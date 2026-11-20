@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 1
-> 🆕 **R2810 · 2026-11-20 22:0x — 16:3x 解冻令·监控轮#2·Step2.3 MM 2×3 predict RUNNING健康(704/2880·+18)**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活(6.8h·ppid1·log零越界自15:16起·无state file=0次处置)✅ ②mem avail1440G≥512G✅ ③load25.29/224✅ ④pretrain step7.08s(末8步7079ms·#2754)≤7.4s✅ ⑤无失控进程✅(MM predict全nice19·max CPU35.9%·max RSS610MB·无>8000%进程). **Step1护栏持续LIVE**: predict_guarded.sh ulimit200GiB·OMP8·nice19·docker eval mem128g/cpu16 patch✅·guard守护LIVE(MEM<400G|load>160→kill)✅. **Step2.1 Verified predict**: 无活跃进程(pi 500/500✅·codex/deepseek quota-stalled停). **Step2.2 incr_eval backlog=0**✅(deepseek 195/500=39.0%). **Step2.3 MM 6路全RUN健康**: cline_dsh64·cline_doubao211·cline_kimi51·oc_dsh90·oc_doubao231·oc_kimi57 =704/2880(+18自R2809)·doubao最快(231/480)·kimi最慢(51-57/480)·判据全绿·ETA慢(护栏串行·报告明写). 无新eval结果→7way报告不REGEN. 📦 TASK32.2KB MEMORY31.5KB
+> 🆕 **R2811 · 2026-11-20 22:25 — 16:3x 解冻令·监控轮#3·Step2.3 MM 2×3 predict RUNNING健康(723/2880·+19)**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活(7.15h·ppid1·etimes25751·log零越界)✅ ②mem avail1435G≥512G✅ ③load27.23/224✅ ④pretrain step7.02s(末8步7023ms·#2757·iter263770/700000·GPU8卡97-100%)≤7.4s✅ ⑤无失控进程✅(MM predict全nice19·max CPU116%·max RSS702MB·无>8000%·无>50GB). **Step1护栏持续LIVE**: predict_guarded.sh ulimit200GiB·OMP8·nice19✅·docker eval mem128g/cpu16 patch✅·guard守护LIVE(MEM<400G|load>160→kill)✅·docker ps无eval容器(无容器=--memory判据空真满足). **Step2.1 Verified predict**: 无活跃进程(pi500/500✅·codex/deepseek quota-stalled停). **Step2.2 incr_eval backlog=0**✅(deepseek195/500=39.0%). **Step2.3 MM 6路全RUN健康**: cline_dsh64·cline_doubao215·cline_kimi51·oc_dsh92·oc_doubao240·oc_kimi61=723/2880(+19自R2810)·doubao最快(240/480)·kimi最慢(51/480·wall1156s/题)·cline_dsh慢(64/480·wall305s/题·ep_poll非hang)·0 quota/429·判据全绿·ETA慢(护栏串行·报告明写). 无新eval结果→7way报告不REGEN. 📦 TASK32.2KB MEMORY~30KB(归档R2782及更早指针)
+> 📦 R2810 流水已归档 → daily-memories-harness/2026-11-20.md（16:3x解冻令·监控轮#2·Step1护栏LIVE·Step2.3 MM 704/2880(+18)·判据全绿·guard PID931671零越界·pretrain7.08s·mem1440G·load25.29·WAITING=1）。需要时再读。
 > 📦 R2809 流水已归档 → daily-memories-harness/2026-11-20.md（16:3x解冻令·监控轮·Step1护栏HARD VERIFIED·Step2.3 MM 686/2880·判据全绿·guard PID931671零越界·pretrain7.05s·WAITING=1）。需要时再读。
 > 📦 R2808 流水已归档 → daily-memories-harness/2026-11-20.md（16:3x解冻令·Step2.1/2.2 COMPLETE→Step2.3 MM 2×3 predict STARTED·6路全RUN·7way报告REGEN R2808·cline303/pi247/dsh195/codex115/hermes444/opencode415/cc295·guard PID931671·load24.96·mem1452G·pretrain7.05s·WAITING=1）。需要时再读。
 > 📦 R2807 流水已归档 → daily-memories-harness/2026-11-20.md（16:3x解冻令·Step2.1 codex→deepseek调度·Step2.2 R2800 5-matplotlib COMPLETE·deepseek195/500=39.0%·7way报告REGEN·guard PID931671·load24.5·mem1476G·pretrain7.21s·WAITING=1）。需要时再读。
@@ -25,103 +26,17 @@ WAITING: 1
 > 📦 R2789 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval R2789 COMPLETE(pi+1/dsh+3)+merge_empties(21空patch)+7way报告REGEN·MM 2×3 526/2880·6路全RUN·Verified predict codex414/pi440/dsh283 alive·自检clean）。需要时再读。
 > 📦 R2790 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval R2790 COMPLETE: codex sphinx-8035 FAILED+pi xarray-6744 RESOLVED✅re-eval·pi245→246/49.2%+1·7way REGEN 5177B·MM 540/2880·自检clean）。需要时再读。
 > 📦 R2791 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM 2×3 551/2880·backlog=1<2阈值→skip incr_eval·7way无需REGEN·自检clean）。需要时再读。
-> 📦 R2782 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval_R2777 COMPLETE+7way报告REGEN·MM 2×3 358/2880·6路全RUN·Verified predict 4路alive·自检clean）。需要时再读。
-> 📦 R2781 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·incr_eval_R2777 RUNNING(matplotlib-24026)·MM 2×3 346/2880 has_patch319=92%·6路全RUN·Verified predict 4路alive·自检clean）。需要时再读。
-> 📦 R2780 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·incr_eval_R2777 RUNNING(matplotlib-24026 docker up16min)·MM 2×3 327/2880 has_patch300=92%·6路全RUN·Verified predict 4路alive·自检clean）。需要时再读。
-> 📦 R2779 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·incr_eval_R2777 RUNNING(matplotlib-24026)·MM 2×3 314/2880·6路全RUN·Verified predict 4路alive·自检clean）。需要时再读。
-> 📦 R2778 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·incr_eval_R2777 RUNNING·MM 2×3 299/2880·6路全RUN·Verified predict 4路alive·自检clean）。需要时再读。
-> 📦 R2777 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval_R2777 RUNNING·MM 2×3 276/2880·6路全RUN·Verified predict 4路alive·自检clean）。需要时再读。
-> 📦 R2776 流水已归档 → daily-memories-harness/2026-11-19.md（deepseek 2路quota重启✅·MM 2×3 225/2880·6路全RUN·Verified predict 4路alive·自检clean）。需要时再读。
-> 📦 R2775 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval R2771 COMPLETE+7way报告REGEN·MM 2×3 444/2880·2 deepseek STOPPED quota reset~18:10·4路RUN·自检clean）。需要时再读。
-> 📦 R2774 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM 2×3 419/2880·2 deepseek路由STOPPED·4路RUN·incr_eval R2771 cline done·pi仍running·自检clean）。需要时再读。
-> 📦 R2773 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+动作·MM 2×3 405/2880·2 deepseek路由STOPPED防quota污染·4路RUN·自检clean）。需要时再读。
-> 📦 R2772 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM 2×3 378/2880·deepseek双路quota确认228 blocked(reset~18:10)·6路全RUN·自检clean）。需要时再读。
-> 📦 R2771 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·cline +1 RESOLVED=301/500=60.2%·7way报告REGEN R2771·MM 2×3 356/2880·pi+deepseek eval后台运行·自检clean）。需要时再读。
-> 📦 R2770 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·cline__deepseek quota-blocked(84)·MM 2×3 224/2880·Verified deltas<2不跑incr_eval·cumulative不变·无REGEN·自检clean）。需要时再读。
-> 📦 R2768 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·自检clean·MM 2×3 76/2880(88%非空patch)·Verified 4路alive·pi incr_eval R2765 still running·无REGEN·cumulative不变）。需要时再读。
-> 📦 R2767 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·自检clean·MM 2×3 65/2880(89%非空patch)·Verified 4路alive·pi incr_eval R2765 still running·无REGEN·cumulative不变）。需要时再读。
-> 📦 R2766 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+incr_eval R2765结果收集: cline+4/codex+1/deepseek+7 RESOLVED·pi 10inst still running·7way报告REGEN R2766·MM 2×3 51/2880·Verified 4路alive·自检clean）。需要时再读。
-> 📦 R2765 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+incr_eval R2765 launched·cline6 sphinx+codex2 sklearn+pi10 django/mpl+dsh7 django·MM 2×3 predict 6路RUN中·kimi慢已解·Verified 4路alive·自检clean）。需要时再读。
-> 📦 R2764 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM 2×3 predict 6路RUN中·doubao最快5-6/480·deepseek2/480 text-only·kimi0/480慢(instance1跑12min)·Verified predict 4路alive(cline474/pi419/codex398/dsh270)·自检clean(load37/224=16.6%)·kimi慢标下轮复查）。需要时再读。
-> 📦 R2763 流水已归档 → daily-memories-harness/2026-11-19.md（MM容器下载COMPLETE 580/580·gate 4/4 met·2×3 predict全6路启动·nice19/ionice3·实测opencode×doubao has_patch patch=598B✅·6路全RUN可恢复·SWE-bench Verified predict 4路alive·自检clean）。需要时再读。
-> 📦 R2762 流水已归档 → daily-memories-harness/2026-11-19.md（MM 2×3 cline×doubao/deepseek silent-exit根因修复=sanitize_cline_prompt U+200B→ASCII空格·smoke全6路PASS: cline×kimi2284B/doubao1770B/deepseek4300B·opencode×kimi2441B/doubao1627B/deepseek6832B）。需要时再读。
-> 📦 R2761 流水已归档 → daily-memories-harness/2026-11-19.md（MM 2×3 cline管线3bug修复+cline×kimi smoke PASS patch=2284B 51calls 491s+opencode×kimi PASS patch=2441B·两harness MM管线全通）。需要时再读。
-> 📦 R2757 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval(cline+1 pi+2 RESOLVED)+MM 2×3可行性核查+6路配置落盘+7way报告REGEN·MM容器521/580=89.8%）。需要时再读。
-> 📦 R2756 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器465/580=80.2%·pretrain未受影响·predict+2新各路<2阈值→不跑incr_eval·自检clean）。需要时再读。
-> 📦 R2755 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器448/580=77.2%·predict自R2754仅+2新各路<2阈值→不跑incr_eval·predict 4路alive·cumulative不变·自检clean·pretrain未受影响）。需要时再读。
-> 📦 R2754 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval R2752 merge确认(cline+3→295 dsh+2→168) 监控轮 codex 1empty merged 7way报告REGEN MM容器440/580 predict 4路alive 自检clean）。需要时再读。
-> 📦 R2753 流水已归档 → daily-memories-harness/2026-11-19.md（MM容器下载巡检433/580+I/O清理kill 4 orphaned find / trees→load81→45·incr_eval R2752 running·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2752 流水已归档 → daily-memories-harness/2026-11-19.md（CPU螺旋kill 162核sklearn pytest+incr_eval R2752 CPU-limited launched·sklearn-13496 RESOLVED·MM容器429/580=74%·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2751 流水已归档 → daily-memories-harness/2026-11-19.md（§用户令11-19 08:2x交付·两份7way中文HTML报告REGEN主表置顶·TB-2.1主表opencode50.6/cline47.2/hermes46.1/pi39.3/cc33.7/codex28.1/deepseek12.4·SWE-bench Verified主表hermes88.8/opencode83.0/cc59.0/cline58.4/pi46.6/deepseek33.2/codex21.6·0script/0外链✅）。需要时再读。
-> 📦 R2750 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·MM容器409/580=70.5%·incr_eval R2750 DONE: cline+5 RESOLVED→292/500=58.4%·deepseek+4 RESOLVED→166/500=33.2%·pi 1 FAILED+1 empty·codex 1 empty·CPU_SPIRAL_SKIP guard·7way报告REGEN·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2749 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器404/580·dsh 1 empty merged(django-14539)·无incr_eval(无路≥2 real_new)·7way报告REGEN(18720B)·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2748 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·+5 RESOLVED跨4路(cline+1/codex+1/dsh+1/pi+2)·13 empties merged·MM容器402/580·7way报告REGEN·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2747 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器397/580·1 empty merged(pi django-15128)·无incr_eval·7way报告REGEN(18720B)·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2746 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器395/580·0 empties merged·无incr_eval·7way报告REGEN(18720B)·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2745 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器393/580·pi 1 empty merged(django-15037)·无incr_eval(无路≥2 real_new)·2 real-patch pending(cline pytest-7521·codex scikit-learn-11310)·7way报告REGEN(18720B)·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2744 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·3 real-patch eval跨2路: cline +3 RESOLVED(pytest-7324/7432/7490)+cc +1 RESOLVED(sympy-13647)·dsh +1 empty merged·7way报告REGEN(18720B)·MM容器393/580·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2743 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器387/580·4 empties merged(cline1+codex2+dsh1)·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2742 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器384/580·9 empties merged(cline1+codex6+pi2)·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2741 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器382/580·10 empties merged(cline2+codex5+dsh2+pi1)·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2740 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器379/580·5 empties merged(cline1+codex2+pi2)·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2739 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器377/580·9 empties merged(cline1+codex6+dsh1+pi1)·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2738 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器374/580·8 empties merged(cline1+codex5+dsh1+pi1)·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2737 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器373/580·7 empties merged(cline1+codex4+dsh1+pi1)·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2736 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器371/580·7 empties merged(cline1+codex5+pi1)·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2735 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器369/580·13 empties merged(cline2+codex7+dsh2+pi2)·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 4路alive·自检clean）。需要时再读。
-> 📦 R2732 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器361/580·11 empties merged·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2731 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器359/580·13 empties merged·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2730 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器357/580·10 empties merged·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2729 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器355/580·21 empties merged·1 pending real(cc sympy-13647<2阈值)·resolved不变·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2728 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器353/580·real_new=1<2阈值→不跑eval·resolved不变·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2727 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·16 empties merged·1 pending real(cc sympy-13647<2阈值)·resolved不变·MM容器351/580·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2726 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·2 real-patch评估(1 RESOLVED+1 FAILED)+16 empties merged·MM容器349/580·7way报告REGEN(18817B)·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2725 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·6 real-patch评估(5 RESOLVED+1 FAILED)+11 empties merged·MM容器345/580·7way报告REGEN(18817B)·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2724 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·4 real-patch评估(3 RESOLVED+1 FAILED)+6 empties merged·MM容器339/580·7way报告REGEN(18736B)·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2723 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·7 real-patch评估(5 RESOLVED+2 FAILED)+2 empties merged·MM容器332/580·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2722 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·5 real-patch评估完成(cline +2+codex +1 RESOLVED)·MM容器326/580·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2721 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·3 codex real-patch全RESOLVED(django-15368+15380+15467)+cc sympy-13031 FAILED+dsh django-13401 FAILED·7 empties merged·7way报告REGEN 18736B·MM容器323/580·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2720 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·4 real-patch全RESOLVED·48 empties merged·race-condition dedup fix·7way报告REGEN 18734B·MM容器322/580·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2719 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器320/580·real_new(pending)=0<2阈值→不跑eval·17 empties merged入failed·resolved不变·7way报告无需REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2718 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器319/580·real_new(pending)=0<2阈值→不跑eval·11 empties merged入failed·resolved不变·7way报告无需REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2717 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器318/580·real_new(pending)=0<2阈值→不跑eval·13 empties merged入failed·resolved不变·7way报告无需REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2716 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+merge-empties·MM容器317/580·real_new(pending)=0<2阈值→不跑eval·41 empties merged入failed·resolved不变·7way报告无需REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2715 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器316/580·real_new=1(pi django-13033)<2阈值→不跑eval·resolved不变·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2714 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器315/580·0新real-patch(21新预测全empty)·resolved不变·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2713 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器314/580·0新real-patch(14新预测全empty)·1 pending未达阈值·resolved不变·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2712 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器313/580·0新real-patch达阈值·empties合并入failed·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2711 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮·MM容器311/580·0新real-patch·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2710 流水已归档 → daily-memories-harness/2026-11-19.md（监控轮+incr_eval merge-only·0 real-patch→15 empty merge入failed·n更新 Pass%不变·7way报告REGEN(18814B)·MM容器310/580·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2709 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·2 real-patch跨2路(cline1+pi1全RESOLVED)+codex7empty merge·MM容器308/580·路径bug修复后首次自动正确·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2708 流水已归档 → daily-memories-harness/2026-11-19.md（incr_eval轮·4 real-patch跨3路(cline4全RESOLVED+pi1 FAILED+dsh1 RESOLVED)·MM容器306/580·路径bug发现并修复(EVAL_LOG_ROOT logs/run_evaluation→logs/evaluation)·6题误标infra手动修正·7way报告REGEN(18814B)·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2707 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·MM容器303/580·1新real-patch(cline)不足阈值·cumulative不变·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2706 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·MM容器301/580·0新incr_eval·cumulative不变·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2705 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器300/580·2 real-patch跨2路(deepseek django-12774+pi django-12858)全RESOLVED✅·FALSE INFRA路径bug复发已手动修正·7way报告REGEN(15506B)·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2704 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器298/580·1 real-patch(cline django-15957)FAILED(ability·patch applied but tests fail)·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2700~R2703 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器286→295/580·codex/dsh RESOLVED+FALSE INFRA路径bug修正·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2699 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·MM容器283/580·predict 5路alive·0新incr_eval·cumulative不变·自检clean）。需要时再读。
-> 📦 R2698 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮+FALSE INFRA修复·MM容器281/580·7 real-patch跨3路eval: cline5全RESOLVED+pi1 FAILED+dsh1 RESOLVED·fix_false_infra_R2698.py交叉校验修正7题误标infra·incr_eval模板已修·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2697 流水已归档 → daily-memories-harness/2026-11-18.md（监控轮·MM容器243/580·predict cline+1(django-15380)·无incr_eval(1新real-patch不足阈值)·cumulative不变·自检clean）。需要时再读。
-> 📦 R2696 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器下载225/580·cline django-15375 RESOLVED·hermes infra修正 django-14631/14725 从infra→failed(能力·patch-apply-fail)·hermes infra 2→0·7way报告REGEN(18730B)·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2695 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器下载194/580·3 real-patch跨3路eval全FAILED(能力)·path bug致3题误标infra→fix_r2695修正为failed·75 empty-patch merge入failed·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2694 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器下载167/580·7 instances 4 routes·cline django-15268+15277 RESOLVED·cc django-14500 RESOLVED·pi django-11820 FAILED·hermes 14631/14725 infra第5次·deepseek django-12304 RESOLVED·7way报告REGEN(18741B)·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2693 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器下载133/580·3 instances 3 routes·cc django-14434 RESOLVED·deepseek django-12276 RESOLVED·hermes 14631/14725 infra第4次·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2692 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器下载117/580·4 instances 3 routes·+1 RESOLVED(pi django-11749)+2 FAILED+2 infra(hermes 14631/14725 第3次)·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2691 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器下载104/580·6 instances 4 routes·+4 RESOLVED+0 FAILED+2 infra·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2690 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器下载90/580·10 instances 6 routes·+7 RESOLVED+1 FAILED+2 infra·cline django-14725 race-fix·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2689 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·dedup修正+MM容器下载56/580·3 instances·dsh django-11603 RESOLVED·hermes 2 infra仍NO report.json·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2688 流水已归档 → daily-memories-harness/2026-11-18.md（incr_eval轮·MM容器下载42/580·11 instances 6 routes·+6 RESOLVED+3 FAILED+2 infra·CPU_SPIRAL_SKIP added·pi infra dedup·7way报告REGEN·predict 5路alive·自检clean）。需要时再读。
-> 📦 R2683及更早(R2683~R2481, Gen7 pilot, R474-R477) 流水已归档 → daily-memories-harness/2026-11-14~18.md + 2026-10-24~28.md。需要时再读。
+> 📦 R2782及更早(R2782~R2683, Gen7 pilot, R474-R477) 流水已归档 → daily-memories-harness/2026-11-18~19.md + 2026-10-24~28.md。需要时再读。
 
 ## 📊 进度快照
 
 PHASE:        16:3x 解冻令·Step 1✅·Step 2.1 predict COMPLETE(pi500/dsh332/codex442quota)·Step 2.2 incr_eval backlog=0✅·Step 2.3 MM 2×3 predict 6路 RUNNING
 已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·SWE-bench Verified predict 7路·§11-19报告重写✅(R2758)·MM容器下载COMPLETE(580/580)✅·Phase 0 冻结验收通过✅·Step 1 硬护栏全落地✅(swebench_guarded_eval.py docker mem128g/cpu16 monkey-patch HARD VERIFIED✅·predict_guarded.sh ulimit200GiB+OMP8+nice19/ionice3✅·guard PID931671✅)·**Step 2.1 Verified predict COMPLETE**: pi500/500·dsh332/500·codex442/500(quota)·**Step 2.2 incr_eval backlog=0**(deepseek+pi全评测)·**7way报告REGEN R2808**(cline303/pi247/dsh195/codex115)·**Step 2.3 MM 2×3 predict STARTED 6路**·TASK归档14:5x+08:2x已搬ARCHIVE✅
-当前动作:     R2808: 7way报告REGEN R2808(4815B·cline303/60.6%+7·pi247/49.4%+12·dsh195/39.0%+27·codex115/23.0%+7)·MM 2×3 predict 6路STARTED(launch_mm_2x3_full.sh→predict_guarded.sh·ulimit200GiB✅·resume 480/480 done+blocked)·判据全绿(load24.96/mem1452G/pretrain7.05s/guard PID931671)
+当前动作:     R2811: 监控轮#3·MM 2×3 predict 6路全RUN健康(723/2880·+19)·判据全绿(load27.23/mem1435G/pretrain7.02s/guard PID931671)·无新eval结果→7way报告不REGEN·cline_dsh/kimi慢(ep_poll非hang·API等待)·0 quota/429
 下一步:       ①监控MM 2×3 predict 6路(pretrain≤7.4s·mem≥512G·load≤120·越界降载/暂停)→②MM blocked项重试(quota恢复则has_patch增加)→③MM eval(has_patch走guarded容器CPU限·串行)→④codex quota恢复后rerun 256 quota_blocked+predict 442→500→⑤deepseek predict 4 no-patch refill(低价值可选)
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK32.2KB（✅<40KB硬限·略>32KB软限·14:5x/08:2x已归档）/ MEMORY31.9KB（✅≤32KB）
+ 体积: TASK32.2KB（✅<40KB硬限·略>32KB软限·14:5x/08:2x已归档）/ MEMORY~30KB（✅≤32KB·R2782及更早指针已折叠）
  SWE-bench Verified Pass%(分母恒500·incr_eval backlog=0): hermes444/500=88.8%·opencode415/500=83.0%·cline303/500=60.6%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%·（MM 2×3 predict 6路 RUNNING·480/480 done+blocked 重试中）
  真实 Pass% (layer-A/B, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
    SWE-bench Multimodal 2×3 predict(冻结暂停·R2763 14:56启动·480题/路): opencode×doubao212·cline×doubao194·opencode×deepseek74·opencode×kimi49·cline×kimi42·cline×deepseek49·6路已按14:5x冻结令暂停(opencode×deepseek PID962346已杀停)
