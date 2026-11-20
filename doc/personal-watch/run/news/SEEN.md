@@ -3539,3 +3539,31 @@
 | 2026-11-20 | 子午播报 2026-11-20（联合国新闻播报汇编） | 联合国新闻 | W:not-news（第 316 轮 · 播报汇编） | https://news.un.org/feed/view/zh/story/2026/11/1143232 |
 | 2026-11-20 | 美国为伊朗战事花费超 480 亿美元 / 法国 10 月骚乱损失超 2 亿欧元 / 土耳其卡塔尔防御协议 / 中方反对恐怖主义 | 央视网 | W:not-news（第 316 轮 · 禁令 9 涉军涉外冲突） | https://news.cctv.com/ |
 | 2026-11-20 | AI 类岗位扩容、技能人才需求旺（就业市场新趋势） | 中新网 | W:not-news（第 316 轮 · 综述访谈，无具体事件点） | https://www.chinanews.com.cn/ |
+| 2026-11-20 | 约 14MB 内存跑 2.7 亿参数模型：谷歌工程师把 AI 装进打印机，每词元约 60 秒 | IT之家（第 317 轮 · §1） | news | https://www.ithome.com/1/029/953.htm |
+| 2026-11-20 | AMD XDNA2 NPU 首获 Unsloth Desktop 适配，超百款智能体可本地跑 | IT之家（第 317 轮 · §1） | news | https://www.ithome.com/1/030/131.htm |
+| 2026-11-20 | 微软 USB4 多台 Win11 电脑协同跑 AI（RDMA 开发者预览，28–50 微秒） | IT之家（第 317 轮 · §1） | news | https://www.ithome.com/1/030/081.htm |
+| 2026-11-20 | Anthropic 上市当天，离职研究员考克森在总部外呼吁禁止递归自我改进 | IT之家 / 商业内幕（第 317 轮 · §2） | news | https://www.ithome.com/1/030/127.htm |
+| 2026-11-19 | 联合国警告：人工智能正被用于诱骗和剥削儿童 | 联合国新闻（第 317 轮 · §2） | news | https://news.un.org/feed/view/zh/story/2026/11/1143231 |
+| 2026-11-20 | 国家网信办：9—10 月新增 133 款生成式 AI 服务完成备案（累计 1245 款） | 央视网 / 国家网信办（第 317 轮 · §3） | news | https://news.cctv.com/2026/11/20/ARTIHBHk4WuG4IqM14kzOZpb261120.shtml |
+| 2026-11-20 | 百度（香港）违法实施经营者集中，市场监管总局罚款 50 万元 | IT之家（第 317 轮 · §3） | news | https://www.ithome.com/1/030/136.htm |
+| 2026-11-20 | 前三季度数字产业收入 32.41 万亿元 +14.8%；智能算力 2592 EFLOPS +146% | 央视网 / 工信部（第 317 轮 · §3） | news | https://news.cctv.com/2026/11/20/ARTIgiH0Q4UfdQKVDJ7OVy7V261120.shtml |
+| 2026-11-20 | 网易丁磊：短剧爆炸式发展，短期内确实会对游戏产生影响 | IT之家 / 每日经济新闻（第 317 轮 · §4） | news | https://www.ithome.com/1/029/977.htm |
+| 2026-11-19 | 货币基金组织总裁：AI 将成为影响全球竞争力和经济增长的重要因素 | 联合国新闻（第 317 轮 · §4） | news | https://news.un.org/feed/view/zh/story/2026/11/1143226 |
+| 2026-11-20 | 阿里真武 V900 明年一季度量产售卖（称目前算力最强中国自研 AI 芯片） | IT之家 / 阿里云（第 317 轮 · §5） | news | https://www.ithome.com/1/030/006.htm |
+| 2026-11-20 | 谷歌调整 TPU 供应链：与联发科分工设计、直接采购 HBM | IT之家 / Chosun Biz（第 317 轮 · §5） | news | https://www.ithome.com/1/030/066.htm |
+| 2026-11-20 | 国际能源署：到 2030 年全球数据中心用电量或翻倍（约 1 万亿千瓦时） | IT之家 / CNBC / IEA（第 317 轮 · §5） | news | https://www.ithome.com/1/030/065.htm |
+| 2026-11-20 | 我国首个自主指令集综合开源社区「开放原子龙架构社区」成立 | IT之家（第 317 轮 · §6） | news | https://www.ithome.com/1/030/139.htm |
+| 2026-11-20 | 全国产十万卡 AI 超集群曙光 8000（登峰）获戈登·贝尔奖 | 央视网 / SC26（第 317 轮 · §6） | news | https://news.cctv.com/2026/11/20/ARTI9v5RCKd57ngMCEcajCU2261120.shtml |
+| 2026-11-20 | 语用科技（林俊旸创办）新一轮融资 估值 50 亿美元 | IT之家 / 彭博社（第 317 轮 · 附录） | W:not-news（融资传闻，无公告） | https://www.ithome.com/1/030/176.htm |
+| 2026-11-20 | 华为星芒 OSTA O1 Pro / 享界 V8 发布会通稿与产品价格（16 条） | IT之家（第 317 轮 · 附录） | W:not-news（发布会通稿/价格） | https://www.ithome.com/1/030/068.htm |
+| 2026-11-20 | 数字产业外的宏观数据：LPR 连续 18 个月不变 / 1—10 月预算收入 195671 亿元 / 吸收外资 6069.3 亿元 | 央视网 / 中新网（第 317 轮 · 附录） | W:not-news（非 AI 主题） | https://www.chinanews.com.cn/ |
+| 2026-11-20 | 纪检与人事：马晓璐、张杰、丛克、周亮军被查/双开；郑海涛任扬州市委书记 | 央视网 / 中新网（第 317 轮 · 附录） | W:not-news（禁令 9 司法个案） | https://news.cctv.com/ |
+| 2026-11-20 | 中美两军海上军事安全磋商；外交部回应日方涉台表态 | 中新网 / 央视网（第 317 轮 · 附录） | W:not-news（禁令 9 涉军涉台） | https://www.chinanews.com.cn/ |
+| 2026-11-19 | 国际法院认定缅甸种族灭绝 / COP31 草案 / 粮农组织粮食展望 / 联合国人口基金警告 | 联合国新闻（第 317 轮 · 附录） | W:not-news（涉外司法·气候·报告） | https://news.un.org/feed/subscribe/zh/news/all/rss.xml |
+| 2026-11-20 | 两部门公布 4 起编造传播资本市场虚假信息典型案例 | 央视网 / 中新网（第 317 轮 · 附录） | W:not-news（禁令 9 执法个案） | https://news.cctv.com/ |
+| 2026-11-20 | 硬件与消费通告 17 条（七彩虹 B850I / 群联 Pascari Space / 铭匠 / 美光 HBM 厂 / 捷途 / 尚界 Z7T / 技嘉·银昕电源 / 重力星球 / 看到科技 / Lomo72 / 索尼促销 / 舒尔 / 影石 / 雷克萨斯 / 冠道 / 罗技手写笔） | IT之家（第 317 轮 · 附录） | W:not-news（销售通告） | https://www.ithome.com/1/030/157.htm |
+| 2026-11-20 | 召回：福特 F-150 54 辆 / 捷豹路虎 18 辆 / 奔驰近 18 万辆 | IT之家（第 317 轮 · 附录） | W:not-news（召回通告） | https://www.ithome.com/1/029/942.htm |
+| 2026-11-20 | 游戏与娱乐：GTA6 串流补帧 / Steam 2027 新春特卖报名 / Analogue 3D / Epic 喜加一 / KeyCapy | IT之家（第 317 轮 · 附录） | W:not-news（娱乐消费） | https://www.ithome.com/1/029/978.htm |
+| 2026-11-20 | 谷歌 1000 万美元收购精神航空数据获法院批准 / 应用锁需安卓 17 QPR3 / 日本车企零部件标准化 / 红果短剧时间管理 | IT之家 / 中新网（第 317 轮 · 附录） | W:not-news（弱相关/司法） | https://www.ithome.com/1/030/137.htm |
+| 2026-11-20 | 量子位：昇腾具身世界模型双榜 SOTA（511610）· SenseNova U1 Pro 双榜第一（511179） | 量子位（第 317 轮 · 附录） | W:not-news（厂商单方榜单稿） | https://www.qbitai.com/2026/11/511610.html |
+| 2026-11-20 | 联合国《2026 年电子政务调查报告》 | 联合国新闻（第 317 轮 · 附录） | W:not-news（报告综述） | https://news.un.org/feed/view/zh/story/2026/11/1143230 |
