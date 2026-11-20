@@ -1635,3 +1635,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795090189327_71kny	dandans	hfeg0pbn13	76	spice_sim	parked		2026-11-20 19:31	netlist/lib mgmt (netlist:1113 hspice:1), weak spice signal, not produce-task
 1795089984884_tom4v	yuchens	hfeahpc503	4	spice_sim	parked		2026-11-20 19:31	schematic/rtl (schematic:32 rtl:15 pex:4 hspice:4), weak spice
 1795139104007_7w8z6	yuankong	hfeg0pfn021	3	spice_sim	parked		2026-11-20 19:31	DRC-heavy (drc:69 netlist:111), C-domain physical_verify not spice
+1795006552050_wj4a9.messages.json	harrywu	hfeg0plg54	65	spice_sim	case	EDA-Eval-DesignFlow-FsdbCutterFrontend-001	2026-11-20 20:16	
