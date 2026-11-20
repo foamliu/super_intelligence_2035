@@ -4008,7 +4008,7 @@
 | 邮箱 | **dnarayanan@nvidia.com**（来源：个人主页 `https://deepakn94.github.io/` 实测 `HTTP 200` / 10,161 B，页内明文；页面 `mailto:` 被 JS 混淆为空 ⇒ 按 **B 级**记，发信前需当场复核） |
 | 主页 | <https://deepakn94.github.io/>（实测 `200` / 10,161 B；页面内含 `megatron-sc21.pdf` 链接，与论文对应） |
 | X 账号 | **未找到**（主页无 X / Twitter 链接，🚫 不猜） |
-| 状态 | **只建档**（本轮时窗信额已满，未发） |
+| 状态 | **已发信**（2026-11-21 03:04:51 `SENT OK`，信 #122 · 主题 `Megatron-LM SC'21: interleaved 1F1B at 2B scale?`） |
 | 备注 | `语言=英文(判据=英文姓名族属+美国机构)`。价值点：并行组切分与交错 1F1B 的**实测取舍**（TP×PP×DP 与气泡占比），可直接回填 pretrain 的并行配置预注册表；也可追问 2B 规模下「交错层数」是否有拐点。 |
 
 ### 282. Samir Khaki
@@ -4023,3 +4023,43 @@
 | X 账号 | **未找到**（🚫 不猜） |
 | 状态 | **只建档**（无可发地址） |
 | 备注 | `语言=英文(判据=姓名族属不可判+无中文/日韩机构信号；兜底英文)`。价值点：激活量化的**误差分摊**与离线 scale-ratio 校准 —— 即使没有 Vera Rubin，也可在模拟环境验证「两条稀疏流共享同一 FP4 预算」的思路。 |
+
+### 283. Aditya Grover
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Aditya Grover（英语机构 + 印度姓名族属 ⇒ 信按英文写；§2 母语表未列印度语言，英文兜底） |
+| 机构 | **UCLA**（计算机系；本轮只核个人主页，未逐页核职称） |
+| 代表论文 | Decision Transformer（arXiv `2106.01345`，B 轨 #304，第 5 作者）· Deep Diffusion / 生成模型方向 |
+| 邮箱 | **adityag@cs.ucla.edu**（来源：本人主页 `https://aditya-grover.github.io/` 的 `mailto:`（percent-encoded `%61%64%69%74%79%61%67@…`，已解码），2026-11-21 03:0x 实测 `HTTP 200` / 17,742 B ⇒ **A 级**） |
+| 主页 | <https://aditya-grover.github.io/> |
+| X 账号 | **未找到**（主页本轮未见 X 链接，🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 03:04:43 `SENT OK`，信 #120 · 主题 `Decision Transformer: return-to-go targets under heavy-tailed returns`） |
+| 备注 | `语言=英文(判据=英文机构 UCLA + 印度姓名族属，英文兜底)`。价值点：return-to-go 条件化 vs 学 critic 的取舍，直接决定 zhulong 多步 EDA 流用「序列建模」还是「critic 后训练」。 |
+
+### 284. Mathieu Salzmann
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mathieu Salzmann（法/德姓名族属 ⇒ **法文称谓问候 + 英文正文**） |
+| 机构 | **EPFL**（CVLab；本轮只核官方人员页） |
+| 代表论文 | HiSA: Sparsifying the Hidden Dimension of RoPE Attention in LLMs（arXiv `2611.26363`，2026-11-19，合作者） |
+| 邮箱 | **mathieu.salzmann@epfl.ch**（来源：EPFL 官方人员页 `https://people.epfl.ch/mathieu.salzmann`，2026-11-21 03:0x 实测 `HTTP 200` / 36,341 B 页内明文 ⇒ **B 级**） |
+| 主页 | <https://people.epfl.ch/mathieu.salzmann> |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 03:04:47 `SENT OK`，信 #121 · 主题 `HiSA: which RoPE frequency partition gets dropped?`） |
+| 备注 | `语言=法文称谓+英文正文(判据=法/德姓名族属 + EPFL 在法语区瑞士；按 §2 欧洲语言不全文母语)`。价值点：hidden-dim 稀疏由 RoPE 分解推出的静态规则 —— 换 RoPE base 后是否需重推，直接影响长上下文预训练配置。 |
+
+### 285. Sam McCandlish
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sam McCandlish（英文姓名族属 ⇒ 英文） |
+| 机构 | **Anthropic**（联合创始人；本轮只按论文与公开报道记，未逐页核现职） |
+| 代表论文 | An Empirical Model of Large-Batch Training（arXiv `1812.06162`，B 轨 #302，一作）· Scaling Laws for Neural LMs（合著） |
+| 邮箱 | **未找到**（候选 `mccandlish.github.io` 实测 `404`；`anthropic.com/people/sam-mccandlish` `404` ⇒ 按纪律不猜） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=英文(判据=英文姓名族属 + 美国机构)`。价值点：梯度噪声尺度 / 临界批量的**小批量预测量法**，可在 2B 预训练前先做「batch 还能不能继续加」的判定，避免盲目堆卡。 |
+

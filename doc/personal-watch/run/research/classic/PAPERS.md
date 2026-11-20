@@ -10,7 +10,7 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **299** 条（**第七十八轮 2026-11-21 00:0x 补 3 条 → 299**：Horovod `1802.05799`（**1,619**，预印本）/ Deformable DETR `2010.04159`（**8,952**，arXiv `comment` = ICLR 2021 Oral）/ SigLIP 2 `2502.14786`（**1,832**，预印本）；元数据 arXiv `id_list` 单篇 **3/3 `200` + `application/atom+xml`**（`published` 齐备）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（本轮 PDF 下载 30 s 内未完成）；覆盖轴 = 数据并行 ring-allreduce 的通信成本基线 / 参考点稀疏采样把收敛压 10× / 视觉塔的统一图文配方与原生宽高比）
+**本轮快照**：累计 **304** 条（**第七十九轮 2026-11-21 03:0x 补 3 条 → 304**：An Empirical Model of Large-Batch Training `1812.06162`（**543**，预印本）/ On the difficulty of training RNNs `1211.5063`（**5,097**，预印本；ICML 2013 版本轮未逐页核）/ Decision Transformer `2106.01345`（**2,596**，预印本，OpenAlex biblio.volume 34）；arXiv `id_list` **3/3 `200` + atom** + abs 页 **3/3 `200`**（43,826 / 41,068 / 43,191 B）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；覆盖轴 = 临界批量与梯度噪声尺度 / 梯度范数裁剪作为 spike 第一闸 / return-to-go 序列建模替代 critic；**回溯 第七十八轮 2026-11-21 00:0x 补 3 条 → 299**：Horovod `1802.05799`（**1,619**，预印本）/ Deformable DETR `2010.04159`（**8,952**，arXiv `comment` = ICLR 2021 Oral）/ SigLIP 2 `2502.14786`（**1,832**，预印本）；元数据 arXiv `id_list` 单篇 **3/3 `200` + `application/atom+xml`**（`published` 齐备）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（本轮 PDF 下载 30 s 内未完成）；覆盖轴 = 数据并行 ring-allreduce 的通信成本基线 / 参考点稀疏采样把收敛压 10× / 视觉塔的统一图文配方与原生宽高比）
 
 **本轮快照**：累计 **292** 条（**第七十六轮 2026-11-20 18:0x 补 4 条 → 292**：ELECTRA `2003.10555`（**5,109**，arXiv `comment` = ICLR 2020）/ Faster R-CNN `1506.01497`（**80,700**，IEEE TPAMI 39(6):1137–1149, 2017）/ Mask R-CNN `1703.06870`（**7,047**，IEEE TPAMI 42(2):386–397, 2020）/ Soft Actor-Critic `1801.01290`（**13,567**，arXiv `comment` = ICML 2018，OpenAlex biblio pp. 1861–1870）；元数据 `id_list=2003.10555,1703.06870,1506.01497,1801.01290` **`200` + `application/atom+xml`**（9,733 B / 4 entry）+ OpenAlex **4/4 `200`**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；覆盖轴 = 判别式预训练的样本效率 / 共享卷积特征做近零成本候选框 / 解耦掩码分支与 RoIAlign / 最大熵离策略 RL 的种子稳定性）
 
@@ -5209,6 +5209,57 @@
 
 ---
 
+## 302. An Empirical Model of Large-Batch Training
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | An Empirical Model of Large-Batch Training |
+| 作者（前 3） | Sam McCandlish · Jared Kaplan · Dario Amodei（第 4 位为团队署名 `OpenAI Dota Team`；arXiv 作者字段逐字核） |
+| 年份 | **2018**（arXiv v1 `2018-12-14`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`，来源 arXiv；arXiv `comment` 为空） |
+| 被引数 | **543**（OpenAlex `10.48550/arxiv.1812.06162`，查询日 **2026-11-21**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/1812.06162> ｜ arXiv DOI `10.48550/arxiv.1812.06162` |
+| 一句话贡献 | 用**梯度噪声尺度（gradient noise scale）**把「大批量训练的收益何时饱和」变成可测的量：噪声尺度与临界批量近似成比例，临界批量随训练进程增长；据此可在小批量上先测出「再增大 batch 还能不能换来等比例的步数减少」，从而在训练前决定 batch size 与并行度。 |
+| 与我们工作的关系 | **pretrain（主 · 批量与并行配置）**：预注册项 = 「在小 batch 上测噪声尺度 → 推临界批量 → 再定 batch size / 学习率缩放」，避免一上来就用大卡堆 batch。<br>**pretrain（数据效率口径）**：把「样本效率 vs 步数效率」的权衡写成可测曲线，供 2B 预训练的数据预算讨论使用。<br>**zhulong（成本口径）**：临界批量决定「加卡能否线性缩短墙钟」，是扩卡效率分析的分母。 |
+| 首次收录 | **2026-11-21**（第七十九轮 · 03:00 时窗） |
+| 核验状态 | arXiv `id_list=1812.06162` **`200` + `application/atom+xml`**（`published` `2018-12-14T18:58:23Z`）+ abs 页 **`200` / 43,826 B**；OpenAlex **`200`（543 / 2018 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 303. On the difficulty of training Recurrent Neural Networks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | On the difficulty of training Recurrent Neural Networks |
+| 作者（前 3） | Razvan Pascanu · Tomas Mikolov · Yoshua Bengio（共 3 位；arXiv 作者字段逐字核） |
+| 年份 | **2012**（arXiv v1 `2012-11-21`；v2 更新） |
+| 会议 / 期刊 | **预印本**（OpenAlex 主记录 `type=preprint` 2012；ICML 2013 版为常见引用版本，**本轮未逐页核会议版**） |
+| 被引数 | **5,097**（OpenAlex `10.48550/arxiv.1211.5063`，查询日 **2026-11-21**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/1211.5063> ｜ arXiv DOI `10.48550/arxiv.1211.5063` |
+| 一句话贡献 | 把 RNN 训练困难拆成**梯度爆炸 / 消失**两类并给出诊断：梯度范数本身可作为「悬崖（cliff）」的观测量，**按范数阈值裁剪梯度**（而不是按固定值截断）是当时最便宜且有效的稳定手段；同时分析长期依赖为何难以学习。 |
+| 与我们工作的关系 | **pretrain（主 · 训练稳定性）**：把「梯度范数阈值裁剪」写成 spike 处置的第一道闸（阈值、触发频率、裁剪后是否改学习率），与本线已收的 μP / QK-clip 一起构成稳定性三件套。<br>**pretrain（诊断口径）**：loss spike 时先看梯度范数分布而不是只看 loss，可作为崩溃复盘的固定字段。<br>**zhulong**：长序列（thinking 链）训练同样受爆炸梯度影响，裁剪策略需与序列长度一同预注册。 |
+| 首次收录 | **2026-11-21**（第七十九轮 · 03:00 时窗） |
+| 核验状态 | arXiv `id_list=1211.5063` **`200` + atom**（`published` `2012-11-21T18:07:37Z`；`comment` 逐字：`Improved description of the exploding gradient problem and description and analysis of the vanishing gradient problem`）+ abs 页 **`200` / 41,068 B**；OpenAlex **`200`（5,097 / 2012 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 304. Decision Transformer: Reinforcement Learning via Sequence Modeling
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Decision Transformer: Reinforcement Learning via Sequence Modeling |
+| 作者（前 3） | Lili Chen · Kevin Lu · Aravind Rajeswaran（共 **9** 位；末两位 Aditya Grover / Igor Mordatch；arXiv 作者字段逐字核） |
+| 年份 | **2021**（arXiv v1 `2021-06-02`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`，`biblio.volume=34` ⇒ 对应 NeurIPS 2021 论文集卷 34；**会议版本轮未逐页核**） |
+| 被引数 | **2,596**（OpenAlex `10.48550/arxiv.2106.01345`，查询日 **2026-11-21**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2106.01345> ｜ arXiv DOI `10.48550/arxiv.2106.01345` |
+| 一句话贡献 | 把 RL 改写成**序列建模**：把 return-to-go、状态、动作拼成一条因果序列喂给 GPT 式 Transformer，用**自回归预测动作**替代价值函数与自举（no bootstrapping / no dynamic programming），并在 Atari、D4RL 等离线任务上验证可行。 |
+| 与我们工作的关系 | **zhulong（主 · 动作序列建模）**：把多步 EDA 流（规划命令 → 检查日志 → 修正）当成序列建模时，「条件化在目标回报上」与「学 critic」是两条互斥路线，本文是最干净的对照基线。<br>**harness（agent 轨迹训练）**：trajectory-level 训练目标可复用；需回答「上下文长度外的信用分配」这一缺口。<br>**pretrain（序列接口）**：与语言模型同一套因果 Transformer 接口，便于复用现有训练栈。 |
+| 首次收录 | **2026-11-21**（第七十九轮 · 03:00 时窗） |
+| 核验状态 | arXiv `id_list=2106.01345` **`200` + atom**（`published` `2021-06-02T17:57:33Z`；`comment` 逐字：`First two authors contributed equally. Last two authors advised equally`）+ abs 页 **`200` / 43,191 B**；OpenAlex **`200`（2,596 / 2021 / preprint / biblio.volume 34）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
@@ -5289,6 +5340,8 @@
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
 |:--|:--|:--|:--|:--|
 | — | （本轮无新增候选，待下轮实测后填） | — | — | — |
+
+> ✅ **第七十九轮（2026-11-21 03:0x）转正 3 条**：An Empirical Model of Large-Batch Training `1812.06162`（#302，**543**，预印本）· On the difficulty of training RNNs `1211.5063`（#303，**5,097**，预印本）· Decision Transformer `2106.01345`（#304，**2,596**，预印本）⇒ B 轨累计 **304**。核验：arXiv `id_list` **3/3 `200` + atom** + abs 页 **3/3 `200`** + OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（GShard `2006.16668` 与 LoRA `2106.09685` 经查**已在表内** ⇒ 剔除，未重复收）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧的实现报告（QK-clip / loss-spike）；③ 检测后续（Mask DINO / DINO-X 一手核 ID）；④ 视觉塔对照（InternViT 一手）；⑤ 长上下文位置编码（位置插值 / NTK 对照，YaRN 已收）。
 
 > ✅ **第七十八轮（2026-11-21 00:0x）转正 3 条**：Horovod `1802.05799`（#297，**1,619**，预印本）· Deformable DETR `2010.04159`（#298，**8,952**，ICLR 2021 Oral）· SigLIP 2 `2502.14786`（#299，**1,832**，预印本）⇒ B 轨累计 **299**（覆盖轴：数据并行 ring-allreduce 的通信成本基线 / 参考点稀疏采样把收敛压 10× / 视觉塔的统一图文配方与原生宽高比）。核验：arXiv `id_list` 单篇 **3/3 `200` + atom** + OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则均 **0 命中**（`1802.05799` 与此前「Ring-AllReduce 通信侧」候选一致，未与 ZeRO `1910.02054` 重复）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ 检测后续（DINO 系列 / Mask DINO）；④ 视觉塔对照补 SigLIP 原文 `2103.00020` 已在表内 ⇒ 改补 EVA / InternViT 一手；⑤ 存储墙侧（PIM 综述已收 ⇒ 补近三年 HBM 实测论文）。
 

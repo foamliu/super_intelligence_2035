@@ -1,0 +1,18 @@
+Bonjour Professeur Salzmann,
+
+I am Yang Liu, a researcher working on LLM agents and efficient inference; my work is at https://foamliu.github.io/.
+
+I read HiSA because on our hardware the attention score computation, not the KV cache, is the binding constraint. What interests me is that the sparsity sits in the hidden dimension, following a static parameter-free rule from the RoPE decomposition - about a third of the query-key products - rather than dropping tokens.
+
+Three questions:
+
+1. Is the omitted partition tied to specific RoPE frequency bands, or to the positional offset? If we change the RoPE base for long context, must the rule be re-derived?
+
+2. Does wall-clock follow the one-third ratio at head_dim 64 and 128, and does the gain appear at the ~2B scale? I need to know whether this justifies a training run for us.
+
+3. You show dense attention suppresses the dropped score parts. Is that measurable per layer from a checkpoint, so sparse versus dense could be chosen per layer rather than globally?
+
+Thank you for releasing the code; the point 3 measurement is what I most want to reproduce.
+
+Best regards,
+Yang Liu
