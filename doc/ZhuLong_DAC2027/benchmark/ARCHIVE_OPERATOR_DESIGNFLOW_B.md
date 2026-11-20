@@ -2301,3 +2301,23 @@ WAITING: 0（11-21 **r945 1-case 产出轮**：mc-matrix `python3 designflow/tra
 
 ## r944 verbose (r946-mem-trim)
 [r944 archived] 11-21 r944 1-case 产出轮：mc-matrix `python3 designflow/trace_ledger.py --shard B mc-matrix --src designflow/summary_1120_reconstructed.tsv` → mc≥10 pool=2072 touched=1763 **fresh=309**。candidates_mc10.tsv 跨 shard ledger 排除(4-shard variant) + B spice 关键词(spice_total≥20) → 116 fresh；按 spice_total 选 **fve2x**(irene1li hfeg0plg58 mc113, hspice:302/netlist:509/schematic:337/waveview:90, 4-shard fresh, NEW-session)。.75 SSH cat(经 subdir 路径，autofs 直 scp 失败→用 ssh cat>file) 取 messages.json(619KB/131msg)→深读 fve2x_sampler_setuphold.md：irene1li 在 hfeg0plg58 用 FineSim 跑 m2701 V0_DDR4 sim_CkDcaMux24to1(24to1 mux+PRBS)，分析 IO_DataLat D 锁存器(下降沿采样) setup/hold 采样裕度。msg[2] 用户原话"D锁存器的setup time以及hold up time(setup time就是数据到CLK低电平的时间，hold up time就是CLK高电平到数据改变的时间)"。agent 全程试读 18GB FSDB(哈希化扁平节点名 _<hex>_void_pp)，fscript/Verdi fsdbreport/WaveView wv 均难寻址内部信号，**最终未交付测量**。本 case 取用户 msg[2] 真实分析意图，把 CLK/DATA 采样波形导成 CSV(t_ns,clk,data; dt=10ps; vth=0.5)，交付纯 Python `sampler_setup_hold.py <wave.csv> <spec.json> [--out report.json]`：阈值穿越+线性插值检测边沿→按周期切分→高电平段找 data 跳变→setup_ps=(t_fall−t_data)*1000, hold_ps=(t_data−t_rise)*1000→report.json(per-cycle+min/avg/max)。A=period 2.0ns offsets[0.20,0.35,0.15,0.45,0.25,0.40], hidden B=period 1.6ns offsets[0.18,0.30,0.42,0.22,0.38,0.12] 全异 anti-hardcode-A。**SamplerSetupHold-001** 落库(k=17 a..o, ref PASS 17/17, NEG 4/4 FAIL: naive_empty/print_only(灌A值)/core_removed(全0)/hardcode_a, 3-seed sha256 一致, check 独立从 B CSV 复算 GT_B 对账 ±20ps)。cases/B 473→475(本 +1, 另 +1 并发 shard), B.jsonl 472→473(auto-regen build_jsonl --shard B), ledger_B case 634→635。clk 起始置低(低半周期)以让首个上升沿被边沿检测捕获(首轮 n_cycles=5→修正后=6)。原文见 git log r944）
+
+## r948-mem-trim batch (rolled from MEMORY_DESIGNFLOW_B.md 2026-11-21)
+[r897 archived] 11-20 r897 1-case · xwken(kaixuanx mc137)→DffPvtCompareGen-001, cases/B 437→438 (k=14, NEG 5/5); 原文见 git log r897
+[r893 archived] 11-20 r893 1-case · nghfa(siyuji NEW-user #27 mc54)→TclDebugInstrumentGen-001, cases/B 434→435 (k=16, NEG 5/5); 原文见 git log r893
+[r891 archived] 11-19 r891 1-case · svju2(clarawu NEW-user #25 mc172)→DvohSensMetricGen-001, cases/B 432→433 (k=16, NEG 5/5); 原文见 git log r891
+[r890 archived] 11-19 r890 1-case · 5zp1p(hairuizh NEW-user #23)→SimScanSkillGen-001, cases/B 430→431 (k=16, NEG 5/5); 原文见 git log r890
+[r883 archived] 11-19 r883 · hk2q4(steveny NEW-user mc202)→AgentFriendlyCheck-001, cases/B 424→425 (k=15, 5 neg FAIL); 原文见 git log r883
+[r882 archived] 11-19 r882 · uxbqp(e0039816 NEW-user mc24)→OcsaTr0AsymAnalyze-001 (k=12, 5 neg FAIL); 原文见 git log r882
+[r873 archived] 11-19 r873 · 06m8h(binwenh NEW-user mc27)→SpDeckDiffAnalyze-001, B.jsonl 417→418 (k=16, 5 neg FAIL); 原文见 git log r873
+[r872 archived] 11-19 r872 · 3ygqr(e0030760 NEW-user mc155)→SnmHsvFailDiag-001, B.jsonl 416→417 (k=14, 5 neg FAIL); 原文见 git log r872
+[r871 archived] 11-19 r871 1-case · zh2fc(weiyue NEW-user)→AcDcCapMerge-001, B.jsonl 415→416 (k=15, 5 neg FAIL, ref 15/15 PASS); AC/DC 派生电容合并; 原文见 git log r871
+[r870 archived] 11-19 r870 1-case · mv4xp(zlhou)→FineSimPostsimDiag-001, B.jsonl 414→415 (k=15, 5 neg FAIL); 原文见 git log r870
+[r866 archived] 11-19 r866 · qetcj(kaixuanx NEW-user)→WakeDelayMeasGen-001, B.jsonl 412→413 (k=14, 5 neg FAIL); 原文见 git log r866
+[r862 archived] 11-19 r862 1-case · oa6ct(yangyangs NEW-user mc62)→PsijCalc-001, B.jsonl 408→409 (k=14, 5 neg FAIL); 原文见 git log r862
+[r861 archived] 11-19 r861 1-case · f8e95(e0044480 NEW-user mc67)→SpDeckBatchMod-001, B.jsonl 407→408 (k=14, 5 neg FAIL); 原文滚入 ARCHIVE r862-mem-trim
+[r860 archived] 11-19 r860 1-case · 5qu6l(willz NEW-user mc193)→PvtDeckGen-001, B.jsonl 406→407 (k=16, 5 neg FAIL); 原文滚入 ARCHIVE r861-mem-trim
+[r857 archived] 11-19 r857 · w8iq4(joeyl NEW-user mc246)→DelvtoNetlistMod-001, cases/B 403→404 (k=14, 5 neg FAIL); 原文见 git log r857
+[r856 archived] 11-19 r856 1-case · 7rj65(tongfanl mc40)→SkillDocGen-001, cases/B 402→403 (k=15, 5 neg FAIL); 原文滚入 ARCHIVE r857-mem-trim
+[r855 archived] 11-19 r855 1-case · a8p3f(dsgao mc43)→TwoStepSenseTTCmp-001, B.jsonl 401→402 (k=14, 5 neg FAIL); 原文滚入 ARCHIVE r856-mem-trim
+[r854 archived] 11-19 r854 · khobz(tongfanl mc119)→MatrixJobStatusParse-001, B.jsonl 400→401 (k=14, 5 neg FAIL); 原文见 git log r854
