@@ -1430,9 +1430,16 @@
   "alibaba-fusion__next-1788": {
     "instance_id": "alibaba-fusion__next-1788",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 123.5,
+    "rc": 0,
+    "model_patch_len": 921,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "nt>) => void` |\n| `InputProps` | `onFocus` | `() => void` | `(e: React.FocusEvent<HTMLInputElement>) => void` |\n\n`PasswordProps` 继承自 `InputProps`，也会同步修复。现在你可以在 `onBlur` 回调里正常访问 `e.target.value` 等属性了。\n",
+    "stderr_tail": "ct.FocusEvent<HTMLInputElement>) => void;\n \n /**\n  * 自定义字符串计算长度方式\n  */\n\n\u001b[0m\n\u001b[0m→ \u001b[0mRead types/input/index.d.ts\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix onBlur and onFocus types in types/input/index.d.ts\n\u001b[0m\n"
   },
   "alibaba-fusion__next-1807": {
     "instance_id": "alibaba-fusion__next-1807",

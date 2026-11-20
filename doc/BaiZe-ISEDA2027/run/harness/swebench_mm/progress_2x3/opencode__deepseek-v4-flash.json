@@ -2076,16 +2076,30 @@
   "bpmn-io__bpmn-js-1299": {
     "instance_id": "bpmn-io__bpmn-js-1299",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 852.8,
+    "rc": 0,
+    "model_patch_len": 687,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " false) {\n+    if (isEmptyText(newLabel)) {\n+      if (isLabel(label) && hints.removeShape !== false) {\n         modeling.removeShape(label, { unsetLabel: false });\n       }\n       return;\n     }\n```\n",
+    "stderr_tail": "0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore the codebase structure and understand the bug\n[✓] Identify the root cause of elements shrinking/disappearing when selected\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1330": {
     "instance_id": "bpmn-io__bpmn-js-1330",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 225.2,
+    "rc": 0,
+    "model_patch_len": 1566,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "*Test update:** Changed `Task_in_OtherProcess -> BoundaryEvent_on_SubProcess` test expectation from `messageFlow: true` to `messageFlow: false` in `test/spec/features/rules/BpmnRulesSpec.js:655-663`.\n",
+    "stderr_tail": "ent|message|Message\"\u001b[90m in test/spec/features/modeling/behavior · 49 matches\u001b[0m\n\u001b[0m→ \u001b[0mRead test/spec/features/modeling/behavior/ReplaceConnectionBehaviorSpec.js\u001b[90m [limit=80, offset=395]\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1337": {
     "instance_id": "bpmn-io__bpmn-js-1337",
