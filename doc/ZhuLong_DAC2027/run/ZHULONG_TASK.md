@@ -1,5 +1,91 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-20 用户令 — 放行 EDA-Flow-Bench Lite 500 评测起跑（16 workers · 仓库在本机 · 直接跑 run_batch.sh）· 最多优先（覆盖 standby）**
+>
+> 本条是收益材料 slide 24 调整（commit `d6cfd68b8`）之后的**评测起跑放行令**。用户原话：「安排 zhulong agent 跑一下 EDA-Flow-Bench 评测（仓库跟 zhulong agent 在一台服务器）：`app.e0031982@hfeg0tedaap02:/nasdata/app.e0031982/code/EDA-Flow-Bench$ bash eval/run_batch.sh --workers 16`」。
+>
+> **背景**：此前所有红令都 🚫 不起评测进程，agent 一直在 standby 写论文。本条**正式放行**评测起跑——EDA-Flow-Bench 评测仓库与 zhulong agent 在同一台服务器（`hfeg0tedaap02`），路径 `/nasdata/app.e0031982/code/EDA-Flow-Bench/`，agent 可直接 cd 进去执行。这是论文 §6 M0 + 各臂实测结果的数据来源——论文当前 M1-M8/N1-N2 全标 \TBD，跑完才有真实数字填进论文。
+>
+> ### ① 执行命令（用户指定，逐字照跑）
+>
+> ```bash
+> cd /nasdata/app.e0031982/code/EDA-Flow-Bench
+> bash eval/run_batch.sh --workers 16
+> ```
+>
+> - **工作目录**：`/nasdata/app.e0031982/code/EDA-Flow-Bench/`（不是 super_intelligence_2035 repo 内的论文树，是独立的 EDA-Flow-Bench 评测仓库）
+> - **命令**：`bash eval/run_batch.sh --workers 16`（用户原话，逐字执行，不要改参数）
+> - **默认行为**（run_batch.sh 默认）：跑 `eval/cases_lite.txt`（500 条 Lite 子集），16 个 worker 并发，主指标 Pass@1，结果写 `eval/status.jsonl`，跑完打印汇总
+> - **预期耗时**：500 case × 单 case 中位 ~1047s / 16 worker ≈ **8-12 小时**（参考 47 pilot 数据；实际取决于 case 难度分布与 worker 抖动）
+>
+> ### ② 跑前自检（agent 必须先做，避免空跑）
+>
+> 跑前确认环境就绪，**任何一项不满足先修再跑**：
+>
+> 1. **仓库就位**：`ls /nasdata/app.e0031982/code/EDA-Flow-Bench/eval/run_batch.sh` 存在且可执行（`-rwxr-x---`）
+> 2. **Lite 集就位**：`ls /nasdata/app.e0031982/code/EDA-Flow-Bench/eval/cases_lite.txt` 存在且 ≥ 500 行（若缺失或不足，先 `--regen-lite` 重建：`bash eval/run_batch.sh --regen-lite --workers 1 --limit 0 --dry-run` 看是否需重建，或直接 `--regen-lite` 重建后再跑主命令）
+> 3. **cline 就位**：`which cline` 或 `/home/app.e0031982/.local/node-20/bin/cline` 可执行；cline 版本与论文 §6 声明一致（Cline v3.0.51，若版本已变在 MEMORY 心跳标注）
+> 4. **基座配置**：默认 `--model doubao-seed-2.0-pro-cloud --thinking low --timeout 2400`（run_batch.sh 默认值，与论文 §6 M0 snapshot 配置对齐：DeepSeek-V4-Pro / Cline v3.0.51 / thinking=low / 2400s）。**若默认基座不是 DeepSeek-V4-Pro**，显式加 `--model deepseek-v4-pro-cloud`（agent 自决，但必须与论文 §6 M0 配置一致，否则结果不能直接作 M0）
+> 5. **磁盘空间**：`df -h /nasdata/app.e0031982/` 剩余 ≥ 50GB（500 case × 16 worker × 每 workdir ~100MB 估算；不足先清理 agent_workspace/ 旧 workdir）
+> 6. **GPU/网络**：cline 走云基座，确认 `https_proxy=http://172.19.92.23:13128` 在环境里（或 ~/.bashrc:119 注入），否则 cline 连不上基座 API
+> 7. **无并发冲突**：确认本机没有其他 EDA-Flow-Bench 评测在跑（`pgrep -fa run_batch.sh` 无其它 PID，或本线已知的 designflow 评测不冲突）
+>
+> ### ③ 跑中监控（agent 自主节奏）
+>
+> - **nohup + 日志**：建议 `nohup bash eval/run_batch.sh --workers 16 > eval/run_$(date +%Y%m%d_%H%M).log 2>&1 &` 后台跑，agent 继续 standby 心跳，每 wake 检查日志进度
+> - **进度检查**：每 wake `tail -20 eval/run_*.log` + `wc -l eval/status.jsonl`（已判 case 数 / 500）+ `grep -c '"PASS"' eval/status.jsonl`（当前 Pass 数）
+> - **早期 abort 信号**（若出现立即停并诊断）：
+>   - 日志连续报 `cline not found` / `quota error` / `401 auth` / `connection refused` → 环境问题，停
+>   - 前 20 case 全 FAIL 且都是 `no-output/aborted` → cline 启动失败，停
+>   - 磁盘满 → 停并清理
+>   - worker 全 hang（>30min 无新 status 写入）→ 死锁，停
+> - **正常波动**：单 case FAIL / 个别 worker 慢 / 个别 timeout 是正常，不停
+>
+> ### ④ 跑后汇总（结果回填论文 + 报告）
+>
+> 跑完后（500 case 全判完或 abort）：
+>
+> 1. **汇总数字**（从 `eval/status.jsonl` + run_batch.sh summary 输出取）：
+>    - 总 case 数 / 已判 case 数 / PASS / FAIL / ERROR / ABSENT / UNKNOWN
+>    - Pass@1 (decided) = PASS / (PASS + FAIL)
+>    - per-domain 分布（若 status.jsonl 含 domain 字段）
+>    - 平均 tool calls / 平均时长 / MCP 比例（若 run_batch.sh 输出）
+>    - 与论文 §6 M0 snapshot（696-run 10.0%）对比：Lite 500 的 M0 Pass@1 是多少？差异多大？
+> 2. **报告**：在 `doc/ZhuLong_DAC2027/reports/` 新增 `report_edafb_lite500_m0_eval_zh.html`，含：跑批配置（基座/cline/thinking/timeout/workers/起止时间）+ 汇总数字 + per-domain 表 + 与 696-run snapshot 对比 + 异常 case 抽样 + 是否作论文 M0 anchor 的判断（按朋友评审 R5：M0 anchor = 同 Lite 子集实测值，696-run 仅作 Full-set descriptive baseline）
+> 3. **论文回填**（可选，agent 自决是否本令一并做还是下条令做）：
+>    - 论文 §6 M0 表的 `\TBD` 改为实测值（Lite 500 的 M0 Pass@1）
+>    - §3 Evaluation subset 段的 `(\TBD, to be measured)` 改实测值
+>    - §5 arm 表 M0 行的 `anchor = M0 Pass@1 on same top-120-of-Lite subset (\TBD)` 改实测值（若跑的是全 Lite 500，top-120 子集从结果里取）
+>    - abstract / §1 / §9 若有 "to be evaluated" 可微调为 "M0 evaluated; other arms pending"（agent 自决）
+>    - **防伪底线**：只填实测数字，不编造；若跑批 abort 未跑完 500，只填已判子集数字 + 标注 "partial run, N/500 judged"
+> 4. **MEMORY 心跳**：每 wake 记录跑批进度（已判 N/500 · 当前 Pass@1 · 预计完成时间），跑完记最终汇总
+>
+> ### ⑤ 硬约束（本令专项 + 继承）
+>
+> - ✅ **可起评测进程**（本令正式放行，撤销此前"🚫 不起评测进程"约束，**仅限 EDA-Flow-Bench Lite 500 M0 评测**，不是 designflow 造题线也不是其它评测）
+> - 🚫 **不改判据/题/样本**：cases_lite.txt 的 500 case 不动，run_batch.sh 的判分逻辑不动，check.py / assertions 不动
+> - 🚫 **不动 designflow 造题线**（cases/jsonl/ledger）、其他论文树、super_intelligence_2035 repo 论文树（除非 ④.3 论文回填）
+> - ✅ **命令逐字照跑**：`bash eval/run_batch.sh --workers 16`（用户原话，不要改参数；若 ② 自检发现需加 `--model` 或 `--regen-lite`，在 commit/MEMORY 说明理由）
+> - ✅ **M0 配置对齐**：基座 = DeepSeek-V4-Pro / Cline v3.0.51 / thinking=low / timeout=2400s（与论文 §6 M0 snapshot 一致；若 run_batch.sh 默认基座不是这个，显式加 `--model`）
+> - ✅ **防伪底线**：不编造数字，只填实测；不删他人数据；不改判据/题/样本
+> - ✅ **双盲匿名 + 0 外链 + 不承诺开源 + 无预注册 + Full/Lite 分层 + 3 项贡献**（前几轮令全部继续，论文回填时不得违反）
+> - **提交**：
+>   - 评测仓库 `/nasdata/app.e0031982/code/EDA-Flow-Bench/` 的产物（status.jsonl / log / report）若在 git 跟踪，commit 到该仓库；若不在 git，只在本 repo `doc/ZhuLong_DAC2027/reports/` 写报告
+>   - 论文回填（若做）commit 到本 repo `doc/ZhuLong_DAC2027/EDA-Flow-Bench_ICML2027/`，前缀 `zhulong eval: EDA-Flow-Bench Lite 500 M0 评测结果回填论文`
+>   - 本 repo run 文件（MEMORY / TASK / daily-memories）照常 commit，前缀 `zhulong eval: EDA-Flow-Bench Lite 500 M0 评测起跑·进度 wake#XXXX`
+>   - **只 add 本线文件**，勿 `-A`
+> - **判据（自检后再汇报）**：
+>   ① ② 自检 7 项全过 ✅；
+>   ② run_batch.sh 成功启动，日志写到 eval/run_*.log ✅；
+>   ③ 跑中每 wake 进度记录（已判 N/500 · Pass@1）✅；
+>   ④ 跑完汇总数字 + 报告 `report_edafb_lite500_m0_eval_zh.html` ✅；
+>   ⑤ 论文 §6 M0 \TBD 改实测值（若本令一并做）✅；
+>   ⑥ 防伪底线（不编造、不删、不改判据/题/样本）✅；
+>   ⑦ 双盲+分层+3 贡献+无预注册+不承诺开源 继续过 ✅。
+> - 完成后 `WAITING=0` standby，记一行心跳。
+>
+> **agent 自主空间**：是否 nohup 后台跑 vs 前台跑 / 是否本令一并回填论文 vs 下条令回填 / 报告 html 的具体格式 / per-domain 表是否做 / 异常 case 抽样多少条 —— 由 agent 自主决定。用户给的是"跑 `bash eval/run_batch.sh --workers 16`"+ 仓库路径，不是逐字模板。**关键是命令逐字照跑、跑完有汇总数字回填论文**。
+
 ### 🟡 询问 · 2026-11-20 08:4x（**只回答，不要动手**）
 
 > 用户在 36.15 上有 EDA-Flow-Bench 仓库的本地 clone：`/nasdata/app.e0031932/code/EDA-Flow-Bench`。
