@@ -384,7 +384,7 @@
 1794187704615_bmqho					parked		2026-11-15 15:07	r571 deepread: dir-comparison Q&A depends on private verilog_lib_trans project dirs, not self-contained for check() | r663-merged-dup-notes: r385 mc10-29-slice peek: 
 1792804747547_8bgtd.messages.json	ruisongs	10.129.33.216	17	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
 1793969287953_187i0.messages.json	johnl	10.129.33.246	12	digital	parked		2026-11-11 17:35	r385 mc10-29-slice peek: 
-1793154396942_2idq4.messages.json	mwhu	10.129.35.74	18	eda_other	parked		2026-11-21 06:44	r888 deepread: doc-gen produce-task(CDC run spec from PDF,360行/9章节),MAKEABLE B档synthesized defer下轮合成
+1793154396942_2idq4.messages.json	mwhu	10.129.35.74	18	eda_other	case	EDA-Eval-DesignFlow-CdcRunSpecDocGenProduce-001	2026-11-21 07:18	r888 deepread: doc-gen produce-task(CDC run spec from PDF,360行/9章节),MAKEABLE B档synthesized defer下轮合成
 1793931604619_df52y					parked		2026-11-15 15:07	r571 deepread: 0 write tool_calls, pure pinyin analysis Q&A about mrr_exp.pl script, type-b scattered knowledge Q&A | r663-merged-dup-notes: r385 mc10-29-slice peek: 
 1792112971082_l8ljo.messages.json	e13zhang	10.129.35.111	21	digital	case	EDA-Eval-DesignFlow-SdfNegLimitDiagnose-001	2026-11-16 22:50	r386 A-dominant peek: 17msgs, U#0-5 same repeated SDF SDFCOM_NL negative-limit warning paste (post-sim sdf log Q&A), U#6 Cadence VIP license-checkout error paste; private asset /proj/lagat; analysis-Q&A weak; LAST fresh A-dominant candidate (58 pool, 57 ledgered, this 1 weak)
 1790128993113_iiqrs	jinhaoli	hfeg0pkn004	218	verification	case	EDA-Eval-DesignFlow-DiscardRefFix-001	2026-11-11 19:07	
