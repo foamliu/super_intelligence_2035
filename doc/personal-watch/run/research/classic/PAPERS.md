@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **280** 条（**第七十三轮 2026-11-20 09:0x 补 4 条 → 280**：SmoothQuant `2211.10438`（**839**）/ Chatbot Arena `2403.04132`（**2,131**）/ ALOHA+ACT `2304.13705`（**3,065**，RSS 2023）/ Dolma `2402.00159`（**674**，ACL 2024）；元数据 arXiv `id_list` **`200` + atom**（11,794 B / 4 entry）+ OpenAlex **4/4 `200`**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；两条 OpenAlex 记 `preprint` 的如实标注、不写记忆中的会场）
+
 **本轮快照**：累计 **276** 条（**第七十二轮 2026-11-20 06:0x 补 4 条 → 276**：MMLU `2009.03300`（**6,448**，ICLR 2021）/ Qwen2-VL `2409.12191`（**6,170**）/ The Pile `2101.00027`（**3,645**）/ DeepSeek-V2 `2405.04434`（**1,986**）；元数据 arXiv `id_list` **`200` + atom**（19,377 B / 4 entry）+ OpenAlex **4/4 `200`** + ar5iv HTML **4/4 `200`**（208,166 / 655,463 / 677,121 / 694,593 B）核数字，**未做 PDF 逐页复核**；覆盖轴 = 57 学科知识基准的聚合与污染 / 原生动态分辨率与三维位置编码 / 语料配比的「比例 × epoch」两旋钮 / MLA 的 KV cache 压缩）
 
 **本轮快照**：累计 **272** 条（**第七十一轮 2026-11-20 03:0x 补 4 条 → 272**：C4 文档化 `2104.08758`（**990**，EMNLP 2021 pp. 1286–1305）/ ConvNeXt `2201.03545`（**13,910**，CVPR 2022 pp. 11966–11976）/ Grokking `2201.02177`（**967**）/ Mirage `2304.15004`（**1,116**，NeurIPS 2023 pp. 55565–55581）；元数据 arXiv abs 页 **4/4 `200`** + OpenAlex **4/4 `200`**；数字用 ar5iv HTML **4/4 `200`**（207,799 / 476,499 / 106,203 / 151,070 B）核对，**未做 PDF 逐页复核**；覆盖轴 = 网页语料来源审计 / 纯 ConvNet 现代化配方 / 过拟合之后的泛化 / 指标选择制造的假涌现）
@@ -4770,7 +4772,89 @@
 
 ---
 
+## 277. SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models |
+| 作者（前 3） | Guangxuan Xiao · Ji Lin · Mickael Seznec（共 **6** 位；末位 Song Han；arXiv 作者字段逐字核） |
+| 年份 | **2022**（arXiv v1 `2022-11-18`；v2 `2024-03-29`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`，来源标 arXiv；本轮未核到一手会场页 ⇒ 不写会议） |
+| 被引数 | **839**（OpenAlex `10.48550/arxiv.2211.10438`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2211.10438> ｜ DOI `10.48550/arxiv.2211.10438` |
+| 一句话贡献 | 训练后量化（PTQ）：用逐通道缩放 `s_j = max|X_j|^α / max|W_j|^(1−α)` 把激活的离群难度**等价迁移**到权重，从而做 **W8A8**；摘要自报 **1.56×** 加速、**2×** 显存下降，并可在单节点服务 **530B** 模型。 |
+| 与我们工作的关系 | **zhulong（主 · 成本口径）**：凡引用量化收益，必须注明「按权重还是按激活折算」，否则成本对比不可比。**pretrain（推理侧）**：W8A8 后的精度差摘要只写 "negligible loss"、无逐任务数字 ⇒ 我方须自测后再入账。**harness**：模型卡需固定精度版本（FP16 / W8A8），否则同一基准的分数不可跨轮比较。 |
+| 首次收录 | **2026-11-20**（第七十三轮） |
+| 核验状态 | arXiv `id_list=2403.04132,2211.10438,2304.13705,2402.00159` **`200` + `application/atom+xml`**（11,794 B / 4 entry）；OpenAlex **`200`（839）**；数字取自 arXiv 官方摘要；**未做 PDF 逐页复核**。 |
+
+---
+
+## 278. Chatbot Arena: An Open Platform for Evaluating LLMs by Human Preference
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Chatbot Arena: An Open Platform for Evaluating LLMs by Human Preference |
+| 作者（前 3） | Wei-Lin Chiang · Lianmin Zheng · Ying Sheng（共 **11** 位；末位 Ion Stoica；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-03-07`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`，来源标 arXiv；本轮未核到一手会场页 ⇒ 不写会议） |
+| 被引数 | **2,131**（OpenAlex `10.48550/arxiv.2403.04132`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2403.04132> ｜ DOI `10.48550/arxiv.2403.04132` |
+| 一句话贡献 | 把**匿名成对比较 + 众包投票**做成常驻评测平台：累计 **240K+** 票；验证众包问题足够多样且有区分度、人类投票与专家评分一致性良好；公开排行榜。 |
+| 与我们工作的关系 | **harness（主 · 人评与自动判分的偏差）**：<b>动作</b>：agent 任务的人评比聊天更贵，先做「成对比较 + 小样本一致性抽样」校准自动 judge，再决定是否扩大人评；报表须同时给票数与置信区间。**zhulong**：人评成本单独列一项，不混进模型推理成本。 |
+| 首次收录 | **2026-11-20**（第七十三轮） |
+| 核验状态 | 同批 arXiv `id_list` **`200` + atom**；OpenAlex **`200`（2,131）**；数字取自 arXiv 官方摘要；**未做 PDF 逐页复核**。 |
+
+---
+
+## 279. Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware（ALOHA + ACT）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware |
+| 作者（前 3） | Tony Z. Zhao · Vikash Kumar · Sergey Levine（共 **4** 位；末位 Chelsea Finn；arXiv 作者字段逐字核） |
+| 年份 | **2023**（arXiv v1 `2023-04-23`） |
+| 会议 / 期刊 | **Robotics: Science and Systems（RSS）**（OpenAlex `type=conference-paper`，`primary_location.source.display_name` 原文） |
+| 被引数 | **3,065**（OpenAlex `10.48550/arxiv.2304.13705`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2304.13705> ｜ DOI `10.48550/arxiv.2304.13705` |
+| 一句话贡献 | 低成本双臂遥操作硬件 + **ACT**：对**动作序列**建生成模型、一次预测一段（action chunking），用 **10 分钟**演示在 **6** 个真机精细任务上达到 **80–90%** 成功率。 |
+| 与我们工作的关系 | **vision（视觉塔接动作头）**：视觉编码器之外，「一次预测一段动作」是降低复合误差的关键设计。**data**：演示量以「分钟」计 ⇒ 数据线可用「每任务演示时长」作预算单位。**harness**：真机成功率须写清每任务演示数 / 尝试次数，否则不可比。 |
+| 首次收录 | **2026-11-20**（第七十三轮） |
+| 核验状态 | 同批 arXiv `id_list` **`200` + atom**；OpenAlex **`200`（3,065）**；数字取自 arXiv 官方摘要；**未做 PDF 逐页复核**。 |
+
+---
+
+## 280. Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research |
+| 作者（前 3） | Luca Soldaini · Rodney Kinney · Akshita Bhagia（共 **36** 位；Ai2；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-01-31`；v2 `2024-06-06`） |
+| 会议 / 期刊 | **ACL**（OpenAlex `type=conference-paper`，`primary_location.source.display_name` = `Proceedings of the conference - Association for Computational Linguistics. Meeting`） |
+| 被引数 | **674**（OpenAlex `10.48550/arxiv.2402.00159`，查询日 **2026-11-20**） |
+| arXiv / DOI | <https://arxiv.org/abs/2402.00159> ｜ DOI `10.48550/arxiv.2402.00159` |
+| 一句话贡献 | 发布 **3 万亿 token** 英文预训练语料（网页 / 论文 / 代码 / 公版书 / 社交 / 百科六类来源），并把**构造过程 + 中间态分析 + 开源 curation toolkit** 一并公开。 |
+| 与我们工作的关系 | **data（主 · 配比与顺序）**：<b>动作</b>：把「中间态 checkpoint 上的 loss」作为每个清洗步骤的验收指标，而不是只看最终语料统计。**pretrain**：语料版本号进训练配置，保证可复现。**harness**：评测报表须记录模型所用的数据版本，跨版本分数不直接比较。 |
+| 首次收录 | **2026-11-20**（第七十三轮） |
+| 核验状态 | 同批 arXiv `id_list` **`200` + atom**；OpenAlex **`200`（674）**；数字取自 arXiv 官方摘要；**未做 PDF 逐页复核**。 |
+
+---
+
+
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
+
+| arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
+|:--|:--|:--|:--|:--|
+| `2403.03378` | PaLM-E: An Embodied Multimodal Language Model | 2023-03-06 | vision / VLA | 具身多模态的早期大模型（**本轮未核**，下一轮实测） |
+| `2402.00159` | ~~Dolma~~ ⇒ 已转正 #280 | — | — | — |
+| `2308.04079` | 3D Gaussian Splatting for Real-Time Radiance Field Rendering | 2023-08-08 | vision | 渲染范式的实时化（**本轮未核**） |
+| `2310.08560` | MemGPT: Towards LLMs as Operating Systems | 2023-10-12 | harness / zhulong | 已收 #130 ⇒ 勿重复 |
+| `1904.00962` | ~~LAMB~~ ⇒ 已收 #175 | — | — | — |
+
+> 维护纪律：候选池只放**未收录**且**被引未实测**的 ID；转正后从本表删去并在条目里写明「首次收录」。🚫 未实测前不写被引数、不写会议。
+
+> ✅ **第七十三轮（2026-11-20 09:0x）转正 4 条**：SmoothQuant `2211.10438`（#277，**839**）· Chatbot Arena `2403.04132`（#278，**2,131**）· ALOHA+ACT `2304.13705`（#279，**3,065**，RSS）· Dolma `2402.00159`（#280，**674**，ACL）⇒ B 轨累计 **280**（覆盖轴：W8A8 的逐通道缩放与成本口径 / 人评排行榜的一致性与置信区间 / 动作分块降低复合误差 / 语料构造的中间态验收）。核验：arXiv `id_list` **`200` + atom**（11,794 B / 4 entry）+ OpenAlex **4/4 `200`**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：四个 ID 在 `PAPERS.md` 全量正则 0 命中。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① PaLM-E `2403.03378`（具身多模态）；② 3D Gaussian Splatting `2308.04079`；③ HBM / JEDEC 一手（连续多轮未命中）；④ 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；⑤ 数据质量线「合成数据自举」后续一手。
 
 > ✅ **第七十二轮（2026-11-20 06:0x）转正 4 条**：MMLU `2009.03300`（#273，**6,448**，ICLR 2021）· Qwen2-VL `2409.12191`（#274，**6,170**）· The Pile `2101.00027`（#275，**3,645**）· DeepSeek-V2 `2405.04434`（#276，**1,986**）⇒ B 轨累计 **276**（覆盖轴：57 学科知识基准的聚合与污染 / 原生动态分辨率与三维位置编码 / 语料配比的「比例 × epoch」两旋钮 / MLA 的 KV cache 压缩）。核验：arXiv `id_list` **`200` + atom**（19,377 B / 4 entry）+ OpenAlex **4/4 `200`** + ar5iv HTML **4/4 `200`**（208,166 / 655,463 / 677,121 / 694,593 B），**未做 PDF 逐页复核**。**先查重**：四个 ID 在 `PAPERS.md` 全量正则 0 命中（另核 `2211.09110` HELM / `2107.03374` Codex / `2306.00978` AWQ / `2308.03688` AgentBench / `2306.05685` MT-Bench 均未收录，留作候选）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ HELM `2211.09110`（多场景评测框架）或 Codex `2107.03374`（HumanEval 的原始出处）；④ AWQ `2306.00978`（激活感知权重量化，SLM 部署）；⑤ 合成数据自举后续一手。
 > ✅ **第七十一轮（2026-11-20 03:0x）转正 4 条**：C4 文档化 `2104.08758`（#269，**990**，EMNLP 2021 pp. 1286–1305）· ConvNeXt `2201.03545`（#270，**13,910**，CVPR 2022 pp. 11966–11976）· Grokking `2201.02177`（#271，**967**）· Are Emergent Abilities a Mirage? `2304.15004`（#272，**1,116**，NeurIPS 2023 pp. 55565–55581）⇒ B 轨累计 **272**（覆盖轴：网页语料的来源审计 / 纯 ConvNet 的现代化配方 / 过拟合之后的泛化 / 指标选择制造的假涌现）。核验：abs 页 4/4 `200`；OpenAlex 4/4 `200`（990 / 13,910 / 967 / 1,116）；ar5iv HTML 4/4 `200`（207,799 / 476,499 / 106,203 / 151,070 B）核数字，**未做 PDF 逐页复核**。**先查重**：四个 ID 在 `PAPERS.md` 全量正则 0 命中。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧（QK-clip / loss-spike 一手）；③ 合成数据自举后续一手；④ EDA 第二篇可执行判分（换 OpenROAD 指令集方向）；⑤ 视觉侧补 AIMv2 / DFN 与 #270 对照。

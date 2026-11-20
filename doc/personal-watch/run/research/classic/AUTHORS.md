@@ -6,6 +6,10 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-20 09:0x）**：作者 **260** 人（编号最大 **260**）· X 已核验 **106**（本轮 5 个主页 `href` 均实读，但未做 `og:title` 二次核验 ⇒ 按纪律不计入）· 已发信 **114**（台账 #1–#114；另有 1 封主题行更正，不计入）· 回信 **0**。
+
+> **第七十三轮增量（2026-11-20 09:0x）**：作者网 255 → **260**（#256 Ji Lin **A 级** `jilin.eecs@gmail.com`（`linji.me` 页内 `jilin.eecs AT gmail`，`200` / 58,984 B）/ #257 Tony Z. Zhao **A 级** `tonyzihaozhao@gmail.com`（`tonyzhaozh.github.io` 页内 `mailto:`，`200` / 24,093 B）/ #258 Guangxuan Xiao **A 级** `xiaoguangxuan@gmail.com`（`guangxuanx.com` 页内 `mailto:`，`200` / 15,305 B，经代理）/ #259 Luca Soldaini **A 级** `luca@soldaini.net`（`soldaini.net` 页内 `mailto:`，`200` / 12,855 B）/ #260 Wei-Lin Chiang **无邮箱**（主页 `200` / 20,604 B 无明文 ⇒ 待跟踪））；⚠️ **同作者去重**：Guangxuan Xiao 已于 11-17 收 #69、Soldaini 已于 11-18 收 #89 ⇒ 本轮两篇经典改投 Ji Lin（SmoothQuant 二作）与不投（Dolma），未重复发信。
+
 > **当前计数（2026-11-20 06:0x）**：作者 **255** 人（编号最大 **255**）· X 已核验 **106**（本轮未新增核验：四名新作者主页均无可读 handle）· 已发信 **112**（台账 #1–#112；另有 1 封主题行更正，不计入）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **第七十二轮增量（2026-11-20 06:0x）**：作者网 251 → **255**（#252 Jacob Steinhardt **A 级** `jsteinhardt@berkeley.edu`（本人主页明文，`200` / 13,887 B）/ #253 Eugene Agichtein **B 级** `eugene.agichtein@emory.edu`（arXiv 原生 HTML，`200` / 970,388 B；主页 `403`）/ #254 Yi Lu **B 级** `luyi06@gmail.com`（arXiv 原生 HTML，`200` / 348,321 B；南京审计大学）/ #255 Charles L. A. Clarke **B 级** `claclark@gmail.com`（同源 HTML；主页 `200` / 1,342 B）），来自 B 轨 #273 MMLU 与 A 轨 `2611.24849` / `2611.24071`；已发信 109 → **112**（#110 英文 173 词 `SENT OK 06:03:52` / #111 英文 189 词 `06:03:55` / #112 中文 297 字 `06:03:59`）；⚠️ **事故如实记**：#112 的主题行被 shell 二次转义成以 `u5173` 开头的字面量，已于 `06:04:04` 补发一封**主题行更正**（不计为第 113 封）并写入台账。X 保持 **106**，四人均写「未找到 X」。
@@ -1692,8 +1696,75 @@
 | 状态 | 待跟踪（仅建档；无联系方式 ⇒ 不发信） |
 | 备注 | **data 线去重**的直接关系人。无联系方式，本轮只把其论文数字（>1% 逐字复制、>4% 验证集重叠）落进 data 线建议。 |
 
-## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
+### 256. Ji Lin
 
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ji Lin（中文汉字名未能从可访问页面确认 ⇒ 🚫 不臆写；拼音姓名族属 ⇒ 中文信） |
+| 机构 | **OpenAI**（research scientist；本人主页自述）；论文发表时为 MIT EECS 博士生（Song Han 组） |
+| 代表论文 | **SmoothQuant**（`2211.10438`，二作）· AWQ（`2306.00978`，HAN Lab 合作） |
+| 邮箱 | **jilin.eecs@gmail.com** / **A**（本人主页 `https://www.linji.me/` 页内混淆明文 `jilin.eecs AT gmail`，2026-11-20 实测 `200` / 58,984 B） |
+| 主页 | <https://www.linji.me/>（`200` / 58,984 B） |
+| X 账号 | **@jilin_14**（本人主页 `href="https://twitter.com/jilin_14"`，2026-11-20 实读；**未做 `og:title` 二次核验 ⇒ 不计入已核验 106**） |
+| 状态 | **已发信**（第 113 封，2026-11-20 09:06:37 `SENT OK`；主题「SmoothQuant 的 α 标定与 INT8 内核边界」） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 清华本科；不因人在美国 / 论文英文 / gmail 邮箱判英文)`。价值点：W8A8 的 α 按层标定与「哪些算子必须留 FP16」直接决定 zhulong 的成本折算口径；答复回填 zhulong（主）· pretrain（推理/量化）· harness（模型精度版本）。 |
+
+### 257. Tony Z. Zhao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tony Z. Zhao（姓 Zhao 为汉语拼音 ⇒ 中文信；名用英文 Tony，故正文以「Tony Z. Zhao 老师」称呼，🚫 不臆写汉字名） |
+| 机构 | **Stanford University**（CS 博士生；本人主页自述） |
+| 代表论文 | **ALOHA + ACT**（`2304.13705`，一作）· Mobile ALOHA（项目页 `mobile-aloha.github.io`） |
+| 邮箱 | **tonyzihaozhao@gmail.com** / **A**（本人主页 `https://tonyzhaozh.github.io/` 页内 `mailto:` 明文，2026-11-20 实测 `200` / 24,093 B） |
+| 主页 | <https://tonyzhaozh.github.io/>（`200` / 24,093 B） |
+| X 账号 | **@tonyzzhao**（本人主页同时挂 `twitter.com/tonyzzhao` 与 `x.com/tonyzzhao`；**未做 `og:title` 二次核验 ⇒ 不计入已核验 106**） |
+| 状态 | **已发信**（第 114 封，2026-11-20 09:06:40 `SENT OK`；主题「ACT 的动作 chunk 长度与演示非平稳处理」） |
+| 备注 | `语言=中文(判据=姓氏 Zhao 汉语拼音 + 中文姓名族属；不因人在美国 / 论文英文 / gmail 邮箱判英文)`。价值点：chunk 长度、temporal ensembling 与演示清洗共同决定「每任务需要多少分钟演示」，直接回填 vision（视觉塔接动作头）与 data（演示预算）。 |
+
+### 258. Guangxuan Xiao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Guangxuan Xiao（拼音姓名可还原中文名 肖光轩 ⇒ 中文信） |
+| 机构 | **Thinking Machines Lab**（本人主页自述，Member of Technical Staff）；论文发表时为 MIT |
+| 代表论文 | **SmoothQuant**（`2211.10438`，一作）· StreamingLLM（`2309.17453`，一作） |
+| 邮箱 | **xiaoguangxuan@gmail.com** / **A**（本人主页 `https://guangxuanx.com/` 页内 `mailto:` 明文，2026-11-20 实测 `200` / 15,305 B，经代理 `127.0.0.1:7897`；直连 `000`） |
+| 主页 | <https://guangxuanx.com/>（`200` / 15,305 B） |
+| X 账号 | **@Guangxuan_Xiao**（本人主页 `href="https://x.com/Guangxuan_Xiao"`；**未做 `og:title` 二次核验 ⇒ 不计入已核验 106**） |
+| 状态 | **已发信**（第 69 封，2026-11-17 00:03，论文 `2309.17453` StreamingLLM）；本论文 `2211.10438` 因「同作者 ≤1」**不再发** |
+| 备注 | `语言=中文(判据=中文姓名族属 肖光轩；不因人在美国 / 论文英文 / gmail 邮箱判英文)`。本论文改由二作 Ji Lin 触达（#256）；此条用于登记同一论文的一作身份，防止下一轮重复发信。 |
+
+### 259. Luca Soldaini
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Luca Soldaini（意大利姓名族属 ⇒ 意大利语称谓问候 + 英文正文） |
+| 机构 | **Microsoft AI**（本人主页自述，technical staff）；2022–2026 初在 **Ai2** 联合主持 OLMo |
+| 代表论文 | **Dolma**（`2402.00159`，一作）· OLMo 2（`2501.00656`，合著） |
+| 邮箱 | **luca@soldaini.net** / **A**（本人主页 `https://www.soldaini.net/` 页内 `mailto:` 明文，2026-11-20 实测 `200` / 12,855 B） |
+| 主页 | <https://www.soldaini.net/>（`200` / 12,855 B） |
+| X 账号 | **@soldni**（本人主页 `href="https://twitter.com/soldni"`；**未做 `og:title` 二次核验 ⇒ 不计入已核验 106**） |
+| 状态 | **已发信**（第 89 封，2026-11-18 12:10，论文 `2501.00656` OLMo 2 · Dolmino Mix 1124 退火预算）；本论文 `2402.00159` 因「同作者 ≤1」**不再发**，草稿留档 `drafts/2402.00159.md` |
+| 备注 | `语言=意大利语称谓 + 英文正文(判据=意大利姓名族属 Luca Soldaini；机构在美国不作纯英文判据)`。本论文的价值点在「中间态语料分析 + 开源 curation toolkit」，若将来另择未触达的合著者，问题应聚焦 tagger 阈值与去重顺序。 |
+
+### 260. Wei-Lin Chiang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wei-Lin Chiang（中文姓名族属 ⇒ 若发信应用中文） |
+| 机构 | **UC Berkeley**（SkyLab 博士生，本人主页自述）；Chatbot Arena / LMSYS 项目核心成员 |
+| 代表论文 | **Chatbot Arena**（`2403.04132`，一作）· LMSYS-Chat-1M（合著） |
+| 邮箱 | **未找到**（本人主页 `200` / 20,604 B，页内无 `mailto:` 或明文地址 ⇒ 🚫 不猜） |
+| 主页 | <https://infwinston.github.io/>（`200` / 20,604 B） |
+| X 账号 | **@infwinston**（本人主页 `href="https://twitter.com/infwinston"`；**未做 `og:title` 二次核验 ⇒ 不计入已核验 106**） |
+| 状态 | **待跟踪**（无可用邮箱；同论文合作者 Lianmin Zheng 已于 2026-11-15 收第 52 封 ⇒ 本文不再发） |
+| 备注 | `语言=中文(判据=中文姓名族属 Wei-Lin Chiang；机构在美国不作英文判据)`。价值点：成对比较的样本量与置信区间、人工票与自动 judge 的一致性，可直接回填 harness 的「人评预算」；待其公开邮箱后再触达。 |
+
+
+
+
+## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
 
 > 令要求「先验证能力再动手」。**结论：`OPEN(x_readonly)`（第四轮 12:4x CST 实测）** —— 经运维部署的本机 Mihomo 代理（`http://127.0.0.1:7897`），`x.com` 已可达；**只读可做，写操作（follow/like/发帖）仍需登录态 ⇒ 不做**。
 

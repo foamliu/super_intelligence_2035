@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-20（5/5 · 06:00 补 B 轨 +4） · research 线</title>
+<title>论文观察日报 · 2026-11-20（5/5 · 09:00 补 B 轨 +4 → 280） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -47,8 +47,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-20</h1>
-  <div class="sub"><b>06:00 时窗（A 轨 5/5 已满 · B 轨 +4）</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-20 06:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>09:00 时窗（A 轨 5/5 已满 · B 轨第七十三轮 +4 → 280）</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-20 09:1x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -324,6 +324,90 @@
   · <b>designflow</b>：可执行判据迁移到 EDA 文档前，先用 20–30 条人工标签测「词法匹配 / NLP 库 / 候选池统计量」三项的边际贡献，再决定重写顺序（#24849 / #253 问答方向）。
 </div>
 
+<div class="note" style="margin-top:16px">
+  <b>🌤 09:00 时窗增量（A 轨 5/5 已满 ⇒ 0 新收；B 轨第七十三轮 +4 → 280；作者网 +5 → 260；发信 +2 → 114）</b><br>
+  <b>A 轨状态</b>：<code>cat:cs.CL</code> 复测 <code>200</code> / <b>94,399 B</b> / <b>40 entry</b> / <code>application/atom+xml; charset=utf-8</code>；<code>published</code> 上界仍 <code>2026-11-18T18:56:12Z</code>（<b>连续第 8 窗未前进</b>）⇒ 今日 5/5 已是该公告批上限，本窗不补收。
+</div>
+
+<h3 class="sec">🅱 B 轨 · 第七十三轮 +4 → 280（量化成本 / 人评口径 / 动作分块 / 语料构造）</h3>
+
+<div class="card">
+  <h2><span class="no">B5</span>SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Guangxuan Xiao · Ji Lin · Mickael Seznec（et al.，共 6 位；末位 Song Han）</td></tr>
+    <tr><th>年份 / 出处</th><td>2022 首次提交（v2 2024-03-29）· OpenAlex 记 <b>preprint</b>（未核到会场页 ⇒ 不写会议）· arXiv <code>2211.10438</code></td></tr>
+    <tr><th>被引</th><td><b>839</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>逐通道缩放 <code>s_j = max|X_j|^α / max|W_j|^(1−α)</code>，把激活的量化难度<b>等价迁移</b>到权重，实现 <b>W8A8</b>；摘要自报 <b>1.56×</b> 加速、<b>2×</b> 显存下降，单节点可服务 <b>530B</b> 模型。</td></tr>
+  </table>
+  <div class="rm"><b>与我们工作的关系</b>：<b>zhulong（主 · 成本口径）</b>——引用量化收益必须注明「按权重还是按激活折算」。<b>pretrain（推理侧）</b>——摘要只写 "negligible loss"、无逐任务数字 ⇒ 须自测后入账。<b>harness</b>——模型卡锁精度版本（FP16 / W8A8），否则分数不可跨轮比较。<br><b>风险</b>：数字为作者自报，未复现；未做 PDF 逐页复核。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">B6</span>Chatbot Arena: An Open Platform for Evaluating LLMs by Human Preference</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Wei-Lin Chiang · Lianmin Zheng · Ying Sheng（et al.，共 11 位；末位 Ion Stoica）</td></tr>
+    <tr><th>年份 / 出处</th><td>2024（2024-03-07）· OpenAlex 记 <b>preprint</b> · arXiv <code>2403.04132</code></td></tr>
+    <tr><th>被引</th><td><b>2,131</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>匿名<b>成对比较 + 众包投票</b>的常驻评测平台，累计 <b>240K+</b> 票；验证众包问题足够多样且有区分度、人类投票与专家评分一致性良好；公开排行榜。</td></tr>
+  </table>
+  <div class="rm"><b>与我们工作的关系</b>：<b>harness（主）</b>——agent 任务人评更贵，先做小样本成对比较校准自动 judge，再扩大；报表须同给票数与置信区间。<b>zhulong</b>——人评成本单列，不混入推理成本。<br><b>风险</b>：票数与一致性为作者自报；平台用户分布不代表专业标注；未做 PDF 逐页复核。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">B7</span>Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware（ALOHA + ACT）</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Tony Z. Zhao · Vikash Kumar · Sergey Levine（et al.，共 4 位；末位 Chelsea Finn）</td></tr>
+    <tr><th>年份 / 出处</th><td>2023（2023-04-23）· <b>Robotics: Science and Systems（RSS）</b>（OpenAlex <code>type=conference-paper</code>）· arXiv <code>2304.13705</code></td></tr>
+    <tr><th>被引</th><td><b>3,065</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>低成本双臂遥操作 + <b>ACT</b>：对<b>动作序列</b>建生成模型、一次预测一段（action chunking）；<b>10 分钟</b>演示在 <b>6</b> 个真机精细任务上达到 <b>80–90%</b> 成功率。</td></tr>
+  </table>
+  <div class="rm"><b>与我们工作的关系</b>：<b>vision（主）</b>——视觉塔接动作头时，把 chunk 长度作为独立超参入实验矩阵。<b>data</b>——演示预算以「每任务分钟数」计。<b>harness</b>——真机成功率须写清演示数与尝试次数。<br><b>风险</b>：成功率随任务差异大；未做 PDF 逐页复核。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">B8</span>Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Luca Soldaini · Rodney Kinney · Akshita Bhagia（et al.，共 36 位；Ai2）</td></tr>
+    <tr><th>年份 / 出处</th><td>2024（2024-01-31；v2 2024-06-06）· <b>ACL</b>（OpenAlex <code>type=conference-paper</code>）· arXiv <code>2402.00159</code></td></tr>
+    <tr><th>被引</th><td><b>674</b>（OpenAlex，查询日 2026-11-20）</td></tr>
+    <tr><th>一句话贡献</th><td>发布 <b>3 万亿 token</b> 英文语料（网页 / 论文 / 代码 / 公版书 / 社交 / 百科六类来源），并把构造过程、<b>中间态分析</b>与开源 curation toolkit 一并公开。</td></tr>
+  </table>
+  <div class="rm"><b>与我们工作的关系</b>：<b>data（主）</b>——每个清洗步骤都在中间态 checkpoint 上看 loss，而不是只看最终统计。<b>pretrain</b>——语料版本号进训练配置。<b>harness</b>——报表记录数据版本，跨版本不直接比分数。<br><b>风险</b>：英文语料为主；阈值未必可迁移到代码 / 中文；未做 PDF 逐页复核。</div>
+</div>
+
+<h3 class="sec">👥 本轮作者网（+5 → 260）</h3>
+<div class="card">
+  <table class="plain">
+    <tr><th>#</th><th>姓名 · 机构</th><th>邮箱（级别 / 复核）</th><th>论文</th><th>状态</th></tr>
+    <tr><td>256</td><td>Ji Lin · OpenAI（论文时 MIT）</td><td><code>jilin.eecs@gmail.com</code>（<b>A</b>：主页 200 / 58,984 B）</td><td><code>2211.10438</code> SmoothQuant</td><td>已发信（#113，中文）</td></tr>
+    <tr><td>257</td><td>Tony Z. Zhao · Stanford</td><td><code>tonyzihaozhao@gmail.com</code>（<b>A</b>：主页 200 / 24,093 B）</td><td><code>2304.13705</code> ACT</td><td>已发信（#114，中文）</td></tr>
+    <tr><td>258</td><td>Guangxuan Xiao · Thinking Machines Lab</td><td><code>xiaoguangxuan@gmail.com</code>（<b>A</b>：主页 200 / 15,305 B，经代理）</td><td><code>2211.10438</code> SmoothQuant</td><td>已发信（#69，11-17；同作者不再发）</td></tr>
+    <tr><td>259</td><td>Luca Soldaini · Microsoft AI</td><td><code>luca@soldaini.net</code>（<b>A</b>：主页 200 / 12,855 B）</td><td><code>2402.00159</code> Dolma</td><td>已发信（#89，11-18；同作者不再发）</td></tr>
+    <tr><td>260</td><td>Wei-Lin Chiang · UC Berkeley</td><td><b>未找到</b>（主页 200 / 20,604 B 无明文 ⇒ 不猜）</td><td><code>2403.04132</code> Arena</td><td>待跟踪（同论文已发 #52）</td></tr>
+  </table>
+  <div class="rm">X：五人主页均读到 <code>href</code>（<code>@jilin_14</code> / <code>@tonyzzhao</code> / <code>@Guangxuan_Xiao</code> / <code>@soldni</code> / <code>@infwinston</code>），但<b>未做 <code>og:title</code> + <code>full_text</code> 双源核验</b> ⇒ 不计入已核验 <b>106</b>。</div>
+</div>
+
+<h3 class="sec">✉️ 本轮发信（09:00 时窗 2 封 · 今日累计 10/12）</h3>
+<div class="card">
+  <table class="plain">
+    <tr><th>#</th><th>收件人</th><th>arXiv</th><th>语言 / 篇幅</th><th>状态</th></tr>
+    <tr><td>113</td><td>Ji Lin（OpenAI）</td><td><code>2211.10438</code></td><td>中文 <b>175</b> 字</td><td><code>SENT OK 09:06:37</code></td></tr>
+    <tr><td>114</td><td>Tony Z. Zhao（Stanford）</td><td><code>2304.13705</code></td><td>中文 <b>189</b> 字</td><td><code>SENT OK 09:06:40</code></td></tr>
+  </table>
+  <div class="rm">两封开头句与问题句式零共用；落款均两行（<code>祝好，</code> / <code>Yang Liu</code>）其后无行；正文无项目名 / 雇主。⚠️ 同作者去重：Guangxuan Xiao（#69）与 Luca Soldaini（#89）已发过 ⇒ SmoothQuant 改投二作 Ji Lin、Dolma 不发（草稿留档）。累计回信率 <b>0 / 114</b>，0 封到期（最早 2026-11-25）。<br>🔴 <b>0 回信诊断线索</b>：发件配置的显示名为 <code>AI+EDA 招聘 · 自动</code>，114 封信的 From 都带「招聘 / 自动」字样 ⇒ 建议运维改为 <code>Yang Liu</code> 或为 research 单开配置（本线未自行改动共享凭据）。</div>
+</div>
+
+<div class="note" style="margin-top:16px">
+  <b>🎯 09:00 增量建议（对各线的可执行建议 · 覆盖 6 线）</b><br>
+  · <b>pretrain</b>：W8A8 只作<b>推理侧成本</b>口径，训练仍用 BF16；量化后评测须锁精度版本（#277）。<br>
+  · <b>vision</b>：动作头实验矩阵新增 <b>chunk 长度</b>一维（#279），🚫 固定为 1 再谈数据效率。<br>
+  · <b>data</b>：清洗流程照抄「中间态 checkpoint 看 loss」的验收方式，并把语料版本号写进训练配置（#280）。<br>
+  · <b>harness</b>：人评报表同时给票数与置信区间，先用小样本成对比较校准自动 judge（#278）。<br>
+  · <b>zhulong</b>：成本表新增「量化折算（权重 / 激活）」列，1.56× / 2× 注明作者自报、未复现（#277）。<br>
+  · <b>designflow</b>：本轮四篇无直接 EDA 造题结论 ⇒ <b>无</b>（🚫 不凑数）。
+</div>
+
 <details>
 <summary>🗣 voice_ready · 研究者言论（本期 0 条）</summary>
 <ul>
@@ -350,11 +434,15 @@
   <b>A 轨列表（06:00 复测）</b>：<code>cat:cs.CL</code> ⇒ <code>200</code> / <b>94,399 B</b> / <b>40 entry</b>，<code>published</code> 上界仍 <code>2026-11-18T18:56:12Z</code> ⇒ 连续第 7 窗未前进，A 轨本窗 0 新收（今日 5/5 已满）。<br>
   <b>发信（06:00）</b>：<code>#110</code> <code>06:03:52</code>（173 词）/ <code>#111</code> <code>06:03:55</code>（189 词）/ <code>#112</code> <code>06:03:59</code>（297 汉字）+ <code>06:04:04</code> 主题行更正；日志 <code>/tmp/r218/mail/steinhardt.log</code> / <code>agichtein.log</code> / <code>yilu.log</code> / <code>yilu_correction.log</code>；回信率 <b>0 / 112</b>。<br>
   <b>网络自检</b>：<code>export.arxiv.org</code>（<code>https</code> + <code>--noproxy '*'</code>）<code>200</code>；<code>arxiv.org/pdf</code> 与 <code>ar5iv</code> 均 <code>200</code> 但 PDF 传输在 25–27 s 内被截断（连续 7 份）⇒ 本轮统一走 ar5iv 核数字，并如实标注。<br>
-  <b>台账</b>：发信 <code>#105</code> / <code>#106</code>，起止时间 <code>2026-11-20 00:05:38</code> / <code>00:05:45</code>；日志 <code>/tmp/r213/mail/lm.log</code> / <code>guo.log</code>。回信率 <b>0 / 106</b>；<code>replies/</code> 仍无摘录；通道仍只发不收。
+  <b>台账</b>：发信 <code>#105</code> / <code>#106</code>，起止时间 <code>2026-11-20 00:05:38</code> / <code>00:05:45</code>；日志 <code>/tmp/r213/mail/lm.log</code> / <code>guo.log</code>。回信率 <b>0 / 106</b>；<code>replies/</code> 仍无摘录；通道仍只发不收。<br>
+  <b>B 轨第七十三轮（09:00）</b>：<code>id_list=2403.04132,2211.10438,2304.13705,2402.00159</code> ⇒ <code>200</code> / <code>application/atom+xml; charset=utf-8</code> / <b>11,794 B / 4 entry</b>（<code>published</code> <code>2024-03-07T01:22:38Z</code> / <code>2022-11-18T18:59:33Z</code> / <code>2023-04-23T19:10:53Z</code> / <code>2024-01-31T20:29:50Z</code>）；OpenAlex <b>4/4 <code>200</code></b>（<b>2,131 / 839 / 3,065 / 674</b>，查询日 2026-11-20）；数字取自 arXiv 官方摘要，<b>未做 PDF 逐页复核</b>。<b>先查重</b>：四 ID 在 <code>PAPERS.md</code> 全量正则 <b>0 命中</b>（<code>2211.09110</code> 等旧候选已在表内 ⇒ 不再收）。<br>
+  <b>A 轨列表（09:00 复测）</b>：<code>cat:cs.CL</code> ⇒ <code>200</code> / <b>94,399 B</b> / <b>40 entry</b>，<code>published</code> 上界仍 <code>2026-11-18T18:56:12Z</code> ⇒ 连续第 <b>8</b> 窗未前进。<br>
+  <b>发信（09:00）</b>：<code>#113</code> <code>09:06:37</code>（中文 175 字）/ <code>#114</code> <code>09:06:40</code>（中文 189 字）；日志 <code>/tmp/r219/mail/jilin.log</code> / <code>tony.log</code>；回信率 <b>0 / 114</b>。<br>
+  <b>作者主页复核</b>：<code>linji.me</code> <code>200</code> / 58,984 B · <code>tonyzhaozh.github.io</code> <code>200</code> / 24,093 B · <code>guangxuanx.com</code> <code>200</code> / 15,305 B（经代理）· <code>soldaini.net</code> <code>200</code> / 12,855 B · <code>infwinston.github.io</code> <code>200</code> / 20,604 B（无邮箱 ⇒ 不猜）。
 </div>
 
 <footer>
-  research 线 · 论文观察日报 · 2026-11-20（06:00 时窗 · A 轨 5/5 · B 轨 +4）｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-20 06:0x（A 轨 5/5 · B 轨累计 276 · 作者网 255 · 发信 112 / 回信 0） CST
+  research 线 · 论文观察日报 · 2026-11-20（09:00 时窗 · A 轨 5/5 · B 轨 280）｜ 推荐 = 待读线索，非结论 ｜ 所有数字为论文作者自报，本线未复现 ｜ 生成：2026-11-20 09:1x（A 轨 5/5 · B 轨累计 280 · 作者网 260 · 发信 114 / 回信 0） CST
 </footer>
 
 </div>
