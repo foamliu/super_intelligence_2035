@@ -237,7 +237,7 @@ bftii	jason17w	hfeg0pnd002	11		旧判:duplicate/已覆盖	不可造(已覆盖dup
 1791942254525_bd1k2					旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	simdiag-cli skill diag infra
 1783080146131_ebokr					旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	run existing IMCleAutoVia.il exec not produce
 1790230242506_8h59z					旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	run-regression skill invocation canned workflow not produce
-1792995847117_mon3r.messages.json	e13zhang	10.129.2.11		旧判:weak(Q&A非produce)	不可造(待深读)	r855:检索确认可达(订正tsv空user/host→e13zhang@hfeg0pkn002,subdir ALIVE 213KB;flat-path NOFILE假阴性)。旧判'SDF SDFCOM_NL warning debug troubleshooting'作废(debug-Q&A合法);待深读内容:若有具体warning/fix gold可debug-Q&A toothy,需核(下轮优先)
+1792995847117_mon3r.messages.json	e13zhang	10.129.2.11		旧判:weak(Q&A非produce)	不可造(待深读)	可造(已造r862)	r862 deepread+synthesize: analysis-Q&A +incdir+/import/package 编译语义 (U#2/U#4/U#12). 旧判 r553 'SDF SDFCOM_NL warning debug not produce-task' 实误 (真实主题=Cadence Denali LPDDR6 VIP VCS 编译语义, 非 SDF). 11-15 reaudit: analysis-Q&A/explain 合法. A档 trace-faithful (filelist/cdnVipTop.sv/parsing log 全 user-pasted 自包含). k=13/13, hidden-B=DDR4 VIP 同构改名. 同 session U#40 链接错误已落地 CadenceVipLinkErrorDiagnose-001 (不同 turn/意图/判分范式, 无重叠)
 1793607738033_9ufjy					旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	DDR5 DRC waveform analysis Q&A,prose
 1789884434870_ilkea					旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	project analysis(look at dir),prose
 1791507262889_xotf3					旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	NetApp IO monitoring+script cleanup,IT-ops

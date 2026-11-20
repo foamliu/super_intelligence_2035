@@ -583,7 +583,7 @@ bftii	jason17w	hfeg0pnd002	11		parked		2026-11-15 07:08	r550 deepread REJECT r55
 1791942254525_bd1k2					parked		2026-11-15 07:54	r553: simdiag-cli skill diag, infra not produce-task
 1783080146131_ebokr					parked		2026-11-15 07:54	r553: run existing .il script (IMCleAutoVia.il), exec not produce-task
 1790230242506_8h59z					parked		2026-11-15 07:54	r553: run-regression skill invocation, canned workflow not produce-task
-1792995847117_mon3r					parked		2026-11-15 07:54	r553: SDF SDFCOM_NL warning debug, troubleshooting not produce-task
+1792995847117_mon3r					case	EDA-Eval-DesignFlow-IncdirImportSemanticsQA-001	2026-11-20 16:14	r862: analysis-Q&A +incdir+/import/package semantics, U#2/U#4/U#12 of mon3r (sister-turn of CadenceVipLinkErrorDiagnose-001 U#40), A档 trace-faithful, k=13/13
 1793607738033_9ufjy					parked		2026-11-15 07:54	r553: waveform analysis (DDR5 DRC module function+TM timing), Q&A not produce-task
 1789884434870_ilkea					parked		2026-11-15 07:54	r553: project analysis (look at dir), analysis not produce-task
 1791507262889_xotf3					parked		2026-11-15 07:54	r553: NetApp IO monitoring + script cleanup, IT-ops not EDA
