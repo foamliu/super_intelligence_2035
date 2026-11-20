@@ -1,5 +1,29 @@
 # BAIZE_HARNESS_TASK.md
 
+### 🔴 用户令 · 2026-11-20 14:5x（**OOM 事故后带护栏分批灰度重启 · 最高优先 · 覆盖 08:2x 令**）
+
+> **背景（已核实，不必重查）**：11-19 夜 deepseek incr_eval R2800 的 matplotlib 评测容器吃穿宿主 ~2TB 内存，`.29` OOM 卡死，14:0x 重启。根因 = **评测容器无内存上限**（`daemon.json` 无默认限制），且自检是「报告」不是「拦截」（R2801 写 clean 后两次唤醒间无人杀失控容器）。同源历史：10-29 sympy 宿主 predict 吃 1.2TB、11-02 sklearn 抢 185 核。
+
+> **本次重启一律不自动续跑任何在途任务**：R2800 deepseek matplotlib incr_eval、MM 2×3 predict(6 路)、Verified predict(codex/pi/dsh 3 路) 全部**暂停**，判定为「事故中断、待护栏落地后由运维令放行」。🚫 本轮及后续若干轮**不跑 eval、不起 docker 评测、不起新 predict**。
+
+#### Phase 0 — 本令即执行，并持续到运维另发「解冻」令（期间 `WAITING` 保持 1）
+
+1. **启动护栏守护**（若未运行）：`setsid bash run/harness_resource_guard.sh > /tmp/harness_resource_guard.log 2>&1 < /dev/null &`；`ps` 确认 PID 活、`tail /tmp/harness_resource_guard.log` 见「启动:」行。此脚本**常驻**、每 15s 采样，`MemAvailable<400GB` 或 `load1>160` 时就地 `docker kill` 全部 harness 评测容器（只识别 `sweb.eval.*`/`swebench/*`/`alexgshaw/*`，绝不碰别线或宿主进程）。
+2. **完成 08:2x 令尚未做的部分（CPU 节流）**：改 `baize_harness_loop.sh` 加 `HARNESS_CPUS/NICE/IONICE/OMP/LOAD_MAX` + 受控 cline 启动 + load 闸，`bash -n` 过。判据 = pretrain step ≤7.4s 且不再出现「harness CPU 争抢」。
+3. **本轮其余只做**：git pull → 自检 CPU/内存 → 核验无运行中 harness 评测容器（`docker ps | grep -E 'sweb.eval|swebench|alexgshaw'` 应为空，有残留先 `docker kill`）→ 写 MEMORY 心跳（注明「Phase 0 monitor-only·未自动续跑任何在途任务」）→ `WAITING: 1` → commit+push。
+
+#### 解冻前必须落地的硬护栏（预先准备好，解冻令到达前不执行）
+
+- **docker 评测加内存/CPU 上限**：在 eval 入口统一注入 `--memory 128g --memory-swap 128g --cpus 16`（包一层 `docker run` wrapper，或核实 swebench harness 是否支持透传 docker 参数；做不成如实报「未做」，不假装做成）。
+- **宿主 predict 加 `ulimit -v`**（10-29 sympy 1.2TB 就是宿主 predict 无上限）：每路 predict 启动前 `ulimit -v 209715200`（=200GiB，单位 KB）+ 既有 `nice -n 19` `ionice -c3` + `OMP_NUM_THREADS≤8`。
+- **`.12` 均摊**：把 incr_eval docker 与纯 Python 报告生成迁 `.12`（`.12` 上 `nice -n 19` + load 闸，阈值按 data 线分词设更低，如 80）。
+
+#### 交付与验收（Phase 0 完成后）
+
+- `MEMORY_HARNESS.md` 心跳 1 行；**收到解冻令前不得自行解冻**。
+- 判据：`docker ps` 无 harness 评测容器；护栏守护 PID 存活；`baize_harness_loop.sh` 已受控且 `bash -n` 过；pretrain step ≤7.4s。
+- 诚实底线：护栏必然拖慢评测 ETA，解冻后明写，不藏。
+
 ### 🔴 用户令 · 2026-11-20 08:2x（**限制 CPU 占用，不得影响 pretrain 进度；并让 `.29`+`.12` 均摊**）
 
 > 用户原话：①「让 harness 限制 CPU 使用，不许影响预训练进度」②「harness 目前在 .29，可以均匀使用 .12 和 .29 的 CPU」。
