@@ -121,7 +121,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1793003840562_382ay.messages.json	harrys	10.129.2.11	46	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	U#0=workspace link info-exploration Q&A,doc-search无produce,thin
 1792041543395_mss1b.messages.json	e0039102	10.129.2.11	45	digital	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'walk-through explanation Q&A'作废;待深读:逐行带我读verilogrun,有具体文件/行号gold可能specificity-oracle,需核
 1790490968281_6vy3t	mike	10.129.32.80	58	verification	旧判:duplicate/已覆盖	不可造(已覆盖dup)	near-dup of SimIncludeMissDiag-001
-1791974855202_32935	shanliny	10.129.2.10	51	verification	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'SV UVM code-review Q&A'作废;待深读:code-review Q&A合法,若有具体bug/line gold可specificity-oracle,需核
+1791974855202_32935	shanliny	10.129.2.10	51	verification	旧判:weak(Q&A非produce)	可造(defer下轮)	r852深读:code-review Q&A合法,A档可行(uploads/11 .sv可达),agent msg9出14 bug(2严重2重要3中6轻,文件+行号+描述+修复),specificity-oracle可toothy;合成需11文件+variant B超单轮预算,defer下轮;详trace_deepreads/r852_32935_uvm_sram_codereview.md
 1791536684137_lpn8o	mike	10.129.32.80	39	eda_other	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	重构环境env-setup,env-state hard toothy
 1789375537537_uh4tz	lorikx	10.129.2.13	36	verification	旧判:duplicate/已覆盖	不可造(已覆盖dup)	near-dup of SramVcsLogDiagnose-001
 1791537885417_6h27d	mike	10.129.32.80	35	eda_other	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	env-setup Q&A sibling,env-state
@@ -154,7 +154,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1794465633184_9scu4	e0045128	hfeg0pkn005	27	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	mc27 synthesis:3 pyAether only too low+NOFILE unreachable
 1794468675464_p5pi7	dsgao	hfeg0pkn001	236	verification	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	scan false-positive:gvim syntax highlighting Q&A,mc236 from systemverilog kw in context,actual=gvim config troubleshooting
 1794385756928_jeij7	e0039102	hfeg0pbn16	143	verification	旧判:weak(L1-only非L2/L3)	可造	§5 L1-gate作废,L1合法. 可造:run_regr config file-set generation produce-task(306msgs,user generate run_regr file set for new project lpddr5_ddgoa_WOWTOP),verifiable file-set结构,toothy check OK. 拟造:run_regr config generator(L1 produce-task,hidden-B=不同项目名/参数). 资产caveat:/rundata/ddgoa资产e0031982 ssh不可达,需.75 eda_flow或换身份核验
-1794290494748_5u1j9	e0039102	hfeg0pbn16	129	verification	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'analysis not produce'作废;待深读:run_regr framework analysis summarize-to-md,若有具体config架构/字段gold可toothy,需核
+1794290494748_5u1j9	e0039102	hfeg0pbn16	129	verification	旧判:weak(Q&A非produce)	不可造(已覆盖dup)	r852深读:intent-dup 22gh5 RunRegrArchAnalyze-001(同user e0039102/同项目drgsa+ddgoa/同意图"理解run_regr框架架构整理报告",forked session,session ID不同但意图同);oh5bd亦同dup
 1794291542588_oh5bd	e0039102	hfeg0pbn16	129	verification	旧判:duplicate/已覆盖	不可造(已覆盖dup)	dup of 5u1j9(same user msgs 17min apart)
 1793180163442_wz7gy	e03179	hfeg0plg15	281	eda_other	旧判:wrong-shard/跨域	不可造(跨域defer)	netlist/waveview/schematic=D域+infra-block
 1792052491292_p5laa	xinqiaoz	hfeg0plg15	267	pnr_signoff	旧判:wrong-shard/跨域	不可造(跨域defer)	drc/pdk/calibre=C域
@@ -182,7 +182,7 @@ session	user	host	mc	domain	旧判定	新判定	拟造任务形态
 1793003474253_vgpcy	harrys	hfeg0pkn002	32	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	'workspace have what'infra Q&A,thin
 1791280343229_bp54q	mwxi	hfeg0pkn003	76	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	crontab task-recovery infra
 1793169406310_49kzt	e0039602	hfeg0pkn005	55	digital	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	'dont execute just tell me'xcelium usage Q&A,prose
-1794469877801_685bd	eric1ch	hfeg0pkn001	50	digital	旧判:weak(Q&A非produce)	不可造(待深读)	旧判'LPDDR6 JEDEC KG skill-usage'作废;待深读:KG skill-usage,若有具体spec/clause gold可toothy,需核
+1794469877801_685bd	eric1ch	hfeg0pkn001	50	digital	旧判:weak(Q&A非produce)	不可造(无牙check)	r852深读:skill-engineering(固化lp6-regr-debug skill+加入expected-value拆解)+lpregr工具依赖+2.2MB archive,无牙headless check(skill固化/expected-value需skill上下文,非自包含),不可造
 1793704618870_pz29g	e0039602	hfeg0pkn005	48	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	host unreachable/timeout this round(可能transient,待重试)
 1791785549996_uaa3b	kiaray	hfeahpc505	45	digital	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	build-d6/run-d6 skill-invocation env-specific,not self-contained
 1793865143182_nwmze	e0039602	hfeg0pkn005	41	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	Q&A log-scripts+delete-logs infra destructive non-produce
