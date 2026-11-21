@@ -3615,3 +3615,23 @@
 | 2026-11-21 | 附录：PostgreSQL 19 发布 / 车与消费通告（零跑 A10 回应、银河 M8、欧拉、大众、坦克、荣威、岚图等） | IT之家（第 321 轮 · 附录） | W:not-news | https://www.ithome.com/1/030/285.htm |
 | 2026-11-21 | 附录：硬件上架（群联/铭匠/银昕/明基/康宁）+ 游戏娱乐（堡垒之夜/GTA6 作弊码/POLYARIS/Drivatar/CK3） | IT之家（第 321 轮 · 附录） | W:not-news | https://www.ithome.com/1/030/134.htm |
 | 2026-11-21 | 附录：央视网/中新网当日元首会见·APEC·涉军·文体·民生·地方政务（禁令 9 / 无 AI 事件点） | 央视网 / 中新网（第 321 轮 · 附录） | W:not-news | https://news.cctv.com/ |
+| 2026-11-21 | OpenAI 发布 MedChemBench 基准：评估 AI 辅助药物研发，分子重建 95.4%、化合物筛选与性质预测约一半（xhigh 档；首图：0bbcefcb） | IT之家 / OpenAI（第 322 轮 · §1） | news | https://www.ithome.com/1/030/301.htm |
+| 2026-11-21 | 匿名 AI 模型 Gestalt 登顶 Contra 前沿设计榜 Frontier Design Benchmark：Elo 1931 / 胜率 90%，人类参考 1739 / 74%（33 任务 / 35 设计师 / 4,311 票；首图：d8da9d8c） | IT之家 / Contra Labs（第 322 轮 · §1） | news | https://www.ithome.com/1/030/291.htm |
+| 2026-11-21 | Lean 形式化不是免检章：AI 生成的 Lean 代码曾在 OpenAI Navier-Stokes 证明中弱化原始命题表述（《科学》2026-10 报道；Lean 4 历史版本曾出现内核缺陷；首图：22859de2） | IT之家 / 科学杂志（第 322 轮 · §1） | news | https://www.ithome.com/1/030/297.htm |
+| 2026-11-21 | 20 多国 700 余台 POS 机约 2 年未打补丁，100 多万张银行卡资料被窃（CVE-2024-49138 / CLFS 本地提权；首图：e566526d） | IT之家 / TechSpot（第 322 轮 · §2） | news | https://www.ithome.com/1/030/298.htm |
+| 2026-11-21 | 人民日报：国产开源大模型全球累计下载量突破 100 亿次；OpenRouter 中国模型周调用 119.1 万亿词元、连续 29 周第一；日均词元调用超 500 万亿（正文无配图） | 人民日报 / 中新网转载（第 322 轮 · §3） | news | https://www.chinanews.com.cn/gn/2026/11-21/10735639.shtml |
+| 2026-11-21 | Anthropic 研究员 Tao Lin：2027 年底 AI 将在几乎所有领域超越顶尖专家、几乎所有人可能长期失业；又称大规模失业「极低」（Claude 使用中 68% 任务理论可独立完成；首图带 x-bce-process） | IT之家 / Palisade Research 访谈（第 322 轮 · §4） | news | https://www.ithome.com/1/030/308.htm |
+| 2026-11-21 | 英伟达周五跌 14%、市值较 10-06 高点蒸发逾 2.73 万亿美元（超整个亚马逊）；纳指单周 -10%（首图：966acf33；不构成投资建议） | IT之家 / 华尔街日报·美联社（第 322 轮 · §5） | news | https://www.ithome.com/1/030/302.htm |
+| 2026-11-21 | 阿波罗与高盛完成 440 亿美元 GPU 融资定价（迄今最大），为 SpaceX 采购英伟达 Vera Rubin 芯片（正文 0 图） | IT之家（第 322 轮 · §5） | news | https://www.ithome.com/1/030/296.htm |
+| 2026-11-21 | Valve：Steam Machine 内存与存储成本前所未有上涨，产量与售价「无法得知」，更多消息 2027 年 1 月（512GB 1,049 / 2TB 1,349 美元；首图：df0adacc） | IT之家（第 322 轮 · §5） | news | https://www.ithome.com/1/030/273.htm |
+| 2026-11-21 | 华为星芒 O1 Pro 5499 元起引争议，总经理刘赫回应「我们选择创新优先」；AI 屏与小星芒为星芒独占（正文 0 图） | IT之家（第 322 轮 · §5） | news | https://www.ithome.com/1/030/311.htm |
+| 2026-11-21 | 爆料：某厂骁龙 8E6 大屏机打磨中，疑为小米 18 Max，电池超 8000mAh（纯爆料口径；首图：381e89f1） | IT之家 / @数码闲聊站（第 322 轮 · §5） | news | https://www.ithome.com/1/030/313.htm |
+| 2026-11-21 | 我国发射卫星互联网低轨 30 组卫星：GW 星座规划 12,992 颗、2035 年完成组网（首图：e9b45347） | IT之家（第 322 轮 · §6） | news | https://www.ithome.com/1/030/242.htm |
+| 2026-11-21 | 附录：Pixel 11 Pro XL 原型机曝光（测温传感器 + HiLight 共存规划） | IT之家（第 322 轮 · 附录） | W:not-news | https://www.ithome.com/1/030/310.htm |
+| 2026-11-21 | 附录：国家网信办 9—10 月新增 133 款生成式 AI 服务完成备案（正文前端渲染抓不到，只记标题） | 央视网（第 322 轮 · 附录） | W:not-news | https://news.cctv.com/2026/11/20/ARTIHBHk4WuG4IqM14kzOZpb261120.shtml |
+| 2026-11-21 | 附录：IT早报 1121（华为 OSTA O1 Pro 发布 / 腾讯诉百度《仙逆》盗版索赔 1 亿 / 京东华为星芒三年 700 亿 / 余承东谈 L2） | IT之家（第 322 轮 · 附录） | W:not-news | https://www.ithome.com/1/030/294.htm |
+| 2026-11-21 | 附录：华为 Mate 系列无缘 OSTA 小星芒与 AI 屏 | IT之家（第 322 轮 · 附录） | W:not-news | https://www.ithome.com/1/030/284.htm |
+| 2026-11-21 | 附录：车与消费通告（银河 M8 预售 / 欧拉 ORA 7 / 方程豹钛 9 / 零跑欧宝 / 长城坦克 100 万台 / 大众 ID. Polo GTI / 沪杭二线 / 明基投影 / 三星 S27 Pro 跑分 / 零跑 A10 回应） | IT之家（第 322 轮 · 附录） | W:not-news | https://www.ithome.com/1/030/ |
+| 2026-11-21 | 附录：软件与娱乐（QQ 鸿蒙 9.2.90 / GTA 6 首日 37.9 亿美元 / 堡垒之夜致敬 GTA 4 / POLYARIS / Drivatar / 江南大学英语改选修） | IT之家（第 322 轮 · 附录） | W:not-news | https://www.ithome.com/1/030/ |
+| 2026-11-21 | 附录：央视网 / 中新网当日其余（金融监管 / 财政收支 / 公积金 / 医疗流程 / 助眠器 / 金价 / 地震 / 天气 / 谣言 / 反对核潜艇 / 产业博览会 / 麓山科技金融 / 重庆 OPC / 合肥数智 / 联合国儿童诱骗 / 电子政务 / IMF 表态） | 央视网 / 中新网 / 联合国新闻（第 322 轮 · 附录） | W:not-news | https://www.chinanews.com.cn/ |
+| 2026-11-21 | 药片也能「打印」：南京企业获全国首张 3D 打印药品生产许可证（2025-09-04），中国成全球第二个产业化国家；产能最高年产 3 亿片；多肽生物利用度自述「零点几个百分点→10%~20%」（首图：cctvpic 2026112105233229608，带央视财经台标） | 央视网 / 央视财经（第 322 轮 · §3） | news | https://jingji.cctv.com/2026/11/21/ARTIgdCoCxlwRsvV2EnPLlEp261121.shtml |
