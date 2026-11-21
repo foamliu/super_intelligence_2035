@@ -1678,3 +1678,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795057180298_esbdu.messages.json	kevin3d	hfeahpc503	71	spice_sim	case	EDA-Eval-DesignFlow-FinesimIgnoreAudit-001	2026-11-21 15:09	r968 FineSim si.inp ignore audit (analysis-Q&A L1)
 1794879740388_dfl7k.messages.json	gallopc	hfeg0plg80	47	spice_sim	case	EDA-Eval-DesignFlow-ZpowerGlitchStimGen-001	2026-11-21 16:10	
 1795070503467_lovic.messages.json	zqzhan	hfeg0plg94	33	spice_sim	case	EDA-Eval-DesignFlow-SimKbCompareGen-001	2026-11-21 16:38	
+1795051874981_6wqk0.messages.json	alexcui	hfeg0plg09	83	spice_sim	parked		2026-11-21 17:21	near-dup of VlogaNonoverlapClkGen-001 r962 (same user alexcui, same 3-phase non-overlap clk phi2=160ns/phi1=80ns/phi0=80ns + phi2E/phi0E rotating bus task)
