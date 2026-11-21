@@ -1690,3 +1690,5 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794475206189_lbrbv	willz	hfeahpc501	65	spice_sim	case	EDA-Eval-DesignFlow-SpDeckModelStripMigrate-001	2026-11-21 22:55	
 1794807865026_914l2.messages.json	joeyl	hfeg0pkn004	220	spice_sim	case	EDA-Eval-DesignFlow-DelvtoPmosNmosSignPatch-001	2026-11-21 23:39	
 1794967669776_6rsot.messages.json	e0044979	hfeg0pkn034	71	characterization	claimed		2026-11-21 23:55	
+1795154624230_10atu	jeoteanl	hfeg0pkn005	81	spice_sim	parked		2026-11-22 00:46	near-dup of FineSimNoRefCktFix-001 + SimErrSubcktRefDiag-001 (both diagnose 'no reference ckt'); 10atu's lib-entry-not-found+stale-process twist insufficient to differentiate core no-ref-ckt diagnostic shape. r985 triage.
+1794810067969_jsutr	willz	hfeahpc501	60	spice_sim	parked		2026-11-22 00:46	near-dup of r983 SpDeckModelStripMigrate-001 (willz sim_result_251202->261112 .sp edits, same lbrbv sessionId in policy). r985 triage.
