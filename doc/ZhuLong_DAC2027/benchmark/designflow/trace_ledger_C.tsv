@@ -751,7 +751,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794188385974_1c67w					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1790079870984_56jqu					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1792223700738_pebvu					parked		2026-11-16 19:20	r668 revival-REJECT: auto-trigger U#0 auto stdcell only organic turn, 0 write, thin; confirms D r271; liwan 2-host mc90 off-C aether/schematic
-1794363615663_goeio					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
+1794363615663_goeio					case	EDA-Eval-DesignFlow-FoldedNandFingerPlanAnalyzer-001	2026-11-22 00:13	r925 revival (11-15 令 parked→revive): goeio kepeim layout_aether folded-NMOS nand3 finger S/D arrangement + VSS tap analysis; deepread confirmed real layout operation intent (msg 110/121/124), no cross-shard collision
 1794480485564_nphvz					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794292352673_gjzyg					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
 1794357676593_s5o5k					parked		2026-11-14 00:41	r537 peek REJECT (Q&A/sim/run-existing/done)
