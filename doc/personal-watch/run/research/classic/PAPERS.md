@@ -10,6 +10,9 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **317** 条（**第八十三轮 2026-11-21 15:0x 补 3 条 → 317**：Grounding DINO `2303.05499`（**2,415**，≥500 直接满足，预印本）/ AndroidWorld `2405.14573`（**525**，≥500 直接满足，OpenAlex source = ICLR）/ EAGLE `2401.15077`（**499**，**&lt;500 按「方法论常青」收**：EAGLE-2 / EAGLE-3 的标准对照）；核验：arXiv API `id_list` 单批 **`200` + `application/atom+xml`**（`published` 齐备）+ abs 页 **3/3 `200`**（44,302 / 44,789 / 42,120 B）+ OpenAlex **3/3 `200`**（2,415 / 525 / 499，查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` **0 命中**（同批候选 Mind2Web `2306.06070` / Dolma `2402.00159` / MiniCPM `2404.06395` 经查**已在表内** ⇒ 剔除）；⚠️ **ID 误记在写入前拦截**：候选池旧记 Grounding DINO 为 `2303.19588`，`id_list` 实测不返回该文 ⇒ 真 ID `2303.05499`；另 `2502.05907` 实测是 **EvolvingAgent**（非 Muon）⇒ 未收；覆盖轴 = 开放词表取框的三阶段紧融合 / 参数化动态任务 + 程序化成功检查 / 特征层自回归的投机解码；累计覆盖：pretrain **105** · vision **48** · harness **120** · data **110** · zhulong **121** · designflow **51**）
+
+
 **本轮快照**：累计 **314** 条（**第八十二轮 2026-11-21 12:0x 补 3 条 → 314**：Grounding DINO 1.5 `2405.10300`（**237**，**&lt;500 按「本领域权威」收**，预印本技术报告）/ CodeAct `2402.01030`（**470**，**&lt;500 按「方法论常青」收**，arXiv `comment` = ICML 2024）/ Native Sparse Attention `2502.11089`（**674**，**≥500 直接满足判据**，OpenAlex source = ACL 2025）；核验：arXiv API `id_list` 单批 **`200` + `application/atom+xml`**（10,529 B / 3 entry，`published` 齐备）+ abs 页 **3/3 `200`**（44,192 / 44,230 / 44,015 B）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**；⚠️ **ID 误记在写入前拦截**：本轮原计划「Small-scale proxies」按记忆写作 `2209.14375`，`id_list` 实测该 ID 为 *Improving alignment of dialogue agents via targeted human judgements*（无关）⇒ 真 ID 为 `2309.14322`，而该文**已在表内 #226** ⇒ 整条剔除，改收 Native Sparse Attention；覆盖轴 = 开放词表检测的 Pro/Edge 两档 / 代码即动作空间 / 可原生训练的稀疏注意力）
 
 **本轮快照**：累计 **311** 条（**第八十一轮 2026-11-21 09:0x 补 4 条 → 311**：LLaVA-OneVision `2408.03326`（**3,423**，TMLR）/ VideoMAE `2203.12602`（**2,690**，NeurIPS 2022，DOI `10.52202/068431-0732`，pp. 10078–10093）/ DINO-X `2411.14347`（**173**，**&lt;500 按「本领域权威」收**，预印本技术报告）/ Scaling Laws of RoPE-based Extrapolation `2310.05209`（**107**，**&lt;500 按「方法论常青」收**，ICLR 2024）；核验：arXiv API `id_list` 单批 **`200` + atom**（10,844 B / 4 entry，`published` 齐备）+ abs 页 **4/4 `200`**（42,147 / 42,543 / 45,378 / 41,298 B）+ OpenAlex **4/4 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；先查重：四 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**；覆盖轴 = 单塔服务单图/多图/视频 / 90–95% 管状掩码的小数据视频预训练 / 免提示开放词表检测 / RoPE 临界维度与外推）
@@ -5433,6 +5436,57 @@
 | 与我们工作的关系 | **pretrain（主 · 长上下文训练成本）**：把「长上下文靠加卡」换成「训练时就稀疏」，影响上下文扩展方案的选择与显存预算。<br>**zhulong（成本口径）**：解码 / 前向 / 反向三段分别加速 ⇒ 成本表必须分三段记，不能只报 prefill。<br>**harness（长上下文评测）**：稀疏注意力必须同时报「通用基准不退」与「长上下文不退化」，单报后者会掩盖能力损失。 |
 | 首次收录 | **2026-11-21**（第八十二轮 · 12:00 时窗） |
 | 核验状态 | arXiv `id_list=2502.11089` **`200` + `application/atom+xml`**（`published` `2025-02-16T11:53:44Z`）；abs 页 **`200` / 44,015 B**；OpenAlex **`200`（674 / 2025 / conference-paper / ACL）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 315. Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection |
+| 作者（前 3） | Shilong Liu · Zhaoyang Zeng · Tianhe Ren（共 **12** 位；末位 Lei Zhang；IDEA Research / 清华 / 港科大；arXiv 作者字段逐字核） |
+| 年份 | **2023**（arXiv v1 `2023-03-09`；v5 `2024-07-19`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `publication_year=2023`、source = *arXiv (Cornell University)*；ECCV 2024 接收信息**本轮未核 ⇒ 不写**） |
+| 被引数 | **2,415**（OpenAlex `10.48550/arxiv.2303.05499`，查询日 **2026-11-21**；**≥500 直接满足判据**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2303.05499> ｜ arXiv DOI `10.48550/arxiv.2303.05499` |
+| 一句话贡献 | 把语言接进闭集 DETR 式检测器，按检测的三阶段做**紧融合**：**feature enhancer + language-guided query selection + cross-modality decoder**，并用**子句级（sub-sentence）文本表征**支持「属性限定的指代表达」；摘要报 **COCO 零样本 52.5 AP**（不含任何 COCO 训练数据）与 **ODinW 零样本均值 26.1 AP**。 |
+| 与我们工作的关系 | **vision（主 · 开放词表取框器）**：版图 / 封装截图的取样器基线，提示写成「单个类别名」还是「带属性的短语」直接改召回，需按提示形态分档记录。<br>**designflow（造题接口）**：造题时「用自然语言指定要动的对象」这一接口的参照实现。<br>**harness（口径）**：52.5 AP 是**零样本**口径，不得与闭集微调结果混比；表格须标是否含目标域训练数据。 |
+| 首次收录 | **2026-11-21**（第八十三轮 · 15:00 时窗） |
+| 核验状态 | arXiv `id_list=2303.05499` **`200` + `application/atom+xml`**（`published` `2023-03-09T18:52:16Z`）；abs 页 **`200` / 44,302 B**；OpenAlex **`200`（2,415 / 2023 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。⚠️ 写入前拦截一次 ID 误记：候选池旧记 `2303.19588`，`id_list` 实测该 ID 不返回本文 ⇒ 真 ID `2303.05499`。 |
+
+---
+
+## 316. AndroidWorld: A Dynamic Benchmarking Environment for Autonomous Agents
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | AndroidWorld: A Dynamic Benchmarking Environment for Autonomous Agents |
+| 作者（前 3） | Christopher Rawles · Sarah Clinckemaillie · Yifan Chang（共 **15** 位；末位 Oriana Riva；Google DeepMind；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-05-23`；v5 `2025-04-06`） |
+| 会议 / 期刊 | **ICLR**（OpenAlex source = *International Conference on Learning Representations*、`publication_year=2024`；卷期 / 页码**未核**） |
+| 被引数 | **525**（OpenAlex `10.48550/arxiv.2405.14573`，查询日 **2026-11-21**；**≥500 直接满足判据**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.14573> ｜ arXiv DOI `10.48550/arxiv.2405.14573` |
+| 一句话贡献 | 真机 Android 环境上的动态 agent 基准：**116 个程序化任务 / 20 个真实 app**，任务**参数化并可用自然语言无限构造**（不是静态测试集）；每题自带 **初始化 / 成功检查 / 清理**逻辑直接读写设备状态；摘要报最佳基线 **30.6%**，桌面 web agent 迁到手机后更差，且任务扰动会显著改变分数。 |
+| 与我们工作的关系 | **harness（主 · 造题与判分模板）**：「参数化任务 + 程序化成功检查 + 环境重置」三件套，正对应我们造题流水线必须保证的「可重置、可判分」。<br>**zhulong（跨平台口径）**：桌面 web agent 迁移动端掉分的证据 ⇒ 跨平台能力不能按同一分数外推。<br>**designflow（判分强度）**：扰动敏感说明「单次固定题面」的分数不可当结论，须报任务变体下的区间。 |
+| 首次收录 | **2026-11-21**（第八十三轮 · 15:00 时窗） |
+| 核验状态 | arXiv `id_list=2405.14573` **`200` + atom**（`published` `2024-05-23T13:48:54Z`）；abs 页 **`200` / 44,789 B**；OpenAlex **`200`（525 / 2024 / conference-paper, ICLR）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 317. EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty |
+| 作者（前 3） | Yuhui Li · Fangyun Wei · Chao Zhang（共 **4** 位；末位 Hongyang Zhang；Microsoft Research / University of Waterloo；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-01-26`；v3 `2025-03-04`） |
+| 会议 / 期刊 | **未核**（作者 GitHub 页写 EAGLE-1 = ICML'24，本线**未核会议信息 ⇒ 不写**） |
+| 被引数 | **499**（OpenAlex `10.48550/arxiv.2401.15077`，查询日 **2026-11-21**；**<500 ⇒ 按「方法论常青」收**：EAGLE-2 / EAGLE-3 以它为基线，投机解码的标准对照） |
+| arXiv / DOI | <https://arxiv.org/abs/2401.15077> ｜ arXiv DOI `10.48550/arxiv.2401.15077` |
+| 一句话贡献 | 两个观察：**在第二顶层「特征层」做自回归比 token 层更直接**，而特征层自回归的**不确定性**会限速 ⇒ 用**前移一步的 token 序列**（training-time test / test-time simulation）消解不确定性；摘要报 LLaMA2-Chat 70B 上 **2.7×–3.5× 延迟加速、吞吐翻倍**且保持生成分布，评测覆盖 Vicuna / LLaMA2-Chat 全系与 Mixtral 8x7B，任务含对话 / 代码 / 数学 / 指令跟随。 |
+| 与我们工作的关系 | **zhulong（主 · 解码成本口径）**：「延迟加速」与「吞吐翻倍」是两个不同口径，成本表须分开列，不能只报一个。<br>**harness（默认开关）**：agent 多为单请求小 batch，2.7–3.5× 是否在 batch=1 成立决定能否默认开。<br>**pretrain（域内重训）**：draft 头是否需要见过目标分布，决定窄域（RTL / 版图脚本）上要不要单独训草稿头。 |
+| 首次收录 | **2026-11-21**（第八十三轮 · 15:00 时窗） |
+| 核验状态 | arXiv `id_list=2401.15077` **`200` + atom**（`published` `2024-01-26T18:59:01Z`）；abs 页 **`200` / 42,120 B**；OpenAlex **`200`（499 / 2024 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
 
 ---
 

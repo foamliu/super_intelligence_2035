@@ -11,6 +11,9 @@
 > **第八十一轮增量（2026-11-21 09:0x）**：作者网 287 → **290**（#288 Limin Wang 王利民 **A 级** `lmwang.nju@gmail.com`（`wanglimin.github.io` 页内明文 `lmwang.nju [at] gmail.com`，`200` / 55,527 B；页内写明南京大学 +「王利民」）/ #289 Xipeng Qiu 邱锡鹏 **A 级** `xpqiu@fudan.edu.cn`（`xpqiu.github.io` 页内 `mailto:`，`200` / 33,632 B）/ #290 Ziwei Liu 刘子纬 **无邮箱**（`liuziwei7.github.io` `200` / 39,458 B 无 `mailto:`；X = `@liuziwei7` 已双源核验 ⇒ 状态「待跟踪 / 已核验 X」）），来自本轮 B 轨 #309 VideoMAE / #311 RoPE Scaling Laws / #308 LLaVA-OneVision；#310 DINO-X 的作者（Tianhe Ren / Lei Zhang 等）**原生 HTML 页内无公开邮箱** ⇒ 只计不建、不猜地址；已发信 125 → **127**（#126 中文 228 字 `SENT OK 09:07:13` / #127 中文 257 字 `09:07:14`）；回信 **0**（0/127）。⚠️ **计数校正**：第八十轮（06:0x）已落 #286 / #287 两条正文但顶部计数行当时漏改，本轮以 **287** 为基线续记。
 
 
+> **当前计数（2026-11-21 15:0x）**：作者 **294** 人（编号最大 **294**）· X 已核验 **111**（本轮 +1：`@hongyangzh` 双源核验；`@atasteoff` 经代理 `404` ⇒ 不记）· 已发信 **128**（台账 #1–#128；本窗不借日额度）· 回信 **0**（0/128）。<br>**第八十三轮增量（2026-11-21 15:0x）**：作者网 292 → **294**（#293 Shilong Liu **A 级** `sl6222@columbia.edu`（本人主页 `lsl.zone` `200` / 26,074 B 页内 `mailto:` 明文；主页写明 Princeton 邮箱已停用）/ #294 Hongyang Zhang **A 级** `hongyang.zhang@uwaterloo.ca`（滑铁卢官方人员页 `200` / 95,418 B 页内 `mailto:`）），来自 B 轨 #315 Grounding DINO / #317 EAGLE；两封草稿已入仓（`drafts/2303.05499.md` / `drafts/2401.15077.md`），当日 12/12 已满 ⇒ 计划 11-22 00:00 发。以下历史快照行保留原文（不追改），计数以本行为准。
+
+
 > **当前计数（2026-11-21 00:0x）**：作者 **280** 人（编号最大 **280**）· X 已核验 **107**（本轮未新增核验：`x.com` 经代理 `000`）· 已发信 **119**（台账 #1–#119）· 回信 **0**。
 
 > **第七十八轮增量（2026-11-21 00:0x）**：作者网 276 → **280**（#277 Xizhou Zhu **B 级** `zhuwalter@sensetime.com`（ar5iv HTML `200` / 267,916 B 脚注明文；**2020 年地址，疑失效 ⇒ 只建档不发**）/ #278 Michael Tschannen **未找到**（`tschannen.github.io` `404`）/ #279 Xiaohua Zhai **未找到**（`xiaohuazhai.com` 本轮 `000`）/ #280 Alexander Sergeev **未找到**（论文未给邮箱）），来自第七十八轮 B 轨 #297 Horovod / #298 Deformable DETR / #299 SigLIP 2；已发信 116 → **119**（#117 NeRF 英文 181 词 `SENT OK 00:04:19` / #118 Faster R-CNN 英文 178 词 `00:04:21` / #119 Quiet-STaR 英文 182 词 `00:04:24`）；回信 **0**（0/119）。
@@ -4158,3 +4161,29 @@
 | X 账号 | **@peterjliu**（双源核验 2026-11-21 12:0x：X 页 `og:title` = `Peter J. Liu (@peterjliu) on X`、`og:description` = `Building @getcompoundai. Was Research Scientist @ Google Brain / DeepMind, language model research…`；`x.com/peterjliu` `200` / 162,821 B 经代理） |
 | 状态 | **待跟踪**（无公开明文邮箱 ⇒ 不发信；X 已核验，follow 需登录态，未自动执行） |
 | 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：该文给出的**「小模型 + 高学习率」复现大模型 loss spike** 与 **QK-norm 压制注意力 logit 增长**，是 pretrain 线「2B 上先复现不稳定再上大模型」的预注册依据。 |
+
+### 293. Shilong Liu（刘世隆）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shilong Liu（主页自写中文名「刘世隆」） |
+| 机构 | **Princeton AI Lab** 博士后（Peretsman Scully Postdoctoral Research Fellow / AI² Fellow）；**2027 秋入职 Columbia EE 助理教授**（主页原文：Incoming Tenure-track Assistant Professor, Department of Electrical Engineering, Columbia University, Fall 2027） |
+| 代表论文 | **Grounding DINO**（`2303.05499`，B 轨 #315，一作）· **Grounding DINO 1.5**（`2405.10300`，B 轨 #312）· Grounded-SAM 系列 |
+| 邮箱 | **A 级** `sl6222@columbia.edu`（本人主页 `https://lsl.zone/` 实测 `2026-11-21 15:0x`：`HTTP 200` / 26,074 B，页内 `mailto:` 明文；页面注明「University-related topics」用此地址、Princeton 邮箱已停用）；备用 `slongliu86@gmail.com`（同页 `mailto:`，非学术事务） |
+| 主页 | <https://lsl.zone/> |
+| X 账号 | **未找到**（主页外链指向 `twitter.com/atasteoff`，但 `x.com/atasteoff` 经代理实测 **`404`**（`og:title` = `User Profile Not Found - X | 404 Error`）⇒ 不记、不猜） |
+| 状态 | **待跟踪**（草稿 `research/mail/drafts/2303.05499.md` 已备；当日额度已满，计划 2026-11-22 00:00 时窗发） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 主页中文名「刘世隆」)`。价值点：开放词表取框的**三阶段紧融合**（feature enhancer / 语言引导 query 选择 / 跨模态解码器）与我们版图-封装截图取样直接相关；本人研究自述含「self-evolving agents 与 world models」⇒ 后续也可服务 harness 线。 |
+
+### 294. Hongyang Zhang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hongyang Zhang（拼音姓名族属 ⇒ 中文全文发信） |
+| 机构 | **University of Waterloo**（Cheriton School of Computer Science 助理教授，DC 2641）· **Vector Institute**（SafeAI Lab 负责人；官方人员页实测 2026-11-21） |
+| 代表论文 | **EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty**（`2401.15077`，B 轨 #317，末位 / 通讯方向）· EAGLE-2 / EAGLE-3 系列 |
+| 邮箱 | **A 级** `hongyang.zhang@uwaterloo.ca`（滑铁卢官方人员页 `https://uwaterloo.ca/computer-science/about/people/h935zhan` 实测 `HTTP 200` / 95,418 B，页内 `mailto:` 明文） |
+| 主页 | <https://hongyanz.github.io/>（`200` / 27,193 B；页内无明文邮箱 ⇒ 地址取官方人员页） |
+| X 账号 | **@hongyangzh**（双源核验 2026-11-21 15:0x：GitHub `github.com/hongyanz` `200` / 175,788 B 页内链接 `twitter.com/hongyangzh`；X 页 `og:title` = `Hongyang Zhang (@hongyangzh) on X`，`x.com/hongyangzh` `200` / 197,556 B 经代理） |
+| 状态 | **待跟踪**（草稿 `research/mail/drafts/2401.15077.md` 已备；计划 2026-11-22 00:00 时窗发；follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | `语言=中文(判据=拼音姓名族属；本文四位作者均为华人姓名)`。价值点：「延迟加速」与「吞吐翻倍」是两个成本口径，且 draft 头在窄域（RTL / 版图脚本）是否需重训，直接决定 zhulong 成本表与 harness 默认开关。 |

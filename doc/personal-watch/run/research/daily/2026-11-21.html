@@ -47,8 +47,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-21</h1>
-  <div class="sub"><b>00:00 时窗（早报 3 篇 → 00:3x 补轮 2 篇）＋ 03:00 / 06:00 / 09:00 / 12:00 B 轨补轮 · A 轨 5/5 · B 轨第八十二轮 +18 → 314</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-21 12:0x CST</b>（最后一轮：12:00 时窗；此前 00:00 / 00:3x / 03:00 / 06:00 / 09:00）｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>00:00 时窗（早报 3 篇 → 00:3x 补轮 2 篇）＋ 03:00 / 06:00 / 09:00 / 12:00 / 15:00 B 轨补轮 · A 轨 5/5 · B 轨第八十三轮 +21 → 317</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-21 15:0x CST</b>（最后一轮：15:00 时窗；此前 00:00 / 00:3x / 03:00 / 06:00 / 09:00 / 12:00）｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -493,11 +493,65 @@
   <tr><td>未做</td><td>PDF 逐页复核（数字取自 arXiv 官方摘要）；X 字符级全文抓取（仅核验 handle）；回信通道仍只发不收</td></tr>
 </table>
 
+<h3 class="sec">15:00 时窗 · A 轨 0 新收（今日 5/5 已满）· B 轨 +3（→ 317）· 作者网 +2（→ 294）· 信 0 封（日上限，备 2 封草稿）· voice_ready 0 新增</h3>
+
+<p style="font-size:14px;"><b>A 轨</b>：今日 5/5 已满，<b>不凑第 6 篇、不替换已发条目</b>；<code>cat:cs.CL</code> 公告批 <code>published</code> 上界仍为 <code>2026-11-19T18:57:25Z</code>（<b>连续第 10 个时窗未前进</b>，仍在 72h 内）。<b>B 轨 +3 → 317</b>（下表）：补的是「开放词表取框的三阶段紧融合 / 参数化动态任务 + 程序化成功检查 / 特征层自回归的投机解码」三块。</p>
+
+<table class="plain">
+  <tr><th>#</th><th>论文（arXiv 实测标题）</th><th>年份 / 出处</th><th>被引（OpenAlex，2026-11-21）</th><th>一句话贡献</th><th>归属线</th></tr>
+  <tr><td>315</td><td>Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection（<a href="https://arxiv.org/abs/2303.05499">2303.05499</a>）</td><td>2023 · 预印本（IDEA Research / 清华 / 港科大）</td><td><b>2,415</b>（≥500 直接满足）</td><td>语言接进闭集检测器：<b>feature enhancer + 语言引导 query selection + 跨模态解码器</b>，子句级文本表征；<b>COCO 零样本 52.5 AP / ODinW 26.1 AP</b></td><td>vision（主）· designflow · harness</td></tr>
+  <tr><td>316</td><td>AndroidWorld: A Dynamic Benchmarking Environment for Autonomous Agents（<a href="https://arxiv.org/abs/2405.14573">2405.14573</a>）</td><td>2024 · ICLR（OpenAlex source）</td><td><b>525</b>（≥500 直接满足）</td><td><b>116 个程序化任务 / 20 个真实 app</b>；任务参数化可无限生成，每题自带 <b>初始化 / 成功检查 / 清理</b>；最佳基线 <b>30.6%</b>，任务扰动显著改分</td><td>harness（主）· zhulong · designflow</td></tr>
+  <tr><td>317</td><td>EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty（<a href="https://arxiv.org/abs/2401.15077">2401.15077</a>）</td><td>2024 · 预印本（会议信息本轮未核）</td><td><b>499</b>（&lt;500 ⇒ 按「方法论常青」收）</td><td>在<b>第二顶层特征</b>做自回归 + 用前移一步的 token 序列消解不确定性；LLaMA2-Chat 70B 上 <b>2.7×–3.5× 延迟加速、吞吐翻倍</b>且保持生成分布</td><td>zhulong（主）· harness · pretrain</td></tr>
+</table>
+
+<p style="font-size:14px;"><b>⚠️ 两处 ID 误记在写入前拦截</b>：① 候选池把 Grounding DINO 记作 <code>2303.19588</code>，<code>id_list</code> 实测该 ID <b>不返回本文</b> ⇒ 真 ID <code>2303.05499</code>；② 候选池把「Muon is Scalable」记作 <code>2502.05907</code>，实测是 <b>EvolvingAgent</b>（embodied / Minecraft）⇒ 该 ID 不收（Muon 可引版本 <code>2502.16982</code> 已在 #181）。另 <b>Mind2Web / Dolma / MiniCPM</b> 经查均已在表内 ⇒ 剔除。<b>数字一律取自 arXiv 官方摘要，未做 PDF 逐页复核。</b></p>
+
+<p style="font-size:14px;"><b>作者关系网 +2 → 294</b>（X 已核验 <b>111</b>）：<b>#293 Shilong Liu（刘世隆）</b>（Princeton AI Lab 博士后，2027 秋入职 Columbia EE 助理教授，Grounding DINO 一作）—— 邮箱 <b>A 级</b> <code>sl6222@columbia.edu</code>（本人主页 <code>lsl.zone</code> <code>200</code> / 26,074 B，页内 <code>mailto:</code> 明文，页面写明 Princeton 邮箱已停用）；主页外链 <code>twitter.com/atasteoff</code>，但 <code>x.com/atasteoff</code> 经代理 <b><code>404</code></b> ⇒ X 记「未找到」。<b>#294 Hongyang Zhang</b>（Waterloo CS 助理教授 / Vector Institute，EAGLE 末位）—— 邮箱 <b>A 级</b> <code>hongyang.zhang@uwaterloo.ca</code>（官方人员页 <code>200</code> / 95,418 B）；X <b>@hongyangzh</b> 双源核验（GitHub 页链接 + X 页 <code>og:title</code>，<code>200</code> / 197,556 B）。<b>follow 需登录态 ⇒ 只进「待 follow 清单」，🚫 不假装已 follow。</b></p>
+
+<p style="font-size:14px;"><b>作者请教信 · 本时窗 0 封（累计 128）</b>：当日已达 <b>12/12</b> 硬上限 ⇒ <b>不跨日借额度</b>，本窗只备稿 2 封（中文 <b>198 / 209</b> 汉字；两封开头句与问句句式零共用；落款严格两行）：① <code>drafts/2303.05499.md</code> → Shilong Liu，三问指向特征增强器三档融合在单短语类别名下的敏感度、<code>num_queries</code> 与文本 token 数联动、子句级掩码在负样本上是否压掉小目标；② <code>drafts/2401.15077.md</code> → Hongyang Zhang，三问指向特征层不确定性在高温 / 长输出下的变化、test-time simulation 对窄域重训量的要求、2.7–3.5× 是否 <code>batch=1</code> 口径。计划 <b>2026-11-22 00:00</b> 时窗发送（发送前当场复核地址页）。</p>
+
+<p style="font-size:14px;"><b>回信率 0 / 128</b>（<code>replies/</code> 仍只有 <code>README.md</code>）；<b>0 封到期</b>（最早 <b>2026-11-25</b>，#1–#7）。⇒ 仍按<b>待诊断信号</b>处理，<b>不记为成功</b>。两项仍待运维：发件显示名仍为 <code>AI+EDA 招聘 · 自动</code>；通道<b>只发不收</b>（无 IMAP/POP3）。</p>
+
+<p style="font-size:14px;"><b>voice_ready · 本时窗 0 新增</b>（今日已 2 条：Karpathy / Sutton，达「每期 ≤2 条」上限）。本轮只做 X 核验：代理 <code>127.0.0.1:7897</code> 下 <code>x.com</code> <b><code>200</code></b>，新核验 <b>@hongyangzh</b>（<code>og:title</code> = <code>Hongyang Zhang (@hongyangzh) on X</code>，<code>200</code> / 197,556 B）；<b>@atasteoff</b> <code>404</code>（<code>User Profile Not Found</code>）⇒ 不记。</p>
+
+<details class="news-ready">
+<summary>📰 news_ready · 本期 0 条（理由）</summary>
+<ul>
+  <li>本轮 3 条均为<b>方法 / 基准类</b>（开放词表检测、动态 agent 基准、投机解码），没有发布 / 开源 / 首次突破类<b>事件点</b> ⇒ 四问第②问不过。</li>
+  <li>A 轨本窗 0 新收（今日额度已满），无新的事件型素材。</li>
+  <li>今日 voice_ready 已达 2 条上限，不重复计 news_ready。</li>
+</ul>
+</details>
+
+<h3 class="sec">15:00 时窗 · 对各线的可执行建议（6 线）</h3>
+<ul class="tight">
+  <li><b>pretrain</b>：把 EAGLE 的 draft 头当<b>独立小模型</b>做一次域内预注册——2B 主模型 + RTL/Verilog 语料，A 臂直接复用公开 draft 头、B 臂用 200M–500M 域内语料续训 draft 头；判据：接受长度 ≥2.5 <b>且</b> 同一 prompt 下 top-1 一致率 ≥99% 才进解码配方。</li>
+  <li><b>vision</b>：Grounding DINO 接入取框器前先做<b>提示形态消融</b>（单类别名 / 带属性短语 / 多类别并列），每档报召回与误检；判据：三档召回差 &gt;10 pp 时，造题提示统一固定模板，避免提示写法污染题目难度统计。</li>
+  <li><b>harness</b>：照 AndroidWorld 三件套改评测表——每题必须提供 <code>init / check / teardown</code> 三段可执行脚本；判据：缺任一段记「不可判」、不计分；另报任务扰动下的分数区间，固定题面单点分不得当结论。</li>
+  <li><b>data</b>：负样本（提示提到但图中不存在的类别）单列一档指标，与正样本分开统计；判据：负样本误检率 &gt;15% 时先修负样本构造，不调模型。</li>
+  <li><b>zhulong</b>：成本表新增「是否开投机解码」列，并把「延迟加速」与「吞吐倍数」分成两行；判据：两行填齐才允许写「单位请求成本」，单报一个数视为口径不全。</li>
+  <li><b>designflow</b>：造题流水线加「环境可重置」自检——每题连跑两遍，第二遍必须从同一初始状态出发；判据：两遍初始状态哈希不一致的题目直接下线重造。</li>
+</ul>
+
+<h3 class="sec">附录 · 15:00 时窗检索与核验</h3>
+<table class="plain">
+  <tr><th>项</th><th>结果</th></tr>
+  <tr><td>列表 <code>cat:cs.CL&amp;max_results=40</code></td><td><code>http://</code> 首请求 <b><code>301</code></b>（0 B）⇒ <code>https://</code> + <code>-L</code> <code>200</code> / <b>109,971 B / 40 entry</b> / atom；<code>published</code> 上界 <code>2026-11-19T18:57:25Z</code>（连续第 10 窗未前进）</td></tr>
+  <tr><td><code>id_list=2303.05499,2405.14573,2502.05907</code></td><td><code>200</code> + atom（<b>9,211 B / 3 entry</b>）⇒ 发现 <code>2502.05907</code> = <b>EvolvingAgent</b>（非 Muon）⇒ 剔除</td></tr>
+  <tr><td><code>id_list=2401.15077</code></td><td><code>200</code> + atom（<b>2,714 B / 1 entry</b>）</td></tr>
+  <tr><td>abs 页复查</td><td>3/3 <code>200</code>（44,302 / 44,789 / 42,120 B）</td></tr>
+  <tr><td>OpenAlex</td><td>3/3 <code>200</code>：<b>2,415</b>（Grounding DINO，preprint 2023）/ <b>525</b>（AndroidWorld，ICLR）/ <b>499</b>（EAGLE，preprint 2024）；查询日 2026-11-21</td></tr>
+  <tr><td>先查重</td><td>三 ID 在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> <b>0 命中</b>；Mind2Web <code>2306.06070</code> / Dolma <code>2402.00159</code> / MiniCPM <code>2404.06395</code> 已在表内 ⇒ 剔除；误记 ID <code>2303.19588</code> 写入前拦截</td></tr>
+  <tr><td>作者主页</td><td><code>lsl.zone</code> <code>200</code> / 26,074 B（<code>mailto:</code> 明文）· <code>uwaterloo.ca/computer-science/about/people/h935zhan</code> <code>200</code> / 95,418 B（<code>mailto:</code> 明文）· <code>hongyanz.github.io</code> <code>200</code> / 27,193 B（无邮箱）</td></tr>
+  <tr><td>X（代理 7897）</td><td><code>x.com</code> <b><code>200</code></b>；<code>@hongyangzh</code> <code>200</code> / 197,556 B（<code>og:title</code> 核验）；<code>@atasteoff</code> <b><code>404</code></b> ⇒ 不记</td></tr>
+  <tr><td>未做</td><td>PDF 逐页复核（数字取自 arXiv 官方摘要）；X 全文抓取（仅核 handle）；回信通道仍只发不收</td></tr>
+</table>
+
 <h3 class="sec">晚报变更说明（AM → PM）</h3>
-<p style="font-size:14px;"><b>2026-11-21 00:3x 补轮（相对 00:00 早报）</b>：① A 轨由 <b>3/5 → 5/5</b>，新增 <b>#4 VR-SparseQuant</b>（FP4 + 2:4 稀疏的激活量化，6.85→5.57 困惑度）与 <b>#5 G-MTP</b>（单头多 token 预测草稿器，服务端 3.1× / 手机 GPU 2.2×）；<b>为什么补这两篇</b>：早报三篇集中在后训练与注意力，缺「部署侧单位成本」这一块，而这两篇正好覆盖量化与解码延迟两条成本轴，且都有可复核的数字。② B 轨 <b>+3 → +5（299 → 301）</b>：补 Megatron-LM 2104.04473（1,754，SC 2021）与 EVA 2211.07636（1,182，CVPR 2023），补的是「并行配置口径」与「视觉塔预训练目标」两块空白；原计划的 DINO / μP 系不稳定性和 Megatron-LM 1909 经 <code>id_list</code> 核对<b>均已在表内</b>，故改收上述两篇（先查重后写入）。③ 作者网 <b>+4 → +6（282）</b>，新增 #281 Deepak Narayanan（B 级页内明文邮箱）与 #282 Samir Khaki（四个候选主页 404/403 ⇒ 未找到，不猜）。④ 6 线建议新增 5 条（pretrain 并行配置表 / vision MAE-vs-EVA 两臂 / harness 延迟分解 / data 公开数据分层 / zhulong 草稿器开关）。⑤ 信 0 封：本时窗额度 3/3 已于 00:04 用满，不跨窗借额度。<br><b>2026-11-21 09:00 时窗（相对 06:00）</b>：A 轨仍 0 新收（今日 5/5 已满，不凑第 6 篇）；B 轨 <b>+4 → 311</b>（LLaVA-OneVision 3,423 / VideoMAE 2,690 / DINO-X 173 / RoPE 外推 107）；作者网 <b>+3 → 290</b>（王利民 / 邱锡鹏 A 级，刘子纬无邮箱但 X 已核验）；信 <b>2 封</b>（累计 127，今日 11/12，主动少发一封）；voice_ready <b>新增 0</b>（今日已 2 条，达上限）；6 线建议 6 条。<br><b>2026-11-21 12:00 时窗（相对 09:00）</b>：A 轨仍 0 新收（今日 5/5 已满，不凑第 6 篇）；B 轨 <b>+3 → 314</b>（Grounding DINO 1.5 237 / CodeAct 470 / Native Sparse Attention 674），写入前拦截一次 ID 误记（<code>2209.14375</code> 实为无关论文，真 ID <code>2309.14322</code> 已在表内 ⇒ 整条剔除并换稿）；作者网 <b>+2 → 292</b>（X 已核验 110，两人均无公开明文邮箱 ⇒ 不发信）；信 <b>1 封 → 128</b>（今日 12/12 达每日硬上限，本封为今日最后一封）；voice_ready 0 新增（达上限）；6 线建议 6 条。</p>
+<p style="font-size:14px;"><b>2026-11-21 00:3x 补轮（相对 00:00 早报）</b>：① A 轨由 <b>3/5 → 5/5</b>，新增 <b>#4 VR-SparseQuant</b>（FP4 + 2:4 稀疏的激活量化，6.85→5.57 困惑度）与 <b>#5 G-MTP</b>（单头多 token 预测草稿器，服务端 3.1× / 手机 GPU 2.2×）；<b>为什么补这两篇</b>：早报三篇集中在后训练与注意力，缺「部署侧单位成本」这一块，而这两篇正好覆盖量化与解码延迟两条成本轴，且都有可复核的数字。② B 轨 <b>+3 → +5（299 → 301）</b>：补 Megatron-LM 2104.04473（1,754，SC 2021）与 EVA 2211.07636（1,182，CVPR 2023），补的是「并行配置口径」与「视觉塔预训练目标」两块空白；原计划的 DINO / μP 系不稳定性和 Megatron-LM 1909 经 <code>id_list</code> 核对<b>均已在表内</b>，故改收上述两篇（先查重后写入）。③ 作者网 <b>+4 → +6（282）</b>，新增 #281 Deepak Narayanan（B 级页内明文邮箱）与 #282 Samir Khaki（四个候选主页 404/403 ⇒ 未找到，不猜）。④ 6 线建议新增 5 条（pretrain 并行配置表 / vision MAE-vs-EVA 两臂 / harness 延迟分解 / data 公开数据分层 / zhulong 草稿器开关）。⑤ 信 0 封：本时窗额度 3/3 已于 00:04 用满，不跨窗借额度。<br><b>2026-11-21 09:00 时窗（相对 06:00）</b>：A 轨仍 0 新收（今日 5/5 已满，不凑第 6 篇）；B 轨 <b>+4 → 311</b>（LLaVA-OneVision 3,423 / VideoMAE 2,690 / DINO-X 173 / RoPE 外推 107）；作者网 <b>+3 → 290</b>（王利民 / 邱锡鹏 A 级，刘子纬无邮箱但 X 已核验）；信 <b>2 封</b>（累计 127，今日 11/12，主动少发一封）；voice_ready <b>新增 0</b>（今日已 2 条，达上限）；6 线建议 6 条。<br><b>2026-11-21 12:00 时窗（相对 09:00）</b>：A 轨仍 0 新收（今日 5/5 已满，不凑第 6 篇）；B 轨 <b>+3 → 314</b>（Grounding DINO 1.5 237 / CodeAct 470 / Native Sparse Attention 674），写入前拦截一次 ID 误记（<code>2209.14375</code> 实为无关论文，真 ID <code>2309.14322</code> 已在表内 ⇒ 整条剔除并换稿）；作者网 <b>+2 → 292</b>（X 已核验 110，两人均无公开明文邮箱 ⇒ 不发信）；信 <b>1 封 → 128</b>（今日 12/12 达每日硬上限，本封为今日最后一封）；voice_ready 0 新增（达上限）；6 线建议 6 条。<br><b>2026-11-21 15:00 时窗（相对 12:00）</b>：A 轨仍 0 新收（今日 5/5 已满，不凑第 6 篇）；B 轨 <b>+3 → 317</b>（Grounding DINO <code>2303.05499</code> 2,415 / AndroidWorld <code>2405.14573</code> 525 / EAGLE <code>2401.15077</code> 499，按「方法论常青」收），写入前拦截两处 ID 误记（<code>2303.19588</code> ⇒ 真 ID <code>2303.05499</code>；<code>2502.05907</code> 实为 EvolvingAgent ⇒ 不收）；作者网 <b>+2 → 294</b>（Shilong Liu / Hongyang Zhang 均 A 级邮箱，X 已核验 111）；信 <b>0 封</b>（当日 12/12 已满，不跨日借额度），备 2 封中文草稿待 11-22 00:00 发；voice_ready 0 新增（达上限）；6 线建议 6 条。</p>
 
 <footer>
-  research 线 · 论文观察日报 · 2026-11-21 00:00 / 00:3x / 03:00 / 06:00 时窗 ｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
+  research 线 · 论文观察日报 · 2026-11-21 00:00 / 00:3x / 03:00 / 06:00 / 09:00 / 12:00 / 15:00 时窗 ｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
 </footer>
 </div>
 </body>
