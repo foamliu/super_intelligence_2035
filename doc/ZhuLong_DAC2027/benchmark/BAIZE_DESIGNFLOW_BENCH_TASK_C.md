@@ -1,5 +1,23 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> ## 🔴 2026-11-21 17:0x 用户令 · **全部 4 shard：mc 阈值统一降到 5** · 最高优先
+
+> **用户原话**：「4个shard mc都降为5吧，保持一致」
+
+**配置已改好，直接生效**：`designflow/summary_stats.json` → `shard_mc = {"A":5,"B":5,"C":5,"D":5}`（`target_mc` 仍 10，全局分母口径不变）。`trace_ledger.py` L337-340 优先读 `shard_mc[<shard>]`，故 `--shard 
+X
+` 自动按 mc≥5 选料，**你无需改代码、无需改配置**。
+
+**你要做的**：① 复算 `python3 designflow/trace_ledger.py --shard <你的shard> mc-matrix --src designflow/summary_1121.tsv --thresholds 5,10,15,20,30`，把 **mc5 / mc10 / touched / fresh** 写进 MEMORY；② **用 mc≥5 池选料造题**（§6 流程）；③ 每轮心跳报三数：**mc≥5 pool/touched/fresh · 本轮 peek 的本域 vs 跨域比例 · 本轮产出 case 数**。
+
+**质量闸门一条不放松**（mc 降低 ≠ 标准降低）：k≥8、3 neg 全 FAIL、§4.9 三假 FAIL、hidden B、A 档自包含、真实 trace 溯源（`metadata.trace_source`）。🚫 不为凑数造 weak case；🚫 不改题/图/`check.py`、不动别 shard 文件、不 `git add -A`。
+
+**跨域归属先判**（防串台）：本域 keyword 不主导的候选记一行交对应 shard，🚫 不自己造别域的题。
+
+**止损**：若 mc≥5 连续 3 轮仍 0 case（且每轮真的 peek 过 ≥10 个本域 fresh），在 MEMORY 写「mc≥5 扩池实测无效 + 数据依据」并转做不依赖新候选的产出（§4.9 anti-hardcode 自查 / `test_rationale` 补断言清单 / ledger 治理）。
+
+---
+
 > ## 🎯 任务初衷（最高优先级 · 一切规则与之冲突时以本段为准）
 >
 > **基于真实 trace 创建评测用例，评价 agent 解决用户真实任务并交付结果的能力。**
@@ -13,296 +31,15 @@
 > **难度分布是观察对象，不是生产指标。** L1/L2/L3 只用于事后统计当前题库覆盖了什么，**不得用于限制新建 case**。**通过率同样是观察值**——由用户任务的真实难度与 agent 真实能力共同决定，如实测量即可，不为凑数字而挑题、改题、加难或降难。
 
 
-> ## 🔍 2026-11-15 用户令 · 用新标准重审「已造的题」与「候选池」· 最高优先 · 全部 4 shard
+> ## 🔍 2026-11-15 用户令 · 用新标准重审「已造的题」与「候选池」· **C 已收口**
 
 > **用户原话**：「安排4线重新审视自己已经造的题和候选池，如果跟任务初衷有违背可以重做」
 
-**为什么现在要重审**
+**✅ C 收口**：`intent_audit_C.tsv` **580/580 全 keep**（off_intent/over_constrained/downgraded 均 0）；`pool_reaudit_C.tsv` 可造 6 → **380**（+374 误杀复活，§二 C 域增益最大）。
 
-任务初衷已置顶（见本文件开头），但**你现有的题和候选池，是在旧规则下筛出来的**——旧规则里有 `L1≤30%/L2≥50%/L3≥20%` 的难度配额、有"只做 L2/L3"的准入限制、有"analysis-only 判为 weak"的筛子、还有"通过率必须落 20–30%"的调难度要求。**这些规则今天全部作废。**因此旧题里可能混进了两类问题：
+**判据仍有效（造题时对照）**：难度配额、「只做 L2/L3」、「analysis-only 判 weak」**全部作废**；`analysis-Q&A`/`doc-search`/`debug-Q&A`/`env-config`/`flow-driving` **都是合法真实意图**；唯一排除标准 = ①无真实 trace ②`check()` 没牙。重做 ≠ 删了重来（新增 `-v2` 并说明改了什么）。
 
-- **A 类（该删/该重做）**：为了满足配额或通过率区间而**人为加难、改题、硬凑工具链路**的题——它们不是用户真实想干的事。
-- **B 类（被误杀，该复活）**：当年因为"归为 analysis / doc-search / Q&A / env-config"被判 weak 而**没造的候选**——按新标准这些都是合法任务。
-
-**一、重审「已造的题」（本 shard 全部 jsonl，C 现有 358 条）**
-
-逐题过一遍，用这三个问题判定：
-
-1. **这条题问的，是 trace 里用户真实想干的事吗？**
-   - 是 → 保留
-   - 否（为了凑 L2/L3 配额硬加的步骤、为过题而人为改造的任务、把用户没要求的东西塞进判分） → 标 **`off_intent`**，进重做队列
-2. **如果 `check()` 判分要求的东西，超出了用户原始意图**（例如用户只要"看到结果"，判分却要求特定文件结构/特定实现路径） → 标 **`over_constrained`**，把判分收敛回用户真实交付物
-3. **有没有因为旧配额规则，把用户真实任务"降级/裁剪"后才入库的？** → 标 **`downgraded`**，考虑恢复原形态
-
-**产出**：`designflow/intent_audit_C.tsv`，列固定：
-```
-case_id | user_intent_from_trace | 判定(keep/off_intent/over_constrained/downgraded) | 理由 | 处置(保留/重做/下线)
-```
-并在 MEMORY 写一行：`🔍 意图审计: N 题, keep=x / off_intent=y / over_constrained=z / downgraded=w`
-
-**二、重审「候选池」**
-
-旧筛子把大量真实用户意图判成了"不可造"。逐项重判：
-
-- **旧判为 weak / analysis-only / 不可造的候选**：`analysis-Q&A`、`doc-search`、`debug-Q&A`、`env-config`、`flow-driving`、`setup 类`、`retrieval 类`、`explain 类` —— **按任务初衷，这些都是真实用户意图，全部恢复为可造**。
-- 唯一保留的排除标准只有两条：
-  1. **没有真实 trace**（无 `trace_source` 可溯源）→ 不可造
-  2. **写不出能区分真假交付的 `check()`**（判分没有"牙"）→ 不可造
-- **特别提醒 C（physical_verify）**：你的 `C_depth_demand_audit.tsv` / `C_keyword_artifact_audit.tsv` 里"depth demand / artifact"这类判据，若曾把浅层但真实的用户任务判低，请一并复核；physical_verify 里"看一眼确认对不对"也是真实用户任务。
-
-**产出**：`designflow/pool_reaudit_C.tsv`，列：
-```
-session | user | host | mc | domain | 旧判定 | 新判定(可造/不可造) | 拟造任务形态
-```
-并在 MEMORY 写：`🔍 候选重审: 旧可造=x → 新可造=y（新增 z 条被旧规则误杀）`
-
-**三、重做的方式（重要）**
-
-- **重做不是删了重来**：保留原 case 及其 `check()`（作历史对照），新建修正版（case_id 加 `-v2` 后缀或独立新 id），并在 MEMORY 说明「v2 相对 v1 改了什么、为什么」。
-- 🚫 **不删旧 case、不删 jsonl 行**——旧题是"旧规则下的产物"的证据，留着才能说明口径变迁。
-- ✅ 允许**下线**：标 `retired` + 理由，从通过率分母中剔除（但 jsonl 行保留）。
-- **工作量提示**：全审不是一轮能干完的。**分批做**：每轮审 N 条（自己定），把进度写进 MEMORY（`审计进度 x/N`），审完再回到正常造题。
-
-**四、顺序建议**
-
-1. 先审**最近 50 条**（最近的最可能带旧配额痕迹）
-2. 再审 `rewrite_queue.tsv` 里挂着的那批
-3. 最后扫历史存量
-4. **候选池重审优先于继续造题**
-
-**五、纪律**
-
-- 🚫 不改别人 shard 的 jsonl / MEMORY
-- 🚫 不删数据（重做 = 新增版本 + 标状态）
-- ✅ 审计结论要能逐题追溯到 trace 原文（`user` / `session_file` / 用户原话）
-
-
-> 🆕 **用户令 · WAVEVIEW 协作 · 2026-11-14（vision ↔ designflow 协作 · 空闲时认领）**
->
-> **用户原话**：「请你帮助 vision 完成跟 designflow 的工作协调（#3 / #4）」
->
-> **要你做什么**：vision 需要 designflow 帮忙跑 waveview 用例的**真实基线**，才能度量多模态增益。
-> 详细交接 → **`benchmark/designflow/WAVEVIEW_COLLAB.md`**（含输入清单、两步任务、交付落点）。
->
-> **一句话**：把「原意图需看图」的 11 题（α4+β7，清单在 `doc/BaiZe-ISEDA2027/run/reports/waveview_need_image_handoff.md`）**恢复成需要看图的原始形态**并跑出基线通过率；无多模态能力者 fail 是正确结果，**不许降级成文本替身**。
->
-> **认领规则**：任一**空闲** shard 在 `WAVEVIEW_COLLAB.md` 的「认领记录」写一行即可开始；**同一任务只由一个 shard 做**；本 shard 若有 case 可造，**造题优先**，协作让给空闲 shard。
->
-> **完成**：在 `WAVEVIEW_COLLAB.md` 的「交付记录」写一行 + 本线 MEMORY 记一行。
->
-> ---
->
-> 💬 **2026-11-11 用户令（第 2 版）：讨论区 `benchmark/designflow/discuss/`**
->
-> 用户原话：「各线designflow在没有case可做时，阅读论文，在这个文件中阅读他人的看法，发表自己的意见。」
->
-> #### 触发（配额制 · 取代第 1 版「0-case 才进」）
-> 第 1 版写「本轮 0 case 才进 + 有 case 则造题优先」⇒ **零发言**（0-case 是瞬时状态，且没配额跳过零成本）。
->
-> | 何时必须发言 | 说明 |
-> |:--|:--|
-> | **每 4 个造题轮 ⇒ 1 次** | 看 `discuss/C.md` 最近发言轮次，与本轮相差 ≥4 即欠一条 |
-> | **`board.md` 有 OPEN 议题点 `@C`** | 当轮必须表态，不受配额限制 |
->
-> 🚫 不许以「本轮有 case」跳过 —— 发言仅 15–20 分钟，不占造题时间。
-> **豁免**：BLOCKED/事故轮；或无 OPEN 议题且未欠配额。连续两轮欠配额须在 MEMORY 写原因。
->
-> #### 4 步（15–20 min）
-> ① 读：`board.md` OPEN 议题 → 其他 3 shard 的 `.md`（尤其 `回应 @C`）→ `rounds/` → 论文 section
-> ② 想：用 **physical_verify / layout_* / pg_layout** 域视角；**引你造过的 case** 作依据最有价值
-> ③ 写：append 到 `discuss/C.md`（格式照 `discuss/README.md §3`）
-> ④ 提交：`git add benchmark/designflow/discuss/C.md`
->
-> #### 最低有效标准（达不到 = 没发言，下轮重写）
-> 🚫「我同意」「+1」不算；✅ 必须表态明确（同意/反对/补充）+ 本域依据（case id / 实测数字 / `sections/X.tex`+行号）。
->
-> #### 边界
-> 🚫 禁改 `README.md` / `board.md` / 其他 shard 的 `.md`；🚫 `git add -A`
-> 召集人 = **shard A**（board 只由 A 写；A 也要发言）。讨论产出是**建议**不是结论。论文目录只读。
-
-
-
-> ### ⚠️ 同步纪律（共享工作副本 · 2026-11-11 补 · 源自两次真实事故）
->
-> 4 个 shard + 其他线**共用一个 git 工作区**。文件系统不会写坏文件，**但 git 合并会丢内容**：
-> - **事故 1（2026-11-02 本仓 shard C）**：`rebase clobbered rounds 3-6` —— 台账 4 轮记录被 rebase 覆盖（commit `5883d4d43`）。
-> - **事故 2（2026-10-07 兄弟仓）**：历史 autostash 一 `pop` 就冲突 ⇒ 弄脏共享工作区 ⇒ **阻塞所有线 pull，停摆 5 小时**。
->
-> **每轮收尾「同步三连」，缺一不可**：
-> ```bash
-> git status --porcelain                                 # ① 干净（只应有你本轮的文件）
-> git stash list                                         # ② 空
-> git rev-list --left-right --count origin/main...HEAD   # ③ "0 0"
-> ```
-> 1. 🚫 不 clean / reset / stash 别人的改动（陌生未提交文件是别线在途）。
-> 2. 🚫 禁止 `git stash pop` 去"恢复"残留 —— 会阻塞全部线。
-> 3. ✅ 冲突解不掉就**停手报 blocker**，🚫 别靠 rebase 硬推（丢的是别人的数据）。
->
-
-
-
-> 🔴 **2026-11-11 用户令（最高优先 · 覆盖所有旧 mc / 候选池口径令）：**
-> ### ① 候选池快照 11/05 → **11/09**；② mc 阈值 **全线 30 → 10**（mc≥10，坚决执行）
->
-> **用户原话**：「1.候选池替换: 11/5 -> 11/9；2.mc阈值降低到10(mc>=10)」「把mc>=10 这条规则坚决执行下去」。
->
-> **换池由 shard A 独家执行**（A1–A6 见 A 任务书顶部）。**你线不要自己换池**（4 个 agent 抢同一个 `summary_stats.json` 会互相覆盖）。判据：`summary_stats.json.mc_matrix.src` 变成 `designflow/summary_1109.tsv` 即视为已换池。
->
-> **本 shard 每轮必须遵守（mc≥10 强制执行条款）：**
-> 1. **选料阈值固定 mc≥10**：`awk '$5+0>=10'`。**禁止**出现 `>=30` / `>=15` / `min-mc 30` 作为选料阈值。
-> 2. **候选清单只用 `candidates_mc10.tsv`**，`candidates_mc30.tsv` **冻结停用**；按本 shard 过滤重出：`python3 designflow/trace_ledger.py --shard C mc-matrix --src <mc_matrix.src> --emit-candidates --emit-candidates-mc 10`。
-> 3. **`refresh` 时 `target_mc` 必须写 10、`shard_mc` 必须 `{"A":10,"B":10,"C":10,"D":10}`**，禁止写回 15/30。
-> 4. **禁止在无证据时写「池确证枯竭 / 池耗尽 / 0-case 说明」**：必须先贴 `python3 designflow/trace_ledger.py --shard C mc-matrix --src <mc_matrix.src>` 输出，且仅当 `mc10.fresh == 0` 才可下此结论。你线 r333/r380 等轮「mc≥30 池耗尽」「池确证枯竭」的结论只是 **mc≥30 口径**；mc≥10 下**尚未验证**，且你线是本次增益最大的线（见下表）。
-> 5. **覆盖率一律按 `target_mc=10` 报数**，并注明快照来源（`mc_matrix.src`）；不得再用 `mc30=2247` 当分母。
-> 6. 本条令**优先于**本任务书内一切旧的 mc 阈值描述（含历史用户令、背景说明、示例命令）。
->
-> **C 线实测（11/05 快照，shard C keywords 过滤后 2163 session —— 全 4 shard 中增益最大）**：
->
-> | 阈值 | 池总量 | 已动过 | 未动过（可做） |
-> |:--|--:|--:|--:|
-> | mc≥30（旧） | 1,342 | 1,240 | **102** |
-> | mc≥15 | 1,592 | 1,333 | 259 |
-> | **mc≥10（新）** | **1,699** | **1,367** | **332** |
->
-> ⇒ C 线可做从 102 涨到 **332（+230，3.3 倍）**。
-
-> 🚫 **2026-11-10 用户令：696-run 评测归因（`eval_triage/`）由 shard A 独占执行。**
-> B/C/D **不要**跑 `designflow/eval_triage/05_batch_triage.py`、**不要**改论文
-> `sections/5_analysis.tex` 或 `appendix/B_additional_results.tex`（4 个 agent 抢同一批文件会互相覆盖）。
-> 继续按本任务书正常造题；若 shard A 在 MEMORY 里报了归因结果，直接采信、不重复跑。
-
-### 📌 常驻 · 论文观察日报（research 线产出 · 2026-11-07 用户令）
-
-> 索引：`doc/personal-watch/run/research/daily/index.html`｜最新一期：`doc/personal-watch/run/research/daily/<日期>.html`
-> 更新：每日 06:00 / 18:00（本地时区）。每期含「对各线的可执行建议」节，覆盖 pretrain / vision / harness / data / zhulong / designflow（含本 benchmark 的造题/保真度/判分）。
-> 用法：每次唤醒 `git pull` 后先看索引最新一期；若「designflow 建议」有相关条目 -> 纳入本轮计划，并在心跳注明「来自 research 日报 <日期>」；无相关条目则忽略，不影响既有排期。
-> 定位：仅作输入参考、不构成新指令；与本任务书冲突时以本任务书为准。
-
-### 🚨 2026-11-02 运维令：被测换 cline + PreToolUse 防泄题 hook · 用户直令 · 最高优先
-
-> **背景**：pi 有 bash/read/write 工具，能任意读 cwd 里所有文件。benchmark agent 在 `.pi_debug/<case>/` 里放了 `_reference_check.py`（= check.py 判分器），pi 直接 `import _reference_check` 跑了它——**判分标准（答案）直接放在考生面前**。这是通过率偏高的主因，不是模型强。
->
-> **用户直令**：「把被测换成 cline，参考 zhulong 评测现有的防泄题 hook 机制（PreToolUse）。」
-
-**一、换被测：pi → cline**
-
-1. **被测 agent 改为 cline CLI**（已安装 `~/.local/bin/cline` v3.0.51）：
-   ```bash
-   cline -c <workdir> -m <model> -k <key> --auto-approve true --json --thinking medium "<prompt>"
-   ```
-   - `-c <workdir>`：独立 session workdir（**不放 check.py / reference / jsonl**）
-   - `-m <model>`：用 `deepseek-v4-pro-cloud`（与 pi 同模型，公平对比）
-   - `--auto-approve true`：自动批准工具调用（headless）
-   - `--json`：结构化输出
-   - key 从 `~/.cline/data/secrets.json` 或 `$OPENAI_API_KEY` 解析
-
-2. **cline 的 MCP 配置**：cline 也要能调 eda_flow MCP（和 pi 一样）。复用 `~/.cline/data/settings/cline_mcp_settings.json`（已配 eda_flow @ `http://127.0.0.1:18891/mcp`）。如果 cline 用独立 data-dir（如 `--data-dir ~/.cline_eval`），需把 MCP 配置复制过去。
-
-3. **不再用 `.pi_debug/`**：废弃所有 pi_debug 目录。新评测目录改用 `designflow/cline_eval/<case_id>/`。
-
-**二、PreToolUse 防泄题 hook（复用 EDA-Flow-Bench 现有机制）**
-
-1. **hook 脚本**：`EDA-Flow-Bench/scripts/cline_hooks/PreToolUse`（已存在，可直接用）。
-   - 作用：拦截 cline 的 `read_files`/`list_files`/`write`/`search_codebase`/`run_commands` 工具，只允许访问 workspace 内文件；MCP 工具（`mcp__eda_flow__*`）放行。
-   - `hook_scope.txt` 机制：同目录写 `hook_scope.txt`（本批次根路径），hook 只对 workspace 落在该路径内的会话启用限制，其余 cline 会话放行。
-
-2. **部署**：评测前把 hook 复制到 `~/.cline/hooks/PreToolUse`（cline 的全局 hook 搜索路径）：
-   ```bash
-   cp EDA-Flow-Bench/scripts/cline_hooks/PreToolUse ~/.cline/hooks/PreToolUse
-   chmod +x ~/.cline/hooks/PreToolUse
-   # 写 scope（本批次 workdir 根）
-   echo "<workdir_root>" > ~/.cline/hooks/hook_scope.txt
-   ```
-   评测结束后移除（或保留——scope 机制会让非评测会话放行）。
-
-3. **关键：workdir 里只放 prompt + assets（A 输入）+ task_brief**：
-   - ✅ 放：`prompt.txt`、`assets/`（case 的真实输入文件 A）、`task_brief.md`（≤3 行交付接口说明）
-   - 🚫 不放：`check.py`、`_reference_check.py`、`reference/`、`negative/`、`hidden/`、jsonl、test 字段
-   - cline 只产出 `outputs/submit.zip`，然后退出
-
-4. **判分在 cline 退出后独立跑**（不在 cline 的 cwd 里）：
-   ```bash
-   # cline 跑完，退出
-   # 独立进程判分：
-   cp <workdir>/outputs/submit.zip /tmp/judge_<case>/
-   cp reference/<case>/check.py /tmp/judge_<case>/
-   cd /tmp/judge_<case>/ && python3 -c "from check import check; print(check('submit.zip', '.'))"
-   ```
-   判分器（check.py）**绝不进 cline 的 workdir**。
-
-**三、pi_debug_status.jsonl → cline_eval_status.jsonl**
-
-1. 新建 `designflow/cline_eval_status.jsonl`（格式同 pi_debug_status.jsonl，追加 `harness:"cline"` 字段）
-2. pi_debug_status.jsonl 保留作历史（不删），但新评测只写 cline_eval_status.jsonl
-
-**四、执行**
-
-1. 先建一个 `designflow/cline_eval/run_one.sh` 脚本：部署 hook → 建 workdir（只放 prompt+assets+task_brief）→ 跑 cline → 独立判分 → 记 status
-2. 拿一条现有 PASS 的 case（如 Schematic-001）用 cline + hook 重跑，验证：
-   - hook 生效（cline 试图读 workdir 外文件被拦）
-   - cline 看不到 check.py
-   - 判分独立跑，结果真实
-3. 逐步把存量 case 用 cline 重跑一遍，得到真实通过率
-4. 收尾铁律提交
-
-**五、为什么换 cline**
-
-| 项 | pi | cline |
-|---|---|---|
-| shell 工具 | 有 bash/read/write/edit（任意访问） | 有 read/write/bash（但被 PreToolUse hook 拦截） |
-| 防泄题 hook | 无 | PreToolUse（EDA-Flow-Bench 现成） |
-| session 日志 | `~/.pi/agent/sessions/` | `~/.cline/data/sessions/`（结构化 JSONL） |
-| MCP 支持 | 有 eda_flow | 有 eda_flow（已配） |
-| headless | `--print --no-approve` | `--auto-approve true --json` |
-
-cline + PreToolUse hook = agent 只能看 workspace 内文件（prompt + assets），判分器在 workspace 外独立跑，**彻底消除泄题**。
-
-### 🚨 2026-10-31 21:5x 运维令：`test 思路` 必须是「k 条断言」（**硬闸门 + 打回重写**）· 用户直令 · 最高优先
-
-> **背景**：§4.6 昨天已要求 `k 条断言：①…`，但 10_31 日报 **30 条 case 里 0 条达标**（全文“断言”出现 0 次，全部仍是散文式，如「解 zip 校验 5 文件…」）。原因不是理解偏差，是**没有闸门**。本轮起改成硬闸门。
-
-**规则（每条 case、每一轮都必须过）**
-1. **写**：`metadata.test_rationale` 必须**以 `k 条断言：` 开头**，后接 ①②③…，**与 `check()` 中可独立失败的条件一一对应**，每条写「对象 + 判定」。🚫 散文 / 🚫 实现细节（`raise`、`zipfile`）/ 🚫 「校验交付件完整性」式废话。
-2. **对账（落 jsonl 之前）**：agent 必须**先把 `check.py` 的条件标签列出来**（a–n，或 `CONDITIONS = [("a","…"), …]` 表），数出 `k_check`；判据 **`k_rationale == k_check` 且 `k_check ≥ 8`**。
-3. **不过就滚回去改**：`k_rationale ≠ k_check` 或 `k_check < 8` ⇒ 该 case 标 **`incomplete`**：🚫 不许 `mark --status case`、🚫 不许追加进 jsonl、🚫 不计入通过率；写入 `designflow/rewrite_queue.tsv`，**下一轮第一件事就是修它**，修完才准开新 case。
-5. **存量 30 条**：按 §4.6 全部视为未完成；每轮从 `rewrite_queue.tsv` **修 1 条**，直到清零，心跳写 `断言清单 x/30`。
-6. **心跳新增一行**：`🧾 断言: k_rationale=k_check=n ✓/✗（今日 x/30 达标）`。
-
-> 📦 体积：本令约 1.5KB；TASK 现 17KB，远低于 40KB 红线。
-
-
-### 🚨 2026-10-31 21:3x 运维令：A/B 双档 casemaking（trace-faithful 试点 10 条）· 用户直令 · 最高优先
-
-> **用户原话**：「如果只把真实 trace 中用户的意图作为任务说明，不妄做修改，是否难度就可以提升、通过率下降？」→「好的试试看」
-> **判断（运维）**：当前通过率偏高，主因不是模型强，而是**合成的 `task_brief.md` 替模型把题读懂了**——交付形态、资产用途、验收点全写明，难度被稀释。本轮起引入 **A 档（trace-faithful）**。
-
-#### ① A 档（本轮试点 10 条，唯一硬交付）
-1. **任务说明 = 该轮用户原话逐字原文**：按红线 #2 **不脱敏、不改写、不补全**（仅 key/token/密码掩码）。🚫 不许把口语改写成规整需求。
-2. **选轮规则（关键）**：只取「**提出需求 / 表达目标**」的用户轮；🚫 **凡用户已指出根因或给出修复方案的轮，一律不得用作 A 档任务说明**（可另存为 hint，不进 prompt）。
-3. **接口固定 ≠ 改意图**：契约照旧 —— `mode:design_flow` + `entry_point=outputs/submit.zip` + `test=check(deliverable, workdir)` 双参；`task_brief.md` **只写「交付接口与文件位置」≤3 行，不写「要做什么」**。
-4. **金标准** = trace 末尾**用户实际接受的结果**（工具真实产物），人工复核一次；断言只对事实（数值容差 / 拓扑等价 / 产物确由工具生成），🚫 不对措辞、不许拿合成 brief 反推答案。
-5. **隐藏 B 照旧**（换输入 / 反转结构 / 多 seed），防硬编码与猜答案。
-6. **资产用该轮真实 attachments**（原文），不加说明性注解。
-
-#### ② B 档（synthesized）= 现有做法
-保留作 L1 补牙 / 教学 / 消融。**A、B 两档通过率分开报，🚫 混算**（这同时修掉「最近 20 条混算 L1+L2」的口径缺陷）。
-
-#### ③ 试点与判据
-- 先做 **10 条 A 档**，优先覆盖 **L2 真跑商业工具**的域（spice_sim / physical_verify / schematic_netlist / layout_*）。
-- 每条用同一口径跑 pi（`pi 1.4.0` / `deepseek-v4-pro-cloud` / `--thinking medium`），记录 pass/fail + **失败归因四类**：①交付形态/位置错 ②前提缺失（需澄清/需上一轮状态）③能力不足 ④判分歧义。
-- **判据**：A 档通过率 **≤10%**，且「①+④」类失败占比 **≤30%**（否则先修接口与判分，不许把格式失败当难度）。
-
-#### ④ 口径调整（覆盖 §0 的单一目标）
-- B 档：通过率目标 **20–30% 不变**；
-- A 档：**本轮不设目标、只报数**，试点后用实测定档；
-- 任何对外数字必须标档位（A / B），🚫 用 B 档数字代表真实难度。
-
-> 📦 体积：本令约 1.7KB，TASK 已超 40KB 红线（agent 只读）；运维下轮归档已闭合块。
-
-
-
-> **本文件由运维维护（agent 只读）**。运行时状态写 `MEMORY_DESIGNFLOW.md`、`EXPERIMENTS_DESIGNFLOW.md`、`daily-memories-designflow/`。
-> 旧版全文（即时令 VII/VIII/IX/X/XI/XII、运维增补 I–IV、收尾铁律、体积规程）已**原文归档** → `ARCHIVE_OPERATOR_DESIGNFLOW.md`「归档批次 48」。本版把上述指令**按主题融合**，不再按时间堆叠。
+> 📦 原文见 git 历史与 `ARCHIVE_OPERATOR_DESIGNFLOW_C.md`。
 
 ## 0. 目标（一句话）
 

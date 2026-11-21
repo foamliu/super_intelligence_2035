@@ -1,5 +1,26 @@
 # BAIZE_PRETRAIN_2B_TASK.md
 
+> ## 🔴 2026-11-21 17:0x 用户令 · **放行 autoqueue —— 270k / 272k 及后续万整数 ckpt 立即补评** · 覆盖「维护态保守 hold」
+
+> **用户原话**：「pretrain：放行 autoqueue」
+
+**背景**：2026-11-20 14:4x 用户令要求「训练已由运维拉起，只许监控，禁止重启/杀进程」，你据此在维护态下**保守 hold 了 eval**，导致 **270k（iter_0270000）与 272k（iter_0272000）两个万整数评测点积压未评**（L1 仍停在 260k=59.00%，26/27 完成）。
+
+**一、授权范围（仅限 eval，不涉训练）**
+- ✅ **放行 autoqueue**：对所有**已落盘的万整数 ckpt**（270k / 272k，以及此后每新落盘的 274k / 276k …）**立即启动 L1 评测并刷新报告**。
+- ✅ 按 TASK 既有口径执行（L146 条款）：新 ckpt 出现即评一次、刷新 `report_pretrain_llamacpp_scaling_zh.html`。
+- 🚫 **仍禁止**：重启/杀训练进程、改 configs、碰 `.bak` 包、动训练超参。**训练与 eval 是两条独立通道**——本令只开 eval。
+
+**二、执行要求**
+1. **一次把积压清掉**：先补评 270k、272k（若新 ckpt 已落盘一并纳入），跑完在 MEMORY 写出每个 ckpt 的 L1 分数。
+2. **监控负载**：eval 会占 CPU（`llama-server`）。跑前记录两机 load，跑后再记一次；若 step time 因此从 ~7.17s 明显上抬（>7.4s 持续）⇒ **立即暂停 eval 并记 `⚠️ 待运维处理`**（11-18 MegaMath CPU 争抢事故的教训）。
+3. **每次 eval 前后各测一次 step time**，把「有无 eval 负载」写进心跳，便于日后归因。
+4. **evidence 三件套**照旧：ckpt 路径 + eval JSON/日志路径 + 复现命令。数字取不到就写 `TODO(BLOCKED: 原因)`，🚫 不估不猜。
+
+**三、顺带**：`WAITING` 仍按实际状态维持 0；eval 串行跑时可在心跳记 `eval_running=<ckpt>`。
+
+---
+
 > ✅ **用户令 · 2026-11-18 — 训练 resume 后吞吐减半，排查原因（已完成）** — 根因=`.12` CPU 争抢(data 线 MegaMath 分词 8925% CPU)；运维直接干预重启自 iter_244000，CPU 释放后 step time 回落 ~7.0s；2026-11-19 06:36 训练健康 iter=252000。详见 `run/ARCHIVE_OPERATOR_PRETRAIN.md`「归档 2026-11-19」节。
 
 > ✅ **用户令 · 2026-11-17 — Stable 段 S1/S2 等分可行性报告（已完成）** — 报告已交付 `run/reports/report_s1s2_split_pretrain.md`(36.7KB)。
