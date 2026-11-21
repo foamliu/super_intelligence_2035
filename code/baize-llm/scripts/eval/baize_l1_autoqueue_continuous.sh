@@ -84,6 +84,10 @@ next_iter() {
     [ -d "$d" ] || continue
     it=$(basename "$d" | grep -oP 'iter_\K[0-9]+') || continue
     [ -n "$it" ] || continue
+    # Normalize to a decimal integer (strip any leading zeros). Without this,
+    # a value like "0274000" is treated as OCTAL by $(( )) and `printf %d`
+    # -> 96256, and "0278000" (contains digit 8) errors out as invalid octal.
+    it=$((10#$it))
     [ "$it" -ge "$MIN_ITER" ] 2>/dev/null || continue
     [ "$it" -le "$MAX_ITER" ] 2>/dev/null || continue
     has_results "$it" && continue
@@ -94,7 +98,7 @@ next_iter() {
 }
 
 pkill_server() {
-  local pid; pid=$(pgrep -f "llama-server.*--port $PORT" 2>/dev/null | head -1)
+  local pid; pid=$(pgrep -f "llama.cpp/build/bin/llama-server.*--port $PORT" 2>/dev/null | head -1)
   [ -n "$pid" ] && { kill "$pid" 2>/dev/null; sleep 3; kill -9 "$pid" 2>/dev/null; sleep 1; }
 }
 
@@ -113,7 +117,7 @@ start_server() {
 
 eval_one() {
   local iter="$1"
-  local ckpt="$CKPT_ROOT/iter_$(printf '%07d' "$iter")"
+  local ckpt="$CKPT_ROOT/iter_$(printf '%07d' "$((10#$iter))")"
   local hf="$HF_ROOT/hf_iter_${iter}"
   local gguf="$GGUF_ROOT/bz2b-${iter}-f16.gguf"
   local out="$RES_DIR/gguf_iter_${iter}_fixed_8set"
@@ -204,7 +208,11 @@ PYEOF2
 
 # ---- main loop ----
 while true; do
-  while pgrep -f 'llama-server' >/dev/null 2>&1; do
+  # NOTE: must NOT use `pgrep -f 'llama-server'` -- the cline agent process
+  # carries the task book (which mentions "llama-server") in its argv, causing
+  # a permanent false-positive that blocks the daemon during every agent wake.
+  # `pgrep -x llama-server` matches only the binary's comm (cline/bash excluded).
+  while pgrep -x llama-server >/dev/null 2>&1; do
     echo "$(ts) [serial] llama-server running, waiting 60s ..." | tee -a "$LOG"
     sleep 60
   done
