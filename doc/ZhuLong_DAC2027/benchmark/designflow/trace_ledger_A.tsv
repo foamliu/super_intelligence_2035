@@ -731,3 +731,4 @@ im5c1	lorikx	hfeg0plg15	266	verification	case	EDA-Eval-DesignFlow-SvTbVcdFsdbVer
 1795076330770_tlxxy.messages.json	ethanw	hfeg0plg92	163	digital	case	EDA-Eval-DesignFlow-CovEillenIllegalBinsAnalyzeQA-001	2026-11-21 23:38	r956 digital/verification cov-illegal-bins analysis Q&A, k=14/14 + 5neg FAIL (ledger debt fix r957)
 1789463774232_xiqxa.messages.json	junxu	hfeg0pkn005	431	eda_other	parked		2026-11-21 23:45	r957 REJECT non-design_flow: U#0=skill-design brainstorming (sim-view/waveview/verdi/fscript tool selection), not EDA work; synopsys=waveview not synthesis; deepread xiqxa_simview_skill_brainstorm_reject.md
 1794989154211_ciw0o.messages.json	rose3wang	hfeg0pkn003	165	digital	case	EDA-Eval-DesignFlow-VlnPinTableShellProduce-001	2026-11-22 01:04	
+1795141876266_sg8o8.messages.json	lorikx	hfeg0plg15	160		case	EDA-Eval-DesignFlow-SynReportCompareFlow-001	2026-11-22 01:50	
