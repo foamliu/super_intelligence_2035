@@ -1640,7 +1640,7 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794983239607_0sfqm.messages.json	wnyu	hfeg0pkn005	33	spice_sim	case	EDA-Eval-DesignFlow-VcoBiasAcStbGen-001	2026-11-20 21:27	
 1794830515784_y58ez	willz	hfeahpc501	191	spice_sim	case	EDA-Eval-DesignFlow-DeckModeSpfRewrite-001	2026-11-20 21:35	
 1795052486611_9d633	clarawu	hfeg0pkn005	177	spice_sim	case	EDA-Eval-DesignFlow-MeasAtValueFix-001	2026-11-20 22:07	
-1795152734593_40uq0	shanliny	hfeg0plg107	547	spice_sim	case	EDA-Eval-DesignFlow-MosMeasDeckFix-001	2026-11-20 22:32	
+1795152734593_40uq0	shanliny	hfeg0plg107	547	spice_sim	parked	EDA-Eval-DesignFlow-MosMeasDeckFix-001	2026-11-22 02:27	near-dup of r979 FinesimMosComparaFix-001(same user shanliny,same mos_compara tool,same 4 bugs lv9-probe/sweep-path/X-prefix/transistor_list)
 1795068208982_tmtun	chuanqiz	hfeg0pnd001	292	spice_sim	case	EDA-Eval-DesignFlow-RailPinTypeScanGen-001	2026-11-20 23:04	
 1795155396772_ovoby	hauserz	hfeg0plg17	232	spice_sim	case	EDA-Eval-DesignFlow-LdoDeckGen-001	2026-11-20 23:46	
 1795154631427_u6dpn	jeoteanl	hfeg0plg57	86	spice_sim	case	EDA-Eval-DesignFlow-LibMismatchFix-001	2026-11-21 00:38	r941: A档 trace-faithful LibMismatchFix-001 (k=12 a-l, ref 12/12, NEG 4/4 FAIL, 3-seed). FineSim IDDQ lib/netlist device-name mismatch diagnosis+fix, pure Python lib_mismatch_fix.py
@@ -1694,3 +1694,13 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794810067969_jsutr	willz	hfeahpc501	60	spice_sim	parked		2026-11-22 00:46	near-dup of r983 SpDeckModelStripMigrate-001 (willz sim_result_251202->261112 .sp edits, same lbrbv sessionId in policy). r985 triage.
 1795054813911_h5giy.messages.json	e0044131	hfeahpc502	34	spice_sim	case	EDA-Eval-DesignFlow-SramVecCovAnalyze-001	2026-11-22 01:33	
 1795080052098_faqqt	zjqiao	hfhds234	105	characterization	parked	dup-of-CrcAlertFixGen-001(y4kgh same zjqiao meas_crc_alert.sp task)	2026-11-22 02:15	
+1794970762357_52o67	dsgao	hfeg0pkn003	303	spice_sim	parked		2026-11-22 02:43	digital DC synthesis gate-mux opt (mxi2LVx2->mx2Lx1), not spice. r990 triage.
+1794883478615_3p4sb	yinyus	hfeg0plg58	483	spice_sim	parked		2026-11-22 02:43	pyAether nicap-block-create schematic cell gen, not spice. r990 triage.
+1789720543695_ijh76	junxu	hfeg0pkn005	1393	spice_sim	parked		2026-11-22 02:43	virtuoso-cli refactor (rename .sh->cli), tooling, not spice. r990 triage.
+1789868744753_m6imc	junxu	hfeg0pkn005	1354	spice_sim	parked		2026-11-22 02:43	virtuoso CLI DISPLAY/SSH bridge tooling, not spice. r990 triage.
+1794970943224_nvarn	dsgao	hfeg0pkn003	292	spice_sim	parked		2026-11-22 02:43	same as 52o67 DC synthesis continuation, not spice. r990 triage.
+1795055320451_u94w0	jcgu	hfeg0pin003	299	spice_sim	parked		2026-11-22 02:43	porting_flow GUI layout-migration skill, not spice. r990 triage.
+1795080487532_ad4g6	cyrusrao	hfeg0pkn003	266	spice_sim	parked		2026-11-22 02:43	pyAether schematic signal-driver tracing (blen logic chain), shard D. r990 triage.
+1795159188311_7v1g8	shanliny	hfeg0plg107	250	spice_sim	parked		2026-11-22 02:43	near-dup FinesimMosComparaFix-001 (shanliny mos_compara.py same path). r990 triage.
+1787104991644_x03ml	junxu	hfeg0pkn005	677	spice_sim	parked		2026-11-22 02:43	Cadence SKILL doc reading (sklangref HTML), not spice. r990 triage.
+1787196205133_yr9k2	junxu	hfeg0pkn005	779	spice_sim	parked		2026-11-22 02:43	virtuoso block-design skill (SKILL layout/ERC), not spice. r990 triage.
