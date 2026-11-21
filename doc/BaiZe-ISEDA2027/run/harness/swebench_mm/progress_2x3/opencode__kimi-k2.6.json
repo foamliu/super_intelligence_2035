@@ -2289,16 +2289,30 @@
   "bpmn-io__bpmn-js-1610": {
     "instance_id": "bpmn-io__bpmn-js-1610",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 508.1,
+    "rc": 0,
+    "model_patch_len": 1891,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "der karma-webpack) that prevents the full Karma suite from starting. The fix itself is minimal and follows the same pattern already used in the file for other “cancel/complete direct editing” events.\n",
+    "stderr_tail": "onfig/karma.unit.js\n@@ -27,9 +27,10 @@\n basePath,\n \n frameworks: [\n   'mocha',\n-  'sinon-chai'\n+  'sinon-chai',\n+  'webpack'\n ],\n \n files: [\n   'node_modules/promise-polyfill/dist/polyfill.js',\n\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1623": {
     "instance_id": "bpmn-io__bpmn-js-1623",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1082.8,
+    "rc": 0,
+    "model_patch_len": 2293,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "has dependency version mismatches that prevent the test suite from running, but the code passes linting and the logic is consistent with the existing event handling patterns in the drilldown feature.\n",
+    "stderr_tail": "eFactory.js:33:10), <anonymous>:20:22)\n\u001b[0m\n\u001b[0m$ \u001b[0mnpx eslint lib/features/drilldown/DrilldownOverlayBehavior.js test/spec/features/drilldown/DrilldownOverlaysBehaviorSpec.js 2>&1\n(no output)\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1636": {
     "instance_id": "bpmn-io__bpmn-js-1636",

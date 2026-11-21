@@ -2124,9 +2124,16 @@
   "bpmn-io__bpmn-js-1382": {
     "instance_id": "bpmn-io__bpmn-js-1382",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 985.3,
+    "rc": 0,
+    "model_patch_len": 4827,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "tation follows the established codebase patterns exactly and the test structure mirrors existing working tests in the same spec file.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1434": {
     "instance_id": "bpmn-io__bpmn-js-1434",
