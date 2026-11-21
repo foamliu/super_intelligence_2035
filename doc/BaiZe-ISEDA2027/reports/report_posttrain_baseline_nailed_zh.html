@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="UTF-8">
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
 <title>BaiZe Posttrain · 把 baseline 做扎实（baseline-nailed）</title>
 <style>
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:24px auto;padding:0 20px;color:#222;line-height:1.65}
@@ -20,47 +19,45 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:0.88em}
 .tag.go{background:#1e7d32}.tag.stop{background:#c0392b}.tag.pending{background:#b8860b}
 </style></head><body>
 <h1>BaiZe Stage(ii) Posttrain · 把 baseline 做扎实</h1>
-<p><span class="tag pending">Stage3 进行中</span> &nbsp; 报告日期：2026-11-21 &nbsp; 机器：s0pgpuap12（10.252.32.17）+ 隧道至 36.15 &nbsp; 触发令：2026-11-20 21:1x「第一步：把 baseline 做扎实」</p>
-<div class="first">
-<h3 style="margin-top:6px">首屏三句（现状承认，不许含糊）</h3>
-<ol>
-<li><b>现有 3.04% ± 0.83% 不是 base 模型</b>——它是 SFT v39 global_step_105。MiniCPM5-2B 原模型作为 cline 底模的 5-run 数字，至本轮之前<b>不存在</b>。本轮 A0 run1 首次产出该数字（单 run）。</li>
+<p><span class="tag pending">Stage3 进行中</span> &nbsp; 报告日期：2026-11-21（数据驱动自动生成）&nbsp; 机器：s0pgpuap12（10.252.32.17）&nbsp; 触发令：2026-11-20 21:1x「把 baseline 做扎实」</p>
+<div class="first"><h3 style="margin-top:6px">首屏三句（现状承认，不许含糊）</h3><ol>
+<li><b>现有 3.04% ± 0.83% 不是 base 模型</b>——它是 SFT v39 global_step_105。MiniCPM5-2B 原模型作为 cline 底模的 5-run 数字，至本轮之前<b>不存在</b>。本轮 A0 已产出 interim 数字（见 §一），5-run 收口中。</li>
 <li><b>6.84% ± 6.12% 是混合口径</b>：run1=18.99% 为 ws-only 锚点（分母仅 36 个 ws 段），run2–5 为 recovered 口径；剔除 run1 后 recovered 4-run = <b>3.80% ± 0.90</b>。主结论用后者，混合 5-run 并列报告。</li>
-<li><b>量尺本身有 bug</b>：format_cline_cli_output.py:166 原本只读 ws/pyAether_code、丢 no-ws 代码，使 run2/3/4 假跌到 0%。历史实测该偏差可达 <b>15.19pp</b>，比任何模型效应都大。A0/A1 走 .17 抽取器（读 code/&lt;task&gt;/pyAether_code no-ws 路径），不受此 bug 影响。</li>
-</ol>
-</div>
-<h2>一、本轮里程碑结论（一句话）</h2>
-<p><span class="kpi">A0 base run1 Pass@1 = 69/158 = 43.67%</span>（MiniCPM5-2B 原模型 · .17 口径 · 修复后抽取器 · 沙盒真执行验证 · <b>单 run，非 5-run 均值</b>）。</p>
-<p>打分<b>确定性</b>（judge_sd=0）+ 打分<b>可区分</b>（69 pass 真有 OK stdout，89 fail 真有 AssertionError/TypeError/AttributeError 等错误类型）⇒ 该 43.67% <b>不是评分 bug 造成的虚高</b>，是修复量尺后首次得到的真实 base 单点。它远高于旧 3.04%/6.84%，但旧数同时换了「模型(SFT vs base)+量尺(broken vs 修复)+harness(36.15 vs .17)」三件事，<b>不可直接比较</b>（见 §四口径隔离）。要得到干净 base 数字与 SFT 增量，须 A0/A1 同尺 5-run（Stage3 进行中）。</p>
-<div class="danger"><b>⚠ B1 身份警示（§B.1 风险已坐实）</b>：final_report.json 的 model_name 字段 = zhulong_deepseek_v32（系 config.yaml 的 active_model 陈旧标签被 calculate_results.py 写进报告头，<b>非实际服务模型</b>）。<b>权威身份</b>取自：① curl :8098/v1/models → id=minicpm5-2b root=/nas_data/app.e0031982/models/MiniCPM5-2B；② serve PID799523 --model /nas_data/.../MiniCPM5-2B --served-model-name minicpm5-2b；③ <b>逐会话</b>复核：158/158 session 均为 minicpm5-2b。⇒ <b>requested=served=ckpt=base 一致，B1 真身份 PASS</b>；陈旧标签属报告头 bug，须显式标注，不据此判 fail 停跑。本报告所有数字归因到 MiniCPM5-2B base。</div>
+<li><b>量尺本身有 bug</b>：format_cline_cli_output.py ws-only (丢 no-ws 代码)。历史实测该偏差可达 <b>15.19pp</b>，比任何模型效应都大。A0/A1 走 .17 抽取器（读 code/&lt;task&gt;/pyAether_code no-ws 路径），不受此 bug 影响。</li>
+</ol></div>
+<h2>一、本轮里程碑结论</h2>
+<p><span class="kpi">A0 base Pass@1 = 45.78% ± 2.22%</span>（MiniCPM5-2B 原模型 · .17 口径 · 修复后抽取器 · 沙盒真执行验证 · n=3 runs（interim(n=3)，非最终 5-run））。</p>
+<p>逐 run：run1=43.67%, run2=45.57%, run3=48.10%。</p>
+<p>要量化「SFT 增量」须 A1(SFT step105)在<b>同一把修复后 .17 量尺</b>上跑 5-run（A1 待 A0 5-run 干净后起）。</p>
+<div class="danger"><b>⚠ B1 身份警示（§B.1 风险已坐实）</b>：final_report.json 的 model_name = zhulong_deepseek_v32（config.yaml active_model 陈旧标签，<b>非实际服务模型</b>）。<b>权威身份</b>：① curl :8098/v1/models → id=minicpm5-2b root=/nas_data/app.e0031982/models/MiniCPM5-2B；② serve PID799523 --model /nas_data/app.e0031982/models/MiniCPM5-2B --served-model-name minicpm5-2b；③ <b>逐会话</b>复核 158/158 session = minicpm5-2b。⇒ <b>requested=served=ckpt=base 一致，B1 真身份 PASS</b>；陈旧标签属报告头 bug，已显式标注，不据此判 fail 停跑。本报告所有数字归因到 MiniCPM5-2B base。</div>
 <h2>二、臂矩阵（A/B/C/D 全表 · 本轮 A0/A1）</h2>
 <table>
 <tr><th>臂</th><th>底模</th><th>endpoint</th><th>口径</th><th>用途</th><th>本轮状态</th></tr>
-<tr><td><b>A0</b></td><td>MiniCPM5-2B 原模型(base)</td><td>:8098(GPU4 vLLM standby)</td><td>.17(无远程RAG/无沙盒MCP/cline/-p8 -n/无PreToolUse hook)</td><td><b>用户要的那个 base 数字</b></td><td><span class="tag pending">run1 ✅43.67% · run2 进行中 · 5-run 待补</span></td></tr>
-<tr><td><b>A1</b></td><td>SFT v39 global_step_105</td><td>需重起 serve(:8096 已裁减)</td><td>同 A0，同一把尺</td><td>分离「SFT 带来的增量」</td><td><span class="tag pending">待 A0 5-run 干净后起</span></td></tr>
+<tr><td><b>A0</b></td><td>MiniCPM5-2B 原模型(base)</td><td>:8098(GPU4 vLLM standby)</td><td>.17(无远程RAG/无沙盒MCP/cline/-p8 -n/无PreToolUse hook)</td><td><b>用户要的那个 base 数字</b></td><td><span class="tag pending">interim n=3 45.78%±2.22%</span></td></tr>
+<tr><td><b>A1</b></td><td>SFT v39 global_step_105</td><td>:8096(GPU5 serve, A1 链自动起)</td><td>同 A0，同一把尺</td><td>分离「SFT 带来的增量」</td><td><span class="tag pending">待 A0 5-run 干净后起</span></td></tr>
 <tr><td>A2/A3(暂缓)</td><td>+RAG / +沙盒 MCP</td><td>36.15 口径</td><td>36.15(有 RAG+沙盒 MCP+PreToolUse hook)</td><td>分离环境杠杆</td><td><span class="tag">待 zhulong 当前 batch 跑完再排</span></td></tr>
 </table>
-<p>两臂同：158 题 / Pass@1 / -p 8 -n / 2500s / 5-run / 同一抽取器 / 同一 fail_mode 分类器。串行纪律：起跑前 pgrep -f run_cline_script + ss -tlnp 自检（本轮 run2 起跑前已自检通过，无他线 cline run）。</p>
+<p>两臂同：158 题 / Pass@1 / -p 8 -n / 2500s / 5-run / 同一抽取器 / 同一 fail_mode 分类器。串行纪律：起跑前 pgrep -f run_cline_script + ss -tlnp 自检。</p>
 <h2>三、五道验收项（B1–B5）</h2>
-<h3>B1 身份四证（防「报告里的模型 ≠ 实际服务的模型」）</h3>
+<h3>B1 身份四证</h3>
 <table>
 <tr><th>字段</th><th>值</th><th>一致?</th></tr>
-<tr><td>requested_model</td><td>minicpm5-2b(base，非 SFT)</td><td>—</td></tr>
-<tr><td>served_model(/v1/models id)</td><td>minicpm5-2b，root=/nas_data/app.e0031982/models/MiniCPM5-2B</td><td class="ok">✓</td></tr>
-<tr><td>ckpt_path / mtime</td><td>/nas_data/app.e0031982/models/MiniCPM5-2B，mtime 2026-11-09 08:55</td><td class="ok">✓</td></tr>
-<tr><td>ckpt_config</td><td>LlamaForCausalLM·42层·hidden2048·bf16·_name_or_path=openbmb/MiniCPM5-2B</td><td class="ok">✓ base</td></tr>
-<tr><td>fingerprint(同 prompt 3 seed)</td><td>3× 风格一致(均 minicpm5-2b)，md5 不同(采样随机)，首 32 token 均为「We need to output only the code...」类</td><td class="ok">✓</td></tr>
-<tr><td>逐会话复核(run1)</td><td><b>158/158 session = minicpm5-2b</b>(per-worker data-dir providers.json)</td><td class="ok">✓</td></tr>
-<tr><td>final_report.model_name</td><td>zhulong_deepseek_v32(config.yaml active_model 陈旧标签)</td><td class="bad">✗ 报告头标签 bug</td></tr>
+<tr><td>requested_model</td><td>minicpm5-2b (base MiniCPM5-2B, 非 SFT)(base，非 SFT)</td><td>—</td></tr>
+<tr><td>served_model(/v1/models id)</td><td>minicpm5-2b，root=/nas_data/app.e0031982/models/MiniCPM5-2B</td><td><span class="ok">✓</span></td></tr>
+<tr><td>ckpt_path / mtime</td><td>/nas_data/app.e0031982/models/MiniCPM5-2B，mtime 2026-11-09 08:55</td><td><span class="ok">✓</span></td></tr>
+<tr><td>ckpt_config</td><td>LlamaForCausalLM·42层·hidden2048·bfloat16·_name_or_path=openbmb/MiniCPM5-2B</td><td><span class="ok">✓ base</span></td></tr>
+<tr><td>fingerprint(同 prompt 3 seed)</td><td>3× 风格一致(均 minicpm5-2b)，md5 不同(采样随机)</td><td><span class="ok">✓</span></td></tr>
+<tr><td>逐会话复核</td><td><b>158/158 session = minicpm5-2b</b></td><td><span class="ok">✓</span></td></tr>
+<tr><td>final_report.model_name</td><td>zhulong_deepseek_v32(config.yaml 陈旧标签)</td><td><span class="bad">✗ 报告头标签 bug</span></td></tr>
 </table>
-<p><b>判据</b>：实际服务模型四字段(requested/served/ckpt/fingerprint)一致 ⇒ <b>B1 真身份 PASS</b>。final_report.model_name 为报告头陈旧标签(§B.1 已预警)，非实际模型，已显式标注，不触发停跑。</p>
+<p><b>判据</b>：四字段(requested/served/ckpt/fingerprint)一致 ⇒ <b>B1 真身份 PASS</b>。final_report.model_name 为陈旧标签，非实际模型，已显式标注，不触发停跑。</p>
 <h3>B2 量尺一致性（原始抽取 vs 回补）</h3>
 <table>
-<tr><th>口径</th><th>说明</th><th>Pass@1</th><th>量尺误差</th></tr>
-<tr><td>ws-only 抽取(path A,bug)</td><td>仅读 ws/pyAether_code，丢 no-ws 代码</td><td>0%(live batch 2026_1118_102651 抽 0 题)</td><td rowspan="2">历史 5-run max=<b>15.19pp</b>(run1 ws-only 18.99% vs recovered-4run mean 3.80%)</td></tr>
+<tr><th>口径</th><th>说明</th><th>Pass@1</th></tr>
+<tr><td>ws-only 抽取(path A,bug)</td><td>仅读 ws/pyAether_code，丢 no-ws 代码</td><td>0%(live batch 抽 0 题)</td></tr>
 <tr><td>recovered 回补(path B,修复后)</td><td>加 no-ws fallback code/&lt;task&gt;/pyAether_code</td><td>157 题被抽(同 batch)</td></tr>
 </table>
-<p><b>源头修复</b>：36.15 /nasdata/.../format_cline_cli_output.py L168-170 加 no-ws fallback(mtime 2026-11-18 10:00)—— ⚠ <b>未提交 working-tree edit，有 revert 风险</b>。A0/A1 走 .17 抽取器(读 pyAether_code no-ws)<b>不受此 bug 影响</b>；A2/A3 走 36.15 前须复核该 fix 在位。<b>正式数字一律用修复后口径。</b></p>
+<p><b>量尺误差（历史 5-run max）= 15.19pp</b>（run1 ws-only 18.99% vs recovered-4run mean 3.80%）。<b>源头修复</b>：36.15 format_cline_cli_output.py L168-170 加 no-ws fallback(mtime 2026-11-18 10:00)—— ⚠ <b>未提交 working-tree edit，有 revert 风险</b>。A0/A1 走 .17 抽取器<b>不受此 bug 影响</b>；A2/A3 走 36.15 前须复核该 fix 在位。<b>正式数字一律用修复后口径。</b></p>
 <h3>B3 打分器噪声（同 jsonl 重评 10×）</h3>
 <table>
 <tr><th>run</th><th>exec_lines</th><th>passed</th><th>Pass@1 10× mean</th><th>10× sd</th></tr>
@@ -70,37 +67,46 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:0.88em}
 <tr><td>run4</td><td>35</td><td>6</td><td>0.03798</td><td>0.0</td></tr>
 <tr><td>run5</td><td>44</td><td>7</td><td>0.04430</td><td>0.0</td></tr>
 </table>
-<p><b>judge_sd = 0(全部 5 run)</b> ⇒ 打分<b>完全确定</b>。5-run 方差<b>全部来自上游</b>(generation + sandbox 执行)，非打分器。判据「同臂两 run 差值 &lt; 2×judge_sd=0」⇒ 任何非零差值归因于 generation/execution 噪声 ⇒ 动机转 B4。</p>
-<h3>B4 执行确定性（待 Stage3 补）</h3>
-<p>抽 10 个已判定题(5 PASS / 5 FAIL)同一份代码沙盒各跑 10×，报判决翻转率(历史实测 direct 2/79 vs rescue 0/79)。<span class="tag pending">Stage3 随 5-run 产出补</span>。本轮 run1 sandbox 执行可区分(69 pass 真 OK / 89 fail 真错误类型)已间接佐证非全翻转。</p>
-<h3>B5 逐题画像（回答「哪些地方出错」· A0 run1，base 自己的数据）</h3>
-<p><b>⚠ 用 MiniCPM5 base 自己的数据重做，未沿用 DeepSeek 的 fail_mode 分布。</b> 数据源：per-session cli_data/worker_*/data/sessions/&lt;sid&gt;/(非交错 codegen.log，修 v1 interleaving bug)。</p>
+<p><b>judge_sd = 0.0（全部 5 run）</b> ⇒ 打分<b>完全确定</b>。5-run 方差<b>全部来自上游</b>(generation + sandbox 执行)，非打分器。判据「同臂两 run 差值 &lt; 2×judge_sd=0」⇒ 任何非零差值归因于 generation/execution 噪声 ⇒ 动机转 B4。</p>
+<h3>B4 执行确定性（10 任务 × 10 次沙盒重跑）</h3>
 <table>
-<tr><th>指标</th><th>值</th><th>说明</th></tr>
-<tr><td>overall Pass@1(单 run)</td><td><b>69/158 = 43.67%</b></td><td>沙盒真执行验证</td></tr>
-<tr><td>pass 次数分布(0/1)</td><td>0→89 题；1→69 题</td><td>单 run 无 0/5…5/5，待 5-run</td></tr>
-<tr><td>execution_statuses</td><td>passed=69 / failed=59 / not_executed=28 / timeout=2</td><td>28 not_executed = 19 gen_fail + 9 gen_timeout</td></tr>
-<tr><td>generation 统计</td><td>success=130 / fail=19 / timeout=9</td><td>gen_success_rate=82.28%</td></tr>
+<tr><th>字段</th><th>值</th></tr>
+<tr><td>规格</td><td>10 tasks (5 PASS + 5 FAIL from A0 run1), same code run 10x in sandbox, report verdict flip rate</td></tr>
+<tr><td>源 run</td><td>A0_base_run1</td></tr>
+<tr><td>PASS 任务(5)</td><td>EDA-Eval-PyAether-002, EDA-Eval-PyAether-003, EDA-Eval-PyAether-005, EDA-Eval-PyAether-007, EDA-Eval-PyAether-010</td></tr>
+<tr><td>FAIL 任务(5)</td><td>EDA-Eval-PyAether-001, EDA-Eval-PyAether-006, EDA-Eval-PyAether-013, EDA-Eval-PyAether-015, EDA-Eval-PyAether-016</td></tr>
+<tr><td>重跑次数</td><td>10</td></tr>
+<tr><td>翻转任务数</td><td><b>0</b></td></tr>
+<tr><td><b>翻转率 flip_rate</b></td><td><span class="ok"><b>0.0</b></span></td></tr>
+<tr><td>历史对照</td><td>wake533: direct 2/79 vs rescue 0/79</td></tr>
 </table>
-<h4>fail_mode 五分类(89 fail)</h4>
+<p><b>判据满足</b>：flip_rate=0（0/10 任务翻转，10 轮判决全一致），优于历史 wake533 direct 2/79。⚠ caveat：10 任务均为快任务(0 timeout)，未覆盖 timeout-prone 题翻转，但符合 B4 规格。</p>
+<h3>B5 逐题画像（回答「哪些地方出错」· MiniCPM5 base 自己的数据）</h3>
+<p><b>⚠ 用 MiniCPM5 base 自己的数据重做，未沿用 DeepSeek 的 fail_mode 分布。</b></p>
+<table>
+<tr><th>指标</th><th>值</th></tr>
+<tr><td>A0 Pass@1(n=3 runs)</td><td><b>45.78% ± 2.22%</b></td></tr>
+<tr><td>题级 pass 次数分布</td><td>0/5→57 题 · 1/5→24 题 · 2/5→38 题 · 3/5→39 题</td></tr>
+<tr><td>题级分类</td><td>pass_all=39 / fail_all=57 / partial=62 / n=158</td></tr>
+</table>
+<h4>fail_mode 五分类（dominant over failing tasks，n=119）</h4>
 <table>
 <tr><th>类别</th><th>题数</th><th>占比(fail)</th><th>含义</th></tr>
-<tr><td>F5_logic_error</td><td>40</td><td>44.9%</td><td>代码出且执行，但断言/结果错(AssertionError=26 主因)</td></tr>
-<tr><td>F4_api_misuse</td><td>21</td><td>23.6%</td><td>代码出但 TypeError/AttributeError(错 API/类型，TypeError=17)</td></tr>
-<tr><td>F1_no_code</td><td>18</td><td>20.2%</td><td>无 .py 文件(gen_fail / 未真正用工具)</td></tr>
-<tr><td>F3_timeout</td><td>9</td><td>10.1%</td><td>生成超时(gen_timeout)</td></tr>
-<tr><td>F2_tool_format</td><td>1</td><td>1.1%</td><td>工具 schema 拒绝耗尽预算 → 无代码</td></tr>
+<tr><td>F5_logic_error</td><td>50</td><td>42.0%</td><td>code emitted &amp; executed but assertion/wrong result</td></tr>
+<tr><td>F1_no_code</td><td>29</td><td>24.4%</td><td>no .py file (gen_fail / no tool engagement)</td></tr>
+<tr><td>F4_api_misuse</td><td>29</td><td>24.4%</td><td>code emitted but TypeError/AttributeError (wrong API/type)</td></tr>
+<tr><td>F3_timeout</td><td>9</td><td>7.6%</td><td>generation timed out</td></tr>
+<tr><td>F2_tool_format</td><td>2</td><td>1.7%</td><td>tool schema rejections exhausted budget -&gt; no code</td></tr>
 </table>
-<p><b>错误类型细分布</b>(final_report error_types)：AssertionError=26·TypeError=17·Generation fail=19·Generation timeout=9·ValueError=5·AttributeError=4·Unknown Failure=3·NameError=3·Timeout=2·IndentationError=1。</p>
-<h4>四指标（agent 行为画像 · 158 题均值）</h4>
+<h4>四指标（agent 行为画像 · 题均值）</h4>
 <table>
 <tr><th>指标</th><th>值</th></tr>
 <tr><td>agent_loop_entry_rate(是否进入 agent 回路)</td><td><b>93.67%</b></td></tr>
-<tr><td>tool_call_count_mean(工具调用数/题)</td><td><b>30.28</b></td></tr>
-<tr><td>error_rate_mean(报错率)</td><td><b>0.76%</b></td></tr>
-<tr><td>rag_queried_rate(API 检索工具命中率)</td><td><b>100%</b></td></tr>
+<tr><td>tool_call_count_mean(工具调用数/题)</td><td><b>32.0844</b></td></tr>
+<tr><td>error_rate_mean(报错率)</td><td><b>0.7%</b></td></tr>
+<tr><td>rag_queried_rate(API 检索工具命中率)</td><td><b>100.00%</b></td></tr>
 </table>
-<p><b>聚合工具调用</b>(158 题)：search_apis=1969·get_api_details=978·run_commands=684·search_apis_by_keyword=476·read_files=239·editor=217·submit_and_exit=138·run_code=81。<br><b>拒绝原因</b>：other-type-error=32·unavailable-tool=6。<br><span class="note">注：rag_queried_rate 计的是本地 PyAether API 检索工具(search_apis 等，.17 harness 自带)，<b>非</b>远程 RAG recall(:9002，A0 口径未启用)。A0「无 RAG」指无远程 recall 后端，不排除 API 检索工具。</span></p>
+<p><b>聚合工具调用</b>(run1, top10)：search_apis=1969 · get_api_details=978 · run_commands=684 · search_apis_by_keyword=476 · read_files=239 · editor=217 · submit_and_exit=138 · run_code=81 · process=1 · runner__search_apis=1。<br><b>拒绝原因</b>：other-type-error=32 · unavailable-tool=6。<br><span class="note">注：rag_queried_rate 计的是本地 PyAether API 检索工具(search_apis 等，.17 harness 自带)，<b>非</b>远程 RAG recall(:9002，A0 口径未启用)。</span></p>
 <h2>四、口径六元组（caliber six-tuple）</h2>
 <table>
 <tr><th>元</th><th>A0(本轮)</th><th>旧 6.84% 5-run(不可比)</th></tr>
@@ -111,41 +117,44 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:0.88em}
 <tr><td>5. 沙盒 MCP(codegen 期)</td><td>无</td><td>有</td></tr>
 <tr><td>6. 协议</td><td>158题/Pass@1/2500s/单trace/<b>5-run 目标</b>/-p8 -n</td><td>同协议(但量尺/模型/harness 不同)</td></tr>
 </table>
-<p><b>结论</b>：A0 run1(43.67%)与旧 6.84%(3.04%)在六元组中有 <b>3 项不同</b>(模型/量尺/harness)⇒ <b>禁止直接比较</b>。要量化「SFT 增量」须 A1(SFT step105)在<b>同一把修复后 .17 量尺</b>上跑 5-run(Stage3)。</p>
+<p><b>结论</b>：A0 与旧 6.84%(3.04%)在六元组中有 <b>3 项不同</b>(模型/量尺/harness)⇒ <b>禁止直接比较</b>。要量化「SFT 增量」须 A1 在<b>同一把修复后 .17 量尺</b>上跑 5-run。</p>
 <h2>五、分段交付与状态</h2>
 <table>
 <tr><th>Stage</th><th>内容</th><th>状态</th></tr>
 <tr><td>Stage1(≤2h,零 codegen)</td><td>B1 身份四证 + B3 judge 噪声 + B2 量尺差值</td><td><span class="tag go">✅ DONE</span> → baseline_measurement_audit.json</td></tr>
-<tr><td>Stage2(单 run)</td><td>A0 run1 逐题画像(B5)</td><td><span class="tag go">✅ DONE</span> run1=43.67%，画像见 §三 B5</td></tr>
-<tr><td>Stage3(5-run)</td><td>A0 补满 5-run + A1 同尺 5-run → 正式基线表</td><td><span class="tag pending">进行中：run2 codegen 跑(PID4122533)</span></td></tr>
+<tr><td>Stage2(单 run)</td><td>A0 run1 逐题画像(B5)</td><td><span class="tag go">✅ DONE</span> run1 逐题画像(B5)</td></tr>
+<tr><td>Stage3(5-run)</td><td>A0 补满 5-run + A1 同尺 5-run → 正式基线表</td><td><span class="tag pending">进行中：A0 interim n=3 (45.78%±2.22%)</span> + <span class="tag pending">A1 5-run 待起</span></td></tr>
 </table>
-<p>判据触发：Stage1 verdict=GO(B1 PASS / judge_sd=0 / 量尺差值已量化)⇒ 未触发停跑。Stage2 单 run 结论清晰(base ≈ 44% 真实、fail_mode 以 F5_logic+F4_api 为主)⇒ 支持补 5-run 以钉 mean±std。</p>
-<h2>六、全部落盘路径</h2>
+<p><b>五道验收项：B1✅/B2✅/B3✅/B4✅/B5✅</b>。Stage1 verdict=GO（未触发停跑）；Stage2 单 run 结论清晰（fail_mode 以 F5_logic+F4_api 为主）⇒ 支持补 5-run。</p>
+<h2>七、全部落盘路径</h2>
 <table>
 <tr><th>交付物</th><th>路径</th></tr>
 <tr><td>Stage1 审计 JSON</td><td>run/baseline_measurement_audit.json</td></tr>
-<tr><td>A0 run1 final_report</td><td>/tmp/posttrain_5run_eval/A0_base/run1/final_report.json(55KB)</td></tr>
+<tr><td>B4 执行确定性 JSON</td><td>run/baseline_B4_execution_determinism.json</td></tr>
+<tr><td>A0 5-run summary</td><td>run/baseline_A0_base_5run_summary.json（interim(n=3)）</td></tr>
+<tr><td>A1 5-run summary</td><td>run/baseline_A1_sft_5run_summary.json（待产出）</td></tr>
+<tr><td>A0-vs-A1 配对统计</td><td>run/baseline_A0_vs_A1_paired_compare.json（待产出）</td></tr>
 <tr><td>A0 run1 逐题画像 JSON(E.2)</td><td>run/baseline_A0_base_run1_pertask.json</td></tr>
-<tr><td>A0 run1 INTERIM 画像</td><td>run/baseline_A0_base_run1_pertask_INTERIM.json</td></tr>
-<tr><td>逐题画像脚本</td><td>run/baize_posttrain_baseline_pertask_profile.py(--eval-dir &lt;batch&gt; --report &lt;final_report.json&gt;)</td></tr>
-<tr><td>本轮里程碑报告(E.1)</td><td>reports/report_posttrain_baseline_nailed_zh.html(本文件)</td></tr>
+<tr><td>逐题画像脚本</td><td>run/baize_posttrain_baseline_pertask_profile.py</td></tr>
+<tr><td>5-run finalize 脚本</td><td>run/baize_posttrain_a0_finalize_5run.py</td></tr>
+<tr><td>A1 自治链脚本</td><td>run/baize_posttrain_a1_sft_chain.sh</td></tr>
+<tr><td>配对比较脚本</td><td>run/baize_posttrain_arm_paired_compare.py</td></tr>
+<tr><td>本报告生成脚本</td><td>run/baize_posttrain_baseline_report_gen.py</td></tr>
+<tr><td>本轮里程碑报告(E.1)</td><td>reports/report_posttrain_baseline_nailed_zh.html（本文件）</td></tr>
 <tr><td>5-run eval 链脚本</td><td>run/baize_posttrain_5run_eval.sh</td></tr>
 <tr><td>vLLM base serve 日志</td><td>/tmp/vllm_gpu4.log(GPU4 :8098)</td></tr>
 </table>
-<h2>七、本轮禁止项核对（令 §F）</h2>
-<ul>
+<h2>八、本轮禁止项核对（令 §F）</h2><ul>
 <li>🚫 五道验收项过之前起 GRPO/SFT/造题 —— <b>未起</b>(仅做 baseline eval)✅</li>
 <li>🚫 改 158 题面/check.py/协议/超时/-p —— <b>未改</b>(协议冻结项全保持)✅</li>
-<li>🚫 把 3.04% 说成 base 结果 —— 本报告显式标注 3.04%=SFT step105，<b>base 数字本轮首次产出=43.67% 单 run</b> ✅</li>
+<li>🚫 把 3.04% 说成 base 结果 —— 本报告显式标注 3.04%=SFT step105 ✅</li>
 <li>🚫 跨口径比较不标注 —— §四口径六元组显式标注 3 项不同，<b>禁止直接比较</b> ✅</li>
 </ul>
-<h2>八、下一步（Stage3）</h2>
-<ol>
-<li>A0 run2 进行中(PID4122533，batch A0_base_run2_2026_1121_035757，endpoint :8098 base)；后续 run3-5 串行补满。</li>
-<li>每 run 完成 → 产出 baseline_A0_base_run&lt;N&gt;_pertask.json → 收口 A0 5-run mean±std + 配对分布(0/5…5/5)。</li>
-<li>A0 5-run 干净后，重起 :8096 serve SFT step105，A1 同尺 5-run → 量化 SFT 增量(McNemar / paired bootstrap)。</li>
-<li>补 B4 执行确定性(10 题×10 次翻转率)。</li>
-<li>本报告随 Stage3 完成<b>原地覆盖更新</b>(5-run 正式基线表 + A1 增量)。</li>
+<h2>九、下一步</h2><ol>
+<li>A0 5-run 收口中（run345 auto-chain 串行 + finalize-watcher 自动聚合 5 个 final_report.json → baseline_A0_base_5run_summary.json）。</li>
+<li>A0 5-run 干净后，A1 链自动起 :8096 serve SFT step105 → A1 同尺 5-run → baseline_A1_sft_5run_summary.json。</li>
+<li>两臂 summary 齐备后，compare-watcher 自动跑配对统计 → baseline_A0_vs_A1_paired_compare.json。</li>
+<li>本报告由 report-watcher 在上述交付物落盘后<b>自动原地覆盖更新</b>。</li>
 </ol>
-<p style="margin-top:30px;color:#888;font-size:0.85em">BaiZe Stage(ii) posttrain · baseline-nailed · 自包含单文件 HTML · 2026-11-21 · commit 前缀 posttrain baseline-nailed:</p>
+<p style="margin-top:30px;color:#888;font-size:0.85em">BaiZe Stage(ii) posttrain · baseline-nailed · 数据驱动自包含单文件 HTML · 由 baize_posttrain_baseline_report_gen.py 生成 · commit 前缀 posttrain baseline-nailed:</p>
 </body></html>
