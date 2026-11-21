@@ -5355,30 +5355,58 @@
   "highlightjs__highlight.js-3644": {
     "instance_id": "highlightjs__highlight.js-3644",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 191.4,
+    "rc": 0,
+    "model_patch_len": 466,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " fully resolves the reported issue. The multi-line comments will now be properly grayed out just like single-line comments.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-10340": {
     "instance_id": "openlayers__openlayers-10340",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 527.2,
+    "rc": 0,
+    "model_patch_len": 5737,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "try**, while maintaining backwards compatibility for all existing geometry functions including custom user-provided ones.\\n\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-10478": {
     "instance_id": "openlayers__openlayers-10478",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 190.8,
+    "rc": 0,
+    "model_patch_len": 900,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rt, ensuring that tiles are refetched when they have been disposed instead of being excluded from the reprojection process.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-10545": {
     "instance_id": "openlayers__openlayers-10545",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 258.0,
+    "rc": 0,
+    "model_patch_len": 1236,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " patterns, and addresses the exact issue you reported while also handling any similar entity encoding issues automatically.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-10694": {
     "instance_id": "openlayers__openlayers-10694",

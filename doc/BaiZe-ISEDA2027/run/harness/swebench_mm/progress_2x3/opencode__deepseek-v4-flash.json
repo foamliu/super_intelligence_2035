@@ -2244,9 +2244,16 @@
   "bpmn-io__bpmn-js-1570": {
     "instance_id": "bpmn-io__bpmn-js-1570",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1016.4,
+    "rc": 0,
+    "model_patch_len": 1696,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ate) paths. Since JavaScript is single-threaded, the browser never repaints between the intermediate viewport reset and the restore, so the diagram stays in its current viewport without visible jump.\n",
+    "stderr_tail": "t-expanded': {\n186:      className: 'bpmn-icon-participant',\n187:      title: translate('Create Pool/Participant'),\n189:        dragstart: createParticipant,\n190:        click: createParticipant\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1578": {
     "instance_id": "bpmn-io__bpmn-js-1578",

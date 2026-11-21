@@ -1668,9 +1668,16 @@
   "alibaba-fusion__next-4021": {
     "instance_id": "alibaba-fusion__next-4021",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1385.8,
+    "rc": 0,
+    "model_patch_len": 2498,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "index-spec.js`\n更新了 `should support onCorrect` 测试用例，因为原测试依赖“输入超出边界值 → blur 时订正”这一旧行为。修改后该测试改为验证以下两个仍然有效的 `onCorrect` 触发场景：\n- 初始值就超出边界时，blur 自动订正触发 `onCorrect`\n- 输入精度超出设定值时，onChange 中精度订正触发 `onCorrect`\n",
+    "stderr_tail": "ulate('change', { target: { value: '21' } });\n+                .simulate('change', { target: { value: '0.34' } });\n+            assert(onCorrect2.calledOnce);\n \n             done();\n         });\n\u001b[0m\n"
   },
   "alibaba-fusion__next-4182": {
     "instance_id": "alibaba-fusion__next-4182",

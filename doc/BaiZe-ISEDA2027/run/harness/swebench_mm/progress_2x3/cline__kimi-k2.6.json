@@ -1561,23 +1561,44 @@
   "alibaba-fusion__next-3198": {
     "instance_id": "alibaba-fusion__next-3198",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1481.2,
+    "rc": 0,
+    "model_patch_len": 3258,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "actically correct and follow the existing codebase patterns. The test was written to match the existing test structure and selectors.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "alibaba-fusion__next-3218": {
     "instance_id": "alibaba-fusion__next-3218",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 101.9,
+    "rc": 0,
+    "model_patch_len": 775,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rkdirs/cline__kimi-k2.6/alibaba-fusion_next/docs/select/demo/combobox-basic.md`\\n\\n这样每个 demo 的样式只会作用于自身的 `demo-container` 内部，不会再互相污染。\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "alibaba-fusion__next-3345": {
     "instance_id": "alibaba-fusion__next-3345",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 796.7,
+    "rc": 0,
+    "model_patch_len": 2465,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " + $dialog-close-width` and `$dialog-close-width + $dialog-close-right`) to ensure the close button doesn't overlap with the content.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "alibaba-fusion__next-3445": {
     "instance_id": "alibaba-fusion__next-3445",
