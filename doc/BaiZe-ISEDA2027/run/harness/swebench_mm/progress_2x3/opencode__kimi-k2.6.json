@@ -2013,9 +2013,16 @@
   "bpmn-io__bpmn-js-1221": {
     "instance_id": "bpmn-io__bpmn-js-1221",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1130.3,
+    "rc": 0,
+    "model_patch_len": 2752,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " executed in this environment due to missing headless browser support, but the fix follows the existing patterns in the codebase and correctly hooks into the command lifecycle after paste completion.\n",
+    "stderr_tail": "50\n+        }\n+      });\n+\n+      var pastedElement = pastedElements[0];\n+\n+      // then\n+      expectLabelOrientation(pastedElement, 'left');\n+    }));\n+\n+  });\n+\n });\n \n // helpers //////////\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1236": {
     "instance_id": "bpmn-io__bpmn-js-1236",

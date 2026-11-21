@@ -1893,9 +1893,15 @@
   "bpmn-io__bpmn-js-1172": {
     "instance_id": "bpmn-io__bpmn-js-1172",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.6,
+    "rc": -1,
+    "model_patch_len": 781,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "bpmn-io__bpmn-js-1174": {
     "instance_id": "bpmn-io__bpmn-js-1174",

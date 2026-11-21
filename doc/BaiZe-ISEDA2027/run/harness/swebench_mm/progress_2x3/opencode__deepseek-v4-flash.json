@@ -2830,16 +2830,30 @@
   "carbon-design-system__carbon-12402": {
     "instance_id": "carbon-design-system__carbon-12402",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 676.0,
+    "rc": 0,
+    "model_patch_len": 4759,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "lass, and that clicking doesn't change `aria-checked`\n- `should still emit onClick when readonly` - verifies onClick fires\n- `should not emit onToggle when readonly` - verifies onToggle is not called\n",
+    "stderr_tail": "cked}\n-  aria-disabled={readOnly}\n+  aria-disabled={readOnly ? true : undefined}\n   disabled={disabled}\n   onClick={handleClick}\n />\n <label htmlFor={id} className={`${prefix}--toggle__label`}>\n\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12410": {
     "instance_id": "carbon-design-system__carbon-12410",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 132.4,
+    "rc": 0,
+    "model_patch_len": 10175,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ng: CSS class on slider, CSS class on container, `aria-readonly` attribute, no-op on input change, no-op on drag start/drag/drag stop, no-op on arrow keys, and `readOnly` attribute on the text input.\n",
+    "stderr_tail": "nts/Slider/Slider.stories.js\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Add readOnly prop to Slider component\n[✓] Add readOnly SCSS styles\n[✓] Add readOnly story and Playground control\n[✓] Add readOnly unit tests\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12412": {
     "instance_id": "carbon-design-system__carbon-12412",

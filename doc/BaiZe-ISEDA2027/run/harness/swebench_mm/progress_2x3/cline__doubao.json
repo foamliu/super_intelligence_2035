@@ -6657,29 +6657,57 @@
   "scratchfoundation__scratch-gui-4568": {
     "instance_id": "scratchfoundation__scratch-gui-4568",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 272.8,
+    "rc": 0,
+    "model_patch_len": 7801,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ebase and uses the same `requestUpdateMonitor` API that's used for other monitor properties like position and display mode.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "scratchfoundation__scratch-gui-5039": {
     "instance_id": "scratchfoundation__scratch-gui-5039",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 182.7,
+    "rc": 0,
+    "model_patch_len": 505,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "regressions**: The fix is minimal and only affects when drag recognition starts, with no changes to existing drag behavior.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "scratchfoundation__scratch-gui-8492": {
     "instance_id": "scratchfoundation__scratch-gui-8492",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 275.9,
+    "rc": 0,
+    "model_patch_len": 3743,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ical in concept to the one referenced in the scratch-www PR #2987, and addresses the exact use case described in the issue.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "scratchfoundation__scratch-gui-8891": {
     "instance_id": "scratchfoundation__scratch-gui-8891",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 121.5,
+    "rc": 0,
+    "model_patch_len": 1257,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "sign patterns using the standard $motion-primary blue color that is used across the interface for active/selected elements.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   }
 }
