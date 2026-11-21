@@ -27,9 +27,11 @@
   "mc500": 133,
   "mc5_recompute": {
     "auto_stop": {
-      "consecutive_zero_case_rounds": 2,
-      "note": "r958 0-case round (2nd consecutive after r956 case). Re-verified A-domain mc>=5 fresh pool on scan 20261121_151844 with A-ratio>=0.4 filter: peeked 40 unique A-pure candidates (mc 5-1576), ALL 40 in 4-shard ledger (case/parked), 0 FRESH. Top 9 (w4x70/brnqb/cwq7f/1wvdl/f6x1i/40uq0/ppl5a/6i6lk/vi5wa) all ledgered. r957's xiqxa (only fresh at mc>=5) already parked/rejected. Pool PROVABLY exhausted (40/40 ledgered). Stop-loss threshold=3 NOT met (1 more 0-case round triggers revert shard_mc.A->10). 15:1x rescan: ssh_eda_search driver not in either repo; new day 11-22 quota available but 698-machine scan infeasible in 40-min budget. Governance: §4.9 anti-hardcode audit on r956 CovEillenIllegalBinsAnalyzeQA-001 = ALL PASS (ref 14/14, 5 negs FAIL). shard_mc.A=5 maintained.",
-      "threshold_rounds": 3
+      "consecutive_zero_case_rounds": 3,
+      "note": "r959 0-case round (3rd consecutive: r957/r958/r959) — STOP-LOSS TRIGGERED per 16:4x order. Re-verified A-domain mc>=5 fresh pool on scan 20261121_151844 with A-ratio>=0.4 filter: peeked 50 unique A-pure candidates (mc 310-1576), ALL 50 in 4-shard ledger (normalized sid match against 4063 unique ledger sids), 0 FRESH. Top 15 (w4x70/brnqb/cwq7f/1wvdl/f6x1i/40uq0/ppl5a/6i6lk/vi5wa/zrva7/pwhqb/xm22u/le1s7/xh3mj/lc81i) all ledgered (case/parked). r958's 40-candidate check confirmed; r959 independent 50-candidate check confirms. mc>=5 pool expansion PROVEN INEFFECTIVE: 3 consecutive 0-case rounds with genuine >=10 peek each round (r957 peeked 1 fresh xiqa->rejected; r958 peeked 40 all ledgered; r959 peeked 50 all ledgered). ACTION: shard_mc.A reverted 5->10 (target_mc=10 global denominator consistency). 15:1x rescan: ssh_eda_search driver not found in either repo or on .75; new day 11-22 quota available but 698-machine scan infeasible in 40-min budget (driver missing + scan ~40min > budget). Governance: §4.9 anti-hardcode audit on r954 Lp6TbErrforceScintMrrAnalyzeQA-001 = ALL PASS (ref 16/16 PASS, 5/5 negatives FAIL: fake_empty/fake_print_expected/fake_core_deleted/neg_naive_stub/neg_always_conclusion).",
+      "threshold_rounds": 3,
+      "triggered_at": "2026-11-22T00:3x+08:00 (r959)",
+      "triggered_by": "r959 (3rd consecutive 0-case round, 50/50 A-pure mc>=5 candidates ledgered)"
     },
     "computed_at": "2026-11-18T08:30:00+08:00",
     "computed_by": "r718 (mc>=5 adoption flip)",
@@ -68,7 +70,7 @@
     },
     "scan": "ssh_eda_search_20261115_081559/summary.tsv (local mirror summary_1115_081559.tsv)",
     "scope": "shard A broad-keyword filter, 4-shard ledger exclusion",
-    "shard_mc_A": 5,
+    "shard_mc_A": 10,
     "verdict": "r718: mc>=5 ADOPTED. mc>=5 fresh=310 (vs mc>=10 fresh=136, +174). r382 mc>=5 useless EXPIRED under 6959-dedup scan. Next: select from candidates_mc5.tsv, report A-domain vs cross-domain ratio + case count each round."
   },
   "mc_matrix": {
@@ -187,7 +189,7 @@
   },
   "sessions": 2289,
   "shard_mc": {
-    "A": 5,
+    "A": 10,
     "B": 5,
     "C": 5,
     "D": 5
