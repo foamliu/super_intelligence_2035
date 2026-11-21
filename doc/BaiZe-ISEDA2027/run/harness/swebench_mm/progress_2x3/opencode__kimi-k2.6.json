@@ -1849,37 +1849,70 @@
   "bpmn-io__bpmn-js-1119": {
     "instance_id": "bpmn-io__bpmn-js-1119",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 974.9,
+    "rc": 0,
+    "model_patch_len": 2287,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " Added\n\nI also added a test in `test/spec/features/modeling/behavior/ReplaceConnectionBehaviorSpec.js` that specifically covers this scenario and asserts the new sequence flow has the correct parent.\n",
+    "stderr_tail": "rstand the bug: replacing message flow with sequence flow gives wrong parent\n[✓] Find relevant code for connection replacement and parent assignment\n[✓] Implement fix\n[✓] Run tests to verify fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1143": {
     "instance_id": "bpmn-io__bpmn-js-1143",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 418.1,
+    "rc": 0,
+    "model_patch_len": 2312,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "g browser binaries and OpenSSL compatibility issues with the older toolchain, but the fix is minimal, logically sound, and follows the existing early-return pattern already used in the same function.\n",
+    "stderr_tail": ")\n    at require (node:internal/modules/helpers:179:18)\n    at [eval]:2:21\n    at runScriptInThisContext (node:internal/vm:209:10)\n    at node:internal/process/execution:118:14\n\nNode.js v20.18.1\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1151": {
     "instance_id": "bpmn-io__bpmn-js-1151",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 3797,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "bpmn-io__bpmn-js-1168": {
     "instance_id": "bpmn-io__bpmn-js-1168",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "bpmn-io__bpmn-js-1172": {
     "instance_id": "bpmn-io__bpmn-js-1172",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 411.1,
+    "rc": 0,
+    "model_patch_len": 2464,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "t reference, and the data association\n\n### Files Changed\n\n- `lib/import/BpmnTreeWalker.js`\n- `test/spec/import/ImporterSpec.js`\n- `test/fixtures/bpmn/import/boundaryEvent-data-association.bpmn` (new)\n",
+    "stderr_tail": "  (use \"git add <file>...\" to include in what will be committed)\n\ttest/fixtures/bpmn/import/boundaryEvent-data-association.bpmn\n\nno changes added to commit (use \"git add\" and/or \"git commit -a\")\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1174": {
     "instance_id": "bpmn-io__bpmn-js-1174",
