@@ -251,7 +251,7 @@ bftii	jason17w	hfeg0pnd002	11		旧判:duplicate/已覆盖	不可造(已覆盖dup
 1794971954921_ejpf0					旧判:duplicate/已覆盖	不可造(已覆盖dup)	dup of 8akpt/StaSpec21Audit-001(same path)
 1794969439750_najzl					旧判:duplicate/已覆盖	不可造(已覆盖dup)	dup of 8akpt/StaSpec21Audit-001(same path)
 1794819145943_twfqn					旧判:duplicate/已覆盖	不可造(已覆盖dup)	fork of o0c8y/AhbMasterVerilog-001(near-empty fork 6 msgs)
-1794793100170_g7hp7					旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	NOFILE rotation
+1794793100170_g7hp7	tabtao	hfeg0pkn002	191	digital	旧判:不可造(非真实任务/文件缺失)	可造(已造r893)	A档 analysis-Q&A (DC+FM 双问诊断) — subdir-path liveness 11-18 假阴性修正
 1793604555578_omdil	e0046913	hfeg0pkn004	6	pnr_signoff	旧判:weak(Q&A/analysis/env-config非produce)	不可造(无牙check)	SYN setup read_files stripped+/proj perm-denied+vimrc env-config,asset不可达
 1794491712234_im6zb	yohannw	hfeg0pkn004	5	digital	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	scan false-positive:nginx reverse-proxy+SSL+S3 IT-ops
 1789873869309_n0o6i	junwangt	hfeg0plg07	5	pnr_signoff	旧判:不可造(非真实任务/文件缺失)	不可造(无真实trace)	scan false-positive:Chinese locale+pinyin script
