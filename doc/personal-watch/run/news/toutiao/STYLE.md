@@ -1,3 +1,17 @@
+> 📌 索引：§A.32 = 2026-11-22 07:3x（第 328 轮）· §A.31 = 11-21 18:0x（第 326 轮）· §A.30 = 11-21 15:0x（第 325 轮）
+
+## §A.32 第 328 轮实测（2026-11-22 07:3x · 6 条 · **刷新即「继续编辑」/ 工具栏插图按钮要先给编辑区焦点 / 图注框是 `textarea.pgc-img-caption-ipt` / 页脚按钮要按视口坐标重算 / 自赞会点反**）
+
+| # | 要点 | 实证 |
+|:--|:--|:--|
+| 1 | ⚠️ **`publish` 页只要有草稿，`location.reload()` 就清空并挂着「继续编辑」横幅** | 灌完 `共 925 字` 后刷新页面 → `AfterReload {title:"", kids:["P"], words:"共 0 字"}`，而横幅「草稿 25 倍的承诺先放一边 / 继续编辑」还在。且**已存草稿不会自动回填**，点「继续编辑」后 `n:0`（DOM 里找不到同名文本，`ps` 仍是 15）⇒ **一次会话内写完 + 插图 + 勾选 + 发布，中途别 reload**；若已 reload，按 §A.31 第 3 条换页（`nav('/graphic/articles')` → `publish`）再回读 `words:"共 0 字"` |
+| 2 | ✅ **一次 `e.innerHTML = P.map(s=>'<p>'+s+'</p>').join('')` + `dispatchEvent(new InputEvent('input'))` 可以一次灌满多段，且重载后仍在** | `CHK {ps:15, words:"共 925 字"}`（14 段 + 尾段）；随后 reload 仍是 `ps:15 / words 共 925 字` ⇒ 这是**最快且最稳**的灌段法（无需逐段 `Enter`），但**必须**在第 1 条的前提下使用（灌完就发布，不刷新） |
+| 3 | ⚠️ **工具栏「图片」按钮是 `div.syl-toolbar-tool.image.static`，必须先让 `.ProseMirror` 获得焦点再点，否则点了毫无反应** | 直接 `elementFromPoint(938,40).click()`、`Input.dispatchMouseEvent` 点击、`MouseEvent('click')` 派发**都无反应**（`TABS {lib:false, up:false}`、`FILEINPUTS 0`）；先点正文末段（`SEL {a:"P", t:"还是更容易分心？"}`）再点 `(951,53)` → `TABS {lib:true, up:true, snip:"上传图片免费正版图片我的素材 | 本地上传 | 扫码上传"}`。⚠️ 点击前先 `scrollY` 回到编辑区（本页工具栏 `position: relative`，`y` 会随滚动跑：`y:104` ↔ `y:40`） |
+| 4 | ⚠️ **图注框是 `textarea.pgc-img-caption-ipt`（`placeholder="请输入图片描述(最多50字)"`），不是 `[placeholder]` 里第一个** | `probe_cap` 实读：页面上有 3 个 `placeholder` 元素（标题框 / `pgc-img-caption-ipt` / AI 助手框）⇒ 只用 `textarea.pgc-img-caption-ipt` 定位；点中后 `FOCUS TEXTAREA.pgc-img-caption-ipt` → `Input.insertText` → `CAP ["图：IT之家（画面为特斯拉官方发布的 FSD v15 更新说明）"]`、`ERR []` |
+| 5 | ⚠️ **页脚三个按钮的位置随页面滚动变化，「预览/预览并发布」要每次用 `getBoundingClientRect()` 现算** | 固定坐标 `(819,916)` 一次点空（`HIT DIV.garr-footer-publish-content`），现算得 `预览 (894,933)` / `预览并发布 (1123,933)`；预览弹窗（手机预览 + 二维码）底部是 `关闭预览` / `定时发布` / `发布`，点 `关闭预览` 后回到 `预览并发布` → 弹窗 `确认发布 (1130,933)` → 跳 `/graphic/articles` |
+| 6 | ⚠️ **自赞前先看是否已赞过（并发进程可能已点）** | 首读 `detail-like like | txt:"1"`（已赞）⇒ 我的点击变成**取消**（`detail-like | 赞`），重载确认「未赞」后再点一次才恢复 `detail-like like | 1`。**判据 = `className` 含 `like` 且 `innerText` 是数字**；`赞` 字样 = 未赞。另：`cdp.evaluate` 超时/网络慢时命令会 **30s 超时**，属前台超时 ≠ 作业被杀（承 §4 第 6 条） |
+
+
 ## §A.31 第 326 轮实测（2026-11-21 18:0x · 6 条 · **零尺寸游离图 / Delete 清不空正文 / 「继续编辑」回滚旧稿 / `已删除` 误判 GONE / 懒加载 1×1 占位**）
 
 | # | 要点 | 实证 |
