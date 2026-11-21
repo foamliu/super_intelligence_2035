@@ -203,7 +203,7 @@
 1790664471639_s4xs4	xinqiaoz	hfeg0pkn004	283	physical_verify	case	EDA-Eval-DesignFlow-PdkRunsetExplorer-001	2026-11-04 22:09	
 1793078373656_wqhsu	xiwang	hfeg0pkn003	289	layout_aether	case	EDA-Eval-DesignFlow-ScmosStructId-001	2026-11-04 22:56	
 1783342909947_149bq.messages.json	e0014566	hfeg0plg49	10	layout_virtuoso	case	EDA-Eval-DesignFlow-AutoViaLayoutMerge-001	2026-11-04 23:42	
-1791964484349_gaz6r.messages.json	jaceyx	hfeg0plg90	86	layout_aether	parked		2026-11-04 23:57	Q&A session (ITF/inline-data concept questions, 0 write ops, only search/read/RAG) - no concrete deliverable
+1791964484349_gaz6r.messages.json	jaceyx	hfeg0plg90	86	layout_aether	claimed		2026-11-22 07:19	r940 revival (11-15 reaudit: Q&A legal); was parked r? 'Q&A no deliverable' now revivable as doc-search/Q&A case
 1783080403465_aneq6.messages.json					parked		2026-11-04 23:59	autovia IMCleAutoVia.il GUI-removal - overlaps AutoViaGen-001/AutoViaLayoutMerge-001
 1783413531894_o8i0o.messages.json					parked		2026-11-04 23:59	autovia run_autovia_agent.il exec - overlaps existing autovia cases
 1789632393597_0zg87.messages.json					parked		2026-11-05 00:00	fragmented intent (DFM SPEC FILL / print(f)deyongfa), 0 write ops, only read/search - no clean deliverable
