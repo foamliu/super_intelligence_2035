@@ -3007,23 +3007,44 @@
   "carbon-design-system__carbon-13421": {
     "instance_id": "carbon-design-system__carbon-13421",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1479.7,
+    "rc": 0,
+    "model_patch_len": 489,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ng issue.\n\nThe glob `**/DataTable/index.js` matches all three build output locations: `src/components/DataTable/index.js`, `es/components/DataTable/index.js`, and `lib/components/DataTable/index.js`.\n",
+    "stderr_tail": "✓] Investigate how DataTable is exported from @carbon/react\n[✓] Identify why destructuring DataTable breaks the app\n[✓] Implement fix to make DataTable subcomponents accessible via destructuring\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-13527": {
     "instance_id": "carbon-design-system__carbon-13527",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 410.7,
+    "rc": 0,
+    "model_patch_len": 517,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "`SideNavMenu.displayName = 'SideNavMenu'` at line 81 of `SideNavMenu.js`, consistent with `SideNav`, `SideNavLink`, `SideNavMenuItem`, and `SideNavSwitcher` which all already set their `displayName`.\n",
+    "stderr_tail": "✓] Check SCSS for SideNav menu visibility on rail collapse\n[✓] Check git log for related fixes/changes to SideNavMenu\n[✓] Implement fix: add missing displayName to SideNavMenu\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-13851": {
     "instance_id": "carbon-design-system__carbon-13851",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 567.4,
+    "rc": 0,
+    "model_patch_len": 7343,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "irement` display (so warning messages show up)\n\n### 4. `packages/react/src/components/TimePicker/TimePicker.stories.js`\n- Added `warn` (boolean) and `warnText` (text) controls to the Playground story\n",
+    "stderr_tail": "] Update _form.scss - add time-picker--warning to show form-requirement\n[✓] Update TimePicker.stories.js - add warn/warnText controls to Playground\n[✓] Verify changes are consistent and complete\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-14239": {
     "instance_id": "carbon-design-system__carbon-14239",

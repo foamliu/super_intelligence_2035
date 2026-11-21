@@ -2270,9 +2270,16 @@
   "bpmn-io__bpmn-js-1607": {
     "instance_id": "bpmn-io__bpmn-js-1607",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 210.9,
+    "rc": 0,
+    "model_patch_len": 922,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " same purpose — ensuring root elements like errors, messages, signals are always added to the correct `bpmn:Definitions` container.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1610": {
     "instance_id": "bpmn-io__bpmn-js-1610",
