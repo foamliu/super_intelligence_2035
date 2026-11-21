@@ -66,9 +66,9 @@
 
 ### 各 shard 复现命令（任选一条自验）
 ```bash
-# 静态筛查
-cd <EDA-Flow-Bench>/benchmarks/EDA-Eval-DesignFlow
-python3 _audit_antihardcode_static.py --shard <X> --sample 25
+# 静态筛查（脚本在 workspace designflow/，--bench-root 默认指向 EDA-Flow-Bench 题库）
+cd <super_intelligence_2035>/doc/ZhuLong_DAC2027/benchmark
+python3 designflow/_audit_antihardcode_static.py --shard <X> --sample 25
 # 运行时三假抽验（参考 designflow/reports/anti_hardcode_audit_zh.md §2.2）
 ```
 

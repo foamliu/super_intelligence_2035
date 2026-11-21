@@ -2,7 +2,8 @@
 
 > 生成时间：2026-11-21 17:4x · 执行方：shard D · 依据：2026-11-21 17:0x 用户令「全 bench §4.9 anti-hardcode 普查放行，让 D 执行」
 > 数据文件：`designflow/anti_hardcode_audit_all.tsv`（635 行）
-> 普查脚本：`EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/_audit_antihardcode_static.py` + `designflow/_gen_audit_tsv.py`
+> 普查脚本：`designflow/_audit_antihardcode_static.py`（静态筛查）+ `designflow/_gen_audit_tsv.py`（统一 TSV 生成）
+> 题库根：`/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow`（脚本默认 --bench-root 指向此处）
 
 ## 0. TL;DR（先看结论）
 
@@ -154,14 +155,13 @@ A/B/C 抽样 GAP 代表题（已开 P0）：
 
 ## 7. 复现总命令
 ```bash
-cd <EDA-Flow-Bench>/benchmarks/EDA-Eval-DesignFlow
-# 静态筛查（D 全量 + A/B/C 各 25 抽样）
-python3 _audit_antihardcode_static.py --shard D --all --out /tmp/audit_D_full.tsv
-python3 _audit_antihardcode_static.py --shard A --sample 25 --out /tmp/audit_A_s25.tsv
-python3 _audit_antihardcode_static.py --shard B --sample 25 --out /tmp/audit_B_s25.tsv
-python3 _audit_antihardcode_static.py --shard C --sample 25 --out /tmp/audit_C_s25.tsv
-# 生成统一 TSV（directive 列格式）
 cd <super_intelligence_2035>/doc/ZhuLong_DAC2027/benchmark
+# 静态筛查（D 全量 + A/B/C 各 25 抽样）；--bench-root 默认指向 EDA-Flow-Bench 题库
+python3 designflow/_audit_antihardcode_static.py --shard D --all --out /tmp/audit_D_full.tsv
+python3 designflow/_audit_antihardcode_static.py --shard A --sample 25 --out /tmp/audit_A_s25.tsv
+python3 designflow/_audit_antihardcode_static.py --shard B --sample 25 --out /tmp/audit_B_s25.tsv
+python3 designflow/_audit_antihardcode_static.py --shard C --sample 25 --out /tmp/audit_C_s25.tsv
+# 生成统一 TSV（directive 列格式）
 python3 designflow/_gen_audit_tsv.py
 # 产物：designflow/anti_hardcode_audit_all.tsv
 ```
