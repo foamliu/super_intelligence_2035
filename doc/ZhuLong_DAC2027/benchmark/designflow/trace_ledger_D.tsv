@@ -1975,3 +1975,4 @@ vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:
 1795078502927_cmf4m.messages.json	mengfeiz	hfeg0pgn145	54	schematic_netlist	case	EDA-Eval-DesignFlow-SpiceNetlistParseProduce-001	2026-11-21 17:26	
 1794910638083_rgd33.messages.json	t0002802	hfeg0plg91	15	analog_context	case	EDA-Eval-DesignFlow-ConnectRelCheck-001	2026-11-21 20:00	
 1793957889009_55xl5	jinsongl	10.129.2.14	8	netlist	case	EDA-Eval-DesignFlow-RepErrorCounterProduce-001	2026-11-21 20:22	
+1795076423732_6azlp.messages.json	tongfanl	hfhds201	55	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistNodeTraceProduce-001	2026-11-21 20:59	
