@@ -1985,16 +1985,30 @@
   "bpmn-io__bpmn-js-1200": {
     "instance_id": "bpmn-io__bpmn-js-1200",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 583.2,
+    "rc": 0,
+    "model_patch_len": 3448,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " when dropping an `IntermediateCatchEvent` on a default sequence flow.\n\n**Files Modified:**\n- `lib/features/modeling/BpmnUpdater.js`\n- `test/spec/features/modeling/behavior/DropOnFlowBehaviorSpec.js`\n",
+    "stderr_tail": "uence flow conditionExpression handling\n[✓] Find the root cause of conditionExpression removal when changing to Timer Intermediate Catch Event\n[✓] Implement the fix\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1206": {
     "instance_id": "bpmn-io__bpmn-js-1206",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 805.0,
+    "rc": 0,
+    "model_patch_len": 4568,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " verifies that when a host and its boundary event are moved together, the boundary event stays attached\n\nThe existing tests continue to pass, and the linter reports no issues with the modified files.\n",
+    "stderr_tail": "\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix DetachEventBehavior.js to handle batch moves of boundary events\n[✓] Add test case for batch detachment of boundary events\n[✓] Verify fix doesn't break existing tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1221": {
     "instance_id": "bpmn-io__bpmn-js-1221",
