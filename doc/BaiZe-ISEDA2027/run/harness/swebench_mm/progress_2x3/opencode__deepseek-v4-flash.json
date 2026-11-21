@@ -2452,9 +2452,16 @@
   "bpmn-io__bpmn-js-1720": {
     "instance_id": "bpmn-io__bpmn-js-1720",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1724.6,
+    "rc": 0,
+    "model_patch_len": 1074,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ewElement` (which has the DI with `isExpanded`) instead of the bare `newBusinessObject` to `rules.allowed('shape.resize', ...)`, so that `canResize()` can properly evaluate expanded SubProcess shapes\n",
+    "stderr_tail": "ivity -> SubProcess shape resizing\n[✓] Identify the relevant code for shape resize on element transformation\n[✓] Implement the fix for shape resize (BpmnReplace.js)\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1802": {
     "instance_id": "bpmn-io__bpmn-js-1802",
