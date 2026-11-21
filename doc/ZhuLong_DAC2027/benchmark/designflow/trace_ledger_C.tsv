@@ -75,7 +75,7 @@
 1790067900307_qy90r.messages.json	xinqiaoz	hfeg0plg76	534	physical_verify	parked		2026-11-03 11:01	handoff resume PDK QA sync phase4(r47)
 1792998643161_19e3k.messages.json	jcgu	hfeg0plg95	533	physical_verify	case	EDA-Eval-DesignFlow-AetherLauncherSkill-001	2026-11-18 03:59	ssh 超时弃(r45)
 1790164140533_q2upl.messages.json	xinqiaoz	hfeg0plg76	513	physical_verify	parked		2026-11-03 11:01	handoff resume PDK QA phase5(r47)
-1786615396051_enh4y.messages.json	e0014566	hfeg0plg58	511	layout_virtuoso	parked		2026-11-03 11:01	RDL/RNODE/RTEXT 重叠 9cg75(r45)
+1786615396051_enh4y.messages.json	e0014566	hfeg0plg58	511	layout_virtuoso	case	EDA-Eval-DesignFlow-RsCalcConvLoopOrchestrator-001	2026-11-22 06:18	r938 revival (11-15 reaudit: run-existing no longer excluded). rscalc/autovia/powerfill resistance-reduction flow = pg_layout. deepread confirms real intent.
 1792829537180_vaiob.messages.json	harrywu	hfeg0pkn002	506	physical_verify	parked		2026-11-03 11:01	meta 中文输入法问题非EDA(r47)
 1792205753795_x5t0t.messages.json	brian	hfeg0plg99	497	layout_virtuoso	parked		2026-11-03 11:01	opamp design=analog/schematic 域非纯 shard C(r47)
 1792025124250_ebwqh.messages.json	xinqiaoz	hfeg0plg76	485	physical_verify	parked		2026-11-03 11:01	dummy migration 协作弃(r46)
