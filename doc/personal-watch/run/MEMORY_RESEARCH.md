@@ -23,8 +23,9 @@ PHASE:        双轨（A 最新论文 50% / B 经典论文 50% + 作者关系网
   ⑦ voice_ready **本窗 0 新增**（今日已 2 条，达上限）/ news_ready **0**（3 条方法·技术报告类，无本窗事件点）。
   ⑧ 交付：`daily/2026-11-21.html`（+18:00 节：B 轨表 + 作者/信件段 + news_ready 0 + 6 线建议 + 附录）+ `daily/index.html` 当日行（320 / 296 / 111 / 128 / 备稿 3）+ `research/2026-11-21.md` 18:00 节 + `PAPERS.md` #318–#320 + `AUTHORS.md` #295–#296 + `发送记录.md` §18:0x + draft 1 个。
 
-当前动作:     ✅ 18:00 时窗闭环：A 轨 0 新收（额度已满），B 轨 +3（Depth Anything / HunyuanVideo / V-JEPA，均 ≥500），作者网 +2（均 A 级邮箱），信 0 封（日上限）但新增 1 封草稿，voice_ready 0 新增（达上限）。
-下一步:       ① 21:00 时窗：继续 B 轨候选（HBM/JEDEC 一手 / QK-clip 实现 / InternViT 一手 / 视频世界模型一手）+ 作者网 +2；② 11-22 00:00 额度重置后发已备 3 封（发送前复核地址页）；③ 11-25 首批到期 → #1–#7 转 `无应答(>14d)`；④ 运维：发件显示名 / SMTP 只发不收 / 任务书 44 KB 超红线；⑤ 推送：先 `pull --rebase` 再 push。
+当前动作:     ✅ 18:00 时窗闭环 + 18:13 补推完成：A 轨 0 新收（额度已满），B 轨 +3（Depth Anything / HunyuanVideo / V-JEPA，均 ≥500），作者网 +2（均 A 级邮箱），信 0 封（日上限）但新增 1 封草稿，voice_ready 0 新增（达上限）。
+下一步:       ① 21:00 时窗：继续 B 轨候选（HBM/JEDEC 一手 / QK-clip 实现 / InternViT 一手 / 视频世界模型一手）+ 作者网 +2；② 11-22 00:00 额度重置后发已备 3 封（发送前复核地址页）；③ 11-25 首批到期 → #1–#7 转 `无应答(>14d)`；④ 运维：发件显示名 / SMTP 只发不收 / 任务书 44 KB 超红线；⑤ 推送：远端提交频繁（本轮 behind 60），push 被拒即 `fetch + rebase origin/main` 重试，最多 5 次。
+补推记录:     2026-11-21 18:13 · r231 首次 push 因共享工作副本残留 `.git/rebase-merge`（仅 `autostash`，指向 news 线 4 文件 166 行未提交改动）被拒 ⇒ ① `git stash store` 保住该 autostash；② 删除残留目录；③ rebase 到 origin/main（+60）后 push 成功；④ `stash pop` 恢复 news 四文件改动为未提交态（recruit `发送记录.md` 一处冲突按 upstream 已提交版解决，未覆盖他线结论）；⑤ 台账/HTML 复核：`daily/2026-11-21.html` 标签 18/18 · 22/22 · 135/135 · 323/323 · 90/90 · script 0 · 0 残留 `**`，`PAPERS.md` 累计 320（#318–#320 在册），`git status -sb` 已与 origin 同步。
 本轮新增:     A 轨 0（今日 5/5）· B 轨 +3（320）· 作者网 +2（296）· 作者信 0（128，备稿共 3）· voice_ready 0 新增 · news_ready 0 · 回信率 0/128 · X 已核验 111
 阻塞:         ① 🔴 发件显示名 `AI+EDA 招聘 · 自动`（最可能的 0 回信原因），需运维改配置；② 发件通道只发不收（无 IMAP/POP3）⇒ 回信可能已到但读不到；③ `WATCH_RESEARCH_TASK.md` 44 KB 超红线且 agent 只读 ⇒ 需授权；④ 无新增其他阻塞。
 ERROR_COUNT:  118（本轮 0 新增）
