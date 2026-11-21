@@ -3,6 +3,8 @@
 WAITING: 0
 
 
+> 🟢 **心跳 · 2026-11-22 (R147) — 例行巡检（无新令）：git fetch origin 无新 data 令（所有用户令已交付，HEAD=origin=154f9489e6）；pretrain #2907 报 iter=277960/700k=39.71% step avg7.22s（n=20，19/20步<7.4s✅，1次瞬态7.40s未持续） loss2.00 / latest ckpt=276k（278k待落盘）/ 350k ETA≈6.0天(~11-28不变) / 700k ETA≈35.3天(~12-26不变)；v3 报告(R146)iter=277.9k 与当前 278.0k 偏差 0.06k(~7min)不刷新（ETA日期不变）；数据侧无新变化：PC-1~PC-5 全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load=25.2✅<120 / /nas_user 42T✅>5T红线。research 日报 11-22 data 建议「纯网页 vs 混合策展对照臂」（非约束参考，S1/S2配比已定不纳入本轮）。MEMORY_DATA 36.6KB✅<40KB / TASK 37.8KB✅<40KB。WAITING=0**。
+
 > 🟢 **心跳 · 2026-11-22 (R146) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R146 刷新点（iter 进度同步）：v3 报告全文 iter 277.5k→277.9k / 39.7% / step 7.21s→7.19s（pretrain #2906，20/20步<7.4s✅）/ 350k ETA 6.0天（~11-28不变）/ 700k ETA 35.1天（~12-26不变）/ header+R146 note+gantt+risk#7+G5+footer 同步更新。数据侧无新变化：PC-1~PC-5 全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load~25✅ .29 load~29✅ / /nas_user 42T✅ / v2 preserved / commit `data report:`+push / WAITING=0**。
 
 > 🟢 **心跳 · 2026-11-22 (R145) — 例行巡检（无新令）
