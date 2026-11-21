@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **320** 条（**第八十四轮 2026-11-21 18:0x 补 3 条 → 320**：Depth Anything `2401.10891`（**2,769**，CVPR 2024）/ HunyuanVideo `2412.03603`（**2,092**，预印本）/ V-JEPA 特征预测 `2404.08471`（**846**，TMLR）；核验：arXiv API `id_list` 单批 **`200` + `application/atom+xml`**（15,089 B / 3 entry，`published` 齐备）+ abs 页 **3/3 `200`**（42,879 / 50,895 / 41,768 B）+ OpenAlex **3/3 `200`**（2,769 / 2,092 / 846，查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 DeepSeek-R1 `2501.12948` / Mixtral `2401.04088` / Self-Consistency `2203.11171` / Ring Attention `2310.01889` / s1 `2501.19393` / DCLM `2406.11794` 经查**均已在表内** ⇒ 剔除）；覆盖轴 = 62M 无标注图的数据引擎 + 更难目标 + 辅助语义监督 / 开源 13B 视频基座的四段框架 / 不用负样本与重建的纯特征预测目标；累计覆盖（按主归属线计）：pretrain **105** · vision **51** · harness **120** · data **110** · zhulong **121** · designflow **51**）
+
 **本轮快照**：累计 **317** 条（**第八十三轮 2026-11-21 15:0x 补 3 条 → 317**：Grounding DINO `2303.05499`（**2,415**，≥500 直接满足，预印本）/ AndroidWorld `2405.14573`（**525**，≥500 直接满足，OpenAlex source = ICLR）/ EAGLE `2401.15077`（**499**，**&lt;500 按「方法论常青」收**：EAGLE-2 / EAGLE-3 的标准对照）；核验：arXiv API `id_list` 单批 **`200` + `application/atom+xml`**（`published` 齐备）+ abs 页 **3/3 `200`**（44,302 / 44,789 / 42,120 B）+ OpenAlex **3/3 `200`**（2,415 / 525 / 499，查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` **0 命中**（同批候选 Mind2Web `2306.06070` / Dolma `2402.00159` / MiniCPM `2404.06395` 经查**已在表内** ⇒ 剔除）；⚠️ **ID 误记在写入前拦截**：候选池旧记 Grounding DINO 为 `2303.19588`，`id_list` 实测不返回该文 ⇒ 真 ID `2303.05499`；另 `2502.05907` 实测是 **EvolvingAgent**（非 Muon）⇒ 未收；覆盖轴 = 开放词表取框的三阶段紧融合 / 参数化动态任务 + 程序化成功检查 / 特征层自回归的投机解码；累计覆盖：pretrain **105** · vision **48** · harness **120** · data **110** · zhulong **121** · designflow **51**）
 
 
@@ -5487,6 +5489,57 @@
 | 与我们工作的关系 | **zhulong（主 · 解码成本口径）**：「延迟加速」与「吞吐翻倍」是两个不同口径，成本表须分开列，不能只报一个。<br>**harness（默认开关）**：agent 多为单请求小 batch，2.7–3.5× 是否在 batch=1 成立决定能否默认开。<br>**pretrain（域内重训）**：draft 头是否需要见过目标分布，决定窄域（RTL / 版图脚本）上要不要单独训草稿头。 |
 | 首次收录 | **2026-11-21**（第八十三轮 · 15:00 时窗） |
 | 核验状态 | arXiv `id_list=2401.15077` **`200` + atom**（`published` `2024-01-26T18:59:01Z`）；abs 页 **`200` / 42,120 B**；OpenAlex **`200`（499 / 2024 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 318. Depth Anything: Unleashing the Power of Large-Scale Unlabeled Data
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Depth Anything: Unleashing the Power of Large-Scale Unlabeled Data |
+| 作者（前 3） | Lihe Yang · Bingyi Kang · Zilong Huang（共 **6** 位；末位 Hengshuang Zhao；arXiv 作者字段逐字核；arXiv 元数据未列 affiliation ⇒ 机构不写） |
+| 年份 | **2024**（arXiv v1 `2024-01-19`；v2 `2024-04-07`） |
+| 会议 / 期刊 | **CVPR 2024**（arXiv `comment` = *Accepted by CVPR 2024*；OpenAlex source = *IEEE/CVF Conference on Computer Vision and Pattern Recognition*） |
+| 被引数 | **2,769**（OpenAlex `10.48550/arxiv.2401.10891`，查询日 **2026-11-21**；**≥500 直接满足判据**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2401.10891> ｜ arXiv DOI `10.48550/arxiv.2401.10891` |
+| 一句话贡献 | 不发明新模块，靠**数据引擎**自动收集并标注约 **62M 无标注图**做单目深度基础模型；两条让「放大数据」真正有效的策略：① 用数据增强构造**更难的优化目标**，逼模型找额外视觉知识；② 用**来自预训练编码器的辅助监督**继承语义先验。在**六个公开数据集 + 随机拍摄照片**上做零样本评测，再用 NYUv2 / KITTI 的 metric depth 微调刷新 SOTA，并让下游 depth-conditioned ControlNet 变好。 |
+| 与我们工作的关系 | **vision（主 · 自监督视觉塔的数据引擎）**：「自动标注流水线 + 更难目标 + 辅助语义监督」三件套可直接搬给我们版图 / 封装截图的无标注取样。<br>**data（自动标注口径）**：62M 规模下的伪标签质量如何控，是我们数据线「自动标注 vs 人工抽检」配比的参照。<br>**harness（零样本口径）**：「六个公开数据集 + 随机照片」是**零样本**口径，不得与域内微调数字混比。 |
+| 首次收录 | **2026-11-21**（第八十四轮 · 18:00 时窗） |
+| 核验状态 | arXiv `id_list=2401.10891` **`200` + `application/atom+xml`**（`published` `2024-01-19T18:59:52Z`）；abs 页 **`200` / 42,879 B**；OpenAlex **`200`（2,769 / 2024 / conference-paper, CVPR）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 319. HunyuanVideo: A Systematic Framework For Large Video Generative Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | HunyuanVideo: A Systematic Framework For Large Video Generative Models |
+| 作者（前 3） | Weijie Kong · Qi Tian · Zijian Zhang（共 **52** 位；末位 Caesar Zhong；腾讯混元；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-12-03`；v6 `2025-03-11`） |
+| 会议 / 期刊 | **预印本**（OpenAlex source = *arXiv (Cornell University)*、`publication_year=2024`；会议 / 期刊接收信息**未核 ⇒ 不写**） |
+| 被引数 | **2,092**（OpenAlex `10.48550/arxiv.2412.03603`，查询日 **2026-11-21**；**≥500 直接满足判据**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2412.03603> ｜ arXiv DOI `10.48550/arxiv.2412.03603` |
+| 一句话贡献 | 开源视频生成基础模型技术报告：把**数据清洗（curation）· 架构设计 · 渐进式放大与训练 · 大规模训练 / 推理基础设施**打包成一套框架，训出 **13B 以上**参数（作者称开源模型中最大）；按专业评测，效果超过 Runway Gen-3、Luma 1.6 与三个头部中文视频模型（作者自述，无第三方复现）；代码与基础模型公开。 |
+| 与我们工作的关系 | **vision（主 · 视频生成基线）**：开源视频基座的「数据 + 架构 + 渐进放大 + 基建」四段拆法，是我们视频侧评估什么该自研、什么可直接用的参照。<br>**pretrain（渐进放大）**：分辨率 / 时长 / 帧率的**分阶段放大顺序**是训练排程问题，与我们 WSD 排程同属「先短后长」一类。<br>**zhulong（成本口径）**：13B 级视频模型把「单条生成成本」推到必须单列的口径，不能与文本 token 成本混算。<br>**data（curation）**：报告把数据清洗列为一等公民，与我们「配比 > 规模」的判断相互印证（我们的观察）。 |
+| 首次收录 | **2026-11-21**（第八十四轮 · 18:00 时窗） |
+| 核验状态 | arXiv `id_list=2412.03603` **`200` + atom**（`published` `2024-12-03T23:52:37Z`）；abs 页 **`200` / 50,895 B**；OpenAlex **`200`（2,092 / 2024 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；「超过 Runway Gen-3 / Luma 1.6」是**作者自述**，本线未复核。 |
+
+---
+
+## 320. Revisiting Feature Prediction for Learning Visual Representations from Video
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Revisiting Feature Prediction for Learning Visual Representations from Video |
+| 作者（前 3） | Adrien Bardes · Quentin Garrido · Jean Ponce（共 **8** 位；末位 Nicolas Ballas；Meta FAIR / Inria 方向；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-02-15`） |
+| 会议 / 期刊 | **TMLR**（OpenAlex source = *Transactions on Machine Learning Research*、`type=article`；卷期 / 页码**未核**） |
+| 被引数 | **846**（OpenAlex `10.48550/arxiv.2404.08471`，查询日 **2026-11-21**；**≥500 直接满足判据**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2404.08471> ｜ arXiv DOI `10.48550/arxiv.2404.08471` |
+| 一句话贡献 | 把**特征预测**单独当作视频无监督学习目标：**不用**预训练图像编码器、文本、负样本、重建或其他监督；在 **2M 公开视频**上训练一组 ViT；**冻结骨干**即可同时做运动类与外观类任务——最大模型 ViT-H/16 仅用视频训练即得 **Kinetics-400 81.9% / Something-Something-v2 72.2% / ImageNet1K 77.9%**。 |
+| 与我们工作的关系 | **vision（主 · 视频自监督目标）**：证明「预测特征」可完全替代像素重建与对比负样本，是我们视觉塔预训练目标的第三个候选臂（重建 / 对比 / 特征预测）。<br>**pretrain（目标函数口径）**：无文本、无负样本 ⇒ 训练侧无需额外数据管线，对纯工业视频域最省事，可作为 2B 模型视觉塔的对照实验。<br>**data（标签需求）**：全程无标签、只用 2M 公开视频 ⇒ 与我们「公开数据打底、专有数据只做精调」的分层策略一致（我们的观察）。<br>**harness（冻结评测）**：冻结骨干下的分数是**表征质量**口径，与端到端微调分数不可混比。 |
+| 首次收录 | **2026-11-21**（第八十四轮 · 18:00 时窗） |
+| 核验状态 | arXiv `id_list=2404.08471` **`200` + atom**（`published` `2024-02-15T18:59:11Z`）；abs 页 **`200` / 41,768 B**；OpenAlex **`200`（846 / 2024 / article, TMLR）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
 
 ---
 

@@ -14,6 +14,8 @@
 > **当前计数（2026-11-21 15:0x）**：作者 **294** 人（编号最大 **294**）· X 已核验 **111**（本轮 +1：`@hongyangzh` 双源核验；`@atasteoff` 经代理 `404` ⇒ 不记）· 已发信 **128**（台账 #1–#128；本窗不借日额度）· 回信 **0**（0/128）。<br>**第八十三轮增量（2026-11-21 15:0x）**：作者网 292 → **294**（#293 Shilong Liu **A 级** `sl6222@columbia.edu`（本人主页 `lsl.zone` `200` / 26,074 B 页内 `mailto:` 明文；主页写明 Princeton 邮箱已停用）/ #294 Hongyang Zhang **A 级** `hongyang.zhang@uwaterloo.ca`（滑铁卢官方人员页 `200` / 95,418 B 页内 `mailto:`）），来自 B 轨 #315 Grounding DINO / #317 EAGLE；两封草稿已入仓（`drafts/2303.05499.md` / `drafts/2401.15077.md`），当日 12/12 已满 ⇒ 计划 11-22 00:00 发。以下历史快照行保留原文（不追改），计数以本行为准。
 
 
+> **当前计数（2026-11-21 18:0x）**：作者 **296** 人（编号最大 **296**）· X 已核验 **111**（本轮 0 新增：`@LiheYoung` / `@hszhao` 经代理实测均 **`404`**（`og:title` = `User Profile Not Found - X | 404 Error`）⇒ 不记、不猜）· 已发信 **128**（台账 #1–#128；当日 12/12 已满 ⇒ 本窗不发）· 回信 **0**（0/128）。<br>**第八十四轮增量（2026-11-21 18:0x）**：作者网 294 → **296**（#295 Lihe Yang **A 级** `lihe.yang.cs@gmail.com`（本人主页 `liheyoung.github.io` `200` / 17,151 B 页内 `mailto:` 明文；页内自述 HKU 博士生，导师 Hengshuang Zhao）/ #296 Hengshuang Zhao **A 级** `hszhao[at]cs.hku.hk`（港大官方个人页 `i.cs.hku.hk/~hszhao/` `200` / 36,107 B 页内明文；页内写明 Assistant Professor, School of Computing and Data Science, HKU）），来自 B 轨 #318 Depth Anything；`@LiheYoung` / `@hszhao` 均 `404` ⇒ 记「未找到 X」。以下历史快照行保留原文（不追改），计数以本行为准。
+
 > **当前计数（2026-11-21 00:0x）**：作者 **280** 人（编号最大 **280**）· X 已核验 **107**（本轮未新增核验：`x.com` 经代理 `000`）· 已发信 **119**（台账 #1–#119）· 回信 **0**。
 
 > **第七十八轮增量（2026-11-21 00:0x）**：作者网 276 → **280**（#277 Xizhou Zhu **B 级** `zhuwalter@sensetime.com`（ar5iv HTML `200` / 267,916 B 脚注明文；**2020 年地址，疑失效 ⇒ 只建档不发**）/ #278 Michael Tschannen **未找到**（`tschannen.github.io` `404`）/ #279 Xiaohua Zhai **未找到**（`xiaohuazhai.com` 本轮 `000`）/ #280 Alexander Sergeev **未找到**（论文未给邮箱）），来自第七十八轮 B 轨 #297 Horovod / #298 Deformable DETR / #299 SigLIP 2；已发信 116 → **119**（#117 NeRF 英文 181 词 `SENT OK 00:04:19` / #118 Faster R-CNN 英文 178 词 `00:04:21` / #119 Quiet-STaR 英文 182 词 `00:04:24`）；回信 **0**（0/119）。
@@ -4187,3 +4189,30 @@
 | X 账号 | **@hongyangzh**（双源核验 2026-11-21 15:0x：GitHub `github.com/hongyanz` `200` / 175,788 B 页内链接 `twitter.com/hongyangzh`；X 页 `og:title` = `Hongyang Zhang (@hongyangzh) on X`，`x.com/hongyangzh` `200` / 197,556 B 经代理） |
 | 状态 | **待跟踪**（草稿 `research/mail/drafts/2401.15077.md` 已备；计划 2026-11-22 00:00 时窗发；follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
 | 备注 | `语言=中文(判据=拼音姓名族属；本文四位作者均为华人姓名)`。价值点：「延迟加速」与「吞吐翻倍」是两个成本口径，且 draft 头在窄域（RTL / 版图脚本）是否需重训，直接决定 zhulong 成本表与 harness 默认开关。 |
+
+### 295. Lihe Yang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lihe Yang（拼音姓名族属 ⇒ 中文全文发信） |
+| 机构 | **The University of Hong Kong（HKU）** 博士生，导师 Hengshuang Zhao（本人主页 2026-11-21 18:0x 实测原文：`I am a PhD student at HKU, advised by Prof. Hengshuang Zhao`）；本科 / 硕士毕业于南京大学（导师 Yinghuan Shi）；曾在 Meta FAIR / ByteDance Seed / 上海 AI Lab / SenseTime / 腾讯优图实习；现研究 VLM |
+| 代表论文 | **Depth Anything**（`2401.10891`，B 轨 #318，一作）· Depth Anything V2 · UniMatch / UniMatch V2 |
+| 邮箱 | **A 级** `lihe.yang.cs@gmail.com`（本人主页 `https://liheyoung.github.io/` 实测 `HTTP 200` / 17,151 B，页内 `mailto:` 明文；同页 Contact 区「Email」链接指向该地址） |
+| 主页 | <https://liheyoung.github.io/> |
+| X 账号 | **未找到**（主页未挂 X 链接；`x.com/LiheYoung` 经代理实测 **`404`**（`og:title` = `User Profile Not Found - X | 404 Error`）⇒ 不记、不猜） |
+| 状态 | **待跟踪**（A 级邮箱已核；当日 12/12 已满 ⇒ 本窗不发信，草稿 `research/mail/drafts/2401.10891.md` 已备，计划 2026-11-22 00:00 时窗发） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + HKU 中文环境；同为华人导师组)`。价值点：Depth Anything 的**数据引擎 + 更难优化目标 + 预训练编码器辅助监督**三件套，直接对应我们版图 / 封装截图的自动标注取舍；其主页新闻写明 Depth Anything V1 进入 CVPR 2024 top-5 most influential papers（本人自述）。 |
+
+### 296. Hengshuang Zhao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hengshuang Zhao（拼音姓名族属 ⇒ 中文全文发信） |
+| 机构 | **The University of Hong Kong** 助理教授（School of Computing and Data Science，Rm424 Chow Yei Ching Building；本人页 2026-11-21 18:0x 实测原文 `Assistant Professor ... The University of Hong Kong`），主持 **SAIL（Super Artificial Intelligence Lab）**；曾任 MIT CSAIL（导师 Antonio Torralba）与牛津 Torr Vision Group 博士后；CUHK 博士（导师 Jiaya Jia） |
+| 代表论文 | **Depth Anything**（`2401.10891`，B 轨 #318，末位 / 通讯方向）· **PSPNet 语义分割系列**（一作；本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **A 级** `hszhao[at]cs.hku.hk`（港大个人页 `https://i.cs.hku.hk/~hszhao/` 实测 `HTTP 200` / 36,107 B，页内 `Email: hszhao[at]cs.hku.hk` 明文；`[at]` 按站内写法还原为 `@`） |
+| 主页 | <https://i.cs.hku.hk/~hszhao/> |
+| X 账号 | **未找到**（页面未挂 X 链接；`x.com/hszhao` 经代理实测 **`404`**（`og:title` = `User Profile Not Found - X | 404 Error`）⇒ 不记、不猜） |
+| 状态 | **待跟踪**（A 级邮箱已核；与 #295 同属 Depth Anything ⇒ **同论文 ≤1 封**，本线优先发一作 Lihe Yang，本文不另发） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 港大中文环境)`。价值点：研究自述含 **Computer Vision / Embodied AI / Multimodal AI / Spatial AI / Physical AI**，与我们 vision 线与 zhulong 的「空间 / 物理」评测口径相关；作为导师可判断方向级问题（数据引擎是否值得长期投入），细节问题走一作。 |
+
