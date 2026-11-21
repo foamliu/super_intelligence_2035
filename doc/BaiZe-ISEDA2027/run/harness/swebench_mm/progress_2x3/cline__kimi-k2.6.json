@@ -1920,16 +1920,29 @@
   "bpmn-io__bpmn-js-1179": {
     "instance_id": "bpmn-io__bpmn-js-1179",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.6,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "bpmn-io__bpmn-js-1192": {
     "instance_id": "bpmn-io__bpmn-js-1192",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 269.4,
+    "rc": 0,
+    "model_patch_len": 1902,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "can now be copied just like any other shape, aligning the copy behavior with the existing detach capability shown in the issue's GIF.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1196": {
     "instance_id": "bpmn-io__bpmn-js-1196",

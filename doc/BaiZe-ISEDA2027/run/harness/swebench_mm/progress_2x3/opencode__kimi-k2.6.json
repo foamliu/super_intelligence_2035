@@ -2041,9 +2041,16 @@
   "bpmn-io__bpmn-js-1238": {
     "instance_id": "bpmn-io__bpmn-js-1238",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1254.5,
+    "rc": 0,
+    "model_patch_len": 1488,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ec/features/modeling/association-parent.bpmn`** (new) - Test fixture\n\nThe fix is minimal, follows the existing codebase patterns, and properly integrates with the command stack for undo/redo support.\n",
+    "stderr_tail": "se structure and find association-related code\n[✓] Identify where source/target parent changes are handled\n[✓] Implement fix to update association parent when source/target move\n[✓] Test the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1256": {
     "instance_id": "bpmn-io__bpmn-js-1256",
