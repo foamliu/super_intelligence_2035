@@ -341,7 +341,7 @@ D	EDA-Eval-DesignFlow-RunTraceTimingDiagQA-001	15	n	y	PASS	PASS	FAIL(静态)	GAP
 D	EDA-Eval-DesignFlow-SAConnCheckQA-001	13	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-SPFNetlistCompare-001	17	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-SPFResistorLayerDiffQA-001	23	n	n	FAIL	FAIL	FAIL(静态)	PASS	保留；抽查 1 条重跑 negative_selftest
-D	EDA-Eval-DesignFlow-SaNPTrannoiseFix-001	11	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-SaNPTrannoiseFix-001	16	y	n	FAIL	FAIL	FAIL	PASS	r1077 修复: 新增隐藏 A' testbench(reference/.../hidden_a/, SUT 不可见, FF 1.35V/sns_hv_nmos/sns_chain/xmson0, 与 A(xmmn13/TT) B(xmmn0/SS) token 结构性不相交) + 5 条 A'-gold 交叉(l-p, k=11->16); smart B-hardcode stub(md5 查表 A->A-gold/B->B-gold/unknown->B-gold fallback) pre-fix PASS 全 11(a-k 含 visible-A guard j) -> post-fix FAIL[(m) A' instance=xmson0!=xmmn0]; §4.9 三假 runtime 实测均 FAIL(静态标 print_only/core_deleted PASS 为误报, 同 r1069/InvSpiceSim); 负样本入库 neg_fake_hardcode_b.py
 D	EDA-Eval-DesignFlow-SaTransistorExtract-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-SacapBl2blCompare-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-SacapBlCouplingSummary-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
