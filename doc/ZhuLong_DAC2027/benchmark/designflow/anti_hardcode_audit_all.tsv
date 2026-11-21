@@ -280,7 +280,7 @@ D	EDA-Eval-DesignFlow-OscSpDeckMigrateInclude-001	14	n	y	PASS	PASS	FAIL(静态)	
 D	EDA-Eval-DesignFlow-OtaSimReport-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-PGcheckTcl-001	15	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-ParallelMeasFanout-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
-D	EDA-Eval-DesignFlow-ParasiticsAnnotDiag-001	9	n	n	PASS	PASS	FAIL(静态)	GAP	【运行时已确认 GAP】print_only PASS (confirmed: ship reference_report_B.md verbatim)；重写 check.py：要求交付分析脚本而非报告，check 在 B 上 subprocess 运行脚本 + 嵌入 A fixture 做 A-gold 交叉校验
+D	EDA-Eval-DesignFlow-ParasiticsAnnotDiag-001	14	y	y	FAIL(runtime post-fix)	FAIL(runtime post-fix)	FAIL(runtime post-fix)	PASS	【已修复r1083】reframe report->script deliverable (diagnose_parasitics.py subprocess on hidden B + hidden A' cross-check, k=9->14); 三假+smart hardcode_b stub ALL FAIL (n_distinct=3: b/c/l)
 D	EDA-Eval-DesignFlow-PassModuleSplice-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-PatternHierResolverProduce-001	18	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-PatternParamAudit-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub

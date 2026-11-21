@@ -1704,3 +1704,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795159188311_7v1g8	shanliny	hfeg0plg107	250	spice_sim	parked		2026-11-22 02:43	near-dup FinesimMosComparaFix-001 (shanliny mos_compara.py same path). r990 triage.
 1787104991644_x03ml	junxu	hfeg0pkn005	677	spice_sim	parked		2026-11-22 02:43	Cadence SKILL doc reading (sklangref HTML), not spice. r990 triage.
 1787196205133_yr9k2	junxu	hfeg0pkn005	779	spice_sim	parked		2026-11-22 02:43	virtuoso block-design skill (SKILL layout/ERC), not spice. r990 triage.
+1794893672653_11voz.messages.json	joeyl	hfeg0plg74	116	spice_sim	claimed		2026-11-22 03:45	
