@@ -5645,6 +5645,57 @@
 
 ---
 
+## 327. EVA-02: A Visual Representation for Neon Genesis
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | EVA-02: A Visual Representation for Neon Genesis |
+| 作者（前 3） | Yuxin Fang · Quan Sun · Xinggang Wang（共 **6** 位；末位 Yue Cao；arXiv 作者字段逐字核；机构本轮未逐页核 ⇒ 不写） |
+| 年份 | **2023**（arXiv v1 `2023-03-20`） |
+| 会议 / 期刊 | **Image and Vision Computing**（OpenAlex `type=article`、`publication_date=2024-07-17`、卷 **149** / 页 **105171**、Elsevier；查询日 2026-11-22） |
+| 被引数 | **683**（OpenAlex `10.48550/arxiv.2303.11331`，查询日 **2026-11-22**；**≥500 直接满足判据**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2303.11331> ｜ arXiv DOI `10.48550/arxiv.2303.11331` |
+| 一句话贡献 | 用**更新后的 plain Transformer + 从公开 CLIP 视觉编码器初始化 + 掩码图像建模（MIM）** 重做 EVA：仅 **304M** 参数的 EVA-02 在 ImageNet-1K 微调达 **90.0** top-1；EVA-02-CLIP 以约 **1/6** 参数与 **1/6** 图文训练数据达到 **80.4** 零样本 top-1（作者自报）。 |
+| 与我们工作的关系 | **vision（主 · 视觉塔初始化与容量）**：MIM 目标 + CLIP 权重初始化这条组合，是我们视觉塔「从零训 vs 从 CLIP 初始化」对照的直接证据。<br>**data（图文对效率）**：1/6 数据达到 80.4 零样本，说明数据质量 / 初始化可能比堆图文对更划算。<br>**pretrain（目标函数）**：同一骨干上 MIM 与对比学习目标的迁移差异，须单独消融。 |
+| 首次收录 | **2026-11-22**（第八十七轮 · 03:00 时窗） |
+| 核验状态 | arXiv `id_list=2303.11331` **`200` + atom**（`published` `2023-03-20T17:59:59Z`）；abs 页 **`200` / 43,667 B**（`citation_title` 与 API 逐字一致）；OpenAlex **`200`（683 / 2024 / article）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 328. Sequence Parallelism: Long Sequence Training from System Perspective
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Sequence Parallelism: Long Sequence Training from System Perspective |
+| 作者（前 3） | Shenggui Li · Fuzhao Xue · Chaitanya Baranwal（共 **5** 位；末位 Yang You；arXiv 作者字段逐字核；机构本轮未逐页核 ⇒ 不写） |
+| 年份 | **2021**（arXiv v1 `2021-05-26`） |
+| 会议 / 期刊 | **ACL 2023**（OpenAlex `type=conference-paper`、`publication_date=2023-01-01`、页 **2391–2404**；查询日 2026-11-22） |
+| 被引数 | **258**（OpenAlex `10.48550/arxiv.2105.13120`，查询日 **2026-11-22**；未达 500，按「开创范式 / 方法论常青」入选——它是把长序列切到多卡的系统侧并行方案） |
+| arXiv / DOI | <https://arxiv.org/abs/2105.13120> ｜ arXiv DOI `10.48550/arxiv.2105.13120` |
+| 一句话贡献 | 把**输入序列维**切开做并行（sequence parallelism），与数据 / 流水 / 张量并行正交，凑成 **4D 并行**；不再要求单卡放下整条序列，配稀疏注意力可训「无限长」序列（作者自报）。 |
+| 与我们工作的关系 | **pretrain（主 · 长上下文训练）**：我们扩上下文时，先判断瓶颈是**单卡显存**还是**通信**——这篇给的是「序列维切卡」的系统侧基线。<br>**zhulong（长视频训练）**：视频 token 数随帧数线性增长，序列并行是可复用的切分轴。<br>**harness（成本口径）**：长上下文实验必须同时报「并行度 / 卡数 / 有效序列长度」，否则吞吐不可比。 |
+| 首次收录 | **2026-11-22**（第八十七轮 · 03:00 时窗） |
+| 核验状态 | arXiv `id_list=2105.13120` **`200` + atom**（`published` `2021-05-26T13:40:58Z`）；abs 页 **`200` / 44,844 B**（标题逐字一致）；OpenAlex **`200`（258 / 2023 / conference-paper）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 329. Vision Transformers Need Registers
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Vision Transformers Need Registers |
+| 作者（前 3） | Timothée Darcet · Maxime Oquab · Julien Mairal（共 **4** 位；末位 Piotr Bojanowski；arXiv 作者字段逐字核；机构本轮未逐页核 ⇒ 不写） |
+| 年份 | **2023**（arXiv v1 `2023-09-28`） |
+| 会议 / 期刊 | **ICLR 2024**（OpenAlex `type=conference-paper`、`publication_date=2024-05-31`、source = *International Conference on Learning Representations*；作者主页自述 ICLR 2024 oral / outstanding paper；卷期页码无） |
+| 被引数 | **821**（OpenAlex `10.48550/arxiv.2309.16588`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2309.16588> ｜ arXiv DOI `10.48550/arxiv.2309.16588` |
+| 一句话贡献 | 在监督与自监督 ViT 的特征图里定位到**高范数 token 伪影**（主要出现在低信息背景区，被模型挪去承担内部计算），通过**额外加 register token** 让它们有专用去处；修复后密集预测达到新的自监督 SOTA，特征图 / 注意力图更平滑（作者自报）。 |
+| 与我们工作的关系 | **vision（主 · 特征图质量）**：我们的视觉塔若直接拿 patch 特征做检测 / 分割 / 定位，必须检查高范数伪影，否则下游头会把「背景伪影」当信号。<br>**zhulong（视频特征）**：多帧 ViT 的伪影是否随时序累积，需在视频特征上复核（作者只做图像）。<br>**harness（可视化验收）**：把「特征图范数分布 + 注意力平滑度」列入视觉塔验收项，而非只看线性探针分数。 |
+| 首次收录 | **2026-11-22**（第八十七轮 · 03:00 时窗） |
+| 核验状态 | arXiv `id_list=2309.16588` **`200` + atom**（`published` `2023-09-28T16:45:46Z`）；abs 页 **`200` / 40,626 B**（标题逐字一致）；OpenAlex **`200`（821 / 2024 / conference-paper）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |

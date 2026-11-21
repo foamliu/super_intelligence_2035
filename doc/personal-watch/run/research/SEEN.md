@@ -5711,3 +5711,6 @@
 | 2026-11-22 | 2611.26275 | dLoop: Looped Diffusion Language Models via Recurrent Latent Refinement | cs.CL | 收录 |
 | 2026-11-22 | 2611.26084 | RL Can Only Reinforce What It Sees Succeed | cs.LG | 收录 |
 | 2026-11-22 | 2611.26069 | SheetAlign: Grounded Interaction and Stage-Isolated Learning for Spreadsheet Agents | cs.CL | 收录 |
+| 2026-11-22 | 2611.26409 | WeMM-Video: Pushing the Frontiers of Open-Source Omni-Modal Video Understanding | cs.CV | 收录 |
+| 2026-11-22 | 2611.26334 | Online Temporal Rotations for 2 Bit KV-Cache Quantization in Video Diffusion Transformers | cs.CV | 收录 |
+

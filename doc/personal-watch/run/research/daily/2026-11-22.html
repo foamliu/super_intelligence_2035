@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-22（3/5 · 00:00 早报 · B 轨第八十六轮 → 326） · research 线</title>
+<title>论文观察日报 · 2026-11-22（5/5 · 03:00 晚报 · B 轨第八十七轮 → 329） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -47,18 +47,18 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-22</h1>
-  <div class="sub"><b>00:00 时窗（早报 3 篇）· A 轨 3/5 · B 轨第八十六轮 +3 → 326</b> · 今日进度 <b>3 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-22 00:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>03:00 时窗（晚报补 2 篇）· A 轨 5/5 · B 轨第八十七轮 +3 → 329</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-22 03:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
 <div class="note">
-  <b>采集口径说明（可核验）</b>：本轮 <code>cat:cs.CL&amp;max_results=40&amp;sortBy=submittedDate</code> <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（<b>109,971 B / 40 entry</b>，<code>--noproxy '*'</code> 直连），最新 <code>published</code> = <b><code>2026-11-19T18:57:25Z</code></b>（<b>连续第 13 窗未前进</b>；距 72h 截止 <code>2026-11-22T18:57:25Z</code> 尚在窗内）。
-  3 篇入选 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / 近 7 天 <code>daily/</code> <b>均 0 命中</b>；abs 页逐篇复查 <b>3/3 <code>200</code></b>（41,201 / 40,874 / 43,057 B）且 <code>citation_title</code> 与 API 标题逐字一致，<code>published</code> 齐备。
+  <b>采集口径说明（可核验 · 03:00 补轮）</b>：本轮 <code>cat:cs.CV&amp;max_results=40&amp;sortBy=submittedDate</code> <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（<b>107,965 B / 40 entry</b>，<code>--noproxy '*'</code> 直连），最新 <code>published</code> = <b><code>2026-11-19T18:59:57Z</code></b>（公告批仍未前进；与 00:00 的 cs.CL 上界 <code>18:57:25Z</code> 同批，距 72h 截止仍在窗内）。
+  2 篇入选 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / 近 7 天 <code>daily/</code> <b>均 0 命中</b>；abs 页逐篇复查 <b>2/2 <code>200</code></b>（43,294 / 41,727 B）且 <code>citation_title</code> 与 API 标题逐字一致，<code>published</code> 齐备。
   ⚠️ 本窗仍只从<b>已公告的积压候选</b>里取，未把「公告批上界不动」当成「没有新论文」。
 </div>
 
-<h3 class="sec">A 轨 · 今日推荐（3 / 5）</h3>
+<h3 class="sec">A 轨 · 今日推荐（5 / 5）</h3>
 
 <div class="card">
   <h2><span class="no">1</span>SheetAlign: Grounded Interaction and Stage-Isolated Learning for Spreadsheet Agents</h2>
@@ -96,7 +96,31 @@
   <div class="rm"><b>推荐理由</b>：我们在 zhulong 上关心的是<b>每 token 成本</b>，而「并行解码」类的加速经常靠降置信度阈值，代价是质量；本文给的是<b>另一根轴：在提交前多算几次潜变量</b>。可借三点：① <b>参数共享的循环块</b>只增加计算不增加参数量，是「用算力换质量」的可控旋钮，适合放在成本分档里；② <b>TPF 折算</b>这个口径值得照搬——比较解码加速必须把额外计算算进去，否则数字不可比；③ 只改结构不改预训练目标，理论上可在现有 DLM checkpoint 上做最小改造。<br><b>风险 / 边界</b>：① 只覆盖四个推理 / 代码基准，长文生成与多语未测；② 「DP 加速」的对手选择有限，未与自回归 + 投机解码做同成本对比；③ 循环次数与质量的曲线需读正文，摘要未给拐点；④ 作者自报。</div>
 </div>
 
-<h3 class="sec">B 轨 · 经典论文（第八十六轮 +3 → 326）</h3>
+<div class="card">
+  <h2><span class="no">4</span>WeMM-Video: Pushing the Frontiers of Open-Source Omni-Modal Video Understanding</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Changli Tang · Jie Yang · Tianyi Wang（et al.，共 12 位；机构取自 arXiv 元数据，本轮未逐页核）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-19（v1）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.CV ｜ <tag class="t-borrow">借鉴</tag> omni-modal 视频理解 / 渐进预训练 / 多阶段后训练 / 模型族缩放</td></tr>
+    <tr><th>中文一句话</th><td>发布中英双语 omni-modal 基础模型族（<b>2B / 4B / 9B / 35B-A3B</b>），统一文本、图像、音频、视频，支持非思考 instruct 与显式逐步推理两模式；约 <b>1.2T token</b> 渐进预训练，后训练用<b>多教师 OPD + 抗重复 MrDPO + 专家 RL</b> 多阶段流水线；120+ 基准上，<b>35B-A3B 在 omni-modal 视频上称开源 SOTA</b>（超过 Qwen3.5-Omni-Flash、Seed2.0-Mini-0428，逼近 Gemini-3.0-Flash），<b>9B 超过 Qwen3-Omni-30B-A3B-Instruct</b>，并公开模型族与评测 / 复现流水线（作者自报）。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.26409">abs: 2611.26409</a> ｜ <a href="https://arxiv.org/pdf/2611.26409">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：我们在 vision 线最缺的是<b>「音视频联合」的完整配方</b>，而不是单点模块。可借三点：① <b>渐进预训练</b>把 1.2T token 分阶段喂入，是长训练不崩的可操作模板，可直接对照我们的数据课程；② 后训练的 <b>多教师 OPD + MrDPO + 专家 RL</b> 三段式，把「蒸馏 / 偏好 / 结果奖励」拆开，便于分别做消融；③ <b>9B 超过 30B-A3B</b> 这一条若成立，说明 omni-modal 的能力密度比参数堆叠更关键，值得在 2B 级代理模型上先验证。<br><b>风险 / 边界</b>：① 「开源 SOTA / 超过闭源」均为作者自报，未给逐基准表与置信区间；② 120+ 基准的选择与去污染未在本轮核；③ 1.2T token 的训练成本远超我们当前量级，配方可借、规模不可照搬；④ 音频侧收益能否迁到工业视觉任务未知。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">5</span>Online Temporal Rotations for 2 Bit KV-Cache Quantization in Video Diffusion Transformers</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Ryan Lucas · Petros Prastakos · Rahul Mazumder（共 3 位；机构取自 arXiv 元数据，本轮未逐页核）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-19（v1）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.CV ｜ <tag class="t-borrow">借鉴</tag> 视频扩散 Transformer / KV cache 量化 / 在线正交变换 / 推理成本</td></tr>
+    <tr><th>中文一句话</th><td>视频扩散 Transformer 跨去噪步复用 KV cache，长视频下很快成瓶颈；作者发现<b>时间上相距远的 cache 向量量化范围大、误差高，而时间相邻 token 的每通道模式稳定</b>，提出 <b>TRQ</b>：量化前对时间相邻 cache 块拟合正交变换，把它参数化为<b>每颗只存 2 bit 的 2×2 平面旋转树 + 全局共享 Hadamard</b>，<b>无梯度、不改模型权重</b>，并证明贪心拟合对「均值拉平」目标全局最优；变换按视频在线拟合，附融合 Triton kernel。2-bit 下 VBench 主体一致性 <b>LongCat-Video-13B 90.38→92.02</b>、<b>HY-WorldPlay-8B 86.33→87.61</b>（对手 QVG，同压缩比；作者自报）。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.26334">abs: 2611.26334</a> ｜ <a href="https://arxiv.org/pdf/2611.26334">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：zhulong 的长视频成本里，<b>KV cache 带宽</b>是常被忽略的一项。可借三点：① 「时间相邻才共享模式」这个观察直接决定 cache 分块方式——按帧块而不是全序列做量化；② <b>在线、无梯度、不改权重</b>的旋转拟合，可在现有推理栈里加一层，不需要重训；③ 每颗旋转只存 <b>2 bit</b>，旋转本身的开销可控，且作者给了 Triton kernel，复现门槛低。<br><b>风险 / 边界</b>：① 只报 VBench 主体一致性等指标，2-bit 对运动 / 文本对齐的损失需读正文；② 只在两个 13B / 8B 级视频模型上验证，跨模型泛化未测；③ 在线拟合的每视频延迟未在摘要给出；④ 作者自报，无第三方复现。</div>
+</div>
+
+<h3 class="sec">B 轨 · 经典论文（第八十七轮 +3 → 329）</h3>
 <table class="plain">
   <tr><th>#</th><th>论文</th><th>年 / 被引</th><th>一句话贡献</th><th>与我们工作的关系</th></tr>
   <tr>
@@ -120,24 +144,54 @@
     <td>改进 rectified flow 的噪声采样（偏向感知相关尺度），并给出<b>双流（文本 / 图像各自权重）+ 单流合并</b>的 MMDiT 结构，在大规模文生图上优于既有扩散形式。</td>
     <td><b>zhulong（主）</b>：视频 / 图像生成的分辨率-成本口径与「采样尺度偏置」是直接可试的改造。<b>vision</b>：双流到单流的合并点是参数量与算力的折中旋钮。<b>harness</b>：生成质量须给可程序化的评估，而非只看人评。</td>
   </tr>
+  <tr>
+    <td>327</td>
+    <td><b>EVA-02: A Visual Representation for Neon Genesis</b><br><a href="https://arxiv.org/abs/2303.11331">arXiv:2303.11331</a></td>
+    <td>2023 · <b>683</b><br><span style="color:#59636e;font-size:12.5px;">Image and Vision Computing（OpenAlex type=article）</span></td>
+    <td>用<b>更新后的 plain Transformer + 公开 CLIP 视觉编码器初始化 + 掩码图像建模</b>重做 EVA：<b>304M</b> 参数在 ImageNet-1K 微调达 <b>90.0</b> top-1；EVA-02-CLIP 以约 <b>1/6</b> 参数与 <b>1/6</b> 图文数据达 <b>80.4</b> 零样本 top-1。</td>
+    <td><b>vision（主）</b>：「MIM + CLIP 初始化」是从零训 vs 初始化的直接对照臂。<b>data</b>：1/6 数据达 80.4 ⇒ 数据质量 / 初始化可能比堆图文对更划算。<b>pretrain</b>：MIM 与对比学习目标的迁移差异须单独消融。</td>
+  </tr>
+  <tr>
+    <td>328</td>
+    <td><b>Sequence Parallelism: Long Sequence Training from System Perspective</b><br><a href="https://arxiv.org/abs/2105.13120">arXiv:2105.13120</a></td>
+    <td>2021 · <b>258</b><br><span style="color:#59636e;font-size:12.5px;">ACL 2023（OpenAlex type=conference-paper；按「开创范式 / 常青」入选）</span></td>
+    <td>把<b>输入序列维</b>切开做并行，与数据 / 流水 / 张量并行正交凑成 <b>4D 并行</b>；不再要求单卡放下整条序列，配稀疏注意力可训「无限长」序列。</td>
+    <td><b>pretrain（主）</b>：扩上下文先判断瓶颈是单卡显存还是通信；这是「序列维切卡」的系统侧基线。<b>zhulong</b>：视频 token 随帧数线性增长，序列并行是可复用切分轴。<b>harness</b>：长上下文实验必须同时报并行度 / 卡数 / 有效序列长度。</td>
+  </tr>
+  <tr>
+    <td>329</td>
+    <td><b>Vision Transformers Need Registers</b><br><a href="https://arxiv.org/abs/2309.16588">arXiv:2309.16588</a></td>
+    <td>2023 · <b>821</b><br><span style="color:#59636e;font-size:12.5px;">ICLR 2024（OpenAlex type=conference-paper）</span></td>
+    <td>在监督与自监督 ViT 特征图里定位<b>高范数 token 伪影</b>（多在低信息背景区，被模型挪去承担内部计算），用<b>额外 register token</b> 给它们专用去处；修复后密集预测达新的自监督 SOTA，特征 / 注意力图更平滑。</td>
+    <td><b>vision（主）</b>：拿 patch 特征做检测 / 分割前必须检查高范数伪影。<b>zhulong</b>：多帧 ViT 的伪影是否随时序累积需复核（作者只做图像）。<b>harness</b>：把「特征范数分布 + 注意力平滑度」列入视觉塔验收项。</td>
+  </tr>
 </table>
 
-<p style="font-size:14px;"><b>作者关系网 · +2（→ 300）</b>：#299 <b>Robin Rombach</b>（Stability AI / Black Forest Labs 方向；SD3 末位）<b>X 已核验</b> <code>@robrombach</code>（<code>x.com/robrombach</code> <code>200</code> / 188,334 B，<code>og:title</code> = <code>Robin Rombach (@robrombach) on X</code>）；<b>邮箱未找到</b>（<code>rombach.me</code> 与 <code>www.robrombach.com</code> 本轮均 <code>000</code> 超时）⇒ 不猜、不发信。· #300 <b>Patrick Esser</b>（Stability AI；SD3 一作）：<b>邮箱 / 主页 / X 均未找到</b>（<code>patrickesser.com</code> <code>000</code>；<code>@PatrickEsser</code> 实为另一人（<code>patrick goncalves</code>）、<code>@EsserPatrick</code> 实为 <code>Patrick Esser JR</code> ⇒ 均不记）⇒ 只建档。X 已核验累计 <b>114</b>。</p>
+<p style="font-size:14px;"><b>作者关系网 · 03:00 时窗 +2（→ 302）</b>：#301 <b>Timothée Darcet</b>（FAIR Paris / Inria；ViT registers 一作）<b>X 已核验</b> <code>@timdarcet</code>（<code>x.com/timdarcet</code> 经代理 <code>200</code> / 181,126 B，<code>og:title</code> = <code>TimDarcet (@TimDarcet) on X</code>，<code>og:description</code> = <code>LLMs @ FAIR, prev. DINO stuff @ INRIA &amp; FAIR</code>）；<b>邮箱未找到</b>（<code>timdarcet.github.io</code> <code>200</code> / 2,363 B 页内无 <code>mailto:</code>）⇒ 不猜、不发信。· #302 <b>Changli Tang</b>（清华大学电子系博士生；WeMM-Video 一作）：<b>邮箱未找到</b>（<code>github.com/TCL606</code> <code>200</code> / 196,169 B 页内无 <code>mailto:</code>），<b>X 未找到</b>（<code>@TCL606</code> <code>404</code>）⇒ 只建档。X 已核验累计 <b>115</b>。</p>
 
-<p style="font-size:14px;"><b>作者请教信 · 本时窗 3 封 · 累计 131 · 回信率 0/131</b>：新日额度重置后发出 11-21 备好的 3 封中文信 —— #129 Grounding DINO（Shilong Liu，<b>汉字 187</b>）<code>SENT OK 00:02:06</code> · #130 EAGLE（Hongyang Zhang，<b>汉字 200</b>）<code>00:02:08</code> · #131 Depth Anything（Lihe Yang，<b>汉字 241</b>）<code>00:02:09</code>。发送前地址页当场复核 3/3 <code>200</code> 且页内邮箱明文未变（<code>lsl.zone</code> 26,074 B · <code>uwaterloo.ca</code> 95,418 B · <code>liheyoung.github.io</code> 17,151 B）。三封开头句与问句句式零共用，各含只对该论文成立的技术细节（52.5 AP / ODinW 26.1 / 三档融合 · 倒数第二层特征 + 前移一步 token / 2.7–3.5× · 62M 自动标注 / 强增强）。待发队列余 <b>1 封</b>（Show-o，<code>drafts/2408.12528.md</code>）。<b>回信 0 / 131，0 封到期</b>（最早 2026-11-25，#1–#7）⇒ 继续按待诊断信号处理，不记为成功。</p>
+<p style="font-size:14px;"><b>作者请教信 · 本时窗 1 封 · 累计 132 · 回信率 0/132</b>：发出 11-21 备好的 Show-o 中文稿 —— #132 Mike Zheng Shou（NUS，<b>汉字 203</b>）<code>SENT OK 03:02:36</code>。发送前地址页当场复核 <code>sites.google.com/view/showlab</code> <code>200</code> / <b>162,233 B</b>，页内仍为 <code>mike.zheng.shou AT gmail.com</code>（与收件人逐字一致）。该信含只对本文成立的技术细节（1.3B / 码本 K=8,192 / 16×16 token / 35M 图文对 / 500K steps / GenEval 0.68），落款两行 <code>祝好，</code> / <code>Yang Liu</code> 其后无任何行。待发队列 <b>已清空</b>。<b>回信 0 / 132，0 封到期</b>（最早 2026-11-25，#1–#7）⇒ 继续按待诊断信号处理，不记为成功。</p>
 
 <details>
 <summary>📰 news_ready · 本期 0 条（理由）</summary>
 <ul>
-  <li>三篇 A 轨均为<b>方法 / 框架类</b>（表格 agent 的三段式、RL 的「成功组数」判据、DLM 的循环潜变量），没有发布 / 开源 / 首次突破类<b>事件点</b> ⇒ 四问第②问不过。</li>
-  <li>B 轨三条均为 2023–2024 年经典，非本窗新闻。</li>
+  <li>五篇 A 轨均为<b>方法 / 框架 / 技术报告类</b>（表格 agent 的三段式、RL 的「成功组数」判据、DLM 的循环潜变量、omni-modal 模型族、视频 KV cache 量化），没有发布 / 开源 / 首次突破类<b>事件点</b> ⇒ 四问第②问不过。</li>
+  <li>B 轨六条均为 2021–2024 年经典，非本窗新闻。</li>
   <li>按「每期 ≤2 条、宁缺勿滥」⇒ 本期 0 条，不硬凑。</li>
 </ul>
 </details>
 
 <p style="font-size:14px;"><b>voice_ready 本期 0 条</b>：本轮 X 仅用于核验作者 handle（<code>x.com</code> 经代理 <code>200</code>），未抓到可双源核验的<b>单条推文原文 + 时间戳</b> ⇒ 按规矩不出 voice_ready（不用二手转述顶替）。</p>
 
-<h3 class="sec">00:00 时窗 · 对各线的可执行建议（6 线）</h3>
+<h3 class="sec">晚报变更说明（AM → PM）</h3>
+<ul style="font-size:14px;">
+  <li><b>A 轨 3 → 5</b>：新增 #4 WeMM-Video（<code>2611.26409</code>）与 #5 TRQ（<code>2611.26334</code>），均 cs.CV、均 2026-11-19 提交；方向按「vision / zhulong 优先」补齐，AM 三篇偏 agent + 后训练。</li>
+  <li><b>B 轨 326 → 329</b>：新增 EVA-02（683）/ Sequence Parallelism（258）/ ViT registers（821）；同批候选 Transfusion / Janus / Ring Attention 查重后已在表内，剔除。</li>
+  <li><b>作者网 300 → 302</b>：新增 Timothée Darcet（X 已核验）/ Changli Tang（只建档）；<b>X 114 → 115</b>。</li>
+  <li><b>作者信 131 → 132</b>：发出 Show-o（Mike Zheng Shou）中文稿，待发队列清空；<b>回信率仍 0/132</b>，0 封到期。</li>
+  <li><b>未改</b>：AM 三篇的标题、摘要、数字与推荐理由均未改动；<code>SEEN.md</code> / <code>papers.jsonl</code> 只追加，不覆盖。</li>
+</ul>
+
+<h3 class="sec">各线可执行建议（6 线 · 00:00 + 03:00）</h3>
 <ul style="font-size:14px;">
   <li><b>pretrain</b>：把 RL 侧的「成功组数」判据做成<b>开跑前检查项</b>——在现有离线题池上先数「至少有一次采样成功的尝试组数」，低于 ~35 组就先加采样或改课程，再谈超参；判据：同一配方连跑 3 个种子，若成功率分布跨 0 与 1 两极化即判「信号不足」，禁止据单次最好结果立项。</li>
   <li><b>vision</b>：视觉塔选型表新增两列 <b>「见到的样本数」</b>与<b>「增强策略」</b>，与参数量并列；判据：任一新塔必须给出「同参数量、不同样本数」的对照，缺该对照的结论不写入选型结论。</li>
@@ -145,9 +199,12 @@
   <li><b>data</b>：启动「纯网页 vs 混合策展」小规模对照臂（同 token 预算、同去重规则），把<b>去重率与过滤阈值</b>记为超参；判据：对照差距 &lt;1% 时，后续统一走网页数据路线并停掉高成本策展。</li>
   <li><b>zhulong</b>：所有解码 / 生成加速数字一律折算成 <b>tokens-per-forward 或「每样本 GPU·s」</b>后再比较（按 dLoop 的 TPF 口径）；判据：报告缺折算口径的加速比不予采纳。</li>
   <li><b>designflow</b>：造题时把「阶段」显式建模（在哪操作 / 改什么 / 怎么实现），每阶段单独给分；判据：任一题目若无法把三阶段拆开判分，则降级为参考题、不进正式集。</li>
+  <li><b>vision（03:00 新增）</b>：按 ViT registers（#329）在视觉塔验收里加两项<b>特征健康度</b>检查——每层高范数 token 占比、注意力图平滑度；判据：若去掉 register token 后背景区出现 &gt;10 个高范数离群 token，则该塔不许直接接检测 / 分割头，先补 register 再评。</li>
+  <li><b>zhulong（03:00 新增）</b>：长视频推理先做<b>KV cache 分块量化</b>的最小实验——按时间相邻帧块拟合旋转（TRQ 路线），2-bit 下只测主体一致性是否守住；判据：同压缩比下相对 FP16 的 VBench 主体一致性跌幅 &lt;1.0 且运动分数跌幅 &lt;2.0 才进下一轮，否则回退 4-bit。</li>
+  <li><b>pretrain（03:00 新增）</b>：扩上下文实验表新增「并行轴 / 卡数 / 有效序列长度」三列；判据：同一有效序列长度下若序列并行相对张量并行的吞吐提升 &lt;10%，则不引入新并行维度，避免为长上下文付通信税。</li>
 </ul>
 
-<h3 class="sec">附录 · 00:00 时窗检索与核验</h3>
+<h3 class="sec">附录 · 00:00 / 03:00 时窗检索与核验</h3>
 <table class="plain">
   <tr><th>项</th><th>结果</th></tr>
   <tr><td>列表 <code>cat:cs.CL&amp;max_results=40</code></td><td><code>200</code> / <b>109,971 B / 40 entry</b> / atom；<code>published</code> 上界 <code>2026-11-19T18:57:25Z</code>（连续第 13 窗未前进，仍在 72h 窗内）</td></tr>
@@ -157,11 +214,18 @@
   <tr><td>先查重</td><td>六个 ID（A 轨 3 + B 轨 3）在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> 全量正则 <b>0 命中</b>；近 7 天 <code>daily/</code> 亦 0 命中</td></tr>
   <tr><td>地址页复核（发信前）</td><td><code>lsl.zone</code> <code>200</code> / 26,074 B（页内 <code>sl6222@columbia.edu</code>）· <code>uwaterloo.ca/…/h935zhan</code> <code>200</code> / 95,418 B（页内 <code>hongyang.zhang@uwaterloo.ca</code>）· <code>liheyoung.github.io</code> <code>200</code> / 17,151 B（页内 <code>lihe.yang.cs@gmail.com</code>）</td></tr>
   <tr><td>X（代理 7897）</td><td><code>x.com</code> <b><code>200</code></b>；<code>@robrombach</code> <code>200</code> / 188,334 B（<code>og:title</code> 核验）；反例：<code>@guipenedo</code> 实为另一位巴西用户（<code>og:description</code> 自述做灯光 / 影视）、<code>@PatrickEsser</code> 实为 <code>patrick goncalves</code> ⇒ 均不记</td></tr>
+  <tr><td>03:00 列表 <code>cat:cs.CV&amp;max_results=40</code></td><td><code>200</code> / <b>107,965 B / 40 entry</b> / atom；<code>published</code> 上界 <code>2026-11-19T18:59:57Z</code>（与 cs.CL 上界同批，公告批仍未前进，仍在 72h 窗内）</td></tr>
+  <tr><td>03:00 abs 页复查（A 轨 2 篇）</td><td>2/2 <code>200</code>（43,294 / 41,727 B），<code>citation_title</code> 与 API 标题逐字一致</td></tr>
+  <tr><td>03:00 B 轨 <code>id_list=2303.11331,2105.13120,2309.16588</code></td><td><code>200</code> + atom（<b>7,486 B / 3 entry</b>，<code>published</code> 齐备：2023-03-20 / 2021-05-26 / 2023-09-28）；abs 页 3/3 <code>200</code>（43,667 / 44,844 / 40,626 B）</td></tr>
+  <tr><td>03:00 OpenAlex</td><td>3/3 <code>200</code>：<b>683</b>（EVA-02，article 2024）/ <b>258</b>（Sequence Parallelism，conference-paper 2023）/ <b>821</b>（ViT registers，conference-paper 2024）；查询日 2026-11-22</td></tr>
+  <tr><td>03:00 先查重</td><td>五个 ID（A 轨 2 + B 轨 3）在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> 全量正则 <b>0 命中</b>；同批候选 Transfusion / Janus / Ring Attention 经查已在表内 ⇒ 剔除</td></tr>
+  <tr><td>03:00 地址页复核（发信前）</td><td><code>sites.google.com/view/showlab</code> 经代理 <code>200</code> / <b>162,233 B</b>（页内 <code>mike.zheng.shou AT gmail.com</code>）</td></tr>
+  <tr><td>03:00 X / 主页</td><td><code>@timdarcet</code> <code>200</code> / 181,126 B（<code>og:title</code> + <code>og:description</code> 双源核验）· <code>timdarcet.github.io</code> <code>200</code> / 2,363 B · <code>github.com/TCL606</code> <code>200</code> / 196,169 B；反例：<code>@xgwang</code> 实为 Montréal 的 3 followers 账号（非 EVA-02 作者）、<code>@TCL606</code> <code>404</code> ⇒ 均不记</td></tr>
   <tr><td>未做</td><td>PDF 逐页复核（数字取自 arXiv 官方摘要）；X 推文全文抓取（仅核 handle）；回信通道仍只发不收</td></tr>
 </table>
 
 <footer>
-  research 线 · 论文观察日报 · 2026-11-22 00:00 时窗 ｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
+  research 线 · 论文观察日报 · 2026-11-22 03:00 时窗（5/5）｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
 </footer>
 </div>
 </body>

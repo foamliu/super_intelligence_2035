@@ -20,6 +20,8 @@
 
 > **当前计数（2026-11-22 00:0x）**：作者 **300** 人（编号最大 **300**）· X 已核验 **114**（本轮 +1：`@robrombach` 经 `x.com/robrombach` `200` / 188,334 B，`og:title` = `Robin Rombach (@robrombach) on X`）· 已发信 **131**（台账 #1–#131；今日 3/12）· 回信 **0**（0/131）。<br>**第八十六轮增量（2026-11-22 00:0x）**：作者网 298 → **300**（#299 Robin Rombach **无邮箱**（`rombach.me` / `www.robrombach.com` 均 `000`）但 X `@robrombach` 已核验 / #300 Patrick Esser **邮箱·主页·X 均未找到** ⇒ 只建档），来自本轮 B 轨 #326 SD3。⚠️ 两处同名反例当场拦下：`@guipenedo` 实为巴西灯光从业者（`og:description` 自述，与 RefinedWeb 作者无关）、`@PatrickEsser` 实为 `patrick goncalves`、`@EsserPatrick` 实为 `Patrick Esser JR` ⇒ 均不记。以下历史快照行保留原文（不追改），计数以本行为准。
 
+> **当前计数（2026-11-22 03:0x）**：作者 **302** 人（编号最大 **302**）· X 已核验 **115**（本轮 +1：`@timdarcet` 经 `x.com/timdarcet` `200` / 181,126 B，`og:title` = `TimDarcet (@TimDarcet) on X`，`og:description` = `LLMs @ FAIR, prev. DINO stuff @ INRIA & FAIR`；`@TCL606` 经代理 `404` ⇒ 不记）· 已发信 **132**（台账 #1–#132；今日 4/12）· 回信 **0**（0/132）。<br>**第八十七轮增量（2026-11-22 03:0x）**：作者网 300 → **302**（#301 Timothée Darcet **无邮箱**（`timdarcet.github.io` `200` / 2,363 B 页内无 `mailto:`）但 X `@timdarcet` 已双源核验 / #302 Changli Tang 唐昌礼 **无邮箱**（`github.com/TCL606` `200` / 196,169 B 页内无 `mailto:`，自述清华电子系博士生；`@TCL606` `404`）⇒ 只建档），来自本轮 B 轨 #329 ViT registers / A 轨 WeMM-Video。以下历史快照行保留原文（不追改），计数以本行为准。
+
 > **当前计数（2026-11-21 00:0x）**：作者 **280** 人（编号最大 **280**）· X 已核验 **107**（本轮未新增核验：`x.com` 经代理 `000`）· 已发信 **119**（台账 #1–#119）· 回信 **0**。
 
 > **第七十八轮增量（2026-11-21 00:0x）**：作者网 276 → **280**（#277 Xizhou Zhu **B 级** `zhuwalter@sensetime.com`（ar5iv HTML `200` / 267,916 B 脚注明文；**2020 年地址，疑失效 ⇒ 只建档不发**）/ #278 Michael Tschannen **未找到**（`tschannen.github.io` `404`）/ #279 Xiaohua Zhai **未找到**（`xiaohuazhai.com` 本轮 `000`）/ #280 Alexander Sergeev **未找到**（论文未给邮箱）），来自第七十八轮 B 轨 #297 Horovod / #298 Deformable DETR / #299 SigLIP 2；已发信 116 → **119**（#117 NeRF 英文 181 词 `SENT OK 00:04:19` / #118 Faster R-CNN 英文 178 词 `00:04:21` / #119 Quiet-STaR 英文 182 词 `00:04:24`）；回信 **0**（0/119）。
@@ -4271,3 +4273,30 @@
 | X 账号 | **未找到**（反例：`@PatrickEsser` 实为 `patrick goncalves`、`@EsserPatrick` 实为 `Patrick Esser JR` ⇒ 均不记；🚫 不猜） |
 | 状态 | **只建档**（无可发地址） |
 | 备注 | `语言=英文(判据=姓名族属两可 + 判据冲突 ⇒ 英文兜底)`。价值点：MMDiT 的双流权重划分与合并时机是 zhulong 视频架构的直接变量；若有地址，问「双流合并放在哪一层、合并后参数量如何折算算力」。 |
+
+### 301. Timothée Darcet
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Timothée Darcet |
+| 机构 | **FAIR Paris (Meta) / Inria**（本人主页 `timdarcet.github.io` 自述：PhD student at FAIR Paris and Inria，导师 Maxime Oquab / Julien Mairal / Piotr Bojanowski） |
+| 代表论文 | **Vision Transformers Need Registers**（`2309.16588`，B 轨 #329，一作；页面自述 ICLR 2024 oral / outstanding paper）· DINOv2（页面列名，本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **未找到**（`timdarcet.github.io` `200` / 2,363 B，页内无 `mailto:`；🚫 不猜地址、不发信） |
+| 主页 | <https://timdarcet.github.io/>（`200` / 2,363 B） |
+| X 账号 | **@timdarcet**（`x.com/timdarcet` 经代理 `200` / 181,126 B；`og:title` = `TimDarcet (@TimDarcet) on X`；`og:description` = `LLMs @ FAIR, prev. DINO stuff @ INRIA & FAIR` 双源核验） |
+| 状态 | **待跟踪**（X 已核验；follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow；无公开邮箱 ⇒ 本线不建信） |
+| 备注 | `语言=法语(判据=法式姓名族属 + 法国机构；欧洲语言只做称谓问候 + 英文正文)`。价值点：register token 修的是 ViT 特征图高范数伪影；若拿到地址，可问「register 数取多少、在视频多帧输入上伪影是否随时序累积」。 |
+
+### 302. Changli Tang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Changli Tang（汉字名本轮未从官方页直接核到 ⇒ 不写） |
+| 机构 | **清华大学电子工程系**（`github.com/TCL606` 自述 `PhD, Department of Electronic Engineering, Tsinghua University`；WeMM-Video 一作，机构以论文为准，本轮未逐页核） |
+| 代表论文 | **WeMM-Video: Pushing the Frontiers of Open-Source Omni-Modal Video Understanding**（`2611.26409`，A 轨本窗推荐，一作）· video-SALMONN 2（GitHub / 检索页列名，本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **未找到**（`github.com/TCL606` `200` / 196,169 B，页内无 `mailto:`；🚫 不猜地址、不发信） |
+| 主页 | <https://github.com/TCL606>（`200` / 196,169 B，`<title>` = `TCL606 (Changli Tang) · GitHub`） |
+| X 账号 | **未找到**（`x.com/TCL606` 经代理 `404`，`og:title` = `User Profile Not Found - X | 404 Error` ⇒ 不记、不猜） |
+| 状态 | **只建档**（无可发地址、X 未找到） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 清华大学)`。价值点：WeMM-Video 的 **1.2T token 渐进预训练 + 多教师 OPD + anti-repetition MrDPO + specialist RL** 是 omni-modal 视频理解的完整配方；若有地址，可问「音频 / 视觉 token 配比与 2B→35B-A3B 的规模拐点」。 |
+
