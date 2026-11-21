@@ -1491,9 +1491,16 @@
   "alibaba-fusion__next-2860": {
     "instance_id": "alibaba-fusion__next-2860",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1024.0,
+    "rc": 0,
+    "model_patch_len": 1312,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ocus styling (border color, background, box-shadow)\\n- The error state is also correctly handled with its specific focus shadow color\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "alibaba-fusion__next-2919": {
     "instance_id": "alibaba-fusion__next-2919",

@@ -2160,30 +2160,58 @@
   "bpmn-io__bpmn-js-1434": {
     "instance_id": "bpmn-io__bpmn-js-1434",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1436.9,
+    "rc": 0,
+    "model_patch_len": 2152,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": ", these restrictions are enforced by `canReplace()`, but that logic was never applied during paste.\n\nThe fix mirrors the `canReplace()` logic used for moves, ensuring paste has the same restrictions.\n",
+    "stderr_tail": "sate start events pasted into subprocesses\n[✓] Verify the canPaste function logic is correct\n[✓] Run existing tests to verify no regressions (blocked by missing deps)\n[✓] Write tests for the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1438": {
     "instance_id": "bpmn-io__bpmn-js-1438",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 222.1,
+    "rc": 0,
+    "model_patch_len": 1514,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "int.y + 12` (just below the envelope icon at the flow's midpoint) with a centered 100px-wide box, using the same `renderLabel` utility already used for text annotations and other labels. Lint passes.\n",
+    "stderr_tail": "ow rendering and label handling\n[✓] Implement feature: show message name on message flows in BpmnRenderer.js\n[✓] Update test fixture to include a message with name\n[✓] Verify with lint and tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1442": {
     "instance_id": "bpmn-io__bpmn-js-1442",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 615.8,
+    "rc": 0,
+    "model_patch_len": 1187,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "\n        shapeCount++;\n      }\n    });\n    if (shapeCount > 1) {\n      context.topParent = topParent.parent;\n    }\n  }\n}, true);\n```\n\nSingle-shape pastes onto a connection continue to work as before.\n",
+    "stderr_tail": "  karma.set(config);\n};\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore DropOnFlowBehavior to understand the bug\n[✓] Implement fix for pasting multiple shapes onto connection\n[✓] Verify fix with existing tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1542": {
     "instance_id": "bpmn-io__bpmn-js-1542",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 252.6,
+    "rc": 0,
+    "model_patch_len": 884,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "**Fix:** Added a null-check for `attachment` in `getLabelAdjustment()` at `lib/features/modeling/behavior/util/LabelLayoutUtil.js:117`. If no attachment is found, return zero delta (label stays put).\n",
+    "stderr_tail": "Cannot read properties of undefined (reading segmentIndex)' when inserting gateway on flow\n[✓] Find the root cause in LabelLayoutUtil.js and LabelBehavior.js\n[✓] Implement fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1557": {
     "instance_id": "bpmn-io__bpmn-js-1557",

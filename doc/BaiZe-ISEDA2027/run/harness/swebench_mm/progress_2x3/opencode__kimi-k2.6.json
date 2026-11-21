@@ -1542,16 +1542,30 @@
   "alibaba-fusion__next-2984": {
     "instance_id": "alibaba-fusion__next-2984",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 502.3,
+    "rc": 0,
+    "model_patch_len": 556,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "原始 item\n    pos,\n    _source: item,\n};\n```\n\n### 修改文件\n\n- `src/cascader/cascader.jsx`\n\n该修复确保：\n- 用户的 `dataSource` 不再被组件内部修改\n- `immer` 等不可变状态管理库可以正常工作\n- 组件内部的 `v2n` / `p2n` 缓存仍然使用 string 类型的 `value`，行为不变\n",
+    "stderr_tail": "os\n[✓] Find CascaderSelect source and identify where it mutates user props\n[✓] Fix the mutation to avoid immer errors\n[✓] Verify fix by checking for other similar mutations in related components\n\u001b[0m\n"
   },
   "alibaba-fusion__next-3034": {
     "instance_id": "alibaba-fusion__next-3034",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 502.4,
+    "rc": 0,
+    "model_patch_len": 4725,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "     <img src={file.url} />\n            <Icon type=\"ashbin\" onClick={onRemove} />\n        </div>\n    );\n};\n\n<Upload.Card itemRender={itemRender} />\n```\n\n该修改是**向后兼容**的，已有的 `itemRender(file)` 用法不会受到影响。\n",
+    "stderr_tail": " Upload component's itemRender and delete functionality\n[✓] Identify the bug where itemRender disables delete functionality\n[✓] Implement the fix for itemRender delete support\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "alibaba-fusion__next-3198": {
     "instance_id": "alibaba-fusion__next-3198",

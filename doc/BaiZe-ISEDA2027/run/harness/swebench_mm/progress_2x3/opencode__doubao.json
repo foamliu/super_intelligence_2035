@@ -5859,30 +5859,58 @@
   "openlayers__openlayers-13547": {
     "instance_id": "openlayers__openlayers-13547",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 323.0,
+    "rc": 0,
+    "model_patch_len": 4392,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rendering only the actual tile content\n\nAll changes address the full feature request, including both expanding gutter support to new tile sources and fixing the WebGL rendering edge effect issue.\n```\n",
+    "stderr_tail": "elper_.flushBufferData(coords);\n \n /**\n\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Add gutter option to XYZ tile source\n[✓] Add gutter option to DataTile source\n[✓] Fix WebGL gutter handling to avoid edge effects\n\u001b[0m\n"
   },
   "openlayers__openlayers-13648": {
     "instance_id": "openlayers__openlayers-13648",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 236.9,
+    "rc": 0,
+    "model_patch_len": 3973,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e upper part, matching geotiff.io/QGIS behavior\n- All existing functionality for square pixel images remains unchanged\n- Global lint errors are pre-existing in the codebase and unrelated to this fix.\n",
+    "stderr_tail": "  comma-dangle\n\n✖ 16783 problems (16783 errors, 0 warnings)\n  15423 errors and 0 warnings potentially fixable with the `--fix` option.\n\u001b[0m\n\u001b[0m$ \u001b[0mnode -c src/ol/source/GeoTIFF.js\n(no output)\n\u001b[0m\n"
   },
   "openlayers__openlayers-13654": {
     "instance_id": "openlayers__openlayers-13654",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 331.2,
+    "rc": 0,
+    "model_patch_len": 7197,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "zones now work as expected\n\nNo changes are needed to the user's code other than using an OpenLayers version with this fix. The reprojection happens automatically, just like with regular tile sources.\n",
+    "stderr_tail": "\n+    }\n+  }\n+  return false;\n+}\n+\n+/**\n  * @param {Loader} loader The data loader.\n  * @protected\n  */\n setLoader(loader) {\n\n\u001b[0m\n\u001b[0m← \u001b[0mWrite test-reprojection.html\nWrote file successfully.\n\u001b[0m\n"
   },
   "openlayers__openlayers-13669": {
     "instance_id": "openlayers__openlayers-13669",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 264.8,
+    "rc": 0,
+    "model_patch_len": 2117,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " nodata value (including NaN)\n\nNow when you use `nodata: NaN` with your COG, `getData()` will return `[NaN, NaN, NaN, 0]` for nodata pixels as expected, and styling functionality will work correctly.\n",
+    "stderr_tail": "2  error  Unexpected space before function parentheses  space-before-function-paren\n\n✖ 19 problems (19 errors, 0 warnings)\n  17 errors and 0 warnings potentially fixable with the `--fix` option.\n\u001b[0m\n"
   },
   "openlayers__openlayers-13823": {
     "instance_id": "openlayers__openlayers-13823",
