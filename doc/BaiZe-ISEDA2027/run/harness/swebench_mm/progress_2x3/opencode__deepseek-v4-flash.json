@@ -5036,37 +5036,72 @@
   "highlightjs__highlight.js-2969": {
     "instance_id": "highlightjs__highlight.js-2969",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1089.5,
+    "rc": 0,
+    "model_patch_len": 845,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "}|\\\\u[0-9a-fA-F]{4}|\\\\x[0-9a-fA-F]{1,2}|\\\\[0-7]{1,3}|\\\\\\S|[^\\s\\\\])(?!\\w)`\n\nAll 424 markup tests pass, and the code golf example from the issue now highlights correctly (no regex spillover from `?/`).\n",
+    "stderr_tail": "d Ruby grammar file\n[✓] Understand current character literal handling in Ruby grammar\n[✓] Fix character literal support for all cases listed in the issue\n[✓] Verify the fix works with test cases\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2972": {
     "instance_id": "highlightjs__highlight.js-2972",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 171.1,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "empty_patch",
+    "stdout_tail": "Let me look at some reference grammars and the test infrastructure more closely.\n",
+    "stderr_tail": "[✓] Explore the Python language grammar in highlight.js\n[✓] Identify what type hint patterns need to be added\n[•] Implement better Python type hints support\n[ ] Verify the changes work correctly\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3000": {
     "instance_id": "highlightjs__highlight.js-3000",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 341.2,
+    "rc": 0,
+    "model_patch_len": 1384,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "DE` for the function name.\n\nThe arrow function mode also correctly terminates at `=>`, so the expression body falls through to outer modes (variables, numbers, strings, etc.) for proper highlighting.\n",
+    "stderr_tail": "d and read PHP language definition in highlight.js\n[✓] Understand how arrow functions are handled and identify the bug\n[✓] Fix the arrow function highlighting issue\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3018": {
     "instance_id": "highlightjs__highlight.js-3018",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 96.2,
+    "rc": 0,
+    "model_patch_len": 391,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "nt`, `BigInt64Array`, and `BigUint64Array` to the `TYPES` array in `src/languages/lib/ecmascript.js:86-88` so they are highlighted as built-in types, matching the behavior of `Number`, `String`, etc.\n",
+    "stderr_tail": "5) php\n       should markup functions:\n  6) php\n       should markup numbers:\n  7) php\n       should markup php80:\n  8) tcl\n       should markup default:\n  9) tcl\n       should markup variables:\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3070": {
     "instance_id": "highlightjs__highlight.js-3070",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 170.2,
+    "rc": 0,
+    "model_patch_len": 529,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": ", `language-javascript` → `aliases[\"javascript\"]` = `undefined` → falls back to `\"javascript\"`) now also apply the class\n- **Auto-detection** (`currentLang` is falsy → uses `resultLang`) is unchanged\n",
+    "stderr_tail": "uld not match any word starting with numbers\n    multi-class matchers\n      ✓ should support begin\n      ✓ basic functionality\n      ✓ works inside a classified parent mode\n\n\n  48 passing (86ms)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3154": {
     "instance_id": "highlightjs__highlight.js-3154",
