@@ -1,0 +1,37 @@
+{
+  "defects_found": [
+    {
+      "class": 2,
+      "kind": "mode_promd_trannoise",
+      "old_mode": "promd",
+      "new_mode": "spicemd"
+    },
+    {
+      "class": 3,
+      "kind": "option_list",
+      "action": "commented_out"
+    },
+    {
+      "class": 5,
+      "kind": "option_artist_post2",
+      "action": "artist_commented_out"
+    },
+    {
+      "class": 1,
+      "kind": "mosfet_w_range",
+      "instance": "xmmn0",
+      "subckt": "ntnlv_hlsa",
+      "param": "W",
+      "old": 4.5e-07,
+      "new": 6e-07
+    },
+    {
+      "class": 4,
+      "kind": "trannoise_params_inline",
+      "fmin": 100.0,
+      "fmax": "5g",
+      "noiseseed": 7
+    }
+  ],
+  "n_defects": 5
+}
