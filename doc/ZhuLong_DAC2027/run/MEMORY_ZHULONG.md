@@ -1,6 +1,8 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-21 wake#1716·standby·v2 用户令全交付·**pro 报告补交付**（wake#1715 核账发现 `report_edafb_lite500_doubao_pro_eval_zh.html` 此前漏产·MEMORY 误记"三轮报告全交付"·本轮从 batch `run_batch_20261120_170940` 实测数据补生成·45/483=9.32% 全 Lite 500 + 12/119=10.1% top-120 子集 = `\MzeroAnchor`·现已三轮报告齐备）·HEAD=`44fae1f1df`=origin/main·0/0 干净·三轮 doubao 评测完成（pro 9.32% 对齐 10.5%±2pp / mini infra-contaminated 0.0% 不可作干净能力结论 / lite 3.85% clean）·论文 §6 M0 anchor 回填完成（commit `4fa407d35`·`\MzeroAnchor=10.1%`）·🟡 询问已答（wake#1704：昨晚 batch 起跑前未读仓库 README/AGENTS.md）·无新令·无评测跑中）
+WAITING: 0（2026-11-21 wake#1717·standby·v2 用户令全交付·三轮 doubao 评测完成（pro 9.32% 对齐 10.5%±2pp / mini infra-contaminated 0.0% 非干净能力结论 / lite 3.85% clean）·论文 §6 M0 anchor 回填完成（`\MzeroAnchor=10.1%`·commit `4fa407d35`）·三轮报告齐备·🟡 询问已答（wake#1704：昨晚 batch 起跑前未读仓库 README/AGENTS.md）·HEAD=`5457334b72`=origin/main·0/0 干净（本线工作树 clean·全树 status 中 modified/untracked 文件均 designflow 线在途·非本线不动）·research 日报 2026-11-21 已阅：3 条 zhulong 建议（skill-prefix thinking 变量 / return-to-go vs critic 两臂 / 成本表加精度补偿列）= 输入参考非指令·subagent 消融线结案中不可起臂·标注 noted-not-actionable·无新令·无评测跑中）
+
+- wake#1717（2026-11-21·opencode 交互式 standby 心跳）：v2 令维持全交付·本线 clean·HEAD=`5457334b72`=origin/main `0/0`·research 日报 2026-11-21 zhulong 建议 3 条 noted（非指令·消融线结案不可起臂）·§7 Step C done_all 不起臂·不起评测·原文不改。
 
 - [wake#1715详条已滚出·2026-11-21 wake#1716 维护] 见 `daily-memories/2026-11-21.md` §[wake#1715rolled-out]（opencode 交互式 standby 心跳·v2 令全判据 ✅·不起臂·done_all·原文不改）。
 
