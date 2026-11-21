@@ -1,0 +1,330 @@
+{
+  "acceptance_item": "B4_execution_determinism",
+  "spec": "10 tasks (5 PASS + 5 FAIL from A0 run1), same code run 10x in sandbox, report verdict flip rate",
+  "source_run": "A0_base_run1",
+  "pass_task_ids": [
+    "EDA-Eval-PyAether-002",
+    "EDA-Eval-PyAether-003",
+    "EDA-Eval-PyAether-005",
+    "EDA-Eval-PyAether-007",
+    "EDA-Eval-PyAether-010"
+  ],
+  "fail_task_ids": [
+    "EDA-Eval-PyAether-001",
+    "EDA-Eval-PyAether-006",
+    "EDA-Eval-PyAether-013",
+    "EDA-Eval-PyAether-015",
+    "EDA-Eval-PyAether-016"
+  ],
+  "subset_jsonl": "/home/app.e0031982/eda_code_eval/completed_code_generation_B4_DET.jsonl",
+  "n_runs_completed": 10,
+  "n_tasks": 10,
+  "n_tasks_flipped": 0,
+  "flip_rate": 0.0,
+  "historical_reference": "wake533: direct 2/79 vs rescue 0/79",
+  "per_task": {
+    "EDA-Eval-PyAether-001": {
+      "verdicts": [
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed"
+      ],
+      "unique": [
+        "failed"
+      ],
+      "flipped": false
+    },
+    "EDA-Eval-PyAether-002": {
+      "verdicts": [
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed"
+      ],
+      "unique": [
+        "passed"
+      ],
+      "flipped": false
+    },
+    "EDA-Eval-PyAether-003": {
+      "verdicts": [
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed"
+      ],
+      "unique": [
+        "passed"
+      ],
+      "flipped": false
+    },
+    "EDA-Eval-PyAether-005": {
+      "verdicts": [
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed"
+      ],
+      "unique": [
+        "passed"
+      ],
+      "flipped": false
+    },
+    "EDA-Eval-PyAether-006": {
+      "verdicts": [
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed"
+      ],
+      "unique": [
+        "failed"
+      ],
+      "flipped": false
+    },
+    "EDA-Eval-PyAether-007": {
+      "verdicts": [
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed"
+      ],
+      "unique": [
+        "passed"
+      ],
+      "flipped": false
+    },
+    "EDA-Eval-PyAether-010": {
+      "verdicts": [
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed",
+        "passed"
+      ],
+      "unique": [
+        "passed"
+      ],
+      "flipped": false
+    },
+    "EDA-Eval-PyAether-013": {
+      "verdicts": [
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed"
+      ],
+      "unique": [
+        "failed"
+      ],
+      "flipped": false
+    },
+    "EDA-Eval-PyAether-015": {
+      "verdicts": [
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed"
+      ],
+      "unique": [
+        "failed"
+      ],
+      "flipped": false
+    },
+    "EDA-Eval-PyAether-016": {
+      "verdicts": [
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed",
+        "failed"
+      ],
+      "unique": [
+        "failed"
+      ],
+      "flipped": false
+    }
+  },
+  "per_run_raw": [
+    {
+      "EDA-Eval-PyAether-001": "failed",
+      "EDA-Eval-PyAether-002": "passed",
+      "EDA-Eval-PyAether-003": "passed",
+      "EDA-Eval-PyAether-005": "passed",
+      "EDA-Eval-PyAether-006": "failed",
+      "EDA-Eval-PyAether-007": "passed",
+      "EDA-Eval-PyAether-010": "passed",
+      "EDA-Eval-PyAether-013": "failed",
+      "EDA-Eval-PyAether-015": "failed",
+      "EDA-Eval-PyAether-016": "failed"
+    },
+    {
+      "EDA-Eval-PyAether-001": "failed",
+      "EDA-Eval-PyAether-002": "passed",
+      "EDA-Eval-PyAether-003": "passed",
+      "EDA-Eval-PyAether-005": "passed",
+      "EDA-Eval-PyAether-006": "failed",
+      "EDA-Eval-PyAether-007": "passed",
+      "EDA-Eval-PyAether-010": "passed",
+      "EDA-Eval-PyAether-013": "failed",
+      "EDA-Eval-PyAether-015": "failed",
+      "EDA-Eval-PyAether-016": "failed"
+    },
+    {
+      "EDA-Eval-PyAether-001": "failed",
+      "EDA-Eval-PyAether-002": "passed",
+      "EDA-Eval-PyAether-003": "passed",
+      "EDA-Eval-PyAether-005": "passed",
+      "EDA-Eval-PyAether-006": "failed",
+      "EDA-Eval-PyAether-007": "passed",
+      "EDA-Eval-PyAether-010": "passed",
+      "EDA-Eval-PyAether-013": "failed",
+      "EDA-Eval-PyAether-015": "failed",
+      "EDA-Eval-PyAether-016": "failed"
+    },
+    {
+      "EDA-Eval-PyAether-001": "failed",
+      "EDA-Eval-PyAether-002": "passed",
+      "EDA-Eval-PyAether-003": "passed",
+      "EDA-Eval-PyAether-005": "passed",
+      "EDA-Eval-PyAether-006": "failed",
+      "EDA-Eval-PyAether-007": "passed",
+      "EDA-Eval-PyAether-010": "passed",
+      "EDA-Eval-PyAether-013": "failed",
+      "EDA-Eval-PyAether-015": "failed",
+      "EDA-Eval-PyAether-016": "failed"
+    },
+    {
+      "EDA-Eval-PyAether-001": "failed",
+      "EDA-Eval-PyAether-002": "passed",
+      "EDA-Eval-PyAether-003": "passed",
+      "EDA-Eval-PyAether-005": "passed",
+      "EDA-Eval-PyAether-006": "failed",
+      "EDA-Eval-PyAether-007": "passed",
+      "EDA-Eval-PyAether-010": "passed",
+      "EDA-Eval-PyAether-013": "failed",
+      "EDA-Eval-PyAether-015": "failed",
+      "EDA-Eval-PyAether-016": "failed"
+    },
+    {
+      "EDA-Eval-PyAether-001": "failed",
+      "EDA-Eval-PyAether-002": "passed",
+      "EDA-Eval-PyAether-003": "passed",
+      "EDA-Eval-PyAether-005": "passed",
+      "EDA-Eval-PyAether-006": "failed",
+      "EDA-Eval-PyAether-007": "passed",
+      "EDA-Eval-PyAether-010": "passed",
+      "EDA-Eval-PyAether-013": "failed",
+      "EDA-Eval-PyAether-015": "failed",
+      "EDA-Eval-PyAether-016": "failed"
+    },
+    {
+      "EDA-Eval-PyAether-001": "failed",
+      "EDA-Eval-PyAether-002": "passed",
+      "EDA-Eval-PyAether-003": "passed",
+      "EDA-Eval-PyAether-005": "passed",
+      "EDA-Eval-PyAether-006": "failed",
+      "EDA-Eval-PyAether-007": "passed",
+      "EDA-Eval-PyAether-010": "passed",
+      "EDA-Eval-PyAether-013": "failed",
+      "EDA-Eval-PyAether-015": "failed",
+      "EDA-Eval-PyAether-016": "failed"
+    },
+    {
+      "EDA-Eval-PyAether-001": "failed",
+      "EDA-Eval-PyAether-002": "passed",
+      "EDA-Eval-PyAether-003": "passed",
+      "EDA-Eval-PyAether-005": "passed",
+      "EDA-Eval-PyAether-006": "failed",
+      "EDA-Eval-PyAether-007": "passed",
+      "EDA-Eval-PyAether-010": "passed",
+      "EDA-Eval-PyAether-013": "failed",
+      "EDA-Eval-PyAether-015": "failed",
+      "EDA-Eval-PyAether-016": "failed"
+    },
+    {
+      "EDA-Eval-PyAether-001": "failed",
+      "EDA-Eval-PyAether-002": "passed",
+      "EDA-Eval-PyAether-003": "passed",
+      "EDA-Eval-PyAether-005": "passed",
+      "EDA-Eval-PyAether-006": "failed",
+      "EDA-Eval-PyAether-007": "passed",
+      "EDA-Eval-PyAether-010": "passed",
+      "EDA-Eval-PyAether-013": "failed",
+      "EDA-Eval-PyAether-015": "failed",
+      "EDA-Eval-PyAether-016": "failed"
+    },
+    {
+      "EDA-Eval-PyAether-001": "failed",
+      "EDA-Eval-PyAether-002": "passed",
+      "EDA-Eval-PyAether-003": "passed",
+      "EDA-Eval-PyAether-005": "passed",
+      "EDA-Eval-PyAether-006": "failed",
+      "EDA-Eval-PyAether-007": "passed",
+      "EDA-Eval-PyAether-010": "passed",
+      "EDA-Eval-PyAether-013": "failed",
+      "EDA-Eval-PyAether-015": "failed",
+      "EDA-Eval-PyAether-016": "failed"
+    }
+  ],
+  "timestamp_iso": "2026-11-21T19:15:43.369754"
+}
