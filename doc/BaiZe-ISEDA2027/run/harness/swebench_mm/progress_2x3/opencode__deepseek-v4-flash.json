@@ -3762,9 +3762,16 @@
   "carbon-design-system__carbon-6442": {
     "instance_id": "carbon-design-system__carbon-6442",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 116.5,
+    "rc": 0,
+    "model_patch_len": 5380,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "` context\n\n6. **`packages/components/src/components/content-switcher/content-switcher.hbs`**\n   - Added conditional `{{@root.prefix}}--content-switcher--light` class based on `light` context variable\n",
+    "stderr_tail": "les/.package-lock.json\ndist\nLICENSE\nnode_modules\npackage.json\nReadme.md\nsrc\nbuild\nLICENSE.md\nmount.js\npackage.json\nReactWrapper.js\nREADME.md\nrender.js\nshallow.js\nShallowWrapper.js\nsrc\nwithDom.js\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-6520": {
     "instance_id": "carbon-design-system__carbon-6520",
