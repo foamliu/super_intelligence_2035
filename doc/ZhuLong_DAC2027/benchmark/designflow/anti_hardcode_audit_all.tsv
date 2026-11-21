@@ -415,7 +415,7 @@ D	EDA-Eval-DesignFlow-SpiceMeasInject-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 
 D	EDA-Eval-DesignFlow-SpiceMeasInserter-001	15	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-SpiceMismatchSweep-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-SpiceSweepOptimizeProduce-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
-D	EDA-Eval-DesignFlow-SpiceUndefParamScan-001	11	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-SpiceUndefParamScan-001	16	y	n	FAIL	FAIL	FAIL	PASS	r1089 fix: +hidden Aprime (q-namespace SUT-invisible depth-2 nested) +5 Aprime-gold cross (l-p); smart B-hardcode stub (fingerprint XtopA/B/C +chr() build B/C tokens bypass FORBIDDEN_LITERALS) pre-fix PASS 11(a-k) post-fix FAIL(m-p); k=11->16; 5 neg ALL FAIL NEG_RC=0; ref 16/16 PASS
 D	EDA-Eval-DesignFlow-SpiceldViewChg-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-SramButterfly-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-SramHierAdapter-001	23	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
