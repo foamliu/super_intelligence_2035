@@ -4966,30 +4966,58 @@
   "highlightjs__highlight.js-2899": {
     "instance_id": "highlightjs__highlight.js-2899",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 257.4,
+    "rc": 0,
+    "model_patch_len": 242781,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "his prevents the empty block comment `/**/` from being matched as a doc comment with markdown sublanguage, which was consuming everything until the next `*/` and breaking all subsequent highlighting.\n",
+    "stderr_tail": "m\n\u001b[0m$ \u001b[0mcd /dev/shm/harness_mm_2x3/workdirs/opencode__deepseek-v4-flash/highlightjs_highlight.js && npx mocha test/markup/index.js 2>&1 | tail -5\n✓ should markup default\n\n\n  405 passing (1s)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2927": {
     "instance_id": "highlightjs__highlight.js-2927",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 87.8,
+    "rc": 0,
+    "model_patch_len": 2993,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " `ll|LL|ull|ULL` suffix support to hex and float exponent literals\n\n**Test update in `test/markup/cpp/number-literals.txt` and `.expect.txt`:**\n- Added test cases for `42LL`, `42ULL`, `42ll`, `42ull`\n",
+    "stderr_tail": "tring-literals\n    ✓ should markup template_complexity\n--\n    ✓ should markup number-literals\n    ✓ should markup objects\n    ✓ should markup prime\n    ✓ should markup triple-quote\n\n  powershell\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2932": {
     "instance_id": "highlightjs__highlight.js-2932",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 851.6,
+    "rc": 0,
+    "model_patch_len": 1290,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "m being interpreted as `\\` + newline continuation.\n\n**Test update:** Added the exact reproduction case from the issue to the markup test suite.\n\nAll 605 tests pass (413 markup, 187 detect, 5 parser).\n",
+    "stderr_tail": " (25ms)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix properties.js: add escaped backslash pattern before line continuation\n[✓] Update test markup to include the reproduction case\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2958": {
     "instance_id": "highlightjs__highlight.js-2958",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 96.7,
+    "rc": 0,
+    "model_patch_len": 1752,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "he first letter) is part of the base name, and the colon plus local-name is the optional group. This allows single-letter prefixes like `a:` to match correctly while preserving all existing behavior.\n",
+    "stderr_tail": "structure and find XML language definition\n[✓] Identify the regex that fails for single-letter namespace prefixes\n[✓] Fix the regex to support single-letter namespace prefixes\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2960": {
     "instance_id": "highlightjs__highlight.js-2960",

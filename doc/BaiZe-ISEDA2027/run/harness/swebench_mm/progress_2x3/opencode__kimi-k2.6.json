@@ -2930,23 +2930,44 @@
   "carbon-design-system__carbon-13196": {
     "instance_id": "carbon-design-system__carbon-13196",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 167.0,
+    "rc": 0,
+    "model_patch_len": 2430,
+    "n_images": 5,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "isually-hidden` class, meaning it's hidden visually but remains available to screen readers. Users can still optionally provide `aria-labelledby` if they want to use an external element as the label.\n",
+    "stderr_tail": "Time:        3.121 s\nRan all test suites matching /Toggle-test/i.\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Toggle/Toggle.js\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Toggle/Toggle-test.js\n"
   },
   "carbon-design-system__carbon-13218": {
     "instance_id": "carbon-design-system__carbon-13218",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 248.9,
+    "rc": 0,
+    "model_patch_len": 2670,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "s to be built first), so I couldn't run the test suite directly. However, the changes are minimal and follow the exact same pattern already used by `ToastNotification` for its caption implementation.\n",
+    "stderr_tail": "ckages/react/src/components/Notification/Notification-test.js\u001b[90m [offset=298, limit=60]\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Notification/Notification.js\u001b[90m [offset=660, limit=30]\u001b[0m\n"
   },
   "carbon-design-system__carbon-13224": {
     "instance_id": "carbon-design-system__carbon-13224",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 13.5,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "empty_patch",
+    "stdout_tail": "on** for it?\n3. **Review or test** an existing implementation?\n4. Something else?\n\nPlease let me know what specific task you'd like me to perform, and I'll be happy to help using the available tools.\n",
+    "stderr_tail": "\u001b[0m\n> build · kimi-k2.6-cloud\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-13317": {
     "instance_id": "carbon-design-system__carbon-13317",
