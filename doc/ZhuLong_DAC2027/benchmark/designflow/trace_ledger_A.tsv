@@ -744,3 +744,4 @@ im5c1	lorikx	hfeg0plg15	266	verification	case	EDA-Eval-DesignFlow-SvTbVcdFsdbVer
 1795177578887_h07up.messages.json	jkxu	hfhds209	165	verification	case	EDA-Eval-DesignFlow-CompErrRerunGen-001	2026-11-22 06:19	r969 A-domain verification produce-task: find_comperror_jobs.py (tail-10 *E -> rerun). k=18, 3 negs+§4.9 FAIL, ref PASS. A.jsonl #434.
 1794793228965_2cfmj.messages.json	jingjiew	hfeg0pkn003	74	verification	case	EDA-Eval-DesignFlow-FsmchkPathScanProduce-001	2026-11-22 06:52	
 1795078644380_7t4og.messages.json	guomings	hfeg0pkn003	102	digital	case	EDA-Eval-DesignFlow-InstTieZeroProduce-001	2026-11-22 07:13	
+1794997341095_yyjfq	devonma	hfeg0pkn004	54	digital	case	EDA-Eval-DesignFlow-WicaParamUpdateProduce-001	2026-11-22 07:46	
