@@ -2317,16 +2317,30 @@
   "bpmn-io__bpmn-js-1638": {
     "instance_id": "bpmn-io__bpmn-js-1638",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 216.1,
+    "rc": 0,
+    "model_patch_len": 979,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "tionExpression;` in `BpmnUpdater.js`) and aligns with the test expectation that `di.label` should not exist after clearing the label.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1640": {
     "instance_id": "bpmn-io__bpmn-js-1640",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 729.1,
+    "rc": 0,
+    "model_patch_len": 3652,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "oop characteristic types (`StandardLoopCharacteristics` → `MultiInstanceLoopCharacteristics`) still creates a new object as expected.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1644": {
     "instance_id": "bpmn-io__bpmn-js-1644",

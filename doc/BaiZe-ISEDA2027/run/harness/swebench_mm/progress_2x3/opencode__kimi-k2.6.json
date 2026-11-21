@@ -2469,37 +2469,71 @@
   "bpmn-io__bpmn-js-1847": {
     "instance_id": "bpmn-io__bpmn-js-1847",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 615.1,
+    "rc": 0,
+    "model_patch_len": 4344,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "*`test/spec/features/create-append-anything/CreateAppendKeyboardBindingsSpec.js`** — Added a test verifying that pressing `a` on an event sub-process opens the `bpmn-create` menu (fallback behavior).\n",
+    "stderr_tail": "handling\n[✓] Identify root cause of append shortcut failing on elements without append menu\n[✓] Implement fix for append shortcut to default to create when append not applicable\n[✓] Test the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1928": {
     "instance_id": "bpmn-io__bpmn-js-1928",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 290.6,
+    "rc": 0,
+    "model_patch_len": 2634,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "tool**: Empty/collapsed pools are no longer resized\n- **Horizontal space tool**: Empty/collapsed pools can still be resized normally\n- Expanded pools (with `processRef`) are unaffected by this change\n",
+    "stderr_tail": "l / empty pool related code\n[✓] Identify root cause of empty pool vertical resize via space tool\n[✓] Implement fix to prevent empty pool vertical resize\n[✓] Verify fix with tests or manual check\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-2024": {
     "instance_id": "bpmn-io__bpmn-js-2024",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 2.7,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "failed",
+    "stderr_tail": "\u001b[91m\u001b[1mError: \u001b[0m{\n  \"_tag\": \"BadRequest\"\n}\n"
   },
   "carbon-design-system__carbon-10188": {
     "instance_id": "carbon-design-system__carbon-10188",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 574.8,
+    "rc": 0,
+    "model_patch_len": 851,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e `itemToElement` to render custom React elements for both menu items **and** the selected item\n\nThis change is consistent with how `itemToElement` was already being used for the dropdown menu items.\n",
+    "stderr_tail": " \u001b[0mTodos\n[✓] Explore the Dropdown component codebase\n[✓] Understand current itemToString/itemToElement usage\n[✓] Implement the fix for selectedItem rendering\n[✓] Run tests to verify the change\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-10214": {
     "instance_id": "carbon-design-system__carbon-10214",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 94.7,
+    "rc": 0,
+    "model_patch_len": 1034,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "}>\n```\n\n**After (sortable path):**\n```jsx\n<th ... {...rest}>\n  <button ...>\n```\n\nThe existing snapshots only cover the non-sortable path (`isSortable={false}`), so they are unaffected by this change.\n",
+    "stderr_tail": "No such file or directory\n\u001b[0m\n\u001b[0m✱ \u001b[0mGlob \"**/__snapshots__/*TableHeader*\"\u001b[90m 1 match\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/DataTable/__tests__/__snapshots__/TableHeader-test.js.snap\n"
   },
   "carbon-design-system__carbon-10225": {
     "instance_id": "carbon-design-system__carbon-10225",

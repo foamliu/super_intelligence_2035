@@ -4378,23 +4378,44 @@
   "eslint__eslint-11407": {
     "instance_id": "eslint__eslint-11407",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 452.2,
+    "rc": 0,
+    "model_patch_len": 1027,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "tually within the current arrow function's body before applying parenthesis wrapping.\n\nAll 59 existing tests pass, and the exact reproduction case from the issue now produces valid JavaScript output.\n",
+    "stderr_tail": "0m# \u001b[0mTodos\n[✓] Find the implicit-arrow-linebreak rule implementation\n[✓] Understand the bug: autofixer adds extra characters with comments\n[✓] Fix the autofixer logic\n[✓] Verify the fix works\n\u001b[0m\n"
   },
   "eslint__eslint-12472": {
     "instance_id": "eslint__eslint-12472",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 192.1,
+    "rc": 0,
+    "model_patch_len": 3383,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "alid, 1 invalid) covering JSX expression containers with `align: \"value\"` and `align: \"colon\"` configurations, confirming alignment is skipped but basic spacing is still enforced. All 116 tests pass.\n",
+    "stderr_tail": "logic and the JSX issue\n[✓] Implement fix: skip value alignment for multi-line objects inside JSX expressions\n[✓] Add tests for JSX expression containers\n[✓] Verify the fix passes existing tests\n\u001b[0m\n"
   },
   "eslint__eslint-12652": {
     "instance_id": "eslint__eslint-12652",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 195.0,
+    "rc": 0,
+    "model_patch_len": 3143,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ing alignment or spacing fixes to object literals inside JSX expressions like `style={{ display: 'inline-block', marginRight: '10px' }}`, which was causing the ugly formatting described in the issue.\n",
+    "stderr_tail": "comment*/:/*comment*/bar })\n\n\n  115 passing (300ms)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/rules/key-spacing.js\u001b[90m [limit=30, offset=26]\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/rules/key-spacing.js\u001b[90m [limit=35, offset=644]\u001b[0m\n"
   },
   "eslint__eslint-14033": {
     "instance_id": "eslint__eslint-14033",
