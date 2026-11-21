@@ -2634,37 +2634,72 @@
   "carbon-design-system__carbon-11416": {
     "instance_id": "carbon-design-system__carbon-11416",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 657.7,
+    "rc": 0,
+    "model_patch_len": 2776,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " — extracts the input from `this.input`\n\nThis mirrors the battle-tested `assignInputFieldRef` pattern from the classic `DatePicker.js` at `packages/react/src/components/DatePicker/DatePicker.js:572`.\n",
+    "stderr_tail": "d packages/react/src/components/DatePicker/next/DatePicker.js\u001b[90m [limit=10, offset=1]\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/DatePicker/next/DatePicker.js\u001b[90m [limit=100, offset=196]\u001b[0m\n"
   },
   "carbon-design-system__carbon-11613": {
     "instance_id": "carbon-design-system__carbon-11613",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 224.8,
+    "rc": 0,
+    "model_patch_len": 831,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "re-flags.js` (imported by `.storybook/preview.js`), making the decorator completely redundant.\n\nNo other story files have this same decorator pattern — the `Notification.stories.js` was the only one.\n",
+    "stderr_tail": "✓] Find the root cause in story generation/source display logic\n[✓] Remove the redundant FeatureFlags decorator from Notification.stories.js\n[✓] Check for other story files with the same pattern\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-11621": {
     "instance_id": "carbon-design-system__carbon-11621",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 545.2,
+    "rc": 0,
+    "model_patch_len": 1024,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "or expandable search\n- `.cds--table-toolbar:not(.cds--table-toolbar--sm) .cds--toolbar-search-container-persistent.cds--search--xl .cds--search-magnifier-icon { left: 1rem; }` — for persistent search\n",
+    "stderr_tail": "m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore DataTable toolbar/search components to understand the bug\n[✓] Find the search icon alignment issue in the selection variant\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-11664": {
     "instance_id": "carbon-design-system__carbon-11664",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 46.2,
+    "rc": 0,
+    "model_patch_len": 559,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "] !== undefined`, this prevents the false deprecation warning when the user doesn't pass the `light` prop at all. Both `undefined` and `false` are falsy, so there's no behavioral change in rendering.\n",
+    "stderr_tail": "};\n \n /**\n\n\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"light: deprecate\"\u001b[90m in packages/react/src · 11 matches\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/OverflowMenu/OverflowMenu.js\u001b[90m [limit=10, offset=247]\u001b[0m\n"
   },
   "carbon-design-system__carbon-11743": {
     "instance_id": "carbon-design-system__carbon-11743",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 123.9,
+    "rc": 0,
+    "model_patch_len": 540,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "y other story with `subcomponents` in this codebase also defines `component` — without it, Storybook's addon-docs has no component to introspect for propTypes, resulting in an empty/blank prop table.\n",
+    "stderr_tail": " component: Header,\n   subcomponents: {\n     Content,\n     Header,\n     HeaderMenuButton,\n\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/UIShell/UIShell.stories.js\u001b[90m [offset=132, limit=30]\u001b[0m\n"
   },
   "carbon-design-system__carbon-11761": {
     "instance_id": "carbon-design-system__carbon-11761",
