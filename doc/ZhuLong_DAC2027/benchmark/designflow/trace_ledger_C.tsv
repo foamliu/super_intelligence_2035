@@ -1355,3 +1355,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1794829264163_7ypz6	dechaoc	hfeg0pkn004	16217	physical_verify	parked		2026-11-21 07:30	r889 peek: U#0=xrun.log sim-error analysis (cmds_p1_cm_check.x8_9200/xrun.log); A-domain digital/verification, drc/verilog kw incidental from log content; NOT C physical_verify/layout
 1792204711601_yt3zr	ellawu	hfeg0pkn001	79	physical_verify	case	EDA-Eval-DesignFlow-DrcVarTraceExtract-001	2026-11-21 09:36	
 1795000168376_59mx1	ellawu	hfeg0pkn001	72	physical_verify	case	EDA-Eval-DesignFlow-TvfDeckSpecExtract-001	2026-11-21 10:07	
+1794537332196_hgx6a	thomasz	hfeg0pfn058	54	physical_verify	case	EDA-Eval-DesignFlow-PathfinderStuckDiag-001	2026-11-21 10:56	r899: Ansys Pathfinder ESD stuck-state diagnostic, k=16
