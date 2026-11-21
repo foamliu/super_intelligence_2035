@@ -2092,16 +2092,30 @@
   "bpmn-io__bpmn-js-1337": {
     "instance_id": "bpmn-io__bpmn-js-1337",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1844.7,
+    "rc": 0,
+    "model_patch_len": 4466,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "only generalizing the condition from three specific event definition checks to a single general \\\"has any event definition\\\" check.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1348": {
     "instance_id": "bpmn-io__bpmn-js-1348",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 281.8,
+    "rc": 0,
+    "model_patch_len": 3973,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "messageFlow: false` expectations.\\n- `isMessageFlowSource` still rejects all boundary events as sources, which is correct per spec.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1365": {
     "instance_id": "bpmn-io__bpmn-js-1365",

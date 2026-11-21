@@ -2704,23 +2704,44 @@
   "carbon-design-system__carbon-11761": {
     "instance_id": "carbon-design-system__carbon-11761",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 550.4,
+    "rc": 0,
+    "model_patch_len": 3335,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "`<table>` element\n- When `title`/`description` are not provided (or `Table` is used outside `TableContainer`), these attributes are `undefined` and omitted by React, preserving backward compatibility\n",
+    "stderr_tail": " and Table\n[✓] Modify TableContainer to generate IDs and provide via context\n[✓] Modify Table to consume context and apply aria-labelledby/aria-describedby\n[✓] Verify the fix with existing tests\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12027": {
     "instance_id": "carbon-design-system__carbon-12027",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 85.5,
+    "rc": 0,
+    "model_patch_len": 3765,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "`isFlush` prop support to the skeleton variant for consistency.\n\nThe implementation follows the same pattern as `StructuredList`'s `isFlush` prop - a boolean that adds a `--flush` CSS modifier class.\n",
+    "stderr_tail": "flush SCSS styles to _accordion.scss\n[✓] Add `isFlush` control to Accordion.stories.js Playground\n[✓] Add `isFlush` to Accordion.Skeleton.js if it passes props through\n[✓] Verify with tests/lint\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12151": {
     "instance_id": "carbon-design-system__carbon-12151",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 411.4,
+    "rc": 0,
+    "model_patch_len": 4268,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "/_fluid-text-input.scss` — Added skeleton styles (padding, border-bottom, background, label spacing, input shape sizing)\n\nThe implementation follows the exact same pattern as `FluidTextAreaSkeleton`.\n",
+    "stderr_tail": "s\n[✓] Update FluidTextInput/index.js to export skeleton\n[✓] Add SCSS for fluid text input skeleton\n[✓] Add Skeleton story to stories file\n[✓] Add tests for skeleton\n[✓] Verify the implementation\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12262": {
     "instance_id": "carbon-design-system__carbon-12262",

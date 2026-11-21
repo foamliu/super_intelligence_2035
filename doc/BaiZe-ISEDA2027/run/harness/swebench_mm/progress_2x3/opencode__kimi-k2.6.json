@@ -1958,16 +1958,29 @@
   "bpmn-io__bpmn-js-1196": {
     "instance_id": "bpmn-io__bpmn-js-1196",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.1,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "bpmn-io__bpmn-js-1198": {
     "instance_id": "bpmn-io__bpmn-js-1198",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 934.7,
+    "rc": 0,
+    "model_patch_len": 1862,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "iles. The full browser test suite could not be executed in this environment due to missing Chromium/PhantomJS binaries, but the webpack compilation of the targeted test file succeeded without errors.\n",
+    "stderr_tail": "ter.js: add === businessObject check for reconnectEnd default flow handling\n[✓] Add test for dropping element on non-default flow preserving gateway default attribute\n[✓] Run tests to verify fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1200": {
     "instance_id": "bpmn-io__bpmn-js-1200",

@@ -6489,37 +6489,72 @@
   "prettier__prettier-14688": {
     "instance_id": "prettier__prettier-14688",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 171.7,
+    "rc": 0,
+    "model_patch_len": 693,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "railing comma for generic arrow functions, avoiding compilation errors while still adhering to Prettier's formatting rules.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "prettier__prettier-14961": {
     "instance_id": "prettier__prettier-14961",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 179.0,
+    "rc": 0,
+    "model_patch_len": 881,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e still maintaining readability for pipes that take variable/expression arguments, as requested in the compromise proposal.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "prettier__prettier-16347": {
     "instance_id": "prettier__prettier-16347",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 443.6,
+    "rc": 0,
+    "model_patch_len": 685,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "n\\nThis change is backwards compatible and preserves all existing YAML formatting behavior while fixing the reported issue.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "prettier__prettier-4115": {
     "instance_id": "prettier__prettier-4115",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 273.7,
+    "rc": 0,
+    "model_patch_len": 1222,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "fix matches the existing working pattern for code blocks in Markdown, which do not suffer from this same indentation issue.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "prettier__prettier-4153": {
     "instance_id": "prettier__prettier-4153",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 136.5,
+    "rc": 0,
+    "model_patch_len": 673,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ", which matches the expected behavior.\\n\\nThe fix is minimal, backward compatible, and addresses the exact issue described.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "prettier__prettier-4202": {
     "instance_id": "prettier__prettier-4202",
