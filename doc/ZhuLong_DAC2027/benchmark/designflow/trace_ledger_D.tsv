@@ -1960,3 +1960,4 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1795165791752_m801p					case	EDA-Eval-DesignFlow-NetlistSimSubmitProduce-001	2026-11-21 08:07	
 1794885045965_6f9zc	mike	hfhds201	6257	schematic_netlist	case	EDA-Eval-DesignFlow-Lp6CfgFormatConvertProduce-001	2026-11-21 08:44	
 1795144434219_xjdww	e06960	hfeg0pkn001	2287	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistPortMismatchDiagProduce-001	2026-11-21 09:06	
+1795052686044_ypdsb	e0044131	hfeahpc502	267	schematic_netlist	case	EDA-Eval-DesignFlow-SramNetlistStructAuditProduce-001	2026-11-21 09:29	
