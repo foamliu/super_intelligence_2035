@@ -2216,9 +2216,16 @@
   "bpmn-io__bpmn-js-1557": {
     "instance_id": "bpmn-io__bpmn-js-1557",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1064.1,
+    "rc": 0,
+    "model_patch_len": 921,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "morph to proceed without error. The `DataObjectReference` created outside a Pool will have its semantic parent left as-is (avoiding the crash), similar to how `DataStoreReference` is already handled.\n",
+    "stderr_tail": "tand the bug structure\n[✓] Fix: Add guard for DataObjectReference in BpmnUpdater.updateParent()\n[✓] Fix: Add null check for di in BpmnUpdater.updateDiParent()\n[✓] Verify the fix by running tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1567": {
     "instance_id": "bpmn-io__bpmn-js-1567",

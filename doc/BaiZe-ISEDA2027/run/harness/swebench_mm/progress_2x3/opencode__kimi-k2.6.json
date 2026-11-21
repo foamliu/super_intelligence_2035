@@ -1598,23 +1598,44 @@
   "alibaba-fusion__next-3345": {
     "instance_id": "alibaba-fusion__next-3345",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 349.2,
+    "rc": 0,
+    "model_patch_len": 760,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "16px); // 原 padding-top + 关闭按钮高度\n}\n\n.next-dialog-quick.next-closeable .next-dialog-body:first-child {\n    padding-top: calc(20px + 16px); // 对 alert/confirm 同样生效\n}\n```\n\n这样无标题时，body 内容会自动下移，避免与关闭按钮重叠。\n",
+    "stderr_tail": ": 0;\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore Dialog component code and styles\n[✓] Identify root cause of close button overlap when no title\n[✓] Fix the close button positioning issue\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "alibaba-fusion__next-3445": {
     "instance_id": "alibaba-fusion__next-3445",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 429.7,
+    "rc": 0,
+    "model_patch_len": 1876,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "<label\n        key={`overlay-${i}`}\n        htmlFor={enableA11y ? `${id}-${prefix}star${i + 1}` : null}\n        className={`${prefix}rating-icon`}\n+       onClick={e => e.stopPropagation()}\n    >\n```\n",
+    "stderr_tail": "sign (/dev/shm/harness_mm_2x3/workdirs/opencode__kimi-k2.6/alibaba-fusion_next/node_modules/babylon/lib/index.js:3344:19)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead test/rating/index-spec.js\u001b[90m [offset=150, limit=40]\u001b[0m\n"
   },
   "alibaba-fusion__next-3454": {
     "instance_id": "alibaba-fusion__next-3454",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 584.8,
+    "rc": 0,
+    "model_patch_len": 1788,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ld detect max & min prop changes in real time`，验证仅修改 `max`/`min` 时，增减按钮的 `disabled` 状态能实时更新。\n\n由于项目测试环境存在依赖缺失（`bignumber.js`、`dayjs` 等），无法直接运行 `npm test`，已通过独立脚本模拟 `getDerivedStateFromProps` 的逻辑并验证通过。\n",
+    "stderr_tail": "ctly\nPASS: returns null when no props change\n\nAll verification checks passed!\n\u001b[0m\n\u001b[0m$ \u001b[0mrm /dev/shm/harness_mm_2x3/workdirs/opencode__kimi-k2.6/alibaba-fusion_next/verify-fix.js\n(no output)\n\u001b[0m\n"
   },
   "alibaba-fusion__next-3724": {
     "instance_id": "alibaba-fusion__next-3724",
