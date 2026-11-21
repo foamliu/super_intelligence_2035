@@ -171,7 +171,7 @@
 1793170209567_2mfi6					parked		2026-11-07 00:33	duplicate of 0kv56/PatStatSpeed-001 (same jascperc+PTE pattern-speed task, earlier 184-msg session) | r663-merged-dup-notes: duplicate of 0kv56/PatStatSpeed-001 (A:97); r313 build aborted, NOT appended
 1792658984406_7j9b9	nevinrao	hfeg0pkn001	205	verification	case	EDA-Eval-DesignFlow-SimFailParse-001	2026-11-07 00:48	
 1788871441686_fieju.messages.json	harrys	hfeg0pkn002	495	digital	case	EDA-Eval-DesignFlow-NandMcuAsm-001	2026-11-07 01:25	 | r663-merged-dup-notes: clean-A-faithful-produce-3MCU-plus-compile-sim-L3-too-complex-for-checkable-case-defer-future
-1793005700370_jzlbn	lorikx	hfeg0pkn001	395	verification	case	EDA-Eval-DesignFlow-FsdbVerdiInteg-001	2026-11-07 02:07	
+1793005700370_jzlbn	lorikx	hfeg0pkn001	395	verification	case	EDA-Eval-DesignFlow-FsdbVerdiInteg-001	2026-11-21 15:48	
 1791774925790_tyk6x	shanliny	hfeg0pkn001	102	verification	case	EDA-Eval-DesignFlow-VcheckMacroAdd-001	2026-11-07 02:47	
 1793082695144_reixr	lorikx	hfeg0pkn001	183	digital	case	EDA-Eval-DesignFlow-CrEdgeAlignFix-001	2026-11-07 03:18	
 1793605487158_evxj6	xuluo	hfeg0pkn001	333	verification	case	EDA-Eval-DesignFlow-ParamRecon-001	2026-11-07 03:56	
