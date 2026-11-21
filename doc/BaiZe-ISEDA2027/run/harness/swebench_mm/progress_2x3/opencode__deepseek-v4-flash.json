@@ -2578,30 +2578,58 @@
   "carbon-design-system__carbon-10283": {
     "instance_id": "carbon-design-system__carbon-10283",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 542.6,
+    "rc": 0,
+    "model_patch_len": 1951,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "/components/date-picker/date-picker.js:337`** — Same fix for the Vanilla JS component's icon click handler. After `calendar.open()`, focus `selectedDateElem`, `todayDateElem`, or `calendarContainer`.\n",
+    "stderr_tail": "[✓] Explore the date picker component code to understand the structure\n[✓] Identify the root cause of keyboard focus issue when opening calendar via icon\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-10301": {
     "instance_id": "carbon-design-system__carbon-10301",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 338.9,
+    "rc": 0,
+    "model_patch_len": 4383,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " of tabs\" size=\"lg\">\n  <Tab><Monster20 /></Tab>\n</TabList>\n\n// Large size (lg, 56px) - contained tabs\n<TabList aria-label=\"List of tabs\" contained size=\"lg\">\n  <Tab><Monster20 /></Tab>\n</TabList>\n```\n",
+    "stderr_tail": "s structure\n[✓] Add size prop to TabList in next/Tabs.js\n[✓] Add SCSS styles for tab sizes in _tabs.scss\n[✓] Update stories to demonstrate size variants\n[✓] Verify changes compile/lint correctly\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-10599": {
     "instance_id": "carbon-design-system__carbon-10599",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 80.7,
+    "rc": 0,
+    "model_patch_len": 3832,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " their state annotations.\n\n**V10→V11 mappings** (`mixins.js:260-261`, `modules-themes.js:97-98`): Mapped `link-inverse-hover` → `inverse-link-hover` and `link-inverse-active` → `inverse-link-active`.\n",
+    "stderr_tail": "-themes.js\u001b[90m [limit=6, offset=93]\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/themes/src/next/g100.js\u001b[90m [limit=10, offset=159]\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/themes/src/next/g10.js\u001b[90m [limit=10, offset=152]\u001b[0m\n"
   },
   "carbon-design-system__carbon-11352": {
     "instance_id": "carbon-design-system__carbon-11352",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 269.4,
+    "rc": 0,
+    "model_patch_len": 1203,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ner `<Button>`, preserving any user-supplied classNames. This ensures correct padding:\n- `sm` → 7px symmetrical padding\n- `md` (default) → 11px symmetrical padding  \n- `lg` → 15px symmetrical padding\n",
+    "stderr_tail": "    </Button>\n     </Tooltip>\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Find IconButton component and styling files\n[✓] Identify the right padding issue in IconButton\n[✓] Fix the right padding\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-11416": {
     "instance_id": "carbon-design-system__carbon-11416",

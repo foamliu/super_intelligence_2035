@@ -2050,16 +2050,30 @@
   "bpmn-io__bpmn-js-1256": {
     "instance_id": "bpmn-io__bpmn-js-1256",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1568.7,
+    "rc": 0,
+    "model_patch_len": 755545,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ed environment (no display, no sandbox, no `xvfb`). The fix has been validated through logic analysis, simulation, and compilation.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1299": {
     "instance_id": "bpmn-io__bpmn-js-1299",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 702.2,
+    "rc": 0,
+    "model_patch_len": 650,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "r elements with external labels will no longer shrink or disappear when the user completes direct editing with an empty name/label.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1330": {
     "instance_id": "bpmn-io__bpmn-js-1330",

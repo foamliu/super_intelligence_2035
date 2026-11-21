@@ -1931,16 +1931,29 @@
   "bpmn-io__bpmn-js-1179": {
     "instance_id": "bpmn-io__bpmn-js-1179",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "bpmn-io__bpmn-js-1192": {
     "instance_id": "bpmn-io__bpmn-js-1192",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 107.1,
+    "rc": 0,
+    "model_patch_len": 933,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ryEvent, [], true);\n   ```\n\n*(Note: I couldn’t run the test suite locally because PhantomJS fails to start in this environment due to OpenSSL/library issues, but the change is minimal and targeted.)*\n",
+    "stderr_tail": "(cannot start). Giving up.\n\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/features/rules/BpmnRules.js\u001b[90m [offset=898, limit=20]\u001b[0m\n\u001b[0m→ \u001b[0mRead test/spec/features/rules/BpmnRulesSpec.js\u001b[90m [offset=168, limit=25]\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1196": {
     "instance_id": "bpmn-io__bpmn-js-1196",
