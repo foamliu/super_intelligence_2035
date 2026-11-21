@@ -2636,30 +2636,58 @@
   "carbon-design-system__carbon-11613": {
     "instance_id": "carbon-design-system__carbon-11613",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 199.3,
+    "rc": 0,
+    "model_patch_len": 572,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "per.\n\nI also checked the rest of the codebase and confirmed that `Notification` is the only component currently using `FeatureFlags` as a local story decorator, so no other files needed the same fix.\n",
+    "stderr_tail": "dos\n[✓] Explore codebase to find Notifications stories and FeatureFlags usage\n[✓] Identify root cause of Show Code displaying FeatureFlags instead of actual code\n[✓] Implement fix\n[✓] Verify fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-11621": {
     "instance_id": "carbon-design-system__carbon-11621",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 360.8,
+    "rc": 0,
+    "model_patch_len": 1257,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ngside `.bx--search--lg` so both use `left: 1rem`\n\nThis ensures the search icon is properly centered in the toolbar button regardless of whether the search component renders with `lg` or `xl` sizing.\n",
+    "stderr_tail": "selection/search related files\n[✓] Identify the CSS/SASS causing the icon misalignment on hover\n[✓] Fix the misalignment issue with minimal changes\n[✓] Verify the fix (run tests or inspect code)\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-11664": {
     "instance_id": "carbon-design-system__carbon-11664",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 186.7,
+    "rc": 0,
+    "model_patch_len": 536,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "test suite because `node_modules` aren't installed in this workspace, but the change is minimal and shouldn't affect any existing tests (all tests that reference `light` explicitly set it to `true`).\n",
+    "stderr_tail": "ight: false\"\u001b[90m in packages/react/src/components · 14 matches\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix OverflowMenu defaultProps to not set light: false when deprecated\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-11743": {
     "instance_id": "carbon-design-system__carbon-11743",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 278.9,
+    "rc": 0,
+    "model_patch_len": 617,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ger needed since the `component` property is present.\n\nThis follows the same pattern used by other multi-component stories in the codebase (e.g., `Accordion`, `Breadcrumb`, `Toggletip`, `DataTable`).\n",
+    "stderr_tail": "HeaderNavigation,\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore UIShell components and storybook files\n[✓] Identify why prop tables are not rendering\n[✓] Fix the prop table rendering issue\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-11761": {
     "instance_id": "carbon-design-system__carbon-11761",
