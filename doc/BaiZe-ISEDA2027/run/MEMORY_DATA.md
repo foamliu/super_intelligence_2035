@@ -3,6 +3,8 @@
 WAITING: 0
 
 
+> 🟢 **心跳 · 2026-11-22 (R149) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R149 刷新点（iter 进度同步）：v3 报告全文 iter 277.9k→278.5k / 39.7%→39.8% / step 7.19s→7.21s（pretrain #2913，19/20步&lt;7.4s✅）/ 350k ETA 6.0天（~11-28不变）/ 700k ETA 35.1→35.2天（~12-26不变）/ header+R149 note+gantt+risk#7+G5+footer 同步更新。git fetch无新令(HEAD=origin=17038596fc)；pretrain #2913 iter=278550 step7.21s 19/20&lt;7.4s✅ loss2.016 278k eval运行中。数据侧无新变化：PC-1~PC-5 全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load=24.8✅ / /nas_user 42T✅ / v2 preserved / commit `data report:`+push / WAITING=0**。
+
 > 🟢 **心跳 · 2026-11-22 (R148) — 例行巡检（无新令）：git fetch origin 无新 data 令（所有用户令已交付，HEAD=origin=ee5a5f262c）；pretrain #2908 报 278k eval 自动启动中（daemon 02:37 poll 拾取，llama-server 跑 8-set）/ iter~278k/700k(39.7%) step avg7.10s（n=6 全<7.4s✅） loss~2.00 / latest ckpt=276k（278k eval 运行中）/ 350k ETA≈5.9天(~11-28不变) / 700k ETA≈35.1天(~12-26不变)；v3 报告(R146)iter=277.9k 与当前 ~278k 偏差 ~0.1k(~12min)不刷新（ETA日期不变）；数据侧无新变化：PC-1~PC-5 全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load=26.1✅<120 / /nas_user 42T✅>5T红线。research 日报 11-22 data 建议「纯网页 vs 混合策展对照臂」（非约束参考，S1/S2配比已定不纳入本轮）。MEMORY_DATA 37.4KB✅<40KB / TASK 37.8KB✅<40KB。WAITING=0**。
 
 > 🟢 **心跳 · 2026-11-22 (R147) — 例行巡检（无新令）：git fetch origin 无新 data 令（所有用户令已交付，HEAD=origin=154f9489e6）；pretrain #2907 报 iter=277960/700k=39.71% step avg7.22s（n=20，19/20步<7.4s✅，1次瞬态7.40s未持续） loss2.00 / latest ckpt=276k（278k待落盘）/ 350k ETA≈6.0天(~11-28不变) / 700k ETA≈35.3天(~12-26不变)；v3 报告(R146)iter=277.9k 与当前 278.0k 偏差 0.06k(~7min)不刷新（ETA日期不变）；数据侧无新变化：PC-1~PC-5 全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load=25.2✅<120 / /nas_user 42T✅>5T红线。research 日报 11-22 data 建议「纯网页 vs 混合策展对照臂」（非约束参考，S1/S2配比已定不纳入本轮）。MEMORY_DATA 36.6KB✅<40KB / TASK 37.8KB✅<40KB。WAITING=0**。
@@ -29,11 +31,7 @@ WAITING: 0
 
 > 🟢 **心跳 · 2026-11-21 (R137) — 黑名单可再生中间物重建：发现 `data_pipeline/blacklist/` 因 commit 931cc40e30 取消跟踪而缺失（gitignore 第30-33行标记为可再生），已用 build_blacklist.py + 6 评测快照 jsonl(EDA-Eval v20260311/148/46/Updated102/TEST/cuhk@/nas_train/.../eda_fastmcp/pyAether-eval/original_dataset/) **重跑复现**：536任务/193,295 13-gram/10 8-gram/4 短任务，与 v0.2 文档逐数一致(meta.json 2.13MB/ngram_hashes.txt 3.29MB/short 170B/ep 60KB)；正控冒烟(扫v20260311.jsonl自身)=158/158命中✅；S1污染闸门已就绪可复用。CONTAMINATION_CHECK.md §4+§7 已更新(标注 gitignore+重跑证据+S2新源扫描待办)。v3报告(R136)与blend TSV(12源/main)未动仍sound。iter~276.4k/700k step<7.4s / PC-1~PC-5 全✅ / 无后台任务 / .12✅ .29✅ / 9277-task 扩展黑名单(blacklist_extended/)尚未建(PC-3已下6 benchmark待转jsonl入指纹)**。
 
-> 🟢 **心跳 · 2026-11-21 (R136) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R136 刷新点（main版blend TSV更新）：S2 blend TSV 从 fallback(10源) 更新为 main(12源)，加入 nemotron(prop=0.067/195.4B tok) + megamath_web(prop=0.060/218.1B tok)，megamath Batch1 epoch 1.69→0.62，math_l1/l3 降权(0.08→0.025/0.04→0.015)优先零重叠新源，math 类别 epoch 0.48→0.54，gen_blend.py --verify 通过(weight_sum=1.000000/13847 shards) / iter ~275.3k(ckpt274k)/700k(39.3%) step~7.23s / PC-1~PC-5 全部✅完成 / 无后台任务运行 / .12 load=27.4✅ .29 load=28.8✅ / /nas_user 42T✅ / fallback版存为blend_s2_preblend_fallback.tsv / v2 preserved / commit+push**。
-
-> 🟢 **心跳 · 2026-11-21 (R135) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R135 刷新点（MegaMath-web分词✅100%完成）：iter ~275.3k(ckpt274k)/700k(39.3%) step~7.23s / 350k~11-28 700k~12-26 / MegaMath-web 分词✅100%(4950/4950=100%,磁盘 megamath_web_*.json 实测 sum ~218.1B tok,进程已退出) / Nemotron-CC-Math ✅完成(193/193,195.4B tok) / finemath ✅完成(9.4B tok) / Math-Reasoning ✅完成(2228/2228) / Code-Reasoning ✅完成(1637/1637) / MegaMath-web下载✅完成(4950/4950) / latest ckpt=274k / .12 load=25.3✅ .29 load=27.2✅ / /nas_user 42T✅ / **PC-1~PC-5 全部✅完成** / v2 preserved / commit+push**。
-
-> _(R134~R116 心跳已归档 daily-memories-data/2026-11-21.md · iter~275.1k→273.0k step~7.23~7.13s MM-web 98.8%→89.8% Nemotron✅ finemath✅ Math-Reasoning✅ Code-Reasoning✅)_
+> _(R136~R116 心跳已归档 daily-memories-data/2026-11-21.md · R136:main版blend TSV 12源(nemotron+megamath_web)更新 / R135:MegaMath-web分词✅100%(218.1B tok) / iter~275.3k→273.0k step~7.23~7.13s MM-web 98.8%→89.8% Nemotron✅ finemath✅ Math-Reasoning✅ Code-Reasoning✅)_
 > _(R115~R108 心跳已归档 daily-memories-data/2026-11-21.md · iter~272.3k→271.6k step~7.16~7.17s MM-web 87.7%→85.6% Nemotron✅ finemath✅ Math-Reasoning✅ Code-Reasoning✅)_
 > _(R107~R97 心跳已归档 daily-memories-data/2026-11-21.md · iter~271.6k→270k step~7.12~7.17s MM-web 85.3%→79.9% Nemotron✅ finemath✅ Math-Reasoning✅ Code-Reasoning✅)_
 > _(R96~R85 心跳已归档 daily-memories-data/2026-11-21.md · iter~269.8k→267.9k step~7.09~7.16s MM-web 78.9%→72.1% Nemotron✅ finemath✅ Math-Reasoning✅ Code-Reasoning✅)_
@@ -112,7 +110,7 @@ WAITING: 0
 ```
 PHASE:        S2前置+污染闸门全完成 — PC-1✅~PC-5✅ + 扩展黑名单✅ + S2新源扫描✅(48K docs/0命中) → WAITING=0
 已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(6benchmark/9277tasks);✅PC-4 main版blend_s2_preblend.tsv(12源/含nemotron 0.067+megamath_web 0.060+finemath 0.005/weight_sum=1.0/gen_blend --verify通过);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(R136刷新main版/pushed);✅MegaMath-web下载DONE(4950parquet/826GB);✅MegaMath-web分词DONE(4950/4950=100%/218.1B tok);✅Code-Reasoning下载DONE(1637parquet/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2228parquet/0inc);✅DATA_MAPPING.md更新;✅论文Fig-1三饼图+Fig-2调优+TABLE IV精简+数据源/Decay/LongCtx引用补齐(latexmk 0err);✅EDA-Eval 536-task黑名单重跑复现(R137/正控158/158);✅扩展黑名单blacklist_extended建成(R138/5359tasks/4847354 13-gram/正控164/164);✅S2新源污染扫描(R139/4源×12K=48K docs/全0命中)
-当前动作:     R148:例行巡检;git fetch无新令(HEAD=origin=ee5a5f262c);pretrain #2908 278k eval运行中 iter~278k/700k(39.7%) step7.10s;v3报告(R146)iter=277.9k偏差~0.1k不刷新;PC-1~PC-5全✅/污染扫描✅268K docs 0命中;无后台任务
+当前动作:     R149:v3报告iter刷新277.9k→278.5k(39.8%)/step7.21s/350k~11-28/700k~12-26不变;git fetch无新令(HEAD=origin=17038596fc);pretrain #2913 iter=278550 step7.21s 19/20<7.4s✅ loss2.016 278k eval运行中;PC-1~PC-5全✅/污染扫描✅268K docs 0命中;无后台任务;.12 load=24.8✅
 下一步:       ①等pretrain到350k(~11-28)启动S2(blend TSV已就绪/SEED=5678待转告pretrain线) ②S2投料前可按S1口径对4新源做全量扫描(>150K docs)作为加强验证(非阻塞/contam_venv已就绪)
 阻塞:         无(全部前置完成;无后台任务;.12 load≈24<120✅;/nas_user 42T可用✅>5T红线)
 ERROR_COUNT:  0
