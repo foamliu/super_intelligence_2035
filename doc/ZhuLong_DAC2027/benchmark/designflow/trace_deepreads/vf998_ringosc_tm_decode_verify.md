@@ -55,3 +55,34 @@ hidden B: testmode cm0_ts_OscNdXpSel / select cm0_ts_OscNdSel / osc_RO / osc_ROF
 - k_check=k_rationale=14>=8 GATE PASS ✓
 - check_sha256 ae1acd30... check_size 9196
 - case_id: EDA-Eval-DesignFlow-RingOscTmDecodeVerify-001 (analog_context, A-faithful)
+
+## 后续 sister-turn 造题记录
+
+### r1035 U#149 cm1_id_SCmosDataWCKOSCFooter (WckOsc footer 50/50 ratio)
+- 机制类: 1-bit footer RATIO (A/B 两组 footer 管子, Footer=0->100% / Footer=1->50%)
+- case_id: EDA-Eval-DesignFlow-WckOscFooterRatioVerify-001 (analog_context, A-faithful)
+
+### r1043 U#81 cm0_ts_VintReadSel (Vintcore/Vintbus trim code readout)
+- 机制类: 1-bit ENABLE GATE pass-through (CPSeli[i]=MdCPSel[i]&VintReadSel)
+- case_id: EDA-Eval-DesignFlow-VintReadSelGateVerify-001 (analog_context, A-faithful)
+
+### r1044 U#48 cm0_ts_CrackMonEn (analog/digital test scheme switch)
+- 机制类: 1-bit COMPLEMENTARY DUAL-ENABLE (CrackMonEnF inv -> analog ref-cap; CrackMonEn + CrackMonEnF -> digital comparator)
+- case_id: EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001 (analog_context, A-faithful)
+
+### r1052 U#137 cm1_io_KillPPRDis (command-filter gate) ← 本轮
+- 用户原话(会话 idx 137, 用户第 73 轮, A-faithful 逐字): 「验证cm1_io_KillPPRDis，默认为零，disable除MRW外所有命令（KillPPR信号），打开之后，可enable KillPPR信号，正确信号应该是什么样」
+- 助手验证结论(idx 146): PPRKill 模块(L481438, 实例 I_PPRKill_15 在 CmdDec_PN1p76 I_CmdDec_PN1p76_646 L560749 内); 非 MRW 命令分两组 nor 活跃检测 net8={Act,Pre,MRR,RDC,RFF,WFF} net0={RdInit,WrInit,CasPre,Mpc,Rfsh,SelfRfsh}; KillPPR=aoi21(net8,net0,PprKillEnN)=PprKillEn&ACTIVE; AllCmd=nand3(net8,net0,cm1_io_KillPPRDis); 金标准: Dis=0->KillPPR 恒 0(masked)+AllCmd 强制 1, Dis=1+PprKillEn=1+任一非MRW命令->KillPPR 拉高脉冲, AllCmd=ACTIVE; MRW 是安全隔离例外命令
+- 机制类: 1-bit testmode COMMAND-FILTER GATE (two nor2 command-detection groups + nand3 testmode mask + aoi21 trigger gate) — 与 4 个 sister 机制类 pairwise 正交 (DECODER/RATIO/ENABLE-GATE/DUAL-ENABLE)
+- 三闸门全 PASS: (1) structure orthogonal (2) 17 不可复用断言 (a-q, 含 _gt_parse_module/_gt_parse_testmode/_gt_groups/_gt_simulate 独立重算 + anti-hardcode A-only 17 token 零漏 + B-only 17 token 全现 + 3-seed md5 + A-gold 交叉校验) (3) token 5-way disjoint (A-only vs B-only vs RingOsc-B vs WckOsc-B vs VintReadSel-B vs CrackMon-B 全 pairwise 不相交)
+- synthesized-reframe: 紧凑 Verilog fixture ppr_kill_A.v 保留真实模块名 PPRKill_A + 真实 testmode cm1_io_KillPPRDis + 真实触发 PprKillEn + 真实两组命令 {Act,Pre,MRR,RDC,RFF,WFF}/{RdInit,WrInit,CasPre,Mpc,Rfsh,SelfRfsh} + 真实输出 KillPPR/AllCmd + 真实中间网络 net6/net5/net8/net4/net3/net0/ACTIVE + nor2/nand3/aoi21 等价门结构
+- produce-script verify_killppr_gate.py CLI `<netlist.v> [-o report.json]`: 解析模块/testmode/trigger/两组命令/两输出/行为真值表(testmode,trigger,any_cmd_active)∈{0,1}^3/summary 三金标准性质
+- hidden B ppr_kill_B.v (CmdGate_B/cm1_io_CmdMaskDis/GateEn/GatePulse/MaskAll/Init,Cfg,Scan,Bist,Acc,Load/Refresh,Sleep,Wake,Test,Mode,Calib) token 与 A 完全不相交
+- check.py 17 断言 a-q, k_check=k_rationale=17>=8 GATE PASS ✓; ref 17/17 PASS + 3 neg(fake_empty->FAIL b/fake_print_only->FAIL n+q/fake_core_deleted->FAIL j)全 FAIL NEG_RC=ALL FAIL + §4.9 三假全 FAIL
+- check_sha256 1fa486cc8bcc216df788eb8507d57cf3ba9446ad2bc7a5a908ddd2fa6ae02e2d check_size 17000
+- case_id: EDA-Eval-DesignFlow-KillPPRDisGateVerify-001 (analog_context, A-faithful)
+
+## vf998 sister-turn 覆盖盘点 (截至 r1052)
+- 已造 5 个 testmode verify turn: U#0 RingOsc(r1023), U#149 WckOsc(r1035), U#81 VintReadSel(r1043), U#48 CrackMon(r1044), U#137 KillPPRDis(r1052)
+- 剩余可造 turn (deepread 表): U#106 TM_ChipID_FabID_CorePara, U#117 cm2_ts_BCCheckbit3NotBlown, U#169/U#193/U#202/U#212/U#218 (broadcast 系列, 同一 BCCheckbit3 机制多角度 — 需判三闸门避免近 dup), U#46 (太薄, 仿真后问看哪个信号), U#137 已造
+- 机制类已覆盖: DECODER / RATIO / ENABLE-GATE / DUAL-ENABLE / COMMAND-FILTER-GATE (5 类正交)
