@@ -4700,30 +4700,58 @@
   "grommet__grommet-6350": {
     "instance_id": "grommet__grommet-6350",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 224.9,
+    "rc": 0,
+    "model_patch_len": 45439,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "` to the render output between `{content}` and `{displayPinned}`\n\nThis keeps the action element as a proper sibling in the row layout rather than being trapped inside the `<Box flex>` column wrapper.\n",
+    "stderr_tail": "onents/List/stories/Action.js\n\u001b[0m→ \u001b[0mRead src/js/components/List/stories/Order.js\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix List component so action and onOrder work together\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "grommet__grommet-6438": {
     "instance_id": "grommet__grommet-6438",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1063.7,
+    "rc": 0,
+    "model_patch_len": 974,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "):\n1. Store normalized bounds in state instead of raw strings (line 305, 307)\n2. Remove the redundant `normalizeInput(bounds)` call at day-level check (line 730), since `bounds` is already normalized\n",
+    "stderr_tail": "21d4f9ea1cc5546a910f9)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/js/components/Calendar/Calendar.js\u001b[90m [limit=15, offset=304]\u001b[0m\n\u001b[0m→ \u001b[0mRead src/js/components/Calendar/Calendar.js\u001b[90m [limit=10, offset=726]\u001b[0m\n"
   },
   "grommet__grommet-6490": {
     "instance_id": "grommet__grommet-6490",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 111.7,
+    "rc": 0,
+    "model_patch_len": 557,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "95`. When `gap` is a pixel value like `\"10px\"`, `responsiveMetric` is `undefined` (pixel values aren't theme edgeSize keys), so the guard now prevents `parseMetricToNum(undefined)` from being called.\n",
+    "stderr_tail": "ssed, 1 total\nTests:       1 skipped, 32 passed, 33 total\nSnapshots:   31 passed, 31 total\nTime:        4.764 s\nRan all test suites matching /src\\/js\\/components\\/Box\\/__tests__\\/Box-test.tsx/i.\n\u001b[0m\n"
   },
   "grommet__grommet-6494": {
     "instance_id": "grommet__grommet-6494",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 215.0,
+    "rc": 0,
+    "model_patch_len": 1739,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "'RangeInput'` from `grommetInputPadNames`\n- `src/js/components/FormField/__tests__/__snapshots__/FormField-test.js.snap` — updated snapshots (trivial quote style changes, not semantically meaningful)\n",
+    "stderr_tail": "38, limit=6]\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore codebase to find RangeInput and FormField components\n[✓] Identify the root cause of the alignment issue\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "grommet__grommet-6600": {
     "instance_id": "grommet__grommet-6600",

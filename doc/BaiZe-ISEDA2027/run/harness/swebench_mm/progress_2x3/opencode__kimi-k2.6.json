@@ -2692,16 +2692,30 @@
   "carbon-design-system__carbon-11761": {
     "instance_id": "carbon-design-system__carbon-11761",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1037.4,
+    "rc": 0,
+    "model_patch_len": 7032,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "r` generates and assigns IDs to its title and description elements, and the `Table` consumes those IDs via React Context to set the appropriate ARIA attributes. No consumer code changes are required.\n",
+    "stderr_tail": "rc/components/DataTable/Table.js\n\u001b[0m→ \u001b[0mRead packages/react/src/components/DataTable/__tests__/TableContainer-test.js\n\u001b[0m→ \u001b[0mRead packages/react/src/components/DataTable/__tests__/Table-test.js\n"
   },
   "carbon-design-system__carbon-12027": {
     "instance_id": "carbon-design-system__carbon-12027",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 384.5,
+    "rc": 0,
+    "model_patch_len": 4669,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ft indentation, making them flush with the left edge of the accordion dividers\n- This is useful for side panel situations where teams need the content aligned to the edge rather than hanging/indented\n",
+    "stderr_tail": "2x3/workdirs/opencode__kimi-k2.6/carbon-design-system_carbon/packages -type f \\( -name \"*.ts\" -o -name \"*.tsx\" -o -name \"*.d.ts\" \\) | xargs grep -l \"Accordion\" 2>/dev/null | head -20\n(no output)\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12151": {
     "instance_id": "carbon-design-system__carbon-12151",
