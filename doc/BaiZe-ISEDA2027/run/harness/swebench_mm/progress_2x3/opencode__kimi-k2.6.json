@@ -2972,9 +2972,16 @@
   "carbon-design-system__carbon-13317": {
     "instance_id": "carbon-design-system__carbon-13317",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1129.7,
+    "rc": 0,
+    "model_patch_len": 13329,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rning` selectors so that `.cds--form-requirement` messages are displayed properly when adjacent to the fieldset\n\n### Verification\nAll `RadioButtonGroup` and `RadioButton` tests pass (29 tests total).\n",
+    "stderr_tail": " Implement invalid/error state for RadioButtonGroup\n[✓] Implement warn state for RadioButtonGroup\n[✓] Implement helper text for RadioButtonGroup\n[✓] Verify implementation with tests or storybook\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-13364": {
     "instance_id": "carbon-design-system__carbon-13364",
