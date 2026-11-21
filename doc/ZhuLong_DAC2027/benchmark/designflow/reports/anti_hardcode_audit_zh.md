@@ -10,7 +10,7 @@
 - **普查范围**：D 全量 560 条 + A/B/C 各抽样 25 条（优先抽 k<12 老题），合计 **635 条**。
 - **判定**：**PASS 43 · GAP 569 · WEAK 4 · MISSING 16 · 其它 3**。**GAP 率 ≈ 90%**。
 - **核心病灶**：绝大多数 `check.py` **只跑 hidden B、无 A-gold 交叉校验**（无嵌入 A fixture、不在 A 上跑候选）。审计方构造一个"忽略输入、直接吐出 B 的 gold 输出"的假提交（`fake_print_only`），即可 PASS 全部断言——违反 §4.9 (b)(c)。
-- **修复进度**：D 已修 15/505（r1059–r1089），最新 r1089（2026-11-22）修 SpiceUndefParamScan-001（k=11→16，schematic_netlist/SPICE include-chain undefined-param scanner，r1069 范式复用：新增隐藏 A' q-namespace deck SUT 不可见 depth-2 nested + 5 A'-gold 交叉 l-p，smart B-hardcode stub fingerprint XtopA/B/C + chr() 构造 B/C token 绕过 FORBIDDEN_LITERALS pre-fix PASS 12(a-l) post-fix FAIL m/n/o/p）。D 当前 61 PASS / 490 GAP。详 §5.1。
+- **修复进度**：D 已修 16/505（r1059–r1094），最新 r1094（2026-11-22）修 ArgparseWaveviewFixQA-001（k=12→20，waveform/argparse-diagnose Q&A→script-deliverable reframe，r1069 范式复用：新增隐藏 A' 交叉 fixture 嵌入 check.py(03_gen_panel_extract.py+SigCap_4TCMD.sx+error_output_Ap+dir_listing_Ap，每维与 A/B 不同 script/sx/pos/opt/default/corner/PVT) + 8 A'-gold 交叉 m-t，B-hardcode stub 在 A' 上 FAIL[n]）。D 当前 62 PASS / 489 GAP。详 §5.1。
 - **运行时已确认 GAP（2 条，可复现）**：
   - D `EDA-Eval-DesignFlow-ParasiticsAnnotDiag-001`（k=9，纯报告 grep，无 subprocess）—— **已于 r1083（2026-11-22）修复**：k=9→14。**病灶=analysis-Q&A report-deliverable 类无牙**：原 check 纯子串匹配 `diagnostic_report.md`，shipping `reference_report_B.md` verbatim 即 PASS（print_only PASS 运行时已确认）。**解法=reframe report→script deliverable**（trace agent 实写 analyze_parasitics.py/analyze_sdf.py 故忠实）：交付 `diagnose_parasitics.py` 接收 asset_dir 打印结构化 JSON 诊断，check subprocess 在隐藏 B + 隐藏 A' 上各跑一次校验由输入计算的金值；新增隐藏 A' `hidden_a/`(sdf.tcl GDDR6X/3 read_parasitis + log 1288550/221894/1066656/512/506 + GDDR6X.sdf 4 hier I_PERI0/I_Array8G_T_0/T_1/B_2) 与 A(DDR5TOP/I_BCenter/I_Array6G) 及 B(LPDDR5TOP/I_DCC/I_Array4G) token 全维不相交；14 断言=10 B-side(a-j)+4 A'-gold 交叉(k-n)，smart §4.9(b) signature-stub `neg_fake_hardcode_b`（读 SDF design 查表 DDR5TOP→A-gold/LPDDR5TOP→B-gold/unknown→B-gold fallback）post-fix FAIL[l] A' design=LPDDR5TOP≠GDDR6X，4 neg 全 FAIL n_distinct=3(b/c/l)，ref 14/14 PASS。**增益**：analysis-Q&A/report-deliverable 类判分无牙根因=check 纯文本子串匹配，reframe 为「交付计算脚本 + subprocess 跑隐藏 B/A' 校验计算值」是通用解法。
   - D `EDA-Eval-DesignFlow-AddrRtlGateMap-001`（k=12，Produce 跑 B 但无 A-gold 交叉）—— **已于 r1059（2026-11-21）修复**：k=12→21（12 B-side + 9 A-gold 交叉 m-u），A fixture 落 `reference/hidden_a/`（避免 base64 编辑腐蚀），check 在 A 上 subprocess 跑候选并断言 A-gold，3 假（print_only/core_deleted/empty）全 FAIL，5 neg selftest 全 FAIL。
@@ -88,7 +88,7 @@ python3 -c "import importlib.util as u; s=u.spec_from_file_location('c','$REF/ch
 | A | 25 | 0 | 24 | 0 | 0* | 96% |
 | B | 25 | 0 | 20 | 2 | 3 | 80% |
 | C | 25 | 1 | 20 | 1 | 3 | 80% |
-| **D** | **561（全量）** | **60** | **491** | **0** | **13** | **87%** |
+| **D** | **561（全量）** | **62** | **489** | **0** | **13** | **87%** |
 | 合计 | 636 | 44 | 569 | 3** | 16 | — |
 
 \* A 抽样经 reference 目录名修正后 MISSING 已归零；\*\* 合计 WEAK=4（B 2 + C 1 + 表格四舍五入）。
