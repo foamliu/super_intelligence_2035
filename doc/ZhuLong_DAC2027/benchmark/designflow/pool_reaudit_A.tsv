@@ -283,3 +283,4 @@ bftii	jason17w	hfeg0pnd002	11		旧判:duplicate/已覆盖	不可造(已覆盖dup
 1794276772104_yicdk					旧判:wrong-shard/跨域	不可造(跨域defer)	finesim/primesim fullchip sim=B
 1794301691470_zg7xg					旧判:wrong-shard/跨域	不可造(跨域defer)	ERC marker physical_verify=C
 1794278751082_g8en5					旧判:wrong-shard/跨域	不可造(跨域defer)	cck circuit traversal schematic_netlist=D
+1795077186517_plk7n	lein	hfeg0pkn002	1677	verification	旧判:NOFILE(r877 parked)	可造(已造r894, subdir-path liveness 假阴性修正)	A档 trace-faithful analysis-Q&A 双问诊断(CBR force sc_force 路径错配 + PdPreEm0 逻辑层次), case=EDA-Eval-DesignFlow-Lpddr6CbrForcePreemDiagnoseQA-001

@@ -701,7 +701,7 @@ gital	case	PtuGuiRecomputeProduce-001	2026-11-20 03:26
 1794832618722_nqtif					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
 1794905310620_zo3k4					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
 1794905317697_2n2tp					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
-1795077186517_plk7n					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
+1795077186517_plk7n					case	EDA-Eval-DesignFlow-Lpddr6CbrForcePreemDiagnoseQA-001	2026-11-21 09:55	r894 REVIVAL: r877 NOFILE 假阴性(subdir-path), 实测 ALIVE 715KB/146msgs on hfeg0pkn002 (NFS-synced home, scan host hfeg0pgn145), lein, mc1677, A-domain verilog:1247 dominant. 双问诊断(CBR force path bug + PdPreEm0 hierarchy)
 1794971015849_bxlhe					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
 1794989160663_uhnxn					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
 1794983590823_7ykhf					parked		2026-11-21 00:05	r877 NOFILE rotation-evaporated (11-20 snapshot A-pure fresh, mc164-268, 7 hosts all NOFILE, g18s9 post-r875 rotation confirms)
