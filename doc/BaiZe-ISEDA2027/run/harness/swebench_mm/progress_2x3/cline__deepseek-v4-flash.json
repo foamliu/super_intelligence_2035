@@ -2078,9 +2078,16 @@
   "bpmn-io__bpmn-js-1330": {
     "instance_id": "bpmn-io__bpmn-js-1330",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 111.5,
+    "rc": 0,
+    "model_patch_len": 1454,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "anConnectMessageFlow` before `canConnectSequenceFlow`, so if a message flow is rejected it will fall through to check sequence flow\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1337": {
     "instance_id": "bpmn-io__bpmn-js-1337",
