@@ -3328,9 +3328,16 @@
   "carbon-design-system__carbon-4055": {
     "instance_id": "carbon-design-system__carbon-4055",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 453.7,
+    "rc": 0,
+    "model_patch_len": 3726,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "run due to pre-existing dependency incompatibilities in the environment (cheerio v1.2 vs enzyme v3.11), but the changes are structurally sound and directly address the reported VoiceOver/JAWS issues.\n",
+    "stderr_tail": ".js · 12 matches\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Tile/Tile.js\u001b[90m [offset=1, limit=20]\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Tile/Tile.js\u001b[90m [offset=322, limit=110]\u001b[0m\n"
   },
   "carbon-design-system__carbon-4167": {
     "instance_id": "carbon-design-system__carbon-4167",
