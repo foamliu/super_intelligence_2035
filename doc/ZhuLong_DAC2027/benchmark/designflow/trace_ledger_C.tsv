@@ -1359,3 +1359,6 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1794964207896_jx42b	sierraw	hfeg0plg09	433	physical_verify	case	EDA-Eval-DesignFlow-DspfRcTrendAnalyze-001	2026-11-21 11:40	
 1790231997741_343bs	xinqiaoz	10.129.2.14	43	physical_verify	parked		2026-11-21 14:07	r905 peek REJECT: source /apps/imctf/develop/dummy/script/data/0.3.3 not accessible by e0031982 from .75 (perm denied); output /home/xinqiaoz/PDK_QA/.tmp/ also perm denied; cannot fetch real A artifacts
 1791524977439_9b1zt					case	EDA-Eval-DesignFlow-SkillIlAnalyzeImprove-001	2026-11-21 14:24	
+1794816078690_042nk	xflin	hfeg0pkn001	3787	layout_aether	parked		2026-11-21 14:35	skill-management IT/ops: copy adaml skills to xflin + audit; NOT C-domain physical_verify/layout (keywords aether/dbcreateinst are skill NAMES not task intent)
+1795065974673_kuaib	chaor	hfeg0pkn002	3593	physical_verify	parked		2026-11-21 14:35	verilog regression DQ_Err check in A_Summary.rpt/B_Summary.rpt; A-domain verification regression triage NOT C-domain (lvs:250/.cdl:157 are path-string keyword false-positives from ddr6.dscqa sim dir names)
+1793101953622_xv1zc	guomings	hfeg0pkn003	3477	layout_aether	parked		2026-11-21 14:36	trace only 4.7KB/2msgs no real user request; empty seed
