@@ -3,6 +3,8 @@
 WAITING: 0
 
 
+> 🟢 **心跳 · 2026-11-22 (R143) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R143 刷新点（iter 进度同步）：v3 报告全文 iter 277.1k→277.5k / 39.6%→39.7% / step 7.23s→7.21s（pretrain #2900，20/21步<7.4s✅）/ 350k ETA 6.1→6.0 天（~11-28不变）/ 700k ETA 35.4→35.3 天（~12-26不变）/ gantt note + G5 Go/No-Go + risk#7 + footer 同步更新。数据侧无新变化：PC-1~PC-5 全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load~26✅ .29 load~34✅ / /nas_user 42T✅ / v2 preserved / commit `data report:`+push / WAITING=0**。
+
 > 🟢 **心跳 · 2026-11-22 (R142) — BAIZE_DATA_TASK.md 体积归档（硬上限修复）：3 个已闭合运维令（11-15 08:5x IFM下载+调研 / 11-13b 分词搬迁 / 11-13a stack-v3全量下载）原文搬入 `ARCHIVE_OPERATOR_DATA.md` 留 1 行指针；任务书 51381→37804 bytes（<40KB 硬上限 ✅）；归档口径=只搬迁留指针不改结论（口径仲裁表/工作约定/红线/任务目标等常驻段未动）。例行巡检：git fetch 无新 data 令（所有用户令已交付）；v3 报告(R140/v3.101) sound iter~277.1k；pretrain iter~277.3k step 7.18s；PC-1~PC-5 全✅；污染扫描✅268K docs 0 命中；blend TSV 12源 main 版就绪；.12 load~26✅ .29 load~28✅ /nas_user 42T✅；无后台任务。MEMORY_DATA 32950 bytes（<40KB✅）。WAITING=0**。
 
 > 🟢 **心跳 · 2026-11-22 (R141) — 例行巡检 + /tmp 清理（step ③ 完成）：git fetch origin 无新 data 令（HEAD=origin=183b0ed4db）；pretrain #2896 报 iter~277.3k step 7.18s（<7.4s ✅）/ latest ckpt=276k / 350k ETA≈6.0天(~11-28) / 700k ETA≈35.1天(~12-26)；.12 load=26.1✅<120 / .29 load=28.1✅ / /nas_user 42T✅>5T红线 / 无后台任务 / PC-1~PC-5全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪。**清理 /tmp 临时文件**：删除 ~24 个旧 pc2_*.log/py + tokenize_*.log + contam_*.md（MegaMath/stack-v3 分词已完成，日志无用）；保留 /tmp/contam_venv(152MB, pyarrow 环境) 供 S2 投料前可选全量扫描复用。research 日报 11-22 data 建议启动「纯网页 vs 混合策展」对照臂（非约束参考，当前 S1/S2 配比已定不纳入本轮）。v3 报告(R140)iter=277.1k 与当前 277.3k 偏差 0.2k(~24min)不刷新。WAITING=0**。
