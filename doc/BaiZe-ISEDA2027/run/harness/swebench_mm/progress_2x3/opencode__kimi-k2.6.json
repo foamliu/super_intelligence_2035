@@ -2441,16 +2441,30 @@
   "bpmn-io__bpmn-js-1720": {
     "instance_id": "bpmn-io__bpmn-js-1720",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1205.7,
+    "rc": 0,
+    "model_patch_len": 3560,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "anded SubProcess** resizes to `350 × 200`\n\nThe existing tests (e.g. “should keep size when morphing ad hoc”) continue to pass because the expanded‑to‑expanded path still preserves the old dimensions.\n",
+    "stderr_tail": "s/AGENTS.md\n\u001b[0m→ \u001b[0mRead test/spec/features/popup-menu/ReplaceMenuProviderSpec.js\u001b[90m [offset=1410, limit=60]\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/features/replace/BpmnReplace.js\u001b[90m [offset=119, limit=80]\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1802": {
     "instance_id": "bpmn-io__bpmn-js-1802",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 977.2,
+    "rc": 0,
+    "model_patch_len": 4623,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "pend'` or `'append'` as appropriate for each element type\n\nThe tests couldn't be run locally due to missing Chrome/Puppeteer in the environment, but all new and modified files pass syntax validation.\n",
+    "stderr_tail": "os\n[✓] Explore codebase structure and understand context pad/palette providers\n[✓] Add entry to context pad for 'append anything'\n[✓] Add append menu entries provider\n[✓] Test the implementation\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1847": {
     "instance_id": "bpmn-io__bpmn-js-1847",
