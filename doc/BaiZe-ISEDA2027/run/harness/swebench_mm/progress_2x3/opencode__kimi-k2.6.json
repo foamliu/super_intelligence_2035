@@ -2399,16 +2399,30 @@
   "bpmn-io__bpmn-js-1677": {
     "instance_id": "bpmn-io__bpmn-js-1677",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 603.6,
+    "rc": 0,
+    "model_patch_len": 2151,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "error is thrown and editing is canceled\n  });\n});\n```\n\nThe full changes are in:\n- `lib/features/label-editing/LabelEditingProvider.js`\n- `test/spec/features/label-editing/LabelEditingProviderSpec.js`\n",
+    "stderr_tail": "rect editing triggers illegal invocation\n[✓] Explore relevant code: LabelEditingProvider, DirectEditing, CommandStack\n[✓] Implement fix to prevent updateLabel on deleted element\n[✓] Test the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1679": {
     "instance_id": "bpmn-io__bpmn-js-1679",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1171.9,
+    "rc": 0,
+    "model_patch_len": 1775,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "dLoopCharacteristics, loopCharacteristics);\n}\n```\n\nThis ensures `updateProperties()` receives a new object reference, so the command stack properly records the change and the XML updates as expected.\n",
+    "stderr_tail": ")\"\nSyntax OK\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Investigate multi-instance toggle bug (Parallel/Sequential XML not updating)\n[✓] Find root cause in the codebase\n[✓] Implement fix\n[✓] Verify fix with tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1719": {
     "instance_id": "bpmn-io__bpmn-js-1719",
