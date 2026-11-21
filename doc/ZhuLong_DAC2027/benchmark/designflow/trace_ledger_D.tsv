@@ -1982,4 +1982,4 @@ vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:
 1795077131085_w2fwq	caozhang	hfeg0pkn003	31	analog_context	case	EDA-Eval-DesignFlow-SpfCellCrossRefProduce-001	2026-11-22 01:51	doc-search cell cross-ref (analog_context), deepread done r1078, synthesis planned r1079 — see w2fwq_caozhang_spf_cell_crossref.md
 1790228599516_npuxl.messages.json	jason17w	hfeg0pnd002	7	schematic_netlist	parked		2026-11-22 04:22	r1085 deepread: same run-regression skill + same python3.7-wrapper infra failure as 8h59z; agent produced ZERO deliverable; near-dup of 8h59z; weak
 1795153863375_wvvpb.messages.json	thomasz	hfeg0pkn003	78	waveform	case	EDA-Eval-DesignFlow-WvvpbSlowCellLocate-001	2026-11-22 05:04	
-1795154851675_dasvf	junlingw	hfeg0pkn005	200	schematic_netlist	claimed		2026-11-22 05:27	
+1795154851675_dasvf	junlingw	hfeg0pkn005	200	schematic_netlist	case	EDA-Eval-DesignFlow-GenguiVariantAudit-001	2026-11-22 06:23	
