@@ -1709,3 +1709,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794900549189_dibsj.messages.json	joeyl	hfeg0plg74	186	spice_sim	parked		2026-11-22 04:54	dup-of-CmlWckTopTunerProduce-001 (r996): same joeyl + same WCKTOP testbench 4_WCKTOP/1_AC.sp + same 5-corner tuning task + same make_net.py reframe; dibsj=subset(2nd-stage active inductor) of 11voz(3-stage CML+active inductor)
 1795079346509_sbp15.messages.json	zjqiao	hfhds201	105	spice_sim	parked		2026-11-22 04:55	dup-of-CrcAlertFixGen-001 (r915): same zjqiao + same meas_crc_alert.sp + same CRC alert false-fail fix task; sbp15=continuation of faqqt(r989 parked)/y4kgh(r915)
 1795073056270_n488u					case	EDA-Eval-DesignFlow-Mt0TempDedupProduce-001	2026-11-22 05:16	
+1794884424309_e692a	e0039786	hfeg0plg54	339	spice_sim	case	EDA-Eval-DesignFlow-DbcVaractorSpTestGen-001	2026-11-22 06:23	r1001 落库 k=12 ref PASS 12/12 3neg FAIL
