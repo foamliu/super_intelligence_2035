@@ -1640,16 +1640,30 @@
   "alibaba-fusion__next-3724": {
     "instance_id": "alibaba-fusion__next-3724",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 431.9,
+    "rc": 0,
+    "model_patch_len": 12227,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "左右搜索框能接收到不同的 props\n\n### 使用示例\n\n```jsx\n<Transfer\n    showSearch\n    searchProps={[{ hasClear: true }, { hasClear: false }]}\n    dataSource={dataSource}\n/>\n```\n\n这样左侧搜索框会显示清空按钮，右侧则不会。如果仍传对象，则两侧保持一致的原有行为。\n",
+    "stderr_tail": "r.jsx to support array searchProps [left, right]\n[✓] Update docs for searchProps array support\n[✓] Update TypeScript definitions for searchProps\n[✓] Add tests for separate left/right searchProps\n\u001b[0m\n"
   },
   "alibaba-fusion__next-3947": {
     "instance_id": "alibaba-fusion__next-3947",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 833.5,
+    "rc": 0,
+    "model_patch_len": 12689,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "Input name=\"name\" />\n</FormItem>\n\n// 方式3：在 Form 上统一设置\n<Form useLabelForErrorMessage errorMessageLabel=\"全局自定义\">\n  <FormItem label={<span>姓名</span>}>\n    <Input name=\"name\" />\n  </FormItem>\n</Form>\n```\n",
+    "stderr_tail": "示的 label，可以是字符串或函数（接收 label 作为参数，返回字符串）\n+     */\n+    errorMessageLabel?: string | ((label: React.ReactNode) => string);\n }\n \n export default class Form extends React.Component<FormProps, any> {\n\u001b[0m\n"
   },
   "alibaba-fusion__next-4021": {
     "instance_id": "alibaba-fusion__next-4021",
