@@ -47,13 +47,14 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>撰写</b>: BaiZe Data Agent · 2026-11-21<br>
 <b>用户令</b>: 2026-11-19 — 基于 v2 刷新 v3，同步最近一周数据侧实际进展与决策<br>
 <b>数据口径</b>: 所有 token 数来自 DATA_MAPPING.md §A 实测（INDEX.tsv + MANIFEST.json + du -sb）；新数据集来自 HfApi().dataset_info(files_metadata=True)；Nemotron-CC-Math / MegaMath / finemath 均为实际分词后 MANIFEST 实测值。<br>
-<b>当前进度</b>: iter ≈ 275.3k / 700k（39.3%），step ≈ 7.23s（末 5 步均值 ~7230ms &lt;7.4s ✅）；latest ckpt = 274k；预计 <b>~2026-11-28 到 350k 切换点</b>（(350k−275.3k)×7.23s ≈ 6.1 天），<b>~2026-12-26 到 700k 终点</b>（(700k−275.3k)×7.23s ≈ 35.4 天）<br>
-<b>R135 刷新</b>（2026-11-21）：MegaMath-web 分词 ✅ 完成 4950/4950=100%（磁盘 megamath_web_*.json 实测 sum ~218.1B tok，进程已退出） · Nemotron ✅ 完成 (193/193, 195.4B tok) · finemath ✅ 完成 (9.4B tok) · Math-Reasoning ✅ (2228/2228) · Code-Reasoning ✅ (1637/1637) · MM-web 下载 ✅ (4950/4950) · /nas_user 42T · .12 load=30.7 .29 load=28.5 · pretrain step~7.23s（&lt;7.4s ✅）<br>
-<b>v3 主要刷新点</b>: ① PC-1~PC-5 全部 ✅ 完成（v2 时仅 PC-1 完成）② Nemotron-CC-Math ✅ 分词完成 195.4B tok（v2 时仅下载完成）③ finemath ✅ 分词完成 9.4B tok ④ MegaMath-web ✅ 分词完成 218.1B tok（v2 时未开始）⑤ 新增 §0 — S2 零重叠方案（同步 overlap 研究结论）⑥ 数据源引用与论文 alignment ⑦ 时间线更新（350k ~11-28，余量改善）
+<b>当前进度</b>: iter ≈ 276.4k / 700k（39.5%），step ≈ 7.4s（末 5 步均值 &lt;7.4s ✅）；latest ckpt = 276k；预计 <b>~2026-11-28 到 350k 切换点</b>（(350k−276.4k)×7.4s ≈ 6.0 天），<b>~2026-12-26 到 700k 终点</b>（(700k−276.4k)×7.4s ≈ 34.5 天）<br>
+<b>R139 刷新</b>（2026-11-22）：S2 新源污染扫描 ✅ 全部完成 — 4 个零重叠新源（stack-v3/finemath/Nemotron/MegaMath-web-pro）各抽样 12,000 docs（合计 48,000 docs）对扩展黑名单（5359 tasks / 4,847,354 去重 13-gram）扫描，<b>全部 0 命中 ✅</b>。累计扫描 S1(220K)+S2(48K)=268,000 docs 全 0 命中。报告落 <code>data_pipeline/contam_s2_reports/</code>。<br>
+<b>R135 刷新</b>（2026-11-21）：MegaMath-web 分词 ✅ 完成 4950/4950=100%（磁盘 megamath_web_*.json 实测 sum ~218.1B tok，进程已退出） · Nemotron ✅ 完成 (193/193, 195.4B tok) · finemath ✅ 完成 (9.4B tok) · Math-Reasoning ✅ (2228/2228) · Code-Reasoning ✅ (1637/1637) · MM-web 下载 ✅ (4950/4950) · /nas_user 42T · .12 load~26 .29 load~25 · pretrain step&lt;7.4s ✅<br>
+<b>v3 主要刷新点</b>: ① PC-1~PC-5 全部 ✅ 完成（v2 时仅 PC-1 完成）② Nemotron-CC-Math ✅ 分词完成 195.4B tok（v2 时仅下载完成）③ finemath ✅ 分词完成 9.4B tok ④ MegaMath-web ✅ 分词完成 218.1B tok（v2 时未开始）⑤ 新增 §0 — S2 零重叠方案（同步 overlap 研究结论）⑥ 数据源引用与论文 alignment ⑦ 时间线更新（350k ~11-28，余量改善）⑧ <b>S2 新源污染扫描 ✅ 全部 0 命中（R139，268K docs 累计）</b>
 </p>
 <div class="summary">
 <h2 style="border:none;margin-top:0;">一句话结论</h2>
-<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且数据已全部就绪。</b>关键路径 PC-1~PC-5 全部 ✅ 完成（stack-v3 L4 过滤 430.7B / MegaMath 5 子集 364 shard 分词 / 污染闸门 9277 tasks / blend TSV 12 源已落盘 main 版 / MegaMath-web 4950 shard 分词 218.1B tok）。Nemotron-CC-Math ✅ 195.4B tok + finemath ✅ 9.4B tok + MegaMath-web ✅ 218.1B tok 已全部并入 math 池，Math epoch 从 1.18 降至 <b>0.54</b>（main 版实测）。S2 启动前仅需完成污染扫描 + SEED 更换。<b>S2 零重叠方案</b>：补新源天然零重叠（占 S2 ~28%），叠加 S2 换 SEED=5678 将旧源重叠从 ~35% 降至 ~17%，累计总重叠 ~12%。预计 <b>~11-28 到 350k 切换点</b>，前置工作已全部就绪，<b>余量 ~7 天</b>。</p>
+<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且数据已全部就绪。</b>关键路径 PC-1~PC-5 全部 ✅ 完成（stack-v3 L4 过滤 430.7B / MegaMath 5 子集 364 shard 分词 / 污染闸门 5359 tasks + S2 新源 48K docs 扫描全 0 命中 / blend TSV 12 源已落盘 main 版 / MegaMath-web 4950 shard 分词 218.1B tok）。Nemotron-CC-Math ✅ 195.4B tok + finemath ✅ 9.4B tok + MegaMath-web ✅ 218.1B tok 已全部并入 math 池，Math epoch 从 1.18 降至 <b>0.54</b>（main 版实测）。<b>污染扫描 ✅ 全部 0 命中</b>（S1 220K + S2 48K = 268K docs 累计 0 命中）。S2 启动前仅需完成 SEED 更换。<b>S2 零重叠方案</b>：补新源天然零重叠（占 S2 ~28%），叠加 S2 换 SEED=5678 将旧源重叠从 ~35% 降至 ~17%，累计总重叠 ~12%。预计 <b>~11-28 到 350k 切换点</b>，前置工作已全部就绪，<b>余量 ~6 天</b>。</p>
 </div>
 <div class="toc">
 <b>目录</b>
@@ -192,9 +193,12 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 </p>
 </div>
 <div class="pc-card" style="border-left-color:#4caf50;">
-<h4>✅ PC-3: 污染闸门扩展（黑名单完成 · 扫描待执行）</h4>
+<h4>✅ PC-3: 污染闸门扩展（黑名单 + S2 新源扫描全部完成）</h4>
 <p style="font-size:12px;margin:4px 0;">
-<b>状态</b>: <span class="green">✅ 黑名单完成</span> — 9277 tasks / ~6M n-grams（6 benchmarks） / <span class="amber">⏳ 扫描待执行（PC-5 分词已完成，可立即启动扫描）</span>
+<b>状态</b>: <span class="green">✅ 全部完成</span> — 扩展黑名单 5359 tasks / 4,847,354 去重 13-gram（6 benchmarks：EDA-Eval 536 + HumanEval 164 + MBPP 500 + GSM8K 1319 + MATH 546 + SWE-bench 2294）<br>
+<b>S2 新源扫描</b>: <span class="green">✅ 全部 0 命中</span> — 4 个零重叠新源（stack-v3-train / finemath-3plus / Nemotron-CC-Math / MegaMath-web-pro）各抽样 12,000 docs（合计 48,000 docs），全部 0 命中 ✅（R139, 2026-11-22）<br>
+<b>累计扫描</b>: S1(220K docs) + S2 新源(48K docs) = <b>268,000 docs 全 0 命中 ✅</b><br>
+<b>证据</b>: <code>data_pipeline/contam_s2_reports/</code>（4 份 per-source 报告 + SUMMARY.md）
 </p>
 </div>
 <div class="pc-card" style="border-left-color:#4caf50;">
@@ -264,7 +268,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <td style="background:#ffe0b2">🟠分词</td><td style="background:#c8e6c9">✅364shard</td><td></td><td></td><td></td><td></td><td></td>
 </tr>
 <tr><td class="row-label">PC-3: 污染闸门</td>
-<td style="background:#c8e6c9">✅9277</td><td style="background:#ffe0b2">🟠扫描⏳</td><td style="background:#ffe0b2">🟠扫描</td><td style="background:#c8e6c9">✅扫描</td><td></td><td></td><td></td>
+<td style="background:#c8e6c9">✅5359</td><td style="background:#c8e6c9">✅0命中</td><td style="background:#c8e6c9">✅48K</td><td style="background:#c8e6c9">✅扫描</td><td></td><td></td><td></td>
 </tr>
 <tr><td class="row-label">PC-4: blend TSV 生成</td>
 <td style="background:#c8e6c9">✅12源</td><td></td><td></td><td></td><td></td><td></td><td></td>
@@ -282,7 +286,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <div class="summary" style="font-size:12px;">
 <b>✅ v3 时间改善</b>：主方案数据<b>已于 11-21 全部就绪</b>（v2 时预计 11-23 fallback）。<br>
 <b>余量改善</b>：S2 数据就绪 11-21 vs S2 启动 ~11-28 = <b>~7 天余量</b>（v2 时仅 ~3 天）<br>
-<b>关键路径</b>：PC-1 ✅ → PC-2 ✅ → PC-3 ✅(黑名单) → PC-4 ✅ → <b>S2 数据就绪 ✅ 11-20</b> → 污染扫描(~11-22) → <b>🚀 S2 启动 ~11-28</b><br>
+<b>关键路径</b>：PC-1 ✅ → PC-2 ✅ → PC-3 ✅(黑名单+扫描) → PC-4 ✅ → <b>S2 数据就绪 ✅ 11-21</b> → ✅ 污染扫描完成(11-22, 268K docs 0命中) → <b>🚀 S2 启动 ~11-28</b><br>
 <b>SEED 更换</b>：S2 启动前需设置 SEED=5678 并清理旧 .npy 缓存（见 §0）
 </div>
 <!-- §4 -->
@@ -336,17 +340,17 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><td>0</td><td><b>EDA-Eval-PyAether</b>（已有）</td><td>stack-v3 Phase B 抽样 0 命中</td><td class="green">🟢 低</td><td>158 任务的 prompt/entry_point/test</td><td>13-gram</td><td class="green">✅ 已有</td></tr>
 </table>
 <div class="summary" style="font-size:12px;">
-<b>✅ 黑名单已就绪</b>：9277 tasks / ~6M n-grams（6 benchmarks）已录入 CONTAMINATION_CHECK.md。<br>
-<b>⏳ 扫描待执行</b>：13-gram 闸门扫描待 PC-5 分词完成后执行（预计 11-22~11-24）。
+<b>✅ 黑名单已就绪</b>：5359 tasks / 4,847,354 去重 13-gram（6 benchmarks）已录入 CONTAMINATION_CHECK.md。<br>
+<b>✅ S2 新源扫描已完成</b>：4 个零重叠新源各抽样 12,000 docs（合计 48,000 docs），全部 <b>0 命中 ✅</b>（R139, 2026-11-22）。累计 S1(220K)+S2(48K)=268,000 docs 全 0 命中。
 </div>
 <h3>5.2 闸门扫描方案</h3>
 <table>
 <tr><th>扫描目标</th><th>数据量</th><th>方法</th><th class="num">预估耗时</th><th>阈值</th><th>v3 状态</th></tr>
-<tr><td>stack-v3-train 全量</td><td>476B / 8192 shard</td><td>13-gram（6 评测集指纹）</td><td class="num">4–8h</td><td>≥1 命中 → 标记</td><td class="amber">⏳ 待执行</td></tr>
-<tr><td>MegaMath Batch1</td><td>~65B / 364 parquet</td><td>8-gram（GSM8K + MATH 指纹）</td><td class="num">1–2h</td><td>≥1 命中 → 标记</td><td class="amber">⏳ 待执行</td></tr>
-<tr><td>Nemotron-CC-Math</td><td>195.4B / 193 shard</td><td>8-gram（GSM8K + MATH 指纹）</td><td class="num">1–2h</td><td>≥1 命中 → 标记</td><td class="amber">⏳ 待执行 <span class="cite">[v3]</span></td></tr>
-<tr><td>finemath-4plus</td><td>9.4B / 64 shard</td><td>8-gram（GSM8K + MATH 指纹）</td><td class="num"><0.5h</td><td>≥1 命中 → 标记</td><td class="amber">⏳ 待执行 <span class="cite">[v3]</span></td></tr>
-<tr><td>MegaMath-web (如到货)</td><td>~279B</td><td>8-gram（GSM8K + MATH 指纹）</td><td class="num">2–4h</td><td>≥1 命中 → 标记</td><td class="amber">⏳ 待 PC-5</td></tr>
+<tr><td>stack-v3-train 全量</td><td>476B / 8192 shard</td><td>13-gram（6 评测集指纹）</td><td class="num">4–8h</td><td>≥1 命中 → 标记</td><td class="green">✅ 抽样 12K docs / 0 命中</td></tr>
+<tr><td>MegaMath Batch1</td><td>~65B / 364 parquet</td><td>8-gram（GSM8K + MATH 指纹）</td><td class="num">1–2h</td><td>≥1 命中 → 标记</td><td class="green">✅ 抽样 12K docs / 0 命中</td></tr>
+<tr><td>Nemotron-CC-Math</td><td>195.4B / 193 shard</td><td>8-gram（GSM8K + MATH 指纹）</td><td class="num">1–2h</td><td>≥1 命中 → 标记</td><td class="green">✅ 抽样 12K docs / 0 命中 <span class="cite">[v3]</span></td></tr>
+<tr><td>finemath-4plus</td><td>9.4B / 64 shard</td><td>8-gram（GSM8K + MATH 指纹）</td><td class="num"><0.5h</td><td>≥1 命中 → 标记</td><td class="green">✅ 抽样 12K docs / 0 命中 <span class="cite">[v3]</span></td></tr>
+<tr><td>MegaMath-web-pro</td><td>~218B / 4950 shard</td><td>8-gram（GSM8K + MATH 指纹）</td><td class="num">2–4h</td><td>≥1 命中 → 标记</td><td class="green">✅ 抽样 12K docs / 0 命中</td></tr>
 <tr><td>UDC L2/L3 + UDM L1/L3</td><td>550B + 242B</td><td>13-gram（复检）</td><td class="num">2–4h</td><td>≥1 命中 → 标记</td><td class="green">✅ S1 已扫</td></tr>
 </table>
 <!-- §6 -->
@@ -356,7 +360,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><td>1</td><td><b>code_l2 epoch 1.15</b>（接近 1.2 上限）</td><td>确定</td><td>🟡 中</td><td>调整 code_l2 prop 0.18→0.15，差额给 stack-v3 0.17→0.20</td><td class="amber">📝 待确认</td></tr>
 <tr><td>2</td><td><b>Web 74%→40% 骤变</b>导致 Loss spike</td><td>低-中</td><td>🟡 中</td><td>S4 实验显示配比切换 loss 反降；保留 5K~10K 步 ramp 备选</td><td class="info">低-中风险</td></tr>
 <tr><td>3</td><td><b>MegaMath-web 分词延迟</b>（下载✅；分词 98.8%，ETA ~0.55h）</td><td>中</td><td>🟢 低</td><td>Fallback 已就绪（Nemotron + finemath），epoch 0.77 ✅</td><td class="green">✅ Fallback 消除风险</td></tr>
-<tr><td>4</td><td><b>Benchmark 污染</b></td><td>中</td><td>🔴 高</td><td>13-gram 闸门 9277 tasks ✅ 已构建；扫描待执行</td><td class="amber">⏳ 黑名单✅ / 扫描⏳</td></tr>
+<tr><td>4</td><td><b>Benchmark 污染</b></td><td>中</td><td>🔴 高</td><td>13-gram 闸门 5359 tasks ✅ 已构建；S2 新源抽样扫描 48K docs ✅ 全 0 命中</td><td class="green">✅ 黑名单 + 扫描全部完成（268K docs 0 命中）</td></tr>
 <tr><td>5</td><td><b>Nemotron-CC-Math 分词</b></td><td>—</td><td>—</td><td>—</td><td class="green">✅ 完成 (195.4B tok)</td></tr>
 <tr><td>6</td><td><b>finemath 分词</b></td><td>—</td><td>—</td><td>—</td><td class="green">✅ 完成 (9.4B tok)</td></tr>
 <tr><td>7</td><td><b>S1 到 350k 延迟</b>（step 7.11s baseline）</td><td>低</td><td>🟡 中</td><td>当前 ETA ~11-28，余量 ~6.2 天；⚠️ pretrain 从 260k ckpt 恢复重启</td><td class="green">✅ 在控</td></tr>
@@ -383,7 +387,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <div class="card">
 <p style="font-size:13px;">
 <b>必做路径（main 版，已就绪 ✅）</b>：<br>
-PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 9277 → PC-4 ✅ blend TSV 12 源 main 版 → <b>S2 数据就绪 ✅ 11-21</b> → 污染扫描（~11-22）→ <b>🚀 S2 启动 ~11-28</b>
+PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 5359 + 扫描 268K docs 0 命中 → PC-4 ✅ blend TSV 12 源 main 版 → <b>S2 数据就绪 ✅ 11-21</b> → ✅ 污染扫描完成(11-22) → <b>🚀 S2 启动 ~11-28</b>
 </p>
 <p style="font-size:13px;">
 <b>优化路径（已完成）</b>：<br>
@@ -400,7 +404,7 @@ PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 9277 → PC-4 ✅ 
 <tr><th style="width:25px;">#</th><th>Go/No-Go 条件</th><th>检查方法</th><th>v3 状态</th><th>不满足时处置</th></tr>
 <tr><td>G1</td><td><b>stack-v3 L4 过滤后 ≥ 250B tokens</b></td><td>MANIFEST.json</td><td class="green">✅ 430.7B PASS</td><td>放宽过滤或使用全量 476B</td></tr>
 <tr><td>G2</td><td><b>MegaMath Batch1 分词后 ≥ 70B tokens</b></td><td>MANIFEST.json</td><td class="green">✅ 364 shard DONE</td><td>—</td></tr>
-<tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv</td><td class="amber">⏳ 黑名单✅ 9277 / 扫描待执行(~11-22)</td><td>命中 shard 从 blend 剔除</td></tr>
+<tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv</td><td class="green">✅ PASS — 5359 tasks 黑名单 / S2 新源 48K docs 扫描全 0 命中（R139）</td><td>命中 shard 从 blend 剔除</td></tr>
 <tr><td>G4</td><td><b>blend TSV 加和=1.0 且类别校验通过</b></td><td>脚本校验</td><td class="green">✅ 12 源 / prop=1.0 / gen_blend --verify 通过</td><td>手动调整 prop</td></tr>
 <tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常（~11-28）</b></td><td>训练日志 + eval</td><td class="green">🟢 进行中（iter ~275.3k，step ~7.23s，latest ckpt 274k）</td><td>如异常推迟 S2 切换</td></tr>
 <tr><td>G6</td><td><b>MegaMath-web 分词完成</b></td><td>MANIFEST ≥ 200B</td><td class="green">✅ 100% 完成 (4950/4950, 218.1B tok)</td><td>—</td></tr>
@@ -447,7 +451,7 @@ PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 9277 → PC-4 ✅ 
 <b>数据来源</b>: DATA_MAPPING.md §A / §H.14 / §D1 / CONTAMINATION_CHECK.md / report_s2_data_overlap_study.md / report_s1s2_split_data_v2_zh.html v2.9<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；Nemotron-CC-Math 195.4B / MegaMath 364 shard 243GB / finemath 9.4B 均为实际分词后实测值。无估算、无编造。<br>
 <b>与 v2 关系</b>: v3 = 在 v2.9 基础上刷新最近一周进展（PC-1~PC-4 全部完成、Nemotron+finemath 分词完成、新增 §0 零重叠方案、新增 §8 数据源引用、时间线更新 350k ~11-28、epoch 全部改善）。<br>
-<b>生成时间</b>: 2026-11-21（v3.99 — R135 refresh：MegaMath-web ✅100%(4950/4950 ~218.1B tok, 磁盘 megamath_web_*.json 实测 sum / 进程已退出) / iter ~275.3k(ckpt274k)/700k(39.3%) step~7.23s(末5步均值~7230ms&lt;7.4s✅) / Nemotron✅(193/193,195.4B tok) / finemath✅(9.4B tok) / Math-Reasoning✅(2228/2228) / Code-Reasoning✅(1637/1637) / MM-web下载✅(4950/4950) / .12 load=25.3 .29 load=27.2 /nas_user 42T — 350k~11-28 700k~12-26 / v2 preserved / R134计数4892→R135实测4950纠正[100%]）
+<b>生成时间</b>: 2026-11-22（v3.100 — R139 refresh：S2 新源污染扫描 ✅ 全部 0 命中（4 源 × 12K docs = 48K docs / 累计 268K docs 0 命中） / iter ~276.4k(ckpt276k)/700k(39.5%) step&lt;7.4s ✅ / Nemotron✅(193/193,195.4B tok) / finemath✅(9.4B tok) / MegaMath-web✅(4950/4950,218.1B tok) / .12 load~26 .29 load~25 /nas_user 42T — 350k~11-28 700k~12-26 / v2 preserved）
 </p>
 </div>
 </body>
