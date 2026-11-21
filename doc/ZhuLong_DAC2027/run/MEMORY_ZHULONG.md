@@ -1,7 +1,8 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-21 wake#1717·standby·v2 用户令全交付·三轮 doubao 评测完成（pro 9.32% 对齐 10.5%±2pp / mini infra-contaminated 0.0% 非干净能力结论 / lite 3.85% clean）·论文 §6 M0 anchor 回填完成（`\MzeroAnchor=10.1%`·commit `4fa407d35`）·三轮报告齐备·🟡 询问已答（wake#1704：昨晚 batch 起跑前未读仓库 README/AGENTS.md）·HEAD=`5457334b72`=origin/main·0/0 干净（本线工作树 clean·全树 status 中 modified/untracked 文件均 designflow 线在途·非本线不动）·research 日报 2026-11-21 已阅：3 条 zhulong 建议（skill-prefix thinking 变量 / return-to-go vs critic 两臂 / 成本表加精度补偿列）= 输入参考非指令·subagent 消融线结案中不可起臂·标注 noted-not-actionable·无新令·无评测跑中）
+WAITING: 0（2026-11-21 wake#1718·standby·v2 用户令全交付·三轮 doubao 评测完成（pro 9.32% 对齐 10.5%±2pp / mini infra-contaminated 0.0% 非干净能力结论 / lite 3.85% clean）·论文 §6 M0 anchor 回填完成（`\MzeroAnchor=10.1%`·commit `4fa407d35`）·三轮报告齐备·🟡 询问已答（wake#1704：昨晚 batch 起跑前未读仓库 README/AGENTS.md）·HEAD=`c289c6c50c`=origin/main·0/0（本线 clean·worktree 中 2 处 modified/untracked=designflow 线在途·非本线不动）·无新令·无评测跑中·done_all）
 
+- wake#1718（2026-11-21·opencode 交互式 standby 心跳）：用户再次粘贴全 ZHULONG_TASK.md（无新令·与 wake#1653-1717 同一粘贴模式·on-disk TASK 顶部=v2 release order+🟡 询问·均已交付/已答）·git HEAD=`c289c6c50c`=origin/main `0/0`（worktree 2 处改动=designflow trace_ledger_D.tsv/apure_candidates_r871.tsv·非本线·🚫 不动）·§7 Step A pgrep 无 app.e0031982 ZhuLong eval（命中=zhulong_loop.sh 外层 wrapper + app.t0002147 casefix 他线·均假阳性）→ §7 Step C PHASE=done_all→什么都不做退出·不起臂·不起评测·原文不改。
 - wake#1717（2026-11-21·opencode 交互式 standby 心跳）：v2 令维持全交付·本线 clean·HEAD=`5457334b72`=origin/main `0/0`·research 日报 2026-11-21 zhulong 建议 3 条 noted（非指令·消融线结案不可起臂）·§7 Step C done_all 不起臂·不起评测·原文不改。
 
 - [wake#1715详条已滚出·2026-11-21 wake#1716 维护] 见 `daily-memories/2026-11-21.md` §[wake#1715rolled-out]（opencode 交互式 standby 心跳·v2 令全判据 ✅·不起臂·done_all·原文不改）。
