@@ -1687,3 +1687,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795225607049_26n1l	ryanren	hfeg0pfn120	251	spice_sim	case	EDA-Eval-DesignFlow-PumpcoreAgingDeckGen-001	2026-11-21 21:14	r980 pumpcore aging deck gen, 12 assertions, 3 neg, selftest OK
 1795224598668_1ziwu.messages.json	hairuizh	hfeahpc502	119	spice_sim	case	EDA-Eval-DesignFlow-DelvtoCktWiringPatch-001	2026-11-21 21:39	
 1794893451446_nhj3c.messages.json	hairuizh	hfeahpc502	9	spice_sim	case	EDA-Eval-DesignFlow-HspiceAlterTrnPredictor-001	2026-11-21 22:29	
+1794475206189_lbrbv	willz	hfeahpc501	65	spice_sim	case	EDA-Eval-DesignFlow-SpDeckModelStripMigrate-001	2026-11-21 22:55	
