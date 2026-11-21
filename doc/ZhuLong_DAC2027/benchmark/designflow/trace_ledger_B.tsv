@@ -1674,5 +1674,5 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795152158535_jubda.messages.json	fanglei	hfeg0plg64	46	spice_sim	parked		2026-11-21 13:24	interactive WaveView GUI: 'see open waveforms/probed signals' bridge timeout, not self-contained
 1794813279450_izf3q.messages.json	ericw	hfeg0pfn034	94	spice_sim	parked		2026-11-21 13:24	si.out debug-Q&A: needs 269K-line prod incFile_T1_HKMG model+netlist (confidential/huge), not packageable
 1795068468777_09u61	siyuji	hfeg0plg72	11	spice_sim	case	EDA-Eval-DesignFlow-XtalkDeepDfsProvenanceAnalyze-001	2026-11-21 14:00	
-1795152225461_8igoq	mingyu1l	hfeg0pkn005	11	spice_sim	claimed		2026-11-21 15:07	
+1795152225461_8igoq	mingyu1l	hfeg0pkn005	11	spice_sim	case	EDA-Eval-DesignFlow-GenguiToolkitProvenanceAnalyze-001	2026-11-21 15:40	
 1795057180298_esbdu.messages.json	kevin3d	hfeahpc503	71	spice_sim	case	EDA-Eval-DesignFlow-FinesimIgnoreAudit-001	2026-11-21 15:09	r968 FineSim si.inp ignore audit (analysis-Q&A L1)
