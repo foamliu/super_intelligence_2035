@@ -1669,3 +1669,7 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795057341901_qcuvw.messages.json	alexcui	hfeg0plg09	86	spice_sim	case	EDA-Eval-DesignFlow-VlogaNonoverlapClkGen-001	2026-11-21 12:11	
 1795058492590_l127k					case	EDA-Eval-DesignFlow-PvtSimDriverGen-001	2026-11-21 12:39	
 1794810150698_o48g2.messages.json	willz	hfeahpc501	121	spice_sim	case	EDA-Eval-DesignFlow-PvtCornerDeckGen-001	2026-11-21 13:08	
+1794885230899_lpsj7.messages.json	renfengc	hfhds234	79	spice_sim	parked		2026-11-21 13:24	FSDB reader: needs 880MB finesim.mt0/prod FSDB v6.3 asset, not packageable
+1795049521957_5qv7f.messages.json	hao23c	hfeahpc505	89	spice_sim	parked		2026-11-21 13:24	interactive WaveView GUI session: 'see my open waveforms/find measured signal' needs live GUI, not self-contained
+1795152158535_jubda.messages.json	fanglei	hfeg0plg64	46	spice_sim	parked		2026-11-21 13:24	interactive WaveView GUI: 'see open waveforms/probed signals' bridge timeout, not self-contained
+1794813279450_izf3q.messages.json	ericw	hfeg0pfn034	94	spice_sim	parked		2026-11-21 13:24	si.out debug-Q&A: needs 269K-line prod incFile_T1_HKMG model+netlist (confidential/huge), not packageable
