@@ -1375,3 +1375,5 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1787122881271_1hkwu	junxu	hfeg0plg79	1956	layout_virtuoso	case	EDA-Eval-DesignFlow-VirtuosoCliNoInstanceJsonErr-001	2026-11-21 21:54	
 1795003274428_gpy0p	liwan	hfeg0plg82	312	physical_verify	case	EDA-Eval-DesignFlow-DrcSummaryCountCmp-001	2026-11-21 22:19	
 u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRewrite-001	2026-11-21 22:56	
+1799720543695_ijh76.messages.json					parked		2026-11-21 23:26	r923 串台 REJECT: collides with shard D VcliPyenvFix-001 (ogspt, same junxu virtuoso-cli find-python.sh)
+1788488738438_sroz5.messages.json					parked		2026-11-21 23:26	r923 域错配 REJECT: schematic ops (schCreateLabel/schematic cellview) = shard D not C
