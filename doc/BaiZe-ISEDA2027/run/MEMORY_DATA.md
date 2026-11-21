@@ -2,6 +2,9 @@
 
 WAITING: 0
 
+> 🟢 **心跳 · 2026-11-21 (R114) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R114 刷新点（operator-assisted live-number refresh）：iter ~272.7k(ckpt272k)/700k(39.0%) step~7.24s(末10步均值7237ms✅<7.4s) / 350k~11-28 700k~12-26 / MegaMath-web 分词 4405/4950=89.0%(磁盘 megamath_web_*.json 实测 sum ~193.8B tok) ETA~5.1h(墙钟速率~108shard/h,进程PID3028119 nice19运行中,etime~41h) / Nemotron-CC-Math ✅完成(193/193,195.4B tok) / finemath ✅完成(9.4B tok) / Math-Reasoning ✅完成(2228/2228) / Code-Reasoning ✅完成(1637/1637) / MegaMath-web下载✅完成(4950/4950) / latest ckpt=272k / .12 load=31.19✅ .29 load=26.58✅ / /nas_user 42T✅ / v3.78 (R113计数4388→R114实测4405纠正[89.0%], 192.8B→193.8B, ETA 5.2h→5.1h, step 7.16s→7.24s, iter 272.4k→272.7k, .12 load 29.86→31.19, .29 load 28.41→26.58) / v2 preserved / commit+push**。
+
+
 > 🟢 **心跳 · 2026-11-21 (R113) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R113 刷新点（operator-assisted live-number refresh）：iter ~272.4k(ckpt272k)/700k(38.9%) step~7.16s✅<7.4s / 350k~11-28 700k~12-26 / MegaMath-web 分词 4388/4950=88.6%(磁盘 megamath_web_*.json 实测 sum ~192.8B tok) ETA~5.2h(墙钟速率~108shard/h) / Nemotron-CC-Math ✅完成(193/193,195.4B tok) / finemath ✅完成(9.4B tok) / Math-Reasoning ✅完成(2228/2228) / Code-Reasoning ✅完成(1637/1637) / MegaMath-web下载✅完成(4950/4950) / latest ckpt=272k / .12 load=29.86✅ / /nas_user 42T✅ / v3.77 (R112计数4341→R113实测4388纠正[88.6%], 190.3B→192.8B, ETA 5.7h→5.2h, .12 load 30.77→29.86) / R107~R97归档daily-memories-data/2026-11-21.md(29.9KB<32KB) / v2 preserved / commit+push**。
 
 
