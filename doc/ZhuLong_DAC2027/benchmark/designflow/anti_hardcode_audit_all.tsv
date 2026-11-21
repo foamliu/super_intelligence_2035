@@ -464,7 +464,7 @@ D	EDA-Eval-DesignFlow-TsCodeComp3bitLogicDiffQA-001	16	n	y	PASS	PASS	FAIL(静态
 D	EDA-Eval-DesignFlow-TsCoreFilterFuncExplainQA-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-TscodecompTruthTable-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-TskewCalc-001	13	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
-D	EDA-Eval-DesignFlow-TwoStepOcNetlistAudit-001	11	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-TwoStepOcNetlistAudit-001	16	y	n	FAIL	FAIL	FAIL(已修复r1080)	PASS	已修复r1080：visible-A guard (k) 无效(印证r1069)→加隐藏 A'(hidden_a/2stepoc_Ap.sp SUT不可见,FF_pvcc1p25_125C/cap 3-6-12-24f/ht=7/lt=2/64meas,与 A/B token 全维不相交)+5 A'-gold 交叉(l-p),A'-gold 硬编码于 check.py;smart §4.9(b) B-hardcode stub(按 pvcc 查表 A→A-gold/else→B-gold)pre-fix PASS 11→post-fix FAIL[m];6 neg 全 FAIL n_distinct=4(b,e,k,m);ref 16/16 PASS
 D	EDA-Eval-DesignFlow-UlvtDelvtoReducer-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-VAMSGen-001	21	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-VamCellReco-001	35	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
