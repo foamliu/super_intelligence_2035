@@ -2804,23 +2804,44 @@
   "carbon-design-system__carbon-12398": {
     "instance_id": "carbon-design-system__carbon-12398",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 421.4,
+    "rc": 0,
+    "model_patch_len": 6014,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ribute on the `<input>`\n- Applies `cds--checkbox-wrapper--readonly` class on the wrapper\n- Prevents toggling when clicked\n- Does not call `onChange` when clicked\n\n**Test result:** All 14 tests pass ✅\n",
+    "stderr_tail": "ox.tsx with class and behavior\n[✓] Add read-only styles to _checkbox.scss\n[✓] Update Checkbox.stories.js with readOnly control and story\n[✓] Add RTL tests for read-only class in Checkbox-test.js\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12402": {
     "instance_id": "carbon-design-system__carbon-12402",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 611.5,
+    "rc": 0,
+    "model_patch_len": 4346,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rs** (button is not disabled)\n- Screen readers announce it as read-only via `aria-readonly=\"true\"`\n- The value **cannot be changed** via click or keyboard interaction\n\nAll 12 tests pass successfully.\n",
+    "stderr_tail": "assed, 1 total\nTests:       12 passed, 12 total\nSnapshots:   0 total\nTime:        1.708 s, estimated 2 s\nRan all test suites matching /packages\\/react\\/src\\/components\\/Toggle\\/Toggle-test.js/i.\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12410": {
     "instance_id": "carbon-design-system__carbon-12410",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 348.1,
+    "rc": 0,
+    "model_patch_len": 8128,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " the prop is set\n  - Verifies the slider does not fire `onChange` when clicked in read-only mode\n  - Verifies the text input has the `readonly` attribute\n\nAll 37 tests pass, including the 3 new ones.\n",
+    "stderr_tail": "----\n .../react/src/components/Slider/Slider.stories.js  | 16 +++++++\n .../styles/scss/components/slider/_slider.scss     | 35 ++++++++++++++\n 4 files changed, 128 insertions(+), 11 deletions(-)\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12412": {
     "instance_id": "carbon-design-system__carbon-12412",

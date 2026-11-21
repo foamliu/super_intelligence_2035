@@ -4826,30 +4826,58 @@
   "highlightjs__highlight.js-2703": {
     "instance_id": "highlightjs__highlight.js-2703",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 148.6,
+    "rc": 0,
+    "model_patch_len": 1135,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "t was matched by the regex lookahead before the comment rule could fire. Moved `C_LINE_COMMENT_MODE` and `C_BLOCK_COMMENT_MODE` to the front of `PARAMS_CONTAINS` so comments are checked before regex.\n",
+    "stderr_tail": "e and understand how languages are defined\n[✓] Fix Scala: comment rendered as class title when on next line\n[✓] Fix JavaScript: comments not highlighted inside params\n[✓] Verify fixes with tests\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2704": {
     "instance_id": "highlightjs__highlight.js-2704",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 51.1,
+    "rc": 0,
+    "model_patch_len": 469,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "sts pass. The fix is a negative lookahead `(?!\\))` on line 42 of `src/languages/fsharp.js` so that `(*` only starts a comment when not immediately followed by `)`, correctly handling `Operators.(*)`.\n",
+    "stderr_tail": "division\n    ✓ should markup freeze_bug\n    ✓ should markup function\n\u001b[0m\n\u001b[0m$ \u001b[0mnpx mocha test/markup/index.js 2>&1 | grep -i \"fsharp\\|failing\\|passing\\|failing\"\nfsharp\n  272 passing (926ms)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2726": {
     "instance_id": "highlightjs__highlight.js-2726",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 514.7,
+    "rc": 0,
+    "model_patch_len": 1190,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "]` and `{...}` that `contain: [COMMAND]`\n2. Added `COMMAND` and `hljs.COMMENT` to their `contains` arrays after the initial definition (to break the circular reference)\n3. All 532 existing tests pass\n",
+    "stderr_tail": "\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore the LaTeX/TeX grammar in highlight.js\n[✓] Fix brace handling in LaTeX grammar to treat braces as scope delimiters, not strings\n[✓] Verify the fix works correctly\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2727": {
     "instance_id": "highlightjs__highlight.js-2727",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 421.7,
+    "rc": 0,
+    "model_patch_len": 7792,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "e TS extends JS). Tests updated to verify:\n- `honk() { }` — regular method → highlighted as function with title/params\n- `static info() { }` — static method → `static` keyword + function highlighting\n",
+    "stderr_tail": "cript/' + f + '.expect.txt', actual);\n  console.log('Updated ' + f);\n});\n\"\nUpdated jsx-fragment\nUpdated jsx\n\u001b[0m\n\u001b[0m$ \u001b[0mnpm test 2>&1 | grep -E \"passing|failing|^\\s+[0-9]+\\)\"\n530 passing (7s)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2740": {
     "instance_id": "highlightjs__highlight.js-2740",
