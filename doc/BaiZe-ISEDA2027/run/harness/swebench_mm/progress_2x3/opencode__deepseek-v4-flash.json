@@ -4238,16 +4238,30 @@
   "carbon-design-system__carbon-8720": {
     "instance_id": "carbon-design-system__carbon-8720",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 249.5,
+    "rc": 0,
+    "model_patch_len": 2219,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "\n| `helperText` | node | - | Context text below bar |\n| `hideLabel` | bool | `false` | Visually hides label |\n| `className` | string | - | Custom CSS class |\n| `id` | string | - | Custom element ID |\n",
+    "stderr_tail": ".js\n[✓] Create SCSS styles for packages/components\n[✓] Create SCSS styles for packages/styles\n[✓] Register styles in packages/components and packages/styles indexes\n[✓] Verify with linting/tests\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8912": {
     "instance_id": "carbon-design-system__carbon-8912",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 111.7,
+    "rc": 0,
+    "model_patch_len": 495,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "fault from `''` to `'lg'`, which maps to `height: rem(40px)` — the standard default size for Carbon v10 Search.\n\n```js\n// Before\nsize = !small ? '' : 'sm',\n// After  \nsize = !small ? 'lg' : 'sm',\n```\n",
+    "stderr_tail": "codebase structure and find Form/Search related components\n[✓] Identify the CSS/styling causing the Search field height issue\n[✓] Fix the height issue by setting default size on Search component\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8945": {
     "instance_id": "carbon-design-system__carbon-8945",
