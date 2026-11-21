@@ -230,7 +230,7 @@ D	EDA-Eval-DesignFlow-NetRcPathDiff-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-
 D	EDA-Eval-DesignFlow-NetSigTrace-001	13	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-NetTypoScanReport-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-NetlistBisectLocalize-001	16	n	n	FAIL	FAIL	FAIL(静态)	PASS	保留；抽查 1 条重跑 negative_selftest
-D	EDA-Eval-DesignFlow-NetlistBroadcastFlow-001	11	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-NetlistBroadcastFlow-001	16	y	n	FAIL(runtime)	FAIL(runtime)	FAIL(runtime post-fix)	PASS	已修复 r1074: 新增 hidden A'(reference/hidden_a/netlist_Aprime.v, SUT 不可见, token 与 A/B 结构性不相交: GPUTOP/BroadcastCalibBit/CalibCenterN/AF_CalibflagInject/or2/CalibFuseColumn/CalibIn/CalibDftCtrl/CalibTdqMon/CalibMonOut); check.py k11→16 = 11 B-side+visible-A(a-k) + 5 A'-gold 交叉(l-p §4.9 anti-hardcode); smart §4.9(b) B-hardcode stub(neg_fake_hardcode_b.py, 检测 A token 吐 A-gold / else 吐 B-gold) pre-fix PASS 全 11(可见-A guard (j) 被绕过) → post-fix FAIL(m) A' top_module=DDR5TOP!=GPUTOP; 4 neg+3 deg 全 FAIL n_distinct=5(c,d,e,f,m); ref 16/16 PASS
 D	EDA-Eval-DesignFlow-NetlistCellReplace-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-NetlistChk-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-NetlistChkzdomGenExplainQA-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
