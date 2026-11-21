@@ -58,6 +58,12 @@
 - 生成：`python run/data_pipeline/build_blacklist.py --eval-jsonl <jsonl1> <jsonl2> ... --out-dir run/data_pipeline/blacklist`（脚本多文件求**并集**）。
 - 结果（v0.2）：536 任务 / 193,295 去重后 13-gram（较 v0.1 的 191,718 多了 1,577，全来自被修复的中文 cuhk 内容）；
   短文本兜底 4 任务 / 10 个 8-gram（`CUHK-PyAether-012/-037/-042/-052`，NFKC 后仍不足 13 字符）。
+- ⚠️ **可再生中间物（gitignore）**：上述 4 个产物文件在 `run/.gitignore` 第 30-33 行被标记为「可再生成」，
+  **不进 git**（commit `931cc40e30` 取消跟踪，省 ~5.5MB）。源脚本 `build_blacklist.py` + 6 个评测快照 jsonl
+  （`/nas_train/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/`）保留，需要时在机器上重跑即可复现。
+  **2026-11-21 (R137) 已重跑复现**：536 任务 / 193,295 13-gram / 10 8-gram / 4 短任务，与 v0.2 文档**逐数一致**
+  （meta.json 2.13MB / ngram_hashes.txt 3.29MB / short_ngram_hashes.txt 170B / entry_points.sha256 60KB）；
+  正控冒烟（扫 v20260311.jsonl 自身）= **158/158 命中** ✅，黑名单功能正常。
 
 #### 快照去重关系（实测）
 
@@ -120,3 +126,5 @@
 - [x] SFT 语料同闸机制修复 + 冒烟（唤醒 5）：check_contamination.py 目录分支现可递归扫描**嵌套 jsonl**（旧版只 glob parquet → 目录输入会静默扫 0 文档），并支持 Agent-2609 的 `messages`（list<{role,content}>）多轮对话字段；单文件 30 / 目录 10 文档均 **0 命中**、正控 158/158 无回归
 - [x] **R3 投料前污染扫描**（唤醒289, 2026-10-10）：30 parquet × 2,000 docs = **60,000 docs**, **0 命中** ✅。覆盖 L3(10) + Code(10) + Math(10)，每源 ≥ 20K docs（超过 ≥10K 要求）。日志 → `run/data_pipeline/contam_scan_r3.log`，摘要 → `run/data_pipeline/contam_scan_r3_summary.md`
 - [x] **全部投料前扫描完成**：base 采样 10K + base 全量 150K + R3 60K = **220,000 docs**，全部 6 源，**0 命中**。**P-8 数据层全就绪。**
+- [x] **EDA-Eval 黑名单重跑复现**（2026-11-21 R137）：发现 `data_pipeline/blacklist/` 因 commit `931cc40e30` 取消跟踪而缺失（可再生中间物），已用 `build_blacklist.py` + 6 评测快照 jsonl **重跑**，产物逐数与 v0.2 一致（536 任务 / 193,295 13-gram / 10 8-gram），正控 158/158 ✅。**S1 污染闸门已就绪可复用。**
+- [ ] **S2 新源 13-gram 扫描（待办 · 下一步①）**：S2 blend 新增的 4 个零重叠源——`stack-v3-train`(476B tok / L4 过滤 90.5%)、`MegaMath-web`(218.1B)、`Nemotron-CC-Math`(195.4B)、`finemath-4plus`(9.4B)——尚未跑 13-gram 闸门。计划：① 先扩黑名单为 `blacklist_extended/`（在 EDA-Eval 536 基础上并 HumanEval/MBPP/GSM8K/MATH/SWE-bench 共 9277 tasks，需 build_blacklist.py 适配各 benchmark schema，输出目录已在 `run/.gitignore` 第 34-37 行预留）；② 对 4 个新源各抽样 ≥10K docs 扫描（参照 S1 投料前口径）。前置：PC-3 已下载 6 benchmark（9277 tasks），待转 jsonl 入指纹。
