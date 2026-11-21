@@ -637,3 +637,4 @@ C	EDA-Eval-DesignFlow-FindCircuitByPath-001	15	n	y	PASS	PASS	FAIL(静态)	GAP	�
 D	EDA-Eval-DesignFlow-ConnectRelCheck-001	13	y	n	FAIL	FAIL	FAIL	PASS	新建 case r1063: 含 A-prime-gold 交叉校验 i-m 5 条; §4.9 三假+smart stub 经 negative_selftest 全 FAIL
 D	EDA-Eval-DesignFlow-RepErrorCounterProduce-001	15	y	n	FAIL	FAIL	FAIL	PASS	新建 case r1064: 含 A'-gold 交叉校验 k-o 5 条(15=10 B-side+5 A'-gold); §4.9 三假+smart hardcode_b stub 经 negative_selftest 全 FAIL(n_distinct=4); A'/B/A token 完全不相交
 D	EDA-Eval-DesignFlow-NetlistNodeTraceProduce-001	14	y	n	FAIL	FAIL	FAIL	PASS	新建 case r1065: 含 A'-gold 交叉校验 j-n 5 条(14=9 B-side+5 A'-gold); §4.9 三假(print_only/core_deleted/hardcode_b)经 negative_selftest 全 FAIL(n_distinct=3); A/B/A' 三集 param/node/subckt 名 token 完全不相交; netlist-node-trace produce 子型
+D	EDA-Eval-DesignFlow-VdbiasScanProduce-001	14	y	n	FAIL	FAIL	FAIL	PASS	新建即合规(A'/B token 不相交+独立_gt_recount+3假入库全FAIL, r1066)
