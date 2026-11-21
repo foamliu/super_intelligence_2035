@@ -2137,9 +2137,16 @@
   "bpmn-io__bpmn-js-1382": {
     "instance_id": "bpmn-io__bpmn-js-1382",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 498.4,
+    "rc": 0,
+    "model_patch_len": 5541,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "un against. However, the changes follow the exact same patterns used for all other replace menu entries in the codebase, and a syntax/structure verification confirmed all expected content is present.\n",
+    "stderr_tail": "S.md found\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore codebase for replace menu implementation\n[✓] Add DataStoreReference to DataObjectReference replace menu and vice-versa\n[✓] Run tests to verify changes\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1434": {
     "instance_id": "bpmn-io__bpmn-js-1434",
