@@ -1794,9 +1794,16 @@
   "bpmn-io__bpmn-js-1080": {
     "instance_id": "bpmn-io__bpmn-js-1080",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1075.9,
+    "rc": 0,
+    "model_patch_len": 3239,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ures/modeling/behavior/CreateBehavior.connect.bpmn`:**\n- New BPMN diagram with two participants, one containing a lane, used by the connect test\n\nBoth the source file and test pass ESLint validation.\n",
+    "stderr_tail": " flow connection rules and lane/pool behavior\n[✓] Identify root cause of message flow connection issue after lane add/remove\n[✓] Implement fix with minimal changes\n[✓] Verify fix works correctly\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1083": {
     "instance_id": "bpmn-io__bpmn-js-1083",

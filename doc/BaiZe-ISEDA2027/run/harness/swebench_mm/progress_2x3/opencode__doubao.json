@@ -6498,30 +6498,58 @@
   "prettier__prettier-14961": {
     "instance_id": "prettier__prettier-14961",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 460.7,
+    "rc": 0,
+    "model_patch_len": 595407,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " spaces for string/number literal arguments, spaces for all other cases. The existing tests fail only because the snapshots need to be updated to reflect the new correct formatting for Angular pipes.\n",
+    "stderr_tail": "ites: 1 failed, 1 of 6 total\nTests:       5 failed, 35 passed, 40 total\nSnapshots:   5 failed, 35 passed, 40 total\nTime:        10.539 s\nRan all test suites matching /tests\\/format\\/angular\\//i.\n\u001b[0m\n"
   },
   "prettier__prettier-16347": {
     "instance_id": "prettier__prettier-16347",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 421.9,
+    "rc": 0,
+    "model_patch_len": 1144,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "le).\n\nThese changes ensure consistent preservation of empty lines between YAML sequence items in markdown frontmatter, regardless of whether the sequence appears at the end of the frontmatter or not.\n",
+    "stderr_tail": "    isNextLineEmpty(node, originalText) &&\n+      !shouldPrintEndComments(path.parent)\n+    ) {\n+      return hardline;\n+    }\n+  }\n+\n   return \"\";\n }\n \n function shouldPrintEndComments(node) {\n\n\u001b[0m\n"
   },
   "prettier__prettier-4115": {
     "instance_id": "prettier__prettier-4115",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 203.9,
+    "rc": 0,
+    "model_patch_len": 1687,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "u described perfectly: HTML tables (and any other HTML blocks) nested inside list items/indented blocks will now maintain their correct indentation level no matter how many times you format the file.\n",
+    "stderr_tail": "bin/prettier.cjs test2.md > test3.md && diff test1.md test2.md && diff test2.md test3.md\n(no output)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead test1.md\n\u001b[0m\n\u001b[0m$ \u001b[0mrm test.md test1.md test2.md test3.md\n(no output)\n\u001b[0m\n"
   },
   "prettier__prettier-4153": {
     "instance_id": "prettier__prettier-4153",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 112.0,
+    "rc": 0,
+    "model_patch_len": 605,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "output\n- Both syntaxes with and without space between language and attributes (````js{...}` vs ```` ```js {...}````) work correctly\n- Existing functionality for regular code blocks remains unchanged.\n",
+    "stderr_tail": "-jest-JOBGIc2j'\nnpm error A complete log of this run can be found in: /home/app.e0031982/.npm/_logs/2026-11-21T03_03_08_229Z-debug-0.log\n\u001b[0m\n\u001b[0m→ \u001b[0mRead tests/multiparser_js_markdown/codeblock.js\n"
   },
   "prettier__prettier-4202": {
     "instance_id": "prettier__prettier-4202",

@@ -1673,9 +1673,16 @@
   "alibaba-fusion__next-4182": {
     "instance_id": "alibaba-fusion__next-4182",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1036.1,
+    "rc": 0,
+    "model_patch_len": 1870,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "xt/test/cascader-select/index-spec.js`** — Added a regression test `\\\"should not throw when popupProps.v2 is true with showSearch\\\"`.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "alibaba-fusion__next-665": {
     "instance_id": "alibaba-fusion__next-665",

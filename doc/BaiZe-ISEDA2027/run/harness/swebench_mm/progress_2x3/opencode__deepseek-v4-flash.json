@@ -2312,23 +2312,44 @@
   "bpmn-io__bpmn-js-1623": {
     "instance_id": "bpmn-io__bpmn-js-1623",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 637.2,
+    "rc": 0,
+    "model_patch_len": 551,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "mplete` event is fired in both the `importXML` and `open` code paths, making it the correct event to listen to for ensuring overlays are consistently re-applied after any diagram import or re-import.\n",
+    "stderr_tail": "lay architecture\n[✓] Understand how multi-diagram plugins interact with deep linking\n[✓] Implement a solution for deep linking overlay persistence across diagram switches\n[✓] Verify the solution\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1636": {
     "instance_id": "bpmn-io__bpmn-js-1636",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 170.2,
+    "rc": 0,
+    "model_patch_len": 906,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "tivity' ])`, and added `isAny` to the imports from `ModelUtil`. This ensures a start event is added when morphing a call activity to an expanded sub-process, matching the existing behavior for tasks.\n",
+    "stderr_tail": "odos\n[✓] Explore codebase to understand morphing behavior for call activity -> subprocess\n[✓] Implement fix: add start event when morphing call activity to expanded subprocess\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1638": {
     "instance_id": "bpmn-io__bpmn-js-1638",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 331.8,
+    "rc": 0,
+    "model_patch_len": 560,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "he moddle-xml serializer in `write.js:152` skips properties that are not own properties (`!element.hasOwnProperty(name)`), so after deletion the property won't appear in serialized XML output at all.\n",
+    "stderr_tail": "modules/moddle/lib · 2 matches\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"serializ|toXML\"\u001b[90m in node_modules/moddle-xml · 36 matches\u001b[0m\n\u001b[0m→ \u001b[0mRead node_modules/moddle-xml/lib/write.js\u001b[90m [limit=50, offset=140]\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1640": {
     "instance_id": "bpmn-io__bpmn-js-1640",
