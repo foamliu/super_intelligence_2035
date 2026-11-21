@@ -581,7 +581,12 @@ def eval_route(route, predictions_path=None):
     if not predictions_path.exists():
         log(f"  ERROR: no predictions for {route_id}"); return
     run_id = f"mm_2x3_{route_id}"
-    cmd = [sys.executable, "-m", "swebench.harness.run_evaluation",
+    # 2026-11-20 用户令·Step 1.1: eval 入口统一注入 docker --memory 128g/--memory-swap 128g/--cpus 16。
+    # swebench 5.0.2 的 docker SDK create() 不带资源上限 → 必须经 swebench_guarded_eval.py
+    # 的 monkey-patch 注入（裸 `python -m swebench.harness.run_evaluation` 不会被限制）。
+    # guarded wrapper 用 runpy.run_module(..., alter_sys=True) 透传 sys.argv[1:]，参数与原裸调用一致。
+    guarded_eval = str(HARNESS_DIR / "swebench_guarded_eval.py")
+    cmd = [sys.executable, guarded_eval,
            "--dataset_name", str(DATASET_JSON), "--split", "test",
            "--predictions_path", str(predictions_path),
            "--max_workers", "1", "--run_id", run_id,
