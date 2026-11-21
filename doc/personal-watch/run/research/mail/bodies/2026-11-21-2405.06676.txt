@@ -1,0 +1,16 @@
+Professor Chhabria,
+
+We are building a grader in which a physical-design task counts as solved only if the generated script actually runs and changes the database as intended. So I read EDA Corpus as a record of what you call correct, not just a training set.
+
+Table I separates 198 unique from 392 augmented question-answer pairs, and 395 from 545 augmented prompt-script pairs; Table II reports fine-tuned ChatGPT-3.5 at 22 true / 28 false on prompt-script. Three questions:
+
+1. For those 28 failed scripts, how many crash (exception, non-zero exit) versus run to completion but modify the wrong object or layer? That decides whether we need an executor or a state-diff checker.
+
+2. When you paraphrase prompts and rename variables, do all paraphrases of one datapoint stay on the same side of the 95/5 split? If not, 22/50 may be inflated by near-duplicate prompts, and we would quote it only as a lower bound.
+
+3. Your 258 database datapoints outnumber the 138 flow ones. How did you set that balance, and for a corpus ten times smaller would you keep the natural distribution or shift weight toward executable database queries?
+
+Thank you for releasing the corpus.
+
+Best regards,
+Yang Liu

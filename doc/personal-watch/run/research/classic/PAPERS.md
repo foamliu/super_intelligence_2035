@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **314** 条（**第八十二轮 2026-11-21 12:0x 补 3 条 → 314**：Grounding DINO 1.5 `2405.10300`（**237**，**&lt;500 按「本领域权威」收**，预印本技术报告）/ CodeAct `2402.01030`（**470**，**&lt;500 按「方法论常青」收**，arXiv `comment` = ICML 2024）/ Native Sparse Attention `2502.11089`（**674**，**≥500 直接满足判据**，OpenAlex source = ACL 2025）；核验：arXiv API `id_list` 单批 **`200` + `application/atom+xml`**（10,529 B / 3 entry，`published` 齐备）+ abs 页 **3/3 `200`**（44,192 / 44,230 / 44,015 B）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**；⚠️ **ID 误记在写入前拦截**：本轮原计划「Small-scale proxies」按记忆写作 `2209.14375`，`id_list` 实测该 ID 为 *Improving alignment of dialogue agents via targeted human judgements*（无关）⇒ 真 ID 为 `2309.14322`，而该文**已在表内 #226** ⇒ 整条剔除，改收 Native Sparse Attention；覆盖轴 = 开放词表检测的 Pro/Edge 两档 / 代码即动作空间 / 可原生训练的稀疏注意力）
+
 **本轮快照**：累计 **311** 条（**第八十一轮 2026-11-21 09:0x 补 4 条 → 311**：LLaVA-OneVision `2408.03326`（**3,423**，TMLR）/ VideoMAE `2203.12602`（**2,690**，NeurIPS 2022，DOI `10.52202/068431-0732`，pp. 10078–10093）/ DINO-X `2411.14347`（**173**，**&lt;500 按「本领域权威」收**，预印本技术报告）/ Scaling Laws of RoPE-based Extrapolation `2310.05209`（**107**，**&lt;500 按「方法论常青」收**，ICLR 2024）；核验：arXiv API `id_list` 单批 **`200` + atom**（10,844 B / 4 entry，`published` 齐备）+ abs 页 **4/4 `200`**（42,147 / 42,543 / 45,378 / 41,298 B）+ OpenAlex **4/4 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；先查重：四 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**；覆盖轴 = 单塔服务单图/多图/视频 / 90–95% 管状掩码的小数据视频预训练 / 免提示开放词表检测 / RoPE 临界维度与外推）
 
 **本轮快照**：累计 **307** 条（**第八十轮 2026-11-21 06:0x 补 3 条 → 307**：Mask DINO `2206.02777`（**911**，CVPR 2023，DOI `10.1109/cvpr52729.2023.00297`）/ Scaling ViT to 22B `2302.05442`（**965**，预印本）/ PaLM 2 Technical Report `2305.10403`（**2,439**，预印本）；arXiv `id_list` 单批 **`200` + atom**（9,772 B / 3 entry，`published` 齐备）+ abs 页 **3/3 `200`**（42,570 / 47,645 / 64,215 B）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；覆盖轴 = 一个头同时出框与掩码 / QK-norm 压注意力 logit 爆炸 / 配比比规模更影响多语与推理）
@@ -5380,6 +5382,57 @@
 | 与我们工作的关系 | **pretrain（主 · 长上下文续训）**：把「RoPE base 靠网格试错」换成「先按临界维度算、再小网格验证」的预注册流程（判据 = 目标长度上 PPL 与检索式评测同时不退化）。<br>**zhulong（成本口径）**：同训练长度可外推更长上下文 ⇒「有效上下文 / 训练 token」是一个成本分母。<br>**harness（长上下文评测）**：外推能力须按「训练长度 → 测试长度」矩阵报，单点数字不可比。 |
 | 首次收录 | **2026-11-21**（第八十一轮 · 09:00 时窗） |
 | 核验状态 | arXiv `id_list=2310.05209` **`200` + `application/atom+xml`**（`published` `2023-10-08T15:50:36Z`，`comment` 已读）；abs 页 **`200` / 41,298 B**；OpenAlex **`200`（107 / 2023 / conference-paper / ICLR）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 312. Grounding DINO 1.5: Advance the "Edge" of Open-Set Object Detection
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Grounding DINO 1.5: Advance the "Edge" of Open-Set Object Detection |
+| 作者（前 3） | Tianhe Ren · Qing Jiang · Shilong Liu（共 **16** 位；末位 Lei Zhang；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-05-16`；v2 `2024-06-01`） |
+| 会议 / 期刊 | **预印本**（IDEA Research 技术报告；OpenAlex `type=preprint`、source = arXiv） |
+| 被引数 | **237**（OpenAlex `10.48550/arxiv.2405.10300`，查询日 **2026-11-21**；**&lt;500 ⇒ 按「本领域权威」收**：开放词表检测的工业级主线模型；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.10300> ｜ arXiv DOI `10.48550/arxiv.2405.10300` |
+| 一句话贡献 | 给出 **Pro / Edge 两档**开放词表检测器：Pro 版**放大架构 + 增强视觉骨干 + 把训练数据扩到 2,000 万张以上带 grounding 标注的图像**以换泛化；Edge 版**降低特征尺度**换速度，面向端侧部署。 |
+| 与我们工作的关系 | **vision（主 · 开放词表检测）**：版图 / 封装 / 界面截图的目标类别长尾且事前不可枚举，「给文本提示就能检出」是可测能力轴；Edge 档直接对应「端侧 / 低算力」部署分支。<br>**designflow（造题辅助）**：可先自动产出「区域 → 元件」候选，再人工复核。<br>**harness（评测口径）**：零样本检测必须写明「训练数据是否含该类别」，否则与闭集微调不可比。 |
+| 首次收录 | **2026-11-21**（第八十二轮 · 12:00 时窗） |
+| 核验状态 | arXiv `id_list=2405.10300` **`200` + `application/atom+xml`**（`published` `2024-05-16T17:54:15Z`）；abs 页 **`200` / 44,192 B**；OpenAlex **`200`（237 / 2024 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 313. Executable Code Actions Elicit Better LLM Agents
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Executable Code Actions Elicit Better LLM Agents |
+| 作者（前 3） | Xingyao Wang · Yangyi Chen · Lifan Yuan（共 **7** 位；末位 Heng Ji；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-02-01`；v4 `2024-06-07`） |
+| 会议 / 期刊 | **ICML 2024**（arXiv `comment` 逐字：`Accepted by ICML 2024; Code, data, model, and demo are available at ...`；OpenAlex 仍记 `preprint` ⇒ 两源不一致，以 arXiv comment 为准并注明） |
+| 被引数 | **470**（OpenAlex `10.48550/arxiv.2402.01030`，查询日 **2026-11-21**；**&lt;500 ⇒ 按「方法论常青」收**：code-as-action 的常用对照基线，OpenHands 默认 agent 直接采用该动作空间；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2402.01030> ｜ arXiv DOI `10.48550/arxiv.2402.01030` |
+| 一句话贡献 | 用**可执行 Python 代码**把 agent 的动作统一成一个动作空间（**CodeAct**），接解释器后可在**多轮**里按新观察**改写先前的动作**或发新动作，突破 JSON / 文本动作在「动作空间受限、不能组合多工具」上的两大限制；在 API-Bank 与自建基准上评测 **17 个 LLM**，称优于常用 JSON / 文本动作方案（摘要中具体倍数未取到 ⇒ **不写倍数**）。 |
+| 与我们工作的关系 | **harness（主 · 动作空间与判分）**：动作空间从「固定工具表」换成「代码 + 解释器」后，判分必须记录**每轮代码与执行结果**，否则无法归因是模型错还是运行时错。<br>**zhulong（推理成本）**：多轮执行把「一次生成」变成「生成—执行—再生成」，token 账要按轮累计。<br>**pretrain（代码语料）**：可执行代码作为动作空间的前提是代码模型能写出**能跑**的片段。 |
+| 首次收录 | **2026-11-21**（第八十二轮 · 12:00 时窗） |
+| 核验状态 | arXiv `id_list=2402.01030` **`200` + `application/atom+xml`**（`published` `2024-02-01T21:38:58Z`，`comment` 已读）；abs 页 **`200` / 44,230 B**；OpenAlex **`200`（470 / 2024 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 314. Native Sparse Attention: Hardware-Aligned and Natively Trainable Sparse Attention
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Native Sparse Attention: Hardware-Aligned and Natively Trainable Sparse Attention |
+| 作者（前 3） | Jingyang Yuan · Huazuo Gao · Damai Dai（共 **15** 位；末位 Wangding Zeng；DeepSeek-AI；arXiv 作者字段逐字核） |
+| 年份 | **2025**（arXiv v1 `2025-02-16`；v2 `2025-02-27`） |
+| 会议 / 期刊 | **ACL 2025**（OpenAlex `publication_year=2025`、source = *Proceedings of the Conference — Association for Computational Linguistics. Meeting*；arXiv `comment` 为空） |
+| 被引数 | **674**（OpenAlex `10.48550/arxiv.2502.11089`，查询日 **2026-11-21**；**≥500 直接满足判据**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2502.11089> ｜ arXiv DOI `10.48550/arxiv.2502.11089` |
+| 一句话贡献 | 提出**可原生训练**的稀疏注意力 NSA：**粗粒度 token 压缩 + 细粒度 token 选择**的分层稀疏策略，配合**按算术强度平衡的算法设计与现代硬件实现**，使稀疏注意力能**端到端预训练**（而非只在推理阶段套用）；摘要称在通用基准、长上下文任务与指令推理上**维持或超过**全注意力模型，并在 **64k 长度**的解码 / 前向 / 反向三个环节都取得加速（**摘要未给具体倍数 ⇒ 不写倍数**）。 |
+| 与我们工作的关系 | **pretrain（主 · 长上下文训练成本）**：把「长上下文靠加卡」换成「训练时就稀疏」，影响上下文扩展方案的选择与显存预算。<br>**zhulong（成本口径）**：解码 / 前向 / 反向三段分别加速 ⇒ 成本表必须分三段记，不能只报 prefill。<br>**harness（长上下文评测）**：稀疏注意力必须同时报「通用基准不退」与「长上下文不退化」，单报后者会掩盖能力损失。 |
+| 首次收录 | **2026-11-21**（第八十二轮 · 12:00 时窗） |
+| 核验状态 | arXiv `id_list=2502.11089` **`200` + `application/atom+xml`**（`published` `2025-02-16T11:53:44Z`）；abs 页 **`200` / 44,015 B**；OpenAlex **`200`（674 / 2025 / conference-paper / ACL）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
 
 ---
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-21（5/5 · 00:00 早报 + 00:3x 补齐 + 03:00 / 06:00 / 09:00 B 轨 → 311） · research 线</title>
+<title>论文观察日报 · 2026-11-21（5/5 · 00:00 早报 + 00:3x 补齐 + 03:00 / 06:00 / 09:00 / 12:00 B 轨 → 314） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -47,8 +47,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-21</h1>
-  <div class="sub"><b>00:00 时窗（早报 3 篇 → 00:3x 补轮 2 篇）＋ 03:00 / 06:00 / 09:00 B 轨补轮 · A 轨 5/5 · B 轨第八十一轮 +15 → 311</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-21 09:0x CST</b>（最后一轮：09:00 时窗；此前 00:00 / 00:3x / 03:00 / 06:00）｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>00:00 时窗（早报 3 篇 → 00:3x 补轮 2 篇）＋ 03:00 / 06:00 / 09:00 / 12:00 B 轨补轮 · A 轨 5/5 · B 轨第八十二轮 +18 → 314</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-21 12:0x CST</b>（最后一轮：12:00 时窗；此前 00:00 / 00:3x / 03:00 / 06:00 / 09:00）｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -439,8 +439,62 @@
   <tr><td>未做</td><td>PDF 逐页复核（数字取自 arXiv 官方摘要）；回信通道仍只发不收</td></tr>
 </table>
 
+
+<h3 class="sec">12:00 时窗 · A 轨 0 新收（今日 5/5 已满）· B 轨 +3（→ 314）· 作者网 +2（→ 292）· 信 1 封（累计 128）· voice_ready 0 新增</h3>
+
+<p style="font-size:14px;"><b>A 轨</b>：今日 5/5 已满，<b>不凑第 6 篇、不替换已发条目</b>；<code>cat:cs.CL</code> 公告批 <code>published</code> 上界仍为 <code>2026-11-19T18:57:25Z</code>（<b>连续第 9 个时窗未前进</b>，仍在 72h 内）。<b>B 轨 +3 → 314</b>（下表）：补的是「开放词表检测的两档部署 / 代码即动作空间 / 可原生训练的稀疏注意力」三块。</p>
+
+<table class="plain">
+  <tr><th>#</th><th>论文（arXiv 实测标题）</th><th>年份 / 出处</th><th>被引（OpenAlex，2026-11-21）</th><th>一句话贡献</th><th>归属线</th></tr>
+  <tr><td>312</td><td>Grounding DINO 1.5: Advance the "Edge" of Open-Set Object Detection（<a href="https://arxiv.org/abs/2405.10300">2405.10300</a>）</td><td>2024 · 预印本技术报告（IDEA Research）</td><td><b>237</b>（&lt;500 ⇒ 按「本领域权威」收）</td><td>Pro / Edge 两档开放词表检测：Pro 放大架构 + 增强视觉骨干 + <b>2,000 万+</b> grounding 图像；Edge 降特征尺度换速度</td><td>vision（主）· designflow · harness</td></tr>
+  <tr><td>313</td><td>Executable Code Actions Elicit Better LLM Agents（<a href="https://arxiv.org/abs/2402.01030">2402.01030</a>）</td><td>2024 · ICML 2024（arXiv <code>comment</code> 逐字）</td><td><b>470</b>（&lt;500 ⇒ 按「方法论常青」收）</td><td>CodeAct：用<b>可执行 Python</b> 统一动作空间，接解释器后多轮按观察改写动作；评测 <b>17 个 LLM</b></td><td>harness（主）· zhulong · pretrain</td></tr>
+  <tr><td>314</td><td>Native Sparse Attention: Hardware-Aligned and Natively Trainable Sparse Attention（<a href="https://arxiv.org/abs/2502.11089">2502.11089</a>）</td><td>2025 · ACL 2025（OpenAlex source）</td><td><b>674</b>（≥500 直接满足判据）</td><td>粗粒度 token 压缩 + 细粒度 token 选择的分层稀疏；<b>可端到端预训练</b>；64k 长度解码 / 前向 / 反向均加速（摘要未给倍数）</td><td>pretrain（主）· zhulong · harness</td></tr>
+</table>
+
+<p style="font-size:14px;"><b>⚠️ 写入前拦截一次 ID 误记</b>：本轮原计划收「Small-scale proxies for large-scale Transformer training instabilities」，按记忆写作 <code>2209.14375</code>；<code>id_list</code> 实测该 ID 是 <i>Improving alignment of dialogue agents via targeted human judgements</i>（无关）。真 ID 为 <code>2309.14322</code>，而该文<b>早已在表内（#226）</b> ⇒ 整条剔除，改收 Native Sparse Attention。<b>数字一律取自 arXiv 官方摘要，未做 PDF 逐页复核。</b></p>
+
+<p style="font-size:14px;"><b>作者关系网 +2 → 292</b>（X 已核验 <b>110</b>）：<b>#291 Xingyao Wang</b>（UIUC / OpenHands 联合创始人，CodeAct 一作）—— 邮箱<b>未找到明文</b>（GitHub <code>email=null</code>；主页邮箱为 Cloudflare 编码，不反解），X <b>@xingyaow_</b> 双源核验（主页链接 + X 页 <code>og:title</code>/<code>og:description</code>，<code>200</code> / 170,026 B）；<b>#292 Peter J. Liu</b>（Small-scale proxies 二作，据 X 简介曾在 Google Brain / DeepMind）—— 邮箱未找到现行页，X <b>@peterjliu</b> 双源核验（<code>200</code> / 162,821 B）。<b>follow 需登录态 ⇒ 只进「待 follow 清单」，🚫 不假装已 follow。</b></p>
+
+<p style="font-size:14px;"><b>信 1 封（累计 128 · 今日 12/12 达每日硬上限）</b>：#128 致 <b>Vidya A. Chhabria</b>（ASU，EDA Corpus <code>2405.06676</code> 末位 / 通讯）· 英文 <b>200</b> 词 · <code>SENT OK 2026-11-21 12:03:31</code>。地址 <code>search.asu.edu/profile/4370240</code> 当场复核 <code>200</code> / 124,745 B（<b>A 级</b>）。三问各指一处可改的判分/造题决策：① Table II 的 <b>28 条失败脚本</b>里「崩」与「跑通但改错对象」各占多少（决定判分器要 executor 还是 state-diff）；② 增强改写是否与原文<b>同侧</b>划分（否则 <b>22/50</b> 只能当下界）；③ <b>258 database vs 138 flow</b> 的配比在小语料上是否该倾斜。</p>
+
+<p style="font-size:14px;"><b>回信率 0 / 128</b>（<code>replies/</code> 仍只有 <code>README.md</code>）；<b>0 封到期</b>（最早 <b>2026-11-25</b>，#1–#7）。⇒ 仍按<b>待诊断信号</b>处理，<b>不记为成功</b>。两项仍待运维：发件显示名仍为 <code>AI+EDA 招聘 · 自动</code>；通道<b>只发不收</b>（无 IMAP/POP3）。</p>
+
+<p style="font-size:14px;"><b>voice_ready · 本时窗 0 新增</b>（今日已 2 条：Karpathy / Sutton，达「每期 ≤2 条」上限）。本轮只做 X 核验：代理 <code>127.0.0.1:7897</code> 下 <code>x.com</code> <b><code>200</code></b>，新核验 <b>@xingyaow_</b> / <b>@peterjliu</b> 两条（均 <code>og:title</code> + <code>og:description</code> 双源一致）。</p>
+
+<details class="news-ready">
+<summary>📰 news_ready · 本期 0 条（理由）</summary>
+<ul>
+  <li>本轮 3 条均为<b>方法 / 技术报告类</b>（开放词表检测、动作空间、稀疏注意力），没有发布 / 开源 / 首次突破类<b>事件点</b> ⇒ 四问第②问不过。</li>
+  <li>A 轨本窗 0 新收（今日额度已满），无新的事件型素材。</li>
+  <li>今日 voice_ready 已达 2 条上限，不重复计 news_ready。</li>
+</ul>
+</details>
+
+<h3 class="sec">12:00 时窗 · 对各线的可执行建议（6 线）</h3>
+<ul class="tight">
+  <li><b>pretrain</b>：以 NSA 为对照做<b>两臂预注册</b>——2B / 8K，A 臂全注意力、B 臂「粗压缩 + 细选择」，<b>固定总 token 预算与全局 batch</b>；判据：通用基准均值降 ≤1% <b>且</b> 32K 检索式评测不退化，才进长上下文配方；成本一律按 <b>prefill / decode / backward 三段</b>分记 GPU·h（缺一段不得进对比表）。</li>
+  <li><b>vision</b>：Grounding DINO 1.5 的 Pro/Edge 两档先做<b>零样本可测性检查</b>——200 张版图 / 封装截图，用固定提示集（<code>pad</code> / <code>via</code> / <code>cell</code> / <code>macro</code>）跑两档；判据：与人工框 IoU ≥0.5 的召回 ≥60% 才接入造题流水线，且表里必须写「该类别是否在 2,000 万训练图里出现」（零样本口径不得与闭集微调混比）。</li>
+  <li><b>harness</b>：按 CodeAct 的口径给评测记录<b>加三列</b>——每轮「代码 / 执行输出 / 状态哈希」；判据：任一失败题若无法仅凭这三列复现失败原因，判该题<b>评测无效</b>，不计入模型分。</li>
+  <li><b>data</b>：配比与验证集表新增「<b>唯一数据点 vs 增强数据点</b>」两列；判据：验证集里同一唯一数据点的改写占比 &gt;10% 时，该指标只作<b>下界</b>上报，不得写进结论句。</li>
+  <li><b>zhulong</b>：成本表由「总 GPU·h」拆成 <b>prefill / decode / backward</b> 三行，并同时给 tokens/s；判据：三段齐全才允许计算「每百万有效 token 成本」，避免只报 prefill 造成成本低估。</li>
+  <li><b>designflow</b>：把 EDA Corpus 的「<b>执行即正确</b>」落成硬门槛——造题流水线每题先在 OpenROAD 容器里实跑，记录退出码与关键对象（net / layer / cell）快照；判据：抽检 100 题实跑通过率 &lt;80% 时先修脚本模板、暂停扩量。</li>
+</ul>
+
+<h3 class="sec">附录 · 12:00 时窗检索与核验</h3>
+<table class="plain">
+  <tr><th>项</th><th>结果</th></tr>
+  <tr><td>列表 <code>cat:cs.CL&amp;max_results=40</code></td><td><code>200</code> / <b>109,971 B / 40 entry</b> / <code>application/atom+xml; charset=utf-8</code>；<code>published</code> 上界 <code>2026-11-19T18:57:25Z</code>（连续第 9 窗未前进）</td></tr>
+  <tr><td><code>id_list=2405.10300,2402.01030,2502.11089</code></td><td><code>200</code> + atom（<b>10,529 B / 3 entry</b>，<code>published</code> 齐备）；第二轮复核（含作者数）同批 <code>200</code></td></tr>
+  <tr><td>abs 页复查</td><td>3/3 <code>200</code>（44,192 / 44,230 / 44,015 B）</td></tr>
+  <tr><td>OpenAlex</td><td>3/3 <code>200</code>：<b>237</b>（preprint, 2024）/ <b>470</b>（preprint, 2024；arXiv comment = ICML 2024）/ <b>674</b>（ACL 2025）；查询日 2026-11-21</td></tr>
+  <tr><td>先查重</td><td>三 ID 在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> 全量正则 <b>0 命中</b>；误记 ID <code>2209.14375</code> 与真 ID 重复项 <code>2309.14322</code>（已在 #226）均在写入前拦截</td></tr>
+  <tr><td>地址复核（发信前）</td><td><code>search.asu.edu/profile/4370240</code> <code>200</code> / 124,745 B，页内明文 <code>vidyachhabria@asu.edu</code></td></tr>
+  <tr><td>X 可达性</td><td>代理 <code>127.0.0.1:7897</code>：<code>x.com</code> <b><code>200</code></b>；<code>@xingyaow_</code> <code>200</code> / 170,026 B、<code>@peterjliu</code> <code>200</code> / 162,821 B（<code>og:title</code> + <code>og:description</code> 双源核验）；另 <code>@xingyaoww</code> / <code>@m_wortsman</code> <b><code>404</code></b> ⇒ 未收</td></tr>
+  <tr><td>未做</td><td>PDF 逐页复核（数字取自 arXiv 官方摘要）；X 字符级全文抓取（仅核验 handle）；回信通道仍只发不收</td></tr>
+</table>
+
 <h3 class="sec">晚报变更说明（AM → PM）</h3>
-<p style="font-size:14px;"><b>2026-11-21 00:3x 补轮（相对 00:00 早报）</b>：① A 轨由 <b>3/5 → 5/5</b>，新增 <b>#4 VR-SparseQuant</b>（FP4 + 2:4 稀疏的激活量化，6.85→5.57 困惑度）与 <b>#5 G-MTP</b>（单头多 token 预测草稿器，服务端 3.1× / 手机 GPU 2.2×）；<b>为什么补这两篇</b>：早报三篇集中在后训练与注意力，缺「部署侧单位成本」这一块，而这两篇正好覆盖量化与解码延迟两条成本轴，且都有可复核的数字。② B 轨 <b>+3 → +5（299 → 301）</b>：补 Megatron-LM 2104.04473（1,754，SC 2021）与 EVA 2211.07636（1,182，CVPR 2023），补的是「并行配置口径」与「视觉塔预训练目标」两块空白；原计划的 DINO / μP 系不稳定性和 Megatron-LM 1909 经 <code>id_list</code> 核对<b>均已在表内</b>，故改收上述两篇（先查重后写入）。③ 作者网 <b>+4 → +6（282）</b>，新增 #281 Deepak Narayanan（B 级页内明文邮箱）与 #282 Samir Khaki（四个候选主页 404/403 ⇒ 未找到，不猜）。④ 6 线建议新增 5 条（pretrain 并行配置表 / vision MAE-vs-EVA 两臂 / harness 延迟分解 / data 公开数据分层 / zhulong 草稿器开关）。⑤ 信 0 封：本时窗额度 3/3 已于 00:04 用满，不跨窗借额度。<br><b>2026-11-21 09:00 时窗（相对 06:00）</b>：A 轨仍 0 新收（今日 5/5 已满，不凑第 6 篇）；B 轨 <b>+4 → 311</b>（LLaVA-OneVision 3,423 / VideoMAE 2,690 / DINO-X 173 / RoPE 外推 107）；作者网 <b>+3 → 290</b>（王利民 / 邱锡鹏 A 级，刘子纬无邮箱但 X 已核验）；信 <b>2 封</b>（累计 127，今日 11/12，主动少发一封）；voice_ready <b>新增 0</b>（今日已 2 条，达上限）；6 线建议 6 条。</p>
+<p style="font-size:14px;"><b>2026-11-21 00:3x 补轮（相对 00:00 早报）</b>：① A 轨由 <b>3/5 → 5/5</b>，新增 <b>#4 VR-SparseQuant</b>（FP4 + 2:4 稀疏的激活量化，6.85→5.57 困惑度）与 <b>#5 G-MTP</b>（单头多 token 预测草稿器，服务端 3.1× / 手机 GPU 2.2×）；<b>为什么补这两篇</b>：早报三篇集中在后训练与注意力，缺「部署侧单位成本」这一块，而这两篇正好覆盖量化与解码延迟两条成本轴，且都有可复核的数字。② B 轨 <b>+3 → +5（299 → 301）</b>：补 Megatron-LM 2104.04473（1,754，SC 2021）与 EVA 2211.07636（1,182，CVPR 2023），补的是「并行配置口径」与「视觉塔预训练目标」两块空白；原计划的 DINO / μP 系不稳定性和 Megatron-LM 1909 经 <code>id_list</code> 核对<b>均已在表内</b>，故改收上述两篇（先查重后写入）。③ 作者网 <b>+4 → +6（282）</b>，新增 #281 Deepak Narayanan（B 级页内明文邮箱）与 #282 Samir Khaki（四个候选主页 404/403 ⇒ 未找到，不猜）。④ 6 线建议新增 5 条（pretrain 并行配置表 / vision MAE-vs-EVA 两臂 / harness 延迟分解 / data 公开数据分层 / zhulong 草稿器开关）。⑤ 信 0 封：本时窗额度 3/3 已于 00:04 用满，不跨窗借额度。<br><b>2026-11-21 09:00 时窗（相对 06:00）</b>：A 轨仍 0 新收（今日 5/5 已满，不凑第 6 篇）；B 轨 <b>+4 → 311</b>（LLaVA-OneVision 3,423 / VideoMAE 2,690 / DINO-X 173 / RoPE 外推 107）；作者网 <b>+3 → 290</b>（王利民 / 邱锡鹏 A 级，刘子纬无邮箱但 X 已核验）；信 <b>2 封</b>（累计 127，今日 11/12，主动少发一封）；voice_ready <b>新增 0</b>（今日已 2 条，达上限）；6 线建议 6 条。<br><b>2026-11-21 12:00 时窗（相对 09:00）</b>：A 轨仍 0 新收（今日 5/5 已满，不凑第 6 篇）；B 轨 <b>+3 → 314</b>（Grounding DINO 1.5 237 / CodeAct 470 / Native Sparse Attention 674），写入前拦截一次 ID 误记（<code>2209.14375</code> 实为无关论文，真 ID <code>2309.14322</code> 已在表内 ⇒ 整条剔除并换稿）；作者网 <b>+2 → 292</b>（X 已核验 110，两人均无公开明文邮箱 ⇒ 不发信）；信 <b>1 封 → 128</b>（今日 12/12 达每日硬上限，本封为今日最后一封）；voice_ready 0 新增（达上限）；6 线建议 6 条。</p>
 
 <footer>
   research 线 · 论文观察日报 · 2026-11-21 00:00 / 00:3x / 03:00 / 06:00 时窗 ｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现

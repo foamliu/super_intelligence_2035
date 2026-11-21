@@ -3602,7 +3602,7 @@
 | 邮箱 | **vidyachhabria@asu.edu** / **A**（ASU 官方 profile 页 `https://search.asu.edu/profile/4370240` 页内明文，2026-11-19 实测 `200` / 124,745 B；另有院系页 `faculty.engineering.asu.edu/vidyachhabria/` `200` / 17,609 B 但无邮箱） |
 | 主页 | <https://faculty.engineering.asu.edu/vidyachhabria/>（`200` / 17,609 B） |
 | X 账号 | **未找到**（🚫 不猜） |
-| 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发） |
+| 状态 | **已发信**（2026-11-21 12:03:31 `SENT OK`，信 **#128** · 主题 `EDA Corpus: how do the 28 failed scripts fail?`） |
 | 备注 | `语言=英文(判据=姓名族属印度裔 + 美国机构；无中/日/韩信号)`。价值点：**「脚本类样本必须在 OpenROAD 里真跑才判对」** 是 designflow L1–L5 判分器最缺的一条硬约束；可问「增强样本（改写 prompt / 改参数）在训练与评分的分布如何隔离，避免验证集被增强污染」。 |
 
 ### 246. Tianle Cai（蔡天乐）
@@ -4133,3 +4133,28 @@
 | 状态 | **待跟踪**（无公开邮箱 ⇒ 不发信；X 已核验，follow 需登录态，未自动执行） |
 | 备注 | `语言=中文(判据=拼音姓名族属 + NTU 中文姓名为主)`；价值点：单塔服务单图 / 多图 / 视频的任务迁移证据，可作 vision 线「分塔 vs 单塔」对照臂的外部参照。 |
 
+### 291. Xingyao Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xingyao Wang（拼音姓名族属 ⇒ 若发信应用中文全文） |
+| 机构 | **UIUC**（PhD candidate, Illinois CDS；据 X 简介）+ **OpenHands（All Hands AI）联合创始人**（GitHub API `company` 字段 = `OpenHands / All Hands AI`，2026-11-21 实测） |
+| 代表论文 | **CodeAct**（`2402.01030`，B 轨 #313 一作）· SWE-bench / OpenDevin 生态 |
+| 邮箱 | **未找到明文**（GitHub API `api.github.com/users/xingyaoww` 的 `email` 字段为 `null`；主页 `xwang.dev` 的邮箱为 Cloudflare `email-protection` 编码 ⇒ **不反解、不猜**） |
+| 主页 | <http://xwang.dev/>（`xingyaoww.github.io` `301` → `xwang.dev`，`200` / 33,093 B） |
+| X 账号 | **@xingyaow_**（双源核验 2026-11-21 12:0x：主页页内链接 `https://x.com/xingyaow_`；X 页 `og:title` = `Xingyao Wang (@xingyaow_) on X`、`og:description` = `Co-founder @OpenHandsDev | PhD candidate @IllinoisCDS …`；`x.com/xingyaow_` `200` / 170,026 B 经代理） |
+| 状态 | **待跟踪**（无公开明文邮箱 ⇒ 不发信；X 已核验，follow 需登录态，未自动执行） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 中文姓名为主)`。价值点：**代码即动作空间 + 每轮执行轨迹**决定了 harness 必须记录「每轮代码 / 执行输出 / 状态」三件套，否则无法区分模型错与运行时错。 |
+
+### 292. Peter J. Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Peter J. Liu（英语姓名族属 ⇒ 英文信） |
+| 机构 | 据 X 简介（2026-11-21 抓取）：**Building @getcompoundai**，曾任 **Google Brain / DeepMind** research scientist（论文时期为 Google Research / Brain） |
+| 代表论文 | **Small-scale proxies for large-scale Transformer training instabilities**（`2309.14322`，B 轨 #226 二作）· 文本生成评估与序列模型方向 |
+| 邮箱 | **未找到**（本轮未核到可确认的**现行**个人页；🚫 不用 2023 年论文 PDF 旧地址、🚫 不猜 `@google.com`） |
+| 主页 | **未找到**（`wortsman.github.io` 一类候选页均 `404` / 域名不存在；不臆写） |
+| X 账号 | **@peterjliu**（双源核验 2026-11-21 12:0x：X 页 `og:title` = `Peter J. Liu (@peterjliu) on X`、`og:description` = `Building @getcompoundai. Was Research Scientist @ Google Brain / DeepMind, language model research…`；`x.com/peterjliu` `200` / 162,821 B 经代理） |
+| 状态 | **待跟踪**（无公开明文邮箱 ⇒ 不发信；X 已核验，follow 需登录态，未自动执行） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：该文给出的**「小模型 + 高学习率」复现大模型 loss spike** 与 **QK-norm 压制注意力 logit 增长**，是 pretrain 线「2B 上先复现不稳定再上大模型」的预注册依据。 |
