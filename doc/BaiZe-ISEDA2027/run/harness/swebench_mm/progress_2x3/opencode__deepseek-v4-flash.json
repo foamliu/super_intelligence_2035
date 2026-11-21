@@ -3930,37 +3930,72 @@
   "carbon-design-system__carbon-7046": {
     "instance_id": "carbon-design-system__carbon-7046",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 165.9,
+    "rc": 0,
+    "model_patch_len": 22668,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "s all 4 variants (default, invalid, disabled, disabled+invalid)\n- `time-picker--light.hbs` - Same additions across all 4 light variants\n- `time-picker.config.js` - Added 'sm' and 'xl' variant entries\n",
+    "stderr_tail": "cker-story.js with size knob\n[✓] Update TimePickerSelect to pass through size\n[✓] Update time-picker.hbs and time-picker--light.hbs templates for size variants\n[✓] Verify all changes are correct\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7063": {
     "instance_id": "carbon-design-system__carbon-7063",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 155.6,
+    "rc": 0,
+    "model_patch_len": 3776,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "Added `Native` story example\n\n### Usage:\n```jsx\n<OrderedList native>\n  <ListItem>This will use native decimal numbering</ListItem>\n  <ListItem>Works correctly in Firefox</ListItem>\n</OrderedList>\n```\n",
+    "stderr_tail": "prop to OrderedList React component\n[✓] Add CSS for native ordered list mode in _list.scss\n[✓] Add tests for the new `native` prop\n[✓] Update story file with native example\n[✓] Verify tests pass\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7212": {
     "instance_id": "carbon-design-system__carbon-7212",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 49.5,
+    "rc": 0,
+    "model_patch_len": 393,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ed, but were missing from the PropTypes validation array (`ButtonKinds`). When Storybook rendered `<Button kind=\"danger-ghost\">`, React's PropTypes check rejected it as invalid, emitting the warning.\n",
+    "stderr_tail": "esign-system_carbon/packages/react/src/prop-types/types.js\n@@ -12,6 +12,7 @@\n   'ghost',\n   'danger--primary',\n   'danger--tertiary',\n   'danger-tertiary',\n+  'danger-ghost',\n   'tertiary',\n ];\n\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7270": {
     "instance_id": "carbon-design-system__carbon-7270",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 129.3,
+    "rc": 0,
+    "model_patch_len": 1554,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "sts couldn't run due to missing `browserslist-config-carbon` in this environment, but the fix follows the documented downshift API for `getToggleButtonProps` which explicitly supports a `ref` option.\n",
+    "stderr_tail": "Grep \"forwardRef|getToggleButtonProps\"\u001b[90m in packages/react/src/components/ComboBox · 2 matches\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/ComboBox/ComboBox.js\u001b[90m [limit=50, offset=380]\u001b[0m\n"
   },
   "carbon-design-system__carbon-7288": {
     "instance_id": "carbon-design-system__carbon-7288",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 236.2,
+    "rc": 0,
+    "model_patch_len": 5743,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "The callback receives a boolean (`true` when menu opens, `false` when it closes). Tests were added for both components verifying `onMenuChange` fires correctly on open/close and not on initial mount.\n",
+    "stderr_tail": "nuChange to FilterableMultiSelect.js (class component)\n[✓] Add tests for onMenuChange in MultiSelect-test.js\n[✓] Add tests for onMenuChange in FilterableMultiSelect-test.js\n[✓] Verify tests pass\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7350": {
     "instance_id": "carbon-design-system__carbon-7350",

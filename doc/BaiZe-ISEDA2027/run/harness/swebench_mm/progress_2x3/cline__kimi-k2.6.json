@@ -2166,9 +2166,16 @@
   "bpmn-io__bpmn-js-1442": {
     "instance_id": "bpmn-io__bpmn-js-1442",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 878.0,
+    "rc": 0,
+    "model_patch_len": 3687,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "orrection** still happens during batch creation, so pasted shapes end up in the correct container (the process, not the flow itself).\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1542": {
     "instance_id": "bpmn-io__bpmn-js-1542",
