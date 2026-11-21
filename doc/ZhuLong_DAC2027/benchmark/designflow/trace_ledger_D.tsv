@@ -789,7 +789,7 @@
 1793081107300_z1qdm.messages.json					parked		2026-11-05 22:00	peeked #282 unfit
 1789611712575_5tdum	mike	10.129.32.80	80	schematic_netlist	case	EDA-Eval-DesignFlow-SiInpTokenStrip-001	2026-11-05 22:49	
 1fxvk					parked		2026-11-05 22:49	Q&A/forensics 取证目录树非produce
-flxzl					parked		2026-11-05 22:49	vam-agent cell建模推荐分析非clean produce
+flxzl					case	CrcReplaceScan-001	2026-11-22 07:10	reconsideration->case (see full-slug row)
 ohuot					parked		2026-11-05 22:49	CXSA/LSA电路Q&A分析
 3cxb2					parked		2026-11-05 22:49	网表diff/编译时间分析+格雷码Q&A
 um5we					parked		2026-11-05 22:49	vecgen seed共享(digital pattern非shardD core)+n361大
@@ -987,7 +987,7 @@ wl9i4					parked		2026-11-05 22:49	交互shell驱动+Q&A n752大
 1791773912018_j4pvk					parked		2026-11-06 05:30	analysis Q&A (analyze RdLatencyCmd cell function / find CM cells)
 1793861227844_poh36					parked		2026-11-06 05:30	Aether L2 search+visualize CM cells distribution (needs live Aether)
 1790660523598_1fxvk					parked		2026-11-06 05:30	Q&A understand simulation directory purpose
-1793148627756_flxzl					parked		2026-11-06 05:30	recommendation Q&A which cells can be replaced (vam-agent)
+1793148627756_flxzl	e03179	hfhds201	162	schematic_netlist	case	CrcReplaceScan-001	2026-11-22 07:10	reconsideration: sub-deliverable (CRC-mode 判定+可替换cell识别) path-driven checkable; reframe crc_replace_scan.py L1 (r1092); prior 非 clean produce 针对 .va 受阻非此子交付
 1792565482572_2gmli					parked		2026-11-06 05:30	read/understand schematic circuit Q&A
 1792055748237_3cxb2					parked		2026-11-06 05:30	compare two netlists diff + root-cause compile-time
 1792118523831_f10db					parked		2026-11-06 05:30	debug: look at xa.log (Q&A)

@@ -33,3 +33,22 @@ r1091 为造题主线选料轮（上轮 r1090 紧急数据恢复 0 case，本轮
 - DEBT: 1 份 flxzl 重深读（可 reconsideration 为 CRC-replace L1 case，下轮决定是否 unpark 重造）
 - 增益：高 mc D-pure 池已采空（事实），后续造题须降 mc 门槛或 parked reconsideration
 - eda_flow session 已 close（清理）
+
+## r1092 reconsideration 已落地（flxzl unparked → case）
+r1092 决定：unpark flxzl，reframe 子交付为 `EDA-Eval-DesignFlow-CrcReplaceScan-001`（L1, schematic_netlist）。
+- eda_flow open_session(peek) 提取 trace 关键素材：msg#0 用户原文（完整 Golden008 仿真路径）、msg#8 search_codebase 结果（含 vam-agent/SKILL.md 的 CRC-mode 判定规则 + vam-agent/assets/config.json 结构 + gen_bnk_va 注释里的算法）、msg#11 agent 最终交付（CRC 配置判断结果表格：DSCQA / 无 CRC 关键字 → CRC 关闭 → D_CRCR10_CRCTop 可替换）。
+- 关键解锁：子交付**完全 path-driven**（sim path + config.json → CRC mode → replaceability），**不依赖** owner-only 的 netlist.presim 文件 → prior「非 clean produce」针对的是 .va 生成受阻（DSIM 产物缺失），**非**此 path-driven 子交付。判据成立，reconsideration 合规。
+- 决策算法（来自 config.json + gen_bnk_va 注释，trace 已捕获）：
+  - project 识别：config.project_crc_cells 的 key 小写后作子串在 path 里找
+  - crc_token：该项目的 crc_keywords 列表里第一个在 path 中出现的，或 null
+  - crc_mode：token==null 或 token∈crc_disable_values → DISABLED；否则 ENABLED
+  - replaceable：crc_mode==DISABLED 且 crc_cell 非空 → True
+- config.json 真实结构（DSCQA）：crc_cell=D_CRCR10_CRCTop, crc_keywords=[CRC_00,CRC_01,CRC_10,CRC_11], crc_disable_values=[CRC_00], note=...
+- asset A（可见，faithful）：真实 DSCQA config（+DSCHN 第二项目）+ 真实 Golden008 路径（无 CRC→DISABLED→可替换，即 trace 原案）+ CRC_01/CRC_00 变体（文档化命名约定）。
+- hidden B：MEMPHY/NVMCTL 项目 + ECC_*/CHK_* 关键词 + D_MemPhyCrcTop/D_NvmCtlChkTop cell，6 条路径（ECC_01/ECC_10/ECC_00/none/CHK_1/none）。
+- hidden A'（同名 config.json/paths.txt，异内容）：cell 全加 _R2 后缀 + disable_values 翻转（MEMPHY=[ECC_00,ECC_10], NVMCTL=[CHK_1]）→ ECC_10/CHK_1 在 A' 由 ENABLED 翻为 DISABLED，击穿 B-hardcode stub。
+- check.py k=16（a-n runtime 14 + o/p 由 negative_selftest 验证 §4.9 三假 + B-hardcode stub），独立 oracle 实时从 B/A' 文件算金值。
+- 自验：reference_submit.zip 跑 check.py PASS；negative_selftest 4 fake 全 FAIL，4 distinct fail letter（b/c/f/j）≥3。
+- D.jsonl 567→568，byte-sync test sha=7a8d5659c396ae7c/size=14104。
+- 台账 flxzl 两行（slug+full-slug）parked→case(CrcReplaceScan-001)。
+- flag: r1092 = reconsideration 造题轮 #3（flxzl unparked, CrcReplaceScan-001, k=16, path-driven 子交付 reframe）
