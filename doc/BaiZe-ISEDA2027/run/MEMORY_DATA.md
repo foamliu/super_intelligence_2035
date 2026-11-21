@@ -3,6 +3,9 @@
 WAITING: 0
 
 
+> 🟢 **心跳 · 2026-11-22 (R152) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R152 刷新点（iter 进度同步）：v3 报告全文 iter 278.5k→279.2k / 39.8%→39.9% / step 7.21s→7.23s（pretrain #2921，9/10步&lt;7.4s✅）/ 350k ETA 6.0→5.9天（~11-28不变）/ 700k ETA 35.2天（~12-26不变）/ latest ckpt 276k→278k（278k eval✅完成04:00:38，280k待落盘）/ header+R152 note+gantt+risk#7+G5+footer 同步更新。git fetch无新令(origin=7a5f443386 harness)。数据侧无新变化：PC-1~PC-5全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load=24.7✅ / /nas_user 42T✅ / v2 preserved / commit `data report:`+push / WAITING=0**。
+
+
 > 🟢 **心跳 · 2026-11-22 (R151) — v3 报告验证+例行巡检（无新令）：手动唤醒复核 v3 报告任务交付状态——`run/reports/report_s1s2_split_data_v3_zh.html`(55476B/460行)已落盘+已commit(4bd386dbdc)+已push；v2 保留未删(54100B)；v3 满足全部 6 条刷新要求（PC-1~PC-5全✅ / §0零重叠方案D+E / 时间线350k~11-28+700k~12-26 / §8数据源引用Nemotron arXiv2508.15096+MegaMath arXiv2504.02807+finemath+stack-v3 / 中文HTML自包含0外链0script）。git fetch无新令(HEAD=4eedc089df designflow)。pretrain #2914 iter=278600/700k(39.8%) step7.19s 不变。数据侧无新变化：PC-1~PC-5全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版 / 无后台任务 / .12 load=27.1✅ / /nas_user 42T✅。MEMORY_DATA 38.9KB✅<40KB。WAITING=0**。
 
 > 🟢 **心跳 · 2026-11-22 (R150) — 例行巡检（无新令）：git fetch origin 无新 data 令（所有用户令已交付，origin/main=51f99386ca；本地 HEAD=cccff9f6c3 为 pretrain #2914 提交，非 data 令）；pretrain #2914 报 iter=278600/700k(39.8%) step avg7.19s（n=20,max7.43s,19/20&lt;7.4s✅,1次spike未持续） loss2.008 0NaN/0skip✅ / 278k eval 运行中（daemon PID1081392,llama-server PID1665621,lm_eval PID1676099 ~69min,ETA~04:00） / latest ckpt=276k（278k eval 待落盘）/ 350k ETA≈6.0天(~11-28不变) / 700k ETA≈35.1天(~12-26不变)；v3 报告(R149)iter=278.5k 与当前 278.6k 偏差 0.1k(~12min)不刷新（ETA日期不变）；数据侧无新变化：PC-1~PC-5 全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务（无pc2/tokenize/blend/contam进程）/ .12 load=26.8✅&lt;120 .29 load=29✅ / /nas_user 42T✅&gt;5T红线。research 日报 11-22 data 建议「纯网页 vs 混合策展对照臂」（非约束参考，S1/S2配比已定不纳入本轮）。MEMORY_DATA 37.9KB✅&lt;40KB / TASK 37.8KB✅&lt;40KB。WAITING=0**。
