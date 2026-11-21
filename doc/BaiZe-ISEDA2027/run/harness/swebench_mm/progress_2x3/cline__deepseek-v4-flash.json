@@ -2985,30 +2985,58 @@
   "carbon-design-system__carbon-13421": {
     "instance_id": "carbon-design-system__carbon-13421",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 320.8,
+    "rc": 0,
+    "model_patch_len": 458,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ing bug in production builds and would benefit from a similar treatment, but the user's goal was specifically focused on DataTable.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-13527": {
     "instance_id": "carbon-design-system__carbon-13527",
     "route": "cline__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 318.9,
+    "rc": 0,
+    "model_patch_len": 3586,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "Expanded` goes from `true` to `false`), `SideNavMenu` receives the updated prop and its internal state resets, closing the submenu.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-13851": {
     "instance_id": "carbon-design-system__carbon-13851",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 251.1,
+    "rc": 0,
+    "model_patch_len": 10497,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ns used by other form components\\n- The `FluidTimePicker` component already fully supported `warn`/`warnText` and remains unchanged\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-14239": {
     "instance_id": "carbon-design-system__carbon-14239",
     "route": "cline__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 200.7,
+    "rc": 0,
+    "model_patch_len": 6449,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "prop — set `interactive` on `<ExpandableTile>` to force the `<div>`+button interactive rendering mode regardless of child content |\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-14476": {
     "instance_id": "carbon-design-system__carbon-14476",

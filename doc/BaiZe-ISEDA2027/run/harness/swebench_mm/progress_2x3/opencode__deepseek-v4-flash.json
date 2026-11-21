@@ -4266,30 +4266,58 @@
   "carbon-design-system__carbon-8945": {
     "instance_id": "carbon-design-system__carbon-8945",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 303.7,
+    "rc": 0,
+    "model_patch_len": 2738,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "21): Added the missing axe accessibility test.\n\n**`config/jest-config-carbon/package.json`** (line 31): Updated `axe-core` from `^4.1.1` to `^4.2.0` to enable the `nested-interactive` rule detection.\n",
+    "stderr_tail": "ponent structure\n[✓] Fix nested interactive controls violation (div role=button contains input)\n[✓] Add axe accessibility test for FileUploaderDropContainer\n[✓] Update axe-core version if needed\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-9074": {
     "instance_id": "carbon-design-system__carbon-9074",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 129.8,
+    "rc": 0,
+    "model_patch_len": 2881,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "nd\" legendId=\"my-legend-id\" name=\"group1\">\n  ...\n</RadioButtonGroup>\n```\n\nThis establishes the explicit `aria-labelledby` connection between the `fieldset` and its `legend` for screen reader support.\n",
+    "stderr_tail": "e (node:internal/modules/cjs/loader:1311:19)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/FormGroup/FormGroup.js\n\u001b[0m→ \u001b[0mRead packages/react/src/components/RadioButtonGroup/RadioButtonGroup.js\n"
   },
   "carbon-design-system__carbon-9136": {
     "instance_id": "carbon-design-system__carbon-9136",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 151.0,
+    "rc": 0,
+    "model_patch_len": 1121,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "wardRef(function ComboBox(props, ref) { ... })`\n- Line 311: Added `ref` to the `mergeRefs` call: `ref={mergeRefs(textInput, rootProps.ref, ref)}`\n- Line 392: Added `ComboBox.displayName = 'ComboBox'`\n",
+    "stderr_tail": "[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/ComboBox/ComboBox.js\u001b[90m [limit=10, offset=388]\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/ComboBox/ComboBox.js\u001b[90m [limit=15, offset=540]\u001b[0m\n"
   },
   "carbon-design-system__carbon-9189": {
     "instance_id": "carbon-design-system__carbon-9189",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 114.3,
+    "rc": 0,
+    "model_patch_len": 1251,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "erflowMenu.js:124`** — Added `OverflowMenu.displayName = 'OverflowMenu'` so the v11 (`next`) variant also has a proper display name, fixing the issue when the `enable-v11-release` feature flag is on.\n",
+    "stderr_tail": " log of this run can be found in: /home/app.e0031982/.npm/_logs/2026-11-21T17_31_26_375Z-debug-0.log\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Breadcrumb/BreadcrumbItem.js\u001b[90m [limit=55]\u001b[0m\n"
   },
   "carbon-design-system__carbon-9402": {
     "instance_id": "carbon-design-system__carbon-9402",

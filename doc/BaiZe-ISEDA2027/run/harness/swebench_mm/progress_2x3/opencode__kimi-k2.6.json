@@ -2427,9 +2427,16 @@
   "bpmn-io__bpmn-js-1719": {
     "instance_id": "bpmn-io__bpmn-js-1719",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1894.4,
+    "rc": 0,
+    "model_patch_len": 3747,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "nded subprocess with a labeled start event,\n2. simulates the reparenting of the label to the root (as `BpmnOrderingProvider` does),\n3. toggles collapse,\n4. asserts the label ends up inside the plane.\n",
+    "stderr_tail": "then\n+        var plane = elementRegistry.get(subProcess.id + '_plane');\n+\n+        expect(plane).to.exist;\n+        expect(plane.children).to.include(label);\n+      })\n+    );\n+\n+  });\n+\n+\n });\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1720": {
     "instance_id": "bpmn-io__bpmn-js-1720",
