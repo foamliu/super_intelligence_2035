@@ -2924,30 +2924,57 @@
   "carbon-design-system__carbon-12445": {
     "instance_id": "carbon-design-system__carbon-12445",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.9,
+    "rc": -1,
+    "model_patch_len": 2367449,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "carbon-design-system__carbon-13196": {
     "instance_id": "carbon-design-system__carbon-13196",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 180.4,
+    "rc": 0,
+    "model_patch_len": 3515,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " 95): `\"doesn't render sideLabel if props.hideLabel and props['aria-labelledby'] are provided\"` → `\"doesn't render label and uses div when props.hideLabel and props['aria-labelledby'] are provided\"`.\n",
+    "stderr_tail": "\n[✓] Explore the Toggle component implementation to understand hideLabel behavior\n[✓] Fix hideLabel to work without requiring aria-labelledby\n[✓] Improve Storybook docs for Toggle hideLabel prop\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-13218": {
     "instance_id": "carbon-design-system__carbon-13218",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 47.7,
+    "rc": 0,
+    "model_patch_len": 2402,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " with `$text-primary` color (lines 272-275)\n\n**`packages/react/src/components/Notification/stories/ActionableNotification.stories.js`**\n- Added `caption=\"Caption text\"` to the Default story (line 38)\n",
+    "stderr_tail": "t/src/components/Notification/Notification.js\u001b[90m [limit=20, offset=625]\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/styles/scss/components/notification/_actionable-notification.scss\u001b[90m [limit=30, offset=252]\u001b[0m\n"
   },
   "carbon-design-system__carbon-13224": {
     "instance_id": "carbon-design-system__carbon-13224",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 372.0,
+    "rc": 0,
+    "model_patch_len": 1507,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " button and trigger\n- Supports `size` prop (sm/md/lg/xl/2xl) with proportional trigger sizing\n- Ref forwards to the primary `<Button>` element\n- Menu opens below the trigger aligned to the right edge\n",
+    "stderr_tail": " ComboButton index.js barrel export\n[✓] Add ComboButton export to packages/react/src/index.js\n[✓] Create ComboButton stories file\n[✓] Add ComboButton SCSS styles\n[✓] Verify the build/lint passes\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-13317": {
     "instance_id": "carbon-design-system__carbon-13317",
