@@ -2193,9 +2193,16 @@
   "bpmn-io__bpmn-js-1542": {
     "instance_id": "bpmn-io__bpmn-js-1542",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 822.5,
+    "rc": 0,
+    "model_patch_len": 3039,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "c/features/modeling/behavior/DropOnFlowBehaviorSpec.js` – added an integration test that reproduces the crash by dropping a gateway on a labeled flow near the source.\n\nAll modified files pass ESLint.\n",
+    "stderr_tail": "LayoutUtilSpec.js test/spec/features/modeling/behavior/DropOnFlowBehaviorSpec.js\n(no output)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/features/modeling/behavior/util/LabelLayoutUtil.js\u001b[90m [offset=100, limit=30]\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1557": {
     "instance_id": "bpmn-io__bpmn-js-1557",
