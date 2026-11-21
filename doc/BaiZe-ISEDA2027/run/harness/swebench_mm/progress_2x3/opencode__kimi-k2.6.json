@@ -2317,23 +2317,44 @@
   "bpmn-io__bpmn-js-1636": {
     "instance_id": "bpmn-io__bpmn-js-1636",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 362.5,
+    "rc": 0,
+    "model_patch_len": 4319,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "t/spec/features/modeling/behavior/SubProcessBehavior.start-event.bpmn`**\n- Added a `CallActivity_1` element (with its DI shape) to the test fixture so the new tests have a call activity to work with.\n",
+    "stderr_tail": "es\n[✓] Identify difference between task->subprocess and callActivity->subprocess morphing\n[✓] Implement fix to add start event when morphing call activity to expanded subprocess\n[✓] Test the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1638": {
     "instance_id": "bpmn-io__bpmn-js-1638",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 411.8,
+    "rc": 0,
+    "model_patch_len": 467,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "sed Karma test suite because the environment has a pre-existing Node.js 20 + webpack 4 incompatibility issue that is unrelated to this fix. The CI for this project is configured to run on Node.js 14.\n",
+    "stderr_tail": "os\n[✓] Explore codebase to understand label handling\n[✓] Find where di.label is set/cleared when label is removed\n[✓] Implement fix to remove di.label property entirely\n[✓] Verify fix with tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1640": {
     "instance_id": "bpmn-io__bpmn-js-1640",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 782.8,
+    "rc": 0,
+    "model_patch_len": 4224,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "o Chrome/Chromium browser available and the project's `karma-webpack` v3 setup has compatibility issues with Node 20's OpenSSL 3. However, both modified files pass `eslint` and structural validation.\n",
+    "stderr_tail": "nality);\n+        })\n+      );\n+\n     });\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore codebase to find multi-instance marker handling\n[✓] Identify root cause of lost properties\n[✓] Implement fix and verify\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1644": {
     "instance_id": "bpmn-io__bpmn-js-1644",

@@ -2138,16 +2138,30 @@
   "bpmn-io__bpmn-js-1434": {
     "instance_id": "bpmn-io__bpmn-js-1434",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1508.0,
+    "rc": 0,
+    "model_patch_len": 6071,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ehaviour`, which is untouched.\\n\\nWould you like me to proceed with any additional verification, or shall we move to executing tests?\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "t-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n      at processTicksAndRejections (unknown:7:39)\n\n"
   },
   "bpmn-io__bpmn-js-1438": {
     "instance_id": "bpmn-io__bpmn-js-1438",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 871.7,
+    "rc": 0,
+    "model_patch_len": 2862,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "vironment due to the absence of Chrome/Puppeteer, but the code follows the existing patterns and conventions of the codebase exactly.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1442": {
     "instance_id": "bpmn-io__bpmn-js-1442",
