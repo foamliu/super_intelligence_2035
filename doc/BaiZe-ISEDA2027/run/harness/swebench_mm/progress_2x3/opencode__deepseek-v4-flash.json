@@ -4420,9 +4420,16 @@
   "eslint__eslint-14033": {
     "instance_id": "eslint__eslint-14033",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 884.7,
+    "rc": 0,
+    "model_patch_len": 1558,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "This overlaps with `no-undef-init`'s fix, and since `prefer-const`'s fix sorts first (earlier start position), `no-undef-init`'s fix gets skipped. Result: `const foo = undefined;` — valid JavaScript.\n",
+    "stderr_tail": "tend fix range when init is undefined to overlap with no-undef-init's fix\n[✓] Verify fix handles all edge cases correctly\n\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/rules/prefer-const.js\u001b[90m [offset=448, limit=25]\u001b[0m\n"
   },
   "eslint__eslint-14242": {
     "instance_id": "eslint__eslint-14242",
