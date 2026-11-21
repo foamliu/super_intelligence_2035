@@ -723,3 +723,4 @@ gital	case	PtuGuiRecomputeProduce-001	2026-11-20 03:26
 1795074289377_6ibes.messages.json	e0039218	hfeg0pgn145	342	digital	case	EDA-Eval-DesignFlow-PevaveTaskSvDiffAnalyzeQA-001	2026-11-21 18:47	
 1795071099634_c3dxb.messages.json	lorikx	hfeg0plg15	24	digital	parked		2026-11-21 19:31	incomplete_trace_no_gold_14msgs_assistant_undelivered
 1795161247561_rtcv6.messages.json	zlhou	hfeg0plg15	253	digital	case	EDA-Eval-DesignFlow-MkfileUnknownVarFailFastQA-001	2026-11-21 19:31	
+1795225169331_tutv7.messages.json	e03101	hfeg0plg15	62	verification	parked		2026-11-21 19:48	ssh_blocked_infra_partial_deepread_r949
