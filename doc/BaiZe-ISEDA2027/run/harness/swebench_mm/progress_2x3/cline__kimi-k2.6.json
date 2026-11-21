@@ -2454,37 +2454,72 @@
   "bpmn-io__bpmn-js-1847": {
     "instance_id": "bpmn-io__bpmn-js-1847",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 509.0,
+    "rc": 0,
+    "model_patch_len": 3444,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ich now gracefully falls back to `createElement` whenever append is not possible, ensuring the `a` shortcut always works as designed.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1928": {
     "instance_id": "bpmn-io__bpmn-js-1928",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 611.1,
+    "rc": 0,
+    "model_patch_len": 3343,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "lint` passes with no errors\\n- No new TypeScript errors introduced (`generate-types:test` errors are pre-existing in unrelated files)\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-2024": {
     "instance_id": "bpmn-io__bpmn-js-2024",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 9.3,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "age\":{\"inputTokens\":0,\"outputTokens\":0,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":5897,\"text\":\"openai_error\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "{\"ts\":\"2026-11-21T21:19:06.565Z\",\"type\":\"error\",\"message\":\"openai_error\"}\n"
   },
   "carbon-design-system__carbon-10188": {
     "instance_id": "carbon-design-system__carbon-10188",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 332.5,
+    "rc": 0,
+    "model_patch_len": 3344,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " consistently renders both menu items and the selected item in the button, with `item.text` used for the accessible `title` attribute\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-10214": {
     "instance_id": "carbon-design-system__carbon-10214",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 160.2,
+    "rc": 0,
+    "model_patch_len": 1928,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "button>`\\n\\nThe existing snapshots don't cover the `isSortable={true}` case, so no snapshot updates were required for existing tests.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-10225": {
     "instance_id": "carbon-design-system__carbon-10225",

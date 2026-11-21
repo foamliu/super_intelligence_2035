@@ -2748,23 +2748,44 @@
   "carbon-design-system__carbon-12302": {
     "instance_id": "carbon-design-system__carbon-12302",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 404.4,
+    "rc": 0,
+    "model_patch_len": 589,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "eads “1 page”, “2 page”, etc., removing the duplication while still allowing consumers to customize `pageText` if needed.\n\nI ran the existing Pagination unit tests and they all pass after the change.\n",
+    "stderr_tail": "g /packages\\/react\\/src\\/components\\/Pagination\\/Pagination-test.js/i.\n\u001b[0m\n\u001b[0m$ \u001b[0mrm __mocks__/icons-react.js temp-jest.config.js && rmdir __mocks__ 2>/dev/null; echo \"cleaned up\"\ncleaned up\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12329": {
     "instance_id": "carbon-design-system__carbon-12329",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 650.6,
+    "rc": 0,
+    "model_patch_len": 2019,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ound pattern described in the issue and restoring ref support that was available in v10.\n\nThe syntax of both files has been validated with Babel, and `eslint` reports no issues on the modified files.\n",
+    "stderr_tail": "\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Find and analyze DatePicker component source code\n[✓] Refactor DatePicker to use forwardRef\n[✓] Update/add tests for forwardRef behavior\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12332": {
     "instance_id": "carbon-design-system__carbon-12332",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 136.8,
+    "rc": 0,
+    "model_patch_len": 695,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " restoring alignment with the circles. All other packages (`@carbon/react`, `@carbon/components`, etc.) forward from this source-of-truth styles package, so this single change covers every framework.\n",
+    "stderr_tail": " 15 matches\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore codebase for ProgressIndicator component styles\n[✓] Identify and fix skeleton text misalignment in vertical progress indicator\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12384": {
     "instance_id": "carbon-design-system__carbon-12384",

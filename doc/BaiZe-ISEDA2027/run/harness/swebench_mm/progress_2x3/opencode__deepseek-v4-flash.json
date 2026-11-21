@@ -4798,9 +4798,16 @@
   "grommet__grommet-7025": {
     "instance_id": "grommet__grommet-7025",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 819.2,
+    "rc": 0,
+    "model_patch_len": 3284,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "/DataContext.js`\n- Added `defaultView: {}` to default context value\n\n### Modified: `components/index.js`\n- Added `export * from './DataClearFilters'` (alphabetically between DataChart and DataFilter)\n",
+    "stderr_tail": "a's auto-toolbar rendering in Data.js\n[✓] Export DataClearFilters from components/index.js\n[✓] Sync touched state in DataFilters with external view changes (useEffect)\n[✓] Verify with tests/lint\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2684": {
     "instance_id": "highlightjs__highlight.js-2684",
