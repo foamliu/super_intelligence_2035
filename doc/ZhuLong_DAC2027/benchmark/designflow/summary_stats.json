@@ -27,8 +27,8 @@
   "mc500": 133,
   "mc5_recompute": {
     "auto_stop": {
-      "consecutive_zero_case_rounds": 1,
-      "note": "r957 0-case round (1st consecutive after r956 case). Peeked 125 A-domain cands (mc>=5 A-ratio>=0.4: 80 cands, 79/80 in ledger, 1 fresh xiqxa REJECTED non-design_flow skill-brainstorm; mc 3-4 A-ratio>=0.4: 45 fresh, sampled 3/45 all trivial 'hello'/'generate md'). A-domain fresh pool at mc>=5 heavily depleted (79/80 consumed). r794 OVERTURN still holds (mc>=5 active). Counter=1, threshold=3 NOT met.",
+      "consecutive_zero_case_rounds": 2,
+      "note": "r958 0-case round (2nd consecutive after r956 case). Re-verified A-domain mc>=5 fresh pool on scan 20261121_151844 with A-ratio>=0.4 filter: peeked 40 unique A-pure candidates (mc 5-1576), ALL 40 in 4-shard ledger (case/parked), 0 FRESH. Top 9 (w4x70/brnqb/cwq7f/1wvdl/f6x1i/40uq0/ppl5a/6i6lk/vi5wa) all ledgered. r957's xiqxa (only fresh at mc>=5) already parked/rejected. Pool PROVABLY exhausted (40/40 ledgered). Stop-loss threshold=3 NOT met (1 more 0-case round triggers revert shard_mc.A->10). 15:1x rescan: ssh_eda_search driver not in either repo; new day 11-22 quota available but 698-machine scan infeasible in 40-min budget. Governance: §4.9 anti-hardcode audit on r956 CovEillenIllegalBinsAnalyzeQA-001 = ALL PASS (ref 14/14, 5 negs FAIL). shard_mc.A=5 maintained.",
       "threshold_rounds": 3
     },
     "computed_at": "2026-11-18T08:30:00+08:00",
@@ -278,7 +278,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-21 23:50",
+  "updated_at": "2026-11-22T00:12:04.163541+08:00",
   "users_mc10": 559,
   "users_mc100": 182,
   "users_mc30": 401,
