@@ -1808,16 +1808,29 @@
   "bpmn-io__bpmn-js-1083": {
     "instance_id": "bpmn-io__bpmn-js-1083",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 720771,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "bpmn-io__bpmn-js-1085": {
     "instance_id": "bpmn-io__bpmn-js-1085",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 582.3,
+    "rc": 0,
+    "model_patch_len": 672,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ram element only, and the DI edge (`businessObject.di.waypoint`) is updated correctly by `BpmnUpdater`, so the exported XML no longer contains the illegal `waypoints` attribute on the `sequenceFlow`.\n",
+    "stderr_tail": "g/behavior/LayoutConnectionBehavior.js\n\u001b[0m✱ \u001b[0mGrep \"updateProperties.*\\{\\s*waypoints\"\u001b[90m in . · 0 matches\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"waypoints.*xml|xml.*waypoints|saveXML\"\u001b[90m in test · 14 matches\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1092": {
     "instance_id": "bpmn-io__bpmn-js-1092",

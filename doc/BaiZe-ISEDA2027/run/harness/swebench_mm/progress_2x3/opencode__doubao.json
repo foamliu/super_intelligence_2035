@@ -6624,37 +6624,72 @@
   "scratchfoundation__scratch-gui-2778": {
     "instance_id": "scratchfoundation__scratch-gui-2778",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 264.9,
+    "rc": 0,
+    "model_patch_len": 347,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "cess to GitHub is blocked), which is unrelated to the autoprefixer update. The update is complete and will work correctly once dependencies are installed in an environment with proper network access.\n",
+    "stderr_tail": "e you have the correct access rights\nnpm error and the repository exists.\nnpm error A complete log of this run can be found in: /home/app.e0031982/.npm/_logs/2026-11-21T03_26_08_961Z-debug-0.log\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-3342": {
     "instance_id": "scratchfoundation__scratch-gui-3342",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 131.7,
+    "rc": 0,
+    "model_patch_len": 1775,
+    "n_images": 6,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ded watermark element and costume URL fetching\n- `/dev/shm/harness_mm_2x3/workdirs/opencode__doubao/scratchfoundation_scratch-gui/src/containers/blocks.css`: Added styling for watermark and container\n",
+    "stderr_tail": "$space * 2;\n+    right: $space * 3;\n     max-width: 3rem;\n     max-height: 3rem;\n     opacity: 0.35;\n-    z-index: 20;\n+    z-index: 0;\n     pointer-events: none;\n }\n \n [dir=\"rtl\"] .watermark {\n\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-4568": {
     "instance_id": "scratchfoundation__scratch-gui-4568",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 126.1,
+    "rc": 0,
+    "model_patch_len": 4031,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " menu for sliders, added new menu items\n- `src/containers/monitor.jsx`: Added handlers for changing min/max values\n- `src/components/monitor/slider-monitor.jsx`: Already supports custom min/max props\n",
+    "stderr_tail": "id=\"gui.monitor.contextMenu.sliderMax\"\n+        />\n+    </MenuItem>}\n {props.onImport &&\n     <MenuItem onClick={props.onImport}>\n         <FormattedMessage\n             defaultMessage=\"import\"\n\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-5039": {
     "instance_id": "scratchfoundation__scratch-gui-5039",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 124.9,
+    "rc": 0,
+    "model_patch_len": 1371,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "sures no OS context menu ever appears for sprite items\n- The blur listener fixes the drag state not resetting when dragging outside the browser window\n\nThese resolve both parts of the reported issue.\n",
+    "stderr_tail": "tor-item.test.jsx\n> scratch-gui@0.1.0 test:unit\n> jest test[\\\\/]unit test/unit/components/sprite-selector-item.test.jsx test/unit/containers/sprite-selector-item.test.jsx\n\nsh: 1: jest: not found\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-8492": {
     "instance_id": "scratchfoundation__scratch-gui-8492",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 728.6,
+    "rc": 0,
+    "model_patch_len": 1522068,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "xed! Updated react-modal from 3.9.1 to 3.16.1, which resolves the issue where dragging outside the sound recording modal closes it and loses work, matching the fix referenced in scratch-www PR #2987.\n",
+    "stderr_tail": "tch-gui\n  397 files checked.\n  testMatch: **/__tests__/**/*.js?(x),**/?(*.)(spec|test).js?(x) - 58 matches\n  testPathIgnorePatterns: src/test.js - 396 matches\nPattern: modal.test.jsx - 0 matches\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-8891": {
     "instance_id": "scratchfoundation__scratch-gui-8891",

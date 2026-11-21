@@ -2382,23 +2382,44 @@
   "bpmn-io__bpmn-js-1655": {
     "instance_id": "bpmn-io__bpmn-js-1655",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 475.4,
+    "rc": 0,
+    "model_patch_len": 2076,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "\n\n**Tests**: Updated the existing test to use distinct colors for stroke (`FUCHSIA`) and fill (`YELLOW`) to verify stroke is chosen, and added a new test to verify the fill-only fallback still works.\n",
+    "stderr_tail": "ng\n[✓] Implement fix: external labels should use stroke color instead of fill color\n[✓] Update test to properly verify stroke vs fill color on external labels\n[✓] Run lint to verify code quality\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1659": {
     "instance_id": "bpmn-io__bpmn-js-1659",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 667.3,
+    "rc": 0,
+    "model_patch_len": 847,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "heir segment index adjusted by the offset (clamped to valid range), matching the pattern used by `segmentMove` and `bendpointMove` handlers. Special cases for first/last segment labels are preserved.\n",
+    "stderr_tail": "nStart/End hints are set and offset !== 0\n[✓] Fix findNewLineStartIndex in LayoutUtil.js to handle middle segment labels during connectionStart/End with offset !== 0\n[✓] Verify the fix with lint\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1677": {
     "instance_id": "bpmn-io__bpmn-js-1677",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 393.7,
+    "rc": 0,
+    "model_patch_len": 577,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "uments, so passing `event.element` was a no-op (any truthy value returns `!!this._active`). Calling `cancel()` unconditionally is fine since `cancel()` already guards with `if (!this._active) return`\n",
+    "stderr_tail": "e bug\n[✓] Find the root cause in LabelEditingProvider.js\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/features/label-editing/LabelEditingProvider.js\u001b[90m [limit=15, offset=58]\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1679": {
     "instance_id": "bpmn-io__bpmn-js-1679",
