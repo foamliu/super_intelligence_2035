@@ -4070,23 +4070,44 @@
   "carbon-design-system__carbon-7722": {
     "instance_id": "carbon-design-system__carbon-7722",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 292.6,
+    "rc": 0,
+    "model_patch_len": 806,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "cus, the entire field shows the outline\n2. Added `outline: none` on `.bx--list-box__field .bx--text-input:focus` to prevent the native text-input focus outline from showing (avoiding double outlines)\n",
+    "stderr_tail": "ponent codebase to understand the issue\n[✓] Identify the root cause of the focus outline being on the wrong node\n[✓] Implement the fix for filterable multiselect focus outline\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7768": {
     "instance_id": "carbon-design-system__carbon-7768",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 227.6,
+    "rc": 0,
+    "model_patch_len": 14996,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "src/components/MultiSelect/FilterableMultiSelect.js`**: Removed redundant `title` prop from `<ListBox.MenuItem>`\n- **Updated snapshots** for `Dropdown`, `ListBoxMenuIcon`, and `FilterableMultiSelect`\n",
+    "stderr_tail": "tle=\"\u001b[90m in packages/react/src/components/MultiSelect/__tests__/__snapshots__ · 0 matches\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"aria-label=\\\"(Open|Close) menu\\\"\"\u001b[90m in packages/react/src/components · 0 matches\u001b[0m\n"
   },
   "carbon-design-system__carbon-7908": {
     "instance_id": "carbon-design-system__carbon-7908",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 254.7,
+    "rc": 0,
+    "model_patch_len": 1159,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ince the outer element is now a `<div>` (non-interactive by default) rather than a `<button>`, and the `stopPropagation` in `ListBoxSelection` prevents the inner button from triggering the outer one.\n",
+    "stderr_tail": "222]\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"<button[^>]*list-box__field\"\u001b[90m in packages/react/src/components · 0 matches\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"<ListBox\\.Selection\"\u001b[90m in packages/react/src/components · 13 matches\u001b[0m\n"
   },
   "carbon-design-system__carbon-8022": {
     "instance_id": "carbon-design-system__carbon-8022",

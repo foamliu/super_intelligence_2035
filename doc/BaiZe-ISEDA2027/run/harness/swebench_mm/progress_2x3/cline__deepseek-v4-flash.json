@@ -2859,9 +2859,16 @@
   "carbon-design-system__carbon-12430": {
     "instance_id": "carbon-design-system__carbon-12430",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 432.5,
+    "rc": 0,
+    "model_patch_len": 5911,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "true`. When `readOnly` is `false`, downshift's `toggleButtonProps` handlers pass through unobstructed, and the menu opens normally.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-12435": {
     "instance_id": "carbon-design-system__carbon-12435",
