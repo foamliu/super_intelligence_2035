@@ -1965,3 +1965,5 @@ vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:
 3vvv0	hao21l	hfeg0pkn004	276	analog_context	case	EDA-Eval-DesignFlow-TbArchDataflowProduce-001	2026-11-21 11:21	
 1794469889494_pr2uh	chapinc	hfeg0pkn002	1186	schematic_netlist	case	EDA-Eval-DesignFlow-MosfetBlockInventoryQA-001	2026-11-21 11:57	
 1794965889936_v595l	jolinz	hfeg0pkn001	385	analog_context	case	EDA-Eval-DesignFlow-DqRouting1p6WriteAnalyzeProduce-001	2026-11-21 12:45	
+1794981212067_pi7p8	jiashengz	hfeg0plg92	168	schematic_netlist	parked		2026-11-21 13:02	host hfeg0plg92 cluster alias multi-IP home not NFS-shared, cannot fetch trace
+1795071662224_u3e1z	xavierw	hfeg0pkn002	329	schematic_netlist	case	EDA-Eval-DesignFlow-TrkwlConnExplainQA-001	2026-11-21 13:23	
