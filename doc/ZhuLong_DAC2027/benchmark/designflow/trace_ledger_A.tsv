@@ -736,3 +736,4 @@ im5c1	lorikx	hfeg0plg15	266	verification	case	EDA-Eval-DesignFlow-SvTbVcdFsdbVer
 1795142163261_ff8hl.messages.json	lein	hfeg0pkn005	143	digital	case	EDA-Eval-DesignFlow-IsoLationUndeclDiagnoseQA-001	2026-11-22 02:41	
 1794993711733_9ofdu.messages.json	rose3wang	hfeg0pkn003	154	digital	case	EDA-Eval-DesignFlow-EcoSpareGenProduce-001	2026-11-22 03:07	
 1794790788542_yk8qc	lein	hfeg0plg79	321	digital	case	EDA-Eval-DesignFlow-RefreshSmokeRunProduce-001	2026-11-22 03:59	r966 fresh A-domain top mc321 verilog:3641 netlist:145 .def:37 systemverilog:32
+1794969685019_elb1i	rose3wang	hfeg0pkn003	144	digital	case	EDA-Eval-DesignFlow-PwrSeqRecoveryProduce-001	2026-11-22 04:26	r966 case: PwrSeqRecoveryProduce-001, k=16/16, $recovery power-seq timing-check gen, ref PASS+3fake FAIL+neg FAIL
