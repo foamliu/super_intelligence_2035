@@ -54,7 +54,7 @@ code{background:#f3f4f6;padding:1px 5px;border-radius:4px;font-size:.85em}
 </div>
 
 <h2>§1 波形 RL 探索（CPU 阶段，.12）</h2>
-<p class="muted">机器：10.239.2.12（whag0pgpuap12，GPU 当时让给 pretrain，本线改用 CPU）｜数据源：<code>vision/wave_rl/</code> 各 <code>experiment_results.json</code> / <code>v10_summary.json</code> / <code>v11_summary.json</code>｜报告：<code>reports/report_vision_vqa_restored_probe_zh.html</code>（v5 类型分类探针）、<code>reports/report_vision_cot_vqa_result_zh.html</code>（CoT 60→90%）、<code>reports/report_vision_vqa_strengthen_v2_zh.html</code>（v2 强化）</p>
+<p class="muted">机器：10.239.2.12（whag0pgpuap12，GPU 当时让给 pretrain，本线改用 CPU）｜数据源：<code>vision/wave_rl/</code> 各 <code>experiment_results.json</code>（v2–v11；v5 类型分类结果落盘于 .12 <code>cpu_rl_v5_typecls/experiment_results.json</code>，归档 wake#893）/ <code>v10_results/v10_summary.json</code> / <code>v11_results/v11_summary.json</code>｜报告：<code>reports/report_vision_cot_vqa_result_zh.html</code>（CoT 60→90%）、<code>reports/report_vision_vqa_strengthen_v2_zh.html</code>（v2 强化）</p>
 <div class="verdict pos">核心结论：在 CPU pilot 规模下，<b>v5 波形类型 4 分类 + RFT</b> 是唯一统计显著的正结果（A16%→B37%→C53%，McNemar p=0.0009，Bootstrap CI=[+7,+25]，cheat_rate=0）；v2–v4 与 v6–v11 共 9 轮均无净增益，负结果如实记录。</div>
 
 <h3>1.1 版本全景（v2 → v11，诚实口径）</h3>
