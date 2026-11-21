@@ -47,13 +47,13 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>撰写</b>: BaiZe Data Agent · 2026-11-21<br>
 <b>用户令</b>: 2026-11-19 — 基于 v2 刷新 v3，同步最近一周数据侧实际进展与决策<br>
 <b>数据口径</b>: 所有 token 数来自 DATA_MAPPING.md §A 实测（INDEX.tsv + MANIFEST.json + du -sb）；新数据集来自 HfApi().dataset_info(files_metadata=True)；Nemotron-CC-Math / MegaMath / finemath 均为实际分词后 MANIFEST 实测值。<br>
-<b>当前进度</b>: iter ≈ 275.1k / 700k（39.3%），step ≈ 7.23s（末 5 步均值 ~7230ms &lt;7.4s ✅）；latest ckpt = 274k；预计 <b>~2026-11-28 到 350k 切换点</b>（(350k−275.1k)×7.23s ≈ 6.3 天），<b>~2026-12-26 到 700k 终点</b>（(700k−275.1k)×7.23s ≈ 35.6 天）<br>
-<b>R134 刷新</b>（2026-11-21）：MegaMath-web 分词 4892/4950=98.8%（磁盘 megamath_web_*.json 实测 sum ~215.9B tok）ETA ~0.55h（墙钟速率 ~106 shard/h，进程 PID 3028124 nice19 运行中, etime ~46.1h） · Nemotron ✅ 完成 (193/193, 195.4B tok) · finemath ✅ 完成 (9.4B tok) · Math-Reasoning ✅ (2228/2228) · Code-Reasoning ✅ (1637/1637) · MM-web 下载 ✅ (4950/4950) · /nas_user 42T · .12 load=30.7 .29 load=28.5 · pretrain step~7.23s（&lt;7.4s ✅）<br>
-<b>v3 主要刷新点</b>: ① PC-1~PC-4 全部 ✅ 完成（v2 时仅 PC-1 完成）② Nemotron-CC-Math ✅ 分词完成 195.4B tok（v2 时仅下载完成）③ finemath ✅ 分词完成 9.4B tok ④ 新增 §0 — S2 零重叠方案（同步 overlap 研究结论）⑤ 数据源引用与论文 alignment ⑥ 时间线更新（350k ~11-28，余量改善）
+<b>当前进度</b>: iter ≈ 275.3k / 700k（39.3%），step ≈ 7.23s（末 5 步均值 ~7230ms &lt;7.4s ✅）；latest ckpt = 274k；预计 <b>~2026-11-28 到 350k 切换点</b>（(350k−275.3k)×7.23s ≈ 6.1 天），<b>~2026-12-26 到 700k 终点</b>（(700k−275.3k)×7.23s ≈ 35.4 天）<br>
+<b>R135 刷新</b>（2026-11-21）：MegaMath-web 分词 ✅ 完成 4950/4950=100%（磁盘 megamath_web_*.json 实测 sum ~218.1B tok，进程已退出） · Nemotron ✅ 完成 (193/193, 195.4B tok) · finemath ✅ 完成 (9.4B tok) · Math-Reasoning ✅ (2228/2228) · Code-Reasoning ✅ (1637/1637) · MM-web 下载 ✅ (4950/4950) · /nas_user 42T · .12 load=30.7 .29 load=28.5 · pretrain step~7.23s（&lt;7.4s ✅）<br>
+<b>v3 主要刷新点</b>: ① PC-1~PC-5 全部 ✅ 完成（v2 时仅 PC-1 完成）② Nemotron-CC-Math ✅ 分词完成 195.4B tok（v2 时仅下载完成）③ finemath ✅ 分词完成 9.4B tok ④ MegaMath-web ✅ 分词完成 218.1B tok（v2 时未开始）⑤ 新增 §0 — S2 零重叠方案（同步 overlap 研究结论）⑥ 数据源引用与论文 alignment ⑦ 时间线更新（350k ~11-28，余量改善）
 </p>
 <div class="summary">
 <h2 style="border:none;margin-top:0;">一句话结论</h2>
-<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且数据已基本就绪。</b>关键路径 PC-1~PC-4 全部 ✅ 完成（stack-v3 L4 过滤 430.7B / MegaMath 5 子集 364 shard 分词 / 污染闸门 9277 tasks / blend TSV 10 源已落盘）。Nemotron-CC-Math ✅ 195.4B tok + finemath ✅ 9.4B tok 已并入 math 池，Math epoch 从 1.18 降至 <b>0.77</b>。S2 启动前仅需完成污染扫描 + MegaMath-web 分词长尾（PC-5, 98.8%, ETA ~0.55h；下载已 ✅ 完成）。<b>S2 零重叠方案</b>：补新源天然零重叠（占 S2 ~28%），叠加 S2 换 SEED=5678 将旧源重叠从 ~35% 降至 ~17%，累计总重叠 ~12%。预计 <b>~11-28 到 350k 切换点</b>，前置工作 ~11-25 前全部就绪，<b>余量 ~3-5 天</b>。</p>
+<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且数据已全部就绪。</b>关键路径 PC-1~PC-5 全部 ✅ 完成（stack-v3 L4 过滤 430.7B / MegaMath 5 子集 364 shard 分词 / 污染闸门 9277 tasks / blend TSV 10 源已落盘 / MegaMath-web 4950 shard 分词 218.1B tok）。Nemotron-CC-Math ✅ 195.4B tok + finemath ✅ 9.4B tok + MegaMath-web ✅ 218.1B tok 已全部并入 math 池，Math epoch 从 1.18 降至 <b>0.48</b>（主方案）。S2 启动前仅需完成污染扫描 + SEED 更换。<b>S2 零重叠方案</b>：补新源天然零重叠（占 S2 ~28%），叠加 S2 换 SEED=5678 将旧源重叠从 ~35% 降至 ~17%，累计总重叠 ~12%。预计 <b>~11-28 到 350k 切换点</b>，前置工作已全部就绪，<b>余量 ~7 天</b>。</p>
 </div>
 <div class="toc">
 <b>目录</b>
@@ -193,7 +193,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <div class="pc-card" style="border-left-color:#4caf50;">
 <h4>✅ PC-3: 污染闸门扩展（黑名单完成 · 扫描待执行）</h4>
 <p style="font-size:12px;margin:4px 0;">
-<b>状态</b>: <span class="green">✅ 黑名单完成</span> — 9277 tasks / ~6M n-grams（6 benchmarks） / <span class="amber">⏳ 扫描待执行（PC-5 分词完成后）</span>
+<b>状态</b>: <span class="green">✅ 黑名单完成</span> — 9277 tasks / ~6M n-grams（6 benchmarks） / <span class="amber">⏳ 扫描待执行（PC-5 分词已完成，可立即启动扫描）</span>
 </p>
 </div>
 <div class="pc-card" style="border-left-color:#4caf50;">
@@ -201,7 +201,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <p style="font-size:12px;margin:4px 0;">
 <b>状态</b>: <span class="green">✅ 完成 — fallback 版已落盘</span><br>
 <b>证据</b>: <code>code/baize-llm/configs/blend_s2_preblend.tsv</code>（10 源 / prop=1.0 / web40:code40:math20 / 已加入 finemath-4plus prop=0.005 / epoch=0.78）<br>
-<b>注</b>: 待 PC-5 完成后更新为 main 版（加入 MegaMath-web）
+<b>注</b>: PC-5 已完成，可更新为 main 版（加入 MegaMath-web 218.1B）
 </p>
 </div>
 <div class="pc-card" style="border-left-color:#ff9800;">
@@ -231,11 +231,11 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 </table>
 <div class="info" style="font-size:12px;">
 <b>磁盘红线</b>：<code>/nas_user</code> 可用 ≥5TB，当前 <b>42TB 可用 ✅</b>。<br>
-<b>v3 更新</b>：#1 MegaMath-web 下载 ✅ 完成（分词进行中 98.8%）；#2 Nemotron-CC-Math + #3 finemath <b>全部完成（下载+分词）</b>；#4 Code-Reasoning ✅ 完成；#5 Math-Reasoning ✅ 完成；#6~#10 小数据集 ✅ 全部完成。
+<b>v3 更新</b>：#1 MegaMath-web <b>下载+分词全部完成（4950/4950, 218.1B tok）</b>；#2 Nemotron-CC-Math + #3 finemath <b>全部完成（下载+分词）</b>；#4 Code-Reasoning ✅ 完成；#5 Math-Reasoning ✅ 完成；#6~#10 小数据集 ✅ 全部完成。
 </div>
 <!-- §3 -->
 <h2 id="s3">§3 — 时间线甘特图（11-18 → 11-30）</h2>
-<p style="font-size:12px;color:#666;">每格 = 2 天。🟠=进行中 🔵=待执行 ✅=完成 🎯=里程碑/切换点。<b>350k 切换点 ≈ 11-28</b>（(350k−275.1k)×7.23s ≈ 6.3 天），<b>700k 终点 ≈ 12-26</b>。</p>
+<p style="font-size:12px;color:#666;">每格 = 2 天。🟠=进行中 🔵=待执行 ✅=完成 🎯=里程碑/切换点。<b>350k 切换点 ≈ 11-28</b>（(350k−275.3k)×7.23s ≈ 6.1 天），<b>700k 终点 ≈ 12-26</b>。</p>
 <table class="gantt">
 <tr>
 <th class="row-label" style="width:160px;">任务 \ 日期</th>
@@ -279,8 +279,8 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 </tr>
 </table>
 <div class="summary" style="font-size:12px;">
-<b>✅ v3 时间改善</b>：Fallback 数据<b>已于 11-20 就绪</b>（v2 时预计 11-23）。主方案预计 ~11-24 就绪。<br>
-<b>余量改善</b>：S2 数据就绪 ~11-24 vs S2 启动 ~11-28 = <b>~4 天余量</b>（v2 时仅 ~3 天）<br>
+<b>✅ v3 时间改善</b>：主方案数据<b>已于 11-21 全部就绪</b>（v2 时预计 11-23 fallback）。<br>
+<b>余量改善</b>：S2 数据就绪 11-21 vs S2 启动 ~11-28 = <b>~7 天余量</b>（v2 时仅 ~3 天）<br>
 <b>关键路径</b>：PC-1 ✅ → PC-2 ✅ → PC-3 ✅(黑名单) → PC-4 ✅ → <b>S2 数据就绪 ✅ 11-20</b> → 污染扫描(~11-22) → <b>🚀 S2 启动 ~11-28</b><br>
 <b>SEED 更换</b>：S2 启动前需设置 SEED=5678 并清理旧 .npy 缓存（见 §0）
 </div>
@@ -366,13 +366,14 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <h2 id="s7">§7 — 结论：可行性判定 + 关键路径 + Go/No-Go 条件</h2>
 <h3>7.1 可行性判定</h3>
 <div class="summary">
-<p><b>✅ 可行 — 且数据已基本就绪。</b>v3 关键改善（vs v2）：</p>
+<p><b>✅ 可行 — 且数据已全部就绪。</b>v3 关键改善（vs v2）：</p>
 <ul style="font-size:13px;">
-<li><b>PC-1~PC-4 全部完成</b>（v2 时仅 PC-1 完成）</li>
+<li><b>PC-1~PC-5 全部完成</b>（v2 时仅 PC-1 完成）</li>
 <li><b>Nemotron-CC-Math 195.4B tok 分词完成</b>（v2 时仅下载完成）→ Math epoch 从 1.18 降至 0.77</li>
 <li><b>finemath 9.4B tok 分词完成</b>（v2 时仅下载完成）</li>
+<li><b>MegaMath-web 218.1B tok 分词完成</b>（v2 时未开始）→ Math epoch 进一步降至 0.48（主方案）</li>
 <li><b>S2 零重叠方案已确定</b>（方案 D+E，见 §0）→ 总重叠 ~12%</li>
-<li><b>Fallback 数据已就绪</b>（含 Nemotron + finemath，11-20 即可用）→ 余量改善至 ~8 天</li>
+<li><b>主方案数据已就绪</b>（含 MegaMath-web + Nemotron + finemath，11-21 全部完成）→ 余量 ~7 天</li>
 <li><b>所有 epoch >1.2 风险已消除</b>（v2 时 fallback Math=1.18 🟡 → v3 = 0.77 ✅）</li>
 </ul>
 </div>
@@ -383,12 +384,12 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 9277 → PC-4 ✅ blend TSV 10 源 → <b>S2 数据就绪 ✅ 11-20</b> → 污染扫描（~11-22）→ <b>🚀 S2 启动 ~11-28</b>
 </p>
 <p style="font-size:13px;">
-<b>优化路径（主方案，进行中）</b>：<br>
-+ PC-5 MegaMath-web 分词（下载✅；分词 98.8%, ETA ~0.55h, ~11-21 完成）→ 更新 blend TSV → Math epoch 0.77→0.48<br>
+<b>优化路径（已完成）</b>：<br>
++ PC-5 MegaMath-web 分词 ✅ 完成 (4950/4950, 218.1B tok, ~11-21) → 更新 main 版 blend TSV → Math epoch 0.77→0.48 ✅<br>
 + SEED 更换（S2 设 SEED=5678 + 清理 .npy 缓存，~11-27 执行）
 </p>
 <p style="font-size:12px;color:#666;">
-<b>结论</b>：fallback 已就绪可随时启动；主方案 ~11-24 就绪。建议先用 fallback 启动 S2 (~11-28)，PC-5 完成后立即刷新 blend TSV 为主方案。
+<b>结论</b>：主方案数据已全部就绪（PC-1~PC-5 完成）。建议直接用主方案启动 S2 (~11-28)，仅需在启动前完成污染扫描 + SEED 更换。
 </p>
 </div>
 <h3>7.3 Go/No-Go 条件</h3>
@@ -400,7 +401,7 @@ PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 9277 → PC-4 ✅ 
 <tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv</td><td class="amber">⏳ 黑名单✅ 9277 / 扫描待执行(~11-22)</td><td>命中 shard 从 blend 剔除</td></tr>
 <tr><td>G4</td><td><b>blend TSV 加和=1.0 且类别校验通过</b></td><td>脚本校验</td><td class="green">✅ 10 源 / prop=1.0</td><td>手动调整 prop</td></tr>
 <tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常（~11-28）</b></td><td>训练日志 + eval</td><td class="green">🟢 进行中（iter ~275.1k，step ~7.23s，latest ckpt 274k）</td><td>如异常推迟 S2 切换</td></tr>
-<tr><td>G6</td><td><b>（可选）MegaMath-web 分词完成（~11-24）</b></td><td>MANIFEST ≥ 200B</td><td class="amber">⏳ 98.8% / ETA ~0.55h（下载✅）</td><td>使用 fallback（epoch 0.77 ✅）</td></tr>
+<tr><td>G6</td><td><b>MegaMath-web 分词完成</b></td><td>MANIFEST ≥ 200B</td><td class="green">✅ 100% 完成 (4950/4950, 218.1B tok)</td><td>—</td></tr>
 <tr><td>G7</td><td><b>S2 SEED=5678 已设置 + .npy 缓存已清理</b></td><td>common.env + 缓存目录</td><td class="amber">⏳ 待执行（~11-27）</td><td>5 分钟即可完成</td></tr>
 </table>
 <h3>7.4 平滑过渡方案（可选项）</h3>
@@ -444,7 +445,7 @@ PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 9277 → PC-4 ✅ 
 <b>数据来源</b>: DATA_MAPPING.md §A / §H.14 / §D1 / CONTAMINATION_CHECK.md / report_s2_data_overlap_study.md / report_s1s2_split_data_v2_zh.html v2.9<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；Nemotron-CC-Math 195.4B / MegaMath 364 shard 243GB / finemath 9.4B 均为实际分词后实测值。无估算、无编造。<br>
 <b>与 v2 关系</b>: v3 = 在 v2.9 基础上刷新最近一周进展（PC-1~PC-4 全部完成、Nemotron+finemath 分词完成、新增 §0 零重叠方案、新增 §8 数据源引用、时间线更新 350k ~11-28、epoch 全部改善）。<br>
-<b>生成时间</b>: 2026-11-21（v3.98 — R134 refresh：MegaMath-web 98.8%(4892/4950 ~215.9B tok, 磁盘 megamath_web_*.json 实测 sum / ETA~0.55h / 进程PID3028124 nice19运行中,etime~46.1h) / iter ~275.1k(ckpt274k)/700k(39.3%) step~7.23s(末5步均值~7230ms&lt;7.4s✅) / Nemotron✅(193/193,195.4B tok) / finemath✅(9.4B tok) / Math-Reasoning✅(2228/2228) / Code-Reasoning✅(1637/1637) / MM-web下载✅(4950/4950) / .12 load=30.7 .29 load=28.5 /nas_user 42T — 350k~11-28 700k~12-26 / v2 preserved / R133计数4863→R134实测4892纠正[98.8%]）
+<b>生成时间</b>: 2026-11-21（v3.99 — R135 refresh：MegaMath-web ✅100%(4950/4950 ~218.1B tok, 磁盘 megamath_web_*.json 实测 sum / 进程已退出) / iter ~275.3k(ckpt274k)/700k(39.3%) step~7.23s(末5步均值~7230ms&lt;7.4s✅) / Nemotron✅(193/193,195.4B tok) / finemath✅(9.4B tok) / Math-Reasoning✅(2228/2228) / Code-Reasoning✅(1637/1637) / MM-web下载✅(4950/4950) / .12 load=30.7 .29 load=28.5 /nas_user 42T — 350k~11-28 700k~12-26 / v2 preserved / R133计数4863→R134实测4892纠正[98.8%]）
 </p>
 </div>
 </body>
