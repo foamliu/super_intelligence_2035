@@ -4434,37 +4434,72 @@
   "eslint__eslint-14242": {
     "instance_id": "eslint__eslint-14242",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 157.9,
+    "rc": 0,
+    "model_patch_len": 998,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "exceed the threshold, quiet is overridden and warnings are printed (the \"ideal\" behavior from the issue)\n- When warnings are within the threshold, quiet works as before (filters warnings from output)\n",
+    "stderr_tail": " \u001b[0mTodos\n[✓] Explore codebase to understand how --quiet and --max-warnings are implemented\n[✓] Implement fix to make --max-warnings and --quiet work together\n[✓] Verify the fix works correctly\n\u001b[0m\n"
   },
   "eslint__eslint-15243": {
     "instance_id": "eslint__eslint-15243",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 120.8,
+    "rc": 0,
+    "model_patch_len": 1003,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "unctions accept non-promise return values, and `await` on a non-promise value is a no-op. Async formatters (like one using `shiki`) now work because the `format` method properly awaits their promise.\n",
+    "stderr_tail": "Explore codebase to understand current formatter implementation\n[✓] Identify all places where formatters are called/loaded\n[✓] Implement async formatter support\n[✓] Verify changes work correctly\n\u001b[0m\n"
   },
   "eslint__eslint-17618": {
     "instance_id": "eslint__eslint-17618",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 180.1,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "empty_patch",
+    "stdout_tail": "Now let me check how `pushChoiceContext` is called for LogicalExpression:\n",
+    "stderr_tail": "lysis/logical--*mix*\"\u001b[90m 13 matches\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/linter/code-path-analysis/code-path-state.js\u001b[90m [limit=120, offset=120]\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/linter/code-path-analysis/fork-context.js\n"
   },
   "eslint__eslint-8120": {
     "instance_id": "eslint__eslint-8120",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 404.0,
+    "rc": 0,
+    "model_patch_len": 1826,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ind the `ObjectPattern`** through `def.name.parent.parent` for parameter definitions, where `def.node` is the `FunctionDeclaration` (not a `VariableDeclarator` with `.id` pointing to `ObjectPattern`)\n",
+    "stderr_tail": "h ignoreRestSiblings: PASS (rest reported)\n\u001b[0m\n\u001b[0m$ \u001b[0mnode node_modules/mocha/bin/mocha tests/lib/rules/no-unused-vars.js --reporter min --timeout 30000 2>&1\n\u001b[2J\u001b[1;3H\n  204 passing (303ms)\n\u001b[0m\n"
   },
   "eslint__eslint-8850": {
     "instance_id": "eslint__eslint-8850",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 595.4,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "empty_patch",
+    "stdout_tail": "understand the indentation computation:\nLet me add some debug output to understand how the tokens and offsets interact:\nLet me look at how the visitor map is built and how ReturnStatement is handled:\n",
+    "stderr_tail": "m→ \u001b[0mRead lib/rules/indent.js\u001b[90m [limit=80, offset=1280]\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/rules/indent.js\u001b[90m [limit=80, offset=1050]\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/rules/indent.js\u001b[90m [limit=80, offset=590]\u001b[0m\n"
   },
   "eslint__eslint-9348": {
     "instance_id": "eslint__eslint-9348",

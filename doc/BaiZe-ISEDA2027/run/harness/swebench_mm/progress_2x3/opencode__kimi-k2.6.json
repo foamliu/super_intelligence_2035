@@ -2538,23 +2538,44 @@
   "carbon-design-system__carbon-10225": {
     "instance_id": "carbon-design-system__carbon-10225",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 775.9,
+    "rc": 0,
+    "model_patch_len": 17498,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ed tabs icon-only\n<ContainedTabs iconOnly>\n  <ContainedTab label={<Add16 />} title=\"Add\">...</ContainedTab>\n  <ContainedTab label={<Search16 />} title=\"Search\">...</ContainedTab>\n</ContainedTabs>\n```\n",
+    "stderr_tail": "ebase and locate Tabs components\n[✓] Implement icon-only variant for Line Tabs\n[✓] Implement icon-only variant for ContainedTabs\n[✓] Add/update tests if needed\n[✓] Verify changes build correctly\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-10262": {
     "instance_id": "carbon-design-system__carbon-10262",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 338.6,
+    "rc": 0,
+    "model_patch_len": 790,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "string children', () => {\n  const wrapper = mount(\n    <TooltipDefinition {...mockProps}>\n      <h3>Hello</h3>\n    </TooltipDefinition>\n  );\n  expect(wrapper.find('h3').text()).toBe('Hello');\n});\n```\n",
+    "stderr_tail": "3>\n+      </TooltipDefinition>\n+    );\n+    expect(wrapper.find('h3').text()).toBe('Hello');\n+  });\n });\n\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/TooltipDefinition/TooltipDefinition-test.js\n"
   },
   "carbon-design-system__carbon-10283": {
     "instance_id": "carbon-design-system__carbon-10283",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 397.7,
+    "rc": 0,
+    "model_patch_len": 2101,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ocus on the input, Flatpickr’s existing document-level keydown handling can intercept arrow keys and allow calendar navigation just as it does when the calendar is opened by clicking the input field.\n",
+    "stderr_tail": "nts/tests/spec/date-picker_spec.js\n\u001b[0m\n\u001b[0m$ \u001b[0mwhich yarn && which npm\n(no output)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/components/src/components/date-picker/date-picker.js\u001b[90m [offset=325, limit=30]\u001b[0m\n"
   },
   "carbon-design-system__carbon-10301": {
     "instance_id": "carbon-design-system__carbon-10301",
