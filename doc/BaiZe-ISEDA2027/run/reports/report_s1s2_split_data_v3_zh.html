@@ -47,13 +47,13 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>撰写</b>: BaiZe Data Agent · 2026-11-21<br>
 <b>用户令</b>: 2026-11-19 — 基于 v2 刷新 v3，同步最近一周数据侧实际进展与决策<br>
 <b>数据口径</b>: 所有 token 数来自 DATA_MAPPING.md §A 实测（INDEX.tsv + MANIFEST.json + du -sb）；新数据集来自 HfApi().dataset_info(files_metadata=True)；Nemotron-CC-Math / MegaMath / finemath 均为实际分词后 MANIFEST 实测值。<br>
-<b>当前进度</b>: iter ≈ 272.2k / 700k（38.9%），step ≈ 7.15s（末 10 步均值 ~7151ms &lt;7.4s ✅）；latest ckpt = 272k；预计 <b>~2026-11-28 到 350k 切换点</b>（(350k−272.2k)×7.15s ≈ 6.4 天），<b>~2026-12-26 到 700k 终点</b>（(700k−272.2k)×7.15s ≈ 35.4 天）<br>
-<b>R111 刷新</b>（2026-11-21）：MegaMath-web 分词 4323/4950=87.3%（磁盘 megamath_web_*.json 实测 sum ~189.4B tok）ETA ~5.5h（墙钟速率 ~115 shard/h，进程 PID 3028119 nice19 运行中, etime 1d16h） · Nemotron ✅ 完成 (193/193, 195.4B tok) · finemath ✅ 完成 (9.4B tok) · Math-Reasoning ✅ (2228/2228) · Code-Reasoning ✅ (1637/1637) · MM-web 下载 ✅ (4950/4950) · /nas_user 42T · .12 load=30.30 .29 load=28.26 · pretrain step~7.15s（&lt;7.4s ✅）<br>
+<b>当前进度</b>: iter ≈ 272.3k / 700k（38.9%），step ≈ 7.16s（末 10 步均值 ~7160ms &lt;7.4s ✅）；latest ckpt = 272k；预计 <b>~2026-11-28 到 350k 切换点</b>（(350k−272.3k)×7.16s ≈ 6.4 天），<b>~2026-12-26 到 700k 终点</b>（(700k−272.3k)×7.16s ≈ 35.4 天）<br>
+<b>R112 刷新</b>（2026-11-21）：MegaMath-web 分词 4341/4950=87.7%（磁盘 megamath_web_*.json 实测 sum ~190.3B tok）ETA ~5.7h（墙钟速率 ~108 shard/h，进程 PID 3028124 nice19 运行中, etime ~40h） · Nemotron ✅ 完成 (193/193, 195.4B tok) · finemath ✅ 完成 (9.4B tok) · Math-Reasoning ✅ (2228/2228) · Code-Reasoning ✅ (1637/1637) · MM-web 下载 ✅ (4950/4950) · /nas_user 42T · .12 load=30.77 .29 load=28.41 · pretrain step~7.16s（&lt;7.4s ✅）<br>
 <b>v3 主要刷新点</b>: ① PC-1~PC-4 全部 ✅ 完成（v2 时仅 PC-1 完成）② Nemotron-CC-Math ✅ 分词完成 195.4B tok（v2 时仅下载完成）③ finemath ✅ 分词完成 9.4B tok ④ 新增 §0 — S2 零重叠方案（同步 overlap 研究结论）⑤ 数据源引用与论文 alignment ⑥ 时间线更新（350k ~11-28，余量改善）
 </p>
 <div class="summary">
 <h2 style="border:none;margin-top:0;">一句话结论</h2>
-<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且数据已基本就绪。</b>关键路径 PC-1~PC-4 全部 ✅ 完成（stack-v3 L4 过滤 430.7B / MegaMath 5 子集 364 shard 分词 / 污染闸门 9277 tasks / blend TSV 10 源已落盘）。Nemotron-CC-Math ✅ 195.4B tok + finemath ✅ 9.4B tok 已并入 math 池，Math epoch 从 1.18 降至 <b>0.77</b>。S2 启动前仅需完成污染扫描 + MegaMath-web 分词长尾（PC-5, 87.3%, ETA ~5.5h；下载已 ✅ 完成）。<b>S2 零重叠方案</b>：补新源天然零重叠（占 S2 ~28%），叠加 S2 换 SEED=5678 将旧源重叠从 ~35% 降至 ~17%，累计总重叠 ~12%。预计 <b>~11-28 到 350k 切换点</b>，前置工作 ~11-25 前全部就绪，<b>余量 ~3-5 天</b>。</p>
+<p><b>S1/S2 等分 + S2 采用 web:code:math = 4:4:2 可行且数据已基本就绪。</b>关键路径 PC-1~PC-4 全部 ✅ 完成（stack-v3 L4 过滤 430.7B / MegaMath 5 子集 364 shard 分词 / 污染闸门 9277 tasks / blend TSV 10 源已落盘）。Nemotron-CC-Math ✅ 195.4B tok + finemath ✅ 9.4B tok 已并入 math 池，Math epoch 从 1.18 降至 <b>0.77</b>。S2 启动前仅需完成污染扫描 + MegaMath-web 分词长尾（PC-5, 87.7%, ETA ~5.7h；下载已 ✅ 完成）。<b>S2 零重叠方案</b>：补新源天然零重叠（占 S2 ~28%），叠加 S2 换 SEED=5678 将旧源重叠从 ~35% 降至 ~17%，累计总重叠 ~12%。预计 <b>~11-28 到 350k 切换点</b>，前置工作 ~11-25 前全部就绪，<b>余量 ~3-5 天</b>。</p>
 </div>
 <div class="toc">
 <b>目录</b>
@@ -126,7 +126,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <li><b>S2 换 SEED=5678</b>（见 §0），降低与 S1 的样本重叠 <span class="cite">[v3 新增]</span></li>
 </ol>
 <h3>1.2 主方案 S2 Blend TSV — 含 MegaMath-web + Nemotron + finemath（推荐，目标方案）</h3>
-<p style="font-size:12px;color:#666;">假设 MegaMath-web (Batch2, ~887GB, ~279B tokens) 在 S2 启动前分词完成（下载已 ✅ 完成 4950/4950；当前分词 87.3%, ETA ~5.5h）。Nemotron-CC-Math ✅ 已完成 195.4B tok，finemath ✅ 已完成 9.4B tok。所有 epoch 均在安全线内。</p>
+<p style="font-size:12px;color:#666;">假设 MegaMath-web (Batch2, ~887GB, ~279B tokens) 在 S2 启动前分词完成（下载已 ✅ 完成 4950/4950；当前分词 87.7%, ETA ~5.7h）。Nemotron-CC-Math ✅ 已完成 195.4B tok，finemath ✅ 已完成 9.4B tok。所有 epoch 均在安全线内。</p>
 <table>
 <tr><th>#</th><th>数据源</th><th>key</th><th>类别</th><th class="num">S2 prop</th><th class="num">S2 tok (B)</th><th class="num">可用 (B)</th><th class="num">S1 消耗 (B)</th><th class="num">累计 (B)</th><th class="num">累计 epoch</th><th>备注</th></tr>
 <tr><td>1</td><td>Ultra-FineWeb en_v1_4</td><td><code>en_v1_4</code></td><td>Web</td><td class="num">0.35</td><td class="num">513.3</td><td class="num">2,237.1</td><td class="num">953.6</td><td class="num">1,466.9</td><td class="num green">0.66</td><td>Web 主体</td></tr>
@@ -150,7 +150,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>v3 更新</b>：Math 池新增 Nemotron-CC-Math (195.4B) + finemath (9.4B)，Math 可用从 613B 提升至 <b>818B</b>，Math 类别级 epoch 从 0.65 进一步降至 <b>0.48</b> ✅。finemath 量小（9.4B），prop 调低至 0.01（单源 epoch 1.56 因首训新数据可接受，实际消耗仅 14.7B）。
 </div>
 <h3>1.3 Fallback 方案 — 仅含已分词数据（如 MegaMath-web 延迟）</h3>
-<p style="font-size:12px;color:#666;">如 MegaMath-web 未能在 S2 启动前分词完成（下载已 ✅ 完成；当前分词 87.3%，ETA ~5.5h）：Nemotron-CC-Math (195.4B) + finemath (9.4B) 已就位，Math epoch 仅 <b>0.77</b>（v2 时为 1.18），已无 >1.2 风险。</p>
+<p style="font-size:12px;color:#666;">如 MegaMath-web 未能在 S2 启动前分词完成（下载已 ✅ 完成；当前分词 87.7%，ETA ~5.7h）：Nemotron-CC-Math (195.4B) + finemath (9.4B) 已就位，Math epoch 仅 <b>0.77</b>（v2 时为 1.18），已无 >1.2 风险。</p>
 <table>
 <tr><th>#</th><th>数据源</th><th>key</th><th>类别</th><th class="num">S2 prop</th><th class="num">S2 tok (B)</th><th class="num">可用 (B)</th><th class="num">累计 (B)</th><th class="num">累计 epoch</th><th>备注</th></tr>
 <tr><td>1</td><td>Ultra-FineWeb en_v1_4</td><td><code>en_v1_4</code></td><td>Web</td><td class="num">0.35</td><td class="num">513.3</td><td class="num">2,237.1</td><td class="num">1,466.9</td><td class="num green">0.66</td><td>同主方案</td></tr>
@@ -207,7 +207,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <div class="pc-card" style="border-left-color:#ff9800;">
 <h4>🔄 PC-5: MegaMath-web 下载 + 分词（进行中）</h4>
 <p style="font-size:12px;margin:4px 0;">
-<b>状态</b>: <span class="green">✅ 下载完成 (4950/4950, 0 inc)</span> / <span class="amber">🔄 分词 87.3% (4323/4950 = ~189.4B tok, 磁盘 .json 实测 sum) / ETA ~5.5h</span><br>
+<b>状态</b>: <span class="green">✅ 下载完成 (4950/4950, 0 inc)</span> / <span class="amber">🔄 分词 87.7% (4341/4950 = ~190.3B tok, 磁盘 .json 实测 sum) / ETA ~5.7h</span><br>
 <b>Nemotron-CC-Math 分词</b>: <span class="green">✅ 完成 (193/193 shards, 195.4B tok, 0 errors)</span> <span class="cite">[v3 新增里程碑]</span><br>
 <b>finemath-4plus 分词</b>: <span class="green">✅ 完成 (64/64 shards, 9.4B tok, 0 errors, 5528s)</span> <span class="cite">[v3 新增里程碑]</span><br>
 <b>Math-Reasoning 下载</b>: <span class="green">✅ 完成 (2228/2228, 0 inc)</span><br>
@@ -218,7 +218,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <p style="font-size:12px;color:#666;">按 S2 落地需求排序，预训练语料优先。v3 更新当前状态（截至 2026-11-21）。</p>
 <table>
 <tr><th>#</th><th>repo_id</th><th>类型</th><th class="num">体积</th><th>用途</th><th>v3 状态</th></tr>
-<tr><td><b>1</b></td><td><code>IFM/MegaMath</code> batch2 (megamath-web)</td><td>预训练</td><td class="num">887GB</td><td>S2 Math</td><td class="green">✅ 下载完成 (4950/4950) · 🔄 分词 87.3%</td></tr>
+<tr><td><b>1</b></td><td><code>IFM/MegaMath</code> batch2 (megamath-web)</td><td>预训练</td><td class="num">887GB</td><td>S2 Math</td><td class="green">✅ 下载完成 (4950/4950) · 🔄 分词 87.7%</td></tr>
 <tr><td><b>2</b></td><td><code>nvidia/Nemotron-CC-Math-v1</code></td><td>预训练</td><td class="num">260GB</td><td>S2 Math</td><td class="green">✅ 下载完成 + 分词完成 (195.4B tok)</td></tr>
 <tr><td><b>3</b></td><td><code>HuggingFaceTB/finemath</code></td><td>预训练</td><td class="num">149GB</td><td>S2 Math</td><td class="green">✅ 下载完成 + 分词完成 (9.4B tok)</td></tr>
 <tr><td><b>4</b></td><td><code>IFM/Code-Reasoning</code></td><td>SFT</td><td class="num">3.28TB</td><td>decay/post-train</td><td class="green">✅ 完成 (0 inc)</td></tr>
@@ -231,11 +231,11 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 </table>
 <div class="info" style="font-size:12px;">
 <b>磁盘红线</b>：<code>/nas_user</code> 可用 ≥5TB，当前 <b>42TB 可用 ✅</b>。<br>
-<b>v3 更新</b>：#1 MegaMath-web 下载 ✅ 完成（分词进行中 87.3%）；#2 Nemotron-CC-Math + #3 finemath <b>全部完成（下载+分词）</b>；#4 Code-Reasoning ✅ 完成；#5 Math-Reasoning ✅ 完成；#6~#10 小数据集 ✅ 全部完成。
+<b>v3 更新</b>：#1 MegaMath-web 下载 ✅ 完成（分词进行中 87.7%）；#2 Nemotron-CC-Math + #3 finemath <b>全部完成（下载+分词）</b>；#4 Code-Reasoning ✅ 完成；#5 Math-Reasoning ✅ 完成；#6~#10 小数据集 ✅ 全部完成。
 </div>
 <!-- §3 -->
 <h2 id="s3">§3 — 时间线甘特图（11-18 → 11-30）</h2>
-<p style="font-size:12px;color:#666;">每格 = 2 天。🟠=进行中 🔵=待执行 ✅=完成 🎯=里程碑/切换点。<b>350k 切换点 ≈ 11-28</b>（(350k−272.2k)×7.15s ≈ 6.4 天），<b>700k 终点 ≈ 12-26</b>。</p>
+<p style="font-size:12px;color:#666;">每格 = 2 天。🟠=进行中 🔵=待执行 ✅=完成 🎯=里程碑/切换点。<b>350k 切换点 ≈ 11-28</b>（(350k−272.3k)×7.16s ≈ 6.4 天），<b>700k 终点 ≈ 12-26</b>。</p>
 <table class="gantt">
 <tr>
 <th class="row-label" style="width:160px;">任务 \ 日期</th>
@@ -353,7 +353,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><th style="width:25px;">#</th><th>风险</th><th>概率</th><th>影响</th><th>缓解措施</th><th>v3 状态</th></tr>
 <tr><td>1</td><td><b>code_l2 epoch 1.15</b>（接近 1.2 上限）</td><td>确定</td><td>🟡 中</td><td>调整 code_l2 prop 0.18→0.15，差额给 stack-v3 0.17→0.20</td><td class="amber">📝 待确认</td></tr>
 <tr><td>2</td><td><b>Web 74%→40% 骤变</b>导致 Loss spike</td><td>低-中</td><td>🟡 中</td><td>S4 实验显示配比切换 loss 反降；保留 5K~10K 步 ramp 备选</td><td class="info">低-中风险</td></tr>
-<tr><td>3</td><td><b>MegaMath-web 分词延迟</b>（下载✅；分词 87.3%，ETA ~5.5h）</td><td>中</td><td>🟢 低</td><td>Fallback 已就绪（Nemotron + finemath），epoch 0.77 ✅</td><td class="green">✅ Fallback 消除风险</td></tr>
+<tr><td>3</td><td><b>MegaMath-web 分词延迟</b>（下载✅；分词 87.7%，ETA ~5.7h）</td><td>中</td><td>🟢 低</td><td>Fallback 已就绪（Nemotron + finemath），epoch 0.77 ✅</td><td class="green">✅ Fallback 消除风险</td></tr>
 <tr><td>4</td><td><b>Benchmark 污染</b></td><td>中</td><td>🔴 高</td><td>13-gram 闸门 9277 tasks ✅ 已构建；扫描待执行</td><td class="amber">⏳ 黑名单✅ / 扫描⏳</td></tr>
 <tr><td>5</td><td><b>Nemotron-CC-Math 分词</b></td><td>—</td><td>—</td><td>—</td><td class="green">✅ 完成 (195.4B tok)</td></tr>
 <tr><td>6</td><td><b>finemath 分词</b></td><td>—</td><td>—</td><td>—</td><td class="green">✅ 完成 (9.4B tok)</td></tr>
@@ -384,7 +384,7 @@ PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 9277 → PC-4 ✅ 
 </p>
 <p style="font-size:13px;">
 <b>优化路径（主方案，进行中）</b>：<br>
-+ PC-5 MegaMath-web 分词（下载✅；分词 87.3%, ETA ~5.5h, ~11-21 完成）→ 更新 blend TSV → Math epoch 0.77→0.48<br>
++ PC-5 MegaMath-web 分词（下载✅；分词 87.7%, ETA ~5.7h, ~11-21 完成）→ 更新 blend TSV → Math epoch 0.77→0.48<br>
 + SEED 更换（S2 设 SEED=5678 + 清理 .npy 缓存，~11-27 执行）
 </p>
 <p style="font-size:12px;color:#666;">
@@ -399,8 +399,8 @@ PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 9277 → PC-4 ✅ 
 <tr><td>G2</td><td><b>MegaMath Batch1 分词后 ≥ 70B tokens</b></td><td>MANIFEST.json</td><td class="green">✅ 364 shard DONE</td><td>—</td></tr>
 <tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv</td><td class="amber">⏳ 黑名单✅ 9277 / 扫描待执行(~11-22)</td><td>命中 shard 从 blend 剔除</td></tr>
 <tr><td>G4</td><td><b>blend TSV 加和=1.0 且类别校验通过</b></td><td>脚本校验</td><td class="green">✅ 10 源 / prop=1.0</td><td>手动调整 prop</td></tr>
-<tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常（~11-28）</b></td><td>训练日志 + eval</td><td class="green">🟢 进行中（iter ~272.2k，step ~7.15s，latest ckpt 272k）</td><td>如异常推迟 S2 切换</td></tr>
-<tr><td>G6</td><td><b>（可选）MegaMath-web 分词完成（~11-24）</b></td><td>MANIFEST ≥ 200B</td><td class="amber">⏳ 87.3% / ETA ~5.5h（下载✅）</td><td>使用 fallback（epoch 0.77 ✅）</td></tr>
+<tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常（~11-28）</b></td><td>训练日志 + eval</td><td class="green">🟢 进行中（iter ~272.3k，step ~7.16s，latest ckpt 272k）</td><td>如异常推迟 S2 切换</td></tr>
+<tr><td>G6</td><td><b>（可选）MegaMath-web 分词完成（~11-24）</b></td><td>MANIFEST ≥ 200B</td><td class="amber">⏳ 87.7% / ETA ~5.7h（下载✅）</td><td>使用 fallback（epoch 0.77 ✅）</td></tr>
 <tr><td>G7</td><td><b>S2 SEED=5678 已设置 + .npy 缓存已清理</b></td><td>common.env + 缓存目录</td><td class="amber">⏳ 待执行（~11-27）</td><td>5 分钟即可完成</td></tr>
 </table>
 <h3>7.4 平滑过渡方案（可选项）</h3>
@@ -444,7 +444,7 @@ PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 9277 → PC-4 ✅ 
 <b>数据来源</b>: DATA_MAPPING.md §A / §H.14 / §D1 / CONTAMINATION_CHECK.md / report_s2_data_overlap_study.md / report_s1s2_split_data_v2_zh.html v2.9<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；Nemotron-CC-Math 195.4B / MegaMath 364 shard 243GB / finemath 9.4B 均为实际分词后实测值。无估算、无编造。<br>
 <b>与 v2 关系</b>: v3 = 在 v2.9 基础上刷新最近一周进展（PC-1~PC-4 全部完成、Nemotron+finemath 分词完成、新增 §0 零重叠方案、新增 §8 数据源引用、时间线更新 350k ~11-28、epoch 全部改善）。<br>
-<b>生成时间</b>: 2026-11-21（v3.75 — R111 refresh：MegaMath-web 87.3%(4323/4950 ~189.4B tok, 磁盘 megamath_web_*.json 实测 sum / ETA~5.5h / 进程PID3028119 nice19运行中,etime 1d16h) / iter ~272.2k(ckpt272k)/700k(38.9%) step~7.15s(末10步均值~7151ms&lt;7.4s✅) / Nemotron✅(193/193,195.4B tok) / finemath✅(9.4B tok) / Math-Reasoning✅(2228/2228) / Code-Reasoning✅(1637/1637) / MM-web下载✅(4950/4950) / .12 load=30.30 .29 load=28.26 /nas_user 42T — 350k~11-28 700k~12-26 / v2 preserved / R110计数4300→R111实测4323纠正[87.3%]）
+<b>生成时间</b>: 2026-11-21（v3.76 — R112 refresh：MegaMath-web 87.7%(4341/4950 ~190.3B tok, 磁盘 megamath_web_*.json 实测 sum / ETA~5.7h / 进程PID3028124 nice19运行中,etime~40h) / iter ~272.3k(ckpt272k)/700k(38.9%) step~7.16s(末10步均值~7160ms&lt;7.4s✅) / Nemotron✅(193/193,195.4B tok) / finemath✅(9.4B tok) / Math-Reasoning✅(2228/2228) / Code-Reasoning✅(1637/1637) / MM-web下载✅(4950/4950) / .12 load=30.77 .29 load=28.41 /nas_user 42T — 350k~11-28 700k~12-26 / v2 preserved / R111计数4323→R112实测4341纠正[87.7%]）
 </p>
 </div>
 </body>
