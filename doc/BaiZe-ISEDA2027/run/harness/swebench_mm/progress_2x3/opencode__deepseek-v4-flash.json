@@ -3524,37 +3524,72 @@
   "carbon-design-system__carbon-4754": {
     "instance_id": "carbon-design-system__carbon-4754",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 380.3,
+    "rc": 0,
+    "model_patch_len": 5169,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "n the right, title on the left. Matches current Carbon default behavior via `flex-direction: row-reverse`.\n- **`align=\"start\"`**: Chevron on the left, title on the right, using `flex-direction: row`.\n",
+    "stderr_tail": " styles for `--start` heading modifier\n[✓] Update Accordion-story.js to showcase `align` prop\n[✓] Update tests (AccordionItem-test.js) for `align` prop\n[✓] Update snapshots and verify tests pass\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4801": {
     "instance_id": "carbon-design-system__carbon-4801",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 45.0,
+    "rc": 0,
+    "model_patch_len": 701,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "nt already uses. This gives screen readers like JAWS a proper label for the searchbox role, replacing the \"? Edit\" / \"Unlabeled# Edit\" announcement with something meaningful like \"Filter table Edit\".\n",
+    "stderr_tail": "  \"react-dom\": \"~16.9.0\",\n    \"react-is\": \"~16.9.0\",\n    \"react-test-renderer\": \"~16.9.0\"\n  },\n  \"devDependencies\": {\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/DataTable/TableToolbarSearch.js\n"
   },
   "carbon-design-system__carbon-4816": {
     "instance_id": "carbon-design-system__carbon-4816",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 160.5,
+    "rc": 0,
+    "model_patch_len": 942,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ent (lines 364-366). The non-mobile variant already had these (lines 393-395), but the mobile branch was missing them, causing DAP to flag the missing ARIA attributes when form validation was active.\n",
+    "stderr_tail": "bile variant has aria-invalid: true\nMobile variant has aria-describedby: true\ndata-invalid occurrences: 2\naria-invalid occurrences: 2\naria-describedby occurrences: 2\naria-disabled occurrences: 1\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4820": {
     "instance_id": "carbon-design-system__carbon-4820",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 248.6,
+    "rc": 0,
+    "model_patch_len": 6059,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "a-selected` on selected menu items\n- Nested `role=\"listbox\"` conflict (outer wrapper + inner menu)\n- No `aria-invalid` when `invalid` prop is set\n- `aria-haspopup` was `\"true\"` instead of `\"listbox\"`\n",
+    "stderr_tail": "m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore Dropdown component structure and understand current accessibility implementation\n[✓] Identify DAP accessibility violations and fix them\n[✓] Verify fixes are correct\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4834": {
     "instance_id": "carbon-design-system__carbon-4834",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 221.7,
+    "rc": 0,
+    "model_patch_len": 1056,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "menu\"` to the `<div>` wrapper so that its `<li role=\"menuitem\">` children have a proper ARIA container, fixing the DAP violation reported when nav links collapse into the side nav on smaller screens.\n",
+    "stderr_tail": "cit color to hidden state to prevent default link blue on dark bg contrast failure\n[✓] Add role='menu' to HeaderSideNavItems parent div for menuitem ARIA compliance\n[✓] Verify changes with tests\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4862": {
     "instance_id": "carbon-design-system__carbon-4862",
