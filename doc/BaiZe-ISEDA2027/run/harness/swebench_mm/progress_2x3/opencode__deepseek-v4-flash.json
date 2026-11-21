@@ -3049,30 +3049,58 @@
   "carbon-design-system__carbon-14239": {
     "instance_id": "carbon-design-system__carbon-14239",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 270.2,
+    "rc": 0,
+    "model_patch_len": 5058,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "le tile as a button)\n- When `undefined` (default), preserves the existing auto-detection behavior via `getInteractiveContent`\n- The auto-detection effect is skipped when `interactiveProp` is provided\n",
+    "stderr_tail": "-expanded on non-interactive elements (remove from div)\n[✓] Add `interactive` prop to force interactive mode without fake children\n[✓] Update tests for the changes\n[✓] Verify with lint/typecheck\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-14476": {
     "instance_id": "carbon-design-system__carbon-14476",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 302.8,
+    "rc": 0,
+    "model_patch_len": 7274,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "elects **all** rows (across all pages), matching the Gmail-like pattern described in the feature request, in contrast to the existing `handleSelectAll` which toggles selection within filtered results\n",
+    "stderr_tail": "Select all' feature in TableBatchActions component\n[✓] Add tests for the new onSelectAll feature\n[✓] Add Storybook stories for the new feature\n[✓] Verify the implementation builds/runs correctly\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-15197": {
     "instance_id": "carbon-design-system__carbon-15197",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 328.7,
+    "rc": 0,
+    "model_patch_len": 1345,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "` - Dynamic `tabIndex` based on `isHighlighted` prop\n- `packages/react/src/components/ListBox/__tests__/__snapshots__/ListBoxMenuItem-test.js.snap:50` - Updated snapshot for the highlighted test case\n",
+    "stderr_tail": "structure\n[✓] Identify where listbox options are rendered and why they're not tabbable\n[✓] Implement fix to make dropdown options tabbable when list is open\n[✓] Verify fix with linting/typecheck\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-16237": {
     "instance_id": "carbon-design-system__carbon-16237",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 341.9,
+    "rc": 0,
+    "model_patch_len": 3548,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "uired` on `<TileGroup>` instead of on every `<RadioTile>` individually, and the browser's native validation error will appear at the bottom center of each tile rather than at unpredictable positions.\n",
+    "stderr_tail": "plementation\n[✓] Fix required attribute to work on TileGroup level\n[✓] Fix radio input positioning for validation errors\n\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"ReactAttr\"\u001b[90m in packages/react/src/types · 1 match\u001b[0m\n"
   },
   "carbon-design-system__carbon-16332": {
     "instance_id": "carbon-design-system__carbon-16332",

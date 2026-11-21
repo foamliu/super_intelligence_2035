@@ -2165,16 +2165,30 @@
   "bpmn-io__bpmn-js-1438": {
     "instance_id": "bpmn-io__bpmn-js-1438",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1765.0,
+    "rc": 0,
+    "model_patch_len": 2904,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " **No DI impact**: The message name is rendered purely visually; it does not create additional label shapes or affect the BPMN DI export.\n- **Linting passes**: `npm run lint` succeeds with no errors.\n",
+    "stderr_tail": "ge');\n+\n+        expect(domQuery('text', messageFlowWithoutRefGfx)).not.to.exist;\n+      })();\n     });\n   });\n\u001b[0m\n\u001b[0m→ \u001b[0mRead test/fixtures/bpmn/draw/message-marker-name.bpmn\u001b[90m [limit=30]\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1442": {
     "instance_id": "bpmn-io__bpmn-js-1442",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1159.9,
+    "rc": 0,
+    "model_patch_len": 4605,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "w results in no connections being created, the sequence flow remains untouched, and pasted shapes are placed under the correct parent\n\nESLint passes and the webpack test bundle compiles successfully.\n",
+    "stderr_tail": "\n[✓] Understand the bug and codebase\n[✓] Modify DropOnFlowBehavior.js to skip drop-on-flow for multi-shape paste\n[✓] Add test for multi-shape paste onto sequence flow\n[✓] Run tests to verify fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1542": {
     "instance_id": "bpmn-io__bpmn-js-1542",
