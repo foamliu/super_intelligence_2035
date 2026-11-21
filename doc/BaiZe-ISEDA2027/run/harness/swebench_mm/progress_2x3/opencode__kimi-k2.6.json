@@ -1738,30 +1738,58 @@
   "alibaba-fusion__next-895": {
     "instance_id": "alibaba-fusion__next-895",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 861.4,
+    "rc": 0,
+    "model_patch_len": 6666,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "#{$css-prefix}icon + span {\n    opacity: 0;\n}\n```\n\n这样：\n- 有 `icon` 的项：显示图标，文字隐藏（保持原有行为）\n- 无 `icon` 的项：不再出现空白占位，而是直接显示文字内容\n\n**3. 更新测试用例**\n- `test/nav/index-spec.js`\n\n把原来断言“应该存在占位符”改为断言“不存在占位符，且文字内容可见”。\n",
+    "stderr_tail": "\n\u001b[0m→ \u001b[0mRead src/nav/popup-item.jsx\n\u001b[0m→ \u001b[0mRead src/nav/group.jsx\n\u001b[0m→ \u001b[0mRead src/nav/main.scss\u001b[90m [offset=1, limit=60]\u001b[0m\n\u001b[0m→ \u001b[0mRead src/nav/main.scss\u001b[90m [offset=330, limit=30]\u001b[0m\n"
   },
   "alibaba-fusion__next-94": {
     "instance_id": "alibaba-fusion__next-94",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 317.0,
+    "rc": 0,
+    "model_patch_len": 725,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "\n\nNote: I couldn't run the full Karma test suite in this environment due to missing Chrome and legacy dependency issues, but the fix is minimal and mirrors the existing working pattern in `downStep`.\n",
+    "stderr_tail": "on=3)\n  OLD: 0.131\n  NEW: 0.131\nTest 4: 1.99 + 0.01\n  OLD: 2\n  NEW: 2\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix floating-point precision issue in NumberPicker upStep method\n[✓] Verify fix with existing tests\n\u001b[0m\n"
   },
   "alibaba-fusion__next-966": {
     "instance_id": "alibaba-fusion__next-966",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 564.1,
+    "rc": 0,
+    "model_patch_len": 4164,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "测试用例，验证在 `Group` 和 `SubMenu` 的子元素之间插入空格文本节点时不会报错，且能正确渲染菜单项。\n\n---\n\n**根因**：JSX 中元素之间的空格/换行会被 React 解析为文本节点（string）。`Group` 和 `SubMenu` 在遍历 children 时没有过滤掉这些文本节点，导致后续对它们调用 `.props` 或 `cloneElement` 时出错。\n",
+    "stderr_tail": "m\n\u001b[0m$ \u001b[0mrm /dev/shm/harness_mm_2x3/workdirs/opencode__kimi-k2.6/alibaba-fusion_next/verify-fix.js\n(no output)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/menu/view/group.jsx\n\u001b[0m→ \u001b[0mRead src/menu/view/sub-menu.jsx\n"
   },
   "bpmn-io__bpmn-js-1011": {
     "instance_id": "bpmn-io__bpmn-js-1011",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 338.2,
+    "rc": 0,
+    "model_patch_len": 1442,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " does not have network access to install dependencies. The fix is minimal and follows the existing patterns in the codebase, so it should work correctly once tests are run in a proper CI environment.\n",
+    "stderr_tail": "✓] Find how elements are rendered and where z-order / parent-child is determined\n[✓] Implement fix to ensure groups render on top\n[✓] Add tests for group ordering\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1080": {
     "instance_id": "bpmn-io__bpmn-js-1080",

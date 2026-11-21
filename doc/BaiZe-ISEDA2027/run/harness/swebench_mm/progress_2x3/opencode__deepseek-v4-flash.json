@@ -2271,16 +2271,29 @@
   "bpmn-io__bpmn-js-1584": {
     "instance_id": "bpmn-io__bpmn-js-1584",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.1,
+    "rc": -1,
+    "model_patch_len": 1354,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "bpmn-io__bpmn-js-1607": {
     "instance_id": "bpmn-io__bpmn-js-1607",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 333.8,
+    "rc": 0,
+    "model_patch_len": 2327,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ns()` now uses `bpmnjs.getDefinitions()` directly, replaced `canvas` dependency with `bpmnjs`\n- `lib/features/label-editing/LabelEditingProvider.js` — same fix in `update()` method, injected `bpmnjs`\n",
+    "stderr_tail": "mTodos\n[✓] Explore codebase to understand how groups and sub-processes are handled\n[✓] Identify the root cause of the unresolved category value reference\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1610": {
     "instance_id": "bpmn-io__bpmn-js-1610",

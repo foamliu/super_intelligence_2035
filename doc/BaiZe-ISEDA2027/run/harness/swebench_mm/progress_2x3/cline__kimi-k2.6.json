@@ -1631,23 +1631,44 @@
   "alibaba-fusion__next-3724": {
     "instance_id": "alibaba-fusion__next-3724",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 825.7,
+    "rc": 0,
+    "model_patch_len": 15252,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "['Searchable', 'Not Searchable']}\\n/>\\n```\\n\\nAll modified files were validated with `@babel/parser` to ensure syntactic correctness.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "alibaba-fusion__next-3947": {
     "instance_id": "alibaba-fusion__next-3947",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 337.2,
+    "rc": 0,
+    "model_patch_len": 5782,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "LabelForErrorMessage` on the `Form` level, producing validation messages like `\\\"Account 是必填字段\\\"` instead of `\\\"valUsername 是必填字段\\\"`.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "alibaba-fusion__next-4021": {
     "instance_id": "alibaba-fusion__next-4021",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1071.8,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "80,\"outputTokens\":23549,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":1068406,\"text\":\"The operation timed out.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "    at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n      at processTicksAndRejections (unknown:7:39)\n\n{\"ts\":\"2026-11-21T02:39:40.382Z\",\"type\":\"error\",\"message\":\"The operation timed out.\"}\n"
   },
   "alibaba-fusion__next-4182": {
     "instance_id": "alibaba-fusion__next-4182",
