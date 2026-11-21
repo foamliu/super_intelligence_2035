@@ -2027,9 +2027,16 @@
   "bpmn-io__bpmn-js-1236": {
     "instance_id": "bpmn-io__bpmn-js-1236",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1302.7,
+    "rc": 0,
+    "model_patch_len": 2445,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ec.js`**\nAdded a regression test that:\n- Gets an expanded subprocess with children\n- Collapses it\n- Converts it to Ad Hoc\n- Asserts that dimensions remain unchanged\n\nAll modified files pass `eslint`.\n",
+    "stderr_tail": "] Explore codebase to understand subprocess, collapse, and ad-hoc handling\n[✓] Identify root cause of dimension change when converting collapsed subprocess to ad-hoc\n[✓] Implement fix and verify\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1238": {
     "instance_id": "bpmn-io__bpmn-js-1238",

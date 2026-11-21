@@ -1906,9 +1906,16 @@
   "bpmn-io__bpmn-js-1174": {
     "instance_id": "bpmn-io__bpmn-js-1174",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1303.7,
+    "rc": 0,
+    "model_patch_len": 4098,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "  - Old coordinates no longer leak into loop connections\\n  - Non-loop reconnection still works correctly (waypoint repair preserved)\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1179": {
     "instance_id": "bpmn-io__bpmn-js-1179",
