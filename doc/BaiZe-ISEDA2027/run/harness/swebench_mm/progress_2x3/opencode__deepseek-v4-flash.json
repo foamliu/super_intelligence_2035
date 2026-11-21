@@ -4882,16 +4882,30 @@
   "highlightjs__highlight.js-2740": {
     "instance_id": "highlightjs__highlight.js-2740",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1037.2,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "empty_patch",
+    "stdout_tail": "Now I can see the issue clearly. Let me trace through the actual parsing to understand why `''` handling is broken:\nLet me look at the specific REPLACE case from the bug report and test it precisely:\n",
+    "stderr_tail": ">(@v,<span class=\"hljs-string\">&#x27;&#x27;&#x27;&#x27;</span>,<span class=\"hljs-string\">&#x27;&#x27;&#x27;&#x27;&#x27;&#x27;</span>) + <span class=\"hljs-string\">&#x27;&#x27;&#x27;;&#x27;</span>\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2750": {
     "instance_id": "highlightjs__highlight.js-2750",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 332.6,
+    "rc": 0,
+    "model_patch_len": 3063,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "t.txt` — Updated expected output (correctly balanced braces now)\n3. `test/markup/typescript/inline-languages.expect.txt` — Updated expected output (correctly balanced braces now)\n\nAll 530 tests pass.\n",
+    "stderr_tail": " in JS/TS grammars\n[✓] Identify the root cause of curly braces inside template literal expressions\n[✓] Implement fix: add balanced brace mode to SUBST.contains\n[✓] Verify the fix with test cases\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2765": {
     "instance_id": "highlightjs__highlight.js-2765",

@@ -2860,16 +2860,30 @@
   "carbon-design-system__carbon-12420": {
     "instance_id": "carbon-design-system__carbon-12420",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 309.3,
+    "rc": 0,
+    "model_patch_len": 4886,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "  ✓ does not render a label by default\n      ✓ renders a label as expected\n    events\n      ✓ should write text inside the textbox\n\nTest Suites: 1 passed, 1 total\nTests:       11 passed, 11 total\n```\n",
+    "stderr_tail": "src/components/TimePicker/TimePicker.stories.js\n\u001b[0m→ \u001b[0mRead packages/react/src/components/TimePicker/TimePicker-test.js\n\u001b[0m→ \u001b[0mRead packages/styles/scss/components/time-picker/_time-picker.scss\n"
   },
   "carbon-design-system__carbon-12430": {
     "instance_id": "carbon-design-system__carbon-12430",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 313.3,
+    "rc": 0,
+    "model_patch_len": 5679,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "opy/paste\n\n### 4. Tests (`packages/react/src/components/Dropdown/Dropdown-test.js`)\n- Added an RTL test that verifies the `cds--dropdown--readonly` class is applied when the `readOnly` prop is passed\n",
+    "stderr_tail": " Dropdown component files\n[✓] Add readOnly prop to Dropdown component\n[✓] Add styles for read-only state\n[✓] Update stories/playground with readOnly controls\n[✓] Add RTL tests for readOnly class\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12435": {
     "instance_id": "carbon-design-system__carbon-12435",
