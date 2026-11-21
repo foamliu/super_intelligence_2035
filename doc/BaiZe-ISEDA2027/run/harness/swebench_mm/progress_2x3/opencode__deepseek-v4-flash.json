@@ -2911,9 +2911,15 @@
   "carbon-design-system__carbon-12442": {
     "instance_id": "carbon-design-system__carbon-12442",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.5,
+    "rc": -1,
+    "model_patch_len": 2374814,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "carbon-design-system__carbon-12445": {
     "instance_id": "carbon-design-system__carbon-12445",

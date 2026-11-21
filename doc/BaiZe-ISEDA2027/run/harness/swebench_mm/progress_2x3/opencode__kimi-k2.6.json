@@ -2096,16 +2096,30 @@
   "bpmn-io__bpmn-js-1337": {
     "instance_id": "bpmn-io__bpmn-js-1337",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1181.7,
+    "rc": 0,
+    "model_patch_len": 7282,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " test startup succeeded without errors, confirming the syntax is valid. The logic follows the existing, well-established patterns in the codebase for handling non-interrupting and error start events.\n",
+    "stderr_tail": "sub-process\n[✓] Read and modify ReplaceMenuProvider.js to disallow morphing to typed start event inside regular sub-process\n[✓] Add tests for the new behavior\n[✓] Run tests to verify the changes\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1348": {
     "instance_id": "bpmn-io__bpmn-js-1348",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 540.5,
+    "rc": 0,
+    "model_patch_len": 3989,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "pt that confirmed the `isMessageFlowTarget` behavior is correct for all relevant element types (message boundary event → allowed, timer boundary event → blocked, plain boundary event → blocked, etc.)\n",
+    "stderr_tail": "mTodos\n[✓] Explore codebase to find message flow connection rules\n[✓] Identify and fix rule disallowing message flow to intermediate message catch boundary events\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1365": {
     "instance_id": "bpmn-io__bpmn-js-1365",
