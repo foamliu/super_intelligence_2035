@@ -4000,37 +4000,72 @@
   "carbon-design-system__carbon-7350": {
     "instance_id": "carbon-design-system__carbon-7350",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 934.8,
+    "rc": 0,
+    "model_patch_len": 658,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "- **Submenu hover intent**: 200ms delay to open, 300ms delay to close to prevent accidental dismissals\n- **Viewport boundary detection**: Automatically repositions if menu would overflow the viewport\n",
+    "stderr_tail": "s\n[✓] Update packages/react/src/index.js - add exports\n[✓] Create ContextMenu-test.js - tests (14 passing)\n[✓] Create ContextMenu-story.js - storybook stories\n[✓] Final review and verify exports\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7353": {
     "instance_id": "carbon-design-system__carbon-7353",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 102.3,
+    "rc": 0,
+    "model_patch_len": 1106,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ation buttons in the Tabs component (`packages/react/src/components/Tabs/Tabs.js:481,507`). This gives assistive technology users a meaningful label for these buttons instead of hiding them entirely.\n",
+    "stderr_tail": "e_modules/enzyme-adapter-react-16 2>&1 || find . -name \"enzyme-adapter-react-16\" -type d 2>/dev/null | head -5\nls: cannot access 'node_modules/enzyme-adapter-react-16': No such file or directory\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7478": {
     "instance_id": "carbon-design-system__carbon-7478",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 230.3,
+    "rc": 0,
+    "model_patch_len": 10262,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ages/react/src/components/CodeSnippet/__tests__/CodeSnippet-test.js`\n- Tests: disabled prop passes through to Copy/CopyButton, disabled CSS class applied for all types, tabIndex removed when disabled\n",
+    "stderr_tail": "Snippet.js (component logic, PropTypes, defaultProps)\n[✓] Add disabled styles to _code-snippet.scss\n[✓] Add disabled stories to CodeSnippet-story.js\n[✓] Add disabled tests to CodeSnippet-test.js\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7619": {
     "instance_id": "carbon-design-system__carbon-7619",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 95.9,
+    "rc": 0,
+    "model_patch_len": 5158,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "or vanilla HTML demo\n\nThe `sm` size produces an 18px tall tag (matching the proposed design), while `md` preserves the existing 24px default. The default size remains `md` for backward compatibility.\n",
+    "stderr_tail": "const tag = shallow(<Tag type=\"red\" />);\n+    expect(tag.hasClass(`${prefix}--tag--md`)).toEqual(true);\n+  });\n });\n \n describe('TagSkeleton', () => {\n   describe('Renders as expected', () => {\n\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7687": {
     "instance_id": "carbon-design-system__carbon-7687",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 507.1,
+    "rc": 0,
+    "model_patch_len": 20881,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "a JS component (`number-input.js`) needed no changes — it attaches click handlers via `.up-icon` and `.down-icon` class selectors, which are preserved regardless of which SVG icon is rendered inside.\n",
+    "stderr_tail": "{{#if plusminus}}{{ carbon-icon 'Subtract' }}{{else}}{{ carbon-icon 'CaretDownGlyph' }}{{/if}}\n259:        {{#if plusminus}}{{ carbon-icon 'Add' }}{{else}}{{ carbon-icon 'CaretUpGlyph' }}{{/if}}\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7722": {
     "instance_id": "carbon-design-system__carbon-7722",

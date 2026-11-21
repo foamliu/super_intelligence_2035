@@ -2359,16 +2359,29 @@
   "bpmn-io__bpmn-js-1644": {
     "instance_id": "bpmn-io__bpmn-js-1644",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.3,
+    "rc": -1,
+    "model_patch_len": 1128764,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "bpmn-io__bpmn-js-1655": {
     "instance_id": "bpmn-io__bpmn-js-1655",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 95.5,
+    "rc": 0,
+    "model_patch_len": 1533,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "color')).to.eql(FUCHSIA_HEX);\n}));\n```\n\nThis ensures external labels now behave consistently with embedded labels by using the stroke color, which is darker and more readable than a light fill color.\n",
+    "stderr_tail": "ROR [launcher]: \u001b[39mChromeHeadless stderr:\n\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/features/modeling/cmd/SetColorHandler.js\n\u001b[0m→ \u001b[0mRead test/spec/features/modeling/SetColorSpec.js\u001b[90m [offset=147, limit=40]\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1659": {
     "instance_id": "bpmn-io__bpmn-js-1659",
