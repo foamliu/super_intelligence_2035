@@ -1356,3 +1356,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1792204711601_yt3zr	ellawu	hfeg0pkn001	79	physical_verify	case	EDA-Eval-DesignFlow-DrcVarTraceExtract-001	2026-11-21 09:36	
 1795000168376_59mx1	ellawu	hfeg0pkn001	72	physical_verify	case	EDA-Eval-DesignFlow-TvfDeckSpecExtract-001	2026-11-21 10:07	
 1794537332196_hgx6a	thomasz	hfeg0pfn058	54	physical_verify	case	EDA-Eval-DesignFlow-PathfinderStuckDiag-001	2026-11-21 10:56	r899: Ansys Pathfinder ESD stuck-state diagnostic, k=16
+1794964207896_jx42b	sierraw	hfeg0plg09	433	physical_verify	case	EDA-Eval-DesignFlow-DspfRcTrendAnalyze-001	2026-11-21 11:40	
