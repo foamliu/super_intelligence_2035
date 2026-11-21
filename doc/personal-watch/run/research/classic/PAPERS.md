@@ -5594,6 +5594,57 @@
 
 ---
 
+## 324. EVA-CLIP: Improved Training Techniques for CLIP at Scale
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | EVA-CLIP: Improved Training Techniques for CLIP at Scale |
+| 作者（前 3） | Quan Sun · Yuxin Fang · Ledell Wu（共 **5** 位；末位 Yue Cao；arXiv 作者字段逐字核；机构本轮未逐页核 ⇒ 不写） |
+| 年份 | **2023**（arXiv v1 `2023-03-27`） |
+| 会议 / 期刊 | **预印本**（OpenAlex source = *arXiv (Cornell University)*、`type=preprint`、`publication_year=2023`；会议 / 期刊接收信息**未核 ⇒ 不写**） |
+| 被引数 | **1,204**（OpenAlex `10.48550/arxiv.2303.15389`，查询日 **2026-11-22**；**≥500 直接满足判据**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2303.15389> ｜ arXiv DOI `10.48550/arxiv.2303.15389` |
+| 一句话贡献 | 从**表征学习 / 优化器 / 数据增强**三处改 CLIP 训练效率：最大的 **5.0B** 参数 EVA-02-CLIP-E/14+ 只见过 **9B** 样本就达到 ImageNet-1K 零样本 **82.0** top-1，**430M** 的 L/14+ 只见过 **6B** 样本达 **80.4**，并开源整套模型（作者自报）。 |
+| 与我们工作的关系 | **vision（主 · 视觉塔选型口径）**：同等参数下「见过多少样本」才是可比口径 ⇒ 我们做视觉塔对比时必须同时报参数量与样本数，否则结论不可比。<br>**data（增强与去重）**：增强策略直接决定图文对的有效量，属 data 线可复用的配方。<br>**pretrain（优化器消融）**：优化器与增强改动带来的收敛差异必须单独消融，不能与「样本数」混谈。<br>**zhulong（成本口径）**：2B 级自研视觉塔的「样本数 × 参数量」成本线可参照这篇的量级。 |
+| 首次收录 | **2026-11-22**（第八十六轮 · 00:00 时窗） |
+| 核验状态 | arXiv `id_list=2303.15389` **`200` + atom**（`published` `2023-03-27T17:02:21Z`）；abs 页 **`200` / 40,797 B**（`citation_title` 与 API 逐字一致）；OpenAlex **`200`（1,204 / 2023 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 325. The RefinedWeb Dataset for Falcon LLM: Outperforming Curated Corpora with Web Data, and Web Data Only
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | The RefinedWeb Dataset for Falcon LLM: Outperforming Curated Corpora with Web Data, and Web Data Only |
+| 作者（前 3） | Guilherme Penedo · Quentin Malartic · Daniel Hesslow（共 **9** 位；末位 Julien Launay；arXiv 作者字段逐字核；机构本轮未逐页核 ⇒ 不写） |
+| 年份 | **2023**（arXiv v1 `2023-06-01`） |
+| 会议 / 期刊 | **预印本**（OpenAlex source = *arXiv (Cornell University)*、`type=preprint`、`publication_year=2023`；会议 / 期刊接收信息**未核 ⇒ 不写**） |
+| 被引数 | **1,221**（OpenAlex `10.48550/arxiv.2306.01116`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2306.01116> ｜ arXiv DOI `10.48550/arxiv.2306.01116` |
+| 一句话贡献 | 反证「必须策展语料」的共识：只靠**充分过滤 + 去重的网页数据**就能训出强模型，且优于用 The Pile 训的对照；从 CommonCrawl 抽出 **5 万亿 token**，并公开 **600B** token 的抽取集（作者自报）。 |
+| 与我们工作的关系 | **data（主 · 语料路线）**：「策展语料是否必要」是我们可预注册的对照臂——自建语料前先做「纯网页 vs 混合策展」小规模对照，避免过早投入高成本清洗。<br>**pretrain（可比性）**：去重率与过滤阈值必须作为超参登记，否则不同批次的 loss 不可比。<br>**zhulong（成本上限）**：语料规模决定训练成本上限，须与每 token 成本一起报。 |
+| 首次收录 | **2026-11-22**（第八十六轮 · 00:00 时窗） |
+| 核验状态 | arXiv `id_list=2306.01116` **`200` + atom**（`published` `2023-06-01T20:03:56Z`）；abs 页 **`200` / 41,829 B**（标题逐字一致）；OpenAlex **`200`（1,221 / 2023 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 326. Scaling Rectified Flow Transformers for High-Resolution Image Synthesis
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling Rectified Flow Transformers for High-Resolution Image Synthesis |
+| 作者（前 3） | Patrick Esser · Sumith Kulal · Andreas Blattmann（共 **17** 位；末位 Robin Rombach；arXiv 作者字段逐字核；机构本轮未逐页核 ⇒ 不写） |
+| 年份 | **2024**（arXiv v1 `2024-03-05`） |
+| 会议 / 期刊 | **预印本**（OpenAlex source = *arXiv (Cornell University)*、`type=preprint`、`publication_year=2024`；即常称的 SD3 技术报告；正式接收信息**未核 ⇒ 不写**） |
+| 被引数 | **5,735**（OpenAlex `10.48550/arxiv.2403.03206`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2403.03206> ｜ arXiv DOI `10.48550/arxiv.2403.03206` |
+| 一句话贡献 | 改进 rectified flow 的**噪声采样**（把采样偏置到感知相关尺度），并提出**双流（文本 / 图像各自权重）→ 单流合并**的 MMDiT 结构；大规模高分辨率文生图实验上优于既有扩散形式（作者自报）。 |
+| 与我们工作的关系 | **zhulong（主 · 生成侧成本与架构）**：视频 / 图像生成的分辨率-算力口径、「双流到单流」的参数量折中旋钮，是我们视频路线的顶层参照。<br>**vision（多模态架构）**：文本与图像模态各自一套权重的做法，与「统一权重」路线（Show-o #322）是直接对照。<br>**harness（生成评测）**：生成质量须给可程序化评估，人评只能作补充。 |
+| 首次收录 | **2026-11-22**（第八十六轮 · 00:00 时窗） |
+| 核验状态 | arXiv `id_list=2403.03206` **`200` + atom**（`published` `2024-03-05T18:45:39Z`）；abs 页 **`200` / 43,894 B**（标题逐字一致）；OpenAlex **`200`（5,735 / 2024 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
@@ -5605,6 +5656,8 @@
 | `1904.00962` | ~~LAMB~~ ⇒ 已收 #175 | — | — | — |
 
 > 维护纪律：候选池只放**未收录**且**被引未实测**的 ID；转正后从本表删去并在条目里写明「首次收录」。🚫 未实测前不写被引数、不写会议。
+
+> ✅ **第八十六轮（2026-11-22 00:0x）转正 3 条**：EVA-CLIP `2303.15389`（#324，**1,204**，预印本）· RefinedWeb `2306.01116`（#325，**1,221**，预印本）· SD3 `2403.03206`（#326，**5,735**，预印本 / SD3 技术报告）⇒ B 轨累计 **326**（覆盖轴：视觉塔「参数量 × 见过样本数」的可比口径 / 纯网页 + 去重语料即可超越策展语料 / rectified-flow 噪声采样偏置 + 双流→单流 MMDiT）。核验：arXiv `id_list` 单批 **`200` + atom**（7,923 B / 3 entry）+ abs 页 **3/3 `200`**（40,797 / 41,829 / 43,894 B，`citation_title` 逐字核）+ OpenAlex **3/3 `200`**（1,204 / 1,221 / 5,735，均 `type=preprint`；查询日 2026-11-22）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批排除已收 `2502.16982` Muon / `2409.12191` Qwen2-VL / `2310.05209` RoPE 外推 / `2101.00027` The Pile / `2107.03374` HumanEval / `2304.14108` DataComp / `2304.07193` DINOv2 / `2304.02643` SAM / `2405.09818` Chameleon / `2409.18869` Emu3 / `2209.14322`… 等）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧实现报告（QK-clip / loss-spike）；③ 视觉塔对照补 EVA-02 正式论文（EVA-CLIP 已收 #324 ⇒ 若为同一工作的会议版则不重复收）；④ 数据侧补「去污染 / 评测集泄露」一手（RefinedWeb 已覆盖「纯网页」路线）；⑤ 视频生成侧补 DiT 后的时序建模一手（CogVideoX / Open-Sora 类）。
 
 > ✅ **第八十五轮（2026-11-21 21:0x）转正 3 条**：Cosmos WFM `2501.03575`（#321，**1,115**，预印本，NVIDIA）· Show-o `2408.12528`（#322，**739**，ICLR 2025）· FP8-LM `2310.18313`（#323，**171**，**&lt;500 按「方法论常青」收**，理由：FP8 混合精度训练公开参考实现，后续低精度训练工作普遍以它作对照）⇒ B 轨累计 **323**（覆盖轴：世界模型四件套（清洗 / 基座 / 后训练 / tokenizer）+ 开放权重 / 理解与生成共用一套权重的 AR + 离散扩散混合目标 / FP8 三级递进低精度训练）。核验：arXiv `id_list` 单批 **`200` + atom** + abs **3/3 `200`**（53,618 / 41,613 / 45,703 B）+ OpenAlex **3/3 `200`**（1,115 / 739 / 171，查询日 2026-11-21）。**先查重**：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**。⚠️ **写入前拦截两处 ID 误记**：候选池旧记「InternVL `2312.16873`」实测为**杆状聚合物论文**（真 ID 应为 `2312.14238`，且已在表内）⇒ 整条剔除；「Qwen2-VL `2408.12528`」实测为 **Show-o**（Qwen2-VL 真 ID `2409.12191`，已在表内）⇒ 改收 Show-o 本身。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧实现报告（QK-clip / loss-spike）；③ 视频世界模型对照（Genie / Sora 技术报告无 arXiv 一手 ⇒ 只补有 arXiv 的一手）；④ 视觉塔对照补 InternViT 一手 `2312.14238` **已在表内** ⇒ 改补 EVA-02 后续；⑤ 低精度推理侧（FP8 / FP4 量化 KV cache 一手）。
 

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-22（3/5 · 00:00 早报 · B 轨第八十六轮 → 326） · research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.75; font-size:15px; }
+  .wrap { max-width:920px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:28px 30px; margin-bottom:20px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:23px; }
+  header.hero .sub { font-size:14px; opacity:.95; }
+  header.hero .meta { margin-top:12px; font-size:13px; opacity:.9; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid #9a6700; border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 22px; margin-bottom:18px; }
+  .card h2 { margin:0 0 10px; font-size:18px; color:var(--primary); line-height:1.5; }
+  .card .no { display:inline-block; background:var(--primary); color:#fff; border-radius:6px; padding:1px 9px;
+              font-size:13px; margin-right:8px; vertical-align:2px; }
+  .kv { width:100%; border-collapse:collapse; font-size:14px; margin-top:8px; }
+  .kv th, .kv td { border-top:1px solid var(--border); padding:7px 8px; text-align:left; vertical-align:top; }
+  .kv th { width:110px; color:var(--muted); font-weight:600; background:#fafbfc; }
+  tag { display:inline-block; font-size:12px; border-radius:5px; padding:1px 8px; margin-right:6px; }
+  .t-borrow { background:#e7f0ff; color:#0b3d6e; border:1px solid #b9d0f5; }
+  .t-pop { background:#eaf7ee; color:#1a7f37; border:1px solid #b7e0c3; }
+  .rm { background:#f6f8fa; border-left:3px solid var(--accent); padding:8px 14px; font-size:14px; color:#2b3b4a; margin-top:10px; border-radius:0 6px 6px 0; }
+  details { border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin-top:12px; background:#fcfdff; }
+  details summary { cursor:pointer; font-weight:600; color:var(--primary); font-size:14.5px; }
+  details ul { margin:10px 0 2px; padding-left:22px; font-size:14px; }
+  details li { margin:5px 0; }
+  h3.sec { font-size:17px; color:var(--primary); margin:28px 0 10px; }
+  table.plain { width:100%; border-collapse:collapse; font-size:14px; background:var(--card); }
+  table.plain th, table.plain td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  table.plain th { background:#eef3f8; color:var(--primary); }
+  a { color:var(--accent); word-break:break-all; }
+  code { background:#f2f4f7; border-radius:4px; padding:1px 5px; font-size:13px; }
+  footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul.tight li { margin:4px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-22</h1>
+  <div class="sub"><b>00:00 时窗（早报 3 篇）· A 轨 3/5 · B 轨第八十六轮 +3 → 326</b> · 今日进度 <b>3 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-22 00:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
+</header>
+
+<div class="note">
+  <b>采集口径说明（可核验）</b>：本轮 <code>cat:cs.CL&amp;max_results=40&amp;sortBy=submittedDate</code> <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（<b>109,971 B / 40 entry</b>，<code>--noproxy '*'</code> 直连），最新 <code>published</code> = <b><code>2026-11-19T18:57:25Z</code></b>（<b>连续第 13 窗未前进</b>；距 72h 截止 <code>2026-11-22T18:57:25Z</code> 尚在窗内）。
+  3 篇入选 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / 近 7 天 <code>daily/</code> <b>均 0 命中</b>；abs 页逐篇复查 <b>3/3 <code>200</code></b>（41,201 / 40,874 / 43,057 B）且 <code>citation_title</code> 与 API 标题逐字一致，<code>published</code> 齐备。
+  ⚠️ 本窗仍只从<b>已公告的积压候选</b>里取，未把「公告批上界不动」当成「没有新论文」。
+</div>
+
+<h3 class="sec">A 轨 · 今日推荐（3 / 5）</h3>
+
+<div class="card">
+  <h2><span class="no">1</span>SheetAlign: Grounded Interaction and Stage-Isolated Learning for Spreadsheet Agents</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Yuxiang Wang · Junhao Gan · Jianzhong Qi（共 3 位；机构取自 arXiv 元数据，本轮未逐页核）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-19（v1，UTC 13:13:12Z）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.CL ｜ <tag class="t-borrow">借鉴</tag> 表格 agent / 工具接地 / 分阶段训练 / 执行一致性</td></tr>
+    <tr><th>中文一句话</th><td>把表格操作拆成<b>「在哪操作 → 改什么 → 怎么实现」三段</b>，先让模型看一眼工作簿再做 API 接地，再用<b>编辑进度奖励</b>分阶段训练生成与复核，推理时用<b>多程序执行后工作簿状态的一致性</b>选程序。SpreadsheetBench 上，仅换「接地后的任务接口」就让 <b>Qwen3-4B 从 13.5% 提到 29.2%</b>（不训练）；加训练与执行一致性后达 <b>32.8%</b>，Domain-Spreadsheet 上 <b>30.1%</b>（作者自报）。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.26069">abs: 2611.26069</a> ｜ <a href="https://arxiv.org/pdf/2611.26069">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：我们的 harness 里「工具调用失败」有很大一块不是模型不会写代码，而是<b>没看清状态就动手</b>。可借三点：① <b>先观测后生成</b>的两段式（task-guided inspection + API grounding）不需要训练，可直接当 prompt / 工具层改造，<b>+15.7 pp</b> 是不训练就能拿的量级参照；② <b>按阶段隔离训练</b>（生成 / 复核分开）比端到端更易定位退化，适合我们已经在跑的多阶段流水线；③ <b>用执行结果一致性投票</b>替代多数投票，判分信号来自环境而非模型自评，cost/benefit 更可控。<br><b>风险 / 边界</b>：① 只在 4B 级开源模型上验证，未给 30B+ 或闭源强模型曲线；② 表格任务的可执行验证天然容易，版图 / 规格书类任务的状态比对更贵，迁移收益未测；③ 数字作者自报，无第三方复现；④ 代码「录用后公开」⇒ 当前不可复现。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">2</span>RL Can Only Reinforce What It Sees Succeed</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Ruben Sanchez-Corcuera · Unai Zulaika · Aritz Bilbao-Jayo（et al.，共 4 位；机构取自 arXiv 元数据，本轮未逐页核）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-19（v1，UTC 13:24:40Z）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.LG ｜ <tag class="t-borrow">借鉴</tag> 强化学习 / GRPO / 稀疏奖励 / 后训练稳定性</td></tr>
+    <tr><th>中文一句话</th><td>在「先验与正确答案都已知」的谜题世界里从零训小模型，发现结果奖励 RL <b>只能强化它采样到过的成功</b>：正确动作稀少时，每条 run 要么全学会要么完全学不会，而<b>哪条 run 会起飞可在训练前用一个计数预测</b>——「动作获胜的尝试组数」；约 <b>35 组</b>时胜负各半，该计数在 4–256 次尝试的组、不同学习率 / 优化器 / GRPO 变体与 <b>1.3M–85M</b> 参数上成立（只移动阈值，不改变「数什么」）（作者自报）。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.26084">abs: 2611.26084</a> ｜ <a href="https://arxiv.org/pdf/2611.26084">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：我们做 RL 后训练最常踩的坑是<b>「跑了一次不涨就换超参」</b>，而这篇给的是<b>训练前可算的判据</b>。可借三点：① 把「成功样本组数」做成开跑前的一次性统计（我们离线数据上就能数），低于阈值就先加采样 / 改课程，而不是调 lr；② 「rare success ⇒ 全或无」解释了为什么同一配方在不同种子下方差巨大 ⇒ 预注册时必须报<b>多条 run 的分布</b>而非单次最好；③ 结论跨 1.3M–85M 稳定，可先在 2B 以下的代理模型上定阈值，再迁到主模型。<br><b>风险 / 边界</b>：① 环境是合成谜题世界（先验可控），真实任务的奖励噪声与多解会让「组数」难以界定；② 只测结果奖励 RL，未覆盖过程奖励 / 偏好学习；③ 阈值 35 是特定任务族的经验值，不可直接照搬到我们的题池；④ 作者自报。</div>
+</div>
+
+<div class="card">
+  <h2><span class="no">3</span>dLoop: Looped Diffusion Language Models via Recurrent Latent Refinement</h2>
+  <table class="kv">
+    <tr><th>作者 / 机构</th><td>Handa Li · Pengxiang Li · Mingyu Cao（et al.，共 7 位；机构取自 arXiv 元数据，本轮未逐页核）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-19（v1）</td></tr>
+    <tr><th>分类 + 标签</th><td>cs.CL ｜ <tag class="t-borrow">借鉴</tag> 扩散语言模型 / 并行解码 / 循环深度 / 推理成本</td></tr>
+    <tr><th>中文一句话</th><td>扩散语言模型每步只有一部分位置「够可靠」才敢提交，瓶颈在<b>单次前向里信息没整合完</b>；dLoop 把预训练 DLM 改造成 <b>Prelude–Loop–Coda</b> 结构，对同一个部分掩码状态<b>循环复用一块参数共享的中间层</b>，用额外循环换潜空间计算（而非推进去噪步）。GSM8K / MATH / MBPP / HumanEval 上取得最高或并列最高准确率，且在按循环计算折算的 tokens-per-forward 口径下同时优于 Fast-dLLM（四项）与 dParallel（三项）（作者自报）。</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.26275">abs: 2611.26275</a> ｜ <a href="https://arxiv.org/pdf/2611.26275">pdf</a></td></tr>
+  </table>
+  <div class="rm"><b>推荐理由</b>：我们在 zhulong 上关心的是<b>每 token 成本</b>，而「并行解码」类的加速经常靠降置信度阈值，代价是质量；本文给的是<b>另一根轴：在提交前多算几次潜变量</b>。可借三点：① <b>参数共享的循环块</b>只增加计算不增加参数量，是「用算力换质量」的可控旋钮，适合放在成本分档里；② <b>TPF 折算</b>这个口径值得照搬——比较解码加速必须把额外计算算进去，否则数字不可比；③ 只改结构不改预训练目标，理论上可在现有 DLM checkpoint 上做最小改造。<br><b>风险 / 边界</b>：① 只覆盖四个推理 / 代码基准，长文生成与多语未测；② 「DP 加速」的对手选择有限，未与自回归 + 投机解码做同成本对比；③ 循环次数与质量的曲线需读正文，摘要未给拐点；④ 作者自报。</div>
+</div>
+
+<h3 class="sec">B 轨 · 经典论文（第八十六轮 +3 → 326）</h3>
+<table class="plain">
+  <tr><th>#</th><th>论文</th><th>年 / 被引</th><th>一句话贡献</th><th>与我们工作的关系</th></tr>
+  <tr>
+    <td>324</td>
+    <td><b>EVA-CLIP: Improved Training Techniques for CLIP at Scale</b><br><a href="https://arxiv.org/abs/2303.15389">arXiv:2303.15389</a></td>
+    <td>2023 · <b>1,204</b><br><span style="color:#59636e;font-size:12.5px;">预印本（OpenAlex type=preprint）</span></td>
+    <td>从表征学习 / 优化器 / 增强三处改 CLIP 训练效率：<b>5.0B 参数 EVA-02-CLIP-E/14+ 仅见 9B 样本即达 82.0 零样本 top-1</b>，430M 的 L/14+ 见 6B 样本达 80.4。</td>
+    <td><b>vision（主）</b>：同等参数下「见多少样本」才是可比口径 ⇒ 我们视觉塔选型须同时报参数量与样本数。<b>data</b>：增强与去重策略直接决定图文对的有效量。<b>pretrain</b>：优化器改动带来的收敛差异要单独消融。</td>
+  </tr>
+  <tr>
+    <td>325</td>
+    <td><b>The RefinedWeb Dataset for Falcon LLM: Outperforming Curated Corpora with Web Data, and Web Data Only</b><br><a href="https://arxiv.org/abs/2306.01116">arXiv:2306.01116</a></td>
+    <td>2023 · <b>1,221</b><br><span style="color:#59636e;font-size:12.5px;">预印本（OpenAlex type=preprint）</span></td>
+    <td>只靠<b>充分过滤 + 去重的网页数据</b>就能胜过用 The Pile 训的模型；从 CommonCrawl 抽出 <b>5 万亿 token</b>，公开 600B token 抽取集。</td>
+    <td><b>data（主）</b>：「策展语料是否必要」是可预注册的对照臂，我们自建语料前应先做「纯网页 vs 混合」对照。<b>pretrain</b>：去重率与过滤阈值要作为超参记录，否则 loss 不可比。<b>zhulong</b>：语料规模决定成本上限，须与 token 单价一起报。</td>
+  </tr>
+  <tr>
+    <td>326</td>
+    <td><b>Scaling Rectified Flow Transformers for High-Resolution Image Synthesis</b><br><a href="https://arxiv.org/abs/2403.03206">arXiv:2403.03206</a></td>
+    <td>2024 · <b>5,735</b><br><span style="color:#59636e;font-size:12.5px">预印本（OpenAlex type=preprint；SD3 技术报告）</span></td>
+    <td>改进 rectified flow 的噪声采样（偏向感知相关尺度），并给出<b>双流（文本 / 图像各自权重）+ 单流合并</b>的 MMDiT 结构，在大规模文生图上优于既有扩散形式。</td>
+    <td><b>zhulong（主）</b>：视频 / 图像生成的分辨率-成本口径与「采样尺度偏置」是直接可试的改造。<b>vision</b>：双流到单流的合并点是参数量与算力的折中旋钮。<b>harness</b>：生成质量须给可程序化的评估，而非只看人评。</td>
+  </tr>
+</table>
+
+<p style="font-size:14px;"><b>作者关系网 · +2（→ 300）</b>：#299 <b>Robin Rombach</b>（Stability AI / Black Forest Labs 方向；SD3 末位）<b>X 已核验</b> <code>@robrombach</code>（<code>x.com/robrombach</code> <code>200</code> / 188,334 B，<code>og:title</code> = <code>Robin Rombach (@robrombach) on X</code>）；<b>邮箱未找到</b>（<code>rombach.me</code> 与 <code>www.robrombach.com</code> 本轮均 <code>000</code> 超时）⇒ 不猜、不发信。· #300 <b>Patrick Esser</b>（Stability AI；SD3 一作）：<b>邮箱 / 主页 / X 均未找到</b>（<code>patrickesser.com</code> <code>000</code>；<code>@PatrickEsser</code> 实为另一人（<code>patrick goncalves</code>）、<code>@EsserPatrick</code> 实为 <code>Patrick Esser JR</code> ⇒ 均不记）⇒ 只建档。X 已核验累计 <b>114</b>。</p>
+
+<p style="font-size:14px;"><b>作者请教信 · 本时窗 3 封 · 累计 131 · 回信率 0/131</b>：新日额度重置后发出 11-21 备好的 3 封中文信 —— #129 Grounding DINO（Shilong Liu，<b>汉字 187</b>）<code>SENT OK 00:02:06</code> · #130 EAGLE（Hongyang Zhang，<b>汉字 200</b>）<code>00:02:08</code> · #131 Depth Anything（Lihe Yang，<b>汉字 241</b>）<code>00:02:09</code>。发送前地址页当场复核 3/3 <code>200</code> 且页内邮箱明文未变（<code>lsl.zone</code> 26,074 B · <code>uwaterloo.ca</code> 95,418 B · <code>liheyoung.github.io</code> 17,151 B）。三封开头句与问句句式零共用，各含只对该论文成立的技术细节（52.5 AP / ODinW 26.1 / 三档融合 · 倒数第二层特征 + 前移一步 token / 2.7–3.5× · 62M 自动标注 / 强增强）。待发队列余 <b>1 封</b>（Show-o，<code>drafts/2408.12528.md</code>）。<b>回信 0 / 131，0 封到期</b>（最早 2026-11-25，#1–#7）⇒ 继续按待诊断信号处理，不记为成功。</p>
+
+<details>
+<summary>📰 news_ready · 本期 0 条（理由）</summary>
+<ul>
+  <li>三篇 A 轨均为<b>方法 / 框架类</b>（表格 agent 的三段式、RL 的「成功组数」判据、DLM 的循环潜变量），没有发布 / 开源 / 首次突破类<b>事件点</b> ⇒ 四问第②问不过。</li>
+  <li>B 轨三条均为 2023–2024 年经典，非本窗新闻。</li>
+  <li>按「每期 ≤2 条、宁缺勿滥」⇒ 本期 0 条，不硬凑。</li>
+</ul>
+</details>
+
+<p style="font-size:14px;"><b>voice_ready 本期 0 条</b>：本轮 X 仅用于核验作者 handle（<code>x.com</code> 经代理 <code>200</code>），未抓到可双源核验的<b>单条推文原文 + 时间戳</b> ⇒ 按规矩不出 voice_ready（不用二手转述顶替）。</p>
+
+<h3 class="sec">00:00 时窗 · 对各线的可执行建议（6 线）</h3>
+<ul style="font-size:14px;">
+  <li><b>pretrain</b>：把 RL 侧的「成功组数」判据做成<b>开跑前检查项</b>——在现有离线题池上先数「至少有一次采样成功的尝试组数」，低于 ~35 组就先加采样或改课程，再谈超参；判据：同一配方连跑 3 个种子，若成功率分布跨 0 与 1 两极化即判「信号不足」，禁止据单次最好结果立项。</li>
+  <li><b>vision</b>：视觉塔选型表新增两列 <b>「见到的样本数」</b>与<b>「增强策略」</b>，与参数量并列；判据：任一新塔必须给出「同参数量、不同样本数」的对照，缺该对照的结论不写入选型结论。</li>
+  <li><b>harness</b>：照 SheetAlign 的两段式改工具层——先让 agent <b>读一次环境状态</b>再生成调用（不改训练）；判据：在固定 50 题子集上做 A/B，若工具调用失败率不降 ≥5 pp 则回退，避免把「模型能力」与「接口设计」混为一谈。</li>
+  <li><b>data</b>：启动「纯网页 vs 混合策展」小规模对照臂（同 token 预算、同去重规则），把<b>去重率与过滤阈值</b>记为超参；判据：对照差距 &lt;1% 时，后续统一走网页数据路线并停掉高成本策展。</li>
+  <li><b>zhulong</b>：所有解码 / 生成加速数字一律折算成 <b>tokens-per-forward 或「每样本 GPU·s」</b>后再比较（按 dLoop 的 TPF 口径）；判据：报告缺折算口径的加速比不予采纳。</li>
+  <li><b>designflow</b>：造题时把「阶段」显式建模（在哪操作 / 改什么 / 怎么实现），每阶段单独给分；判据：任一题目若无法把三阶段拆开判分，则降级为参考题、不进正式集。</li>
+</ul>
+
+<h3 class="sec">附录 · 00:00 时窗检索与核验</h3>
+<table class="plain">
+  <tr><th>项</th><th>结果</th></tr>
+  <tr><td>列表 <code>cat:cs.CL&amp;max_results=40</code></td><td><code>200</code> / <b>109,971 B / 40 entry</b> / atom；<code>published</code> 上界 <code>2026-11-19T18:57:25Z</code>（连续第 13 窗未前进，仍在 72h 窗内）</td></tr>
+  <tr><td>abs 页复查（A 轨 3 篇）</td><td>3/3 <code>200</code>（41,201 / 40,874 / 43,057 B），<code>citation_title</code> 与 API 标题逐字一致</td></tr>
+  <tr><td>B 轨 <code>id_list=2303.15389,2306.01116,2403.03206</code></td><td><code>200</code> + atom（<b>7,923 B / 3 entry</b>，<code>published</code> 齐备：2023-03-27 / 2023-06-01 / 2024-03-05）；abs 页 3/3 <code>200</code>（40,797 / 41,829 / 43,894 B）</td></tr>
+  <tr><td>OpenAlex</td><td>3/3 <code>200</code>：<b>1,204</b>（EVA-CLIP，preprint 2023）/ <b>1,221</b>（RefinedWeb，preprint 2023）/ <b>5,735</b>（SD3，preprint 2024）；查询日 2026-11-22</td></tr>
+  <tr><td>先查重</td><td>六个 ID（A 轨 3 + B 轨 3）在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> 全量正则 <b>0 命中</b>；近 7 天 <code>daily/</code> 亦 0 命中</td></tr>
+  <tr><td>地址页复核（发信前）</td><td><code>lsl.zone</code> <code>200</code> / 26,074 B（页内 <code>sl6222@columbia.edu</code>）· <code>uwaterloo.ca/…/h935zhan</code> <code>200</code> / 95,418 B（页内 <code>hongyang.zhang@uwaterloo.ca</code>）· <code>liheyoung.github.io</code> <code>200</code> / 17,151 B（页内 <code>lihe.yang.cs@gmail.com</code>）</td></tr>
+  <tr><td>X（代理 7897）</td><td><code>x.com</code> <b><code>200</code></b>；<code>@robrombach</code> <code>200</code> / 188,334 B（<code>og:title</code> 核验）；反例：<code>@guipenedo</code> 实为另一位巴西用户（<code>og:description</code> 自述做灯光 / 影视）、<code>@PatrickEsser</code> 实为 <code>patrick goncalves</code> ⇒ 均不记</td></tr>
+  <tr><td>未做</td><td>PDF 逐页复核（数字取自 arXiv 官方摘要）；X 推文全文抓取（仅核 handle）；回信通道仍只发不收</td></tr>
+</table>
+
+<footer>
+  research 线 · 论文观察日报 · 2026-11-22 00:00 时窗 ｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
+</footer>
+</div>
+</body>
+</html>

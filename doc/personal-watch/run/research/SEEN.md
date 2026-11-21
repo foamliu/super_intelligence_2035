@@ -5708,3 +5708,6 @@
 | 2026-11-21 | 2611.26363 | HiSA: Sparsifying the Hidden Dimension of RoPE Attention in LLMs | cs.LG | 收录 |
 | 2026-11-21 | 2611.25717 | VR-SparseQuant: Accurate FP4 Quantization with 2:4 Sparsity on Vera Rubin | cs.CL | 收录 |
 | 2026-11-21 | 2611.25813 | Efficient and Robust Drafting with Multi-Token Prediction | cs.CL | 收录 |
+| 2026-11-22 | 2611.26275 | dLoop: Looped Diffusion Language Models via Recurrent Latent Refinement | cs.CL | 收录 |
+| 2026-11-22 | 2611.26084 | RL Can Only Reinforce What It Sees Succeed | cs.LG | 收录 |
+| 2026-11-22 | 2611.26069 | SheetAlign: Grounded Interaction and Stage-Isolated Learning for Spreadsheet Agents | cs.CL | 收录 |

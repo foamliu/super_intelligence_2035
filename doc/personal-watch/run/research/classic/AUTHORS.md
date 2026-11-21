@@ -18,6 +18,8 @@
 
 > **当前计数（2026-11-21 21:0x）**：作者 **298** 人（编号最大 **298**）· X 已核验 **113**（本轮 +2：`@MikeShou1` 经 `og:title` = `Mike Shou (@MikeShou1) on X` + `og:description` = `Assoc Prof at NUS. Forbes 30 under 30 Asia...` 双源核验；`@liu_mingyu` 由本人主页 `href` 外链 + `x.com/liu_mingyu` `200`（`og:title` = `MingYuLiu (@MingYuLiu) on X`）核验）· 已发信 **128**（台账 #1–#128；当日 12/12 已满 ⇒ 本窗不发）· 回信 **0**（0/128）。<br>**第八十五轮增量（2026-11-21 21:0x）**：作者网 296 → **298**（#297 Mike Zheng Shou **A 级** `mike.zheng.shou AT gmail.com`（Show Lab 主页 `sites.google.com/view/showlab` 经代理 `200` / 161,838 B，页内明文 `mike.zheng.shou AT gmail.com`）/ #298 Ming-Yu Liu 劉洺堉 **无明文邮箱**（本人主页 `mingyuliu.net` `200` / 7,878 B 无 `mailto:`；NVIDIA Research 人员页 `research.nvidia.com/person/ming-yu-liu` `200` / 70,084 B 也无邮箱）⇒ 不猜地址），来自 B 轨 #322 Show-o / #321 Cosmos WFM。以下历史快照行保留原文（不追改），计数以本行为准。
 
+> **当前计数（2026-11-22 00:0x）**：作者 **300** 人（编号最大 **300**）· X 已核验 **114**（本轮 +1：`@robrombach` 经 `x.com/robrombach` `200` / 188,334 B，`og:title` = `Robin Rombach (@robrombach) on X`）· 已发信 **131**（台账 #1–#131；今日 3/12）· 回信 **0**（0/131）。<br>**第八十六轮增量（2026-11-22 00:0x）**：作者网 298 → **300**（#299 Robin Rombach **无邮箱**（`rombach.me` / `www.robrombach.com` 均 `000`）但 X `@robrombach` 已核验 / #300 Patrick Esser **邮箱·主页·X 均未找到** ⇒ 只建档），来自本轮 B 轨 #326 SD3。⚠️ 两处同名反例当场拦下：`@guipenedo` 实为巴西灯光从业者（`og:description` 自述，与 RefinedWeb 作者无关）、`@PatrickEsser` 实为 `patrick goncalves`、`@EsserPatrick` 实为 `Patrick Esser JR` ⇒ 均不记。以下历史快照行保留原文（不追改），计数以本行为准。
+
 > **当前计数（2026-11-21 00:0x）**：作者 **280** 人（编号最大 **280**）· X 已核验 **107**（本轮未新增核验：`x.com` 经代理 `000`）· 已发信 **119**（台账 #1–#119）· 回信 **0**。
 
 > **第七十八轮增量（2026-11-21 00:0x）**：作者网 276 → **280**（#277 Xizhou Zhu **B 级** `zhuwalter@sensetime.com`（ar5iv HTML `200` / 267,916 B 脚注明文；**2020 年地址，疑失效 ⇒ 只建档不发**）/ #278 Michael Tschannen **未找到**（`tschannen.github.io` `404`）/ #279 Xiaohua Zhai **未找到**（`xiaohuazhai.com` 本轮 `000`）/ #280 Alexander Sergeev **未找到**（论文未给邮箱）），来自第七十八轮 B 轨 #297 Horovod / #298 Deformable DETR / #299 SigLIP 2；已发信 116 → **119**（#117 NeRF 英文 181 词 `SENT OK 00:04:19` / #118 Faster R-CNN 英文 178 词 `00:04:21` / #119 Quiet-STaR 英文 182 词 `00:04:24`）；回信 **0**（0/119）。
@@ -4244,3 +4246,28 @@
 | 状态 | **待跟踪**（X 已核验；follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow；**无公开邮箱 ⇒ 本线不建信**） |
 | 备注 | `语言=中文(判据=姓名族属；主页同时列中文姓名「劉洺堉」)`。价值点：Cosmos 把世界模型拆成「清洗 / 基座 / 后训练 / tokenizer」四件套，可作为我们 vision 线与 zhulong 视频成本口径的顶层参照；作为 VP 可判断「开放权重 vs 闭源」的策略级问题。 |
 
+### 299. Robin Rombach
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Robin Rombach（德式姓名族属；若发信 ⇒ 德语称谓问候 + 英文正文） |
+| 机构 | **Stability AI / Black Forest Labs 方向**（SD3 论文末位作者；本轮未逐页核现职） |
+| 代表论文 | **Scaling Rectified Flow Transformers for High-Resolution Image Synthesis**（`2403.03206`，B 轨 #326，末位）· Latent Diffusion / Stable Diffusion 系列（本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **未找到**（`rombach.me` / `www.robrombach.com` 本轮均 <code>000</code> 超时；🚫 不猜地址、不发信） |
+| 主页 | **未找到**（候选域均不可达） |
+| X 账号 | **@robrombach**（`x.com/robrombach` 经代理 `200` / 188,334 B，`og:title` = `Robin Rombach (@robrombach) on X`；`og:description` 自述 generative models 方向） |
+| 状态 | **待跟踪**（X 已核验；follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow；无公开邮箱 ⇒ 本线不建信） |
+| 备注 | `语言=德语(判据=德式姓名族属 + 德国机构；欧洲语言只做称谓问候 + 英文正文)`。价值点：rectified-flow 的噪声采样偏置与「双流→单流」MMDiT 是 zhulong 视频生成路线的顶层参照；若拿到地址，可问「分辨率-算力曲线在 720p 以上是否仍线性」。 |
+
+### 300. Patrick Esser
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Patrick Esser（英语 / 德语姓名两可；判据冲突 ⇒ 英文兜底） |
+| 机构 | **Stability AI**（SD3 论文一作；本轮未逐页核现职） |
+| 代表论文 | **Scaling Rectified Flow Transformers for High-Resolution Image Synthesis**（`2403.03206`，B 轨 #326，一作）· VQGAN（本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **未找到**（`patrickesser.com` 本轮 <code>000</code> 超时；`github.com/patrickesser` 页无身份明示 ⇒ 不据以推断邮箱） |
+| 主页 | **未找到**（候选域不可达） |
+| X 账号 | **未找到**（反例：`@PatrickEsser` 实为 `patrick goncalves`、`@EsserPatrick` 实为 `Patrick Esser JR` ⇒ 均不记；🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=英文(判据=姓名族属两可 + 判据冲突 ⇒ 英文兜底)`。价值点：MMDiT 的双流权重划分与合并时机是 zhulong 视频架构的直接变量；若有地址，问「双流合并放在哪一层、合并后参数量如何折算算力」。 |
