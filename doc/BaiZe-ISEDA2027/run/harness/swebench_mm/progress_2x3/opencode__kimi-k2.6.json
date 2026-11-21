@@ -1917,9 +1917,16 @@
   "bpmn-io__bpmn-js-1174": {
     "instance_id": "bpmn-io__bpmn-js-1174",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1589.4,
+    "rc": 0,
+    "model_patch_len": 3288,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "Layouter.js` – 2 lines added\n* `test/spec/features/modeling/layout/Helper.js` – `reconnectStart` helper added\n* `test/spec/features/modeling/layout/LayoutSequenceFlowSpec.js` – 2 new test cases added\n",
+    "stderr_tail": "atures/modeling/layout/Helper.js test/spec/features/modeling/layout/LayoutSequenceFlowSpec.js 2>&1\n(no output)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/features/modeling/BpmnLayouter.js\u001b[90m [offset=78, limit=20]\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1179": {
     "instance_id": "bpmn-io__bpmn-js-1179",
