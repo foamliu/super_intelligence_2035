@@ -740,3 +740,5 @@ im5c1	lorikx	hfeg0plg15	266	verification	case	EDA-Eval-DesignFlow-SvTbVcdFsdbVer
 1795141581819_c8d7b	e06960	hfeg0plg56	111		case	EDA-Eval-DesignFlow-LPDDR6CACodecProduce-001	2026-11-22 05:38	
 1793683605769_se6k2.messages.json	e0014036	hfeg0pkn004	100	verification	parked		2026-11-22 05:28	trace too env-specific (DDR6 RCD platform integration, deep domain knowledge needed for check), pivot to simpler candidate
 1795072398281_bbqpl.messages.json	e03101	hfeg0plg103	78	verification	case	EDA-Eval-DesignFlow-IrunCofllxGenFailDiagnoseQA-001	2026-11-22 05:38	
+1794970827208_xzcak.messages.json	rose3wang	hfeg0pkn003	144	digital	parked		2026-11-22 06:13	r969: DUP of existing VlogShellWrapGen-001 (line 375, same rose3wang efuse pin-table verilog-shell task, session l3qi7). Not appended.
+1795177578887_h07up.messages.json	jkxu	hfhds209	165	verification	case	EDA-Eval-DesignFlow-CompErrRerunGen-001	2026-11-22 06:19	r969 A-domain verification produce-task: find_comperror_jobs.py (tail-10 *E -> rerun). k=18, 3 negs+§4.9 FAIL, ref PASS. A.jsonl #434.
