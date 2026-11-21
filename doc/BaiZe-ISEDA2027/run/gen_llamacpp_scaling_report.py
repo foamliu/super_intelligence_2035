@@ -56,6 +56,30 @@ def task_harness_metric(tkey, tv):
 TARGET_ITERS = [10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000,
                 110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000,
                 210000, 220000, 230000, 240000, 250000, 260000, 270000, 280000, 290000, 300000]
+
+
+def discover_iters():
+    """动态扫描 RESULTS_BASE，找出所有已落盘 results.json 的 gguf_iter_<n>_fixed_8set。
+
+    2026-11-21 用户令放行 autoqueue 后，万整数评测改为每 2k 步一个点（270k/272k/274k…），
+    不再限于静态 TARGET_ITERS 的 10k 级。本函数让报告自动纳入任何已评测检查点。
+    """
+    found = set()
+    try:
+        for name in os.listdir(RESULTS_BASE):
+            if name.startswith("gguf_iter_") and name.endswith("_fixed_8set"):
+                mid = name[len("gguf_iter_"):-len("_fixed_8set")]
+                if mid.isdigit():
+                    rp = os.path.join(RESULTS_BASE, name, "results.json")
+                    if os.path.isfile(rp):
+                        found.add(int(mid))
+    except Exception:
+        pass
+    return found
+
+
+# 静态 10k 期望清单 ∪ 磁盘上实际已评测的点（含 2k 级 272k/274k…），排序去重。
+EVAL_ITERS = sorted(set(TARGET_ITERS) | discover_iters())
 TOK_PER_STEP = 256 * 16384
 TARGET_700K = 700000
 TARGET_700K_TOK = TARGET_700K * TOK_PER_STEP  # ~2.936T
@@ -102,7 +126,7 @@ def _is_nan_result(d):
 
 def load_results():
     out = {}
-    for it in TARGET_ITERS:
+    for it in EVAL_ITERS:
         dpath = os.path.join(RESULTS_BASE, CKPT_DIR_FMT.format(it=it), "results.json")
         if not os.path.isfile(dpath):
             continue
@@ -352,7 +376,7 @@ def build_html(data, now_str):
     h.append("<h1>BaiZe-2B llama.cpp 全 checkpoint 常识推理评测 · 10 点能力曲线（10k–100k）与 700k 预测</h1>")
     h.append(f"<p class='small'>生成时间：{esc(now_str)}　|　后端：llama.cpp 修复分支 "
              f"<code>fix/nemotron-h-undo-permute-and-rope</code>（build 5dc38db00）　|　"
-             f"已完成 {n_done}/{len(TARGET_ITERS)} ckpt　|　8 集 zero-shot <code>limit=100</code></p>")
+             f"已完成 {n_done}/{len(EVAL_ITERS)} ckpt　|　8 集 zero-shot <code>limit=100</code></p>")
     h.append("<div class='card'><h2>① 评测配置</h2><table>")
     h.append("<tr><th>项目</th><th>说明</th></tr>")
     h.append("<tr><td>模型</td><td>BaiZe-2B（Mamba2-hybrid，2.22B 参数）</td></tr>")
@@ -360,8 +384,8 @@ def build_html(data, now_str):
              "<code>-t 8</code> / <code>nice 19</code> / <code>OMP_NUM_THREADS=8</code></td></tr>")
     h.append("<tr><td>8 个任务集</td><td>ARC-Challenge / ARC-Easy / BoolQ / HellaSwag / "
              "OpenBookQA / PIQA / SciQ / Winogrande（zero-shot，与 P-6 同口径）</td></tr>")
-    h.append(f"<tr><td>检查点</td><td>iter_{{{','.join(str(i) for i in TARGET_ITERS)}}}（token/step={TOK_PER_STEP:,}，"
-             f"即 {fmt_tok(TARGET_ITERS[0]*TOK_PER_STEP)} ~ {fmt_tok(TARGET_ITERS[-1]*TOK_PER_STEP)}）</td></tr>")
+    h.append(f"<tr><td>检查点</td><td>iter_{{{','.join(str(i) for i in EVAL_ITERS)}}}（token/step={TOK_PER_STEP:,}，"
+             f"即 {fmt_tok(EVAL_ITERS[0]*TOK_PER_STEP)} ~ {fmt_tok(EVAL_ITERS[-1]*TOK_PER_STEP)}）</td></tr>")
     h.append("<tr><td>参照线</td><td>P-6 起点 0.4395@655M/20k；Xmodel-2 s1 (1.2B)；Phi-1.5 (1.3B)</td></tr>")
     h.append("<tr><td>每任务样本</td><td><code>limit=100</code>（非全量），acc_stderr ≈ ±4.5%，"
              "逐集绝对值有统计波动，<strong>Avg 趋势比单集绝对值更可信</strong></td></tr>")
@@ -373,7 +397,7 @@ def build_html(data, now_str):
         avgs = [(it, avg_acc(data[it])) for it in iters_done]
         best_it, best_avg = max(avgs, key=lambda p: p[1])
         first_it, first_avg = avgs[0]
-        h.append(f"<li>已完成 <strong>{n_done}/{len(TARGET_ITERS)}</strong> 个检查点（{', '.join(f'iter_{it}' for it in iters_done)}）。</li>")
+        h.append(f"<li>已完成 <strong>{n_done}/{len(EVAL_ITERS)}</strong> 个检查点（{', '.join(f'iter_{it}' for it in iters_done)}）。</li>")
         if n_done >= 2:
             h.append(f"<li>常识推理 Avg 从 iter_{first_it} 的 <strong>{fmt_pct(first_avg)}</strong> "
                      f"到 iter_{best_it} 的 <strong>{fmt_pct(best_avg)}</strong>。</li>")
@@ -405,7 +429,7 @@ def build_html(data, now_str):
                  "llama.cpp C++ SSM scan 数值稳定，<strong>所有已评测 ckpt 全部可正常出分</strong>，"
                  "本报告即为修复后真实能力曲线。</li>")
     h.append("</ul></div>")
-    h.append(f"<div class='card'><h2>③ {len(TARGET_ITERS)} ckpt × 8 集汇总表（acc / acc_norm）</h2>")
+    h.append(f"<div class='card'><h2>③ {len(EVAL_ITERS)} ckpt × 8 集汇总表（acc / acc_norm）</h2>")
     if n_done == 0:
         h.append("<p class='small'>暂无已完成检查点，待评测结束后刷新。</p>")
     else:
@@ -413,7 +437,7 @@ def build_html(data, now_str):
         for _, tn in TASKS:
             h.append(f"<th>{tn}<br><span class='small'>acc/norm</span></th>")
         h.append("<th class='avg'>Avg<br>(harness)</th><th class='avg'>Avg<br>(raw acc)</th></tr>")
-        for it in TARGET_ITERS:
+        for it in EVAL_ITERS:
             if it not in data:
                 h.append(f"<tr><td>iter_{it}</td><td>{fmt_tok(it*TOK_PER_STEP)}</td>"
                          f"<td colspan='{len(TASKS)+2}' class='na'>评测中…</td></tr>")
@@ -541,7 +565,7 @@ def main():
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
         f.write(build_html(data, now_str))
     sz = os.path.getsize(REPORT_PATH)
-    print(f"[OK] {REPORT_PATH}  ({sz} B, {len(data)}/{len(TARGET_ITERS)} ckpt)")
+    print(f"[OK] {REPORT_PATH}  ({sz} B, {len(data)}/{len(EVAL_ITERS)} ckpt)")
     for it in sorted(data):
         print(f"  iter_{it}: Avg={fmt_pct(avg_acc(data[it]))}")
 
