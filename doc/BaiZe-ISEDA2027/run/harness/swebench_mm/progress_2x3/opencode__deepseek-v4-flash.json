@@ -2979,16 +2979,30 @@
   "carbon-design-system__carbon-13317": {
     "instance_id": "carbon-design-system__carbon-13317",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 226.7,
+    "rc": 0,
+    "model_patch_len": 10360,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "--form-requirement`\n\n**`packages/react/src/components/RadioButtonGroup/RadioButtonGroup-test.js`**\n- 6 new tests covering invalid, invalidText, warn, warnText, helperText, and invalid+warn precedence\n",
+    "stderr_tail": "adioGroup\n[✓] Implement warn state for RadioGroup\n[✓] Implement helper text for RadioGroup\n[✓] Add SCSS styles for validation states\n[✓] Add tests for validation states\n[✓] Verify implementation\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-13364": {
     "instance_id": "carbon-design-system__carbon-13364",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 220.9,
+    "rc": 0,
+    "model_patch_len": 19687,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "pandHeader-test.js` — tests use `aria-label` prop\n- `InlineCheckbox-test.js` — tests use `aria-label` prop\n\nThe deprecated `ariaLabel` prop continues to work with a console warning via `deprecate()`.\n",
+    "stderr_tail": "ndHeader\n[✓] Refactor ariaLabel to aria-label in InlineCheckbox\n[✓] Update DataTable.js to pass aria-label alongside ariaLabel\n[✓] Update test files\n[✓] Verify changes compile and lint correctly\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-13421": {
     "instance_id": "carbon-design-system__carbon-13421",
