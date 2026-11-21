@@ -2424,16 +2424,30 @@
   "bpmn-io__bpmn-js-1679": {
     "instance_id": "bpmn-io__bpmn-js-1679",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1539.8,
+    "rc": 0,
+    "model_patch_len": 739,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "teristics` vs `MultiInstanceLoopCharacteristics`), a new element of the correct type is always created via `self._moddle.create()`.\n\nFile changed: `lib/features/popup-menu/ReplaceMenuProvider.js:435`\n",
+    "stderr_tail": "ug: toggling parallel/sequential doesn't update XML correctly\n[✓] Fix the bug in toggleLoopEntry - ensure new element is created on toggle to preserve change detection\n[✓] Verify fix makes sense\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1719": {
     "instance_id": "bpmn-io__bpmn-js-1719",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1286.8,
+    "rc": 0,
+    "model_patch_len": 770,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "shape.collapsed` reflects the actual toggled state because it was already updated by the core handler at priority 0.\n\nTwo lines changed in `lib/features/modeling/behavior/SubProcessPlaneBehavior.js`.\n",
+    "stderr_tail": "nded check at priority 400\n[✓] Reproduce the bug to understand the exact failure mechanism\n[✓] Implement the fix to hide labels inside collapsed sub-processes\n[✓] Verify the fix by running tests\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1720": {
     "instance_id": "bpmn-io__bpmn-js-1720",
