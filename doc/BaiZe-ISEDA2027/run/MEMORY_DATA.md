@@ -3,6 +3,7 @@
 WAITING: 0
 
 
+> 🟢 **心跳 · 2026-11-22 (R159) — 例行巡检（无新令）：git fetch origin 无新 data 令（所有用户令已交付，origin/main=7bf5572236 r1003）；pretrain #2938 报 iter=280350/700k(40.05%) step during-eval avg7289ms(n=20,18/20<7.4s✅) loss~2.00-2.03 0NaN/0skip✅ / latest ckpt=280k eval RUNNING(daemon PID1081392,lm_eval phase[5/6],ETA~38min,eval未拖训练Δ≈+0.08s✅) / 350k ETA≈5.8天(~11-28不变) / 700k ETA≈34.9天(~12-26不变）；v3 报告(R158)iter=280.2k 与当前 280.35k 偏差 0.15k(~18min)不刷新（ETA日期不变,280k eval仍在跑待完成后再刷新）；数据侧无新变化：PC-1~PC-5 全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务（无pc2/tokenize/blend/contam进程）/ .12 load=25.5✅<120 / /nas_user 42T✅>5T红线。research 日报 11-22 data 建议同 R153（「纯网页 vs 混合策展对照臂」非约束参考，S1/S2配比已定不纳入）。MEMORY_DATA 36.9KB✅<40KB / TASK 37.8KB✅<40KB。WAITING=0**。
 
 > 🟢 **心跳 · 2026-11-22 (R158) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R158 刷新点（iter 进度同步）：v3 报告全文 iter 279.8k→280.2k / 40.0%→40.03% / step 7.23s→7.19s（pretrain #2936）/ 350k ETA 5.9→5.8天（~11-28不变）/ 700k ETA 35.2→34.9天（~12-26不变）/ latest ckpt 278k→280k（280k eval RUNNING，ETA~50min，lm_eval phase[5/6]，eval未拖训练Δ≈0s✅）/ header+R158 note+gantt+risk#7+G5+footer 同步更新。git fetch无新令。数据侧无新变化：PC-1~PC-5全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load=25✅<120 / /nas_user 42T✅>5T红线 / v2 preserved / commit `data report:`+push / WAITING=0**。
 
