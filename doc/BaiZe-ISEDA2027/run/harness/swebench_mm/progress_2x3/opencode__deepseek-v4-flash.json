@@ -4588,16 +4588,30 @@
   "grommet__grommet-5243": {
     "instance_id": "grommet__grommet-5243",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 222.2,
+    "rc": 0,
+    "model_patch_len": 6108,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ormalizeColor`\n2. `src/js/components/RadioButton/RadioButton.js:89` — Passed `checked={checked}` prop to `StyledRadioButtonBox`\n\nNow `check.background.color` only applies to the checked radio button.\n",
+    "stderr_tail": "53ad6c)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore RadioButton and RadioButtonGroup components to understand the bug\n[✓] Fix check.background.color to only apply to checked radio button\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "grommet__grommet-6227": {
     "instance_id": "grommet__grommet-6227",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 248.4,
+    "rc": 0,
+    "model_patch_len": 76697,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "), so `filterRemovedFields` wouldn't clean stale errors\n- `requiredFields.current` was never cleaned up, so `buildValid` would still check the removed field's (now `undefined`) value → `valid: false`\n",
+    "stderr_tail": "me]).length === 0\n+                ) {\n+                  delete validationRulesRef.current[name];\n+                }\n+              }\n+            };\n           }\n \n           return undefined;\n\u001b[0m\n"
   },
   "grommet__grommet-6239": {
     "instance_id": "grommet__grommet-6239",

@@ -2594,23 +2594,44 @@
   "carbon-design-system__carbon-10599": {
     "instance_id": "carbon-design-system__carbon-10599",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1113.3,
+    "rc": 0,
+    "model_patch_len": 9995,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "\n- `packages/themes/src/next/tokens/__tests__/__snapshots__/v11-test.js.snap`\n- `packages/styles/scss/__tests__/theme-test.js`\n- `packages/elements/src/__tests__/__snapshots__/PublicAPI-test.js.snap`\n",
+    "stderr_tail": "ges/themes/src/white.js                                      | 3 +++\n packages/themes/tasks/builders/compat/shared.js                   | 2 ++\n 17 files changed, 51 insertions(+), 4 deletions(-)\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-11352": {
     "instance_id": "carbon-design-system__carbon-11352",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 317.0,
+    "rc": 0,
+    "model_patch_len": 1173,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ght\n- `md`: `11px` left/right  \n- `sm`: `7px` left/right\n\nThis is consistent with how `Button` already behaves when used with `hasIconOnly` (it pre-computes this class and passes it to `IconButton`).\n",
+    "stderr_tail": "/Button-test.js\u001b[90m [offset=325, limit=25]\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Find IconButton component and style files\n[✓] Identify the right padding bug\n[✓] Fix the padding issue\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-11416": {
     "instance_id": "carbon-design-system__carbon-11416",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 512.4,
+    "rc": 0,
+    "model_patch_len": 2534,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "pdated all usages in the component's `useEffect` hooks so that `flatpickr`, event plugins, event listeners, and value assignments all operate on the resolved DOM nodes rather than the raw ref values.\n",
+    "stderr_tail": "rent\"\u001b[90m in packages/react/src/components/DatePicker/next · 0 matches\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix DatePicker crash when datePickerType=\"single\" by resolving DOM refs in next/DatePicker.js\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-11613": {
     "instance_id": "carbon-design-system__carbon-11613",
