@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **332** 条（**第八十八轮 2026-11-22 06:0x 补 3 条 → 332**：CogVideoX `2408.06072`（**2,181**，OpenAlex `type=conference-paper`、ICLR 2025）/ Open-Sora Plan `2412.00131`（**359**，预印本，PKU-YuanGroup）/ Spike No More `2312.16903`（**72**，**&lt;500 按「方法论常青」收**：从 Jacobian 谱范数推出「小 sub-layer + 大 shortcut」两条件，loss-spike 排查工作至今拿它作理论参照）；核验：arXiv `id_list` 单批 **`200` + `application/atom+xml`**（7,780 B / 3 entry，`published` 齐备：2024-08-12 / 2024-11-28 / 2023-12-28）+ 标题与 API 逐字核 + OpenAlex **3/3 `200`**（查询日 2026-11-22）；数字取自 arXiv 官方摘要，Spike 另用 PDF 首页（`pdftotext`，1.7B 配置、约 13,000 步发散）核；**CogVideoX / Open-Sora Plan 未做 PDF 逐页复核**（CogVideoX PDF 14,790,587 B > 5 MB 未落盘）；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 FineWeb `2406.17557` 已在表内 #201 ⇒ 剔除；Phi-3 `2404.14219`、AgentBench `2308.03688` 亦已在表内）；覆盖轴 = 3D 因果 VAE + expert adaptive LayerNorm 的 10 秒 768×1360 视频 DiT / 全开源视频生成栈（Wavelet-Flow VAE + Joint Image-Video Skiparse Denoiser + 多维数据治理）/ 预训练 loss spike 的两条理论条件；本轮归属：zhulong **+2** · vision **+1** · pretrain **+1** · data **+1**（一篇可多线））
+
 **本轮快照**：累计 **320** 条（**第八十四轮 2026-11-21 18:0x 补 3 条 → 320**：Depth Anything `2401.10891`（**2,769**，CVPR 2024）/ HunyuanVideo `2412.03603`（**2,092**，预印本）/ V-JEPA 特征预测 `2404.08471`（**846**，TMLR）；核验：arXiv API `id_list` 单批 **`200` + `application/atom+xml`**（15,089 B / 3 entry，`published` 齐备）+ abs 页 **3/3 `200`**（42,879 / 50,895 / 41,768 B）+ OpenAlex **3/3 `200`**（2,769 / 2,092 / 846，查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 DeepSeek-R1 `2501.12948` / Mixtral `2401.04088` / Self-Consistency `2203.11171` / Ring Attention `2310.01889` / s1 `2501.19393` / DCLM `2406.11794` 经查**均已在表内** ⇒ 剔除）；覆盖轴 = 62M 无标注图的数据引擎 + 更难目标 + 辅助语义监督 / 开源 13B 视频基座的四段框架 / 不用负样本与重建的纯特征预测目标；累计覆盖（按主归属线计）：pretrain **105** · vision **51** · harness **120** · data **110** · zhulong **121** · designflow **51**）
 
 **本轮快照**：累计 **317** 条（**第八十三轮 2026-11-21 15:0x 补 3 条 → 317**：Grounding DINO `2303.05499`（**2,415**，≥500 直接满足，预印本）/ AndroidWorld `2405.14573`（**525**，≥500 直接满足，OpenAlex source = ICLR）/ EAGLE `2401.15077`（**499**，**&lt;500 按「方法论常青」收**：EAGLE-2 / EAGLE-3 的标准对照）；核验：arXiv API `id_list` 单批 **`200` + `application/atom+xml`**（`published` 齐备）+ abs 页 **3/3 `200`**（44,302 / 44,789 / 42,120 B）+ OpenAlex **3/3 `200`**（2,415 / 525 / 499，查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` **0 命中**（同批候选 Mind2Web `2306.06070` / Dolma `2402.00159` / MiniCPM `2404.06395` 经查**已在表内** ⇒ 剔除）；⚠️ **ID 误记在写入前拦截**：候选池旧记 Grounding DINO 为 `2303.19588`，`id_list` 实测不返回该文 ⇒ 真 ID `2303.05499`；另 `2502.05907` 实测是 **EvolvingAgent**（非 Muon）⇒ 未收；覆盖轴 = 开放词表取框的三阶段紧融合 / 参数化动态任务 + 程序化成功检查 / 特征层自回归的投机解码；累计覆盖：pretrain **105** · vision **48** · harness **120** · data **110** · zhulong **121** · designflow **51**）
@@ -5693,6 +5695,57 @@
 | 与我们工作的关系 | **vision（主 · 特征图质量）**：我们的视觉塔若直接拿 patch 特征做检测 / 分割 / 定位，必须检查高范数伪影，否则下游头会把「背景伪影」当信号。<br>**zhulong（视频特征）**：多帧 ViT 的伪影是否随时序累积，需在视频特征上复核（作者只做图像）。<br>**harness（可视化验收）**：把「特征图范数分布 + 注意力平滑度」列入视觉塔验收项，而非只看线性探针分数。 |
 | 首次收录 | **2026-11-22**（第八十七轮 · 03:00 时窗） |
 | 核验状态 | arXiv `id_list=2309.16588` **`200` + atom**（`published` `2023-09-28T16:45:46Z`）；abs 页 **`200` / 40,626 B**（标题逐字一致）；OpenAlex **`200`（821 / 2024 / conference-paper）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 330. CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer |
+| 作者（前 3） | Zhuoyi Yang · Jiayan Teng · Wendi Zheng（共 **18** 位；末位 Jie Tang；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-08-12`） |
+| 会议 / 期刊 | **ICLR 2025**（OpenAlex `type=conference-paper`、`publication_date=2025-05-01`、source = *International Conference on Learning Representations*；卷期页码无） |
+| 被引数 | **2,181**（OpenAlex `10.48550/arxiv.2408.06072`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2408.06072> ｜ arXiv DOI `10.48550/arxiv.2408.06072` |
+| 一句话贡献 | 用**三维因果 VAE**（时间 + 空间同时压缩）＋ **expert transformer（expert adaptive LayerNorm）** 做文本与视频的深层融合，再配 progressive training 与多分辨率 frame pack，做出 **10 秒 / 16 fps / 768×1360** 的连续视频；2B 与 5B 两档权重、3D causal VAE 与视频 caption 模型全部开源（作者自报）。 |
+| 与我们工作的关系 | **zhulong（主 · 视频生成架构）**：视频塔要跨过「短视频拼接」阶段，就得先解决时间维压缩与文-视频融合两件事；本文给出 3D 因果 VAE + expert adaptive LayerNorm 的可照抄组合，并给出 2B/5B 两档规模对照。<br>**vision（视频 token 预算）**：768×1360 / 16 fps 这一档的 token 数决定训练成本，可作我们视觉塔的「视频分辨率-序列长度」换算基线。<br>**data（caption 管线）**：本文强调 caption 质量对语义对齐的贡献，data 线可把「视频 caption 模型」列为独立可交付资产。<br>**harness（生成评测）**：多机器指标 + 人工评测并列的做法，可作 zhulong 视频验收的双轨口径参照。 |
+| 首次收录 | **2026-11-22**（第八十八轮 · 06:00 时窗） |
+| 核验状态 | arXiv `id_list=2408.06072` **`200` + atom**（`published` `2024-08-12T11:47:11Z`）；标题与 API 逐字一致；OpenAlex **`200`（2,181 / 2025 / conference-paper / ICLR）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（PDF `content-length` 14,790,587 B > 5 MB ⇒ 未落盘）。 |
+
+---
+
+## 331. Open-Sora Plan: Open-Source Large Video Generation Model
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Open-Sora Plan: Open-Source Large Video Generation Model |
+| 作者（前 3） | Bin Lin · Yunyang Ge · Xinhua Cheng（共 **23** 位；末位 Li Yuan；另有 Yonghong Tian；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-11-28`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`、source = arXiv (Cornell University)；无卷期页码） |
+| 被引数 | **359**（OpenAlex `10.48550/arxiv.2412.00131`，查询日 **2026-11-22**；**&lt;500，按「本领域权威 / 方法论常青」收**：开源视频生成里少数把 VAE、Denoiser、数据治理三段全写清的项目报告） |
+| arXiv / DOI | <https://arxiv.org/abs/2412.00131> ｜ arXiv DOI `10.48550/arxiv.2412.00131` |
+| 一句话贡献 | 把开源长视频生成拆成 **Wavelet-Flow VAE + Joint Image-Video Skiparse Denoiser + 条件控制器** 三段，并给出高效训练 / 推理策略与**多维数据治理流水线**；代码与权重全开（<https://github.com/PKU-YuanGroup/Open-Sora-Plan>，作者自报）。 |
+| 与我们工作的关系 | **zhulong（主 · 全栈开源对照）**：与 CogVideoX 互补 —— CogVideoX 讲单个模型的架构取舍，本文讲整条流水线（VAE / Denoiser / 控制器 / 数据）怎么拼，适合当 zhulong 的「工程分解图」。<br>**data（视频数据治理）**：多维数据治理流水线可直接对照 data 线的视频清洗口径（分辨率 / 时长 / 美学 / 文本对齐各维怎么筛）。<br>**vision（图像-视频联合去噪）**：Joint Image-Video 的 Skiparse Denoiser 提示图文与视频数据可共用一套去噪主干，供 vision 线判断「要不要为视频单独训塔」。<br>**pretrain（高效训练）**：训练 / 推理加速策略可作 zhulong 显存与吞吐预算的参照。 |
+| 首次收录 | **2026-11-22**（第八十八轮 · 06:00 时窗） |
+| 核验状态 | arXiv `id_list=2412.00131` **`200` + atom**（`published` `2024-11-28T14:07:45Z`）；标题与 API 逐字一致；OpenAlex **`200`（359 / 2024 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 332. Spike No More: Stabilizing the Pre-training of Large Language Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Spike No More: Stabilizing the Pre-training of Large Language Models |
+| 作者（前 3） | Sho Takase · Shun Kiyono · Sosuke Kobayashi（共 **4** 位；末位 Jun Suzuki；arXiv 作者字段逐字核） |
+| 年份 | **2023**（arXiv v1 `2023-12-28`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`、source = arXiv (Cornell University)；无卷期页码） |
+| 被引数 | **72**（OpenAlex `10.48550/arxiv.2312.16903`，查询日 **2026-11-22**；**&lt;500，按「方法论常青」收**：把 loss spike 归因到 sub-layer / shortcut 的 Jacobian 谱范数，是少见的可推导条件，而非经验开关） |
+| arXiv / DOI | <https://arxiv.org/abs/2312.16903> ｜ arXiv DOI `10.48550/arxiv.2312.16903` |
+| 一句话贡献 | 从各子层 Jacobian 的谱范数出发，论证预训练不炸需要**两个条件：sub-layer 要小、shortcut 要大**；给出满足条件的初始化 + 一个简单的 embedding 修改，实验显示能压住 loss spike，并允许用更大的学习率（作者自报；PDF 首页：1.7B 配置下 vanilla 在约 **13,000 步**发散）。 |
+| 与我们工作的关系 | **pretrain（主 · 训练稳定性）**：我们的 spike 排查目前靠「降 LR / 梯度裁剪 / 回滚」，本文给出**结构侧**的两个可检验条件，可直接转成开跑前检查表（sub-layer 权重范数、shortcut 增益）。<br>**zhulong（长序列训练）**：长上下文与视频序列更容易触发梯度爆炸，两条件可作为扩序列实验的前置约束。<br>**harness（失败可解释性）**：把「spike 前 100 步的 sub-layer / shortcut 范数」纳入训练日志，失败时能区分是数据问题还是结构问题。 |
+| 首次收录 | **2026-11-22**（第八十八轮 · 06:00 时窗） |
+| 核验状态 | arXiv `id_list=2312.16903` **`200` + atom**（`published` `2023-12-28T08:53:27Z`）；标题与 API 逐字一致；OpenAlex **`200`（72 / 2023 / preprint）**；数字取自 arXiv 官方摘要 + PDF v2 首页（`pdftotext` 实测 `content-length` 1,815,593 B，文件名 `/tmp/spike.pdf`，未入 git），**其余章节未逐页复核**。 |
 
 ---
 

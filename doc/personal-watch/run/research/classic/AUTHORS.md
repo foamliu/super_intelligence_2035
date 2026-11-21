@@ -4298,5 +4298,31 @@
 | 主页 | <https://github.com/TCL606>（`200` / 196,169 B，`<title>` = `TCL606 (Changli Tang) · GitHub`） |
 | X 账号 | **未找到**（`x.com/TCL606` 经代理 `404`，`og:title` = `User Profile Not Found - X | 404 Error` ⇒ 不记、不猜） |
 | 状态 | **只建档**（无可发地址、X 未找到） |
-| 备注 | `语言=中文(判据=拼音姓名族属 + 清华大学)`。价值点：WeMM-Video 的 **1.2T token 渐进预训练 + 多教师 OPD + anti-repetition MrDPO + specialist RL** 是 omni-modal 视频理解的完整配方；若有地址，可问「音频 / 视觉 token 配比与 2B→35B-A3B 的规模拐点」。 |
+### 303. Sho Takase
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sho Takase（日文姓名族属 ⇒ 若发信应用 **日本語**；汉字名未从官方页核到 ⇒ 不写） |
+| 机构 | **LY Corporation / SB Intuitions**（arXiv PDF v2 首页脚注第 1 单位，`pdftotext` 实测；此前在 NTT 系研究所） |
+| 代表论文 | **Spike No More: Stabilizing the Pre-training of Large Language Models**（`2312.16903`，B 轨 #332，一作 / 通讯）· 句向量 / 检索方向工作（本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **sho.takase@lycorp.co.jp**（来源：arXiv PDF v2 首页 `Correspondence to: Sho Takase <sho.takase@lycorp.co.jp>`，`pdftotext` 明文；本人主页 `takase.github.io` `200` / 22,054 B **无邮箱** ⇒ 以论文通讯地址为准，标注为 2024 年论文内地址，送达率不可验证） |
+| 主页 | <https://takase.github.io/>（`200` / 22,054 B） |
+| X 账号 | **未找到**（主页无 `twitter.com` / `x.com` 链接；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-22 06:0x · 第 133 封 · 日文 281 字；回信状态 `未到期`，2026-12-06 到期） |
+| 备注 | `语言=日本語(判据=日文姓名族属 + 日本机构；🚫 未因论文英文/邮箱英文判英文)`。价值点：把 loss spike 归因到 sub-layer / shortcut 的 Jacobian 谱范数，是 pretrain 线可转成开跑前检查表的少数结构化结论。 |
+
+### 304. Jie Tang（唐杰）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jie Tang（唐杰；中文姓名族属 ⇒ 中文发信） |
+| 机构 | **清华大学计算机系**（KEG 知识工程组负责人；本人主页自述 Professor of Computer Science、ACM / AAAI / IEEE Fellow） |
+| 代表论文 | **CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer**（`2408.06072`，B 轨 #330，末位 / 资深作者）· GLM-4（`2406.12793`，B 轨已收，团队署名含他） |
+| 邮箱 | **jietang@tsinghua.edu.cn**（来源：本人主页 `keg.cs.tsinghua.edu.cn/jietang/` `200` / 217,822 B，页内 `E-Mail: jietang at tsinghua . edu . cn` 明文；发送前当场复核） |
+| 主页 | <https://keg.cs.tsinghua.edu.cn/jietang/>（`200` / 217,822 B） |
+| X 账号 | **@jietang**（主页自挂 `twitter.com/jietang`；`x.com/jietang` 经代理 `200` / 180,469 B，`og:title` = `jietang (@jietang) on X`，bio = `Professor @ Tsinghua, Founder of … AGI, LLM.` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-22 06:0x · 第 134 封 · 中文 185 汉字；回信状态 `未到期`，2026-12-06 到期）；X 待 follow（需登录态） |
+| 备注 | `语言=中文(判据=中文姓名族属 + 清华大学；🚫 未因论文英文/邮箱英文判英文)`。价值点：CogVideoX 的 3D 因果 VAE + expert adaptive LayerNorm + 多分辨率 frame pack 是 zhulong 视频塔的现成对照；三问已落到「时间维压缩比 / 两路融合比例随规模是否要重调 / 先提分辨率还是先提帧数」。 |
+
+
 

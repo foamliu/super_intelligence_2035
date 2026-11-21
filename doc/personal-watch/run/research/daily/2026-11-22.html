@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-22（5/5 · 03:00 晚报 · B 轨第八十七轮 → 329） · research 线</title>
+<title>论文观察日报 · 2026-11-22（5/5 · 06:00 补轮 · B 轨第八十八轮 → 332） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -47,8 +47,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-22</h1>
-  <div class="sub"><b>03:00 时窗（晚报补 2 篇）· A 轨 5/5 · B 轨第八十七轮 +3 → 329</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-22 03:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>06:00 时窗（A 轨已满 5/5 ⇒ 转 B 轨 / 作者网 / 发信）· B 轨第八十八轮 +3 → 332 · 作者网 304 · 作者信 134</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-22 06:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -56,6 +56,10 @@
   <b>采集口径说明（可核验 · 03:00 补轮）</b>：本轮 <code>cat:cs.CV&amp;max_results=40&amp;sortBy=submittedDate</code> <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（<b>107,965 B / 40 entry</b>，<code>--noproxy '*'</code> 直连），最新 <code>published</code> = <b><code>2026-11-19T18:59:57Z</code></b>（公告批仍未前进；与 00:00 的 cs.CL 上界 <code>18:57:25Z</code> 同批，距 72h 截止仍在窗内）。
   2 篇入选 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / 近 7 天 <code>daily/</code> <b>均 0 命中</b>；abs 页逐篇复查 <b>2/2 <code>200</code></b>（43,294 / 41,727 B）且 <code>citation_title</code> 与 API 标题逐字一致，<code>published</code> 齐备。
   ⚠️ 本窗仍只从<b>已公告的积压候选</b>里取，未把「公告批上界不动」当成「没有新论文」。
+</div>
+
+<div class="note">
+  <b>06:00 补轮口径（可核验 · A 轨已满 5/5 ⇒ 本窗不新增 A 轨）</b>：本轮 <code>cat:cs.CL&amp;max_results=40&amp;sortBy=submittedDate</code> <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（<b>109,971 B / 40 entry</b>，<code>--noproxy '*'</code> 直连），最新 <code>published</code> = <b><code>2026-11-19T18:57:25Z</code></b>（<b>连续第 14 窗未前进</b>，距 72h 截止仍在窗内）。A 轨今日已 5/5 ⇒ <b>不凑第 6 篇</b>，本窗把额度全给 B 轨 + 作者网 + 发信。
 </div>
 
 <h3 class="sec">A 轨 · 今日推荐（5 / 5）</h3>
@@ -165,11 +169,36 @@
     <td>在监督与自监督 ViT 特征图里定位<b>高范数 token 伪影</b>（多在低信息背景区，被模型挪去承担内部计算），用<b>额外 register token</b> 给它们专用去处；修复后密集预测达新的自监督 SOTA，特征 / 注意力图更平滑。</td>
     <td><b>vision（主）</b>：拿 patch 特征做检测 / 分割前必须检查高范数伪影。<b>zhulong</b>：多帧 ViT 的伪影是否随时序累积需复核（作者只做图像）。<b>harness</b>：把「特征范数分布 + 注意力平滑度」列入视觉塔验收项。</td>
   </tr>
+  <tr>
+    <td>330</td>
+    <td><b>CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer</b><br><a href="https://arxiv.org/abs/2408.06072">arXiv:2408.06072</a></td>
+    <td>2024 · <b>2,181</b><br><span style="color:#59636e;font-size:12.5px;">ICLR 2025（OpenAlex type=conference-paper）</span></td>
+    <td><b>3D 因果 VAE</b> 同时在时间与空间压缩 ＋ <b>expert adaptive LayerNorm</b> 深层融合文本与视频，配 progressive training 与多分辨率 frame pack，做出 <b>10 秒 / 16 fps / 768×1360</b> 连续视频；2B 与 5B 两档权重、3D causal VAE 与 caption 模型全开源。</td>
+    <td><b>zhulong（主）</b>：视频塔跨过「短视频拼接」需要的两项——时间维压缩 + 文-视频融合，本文给出可照抄组合与 2B/5B 对照。<b>vision</b>：768×1360 / 16 fps 可作视频 token 预算换算基线。<b>data</b>：视频 caption 模型可列为独立资产。<b>harness</b>：机器指标 + 人工评测双轨口径。</td>
+  </tr>
+  <tr>
+    <td>331</td>
+    <td><b>Open-Sora Plan: Open-Source Large Video Generation Model</b><br><a href="https://arxiv.org/abs/2412.00131">arXiv:2412.00131</a></td>
+    <td>2024 · <b>359</b><br><span style="color:#59636e;font-size:12.5px;">预印本（&lt;500，按「本领域权威 / 方法论常青」收）</span></td>
+    <td>把开源长视频生成拆成 <b>Wavelet-Flow VAE + Joint Image-Video Skiparse Denoiser + 条件控制器</b> 三段，并给出高效训练 / 推理策略与<b>多维数据治理流水线</b>；代码与权重全开。</td>
+    <td><b>zhulong（主）</b>：与 CogVideoX 互补——本文是整条流水线的「工程分解图」。<b>data</b>：多维数据治理（分辨率 / 时长 / 美学 / 文本对齐）可直接对照视频清洗口径。<b>vision</b>：Joint Image-Video 去噪提示图文与视频可共用主干。<b>pretrain</b>：加速策略作显存 / 吞吐预算参照。</td>
+  </tr>
+  <tr>
+    <td>332</td>
+    <td><b>Spike No More: Stabilizing the Pre-training of Large Language Models</b><br><a href="https://arxiv.org/abs/2312.16903">arXiv:2312.16903</a></td>
+    <td>2023 · <b>72</b><br><span style="color:#59636e;font-size:12.5px;">预印本（&lt;500，按「方法论常青」收）</span></td>
+    <td>从各子层 Jacobian 的谱范数推出预训练不炸的<b>两个条件：sub-layer 要小、shortcut 要大</b>；给出满足条件的初始化 + 简单 embedding 修改，压住 loss spike 并允许更大学习率（PDF 首页：1.7B 配置下 vanilla 约 <b>13,000 步</b>发散）。</td>
+    <td><b>pretrain（主）</b>：把 spike 排查从「降 LR / 裁剪 / 回滚」扩到<b>结构侧两条件</b>，可转成开跑前检查表。<b>zhulong</b>：长序列 / 视频更易梯度爆炸，可作扩序列前置约束。<b>harness</b>：把 spike 前 100 步的 sub-layer / shortcut 范数写进日志，区分数据问题与结构问题。</td>
+  </tr>
 </table>
 
 <p style="font-size:14px;"><b>作者关系网 · 03:00 时窗 +2（→ 302）</b>：#301 <b>Timothée Darcet</b>（FAIR Paris / Inria；ViT registers 一作）<b>X 已核验</b> <code>@timdarcet</code>（<code>x.com/timdarcet</code> 经代理 <code>200</code> / 181,126 B，<code>og:title</code> = <code>TimDarcet (@TimDarcet) on X</code>，<code>og:description</code> = <code>LLMs @ FAIR, prev. DINO stuff @ INRIA &amp; FAIR</code>）；<b>邮箱未找到</b>（<code>timdarcet.github.io</code> <code>200</code> / 2,363 B 页内无 <code>mailto:</code>）⇒ 不猜、不发信。· #302 <b>Changli Tang</b>（清华大学电子系博士生；WeMM-Video 一作）：<b>邮箱未找到</b>（<code>github.com/TCL606</code> <code>200</code> / 196,169 B 页内无 <code>mailto:</code>），<b>X 未找到</b>（<code>@TCL606</code> <code>404</code>）⇒ 只建档。X 已核验累计 <b>115</b>。</p>
 
 <p style="font-size:14px;"><b>作者请教信 · 本时窗 1 封 · 累计 132 · 回信率 0/132</b>：发出 11-21 备好的 Show-o 中文稿 —— #132 Mike Zheng Shou（NUS，<b>汉字 203</b>）<code>SENT OK 03:02:36</code>。发送前地址页当场复核 <code>sites.google.com/view/showlab</code> <code>200</code> / <b>162,233 B</b>，页内仍为 <code>mike.zheng.shou AT gmail.com</code>（与收件人逐字一致）。该信含只对本文成立的技术细节（1.3B / 码本 K=8,192 / 16×16 token / 35M 图文对 / 500K steps / GenEval 0.68），落款两行 <code>祝好，</code> / <code>Yang Liu</code> 其后无任何行。待发队列 <b>已清空</b>。<b>回信 0 / 132，0 封到期</b>（最早 2026-11-25，#1–#7）⇒ 继续按待诊断信号处理，不记为成功。</p>
+
+<p style="font-size:14px;"><b>作者关系网 · 06:00 时窗 +2（→ 304）</b>：#303 <b>Sho Takase</b>（LY Corporation / SB Intuitions；Spike No More 一作 / 通讯）<b>邮箱已核</b> <code>sho.takase@lycorp.co.jp</code>（arXiv PDF v2 首页 <code>Correspondence to</code> 明文，<code>pdftotext</code> 实测；本人主页 <code>takase.github.io</code> <code>200</code> / 22,054 B 无邮箱 ⇒ 以论文通讯地址为准，标注「2024 年论文内地址」）；<b>X 未找到</b>（主页无 X 链接 ⇒ 不猜）。· #304 <b>Jie Tang 唐杰</b>（清华大学计算机系；CogVideoX 末位 / 资深作者）：<b>邮箱已核</b> <code>jietang@tsinghua.edu.cn</code>（本人主页 <code>200</code> / <b>217,822 B</b> 页内明文）；<b>X 已核验</b> <code>@jietang</code>（<code>x.com/jietang</code> 经代理 <code>200</code> / 180,469 B，<code>og:title</code> + bio「Professor @ Tsinghua … AGI, LLM.」双源）。X 已核验累计 <b>116</b>。</p>
+
+<p style="font-size:14px;"><b>作者请教信 · 本时窗 2 封 · 累计 134 · 回信率 0/134</b>：① <b>#133 Sho Takase</b>（<code>2312.16903</code> Spike No More，<b>日文非空白 281 字</b>）<code>SENT OK 06:03:43</code>；② <b>#134 Jie Tang 唐杰</b>（<code>2408.06072</code> CogVideoX，<b>汉字 185</b>）<code>SENT OK 06:03:48</code>。两封均按姓名族属判母语（日文 / 中文，未因论文英文或邮箱英文判英文），落款严格两行、其后无任何行，正文不含项目名；开头句与问题句式零共用，各含只对本文成立的技术细节（1.7B 配置 / 约 13,000 步 / 两条件；10 秒 16 fps 768×1360 / 3D 因果 VAE / expert adaptive LayerNorm / 2B 与 5B / frame pack）。<b>今日 6/12</b>，待发队列空。<b>回信 0 / 134，0 封到期</b>（最早 2026-11-25）⇒ 仍按待诊断信号处理。</p>
 
 <details>
 <summary>📰 news_ready · 本期 0 条（理由）</summary>
@@ -180,7 +209,7 @@
 </ul>
 </details>
 
-<p style="font-size:14px;"><b>voice_ready 本期 0 条</b>：本轮 X 仅用于核验作者 handle（<code>x.com</code> 经代理 <code>200</code>），未抓到可双源核验的<b>单条推文原文 + 时间戳</b> ⇒ 按规矩不出 voice_ready（不用二手转述顶替）。</p>
+<p style="font-size:14px;"><b>voice_ready 本期 0 条</b>：本轮 X 仅用于核验作者 handle（<code>x.com</code> 经代理 <code>200</code>），未抓到可双源核验的<b>单条推文原文 + 时间戳</b> ⇒ 按规矩不出 voice_ready（不用二手转述顶替）。06:00 时窗同样 0 条；<b>news_ready 06:00 亦 0 条</b>（B 轨三条均为 2023–2024 年经典，非本窗事件点）。</p>
 
 <h3 class="sec">晚报变更说明（AM → PM）</h3>
 <ul style="font-size:14px;">
@@ -202,6 +231,10 @@
   <li><b>vision（03:00 新增）</b>：按 ViT registers（#329）在视觉塔验收里加两项<b>特征健康度</b>检查——每层高范数 token 占比、注意力图平滑度；判据：若去掉 register token 后背景区出现 &gt;10 个高范数离群 token，则该塔不许直接接检测 / 分割头，先补 register 再评。</li>
   <li><b>zhulong（03:00 新增）</b>：长视频推理先做<b>KV cache 分块量化</b>的最小实验——按时间相邻帧块拟合旋转（TRQ 路线），2-bit 下只测主体一致性是否守住；判据：同压缩比下相对 FP16 的 VBench 主体一致性跌幅 &lt;1.0 且运动分数跌幅 &lt;2.0 才进下一轮，否则回退 4-bit。</li>
   <li><b>pretrain（03:00 新增）</b>：扩上下文实验表新增「并行轴 / 卡数 / 有效序列长度」三列；判据：同一有效序列长度下若序列并行相对张量并行的吞吐提升 &lt;10%，则不引入新并行维度，避免为长上下文付通信税。</li>
+  <li><b>pretrain（06:00 新增 · 按 Spike No More）</b>：开跑前检查表加两项<b>结构侧指标</b>——每层 sub-layer 权重谱范数与 shortcut（残差恒等支路）增益；判据：若 sub-layer 谱范数随深度单调上升或 shortcut 增益 &lt;1，则先改初始化 / embedding 缩放再开跑，不许用「先跑再看 spike」当默认流程。</li>
+  <li><b>zhulong（06:00 新增 · 按 CogVideoX + Open-Sora Plan）</b>：视频塔立项时先交一张<b>三段分解表</b>（VAE 的时空压缩比 / 去噪主干是否图文视频共用 / 数据治理四维阈值），每段各写一条可验收指标；判据：缺任一段的提案不进评审，避免把「模型架构」与「数据管线」混成一个不可归因的整体。</li>
+  <li><b>data（06:00 新增 · 按 Open-Sora Plan）</b>：视频数据清洗先落四维阈值（分辨率 / 时长 / 美学 / 文本对齐），并按「保留率」记账；判据：任一维过滤后保留率 &lt;5% 时须先复核阈值来源，禁止直接用论文默认值套到工业视频上。</li>
+  <li><b>vision / harness（06:00 · 无新增）</b>：本轮 vision 侧仅有 CogVideoX 的 token 预算换算一条，已并入上条 zhulong 建议；harness 侧无独立可执行项，写「无」。</li>
 </ul>
 
 <h3 class="sec">附录 · 00:00 / 03:00 时窗检索与核验</h3>
@@ -222,10 +255,16 @@
   <tr><td>03:00 地址页复核（发信前）</td><td><code>sites.google.com/view/showlab</code> 经代理 <code>200</code> / <b>162,233 B</b>（页内 <code>mike.zheng.shou AT gmail.com</code>）</td></tr>
   <tr><td>03:00 X / 主页</td><td><code>@timdarcet</code> <code>200</code> / 181,126 B（<code>og:title</code> + <code>og:description</code> 双源核验）· <code>timdarcet.github.io</code> <code>200</code> / 2,363 B · <code>github.com/TCL606</code> <code>200</code> / 196,169 B；反例：<code>@xgwang</code> 实为 Montréal 的 3 followers 账号（非 EVA-02 作者）、<code>@TCL606</code> <code>404</code> ⇒ 均不记</td></tr>
   <tr><td>未做</td><td>PDF 逐页复核（数字取自 arXiv 官方摘要）；X 推文全文抓取（仅核 handle）；回信通道仍只发不收</td></tr>
+  <tr><td>06:00 列表 <code>cat:cs.CL&amp;max_results=40</code></td><td><code>200</code> / <b>109,971 B / 40 entry</b> / atom；<code>published</code> 上界 <code>2026-11-19T18:57:25Z</code>（<b>连续第 14 窗未前进</b>，仍在 72h 窗内）</td></tr>
+  <tr><td>06:00 B 轨 <code>id_list=2408.06072,2412.00131,2312.16903</code></td><td><code>200</code> + atom（<b>7,780 B / 3 entry</b>，<code>published</code> 齐备：2024-08-12 / 2024-11-28 / 2023-12-28）；标题与 API 逐字一致</td></tr>
+  <tr><td>06:00 OpenAlex</td><td>3/3 <code>200</code>：<b>2,181</b>（CogVideoX，conference-paper / ICLR 2025）/ <b>359</b>（Open-Sora Plan，preprint）/ <b>72</b>（Spike No More，preprint）；查询日 2026-11-22</td></tr>
+  <tr><td>06:00 先查重</td><td>三个 ID 在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> 全量正则 <b>0 命中</b>；同批候选 FineWeb <code>2406.17557</code> 已在表内 #201、Phi-3 <code>2404.14219</code>、AgentBench <code>2308.03688</code> 亦已在表内 ⇒ 剔除</td></tr>
+  <tr><td>06:00 地址页复核（发信前）</td><td><code>keg.cs.tsinghua.edu.cn/jietang/</code> <code>200</code> / <b>217,822 B</b>（页内 <code>jietang at tsinghua . edu . cn</code>）；<code>takase.github.io</code> <code>200</code> / 22,054 B（无邮箱，改用 arXiv PDF v2 首页通讯地址）</td></tr>
+  <tr><td>06:00 X</td><td><code>x.com/jietang</code> 经代理 <code>200</code> / 180,469 B（<code>og:title</code> + bio「Professor @ Tsinghua … AGI, LLM.」双源）；<code>@takase</code> 类 handle 未在主页出现 ⇒ 不记、不猜</td></tr>
 </table>
 
 <footer>
-  research 线 · 论文观察日报 · 2026-11-22 03:00 时窗（5/5）｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
+  research 线 · 论文观察日报 · 2026-11-22 06:00 时窗（5/5）｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
 </footer>
 </div>
 </body>
