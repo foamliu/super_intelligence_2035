@@ -1,4 +1,4 @@
-## §A.31 第 326 轮实测（2026-11-21 18:0x · 5 条 · **零尺寸游离图 / Delete 清不空正文 / 「继续编辑」回滚旧稿 / `已删除` 误判 GONE**）
+## §A.31 第 326 轮实测（2026-11-21 18:0x · 6 条 · **零尺寸游离图 / Delete 清不空正文 / 「继续编辑」回滚旧稿 / `已删除` 误判 GONE / 懒加载 1×1 占位**）
 
 | # | 要点 | 实证 |
 |:--|:--|:--|
@@ -7,6 +7,7 @@
 | 3 | ✅ **新开 `/graphic/articles` → 再点 `publish` 才是干净页；但 reload 会「继续编辑」旧稿** | `clean.py` 读 `STATE {title:"", raw:1, words:"共 0 字", imgs:0}` 才动手；而 `ensure()` 的 `location.reload()` 会命中「继续编辑」把**上一份脏稿**拉回（`ENSURE RESUMED` → `SELALL {len:50}`）⇒ **reload 后必须再读一次 `raw/words/imgs` 确认是空页**，否则先 `nav('/graphic/articles')` 再进 `publish` |
 | 4 | ⚠️ **`VERDICT` 的 `已删除` 关键词会撞正文自写句** | `chk_pub` 首读 `VERDICT GONE`，实为正文「Meta … 已删除 9200 万条色情广告」命中（`i2=1129`），`内容不存在` 为 -1 ⇒ 判存活要**分别回读关键词与上下文**（`s1/s2` 片段），不能只看 `GONE` |
 | 5 | ✅ **图注为空会被「内容建议」提示补图**；**图注 ≤50 字**再复核一次 | 36 字图注 `ERR NONE`，公开页 `capCnt:1` 正常显示；本轮发布前 `COV` 读到「建议添加配图」是**图片节点未被识别**的表征（游离 DIV），修好后该提示消失 |
+| 6 | ⚠️ **公开页图是懒加载，`nw:1` 不等于破图** | 首读 `{nw:1, nh:1, src:"data:image/gif;base64,R0l…", cls:"syl-page-img syl-img-loading"}`，`scrollIntoView` 后 5s 变 `{nw:1178, nh:656, src:"https://p3-sign.toutiaoimg.com/…"}` ⇒ `broken` 判据必须排除 1×1 占位 gif（`/^data:/` 且 `nw<=1`），否则每篇都会误报 `broken:1` |
 
 ## §A.30 第 325 轮实测（2026-11-21 15:0x · 4 条 · **正文换行会被吞 / 图注上限 50 字 / 同标题重发的硬事实 / 文件名撞标准库**）
 
