@@ -497,7 +497,7 @@ D	EDA-Eval-DesignFlow-WaveCmpWarnPort-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 
 D	EDA-Eval-DesignFlow-WaveCmpWrap-001	13	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-WaveMaxFind-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-WaveView-002	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
-D	EDA-Eval-DesignFlow-Waveform-001	11	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-Waveform-001	16	y	n	FAIL(runtime)	FAIL(runtime)	FAIL(runtime post-fix)	PASS	已修复 r1084: hidden A_prime(同信号名 clk/sense/absent 不同值: clk 3r/3f@0.1/1.5 vs B 4/4@0/1.8; sense 3zc@+-0.8 vs B 4zc@+-0.5) +5 A_prime-gold 交叉(l-p); A_prime-gold 运行时由 inline ref analyzer 计算(非硬编); smart 4.9(b) window-aware B-hardcode stub pre-fix PASS(a-k) post-fix FAIL(m/n/o); 8 neg ALL FAIL
 D	EDA-Eval-DesignFlow-WaveformEdgeDiffStat-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-WaveformInvSearchProduce-001	15	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-WaveformStagePartitionQA-001	20	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
