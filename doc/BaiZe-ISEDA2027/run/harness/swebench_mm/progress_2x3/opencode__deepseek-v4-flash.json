@@ -3315,9 +3315,15 @@
   "carbon-design-system__carbon-4028": {
     "instance_id": "carbon-design-system__carbon-4028",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.1,
+    "rc": -1,
+    "model_patch_len": 8093,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "carbon-design-system__carbon-4055": {
     "instance_id": "carbon-design-system__carbon-4055",

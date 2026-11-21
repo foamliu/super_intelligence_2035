@@ -2235,9 +2235,16 @@
   "bpmn-io__bpmn-js-1570": {
     "instance_id": "bpmn-io__bpmn-js-1570",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1314.4,
+    "rc": 0,
+    "model_patch_len": 1287,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "anvas.setRootElement(newRoot);\n   canvas.removeRootElement(oldRoot);\n \n+  canvas.viewbox(viewbox);\n+\n   // (2) update root elements\n```\n\n(Same pattern applied in both `execute` and `revert` methods.)\n",
+    "stderr_tail": "✓] Identify the root cause of the diagram jump when wrapping a process in a pool\n[✓] Implement a fix to keep the diagram in the current viewport during pool wrapping\n[✓] Test the fix if possible\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1578": {
     "instance_id": "bpmn-io__bpmn-js-1578",
