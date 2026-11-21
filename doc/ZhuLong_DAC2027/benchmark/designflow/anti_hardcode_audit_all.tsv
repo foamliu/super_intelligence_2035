@@ -77,7 +77,7 @@ D	EDA-Eval-DesignFlow-DLLFuncExplainQA-v2	15	n	y	PASS	PASS	FAIL(静态)	GAP	补 
 D	EDA-Eval-DesignFlow-DQDbusBitMapReconstructProduce-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-DQTXStim-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-DbcoaZqCalCircuitExplainQA-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
-D	EDA-Eval-DesignFlow-Ddr5ClDelayPivot-001	9	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-Ddr5ClDelayPivot-001	14	y	n	FAIL(runtime)	FAIL(runtime)	FAIL(runtime post-fix)	PASS	已修复r1082:隐藏A'(从B派生CL+4移位)+5交叉断言⑩-⑭,smart B-hardcode stub(TS_9500签名)pre-fix PASS全9→post-fix FAIL⑭(A'值B-gold18.95vsA'-gold19.79);静态audit print_only/core_deleted标PASS系误报(runtime均FAIL)
 D	EDA-Eval-DesignFlow-Ddr5WriteTaskParamExplainQA-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-Ddr6OdtModifyMethodQA-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-DeckFileExplainQA-001	15	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
