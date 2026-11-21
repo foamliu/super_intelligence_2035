@@ -1,10 +1,12 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-WAITING: 0（✅ **2026-11-21 11:12 #2826 维护态监控巡检·训练健康iter=270300/700000 step~7.15s(末12步均值7151ms;最大7216.5ms@270280;最小7005.5ms@270260;无>7.4s✅) loss~1.997-2.030 stable lr=1e-3 0NaN/0skip✅·grad norm 0.088-0.124全<0.16无尖峰✅(连续6轮无尖峰)·GPU .29全8卡100%/~75GB✅·.12全8卡100%/~75GB✅·train.sh PID2547367存活✅(20.5h,Ss)·.12 torchrun PID1439817✅(20.5h,Ssl,node_rank=0,--rotary-base 1000000)·ops_relay PID1479210✅(ppid=1,单实例,20.7h)·latest ckpt=iter_270000✅(10:35落盘)·L1=26/30(260k Avg=59.00%)·270k已落盘=待评·llama-server=0✅·autoqueue=0(维护态保守;step7.15s vs 7.4s阈值0.25s余量,待运维确认或余量改善)·load .29=30.22/.12=30.35✅(无CPU争抢)·ops inbox RUN_ID289(只读,非本线指令)·research日报2026-11-21(无可立即执行项,下次18:00)·纯监控未碰训练/eval/configs/.bak）**
+WAITING: 0（✅ **2026-11-21 11:25 #2827 维护态监控巡检·训练健康iter=270390/700000 step~7.14s(末12步均值7138ms;最大7242.1ms@270350;最小7005.5ms@270260;无>7.4s✅) loss~1.997-2.030 stable lr=1e-3 STABLE 0NaN/0skip✅·grad norm 0.088-0.124全<0.16无尖峰✅(连续7轮无尖峰)·GPU .29全8卡97-100%/~74-75GB(57-62℃)✅·.12全8卡86-100%/~74-76GB✅·train.sh PID2547367存活✅(20.7h,Ss)·.12 torchrun PID1439817✅(20.7h,Ssl,node_rank=0,--rotary-base 1000000)·ops_relay PID1479210✅(ppid=1,单实例,20.9h)·latest ckpt=iter_270000✅(10:35落盘)·L1=26/30(260k Avg=59.00%)·270k已落盘=待评·llama-server=0✅·autoqueue=0(维护态保守;step7.14s vs 7.4s阈值0.26s余量,待运维确认或余量改善)·load .29=29.09/.12=28.17✅(无CPU争抢)·ops inbox RUN_ID289(只读,.29 SSH会话通道诊断,非本线指令)·research日报2026-11-21(无可立即执行项,下次18:00)·纯监控未碰训练/eval/configs/.bak）**
+
+> 📦 #2826（11-21 11:12, 维护态监控巡检·训练健康iter=270300/700000 step~7.15s(末12步均值7151ms;最大7216.5ms@270280;无>7.4s✅)·loss~1.997-2.030 stable·grad norm 0.088-0.124无尖峰✅(连续6轮)·0NaN/0skip✅·GPU全16卡100%~75GB✅·train.sh/.12 torchrun/ops_relay全存活✅·latest ckpt=iter_270000(10:35落盘)·L1=26/30(260k Avg=59.00%)·270k已落盘=待评·llama-server=0✅·autoqueue=0(维护态保守)·纯监控未碰训练/eval）→ daily-memories/2026-11-21.md；需要时再读。
 
 
 
 
-> 📦 #2820（11-21 09:59, 维护态监控巡检·训练健康iter=269690/700000 step~7.14s(末12步均值7137ms;最大7298.1ms@269670;无>7.4s✅)✅·loss~2.005-2.022 stable·grad norm 0.094-0.623[269620单步0.623瞬态尖峰次步回落,余<0.15;另早段269320=0.657/269410=2.170均单步恢复]·0NaN/0skip✅·GPU全16卡97-100%~75GB✅·train.sh/.12 torchrun/ops_relay全存活✅·latest ckpt=iter_0268000·270k ETA~10:36·L1=26/30·纯监控未碰训练/eval）→ daily-memories/2026-11-21.md；需要时再读。
+
 
 > 📦 #2821（11-21 10:14, 维护态监控巡检·训练健康iter=269800/700000 step~7.16s(末12步均值7161ms;最大7388.2ms@269750;无>7.4s✅)✅·loss~2.004-2.022 stable·grad norm 0.085-0.142全<0.15良性无尖峰✅·lr=1e-3 STABLE·0NaN/0skip✅·GPU .29全8卡100%/.12全8卡96-100%~75GB✅·train.sh PID2547367(19.5h,Ss)✅·.12 torchrun PID1439817(19.5h,Ssl,node_rank=0,--rotary-base 1000000)✅·ops_relay PID1479210(ppid=1,单实例,19.8h)✅·latest ckpt=iter_0268000·270k(下10k评测点)未落盘ETA~10:35·L1=26/30(260k Avg=59.00%)·llama-server=0✅·autoqueue=0(维护态保守)·load .29=27.86✅·纯监控未碰训练/eval/configs/.bak·git pull=Already up to date）→ daily-memories/2026-11-21.md；需要时再读。
 
