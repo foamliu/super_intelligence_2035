@@ -1,0 +1,80 @@
+\documentclass[conference]{IEEEtran}
+% =====================================================================
+%  中文译版：Run, Read Back, Refine: Observation Fidelity in
+%            Execution-Grounded EDA Agents
+%  原文：arXiv:2611.19056v2，第一作者 Yang Liu
+%  中文版由原作者授权发布。本译版仅供学习与研究，非商业用途。
+%
+%  构建方式（中文需 XeLaTeX）：
+%      xelatex main && bibtex main && xelatex main && xelatex main
+% =====================================================================
+
+% ---------------- packages (IEEE template set + what this paper needs) --
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{url}
+
+% ---------------- 中文支持 -------------------------------------------
+% xeCJK 负责中文断行与字体；IEEEtran 保持 Times 正文体例
+\usepackage{xeCJK}
+% 文泉驿正黑：TTF 轮廓，标点与汉字覆盖完整（Droid Sans Fallback 缺弯引号与破折号）
+\setCJKmainfont{WenQuanYi Zen Hei}
+\setCJKsansfont{WenQuanYi Zen Hei}
+\setCJKmonofont{WenQuanYi Zen Hei}
+\xeCJKsetup{CJKecglue={\hskip 0.08em plus 0.04em minus 0.02em}}
+% 中文段落：首行缩进两字，取消英文段间距
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0pt}
+
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{3pt}
+\setlength{\belowcaptionskip}{0pt}
+
+\begin{document}
+
+% ---------------- title ------------------------------------------------
+\title{运行、回读、精炼：\\执行接地 EDA 智能体中的观测保真度}
+
+% ---------------- 作者 --------------------------------------------------
+\author{%
+\IEEEauthorblockN{Yang Liu, Shiwei Hou, Xiyuan Chen, Sen Yuan, Shao You, Feifan Chen, Wencheng Li, Shuyang Hu,\\
+Emma Xia, Xiaojing Lu, Wenchuan Zhang, Hao Wang, Fan Xu, Yanfeng Li, Hongwen Li, Yiming Zhu}\\
+\IEEEauthorblockA{\textit{长鑫存储技术有限公司}，中国；\quad 邮箱：\{paul.liu, yanfeng.li, howie.li\}@cxmt.com}
+}
+
+\maketitle
+
+% ---------------- 行距（中文需拉开；必须放 \maketitle 之后）-------------
+% ⚠️ 不要在导言区改 \linespread / \normalsize / \baselineskip —— IEEEtran 双栏浮动体
+%    取样依赖它们的原始值，改了会导致跨栏断句、两栏交错（详见 XIANLUN_TRANSLATE_SKILL.md §3.3）
+\renewcommand{\baselinestretch}{1.35}\selectfont
+
+% ---------------------------------------------------------------- 摘要
+% 译版授权说明只留在文件头注释里，不排进正文（见 SKILL §3.4）
+
+% ---------------- abstract + index terms -------------------------------
+\input{DAC2027/0_abstract}
+
+% ---------------- body -------------------------------------------------
+\input{DAC2027/1_intro}
+\input{DAC2027/2_background}
+\input{DAC2027/3_design}
+\input{DAC2027/4_grounding}
+\input{DAC2027/5_bench}
+\input{DAC2027/6_exp}
+\input{DAC2027/7_discussion}
+\input{DAC2027/8_conclusion}
+
+% ---------------- references -------------------------------------------
+\clearpage
+\bibliographystyle{IEEEtran}
+\bibliography{reference}
+
+\end{document}
