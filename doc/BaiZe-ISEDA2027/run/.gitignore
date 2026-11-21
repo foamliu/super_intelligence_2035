@@ -46,7 +46,7 @@ results_dualnode_seq16k32k/
 smoke_test_results/
 scaling_report/
 rca_collapse_evidence/
-pretrain_cpu_eval_gguf/
+# pretrain_cpu_eval_gguf/ — scripts restored 2026-11-21 (needed for L1 eval pipeline)
 attribution_3615_run*/
 
 # ---- 5) 训练语料派生物（可再生成；源脚本 gen_* / build_* 保留）----
