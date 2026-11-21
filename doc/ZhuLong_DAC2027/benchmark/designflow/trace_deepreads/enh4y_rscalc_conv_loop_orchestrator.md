@@ -54,7 +54,7 @@ via 名集合、层名、net 名、cell 名全异——反硬编。
 ## 自验
 
 - ref solve.py PASS 12/12 on env_A + hidden B
-- 3 negatives: naive_empty → tooth ⑫(空 JSON 缺键), naive_print_A → tooth ①(A config 不匹配 B), neg_delete_core → tooth ⑦(全不收敛) — 3 neg FAIL distinct teeth
+- 3 negatives: naive_empty → no-stdout 结构断言 (空输出), naive_print_A → tooth ①(A config 不匹配 B), neg_delete_core → tooth ⑤(baseline checkpoint count 0 vs 8) — 3 neg FAIL distinct teeth
 - §4.9(a)(b)(c) 三假全 FAIL
 - 3-seed sha256 deterministic `daabb98611126b11`
 
