@@ -2354,16 +2354,30 @@
   "bpmn-io__bpmn-js-1640": {
     "instance_id": "bpmn-io__bpmn-js-1640",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 624.4,
+    "rc": 0,
+    "model_patch_len": 2021,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "mer skipped setting `isSequential` to `false` when toggling to parallel, which was harmless before (new element defaulted to `false`) but would have left stale data when reusing the existing element.\n",
+    "stderr_tail": "dled\n[✓] Find the code that handles toggling between parallel and sequential multi-instance\n[✓] Implement the fix to preserve multi-instance properties when switching between parallel/sequential\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1644": {
     "instance_id": "bpmn-io__bpmn-js-1644",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 321.5,
+    "rc": 0,
+    "model_patch_len": 1404,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "roperties. A new object is still created when switching between `MultiInstanceLoopCharacteristics` and `StandardLoopCharacteristics` (or enabling for the first time), since those are different types.\n",
+    "stderr_tail": "ng\n[✓] Identify the root cause of multi-instance properties being lost when switching between parallel/sequential\n[✓] Implement the fix in ReplaceMenuProvider.js\n[✓] Verify the fix (lint passes)\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1655": {
     "instance_id": "bpmn-io__bpmn-js-1655",

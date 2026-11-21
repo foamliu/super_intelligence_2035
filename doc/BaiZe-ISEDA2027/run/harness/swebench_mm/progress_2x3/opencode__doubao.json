@@ -6568,30 +6568,58 @@
   "prettier__prettier-6319": {
     "instance_id": "prettier__prettier-6319",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 102.3,
+    "rc": 0,
+    "model_patch_len": 526,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "mm_2x3/workdirs/opencode__doubao/prettier_prettier/src/language-js/parser-babel.js:33</filePath> to support the # placeholder syntax.\nThe input `5 |> # * 2` now parses correctly without syntax error.\n",
+    "stderr_tail": "   }\n        }\n      }\n    ],\n    \"directives\": []\n  },\n  \"comments\": []\n}\n\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"pipelineOperator\"\u001b[90m 0 matches\u001b[0m\n\u001b[0m\n\u001b[0m$ \u001b[0mrm test-pipeline.js test-parser.js\n(no output)\n\u001b[0m\n"
   },
   "prettier__prettier-8536": {
     "instance_id": "prettier__prettier-8536",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 413.5,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "empty_patch",
+    "stdout_tail": " directives with an empty body.\n\nThe fix has been applied by modifying the final hardline condition to handle this specific case correctly, ensuring exactly one trailing newline is added as expected.\n",
+    "stderr_tail": "e any contents.\n if (\n   !n.body.every(({ type }) => type === \"EmptyStatement\") ||\n-  (n.comments && !(n.directives && n.directives.length > 0))\n+  n.comments\n ) {\n   parts.push(hardline);\n }\n \n\n\u001b[0m\n"
   },
   "prettier__prettier-9514": {
     "instance_id": "prettier__prettier-9514",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 220.8,
+    "rc": 0,
+    "model_patch_len": 2209,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " cherow your-file.js\n```\n\nAs noted, Cherow does not yet support Flow syntax, so it is available as an opt-in parser for standard JavaScript/JSX files where it provides ~40% faster parsing than Babel.\n",
+    "stderr_tail": "2.0\",\n \"escape-string-regexp\": \"4.0.0\",\n \"espree\": \"7.3.0\",\n+\"cherow\": \"^1.6.9\",\n \"esutils\": \"2.0.3\",\n \"fast-glob\": \"3.2.4\",\n \"fast-json-stable-stringify\": \"2.1.0\",\n \"find-parent-dir\": \"0.3.0\",\n\n\u001b[0m\n"
   },
   "prettier__prettier-9866": {
     "instance_id": "prettier__prettier-9866",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 126.2,
+    "rc": 0,
+    "model_patch_len": 585,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "es full-width spaces the same as regular spaces in JSX, ensuring stable formatting.\n\n**Change made:**\n```diff\n- const jsxWhitespaceChars = \" \\n\\r\\t\";\n+ const jsxWhitespaceChars = \" \\n\\r\\t\\u3000\";\n```\n",
+    "stderr_tail": "0.18.1\n\u001b[0m\n\u001b[0m$ \u001b[0mnpm run test jsx/whitespace -- -u\n> prettier@2.3.0-dev test\n> jest jsx/whitespace -u\n\nsh: 1: jest: not found\n\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"jsxWhitespaceChars\"\u001b[90m in src · 3 matches\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-2778": {
     "instance_id": "scratchfoundation__scratch-gui-2778",
