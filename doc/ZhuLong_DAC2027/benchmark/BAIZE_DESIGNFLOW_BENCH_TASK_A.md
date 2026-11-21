@@ -99,46 +99,26 @@ session | user | host | mc | domain | 旧判定 | 新判定(可造/不可造) | 
 
 
 
-> 🔴 **2026-11-15 用户令 · shard A：mc 阈值降到 5（选料枯竭 → 扩池）· 最高优先 · 未完成**
+> ## 🔴 2026-11-21 16:4x 用户令 · shard A：**批准 mc 降到 5，立即用 mc≥5 池再造题** · 最高优先
 
-> **用户原话**：「既然 designflow shard A 选料枯竭，那就把 mc 阈值降到 5」
+> **用户原话**：「designflow 好的 mc降到5」
 
-**一、配置已由运维改好（不是待办，直接生效）**
+**一、配置已由我改好（直接生效，无需你改）**：`designflow/summary_stats.json` → `shard_mc = {"A": 5, "B": 10, "C": 10, "D": 10}`（单行 diff，只动 A）。`target_mc` **仍为 10**（全局覆盖率分母口径不变）。`trace_ledger.py` L337-340 会优先读 `shard_mc["A"]`，故 `--shard A` 自动按 mc≥5 选料。
 
-- `designflow/summary_stats.json` → `shard_mc = {"A": 5, "B": 10, "C": 10, "D": 10}`（**只有 A 降到 5**，B/C/D 维持 10）
-- `target_mc` 仍为 10（全局覆盖率分母口径不变）
-- `trace_ledger.py` 读取逻辑：`--shard A` 时取 `shard_mc["A"]=5`（已核对代码 L320-324）
-- 复算命令（`--thresholds` 默认就含 5，无需改代码）：
-  ```
-  python3 designflow/trace_ledger.py --shard A mc-matrix --thresholds 5,10,15,20,30
-  python3 designflow/trace_ledger.py --shard A mc-matrix --emit-candidates-mc 5
-  ```
+**二、为什么现在批**：你 r942 已用 7 倍扩池（151844，8808 sessions）证明 **strict A-pure（ak>ck, ak≥20, mc≥10）top-80 fresh = 0**；broad 过滤出的 17 fresh 全是 junxu virtuoso-dominant（C 域）。高 mc A-pure 确实耗尽 ⇒ 降 mc 是唯一扩池手段，也是 11-15 令的本意。
 
-**二、你要做的事**
+**三、立刻做**：
+1. 复算：`python3 designflow/trace_ledger.py --shard A mc-matrix --src designflow/summary_1121.tsv --thresholds 5,10,15,20,30`，报 **mc5 / mc10 / touched / fresh** 并写进 MEMORY。
+2. **用 mc≥5 池造题**（§6 流程，1 条 case）。**质量闸门一条都不放松**：k≥8、3 neg 全 FAIL、§4.9 三假 FAIL、hidden B、A 档自包含、真实 trace 溯源（`metadata.trace_source`）。
+3. **A 域归属先判**（关键，防串台）：先看 keyword 构成，`virtuoso/skill/layout/gds/calibre/drc/lvs` 主导 ⇒ 归 **C**，`hspice/netlist/spice/schematic` 主导 ⇒ 归 **B/D**。**只有 digital/verification/pnr_signoff/eda_other 主导才算 A**。跨域候选记一行交对应 shard，🚫 不改别人的题。
 
-1. **用最新扫描快照重算 A 的 mc≥5 池**（`scan_path` 现指向 `ssh_eda_search_20261115_013654/summary.tsv`，11-15 01:36，39263 行 / 6959 dedup）。
-   ⚠️ **不要引用 r382 那份「降到 mc≥5 没用」的结论**——它基于 **11-05 的 `summary_1105.tsv`（2560 dedup）**，而现在是 **6959 dedup，数据量翻了近 3 倍**，旧结论可能已过期。**必须用新快照重新算一遍再说。**
-2. **按 mc≥5 选料造题**，沿用既有全部质检（k≥8、3 neg FAIL、hidden B、A 档自包含、真实 trace 溯源——**这些门禁一条都不放松**）。
-3. **每轮心跳必须报三个数**（不然无法判断降阈值是否有效）：
-   - mc≥5 的 `pool / touched / fresh`
-   - 本轮 peek 的候选里 **A 域 vs 跨域（C/D）的比例**
-   - 本轮产出 case 数
-4. **自动止损（写进你的判断逻辑，不用问我）**：若连续 **3 轮** mc≥5 下仍 0 case，把 `shard_mc.A` 改回 10，在 MEMORY 记录「mc≥5 扩池实测无效 + 数据依据」，然后转向别的产出（详见下条）。
+**四、止损（写进判断逻辑，不用问我）**：若 **mc≥5 连续 3 轮仍 0 case**（且每轮都真的 peek 过 ≥10 个 A-domain fresh 候选），则把 `shard_mc.A` 改回 10，在 MEMORY 写「mc≥5 扩池实测无效 + 数据依据」，并转做**不依赖新候选**的产出（已有 case 的 §4.9 anti-hardcode 普查 / `test_rationale` 补断言清单 / ledger 治理）。
 
-   ⚠️ **注意止损的判据变了**：此前判「枯竭」用的是「strict-clean produce-task 有没有」——那套筛选把 analysis-Q&A / doc-search / debug-Q&A / env-config / flow-driving **全判为 weak**，而按顶部「任务初衷」，**这些正是真实用户意图，都该造**。所以现在止损的唯一判据是：**mc≥5 的候选里，有没有能忠实还原用户意图、且能写出可判分 `check()` 的任务**。若这类候选也真的耗尽，才算枯竭。
+**五、纪律**：🚫 不改题/图/`check.py`、不动别 shard 文件、不 `git add -A`；🚫 不为凑数造 weak case。✅ 每轮心跳必须报三数：**mc≥5 的 pool/touched/fresh · 本轮 peek 的 A-domain vs 跨域比例 · 本轮产出 case 数**。
 
-**三、并行任务：把 `waveview_real_cases.jsonl` 做出来**
+> 📦 **2026-11-15 shard A「mc 阈值降到 5」令 · 已被上条 16:4x 令接管**。注：该令所称「配置已由运维改好 A=5」**实际从未落地**（11-21 16:4x 核查 `summary_stats.json` 仍为 A=10，这是它长期「未完成」的真因）；现已真正改为 A=5。原文见 git 历史。
 
-你已连续 0-case 空转多轮，这段产能不要浪费。**在跑 mc≥5 选料的同时（或空转时）**，优先完成：
-
-- 产出 `designflow/waveview_real_cases.jsonl` + `waveview_real_cases.README.md`
-- 规格见 `designflow/WAVEVIEW_COLLAB.md` §零（字段、验收硬指标、纪律都在里面）
-- 这条已经挂了 1 小时，vision 侧在等（虽然它也自己开了 SSH 通道，但你的 jsonl 是它的主路径）
-
-**四、纪律**
-- 🚫 不改题/图/check；🚫 不混 text-only 替身
-- ✅ 「枯竭」照实说，但**要换成 mc≥5 口径重新举证**，不能拿 mc≥10 的旧证据说 mc≥5 也枯竭
-
+---
 
 > 🟢 **运维令 · 2026-11-14 18:0x（用户直令）· A 可主动全量扫描 698 机 —— 覆盖 §9「默认否，只被动只读发现」**
 >
