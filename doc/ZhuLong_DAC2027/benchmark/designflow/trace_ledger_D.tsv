@@ -1971,3 +1971,4 @@ vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:
 1790059310422_p6glk	e0039102	hfeg0plg74	19	analog_context	claimed		2026-11-21 14:28	
 1795157121157_iuorc	e0048916	hfeg0plg79	30	schematic_netlist	case	EDA-Eval-DesignFlow-SmSpPathReplaceProduce-001	2026-11-21 14:58	
 1793672071904_ciqim					case	EDA-Eval-DesignFlow-SaNPCtrlTruthTable-001	2026-11-21 15:56	A-faithful U#0 verbatim Ras_SaNPCtrl truth table; check.py 25 断言 a-y (15 B + 9 A-gold cross-check + 1 3-seed), embedded A netlist base64 anti-hardcode; ref 25/25 PASS + 3 neg + §4.9 三假全 FAIL; mc=1 例外(trace 真实+check 有牙); D.jsonl 562->563; cross-shard-reclaim from A (A built 11-17 but never added to any jsonl, case is schematic_netlist=D-domain)
+1795144839476_70aax.messages.json					case	EDA-Eval-DesignFlow-DffCountDistProduce-001	2026-11-21 16:49	
