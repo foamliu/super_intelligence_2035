@@ -47,7 +47,8 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <b>撰写</b>: BaiZe Data Agent · 2026-11-21<br>
 <b>用户令</b>: 2026-11-19 — 基于 v2 刷新 v3，同步最近一周数据侧实际进展与决策<br>
 <b>数据口径</b>: 所有 token 数来自 DATA_MAPPING.md §A 实测（INDEX.tsv + MANIFEST.json + du -sb）；新数据集来自 HfApi().dataset_info(files_metadata=True)；Nemotron-CC-Math / MegaMath / finemath 均为实际分词后 MANIFEST 实测值。<br>
-<b>当前进度</b>: iter ≈ 279.8k / 700k（40.0%），step ≈ 7.23s（末 10 步均值 &lt;7.4s ✅）；latest ckpt = 278k（280k ckpt 待落盘，daemon idle 等待中）；预计 <b>~2026-11-28 到 350k 切换点</b>（(350k−279.8k)×7.23s ≈ 5.9 天），<b>~2026-12-26 到 700k 终点</b>（(700k−279.8k)×7.23s ≈ 35.2 天）<br>
+<b>当前进度</b>: iter ≈ 280.2k / 700k（40.03%），step ≈ 7.19s（末 17 步均值 &lt;7.4s ✅）；latest ckpt = 280k（eval RUNNING，ETA~50min）；预计 <b>~2026-11-28 到 350k 切换点</b>（(350k−280.2k)×7.19s ≈ 5.8 天），<b>~2026-12-26 到 700k 终点</b>（(700k−280.2k)×7.19s ≈ 34.9 天）<br>
+<b>R158 刷新</b>（2026-11-22）：iter 进度同步刷新 — iter ~279.8k→280.2k/700k(40.0%→40.03%) step 7.23s→7.19s（pretrain #2936）；350k ETA ~11-28 / 700k ETA ~12-26 不变；latest ckpt 280k（eval RUNNING，ETA~50min，daemon PID1081392，lm_eval phase[5/6]）；eval 未拖训练（Δ≈0s✅）。数据侧 PC-1~PC-5 全部 ✅，污染扫描 ✅ 268K docs 0 命中，无新变化。.12 load=25✅ /nas_user 42T✅。<br>
 <b>R155 刷新</b>（2026-11-22）：iter 进度同步刷新 — iter ~279.5k→279.8k/700k(39.9%→40.0%) step 7.29s→7.23s（pretrain #2931）；350k ETA ~11-28 / 700k ETA ~12-26 不变；latest ckpt 278k（280k 待落盘，daemon idle 等待 ETA~06:33）。数据侧 PC-1~PC-5 全部 ✅，污染扫描 ✅ 268K docs 0 命中，无新变化。.12 load=25✅ /nas_user 42T✅。<br>
 <b>R154 刷新</b>（2026-11-22）：iter 进度同步刷新 — iter ~279.2k→279.5k/700k(39.9%) step 7.23s→7.29s（pretrain #2926）；350k ETA ~11-28 / 700k ETA ~12-26 不变；latest ckpt 278k（280k 待落盘）。数据侧 PC-1~PC-5 全部 ✅，污染扫描 ✅ 268K docs 0 命中，无新变化。.12 load=25✅ /nas_user 42T✅。<br>
 <b>R152 刷新</b>（2026-11-22）：iter 进度同步刷新 — iter ~279.2k/700k(39.9%) step 7.23s（pretrain #2921，9/10 步 &lt;7.4s ✅）；350k ETA ~11-28 / 700k ETA ~12-26 不变；278k ckpt eval ✅ 完成（04:00:38），280k 待落盘。数据侧 PC-1~PC-5 全部 ✅，污染扫描 ✅ 268K docs 0 命中，无新变化。<br>
@@ -245,7 +246,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 </div>
 <!-- §3 -->
 <h2 id="s3">§3 — 时间线甘特图（11-18 → 11-30）</h2>
-<p style="font-size:12px;color:#666;">每格 = 2 天。🟠=进行中 🔵=待执行 ✅=完成 🎯=里程碑/切换点。<b>350k 切换点 ≈ 11-28</b>（(350k−279.8k)×7.23s ≈ 5.9 天），<b>700k 终点 ≈ 12-26</b>。</p>
+<p style="font-size:12px;color:#666;">每格 = 2 天。🟠=进行中 🔵=待执行 ✅=完成 🎯=里程碑/切换点。<b>350k 切换点 ≈ 11-28</b>（(350k−280.2k)×7.19s ≈ 5.8 天），<b>700k 终点 ≈ 12-26</b>。</p>
 <table class="gantt">
 <tr>
 <th class="row-label" style="width:160px;">任务 \ 日期</th>
@@ -368,7 +369,7 @@ code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:11px}
 <tr><td>4</td><td><b>Benchmark 污染</b></td><td>中</td><td>🔴 高</td><td>13-gram 闸门 5359 tasks ✅ 已构建；S2 新源抽样扫描 48K docs ✅ 全 0 命中</td><td class="green">✅ 黑名单 + 扫描全部完成（268K docs 0 命中）</td></tr>
 <tr><td>5</td><td><b>Nemotron-CC-Math 分词</b></td><td>—</td><td>—</td><td>—</td><td class="green">✅ 完成 (195.4B tok)</td></tr>
 <tr><td>6</td><td><b>finemath 分词</b></td><td>—</td><td>—</td><td>—</td><td class="green">✅ 完成 (9.4B tok)</td></tr>
-<tr><td>7</td><td><b>S1 到 350k 延迟</b>（step 7.23s 实测）</td><td>低</td><td>🟡 中</td><td>当前 ETA ~11-28，余量 ~5.9 天（iter 279.8k）；⚠️ pretrain 从 260k ckpt 恢复重启</td><td class="green">✅ 在控</td></tr>
+<tr><td>7</td><td><b>S1 到 350k 延迟</b>（step 7.19s 实测）</td><td>低</td><td>🟡 中</td><td>当前 ETA ~11-28，余量 ~5.8 天（iter 280.2k）；⚠️ pretrain 从 260k ckpt 恢复重启</td><td class="green">✅ 在控</td></tr>
 <tr><td>8</td><td><b>S2 与 S1 数据重叠</b>（同种子 83-100%）</td><td>确定（如不换种子）</td><td>🟡 中</td><td><b>S2 换 SEED=5678</b> → 旧源重叠降至 ~30%；新源零重叠 → 总重叠 ~12%</td><td class="green">✅ 方案已确定（§0）</td></tr>
 <tr><td>9</td><td><b>.12 CPU 争抢 pretrain</b></td><td>—</td><td>—</td><td>—</td><td class="green">✅ 已解决 (loadavg 214→10)</td></tr>
 <tr><td>10</td><td><b>finemath 单源 epoch</b>（量小 9.4B）</td><td>确定</td><td>🟢 低</td><td>首训新数据，prop 调低至 0.005，实际消耗仅 7.3B，epoch 0.78 ✅</td><td class="green">✅ 可接受</td></tr>
@@ -411,7 +412,7 @@ PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 5359 + 扫描 268K
 <tr><td>G2</td><td><b>MegaMath Batch1 分词后 ≥ 70B tokens</b></td><td>MANIFEST.json</td><td class="green">✅ 364 shard DONE</td><td>—</td></tr>
 <tr><td>G3</td><td><b>污染闸门 0 命中（6 评测集）</b></td><td>contamination_s2_report.tsv</td><td class="green">✅ PASS — 5359 tasks 黑名单 / S2 新源 48K docs 扫描全 0 命中（R139）</td><td>命中 shard 从 blend 剔除</td></tr>
 <tr><td>G4</td><td><b>blend TSV 加和=1.0 且类别校验通过</b></td><td>脚本校验</td><td class="green">✅ 12 源 / prop=1.0 / gen_blend --verify 通过</td><td>手动调整 prop</td></tr>
-<tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常（~11-28）</b></td><td>训练日志 + eval</td><td class="green">🟢 进行中（iter ~279.8k，step ~7.23s，latest ckpt 278k）</td><td>如异常推迟 S2 切换</td></tr>
+<tr><td>G5</td><td><b>S1 到 350k 步且 loss 正常（~11-28）</b></td><td>训练日志 + eval</td><td class="green">🟢 进行中（iter ~280.2k，step ~7.19s，latest ckpt 280k eval RUNNING）</td><td>如异常推迟 S2 切换</td></tr>
 <tr><td>G6</td><td><b>MegaMath-web 分词完成</b></td><td>MANIFEST ≥ 200B</td><td class="green">✅ 100% 完成 (4950/4950, 218.1B tok)</td><td>—</td></tr>
 <tr><td>G7</td><td><b>S2 SEED=5678 已设置 + .npy 缓存已清理</b></td><td>common.env + 缓存目录</td><td class="amber">⏳ 待执行（~11-27）</td><td>5 分钟即可完成</td></tr>
 </table>
@@ -456,7 +457,7 @@ PC-1 ✅ 430.7B → PC-2 ✅ 364 shard → PC-3 ✅ 黑名单 5359 + 扫描 268K
 <b>数据来源</b>: DATA_MAPPING.md §A / §H.14 / §D1 / CONTAMINATION_CHECK.md / report_s2_data_overlap_study.md / report_s1s2_split_data_v2_zh.html v2.9<br>
 <b>口径声明</b>: 所有 token 数来自 INDEX.tsv / MANIFEST.json 实测；Nemotron-CC-Math 195.4B / MegaMath 364 shard 243GB / finemath 9.4B 均为实际分词后实测值。无估算、无编造。<br>
 <b>与 v2 关系</b>: v3 = 在 v2.9 基础上刷新最近一周进展（PC-1~PC-4 全部完成、Nemotron+finemath 分词完成、新增 §0 零重叠方案、新增 §8 数据源引用、时间线更新 350k ~11-28、epoch 全部改善）。<br>
-<b>生成时间</b>: 2026-11-22（v3.107 — R155 refresh：iter 进度同步 279.5k→279.8k(39.9%→40.0%) step 7.29s→7.23s（pretrain #2931）/ 350k~11-28 700k~12-26 不变 / R154: iter 279.2k→279.5k / R152: iter 278.5k→279.2k / R149: iter 277.9k→278.5k / R146: iter 277.9k→278.5k / R139: S2 新源污染扫描 ✅ 全部 0 命中（4 源 × 12K docs = 48K docs / 累计 268K docs 0 命中） / Nemotron✅(193/193,195.4B tok) / finemath✅(9.4B tok) / MegaMath-web✅(4950/4950,218.1B tok) / .12 load~25 .29 load~28 /nas_user 42T / v2 preserved）
+<b>生成时间</b>: 2026-11-22（v3.108 — R158 refresh：iter 进度同步 279.8k→280.2k(40.0%→40.03%) step 7.23s→7.19s（pretrain #2936）/ 350k~11-28 700k~12-26 不变 / latest ckpt 280k eval RUNNING / R155: iter 279.5k→279.8k / R154: iter 279.2k→279.5k / R152: iter 278.5k→279.2k / R149: iter 277.9k→278.5k / R146: iter 277.9k→278.5k / R139: S2 新源污染扫描 ✅ 全部 0 命中（4 源 × 12K docs = 48K docs / 累计 268K docs 0 命中） / Nemotron✅(193/193,195.4B tok) / finemath✅(9.4B tok) / MegaMath-web✅(4950/4950,218.1B tok) / .12 load~25 .29 load~29 /nas_user 42T / v2 preserved）
 </p>
 </div>
 </body>
