@@ -784,7 +784,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1793949237063_wsxpm	ruifan	10.129.32.46	400		parked		2026-11-14 02:30	r538 peek REJECT (run-existing: df2_LP + skill script)
 1794468995675_xyj6b	rayfeng	10.129.2.10	227		parked		2026-11-14 02:30	r538 peek REJECT (wrong-domain: TCAD MCP server dev)
 1793172979841_8tchb	easont	10.129.32.81	261		parked		2026-11-14 02:30	r538 peek REJECT (wrong-domain: characterization sim = B)
-1794485797930_w7spy	chapinc	10.129.2.10	381		parked		2026-11-14 02:30	r538 peek REJECT (Q&A: count MOSFET in block)
+1794485797930_w7spy	chapinc	10.129.2.10	381		case	EDA-Eval-DesignFlow-MosfetCellInventory-001	2026-11-21 12:01	r901 revival (11-15 reaudit): parked r538 'Q&A REJECT' reaudited buildable; layout_aether MOSFET inventory reframe; k=15; ref PASS + 4 neg FAIL + §4.9 three-fake FAIL + 3-seed deterministic
 1789954294975_4chsl	xrxiong	10.129.2.10	497		parked		2026-11-14 02:30	r538 peek REJECT (wrong-domain: verilog RTL analysis = A)
 1792205753795_x5t0t	brian	10.129.8.231	506		parked		2026-11-14 02:30	r538 peek REJECT (wrong-domain: analog OP AMP design = D)
 1792025124250_ebwqh	xinqiaoz	10.129.2.11	520		parked		2026-11-14 02:30	r538 peek REJECT (skill-orch: xinqiaoz pdkQaSystem cluster)
