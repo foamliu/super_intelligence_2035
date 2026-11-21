@@ -1662,3 +1662,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794896693040_g9jgn	jiangbaol	hfeg0pkn004	1007	spice_sim	parked		2026-11-21 08:52	doubletail_nmoslatch sizing sweep (MN11/MN12 W/nf minimize FOM=CK2Q_DFE_T_F*Cur_slicer_latch_avg). Task form=get sim optimization results; needs finesim execution + PDK unavailable in SUT sandbox. Testbench under /proj permission-denied. check() can't verify real sim results without tool. toolchain block
 1794793546571_8ucoj	zjqiao	hfhds234	6060	spice_sim	case	EDA-Eval-DesignFlow-SimRuntimeRank-001	2026-11-21 09:16	
 1795001687991_nld2d	joeyl	hfeg0pkn004	1324	spice_sim	case	EDA-Eval-DesignFlow-DelvtoNetlistShift-001	2026-11-21 09:47	
+1794998436688_74n5u.messages.json	e0039786	hfeg0pkn005	60	spice_sim	claimed		2026-11-21 10:10	
