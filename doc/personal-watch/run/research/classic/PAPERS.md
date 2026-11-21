@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **311** 条（**第八十一轮 2026-11-21 09:0x 补 4 条 → 311**：LLaVA-OneVision `2408.03326`（**3,423**，TMLR）/ VideoMAE `2203.12602`（**2,690**，NeurIPS 2022，DOI `10.52202/068431-0732`，pp. 10078–10093）/ DINO-X `2411.14347`（**173**，**&lt;500 按「本领域权威」收**，预印本技术报告）/ Scaling Laws of RoPE-based Extrapolation `2310.05209`（**107**，**&lt;500 按「方法论常青」收**，ICLR 2024）；核验：arXiv API `id_list` 单批 **`200` + atom**（10,844 B / 4 entry，`published` 齐备）+ abs 页 **4/4 `200`**（42,147 / 42,543 / 45,378 / 41,298 B）+ OpenAlex **4/4 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；先查重：四 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**；覆盖轴 = 单塔服务单图/多图/视频 / 90–95% 管状掩码的小数据视频预训练 / 免提示开放词表检测 / RoPE 临界维度与外推）
+
 **本轮快照**：累计 **307** 条（**第八十轮 2026-11-21 06:0x 补 3 条 → 307**：Mask DINO `2206.02777`（**911**，CVPR 2023，DOI `10.1109/cvpr52729.2023.00297`）/ Scaling ViT to 22B `2302.05442`（**965**，预印本）/ PaLM 2 Technical Report `2305.10403`（**2,439**，预印本）；arXiv `id_list` 单批 **`200` + atom**（9,772 B / 3 entry，`published` 齐备）+ abs 页 **3/3 `200`**（42,570 / 47,645 / 64,215 B）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；覆盖轴 = 一个头同时出框与掩码 / QK-norm 压注意力 logit 爆炸 / 配比比规模更影响多语与推理）
 
 **本轮快照**：累计 **304** 条（**第七十九轮 2026-11-21 03:0x 补 3 条 → 304**：An Empirical Model of Large-Batch Training `1812.06162`（**543**，预印本）/ On the difficulty of training RNNs `1211.5063`（**5,097**，预印本；ICML 2013 版本轮未逐页核）/ Decision Transformer `2106.01345`（**2,596**，预印本，OpenAlex biblio.volume 34）；arXiv `id_list` **3/3 `200` + atom** + abs 页 **3/3 `200`**（43,826 / 41,068 / 43,191 B）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；覆盖轴 = 临界批量与梯度噪声尺度 / 梯度范数裁剪作为 spike 第一闸 / return-to-go 序列建模替代 critic；**回溯 第七十八轮 2026-11-21 00:0x 补 3 条 → 299**：Horovod `1802.05799`（**1,619**，预印本）/ Deformable DETR `2010.04159`（**8,952**，arXiv `comment` = ICLR 2021 Oral）/ SigLIP 2 `2502.14786`（**1,832**，预印本）；元数据 arXiv `id_list` 单篇 **3/3 `200` + `application/atom+xml`**（`published` 齐备）+ OpenAlex **3/3 `200`**（查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（本轮 PDF 下载 30 s 内未完成）；覆盖轴 = 数据并行 ring-allreduce 的通信成本基线 / 参考点稀疏采样把收敛压 10× / 视觉塔的统一图文配方与原生宽高比）
@@ -5310,6 +5312,74 @@
 | 与我们工作的关系 | **data（主 · 配比）**：明确「同一 token 预算下，换配比比换规模更划算」，是我们数据线做消融的对照口径。<br>**pretrain（架构）**：深窄 vs 宽浅的取舍直接影响 2B 模型的单卡吞吐与显存，可作为形状消融的一极。<br>**harness（多语评测）**：多语能力必须与配比一起报，否则跨报告的数字不可比。 |
 | 首次收录 | **2026-11-21**（第八十轮 · 06:00 时窗） |
 | 核验状态 | arXiv `id_list=2305.10403` **`200` + atom**（`published` `2023-05-17T17:46:53Z`）+ abs 页 **`200` / 64,215 B**；OpenAlex **`200`（2,439 / 2023 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 308. LLaVA-OneVision: Easy Visual Task Transfer
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | LLaVA-OneVision: Easy Visual Task Transfer |
+| 作者（前 3） | Bo Li · Yuanhan Zhang · Dong Guo（共 **11** 位；末位 Chunyuan Li；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-08-06`；v3 `2024-10-26`） |
+| 会议 / 期刊 | **TMLR**（OpenAlex `type=article`、`primary_location.source` = Transactions on Machine Learning Research、`publication_year=2025`；arXiv `comment` 只给项目主页，未写会议 ⇒ 会议信息取自 OpenAlex） |
+| 被引数 | **3,423**（OpenAlex `10.48550/arxiv.2408.03326`，查询日 **2026-11-21**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2408.03326> ｜ arXiv DOI `10.48550/arxiv.2408.03326` ｜ 项目页见 arXiv `comment` |
+| 一句话贡献 | 把 LLaVA-NeXT 系列在**数据、模型、视觉表征**上的经验收成一个配方，得到**首个单模型同时在单图 / 多图 / 视频三类场景**上推进开源 LMM 边界的模型；并显示三类场景之间存在**任务迁移**（图像上学到的能力可迁移到视频，产生跨场景的新能力）。 |
+| 与我们工作的关系 | **vision（主 · 视觉塔与训练配方）**：一个视觉塔 + 一套投影服务三种输入形态，对应我们「一份视觉编码器服务截图 / 版图 / 录屏」的设想 —— 可预注册对照臂：分塔 vs 单塔。<br>**data（配比）**：论文把收益归因于数据配比与课程，是 data 线「同 token 预算换配比」的可复用证据。<br>**harness（评测口径）**：单图 / 多图 / 视频必须分场景报分，跨场景平均会掩盖退化。<br>**pretrain（视觉 token 预算）**：高分辨率单图与多帧视频的 token 数差异，是长上下文预算的现实来源。 |
+| 首次收录 | **2026-11-21**（第八十一轮 · 09:00 时窗） |
+| 核验状态 | arXiv `id_list=2408.03326` **`200` + `application/atom+xml; charset=utf-8`**（10,844 B / 4 entry，`published` `2024-08-06T17:59:44Z`）；abs 页 **`200` / 42,147 B**；OpenAlex **`200`（3,423 / 2025 / article / TMLR）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 309. VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training |
+| 作者（前 3） | Zhan Tong · Yibing Song · Jue Wang（共 **4** 位；末位 Limin Wang；arXiv 作者字段逐字核） |
+| 年份 | **2022**（arXiv v1 `2022-03-23`；v3 `2022-10-18`） |
+| 会议 / 期刊 | **NeurIPS 2022**（arXiv `comment` 逐字：`NeurIPS 2022 camera-ready version`；OpenAlex `conference-paper`，DOI `10.52202/068431-0732`，pp. **10078–10093**） |
+| 被引数 | **2,690**（OpenAlex `10.48550/arxiv.2203.12602`，查询日 **2026-11-21**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2203.12602> ｜ arXiv DOI `10.48550/arxiv.2203.12602` ｜ 会议 DOI `10.52202/068431-0732` |
+| 一句话贡献 | 把图像 MAE 搬到时域：用**管状（tube）掩码 + 极高掩码率（90%–95%）**把视频重建变成更难的自监督任务；结论是**3k–4k 视频、不加额外数据**也能学到有效表征（K400 **87.4%** / SSv2 **75.4%** / UCF101 **91.3%** / HMDB51 **62.6%**，原版 ViT），并明确「数据质量比数据量更重要、域偏移是关键失败模式」。 |
+| 与我们工作的关系 | **vision（主 · 视频/录屏预训练）**：我们的视频数据只有万级片段，「小数据 + 高掩码率」是可落地配方。<br>**data（质量 &gt; 数量）**：域偏移失败模式说明配比表必须带「目标域相似度」列，而不只是条数。<br>**pretrain（掩码率与 token 预算）**：掩码率决定实际前向 token 数，可直接折算进 2B 预训练算力账。<br>**harness（视频评测）**：K400 / SSv2 / UCF101 / HMDB51 四套口径并列，是「跨数据集可比性」的现成反例。 |
+| 首次收录 | **2026-11-21**（第八十一轮 · 09:00 时窗） |
+| 核验状态 | arXiv `id_list=2203.12602` **`200` + `application/atom+xml`**（`published` `2022-03-23T17:55:10Z`）；abs 页 **`200` / 42,543 B**；OpenAlex **`200`（2,690 / 2022 / conference-paper / NeurIPS，pp. 10078–10093）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 310. DINO-X: A Unified Vision Model for Open-World Object Detection and Understanding
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | DINO-X: A Unified Vision Model for Open-World Object Detection and Understanding |
+| 作者（前 3） | Tianhe Ren · Yihao Chen · Qing Jiang（共 **20** 位；末位 Lei Zhang；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-11-21`；v3 `2025-05-15`） |
+| 会议 / 期刊 | **预印本**（技术报告；arXiv `comment` = `Technical Report`，OpenAlex `type=preprint`） |
+| 被引数 | **173**（OpenAlex `10.48550/arxiv.2411.14347`，查询日 **2026-11-21**；**&lt;500 ⇒ 按「本领域权威」收**：IDEA Research 开放世界检测主线模型，与 Grounding DINO 1.5 同架构；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2411.14347> ｜ arXiv DOI `10.48550/arxiv.2411.14347` |
+| 一句话贡献 | 以与 Grounding DINO 1.5 相同的 Transformer 编解码为骨架，把**文本提示 / 视觉提示 / 自定义提示**统一进以物体为中心的模型，并给出**免提示的通用物体提示**（不画框也能「检测一切」）；自建 **Grounding-100M**（1 亿+ grounding 样本）；Pro 版零样本 **COCO 56.0 AP / LVIS-minival 59.8 AP / LVIS-val 52.4 AP**，稀有类 **63.3 AP**。 |
+| 与我们工作的关系 | **vision（主 · 检测/分割头的开放词表能力）**：版图与封装图的目标类别长尾且事前不可枚举，「免提示检测」是可测能力轴。<br>**designflow（造题与判分）**：开放词表检测可先自动产出「区域 → 元件」候选标注，再人工复核，降低造题成本。<br>**data（100M 级 grounding 数据）**：说明对象级数据可合成扩量，但必须给「合成 vs 真实」配比列。<br>**harness（零样本口径）**：COCO / LVIS-minival / LVIS-val 三套零样本口径必须分开报，混算会夸大。 |
+| 首次收录 | **2026-11-21**（第八十一轮 · 09:00 时窗） |
+| 核验状态 | arXiv `id_list=2411.14347` **`200` + atom**（`published` `2024-11-21T17:42:20Z`）；abs 页 **`200` / 45,378 B**；原生 HTML `arxiv.org/html/2411.14347v1` **`200` / 321,387 B**（读作者块与 `Grounding-100M` 表述；**页内无公开邮箱**）；OpenAlex **`200`（173 / 2024 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 311. Scaling Laws of RoPE-based Extrapolation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling Laws of RoPE-based Extrapolation |
+| 作者（前 3） | Xiaoran Liu · Hang Yan · Shuo Zhang（共 **6** 位；含 Xipeng Qiu · Dahua Lin；arXiv 作者字段逐字核） |
+| 年份 | **2023**（arXiv v1 `2023-10-08`；v2 `2024-03-13`） |
+| 会议 / 期刊 | **ICLR 2024**（arXiv `comment` 逐字：`26 pages, 12 figures, Accepted by ICLR 2024`；OpenAlex `conference-paper`、source = International Conference on Learning Representations、`publication_year=2023` ⇒ 两源年份不一致，以 arXiv comment 的 2024 为准并注明） |
+| 被引数 | **107**（OpenAlex `10.48550/arxiv.2310.05209`，查询日 **2026-11-21**；**&lt;500 ⇒ 按「方法论常青」收**：长上下文位置编码的常用对照口径；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.05209> ｜ arXiv DOI `10.48550/arxiv.2310.05209` |
+| 一句话贡献 | 从**旋转周期**视角给出统一框架，描述外推性能与 base 值、微调长度三者的关系；指出**把 base 调小或调大都可能增强外推**（与「只调大 base」的主流做法相反），并用 **critical dimension** 解释外推为何失效；在 LLaMA2 7B/13B 上以 **16K 训练长度**做到 **1M 上下文**外推。 |
+| 与我们工作的关系 | **pretrain（主 · 长上下文续训）**：把「RoPE base 靠网格试错」换成「先按临界维度算、再小网格验证」的预注册流程（判据 = 目标长度上 PPL 与检索式评测同时不退化）。<br>**zhulong（成本口径）**：同训练长度可外推更长上下文 ⇒「有效上下文 / 训练 token」是一个成本分母。<br>**harness（长上下文评测）**：外推能力须按「训练长度 → 测试长度」矩阵报，单点数字不可比。 |
+| 首次收录 | **2026-11-21**（第八十一轮 · 09:00 时窗） |
+| 核验状态 | arXiv `id_list=2310.05209` **`200` + `application/atom+xml`**（`published` `2023-10-08T15:50:36Z`，`comment` 已读）；abs 页 **`200` / 41,298 B**；OpenAlex **`200`（107 / 2023 / conference-paper / ICLR）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
 
 ---
 

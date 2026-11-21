@@ -6,6 +6,11 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-21 09:0x）**：作者 **290** 人（编号最大 **290**）· X 已核验 **108**（本轮 +1：`@liuziwei7` 经 X 页 `og:title` + `og:description` 双源核验 = Ziwei Liu / NTU）· 已发信 **127**（台账 #1–#127）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **第八十一轮增量（2026-11-21 09:0x）**：作者网 287 → **290**（#288 Limin Wang 王利民 **A 级** `lmwang.nju@gmail.com`（`wanglimin.github.io` 页内明文 `lmwang.nju [at] gmail.com`，`200` / 55,527 B；页内写明南京大学 +「王利民」）/ #289 Xipeng Qiu 邱锡鹏 **A 级** `xpqiu@fudan.edu.cn`（`xpqiu.github.io` 页内 `mailto:`，`200` / 33,632 B）/ #290 Ziwei Liu 刘子纬 **无邮箱**（`liuziwei7.github.io` `200` / 39,458 B 无 `mailto:`；X = `@liuziwei7` 已双源核验 ⇒ 状态「待跟踪 / 已核验 X」）），来自本轮 B 轨 #309 VideoMAE / #311 RoPE Scaling Laws / #308 LLaVA-OneVision；#310 DINO-X 的作者（Tianhe Ren / Lei Zhang 等）**原生 HTML 页内无公开邮箱** ⇒ 只计不建、不猜地址；已发信 125 → **127**（#126 中文 228 字 `SENT OK 09:07:13` / #127 中文 257 字 `09:07:14`）；回信 **0**（0/127）。⚠️ **计数校正**：第八十轮（06:0x）已落 #286 / #287 两条正文但顶部计数行当时漏改，本轮以 **287** 为基线续记。
+
+
 > **当前计数（2026-11-21 00:0x）**：作者 **280** 人（编号最大 **280**）· X 已核验 **107**（本轮未新增核验：`x.com` 经代理 `000`）· 已发信 **119**（台账 #1–#119）· 回信 **0**。
 
 > **第七十八轮增量（2026-11-21 00:0x）**：作者网 276 → **280**（#277 Xizhou Zhu **B 级** `zhuwalter@sensetime.com`（ar5iv HTML `200` / 267,916 B 脚注明文；**2020 年地址，疑失效 ⇒ 只建档不发**）/ #278 Michael Tschannen **未找到**（`tschannen.github.io` `404`）/ #279 Xiaohua Zhai **未找到**（`xiaohuazhai.com` 本轮 `000`）/ #280 Alexander Sergeev **未找到**（论文未给邮箱）），来自第七十八轮 B 轨 #297 Horovod / #298 Deformable DETR / #299 SigLIP 2；已发信 116 → **119**（#117 NeRF 英文 181 词 `SENT OK 00:04:19` / #118 Faster R-CNN 英文 178 词 `00:04:21` / #119 Quiet-STaR 英文 182 词 `00:04:24`）；回信 **0**（0/119）。
@@ -4088,4 +4093,43 @@
 | X 账号 | **未找到**（主页未见 X 链接；🚫 不猜） |
 | 状态 | **已发信**（2026-11-21 06:04:15 `SENT OK`，信 #124 · 主题 `Mask DINO：detection 与 segmentation 共用 query 时的任务冲突`） |
 | 备注 | `语言=中文(判据=拼音姓名族属 + 香港机构)`。价值点：一个头同时出框与掩码（query embedding × 高分辨率像素图点积），是 vision 线检测头选型与 designflow 掩码粒度判分的对照基线。 |
+
+### 288. Limin Wang（王利民）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Limin Wang（主页直接写「王利民」，中文名有据） |
+| 机构 | **南京大学**（Nanjing University，计算机系 / 多媒体计算组 MCG；主页域 `wanglimin.github.io` 写明） |
+| 代表论文 | **VideoMAE**（`2203.12602`，B 轨 #309，末位）· 视频自监督预训练与动作识别主线 |
+| 邮箱 | `lmwang.nju@gmail.com`（**A 级**：本人主页 `https://wanglimin.github.io/` 页内明文 `lmwang.nju [at] gmail.com`，2026-11-21 09:0x 实测 `HTTP 200` / 55,527 B，按 `[at]` 规则确定性还原） |
+| 主页 | <https://wanglimin.github.io/> |
+| X 账号 | **未找到**（主页未见 X 链接；🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 09:07:14 `SENT OK`，信 #127 · 主题 `VideoMAE：90–95% 管状掩码在小数据工业录屏域怎么取`） |
+| 备注 | `语言=中文全文(判据=拼音姓名族属 + 主页写「王利民」+ `.edu.cn` 机构)`。价值点：**90%–95% 管状掩码 + 3k–4k 视频无额外数据**这条配方，是 vision 线「万级工业录屏片段」最省算力的起点；域偏移失败模式可直接写进 data 线配比表的「目标域相似度」列。 |
+
+### 289. Xipeng Qiu（邱锡鹏）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xipeng Qiu（中文名邱锡鹏；拼音族属判定，汉字写法未在页内逐字核） |
+| 机构 | **复旦大学**（Fudan University；主页域 `xpqiu.github.io`，页内写明 Fudan） |
+| 代表论文 | **Scaling Laws of RoPE-based Extrapolation**（`2310.05209`，B 轨 #311，5 作 / 通讯方向）· 另有 MOSS / 中文 LLM 系列 |
+| 邮箱 | `xpqiu@fudan.edu.cn`（**A 级**：本人主页 `https://xpqiu.github.io/` 页内 `mailto:` 明文，2026-11-21 09:0x 实测 `HTTP 200` / 33,632 B） |
+| 主页 | <https://xpqiu.github.io/> |
+| X 账号 | **未找到**（主页未见 X 链接；🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 09:07:13 `SENT OK`，信 #126 · 主题 `RoPE 外推：critical dimension 能否提前判定 32K 续训的 base？`） |
+| 备注 | `语言=中文全文(判据=拼音姓名族属 + .edu.cn 机构)`。价值点：**critical dimension + 旋转周期统一框架**把「RoPE base 靠网格搜」换成可计算的预注册流程，直接影响 pretrain 长上下文续训与 zhulong「有效上下文 / 训练 token」成本口径。 |
+
+### 290. Ziwei Liu（刘子纬）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ziwei Liu（中文名刘子纬；拼音族属判定） |
+| 机构 | **南洋理工大学 NTU**（X 页 `og:description` 明文 `Associate Professor @NTUsg`） |
+| 代表论文 | **LLaVA-OneVision**（`2408.03326`，B 轨 #308，末位）· 另有 S-Lab 多模态与生成系列 |
+| 邮箱 | **未找到**（`https://liuziwei7.github.io/` `200` / 39,458 B 页内无 `mailto:` 与明文邮箱；🚫 不猜） |
+| 主页 | <https://liuziwei7.github.io/> |
+| X 账号 | **@liuziwei7**（双源核验 2026-11-21 09:0x：X 页 `og:title` = `Ziwei Liu (@liuziwei7) on X`、`og:description` = `Associate Professor @NTUsg …`；`x.com/liuziwei7` `200` / 217,370 B 经代理） |
+| 状态 | **待跟踪**（无公开邮箱 ⇒ 不发信；X 已核验，follow 需登录态，未自动执行） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + NTU 中文姓名为主)`；价值点：单塔服务单图 / 多图 / 视频的任务迁移证据，可作 vision 线「分塔 vs 单塔」对照臂的外部参照。 |
 
