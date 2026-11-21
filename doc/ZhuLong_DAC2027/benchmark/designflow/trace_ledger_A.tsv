@@ -689,7 +689,7 @@ gital	case	PtuGuiRecomputeProduce-001	2026-11-20 03:26
 1794893066701_eu329	lein	hfeg0pgn145	197	verification	case	EDA-Eval-DesignFlow-RandcaseWeightZeroTrfcQA-001	2026-11-20 19:25	r869 case: A-pure verification, LPDDR6 refresh.run randcase weight-0 trfc semantics analysis-Q&A, A档 trace-faithful, k=12/12
 1794987681428_6mdpc	xuluo	hfeg0plg74	183	digital	case	EDA-Eval-DesignFlow-RhrRefreshTimingQA-001	2026-11-20 20:05	
 1795095642999_y7gyo.messages.json	wenfeiz	hfeg0plg09	201	digital	parked		2026-11-20 20:28	NOFILE rotated/evaporated, scp 11-20 20:2x fail
-1794915763924_fkrdf.messages.json	max7c	hfeg0plg06	123	digital	parked		2026-11-20 20:35	path infra issue: sessions are subdirs not flat files, deferred; exucf chosen instead
+1794915763924_fkrdf.messages.json	max7c	hfeg0plg06	123	digital	case	EDA-Eval-DesignFlow-SymlinkLocalizeProduce-001	2026-11-21 08:31	r891 case: B-synth symlink-to-local conversion produce-task, k=14/14, ref PASS + 5neg FAIL + §4.9三假FAIL
 1794963500274_exucf	eva1li	hfeg0plg74	123	digital	case	EDA-Eval-DesignFlow-ErrforcebitMeaningQA-001	2026-11-20 20:56	
 1794902635452_aoe57	e0014036	hfeg0plg15	158	digital	case	EDA-Eval-DesignFlow-RunSimPprNewShAnalyzeQA-001	2026-11-20 21:29	
 1794972439111_qooqq.messages.json	e0045144	hfeg0plg11	164	digital	case	EDA-Eval-DesignFlow-LintRptAnalyzeQA-001	2026-11-20 22:15	LintRptAnalyzeQA-001 k=12 digital lint report analysis A档 trace-faithful (lint.rpt 947L from trace) hidden B lint_B.rpt 12 assertions selftest PASS 7 negs FAIL
