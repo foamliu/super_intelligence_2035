@@ -634,3 +634,4 @@ C	EDA-Eval-DesignFlow-InnovusImpsr1253Diag-001	15	n/a	n/a	n/a	n/a	n/a	MISSING	ch
 C	AutoCellConfigDiffCompare-001	19	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 C	EDA-Eval-DesignFlow-AutoCellFlowAudit-001	20	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 C	EDA-Eval-DesignFlow-FindCircuitByPath-001	15	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-ConnectRelCheck-001	13	y	n	FAIL	FAIL	FAIL	PASS	新建 case r1063: 含 A-prime-gold 交叉校验 i-m 5 条; §4.9 三假+smart stub 经 negative_selftest 全 FAIL
