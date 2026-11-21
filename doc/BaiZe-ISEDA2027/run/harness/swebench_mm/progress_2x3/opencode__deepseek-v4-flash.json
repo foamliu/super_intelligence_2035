@@ -4756,23 +4756,44 @@
   "grommet__grommet-6600": {
     "instance_id": "grommet__grommet-6600",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 194.2,
+    "rc": 0,
+    "model_patch_len": 10080,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " the layer usage.\n\nThe `layer` prop works alongside the existing `drop` prop — use `<DataFilters layer>` for a full-layer overlay (ideal for many filters) vs `<DataFilters drop>` for a dropdown menu.\n",
+    "stderr_tail": "ssed, 1 total\nTests:       7 passed, 7 total\nSnapshots:   7 passed, 7 total\nTime:        6.46 s\nRan all test suites matching /src\\/js\\/components\\/DataFilters\\/__tests__\\/DataFilters-test.tsx/i.\n\u001b[0m\n"
   },
   "grommet__grommet-6722": {
     "instance_id": "grommet__grommet-6722",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 225.5,
+    "rc": 0,
+    "model_patch_len": 503,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "align={align}` to Grid, users can now use:\n\n```jsx\n<NameValueList align=\"start\" valueProps={{ width: \"auto\", align: \"start\" }}>\n```\n\nto vertically align the name and value content. All 16 tests pass.\n",
+    "stderr_tail": " `align` prop to Grid for vertical alignment (align-items)\n[✓] Fix NameValuePair: ensure consistent vertical alignment when using custom components and valueProps align\n[✓] Verify fix with tests\n\u001b[0m\n"
   },
   "grommet__grommet-6749": {
     "instance_id": "grommet__grommet-6749",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 424.3,
+    "rc": 0,
+    "model_patch_len": 5194,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "sx\n<Data data={DATA}>\n  <Toolbar>\n    <DataTableGroup />\n  </Toolbar>\n  <DataTable columns={columns} />\n</Data>\n```\n\nAll test failures are pre-existing (verified by running tests on the base commit).\n",
+    "stderr_tail": "up from components/index.js\n[✓] Add DataTableGroup messages to default.json\n[✓] Make DataTable read groupBy from DataContext view\n[✓] Add DataTableGroup story\n[✓] Verify by running related tests\n\u001b[0m\n"
   },
   "grommet__grommet-7025": {
     "instance_id": "grommet__grommet-7025",

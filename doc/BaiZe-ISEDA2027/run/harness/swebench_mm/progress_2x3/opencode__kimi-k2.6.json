@@ -2720,16 +2720,30 @@
   "carbon-design-system__carbon-12151": {
     "instance_id": "carbon-design-system__carbon-12151",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 370.2,
+    "rc": 0,
+    "model_patch_len": 3331,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ESLint** and **Stylelint** validation. (Unit tests couldn't be executed due to a missing `@carbon/icons-react` dependency in this environment — a pre-existing setup issue unrelated to these changes.)\n",
+    "stderr_tail": "leton.js component\n[✓] Add skeleton styles to _fluid-text-input.scss\n[✓] Add Skeleton story to FluidTextInput.stories.js\n[✓] Add tests for FluidTextInput skeleton\n[✓] Run tests to verify changes\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12262": {
     "instance_id": "carbon-design-system__carbon-12262",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1274.7,
+    "rc": 0,
+    "model_patch_len": 7371,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ExpandHeaderProps` and `getRowProps`), the expand header `<th>` and expand row `<td>` now automatically share matching, unique `id`/`headers` values, resolving the IBM Equal Access checker violation.\n",
+    "stderr_tail": "18.1\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore DataTable component files and understand the a11y id issue\n[✓] Identify missing id elements and implement fix\n[✓] Verify fix with tests or manual inspection\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12302": {
     "instance_id": "carbon-design-system__carbon-12302",
