@@ -852,7 +852,7 @@ gx19a	steveny	hfeg0pnd001	146	physical_verify	parked		2026-11-09 20:39	RAG-looku
 1794375180864_lwzz2	xxchen	hfeg0plg53	161	physical_verify	parked		2026-11-14 13:21	xxchen known-reject r547 label-modify
 1794542962301_1q921	xxchen	hfeg0plg53	154	physical_verify	parked		2026-11-14 13:21	xxchen known-reject r547 editor-fault
 1792198270473_rgxd6	xxchen	hfeg0plg53	141	physical_verify	parked		2026-11-14 13:21	xxchen known-reject r547 drc-modify
-1790584988596_q5xew	kenwang	hfeg0plg16	198	layout_aether	parked		2026-11-14 13:21	kenwang known-reject r547 context-summary
+1790584988596_q5xew	kenwang	hfeg0plg16	198	layout_aether	case	EDA-Eval-DesignFlow-SpacePatternPlanner-001	2026-11-22 05:11	r936 revive: full deepread shows 371-msg multi-turn real C-domain physical_verify task (refactor hardcoded SKILL DRC QA pattern generator M1_S_20.il into parameterized topology library drqa_topology.il + per-group mark boxes + space_pattern.md design doc). r547 park was based on msg0 context-summary only.
 1790574386590_dx2x0	kenwang	hfeg0plg16	140	layout_aether	parked		2026-11-14 13:21	kenwang known-reject near-dup
 1790574379050_pikns	kenwang	hfeg0plg16	140	layout_aether	parked		2026-11-14 13:21	kenwang known-reject near-dup
 1790574116232_re39c	kenwang	hfeg0plg16	140	layout_aether	parked		2026-11-14 13:21	kenwang known-reject near-dup
