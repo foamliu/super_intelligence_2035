@@ -3,6 +3,8 @@
 WAITING: 0
 
 
+> 🟢 **心跳 · 2026-11-22 (R141) — 例行巡检 + /tmp 清理（step ③ 完成）：git fetch origin 无新 data 令（HEAD=origin=183b0ed4db）；pretrain #2896 报 iter~277.3k step 7.18s（<7.4s ✅）/ latest ckpt=276k / 350k ETA≈6.0天(~11-28) / 700k ETA≈35.1天(~12-26)；.12 load=26.1✅<120 / .29 load=28.1✅ / /nas_user 42T✅>5T红线 / 无后台任务 / PC-1~PC-5全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪。**清理 /tmp 临时文件**：删除 ~24 个旧 pc2_*.log/py + tokenize_*.log + contam_*.md（MegaMath/stack-v3 分词已完成，日志无用）；保留 /tmp/contam_venv(152MB, pyarrow 环境) 供 S2 投料前可选全量扫描复用。research 日报 11-22 data 建议启动「纯网页 vs 混合策展」对照臂（非约束参考，当前 S1/S2 配比已定不纳入本轮）。v3 报告(R140)iter=277.1k 与当前 277.3k 偏差 0.2k(~24min)不刷新。WAITING=0**。
+
 > 🟢 **心跳 · 2026-11-22 (R140) — v3 报告 iter 进度同步刷新：pretrain #2892 报 iter=277100 step 7.23s（<7.4s ✅），278k ckpt 待落盘。v3 报告 `report_s1s2_split_data_v3_zh.html` 全文 iter 数字 276.4k→277.1k / 39.5%→39.6% / step 7.4s→7.23s / 350k ETA 6.0→6.1 天 / 700k ETA 34.5→35.4 天（350k~11-28 700k~12-26 不变）；gantt note + G5 Go/No-Go + risk#7 + footer 同步更新。数据侧无新变化：PC-1~PC-5 全✅ / 污染扫描✅ 268K docs 0命中 / blend TSV 12源 main 版 / 无后台任务 / .12 load~25✅ .29 load~25✅ / /nas_user 42T✅ / commit `data report:`+push / WAITING=0**。
 
 > 🟢 **心跳 · 2026-11-22 (R139) — S2 新源污染扫描全部完成（Go/No-Go #5 前置②✅）：用 `uv venv /tmp/contam_venv`（Python 3.10 + pyarrow 25.0.1，经代理安装）解决 pyarrow 缺失；新增采样脚本 `data_pipeline/sample_s2_new_sources.py`（每源 12 parquet 均匀采样 × ~1000 docs/file = 12,000 docs/源）；对 S2 blend 4 个零重叠新源各抽样 12,000 docs（合计 48,000 docs）用 `blacklist_extended`（5359 任务 / 4,847,354 去重 13-gram）跑 `check_contamination.py`：stack-v3-train(嵌套 files[].content, 12/8192 parquet)→12000 docs/76短文本兜底/**0命中**✅；finemath-3plus(顶层text, 12/128)→12000/**0**✅；Nemotron-CC-Math(顶层text, 12/57)→12000/**0**✅；MegaMath-web-pro(顶层text, 12/100)→12000/**0**✅。报告落 `data_pipeline/contam_s2_reports/`（4份+SUMMARY.md）。CONTAMINATION_CHECK.md §7 已更新为 [x]。**累计扫描总计 S1(220K)+S2新源(48K)=268,000 docs 全 0 命中**。iter~276.4k/700k step<7.4s / PC-1~PC-5全✅ / 无后台任务 / .12 load~26✅ .29 load~25✅ / /nas_user 42T✅ / commit `data contam:`+push / WAITING=0**。
@@ -95,9 +97,9 @@ WAITING: 0
 ```
 PHASE:        S2前置+污染闸门全完成 — PC-1✅~PC-5✅ + 扩展黑名单✅ + S2新源扫描✅(48K docs/0命中) → WAITING=0
 已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(6benchmark/9277tasks);✅PC-4 main版blend_s2_preblend.tsv(12源/含nemotron 0.067+megamath_web 0.060+finemath 0.005/weight_sum=1.0/gen_blend --verify通过);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(R136刷新main版/pushed);✅MegaMath-web下载DONE(4950parquet/826GB);✅MegaMath-web分词DONE(4950/4950=100%/218.1B tok);✅Code-Reasoning下载DONE(1637parquet/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2228parquet/0inc);✅DATA_MAPPING.md更新;✅论文Fig-1三饼图+Fig-2调优+TABLE IV精简+数据源/Decay/LongCtx引用补齐(latexmk 0err);✅EDA-Eval 536-task黑名单重跑复现(R137/正控158/158);✅扩展黑名单blacklist_extended建成(R138/5359tasks/4847354 13-gram/正控164/164);✅S2新源污染扫描(R139/4源×12K=48K docs/全0命中)
-当前动作:     R140:v3报告iter进度同步刷新——pretrain #2892 报 iter=277100 step 7.23s, v3报告全文iter数字276.4k→277.1k(39.6%)/gantt+G5+risk#7+footer同步;数据侧无新变化(PC-1~PC-5全✅/污染扫描✅268K docs 0命中);无后台任务;.12 load✅.29 load✅;/nas_user 42T✅;pretrain训练正常(iter~277.1k/step 7.23s/latest ckpt=276k)
-下一步:       ①等pretrain到350k(~11-28)启动S2(blend TSV已就绪/SEED=5678待转告pretrain线) ②S2投料前可按S1口径对4新源做全量扫描(>150K docs)作为加强验证(非阻塞) ③清理/tmp临时采样文件
-阻塞:         无(全部前置完成;无后台任务;.12 load≈26<120✅;.29 load≈25✅;/nas_user 42T可用✅>5T红线)
+当前动作:     R141:例行巡检+/tmp清理——git fetch无新令;pretrain iter~277.3k step 7.18s;350k~11-28 700k~12-26;.12 load 26✅ .29 load 28✅;/nas_user 42T✅;无后台任务;清理/tmp旧pc2/tokenize/contam临时文件~24个(保留contam_venv);v3报告(R140)sound不刷新;PC-1~PC-5全✅/污染扫描✅268K docs 0命中
+下一步:       ①等pretrain到350k(~11-28)启动S2(blend TSV已就绪/SEED=5678待转告pretrain线) ②S2投料前可按S1口径对4新源做全量扫描(>150K docs)作为加强验证(非阻塞/contam_venv已就绪)
+阻塞:         无(全部前置完成;无后台任务;.12 load≈26<120✅;.29 load≈28✅;/nas_user 42T可用✅>5T红线)
 ERROR_COUNT:  0
 未完成指令:   无(全部用户令已交付;PC-1~PC-5全部完成;main版blend TSV已就绪)→WAITING=0
 ```
