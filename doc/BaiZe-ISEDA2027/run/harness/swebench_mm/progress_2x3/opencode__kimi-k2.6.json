@@ -2068,16 +2068,30 @@
   "bpmn-io__bpmn-js-1299": {
     "instance_id": "bpmn-io__bpmn-js-1299",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1025.3,
+    "rc": 0,
+    "model_patch_len": 2704,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ted with empty text.\n\n## Files Changed\n- `lib/features/label-editing/cmd/UpdateLabelHandler.js` — added the guard condition\n- `test/spec/features/modeling/UpdateLabelSpec.js` — added regression tests\n",
+    "stderr_tail": "cting events/gateways makes them smaller or disappear due to empty label direct editing\n[✓] Find relevant code related to direct editing and label resizing\n[✓] Implement the fix\n[✓] Test the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1330": {
     "instance_id": "bpmn-io__bpmn-js-1330",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 690.5,
+    "rc": 0,
+    "model_patch_len": 1454,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "dified files\n- The test compilation succeeds with the project's webpack setup\n- No other existing tests are affected by this change (all other `messageFlow: true` tests involve non-boundary elements)\n",
+    "stderr_tail": "ction rules\n[✓] Identify why untyped boundary events allow message flow connections\n[✓] Implement fix to disallow message flow connections to/from all boundary events\n[✓] Run tests to verify fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1337": {
     "instance_id": "bpmn-io__bpmn-js-1337",

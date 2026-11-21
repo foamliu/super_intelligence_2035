@@ -1961,9 +1961,16 @@
   "bpmn-io__bpmn-js-1198": {
     "instance_id": "bpmn-io__bpmn-js-1198",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1495.8,
+    "rc": 0,
+    "model_patch_len": 3218,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "fects the two type-check lists in `BpmnUpdater`, aligning `IntermediateCatchEvent` with the already-present `IntermediateThrowEvent`.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1200": {
     "instance_id": "bpmn-io__bpmn-js-1200",
