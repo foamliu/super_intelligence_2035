@@ -1570,16 +1570,30 @@
   "alibaba-fusion__next-3198": {
     "instance_id": "alibaba-fusion__next-3198",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 801.3,
+    "rc": 0,
+    "model_patch_len": 4106,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "日期也会显示 \"Invalid Date\"：\n\n   ```js\n   {value && value.isValid() ? this.formater(value) : null}\n   ```\n\n4. **`test/date-picker2/index-spec.js`**  \n   补充了当 `timePanelProps.defaultValue` 为 dayjs 对象时的测试用例。\n",
+    "stderr_tail": "understand timePanelProps.defaultValue handling\n[✓] Identify root cause of Invalid Date when timePanelProps.defaultValue is set\n[✓] Implement fix for the issue\n[✓] Verify the fix works correctly\n\u001b[0m\n"
   },
   "alibaba-fusion__next-3218": {
     "instance_id": "alibaba-fusion__next-3218",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 101.5,
+    "rc": 0,
+    "model_patch_len": 775,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "o 容器内，避免影响页面上的其他 demo。\n\n```css\n/* 修改前 */\n.next-select {\n    margin-right: 8px;\n    margin-bottom: 8px;\n}\n\n/* 修改后 */\n.demo-container .next-select {\n    margin-right: 8px;\n    margin-bottom: 8px;\n}\n```\n",
+    "stderr_tail": "s/select/demo/select-basic.md\u001b[90m [offset=106, limit=20]\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix broad .next-select CSS in combobox-basic.md demo\n[✓] Fix broad .next-select CSS in select-basic.md demo\n\u001b[0m\n"
   },
   "alibaba-fusion__next-3345": {
     "instance_id": "alibaba-fusion__next-3345",

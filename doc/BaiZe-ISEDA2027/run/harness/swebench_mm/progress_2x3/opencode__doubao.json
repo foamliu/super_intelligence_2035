@@ -5915,9 +5915,16 @@
   "openlayers__openlayers-13823": {
     "instance_id": "openlayers__openlayers-13823",
     "route": "opencode__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 399.5,
+    "rc": 0,
+    "model_patch_len": 1674,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ation to match the new canvas dimensions\n\nThe fix automatically applies to both ImageLayer and VectorImageLayer, and maintains full backward compatibility for sources that support HiDPI pixel ratios.\n",
+    "stderr_tail": " 179:21  error  Unexpected trailing comma                     comma-dangle\n\n✖ 16949 problems (16949 errors, 0 warnings)\n  15579 errors and 0 warnings potentially fixable with the `--fix` option.\n\u001b[0m\n"
   },
   "openlayers__openlayers-13860": {
     "instance_id": "openlayers__openlayers-13860",
