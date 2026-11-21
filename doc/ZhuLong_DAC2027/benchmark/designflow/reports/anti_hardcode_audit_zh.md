@@ -12,7 +12,7 @@
 - **核心病灶**：绝大多数 `check.py` **只跑 hidden B、无 A-gold 交叉校验**（无嵌入 A fixture、不在 A 上跑候选）。审计方构造一个"忽略输入、直接吐出 B 的 gold 输出"的假提交（`fake_print_only`），即可 PASS 全部断言——违反 §4.9 (b)(c)。
 - **运行时已确认 GAP（2 条，可复现）**：
   - D `EDA-Eval-DesignFlow-ParasiticsAnnotDiag-001`（k=9，纯报告 grep，无 subprocess）
-  - D `EDA-Eval-DesignFlow-AddrRtlGateMap-001`（k=12，Produce 跑 B 但无 A-gold 交叉）
+  - D `EDA-Eval-DesignFlow-AddrRtlGateMap-001`（k=12，Produce 跑 B 但无 A-gold 交叉）—— **已于 r1059（2026-11-21）修复**：k=12→21（12 B-side + 9 A-gold 交叉 m-u），A fixture 落 `reference/hidden_a/`（避免 base64 编辑腐蚀），check 在 A 上 subprocess 跑候选并断言 A-gold，3 假（print_only/core_deleted/empty）全 FAIL，5 neg selftest 全 FAIL。
 - **修复范式**：参照 r1053 SaNPCtrl / r1056 SpiceNetlistParseProduce——`check.py` 嵌入 A fixture（base64）+ 在 A 上跑候选并断言 A-gold + 独立 `_gt_recount` 重算，3 假全 FAIL。
 - **处置**：D 自有题由 D 后续轮次逐批重写 `check.py`（本轮为普查，不修）；A/B/C 抽样 GAP 已在 `discuss/D.md` 开 P0 @ 对应 shard，由各 shard 自修。**D 不改别线题库。**
 
@@ -115,7 +115,7 @@ k≥12 的"达标"题同样大量 GAP——**断言数达标 ≠ anti-hardcode �
 | 6 | EDA-Eval-DesignFlow-NetlistBroadcastFlow-001 | 11 | schematic_netlist | GAP |
 | 7 | EDA-Eval-DesignFlow-SaNPTrannoiseFix-001 | 11 | waveform | GAP |
 | 8 | EDA-Eval-DesignFlow-Waveform-001 | 11 | waveform | GAP |
-| 9 | **EDA-Eval-DesignFlow-AddrRtlGateMap-001** | 12 | Produce 跑 B 无 A-gold | **运行时已确认 fake_print_only PASS** |
+| 9 | **EDA-Eval-DesignFlow-AddrRtlGateMap-001** | 12→21 | Produce 跑 B 无 A-gold | **运行时已确认 → 已修复 r1059**（k=21，A-gold 交叉校验 m-u，3 假全 FAIL） |
 | 10 | EDA-Eval-DesignFlow-AeDelCellCurCellProduce-001 | 12 | schematic_netlist | GAP |
 
 A/B/C 抽样 GAP 代表题（已开 P0）：

@@ -1,6 +1,6 @@
 shard	case_id	k_check	有anti_hardcode(y/n)	只在B跑(y/n)	print_only	core_deleted	hardcode_a	判定(PASS/GAP)	建议
 D	EDA-Eval-DesignFlow-2StepOCChainAnalyze-001	12	n	n	FAIL	FAIL	FAIL(静态)	PASS	保留；抽查 1 条重跑 negative_selftest
-D	EDA-Eval-DesignFlow-AddrRtlGateMap-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	【运行时已确认 GAP】print_only PASS (confirmed: ship precomputed B gold netlist.json)；补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-AddrRtlGateMap-001	21	y	n	FAIL	FAIL	FAIL	PASS	【已修复 r1059 2026-11-21】原 k=12 只跑 B 无 A-gold 交叉 → fake_print_only PASS(§4.9b 违规)。现 k=21(a-u)=12 B-side + 9 A-gold 交叉(m-u)；A fixture 落 reference/hidden_a/(addr2rc_A.v+stdcell_catalog_A.json，避免 base64 编辑腐蚀)；check 在 A 上 subprocess 跑候选 + 断言 A-gold(module=addr2rc/4-bit/16 向量功能等价/row 3 区域/col=A[1:0]/valid 越界)；netval 加越界 index 守卫防 B-only stub 喂 A 时 A[4] 越界 crash。自验 ref 21/21 PASS + 3 假(print_only/core_deleted/empty)全 FAIL + 2 旧 neg 全 FAIL。test_rationale k=21=check 21。
 D	EDA-Eval-DesignFlow-AetherDmBatchCopyExplainQA-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-AetherNetHighlightQA-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-AetherPartialNetlistExtractQA-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
