@@ -173,7 +173,7 @@ D	EDA-Eval-DesignFlow-InstFuncDiagFix-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 
 D	EDA-Eval-DesignFlow-InvCSOpt-001	17	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-InvPulseStimTb-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-InvSchemBuild-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
-D	EDA-Eval-DesignFlow-InvSpiceSim-001	11	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-InvSpiceSim-001	16	y	n	FAIL(runtime)	FAIL(runtime)	FAIL(runtime post-fix)	PASS	【已修复 r1069】重写 check.py k=11->16=11 B-side(a-k)+5 A'-gold 交叉(l-p); 新增 hidden_a/spec_Aprime.json(vdd=0.9/Wn=1.5u/Ln=0.13u/Wp=3u/Lp=0.13u/CL=25fF/tr=0.2ns/pts=51, 与 A vdd=1.2/B vdd=1.05 token 结构性不相交); 判分器内联 _judge_gold(Shockley)独立重算 A'-gold 与 ref inv_spice.py 在 A'/A/B 三集完全一致(交叉验证); smart §4.9(b) B-hardcode stub neg_fake_hardcode_b(检测 vdd: A→A-gold, B→B-gold, A'→fallback B-gold) pre-fix PASS 全 11 post-fix FAIL[m] A' voh=1.05!=judge-gold=0.9(运行时证明隐藏 A' 交叉击穿 stub)
 D	EDA-Eval-DesignFlow-IpPortRuleAuditQA-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-IrunLogNetlistMissingModDiagQA-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-IrunWarnClassify-001	17	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
