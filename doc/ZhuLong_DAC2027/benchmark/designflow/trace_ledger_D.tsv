@@ -1964,3 +1964,4 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:36	sister-turn U#48 CrackMonEn complementary dual-enable analog/digital switch (4th sister: r1023 decode/r1035 ratio/r1043 enable-gate/this complementary-dual-enable); 3-gate PASS
 3vvv0	hao21l	hfeg0pkn004	276	analog_context	case	EDA-Eval-DesignFlow-TbArchDataflowProduce-001	2026-11-21 11:21	
 1794469889494_pr2uh	chapinc	hfeg0pkn002	1186	schematic_netlist	case	EDA-Eval-DesignFlow-MosfetBlockInventoryQA-001	2026-11-21 11:57	
+1794965889936_v595l	jolinz	hfeg0pkn001	385	analog_context	case	EDA-Eval-DesignFlow-DqRouting1p6WriteAnalyzeProduce-001	2026-11-21 12:45	
