@@ -4322,30 +4322,58 @@
   "carbon-design-system__carbon-9402": {
     "instance_id": "carbon-design-system__carbon-9402",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 858.1,
+    "rc": 0,
+    "model_patch_len": 1618,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "gation()` was added as a workaround.\n\nBy properly applying the ref, the chevron is now recognized as \"inside\" the component, and `mouseup` events can propagate naturally to other downshift instances.\n",
+    "stderr_tail": "ponents\n[✓] Understand how dropdown dismissal currently works\n[✓] Identify the root cause of the bug\n[✓] Implement fix for ComboBox not dismissing other open lists\n[✓] Verify fix with tests/lint\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-9700": {
     "instance_id": "carbon-design-system__carbon-9700",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 262.1,
+    "rc": 0,
+    "model_patch_len": 1749,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "components/modal/_modal.scss`.\n\nNow form inputs inside `.bx--modal-content` will only have the base `$spacing-05` padding on the right, allowing them to span the full width of the modal content area.\n",
+    "stderr_tail": "4,7 +202,6 @@\n       width: 96%;\n \n       .#{$prefix}--modal-header,\n-      .#{$prefix}--modal-content,\n       .#{$prefix}--modal-content__regular-content {\n         padding-right: 20%;\n       }\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-9812": {
     "instance_id": "carbon-design-system__carbon-9812",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 937.4,
+    "rc": 0,
+    "model_patch_len": 12910,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "tered `shadow` in `v11TokenGroup.js` with `properties: ['shadow']`\n- Added to `tokens.js` color list and `unstable__meta`\n- Added to build system token mappings in `mixins.js` and `modules-themes.js`\n",
+    "stderr_tail": ")\n[✓] Register shadow token in v11TokenGroup.js and tokens.js\n[✓] Add shadow to token mappings in build files\n[✓] Update box-shadow mixins to use $shadow variable\n[✓] Verify changes look correct\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-9994": {
     "instance_id": "carbon-design-system__carbon-9994",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 122.1,
+    "rc": 0,
+    "model_patch_len": 1665,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ist` on the right via `margin-left: auto`. Both children have `flex-shrink: 0` so they don't collapse. When content exceeds the container width, `overflow-x: auto` now correctly produces a scrollbar.\n",
+    "stderr_tail": " v11 SCSS: remove absolute positioning from .bx--action-list and .bx--batch-summary, use flex layout\n[✓] Fix v10 SCSS: same fix in components package\n[✓] Verify changes don't break other layouts\n\u001b[0m\n"
   },
   "eslint__eslint-11407": {
     "instance_id": "eslint__eslint-11407",

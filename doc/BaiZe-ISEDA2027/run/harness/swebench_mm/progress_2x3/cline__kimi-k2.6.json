@@ -2289,16 +2289,30 @@
   "bpmn-io__bpmn-js-1623": {
     "instance_id": "bpmn-io__bpmn-js-1623",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 372.1,
+    "rc": 0,
+    "model_patch_len": 1892,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "overlays are correctly recreated after any diagram render operation — whether from `importXML()`, `open()`, or `importDefinitions()`.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1636": {
     "instance_id": "bpmn-io__bpmn-js-1636",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 157.0,
+    "rc": 0,
+    "model_patch_len": 3710,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " suite because Chrome/Puppeteer is not available in this environment, but I verified the modified files pass Node.js syntax checking.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "bpmn-io__bpmn-js-1638": {
     "instance_id": "bpmn-io__bpmn-js-1638",
