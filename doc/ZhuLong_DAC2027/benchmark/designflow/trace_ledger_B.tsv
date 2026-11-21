@@ -1706,3 +1706,5 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1787196205133_yr9k2	junxu	hfeg0pkn005	779	spice_sim	parked		2026-11-22 02:43	virtuoso block-design skill (SKILL layout/ERC), not spice. r990 triage.
 1794893672653_11voz.messages.json	joeyl	hfeg0plg74	116	spice_sim	case	EDA-Eval-DesignFlow-CmlWckTopTunerProduce-001	2026-11-22 03:58	
 1789453040533_94ezt.messages.json	junxu	hfeg0pkn005	183	spice_sim	case	EDA-Eval-DesignFlow-BlockSimHarnessGen-001	2026-11-22 04:29	
+1794900549189_dibsj.messages.json	joeyl	hfeg0plg74	186	spice_sim	parked		2026-11-22 04:54	dup-of-CmlWckTopTunerProduce-001 (r996): same joeyl + same WCKTOP testbench 4_WCKTOP/1_AC.sp + same 5-corner tuning task + same make_net.py reframe; dibsj=subset(2nd-stage active inductor) of 11voz(3-stage CML+active inductor)
+1795079346509_sbp15.messages.json	zjqiao	hfhds201	105	spice_sim	parked		2026-11-22 04:55	dup-of-CrcAlertFixGen-001 (r915): same zjqiao + same meas_crc_alert.sp + same CRC alert false-fail fix task; sbp15=continuation of faqqt(r989 parked)/y4kgh(r915)
