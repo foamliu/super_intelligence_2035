@@ -1367,3 +1367,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1795237965362_zloqs	chengk	hfeg0plg96	428	layout_aether	case	EDA-Eval-DesignFlow-PyLibApiDocGen-001	2026-11-21 16:47	r910 deepread-done ready-synth: pylib API doc gen reframe PyLibApiDocGen-001 plan in trace_deepreads/zloqs_pylib_doc_gen.md; needs AppForm.py(2459L)+AsyncTool.py(251L)+2 gold md fetch from 10.129.8.228; B mini + check 11 teeth; defer synth to r911 (40-min budget exhausted by triage)
 1794876332385_3oryk.messages.json	shwanlai	hfeg0plg88	150	physical_verify	case	VirEnvCancelInitFix-001	2026-11-21 17:59	r913: fresh C-dominant drc1549+lvs629+calibre167+pex62+aether1300+pdk100; 4-shard dedup clean
 1794788771330_ft12v.messages.json	xxchen	hfeg0plg06	167	physical_verify	case	SkillScopeMigrate-001	2026-11-21 18:25	
+1787743463896_sjzm0.messages.json	junxu	hfeg0pkn005	2287	layout_virtuoso	case	EDA-Eval-DesignFlow-VirtuosoDaemonReviewFix-001	2026-11-21 18:54	
