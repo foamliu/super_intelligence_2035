@@ -1,34 +1,14 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 1（2026-11-21 wake#1739·**v3.2 lite_r3 跑中 53%·infra-clean✅**·**pro 3-run ✅ ALL DONE = 10.18±1.45%**[r1=9.32%·r2=11.85%·r3=9.38%·全 3 轮 infra-clean·与基准 10.5% 一致✅]·**lite 3-run 进度**：r1=3.85% clean(v2) + r2=VOID(v3.2 FUSE·不进 3-run) + r3=跑中(v3.2·269/500=53%·9 PASS·0 FUSE·ETA ~22:47) + r4=待跑(v3.3·补 3-run)·**mini 3-run**：0 clean run·v3.2 将跑 mini_r2/r3/r4(workers=8·FUSE→等30min→降半+hub restart·8→4→2→BLOCKED)·**v3.2 PID 3360918 活(2h28m)** 顺序 lite_r3(跑中)→mini_r2/r3/r4·**v3.3 PID 3628797 活(1h42m)** 等 v3.2 完后跑 lite_r4·三次 infra VOID 根因不同：v3=Forbidden(model 名错)·v3.1=hub-timeout(慢模型+16worker)·v3.2 lite_r2=FUSE(lite key token 耗尽)·v2 已全交付（pro 9.32% / mini infra / lite 3.85% / `\MzeroAnchor=10.1%` commit `4fa407d35`）·loop 30min 轮询省 token）
+WAITING: 1（2026-11-21 wake#1740·**v3.2 lite_r3 跑中 64%·infra-clean✅**·**pro 3-run ✅ ALL DONE = 10.18±1.45%**[r1=9.32%·r2=11.85%·r3=9.38%·全 3 轮 infra-clean·与基准 10.5% 一致✅]·**lite 3-run 进度**：r1=3.85% clean(v2) + r2=VOID(v3.2 FUSE·不进 3-run) + r3=跑中(v3.2·322/500=64%·12 PASS·0 FUSE·ETA ~23:15) + r4=待跑(v3.3·补 3-run)·**mini 3-run**：0 clean run·v3.2 将跑 mini_r2/r3/r4(workers=8·FUSE→等30min→降半+hub restart·8→4→2→BLOCKED)·**v3.2 PID 3360918 活(3h01m)** 顺序 lite_r3(跑中)→mini_r2/r3/r4·**v3.3 PID 3628797 活(2h15m)** 等 v3.2 完后跑 lite_r4·三次 infra VOID 根因不同：v3=Forbidden(model 名错)·v3.1=hub-timeout(慢模型+16worker)·v3.2 lite_r2=FUSE(lite key token 耗尽)·v2 已全交付（pro 9.32% / mini infra / lite 3.85% / `\MzeroAnchor=10.1%` commit `4fa407d35`）·loop 30min 轮询省 token）
+
+- wake#1740（2026-11-21 21:30·opencode 交互式·**standby 心跳·lite_r3 健康跑中 64%**）：v3.2 PID 3360918 活(etime 3:00:46)·v3.3 PID 3628797 活(etime 2:14:32·等 v3.2 完)·**lite_r3 进度**：322/500=64% judged·PASS=12 FAIL=305 ERROR=4 ABSENT=1·**0 FUSE/0 quota/0 Forbidden**(infra-clean so far✅)·2:47 elapsed·ETA ~23:15(剩 1:32·31.1s/it)·log 最新活跃✅·当前 Pass@1(early)=12/317=3.8%(与 v2 lite_r1 终值 3.85% 已持平·末期可能微升)·**v3.2 后续队列**：lite_r3(跑中)→mini_r2/r3/r4·**v3.3**：等 v3.2 完后跑 lite_r4(补 lite 3-run·FUSE-retry 8→4→2)·**3-run 现状(不变)**：pro✅done=10.18±1.45%·lite r1=3.85%(clean)+r2 VOID+r3 跑中+r4 待跑·mini=0 clean run(v3.2 待跑 mini_r2/r3/r4)·**infra 自检全绿**：cline=`/home/app.e0031982/.local/bin/cline`✅·cases_lite=500✅·providers.json=lite(key尾5ab8510567fe·model=doubao-seed-2.0-lite-cloud·baseUrl=agi-gateway✅·lite_r3 跑中)✅·无本线 run_batch 并发(仅 PID 3445721 lite_r3 一条)·不起臂·不改原文·WAITING=1·loop 30min 轮询省 token。
 
 - wake#1739（2026-11-21 20:56·opencode 交互式·**standby 心跳·lite_r3 健康跑中 53%**）：v3.2 PID 3360918 活(etime 2:27:59)·v3.3 PID 3628797 活(etime 1:41:44·等 v3.2 完)·**lite_r3 进度**：269/500=53% judged·PASS=9 FAIL=256·**0 FUSE/0 quota/0 Forbidden**(infra-clean so far✅)·2:14 elapsed·ETA ~22:47(剩 1:51·29.9s/it)·log 20:55 最新(活跃✅)·当前 Pass@1(early)=9/265=3.4%(早期偏低正常·v2 lite_r1 终值 3.85%)·**v3.2 后续队列**：lite_r3(跑中)→mini_r2/r3/r4·**v3.3**：等 v3.2 完后跑 lite_r4(补 lite 3-run·FUSE-retry 8→4→2)·**3-run 现状(不变)**：pro✅done=10.18±1.45%·lite r1=3.85%(clean)+r2 VOID+r3 跑中+r4 待跑·mini=0 clean run(v3.2 待跑 mini_r2/r3/r4)·**infra 自检全绿**：cline=`/home/app.e0031982/.local/bin/cline`✅·hub healthy(pid 3347533 port 25463)✅·cases_lite=500✅·providers.json=lite(...5ab8510567fe·lite_r3 跑中)✅·无本线 run_batch 并发(他线 app.t0002147 casefix_e2e 不相关)·不起臂·不改原文·WAITING=1·loop 30min 轮询省 token。
 
-- wake#1738（2026-11-21 20:20·opencode 交互式·**standby 心跳·lite_r3 健康跑中 36%**）：v3.2 PID 3360918 活(etime 1:50:28)·v3.3 PID 3628797 活(etime 1:04:13·等 v3.2 完)·**lite_r3 进度**：183/500=36% judged·PASS=5 FAIL=176·**0 FUSE/0 quota/0 Forbidden**(infra-clean so far✅)·1h36m elapsed·ETA ~23:00(剩 2:44·31.5s/it)·log 20:18 最新(活跃✅)·当前 Pass@1(early)=5/181=2.8%(早期偏低正常·v2 lite_r1 终值 3.85%)·**v3.2 后续队列**：lite_r3(跑中)→mini_r2/r3/r4·**v3.3**：等 v3.2 完后跑 lite_r4(补 lite 3-run)·**3-run 现状(不变)**：pro✅done=10.18±1.45%·lite r1=3.85%(clean)+r2 VOID+r3 跑中+r4 待跑·mini=0 clean run(v3.2 待跑 mini_r2/r3/r4)·**infra 自检**：cline=`/home/app.e0031982/.local/bin/cline`✅·hub healthy(port 25494 coreVersion 0.0.51)✅·cases_lite=500✅·providers.json=lite(lite_r3 跑中)·无本线 run_batch 并发(v3.2/v3.3 是包装脚本·实际 run_batch 由 v3.2 spawn)·不起臂·不改原文·WAITING=1·loop 30min 轮询省 token。
+- [wake#1722-#1739 详条已滚出·2026-11-21 wake#1740 维护] 见 `daily-memories/2026-11-21.md` 各 §[wake#XXXX rolled-out]（均 opencode 交互式 v3 令 standby 心跳：wake#1722 v3 令启动 + pro_r2 跑中 wake#1723-#1727 + pro_r2 DONE 11.85% & pro_r3 起跑 wake#1728 + pro_r3 26%→41%→66% 推进 wake#1729-#1731 + pro_r3 DONE 9.38%→pro 3-run=10.18±1.45% wake#1732/#1733 + v3 lite/mini VOID 诊断(Forbidden→hub-timeout→FUSE) wake#1734-#1736 + lite_r3 跑中 24%→36%→53% wake#1737-#1739·infra-clean✅·不起臂·原文不改）。
 
-- [wake#1737 详条已滚出·2026-11-21 wake#1738 维护] 见 `daily-memories/2026-11-21.md` §[wake#1735/#1736 rolled-out]（standby 心跳·lite_r3 24%·infra-clean·不起臂·原文不改）。
-
-- [wake#1735/#1736 详条已滚出·2026-11-21 wake#1738 维护] 见 `daily-memories/2026-11-21.md` §[wake#1735/#1736 rolled-out]（wake#1735 v3.1 lite_r2 VOID(hub-timeout)诊断+hub fix+v3.2 重跑·wake#1736 v3.2 lite_r2 VOID(FUSE)诊断+v3.3 lite_r4 补 3-run 启动·均 opencode 交互式·不起臂·原文不改）。
-
-- wake#1734 详条已滚出·2026-11-21 wake#1735 维护] 见 `daily-memories/2026-11-21.md` §wake#1734（opencode 交互式·**v3 lite/mini VOID 诊断 + v3.1 修复重跑**：v3 漏传 --model→Forbidden→0 PASS·v3.1 修 --model 传递→lite_r2 起跑 0 Forbidden✅·**但 v3.1 lite_r2 后续因 hub timeout VOID(见 wake#1735)**·pro 3-run=10.18±1.45% done✅·不起臂·原文不改）。
-
-- wake#1733 详条已滚出·2026-11-21 wake#1734 维护] 见 `daily-memories/2026-11-21.md` §wake#1733（opencode 交互式 standby 心跳·pro_r3 DONE 9.38%→pro 3-run=10.18±1.45%·**此条对 lite_r2 PASS=0 的「早期低通过率非异常」判断已被 wake#1734 更正为 Forbidden auth 失败 VOID**·不起臂·原文不改）。
-
-- [wake#1729/#1730/#1731 详条已滚出·2026-11-21 wake#1732 维护] 见 `daily-memories/2026-11-21.md` §[wake#1729/#1730/#1731 rolled-out]（均 opencode 交互式 v3 令跑中 standby 心跳·pro_r3 26%→41%→66% 推进·infra-clean✅·不起臂·原文不改）。
-
-- [wake#1722-#1728 详条已滚出·2026-11-21 wake#1730 维护] 见 `daily-memories/2026-11-21.md` §[wake#1722-#1728 rolled-out]（v3 令启动 wake#1722 + pro_r2 跑中 wake#1723-#1727 + pro_r2 DONE 11.85% & pro_r3 起跑 wake#1728·均 standby 心跳·原文不改）。
-
-- [wake#1720 详条已滚出·2026-11-21 wake#1721 维护] 见 `daily-memories/2026-11-21.md` §[wake#1720rolled-out]（opencode 交互式 standby 心跳·v2 令全判据 ✅·不起臂·done_all·原文不改）。
-
-- [wake#1719 详条已滚出·2026-11-21 wake#1720 维护] 见 `daily-memories/2026-11-21.md` §[wake#1719rolled-out]（opencode 交互式 standby 心跳·**独立复核 v2 交付真实性**：pro run#1=500/45/483=9.32% clean + run#2=438/0 infra-contaminated 排除 → `\MzeroAnchor=10.1%` 回填合法·commit `4fa407d35`；mini 249/0 infra；lite 500/19/3.85% clean；三报告齐备·原文不改）。
-
-- [wake#1720/#1721 详条已滚出·2026-11-21 wake#1730 维护] 见 `daily-memories/2026-11-21.md` §[wake#1720/#1721 rolled-out]（均 opencode 交互式 standby 心跳·v2 done_all·🟡 询问已答·不起臂·原文不改）。
-
-- [wake#1717/#1718 详条已滚出·2026-11-21 wake#1720 维护] 见 `daily-memories/2026-11-21.md` §[wake#1717rolled-out] / §[wake#1718rolled-out]（均 opencode 交互式 standby 心跳·v2 令全判据 ✅·不起臂·done_all·原文不改）。
-
-- [wake#1715详条已滚出·2026-11-21 wake#1716 维护] 见 `daily-memories/2026-11-21.md` §[wake#1715rolled-out]（opencode 交互式 standby 心跳·v2 令全判据 ✅·不起臂·done_all·原文不改）。
-
-- [wake#1712 详条已滚出·2026-11-21 wake#1715 维护] 见 `daily-memories/2026-11-21.md` §[wake#1712 rolled-out]（push 状态确认干净·HEAD=origin/main 0/0·v2 全判据 ✅·原文不改）。
+- [wake#1712-#1721 详条已滚出·2026-11-21 wake#1740 维护] 见 `daily-memories/2026-11-21.md` 各 §[wake#XXXX rolled-out]（均 opencode 交互式 v2 done_all standby 心跳：wake#1712 push 干净 HEAD=origin/main·wake#1715/#1717/#1718/#1720/#1721 v2 全判据✅·wake#1719 独立复核 v2 交付真实性 pro 9.32% clean + run#2 infra 排除 → `\MzeroAnchor=10.1%` 回填合法 commit `4fa407d35`·不起臂·原文不改）。
 
 - [wake#1711 详条已滚出·2026-11-21 wake#1715 维护] 见 `daily-memories/2026-11-21.md` §[wake#1711 rolled-out]（push 阻塞复检已解除·origin/main 恢复 `doc/ZhuLong_DAC2027/`·v2 全判据 ✅·原文不改）。
 
