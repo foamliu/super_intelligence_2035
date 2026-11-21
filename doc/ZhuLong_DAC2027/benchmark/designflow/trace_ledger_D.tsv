@@ -1978,3 +1978,4 @@ vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:
 1795076423732_6azlp.messages.json	tongfanl	hfhds201	55	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistNodeTraceProduce-001	2026-11-21 20:59	
 1795051092028_wm05l	tongfanl	hfeg0pgn072	90	schematic_netlist	case	EDA-Eval-DesignFlow-VdbiasScanProduce-001	2026-11-21 21:26	
 1789435102785_ogspt.messages.json	junxu	hfeg0plg79	517	schematic_netlist	case	EDA-Eval-DesignFlow-VcliPyenvFix-001	2026-11-21 22:51	complex multi-file cross-host py-env debug (329msgs/969KB), synthesis needs dedicated round, deepread=designflow/trace_deepreads/ogspt_junxu_virtuosocli_pyenv.md
+1789629093789_wduge	junxu	hfeg0pkn005	155	waveform	case	EDA-Eval-DesignFlow-SkillInstallScriptProduce-001	2026-11-22 00:36	
