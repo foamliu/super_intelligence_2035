@@ -2888,23 +2888,44 @@
   "carbon-design-system__carbon-12435": {
     "instance_id": "carbon-design-system__carbon-12435",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1017.3,
+    "rc": 0,
+    "model_patch_len": 13949,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "`**\n  - Test: `should not be interactive if readOnly`\n  - Test: `should add the read-only class when readOnly is provided`\n\nAll ESLint and stylelint checks pass, and all existing plus new tests pass.\n",
+    "stderr_tail": " readOnly prop to MultiSelect component with styles\n[✓] Add read-only controls to Storybook playground\n[✓] Add default story for easy copy/paste\n[✓] Add RTL tests for read-only class on the prop\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-12442": {
     "instance_id": "carbon-design-system__carbon-12442",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 386.6,
+    "rc": 0,
+    "model_patch_len": 2723,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ernal packages (like `@carbon/icons-react`) aren't built here, but the changes follow the existing patterns used in other components (e.g., `RadioTile`, `Pagination`) and are formatted with Prettier.\n",
+    "stderr_tail": "te packages/react/src/components/Accordion/AccordionItem.js\npackages/react/src/components/Accordion/AccordionItem.js 107ms\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Accordion/AccordionItem.js\n"
   },
   "carbon-design-system__carbon-12445": {
     "instance_id": "carbon-design-system__carbon-12445",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 419.0,
+    "rc": 0,
+    "model_patch_len": 6839,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ld apply the `cds--combo-box--readonly` class\n- Should set the `readonly` attribute on the input\n- Should prevent the user from typing in the input\n- Should prevent the menu from opening when clicked\n",
+    "stderr_tail": "mponent\n[✓] Add styles for read-only state\n[✓] Add controls for each state in Storybook playground\n[✓] Add default story for easy copy and paste\n[✓] Add RTL tests for read-only class on the prop\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-13196": {
     "instance_id": "carbon-design-system__carbon-13196",

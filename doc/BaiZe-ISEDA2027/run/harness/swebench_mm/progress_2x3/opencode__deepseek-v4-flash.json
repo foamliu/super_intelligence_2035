@@ -4910,30 +4910,58 @@
   "highlightjs__highlight.js-2765": {
     "instance_id": "highlightjs__highlight.js-2765",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1256.1,
+    "rc": 0,
+    "model_patch_len": 1666,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ghlighted as `template-tag` with `else` keyword\n- `{{else if condition}}` → highlighted as `template-tag` with `else` keyword and `if` as `builtin-name`\n- `{{else unless condition}}` → same treatment\n",
+    "stderr_tail": "e if}}` are matched\n[✓] Fix the else rule in handlebars.js to handle `{{else if ...}}` as template-tag\n[✓] Update else-variants test to include `{{else if}}` case\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2785": {
     "instance_id": "highlightjs__highlight.js-2785",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 8.0,
+    "rc": 0,
+    "model_patch_len": 352,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "sing a `className` property, so PHP variables (like `$var`) matched the regex but weren't given any highlight styling.\n\nFixed by adding `className: 'variable'` to the VARIABLE declaration at line 14.\n",
+    "stderr_tail": " export default function(hljs) {\n   var VARIABLE = {\n+    className: 'variable',\n     begin: '\\\\$+[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*'\n   };\n   var PREPROCESSOR = {\n     className: 'meta',\n\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2811": {
     "instance_id": "highlightjs__highlight.js-2811",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 12.8,
+    "rc": 0,
+    "model_patch_len": 442,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "h consumed the entire line, preventing `HASH_COMMENT_MODE` from matching anything after the decorator. Changed the end to `/(?=#)|$/` to stop before a `#` comment, letting the comment mode take over.\n",
+    "stderr_tail": "/^[\\t ]*@/, end: /(?=#)|$/\n },\n {\n   begin: /\\b(print|exec)\\(/ // don’t highlight keywords-turned-functions in Python 3\n }\n\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/languages/python.js\u001b[90m [offset=275, limit=10]\u001b[0m\n"
   },
   "highlightjs__highlight.js-2897": {
     "instance_id": "highlightjs__highlight.js-2897",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 253.5,
+    "rc": 0,
+    "model_patch_len": 384,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "tching the approach already used in Dart (`612a5516`). Empty `/**/` now falls through to `C_BLOCK_COMMENT_MODE` (regular block comment), while `/** ... */` with content still gets JSDoc highlighting.\n",
+    "stderr_tail": "lock comment bug in JS highlighting\n[✓] Fix JSDOC_COMMENT begin pattern to exclude empty comments\n[✓] Apply fix to build output files (javascript.js, typescript.js)\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2899": {
     "instance_id": "highlightjs__highlight.js-2899",
