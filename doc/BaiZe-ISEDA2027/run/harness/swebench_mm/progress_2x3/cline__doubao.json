@@ -5831,9 +5831,16 @@
   "openlayers__openlayers-13333": {
     "instance_id": "openlayers__openlayers-13333",
     "route": "cline__doubao",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 307.6,
+    "rc": 0,
+    "model_patch_len": 2396,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " screenshots: the red box (correct extent) will now be the bounds of the rendered area, with no black pixels outside of it.\",\"model\":{\"id\":\"doubao-seed-2.0-pro-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-13509": {
     "instance_id": "openlayers__openlayers-13509",

@@ -1835,9 +1835,16 @@
   "bpmn-io__bpmn-js-1092": {
     "instance_id": "bpmn-io__bpmn-js-1092",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 695.0,
+    "rc": 0,
+    "model_patch_len": 3474,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "Tasks\n- `snapInsideTarget()` now accepts a configurable padding parameter\n\nThe modified file compiles successfully and passes ESLint checks. The fix matches the upstream resolution in bpmn-js v4.0.0.\n",
+    "stderr_tail": "e\n[✓] Identify the root cause of center-to-center connection snapping failure\n[✓] Implement minimal fix to restore center-to-center connection behavior\n[✓] Verify the fix with tests if available\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1119": {
     "instance_id": "bpmn-io__bpmn-js-1119",
