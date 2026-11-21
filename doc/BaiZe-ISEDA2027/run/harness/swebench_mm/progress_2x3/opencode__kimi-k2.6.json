@@ -2207,16 +2207,30 @@
   "bpmn-io__bpmn-js-1557": {
     "instance_id": "bpmn-io__bpmn-js-1557",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1562.4,
+    "rc": 0,
+    "model_patch_len": 4506,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " Test verifying that the replace menu does not offer the `DataObjectReference` option for a `DataStoreReference` on a `Collaboration`.\n\nAll modified files pass `eslint` and webpack syntax validation.\n",
+    "stderr_tail": "erence to DataObjectReference outside Pool\n[✓] Identify root cause in updateDiParent/updateParent logic\n[✓] Implement fix for the undefined parent issue\n[✓] Verify fix with tests or reproduction\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1567": {
     "instance_id": "bpmn-io__bpmn-js-1567",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 639.1,
+    "rc": 0,
+    "model_patch_len": 3688,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "lidation. The test runner in this workspace has a pre-existing `karma-webpack` version incompatibility that prevents executing tests, but the fix is minimal and directly addresses the reported issue.\n",
+    "stderr_tail": "debase to understand drilldown and root element handling\n[✓] Reproduce the bug by analyzing relevant code\n[✓] Implement fix for drilldown after root change\n[✓] Verify fix with tests if available\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1570": {
     "instance_id": "bpmn-io__bpmn-js-1570",

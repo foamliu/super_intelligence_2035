@@ -3287,16 +3287,30 @@
   "carbon-design-system__carbon-3918": {
     "instance_id": "carbon-design-system__carbon-3918",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 523.7,
+    "rc": 0,
+    "model_patch_len": 2117,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ePlace` focus listener already handles close-on-focus-out behavior.\n\n3. **Cleaned up unused `_hBlurTimeout`**: Removed declaration and `componentWillUnmount` cleanup since `handleBlur` never existed.\n",
+    "stderr_tail": "nu in DataTable lacks keyboard focus styles\n[✓] Find relevant DataTable and OverflowMenu source files\n[✓] Identify the root cause of missing focus styles\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-3928": {
     "instance_id": "carbon-design-system__carbon-3928",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 63.6,
+    "rc": 0,
+    "model_patch_len": 6433,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " now passes `iconDescription` explicitly (since it has no children)\n\n**Snapshot** (`TableBatchAction-test.js.snap`):\n- Updated to reflect the new default `iconDescription=\"\"` and the added child text\n",
+    "stderr_tail": " at evalScript (node:internal/process/execution:133:3)\n    at node:internal/main/eval_string:51:3\nTest 3 (renderIcon + no children + iconDescription): undefined\nTest 4 (no renderIcon): undefined\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4028": {
     "instance_id": "carbon-design-system__carbon-4028",
