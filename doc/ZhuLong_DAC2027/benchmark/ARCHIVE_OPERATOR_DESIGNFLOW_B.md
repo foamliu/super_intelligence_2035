@@ -2321,3 +2321,74 @@ WAITING: 0（11-21 **r945 1-case 产出轮**：mc-matrix `python3 designflow/tra
 [r856 archived] 11-19 r856 1-case · 7rj65(tongfanl mc40)→SkillDocGen-001, cases/B 402→403 (k=15, 5 neg FAIL); 原文滚入 ARCHIVE r857-mem-trim
 [r855 archived] 11-19 r855 1-case · a8p3f(dsgao mc43)→TwoStepSenseTTCmp-001, B.jsonl 401→402 (k=14, 5 neg FAIL); 原文滚入 ARCHIVE r856-mem-trim
 [r854 archived] 11-19 r854 · khobz(tongfanl mc119)→MatrixJobStatusParse-001, B.jsonl 400→401 (k=14, 5 neg FAIL); 原文见 git log r854
+
+
+--- r955-mem-trim (2026-11-21): 流水 verbose r908-r917 + r848 滚入归档（从 MEMORY_B L78-L145 移出）---
+## 流水（最新在上）→ verbose 原文 r908 滚入 ARCHIVE_OPERATOR_DESIGNFLOW_B.md r908-mem-trim
+- r917 case 产出轮 · iyoge(yinyus hfeahpc505 mc4988 spice_sim)→WvCurPwlStimGen-001 落库：
+  · 经 .75 SSH scp 取回真实 messages.json(910KB/216msg/6user/112tool_use) → 解析 user 原话: msg[0]「读取这个文件 然后写成电流激励 形式仿照ivblh vblh! 0 pwl(0 0 120u 0 120.001u 2mA) 规则如下 将上面的数据写成的电流激励加在120us之后」+ msg[3] 保存为 ivblh_iloadIDD.sp + msg[35] 改 200us + msg[50] FSDB 高精度重提 + msg[185/187] 转 SKILL。
+  · 核心 produce 意图取 msg[0]/msg[3]（msg[50] FSDB 提取依赖 waveview license 不可沙盒复现, 不取）。
+  · 真实输入 ivblh_idd5b2.sp 因权限 e0031982 不可直读 → 从 trace read_files tool_result 提取真实 Custom WaveView 表(#format 头+XVAL isub(inh_vblh)+1661 可见采样点) → 下采样 37 点作 asset A(0..1.17us,-0.85mA..68mA)。
+  · reframe harness-for-teeth: one-off deck 生成 → produce 参数化 pwl_current_gen.py(input_wv/output_sp/--shift/--isrc/--nodep/--noden)。
+  · hidden B=120 点(0..5.95us 严格递增 50ns 步,-1.5mA..80mA 脉冲,isub(ivdd) 信号,shift 150us,isrc iload/vdd/0) → 验通用性 + anti-hardcode-A(点数 120≠37/信号/范围/平移量全异)。
+  · check.py 12 断言(a-l): zip含脚本/B上exit0非空/确定性/头行匹配CLI/0 0锚点/)末行/对数=N_B+1/时间严格递增/每点平移正确(t_i+SHIFT,v_i)/数据token科学计数法/无重复时间/shift-respect+anti-hardcode-A(SHIFT2=200us重跑时间==t_i+SHIFT2,B点数120≠A37)。
+  · 自验: ref PASS 12/12; NEG 5/5 全 FAIL(neg_empty/neg_print/neg_core=§4.9三假 / neg_noshift / neg_hardcode); 确定性 diff 一致。in-place check.py selftest PASS。
+  · cases/B 449→450, 总断言 1375→1387, ledger_B case 610→611(iyoge marked case)。真实性: 路径/信号名/采样值全保真非脱敏, trace_source 可溯源。
+  · discuss r917 mandatory 清付(r909→r917 diff=8 ≥4): 3 点实质表态(high-mc≠复杂意图锚定msg[0] / 698重扫为池枯竭前置闸门 / WaveView produce 判分双闸门)。
+
+- r916 case 产出轮 · 清 r915 DEBT · h9k50(yh1yang hfeg0pkn003 mc518 spice_sim)→DevFourTermMeasGen-001 落库：
+  · 经 .75 SSH cat 取回真实 test.sp 全文(302 行/22 器件四端 MOSFET, post-fix 已含全 4 meas) → A 档 trace-faithful：真实 22 器件结构 + yh1yang 原话, A=pre-fix 态(每器件仅 id meas)。
+  · reframe harness-for-teeth: one-off deck edit → produce 参数化 dev4term_meas_gen.py(任意器件数/电压/温度/工艺角/meas 残缺状态)。
+  · hidden B=14 器件/25C/ff/异 bias/混合 meas 状态(部分仅 id/id+ig/id+ig+is/全4/无) → 验补齐缺失不重复 + anti-hardcode-A(器件数 14≠22)。
+  · check.py 14 断言(a-n): zip含脚本/CLI exit0非空/确定性/框架行逐行一致/器件实例逐行一致/电压源逐行一致/每器件id/ig/is/ib齐/规范meas总数=器件×4/无重复meas名/find目标正确对应/反硬编码A器件数。
+  · 自验: ref PASS 14/14; NEG 6/6 全 FAIL(neg_empty/neg_print/neg_core=§4.9三假 / neg_onlyid / neg_hardcode / neg_crosswire); 确定性 diff 一致。B→56 meas(14×4), A→88 meas(22×4)。
+  · cases/B 448→449, 总断言 1361→1375, ledger_B case 609→610(h9k50 marked case)。真实性: 路径/器件名/bias 全保真非脱敏, trace_source 可溯源。
+
+- r915 698 机重扫刷新 trace source + claim · 执行 r914 收尾"下次 698 机重扫"：
+  · .75 run_commands 调 scan_remote.sh 于 11/19 summary 424 个 spice-domain host（-P 30, 90s/host, ssh </dev/null 防 hang）→ 419/419 响应, raw 29670 行。
+  · diff 11/19 summary 5695 sid → 41 个全新 B 域 sid（11/19 17:21 后创建, 全不在 B ledger 1371 touched）。
+  · spice/char 评分排序（hspice/spectre/finesim/siliconsmart/maestro/adexl/assembler/ngspice/ocean 计数和）见 designflow/rescan_1120_B_ranked.tsv。top: iyoge(yinyus hspice:4988) / qlvgs(xiuqiy hspice:4986) / h9k50(yh1yang hspice:308) / t6td6+b35r7(xkyuan hspice:94) / 6jie5(joeyl hspice:95 opamp:24)。
+  · peek top2 真消息（SSH cat messages.json→workdir 解析 user msgs）：h9k50=HSPICE 多器件四端电流 meas 补齐 deck 任务（用户原话: test.sp 已写器件定义/电压条件, meas 只测 id, 要补 ig/is/ib 四端, 简洁避免错误）；iyoge=WaveView 电流数据→PWL 电流激励（ivblh vblh! 0 pwl(...) 加 120us 后）。
+  · claim h9k50(yh1yang hfeg0pkn003 mc518 spice_sim) 落 ledger_B；深读笔记 designflow/trace_deepreads/h9k50_dev4term_meas.md + 合成计划(DevFourTermMeasGen-001, ≥10 断言, hidden B 异器件/bias, §4.9 三假)。
+  · DEBT 1: h9k50 case 合成留 r916（本轮预算用于 rescan+claim+深读；完整 hidden B+断言+负样本+自验+pi 不够时, 强行产出=违反 incomplete 闸门, 质量优先）。
+  · 复活池复核：pool_reaudit_B 119 可造-全 provenance 行全在 B ledger（r914 结论"复活池变现完毕"复核成立），唯一增量来源=698 机重扫。
+- r914 0-case 取证轮 + cluster-park · 1119 B-pool fresh mc≥10=9 → peek cluster 代表 ynuo4 → park 9 → fresh mc≥10=0 池彻底耗尽：
+  · mc-matrix 复算 fresh mc≥10=9（与 r913 一致，池未变；.75 最新扫描仍 11/19_172105，无新 snapshot）。
+  · 9 全 clarawu 同 kw 簇：8 byte-identical（ynuo4/pbz9y/gicv2/mq7oq/8o6cv/bz7ld/slmca/v4gsj，mc67-69，kw netlist:217;hspice:214;schematic:141）+ aurzv（mc52，kw netlist:124;hspice:122;schematic:120）。
+  · **peek ynuo4（mc69 cluster 代表）**：eda_flow sandbox SSH .75→10.129.2.14（hfeg0pkn005，e0031982 key 可达），scp /home/clarawu/.cline/data/sessions/1794970501696_ynuo4/1794970501696_ynuo4.messages.json（400KB/78msg），dump_session.py 提 user 文本。
+  · ynuo4 核心 produce（msg14/47/63/77）= 写 python 脚本从 wv_Ron_ff/tt/ss/global/Ron_*.md0 提 rpu/rpd≈230 的 zqcode + 经 run/stimulus_Ron_*.sp 映射 PVT + 输出 zqcode_75pvt.sp（.lib zqcode_<PVT> + .param zqpuN + 工艺角信息 .lib model/.temp/VVDD）。
+  · **= 现有 case ZqRonLibGen-001（clarawu session gcxee）同意图 near-dup**：同 user clarawu / 同项目 V0_DDR4 ZQ Ron char / 同文件 wv_Ron_*+Ron_*.md0 / 同输出 zqcode_75pvt.sp / 同脚本 extract_Ron_75pvt.py。asset task_brief 确认 ZqRonLibGen-001 trace 原话与 ynuo4 msg14/47/63/77 一致。
+  · park 9：ynuo4（peek-confirmed ZqRonLibGen near-dup）+ 7 byte-identical-kw 同簇（pbz9y/gicv2/mq7oq/8o6cv/bz7ld/slmca/v4gsj，ynuo4 代表确认）+ aurzv（clarawu Ron/netlist 域 near-dup 簇）。
+  · **fresh mc≥10 = 0**（1119 B-pool 209 全 touched，池彻底耗尽）。mcguard PASS。
+  · 0 case 产出。证据链：mc-matrix fresh=0 + ynuo4 真消息 peek-confirmed ZqRonLibGen near-dup + r912(5 peek)+r913(3 peek)+r914(1 peek) 共 9 peek 全 near-dup。需下次 698 机重扫刷新 trace source（per 11-05 ops令）。
+  · 📊 覆盖率: covered 609 / 1119 B-pool mc≥10 不变(本轮 0 case)；ledger_B case 609·parked 991(+9)·total 1600(+9)
+  · 🧾 断言: 本轮 r914 +0(0-case+cluster-park)，总断言 1348 不变；存量 447/447 达标。
+  · eda_flow session shardB_20261120-r914_B-peek-ynuo4 待 close。
+- r913 0-case 取证轮 + dup-catch · 1119 B-pool fresh mc≥10=12→18 fresh 逐条 cross-shard ledger 查(6 TAKEN)+peek3 park3; 先合成 NxPxDeckGen-001(16 cond)后 claim 拒→sgk0l 已被 D 11-13 造为 SpSweepDeckGen-001，未提交 dup; 原文见 git log r913
+- r912 0-case 取证轮 · 1119 B-pool fresh mc≥10=17 peek 5/17 全 near-dup → claim+park 5：
+  · rs6bc(e0029308 mc62)≈**DffResetPrioClassify-001**（同 user DFF reset 优先级，6_dff_hspice_summary reset_desc+4_DFF_Reset_sim.sp 第3.alter）
+  · k9a0w(weiyue mc26)≈**AcDcCapMerge-001**（同 user AC/DC 派生电容 Cgdl/Cgd0/Cgda/Cch/Cov/Ceff 合并）
+  · 0jt5b(clarawu mc89)≈**ZqRonLibGen-001**（同 user extract_Ron_75pvt.py 从 wv_Ron_*/.md0 提 rpu/rpd≈230 zqcode 生成 zqcode_75pvt.sp + PVT 映射）
+  · ksikx(clarawu mc66)=0jt5b 同脚本续作（extract_Ron_75pvt.py 补工艺角 + 精简输出）≈ ZqRonLibGen-001
+  · icdx9(clarawu mc56)≈**RonDvqSlopeExtract-001+FineSimStimSweepFix-001**（同 user dRONdV2 诊断 v(zqpu5)/v(vvdd2cs) 不随 VVDD 扫描 + extract_dRONdV2.py 改 sweep 列名）
+  · 剩余 12 fresh：9 clarawu 同 keyword 簇(ynuo4/pbz9y/gicv2/mq7oq/8o6cv/bz7ld/slmca/v4gsj/zxfv3 mc67-80 kw字节级同) + aurzv(clarawu mc52) + s63b6(e0029308 mc19 kw virtuoso:16804 huge 483KB/27MB) + xbksc(shanliny mc33 r910 deferred 3.3MB/377msg)
+  · 取证证据：mc-matrix `python3 trace_ledger.py --shard B mc-matrix --src b_pool_1119_summary_schema.tsv` → fresh mc≥10=17→12(本轮 park5)；r910(8 peek)+r912(5 peek) 共 13/17 peek 全 near-dup/吃不下
+  · 📊 覆盖率: covered 609 / 1119 B-pool mc≥10 不变(本轮 0 case)；ledger_B case 609·parked 977(+5)·total 1585(+5)
+  · 🧾 断言: 本轮 r912 +0(0-case)，总断言 1348 不变；存量 447/447 达标。
+- r911 case 产出轮 · 清付 r910 DEBT · 0rh2t(shanliny mc24 spice_sim)→GenXtopCliUpgrade-001（generate_xtop.py CLI 升级 + '+' 续行 bug 修复）：
+  · trace-faithful: 用户原话"连输出在哪都不能改"/"只能 python generate_xtop.py <文件> 这个用法这么弱智"；produce=改好的 generate_xtop.py 打包 submit.zip。
+  · A(naive 原版,209行,无 argparse,+bug,输出写 CWD)+visible DSPF(SRAM_TOP 3 段续行)；hidden B=DDS_TOP(18 pins,内部 .SUBCKT INVX leaf 干扰)+LDO_TOP(8 pins) 验通用性。
+  · check k=15 a-o: zip/py_compile/no-args/-h/-o 默认源目录/-o dir/-s/-n/-f/XTOP+top名/'+'过滤/全 pin/批量/cross-input guard/随机化; ref 15/15 PASS, 5 neg 全 FAIL(NEG_RC=5/5), §4.9 三假(空壳·print·core-deleted)全 FAIL。
+  · 自纠: B1 初版把内部 .SUBCKT INVX 紧接续行后(中间只隔注释)，ref parser 因注释 continue 不 break → 覆盖 DDS_TOP 为 INVX；改为续行后先放 Xbuf 实例行触发 break 再放内部 .SUBCKT，ref 正确取 DDS_TOP。
+  · 落库: cases/B 446→447, B.jsonl 446→447, ledger 0rh2t claimed→case; near-dup 自检: shanliny 既有 5 case 全 mt0/meas 诊断域, 本 case 动作动词"CLI 升级+bug 修复"正交, 无重叠。
+  · 📊 覆盖率: covered 609 / 1119 B-pool mc≥10 不变; ledger_B case 609·parked 972·total 1580; 🧾 断言 +15 → 总 1348。
+- r910 0-case 取证轮（1119 B-pool 209 mc≥10 扫 → 8 fresh peek 全 near-dup/weak-teeth → 仅 0rh2t distinct）：
+  · 取证证据：sgk0l(vincentz)≈**shard D 已 case SpSweepDeckGen-001**（跨 shard 互斥确认 exact dup）；s27qe(vincentz)≈SpTempParamAlter；sq0lh(clarawu)≈Ron/.md0 cluster(RonDvqSlopeExtract/Md0MeasureExtract)；cnyt5(e0044979)≈DspfPerfMultiProcDiag；u5vqi(weiyue)=Q&A cleanup-advice 无 produce(check() 无牙)；md9m3(alan17z)=skill-merge meta-task 非 B 域；xbksc(shanliny)=3.3MB/377msg SRAM meas debug 单轮吃不下。
+  · 已 park: s27qe/cnyt5/sq0lh（near-dup）；sgk0l 跨 shard D 已 case 拒 park。
+  · 已 claim+深读: **0rh2t(shanliny mc24) → GenXtopCliUpgrade**：SRAM char 工具链 generate_xtop.py 加 CLI(-o/-s/-f/-q/-n/-h)+修 SPICE `+` 续行 pin 名 bug；参考解已存 .75 uploads/generate_xtop.py(274行)；distinct vs shanliny 既有 5 mt0/meas case；DEBT=1 下轮首合成（SOP 见 deepread note designflow/trace_deepreads/0rh2t_GenXtopCliUpgrade.md）。
+  · 📊 覆盖率: covered 609 / 1119 B-pool mc≥10 不变(本轮 0 case)；ledger_B case 609·parked 972(+3)·total 1580(+1 claim)；mc10.fresh=22-28(全老用户新 session, NEW-user=0)，本轮取证确认 fresh 多为老用户重复任务 near-dup。
+  · 🧾 断言: 本轮 r910 +0(0-case)，总断言 1333 不变；存量 446/446 达标。
+- r909 case 产出轮 · sivh1(e0044979 mc31 characterization)→CmpLogReportMod-001（cmp_log 工具链 3 改:列名+log.path/mode 提取/working dir 面板; k=15 a-o, ref 15/15 PASS, 5 neg FAIL NEG_RC=5/5, §4.9 三假全 FAIL, 随机化+cross-input guard; cases/B 445→446, B.jsonl 445→446, ledger sivh1→case; 同 user e0044979 7 case 3 个同 cmp_log 工具链动作动词正交; discuss r909 mandatory 清付 r900→r909 diff=9）
+- r908 0-case 候选排重 + MEMORY_B 瘦身轮（见顶部 WAITING 行；ARCHIVE r908-mem-trim 含原 L46-L58 事故块 + L64-L127 流水 verbose）
+- r902-r907 流水 verbose 见 git log r902-r907 / ARCHIVE 各 rXXX-mem-trim 批次
+- r848 及更早流水 verbose 见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md 各 rXXX-mem-trim 批次
