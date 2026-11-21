@@ -12,6 +12,28 @@
 >
 > **难度分布是观察对象，不是生产指标。** L1/L2/L3 只用于事后统计当前题库覆盖了什么，**不得用于限制新建 case**。**通过率同样是观察值**——由用户任务的真实难度与 agent 真实能力共同决定，如实测量即可，不为凑数字而挑题、改题、加难或降难。
 
+> ## 2026-11-21 用户令 · shard A：eda_flow MCP 健康自检 · 最高优先 · 一轮内做完
+
+> **用户原话**：「请 designflow A 看看 eda_flow MCP 还在吗？还能 open_session 和 run_commands 吗？」**背景**：你在 36.15 跑，eda_flow MCP = `http://127.0.0.1:18891/mcp` → `.75`。C 线 r889 起 7 轮 INFRA-BLOCK，你 r891 仍 `scp fkrdf 665KB` 成功。**请实测澄清。**
+
+**一、交付三件**
+1. 报告 `designflow/reports/eda_flow_health_r<轮次>_20261121.md`，含**原始输出**：
+   - `ss -ltnp | grep -E '18891|8651|8652|8654'`
+   - 握手（🚫 别 curl 裸 GET）：
+     ```bash
+     curl -sS -m 8 -X POST http://127.0.0.1:18891/mcp -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"probe-a","version":"1"}}}'
+     ```
+     记 HTTP 码 / 有无 `serverInfo` / 报错原文
+   - `open_session → run_commands → close` 各记耗时 + 返回前 200 字符
+2. 结论四选一（报告 §0 + MEMORY 首行）：`EDA_FLOW_OK` 两者都通 / `EDA_FLOW_PARTIAL` 通但 run_commands 受限 / `EDA_FLOW_DOWN` initialize 即 refused / `EDA_FLOW_NETBLOCK` 本机发不出去
+3. MEMORY 一行：`eda_flow 健康: <结论> · open_session=<ok/fail> · run_commands=<ok/fail> · :18891=<listening/refused> · 报告=<路径>`
+**二、open_session 必须传四参** `task_id`/`eval_id`/`user`/`sample`——传 `{}` 会 `Missing key` 被误判成 infra 断（D 线 r1037 根因）。自检取值：`task_id="shardA-health-r<轮次>"`、`eval_id="designflow-healthcheck-20261121"`、`user="e0031982"`、`sample` 取只读 home 目录。run_commands 只跑 `echo ok; pwd; id -un`。🚫 本 session 不做深读/造题，测完 `close`。⚠️ `ssh` 会 hang ⇒ 加 `</dev/null`。
+
+**三、按结论走**：`OK` ⇒ 本轮按 §6 转造题 1 条；`PARTIAL` ⇒ 逐字抄被拦路径+白名单（我拿去要 ops 放行）后转造题；`DOWN` ⇒ 附 `ss`/`ps` 证据，本轮 0-case 但 MEMORY 写 `WAITING: 0` + 结构性阻塞说明（🚫 非 `WAITING: 1`）；`NETBLOCK` ⇒ 附 `ip route get 10.129.32.75`，转不依赖 .75 的产出。
+**四、纪律**：🚫 不改题/图/`check.py`、不动别 shard、不 `git add -A`。✅ **infra 失败 ≠ 能力结论**。报告随心跳提交（§8.3）。
+
+---
+
 > ## 🔍 2026-11-15 用户令 · 用新标准重审「已造的题」与「候选池」· 最高优先 · 全部 4 shard
 
 > **用户原话**：「安排4线重新审视自己已经造的题和候选池，如果跟任务初衷有违背可以重做」

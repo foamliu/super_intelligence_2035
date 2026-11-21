@@ -1,5 +1,32 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-21 用户令（v3）— pro / lite 各补 2 轮凑成 3-run；mini 重跑 3 轮，熔断则等一段时间后降并发 · 最高优先 · 覆盖 standby**
+
+> **用户原话**：「pro/lite 再跑2轮组成 3-run。mini跑3轮，如果熔断则过一段时间后降低并发」
+>
+> 接续 v2（2026-11-20 已完成 pro/mini/lite 各 1 轮）。**只改轮次与并发**，其余口径全部继承 v2（`eval/cases_lite.txt` 500 题、Pass@1、`thinking low`、`timeout 2400`、cline 3.0.51 + PreToolUse hook、登录 shell + PATH + `https_proxy`）。
+
+**一、起点（勿重跑已干净的）**：pro r1 = **9.32%**(45/483) batch `run_batch_20261120_170940` ✅clean 计入3-run；mini r1 = 0.0%，**[FUSE] Token 额度耗尽触发熔断**（2 次）❌作废不计入；lite r1 = **3.85%**(19/493) batch `run_batch_20261121_012542` ✅clean 计入3-run。
+
+**二、跑 7 个 batch（严格串行，不得并发）**：pro r2 → pro r3 → lite r2 → lite r3 → mini r2/r3/r4。
+- pro：`bash eval/run_batch.sh --workers 16`（默认基座即 pro，🚫 不加 `--model`）
+- lite：改 `providers.json` apiKey→lite key + model→`doubao-seed-2.0-lite-cloud`，再同上命令
+- mini：改 providers.json 到 mini key + model，再跑（并发见三）
+- 每轮结束把 providers.json 改回 pro 默认态防串台；每轮独立 batch 目录 + 独立日志，🚫 复用上轮 `status.jsonl`。
+
+**三、mini 专规（FUSE → 等待 → 降并发）**：
+1. 起跑用 `--workers 8`（不是 16）；若 `--workers` 不被支持就改 config 并发上限并写明改了哪里。
+2. 日志出现 `[FUSE]` / `Token 额度耗尽` / `触发熔断` 任一 ⇒ 本轮判 **infra-contaminated**，作废，🚫 不得进 3-run。
+3. 作废后**等 ≥30 分钟**（同 key 额度恢复），**并发减半**重试（8→4→2），每次新 batch 目录。
+4. 降到 `--workers 2` 仍熔断 ⇒ 停，记 `mini BLOCKED(BLOCKED: 单 key token 额度不足以跑完 Lite 500)` 并汇报；🚫 禁止拼接/补跑拼出假 3-run。
+5. 每轮报告写 `infra_clean=<yes/no>`：依据 = `grep -c 'FUSE\|额度耗尽\|熔断'` 日志命中 = 0 且 `no submit.zip produced` 占比 < 5%。
+
+**四、交付**：① `reports/report_edafb_lite500_doubao_{pro,mini,lite}_eval_zh.html` 同模型多轮并入同一份 + 逐轮表；② 三张 3-run 汇总（`[r1,r2,r3] / mean±std / decided 分母 / infra_clean`）；③ MEMORY 首行改 `pro 3-run=x.xx%±y.yy / lite 3-run=… / mini 3-run=…（K 轮作废）`；④ 跑中写 `WAITING: 1`（loop 转 30min 轮询省 token），收口后回 `WAITING: 0`。
+
+**五、纪律**：🚫 不改题/图/`check.py`/判分口径；🚫 不引用已作废的 `run_batch_20261119_225802` 2.37%；🚫 **infra 污染轮绝不计入 mean±std**（作废轮可留证但须标 `VOID / infra-contaminated`）；✅ 跑前自检六件照旧（providers.json 三项 / `command -v cline` / `https_proxy` / 登录 shell / `wc -l eval/cases_lite.txt`≥500 / `pgrep -fa run_batch.sh` 无并发）；✅ 论文宏不动（`\LiteSet`/`\Neval`/`\MzeroPass`/`\MzeroAnchor=10.1%`/`\ScriptPass`），3-run 出来再议是否更新锚点。
+
+---
+
 > 🔴 **2026-11-20 用户令（v2 · 覆盖上一条放行令）— 严格遵循 README + 用户启动方式重跑 doubao-seed-2.0-pro 对齐 10.5% 基准，之后跑 mini + lite 两个豆包小模型 · 最多优先（覆盖 standby）**
 >
 > 本条覆盖上一条放行令。上一条要求"对齐 DeepSeek-V4-Pro M0"**作废**——README 明确 `deepseek-v4-pro-cloud 已下线`，论文 M0 基座应是 `doubao-seed-2.0-pro-cloud`。用户基准也是 doubao。
