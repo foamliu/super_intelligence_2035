@@ -1682,30 +1682,58 @@
   "alibaba-fusion__next-4182": {
     "instance_id": "alibaba-fusion__next-4182",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 908.8,
+    "rc": 0,
+    "model_patch_len": 2590,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "er-select/index-spec.js`**\n\n新增一条用例验证 `showSearch + popupProps.v2` 的场景，确保搜索功能正常且不再报错。\n\n### 验证\n- 编写了独立的逻辑验证脚本，确认在 `overlay` 为 `null`、仅传 `node`、以及 v1 完整链路三种情况下都不会抛错，且用户的 `popupProps.afterOpen` 回调仍能正常执行。\n",
+    "stderr_tail": "it=20]\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore codebase to find CascaderSelect component and related files\n[✓] Identify the bug when popupProps.v2 is true with showSearch\n[✓] Fix the bug and verify\n\u001b[0m\n"
   },
   "alibaba-fusion__next-665": {
     "instance_id": "alibaba-fusion__next-665",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 349.5,
+    "rc": 0,
+    "model_patch_len": 14274,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "Keys, records) => {\n      console.log(selectedRowKeys, records);\n    },\n  }}\n>\n  <Table.Column dataIndex=\"id\" title=\"ID\" />\n  <Table.Column dataIndex=\"name\" title=\"名称\" />\n</Table>\n```\n\n代码和文档均已通过语法校验。\n",
+    "stderr_tail": "limit=50]\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore codebase to find Table component and select-all header cell logic\n[✓] Implement custom header select-all cell feature\n[✓] Verify the implementation\n\u001b[0m\n"
   },
   "alibaba-fusion__next-717": {
     "instance_id": "alibaba-fusion__next-717",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 585.0,
+    "rc": 0,
+    "model_patch_len": 971,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ", while correctly falling back to `valueRender` (which returns `label || value`) when the property is missing — such as when there's no `dataSource` and the value is a primitive string like `\"jack\"`.\n",
+    "stderr_tail": "re codebase to understand Select component structure\n[✓] Find the fillProps and value rendering logic\n[✓] Fix the bug where value not shown with empty dataSource and fillProps\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "alibaba-fusion__next-877": {
     "instance_id": "alibaba-fusion__next-877",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 48.7,
+    "rc": 0,
+    "model_patch_len": 296,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "已修复 `Overlay` 组件的样式问题。在 `src/overlay/main.scss` 中为 `.next-overlay-wrapper` 添加了 `width: 100%;`，防止当内容行内展示且浏览器没有足够渲染空间时发生折叠。\n",
+    "stderr_tail": "scss\n@@ -3,8 +3,9 @@\n .#{$css-prefix}overlay-wrapper {\n     position: absolute;\n     top: 0;\n     left: 0;\n+    width: 100%;\n \n     .#{$css-prefix}overlay-inner {\n         z-index: 1001;\n     }\n\n\u001b[0m\n"
   },
   "alibaba-fusion__next-895": {
     "instance_id": "alibaba-fusion__next-895",
