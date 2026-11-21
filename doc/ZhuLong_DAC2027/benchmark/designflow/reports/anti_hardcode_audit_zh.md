@@ -112,7 +112,7 @@ k≥12 的"达标"题同样大量 GAP——**断言数达标 ≠ anti-hardcode �
 |:--:|:--|--:|:--|:--|
 | 1 | **EDA-Eval-DesignFlow-Schematic-001** | 8→13 | schematic_netlist | **k 最低 + GAP → 已修复 r1062**（k=13，A'-gold 交叉校验 i-m，5 neg 全 FAIL） |
 | 2 | **EDA-Eval-DesignFlow-ParasiticsAnnotDiag-001** | 9 | 纯报告 grep | **运行时已确认 fake_print_only PASS** |
-| 3 | EDA-Eval-DesignFlow-LvlshftStepFix-001 | 10 | schematic_netlist | GAP |
+| 3 | **EDA-Eval-DesignFlow-LvlshftStepFix-001** | 10→15 | schematic_netlist | **GAP → 已修复 r1067**（k=15，A'-gold 交叉校验 k-o，hidden run_pipeline_A.py + sha256 token，smart §4.9(b) reimpl stub FAIL at [l]，5 neg+3 deg 全 FAIL n_distinct=4） |
 | 4 | EDA-Eval-DesignFlow-RcVizTool-001 | 10 | schematic_netlist | GAP |
 | 5 | EDA-Eval-DesignFlow-InvSpiceSim-001 | 11 | schematic_netlist | GAP |
 | 6 | EDA-Eval-DesignFlow-NetlistBroadcastFlow-001 | 11 | schematic_netlist | GAP |
@@ -136,7 +136,7 @@ A/B/C 抽样 GAP 代表题（已开 P0）：
   3. 加独立 `_gt_recount` 重算（防候选 regex gaming）；
   4. 3 假回归入库 `reference/<id>/negative/`，`negative_selftest.py` 全 FAIL。
 - 优先修 Top 10 + k<12 的 12 条。
-- **修复进度**：r1059 修 1/505（AddrRtlGateMap-001）；r1060 修 2/505（AutoCellRmAvPf-001，范式=直接读 assets/ A fixture 而非 base64，更简）；r1061 修 3/505（AvcPatternCompare-001，范式=新增隐藏 A' 文件 + 独立 _gt_recount，发现新病灶「visible-A-vs-A 交叉校验无效，A 在 SUT 沙箱内可被 stub 读取特判 a==b，必须用 SUT 不可见的隐藏 A'」）；r1062 修 4/505（Schematic-001，k=8→13，范式=新增隐藏 A' 文件 + subprocess 跑 A' 断 A'-gold，沿用 r1059 文件式 A fixture 规避 base64 腐蚀，smart §4.9(b) B-hardcoded stub 入库为运行时证明）。余 501 待逐批修，与造题交替。
+- **修复进度**：r1059 修 1/505（AddrRtlGateMap-001）；r1060 修 2/505（AutoCellRmAvPf-001，范式=直接读 assets/ A fixture 而非 base64，更简）；r1061 修 3/505（AvcPatternCompare-001，范式=新增隐藏 A' 文件 + 独立 _gt_recount，发现新病灶「visible-A-vs-A 交叉校验无效，A 在 SUT 沙箱内可被 stub 读取特判 a==b，必须用 SUT 不可见的隐藏 A'」）；r1062 修 4/505（Schematic-001，k=8→13，范式=新增隐藏 A' 文件 + subprocess 跑 A' 断 A'-gold，沿用 r1059 文件式 A fixture 规避 base64 腐蚀，smart §4.9(b) B-hardcoded stub 入库为运行时证明）；r1067 修 5/505（LvlshftStepFix-001，k=10→15，**新范式=隐藏 A' 下游 pipeline**：CLI 修复类 case 的下游 run_pipeline.py 在 assets/ 内 SUT 可见，reimpl stub 可模仿其输出格式故 visible-A/B 交叉无效；解法=新增 SUT 不可见的 hidden_a/run_pipeline_A.py，check 将其安装为 A' 测试目录的 run_pipeline.py，候选真跑须经 os.execv 委托到 hidden pipeline 才能产 [OK-A] 标记+sha256 token，reimpl stub 模仿可见 [OK] 格式 → FAIL[l]，smart §4.9(b) reimpl stub 入库为运行时证明）。余 500 待逐批修，与造题交替。
 - 修复进度记 `MEMORY_DESIGNFLOW_D.md` + 本报告增量更新。
 
 ### 5.2 A/B/C 抽样 GAP —— 开 P0 @ 对应 shard，D 不改别线题库
