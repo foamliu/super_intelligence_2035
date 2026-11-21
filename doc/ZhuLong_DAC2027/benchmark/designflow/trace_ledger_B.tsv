@@ -1710,3 +1710,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795079346509_sbp15.messages.json	zjqiao	hfhds201	105	spice_sim	parked		2026-11-22 04:55	dup-of-CrcAlertFixGen-001 (r915): same zjqiao + same meas_crc_alert.sp + same CRC alert false-fail fix task; sbp15=continuation of faqqt(r989 parked)/y4kgh(r915)
 1795073056270_n488u					case	EDA-Eval-DesignFlow-Mt0TempDedupProduce-001	2026-11-22 05:16	
 1794884424309_e692a	e0039786	hfeg0plg54	339	spice_sim	case	EDA-Eval-DesignFlow-DbcVaractorSpTestGen-001	2026-11-22 06:23	r1001 落库 k=12 ref PASS 12/12 3neg FAIL
+1794531710269_sgk0l.messages.json	vincentz	hfeg0pkn005	57	spice_sim	case	EDA-Eval-DesignFlow-SanadjRblDeckSweep-001	2026-11-22 07:50	r1002 落库 k=12 ref PASS 12/12 3neg FAIL distinct vs e692a(deck-gen vs test-block-gen); sgk0l 14-fresh-pool peek #2 (joeyl o7ljl env-bound divider-C2C skip)
