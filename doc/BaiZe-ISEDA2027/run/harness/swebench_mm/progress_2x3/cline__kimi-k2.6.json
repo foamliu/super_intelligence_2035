@@ -2111,9 +2111,15 @@
   "bpmn-io__bpmn-js-1365": {
     "instance_id": "bpmn-io__bpmn-js-1365",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.7,
+    "rc": -1,
+    "model_patch_len": 6544,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "bpmn-io__bpmn-js-1382": {
     "instance_id": "bpmn-io__bpmn-js-1382",
