@@ -14,6 +14,7 @@
   - D `EDA-Eval-DesignFlow-ParasiticsAnnotDiag-001`（k=9，纯报告 grep，无 subprocess）
   - D `EDA-Eval-DesignFlow-AddrRtlGateMap-001`（k=12，Produce 跑 B 但无 A-gold 交叉）—— **已于 r1059（2026-11-21）修复**：k=12→21（12 B-side + 9 A-gold 交叉 m-u），A fixture 落 `reference/hidden_a/`（避免 base64 编辑腐蚀），check 在 A 上 subprocess 跑候选并断言 A-gold，3 假（print_only/core_deleted/empty）全 FAIL，5 neg selftest 全 FAIL。
   - D `EDA-Eval-DesignFlow-AutoCellRmAvPf-001`（k=12，Produce 跑 B 但无 A-gold 交叉）—— **已于 r1060（2026-11-21）修复**：k=12→21（12 B-side + 9 A-gold 交叉 m-u）。A fixture 直接读 `assets/spec.json`+`instance_manifest.json`（judge 可访问，无需 base64/无编辑腐蚀），check 在 A 上 subprocess 跑候选并断言 A-gold（deleted=8 av=3/pf=5，≠ B 的 11）。新增 `neg_fake_hardcode_b.py`（smart §4.9(b) B 硬编码 stub：B 上过 b-l，A 上 dbDelete 不触发→deleted 空→FAIL [o]）为运行时证明；6 neg（5 旧+1 新）全 FAIL，6 distinct labels，ref 21/21 PASS。
+  - D `EDA-Eval-DesignFlow-AvcPatternCompare-001`（k=11，visible-A-vs-B + visible-A-vs-A，可见 A 可被 stub 读取特判）—— **已于 r1061（2026-11-21）修复**：k=11→15（a-o）。新增隐藏 A' `pattern_A2.avc`（24 records/8 unique/X@pos1/pos6，SUT 不可见）；check 用判分器独立 `_gt_recount`/`_gt_parse`/`_gt_diff` 重算 A'-gold（A2-vs-A2 shared=8/only=0/bdiff=[]/rc=24/up=8；A2-vs-B shared=1/only_a=7/only_b=11/bdiff=[1,2,4,6]/rc_a=24/rc_b=60），候选须在 A' 上真解析才能匹配。smart §4.9(b) stub（读 visible-A 检测 a==b 硬编码 A-gold+B-gold）pre-fix PASS→post-fix FAIL[m]；6 neg 全 FAIL n_distinct=5，ref 15/15 PASS。此例的病灶是新发现：**visible-A-vs-A 交叉校验无效**（A 在 SUT 沙箱内，stub 可读它特判 a==b），必须用 SUT 不可见的隐藏 A' 才能真正击穿 B-hardcoded stub。
 - **修复范式**：参照 r1053 SaNPCtrl / r1056 SpiceNetlistParseProduce——`check.py` 嵌入 A fixture（base64）+ 在 A 上跑候选并断言 A-gold + 独立 `_gt_recount` 重算，3 假全 FAIL。
 - **处置**：D 自有题由 D 后续轮次逐批重写 `check.py`（本轮为普查，不修）；A/B/C 抽样 GAP 已在 `discuss/D.md` 开 P0 @ 对应 shard，由各 shard 自修。**D 不改别线题库。**
 
@@ -134,7 +135,7 @@ A/B/C 抽样 GAP 代表题（已开 P0）：
   3. 加独立 `_gt_recount` 重算（防候选 regex gaming）；
   4. 3 假回归入库 `reference/<id>/negative/`，`negative_selftest.py` 全 FAIL。
 - 优先修 Top 10 + k<12 的 12 条。
-- **修复进度**：r1059 修 1/505（AddrRtlGateMap-001）；r1060 修 2/505（AutoCellRmAvPf-001，范式=直接读 assets/ A fixture 而非 base64，更简）。余 503 待逐批修，与造题交替。
+- **修复进度**：r1059 修 1/505（AddrRtlGateMap-001）；r1060 修 2/505（AutoCellRmAvPf-001，范式=直接读 assets/ A fixture 而非 base64，更简）；r1061 修 3/505（AvcPatternCompare-001，范式=新增隐藏 A' 文件 + 独立 _gt_recount，发现新病灶「visible-A-vs-A 交叉校验无效，A 在 SUT 沙箱内可被 stub 读取特判 a==b，必须用 SUT 不可见的隐藏 A'」）。余 502 待逐批修，与造题交替。
 - 修复进度记 `MEMORY_DESIGNFLOW_D.md` + 本报告增量更新。
 
 ### 5.2 A/B/C 抽样 GAP —— 开 P0 @ 对应 shard，D 不改别线题库
