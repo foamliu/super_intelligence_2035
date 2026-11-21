@@ -319,7 +319,7 @@ D	EDA-Eval-DesignFlow-RasNetlistAnalyze-001	25	n	y	PASS	PASS	FAIL(静态)	GAP	�
 D	EDA-Eval-DesignFlow-RcCellCapReport-001	18	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-RcNetResistanceCalc-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-RcNetVizRcalc-001	12	n	n	FAIL	FAIL	FAIL(静态)	PASS	保留；抽查 1 条重跑 negative_selftest
-D	EDA-Eval-DesignFlow-RcVizTool-001	10	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-RcVizTool-001	10→15	y→y(改)	n→n	PASS→FAIL(runtime)	PASS→FAIL(runtime)	FAIL(静态)→FAIL(runtime post-fix)	GAP→PASS(已修复r1071)	r1071 修复：新增隐藏 A'(XBOT.XDEC2.NETZ2 R*0.7 C*0.9, SUT 不可见, 与 A/B token 结构性不相交) + 5 条 A'-gold 交叉断言(k-o): k A' -r exit0+打印ohm / l A' R 匹配独立 oracle A'-gold=237.459Ω(1% rel, 核心交叉, 击穿检测B打印B-gold508.842的 §4.9(b) stub) / m A'与B上R不同(输入相关非恒量) / n --devices A'选严格子集 / o --dpi+--figsize A'接受。smart §4.9(b) B-hardcode stub(neg_fake_hardcode_b) PASS 全 B-side(a-j)=10/10(证明 pre-fix 可绕过) 但 FAIL[l]+FAIL[m]=13/15(运行时证明 A' 交叉击穿)。ref 15/15 PASS, §4.9 三假全 FAIL, n_distinct(l,m)=2。k_check=k_rationale=15, byte-sync sha=4c7f5724 size=29297
 D	EDA-Eval-DesignFlow-ReadsigCM-001	22	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-RedBistBroadcastErrAddrQA-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-RefactorInnovSummaryQA-001	15	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
