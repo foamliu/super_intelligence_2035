@@ -2298,9 +2298,16 @@
   "bpmn-io__bpmn-js-1610": {
     "instance_id": "bpmn-io__bpmn-js-1610",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 736.5,
+    "rc": 0,
+    "model_patch_len": 636,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ed when the user switches to a different plane.\n\n```js\n// cancel on plane switch\neventBus.on('root.remove', function(event) {\n  if (directEditing.isActive()) {\n    directEditing.cancel();\n  }\n});\n```\n",
+    "stderr_tail": "✓] Explore the codebase to understand direct editing and plane switching\n[✓] Identify the root cause of direct editing not being canceled on plane switch\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "bpmn-io__bpmn-js-1623": {
     "instance_id": "bpmn-io__bpmn-js-1623",
