@@ -5543,6 +5543,57 @@
 
 ---
 
+## 321. Cosmos World Foundation Model Platform for Physical AI
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Cosmos World Foundation Model Platform for Physical AI |
+| 作者（前 3） | Niket Agarwal · Arslan Ali · Maciej Bala（arXiv 作者字段以机构 `NVIDIA` 起头；`citation_author` 共 **79** 项 = 机构 `NVIDIA` + 分隔符 `:` + **77** 位个人作者；末位 Artur Zolkowski；NVIDIA Cosmos Lab） |
+| 年份 | **2025**（arXiv v1 `2025-01-07`；v3 `2025-01-31`） |
+| 会议 / 期刊 | **预印本**（OpenAlex source = *arXiv (Cornell University)*、`type=preprint`、`publication_year=2025`；会议 / 期刊接收信息**未核 ⇒ 不写**） |
+| 被引数 | **1,115**（OpenAlex `10.48550/arxiv.2501.03575`，查询日 **2026-11-21**；**≥500 直接满足判据**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2501.03575> ｜ arXiv DOI `10.48550/arxiv.2501.03575` |
+| 一句话贡献 | 把**世界基础模型（WFM）** 定义为「可微调成下游定制世界模型的通用模型」，并交付一整套平台四件套：**视频清洗流水线 · 预训练 WFM · 后训练示例 · 视频 tokenizer**；模型以**开放权重 + 宽松许可**发布（作者自述，许可条款本线未逐条复核）。 |
+| 与我们工作的关系 | **vision（主 · 视频世界模型基线）**：把「世界模型」拆成「数据清洗 → 基座 → 后训练 → tokenizer」四层，是我们判断视频 / 世界模型侧哪层自研、哪层直接用的参照。<br>**pretrain（训练配方）**：tokenizer 与基座分开训练 ⇒ 视觉 token 空间与语言 token 空间的对齐问题被显式拆开，可作为 2B 模型视觉塔的接口设计参照。<br>**zhulong（成本口径）**：世界模型推理是**按秒生成视频**的成本，与文本 token 成本不同量纲，成本表须单列。<br>**harness（物理合理性评测）**：「物理 AI」类模型的能力口径尚无统一基准，引用其数字时须标「作者自报」。 |
+| 首次收录 | **2026-11-21**（第八十五轮 · 21:00 时窗） |
+| 核验状态 | arXiv `id_list=2501.03575` **`200` + `application/atom+xml`**（`published` `2025-01-07T06:55:50Z`）；abs 页 **`200` / 53,618 B**；OpenAlex **`200`（1,115 / 2025 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 322. Show-o: One Single Transformer to Unify Multimodal Understanding and Generation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Show-o: One Single Transformer to Unify Multimodal Understanding and Generation |
+| 作者（前 3） | Jinheng Xie · Weijia Mao · Zechen Bai（共 **10** 位；末位 Mike Zheng Shou；Show Lab / NUS 方向；arXiv 作者字段逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-08-22`；v7 `2025-03-27`） |
+| 会议 / 期刊 | **ICLR 2025**（arXiv `comment` = *ICLR 2025*；OpenAlex source = *International Conference on Learning Representations*、`type=conference-paper`；页码**未核**） |
+| 被引数 | **739**（OpenAlex `10.48550/arxiv.2408.12528`，查询日 **2026-11-21**；**≥500 直接满足判据**；S2 / Google Scholar 未查） |
+| arXiv / DOI | <https://arxiv.org/abs/2408.12528> ｜ arXiv DOI `10.48550/arxiv.2408.12528` |
+| 一句话贡献 | 用一个 Transformer **同时做多模态理解与生成**：不像纯自回归模型那样只用 next-token，而是把**自回归建模**与**离散扩散建模**放进同一模型，按输入 / 输出模态自适应切换；同一套权重覆盖 VQA、文生图、文本引导的 inpainting / extrapolation 与**混合模态生成**，作者称在同等或更大参数量的专用模型上「可比或更优」（作者自述）。 |
+| 与我们工作的关系 | **vision（主 · 理解与生成合流）**：证明「理解塔 + 生成塔」不必是两套权重，对我们 vision 线是否合并两塔是直接对照。<br>**pretrain（混合目标）**：AR 与离散扩散的混合目标 ⇒ 训练 loss 口径不再单一，评测时必须分「理解任务」与「生成任务」两列报告。<br>**harness（混合模态题）**：混合模态生成（图文交错输出）目前**没有标准判分**，若我们要出这类题，须先自建可程序化校验的判分口径。<br>**data（图文 + 纯文本混训）**：统一模型必须同时吃图文对与纯文本，配比成为一等超参，与我们 data 线的配比实验同构。 |
+| 首次收录 | **2026-11-21**（第八十五轮 · 21:00 时窗） |
+| 核验状态 | arXiv `id_list=2408.12528` **`200` + atom**（`published` `2024-08-22T16:32:32Z`）；abs 页 **`200` / 41,613 B**；OpenAlex **`200`（739 / 2024 / conference-paper, ICLR）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（HTML 全文 30 s 内未取完 ⇒ 放弃，如实记）。 |
+
+---
+
+## 323. FP8-LM: Training FP8 Large Language Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | FP8-LM: Training FP8 Large Language Models |
+| 作者（前 3） | Houwen Peng · Kan Wu · Yixuan Wei（共 **20** 位；末位 Peng Cheng；arXiv 作者字段逐字核；机构以论文为准，本线未逐字核 ⇒ 不写） |
+| 年份 | **2023**（arXiv v1 `2023-10-27`；v4 `2024-10-06`） |
+| 会议 / 期刊 | **预印本**（OpenAlex source = *arXiv (Cornell University)*、`type=preprint`、`publication_year=2023`；会议 / 期刊接收信息**未核 ⇒ 不写**） |
+| 被引数 | **171**（OpenAlex `10.48550/arxiv.2310.18313`，查询日 **2026-11-21**；**&lt;500 ⇒ 按「方法论常青」收**，理由：FP8 混合精度训练的公开参考实现，后续低精度训练 / 推理工作普遍以它作对照基线） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.18313> ｜ arXiv DOI `10.48550/arxiv.2310.18313` |
+| 一句话贡献 | 提出 **FP8 自动混合精度**框架，按**三级递进**把低精度扩到 8-bit 梯度、优化器状态与分布式训练，且**不改超参**；在 H100 上训 GPT-175B，作者自报**显存降 39%**、比 BF16 的 Megatron-LM **快 75%**、比 NVIDIA Transformer Engine **快 37%**，并称同一套方法可迁移到指令微调与 RLHF。 |
+| 与我们工作的关系 | **pretrain（主 · 低精度训练）**：三级递进（梯度 → 优化器状态 → 分布式）是**可分段上线**的改造路径，比「一次性全 FP8」风险低，可作为 2B 模型精度下探的路线图。<br>**pretrain（超参不变的前提）**：作者称不改超参 ⇒ 如果我们换 FP8，必须先验证「loss 曲线与 BF16 基线在早期 step 的偏离幅度」，不能只看最终 loss。<br>**zhulong（成本口径）**：显存与吞吐的收益要换算成「每 token 成本」才可比，且须注明硬件（H100）与软件栈版本。<br>**harness（数值口径）**：低精度下的评测分数波动需与 BF16 同种子对比，否则无法区分「精度损失」与「评测噪声」。 |
+| 首次收录 | **2026-11-21**（第八十五轮 · 21:00 时窗） |
+| 核验状态 | arXiv `id_list=2310.18313` **`200` + atom**（`published` `2023-10-27T17:59:51Z`）；abs 页 **`200` / 45,703 B**；OpenAlex **`200`（171 / 2023 / preprint）**；数字取自 arXiv 官方摘要（均为**作者自报**），**未做 PDF 逐页复核**。 |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
@@ -5554,6 +5605,8 @@
 | `1904.00962` | ~~LAMB~~ ⇒ 已收 #175 | — | — | — |
 
 > 维护纪律：候选池只放**未收录**且**被引未实测**的 ID；转正后从本表删去并在条目里写明「首次收录」。🚫 未实测前不写被引数、不写会议。
+
+> ✅ **第八十五轮（2026-11-21 21:0x）转正 3 条**：Cosmos WFM `2501.03575`（#321，**1,115**，预印本，NVIDIA）· Show-o `2408.12528`（#322，**739**，ICLR 2025）· FP8-LM `2310.18313`（#323，**171**，**&lt;500 按「方法论常青」收**，理由：FP8 混合精度训练公开参考实现，后续低精度训练工作普遍以它作对照）⇒ B 轨累计 **323**（覆盖轴：世界模型四件套（清洗 / 基座 / 后训练 / tokenizer）+ 开放权重 / 理解与生成共用一套权重的 AR + 离散扩散混合目标 / FP8 三级递进低精度训练）。核验：arXiv `id_list` 单批 **`200` + atom** + abs **3/3 `200`**（53,618 / 41,613 / 45,703 B）+ OpenAlex **3/3 `200`**（1,115 / 739 / 171，查询日 2026-11-21）。**先查重**：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**。⚠️ **写入前拦截两处 ID 误记**：候选池旧记「InternVL `2312.16873`」实测为**杆状聚合物论文**（真 ID 应为 `2312.14238`，且已在表内）⇒ 整条剔除；「Qwen2-VL `2408.12528`」实测为 **Show-o**（Qwen2-VL 真 ID `2409.12191`，已在表内）⇒ 改收 Show-o 本身。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧实现报告（QK-clip / loss-spike）；③ 视频世界模型对照（Genie / Sora 技术报告无 arXiv 一手 ⇒ 只补有 arXiv 的一手）；④ 视觉塔对照补 InternViT 一手 `2312.14238` **已在表内** ⇒ 改补 EVA-02 后续；⑤ 低精度推理侧（FP8 / FP4 量化 KV cache 一手）。
 
 > ✅ **第七十八轮 · 00:3x 补轮（2026-11-21）转正 2 条**：Megatron-LM SC'21 `2104.04473`（#300，**1,754**，SC 2021）· EVA `2211.07636`（#301，**1,182**，CVPR 2023）⇒ B 轨累计 **301**。⚠️ **先查重后写入**：原候选 DINO `2104.14294` / 小规模代理训练不稳定性 `2209.14389` / Megatron-LM 1909 `1909.08053` 经 `id_list` 批量核对**均已在表内** ⇒ 全部剔除，改收上述两篇（两 ID 全量正则 0 命中）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 通信重叠侧（Ring-AllReduce / overlap：ZeRO、Ring Attention、Horovod 已收 ⇒ 只补 overlap 实现侧）；③ 训练稳定性 spike 侧（μP 与 QK-clip 方向，注意 `2209.14389` 已收）；④ 视觉塔后续对照（`2611.26199` 自适应数据选择，属新论文 ⇒ 归 A 轨）；⑤ MoE 路由可解释性（`2611.26075`，摘要只给两个误差降幅，缺可复用超参 ⇒ 暂留观察）。
 
