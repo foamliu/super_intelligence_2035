@@ -1667,3 +1667,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794832232538_exvvj.messages.json	clarawu	hfeg0pkn005	77	spice_sim	parked		2026-11-21 11:46	near-dup of r954 WvTrtfDutySummarizer-001 (same user clarawu, same tr/tf/duty on idd_versionD.fsdb theme)
 1795070862706_334ey.messages.json					parked		2026-11-21 11:47	near-dup of r941 LibMismatchFix-001 (same user jeoteanl, same IDDQ 75-case failure diagnosis)
 1795057341901_qcuvw.messages.json	alexcui	hfeg0plg09	86	spice_sim	case	EDA-Eval-DesignFlow-VlogaNonoverlapClkGen-001	2026-11-21 12:11	
+1795058492590_l127k					case	EDA-Eval-DesignFlow-PvtSimDriverGen-001	2026-11-21 12:39	
