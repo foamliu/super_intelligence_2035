@@ -2001,3 +2001,4 @@ vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:
 1795002534044_oj780.messages.json	reedchen	hfeg0pkn002	185	schematic_netlist	case	EDA-Eval-DesignFlow-SpfPruneProduce-001	2026-11-23 02:15	
 1794376149228_dr7mm.messages.json	fxian	hfeg0pkn005	446	schematic_netlist	case	EDA-Eval-DesignFlow-HierPinFanoutProduce-001	2026-11-23 02:37	cross-shard reclaim: C parked as wrong-domain(D) r538; D reclaims — hier pin fanout script (hier_pin_gui.py)
 1789970881163_nfubg.messages.json	junxu	hfeg0pkn005	350	schematic_netlist	case	EDA-Eval-DesignFlow-WireRenameMovePinProduce-001	2026-11-23 04:42	
+1788932035519_3dm7z.messages.json	junxu	hfeg0pkn005	348	schematic_netlist	case	EDA-Eval-DesignFlow-PinOrientStubFix-001	2026-11-23 05:03	
