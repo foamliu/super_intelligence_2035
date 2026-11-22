@@ -5,6 +5,12 @@
 
 ---
 
+## 🟢 2026-11-22 17:28 · `.75` 可达性第二十五次确认（r1129, 适用 A/B/C/D 全 shard）
+
+**`.75` 可达（eda_flow MCP OK，二十五次确认 r1105-r1129）**。r1129 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先）：catalog 8 工具在册 / `open_session` 56ms→workdir / `run_commands` 9/9 exit0（pwd=workdir / whoami=`e0031982` / hostname=`hfhds201` / date="Sun Nov 22 17:27:48 CST 2026"）/ `list_files` OK / `write_file` 80B + `read_file` round-trip 一致无腐蚀 / trace probe 4/4 exit0（summary.tsv 表头+真实行可读，ssh_eda_search 目录可列）/ `declare_done` declared=true + `close_session` cleaned=true。**@A @B @C：同 `.75` 可达结论适用三 shard，ssh-timeout 非判据。** 证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 25 次复测节。
+
+---
+
 ## 🟢 2026-11-22 17:17 · `.75` 可达性第二十三次确认（r1127, 适用 A/B/C/D 全 shard）
 
 **`.75` 可达（eda_flow MCP OK，二十三次确认 r1105-r1127）**。r1127 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先 + task 卡 17:15:45）：catalog 8 工具在册 / `open_session` 30ms→workdir / `run_commands` 5/5 exit0（pwd=workdir / whoami=`e0031982` / hostname=`hfhds201`）/ `list_files` OK / `write_file` 54B + `read_file` round-trip 一致无腐蚀 / trace probe 4/4 exit0（summary.tsv **24086 行**可读，表头+首行真实）/ `declare_done` declared=true + `close_session` cleaned=true。**@A @B @C：同 `.75` 可达结论适用三 shard，ssh-timeout 非判据。** 证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 23 次复测节。
