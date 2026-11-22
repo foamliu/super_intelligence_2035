@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-22（5/5 · 06:00 补轮 · B 轨第八十八轮 → 332） · research 线</title>
+<title>论文观察日报 · 2026-11-22（5/5 · 09:00 补轮 · B 轨第八十九轮 → 335） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -124,7 +124,7 @@
   <div class="rm"><b>推荐理由</b>：zhulong 的长视频成本里，<b>KV cache 带宽</b>是常被忽略的一项。可借三点：① 「时间相邻才共享模式」这个观察直接决定 cache 分块方式——按帧块而不是全序列做量化；② <b>在线、无梯度、不改权重</b>的旋转拟合，可在现有推理栈里加一层，不需要重训；③ 每颗旋转只存 <b>2 bit</b>，旋转本身的开销可控，且作者给了 Triton kernel，复现门槛低。<br><b>风险 / 边界</b>：① 只报 VBench 主体一致性等指标，2-bit 对运动 / 文本对齐的损失需读正文；② 只在两个 13B / 8B 级视频模型上验证，跨模型泛化未测；③ 在线拟合的每视频延迟未在摘要给出；④ 作者自报，无第三方复现。</div>
 </div>
 
-<h3 class="sec">B 轨 · 经典论文（第八十七轮 +3 → 329）</h3>
+<h3 class="sec">B 轨 · 经典论文（第八十九轮 +3 → 335）</h3>
 <table class="plain">
   <tr><th>#</th><th>论文</th><th>年 / 被引</th><th>一句话贡献</th><th>与我们工作的关系</th></tr>
   <tr>
@@ -190,6 +190,27 @@
     <td>从各子层 Jacobian 的谱范数推出预训练不炸的<b>两个条件：sub-layer 要小、shortcut 要大</b>；给出满足条件的初始化 + 简单 embedding 修改，压住 loss spike 并允许更大学习率（PDF 首页：1.7B 配置下 vanilla 约 <b>13,000 步</b>发散）。</td>
     <td><b>pretrain（主）</b>：把 spike 排查从「降 LR / 裁剪 / 回滚」扩到<b>结构侧两条件</b>，可转成开跑前检查表。<b>zhulong</b>：长序列 / 视频更易梯度爆炸，可作扩序列前置约束。<b>harness</b>：把 spike 前 100 步的 sub-layer / shortcut 范数写进日志，区分数据问题与结构问题。</td>
   </tr>
+  <tr>
+    <td>333</td>
+    <td><b>Hierarchical Text-Conditional Image Generation with CLIP Latents</b>（unCLIP / DALL·E 2）<br><a href="https://arxiv.org/abs/2204.06125">arXiv:2204.06125</a></td>
+    <td>2022 · <b>10,659</b><br><span style="color:#59636e;font-size:12.5px;">预印本（OpenAlex type=preprint）</span></td>
+    <td><b>两段式</b>：prior 由 caption 生成 <b>CLIP 图像嵌入</b>，decoder 再由嵌入生成图像（decoder 用 diffusion）；prior 同时试了 AR 与 diffusion，结论是 diffusion prior <b>算力更省、样本更好</b>；CLIP 联合嵌入空间支持<b>零样本语言引导编辑</b>。</td>
+    <td><b>vision（主）</b>：中间表示选型——冻结语义嵌入当瓶颈 vs 直接 cross-attention，是可预注册的对照臂。<b>pretrain</b>：先验训练预算该投深度还是投采样步数，取决于原文的「算力更省」是按参数量 / 采样预算 / 墙钟哪一种口径比。<b>zhulong</b>：编辑能力来自嵌入空间还是解码器，决定窄域重训后还能否保留可控性。</td>
+  </tr>
+  <tr>
+    <td>334</td>
+    <td><b>Scaling Autoregressive Models for Content-Rich Text-to-Image Generation</b>（Parti）<br><a href="https://arxiv.org/abs/2206.10789">arXiv:2206.10789</a></td>
+    <td>2022 · <b>1,827</b><br><span style="color:#59636e;font-size:12.5px;">TMLR（OpenAlex type=article）</span></td>
+    <td>把文生图当 <b>seq2seq</b>：目标是 <b>ViT-VQGAN</b> 的离散图像 token 序列；编码器-解码器 Transformer 扩到 <b>20B</b>，MS-COCO <b>零样本 FID 7.23 / 微调 FID 3.22</b>；自建 <b>PartiPrompts（P2）</b> 基准，<b>1600+</b> 条英文提示词。</td>
+    <td><b>vision（主）</b>：tokenizer 的序列长度与词表大小是训练成本的直接旋钮（256×256 起序列一涨成本近线性上升）。<b>pretrain</b>：自回归质量随规模单调改善到哪一档开始饱和，决定生成塔要不要继续投 AR。<b>harness</b>：P2 这类提示词基准的造题与防泄漏做法，可直接搬到设计图生成评测。</td>
+  </tr>
+  <tr>
+    <td>335</td>
+    <td><b>Classifier-Free Diffusion Guidance</b>（CFG）<br><a href="https://arxiv.org/abs/2207.12598">arXiv:2207.12598</a></td>
+    <td>2022 · <b>7,405</b><br><span style="color:#59636e;font-size:12.5px;">预印本（arXiv comment：短版见 NeurIPS 2021 Workshop）</span></td>
+    <td><b>联合训练</b>条件与无条件扩散模型（同一网络、按概率丢弃条件），推理时把条件与无条件 score 估计<b>线性组合</b>，用一个引导权换保真度 / 多样性的权衡，且<b>不需要额外分类器</b>。</td>
+    <td><b>zhulong（主）</b>：引导权是否随噪声级 / 采样器漂移，直接决定视频少步采样的稳定性。<b>harness</b>：过饱和与 mode dropping 需要量化判据（颜色饱和统计 / CLIP 分数平台 / FID 回头），不能只看人眼。<b>pretrain</b>：条件丢弃概率决定「无条件分支」质量，是训练成本的隐性项。</td>
+  </tr>
 </table>
 
 <p style="font-size:14px;"><b>作者关系网 · 03:00 时窗 +2（→ 302）</b>：#301 <b>Timothée Darcet</b>（FAIR Paris / Inria；ViT registers 一作）<b>X 已核验</b> <code>@timdarcet</code>（<code>x.com/timdarcet</code> 经代理 <code>200</code> / 181,126 B，<code>og:title</code> = <code>TimDarcet (@TimDarcet) on X</code>，<code>og:description</code> = <code>LLMs @ FAIR, prev. DINO stuff @ INRIA &amp; FAIR</code>）；<b>邮箱未找到</b>（<code>timdarcet.github.io</code> <code>200</code> / 2,363 B 页内无 <code>mailto:</code>）⇒ 不猜、不发信。· #302 <b>Changli Tang</b>（清华大学电子系博士生；WeMM-Video 一作）：<b>邮箱未找到</b>（<code>github.com/TCL606</code> <code>200</code> / 196,169 B 页内无 <code>mailto:</code>），<b>X 未找到</b>（<code>@TCL606</code> <code>404</code>）⇒ 只建档。X 已核验累计 <b>115</b>。</p>
@@ -211,6 +232,23 @@
 
 <p style="font-size:14px;"><b>voice_ready 本期 0 条</b>：本轮 X 仅用于核验作者 handle（<code>x.com</code> 经代理 <code>200</code>），未抓到可双源核验的<b>单条推文原文 + 时间戳</b> ⇒ 按规矩不出 voice_ready（不用二手转述顶替）。06:00 时窗同样 0 条；<b>news_ready 06:00 亦 0 条</b>（B 轨三条均为 2023–2024 年经典，非本窗事件点）。</p>
 
+<h3 class="sec">09:00 时窗 · 文生图三件套（B 轨第八十九轮）</h3>
+<p style="font-size:14px;"><b>为什么这三篇</b>：A 轨今日已 5/5（公告批连续第 15 窗停在 <code>2026-11-19T18:57:25Z</code>，不凑第 6 篇），余量给 B 轨。本轮选的是<b>文生图的三条奠基路线</b>——unCLIP 的「先语义嵌入再解码」、Parti 的「离散 token 纯自回归」、CFG 的「无分类器引导」。三者合起来正好覆盖 zhulong 视频塔要决策的三件事：中间表示、tokenizer / 序列预算、引导权与采样稳定性。</p>
+
+<p style="font-size:14px;"><b>作者关系网 · 09:00 时窗 +2（→ 306）</b>：#305 <b>Jiahui Yu</b>（Parti 一作）<b>邮箱已核</b> <code>jiahuiyu@google.com</code>（ar5iv 全文页 <code>200</code> / 613,481 B 首页作者邮箱块）；<b>X 已核验</b> <code>@jiahuiyu</code>（<code>x.com/jiahuiyu</code> 经代理 <code>200</code> / 191,153 B，<code>og:title</code> = <code>Jiahui Yu (@jiahuiyu) on X</code>，<code>og:description</code> = <code>Startup. Previously co-founded TBD @Meta Superintelligence Labs; led Perception @OpenAI; co-led Gemini Multimodal @GoogleDeepMind.</code> 双源）；<b>主页</b> <code>jiahuiyu.com</code> <code>200</code> / 23,467 B（页内无明文邮箱）。· #306 <b>Aditya Ramesh</b>（OpenAI；unCLIP / DALL·E 2 一作）：<b>邮箱已核</b> <code>aramesh@openai.com</code>（ar5iv 全文页 <code>200</code> / 274,460 B 首页作者邮箱块）；<b>X 未找到</b>（<code>@adityaramesh</code> 经代理 <code>200</code> 但 bio 为 <code>A+ : Indic : If You Are Not a Liberal When You Are Young…</code> ⇒ 显系他人，<b>不记</b>）。X 已核验累计 <b>117</b>。</p>
+
+<p style="font-size:14px;"><b>作者请教信 · 本时窗 3 封 · 累计 137 · 回信率 0/137</b>：① <b>#135 Aditya Ramesh</b>（<code>2204.06125</code> unCLIP，英文 <b>197</b> 词）<code>SENT OK 09:05:25</code>；② <b>#136 Jiahui Yu</b>（<code>2206.10789</code> Parti，<b>汉字 252</b>）<code>SENT OK 09:05:27</code>；③ <b>#137 Tim Salimans</b>（<code>2207.12598</code> CFG，荷兰语称谓问候 + 英文正文 <b>189</b> 词）<code>SENT OK 09:05:29</code>。三封按姓名族属判语言（英文 / 中文 / 荷兰语混合式），落款一律两行、其后无任何行，正文不含项目名；三个开头句与问题句式<b>零共用</b>，各含只对本文成立的技术细节（prior 的 CLIP ViT-H/14 嵌入 + AR vs diffusion prior 口径；ViT-VQGAN 20B + FID 7.23 / 3.22 + P2 的 1600+；条件丢弃概率 + 引导权随噪声级漂移）。<b>今日 9/12</b>，待发队列空。<b>回信 0 / 137，0 封到期</b>（最早 2026-11-25）⇒ 仍按待诊断信号处理，不记为成功。⚠️ 三封收件地址均取自论文全文页（2022 年），机构页不公开个人邮箱 ⇒ 送达率不可验证，已在台账与草稿逐条标注。</p>
+
+<details>
+<summary>📰 news_ready · 09:00 时窗 0 条（理由）</summary>
+<ul>
+  <li>B 轨三条均为 <b>2022 年</b>的奠基论文（unCLIP / Parti / CFG），<b>不是本窗事件点</b>；四问第②问（有事件点吗）不过。</li>
+  <li>按「每期 ≤2 条、宁缺勿滥」⇒ 本时窗 0 条，不拿旧论文当年的发布当今日新闻。</li>
+</ul>
+</details>
+
+<p style="font-size:14px;"><b>voice_ready · 09:00 时窗 0 条</b>：本轮 X 只用于核验 handle（<code>x.com</code> 经代理 <code>200</code>、<code>x.com/jiahuiyu</code> <code>200</code>），未抓取具体推文原文与时间戳 ⇒ 按规矩不出 voice_ready；<b>不使用二手转述顶替</b>。</p>
+
 <h3 class="sec">晚报变更说明（AM → PM）</h3>
 <ul style="font-size:14px;">
   <li><b>A 轨 3 → 5</b>：新增 #4 WeMM-Video（<code>2611.26409</code>）与 #5 TRQ（<code>2611.26334</code>），均 cs.CV、均 2026-11-19 提交；方向按「vision / zhulong 优先」补齐，AM 三篇偏 agent + 后训练。</li>
@@ -220,7 +258,7 @@
   <li><b>未改</b>：AM 三篇的标题、摘要、数字与推荐理由均未改动；<code>SEEN.md</code> / <code>papers.jsonl</code> 只追加，不覆盖。</li>
 </ul>
 
-<h3 class="sec">各线可执行建议（6 线 · 00:00 + 03:00）</h3>
+<h3 class="sec">各线可执行建议（6 线 · 00:00 / 03:00 / 06:00 / 09:00）</h3>
 <ul style="font-size:14px;">
   <li><b>pretrain</b>：把 RL 侧的「成功组数」判据做成<b>开跑前检查项</b>——在现有离线题池上先数「至少有一次采样成功的尝试组数」，低于 ~35 组就先加采样或改课程，再谈超参；判据：同一配方连跑 3 个种子，若成功率分布跨 0 与 1 两极化即判「信号不足」，禁止据单次最好结果立项。</li>
   <li><b>vision</b>：视觉塔选型表新增两列 <b>「见到的样本数」</b>与<b>「增强策略」</b>，与参数量并列；判据：任一新塔必须给出「同参数量、不同样本数」的对照，缺该对照的结论不写入选型结论。</li>
@@ -235,9 +273,13 @@
   <li><b>zhulong（06:00 新增 · 按 CogVideoX + Open-Sora Plan）</b>：视频塔立项时先交一张<b>三段分解表</b>（VAE 的时空压缩比 / 去噪主干是否图文视频共用 / 数据治理四维阈值），每段各写一条可验收指标；判据：缺任一段的提案不进评审，避免把「模型架构」与「数据管线」混成一个不可归因的整体。</li>
   <li><b>data（06:00 新增 · 按 Open-Sora Plan）</b>：视频数据清洗先落四维阈值（分辨率 / 时长 / 美学 / 文本对齐），并按「保留率」记账；判据：任一维过滤后保留率 &lt;5% 时须先复核阈值来源，禁止直接用论文默认值套到工业视频上。</li>
   <li><b>vision / harness（06:00 · 无新增）</b>：本轮 vision 侧仅有 CogVideoX 的 token 预算换算一条，已并入上条 zhulong 建议；harness 侧无独立可执行项，写「无」。</li>
+  <li><b>vision（09:00 新增 · 按 unCLIP + Parti）</b>：把「中间表示」做成显式对照臂——同一份图文对上比 <b>(a) 冻结 CLIP 嵌入瓶颈 + diffusion 解码</b> 与 <b>(b) 直接 cross-attention</b>，两者用同一 FID / CLIP-score 口径；判据：若 (a) 相对 (b) 的 FID 差 &lt;3% 且训练成本低 &gt;20%，则视觉塔默认走嵌入瓶颈，否则弃用。</li>
+  <li><b>zhulong（09:00 新增 · 按 CFG）</b>：引导权当<b>超参表</b>管理而非常数——至少记录「权重 × 噪声级区间 × 采样步数」三列；判据：先跑 3 档权重（如 1.5 / 3.0 / 6.0）各 200 条样本，若最高档的颜色饱和均值相对最低档上涨 &gt;15% 而 CLIP-score 涨幅 &lt;2%，判定过引导，写进验收红线。</li>
+  <li><b>harness（09:00 新增 · 按 Parti 的 P2）</b>：生成类评测的提示词集须登记<b>造题来源与去重方式</b>（是否与训练 caption 同源 / 相似度阈值是多少）；判据：任一评测集若无法说明与训练语料的相似度上界，分数只作参考、不进对外结论。</li>
+  <li><b>data（09:00 新增 · 按 Parti 的 tokenizer 侧）</b>：图像进入训练前先固化<b>token 序列长度与词表大小</b>两项元数据，与分辨率一起记账；判据：换 tokenizer 必须重报「每样本 token 数 / 单步成本」，缺该项的吞吐对比不予采纳。</li>
 </ul>
 
-<h3 class="sec">附录 · 00:00 / 03:00 时窗检索与核验</h3>
+<h3 class="sec">附录 · 00:00 / 03:00 / 06:00 / 09:00 时窗检索与核验</h3>
 <table class="plain">
   <tr><th>项</th><th>结果</th></tr>
   <tr><td>列表 <code>cat:cs.CL&amp;max_results=40</code></td><td><code>200</code> / <b>109,971 B / 40 entry</b> / atom；<code>published</code> 上界 <code>2026-11-19T18:57:25Z</code>（连续第 13 窗未前进，仍在 72h 窗内）</td></tr>
@@ -261,10 +303,18 @@
   <tr><td>06:00 先查重</td><td>三个 ID 在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> 全量正则 <b>0 命中</b>；同批候选 FineWeb <code>2406.17557</code> 已在表内 #201、Phi-3 <code>2404.14219</code>、AgentBench <code>2308.03688</code> 亦已在表内 ⇒ 剔除</td></tr>
   <tr><td>06:00 地址页复核（发信前）</td><td><code>keg.cs.tsinghua.edu.cn/jietang/</code> <code>200</code> / <b>217,822 B</b>（页内 <code>jietang at tsinghua . edu . cn</code>）；<code>takase.github.io</code> <code>200</code> / 22,054 B（无邮箱，改用 arXiv PDF v2 首页通讯地址）</td></tr>
   <tr><td>06:00 X</td><td><code>x.com/jietang</code> 经代理 <code>200</code> / 180,469 B（<code>og:title</code> + bio「Professor @ Tsinghua … AGI, LLM.」双源）；<code>@takase</code> 类 handle 未在主页出现 ⇒ 不记、不猜</td></tr>
+  <tr><td>09:00 列表 <code>cat:cs.CL&amp;max_results=40</code></td><td><code>200</code> / <b>109,971 B / 40 entry</b> / <code>application/atom+xml; charset=utf-8</code>；<code>published</code> 上界 <code>2026-11-19T18:57:25Z</code>（<b>连续第 15 窗未前进</b>，仍在 72h 窗内）⇒ A 轨今日 5/5 不凑第 6 篇</td></tr>
+  <tr><td>09:00 B 轨 <code>id_list=2204.06125,2206.10789,2207.12598</code></td><td><code>200</code> + atom（<b>7,556 B / 3 entry</b>；<code>published</code> 齐备：2022-04-13 / 2022-06-22 / 2022-07-26）；一次 <code>429</code> 后按 ≥3 s 限速重试成功（如实记）</td></tr>
+  <tr><td>09:00 abs 页复查</td><td>3/3 <code>200</code>（40,571 / 45,080 / 41,707 B），<code>citation_title</code> 与 API 标题逐字一致</td></tr>
+  <tr><td>09:00 OpenAlex</td><td>3/3 <code>200</code>：<b>10,659</b>（unCLIP，preprint 2022）/ <b>1,827</b>（Parti，article / TMLR 2022）/ <b>7,405</b>（CFG，preprint 2022）；查询日 2026-11-22</td></tr>
+  <tr><td>09:00 先查重</td><td>三个 ID 在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> 全量正则 <b>0 命中</b>；近 7 天 <code>daily/</code> 亦 0 命中（同批候选 Switch Transformer / QLoRA / PagedAttention / RoPE / AdamW / GPT-4 / Toolformer / WebArena / GAIA / DeepSeek-V3 / Qwen2.5 经查均已在表内 ⇒ 剔除）</td></tr>
+  <tr><td>09:00 地址复核（发信前）</td><td>ar5iv 全文页 3/3 <code>200</code>（274,460 / 613,481 / 238,415 B），页内邮箱逐字命中 <code>aramesh@openai.com</code> / <code>jiahuiyu@google.com</code> / <code>salimans@google.com</code>（均为 2022 年论文内地址，机构页不公开个人邮箱 ⇒ 送达率不可验证，已标注）</td></tr>
+  <tr><td>09:00 X</td><td><code>x.com</code> 经代理 <code>200</code>；<code>@jiahuiyu</code> <code>200</code> / 191,153 B（<code>og:title</code> + <code>og:description</code> 双源）；反例：<code>@adityaramesh</code> <code>200</code> 但 bio 为 <code>A+ : Indic : …</code>（他人）、<code>@tim_salimans</code> <code>404</code>、<code>@jonathanho</code> 为 Chicago 的 22 followers 账号（他人）⇒ 均不记</td></tr>
+  <tr><td>09:00 未做</td><td>PDF 逐页复核（unCLIP / Parti PDF 下载被截断 ⇒ 数字一律取自 arXiv 官方摘要；CFG PDF 未取）；推文全文抓取（仅核 handle）；回信通道仍只发不收</td></tr>
 </table>
 
 <footer>
-  research 线 · 论文观察日报 · 2026-11-22 06:00 时窗（5/5）｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
+  research 线 · 论文观察日报 · 2026-11-22 09:00 时窗（5/5）｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
 </footer>
 </div>
 </body>

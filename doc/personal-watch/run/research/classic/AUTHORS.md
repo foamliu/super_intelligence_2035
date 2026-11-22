@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-22 09:0x）**：作者 **306** 人（编号最大 **306**）· X 已核验 **117**（本轮 +1：`@jiahuiyu` 经 X 页 `og:title` + `og:description` 双源核验 = Jiahui Yu；反例 `@adityaramesh` 为他人、`@tim_salimans` `404`、`@jonathanho` 为 Chicago 另一人 ⇒ 均不记）· 已发信 **137**（台账 #1–#137）· 回信 **0**（0/137）。以下历史快照行保留原文（不追改），计数以本行为准。
+
 > **当前计数（2026-11-21 09:0x）**：作者 **290** 人（编号最大 **290**）· X 已核验 **108**（本轮 +1：`@liuziwei7` 经 X 页 `og:title` + `og:description` 双源核验 = Ziwei Liu / NTU）· 已发信 **127**（台账 #1–#127）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **第八十一轮增量（2026-11-21 09:0x）**：作者网 287 → **290**（#288 Limin Wang 王利民 **A 级** `lmwang.nju@gmail.com`（`wanglimin.github.io` 页内明文 `lmwang.nju [at] gmail.com`，`200` / 55,527 B；页内写明南京大学 +「王利民」）/ #289 Xipeng Qiu 邱锡鹏 **A 级** `xpqiu@fudan.edu.cn`（`xpqiu.github.io` 页内 `mailto:`，`200` / 33,632 B）/ #290 Ziwei Liu 刘子纬 **无邮箱**（`liuziwei7.github.io` `200` / 39,458 B 无 `mailto:`；X = `@liuziwei7` 已双源核验 ⇒ 状态「待跟踪 / 已核验 X」）），来自本轮 B 轨 #309 VideoMAE / #311 RoPE Scaling Laws / #308 LLaVA-OneVision；#310 DINO-X 的作者（Tianhe Ren / Lei Zhang 等）**原生 HTML 页内无公开邮箱** ⇒ 只计不建、不猜地址；已发信 125 → **127**（#126 中文 228 字 `SENT OK 09:07:13` / #127 中文 257 字 `09:07:14`）；回信 **0**（0/127）。⚠️ **计数校正**：第八十轮（06:0x）已落 #286 / #287 两条正文但顶部计数行当时漏改，本轮以 **287** 为基线续记。
@@ -4326,3 +4328,28 @@
 
 
 
+### 305. Jiahui Yu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jiahui Yu（拼音姓名族属 ⇒ 中文发信；汉字名本轮未从官方页核到 ⇒ 不写） |
+| 机构 | **论文署名 Google Research / Brain**（Parti 一作）；本人 X 简介自述现已离开（Startup，此前 OpenAI / Meta Superintelligence Labs / Google DeepMind）⇒ **以论文机构为准并标注变化** |
+| 代表论文 | **Scaling Autoregressive Models for Content-Rich Text-to-Image Generation**（Parti，`2206.10789`，B 轨 #334，一作）· ViT-VQGAN（论文内引用，本线未单独立条） |
+| 邮箱 | **jiahuiyu@google.com**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2206.10789` `200` / 613,481 B，首页作者邮箱块；⚠️ **2022 年论文内地址**，本人已离开 Google ⇒ 送达率不可验证，发信时须标注） |
+| 主页 | <https://jiahuiyu.com/>（`200` / 23,467 B，页内无明文邮箱） |
+| X 账号 | **@jiahuiyu**（`x.com/jiahuiyu` 经代理 `200` / 191,153 B；`og:title` = `Jiahui Yu (@jiahuiyu) on X`；`og:description` = `Startup. Previously co-founded TBD @Meta Superintelligence Labs; led Perception @OpenAI; co-led Gemini Multimodal @GoogleDeepMind.` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-22 09:0x · 第 136 封 · 中文 252 汉字；回信状态 `未到期`，2026-12-06 到期）；X 待 follow（需登录态） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 论文 Google 机构；🚫 未因论文英文/邮箱域名判英文)`。价值点：Parti 的 ViT-VQGAN token 序列 / 20B 编码器-解码器 / P2 基准造题，直接对应 vision 线的序列预算与 harness 的生成评测造题。 |
+
+### 306. Aditya Ramesh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Aditya Ramesh（印度姓名族属 ⇒ 英文发信） |
+| 机构 | **OpenAI**（unCLIP / DALL·E 2 一作；机构据论文页，本轮未逐页核官方人员页） |
+| 代表论文 | **Hierarchical Text-Conditional Image Generation with CLIP Latents**（unCLIP / DALL·E 2，`2204.06125`，B 轨 #333，一作） |
+| 邮箱 | **aramesh@openai.com**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2204.06125` `200` / 274,460 B，首页作者邮箱块；**2022 年论文内地址**，机构页不公开个人邮箱 ⇒ 送达率不可验证） |
+| 主页 | **未找到**（本轮未找到可确认的本人页；🚫 不拿公司页冒充个人页） |
+| X 账号 | **未找到**（`x.com/adityaramesh` 经代理 `200` / 61,805 B，但 `og:title` = `Adi (@adityaramesh) on X`、`og:description` = `A+ : Indic : If You Are Not a Liberal When You Are Young…` ⇒ **显系他人，不记、不猜**） |
+| 状态 | **已发信**（2026-11-22 09:0x · 第 135 封 · 英文 197 词；回信状态 `未到期`，2026-12-06 到期） |
+| 备注 | `语言=英文(判据=印度姓名族属 + OpenAI 美国机构)`。价值点：两段式 prior/decoder 拆分与 AR vs diffusion prior 的比较口径，是 vision 线「中间表示选型」的直接依据。 |

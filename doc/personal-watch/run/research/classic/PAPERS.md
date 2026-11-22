@@ -10,7 +10,9 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
-**本轮快照**：累计 **332** 条（**第八十八轮 2026-11-22 06:0x 补 3 条 → 332**：CogVideoX `2408.06072`（**2,181**，OpenAlex `type=conference-paper`、ICLR 2025）/ Open-Sora Plan `2412.00131`（**359**，预印本，PKU-YuanGroup）/ Spike No More `2312.16903`（**72**，**&lt;500 按「方法论常青」收**：从 Jacobian 谱范数推出「小 sub-layer + 大 shortcut」两条件，loss-spike 排查工作至今拿它作理论参照）；核验：arXiv `id_list` 单批 **`200` + `application/atom+xml`**（7,780 B / 3 entry，`published` 齐备：2024-08-12 / 2024-11-28 / 2023-12-28）+ 标题与 API 逐字核 + OpenAlex **3/3 `200`**（查询日 2026-11-22）；数字取自 arXiv 官方摘要，Spike 另用 PDF 首页（`pdftotext`，1.7B 配置、约 13,000 步发散）核；**CogVideoX / Open-Sora Plan 未做 PDF 逐页复核**（CogVideoX PDF 14,790,587 B > 5 MB 未落盘）；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 FineWeb `2406.17557` 已在表内 #201 ⇒ 剔除；Phi-3 `2404.14219`、AgentBench `2308.03688` 亦已在表内）；覆盖轴 = 3D 因果 VAE + expert adaptive LayerNorm 的 10 秒 768×1360 视频 DiT / 全开源视频生成栈（Wavelet-Flow VAE + Joint Image-Video Skiparse Denoiser + 多维数据治理）/ 预训练 loss spike 的两条理论条件；本轮归属：zhulong **+2** · vision **+1** · pretrain **+1** · data **+1**（一篇可多线））
+**本轮快照**：累计 **335** 条（**第八十九轮 2026-11-22 09:0x 补 3 条 → 335**：unCLIP / DALL·E 2 `2204.06125`（**10,659**，OpenAlex `type=preprint`）/ Parti `2206.10789`（**1,827**，OpenAlex `type=article`、source = *Transactions on Machine Learning Research*）/ Classifier-Free Diffusion Guidance `2207.12598`（**7,405**，预印本；arXiv `comment` = 短版见 NeurIPS 2021 Workshop）；核验：arXiv `id_list` 单批 **`200` + `application/atom+xml`**（7,556 B / 3 entry，`published` 齐备：2022-04-13 / 2022-06-22 / 2022-07-26；期间一次 `429`，按 ≥3 s 限速重试成功）+ abs 页 **3/3 `200`**（40,571 / 45,080 / 41,707 B，`citation_title` 逐字核）+ OpenAlex **3/3 `200`**（查询日 2026-11-22）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（unCLIP / Parti PDF 下载被截断 ⇒ 放弃本地解析）；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 Switch Transformer `2101.03961` / QLoRA `2305.14314` / PagedAttention `2309.06180` / RoPE `2104.09864` / AdamW `1711.05101` / GPT-4 `2303.08774` / Toolformer `2302.04761` / WebArena `2307.13854` / GAIA `2311.12983` / DeepSeek-V3 `2412.19437` / Qwen2.5 `2412.15115` 均已在表内 ⇒ 剔除）；覆盖轴 = 语义嵌入先验 + diffusion 解码的两段式 / 离散 token 纯自回归的 20B 规模档 / 无分类器引导的保真度-多样性旋钮；本轮归属：zhulong **+2** · vision **+2** · pretrain **+1** · harness **+1**（一篇可多线））
+
+**本轮快照（回溯）**：累计 **332** 条（**第八十八轮 2026-11-22 06:0x 补 3 条 → 332**：CogVideoX `2408.06072`（**2,181**，OpenAlex `type=conference-paper`、ICLR 2025）/ Open-Sora Plan `2412.00131`（**359**，预印本，PKU-YuanGroup）/ Spike No More `2312.16903`（**72**，**&lt;500 按「方法论常青」收**：从 Jacobian 谱范数推出「小 sub-layer + 大 shortcut」两条件，loss-spike 排查工作至今拿它作理论参照）；核验：arXiv `id_list` 单批 **`200` + `application/atom+xml`**（7,780 B / 3 entry，`published` 齐备：2024-08-12 / 2024-11-28 / 2023-12-28）+ 标题与 API 逐字核 + OpenAlex **3/3 `200`**（查询日 2026-11-22）；数字取自 arXiv 官方摘要，Spike 另用 PDF 首页（`pdftotext`，1.7B 配置、约 13,000 步发散）核；**CogVideoX / Open-Sora Plan 未做 PDF 逐页复核**（CogVideoX PDF 14,790,587 B > 5 MB 未落盘）；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 FineWeb `2406.17557` 已在表内 #201 ⇒ 剔除；Phi-3 `2404.14219`、AgentBench `2308.03688` 亦已在表内）；覆盖轴 = 3D 因果 VAE + expert adaptive LayerNorm 的 10 秒 768×1360 视频 DiT / 全开源视频生成栈（Wavelet-Flow VAE + Joint Image-Video Skiparse Denoiser + 多维数据治理）/ 预训练 loss spike 的两条理论条件；本轮归属：zhulong **+2** · vision **+1** · pretrain **+1** · data **+1**（一篇可多线））
 
 **本轮快照**：累计 **320** 条（**第八十四轮 2026-11-21 18:0x 补 3 条 → 320**：Depth Anything `2401.10891`（**2,769**，CVPR 2024）/ HunyuanVideo `2412.03603`（**2,092**，预印本）/ V-JEPA 特征预测 `2404.08471`（**846**，TMLR）；核验：arXiv API `id_list` 单批 **`200` + `application/atom+xml`**（15,089 B / 3 entry，`published` 齐备）+ abs 页 **3/3 `200`**（42,879 / 50,895 / 41,768 B）+ OpenAlex **3/3 `200`**（2,769 / 2,092 / 846，查询日 2026-11-21）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 DeepSeek-R1 `2501.12948` / Mixtral `2401.04088` / Self-Consistency `2203.11171` / Ring Attention `2310.01889` / s1 `2501.19393` / DCLM `2406.11794` 经查**均已在表内** ⇒ 剔除）；覆盖轴 = 62M 无标注图的数据引擎 + 更难目标 + 辅助语义监督 / 开源 13B 视频基座的四段框架 / 不用负样本与重建的纯特征预测目标；累计覆盖（按主归属线计）：pretrain **105** · vision **51** · harness **120** · data **110** · zhulong **121** · designflow **51**）
 
@@ -5749,6 +5751,57 @@
 
 ---
 
+## 333. Hierarchical Text-Conditional Image Generation with CLIP Latents（unCLIP / DALL·E 2）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Hierarchical Text-Conditional Image Generation with CLIP Latents |
+| 作者（前 3） | Aditya Ramesh · Prafulla Dhariwal · Alex Nichol（共 **5** 位；末位 Mark Chen；arXiv 作者字段逐字核；机构本轮未逐页核 ⇒ 不写，仅据论文页为 OpenAI） |
+| 年份 | **2022**（arXiv v1 `2022-04-13`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`、source = arXiv (Cornell University)；无卷期页码） |
+| 被引数 | **10,659**（OpenAlex `10.48550/arxiv.2204.06125`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2204.06125> ｜ arXiv DOI `10.48550/arxiv.2204.06125` |
+| 一句话贡献 | 提出**两段式**文生图：prior 由 caption 生成 **CLIP 图像嵌入**，decoder 由该嵌入生成图像（decoder 用 diffusion）；prior 同时试了自回归与扩散两种实现，结论是 **diffusion prior 算力更省、样本更好**；CLIP 的联合嵌入空间还支持**零样本语言引导编辑**与图像变体生成（作者自报）。 |
+| 与我们工作的关系 | **vision（主 · 中间表示）**：「冻结语义嵌入当瓶颈 + 轻解码」与「直接 cross-attention」是可预注册的两条对照臂，本文给了前者的大规模证据。<br>**pretrain（先验训练预算）**：AR 与 diffusion prior 的比较口径（参数量 / 采样预算 / 墙钟）决定我们把预算投深度还是投步数。<br>**zhulong（可控生成）**：零样本编辑能力来自嵌入空间还是解码器，决定窄域重训后编辑能力是否还能保留。 |
+| 首次收录 | **2026-11-22**（第八十九轮 · 09:00 时窗） |
+| 核验状态 | arXiv `id_list=2204.06125` **`200` + atom**（`published` `2022-04-13T01:10:33Z`）；abs 页 **`200` / 40,571 B**（`citation_title` 逐字一致）；OpenAlex **`200`（10,659 / 2022 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（PDF 下载被截断，`pdftotext` 报 xref 错误 ⇒ 未落盘）。 |
+
+---
+
+## 334. Scaling Autoregressive Models for Content-Rich Text-to-Image Generation（Parti）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling Autoregressive Models for Content-Rich Text-to-Image Generation |
+| 作者（前 3） | Jiahui Yu · Yuanzhong Xu · Jing Yu Koh（共 **20+** 位，arXiv 作者字段本轮只核到前段；机构本轮未逐页核 ⇒ 不写，仅据论文页为 Google Research） |
+| 年份 | **2022**（arXiv v1 `2022-06-22`） |
+| 会议 / 期刊 | **TMLR**（OpenAlex `type=article`、source = *Transactions on Machine Learning Research*；卷期页码无） |
+| 被引数 | **1,827**（OpenAlex `10.48550/arxiv.2206.10789`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2206.10789> ｜ arXiv DOI `10.48550/arxiv.2206.10789` |
+| 一句话贡献 | 把文生图当 **seq2seq**：目标是 **ViT-VQGAN** 编出的离散图像 token 序列；把编码器-解码器 Transformer 扩到 **20B**，MS-COCO **零样本 FID 7.23 / 微调 FID 3.22**；并提出 **PartiPrompts（P2）** 基准（**1600+** 条英文提示词）做内容与构图压力测试（作者自报）。 |
+| 与我们工作的关系 | **vision（主 · tokenizer 与序列预算）**：token 序列长度与词表大小是训练成本的直接旋钮（分辨率一涨序列近线性增长）。<br>**pretrain（AR 规模边界）**：质量随规模单调改善的区间与饱和点，决定生成塔是否继续投纯自回归。<br>**harness（造题与防泄漏）**：P2 这种「复杂组合 + 世界知识」提示词集的写法与去重方式，可直接搬到设计图生成评测。 |
+| 首次收录 | **2026-11-22**（第八十九轮 · 09:00 时窗） |
+| 核验状态 | arXiv `id_list=2206.10789` **`200` + atom**（`published` `2022-06-22T01:11:29Z`）；abs 页 **`200` / 45,080 B**（`citation_title` 逐字一致）；OpenAlex **`200`（1,827 / 2022 / article / TMLR）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（PDF 下载被截断 ⇒ 未落盘）。 |
+
+---
+
+## 335. Classifier-Free Diffusion Guidance（CFG）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Classifier-Free Diffusion Guidance |
+| 作者（前 2） | Jonathan Ho · Tim Salimans（共 **2** 位；arXiv 作者字段逐字核；机构本轮未逐页核 ⇒ 不写，仅据论文页为 Google Research / Brain） |
+| 年份 | **2022**（arXiv v1 `2022-07-26`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`、source = arXiv (Cornell University)）；arXiv `comment` = 短版见 **NeurIPS 2021 Workshop on Deep Generative Models and Downstream Applications**（workshop 版与 arXiv 版不同，不并记为一篇两个会场） |
+| 被引数 | **7,405**（OpenAlex `10.48550/arxiv.2207.12598`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2207.12598> ｜ arXiv DOI `10.48550/arxiv.2207.12598` |
+| 一句话贡献 | 不再需要额外分类器：**联合训练**条件与无条件扩散模型（同一网络、按概率丢弃条件），推理时把两者的 score 估计**线性组合**，用一个引导权在**保真度与多样性**之间取权衡，效果与 classifier guidance 相当（作者自报）。 |
+| 与我们工作的关系 | **zhulong（主 · 采样稳定性）**：引导权是否随噪声级 / 采样器漂移，决定视频少步采样的稳定性与是否要分档调度。<br>**harness（生成质量判据）**：过饱和与 mode dropping 需要量化信号（颜色饱和统计 / CLIP 分数平台 / FID 回头），不能只看人眼。<br>**pretrain（隐性成本）**：条件丢弃概率决定「无条件分支」质量，是训练预算里容易被漏记的一项。 |
+| 首次收录 | **2026-11-22**（第八十九轮 · 09:00 时窗） |
+| 核验状态 | arXiv `id_list=2207.12598` **`200` + atom**（`published` `2022-07-26T01:42:07Z`）；abs 页 **`200` / 41,707 B**（`citation_title` 逐字一致）；OpenAlex **`200`（7,405 / 2022 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（PDF 本轮未取到）。 |
+
+---
+
 ## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
@@ -5760,6 +5813,8 @@
 | `1904.00962` | ~~LAMB~~ ⇒ 已收 #175 | — | — | — |
 
 > 维护纪律：候选池只放**未收录**且**被引未实测**的 ID；转正后从本表删去并在条目里写明「首次收录」。🚫 未实测前不写被引数、不写会议。
+
+> ✅ **第八十九轮（2026-11-22 09:0x）转正 3 条**：unCLIP / DALL·E 2 `2204.06125`（#333，**10,659**，预印本）· Parti `2206.10789`（#334，**1,827**，TMLR）· Classifier-Free Diffusion Guidance `2207.12598`（#335，**7,405**，预印本）⇒ B 轨累计 **335**（覆盖轴：语义嵌入先验 + diffusion 解码的两段式 / 离散 token 纯自回归的 20B 规模档 / 无分类器引导的保真度-多样性旋钮）。核验：arXiv `id_list` 单批 **`200` + atom**（7,556 B / 3 entry，`published` 齐备：2022-04-13 / 2022-06-22 / 2022-07-26；一次 `429` 后按 ≥3 s 限速重试成功）+ abs 页 **3/3 `200`**（40,571 / 45,080 / 41,707 B，`citation_title` 逐字核）+ OpenAlex **3/3 `200`**（10,659 / 1,827 / 7,405，查询日 2026-11-22）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（unCLIP / Parti PDF 下载被截断）。**先查重**：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 Switch Transformer `2101.03961` / QLoRA `2305.14314` / PagedAttention `2309.06180` / RoPE `2104.09864` / AdamW `1711.05101` / GPT-4 `2303.08774` / Toolformer `2302.04761` / WebArena `2307.13854` / GAIA `2311.12983` / DeepSeek-V3 `2412.19437` / Qwen2.5 `2412.15115` 经查**均已在表内** ⇒ 剔除，未重复收）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧实现报告（QK-clip / loss-spike）；③ 视频生成侧补「时序建模」一手（Latte `2401.12168` / Open-Sora 2.0，须先核 ID 与被引）；④ 视觉塔对照补 InternViT 之后的开放权重一代；⑤ 生成评测侧补「人评一致性」一手（HPSv2 / ImageReward 类，须核被引与是否为会议版）。
 
 > ✅ **第八十六轮（2026-11-22 00:0x）转正 3 条**：EVA-CLIP `2303.15389`（#324，**1,204**，预印本）· RefinedWeb `2306.01116`（#325，**1,221**，预印本）· SD3 `2403.03206`（#326，**5,735**，预印本 / SD3 技术报告）⇒ B 轨累计 **326**（覆盖轴：视觉塔「参数量 × 见过样本数」的可比口径 / 纯网页 + 去重语料即可超越策展语料 / rectified-flow 噪声采样偏置 + 双流→单流 MMDiT）。核验：arXiv `id_list` 单批 **`200` + atom**（7,923 B / 3 entry）+ abs 页 **3/3 `200`**（40,797 / 41,829 / 43,894 B，`citation_title` 逐字核）+ OpenAlex **3/3 `200`**（1,204 / 1,221 / 5,735，均 `type=preprint`；查询日 2026-11-22）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。**先查重**：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批排除已收 `2502.16982` Muon / `2409.12191` Qwen2-VL / `2310.05209` RoPE 外推 / `2101.00027` The Pile / `2107.03374` HumanEval / `2304.14108` DataComp / `2304.07193` DINOv2 / `2304.02643` SAM / `2405.09818` Chameleon / `2409.18869` Emu3 / `2209.14322`… 等）。<br>**下轮候选（🚫 未实测前不进表、不写 DOI / 被引）**：① HBM / JEDEC 一手（连续多轮未命中）；② 训练稳定性 spike 侧实现报告（QK-clip / loss-spike）；③ 视觉塔对照补 EVA-02 正式论文（EVA-CLIP 已收 #324 ⇒ 若为同一工作的会议版则不重复收）；④ 数据侧补「去污染 / 评测集泄露」一手（RefinedWeb 已覆盖「纯网页」路线）；⑤ 视频生成侧补 DiT 后的时序建模一手（CogVideoX / Open-Sora 类）。
 

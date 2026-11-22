@@ -1,0 +1,16 @@
+Dear Dr. Ramesh,
+
+I am Yang Liu, a researcher working on LLM agents and multimodal generation; my work is at https://foamliu.github.io/. Your two-stage formulation — a prior over CLIP image embeddings plus a diffusion decoder — is the design we return to whenever we ask whether text-to-image should route through a frozen semantic embedding.
+
+Three questions:
+
+1. The prior matches a CLIP ViT-H/14 image embedding, so the decoder never sees raw caption tokens. In your ablations, how much of the photorealism loss comes from that bottleneck versus from decoder capacity? We are weighing that bottleneck against direct cross-attention for industrial imagery, where captions are short and repetitive.
+
+2. You report the diffusion prior as more compute-efficient than the autoregressive one. Was that comparison at matched parameter count, matched sampling budget, or matched wall-clock? The answer decides whether we spend our prior budget on depth or on more diffusion steps.
+
+3. Zero-shot language-guided editing is attributed to the joint embedding space. Does it survive when the decoder is retrained on a narrow domain, or does the prior have to be retrained too?
+
+These would directly shape our architecture choice. Thank you for your time.
+
+Best regards,
+Yang Liu
