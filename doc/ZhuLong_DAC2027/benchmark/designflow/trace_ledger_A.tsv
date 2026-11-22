@@ -443,7 +443,7 @@
 1789893503811_1uk4t					case	EDA-Eval-DesignFlow-FsdbWaveConvert-001	2026-11-13 12:38	
 1793947227109_1236h	daiweilu	hfeg0pjn100	91	verification	case	EDA-Eval-DesignFlow-NetlistHierTracer-001	2026-11-13 13:07	
 1794466134962_vjcll	tomtang	hfeg0pfn016	247	digital	case	EDA-Eval-DesignFlow-SvPackedFlatten-001	2026-11-13 14:10	
-1794446541461_udmg8.messages.json	lein	hfeg0pkn001	396	verification	case	EDA-Eval-DesignFlow-RegrCheckMacroMap-001	2026-11-13 14:45	 | r663-merged-dup-notes: file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
+1794446541461_udmg8.messages.json	lein	hfeg0pkn001	396	verification	case	EDA-Eval-DesignFlow-RegrCheckMacroMap-001	2026-11-22 18:43	 | r663-merged-dup-notes: file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1794385786325_gaekj.messages.json	e0039102	hfeg0pbn16	154	digital	case	EDA-Eval-DesignFlow-CaselistPerlDriverGen-001	2026-11-13 15:47	 | r663-merged-dup-notes: file-deleted-postscan-r528: 11/13 scan ssh_eda_search_20261113_131349, ls+head same-conn NOFILE on 11/14, cline session rotation evaporated fresh pool
 1794452011319_1ckh3	e0048255	hfeg0pnd002	159	digital	case	EDA-Eval-DesignFlow-GpioPortRefactor-001	2026-11-13 16:29	
 1794447438232_5bngi.messages.json	tabtao	hfeg0pkn001	44	verification	case	EDA-Eval-DesignFlow-FmDontVerifyGen-001	2026-11-13 17:11	
