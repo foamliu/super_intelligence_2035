@@ -4589,9 +4589,16 @@
   "grommet__grommet-6239": {
     "instance_id": "grommet__grommet-6239",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1488.1,
+    "rc": 0,
+    "model_patch_len": 23571,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "efined}\n-            margin={overflow ? '-2px' : undefined}\n+            pad=\"2px\"\n+            margin=\"-2px\"\n```\n\nThe snapshots were also updated to reflect this change, and all relevant tests pass.\n",
+    "stderr_tail": "ents\\/Tabs\\/__tests__\\/Tabs-test.tsx|src\\/js\\/components\\/Tab\\/__tests__\\/Tab-test.tsx/i.\n\u001b[0m\n\u001b[0m✱ \u001b[0mGlob \"**/Tab/__tests__/*\"\u001b[90m 0 matches\u001b[0m\n\u001b[0m✱ \u001b[0mGlob \"**/*Tab*test*\"\u001b[90m 6 matches\u001b[0m\n"
   },
   "grommet__grommet-6246": {
     "instance_id": "grommet__grommet-6246",
