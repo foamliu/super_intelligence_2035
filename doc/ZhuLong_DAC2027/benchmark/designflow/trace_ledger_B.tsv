@@ -1462,7 +1462,7 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794795007762_dvr37	thomasz	hfeg0pfn058	145	spice_sim	case	EDA-Eval-DesignFlow-FinesimConvCompare-001	2026-11-19 15:45	
 1794969925980_gcxee	clarawu	hfeg0pkn005	72	spice_sim	case	EDA-Eval-DesignFlow-ZqRonLibGen-001	2026-11-19 16:35	
 1794970521313_yulwm	xiaoyu1d	hfhds208	19	spice_sim	case	EDA-Eval-DesignFlow-FinesimNestedSweepGen-001	2026-11-19 17:40	
-1794796977777_uxbqp	e0039816	hfeg0plg70	24	spice_sim	parked	EDA-Eval-DesignFlow-OcsaTr0AsymAnalyze-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
+1794796977777_uxbqp	e0039816	hfeg0plg70	24	spice_sim	case	EDA-Eval-DesignFlow-OcsaTr0AsymAnalyze-001	2026-11-23 02:00	r1050 reconstruction: case JSON rebuilt from reference/+assets/ and appended to B.jsonl (was gitignored at r882 creation); §4.9 PASS (REF PASS + negs FAIL)
 1794892256265_hk2q4	steveny	hfeg0pnd001	202	spice_sim	case	EDA-Eval-DesignFlow-AgentFriendlyCheck-001	2026-11-19 19:23	
 1795000059890_2xqbx	alan17z	hfeg0plg10	145	spice_sim	case	EDA-Eval-DesignFlow-ZqCalibDeckGen-001	2026-11-19 20:04	
 1794999063814_euwld	clarawu	hfeg0pkn005	89	spice_sim	case	EDA-Eval-DesignFlow-RonDvqSlopeExtract-001	2026-11-19 20:45	
@@ -1586,12 +1586,12 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794879740388_dfl7k.messages.json	gallopc	hfeg0plg80	47	spice_sim	case	EDA-Eval-DesignFlow-ZpowerGlitchStimGen-001	2026-11-21 16:10	
 1795070503467_lovic.messages.json	zqzhan	hfeg0plg94	33	spice_sim	case	EDA-Eval-DesignFlow-SimKbCompareGen-001	2026-11-21 16:38	
 1795051874981_6wqk0.messages.json	alexcui	hfeg0plg09	83	spice_sim	parked		2026-11-21 17:21	near-dup of VlogaNonoverlapClkGen-001 r962 (same user alexcui, same 3-phase non-overlap clk phi2=160ns/phi1=80ns/phi0=80ns + phi2E/phi0E rotating bus task)
-1795074929427_gpya9.messages.json	t0002607	hfeahpc505	163	spice_sim	parked	EDA-Eval-DesignFlow-MissingRefDiagnose-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
+1795074929427_gpya9.messages.json	t0002607	hfeahpc505	163	spice_sim	case	EDA-Eval-DesignFlow-MissingRefDiagnose-001	2026-11-23 02:00	r1050 reconstruction: case JSON rebuilt from reference/+assets/ and appended to B.jsonl (was gitignored at r882 creation); §4.9 PASS (REF PASS + negs FAIL)
 1795052638809_t9l0r	e0046686	hfeg0plg68	158	spice_sim	case	EDA-Eval-DesignFlow-SpfParmHackSolidoCondGen-001	2026-11-21 18:37	
 1795051687187_yzpwv.messages.json	joeyl	hfeg0plg74	246	spice_sim	case	EDA-Eval-DesignFlow-UlvtDelvtoInject-001	2026-11-21 19:19	
 1794968173766_dap8v	ynbai	hfeg0pkn004	81	characterization	case	EDA-Eval-DesignFlow-BiasTrimSubcktFilter-001	2026-11-21 20:18	
 1795143772734_1yumf	shanliny	hfeg0plg107	111	spice_sim	case	EDA-Eval-DesignFlow-FinesimMosComparaFix-001	2026-11-21 20:45	
-1795225607049_26n1l	ryanren	hfeg0pfn120	251	spice_sim	parked	EDA-Eval-DesignFlow-PumpcoreAgingDeckGen-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
+1795225607049_26n1l	ryanren	hfeg0pfn120	251	spice_sim	case	EDA-Eval-DesignFlow-PumpcoreAgingDeckGen-001	2026-11-23 02:00	r1050 reconstruction: case JSON rebuilt from reference/+assets/ and appended to B.jsonl (was gitignored at r882 creation); §4.9 PASS (REF PASS + negs FAIL)
 1795224598668_1ziwu.messages.json	hairuizh	hfeahpc502	119	spice_sim	case	EDA-Eval-DesignFlow-DelvtoCktWiringPatch-001	2026-11-21 21:39	
 1794893451446_nhj3c.messages.json	hairuizh	hfeahpc502	9	spice_sim	case	EDA-Eval-DesignFlow-HspiceAlterTrnPredictor-001	2026-11-21 22:29	
 1794475206189_lbrbv	willz	hfeahpc501	65	spice_sim	case	EDA-Eval-DesignFlow-SpDeckModelStripMigrate-001	2026-11-21 22:55	
