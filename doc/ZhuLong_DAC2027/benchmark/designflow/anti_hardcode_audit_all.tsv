@@ -20,7 +20,7 @@ D	EDA-Eval-DesignFlow-AvcPatternCompare-001	15	y	n	FAIL	FAIL	FAIL	PASS	【已修
 D	EDA-Eval-DesignFlow-Backannot-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-BboxHierProbeAnalysis-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-BitcellMcSpGen-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
-D	EDA-Eval-DesignFlow-BitlinePrechargeRootCauseQA-001	13	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-BitlinePrechargeRootCauseQA-001	18	y	n	FAIL	FAIL	FAIL	PASS	r1101 修复: 嵌入隐藏 A-prime(第三套 z-namespace 网表 z0_pwa_tgt/pvpc/vpc!/PwcSnsZ/XJ9, 612mV@22ns, SUT 不可见)+独立 oracle+5 A'-gold 交叉(n-r). smart B-hardcode stub(吐预焙 B-gold) runtime 复现 PASS pre-fix 13/13 -> post-fix FAIL o,p,q,r. 3 neg selftest 全 FAIL 16 distinct.
 D	BlClampRailDiagQA-001	12	n/a	n/a	n/a	n/a	n/a	MISSING	check.py 缺失，先补 check.py 再审
 D	EDA-Eval-DesignFlow-BlConnEquivCheck-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-BsmFailAnalyzer-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
