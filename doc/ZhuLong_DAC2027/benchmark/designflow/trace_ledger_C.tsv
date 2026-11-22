@@ -1411,3 +1411,5 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1794894739402_3yj6k	eric9zhu	hfeg0pkn005	240	layout_aether	case	EDA-Eval-DesignFlow-GtJumperPathAnalyzer-001	2026-11-22 11:04	
 1795072827714_iqfr1	xxchen	hfeg0plg06	358	physical_verify	case	EDA-Eval-DesignFlow-StippleDotPatternGen-001	2026-11-22 11:35	DEBT revived: synth stipple_dot_pattern_gen this round
 1794816063102_dhgd8	jmgu	hfeg0plg79	275	physical_verify	case	EDA-Eval-DesignFlow-DrcQaPatternPlanGen-001	2026-11-22 12:07	
+1794898478810_kdnrp.messages.json	xxchen	hfeg0plg06	284	physical_verify	case	EDA-Eval-DesignFlow-AuxRegionAndOrPlan-001	2026-11-22 12:37	
+1792963596117_aftvk.messages.json	jieran	hfeg0plg70	1033	layout_aether	claimed		2026-11-22 12:19	
