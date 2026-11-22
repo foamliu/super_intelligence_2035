@@ -3021,9 +3021,16 @@
   "carbon-design-system__carbon-13851": {
     "instance_id": "carbon-design-system__carbon-13851",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1017.2,
+    "rc": 0,
+    "model_patch_len": 7922,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "erInput**: Uses `$text-primary` for warning messages and `$text-error` for invalid messages\n- **FluidTimePicker**: Already had warning state support — the default TimePicker now matches that behavior\n",
+    "stderr_tail": "nent in codebase\n[✓] Understand current error/warning state implementation\n[✓] Implement design spec changes for error/warning states\n[✓] Verify changes are consistent with other form components\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-14239": {
     "instance_id": "carbon-design-system__carbon-14239",

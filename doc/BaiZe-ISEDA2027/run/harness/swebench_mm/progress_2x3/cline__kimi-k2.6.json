@@ -2818,9 +2818,16 @@
   "carbon-design-system__carbon-12410": {
     "instance_id": "carbon-design-system__carbon-12410",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 965.4,
+    "rc": 0,
+    "model_patch_len": 5873,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " tests pass (34 existing Enzyme tests + 4 new RTL tests):\\n```\\nTest Suites: 2 passed, 2 total\\nTests:       38 passed, 38 total\\n```\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-12412": {
     "instance_id": "carbon-design-system__carbon-12412",
