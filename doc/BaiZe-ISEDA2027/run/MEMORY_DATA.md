@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R221) — 例行巡检+blendswitch第14次复验7/7 PASS**：①✅git fetch origin 有1新提交(harness auto-commit 04:50)，**无新data令**，local已与origin/main同步(a0c7be2e55)；②✅pretrain iter=291,030/700k(41.58%) step_avg(last10)=7129ms<7.4s gate✅ loss≈1.998-2.006 0NaN/0skip✅ lr=1e-3 stable 290k eval DONE(55.25%) daemon idle等292k(ETA≈06:36) 训练健康；③✅blendswitch第14次复验7/7 PASS(zero_overlap_pass/ratio_switch_pass/flag_off_equivalence_pass/new_source_zero_overlap_pass/epoch_wrap_pass/json_roundtrip_pass/perf_pass 全True；zero_overlap=0/new_source=0/flag-off=byte-identical/max_dev=0.0087%；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=27.13<120✅；⑤✅/nas_user 42T可用>5T红线✅(0 .incomplete)；⑥✅无后台data任务(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226，ps确认无残留进程)；⑦✅MEMORY 30.5KB<32KB / TASK 27.6KB<32KB。research日报11-23「EDA语料Gopher体检」建议记为参考(EDA已取消)。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R222) — 例行巡检+blendswitch第15次复验7/7 PASS**：①✅git fetch origin local已与origin/main同步(3d5c84ed15)，**无新data令**；②✅pretrain iter=291,150/700k(41.59%) step_avg(last10)=7231ms<7.4s gate✅ 训练健康；③✅blendswitch第15次复验7/7 PASS(zero_overlap=0/new_source=0/flag-off=byte-identical/max_dev=0.0087%；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=24.76<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data任务(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226，ps确认无残留进程)；⑦✅MEMORY 30.5KB<32KB / TASK 27.6KB<32KB。research日报11-23「EDA语料Gopher体检」建议记为参考(EDA已取消)。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+
+> 📦 R221 心跳（例行巡检+blendswitch第14次复验7/7 PASS·iter291030 step7129ms·.12 load27.13·S2三下载全100%·research日报EDA建议记为参考(EDA已取消)）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R220 心跳（例行巡检+blendswitch第13次复验7/7 PASS·iter290960 step7338ms·.12 load26.90·S2三下载全100%·research日报EDA建议记为参考(EDA已取消)）已归档 → daily-memories-data/2026-11-23.md
 
