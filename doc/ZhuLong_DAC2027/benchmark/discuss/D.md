@@ -256,3 +256,8 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - `.75` 可达 = YES（eda_flow MCP 第32次复测 OK, r1105-r1136 三十二次一致）
 - 1 case 合成入库: EDA-Eval-DesignFlow-DqsJitterWaveExport-001 (waveform, k=13, D.jsonl line 560)
 - DEBT: D 自有 ~450 GAP(已修24) + P0-001 全量64(挂18轮, A/B/C 无回执) + pi 实跑 pending
+
+### r1137 (2026-11-22 19:55) — shard D status
+- `.75` 可达 = YES（eda_flow MCP 第33次复测 OK, r1105-r1137 三十三次一致；catalog 8 工具 / open_session 17ms / run_commands 8/8 exit0 hostname=hfhds201 whoami=e0031982 / list_files / write_file+read_file round-trip / declare_done+close cleaned=true；trace summary.tsv 24086 行可读）
+- 0 case 合成：本轮预算耗于 MCP 第33次复测（用户令最高优先）+ 主线候选选取。fresh 深读笔记(junxu skill-dev / 跨域 A·B·C)无可复用 D 域料；top fresh 候选(508od/sroz5 = junxu virtuoso-cli skill 改进元工具, 非 circuit task; aneeo/m2vah/4kf4h/7rzyf = drc/lvs 重 C 域) 无合格 D 域 case 材料
+- DEBT: 下轮用 trace_prefilter.py 预筛 pipeline + 扫中低 mc 段找真实 D 域 circuit-task 候选(排除 skill-dev session)；D 自有 ~450 GAP(已修24) + P0-001 全量64(挂19轮) + pi 实跑 pending
