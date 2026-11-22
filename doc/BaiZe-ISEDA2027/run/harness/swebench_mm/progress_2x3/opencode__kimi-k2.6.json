@@ -3246,23 +3246,44 @@
   "carbon-design-system__carbon-3859": {
     "instance_id": "carbon-design-system__carbon-3859",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 16.6,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "empty_patch",
+    "stdout_tail": "ng\n3. **Update tests and documentation** accordingly\n4. **Show you what changes** would be needed\n\nLet me know what you'd like, or I can start by investigating the current `Link` component structure.\n",
+    "stderr_tail": "\u001b[0m\n> build · kimi-k2.6-cloud\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-3918": {
     "instance_id": "carbon-design-system__carbon-3918",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1167.6,
+    "rc": 0,
+    "model_patch_len": 1081,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ears immediately when the menu opens (the item's `:focus` outline styles apply).\n2. Arrow key navigation works right away because focus is on an `OverflowMenuItem` that handles `ArrowUp`/`ArrowDown`.\n",
+    "stderr_tail": "find DataTable and OverflowMenu components\n[✓] Identify root cause of missing focus styles in DataTable OverflowMenu\n[✓] Implement fix for keyboard accessible styles\n[✓] Test the fix if possible\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-3928": {
     "instance_id": "carbon-design-system__carbon-3928",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 408.3,
+    "rc": 0,
+    "model_patch_len": 9739,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "t\n2. **Callers no longer need to pass `iconDescription=''`** to override a bad default — the default is now `''`\n3. **`iconDescription` is only required** when there is no visible label (no children)\n",
+    "stderr_tail": "itionally required\n[✓] Update TableBatchAction-test.js with tests for new prop behavior\n[✓] Update snapshots to reflect new default iconDescription\n[✓] Verify changes by reviewing affected files\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4028": {
     "instance_id": "carbon-design-system__carbon-4028",

@@ -5385,16 +5385,30 @@
   "openlayers__openlayers-10545": {
     "instance_id": "openlayers__openlayers-10545",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 404.4,
+    "rc": 0,
+    "model_patch_len": 1231,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ities (e.g., `&amp;` → `&`), but `&apos;` (or `&#39;`, `&#x27;`) that results from double-encoding or numeric character references remain undecoded. The `decodeHTML()` call handles this second level.\n",
+    "stderr_tail": "L entity decoding utility to ol/string.js\n[✓] Use decode function in readString() in ol/format/xsd.js\n[✓] Check other direct getAllTextContent usages in KML.js\n[✓] Verify fix with existing tests\n\u001b[0m\n"
   },
   "openlayers__openlayers-10694": {
     "instance_id": "openlayers__openlayers-10694",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 167.0,
+    "rc": 0,
+    "model_patch_len": 518,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "globalAlpha` is automatically restored. This composes correctly with layer opacity (which also sets `globalAlpha`) because multiplication is commutative — the result is `layerOpacity × imageOpacity`.\n",
+    "stderr_tail": "xplore codebase structure and understand how image style opacity works\n[✓] Identify the bug in setOpacity for image styles\n[✓] Fix the bug in drawImageOrLabel to apply opacity\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-10723": {
     "instance_id": "openlayers__openlayers-10723",

@@ -2972,9 +2972,15 @@
   "carbon-design-system__carbon-13364": {
     "instance_id": "carbon-design-system__carbon-13364",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.3,
+    "rc": -1,
+    "model_patch_len": 21635,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "carbon-design-system__carbon-13421": {
     "instance_id": "carbon-design-system__carbon-13421",
