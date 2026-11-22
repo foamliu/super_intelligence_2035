@@ -2774,3 +2774,48 @@ MEMORY 首行写：「**v4 报告路径 + ≤15KB + 新增方案 F（同 run 切
 > 📦 **用户令 · 2026-11-15 08:5x（IFM 3数据集下载+调研）· ✅ 已完成** → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§用户令·2026-11-15 08:5x」；结论：MegaMath(5子集)/Math-Reasoning(5子集)/Code-Reasoning(7子集)已落盘+分词；调研报告 `report_data_math_code_datasets_survey_zh.html`。
 
 ---
+
+## §用户令·2026-11-22 19:4x（F 方案小白科普报告·内联SVG）· ✅ 已交付（归档于 R213, 2026-11-23）
+
+> 🔴 **用户令 · 2026-11-22 19:4x — 为方案 F 写一份「小白友好」的中文 HTML 科普报告，含 ≥5 张内联 SVG 图 · 最高优先**
+
+> **用户原话**：「安排 data 给 F 方案写个中文HTML报告，技术细节写的详细一些我是小白，最好有几张可视化的图（SVG）。」
+
+**交付**：`run/reports/report_s1s2_blendswitch_f_explainer_zh.html`（**新建**；v4/v5 保留不删）。
+**硬约束**：单文件 HTML、内联 CSS、**0 外链 0 script**、离线可开；**≥5 张手写内联 `<svg>`**（🚫 外链图片/字体/CDN）；体积 **≤80 KB**；全篇中文。
+
+**读者假设（关键）**：读者**不懂 Megatron / 分布式训练 / epoch / shuffle**——每个术语首次出现必须给「一句白话 + 一个类比」：
+- 游标 = **书签**（读到哪了）；
+- epoch = **把一本书从头翻完一遍**；
+- blend = **按比例混合几桶米**（每桶是一个数据源）；
+- shard = **把一大桶米分成小袋**。
+
+**必须包含的章节（按此顺序）**
+0. **一页看懂**（首屏三句话）：① 为什么会重叠；② F 解决什么；③ 现在到哪一步（CPU 验证 7/7、`zero_overlap=0`、比例偏差 0.0087%、flag-off 与 stock 逐字节一致）。
+1. **背景科普**：blend/配比、shard 与样本、epoch、shuffle、游标；S1→S2 课程（350k 切换、40/40/20）用白话讲清。
+2. **为什么难**：换比例必须重建索引 ⇒ 游标归零 ⇒ 重读旧数据（配 stock 真实行为 + 代码行号）。
+3. **三种路线对比表**：① stock 开箱（不可行）；② resume + 新 blend（= D+E，重叠 ~12% 属**估算**）；③ 自定义改造（本方案）。
+4. **F 原理逐步图解（全文重点）**：权重热更新 + **per-source 游标映射**；讲清「为什么按源记进度、而不是记总进度」；给切换前后每源消费进度的具体示例。
+5. **代码级改动点**：文件 + 行号（`blended_dataset.py:41/68/82/86/97`、`gpt_dataset.py:381`、`samplers.py:222-264`、`loaders.py:191`）；开关 `--blend-hot-switch` 默认关闭，**flag off = stock**。
+6. **验证怎么做、结果怎么看**：7 项检查各用一句白话解释含义（zero_overlap / ratio_switch / flag_off_equivalence / new_source / epoch_wrap / json_roundtrip / perf），配结果表 + 条形图；明确区分**实测**与**估算**。
+7. **风险与回退**：切换点 11-28、失败即回退 D+E；**真实训练尚未切换**（目前只做 CPU 验证），剩余风险要写清。
+8. **FAQ 5 条**：会重复读同一批数据吗？新数据从哪开始？关掉开关会怎样？为什么不用「换 seed」？怎么自己复跑验证？
+
+**必须有的图（≥5，全部内联 SVG，中文标注 + 图注 + 统一配色）**
+- **图1 时间轴**：S1（0–350k）→ S2（350k–700k）+ 切换点 + 剩余天数。
+- **图2 配比对比**：S1 74/19/7 vs S2 40/40/20（条形或双饼）。
+- **图3 问题示意**：stock「重建索引 → 游标归零 → 重读」前后对比（红色标出重叠区）。
+- **图4 核心图**：per-source 游标映射——共享源 A 已读 60% ⇒ 切换后从 60% 继续；新源从 0；总游标不复位。
+- **图5 验证结果条形图**：`overlap_docs=0` / 比例偏差 `0.0087%` / flag-off 等价 / new-source 0。
+- （可选 图6）切换流程时序：训练 step → 触发切换 → 重建 `dataset_index` → 复用 `shuffle_index` → 继续训练。
+
+**诚实性（硬要求）**：每个数字标「实测 / 估算 / 来源」；🚫 不写「完全无风险」；🚫 不把 CPU 验证说成真实训练已验证；D+E 的 ~12% 必须标「估算、未实测」。
+
+**验收**：文件 **≤80 KB**；`<script` 计数 = **0**；`https?://` 计数 = **0**；`<svg` 计数 **≥5**；`div/table/tr/td` 标签配对；离线打开无空白/无错位。
+**收尾**：`git add -- run/reports/report_s1s2_blendswitch_f_explainer_zh.html run/MEMORY_DATA.md` → commit `data report:` → push；MEMORY 首行写「F 科普报告 v1 + SVG≥5 + ≤80KB + 0外链0script」。
+
+---
+
+**交付结论**：报告 `run/reports/report_s1s2_blendswitch_f_explainer_zh.html` = 40,743B≤80KB / 6张内联SVG / 0外链0script / 标签全配对(23/6/36/163) / 8节+一页看懂+6图。`data/blendswitch/verify_results.json` 实测核对一致（7/7 PASS，total_overlap_docs=0，max_deviation_pct=0.0087，flag_off_equivalence=true，new_source overlap=0）。诚实标注：实测 vs 估算(D+E ~12%未实测) vs 待测(GPU step time/显存)。commit b23a829b46+30ea2164f3 已 push。
+
+---
