@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **341** 条（**第九十一轮 2026-11-22 15:0x 补 3 条 → 341**：Bahdanau attention `1409.0473`（**32,083**，arXiv `comment` = ICLR 2015 oral；定长向量瓶颈 + 可微软对齐，长句更稳）/ Qwen2.5-VL `2502.13923`（**10,565**，预印本技术报告；动态分辨率 + 绝对时间编码，框/点定位与文档结构化抽取、小时级视频秒级定位）/ RAFT `2403.10131`（**524**，预印本；golden/distractor 混训 + 逐字引用 + CoT，表 1 RAFT (LLaMA2-7B) 73.30 / 35.28 / 74.00 / 84.95 / 86.86）；核验：arXiv `id_list` 单批 **`200` + atom**（11,306 B / 3 entry，`published` 齐备：2024-03-15 / 2025-02-19 / 2014-09-01）+ abs 页 **3/3 `200`**（41,842 / 46,388 / 43,549 B，`citation_title` 逐字一致）+ OpenAlex **3/3 `200`**（查询日 2026-11-22）+ RAFT 表 1 用 ar5iv 全文页 **`200` / 150,398 B** 核；三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 word2vec `1301.3781` 44,294 / Dropout `1207.0580` 9,564 / BLIP `2201.12086` 8,544 / Let's Verify `2305.20050` 2,661 本轮未收，留作下轮）；覆盖轴 = 对齐式历史取用 / 原生分辨率视觉塔与时序编码 / 领域 RAG 后训练配方；本轮归属：vision **+1** · data **+2** · harness **+2** · zhulong **+2** · pretrain **+2** · designflow **0**（一篇可多线））
+
 **本轮快照**：累计 **338** 条（**第九十轮 2026-11-22 12:0x 补 3 条 → 338**：Retentive Network（RetNet）`2307.08621`（**1,135**，预印本；并行 / 循环 / 分块循环三范式共用权重，O(1) 推理）/ U-Net `1505.04597`（**18,157**，arXiv `comment` = conditionally accepted at MICCAI 2015；收缩-扩张 + 跳连、强数据增强、512×512 分割 <1 秒）/ ImageNet ILSVRC `1409.0575`（**1,893**，OpenAlex 仅计 arXiv 记录，IJCV 正式版被引远高于此、未合并；数百类 / 数百万图 / 50+ 机构 / 2010 年起年度赛）；核验：arXiv `id_list` 单批 **`200` + atom**（6,740 B / 3 entry，`published` 齐备）+ abs 页 **3/3 `200`**（42,591 / 42,533 / 43,947 B，`citation_title` 逐字一致）+ OpenAlex **3/3 `200`**（查询日 2026-11-22）；三 ID 在 `PAPERS.md` 三处查重 **0 命中**（同批候选 Gopher / FunSearch / ImageNet-1K 训练集论文经核实：`2306.12464` 实为天体物理论文、`2304.07972` 实为控制论论文 ⇒ 均不记）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**）
 
 **本轮快照**：累计 **335** 条（**第八十九轮 2026-11-22 09:0x 补 3 条 → 335**：unCLIP / DALL·E 2 `2204.06125`（**10,659**，OpenAlex `type=preprint`）/ Parti `2206.10789`（**1,827**，OpenAlex `type=article`、source = *Transactions on Machine Learning Research*）/ Classifier-Free Diffusion Guidance `2207.12598`（**7,405**，预印本；arXiv `comment` = 短版见 NeurIPS 2021 Workshop）；核验：arXiv `id_list` 单批 **`200` + `application/atom+xml`**（7,556 B / 3 entry，`published` 齐备：2022-04-13 / 2022-06-22 / 2022-07-26；期间一次 `429`，按 ≥3 s 限速重试成功）+ abs 页 **3/3 `200`**（40,571 / 45,080 / 41,707 B，`citation_title` 逐字核）+ OpenAlex **3/3 `200`**（查询日 2026-11-22）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**（unCLIP / Parti PDF 下载被截断 ⇒ 放弃本地解析）；先查重：三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 Switch Transformer `2101.03961` / QLoRA `2305.14314` / PagedAttention `2309.06180` / RoPE `2104.09864` / AdamW `1711.05101` / GPT-4 `2303.08774` / Toolformer `2302.04761` / WebArena `2307.13854` / GAIA `2311.12983` / DeepSeek-V3 `2412.19437` / Qwen2.5 `2412.15115` 均已在表内 ⇒ 剔除）；覆盖轴 = 语义嵌入先验 + diffusion 解码的两段式 / 离散 token 纯自回归的 20B 规模档 / 无分类器引导的保真度-多样性旋钮；本轮归属：zhulong **+2** · vision **+2** · pretrain **+1** · harness **+1**（一篇可多线））
@@ -5852,6 +5854,57 @@
 | 与我们工作的关系 | **data（主 · 基准与标注治理）**：本线所有「造题 / 标注 / 防泄漏」问题都能在这里找到最早的系统性答案（标注质量控制、类别体系、训练-测试隔离）。<br>**harness（主 · 榜单设计）**：年度挑战赛 + 隐藏测试集的机制，是设计内部评测榜单（含 EDA 设计流 benchmark）的直接范本。<br>**vision（历史基线）**：AlexNet / ResNet 等视觉主干的成绩都在这个口径下比较，引用视觉 SOTA 时必须说明是哪一届 ILSVRC 口径。 |
 | 首次收录 | **2026-11-22**（第九十轮 · 12:00 时窗） |
 | 核验状态 | arXiv `id_list=1409.0575` **`200` + atom**（`published` `2014-09-01T22:29:38Z` / `updated` `2015-01-30T01:23:59Z`）；abs 页 **`200` / 43,947 B**（`citation_title` 逐字一致）；OpenAlex **`200`（1,893 / 2014 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 339. Neural Machine Translation by Jointly Learning to Align and Translate（Bahdanau attention）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Neural Machine Translation by Jointly Learning to Align and Translate |
+| 作者（前 3） | Dzmitry Bahdanau · Kyunghyun Cho · Yoshua Bengio（共 **3** 位；arXiv 作者字段逐字核；机构据论文页为 Université de Montréal / Jacobs University Bremen） |
+| 年份 | **2014**（arXiv v1 `2014-09-01`，v7 `2016-05-19`） |
+| 会议 / 期刊 | **ICLR 2015 oral**（arXiv `comment` = `Accepted at ICLR 2015 as oral presentation`；OpenAlex `type=preprint`、source = arXiv (Cornell University)，会议版另计） |
+| 被引数 | **32,083**（OpenAlex `10.48550/arxiv.1409.0473`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1409.0473> ｜ arXiv DOI `10.48550/arxiv.1409.0473` |
+| 一句话贡献 | 指出「编码器把源句压成**定长向量**」是 encoder–decoder 的性能瓶颈，改为让解码器每一步对源句做**可微的软对齐（soft-search / attention）**并与翻译目标联合训练；据摘要，该做法在英语-法语翻译上优于当时基线，且**对长句更稳**（作者自报）。 |
+| 与我们工作的关系 | **pretrain（主 · 架构史）**：这是「定长状态 → 按需取用历史」的分水岭；做长上下文 / KV 压缩时，必须分清「压缩状态」与「按需检索历史」两类信息通路，本文给出后者最早的端到端证据。<br>**harness（评测口径）**：论文把「长句变差不差」作为主指标之一 ⇒ 长上下文评测必须分长度桶报，不能只看全量平均。<br>**zhulong（agent 记忆）**：agent 长轨迹里「哪些历史步要被重新取用」与这里的对齐权重同构，可作为显式检索记忆的对照基线。 |
+| 首次收录 | **2026-11-22**（第九十一轮 · 15:00 时窗） |
+| 核验状态 | arXiv `id_list=1409.0473` **`200` + atom**（`published` `2014-09-01T16:33:02Z` / `updated` `2016-05-19T21:53:22Z`）；abs 页 **`200` / 43,549 B**（`citation_title` 逐字一致）；OpenAlex **`200`（32,083 / 2014 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 340. Qwen2.5-VL Technical Report
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Qwen2.5-VL Technical Report |
+| 作者（前 3） | Shuai Bai · Keqin Chen · Xuejing Liu（共 **27** 位；arXiv 作者字段逐字核；机构据论文页为 Qwen Team, Alibaba Group） |
+| 年份 | **2025**（arXiv v1 `2025-02-19`） |
+| 会议 / 期刊 | **预印本技术报告**（OpenAlex `type=preprint`、source = arXiv (Cornell University)；arXiv `comment` 无） |
+| 被引数 | **10,565**（OpenAlex `10.48550/arxiv.2502.13923`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2502.13923> ｜ arXiv DOI `10.48550/arxiv.2502.13923` |
+| 一句话贡献 | Qwen 视觉-语言系列当时的旗舰报告：强调**精确目标定位（框 / 点）**、**文档解析与结构化抽取**（发票 / 表单 / 表格 / 图表 / 版面）与**长视频理解**；引入**动态分辨率**处理与**绝对时间编码**，使小时级视频也能做**秒级事件定位**（作者自报）。 |
+| 与我们工作的关系 | **vision（主 · 视觉塔对照）**：动态分辨率 + 原生框/点输出，是 BaiZe 视觉塔「固定分辨率 vs 原生分辨率」两臂的直接对照；文档 / 表格 / 版面能力也决定 EDA 波形图与规格书能不能直接进 VLM。<br>**zhulong（视频 / 长时序）**：绝对时间编码 + 秒级事件定位，是 agent 看长操作录像 / 工具日志回放时的时序对齐参考。<br>**harness（生成式评测）**：框 / 点定位与文档抽取都可自动判分，适合作为内部视觉能力的可验证子项。<br>**data（图文对）**：报告的数据配方（文档、图表、视频）可反推 data 线在 EDA 语料上的配比缺口。 |
+| 首次收录 | **2026-11-22**（第九十一轮 · 15:00 时窗） |
+| 核验状态 | arXiv `id_list=2502.13923` **`200` + atom**（`published` `2025-02-19T18:00:14Z`，无更新版）；abs 页 **`200` / 46,388 B**（`citation_title` 逐字一致）；OpenAlex **`200`（10,565 / 2025 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 341. RAFT: Adapting Language Model to Domain Specific RAG
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | RAFT: Adapting Language Model to Domain Specific RAG |
+| 作者（前 3） | Tianjun Zhang · Shishir G. Patil · Naman Jain（共 **7** 位；末位 Joseph E. Gonzalez；arXiv 作者字段逐字核；机构据论文页为 UC Berkeley） |
+| 年份 | **2024**（arXiv v1 `2024-03-15`，v2 `2024-06-05`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`、source = arXiv (Cornell University)；arXiv `comment` 无） |
+| 被引数 | **524**（OpenAlex `10.48550/arxiv.2403.10131`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2403.10131> ｜ arXiv DOI `10.48550/arxiv.2403.10131` ｜ 代码 <https://github.com/ShishirPatil/gorilla> |
+| 一句话贡献 | 提出 **RAFT（Retrieval Augmented FineTuning）**：训练时给「问题 + 检索到的文档集」，其中掺入 **distractor 文档**，要求模型**逐字引用**真正相关文档里的片段，并以 **chain-of-thought** 形式作答；在 PubMed / HotpotQA / Gorilla（HuggingFace / Torch Hub / TensorFlow Hub）上稳定超过「有 / 无 RAG 的常规 SFT」；表 1 中 RAFT（LLaMA2-7B）为 **73.30 / 35.28 / 74.00 / 84.95 / 86.86**，相对基座 Llama-2 的最大提升写作 **35.25%（HotpotQA）/ 76.35%（Torch Hub）**（作者自报）。 |
+| 与我们工作的关系 | **data（主 · 领域语料后训练）**：EDA 工具手册 / 错误日志天然是「多文档 + 大量无关段落」，RAFT 的 golden/distractor 混训是造领域 SFT 数据的直接模板。<br>**harness（主 · 可验证判分）**：逐字引用要求天然可判「引用片段是否真在 golden 文档里」，比自由文本答案更抗吹牛，适合做 EDA 问答的可验证子项。<br>**zhulong（agent 读文档）**：agent 在工具链里查规格书时同样是多文档、多干扰，distractor 鲁棒性是闭环成功率的前置条件。<br>**pretrain / posttrain**：属后训练配方（不重训底座），与 WSD / 继续预训练是两条可选路线，需按 token 预算做取舍。 |
+| 首次收录 | **2026-11-22**（第九十一轮 · 15:00 时窗） |
+| 核验状态 | arXiv `id_list=2403.10131` **`200` + atom**（`published` `2024-03-15T09:26:02Z` / `updated` `2024-06-05T17:27:51Z`）；abs 页 **`200` / 41,842 B**（`citation_title` 逐字一致）；OpenAlex **`200`（524 / 2024 / preprint）**；表 1 数字取自 ar5iv 全文页 **`200` / 150,398 B**（`<table>` 行 `RAFT (LLaMA2-7B) 73.30 35.28 74.00 84.95 86.86`，以及正文 `35.25% on Hotpot QA and 76.35% on Torch Hub`），**未做 PDF 逐页复核**。 |
 
 ---
 

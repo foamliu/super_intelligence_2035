@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-22 15:0x）**：作者 **310** 人（编号最大 **310**）· X 已核验 **119**（本轮 **+2**：`@tianjun_zhang` 经 `x.com/tianjun_zhang` `200` / 190,919 B，`og:title` = `Tianjun Zhang (@tianjun_zhang) on X`，`og:description` = `@peano_ai | Prev @meta @GoogleDeepMind @berkeley_ai | Project Lead of LiveCodeBench, RAFT and Gorilla LLM`；`@DBahdanau` 经 `x.com/DBahdanau` `200` / 199,403 B，`og:title` = `🇺🇦 Dzmitry Bahdanau (@DBahdanau) on X`，`og:description` = `Team member at @periodiclabs.`）· 已发信 **140**（台账 #1–#140）· 回信 **0**（0/140）。以下历史快照行保留原文（不追改），计数以本行为准。
+
 > **当前计数（2026-11-22 12:0x）**：作者 **308** 人（编号最大 **308**）· X 已核验 **117**（本轮 **0 新增**：两位新增作者的主页均未见 X 链接 ⇒ 不猜 handle）· 已发信 **139**（台账 #1–#139）· 回信 **0**（0/139）。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **当前计数（2026-11-22 09:0x）**：作者 **306** 人（编号最大 **306**）· X 已核验 **117**（本轮 +1：`@jiahuiyu` 经 X 页 `og:title` + `og:description` 双源核验 = Jiahui Yu；反例 `@adityaramesh` 为他人、`@tim_salimans` `404`、`@jonathanho` 为 Chicago 另一人 ⇒ 均不记）· 已发信 **137**（台账 #1–#137）· 回信 **0**（0/137）。以下历史快照行保留原文（不追改），计数以本行为准。
@@ -4381,4 +4383,31 @@
 | X 账号 | **未找到**（主页本轮未见 X 链接；🚫 不猜 handle） |
 | 状态 | **已发信**（2026-11-22 12:0x · 第 139 封 · 中文 233 汉字；回信状态 `未到期`，2026-12-06 到期）；X 待跟踪 |
 | 备注 | `语言=中文(判据=拼音姓名族属 + 普林斯顿机构；🚫 未因论文英文/邮箱域名判英文)`。价值点：ILSVRC 是「基准怎么造 + 隐藏测试集怎么防过拟合」的最早系统范本，直接服务 harness 的 EDA 设计流 benchmark 与 data 的标注治理；三问落到「领域基准的标注成本与一致性口径 / 人机对比的黑箱评测协议 / 榜单长期维护与版本化」。 |
+
+
+### 309. Tianjun Zhang 张天俊
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tianjun Zhang（拼音姓名族属 ⇒ 中文发信；汉字名本轮未从官方页核到 ⇒ 不写） |
+| 机构 | **UC Berkeley EECS**（RAFT 一作；本人主页 `tianjunz.github.io` 自述 BAIR / RISE lab 博士生；X bio 另注现职 `@peano_ai`、此前 Meta / Google DeepMind） |
+| 代表论文 | **RAFT: Adapting Language Model to Domain Specific RAG**（`2403.10131`，B 轨 #341，一作）· LiveCodeBench / Gorilla（X bio 自述为 Project Lead，本线未单独立条） |
+| 邮箱 | **tianjunz@berkeley.edu**（来源：本人主页 `https://tianjunz.github.io/` `200` / 6,538 B，页内明文 `Email: tianjunz [at] berkeley [dot] edu`；论文 PDF 首页亦写 `{tianjunz}@berkeley.edu`，双源一致） |
+| 主页 | <https://tianjunz.github.io/>（`200` / 6,538 B） |
+| X 账号 | **@tianjun_zhang**（`x.com/tianjun_zhang` 经代理 `200` / 190,919 B；`og:title` = `Tianjun Zhang (@tianjun_zhang) on X`；`og:description` 明写 `Project Lead of LiveCodeBench, RAFT and Gorilla LLM` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-22 15:0x · 第 140 封 · 中文 268 汉字；回信状态 `未到期`，2026-12-06 到期）；X 待 follow（需登录态） |
+| 备注 | `语言=中文(判据=拼音姓名族属 Zhang + 姓名可还原中文名习惯；🚫 未因论文英文 / 美国机构判英文)`。价值点：RAFT 的 golden/distractor 混训与逐字引用，直接对应我们「EDA 工具手册 / 错误日志 → 领域问答」的数据构造与可验证判分；三问落到「distractor 比例与 top-k 的消融 / 答案需跨多文档拼合时 golden 怎么造 / 逐字引用在代码与中英混合文档上的校验」。 |
+
+### 310. Dzmitry Bahdanau
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Dzmitry Bahdanau（白俄罗斯 / 东欧姓名族属 ⇒ 英文发信；德法西等对照表不含白俄/俄语族，按「判据冲突 ⇒ 英文」兜底） |
+| 机构 | **Mila / Université de Montréal**（论文署名）；本人 Mila 目录页与 X bio 自述现为 **Periodic Labs**、McGill 兼职教授 |
+| 代表论文 | **Neural Machine Translation by Jointly Learning to Align and Translate**（`1409.0473`，B 轨 #339，一作） |
+| 邮箱 | **未找到**（Mila 目录页 `200` / 125,911 B 无个人明文邮箱；个人站点 `bahdanau.github.io` / `www.bahdanau.com` 本轮 `404` / `000`；🚫 不用 RocketReach 等第三方猜测地址） |
+| 主页 | **未找到**（`bahdanau.github.io` `404`；以 Mila 目录页为公开身份页） |
+| X 账号 | **@DBahdanau**（`x.com/DBahdanau` 经代理 `200` / 199,403 B；`og:title` = `🇺🇦 Dzmitry Bahdanau (@DBahdanau) on X`；`og:description` = `Team member at @periodiclabs.` ⇒ 双源核验） |
+| 状态 | **待跟踪**（X 待 follow，需登录态；无可用邮箱 ⇒ 本线不发信，不猜地址） |
+| 备注 | `语言=英文(判据=白俄罗斯姓名族属 + 加拿大 Mila 机构；对照表无该国语言 ⇒ 英文兜底)`。价值点：Bahdanau attention 是「定长状态 → 按需取用历史」的分水岭，服务 pretrain 的长上下文 / KV 压缩路线判定与 harness 的分长度桶评测口径。 |
 
