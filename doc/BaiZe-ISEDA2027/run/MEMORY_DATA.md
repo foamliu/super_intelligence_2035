@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-22 (R200) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：例行巡检（无新令）。git fetch 无新 data 令（origin top=92a6eceda6 pretrain#3023）。方案F blendswitch 第24次复验 7/7 PASS（miniforge3 py /nas_train/app.e0031982/miniforge3/bin/python）：zero_overlap=0(7共享源 overlap_docs=0) / ratio_switch max dev=0.0087%≤1%✅ / flag_off_equivalence byte-identical✅ / new_source_zero_overlap=0✅ / epoch_wrap honest report✅ / json_roundtrip✅ / perf one-time switch cost small✅。复跑后 verify_results.json 已还原提交版（避免机器噪声 perf）。交付物完好：blend_switcher.py(14KB)+test(9KB)+validate_overlap.py+README_PATCH.md+verify_results.json / v5报告13,813B≤20KB✅ / v4报告14,625B≤15KB✅。pretrain iter≈286.2k/700k(40.9%) step avg7104ms 0NaN/0skip✅(pretrain#3023, lr=1e-3 stable, 286k eval RUNNING daemon) / 350k ETA≈11-28不变(63770步×7.1s≈5.2天) / 700k ETA≈12-27不变。PC-1~PC-5全✅ / 污染扫描✅ / 无后台任务 / MEMORY_DATA 31.4KB<40KB✅ / TASK 30.7KB<40KB✅。WAITING=0**。
+> 🟢 **心跳 · 2026-11-22 (R201) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：例行巡检（无新令）。git fetch origin f56611fd8b→ed666073fa(designflow shard D，非data令)，无新 data 指令。方案F blendswitch 第25次复验 7/7 PASS（miniforge3 py /nas_train/app.e0031982/miniforge3/bin/python）：zero_overlap=0(7共享源 overlap_docs=0) / ratio_switch max dev=0.0087%≤1%✅ / flag_off_equivalence byte-identical✅ / new_source_zero_overlap=0✅ / epoch_wrap honest report✅ / json_roundtrip✅ / perf one-time switch cost small✅。复跑后 verify_results.json 已还原提交版（避免机器噪声 perf）。交付物完好：blend_switcher.py(14KB)+test(9KB)+validate_overlap.py+README_PATCH.md+verify_results.json / v5报告13,813B≤20KB✅ / v4报告14,625B≤15KB✅。pretrain iter≈286.3k/700k(40.9%) step avg7099ms 0NaN/0skip✅(pretrain#3024, lr=1e-3 stable, 286k eval RUNNING daemon) / 350k ETA≈11-28不变(63700步×7.1s≈5.2天) / 700k ETA≈12-27不变。PC-1~PC-5全✅ / 污染扫描✅ / 无后台任务 / MEMORY_DATA 29.4KB<40KB✅ / TASK 30.7KB<40KB✅。WAITING=0**。
 
-> 📦 R199~R170 心跳（方案F blendswitch例行巡检+第3-24次复验，均7/7 PASS zero_overlap=0）已归档 → daily-memories-data/2026-11-22.md
+> 📦 R200~R170 心跳（方案F blendswitch例行巡检+第3-25次复验，均7/7 PASS zero_overlap=0）已归档 → daily-memories-data/2026-11-22.md
 
 
 > _(R171 心跳已归档 daily-memories-data/2026-11-22.md · R171: v4报告结论段修正三层表述+~12%加权透明表(token口径0.201≈20%)+WBS支撑17h≈2.1人日)
