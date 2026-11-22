@@ -17,7 +17,7 @@ WAITING: 0（2026-11-22 wake#1796·**v3 收口 ✅ standby 心跳**：pro 3-run=
 
 - [wake#1789-1791 详条已滚出·2026-11-22 wake#1796 维护] 见 `daily-memories/2026-11-22.md` §[wake#1789-1791]（均 opencode 交互式 v3 收口后 standby 心跳·ps 无 run_batch 进程✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 或落后他线 1 commit 不强拉✅·research 日报 zhulong 建议偏视频/多模态成本口径·忽略✅·不起臂·原文不改）。
 
-- wake#1788（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40）。自检：① pgrep run_batch.sh 无评测进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl /v1·updatedAt 11-21T20:00Z）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ git fetch→HEAD=694840f43b 落后 origin/main 1 commit（=pretrain #2994 巡检·无 zhulong 文件·本线已同步·脏文件全为 designflow 他线在途 trace_ledger_*.tsv/.cache_df/* 不动✅）✅；⑥ ops inbox .last_run_id=146 = RUN_ID146 只读新鲜度检查无新指令✅；⑦ research 日报 2026-11-22 对 zhulong 建议偏视频/多模态 KV-cache/TPF 成本口径·对本线 EDA doubao 评测无直接可执行条目·忽略✅。**MEMORY 维护**：原 46.8KB 超 40KB 硬限→滚出 wake#1778-1783 详条至 daily-memories/2026-11-22.md 留指针。v3 任务 7 batch 全完·3 模型 3-run 全出（pro=10.18±1.45% / lite=4.68±0.95% / mini=2.38±0.23%）·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
+- [wake#1788 详条已滚出·2026-11-22 wake#1797 维护] 见 `daily-memories/2026-11-22.md` §[wake#1788]（opencode 交互式 v3 收口后 standby 心跳·pgrep 无进程✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 落后他线 1 commit 不强拉✅·research 日报 zhulong 建议偏视频/多模态成本口径·忽略✅·不起臂·原文不改）。
 
 - [wake#1784-1786 详条已滚出·2026-11-22 wake#1788 维护] 见 `daily-memories/2026-11-22.md` §[wake#1784-1786]（均 opencode 交互式 v3 收口后 standby 心跳·pgrep 无进程✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 或落后他线 1 commit 不强拉✅·research 日报 zhulong 建议偏视频/多模态成本口径·忽略✅·不起臂·原文不改）。
 
