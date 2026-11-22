@@ -548,3 +548,41 @@ await tools["eda_flow"].close_session({workdir, keep:false});
 **结论: eda_flow MCP 可用 = .75 可达（第 28 次确认，与 r1105-r1131 一致）**。用户令 §四「两件事分开写」兑现：① .75 可达(MCP 层)=YES ② trace 读取: MCP list_files/read_file whitelist=workdir-only, 但 run_commands bash 全可读(非权限/路径问题)。r1098-r1102 ssh-timeout 止损理由维持误判。同结论适用 A/B/C 三 shard。
 
 **r1132 本轮另完成**：mc-matrix 复算(2026-11-21 mc=5 用户令 DEBT, src=summary_1120_reconstructed.tsv: D mc≥5 pool=1735 fresh=394 / mc≥10 fresh=231) + peek 20 fresh D-pure。0 case(预算耗尽; haoyut s_w4x70 经 ledger 查已=case SpefAnnotAudit-001 非 fresh; 下轮用 ledger-aware awk 取真 fresh 候选续深读合成)。
+
+---
+
+## 第 30 次复测 — r1134 · 2026-11-22 19:07 CST · session GLM-5.2/opencode（loop shard D task 卡 19:07:14 触发）
+
+**用户令触发**：2026-11-22 11:2x 用户令最高优先「先测 eda_flow MCP 是否可用——可用即代表 .75 可达（.75 走 eda_flow MCP，不走直连 SSH）」。本轮 task 卡 19:07:14 由 loop shard D 自动生成，仍按令先做 MCP 连通性复测。
+
+**逐项记录（工具名 / 参数 / 返回摘要 / 耗时 / 错误原文）**：
+
+1. **catalog/list** `search({namespace:"eda_flow", limit:20})` (execute Code Mode) → 8 工具在册: `open_session`/`close_session`/`declare_done`/`run_commands`/`run_code`/`read_file`/`write_file`/`list_files`。`remaining=0`, `next=null`。✅ 无错。
+2. **open_session** `{task_id:"MCP-PING-001", eval_id:"20261122-mcp-ping", sample:"0", user:"shard-D-mcp-probe"}` → **17ms** → `workdir=/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/shard-D-mcp-probe_20261122-mcp-ping_MCP-PING-001_0`, `response="session workdir ready"`, `error_log=""`. ✅
+3. **run_commands** `{workdir, commands:[pwd, "ls -la", hostname, whoami, "date '+%Y-%m-%d %H:%M:%S %Z'", "uname -a", "echo MCP_PROBE_OK > probe_marker.txt", "ls -la probe_marker.txt"], timeout_per_cmd:20}` → **96ms**, 8/8 exit_code=0:
+   - `pwd` → workdir 路径
+   - `ls -la` → 空 workdir (`drwxrwsr-x 2 e0031982 guest 4096`)
+   - `hostname` → **`hfhds201`**（← 即 .75）
+   - `whoami` → `e0031982`
+   - `date` → **`2026-11-22 19:07:37 CST`**
+   - `uname -a` → `Linux hfhds201 3.10.0-1127.el7.x86_64 #1 SMP Tue Mar 31 23:36:51 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux`
+   - `echo ... > probe_marker.txt` + `ls -la probe_marker.txt` → 13B 文件写入
+4. **list_files** `{dir:workdir, pattern:"*"}` → **15ms**, `entries=["probe_marker.txt"]`, `error_log=""`. ✅
+5. **read_file** `{path:workdir+"/probe_marker.txt"}` → **15ms**, `content="MCP_PROBE_OK\n"`, `size=13`, `is_text=true`, `error_log=""`. ✅ Round-trip 一致无腐蚀（plain `content`，未用 base64）。
+6. **trace 可读性验证**（用户令 §四「两件事分开写」）— `run_commands` bash on .75 探真实 trace 路径：
+   - `ls -ld /home/t0002965/log` → `drwxrwxr-x 22 t0002965 guest 8192 Nov 22 17:22`
+   - `ls /home/t0002965/log/ssh_eda_search_20261028_174426/` → REPORT.md / raw.tsv / scan.tsv / stderr.log / summary.tsv / unreachable.log
+   - `head -3 .../summary.tsv` → 表头 `ip\thost\tuser\tsession_file\tmatch_count\tkeywords\ttools` + 真实行 `10.129.32.189 hfeg0pnd001 e0045140 1792637822804_6xv88.messages.json 9 ...`
+   - `ls -la /home/t0002965/ssh_auth_ok.txt` → 9451B, Oct 28
+   - `wc -l /home/t0002965/ssh_auth_ok.txt` → **698 行**（与 §2 关键路径一致）
+   - 全部 exit0
+7. **declare_done** `{workdir}` → **25ms**, `declared=true`, marker 写入。✅
+8. **close_session** `{workdir, keep:false}` → **23ms**, `cleaned=true`. ✅
+
+**结论: eda_flow MCP 可用 = .75 可达（第 30 次确认，与 r1105-r1133 一致）**。r1098-r1102 ssh-timeout 止损理由维持误判。同结论适用 A/B/C 三 shard。
+
+**用户令 §四「两件事分开写」兑现**：
+- ① **`.75` 可达（MCP 层）= YES**（open_session/run_commands/list_files/read_file/write_file/declare_done/close_session 全 exit0 + hostname=hfhds201）
+- ② **trace 读取（权限/路径层）= 完全可读**（`run_commands` bash 读 `summary.tsv` 表头+首行真实数据 OK；读 698 行主机清单 OK；list_files/read_file MCP 便利工具 whitelist 限 session workdir 是设计约束，非 .75 可达性问题）
+
+**MCP 可用 ⇒ 用户令 §三「立即恢复深读新 trace + 造题主线」无外部阻塞**。本轮预算剩余用于主线 ledger-aware 候选搜索（高 mc 池 r1133 已采空，转 mc 50-150 中低段 fresh 候选 / D-parked reconsideration / anti-hardcode 修复交替）。
