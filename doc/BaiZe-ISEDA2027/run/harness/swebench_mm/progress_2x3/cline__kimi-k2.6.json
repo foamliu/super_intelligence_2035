@@ -3556,16 +3556,30 @@
   "carbon-design-system__carbon-4834": {
     "instance_id": "carbon-design-system__carbon-4834",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 892.9,
+    "rc": 0,
+    "model_patch_len": 1081,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " Jest suite from running. The code changes themselves are syntactically correct and follow the patterns used throughout the codebase.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-4862": {
     "instance_id": "carbon-design-system__carbon-4862",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 583.9,
+    "rc": 0,
+    "model_patch_len": 3850,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "el=\\\"Settings\\\"`)\\n\\nThe button will now render with `aria-label=\\\"Settings\\\"` and `title=\\\"Settings\\\"`, resolving the DAP violation.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-4891": {
     "instance_id": "carbon-design-system__carbon-4891",

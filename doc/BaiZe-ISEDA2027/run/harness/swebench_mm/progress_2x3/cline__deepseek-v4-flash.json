@@ -4951,23 +4951,44 @@
   "highlightjs__highlight.js-2927": {
     "instance_id": "highlightjs__highlight.js-2927",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 467.0,
+    "rc": 0,
+    "model_patch_len": 247332,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "hex, and binary literals\\n- The regex patterns are validated and do not introduce any exponential or polynomial backtracking issues\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-2932": {
     "instance_id": "highlightjs__highlight.js-2932",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1150.3,
+    "rc": 0,
+    "model_patch_len": 1788,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " correct highlighting for the new test case and the previously missing expected output for line 14 (`key\\\\:\\\\=\\\\ key\\\\:\\\\=\\\\ val`).\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-2958": {
     "instance_id": "highlightjs__highlight.js-2958",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 151.8,
+    "rc": 0,
+    "model_patch_len": 633,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "single-letter prefixes, multi-letter prefixes, dotted names, hyphenated names, underscores, self-closing tags, open/close tag pairs\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-2960": {
     "instance_id": "highlightjs__highlight.js-2960",

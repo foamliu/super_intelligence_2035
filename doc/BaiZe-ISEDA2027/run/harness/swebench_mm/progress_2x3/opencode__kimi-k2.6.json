@@ -4071,16 +4071,30 @@
   "carbon-design-system__carbon-7908": {
     "instance_id": "carbon-design-system__carbon-7908",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 759.0,
+    "rc": 0,
+    "model_patch_len": 5089,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ication\nAll related tests pass (32/32), with only snapshot updates needed due to the `forwardRef` wrapper changing the enzyme component display name from `ListBoxField` to `ForwardRef(ListBoxField)`.\n",
+    "stderr_tail": "t and understand the issue\n[✓] Identify where the nested button issue occurs\n[✓] Implement fix to remove interactive content descendant from button\n[✓] Verify fix with tests or visual inspection\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8022": {
     "instance_id": "carbon-design-system__carbon-8022",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 662.5,
+    "rc": 0,
+    "model_patch_len": 829,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "`stylelint` passes on the modified file.\n- All related React tests pass (UIShell: 21 passed, DataTable: 26 passed).\n- The SCSS compilation error seen is a pre-existing issue unrelated to this change.\n",
+    "stderr_tail": "\n[✓] Explore codebase for icon-only Button tooltip focus behavior\n[✓] Identify root cause of overlapping tooltips\n[✓] Implement fix for overlapping tooltips on icon-only buttons\n[✓] Test the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8092": {
     "instance_id": "carbon-design-system__carbon-8092",

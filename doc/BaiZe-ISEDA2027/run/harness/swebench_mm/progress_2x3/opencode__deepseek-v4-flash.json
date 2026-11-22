@@ -6022,16 +6022,29 @@
   "openlayers__openlayers-14100": {
     "instance_id": "openlayers__openlayers-14100",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.3,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-14332": {
     "instance_id": "openlayers__openlayers-14332",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 720.2,
+    "rc": 0,
+    "model_patch_len": 599,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "const canvasPixelRatio = Math.sqrt(\n  Math.pow(event.inversePixelTransform[0], 2) +\n    Math.pow(event.inversePixelTransform[1], 2)\n);\n```\n\nVerified: lint passes, no type errors in the modified file.\n",
+    "stderr_tail": "odos\n[✓] Explore the codebase to understand the issue with rotated tile layers in vector context\n[✓] Identify the root cause of the rendering discrepancy\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-14414": {
     "instance_id": "openlayers__openlayers-14414",
