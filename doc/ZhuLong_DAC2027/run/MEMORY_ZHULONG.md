@@ -1,6 +1,8 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-22 wake#1775·**v3 收口 ✅ standby 心跳**：pro 3-run=10.18±1.45% / lite 3-run=4.68±0.95%（r2 VOID 不计入）/ mini 3-run=2.38±0.23%（r1 FUSE VOID 不计入）·7 batch 全完·providers.json=pro 默认态✅·3 份报告 3-run 汇总版✅·pgrep run_batch 无进程✅·cases_lite=500✅·cline 就位✅·git HEAD=origin/main(9379bc007)0/0✅·不起臂·原文不改·standby）
+WAITING: 0（2026-11-22 wake#1776·**v3 收口 ✅ standby 心跳**：pro 3-run=10.18±1.45% / lite 3-run=4.68±0.95%（r2 VOID 不计入）/ mini 3-run=2.38±0.23%（r1 FUSE VOID 不计入）·7 batch 全完·providers.json=pro 默认态✅·3 份报告 3-run 汇总版✅·pgrep run_batch 无进程✅·cases_lite=500✅·cline 就位✅·git HEAD=origin/main(e90b04178e)0/0✅·不起臂·原文不改·standby）
+
+- wake#1776（2026-11-22 14:26·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令）。自检：① pgrep run_batch.sh 无进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl 正确）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ 3 份报告（pro/mini mtime 13:53·lite mtime 14:23）3-run 汇总版✅；⑥ git fetch→HEAD=origin/main=e90b04178e（0 ahead/0 behind·incoming 仅 designflow shard B 他线提交·与本线无路径重叠·run/paper dir 无脏文件）✅。v3 任务 7 batch 全完·3 模型 3-run 全出（pro=10.18±1.45% / lite=4.68±0.95% / mini=2.38±0.23%）·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
 
 - wake#1775（2026-11-22 14:23·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令）。自检：① pgrep run_batch.sh 无进程（仅本 shell 自身）✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl 正确）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ 3 份报告（pro/mini mtime 13:53·lite mtime 14:23）3-run 汇总版✅；⑥ git fetch→HEAD=origin/main=9379bc007（0 ahead/0 behind·run dir 无脏文件）✅。v3 任务 7 batch 全完·3 模型 3-run 全出（pro=10.18±1.45% / lite=4.68±0.95% / mini=2.38±0.23%）·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
 
