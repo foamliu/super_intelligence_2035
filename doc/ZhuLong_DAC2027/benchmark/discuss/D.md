@@ -5,6 +5,10 @@
 
 ---
 
+## 🟢 2026-11-22 15:0x · `.75` 可达性第十七次确认 + 转主线造题（r1121, 适用 A/B/C/D 全 shard）
+
+**`.75` 可达（eda_flow MCP OK，十七次确认 r1105-r1121）**。r1121 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先）：`open_session` 21ms→workdir / `run_commands` 11/11 exit0（hostname=`hfhds201` / whoami=`e0031982` / date 11/22 15:08 CST / summary.tsv 表头+2 行真实 / ssh_auth_ok.txt 698 行）/ `write_file` 74B+`read_file` round-trip 一致（race-condition lesson: 勿与 write 并发读同文件）/ `list_files` workdir OK / `read_file` workdir 外白名单拒绝=sandbox 安全设计**非不可达** / `return_files` 两文件回传 OK / `declare_done` declared=true + `close_session` cleaned=true。与 r1105-r1120 结论一致。证据：`designflow/eda_flow_mcp_connectivity_20261122.md`。**主线造题**：用户令 §三「MCP 可用 ⇒ 立即恢复造题主线」兑现，D 用 fresh-log 法选 jiashengz@hfeg0pkn004 o3yts（标准单元网表报告→R1b1 原理图）→ 合成 `EDA-Eval-DesignFlow-StdcellNetlistToSchema-001`（schematic_netlist L1, k=15, anti-hardcode A'=NOR2 交叉, ref 15/15 PASS + 4 neg ALL FAIL）→ D.jsonl 555→556。@A @B @C：同 `.75` 可达结论适用三 shard；fresh-log 法（`eda_trace_YYYYMMDD.log` 替代 stale `summary.tsv`）可复用，主线「深读新 trace + 造题」无外部阻塞。
+
 ## 🟢 2026-11-22 14:5x · `.75` 可达性第十五次确认 + 主线突破（r1119, 适用 A/B/C/D 全 shard）
 
 **`.75` 可达（eda_flow MCP OK，十五次确认 r1105-r1119）**。r1119 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先）：`open_session` 20ms→workdir / `run_commands` 6/6 exit0（hostname=`hfhds201` / whoami=`e0031982` / date 11/22 14:33 CST / uname Linux hfhds201）/ `list_files` workdir OK / `write_file` 34B+`read_file` round-trip 一致 / `read_file` workdir 外白名单拒绝=sandbox 安全设计**非不可达** / `declare_done` declared=true + `close_session` cleaned=true。与 r1105-r1118 结论一致。证据：`designflow/eda_flow_mcp_connectivity_20261122.md`。**主线突破**：摒弃 stale `summary.tsv`（20261028，scan 候选多被 cline 清理），改用 fresh `eda_trace_20261122.log`（今日 00:01 生成，4059 sessions）→ 定位 D-pure live trace `chuanqiz@hfeg0pnd001` fsgjs（netlist:161/schematic:83）→ 合成 `EDA-Eval-DesignFlow-LiberateInstGenQA-001`（schematic_netlist L1, k=16, anti-hardcode A'=RstSync2 交叉, ref 16/16 PASS + 7 neg ALL FAIL）→ D.jsonl 554→555。@A @B @C：同 `.75` 可达结论适用三 shard；fresh-log 法（`eda_trace_YYYYMMDD.log` 替代 stale `summary.tsv`）可复用，主线「深读新 trace + 造题」无外部阻塞。

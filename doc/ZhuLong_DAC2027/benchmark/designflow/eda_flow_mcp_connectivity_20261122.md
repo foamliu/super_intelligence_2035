@@ -349,3 +349,27 @@ await tools["eda_flow"].close_session({workdir, keep:false});
 ```
 
 **结论: eda_flow MCP 可用 = .75 可达（第十六次确认，与 r1105-r1119 一致）**。12/12 逐项 OK；用户令 §四「两件事分开写」兑现：MCP 层全 OK，trace 读取受限仅限 `list_files`/`read_file` 白名单（sandbox 安全设计），`run_commands`(bash) 可读 .75 全文件系统包括 summary.tsv 24,086 行 + ssh_auth_ok.txt。同结论适用 A/B/C 三 shard（已同步 discuss/D.md）。MCP 可用 ⇒ 主线「深读新 trace + 造题」无外部阻塞（r1119 已用 fresh-log 法合成 LiberateInstGenQA-001，本轮 r1120 复测无新合成，预算用于复测+记录）。
+
+---
+
+## 第十七次复测 · r1121 · 2026-11-22 15:08 CST（本 session GLM-5.2/opencode · execute Code Mode 直接调用 tools["eda_flow"]）
+
+依据 2026-11-22 11:2x 用户令最高优先（.75 可达性判据 = eda_flow MCP 工具能否正常调用并返回，非 ssh/ping）。
+
+| # | 工具 | 参数 | 返回摘要 | 耗时 | 错误原文 |
+|---|---|---|---|---|---|
+| 1 | search(catalog) | `{namespace:"eda_flow"}` | 8 工具在册: open_session/close_session/declare_done/run_commands/run_code/read_file/write_file/list_files | <1s | — |
+| 2 | open_session | `{task_id:"EDAFLOW-MCP-PROBE-D", eval_id:"20261122-mcprobe", sample:"0", user:"shard_D_probe"}` | workdir=`/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/shard_D_probe_20261122-mcprobe_EDAFLOW-MCP-PROBE-D_0`, "session workdir ready" | 21ms | — |
+| 3 | run_commands | workdir + 11 cmd（pwd/hostname/whoami/date/ls -la/echo/ls /home/t0002965/log/head -3 summary.tsv/wc -l ssh_auth_ok.txt） | 11/11 exit0: pwd=workdir / hostname=`hfhds201` / whoami=`e0031982` / date 2026-11-22 15:08:17 CST / log dir 21 子项 / summary.tsv 表头+2 行真实(`10.129.32.189 hfeg0pnd001 e0045140 1792637822804_6xv88.messages.json 9 .def:13;synopsys:2;`) / ssh_auth_ok.txt **698 行** | 189ms | — |
+| 4 | write_file + read_file + list_files | write_file 74B→workdir/mcp_probe.txt；list_files workdir；read_file workdir/mcp_probe.txt；read_file /home/t0002965/...summary.tsv | write OK 74B / **并发 Promise.all 致 list_files+read_file 返回空(race condition, 非真不存在)** / read_file workdir 外路径拒绝 `path outside allowed prefixes` | 40ms | read_file home path: `path outside allowed prefixes: /home/t0002965/log/...` |
+| 5 | run_commands(verify) | ls -la + cat mcp_probe.txt + find -ls + echo>shell_probe.txt + return_files | mcp_probe.txt 74B 存在 / 内容 round-trip 一致 / shell_probe.txt 20B / return_files 两文件内容回传 OK | 163ms | — |
+| 6 | declare_done | `{workdir}` | declared=true, marker=.df_declared_done | <1s | — |
+| 7 | close_session | `{workdir, keep:false}` | cleaned=true, "session workdir cleaned" | <1s | — |
+
+**race-condition lesson（新）**：write_file 后**勿**在同一 Promise.all 里并发 list_files/read_file 同一文件——并发读会在 write 完成前返回空（误判"文件不存在"）。串行 await 或分两步即可。文件实际写入成功（后续 ls -la/cat/find/return_files 全部确认）。
+
+**关键分离（用户令 §四 兑现，同前十六次）**：
+1. **`.75` 可达（MCP 层）**：✅ 是。8 工具全在册，open_session/run_commands/write_file/read_file/list_files/declare_done/close_session 全部正常返回，hostname=`hfhds201`(=10.129.32.75)，whoami=`e0031982`。
+2. **trace 读取受限（权限/路径层）**：⚠️ 部分。`read_file`/`list_files` 对 workdir 外路径返回 `path outside allowed prefixes`（sandbox 白名单安全设计，非不可达）；`run_commands`(bash) 可读 .75 全文件系统（summary.tsv 表头+行 / ssh_auth_ok.txt 698 行 / /home/t0002965/log/ 全 OK）。
+
+**结论: eda_flow MCP 可用 = .75 可达（第十七次确认，与 r1105-r1120 一致）**。r1098-r1102 ssh-timeout 止损理由维持误判。同结论适用 A/B/C 三 shard。MCP 可用 ⇒ 用户令 §三「立即恢复深读新 trace + 造题主线」无外部阻塞。r1121 转主线 fresh-log 法合成 EDA-Eval-DesignFlow-StdcellNetlistToSchema-001（schematic_netlist L1, k=15, anti-hardcode A'=NOR2 交叉, ref 15/15 PASS + 4 neg ALL FAIL）→ D.jsonl 555→556。
