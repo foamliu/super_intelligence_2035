@@ -4771,23 +4771,44 @@
   "grommet__grommet-7025": {
     "instance_id": "grommet__grommet-7025",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1074.3,
+    "rc": 0,
+    "model_patch_len": 62353,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "licated inside the filter drop/layer.\n\n**Verification:**\n- `Data`, `DataFilters`, and `Toolbar` tests all pass after updating the affected snapshots.\n- ESLint reports no errors in the modified files.\n",
+    "stderr_tail": "js       |   18 -\n .../__snapshots__/DataFilters-test.tsx.snap        |   36 +-\n src/js/components/Toolbar/Toolbar.js               |   18 +\n 5 files changed, 928 insertions(+), 295 deletions(-)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2684": {
     "instance_id": "highlightjs__highlight.js-2684",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 615.7,
+    "rc": 0,
+    "model_patch_len": 270733,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "*New test**\n- `test/markup/bash/operators.txt` and `.expect.txt` — covers pipes, heredocs, herestrings, subshells, line continuations, and redirections\n\nAll 531 tests pass (markup + detect + parser).\n",
+    "stderr_tail": "rator\">&gt;&gt;</span> file.txt\n<span class=\"hljs-built_in\">echo</span> foo 2<span class=\"hljs-operator\">&gt;</span><span class=\"hljs-operator\">&amp;</span>1\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/languages/bash.js\n"
   },
   "highlightjs__highlight.js-2703": {
     "instance_id": "highlightjs__highlight.js-2703",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 420.7,
+    "rc": 0,
+    "model_patch_len": 1396,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ion\n- Rebuilt the library and verified both issues are resolved\n- All **524 existing tests** continue to pass\n- Confirmed JavaScript regexes and division operators still highlight correctly in params\n",
+    "stderr_tail": "nt rendered as class title bug\n[✓] Investigate JavaScript comments not highlighted inside params bug\n[✓] Fix Scala class title comment issue\n[✓] Fix JavaScript param comment issue\n[✓] Test fixes\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2704": {
     "instance_id": "highlightjs__highlight.js-2704",

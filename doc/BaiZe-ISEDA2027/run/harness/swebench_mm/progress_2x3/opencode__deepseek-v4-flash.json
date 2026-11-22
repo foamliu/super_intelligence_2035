@@ -6657,15 +6657,28 @@
   "scratchfoundation__scratch-gui-8492": {
     "instance_id": "scratchfoundation__scratch-gui-8492",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.8,
+    "rc": -1,
+    "model_patch_len": 1542647,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "scratchfoundation__scratch-gui-8891": {
     "instance_id": "scratchfoundation__scratch-gui-8891",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 166.1,
+    "rc": 0,
+    "model_patch_len": 2146,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " fully colored at all times. The active state is indicated by a light purple background (`$looks-light-transparent`), while inactive state has a white background - a contrast that works in grayscale.\n",
+    "stderr_tail": "-info.css\u001b[90m [limit=15, offset=55]\u001b[0m\n\u001b[0m→ \u001b[0mRead src/components/direction-picker/direction-picker.css\n\u001b[0m→ \u001b[0mRead src/components/stage-header/stage-header.css\u001b[90m [limit=25, offset=49]\u001b[0m\n"
   }
 }
