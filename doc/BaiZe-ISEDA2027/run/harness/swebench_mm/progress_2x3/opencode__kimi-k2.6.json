@@ -4827,9 +4827,15 @@
   "highlightjs__highlight.js-2726": {
     "instance_id": "highlightjs__highlight.js-2726",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 514.5,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "empty_patch",
+    "stderr_tail": "\u001b[0m\n> build · kimi-k2.6-cloud\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2727": {
     "instance_id": "highlightjs__highlight.js-2727",

@@ -5614,9 +5614,16 @@
   "openlayers__openlayers-12962": {
     "instance_id": "openlayers__openlayers-12962",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 366.9,
+    "rc": 0,
+    "model_patch_len": 1498,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ck passed (no new errors in modified files).\\n- The fix follows the established project pattern used by `VectorLayer` since v6.8.0.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-12965": {
     "instance_id": "openlayers__openlayers-12965",
