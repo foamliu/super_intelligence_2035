@@ -5855,23 +5855,43 @@
   "openlayers__openlayers-13648": {
     "instance_id": "openlayers__openlayers-13648",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.1,
+    "rc": -1,
+    "model_patch_len": 1491,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-13654": {
     "instance_id": "openlayers__openlayers-13654",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 808.9,
+    "rc": 0,
+    "model_patch_len": 13252,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " Renders them into a canvas via affine triangle-by-triangle drawing\n4. The WebGL renderer uploads this canvas as a WebGL texture\n\nThis is the same approach used by `TileImageSource` for canvas tiles.\n",
+    "stderr_tail": "tImage() to DataTile for reprojection canvas rendering\n[✓] Add reprojection support to DataTileSource (getTile, getTileGridForProjection, caches, etc.)\n[✓] Verify the fix compiles and tests pass\n\u001b[0m\n"
   },
   "openlayers__openlayers-13669": {
     "instance_id": "openlayers__openlayers-13669",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 155.8,
+    "rc": 0,
+    "model_patch_len": 617,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": ".\n\nThe condition now reads: if the values are not strictly equal AND they aren't both NaN, then the pixel is opaque. Otherwise (values match, including NaN matching NaN), the pixel stays transparent.\n",
+    "stderr_tail": "ometry'.\n\n\u001b[7m1088\u001b[0m    * @param {import(\"../Feature.js\").default<Geometry>} feature The feature.\n\u001b[7m    \u001b[0m \u001b[91m                                             ~~~~~~~~\u001b[0m\n\n\nFound 84 errors.\n\u001b[0m\n"
   },
   "openlayers__openlayers-13823": {
     "instance_id": "openlayers__openlayers-13823",
