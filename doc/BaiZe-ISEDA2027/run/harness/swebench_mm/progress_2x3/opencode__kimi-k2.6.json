@@ -4813,9 +4813,16 @@
   "highlightjs__highlight.js-2704": {
     "instance_id": "highlightjs__highlight.js-2704",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 166.4,
+    "rc": 0,
+    "model_patch_len": 528,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ".\n\n### Test\nAdded a new test case in `test/markup/fsharp/operators.txt` (and `.expect.txt`) using the exact code from the issue to prevent regression.\n\nAll 272 markup tests and 186 detect tests pass.\n",
+    "stderr_tail": " vhdl\n    ✓ should be detected as vim\n    ✓ should be detected as x86asm\n    ✓ should be detected as xl\n    ✓ should be detected as xquery\n    ✓ should be detected as zephir\n\n\n  186 passing (5s)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2726": {
     "instance_id": "highlightjs__highlight.js-2726",
