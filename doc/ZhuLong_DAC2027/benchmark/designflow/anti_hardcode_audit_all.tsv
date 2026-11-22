@@ -24,7 +24,7 @@ D	EDA-Eval-DesignFlow-BitlinePrechargeRootCauseQA-001	13	n	y	PASS	PASS	FAIL(静�
 D	BlClampRailDiagQA-001	12	n/a	n/a	n/a	n/a	n/a	MISSING	check.py 缺失，先补 check.py 再审
 D	EDA-Eval-DesignFlow-BlConnEquivCheck-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-BsmFailAnalyzer-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
-D	EDA-Eval-DesignFlow-BtopPoststressJobs-001	12	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
+D	EDA-Eval-DesignFlow-BtopPoststressJobs-001	15	y	n	FAIL	FAIL	FAIL(A'交叉)	PASS	r1095 修复: 嵌入 A-prime fixture(111/222, JOBID/bank/corner/PVT 全异于 A 与 B) + 独立 oracle _gold_poststress001(regex) 实时算 gold + m/n A'交叉校验 + o B-diff 守卫; hardcode_b stub B-side PASS 但 A' FAIL(m); §4.9 三假 empty->b/print_only->g/core_deleted->f + hardcode_b->m, 4 distinct; 自验 ref PASS + 7 neg ALL FAIL
 D	EDA-Eval-DesignFlow-BufPFFlatGen-001	16	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-CABufDiffPairOPCheck-001	14	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
 D	EDA-Eval-DesignFlow-CTLEAcMetric-001	15	n	y	PASS	PASS	FAIL(静态)	GAP	补 A-gold 交叉校验：嵌入 A fixture(base64)，check 同时在 A 上跑候选并断言 A-gold，击穿 B-only 硬编码 stub
