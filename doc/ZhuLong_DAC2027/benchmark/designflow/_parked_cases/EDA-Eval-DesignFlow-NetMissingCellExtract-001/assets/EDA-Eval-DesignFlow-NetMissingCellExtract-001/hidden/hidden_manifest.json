@@ -1,0 +1,10 @@
+{
+  "case_id": "EDA-Eval-DesignFlow-NetMissingCellExtract-001",
+  "group": "B",
+  "hidden": true,
+  "files": {
+    "netlist": "netlist_b.v",
+    "simlib": "simlib_b.sv"
+  },
+  "note": "Hidden grading inputs; cell/module names disjoint from sample_a. Injected into SUT sandbox at grade time, NOT shipped in submit.zip."
+}
