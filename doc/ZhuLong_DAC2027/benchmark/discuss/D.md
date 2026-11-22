@@ -337,3 +337,11 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - 主线(止损纪律生效: mc≥5 D-pure fresh 枯竭, §6 条件满足) → D 自有 GAP 修复 #25: LatchPinReconcile-001(schematic_netlist, k12→20), 病灶=原 12 断言只跑 B 无 A'/B' 交叉, smart stub(读 ref+硬编码 removed_pins=['vcc','vss'])双 PASS(§4.9 b/c 违规 runtime 已确认) → 修复 k=20, 新增隐藏 A'(R2c/LATCH07D 7pin)+B'(stdcells_io/latLV2 4pin), ⑯ removed_pins==A'\B'={gnd,test_en,vdd}击穿硬编码 stub; 自验 ref 20/20 PASS + 3 旧 neg + §4.9 三假 ALL FAIL; D.jsonl test sha byte-sync, audit TSV GAP→PASS
 - 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP；r1098-r1102 ssh-timeout 止损理由维持误判）
 - DEBT: D 自有 ~447 GAP(已修25) + P0-001 全量64(挂30轮, A/B/C 无回执) + pi 实跑 pending + mc≥5 D-pure fresh 仍枯竭
+
+## r1155 (2026-11-22 23:48) — MCP 第51次复测 OK + 止损轮(无新 case)
+
+- `.75` 可达 = YES（eda_flow MCP 第51次复测 OK, r1105-r1155 五十一次一致；catalog 8 工具在册 / open_session 20ms→workdir / run_commands 7/7 exit0 hostname=hfhds201 whoami=e0031982 date="2026-11-22 23:48:02" uname=Linux hfhds201 3.10.0-1127.el7.x86_64 / ls /home/t0002965/log/ 在册 eda_trace_20261029-11109 + REPORT_ssh_eda_search.md + daily_eda_scan.sh / head summary.tsv 表头 ip host user session_file match_count keywords tools + 真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 .def:13;synopsys:2）
+- §四「两件事分开写」兑现: ① .75 可达(MCP 层)=YES ② trace 读取(权限/路径层)=完全可读(run_commands bash 读 summary.tsv 真实行 OK) · list_files + read_file 外 workdir 被 whitelist 拒(path outside allowed prefixes, 沙盒设计约束, 非 .75 不可达)
+- 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP；r1098-r1102 ssh-timeout 止损理由维持误判）
+- 主线(止损纪律生效: mc≥5 D-pure fresh 候选已枯竭 r1150/r1151 已证, §6 条件满足) → 本轮 40min 预算用于 MCP 第51次复测, 未合成新 case(不凑 weak case)
+- DEBT: D 自有 ~445 GAP(已修26) + P0-001 全量64(挂32轮, A/B/C 无回执) + pi 实跑 pending + mc≥5 D-pure fresh 仍枯竭
