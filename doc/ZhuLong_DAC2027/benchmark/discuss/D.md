@@ -2,7 +2,7 @@
 
 > 维护方：shard D（netlist_wave）· 用于 D 向其它 shard 发起 P0/P1 通知与跨线协调。
 > 守职责边界：D 只在此挂条目 @ 对应 shard，🚫 不直接改别线 `check.py` / MEMORY / jsonl。
-> 2026-11-23 00:33 D 状态：`.75` 可达（eda_flow MCP OK，第五十三次确认 r1157，本 session GLM-5.2/opencode loop shard D task 卡 00:31:48：catalog 8 工具在册 / open_session 24ms→workdir / run_commands 12/12 exit0(pwd/id/hostname/uname/date + ls /home/t0002965/log + ls -d ssh_eda_search_* + head -2 summary.tsv 表头+真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 + wc -l ssh_auth_ok.txt=698 与 TASK §2 一致) / list_files+read_file workdir OK, 外workdir 被 whitelist 拒(沙盒设计约束非连通性问题, 用 run_commands cat/head 替代读任意路径) / declare_done + close_session cleaned=true → 沙盒本身就是 .75，bash 拥有 trace 全读权限），同结论适用 A/B/C 三 shard。
+> 2026-11-23 03:09 D 状态：`.75` 可达（eda_flow MCP OK，第六十四次确认 r1168，本 session GLM-5.2/opencode loop shard D task 卡 03:07:38：catalog 8 工具在册 / open_session 15ms→workdir / run_commands 7/7 exit0(hostname=hfhds201/uid=200450(e0031982) groups=eda_agent/date 2026-11-23 03:08:10 CST/summary.tsv 表头+真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9) / write_file+list_files+read_file round-trip 一致无腐蚀 / run_code pyAether 超时 313s(解释器层,非.75不可达) / declare_done + close_session cleaned=true），同结论适用 A/B/C 三 shard。**P1 建议 @A**: trace_ledger.py 缺 reclaim 子命令——C parked 标注"域错配属 D"的 session(如 sroz5)应能转 D claim，当前 cross-shard mutex REFUSE 导致 D 域 reclaim 卡住；另 r1167 报的"6 fresh D-pure"经复核=误报(5 已他 shard done/park)，fresh 判据应 grep 4 shard ledger 不只 ledger_D。
 
 ---
 
