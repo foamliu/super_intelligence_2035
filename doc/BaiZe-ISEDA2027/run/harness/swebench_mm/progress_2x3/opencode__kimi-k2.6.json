@@ -3735,37 +3735,72 @@
   "carbon-design-system__carbon-6442": {
     "instance_id": "carbon-design-system__carbon-6442",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 506.5,
+    "rc": 0,
+    "model_patch_len": 5390,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "d `CodeSnippet` for their `light` variants. The light variant makes the ContentSwitcher buttons visually distinct when placed on `$ui-01` backgrounds by using `$ui-02` as the button background color.\n",
+    "stderr_tail": "light` prop in ContentSwitcher-test.js\n[✓] Add `light` knob to ContentSwitcher story\n[✓] Add light variant styles to content-switcher SCSS\n[✓] Add light variant to vanilla JS config and template\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-6520": {
     "instance_id": "carbon-design-system__carbon-6520",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1716.7,
+    "rc": 0,
+    "model_patch_len": 28481,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rid>\n```\n\nOr with vanilla HTML/CSS:\n```html\n<div class=\"bx--grid bx--grid--narrow\">\n  <div class=\"bx--row\">\n    <div class=\"bx--col\">Content</div>\n  </div>\n</div>\n```\n\nAll 17 tests pass successfully.\n",
+    "stderr_tail": "ct Row component\n[✓] Add narrow tests for React Grid and Row\n[✓] Add narrow story examples to Grid-story.js\n[✓] Add narrow grid test to components grid-test.js\n[✓] Run tests and update snapshots\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-6566": {
     "instance_id": "carbon-design-system__carbon-6566",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 120.1,
+    "rc": 0,
+    "model_patch_len": 575,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "` media query block that was overriding the overflow. The pagination now keeps `overflow-x: auto` at all viewport sizes, so it will horizontally scroll whenever its content doesn't fit the container.\n",
+    "stderr_tail": "\n\u001b[0m# \u001b[0mTodos\n[✓] Find Pagination component styles and code\n[✓] Identify the root cause of overflow on smaller viewports\n[✓] Fix the overflow issue with minimal CSS changes\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-6675": {
     "instance_id": "carbon-design-system__carbon-6675",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 157.0,
+    "rc": 0,
+    "model_patch_len": 3192,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "otalItems={0}` test that previously expected `'of 1 pages'` to now expect `'of 1 page'`\n- Added two new tests to verify singular noun usage when there is only one item or one page\n\nAll 40 tests pass.\n",
+    "stderr_tail": "es: 1 passed, 1 total\nTests:       40 passed, 40 total\nSnapshots:   0 total\nTime:        19.63 s\nRan all test suites matching /packages\\/react\\/src\\/components\\/Pagination\\/Pagination-test.js/i.\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-6691": {
     "instance_id": "carbon-design-system__carbon-6691",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 211.1,
+    "rc": 0,
+    "model_patch_len": 1090,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "gendText`\n\nBoth the `FormGroup` tests and the `PublicAPI` snapshot test pass successfully. You can now pass a `<Tooltip>` or any other React node to `legendText` without getting a prop-types warning.\n",
+    "stderr_tail": "ith a semver change (23179 ms)\n\nTest Suites: 1 passed, 1 total\nTests:       1 passed, 1 total\nSnapshots:   1 passed, 1 total\nTime:        24.452 s\nRan all test suites matching /PublicAPI-test/i.\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-6726": {
     "instance_id": "carbon-design-system__carbon-6726",
