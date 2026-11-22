@@ -11,6 +11,16 @@ WAITING: 0
 
 > 🟢 **心跳 · 2026-11-22 (R165) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R165 刷新点（iter 进度同步）：v3 报告全文 iter 280.7k→280.9k / 40.1% / step 7.2s→7.22s（pretrain #2944，eval idle，daemon 等 282k ckpt ETA~10:34）/ 350k ETA 5.8天（~11-28不变）/ 700k ETA 35.0天（~12-26不变）/ 280k eval ✅ DONE（07:57:38，Avg=58.38%）/ backlog 全清（270k-280k 6 ckpt ✅）/ header+R165 note+gantt+risk#7+G5+footer 同步更新。git fetch无新令（所有用户令已交付）。数据侧无新变化：PC-1~PC-5全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load=27✅<120 / /nas_user 42T✅>5T红线。MEMORY_DATA ~35KB✅<40KB / TASK 37.8KB✅<40KB。WAITING=0**。
 
+> 🟢 **心跳 · 2026-11-22 (R169) — 🔴 ops 新令：重写 S1/S2 报告出 v4（≤15KB，补方案 F）· 已提交 git**：用户判定 **v3 §0「S2 零重叠方案」存在框架性遗漏**——六方案 A~F 全部隐含「S2 必须另起新 run」这个未经检验的前提，从未考察「**同一 run 内切换配比**」。**正式令见 `BAIZE_DATA_TASK.md` 顶部「🔴🔴 用户令 · 2026-11-22 10:0x」**（已 commit push，不会再丢）。
+> - **交付**：`run/reports/report_s1s2_split_data_v4_zh.html`（新建，不覆盖 v3）｜**硬上限 ≤ 15 KB**（v3 = 57,681B，须压 74%）。
+> - **必改 1（核心）**：新增**方案 F = 同一 run 内切换配比**；核查 Megatron `GPTDataset` 能否热更新 blend 权重 / 重启 dataloader 时能否保留 `shuffle_index` 与 `sample_idx` 游标。**若可行 ⇒ 天然零重叠，F 列首选，D+E 降 fallback**（即 D+E 的 ~12% 重叠是**不必要的妥协**）。🔴 **判定必须落到具体文件+行号**（`build_train_valid_test_data_iterators` / `BlendedDataset` / `shuffle_index` 实现位置），不许只写可行/不可行。
+> - **必改 2（重要）**：v3 §0.1「不换种子 ⇒ 83-100% 重叠」**只在「重开 run」前提下成立**，v4 必须加限定条件。
+> - **必补 3**：S1→S2 的 **WSD 学习率接力 / optimizer state 是否延续 / 是否重新 warmup**——v3 一字未提，但**比数据重叠更影响最终指标**。
+> - **诚实性**：D+E「~12% 可接受」v3 无量化证据 ⇒ v4 要么给证据，要么明写「未量化，属假设」。
+> - 📌 **【ops 代写交接声明】**：本令由 **ops（外部 assistant）代写下发**，非 data 自主产出；**原文以 `BAIZE_DATA_TASK.md` 为准**。
+> - 🔴 **本节不得被整段删除或覆盖**；因体积压缩时只能降级为 1 行指针，且保留「v4 路径 / ≤15KB / 方案 F / 首屏口径」四锚点。
+> - 收尾：`git add -- run/reports/report_s1s2_split_data_v4_zh.html run/MEMORY_DATA.md` → commit `data report:` → push；**v3 保留不删**。WAITING=0。
+
 > 🟢 **心跳 · 2026-11-22 (R164) — v3 报告 R164 刷新（280k eval ✅ DONE）：SSH .29 确认 280k eval 于 07:57:38 完成（Avg=58.38%，daemon idle 等 282k ckpt ETA~10:30），iter=280700/700k(40.1%)；v3 报告刷新 R158→R164（iter 280.2k→280.7k / 40.03%→40.1% / step 7.19s→7.2s post-eval / 280k eval ✅ DONE / 350k~11-28 700k~12-26 不变）；git fetch 无新 data 令（所有用户令已交付）；数据侧无新变化：PC-1~PC-5 全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load=27✅<120 / .29 load=26✅ / /nas_user 42T✅>5T红线。MEMORY_DATA ~34KB✅<40KB / TASK 37.8KB✅<40KB。WAITING=0**。
 
 > 🟢 **心跳 · 2026-11-22 (R163) — 例行巡检（无新令）：git fetch origin 无新 data 令（所有用户令已交付，origin/main=433a18bad5 harness R2884）；pretrain #2941(07:46)报 iter=280600/700k(40.09%) step during-eval avg7261ms(n=10,0/10>7.4s✅) loss~2.008-2.019 0NaN/0skip✅ / latest ckpt=280k eval RUNNING(lm_eval PID2868882,~69min since06:37:18,phase[5/6],ETA~07:57,eval未拖训练Δ≈+0.06s✅) / .29 load=29.29✅ / 350k ETA≈5.6天(~11-28不变) / 700k ETA≈33.5天(~12-26不变）；v3 报告(R158)iter=280.2k 与当前 280.6k 偏差 ~0.4k(~50min)不刷新（ETA日期不变,280k eval仍在跑待完成后再刷新）；数据侧无新变化：PC-1~PC-5 全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务（无pc2/tokenize/blend/contam进程）/ .12 load=25.78✅<120 / /nas_user 42T✅>5T红线。MEMORY_DATA ~33KB✅<40KB / TASK 37.8KB✅<40KB。WAITING=0**。

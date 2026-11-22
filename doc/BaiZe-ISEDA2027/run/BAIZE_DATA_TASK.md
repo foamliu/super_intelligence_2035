@@ -1,43 +1,79 @@
-﻿# BAIZE_DATA_TASK.md
+# BAIZE_DATA_TASK.md
 
-> 🔴 **用户令 · 2026-11-19 16:0x — 刷新 S1/S2 报告出 v3（最高优先）**
+> 🔴🔴 **用户令 · 2026-11-22 10:0x — 重写 S1/S2 报告出 v4：补「同一 run 内切换配比」方案 + 大幅精简（最高优先）**
 
-> **用户原话**：「请 data 刷新 report_s1s2_split_data_v2_zh.html，得到 report_s1s2_split_data_v3_zh.html」
+> **用户原话**：「report_s1s2_split_data_v3_zh.html 【S2 零重叠方案】没有考虑在同一个 run 中切换配比这个选项。把这个问题下发给 data，让它重写 report_s1s2_split_data_v3_zh.html，输出 report_s1s2_split_data_v4_zh.html（中文HTML）。篇幅需要大幅简化（<=15KB，现在是 57KB），把主要问题说清楚。」
 
-**任务**：基于 `run/reports/report_s1s2_split_data_v2_zh.html` 刷新一版 **v3**，落盘为 `run/reports/report_s1s2_split_data_v3_zh.html`（原地新增文件，不覆盖 v2）。
+**交付**：`run/reports/report_s1s2_split_data_v4_zh.html`（**新建，不覆盖 v3**）。
+**硬体积上限：≤ 15 KB**（当前 v3 = 57,681 B，须压缩约 74%）。超限即不合格。
 
-**刷新重点**（把最近一周数据侧的实际进展与决策同步进去，别再引用旧数字）：
-1. **前置工作实测状态**：PC-1（L4 过滤 430.7B/90.5%）✅、PC-2（MegaMath 5 子集 364 shard 分词）✅、PC-3（污染闸门 9277 tasks）✅、PC-4（`blend_s2_preblend.tsv` 10 源 web40/code40/math20 含 finemath）✅、PC-5（MegaMath-web 下载→分词，进度以实盘为准）+ Nemotron-CC-Math 分词进度。
-2. **S2 零重叠方案**：把 `report_s2_data_overlap_study.md` 的结论同步进来（当前 blend 不排除 S1 已训数据、同种子重叠 83-100%、推荐方案 D+E：补新源天然零重叠 + S2 换 SEED=5678）。
-3. **切换点/时间线**：350k 切换点 ~11-26、700k 终点 ~12-25、前置关键路径已就绪（PC-1~PC-4 完成，仅剩 Nemotron 分词长尾）。
-4. **数据源引用**：与论文 alignment——Nemotron-CC-Math（arXiv 2508.15096 / ICLR 2026）、MegaMath（arXiv 2504.02807）、stack-v3、finemath 等带引用的口径写清。
-5. **报告规范照旧**：中文 HTML、单文件自包含、内联 CSS、0 外链 0 script、离线可开。
-6. 完成后 `git add` → commit `data report:` → push；心跳第一行写「v3 报告路径 + 主要刷新点」。（v2 保留不删）
+#### 一、必须修正的核心缺陷：v3 漏掉了「同一 run 内切换配比」
+
+**v3 §0 的六方案（A~F）全部隐含同一个未经检验的前提：「S2 必须另起一个新 run」。**
+在这个框架内讨论「如何降低重开 run 后的重叠」，却从未先问「为什么要重开 run」。这是框架性遗漏，不是措辞问题。
+
+**v4 必须新增方案 F 并重新排序**：
+
+- **F = 同一 run 内切换配比**：前 350k 用 S1 blend，之后在同一 run 内切到 S2 blend。
+- **必须先核查的技术前提（写成明确结论，不许含糊）**：
+  1. Megatron `GPTDataset` 能否在训练中**热更新 blend 权重**？还是必须重启 dataloader？
+  2. 若必须重启 dataloader，重启时能否**保留 `shuffle_index` 与 `sample_idx` 游标**？
+  3. 若 (1) 或 (2) 有一个可行 ⇒ **天然零重叠**（游标沿同一排列延续，不会回头重读）。
+  - 🔴 **证据要求**：上述三条判定必须落到**具体文件 + 行号**（如 Megatron 源码里 `build_train_valid_test_data_iterators` / `BlendedDataset` / `shuffle_index` 的实现位置），**不许只写「可行/不可行」而无出处**。
+- **评估维度补全（v3 完全缺失）**：optimizer state 是否延续、**WSD 学习率调度如何接力**、是否重新 warmup、论文能否声称「单次 700k 连续训练」。
+
+#### 二、必须修正 v3 §0.1 的错误表述（重要）
+
+v3 原文：「S2 如果使用与 S1 相同的 7 个数据源且不修改随机种子，则 S2 将以 ~83-100% 的概率重复采样 S1 已看过的文档」。
+
+**该结论只在「重开 run」前提下成立**。v4 必须加上这个限定条件，否则读者会误以为它是普适结论。
+同一 run 内切换时，游标从 K 继续前移，读到 `shuffle_index[K:]` ⇒ **本身零重叠**。这意味着 **D+E 的 ~12% 重叠可能是不必要的妥协**（把本可 0% 的重叠抬到 12%）。这一判断 v4 必须显式给出。
+
+#### 三、必须补的关键遗漏：S1→S2 的 LR / optimizer 接力
+
+无论最终选哪条路线，v4 都必须写清：WSD 调度如何衔接、optimizer state 是否延续、S2 是否重新 warmup。**这比数据重叠更能影响最终指标**，v3 一字未提。
+
+#### 四、诚实性要求
+
+1. **D+E 的「~12% 重叠可接受」必须标注证据状态**——v3 给了结论但无任何量化证据。v4 要么给出证据，要么明确写「未量化，属假设」。
+2. 方案 F 若不可行，必须写清**卡在哪一步**（具体到 Megatron 的哪个模块/接口），不许写「不可行」了事。
+3. 若 F 可行 ⇒ **F 应列为首选，D+E 降为 fallback**，并说明降级理由。
+
+#### 五、篇幅与结构（≤15 KB 硬性要求）
+
+**必须删掉的内容**：
+- §2 下载优先级表（10 项，全部 ✅ 完成）→ 压成一行；
+- §3 甘特图（SVG 体积大）→ 压成 3 行文字时间线；
+- §4 逐源 Epoch 核算明细表 → 只留类别级 web/code/math 三个数；
+- §5 污染检查方案全文 → 压成 2 行；
+- §8 数据源引用清单 → 压成 3 行或删。
+
+**必须保留并突出的内容**（这是报告的「主要问题」）：
+1. **§0 零重叠方案**——含新增的 **F 方案**、修正后的六/七方案对比表、以及「是否该重开 run」这个根本问题的明确回答（**本节应是全文最长的一节**）；
+2. **S1→S2 接力方案**（LR / optimizer / 是否重开）——新增章节；
+3. **一句话结论**（首屏）——选哪条路线、为什么、剩余风险；
+4. **Go/No-Go 状态**——7 项门压成一张小表（G1~G7 各一行，只留状态与不满足时的处置）。
+
+**格式**：中文、单文件 HTML、内联 CSS、**0 外链 0 script**、离线可开。可用小表格，**不要再画甘特图/大 SVG**。
+**验收**：`(Get-Item report_..._v4_zh.html).Length -le 15360`，且 `div/table/tr/span` 标签配对、0 script、0 外链。
+
+#### 六、收尾
+
+完成后 `git add -- run/reports/report_s1s2_split_data_v4_zh.html run/MEMORY_DATA.md` → commit `data report:` → push。
+MEMORY 首行写：「**v4 报告路径 + ≤15KB + 新增方案 F（同 run 切换）+ v3 §0.1 表述已修正 + F/D+E 排序结论**」。
+**v3 保留不删**（历史留证）。
+🔴 **本节不得被整段删除或覆盖**（ops 下发，未执行完前必须保留）；因体积需压缩时只能降级为「1 行指针 + 原文归档到 ARCHIVE」，且**必须保留「v4 路径 / ≤15KB / 方案 F / 首屏口径」四个锚点**。
 
 ---
 
-> 🔴 **用户令 · 2026-11-19 13:2x — 改论文第二轮：Fig-2 饼图调优 / TABLE IV 精简 / 数据源与数据引用（最高优先）**
+> 📦 **§用户令 · 2026-11-19 16:0x（刷新 S1/S2 报告出 v3）✅ 已交付** → `run/reports/report_s1s2_split_data_v3_zh.html`（57,681B）
+> —— **但已被 2026-11-22 新令判定存在框架性缺陷（漏掉「同 run 切换配比」），需按上文 v4 令重写**；要点：PC-1~PC-5 实测状态 / S2 零重叠方案（现为 D+E）/ 切换点 350k / 数据源引用 / 中文单文件 HTML 0外链0script。原文见 git history。
 
-> **用户原话**（data 部分）：
-> ① Fig-2 三阶段饼图再调：圆饼和顶部标签有重叠；圆饼太小，直径扩到原来的 2-3 倍；图标题写太细（`blend_s2_preblend.tsv` 这种文件名不要写进图题）。
-> ② TABLE IV 的 Wall-clock 和 Status 两列删掉（尤其 Status 这种中间态不要写）。
-> ③ 数据源（如 Nemotron-CC-Math）加论文引用，可用 `research.cimi_search` web search 查。
-> ④ Decay 阶段用的 instruction-SFT / agentic-SFT 适当列一下并给引用。
-> ⑤ Long-Context Data 训练用的开源数据也列一下、给引用。
+---
 
-**论文路径**：`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex`（Fig 是 `fig:data-mix`，`figure*` 三饼图；TABLE IV 是 `tab:prod-budget`）+ `reference.bib`。
-
-**任务（逐条执行）**：
-
-1. **Fig-2 饼图调优**：
-   - ① 修 **圆饼与顶部标签重叠**：饼图标题（`\textbf{S1/S2/Decay}`）目前放在 `minipage` 顶部与饼图贴太近，需拉开间距（如调 `\\[-2pt]` 为 `\\[6pt]` 或加 `\vspace`），确保标题与圆饼不重叠。
-   - ② **圆饼尺寸扩大 2-3 倍**：TikZ 的 `scale=0.85`（或各饼的 scale）改大到 2-3 倍直径（如三饼统一 `scale=1.8` 左右，注意 `figure*` 跨双栏宽度够放三张放大饼；若放不下，可每饼 0.31linewidth 微调、或 scale 2.0 并接受换行，但**优先保证直径翻 2-3 倍**）。
-   - ③ **图题去文件名**：`\caption{...}` 里删掉 `(\texttt{blend\_s2\_preblend.tsv})` 这类实现细节/文件名（S2 category proportions follow the finalized 4:4:2 blend configuration，不再贴 tsv 文件名）；中文注释行同步。
-2. **TABLE IV 精简（`tab:prod-budget`）**：删掉 **Wall-clock** 列和 **Status** 列（表头 + 各行的值），只留 `Phase / Tokens / Steps` 三列（合计行相应精简）。删 Status 后「in progress/queued/gated」这些中间态从表中消失（正文若靠表表达进行态，改为文字说明或不提）。同步更新中文注释。
-3. **数据源加引用（Nemotron-CC-Math 等）**：用 `research.cimi_search` web search 查证下列数据源的官方出处/论文/arXiv，往 `reference.bib` 补齐 bibtex 并在正文 `\cite`，至少覆盖：**Nemotron-CC-Math**（ICLR 2026 / arXiv）、**finemath**（且确认其更正式名如 FineMath-3+/Llama-3.1、HF 与 arXiv）、**MegaMath**（arXiv 2504.02807）、**stack-v3**（HuggingFace The Stack v3）。找不到官方引用的标「未查到」并在报告里说明，不编造。
-4. **Decay 数据列引用（instruction-SFT / agentic-SFT）**：在 §Data/Decay 相关段落，把 Decay 用到的 instruction-SFT（如 UltraData-SFT-2605、OpenMathInstruct-2、NuminaMath-1.5、OpenCodeReasoning 等）与 agentic-SFT（UltraData-SFT-Agent-2609、AgentTrove 等）适当列名 + `\cite`（同样先 search 查证官方出处）。
-5. **Long-Context Data 列引用**：在 `\ref{sec:longctx-data}` 相关段落，把长上下文训练用的开源数据（如 ProLong、LongAlign、RULER、whole-books 等，以 data 线实际下载/使用的为准）列名 + `\cite`。
-6. **编译验收**：`latexmk -pdf main.tex` 0 error、0 undefined ref、无未定义 citation；`git add` 论文文件 + reference.bib → commit `data paper:` → push。心跳第一行写「fig:data-mix 饼图调优/TABLE IV 删2列/数据源+Decay+LongCtx 引用补齐 + 编译0err」。
+> 📦 **§用户令 · 2026-11-19 13:2x（改论文第二轮：Fig-2 饼图调优 / TABLE IV 精简 / 数据源与数据引用）✅ 已交付**
+> —— 覆盖 ① Fig-2 `fig:data-mix` 三饼图（去重叠 / 直径扩 2–3 倍 / 图题去文件名）② TABLE IV `tab:prod-budget` 删 Wall-clock + Status 两列 ③ Nemotron-CC-Math / finemath / MegaMath / stack-v3 补 `reference.bib` + `\\cite`（查不到标「未查到」，不编造）④ Decay instruction-SFT / agentic-SFT 列名 + 引用 ⑤ Long-Context 数据列名 + 引用 ⑥ `latexmk -pdf` 0 error / 0 undefined。
+> 论文：`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex` + `reference.bib`。**原文见 git history**。
 
 ---
 
