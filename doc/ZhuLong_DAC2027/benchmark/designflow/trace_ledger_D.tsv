@@ -2004,3 +2004,4 @@ vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:
 1788932035519_3dm7z.messages.json	junxu	hfeg0pkn005	348	schematic_netlist	case	EDA-Eval-DesignFlow-PinOrientStubFix-001	2026-11-23 05:03	
 1787809753708_1x4za.messages.json	junxu	hfeg0pkn005	379	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoCliFeedbackReport-001	2026-11-23 06:00	
 1794882398353_v97a4.messages.json	steveny	hfeg0pnd001	40	schematic_netlist	parked		2026-11-23 06:14	thin stateful task (get-current-design depends on live EDA sandbox state; not suitable for deterministic hidden-B check); suz5p chosen instead
+sroz5	junxu	virtuoso	mc1101	schematic_netlist	claimed		2026-11-23 06:30	r1180 fresh mc5-pool; feedback-report L1 candidate
