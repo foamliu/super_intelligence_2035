@@ -1415,3 +1415,4 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1792963596117_aftvk.messages.json	jieran	hfeg0plg70	1033	layout_aether	parked		2026-11-22 12:47	typo dup of 1793963596117_aftvk already case StdcellLayoutPlanGen-001; r953 fix
 1787880772534_qqw9t.messages.json	junxu	hfeg0pjn200	640	layout_virtuoso	case	EDA-Eval-DesignFlow-SchCheckOverlapAudit-001	2026-11-22 13:28	DEBT r953: deepread done, ready-synth schematic_schcheck_overlap_audit, ETA 1 round. single-shot FIFO build (1 user msg), distinct from fbz0w/sstk3
 1795056449150_uvw7l.messages.json					case	EDA-Eval-DesignFlow-PyAetherEnvAudit-001	2026-11-22 13:51	
+1789718624102_tvc27					case	EDA-Eval-DesignFlow-IddToIpfCaseInsensitiveGen-001	2026-11-22 14:18	cross-shard revival: B parked 2026-11-13 as misfiled spice_sim (B note acknowledges C physical_verify drc:98/lvs:77 dominant); C r956 revived per 11-15 rule
