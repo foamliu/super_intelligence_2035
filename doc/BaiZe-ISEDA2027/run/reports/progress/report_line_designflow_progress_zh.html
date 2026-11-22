@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>designflow 线进展报告 · EDA-Flow-Bench 评测集构建（A/B/C/D 四 shard）</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:24px;line-height:1.65;color:#222;background:#fafafa}
+h1{color:#1a1a2e;border-bottom:3px solid #d35400;padding-bottom:8px}
+h2{color:#2c3e50;margin-top:34px;border-left:4px solid #d35400;padding-left:10px}
+h3{color:#34495e;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid #bbb;padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#e8e8e8;font-weight:600}
+tr:nth-child(even){background:#f5f5f5}
+.warn{background:#fff3cd;border:1px solid #ffe08a;padding:12px 16px;border-radius:6px;margin:12px 0}
+.danger{background:#f8d7da;border:1px solid #f5c6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+.ok{background:#d4edda;border:1px solid #c3e6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+.info{background:#d1ecf1;border:1px solid #bee5eb;padding:12px 16px;border-radius:6px;margin:12px 0}
+code{background:#eef;padding:1px 4px;border-radius:3px;font-size:13px}
+.summary-box{background:#fff;border:2px solid #333;border-radius:8px;padding:16px 20px;margin:16px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600}
+.tag-ok{background:#d4edda;color:#155724}
+.tag-warn{background:#fff3cd;color:#856404}
+.tag-bad{background:#f8d7da;color:#721c24}
+.tag-info{background:#d1ecf1;color:#0c5460}
+.kpi{display:inline-block;min-width:160px;background:#fff;border:1px solid #ccc;border-radius:6px;padding:10px 14px;margin:6px 8px 6px 0}
+.kpi .v{font-size:22px;font-weight:700;color:#7e3f10}
+.kpi .l{font-size:12px;color:#666}
+ul{margin:6px 0}
+.foot{margin-top:40px;padding-top:12px;border-top:1px solid #ccc;font-size:12px;color:#666}
+</style>
+</head>
+<body>
+
+<h1>designflow 线进展报告</h1>
+<p>
+<strong>负责范围：</strong>构建评测集 <code>EDA-Flow-Bench</code>（Full + Lite 500），供 zhulong / vision / posttrain 消费｜
+<strong>报告时间：</strong>2026-11-22 08:30｜
+<strong>组织：</strong>4 个并行 shard（A / B / C / D）｜
+<strong>状态：</strong><span class="tag tag-ok">🟢 四 shard 持续产出</span> <span class="tag tag-bad">🔴 出过一次数据丢失（已修）</span>
+</p>
+
+<div class="summary-box">
+<h3 style="margin-top:0">一句话进展</h3>
+<p>四 shard 持续按「1-trace-1-case」原则造题，累计 <strong>A 435 / B 508 / C 580 / D 569 条</strong>（本 repo 视角 jsonl 行数）。
+本轮 A/B 各有 1 条新 case 落库（k 断言 26 / 12），D 完成第 17 条 anti-hardcode 修复。
+<strong>C 线发现并修复一次严重数据丢失</strong>：r941 commit 在 stale base 上 rebase，把 r929–r940 的 12 条 case 丢掉（568→580 回补）——
+这是本轮最需要制度化防范的问题。
+</p>
+</div>
+
+<h2>1. 四 shard 状态</h2>
+<table>
+<tr><th>shard</th><th>jsonl 行数</th><th>本轮进展</th><th>WAITING</th></tr>
+<tr><td><strong>A</strong></td><td>435</td><td>r974 新增 <code>PreEMSigDataflowTraceProduce-001</code>（verification，<strong>k = 26/26</strong>）</td><td>0</td></tr>
+<tr><td><strong>B</strong></td><td>508</td><td>r1004 新增 <code>Dvohdv2ZqRefFix-001</code>（spice_sim，<strong>k = 12</strong>，ref PASS + 3 负例 FAIL + 3 seed 确定性）</td><td>0</td></tr>
+<tr><td><strong>C</strong></td><td>580</td><td>r942 <strong>数据丢失修复</strong>（0 新 case）；r941 新增 <code>PexSpDeckGen-001</code>（physical_verify，k = 15）</td><td>0</td></tr>
+<tr><td><strong>D</strong></td><td>569</td><td>r1095 anti-hardcode 修复第 17 条 <code>BtopPoststressJobs-001</code>（k 12→15）；.75 不可达 → 止损转修</td><td>0</td></tr>
+</table>
+
+<h2>2. 评测集结构（论文口径）</h2>
+<table>
+<tr><th>层级</th><th>规模</th><th>用途</th></tr>
+<tr><td><strong>Full</strong></td><td><code>several thousand</code>（正文只写定性）</td><td>全量池，持续增长</td></tr>
+<tr><td><strong>Lite</strong></td><td><strong>500</strong>（严格筛选，冻结）</td><td>主评测集，受限 token / 时间预算下的通用评测</td></tr>
+</table>
+<p><strong>Lite 筛选四原则：</strong>① 覆盖全部 13 个 domain（verification 最易、digital 最难，分层不能全挑易题）；
+② 按链长 / 工具链深度分层（grounding depth 是论文核心自变量）；
+③ <strong>保留必须看图 / 多模态的题</strong>（不因被测系统做不了而降级或剔除）；
+④ 可复跑（<code>assets/</code> 齐备、<code>check.py</code> 可离线执行、无外网依赖）。</p>
+
+</table>
+
+<h2>3. 造题红线（用户 2026-11-14 令，凌驾于「好造」之上）</h2>
+<div class="danger">
+<ol>
+<li><strong>用例形态 = 合格 DE 的工作形态</strong>：DE 要看波形图、看眼图、看边沿，agent 也一样；🚫 不得把「看图」改成「读 .rep / CSV / Tcl」。</li>
+<li><strong>自检一问</strong>：「一个不会看波形的 DE，能不能靠纯文本做对？」答案是「能」⇒ 题被降级了，改回去。</li>
+<li>🚫 禁止：拆子步骤给提示、放宽阈值、把视觉要求改成数值要求、因为某系统 fail 就删题。</li>
+<li>✅ 唯一允许的帮助是<strong>环境层面</strong>（真实 FSDB 导出成可离线复跑样本、GUI 操作截图化），且不得让「不看图也能做对」。</li>
+</ol>
+</div>
+
+<h2>4. 单题质量标准（每 case 必过）</h2>
+<table>
+<tr><th>项</th><th>标准</th></tr>
+<tr><td>来源可追</td><td>每个用例可追到<strong>一条真实会话 trace</strong>（长鑫 PDC / TYA 上线后的烛龙真实 trace）</td></tr>
+<tr><td>1-trace-1-case</td><td>互斥，防一料多题重复计分</td></tr>
+<tr><td>断言数</td><td><code>check.py</code> ≥ 8 条独立断言</td></tr>
+<tr><td>hidden-B</td><td>用 <strong>hidden B</strong>（而非 A）判分，防硬编码</td></tr>
+<tr><td>负例自测</td><td>提供多个负例解，须全部 FAIL 且命中不同断言</td></tr>
+<tr><td>确定性</td><td>重跑 byte-identical</td></tr>
+<tr><td>§4.9 三假</td><td>三种伪造解全部 FAIL</td></tr>
+
+<h2>5. 🔴 卡点</h2>
+
+<div class="danger">
+<strong>卡点 1（最严重）：C 线数据丢失事件 —— stale-base rebase 静默删行</strong>
+<table>
+<tr><th>项</th><th>事实</th></tr>
+<tr><td>现象</td><td><code>origin/master</code> 上 <code>C.jsonl</code> 从 <strong>579 → 568 行</strong>，丢了 <strong>12 条 case</strong></td></tr>
+<tr><td>根因</td><td>r941 commit 在 <strong>stale base</strong>（567 cases，截止 r928 <code>WireWidthSpaceRuler</code>）上构建，rebase 时把 r929–r940 的 12 条 case 覆盖掉</td></tr>
+<tr><td>处置</td><td>r942 已恢复（568 → <strong>580</strong>），并修掉 <code>PexSpDeckGen-001</code> 的 <code>id:null</code></td></tr>
+<tr><td>性质</td><td><strong>agent 侧 git 操作静默覆盖上游内容</strong>——与 vision 线「TASK 被 auto-commit 删 52 行」是同一类故障</td></tr>
+</table>
+<p><strong>建议制度化护栏：</strong>commit 后强制比对 <code>wc -l</code> 与父 commit 行数，<strong>删除行 &gt; 0 即阻断 push</strong>；
+共享仓提交必须 <code>git fetch</code> → 基于最新 base 重建 → 再 push。</p>
+</div>
+
+<div class="warn">
+<strong>卡点 2：D 线 <code>.75</code> 不可达，无法深读新 trace</strong>
+<p><code>ssh 10.129.32.75</code> / <code>hfhds201</code> 均 timeout；<code>eda_flow open_session</code> 需要 eval-driver 的
+<code>task_id</code> / <code>eval_id</code>（非本 agent session 可得），且无本地 <code>messages.json</code> 缓存
+⇒ 无法取新候选。<strong>当前按 §6 止损策略转做「不依赖新候选的产出」</strong>（anti-hardcode 普查 + 存量 GAP 修复），已修 17 条。</p>
+</div>
+
+<div class="warn">
+<strong>卡点 3：near-dup 消耗产出轮次</strong>
+<p>B 线 r999 曾遇 3 个 fresh 候选全是 near-dup（如 2vuso 已落库为 <code>SpGen-001</code>）⇒ 0-case 轮；
+r1001 已完整造题后才在落库前发现重复，<strong>revert</strong> 掉（504→504）并删本地 assets。
+说明去重检查应<strong>前移到选料阶段</strong>，而不是造完再查。</p>
+</div>
+
+<div class="info">
+<strong>可用的正规去重源（🚫 不许自建排重逻辑）</strong>
+<ul>
+<li>台账：<code>ledger_*</code> / <code>*_dedup*.tsv</code> / <code>used_sessions_*</code></li>
+<li>跨 shard 去重：<code>benchmark/designflow/all_shard_sids.txt</code> / <code>excl_4shard_v2.txt</code>（唯一去重源）</li>
+</ul>
+</div>
+
+<h2>6. 下一步计划</h2>
+<table>
+<tr><th>优先级</th><th>动作</th><th>shard</th></tr>
+<tr><td>P0</td><td>继续每轮 1 case，保持 <code>WAITING: 0</code></td><td>A / B / C / D</td></tr>
+<tr><td>P0</td><td><strong>加 commit 行数护栏</strong>：删除行 &gt; 0 即阻断；提交前 fetch 最新 base</td><td>全部</td></tr>
+<tr><td>P1</td><td>把 near-dup 检查前移到选料阶段（先查 ledger / excl 再深读 trace）</td><td>B / C / D</td></tr>
+<tr><td>P1</td><td>D 线：<code>.75</code> 可达性求运维协助，或继续存量 GAP 修复</td><td>D</td></tr>
+<tr><td>P1</td><td>Lite 500 冻结前做一次全量行数 + 去重 + 可复跑审计</td><td>全部</td></tr>
+<tr><td>P2</td><td>交付下游时给出清单：<code>case_id / domain / k 断言数 / assets / check 路径 / 台账行</code></td><td>全部</td></tr>
+</table>
+
+<h2>7. 交接约定（谁产出 → 谁消费）</h2>
+<table>
+<tr><th>下游</th><th>消费内容</th><th>硬规则</th></tr>
+<tr><td>zhulong</td><td>ICML 论文实验数字</td><td rowspan="3">下游<strong>只读引用</strong>，🚫 不改题 / <code>check.py</code> / 判分口径；<br>发现缺陷 ⇒ 记一行 + 交回 designflow；<br>上游改题/改断言 ⇒ <strong>必须通知下游重跑</strong></td></tr>
+<tr><td>vision</td><td>WaveView 子集 / §6 数字</td></tr>
+<tr><td>posttrain</td><td>L4 领域评测口径</td></tr>
+</table>
+
+<h2>8. 证据索引</h2>
+<table>
+<tr><th>产物</th><th>路径</th></tr>
+<tr><td>MEMORY（4 shard）</td><td><code>doc/ZhuLong_DAC2027/benchmark/MEMORY_DESIGNFLOW_{A,B,C,D}.md</code></td></tr>
+<tr><td>任务书</td><td><code>benchmark/BAIZE_DESIGNFLOW_BENCH_TASK{,_A,_B,_C,_D}.md</code></td></tr>
+<tr><td>每日记忆</td><td><code>benchmark/daily-memories-designflow/daily_{A,B,C,D}_2026-11-22.md</code></td></tr>
+<tr><td>去重源</td><td><code>benchmark/designflow/all_shard_sids.txt</code> / <code>excl_4shard_v2.txt</code></td></tr>
+<tr><td>台账</td><td><code>benchmark/designflow/trace_ledger_{A,B,C,D}.tsv</code></td></tr>
+<tr><td>数据丢失修复</td><td><code>git show 675f7382bc</code>（shard C #r942，568→580）</td></tr>
+</table>
+
+<div class="foot">
+本报告由 designflow 线自述，数字取自 <code>MEMORY_DESIGNFLOW_{A,B,C,D}.md</code> 首行（r974 / r1004 / r942 / r1095，2026-11-22）与 git 记录。
+造题红线、k 断言数、hidden-B、负例自测等质量判据逐题落实；数据丢失事件如实记录并给出制度化建议。
+生成时间：2026-11-22 08:30。
+</div>
+
+</body>
+</html>

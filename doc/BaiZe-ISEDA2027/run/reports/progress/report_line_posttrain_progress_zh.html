@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>posttrain 线进展报告 · ISEDA 2027 §5 后训练</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:24px;line-height:1.65;color:#222;background:#fafafa}
+h1{color:#1a1a2e;border-bottom:3px solid #c0392b;padding-bottom:8px}
+h2{color:#2c3e50;margin-top:34px;border-left:4px solid #c0392b;padding-left:10px}
+h3{color:#34495e;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid #bbb;padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#e8e8e8;font-weight:600}
+tr:nth-child(even){background:#f5f5f5}
+.warn{background:#fff3cd;border:1px solid #ffe08a;padding:12px 16px;border-radius:6px;margin:12px 0}
+.danger{background:#f8d7da;border:1px solid #f5c6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+.ok{background:#d4edda;border:1px solid #c3e6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+.info{background:#d1ecf1;border:1px solid #bee5eb;padding:12px 16px;border-radius:6px;margin:12px 0}
+code{background:#eef;padding:1px 4px;border-radius:3px;font-size:13px}
+.summary-box{background:#fff;border:2px solid #333;border-radius:8px;padding:16px 20px;margin:16px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600}
+.tag-ok{background:#d4edda;color:#155724}
+.tag-warn{background:#fff3cd;color:#856404}
+.tag-bad{background:#f8d7da;color:#721c24}
+.tag-info{background:#d1ecf1;color:#0c5460}
+.kpi{display:inline-block;min-width:160px;background:#fff;border:1px solid #ccc;border-radius:6px;padding:10px 14px;margin:6px 8px 6px 0}
+.kpi .v{font-size:22px;font-weight:700;color:#8e2b20}
+.kpi .l{font-size:12px;color:#666}
+ul{margin:6px 0}
+.foot{margin-top:40px;padding-top:12px;border-top:1px solid #ccc;font-size:12px;color:#666}
+</style>
+</head>
+<body>
+
+<h1>posttrain 线进展报告</h1>
+<p>
+<strong>负责范围：</strong>ISEDA 2027 第 (ii) 阶段 · 后训练（<code>ISEDA2027/5_llm_posttrain.tex</code>）｜
+<strong>报告时间：</strong>2026-11-22 08:30｜
+<strong>机器：</strong><code>10.252.32.17</code> GPU 4-5｜
+<strong>状态：</strong><span class="tag tag-ok">🟢 基线闭环中</span> <span class="tag tag-bad">🔴 SFT 显著退化</span>
+</p>
+
+<div class="summary-box">
+<h3 style="margin-top:0">一句话进展</h3>
+<p>按「baseline 先做扎实」的预注册协议，已完成 <strong>五道验收（B1–B5）全过</strong>；
+<strong>A0（MiniCPM5-2B 原模型）5-run = 43.29% ± 3.92%</strong> 干净基线落定。
+但 <strong>A1（SFT v39 step105）run1 仅 6.96%</strong>，相对 base <strong>Δ ≈ −36pp</strong>——
+<strong>SFT 造成显著退化</strong>（退化循环：88/158 题 fail-to-generate）。
+这是本次最重要的科学发现，将作为负结果如实写入论文，并直接改变后续方法路线。
+</p>
+
+<h2>1. 关键数字</h2>
+<div>
+<span class="kpi"><div class="v">43.29% ± 3.92%</div><div class="l">A0 base · 5-run Pass@1（158 题）</div></span>
+<span class="kpi"><div class="v">6.96%</div><div class="l">A1 SFT · run1（11/158）</div></span>
+<span class="kpi"><div class="v">−36 pp</div><div class="l">SFT 相对 base 的增量（退化）</div></span>
+<span class="kpi"><div class="v">5 / 5</div><div class="l">验收项 B1–B5 全过</div></span>
+</div>
+
+<h2>2. 两臂对照（口径严格对齐 · .17 口径）</h2>
+<table>
+<tr><th>项</th><th>A0（base）</th><th>A1（SFT v39 step105）</th></tr>
+<tr><td>基座</td><td>MiniCPM5-2B 原模型</td><td>SFT checkpoint <code>global_step_105</code></td></tr>
+<tr><td>served-model-name</td><td><code>minicpm5-2b</code>（:8098）</td><td><code>minicpm5-2b-sft-v39-final</code>（:8096）</td></tr>
+<tr><td>RAG / 沙盒 MCP</td><td>无 / 无</td><td>无 / 无</td></tr>
+<tr><td>量尺</td><td colspan="2">修复后口径（recovered / ws+no-ws fallback）</td></tr>
+<tr><td>协议</td><td colspan="2">EDA-Eval-PyAether <strong>158 题</strong> · Pass@1 · 2500s/题 · 单 trace · <code>-p 8 -n</code></td></tr>
+<tr><td>run 数</td><td><strong>5 / 5 ✅</strong></td><td>1 / 5（run2 进行中）</td></tr>
+<tr><td><strong>Pass@1</strong></td><td><strong>43.29% ± 3.92%</strong><br>[43.67, 45.57, 48.10, 41.14, 37.97]</td><td><strong>6.96%</strong>（11/158）</td></tr>
+<tr><td>失败结构</td><td>pass_all 25 / partial 82 / fail_all 51</td><td>88/158 fail-to-generate（退化循环）</td></tr>
+</table>
+
+<div class="danger">
+<strong>🔴 核心负结果：SFT 显著退化（Δ ≈ −36pp）</strong>
+<p><strong>现象：</strong>A1 run1 Pass@1 = 6.96%，generated 53 / fail 88 / exec_err 0（真实结果，非 0%-bug）。</p>
+<p><strong>成因（已定位）：退化循环</strong>——模型反复输出「I finished」等收尾语而不产代码，88/158 题 fail-to-generate。
+run2 已复现同型现象（83/158 处理完但仅 37 个 <code>.py</code> 实产，success 64 vs .py 37 的落差与 run1 一致）。</p>
+<p><strong>不是 infra 问题：</strong>B1 身份四证一致（<code>curl :8096</code> id = <code>minicpm5-2b-sft-v39-final</code>）、
+judge 确定性 sd=0、量尺已修复、GPU 合规。⇒ <strong>这是模型行为层面的真实退化</strong>。</p>
+<p><strong>论文处理：</strong>作为负结果如实写入 §5，并据此修正方法路线：<span class="tag tag-bad">不再直接采用该 SFT 初值</span>。</p>
+</div>
+
+</div>
+
+
+<h2>3. A0 逐题画像（B5 · 用于论文失败模式分析）</h2>
+<table>
+<tr><th>指标</th><th>值</th></tr>
+<tr><td>pass 分布（0/5 → 5/5）</td><td>0/5 = 51 · 1/5 = 17 · 2/5 = 19 · 3/5 = 22 · 4/5 = 24 · 5/5 = 25</td></tr>
+<tr><td>主导失败模式</td><td><strong>F5_logic = 51</strong> · F1_no_code = 36 · F4_api = 31 · F3_timeout = 13 · F2_tool = 2</td></tr>
+<tr><td>四指标</td><td>agent_loop_entry 93.67% · tool_call_mean 32.34 · error 0.74% · rag_queried 100%</td></tr>
+</table>
+<div class="info">
+<strong>洞察（可直接进论文）：</strong>主导失败是 <strong>F5_logic（逻辑错误）51 题</strong>，而非工具 / API 问题。
+说明 2B 模型在 EDA 脚本任务上的瓶颈是<strong>「想错」而非「摸不到工具」</strong>——这为「后训练应投入逻辑 / 推理监督而非更多工具使用示例」提供直接依据。
+</div>
+
+<h2>4. 五道预注册验收（先定后测 · 全过）</h2>
+<table>
+<tr><th>编号</th><th>内容</th><th>结果</th></tr>
+<tr><td>B1</td><td>身份四证：requested == served == ckpt 一致</td><td><span class="tag tag-ok">✅ PASS</span>（两臂均 PASS）</td></tr>
+<tr><td>B2</td><td>量尺差值写进报告（已知 bug 偏差可达 +15pp）</td><td><span class="tag tag-ok">✅ 15.19pp，源头已修</span></td></tr>
+<tr><td>B3</td><td>judge 确定性（judge_sd = 0）</td><td><span class="tag tag-ok">✅ sd = 0</span></td></tr>
+<tr><td>B4</td><td>执行翻转率：10 题 × 10 次沙盒重跑</td><td><span class="tag tag-ok">✅ flip_rate = 0.0</span>（10 轮判决全一致）</td></tr>
+<tr><td>B5</td><td>逐题画像用 MiniCPM5 自己的数据重做</td><td><span class="tag tag-ok">✅ DONE</span>（不沿用 DeepSeek fail_mode）</td></tr>
+</table>
+<p>B4 的 caveat 如实记录：10 题均为快任务（0 timeout），未覆盖 timeout-prone 题的翻转。</p>
+
+<h2>5. 🔴 卡点（Blockers）</h2>
+<div class="warn">
+<strong>卡点 1：SFT 方法路线需要重定（最高优先）</strong>
+<p>SFT v39 step105 造成 −36pp 退化。在 A1 5-run 出齐之前不能排除「该 checkpoint 特有」的可能；
+但若 5-run 都稳定在 ~7% 量级，则需<strong>更换 SFT 数据配方或改走 RL 直接训练</strong>，否则 §5 只剩「SFT 有害」一个结论。</p>
+<p><strong>建议：</strong>① 先等 A1 5-run 完成（预注册判据不变）；② 同时准备对照臂：SFT 数据去掉「收尾语 / 无代码轨迹」样本，或取中间检查点（step 30 / 60）；③ RL 侧直接用 A0 base 冷启动，绕开退化 ckpt。</p>
+</div>
+<div class="warn">
+<strong>卡点 2：正式训练阻塞于 pretrain 收敛 ckpt</strong>
+<p>正式 SFT / RL 的基座应为 BaiZe 预训练 700k ckpt（pretrain 线 <strong>ETA ≈ 2026-12-26</strong>）。
+在此之前用 MiniCPM5-2B 做方法探索——这正是当前工作的意义：在等 ckpt 的时间里把「有效 / 无效方法」先探出来。</p>
+</div>
+<div class="info">
+<strong>已知坑（常驻，避免复发）</strong>
+<ul>
+<li><code>final_report.model_name = zhulong_deepseek_v32</code> 是 <code>config.yaml</code> 陈旧标签，<strong>非实际模型</strong>；权威身份 = <code>curl /v1/models</code>。</li>
+<li>verl 0.4.0 GRPO 已结论性 BLOCKED（Ray 命名 actor 死锁），已换自写单进程 GRPO loop（纯 HF + torch）。</li>
+<li>RL R2 5-run mean ≈ 0.475%，<strong>decisively 负</strong>（proxy reward 不移动 policy）——负结果保留。</li>
+<li><code>.17</code> 的 <code>run/</code> 在 NFS 上，<code>git pull --rebase --autostash</code> 会 hang；须用 temp-index 法提交。push 前必须重 fetch 防 force-push 覆盖他线。</li>
+</ul>
+</div>
+
+<h2>6. 下一步计划</h2>
+<table>
+<tr><th>优先级</th><th>动作</th><th>触发 / ETA</th></tr>
+<tr><td>P0</td><td>A1 run2–run5 串行跑完（同尺同口径）</td><td>run2 进行中（83/158 已处理）</td></tr>
+<tr><td>P0</td><td>compare-watcher 自动出 A0 vs A1 配对统计（McNemar / paired bootstrap）</td><td>A1 5-run 完成即触发</td></tr>
+<tr><td>P0</td><td>report-watcher 自动重生成里程碑报告（含 §6 SFT 增量）</td><td>同上</td></tr>
+<tr><td>P1</td><td>若 SFT 5-run 确认退化 → 起「SFT 配方对照臂」（去收尾语样本 / 中间 step）</td><td>需用户确认</td></tr>
+<tr><td>P1</td><td>RL 从 A0 base 冷启动（绕开退化 ckpt），预注册判据先写 MEMORY 再跑</td><td>SFT 结论落定后</td></tr>
+<tr><td>P2</td><td>pretrain 700k ckpt 到位后重做正式 SFT / RL</td><td>ETA ≈ 2026-12-26</td></tr>
+<tr><td>P2</td><td>§5 回填：anneal / sft / rl / <code>tab:reward</code> / <code>sec:posttrain-eval</code> 的 TBD 逐项填实</td><td>随实验推进</td></tr>
+</table>
+<div class="warn">
+<strong>⚠️ 论文口径纪律：</strong>三类数字<strong>永不混表</strong>——
+① A0 43.29%（.17 口径，无 RAG / 无 MCP）；② 旧 6.84%（36.15 口径，有 RAG / 有 MCP）；③ 更早的 3.04%（.17 旧口径）。
+跨口径比较属学术错误，必须分行并标注口径。
+</div>
+
+<h2>7. 证据索引</h2>
+<table>
+<tr><th>产物</th><th>路径</th></tr>
+<tr><td>A0 5-run 汇总</td><td><code>run/baseline_A0_base_5run_summary.json</code>（five_run_mean=0.432911 / std=0.039169 / n=5）</td></tr>
+<tr><td>A1 run1 逐题</td><td><code>run/baseline_A1_run1_pertask.json</code></td></tr>
+<tr><td>A0 逐题画像（B5）</td><td><code>run/baseline_A0_base_run1_pertask.json</code></td></tr>
+<tr><td>B4 执行确定性</td><td><code>run/baseline_B4_execution_determinism.json</code>（flip_rate=0.0）</td></tr>
+<tr><td>Stage1 审计</td><td><code>run/baseline_measurement_audit.json</code></td></tr>
+<tr><td>里程碑报告</td><td><code>run/reports/report_posttrain_baseline_nailed_zh.html</code></td></tr>
+<tr><td>MEMORY / 任务书</td><td><code>run/MEMORY_POSTTRAIN.md</code> / <code>run/BAIZE_POSTTRAIN_TASK.md</code></td></tr>
+<tr><td>每日记忆</td><td><code>run/daily-memories-posttrain/2026-11-22.md</code>（wake699–wake703）</td></tr>
+</table>
+
+<div class="foot">
+本报告由 posttrain 线自述，数字取自 <code>MEMORY_POSTTRAIN.md</code> 最新条目（wake702 / wake703，2026-11-22 07:47–08:11）与落盘 JSON。
+所有结论区分 <code>infra / harness / 能力</code> 三类；负结果照写，不事后改判据。
+生成时间：2026-11-22 08:30。
+</div>
+
+</body>
+</html>

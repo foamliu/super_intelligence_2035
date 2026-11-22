@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>harness 线进展报告 · agentic harness 横评（SWE-bench MM）</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:24px;line-height:1.65;color:#222;background:#fafafa}
+h1{color:#1a1a2e;border-bottom:3px solid #2c3e50;padding-bottom:8px}
+h2{color:#2c3e50;margin-top:34px;border-left:4px solid #2c3e50;padding-left:10px}
+h3{color:#34495e;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid #bbb;padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#e8e8e8;font-weight:600}
+tr:nth-child(even){background:#f5f5f5}
+.warn{background:#fff3cd;border:1px solid #ffe08a;padding:12px 16px;border-radius:6px;margin:12px 0}
+.danger{background:#f8d7da;border:1px solid #f5c6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+.ok{background:#d4edda;border:1px solid #c3e6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+.info{background:#d1ecf1;border:1px solid #bee5eb;padding:12px 16px;border-radius:6px;margin:12px 0}
+code{background:#eef;padding:1px 4px;border-radius:3px;font-size:13px}
+.summary-box{background:#fff;border:2px solid #333;border-radius:8px;padding:16px 20px;margin:16px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600}
+.tag-ok{background:#d4edda;color:#155724}
+.tag-warn{background:#fff3cd;color:#856404}
+.tag-bad{background:#f8d7da;color:#721c24}
+.tag-info{background:#d1ecf1;color:#0c5460}
+.kpi{display:inline-block;min-width:160px;background:#fff;border:1px solid #ccc;border-radius:6px;padding:10px 14px;margin:6px 8px 6px 0}
+.kpi .v{font-size:22px;font-weight:700;color:#1b2631}
+.kpi .l{font-size:12px;color:#666}
+ul{margin:6px 0}
+.foot{margin-top:40px;padding-top:12px;border-top:1px solid #ccc;font-size:12px;color:#666}
+</style>
+</head>
+<body>
+
+<h1>harness 线进展报告</h1>
+<p>
+<strong>负责范围：</strong>agentic harness 横评（SWE-bench Multimodal · 6 条 CLI 路线 × 480 实例）｜
+<strong>报告时间：</strong>2026-11-22 08:30｜
+<strong>状态：</strong><span class="tag tag-ok">🟢 判据全绿</span> <span class="tag tag-warn">4 路仍在跑</span>
+</p>
+
+<div class="summary-box">
+<h3 style="margin-top:0">一句话进展</h3>
+<p>6 条 harness 路线 × 480 实例 = 2,880 任务的 retry pass 已跑到 <strong>has_patch = 1,910（66.3%）</strong>，
+其中两条路线已 DONE（cline×doubao 466 / oc×doubao 448），其余 4 路仍在跑（~40.8h，无 stall）。
+护栏与资源判据<strong>全部绿灯</strong>：ulimit 200GiB 四路 HARD VERIFIED、guard 零越界 40.8h、
+mem 1,289G、load 24.21，且 pretrain 训练未被拖慢（7.24s）。
+</p>
+</div>
+
+<h2>1. 关键指标（监控轮 #77 · R2885）</h2>
+<div>
+<span class="kpi"><div class="v">1,910 / 2,880</div><div class="l">has_patch（66.3%）</div></span>
+<span class="kpi"><div class="v">2 / 6</div><div class="l">路线已 DONE</div></span>
+<span class="kpi"><div class="v">40.8 h</div><div class="l">guard 零越界时长</div></span>
+<span class="kpi"><div class="v">7.24 s</div><div class="l">pretrain step（未被拖慢）</div></span>
+</div>
+
+<h2>2. 六条路线进度</h2>
+<table>
+<tr><th>路线</th><th>has_patch</th><th>进度</th><th>状态</th></tr>
+<tr><td>cline × doubao</td><td>466</td><td>479 rc</td><td><span class="tag tag-ok">✅ DONE</span></td></tr>
+<tr><td>oc × doubao</td><td>448</td><td>479 rc</td><td><span class="tag tag-ok">✅ DONE</span></td></tr>
+<tr><td>oc × dsh</td><td>351</td><td>369 / 480</td><td><span class="tag tag-info">RUNNING</span></td></tr>
+<tr><td>cline × dsh</td><td>267</td><td>—</td><td><span class="tag tag-info">RUNNING</span></td></tr>
+<tr><td>oc × kimi</td><td>201</td><td>218 / 480</td><td><span class="tag tag-info">RUNNING</span></td></tr>
+<tr><td>cline × kimi</td><td>177</td><td>—</td><td><span class="tag tag-info">RUNNING</span></td></tr>
+<tr><td><strong>合计</strong></td><td><strong>1,910</strong></td><td>2,880 任务</td><td>本轮 +7</td></tr>
+</table>
+
+<h2>3. 自检与护栏（6/6 绿）</h2>
+<table>
+<tr><th>检查项</th><th>实测</th><th>判定</th></tr>
+<tr><td>guard 进程</td><td>PID 931671 存活 ~40.8h（ppid 1，<strong>零越界</strong>）</td><td><span class="tag tag-ok">✅</span></td></tr>
+<tr><td>可用内存</td><td>1,289 G ≥ 512 G</td><td><span class="tag tag-ok">✅</span></td></tr>
+<tr><td>load</td><td>24.21 / 25.75 / 28.03 ≤ 120</td><td><span class="tag tag-ok">✅</span></td></tr>
+<tr><td>pretrain step</td><td>avg 7.24s（1/20 步瞬时 7.40s，非持续）</td><td><span class="tag tag-ok">✅</span></td></tr>
+<tr><td>失控进程</td><td>top = pretrain 144%（≈1.4 核），无 &gt;5000% pcpu</td><td><span class="tag tag-ok">✅</span></td></tr>
+<tr><td>docker</td><td><code>docker ps</code> 空</td><td><span class="tag tag-ok">✅</span></td></tr>
+</table>
+
+<div class="ok">
+<strong>✅ Step1 护栏 LIVE（硬验证）</strong>
+<p><code>/proc</code> ulimit <strong>200GiB</strong>，4/4 predict workers <strong>HARD VERIFIED</strong>
+（PID 2131912 / 2131930 / 2132137 / 2140501，Max address space = 214748364800 bytes）；
+<code>predict_guarded.sh</code> + OMP8 + nice19 在位；
+<code>swebench_guarded_eval.py</code> docker mem128g/cpu16 monkey-patch 在位；
+guard <strong>零越界 ~40.8h</strong>。</p>
+</div>
+
+<h2>4. 卡点</h2>
+<div class="warn">
+<strong>卡点 1：retry pass 收敛变慢（非故障，需判断是否接受）</strong>
+<p>has_patch 净增已从早期 +12~+28/轮 降到 <strong>+7/轮</strong>。这是 retry 机制的<strong>正常长尾</strong>——
+<code>error backlog</code> 中 rc=None 的任务每轮重跑仍能带来净增（说明「非永久失败、非能力问题」），
+但最慢两路（cline×kimi 177、oc×kimi 201）ETA 仍约 <strong>25–35 小时</strong>。</p>
+<p><strong>建议：</strong>不改码（retry 机制正确），继续观察；若 48h 后仍 +&lt;5/轮，再评估放宽 worker 或调整超时。</p>
+</div>
+<div class="danger">
+<strong>卡点 2：与 pretrain L1 eval 的资源耦合</strong>
+<p>pretrain 的 L1 eval（llama-server 约 270–294%）与本线观测共存，曾出现 step 瞬时 7.41s（微超 7.4s 阈值）。
+目前判定为<strong>非持续性</strong>、未影响训练；但属跨线资源耦合的固有风险，需持续监控。</p>
+</div>
+
+<h2>5. 可向论文交付的结论（供 pretrain / posttrain 引用）</h2>
+<table>
+<tr><th>结论</th><th>状态</th></tr>
+<tr><td>同模型下不同 harness（CLI）结果差异显著 → harness 是独立变量</td><td>数据积累中（1,910/2,880）</td></tr>
+<tr><td>「先观测后生成」两段式 +15.7pp（不训练即可获得）</td><td>研究建议，<strong>待 MM eval 出结果后纳入</strong></td></tr>
+<tr><td>按阶段隔离训练</td><td>建议，待数据支撑</td></tr>
+<tr><td>执行结果一致性投票 &gt; 多数投票</td><td>建议，待数据支撑</td></tr>
+</table>
+<div class="info">
+本线<strong>不为论文直接署名</strong>，但为 pretrain / posttrain 提供 harness 横评结论；引用时由对应论文线负责口径与证据。
+</div>
+
+<h2>6. 下一步计划</h2>
+<table>
+<tr><th>优先级</th><th>动作</th><th>触发 / ETA</th></tr>
+<tr><td>P0</td><td>继续监控 4 路 retry pass，保持 guard / ulimit / 判据全绿</td><td>每轮 wake（~25min）</td></tr>
+<tr><td>P0</td><td>全部 2,880 任务完成 → 触发 7way 汇总 REGEN</td><td>最慢路 ETA 25–35h</td></tr>
+<tr><td>P1</td><td>MM eval 出结果后，把 3 条研究建议（两段式 / 阶段隔离 / 一致性投票）纳入实证</td><td>依赖 eval</td></tr>
+<tr><td>P2</td><td>长期跑路评估：若 48h 后净增 &lt;5/轮，再议并发与超时参数</td><td>条件触发</td></tr>
+</table>
+
+<h2>7. 证据索引</h2>
+<table>
+<tr><th>产物</th><th>路径</th></tr>
+<tr><td>MEMORY / 任务书</td><td><code>doc/BaiZe-ISEDA2027/run/MEMORY_HARNESS.md</code>（R2885） / <code>BAIZE_HARNESS_TASK.md</code></td></tr>
+<tr><td>每日记忆</td><td><code>doc/BaiZe-ISEDA2027/run/daily-memories-harness/2026-11-22.md</code>（R2865–R2885）</td></tr>
+<tr><td>护栏脚本</td><td><code>predict_guarded.sh</code> / <code>swebench_guarded_eval.py</code></td></tr>
+<tr><td>预测产物</td><td><code>predictions_2x3/*.json</code>（<code>list[0].model_patch</code> 实查）</td></tr>
+</table>
+
+<div class="foot">
+本报告由 harness 线自述，数字取自 <code>MEMORY_HARNESS.md</code> R2885（2026-11-22 08:08）与 daily R2885。
+retry 中的 rc=None 一律判为「非永久失败、非能力」，与 infra 故障分别记录。
+生成时间：2026-11-22 08:30。
+</div>
+
+</body>
+</html>

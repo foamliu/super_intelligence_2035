@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>A0 深度数据分析 · MiniCPM5-2B vs DeepSeek-V4-Pro 能力对照</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:24px;line-height:1.65;color:#222;background:#fafafa}
+h1{color:#1a1a2e;border-bottom:3px solid #1f6f8b;padding-bottom:8px}
+h2{color:#2c3e50;margin-top:34px;border-left:4px solid #1f6f8b;padding-left:10px}
+h3{color:#34495e;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid #bbb;padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#e8e8e8;font-weight:600}
+tr:nth-child(even){background:#f5f5f5}
+.warn{background:#fff3cd;border:1px solid #ffe08a;padding:12px 16px;border-radius:6px;margin:12px 0}
+.danger{background:#f8d7da;border:1px solid #f5c6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+.ok{background:#d4edda;border:1px solid #c3e6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+.info{background:#d1ecf1;border:1px solid #bee5eb;padding:12px 16px;border-radius:6px;margin:12px 0}
+code{background:#eef;padding:1px 4px;border-radius:3px;font-size:13px}
+.summary-box{background:#fff;border:2px solid #333;border-radius:8px;padding:16px 20px;margin:16px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600}
+.tag-ok{background:#d4edda;color:#155724}
+.tag-warn{background:#fff3cd;color:#856404}
+.tag-bad{background:#f8d7da;color:#721c24}
+.tag-info{background:#d1ecf1;color:#0c5460}
+.kpi{display:inline-block;min-width:160px;background:#fff;border:1px solid #ccc;border-radius:6px;padding:10px 14px;margin:6px 8px 6px 0}
+.kpi .v{font-size:22px;font-weight:700;color:#145a6b}
+.kpi .l{font-size:12px;color:#666}
+.bar{display:inline-block;height:15px;background:#1f6f8b;vertical-align:middle;border-radius:2px}
+.bar2{display:inline-block;height:15px;background:#c0392b;vertical-align:middle;border-radius:2px}
+ul{margin:6px 0}
+.foot{margin-top:40px;padding-top:12px;border-top:1px solid #ccc;font-size:12px;color:#666}
+</style>
+</head>
+<body>
+
+<h1>A0 深度数据分析：MiniCPM5-2B 与 DeepSeek-V4-Pro 能力对照</h1>
+<p>
+<strong>所属：</strong>posttrain 线 · ISEDA 2027 §5｜
+<strong>数据源：</strong>A0 = MiniCPM5-2B base 在 EDA-Eval-PyAether（158 题）的 5-run 逐题画像｜
+<strong>报告时间：</strong>2026-11-22｜
+<strong>运维令：</strong>2026-11-22 第 3 条
+</p>
+
+<div class="danger">
+<strong>⚠️ 首要声明：本次对照不是同口径的分数对比，请勿把两个百分比相减</strong>
+<table>
+<tr><th>维度</th><th>MiniCPM5-2B（A0）</th><th>DeepSeek-V4-Pro（历史锚点）</th></tr>
+<tr><td>Pass@1</td><td><strong>43.29% ± 3.92%</strong>（5-run）</td><td><strong>82.1% ± 3.0%</strong>（5/5）</td></tr>
+<tr><td>起评机器</td><td><strong>.17</strong>（10.252.32.17）</td><td><strong>36.15</strong>（内网直连 .75）</td></tr>
+<tr><td>RAG</td><td><strong>无</strong></td><td><strong>有</strong>（:9006）</td></tr>
+<tr><td>沙盒 MCP</td><td><strong>无</strong>（需经隧道）</td><td><strong>有</strong>（:18891）</td></tr>
+<tr><td>模型规模</td><td>2B（本地 vLLM）</td><td>大模型（云端）</td></tr>
+</table>
+<p><strong>结论：</strong>两者在 <strong>4 个口径维度上不同</strong>（机器 / RAG / MCP / 规模），
+绝对数值差（−38.8pp）<strong>同时包含「模型能力差」和「环境配置差」两个成分，不能归因于任何单一因素</strong>。
+本报告因此<strong>不做分数排名</strong>，只做<strong>能力维度的结构性对照</strong>——即「失败在哪里、行为模式如何、产出形态如何」。
+这也是 AGENTS.md §4.3 明确写下的纪律：<em>「大模型参照不可与 2B 比较」</em>。</p>
+
+<h2>1. 一句话结论</h2>
+<div class="summary-box">
+<p><strong>MiniCPM5-2B 与 DeepSeek-V4-Pro 的差距不在「愿不愿意干活」，而在「一次做对的能力」。</strong></p>
+<ul>
+<li><strong>接近的部分</strong>：<strong>工具使用意愿与探索能力</strong>——agent 循环进入率 <strong>93.67%</strong>、RAG 查询率 <strong>100%</strong>、
+平均工具调用 30+ 次、10 类工具全部用到（含 <code>editor</code> / <code>run_code</code> / <code>submit_and_exit</code>）⇒ <strong>它不是「不会用工具」的模型</strong>。</li>
+<li><strong>明显不足的部分</strong>：<strong>领域 API 精确记忆 + 一次写对</strong>——主导失败是 <strong>逻辑错误 40 题（AssertionError 26）</strong> 与
+<strong>API 误用 21 题（TypeError 17 / AttributeError 4）</strong>，合计 <strong>61/89 = 68.5%</strong> 的失败是「代码写出来了但写错了」。</li>
+<li><strong>最尖锐的证据</strong>：失败任务平均 <strong>40.6 次工具调用 / 44.6 万 input token</strong>，
+而成功任务只要 <strong>17.0 次 / 23.8 万</strong>——<strong>失败组付出了 2.4 倍努力却失败了</strong>，
+且搜索/编辑比高达 <strong>17.1（成功组仅 4.0）</strong> ⇒ 典型的<strong>「探索瘫痪」</strong>：反复查 API 却不敢/不能写出正确代码。</li>
+</ul>
+</div>
+
+<h2>2. A0 基线全景（n = 158）</h2>
+<div>
+<span class="kpi"><div class="v">43.29% ± 3.92%</div><div class="l">Pass@1（5-run）</div></span>
+<span class="kpi"><div class="v">69 / 89</div><div class="l">pass / fail（run1）</div></span>
+<span class="kpi"><div class="v">93.67%</div><div class="l">agent 循环进入率</div></span>
+<span class="kpi"><div class="v">100%</div><div class="l">RAG 查询率</div></span>
+<span class="kpi"><div class="v">0.74%</div><div class="l">工具错误率</div></span>
+</div>
+
+<h3>2.1 五轮稳定性（区分「运气」与「能力」）</h3>
+<table>
+<tr><th>run</th><th>Pass@1</th><th>通过数</th></tr>
+<tr><td>run1</td><td>43.67%</td><td>69 / 158</td></tr>
+<tr><td>run2</td><td>45.57%</td><td>72 / 158</td></tr>
+<tr><td>run3</td><td>48.10%</td><td>76 / 158</td></tr>
+<tr><td>run4</td><td>41.14%</td><td>65 / 158</td></tr>
+<tr><td>run5</td><td>37.97%</td><td>60 / 158</td></tr>
+<tr><td><strong>5-run</strong></td><td><strong>43.29% ± 3.92%</strong></td><td>—</td></tr>
+<tr><td colspan="3"><em>本地 interim（仅 run1–4）mean = 44.62%，std = 2.95%（n_runs_completed=4/5）——用于交叉校验，最终以 5-run 为准</em></td></tr>
+</table>
+
+<h3>2.2 逐题稳定性：能力边界在哪里</h3>
+<table>
+<tr><th>类别（5-run 逐题）</th><th>题数</th><th>占比</th><th>含义</th></tr>
+<tr><td><strong>pass_all_runs</strong>（5/5 全过）</td><td><strong>25</strong></td><td>15.8%</td><td><strong>稳定会做</strong> ⇒ 已掌握的能力</td></tr>
+<tr><td><strong>fail_all_runs</strong>（0/5 全败）</td><td><strong>51</strong></td><td>32.3%</td><td><strong>稳定不会做</strong> ⇒ 真实能力缺口</td></tr>
+<tr><td><strong>partial</strong>（1–4/5）</td><td><strong>82</strong></td><td>51.9%</td><td><strong>不稳定</strong> ⇒ 有知识但调用不出 / 采样方差大</td></tr>
+</table>
+<div class="info">
+<strong>关键洞察：</strong>超过一半的题（82/158 = 51.9%）是<strong>「有时能做对」</strong>。
+这说明 MiniCPM5-2B 的瓶颈<strong>不是「完全不会」</strong>，而是<strong>「无法稳定复现正确解」</strong>——
+这是<strong>推理稳定性 / 采样控制</strong>问题，而非纯粹的知识缺失。
+对后训练的直接含义：<strong>RL 与 rejection-sampling 类方法（在已有正确样本上强化）理论上比单纯灌数据 SFT 更对症</strong>。
+</div>
+
+
+<h2>3. 失败模式解剖：89 个失败到底失败在哪</h2>
+
+<h3>3.1 五分类失败模式</h3>
+<table>
+<tr><th>模式</th><th>题数</th><th>占 89 失败比例</th><th>定义</th></tr>
+<tr><td><strong>F5 逻辑错误</strong></td><td><strong>40</strong></td><td><strong>44.9%</strong></td><td>代码已产出且执行，但断言失败 / 结果错误</td></tr>
+<tr><td><strong>F4 API 误用</strong></td><td><strong>21</strong></td><td><strong>23.6%</strong></td><td>代码已产出，但 TypeError / AttributeError（用错 API 或类型）</td></tr>
+<tr><td>F1 无代码产出</td><td>18</td><td>20.2%</td><td>没生成 .py / 未投入工具</td></tr>
+<tr><td>F3 超时</td><td>9</td><td>10.1%</td><td>生成超时</td></tr>
+<tr><td>F2 工具格式</td><td>1</td><td>1.1%</td><td>工具 schema 拒绝耗尽预算</td></tr>
+</table>
+
+<div style="margin:14px 0">
+<div style="margin:4px 0">F5 逻辑错误 <span class="bar" style="width:280px"></span> 40</div>
+<div style="margin:4px 0">F4 API 误用 <span class="bar" style="width:147px"></span> 21</div>
+<div style="margin:4px 0">F1 无代码 <span class="bar" style="width:126px"></span> 18</div>
+<div style="margin:4px 0">F3 超时 <span class="bar" style="width:63px"></span> 9</div>
+<div style="margin:4px 0">F2 工具格式 <span class="bar" style="width:7px"></span> 1</div>
+</div>
+
+<div class="ok">
+<strong>✅ 结论：68.5% 的失败是「写出来了但写错」</strong>
+<p>F5 + F4 = 40 + 21 = <strong>61 题（68.5%）</strong>，即模型<strong>成功产出了可执行代码</strong>，问题在于<strong>语义/逻辑/API 细节不精确</strong>。
+真正「不会动手」的只有 F1 18 题（20.2%）+ F2 1 题。</p>
+<p>这与「小模型工具能力差」的常见假设<strong>相反</strong>——MiniCPM5-2B 的 agentic 骨架是通的，
+缺的是 <strong>PyAether 领域 API 的精确语义记忆</strong>与<strong>算法逻辑的正确性</strong>。</p>
+</div>
+
+<h3>3.2 底层异常类型（更精确的病灶）</h3>
+<table>
+<tr><th>异常类型</th><th>次数</th><th>归因</th></tr>
+<tr><td><strong>AssertionError</strong></td><td><strong>26</strong></td><td>功能逻辑错误——数值/流程算错</td></tr>
+<tr><td>Generation fail</td><td>19</td><td>未产出代码（生成层失败）</td></tr>
+<tr><td><strong>TypeError</strong></td><td><strong>17</strong></td><td><strong>API 签名 / 参数类型记错</strong></td></tr>
+<tr><td>Generation timeout</td><td>9</td><td>超时</td></tr>
+<tr><td>ValueError</td><td>5</td><td>取值/范围错误</td></tr>
+<tr><td>AttributeError</td><td>4</td><td><strong>对象属性/方法不存在</strong>（API 记忆错误）</td></tr>
+<tr><td>NameError</td><td>3</td><td>变量名错误</td></tr>
+<tr><td>IndentationError</td><td>1</td><td>语法错误</td></tr>
+<tr><td>Timeout / Unknown</td><td>5</td><td>—</td></tr>
+</table>
+<p><strong>TypeError + AttributeError + NameError = 24 次</strong>，全部指向<strong>「API/符号记忆不精确」</strong>。
+这不是理解力问题，而是<strong>参数级细粒度记忆</strong>问题——恰是「小参数量 + 领域长尾 API」的典型症状。</p>
+
+<h2>4. 两种模型的行为学对照（核心分析）</h2>
+
+<h3>4.1 成功组 vs 失败组：努力程度与效率</h3>
+<table>
+<tr><th>指标（run1）</th><th>PASS 组（n=69）</th><th>FAIL 组（n=89）</th><th>倍数</th><th>解读</th></tr>
+<tr><td>平均工具调用</td><td><strong>17.0</strong>（median 14）</td><td><strong>40.6</strong>（median 30）</td><td>2.4×</td><td>失败者更"忙"</td></tr>
+<tr><td>平均 input token</td><td>238,265（median 162,973）</td><td>445,826（median 319,435）</td><td>1.9×</td><td>失败者上下文更长</td></tr>
+<tr><td>平均 output token</td><td>9,126</td><td>15,032</td><td>1.6×</td><td>失败者输出更多</td></tr>
+<tr><td>平均消息数</td><td>30.5</td><td>56.9</td><td>1.9×</td><td>失败者轮次更多</td></tr>
+<tr><td>工具错误率</td><td>0.01</td><td>0.01</td><td>1.0×</td><td><strong>工具本身没坏</strong></td></tr>
+</table>
+
+<h3>4.2 「探索瘫痪」证据：搜索/编辑比</h3>
+<table>
+<tr><th>组</th><th>search_apis + by_keyword</th><th>editor（写代码）</th><th>run_commands</th><th>read_files</th><th><strong>search/edit 比</strong></th></tr>
+<tr><td><strong>PASS</strong></td><td>390</td><td><strong>97</strong></td><td>267</td><td>103</td><td><strong>4.0</strong></td></tr>
+<tr><td><strong>FAIL</strong></td><td><strong>2,055</strong></td><td><strong>120</strong></td><td>417</td><td>136</td><td><strong>17.1</strong></td></tr>
+</table>
+<div class="danger">
+<strong>🔴 这是本报告最重要的行为学发现</strong>
+<p>失败组<strong>搜索 API 的次数是成功组的 5.3 倍（2055 vs 390）</strong>，但<strong>真正写代码的次数几乎一样（120 vs 97）</strong>。</p>
+<p>⇒ 失败模式是 <strong>「反复查 API 却写不出代码」</strong>，而不是「查不到 API」。
+它们在<strong>搜索阶段就耗尽了自己</strong>——这是典型的<strong>决策瘫痪 / 规划失败</strong>，
+不是工具不可用，也不是检索质量差（RAG 查询率 100%、工具错误率仅 0.74%）。</p>
+<p><strong>对 DeepSeek-V4-Pro 的对照含义：</strong>大模型的核心优势不在于「会调用工具」，而在于
+<strong>「看完 API 就能一次写对」</strong> —— 这正好解释了 82.1% vs 43.29% 的差距主体。</p>
+</div>
+
+<h3>4.3 工具使用广度（能力覆盖）</h3>
+<table>
+<tr><th>工具</th><th>总调用</th><th>说明</th></tr>
+<tr><td>search_apis</td><td>1,969</td><td>最大开销项</td></tr>
+<tr><td>get_api_details</td><td>978</td><td>确实会查细节</td></tr>
+<tr><td>run_commands</td><td>684</td><td>会执行验证</td></tr>
+<tr><td>search_apis_by_keyword</td><td>476</td><td>会用关键词检索</td></tr>
+<tr><td>read_files</td><td>239</td><td>会读文件</td></tr>
+<tr><td>editor</td><td>217</td><td>会写代码</td></tr>
+<tr><td>submit_and_exit</td><td>138</td><td>会收尾提交</td></tr>
+<tr><td>run_code</td><td>81</td><td>会直接跑代码</td></tr>
+</table>
+<p><strong>10 类工具全部用到了</strong>，包括收尾的 <code>submit_and_exit</code>（138 次）——
+说明 <strong>「工具使用广度」这一维度上，2B 与任何大模型没有质的差别</strong>。这是「接近」的部分。</p>
+
+
+<h2>5. 「哪些接近 / 哪些明显不足」——直接回答</h2>
+
+<table>
+<tr><th style="width:16%">能力维度</th><th style="width:12%">判定</th><th>证据（A0 实测）</th><th>对 DeepSeek 的相对位置</th></tr>
+<tr>
+<td><strong>工具使用意愿</strong></td>
+<td><span class="tag tag-ok">接近</span></td>
+<td>agent 循环进入率 93.67%；平均工具调用 30.3 次；工具错误率 0.74%</td>
+<td>无明显劣势——两者都会主动进入 agent loop、都会用工具</td>
+</tr>
+<tr>
+<td><strong>工具使用广度</strong></td>
+<td><span class="tag tag-ok">接近</span></td>
+<td>10 类工具全部用到，含 submit_and_exit 138 次</td>
+<td>覆盖面上没有质的缺口</td>
+</tr>
+<tr>
+<td><strong>检索/探索意愿</strong></td>
+<td><span class="tag tag-ok">接近（甚至过度）</span></td>
+<td>RAG 查询率 100%；search_apis 1,969 次</td>
+<td><strong>不是不足而是过量</strong>，见 4.2 探索瘫痪</td>
+</tr>
+<tr>
+<td><strong>收尾/交付行为</strong></td>
+<td><span class="tag tag-ok">接近</span></td>
+<td>submit_and_exit 138 次（≈ 每题 0.87 次）</td>
+<td>会正常结束任务</td>
+</tr>
+<tr>
+<td><strong>领域 API 精确记忆</strong></td>
+<td><span class="tag tag-bad">明显不足</span></td>
+<td>TypeError 17 + AttributeError 4 + NameError 3 = <strong>24 次</strong>；F4 API 误用 21 题（23.6%）</td>
+<td><strong>最大短板之一</strong>：知道要调用什么，但参数/签名/属性记不准</td>
+</tr>
+<tr>
+<td><strong>算法逻辑正确性</strong></td>
+<td><span class="tag tag-bad">明显不足</span></td>
+<td>AssertionError <strong>26</strong> 次；F5 逻辑错误 <strong>40 题（44.9%）</strong></td>
+<td><strong>最大短板</strong>：代码能跑但算错，是最主要的失败来源</td>
+</tr>
+<tr>
+<td><strong>一次做对的稳定性</strong></td>
+<td><span class="tag tag-bad">明显不足</span></td>
+<td>稳定会做仅 25/158（15.8%）；不稳定 82/158（51.9%）；5-run 波动 37.97%–48.10%</td>
+<td>大模型的核心优势所在：同样的题一次写对</td>
+</tr>
+<tr>
+<td><strong>规划效率（少走弯路）</strong></td>
+<td><span class="tag tag-bad">明显不足</span></td>
+<td>FAIL 组工具调用 40.6 vs PASS 17.0（2.4×）；search/edit 比 17.1 vs 4.0</td>
+<td>差距最直观的一项行为学指标</td>
+</tr>
+<tr>
+<td><strong>长上下文效率</strong></td>
+<td><span class="tag tag-warn">不足</span></td>
+<td>FAIL 组 input token 44.6 万 vs PASS 23.8 万（1.9×）</td>
+<td>失败时上下文膨胀，可能加剧后期注意力稀释</td>
+</tr>
+<tr>
+<td><strong>生成吞吐/时延</strong></td>
+<td><span class="tag tag-warn">不足</span></td>
+<td>Generation timeout 9 题（F3 超时 9 题，10.1%）</td>
+<td>2B 本地 vLLM 在 2500s 预算内有超时项</td>
+</tr>
+</table>
+
+<div class="ok">
+<strong>一句话总结对照结论</strong>
+<p><strong>接近的</strong>：<em>做事的态度与手段</em>——愿意进循环、会用全部工具、会检索、会收尾。<br>
+<strong>明显不足的</strong>：<em>做事的水准</em>——<strong>API 记不准（24 次符号级错误）、逻辑算不对（26 次断言失败）、一次做不稳（仅 15.8% 稳定通过）、规划效率低（2.4 倍无效努力）</strong>。<br>
+⇒ 用一个类比：<strong>它的「手」已经够用了，差距全在「脑」的精度上。</strong></p>
+</div>
+
+<h2>6. 对后训练路线的直接含义</h2>
+<table>
+<tr><th>发现</th><th>推得的后训练策略</th><th>与本轮实验的对应</th></tr>
+<tr><td>51.9% 的题「有时能做对」（partial）</td><td><strong>rejection sampling / RL 优于纯 SFT</strong>——已有正确样本可强化，不必外部灌知识</td><td>支持从 A0 base 冷启动做 RL，而非先 SFT</td></tr>
+<tr><td>SFT v39 导致 −36pp 退化（退化循环）</td><td><strong>SFT 会破坏「愿意写代码」这一已有优势</strong></td><td>解释了为什么 A1 反而更差：把「手」也弄坏了</td></tr>
+<tr><td>F4 API 误用 23.6%（符号级记忆错误）</td><td>需要<strong>精准的 API 用法监督</strong>（正例 + 反例对照），不是泛泛的领域文本</td><td>数据侧应提供 API 签名级样本</td></tr>
+<tr><td>F5 逻辑错误 44.9%（AssertionError 26）</td><td>需要<strong>可验证奖励</strong>（执行结果判分）而非下一 token 拟合</td><td>支持 RLVR / GRPO，而非 SFT 拟合</td></tr>
+<tr><td>「探索瘫痪」search/edit = 17.1</td><td>需要<strong>规划约束 / 步数惩罚</strong>，抑制无效搜索</td><td>可在 reward 中加入工具调用成本项</td></tr>
+</table>
+
+<div class="info">
+<strong>与令 2（A5 = Qwen3.5-2B）的关系</strong>
+<p>若 <strong>A5 显著优于 A0</strong>（预注册判据：McNemar p&lt;0.05，逐题配对 158 题），则说明
+<strong>这些短板主要是「2B 通用基模的先天能力差异」，而非 EDA 领域知识缺失</strong>——
+那么后训练的资源应优先投向<strong>强化已有正确解（RL）</strong>，而不是继续堆领域语料。
+反之若 A5 ≈ A0，则说明 <strong>MiniCPM5-2B 已接近 2B 同规模上限</strong>，
+提升必须来自<strong>方法创新（奖励设计 / 数据构造）</strong>而非换基座。</p>
+</div>
+
+<h2>7. 数据可信度与局限（必须知道）</h2>
+<table>
+<tr><th>项</th><th>状态</th></tr>
+<tr><td>A0 5-run 一致性</td><td>5-run 43.29% ± 3.92%；run 间极差 10.1pp（37.97–48.10），<strong>方差不可忽略</strong></td></tr>
+<tr><td>逐题画像来源</td><td>run1（69 pass / 89 fail）真实 session 数据，<strong>非事后推断</strong>（B5 已用 MiniCPM5 自身数据重做，未沿用 DeepSeek fail_mode）</td></tr>
+<tr><td>身份核验</td><td><strong>B1 PASS</strong>：158/158 session 的 <code>model</code> 字段均为 <code>minicpm5-2b</code>；报告内 <code>model_name=zhulong_deepseek_v32</code> 系 config.yaml 陈旧标签，<strong>非实际模型</strong></td></tr>
+<tr><td>DeepSeek 侧数据</td><td><strong>⚠️ 仅有汇总锚点 82.1% ± 3.0%，无逐题数据</strong> ⇒ 无法做逐题配对检验，也无法做失败模式归因对照</td></tr>
+<tr><td>因此本报告的对照性质</td><td><strong>结构性 / 行为学对照</strong>（基于 A0 的完整逐题数据 + DeepSeek 的单点分数锚点），<strong>不是配对统计检验</strong></td></tr>
+<tr><td>已知异常</td><td>session_statuses：completed 138 / cancelled 13 / failed 7 —— 13 例 cancelled 的真实原因未逐条回溯</td></tr>
+</table>
+
+<div class="warn">
+<strong>若要升级为严格的能力对照，需要补三件事：</strong>
+<ol>
+<li><strong>DeepSeek-V4-Pro 在 A0 同口径下重跑</strong>（.17 起评 / 无 RAG / 无 MCP / 5-run）——消除环境差异；</li>
+<li>或在 <strong>36.15 口径下把 MiniCPM5-2B 也跑一遍</strong>（RAG + MCP 齐备）——同样能对齐；</li>
+<li>拿到 DeepSeek 的<strong>逐题结果</strong>后，才能做 McNemar 配对检验与逐题失败模式交叉表。</li>
+</ol>
+<p>在此之前，本报告的所有结论限定为<strong>「A0 自身能力画像 + 与 82.1% 锚点的差距来源分解」</strong>，不声称「已量化两模型能力差」。</p>
+</div>
+
+<h2>8. 证据索引</h2>
+<table>
+<tr><th>产物</th><th>路径</th></tr>
+<tr><td>run1 逐题画像（本文主数据源）</td><td><code>run/baseline_A0_base_run1_pertask.json</code>（158 题，含 tool_calls / tokens / fail_mode / error_types）</td></tr>
+<tr><td>4-run interim 汇总</td><td><code>run/baseline_A0_base_4run_interim_summary.json</code>（mean 44.62% / std 2.95% / n=4）</td></tr>
+<tr><td>5-run 最终汇总</td><td><code>run/baseline_A0_base_5run_summary.json</code>（<strong>位于 .17</strong>；本地未见，数值引自 MEMORY wake702）</td></tr>
+<tr><td>DeepSeek 82.1% 锚点来源</td><td><code>run/PLAN_MINICPM5_PYAETHER_158.md</code> L24（36.15 起评 / RAG+MCP / 5-run）</td></tr>
+<tr><td>口径纪律</td><td><code>doc/AGENTS.md</code> §4.3「大模型参照不可与 2B 比较」</td></tr>
+<tr><td>MEMORY</td><td><code>run/MEMORY_POSTTRAIN.md</code>（Stage2/Stage3 + 2026-11-22 运维令三条）</td></tr>
+</table>
+
+<div class="foot">
+本报告为 posttrain 线对 A0 的深度数据分析，回应运维令 2026-11-22 第 3 条。
+所有数字取自 <code>baseline_A0_base_run1_pertask.json</code>（158 题逐题 session 数据，非推断）与 interim/5-run 汇总。
+<strong>口径声明</strong>：A0（.17 / 无 RAG / 无 MCP）与 DeepSeek-V4-Pro（36.15 / 有 RAG / 有 MCP）四维不同，
+绝对差值同时含能力与环境两个成分，<strong>本报告不做分数排名，仅做结构性对照</strong>。
+负结果与局限如实列出（DeepSeek 无逐题数据、13 例 cancelled 未回溯、run 间方差 10.1pp）。
+生成时间：2026-11-22。
+</div>
+
+</body>
+</html>

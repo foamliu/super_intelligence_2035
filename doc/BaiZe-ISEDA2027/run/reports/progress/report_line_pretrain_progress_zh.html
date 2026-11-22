@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>pretrain 线进展报告 · ISEDA 2027 §4 预训练</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:24px;line-height:1.65;color:#222;background:#fafafa}
+h1{color:#1a1a2e;border-bottom:3px solid #2980b9;padding-bottom:8px}
+h2{color:#2c3e50;margin-top:34px;border-left:4px solid #2980b9;padding-left:10px}
+h3{color:#34495e;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid #bbb;padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#e8e8e8;font-weight:600}
+tr:nth-child(even){background:#f5f5f5}
+.warn{background:#fff3cd;border:1px solid #ffe08a;padding:12px 16px;border-radius:6px;margin:12px 0}
+.danger{background:#f8d7da;border:1px solid #f5c6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+.ok{background:#d4edda;border:1px solid #c3e6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
+.info{background:#d1ecf1;border:1px solid #bee5eb;padding:12px 16px;border-radius:6px;margin:12px 0}
+code{background:#eef;padding:1px 4px;border-radius:3px;font-size:13px}
+.summary-box{background:#fff;border:2px solid #333;border-radius:8px;padding:16px 20px;margin:16px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600}
+.tag-ok{background:#d4edda;color:#155724}
+.tag-warn{background:#fff3cd;color:#856404}
+.tag-bad{background:#f8d7da;color:#721c24}
+.tag-info{background:#d1ecf1;color:#0c5460}
+.kpi{display:inline-block;min-width:150px;background:#fff;border:1px solid #ccc;border-radius:6px;padding:10px 14px;margin:6px 8px 6px 0}
+.kpi .v{font-size:22px;font-weight:700;color:#1a5276}
+.kpi .l{font-size:12px;color:#666}
+ul{margin:6px 0}
+.foot{margin-top:40px;padding-top:12px;border-top:1px solid #ccc;font-size:12px;color:#666}
+</style>
+</head>
+<body>
+
+<h1>pretrain 线进展报告</h1>
+<p>
+<strong>负责范围：</strong>ISEDA 2027 第 (i) 阶段 · 预训练（<code>ISEDA2027/4_llm_pretrain.tex</code>）｜
+<strong>报告时间：</strong>2026-11-22 08:30｜
+<strong>机器：</strong><code>10.239.2.29</code>（训练）＋ <code>10.239.2.12</code>（watchdog/eval daemon）｜
+<strong>状态：</strong><span class="tag tag-ok">🟢 训练健康运行</span> <span class="tag tag-warn">L2/L3 评测受限</span>
+</p>
+
+<div class="summary-box">
+<h3 style="margin-top:0">一句话进展</h3>
+<p>主线 2B 预训练在 <code>.29</code> 8×H100 上健康推进到 <strong>iter 280,860 / 700,000（40.12%）</strong>，
+step 稳定 <strong>7.22s</strong>（0/10 步超 7.4s 阈值）、<strong>0 NaN / 0 skip</strong>；
+每 2k iter 的 L1 自动评测队列全部清空，最新 280k ckpt 八集合 harness 均分 <strong>58.38%</strong>。
+L2 生成类基准的历史「全 0%」根因已定案为 <strong>llama.cpp SSM 生成 bug</strong>（非模型能力），已改用 HF transformers 验证。
+</p>
+</div>
+
+
+<h2>1. 关键指标（截至 2026-11-22 08:17 · #2944）</h2>
+<div>
+<span class="kpi"><div class="v">280,860 / 700,000</div><div class="l">训练 iter（40.12%）</div></span>
+<span class="kpi"><div class="v">7.22 s</div><div class="l">step avg（n=10，7109–7346ms）</div></span>
+<span class="kpi"><div class="v">1.99–2.007</div><div class="l">loss 区间</div></span>
+<span class="kpi"><div class="v">0 / 0</div><div class="l">NaN / skip</div></span>
+<span class="kpi"><div class="v">8 × 98–100%</div><div class="l">GPU 利用率（74.5GB/卡）</div></span>
+<span class="kpi"><div class="v">58.38%</div><div class="l">280k · L1 八集合均分</div></span>
+</div>
+
+<h2>2. 训练状态明细</h2>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>训练机器</td><td><code>10.239.2.29</code>（hostname <code>whag0pgpuap29</code> verified）</td></tr>
+<tr><td>当前 iter</td><td>280,860 / 700,000（40.12%）</td></tr>
+<tr><td>step 稳定性</td><td>avg 7.22s，range 7109–7346ms，<strong>0/10 超过 7.4s 阈值</strong></td></tr>
+<tr><td>loss</td><td>~1.99 – 2.007</td></tr>
+<tr><td>异常计数</td><td>0 NaN / 0 skip</td></tr>
+<tr><td>GPU</td><td>8 卡 × 98–100%，74.5GB/卡，51–60°C</td></tr>
+<tr><td>load average</td><td><code>.29</code> = 26.71 / 26.84 / 27.57；<code>.12</code> = 25.74 / 25.89 / 25.78</td></tr>
+<tr><td>eval 干扰</td><td>eval daemon idle（since 280k DONE 07:57:38），无并发负载</td></tr>
+<tr><td>序列长度</td><td><code>seq_length = 4096</code>（用户 2026-10-14 直令固定口径）</td></tr>
+</table>
+
+<h2>3. L1 评测队列（每 2k iter 一个 ckpt）</h2>
+<div class="ok">
+<strong>✅ 270k–280k 六个 ckpt 全部评测完成，backlog 全清</strong>，每个都有落盘 <code>results.json</code> 并已进 L1 报告。
+</div>
+<table>
+<tr><th>ckpt</th><th>L1 harness 均分</th><th>说明</th></tr>
+<tr><td>270k</td><td>59.75%</td><td>backlog 已复核</td></tr>
+<tr><td>272k</td><td>56.75%</td><td>backlog 已复核</td></tr>
+<tr><td>274k</td><td>60.00%</td><td>backlog 已复核</td></tr>
+<tr><td>276k</td><td>58.12%</td><td>backlog 已复核</td></tr>
+<tr><td>278k</td><td>57.38%</td><td>backlog 已复核</td></tr>
+<tr><td><strong>280k</strong></td><td><strong>58.38%</strong>（harness） / 55.38%（raw）</td><td>07:57:38 DONE</td></tr>
+</table>
+<p>L1 报告 <code>report_pretrain_llamacpp_scaling_zh.html</code>（31,578B）已覆盖 32/34 ckpt，含 280k。
+daemon（PID 1081392）idle 等 <strong>282k ckpt（ETA ≈ 10:34）</strong>，约 1,140 iter × 7.22s ≈ 2.3h。</p>
+<p><strong>复现命令：</strong><code>bash code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh</code>；
+日志 <code>/tmp/baize_l1_autoqueue_continuous.log</code>；
+单 ckpt 证据 <code>checkpoints/iter_0280000/</code> + <code>lm_eval_results/gguf_iter_280000_fixed_8set/results.json</code>。</p>
+
+<h2>4. 🔴 卡点（Blockers）</h2>
+
+<div class="warn">
+<strong>卡点 1：L2/L3 生成类基准评测工具链受限（P2-001 · 待用户裁定）</strong>
+<table>
+<tr><th>项</th><th>现状</th></tr>
+<tr><td>现象</td><td>160k ckpt（25% 训练）用 llama.cpp 评 L2 时，生成类基准全面 0%</td></tr>
+<tr><td>根因（已定案）</td><td><strong>llama.cpp SSM 生成 bug</strong>：PR #31703 修了权重映射，但生成仍退化（repetition loop）。HF transformers 生成正常 ⇒ 权重 / SSM 计算本身正确。</td></tr>
+<tr><td>HF 五重验证（160k）</td><td>HumanEval 15.0%(3/20) · GSM8K 10.0%(1/10) · MBPP 5.0%(1/20) · BBH 3.3%(1/30) · MATH 0.0%(0/10) → 生成 5 集平均 <strong>6.66%</strong>；MMLU 23.16%（≈随机 25%，MC 题不受生成 bug 影响 ⇒ 纯知识能力不足）</td></tr>
+<tr><td>L3 agentic</td><td>无可用 GPU 跑 vLLM（.29 8×100% 训练中 / .12 vision 占满 / .17 SSH 曾超时）；vLLM·SGLang 未装于 .29/.12；CPU HF 对 multi-turn agentic 太慢</td></tr>
+<tr><td>口径纪律</td><td>L2/L3 的 0% <strong>不得</strong>作为「模型弱」的证据（属 <code>harness</code> 故障非能力）；MMLU 23% 才是纯能力信号</td></tr>
+</table>
+<p><strong>需要用户裁定（4 选 1）：</strong>① 维持现状等 350k 再判；② 提前调整 decay phase 的 code/math 配比（当前 code 19% + math 7% = 26%，建议提到 15–20%）；③ 等 .17 SSH 恢复后接 L3；④ 等 700k 训完在 post-train 阶段补 L3。</p>
+</div>
+
+<div class="warn">
+<strong>卡点 2：早期阶段知识能力未建立（MMLU ≈ 随机）</strong>
+<p>160k 时点 MMLU 23.16% 接近随机猜测（25%），说明知识类能力尚未建立——与「25% 训练进度、仍处 stable phase（lr=1e-3 恒定）、未进入 instruction-SFT/decay」一致。
+需持续观察 MMLU 是否随训练单调上升；若 350k 仍 ≈25%，建议改 decay 配方。</p>
+</div>
+
+<div class="info">
+<strong>制度性提醒：机器甄别</strong>
+<p>pretrain watchdog loop 跑在 <code>.12</code>，但主训练跑在 <code>.29</code>。判活必须先
+<code>ssh 10.239.2.29 '...'</code> 再做——在 <code>.12</code> 本地做会看到 ArmC 多模态训练（<code>mllm_bridge/stage15_train_armC.py</code>），容易误判。</p>
+</div>
+
+<h2>5. 下一步计划</h2>
+<table>
+<tr><th>优先级</th><th>动作</th><th>触发条件 / ETA</th></tr>
+<tr><td>P0</td><td>继续 autoqueue：每 2k iter 自动 eval L1，保持 backlog = 0</td><td>282k ckpt ETA ≈ 2026-11-22 10:34</td></tr>
+<tr><td>P0</td><td>训练健康度巡检（step ≤ 7.4s、0 NaN/skip、GPU ≥ 98%）</td><td>每轮 wake</td></tr>
+<tr><td>P1</td><td>350k 节点（50%）做完整能力评估：L1 + L2（HF transformers 口径）</td><td>ETA ≈ 2026-11-28</td></tr>
+<tr><td>P1</td><td>就「decay phase 是否提高 code/math 配比」等用户裁定（卡点 1 选项②）</td><td>需用户拍板</td></tr>
+<tr><td>P2</td><td>700k 收敛 → 交付 ckpt 给 posttrain 作为正式 SFT/RL 前置</td><td>ETA ≈ <strong>2026-12-26</strong></td></tr>
+<tr><td>P2</td><td>L3 agentic 评测：等 GPU 窗口（vLLM）或交 posttrain 代跑</td><td>依赖资源</td></tr>
+</table>
+<p><strong>论文回填计划：</strong>§4 的 <code>sec:arch-rationale</code> / <code>sec:framework</code> / <code>sec:llm-data</code> / <code>fig:data-mix</code> / <code>tab:config</code> 已有可填内容；
+训练曲线待 350k / 700k 节点补齐。每个数字均附「口径 + 落盘文件 + 复现命令」三件套，未跑完的格子写 <code>TODO(BLOCKED)</code>。</p>
+
+<h2>6. 证据索引</h2>
+<table>
+<tr><th>产物</th><th>路径</th></tr>
+<tr><td>MEMORY（运行时状态）</td><td><code>doc/BaiZe-ISEDA2027/run/MEMORY_PRETRAIN_2B.md</code></td></tr>
+<tr><td>任务书</td><td><code>doc/BaiZe-ISEDA2027/run/BAIZE_PRETRAIN_2B_TASK.md</code></td></tr>
+<tr><td>L1 报告</td><td><code>doc/BaiZe-ISEDA2027/run/reports/report_pretrain_llamacpp_scaling_zh.html</code>（31,578B）</td></tr>
+<tr><td>L1 复现脚本</td><td><code>code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh</code></td></tr>
+<tr><td>每日记忆</td><td><code>doc/BaiZe-ISEDA2027/run/daily-memories/2026-11-22.md</code></td></tr>
+</table>
+
+<div class="foot">
+本报告由 pretrain 线自述，数字全部取自 <code>MEMORY_PRETRAIN_2B.md</code> 最新条目（#2944，2026-11-22 08:17）与落盘 eval JSON。
+遵循「证据三件套」：口径 / 落盘文件 / 复现命令。负结果与 infra 故障如实记录，不与模型能力混谈。
+生成时间：2026-11-22 08:30。
+</div>
+
+</body>
+</html>
