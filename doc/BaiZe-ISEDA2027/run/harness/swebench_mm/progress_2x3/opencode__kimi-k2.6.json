@@ -3035,15 +3035,22 @@
   "carbon-design-system__carbon-14239": {
     "instance_id": "carbon-design-system__carbon-14239",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 724.7,
+    "rc": 0,
+    "model_patch_len": 4418,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " tests verifying the interactive variant renders correctly when `hasInteractiveContent` is set\n  - Added a test ensuring the outer element in the interactive variant does **not** have `aria-expanded`\n",
+    "stderr_tail": "he root cause of the a11y issues (aria-expanded on non-button, forced interactive mode)\n[✓] Implement fix for aria-expanded and add prop to force interactive mode\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-14476": {
     "instance_id": "carbon-design-system__carbon-14476",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
+    "blocked": "git fetch base_commit failed (shallow)",
+    "classification": "blocked",
     "model_patch_len": 0
   },
   "carbon-design-system__carbon-15197": {
