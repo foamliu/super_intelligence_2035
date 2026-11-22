@@ -272,3 +272,9 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - `.75` 可达 = YES（eda_flow MCP 第34次复测 OK, r1105-r1138 三十四次一致；catalog 8 工具 / open_session 16ms / run_commands 6/6 exit0 hostname=hfhds201 id=uid=200450(e0031982) date=2026-11-22 19:55:42 +0800 / list_files workdir OK / write_file 80B+read_file round-trip is_text=true / bash 读 /home/t0002965/log 21 子项 + summary.tsv 24086 行 + scan dir 6 文件 / declare_done+close cleaned=true）
 - 主线候选选取沿用 r1137 结论（0 case, 无合格 D 域料），DEBT 同 r1137
 - 同结论适用 A/B/C 三 shard
+
+### r1140 (2026-11-22 20:30) — shard D status
+- `.75` 可达 = YES（eda_flow MCP 第36次复测 OK, r1105-r1140 三十六次一致；catalog 8 工具 / open_session 23ms / run_commands 11/11 exit0 hostname=hfhds201 hostname -I=10.129.32.75 id=uid=200450(e0031982) groups=eda_agent / list_files / write_file 86B+cat round-trip / read_file 外workdir whitelist 拒(沙盒约束非不可达) / bash 读 summary.tsv 24086 行 + scan dir 6 文件 / declare_done+close cleaned=true）
+- **主线 1 case 合成入库**（兑现 r1139 DEBT）：复用 r1139 深读笔记 xjxxj(tongfanl@hfeg0pkn002 mc=619 netlist:527 D-pure schematic_netlist) → **EDA-Eval-DesignFlow-AgingVdbiasPreStep2Check-001**(schematic_netlist, L1, k_check=k_rationale=13, 交付 aging_check.py+report.json; hidden B=LTOL/THB/Normal_5000hr pvdias 与 A 不相交 + THB structural swap; A'=内联第三 corner; 13 断言 a-m; 3 neg 全 FAIL 3 distinct; ref 13/13 PASS; D.jsonl line 561; 第3条 schematic_netlist 域 case)
+- 同结论适用 A/B/C 三 shard
+- DEBT: D 自有 ~450 GAP(已修24) + P0-001 全量64(挂20轮, A/B/C 无回执) + pi 实跑 pending

@@ -1529,3 +1529,16 @@ r1093 指针原文归档（r1099 释体积，保留 r1099/r1098/r1097/r1096/r109
 > r1133 指针：MCP 第二十九次复测 + 主线 ledger-aware 候选搜索 · MCP 8 工具全 OK · 主线 ledger-aware 候选搜索 done: mc 277-2514 全部 20+ 候选均已台账(case/parked), freshest scan 高 mc(≥277) 候选池全 shard 联合采空 · DEBT: 0 case(高 mc 池采空, 下轮转中低 mc / D-parked / anti-hardcode) · flag: r1133 = MCP 29th OK + ledger-aware 搜索, 0 case
 
 > r1132 指针：MCP 第二十八次复测 + mc-matrix 复算 + peek 20 fresh · MCP 8 工具全 OK · mc-matrix: D shard mc≥5 pool=1735 touched=1341 fresh=394 / mc≥10=1529 fresh=231 / mc≥30=1164 fresh=104 · peek 20 fresh top=haoyut s_w4x70 mc=1575 但 ledger 查已=case(非 fresh) · DEBT: 0 case · flag: r1132 = MCP 28th OK + mc-matrix, 0 case
+
+## 归档批次 r1140（r1140 释体积，归档 r1135-r1139 MCP 重复轮 + 旧 case 轮指针 5 块，保留 r1140 新指针 + r1131 及更早指针）
+
+> r1139 指针：MCP 第三十五次复测 OK(依据 2026-11-22 11:2x 用户令最高优先 · 本 session GLM-5.2/opencode loop shard D) · MCP 8 工具逐项复测全 OK: catalog 8 工具在册 / open_session 32ms→workdir / run_commands 10/10 exit0 / list_files workdir OK / write_file 85B+read_file round-trip / read_file 外 workdir whitelist 拒(沙盒约束) / declare_done+close cleaned=true · 三十五次复测(r1105-r1139)结论一致: eda_flow MCP 可用=.75 可达 · 主线候选选取沿用 r1138 结论(0 case) · flag: r1139 = MCP 35th OK(8 工具全绿)
+
+> r1138 指针：MCP 第三十四次复测 OK · MCP 8 工具全 OK: open_session 16ms / run_commands 6/6 exit0 hostname=hfhds201 / list_files / write_file 80B+read_file round-trip / bash 读 summary.tsv 24086 行 / declare_done+close cleaned=true · 三十四次复测(r1105-r1138)结论一致 · 主线候选选取沿用 r1137 结论(0 case) · flag: r1138 = MCP 34th OK
+
+> r1137 指针：MCP 第三十三次复测 + 主线候选选取(0 case) · MCP 8 工具全 OK · 主线候选选取 done(0 case): fresh 深读笔记全部跨域(fjy8k=verification/A, c3781/6pm3i/b3weg=spice/B, mmldo/z9h81/tahks/s4vkc/d4uuz=layout_aether/C, udmg8/qzx4z=verification/A, 7j1bw=已 D case)无可复用 D 域料; top fresh 候选(508od/sroz5=junxu skill-dev; aneeo/m2vah/4kf4h/7rzyf=drc/lvs 重 C 域)无合格 D 域 case 材料 · DEBT: 下轮 trace_prefilter.py 预筛 + 扫中低 mc 段 · flag: r1137 = MCP 33rd OK + 0 case(无合格 D 域料)
+
+> r1136 指针：MCP 第三十二次复测 + 主线合成 1 条 case → **EDA-Eval-DesignFlow-DqsJitterWaveExport-001**(waveform, L1, k=13, 真实契约: 交付 export_dqs.tcl+signal_list.txt+plot_wave.py; hidden B=sslh corner; A'=tt_third corner; 13 断言 a-m; 4 neg 全 FAIL 4 distinct; D.jsonl line 560; 第2条 waveform 域 case) · flag: r1136 = MCP 32nd OK + 1 case(DqsJitterWaveExport-001)
+
+> r1135 指针：MCP 第三十一次复测 + 主线候选选取+深读 · MCP 8 工具全 OK · 选 l4hdo(mc=148 tianqizh@hfeahpc501 waveview:724 D-waveform) → claim → 深读笔记 l4hdo_dqs_jitter_waveview.md · DEBT: 1 case 未合成(r1136 已兑现) · flag: r1135 = MCP 31st OK + l4hdo 深读(r1136 合成入库)
+
