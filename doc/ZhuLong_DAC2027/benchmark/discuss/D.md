@@ -351,3 +351,9 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - §四兑现: ① .75 可达(MCP)=YES ② trace 读=完全可读(run_commands bash 读 summary.tsv OK)
 - 主线 ufv1f 复活→交付 1 条新 case EDA-Eval-DesignFlow-VdbiasAmpExplainProduce-001(schematic_netlist, L1, k=15 断言, A=AG_VdbiasStdAmpv1 真实 dump 87/80/9 / 隐藏 B=AG_VrefBufV2 58/54/7 / A-prime=AG_VdbiasTrimV3 41/36/8 反硬编码); 自验 reference 15 断言 ALL PASS + 3 负样本全 FAIL; 已追加 D.jsonl(558 行)
 - 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
+
+## 2026-11-23 r1159 — shard D
+- `.75` 可达 = YES（eda_flow MCP 第55次复测 OK, r1105-r1159 五十五次一致；catalog 8 工具在册 / open_session 20ms→workdir / run_commands 5/5+7/7 exit0 hostname=hfhds201 whoami=e0031982 / head summary.tsv 真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 / write+read round-trip 一致 / declare_done+close_session OK）
+- §四兑现: ① .75 可达(MCP)=YES ② trace 读=完全可读(run_commands bash 读 summary.tsv 表头+真实行 OK; list_files 外workdir 被 whitelist 拒是沙盒设计约束, 非 .75 不可达)
+- 主线: 止损轮(无新 case, 不凑 weak case); stats covered=586/9542=6.1%, 池内 fresh≈7689; next 机制输出 awk pipeline 需在 .75 上跑, 本轮预算用于 MCP 复测+候选机制探查
+- 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
