@@ -6560,16 +6560,29 @@
   "prettier__prettier-8536": {
     "instance_id": "prettier__prettier-8536",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.3,
+    "rc": -1,
+    "model_patch_len": 618094,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "prettier__prettier-9514": {
     "instance_id": "prettier__prettier-9514",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 969.1,
+    "rc": 0,
+    "model_patch_len": 549545,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " nullish coalescing (`??`), dynamic `import()`, `import.meta`\n- No pipeline operator (`|>`)\n- The `cherow` parser is available as an alternative (not default) - users can opt-in via `--parser cherow`\n",
+    "stderr_tail": " Create parser-cherow.js (similar to parser-espree.js)\n[✓] Register cherow parser in src/language-js/index.js\n[✓] Update postprocess.js to handle cherow\n[✓] Update tests and verify functionality\n\u001b[0m\n"
   },
   "prettier__prettier-9866": {
     "instance_id": "prettier__prettier-9866",

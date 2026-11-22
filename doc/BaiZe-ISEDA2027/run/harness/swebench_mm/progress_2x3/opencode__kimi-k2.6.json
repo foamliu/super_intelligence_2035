@@ -4687,16 +4687,30 @@
   "grommet__grommet-6438": {
     "instance_id": "grommet__grommet-6438",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1384.9,
+    "rc": 0,
+    "model_patch_len": 2432,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "test `onEnter disabled day outside bounds` to `Calendar-test.tsx` that verifies keyboard navigation from July 1 to June 30 (outside `['2020-07-01', '2020-07-31']` bounds) does not trigger `onSelect`.\n",
+    "stderr_tail": "tching /src\\/js\\/components\\/Calendar\\/__tests__\\/Calendar-test.tsx/i with tests matching \"Keyboard\".\n\u001b[0m\n\u001b[0m$ \u001b[0mnpx eslint src/js/components/Calendar/Calendar.js 2>&1 | head -20\n(no output)\n\u001b[0m\n"
   },
   "grommet__grommet-6490": {
     "instance_id": "grommet__grommet-6490",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 293.2,
+    "rc": 0,
+    "model_patch_len": 2357,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "x` – added a test case for `border=\"between\"` with `gap=\"10px\"`.\n- Snapshot updated to include the new rendered output.\n\nThe test now passes and the component renders correctly with pixel gap values.\n",
+    "stderr_tail": "c/js/components/Box/__tests__/__snapshots__/Box-test.tsx.snap\n2436:  height: 10px;\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/js/components/Box/__tests__/__snapshots__/Box-test.tsx.snap\u001b[90m [offset=2420, limit=40]\u001b[0m\n"
   },
   "grommet__grommet-6494": {
     "instance_id": "grommet__grommet-6494",
