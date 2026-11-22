@@ -4757,9 +4757,16 @@
   "grommet__grommet-6749": {
     "instance_id": "grommet__grommet-6749",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 936.0,
+    "rc": 0,
+    "model_patch_len": 3599,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ">\n  </Toolbar>\n  <DataTable columns={columns} />\n</Data>\n```\n\nThe component follows the same patterns as `DataSort` and `DataTableColumns`, integrating cleanly with the `Data` context and `DataForm`.\n",
+    "stderr_tail": "ypes.js\n-rw-r-----  1 app.e0031982 app.adm   89 Nov 23 05:16 README.md\ndrwxr-x---  2 app.e0031982 app.adm   60 Nov 23 05:16 stories\ndrwxr-x---  3 app.e0031982 app.adm   80 Nov 23 05:14 __tests__\n\u001b[0m\n"
   },
   "grommet__grommet-7025": {
     "instance_id": "grommet__grommet-7025",
