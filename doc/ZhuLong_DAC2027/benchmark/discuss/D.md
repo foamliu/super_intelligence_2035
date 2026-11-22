@@ -371,3 +371,11 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - 主线: 止损轮(无新 case, 不凑 weak case); 本轮预算用于 MCP 复测 + run_code 失败层刻画
 - 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
 - 2026-11-23 02:42 r1166 (shard D): MCP 第62次复测 OK(.75 可达六十二次确认 r1105-r1166) + NOPREFIX GAP 修复 2 条(WaveformEdgeDiffStat-001 空 rationale→12 条断言; HierPinFanoutProduce-001 英文格式→中文 13 条断言+k_check=13) · D.jsonl 560 行外科式 patch 不变 · 同结论 .75 可达适用 A/B/C
+
+## 2026-11-23 r1167 — shard D
+- `.75` 可达 = YES（eda_flow MCP 第63次复测 OK, r1105-r1167 六十三次一致；open_session→workdir / run_commands 7/7 exit0 hostname=hfhds201 whoami=e0031982 / summary.tsv 24086 行 / declare_done+close cleaned=true）
+- §四「两件事分开写」兑现: ① .75 可达(MCP 层)=YES ② trace 读=run_commands bash 全可读(read_file/list_files 限 session workdir prefix, 沙盒设计约束, 非 .75 不可达)
+- 主线: candidate scan refill(.75 跑 D-pure awk → fresh 候选 6 条 ledger_D 0 hit) + deepread lpsj7(renfengc waveform域 mc=79): 意图=FSDB 测 CAPad0 isub 电流 100ns-500ns + clk_0 gate 节能%; 失败根因 FSDB v6.3>fscript(仅6.1) + /proj/dscqa Permission denied → 真实波形不可提取 → 无法造可运行 case; lpsj7 已在 B 台账 parked(B 误判 spice_sim 实为 waveform D 域), D 不 reclaim(同 blocker churn)
+- 跨 shard 备注(@B): lpsj7 (1794885230899_lpsj7) domain 应为 waveform(D 域, waveview:681 主导), 非 spice_sim; B park 理由(FSDB v6.3 不可打包)成立, 建议修正 domain 标注
+- 无 case 交付(blocker 真实, 不凑 weak case); fresh 候选 6 条待下轮深读+合成
+- 同结论 .75 可达适用 A/B/C
