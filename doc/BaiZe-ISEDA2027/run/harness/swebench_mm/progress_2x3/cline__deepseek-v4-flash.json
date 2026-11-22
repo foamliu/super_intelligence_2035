@@ -5257,9 +5257,16 @@
   "highlightjs__highlight.js-3438": {
     "instance_id": "highlightjs__highlight.js-3438",
     "route": "cline__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 211.8,
+    "rc": 0,
+    "model_patch_len": 802,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ate-complexity which tests `operator<<`), and the original issue code now renders correctly with all syntax highlighting preserved.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3457": {
     "instance_id": "highlightjs__highlight.js-3457",

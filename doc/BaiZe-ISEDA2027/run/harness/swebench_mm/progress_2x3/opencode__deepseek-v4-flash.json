@@ -6341,9 +6341,16 @@
   "openlayers__openlayers-15796": {
     "instance_id": "openlayers__openlayers-15796",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 875.1,
+    "rc": 0,
+    "model_patch_len": 800,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "canvas onto it, matching the same `!this.containerReused` condition used in `prepareContainer()`. This ensures the previous frame's content is removed before the new frame is composited with opacity.\n",
+    "stderr_tail": "VectorLayer rendering pipeline with declutter and opacity\n[✓] Identify the bug causing uncleared renders when declutter + opacity < 1\n[✓] Implement the fix\n[✓] Verify the fix with existing tests\n\u001b[0m\n"
   },
   "openlayers__openlayers-15825": {
     "instance_id": "openlayers__openlayers-15825",

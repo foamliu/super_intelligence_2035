@@ -4365,30 +4365,58 @@
   "eslint__eslint-12472": {
     "instance_id": "eslint__eslint-12472",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 532.4,
+    "rc": 0,
+    "model_patch_len": 4786,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "anually confirmed:\n- A JSX object like `<div style={{ display: 'inline-block', marginRight: '10px' }} />` no longer triggers alignment errors\n- Regular objects outside JSX still get aligned correctly\n",
+    "stderr_tail": "tion.\n\u001b[0m\n\u001b[0m$ \u001b[0mrm /dev/shm/harness_mm_2x3/workdirs/opencode__kimi-k2.6/eslint_eslint/test-jsx.jsx /dev/shm/harness_mm_2x3/workdirs/opencode__kimi-k2.6/eslint_eslint/test-obj.js\n(no output)\n\u001b[0m\n"
   },
   "eslint__eslint-12652": {
     "instance_id": "eslint__eslint-12652",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 314.0,
+    "rc": 0,
+    "model_patch_len": 3074,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "`tests/lib/rules/key-spacing.js` — Added 4 new tests (2 valid + 2 invalid) covering JSX objects with `align: \"value\"` configured both via `multiLine.align` and top-level `align`.\n\nAll 116 tests pass.\n",
+    "stderr_tail": "odos\n[✓] Explore key-spacing rule implementation and tests\n[✓] Create minimal reproduction test case\n[✓] Implement fix to skip JSX expression containers for alignment\n[✓] Run tests to verify fix\n\u001b[0m\n"
   },
   "eslint__eslint-14033": {
     "instance_id": "eslint__eslint-14033",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 674.8,
+    "rc": 0,
+    "model_patch_len": 4457,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "nt case\n\n**Verification**\n- All 136 tests for `no-undef-init` and `prefer-const` pass\n- Repro confirmed: `let foo = undefined;` now correctly fixes to `const foo = undefined;` instead of `const foo;`\n",
+    "stderr_tail": "alid const foo;\n[✓] Implement fix in no-undef-init to skip auto-fix for let declarations without reassignment\n[✓] Update tests for no-undef-init to reflect the new behavior\n[✓] Verify tests pass\n\u001b[0m\n"
   },
   "eslint__eslint-14242": {
     "instance_id": "eslint__eslint-14242",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 200.7,
+    "rc": 0,
+    "model_patch_len": 1481,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "-quiet --max-warnings 5` on a file with 6 warnings returns exit code `1` and logs the \"too many warnings\" message.\n\nAll `max-warnings` tests pass, including the new one for the `--quiet` combination.\n",
+    "stderr_tail": "ified and there are warnings\n      ✓ should exit with exit code 1 if warning count exceeds threshold in quiet mode\n\n\n  5 passing (188ms)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead lib/cli.js\u001b[90m [offset=295, limit=35]\u001b[0m\n"
   },
   "eslint__eslint-15243": {
     "instance_id": "eslint__eslint-15243",
