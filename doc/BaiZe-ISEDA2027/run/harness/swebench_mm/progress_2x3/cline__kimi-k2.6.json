@@ -3221,9 +3221,16 @@
   "carbon-design-system__carbon-3626": {
     "instance_id": "carbon-design-system__carbon-3626",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1210.8,
+    "rc": 0,
+    "model_patch_len": 17957,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " updates (`-u`) will likely be needed for `SideNavMenu-test.js` because the component changed from a class to a functional component.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-3824": {
     "instance_id": "carbon-design-system__carbon-3824",

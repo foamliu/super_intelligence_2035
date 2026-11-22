@@ -4630,30 +4630,58 @@
   "grommet__grommet-6293": {
     "instance_id": "grommet__grommet-6293",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 618.4,
+    "rc": 0,
+    "model_patch_len": 2302,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "s, round, background, vertical) use `max=100` where `anglePer=3.6` is exact in floating point, so their snapshots remain unchanged.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "grommet__grommet-6296": {
     "instance_id": "grommet__grommet-6296",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 102.3,
+    "rc": 0,
+    "model_patch_len": 1056,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " approach used by the `Text` component's `wordBreak` prop, just applied as a sensible baseline default for headings and paragraphs.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "grommet__grommet-6307": {
     "instance_id": "grommet__grommet-6307",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 166.0,
+    "rc": 0,
+    "model_patch_len": 668,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "e Changed\\n- `src/js/components/DataTable/DataTable.js` — Added 4 lines (`useEffect` to sync `sortProp` into internal `sort` state)\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "grommet__grommet-6350": {
     "instance_id": "grommet__grommet-6350",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 538.7,
+    "rc": 0,
+    "model_patch_len": 2027,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "tion element now correctly aligned, not squished inside the flex wrapper\\n- `action` + `pinned`: **fixed** — same principle applied\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "grommet__grommet-6438": {
     "instance_id": "grommet__grommet-6438",
