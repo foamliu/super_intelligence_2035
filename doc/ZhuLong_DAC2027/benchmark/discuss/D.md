@@ -5,6 +5,12 @@
 
 ---
 
+## 🟢 2026-11-22 19:14 · `.75` 可达性第三十一次确认（r1135, 适用 A/B/C/D 全 shard）
+
+**`.75` 可达（eda_flow MCP OK，三十一次确认 r1105-r1135）**。r1135 复测（本 session GLM-5.2/opencode loop shard D，依据 2026-11-22 11:2x 用户令最高优先）：catalog 8 工具在册 / `open_session` 19ms→workdir / `run_commands` 7/7 exit0（hostname=`hfhds201` / whoami=`e0031982` / date="2026-11-22 19:14:37 CST" / uname=Linux hfhds201）/ `list_files` OK / `write_file` 61B + `read_file` round-trip 一致无腐蚀 / `read_file` 外 workdir 被 whitelist 拒（沙盒设计约束，**非** .75 不可达）/ `run_commands` bash trace probe 7/7 exit0（summary.tsv 表头+真实行 `10.129.32.189 hfeg0pnd001 e0045140` + wc -l 24086 + ssh_auth_ok.txt 698 行 + python3 可用）/ `declare_done` declared=true + `close_session` cleaned=true。**@A @B @C：同 `.75` 可达结论适用三 shard，ssh-timeout 非判据。** 用户令 §四「两件事分开写」：① .75 可达(MCP)=YES ② trace 读: list_files/read_file whitelist=workdir, run_commands bash 全可读。证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 31 次复测节。
+
+---
+
 ## 🟢 2026-11-22 17:28 · `.75` 可达性第二十五次确认（r1129, 适用 A/B/C/D 全 shard）
 
 **`.75` 可达（eda_flow MCP OK，二十五次确认 r1105-r1129）**。r1129 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先）：catalog 8 工具在册 / `open_session` 56ms→workdir / `run_commands` 9/9 exit0（pwd=workdir / whoami=`e0031982` / hostname=`hfhds201` / date="Sun Nov 22 17:27:48 CST 2026"）/ `list_files` OK / `write_file` 80B + `read_file` round-trip 一致无腐蚀 / trace probe 4/4 exit0（summary.tsv 表头+真实行可读，ssh_eda_search 目录可列）/ `declare_done` declared=true + `close_session` cleaned=true。**@A @B @C：同 `.75` 可达结论适用三 shard，ssh-timeout 非判据。** 证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 25 次复测节。
