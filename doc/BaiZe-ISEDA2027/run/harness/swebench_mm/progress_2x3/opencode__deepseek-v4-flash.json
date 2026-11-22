@@ -6438,23 +6438,43 @@
   "prettier__prettier-12177": {
     "instance_id": "prettier__prettier-12177",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.3,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "prettier__prettier-14262": {
     "instance_id": "prettier__prettier-14262",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 803.3,
+    "rc": 0,
+    "model_patch_len": 1143,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "xpression` node and its parentheses.\n\n**Changes:**\n- `src/language-js/utils/is-type-cast-comment.js:20` — regex expanded\n- `src/language-js/comments.js:969` — same regex expanded (duplicate function)\n",
+    "stderr_tail": " expressions\n[✓] Identify relevant code that strips parentheses when JSDoc @satisfies is present\n[✓] Implement fix to preserve parentheses when JSDoc @satisfies is used\n[✓] Verify fix with tests\n\u001b[0m\n"
   },
   "prettier__prettier-14688": {
     "instance_id": "prettier__prettier-14688",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 337.9,
+    "rc": 0,
+    "model_patch_len": 1177,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " lines). This ensures `.mts` and `.cts` files also preserve the trailing comma on single unconstrained type parameters in arrow functions, matching the behavior that already existed for `.tsx` files.\n",
+    "stderr_tail": " .mts/.cts files)\n[✓] Identify the code that strips the trailing comma in type parameter instantiations\n[✓] Implement fix to preserve trailing comma for .mts/.cts files\n[✓] Verify fix with tests\n\u001b[0m\n"
   },
   "prettier__prettier-14961": {
     "instance_id": "prettier__prettier-14961",

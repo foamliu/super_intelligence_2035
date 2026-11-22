@@ -4505,16 +4505,30 @@
   "grommet__grommet-2061": {
     "instance_id": "grommet__grommet-2061",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 74.9,
+    "rc": 0,
+    "model_patch_len": 1063,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ">` with `<SearchTextInput type='search' ... />`\n\nThis prevents Safari from applying its default search input styling that ignores padding, making the search input render consistently across browsers.\n",
+    "stderr_tail": "-no-coverage\n\nsh: 1: jest: not found\n\u001b[0m\n\u001b[0m$ \u001b[0mls node_modules/.bin/jest 2>/dev/null || echo \"no jest\"\nno jest\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/js/components/Select/SelectContainer.js\u001b[90m [limit=20]\u001b[0m\n"
   },
   "grommet__grommet-2124": {
     "instance_id": "grommet__grommet-2124",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 714.3,
+    "rc": 0,
+    "model_patch_len": 4047,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "heir content size and break the calendar layout. Adding `auto` makes the intent explicit and prevents the bug.\n\nI also updated the corresponding Jest snapshot so the CSS class output matches the fix.\n",
+    "stderr_tail": "atches\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"flex:\\s*0\\s+0;\"\u001b[90m in src/js/components/Calendar/__tests__/__snapshots__/Calendar-test.js.snap · 0 matches\u001b[0m\n\u001b[0m→ \u001b[0mRead src/js/components/Calendar/StyledCalendar.js\n"
   },
   "grommet__grommet-2131": {
     "instance_id": "grommet__grommet-2131",
