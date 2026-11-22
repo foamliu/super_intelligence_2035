@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R245) — 例行巡检+blendswitch第38次复验7/7 PASS**：①✅git fetch origin local=in-sync **无新data令**(BAIZE_DATA_TASK.md远端无变化)；②✅pretrain iter=292,360/700k(41.77%) step avg(last12)=7169ms<7.4s gate✅ 训练健康 loss≈1.99 lr=1e-3 stable 292k eval RUNNING(~40min in,ETA~08:05)(读自MEMORY_PRETRAIN_2B.md #3115@07:25；next ckpt=294k ETA~10:42)；350k倒计时≈(350k-292.36k)×7.2s≈115h≈4.8天→~11-28；③✅blendswitch第38次复验7/7 PASS(zero_overlap=0/7源S1 50k·S2 50k docs零交集；ratio max_dev=0.0087%<1%；flag-off=byte-identical；new_source=0；epoch_wrap诚实报告；json_roundtrip OK；perf_pass)；复跑方式=uv run --no-project --with numpy==1.26.4 --python 3.12；verify_results.json已git checkout HEAD还原为提交版避免timing churn；④✅.12 load=25.00<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无下载进程(S2三下载+Nemotron-CC-Math/finemath/MegaMath-web全100%,0 .incomplete)；⑦✅MEMORY 34.8KB<40KB硬限/TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R246) — 例行巡检+blendswitch第39次复验7/7 PASS**：①✅git fetch origin local=in-sync **无新data令**(BAIZE_DATA_TASK.md远端无变化)；②✅pretrain iter=292,410/700k(41.77%) step~7.2s<7.4s gate✅ 训练健康 loss≈1.99 lr=1e-3 stable 292k eval RUNNING(ETA~08:05)(读自MEMORY_PRETRAIN_2B.md #3115@07:25)；350k倒计时≈(350k-292.41k)×7.2s≈115h≈4.8天→~11-28；③✅blendswitch第39次复验7/7 PASS(zero_overlap=0/7源S1 50k·S2 50k docs零交集；ratio max_dev=0.0087%<1%；flag-off=byte-identical；new_source=0；epoch_wrap诚实报告；json_roundtrip OK；perf_pass)；复跑方式=uv run --no-project --with numpy==1.26.4 --python 3.12；verify_results.json已git checkout HEAD还原为提交版避免timing churn；④✅.12 load=25.49<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无下载进程(S2三下载+Nemotron-CC-Math/finemath/MegaMath-web全100%,0 .incomplete)；⑦✅MEMORY 34.9KB<40KB硬限/TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+
+> 📦 R245 心跳（例行巡检+blendswitch第38次复验7/7 PASS·iter292360 step~7.17s·.12 load25.00·0下载进程）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R244 心跳（例行巡检+blendswitch第37次复验7/7 PASS·iter292310 step~7.20s·.12 load27.07·0下载进程）已归档 → daily-memories-data/2026-11-23.md
 
