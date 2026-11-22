@@ -5980,23 +5980,44 @@
   "openlayers__openlayers-14015": {
     "instance_id": "openlayers__openlayers-14015",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 490.7,
+    "rc": 0,
+    "model_patch_len": 2952,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ebGLTile.js`**:\n   - In `handleSourceUpdate_()`, the renderer's `clearCache()` is now called before `setStyle()`, ensuring all cached textures from the old source are disposed when the source changes\n",
+    "stderr_tail": "change\n[✓] Implement the fix in WebGLTileLayerRenderer (clearCache, projection tracking)\n[✓] Implement the fix in WebGLTileLayer (handleSourceUpdate_)\n[✓] Verify the fix compiles and passes lint\n\u001b[0m\n"
   },
   "openlayers__openlayers-14051": {
     "instance_id": "openlayers__openlayers-14051",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 37.1,
+    "rc": 0,
+    "model_patch_len": 606,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "'s own minimum zoom)\n\nThis matches the behavior of the canvas-based `TileLayer` renderer, which also only uses `tileGrid.getMinZoom()` and never references `layer.getMinZoom()` as a tile index bound.\n",
+    "stderr_tail": "ometry'.\n\n\u001b[7m1089\u001b[0m    * @param {import(\"../Feature.js\").default<Geometry>} feature The feature.\n\u001b[7m    \u001b[0m \u001b[91m                                             ~~~~~~~~\u001b[0m\n\n\nFound 92 errors.\n\u001b[0m\n"
   },
   "openlayers__openlayers-14066": {
     "instance_id": "openlayers__openlayers-14066",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 318.3,
+    "rc": 0,
+    "model_patch_len": 4260,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "browser/spec/ol/source/GeoTIFF.test.js`:**\n\n5. Updated test expectations from `toBe('readRasters')` / `toBe('readRGB')` to `toEql(['readRasters'])` / `toEql(['readRGB'])` to match the new array type.\n",
+    "stderr_tail": "igure_\n[✓] Update loadTile_ to use per-source readMethod_\n[✓] Update tests for new array readMethod_\n[✓] Verify with tests\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/ol/source/GeoTIFF.js\u001b[90m [limit=50, offset=420]\u001b[0m\n"
   },
   "openlayers__openlayers-14100": {
     "instance_id": "openlayers__openlayers-14100",

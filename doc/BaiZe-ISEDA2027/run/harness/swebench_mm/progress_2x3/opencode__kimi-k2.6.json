@@ -3987,23 +3987,44 @@
   "carbon-design-system__carbon-7353": {
     "instance_id": "carbon-design-system__carbon-7353",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 548.7,
+    "rc": 0,
+    "model_patch_len": 1881,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "s to verify that both overflow buttons render with the correct `aria-label` attributes.\n\n### Verification\nRan the `Tabs` test suite and all **30 tests passed**, including the new accessibility tests.\n",
+    "stderr_tail": "\n\nTest Suites: 1 passed, 1 total\nTests:       30 passed, 30 total\nSnapshots:   0 total\nTime:        19.432 s\nRan all test suites matching /packages\\/react\\/src\\/components\\/Tabs\\/Tabs-test.js/i.\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7478": {
     "instance_id": "carbon-design-system__carbon-7478",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 547.8,
+    "rc": 0,
+    "model_patch_len": 6723,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "-1` for single-line disabled snippets\n- `onClick` is not triggered for disabled inline snippets\n- `disabled` prop is passed to the `Copy` component for inline snippets\n\nAll 12 CodeSnippet tests pass.\n",
+    "stderr_tail": "os\n[✓] Explore codebase to find CodeSnippet component\n[✓] Add disabled prop to CodeSnippet with styling and behavior\n[✓] Update tests for disabled state\n[✓] Verify implementation works correctly\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7619": {
     "instance_id": "carbon-design-system__carbon-7619",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 402.8,
+    "rc": 0,
+    "model_patch_len": 4636,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "\n\n### Usage\n\n```jsx\n<Tag type=\"blue\" size=\"sm\">Short tag</Tag>\n```\n\nThis renders an 18px-high tag that fits more comfortably in compact data tables and small search fields, as requested in the issue.\n",
+    "stderr_tail": "put)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/components/src/components/tag/tag.hbs\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore codebase for Tag component\n[✓] Implement short tag variant\n[✓] Add/update tests if needed\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7687": {
     "instance_id": "carbon-design-system__carbon-7687",
