@@ -3235,16 +3235,30 @@
   "carbon-design-system__carbon-3824": {
     "instance_id": "carbon-design-system__carbon-3824",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 531.7,
+    "rc": 0,
+    "model_patch_len": 6411,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "n) at the `max` breakpoint (`99rem`), whereas previously it stayed at `2rem` because the margin was `16px` (same as `md`/`lg`/`xlg`).\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-3859": {
     "instance_id": "carbon-design-system__carbon-3859",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 589.1,
+    "rc": 0,
+    "model_patch_len": 5865,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "fully — transpiles and outputs correct markup:\\n  ```html\\n  <a href=\\\"#\\\" class=\\\"bx--link bx--link--inline\\\">Inline link</a>\\n  ```\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-3918": {
     "instance_id": "carbon-design-system__carbon-3918",

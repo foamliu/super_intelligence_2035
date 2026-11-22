@@ -5674,16 +5674,29 @@
   "openlayers__openlayers-13013": {
     "instance_id": "openlayers__openlayers-13013",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-13020": {
     "instance_id": "openlayers__openlayers-13020",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 540.0,
+    "rc": 0,
+    "model_patch_len": 1337,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "and sets it to `null`, so it will be recreated on the next `getRenderer()` call. This is used by `WebGLTileLayer.setStyle()` to rebuild WebGL resources (shaders, buffers, textures) for the new style.\n",
+    "stderr_tail": " \u001b[0mTodos\n[✓] Explore WebGLTile layer implementation and understand current style handling\n[✓] Implement setStyle method on WebGLTile layer\n[✓] Verify the implementation compiles and tests pass\n\u001b[0m\n"
   },
   "openlayers__openlayers-13069": {
     "instance_id": "openlayers__openlayers-13069",

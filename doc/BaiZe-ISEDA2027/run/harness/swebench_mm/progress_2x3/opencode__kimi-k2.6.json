@@ -3637,16 +3637,30 @@
   "carbon-design-system__carbon-5035": {
     "instance_id": "carbon-design-system__carbon-5035",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 746.4,
+    "rc": 0,
+    "model_patch_len": 445,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "kpoint(md) {\n       display: flex;\n       align-items: center;\n       height: rem(48px);\n       border-bottom: none;\n+      width: rem(160px);\n+      padding: $spacing-03 $spacing-05;\n     }\n   }\n```\n",
+    "stderr_tail": "elated styles and components\n[✓] Identify difference in text truncation between default tabs and container tabs\n[✓] Apply fix to container tabs text truncation\n[✓] Verify the fix works correctly\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-5156": {
     "instance_id": "carbon-design-system__carbon-5156",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 768.2,
+    "rc": 0,
+    "model_patch_len": 652,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " The existing `Tile-test.js` suite passes (40/40 tests).\n- A focused test confirmed `onChange` now fires on:\n  - Clicking the label\n  - Pressing `Space` on the label\n  - Pressing `Enter` on the label\n",
+    "stderr_tail": " Find and read the SelectableTile component source code\n[✓] Identify why onChange is not being fired\n[✓] Fix the SelectableTile to fire onChange properly\n[✓] Run relevant tests to verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-5173": {
     "instance_id": "carbon-design-system__carbon-5173",
