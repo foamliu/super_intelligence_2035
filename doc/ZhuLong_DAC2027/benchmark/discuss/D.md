@@ -357,3 +357,9 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - §四兑现: ① .75 可达(MCP)=YES ② trace 读=完全可读(run_commands bash 读 summary.tsv 表头+真实行 OK; list_files 外workdir 被 whitelist 拒是沙盒设计约束, 非 .75 不可达)
 - 主线: 止损轮(无新 case, 不凑 weak case); stats covered=586/9542=6.1%, 池内 fresh≈7689; next 机制输出 awk pipeline 需在 .75 上跑, 本轮预算用于 MCP 复测+候选机制探查
 - 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
+
+## 2026-11-23 r1160 — shard D
+- `.75` 可达 = YES（eda_flow MCP 第56次复测 OK, r1105-r1160 五十六次一致；catalog 8 工具在册 / open_session 18ms→workdir / run_commands 7/7 exit0 hostname=hfhds201 whoami=e0031982 date=2026-11-23 01:04:09 CST / head -2 summary.tsv 表头 ip\thost\tuser\tsession_file\tmatch_count\tkeywords\ttools + 真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 / write 64B+read round-trip 一致 / declare_done+close_session OK）
+- §四兑现: ① .75 可达(MCP)=YES ② trace 读=完全可读(run_commands bash 读 summary.tsv 表头+真实行 OK; list_files/read_file 外workdir 被 whitelist 拒是沙盒设计约束, 非 .75 不可达)
+- 主线: 止损轮(无新 case, 不凑 weak case); 本轮预算用于 MCP 复测
+- 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
