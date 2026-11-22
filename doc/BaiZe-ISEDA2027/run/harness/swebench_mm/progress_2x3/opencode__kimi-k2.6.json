@@ -4309,9 +4309,16 @@
   "carbon-design-system__carbon-9700": {
     "instance_id": "carbon-design-system__carbon-9700",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1368.8,
+    "rc": 0,
+    "model_patch_len": 2849,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "--modal-content__regular-content` still gets `padding-right: 20%` for text content that needs the narrower reading width\n- `.bx--modal-content--with-form` continues to work for backward compatibility\n",
+    "stderr_tail": "0m\n\u001b[0m→ \u001b[0mRead packages/styles/scss/components/modal/_modal.scss\u001b[90m [offset=110, limit=20]\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/components/src/components/modal/_modal.scss\u001b[90m [offset=110, limit=20]\u001b[0m\n"
   },
   "carbon-design-system__carbon-9812": {
     "instance_id": "carbon-design-system__carbon-9812",
