@@ -153,7 +153,7 @@
 1793683605769_xt9ag	e0045144	hfeg0pkn002	301	digital	case	EDA-Eval-DesignFlow-VmodConnCheck-001	2026-11-06 18:07	
 1788172501150_w4x70	haoyut	hfeg0pkn003	1575	pnr_signoff	case	EDA-Eval-DesignFlow-SpefAnnotAudit-001	2026-11-06 18:36	
 1793607569089_mmwky.messages.json	rose3wang	hfeg0pkn003	17	pnr_signoff	case	EDA-Eval-DesignFlow-FloorplanTclAudit-001	2026-11-06 19:05	
-1791964914156_it6n4	e0039102	hfeg0pkn002	134	verification	parked		2026-11-06 19:33	USER#1 find-file-by-logname too thin for >=8 cond A-faithful; USER#3 teach-me no gold deliverable in trace; pivot to a7ied (richer SV fix)
+1791964914156_it6n4	e0039102	hfeg0pkn002	134	verification	case	EDA-Eval-DesignFlow-VsimRegSubmitProduce-001	2026-11-23 05:08	USER#1 find-file-by-logname too thin for >=8 cond A-faithful; USER#3 teach-me no gold deliverable in trace; pivot to a7ied (richer SV fix)
 1792044811256_a7ied	aocao	hfhds223	129	digital	case	EDA-Eval-DesignFlow-AcQueueFix-001	2026-11-06 19:48	
 1790667716325_1f7f1.messages.json	e0039503	hfeg0pkn005	175	digital	case	EDA-Eval-DesignFlow-IrunSimDiagnose-001	2026-11-06 20:17	
 1793775927024_1stc5	shaoyou	hfeg0pkn003	20	verification	parked		2026-11-06 20:42	waveview/fsdb user (signal average), shard D not A; deepread USER[0]=计算信号v(Vb)平均值+fsdb find, innovus:36 keyword=waveview innovus-mention noise
