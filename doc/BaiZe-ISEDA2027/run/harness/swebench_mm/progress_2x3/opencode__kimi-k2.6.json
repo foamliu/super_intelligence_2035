@@ -3679,16 +3679,30 @@
   "carbon-design-system__carbon-5330": {
     "instance_id": "carbon-design-system__carbon-5330",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 415.0,
+    "rc": 0,
+    "model_patch_len": 2900,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ut the environment is missing the `airbnb-prop-types` package (needed by `enzyme-adapter-utils`), so the full test suite couldn't execute. The code change itself is minimal and syntactically correct.\n",
+    "stderr_tail": "→ \u001b[0mRead packages/react/src/components/DataTable/TableToolbarSearch.js\n\u001b[0m→ \u001b[0mRead packages/react/src/components/DataTable/__tests__/TableToolbarSearch-test.js\n\u001b[0m→ \u001b[0mRead tasks/jest/setup.js\n"
   },
   "carbon-design-system__carbon-5485": {
     "instance_id": "carbon-design-system__carbon-5485",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 759.4,
+    "rc": 0,
+    "model_patch_len": 2822,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ation/Pagination-test.js`**\n   - Updated the \"should jump to the page entered in the input field\" test to find `input` instead of `select`\n\n### Test results\nAll 38 Pagination tests pass successfully.\n",
+    "stderr_tail": "statePage)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Replace Select with text input for page number in Pagination component\n[✓] Update Pagination tests for new text input behavior\n[✓] Run tests to verify changes\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-6197": {
     "instance_id": "carbon-design-system__carbon-6197",
