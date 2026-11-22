@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R237) — 例行巡检+blendswitch第30次复验7/7 PASS**：①✅git fetch origin local=0ahead/0behind(in-sync) **无新data令**；②✅pretrain iter=291,890/700k(41.70%) step_avg(last10)=7254ms<7.4s gate✅ 训练健康 lr=1e-3 stable daemon idle等292k ETA≈06:42(读自MEMORY_PRETRAIN_2B.md #3108@06:28)；③✅blendswitch第30次复验7/7 PASS(zero_overlap=0/7源S1 50k·S2 50k docs零交集；ratio max_dev=0.0087%<1%；flag-off=byte-identical；new_source=0；epoch_wrap诚实报告；json_roundtrip OK；perf_pass(t_stock=0.1457s/switch_only=0.1469s one-time开销小)；**复跑方式=uv run --no-project --with numpy==1.26.4 --python 3.12**(系统py310无numpy,改用uv管python3.12+代理172.19.92.25:13128拉numpy)；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=26.19<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data下载进程(S2三大下载全100%；dl_orchestrator.sh PID3319999 stale非活跃)；⑦✅MEMORY 33.5KB<40KB硬限/TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R238) — 例行巡检+blendswitch第31次复验7/7 PASS**：①✅git fetch origin local=0ahead/0behind(in-sync) **无新data令**；②✅pretrain iter=291,980/700k(41.71%) step_avg(last10)=7244ms<7.4s gate✅ 训练健康 lr=1e-3 stable daemon idle等292k ETA≈06:42(读自MEMORY_PRETRAIN_2B.md #3109@06:39)；③✅blendswitch第31次复验7/7 PASS(zero_overlap=0/7源S1 50k·S2 50k docs零交集；ratio max_dev=0.0087%<1%；flag-off=byte-identical；new_source=0；epoch_wrap诚实报告；json_roundtrip OK；perf_pass(t_stock=0.1473s/switch_only=0.1497s one-time开销小)；**复跑方式=uv run --no-project --with numpy==1.26.4 --python 3.12**(系统py310无numpy,改用uv管python3.12+代理172.19.92.25:13128拉numpy)；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=26.22<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data下载进程(S2三大下载全100%；dl_orchestrator.sh PID3319999 stale非活跃)；⑦✅MEMORY 33.8KB<40KB硬限/TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+
+> 📦 R237 心跳（例行巡检+blendswitch第30次复验7/7 PASS·iter291890 step7254ms·.12 load26.19·S2三下载全100%）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R236 心跳（例行巡检+blendswitch第29次复验7/7 PASS·iter291840 step7256ms·.12 load26.06·S2三下载全100%）已归档 → daily-memories-data/2026-11-23.md
 
