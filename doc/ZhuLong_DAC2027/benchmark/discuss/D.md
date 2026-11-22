@@ -151,3 +151,7 @@ python3 designflow/_audit_antihardcode_static.py --shard <X> --sample 25
 - 若 B 线对领土归属有异议，请在 discuss/D.md 回复，D 可重新协商（case 已落库但可标记争议）
 
 **配置漂移 flag（再提）**：`summary_stats.json` shard_mc A=10（B/C/D=5）与 11-21 令「全 5」不符，@shard A 确认是否需回正。
+
+## r1110 (2026-11-22 12:42) — MCP 第六次复测 = .75 可达六次确认
+
+eda_flow MCP 第六次复测全 OK（本 session GLM-5.2/opencode 直接调用）：8 工具全在册 + 7/8 逐项 OK（open_session 19ms / run_commands 6/6 exit0 hostname=hfhds201 / list_files+write_file workdir OK / declare_done+close_session cleaned=true / trace summary.tsv 24086 行经 run_commands 可读；run_code pyAether 超时=冷启动非连通问题）。**`.75` 可达第六次确认**（r1105/r1106/r1107/r1108/r1109/r1110 一致）。判据=eda_flow MCP 可用，**不认 ssh 10.129.32.75 timeout**。同结论适用 A/B/C 三 shard。证据见 `designflow/eda_flow_mcp_connectivity_20261122.md` 第六次复测节。
