@@ -1,68 +1,52 @@
 # BAIZE_DATA_TASK.md
 
-> 🔴🔴 **用户令 · 2026-11-22 10:0x — 重写 S1/S2 报告出 v4：补「同一 run 内切换配比」方案 + 大幅精简（最高优先）**
+> 🔴🔴 **用户令 · 2026-11-22 11:0x — 走「方案 F = 自定义改造（权重热更新 + 跨 blend 游标映射）」实现零重叠 + 换比例（最高优先）**
 
-> **用户原话**：「report_s1s2_split_data_v3_zh.html 【S2 零重叠方案】没有考虑在同一个 run 中切换配比这个选项。把这个问题下发给 data，让它重写 report_s1s2_split_data_v3_zh.html，输出 report_s1s2_split_data_v4_zh.html（中文HTML）。篇幅需要大幅简化（<=15KB，现在是 57KB），把主要问题说清楚。」
+> **用户裁定（不必再论证可行性）**：① F 作为 stock 开箱热切换 = **不可行**（接受 v4 核查 1/2 与代码引用）；② F 作为「resume + 新 blend」= 可行但**等价 D+E**，不作主路线；③ F 作为「**零重叠 + 换比例**」= 需非 stock 改造，**技术上可行，本时间线现在选这条**；**2–3 人日可接受，时间还够**。350k 切换点 ≈ **2026-11-28**（当前 iter≈282k、step≈7.3 s）⇒ **patch + 零重叠验证须在 11-27 前完成**。🚫 不许再以「开发量大 / 本时间线不推荐」为由不做。
 
-**交付**：`run/reports/report_s1s2_split_data_v4_zh.html`（**新建，不覆盖 v3**）。
-**硬体积上限：≤ 15 KB**（当前 v3 = 57,681 B，须压缩约 74%）。超限即不合格。
+#### 一、技术方案（接口级，不许停在概念）
+1. `BlendedDataset`（`blended_dataset.py:41/68/82/86/97`）新增 `update_weights(new_weights)` 或独立 `BlendSwitcher`：重建 `dataset_index` / `dataset_sample_index`，但**复用共享源 `shuffle_index`**（`gpt_dataset.py:381` 的静态排列）。
+2. **跨 blend 游标映射（本令核心）**：维护 **per-source `consumed_per_source[s]`**；切换时对共享源令 `new_cursor[s] = consumed_per_source[s]`（在新 blend 的该源排列中继续前移），新源从 0 起。🚫 禁止用全局 `consumed_samples` 直接套 `epoch = consumed // active_total_samples`（`samplers.py:263-264`，即 v4 认定的 epoch 错位根因）。
+3. `MegatronPretrainingRandomSampler`（`samplers.py:222-264`）改为 per-source 进度驱动；`consumed_train_samples`（`loaders.py:191`）语义扩展或新增 `consumed_per_source`，**必须写入 checkpoint** 保证 resume 正确。
+4. 新 blend **允许**生成新 .npy 缓存（`blended_dataset.py:82` 的 hash 机制不动）；关键是**排列复用 + 游标映射**，不是索引文件复用。
+5. 开关 `--blend-hot-switch`（或等价 config 字段）**默认关闭**；关闭时与 stock **逐字节等价**（同 seed 同数据顺序）。
 
-#### 一、必须修正的核心缺陷：v3 漏掉了「同一 run 内切换配比」
+#### 二、零重叠定义与验收（可复现，不许口头保证）
+- **定义**：S2 阶段消费的 document 集合 ∩ S1 阶段消费的 document 集合 = **空集**（判据针对共享源，新源天然为 0）。
+- **验收**：交付离线验证器，读 S1 消费记录 + S2 生成的 index 序列，按 document id 求交，输出 `overlap_docs / total_docs`，**必须 = 0**（不接受「接近 0」）。
+- 若确实做不到严格 0（shuffle 边界 / 末段不足一个 epoch）⇒ **如实报实际值 + 原因**；🚫 不许改判据、截样本或事后换定义来凑 0。
 
-**v3 §0 的六方案（A~F）全部隐含同一个未经检验的前提：「S2 必须另起一个新 run」。**
-在这个框架内讨论「如何降低重开 run 后的重叠」，却从未先问「为什么要重开 run」。这是框架性遗漏，不是措辞问题。
+#### 三、换比例生效 + 不回归
+- S2 前 **≥5000 个 batch** 的每源样本占比 vs 目标 blend TSV 偏差 ≤ **1 个绝对百分点**（或给统计置信区间并说明）。
+- step time 相对 stock 偏差 ≤ **2%**；显存增量 ≤ **5%**；切换点前后各 100 step 的 loss 无异常突跳。
+- LR / optimizer / `num_steps` 连续（stable 段 LR 恒 1e-3，无需 re-warmup，沿用 v4 §1 方式①）。
 
-**v4 必须新增方案 F 并重新排序**：
+#### 四、安全边界（硬约束，违者按事故处理）
+1. 🚫 **不得改动 `.29` 上正在跑的 700k 训练、其代码目录 / configs / `.bak`**（当前 8×GPU 满载）。开发在**独立副本**（如 `code/Megatron-LM-blendswitch/`），**pin 住当前训练所用 commit 并记录 hash**。
+2. 🚫 **不得抢 GPU**：优先 CPU/gloo + 小规模验证；确需 GPU 时用空闲卡、smoke ≤2k step、🚫 不 kill 任何他人进程。
+3. 以 **patch + 独立分支**交付，🚫 不 merge 进训练主线，等用户验收。
+4. 每次改动附「**flag off = stock 行为**」回归证据。
 
-- **F = 同一 run 内切换配比**：前 350k 用 S1 blend，之后在同一 run 内切到 S2 blend。
-- **必须先核查的技术前提（写成明确结论，不许含糊）**：
-  1. Megatron `GPTDataset` 能否在训练中**热更新 blend 权重**？还是必须重启 dataloader？
-  2. 若必须重启 dataloader，重启时能否**保留 `shuffle_index` 与 `sample_idx` 游标**？
-  3. 若 (1) 或 (2) 有一个可行 ⇒ **天然零重叠**（游标沿同一排列延续，不会回头重读）。
-  - 🔴 **证据要求**：上述三条判定必须落到**具体文件 + 行号**（如 Megatron 源码里 `build_train_valid_test_data_iterators` / `BlendedDataset` / `shuffle_index` 的实现位置），**不许只写「可行/不可行」而无出处**。
-- **评估维度补全（v3 完全缺失）**：optimizer state 是否延续、**WSD 学习率调度如何接力**、是否重新 warmup、论文能否声称「单次 700k 连续训练」。
+#### 五、估算与止损（回应「2–3 人日缺依据」）
+- 必须给 **WBS 表**（任务 / 预计小时 / 依赖 / 风险 buffer，合计 2–3 人日），实现后回填**实际耗时**。
+- **11-27 前未完成 patch + 零重叠验证** ⇒ 立即上报并止损回退 **D+E**；🚫 不许沉默延期、不许先跑训练后补验证。
 
-#### 二、必须修正 v3 §0.1 的错误表述（重要）
+#### 六、交付物（缺一不可）
+1. `run/reports/report_s1s2_blend_hotswitch_v5_zh.html`（**新建**，中文单文件 HTML、内联 CSS、**0 外链 0 script**、**≤20 KB**）：接口设计 / 游标映射规则 / 零重叠证明方法 / WBS / 风险 / Go-No-Go。v4 保留不删。
+2. **patch + 验证脚本 + 结果 JSON**：路径 / 命令 / 输出三件套齐全（`overlap_docs`、比例偏差、step time、flag-off 等价性证据）。
+3. **v4 报告结论段修正**（用户指出的三点缺陷）：主结论改**三层表述**（stock 不可行 / resume+新 blend = D+E / 自定义改造可行**且已选**）；**~12% 加权过程做成透明表**（逐源「权重 × 重叠假设 → 加权贡献」，给 token 口径与算式）；「2–3 人日」改为 WBS 支撑。
+4. `MEMORY_DATA.md` 首行：「**走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态 + 零重叠实测值 + 350k 倒计时**」。
 
-v3 原文：「S2 如果使用与 S1 相同的 7 个数据源且不修改随机种子，则 S2 将以 ~83-100% 的概率重复采样 S1 已看过的文档」。
+#### 七、收尾
+`git add -- <本线明确路径>` → commit `data blend-hotswitch:` → push。
+🔴 **本节保留至执行完毕**；因体积压缩时只能降级为「1 行指针 + 原文归档 ARCHIVE」，且**必须保留四个锚点：F 自定义改造 / per-source 游标映射 / 零重叠 = 0 实测 / 11-27 截止**。
 
-**该结论只在「重开 run」前提下成立**。v4 必须加上这个限定条件，否则读者会误以为它是普适结论。
-同一 run 内切换时，游标从 K 继续前移，读到 `shuffle_index[K:]` ⇒ **本身零重叠**。这意味着 **D+E 的 ~12% 重叠可能是不必要的妥协**（把本可 0% 的重叠抬到 12%）。这一判断 v4 必须显式给出。
+---
 
-#### 三、必须补的关键遗漏：S1→S2 的 LR / optimizer 接力
 
-无论最终选哪条路线，v4 都必须写清：WSD 调度如何衔接、optimizer state 是否延续、S2 是否重新 warmup。**这比数据重叠更能影响最终指标**，v3 一字未提。
-
-#### 四、诚实性要求
-
-1. **D+E 的「~12% 重叠可接受」必须标注证据状态**——v3 给了结论但无任何量化证据。v4 要么给出证据，要么明确写「未量化，属假设」。
-2. 方案 F 若不可行，必须写清**卡在哪一步**（具体到 Megatron 的哪个模块/接口），不许写「不可行」了事。
-3. 若 F 可行 ⇒ **F 应列为首选，D+E 降为 fallback**，并说明降级理由。
-
-#### 五、篇幅与结构（≤15 KB 硬性要求）
-
-**必须删掉的内容**：
-- §2 下载优先级表（10 项，全部 ✅ 完成）→ 压成一行；
-- §3 甘特图（SVG 体积大）→ 压成 3 行文字时间线；
-- §4 逐源 Epoch 核算明细表 → 只留类别级 web/code/math 三个数；
-- §5 污染检查方案全文 → 压成 2 行；
-- §8 数据源引用清单 → 压成 3 行或删。
-
-**必须保留并突出的内容**（这是报告的「主要问题」）：
-1. **§0 零重叠方案**——含新增的 **F 方案**、修正后的六/七方案对比表、以及「是否该重开 run」这个根本问题的明确回答（**本节应是全文最长的一节**）；
-2. **S1→S2 接力方案**（LR / optimizer / 是否重开）——新增章节；
-3. **一句话结论**（首屏）——选哪条路线、为什么、剩余风险；
-4. **Go/No-Go 状态**——7 项门压成一张小表（G1~G7 各一行，只留状态与不满足时的处置）。
-
-**格式**：中文、单文件 HTML、内联 CSS、**0 外链 0 script**、离线可开。可用小表格，**不要再画甘特图/大 SVG**。
-**验收**：`(Get-Item report_..._v4_zh.html).Length -le 15360`，且 `div/table/tr/span` 标签配对、0 script、0 外链。
-
-#### 六、收尾
-
-完成后 `git add -- run/reports/report_s1s2_split_data_v4_zh.html run/MEMORY_DATA.md` → commit `data report:` → push。
-MEMORY 首行写：「**v4 报告路径 + ≤15KB + 新增方案 F（同 run 切换）+ v3 §0.1 表述已修正 + F/D+E 排序结论**」。
-**v3 保留不删**（历史留证）。
-🔴 **本节不得被整段删除或覆盖**（ops 下发，未执行完前必须保留）；因体积需压缩时只能降级为「1 行指针 + 原文归档到 ARCHIVE」，且**必须保留「v4 路径 / ≤15KB / 方案 F / 首屏口径」四个锚点**。
+> 📦 **§用户令 · 2026-11-22 10:0x（重写 S1/S2 报告出 v4）✅ 已交付** → `run/reports/report_s1s2_split_data_v4_zh.html`（12,282B ≤15KB✅）。
+> 锚点保留：**v4 路径** = `run/reports/report_s1s2_split_data_v4_zh.html` · **≤15KB** 已达标 · **方案 F** = stock Megatron 不可行（`blended_dataset.py:41-110` 无权重更新 API；`samplers.py:234/263` resume 保留游标不可行）· **首屏口径** = v3 §0.1「83-100% 重叠」仅在「重开 run」前提下成立、D+E 的 ~12% 属未量化假设。
+> —— 该令已被 **2026-11-22 11:0x 新令覆盖**：F 改走「自定义改造（权重热更新 + 跨 blend 游标映射）」实现零重叠 + 换比例，见本文件顶部令。原文已归档 `ARCHIVE_OPERATOR_DATA.md`（搜索「v4 报告令」）。
 
 ---
 
@@ -116,102 +100,10 @@ MEMORY 首行写：「**v4 报告路径 + ≤15KB + 新增方案 F（同 run 切
 
 ---
 
-> 🔴 **用户令 · 2026-11-18 — 研究 S2 blend 是否排除 S1 已训数据（最高优先）**
-
-> **用户原话**：「blend TSV 时会确保 S1 训练过的数据不会混入，对吧」「我是说 data blend S2 数据时，不会把 S1 已经训过的数据混进去吧」「这个问题你不要轻率的回答，可以下发给 data，请他研究一下。」
-
-> **研究要求**：
-> 1. **现状分析**：当前 Megatron dataloader 的数据采样机制——blend TSV 的 shard 级权重采样是否追踪样本级消费记录？S1 和 S2 用同一数据源（en_v1_4 / code_l2 / code_l3 / math_l1 / math_l3）时，S2 是否会重复采样 S1 已看过的样本？
-> 2. **可行性研究**：如果用户希望 S2 尽量不重复 S1 已训数据，有哪些技术方案？
->    - **shard 级排除**：S1 用 shard 0-7，S2 用 shard 8-15（对 16-shard 数据源可行吗？数据量够吗？）
->    - **样本级排除**：记录 S1 消费的 sample index，S2 排除（Megatron 是否支持？实现复杂度？）
->    - **换源**：S2 完全用新数据源（stack-v3 + MegaMath + Nemotron）替代 S1 的旧源（数据量够吗？配比怎么调？）
->    - **部分排除**：仅对 epoch >1 的 code/math 做 shard 级排除，web 不排除（因为 web 充裕）
-> 3. **数据量核算**：对每个方案，逐数据源核算 S1 消耗量 vs 可用量 vs S2 需求量，判断是否可行。
-> 4. **推荐方案**：给出 data 线的建议（是否排除、如何排除、有何代价）。
-> 5. **对 epoch 的影响**：如果排除 S1 已训数据，各数据源的 epoch 变化。
-
-> 报告写进 `run/reports/report_s2_data_overlap_study.md`，完成后 commit。
-
-> 🔴 **用户令 · 2026-11-17 16:3x — 修正 v2 HTML 报告重大错误（最高优先）**
-
-> **用户原话**：「data 写的 report_s1s2_split_data_v2_zh.html 错漏百出。比如时间线甘特图（11-17 → 12-25）还在说 350K 在 12-25，实际上 12-25 是 700K，根本来不及。」
-
-> **核心事实错误**：
-> - 当前 iter ~235k，step ~7.0s
-> - **350k 切换点 ≈ 11-26**（(350k-235k) × 7s ≈ 9.3 天），不是 12-25
-> - **700k 终点 ≈ 12-25**（(700k-235k) × 7s ≈ 37.7 天）
-> - 报告中所有「~12-25 到 350k」「S2 启动 ~12-25」「4 周余量」**全错**
-> - 正确余量：数据 11-23 就绪 vs S2 启动 ~11-26 = **仅 ~3 天余量**，非常紧
->
-> **要求**：全文逐处修正 350k 切换时间为 **~11-26**，700k 终点为 **~12-25**。甘特图时间轴改为 11-17 → 11-30（聚焦切换点前后），不再延伸到 12-25。余量重新核算。Go/No-Go 条件中时间相关项全部更新。前置工作截止日期相应前移。
->
-> **同时检查其他错漏**，修正后重新 commit。
-
-> **用户原话**：「调整下载次序，跟 S1/S2 split 相关的预训练数据先下载」
-
-> **调整后的下载优先级**（按 S2 落地需求排序，预训练语料优先，SFT/RL 数据靠后）：
->
-> | 序号 | repo_id | 类型 | 体积 | 用途 | 理由 |
-> |:--|:--|:--|--:|:--|:--|
-> | **1** | `IFM/MegaMath` batch2 (megamath-web) | **预训练** | 887GB | S2 Math | S2 数学预训练核心来源，batch1 已完成，batch2 是消除 math 缺口的关键 |
-> | **2** | `nvidia/Nemotron-CC-Math-v1` | **预训练** | 260GB | S2 Math | 133B tok，ICLR2026 实测最优，math epoch 从 1.18 降到 0.85 |
-> | **3** | `HuggingFaceTB/finemath` | **预训练** | 149GB | S2 Math | 34B+9.6B tok，数学预训练补充 |
-> | **4** | `IFM/Code-Reasoning` (恢复断点续传) | SFT | 3.28TB | decay/post-train | 已下 66%，继续完成，但**不是 S2 预训练瓶颈**（stack-v3 已解决 code 缺口） |
-> | **5** | `IFM/Math-Reasoning` (恢复断点续传) | SFT | 4.46TB | decay/post-train | 已下 28%，继续完成，但**不是 S2 预训练瓶颈** |
-> | **6** | `nvidia/OpenMathInstruct-2` | SFT | 12.6GB | post-train | 体积小，快速下完 |
-> | **7** | `nvidia/OpenCodeReasoning` | SFT | 9.7GB | post-train | 体积小，快速下完 |
-> | **8** | `nvidia/OpenCodeInstruct` | SFT | 6.9GB | post-train | 体积小 |
-> | **9** | `deepmind/code_contests` | RL | 7.6GB | post-train RL | 自带验证器 |
-> | **10** | `project-numina/NuminaMath-1.5` | SFT | 0.5GB | post-train | 体积小 |
->
-> **原则**：S2 预训练需要的（MegaMath-web / Nemotron-CC-Math / finemath）排最前；IFM 已在下的继续但不抢带宽；SFT/RL 小数据集穿插在带宽空闲时下。`aimo-validation-aime` 不下。
-> **磁盘红线**：`/nas_user` 可用 ≥5TB，随时检查。
-> **注意**：data loop 进程和下载进程均已停，需要先重启 data loop，再按此优先级启动下载。
-
-> 🔴 **用户令 · 2026-11-17 — S2 采用 4:4:2，刷新细化方案（中文 HTML）（最高优先）**
-
-> **用户裁定**：S1/S2 等分 + S2 采用 web:code:math = 4:4:2。当前 iter ~235k，预计 ~11-26 到 350k，时间来得及。请 data 线基于已出的两份报告，**刷新并细化**出一版**可执行的落地方案**，以**中文 HTML** 单文件交付。
-
-> **HTML 报告要求**：
-> 1. **最终配比表**：S2 的 shard 级 blend TSV（哪些数据源、各自 prop、类别校验 web=40%/code=40%/math=20%、加和=1.0）。含 stack-v3-train（L4 过滤后）+ MegaMath（Batch1 + 尽量含 Batch2-web）。
-> 2. **前置工作清单**：逐项列出 PC-1 ~ PC-5（L4 过滤 / MegaMath 分词 / 污染闸门扩展 / blend TSV 生成 / MegaMath-web 下载），每项含：工作内容、预估耗时、截止日期、当前状态、负责人。
-> 3. **时间线甘特图**（HTML table 或 CSS 模拟）：从 11-17 到 ~12-25（350k 切换点），标注各前置工作起止、IFM 下载完成节点、S2 启动节点。
-> 4. **epoch 核算表**：S1+S2 累计消耗 vs 可用量，逐类别（web/code/math）逐数据源，标红 >1.2 的项。
-> 5. **污染检查方案**：扩展黑名单（HumanEval/MBPP/GSM8K/MATH/SWE-bench）+ 13-gram 闸门扫描范围 + 预估耗时。
-> 6. **风险与缓解**：Math epoch 1.18（仅 Batch1）→ 如 Batch2 按时到货降到 0.65；如 Batch2 延迟的 fallback。
-> 7. **结论**：可行性判定 + 关键路径 + Go/No-Go 条件。
->
-> **外部参考（Gemini 评论，供参考，不代表用户指令）**：
-> - 认为两段式策略对 2B Agent "战略意图清晰、极具实操价值"。
-> - 风险提醒：① 灾难性遗忘/语言风格突变（Web 74%→40% 骤降）；② 数据分布突变导致 350k 处 Loss 跳水/反弹。
-> - 建议：① 设 20K~50K steps 的平滑过渡窗口（线性或阶梯渐变），而非硬切；② Code/Math 质量必须精洗（StarCoder/DeepSeekMath 级别）；③ Decay 段前配比应已稳定在 4:4:2。
-> - 注意：本项目 WSD 的 decay 段是 700k–720k（20k 步），非 Gemini 假设的 70k。pretrain 报告已分析切换点 Loss spike 风险为低-中（S4 实验显示配比切换 loss 反降），推荐直接切换但保留 ramp 备选。报告中可纳入平滑过渡方案作为可选项，但不要照搬 Gemini 的具体步数建议。
-> 
-> 报告写进 `run/reports/report_s1s2_split_data_v2_zh.html`，完成后 commit。
-
-> 🔴 **用户令 · 2026-11-17 — Stable 段 S1/S2 等分可行性报告（最高优先）**
-
-> **用户原话**：「我有点想把 Stable 的 700k 等分成 S1 和 S2，S1 配置不变，S2 中 web:code:math 按 4:4:2 配比，以提升数学、代码、agentic 能力。请 pretrain 和 data 分别写个报告，分析可行性和利弊。」
-
-> **data 报告要求**（pretrain 线另写一份，各写各的）：
-> 1. **数据充足性**：S2 = 350k steps × ~4.19M tok/step ≈ 1.47T tokens。按 web:code:math = 4:4:2，code 需 ~588B tok、math 需 ~294B tok、web 需 ~588B tok。对照 DATA_MAPPING.md 现有库存（code L2 421B + L3 129B = 550B；math L1 164B + L3 78B = 242B；web en 2237B + zh 113B + l1 150B），逐项判断是否够、需几 epoch、是否需要新数据。
-> 2. **新数据源建议**：IFM Code-Reasoning（下载中 65%）、IFM Math-Reasoning（下载中 25%）、MegaMath、stack-v3-train（476B tok）等能否补入 S2？给出到货时间和可用量预估。
-> 3. **配比落地**：给出 S2 的 shard 级配比表（哪些 shard、各自权重、占比），确保加和 = 1.0 且 web:code:math = 4:4:2。
-> 4. **数据质量与去污染**：S2 大幅提高 code/math 比例后，质检门槛是否需要调整？评测集污染风险？
-> 5. **利弊分析**：从数据视角看，code/math 提到 40%/20% 的收益与风险；与 DeepSeek 4:2:4 的差异；现有 web 数据被压缩到 40% 是否会损失通用能力。
-> 6. **落地建议**：是否可行、有何前置条件、推荐时间线。
-> 
-> 报告写进 `run/reports/report_s1s2_split_data.md`，完成后 commit。
-
-> 🧹 **2026-11-15 用户令 · 本任务书已做「去禁令化」检查**：限制探索的禁令已删除；**数据安全类约束全部保留**（删源前校验、不挤他人带宽、不碰他人产物、磁盘红线）——它们防的是**数据损毁**，不是防尝试。**默认立场：数据筛选规则、抽样方法、质检策略由你自主决定，写清依据即可。**
-
-> ✅ **用户令 · 2026-11-15 09:0x（评估 5 个 agent datasets）· ✅ 已完成** → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§2026-11-15 09:0x」；结论：Toucan(21GB)+AgentTrove(19GB)+neulab ADP 15子集(79GB)已落盘；orca P2不下；freeinference P3排除(转告harness)；adp_subset_plan.md+污染检查+DATA_MAPPING D1-D4已交付。以下详细内容保留供参考，已闭合。
-
-> 详细内容已归档至 `ARCHIVE_OPERATOR_DATA.md`「§2026-11-15 09:0x」。
-
-
-> 📦 **用户令 · 2026-11-15 08:5x（IFM 3数据集下载+调研）· ✅ 已完成** → 原文归档 `ARCHIVE_OPERATOR_DATA.md`「§用户令·2026-11-15 08:5x」；结论：MegaMath(5子集)/Math-Reasoning(5子集)/Code-Reasoning(7子集)已落盘+分词；调研报告 `report_data_math_code_datasets_survey_zh.html`。
+> 📦 **§已交付（原文归档）· 2026-11-18 S2 blend 排除研究 / 2026-11-17 v2 报告纠错 / 2026-11-17 下载优先级** → `ARCHIVE_OPERATOR_DATA.md`（搜索「S2 blend 排除研究」）。
+> - **S2 是否排除 S1 已训数据**：已由 v3/v4/v5 迭代收口（现行路线 = **F 自定义改造**，见顶部令）；shard 级排除不可行（S1 已用全部 shard）、样本级排除需改源码、完全换源无 Web 替代。
+> - **时间口径（随 iter 滚动更新）**：350k 切换点 ≈ 2026-11-28；700k 终点 ≈ 2026-12-26。
+> - **下载/落盘常驻**：S2 预训练源（MegaMath-web / Nemotron-CC-Math / finemath）优先；`stack-v3-train` 仅 train 15.9TB（🚫 full 113.7TB、🚫 the-stack-v2）；SFT/RL 小集穿插空闲带宽；`/nas_user` 可用 **≥5TB** 红线随时检查。
 
 ---
 
