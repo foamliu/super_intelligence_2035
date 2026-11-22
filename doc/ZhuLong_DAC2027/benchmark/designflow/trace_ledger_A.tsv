@@ -771,3 +771,4 @@ im5c1	lorikx	hfeg0plg15	266	verification	case	EDA-Eval-DesignFlow-SvTbVcdFsdbVer
 1795076667445_ik2dn.messages.json	dechaoc	hfeg0pgn145	164	verification	case	EDA-Eval-DesignFlow-VlogTaskGraphProduce-001	2026-11-22 14:55	r990 delivered
 1794963805872_1kd5q.messages.json	jkxu	hfhds209	123	pnr_signoff	case	EDA-Eval-DesignFlow-MonRptErrScanProduce-001	2026-11-22 15:31	r991: A档 verification produce-task+hidden-B, mon_rpt_err_scan.py <top_dir> [--csv] [--genrerun] → JSON(total_sims/sims_with_errors/clean_sims/unique_error_types/per_sim presence binary). A=DDR5 drcpa PUMP_MON/WL_MON(4 types 4 sims); hidden B=CMD_MON/DATA_MON/ZQ_MON(3 types 3 sims, disjoint). k=19/19+§4.9三假FAIL. NEW user jkxu@hfhds209 mc123
 1794794874395_kyu2s.messages.json	cliu	hfhds221	78	verification	case	EDA-Eval-DesignFlow-XrunTranCrashDiagnoseQA-001	2026-11-22 15:53	
+fjy8k	chili	hfeg0pgn145	157	verification	case	EDA-Eval-DesignFlow-MsieWaveDumpDiagnoseQA-001	2026-11-22 16:36	
