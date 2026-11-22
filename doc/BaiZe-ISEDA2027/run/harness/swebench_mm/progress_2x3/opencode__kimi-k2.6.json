@@ -3218,16 +3218,30 @@
   "carbon-design-system__carbon-3626": {
     "instance_id": "carbon-design-system__carbon-3626",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1396.3,
+    "rc": 0,
+    "model_patch_len": 9339,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "s focused\"** — The `onFocus`/`onBlur` fix ensures keyboard navigation works properly: tabbing into the nav expands it, tabbing between items inside it keeps it expanded, and tabbing out collapses it.\n",
+    "stderr_tail": "NavContext in SideNav.js and fix onFocus/onBlur\n[✓] Update SideNavMenu.js to collapse when SideNav is collapsed\n[✓] Run tests and update snapshots if needed\n[✓] Verify the fix handles edge cases\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-3824": {
     "instance_id": "carbon-design-system__carbon-3824",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 518.5,
+    "rc": 0,
+    "model_patch_len": 5324,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "the `max` breakpoint now correctly outputs `padding-left: 2.5rem` / `padding-right: 2.5rem` (16px half-gutter + 24px margin), aligning the code with the Carbon website and Sketch file specifications.\n",
+    "stderr_tail": "stigate grid max breakpoint margin discrepancy\n[✓] Find where grid margins/breakpoints are defined\n[✓] Update max breakpoint margin from 16px to 24px\n[✓] Update snapshot tests\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-3859": {
     "instance_id": "carbon-design-system__carbon-3859",

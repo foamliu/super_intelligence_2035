@@ -5371,9 +5371,16 @@
   "openlayers__openlayers-10478": {
     "instance_id": "openlayers__openlayers-10478",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1317.9,
+    "rc": 0,
+    "model_patch_len": 2400,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "s 0\n\n**`src/ol/source/TileImage.js`** (1 fix):\n- `getTileInternal()`: When a cached tile is ABORT, create a fresh tile instead of returning the disposed one, allowing it to be re-requested and loaded\n",
+    "stderr_tail": "ion tile stitching logic\n[✓] Identify the root cause of disposed tiles being excluded from stitching\n[✓] Implement the fix in reproj/Tile.js and source/TileImage.js\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "openlayers__openlayers-10545": {
     "instance_id": "openlayers__openlayers-10545",
