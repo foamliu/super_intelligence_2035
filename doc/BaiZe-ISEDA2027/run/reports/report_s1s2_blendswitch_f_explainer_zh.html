@@ -43,7 +43,7 @@ svg{display:block;margin:8px auto;max-width:100%}
 <b>一页看懂（三句话）</b><br>
 <b>① 为什么会重叠？</b> 换数据配比必须重建索引，索引一重建，"读到哪了"的书签就被扔掉、从头重读，于是把 S1 已经读过的旧数据又读了一遍——这就是"重叠"。<br>
 <b>② 方案 F 解决什么？</b> 给每个数据源单独留一张书签，切换配比后，共享的旧源从书签处继续往后读、新源从头开始，做到零重叠 + 换比例两全。<br>
-<b>③ 现在到哪一步？</b> <span class="tag tag-m">实测</span> CPU 验证 7/7 全通过：零重叠=0、比例偏差 0.0087%、关掉开关与原版逐字节一致。<span class="tag tag-e">估算</span> 对照组 D+E 的 ~20% 重叠尚未实测。真实训练尚未切换，预计切换点 ≈ 11-28。
+<b>③ 现在到哪一步？</b> <span class="tag tag-m">实测</span> CPU 验证 7/7 全通过：零重叠=0、比例偏差 0.0087%、关掉开关与原版逐字节一致。<span class="tag tag-e">估算</span> 对照组 D+E 的 ~12% 重叠尚未实测。真实训练尚未切换，预计切换点 ≈ 11-28。
 </div>
 <!-- §1 背景科普 -->
 <h2>§1 背景科普：先搞懂五个词</h2>
@@ -174,10 +174,10 @@ svg{display:block;margin:8px auto;max-width:100%}
 <tr>
 <td><b>② resume+新 blend</b><br>（= D+E 方案）</td>
 <td>到 35 万步存档（checkpoint），停训练，换 blend 配比文件，重新启动</td>
-<td class="amber">~20%<br><span class="tag tag-e">估算</span></td>
+<td class="amber">~12%<br><span class="tag tag-e">估算</span></td>
 <td class="green">能换</td>
 <td class="green">可行</td>
-<td>能换比例但<b>游标归零→共享源重读</b>。重叠约 20%（token 口径，<span class="tag tag-e">估算·未实测</span>）。等于 D+E 方案，<b>无额外收益</b></td>
+<td>能换比例但<b>游标归零→共享源重读</b>。重叠约 12%（token 口径，<span class="tag tag-e">估算·未实测</span>）。等于 D+E 方案，<b>无额外收益</b></td>
 </tr>
 <tr style="background:#e8f5e9;font-weight:700;">
 <td><b>③ 自定义改造</b><br>（方案 F · 本方案）</td>
@@ -190,7 +190,14 @@ svg{display:block;margin:8px auto;max-width:100%}
 </table>
 
 <div class="info">
-<b>关于 D+E 的 ~20% 重叠</b>（<span class="tag tag-e">估算·未实测</span>）：基于"同 seed=1234 → 打乱顺序相同 → 共享源前 ~30% 被重读"的理论假设，乘以 S2 共享源权重和(0.67) ≈ 0.20。<b>这是估算值，不是实测值</b>。本时间线已选方案 F，CPU 实测零重叠=0，此表仅作对照留档。
+<b>关于 D+E 的 ~12% 重叠</b>（<span class="tag tag-e">估算·未实测</span>）：基于"同 seed=1234 → 打乱顺序相同 → 共享源前 ~30% 被重读"的理论假设，按 token 口径逐源加权如下表。<b>这是估算值，不是实测值</b>。本时间线已选方案 F，CPU 实测零重叠=0，此表仅作对照留档。
+<table>
+<tr><th>共享数据源</th><th>S2 中权重</th><th>重叠假设(被重读比例)</th><th>加权贡献</th></tr>
+<tr><td>Web（主要共享源）</td><td>0.40</td><td>~30%</td><td>0.40 × 0.30 ≈ <b>12.0%</b></td></tr>
+<tr><td>旧 Code / Math（边际共享）</td><td>~0.04</td><td>~30%</td><td>≈ 1.2%</td></tr>
+<tr><td><b>合计（token 口径）</b></td><td>—</td><td>—</td><td><b>≈ 13% → 记 ~12%</b></td></tr>
+</table>
+算式：重叠率 ≈ Σ(共享源 S2 权重 × 该源被重读比例)。所有"权重""重读比例"均为<b>假设</b>，未经实测；真实值需 GPU 实跑 D+E 才能得到。
 </div>
 <!-- §4 F 原理逐步图解 -->
 <h2>§4 方案 F 原理逐步图解（全文重点）</h2>
@@ -340,7 +347,7 @@ svg{display:block;margin:8px auto;max-width:100%}
 <div class="info">
 <b>实测 vs 估算 — 明确区分</b>：<br>
 <span class="tag tag-m">实测</span> 零重叠=0 / 比例偏差 0.0087% / flag-off 等价 / new-source 0 / epoch_wrap / json_roundtrip / perf → CPU 验证，可复现。<br>
-<span class="tag tag-e">估算</span> D+E ~20% 重叠 → 理论假设，<b>未实测</b>。<br>
+<span class="tag tag-e">估算</span> D+E ~12% 重叠 → 理论假设，<b>未实测</b>。<br>
 <span class="tag tag-s">待测</span> step time ≤2% / 显存 ≤5% → <b>需 GPU smoke test，尚未做</b>。
 </div>
 <!-- §7 风险与回退 -->
@@ -362,7 +369,7 @@ svg{display:block;margin:8px auto;max-width:100%}
 <b>回退方案（Go-No-Go）</b>：<br>
 <b>切换点</b>：约 <b>2026-11-28</b>（当前 iter≈287k，距 350k 约 6 万步 / 6 天）。<br>
 <b>止损线</b>：<b>11-27 前 patch + 零重叠验证必须完成</b>（已完成 ✅）。<br>
-<b>若 GPU smoke test 失败</b>：立即回退到 <b>D+E 方案</b>（resume + 新 blend，重叠 ~20% <span class="tag tag-e">估算</span>）。虽然会重叠，但 D+E 是 stock 可行的、不改动代码的保底路线。<br>
+<b>若 GPU smoke test 失败</b>：立即回退到 <b>D+E 方案</b>（resume + 新 blend，重叠 ~12% <span class="tag tag-e">估算</span>）。虽然会重叠，但 D+E 是 stock 可行的、不改动代码的保底路线。<br>
 <b>绝不</b>：不报告就沉默延期、不先跑训练后补验证。
 </div>
 
