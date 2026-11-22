@@ -1630,4 +1630,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1792031875998_68gc9.messages.json	kli	hfeahpc501	424	spice_sim	case	EDA-Eval-DesignFlow-SimExpl-001	2026-11-22 10:30	r1009: backfill orphan (in B.jsonl, ledger row missing)
 1794461037123_hxrml.messages.json	e0030760	hfeg0pkn004	28	spice_sim	case	EDA-Eval-DesignFlow-SnmAnalyzerExplain-001-v2	2026-11-22 10:30	r1009: backfill orphan (in B.jsonl, ledger row missing)
 1794999211646_md9m3.messages.json					case	EDA-Eval-DesignFlow-ZqSimRunnerProduce-001	2026-11-22 10:51	r1010 re-claim from D r958 wrong-domain triage (only saw msg0 skill-creator wrapper); deep-read msgs24-54 shows real B-spice produce: run_sims.py hspice ZQ calibration deck runner w/ $DATA1 verify
-1795137528730_7rhyl.messages.json	junlingw	hfeg0pkn005	216	spice_sim	claimed		2026-11-22 11:22	
+1795137528730_7rhyl.messages.json	junlingw	hfeg0pkn005	216	spice_sim	case	EDA-Eval-DesignFlow-FinesimTbCodebaseAuditProduce-001	2026-11-22 11:48	

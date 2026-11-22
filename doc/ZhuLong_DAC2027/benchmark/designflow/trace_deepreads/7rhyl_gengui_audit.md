@@ -65,3 +65,14 @@ line 40: triple-quote docstring `"""` 未闭合 — docstring 内容（Script/Pu
 - vs r1006 SpLibIncTokenRewrite (.lib token + .inc spf 替换): 完全不同 — 本 case = 代码库审计 (import 依赖+语法检查+orphan 分类)
 - vs r983 SpDeckModelStripMigrate: 不同
 - vs 任何现存 B case: 无代码库审计类 case, distinct ✓
+
+## r1013 合成完成（DEBT 兑现）
+- **case_id**: EDA-Eval-DesignFlow-FinesimTbCodebaseAuditProduce-001
+- **form**: `audit_codebase.py --dir <dir> [--report <path>]` (参数化代码库审计工具, L1, 纯 Python 无 EDA 二进制)
+- **A** (附件 dir_A, 12 .py 忠实重建 GENGUI 结构): 3 有本地 import (check_all→fgrammar, finesim_gui→[fengine,fgrammar], finesim_tb_generator→[fengine,fgrammar]); 2 useful / 10 orphan; gen_pin_from_net.py 未闭合三引号 line 40 (Python SyntaxError.lineno=40 确认).
+- **hidden B** (10 .py 波形工具包, 与 A 五重反 hardcode): 链式 import wvcore→wvparse→wvfilter→wvreport→wvcli; 4 useful / 6 orphan; wv_buggy_indent.py 缩进错 line 25 (IndentationError.lineno=25 确认).
+- **check.py 12 条** (a-l): ①zip+py_compile+size ②B exit0+报告 ③6 顶层键恰好 ④files 集合==B 10 文件 ⑤dependencies 边独立复算 ⑥syntax wv_buggy_indent ok=false line25 其余 ok=true ⑦orphans 集合 ⑧useful 集合 ⑨reverse_deps 独立复算 ⑩anti-hardcode A 标记缺席/B 标记在场 ⑪源码含 --dir/--report+compile/py_compile+re/ast+argparse ⑫3-seed sha256 一致.
+- **核心齿**: ⑥语法错必须检出 (反 naive all-OK) + ⑦orphan 分类 (反 naive all-useful) + ⑤⑨import 边精确 (反 naive 无边) + ⑩anti-hardcode.
+- **自验**: ref audit_codebase_ref.py → check.py PASS 12/12 ✓; negative_selftest 3 negs 全 FAIL (empty→a size0 / print_only→d A 名泄漏 / core_removed→f 语法 stub 全 OK)✓; §4.9 三假全 FAIL ✓; 3-seed 确定性 ✓.
+- **distinct**: vs GenguiToolkitProvenanceAnalyze (provenance 结构报告, schema 不同) / GenguiVariantAudit (GUI variant 对比, parked orphan) / FineSimTbAuditFix (修 .sp deck) — 本 case = Python 代码库 import 依赖图+compile 语法检查+orphan 分类, 无重复 ✓.
+- **落库**: cases/B/EDA-Eval-DesignFlow-FinesimTbCodebaseAuditProduce-001.json + B.jsonl line (519 lines); ledger_B 7rhyl claimed→case.
