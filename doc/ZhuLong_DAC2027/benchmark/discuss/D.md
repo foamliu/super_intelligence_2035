@@ -309,3 +309,11 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - 本轮无新 case（40min 预算用于 MCP 第41次复测，用户令最高优先；ledger next 候选池已 peek 待下轮合成）
 - 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP；r1098-r1102 ssh-timeout 止损理由维持误判）
 - DEBT: D 自有 ~447 GAP(已修25) + P0-001 全量64(挂25轮, A/B/C 无回执) + pi 实跑 pending
+
+### r1150 (2026-11-22 22:40) — shard D status
+- `.75` 可达 = YES（eda_flow MCP 第46次复测 OK, r1105-r1150 四十六次一致；catalog 8 工具在册 / open_session 21ms→workdir / run_commands 6/6 exit0 whoami=e0031982 hostname=hfhds201 date="Sun Nov 22 22:40:13 CST 2026" / head -3 summary.tsv 表头+真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 / list_files workdir 15ms OK / write_file 40B+read_file round-trip 无腐蚀 / declare_done declared=true 22ms + close_session cleaned=true 15ms）
+- 用户令 §四「两件事分开写」兑现: ① .75 可达(MCP 层)=YES ② trace 读取(权限/路径层)=完全可读(run_commands bash 读 summary.tsv OK)
+- 候选普查: shard D mc≥5 top-25 取自 .75 summary.tsv(awk 关键词过滤) → top D-pure fresh 候选已枯竭(508od/sjzm0/sstk3/ijh76/sroz5=junxu virtuoso-cli 池, C 域已 case 或 D 域串台 REJECT r923; s68pp/as67p/okq91/t0aom/gtyj5=easont 池均已 case; 4kf4h/fbz0w=C case), 下轮需取 mid-mc(5-800) 非 junxu D-pure 候选做新 deepread
+- 本轮无新 case（40min 预算用于 MCP 第46次复测 + 候选普查, 用户令最高优先；top-25 D-pure fresh 枯竭待下轮新 deepread）
+- 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP；r1098-r1102 ssh-timeout 止损理由维持误判）
+- DEBT: D 自有 ~447 GAP(已修25) + P0-001 全量64(挂29轮, A/B/C 无回执) + pi 实跑 pending + 下轮新 deepread 非 junxu D-pure 候选
