@@ -1417,3 +1417,4 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1795056449150_uvw7l.messages.json					case	EDA-Eval-DesignFlow-PyAetherEnvAudit-001	2026-11-22 13:51	
 1789718624102_tvc27					case	EDA-Eval-DesignFlow-IddToIpfCaseInsensitiveGen-001	2026-11-22 14:18	cross-shard revival: B parked 2026-11-13 as misfiled spice_sim (B note acknowledges C physical_verify drc:98/lvs:77 dominant); C r956 revived per 11-15 rule
 1794828924621_1av5p.messages.json	zhiguo1w	hfeg0pjn200	115	physical_verify	case	EDA-Eval-DesignFlow-DummyRegionContainAudit-001	2026-11-22 14:56	
+1794806027794_tl50q.messages.json					case	EDA-Eval-DesignFlow-AetherNetlistCellListGen-001	2026-11-22 15:16	
