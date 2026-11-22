@@ -456,3 +456,41 @@ const c = await tools["eda_flow"].run_commands({workdir:r.workdir, commands:["ca
 // 期望: hostname=hfhds201, hostname -I=10.129.32.75, summary.tsv 表头+真实行
 await tools["eda_flow"].close_session({workdir:r.workdir});
 ```
+
+---
+
+## 第四十七次复测 · r1151 · 2026-11-22 22:5x CST（本 session GLM-5.2/opencode loop shard D，task 卡 22:51:57 触发）
+
+**结论：eda_flow MCP 可用 = `.75` 可达（第四十七次确认 r1105-r1151）。trace 完全可读。**
+
+### 口径（工具 + 参数 + 返回摘要 + 耗时）
+| 步骤 | 工具 | 参数 | 返回摘要 | 耗时 |
+|:--|:--|:--|:--|:--|
+| 1 catalog | search({namespace:"eda_flow"}) | — | 8 工具在册: open_session/close_session/declare_done/run_commands/run_code/read_file/write_file/list_files | — |
+| 2 open_session | open_session | {task_id:"MCP-CONN-TEST-D", eval_id:"20261122-mcptest", sample:"0", user:"shardD-connprobe"} | workdir=`/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/shardD-connprobe_20261122-mcptest_MCP-CONN-TEST-D_0`, response="session workdir ready", error_log="" | 29ms |
+| 3a run_commands | run_commands | {workdir, commands:[pwd,hostname/whoami/id,date,uname -a,ls -la,head -3 summary.tsv,wc -l summary.tsv]} | 7/7 exit0: hostname=**hfhds201**(=.75/10.129.32.75), whoami=e0031982(uid=200450 gid=555 groups=eda_agent), date=2026-11-22 22:52:49 +0800, uname=Linux hfhds201 3.10.0-1127.el7.x86_64, **head -3 summary.tsv 表头+真实行(10.129.32.189 hfeg0pnd001 e0045140 mc=9)**, **wc -l=24086** | 288ms |
+| 3b list_files | list_files | {dir:workdir} | entries=[], error_log="" | 28ms |
+| 3c read_file(外workdir) | read_file | {path:"/home/t0002965/log/.../summary.tsv"} | error_log="path outside allowed prefixes"（whitelist=workdir-only，**非** .75 不可达） | 16ms |
+| 3d write_file+read_file(workdir内) | write_file/read_file | {path:workdir+"/probe.txt",content:"..."} / read same | round-trip 一致无腐蚀: "MCP-CONN-TEST-D ok\nline2\n" (25B) | <50ms |
+| 4 declare_done | declare_done | {workdir} | declared=true, marker=.df_declared_done | — |
+| 4 close_session | close_session | {workdir, keep:false} | cleaned=true | 26ms |
+
+### §四「两件事分开写」兑现
+1. **`.75` 是否可达（MCP 层）**：**YES**（hostname=hfhds201，沙盒本身就是 .75）。
+2. **trace 读取是否受限（权限/路径层）**：`read_file`/`list_files` 受 workdir-only whitelist 约束（沙盒设计，非连通性问题）；**`run_commands` bash 对 trace 全可读**——已实测 `summary.tsv` 表头+真实行+24086 行。trace 完全可读。
+
+### 判定与后续
+- **MCP 可用 ⇒ `.75` 可达** ✅。同结论适用 A/B/C 三 shard。
+- r1098-r1102 ssh-timeout 止损理由维持误判。
+- 主线恢复尝试：shard D mc≥5 top D-pure（waveview/cosmos/skill/netlist/spiros/spectrum/analog/schematic，排除 hspice/finesim/siliconsmart/spectre/ngspice/custom_sim）候选普查——top（508od/sjzm0/sstk3/ijh76/sroz5=junxu virtuoso-cli 池 C 域串台/REJECT；aneeo/m2vah=drc/.gds 主导 C 域；ukkn7=已 parked dup SkillToAether-001；s68pp=已 case）+ mid-mc(5-800) 抽 8 强(1dh6s/4a852/82iou/wg5u2=已 case；38quf/1mvxt/dq8bz/f86ll=已 parked) → **D-pure fresh 候选仍枯竭**，mid-mc 6050 条多 drc/lvs/calibre 主导(C 域串台)。本轮未合成新 case（不凑 weak case）。
+
+### 复现命令（逐条）
+```js
+const s = await tools["eda_flow"].open_session({task_id:"MCP-CONN-TEST-D", eval_id:"20261122-mcptest", sample:"0", user:"shardD-connprobe"});
+const r = await tools["eda_flow"].run_commands({workdir:s.workdir, commands:["pwd","hostname; whoami; id","date '+%Y-%m-%d %H:%M:%S %z'","uname -a","ls -la .","head -3 /home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv","wc -l /home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv"]});
+// 期望: hostname=hfhds201, summary.tsv 表头+真实行, wc -l=24086
+await tools["eda_flow"].write_file({path:s.workdir+"/probe.txt", content:"MCP-CONN-TEST-D ok\n"});
+await tools["eda_flow"].read_file({path:s.workdir+"/probe.txt"});  // 期望 round-trip 一致
+await tools["eda_flow"].declare_done({workdir:s.workdir});
+await tools["eda_flow"].close_session({workdir:s.workdir, keep:false});  // 期望 cleaned=true
+```

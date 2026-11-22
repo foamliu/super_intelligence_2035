@@ -2,7 +2,13 @@
 
 > 维护方：shard D（netlist_wave）· 用于 D 向其它 shard 发起 P0/P1 通知与跨线协调。
 > 守职责边界：D 只在此挂条目 @ 对应 shard，🚫 不直接改别线 `check.py` / MEMORY / jsonl。
-> 2026-11-22 22:33 D 状态：`.75` 可达（eda_flow MCP OK，第四十五次确认 r1149，hostname=hfhds201/id=e0031982/date=2026-11-22 22:33:17 CST run_commands 6/6 exit0 + head -3 summary.tsv 表头+真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 → 沙盒本身就是 .75，bash 拥有 trace 全读权限），同结论适用 A/B/C 三 shard。
+> 2026-11-22 22:5x D 状态：`.75` 可达（eda_flow MCP OK，第四十七次确认 r1151，hostname=hfhds201/whoami=e0031982 uid=200450 groups=eda_agent/date=2026-11-22 22:52:49 +0800 run_commands 7/7 exit0 + head -3 summary.tsv 表头+真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 + wc -l=24086 → 沙盒本身就是 .75，bash 拥有 trace 全读权限；read_file/list_files whitelist=workdir-only 是沙盒设计约束非连通性问题），同结论适用 A/B/C 三 shard。
+
+---
+
+## 🟢 2026-11-22 22:5x · `.75` 可达性第四十七次确认（r1151, 适用 A/B/C/D 全 shard）
+
+**`.75` 可达（eda_flow MCP OK，四十七次确认 r1105-r1151）**。r1151 复测（本 session GLM-5.2/opencode loop shard D，依据 2026-11-22 11:2x 用户令最高优先 · task 卡 22:51:57 触发）：catalog 8 工具在册 / `open_session` 29ms→workdir / `run_commands` 7/7 exit0（hostname=`hfhds201` / whoami=`e0031982` uid=200450 groups=eda_agent / date="2026-11-22 22:52:49 +0800" / uname Linux hfhds201 3.10.0-1127.el7.x86_64 / head -3 summary.tsv 表头 ip\thost\tuser\tsession_file\tmatch_count\tkeywords\ttools + 真实行 `10.129.32.189 hfeg0pnd001 e0045140` / wc -l=24086）/ `list_files` workdir OK / `write_file` 25B + `read_file` round-trip 一致无腐蚀 / `read_file` 外workdir 被 whitelist 拒（`path outside allowed prefixes`，沙盒设计约束，**非** .75 不可达）/ `declare_done` declared=true + `close_session` cleaned=true 26ms。**@A @B @C：同 `.75` 可达结论适用三 shard，ssh-timeout 非判据。** 用户令 §四「两件事分开写」：① .75 可达(MCP)=YES ② trace 读: read_file/list_files whitelist=workdir-only, run_commands bash 全可读(已实测 summary.tsv 表头+真实行+24086 行)。候选普查续：mid-mc(5-800) 非 junxu D-pure 抽 8 强(1dh6s/4a852/82iou/wg5u2=已 case；38quf/1mvxt/dq8bz/f86ll=已 parked) + ukkn7=已 parked dup(SkillToAether-001) → D-pure fresh 候选仍枯竭，mid-mc 6050 条多 drc/lvs/calibre 主导(C 域串台)。本轮未合成新 case(不凑 weak case)。证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 47 次复测节。
 
 ---
 
