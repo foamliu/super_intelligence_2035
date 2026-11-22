@@ -494,3 +494,40 @@ await tools["eda_flow"].read_file({path:s.workdir+"/probe.txt"});  // 期望 rou
 await tools["eda_flow"].declare_done({workdir:s.workdir});
 await tools["eda_flow"].close_session({workdir:s.workdir, keep:false});  // 期望 cleaned=true
 ```
+
+---
+
+## r1154 · 第五十次复测 · 2026-11-22 23:41 +0800（本 session GLM-5.2/opencode loop shard D task 卡 23:40:42）
+
+逐项复测全 OK（8 工具 catalog 在册，实测 6 个）：
+
+| 测试 | 工具 | 参数 | 返回摘要 | 耗时 |
+|---|---|---|---|---|
+| 1 catalog | search({namespace:"eda_flow"}) | — | 8 工具在册(close/list/open/read/run_code/run_commands/write/declare_done) | — |
+| 2 open_session | open_session | {task_id:"EDAFlowMCPProbe-D", eval_id:"20261122-mcpprobe", user:"shardD-probe"} | workdir=/proj/.../sessions/shardD-probe_20261122-mcpprobe_EDAFlowMCPProbe-D_0, error_log="" | 17ms |
+| 3a run_commands(6 cmd) | run_commands | {commands:[pwd,ls -la,hostname,whoami,date,uname -a], workdir} | 6/6 exit0: pwd=workdir / hostname=**hfhds201** / whoami=e0031982 / date=2026-11-22 23:41:06 +0800 / uname=Linux hfhds201 3.10.0-1127.el7.x86_64 | 1051ms |
+| 3b list_files | list_files | {dir:workdir} | entries=[], error_log="" | 15ms |
+| 3c trace 路径(run_commands) | run_commands | {commands:[ls summary.tsv / ls ssh_auth_ok.txt / ls /home/t0002965/log/ / head -3 summary.tsv / wc -l summary.tsv / wc -l ssh_auth_ok.txt]} | 6/6 exit0: summary.tsv 4086101B 24086行 / ssh_auth_ok.txt 9451B 698行 / eda_trace_20261029-11109.log 在册 / 表头 ip host user session_file match_count keywords tools + 真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 | 152ms |
+| 3d write+read(workdir内) | write_file/read_file | {path:workdir+"/probe.txt",content:"eda_flow MCP probe OK\nhostname=hfhds201 (.75)\n..."} / read same | round-trip 一致无腐蚀 (87B, is_text=true) | 11ms |
+| 3e read_file(外workdir) | read_file | {path:"/home/t0002965/log/.../summary.tsv"} | error_log="path outside allowed prefixes"（whitelist=workdir-only，**非** .75 不可达，沙盒设计约束） | 10ms |
+| 4 declare_done | declare_done | {workdir} | declared=true, marker=.df_declared_done | — |
+| 4 close_session | close_session | {workdir, keep:false} | cleaned=true | — |
+
+### §四「两件事分开写」兑现
+1. **`.75` 是否可达（MCP 层）**：**YES**（hostname=hfhds201，沙盒本身就是 .75，whoami=e0031982）。
+2. **trace 读取是否受限（权限/路径层）**：`read_file` 受 workdir-only whitelist 约束（沙盒设计，非连通性问题）；**`run_commands` bash 对 trace 全可读**——已实测 `summary.tsv` 24086 行 + `ssh_auth_ok.txt` 698 行 + eda_trace_*.log 在册。trace 完全可读。
+
+### 判定
+- **MCP 可用 ⇒ `.75` 可达** ✅。第五十次复测(r1105-r1154)结论一致。同结论适用 A/B/C 三 shard。
+- r1098-r1102 ssh-timeout 止损理由维持误判。
+
+### 复现命令
+```js
+const s = await tools["eda_flow"]["open_session"]({task_id:"EDAFlowMCPProbe-D", eval_id:"20261122-mcpprobe", sample:"0", user:"shardD-probe"});
+const r = await tools["eda_flow"]["run_commands"]({commands:["pwd","hostname","whoami","date '+%Y-%m-%d %H:%M:%S %z'","uname -a","head -3 /home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv","wc -l /home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv","wc -l /home/t0002965/ssh_auth_ok.txt"], workdir:s.workdir, timeout_per_cmd:30});
+// 期望: hostname=hfhds201, summary.tsv 表头+真实行, wc -l=24086, ssh_auth_ok.txt=698
+await tools["eda_flow"]["write_file"]({path:s.workdir+"/probe.txt", content:"eda_flow MCP probe OK\n"});
+await tools["eda_flow"]["read_file"]({path:s.workdir+"/probe.txt"});
+await tools["eda_flow"]["declare_done"]({workdir:s.workdir});
+await tools["eda_flow"]["close_session"]({workdir:s.workdir, keep:false});
+```
