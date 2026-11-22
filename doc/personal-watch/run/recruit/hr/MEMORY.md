@@ -1598,3 +1598,12 @@
 - **教训 #166**：既有 `chat/index` 标签的 `items:40` 可能是缓存 DOM，不能单独作为登录有效证据；判失效以新标签三条判据为准，判定前勿点击会话（点击触发鉴权 XHR，加速跳登录）。
 - **教训 #167**：失效也可能表现为「`chat/index` 被重定向到**首页**」而非 `bticket`（`bticket:false`）⇒ 必须合看 ⓑ（无 `.user-list`）与 ⓒ（正文含「登录/注册」），不能只看 `bticket`。
 - **blocker**：① VNC 人工重登（失效第 2 窗）；② 全职岗续期/重发（关闭第 5 窗）+ 实习岗续期/重发（关闭第 17 窗）；③ 主动搜索/打招呼未授权（唯一扩池路径）。
+
+## §七十一 · 2026-11-23 06:00 全职窗口（第 97 轮）：Boss 登录连续第 3 窗失效 · 邮件 0 封 · 职位状态无法读取 · 当日 全职 0/2、实习 0/2
+
+- **登录**：`hr_verify_r94.js` 新标签 → `web/user/?ka=bticket`（`bticket:true` / `hasList:false` / `items:0` / `hasLoginText:true`）；`hr_open_chat.js 'https://www.zhipin.com/web/chat/index?r=R97chk<ts>'` → 同样落 `bticket`。两次独立尝试一致；轮首 `hr_tabs.py prune` ⇒ `matched=1 kept=5CD77A0B… closed=0/0`，无缓存 `chat/index` 标签（#166 / #167 判据执行到位）。未重登 / 未重启 Chrome / 未新建 context / 未清 cookie。
+- **职位**：`hr_jobs.js` 依赖 `chat/index` 标签，本轮无 ⇒ 不可执行（`Cannot read properties of undefined (reading 'webSocketDebuggerUrl')`）；按 R95 原文视作持续关闭 ⇒ 全职第 6 窗 / 实习第 18 窗；本线未改任何职位状态，恢复后首窗须补读（连续 2 窗无读数）。
+- **动作**：0 邮件 / 0 文本 / 0 授权卡 / ⛔ 0 约面 / 0 拒绝 / 无 `code=36`。
+- **兜底审计（离线实测）**：`~/hr_resumes` 209 份 PDF / 184 唯一姓名，逐名对 `发送记录.md` 全文差集 ⇒ 未命中 0；`-newermt '2026-11-20 18:00'` 仅余冰芯两份（R92 已发）⇒ 零新增；李骏翔（交大 985 在读 · 两数齐）仍未回 PDF、陈奕洹/黄茗钧未回两数、无 `MAIL-R` 行者 8 人本科非 211 ⇒ 无可兜底真实简历（不降门槛 / 不伪造 / 不用 2027 届凑数）。
+- **教训 #168**：登录失效当窗若**无 `chat/index` 标签**，`hr_jobs.js` 直接抛 `webSocketDebuggerUrl` 错误 ⇒ 职位状态只能标「无法读取」并按上窗视作持续关闭，不得把上窗结论写成当窗事实；恢复后首窗补读。
+- **blocker**：① VNC 人工重登（失效第 3 窗）；② 全职岗续期/重发（关闭第 6 窗）+ 实习岗续期/重发（关闭第 18 窗）；③ 主动搜索/打招呼未授权（唯一扩池路径）。
