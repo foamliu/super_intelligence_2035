@@ -4881,30 +4881,58 @@
   "highlightjs__highlight.js-2765": {
     "instance_id": "highlightjs__highlight.js-2765",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 945.3,
+    "rc": 0,
+    "model_patch_len": 32191,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "now-consistent parameter highlighting.\n   - Added a new `else-if-block` test with the exact code sample from the issue.\n\n**Verification**\n- All 532 tests pass, including the new `else-if-block` test.\n",
+    "stderr_tail": " output)\n\u001b[0m\n\u001b[0m$ \u001b[0mgit check-ignore build/lib/languages/handlebars.js\nbuild/lib/languages/handlebars.js\n\u001b[0m\n\u001b[0m$ \u001b[0mnpm test 2>&1 | tail -n 5\n✓ should markup default\n\n\n  532 passing (7s)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2785": {
     "instance_id": "highlightjs__highlight.js-2785",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 198.2,
+    "rc": 0,
+    "model_patch_len": 2131,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "s-variable\">$a</span>`.\n\n### Verification\n\n- `npm run build && npm run test-markup` — **285 passing**\n- `npm run test-detect` — **186 passing**\n\nPHP variables now highlight with the `variable` class.\n",
+    "stderr_tail": " vhdl\n    ✓ should be detected as vim\n    ✓ should be detected as x86asm\n    ✓ should be detected as xl\n    ✓ should be detected as xquery\n    ✓ should be detected as zephir\n\n\n  186 passing (6s)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2811": {
     "instance_id": "highlightjs__highlight.js-2811",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 226.0,
+    "rc": 0,
+    "model_patch_len": 489,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " like this now correctly highlights the comment in grey:\n```python\n@pytest.mark.asyncio  # note use of pytest-asyncio marker\n```\n\nAll 286 markup tests pass, including the new decorator-comments test.\n",
+    "stderr_tail": "[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Find Python language definition and understand current decorator/comment handling\n[✓] Fix decorator syntax to allow comments on same line\n[✓] Add test case and verify fix\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2897": {
     "instance_id": "highlightjs__highlight.js-2897",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 570.0,
+    "rc": 0,
+    "model_patch_len": 352,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "le</span>.log(<span class=\"hljs-string\">\"Hello, World!\"</span>)<span class=\"hljs-comment\">/**/</span>\n```\n\nNormal JSDOC comments like `/** @param {string} name */` continue to work correctly as well.\n",
+    "stderr_tail": "ment\">// these should not be matched as class functions</span>\n      -<span class=\"hljs-function\"><span class=\"hljs-title\">for</span>(<span class=\"hljs-params\">expr; expr; expr</span>)</span> {}\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2899": {
     "instance_id": "highlightjs__highlight.js-2899",

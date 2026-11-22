@@ -5739,16 +5739,30 @@
   "openlayers__openlayers-13212": {
     "instance_id": "openlayers__openlayers-13212",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1181.7,
+    "rc": 0,
+    "model_patch_len": 2910,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "e` and works with `WebGLTileLayer`\\n- `bandCount` is set on the source instance and available for the renderer's shader compilation\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-13226": {
     "instance_id": "openlayers__openlayers-13226",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 205.8,
+    "rc": 1,
+    "model_patch_len": 680,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "788,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":202205,\"text\":\"deepseek-v4-flash is not a multimodal model\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "ne-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n{\"ts\":\"2026-11-22T23:40:20.616Z\",\"type\":\"error\",\"message\":\"deepseek-v4-flash is not a multimodal model\"}\n"
   },
   "openlayers__openlayers-13269": {
     "instance_id": "openlayers__openlayers-13269",
