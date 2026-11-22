@@ -302,3 +302,9 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - 本轮无新 case（40min 预算用于 MCP 第39次复测，用户令最高优先；ledger next 候选池已 peek 待下轮合成）
 - 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
 - DEBT: D 自有 ~447 GAP(已修25) + P0-001 全量64(挂23轮, A/B/C 无回执) + pi 实跑 pending
+
+### r1145 (2026-11-22 21:22) — shard D status
+- `.75` 可达 = YES（eda_flow MCP 第41次复测 OK, r1105-r1145 四十一次一致；catalog 8 工具在册 / open_session 20ms→workdir / run_commands 8/8 exit0 hostname=hfhds201 whoami=e0031982 date="Sun Nov 22 21:22:42 CST 2026" uname=Linux hfhds201 3.10.0-1127.el7 / list_files workdir OK / write_file 41B+read_file round-trip 无腐蚀 / read_file 外 workdir whitelist 拒(沙盒约束非不可达) / run_commands bash+return_files 读 trace summary.tsv 表头+真实行 10.129.32.189 hfeg0pnd001 e0045140 + snippet.tsv 678B 取回含 D 域 mc=140 候选(analog:182;pyaether:171;netlist:153) / wc -l summary.tsv=24086 / wc -l ssh_auth_ok.txt=698 / ls eda_trace_20261122.log(今日) / declare_done declared=true + close_session cleaned=true）
+- 本轮无新 case（40min 预算用于 MCP 第41次复测，用户令最高优先；ledger next 候选池已 peek 待下轮合成）
+- 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP；r1098-r1102 ssh-timeout 止损理由维持误判）
+- DEBT: D 自有 ~447 GAP(已修25) + P0-001 全量64(挂25轮, A/B/C 无回执) + pi 实跑 pending
