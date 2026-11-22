@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R222) — 例行巡检+blendswitch第15次复验7/7 PASS**：①✅git fetch origin local已与origin/main同步(3d5c84ed15)，**无新data令**；②✅pretrain iter=291,150/700k(41.59%) step_avg(last10)=7231ms<7.4s gate✅ 训练健康；③✅blendswitch第15次复验7/7 PASS(zero_overlap=0/new_source=0/flag-off=byte-identical/max_dev=0.0087%；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=24.76<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data任务(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226，ps确认无残留进程)；⑦✅MEMORY 30.5KB<32KB / TASK 27.6KB<32KB。research日报11-23「EDA语料Gopher体检」建议记为参考(EDA已取消)。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R223) — 例行巡检+blendswitch第16次复验7/7 PASS**：①✅git fetch origin local已与origin/main同步(7cef3cd85f)，**无新data令**；②✅pretrain iter=291,190/700k(41.59%) step_avg(last10)=7242ms<7.4s gate✅ 训练健康；③✅blendswitch第16次复验7/7 PASS(zero_overlap=0/new_source=0/flag-off=byte-identical/max_dev=0.0087%；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=28.19<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data任务(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226，ps确认无残留进程)；⑦✅MEMORY 30.5KB<32KB / TASK 27.6KB<32KB。research日报11-23「EDA语料Gopher体检」建议记为参考(EDA已取消)。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+
+> 📦 R222 心跳（例行巡检+blendswitch第15次复验7/7 PASS·iter291150 step7231ms·.12 load24.76·S2三下载全100%·research日报EDA建议记为参考(EDA已取消)）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R221 心跳（例行巡检+blendswitch第14次复验7/7 PASS·iter291030 step7129ms·.12 load27.13·S2三下载全100%·research日报EDA建议记为参考(EDA已取消)）已归档 → daily-memories-data/2026-11-23.md
 
