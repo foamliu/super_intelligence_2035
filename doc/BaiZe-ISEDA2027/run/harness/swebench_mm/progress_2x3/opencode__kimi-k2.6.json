@@ -3007,9 +3007,16 @@
   "carbon-design-system__carbon-13527": {
     "instance_id": "carbon-design-system__carbon-13527",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1735.6,
+    "rc": 0,
+    "model_patch_len": 3968,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "he menu when isSideNavExpanded becomes true after being closed`** — verifies the previous expanded state is restored when the rail expands again\n\nAll 117 UIShell tests pass, including the 2 new ones.\n",
+    "stderr_tail": "tests__\\//i.\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore repo structure and find SideNav rail component code\n[✓] Identify root cause of dropdown staying open on sidebar retract\n[✓] Implement fix and verify\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-13851": {
     "instance_id": "carbon-design-system__carbon-13851",

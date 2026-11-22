@@ -2804,9 +2804,16 @@
   "carbon-design-system__carbon-12402": {
     "instance_id": "carbon-design-system__carbon-12402",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 529.6,
+    "rc": 0,
+    "model_patch_len": 6950,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "the prop\\n- ✅ When `readOnly` and not `disabled`, the field is announced by screen readers while not allowing the value to be changed\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-12410": {
     "instance_id": "carbon-design-system__carbon-12410",
