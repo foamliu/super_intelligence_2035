@@ -5966,9 +5966,16 @@
   "openlayers__openlayers-13981": {
     "instance_id": "openlayers__openlayers-13981",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 420.7,
+    "rc": 0,
+    "model_patch_len": 1190,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "use `(fx, fy)` as the rotation center in `composeTransform`. The `translate(x, y)` after `setTransform` still correctly positions the text at the offset position within the rotated coordinate system.\n",
+    "stderr_tail": " in both renderers\n[✓] Identify the rotation logic that differs between the two renderers\n[✓] Fix the immediate renderer to match vector layer behavior\n[✓] Verify the fix compiles/runs correctly\n\u001b[0m\n"
   },
   "openlayers__openlayers-14015": {
     "instance_id": "openlayers__openlayers-14015",
