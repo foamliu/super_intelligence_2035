@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-22（5/5 · 09:00 补轮 · B 轨第八十九轮 → 335） · research 线</title>
+<title>论文观察日报 · 2026-11-22（5/5 · 12:00 补轮 · B 轨第九十轮 → 338） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -47,8 +47,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-22</h1>
-  <div class="sub"><b>06:00 时窗（A 轨已满 5/5 ⇒ 转 B 轨 / 作者网 / 发信）· B 轨第八十八轮 +3 → 332 · 作者网 304 · 作者信 134</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-22 06:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>12:00 时窗（A 轨已满 5/5 ⇒ 转 B 轨 / 作者网 / 发信）· B 轨第九十轮 +3 → 338 · 作者网 308 · 作者信 139</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-22 12:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -211,6 +211,27 @@
     <td><b>联合训练</b>条件与无条件扩散模型（同一网络、按概率丢弃条件），推理时把条件与无条件 score 估计<b>线性组合</b>，用一个引导权换保真度 / 多样性的权衡，且<b>不需要额外分类器</b>。</td>
     <td><b>zhulong（主）</b>：引导权是否随噪声级 / 采样器漂移，直接决定视频少步采样的稳定性。<b>harness</b>：过饱和与 mode dropping 需要量化判据（颜色饱和统计 / CLIP 分数平台 / FID 回头），不能只看人眼。<b>pretrain</b>：条件丢弃概率决定「无条件分支」质量，是训练成本的隐性项。</td>
   </tr>
+  <tr>
+    <td>336</td>
+    <td><b>Retentive Network: A Successor to Transformer for Large Language Models</b>（RetNet）<br><a href="https://arxiv.org/abs/2307.08621">arXiv:2307.08621</a></td>
+    <td>2023 · <b>1,135</b><br><span style="color:#59636e;font-size:12.5px;">预印本（OpenAlex type=preprint）</span></td>
+    <td>保留机制 + 「循环 ≡ 注意力」的理论联系：同一套权重支持<b>并行（训练）/ 循环（O(1) 推理）/ 分块循环（线性复杂度长序列）</b>三种范式，试图同时拿到训练并行性与低推理成本（作者自报）。</td>
+    <td><b>pretrain（主）</b>：长上下文不只靠位置外推，也可换掉注意力本身；「训练用并行、部署用循环」是可直接预注册的对照臂。<b>zhulong</b>：分块循环的线性复杂度对着「视频 token 随帧数线性涨」这一痛点。<b>harness</b>：验收必须同时报质量与吞吐 / 显存，单报加速比不采纳。</td>
+  </tr>
+  <tr>
+    <td>337</td>
+    <td><b>U-Net: Convolutional Networks for Biomedical Image Segmentation</b><br><a href="https://arxiv.org/abs/1505.04597">arXiv:1505.04597</a></td>
+    <td>2015 · <b>18,157</b><br><span style="color:#59636e;font-size:12.5px;">MICCAI 2015（arXiv comment = conditionally accepted）</span></td>
+    <td><b>收缩路径（抓上下文）+ 对称扩张路径（精确定位）</b>的端到端全卷积结构，靠<b>强数据增强</b>把少量标注用足；ISBI 神经元分割超过滑窗 CNN，同一网络在 ISBI 2015 细胞追踪挑战赛两类大幅领先；<b>512×512 分割不到 1 秒（当时 GPU）</b>（作者自报）。</td>
+    <td><b>vision（主）</b>：潜空间扩散（含视频）最常用的解码主干基线；判断要不要换 Transformer 主干先看这一臂。<b>zhulong</b>：视频 3D U-Net 直接继承跳连结构，时间维扩展时跳连如何对齐需单独消融。<b>data</b>：「增强策略可替代标注量」与数据效率口径直接可比。</td>
+  </tr>
+  <tr>
+    <td>338</td>
+    <td><b>ImageNet Large Scale Visual Recognition Challenge</b>（ILSVRC）<br><a href="https://arxiv.org/abs/1409.0575">arXiv:1409.0575</a></td>
+    <td>2014 · <b>1,893</b><br><span style="color:#59636e;font-size:12.5px;">IJCV 2015（OpenAlex 仅计 arXiv 记录，正式版被引远高于此、未合并）</span></td>
+    <td>系统交代 <b>2010 年起每年一届</b>的 ILSVRC 如何造：<b>数百类、数百万图</b>，吸引 <b>50+ 机构</b>参赛；把大规模真值标注的难点、类别识别关键突破、分类 / 检测现状、<b>机器与人类精度对比</b>、五年经验教训逐项写清（作者自报）。</td>
+    <td><b>data（主）</b>：标注质量控制、类别体系、训练-测试隔离的最早系统答案。<b>harness（主）</b>：年度挑战赛 + 隐藏测试集机制，是内部评测榜单与 EDA 设计流 benchmark 的直接范本。<b>vision</b>：视觉主干的成绩都在这一口径下比较，引用 SOTA 须说明是哪一届。</td>
+  </tr>
 </table>
 
 <p style="font-size:14px;"><b>作者关系网 · 03:00 时窗 +2（→ 302）</b>：#301 <b>Timothée Darcet</b>（FAIR Paris / Inria；ViT registers 一作）<b>X 已核验</b> <code>@timdarcet</code>（<code>x.com/timdarcet</code> 经代理 <code>200</code> / 181,126 B，<code>og:title</code> = <code>TimDarcet (@TimDarcet) on X</code>，<code>og:description</code> = <code>LLMs @ FAIR, prev. DINO stuff @ INRIA &amp; FAIR</code>）；<b>邮箱未找到</b>（<code>timdarcet.github.io</code> <code>200</code> / 2,363 B 页内无 <code>mailto:</code>）⇒ 不猜、不发信。· #302 <b>Changli Tang</b>（清华大学电子系博士生；WeMM-Video 一作）：<b>邮箱未找到</b>（<code>github.com/TCL606</code> <code>200</code> / 196,169 B 页内无 <code>mailto:</code>），<b>X 未找到</b>（<code>@TCL606</code> <code>404</code>）⇒ 只建档。X 已核验累计 <b>115</b>。</p>
@@ -249,6 +270,23 @@
 
 <p style="font-size:14px;"><b>voice_ready · 09:00 时窗 0 条</b>：本轮 X 只用于核验 handle（<code>x.com</code> 经代理 <code>200</code>、<code>x.com/jiahuiyu</code> <code>200</code>），未抓取具体推文原文与时间戳 ⇒ 按规矩不出 voice_ready；<b>不使用二手转述顶替</b>。</p>
 
+<h3 class="sec">12:00 时窗 · 长序列架构 / 解码主干 / 基准治理（B 轨第九十轮）</h3>
+<p style="font-size:14px;"><b>为什么这三篇</b>：A 轨今日已 5/5（公告批连续第 16 窗停在 <code>2026-11-19T18:57:25Z</code>，不凑第 6 篇），余量给 B 轨。本轮补的是三条「底座」：<b>RetNet</b> 给长序列一个换掉注意力的路线（训练并行 / 部署 O(1)），<b>U-Net</b> 给视频扩散解码一个卷积主干基线，<b>ILSVRC</b> 给造题与榜单治理一份最早的系统范本。三条分别落在 pretrain、vision / zhulong、data / harness。</p>
+
+<p style="font-size:14px;"><b>作者关系网 · 12:00 时窗 +2（→ 308）</b>：#307 <b>Olaf Ronneberger</b>（U-Net 一作；University of Freiburg）<b>邮箱已核</b> <code>ronneber@informatik.uni-freiburg.de</code>（ar5iv 全文页 <code>200</code> / 63,422 B 首页邮箱块；⚠️ 现行主页 <code>lmb.informatik.uni-freiburg.de/people/ronneber/</code> <code>200</code> / 9,182 B 的邮箱是图片 <code>email_images/ronneber.png</code>、机器不可读 ⇒ 以 2015 年论文内地址为准，送达率不可验证）；<b>X 未找到</b>（主页未见 X 链接，不猜）。· #308 <b>Jia Deng 邓嘉</b>（ILSVRC 二作；Princeton）：<b>邮箱已核</b> <code>jiadeng@princeton.edu</code>（本人主页 <code>200</code> / 5,495 B，页内 JS <code>showemail('princeton.edu','jiadeng')</code> 明文可还原）；<b>X 未找到</b>（主页未见 X 链接，不猜）。X 已核验累计 <b>117</b>（本轮 0 新增）。</p>
+
+<p style="font-size:14px;"><b>作者请教信 · 本时窗 2 封 · 累计 139 · 回信率 0/139</b>：① <b>#138 Olaf Ronneberger</b>（<code>1505.04597</code> U-Net，德文称谓问候 + 英文正文 <b>195</b> 词）<code>SENT OK 12:06:31</code>；② <b>#139 Jia Deng 邓嘉</b>（<code>1409.0575</code> ILSVRC，<b>汉字 238</b>）<code>SENT OK 12:06:39</code>。两封按姓名族属 + 机构判语言（德文混合式 / 中文，未因论文英文或邮箱域名判英文），落款一律两行、其后无任何行，正文不含项目名；开头句与问题句式<b>零共用</b>，各含只对本文成立的技术细节（512×512 &lt;1 秒 / 弹性形变 grid spacing + displacement / overlap-tile 镜像上下文；数百类数百万图 / 2010 年起年度赛 / 50+ 机构 / 机器-人类精度对比）。<b>今日 11/12</b>，待发队列空。<b>回信 0 / 139，0 封到期</b>（最早 2026-11-25）⇒ 仍按待诊断信号处理，不记为成功。</p>
+
+<details>
+<summary>📰 news_ready · 12:00 时窗 0 条（理由）</summary>
+<ul>
+  <li>B 轨三条为 <b>2014–2023 年</b>的奠基论文（RetNet / U-Net / ILSVRC），<b>不是本窗事件点</b>；四问第②问（有事件点吗）不过。</li>
+  <li>按「每期 ≤2 条、宁缺勿滥」⇒ 本时窗 0 条，不拿旧论文当年的发布当今日新闻。</li>
+</ul>
+</details>
+
+<p style="font-size:14px;"><b>voice_ready · 12:00 时窗 0 条</b>：本轮未抓取单条推文原文 + 时间戳；两位新增作者主页均未见 X 链接 ⇒ 无 handle 可核，按规矩不出 voice_ready，<b>不使用二手转述顶替</b>。</p>
+
 <h3 class="sec">晚报变更说明（AM → PM）</h3>
 <ul style="font-size:14px;">
   <li><b>A 轨 3 → 5</b>：新增 #4 WeMM-Video（<code>2611.26409</code>）与 #5 TRQ（<code>2611.26334</code>），均 cs.CV、均 2026-11-19 提交；方向按「vision / zhulong 优先」补齐，AM 三篇偏 agent + 后训练。</li>
@@ -277,9 +315,15 @@
   <li><b>zhulong（09:00 新增 · 按 CFG）</b>：引导权当<b>超参表</b>管理而非常数——至少记录「权重 × 噪声级区间 × 采样步数」三列；判据：先跑 3 档权重（如 1.5 / 3.0 / 6.0）各 200 条样本，若最高档的颜色饱和均值相对最低档上涨 &gt;15% 而 CLIP-score 涨幅 &lt;2%，判定过引导，写进验收红线。</li>
   <li><b>harness（09:00 新增 · 按 Parti 的 P2）</b>：生成类评测的提示词集须登记<b>造题来源与去重方式</b>（是否与训练 caption 同源 / 相似度阈值是多少）；判据：任一评测集若无法说明与训练语料的相似度上界，分数只作参考、不进对外结论。</li>
   <li><b>data（09:00 新增 · 按 Parti 的 tokenizer 侧）</b>：图像进入训练前先固化<b>token 序列长度与词表大小</b>两项元数据，与分辨率一起记账；判据：换 tokenizer 必须重报「每样本 token 数 / 单步成本」，缺该项的吞吐对比不予采纳。</li>
+  <li><b>pretrain（12:00 新增 · 按 RetNet）</b>：长上下文实验除「位置外推」外加一条<b>架构臂</b>——固定训练 token 预算，比 <b>Transformer + RoPE</b> 与 <b>保留机制（并行 / 循环 / 分块循环）</b>；判据：同一有效序列长度下，若循环推理的吞吐提升 &lt;2× 或验证集 ppl 退化 &gt;3%，则该路线不进入下一轮，避免为「便宜推理」付质量税。</li>
+  <li><b>vision（12:00 新增 · 按 U-Net）</b>：扩散解码主干选型表新增「卷积 / Transformer」两臂对照，固定参数量与训练步数；判据：若卷积臂在同参数量下 FID 落后 &lt;5% 且单步显存低 &gt;30%，则视频解码默认保留卷积主干，不因「新」而换。</li>
+  <li><b>zhulong（12:00 新增 · 按 U-Net 3D 扩展）</b>：视频 3D U-Net 的<b>时间维跳连</b>必须单列消融（保留 / 只保留相邻帧 / 全去掉）；判据：若去掉时间维跳连后运动一致性跌幅 &lt;1.0 且主体一致性不降，则采用更省的版本，减少显存占用。</li>
+  <li><b>harness（12:00 新增 · 按 ILSVRC）</b>：内部 EDA 设计流 benchmark 必须有<b>隐藏测试集 + 固定提交频率</b>两件套，并记录每版榜单的类别增删；判据：任一榜单若允许随时看测试集分数再改题，分数不得进对外结论。</li>
+  <li><b>data（12:00 新增 · 按 ILSVRC 的标注治理）</b>：给标注任务加<b>双人复核率与分歧率</b>两项记账（不只记总量）；判据：分歧率 &gt;10% 的类别先重写标注规范再扩容，禁止先堆量后补规范。</li>
+  <li><b>designflow（12:00 新增 · 按 ILSVRC 的年度赛机制）</b>：把设计流 benchmark 做成<b>版本化赛制</b>（每版固定题池 + 公开基线 + 变更日志）；判据：新旧版本分数不可直接比较，报告必须注明版本号与题池哈希。</li>
 </ul>
 
-<h3 class="sec">附录 · 00:00 / 03:00 / 06:00 / 09:00 时窗检索与核验</h3>
+<h3 class="sec">附录 · 00:00 / 03:00 / 06:00 / 09:00 / 12:00 时窗检索与核验</h3>
 <table class="plain">
   <tr><th>项</th><th>结果</th></tr>
   <tr><td>列表 <code>cat:cs.CL&amp;max_results=40</code></td><td><code>200</code> / <b>109,971 B / 40 entry</b> / atom；<code>published</code> 上界 <code>2026-11-19T18:57:25Z</code>（连续第 13 窗未前进，仍在 72h 窗内）</td></tr>
@@ -311,10 +355,17 @@
   <tr><td>09:00 地址复核（发信前）</td><td>ar5iv 全文页 3/3 <code>200</code>（274,460 / 613,481 / 238,415 B），页内邮箱逐字命中 <code>aramesh@openai.com</code> / <code>jiahuiyu@google.com</code> / <code>salimans@google.com</code>（均为 2022 年论文内地址，机构页不公开个人邮箱 ⇒ 送达率不可验证，已标注）</td></tr>
   <tr><td>09:00 X</td><td><code>x.com</code> 经代理 <code>200</code>；<code>@jiahuiyu</code> <code>200</code> / 191,153 B（<code>og:title</code> + <code>og:description</code> 双源）；反例：<code>@adityaramesh</code> <code>200</code> 但 bio 为 <code>A+ : Indic : …</code>（他人）、<code>@tim_salimans</code> <code>404</code>、<code>@jonathanho</code> 为 Chicago 的 22 followers 账号（他人）⇒ 均不记</td></tr>
   <tr><td>09:00 未做</td><td>PDF 逐页复核（unCLIP / Parti PDF 下载被截断 ⇒ 数字一律取自 arXiv 官方摘要；CFG PDF 未取）；推文全文抓取（仅核 handle）；回信通道仍只发不收</td></tr>
+  <tr><td>12:00 列表 <code>cat:cs.CL&amp;max_results=2</code></td><td><code>200</code> / 4,815 B / 2 entry / <code>application/atom+xml; charset=utf-8</code>（<code>--noproxy '*'</code> 直连 <code>https</code>）；公告批仍停在 <code>2026-11-19T18:57:25Z</code>（<b>连续第 16 窗未前进</b>）⇒ A 轨今日 5/5 不凑第 6 篇</td></tr>
+  <tr><td>12:00 B 轨 <code>id_list=2307.08621,1505.04597,1409.0575</code></td><td><code>200</code> + atom（<b>6,740 B / 3 entry</b>；<code>published</code> 齐备：2023-07-17 / 2015-05-18 / 2014-09-01）</td></tr>
+  <tr><td>12:00 abs 页复查</td><td>3/3 <code>200</code>（42,591 / 42,533 / 43,947 B），<code>citation_title</code> 与 API 标题逐字一致</td></tr>
+  <tr><td>12:00 OpenAlex</td><td>3/3 <code>200</code>：<b>1,135</b>（RetNet，preprint 2023）/ <b>18,157</b>（U-Net，preprint 2015）/ <b>1,893</b>（ILSVRC，arXiv 记录 2014，IJCV 正式版未合并）；查询日 2026-11-22</td></tr>
+  <tr><td>12:00 先查重</td><td>三个 ID 在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> 全量正则 <b>0 命中</b>；同批候选复核发现 <code>2306.12464</code> 实为天体物理论文、<code>2304.07972</code> 实为控制论论文（OSWorld 真 ID <code>2404.07972</code> 已在表内 #113）⇒ 均不记、不改标签</td></tr>
+  <tr><td>12:00 地址复核（发信前）</td><td>ar5iv 全文页 <code>1505.04597</code> <code>200</code> / <b>63,422 B</b>（页内 <code>ronneber@informatik.uni-freiburg.de</code>）；<code>cs.princeton.edu/~jiadeng/</code> <code>200</code> / <b>5,495 B</b>（页内 JS <code>showemail('princeton.edu','jiadeng')</code> 明文）；Ronneberger 现行主页 <code>200</code> / 9,182 B 邮箱为图片 ⇒ 已标注送达率不可验证</td></tr>
+  <tr><td>12:00 X / 未做</td><td>两位新增作者主页均未见 X 链接 ⇒ X 本轮 0 新增、<b>不猜 handle</b>；未做：PDF 逐页复核（数字取 arXiv 官方摘要）、推文全文抓取；回信通道仍只发不收</td></tr>
 </table>
 
 <footer>
-  research 线 · 论文观察日报 · 2026-11-22 09:00 时窗（5/5）｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
+  research 线 · 论文观察日报 · 2026-11-22 12:00 时窗（5/5）｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
 </footer>
 </div>
 </body>

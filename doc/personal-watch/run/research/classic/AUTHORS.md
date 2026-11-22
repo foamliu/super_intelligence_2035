@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-22 12:0x）**：作者 **308** 人（编号最大 **308**）· X 已核验 **117**（本轮 **0 新增**：两位新增作者的主页均未见 X 链接 ⇒ 不猜 handle）· 已发信 **139**（台账 #1–#139）· 回信 **0**（0/139）。以下历史快照行保留原文（不追改），计数以本行为准。
+
 > **当前计数（2026-11-22 09:0x）**：作者 **306** 人（编号最大 **306**）· X 已核验 **117**（本轮 +1：`@jiahuiyu` 经 X 页 `og:title` + `og:description` 双源核验 = Jiahui Yu；反例 `@adityaramesh` 为他人、`@tim_salimans` `404`、`@jonathanho` 为 Chicago 另一人 ⇒ 均不记）· 已发信 **137**（台账 #1–#137）· 回信 **0**（0/137）。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **当前计数（2026-11-21 09:0x）**：作者 **290** 人（编号最大 **290**）· X 已核验 **108**（本轮 +1：`@liuziwei7` 经 X 页 `og:title` + `og:description` 双源核验 = Ziwei Liu / NTU）· 已发信 **127**（台账 #1–#127）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
@@ -4353,3 +4355,30 @@
 | X 账号 | **未找到**（`x.com/adityaramesh` 经代理 `200` / 61,805 B，但 `og:title` = `Adi (@adityaramesh) on X`、`og:description` = `A+ : Indic : If You Are Not a Liberal When You Are Young…` ⇒ **显系他人，不记、不猜**） |
 | 状态 | **已发信**（2026-11-22 09:0x · 第 135 封 · 英文 197 词；回信状态 `未到期`，2026-12-06 到期） |
 | 备注 | `语言=英文(判据=印度姓名族属 + OpenAI 美国机构)`。价值点：两段式 prior/decoder 拆分与 AR vs diffusion prior 的比较口径，是 vision 线「中间表示选型」的直接依据。 |
+
+### 307. Olaf Ronneberger
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Olaf Ronneberger（德文姓名族属 ⇒ 德文称谓问候 + 英文正文） |
+| 机构 | **University of Freiburg**（U-Net 一作；论文页署名，本人主页 `lmb.informatik.uni-freiburg.de/people/ronneber/` 现行在岗） |
+| 代表论文 | **U-Net: Convolutional Networks for Biomedical Image Segmentation**（`1505.04597`，B 轨 #337，一作） |
+| 邮箱 | **ronneber@informatik.uni-freiburg.de**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/1505.04597` `200` / 63,422 B 首页 | 邮箱块；⚠️ **现行主页** `200` / 9,182 B 的邮箱是图片 `email_images/ronneber.png`、**机器不可读** ⇒ 只能以论文内地址为准并标注「2015 年论文内地址，送达率不可验证」） |
+| 主页 | <https://lmb.informatik.uni-freiburg.de/people/ronneber/>（`200` / 9,182 B） |
+| X 账号 | **未找到**（主页本轮未见 X 链接；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-22 12:0x · 第 138 封 · 德文称谓问候 + 英文正文 186 词；回信状态 `未到期`，2026-12-06 到期）；X 待跟踪 |
+| 备注 | `语言=德文问候+英文(判据=德文姓名族属 + 德国 Freiburg 机构)`。价值点：U-Net 的「收缩-扩张 + 跳连」仍是潜空间扩散（含视频）解码主干的默认基线，且本文把「强数据增强替代标注量」讲得最清楚；三问落到「弹性形变超参可迁移性 / overlap-tile 的边界一致性 / 视频 3D 扩展时跳连该不该保留」。 |
+
+### 308. Jia Deng 邓嘉
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jia Deng 邓嘉（拼音姓名族属 ⇒ 中文发信） |
+| 机构 | **Princeton University**（ILSVRC 二作；本人主页 `cs.princeton.edu/~jiadeng/` 现行在岗） |
+| 代表论文 | **ImageNet Large Scale Visual Recognition Challenge**（`1409.0575`，B 轨 #338，二作） |
+| 邮箱 | **jiadeng@princeton.edu**（来源：本人主页 `https://www.cs.princeton.edu/~jiadeng/` `200` / 5,495 B，页内 JS `showemail('princeton.edu','jiadeng')` 明文可还原，非图片混淆） |
+| 主页 | <https://www.cs.princeton.edu/~jiadeng/>（`200` / 5,495 B） |
+| X 账号 | **未找到**（主页本轮未见 X 链接；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-22 12:0x · 第 139 封 · 中文 233 汉字；回信状态 `未到期`，2026-12-06 到期）；X 待跟踪 |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 普林斯顿机构；🚫 未因论文英文/邮箱域名判英文)`。价值点：ILSVRC 是「基准怎么造 + 隐藏测试集怎么防过拟合」的最早系统范本，直接服务 harness 的 EDA 设计流 benchmark 与 data 的标注治理；三问落到「领域基准的标注成本与一致性口径 / 人机对比的黑箱评测协议 / 榜单长期维护与版本化」。 |
+
