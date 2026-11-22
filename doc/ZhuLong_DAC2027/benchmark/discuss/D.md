@@ -217,3 +217,5 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 ## r1124 状态 (2026-11-22 16:2x)
 - `.75` 可达 = eda_flow MCP OK (二十次确认 r1105-r1124, 本 session open_session 27ms / run_commands 5/5 exit0 / declare_done+close_session cleaned=true). 同结论适用 A/B/C 三 shard.
 - 主线 1j0zt 合成尝试 → netlist blocker: 真实 netlist `/proj/dscqa/.../zmh_AI_VtscRef_standard_tb_sim_schematic.netlist` permission-denied (minghuiz 私有) + trace 节选 truncated + minimal 构造不复现 faithful 4-group report (script `ia()` + CM 分类依赖完整拓扑). 守质量闸门本轮不交付 case. r1125 plan: 迭代 minimal netlist 对 script 复现 4-group / 或找 readable 真实 netlist / 或换 fresh D trace.
+
+> 2026-11-22 16:36 CST · shard D r1125 · **`.75` 可达性状态：eda_flow MCP OK（第 21 次确认 r1105-r1125）**。本 session GLM-5.2/opencode 实测：open_session 34ms / run_commands 5/5 exit0 hostname=hfhds201 id=uid=200450(e0031982) / write_file+list_files+read_file round-trip 一致 / trace summary.tsv 24086 行可读 / declare_done+close_session cleaned=true。**同结论适用 A/B/C 三 shard**（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）。证据：`designflow/eda_flow_mcp_connectivity_20261122.md`。D 主线恢复「深读新 trace + 造题」。
