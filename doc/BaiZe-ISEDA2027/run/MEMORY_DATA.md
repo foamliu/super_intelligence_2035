@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R214) — 例行巡检+blendswitch第7次复验7/7 PASS**：①✅git fetch无新data令（up-to-date origin/main）；②✅pretrain iter=290,670/700k(41.53%) step~7.3s 290k eval in progress 训练健康；③✅blendswitch复验7/7 PASS(zero_overlap=0/new_source=0/flag_off_equivalence=true/max_dev=0.0087%)；④✅.12 load=24.3<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data任务；⑦✅MEMORY 30.5KB<32KB / TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R215) — 例行巡检+blendswitch第8次复验7/7 PASS**：①✅git fetch无新data令（up-to-date origin/main，HEAD=origin=0a89d8ab）；②✅pretrain iter=290,710/700k(41.53%) step_avg=7322ms<7.4s✅ 290k eval DONE(55.25%) 训练健康 loss≈1.99 lr=1e-3 stable；③✅blendswitch复验7/7 PASS(zero_overlap=0/new_source=0/flag_off_equivalence=true/max_dev=0.0087%/perf switch_overhead~0.6%)；④✅.12 load=27.4<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data任务；⑦✅MEMORY 30.2KB<32KB / TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+
+> 📦 R214 心跳（例行巡检+blendswitch第7次复验7/7 PASS）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R209–R213 心跳（F 科普报告复验第2~6次全通过+归档收口）已归档 → daily-memories-data/2026-11-23.md
 
