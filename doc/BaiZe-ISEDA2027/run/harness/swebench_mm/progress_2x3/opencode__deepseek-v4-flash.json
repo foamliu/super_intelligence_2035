@@ -5813,16 +5813,30 @@
   "openlayers__openlayers-13333": {
     "instance_id": "openlayers__openlayers-13333",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 594.1,
+    "rc": 0,
+    "model_patch_len": 2651,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "e instead of creating a normal tile with a loader.\n\nThis mirrors the exact pattern used by `TileImage.createTile_()` (lines 286-306) and `TileSource.getTileCoordForTileUrlFunction()` (lines 326-334).\n",
+    "stderr_tail": "xtent coords\n[✓] Add optional 'state' parameter to DataTile constructor options\n[✓] Update DataTile.load() to handle absent loader (for EMPTY tiles)\n[✓] Verify the fix compiles and looks correct\n\u001b[0m\n"
   },
   "openlayers__openlayers-13509": {
     "instance_id": "openlayers__openlayers-13509",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 619.6,
+    "rc": 0,
+    "model_patch_len": 579,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " the primary source (which is the same source that `getRenderSource()` would return unless multi-source is in play, and in `getSourceState()` we just need to know if *a* source exists and its state).\n",
+    "stderr_tail": "re the codebase to understand Group and WebGlTile visibility handling\n[✓] Identify the root cause of WebGlTile not respecting group visibility\n[✓] Implement the fix\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "openlayers__openlayers-13547": {
     "instance_id": "openlayers__openlayers-13547",
