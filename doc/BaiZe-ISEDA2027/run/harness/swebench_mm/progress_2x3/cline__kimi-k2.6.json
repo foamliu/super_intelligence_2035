@@ -3639,9 +3639,16 @@
   "carbon-design-system__carbon-5035": {
     "instance_id": "carbon-design-system__carbon-5035",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1752.7,
+    "rc": 0,
+    "model_patch_len": 761,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "nt due to a pre-existing Jest version incompatibility (`require.requireActual is not a function`), which is unrelated to this change.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-5156": {
     "instance_id": "carbon-design-system__carbon-5156",

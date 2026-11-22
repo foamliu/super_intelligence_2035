@@ -6202,30 +6202,58 @@
   "openlayers__openlayers-15229": {
     "instance_id": "openlayers__openlayers-15229",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 337.7,
+    "rc": 0,
+    "model_patch_len": 747,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ect = u_viewportSizePx.x / u_viewportSizePx.y;\nscaled.y /= aspect;\n// ... rotate ...\nscaled.y *= aspect;\n```\n\nThis ensures `icon-rotate-with-view` works correctly regardless of viewport aspect ratio.\n",
+    "stderr_tail": "debase to understand WebGLPoints icon rendering\n[✓] Identify the root cause of icon distortion with non-square viewport\n[✓] Implement the fix in pxToScreen in ShaderBuilder.js\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-15234": {
     "instance_id": "openlayers__openlayers-15234",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 276.2,
+    "rc": 0,
+    "model_patch_len": 2635,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "n a user projection is set, and apply it to each feature's coordinates before the view-to-screen transform — ensuring coordinates are properly transformed from EPSG:4326 to EPSG:3857 before rendering\n",
+    "stderr_tail": "PointsLayer\n[✓] Identify the root cause of the coordinate projection mismatch\n[✓] Implement fix for WebGLPointsLayer to respect useGeographic/featureProjection\n[✓] Verify with tests if available\n\u001b[0m\n"
   },
   "openlayers__openlayers-15271": {
     "instance_id": "openlayers__openlayers-15271",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 240.6,
+    "rc": 0,
+    "model_patch_len": 4550,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ng `STRING | NUMBER` and `toGlsl` using a callback that calls `feature.getId()` (lines 746-777)\n\nUsage: `['id']` returns the feature's id (number or string), works in both canvas and WebGL renderers.\n",
+    "stderr_tail": "rt in cpu.js\n[✓] Set evaluationContext.featureId in canvas style.js\n[✓] Add Operators['id'] in WebGL expressions.js\n[✓] Update docs in expressions.js for the new operator\n[✓] Run tests to verify\n\u001b[0m\n"
   },
   "openlayers__openlayers-15365": {
     "instance_id": "openlayers__openlayers-15365",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 314.3,
+    "rc": 0,
+    "model_patch_len": 1488,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "his.getLayer().getOpacity()`\n\nThis matches the pattern used by `VectorLayer`, which correctly gets opacity from `layerState.opacity` and stores it for use in both `renderFrame` and `renderDeclutter`.\n",
+    "stderr_tail": "plore codebase to understand layer group opacity handling\n[✓] Identify the root cause of opacity not applying to vector tile labels\n[✓] Implement the fix in VectorTileLayer.js\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-15466": {
     "instance_id": "openlayers__openlayers-15466",

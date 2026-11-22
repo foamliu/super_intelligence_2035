@@ -4197,23 +4197,44 @@
   "carbon-design-system__carbon-8477": {
     "instance_id": "carbon-design-system__carbon-8477",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 655.5,
+    "rc": 0,
+    "model_patch_len": 9265,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "List and UnorderedList tests pass successfully\n- Button tests are blocked in this environment by a missing `@testing-library/react` dependency (unrelated to these changes), but all syntax checks pass\n",
+    "stderr_tail": "her the list is nested, or not\n    */\n@@ -42,6 +48,7 @@ UnorderedList.propTypes = {\n \n UnorderedList.defaultProps = {\n   nested: false,\n+  expressive: false,\n };\n \n export default UnorderedList;\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8720": {
     "instance_id": "carbon-design-system__carbon-8720",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 579.5,
+    "rc": 0,
+    "model_patch_len": 3420,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "pshot test\n\nThe implementation follows Carbon's existing component patterns and is accessible with proper `role=\"progressbar\"` and ARIA attributes (`aria-valuemin`, `aria-valuemax`, `aria-valuenow`).\n",
+    "stderr_tail": "ectories\n[✓] Check if Progress Bar component already exists\n[✓] Review existing component patterns for implementation reference\n[✓] Implement Progress Bar component (React, SCSS, exports, tests)\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8912": {
     "instance_id": "carbon-design-system__carbon-8912",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 302.0,
+    "rc": 0,
+    "model_patch_len": 451,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "efault Search height 40px (matching the close button and other form inputs like TextInput), while the size modifiers (`sm`, `lg`, `xl`) continue to override it as expected.\n\nAll 27 Search tests pass.\n",
+    "stderr_tail": "assed, 1 total\nTests:       27 passed, 27 total\nSnapshots:   0 total\nTime:        2.491 s, estimated 4 s\nRan all test suites matching /packages\\/react\\/src\\/components\\/Search\\/Search-test.js/i.\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8945": {
     "instance_id": "carbon-design-system__carbon-8945",
