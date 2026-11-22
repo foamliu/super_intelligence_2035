@@ -1668,3 +1668,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794815222258_pofwk	reedchen	hfeg0pkn002	127	spice_sim	case	EDA-Eval-DesignFlow-PvtMt0ThreeLevelAggregate-001	2026-11-22 22:46	
 1795164433311_o7ljl.messages.json	joeyl	hfeg0pkn004	78	spice_sim	case	EDA-Eval-DesignFlow-C2cCornerAmplifierAudit-001	2026-11-22 23:05	
 1789721894372_j1o1i.messages.json	junxu	hfeg0pkn005	235	spice_sim	parked		2026-11-22 23:50	FALSE POSITIVE: junxu custom_design_skill review/optimization (block-design/block-sim/wv-cli skill dev), NOT spice_char; hspice/netlist keywords incidental in skill refs
+1795001430545_gdoad	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 00:21	near-dup 6pm3i/DelvtoNetlistModifier-001 r1028 (joeyl ulvt_delvto add vth=-0.2v to Bias netlist, verbatim same task; 15 near-dup slugs gdoad/gn43h/lsazo/dq5p2/m9brd/jnv8r/pzwk5/9t9um/ikyvh/9qw7j/0dnig/6pc5q/mvi3y/1fj8l all same trace re-indexed)
