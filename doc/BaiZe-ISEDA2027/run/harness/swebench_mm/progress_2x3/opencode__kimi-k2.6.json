@@ -4645,16 +4645,30 @@
   "grommet__grommet-6296": {
     "instance_id": "grommet__grommet-6296",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 528.3,
+    "rc": 0,
+    "model_patch_len": 12823,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rrently fails on a pre-existing environment issue where React’s `ReactDOMTestUtils.act` deprecation warning is thrown as an error by the project’s `setupTests.js`. This is unrelated to these changes.\n",
+    "stderr_tail": "[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Add wordBreak support to Heading component (StyledHeading, propTypes, types)\n[✓] Use wordBreak='break-word' on PageHeader title Heading\n[✓] Add/update tests and snapshots\n\u001b[0m\n"
   },
   "grommet__grommet-6307": {
     "instance_id": "grommet__grommet-6307",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 574.2,
+    "rc": 0,
+    "model_patch_len": 2473,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "alue)\n\nThe existing test failures in this environment are due to React deprecation warnings being thrown as errors by the test setup (`setupTests.js`) — a pre-existing issue unrelated to this change.\n",
+    "stderr_tail": "fix\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/js/components/DataTable/DataTable.js\u001b[90m [offset=105, limit=20]\u001b[0m\n\u001b[0m→ \u001b[0mRead src/js/components/DataTable/__tests__/DataTable-test.js\u001b[90m [offset=369, limit=50]\u001b[0m\n"
   },
   "grommet__grommet-6350": {
     "instance_id": "grommet__grommet-6350",
