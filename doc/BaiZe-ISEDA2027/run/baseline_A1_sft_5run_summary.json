@@ -1,0 +1,1164 @@
+{
+ "arm": "A1_sft",
+ "source": "baseline-nailed §D Stage3 5-run finalize (MiniCPM5-2B base, .17 口径, 修复量尺)",
+ "protocol": "158 / Pass@1 / 2500s / single-trace / 5-run / -p 8 -n (frozen)",
+ "n_runs_completed": 5,
+ "n_runs_requested": 5,
+ "per_run_pass_rate": {
+  "1": 0.06962025316455696,
+  "2": 0.0379746835443038,
+  "3": 0.056962025316455694,
+  "4": 0.03164556962025317,
+  "5": 0.03164556962025317
+ },
+ "five_run_mean": 0.04557,
+ "five_run_std": 0.016983,
+ "five_run_ci_note": "sd reported (n=5); for paper use McNemar/paired-bootstrap on per-task outcomes",
+ "per_task_pass_distribution_0_to_N": {
+  "0": 128,
+  "1": 25,
+  "2": 4,
+  "3": 1
+ },
+ "per_task_categories": {
+  "pass_all_runs": 0,
+  "fail_all_runs": 128,
+  "partial": 30,
+  "n_tasks": 158
+ },
+ "dominant_fail_mode_over_failing_tasks": {
+  "F1_no_code": 127,
+  "F3_timeout": 13,
+  "F5_logic_error": 11,
+  "F4_api_misuse": 7
+ },
+ "four_metric_means_over_runs": {
+  "agent_loop_entry_rate": 0.6228,
+  "tool_call_count_mean": 39.3013,
+  "error_rate_mean": 0.014,
+  "rag_queried_rate": 0.7025
+ },
+ "pertask_profile_present": {
+  "1": true,
+  "2": true,
+  "3": true,
+  "4": true,
+  "5": true
+ },
+ "report_model_name_per_run": {
+  "1": "zhulong_deepseek_v32",
+  "2": "zhulong_deepseek_v32",
+  "3": "zhulong_deepseek_v32",
+  "4": "zhulong_deepseek_v32",
+  "5": "zhulong_deepseek_v32"
+ },
+ "note_model_identity": "final_report.model_name=zhulong_deepseek_v32 is a stale config.yaml tag; authoritative identity = curl /v1/models id=minicpm5-2b + 158/158 sessions (B1 PASS)",
+ "per_task_pass_count_by_run": {
+  "EDA-Eval-PyAether-001": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-002": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-003": [
+   0,
+   1,
+   1,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-004": [
+   0,
+   0,
+   0,
+   0,
+   1
+  ],
+  "EDA-Eval-PyAether-005": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-006": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-007": [
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-008": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-009": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-010": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-011": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-012": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-013": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-014": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-015": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-016": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-017": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-018": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-019": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-020": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-021": [
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-022": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-023": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-024": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-025": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-026": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-027": [
+   0,
+   0,
+   1,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-028": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-029": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-030": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-031": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-032": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-033": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-034": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-035": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-036": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-037": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-038": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-039": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-040": [
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-041": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-042": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-043": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-044": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-045": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-046": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-047": [
+   0,
+   1,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-048": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-049": [
+   0,
+   0,
+   1,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-050": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-051": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-052": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-053": [
+   0,
+   0,
+   0,
+   1,
+   0
+  ],
+  "EDA-Eval-PyAether-054": [
+   0,
+   1,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-055": [
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-056": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-057": [
+   1,
+   1,
+   0,
+   1,
+   0
+  ],
+  "EDA-Eval-PyAether-058": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-059": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-060": [
+   0,
+   0,
+   1,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-061": [
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-062": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-063": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-064": [
+   0,
+   0,
+   0,
+   1,
+   0
+  ],
+  "EDA-Eval-PyAether-065": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-066": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-067": [
+   0,
+   0,
+   0,
+   0,
+   1
+  ],
+  "EDA-Eval-PyAether-068": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-069": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-070": [
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-071": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-072": [
+   0,
+   0,
+   1,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-073": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-074": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-075": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-076": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-077": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-078": [
+   0,
+   0,
+   0,
+   1,
+   0
+  ],
+  "EDA-Eval-PyAether-079": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-080": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-081": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-082": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-083": [
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-084": [
+   0,
+   0,
+   0,
+   1,
+   0
+  ],
+  "EDA-Eval-PyAether-085": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-086": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-087": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-088": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-089": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-090": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-091": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-092": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-093": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-094": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-095": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-096": [
+   0,
+   0,
+   0,
+   0,
+   1
+  ],
+  "EDA-Eval-PyAether-097": [
+   0,
+   0,
+   0,
+   0,
+   1
+  ],
+  "EDA-Eval-PyAether-098": [
+   0,
+   1,
+   1,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-099": [
+   0,
+   0,
+   1,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-100": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-101": [
+   0,
+   1,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-102": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-103": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-104": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-105": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-106": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-107": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-108": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-109": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-110": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-111": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-112": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-113": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-114": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-115": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-116": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-117": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-118": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-119": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-120": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-121": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-122": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-123": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-124": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-125": [
+   1,
+   0,
+   1,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-126": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-127": [
+   1,
+   0,
+   1,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-128": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-129": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-130": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-131": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-132": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-133": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-134": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-135": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-136": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-137": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-138": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-139": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-140": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-141": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-142": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-143": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-144": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-145": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-146": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-147": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-148": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-149": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-150": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-151": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-152": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-153": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-154": [
+   0,
+   0,
+   0,
+   0,
+   1
+  ],
+  "EDA-Eval-PyAether-155": [
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-156": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-157": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "EDA-Eval-PyAether-158": [
+   0,
+   0,
+   0,
+   0,
+   0
+  ]
+ }
+}

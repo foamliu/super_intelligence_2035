@@ -19,7 +19,7 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:0.88em}
 .tag.go{background:#1e7d32}.tag.stop{background:#c0392b}.tag.pending{background:#b8860b}
 </style></head><body>
 <h1>BaiZe Stage(ii) Posttrain · 把 baseline 做扎实</h1>
-<p><span class="tag pending">Stage3 进行中</span> &nbsp; 报告日期：2026-11-21（数据驱动自动生成）&nbsp; 机器：s0pgpuap12（10.252.32.17）&nbsp; 触发令：2026-11-20 21:1x「把 baseline 做扎实」</p>
+<p><span class="tag go">Stage3 完成</span> &nbsp; 报告日期：2026-11-21（数据驱动自动生成）&nbsp; 机器：s0pgpuap12（10.252.32.17）&nbsp; 触发令：2026-11-20 21:1x「把 baseline 做扎实」</p>
 <div class="first"><h3 style="margin-top:6px">首屏三句（现状承认，不许含糊）</h3><ol>
 <li><b>现有 3.04% ± 0.83% 不是 base 模型</b>——它是 SFT v39 global_step_105。MiniCPM5-2B 原模型作为 cline 底模的 5-run 数字，至本轮之前<b>不存在</b>。<b>本轮 A0 5-run 已产出该数字（见 §一）</b>。</li>
 <li><b>6.84% ± 6.12% 是混合口径</b>：run1=18.99% 为 ws-only 锚点（分母仅 36 个 ws 段），run2–5 为 recovered 口径；剔除 run1 后 recovered 4-run = <b>3.80% ± 0.90</b>。主结论用后者，混合 5-run 并列报告。</li>
@@ -28,13 +28,13 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:0.88em}
 <h2>一、本轮里程碑结论</h2>
 <p><span class="kpi">A0 base Pass@1 = 43.29% ± 3.92%</span>（MiniCPM5-2B 原模型 · .17 口径 · 修复后抽取器 · 沙盒真执行验证 · n=5 runs）。</p>
 <p>逐 run：run1=43.67%, run2=45.57%, run3=48.10%, run4=41.14%, run5=37.97%。</p>
-<p>要量化「SFT 增量」须 A1(SFT step105)在<b>同一把修复后 .17 量尺</b>上跑 5-run（A1 待 A0 5-run 干净后起）。</p>
+<p><span class="kpi">A1 (SFT step105) Pass@1 = 4.56% ± 1.70%</span> &nbsp; <span class="kpi">SFT 增量 Δ = -38.73%</span>（同尺同口径，配对统计见 §六）。</p>
 <div class="danger"><b>⚠ B1 身份警示（§B.1 风险已坐实）</b>：final_report.json 的 model_name = zhulong_deepseek_v32（config.yaml active_model 陈旧标签，<b>非实际服务模型</b>）。<b>权威身份</b>：① curl :8098/v1/models → id=minicpm5-2b root=/nas_data/app.e0031982/models/MiniCPM5-2B；② serve PID799523 --model /nas_data/app.e0031982/models/MiniCPM5-2B --served-model-name minicpm5-2b；③ <b>逐会话</b>复核 158/158 session = minicpm5-2b。⇒ <b>requested=served=ckpt=base 一致，B1 真身份 PASS</b>；陈旧标签属报告头 bug，已显式标注，不据此判 fail 停跑。本报告所有数字归因到 MiniCPM5-2B base。</div>
 <h2>二、臂矩阵（A/B/C/D 全表 · 本轮 A0/A1）</h2>
 <table>
 <tr><th>臂</th><th>底模</th><th>endpoint</th><th>口径</th><th>用途</th><th>本轮状态</th></tr>
 <tr><td><b>A0</b></td><td>MiniCPM5-2B 原模型(base)</td><td>:8098(GPU4 vLLM standby)</td><td>.17(无远程RAG/无沙盒MCP/cline/-p8 -n/无PreToolUse hook)</td><td><b>用户要的那个 base 数字</b></td><td><span class="tag go">run1-5 ✅ 43.29%±3.92%</span></td></tr>
-<tr><td><b>A1</b></td><td>SFT v39 global_step_105</td><td>:8096(GPU5 serve, A1 链自动起)</td><td>同 A0，同一把尺</td><td>分离「SFT 带来的增量」</td><td><span class="tag pending">待 A0 5-run 干净后起</span></td></tr>
+<tr><td><b>A1</b></td><td>SFT v39 global_step_105</td><td>:8096(GPU5 serve, A1 链自动起)</td><td>同 A0，同一把尺</td><td>分离「SFT 带来的增量」</td><td><span class="tag go">run1-5 ✅ 4.56%±1.70%</span></td></tr>
 <tr><td>A2/A3(暂缓)</td><td>+RAG / +沙盒 MCP</td><td>36.15 口径</td><td>36.15(有 RAG+沙盒 MCP+PreToolUse hook)</td><td>分离环境杠杆</td><td><span class="tag">待 zhulong 当前 batch 跑完再排</span></td></tr>
 </table>
 <p>两臂同：158 题 / Pass@1 / -p 8 -n / 2500s / 5-run / 同一抽取器 / 同一 fail_mode 分类器。串行纪律：起跑前 pgrep -f run_cline_script + ss -tlnp 自检。</p>
@@ -123,17 +123,32 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:0.88em}
 <tr><th>Stage</th><th>内容</th><th>状态</th></tr>
 <tr><td>Stage1(≤2h,零 codegen)</td><td>B1 身份四证 + B3 judge 噪声 + B2 量尺差值</td><td><span class="tag go">✅ DONE</span> → baseline_measurement_audit.json</td></tr>
 <tr><td>Stage2(单 run)</td><td>A0 run1 逐题画像(B5)</td><td><span class="tag go">✅ DONE</span> run1 逐题画像(B5)</td></tr>
-<tr><td>Stage3(5-run)</td><td>A0 补满 5-run + A1 同尺 5-run → 正式基线表</td><td><span class="tag go">✅ A0 5-run DONE (43.29%±3.92%)</span> + <span class="tag pending">A1 5-run 待起</span></td></tr>
+<tr><td>Stage3(5-run)</td><td>A0 补满 5-run + A1 同尺 5-run → 正式基线表</td><td><span class="tag go">✅ A0 5-run DONE (43.29%±3.92%)</span> + <span class="tag go">A1 5-run DONE (4.56%±1.70%)</span></td></tr>
 </table>
 <p><b>五道验收项：B1✅/B2✅/B3✅/B4✅/B5✅</b>。Stage1 verdict=GO（未触发停跑）；Stage2 单 run 结论清晰（fail_mode 以 F5_logic+F4_api 为主）⇒ 支持补 5-run。</p>
+<h2>六、A0-vs-A1 配对统计（量化 SFT 增量）</h2>
+<table>
+<tr><th>统计量</th><th>值</th></tr>
+<tr><td>A0 base mean ± std</td><td>43.29% ± 3.92% (n=5)</td></tr>
+<tr><td>A1 SFT mean ± std</td><td>4.56% ± 1.70% (n=5)</td></tr>
+<tr><td><b>Δ mean pass rate (A1−A0)</b></td><td><b>-38.73%</b>（正 ⇒ SFT 提升）</td></tr>
+<tr><td>配对任务数</td><td>158</td></tr>
+<tr><td>Wilcoxon signed-rank p</td><td>0.0（方向：A1 - A0 (positive =&gt; SFT helps)）</td></tr>
+<tr><td>paired t-test p</td><td>0.0（t=-13.7888, df=157）</td></tr>
+<tr><td>McNemar (majority) χ² / p</td><td>χ²=68.0143 / p=0.0（discord=70：A0_only=70 A1_only=0）</td></tr>
+<tr><td>McNemar (any_pass) χ² / p</td><td>χ²=71.3086 / p=0.0（discord=81）</td></tr>
+<tr><td>paired bootstrap (B=10000)</td><td>Δ=-38.69%, 95%CI[-44.18%,-33.29%], p=0.0</td></tr>
+<tr><td>scipy_available</td><td>True</td></tr>
+</table>
+<p><b>口径</b>：158 / Pass@1 / 2500s / single-trace / 5-run / -p 8 -n (frozen, same scale both arms)。McNemar 'majority' = task passes if pass_count ≥ ceil(n_runs/2)；'any_pass' = passes if pass_count ≥ 1。Bootstrap 对 158 任务有放回重采样(B=10000)。</p>
 <h2>七、全部落盘路径</h2>
 <table>
 <tr><th>交付物</th><th>路径</th></tr>
 <tr><td>Stage1 审计 JSON</td><td>run/baseline_measurement_audit.json</td></tr>
 <tr><td>B4 执行确定性 JSON</td><td>run/baseline_B4_execution_determinism.json</td></tr>
 <tr><td>A0 5-run summary</td><td>run/baseline_A0_base_5run_summary.json</td></tr>
-<tr><td>A1 5-run summary</td><td>run/baseline_A1_sft_5run_summary.json（待产出）</td></tr>
-<tr><td>A0-vs-A1 配对统计</td><td>run/baseline_A0_vs_A1_paired_compare.json（待产出）</td></tr>
+<tr><td>A1 5-run summary</td><td>run/baseline_A1_sft_5run_summary.json</td></tr>
+<tr><td>A0-vs-A1 配对统计</td><td>run/baseline_A0_vs_A1_paired_compare.json</td></tr>
 <tr><td>A0 run1 逐题画像 JSON(E.2)</td><td>run/baseline_A0_base_run1_pertask.json</td></tr>
 <tr><td>逐题画像脚本</td><td>run/baize_posttrain_baseline_pertask_profile.py</td></tr>
 <tr><td>5-run finalize 脚本</td><td>run/baize_posttrain_a0_finalize_5run.py</td></tr>
@@ -151,8 +166,6 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:0.88em}
 <li>🚫 跨口径比较不标注 —— §四口径六元组显式标注 3 项不同，<b>禁止直接比较</b> ✅</li>
 </ul>
 <h2>九、下一步</h2><ol>
-<li>A0 5-run 干净后，A1 链自动起 :8096 serve SFT step105 → A1 同尺 5-run → baseline_A1_sft_5run_summary.json。</li>
-<li>两臂 summary 齐备后，compare-watcher 自动跑配对统计 → baseline_A0_vs_A1_paired_compare.json。</li>
 <li>本报告由 report-watcher 在上述交付物落盘后<b>自动原地覆盖更新</b>。</li>
 </ol>
 <p style="margin-top:30px;color:#888;font-size:0.85em">BaiZe Stage(ii) posttrain · baseline-nailed · 数据驱动自包含单文件 HTML · 由 baize_posttrain_baseline_report_gen.py 生成 · commit 前缀 posttrain baseline-nailed:</p>
