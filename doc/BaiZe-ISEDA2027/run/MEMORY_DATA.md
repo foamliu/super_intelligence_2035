@@ -3,6 +3,8 @@
 WAITING: 0
 
 
+> 🟢 **心跳 · 2026-11-22 (R167) — 例行巡检（无新令）：git fetch origin 无新 data 令（所有用户令已交付，origin/main=fd56a307df pretrain #2952）；pretrain #2952 报 iter=281370/700k(40.20%) step avg7.29s（n=10, range7133-7420ms, 9/10<7.4s✅, 1 transient 7.42s非持续） loss~2.00 0NaN/0skip✅ / latest ckpt=280k（eval ✅ DONE Avg=58.38%，daemon idle 等 282k ckpt ETA~10:36）/ backlog 全清（270k-280k）/ 350k ETA≈5.8天(~11-28不变) / 700k ETA≈35.3天(~12-26不变)；v3 报告(R165)iter=280.9k 与当前 281.37k 偏差 0.47k(~57min)不刷新（ETA日期不变，282k eval待完成~10:36后再刷新）；数据侧无新变化：PC-1~PC-5全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务（.12仅pretrain torchrun+sglang）/ .12 load=24.76✅<120 / /nas_user 42T✅>5T红线。MEMORY_DATA 32.7KB✅<40KB / TASK 37.8KB✅<40KB。WAITING=0**。
+
 > 🟢 **心跳 · 2026-11-22 (R166) — 例行巡检（无新令）：git fetch origin 无新 data 令（所有用户令已交付，origin/main=9620873218 pretrain #2947）；pretrain #2947 报 iter=281050/700k(40.15%) step avg7.27s（n=20，0/20>7.4s✅） loss~2.0 0NaN/0skip✅ / latest ckpt=280k（eval ✅ DONE Avg=58.38%，daemon idle 等 282k ckpt ETA~10:34）/ backlog 全清（270k-280k）/ 350k ETA≈5.8天(~11-28不变) / 700k ETA≈35.3天(~12-26不变）；v3 报告(R165)iter=280.9k 与当前 281.05k 偏差 0.15k(~18min)不刷新（ETA日期不变，282k eval待完成后再刷新）；数据侧无新变化：PC-1~PC-5全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load=24.8✅<120 / /nas_user 42T✅>5T红线。MEMORY_DATA ~35KB✅<40KB / TASK 37.8KB✅<40KB。WAITING=0**。
 
 > 🟢 **心跳 · 2026-11-22 (R165) — v3 报告路径 `run/reports/report_s1s2_split_data_v3_zh.html` + R165 刷新点（iter 进度同步）：v3 报告全文 iter 280.7k→280.9k / 40.1% / step 7.2s→7.22s（pretrain #2944，eval idle，daemon 等 282k ckpt ETA~10:34）/ 350k ETA 5.8天（~11-28不变）/ 700k ETA 35.0天（~12-26不变）/ 280k eval ✅ DONE（07:57:38，Avg=58.38%）/ backlog 全清（270k-280k 6 ckpt ✅）/ header+R165 note+gantt+risk#7+G5+footer 同步更新。git fetch无新令（所有用户令已交付）。数据侧无新变化：PC-1~PC-5全✅ / 污染扫描✅268K docs 0命中 / blend TSV 12源main版就绪 / 无后台任务 / .12 load=27✅<120 / /nas_user 42T✅>5T红线。MEMORY_DATA ~35KB✅<40KB / TASK 37.8KB✅<40KB。WAITING=0**。
@@ -100,7 +102,7 @@ WAITING: 0
 ```
 PHASE:        S2前置+污染闸门全完成 — PC-1✅~PC-5✅ + 扩展黑名单✅ + S2新源扫描✅(48K docs/0命中) → WAITING=0
 已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(6benchmark/9277tasks);✅PC-4 main版blend_s2_preblend.tsv(12源/含nemotron 0.067+megamath_web 0.060+finemath 0.005/weight_sum=1.0/gen_blend --verify通过);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(R136刷新main版/pushed);✅MegaMath-web下载DONE(4950parquet/826GB);✅MegaMath-web分词DONE(4950/4950=100%/218.1B tok);✅Code-Reasoning下载DONE(1637parquet/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2228parquet/0inc);✅DATA_MAPPING.md更新;✅论文Fig-1三饼图+Fig-2调优+TABLE IV精简+数据源/Decay/LongCtx引用补齐(latexmk 0err);✅EDA-Eval 536-task黑名单重跑复现(R137/正控158/158);✅扩展黑名单blacklist_extended建成(R138/5359tasks/4847354 13-gram/正控164/164);✅S2新源污染扫描(R139/4源×12K=48K docs/全0命中)
-当前动作:     R164:280k eval✅DONE(07:57:38,Avg=58.38%,daemon idle等282k ETA~10:30);v3报告R164刷新(iter 280.2k→280.7k/40.03%→40.1%/step 7.19s→7.2s post-eval/350k~11-28 700k~12-26不变);git fetch无新令;PC-1~PC-5全✅/污染扫描✅268K docs 0命中/无后台任务/.12 load=27✅
+当前动作:     R167例行巡检:iter=281370/700k(40.20%) step7.29s(9/10<7.4s✅) 0NaN/0skip✅;latest ckpt 280k eval✅DONE(Avg=58.38%) daemon等282k ETA~10:36;v3报告R165不变(delta0.47k/ETA日期不变/待282k eval完成再刷新);git fetch无新令;PC-1~PC-5全✅/污染扫描✅268K docs 0命中/无后台任务/.12 load=24.76✅
 下一步:       ①等pretrain到350k(~11-28)启动S2(blend TSV已就绪/SEED=5678待转告pretrain线) ②S2投料前可按S1口径对4新源做全量扫描(>150K docs)作为加强验证(非阻塞/contam_venv已就绪)
 阻塞:         无(全部前置完成;无后台任务;.12 load≈24<120✅;/nas_user 42T可用✅>5T红线)
 ERROR_COUNT:  0
