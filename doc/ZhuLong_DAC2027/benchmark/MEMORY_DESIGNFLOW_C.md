@@ -1,9 +1,10 @@
-WAITING: 0 (r987 1-case 完成 · jylo7 hktklin@hfeg0plg56 mc=230 layout_virtuoso → PcellLibMigrateAudit-001 (pcell_migrate, k=12) · SKILL pcell 库命名空间迁移 lacaa_ldo/tap_p → lacaa_common + 剥 _HT/_SKILL 后缀 · 用户首轮 `for f in *pcell*; sed` 漏 2 非 pcell 命名文件(真实「扫全部文件」教训) · 迁移仅改 pcDefinePCell 头, 正文 tap_pad 注释保留 · 交付 pcell_migrate.py 扫全部 .il 正则替换+输出 migration_report.json{scanned/migrated/untouched/audit/summary} · A=sample_a 8 .il(3 lib token + _HT/_SKILL + tap_pad 陷阱) B=hidden 10 .il(不同 fn/cell/count) · 3-seed(1/2/3 K=2/3/1 decoy .il)反硬编 · check.py 12 条断言 ref PASS 12/12 + 3neg FAIL distinct(naive_stub→②/blind_sed→⑥/hardcode_b→②) + §4.9 三假 FAIL · 选料: jylo7 在 C 台账 r990 parked(误标 not spice)，deepread 推翻判读为真 layout_virtuoso pcell 迁移 · C.jsonl 584→585 · 📊 trace 覆盖率 见 stats)
+WAITING: 0 (r988 1-case 完成 · rrpe6 xxchen@hfeg0plg18 mc=703 physical_verify → DrcResultsItemCollect-001 (drc_results_item_collect, k=13) · Calibre DRC per-cell second_check.drc.results 解析+item 收集 · 用户合并 results 给 RVE 打开语法错误，改为不合并单独解析每 cell · 交付 qa_results.py(find_results_files/read_results/parse_results/collect_items/parse_sum_report/collect_cells/is_pass)+CLI · A=sample_a 3 cell(DNW_F_012_00/PW_S_016_00_c/PW_W_000_00_p precision=10000) B=hidden 4 cell(M2_ENC_008_00_c/M2_S_003_00_p/M2_W_009_00/M2_HA_014_00 precision=1000 含 precision-only 头测 cell fallback + sum 报告 error/skip(2)) · 3-seed(1/2/3 子集 2/3/4 cell)反硬编 · check.py 13 条断言 ref PASS 13/13 + 5neg FAIL distinct(empty_shell→②/print_only→②/hardcode_b→②/naive_stub→③/delete_core→③) + §4.9 三假 FAIL · 选料: 2026-11-23_064315 最新 summary.tsv top C 候选全已 claimed，rrpe6 是 fresh 中最 C-域聚焦(calibre:1928) · C.jsonl 585→586 · 📊 trace 覆盖率 见 stats)
+> **轮(988) 已收口（2026-11-23）。**[摘要: 1-case 落地 · fresh rrpe6 xxchen@hfeg0plg18 mc=703 physical_verify · Calibre DRC per-cell results 解析器 DrcResultsItemCollect-001 (drc_results_item_collect, k=13) · A=sample_a 3 cell precision=10000 B=hidden 4 cell precision=1000(含 precision-only 头 cell fallback + sum 报告 error/skip(2)) · ref PASS 13/13 + 5neg FAIL distinct(empty_shell→②/print_only→②/hardcode_b→②/naive_stub→③/delete_core→③) + §4.9 三假 FAIL + 3-seed(1/2/3 子集 2/3/4 cell)反硬编 · C.jsonl 585→586 · 完整记录见 daily_C_2026-11-23.md r988 条目]
+
 
 > **轮(987) 已收口（2026-11-23）。**[摘要: 1-case 落地 · fresh jylo7 hktklin@hfeg0plg56 mc=230 layout_virtuoso · SKILL pcell 库命名空间迁移审计器 PcellLibMigrateAudit-001 (pcell_migrate, k=12) · A=sample_a 8 .il B=hidden 10 .il(全异) · ref PASS 12/12 + 3neg FAIL distinct(naive_stub→②/blind_sed→⑥/hardcode_b→②) + §4.9 三假 FAIL + 3-seed(1/2/3 K=2/3/1 decoy) · 选料推翻 r990 误标 parked(实为 layout_virtuoso pcell 迁移) · C.jsonl 584→585 · 完整记录见 daily_C_2026-11-23.md r987 条目]
 
 > **轮(986) 已收口（2026-11-23）。**[摘要: 1-case 落地 · fresh 2kujt steveny@hfeg0pnd001 mc=243 layout_aether · eda_agent 技能仓库 single-source-of-truth CAD 源码场景索引生成器 CadSourceSceneIndexGen-001 (cad_source_scene_index_gen, k=16) · A=sample_a/cad_src 8 files/12 funcs/3 stale B=hidden/cad_src 6 files/10 funcs/3 stale(rels 不同) · ref PASS 16/16 + 5neg FAIL distinct(empty_shell→①/print_only→③/naive_stub→⑦/hardcode_b→⑮/delete_core→⑧) + §4.9 三假 FAIL + 3-seed md5 一致 · C.jsonl 583→584 · 完整记录见 daily_C_2026-11-23.md r986 条目]
-
 
 > **轮(980) 已压缩（r981 收口，2026-11-23）。**[摘要: 1-case 落地 · fresh nxmto pdsong@hfeg0pkn004 mc=196 pg_layout · Apache Totem CPM Chip_Power_Model_SubCircuit.sp.inc 元件/子电路/端口分析器 CpmIncNetlistAnalyze-001 (cpm_inc_netlist_element_counter, k=20) · A=1p2-like 6 rails R8C6L4G3J1 pad13 B=0p6-like 4 rails R5C7L2G2M1 pad9 · ref PASS 20/20 + 5neg FAIL distinct + §4.9 三假 FAIL · C.jsonl 577→578 · 完整记录见 daily_C_2026-11-23.md r980 条目与 git log r980]
 
@@ -11,23 +12,7 @@ WAITING: 0 (r987 1-case 完成 · jylo7 hktklin@hfeg0plg56 mc=230 layout_virtuos
 
 > **轮(982) 已压缩（r982 收口，2026-11-23）。**[摘要: 1-case 落地 · fresh 2slkf e0039786@hfhds201 mc=172 layout_virtuoso · 参数化 pcell .il 解析+并行阵列合成+走线校验+emit ParaIlArrayComposer-001 (para-il-array-composer, k=16) · A=PARA_unit_A 42 rects/pitch 0.255/5-finger/ox0=0.021 oy0=0.0143 B=PARA_unit_B 26 rects/pitch 0.36/3-finger/ox0=0.05 oy0=0.02(抗硬编 pitch/rect/finger 全异) · ref PASS 16/16 + 5neg FAIL distinct(empty_shell→a/print_only→b/hardcode_b→n/delete_core→h/naive_stub→b) + §4.9 三假 FAIL + 3-seed 确定性 md5 一致 · 选料: e7fik(physical_verify how-to Q&A)peek REJECT→pivot 2slkf · 修复 check.py 三处早期 return tuple→raise AssertionError(契约一致) · C.jsonl 579→580 · 完整记录见 daily_C_2026-11-23.md r982 条目与 git log r982]
 
-
 > **轮(978) 已压缩（r981 收口，2026-11-23）。**[摘要: 0-case 回滚 · cross-shard collision + domain mismatch · 4a852 e0039602@hfeg0pfn120 mc=661 · netlist missing-cell 提取子型属 A-domain(digital/Verilog)非 C-domain physical_verify · 遵循 r886 precedent 全量回滚 0-case · case 完整保留至 designflow/_parked_cases/EDA-Eval-DesignFlow-NetMissingCellExtract-001/ 待 A-shard rehome · C.jsonl 不变 · 完整记录见 daily_C_2026-11-23.md r978 条目]
-
-
-> **轮(977) 已压缩（r980 收口，2026-11-23）。**[摘要: 1-case 落地 · fresh e0046686@hfeg0plg68 mc=201 physical_verify · AutoSimUni SPF weakcell solido PVT 块匹配器 process g-后缀 bug 修复 SolidoPvtBlockMatchFix-001 (solido_pvt_block_matcher_g_suffix_fix, k=16) · C.jsonl 575→576 · 完整记录见 daily_C_2026-11-23.md r977]
-
-
-> **轮(976) 已压缩（r980 收口，2026-11-23）。**[摘要: 1-case 落地 · fresh chengk@hfeg0pkn003 mc=305 layout_aether · pylib Markdown 指南 python 代码块语法+CJK 残留审计 MdPyBlockCompileCjkAudit-001 (md_pyblock_compile_cjk_audit, k=16) · C.jsonl 574→575 · 完整记录见 daily_C_2026-11-23.md r976]
-
-
-> **轮(975) 已压缩（r980 收口，2026-11-23）。**[摘要: 1-case 落地 · fresh junxu@hfeg0pkn005 mc=297 layout_virtuoso · skill 仓库结构化审计 manifest 生成 SkillRepoAudit-001 (skill_repo_audit_manifest_gen, k=20) · C.jsonl 573→574 · 完整记录见 daily_C_2026-11-23.md r975]
-
-
-> **轮(974) 已压缩（r980 收口，2026-11-23）。**[摘要: 1-case 落地 · fresh ziyuny@hfeg0pnd001 mc=188 physical_verify · wl-adjacent-detect skill parse_wl_pairs.py parity_of 奇偶分类 bug 修复 WlAdjacentParityFix-001 (wl_adjacent_parity_bit_fix, k=12) · C.jsonl 572→573 · 完整记录见 daily_C_2026-11-23.md r974]
-
-
-> **轮(973) 已压缩（r975 归档批次，2026-11-23）。**[摘要: 1-case 落地 · fresh junxu@hfeg0pkn005/10.129.2.14 mc=400 layout_virtuoso · 原理图自动连线 stub 滥用策略 + 摆放密度违规检测 SchemStubPlacementPolicy-001 (schem_stub_policy_placement_density, k=12) · C.jsonl 571→572 · 完整记录见 MEMORY_C_archive.md 归档批次 r975]
 
 > **轮(972) 已压缩（r975 归档批次，2026-11-23）。**[摘要: 1-case 落地 · fresh jmgu@hfeg0plg58/10.129.35.82 mc=114 physical_verify · qa-pattern-engine two_layer_space ladder 模式 KeyError 修复 TwoLayerSpaceLadderKeyErrorFix-001 (two_layer_space_ladder_keyerror_fix, k=14) · C.jsonl 570→571 · 完整记录见 MEMORY_C_archive.md 归档批次 r975]
 
@@ -39,23 +24,17 @@ WAITING: 0 (r987 1-case 完成 · jylo7 hktklin@hfeg0plg56 mc=230 layout_virtuos
 
 > **轮(968) 已压缩（r971 归档，2026-11-22）。**[摘要: 1-case 落地 · fresh joeyli@hfeg0pkn004/10.129.2.13 mc=301 layout_aether · pyAether pin 前缀累加改名 + F7 绑定 PinPrefixIncrRename-001 (pin_prefix_incr_rename, k=20) · pin_prefix_incr_rename (k=20) · 完整记录见本文件归档批次 r971]
 
-
 > **轮(967) 已压缩（r971 归档，2026-11-22）。**[摘要: 1-case 落地 · fresh e0024852@hfeg0pkn005/10.129.2.14 mc=214 physical_verify · M1-via 宽度扫描 DRC 协同优化 M1ViaDrcCoOptim-001 (m1_via_drc_co_optim, k=16) · m1_via_drc_co_optim (k=16) · 完整记录见本文件归档批次 r971]
-
 
 > **轮(966) 已压缩（r971 归档，2026-11-22）。**[摘要: 1-case 落地 · fresh junxu@hfeg0pkn005 mc=498 layout_virtuoso · virtuoso-cli skill 批判性审查 + unittest 套件 VirtuosoCliSkillReviewTestSuite-001 (virtuoso_cli_skill_review_test_suite, k=13) · virtuoso_cli_skill_review_test_suite (k=13) · 完整记录见本文件归档批次 r971]
 
-
 > **轮(965) 已压缩（r971 归档，2026-11-22）。**[摘要: 1-case 落地 · fresh yzwang@hfeg0pkn004 mc=99 layout_aether · pcell IL OPC02_mark1 border 溢出修复 PcellBorderEnclosureFix-001 (pcell_il_border_enclosure_fix, k=16) · pcell_il_border_enclosure_fix (k=16) · 完整记录见本文件归档批次 r971]
 
-
 > **轮(965) 已压缩（r971 归档，2026-11-22）。**[摘要: 1-case 落地 · fresh yzwang@hfeg0pkn004 mc=99 layout_aether · pcell IL OPC02_mark1 border 溢出修复 PcellBorderEnclosureFix-001 (pcell_il_border_enclosure_fix, k=16) · pcell_il_border_enclosure_fix (k=16) · 完整记录见本文件归档批次 r971]
-
 
 > **轮(964) 已压缩（r965 归档，2026-11-22）。**[摘要: 1-case xydou@hfeg0pkn003 mc=483 physical_verify · Calibre DRC UT 隔离距离检查规则生成器 CalibreDRCUTIsolationCheck-001 (k=16) · C.jsonl 598→599 · 完整记录见 git log r964]
 
 > **轮(963) 已压缩（r971 归档，2026-11-22）。**[摘要: 1-case 落地 · fresh tahks cyrusrao@hfeg0plg93/10.129.8.225 mc=260 layout_aether · OA schematic hierarchy testmode 信号追踪影响分析 TestmodeImpactTrace-001 (schematic_hierarchy_signal_trace_impact_analysis, k=17) · schematic_hierarchy_signal_trace_impact_analysis (k=17) · 完整记录见本文件归档批次 r971]
-
 
 > **轮(960) 已压缩（r961 归档，2026-11-22）。**[摘要: 1-case d4uuz robin1l@hfeg0plg87 mc=175 layout_aether · V1 Rectangle→Via 替换操作说明 ViaRectReplaceSpec-001 (k=11) · C.jsonl 594→595 · 完整记录见 git log r960]
 
