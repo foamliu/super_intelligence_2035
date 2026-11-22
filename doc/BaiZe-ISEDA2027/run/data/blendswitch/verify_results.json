@@ -1,0 +1,218 @@
+{
+  "zero_overlap": {
+    "per_source": {
+      "0": {
+        "source_key": "en_v1_4",
+        "s1_docs": 32500,
+        "s2_docs": 26119,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 32500
+      },
+      "1": {
+        "source_key": "ufw_l1_en_hq",
+        "s1_docs": 2500,
+        "s2_docs": 2239,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 2500
+      },
+      "2": {
+        "source_key": "ufw_zh",
+        "s1_docs": 2000,
+        "s2_docs": 1493,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 2000
+      },
+      "3": {
+        "source_key": "math_l1",
+        "s1_docs": 2500,
+        "s2_docs": 1866,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 2500
+      },
+      "4": {
+        "source_key": "math_l3",
+        "s1_docs": 1000,
+        "s2_docs": 1119,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 1000
+      },
+      "5": {
+        "source_key": "code_l2",
+        "s1_docs": 7500,
+        "s2_docs": 13433,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 7500
+      },
+      "6": {
+        "source_key": "code_l3",
+        "s1_docs": 2000,
+        "s2_docs": 3731,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 2000
+      }
+    },
+    "total_s1_docs": 50000,
+    "total_s2_docs": 50000,
+    "total_overlap_docs": 0,
+    "overlap_rate": 0.0,
+    "epoch_wrap_warnings": []
+  },
+  "zero_overlap_pass": true,
+  "ratio_switch": {
+    "num_samples_analyzed": 5000,
+    "per_source": {
+      "0": {
+        "source_key": "en_v1_4",
+        "count": 2612,
+        "actual_ratio": 0.5224,
+        "target_ratio": 0.5223880597014926,
+        "deviation_pct": 0.0011940298507373548
+      },
+      "1": {
+        "source_key": "ufw_l1_en_hq",
+        "count": 224,
+        "actual_ratio": 0.0448,
+        "target_ratio": 0.04477611940298508,
+        "deviation_pct": 0.002388059701492057
+      },
+      "2": {
+        "source_key": "ufw_zh",
+        "count": 149,
+        "actual_ratio": 0.0298,
+        "target_ratio": 0.02985074626865672,
+        "deviation_pct": 0.005074626865671922
+      },
+      "3": {
+        "source_key": "math_l1",
+        "count": 187,
+        "actual_ratio": 0.0374,
+        "target_ratio": 0.0373134328358209,
+        "deviation_pct": 0.008656716417910354
+      },
+      "4": {
+        "source_key": "math_l3",
+        "count": 112,
+        "actual_ratio": 0.0224,
+        "target_ratio": 0.02238805970149254,
+        "deviation_pct": 0.0011940298507460284
+      },
+      "5": {
+        "source_key": "code_l2",
+        "count": 1343,
+        "actual_ratio": 0.2686,
+        "target_ratio": 0.26865671641791045,
+        "deviation_pct": 0.005671641791044069
+      },
+      "6": {
+        "source_key": "code_l3",
+        "count": 373,
+        "actual_ratio": 0.0746,
+        "target_ratio": 0.0746268656716418,
+        "deviation_pct": 0.002686567164179865
+      }
+    },
+    "max_deviation_pct": 0.008656716417910354,
+    "pass": true
+  },
+  "ratio_switch_pass": true,
+  "flag_off_equivalence": true,
+  "flag_off_equivalence_pass": true,
+  "new_source_zero_overlap": {
+    "per_source": {
+      "0": {
+        "source_key": "src_a",
+        "s1_docs": 10000,
+        "s2_docs": 6000,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 10000
+      },
+      "1": {
+        "source_key": "src_b",
+        "s1_docs": 6000,
+        "s2_docs": 4000,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 6000
+      },
+      "2": {
+        "source_key": "src_c",
+        "s1_docs": 4000,
+        "s2_docs": 2000,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": true,
+        "cursor_offset": 4000
+      },
+      "3": {
+        "source_key": "new_d",
+        "s1_docs": 0,
+        "s2_docs": 5000,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": false,
+        "cursor_offset": 0
+      },
+      "4": {
+        "source_key": "new_e",
+        "s1_docs": 0,
+        "s2_docs": 3000,
+        "overlap_docs": 0,
+        "overlap_rate": 0.0,
+        "shared": false,
+        "cursor_offset": 0
+      }
+    },
+    "total_s1_docs": 20000,
+    "total_s2_docs": 20000,
+    "total_overlap_docs": 0,
+    "overlap_rate": 0.0,
+    "epoch_wrap_warnings": []
+  },
+  "new_source_zero_overlap_pass": true,
+  "epoch_wrap": {
+    "per_source": {
+      "0": {
+        "source_key": "tiny_src",
+        "s1_docs": 100,
+        "s2_docs": 50,
+        "overlap_docs": 50,
+        "overlap_rate": 0.5,
+        "shared": true,
+        "cursor_offset": 150
+      }
+    },
+    "total_s1_docs": 100,
+    "total_s2_docs": 50,
+    "total_overlap_docs": 50,
+    "overlap_rate": 0.5,
+    "epoch_wrap_warnings": [
+      "Source tiny_src: consumed 150 > shuffle_index len 100 (epoch wrap), overlap=50 unavoidable"
+    ]
+  },
+  "epoch_wrap_pass": true,
+  "json_roundtrip": true,
+  "json_roundtrip_pass": true,
+  "perf": {
+    "t_stock": 0.20546913146972656,
+    "t_switch_only": 0.13719606399536133,
+    "t_track": 0.01948237419128418
+  },
+  "perf_pass": true
+}
