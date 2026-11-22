@@ -2,6 +2,10 @@
 
 WAITING: 0
 
+> 🟢 **心跳 · 2026-11-23 (R209) — 例行巡检：F 科普报告交付态复验全通过**：报告 `report_s1s2_blendswitch_f_explainer_zh.html` = 40,743B≤80KB✅ / `<script`=0✅ / `https?://`=0✅ / `<svg`=6≥5✅ / div·table·tr·td 全配对✅（23/6/36/163）；8节+6图齐全；诚实标注实测26处/估算8处/未实测3处/待测4处/尚未4处。已 commit+push（commits b23a829b46·30ea2164f3·2e76497b29），local=origin（0 ahead/0 behind）。方案F blendswitch CPU验证 7/7 PASS 不变（verify_results.json 全源 overlap_docs=0）。pretrain iter≈287.3k/700k(41%) step~7.18s / 350k ETA≈11-28 / 700k ETA≈12-27。无新指令，待命。WAITING=0。
+
+> 📦 R208 心跳（F 科普报告 v1 交付 40,743B/6SVG/0外链0script，commit+push 完成）已归档 → daily-memories-data/2026-11-22.md
+
 > 🟢 **心跳 · 2026-11-22 (R208) — F 科普报告 v1 + SVG≥5 + ≤80KB + 0外链0script**：按用户令交付 `run/reports/report_s1s2_blendswitch_f_explainer_zh.html`（40,743B≤80KB✅ / 6张内联SVG✅ / 0外链0script✅ / div·table·tr·td标签全配对✅）。小白友好中文科普：8节（一页看懂→背景5词→为什么难→三路线对比→F原理逐步图解→代码改动4处→7项验证+条形图→FAQ5条）+ 6张手写内联SVG（时间轴/配比双饼/stock重叠问题/per-source游标映射核心图/验证条形图/切换流程时序）。每个术语首次出现带白话+类比（游标=书签/epoch=翻完一遍/blend=混几桶米/shard=分小袋/shuffle=打乱书页）。诚实标注：实测(zero_overlap=0/ratio dev 0.0087%/flag-off byte-identical) vs 估算(D+E ~12%未实测) vs 待测(GPU step time/显存)。v4/v5保留不删。pretrain iter≈287.2k/700k(41%) step~7.30s / 350k ETA≈11-28 / 700k ETA≈12-27。方案F blendswitch CPU验证7/7 PASS不变。WAITING=0。
 
 > 📦 R207 心跳（第31次复验7/7 PASS zero_overlap=0 / v5报告13,813B / v4报告14,625B）已归档 → daily-memories-data/2026-11-22.md
