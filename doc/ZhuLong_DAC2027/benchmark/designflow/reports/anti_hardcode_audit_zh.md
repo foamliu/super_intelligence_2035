@@ -10,7 +10,7 @@
 - **普查范围**：D 全量 560 条 + A/B/C 各抽样 25 条（优先抽 k<12 老题），合计 **635 条**。
 - **判定**：**PASS 43 · GAP 569 · WEAK 4 · MISSING 16 · 其它 3**。**GAP 率 ≈ 90%**。
 - **核心病灶**：绝大多数 `check.py` **只跑 hidden B、无 A-gold 交叉校验**（无嵌入 A fixture、不在 A 上跑候选）。审计方构造一个"忽略输入、直接吐出 B 的 gold 输出"的假提交（`fake_print_only`），即可 PASS 全部断言——违反 §4.9 (b)(c)。
-- **修复进度**：D 已修 22/505（r1059–r1101），最新 r1101（2026-11-22）修 BitlinePrechargeRootCauseQA-001（k=13→18，waveform/DRAM bitline precharge root-cause debug Q&A→generic-analyzer script-deliverable）。病灶=原 13 断言只跑隐藏 B(a-m)，anti-hardcode (l) 仅 A_ONLY_TOKENS substring blocklist（17 词），smart B-hardcode stub（不解析，恒吐预焙 B-gold pvdp2/vdp2!/SnsAmpU/XI38）runtime 复现 PASS 全 13（§4.9b 违规，A-token blocklist 对吐 B-token 的 stub 无效）。修复：嵌入隐藏 A-prime（第三套 z-namespace 网表 z0_pwa_tgt/pvpc/vpc!/PwcSnsZ/XJ9，612mV@22ns，token 与 A mat0_bla_tar/vad2/SA_unit/XI37 及 B m0_bla_tgt/vdp2/SnsAmpU/XI38 全维不相交，嵌入 check.py 字符串保证 SUT 不可见）+ 独立 mini-oracle（regex 从 A-prime 文本算 source_param/source_net/sa_subckt/top_instance，非依赖 ref candidate）+ 5 A'-gold 交叉(n-r)：n A' run exit0+合法JSON / o A' source_param==pvpc[击穿 stub 吐 pvdp2] / p A' source_net==vpc![击穿 vdp2!] / q A' sa_subckt==PwcSnsZ[击穿 SnsAmpU] / r A' top_instance==XJ9<0> 且 target_signal==z0_pwa_tgt<0>[击穿 XI38<0>/m0_bla_tgt<0>]。smart B-hardcode stub `neg_fake_hardcode_b.py` B-side PASS(a-m)→A' fallback B-gold FAIL(o,p,q,r)。§4.9 三假 print_only→k/o/p/q/r、core_deleted→c/d/.../r、hardcode_b→o/p/q/r，3 distinct≥3。自验 ref 18/18 PASS + 3 neg selftest 全 FAIL 16 distinct。D 当前 67 PASS / 483 GAP。详 §5.1。
+- **修复进度**：D 已修 22/505（r1059–r1101），最新 r1101（2026-11-22）修 BitlinePrechargeRootCauseQA-001（k=13→18，waveform/DRAM bitline precharge root-cause debug Q&A→generic-analyzer script-deliverable）。病灶=原 13 断言只跑隐藏 B(a-m)，anti-hardcode (l) 仅 A_ONLY_TOKENS substring blocklist（17 词），smart B-hardcode stub（不解析，恒吐预焙 B-gold pvdp2/vdp2!/SnsAmpU/XI38）runtime 复现 PASS 全 13（§4.9b 违规，A-token blocklist 对吐 B-token 的 stub 无效）。修复：嵌入隐藏 A-prime（第三套 z-namespace 网表 z0_pwa_tgt/pvpc/vpc!/PwcSnsZ/XJ9，612mV@22ns，token 与 A mat0_bla_tar/vad2/SA_unit/XI37 及 B m0_bla_tgt/vdp2/SnsAmpU/XI38 全维不相交，嵌入 check.py 字符串保证 SUT 不可见）+ 独立 mini-oracle（regex 从 A-prime 文本算 source_param/source_net/sa_subckt/top_instance，非依赖 ref candidate）+ 5 A'-gold 交叉(n-r)：n A' run exit0+合法JSON / o A' source_param==pvpc[击穿 stub 吐 pvdp2] / p A' source_net==vpc![击穿 vdp2!] / q A' sa_subckt==PwcSnsZ[击穿 SnsAmpU] / r A' top_instance==XJ9<0> 且 target_signal==z0_pwa_tgt<0>[击穿 XI38<0>/m0_bla_tgt<0>]。smart B-hardcode stub `neg_fake_hardcode_b.py` B-side PASS(a-m)→A' fallback B-gold FAIL(o,p,q,r)。§4.9 三假 print_only→k/o/p/q/r、core_deleted→c/d/.../r、hardcode_b→o/p/q/r，3 distinct≥3。自验 ref 18/18 PASS + 3 neg selftest 全 FAIL 16 distinct。D 当前 100 PASS / 450 GAP（r1102 runtime re-audit 把 33 条 k=12 静态假阳性翻 PASS，详 §8）。详 §5.1。
 - r1099（2026-11-22）修 AetherNetHighlightQA-001（k=16→21，schematic_netlist/Aether 手册 net-highlight 结构化指南 Q&A→script-deliverable）。病灶=原 16 断言只跑隐藏 B/B2/B3(a-p)，smart signature-based B-hardcode stub（读手册 token 检测 版图→B-gold / GUI点选→B2-gold / aeCreateInst→B3-gold / unknown→B-gold fallback）pre-fix PASS 全 16（§4.9b 违规，已运行时复现 stub B/B2/B3 全 PASS）。修复：新增隐藏 A-prime `aether_manual_Ap.md`（assets/hidden/，高亮删除主题，primary=aeSeRemoveNetHighlight，token 与 A(aeTraceNet/schematic)/B(aeTraceNet/layout/版图/金属线)/B2(seGuiTraceNet/GUI/点选/交互)/B3(aeCreateInst/aeCreateWire) 全维不相交，SUT 不可见，文件式规避 base64 腐蚀）+ 5 A'-gold 交叉(q-u)：q A' run exit0+合法JSON含8键 / r A' primary==aeSeRemoveNetHighlight[核心交叉,击穿 stub fallback 吐 aeTraceNet] / s A' primary 作为 token 出现在 manual_Ap[data-grounded] / t A' procedure_steps 非空且含 aeSeRemoveNetHighlight / u A' api_parameters 含 netName(非 B 的 islayout/layer)。smart signature-stub `neg_fake_hardcode_b.py` B-side PASS(a-p)→A' fallback B-gold FAIL(r)。§4.9 三假 empty→a/print_only→c/core_deleted→b + hardcode_b→r，4 distinct(a,b,c,r)≥3。自验 ref 21/21 PASS + 4 neg ALL FAIL 4 distinct。
 - **运行时已确认 GAP（2 条，可复现）**：
   - D `EDA-Eval-DesignFlow-ParasiticsAnnotDiag-001`（k=9，纯报告 grep，无 subprocess）—— **已于 r1083（2026-11-22）修复**：k=9→14。**病灶=analysis-Q&A report-deliverable 类无牙**：原 check 纯子串匹配 `diagnostic_report.md`，shipping `reference_report_B.md` verbatim 即 PASS（print_only PASS 运行时已确认）。**解法=reframe report→script deliverable**（trace agent 实写 analyze_parasitics.py/analyze_sdf.py 故忠实）：交付 `diagnose_parasitics.py` 接收 asset_dir 打印结构化 JSON 诊断，check subprocess 在隐藏 B + 隐藏 A' 上各跑一次校验由输入计算的金值；新增隐藏 A' `hidden_a/`(sdf.tcl GDDR6X/3 read_parasitis + log 1288550/221894/1066656/512/506 + GDDR6X.sdf 4 hier I_PERI0/I_Array8G_T_0/T_1/B_2) 与 A(DDR5TOP/I_BCenter/I_Array6G) 及 B(LPDDR5TOP/I_DCC/I_Array4G) token 全维不相交；14 断言=10 B-side(a-j)+4 A'-gold 交叉(k-n)，smart §4.9(b) signature-stub `neg_fake_hardcode_b`（读 SDF design 查表 DDR5TOP→A-gold/LPDDR5TOP→B-gold/unknown→B-gold fallback）post-fix FAIL[l] A' design=LPDDR5TOP≠GDDR6X，4 neg 全 FAIL n_distinct=3(b/c/l)，ref 14/14 PASS。**增益**：analysis-Q&A/report-deliverable 类判分无牙根因=check 纯文本子串匹配，reframe 为「交付计算脚本 + subprocess 跑隐藏 B/A' 校验计算值」是通用解法。
@@ -183,3 +183,60 @@ python3 designflow/_gen_audit_tsv.py
 # 产物：designflow/anti_hardcode_audit_all.tsv
 ```
 运行时抽验命令见 §2.2。
+
+## 8. r1102 运行时 re-audit（D k=12 静态 GAP 复核 · 2026-11-22）
+
+> 背景：§6.1 已承认静态筛查有假阳性可能。r1102 对 D 全部 **79 条 k=12 静态 GAP** case 做运行时 §4.9 复核，验证静态 GAP 是否为假阳性。
+
+### 8.1 方法（关键修正：负样本改名）
+
+首轮用「原始文件名打包负样本」跑 check，得 47 SOUND / 0 TRUE_GAP——但**这是假象**：大多数负样本文件名与 check 期望的 SUT 名不匹配（如 `neg_hardcode_a.py` vs 期望 `candidate.py`），负样本在**条件 (a) 文件名检查**即 FAIL，根本没跑到反硬编码条件。这种「all negatives FAIL」不能证明 §4.9 合规，只是负样本构造缺陷。
+
+**修正方法**：对每条 case
+1. 从 `reference_submit.zip` namelist 检测期望 SUT 文件名（或 check.py 的 SUT_NAME 字面量）；
+2. 把每个 `.py` 负样本**改名**为期望 SUT 名再打包成 submit.zip（`.csv` 同理；`.zip`/目录型负样本直接传或按内容打包）；
+3. 跑 `check(ref)` 确认 ref PASS（自包含前提）+ 跑 `check(每个改名负样本)`；
+4. 分类：substantive FAIL（反硬编码/数值 oracle 真击穿）vs shallow FAIL（仍只过结构条件）vs PASS（真 GAP）。
+
+判定矩阵（ref PASS 前提下）：
+- **SOUND** = 所有负样本 FAIL 且 ≥1 条 substantive FAIL（n_pass=0, n_sub>0）
+- **WEAK_NEG** = 所有负样本 FAIL 但仅 shallow（n_sub=0）→ §4.9 未被现有负样本实质性测试
+- **TRUE_GAP** = 有负样本 PASS（n_pass>0）→ 真 §4.9 违规
+- **REF_FAIL** = ref 离线跑不过（check 读 assets hidden/ 进 workdir，需 harness 上下文）→ 离线不可验
+
+### 8.2 结果（79 条 D k=12 静态 GAP）
+
+| 判定 | 数量 | 含义 |
+|:--|--:|:--|
+| **SOUND** | 33 | ref PASS + 所有改名负样本 FAIL（含 substantive 击穿）。**静态 GAP 为假阳性**，已翻 PASS |
+| WEAK_NEG | 16 | ref PASS 但负样本只过 shallow 条件；§4.9 未被实质测试，需更强负样本（保留 GAP） |
+| REF_FAIL | 24 | ref 离线跑不过（harness-dependent：check 从 assets 读 hidden/ 进 workdir）；离线不可验（保留 GAP） |
+| NO_REF | 4 | 无 reference_submit.zip（保留 GAP） |
+| NO_NEG | 2 | 无负样本（保留 GAP） |
+| **TRUE_GAP** | **0** | **零条真 §4.9 违规** |
+
+**D 计数变化**：PASS 67→**100**（+33 假阳性翻正），GAP 483→**450**。
+
+### 8.3 关键结论
+
+1. **静态 audit 大幅高估 GAP**：79 条 k=12 静态 GAP 中 0 条真违规，33 条实为 SOUND（用嵌入 oracle / 运行时 subprocess / 反硬编码 token 守卫等机制，非静态 audit 只识别的「文件式 A-gold 交叉」模式）。静态 audit 的「print_only:PASS / core_deleted:PASS」判定对这些 case 系**误报**——运行时改名负样本均 FAIL。
+2. **负样本改名是 §4.9 运行时测试的必要步骤**：原始负样本常因文件名不匹配在条件 (a) 即 FAIL，掩盖了 check 的真实强度。后续 audit 必须改名后复测。
+3. **16 条 WEAK_NEG 需补强负样本**（非 check 必坏）：ref PASS 说明 check 可跑，但现有负样本构造不足以触达反硬编码条件。后续轮次补 print_only/core_deleted 改名负样本复测。
+4. **24 条 REF_FAIL 需 harness 上下文**：check 从 `assets/<case>/hidden/` 读 fixture 进 workdir，离线 standalone 跑不过。这些 case 的 §4.9 状态待 harness-context 复测（或改为自包含 check）。
+5. **0 TRUE_GAP ≠ 全 bench 无违规**：本轮仅覆盖 D k=12（79 条）。D 已修 22 条（r1059–r1101，均为 k<12 或运行时确认的真违规）+ 本轮 33 假阳性翻正。剩余 450 D GAP 中，WEAK_NEG/REF_FAIL 待复测，其余 k≠12 静态 GAP 待下批运行时复核。
+
+### 8.4 复现命令
+
+```bash
+# 期望 SUT 名检测 + 负样本改名 + ref/负样本运行时 §4.9 复测
+# 脚本（一次性，存 /tmp/d_s49_test.py）：
+#   - resolve_dir: EDA-Eval-DesignFlow-<id> 或 <id>（无前缀目录名兼容）
+#   - expected_sut_name: 从 reference_submit.zip namelist 或 check.py SUT_NAME 字面量
+#   - 负样本 .py 改名为 SUT 名打包；.csv 同理；.zip/目录直接传或按内容打包
+#   - 跑 check(ref) + check(每个改名负样本)，分类 substantive/shallow/PASS
+cd /nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow/reference
+# 输入 /tmp/d_gap_k12.txt（79 条 D k=12 静态 GAP case_id，来自 audit TSV）
+python3 /tmp/d_s49_test.py > /tmp/d_s49.tsv
+# 更新 audit TSV（33 SOUND→PASS，余保留 GAP + 运行时备注）
+python3 /tmp/update_audit.py
+```
