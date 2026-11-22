@@ -373,6 +373,7 @@ def _json_resp(handler, code, obj):
 
 class Handler(BaseHTTPRequestHandler):
     server_version = "baize-a5-server-v2/1.0"
+    protocol_version = "HTTP/1.1"  # required for chunked SSE streaming (cline always sends stream:true)
     def log_message(self, fmt, *args):
         sys.stderr.write("[%s] %s\n" % (time.strftime("%H:%M:%S"), fmt % args))
 
@@ -421,14 +422,24 @@ class Handler(BaseHTTPRequestHandler):
         temperature = float(payload.get("temperature", 0.0))
         stop = payload.get("stop")
         model = payload.get("model", SERVED_NAME)
+        stream = bool(payload.get("stream", False))
         req = Request(messages, tools, max_tokens, temperature, stop, model)
         with QUEUE_CV:
             QUEUE.append(req)
             QUEUE_CV.notify()
         req.done.wait(timeout=3600)
         if req.result is None:
-            _json_resp(self, 504, {"error": {"message": "generation timeout (worker)"}}); return
-        content, tool_calls, finish_reason, usage = req.result
+            content, tool_calls, finish_reason, usage = ("", [], "stop",
+                {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0,
+                 "elapsed_s": 0.0, "error": "generation-timeout"})
+        else:
+            content, tool_calls, finish_reason, usage = req.result
+        if stream:
+            self._emit_stream(content, tool_calls, finish_reason, usage, model)
+        else:
+            self._emit_json(content, tool_calls, finish_reason, usage, model)
+
+    def _emit_json(self, content, tool_calls, finish_reason, usage, model):
         msg = {"role": "assistant", "content": content if content else None}
         if tool_calls:
             msg["tool_calls"] = tool_calls
@@ -437,6 +448,67 @@ class Handler(BaseHTTPRequestHandler):
                 "choices": [{"index": 0, "message": msg, "finish_reason": finish_reason}],
                 "usage": usage}
         _json_resp(self, 200, resp)
+
+    def _emit_stream(self, content, tool_calls, finish_reason, usage, model):
+        """Emit an OpenAI-compatible SSE stream (chunked transfer-encoding).
+
+        cline's @ai-sdk/openai-compatible provider ALWAYS sends stream:true and
+        requires a chunk carrying choices[0].finish_reason, else it throws
+        'Response stream ended without a finish reason.' The static micro-batch
+        backend generates the full output first, so we 'fake-stream' it as a few
+        SSE chunks: role -> content -> tool_calls -> finish_reason -> [DONE].
+        """
+        self.close_connection = True
+        cid = "chatcmpl-%d" % int(time.time() * 1000)
+        created = int(time.time())
+        base = {"id": cid, "object": "chat.completion.chunk", "created": created, "model": model}
+        clean_usage = {"prompt_tokens": int(usage.get("prompt_tokens", 0)),
+                       "completion_tokens": int(usage.get("completion_tokens", 0)),
+                       "total_tokens": int(usage.get("total_tokens", 0))}
+        try:
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Transfer-Encoding", "chunked")
+            self.send_header("Connection", "close")
+            self.end_headers()
+
+            def send_chunk(delta, finish=None, with_usage=False):
+                choice = {"index": 0, "delta": delta, "finish_reason": finish}
+                obj = dict(base)
+                obj["choices"] = [choice]
+                if with_usage:
+                    obj["usage"] = clean_usage
+                data = ("data: " + json.dumps(obj, ensure_ascii=False) + "\n\n").encode("utf-8")
+                self.wfile.write(("%x\r\n" % len(data)).encode("ascii") + data + b"\r\n")
+                self.wfile.flush()
+
+            # 1) role-establishing chunk (no content key -> parser emits no text)
+            send_chunk({"role": "assistant"})
+            # 2) content delta (if any)
+            if content:
+                send_chunk({"content": content})
+            # 3) tool-call deltas (if any); each carries index+id+name+full arguments
+            if tool_calls:
+                tc_list = []
+                for i, tc in enumerate(tool_calls):
+                    fn = tc.get("function", tc)
+                    tc_list.append({"index": i, "id": tc.get("id", "call_%d" % (i + 1)),
+                                    "type": "function",
+                                    "function": {"name": fn.get("name"),
+                                                 "arguments": fn.get("arguments", "")}})
+                send_chunk({"tool_calls": tc_list})
+            # 4) final chunk: finish_reason + usage
+            send_chunk({}, finish=finish_reason, with_usage=True)
+            # 5) SSE terminator
+            done = b"data: [DONE]\n\n"
+            self.wfile.write(("%x\r\n" % len(done)).encode("ascii") + done + b"\r\n")
+            # 6) end chunked transfer
+            self.wfile.write(b"0\r\n\r\n")
+            self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError, OSError):
+            # client disconnected mid-stream; nothing more to do
+            pass
 
 
 def main():
