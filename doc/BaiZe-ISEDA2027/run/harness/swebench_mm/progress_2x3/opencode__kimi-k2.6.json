@@ -4421,16 +4421,30 @@
   "eslint__eslint-15243": {
     "instance_id": "eslint__eslint-15243",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 385.2,
+    "rc": 0,
+    "model_patch_len": 3438,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " formatter path\n\n### Backward Compatibility\n\nSync formatters continue to work exactly as before because `await` on a non-promise value resolves immediately. The changes are fully backward compatible.\n",
+    "stderr_tail": "r invocation\n[✓] Identify files that need changes to support async formatters\n[✓] Implement async formatter support\n[✓] Update/add tests for async formatter support\n[✓] Verify changes with tests\n\u001b[0m\n"
   },
   "eslint__eslint-17618": {
     "instance_id": "eslint__eslint-17618",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 930.3,
+    "rc": 0,
+    "model_patch_len": 2552,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "lysis/logical--if-mix-and-qq-1.js`\n* `tests/fixtures/code-path-analysis/assignment--nested-and-3.js`\n\n### Verification\n\n* **236** code‑path analysis tests pass.\n* **29,920** linter / rule tests pass.\n",
+    "stderr_tail": "assing (26s)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore ESLint codebase to locate code path analysis for LogicalExpression\n[✓] Identify bug in handling of (a && b) ?? c\n[✓] Implement fix and add/run tests\n\u001b[0m\n"
   },
   "eslint__eslint-8120": {
     "instance_id": "eslint__eslint-8120",
