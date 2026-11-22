@@ -161,3 +161,7 @@ eda_flow MCP 第六次复测全 OK（本 session GLM-5.2/opencode 直接调用�
 - o9nm6(zhililu 28msgs)深读完成 + 合成 DelvtrandNetlistAudit-001(k=16 anti-hardcode A-prime) + 自验 ref 16/16 PASS + 4 neg ALL FAIL 3 distinct
 - 🔴post-synthesize dup-check §5: D.jsonl line 89 EDA-Eval-DesignFlow-DelvtrandAudit-001(zhililu@hfhds219 17bpf mc=35 同 user+同 task family delvtrand scan+同 domain) 已覆盖 → REVERT D.jsonl 555→554 + rm assets/reference + ledger o9nm6→parked
 - 下轮换非 delvtrand 非 zhililu live trace (analog_context/waveform 域优先)
+
+## r1114 (2026-11-22 13:53 CST) — MCP 第十次复测 OK = .75 可达十次确认
+
+eda_flow MCP 第十次复测全 OK（本 session GLM-5.2/opencode 直接调用）：8 工具全在册 + 8/8 逐项 OK（open_session 19ms / run_commands 8/8 exit0 hostname=hfhds201 whoami=e0031982 date 11/22 13:53 CST / list_files OK / write_file+read_file round-trip 71B 一致无腐蚀 / summary.tsv 表头+首行经 run_commands 可读 / declare_done+close_session cleaned=true）。**`.75` 可达十次确认**（r1105-r1114 一致）。判据=eda_flow MCP 可用，**不认 ssh 10.129.32.75 timeout**。同结论适用 A/B/C 三 shard。证据见 `designflow/eda_flow_mcp_connectivity_20261122.md` 第十次复测节。本轮预算用于复测+记录，未合成新 case；下轮找非 delvtrand 非 zhililu live trace（analog_context/waveform 域优先）。

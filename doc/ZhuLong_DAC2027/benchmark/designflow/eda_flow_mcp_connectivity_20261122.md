@@ -237,3 +237,19 @@ await tools["eda_flow"].close_session({workdir, keep:false});
 ```
 
 **结论: eda_flow MCP 可用 = .75 可达（第六次确认，与 r1105/r1106/r1107/r1108/r1109 一致）**。8 工具全在册；7/8 逐项 OK（run_code pyAether 冷启动超时=非连通问题）；trace summary.tsv 24,086 行经 run_commands 可读，含本 shard D 域候选。**口径纠错成立**：判 .75 可达性的判据 = eda_flow MCP 工具能否正常调用并返回，不是 ssh 直连/ping/DNS；ssh 10.129.32.75 timeout 只证明「直连 SSH 不通」，不据此判「.75 不可达」。同结论适用 A/B/C 三 shard（已同步 discuss/D.md）。MCP 可用且 trace 可读 ⇒ 主线「深读新 trace + 造题」无外部阻塞。
+
+---
+
+## 第十次复测（r1114 · 2026-11-22 13:53 CST · 本 session GLM-5.2/opencode）
+
+**逐项记录**（工具名 / 参数 / 返回摘要 / 耗时 / 错误原文）：
+1. **catalog search** `search({namespace:"eda_flow", limit:20})` → 8 工具全在册（open_session/run_commands/run_code/list_files/read_file/write_file/declare_done/close_session）。
+2. **open_session** `{task_id:"MCP-CHECK-D", eval_id:"20261122-mcp-ping", sample:"0", user:"shardD"}` → `workdir=/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/shardD_20261122-mcp-ping_MCP-CHECK-D_0`, `response="session workdir ready"`, `error_log=""`。耗时 19 ms。
+3. **run_commands** 8 cmd（`pwd`/`ls -la`/`hostname`/`whoami`/`id`/`date`/`ls -d /home/t0002965/log`/`head -2 .../summary.tsv`）→ 8/8 `exit_code=0`；`hostname=hfhds201`，`whoami=e0031982`，`id=uid=200450(e0031982) gid=555(guest) groups=555(guest),11229(eda_agent)`，`date=Sun Nov 22 13:53:44 CST 2026`，`pwd=workdir`。summary.tsv 表头+首行真实可读（`10.129.32.189 hfeg0pnd001 e0045140 1792637822804_6xv88.messages.json 9 ...`）。各 cmd 3-7 ms。无错误。
+4. **list_files** `{dir:workdir, pattern:"*"}` → `entries=[]`, `response="listed 0 entries"`。无错误。
+5. **write_file** `{path:workdir+"/mcp_ping.txt", content:"eda_flow MCP ping OK ...\n.75 reachable via MCP.\n"}` → `size=71`, `response="wrote 71 bytes"`。无错误。
+6. **read_file** `{path:workdir+"/mcp_ping.txt"}` → `content="eda_flow MCP ping OK @ 2026-11-22T05:53:57.595Z\n.75 reachable via MCP.\n"`, `size=71`, `is_text=true`。内容 round-trip 一致（无 base64 腐蚀）。无错误。
+7. **declare_done** `{workdir}` → `declared=true`, marker 写入。无错误。
+8. **close_session** `{workdir, keep:false}` → `cleaned=true`, workdir 已清。无错误。
+
+**结论: eda_flow MCP 可用 = .75 可达（第十次确认，与 r1105-r1113 一致）**。8 工具全在册，8/8 逐项 OK（本轮未测 run_code pyAether，前九次已确认其冷启动超时=非连通问题）；trace summary.tsv 经 run_commands 可读。**口径纠错成立**：判 .75 可达 = eda_flow MCP 工具能否正常调用并返回，不认 ssh 10.129.32.75 timeout。同结论适用 A/B/C 三 shard。MCP 可用且 trace 可读 ⇒ 主线「深读新 trace + 造题」无外部阻塞。
