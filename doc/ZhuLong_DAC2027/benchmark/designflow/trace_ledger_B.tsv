@@ -1632,3 +1632,13 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794999211646_md9m3.messages.json					case	EDA-Eval-DesignFlow-ZqSimRunnerProduce-001	2026-11-22 10:51	r1010 re-claim from D r958 wrong-domain triage (only saw msg0 skill-creator wrapper); deep-read msgs24-54 shows real B-spice produce: run_sims.py hspice ZQ calibration deck runner w/ $DATA1 verify
 1795137528730_7rhyl.messages.json	junlingw	hfeg0pkn005	216	spice_sim	case	EDA-Eval-DesignFlow-FinesimTbCodebaseAuditProduce-001	2026-11-22 11:48	
 1794833913565_agu5s.messages.json	willz	hfeahpc501	21	spice_sim	case	EDA-Eval-DesignFlow-BatchFinesimRunner-001	2026-11-22 12:44	
+1794878898936_8p2am	e0039786	hfeg0plg54	310	spice_sim	parked		2026-11-22 13:06	r1017: NFS stale, .messages.json deleted by cline rotation (stat ENOENT), unreadable; e0039786 DBC varactor near-dup risk
+1795068652264_83hjq	junlingw	hfeg0pkn005	153	spice_sim	parked		2026-11-22 13:06	r1017: NFS stale, .messages.json deleted (stat ENOENT), unreadable; junlingw GENGUI family
+1794816753918_eob9q	junlingw	hfeg0pkn005	152	spice_sim	parked		2026-11-22 13:06	r1017: NFS stale, .messages.json deleted (stat ENOENT), unreadable; junlingw GENGUI family
+1794918789506_dpcmw	e0039786	hfeg0plg54	215	spice_sim	parked		2026-11-22 13:06	r1017: NFS stale, .messages.json+.archive.json deleted (stat ENOENT), unreadable; e0039786 DBC varactor near-dup
+1794915761809_bqwq1	e0039786	hfeg0plg54	170	spice_sim	parked		2026-11-22 13:06	r1017: NFS stale, unreadable; e0039786 DBC varactor near-dup
+1794918751682_gchhb	e0039786	hfeg0plg54	156	spice_sim	parked		2026-11-22 13:06	r1017: NFS stale, unreadable; e0039786 DBC varactor near-dup
+1794878506503_4vekx	e0039786	hfeg0plg54	250	spice_sim	parked		2026-11-22 13:06	r1017: NFS stale, unreadable; e0039786 DBC varactor near-dup
+1794878369105_tnte0	e0039786	hfeg0plg54	242	spice_sim	parked		2026-11-22 13:06	r1017: NFS stale, unreadable; e0039786 DBC varactor near-dup
+1794878347032_n2dw8	e0039786	hfeg0plg54	238	spice_sim	parked		2026-11-22 13:06	r1017: NFS stale, unreadable; e0039786 DBC varactor near-dup
+1794829009109_p1n93	e0039786	hfeg0plg54	238	spice_sim	parked		2026-11-22 13:06	r1017: NFS stale, unreadable; e0039786 DBC varactor near-dup
