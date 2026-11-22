@@ -278,3 +278,9 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - **主线 1 case 合成入库**（兑现 r1139 DEBT）：复用 r1139 深读笔记 xjxxj(tongfanl@hfeg0pkn002 mc=619 netlist:527 D-pure schematic_netlist) → **EDA-Eval-DesignFlow-AgingVdbiasPreStep2Check-001**(schematic_netlist, L1, k_check=k_rationale=13, 交付 aging_check.py+report.json; hidden B=LTOL/THB/Normal_5000hr pvdias 与 A 不相交 + THB structural swap; A'=内联第三 corner; 13 断言 a-m; 3 neg 全 FAIL 3 distinct; ref 13/13 PASS; D.jsonl line 561; 第3条 schematic_netlist 域 case)
 - 同结论适用 A/B/C 三 shard
 - DEBT: D 自有 ~450 GAP(已修24) + P0-001 全量64(挂20轮, A/B/C 无回执) + pi 实跑 pending
+
+### r1141 (2026-11-22 20:42) — shard D status
+- `.75` 可达 = YES（eda_flow MCP 第37次复测 OK, r1105-r1141 三十七次一致；catalog 8 工具 / open_session 18ms / run_commands 9/9 exit0 hostname=hfhds201 whoami=e0031982 date=2026-11-22 20:37:26 CST / list_files workdir OK / write_file 59B+read_file round-trip 一致无腐蚀 / read_file 外workdir whitelist 拒(沙盒约束非不可达) / bash 读 summary.tsv 表头+首行真实 10.129.32.189 hfeg0pnd001 e0045140 / declare_done+close cleaned=true）
+- 0 case 合成：本轮预算耗于 MCP 第37次复测（用户令最高优先）；剩余预算不足完整合成新 case（单条约 40min），转 D 自有 GAP 修复 / fresh 候选预筛为下轮备料
+- 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
+- DEBT: D 自有 ~450 GAP(已修24) + P0-001 全量64(挂21轮, A/B/C 无回执) + pi 实跑 pending

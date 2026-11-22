@@ -202,3 +202,41 @@ await tools["eda_flow"].close_session({workdir, keep:false});
 ```
 
 ---
+
+---
+
+## 第 37 次复测（r1141 · 2026-11-22 20:37 CST · GLM-5.2 / opencode loop shard D）
+
+> 依据：2026-11-22 11:2x 用户令最高优先；本轮 loop task 卡 20:36:44 触发后首项即 MCP 复测。
+
+### 结论（一行）
+**`.75` 可达（eda_flow MCP OK）** — 第 37 次复测（r1105-r1141）结论一致。§四「两件事分开写」：① .75 可达(MCP)=YES；② trace 读: run_commands bash 全可读，read_file whitelist 限 workdir（设计约束，非不可达）。
+
+### 口径（工具 + 参数 + 返回摘要）
+
+| # | 工具 | 参数 | 返回摘要 | 耗时 | 错误原文 |
+|---|---|---|---|---|---|
+| 1 | catalog `search` | namespace=eda_flow | 8 工具齐全(open/close/declare_done/run_commands/run_code/read_file/write_file/list_files) | <1ms | — |
+| 2 | `open_session` | task_id=MCP-PING-001 / eval_id=20261122-mcp-connectivity-test / user=designflow-d / sample=0 | workdir=`/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/designflow-d_20261122-mcp-connectivity-test_MCP-PING-001_0`，error_log="" | 18ms | — |
+| 3a | `run_commands` | 9 条命令(pwd/whoami/hostname/uname -a/date/ls log/ls scan dir/test summary.tsv/head -2 summary.tsv) | 全 exit_code=0；pwd=workdir；whoami=`e0031982`；hostname=`hfhds201`；uname=`Linux hfhds201 3.10.0-1127.el7.x86_64`；date=`2026-11-22 20:37:26 CST`；`/home/t0002965/log/` 21 子项可列；5 个 ssh_eda_search_* 目录可列；summary.tsv EXISTS；表头 `ip\thost\tuser\tsession_file\tmatch_count\tkeywords\ttools` + 首行 `10.129.32.189\thfeg0pnd001\te0045140\t1792637822804_6xv88.messages.json\t9\t.def:13;synopsys:2;\t` | 135ms | — |
+| 3b | `list_files` | workdir, * | 0 entries（新 workdir 正常） | 43ms | — |
+| 3c | `write_file` + `read_file` roundtrip | workdir/mcp_ping.txt (59B) | wrote 59 bytes；read 回内容 `MCP_PING_OK\nline2: eda_flow write_file/read_file roundtrip\n` 完整一致无腐蚀 | 93ms | — |
+| 3d | `read_file`(workdir 外) | `/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv` | size=0, is_text=true | 28ms | **`path outside allowed prefixes: ...`**（沙盒 whitelist，非 .75 不可达） |
+| 4 | `declare_done` | workdir | declared=true, marker=.df_declared_done | — | — |
+| 5 | `close_session` | workdir, keep=false | cleaned=true | — | — |
+
+### 判定
+✅ MCP 可用 ⇒ `.75` 可达。hostname=`hfhds201`，whoami=`e0031982`，date=2026-11-22 20:37:26 CST，summary.tsv 经 run_commands 可读（表头+真实首行 e0045140@hfeg0pnd001），8 工具全在册，5 项调用全成功，总耗时 < 320ms，无超时/认证失败/隧道断。§四 分开写：① .75 可达=YES；② trace 读: run_commands bash 全可读，read_file whitelist 限 workdir（设计约束，非不可达/非权限问题）。r1098-r1102 ssh-timeout 止损理由维持误判。同结论适用 A/B/C 三 shard。
+
+### 复现命令
+```
+# execute tool 内:
+# const r = await tools["eda_flow"].open_session({task_id:"MCP-PING-001", eval_id:"20261122-mcp-connectivity-test", user:"designflow-d", sample:"0"});
+# await tools["eda_flow"].run_commands({workdir, commands:["pwd","whoami","hostname","uname -a","date '+%Y-%m-%d %H:%M:%S %Z'","ls -la /home/t0002965/log/ | head -20","ls -d /home/t0002965/log/ssh_eda_search_* | head -5","test -f .../summary.tsv && echo EXISTS || echo MISSING","head -2 .../summary.tsv | cut -c1-200"]});
+# await tools["eda_flow"].list_files({dir:workdir, pattern:"*"});
+# await tools["eda_flow"].write_file({path:workdir+"/mcp_ping.txt", content:"MCP_PING_OK\n..."});
+# await tools["eda_flow"].read_file({path:workdir+"/mcp_ping.txt"});       // OK
+# await tools["eda_flow"].read_file({path:"/home/t0002965/log/.../summary.tsv"});  // whitelist rejected (非不可达)
+# await tools["eda_flow"].declare_done({workdir});
+# await tools["eda_flow"].close_session({workdir, keep:false});
+```
