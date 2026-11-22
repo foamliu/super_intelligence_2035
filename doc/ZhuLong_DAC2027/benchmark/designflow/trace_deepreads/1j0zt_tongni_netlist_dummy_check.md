@@ -106,6 +106,47 @@ if len(cross_sgg) >= 2:
 - No eda_flow/pyAether dependency for check() — pure Python subprocess on netlist file (L1/L2)
 - Risk: the 371-line script is complex (parsing, union-find, switch_close resolution); SUT may struggle. But that's the real task difficulty — measure honestly.
 
-## connectivity (19th confirm, this round r1123)
-eda_flow MCP OK = .75 reachable (19th confirm r1105-r1123).
-This session (GLM-5.2/opencode): open_session 25ms / run_commands 6/6 exit0 hostname=hfhds201 whoami=e0031982 date 2026-11-22 16:02 CST / list_files OK / write_file 70B + read_file round-trip 一致 / declare_done declared=true + close_session cleaned=true / trace summary.tsv 24086 行 + eda_trace_20261122.log 可读 / ssh 10.129.2.13 scp OK (tongni home readable, /proj/dscqa permission-denied = 权限层非不可达).
+## connectivity (20th confirm, this round r1124)
+eda_flow MCP OK = .75 reachable (20th confirm r1105-r1124).
+This session (GLM-5.2/opencode r1124): open_session 27ms / run_commands 5/5 exit0 hostname=hfhds201 whoami=e0031982 date 2026-11-22 16:19:22 CST / declare_done declared=true + close_session cleaned=true. Materials fetched this round: FIXED r6_amp_dummy_check.py (371 lines, via `ssh e0031982@10.129.2.13 cat /home/tongni/.cline/skills/sim-sp-gen/scripts/r6_amp_dummy_check.py`) + 1j0zt.messages.json (606842B via `ssh e0031982@10.129.2.13 cat /home/tongni/.cline/data/sessions/1794798805818_1j0zt/1794798805818_1j0zt.messages.json`). scp tongni@10.129.2.13 fails (publickey) — must use e0031982@ identity.
+
+## r1124 synthesis attempt + blocker (DEBT → r1125)
+**Attempted full synthesis this round; hit netlist blocker. Case NOT delivered (quality gate).**
+
+**Real netlist access**:
+- Script was invoked on `/proj/dscqa/V0/workdir/minghuiz/simulation/zmh_AI_VtscRef_standard_tb_sim_schematic_ALPS/zmh_AI_VtscRef_standard_tb_sim_schematic.netlist` (confirmed via trace tool-call arg regex).
+- That file is **permission-denied** (owned by minghuiz, e0031982 can't read on 10.129.2.13). `/proj/dscqa/...net` variant also denied.
+- Trace excerpt is **truncated** — no single text blob contains a complete `.SUBCKT AG_VnocVdleqVtscRefAmpCore ... .ENDS` span (the agent's cat output was capped). Greedy whole-doc regex (51KB block) runs but corrupts (mixes code lines, phantom groups).
+
+**Exact instance line patterns extracted from trace** (real, for faithful reconstruction):
+```
+XMM2<0> pmirror GlbRef10 n1 inh_vss ntk_lv w=6e-6 l=3e-6 nf=1     # cross-src SL, src=n1
+XMM3<0> Out GlbRef10 nCom inh_vss ntk_lv w=6e-6 l=3e-6 nf=1        # cross-src SL, src=nCom
+XMMN4<0> n1 Pos ntail inh_vss ntn_m w=6e-6 l=3e-6 nf=1             # diff pair Pos side, src=ntail
+XMM4<0> pCom pmirror inh_vdd1 inh_vdd1 ptk w=6e-6 l=4e-6 nf=1      # CM, gate=pmirror
+XMM5<0> n2 pmirror inh_vdd1 inh_vdd1 ptk w=6e-6 l=4e-6 nf=1        # CM
+XMMP2<0> Out pmirror pCom inh_vdd1 ptk w=6e-6 l=4e-6 nf=1          # CM
+XMM0<0> net034 net036 inh_vdd1 inh_vdd1 ptk_lv w=12e-6 l=1.2e-6 nf=2   # VtscRefAnalog SL, gate=net036
+XMMP0<0> net034 net036 inh_vdd1 inh_vdd1 ptk_lv w=12e-6 l=1.2e-6 nf=2
+```
+
+**Cross-source SL merge block located**: FIXED script **lines 247-260** (`cross_sgg` block in `fm()`). Proper BUGGY version = delete lines 247-260 (regex removal failed; use line-range sed).
+
+**Minimal-netlist test result** (constructed from real patterns, 2 bit-slices each):
+- FIXED script → 3 groups in AmpCore: `[DF] XMMN4,XMMN5 src=ntail` + `[SL] XMM2,XMM3 src=n1+nCom` ✓ (cross-source merge WORKS) + `[SL] XMM4,XMM5,XMMP1 gate=pmirror` (CM MISCLASSIFIED as SL, XMMP2 dropped).
+- AG_VtscRefAnalog → **NOT detected as amplifier** (`Amplifiers found: 1`). `ia()` amplifier detection rejects the minimal VtscRefAnalog.
+- → minimal netlist does NOT reproduce faithful 4-group report.
+
+**Blocker root cause**: script's `ia()` amplifier detection + CM-vs-SL classification depend on full topology (16x bit-slices, complete connectivity, switch_close UF resolution). A hand-minimal netlist diverges.
+
+**r1125 plan (3 options, pick best)**:
+1. **Iterate minimal netlist against script**: study `ia()` amplifier detection heuristic + CM classification (`is_matching_gate`/curmirror detection) → add devices/topology until minimal netlist reproduces faithful 4-group report (DF + cross-src SL + CM + VtscRefAnalog SL). Then build B variant (rename insts/sources/gates preserving topology) + proper BUGGY (sed delete L247-260) + check.py + negatives + self-verify.
+2. **Get readable real netlist**: ask ops to grant e0031982 read on the minghuiz netlist, OR find a copy under tongni's own dirs (tongni ran the script — maybe a local copy exists in /home/tongni/...).
+3. **Pivot to a different fresh D trace** if 1+2 stall.
+
+**Re-fetch commands (verified working)**:
+```bash
+ssh -o BatchMode=yes -o ConnectTimeout=10 e0031982@10.129.2.13 'cat /home/tongni/.cline/skills/sim-sp-gen/scripts/r6_amp_dummy_check.py'   # FIXED 371 lines
+ssh -o BatchMode=yes -o ConnectTimeout=10 e0031982@10.129.2.13 'cat /home/tongni/.cline/data/sessions/1794798805818_1j0zt/1794798805818_1j0zt.messages.json'  # trace 606KB
+```
+**Case ID (next)**: `EDA-Eval-DesignFlow-CrossSrcSymLoadMergeFix-001` (descriptive, follows D.jsonl convention — NOT "D-012"; D.jsonl tail confirms descriptive ids like StdcellNetlistToSchema-001).
