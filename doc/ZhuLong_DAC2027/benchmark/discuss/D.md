@@ -381,3 +381,5 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - 同结论 .75 可达适用 A/B/C
 
 [r1171 2026-11-23] shard D: MCP 67th OK(.75 可达). 修高危 GAP VddSensTDCRootCause-001(原 check.py 只读 analysis.json→hardcode 可 PASS): 新增 hidden B 网表(8-stage delay/11-bit counter/w=30nm l=8nm, 不进 SUT 沙箱)+deliverable 新增 netlist_extract.py+check.py 内嵌 B+subprocess 在 B 上跑候选(§4.2)+独立 ground-truth 解析器. k 12→18. 自验 positive 18/18 PASS + 8 负样本全 FAIL(含 3 anti-hardcode 假). 同步 case json+D.jsonl+solution+negative_selftest. D 自有 GAP 已修 27/445. (同结论 .75 可达适用 A/B/C)
+
+[r1175 2026-11-23 05:07-05:22] shard D: MCP 第71次复测 OK(.75 可达 r1105-r1175). §二五项全过(open_session 17ms/run_commands 8-8 exit0 hostname=hfhds201/读到真实 summary.tsv/list_files+read_file workdir round-trip/declare+close OK). §四: ①.75 可达(MCP)=YES ②trace 读=run_commands bash 全可读(read_file/list_files 白名单仅 workdir 前缀,非故障). 证据 designflow/eda_flow_mcp_connectivity_20261123_r1175.md. 主线: top-120 D 候选全在台账, fresh D-pure 需下沉 mc<700(awk-on-.75 法待下轮). 无新 case(DEBT). 同结论 .75 可达适用 A/B/C.
