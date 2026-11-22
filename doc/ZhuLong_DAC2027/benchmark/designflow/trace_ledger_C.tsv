@@ -1428,3 +1428,5 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1795075084116_js4n1.messages.json	e0024852	hfeg0pkn005	214	physical_verify	case	EDA-Eval-DesignFlow-M1ViaDrcCoOptim-001	2026-11-22 20:20	
 1795253044250_ab6ck	joeyli	hfeg0pkn004	301	layout_aether	case	PinPrefixIncrRename-001	2026-11-22 21:22	layout_aether; joeyli@hfeg0pkn004 mc=301; pyAether pin-prefix-increment + F7 bind; k=20; fresh-user; C.jsonl 566->567
 1795003959776_olgpe					case	EDA-Eval-DesignFlow-AetherSocketBridgeNav-001	2026-11-22 21:32	
+1794970604490_f1olf.messages.json	dsgao	hfeahpc505	318	physical_verify	parked		2026-11-22 21:42	r970 cross-domain A: U#1 analyze netlist R_2stepSenseAdjTempCtrl_0822 circuit function + U#2 truth-table automated verification (digital logic verification, not physical_verify/layout); drc:1188 kw incidental from drcpa project path
+1794814550267_x1ekr.messages.json	shanliny	hfeg0plg107	49	physical_verify	case	EDA-Eval-DesignFlow-RcVizViewAspectClamp-001	2026-11-22 21:54	
