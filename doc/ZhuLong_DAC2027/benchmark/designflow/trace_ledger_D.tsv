@@ -1987,3 +1987,4 @@ vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:
 1789041210705_xxz7c.messages.json					case	EDA-Eval-DesignFlow-NetlistExtractionRoutingQA-001	2026-11-22 12:29	r1108 cross-shard-reclaim from B(parked): netlist:1625 D-dominant, case built
 1793166879135_xs1lj	e0017906	hfeg0plg49	119	schematic_netlist	parked		2026-11-22 13:17	session not live on host 10.129.8.86 (summary.tsv stale: scan candidates cleaned up by cline; live zhililu sessions start ts 1793841+); unclaim for reuse
 1795152806205_fsgjs.messages.json	chuanqiz	hfeg0pnd001	194	schematic_netlist	case	EDA-Eval-DesignFlow-LiberateInstGenQA-001	2026-11-22 14:53	r1119 fresh from eda_trace_20261122.log; netlist:161/schematic:83/spectre:6 D-pure; B synthesized (schematic->manifest->.inst), hidden B=ClkBufTrio + A'=RstSync2 anti-hardcode, k=16
+1794885953050_o3yts.messages.json					case	EDA-Eval-DesignFlow-StdcellNetlistToSchema-001	2026-11-22 15:37	
