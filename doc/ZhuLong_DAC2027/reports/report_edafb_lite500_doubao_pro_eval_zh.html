@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>EDA-Flow-Bench Lite 500 · doubao-seed-2.0-pro-cloud 评测报告（轮 1 · M0 anchor）</title>
+<title>EDA-Flow-Bench Lite 500 · doubao-seed-2.0-pro-cloud 评测报告（3-run 汇总 · M0 anchor）</title>
 <style>
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:24px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#1a1a2e;border-bottom:3px solid #2980b9;padding-bottom:8px}
@@ -26,10 +26,47 @@ ul{margin:6px 0}
 </head>
 <body>
 
-<h1>EDA-Flow-Bench Lite 500 · doubao-seed-2.0-pro-cloud 评测报告</h1>
-<p><strong>轮次：</strong>轮 1（doubao-pro · M0 anchor 轮）｜<strong>日期：</strong>2026-11-20｜<strong>状态：</strong><span class="tag tag-ability">✅ clean ability result（无 infra 污染）</span> <span class="tag tag-anchor">★ M0 anchor 轮</span></p>
+<h1>EDA-Flow-Bench Lite 500 · doubao-seed-2.0-pro-cloud 评测报告（3-run 汇总 · M0 anchor）</h1>
+<p><strong>模型：</strong>doubao-seed-2.0-pro-cloud｜<strong>评测集：</strong>EDA-Flow-Bench Lite 500｜<strong>日期：</strong>2026-11-20 ~ 2026-11-21｜<strong>状态：</strong><span class="tag tag-ability">✅ 3-run 完成（3 轮全 clean，0 轮作废）</span> <span class="tag tag-anchor">★ M0 anchor 模型</span></p>
 
 <div class="ok">
+<strong>✅ 3-run 汇总（doubao-seed-2.0-pro-cloud · M0 anchor 模型）</strong>
+<p>Pro 3-run = <strong>10.18% ± 1.45%</strong>（3 轮全 clean：r1=9.32% / r2=11.85% / r3=9.38%）。与用户基准 <code>51/484 = 10.5%</code> 对齐成功（mean 10.18% 落在 10.5%±2pp 内）。</p>
+<p>所有计入轮次均 infra-clean（<code>grep 'FUSE|额度耗尽|熔断'</code> 日志命中 = 0）。三轮均使用同一 <code>cases_lite.txt</code>（500 case 不动）、同一 <code>run_batch.sh</code> 判分逻辑、同一 <code>check.py</code>，唯一变量 = 轮次随机性。</p>
+</div>
+
+<h2>0. 3-run 逐轮表</h2>
+<div class="summary-box">
+<table>
+<tr><th>轮次</th><th>batch ID</th><th>PASS</th><th>FAIL</th><th>ERROR</th><th>ABSENT</th><th>decided</th><th>Pass@1 (decided)</th><th>infra_clean</th><th>计入 3-run</th></tr>
+<tr><td>r1</td><td>run_batch_20261120_170940</td><td>45</td><td>438</td><td>11</td><td>6</td><td>483</td><td><strong>9.32%</strong></td><td>✅ yes</td><td>✅</td></tr>
+<tr><td>r2</td><td>run_batch_20261121_104954</td><td>57</td><td>424</td><td>17</td><td>2</td><td>481</td><td><strong>11.85%</strong></td><td>✅ yes</td><td>✅</td></tr>
+<tr><td>r3</td><td>run_batch_20261121_135610</td><td>45</td><td>435</td><td>18</td><td>2</td><td>480</td><td><strong>9.38%</strong></td><td>✅ yes</td><td>✅</td></tr>
+</table>
+<table>
+<tr><th>指标</th><th>值</th></tr>
+<tr><td>计入轮次</td><td>r1, r2, r3（3 轮全 clean）</td></tr>
+<tr><td>作废轮次</td><td>0</td></tr>
+<tr><td>Pass@1 逐轮</td><td>[9.32%, 11.85%, 9.38%]</td></tr>
+<tr><td>decided 分母 逐轮</td><td>[483, 481, 480]</td></tr>
+<tr><td><strong>mean</strong></td><td><strong>10.18%</strong></td></tr>
+<tr><td><strong>std（样本标准差, n-1）</strong></td><td><strong>1.45%</strong></td></tr>
+<tr><td>用户基准对齐</td><td>✅ mean 10.18% 落 10.5%±2pp 内（Δ −0.32pp）</td></tr>
+<tr><td>top-120-of-Lite 子集 M0 锚点</td><td>r1 抽取 12/119 = 10.1%（<code>\MzeroAnchor</code>，已回填 commit <code>4fa407d35e</code>）</td></tr>
+</table>
+</div>
+
+<h2>0.1 三模型 3-run 横比</h2>
+<table>
+<tr><th>模型</th><th>3-run mean</th><th>3-run std</th><th>计入轮次</th><th>作废轮次</th></tr>
+<tr><td><strong>doubao-seed-2.0-pro-cloud</strong></td><td><strong>10.18%</strong></td><td>±1.45%</td><td>r1/r2/r3（3 clean）</td><td>0</td></tr>
+<tr><td>doubao-seed-2.0-lite-cloud</td><td>4.68%</td><td>±0.95%</td><td>r1/r3/r4（3 clean）</td><td>r2（infra）</td></tr>
+<tr><td>doubao-seed-2.0-mini-cloud</td><td>2.38%</td><td>±0.23%</td><td>r2/r3/r4（3 clean）</td><td>r1（FUSE）</td></tr>
+</table>
+
+<div class="ok">
+<p>以下为 r1（M0 anchor 轮）单轮详情，保留作原始记录。r2/r3 单轮详情见各自 batch 目录 <code>summary.log</code> 与 <code>status_pro_r{2,3}.jsonl</code>。</p>
+</div>
 <strong>✅ 本轮为干净能力评测结果，且为论文 §6 M0 anchor 来源轮</strong>
 <p>本轮 batch 全程未触发 <code>FUSE</code> / <code>quota</code> / <code>401</code> / <code>403</code> / <code>connection refused</code> / <code>cline not found</code> 等任何基础设施故障信号（<code>Forbidden</code> 字样 2 次命中为 <code>check.py</code> 反泄题断言文本，非 HTTP 403，详见 §5）。
 500 case 全部判完（500/500 judged），<strong>Pass@1 (decided) = 45/483 = 9.32%</strong>，与用户基准 <code>51/484 = 10.5%</code> 的差距为 −1.18pp，落在 ±2pp 正常波动内 → <strong>对齐成功</strong>，可作为 doubao-seed-2.0-pro-cloud 在 EDA-Flow-Bench Lite 500 上的<strong>干净能力数字</strong>。</p>

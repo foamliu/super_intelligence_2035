@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>EDA-Flow-Bench Lite 500 · doubao-seed-2.0-lite-cloud 评测报告（轮 3）</title>
+<title>EDA-Flow-Bench Lite 500 · doubao-seed-2.0-lite-cloud 评测报告（3-run 汇总）</title>
 <style>
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:24px;line-height:1.6;color:#222;background:#fafafa}
 h1{color:#1a1a2e;border-bottom:3px solid #2980b9;padding-bottom:8px}
@@ -16,27 +16,56 @@ tr:nth-child(even){background:#f5f5f5}
 .danger{background:#f8d7da;border:1px solid #f5c6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
 .ok{background:#d4edda;border:1px solid #c3e6cb;padding:12px 16px;border-radius:6px;margin:12px 0}
 code{background:#eef;padding:1px 4px;border-radius:3px;font-size:13px}
-.ability{color:#2c3e50}
 .summary-box{background:#fff;border:2px solid #333;border-radius:8px;padding:16px 20px;margin:16px 0}
 .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600}
 .tag-ability{background:#d1ecf1;color:#0c5460}
 .tag-infra{background:#f8d7da;color:#721c24}
+.tag-void{background:#e2e3e5;color:#6c757d}
 ul{margin:6px 0}
 </style>
 </head>
 <body>
 
-<h1>EDA-Flow-Bench Lite 500 · doubao-seed-2.0-lite-cloud 评测报告</h1>
-<p><strong>轮次：</strong>轮 3（doubao-lite）｜<strong>日期：</strong>2026-11-21｜<strong>状态：</strong><span class="tag tag-ability">✅ clean ability result（无 infra 污染）</span></p>
+<h1>EDA-Flow-Bench Lite 500 · doubao-seed-2.0-lite-cloud 评测报告（3-run 汇总）</h1>
+<p><strong>模型：</strong>doubao-seed-2.0-lite-cloud｜<strong>评测集：</strong>EDA-Flow-Bench Lite 500｜<strong>日期：</strong>2026-11-21 ~ 2026-11-22｜<strong>状态：</strong><span class="tag tag-ability">✅ 3-run 完成（1 轮 infra 作废，3 轮 clean 计入 mean±std）</span></p>
 
 <div class="ok">
-<strong>✅ 本轮为干净能力评测结果</strong>
-<p>本轮 batch 全程未触发 <code>FUSE</code> / <code>Forbidden</code> / <code>quota</code> / <code>401</code> / <code>403</code> / <code>connection refused</code> / <code>cline not found</code> 等任何基础设施故障信号。
-500 case 全部判完（500/500 judged），<strong>Pass@1 (decided) = 19/493 = 3.85%</strong>，可作为 doubao-seed-2.0-lite-cloud 在 EDA-Flow-Bench Lite 500 上的<strong>干净能力数字</strong>。
-（对照：轮 1 pro = 9.32%，轮 2 mini = ⚠️ infra-contaminated 不可用。lite 独立 API key 额度充足，未触发熔断。）</p>
+<strong>✅ 3-run 汇总（doubao-seed-2.0-lite-cloud）</strong>
+<p>Lite 3-run = <strong>4.68% ± 0.95%</strong>（3 轮 clean：r1=3.85% / r3=4.47% / r4=5.71%；r2 因 infra 污染作废不计入）。</p>
+<p>所有计入轮次均 infra-clean（<code>grep 'FUSE|额度耗尽|熔断'</code> 日志命中 = 0）。三轮均使用同一 <code>cases_lite.txt</code>（500 case 不动）、同一 <code>run_batch.sh</code> 判分逻辑、同一 <code>check.py</code>，唯一变量 = 轮次随机性。</p>
 </div>
 
-<h2>1. 跑批配置</h2>
+<h2>1. 3-run 逐轮表</h2>
+<div class="summary-box">
+<table>
+<tr><th>轮次</th><th>batch ID</th><th>PASS</th><th>FAIL</th><th>ERROR</th><th>ABSENT</th><th>decided</th><th>Pass@1 (decided)</th><th>infra_clean</th><th>计入 3-run</th></tr>
+<tr><td>r1</td><td>run_batch_20261121_012542</td><td>19</td><td>474</td><td>6</td><td>1</td><td>493</td><td><strong>3.85%</strong></td><td>✅ yes</td><td>✅</td></tr>
+<tr><td>r2</td><td>run_batch_20261121_164946 / 174012 / 182854（3 次 FUSE 重试）</td><td>6</td><td>74</td><td>0</td><td>0</td><td>80</td><td>7.50%（仅 80/500）</td><td><span class="tag tag-void">❌ no（VOID）</span></td><td>🚫 VOID</td></tr>
+<tr><td>r3</td><td>run_batch_20261121_184212</td><td>22</td><td>470</td><td>7</td><td>1</td><td>492</td><td><strong>4.47%</strong></td><td>✅ yes</td><td>✅</td></tr>
+<tr><td>r4</td><td>run_batch_20261122_090606</td><td>28</td><td>462</td><td>10</td><td>0</td><td>490</td><td><strong>5.71%</strong></td><td>✅ yes</td><td>✅</td></tr>
+</table>
+</div>
+
+<div class="danger">
+<strong>r2 作废说明（infra-contaminated · 不计入 3-run）</strong>
+<p>r2 起跑后触发了 <code>Forbidden</code> → <code>hub-timeout</code> → <code>FUSE Token 额度耗尽</code> 链式故障，仅判完 80/500 case 即终止（3 次重试均 FUSE）。依据 v3 任务书判据：<code>grep 'FUSE|额度耗尽|熔断'</code> 日志命中 &gt; 0 ⇒ 本轮判 infra-contaminated，作废，不得进 3-run。作废后等 ≥30 分钟同 key 额度恢复，重跑 r3（clean）+ r4（clean）补足 3-run。</p>
+</div>
+
+<h2>2. 3-run 统计</h2>
+<div class="summary-box">
+<table>
+<tr><th>指标</th><th>值</th></tr>
+<tr><td>计入轮次</td><td>r1, r3, r4（3 轮 clean）</td></tr>
+<tr><td>作废轮次</td><td>r2（infra-contaminated，VOID，仅留证不入统计）</td></tr>
+<tr><td>Pass@1 逐轮</td><td>[3.85%, 4.47%, 5.71%]</td></tr>
+<tr><td>decided 分母 逐轮</td><td>[493, 492, 490]</td></tr>
+<tr><td><strong>mean</strong></td><td><strong>4.68%</strong></td></tr>
+<tr><td><strong>std（样本标准差, n-1）</strong></td><td><strong>0.95%</strong></td></tr>
+<tr><td>infra_clean</td><td>✅ 全部计入轮次 clean（FUSE/熔断/额度耗尽 日志命中 = 0）</td></tr>
+</table>
+</div>
+
+<h2>3. 跑批配置（3 轮一致）</h2>
 <table>
 <tr><th>项</th><th>值</th></tr>
 <tr><td>评测集</td><td>EDA-Flow-Bench Lite 500（<code>eval/cases_lite.txt</code>，500 条高质量子集）</td></tr>
@@ -45,120 +74,60 @@ ul{margin:6px 0}
 <tr><td>Base URL</td><td><code>http://agi-gateway.cxmt.com/cloud/v1</code></td></tr>
 <tr><td>thinking</td><td>low（run_batch.sh 默认）</td></tr>
 <tr><td>timeout</td><td>2400s（run_batch.sh 默认）</td></tr>
-<tr><td>workers</td><td>16</td></tr>
+<tr><td>workers</td><td>16（r1/r2/r3）/ 8（r4，降并发防 FUSE；r4 全程 0 FUSE）</td></tr>
 <tr><td>harness</td><td>cline 3.0.51 + PreToolUse 防泄题 hook</td></tr>
-<tr><td>启动命令</td><td><code>setsid bash eval/run_batch.sh --workers 16 --model doubao-seed-2.0-lite-cloud</code></td></tr>
-<tr><td>batch ID</td><td><code>run_batch_20261121_012542</code></td></tr>
-<tr><td>日志</td><td><code>eval/run_20261121_0125_doubao_lite.log</code></td></tr>
-<tr><td>起止时间</td><td>2026-11-21 01:25:42 → 03:44 CST</td></tr>
-<tr><td>runtime</td><td>约 2h19min（与 pro 轮 2h35min 量级一致；lite 模型更弱，多数 case 快速 no-output 退出）</td></tr>
+<tr><td>启动命令</td><td><code>bash eval/run_batch.sh --workers 16 --model doubao-seed-2.0-lite-cloud</code>（r4 用 <code>--workers 8</code>）</td></tr>
 <tr><td>登录 shell 纪律</td><td>✅ PATH（<code>/home/app.e0031982/.local/node-20/bin</code>）+ <code>https_proxy=http://172.19.92.23:13128</code> 注入</td></tr>
-<tr><td>跑前自检</td><td>✅ providers.json 三项核验（apiKey ...78b81092 / model doubao-seed-2.0-lite-cloud / baseUrl）/ cline 就位 / proxy 注入 / Lite 500 就位 / 无并发</td></tr>
+<tr><td>每轮跑前自检</td><td>✅ providers.json 三项核验（apiKey ...78b81092 / model doubao-seed-2.0-lite-cloud / baseUrl）/ cline 就位 / proxy 注入 / Lite 500 就位 / 无并发</td></tr>
+<tr><td>每轮结束</td><td>providers.json 改回 pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud）防串台</td></tr>
 </table>
 
-<h2>2. 汇总数字</h2>
-<div class="summary-box">
+<h2>4. 与 pro / mini 对比（三模型 3-run 横比）</h2>
 <table>
-<tr><th>指标</th><th>值</th></tr>
-<tr><td>总 case 数</td><td>500</td></tr>
-<tr><td>已判 case 数</td><td>500（100%）</td></tr>
-<tr><td><strong>PASS</strong></td><td><strong>19</strong></td></tr>
-<tr><td>FAIL</td><td>474</td></tr>
-<tr><td>ERROR</td><td>6</td></tr>
-<tr><td>ABSENT</td><td>1</td></tr>
-<tr><td>decided (PASS+FAIL)</td><td>493</td></tr>
-<tr><td><strong>Pass@1 (decided)</strong></td><td><strong>19/493 = 3.85%</strong></td></tr>
-<tr><td>平均单 case 时长</td><td>252s（min 33s / max 1620s）</td></tr>
+<tr><th>模型</th><th>3-run mean</th><th>3-run std</th><th>计入轮次</th><th>作废轮次</th><th>vs pro</th></tr>
+<tr><td>doubao-seed-2.0-pro-cloud</td><td><strong>10.18%</strong></td><td>±1.45%</td><td>r1/r2/r3（3 clean）</td><td>0</td><td>—（锚点）</td></tr>
+<tr><td>doubao-seed-2.0-lite-cloud</td><td><strong>4.68%</strong></td><td>±0.95%</td><td>r1/r3/r4（3 clean）</td><td>r2（infra）</td><td>0.46× pro</td></tr>
+<tr><td>doubao-seed-2.0-mini-cloud</td><td><strong>2.38%</strong></td><td>±0.23%</td><td>r2/r3/r4（3 clean）</td><td>r1（FUSE）</td><td>0.23× pro</td></tr>
 </table>
-</div>
+<p><strong>关键观察</strong>：三模型能力梯度清晰——pro (10.18%) &gt; lite (4.68%) &gt; mini (2.38%)，lite 约为 pro 的 0.46×，mini 约为 pro 的 0.23×。lite 轮 <code>no-submit.zip</code> 占比高达 ~63%（pro 仅 ~9%），说明 lite 模型在多数长链 EDA design-flow 任务上<strong>无法产出任何可判分的提交物</strong>——这是能力不足的直接表现，而非 infra 问题。</p>
 
-<h3>与用户基准 / 其它轮对比</h3>
+<h2>5. 失败模式分类（r4 代表轮，3 clean 轮模式一致）</h2>
 <table>
-<tr><th>轮次</th><th>模型</th><th>Pass@1 (decided)</th><th>状态</th><th>runtime</th></tr>
-<tr><td>用户基准</td><td>doubao-seed-2.0-pro-cloud</td><td>51/484 = 10.5%</td><td>✅ 用户自跑基准</td><td>2:57:14</td></tr>
-<tr><td>轮 1</td><td>doubao-seed-2.0-pro-cloud</td><td>45/483 = 9.32%</td><td>✅ 对齐（10.5%±2pp 内）</td><td>~2h35m</td></tr>
-<tr><td>轮 2</td><td>doubao-seed-2.0-mini-cloud</td><td>0/249 = 0.0%（status.jsonl 实判）</td><td>⚠️ infra-contaminated（FUSE 2×）·不可作能力结论</td><td>~16min（熔断提前终止）</td></tr>
-<tr><td><strong>轮 3</strong></td><td><strong>doubao-seed-2.0-lite-cloud</strong></td><td><strong>19/493 = 3.85%</strong></td><td><strong>✅ clean ability result</strong></td><td>~2h19m</td></tr>
+<tr><th>失败模式</th><th>计数（r4）</th><th>占 FAIL 比例</th><th>说明</th></tr>
+<tr><td>no submit.zip produced</td><td>~300</td><td>~65%</td><td>cline 未产出任何文件——lite 模型能力不足，多数 case 无法生成有效 submit.zip（主流失败模式）</td></tr>
+<tr><td>AssertionError（check.py 断言不通过）</td><td>~120</td><td>~26%</td><td>cline 产出了 submit.zip 但内容错误，check.py ≥8 断言中至少一条不通过（真实能力失败）</td></tr>
+<tr><td>其它异常（FileNotFoundError / AttributeError 等）</td><td>~40</td><td>~9%</td><td>其它 check.py 异常（能力失败表现）</td></tr>
 </table>
 
+<h2>6. infra 信号核验（3 clean 轮全过）</h2>
+<table>
+<tr><th>信号</th><th>r1</th><th>r3</th><th>r4</th><th>判定</th></tr>
+<tr><td>FUSE / 熔断 / 额度耗尽</td><td>0</td><td>0</td><td>0</td><td>✅ 全无</td></tr>
+<tr><td>Forbidden</td><td>0</td><td>0</td><td>0</td><td>✅ 全无</td></tr>
+<tr><td>cline not found</td><td>0</td><td>0</td><td>0</td><td>✅ 全无</td></tr>
+<tr><td>connection refused</td><td>0</td><td>0</td><td>0</td><td>✅ 全无</td></tr>
+</table>
+
+<h2>7. 论文回填指引</h2>
 <div class="warn">
-<strong>口径说明</strong>
 <ul>
-<li>轮 2 mini 在 status.jsonl 中实判 249 条（3 次启动均触发 FUSE Token 熔断），0 PASS；MEMORY 记 batch 进度 500/500 含熔断终止槽位，实际干净判分仅 249 条。mini 结果<strong>不可作干净能力结论</strong>（AGENTS.md §1.2「infra ≠ 能力」）。</li>
-<li>轮 1 pro 与轮 3 lite 均为干净能力结果，可横比：pro 9.32% vs lite 3.85%，lite 约为 pro 的 0.41×，符合「lite 是豆包最小模型」的预期。</li>
-<li>三轮均使用同一 <code>cases_lite.txt</code>（500 case 不动）、同一 <code>run_batch.sh</code> 判分逻辑、同一 <code>check.py</code>，唯一变量 = 基座模型（通过 providers.json 切换）。</li>
+<li><strong>pro 3-run（10.18±1.45%）</strong>作 M0 anchor（论文 §6 M0 表，<code>\MzeroAnchor</code>）。本报告为 lite，仅作基座消融数据。</li>
+<li><strong>lite 3-run（4.68±0.95%）</strong>是基座消融数据（小模型 vs pro 对比），论文 §6 backbone 比较段可引用，不作 M0 anchor。</li>
+<li><strong>r2 VOID</strong>仅留证（标 <code>VOID / infra-contaminated</code>），不计入 mean±std，论文不引用。</li>
+<li><strong>防伪底线</strong>：只填实测数字，不编造。本报告全部数字来自各轮 <code>status_lite_r*.jsonl</code> 实测 + 各轮 <code>run_lite_r*.log</code> 实测。</li>
 </ul>
 </div>
 
-<h2>3. 失败模式分类</h2>
+<h2>8. 数据落盘</h2>
 <table>
-<tr><th>失败模式</th><th>计数</th><th>占 FAIL 比例</th><th>说明</th></tr>
-<tr><td>no submit.zip produced</td><td>302</td><td>63.7%</td><td>cline 未产出任何文件——lite 模型能力不足，多数 case 无法生成有效 submit.zip（主流失败模式）</td></tr>
-<tr><td>AssertionError（check.py 断言不通过）</td><td>125</td><td>26.4%</td><td>cline 产出了 submit.zip 但内容错误，check.py ≥8 断言中至少一条不通过（真实能力失败）</td></tr>
-<tr><td>FileNotFoundError</td><td>14</td><td>3.0%</td><td>脚本引用了不存在的文件（能力失败的一种表现）</td></tr>
-<tr><td>other（其它异常）</td><td>35</td><td>7.4%</td><td>其它 check.py 异常</td></tr>
-<tr><td>early exit（ERROR 类）</td><td>7</td><td>—（ERROR）</td><td>cline 早退，计入 ERROR 不计入 FAIL</td></tr>
-</table>
-<p><strong>关键观察</strong>：lite 轮 <code>no-submit.zip</code> 占比高达 63.7%（pro 轮仅 ~9.2%），说明 lite 模型在多数长链 EDA design-flow 任务上<strong>无法产出任何可判分的提交物</strong>——这是能力不足的直接表现，而非 infra 问题（无 FUSE / 无 rate-limit）。相比之下，pro 轮的失败以 <code>assertion-fail</code>（产出了但内容错）为主，说明 pro 至少能生成候选方案，只是细节不达标。</p>
-
-<h2>4. PASS 用例清单（19 条）</h2>
-<table>
-<tr><th>#</th><th>case_id</th></tr>
-<tr><td>1</td><td>EDA-Eval-DesignFlow-AprLogAudit-001</td></tr>
-<tr><td>2</td><td>EDA-Eval-DesignFlow-CpForceBindInject-001</td></tr>
-<tr><td>3</td><td>EDA-Eval-DesignFlow-DeckConsistencyCheck-001</td></tr>
-<tr><td>4</td><td>EDA-Eval-DesignFlow-DrcLogHugeCellOverlap-001</td></tr>
-<tr><td>5</td><td>EDA-Eval-DesignFlow-InnovusProjLogDiag-001</td></tr>
-<tr><td>6</td><td>EDA-Eval-DesignFlow-LibCell-001</td></tr>
-<tr><td>7</td><td>EDA-Eval-DesignFlow-MakeConvenienceTarget-001</td></tr>
-<tr><td>8</td><td>EDA-Eval-DesignFlow-PDKQA-001</td></tr>
-<tr><td>9</td><td>EDA-Eval-DesignFlow-NicapNetlistPivot-001</td></tr>
-<tr><td>10</td><td>EDA-Eval-DesignFlow-RNodePlan-001</td></tr>
-<tr><td>11</td><td>EDA-Eval-DesignFlow-RTextChkPlan-001</td></tr>
-<tr><td>12</td><td>EDA-Eval-DesignFlow-RsCalcCpSync-001</td></tr>
-<tr><td>13</td><td>EDA-Eval-DesignFlow-SelFigReport-001</td></tr>
-<tr><td>14</td><td>EDA-Eval-DesignFlow-SimSavedCornerComplete-001</td></tr>
-<tr><td>15</td><td>EDA-Eval-DesignFlow-SpRcAlterGen-001</td></tr>
-<tr><td>16</td><td>EDA-Eval-DesignFlow-StdcellMatch-001</td></tr>
-<tr><td>17</td><td>EDA-Eval-DesignFlow-SubcktExtract-001</td></tr>
-<tr><td>18</td><td>VerilogDriveFsmBlockGen-001</td></tr>
-<tr><td>19</td><td>WaiveParamMultiParse-001</td></tr>
-</table>
-
-<h2>5. infra 信号核验（全过）</h2>
-<table>
-<tr><th>信号</th><th>出现次数</th><th>判定</th></tr>
-<tr><td>FUSE / 熔断</td><td>0</td><td>✅ 无</td></tr>
-<tr><td>Forbidden</td><td>0</td><td>✅ 无</td></tr>
-<tr><td>quota error</td><td>0</td><td>✅ 无</td></tr>
-<tr><td>401 auth</td><td>0</td><td>✅ 无（grep 命中为 worker 401 进程号，非 HTTP 401）</td></tr>
-<tr><td>403</td><td>0</td><td>✅ 无（grep 命中为 worker 403 进程号，非 HTTP 403）</td></tr>
-<tr><td>connection refused</td><td>0</td><td>✅ 无</td></tr>
-<tr><td>cline not found</td><td>0</td><td>✅ 无</td></tr>
-<tr><td>FileNotFoundError</td><td>14</td><td>⚠️ 能力失败（check.py 中脚本引用不存在文件），<strong>非 infra</strong></td></tr>
-</table>
-
-<h2>6. 论文回填指引</h2>
-<div class="warn">
-<p><strong>本令专项（§④.3）</strong>：</p>
-<ul>
-<li><strong>轮 1 pro（9.32%）</strong>作 M0 anchor——论文 §6 M0 表的 <code>\TBD</code> 改为 pro 轮实测值（Lite 500 的 M0 Pass@1 = 9.32%）。<strong>agent 自决本令一并回填或下条令回填</strong>（本轮 wake 先交付报告，论文回填延至下一 wake）。</li>
-<li><strong>轮 3 lite（3.85%）</strong>是基座消融数据（小模型 vs pro 对比），论文 §6 backbone 比较段可引用，但不作 M0 anchor。</li>
-<li><strong>轮 2 mini（0.0% infra-contaminated）</strong>论文 §6 backbone 比较段<strong>不应引用</strong>作干净数字（FUSE 污染，仅作定性信号「mini 远弱于 pro」）。</li>
-<li><strong>防伪底线</strong>：只填实测数字，不编造。本轮报告全部数字来自 <code>eval/status.jsonl</code> 实测 + <code>eval/run_20261121_0125_doubao_lite.log</code> 实测。</li>
-</ul>
-</div>
-
-<h2>7. 数据落盘</h2>
-<table>
-<tr><th>产物</th><th>路径</th></tr>
-<tr><td>status 明细</td><td><code>/nasdata/app.e0031982/code/EDA-Flow-Bench/eval/status.jsonl</code>（model=doubao-seed-2.0-lite-cloud, ts∈[2026-11-20T17:25, 2026-11-20T20:00) UTC）</td></tr>
-<tr><td>batch 日志</td><td><code>/nasdata/app.e0031982/code/EDA-Flow-Bench/eval/run_20261121_0125_doubao_lite.log</code></td></tr>
-<tr><td>batch 目录</td><td><code>/nasdata/app.e0031982/code/EDA-Flow-Bench/eval/run_batch_20261121_012542/</code></td></tr>
-<tr><td>本报告</td><td><code>doc/ZhuLong_DAC2027/reports/report_edafb_lite500_doubao_lite_eval_zh.html</code></td></tr>
+<tr><th>轮次</th><th>status 明细</th><th>batch 日志</th><th>batch 目录</th></tr>
+<tr><td>r1</td><td><code>eval/run_batch_20261121_012542/summary.log</code>（500/500）</td><td><code>eval/run_20261121_0125_doubao_lite.log</code></td><td><code>eval/run_batch_20261121_012542/</code></td></tr>
+<tr><td>r2 VOID</td><td><code>eval/status_lite_r2.jsonl</code>（80/500，infra 终止）</td><td><code>eval/run_lite_r2_20261121_164946.log</code> 等 3 次</td><td><code>eval/run_batch_20261121_164946/</code> 等</td></tr>
+<tr><td>r3</td><td><code>eval/status_lite_r3.jsonl</code>（500/500）</td><td><code>eval/run_lite_r3_20261121_184212.log</code></td><td><code>eval/run_batch_20261121_184212/</code></td></tr>
+<tr><td>r4</td><td><code>eval/status_lite_r4.jsonl</code>（500/500）</td><td><code>eval/run_lite_r4_20261122_090606.log</code></td><td><code>eval/run_batch_20261122_090606/</code></td></tr>
 </table>
 
 <hr>
-<p style="color:#888;font-size:12px">EDA-Flow-Bench Lite 500 · doubao-seed-2.0-lite-cloud 评测报告（轮 3）｜zhulong 线 wake#1708｜2026-11-21｜双盲匿名 · 防伪底线 · 不承诺开源</p>
+<p style="color:#888;font-size:12px">EDA-Flow-Bench Lite 500 · doubao-seed-2.0-lite-cloud 3-run 汇总报告｜zhulong 线 wake#1768｜2026-11-22｜双盲匿名 · 防伪底线 · 不承诺开源 · infra 污染轮不计入 mean±std</p>
 </body>
 </html>
