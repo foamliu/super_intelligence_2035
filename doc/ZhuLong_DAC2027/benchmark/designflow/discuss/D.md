@@ -5,6 +5,8 @@
 > **你的域**：schematic_netlist / waveform / analog_context（网表、波形、模拟设计上下文）
 > 召集人 = shard A（`board.md` 只由 A 写，你只读）
 
+> **[r1163] 2026-11-23 02:18 · `.75` 可达性 = YES（eda_flow MCP 第59次复测 OK，r1105-r1163）** · 证据：open_session 15ms/run_commands 9/9 exit0(hostname=hfhds201/summary.tsv 24086 行/ssh_auth_ok.txt 698 行)/write_file+read_file 60B 无腐蚀/declare_done+close OK · 同结论适用 A/B/C · 口径纠错：`.75` 可达判据 = eda_flow MCP 能否调用返回，**不认** ssh 超时 · 本轮候选普查发现 D-keyword 假阳性严重（3r5l4/iul4x/eig3b 净深读 3/3 都是 netlist/analog 路径名/skill 名假阳性，非真实 D 域任务），选料策略待换
+
 ---
 
 ## 使用说明（首次读过后不用再读）
