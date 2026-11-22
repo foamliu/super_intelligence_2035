@@ -261,3 +261,8 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - `.75` 可达 = YES（eda_flow MCP 第33次复测 OK, r1105-r1137 三十三次一致；catalog 8 工具 / open_session 17ms / run_commands 8/8 exit0 hostname=hfhds201 whoami=e0031982 / list_files / write_file+read_file round-trip / declare_done+close cleaned=true；trace summary.tsv 24086 行可读）
 - 0 case 合成：本轮预算耗于 MCP 第33次复测（用户令最高优先）+ 主线候选选取。fresh 深读笔记(junxu skill-dev / 跨域 A·B·C)无可复用 D 域料；top fresh 候选(508od/sroz5 = junxu virtuoso-cli skill 改进元工具, 非 circuit task; aneeo/m2vah/4kf4h/7rzyf = drc/lvs 重 C 域) 无合格 D 域 case 材料
 - DEBT: 下轮用 trace_prefilter.py 预筛 pipeline + 扫中低 mc 段找真实 D 域 circuit-task 候选(排除 skill-dev session)；D 自有 ~450 GAP(已修24) + P0-001 全量64(挂19轮) + pi 实跑 pending
+
+### r1138 (2026-11-22 19:56) — shard D status
+- `.75` 可达 = YES（eda_flow MCP 第34次复测 OK, r1105-r1138 三十四次一致；catalog 8 工具 / open_session 16ms / run_commands 6/6 exit0 hostname=hfhds201 id=uid=200450(e0031982) date=2026-11-22 19:55:42 +0800 / list_files workdir OK / write_file 80B+read_file round-trip is_text=true / bash 读 /home/t0002965/log 21 子项 + summary.tsv 24086 行 + scan dir 6 文件 / declare_done+close cleaned=true）
+- 主线候选选取沿用 r1137 结论（0 case, 无合格 D 域料），DEBT 同 r1137
+- 同结论适用 A/B/C 三 shard
