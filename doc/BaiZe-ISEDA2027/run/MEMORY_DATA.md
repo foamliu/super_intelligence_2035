@@ -8,7 +8,9 @@ WAITING: 0
 
 > 📦 R227 心跳（例行巡检+blendswitch第20次复验7/7 PASS·iter291340 step7158ms·.12 load24.88·S2三下载全100%）已归档 → daily-memories-data/2026-11-23.md
 
-> 🟢 **心跳 · 2026-11-23 (R228) — 例行巡检+blendswitch第21次复验7/7 PASS**：①✅git pull --rebase --autostash local ahead1(非data线 commit718ab50b07) 0 behind origin **无新data令**；②✅pretrain iter=291,400/700k(41.63%) step_avg(last10)=7143ms<7.4s gate✅ 训练健康 loss≈2.000 lr=1e-3 stable daemon idle等292k ETA≈06:41；③✅blendswitch第21次复验7/7 PASS(zero_overlap=0/ratio max_dev=0.0087%/flag-off=byte-identical/new_source=0/epoch_wrap诚实报告/json_roundtrip OK/perf_pass=true；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=25.35<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data下载进程(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226；注：dl_orchestrator.sh PID3319999自11-15起stale etime≈672ks无日志更新,非活跃下载,未kill待确认)；⑦✅MEMORY<32KB/TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R229) — 例行巡检+blendswitch第22次复验7/7 PASS**：①✅git pull --rebase --autostash "Already up to date" 0 behind origin **无新data令**；②✅pretrain iter=291,470/700k(41.64%) step_avg(last10)=7216ms<7.4s gate✅ 训练健康 loss≈1.998 lr=1e-3 stable daemon idle等292k ETA≈06:43；③✅blendswitch第22次复验7/7 PASS(zero_overlap=0/ratio max_dev=0.0087%/flag-off=byte-identical/new_source=0/epoch_wrap诚实报告/json_roundtrip OK/perf_pass=true；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=26.72<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data下载进程(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226；注：dl_orchestrator.sh PID3319999自11-15起stale无日志更新8d,非活跃下载,未kill待确认)；⑦✅MEMORY 31.9KB<32KB/TASK 27.6KB<32KB。research日报11-23「EDA语料Gopher体检」建议记为参考(EDA已取消)。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+
+> 📦 R228 心跳（例行巡检+blendswitch第21次复验7/7 PASS·iter291400 step7143ms·.12 load25.35·S2三下载全100%）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R224 心跳（例行巡检+blendswitch第17次复验7/7 PASS·iter291190 step7242ms·.12 load25.73·S2三下载全100%·research日报EDA建议记为参考(EDA已取消)）已归档 → daily-memories-data/2026-11-23.md
 
