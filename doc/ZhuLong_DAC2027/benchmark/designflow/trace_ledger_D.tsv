@@ -1991,3 +1991,4 @@ vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:
 1795184538015_jx0cw.messages.json	legendd	hfeg0pkn002	698	schematic_netlist	parked		2026-11-22 16:06	r1123 cross-domain: actually layout_aether (C), not schematic_netlist (D). 256 msgs, 70 pyAether calls, aeGuiSdlGenAll/aeRedraw/via:138 = stdcell physical layout from schematic. r1122 keyword-only scan misclassified. Hand to C-shard.
 1794798805818_1j0zt.messages.json	tongni	hfeg0pkn004	215	schematic_netlist	case	EDA-Eval-DesignFlow-CrossSrcSymLoadMergeFix-001	2026-11-22 17:12	
 1794982121198_lfb0j.messages.json	dechaoc	hfeg0pkn004	297	schematic_netlist	case	EDA-Eval-DesignFlow-HierSigScriptModify-001	2026-11-22 18:02	
+1795328650760_s68pp.messages.json	yohannw	hfeg0pkn003	891	waveform	case	EDA-Eval-DesignFlow-IpPortRouteMerge-001	2026-11-22 18:28	

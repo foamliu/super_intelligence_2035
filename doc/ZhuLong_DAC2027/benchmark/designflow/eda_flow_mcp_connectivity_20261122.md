@@ -498,3 +498,32 @@ await tools["eda_flow"].close_session({workdir, keep:false});
 9. **close_session** `{workdir, keep:false}` → `cleaned=true`. ✅
 
 **结论: eda_flow MCP 可用 = .75 可达（第 26 次确认，与 r1105-r1129 一致）**。r1098-r1102 ssh-timeout 止损理由维持误判。同结论适用 A/B/C 三 shard。MCP 可用 ⇒ 用户令 §三「立即恢复深读新 trace + 造题主线」无外部阻塞。
+
+---
+
+## 第 27 次复测 · 2026-11-22 18:06 CST · 本 session GLM-5.2/opencode (r1131)
+
+**用户令触发**：2026-11-22 11:2x 用户令最高优先「先测 eda_flow MCP 是否可用——可用即代表 .75 可达」。
+
+**逐项记录（工具名 / 参数 / 返回摘要 / 耗时 / 错误原文）**：
+
+1. **catalog (search namespace=eda_flow)** — 8 工具在册：`open_session`/`close_session`/`declare_done`/`run_commands`/`run_code`/`read_file`/`write_file`/`list_files`。✅ 无错。
+2. **open_session** `{task_id:"MCP-CONN-TEST", eval_id:"20261122-mcptest", sample:"0", user:"shardD"}` → 17ms → `workdir=/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/shardD_20261122-mcptest_MCP-CONN-TEST_0`, `response="session workdir ready"`, `error_log=""`. ✅
+3. **run_commands** `{commands:[pwd,hostname,whoami,date,"wc -l /home/t0002965/log/ssh_eda_search_20261122_172249/summary.tsv","head -2 /home/t0002965/log/ssh_eda_search_20261122_172249/summary.tsv",ls,cat probe.txt,echo DONE], workdir}` → 9/9 exit0:
+   - `pwd` → workdir 路径
+   - `hostname` → `hfhds201` (← **即 .75**)
+   - `whoami` → `e0031982`
+   - `date` → `Sun Nov 22 18:06:46 CST 2026`
+   - `wc -l .../summary.tsv` → `24086 ...` (4MB 文件全可读)
+   - `head -2 .../summary.tsv` → 表头 `ip\thost\tuser\tsession_file\tmatch_count\tkeywords\ttools` + 真实行 `10.129.32.189 hfeg0pnd001 e0045140 1792637822804_6xv88.messages.json 9 ...`
+   - `ls` workdir / `cat probe.txt` / `echo DONE` → 全 exit0
+4. **list_files** workdir → OK。✅
+5. **write_file** workdir/probe.txt (41B, plain `content` 字符串，非 base64) → ✅。
+6. **read_file** workdir/probe.txt → 内容 round-trip 一致无腐蚀（`$dA`→`$d\x01` 坑未触发，因本轮未用 content_base64）。✅
+7. **trace 可读性验证**（用户令 §四「两件事分开写」）：
+   - **`.75` 可达（MCP 层）= YES**
+   - **trace 读取（权限/路径层）= 完全可读**。`run_commands`(bash on .75) 读 freshest scan `ssh_eda_search_20261122_172249/summary.tsv` 24086 行 4MB 全可读，表头+首行真实 `10.129.32.189 hfeg0pnd001 e0045140`。
+8. **declare_done** `{workdir}` → `declared=true`, marker 写入。✅
+9. **close_session** `{workdir, keep:false}` → `cleaned=true`. ✅
+
+**结论: eda_flow MCP 可用 = .75 可达（第 27 次确认，与 r1105-r1130 一致）**。r1098-r1102 ssh-timeout 止损理由维持误判。同结论适用 A/B/C 三 shard。MCP 可用 ⇒ 用户令 §三「立即恢复深读新 trace + 造题主线」无外部阻塞。本轮 r1131 主线合成首条 waveform 域 case EDA-Eval-DesignFlow-IpPortRouteMerge-001（s68pp, yohannw@hfeg0pkn003, mc=891）。
