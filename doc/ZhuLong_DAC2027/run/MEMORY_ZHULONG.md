@@ -1,6 +1,10 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-22 wake#1820·**v3 收口 ✅ standby 心跳**：pro 3-run=10.18±1.45% / lite 3-run=4.68±0.95%（r2 VOID 不计入）/ mini 3-run=2.38±0.23%（r1 FUSE VOID 不计入）·7 batch 全完·providers.json=pro 默认态✅·pgrep run_batch 无真实进程✅·cases_lite=500✅·cline 就位✅·git 0/0 同步✅（dirty 文件均 designflow 线非本线·不动）·ops inbox 无新指令✅·不起臂·原文不改·standby）
+WAITING: 0（2026-11-22 wake#1821·**v3 收口 ✅ standby 心跳**：pro 3-run=10.18±1.45% / lite 3-run=4.68±0.95%（r2 VOID 不计入）/ mini 3-run=2.38±0.23%（r1 FUSE VOID 不计入）·7 batch 全完·providers.json=pro 默认态✅·pgrep run_batch 无真实进程✅·cases_lite=500✅·cline 就位✅·git 0/0 同步✅（dirty 文件均 designflow 线非本线·不动）·ops inbox 无新指令✅·不起臂·原文不改·standby）
+
+- wake#1821（2026-11-22 opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40·v3 已 7 batch 全完收口）。自检：① pgrep run_batch.sh 无真实评测进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl http://agi-gateway.cxmt.com/cloud/v1 / updatedAt 2026-11-21T20:00Z）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ git fetch（带 https_proxy）→HEAD=77d8cc9ca9=origin/main 0 behind 0 ahead·zhulong run/reports/论文树无脏文件（脏文件均在 designflow 线 benchmark/ 下·非本线·不动）✅；⑥ ops inbox .last_run_id=146 无新指令（inbox/outbox mtime 停 11-21 03:45）✅。v3 任务 7 batch 全完·3 模型 3-run 全出·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
+
+- [wake#1820 详条已滚出·2026-11-22 wake#1821 维护] 见 `daily-memories/2026-11-22.md` §[wake#1820]（opencode 交互式 v3 收口后 standby 心跳·pgrep 无 run_batch✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 同步✅·ops inbox 无新指令✅·不起臂·原文不改）。
 
 - wake#1820（2026-11-22 opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40·v3 已 7 batch 全完收口）。自检：① pgrep run_batch.sh 无真实评测进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl http://agi-gateway.cxmt.com/cloud/v1）✅；③ cases_lite.txt=500✅；④ cline 就位✅；⑤ git fetch（带 https_proxy）→HEAD=2c006c39cd=origin/main 0 behind 0 ahead·zhulong run/reports/论文树无脏文件（脏文件均在 designflow 线 benchmark/designflow/ 下·非本线·不动）✅；⑥ ops inbox .last_run_id=146 无新指令（inbox/outbox mtime 停 11-21 03:45）✅。v3 任务 7 batch 全完·3 模型 3-run 全出·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
 
