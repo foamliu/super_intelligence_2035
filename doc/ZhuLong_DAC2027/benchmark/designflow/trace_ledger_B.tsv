@@ -1456,7 +1456,7 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1795000940649_06m8h.messages.json	binwenh	hfeg0pkn005	27	spice_sim	case	EDA-Eval-DesignFlow-SpDeckDiffAnalyze-001	2026-11-19 12:48	
 1794912291025_2md1p	guangmingz	hfeg0plg58	232	spice_sim	case	EDA-Eval-DesignFlow-CellPortExtract-001	2026-11-19 13:30	
 1794817593461_34knj	e0048916	hfeg0pkn005	21	spice_sim	parked		2026-11-19 13:45	vague brainstorming 'design DDR chip', no concrete deliverable; switched to mnm6f
-1794817079726_mnm6f	xflin	hfeg0pkn004	20	spice_sim	case	EDA-Eval-DesignFlow-PhaseDerivGroupDelay-001	2026-11-19 13:56	
+1794817079726_mnm6f	xflin	hfeg0pkn004	20	spice_sim	case	EDA-Eval-DesignFlow-PhaseDerivGroupDelay-001	2026-11-22 19:18	r1031 peek: near-dup PhaseDerivGroupDelay (phase curve derivative on T_coil1x.sp, 19msgs/7tu small)
 1794820445025_zdqlx	vincentz	hfeahpc501	120	spice_sim	case	EDA-Eval-DesignFlow-HspiceSwCurvExtract-001	2026-11-19 14:23	
 1794793538641_8bcd2	t0003117	hfeg0pkn004	348	spice_sim	case	EDA-Eval-DesignFlow-BridgeServerFix-001	2026-11-19 15:09	
 1794795007762_dvr37	thomasz	hfeg0pfn058	145	spice_sim	case	EDA-Eval-DesignFlow-FinesimConvCompare-001	2026-11-19 15:45	
@@ -1655,3 +1655,9 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794813262053_9y7wd.messages.json	jinyuli	hfeg0plg53	40	spice_sim	parked		2026-11-22 18:33	Q&A only, 2 msgs, no tool_use, no deliverable - not design_flow
 1794962847875_fctlq.messages.json	rongjiez	hfeg0plg58	7	spice_sim	parked		2026-11-22 18:34	Q&A explain-script, 1 read_files, no deliverable
 1794394367344_c3781.messages.json	joeyl	hfeg0plg53	4	spice_sim	case	EDA-Eval-DesignFlow-DutyMidvalMeasRewrite-001	2026-11-22 18:47	
+1794884087415_1d03e.messages.json	zjqiao	hfhds206	52	spice_sim	parked		2026-11-22 19:17	r1031 peek: near-dup CrcAlertFixGen/PulseCheck family (zjqiao CRC alert debug-Q&A, 104msgs/55tu analysis of false-error)
+1795160592806_uk1ke.messages.json	clarawu	hfeg0pkn005	63	spice_sim	parked		2026-11-22 19:17	r1031 peek: analysis-debug dRon/dV2 stimulus 3-identical-points diagnosis, fuzzy deliverable (conclusion + step param edit)
+1794993284938_0res9.messages.json	huifangg	hfeg0pkn005	98	spice_sim	parked		2026-11-22 19:17	r1031 peek: LPDDR6 JEDEC KG skill query Q&A, not design_flow produce
+1795227700059_4cdli.messages.json	kevin3d	hfeg0pkn004	35	spice_sim	parked		2026-11-22 19:17	r1031 peek: analysis-Q&A IR-drop idd4r low-freq ignore vs high-freq, 42msgs/25tu diagnosis
+1795002280106_22w7w.messages.json	joeyl	hfeg0pkn004	76	spice_sim	parked		2026-11-22 19:17	r1031 peek: near-dup o7ljl (joeyl divider 5corner 起振 tuning, needs real finesim non-portable)
+1795079109918_o9kns.messages.json	joeyl	hfeg0pkn004	243	spice_sim	parked		2026-11-22 19:17	r1031 peek: near-dup 6pm3i/DelvtoNetlistModifier (joeyl ulvt_delvto add vth=-0.2v, verbatim same task)
