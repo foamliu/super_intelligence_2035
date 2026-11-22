@@ -211,7 +211,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793923081404_s6bse					parked		2026-11-07 03:10	file-management-movedesktop
 1793961380780_eu254					parked		2026-11-07 03:10	file-management-dup-s6bse
 1793931174603_tc4yu					parked		2026-11-07 03:10	rootcause-whyPM11cutoff
-1792135941514_8n60f					case	EDA-Eval-DesignFlow-TspcTimingBisecTbGen-001	2026-11-11 02:06	skill-authoring-meta-SKILL.md
+1792135941514_8n60f					parked	EDA-Eval-DesignFlow-TspcTimingBisecTbGen-001	2026-11-11 02:06	skill-authoring-meta-SKILL.md | r1011 dup-case_id cleanup: flipped case->parked (duplicate row, real trace kept on other row)
 1792119938594_z6elv					parked		2026-11-07 03:10	trivial-hi
 1792379743340_2y77m					parked		2026-11-07 03:10	skill-invocation-tran-sim-gen
 1793781925131_ud2zs.messages.json	clarawu	hfeg0pkn004	118	spice_sim	case	EDA-Eval-DesignFlow-ZqCodeLinExtract-001	2026-11-07 04:10	
@@ -1009,9 +1009,9 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1791876404012_d7cbo.messages.json	t0002801	hfeg0plg99	190	characterization	case	EDA-Eval-DesignFlow-GmidLut-001	2026-11-11 19:16	seeded
 1792647604577_xv1ip.messages.json	alenxu	hfeg0pkn003	186	spice_sim	case	EDA-Eval-DesignFlow-TxRonSize-001	2026-11-11 19:16	seeded
 1793155079677_gnmu0.messages.json	e0030760	hfeg0pkn002	293	characterization	case	EDA-Eval-DesignFlow-ButterflyCurve-001	2026-11-11 19:16	seeded
-1784623431472_gvm3g.messages.json	e0014566	hfeg0plg58	554	spice_sim	case		2026-11-11 19:16	seeded
-1791963948520_hk622.messages.json	rongtaoy	hfeg0pkn001	257	spice_sim	case		2026-11-11 19:16	seeded
-1792459158095_dfaqe.messages.json	e0045488	hfeg0pkn002	211	characterization	case		2026-11-11 19:16	seeded
+1784623431472_gvm3g.messages.json	e0014566	hfeg0plg58	554	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1791963948520_hk622.messages.json	rongtaoy	hfeg0pkn001	257	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1792459158095_dfaqe.messages.json	e0045488	hfeg0pkn002	211	characterization	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
 1792629073040_7s8l3.messages.json	curryxu	hfeg0plg99	79	characterization	case	EDA-Eval-DesignFlow-SizingSensDiag-001	2026-11-11 19:16	seeded
 1791772987381_dckp0.messages.json	joeyl	hfeg0pkn004	69	characterization	case	EDA-Eval-DesignFlow-Tr0JitterRemeas-001	2026-11-11 19:16	seeded
 1790241654352_5kcuw.messages.json	ghyang	hfeg0pkn003	41	spice_sim	case	EDA-Eval-DesignFlow-StimLoopComplianceFix-001	2026-11-11 19:16	seeded
@@ -1026,7 +1026,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793692877234_xlzwr.messages.json	ronghu	hfeg0pkn005	159	characterization	case	EDA-Eval-DesignFlow-CharRemovalAbort-001	2026-11-11 19:16	seeded
 1793679618975_i1zyw.messages.json	e0030760	hfeg0pkn004	158	spice_sim	case	EDA-Eval-DesignFlow-NetlistMisModCompare-001	2026-11-11 19:16	seeded
 1792119838262_chbpp.messages.json	wnyu	hfeg0pkn004	629	spice_sim	case	EDA-Eval-DesignFlow-VcoKvcoChar-001	2026-11-11 19:16	seeded
-1793341440302_sqm07.messages.json	tongni	hfeg0pkn001	223	spice_sim	case	EDA-Eval-DesignFlow-Vcc2scActDeckGen-001	2026-11-11 19:16	seeded
+1793341440302_sqm07.messages.json	tongni	hfeg0pkn001	223	spice_sim	parked	EDA-Eval-DesignFlow-Vcc2scActDeckGen-001	2026-11-11 19:16	seeded | r1011 dup-case_id cleanup: flipped case->parked (duplicate row, real trace kept on other row)
 1793935018992_a75vy.messages.json	dsgao	hfeg0pkn002	231	spice_sim	case	EDA-Eval-DesignFlow-GrDecPwrVerifTb-001	2026-11-11 19:16	seeded
 1793937421846_ip3nr.messages.json	berylwu	hfeg0pkn002	231	spice_sim	case	EDA-Eval-DesignFlow-MinpulseRewriteRun-001	2026-11-11 19:16	seeded
 1793677026220_gm1z2.messages.json	hairuizh	hfeg0pkn002	193	spice_sim	case	EDA-Eval-DesignFlow-PwlStimTransform-001	2026-11-11 19:16	seeded
@@ -1051,56 +1051,56 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793862569889_ezcgh.messages.json	mike	hfhds201	235	spice_sim	case	EDA-Eval-DesignFlow-CosimRunBlockOpt-001	2026-11-11 19:16	seeded
 1793955284770_l2j22.messages.json	jiangbaol	hfeg0pkn004	228	characterization	case	EDA-Eval-DesignFlow-StrongarmBaselineAnalyze-001	2026-11-11 19:16	seeded
 1793234226913_xtse5.messages.json	shanliny	hfeg0pkn001	43	spice_sim	case	EDA-Eval-DesignFlow-MeaNetPathDiag-001	2026-11-11 19:16	seeded
-1793326498040_6ftap.messages.json	irene1li	hfeg0pkn004	1446	spice_sim	case		2026-11-11 19:16	seeded
-1792573855361_rbllu.messages.json	clarawu	hfeg0pkn004	279	spice_sim	case		2026-11-11 19:16	seeded
-1790229492123_m7hxu.messages.json	cynthiaz	hfeg0pkn005	409	spice_sim	case		2026-11-11 19:16	seeded
-1793611022749_w9aze.messages.json	yuankong	hfhds201	1227	spice_sim	case		2026-11-11 19:16	seeded
-1793865966161_rkdu8.messages.json	yuankong	hfhds201	85	spice_sim	case		2026-11-11 19:16	seeded
-1790042178493_mrmfn.messages.json	ericw	hfhds201	30	characterization	case		2026-11-11 19:16	seeded
-1794033409066_h2sri.messages.json	e0030760	hfeg0pkn004	86	spice_sim	case		2026-11-11 19:16	seeded
-1794023372474_3j03k.messages.json	tongfanl	hfhds201	328	spice_sim	case		2026-11-11 19:16	seeded
-1793427492496_njt15.messages.json	tongfanl	hfhds201	117	spice_sim	case		2026-11-11 19:16	seeded
-1794020447053_pj4bf.messages.json	huifangg	hfeg0pkn004	520	spice_sim	case		2026-11-11 19:16	seeded
-1793956185129_xyou8.messages.json	e0039602	hfeg0pkn004	116	spice_sim	case		2026-11-11 19:16	seeded
-1793949945535_873cy.messages.json	e0014036	hfeg0pkn004	1493	spice_sim	case		2026-11-11 19:16	seeded
-1793940867344_38qa0.messages.json	e0039602	hfeg0pkn004	803	spice_sim	case		2026-11-11 19:16	seeded
-1793849641832_97ksq.messages.json	jiangbaol	hfeg0pkn004	905	spice_sim	case		2026-11-11 19:16	seeded
-1793585029552_gcziu.messages.json	jhhu	hfeg0pkn004	50	characterization	case		2026-11-11 19:16	seeded
-1793869755608_ho5p2.messages.json	jiangbaol	hfeg0pkn004	97	spice_sim	case		2026-11-11 19:16	seeded
-1792204349915_1g0xs.messages.archive.json	xinweif	hfeg0pkn005	28	spice_sim	case		2026-11-11 19:16	seeded
-1793623698314_n7w6c.messages.archive.json	yuyingc	hfeg0pkn001	37	spice_sim	case		2026-11-11 19:16	seeded
-1794133519350_pchuf.messages.json	harrywu	hfeg0pkn002	1005	spice_sim	case		2026-11-11 19:16	seeded
-1793667622298_rh3ek.messages.json	ypzheng	hfeg0pkn003	180	spice_sim	case		2026-11-11 19:16	seeded
-1792399658249_w4b6q.messages.json	e0029495	hfeg0pkn002	66	spice_sim	case		2026-11-11 19:16	seeded
-1791945700744_chg46.messages.json	reedchen	hfeg0pkn002	134	spice_sim	case		2026-11-11 19:16	seeded
-1790572773219_t5osd.messages.json	joeyl	hfeg0plg49	56	spice_sim	case		2026-11-11 19:16	seeded
-1792139236507_7jzqb.messages.json	reedchen	hfeg0plg49	2294	spice_sim	case		2026-11-11 19:16	seeded
-1793775649853_zns2p.messages.json	shanmei	hfeg0plg53	2853	spice_sim	case		2026-11-11 19:16	seeded
-1790840542058_430uk.messages.json	mike	hfeg0plg05	1117	spice_sim	case		2026-11-11 19:16	seeded
-1794187865687_6dvs5.messages.json	reedchen	hfeg0pkn002	47	spice_sim	case		2026-11-11 19:16	seeded
-1793941691690_z3tqe.messages.json	reedchen	hfeg0pkn002	69	spice_sim	case		2026-11-11 19:16	seeded
-1794202410355_ps4q9.messages.json	yifansun	hfeg0pkn001	3	spice_sim	case		2026-11-11 19:16	seeded
-1794187811534_0218t.messages.json	xuelianf	hfeg0pkn002	13	spice_sim	case		2026-11-11 19:16	seeded
-1793946809755_zao50.messages.json	yanxvwei	hfeg0pkn002	8	spice_sim	case		2026-11-11 19:16	seeded
-1794225375454_btflh.messages.json	e0024852	pkn004	16	spice_sim	case		2026-11-11 19:16	seeded
-1794221449278_bqqtk.messages.json	e0046686	hfeg0pkn001	7	characterization	case		2026-11-11 19:16	seeded
-1793880969509_yez2i.messages.json	declanzh	hfeg0pkn005	58	spice_sim	case		2026-11-11 19:16	seeded
-1792389569188_qry8l.messages.json	joeyl	hfeg0pkn004	34	spice_sim	case		2026-11-11 19:16	seeded
-1793078120457_omrsw.messages.json	zhililu	hfeg0pkn001	13	spice_sim	case		2026-11-11 19:16	seeded
-1793928990578_ltkg1.messages.json	curryxu	hfeg0pkn001	229	spice_sim	case		2026-11-11 19:16	seeded
-1793690145277_z7n9b.messages.json	curryxu	hfeg0pkn001	172	spice_sim	case		2026-11-11 19:16	seeded
-1792630397654_fyfm9.messages.json	yanxvwei	hfeg0pkn002	54	characterization	case		2026-11-11 19:16	seeded
-1794192133796_quioy.messages.json	daiweilu	hfhds209	102	spice_sim	case		2026-11-11 19:16	seeded
-1793705585219_k1vy6.messages.json	hauserz	hfeg0pkn006	131	spice_sim	case		2026-11-11 19:16	seeded
-1793942454477_whc3n.messages.json	zanezang	hfeg0plg57	154	spice_sim	case		2026-11-11 19:16	seeded
-1791600745476_4v4nf.messages.json	wenwenl	hfeg0plg74	122	spice_sim	case		2026-11-11 19:16	seeded
-1794272818268_ckhfh.messages.json	haoliu	hfeg0pkn004	0	characterization	case		2026-11-11 19:16	seeded
+1793326498040_6ftap.messages.json	irene1li	hfeg0pkn004	1446	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1792573855361_rbllu.messages.json	clarawu	hfeg0pkn004	279	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1790229492123_m7hxu.messages.json	cynthiaz	hfeg0pkn005	409	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793611022749_w9aze.messages.json	yuankong	hfhds201	1227	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793865966161_rkdu8.messages.json	yuankong	hfhds201	85	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1790042178493_mrmfn.messages.json	ericw	hfhds201	30	characterization	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794033409066_h2sri.messages.json	e0030760	hfeg0pkn004	86	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794023372474_3j03k.messages.json	tongfanl	hfhds201	328	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793427492496_njt15.messages.json	tongfanl	hfhds201	117	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794020447053_pj4bf.messages.json	huifangg	hfeg0pkn004	520	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793956185129_xyou8.messages.json	e0039602	hfeg0pkn004	116	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793949945535_873cy.messages.json	e0014036	hfeg0pkn004	1493	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793940867344_38qa0.messages.json	e0039602	hfeg0pkn004	803	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793849641832_97ksq.messages.json	jiangbaol	hfeg0pkn004	905	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793585029552_gcziu.messages.json	jhhu	hfeg0pkn004	50	characterization	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793869755608_ho5p2.messages.json	jiangbaol	hfeg0pkn004	97	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1792204349915_1g0xs.messages.archive.json	xinweif	hfeg0pkn005	28	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793623698314_n7w6c.messages.archive.json	yuyingc	hfeg0pkn001	37	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794133519350_pchuf.messages.json	harrywu	hfeg0pkn002	1005	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793667622298_rh3ek.messages.json	ypzheng	hfeg0pkn003	180	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1792399658249_w4b6q.messages.json	e0029495	hfeg0pkn002	66	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1791945700744_chg46.messages.json	reedchen	hfeg0pkn002	134	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1790572773219_t5osd.messages.json	joeyl	hfeg0plg49	56	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1792139236507_7jzqb.messages.json	reedchen	hfeg0plg49	2294	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793775649853_zns2p.messages.json	shanmei	hfeg0plg53	2853	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1790840542058_430uk.messages.json	mike	hfeg0plg05	1117	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794187865687_6dvs5.messages.json	reedchen	hfeg0pkn002	47	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793941691690_z3tqe.messages.json	reedchen	hfeg0pkn002	69	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794202410355_ps4q9.messages.json	yifansun	hfeg0pkn001	3	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794187811534_0218t.messages.json	xuelianf	hfeg0pkn002	13	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793946809755_zao50.messages.json	yanxvwei	hfeg0pkn002	8	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794225375454_btflh.messages.json	e0024852	pkn004	16	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794221449278_bqqtk.messages.json	e0046686	hfeg0pkn001	7	characterization	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793880969509_yez2i.messages.json	declanzh	hfeg0pkn005	58	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1792389569188_qry8l.messages.json	joeyl	hfeg0pkn004	34	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793078120457_omrsw.messages.json	zhililu	hfeg0pkn001	13	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793928990578_ltkg1.messages.json	curryxu	hfeg0pkn001	229	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793690145277_z7n9b.messages.json	curryxu	hfeg0pkn001	172	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1792630397654_fyfm9.messages.json	yanxvwei	hfeg0pkn002	54	characterization	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794192133796_quioy.messages.json	daiweilu	hfhds209	102	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793705585219_k1vy6.messages.json	hauserz	hfeg0pkn006	131	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793942454477_whc3n.messages.json	zanezang	hfeg0plg57	154	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1791600745476_4v4nf.messages.json	wenwenl	hfeg0plg74	122	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794272818268_ckhfh.messages.json	haoliu	hfeg0pkn004	0	characterization	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
 1793240429367_jrjm6.messages.json	ghyang	hfeg0plg93	62	spice_sim	case	EDA-Eval-DesignFlow-SpTempParamAlter-001	2026-11-11 19:16	seeded
 1793272819713_jo5q8.messages.json	sierraw	hfeg0plg76	116	characterization	case	EDA-Eval-DesignFlow-SpiceInAutoIl-001	2026-11-11 19:16	seeded
-1793843475842_f5coc.messages.json	renfengc	hfeg0plg53	107	spice_sim	case		2026-11-11 19:16	seeded
-1794206448451_z4swx.messages.json	xuelianf	hfeg0pkn002	214	spice_sim	case		2026-11-11 19:16	seeded
-1793847690294_guobm.messages.json	leo7c	hfeg0plg95	159	spice_sim	case		2026-11-11 19:16	seeded
-1793341757885_9e4kf.messages.json	bolint	hfeg0plg100	42	spice_sim	case		2026-11-11 19:16	seeded
+1793843475842_f5coc.messages.json	renfengc	hfeg0plg53	107	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1794206448451_z4swx.messages.json	xuelianf	hfeg0pkn002	214	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793847690294_guobm.messages.json	leo7c	hfeg0plg95	159	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1793341757885_9e4kf.messages.json	bolint	hfeg0plg100	42	spice_sim	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
 1794220525700_nj8q4.messages.json	tongni	hfeg0pkn004	150	spice_sim	case	EDA-Eval-DesignFlow-NetlistStaticCheck-001	2026-11-11 19:16	seeded
 1793082564833_dhqmb.messages.json	reedchen	hfeg0plg93	102	characterization	case	EDA-Eval-DesignFlow-McPvtVmEval-001	2026-11-11 19:16	seeded
 1793608841437_53e2m.messages.json	victorq	hfeg0plg96	315	spice_sim	case	EDA-Eval-DesignFlow-SpRcAlterGen-001	2026-11-11 19:16	seeded
@@ -1109,8 +1109,8 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793151811279_nrep6.messages.json	thqu	hfeahpc503	215	characterization	case	EDA-Eval-DesignFlow-DOERankBuild-001	2026-11-11 19:16	seeded
 1792135941514_8n60f.messages.archive.json	adaml	hfeg0pkn002	1129	spice_sim	case	EDA-Eval-DesignFlow-TspcTimingBisecTbGen-001	2026-11-11 19:16	seeded
 1793771550244_nlf6u.messages.json	e0044979	hfeg0pkn001	146	spice_sim	case	EDA-Eval-DesignFlow-SramTailorPlanClassify-001	2026-11-11 19:16	seeded
-1792041709940_x5fd4.messages.json	t0002801	hfeg0plg49	119	characterization	case		2026-11-11 19:16	seeded
-1791786108086_vumhg.messages.json	e03179	hfeg0pkn002	274	characterization	case		2026-11-11 19:16	seeded
+1792041709940_x5fd4.messages.json	t0002801	hfeg0plg49	119	characterization	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
+1791786108086_vumhg.messages.json	e03179	hfeg0pkn002	274	characterization	parked		2026-11-11 19:16	seeded | r1011 audit: legacy seeded no case_id/case file, flipped case->parked (ghost-case cleanup)
 1788427145336_tk1gr.messages.json	e0044979	hfeg0pkn001	175	characterization	case	EDA-Eval-DesignFlow-AnalogOptPipeline-001	2026-11-11 19:16	seeded
 1792390745145_31s8i.messages.json	reedchen	hfeg0pkn002	37	spice_sim	case	EDA-Eval-DesignFlow-PostSimDeckBatch-001	2026-11-11 19:16	seeded
 1793370534751_zju83	yh1yang	hfeg0pkn002	24	spice_sim	parked		2026-11-11 19:25	reject first_user=00 续指垃圾
@@ -1121,7 +1121,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1785907092176_vdeyi	e0025768	hfeg0pkn001	65	spice_sim	parked		2026-11-11 19:25	reject debugging optimize报错
 1793602325758_lcg3v	ronghu	hfeg0pkn005	27	spice_sim	parked		2026-11-11 19:25	reject debugging SiliconSmart char hspice rc=1
 1793264248842_f1rqc	hbpeng	hfeg0pkn004	151	spice_sim	parked		2026-11-11 19:25	reject wrong-domain tcl->skill PDK QA + /apps/imctf perm
-1792547194816_gsmj2	adaml	hfeg0pkn002	58	spice_sim	case	EDA-Eval-DesignFlow-TspcNetlistAnalyze-001	2026-11-15 23:52	stale slug variant; real trace=1791980431476_gsmj2.messages.json (delivered as EDA-Eval-DesignFlow-TspcNetlistAnalyze-001 @ r649). revival-pool slug kept parked to avoid double-count | r1009: parked->case (case_id exists in B.jsonl, ledger inconsistent)
+1792547194816_gsmj2	adaml	hfeg0pkn002	58	spice_sim	parked	EDA-Eval-DesignFlow-TspcNetlistAnalyze-001	2026-11-15 23:52	stale slug variant; real trace=1791980431476_gsmj2.messages.json (delivered as EDA-Eval-DesignFlow-TspcNetlistAnalyze-001 @ r649). revival-pool slug kept parked to avoid double-count | r1009: parked->case (case_id exists in B.jsonl, ledger inconsistent) | r1011 dup-case_id cleanup: flipped case->parked (duplicate row, real trace kept on other row)
 1793274153419_2q4mg	rhyanw	hfeg0pkn002	79	spice_sim	case	EDA-Eval-DesignFlow-SimIncompleteWalltimeDiag-001	2026-11-15 22:25	r646 2q4mg rhyanw SMMismatch bisection sim-incomplete walltime+overload root-cause diag, spice_sim L1 debug-Q&A, k=16, ref PASS 16/16 + 4 negs FAIL
 1793266716067_ioa1s	tongni	hfeg0plg49	93	spice_sim	parked		2026-11-11 19:25	reject skill-authoring skill-creator meta
 1793069992209_qpgvn	junweix	hfeg0pkn002	53	spice_sim	case	EDA-Eval-DesignFlow-SpiceDeckExplain-001	2026-11-16 00:55	r651 junweix 解释sp文件 8_commode.sp DC sweep deck 结构化讲解报告 B档synthesized
@@ -1478,7 +1478,7 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1795053953259_xwken	kaixuanx	hfeg0pkn003	137	spice_sim	case	EDA-Eval-DesignFlow-DffPvtCompareGen-001	2026-11-20 02:33	
 1795055245563_97z71	shanliny	hfeg0pkn003	137	spice_sim	case	EDA-Eval-DesignFlow-WmMt0Diag-001	2026-11-20 02:58	
 1795073373751_cixxj	e0029308	hfeg0plg49	234	spice_sim	case	EDA-Eval-DesignFlow-CellFamilyExtractGen-001	2026-11-20 03:28	
-1795049089951_yy8pd	alan17z	hfeg0pkn004	146	spice_sim	case	EDA-Eval-DesignFlow-IbisModelSpGen-001	2026-11-20 03:57	duplicate of r892 3bis4 (same user alan17z, same IBIS DQ-driver model .sp generator intent; r892 commit 3a1b79026 landed IbisModelSpGen-001 first) | r1009: parked->case (case_id exists in B.jsonl, ledger inconsistent)
+1795049089951_yy8pd	alan17z	hfeg0pkn004	146	spice_sim	parked	EDA-Eval-DesignFlow-IbisModelSpGen-001	2026-11-20 03:57	duplicate of r892 3bis4 (same user alan17z, same IBIS DQ-driver model .sp generator intent; r892 commit 3a1b79026 landed IbisModelSpGen-001 first) | r1009: parked->case (case_id exists in B.jsonl, ledger inconsistent) | r1011 dup-case_id cleanup: flipped case->parked (duplicate row, real trace kept on other row)
 1794901251428_sykbg	e0030760	hfeg0pkn001	138	spice_sim	parked		2026-11-20 04:15	r901 deepread done (159msgs/1.2MB, 4 tasks: MC-sigma-chain Q&A / NanoSpice install+doc-loc / NanoSpice HighSigma doc-summary MD / Solido HSV fail diag). BLOCKER: NanoSpice doc txt cleaned + /proj/lacaa perm-denied to sandbox user; reframe=nanospice_highsigma_summarizer.py (Task D, new intent vs e0030760 13 cases). Needs focused trace-rebuild round. 0-case this round.
 1794965001388_f4v84	e0044979	hfeg0pkn002	83	spice_sim	case	EDA-Eval-DesignFlow-SimModeExtractGen-001	2026-11-20 04:36	
 1795065039863_8pwia	e0029308	hfeg0pkn001	112	spice_sim	case	EDA-Eval-DesignFlow-TtCdlVVerdictGen-001	2026-11-20 04:59	
