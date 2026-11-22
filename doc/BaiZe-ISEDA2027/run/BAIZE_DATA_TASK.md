@@ -1,5 +1,45 @@
 # BAIZE_DATA_TASK.md
 
+> 🔴 **用户令 · 2026-11-22 19:4x — 为方案 F 写一份「小白友好」的中文 HTML 科普报告，含 ≥5 张内联 SVG 图 · 最高优先**
+
+> **用户原话**：「安排 data 给 F 方案写个中文HTML报告，技术细节写的详细一些我是小白，最好有几张可视化的图（SVG）。」
+
+**交付**：`run/reports/report_s1s2_blendswitch_f_explainer_zh.html`（**新建**；v4/v5 保留不删）。
+**硬约束**：单文件 HTML、内联 CSS、**0 外链 0 script**、离线可开；**≥5 张手写内联 `<svg>`**（🚫 外链图片/字体/CDN）；体积 **≤80 KB**；全篇中文。
+
+**读者假设（关键）**：读者**不懂 Megatron / 分布式训练 / epoch / shuffle**——每个术语首次出现必须给「一句白话 + 一个类比」：
+- 游标 = **书签**（读到哪了）；
+- epoch = **把一本书从头翻完一遍**；
+- blend = **按比例混合几桶米**（每桶是一个数据源）；
+- shard = **把一大桶米分成小袋**。
+
+**必须包含的章节（按此顺序）**
+0. **一页看懂**（首屏三句话）：① 为什么会重叠；② F 解决什么；③ 现在到哪一步（CPU 验证 7/7、`zero_overlap=0`、比例偏差 0.0087%、flag-off 与 stock 逐字节一致）。
+1. **背景科普**：blend/配比、shard 与样本、epoch、shuffle、游标；S1→S2 课程（350k 切换、40/40/20）用白话讲清。
+2. **为什么难**：换比例必须重建索引 ⇒ 游标归零 ⇒ 重读旧数据（配 stock 真实行为 + 代码行号）。
+3. **三种路线对比表**：① stock 开箱（不可行）；② resume + 新 blend（= D+E，重叠 ~12% 属**估算**）；③ 自定义改造（本方案）。
+4. **F 原理逐步图解（全文重点）**：权重热更新 + **per-source 游标映射**；讲清「为什么按源记进度、而不是记总进度」；给切换前后每源消费进度的具体示例。
+5. **代码级改动点**：文件 + 行号（`blended_dataset.py:41/68/82/86/97`、`gpt_dataset.py:381`、`samplers.py:222-264`、`loaders.py:191`）；开关 `--blend-hot-switch` 默认关闭，**flag off = stock**。
+6. **验证怎么做、结果怎么看**：7 项检查各用一句白话解释含义（zero_overlap / ratio_switch / flag_off_equivalence / new_source / epoch_wrap / json_roundtrip / perf），配结果表 + 条形图；明确区分**实测**与**估算**。
+7. **风险与回退**：切换点 11-28、失败即回退 D+E；**真实训练尚未切换**（目前只做 CPU 验证），剩余风险要写清。
+8. **FAQ 5 条**：会重复读同一批数据吗？新数据从哪开始？关掉开关会怎样？为什么不用「换 seed」？怎么自己复跑验证？
+
+**必须有的图（≥5，全部内联 SVG，中文标注 + 图注 + 统一配色）**
+- **图1 时间轴**：S1（0–350k）→ S2（350k–700k）+ 切换点 + 剩余天数。
+- **图2 配比对比**：S1 74/19/7 vs S2 40/40/20（条形或双饼）。
+- **图3 问题示意**：stock「重建索引 → 游标归零 → 重读」前后对比（红色标出重叠区）。
+- **图4 核心图**：per-source 游标映射——共享源 A 已读 60% ⇒ 切换后从 60% 继续；新源从 0；总游标不复位。
+- **图5 验证结果条形图**：`overlap_docs=0` / 比例偏差 `0.0087%` / flag-off 等价 / new-source 0。
+- （可选 图6）切换流程时序：训练 step → 触发切换 → 重建 `dataset_index` → 复用 `shuffle_index` → 继续训练。
+
+**诚实性（硬要求）**：每个数字标「实测 / 估算 / 来源」；🚫 不写「完全无风险」；🚫 不把 CPU 验证说成真实训练已验证；D+E 的 ~12% 必须标「估算、未实测」。
+
+**验收**：文件 **≤80 KB**；`<script` 计数 = **0**；`https?://` 计数 = **0**；`<svg` 计数 **≥5**；`div/table/tr/td` 标签配对；离线打开无空白/无错位。
+**收尾**：`git add -- run/reports/report_s1s2_blendswitch_f_explainer_zh.html run/MEMORY_DATA.md` → commit `data report:` → push；MEMORY 首行写「F 科普报告 v1 + SVG≥5 + ≤80KB + 0外链0script」。
+
+---
+
+
 > 🔴🔴 **用户令 · 2026-11-22 11:0x — 走「方案 F = 自定义改造（权重热更新 + 跨 blend 游标映射）」实现零重叠 + 换比例（最高优先）**
 
 > **用户裁定（不必再论证可行性）**：① F 作为 stock 开箱热切换 = **不可行**（接受 v4 核查 1/2 与代码引用）；② F 作为「resume + 新 blend」= 可行但**等价 D+E**，不作主路线；③ F 作为「**零重叠 + 换比例**」= 需非 stock 改造，**技术上可行，本时间线现在选这条**；**2–3 人日可接受，时间还够**。350k 切换点 ≈ **2026-11-28**（当前 iter≈282k、step≈7.3 s）⇒ **patch + 零重叠验证须在 11-27 前完成**。🚫 不许再以「开发量大 / 本时间线不推荐」为由不做。
@@ -61,42 +101,13 @@
 
 ---
 
-> 🔴 **用户令 · 2026-11-19 08:3x — 改进 ISEDA2027 论文：重画 Fig-1（S1/S2/Decay 三饼图跨双栏）+ 刷新 S1→S2→Decay 课程学习文字（最高优先）**
-
-> **用户原话**（data 部分）：「data：1.重画 Fig-1，宽度跨越双栏，并排放置 S1、S2 和 Decay 三个饼图；2.基于最新 S1->S2->Decay 课程学习策略和相应的数据处理刷新文字。」
-
-**论文路径**：`doc/BaiZe-ISEDA2027/BaiZe-ISEDA2027/ISEDA2027/4_llm_pretrain.tex`（当前 Fig 是 `\ref{fig:data-mix}`，含 stable + decay 两饼，单栏 minipage），以及相关文字段（`4_llm_pretrain.tex` §Data 节 + 可能 `3_architecture.tex`/`1_intro.tex`）。
-
-**任务（逐条执行）**：
-
-1. **重画 Fig-1（`fig:data-mix` 替换为三饼图，跨双栏）**：
-   - 用 `\begin{figure*}`（跨双栏，`figure*` 而不是 `figure`）并排三个饼图：**S1（稳定段 web74/code19/math7）· S2（web40/code40/math20）· Decay（退火 instr-SFT 60/agentic-SFT 12/web 22/math 4/code 2）**。
-   - 三饼图同一行、同尺寸、各自带标题（S1 stable / S2 / Decay annealing），颜色图例统一。
-   - S2 的配比数字以**最新 4:4:2 决策**为准（web:code:math = 40:40:20），且**优先用已落盘的 `blend_s2_preblend.tsv` 实际 prop**；若 Nemotron/finemath 已并入 main 版，用 main 版实际值并在图注注明数据源。
-   - 图注讲清三阶段课程学习：S1 通用为主 → S2 提升 code/math → Decay 转向指令/agentic。
-2. **刷新文字（基于最新 S1→S2→Decay 课程学习策略 + 对应数据处理）**：刷新 `4_llm_pretrain.tex` §Data 节及相关段落，反映：
-   - S1（0–~350k）保持 web74/code19/math7；S2（~350k–700k）切换 web:code:math=40:40:20，补入 stack-v3（code）+ MegaMath/Nemotron/finemath（math）；Decay（700k–720k）退火转向 instr-SFT/agentic-SFT + 长上下文 ladder。
-   - 呼应数据侧最新事实：S2 通过「补新源（stack-v3/MegaMath）天然零重叠 + 换 SEED」规避与 S1 重复采样（见 `report_s2_data_overlap_study.md`）；删除任何「当前下载中/未完成」这类易变状态表述，只写**最终策略与配比**。
-   - 保持与 S1/S2 报告一致的口径（4:4:2、切换点 ~350k 而非「12-25」）。
-3. **编译验收**：`latexmk -pdf main.tex` 0 error（跨双栏 `figure*` 注意占位/顺序）；`git add` 本线文件 → commit `data paper:` → push。心跳第一行写「Fig-1 三饼图跨双栏 + 文字刷新 + 编译 0err」。
+> 📦 **§用户令 · 2026-11-19 08:3x（重画 Fig-1 三饼图跨双栏 + 刷新 S1→S2→Decay 文字）✅ 已交付**（原文见 git history）。
+> 锚点：论文 `ISEDA2027/4_llm_pretrain.tex` `fig:data-mix` = **`figure*` 三饼图**（S1 74/19/7 · S2 40/40/20 · Decay instr60/agentic12/web22/math4/code2）· 切换点 ~350k · `latexmk -pdf` 0 error。
 
 ---
 
-> 🔴 **用户令 · 2026-11-18 14:2x — 排查 .12 狂占 CPU 的分词任务 + 分词任务 .12/.29 分机（最高优先）**
-
-> **用户原话**：「给 data 下指令，让它：1.看看 .12 上占 CPU 的分词任务，是否都有用（狂占 CPU 的僵尸无用进程可以杀掉），2.把分词任务在 .12 和 .29 分一分，以减少对 pretrain 的干扰。」
-
-**背景（运维已实测，别再重复查）**：`.12` 负载 176/224（79%），主凶是 data 线自己的 MegaMath 分词进程——`/tmp/pc2_fast.py --subset megamath-text-code-block`（PID 2350098，**8925% CPU = 89 核**，ppid=1 孤儿后台进程，已跑 7.5h），另有 `pc2_v3.py` 99% CPU。这批 PC-2 分词把 `.12` 几乎打满，正在干扰 pretrain 训练（pretrain 8 rank + dataloader + NCCL 通信线程抢不到 CPU，疑似导致 step 7s→13s 吞吐腰斩）。
-
-**立即执行**：
-
-1. **盘点 .12 上所有 data 线 CPU 进程**：`ps -eo pid,ppid,pcpu,etime,args | grep -E "pc2_fast|pc2_v3|tokenize|tokenizer|分词"`，逐个判定：
-   - **僵尸/无用/已完成**（如已跑完却没退出、输出已落盘、或对应任务已闭环）→ **直接 kill**；
-   - **仍在有效分词** → 保留但见第 2 条降载。
-   - 判据：看日志 `/tmp/pc2_*.log` 的进度 vs 是否还在产出 shard；无产出的、`pcpu` 高但 etime 超长且无新落盘的，视为僵尸可杀。
-2. **分词任务 .12 / .29 分机 + 降载**：把还在跑的分词拆成两半，一部分留 `.12`（**必须 `nice -n 19` + `ionice -c3` + 限制 worker 数 ≤ 机器核数的 1/4**），另一部分迁到 `.29`（同样 nice 19 低载）跑。**核心原则：分词永远不得与 pretrain 抢 CPU**——.12 上留给训练，分词只吃闲散核；宁可分词慢，不拖训练吞吐（这是红线，同「评测不拖训练」铁律）。
-3. **验证**：处理后 `.12` 负载应明显下降（目标 load < 120/224），并确认 pretrain 训练进程（torchrun 8 rank）能拿到足够 CPU。把「杀了哪些僵尸、分机后各机跑哪些 subset、各自 nice 值/worker 数」写清。
-4. 落盘：`MEMORY_DATA.md` 心跳第一行给「.12 CPU 僵尸清理清单 + 分词分机方案 + 处理后 .12 负载」；commit `data cpu:`。保持 `WAITING=0`。
+> 📦 **§用户令 · 2026-11-18 14:2x（排查 .12 分词任务 + 分词任务 .12/.29 分机）✅ 已交付**（原文见 git history）。
+> 常驻结论：**分词任务必须 .12/.29 分机**，不得让 data 自家分词抢占 pretrain 训练 CPU；无用僵尸分词进程可清理（先确认无未完成 shard）。
 
 ---
 
