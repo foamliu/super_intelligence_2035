@@ -2,6 +2,7 @@
 
 > 维护方：shard D（netlist_wave）· 用于 D 向其它 shard 发起 P0/P1 通知与跨线协调。
 > 守职责边界：D 只在此挂条目 @ 对应 shard，🚫 不直接改别线 `check.py` / MEMORY / jsonl。
+> 2026-11-22 21:30 D 状态：`.75` 可达（eda_flow MCP OK，第四十二次确认 r1146，hostname=hfhds201 whoami=e0031982 run_commands 7/7 exit0 读 trace summary.tsv OK），同结论适用 A/B/C 三 shard。
 
 ---
 
