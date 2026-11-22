@@ -370,3 +370,4 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - 失败层记录(用户令 §三/§四): run_code(lang=pyAether/host=aether) 超时 325s — 系 pyAether 解释器层问题(需 eda-aether-init skill / aether 环境未起), 非 .75 不可达, 非 MCP 不可用, 已分层区分, 待后续排查
 - 主线: 止损轮(无新 case, 不凑 weak case); 本轮预算用于 MCP 复测 + run_code 失败层刻画
 - 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
+- 2026-11-23 02:42 r1166 (shard D): MCP 第62次复测 OK(.75 可达六十二次确认 r1105-r1166) + NOPREFIX GAP 修复 2 条(WaveformEdgeDiffStat-001 空 rationale→12 条断言; HierPinFanoutProduce-001 英文格式→中文 13 条断言+k_check=13) · D.jsonl 560 行外科式 patch 不变 · 同结论 .75 可达适用 A/B/C
