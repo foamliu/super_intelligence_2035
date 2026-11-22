@@ -4323,23 +4323,44 @@
   "carbon-design-system__carbon-9812": {
     "instance_id": "carbon-design-system__carbon-9812",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1357.8,
+    "rc": 0,
+    "model_patch_len": 6391,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "`$ui-background`:\n  - G100 (`#161616`): `rgba(0, 0, 0, 0.8)`\n  - G90 (`#262626`): `rgba(0, 0, 0, 0.7)`\n  - Light themes: `rgba(0, 0, 0, 0.2)`\n- Updated toast-notification to use the theme-aware mixin\n",
+    "stderr_tail": "G90 and G100 themes\n[✓] Update overflow menu shadow opacity for G90 and G100 themes\n[✓] Update modal overlay color to #000000 at 65% transparency for dark themes\n[✓] Verify changes (build/tests)\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-9994": {
     "instance_id": "carbon-design-system__carbon-9994",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 348.2,
+    "rc": 0,
+    "model_patch_len": 1825,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ers can reach all buttons.\n\n**Files modified:**\n- `packages/styles/scss/components/data-table/action/_data-table-action.scss`\n- `packages/components/src/components/data-table/_data-table-action.scss`\n",
+    "stderr_tail": "ble Batch Actions styles and components\n[✓] Identify root cause of clipping on small screens\n[✓] Implement fix for batch actions overflow/scrolling\n[✓] Verify fix with tests or manual inspection\n\u001b[0m\n"
   },
   "eslint__eslint-11407": {
     "instance_id": "eslint__eslint-11407",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 472.0,
+    "rc": 0,
+    "model_patch_len": 4619,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "endently\n\n### Verification\n\n- Reproduced the original bug locally — it produced broken/invalid JavaScript\n- After the fix, `eslint --fix` produces valid code\n- All 61 tests pass (59 existing + 2 new)\n",
+    "stderr_tail": "\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Find the implicit-arrow-linebreak rule implementation and tests\n[✓] Reproduce the bug locally\n[✓] Identify root cause and fix the autofixer\n[✓] Add tests and verify fix\n\u001b[0m\n"
   },
   "eslint__eslint-12472": {
     "instance_id": "eslint__eslint-12472",
