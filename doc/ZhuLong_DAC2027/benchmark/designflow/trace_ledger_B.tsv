@@ -349,7 +349,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1792042288837_5cigt					parked		2026-11-07 21:24	分析sim_lib_gui_new脚本并解释用法 consulting/explanation
 1791852261815_1pxm7					parked		2026-11-07 21:24	定位Enable_TM task/function位置 code navigation非spice
 1792201122841_ncfk9					parked		2026-11-07 21:24	skill脚本语法 consulting Q&A
-1789644585939_3e35z	zjqiao	hfhds201	48	spice_sim	parked	EDA-Eval-DesignFlow-CompressNetlist-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
+1789644585939_3e35z	zjqiao	hfhds201	48	spice_sim	case	EDA-Eval-DesignFlow-CompressNetlist-001	2026-11-23 01:11	r1046 orphan recovery (force: cross-shard stale parked/erroneous; case is B-domain spice_sim/char, ref in B repo, orig produced by B r149/r195/r178). ref PASS + negs FAIL §4.9, migrated schema, B.jsonl 530->535
 1793865966161_rkdu8	yuankong	hfhds201	85	spice_sim	case	EDA-Eval-DesignFlow-NetlistSchemInstLocate-001	2026-11-07 23:00	
 1789699043373_y91i6	ericw	hfhds201	34	characterization	parked	EDA-Eval-DesignFlow-CgMeetExactlyMissWalk-001+EDA-Eval-DesignFlow-CgtMeetExactlyFilter-001	2026-11-22 09:58	double-id data bug (CgMeetExactlyMissWalk+CgtMeetExactlyFilter), no ref artifacts
 1790042178493_mrmfn	ericw	hfhds201	30	characterization	case	EDA-Eval-DesignFlow-CovBinMetaExtract-001	2026-11-07 23:58	
@@ -465,7 +465,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793952138224_b2l64	t0003117	hfeg0pkn005	405	spice_sim	parked		2026-11-09 01:19	eval-user+premise-missing fault-inject
 1791522635010_ikvky	clarawu	hfeg0pkn004	277	spice_sim	parked		2026-11-09 01:19	wrong-shard gvim vimrc config
 1792375467654_hs5zf	mwxi	hfhds228	35	spice_sim	parked		2026-11-09 01:19	unreachable SSH no-file
-1794143556321_ejp6w	yuchens	hfeg0pkn004	549	characterization	parked	EDA-Eval-DesignFlow-NetlistStructDiff-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
+1794143556321_ejp6w	yuchens	hfeg0pkn004	549	characterization	case	EDA-Eval-DesignFlow-NetlistStructDiff-001	2026-11-23 01:11	r1046 orphan recovery (force: cross-shard stale parked/erroneous; case is B-domain spice_sim/char, ref in B repo, orig produced by B r149/r195/r178). ref PASS + negs FAIL §4.9, migrated schema, B.jsonl 530->535
 1793756085396_bam0b	jiangbaol	hfeg0pkn001	182	spice_sim	parked		2026-11-09 02:25	dup DupSubcktDefDiag-001+ProbeFailDiag-001 / U#3 measure no gold std
 1793849491055_xnnyg	jiangbaol	hfeg0pkn001	182	spice_sim	parked		2026-11-09 02:25	same as bam0b dup of DupSubcktDefDiag+ProbeFailDiag
 1791813446865_vw7dp	colinxu	hfeg0pkn002	201	characterization	parked		2026-11-09 02:25	vague topcell-add-pin premise-missing + pyAether layout wrong-shard
@@ -671,7 +671,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1794226772548_iyl1p.messages.json	e0024852	hfeg0pkn002	0	spice_sim	parked		2026-11-09 22:12	wrong-shard: U#1=layout_aether GDS via_optim_gds.py rewrite (shard C); U#3=hd_CH252_bitcell.dspf add layer/location but session ended at assistant clarifying question, NO user-accepted gold standard. e0024852 continuation of btflh(dspf). fresh-window 21:00+ find.
 1793880969509_yez2i	declanzh	hfeg0pkn005	58	spice_sim	case	EDA-Eval-DesignFlow-Mt0PvrefAbsGroupStat-001	2026-11-09 22:56	
 1792389569188_qry8l	joeyl	hfeg0pkn004	34	spice_sim	case	EDA-Eval-DesignFlow-TrimSweepSpGen-001	2026-11-09 23:46	
-1793754060632_nnyxr	curryxu	hfeg0pkn001	12	spice_sim	parked	EDA-Eval-DesignFlow-MeasTranSamplerGen-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
+1793754060632_nnyxr	curryxu	hfeg0pkn001	12	spice_sim	case	EDA-Eval-DesignFlow-MeasTranSamplerGen-001	2026-11-23 01:11	r1046 orphan recovery (force: cross-shard stale parked/erroneous; case is B-domain spice_sim/char, ref in B repo, orig produced by B r149/r195/r178). ref PASS + negs FAIL §4.9, migrated schema, B.jsonl 530->535
 1791423391584_dyfkf					parked		2026-11-09 23:58	REDHAWK file-search consulting (list_allowed_files x51), no produce-task, wrong-domain power-analysis, spice markers path false-positive
 1793078120457_omrsw	zhililu	hfeg0pkn001	13	spice_sim	case	EDA-Eval-DesignFlow-NonOverlapClockDiag-001	2026-11-10 00:38	
 1794227337092_vuj95	marryma	hfeg0pkn002	1126	spice_sim	case	EDA-Eval-DesignFlow-PdkLayerLocate-001	2026-11-15 10:29	r621 reaudit revived (旧判 reject file-search consulting → 新标准 PDK layer-locate 合法): locate SA/SWD layer defs across multi-version Cadence OA PDK (techfile.tf+layermap.layermap+readme.txt), A 档 trace-faithful, SA=302:51/302:517 mark1/mark67 RLDEV, SWD negative, hidden B cross-input (SA=305:88/891 mark44/45 + SWD found 304:77), k=12
@@ -977,8 +977,8 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1789630642152_8b8wk	ghyang	hfeg0pkn003	70	spice_sim	parked		2026-11-11 11:56	agent read_files all returned empty - analysis hallucinated from dir listing, trace not grounded; unusable for A-faithful case
 1791786108086_vumhg	e03179	hfeg0pkn002	274	characterization	case	EDA-Eval-DesignFlow-CabufPvtDatAudit-001	2026-11-11 12:20	
 1793328354943_p7jfx	tongni	hfeg0plg63	481	spice_sim	parked		2026-11-22 10:00	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
-1792399702966_lcbck	e0029495	10.129.2.11	10	spice_sim	parked	EDA-Eval-DesignFlow-Mt0MetastabAudit-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
-1793704886522_kdb8z	owench	pkn002	12	spice_sim	parked	EDA-Eval-DesignFlow-MosToxeClassify-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
+1792399702966_lcbck	e0029495	10.129.2.11	10	spice_sim	case	EDA-Eval-DesignFlow-Mt0MetastabAudit-001	2026-11-23 01:11	r1046 orphan recovery: ref PASS + negs FAIL (§4.9), migrated to current schema, appended to B.jsonl
+1793704886522_kdb8z	owench	pkn002	12	spice_sim	case	EDA-Eval-DesignFlow-MosToxeClassify-001	2026-11-23 01:11	r1046 orphan recovery: ref PASS + negs FAIL (§4.9), migrated to current schema, appended to B.jsonl
 1788249638562_0si6a	sophiaw	hfeg0plg09	160	characterization	parked		2026-11-11 15:05	meta-exploration session (agent self-introspection), no real design task; hspice kw from API docs not sim
 1793928131571_20ss9	junweix	hfeg0pjn185	71	spice_sim	case	EDA-Eval-DesignFlow-PwrNoiseDeckExplain-001	2026-11-16 02:19	real spice deck analysis task but L1 offline (agent read+explained 5_pnoise.sp, no sim run); not suitable as new L2/L3 case per S5
 1793270732926_ebmf3	chapinc	hfeg0pkn002	97	spice_sim	case	EDA-Eval-DesignFlow-BatchHspiceSubmit-001	2026-11-11 17:53	
