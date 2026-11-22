@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-23（A 轨 0/5 · B 轨第九十三轮 → 347） · research 线</title>
+<title>论文观察日报 · 2026-11-23（A 轨 0/5 · B 轨第九十四轮 → 350） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -37,14 +37,14 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-23</h1>
-  <div class="sub"><b>00:00 时窗 · A 轨 0/5（72h 窗内无新公告，不凑数）· B 轨第九十三轮 +3 → 347 · 作者网 314（X 已核验 122）· 作者信 141 · 回信率 0/141</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-23 00:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>00:00 + 03:00 时窗 · A 轨 0/5（公告批连续 20 窗未前进，已超 72h，不凑数）· B 轨第九十四轮 +3 → 350 · 作者网 317（X 已核验 124）· 作者信 143 · 回信率 0/143</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-23 03:0x CST（含 00:00 / 03:00 两个时窗）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
 <div class="note">
   <b>A 轨口径（可核验 · 本窗 0 篇）</b>：<code>cat:cs.CL&amp;max_results=5&amp;sortBy=submittedDate</code> <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（13,563 B / 5 entry，<code>--noproxy '*'</code> 直连），最新 <code>published</code> = <b><code>2026-11-19T18:57:25Z</code></b>；交叉核查 <code>cs.LG</code>（<code>200</code> / 5,610 B）上界 <code>18:59:53Z</code>、<code>cs.CV</code>（<code>200</code> / 5,629 B）上界 <code>18:59:57Z</code>、<code>cs.SE</code>（<code>200</code> / 5,137 B）上界 <code>18:54:19Z</code>。
-  距本窗（2026-11-23 00:00 CST）已约 <b>77 小时</b>，<b>超出 §0.1 的 72h 窗</b> ⇒ A 轨<b>不收录</b>，并显式写「0 篇」；<b>不拿超窗论文凑 5 篇</b>。公告批连续第 <b>19</b> 窗未前进，已在心跳记为待观察信号（非「没有新论文」）。
+  距 03:00 时窗（2026-11-23 03:00 CST）已约 <b>72.05 小时</b>，<b>越过 §0.1 的 72h 窗</b> ⇒ A 轨<b>不收录</b>，并显式写「0 篇」；<b>不拿超窗论文凑 5 篇</b>。公告批连续第 <b>20</b> 窗未前进，已在心跳记为待观察信号（非「没有新论文」）。
 </div>
 
 <h3 class="sec">A 轨 · 今日推荐（0 / 5）</h3>
@@ -167,8 +167,115 @@
   <li><b>数字口径</b>：被引数 = OpenAlex；论文数字 = 作者自报，本线未复现；<b>未做 PDF 逐页复核</b>（CAMEL 的 25,000 与四类失败名称取自 arXiv 原生 HTML）。</li>
 </ul>
 
+<h3 class="sec">03:00 时窗补记 · B 轨 经典论文（+3 → 350）</h3>
+
+<table class="plain">
+  <tr><th>#</th><th>标题 / 作者（前 3）</th><th>年份 · 出处</th><th>被引</th><th>一句话贡献（摘要口径）</th><th>归属线</th></tr>
+  <tr>
+    <td>348</td>
+    <td><a href="https://arxiv.org/abs/2204.06745">GPT-NeoX-20B: An Open-Source Autoregressive Language Model</a><br>Sid Black · Stella Biderman · Eric Hallahan（共 13 位）</td>
+    <td>2022 · <b>ACL Workshop on Challenges &amp; Perspectives in Creating Large Language Models</b>（arXiv <code>comment</code>）</td>
+    <td><b>753</b></td>
+    <td><b>20B</b> dense 自回归 LM，在 <b>The Pile</b> 上训练、权重按宽松许可开放；提交时为公开权重中最大的 dense 自回归模型之一；同 <b>5-shot</b> 设置下相对同规模 GPT-3 / FairSeq 增益更大。</td>
+    <td>pretrain · data · harness · zhulong</td>
+  </tr>
+  <tr>
+    <td>349</td>
+    <td><a href="https://arxiv.org/abs/2305.06500">InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning</a><br>Wenliang Dai · Junnan Li · Dongxu Li（共 9 位，末位 Steven Hoi）</td>
+    <td>2023 · 预印本（NeurIPS 2023 poster）</td>
+    <td><b>2,302</b></td>
+    <td>冻结 BLIP-2 双塔做<b>视觉指令微调</b>：<b>26 个公开数据集</b>、<b>instruction-aware Query Transformer</b>（指令同时进 Q-Former 与 LLM）、<b>balanced sampling</b>；<b>13 held-in</b> 训练、<b>13 held-out</b> 零样本评测，ScienceQA 图上下文 <b>90.7%</b>。</td>
+    <td>vision · data · harness · pretrain</td>
+  </tr>
+  <tr>
+    <td>350</td>
+    <td><a href="https://arxiv.org/abs/2312.08617">RTLCoder: Outperforming GPT-3.5 in Design RTL Generation with Our Open-Source Dataset and Lightweight Solution</a><br>Shang Liu · Wenji Fang · Yao Lu（共 6 位，末位 Zhiyao Xie）</td>
+    <td>2023 · <b>LAD 2024</b>（TCAD 扩展版见 v4）</td>
+    <td><b>252</b><br>（&lt;500 按「本领域权威」收）</td>
+    <td>三阶段数据流（RTL 关键词树 → 指令生成 → 参考代码生成）产出 <b>RTLCoder-27K &gt;27,000</b> 条；<b>7B</b> 模型超过 GPT-3.5、<b>VerilogEval Machine</b> 超过 GPT-4，4-bit 仅 <b>4GB</b>；作者明写 <b>testbench 生成无法自动化</b>，功能正确性未逐条验证。</td>
+    <td>designflow · data · harness · zhulong</td>
+  </tr>
+</table>
+
+<p style="font-size:13.5px;color:#59636e;">核验：arXiv <code>id_list</code> 单批 <code>200</code> + atom（9,106 B / 3 entry）；abs 页 <b>3/3 <code>200</code></b>（43,276 / 43,211 / 44,917 B，<code>citation_title</code> + <code>citation_date</code> 逐字）；OpenAlex <b>3/3 <code>200</code></b>（753 / 2,302 / 252，查询日 2026-11-23）。三 ID 条目级查重 <b>0 命中</b>。⚠️ 写入前拦下一处 ID 误记：候选池旧记 RTLCoder 为 <code>2312.03755</code>，<code>abs</code> 实测为无关地震论文 ⇒ 按标题检索得真 ID <code>2312.08617</code>，旧记作废。</p>
+
+<h3 class="sec">👥 作者关系网（+3 → 317；X 已核验 124）</h3>
+
+<table class="plain">
+  <tr><th>#</th><th>姓名</th><th>机构</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr>
+    <td>315</td>
+    <td>Wenliang Dai</td>
+    <td>NVIDIA（论文署名时 Salesforce Research / HKUST）</td>
+    <td><code>wenliang.dai.1995@gmail.com</code>（本人主页 <code>200</code> / 28,287 B 页内明文）</td>
+    <td><code>@Wenliang_Dai</code> 双源核验（<code>200</code> / 192,970 B）</td>
+    <td>已发信（#142）· X 待 follow</td>
+  </tr>
+  <tr>
+    <td>316</td>
+    <td>Zhiyao Xie 谢知遥</td>
+    <td>HKUST（ECE 助理教授）</td>
+    <td><code>eezhiyao@ust.hk</code>（本人主页 <code>200</code> / 33,297 B + ar5iv 全文 <code>200</code> / 426,868 B 双源）</td>
+    <td>未找到（主页无 X 链接）</td>
+    <td>已发信（#143）</td>
+  </tr>
+  <tr>
+    <td>317</td>
+    <td>Stella Biderman</td>
+    <td>EleutherAI</td>
+    <td><b>未找到</b>（<code>stellabiderman.com</code> 直连与代理均 <code>000</code>）</td>
+    <td><code>@BlancheMinerva</code> 双源核验（<code>200</code> / 180,911 B）</td>
+    <td>待跟踪（无邮箱不发信）</td>
+  </tr>
+</table>
+
+<h3 class="sec">✉ 作者请教信（本窗 2 封 · 累计 143 · 回信率 0/143）</h3>
+
+<div class="card">
+  <h2>#142 · Wenliang Dai（InstructBLIP）· 中文 218 字 · <code>SENT OK 03:02:35</code></h2>
+  <ul class="tight">
+    <li><b>语言判据</b>：中文（拼音姓名族属 Dai；<b>未因机构在美国 / 邮箱 gmail 判英文</b>）。</li>
+    <li><b>抗模板</b>：开头句落在「为文档理解做视觉指令微调」；三问问句与同窗 #143 零共用。</li>
+    <li><b>只对本文成立的技术细节</b>：<b>26 数据集 / 13 held-in + 13 held-out</b>、instruction-aware Q-Former、balanced sampling、batch <b>192 / 128 / 64</b>、最多 <b>60K steps</b> 每 <b>3K</b> 验证、单 checkpoint 用于全部数据集、ScienceQA <b>90.7%</b>。</li>
+    <li><b>问题去向</b>：① 均衡采样权重与 held-out 掉点归因 → data / vision；② 指令在 Q-Former 与 LLM 的贡献拆分、冲突时取值 → vision；③ 单 checkpoint 选择依据与文档表格图是否重训 Q-Former → vision / harness。</li>
+    <li><b>落款</b>：严格两行 <code>祝好，</code> / <code>Yang Liu</code>，其后无任何行；正文不含项目名。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>#143 · Zhiyao Xie 谢知遥（RTLCoder）· 中文 224 字 · <code>SENT OK 03:02:38</code></h2>
+  <ul class="tight">
+    <li><b>语言判据</b>：中文（本人主页标题自署「Zhiyao Xie (谢知遥)」+ 拼音姓名族属；<b>未因机构在香港 / 论文英文判英文</b>）。</li>
+    <li><b>抗模板</b>：开头句落在「为 RTL 生成搭建可判分的评测与数据管线」；三问与 #142 零共用。</li>
+    <li><b>只对本文成立的技术细节</b>：<b>RTLCoder-27K &gt;27,000</b> 条、三阶段（关键词树 → 指令生成 → 参考代码生成）、数据生成用 <b>GPT-3.5</b>、作者明写 <b>testbench 生成无法自动化</b>、<b>7B</b> / 4 张消费级 GPU / 4-bit <b>4GB</b>、VerilogEval EvalMachine / EvalHuman + RTLLM 的 <code>pass@k</code>。</li>
+    <li><b>问题去向</b>：① 语法过但功能错的样本占比 / 断言抽查 → designflow / data；② 换基座是否重生成、哪些环节最敏感 → data / pretrain；③ pass@1 的数据 / 算法归因与扩到 SystemVerilog → zhulong / designflow。</li>
+    <li><b>主动少发</b>：同论文一作 <code>sliudx@connect.ust.hk</code> 已核但<b>不发</b>（一信一作者）；GPT-NeoX 一作 / 二作无公开明文邮箱 ⇒ 只建档、不猜地址。</li>
+  </ul>
+</div>
+
+<h3 class="sec">03:00 时窗 · 对各线的可执行建议（6 线齐全）</h3>
+
+<table class="plain">
+  <tr><th>线</th><th>可执行建议（动作 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>按 GPT-NeoX 的 few-shot 口径复核评测</b>：同一 checkpoint 固定 5-shot prompt 与 shot 数，报 0-shot / 5-shot 两列。预注册：<b>5-shot 增益小于 0-shot 的 10%</b> ⇒ 先查 prompt 模板，不加数据。</td></tr>
+  <tr><td><b>vision</b></td><td><b>InstructBLIP 式连接器 A/B</b>：冻结视觉塔与 LLM，只训连接器；A 臂「指令只进 LLM」，B 臂「指令同时进 Q-Former 与 LLM」；在 <b>2 个 held-out 文档域各 200 题</b>上比。预注册：<b>B 臂 held-out 增益 &lt;2 pp</b> ⇒ 连接器改造不进入主线。</td></tr>
+  <tr><td><b>harness</b></td><td><b>零样本 held-out 与单任务微调分成两张表</b>，任何混报视为口径错误；新增必填字段：每个视觉任务标明属于 held-in 还是 held-out。</td></tr>
+  <tr><td><b>data</b></td><td><b>留出 1 个完全不参与训练的领域</b>，按来源统计占比。预注册：该 held-out 域掉点 <b>&gt;15%</b> ⇒ 先补该域数据，不调采样权重。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>RTLCoder 式「数据 vs 算法」两因素消融</b>：同一 7B 基座跑「换数据」「换训练算法」「两者都换」，报 pass@1。预注册：<b>算法单独贡献 &lt;1 pp</b> ⇒ 后续只投数据侧。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>给 L1–L5 每题补一条可在仿真器中断言的终态</b>（针对 RTLCoder 的 testbench 缺口）。预注册：<b>≥90% 题目能自动判定功能正确</b>，否则该题降级为语法题。</td></tr>
+</table>
+
+<h3 class="sec">附录 · 03:00 时窗检索式与核验（可复核）</h3>
+<ul class="tight">
+  <li><b>A 轨检索</b>：<code>cat:cs.CL&amp;max_results=5</code> <code>200</code> + <code>application/atom+xml</code>（13,563 B / 5 entry）；交叉核 cs.LG <code>200</code> / 8,308 B、cs.CV <code>200</code> / 7,716 B、cs.SE <code>200</code> / 7,788 B；上界均停在 2026-11-19（见页首 note）。</li>
+  <li><b>B 轨核验</b>：arXiv <code>id_list=2204.06745,2305.06500,2312.08617</code> 单批 <code>200</code> + atom（9,106 B / 3 entry）；abs 页 3/3 <code>200</code>（43,276 / 43,211 / 44,917 B）；OpenAlex 3/3 <code>200</code>（753 / 2,302 / 252）。</li>
+  <li><b>查重与更正</b>：三 ID 条目级 0 命中；RTLCoder 候选旧记 <code>2312.03755</code> 实测为无关地震论文 ⇒ 真 ID <code>2312.08617</code>。</li>
+  <li><b>主页证据</b>：<code>wenliangdai.github.io</code> <code>200</code> / 28,287 B 页内邮箱明文；<code>zhiyaoxie.com</code> <code>200</code> / 33,297 B 页内邮箱明文；X <code>@Wenliang_Dai</code> <code>200</code> / 192,970 B、<code>@BlancheMinerva</code> <code>200</code> / 180,911 B（均 <code>og:title</code> + <code>og:description</code> 双源）。</li>
+  <li><b>数字口径</b>：被引数 = OpenAlex（查询日 2026-11-23）；论文数字 = 作者自报，本线未复现；<b>未做 PDF 逐页复核</b>（关键数字取自 ar5iv 原生 HTML）。</li>
+</ul>
+
 <footer>
-  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-23 00:0x CST
+  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-23 03:0x CST（含 00:00 时窗）
 </footer>
 
 </div>

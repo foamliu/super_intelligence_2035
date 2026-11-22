@@ -4464,3 +4464,43 @@
 | X 账号 | **未找到**（`@bernardghanem` 仅 3 followers / `@bernard_ghanem` 仅 4 followers 且 bio 为 `beirut` ⇒ 均判为同名他人，**不记**） |
 | 状态 | **待跟踪**（邮箱已核但**本窗不发**：同一论文已发一作 Guohao Li，守「同一论文 ≤1」；X 未找到） |
 | 备注 | 价值点：CAMEL 的多智能体协作与「task specifier」失真，直接对应 designflow 造题的题面保真；若日后单独发信，问题应落到「多角色流程中如何用独立复算打破互相附和」，而不是泛问 CAMEL 是否开源（已开源）。 |
+
+### 315. Wenliang Dai
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wenliang Dai（拼音姓名族属 Dai = 戴；`语言=中文(判据=姓名族属；🚫 未因机构在美国 / 邮箱为 gmail 判英文)`） |
+| 机构 | **NVIDIA**（Senior Research Scientist，本人主页 2026-11-23 实测）；论文署名时为 **Salesforce Research**（HKUST 博士） |
+| 代表论文 | **InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning**（`2305.06500`，B 轨 #349，**一作**）· 另有多模态对齐 / 后训练工作 |
+| 邮箱 | **wenliang.dai.1995@gmail.com**（来源：本人主页 `https://wenliangdai.github.io/` `HTTP 200` / **28,287 B**，页内明文；同页挂 `twitter.com/Wenliang_Dai`） |
+| 主页 | <https://wenliangdai.github.io/>（`200` / 28,287 B） |
+| X 账号 | **@Wenliang_Dai**（`x.com/Wenliang_Dai` 经代理 `200` / **192,970 B**；`og:title` = `Wenliang Dai (@Wenliang_Dai) on X`；`og:description` = `Senior Research Scientist @NVIDIA` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-23 03:02 CST，作者请教信第 **142** 封，中文 **218** 汉字，`SENT OK`）· X 待 follow（需登录态） |
+| 备注 | 本封三问围绕 InstructBLIP 的 **26 数据集 / 13 held-in + 13 held-out**、balanced sampling、指令同时进 Q-Former 与 LLM 的贡献拆分、单 checkpoint 全数据集复用的选择依据，分别回填 **vision**（连接器与视觉塔）/ **data**（多源图文配比与 held-out 域）/ **harness**（零样本 vs 单任务微调两口径）。 |
+
+### 316. Zhiyao Xie（谢知遥）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhiyao Xie（本人主页标题自署「Zhiyao Xie (谢知遥)」；`语言=中文(判据=主页中文自署 + 拼音姓名族属；🚫 未因机构在香港 / 论文英文判英文)`） |
+| 机构 | **HKUST**（香港科技大学 ECE 助理教授） |
+| 代表论文 | **RTLCoder: Outperforming GPT-3.5 in Design RTL Generation…**（`2312.08617`，B 轨 #350，**末位 / 通讯方向**）· 另有 EDA 与机器学习交叉方向工作 |
+| 邮箱 | **eezhiyao@ust.hk**（来源：本人主页 `https://zhiyaoxie.com/` `HTTP 200` / **33,297 B**，页内明文 ×3；论文 ar5iv 全文 `200` / **426,868 B** 邮箱块同址 ⇒ 双源；同页一作 `sliudx@connect.ust.hk`，**本线只发通讯作者**、不群发） |
+| 主页 | <https://zhiyaoxie.com/>（`200` / 33,297 B） |
+| X 账号 | **未找到**（本人主页无 `twitter.com` / `x.com` 链接；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-23 03:02 CST，作者请教信第 **143** 封，中文 **224** 汉字，`SENT OK`）· X 无账号可 follow |
+| 备注 | 本封三问围绕 **RTLCoder-27K >27,000** 条三阶段生成数据、作者明写「testbench 生成无法自动化 ⇒ 功能正确性未逐条验证」、7B / 4-bit 4GB 的轻量路线，分别回填 **designflow**（参考解须可仿真断言）/ **data**（领域数据自举与误删率）/ **zhulong**（数据 vs 算法的消融归因）。 |
+
+### 317. Stella Biderman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Stella Biderman（英语姓名族属 ⇒ `语言=英文`；本窗未发信，仅建档） |
+| 机构 | **EleutherAI**（执行董事 / 研究负责人，X bio 自述）；GPT-NeoX 署名机构为 EleutherAI 与合作方 |
+| 代表论文 | **GPT-NeoX-20B: An Open-Source Autoregressive Language Model**（`2204.06745`，B 轨 #348，**二作**，一作为 Sid Black）· 另有 The Pile 等工作 |
+| 邮箱 | **未找到**（`https://stellabiderman.com/` 直连与经代理均 `000`，无页内明文可核 ⇒ 🚫 不猜地址、不发信） |
+| 主页 | **未找到**（站点本轮不可达，以 X 页为公开身份页） |
+| X 账号 | **@BlancheMinerva**（`x.com/BlancheMinerva` 经代理 `200` / **180,911 B**；`og:title` = `Stella Biderman (@BlancheMinerva) on X`；`og:description` = `Ensuring that tech companies don't have a monopoly on being able to do research on cutting edge AI @AiEleuther. She/her` ⇒ 双源核验） |
+| 状态 | **待跟踪**（X 待 follow，需登录态；无可用邮箱 ⇒ 本线不发信） |
+| 备注 | 价值点：GPT-NeoX 是「20B dense LM 开放训练栈 + The Pile 数据可审计」的公开基线，可作为我们 pretrain 数据配比与评测 shot 口径的对照；若日后拿到邮箱，问题应落到「The Pile 各子集配比与 long-context 训练顺序如何影响 few-shot 稳定性」，而非泛问是否开源（已开源）。 |
+

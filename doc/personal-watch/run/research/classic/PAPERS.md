@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **350** 条（**第九十四轮 2026-11-23 03:0x 补 3 条 → 350**：GPT-NeoX-20B `2204.06745`（**753**，arXiv `comment` = ACL Workshop on Challenges & Perspectives in Creating Large Language Models；20B dense 自回归，Pile 语料，开放权重，5-shot 增益大于同规模 GPT-3 / FairSeq）/ InstructBLIP `2305.06500`（**2,302**，预印本；instruction-aware Q-Former，**26 数据集 / 13 held-in + 13 held-out**，balanced sampling，ScienceQA 图上下文 **90.7%**）/ RTLCoder `2312.08617`（**252**，**&lt;500 按「本领域权威」收**，LAD 2024；**RTLCoder-27K >27,000** 条三阶段生成，7B 超 GPT-3.5、VerilogEval Machine 超 GPT-4）；核验：arXiv `id_list` 单批 **`200` + atom**（9,106 B / 3 entry，`published`：2022-04-14 / 2023-05-11 / 2023-12-14）+ abs 页 **3/3 `200`**（43,276 / 43,211 / 44,917 B，`citation_title` + `citation_date` 逐字）+ OpenAlex **3/3 `200`**（753 / 2,302 / 252，查询日 2026-11-23；GPT-NeoX、InstructBLIP 为 `preprint`，RTLCoder 为 `conference-paper`）；三 ID 条目级查重 **0 命中**（⚠️ 写入前拦下一处 ID 误记：候选池旧记 RTLCoder 为 `2312.03755`，`abs` 实测该 ID 是 *Near-real-time Earthquake-induced Fatality Estimation*（无关）⇒ 按 `ti:"RTLCoder"` 检索得真 ID **`2312.08617`**，旧记作废）；覆盖轴 = 开放权重 dense LM 的训练与 few-shot 评估 / 指令感知连接器 + 数据集间均衡采样 / EDA 领域的可执行数据生成与轻量模型；本轮归属：pretrain **+2** · vision **+2** · data **+3** · harness **+2** · zhulong **+1** · designflow **+2**（一篇可多线））
+
 **本轮快照**：累计 **347** 条（**第九十三轮 2026-11-23 00:0x 补 3 条 → 347**：Gopher `2112.11446`（**1,730**，预印本；280B dense，152 任务多数 SOTA，规模收益集中在阅读理解 / 事实核查 / 毒性识别，逻辑与数学推理收益较小）/ CAMEL `2303.17760`（**2,892**，arXiv `comment` = NeurIPS 2023；role-playing + inception prompting，50×50 角色 × 10 任务 = 25,000 段对话，归纳四类协作失败）/ WebGPT `2112.09332`（**2,810**，预印本；GPT-3 + 文本浏览器，模仿学习后按人类偏好做拒绝采样，答案须带浏览时收集的引用；ELI5 上相对人类示范 56% 胜、相对 Reddit 最高票 69% 胜）；核验：arXiv `id_list` 单批 **`200` + atom**（12,641 B / 3 entry，`published` 齐备：2021-12-08 / 2023-03-31 / 2021-12-17）+ abs 页 **3/3 `200`**（55,213 / 44,311 / 43,980 B，`citation_title` + `citation_date` 逐字核：2021/12/08 · 2023/03/31 · 2021/12/17）+ OpenAlex **3/3 `200`**（1,730 / 2,892 / 2,810，查询日 2026-11-23，`type` 均 `preprint`）；三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 条目级查重 **0 命中**（PaLM `2204.02311` / Voyager `2305.16291` / Generative Agents `2304.03442` / AutoGen `2308.08155` 经查**均已是表内条目** ⇒ 剔除）；覆盖轴 = dense LM 的规模-任务谱与数据/毒性整体分析 / 角色扮演式多智能体协作的四类失败模式 / 浏览-引用-人类偏好三段式长答；本轮归属：pretrain **+2** · harness **+3** · data **+3** · zhulong **+2** · vision **+0** · designflow **+2**（一篇可多线））
 
 
@@ -6012,6 +6014,57 @@
 | 与我们工作的关系 | **harness（主 · 引用可核）**：把「答案必须带浏览时收集的引用」写进任务定义，是判分可验证性的关键；我们的 harness 可照此要求 agent 每条结论附工具日志片段。<br>**zhulong（主 · 工具使用 + 奖励）**：浏览-引用-人类偏好三段式与我们「调 EDA 工具 → 看日志 → 按结果给奖励」同构；奖励模型只判最终答案时，会漏掉「过程是否真的执行」。<br>**data（主 · 示范 + 偏好）**：人类示范数据 + 偏好对是两条独立数据流，造 EDA 轨迹时应分开记「可模仿」与「可比较」两种标注成本。<br>**pretrain（长答生成）**：长文问答的引用约束会改变解码行为，可作为长上下文后训练的评测项。<br>**vision / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-23**（第九十三轮 · 00:00 时窗） |
 | 核验状态 | arXiv `id_list` 批量请求 **`200` + atom**（`published` = `2021-12-17T05:43:43Z`）；abs 页 **`200` / 43,980 B**（`citation_title` 逐字、`citation_date` = `2021/12/17`）；OpenAlex **`200`（2,810 / 2021 / preprint）**。数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 348. GPT-NeoX-20B: An Open-Source Autoregressive Language Model
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | GPT-NeoX-20B: An Open-Source Autoregressive Language Model |
+| 作者（前 3） | Sid Black · Stella Biderman · Eric Hallahan（共 **13** 位；arXiv `citation_author` 逐字核；机构为 EleutherAI 与合作方） |
+| 年份 | **2022**（arXiv v1 `2022-04-14`） |
+| 会议 / 期刊 | **ACL Workshop on Challenges & Perspectives in Creating Large Language Models**（arXiv `comment` 原文；OpenAlex `type=preprint`，两口径并列） |
+| 被引数 | **753**（OpenAlex `10.48550/arxiv.2204.06745`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2204.06745> ｜ arXiv DOI `10.48550/arxiv.2204.06745` ｜ 代码 / 权重 <https://github.com/EleutherAI/gpt-neox> |
+| 一句话贡献 | 发布 **20B 参数** dense 自回归 LM：在 **The Pile** 上训练、权重按宽松许可开放，提交时是公开权重中最大的 dense 自回归模型之一；系统描述架构、训练与语言理解 / 数学 / 知识类评测，并自报其 **few-shot 推理能力突出**——同为 5-shot 设置下相对同规模 GPT-3 与 FairSeq 模型增益更大；同时开源训练与评测代码。 |
+| 与我们工作的关系 | **pretrain（主 · 开放训练栈）**：这是「20B 级 dense LM 可复现训练」的公开工程记录，可作为我们 2B→更大规模外推时并行策略 / 数据管线 / 评测口径的对照，而不是只看闭源技术报告。<br>**data（主 · 语料与配比）**：在单一公开语料（The Pile）上训练并完整交代数据来源，是把「数据可审计」写进模型卡片的范例，EDA 语料同样应记录来源与配比。<br>**harness（few-shot 口径）**：5-shot 与同规模模型的比较必须同 prompt、同 shot 数；这条可直接写进我们评测规范，防止跨口径比分数。<br>**zhulong（推理评测）**：自报「few-shot 推理强」提示推理能力对 shot 设置敏感，Zhulong 的 thinking 轴评测应固定 shot 数并单列。<br>**vision / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十四轮 · 03:00 时窗） |
+| 核验状态 | arXiv `id_list=2204.06745` 批量请求 **`200` + atom**（9,106 B / 3 entry）；abs 页 **`200` / 43,276 B**（`citation_title` 逐字、`citation_date` = `2022/04/14`）；OpenAlex **`200`（753 / 2022 / preprint）**。数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 349. InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning |
+| 作者（前 3） | Wenliang Dai · Junnan Li · Dongxu Li（共 **9** 位；末位 Steven Hoi；arXiv `citation_author` 逐字核；机构据论文页为 Salesforce Research / HKUST 等） |
+| 年份 | **2023**（arXiv v1 `2023-05-11`） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` = `preprint`；OpenAlex `type=preprint`；OpenReview 记为 NeurIPS 2023 poster，两口径并列） |
+| 被引数 | **2,302**（OpenAlex `10.48550/arxiv.2305.06500`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2305.06500> ｜ arXiv DOI `10.48550/arxiv.2305.06500` ｜ 代码 <https://github.com/salesforce/LAVIS/tree/main/projects/instructblip> |
+| 一句话贡献 | 在冻结的 BLIP-2 视觉编码器与冻结 LLM 之间做系统化**视觉指令微调**：收集 **26 个公开数据集**并统一成指令格式，提出 **instruction-aware Query Transformer**（指令同时送入 Q-Former 与 LLM，使查询特征随指令变化），并用 **balanced sampling** 平衡数据集间学习进度；在 **13 个 held-in** 上训练，于另外 **13 个 held-out** 上零样本评测取得当时最好，ScienceQA 图上下文微调后 **90.7%**。 |
+| 与我们工作的关系 | **vision（主 · 连接器设计）**：指令进入 Q-Former 的「指令感知查询」是把视觉特征按任务重采样的低成本做法，可直接作为我们视觉塔与 LLM 之间连接器的 A/B 臂。<br>**data（主 · 多数据集配比）**：26 数据集 → 13/13 划分与 balanced sampling，是「多源图文数据如何配比 + 如何留出泛化集」的完整模板；我们的图文 / 文档数据同样要固定 held-out 域。<br>**harness（评测口径）**：held-out 零样本与单任务微调两种口径分开报，防止「见过该数据集」的成绩混进泛化结论。<br>**pretrain**：冻结双塔 + 只训连接器的路线，可作为我们「全参训练 vs 只训连接器」的成本对照。<br>**zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十四轮 · 03:00 时窗） |
+| 核验状态 | arXiv `id_list=2305.06500` 批量请求 **`200` + atom**（`published` = `2023-05-11T00:38:10Z`）；abs 页 **`200` / 43,211 B**（`citation_title` 逐字、`citation_date` = `2023/05/11`）；OpenAlex **`200`（2,302 / 2023 / preprint）**；`26` / `13 held-in` / `13 held-out` / `90.7%` / batch `192, 128, 64` / `60K steps` 逐字取自 ar5iv 全文 **`200` / 194,405 B**。 |
+
+---
+
+## 350. RTLCoder: Outperforming GPT-3.5 in Design RTL Generation with Our Open-Source Dataset and Lightweight Solution
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | RTLCoder: Outperforming GPT-3.5 in Design RTL Generation with Our Open-Source Dataset and Lightweight Solution |
+| 作者（前 3） | Shang Liu · Wenji Fang · Yao Lu（共 **6** 位；末位 Zhiyao Xie；arXiv `citation_author` 逐字核；机构据论文页为 HKUST） |
+| 年份 | **2023**（arXiv v1 `2023-12-14`；v5 为 TCAD 扩展版） |
+| 会议 / 期刊 | **LAD 2024**（arXiv `comment` = `This is the LAD Conference version of RTLCoder, for the TCAD extension version, please refer to: arXiv:2312.08617v4`；OpenAlex `type=conference-paper`，DOI `10.1109/lad62341.2024.10691788`） |
+| 被引数 | **252**（OpenAlex `10.48550/arxiv.2312.08617` → 命中会议记录，查询日 **2026-11-23**；**&lt;500，按「本领域权威（LLM-for-EDA）」收**） |
+| arXiv / DOI | <https://arxiv.org/abs/2312.08617> ｜ arXiv DOI `10.48550/arxiv.2312.08617` ｜ 会议 DOI `10.1109/lad62341.2024.10691788` |
+| 一句话贡献 | 用**全自动三阶段数据流**（RTL 领域关键词树 → 指令生成 → 参考代码生成，数据生成调用 **GPT-3.5**）产出 **RTLCoder-27K：>27,000 条指令-代码样本**；只训 **7B** 模型（4 张消费级 GPU）即在代表性 RTL 生成基准上**超过 GPT-3.5**，并在 **VerilogEval Machine** 上超过 GPT-4；4-bit 量化后仅 **4GB** 显存；数据与模型全部开源。作者同时明写：**testbench 生成尚无法自动化**，故数据过滤主要靠语法 / 规则检查，功能正确性未逐条验证。 |
+| 与我们工作的关系 | **designflow（主 · 造题与可判分性）**：三阶段「关键词 → 题面 → 参考解」正是我们 L1–L5 造题的骨架；其「testbench 不能自动生成 ⇒ 功能正确性没验」的坦白，直接指出我们题库必须补的一步：参考解要能在仿真器里跑出可断言终态。<br>**data（主 · 领域数据自举）**：27K 条由强模型生成 + 规则过滤，是「用小成本造领域 SFT 数据」的公开基线；我们做 EDA 数据时应记录过滤规则与估计误删率。<br>**harness（pass@k 口径）**：VerilogEval EvalMachine / EvalHuman + RTLLM 双基准、pass@k 并列报，可作为我们 RTL 判分的对照口径。<br>**zhulong（消融设计）**：7B vs 更大基座、数据 vs 算法的归因，是 Zhulong 消融表应回答的问题。<br>**pretrain / vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十四轮 · 03:00 时窗） |
+| 核验状态 | arXiv `id_list=2312.08617` 单篇 **`200` + atom**（9,106 B / 3 entry 同批；`published` = `2023-12-14T02:42:15Z`）；abs 页 **`200` / 44,917 B**（`citation_title` 逐字、`citation_date` = `2023/12/14`）；OpenAlex **`200`（252 / 2024 / conference-paper）**；`>27,000` / 三阶段 / `7B` / `4GB` / testbench 限制逐字取自 ar5iv 全文 **`200` / 426,868 B**。⚠️ 候选池旧记 ID `2312.03755` 实测为无关地震论文 ⇒ 已更正为 `2312.08617`。 |
 
 ---
 
