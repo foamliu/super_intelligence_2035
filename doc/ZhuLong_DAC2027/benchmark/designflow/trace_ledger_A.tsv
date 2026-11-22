@@ -795,3 +795,13 @@ fjy8k	chili	hfeg0pgn145	157	verification	case	EDA-Eval-DesignFlow-MsieWaveDumpDi
 1795139793140_5z8ws.messages.json	e0047472	hfeg0plg53	18	eda_other	case	EDA-Eval-DesignFlow-RedHawkScFlowProduce-001	2026-11-23 01:38	
 1795085787568_bax7w	jkxu	hfeg0pkn004	154	verification	case	EDA-Eval-DesignFlow-EyecheckSimlistGenProduce-001	2026-11-23 02:02	
 1794986529178_kjrai.messages.json	t0002470	hfeg0pkn001	87	verification	case	EDA-Eval-DesignFlow-CovAllZeroRootCauseDiagnose-001	2026-11-23 02:39	
+1794998870519_ewijv.messages.json	e0031668	hfeg0pkn003	95	eda_other	parked		2026-11-23 03:03	r1011 peek: spyglass CDC flow+bsub env-dependent, no self-contained check
+1794990600575_y7ukp.messages.json	chengk	hfeg0pkn003	35	eda_other	parked		2026-11-23 03:03	r1011 peek: C-domain (pyaether:118/aether dominant) IDD_PTU GUI enhance, cross-shard C
+1795065918458_okqr3.messages.json	mwxi	hfhds228	31	eda_other	parked		2026-11-23 03:03	r1011 peek: sysadmin nomachine cache cleanup, not design-flow
+1795005578326_0jcg4.messages.json	e0046686	hfeg0pkn003	25	eda_other	parked		2026-11-23 03:03	r1011 peek: B/D-domain SPF/parm_hack spice, cross-shard B/D
+1794905978392_we7bb.messages.json	steveny	hfeg0pnd001	18	eda_other	parked		2026-11-23 03:03	r1011 peek: env-config bsub finesim queue query, requires live env
+1795225777762_868xr.messages.json	max7c	hfeg0pkn005	18	verification	parked		2026-11-23 03:03	r1011 peek: explain-Q&A run_async_regression.py usage, prose deliverable hard to check
+1794978450275_brcv3.messages.json	rongjiez	hfeg0pkn001	16	verification	parked		2026-11-23 03:03	r1011 peek: intent-dup 63y2k (same user rongjiez same compare_wave scripts Z-type check)
+1794798040404_421nh.messages.json	pdsong	hfeg0pkn004	14	eda_other	parked		2026-11-23 03:03	r1011 peek: B/D-domain PDN spice config diff (perform_sc.sp/perform_dc.sp), cross-shard B/D
+1794966767607_63y2k.messages.json	rongjiez	hfeg0pkn001	10	verification	parked		2026-11-23 03:03	r1011 peek: Perl compare_wave refactoring produce-task viable but complex (14turns/1700-line/gold across many edits), deferred
+1795138471763_t2z1l.messages.json	e0043182	hfeg0pkn001	9	eda_other	parked		2026-11-23 03:03	r1011 peek: env-config swb license troubleshooting, not produce-task
