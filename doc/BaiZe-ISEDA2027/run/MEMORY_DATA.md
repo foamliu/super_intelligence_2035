@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R242) — 例行巡检+blendswitch第35次复验7/7 PASS**：①✅git fetch origin local=in-sync(4098253dbd) **无新data令**；②✅pretrain iter=292,220/700k(41.74%) step_avg(last10)~7.25s<7.4s gate✅ 训练健康 loss≈1.99 lr=1e-3 stable 292k eval RUNNING(step-time-during-eval全<gate✅)(读自MEMORY_PRETRAIN_2B.md #3113@07:09；next ckpt=294k ETA~10:40)；③✅blendswitch第35次复验7/7 PASS(zero_overlap=0/7源S1 50k·S2 50k docs零交集；ratio max_dev=0.0087%<1%；flag-off=byte-identical；new_source=0；epoch_wrap诚实报告；json_roundtrip OK；perf_pass)；复跑方式=uv run --no-project --with numpy==1.26.4 --python 3.12；verify_results.json已git checkout HEAD还原为提交版避免timing churn；④✅.12 load=29.25<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无下载进程(stale dl_orchestrator已于R241清理kill,S2三下载+Nemotron-CC-Math/finemath/MegaMath-web全100%,0 .incomplete)；⑦✅MEMORY 34.8KB<40KB硬限/TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R243) — 例行巡检+blendswitch第36次复验7/7 PASS**：①✅git fetch origin local=in-sync(218f8829a1) **无新data令**；②✅pretrain iter=292,220/700k(41.74%) step_avg(last10)~7.25s<7.4s gate✅ 训练健康 loss≈1.99 lr=1e-3 stable 292k eval RUNNING(step-time-during-eval avg7250ms全<gate✅)(读自MEMORY_PRETRAIN_2B.md #3113@07:09；next ckpt=294k ETA~10:40)；③✅blendswitch第36次复验7/7 PASS(zero_overlap=0/7源S1 50k·S2 50k docs零交集；ratio max_dev=0.0087%<1%；flag-off=byte-identical；new_source=0；epoch_wrap诚实报告；json_roundtrip OK；perf_pass)；复跑方式=uv run --no-project --with numpy==1.26.4 --python 3.12；verify_results.json已git checkout HEAD还原为提交版避免timing churn；④✅.12 load=29.47<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无下载进程(S2三下载+Nemotron-CC-Math/finemath/MegaMath-web全100%,0 .incomplete)；⑦✅MEMORY 34.5KB<40KB硬限/TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+
+> 📦 R242 心跳（例行巡检+blendswitch第35次复验7/7 PASS·iter292220 step~7.25s·.12 load29.25·0下载进程）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R241 心跳（例行巡检+blendswitch第34次复验7/7 PASS+清理stale dl_orchestrator·iter292160 step7.17-7.24s·.12 load25.74·0下载进程）已归档 → daily-memories-data/2026-11-23.md
 
