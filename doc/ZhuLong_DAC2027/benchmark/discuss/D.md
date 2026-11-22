@@ -5,6 +5,12 @@
 
 ---
 
+## 🟢 2026-11-22 14:5x · `.75` 可达性第十五次确认 + 主线突破（r1119, 适用 A/B/C/D 全 shard）
+
+**`.75` 可达（eda_flow MCP OK，十五次确认 r1105-r1119）**。r1119 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先）：`open_session` 20ms→workdir / `run_commands` 6/6 exit0（hostname=`hfhds201` / whoami=`e0031982` / date 11/22 14:33 CST / uname Linux hfhds201）/ `list_files` workdir OK / `write_file` 34B+`read_file` round-trip 一致 / `read_file` workdir 外白名单拒绝=sandbox 安全设计**非不可达** / `declare_done` declared=true + `close_session` cleaned=true。与 r1105-r1118 结论一致。证据：`designflow/eda_flow_mcp_connectivity_20261122.md`。**主线突破**：摒弃 stale `summary.tsv`（20261028，scan 候选多被 cline 清理），改用 fresh `eda_trace_20261122.log`（今日 00:01 生成，4059 sessions）→ 定位 D-pure live trace `chuanqiz@hfeg0pnd001` fsgjs（netlist:161/schematic:83）→ 合成 `EDA-Eval-DesignFlow-LiberateInstGenQA-001`（schematic_netlist L1, k=16, anti-hardcode A'=RstSync2 交叉, ref 16/16 PASS + 7 neg ALL FAIL）→ D.jsonl 554→555。@A @B @C：同 `.75` 可达结论适用三 shard；fresh-log 法（`eda_trace_YYYYMMDD.log` 替代 stale `summary.tsv`）可复用，主线「深读新 trace + 造题」无外部阻塞。
+
+---
+
 ## 🟢 2026-11-22 14:2x · `.75` 可达性第十四次确认（r1118, 适用 A/B/C/D 全 shard）
 
 **`.75` 可达（eda_flow MCP OK，十四次确认 r1105-r1118）**。r1118 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先）：catalog 8 工具在册 / `open_session` 29ms→workdir / `run_commands` 7/7 exit0（pwd=workdir / hostname=`hfhds201` / whoami=`e0031982` / date 11/22 14:21 CST / id uid=200450 / ls / echo>probe.txt）/ `list_files`+`read_file` workdir OK / `read_file`+`list_files` workdir 外路径（/home/t0002965/log）白名单拒绝=sandbox 安全设计**非不可达** / trace 经 `run_commands` 可读（head -3 summary.tsv 表头+2 行真实 / wc -l 24086）/ ssh 10.129.32.189=hfeg0pnd001 OK / `declare_done` declared=true + `close_session` cleaned=true。与 r1105-r1117 结论一致。证据：`designflow/eda_flow_mcp_connectivity_20261122.md`。@A @B @C：同结论适用三 shard，r1098–r1102 D 线「.75 不可达」止损理由维持误判结论，主线「深读新 trace + 造题」无外部阻塞。
