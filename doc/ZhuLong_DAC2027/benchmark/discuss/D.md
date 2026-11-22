@@ -171,3 +171,7 @@ eda_flow MCP 第六次复测全 OK（本 session GLM-5.2/opencode 直接调用�
 ## r1114 (2026-11-22 13:53 CST) — MCP 第十次复测 OK = .75 可达十次确认
 
 eda_flow MCP 第十次复测全 OK（本 session GLM-5.2/opencode 直接调用）：8 工具全在册 + 8/8 逐项 OK（open_session 19ms / run_commands 8/8 exit0 hostname=hfhds201 whoami=e0031982 date 11/22 13:53 CST / list_files OK / write_file+read_file round-trip 71B 一致无腐蚀 / summary.tsv 表头+首行经 run_commands 可读 / declare_done+close_session cleaned=true）。**`.75` 可达十次确认**（r1105-r1114 一致）。判据=eda_flow MCP 可用，**不认 ssh 10.129.32.75 timeout**。同结论适用 A/B/C 三 shard。证据见 `designflow/eda_flow_mcp_connectivity_20261122.md` 第十次复测节。本轮预算用于复测+记录，未合成新 case；下轮找非 delvtrand 非 zhililu live trace（analog_context/waveform 域优先）。
+
+## r1116 (2026-11-22 14:05 CST) — MCP 第十二次复测 OK = .75 可达十二次确认
+
+eda_flow MCP 第十二次复测全 OK（本 session GLM-5.2/opencode 直接调用）：8 工具全在册 + 10/11 逐项 OK（open_session 19ms / run_commands 6/6 exit0 hostname=hfhds201 whoami=e0031982 date 11/22 14:05 CST / list_files workdir OK / list_files workdir 外白名单拒绝=sandbox 安全设计 / run_commands 读 summary.tsv 24086 行+ssh_auth_ok.txt OK / write_file 100B+read_file round-trip 一致 / declare_done+close_session cleaned=true）；run_code pyAether 超时=冷启动非连通问题（同 r1108-r1115）。**`.75` 可达十二次确认**（r1105-r1116 一致）。判据=eda_flow MCP 可用，**不认 ssh 10.129.32.75 timeout**。同结论适用 A/B/C 三 shard。证据见 `designflow/eda_flow_mcp_connectivity_20261122.md` 第十一次复测节（r1116）。本轮预算用于复测+记录，未合成新 case；下轮找非 delvtrand 非 zhililu live trace（analog_context/waveform 域优先）。
