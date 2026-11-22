@@ -3707,16 +3707,30 @@
   "carbon-design-system__carbon-6197": {
     "instance_id": "carbon-design-system__carbon-6197",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 385.9,
+    "rc": 0,
+    "model_patch_len": 641,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ts existing `padding-top: $spacing-05` to align consistently with non-sortable tall headers.\n\nThe DataTable test suite has pre-existing `enzyme`/`mount` environment failures unrelated to this change.\n",
+    "stderr_tail": "l size and sorting\n[✓] Identify the root cause of misalignment in tall sortable headers\n[✓] Apply minimal fix to align headers correctly\n[✓] Verify the fix (check styles, run tests if available)\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-6410": {
     "instance_id": "carbon-design-system__carbon-6410",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 747.1,
+    "rc": 0,
+    "model_patch_len": 24714,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e skeleton template.\n\nThe tab list (`<ul role=\"tablist\">`) is now always visible, fixing the accessibility issue where screen readers encountered a `listbox` instead of a `tablist` on narrow screens.\n",
+    "stderr_tail": " variant from React Tabs component\n[✓] Update React Tabs tests\n[✓] Update React Tabs stories and skeleton\n[✓] Update shared styles and vanilla JS implementation\n[✓] Verify changes work correctly\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-6442": {
     "instance_id": "carbon-design-system__carbon-6442",

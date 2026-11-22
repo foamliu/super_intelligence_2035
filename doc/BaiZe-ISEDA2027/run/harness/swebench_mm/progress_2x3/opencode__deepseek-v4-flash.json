@@ -5757,30 +5757,58 @@
   "openlayers__openlayers-13198": {
     "instance_id": "openlayers__openlayers-13198",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 335.3,
+    "rc": 0,
+    "model_patch_len": 748,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "le, so that if the previous layer had no background set, we skip the comparison and treat the containers as incompatible. This causes a new container with the proper background to be created instead.\n",
+    "stderr_tail": "s\n[✓] Explore the codebase to understand the bug with vector layers with background\n[✓] Identify the root cause in CanvasVectorLayerRenderer.useContainer\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-13212": {
     "instance_id": "openlayers__openlayers-13212",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 894.2,
+    "rc": 0,
+    "model_patch_len": 9419,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "source with `url` template + `tileGrid`, single `WebGLTileLayer`\n\nThis solves the WebGL context exhaustion issue because there is now only **one** WebGL context per layer, regardless of pyramid size.\n",
+    "stderr_tail": "~~~~~~~~~~~~~~\u001b[0m\n\n\u001b[96msrc/ol/worker/geotiff-decoder.js\u001b[0m:\u001b[93m4\u001b[0m:\u001b[93m32\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2307: \u001b[0mCannot find module 'threads/worker' or its corresponding type declarations.\n\u001b[0m\n"
   },
   "openlayers__openlayers-13226": {
     "instance_id": "openlayers__openlayers-13226",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 144.0,
+    "rc": 0,
+    "model_patch_len": 669,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "rojection(projection)` (lines 295, 386), which safely falls back to the projection's default tile grid when `tileGrid` is null. The fix makes `getRenderExtent()` consistent with the rest of the file.\n",
+    "stderr_tail": "ue with WebGLTileLayer and wrapX: false\n[✓] Find the relevant code in WebGL tile layer rendering\n[✓] Identify the fix needed (possibly related to #13212)\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-13269": {
     "instance_id": "openlayers__openlayers-13269",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 273.8,
+    "rc": 0,
+    "model_patch_len": 3314,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ors exactly what the canvas renderer does in `src/ol/renderer/canvas/TileLayer.js:484-506`, but applied at texture upload time rather than draw time (since WebGL textures can't be partially sampled).\n",
+    "stderr_tail": "eline and how tiles are processed\n[✓] Identify where WebGLTile layer creates textures from tile images\n[✓] Implement gutter clipping in the WebGL tile renderer\n[✓] Verify the fix works correctly\n\u001b[0m\n"
   },
   "openlayers__openlayers-13333": {
     "instance_id": "openlayers__openlayers-13333",
