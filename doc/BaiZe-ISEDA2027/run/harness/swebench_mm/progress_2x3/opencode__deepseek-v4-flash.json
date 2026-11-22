@@ -5605,16 +5605,30 @@
   "openlayers__openlayers-12467": {
     "instance_id": "openlayers__openlayers-12467",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 955.8,
+    "rc": 0,
+    "model_patch_len": 6859,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "le.setSnapToPixel(false);\n```\n\nThe global mechanism continues to work for view-based animations. The per-style override only takes effect when set to `false`, preserving existing behavior by default.\n",
+    "stderr_tail": " option to CircleStyle\n[✓] Pass snapToPixel through ImageBuilder to DRAW_IMAGE instruction\n[✓] Use per-style snapToPixel in Executor to override global value\n[✓] Verify the changes work together\n\u001b[0m\n"
   },
   "openlayers__openlayers-12683": {
     "instance_id": "openlayers__openlayers-12683",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 560.1,
+    "rc": 0,
+    "model_patch_len": 1855,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "setImageStyle()`.\n\nWhen no color is applied, `getPixelRatio()` returns 1, so the scaling is a no-op. When a color is applied, it returns `pixelRatio`, correctly matching the scaled canvas dimensions.\n",
+    "stderr_tail": "ted to icon offset with color and pixel ratio\n[✓] Fix origin scaling in ImageBuilder.js drawPoint() and drawMultiPoint()\n[✓] Fix origin scaling in Immediate.js setImageStyle()\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-12695": {
     "instance_id": "openlayers__openlayers-12695",
