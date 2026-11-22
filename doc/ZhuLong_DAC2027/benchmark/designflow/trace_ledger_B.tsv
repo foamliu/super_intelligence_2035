@@ -177,7 +177,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793886971551_nekpi.messages.json	yifansun	hfeg0pkn001	743	spice_sim	case	EDA-Eval-DesignFlow-LvLvioSweep-001	2026-11-06 05:00	
 1793879856361_1281g.messages.json	hairuizh	hfeg0pkn002	366	spice_sim	case	EDA-Eval-DesignFlow-PlatInvsThick-001	2026-11-06 13:30	
 1793879856361_1281g					case	EDA-Eval-DesignFlow-PlatInvsThick-001	2026-11-06 06:14	
-1793328354943_p7jfx.messages.json	tongni	hfeg0pkn001	481	spice_sim	parked		2026-11-06 06:36	file deleted by active user tongni between 11-05 scan and 11-06 06:25; session ephemeral
+1793328354943_p7jfx.messages.json	tongni	hfeg0pkn001	481	spice_sim	parked		2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
 1792119838262_chbpp	wnyu	hfeg0pkn004	629	spice_sim	case	EDA-Eval-DesignFlow-VcoKvcoChar-001	2026-11-06 07:20	A-faithful need IDX17 (Vtune->4ph 6GHz ring VCO, sim, KVCO); deepread 1792119838262_chbpp_vco_kvco.md; portable level-1 ring-VCO blocked on HSPICE oscillation (latches/-2.74V) -> DEBT:1 case synth next round
 1793341440302_sqm07	tongni	hfeg0pkn001	223	spice_sim	case	EDA-Eval-DesignFlow-Vcc2scActDeckGen-001	2026-11-06 08:08	
 1793270732926_ebmf3.messages.json	chapinc	hfeg0pkn002	97	spice_sim	case	EDA-Eval-DesignFlow-BatchBsubHspice-001	2026-11-06 08:38	
@@ -244,7 +244,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793966362470_otc01					parked		2026-11-06 21:20	consulting: device type exploration (xiwang)
 1793971631579_gvexo	kerwind	hfeg0pkn002	54	spice_sim	case	EDA-Eval-DesignFlow-TimingMeasGen-001	2026-11-06 22:30	
 1793600858808_la00c.messages.json	e0029308	hfeg0pkn001	339	spice_sim	parked	EDA-Eval-DesignFlow-VSplit-001	2026-11-12 05:14	collaborative-continuation (e0029308 '修改DFF仿真结果判定 先从hold来 我来给你方案' - multi-turn collaborative, not clean produce)
-1793843849886_hsizo	ynbai	hfhds201	211	spice_sim	case	EDA-Eval-DesignFlow-FinesimIgnoreGen-001	2026-11-06 23:41	
+1793843849886_hsizo	ynbai	hfhds201	211	spice_sim	parked	EDA-Eval-DesignFlow-FinesimIgnoreGen-001	2026-11-22 09:58	legitimately removed r473 mislabel/near-dup
 1791602435253_66tx9	ynbai	hfhds201	162	spice_sim	case	EDA-Eval-DesignFlow-LibCellListGen-001	2026-11-07 00:03	
 1793347412273_nq8l2	zjqiao	hfhds201	98	spice_sim	case	EDA-Eval-DesignFlow-HcellMissingFind-001	2026-11-07 00:33	
 1793943889492_yg26n.messages.json	shanliny	hfeg0pkn001	95	spice_sim	case	EDA-Eval-DesignFlow-MonteMt0Stats-001	2026-11-07 01:10	
@@ -339,7 +339,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1789645120364_2n1bs	zjqiao	hfhds201	41	spice_sim	case	EDA-Eval-DesignFlow-SetNetlistParam-001	2026-11-07 07:57	
 1789868524114_jr4e1	zjqiao	hfhds201	21	spice_sim	parked		2026-11-07 07:58	incomplete trace: USER0='bmatrix find Running jobs bkill' LSF job mgmt not spice; 10/21 tool_result errors Agent Policy blocked, assistant never produced script, last msg='Agent Policy 限制了工具调用'
 1791768325372_g13dw	dandans	hfhds201	16	spice_sim	case	EDA-Eval-DesignFlow-AgingDirSeparateTransform-001	2026-11-17 01:49	r697 reaudit-revive: 11-15 std only excludes no-trace/no-teeth; real trace + matrixrun fixture + clear intent (separate step1/step2 aging sim dirs); agent-incomplete irrelevant (ref solution self-authored); building case
-1793867708362_0t51l	tzuo	hfhds201	58	spice_sim	case	EDA-Eval-DesignFlow-NetlistViewSpiceldSwap-001	2026-11-07 08:34	
+1793867708362_0t51l	tzuo	hfhds201	58	spice_sim	parked	EDA-Eval-DesignFlow-NetlistViewSpiceldSwap-001	2026-11-22 09:58	legitimately removed r473 mislabel/near-dup
 1792395143753_ai203	yuankong	hfhds201	14	spice_sim	case	EDA-Eval-DesignFlow-BmatrixRerunGen-001	2026-11-07 09:11	
 1793260818025_aw9d7	dsgao	hfhds201	273	spice_sim	case	EDA-Eval-DesignFlow-TscodecompTbVerify-001	2026-11-07 09:46	
 1792841497181_wbge3					parked		2026-11-07 09:46	LSF monitoring not spice
@@ -355,9 +355,9 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1789544518757_at2ga	rongjiez	hfeg0pkn005	319	spice_sim	parked		2026-11-07 10:49	Qt/config.json GUI refactor for AutoSim (mem_sim/inst_char/comp_char pages) — software-engineering task, not spice/characterization compute; same conversation across 4 sessions; FP for shard B
 1794018867939_1qlnn	ynbai	hfhds201	2736	characterization	case	EDA-Eval-DesignFlow-SimSavedCornerComplete-001	2026-11-07 11:25	
 1793243267055_5hjg7	zjqiao	hfhds201	612	spice_sim	case	EDA-Eval-DesignFlow-FinesimMatrixrunAgent-001	2026-11-07 12:03	
-1789545001824_x0t2m	ethanw	hfhds201	183	spice_sim	case	EDA-Eval-DesignFlow-LatchFFNetlistMatch-001	2026-11-07 12:41	
+1789545001824_x0t2m	ethanw	hfhds201	183	spice_sim	parked	EDA-Eval-DesignFlow-LatchFFNetlistMatch-001	2026-11-22 09:58	legitimately removed r473 mislabel/near-dup
 1791955659176_a63u6	jianwang	hfhds201	40	characterization	case	EDA-Eval-DesignFlow-IddblkCsvDiff-001	2026-11-07 14:07	
-1793260738350_ziy0b	xuebaok	hfhds201	26	characterization	case	EDA-Eval-DesignFlow-VsimEnvFileKeep-001	2026-11-07 14:50	
+1793260738350_ziy0b	xuebaok	hfhds201	26	characterization	parked	EDA-Eval-DesignFlow-VsimEnvFileKeep-001	2026-11-22 09:58	legitimately removed r473 mislabel/near-dup
 1793878609339_lywbf	dsgao	hfhds201	229	spice_sim	case	EDA-Eval-DesignFlow-SwitchTbGen-001	2026-11-07 15:28	
 1793583394153_wnpwu	dsgao	hfhds201	186	spice_sim	case	EDA-Eval-DesignFlow-TmVerifyTbGen-001	2026-11-07 16:01	
 1793862569889_ezcgh	mike	hfhds201	235	spice_sim	case	EDA-Eval-DesignFlow-CosimRunBlockOpt-001	2026-11-07 16:27	
@@ -417,9 +417,9 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1792042288837_5cigt					parked		2026-11-07 21:24	分析sim_lib_gui_new脚本并解释用法 consulting/explanation
 1791852261815_1pxm7					parked		2026-11-07 21:24	定位Enable_TM task/function位置 code navigation非spice
 1792201122841_ncfk9					parked		2026-11-07 21:24	skill脚本语法 consulting Q&A
-1789644585939_3e35z	zjqiao	hfhds201	48	spice_sim	case	EDA-Eval-DesignFlow-CompressNetlist-001	2026-11-07 21:45	
+1789644585939_3e35z	zjqiao	hfhds201	48	spice_sim	parked	EDA-Eval-DesignFlow-CompressNetlist-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
 1793865966161_rkdu8	yuankong	hfhds201	85	spice_sim	case	EDA-Eval-DesignFlow-NetlistSchemInstLocate-001	2026-11-07 23:00	
-1789699043373_y91i6	ericw	hfhds201	34	characterization	case	EDA-Eval-DesignFlow-CgMeetExactlyMissWalk-001+EDA-Eval-DesignFlow-CgtMeetExactlyFilter-001	2026-11-07 23:55	同 trace 两轮:U#0=CgMeetExactlyMissWalk(meet_exactly未命中清单)+U#1=CgtMeetExactlyFilter(关键词去除过滤表,hidden B+SRE)
+1789699043373_y91i6	ericw	hfhds201	34	characterization	parked	EDA-Eval-DesignFlow-CgMeetExactlyMissWalk-001+EDA-Eval-DesignFlow-CgtMeetExactlyFilter-001	2026-11-22 09:58	double-id data bug (CgMeetExactlyMissWalk+CgtMeetExactlyFilter), no ref artifacts
 1790042178493_mrmfn	ericw	hfhds201	30	characterization	case	EDA-Eval-DesignFlow-CovBinMetaExtract-001	2026-11-07 23:58	
 1794033409066_h2sri	e0030760	hfeg0pkn004	86	spice_sim	case	EDA-Eval-DesignFlow-SpDeckStructExtract-001	2026-11-08 00:38	
 1793670518248_ap4dl					parked		2026-11-08 00:42	GUI task (tkinter xval_tool), hspice counts from tool processing hspice decks, not real spice sim
@@ -534,7 +534,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1793952138224_b2l64	t0003117	hfeg0pkn005	405	spice_sim	parked		2026-11-09 01:19	eval-user+premise-missing fault-inject
 1791522635010_ikvky	clarawu	hfeg0pkn004	277	spice_sim	parked		2026-11-09 01:19	wrong-shard gvim vimrc config
 1792375467654_hs5zf	mwxi	hfhds228	35	spice_sim	parked		2026-11-09 01:19	unreachable SSH no-file
-1794143556321_ejp6w	yuchens	hfeg0pkn004	549	characterization	case	EDA-Eval-DesignFlow-NetlistStructDiff-001	2026-11-09 01:58	
+1794143556321_ejp6w	yuchens	hfeg0pkn004	549	characterization	parked	EDA-Eval-DesignFlow-NetlistStructDiff-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
 1793756085396_bam0b	jiangbaol	hfeg0pkn001	182	spice_sim	parked		2026-11-09 02:25	dup DupSubcktDefDiag-001+ProbeFailDiag-001 / U#3 measure no gold std
 1793849491055_xnnyg	jiangbaol	hfeg0pkn001	182	spice_sim	parked		2026-11-09 02:25	same as bam0b dup of DupSubcktDefDiag+ProbeFailDiag
 1791813446865_vw7dp	colinxu	hfeg0pkn002	201	characterization	parked		2026-11-09 02:25	vague topcell-add-pin premise-missing + pyAether layout wrong-shard
@@ -740,7 +740,7 @@ qnm9e					parked		2026-11-08 01:58	Finesim DC convergence Q&A prose dup of uky6c
 1794226772548_iyl1p.messages.json	e0024852	hfeg0pkn002	0	spice_sim	parked		2026-11-09 22:12	wrong-shard: U#1=layout_aether GDS via_optim_gds.py rewrite (shard C); U#3=hd_CH252_bitcell.dspf add layer/location but session ended at assistant clarifying question, NO user-accepted gold standard. e0024852 continuation of btflh(dspf). fresh-window 21:00+ find.
 1793880969509_yez2i	declanzh	hfeg0pkn005	58	spice_sim	case	EDA-Eval-DesignFlow-Mt0PvrefAbsGroupStat-001	2026-11-09 22:56	
 1792389569188_qry8l	joeyl	hfeg0pkn004	34	spice_sim	case	EDA-Eval-DesignFlow-TrimSweepSpGen-001	2026-11-09 23:46	
-1793754060632_nnyxr	curryxu	hfeg0pkn001	12	spice_sim	case	EDA-Eval-DesignFlow-MeasTranSamplerGen-001	2026-11-10 00:05	
+1793754060632_nnyxr	curryxu	hfeg0pkn001	12	spice_sim	parked	EDA-Eval-DesignFlow-MeasTranSamplerGen-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
 1791423391584_dyfkf					parked		2026-11-09 23:58	REDHAWK file-search consulting (list_allowed_files x51), no produce-task, wrong-domain power-analysis, spice markers path false-positive
 1793078120457_omrsw	zhililu	hfeg0pkn001	13	spice_sim	case	EDA-Eval-DesignFlow-NonOverlapClockDiag-001	2026-11-10 00:38	
 1794227337092_vuj95	marryma	hfeg0pkn002	1126	spice_sim	case	EDA-Eval-DesignFlow-PdkLayerLocate-001	2026-11-15 10:29	r621 reaudit revived (旧判 reject file-search consulting → 新标准 PDK layer-locate 合法): locate SA/SWD layer defs across multi-version Cadence OA PDK (techfile.tf+layermap.layermap+readme.txt), A 档 trace-faithful, SA=302:51/302:517 mark1/mark67 RLDEV, SWD negative, hidden B cross-input (SA=305:88/891 mark44/45 + SWD found 304:77), k=12
@@ -1053,9 +1053,9 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793173193409_mx7xh	junweix	hfeg0pkn002	77	spice_sim	parked		2026-11-11 11:52	remote pkn002 junweix file others-r=0, not readable by e0031982 sandbox identity
 1789630642152_8b8wk	ghyang	hfeg0pkn003	70	spice_sim	parked		2026-11-11 11:56	agent read_files all returned empty - analysis hallucinated from dir listing, trace not grounded; unusable for A-faithful case
 1791786108086_vumhg	e03179	hfeg0pkn002	274	characterization	case	EDA-Eval-DesignFlow-CabufPvtDatAudit-001	2026-11-11 12:20	
-1793328354943_p7jfx	tongni	hfeg0plg63	481	spice_sim	case	EDA-Eval-DesignFlow-SpSpecCovAudit-001	2026-11-11 12:59	
-1792399702966_lcbck	e0029495	10.129.2.11	10	spice_sim	case	EDA-Eval-DesignFlow-Mt0MetastabAudit-001	2026-11-11 13:59	
-1793704886522_kdb8z	owench	pkn002	12	spice_sim	case	EDA-Eval-DesignFlow-MosToxeClassify-001	2026-11-11 14:37	
+1793328354943_p7jfx	tongni	hfeg0plg63	481	spice_sim	parked		2026-11-22 10:00	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
+1792399702966_lcbck	e0029495	10.129.2.11	10	spice_sim	parked	EDA-Eval-DesignFlow-Mt0MetastabAudit-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
+1793704886522_kdb8z	owench	pkn002	12	spice_sim	parked	EDA-Eval-DesignFlow-MosToxeClassify-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
 1788249638562_0si6a	sophiaw	hfeg0plg09	160	characterization	parked		2026-11-11 15:05	meta-exploration session (agent self-introspection), no real design task; hspice kw from API docs not sim
 1793928131571_20ss9	junweix	hfeg0pjn185	71	spice_sim	case	EDA-Eval-DesignFlow-PwrNoiseDeckExplain-001	2026-11-16 02:19	real spice deck analysis task but L1 offline (agent read+explained 5_pnoise.sp, no sim run); not suitable as new L2/L3 case per S5
 1788427145336_tk1gr	e0044979	hfeg0pkn001	175	characterization	case	EDA-Eval-DesignFlow-AnalogOptPipeline-001	2026-11-11 16:02	
@@ -1116,21 +1116,17 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793870063634_h15ge.messages.json	cynthiaz	hfeg0pkn005	193	spice_sim	case	EDA-Eval-DesignFlow-SlicerFbTimeOpt-001	2026-11-11 19:16	seeded
 1793969040205_8yrag.messages.json	mingyu1l	hfeg0pkn002	0	characterization	case	EDA-Eval-DesignFlow-CellLeakageIvPlot-001	2026-11-11 19:16	seeded
 1793971631579_gvexo.messages.json	kerwind	hfeg0pkn002	54	spice_sim	case	EDA-Eval-DesignFlow-TimingMeasGen-001	2026-11-11 19:16	seeded
-1793843849886_hsizo.messages.json	ynbai	hfhds201	211	spice_sim	case	EDA-Eval-DesignFlow-FinesimIgnoreGen-001	2026-11-11 19:16	seeded
 1791602435253_66tx9.messages.json	ynbai	hfhds201	162	spice_sim	case	EDA-Eval-DesignFlow-LibCellListGen-001	2026-11-11 19:16	seeded
 1793347412273_nq8l2.messages.json	zjqiao	hfhds201	98	spice_sim	case	EDA-Eval-DesignFlow-HcellMissingFind-001	2026-11-11 19:16	seeded
 1789614314714_ctu99.messages.json	rongjiez	hfeg0pkn005	40	characterization	case	EDA-Eval-DesignFlow-ShrinkExtract-001	2026-11-11 19:16	seeded
 1791448400305_kwiij.messages.json	tzuo	hfhds201	49	spice_sim	case	EDA-Eval-DesignFlow-SimResultGrep-001	2026-11-11 19:16	seeded
 1789645120364_2n1bs.messages.json	zjqiao	hfhds201	41	spice_sim	case	EDA-Eval-DesignFlow-SetNetlistParam-001	2026-11-11 19:16	seeded
-1793867708362_0t51l.messages.json	tzuo	hfhds201	58	spice_sim	case	EDA-Eval-DesignFlow-NetlistViewSpiceldSwap-001	2026-11-11 19:16	seeded
 1792395143753_ai203.messages.json	yuankong	hfhds201	14	spice_sim	case	EDA-Eval-DesignFlow-BmatrixRerunGen-001	2026-11-11 19:16	seeded
 1793260818025_aw9d7.messages.json	dsgao	hfhds201	273	spice_sim	case	EDA-Eval-DesignFlow-TscodecompTbVerify-001	2026-11-11 19:16	seeded
 1789031505860_dntvx.messages.json	rongjiez	hfhds201	100	spice_sim	case	EDA-Eval-DesignFlow-Md0MeasureExtract-001	2026-11-11 19:16	seeded
 1794018867939_1qlnn.messages.json	ynbai	hfhds201	2736	characterization	case	EDA-Eval-DesignFlow-SimSavedCornerComplete-001	2026-11-11 19:16	seeded
 1793243267055_5hjg7.messages.json	zjqiao	hfhds201	612	spice_sim	case	EDA-Eval-DesignFlow-FinesimMatrixrunAgent-001	2026-11-11 19:16	seeded
-1789545001824_x0t2m.messages.json	ethanw	hfhds201	183	spice_sim	case	EDA-Eval-DesignFlow-LatchFFNetlistMatch-001	2026-11-11 19:16	seeded
 1791955659176_a63u6.messages.json	jianwang	hfhds201	40	characterization	case	EDA-Eval-DesignFlow-IddblkCsvDiff-001	2026-11-11 19:16	seeded
-1793260738350_ziy0b.messages.json	xuebaok	hfhds201	26	characterization	case	EDA-Eval-DesignFlow-VsimEnvFileKeep-001	2026-11-11 19:16	seeded
 1793878609339_lywbf.messages.json	dsgao	hfhds201	229	spice_sim	case	EDA-Eval-DesignFlow-SwitchTbGen-001	2026-11-11 19:16	seeded
 1793583394153_wnpwu.messages.json	dsgao	hfhds201	186	spice_sim	case	EDA-Eval-DesignFlow-TmVerifyTbGen-001	2026-11-11 19:16	seeded
 1793862569889_ezcgh.messages.json	mike	hfhds201	235	spice_sim	case	EDA-Eval-DesignFlow-CosimRunBlockOpt-001	2026-11-11 19:16	seeded
@@ -1140,9 +1136,7 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1792573855361_rbllu.messages.json	clarawu	hfeg0pkn004	279	spice_sim	case		2026-11-11 19:16	seeded
 1790229492123_m7hxu.messages.json	cynthiaz	hfeg0pkn005	409	spice_sim	case		2026-11-11 19:16	seeded
 1793611022749_w9aze.messages.json	yuankong	hfhds201	1227	spice_sim	case		2026-11-11 19:16	seeded
-1789644585939_3e35z.messages.json	zjqiao	hfhds201	48	spice_sim	case		2026-11-11 19:16	seeded
 1793865966161_rkdu8.messages.json	yuankong	hfhds201	85	spice_sim	case		2026-11-11 19:16	seeded
-1789699043373_y91i6.messages.json	ericw	hfhds201	34	characterization	case		2026-11-11 19:16	seeded
 1790042178493_mrmfn.messages.json	ericw	hfhds201	30	characterization	case		2026-11-11 19:16	seeded
 1794033409066_h2sri.messages.json	e0030760	hfeg0pkn004	86	spice_sim	case		2026-11-11 19:16	seeded
 1794023372474_3j03k.messages.json	tongfanl	hfhds201	328	spice_sim	case		2026-11-11 19:16	seeded
@@ -1158,7 +1152,6 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793623698314_n7w6c.messages.archive.json	yuyingc	hfeg0pkn001	37	spice_sim	case		2026-11-11 19:16	seeded
 1794133519350_pchuf.messages.json	harrywu	hfeg0pkn002	1005	spice_sim	case		2026-11-11 19:16	seeded
 1793667622298_rh3ek.messages.json	ypzheng	hfeg0pkn003	180	spice_sim	case		2026-11-11 19:16	seeded
-1794143556321_ejp6w.messages.json	yuchens	hfeg0pkn004	549	characterization	case		2026-11-11 19:16	seeded
 1792399658249_w4b6q.messages.json	e0029495	hfeg0pkn002	66	spice_sim	case		2026-11-11 19:16	seeded
 1791945700744_chg46.messages.json	reedchen	hfeg0pkn002	134	spice_sim	case		2026-11-11 19:16	seeded
 1790572773219_t5osd.messages.json	joeyl	hfeg0plg49	56	spice_sim	case		2026-11-11 19:16	seeded
@@ -1174,7 +1167,6 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1794221449278_bqqtk.messages.json	e0046686	hfeg0pkn001	7	characterization	case		2026-11-11 19:16	seeded
 1793880969509_yez2i.messages.json	declanzh	hfeg0pkn005	58	spice_sim	case		2026-11-11 19:16	seeded
 1792389569188_qry8l.messages.json	joeyl	hfeg0pkn004	34	spice_sim	case		2026-11-11 19:16	seeded
-1793754060632_nnyxr.messages.json	curryxu	hfeg0pkn001	12	spice_sim	case		2026-11-11 19:16	seeded
 1793078120457_omrsw.messages.json	zhililu	hfeg0pkn001	13	spice_sim	case		2026-11-11 19:16	seeded
 1793928990578_ltkg1.messages.json	curryxu	hfeg0pkn001	229	spice_sim	case		2026-11-11 19:16	seeded
 1793690145277_z7n9b.messages.json	curryxu	hfeg0pkn001	172	spice_sim	case		2026-11-11 19:16	seeded
@@ -1200,8 +1192,6 @@ peek:					parked		2026-11-10 23:22	peek: consultation verdi-fsdb-warning-paste
 1793771550244_nlf6u.messages.json	e0044979	hfeg0pkn001	146	spice_sim	case	EDA-Eval-DesignFlow-SramTailorPlanClassify-001	2026-11-11 19:16	seeded
 1792041709940_x5fd4.messages.json	t0002801	hfeg0plg49	119	characterization	case		2026-11-11 19:16	seeded
 1791786108086_vumhg.messages.json	e03179	hfeg0pkn002	274	characterization	case		2026-11-11 19:16	seeded
-1792399702966_lcbck.messages.json	e0029495	hfeg0pkn002	10	spice_sim	case		2026-11-11 19:16	seeded
-1793704886522_kdb8z.messages.json	owench	hfeg0pkn002	12	spice_sim	case		2026-11-11 19:16	seeded
 1788427145336_tk1gr.messages.json	e0044979	hfeg0pkn001	175	characterization	case	EDA-Eval-DesignFlow-AnalogOptPipeline-001	2026-11-11 19:16	seeded
 1792390745145_31s8i.messages.json	reedchen	hfeg0pkn002	37	spice_sim	case	EDA-Eval-DesignFlow-PostSimDeckBatch-001	2026-11-11 19:16	seeded
 1793370534751_zju83	yh1yang	hfeg0pkn002	24	spice_sim	parked		2026-11-11 19:25	reject first_user=00 续指垃圾
@@ -1419,7 +1409,7 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794460481537_xr6sg	yunfat	10.129.33.28	35	spice_sim	case	EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001	2026-11-13 23:39	
 1794470581748_fgq87	jiangbaol	hfeg0pkn004	147	spice_sim	parked		2026-11-13 23:45	dup of existing SlicerSweepFomOpt-001 (same jiangbaol DDR4 DFE slicer doubletail sweep); skipped r395
 1794474138453_xbl88					parked		2026-11-13 23:46	L1 Python GUI agent to drive FineSim submit (stimulus_manager.py interactive), not spice_sim produce-task; skipped r395
-1794531433701_x86s7	curryxu	hfeg0pkn002	109	spice_sim	case	EDA-Eval-DesignFlow-DutyWeightScale-001	2026-11-13 23:59	CROSS-SHARD COLLISION r505: shard D 同时独立造同 case DutyWeightScale-001 (commit bb3bd65c 23:58 直写 main jsonl+assets+ref, 字节级同 B 档内容). B 已撤回 _B.jsonl 重复行(302 保持), case 仍计 D 交付; B ledger mark case 保留(覆盖率分子).
+1794531433701_x86s7	curryxu	hfeg0pkn002	109	spice_sim	parked	EDA-Eval-DesignFlow-DutyWeightScale-001	2026-11-22 09:58	legitimately removed r505 dup with shard D
 1794383143913_xd3b4	e0018590	hfeg0pkn005	29	spice_sim	parked		2026-11-14 00:27	r506: trace file removed from host 10.129.2.14 (find/ls 证实 /home/e0018590/.cline/data/sessions/ 无 xd3b4/hie89, 11/13 scan stale); near-dup pair hie89 同 user/host/kw 也 stale
 1794486098997_xziue	joeyl	hfeg0pkn004	111	spice_sim	parked		2026-11-14 00:27	r506: P-004 repeat — joeyl WCK CML divider tuning (U0 'WCK整体链路...前三级cml没优化好' + HANDOFF_CML_divider_v3.md 同 r484 CmlDividerSweepTbGen-001 progenitor + r505 joeyl opamp/CML P-004 cluster). hspice:193/pdk:181/opamp:29. 217msgs/114user. Archetype 已饱和不重造
 1794559963037_mjde5	e0044131	hfeg0pkn003	641	spice_sim	parked		2026-11-14 01:01	context-paste SRAM building summary, first msg not a task
@@ -1555,7 +1545,7 @@ sessions.index					parked		2026-11-13 06:49	peek: non-B-dominant (netlist/drc/ae
 1794795007762_dvr37	thomasz	hfeg0pfn058	145	spice_sim	case	EDA-Eval-DesignFlow-FinesimConvCompare-001	2026-11-19 15:45	
 1794969925980_gcxee	clarawu	hfeg0pkn005	72	spice_sim	case	EDA-Eval-DesignFlow-ZqRonLibGen-001	2026-11-19 16:35	
 1794970521313_yulwm	xiaoyu1d	hfhds208	19	spice_sim	case	EDA-Eval-DesignFlow-FinesimNestedSweepGen-001	2026-11-19 17:40	
-1794796977777_uxbqp	e0039816	hfeg0plg70	24	spice_sim	case	EDA-Eval-DesignFlow-OcsaTr0AsymAnalyze-001	2026-11-19 18:44	
+1794796977777_uxbqp	e0039816	hfeg0plg70	24	spice_sim	parked	EDA-Eval-DesignFlow-OcsaTr0AsymAnalyze-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
 1794892256265_hk2q4	steveny	hfeg0pnd001	202	spice_sim	case	EDA-Eval-DesignFlow-AgentFriendlyCheck-001	2026-11-19 19:23	
 1795000059890_2xqbx	alan17z	hfeg0plg10	145	spice_sim	case	EDA-Eval-DesignFlow-ZqCalibDeckGen-001	2026-11-19 20:04	
 1794999063814_euwld	clarawu	hfeg0pkn005	89	spice_sim	case	EDA-Eval-DesignFlow-RonDvqSlopeExtract-001	2026-11-19 20:45	
@@ -1679,12 +1669,12 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794879740388_dfl7k.messages.json	gallopc	hfeg0plg80	47	spice_sim	case	EDA-Eval-DesignFlow-ZpowerGlitchStimGen-001	2026-11-21 16:10	
 1795070503467_lovic.messages.json	zqzhan	hfeg0plg94	33	spice_sim	case	EDA-Eval-DesignFlow-SimKbCompareGen-001	2026-11-21 16:38	
 1795051874981_6wqk0.messages.json	alexcui	hfeg0plg09	83	spice_sim	parked		2026-11-21 17:21	near-dup of VlogaNonoverlapClkGen-001 r962 (same user alexcui, same 3-phase non-overlap clk phi2=160ns/phi1=80ns/phi0=80ns + phi2E/phi0E rotating bus task)
-1795074929427_gpya9.messages.json	t0002607	hfeahpc505	163	spice_sim	case	EDA-Eval-DesignFlow-MissingRefDiagnose-001	2026-11-21 17:53	
+1795074929427_gpya9.messages.json	t0002607	hfeahpc505	163	spice_sim	parked	EDA-Eval-DesignFlow-MissingRefDiagnose-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
 1795052638809_t9l0r	e0046686	hfeg0plg68	158	spice_sim	case	EDA-Eval-DesignFlow-SpfParmHackSolidoCondGen-001	2026-11-21 18:37	
 1795051687187_yzpwv.messages.json	joeyl	hfeg0plg74	246	spice_sim	case	EDA-Eval-DesignFlow-UlvtDelvtoInject-001	2026-11-21 19:19	
 1794968173766_dap8v	ynbai	hfeg0pkn004	81	characterization	case	EDA-Eval-DesignFlow-BiasTrimSubcktFilter-001	2026-11-21 20:18	
 1795143772734_1yumf	shanliny	hfeg0plg107	111	spice_sim	case	EDA-Eval-DesignFlow-FinesimMosComparaFix-001	2026-11-21 20:45	
-1795225607049_26n1l	ryanren	hfeg0pfn120	251	spice_sim	case	EDA-Eval-DesignFlow-PumpcoreAgingDeckGen-001	2026-11-21 21:14	r980 pumpcore aging deck gen, 12 assertions, 3 neg, selftest OK
+1795225607049_26n1l	ryanren	hfeg0pfn120	251	spice_sim	parked	EDA-Eval-DesignFlow-PumpcoreAgingDeckGen-001	2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
 1795224598668_1ziwu.messages.json	hairuizh	hfeahpc502	119	spice_sim	case	EDA-Eval-DesignFlow-DelvtoCktWiringPatch-001	2026-11-21 21:39	
 1794893451446_nhj3c.messages.json	hairuizh	hfeahpc502	9	spice_sim	case	EDA-Eval-DesignFlow-HspiceAlterTrnPredictor-001	2026-11-21 22:29	
 1794475206189_lbrbv	willz	hfeahpc501	65	spice_sim	case	EDA-Eval-DesignFlow-SpDeckModelStripMigrate-001	2026-11-21 22:55	
