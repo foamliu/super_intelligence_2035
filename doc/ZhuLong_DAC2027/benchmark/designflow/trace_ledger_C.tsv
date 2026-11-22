@@ -1421,3 +1421,4 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1794814076685_v1jif	wenhanz	hfeg0plg69	178	layout_aether	case	EDA-Eval-DesignFlow-SdlMosFingerSplitSpec-001	2026-11-22 15:59	
 1795051020306_oepd2.messages.json	finchb	hfeg0pnd002	176	physical_verify	parked		2026-11-22 16:22	sandbox died before bitcell found; no definitive answer in trace
 1795157745763_d4uuz.messages.json	robin1l	hfeg0plg87	175	layout_aether	case	EDA-Eval-DesignFlow-ViaRectReplaceSpec-001	2026-11-22 16:31	
+1795138311750_tahks					case	EDA-Eval-DesignFlow-TestmodeImpactTrace-001	2026-11-22 18:18	
