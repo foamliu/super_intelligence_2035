@@ -3498,23 +3498,44 @@
   "carbon-design-system__carbon-4754": {
     "instance_id": "carbon-design-system__carbon-4754",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 668.4,
+    "rc": 0,
+    "model_patch_len": 18001,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "n-test.js`** — Added tests for `align=\"start\"` and the default `'end'` on the skeleton.\n- **Snapshots** — Updated Accordion, AccordionItem, and AccordionSkeleton snapshots.\n\nAll Accordion tests pass.\n",
+    "stderr_tail": " for accordion alignment\n[✓] Update Accordion story with align knob\n[✓] Add align prop to AccordionSkeleton for consistency\n[✓] Add/update tests for align prop\n[✓] Update snapshots and run tests\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4801": {
     "instance_id": "carbon-design-system__carbon-4801",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 93.7,
+    "rc": 0,
+    "model_patch_len": 1356,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "abel reuses the same text already being passed to the inner `Search` component's `labelText` prop, so it will respect any custom `labelText` provided by consumers and still default to \"Filter table\".\n",
+    "stderr_tail": "able/TableToolbarSearch.js\u001b[90m [offset=80, limit=25]\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/DataTable/__tests__/__snapshots__/TableToolbarSearch-test.js.snap\u001b[90m [offset=10, limit=15]\u001b[0m\n"
   },
   "carbon-design-system__carbon-4816": {
     "instance_id": "carbon-design-system__carbon-4816",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 739.0,
+    "rc": 0,
+    "model_patch_len": 4259,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "### Verification\n- The modified file passes Babel syntax validation.\n- The existing test assertions for `data-invalid` on the container and `invalidText` rendering remain unaffected by these changes.\n",
+    "stderr_tail": " codebase\n[✓] Identify and fix DAP accessibility violations for disabled state\n[✓] Identify and fix DAP accessibility violations for form validation state\n[✓] Verify fixes and run relevant tests\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4820": {
     "instance_id": "carbon-design-system__carbon-4820",

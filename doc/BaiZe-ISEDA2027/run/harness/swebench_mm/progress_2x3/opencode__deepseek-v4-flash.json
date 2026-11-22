@@ -5509,9 +5509,16 @@
   "openlayers__openlayers-11545": {
     "instance_id": "openlayers__openlayers-11545",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 178.9,
+    "rc": 0,
+    "model_patch_len": 1232,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " if not already there\n\nThe fix mirrors what `CanvasLayerRenderer.useContainer()` does at `src/ol/renderer/canvas/Layer.js:114-115` — creating a `<div>` with `className` set to the layer's class name.\n",
+    "stderr_tail": "A complete log of this run can be found in: /home/app.e0031982/.npm/_logs/2026-11-22T05_18_23_471Z-debug-0.log\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/ol/renderer/webgl/PointsLayer.js\u001b[90m [limit=45, offset=412]\u001b[0m\n"
   },
   "openlayers__openlayers-11649": {
     "instance_id": "openlayers__openlayers-11649",
@@ -5542,30 +5549,58 @@
   "openlayers__openlayers-12172": {
     "instance_id": "openlayers__openlayers-12172",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 716.5,
+    "rc": 0,
+    "model_patch_len": 3133,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "lone options.\n\n**Test update:** Updated the displacement test to verify origin is unaffected by displacement, and added tests verifying `getAnchor()` accounts for displacement and clone preserves it.\n",
+    "stderr_tail": "ring\n[✓] Identify the bug: why icons with displacement get clipped\n[✓] Implement the fix: move displacement from getOrigin() to getAnchor() in Icon.js\n[✓] Verify the fix with tests and typecheck\n\u001b[0m\n"
   },
   "openlayers__openlayers-12194": {
     "instance_id": "openlayers__openlayers-12194",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 112.7,
+    "rc": 0,
+    "model_patch_len": 1933,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ap()`, and `lineDashOffset` is also multiplied. This matches the behavior in `Builder.js` (line 508-509) where `applyPixelRatio(state.lineDash)` and `state.lineDashOffset * this.pixelRatio` are used.\n",
+    "stderr_tail": "[0mnpx tsc --pretty 2>&1 | head -30\n(no output)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Find where lineDash is applied in CanvasImmediate renderer\n[✓] Fix lineDash to be scaled by pixelRatio\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-12373": {
     "instance_id": "openlayers__openlayers-12373",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 270.5,
+    "rc": 0,
+    "model_patch_len": 2790,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "the `XYZ` parent so the `{-y}` template gets properly compiled into a `tileUrlFunction`, then uses it in `getTile` to display the actual URL that would be fetched — showing the inverted Y coordinate.\n",
+    "stderr_tail": "nfig/tsconfig-build.json'. Specified 'include' paths were '[\"../build/ol/src/**/*.js\"]' and 'exclude' paths were '[]'.\n\n\nFound 1 error.\n\u001b[0m\n\u001b[0m→ \u001b[0mRead package.json\u001b[90m [limit=15, offset=29]\u001b[0m\n"
   },
   "openlayers__openlayers-12393": {
     "instance_id": "openlayers__openlayers-12393",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 51.8,
+    "rc": 0,
+    "model_patch_len": 654,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "il` with `Math.round` in `src/ol/source/ImageStatic.js:139` to prevent floating point rounding errors from unnecessarily stretching a static image when it's already a near-perfect fit for its extent.\n",
+    "stderr_tail": "ates a strictly increasing sequence\n\n  ol/vec/mat4.js\n    create()\n      ✓ returns the expected matrix\n    fromTransform()\n      ✓ sets the expected transform on the matrix\n\n\n  1713 passing (1s)\n\u001b[0m\n"
   },
   "openlayers__openlayers-12467": {
     "instance_id": "openlayers__openlayers-12467",
