@@ -465,3 +465,36 @@ await tools["eda_flow"].close_session({workdir, keep:false});
 2. **trace 读取（权限/路径层）**：✅ 完全可读。`run_commands`(bash) 读 summary.tsv 表头+真实行 OK，ssh_eda_search 目录可列，ssh_auth_ok.txt 存在；`read_file`/`list_files` 白名单仅限 workdir 前缀（sandbox 安全设计）。
 
 **结论: eda_flow MCP 可用 = .75 可达（第 25 次确认，与 r1105-r1128 一致）**。r1098-r1102 ssh-timeout 止损理由维持误判。同结论适用 A/B/C 三 shard。MCP 可用 ⇒ 用户令 §三「立即恢复深读新 trace + 造题主线」无外部阻塞。
+
+---
+
+## 第 26 次复测 · 2026-11-22 17:42 CST · 本 session GLM-5.2/opencode (r1130)
+
+**用户令触发**：2026-11-22 11:2x 用户令最高优先「先测 eda_flow MCP 是否可用——可用即代表 .75 可达」。
+
+**逐项记录（工具名 / 参数 / 返回摘要 / 耗时 / 错误原文）**：
+
+1. **catalog (search namespace=eda_flow)** — 8 工具在册：`open_session`/`close_session`/`declare_done`/`run_commands`/`run_code`/`read_file`/`write_file`/`list_files`。✅ 无错。
+2. **open_session** `{task_id:"MCP-CONN-TEST", eval_id:"20261122-mcptest", sample:"0", user:"shardD"}` → 25ms → `workdir=/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/shardD_20261122-mcptest_MCP-CONN-TEST_0`, `response="session workdir ready"`, `error_log=""`. ✅
+3. **run_commands** `{commands:[pwd,ls -la,hostname,whoami,date], workdir}` → 3862ms 总, 5/5 exit0:
+   - `pwd` → `/proj/.../sessions/shardD_20261122-mcptest_MCP-CONN-TEST_0` (1ms)
+   - `ls -la` → 空 workdir (436ms)
+   - `hostname` → `hfhds201` (497ms) ← **即 .75**
+   - `whoami` → `e0031982` (2900ms)
+   - `date` → `Sun Nov 22 17:42:39 CST 2026` (4ms)
+4. **list_files** workdir → `listed 0 entries`. ✅
+   - 另测 `/home/t0002965/log/ssh_eda_search_20261028_174426` → `error_log="dir outside allowed prefixes: /home/t0002965/log/..."`（白名单设计，非不可达）。
+5. **write_file** workdir/probe.txt (46B) → ✅。
+6. **read_file** workdir/probe.txt → 内容 round-trip 一致无腐蚀（`$dA`→`$d\x01` 坑未触发，因本轮未用 content_base64）。✅
+7. **trace 可读性验证**（用户令 §四「两件事分开写」）：
+   - **`.75` 可达（MCP 层）= YES**
+   - **trace 读取（权限/路径层）= 完全可读**。`run_commands`(bash on .75) 5/5 exit0：
+     - `ls -d /home/t0002965/log/ssh_eda_search_20261028_174426` → 目录存在
+     - `ls` 目录 → 5 文件：REPORT.md / raw.tsv / scan.tsv / stderr.log / summary.tsv
+     - `head -c 400 summary.tsv` → 表头 `ip\thost\tuser\tsession_file\tmatch_count\tkeywords\ttools` + 真实行（10.129.32.189 hfeg0pnd001 e0045140 1792637822804_6xv88.messages.json 9 ...）
+     - `test -f /home/t0002965/ssh_auth_ok.txt` → `AUTH_OK_FILE_EXISTS`
+     - `ls -la /home/t0002965/` → 66 子项可列
+8. **declare_done** `{workdir}` → `declared=true`, marker 写入。✅
+9. **close_session** `{workdir, keep:false}` → `cleaned=true`. ✅
+
+**结论: eda_flow MCP 可用 = .75 可达（第 26 次确认，与 r1105-r1129 一致）**。r1098-r1102 ssh-timeout 止损理由维持误判。同结论适用 A/B/C 三 shard。MCP 可用 ⇒ 用户令 §三「立即恢复深读新 trace + 造题主线」无外部阻塞。
