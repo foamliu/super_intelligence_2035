@@ -50,12 +50,12 @@ code{background:#f0f0f0;padding:1px 3px;border-radius:2px;font-size:10.5px}
 <p><b>F = 前 350k 用 S1 blend，之后在同一 run 内切到 S2 blend。</b></p>
 
 <p><b>核查 1 — GPTDataset 能否热更新 blend 权重？</b><br>
-→ <b>不能。</b><code>BlendedDataset.__init__</code>（<code>blended_dataset.py:65</code>）在构造时调用 <code>self._build_indices()</code>（<code>blended_dataset.py:97</code>）一次性预计算 <code>dataset_index</code> 与 <code>dataset_sample_index</code>。权重 <code>self.weights</code>（<code>blended_dataset.py:82</code>）被烘焙进 <code>unique_description_hash</code>（<code>blended_dataset.py:95</code>，MD5 of JSON 含 weights），决定 .npy 缓存文件路径。<b>类中无 setter、无 update 方法</b>——改权重 = 新 hash = 新索引文件 = 必须构造新对象。<code>__getitem__</code>（<code>blended_dataset.py:112</code>）只读预计算数组，不接受运行时权重变更。</p>
+→ <b>不能。</b><code>BlendedDataset.__init__</code>（<code>blended_dataset.py:41</code>）在构造时调用 <code>self._build_indices()</code>（<code>blended_dataset.py:86</code>）一次性预计算 <code>dataset_index</code> 与 <code>dataset_sample_index</code>。权重 <code>self.weights</code>（<code>blended_dataset.py:68</code>）被烘焙进 <code>unique_description_hash</code>（<code>blended_dataset.py:82</code>，MD5 of JSON 含 weights），决定 .npy 缓存文件路径。<b>类中无 setter、无 update 方法</b>——改权重 = 新 hash = 新索引文件 = 必须构造新对象。<code>__getitem__</code>（<code>blended_dataset.py:97</code>）只读预计算数组，不接受运行时权重变更。</p>
 
 <p><b>核查 2 — 重启 dataloader 时能否保留 shuffle_index / sample_idx 游标？</b><br>
 → <b>不能（对不同 blend）。</b><code>MegatronPretrainingRandomSampler</code>（<code>samplers.py:222</code>）用 <code>consumed_samples</code>（<code>samplers.py:235</code>）计算 <code>epoch = consumed_samples // active_total_samples</code>（<code>samplers.py:263</code>）和偏移 <code>current_epoch_samples = consumed_samples % active_total_samples</code>（<code>samplers.py:264</code>）。<br>
-• 若 blend 变了：<code>total_samples</code> 变（<code>samplers.py:232</code>）→ epoch 计算错位 → 游标无法对应到新 blend 的正确位置。<br>
-• 若 <code>consumed_train_samples</code> 不重置（<code>loaders.py:185</code> 传给 sampler）：sampler 在新 blend 索引空间跳过旧消耗量 → <b>浪费 S2 数据且不防重叠</b>。<br>
+• 若 blend 变了：<code>total_samples</code> 变（<code>samplers.py:234</code>）→ epoch 计算错位 → 游标无法对应到新 blend 的正确位置。<br>
+• 若 <code>consumed_train_samples</code> 不重置（<code>loaders.py:191</code> 传给 sampler）：sampler 在新 blend 索引空间跳过旧消耗量 → <b>浪费 S2 数据且不防重叠</b>。<br>
 • 若重置为 0：从新 blend 排列起点开始 → 共享源同种子 → <b>83-100% 重叠</b>（与「重开 run」无异）。<br>
 • <code>GPTDataset._build_document_sample_shuffle_indices</code>（<code>gpt_dataset.py:381</code>）生成的 <code>shuffle_index</code> 是<b>静态预计算排列</b>，缓存于 .npy；不同 <code>num_samples</code>（因 weight 变）→ 不同 hash → 不同排列 → 游标无法跨 blend 映射。</p>
 
@@ -117,7 +117,7 @@ code{background:#f0f0f0;padding:1px 3px;border-radius:2px;font-size:10.5px}
 </div>
 
 <div class="ft">
-BaiZe Data Agent · 2026-11-22 · v4（≤15KB）· v3 保留不删 · 代码证据：Megatron-LM py310 site-packages 实测（blended_dataset.py:65-112 / gpt_dataset.py:381 / samplers.py:222-264 / optimizer_param_scheduler.py:259-266 / loaders.py:158-185）
+BaiZe Data Agent · 2026-11-22 · v4（≤15KB）· v3 保留不删 · 代码证据：Megatron-LM py310 site-packages 实测（blended_dataset.py:41-110 / gpt_dataset.py:381 / samplers.py:222-265 / optimizer_param_scheduler.py:259-273 / loaders.py:155-202）
 </div>
 </body>
 </html>
