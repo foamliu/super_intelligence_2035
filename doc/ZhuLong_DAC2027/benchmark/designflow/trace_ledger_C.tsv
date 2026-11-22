@@ -1422,3 +1422,4 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1795051020306_oepd2.messages.json	finchb	hfeg0pnd002	176	physical_verify	parked		2026-11-22 16:22	sandbox died before bitcell found; no definitive answer in trace
 1795157745763_d4uuz.messages.json	robin1l	hfeg0plg87	175	layout_aether	case	EDA-Eval-DesignFlow-ViaRectReplaceSpec-001	2026-11-22 16:31	
 1795138311750_tahks					case	EDA-Eval-DesignFlow-TestmodeImpactTrace-001	2026-11-22 18:18	
+1795245585227_iwrr4	xydou	hfeg0pkn003	483	physical_verify/calibre_drc_ut_check	case	EDA-Eval-DesignFlow-CalibreDRCUTIsolationCheck-001	2026-11-22 18:48	
