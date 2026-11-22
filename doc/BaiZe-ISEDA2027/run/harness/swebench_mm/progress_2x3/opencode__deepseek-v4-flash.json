@@ -6272,16 +6272,30 @@
   "openlayers__openlayers-15484": {
     "instance_id": "openlayers__openlayers-15484",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 602.0,
+    "rc": 0,
+    "model_patch_len": 4139,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "when `wrapX: false` (GeoTIFF default), the source extent is always fully intersected with `maxSourceExtent`, properly cropping the reprojected output to the tile grid extent regardless of projection.\n",
+    "stderr_tail": "/reproj/tile.test.js\u001b[90m [limit=120]\u001b[0m\n\u001b[0m\n\u001b[0m$ \u001b[0mnpm run typecheck 2>&1 | grep -E \"(reproj/DataTile|reproj/Tile|source/DataTile|source/TileImage|test.*tile\\.test)\" | head -20\n(no output)\n\u001b[0m\n"
   },
   "openlayers__openlayers-15614": {
     "instance_id": "openlayers__openlayers-15614",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1040.6,
+    "rc": 0,
+    "model_patch_len": 1079,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "to pool) *before* the deferred ZIndexContexts were played back. `ExecutorGroup.renderedContext_` still referenced the destroyed canvas, so deferred content was drawn to a dead canvas and disappeared.\n",
+    "stderr_tail": "tate);\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore how opacity and declutter interact in the codebase\n[✓] Identify the root cause of the bug\n[✓] Implement the fix in VectorLayer renderer\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-15683": {
     "instance_id": "openlayers__openlayers-15683",

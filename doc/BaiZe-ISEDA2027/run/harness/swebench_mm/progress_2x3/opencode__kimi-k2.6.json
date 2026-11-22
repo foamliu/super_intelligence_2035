@@ -4281,16 +4281,30 @@
   "carbon-design-system__carbon-9189": {
     "instance_id": "carbon-design-system__carbon-9189",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1116.7,
+    "rc": 0,
+    "model_patch_len": 2554,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "k class.\n\n4. **`packages/react/src/internal/__tests__/ComponentToggle-test.js`** (new)\n   - Added a test verifying that `createComponentToggle` sets `displayName` correctly on the returned component.\n",
+    "stderr_tail": "rumbItem-test.js\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore Breadcrumb and BreadcrumbItem components\n[✓] Find the createComponentToggle usage and displayName issue\n[✓] Implement the fix\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-9402": {
     "instance_id": "carbon-design-system__carbon-9402",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 975.4,
+    "rc": 0,
+    "model_patch_len": 1616,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "use `stopPropagation()` is no longer needed, the `mouseup` event bubbles up to the window as expected, allowing other open ComboBoxes and Dropdowns to detect the outside click and dismiss themselves.\n",
+    "stderr_tail": "lasses}>\n+          <div className={wrapperClasses} ref={rootProps.ref}>\n             {titleText && (\n               <label className={titleClasses} {...labelProps}>\n                 {titleText}\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-9700": {
     "instance_id": "carbon-design-system__carbon-9700",
