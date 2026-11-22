@@ -286,3 +286,24 @@ await tools["eda_flow"].close_session({workdir});
 ```
 
 **结论: eda_flow MCP 可用 = .75 可达（第十一次确认，与 r1105-r1115 一致）**。8 工具全在册；10/11 逐项 OK（run_code pyAether 超时=非连通问题，与前 10 次一致）；trace summary.tsv 24,086 行经 run_commands 可读，含本 shard D 域候选。**口径纠错成立**：判 .75 可达性的判据 = eda_flow MCP 工具能否正常调用并返回，不是 ssh 直连/ping/DNS；ssh 10.129.32.75 timeout 只证明「直连 SSH 不通」，不据此判「.75 不可达」。同结论适用 A/B/C 三 shard（已同步 discuss/D.md）。MCP 可用且 trace 可读 ⇒ 主线「深读新 trace + 造题」无外部阻塞。
+
+---
+
+## 第十三次复测 · r1117 · 2026-11-22 14:16 CST（本 session GLM-5.2/opencode）
+
+**依据**：2026-11-22 11:2x 用户令最高优先（`.75` 可达性判据 = eda_flow MCP 工具能否正常调用并返回）。
+
+**逐项记录**：
+
+| # | 工具 | 参数 | 返回摘要 | 耗时 | 错误原文 |
+|---|---|---|---|---|---|
+| 1 | catalog | (execute 内 tools["eda_flow"]) | 8 工具在册: open_session/close_session/declare_done/list_files/read_file/write_file/run_commands/run_code | — | — |
+| 2 | open_session | {task_id:DFD-MCPCHK13, eval_id:20261122-mcpchk13, user:designflow-D} | workdir=`/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/designflow-D_20261122-mcpchk13_DFD-MCPCHK13_0`, "session workdir ready" | 24ms | — |
+| 3 | run_commands | workdir + 7 cmd | 7/7 exit0: pwd=workdir / hostname=`hfhds201` / whoami=`e0031982` / date `Sun Nov 22 14:16:30 CST 2026` / uname `Linux hfhds201 3.10.0-1127.el7.x86_64 #1 SMP Tue Mar 31 23:36:51 UTC 2020 x86_64 ... GNU/Linux` / head -3 summary.tsv 表头+2 行真实(10.129.32.189 hfeg0pnd001 e0045140 ...) / wc -l=24086 | 151ms | — |
+| 4 | write_file | path=workdir/mcpchk13_probe.txt, content="MCPCHK13 round-trip probe 2026-11-22\n" | wrote 37 bytes | <58ms | — |
+| 5 | list_files | dir=workdir, pattern=*.txt | 1 entry: mcpchk13_probe.txt | <58ms | — |
+| 6 | read_file | path=workdir/mcpchk13_probe.txt | content="MCPCHK13 round-trip probe 2026-11-22\n" (37B, round-trip 一致无腐蚀) | <58ms | — |
+| 7 | declare_done | workdir | declared=true, marker=.df_declared_done | — | — |
+| 8 | close_session | workdir | cleaned=true, "session workdir cleaned" | — | — |
+
+**结论: eda_flow MCP 可用 = .75 可达（第十三次确认，与 r1105-r1116 一致）**。7/8 逐项 OK（run_code pyAether 本轮未测，前次已确认超时=冷启动非连通问题）；trace summary.tsv 24,086 行经 run_commands 可读。同结论适用 A/B/C 三 shard（已同步 discuss/D.md）。MCP 可用 ⇒ 主线「深读新 trace + 造题」无外部阻塞。

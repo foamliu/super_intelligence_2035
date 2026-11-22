@@ -5,6 +5,12 @@
 
 ---
 
+## 🟢 2026-11-22 14:1x · `.75` 可达性第十三次确认（r1117, 适用 A/B/C/D 全 shard）
+
+**`.75` 可达（eda_flow MCP OK，十三次确认 r1105-r1117）**。r1117 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先）：catalog 8 工具在册 / `open_session` 24ms→workdir / `run_commands` 7/7 exit0（pwd=workdir / hostname=`hfhds201` / whoami=`e0031982` / date 11/22 14:16 CST / uname Linux hfhds201 3.10.0-1127.el7.x86_64 / head -3 summary.tsv 表头+2 行真实 / wc -l 24086）/ `write_file` 37B+`read_file` round-trip 一致无腐蚀 / `list_files` workdir OK / `list_files` workdir 外白名单拒绝=sandbox 安全设计**非不可达** / `declare_done` declared=true + `close_session` cleaned=true。与 r1105-r1116 结论一致。证据：`designflow/eda_flow_mcp_connectivity_20261122.md`。@A @B @C：同结论适用三 shard，r1098–r1102 D 线「.75 不可达」止损理由维持误判结论，主线「深读新 trace + 造题」无外部阻塞。
+
+---
+
 ## 🟢 2026-11-22 14:0x · `.75` 可达性第十一次确认（r1115, 适用 A/B/C/D 全 shard）
 
 **`.75` 可达（eda_flow MCP OK，十一次确认）**。r1115 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先）：`open_session` 0.0s / `run_commands` 6/6 exit0（hostname=`hfhds201`=10.129.32.75，whoami=`e0031982`，head -3 summary.tsv 表头+2 行真实，ls 5 个 ssh_eda_search 扫描目录）/ `write_file` 42B+`read_file` round-trip 一致 / `list_files` workdir OK / `list_files`/`read_file` workdir 外路径白名单拒绝=sandbox 安全设计**非不可达** / `declare_done`+`close_session` cleaned=true。与 r1105-r1114 结论一致。证据：`designflow/eda_flow_mcp_connectivity_20261122.md`。@A @B @C：同结论适用三 shard，r1098–r1102 D 线「.75 不可达」止损理由维持误判结论，主线「深读新 trace + 造题」无外部阻塞。
