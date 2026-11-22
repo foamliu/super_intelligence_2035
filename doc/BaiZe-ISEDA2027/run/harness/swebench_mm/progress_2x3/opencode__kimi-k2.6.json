@@ -3358,23 +3358,44 @@
   "carbon-design-system__carbon-4273": {
     "instance_id": "carbon-design-system__carbon-4273",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 337.7,
+    "rc": 0,
+    "model_patch_len": 4009,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "tern already used by `Toggle.Skeleton` in the codebase (e.g., `'Toggle is loading'`), ensuring screen readers and accessibility tools like DAP can properly identify the skeleton placeholder controls.\n",
+    "stderr_tail": "m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Add aria-label to AccordionSkeleton buttons\n[✓] Add aria-label to ButtonSkeleton elements\n[✓] Update snapshot tests for AccordionSkeleton\n[✓] Run tests to verify fixes\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4286": {
     "instance_id": "carbon-design-system__carbon-4286",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 519.7,
+    "rc": 0,
+    "model_patch_len": 945,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " used elsewhere in the codebase (e.g., `Button.js` uses `aria-hidden=\"true\"` for its decorative icons). The existing tests do not need updating as they don't assert on these specific ARIA attributes.\n",
+    "stderr_tail": "    \"carbon-icons\": \"^7.0.7\",\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Investigate DAP violation in Search component\n[✓] Fix the DAP violation in Search.js\n[✓] Update tests if needed\n[✓] Run tests to verify fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4307": {
     "instance_id": "carbon-design-system__carbon-4307",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 664.1,
+    "rc": 0,
+    "model_patch_len": 5493,
+    "n_images": 5,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "es (Node 20 vs. the project's expected Node 10.x, missing `enzyme-adapter-react-16`, etc.) that are unrelated to these changes. The modified test assertion was updated to match the new DOM structure.\n",
+    "stderr_tail": " and inspect skeleton component files for Checkbox, NumberInput, Select, Slider, TextArea, TextInput\n[✓] Fix missing label DAP violations in each skeleton component\n[✓] Run tests to verify fixes\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4347": {
     "instance_id": "carbon-design-system__carbon-4347",

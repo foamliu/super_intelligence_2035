@@ -4451,9 +4451,16 @@
   "eslint__eslint-8120": {
     "instance_id": "eslint__eslint-8120",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1423.2,
+    "rc": 0,
+    "model_patch_len": 5496,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "rors in `includeRestPropertyParser` tests that use `ecmaVersion: 2017` with experimental parser which doesn't support `...` syntax)\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "eslint__eslint-8850": {
     "instance_id": "eslint__eslint-8850",
