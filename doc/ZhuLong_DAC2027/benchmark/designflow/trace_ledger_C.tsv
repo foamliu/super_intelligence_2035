@@ -1438,3 +1438,4 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1795159951898_jaay4.messages.json	chengk	hfeg0pkn003	305	layout_aether	case	EDA-Eval-DesignFlow-MdPyBlockCompileCjkAudit-001	2026-11-23 01:08	
 1795071241845_e1gmg	e0049049	hfeg0pkn001	399	layout_virtuoso	parked		2026-11-23 01:31	deepread: pure Virtuoso startup troubleshooting (env/licenset/OA platform/libcrypto/CDS.log lock). No Python scripting — 138 run_approved_command + 29 editor (env config edits), 0 .py writes. Not a clean offline-Python subproblem. Skip.
 1794918791243_xgund	e0046686	hfeg0plg68	201	physical_verify	case	EDA-Eval-DesignFlow-SolidoPvtBlockMatchFix-001	2026-11-23 01:44	
+1794732338684_jju5b.messages.json	jzeng	hfeg0pkn002	180	physical_verify	case	EDA-Eval-DesignFlow-ViaPadGeom-001	2026-11-23 02:51	
