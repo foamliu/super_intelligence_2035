@@ -1,29 +1,39 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
-> 🔴 **2026-11-21 用户令（v3）— pro / lite 各补 2 轮凑成 3-run；mini 重跑 3 轮，熔断则等一段时间后降并发 · 最高优先 · 覆盖 standby**
+> 🔴 **2026-11-22 18:1x 用户令 — doubao pro/lite/mini 收口后，追加「强模型 3-run」：优先 `deepseek-v4-pro-cloud`，不可用则 `glm-5.2` · 最高优先 · 覆盖 standby**
 
-> **用户原话**：「pro/lite 再跑2轮组成 3-run。mini跑3轮，如果熔断则过一段时间后降低并发」
->
-> 接续 v2（2026-11-20 已完成 pro/mini/lite 各 1 轮）。**只改轮次与并发**，其余口径全部继承 v2（`eval/cases_lite.txt` 500 题、Pass@1、`thinking low`、`timeout 2400`、cline 3.0.51 + PreToolUse hook、登录 shell + PATH + `https_proxy`）。
+> **用户原话**：「zhulong 跑完 doubao pro/lite/mini 后，换一个强模型，比如 deepseek-v4-pro 或者 glm-5.2 测 3-run 看看」
 
-**一、起点（勿重跑已干净的）**：pro r1 = **9.32%**(45/483) batch `run_batch_20261120_170940` ✅clean 计入3-run；mini r1 = 0.0%，**[FUSE] Token 额度耗尽触发熔断**（2 次）❌作废不计入；lite r1 = **3.85%**(19/493) batch `run_batch_20261121_012542` ✅clean 计入3-run。
+**一、起点**：v3 已收口（pro **10.18±1.45%** / lite **4.68±0.95%** / mini **2.38±0.23%**，7 batch 全完）。本令为**新增第四组**，🚫 不改前三组任何数字与 batch。
 
-**二、跑 7 个 batch（严格串行，不得并发）**：pro r2 → pro r3 → lite r2 → lite r3 → mini r2/r3/r4。
-- pro：`bash eval/run_batch.sh --workers 16`（默认基座即 pro，🚫 不加 `--model`）
-- lite：改 `providers.json` apiKey→lite key + model→`doubao-seed-2.0-lite-cloud`，再同上命令
-- mini：改 providers.json 到 mini key + model，再跑（并发见三）
-- 每轮结束把 providers.json 改回 pro 默认态防串台；每轮独立 batch 目录 + 独立日志，🚫 复用上轮 `status.jsonl`。
+**二、模型选择与降级（先 canary，后开跑）**
+1. 首选 **`deepseek-v4-pro-cloud`** @ `http://agi-gateway.cxmt.com/cloud/v1`（历史实测 HTTP 200；key 末 8 位 `8aa0785e`）。🚫 不用 `/v1` 下的 `deepseek-v4-pro-fp4`（历史 403/429）。
+2. 开跑前 **canary 两证**：① `curl /v1/models` 返回含目标 model id；② 单题真跑（1 case：非空输出、非 null-content、http/pass 正常）。两证齐 ⇒ 开跑；任一失败（404/403/429/已下线）⇒ **切 `glm-5.2`** @ 同 baseUrl（历史 key 末 8 位 `88ea2f23`；403 再试 `c2759d74`），并在报告里写清「pro-cloud 不可用的具体证据（HTTP 码 + 返回原文）」。
+3. **身份四证**（写进报告与 MEMORY）：`requested model == curl /v1/models 的 served id`、baseUrl、key 末 8 位、`maxTokens=16384` + `reasoning.enabled=false`。
 
-**三、mini 专规（FUSE → 等待 → 降并发）**：
-1. 起跑用 `--workers 8`（不是 16）；若 `--workers` 不被支持就改 config 并发上限并写明改了哪里。
-2. 日志出现 `[FUSE]` / `Token 额度耗尽` / `触发熔断` 任一 ⇒ 本轮判 **infra-contaminated**，作废，🚫 不得进 3-run。
-3. 作废后**等 ≥30 分钟**（同 key 额度恢复），**并发减半**重试（8→4→2），每次新 batch 目录。
-4. 降到 `--workers 2` 仍熔断 ⇒ 停，记 `mini BLOCKED(BLOCKED: 单 key token 额度不足以跑完 Lite 500)` 并汇报；🚫 禁止拼接/补跑拼出假 3-run。
-5. 每轮报告写 `infra_clean=<yes/no>`：依据 = `grep -c 'FUSE\|额度耗尽\|熔断'` 日志命中 = 0 且 `no submit.zip produced` 占比 < 5%。
+**三、冻结口径（与 doubao 三组逐字一致，不许改）**
+- `eval/cases_lite.txt` **500 题** / Pass@1 / `thinking low` / `timeout 2400` / cline 3.0.51 + PreToolUse hook / 登录 shell + PATH + `https_proxy` / `--workers 16`。
+- 若出现 `[FUSE]` / `额度耗尽` / `熔断` ⇒ 按 v3 专规：本轮作废、等 ≥30 min、并发减半（16→8→4→2），🚫 不拼接。
+- 🚫 不改题/图/`check.py`/判分口径；🚫 不加 `--skip-done` 等自创参数；🚫 复用上轮 `status.jsonl`。
 
-**四、交付**：① `reports/report_edafb_lite500_doubao_{pro,mini,lite}_eval_zh.html` 同模型多轮并入同一份 + 逐轮表；② 三张 3-run 汇总（`[r1,r2,r3] / mean±std / decided 分母 / infra_clean`）；③ MEMORY 首行改 `pro 3-run=x.xx%±y.yy / lite 3-run=… / mini 3-run=…（K 轮作废）`；④ 跑中写 `WAITING: 1`（loop 转 30min 轮询省 token），收口后回 `WAITING: 0`。
+**四、执行**：**3 轮严格串行**（r1→r2→r3），每轮独立 batch 目录 + 独立日志；跑前 `cp providers.json providers.json.pro_default.bak`，每轮结束**立即还原 pro 默认态**防串台；每轮完成即写一行 3-run 记录（勿等到最后）。
 
-**五、纪律**：🚫 不改题/图/`check.py`/判分口径；🚫 不引用已作废的 `run_batch_20261119_225802` 2.37%；🚫 **infra 污染轮绝不计入 mean±std**（作废轮可留证但须标 `VOID / infra-contaminated`）；✅ 跑前自检六件照旧（providers.json 三项 / `command -v cline` / `https_proxy` / 登录 shell / `wc -l eval/cases_lite.txt`≥500 / `pgrep -fa run_batch.sh` 无并发）；✅ 论文宏不动（`\LiteSet`/`\Neval`/`\MzeroPass`/`\MzeroAnchor=10.1%`/`\ScriptPass`），3-run 出来再议是否更新锚点。
+**五、交付**
+1. 报告 `reports/report_edafb_lite500_{dsv4pro|glm52}_eval_zh.html`（中文单文件、内联 CSS、**0 外链 0 script**；同模型多轮并入一份 + 逐轮表 + `infra_clean`）。
+2. 3-run 汇总：`[r1,r2,r3] / mean±std / decided 分母 / infra_clean`；`grep -c 'FUSE\|额度耗尽\|熔断'` 必须为 **0** 才计入。
+3. **与 doubao-pro（10.18±1.45%）做配对检验**：逐题 pass/fail 对齐算 McNemar（b/c）并报 p；不显著就写「不显著」，🚫 不写「趋势向好」。
+4. `MEMORY_ZHULONG.md` 首行追加：「强模型 3-run = x.xx±y.yy%（模型名 + 是否 canary 降级）」。
+5. 失败/额度不足 ⇒ 记 `BLOCKED` + 证据，🚫 不拼假 3-run。
+
+**六、纪律与边界**：🚫 不改论文宏与 18 处 `\TBD`（3-run 出来先报数，等用户裁定回填）；🚫 不动 `\LiteSet` / `\Neval` / `\MzeroPass` / `\MzeroAnchor` / `\ScriptPass`；🚫 不引用已作废的 `run_batch_20261119_225802` 2.37%；VOID/infra 污染轮可留证但标 VOID，**永不计入** mean±std。
+
+**七、时间**：doubao 已收口 ⇒ **立即可起跑**；每轮约 2.5–3 h ⇒ 3 轮 ~8–9 h（今晚起跑、明早收口）。跑中 `WAITING: 1`（30 min 轮询省 token），收口回 `WAITING: 0`。
+
+---
+
+
+> 📦 **§用户令 2026-11-21（v3）✅ 已交付**：pro/lite 各补 2 轮、mini 重跑 3 轮，7 batch 严格串行；口径全继承 v2（Lite 500 / Pass@1 / thinking low / timeout 2400 / cline 3.0.51 + PreToolUse hook / 登录 shell+PATH+https_proxy）。
+> 结果：**pro 3-run = 10.18±1.45%**、**lite 3-run = 4.68±0.95%**（r2 VOID）、**mini 3-run = 2.38±0.23%**（r1 FUSE VOID）。VOID/infra 污染轮永不计入 mean±std，🚫 不拼假 3-run，🚫 不引用 `run_batch_20261119_225802` 的 2.37%。
 
 ---
 
