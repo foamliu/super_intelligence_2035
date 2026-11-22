@@ -4029,16 +4029,30 @@
   "carbon-design-system__carbon-7687": {
     "instance_id": "carbon-design-system__carbon-7687",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 457.2,
+    "rc": 0,
+    "model_patch_len": 11778,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "snapshot test passes\n\nThe change swaps the triangular caret arrows for chevron-style arrows in the number input increment/decrement controls, matching the final design decision from the linked issue.\n",
+    "stderr_tail": " use Chevron icons instead of Caret icons\n[✓] Update React NumberInput tests for new Chevron icons\n[✓] Update components package Handlebars template for new icons\n[✓] Run tests to verify changes\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7722": {
     "instance_id": "carbon-design-system__carbon-7722",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1057.5,
+    "rc": 0,
+    "model_patch_len": 4536,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "_tests__/FilterableMultiSelect-test.js`\n- `packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap`\n\nAll `FilterableMultiSelect` and `ListBox` tests pass.\n",
+    "stderr_tail": "nput is focused (5 ms)\n\nTest Suites: 1 passed, 1 total\nTests:       11 passed, 11 total\nSnapshots:   1 passed, 1 total\nTime:        2.195 s\nRan all test suites matching /FilterableMultiSelect/i.\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7768": {
     "instance_id": "carbon-design-system__carbon-7768",
