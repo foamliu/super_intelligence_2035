@@ -4631,9 +4631,16 @@
   "grommet__grommet-6293": {
     "instance_id": "grommet__grommet-6293",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 558.2,
+    "rc": 0,
+    "model_patch_len": 4788,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "tion\n\nThe Meter tests pass (11/12; the one failure is an unrelated React deprecation warning). The new snapshot confirms all 5 values now render as distinct colored arcs instead of just the last one.\n",
+    "stderr_tail": " \u001b[0mTodos\n[✓] Explore codebase to find Meter circle component\n[✓] Identify what changed between v2.24.0 and v2.25.0 causing the bug\n[✓] Implement fix for circle meter rendering\n[✓] Test the fix\n\u001b[0m\n"
   },
   "grommet__grommet-6296": {
     "instance_id": "grommet__grommet-6296",

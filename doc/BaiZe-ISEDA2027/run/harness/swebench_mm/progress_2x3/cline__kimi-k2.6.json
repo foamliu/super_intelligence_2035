@@ -4043,9 +4043,16 @@
   "carbon-design-system__carbon-7722": {
     "instance_id": "carbon-design-system__carbon-7722",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 633.4,
+    "rc": 0,
+    "model_patch_len": 882,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ontrol**\\n- This also improves consistency for **ComboBox**, which shares the same DOM structure (text input inside a list-box field)\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-7768": {
     "instance_id": "carbon-design-system__carbon-7768",
