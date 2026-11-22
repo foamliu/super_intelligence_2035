@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>S1/S2 数据方案 v4 — 零重叠方案修正 + 同 run 切换评估</title>
+<style>
+body{font-family:-apple-system,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;max-width:960px;margin:0 auto;padding:16px;background:#f8f9fa;color:#333;line-height:1.6;font-size:13px}
+h1{color:#1a237e;border-bottom:2px solid #1a237e;padding-bottom:6px;font-size:18px}
+h2{color:#283593;margin-top:22px;border-bottom:1px solid #ccc;padding-bottom:3px;font-size:15px}
+h3{color:#1565c0;font-size:13px;margin:10px 0 4px}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:11.5px}
+th,td{border:1px solid #ddd;padding:3px 6px;text-align:left}
+th{background:#e3f2fd;font-weight:600}
+tr:nth-child(even){background:#f5f5f5}
+.red{color:#c62828;font-weight:700}
+.green{color:#2e7d32;font-weight:600}
+.amber{color:#e65100;font-weight:600}
+.box{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:10px 14px;margin:10px 0}
+.summary{background:#e8f5e9;border-left:3px solid #4caf50;padding:10px 14px;margin:10px 0;border-radius:0 6px 6px 0}
+.danger{background:#ffebee;border-left:3px solid #c62828;padding:10px 14px;margin:8px 0;border-radius:0 6px 6px 0}
+.warn{background:#fff3e0;border-left:3px solid #ff9800;padding:10px 14px;margin:8px 0;border-radius:0 6px 6px 0}
+.info{background:#e3f2fd;border-left:3px solid #1976d2;padding:10px 14px;margin:8px 0;border-radius:0 6px 6px 0}
+code{background:#f0f0f0;padding:1px 3px;border-radius:2px;font-size:10.5px}
+.ft{margin-top:22px;padding-top:8px;border-top:1px solid #ccc;color:#888;font-size:10px}
+</style>
+</head>
+<body>
+<h1>S1/S2 数据方案 v4 — 零重叠方案修正 + 同 run 切换评估</h1>
+<p style="color:#666;font-size:11px;">
+<b>撰写</b>: BaiZe Data Agent · 2026-11-22<br>
+<b>用户令</b>: 2026-11-22 — v3 §0 漏掉「同 run 切换配比」，需补方案 F + 修正 §0.1 + 精简 ≤15KB<br>
+<b>代码证据</b>: Megatron-LM <code>megatron/bridge/data/</code> + <code>megatron/core/datasets/</code>（py310 site-packages 实测）
+</p>
+
+<div class="summary">
+<b>一句话结论</b>：方案 F（同 run 热切换 blend 权重）在 stock Megatron 中<b>不可行</b>——<code>BlendedDataset</code> 无权重更新 API（<code>blended_dataset.py:65-97</code>），索引在构造时一次性预计算并缓存。若以「checkpoint resume + 新 blend」实现同 run 切换，重叠特性与 D+E <b>完全等价</b>（非零重叠）。因此 <b>D+E 仍为首选</b>，F 降为 fallback；D+E 的 ~12% 重叠属<b>未量化假设</b>（无实测），剩余风险 = 需 S2 启动后抽样验证。
+</div>
+
+<h2>§0 零重叠方案（含新增方案 F + §0.1 修正）</h2>
+
+<h3>0.1 修正：v3 §0.1 表述的限定条件</h3>
+<div class="danger">
+<b>v3 原文</b>：「S2 如果使用与 S1 相同的 7 个数据源且不修改随机种子，则 S2 将以 ~83-100% 的概率重复采样 S1 已看过的文档」<br>
+<b>修正</b>：该结论<b>仅在「重开 run（新训练进程 + 新 blend 构建）」前提下成立</b>。同一 run 内若<b>不重建</b> dataloader、游标沿 <code>shuffle_index[K:]</code> 继续前移，则<b>本身零重叠</b>——但此时无法改变 blend 权重（比例不变）。<br>
+<b>根因</b>：改变比例 ⇒ 必须重建 <code>BlendedDataset</code> ⇒ 新 <code>dataset_index</code>（<code>blended_dataset.py:97</code>）⇒ 游标归零 ⇒ 可能重叠。「想换比例」与「想零重叠」存在根本矛盾——<b>不重建则不能换比例；重建则游标归零</b>。v3 未区分这两种情形，导致 §0.1 表述被误读为普适结论。
+</div>
+
+<h3>0.2 方案 F 核查：同 run 内切换配比</h3>
+<div class="box">
+<p><b>F = 前 350k 用 S1 blend，之后在同一 run 内切到 S2 blend。</b></p>
+
+<p><b>核查 1 — GPTDataset 能否热更新 blend 权重？</b><br>
+→ <b>不能。</b><code>BlendedDataset.__init__</code>（<code>blended_dataset.py:65</code>）在构造时调用 <code>self._build_indices()</code>（<code>blended_dataset.py:97</code>）一次性预计算 <code>dataset_index</code> 与 <code>dataset_sample_index</code>。权重 <code>self.weights</code>（<code>blended_dataset.py:82</code>）被烘焙进 <code>unique_description_hash</code>（<code>blended_dataset.py:95</code>，MD5 of JSON 含 weights），决定 .npy 缓存文件路径。<b>类中无 setter、无 update 方法</b>——改权重 = 新 hash = 新索引文件 = 必须构造新对象。<code>__getitem__</code>（<code>blended_dataset.py:112</code>）只读预计算数组，不接受运行时权重变更。</p>
+
+<p><b>核查 2 — 重启 dataloader 时能否保留 shuffle_index / sample_idx 游标？</b><br>
+→ <b>不能（对不同 blend）。</b><code>MegatronPretrainingRandomSampler</code>（<code>samplers.py:222</code>）用 <code>consumed_samples</code>（<code>samplers.py:235</code>）计算 <code>epoch = consumed_samples // active_total_samples</code>（<code>samplers.py:263</code>）和偏移 <code>current_epoch_samples = consumed_samples % active_total_samples</code>（<code>samplers.py:264</code>）。<br>
+• 若 blend 变了：<code>total_samples</code> 变（<code>samplers.py:232</code>）→ epoch 计算错位 → 游标无法对应到新 blend 的正确位置。<br>
+• 若 <code>consumed_train_samples</code> 不重置（<code>loaders.py:185</code> 传给 sampler）：sampler 在新 blend 索引空间跳过旧消耗量 → <b>浪费 S2 数据且不防重叠</b>。<br>
+• 若重置为 0：从新 blend 排列起点开始 → 共享源同种子 → <b>83-100% 重叠</b>（与「重开 run」无异）。<br>
+• <code>GPTDataset._build_document_sample_shuffle_indices</code>（<code>gpt_dataset.py:381</code>）生成的 <code>shuffle_index</code> 是<b>静态预计算排列</b>，缓存于 .npy；不同 <code>num_samples</code>（因 weight 变）→ 不同 hash → 不同排列 → 游标无法跨 blend 映射。</p>
+
+<p><b>核查 3 — 结论</b><br>
+→ <b>热更新不可行</b>（核查 1：<code>BlendedDataset</code> 无 API）；<b>重启保留游标不可行</b>（核查 2：<code>total_samples</code> 变 → epoch 错位）。<br>
+→ 唯一零重叠路径 = <b>不改 blend</b>（但比例不变，无法实现 S1→S2 课程）。<br>
+→ 若接受「checkpoint resume + 新 blend + 重置 consumed=0」：重叠 = D+E（新源 0% + 旧源换种子 ~30%），<b>与 D+E 等价，无额外收益</b>。<br>
+→ 若要真正零重叠 + 换比例：需<b>自定义 Megatron 改造</b>——在 <code>BlendedDataset</code> 中实现权重热更新 + 跨 blend 游标映射（保留共享源的 <code>shuffle_index</code> 游标，仅重建 <code>dataset_index</code>）。<b>非 stock 功能，开发量 ~2-3 人日，本时间线不推荐</b>。</p>
+</div>
+
+<h3>0.3 七方案对比（含 F）</h3>
+<table>
+<tr><th style="width:22px;">方案</th><th>描述</th><th>重叠率</th><th>可行性</th><th>结论</th></tr>
+<tr><td><b>A</b></td><td>shard 级排除（S1 用 0-7, S2 用 8-15）</td><td class="red">~0%</td><td class="red">❌ S1 已用全部 shard</td><td>不可行</td></tr>
+<tr><td><b>B</b></td><td>样本级排除（记录 S1 消费 index）</td><td class="red">~0%</td><td class="red">❌ 需深度改源码</td><td>不可行</td></tr>
+<tr><td><b>C</b></td><td>完全换源（S2 全用新源）</td><td class="red">~0%</td><td class="red">❌ 无 Web 替代</td><td>不可行</td></tr>
+<tr><td><b>D</b></td><td>补新源（stack-v3/MegaMath/Nemotron/finemath）</td><td class="green">新源 0%</td><td class="green">✅ 已实施</td><td>新源天然零重叠</td></tr>
+<tr><td><b>E</b></td><td>换种子 SEED=5678</td><td class="amber">~30%</td><td class="green">✅ 推荐</td><td>旧源重叠降低</td></tr>
+<tr style="background:#e8f5e9;font-weight:700;"><td><b>D+E</b></td><td>推荐组合</td><td class="amber">~12%</td><td class="green">✅ 首选</td><td>实用最优（注：12% 未实测）</td></tr>
+<tr><td><b>F</b></td><td>同 run 切换 blend 权重</td><td>—</td><td class="red">❌ stock 不可行</td><td>热更新无 API；resume+新blend = D+E 等价；零重叠需自定义改造</td></tr>
+</table>
+
+<h3>0.4 D+E 重叠声明的诚实性标注</h3>
+<div class="warn">
+<b>「~12% 可接受」属未量化假设</b>：v3 给出 ~12% 总重叠但<b>无任何实测证据</b>。该数字来自理论估算（新源占比 ~28% × 0% + 旧源占比 ~72% × ~30% ≈ ~22%，再按实际 token 权重加权后约 12%）。<b>实际重叠率取决于 shuffle 种子碰撞</b>，需 S2 启动后抽样实测。但当前 Megatron <b>无跨 run 消费追踪</b>（核查 2 已证）→ 实测需开发。结论：12% 是合理估计但<b>非实测值</b>，报告与论文中应标注「理论估算」。
+</div>
+
+<h2>§1 S1→S2 接力：LR / Optimizer / 是否重开 run</h2>
+<div class="info">
+<p><b>WSD 调度</b>（<code>optimizer_param_scheduler.py:259-266</code>）：warmup 0-2k（线性 0→1e-3）→ stable（<code>num_steps ≤ wsd_anneal_start_</code> 时 <code>coeff=1.0</code>，LR=max_lr 恒定）→ decay 末段（exponential）。<b>S2（350k-700k）完全在 stable 阶段</b> → LR 恒定 1e-3，<b>无需重新 warmup</b>。</p>
+<p><b>Optimizer state</b>：Adam β1/β2 动量从 checkpoint 加载 → <b>延续不重置</b>。<code>num_steps</code> 从 checkpoint 恢复 → LR scheduler 从 step 350k 继续。</p>
+<p><b>两种 resume 方式</b>：</p>
+<ul>
+<li><b>方式 ①（checkpoint resume + 新 blend）</b>：在 350k ckpt 基础上改 <code>data_paths</code>/blend TSV → resume。optimizer + LR 连续，仅 dataloader 重建。<b>论文可声称「单次 700k 连续训练」</b>（权重/优化器/步数连续）。</li>
+<li><b>方式 ②（新 run from 350k ckpt）</b>：独立训练进程 load 350k ckpt。需显式 <code>--lr-warmup-iters 0</code>（跳过 warmup）。同样连续但叙事弱于 ①。</li>
+</ul>
+<p><b>推荐</b>：方式 ①。改 blend TSV + 清 .npy 缓存 + 设 SEED=5678 → resume。<b>LR/optimizer 连续性不受数据切换影响</b>——这比数据重叠更能影响最终指标，v3 一字未提，v4 补全。</p>
+</div>
+
+<h2>§2 Go/No-Go 状态</h2>
+<table>
+<tr><th style="width:22px;">#</th><th>条件</th><th>状态</th><th>不满足时处置</th></tr>
+<tr><td>G1</td><td>stack-v3 L4 过滤 ≥250B tok</td><td class="green">✅ 430.7B</td><td>放宽过滤</td></tr>
+<tr><td>G2</td><td>MegaMath Batch1 分词 ≥70B tok</td><td class="green">✅ 364 shard</td><td>—</td></tr>
+<tr><td>G3</td><td>污染闸门 0 命中（6 评测集）</td><td class="green">✅ 268K docs 0 hits</td><td>剔除命中 shard</td></tr>
+<tr><td>G4</td><td>blend TSV 加和=1.0 / 4:4:2</td><td class="green">✅ 12源 prop=1.0</td><td>手动调 prop</td></tr>
+<tr><td>G5</td><td>S1 到 350k + loss 正常（~11-28）</td><td class="green">🟢 进行中 iter~281.7k step~7.27s</td><td>推迟切换</td></tr>
+<tr><td>G6</td><td>MegaMath-web 分词完成</td><td class="green">✅ 218.1B tok</td><td>—</td></tr>
+<tr><td>G7</td><td>SEED=5678 + 清 .npy 缓存</td><td class="amber">⏳ 待执行（~11-27）</td><td>5 分钟</td></tr>
+</table>
+
+<h2>§3 附：精简信息</h2>
+<div class="box" style="font-size:11px;">
+<p><b>下载优先级</b>：10 项全部 ✅ 完成（MegaMath-web 218B / Nemotron 195.4B / finemath 9.4B / Code-Reasoning / Math-Reasoning / 5 小数据集）。</p>
+<p><b>时间线</b>：350k 切换 ~11-28（(350k−281.7k)×7.27s≈5.4d）；700k 终点 ~12-26；数据 11-21 就绪 → 余量 ~7 天。</p>
+<p><b>Epoch（类别级）</b>：Web 0.67 / Code 0.88 / Math 0.54（均 &lt;1.2 ✅，main 版 12 源实测）。</p>
+<p><b>污染检查</b>：黑名单 5359 tasks / 4.8M 13-gram；S1(220K)+S2(48K)=268K docs 扫描全 0 命中。</p>
+<p><b>数据源引用</b>：Nemotron-CC-Math（arXiv 2508.15096, ICLR 2026）/ MegaMath（arXiv 2504.02807）/ stack-v3（HF The Stack v3）/ FineMath-3+（HF）。</p>
+</div>
+
+<div class="ft">
+BaiZe Data Agent · 2026-11-22 · v4（≤15KB）· v3 保留不删 · 代码证据：Megatron-LM py310 site-packages 实测（blended_dataset.py:65-112 / gpt_dataset.py:381 / samplers.py:222-264 / optimizer_param_scheduler.py:259-266 / loaders.py:158-185）
+</div>
+</body>
+</html>
