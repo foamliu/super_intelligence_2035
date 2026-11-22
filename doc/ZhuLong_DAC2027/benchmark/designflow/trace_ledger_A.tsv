@@ -764,3 +764,6 @@ im5c1	lorikx	hfeg0plg15	266	verification	case	EDA-Eval-DesignFlow-SvTbVcdFsdbVer
 1794993708059_whuon.messages.json	rose3wang	hfeg0pkn003	116	digital	parked		2026-11-22 13:26	intent-dup of r971 EcoSpareGenProduce-001 (9ofdu, same user rose3wang, same eco_dummy-from-mapped-netlist task)
 1795079093690_ewjfi.messages.json	guomings	hfeg0pkn003	67	digital	parked		2026-11-22 13:26	intent-dup of r975 InstPortGroupReorderProduce-001 + r971 InstTieZeroProduce-001 (same user guomings, same project)
 1794970609793_bltup.messages.json	rose3wang	hfeg0pkn003	144	digital	case	EDA-Eval-DesignFlow-TbSkeletonGenProduce-001	2026-11-22 13:23	
+1795160732986_v7a78.messages.json	e0039102	hfeg0pbn16	19	verification	parked		2026-11-22 13:32	intent-dup with r976 RegAllListMergeProduce-001 (same user e0039102, same ALL.list merge task)
+1794989451375_y3hlf.messages.json					parked		2026-11-22 13:34	intent-dup with r965 EcoSpareGenProduce-001 (same user rose3wang, same eco_dummy task)
+1794978930273_jvron.messages.json	e0046913	hfeg0pkn005	20	pnr_signoff	case	EDA-Eval-DesignFlow-MakeAtPrefixDiagnoseQA-001	2026-11-22 13:42	
