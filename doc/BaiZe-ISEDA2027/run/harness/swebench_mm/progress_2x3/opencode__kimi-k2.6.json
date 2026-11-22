@@ -3288,9 +3288,16 @@
   "carbon-design-system__carbon-4028": {
     "instance_id": "carbon-design-system__carbon-4028",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1448.6,
+    "rc": 0,
+    "model_patch_len": 11051,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "quired `role=\"option\"`:\n```jsx\n<div className={className} role=\"option\" {...rest}>\n```\n\nThese minimal changes resolve the DAP violations while preserving all existing behavior and test compatibility.\n",
+    "stderr_tail": "apter = require.requireActual('enzyme-adapter-react-16');\n+const enzyme = require('enzyme');\n+const Adapter = require('enzyme-adapter-react-16');\n \n enzyme.configure({ adapter: new Adapter() });\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4055": {
     "instance_id": "carbon-design-system__carbon-4055",
