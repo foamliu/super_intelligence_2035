@@ -2650,3 +2650,8 @@ WAITING: 0（11-22 **r1030 1-case 产出轮（c3781 → DutyMidvalMeasRewrite-00
 
 → r1030 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1030 1-case 产出轮 c3781→DutyMidvalMeasRewrite-001 落库，FineSim DQS C2C duty mid-value 穿越电平重写器，k=13，ref 13/13 PASS，§4.9 三假齐）
 
+
+## r1031 (archived 11-22 r1032)
+
+WAITING: 0（11-22 **r1031 0-case stop-loss + §4.9 自查轮（fresh B-spice 池再证薄）** · **.75 访问 OK**: eda_flow.open_session(shardB-r1031) → workdir OK, ssh 9 主机通. **新 scan** ssh_eda_search_20261122_172249(同 r1030). **候选查询**: B-spice-dominant 过滤(spice_sum≥5) → 1189 hits → 506 distinct slugs → diff vs 4-shard union touched(4300) → **44 fresh**(40 truly). **逐条 ssh peek 10 fresh**: ①1d03e CRC alert 假错分析 near-dup REJECT→parked; ②uk1ke dRon/dV2 stimulus analysis-fuzzy REJECT→parked; ③0res9 LPDDR6 JEDEC Q&A REJECT→parked; ④hxfhy vth Q&A 已 case 跳过; ⑤ad3nu finesim warning 已 case 跳过; ⑥a3qxh 'how to find sim log' Q&A 跳过; ⑦4cdli IR-drop Q&A REJECT→parked; ⑧mnm6f 相位求导 已 case 跳过; ⑨22w7w divider 5corner near-dup REJECT→parked; ⑩o9kns ulvt_delvto near-dup DelvtoNetlistModifier REJECT→parked. **10 fresh 全 rejected**. **扩池依据**: 506 bspice → 44 fresh → peek 10 → 0 viable; clean distinct B-spice design_flow 在本 scan 已耗尽. **§4.9 自查**: DutyMidvalMeasRewrite-001 + LatchFomSweepFineSim-001 各 3 negs 全 FAIL ✓. **ledger 治理**: parked 6 新候选; ledger_B case 530 不变, parked 1127→1133, covered 530/9542=5.6%. **bench 无变更**.）
+
