@@ -1523,3 +1523,9 @@ r1093 指针原文归档（r1099 释体积，保留 r1099/r1098/r1097/r1096/r109
 
 > r1102 指针：anti-hardcode 运行时 re-audit 轮(止损 · .75 仍不可达 → 按顶部令「§4.9 anti-hardcode 普查」最高优先 + §6 止损) · 主交付=D k=12 静态 GAP 运行时复核 + audit TSV 假阳性翻正 · 关键发现=静态 audit 大幅高估 GAP: 对 D 全部 79 条 k=12 静态 GAP case 做「负样本改名」运行时 §4.9 复测, 结果 SOUND=33(假阳性翻 PASS) / WEAK_NEG=16 / REF_FAIL=24 / NO_REF=4 / NO_NEG=2 / TRUE_GAP=0 · 方法修正: 负样本改名是 §4.9 运行时测试必要步骤 · D 计数 PASS 67→100, GAP 483→450 · flag: r1102 = anti-hardcode 运行时 re-audit 轮(D k=12 79 条, 33 假阳性翻 PASS, 0 TRUE_GAP, 负样本改名方法修正)
 
+
+## 归档批次 r1136（2026-11-22 19:39 · 释体积 r1133/r1132 MCP 重复轮指针）
+
+> r1133 指针：MCP 第二十九次复测 + 主线 ledger-aware 候选搜索 · MCP 8 工具全 OK · 主线 ledger-aware 候选搜索 done: mc 277-2514 全部 20+ 候选均已台账(case/parked), freshest scan 高 mc(≥277) 候选池全 shard 联合采空 · DEBT: 0 case(高 mc 池采空, 下轮转中低 mc / D-parked / anti-hardcode) · flag: r1133 = MCP 29th OK + ledger-aware 搜索, 0 case
+
+> r1132 指针：MCP 第二十八次复测 + mc-matrix 复算 + peek 20 fresh · MCP 8 工具全 OK · mc-matrix: D shard mc≥5 pool=1735 touched=1341 fresh=394 / mc≥10=1529 fresh=231 / mc≥30=1164 fresh=104 · peek 20 fresh top=haoyut s_w4x70 mc=1575 但 ledger 查已=case(非 fresh) · DEBT: 0 case · flag: r1132 = MCP 28th OK + mc-matrix, 0 case
