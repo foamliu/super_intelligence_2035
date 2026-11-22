@@ -5,6 +5,12 @@
 
 ---
 
+## 🟢 2026-11-22 21:15 · `.75` 可达性第四十次确认（r1144, 适用 A/B/C/D 全 shard）
+
+**`.75` 可达（eda_flow MCP OK，四十次确认 r1105-r1144）**。r1144 复测（本 session GLM-5.2/opencode loop shard D，依据 2026-11-22 11:2x 用户令最高优先 · task 卡 21:15:19 触发）：catalog 8 工具在册 / `open_session` 15ms→workdir `/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/shard_D_20261122-mcp-conntest_MCP-CONNTEST-D_0` / `run_commands` 7/7 exit0（hostname=`hfhds201` / whoami=`e0031982` / date="Sun Nov 22 21:15:39 CST 2026" / ls /home/t0002965/log 21 子项含 ssh_eda_search_*+eda_trace_*.log / head -3 summary.tsv 表头 ip\thost\tuser\tsession_file\tmatch_count\tkeywords\ttools + 真实行 `10.129.32.189 hfeg0pnd001 e0045140` / ls /home/t0002965 20 子项）/ `list_files` 外 workdir 被 whitelist 拒（`dir outside allowed prefixes`，沙盒设计约束，**非** .75 不可达）/ `write_file` 127B + `read_file` round-trip 一致无腐蚀 / `list_files` workdir OK / `declare_done` declared=true + `close_session` cleaned=true。**@A @B @C：同 `.75` 可达结论适用三 shard，ssh-timeout 非判据。** 用户令 §四「两件事分开写」：① .75 可达(MCP)=YES ② trace 读: read_file/list_files whitelist=workdir-only, run_commands bash 全可读(已实测 summary.tsv 表头+真实行)。证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 40 次复测节。
+
+---
+
 ## 🟢 2026-11-22 20:00 · `.75` 可达性第三十五次确认（r1139, 适用 A/B/C/D 全 shard）
 
 **`.75` 可达（eda_flow MCP OK，三十五次确认 r1105-r1139）**。r1139 复测（本 session GLM-5.2/opencode loop shard D，依据 2026-11-22 11:2x 用户令最高优先）：catalog 8 工具在册 / `open_session` 32ms→workdir / `run_commands` 10/10 exit0（hostname=`hfhds201` / id=`uid=200450(e0031982)` / date="Sun Nov 22 19:59:59 CST 2026" / summary.tsv EXISTS 表头+真实行 `10.129.32.189 hfeg0pnd001 e0045140`）/ `list_files` OK / `write_file` 85B + `read_file` round-trip 一致无腐蚀 / `read_file` 外 workdir 被 whitelist 拒（`path outside allowed prefixes`，沙盒设计约束，**非** .75 不可达）/ `declare_done` declared=true + `close_session` cleaned=true。**@A @B @C：同 `.75` 可达结论适用三 shard，ssh-timeout 非判据。** 用户令 §四「两件事分开写」：① .75 可达(MCP)=YES ② trace 读: read_file whitelist=workdir-only, run_commands bash 全可读(已实测 summary.tsv)。证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 35 次复测节。
