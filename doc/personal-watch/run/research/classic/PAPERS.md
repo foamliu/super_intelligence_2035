@@ -10,6 +10,9 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **347** 条（**第九十三轮 2026-11-23 00:0x 补 3 条 → 347**：Gopher `2112.11446`（**1,730**，预印本；280B dense，152 任务多数 SOTA，规模收益集中在阅读理解 / 事实核查 / 毒性识别，逻辑与数学推理收益较小）/ CAMEL `2303.17760`（**2,892**，arXiv `comment` = NeurIPS 2023；role-playing + inception prompting，50×50 角色 × 10 任务 = 25,000 段对话，归纳四类协作失败）/ WebGPT `2112.09332`（**2,810**，预印本；GPT-3 + 文本浏览器，模仿学习后按人类偏好做拒绝采样，答案须带浏览时收集的引用；ELI5 上相对人类示范 56% 胜、相对 Reddit 最高票 69% 胜）；核验：arXiv `id_list` 单批 **`200` + atom**（12,641 B / 3 entry，`published` 齐备：2021-12-08 / 2023-03-31 / 2021-12-17）+ abs 页 **3/3 `200`**（55,213 / 44,311 / 43,980 B，`citation_title` + `citation_date` 逐字核：2021/12/08 · 2023/03/31 · 2021/12/17）+ OpenAlex **3/3 `200`**（1,730 / 2,892 / 2,810，查询日 2026-11-23，`type` 均 `preprint`）；三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 条目级查重 **0 命中**（PaLM `2204.02311` / Voyager `2305.16291` / Generative Agents `2304.03442` / AutoGen `2308.08155` 经查**均已是表内条目** ⇒ 剔除）；覆盖轴 = dense LM 的规模-任务谱与数据/毒性整体分析 / 角色扮演式多智能体协作的四类失败模式 / 浏览-引用-人类偏好三段式长答；本轮归属：pretrain **+2** · harness **+3** · data **+3** · zhulong **+2** · vision **+0** · designflow **+2**（一篇可多线））
+
+
 **本轮快照**：累计 **344** 条（**第九十二轮 2026-11-22 18:0x 补 3 条 → 344**：word2vec `1301.3781`（**44,294**，预印本；CBOW / skip-gram 两架构，1.6B 词训练 **<1 天**，句法 + 语义相似度双榜 SOTA，摘要原文 `less than a day` / `1.6 billion words`）/ Dropout `1207.0580`（**9,564**，预印本；每个训练样本随机丢弃**一半**特征检测器以阻断 co-adaptation，语音与物体识别刷新纪录）/ BLIP `2201.12086`（**8,544**，预印本；captioner 生成 + filter 过滤的**自举**方式利用噪声网页图文对，统一理解与生成，检索 avg recall@1 **+2.7%** / captioning CIDEr **+2.8%** / VQA **+1.6%**）；核验：arXiv `id_list` 单批 **`200` + atom**（5,836 B / 3 entry）+ abs 页 **3/3 `200`**（40,906 / 40,988 / 42,767 B，`citation_title` + `citation_date` 逐字核：2013/01/16 · 2012/07/03 · 2022/01/28）+ OpenAlex **3/3 `200`**（44,294 / 9,564 / 8,544，查询日 2026-11-22，`type` 均 `preprint`）；三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（Let's Verify Step by Step `2305.20050` 经查已是表内 **#159** ⇒ 剔除，不重复收）；覆盖轴 = 静态词向量的训练成本 / 特征级正则化的通用配方 / 噪声图文对的自举清洗；本轮归属：pretrain **+3** · vision **+2** · data **+2** · harness **+1** · zhulong **+1** · designflow **0**（一篇可多线））
 
 **本轮快照**：累计 **341** 条（**第九十一轮 2026-11-22 15:0x 补 3 条 → 341**：Bahdanau attention `1409.0473`（**32,083**，arXiv `comment` = ICLR 2015 oral；定长向量瓶颈 + 可微软对齐，长句更稳）/ Qwen2.5-VL `2502.13923`（**10,565**，预印本技术报告；动态分辨率 + 绝对时间编码，框/点定位与文档结构化抽取、小时级视频秒级定位）/ RAFT `2403.10131`（**524**，预印本；golden/distractor 混训 + 逐字引用 + CoT，表 1 RAFT (LLaMA2-7B) 73.30 / 35.28 / 74.00 / 84.95 / 86.86）；核验：arXiv `id_list` 单批 **`200` + atom**（11,306 B / 3 entry，`published` 齐备：2024-03-15 / 2025-02-19 / 2014-09-01）+ abs 页 **3/3 `200`**（41,842 / 46,388 / 43,549 B，`citation_title` 逐字一致）+ OpenAlex **3/3 `200`**（查询日 2026-11-22）+ RAFT 表 1 用 ar5iv 全文页 **`200` / 150,398 B** 核；三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 word2vec `1301.3781` 44,294 / Dropout `1207.0580` 9,564 / BLIP `2201.12086` 8,544 / Let's Verify `2305.20050` 2,661 本轮未收，留作下轮）；覆盖轴 = 对齐式历史取用 / 原生分辨率视觉塔与时序编码 / 领域 RAG 后训练配方；本轮归属：vision **+1** · data **+2** · harness **+2** · zhulong **+2** · pretrain **+2** · designflow **0**（一篇可多线））
@@ -5958,6 +5961,57 @@
 | 与我们工作的关系 | **data（主 · 噪声数据的自举清洗）**：EDA 领域同样拿不到干净图文 / 图文-代码对，「生成 + 过滤」两段式是可直接照搬的数据构造模板，比重训一个干净标注集便宜。<br>**vision（主 · 图文预训练）**：理解与生成共用一个框架，可作我们视觉塔「只做理解」是否够用的对照。<br>**harness（双任务口径）**：检索（判别式）与描述（生成式）必须同时报，防止只挑擅长的口径报成绩。<br>**pretrain**：captioner / filter 本身是小模型，属「用小模型造大模型数据」的路线，与合成数据自举同源。 |
 | 首次收录 | **2026-11-22**（第九十二轮 · 18:00 时窗） |
 | 核验状态 | arXiv `id_list=2201.12086` 批量请求 **`200` + atom**（5,836 B / 3 entry）；abs 页 **`200` / 42,767 B**（`citation_title` 逐字、`citation_date` = `2022/01/28`）；OpenAlex **`200`（8,544 / 2022 / preprint）**。数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 345. Scaling Language Models: Methods, Analysis & Insights from Training Gopher
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling Language Models: Methods, Analysis & Insights from Training Gopher |
+| 作者（前 3） | Jack W. Rae · Sebastian Borgeaud · Trevor Cai（共 **60+** 位；arXiv `citation_author` 逐字核；机构据论文页为 DeepMind） |
+| 年份 | **2021**（arXiv v1 `2021-12-08`；v2 `2022-01-21`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`；arXiv `comment` = `120 pages`） |
+| 被引数 | **1,730**（OpenAlex `10.48550/arxiv.2112.11446`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2112.11446> ｜ arXiv DOI `10.48550/arxiv.2112.11446` |
+| 一句话贡献 | 把 Transformer LM 从数千万参数一路放大到 **2,800 亿参数的 Gopher**，在 **152 个任务**上做统一评测并自报多数任务当时最好；规模收益最大的是**阅读理解、事实核查、毒性语言识别**，**逻辑与数学推理收益明显更小**；另给出训练数据与模型行为的整体分析（偏置 / 毒性与规模的交叉）。 |
+| 与我们工作的关系 | **pretrain（主 · 规模轴与配方）**：这是「dense LM 放大到 280B」的完整工程叙述，可作为我们 2B 骨架向更大规模外推时的对照；其「规模对推理类任务收益更小」正是我们做 thinking / 长 CoT 的目标依据。<br>**data（主 · 数据体检）**：数据构成 + 偏置 / 毒性分析是把「数据质量问题」量化进模型的范式，EDA 语料同样需要这类体检（工具文档 vs 代码 vs 论坛的比例与污染）。<br>**harness（评测广度）**：152 任务统一口径说明「单一平均分」会掩盖任务族差异；我们的 harness 报告应至少按任务族分层，而不是只报总分。<br>**zhulong（thinking 轴）**：数学 / 逻辑收益小 ⇒ 仅靠规模不够，必须在后训练与推理预算上补，这一条可直接写进 Zhulong 的动机节。<br>**vision / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十三轮 · 00:00 时窗） |
+| 核验状态 | arXiv `id_list=2112.11446` 批量请求 **`200` + atom**（12,641 B / 3 entry）；abs 页 **`200` / 55,213 B**（`citation_title` 逐字、`citation_date` = `2021/12/08`）；OpenAlex **`200`（1,730 / 2021 / preprint）**。数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 346. CAMEL: Communicative Agents for "Mind" Exploration of Large Language Model Society
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | CAMEL: Communicative Agents for "Mind" Exploration of Large Language Model Society |
+| 作者（前 3） | Guohao Li · Hasan Abed Al Kader Hammoud · Hani Itani（共 **5** 位；末位 Bernard Ghanem；arXiv `citation_author` 逐字核；机构据论文页为 KAUST） |
+| 年份 | **2023**（arXiv v1 `2023-03-31`；v2 `2023-11-02`） |
+| 会议 / 期刊 | **NeurIPS 2023**（arXiv `comment` = `Accepted at NeurIPS'2023`，77 pages；OpenAlex `type` 记 `conference-paper`） |
+| 被引数 | **2,892**（OpenAlex `10.48550/arxiv.2303.17760`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2303.17760> ｜ arXiv DOI `10.48550/arxiv.2303.17760` ｜ 代码 <https://github.com/camel-ai/camel> ｜ 项目页 <https://www.camel-ai.org> |
+| 一句话贡献 | 提出 **role-playing** 通信智能体框架：用 **inception prompting** 让 assistant / user 两个角色在保持人类意图的前提下自主协作，并用 **task specifier** 把粗任务改写成更具体的任务；AI Society 数据集 = **50 assistant 角色 × 50 user 角色 × 10 任务 = 25,000 段对话**；同时归纳四类协作失败（**role flipping / assistant repeats instruction / flake reply / infinite loop**），开源整套库。 |
+| 与我们工作的关系 | **harness（主 · 多智能体判分）**：四类失败正好是「多轮 agent 评测」缺的负向判据；我们的 harness 可先加自动检测（角色关键词、承诺式动词、无进展轮数），把「跑完」与「跑对」分开。<br>**zhulong（主 · 多角色流程）**：设计者 / 验证者 / 工具执行者三种角色与 CAMEL 的 assistant / user 同构；它暴露的「互相附和」风险，直接对应我们多角色流程的假成功问题。<br>**data（主 · 合成对话）**：25,000 段对话是「角色 × 任务」笛卡尔积生成的规模化样本，可作为我们造多轮 EDA 轨迹的骨架模板，但要先解决 task specifier 的可验证性损失。<br>**designflow（题面保真）**：task specifier 把粗任务变具体的过程，等价于我们造题时的题面改写；必须保留可执行终态，不能只把描述写漂亮。<br>**pretrain / vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十三轮 · 00:00 时窗） |
+| 核验状态 | arXiv `id_list` 批量请求 **`200` + atom**（`published` = `2023-03-31T01:09:00Z`）；abs 页 **`200` / 44,311 B**（`citation_title` 逐字、`citation_date` = `2023/03/31`）；OpenAlex **`200`（2,892 / 2023 / conference-paper）**；`25,000` / 四类失败名称逐字取自 arXiv 原生 HTML `2303.17760v2`（`200` / 598,388 B）。 |
+
+---
+
+## 347. WebGPT: Browser-assisted question-answering with human feedback
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | WebGPT: Browser-assisted question-answering with human feedback |
+| 作者（前 3） | Reiichiro Nakano · Jacob Hilton · Suchir Balaji（共 **18** 位；末位 John Schulman；arXiv `citation_author` 逐字核；机构据论文页为 OpenAI） |
+| 年份 | **2021**（arXiv v1 `2021-12-17`；v3 `2022-06-01`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`；arXiv `comment` = `32 pages`） |
+| 被引数 | **2,810**（OpenAlex `10.48550/arxiv.2112.09332`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2112.09332> ｜ arXiv DOI `10.48550/arxiv.2112.09332` |
+| 一句话贡献 | 把 GPT-3 微调成能操作**文本浏览器**的长答问答模型：任务设计成人类也能做 ⇒ 先用**模仿学习**，再用**人类偏好**训练奖励模型并做拒绝采样；要求模型浏览时**收集引用**来支撑答案；在 ELI5 上最佳模型相对**人类示范 56% 胜**、相对 **Reddit 最高票答案 69% 胜**（作者自报）。 |
+| 与我们工作的关系 | **harness（主 · 引用可核）**：把「答案必须带浏览时收集的引用」写进任务定义，是判分可验证性的关键；我们的 harness 可照此要求 agent 每条结论附工具日志片段。<br>**zhulong（主 · 工具使用 + 奖励）**：浏览-引用-人类偏好三段式与我们「调 EDA 工具 → 看日志 → 按结果给奖励」同构；奖励模型只判最终答案时，会漏掉「过程是否真的执行」。<br>**data（主 · 示范 + 偏好）**：人类示范数据 + 偏好对是两条独立数据流，造 EDA 轨迹时应分开记「可模仿」与「可比较」两种标注成本。<br>**pretrain（长答生成）**：长文问答的引用约束会改变解码行为，可作为长上下文后训练的评测项。<br>**vision / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十三轮 · 00:00 时窗） |
+| 核验状态 | arXiv `id_list` 批量请求 **`200` + atom**（`published` = `2021-12-17T05:43:43Z`）；abs 页 **`200` / 43,980 B**（`citation_title` 逐字、`citation_date` = `2021/12/17`）；OpenAlex **`200`（2,810 / 2021 / preprint）**。数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
 
 ---
 

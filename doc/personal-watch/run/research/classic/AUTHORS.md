@@ -4439,4 +4439,28 @@
 | 状态 | **待跟踪**（X 待 follow，需登录态；无可用邮箱 ⇒ 本线不发信） |
 | 备注 | `语言=中文(判据=拼音姓名族属 Xiong + 华人研究者；🚫 不因论文英文 / 美国机构判英文)`。价值点：BLIP 的 captioner + filter 自举清洗，是我们「噪声图文 / 图文-代码对」数据构造的直接参照；若日后拿到邮箱，问题应落到「filter 的判别阈值与误删率如何随领域漂移校准」，而非问代码是否开源（代码已公开）。 |
 
+### 313. Guohao Li（李国豪）
 
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Guohao Li（拼音姓名族属 Li + 可还原中文名李国豪；`语言=中文(判据=姓名族属；机构在美国 / 创业公司邮箱均未据此判英文)`） |
+| 机构 | **Eigent AI**（创始人）· **CAMEL-AI.org**（负责人）· 前 Oxford 博后 / KAUST 博士（IVUL，导师 Bernard Ghanem） |
+| 代表论文 | **CAMEL: Communicative Agents for "Mind" Exploration of LLM Society**（`2303.17760`，B 轨 #346，**一作**，NeurIPS 2023）· DeepGCNs 系列 |
+| 邮箱 | **guohao.li@eigent.ai**（来源：本人主页 `https://ghli.org/` `HTTP 200` / 72,157 B，页内 `mailto:guohao.li@eigent.ai` 明文；同页另列 `lightaime@gmail.com`，**只采用前者**、不群发） |
+| 主页 | <https://ghli.org/>（`200` / 72,157 B） |
+| X 账号 | **@guohao_li**（`x.com/guohao_li` 经代理 `200` / 195,418 B；`og:title` = `Guohao Li 🐫 (@guohao_li) on X`；`og:description` = `Founder @Eigent_AI / @CamelAIOrg. Scaling RL Environments for Agents @env_lab_ai. Prev Oxford, KAUST, ETHz, Intel, Kumo.` ⇒ 双源核验；反例：`guohao.ai` 是「国皓会展集团」同名站点，**不是**本人 ⇒ 已拒用） |
+| 状态 | **已发信**（2026-11-23 00:04 CST，经典论文请教信第 **141** 封，中文 244 字，`SENT OK`）· X 待 follow（需登录态） |
+| 备注 | 本封问题全部围绕 CAMEL 的**四类协作失败**（role flipping / repeats instruction / flake reply / infinite loop）与 AI Society **25,000 段对话**，分别回填 harness 负向判据、zhulong 多角色假成功、designflow 题面可验证性。⚠️ 同一论文末位作者 Bernard Ghanem 已建档（#314）但**不发**，守「同一论文 ≤1」。 |
+
+### 314. Bernard Ghanem
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bernard Ghanem（黎巴嫩 / 阿拉伯姓名族属 ⇒ `语言=英文`；未发信，仅建档） |
+| 机构 | **KAUST**（ECE 教授；IVUL 负责人；GenAI 卓越中心主席 / 主任） |
+| 代表论文 | **CAMEL**（`2303.17760`，B 轨 #346，**末位 / 通讯方向**）· 另有视觉跟踪 / 视频理解（IVUL）主线 |
+| 邮箱 | **bernard.ghanem@kaust.edu.sa**（来源：KAUST 官方教职页 `https://cemse.kaust.edu.sa/profiles/bernard-ghanem` 经代理 `200` / 57,887 B，页内明文命中；仅建档，本窗不发） |
+| 主页 | <https://www.bernardghanem.com/>（`200` / 119,915 B；`/contact` 无明文邮箱，为 JS 渲染） |
+| X 账号 | **未找到**（`@bernardghanem` 仅 3 followers / `@bernard_ghanem` 仅 4 followers 且 bio 为 `beirut` ⇒ 均判为同名他人，**不记**） |
+| 状态 | **待跟踪**（邮箱已核但**本窗不发**：同一论文已发一作 Guohao Li，守「同一论文 ≤1」；X 未找到） |
+| 备注 | 价值点：CAMEL 的多智能体协作与「task specifier」失真，直接对应 designflow 造题的题面保真；若日后单独发信，问题应落到「多角色流程中如何用独立复算打破互相附和」，而不是泛问 CAMEL 是否开源（已开源）。 |
