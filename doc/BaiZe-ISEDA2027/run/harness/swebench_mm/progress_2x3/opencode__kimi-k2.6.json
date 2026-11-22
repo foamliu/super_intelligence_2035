@@ -3931,30 +3931,58 @@
   "carbon-design-system__carbon-7212": {
     "instance_id": "carbon-design-system__carbon-7212",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 357.4,
+    "rc": 0,
+    "model_patch_len": 3125,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ileUploader/FileUploader-story.js`**  \n   Added the two new kinds to the FileUploader button-kind knob as well, for consistency.\n\nBoth the `Button-test.js` and `PublicAPI-test.js` snapshots now pass.\n",
+    "stderr_tail": ", 1 total\nSnapshots:   1 passed, 1 total\nTime:        3.034 s\nRan all test suites matching /packages\\/react\\/__tests__\\/PublicAPI-test.js/i.\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/prop-types/types.js\n"
   },
   "carbon-design-system__carbon-7270": {
     "instance_id": "carbon-design-system__carbon-7270",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 275.2,
+    "rc": 0,
+    "model_patch_len": 1558,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "react/src/components/MultiSelect/MultiSelect.js`\n\nChanged from:\n```jsx\n<button\n  ref={ref}\n  ...\n  {...getToggleButtonProps()}>\n```\n\nTo:\n```jsx\n<button\n  ...\n  {...getToggleButtonProps({ ref })}>\n```\n",
+    "stderr_tail": " 0 matches\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"ref=\\{ref\\}.*\\n.*getInputProps\\(\\)\"\u001b[90m in packages/react/src · 0 matches\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"React\\.forwardRef\"\u001b[90m in packages/react/src/components · 44 matches\u001b[0m\n"
   },
   "carbon-design-system__carbon-7288": {
     "instance_id": "carbon-design-system__carbon-7288",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 444.1,
+    "rc": 0,
+    "model_patch_len": 5613,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ner could not execute in this environment due to a Node.js version incompatibility with the project's `jest-config-carbon` preset. All modified files were verified to compile successfully with Babel.\n",
+    "stderr_tail": "nMenuChange prop to FilterableMultiSelect.js\n[✓] Add tests for onMenuChange in MultiSelect-test.js\n[✓] Add tests for onMenuChange in FilterableMultiSelect-test.js\n[✓] Run tests to verify changes\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7350": {
     "instance_id": "carbon-design-system__carbon-7350",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 31.1,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 6,
+    "text_only": false,
+    "classification": "empty_patch",
+    "stdout_tail": "et started, could you confirm:\n1. Which package this should live in (e.g., `packages/react`, `packages/styles`)?\n2. Any specific design specs or additional requirements beyond what's in the proposal?\n",
+    "stderr_tail": "\u001b[0m\n> build · kimi-k2.6-cloud\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-7353": {
     "instance_id": "carbon-design-system__carbon-7353",

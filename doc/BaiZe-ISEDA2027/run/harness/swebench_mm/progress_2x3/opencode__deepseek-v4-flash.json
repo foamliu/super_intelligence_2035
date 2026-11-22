@@ -5938,16 +5938,30 @@
   "openlayers__openlayers-13974": {
     "instance_id": "openlayers__openlayers-13974",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 242.4,
+    "rc": 0,
+    "model_patch_len": 581,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "tead of alpha.\n\n**Fix:** Changed to `bandCount % 4 === 2 && i === bandCount - 1`, which correctly identifies the last band when the tail texture is LUMINANCE_ALPHA (i.e., when `bandCount % 4 === 2`).\n",
+    "stderr_tail": "m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Investigate the even bandsCount bug in DataTileSource\n[✓] Find the relevant code in DataTile/DataTileSource\n[✓] Fix the alpha channel handling for even bandsCount >= 6\n\u001b[0m\n"
   },
   "openlayers__openlayers-13975": {
     "instance_id": "openlayers__openlayers-13975",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 952.2,
+    "rc": 0,
+    "model_patch_len": 4422,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "s`**: Pass `displacement` explicitly when constructing the hit-detection `Icon`, so the Immediate renderer applies it correctly.\n\nAll 1778 existing node tests pass (1 pre-existing unrelated failure).\n",
+    "stderr_tail": "  scale: image.getScale(),\n             rotation: image.getRotation(),\n             rotateWithView: image.getRotateWithView(),\n+            displacement: disp,\n           })\n         );\n       }\n\u001b[0m\n"
   },
   "openlayers__openlayers-13981": {
     "instance_id": "openlayers__openlayers-13981",
