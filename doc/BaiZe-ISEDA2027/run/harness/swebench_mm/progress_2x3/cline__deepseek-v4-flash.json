@@ -4798,9 +4798,16 @@
   "highlightjs__highlight.js-2703": {
     "instance_id": "highlightjs__highlight.js-2703",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 720.3,
+    "rc": 0,
+    "model_patch_len": 3264,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ing it.\\n\\n### Verification\\n- Build: `node ./tools/build.js -t node` succeeds.\\n- Tests: All **524 tests** pass after the rebuild.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-2704": {
     "instance_id": "highlightjs__highlight.js-2704",

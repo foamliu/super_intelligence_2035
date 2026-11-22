@@ -5841,9 +5841,16 @@
   "openlayers__openlayers-13547": {
     "instance_id": "openlayers__openlayers-13547",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1466.4,
+    "rc": 0,
+    "model_patch_len": 36050,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "Z({\n  url: 'https://tile.nextzen.org/.../{z}/{x}/{y}.png?api_key=...',\n  tileSize: 256,\n  gutter: 2\n})\n\n// DataTile with gutter\nnew DataTileSource({\n  loader: ...,\n  tileSize: 256,\n  gutter: 2\n})\n```\n",
+    "stderr_tail": "re coordinate adjustment\n[✓] Update WebGL TileLayer renderer to compute and set gutter uniform\n[✓] Add gutter to all TileImage subclass Options typedefs and pass to super()\n[✓] Verify tests pass\n\u001b[0m\n"
   },
   "openlayers__openlayers-13648": {
     "instance_id": "openlayers__openlayers-13648",
