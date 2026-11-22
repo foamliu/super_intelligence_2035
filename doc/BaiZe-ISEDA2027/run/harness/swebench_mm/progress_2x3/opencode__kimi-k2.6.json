@@ -4099,16 +4099,30 @@
   "carbon-design-system__carbon-8092": {
     "instance_id": "carbon-design-system__carbon-8092",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 363.1,
+    "rc": 0,
+    "model_patch_len": 7816,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "xt.\n- If both `invalid` and `warn` are true, **invalid takes precedence** (shows error icon and error text). This matches the pattern used by `TextInput` and other Carbon components.\n\nAll tests pass.\n",
+    "stderr_tail": "elect component in the codebase\n[✓] Understand the current states (e.g., error, disabled) and styling patterns\n[✓] Add warning state to the Select component\n[✓] Verify the changes work correctly\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8130": {
     "instance_id": "carbon-design-system__carbon-8130",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1068.7,
+    "rc": 0,
+    "model_patch_len": 1157,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "`#161616` | **3.60:1** |\n\nAll themes exceed the 3:1 threshold required by WCAG 1.4.11.\n\n### Verification\n- The SCSS compiles successfully with no syntax errors.\n- Existing theme and token tests pass.\n",
+    "stderr_tail": "ntrast values causing the WCAG 1.4.11 failure\n[✓] Implement fix to meet 3:1 non-text contrast for unselected tab borders/backgrounds\n[✓] Verify changes build correctly and contrast is sufficient\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8222": {
     "instance_id": "carbon-design-system__carbon-8222",
