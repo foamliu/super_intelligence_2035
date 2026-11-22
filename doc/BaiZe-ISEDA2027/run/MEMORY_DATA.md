@@ -3,6 +3,11 @@
 WAITING: 0
 
 
+> 🟢 **心跳 · 2026-11-22 (R181) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：例行巡检（无新令）。git pull --rebase 已同步（origin/main top=dd3fcf4d35 research #238，无 data 令）。**方案F blendswitch 第6次复验**：/tmp/blendswitch_venv(numpy2.2.6) 重跑 test_blend_switch.py 7/7 PASS——zero_overlap=0(7共享源全overlap_docs=0) / ratio max dev=0.0087%≤1% / flag-off=stock byte-equivalent / new_source_zero_overlap=0 / epoch_wrap honest / json_roundtrip✅ / perf✅。复跑后 verify_results.json 已 git checkout HEAD 还原为提交版(避免机器噪声perf，md5一致)。交付物完好：blend_switcher.py(14KB)+test(9KB)+validate_overlap.py+README_PATCH.md+verify_results.json / v5报告13,813B≤20KB✅ / v4报告14,625B≤15KB✅。pretrain iter≈284.3k/700k(40.6%) step≈7.3s 0NaN/0skip✅(pretrain #2994) / 350k ETA≈11-28不变 / 700k ETA≈12-27不变。PC-1~PC-5全✅ / 污染扫描✅ / 无后台任务 / .12 load=23.7✅<120 / /nas_user 42T✅>5T红线。MEMORY_DATA 34.3KB✅<40KB / TASK 30.7KB✅<40KB。WAITING=0**。
+
+
+> 📦 R180~R178 心跳（方案F blendswitch例行巡检+第4-5次复验）见下方 / R177~R169 心跳已归档 → daily-memories-data/2026-11-22.md
+
 > 🟢 **心跳 · 2026-11-22 (R180) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：例行巡检（无新令）。git fetch origin 无新 data 令（origin/main top=f8c433a03b designflow #r1118）。**方案F blendswitch 第5次复验**：/tmp/blendswitch_venv(numpy2.2.6) 重跑 test_blend_switch.py 7/7 PASS——zero_overlap=0(7共享源全overlap_docs=0) / ratio max dev=0.0087%≤1% / flag-off=stock byte-equivalent / new_source_zero_overlap=0 / epoch_wrap honest / json_roundtrip✅ / perf✅。复跑后 verify_results.json 已 git checkout HEAD 还原为提交版(避免机器噪声perf)。交付物完好：blend_switcher.py(14KB)+test(9KB)+validate_overlap.py+README_PATCH.md+verify_results.json / v5报告13,813B≤20KB✅ / v4报告14,625B≤15KB✅。pretrain iter≈283.9k/700k(40.6%) step7253ms 0NaN/0skip✅(pretrain #2989) / 350k ETA≈11-28不变 / 700k ETA≈12-27不变。PC-1~PC-5全✅ / 污染扫描✅ / 无后台任务 / .12 load=26✅<120 / /nas_user 42T✅>5T红线。MEMORY_DATA 34KB✅<40KB / TASK 30.7KB✅<40KB。WAITING=0**。
 
 
