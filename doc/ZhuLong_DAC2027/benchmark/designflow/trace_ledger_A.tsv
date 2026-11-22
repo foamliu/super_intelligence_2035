@@ -761,3 +761,6 @@ im5c1	lorikx	hfeg0plg15	266	verification	case	EDA-Eval-DesignFlow-SvTbVcdFsdbVer
 1795144865444_p9nly.messages.json	e0046913	hfeg0pkn005	46	pnr_signoff	parked		2026-11-22 12:39	intent-dup with r984 StaRunEvalProduce-001 (c1gcs, same user e0046913, both STA run evaluation)
 1793584918281_1fzxa.messages.json	thqu	hfeg0pkn004	18	eda_other	parked		2026-11-22 12:40	weak trace: Simvision Q&A + failed tool calls (shell disabled), no clean produce-task deliverable
 1794461048623_ezj8z.messages.json	michael1l	hfeg0pkn003	38	pnr_signoff	case	EDA-Eval-DesignFlow-LefBmObsMissingDiagnoseQA-001	2026-11-22 12:49	
+1794993708059_whuon.messages.json	rose3wang	hfeg0pkn003	116	digital	claimed		2026-11-22 13:00	
+1795079093690_ewjfi.messages.json	guomings	hfeg0pkn003	67	digital	claimed		2026-11-22 13:07	
+1794970609793_bltup.messages.json	rose3wang	hfeg0pkn003	144	digital	case	EDA-Eval-DesignFlow-TbSkeletonGenProduce-001	2026-11-22 13:23	
