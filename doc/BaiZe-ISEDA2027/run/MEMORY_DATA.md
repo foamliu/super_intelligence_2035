@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R210) — 例行巡检：F 科普报告复验全通过（第3次）**：报告 `report_s1s2_blendswitch_f_explainer_zh.html` = 40,743B≤80KB✅ / `<script`=0✅ / `https?://`=0✅ / `<svg`=6≥5✅ / div·table·tr·td 全配对✅（23/6/36/163）；§1-§8+一页看懂+6图齐全；实测标注29处/估算8处（诚实区分）。已 commit+push（commit 30ea2164f3），local=origin（0 ahead/0 behind）。方案F blendswitch CPU验证 7/7 PASS 不变（verify_results.json 全源 overlap_docs=0）。pretrain iter≈289k/700k(41%) step~7.1s / 350k ETA≈11-28 / 700k ETA≈12-27。无新指令，待命。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R211) — 例行巡检：F 科普报告复验全通过（第4次）+ verify_results.json 实测核对**：报告 `report_s1s2_blendswitch_f_explainer_zh.html` = 40,743B≤80KB✅ / `<script`=0✅ / `https?://`=0✅ / `<svg`=6≥5✅ / div·table·tr·td 全配对✅（23/6/36/163）；§1-§8+一页看懂+6图齐全；实测标注29处/估算8处（诚实区分）。本轮额外逐项核对 `data/blendswitch/verify_results.json` 与报告数字一致：zero_overlap total_overlap_docs=0 / max_deviation_pct=0.0087 / flag_off_equivalence=true / new_source overlap=0 / 7项全 PASS。已 commit+push（commit 30ea2164f3），local=origin（0 ahead/0 behind）。方案F blendswitch CPU验证 7/7 PASS 不变。pretrain iter≈289k/700k(41%) step~7.1s / 350k ETA≈11-28 / 700k ETA≈12-27。无新指令，待命。WAITING=0。
 
-> 📦 R209 心跳（F 科普报告交付态复验第2次全通过）已归档 → daily-memories-data/2026-11-23.md
+> 📦 R209–R210 心跳（F 科普报告复验第2~3次全通过）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R208 心跳（F 科普报告 v1 交付 40,743B/6SVG/0外链0script，commit+push 完成）已归档 → daily-memories-data/2026-11-22.md
 
