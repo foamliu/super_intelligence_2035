@@ -3109,9 +3109,16 @@
   "carbon-design-system__carbon-3118": {
     "instance_id": "carbon-design-system__carbon-3118",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1163.7,
+    "rc": 0,
+    "model_patch_len": 2350,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e reason.\\n\\nThe multi-selection snapshots correctly retain `bx--tag--filter` because `selectionCount` is truthy in those test cases.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-3139": {
     "instance_id": "carbon-design-system__carbon-3139",
