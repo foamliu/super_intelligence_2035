@@ -27,11 +27,11 @@
   "mc500": 133,
   "mc5_recompute": {
     "auto_stop": {
-      "consecutive_zero_case_rounds": 1,
+      "consecutive_zero_case_rounds": 0,
       "threshold_rounds": 3,
       "triggered_at": null,
       "triggered_by": null,
-      "note": "r1000 = 1st 0-case round in NEW mc=5 period (16:4x order reset shard_mc.A=5; r995 rescan ssh_eda_search_20261122_172249 + r995-r999 5 consecutive successes reset counter). r1000 选料探测: strict A-pure filter (ak>0,c==0,b==0,ak>=5) on new scan → 2039 broad / 50 strict top; × 4-shard ledger (4159 sids) fresh check: broad top-60 ALL ledgered; broad 161-260 range 16 fresh but ALL cross-domain (joeyl spice/opamp B-domain + dechaoc drc C-domain); strict top-50 only rwced fresh → peek rwced (tongfanl mc318 netlist:681) = B-domain SPICE MatrixRun aging-log analysis, NOT A. genuine A-domain fresh this round = 0. parked v3x5q (xinqiaoz mc318 pdk:1483;drc:1005;calibre:321 C-domain pg_layout) → cross-shard handoff to C. STOP-LOSS NOT triggered (1/3; r1001 0-case→2/3, r1002 0-case→3/3 trigger: revert shard_mc.A→10 + governance). A.jsonl 458 unchanged (0-case round, no commit)."
+      "note": "r1000 = 1st (and only) 0-case round in NEW mc=5 period (16:4x order reset shard_mc.A=5; r995 rescan ssh_eda_search_20261122_172249 + r995-r999 5 consecutive successes reset counter). r1001 produced 1 case (CosimEnvProjectExtractProduce-001, ozvhc) → counter reset to 0. r1002 produced 1 case (SimRerunStatusAuditProduce-001, or2tj) → counter stays 0. STOP-LOSS NOT triggered (0/3). fresh A-pure pool (digA filter on scan 20261122_172249): 887 cands / 98 fresh after 4-shard ledger diff — pool NOT exhausted. A.jsonl 460 (r1002 +1)."
     },
     "computed_at": "2026-11-18T08:30:00+08:00",
     "computed_by": "r718 (mc>=5 adoption flip)",
@@ -295,7 +295,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-22T21:1x+08:00",
+  "updated_at": "2026-11-22T23:3x+08:00",
   "users_mc10": 559,
   "users_mc100": 182,
   "users_mc30": 401,
