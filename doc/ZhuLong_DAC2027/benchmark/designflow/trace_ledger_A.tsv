@@ -812,3 +812,4 @@ fjy8k	chili	hfeg0pgn145	157	verification	case	EDA-Eval-DesignFlow-MsieWaveDumpDi
 huqxk					parked		2026-11-23 03:22	r1012 peek: e0044587@hfeg0pnd001 mc6 - 
 5wc3r					parked		2026-11-23 03:22	r1012 peek: e06960@hfeg0plg56 mc6 - 
 1795158759743_vv500.messages.json	max7c	hfeg0pkn005	6	verification	case	EDA-Eval-DesignFlow-AsyncBindCompareProduce-001	2026-11-23 03:34	r1013
+1790306297242_r8b4l.messages.json	xrxiong	hfeg0pkn001	5	digital	parked		2026-11-23 04:15	r1014 peek: netlist:85+drc:23 dominant C-domain mis-classified by broad A-filter (ac=5 from verilog:9+systemverilog:3+synopsys:3+rtl:3 but netlist+drc=108 >> A-kw). Park.

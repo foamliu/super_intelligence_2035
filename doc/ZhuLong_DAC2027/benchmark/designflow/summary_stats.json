@@ -199,8 +199,19 @@
       "10.129.33.134"
     ],
     "scan_duration_sec": 180,
-    "a_domain_candidates": 1316,
-    "a_domain_fresh": 7
+    "a_domain_candidates": 163,
+    "a_domain_fresh": 1,
+    "r1014_recompute": {
+      "round": "r1014",
+      "scan": "ssh_eda_search_20261122_172249",
+      "digA_filter": "ac>cc && ac>bc && ac>=5",
+      "a_domain_dedup": 163,
+      "fresh_after_4shard_ledger_diff": 1,
+      "fresh_sid": "r8b4l",
+      "fresh_attribution": "xrxiong@hfeg0pkn001 mc5 netlist:85+drc:23 dominant C-domain mis-classified, parked",
+      "4shard_ledger_sids": 4203,
+      "verdict": "mc>=5 A-domain fresh pool on scan 20261122_172249 GENUINE EXHAUSTION (1 fresh, mis-C). r1011-r1013 peeked 21 fresh + r1014 recompute confirmed empty. Next round: new 698-host scan required (15:1x order, daily quota available)."
+    }
   },
   "sessions": 3846,
   "shard_mc": {
@@ -295,7 +306,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-22T2x:xx+08:00 (r1004)",
+  "updated_at": "2026-11-23T04:2x+08:00 (r1014)",
   "users_mc10": 559,
   "users_mc100": 182,
   "users_mc30": 401,
