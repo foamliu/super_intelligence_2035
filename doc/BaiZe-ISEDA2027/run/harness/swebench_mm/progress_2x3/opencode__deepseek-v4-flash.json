@@ -6118,9 +6118,16 @@
   "openlayers__openlayers-14659": {
     "instance_id": "openlayers__openlayers-14659",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 160.7,
+    "rc": 0,
+    "model_patch_len": 842,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "emoved the same incorrect extent check for the same reason — the circle's `getExtent()` returns bounds in whatever coordinate system the geometry uses, which may not match the view projection extent.\n",
+    "stderr_tail": "0m\n\u001b[0m✱ \u001b[0mGlob \"**/spec/**/*Immediate*\"\u001b[90m in . · 0 matches\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix incorrect extent comparison in drawFeature/drawCircle in the CanvasVectorContext or similar file\n\u001b[0m\n"
   },
   "openlayers__openlayers-14719": {
     "instance_id": "openlayers__openlayers-14719",
