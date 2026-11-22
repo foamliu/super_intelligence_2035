@@ -1712,4 +1712,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794884424309_e692a	e0039786	hfeg0plg54	339	spice_sim	case	EDA-Eval-DesignFlow-DbcVaractorSpTestGen-001	2026-11-22 06:23	r1001 落库 k=12 ref PASS 12/12 3neg FAIL
 1794531710269_sgk0l.messages.json	vincentz	hfeg0pkn005	57	spice_sim	case	EDA-Eval-DesignFlow-SanadjRblDeckSweep-001	2026-11-22 07:50	r1002 落库 k=12 ref PASS 12/12 3neg FAIL distinct vs e692a(deck-gen vs test-block-gen); sgk0l 14-fresh-pool peek #2 (joeyl o7ljl env-bound divider-C2C skip)
 1794819950620_q5dn1	zjqiao	10.129.32.100	127	spice_sim	case	EDA-Eval-DesignFlow-HcellNetlistXcheck-001	2026-11-22 07:19	
-1795163422684_neh60.messages.json	clarawu	hfeg0pkn005	106	spice_sim	claimed		2026-11-22 07:55	
+1795163422684_neh60.messages.json	clarawu	hfeg0pkn005	106	spice_sim	case	EDA-Eval-DesignFlow-Dvohdv2ZqRefFix-001	2026-11-22 08:12	
