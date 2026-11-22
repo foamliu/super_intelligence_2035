@@ -3126,23 +3126,44 @@
   "carbon-design-system__carbon-3139": {
     "instance_id": "carbon-design-system__carbon-3139",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 601.1,
+    "rc": 0,
+    "model_patch_len": 7357,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ".snap` | Updated snapshots to reflect added `role=\"option\"` |\n\nThe outer container now has no conflicting ARIA role, and the menu items are properly identified as `option`s inside the `listbox` menu.\n",
+    "stderr_tail": "s/Dropdown/__snapshots__/Dropdown-test.js.snap\u001b[90m [offset=75, limit=15]\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Dropdown/__snapshots__/Dropdown-test.js.snap\u001b[90m [offset=345, limit=20]\u001b[0m\n"
   },
   "carbon-design-system__carbon-3237": {
     "instance_id": "carbon-design-system__carbon-3237",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 324.1,
+    "rc": 0,
+    "model_patch_len": 5115,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ot a function`) unrelated to these changes, so I verified the code changes by reading the modified files directly. The logic follows the same patterns already used in the codebase for class toggling.\n",
+    "stderr_tail": " modal component\n[✓] Add body scroll disabling to React Modal component\n[✓] Add CSS for body no-scroll class\n[✓] Update tests for both vanilla JS and React modals\n[✓] Run tests to verify changes\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-3253": {
     "instance_id": "carbon-design-system__carbon-3253",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 300.0,
+    "rc": 0,
+    "model_patch_len": 1655,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ex=\"-1\"`) to `<Dropdown>`, the underlying focusable field still had `tabIndex=\"0\"`, making it reachable via the Tab key. With this change, a disabled dropdown is correctly removed from the tab order.\n",
+    "stderr_tail": "/src/components/ComboBox · 0 matches\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"tabIndex\"\u001b[90m in packages/react/src/components/MultiSelect · 3 matches\u001b[0m\n\u001b[0m✱ \u001b[0mGlob \"**/__snapshots__/*Dropdown*.snap\"\u001b[90m 1 match\u001b[0m\n"
   },
   "carbon-design-system__carbon-3283": {
     "instance_id": "carbon-design-system__carbon-3283",
@@ -3159,9 +3180,16 @@
   "carbon-design-system__carbon-3347": {
     "instance_id": "carbon-design-system__carbon-3347",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 75.0,
+    "rc": 0,
+    "model_patch_len": 1490,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "### Result\nNow when `danger` is true on `ComposedModal`, the cancel button will correctly be black (`secondary`) instead of gray (`tertiary`), matching the behavior of the standard `Modal` component.\n",
+    "stderr_tail": "total\nTests:       0 total\nSnapshots:   0 total\nTime:        0.27 s\nRan all test suites matching /packages\\/react\\/src\\/components\\/ComposedModal\\/ComposedModal-test.js/i.\njest not found locally\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-3362": {
     "instance_id": "carbon-design-system__carbon-3362",
