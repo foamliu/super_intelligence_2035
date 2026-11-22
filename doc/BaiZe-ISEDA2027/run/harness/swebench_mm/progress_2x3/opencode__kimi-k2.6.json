@@ -4673,9 +4673,16 @@
   "grommet__grommet-6350": {
     "instance_id": "grommet__grommet-6350",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 469.1,
+    "rc": 0,
+    "model_patch_len": 80029,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ist-test.js` to cover:\n- `action` with `onOrder`\n- `action` with `onOrder` and `pinned`\n\nAll relevant tests pass (the one unrelated accessibility failure is a pre-existing React deprecation warning).\n",
+    "stderr_tail": " code and understand how action and onOrder work\n[✓] Identify the root cause of misalignment when both action and onOrder are present\n[✓] Implement fix for the alignment issue\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "grommet__grommet-6438": {
     "instance_id": "grommet__grommet-6438",

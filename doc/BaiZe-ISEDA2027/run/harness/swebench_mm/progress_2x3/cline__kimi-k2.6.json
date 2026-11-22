@@ -4085,9 +4085,16 @@
   "carbon-design-system__carbon-8022": {
     "instance_id": "carbon-design-system__carbon-8022",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1358.6,
+    "rc": 0,
+    "model_patch_len": 10412,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ated snapshots\\n\\nThe TooltipIcon component state management is now fully tested and matches the behavior implemented in `Button.js`.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-8092": {
     "instance_id": "carbon-design-system__carbon-8092",
