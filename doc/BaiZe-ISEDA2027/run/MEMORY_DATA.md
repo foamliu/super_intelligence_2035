@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R213) — F 科普报告指令归档收口（第6次复验全通过）**：报告 `report_s1s2_blendswitch_f_explainer_zh.html` = 40,743B≤80KB✅ / `<script`=0✅ / `https?://`=0✅ / `<svg`=6≥5✅ / div·table·tr·td 全配对✅（23/6/36/163）。`verify_results.json` 实测核对一致（7/7 PASS，total_overlap_docs=0，max_deviation_pct=0.0087，flag_off_equivalence=true，new_source overlap=0）。2026-11-22 19:4x 科普报告令**已交付并归档**：任务书改为「📦 ✅ 已交付」指针（27,605B≤32KB），原文搬入 `ARCHIVE_OPERATOR_DATA.md`「§用户令·2026-11-22 19:4x」。现任务书顶部活跃令=11:0x F 自定义改造（其交付物 v5报告/blend_switcher.py/CPU验证7/7 亦已完成，按令保留至执行完毕）。pretrain iter≈289k/700k(41%) step~7.1s / 350k ETA≈11-28 / 700k ETA≈12-27。无新指令，待命。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R214) — 例行巡检+blendswitch第7次复验7/7 PASS**：①✅git fetch无新data令（up-to-date origin/main）；②✅pretrain iter=290,670/700k(41.53%) step~7.3s 290k eval in progress 训练健康；③✅blendswitch复验7/7 PASS(zero_overlap=0/new_source=0/flag_off_equivalence=true/max_dev=0.0087%)；④✅.12 load=24.3<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data任务；⑦✅MEMORY 30.5KB<32KB / TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
 
-> 📦 R209–R212 心跳（F 科普报告复验第2~5次全通过）已归档 → daily-memories-data/2026-11-23.md
+> 📦 R209–R213 心跳（F 科普报告复验第2~6次全通过+归档收口）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R208 心跳（F 科普报告 v1 交付 40,743B/6SVG/0外链0script，commit+push 完成）已归档 → daily-memories-data/2026-11-22.md
 
@@ -104,7 +104,7 @@ WAITING: 0
 ```
 PHASE:        S2前置+污染闸门全完成 — PC-1✅~PC-5✅ + 扩展黑名单✅ + S2新源扫描✅(48K docs/0命中) → WAITING=0
 已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(6benchmark/9277tasks);✅PC-4 main版blend_s2_preblend.tsv(12源/含nemotron 0.067+megamath_web 0.060+finemath 0.005/weight_sum=1.0/gen_blend --verify通过);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(R136刷新main版/pushed);✅MegaMath-web下载DONE(4950parquet/826GB);✅MegaMath-web分词DONE(4950/4950=100%/218.1B tok);✅Code-Reasoning下载DONE(1637parquet/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2228parquet/0inc);✅DATA_MAPPING.md更新;✅论文Fig-1三饼图+Fig-2调优+TABLE IV精简+数据源/Decay/LongCtx引用补齐(latexmk 0err);✅EDA-Eval 536-task黑名单重跑复现(R137/正控158/158);✅扩展黑名单blacklist_extended建成(R138/5359tasks/4847354 13-gram/正控164/164);✅S2新源污染扫描(R139/4源×12K=48K docs/全0命中);✅方案F blendswitch交付(R170-R171/commit 68742cfbe4/blend_switcher.py+v5报告+v4修正+CPU验证7/7零重叠=0)
-当前动作:     R202例行巡检:iter≈286.4k/700k(40.91%) step7096ms 0NaN/0skip✅(pretrain #3025);方案F blendswitch第26次复验7/7 PASS(zero_overlap=0);git fetch无新令;PC-1~PC-5全✅/无后台任务/.12 load=25.1✅
+当前动作:     R214例行巡检:iter=290,670/700k(41.53%) step~7.3s 290k eval中(pretrain #3087);方案F blendswitch第7次复验7/7 PASS(zero_overlap=0);git fetch无新令;PC-1~PC-5全✅/无后台任务/.12 load=24.3✅
 下一步:       ①等pretrain到350k(~11-28)启动S2(blend TSV已就绪/SEED=5678待转告pretrain线) ②S2投料前可按S1口径对4新源做全量扫描(>150K docs)作为加强验证(非阻塞/contam_venv已就绪)
 阻塞:         无(全部前置完成;无后台任务;.12 load≈24<120✅;/nas_user 42T可用✅>5T红线)
 ERROR_COUNT:  0
