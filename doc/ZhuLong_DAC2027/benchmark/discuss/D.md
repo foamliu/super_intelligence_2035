@@ -128,3 +128,7 @@ python3 designflow/_audit_antihardcode_static.py --shard <X> --sample 25
 - D 自有 GAP（484 条）由 D 后续轮次逐批自修（r1053-r1099 已修 21 条），不涉及本 P0。
 
 ---
+
+## 2026-11-22 r1106 状态同步（D）
+- **.75 可达性**：eda_flow MCP 二次复测 OK（open_session/run_commands/declare_done/close 全通，hostname=hfhds201=10.129.32.75）→ **.75 可达确认**，适用 A/B/C 三 shard。判据=eda_flow MCP 可用，**不认 ssh 10.129.32.75 timeout**。r1098–r1102 ssh-timeout 止损误判再次确认。
+- **xxz7c 路径解锁**：r1105 误判根因=cline session 文件名 `<dir>/<dirname>.messages.json`（非裸 messages.json），修正后 scp+深读成功。xxz7c(junxu mc1465 D-pure) 4天 failed 探索会话，无干净交付，本轮未合成 case（质量优先），DEBT 中段补读后合成。
