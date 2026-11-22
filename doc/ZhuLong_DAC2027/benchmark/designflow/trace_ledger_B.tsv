@@ -1713,7 +1713,7 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794531710269_sgk0l.messages.json	vincentz	hfeg0pkn005	57	spice_sim	case	EDA-Eval-DesignFlow-SanadjRblDeckSweep-001	2026-11-22 07:50	r1002 落库 k=12 ref PASS 12/12 3neg FAIL distinct vs e692a(deck-gen vs test-block-gen); sgk0l 14-fresh-pool peek #2 (joeyl o7ljl env-bound divider-C2C skip)
 1794819950620_q5dn1	zjqiao	10.129.32.100	127	spice_sim	case	EDA-Eval-DesignFlow-HcellNetlistXcheck-001	2026-11-22 07:19	
 1795163422684_neh60.messages.json	clarawu	hfeg0pkn005	106	spice_sim	case	EDA-Eval-DesignFlow-Dvohdv2ZqRefFix-001	2026-11-22 08:12	
-1795071277084_kjutt.messages.json	elianaz	hfhds201	63	spice_sim	claimed		2026-11-22 09:06	
+1795071277084_kjutt.messages.json	elianaz	hfhds201	63	spice_sim	case	EDA-Eval-DesignFlow-SpLibIncTokenRewrite-001	2026-11-22 09:22	
 1794882438855_ilv08.messages.json	e0039786	hfeg0pkn005	313	spice_sim	parked		2026-11-22 09:07	r1005 peek dup-of-DbcVaractorSpTestGen-001(e692a): same e0039786+DBC varactor HSPICE test deck gen, ilv08 msg0 verbatim='这是我进行Hspice仿真的激励文件...生成一系列测不同电性的sp文件' == e692a U0
 1794906646179_3l1h7.messages.json	zjqiao	hfhds201	52	spice_sim	parked		2026-11-22 09:07	r1005 peek dup-of-CrcAlertFixGen-001(y4kgh r915): same zjqiao+meas_crc_alert.sp CRC alert false-fail check, 3l1h7 U0 verbatim same script
 1794884413248_8y5j3.messages.json	joeyl	hfeg0plg74	82	spice_sim	parked		2026-11-22 09:07	r1005 peek dup-of-CmlWckTopTunerProduce-001(11voz r996): same joeyl+4_WCKTOP testbench CML 3-stage 5-corner tuning, 8y5j3 U0 verbatim same 2_TRAN.sp
