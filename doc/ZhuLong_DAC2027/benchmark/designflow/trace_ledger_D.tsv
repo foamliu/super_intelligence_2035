@@ -1912,7 +1912,7 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1794795187792_3dlpk.messages.json	qiangw	hfhds209	194	schematic_netlist	case	EDA-Eval-DesignFlow-StaPathLastModStatQA-001	2026-11-19 15:44	
 1786954043971_7g1bd	e0025730	hfeg0plg49	13	schematic_netlist	parked		2026-11-19 16:16	r947 peek: '/sense-margin' slash-command skill-invocation + env-access-failure (Permission denied /proj/drcoa + SSH timeout), no GOLD deliverable; netlist:20/drc:19 kw from skill desc + project path 'drcoa' not real netlist work; U#2 slash-command not organic A-faithful intent
 1794808132400_f98rc.messages.json	tongfanl	hfhds201	304	analog_context	case	EDA-Eval-DesignFlow-WTM007LfsrCombineSeqProduce-001	2026-11-19 17:41	
-1794806636605_ws1ft	dechaoc	hfeg0pkn004	392	schematic_netlist	case	EDA-Eval-DesignFlow-CmNamePortNetCheckStatusProduce-001	2026-11-19 18:08	
+1794806636605_ws1ft	dechaoc	hfeg0pkn004	392	schematic_netlist	case	EDA-Eval-DesignFlow-HierSigNetlistEnrich-001	2026-11-23 07:47	
 1794877493843_1rs5h	zjqiao	10.129.32.75	345	schematic_netlist	case	EDA-Eval-DesignFlow-FinesimMtxCmdAgentProduce-001	2026-11-19 18:37	
 1794894590754_qbqi9.messages.json	jiashengz	hfeg0plg92	298	schematic_netlist	case	EDA-Eval-DesignFlow-LatchPinReconcile-001	2026-11-19 19:10	LATCH05C symbol vs latqGSx1 reference pin reconciliation; R1b stdcell; D-pure schematic_netlist
 1794885380402_etedy.messages.json	yanghao	hfeg0plg76	113	analog_context	case	EDA-Eval-DesignFlow-TsCoreFilterFuncExplainQA-001	2026-11-19 19:28	
