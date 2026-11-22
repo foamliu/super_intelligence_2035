@@ -6,8 +6,6 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-22 18:0x）**：作者 **312** 人（编号最大 **312**）· X 已核验 **121**（本轮 **+2**：`@rsalakhu` 经 `x.com/rsalakhu` `200`，`og:title` = `Russ Salakhutdinov (@rsalakhu) on X`，`og:description` = `CSO @ Sooth Labs, Professor @ CMU, President Elect ICML Board, Ex-VP of Research @ Meta (Multimodal LLMs, AI Agents), ex-Director of AI at @Apple`；`@CaimingXiong` 经 `x.com/CaimingXiong` `200`，`og:title` = `Caiming Xiong (@CaimingXiong) on X`，`og:description` = `Co-founder of @Recursive_SI.  ex-SVP of Salesforce AI Research | ex-MetaMind`）· 已发信 **140**（台账 #1–#140；今日 12/12 已满 ⇒ 本窗不发）· 回信 **0**（0/140）。<br>**第九十二轮增量（2026-11-22 18:0x）**：作者网 310 → **312**（#311 Ruslan Salakhutdinov **A 级** `rsalakhu@cs.cmu.edu`（CMU 本人主页 `cs.cmu.edu/~rsalakhu/` `200` / 9,400 B 页内明文 `rsalakhu[at]cs.cmu.edu`）/ #312 Caiming Xiong **无邮箱**（`caimingxiong.github.io` `404`、`www.caimingxiong.com` `000`、Recursive 团队页 `404` / `000` ⇒ 不猜地址；X 已双源核验）），来自 B 轨 #343 Dropout / #344 BLIP。⚠️ 同名反例当场拦下：`@JunnanLi` 虽 `200` 但 `og:title` = `雷弟尬尬 (@JunnanLi) on X`、`og:description` = `微博 雷弟_尬尬` ⇒ 与 BLIP 一作无关，**不记**；`@tmikolov` / `@MikolovTomas` 均 `404` ⇒ Mikolov 记「未找到 X」。以下历史快照行保留原文（不追改），计数以本行为准。
-
 > **当前计数（2026-11-22 15:0x）**：作者 **310** 人（编号最大 **310**）· X 已核验 **119**（本轮 **+2**：`@tianjun_zhang` 经 `x.com/tianjun_zhang` `200` / 190,919 B，`og:title` = `Tianjun Zhang (@tianjun_zhang) on X`，`og:description` = `@peano_ai | Prev @meta @GoogleDeepMind @berkeley_ai | Project Lead of LiveCodeBench, RAFT and Gorilla LLM`；`@DBahdanau` 经 `x.com/DBahdanau` `200` / 199,403 B，`og:title` = `🇺🇦 Dzmitry Bahdanau (@DBahdanau) on X`，`og:description` = `Team member at @periodiclabs.`）· 已发信 **140**（台账 #1–#140）· 回信 **0**（0/140）。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **当前计数（2026-11-22 12:0x）**：作者 **308** 人（编号最大 **308**）· X 已核验 **117**（本轮 **0 新增**：两位新增作者的主页均未见 X 链接 ⇒ 不猜 handle）· 已发信 **139**（台账 #1–#139）· 回信 **0**（0/139）。以下历史快照行保留原文（不追改），计数以本行为准。
@@ -4412,31 +4410,4 @@
 | X 账号 | **@DBahdanau**（`x.com/DBahdanau` 经代理 `200` / 199,403 B；`og:title` = `🇺🇦 Dzmitry Bahdanau (@DBahdanau) on X`；`og:description` = `Team member at @periodiclabs.` ⇒ 双源核验） |
 | 状态 | **待跟踪**（X 待 follow，需登录态；无可用邮箱 ⇒ 本线不发信，不猜地址） |
 | 备注 | `语言=英文(判据=白俄罗斯姓名族属 + 加拿大 Mila 机构；对照表无该国语言 ⇒ 英文兜底)`。价值点：Bahdanau attention 是「定长状态 → 按需取用历史」的分水岭，服务 pretrain 的长上下文 / KV 压缩路线判定与 harness 的分长度桶评测口径。 |
-
-### 311. Ruslan Salakhutdinov
-
-| 字段 | 内容 |
-|:--|:--|
-| 姓名 | Ruslan Salakhutdinov（俄 / 鞑靼姓名族属 + 美国机构 ⇒ 按 §2 对照表「判据冲突 / 无对应语言」走英文兜底） |
-| 机构 | **Carnegie Mellon University**（Machine Learning Department，UPMC Professor；主页 `200` 页内自述） |
-| 代表论文 | **Improving neural networks by preventing co-adaptation of feature detectors**（`1207.0580`，B 轨 #343，末位）· 另有 Deep Boltzmann Machines / 多模态深度学习主线 |
-| 邮箱 | **rsalakhu@cs.cmu.edu**（来源：本人 CMU 主页 `https://www.cs.cmu.edu/~rsalakhu/` `200` / 9,400 B，页内明文 `rsalakhu[at]cs.cmu.edu`） |
-| 主页 | <https://www.cs.cmu.edu/~rsalakhu/>（`200` / 9,400 B） |
-| X 账号 | **@rsalakhu**（`x.com/rsalakhu` 经代理 `200`；`og:title` = `Russ Salakhutdinov (@rsalakhu) on X`；`og:description` = `CSO @ Sooth Labs, Professor @ CMU, President Elect ICML Board, Ex-VP of Research @ Meta (Multimodal LLMs, AI Agents), ex-Director of AI at @Apple` ⇒ 双源核验） |
-| 状态 | **待跟踪**（X 待 follow，需登录态；邮箱可用但**本窗不发信**：今日 12/12 已达每日硬上限，且本轮无专属问题清单 ⇒ 不赶进度硬发） |
-| 备注 | `语言=英文(判据=东欧姓名族属 + 美国 CMU；对照表无俄语族 ⇒ 英文兜底)`。价值点：dropout 的「丢弃一半特征检测器」与后续 DBM / 多模态主线，正好覆盖我们 pretrain 小数据正则与 vision 图文联合建模两块；若要发信，问题应落到「dropout 率与模型宽度 / 数据规模的交互是否有可复用经验律」，而非泛问。 |
-
-### 312. Caiming Xiong
-
-| 字段 | 内容 |
-|:--|:--|
-| 姓名 | Caiming Xiong（拼音姓名族属 Xiong = 熊；机构为美国 Salesforce ⇒ 按「姓名族属优先」判中文；本窗未发信故未定稿语言） |
-| 机构 | **Salesforce Research**（BLIP 署名时）；X bio 现自述 **Recursive SI** 联合创始人、前 Salesforce AI Research SVP |
-| 代表论文 | **BLIP: Bootstrapping Language-Image Pre-training…**（`2201.12086`，B 轨 #344，3 作 / 通讯方向）· 另有 relation networks / 视觉问答主线 |
-| 邮箱 | **未找到**（`caimingxiong.github.io` `404`、`www.caimingxiong.com` `000`、Recursive 团队页 `recursive.com/team` `404` / `recursive.ai/team` `000` ⇒ 🚫 不猜地址、不发信） |
-| 主页 | **未找到**（以 X 页为公开身份页） |
-| X 账号 | **@CaimingXiong**（`x.com/CaimingXiong` 经代理 `200`；`og:title` = `Caiming Xiong (@CaimingXiong) on X`；`og:description` = `Co-founder of @Recursive_SI.  ex-SVP of Salesforce AI Research | ex-MetaMind (Opinions are personal.)` ⇒ 双源核验） |
-| 状态 | **待跟踪**（X 待 follow，需登录态；无可用邮箱 ⇒ 本线不发信） |
-| 备注 | `语言=中文(判据=拼音姓名族属 Xiong + 华人研究者；🚫 不因论文英文 / 美国机构判英文)`。价值点：BLIP 的 captioner + filter 自举清洗，是我们「噪声图文 / 图文-代码对」数据构造的直接参照；若日后拿到邮箱，问题应落到「filter 的判别阈值与误删率如何随领域漂移校准」，而非问代码是否开源（代码已公开）。 |
-
 
