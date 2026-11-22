@@ -5232,30 +5232,57 @@
   "highlightjs__highlight.js-3316": {
     "instance_id": "highlightjs__highlight.js-3316",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 267.4,
+    "rc": 0,
+    "model_patch_len": 23254,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "m C++ and primitive types are now keywords\n\n**Test expect files** - Updated all `hljs-type` → `hljs-keyword` in:\n- `test/markup/cpp/*.expect.txt` (10 files)\n- `test/markup/arduino/default.expect.txt`\n",
+    "stderr_tail": "ve types from RESERVED_TYPES to RESERVED_KEYWORDS in cpp.js\n[✓] Move Arduino types from type to keyword scope\n[✓] Update all test expect files (hljs-type -> hljs-keyword)\n[✓] Run tests to verify\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3367": {
     "instance_id": "highlightjs__highlight.js-3367",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.1,
+    "rc": -1,
+    "model_patch_len": 1629,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "highlightjs__highlight.js-3381": {
     "instance_id": "highlightjs__highlight.js-3381",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 256.7,
+    "rc": 0,
+    "model_patch_len": 1021,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ting with underscore.\n- Line 386: Added `\\b` anchor to `def` → `/\\bdef/` in the function definition match.\n- Line 400, 406: Added `\\b` anchor to `class` → `/\\bclass/` in the class definition matches.\n",
+    "stderr_tail": "ould markup inline\n    ✓ should markup keys\n    ✓ should markup numbers\n    ✓ should markup string\n    ✓ should markup tag\n\n  zephir\n    ✓ should markup default\n\n\n  1695 passing (8s)\n  3 pending\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3411": {
     "instance_id": "highlightjs__highlight.js-3411",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 315.9,
+    "rc": 0,
+    "model_patch_len": 451,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " from the match, leaving them unhighlighted. The `*` (zero-or-more) allows a trailing uppercase letter to be included, so `OutT`, `InT`, `FPs`, etc. are now consistently highlighted as `title.class`.\n",
+    "stderr_tail": "ould markup inline\n    ✓ should markup keys\n    ✓ should markup numbers\n    ✓ should markup string\n    ✓ should markup tag\n\n  zephir\n    ✓ should markup default\n\n\n  1697 passing (7s)\n  3 pending\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3438": {
     "instance_id": "highlightjs__highlight.js-3438",
