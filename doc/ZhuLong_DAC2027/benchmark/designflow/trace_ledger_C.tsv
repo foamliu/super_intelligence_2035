@@ -1427,3 +1427,4 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1787723830259_xxuxq.messages.json	junxu	hfeg0pkn005	498	layout_virtuoso	case	EDA-Eval-DesignFlow-VirtuosoCliSkillReviewTestSuite-001	2026-11-22 19:54	
 1795075084116_js4n1.messages.json	e0024852	hfeg0pkn005	214	physical_verify	case	EDA-Eval-DesignFlow-M1ViaDrcCoOptim-001	2026-11-22 20:20	
 1795253044250_ab6ck	joeyli	hfeg0pkn004	301	layout_aether	case	PinPrefixIncrRename-001	2026-11-22 21:22	layout_aether; joeyli@hfeg0pkn004 mc=301; pyAether pin-prefix-increment + F7 bind; k=20; fresh-user; C.jsonl 566->567
+1795003959776_olgpe					case	EDA-Eval-DesignFlow-AetherSocketBridgeNav-001	2026-11-22 21:32	
