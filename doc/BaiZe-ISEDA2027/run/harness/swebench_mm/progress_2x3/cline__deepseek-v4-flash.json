@@ -5104,23 +5104,43 @@
   "highlightjs__highlight.js-3207": {
     "instance_id": "highlightjs__highlight.js-3207",
     "route": "cline__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1921.6,
+    "rc": -1,
+    "model_patch_len": 2626,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "highlightjs__highlight.js-3212": {
     "instance_id": "highlightjs__highlight.js-3212",
     "route": "cline__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 139.5,
+    "rc": 0,
+    "model_patch_len": 1727,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ed test cases for `0`, `0123`, and `0.3`\\n3. `test/markup/elixir/numbers.expect.txt` - Added expected output for the new test cases\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3249": {
     "instance_id": "highlightjs__highlight.js-3249",
     "route": "cline__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 136.3,
+    "rc": 0,
+    "model_patch_len": 1311,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "rify all casings are highlighted as `meta` class\\n\\n**Verification:** All 1663 tests pass (3 pre-existing pending tests unchanged).\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3278": {
     "instance_id": "highlightjs__highlight.js-3278",
