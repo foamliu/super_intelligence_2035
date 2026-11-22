@@ -1,73 +1,20 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-22 wake#1787·**v3 收口 ✅ standby 心跳**：pro 3-run=10.18±1.45% / lite 3-run=4.68±0.95%（r2 VOID 不计入）/ mini 3-run=2.38±0.23%（r1 FUSE VOID 不计入）·7 batch 全完·providers.json=pro 默认态✅·3 份报告 3-run 汇总版✅·pgrep run_batch 无进程✅·cases_lite=500✅·cline 就位✅·git HEAD=bf143ec78d=origin/main(0/0 同步)✅·不起臂·原文不改·standby）
+WAITING: 0（2026-11-22 wake#1788·**v3 收口 ✅ standby 心跳**：pro 3-run=10.18±1.45% / lite 3-run=4.68±0.95%（r2 VOID 不计入）/ mini 3-run=2.38±0.23%（r1 FUSE VOID 不计入）·7 batch 全完·providers.json=pro 默认态✅·3 份报告 3-run 汇总版✅·pgrep run_batch 无进程✅·cases_lite=500✅·cline 就位✅·git HEAD=694840f43b 落后 origin/main 1 commit(=pretrain他线·本线已同步)✅·不起臂·原文不改·standby）
 
-- wake#1787（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40）。自检：① pgrep run_batch.sh 无评测进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl /v1·updatedAt 11-21T20:00Z）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ git fetch→HEAD=origin/main=bf143ec78d（0/0 同步·ZHULONG_TASK.md mtime 11-21 10:40 无新令·ops inbox .last_run_id=146=最新 RUN_ID146 无新指令）✅；⑥ research 日报 2026-11-22 对 zhulong 建议偏视频/多模态 KV-cache/TPF 成本口径·对本线 EDA doubao 评测无直接可执行条目·忽略✅。v3 任务 7 batch 全完·3 模型 3-run 全出（pro=10.18±1.45% / lite=4.68±0.95% / mini=2.38±0.23%）·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
+- [wake#1787 详条已滚出·2026-11-22 wake#1788 维护] 见 `daily-memories/2026-11-22.md` §[wake#1787]（opencode 交互式 v3 收口后 standby 心跳·pgrep 无进程✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 同步✅·不起臂·原文不改）。
 
-- wake#1786（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40）。自检：① pgrep run_batch.sh 无评测进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl /v1·updatedAt 11-21T20:00Z）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ git fetch→HEAD=33002a6438 落后 origin/main 1 commit（=pretrain 他线 MEMORY_PRETRAIN_2B.md·与本线无关·本地脏文件=designflow 他线 trace_ledger_A.tsv + MEMORY_DESIGNFLOW_A.md 挡 rebase·依 AGENTS.md 不 stash/clean 他线·不强拉·本线文件已同步）✅；⑥ ops inbox .last_run_id=146 无新指令✅；⑦ research 日报 2026-11-22 对 zhulong 建议偏视频/多模态 KV-cache/TPF 成本口径·对本线 EDA doubao 评测无直接可执行条目·忽略✅。v3 任务 7 batch 全完·3 模型 3-run 全出（pro=10.18±1.45% / lite=4.68±0.95% / mini=2.38±0.23%）·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
+- wake#1788（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40）。自检：① pgrep run_batch.sh 无评测进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl /v1·updatedAt 11-21T20:00Z）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ git fetch→HEAD=694840f43b 落后 origin/main 1 commit（=pretrain #2994 巡检·无 zhulong 文件·本线已同步·脏文件全为 designflow 他线在途 trace_ledger_*.tsv/.cache_df/* 不动✅）✅；⑥ ops inbox .last_run_id=146 = RUN_ID146 只读新鲜度检查无新指令✅；⑦ research 日报 2026-11-22 对 zhulong 建议偏视频/多模态 KV-cache/TPF 成本口径·对本线 EDA doubao 评测无直接可执行条目·忽略✅。**MEMORY 维护**：原 46.8KB 超 40KB 硬限→滚出 wake#1778-1783 详条至 daily-memories/2026-11-22.md 留指针。v3 任务 7 batch 全完·3 模型 3-run 全出（pro=10.18±1.45% / lite=4.68±0.95% / mini=2.38±0.23%）·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
 
-- wake#1785（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40）。自检：① pgrep run_batch.sh 无评测进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl /v1·updatedAt 11-21T20:00Z）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ git fetch→HEAD=origin/main=fe1f1aaf63（0/0·ZHULONG_TASK.md mtime 11-21 10:40 无新令·ops inbox .last_run_id=146 = 最新 RUN_ID146 无新指令）✅；⑥ research 日报 2026-11-22 对 zhulong 建议偏视频/多模态 KV-cache/TPF 成本口径·对本线 EDA doubao 评测无直接可执行条目·忽略✅。v3 任务 7 batch 全完·3 模型 3-run 全出（pro=10.18±1.45% / lite=4.68±0.95% / mini=2.38±0.23%）·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
+- [wake#1784-1786 详条已滚出·2026-11-22 wake#1788 维护] 见 `daily-memories/2026-11-22.md` §[wake#1784-1786]（均 opencode 交互式 v3 收口后 standby 心跳·pgrep 无进程✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 或落后他线 1 commit 不强拉✅·research 日报 zhulong 建议偏视频/多模态成本口径·忽略✅·不起臂·原文不改）。
 
-- wake#1784（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40）。自检：① pgrep run_batch.sh 无评测进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl /v1·updatedAt 11-21T20:00Z）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ git fetch→HEAD=origin/main=da2e56b96a（0/0·ZHULONG_TASK.md mtime 11-21 10:40 无新令·ops inbox .last_run_id=146 = 最新 RUN_ID146 无新指令）✅；⑥ 脏文件全为 designflow 他线在途 trace_ledger_C/D.tsv + .cache_df/* 不动✅；⑦ research 日报 2026-11-22 对 zhulong 建议偏视频/多模态 KV-cache/TPF 成本口径·对本线 EDA doubao 评测无直接可执行条目·忽略✅。v3 任务 7 batch 全完·3 模型 3-run 全出（pro=10.18±1.45% / lite=4.68±0.95% / mini=2.38±0.23%）·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
-
-- wake#1783（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40·last commit 9c8f397eab 11-21 10:39）。自检：① pgrep run_batch.sh 仅假阳性（自身 shell 命令含 TASK 文本·非评测进程）✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl /v1·updatedAt 11-21T20:00Z）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ git fetch→HEAD=origin/main=36df22bd9985f0aec7f5e9febfda42c20cbb7943（0/0·ops inbox .last_run_id=146 RUN_ID146 只读新鲜度检查无新指令）✅；⑥ research 日报 2026-11-22 对 zhulong 建议偏视频/多模态成本口径·对本线 EDA 评测无直接可执行条目·忽略✅。v3 任务 7 batch 全完·3 模型 3-run 全出（pro=10.18±1.45% / lite=4.68±0.95% / mini=2.38±0.23%）·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
-
-- wake#1782（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40）。自检：① pgrep run_batch.sh 仅假阳性（自身 shell + cline/loop cmdline 含 TASK 文本·非评测进程）✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl /v1·updatedAt 11-21T20:00Z）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ git fetch→HEAD=origin/main=08fa3a65b7（0/0·ZHULONG_TASK.md mtime 11-21 10:40 无新令·ops inbox .last_run_id=146 无新指令）✅；⑥ 脏文件全为 designflow 他线在途 trace_ledger_B/C.tsv + .cache_df/* 不动✅；⑦ research 日报 2026-11-22 对 zhulong 建议偏视频/多模态成本与 token 单价口径·对本线 EDA 评测无直接可执行条目·忽略✅。v3 任务 7 batch 全完·3 模型 3-run 全出·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
-
-- wake#1781（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40）。自检：① pgrep run_batch.sh 无进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl /v1·updatedAt 11-21T20:00Z）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ git fetch→HEAD=origin/main=a9d3aee399（0/0·ZHULONG_TASK.md mtime 11-21 10:40 无新令·ops inbox .last_run_id=146 无新指令）✅；⑥ 脏文件全为 designflow 他线在途 trace_ledger_B/C.tsv + .cache_df/* 不动✅。v3 任务 7 batch 全完·3 模型 3-run 全出·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
-
-- wake#1780（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令·mtime 停 11-21 10:40）。自检：① pgrep run_batch.sh 无进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl /v1·updatedAt 11-21T20:00Z）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ git fetch→HEAD=origin/main=eefc5611d4（0/0·ZHULONG_TASK.md mtime 11-21 10:40 无新令·ops inbox .last_run_id=146 无新指令）✅；⑥ research 日报 2026-11-22.html 对 zhulong 建议偏视频/多模态成本口径·对本线 EDA 评测无直接可执行条目·忽略✅。v3 任务 7 batch 全完·3 模型 3-run 全出·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
-
-- wake#1779（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令）。自检：① pgrep run_batch.sh 无进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl 正确）✅；③ cases_lite.txt=500✅；④ cline 就位 /home/app.e0031982/.local/bin/cline✅；⑤ 3 份报告（pro/mini mtime 13:53·lite mtime 14:23）3-run 汇总版✅；⑥ git fetch→HEAD=origin/main=3031b64657（0 ahead/0 behind·脏文件全为 designflow 他线在途 trace_ledger_*.tsv/.cache_df/* 不动）✅。v3 任务 7 batch 全完·3 模型 3-run 全出（pro=10.18±1.45% / lite=4.68±0.95% / mini=2.38±0.23%）·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
-
-- wake#1778（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：自检：pgrep 无进程✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·3 报告 3-run 版✅·git HEAD=origin/main=f8c433a03(0/0)✅。3 模型 3-run 全出·无新令·不起臂·收口 WAITING=0·standby。
+- [wake#1778-1783 详条已滚出·2026-11-22 wake#1788 维护] 见 `daily-memories/2026-11-22.md` §[wake#1778-1783 rolled-out]（均 opencode 交互式 v3 收口后 standby 心跳·pgrep 无进程✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 同步✅·research 日报 zhulong 建议偏视频/多模态成本口径·忽略✅·不起臂·原文不改）。
 
 - [wake#1768-1777 详条已滚出·2026-11-22 wake#1779 维护] 见 `daily-memories/2026-11-22.md` §[wake#1768-1777 rolled-out]（opencode 交互式 v3 收口 + 9 条 standby 心跳·含 wake#1768 v3 收口详条 lite_r4 DONE 5.71%→lite 3-run=4.68±0.95%·pro/mini/lite 3-run 全出·不起臂·原文不改）。
 
 - [wake#1748 详条已滚出·2026-11-22 wake#1749 维护] 见 `daily-memories/2026-11-22.md` §[wake#1748 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r2 跑中 95%·全 infra-clean✅·不起臂·原文不改）。
 - [wake#1752 详条已滚出·2026-11-22 wake#1754 维护] 见 `daily-memories/2026-11-22.md` §[wake#1752 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r3 跑中 57%·infra-clean✅·不起臂·原文不改）。
-- [wake#1755 详条已滚出·2026-11-22 wake#1756 维护] 见 `daily-memories/2026-11-22.md` §[wake#1755 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r3 ✅DONE clean 2.26%·mini_r4 跑中 7%·infra-clean✅·不起臂·原文不改）。
-- [wake#1756 详条已滚出·2026-11-22 wake#1757 维护] 见 `daily-memories/2026-11-22.md` §[wake#1756 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r4 跑中 24%·0 FUSE·infra-clean·不起臂·原文不改）。
-- [wake#1766 详条已滚出·2026-11-22 wake#1768 维护] 见 `daily-memories/2026-11-22.md` §[wake#1766 rolled-out]（opencode 交互式 v3 令 standby 心跳：lite_r4 跑中 84% 422/500·0 FUSE·当前 5.80%·不起臂·原文不改）。
-
-
-
-- [wake#1768 详条已滚出·2026-11-22 wake#1779 维护] 见 `daily-memories/2026-11-22.md` §[wake#1768-1777 rolled-out]（opencode 交互式·v3 收口 ✅ 详条：lite_r4 DONE clean 5.71%→lite 3-run=4.68±0.95%·pro/mini/lite 3-run 全出·不起臂·原文不改）。
-
-- [wake#1767 详条已滚出·2026-11-22 wake#1768 维护] 见 `daily-memories/2026-11-22.md` §[wake#1767 rolled-out]（opencode 交互式 v3 令 standby 心跳：lite_r4 跑中 99% 498/500·0 FUSE·当前 5.74%·不起臂·原文不改）。
-
-
-
-- [wake#1765 详条已滚出·2026-11-22 wake#1766 维护] 见 `daily-memories/2026-11-22.md` §[wake#1765 rolled-out]（opencode 交互式 v3 令 standby 心跳：lite_r4 跑中 69% 345/500·0 FUSE·当前 4.73%·不起臂·原文不改）。
-
-- [wake#1764 详条已滚出·2026-11-22 wake#1765 维护] 见 `daily-memories/2026-11-22.md` §[wake#1764 rolled-out]（opencode 交互式 v3 令 standby 心跳：lite_r4 跑中 56% 280/500·0 FUSE·当前 4.71%·不起臂·原文不改）。
-
-- [wake#1763 详条已滚出·2026-11-22 wake#1765 补落] 见 `daily-memories/2026-11-22.md` §[wake#1763 rolled-out]（opencode 交互式 v3 令 standby 心跳：lite_r4 跑中 40% 203/500·0 FUSE·当前 4.46%·不起臂·原文不改）。
-
-- [wake#1761-#1762 详条已滚出·2026-11-22 wake#1763 维护] 见 `daily-memories/2026-11-22.md` §[wake#1761-#1762 rolled-out]（opencode 交互式 v3 令 standby 心跳：wake#1761 mini_r4 ✅DONE clean 2.65%→mini 3-run=2.38±0.23% + lite_r4 自动起跑 13%·wake#1762 lite_r4 跑中 28%·全 infra-clean✅·不起臂·原文不改）。
-
-- [wake#1758-#1760 详条已滚出·2026-11-22 wake#1761 维护] 见 `daily-memories/2026-11-22.md` §[wake#1758-#1760 rolled-out]（均 opencode 交互式 v3 令 standby 心跳：wake#1758 更正 wake#1757 误诊(wrapper 仍活)+mini_r4 65%·wake#1759 mini_r4 81%·wake#1760 mini_r4 99%·全 infra-clean✅·不起臂·原文不改）。
-- [wake#1754 详条已滚出·2026-11-22 wake#1755 维护] 见 `daily-memories/2026-11-22.md` §[wake#1754 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r3 跑中 89%·infra-clean✅·不起臂·原文不改）。
-- [wake#1753 详条已滚出·2026-11-22 wake#1754 维护] 见 `daily-memories/2026-11-22.md` §[wake#1753 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r3 跑中 73%·infra-clean✅·不起臂·原文不改）。
-
-- [wake#1747 详条已滚出·2026-11-22 wake#1748 维护] 见 `daily-memories/2026-11-22.md` §[wake#1747 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r2 跑中 74%·全 infra-clean✅·不起臂·原文不改）。
-
-- [wake#1746 详条已滚出·2026-11-22 wake#1748 维护] 见 `daily-memories/2026-11-22.md` §[wake#1746 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r2 跑中 56%·全 infra-clean✅·不起臂·原文不改）。
-
-- [wake#1745 详条已滚出·2026-11-22 wake#1747 维护] 见 `daily-memories/2026-11-21.md` §[wake#1745 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r2 跑中 39%·全 infra-clean✅·不起臂·原文不改）。
-
-- [wake#1744 详条已滚出·2026-11-22 wake#1746 维护] 见 `daily-memories/2026-11-21.md` §[wake#1744 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r2 跑中 25%·全 infra-clean✅·不起臂·原文不改）。
-
-- [wake#1743 详条已滚出·2026-11-22 wake#1746 维护] 见 `daily-memories/2026-11-21.md` §[wake#1743 rolled-out]（opencode 交互式 v3 令 standby 心跳：lite_r3 ✅ DONE clean 4.47%(22/492 decided)·mini_r2 跑中 8%·全 infra-clean✅·不起臂·原文不改）。
-
-- [wake#1739-#1742 详条已滚出·2026-11-21 wake#1743 维护] 见 `daily-memories/2026-11-21.md` §[wake#1739-#1742 rolled-out]（均 opencode 交互式 v3 令 standby 心跳：wake#1739/#1740/#1741 lite_r3 跑中 53%→64%→81% + wake#1742 lite_r3 96%·全 infra-clean✅·不起臂·原文不改）。
-
-- [wake#1722-#1738 详条已滚出·2026-11-21 wake#1740 维护] 见 `daily-memories/2026-11-21.md` 各 §[wake#XXXX rolled-out]（均 opencode 交互式 v3 令 standby 心跳：wake#1722 v3 令启动 + pro_r2 跑中 wake#1723-#1727 + pro_r2 DONE 11.85% & pro_r3 起跑 wake#1728 + pro_r3 26%→41%→66% 推进 wake#1729-#1731 + pro_r3 DONE 9.38%→pro 3-run=10.18±1.45% wake#1732/#1733 + v3 lite/mini VOID 诊断(Forbidden→hub-timeout→FUSE) wake#1734-#1736 + lite_r3 跑中 24%→36% wake#1737-#1738·infra-clean✅·不起臂·原文不改）。
-
-- [wake#1712-#1721 详条已滚出·2026-11-21 wake#1740 维护] 见 `daily-memories/2026-11-21.md` 各 §[wake#XXXX rolled-out]（均 opencode 交互式 v2 done_all standby 心跳：wake#1712 push 干净 HEAD=origin/main·wake#1715/#1717/#1718/#1720/#1721 v2 全判据✅·wake#1719 独立复核 v2 交付真实性 pro 9.32% clean + run#2 infra 排除 → `\MzeroAnchor=10.1%` 回填合法 commit `4fa407d35`·不起臂·原文不改）。
-
-- [wake#1701-#1711 详条已滚出·2026-11-22 wake#1749 维护合并] 见 `daily-memories/2026-11-20.md` 与 `daily-memories/2026-11-21.md` 各 §[wake#XXXX rolled-out]（均 opencode 交互式 standby 心跳：v2 三轮 doubao 评测全交付·pro 9.32% clean + mini infra + lite 3.85% clean·`\MzeroAnchor=10.1%` 回填 commit `4fa407d35` clean compile 12p/0err/0undef·release order 已交付并核账·push 阻塞由 ops 解除·四条 11-19 红令全交付·不起臂·原文不改）。
-- [wake#1686~#1699 详条已滚出·2026-11-20 wake#1700 维护合并] 见 `daily-memories/2026-11-20.md` 各 §[wake#XXXX rolled-out]（均 opencode 交互式 standby 心跳·release order 已交付并核账 10/422=2.37%·pgrep 仅外层 loop wrapper/ops relay/假阳性他线 designflow shard·HEAD 演进 `845dc834f`→`bc5fee688`→`0f2cc2fcc`→`931cc40e3`→`2e73b564f`=origin/main·paper HEAD=`1b2b4222e`·四条 11-19 红令全交付·不起臂·done_all）。含 wake#1699/1698/1697/1696/1694/1693/1692/1690/1689/1687-1688/1686/1685/1681/1603-1685 等多个滚出块。
+- [wake#1686-#1787 详条已滚出·2026-11-22 wake#1788 维护合并] 见 `daily-memories/2026-11-2{0,1}.md` 各 §[wake#XXXX rolled-out]（均 opencode 交互式 standby 心跳·v3 7 batch 全完·pro 3-run=10.18±1.45% / lite 3-run=4.68±0.95% / mini 3-run=2.38±0.23%·`\MzeroAnchor=10.1%` 回填 commit `4fa407d35` clean compile 12p/0err/0undef·release order 已交付·四条 11-19 红令全交付·不起臂·原文不改）。
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
