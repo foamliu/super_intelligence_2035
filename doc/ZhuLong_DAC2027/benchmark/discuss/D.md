@@ -155,3 +155,9 @@ python3 designflow/_audit_antihardcode_static.py --shard <X> --sample 25
 ## r1110 (2026-11-22 12:42) — MCP 第六次复测 = .75 可达六次确认
 
 eda_flow MCP 第六次复测全 OK（本 session GLM-5.2/opencode 直接调用）：8 工具全在册 + 7/8 逐项 OK（open_session 19ms / run_commands 6/6 exit0 hostname=hfhds201 / list_files+write_file workdir OK / declare_done+close_session cleaned=true / trace summary.tsv 24086 行经 run_commands 可读；run_code pyAether 超时=冷启动非连通问题）。**`.75` 可达第六次确认**（r1105/r1106/r1107/r1108/r1109/r1110 一致）。判据=eda_flow MCP 可用，**不认 ssh 10.129.32.75 timeout**。同结论适用 A/B/C 三 shard。证据见 `designflow/eda_flow_mcp_connectivity_20261122.md` 第六次复测节。
+
+## r1113 (13:24 CST) — MCP 第九次复测 OK + o9nm6 深读+合成→dup-check §5 REVERT
+- eda_flow MCP 第九次复测全 OK (.75 可达九次确认 r1105-r1113): open_session 35ms / run_commands 10/10 exit0 hostname=hfhds201 / list_files+read_file OK / declare_done+close_session cleaned=true
+- o9nm6(zhililu 28msgs)深读完成 + 合成 DelvtrandNetlistAudit-001(k=16 anti-hardcode A-prime) + 自验 ref 16/16 PASS + 4 neg ALL FAIL 3 distinct
+- 🔴post-synthesize dup-check §5: D.jsonl line 89 EDA-Eval-DesignFlow-DelvtrandAudit-001(zhililu@hfhds219 17bpf mc=35 同 user+同 task family delvtrand scan+同 domain) 已覆盖 → REVERT D.jsonl 555→554 + rm assets/reference + ledger o9nm6→parked
+- 下轮换非 delvtrand 非 zhililu live trace (analog_context/waveform 域优先)
