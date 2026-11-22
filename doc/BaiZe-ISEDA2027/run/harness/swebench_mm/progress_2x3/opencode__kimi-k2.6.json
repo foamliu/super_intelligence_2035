@@ -3070,30 +3070,58 @@
   "carbon-design-system__carbon-16237": {
     "instance_id": "carbon-design-system__carbon-16237",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 340.1,
+    "rc": 0,
+    "model_patch_len": 3456,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "lure related to a missing feature flag (`enable-v12-tile-radio-icons`) in the test environment, which is unrelated to these changes. I confirmed the tests fail both before and after my modifications.\n",
+    "stderr_tail": ".18.1\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore codebase for RadioTile and TileGroup components and styles\n[✓] Implement fix for native RadioTile validation positioning\n[✓] Verify the changes are correct\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-16332": {
     "instance_id": "carbon-design-system__carbon-16332",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 387.8,
+    "rc": 0,
+    "model_patch_len": 5602,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ied `.tsx` files with Babel's TypeScript parser, and they all pass successfully. The existing tests for these components use the legacy `ariaLabel` prop, which still works for backward compatibility.\n",
+    "stderr_tail": "Update TableExpandRow: deprecate ariaLabel, add aria-label, prefer aria-label\n[✓] Update TableExpandHeader: deprecate ariaLabel, add aria-label, prefer aria-label\n[✓] Run tests to verify changes\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-2885": {
     "instance_id": "carbon-design-system__carbon-2885",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 162.9,
+    "rc": 0,
+    "model_patch_len": 4964,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "he network is currently unreachable, so dependencies cannot be installed. The change is minimal and targeted—no test assertions reference `aria-hidden`, so the existing tests should continue to pass.\n",
+    "stderr_tail": "ove aria-hidden from React Toggle component\n[✓] Remove aria-hidden from vanilla toggle.hbs template\n[✓] Remove aria-hidden from vanilla toggle--small.hbs template\n[✓] Run tests to verify changes\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-3118": {
     "instance_id": "carbon-design-system__carbon-3118",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 658.0,
+    "rc": 0,
+    "model_patch_len": 2618,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "/src/components/ListBox/__tests__/__snapshots__/ListBoxSelection-test.js.snap`\n\nUpdated to reflect the corrected className for single selections (`bx--list-box__selection` without `bx--tag--filter`).\n",
+    "stderr_tail": "dos\n[✓] Find and inspect ComboBox component source files and styles\n[✓] Identify why multiselect styles are being included\n[✓] Fix the invalid state selection icon positioning\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-3139": {
     "instance_id": "carbon-design-system__carbon-3139",
