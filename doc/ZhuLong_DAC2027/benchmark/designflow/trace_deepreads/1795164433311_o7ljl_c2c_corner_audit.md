@@ -5,7 +5,7 @@
 - match_count: 78 (hspice:205; pdk:190; netlist:130)
 - domain: spice_sim (shard B)
 - ledger status: claimed → case (`EDA-Eval-DesignFlow-C2cCornerAmplifierAudit-001`)
-- round: r1037
+- round: r1038
 
 ## 真实任务
 
