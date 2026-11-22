@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R234) — 例行巡检+blendswitch第27次复验7/7 PASS**：①✅git fetch origin local=origin(29b790eaf3) 0 behind **无新data令**；②✅pretrain iter=291,730/700k(41.68%) step_avg(last10)=7190ms<7.4s gate✅ 训练健康 loss≈2.000 lr=1e-3 stable daemon idle等292k ETA≈06:41(读自MEMORY_PRETRAIN_2B.md #3105@06:09)；③✅blendswitch第27次复验7/7 PASS(zero_overlap=0/7源S1 50k·S2 50k docs零交集；ratio max_dev=0.0087%<1%；flag-off=byte-identical；new_source=0(new_d/new_e cursor=0)；epoch_wrap诚实报告(150>100→overlap=50 unavoidable有warning)；json_roundtrip OK；perf_pass(t_stock=0.1819s/switch_only=0.1625s one-time开销小)；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=24.80<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data下载进程(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226；注：dl_orchestrator.sh PID3319999 stale etime≈674ks无日志更新非活跃下载,未kill待确认)；⑦✅MEMORY 33.3KB<40KB硬限/TASK 27.6KB<32KB。research日报11-23「EDA语料Gopher体检」建议记为参考(EDA已取消)。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R235) — 例行巡检+blendswitch第28次复验7/7 PASS**：①✅git fetch origin local=1ahead/0behind(65529e2da5) **无新data令**；②✅pretrain iter=291,780/700k(41.69%) step_avg(last10)=7238ms<7.4s gate✅ 训练健康 lr=1e-3 stable daemon idle等292k ETA≈06:42(读自MEMORY_PRETRAIN_2B.md #3106@06:15)；③✅blendswitch第28次复验7/7 PASS(zero_overlap=0/7源S1 50k·S2 50k docs零交集；ratio max_dev=0.0087%<1%；flag-off=byte-identical；new_source=0；epoch_wrap诚实报告；json_roundtrip OK；perf_pass(t_stock=0.2265s/switch_only=0.2269s one-time开销小)；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=24.50<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data下载进程(S2三大下载全100%；dl_orchestrator.sh PID3319999 stale非活跃)；⑦✅MEMORY 33.3KB<40KB硬限/TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+
+> 📦 R234 心跳（例行巡检+blendswitch第27次复验7/7 PASS·iter291730 step7190ms·.12 load24.80·S2三下载全100%）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R233 心跳（例行巡检+blendswitch第26次复验7/7 PASS·iter291730 step7190ms·.12 load23.52·S2三下载全100%）已归档 → daily-memories-data/2026-11-23.md
 
