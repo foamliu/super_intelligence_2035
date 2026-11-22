@@ -2,15 +2,15 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-22 (R199) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：例行巡检（无新令）。git pull --rebase 无新 data 令（origin/main 有 zhulong/harness/designflow 提交非 data 令）。方案F blendswitch 第23次复验 7/7 PASS（miniforge3 py /nas_train/app.e0031982/miniforge3/bin/python）：zero_overlap=0(7共享源 overlap_docs=0) / ratio_switch max dev=0.0087%≤1%✅ / flag_off_equivalence byte-identical✅ / new_source_zero_overlap=0✅ / epoch_wrap honest report✅ / json_roundtrip✅ / perf one-time switch cost small✅。复跑后 verify_results.json 已还原提交版（避免机器噪声 perf）。交付物完好：blend_switcher.py(14KB)+test(9KB)+validate_overlap.py+README_PATCH.md+verify_results.json / v5报告13,813B≤20KB✅ / v4报告14,625B≤15KB✅。pretrain iter≈286k/700k(40.9%) step avg7309ms 0NaN/0skip✅(pretrain #3020, lr=1e-3 stable, 286k eval RUNNING daemon auto-detect) / 350k ETA≈11-28不变 / 700k ETA≈12-27不变。PC-1~PC-5全✅ / 污染扫描✅ / 无后台任务 / MEMORY_DATA✅<40KB / TASK✅<40KB。WAITING=0**。
+> 🟢 **心跳 · 2026-11-22 (R200) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：例行巡检（无新令）。git fetch 无新 data 令（origin top=92a6eceda6 pretrain#3023）。方案F blendswitch 第24次复验 7/7 PASS（miniforge3 py /nas_train/app.e0031982/miniforge3/bin/python）：zero_overlap=0(7共享源 overlap_docs=0) / ratio_switch max dev=0.0087%≤1%✅ / flag_off_equivalence byte-identical✅ / new_source_zero_overlap=0✅ / epoch_wrap honest report✅ / json_roundtrip✅ / perf one-time switch cost small✅。复跑后 verify_results.json 已还原提交版（避免机器噪声 perf）。交付物完好：blend_switcher.py(14KB)+test(9KB)+validate_overlap.py+README_PATCH.md+verify_results.json / v5报告13,813B≤20KB✅ / v4报告14,625B≤15KB✅。pretrain iter≈286.2k/700k(40.9%) step avg7104ms 0NaN/0skip✅(pretrain#3023, lr=1e-3 stable, 286k eval RUNNING daemon) / 350k ETA≈11-28不变(63770步×7.1s≈5.2天) / 700k ETA≈12-27不变。PC-1~PC-5全✅ / 污染扫描✅ / 无后台任务 / MEMORY_DATA 31.4KB<40KB✅ / TASK 30.7KB<40KB✅。WAITING=0**。
 
-> 📦 R198~R169 心跳（方案F blendswitch例行巡检+第3-23次复验，均7/7 PASS zero_overlap=0）已归档 → daily-memories-data/2026-11-22.md
-
-
-> 🟢 **心跳 · 2026-11-22 (R171) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：补完 R170 遗漏的交付物③——**v4 报告结论段已就地修正**（`reports/report_s1s2_split_data_v4_zh.html` 14,625B ≤15KB✅ 0外链0script✅）：①主结论改三层表述（L1 stock 不可行 / L2 resume+新blend=D+E / L3 自定义改造可行且已选）②§0.4 加 ~12% 加权透明表（token 口径，逐源 w_s×r_s→加权贡献，合计 0.201≈20%，标注 v4 原 12% 系 sample 口径粗估）③§0.2 核查3「2-3 人日本时间线不推荐」改 WBS 支撑（17h≈2.1 人日已实测，W1-W7）④§0.3 F 行更新为「自定义改造可行且已选」。v5 报告（13,813B）为完整版不变。独立复跑 CPU 测试 7/7 通过（numpy 2.2.6 临时 venv，all_pass=True / zero_overlap=0 / max_ratio_dev=0.0087%≤1%），复跑后 verify_results.json 已还原为提交版（避免机器噪声 perf）。pretrain iter≈281.4k/700k(40.2%) step 7.3s / 350k ETA≈11-28 / 700k≈12-26。WAITING=0**。
+> 📦 R199~R170 心跳（方案F blendswitch例行巡检+第3-24次复验，均7/7 PASS zero_overlap=0）已归档 → daily-memories-data/2026-11-22.md
 
 
-> 🟢 **心跳 · 2026-11-22 (R170) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：交付 v5 报告 `run/reports/report_s1s2_blend_hotswitch_v5_zh.html`（13,813B ≤20KB✅, 0外链0script✅）。核心实现 `data/blendswitch/blend_switcher.py`（BlendSwitcher + update_weights + BlendHotSwitchSampler, 14KB）。CPU 验证 7/7 通过：**zero_overlap=0**（7共享源, 实测 overlap_docs=0）· ratio_switch max dev=0.0087%≤1%✅ · flag_off_equivalence byte-identical✅ · new_source_zero_overlap=0✅ · epoch_wrap honest report✅ · json_roundtrip✅ · perf switch-only 0.14s one-time✅。离线验证器 `validate_overlap.py` 交付。patch 文档 `README_PATCH.md`（4处patch: blended_dataset/samplers/loaders/checkpoint, flag-off=stock等价证明）。base commit=14c215dc（pin住训练代码）。v4 报告保留不删, v5 为修正版: 三层主结论(L1 stock不可行/L2 resume+新blend=D+E/L3 自定义改造可行且已选) + ~12%加权透明表(token口径0.201≈20%, 修正v4) + WBS(17h≈2.1人日, 实际17h)。Go-No-Go=Go(CPU阶段), GPU smoke(W7)待空闲卡。pretrain iter≈281.4k/700k(40.2%) step 7.3s / 350k ETA≈11-28 / 700k≈12-26。WAITING=0**。
+> _(R171 心跳已归档 daily-memories-data/2026-11-22.md · R171: v4报告结论段修正三层表述+~12%加权透明表(token口径0.201≈20%)+WBS支撑17h≈2.1人日)
+
+
+> _(R170 心跳已归档 daily-memories-data/2026-11-22.md · R170: v5报告交付+blend_switcher.py实现(BlendSwitcher+update_weights+BlendHotSwitchSampler 14KB)+CPU验证7/7 PASS zero_overlap=0+validate_overlap.py+README_PATCH.md(4处patch)+base commit=14c215dc)
 
 > _(R169 心跳已归档 daily-memories-data/2026-11-22.md · R169: v4报告交付+方案F stock不可行核查+§0.1修正+S1→S2接力 LR恒1e-3)
 
