@@ -5633,16 +5633,30 @@
   "openlayers__openlayers-12695": {
     "instance_id": "openlayers__openlayers-12695",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1010.0,
+    "rc": 0,
+    "model_patch_len": 540,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "64 icon like `star.png`:\n- **Before:** anchor normalized to `[32, 64]` → icon's bottom-center pinned at the point\n- **After:** anchor normalizes to `[32, 32]` → icon's true center pinned at the point\n",
+    "stderr_tail": "stand icon anchor/size handling\n[✓] Identify the bug in anchor point logic for KML symbols\n[✓] Identify the size discrepancy issue\n[✓] Implement fixes for anchor and size\n[✓] Run tests to verify\n\u001b[0m\n"
   },
   "openlayers__openlayers-12962": {
     "instance_id": "openlayers__openlayers-12962",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 633.8,
+    "rc": 0,
+    "model_patch_len": 498,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "er renders into its own canvas with its own CSS opacity, matching the behavior that `CanvasVectorLayerRenderer` already had via its own `useContainer()` override (now redundant but kept for clarity).\n",
+    "stderr_tail": "ty rendering\n[✓] Find the commit(s) between 6.7.0 and 6.8.1 that introduced the opacity bug\n[✓] Fix the opacity stacking issue in CanvasLayerRenderer.useContainer()\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "openlayers__openlayers-12965": {
     "instance_id": "openlayers__openlayers-12965",

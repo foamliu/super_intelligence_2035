@@ -3568,16 +3568,30 @@
   "carbon-design-system__carbon-4862": {
     "instance_id": "carbon-design-system__carbon-4862",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 330.5,
+    "rc": 0,
+    "model_patch_len": 3756,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e icon's `<title>` use the same text as the visible label (e.g., `\"Settings\"`), eliminating the violation.\n\nI also updated the corresponding Jest snapshot to reflect the new accessibility attributes.\n",
+    "stderr_tail": "enu.js\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Find DataTable and Toolbar component code in the repository\n[✓] Identify the 2.5.3 Label in Name violation\n[✓] Fix the accessibility violation in TableToolbarMenu\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4891": {
     "instance_id": "carbon-design-system__carbon-4891",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 418.8,
+    "rc": 0,
+    "model_patch_len": 833,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "t mismatch with the `::before` separator and the icon. Giving the button an explicit background color ensures it always matches the intended field color, regardless of the browser's autofill styling.\n",
+    "stderr_tail": "✓] Investigate Search cancel button color contrast issue with Chrome autofill\n[✓] Update _search.scss to add background-color to close button\n[✓] Add light variant styles for search close button\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4952": {
     "instance_id": "carbon-design-system__carbon-4952",
