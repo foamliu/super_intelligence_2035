@@ -3,6 +3,9 @@
 WAITING: 0
 
 
+> 🟢 **心跳 · 2026-11-22 (R178) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：例行巡检（无新令）。git fetch origin 无新 data 令（origin/main 已同步，top=a4bfa60c pretrain #2986）。**方案F blendswitch 第3次复验**：/tmp/blendswitch_venv(numpy2.2.6) 重跑 test_blend_switch.py 7/7 PASS——zero_overlap=0(7共享源全overlap_docs=0) / ratio max dev=0.0087%≤1% / flag-off=stock byte-equivalent / new_source_zero_overlap=0 / epoch_wrap honest / json_roundtrip✅ / perf✅。复跑后 verify_results.json 已 git checkout 还原为提交版(避免机器噪声perf)。所有交付物完好：blend_switcher.py(14KB)+test(9KB)+validate_overlap.py+README_PATCH.md+verify_results.json / v5报告13,813B≤20KB✅ / v4报告14,625B≤15KB✅。pretrain iter≈283.7k/700k(40.5%) step avg7.26s 0NaN/0skip✅(pretrain #2986) / 350k ETA≈11-28不变 / 700k ETA≈12-26不变。数据侧无新变化：PC-1~PC-5全✅ / 污染扫描✅ / 无后台任务 / .12 load=25.4✅<120 / /nas_user 42T✅>5T红线。MEMORY_DATA 32.5KB✅<40KB / TASK 30.7KB✅<40KB。WAITING=0**。
+
+
 > 🟢 **心跳 · 2026-11-22 (R177) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：例行巡检（无新令）。git fetch origin 无新 data 令（origin/main 已同步）。**方案F blendswitch 复验**：/tmp/blendswitch_venv(numpy2.2.6) 重跑 test_blend_switch.py 7/7 PASS——zero_overlap=0(7共享源全overlap_docs=0) / ratio max dev=0.0087%≤1% / flag-off=stock byte-equivalent / new_source_zero_overlap=0 / epoch_wrap honest / json_roundtrip✅ / perf one-time switch cost✅。复跑后 verify_results.json 已还原提交版(避免机器噪声perf)。所有交付物完好：blend_switcher.py(14KB)+test(9KB)+validate_overlap.py+README_PATCH.md+verify_results.json / v5报告13,813B≤20KB✅ / v4报告14,625B≤15KB✅。pretrain iter≈283.7k/700k(40.5%) step avg7.26s 0NaN/0skip✅(pretrain #2985 13:57) / 350k ETA≈11-28不变 / 700k ETA≈12-26不变。数据侧无新变化：PC-1~PC-5全✅ / 污染扫描✅ / 无后台任务 / .12 load=24.9✅<120 / /nas_user 42T✅>5T红线。MEMORY_DATA 32.5KB✅<40KB / TASK 30.7KB✅<40KB。WAITING=0**。
 
 
