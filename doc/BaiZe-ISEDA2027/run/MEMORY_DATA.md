@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R217) — 例行巡检+blendswitch第10次复验7/7 PASS+S2三大下载全部完成**：①✅git fetch无新data令（up-to-date origin/main，HEAD=bcfc61e4 harness线）；②✅pretrain iter=290,840/700k(41.55%) step~7.2s 290k eval DONE(55.25%) 训练健康 loss≈1.98-2.00 lr=1e-3 stable；③✅blendswitch复验7/7 PASS(zero_overlap=0/ratio_switch 5000batch max_dev=0.0012%/flag_off_equivalent=true/new_source=0/epoch_wrap honest/perf ok)；④✅.12 load=23.5<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data任务；⑦**里程碑：S2三大预训练源下载全部100%完成**——MegaMath-web 4950parquet✅ / Code-Reasoning 1635parquet✅ / Math-Reasoning 2226parquet✅ / 0 .incomplete✅（log→/tmp/dl_*_restart*.log 均显示 100%）；⑧✅MEMORY<32KB / TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R218) — 例行巡检+blendswitch第11次复验7/7 PASS**：①✅git fetch无新data令（up-to-date origin/main，HEAD=55b0e28 data线→250df93 designflow线）；②✅pretrain iter=290,890/700k(41.56%) step_avg(last10)=7234ms<7.4s gate✅ loss≈1.98-2.00 lr=1e-3 stable 290k eval DONE(55.25%) 训练健康；③✅blendswitch第11次复验7/7 PASS(zero_overlap=0/new_source=0/flag_off_equivalence=true/max_dev=0.0087%/perf switch_overhead~0.6%；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4)；④✅.12 load=25.63<120✅；⑤✅/nas_user 42T可用>5T红线✅(0 .incomplete)；⑥✅无后台data任务(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226)；⑦📝research日报11-23本线建议=Gopher式EDA语料体检(毒性/PII抽样500)，因任务书§1 EDA退火源已取消(与评测集同源无意义)，记为参考不执行；⑧✅MEMORY 29.7KB<32KB / TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
 
-> 📦 R214–R216 心跳（例行巡检+blendswitch第7~9次复验7/7 PASS）已归档 → daily-memories-data/2026-11-23.md
+> 📦 R214–R217 心跳（例行巡检+blendswitch第7~10次复验7/7 PASS+S2三大下载全部完成）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R209–R213 心跳（F 科普报告复验第2~6次全通过+归档收口）已归档 → daily-memories-data/2026-11-23.md
 
