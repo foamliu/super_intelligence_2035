@@ -1995,3 +1995,4 @@ vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:
 1795067358138_l4hdo.messages.json	tianqizh	hfeahpc501	148	waveform	case	EDA-Eval-DesignFlow-DqsJitterWaveExport-001	2026-11-22 19:39	
 1795165067187_xjxxj.messages.json	tongfanl	hfeg0pkn002	619	schematic_netlist	case	EDA-Eval-DesignFlow-AgingVdbiasPreStep2Check-001	2026-11-22 20:29	
 1795052470117_n693x.messages.json	dsgao	hfeg0pkn001	116	waveform	case	EDA-Eval-DesignFlow-IdvgVthExtractProduce-001	2026-11-22 21:52	
+1795058805107_4uk8j.messages.json	tianqizh	hfeahpc501	46	waveform	parked		2026-11-23 00:04	deepread done r1156: WaveView bridge debug env-config task; case synthesis deferred (produce weak, 有牙 check 构造需更多预算, 不凑 weak case); 复活路径见 trace_deepreads/1795058805107_4uk8j_waveview_bridge_debug.md

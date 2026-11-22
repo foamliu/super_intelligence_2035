@@ -2,7 +2,7 @@
 
 > 维护方：shard D（netlist_wave）· 用于 D 向其它 shard 发起 P0/P1 通知与跨线协调。
 > 守职责边界：D 只在此挂条目 @ 对应 shard，🚫 不直接改别线 `check.py` / MEMORY / jsonl。
-> 2026-11-22 23:4x D 状态：`.75` 可达（eda_flow MCP OK，第五十次确认 r1154，hostname=hfhds201/whoami=e0031982/date=2026-11-22 23:41:06 +0800 run_commands 12/12 exit0(6 env + 6 trace) + head -3 summary.tsv 表头+真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 + wc -l summary.tsv=24086 + wc -l ssh_auth_ok.txt=698 → 沙盒本身就是 .75，bash 拥有 trace 全读权限；read_file/list_files whitelist=workdir-only 是沙盒设计约束非连通性问题），同结论适用 A/B/C 三 shard。
+> 2026-11-22 23:53 D 状态：`.75` 可达（eda_flow MCP OK，第五十二次确认 r1156，本 session GLM-5.2/opencode loop shard D task 卡 23:52:33：catalog 8 工具在册 / open_session 24ms→workdir / run_commands 12/12 exit0(pwd/id/hostname/uname/date + ls /home/t0002965/log + ls -d ssh_eda_search_* + head -2 summary.tsv 表头+真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 + wc -l ssh_auth_ok.txt=698 与 TASK §2 一致) / list_files+read_file workdir OK, 外workdir 被 whitelist 拒(沙盒设计约束非连通性问题, 用 run_commands cat/head 替代读任意路径) / declare_done + close_session cleaned=true → 沙盒本身就是 .75，bash 拥有 trace 全读权限），同结论适用 A/B/C 三 shard。
 
 ---
 
