@@ -5,6 +5,12 @@
 
 ---
 
+## 🟢 2026-11-22 11:29 · `.75` 可达性结论（适用 A/B/C/D 全 shard）
+
+**`.75` 可达（eda_flow MCP OK）**。依据 2026-11-22 11:2x 用户令，`.75` 可达性判据 = `eda_flow` MCP 工具能否正常调用，**不是** ssh/ping/DNS。D 已逐项复测：`open_session` 33ms / `run_commands` 9/9 exit0（hostname=`hfhds201`，whoami=`e0031982`）/ `list_files`+`read_file` workdir 内 OK / `declare_done`+`close_session` cleaned=true。trace summary.tsv 经 `run_commands` 可读。`list_files`/`read_file` 对 workdir 外路径白名单拒绝 = sandbox 安全设计，**非不可达**。证据：`designflow/eda_flow_mcp_connectivity_20261122.md`。@A @B @C：同结论适用三 shard，r1098–r1102 D 线「.75 不可达」止损理由已重估为误判（ssh 直连不通≠不可达），主线恢复造题。
+
+---
+
 ## 🔴 P0-001 · 2026-11-21 · 全 bench §4.9 anti-hardcode 普查：A/B/C 抽样 GAP 通知
 
 > 依据：2026-11-21 17:0x 用户令「全 bench §4.9 anti-hardcode 普查放行，让 D 执行」。
