@@ -4155,23 +4155,44 @@
   "carbon-design-system__carbon-8296": {
     "instance_id": "carbon-design-system__carbon-8296",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 798.2,
+    "rc": 0,
+    "model_patch_len": 4307,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "and does not close on link click\n\nAll UIShell tests pass. The one failure (`HeaderGlobalAction-test.js`) is a pre-existing issue unrelated to this change (missing feature flag `enable-2021-release`).\n",
+    "stderr_tail": "r, and related components\n[✓] Identify root cause of SideNav not closing on link click or overlay click\n[✓] Implement minimal fix for the issue\n[✓] Verify the fix with existing tests or examples\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8452": {
     "instance_id": "carbon-design-system__carbon-8452",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 852.6,
+    "rc": 0,
+    "model_patch_len": 14885,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "on\n- **`ARCHITECTURE.md`** — Documented the new `bx--data-table--md` class\n\n### Verification\n- All 79 DataTable tests pass ✅\n- All 4 DataTableSkeleton tests pass ✅\n- Stylelint passes with no errors ✅\n",
+    "stderr_tail": "     {({\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore codebase to find data table component and size/row height props\n[✓] Add 40px (md) row height option to data table\n[✓] Verify changes with tests or build\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8469": {
     "instance_id": "carbon-design-system__carbon-8469",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 247.2,
+    "rc": 0,
+    "model_patch_len": 1873,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ext` is not provided (e.g., teams using only `labelA`/`labelB`), the `aria-label` prop is correctly applied to the `<input>` element so screen readers can announce it\n\nAll **21 existing tests** pass.\n",
+    "stderr_tail": "oggle/i.\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix Toggle.js to apply aria-label to input instead of label\n[✓] Fix ToggleSmall.js to apply aria-label to input instead of label\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8477": {
     "instance_id": "carbon-design-system__carbon-8477",

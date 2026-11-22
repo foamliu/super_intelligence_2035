@@ -6132,30 +6132,58 @@
   "openlayers__openlayers-14719": {
     "instance_id": "openlayers__openlayers-14719",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 798.9,
+    "rc": 0,
+    "model_patch_len": 623,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "Fix:** Round `dx` and `dy` to integers in `renderFrame()`:\n```js\nconst dx = Math.round(transform[4]);\nconst dy = Math.round(transform[5]);\n```\n\nAll 1801 tests pass and TypeScript type-checks cleanly.\n",
+    "stderr_tail": "nd WMS image rendering and blurry issue\n[✓] Identify the root cause of blurry WMS images with non-integer ratios or odd dimensions\n[✓] Implement fix for the blurry image issue\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-14932": {
     "instance_id": "openlayers__openlayers-14932",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 211.9,
+    "rc": 0,
+    "model_patch_len": 9140,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": ". The `horizontalTextAlign()` function already handles this correctly (used for point placement), but line placement was bypassing it. The fix applies the same RTL-aware conversion to line placement.\n",
+    "stderr_tail": "✓] Find the rendering test case text-style-linestring-nice\n[✓] Identify the commit/code change that caused the regression\n[✓] Fix the regression - use horizontalTextAlign in Executor.js line 983\n\u001b[0m\n"
   },
   "openlayers__openlayers-14945": {
     "instance_id": "openlayers__openlayers-14945",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 13.5,
+    "rc": 0,
+    "model_patch_len": 1328,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "l/source/ImageArcGISRest.js:34` and `:130`. This ensures the requested image extent exactly matches the viewport, preventing layer-map misalignment on non-100% display scaling and after map rotation.\n",
+    "stderr_tail": "o !== undefined ? options.ratio : 1.5;\n+  this.ratio_ = options.ratio !== undefined ? options.ratio : 1;\n }\n \n /**\n  * Get the user-provided params, i.e. those passed to the constructor through\n\n\u001b[0m\n"
   },
   "openlayers__openlayers-15114": {
     "instance_id": "openlayers__openlayers-15114",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 349.9,
+    "rc": 0,
+    "model_patch_len": 1846,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "rrectly and is consistent with the `inflateEnds` function in `orient.js` which uses the same approach. Also added a safeguard for degenerate rings where orientation can't be determined (`undefined`).\n",
+    "stderr_tail": "s && npm run test-node 2>&1 | tail -10\nol/vec/mat4.js\n    create()\n      ✔ returns the expected matrix\n    fromTransform()\n      ✔ sets the expected transform on the matrix\n\n\n  1869 passing (2s)\n\u001b[0m\n"
   },
   "openlayers__openlayers-15168": {
     "instance_id": "openlayers__openlayers-15168",
