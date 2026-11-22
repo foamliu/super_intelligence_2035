@@ -159,3 +159,39 @@ tools["eda_flow"].declare_done({workdir}); tools["eda_flow"].close_session({work
 - **close_session**: cleaned=true, workdir 已清
 
 **结论: eda_flow MCP 可用 = .75 可达（第四次确认，与 r1105/r1106/r1107 一致）**。run_code 超时属 pyAether 解释器冷启动耗时，非 infra/权限/连通问题。
+
+## 第五次复测（r1109, 2026-11-22 12:33, loop shard D 自动轮 · 依据 2026-11-22 11:2x 用户令最高优先）
+
+逐项记录（工具名 / 参数 / 返回摘要 / 耗时 / 错误原文）：
+
+1. **catalog** (`search({namespace:"eda_flow"})`)：8 工具全在册（open_session / close_session / declare_done / run_commands / run_code / list_files / read_file / write_file）。耗时 <1s。无错误。
+2. **open_session**：参数 `{task_id:"MCP-CONNTEST-D", eval_id:"20261122-mcp-test", sample:"0", user:"shardD"}`。返回 `workdir=/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/shardD_20261122-mcp-test_MCP-CONNTEST-D_0`，`response="session workdir ready"`，`error_log=""`。耗时 **21 ms**。无错误。
+3. **run_commands** (5 条: `pwd / ls -la / hostname / whoami / date`)：全 exit0 —
+   - `hostname=hfhds201`（= .75 / 10.129.32.75）
+   - `whoami=e0031982`
+   - `pwd` = workdir
+   - `date=2026-11-22 12:33:43 CST`
+   耗时 43 ms。无错误。
+4. **list_files** (`{dir:workdir, pattern:"*"}`)：返回 `entries=[]`（空 workdir，符合预期），`error_log=""`。耗时 14 ms。无错误。
+5. **write_file + read_file**：先 `write_file` 写 `probe.txt`（70B），再 `read_file` 回读，内容 byte-identical，`is_text=true`。耗时 13 ms。无错误。
+6. **trace 目录访问**（run_commands, only-read）：
+   - `ls -d /home/t0002965/log/ssh_eda_search_20261028_174426` → exit0，目录存在
+   - `head -c 800 .../summary.tsv` → exit0，真实数据（含 ip/host/user/session_file/match_count/keywords/tools 表头 + 5 行；shard D 域命中如 `netlist:153 / pyAether:171 / analog:182 / hspice:55 / schematic:36`）
+   - `wc -l .../summary.tsv` → **24086 行**（与 §0 「24,085 IC-EDA 命中 + 1 表头」一致）
+   耗时 40 ms。无错误。
+7. **declare_done**：`declared=true`，marker `.df_declared_done` 写入。耗时 19 ms。无错误。
+8. **close_session** (`keep:false`)：`cleaned=true`，workdir 已清。耗时 21 ms。无错误。
+
+**复现命令**（在 Code Mode 内逐条 `await`）：
+```js
+const workdir = (await tools["eda_flow"].open_session({task_id:"MCP-CONNTEST-D",eval_id:"20261122-mcp-test",user:"shardD"})).workdir;
+await tools["eda_flow"].run_commands({workdir, commands:["pwd","hostname","whoami","date '+%F %T %Z'"]});
+await tools["eda_flow"].list_files({dir:workdir, pattern:"*"});
+await tools["eda_flow"].write_file({path:workdir+"/probe.txt", content:"probe\n"});
+await tools["eda_flow"].read_file({path:workdir+"/probe.txt"});
+await tools["eda_flow"].run_commands({workdir, commands:["head -3 /home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv","wc -l /home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv"]});
+await tools["eda_flow"].declare_done({workdir});
+await tools["eda_flow"].close_session({workdir, keep:false});
+```
+
+**结论: eda_flow MCP 可用 = .75 可达（第五次确认，与 r1105/r1106/r1107/r1108 一致）**。所有 8 工具逐项 OK；trace summary.tsv 24,086 行经 run_commands 可读，含本 shard D 域候选（netlist / pyAether / analog / hspice / schematic 命中）；r1098–r1102 「.75 不可达」止损理由（基于 ssh 10.129.32.75 timeout）维持误判结论。同结论适用 A/B/C 三 shard（已同步 discuss/D.md）。MCP 可用且 trace 可读 ⇒ 主线「深读新 trace + 造题」无外部阻塞。
