@@ -4,7 +4,9 @@ WAITING: 0
 
 > 📦 R225 心跳（例行巡检+blendswitch第18次复验7/7 PASS·iter291230 step7355ms·.12 load24.86·S2三下载全100%·research日报EDA建议记为参考(EDA已取消)）已归档 → daily-memories-data/2026-11-23.md
 
-> 🟢 **心跳 · 2026-11-23 (R226) — 例行巡检+blendswitch第19次复验7/7 PASS**：①✅git fetch origin local=origin/main(2cccd40bc9)，0 behind，**无新data令**；②✅pretrain iter=291,290/700k(41.61%) step_avg(last10)=7305ms<7.4s gate✅ 训练健康 loss≈1.986 lr=1e-3 stable daemon idle等292k ETA≈07:00；③✅blendswitch第19次复验7/7 PASS(zero_overlap=0/new_source=0/flag-off=byte-identical/max_dev=0.0087% perf_pass=true；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=26.61<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data下载进程(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226；注：dl_orchestrator.sh PID3319999自11-15起stale无日志更新8d，非活跃下载，未kill待确认)；⑦✅MEMORY ~31.3KB<32KB / TASK 27.6KB<32KB。research日报11-23「EDA语料Gopher体检」建议记为参考(EDA已取消)。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 📦 R226 心跳（例行巡检+blendswitch第19次复验7/7 PASS·iter291290 step7305ms·.12 load26.61·S2三下载全100%·research日报EDA建议记为参考(EDA已取消)）已归档 → daily-memories-data/2026-11-23.md
+
+> 🟢 **心跳 · 2026-11-23 (R227) — 例行巡检+blendswitch第20次复验7/7 PASS**：①✅git fetch origin local=origin/main(bd2ded0a80)，0 behind，**无新data令**；②✅pretrain iter=291,340/700k(41.62%) step_avg(last10)=7158ms<7.4s gate✅ 训练健康 loss≈1.98 lr=1e-3 stable daemon idle等292k；③✅blendswitch第20次复验7/7 PASS(zero_overlap=0/new_source=0/flag-off=byte-identical/max_dev=0.0087% perf_pass=true；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=24.88<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data下载进程(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226；注：dl_orchestrator.sh PID3319999自11-15起stale无日志更新8d，非活跃下载，未kill待确认)；⑦✅MEMORY 31.6KB<32KB / TASK 27.6KB<32KB。research日报11-23「EDA语料Gopher体检」建议记为参考(EDA已取消)。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
 
 > 📦 R224 心跳（例行巡检+blendswitch第17次复验7/7 PASS·iter291190 step7242ms·.12 load25.73·S2三下载全100%·research日报EDA建议记为参考(EDA已取消)）已归档 → daily-memories-data/2026-11-23.md
 
@@ -120,9 +122,9 @@ WAITING: 0
 ```
 PHASE:        S2前置+污染闸门全完成 — PC-1✅~PC-5✅ + 扩展黑名单✅ + S2新源扫描✅(48K docs/0命中) → WAITING=0
 已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(6benchmark/9277tasks);✅PC-4 main版blend_s2_preblend.tsv(12源/含nemotron 0.067+megamath_web 0.060+finemath 0.005/weight_sum=1.0/gen_blend --verify通过);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(R136刷新main版/pushed);✅MegaMath-web下载DONE(4950parquet/826GB);✅MegaMath-web分词DONE(4950/4950=100%/218.1B tok);✅Code-Reasoning下载DONE(1637parquet/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2228parquet/0inc);✅DATA_MAPPING.md更新;✅论文Fig-1三饼图+Fig-2调优+TABLE IV精简+数据源/Decay/LongCtx引用补齐(latexmk 0err);✅EDA-Eval 536-task黑名单重跑复现(R137/正控158/158);✅扩展黑名单blacklist_extended建成(R138/5359tasks/4847354 13-gram/正控164/164);✅S2新源污染扫描(R139/4源×12K=48K docs/全0命中);✅方案F blendswitch交付(R170-R171/commit 68742cfbe4/blend_switcher.py+v5报告+v4修正+CPU验证7/7零重叠=0)
-当前动作:     R216例行巡检:iter=290,800/700k(41.54%) step~7.3s 290k eval DONE(55.25%);方案F blendswitch第9次复验7/7 PASS(zero_overlap=0);git fetch无新令;PC-1~PC-5全✅/无后台任务/.12 load=28.5✅
+当前动作:     R227例行巡检:iter=291,340/700k(41.62%) step_avg(last10)=7158ms<7.4s gate✅;方案F blendswitch第20次复验7/7 PASS(zero_overlap=0);git fetch无新令;PC-1~PC-5全✅/S2三下载全100%/无后台任务/.12 load=24.88✅
 下一步:       ①等pretrain到350k(~11-28)启动S2(blend TSV已就绪/SEED=5678待转告pretrain线) ②S2投料前可按S1口径对4新源做全量扫描(>150K docs)作为加强验证(非阻塞/contam_venv已就绪)
-阻塞:         无(全部前置完成;无后台任务;.12 load≈28.5<120✅;/nas_user 42T可用✅>5T红线)
+阻塞:         无(全部前置完成;S2三下载全100%;无后台任务;.12 load≈24.88<120✅;/nas_user 42T可用✅>5T红线)
 ERROR_COUNT:  0
 未完成指令:   无(全部用户令已交付;PC-1~PC-5全部完成;main版blend TSV已就绪)→WAITING=0
 ```
