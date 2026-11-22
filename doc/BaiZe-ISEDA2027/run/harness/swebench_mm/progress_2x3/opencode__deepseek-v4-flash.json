@@ -6368,37 +6368,72 @@
   "openlayers__openlayers-7554": {
     "instance_id": "openlayers__openlayers-7554",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 628.2,
+    "rc": 0,
+    "model_patch_len": 2072,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "epareFrame()` for the vector renderer path — tracks resolution, pixelRatio, layer revision, and rendered extent. Only re-renders when the cache is invalid, matching the pattern used by `ImageCanvas`.\n",
+    "stderr_tail": "ge vector rendering and draw interaction\n[✓] Identify the performance regression between 4.4.2 and 4.6.2 for renderMode:'image'\n[✓] Implement the fix for the performance issue\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-8515": {
     "instance_id": "openlayers__openlayers-8515",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 397.9,
+    "rc": 0,
+    "model_patch_len": 3313,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "n/Extent.js`** — Added `zIndex: Infinity` to both extent and vertex overlay layers.\n\nThis ensures backward compatibility while giving users the ability to control the zIndex of the selection overlay.\n",
+    "stderr_tail": "erlay\n[✓] Add zIndex: Infinity to Extent.js overlays\n[✓] Add zIndex option to Select.js interaction\n[✓] Check for other setMap() uses on layers in the codebase\n[✓] Verify all changes are correct\n\u001b[0m\n"
   },
   "openlayers__openlayers-9083": {
     "instance_id": "openlayers__openlayers-9083",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 212.9,
+    "rc": 0,
+    "model_patch_len": 545,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "`lastDragTime_` in `abortDrawing_()` at `src/ol/interaction/Draw.js:895-898`.\n\nThe three fields are now reset when drawing ends, preventing the stale state from hijacking subsequent pan interactions.\n",
+    "stderr_tail": "ayers draw interaction bug - map cannot be dragged after drawend with altKeyOnly condition\n[✓] Find the root cause in the source code\n[✓] Implement the fix\n[✓] Verify fix compiles and tests pass\n\u001b[0m\n"
   },
   "openlayers__openlayers-9307": {
     "instance_id": "openlayers__openlayers-9307",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 157.5,
+    "rc": 0,
+    "model_patch_len": 5410,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "s` - Saves/restores `lineHeight` in text states, includes it in cache key\n- `src/ol/render/canvas/Executor.js` - Uses `lineHeight` multiplier (default `1`) to compute line spacing in `getTextImage()`\n",
+    "stderr_tail": "tState typedef in render/canvas.js\n[✓] Save/read lineHeight in TextBuilder.js setTextStyle/saveTextStates\n[✓] Use lineHeight from textState in Executor.js getTextImage\n[✓] Verify the build works\n\u001b[0m\n"
   },
   "prettier__prettier-11884": {
     "instance_id": "prettier__prettier-11884",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 262.8,
+    "rc": 0,
+    "model_patch_len": 392250,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "es (`[]`) are now handled as a special case that always produces `[]` without breaking across lines, instead of going through the group/indent/softline path which caused the erroneous `[,\\n]` output.\n",
+    "stderr_tail": "iling-comma all\n[✓] Find relevant source code in prettier for array type formatting and trailing comma logic\n[✓] Implement fix to prevent trailing comma in empty arrays\n[✓] Verify fix with tests\n\u001b[0m\n"
   },
   "prettier__prettier-12177": {
     "instance_id": "prettier__prettier-12177",

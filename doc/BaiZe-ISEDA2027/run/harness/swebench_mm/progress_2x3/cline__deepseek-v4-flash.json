@@ -5298,23 +5298,43 @@
   "highlightjs__highlight.js-3559": {
     "instance_id": "highlightjs__highlight.js-3559",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 928.7,
+    "rc": 0,
+    "model_patch_len": 1879,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "e `class G : A {` to `test/markup/kotlin/class.txt` and its expected output in `class.expect.txt`\\n- All tests pass: `1717 passing`\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3644": {
     "instance_id": "highlightjs__highlight.js-3644",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 106.9,
+    "rc": 0,
+    "model_patch_len": 703,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ew bracket comment markup test validates the fix works for `#[[...]]`, `#[==[...]==]`, single-line `#` comments, and mixed content.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-10340": {
     "instance_id": "openlayers__openlayers-10340",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1921.8,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-10478": {
     "instance_id": "openlayers__openlayers-10478",

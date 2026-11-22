@@ -4449,23 +4449,44 @@
   "eslint__eslint-8120": {
     "instance_id": "eslint__eslint-8120",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 650.5,
+    "rc": 0,
+    "model_patch_len": 3380,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "laration, arrow function, and function expression parameters with rest properties\n\n**Verification:**\nAll 208 `no-unused-vars` tests pass, including the new tests for function parameter destructuring.\n",
+    "stderr_tail": "base to understand no-unused-vars rule and ignoreRestSiblings implementation\n[✓] Identify the bug causing ignoreRestSiblings to fail in function arguments\n[✓] Implement fix and verify with tests\n\u001b[0m\n"
   },
   "eslint__eslint-8850": {
     "instance_id": "eslint__eslint-8850",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1190.5,
+    "rc": 0,
+    "model_patch_len": 1504,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "sts/lib/rules/indent.js` based on the exact code from the issue (#8732). The full indent test suite passes (693 passing; the 1 pre-existing failure is an unrelated parser error in another test case).\n",
+    "stderr_tail": "e relevant indent logic for JSX binary expressions with parentheses\n[✓] Identify the root cause of the 4.1.0 regression\n[✓] Implement the fix with minimal changes\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "eslint__eslint-9348": {
     "instance_id": "eslint__eslint-9348",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1098.3,
+    "rc": 0,
+    "model_patch_len": 7416,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "s to both rules' test files for the reported bug pattern.\n\nThe fix passes all existing code-path-analysis tests (173 tests) and correctly handles the reported crash without producing false positives.\n",
+    "stderr_tail": " 'super()'.\n\u001b[0m\n\u001b[0m$ \u001b[0mnpx mocha tests/lib/code-path-analysis/code-path-analyzer.js tests/lib/code-path-analysis/code-path.js 2>&1 | grep -E \"passing|failing\" | head -n 5\n173 passing (175ms)\n\u001b[0m\n"
   },
   "eslint__eslint-9436": {
     "instance_id": "eslint__eslint-9436",
