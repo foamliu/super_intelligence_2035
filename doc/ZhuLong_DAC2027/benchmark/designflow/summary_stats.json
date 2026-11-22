@@ -27,11 +27,11 @@
   "mc500": 133,
   "mc5_recompute": {
     "auto_stop": {
-      "consecutive_zero_case_rounds": 3,
-      "note": "r959 0-case round (3rd consecutive: r957/r958/r959) — STOP-LOSS TRIGGERED per 16:4x order. Re-verified A-domain mc>=5 fresh pool on scan 20261121_151844 with A-ratio>=0.4 filter: peeked 50 unique A-pure candidates (mc 310-1576), ALL 50 in 4-shard ledger (normalized sid match against 4063 unique ledger sids), 0 FRESH. Top 15 (w4x70/brnqb/cwq7f/1wvdl/f6x1i/40uq0/ppl5a/6i6lk/vi5wa/zrva7/pwhqb/xm22u/le1s7/xh3mj/lc81i) all ledgered (case/parked). r958's 40-candidate check confirmed; r959 independent 50-candidate check confirms. mc>=5 pool expansion PROVEN INEFFECTIVE: 3 consecutive 0-case rounds with genuine >=10 peek each round (r957 peeked 1 fresh xiqa->rejected; r958 peeked 40 all ledgered; r959 peeked 50 all ledgered). ACTION: shard_mc.A reverted 5->10 (target_mc=10 global denominator consistency). 15:1x rescan: ssh_eda_search driver not found in either repo or on .75; new day 11-22 quota available but 698-machine scan infeasible in 40-min budget (driver missing + scan ~40min > budget). Governance: §4.9 anti-hardcode audit on r954 Lp6TbErrforceScintMrrAnalyzeQA-001 = ALL PASS (ref 16/16 PASS, 5/5 negatives FAIL: fake_empty/fake_print_expected/fake_core_deleted/neg_naive_stub/neg_always_conclusion).",
+      "consecutive_zero_case_rounds": 1,
       "threshold_rounds": 3,
-      "triggered_at": "2026-11-22T00:3x+08:00 (r959)",
-      "triggered_by": "r959 (3rd consecutive 0-case round, 50/50 A-pure mc>=5 candidates ledgered)"
+      "triggered_at": null,
+      "triggered_by": null,
+      "note": "r1000 = 1st 0-case round in NEW mc=5 period (16:4x order reset shard_mc.A=5; r995 rescan ssh_eda_search_20261122_172249 + r995-r999 5 consecutive successes reset counter). r1000 选料探测: strict A-pure filter (ak>0,c==0,b==0,ak>=5) on new scan → 2039 broad / 50 strict top; × 4-shard ledger (4159 sids) fresh check: broad top-60 ALL ledgered; broad 161-260 range 16 fresh but ALL cross-domain (joeyl spice/opamp B-domain + dechaoc drc C-domain); strict top-50 only rwced fresh → peek rwced (tongfanl mc318 netlist:681) = B-domain SPICE MatrixRun aging-log analysis, NOT A. genuine A-domain fresh this round = 0. parked v3x5q (xinqiaoz mc318 pdk:1483;drc:1005;calibre:321 C-domain pg_layout) → cross-shard handoff to C. STOP-LOSS NOT triggered (1/3; r1001 0-case→2/3, r1002 0-case→3/3 trigger: revert shard_mc.A→10 + governance). A.jsonl 458 unchanged (0-case round, no commit)."
     },
     "computed_at": "2026-11-18T08:30:00+08:00",
     "computed_by": "r718 (mc>=5 adoption flip)",
@@ -71,7 +71,16 @@
     "scan": "ssh_eda_search_20261115_081559/summary.tsv (local mirror summary_1115_081559.tsv)",
     "scope": "shard A broad-keyword filter, 4-shard ledger exclusion",
     "shard_mc_A": 10,
-    "verdict": "r718: mc>=5 ADOPTED. mc>=5 fresh=310 (vs mc>=10 fresh=136, +174). r382 mc>=5 useless EXPIRED under 6959-dedup scan. Next: select from candidates_mc5.tsv, report A-domain vs cross-domain ratio + case count each round."
+    "verdict": "r718: mc>=5 ADOPTED. mc>=5 fresh=310 (vs mc>=10 fresh=136, +174). r382 mc>=5 useless EXPIRED under 6959-dedup scan. Next: select from candidates_mc5.tsv, report A-domain vs cross-domain ratio + case count each round.",
+    "auto_stop_history": [
+      {
+        "period": "r957-r959 (first mc=5 adoption)",
+        "consecutive_zero_case_rounds": 3,
+        "triggered_at": "2026-11-22T00:3x+08:00 (r959)",
+        "triggered_by": "r959 (3rd consecutive 0-case round, 50/50 A-pure mc>=5 candidates ledgered)",
+        "note": "r959 0-case round (3rd consecutive: r957/r958/r959) — STOP-LOSS TRIGGERED per 16:4x order. Re-verified A-domain mc>=5 fresh pool on scan 20261121_151844 with A-ratio>=0.4 filter: peeked 50 unique A-pure candidates (mc 310-1576), ALL 50 in 4-shard ledger (normalized sid match against 4063 unique ledger sids), 0 FRESH. Top 15 (w4x70/brnqb/cwq7f/1wvdl/f6x1i/40uq0/ppl5a/6i6lk/vi5wa/zrva7/pwhqb/xm22u/l..."
+      }
+    ]
   },
   "mc_matrix": {
     "a_pure_mc10_fresh": 646,
@@ -286,7 +295,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-22T17:40:00+08:00",
+  "updated_at": "2026-11-22T21:1x+08:00",
   "users_mc10": 559,
   "users_mc100": 182,
   "users_mc30": 401,
