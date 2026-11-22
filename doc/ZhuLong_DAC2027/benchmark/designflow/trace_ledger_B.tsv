@@ -1647,3 +1647,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794813983875_1xu8a.messages.json	terrytao	hfeg0plg74	9	spice_sim	case	EDA-Eval-DesignFlow-DutyOffsetAlertMaxProduce-001	2026-11-22 15:14	
 1793250261601_fxl35.messages.json	cong3li	hfeg0plg72	5	spice_sim	case	EDA-Eval-DesignFlow-SigmaDcSweepAuditProduce-001	2026-11-22 15:58	
 1791790142681_jnhb2	joeyl	hfeg0pkn004	6	spice_sim	case	EDA-Eval-DesignFlow-JitterDutyBlockPwlGen-001	2026-11-22 16:16	
+1794450037273_ug6lk.messages.json	joeyl	hfeg0pkn004	5	spice_sim	case	EDA-Eval-DesignFlow-DualRatePwlClockGen-001	2026-11-22 16:35	
