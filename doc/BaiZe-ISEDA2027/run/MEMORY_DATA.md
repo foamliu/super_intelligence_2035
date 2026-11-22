@@ -2,15 +2,15 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R216) — 例行巡检+blendswitch第9次复验7/7 PASS**：①✅git fetch无新data令（up-to-date origin/main，HEAD=origin=59741ff2）；②✅pretrain iter=290,800/700k(41.54%) step~7.3s 290k eval DONE(55.25%) 训练健康 loss≈1.98-2.01 lr=1e-3 stable；③✅blendswitch复验7/7 PASS(zero_overlap=0/new_source=0/flag_off_equivalence=true/max_dev=0.0087%/perf switch_overhead~0.6%)；④✅.12 load=28.5<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data任务；⑦✅MEMORY 30.4KB<32KB / TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R217) — 例行巡检+blendswitch第10次复验7/7 PASS+S2三大下载全部完成**：①✅git fetch无新data令（up-to-date origin/main，HEAD=bcfc61e4 harness线）；②✅pretrain iter=290,840/700k(41.55%) step~7.2s 290k eval DONE(55.25%) 训练健康 loss≈1.98-2.00 lr=1e-3 stable；③✅blendswitch复验7/7 PASS(zero_overlap=0/ratio_switch 5000batch max_dev=0.0012%/flag_off_equivalent=true/new_source=0/epoch_wrap honest/perf ok)；④✅.12 load=23.5<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data任务；⑦**里程碑：S2三大预训练源下载全部100%完成**——MegaMath-web 4950parquet✅ / Code-Reasoning 1635parquet✅ / Math-Reasoning 2226parquet✅ / 0 .incomplete✅（log→/tmp/dl_*_restart*.log 均显示 100%）；⑧✅MEMORY<32KB / TASK 27.6KB<32KB。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
 
-> 📦 R214–R215 心跳（例行巡检+blendswitch第7~8次复验7/7 PASS）已归档 → daily-memories-data/2026-11-23.md
+> 📦 R214–R216 心跳（例行巡检+blendswitch第7~9次复验7/7 PASS）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R209–R213 心跳（F 科普报告复验第2~6次全通过+归档收口）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R208 心跳（F 科普报告 v1 交付 40,743B/6SVG/0外链0script，commit+push 完成）已归档 → daily-memories-data/2026-11-22.md
 
-> 🟢 **心跳 · 2026-11-22 (R208) — F 科普报告 v1 + SVG≥5 + ≤80KB + 0外链0script**：按用户令交付 `run/reports/report_s1s2_blendswitch_f_explainer_zh.html`（40,743B≤80KB✅ / 6张内联SVG✅ / 0外链0script✅ / div·table·tr·td标签全配对✅）。小白友好中文科普：8节（一页看懂→背景5词→为什么难→三路线对比→F原理逐步图解→代码改动4处→7项验证+条形图→FAQ5条）+ 6张手写内联SVG（时间轴/配比双饼/stock重叠问题/per-source游标映射核心图/验证条形图/切换流程时序）。每个术语首次出现带白话+类比（游标=书签/epoch=翻完一遍/blend=混几桶米/shard=分小袋/shuffle=打乱书页）。诚实标注：实测(zero_overlap=0/ratio dev 0.0087%/flag-off byte-identical) vs 估算(D+E ~12%未实测) vs 待测(GPU step time/显存)。v4/v5保留不删。pretrain iter≈287.2k/700k(41%) step~7.30s / 350k ETA≈11-28 / 700k ETA≈12-27。方案F blendswitch CPU验证7/7 PASS不变。WAITING=0。
+> 📦 R208 心跳（F 科普报告 v1 交付 40,743B/6SVG/0外链0script）已归档 → daily-memories-data/2026-11-22.md
 
 > 📦 R207 心跳（第31次复验7/7 PASS zero_overlap=0 / v5报告13,813B / v4报告14,625B）已归档 → daily-memories-data/2026-11-22.md
 
