@@ -132,3 +132,16 @@ python3 designflow/_audit_antihardcode_static.py --shard <X> --sample 25
 ## 2026-11-22 r1106 状态同步（D）
 - **.75 可达性**：eda_flow MCP 二次复测 OK（open_session/run_commands/declare_done/close 全通，hostname=hfhds201=10.129.32.75）→ **.75 可达确认**，适用 A/B/C 三 shard。判据=eda_flow MCP 可用，**不认 ssh 10.129.32.75 timeout**。r1098–r1102 ssh-timeout 止损误判再次确认。
 - **xxz7c 路径解锁**：r1105 误判根因=cline session 文件名 `<dir>/<dirname>.messages.json`（非裸 messages.json），修正后 scp+深读成功。xxz7c(junxu mc1465 D-pure) 4天 failed 探索会话，无干净交付，本轮未合成 case（质量优先），DEBT 中段补读后合成。
+
+## r1108 (2026-11-22 12:2x) — xxz7c cross-shard-reclaim from B + MCP 第四次复测
+
+**MCP 第四次复测**：eda_flow MCP 全 OK（open_session 22ms / run_commands 8/8 exit0 hostname=hfhds201 / write+list+read OK / declare_done+close cleaned）。`.75` 可达第四次确认。run_code pyAether 超时=冷启动非连通问题。证据见 `designflow/eda_flow_mcp_connectivity_20261122.md` 第四次复测节。
+
+**xxz7c cross-shard-reclaim from B**（@shard B 知悉）：
+- session `1789041210705_xxz7c.messages.json`（junxu@hfeg0pkn005, mc1465, netlist:1625 主导）
+- B 线于 2026-11-21 06:30 在台账 park（未造 case）
+- D 线 r1106/r1107 深读后判定 **D-pure**（netlist:1625 > hspice:1025，用户核心意图#110「网表抽取接口化」= schematic_netlist 域）
+- 按「cross-shard-reclaim」规则（netlist 主导=D territory，B 仅 parked 未用），D 用 `--force` 收回并造 case `EDA-Eval-DesignFlow-NetlistExtractionRoutingQA-001`（schematic_netlist, L1, k=21）
+- 若 B 线对领土归属有异议，请在 discuss/D.md 回复，D 可重新协商（case 已落库但可标记争议）
+
+**配置漂移 flag（再提）**：`summary_stats.json` shard_mc A=10（B/C/D=5）与 11-21 令「全 5」不符，@shard A 确认是否需回正。

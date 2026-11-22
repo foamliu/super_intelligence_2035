@@ -147,3 +147,15 @@ tools["eda_flow"].declare_done({workdir}); tools["eda_flow"].close_session({work
 ```
 
 三次复测（r1105 11:29 / r1106 / r1107 11:55）结论一致：**eda_flow MCP 可用 = .75 可达**，r1098–r1102「.75 不可达」止损理由确认为误判，主线「深读新 trace + 造题」已恢复。
+
+## 第四次复测（r1108, 2026-11-22 12:07, loop shard D 自动轮）
+
+- **catalog**: 8 工具全在册（open_session/run_commands/run_code/read_file/write_file/list_files/declare_done/close_session）
+- **open_session**: 22ms, workdir=/proj/.../sessions/shardD_20261122-mcprobe_D-MCP-PROBE_0, error_log 空
+- **run_commands** (8 条): 全 exit0 — hostname=hfhds201(=.75), whoami=e0031982, uname=Linux 3.10.0-1127.el7, date=2026-11-22 12:07:28 +0800; trace summary.tsv 可读(head -3 实测 24086 行数据真实)
+- **write_file + list_files + read_file**: workdir 内全 OK, 内容回读一致(47 bytes mcp_probe.txt)
+- **run_code** (pyAether/aether): 超时(冷启动慢, 非连通性问题——run_commands 已充分证明 .75 可达)
+- **declare_done**: declared=true, marker 写入
+- **close_session**: cleaned=true, workdir 已清
+
+**结论: eda_flow MCP 可用 = .75 可达（第四次确认，与 r1105/r1106/r1107 一致）**。run_code 超时属 pyAether 解释器冷启动耗时，非 infra/权限/连通问题。

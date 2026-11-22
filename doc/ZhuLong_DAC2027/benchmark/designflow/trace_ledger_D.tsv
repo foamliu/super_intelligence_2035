@@ -1984,3 +1984,4 @@ vf998					case	EDA-Eval-DesignFlow-CrackMonAnadigSwitchVerify-001	2026-11-21 10:
 1795153863375_wvvpb.messages.json	thomasz	hfeg0pkn003	78	waveform	case	EDA-Eval-DesignFlow-WvvpbSlowCellLocate-001	2026-11-22 05:04	
 1795154851675_dasvf	junlingw	hfeg0pkn005	200	schematic_netlist	case	EDA-Eval-DesignFlow-GenguiVariantAudit-001	2026-11-22 06:23	
 1795154523593_yin5a.messages.json	mingyu1l	hfeg0pkn005	185	analog_context	case	EDA-Eval-DesignFlow-PexEffectiveAudit-001	2026-11-22 07:30	
+1789041210705_xxz7c.messages.json					case	EDA-Eval-DesignFlow-NetlistExtractionRoutingQA-001	2026-11-22 12:29	r1108 cross-shard-reclaim from B(parked): netlist:1625 D-dominant, case built
