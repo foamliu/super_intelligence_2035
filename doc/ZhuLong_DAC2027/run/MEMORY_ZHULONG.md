@@ -74,7 +74,7 @@ WAITING: 1（2026-11-22 wake#1834·**强模型 3-run r1-attempt-2 跑中·健康
 
 | 阶段 | 状态 |
 |:--|:--|
-| **强模型 3-run**（2026-11-22 用户令·deepseek-v4-pro-cloud）| 🟠 r1 跑中 **80/500**（13P/64F/2E/1A·**16.9%** early·0 infra）·r2/r3 待（3 轮串行脚本 PID 3070368·ETA r1 ~9h·3 轮 ~30h）|
+| **强模型 3-run**（2026-11-22 用户令·deepseek-v4-pro-cloud）| 🟠 r1 跑中 **125/500**（29P/93F/2E/1A·**23.8%** early·0 infra）·r2/r3 待（3 轮串行脚本 PID 3070368·ETA r1 ~8h40m·3 轮 ~30h）|
 | v3 doubao 三组（pro/lite/mini）| ✅ 收口：pro 10.18±1.45% / lite 4.68±0.95% / mini 2.38±0.23% |
 | 两轴消融 think×lang（30/30）| ✅ 已交付（轴 A 倒 U·轴 B 基座对齐）|
 | subagent 消融 A0/A1/A2 | ✅ done_all（单 agent > 多 agent·自主 spawn > 用户定制）|
