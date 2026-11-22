@@ -2,7 +2,7 @@
 
 > 维护方：shard D（netlist_wave）· 用于 D 向其它 shard 发起 P0/P1 通知与跨线协调。
 > 守职责边界：D 只在此挂条目 @ 对应 shard，🚫 不直接改别线 `check.py` / MEMORY / jsonl。
-> 2026-11-22 21:56 D 状态：`.75` 可达（eda_flow MCP OK，第四十三次确认 r1147，hostname=hfhds201/hostname -I=10.129.32.75 whoami=e0031982 run_commands 5/5 exit0 + 第二 session bash 探测 cat /etc/hostname=hfhds201 + head -c 200 summary.tsv 真实行 10.129.32.189 hfeg0pnd001 e0045140 → 沙盒本身就是 .75，bash 拥有 trace 全读权限），同结论适用 A/B/C 三 shard。
+> 2026-11-22 22:04 D 状态：`.75` 可达（eda_flow MCP OK，第四十四次确认 r1148，hostname=hfhds201/whoami=e0031982/uname="Linux hfhds201 3.10.0-1127.el7.x86_64" run_commands 5/5 exit0 + run_commands bash 读 summary.tsv 表头+真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 → 沙盒本身就是 .75，bash 拥有 trace 全读权限），同结论适用 A/B/C 三 shard。
 
 ---
 
