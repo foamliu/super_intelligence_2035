@@ -4840,9 +4840,16 @@
   "highlightjs__highlight.js-2727": {
     "instance_id": "highlightjs__highlight.js-2727",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1680.7,
+    "rc": 0,
+    "model_patch_len": 5734,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "on\n\n## Result\n\nBefore:\n```html\nrender () {\n```\n\nAfter:\n```html\n<span class=\"hljs-function\"><span class=\"hljs-title\">render</span> (<span class=\"hljs-params\"></span>) </span>{\n```\n\nAll 530 tests pass.\n",
+    "stderr_tail": "and how JavaScript class methods are handled\n[✓] Identify why ES6 class member functions are not highlighted\n[✓] Implement the fix for ES6 class method highlighting\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2740": {
     "instance_id": "highlightjs__highlight.js-2740",
