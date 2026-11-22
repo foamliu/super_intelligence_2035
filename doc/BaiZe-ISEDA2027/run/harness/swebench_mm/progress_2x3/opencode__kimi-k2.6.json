@@ -4491,9 +4491,16 @@
   "eslint__eslint-9436": {
     "instance_id": "eslint__eslint-9436",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 159.2,
+    "rc": 0,
+    "model_patch_len": 13237,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "1, columns 5–9**\n- `something(true ? 1 : 0);` → reports only `true` at **line 5, columns 11–15**\n\nLoops are also correctly narrowed (e.g., `while(true)` reports just `true`, not the whole loop body).\n",
+    "stderr_tail": "y\": 2,\n    \"message\": \"Unexpected constant condition.\",\n    \"line\": 3,\n    \"column\": 13,\n    \"nodeType\": \"Literal\",\n    \"source\": \"do {} while(true)\",\n    \"endLine\": 3,\n    \"endColumn\": 17\n  }\n]\n\u001b[0m\n"
   },
   "grommet__grommet-2061": {
     "instance_id": "grommet__grommet-2061",

@@ -3918,9 +3918,16 @@
   "carbon-design-system__carbon-7063": {
     "instance_id": "carbon-design-system__carbon-7063",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 469.8,
+    "rc": 0,
+    "model_patch_len": 1005,
+    "n_images": 6,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "src/components/list/_list.scss`** — Source SCSS fix\\n2. **`packages/components/docs/sass.md`** — Updated auto-generated docs to match\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-7212": {
     "instance_id": "carbon-design-system__carbon-7212",
