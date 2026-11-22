@@ -290,3 +290,9 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - D 自有 GAP 修复 1 条：BboxHierProbeAnalysis-001(schematic_netlist, k=14→19, 嵌入 SUT 不可见 A-prime 变体 _aprime_synthetic.il in reference/ §4.8 隔离, 5 条 A-prime-gold 交叉 o-s 击穿 smart B-hardcode stub; 5 neg 全 FAIL; ref 19/19 PASS; D.jsonl line 20 byte-sync sha=fd51cf7e/size=17738; audit TSV GAP→PASS)
 - 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
 - DEBT: D 自有 ~447 GAP(已修25) + P0-001 全量64(挂22轮, A/B/C 无回执) + pi 实跑 pending
+
+### r1143 (2026-11-22 21:09) — shard D status
+- `.75` 可达 = YES（eda_flow MCP 第39次复测 OK, r1105-r1143 三十九次一致；catalog 8 工具 / open_session 19ms / run_commands 14/14 exit0 hostname=hfhds201 id=uid=200450(e0031982) groups=guest,eda_agent / list_files+read_file 外 workdir whitelist 拒(沙盒约束非不可达) / run_commands bash 读 trace summary.tsv 表头+首行+24086 行 wc 全可读 / write_file+read_file round-trip 无腐蚀 / declare_done+close cleaned=true）
+- 本轮无新 case（40min 预算用于 MCP 第39次复测，用户令最高优先；ledger next 候选池已 peek 待下轮合成）
+- 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
+- DEBT: D 自有 ~447 GAP(已修25) + P0-001 全量64(挂23轮, A/B/C 无回执) + pi 实跑 pending
