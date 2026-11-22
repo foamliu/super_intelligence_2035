@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **344** 条（**第九十二轮 2026-11-22 18:0x 补 3 条 → 344**：word2vec `1301.3781`（**44,294**，预印本；CBOW / skip-gram 两架构，1.6B 词训练 **<1 天**，句法 + 语义相似度双榜 SOTA，摘要原文 `less than a day` / `1.6 billion words`）/ Dropout `1207.0580`（**9,564**，预印本；每个训练样本随机丢弃**一半**特征检测器以阻断 co-adaptation，语音与物体识别刷新纪录）/ BLIP `2201.12086`（**8,544**，预印本；captioner 生成 + filter 过滤的**自举**方式利用噪声网页图文对，统一理解与生成，检索 avg recall@1 **+2.7%** / captioning CIDEr **+2.8%** / VQA **+1.6%**）；核验：arXiv `id_list` 单批 **`200` + atom**（5,836 B / 3 entry）+ abs 页 **3/3 `200`**（40,906 / 40,988 / 42,767 B，`citation_title` + `citation_date` 逐字核：2013/01/16 · 2012/07/03 · 2022/01/28）+ OpenAlex **3/3 `200`**（44,294 / 9,564 / 8,544，查询日 2026-11-22，`type` 均 `preprint`）；三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（Let's Verify Step by Step `2305.20050` 经查已是表内 **#159** ⇒ 剔除，不重复收）；覆盖轴 = 静态词向量的训练成本 / 特征级正则化的通用配方 / 噪声图文对的自举清洗；本轮归属：pretrain **+3** · vision **+2** · data **+2** · harness **+1** · zhulong **+1** · designflow **0**（一篇可多线））
+
 **本轮快照**：累计 **341** 条（**第九十一轮 2026-11-22 15:0x 补 3 条 → 341**：Bahdanau attention `1409.0473`（**32,083**，arXiv `comment` = ICLR 2015 oral；定长向量瓶颈 + 可微软对齐，长句更稳）/ Qwen2.5-VL `2502.13923`（**10,565**，预印本技术报告；动态分辨率 + 绝对时间编码，框/点定位与文档结构化抽取、小时级视频秒级定位）/ RAFT `2403.10131`（**524**，预印本；golden/distractor 混训 + 逐字引用 + CoT，表 1 RAFT (LLaMA2-7B) 73.30 / 35.28 / 74.00 / 84.95 / 86.86）；核验：arXiv `id_list` 单批 **`200` + atom**（11,306 B / 3 entry，`published` 齐备：2024-03-15 / 2025-02-19 / 2014-09-01）+ abs 页 **3/3 `200`**（41,842 / 46,388 / 43,549 B，`citation_title` 逐字一致）+ OpenAlex **3/3 `200`**（查询日 2026-11-22）+ RAFT 表 1 用 ar5iv 全文页 **`200` / 150,398 B** 核；三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 全量正则 **0 命中**（同批候选 word2vec `1301.3781` 44,294 / Dropout `1207.0580` 9,564 / BLIP `2201.12086` 8,544 / Let's Verify `2305.20050` 2,661 本轮未收，留作下轮）；覆盖轴 = 对齐式历史取用 / 原生分辨率视觉塔与时序编码 / 领域 RAG 后训练配方；本轮归属：vision **+1** · data **+2** · harness **+2** · zhulong **+2** · pretrain **+2** · designflow **0**（一篇可多线））
 
 **本轮快照**：累计 **338** 条（**第九十轮 2026-11-22 12:0x 补 3 条 → 338**：Retentive Network（RetNet）`2307.08621`（**1,135**，预印本；并行 / 循环 / 分块循环三范式共用权重，O(1) 推理）/ U-Net `1505.04597`（**18,157**，arXiv `comment` = conditionally accepted at MICCAI 2015；收缩-扩张 + 跳连、强数据增强、512×512 分割 <1 秒）/ ImageNet ILSVRC `1409.0575`（**1,893**，OpenAlex 仅计 arXiv 记录，IJCV 正式版被引远高于此、未合并；数百类 / 数百万图 / 50+ 机构 / 2010 年起年度赛）；核验：arXiv `id_list` 单批 **`200` + atom**（6,740 B / 3 entry，`published` 齐备）+ abs 页 **3/3 `200`**（42,591 / 42,533 / 43,947 B，`citation_title` 逐字一致）+ OpenAlex **3/3 `200`**（查询日 2026-11-22）；三 ID 在 `PAPERS.md` 三处查重 **0 命中**（同批候选 Gopher / FunSearch / ImageNet-1K 训练集论文经核实：`2306.12464` 实为天体物理论文、`2304.07972` 实为控制论论文 ⇒ 均不记）；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**）
@@ -5905,6 +5907,57 @@
 | 与我们工作的关系 | **data（主 · 领域语料后训练）**：EDA 工具手册 / 错误日志天然是「多文档 + 大量无关段落」，RAFT 的 golden/distractor 混训是造领域 SFT 数据的直接模板。<br>**harness（主 · 可验证判分）**：逐字引用要求天然可判「引用片段是否真在 golden 文档里」，比自由文本答案更抗吹牛，适合做 EDA 问答的可验证子项。<br>**zhulong（agent 读文档）**：agent 在工具链里查规格书时同样是多文档、多干扰，distractor 鲁棒性是闭环成功率的前置条件。<br>**pretrain / posttrain**：属后训练配方（不重训底座），与 WSD / 继续预训练是两条可选路线，需按 token 预算做取舍。 |
 | 首次收录 | **2026-11-22**（第九十一轮 · 15:00 时窗） |
 | 核验状态 | arXiv `id_list=2403.10131` **`200` + atom**（`published` `2024-03-15T09:26:02Z` / `updated` `2024-06-05T17:27:51Z`）；abs 页 **`200` / 41,842 B**（`citation_title` 逐字一致）；OpenAlex **`200`（524 / 2024 / preprint）**；表 1 数字取自 ar5iv 全文页 **`200` / 150,398 B**（`<table>` 行 `RAFT (LLaMA2-7B) 73.30 35.28 74.00 84.95 86.86`，以及正文 `35.25% on Hotpot QA and 76.35% on Torch Hub`），**未做 PDF 逐页复核**。 |
+
+---
+
+## 342. Efficient Estimation of Word Representations in Vector Space（word2vec）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Efficient Estimation of Word Representations in Vector Space |
+| 作者（前 3） | Tomas Mikolov · Kai Chen · Greg Corrado（共 **4** 位；末位 Jeffrey Dean；arXiv `citation_author` 逐字核；机构据论文页为 Google） |
+| 年份 | **2013**（arXiv v1 `2013-01-16`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`、source = arXiv (Cornell University)；arXiv `comment` 无） |
+| 被引数 | **44,294**（OpenAlex `10.48550/arxiv.1301.3781`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1301.3781> ｜ arXiv DOI `10.48550/arxiv.1301.3781` |
+| 一句话贡献 | 提出**两种从超大规模语料学词向量的架构**（连续词袋 CBOW 与 skip-gram），在词相似度任务上对比既有各类神经网络方法：**1.6B 词**语料上学高质量词向量**不到一天**（摘要原文 `less than a day` / `1.6 billion words`），并在句法与语义相似度测试集上取得当时最好结果。 |
+| 与我们工作的关系 | **pretrain（主 · tokenizer / 词表与嵌入基线）**：它把「词表规模 × 语料规模 × 训练时长」三者的换算讲成了工程量级，可直接当 embedding 初始化的成本基线。<br>**data（主 · 语料规模口径）**：1.6B 词的「规模—质量」关系是判断我们领域语料够不够的第一个锚点。<br>**harness（评测设计）**：用**类比 / 相似度**这类可自动判分的任务做表征体检，与我们要给 agent 建「可判分能力项」的思路同源。<br>**zhulong**：结构化文本（工具日志 / 网表名）里同样是「高频 token 的共现结构决定下游可用性」，词向量相似度可作工具名归一化的轻量基线。 |
+| 首次收录 | **2026-11-22**（第九十二轮 · 18:00 时窗） |
+| 核验状态 | arXiv `id_list=1301.3781` 批量请求 **`200` + atom**（5,836 B / 3 entry）；abs 页 **`200` / 40,906 B**（`citation_title` 逐字、`citation_date` = `2013/01/16`）；OpenAlex **`200`（44,294 / 2013 / preprint）**。数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 343. Improving neural networks by preventing co-adaptation of feature detectors（Dropout）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Improving neural networks by preventing co-adaptation of feature detectors |
+| 作者（前 3） | Geoffrey E. Hinton · Nitish Srivastava · Alex Krizhevsky（共 **5** 位；末两位 Ilya Sutskever / Ruslan Salakhutdinov；arXiv `citation_author` 逐字核；机构据论文页为 University of Toronto） |
+| 年份 | **2012**（arXiv v1 `2012-07-03`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`、source = arXiv (Cornell University)；arXiv `comment` 无） |
+| 被引数 | **9,564**（OpenAlex `10.48550/arxiv.1207.0580`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1207.0580> ｜ arXiv DOI `10.48550/arxiv.1207.0580` |
+| 一句话贡献 | 提出 **dropout**：每个训练样本**随机丢弃一半特征检测器**（摘要原文 `randomly omitting half of the feature detectors`），打断「某个检测器只在其他特定检测器共存时才有用」的**复杂共适应**，迫使每个神经元学到在组合爆炸式内部上下文下都普遍有用的特征；在多个基准上大幅改进，并刷新语音识别与物体识别纪录。 |
+| 与我们工作的关系 | **pretrain（主 · 正则化配方）**：小数据 / 小 token 预算下的过拟合抑制，是与 WSD、weight decay、数据重复率并列的必调项；「丢弃一半」是可执行的默认档。<br>**vision（主 · 物体识别）**：AlexNet 时代的直接前置，视觉塔小样本微调仍以此为基础正则。<br>**zhulong（后训练 / 小样本）**：thinking 式长链微调集往往只有几千条，防过拟合比堆数据更划算。<br>**data**：它把「数据不够时靠随机性制造多样性」变成结构手段，可用于评估我们的数据缺口是否真的必须靠扩量解决。 |
+| 首次收录 | **2026-11-22**（第九十二轮 · 18:00 时窗） |
+| 核验状态 | arXiv `id_list=1207.0580` 批量请求 **`200` + atom**（5,836 B / 3 entry）；abs 页 **`200` / 40,988 B**（`citation_title` 逐字、`citation_date` = `2012/07/03`；学科栏 `cs.NE` / `cs.CV` / `cs.LG`）；OpenAlex **`200`（9,564 / 2012 / preprint）**。数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 344. BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation |
+| 作者（前 3） | Junnan Li · Dongxu Li · Caiming Xiong（共 **4** 位；末位 Steven Hoi；arXiv `citation_author` 逐字核；机构据论文页为 Salesforce Research） |
+| 年份 | **2022**（arXiv v1 `2022-01-28`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`、source = arXiv (Cornell University)；arXiv `comment` 无） |
+| 被引数 | **8,544**（OpenAlex `10.48550/arxiv.2201.12086`，查询日 **2026-11-22**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2201.12086> ｜ arXiv DOI `10.48550/arxiv.2201.12086` ｜ 代码 <https://github.com/salesforce/BLIP> |
+| 一句话贡献 | 提出 **BLIP**：用**自举**方式利用噪声网页图文对——**captioner 生成合成 caption、filter 去掉噪声 caption**——并让同一框架同时覆盖视觉语言**理解**与**生成**；摘要自报在图像文本检索 **avg recall@1 +2.7%**、图像描述 **CIDEr +2.8%**、VQA **+1.6%** 上达到当时最好，且可零样本迁移到视频语言任务。 |
+| 与我们工作的关系 | **data（主 · 噪声数据的自举清洗）**：EDA 领域同样拿不到干净图文 / 图文-代码对，「生成 + 过滤」两段式是可直接照搬的数据构造模板，比重训一个干净标注集便宜。<br>**vision（主 · 图文预训练）**：理解与生成共用一个框架，可作我们视觉塔「只做理解」是否够用的对照。<br>**harness（双任务口径）**：检索（判别式）与描述（生成式）必须同时报，防止只挑擅长的口径报成绩。<br>**pretrain**：captioner / filter 本身是小模型，属「用小模型造大模型数据」的路线，与合成数据自举同源。 |
+| 首次收录 | **2026-11-22**（第九十二轮 · 18:00 时窗） |
+| 核验状态 | arXiv `id_list=2201.12086` 批量请求 **`200` + atom**（5,836 B / 3 entry）；abs 页 **`200` / 42,767 B**（`citation_title` 逐字、`citation_date` = `2022/01/28`）；OpenAlex **`200`（8,544 / 2022 / preprint）**。数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
 
 ---
 

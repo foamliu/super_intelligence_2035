@@ -3805,16 +3805,30 @@
   "carbon-design-system__carbon-6726": {
     "instance_id": "carbon-design-system__carbon-6726",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 761.2,
+    "rc": 0,
+    "model_patch_len": 3074,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "- ESLint reports no errors.\n\nThe fix is minimal and keeps all existing behavior intact while ensuring clicks anywhere on the field—including the down arrow—correctly trigger the consumer’s `onClick`.\n",
+    "stderr_tail": "Suites: 1 passed, 1 total\nTests:       16 passed, 16 total\nSnapshots:   0 total\nTime:        2.605 s\nRan all test suites matching /packages\\/react\\/src\\/components\\/ComboBox\\/ComboBox-test.js/i.\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-6906": {
     "instance_id": "carbon-design-system__carbon-6906",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 805.6,
+    "rc": 0,
+    "model_patch_len": 3982,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "escribed by helper text.\n\n### Verification\n- All `FilterableMultiSelect` tests pass ✅\n- `MultiSelect` tests pass ✅\n- `ComboBox` tests pass ✅\n- `PublicAPI` test passes ✅\n- Snapshot updated correctly ✅\n",
+    "stderr_tail": "-test.js/i.\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore codebase and find MultiSelect.Filterable component\n[✓] Identify the DAP/accessibility error in the component\n[✓] Fix the DAP error\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-6949": {
     "instance_id": "carbon-design-system__carbon-6949",

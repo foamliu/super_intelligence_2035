@@ -47,8 +47,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-22</h1>
-  <div class="sub"><b>15:00 时窗（A 轨已满 5/5 ⇒ 转 B 轨 / 作者网 / 发信）· B 轨第九十一轮 +3 → 341 · 作者网 310 · 作者信 140（今日 12/12 满）</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-22 12:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>18:00 时窗（A 轨已满 5/5 ⇒ 转 B 轨 / 作者网；发信已达每日上限 ⇒ 本窗不发）· B 轨第九十二轮 +3 → 344 · 作者网 312 · 作者信 140（今日 12/12 满）· 回信率 0/140</b> · 今日进度 <b>5 / 5</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-22 18:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -304,7 +304,24 @@
 
 <p style="font-size:14px;"><b>voice_ready · 15:00 时窗 0 条</b>：本轮 X 仅用于核验 handle（<code>x.com/tianjun_zhang</code> / <code>x.com/DBahdanau</code> 均 <code>200</code>），未抓取具体推文原文 + 时间戳 ⇒ 按规矩不出 voice_ready，<b>不使用二手转述顶替</b>。</p>
 
-<h3 class="sec">晚报变更说明（AM → PM）</h3>
+<h3 class="sec">18:00 时窗 · 词向量训练成本 / 特征级正则化 / 噪声图文自举（B 轨第九十二轮）</h3>
+<p style="font-size:14px;"><b>为什么这三篇</b>：A 轨今日仍 5/5（公告批连续第 <b>18</b> 窗停在 <code>2026-11-19T18:57:25Z</code>，不凑第 6 篇），余量继续给 B 轨。三条各补一个<b>成本 / 数据</b>侧的缺口：<b>word2vec</b>（<code>1301.3781</code>，<b>44,294</b>）把「语料规模 × 词表 × 训练时长」压成工程量级（1.6B 词 <b>&lt;1 天</b>）；<b>Dropout</b>（<code>1207.0580</code>，<b>9,564</b>）给出小数据下最便宜的正则化旋钮（每样本随机丢弃<b>一半</b>特征检测器）；<b>BLIP</b>（<code>2201.12086</code>，<b>8,544</b>）给「噪声网页图文对 → 自举清洗」的两段式配方（captioner + filter，检索 avg recall@1 <b>+2.7%</b> / CIDEr <b>+2.8%</b> / VQA <b>+1.6%</b>）。三条分别落在 pretrain / pretrain + vision / data + vision。</p>
+
+<p style="font-size:14px;"><b>作者关系网 · 18:00 时窗 +2（→ 312）</b>：#311 <b>Ruslan Salakhutdinov</b>（Dropout 末位；CMU ML 系 UPMC Professor）<b>邮箱已核</b> <code>rsalakhu@cs.cmu.edu</code>（本人主页 <code>cs.cmu.edu/~rsalakhu/</code> <code>200</code> / 9,400 B 页内明文 <code>rsalakhu[at]cs.cmu.edu</code>）；<b>X 已核验</b> <code>@rsalakhu</code>（<code>og:title</code> + <code>og:description</code>「Professor @ CMU / Ex-VP of Research @ Meta」双源）。· #312 <b>Caiming Xiong</b>（BLIP 3 作；Salesforce Research，现 Recursive SI）：<b>邮箱未找到</b>（<code>caimingxiong.github.io</code> <code>404</code>、<code>www.caimingxiong.com</code> <code>000</code>、Recursive 团队页 <code>404</code> / <code>000</code> ⇒ 不猜地址、不发信）；<b>X 已核验</b> <code>@CaimingXiong</code>（<code>og:title</code> + <code>og:description</code>「Co-founder of @Recursive_SI, ex-SVP of Salesforce AI Research」双源）。⚠️ 同名反例当场拦下：<code>@JunnanLi</code> 虽返回 <code>200</code>，但 <code>og:title</code> = <code>雷弟尬尬 (@JunnanLi) on X</code> ⇒ 与 BLIP 一作无关，<b>不记</b>；<code>@tmikolov</code> / <code>@MikolovTomas</code> 均 <code>404</code> ⇒ Mikolov 记「未找到 X」。X 已核验累计 <b>121</b>（本轮 +2）。</p>
+
+<p style="font-size:14px;"><b>作者请教信 · 本时窗 0 封 · 累计 140 · 回信率 0/140</b>：今日已发 <b>12/12（达每日硬上限）</b>，按 <code>RESEARCH_MAIL_SPEC §3</code> 本窗只做选题与建档，<b>不发信</b>；新增两位作者中 #311 有可用邮箱但无专属问题清单、#312 无可用邮箱 ⇒ 均不硬发。回信 <b>0 / 140</b>，<b>0 封到期</b>（最早 2026-11-25，剩 3 天）；按用户令把 0 回信当<b>待诊断信号</b>（发件显示名 / 只发不收 / 地址过期三条嫌疑仍在，见 MEMORY 阻塞项），不记为成功。</p>
+
+<details>
+<summary>📰 news_ready · 18:00 时窗 0 条（理由）</summary>
+<ul>
+  <li>B 轨三条为 <b>2012 / 2013 / 2022 年</b>的方法论文（word2vec / Dropout / BLIP），<b>不是本窗事件点</b>；四问第②问（有事件点吗）不过。</li>
+  <li>按「每期 ≤2 条、宁缺勿滥」⇒ 本时窗 0 条，不把旧论文当年的发布当今日新闻。</li>
+</ul>
+</details>
+
+<p style="font-size:14px;"><b>voice_ready · 18:00 时窗 0 条</b>：本轮 X 只用于<b>核对 handle 身份</b>（<code>x.com/rsalakhu</code> / <code>x.com/CaimingXiong</code> 均 <code>200</code>），未抓取具体推文原文 + 时间戳 ⇒ 按规矩不出 voice_ready，<b>不使用二手转述顶替</b>。</p>
+
+
 <ul style="font-size:14px;">
   <li><b>A 轨 3 → 5</b>：新增 #4 WeMM-Video（<code>2611.26409</code>）与 #5 TRQ（<code>2611.26334</code>），均 cs.CV、均 2026-11-19 提交；方向按「vision / zhulong 优先」补齐，AM 三篇偏 agent + 后训练。</li>
   <li><b>B 轨 326 → 329</b>：新增 EVA-02（683）/ Sequence Parallelism（258）/ ViT registers（821）；同批候选 Transfusion / Janus / Ring Attention 查重后已在表内，剔除。</li>
@@ -343,9 +360,12 @@
   <li><b>data（15:00 新增 · 按 RAFT 的 golden/distractor）</b>：领域 SFT 数据构造加一个<b>干扰文档比例</b>旋钮（0% / 30% / 60% / 80%），且每题必须登记「golden 文档 ID + 干扰文档 ID」；判据：若 60% 档在留出集上不劣于 0% 档且引用准确率高 &gt;5 个点，则默认 60%，否则回退。</li>
   <li><b>harness（15:00 新增 · 按 RAFT 的逐字引用）</b>：把「引用片段是否真在 golden 文档中且能支撑答案」做成<b>自动判分子项</b>（字符串匹配 + 片段定位 + 答案蕴含三档）；判据：任一 EDA 问答结论若引用不可定位，分数记 0，不允许用「大意正确」代替。</li>
   <li><b>designflow（15:00 新增 · 按 RAFT 的领域开放书设定）</b>：设计流问答的评测集须固定<b>文档快照版本</b>（工具手册 / PDK 文档的 commit 或发布日期）并随题登记；判据：文档版本变更后旧题必须重跑，禁止跨版本文档直接比较分数。</li>
+  <li><b>pretrain（18:00 新增 · 按 word2vec）</b>：把<b>词表 × 语料 token 数 × 训练时长</b>做成一张成本基线表，与下游可自动判分的表征任务（相似度 / 类比）并列记录；判据：词表从 32k 扩到 64k 时，若下游分数提升 &lt;1 个点而嵌入参数量翻倍，则维持小词表，嵌入层只作初始化、不追大规模。</li>
+  <li><b>vision（18:00 新增 · 按 Dropout）</b>：小样本视觉 / 多模态微调默认开启 dropout（p=0.5）并同时报<b>训练-验证 gap</b>；判据：若开启后验证指标不低于关闭时且 gap 缩小 ≥3 pp，则写进默认配方；若 gap 不缩，先查数据泄漏与划分方式，别继续加正则。</li>
+  <li><b>data（18:00 新增 · 按 BLIP 的 captioner + filter）</b>：噪声图文 / 图文-代码对先做「生成 + 过滤」两段式小实验，<b>固定 filter 阈值并登记误删率</b>；判据：人工抽检 200 条，若误删率 &gt;10%，先调阈值再谈扩量，禁止用「数据越多越好」掩盖清洗缺陷。</li>
 </ul>
 
-<h3 class="sec">附录 · 00:00 / 03:00 / 06:00 / 09:00 / 12:00 / 15:00 时窗检索与核验</h3>
+<h3 class="sec">附录 · 00:00 / 03:00 / 06:00 / 09:00 / 12:00 / 15:00 / 18:00 时窗检索与核验</h3>
 <table class="plain">
   <tr><th>项</th><th>结果</th></tr>
   <tr><td>列表 <code>cat:cs.CL&amp;max_results=40</code></td><td><code>200</code> / <b>109,971 B / 40 entry</b> / atom；<code>published</code> 上界 <code>2026-11-19T18:57:25Z</code>（连续第 13 窗未前进，仍在 72h 窗内）</td></tr>
@@ -392,11 +412,18 @@
   <tr><td>15:00 RAFT 表 1 核验</td><td>ar5iv 全文页 <code>200</code> / <b>150,398 B</b>：<code>RAFT (LLaMA2-7B) 73.30 35.28 74.00 84.95 86.86</code>；正文 <code>35.25% on Hotpot QA and 76.35% on Torch Hub</code>（<b>未做 PDF 逐页复核</b>）</td></tr>
   <tr><td>15:00 地址复核（发信前）</td><td><code>tianjunz.github.io</code> <code>200</code> / <b>6,538 B</b>，页内明文 <code>tianjunz [at] berkeley [dot] edu</code>，与论文 PDF 首页同址；Mila 目录页 <code>200</code> / 125,911 B 无 Bahdanau 个人明文邮箱；<code>bahdanau.github.io</code> <code>404</code>、<code>www.bahdanau.com</code> <code>000</code> ⇒ 不猜地址</td></tr>
   <tr><td>15:00 X</td><td><code>x.com/tianjun_zhang</code> <code>200</code> / <b>190,919 B</b>（<code>og:title</code> + <code>og:description</code> 双源）；<code>x.com/DBahdanau</code> <code>200</code> / <b>199,403 B</b>（<code>og:title</code> = <code>🇺🇦 Dzmitry Bahdanau (@DBahdanau) on X</code>，<code>og:description</code> = <code>Team member at @periodiclabs.</code>）⇒ X 已核验 <b>119</b></td></tr>
+  <tr><td>18:00 列表 <code>cat:cs.CL&amp;max_results=3</code></td><td><code>200</code> / <b>8,529 B / 3 entry</b> / <code>application/atom+xml</code>（<code>--noproxy '*'</code> 直连 <code>https</code>）；<code>published</code> 上界仍 <code>2026-11-19T18:57:25Z</code>（<b>连续第 18 窗未前进</b>，仍在 72h 窗内）⇒ A 轨今日 5/5 不凑第 6 篇</td></tr>
+  <tr><td>18:00 B 轨 <code>id_list=1301.3781,1207.0580,2201.12086</code></td><td><code>200</code> + atom（<b>5,836 B / 3 entry</b>；<code>published</code> 齐备：2013-01-16 / 2012-07-03 / 2022-01-28）</td></tr>
+  <tr><td>18:00 abs 页复查</td><td>3/3 <code>200</code>（40,906 / 40,988 / 42,767 B），<code>citation_title</code> 与 <code>citation_date</code> 与 arXiv 记录逐字一致；BLIP 学科栏 = <code>cs.CV</code>，Dropout = <code>cs.NE</code> / <code>cs.CV</code> / <code>cs.LG</code>，word2vec = <code>cs.CL</code></td></tr>
+  <tr><td>18:00 OpenAlex</td><td>3/3 <code>200</code>：<b>44,294</b>（word2vec，preprint 2013）/ <b>9,564</b>（Dropout，preprint 2012）/ <b>8,544</b>（BLIP，preprint 2022）；查询日 2026-11-22</td></tr>
+  <tr><td>18:00 先查重</td><td>三个 ID 在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> 全量正则 <b>0 命中</b>；同批候选 Let's Verify Step by Step <code>2305.20050</code> 经查<b>已是表内 #159</b> ⇒ 剔除、不重复收</td></tr>
+  <tr><td>18:00 地址 / X 复核</td><td><code>cs.cmu.edu/~rsalakhu/</code> <code>200</code> / <b>9,400 B</b>（页内明文 <code>rsalakhu[at]cs.cmu.edu</code>）；<code>x.com/rsalakhu</code> <code>200</code>（<code>og:title</code> + <code>og:description</code> 双源）· <code>x.com/CaimingXiong</code> <code>200</code>（双源）；反例：<code>@JunnanLi</code> <code>200</code> 但 <code>og:title</code> = <code>雷弟尬尬 (@JunnanLi) on X</code>（他人）⇒ 不记，<code>@tmikolov</code> / <code>@MikolovTomas</code> <code>404</code>；<code>caimingxiong.github.io</code> <code>404</code>、<code>www.caimingxiong.com</code> <code>000</code> ⇒ 不猜邮箱</td></tr>
+  <tr><td>18:00 未做</td><td>PDF 逐页复核（数字取 arXiv 官方摘要）；推文全文抓取（仅核 handle）；<b>本窗不发信</b>（今日 12/12 达每日硬上限）；回信通道仍只发不收</td></tr>
   <tr><td>15:00 未做</td><td>PDF 逐页复核（Qwen2.5-VL / Bahdanau 数字取 arXiv 官方摘要）；推文全文抓取（仅核 handle）；回信通道仍只发不收</td></tr>
 </table>
 
 <footer>
-  research 线 · 论文观察日报 · 2026-11-22 15:00 时窗（5/5）｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
+  research 线 · 论文观察日报 · 2026-11-22 18:00 时窗（5/5）｜ 自包含单文件（内联 CSS、零外链、离线可开）｜ 推荐 = 待读线索，非结论 ｜ 数字均为论文作者自报，未复现
 </footer>
 </div>
 </body>

@@ -3347,16 +3347,29 @@
   "carbon-design-system__carbon-4260": {
     "instance_id": "carbon-design-system__carbon-4260",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.6,
+    "rc": -1,
+    "model_patch_len": 5007,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "carbon-design-system__carbon-4273": {
     "instance_id": "carbon-design-system__carbon-4273",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 463.2,
+    "rc": 0,
+    "model_patch_len": 5455,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " `ToggleSmall.Skeleton.js`, which both use an `aria-label` prop with a default loading message to satisfy accessibility requirements.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-4286": {
     "instance_id": "carbon-design-system__carbon-4286",

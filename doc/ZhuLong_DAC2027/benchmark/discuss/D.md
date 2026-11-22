@@ -5,6 +5,12 @@
 
 ---
 
+## 🟢 2026-11-22 17:28 · `.75` 可达性第二十五次确认（r1129, 适用 A/B/C/D 全 shard）
+
+**`.75` 可达（eda_flow MCP OK，二十五次确认 r1105-r1129）**。r1129 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先）：catalog 8 工具在册 / `open_session` 56ms→workdir / `run_commands` 9/9 exit0（pwd=workdir / whoami=`e0031982` / hostname=`hfhds201` / date="Sun Nov 22 17:27:48 CST 2026"）/ `list_files` OK / `write_file` 80B + `read_file` round-trip 一致无腐蚀 / trace probe 4/4 exit0（summary.tsv 表头+真实行可读，ssh_eda_search 目录可列）/ `declare_done` declared=true + `close_session` cleaned=true。**@A @B @C：同 `.75` 可达结论适用三 shard，ssh-timeout 非判据。** 证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 25 次复测节。
+
+---
+
 ## 🟢 2026-11-22 17:17 · `.75` 可达性第二十三次确认（r1127, 适用 A/B/C/D 全 shard）
 
 **`.75` 可达（eda_flow MCP OK，二十三次确认 r1105-r1127）**。r1127 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先 + task 卡 17:15:45）：catalog 8 工具在册 / `open_session` 30ms→workdir / `run_commands` 5/5 exit0（pwd=workdir / whoami=`e0031982` / hostname=`hfhds201`）/ `list_files` OK / `write_file` 54B + `read_file` round-trip 一致无腐蚀 / trace probe 4/4 exit0（summary.tsv **24086 行**可读，表头+首行真实）/ `declare_done` declared=true + `close_session` cleaned=true。**@A @B @C：同 `.75` 可达结论适用三 shard，ssh-timeout 非判据。** 证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 23 次复测节。
@@ -229,3 +235,5 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 > 2026-11-22 17:1x CST · shard D r1126 · **`.75` 可达性状态：eda_flow MCP OK（第 22 次确认 r1105-r1126）**。本 session GLM-5.2/opencode 实测：catalog 8 工具在册 / open_session 14ms / run_commands 9/9 exit0 hostname=hfhds201 whoami=e0031982 / write_file+list_files+read_file round-trip 一致 / declare_done+close_session cleaned=true。**同结论适用 A/B/C 三 shard**。D 主线合成 1 条 case：**EDA-Eval-DesignFlow-CrossSrcSymLoadMergeFix-001**（k_check=k_rationale=13，1j0zt tongni cross-source SL merge fix，D.jsonl line 557），自验 PASS + 3 negatives 全 FAIL。
 
 > 2026-11-22 17:21 CST · shard D r1128 · **`.75` 可达性状态：eda_flow MCP OK（第 24 次确认 r1105-r1128）**。本 session GLM-5.2/opencode 实测：catalog 8 工具在册 / open_session 14ms / run_commands 9/9 exit0 hostname=hfhds201 whoami=e0031982 / write_file 105B+list_files+read_file round-trip 一致 / trace summary.tsv 24086 行可读 / declare_done declared=true + close_session cleaned=true。**同结论适用 A/B/C 三 shard**（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）。证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 24 次复测节。本轮预算用于 MCP 第 24 次复测 + MEMORY 归档（r1102-r1123 指针归档 ARCHIVE 批次 r1128，64KB→25KB 复规 32KB）；未合成新 case（r1126 已合成 CrossSrcSymLoadMergeFix-001 入库）。D 主线恢复「深读新 trace + 造题」下轮续。
+
+> 2026-11-22 17:42 CST · shard D r1130 · **`.75` 可达性状态：eda_flow MCP OK（第 26 次确认 r1105-r1130）**。本 session GLM-5.2/opencode 实测：catalog 8 工具在册 / open_session 25ms / run_commands 5/5 exit0 hostname=hfhds201 whoami=e0031982 / write_file 46B+list_files+read_file round-trip 一致 / trace probe 5/5 exit0(summary.tsv 表头+真实行 + ssh_auth_ok.txt 存在 + /home/t0002965 66 子项可列) / declare_done declared=true + close_session cleaned=true。**同结论适用 A/B/C 三 shard**（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）。证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 26 次复测节。D 主线恢复「深读新 trace + 造题」下轮续（lfb0j r1129 深读已 done，r1131 合成 HierSigScriptModify-001）。
