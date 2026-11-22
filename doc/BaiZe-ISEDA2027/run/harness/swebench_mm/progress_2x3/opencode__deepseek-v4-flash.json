@@ -6505,23 +6505,44 @@
   "prettier__prettier-4115": {
     "instance_id": "prettier__prettier-4115",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 965.2,
+    "rc": 0,
+    "model_patch_len": 2681,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " snapshot updated:** `example-138.md` — the old output incorrectly lost the `> ` blockquote prefix on continuation lines of multiline HTML (a pre-existing bug). The new output correctly preserves it.\n",
+    "stderr_tail": "[✓] Implement fix for the idempotency issue\n[✓] Add/run tests to verify the fix\n[✓] Run linting/typecheck\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/language-markdown/printer-markdown.js\u001b[90m [offset=211, limit=15]\u001b[0m\n"
   },
   "prettier__prettier-4153": {
     "instance_id": "prettier__prettier-4153",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 145.8,
+    "rc": 0,
+    "model_patch_len": 2002,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " output.\n\nTest `tests/markdown_code/attributes.md` verifies the expected behavior: the code block with attributes ```` ```js {cmd=node .line-numbers}```` gets formatted identically to ```` ```js````.\n",
+    "stderr_tail": "down fenced code block parsing\n[✓] Identify the code that detects fenced code block language\n[✓] Fix to allow language detection when attributes follow the language\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "prettier__prettier-4202": {
     "instance_id": "prettier__prettier-4202",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 246.8,
+    "rc": 0,
+    "model_patch_len": 4209,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "-: |` separators and strips cell padding\n- Normal tables (under printWidth) are unaffected\n- All 771 markdown tests pass, with a new `contributors.md` test case covering the all-contributors scenario\n",
+    "stderr_tail": "back: use minimal dash separators and no cell padding when table is too wide\n[✓] Add test case for wide tables (all-contributors style) and update snapshots\n[✓] Run tests to verify the fix works\n\u001b[0m\n"
   },
   "prettier__prettier-6319": {
     "instance_id": "prettier__prettier-6319",

@@ -4603,16 +4603,30 @@
   "grommet__grommet-6246": {
     "instance_id": "grommet__grommet-6246",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 840.4,
+    "rc": 0,
+    "model_patch_len": 28596,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "` and `DataChart-test.js` to prevent regression.\n\nThe snapshots now confirm bars render with correct non-zero heights for all-negative data (e.g., `-10, -5, -20`) and mixed data (e.g., `10, -5, 20`).\n",
+    "stderr_tail": "✓] Fix Chart.js renderBars for negative values\n[✓] Fix calcBounds NaN bug with mixed positive/negative values\n[✓] Add tests for negative values in DataChart and Chart\n[✓] Run tests to verify fix\n\u001b[0m\n"
   },
   "grommet__grommet-6282": {
     "instance_id": "grommet__grommet-6282",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 271.9,
+    "rc": 0,
+    "model_patch_len": 2138,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ble-test.js` called `sort null and undefined` that verifies rows with `null` and missing (undefined) properties sort to the top when sorting ascending, just like empty strings would. The test passes.\n",
+    "stderr_tail": "Todos\n[✓] Find DataTable sorting logic related to null/undefined properties\n[✓] Implement fix to treat null/undefined as empty string during sort\n[✓] Verify fix with tests or existing test suite\n\u001b[0m\n"
   },
   "grommet__grommet-6293": {
     "instance_id": "grommet__grommet-6293",
