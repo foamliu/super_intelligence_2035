@@ -3302,30 +3302,58 @@
   "carbon-design-system__carbon-4055": {
     "instance_id": "carbon-design-system__carbon-4055",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 441.0,
+    "rc": 0,
+    "model_patch_len": 3760,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "tton, not the outer div\n- `aria-expanded` toggles correctly on the button\n- Below-the-fold content has `aria-hidden` when collapsed\n- Below-the-fold content is visible to screen readers when expanded\n",
+    "stderr_tail": "er = require.requireActual('enzyme-adapter-react-16');\n \n enzyme.configure({ adapter: new Adapter() });\n\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Tile/Tile.js\u001b[90m [offset=490, limit=50]\u001b[0m\n"
   },
   "carbon-design-system__carbon-4167": {
     "instance_id": "carbon-design-system__carbon-4167",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 342.7,
+    "rc": 0,
+    "model_patch_len": 4573,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ects Node 10.x and `enzyme-adapter-react-16` is not installed here. However, the source file compiles successfully with Babel and all affected snapshots were updated to match the new rendered output.\n",
+    "stderr_tail": "Browserslist: caniuse-lite is outdated. Please run:\n  npx browserslist@latest --update-db\n  Why you should do it regularly: https://github.com/browserslist/browserslist#browsers-data-updating\nOK\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4226": {
     "instance_id": "carbon-design-system__carbon-4226",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 112.2,
+    "rc": 0,
+    "model_patch_len": 2198,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "y meaningful accessible text for assistive technologies. By adding `aria-label=\"Skeleton text\"` to each link, screen readers now have proper labels to announce, resolving the accessibility violation.\n",
+    "stderr_tail": ".1\n\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Breadcrumb/Breadcrumb.Skeleton.js\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Breadcrumb/__tests__/__snapshots__/Breadcrumb.Skeleton-test.js.snap\n"
   },
   "carbon-design-system__carbon-4260": {
     "instance_id": "carbon-design-system__carbon-4260",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 557.7,
+    "rc": 0,
+    "model_patch_len": 5599,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "- `packages/react/src/components/MultiSelect/__tests__/__snapshots__/MultiSelect-test.js.snap`\n- `packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap`\n",
+    "stderr_tail": "={false}\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Remove incorrect role=\"listbox\" from ListBox.js outer div\n[✓] Fix ListBoxField.js so rest.role doesn't override explicit role\n[✓] Update snapshots and run tests\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-4273": {
     "instance_id": "carbon-design-system__carbon-4273",

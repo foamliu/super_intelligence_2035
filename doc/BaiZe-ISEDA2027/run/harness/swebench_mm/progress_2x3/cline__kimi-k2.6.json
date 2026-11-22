@@ -2998,9 +2998,16 @@
   "carbon-design-system__carbon-13527": {
     "instance_id": "carbon-design-system__carbon-13527",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 818.7,
+    "rc": 0,
+    "model_patch_len": 5658,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "s/react/src/components/UIShell/__tests__/SideNavMenu-test.js\\n\\nTest Suites: 3 passed, 3 total\\nTests:       19 passed, 19 total\\n```\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-13851": {
     "instance_id": "carbon-design-system__carbon-13851",

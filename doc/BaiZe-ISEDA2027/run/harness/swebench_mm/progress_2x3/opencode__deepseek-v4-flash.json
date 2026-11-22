@@ -5427,16 +5427,29 @@
   "openlayers__openlayers-10982": {
     "instance_id": "openlayers__openlayers-10982",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-11047": {
     "instance_id": "openlayers__openlayers-11047",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 326.2,
+    "rc": 0,
+    "model_patch_len": 1193,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ut never calls `worker.terminate()` on the underlying native `Worker` objects, leaving them alive indefinitely. The fix explicitly calls `.terminate()` on each worker before destroying the processor.\n",
+    "stderr_tail": "m [limit=100, offset=130]\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore the raster source code and pixelworks worker handling\n[✓] Implement worker termination on raster source disposal\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-11088": {
     "instance_id": "openlayers__openlayers-11088",
