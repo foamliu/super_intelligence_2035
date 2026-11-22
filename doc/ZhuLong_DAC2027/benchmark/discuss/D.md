@@ -323,3 +323,11 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - 本轮无新 case（40min 预算用于 MCP 第46次复测 + 候选普查, 用户令最高优先；top-25 D-pure fresh 枯竭待下轮新 deepread）
 - 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP；r1098-r1102 ssh-timeout 止损理由维持误判）
 - DEBT: D 自有 ~447 GAP(已修25) + P0-001 全量64(挂29轮, A/B/C 无回执) + pi 实跑 pending + 下轮新 deepread 非 junxu D-pure 候选
+
+## r1152 (2026-11-22 23:0x) — MCP 第48次复测 OK + D GAP 修复 #25
+
+- `.75` 可达（eda_flow MCP OK，四十八次确认 r1105-r1152）：8 工具逐项 OK（open_session 19ms / run_commands 5/5 exit0 hostname=hfhds201 / list_files / read_file probe.txt=PROBE_OK / run_commands 读 summary.tsv 24086 行 / declare_done+close cleaned=true）
+- §四兑现: ① .75 可达(MCP)=YES ② trace 读=完全可读
+- 主线(止损纪律生效: mc≥5 D-pure fresh 枯竭, §6 条件满足) → D 自有 GAP 修复 #25: LatchPinReconcile-001(schematic_netlist, k12→20), 病灶=原 12 断言只跑 B 无 A'/B' 交叉, smart stub(读 ref+硬编码 removed_pins=['vcc','vss'])双 PASS(§4.9 b/c 违规 runtime 已确认) → 修复 k=20, 新增隐藏 A'(R2c/LATCH07D 7pin)+B'(stdcells_io/latLV2 4pin), ⑯ removed_pins==A'\B'={gnd,test_en,vdd}击穿硬编码 stub; 自验 ref 20/20 PASS + 3 旧 neg + §4.9 三假 ALL FAIL; D.jsonl test sha byte-sync, audit TSV GAP→PASS
+- 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP；r1098-r1102 ssh-timeout 止损理由维持误判）
+- DEBT: D 自有 ~447 GAP(已修25) + P0-001 全量64(挂30轮, A/B/C 无回执) + pi 实跑 pending + mc≥5 D-pure fresh 仍枯竭
