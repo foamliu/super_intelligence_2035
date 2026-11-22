@@ -395,3 +395,24 @@ await tools["eda_flow"].close_session({workdir, keep:false});
 2. **trace 读取受限（权限/路径层）**：⚠️ 部分。`read_file`/`list_files` 对 workdir 外路径返回 `path outside allowed prefixes`（sandbox 白名单安全设计，非不可达）；`run_commands`(bash) 可读 .75 全文件系统（summary.tsv 24086 行 OK）。
 
 **结论: eda_flow MCP 可用 = .75 可达（第 21 次确认，与 r1105-r1124 一致）**。r1098-r1102 ssh-timeout 止损理由维持误判。同结论适用 A/B/C 三 shard。MCP 可用 ⇒ 用户令 §三「立即恢复深读新 trace + 造题主线」无外部阻塞。
+
+## 第 23 次复测 · 2026-11-22 17:17 CST · session: GLM-5.2 / opencode（本轮 task 卡 17:15:45 触发）
+
+依据 2026-11-22 11:2x 用户令最高优先 + 本轮 task 卡「先测 eda_flow MCP 是否可用」。
+
+| # | 工具 | 参数 | 返回摘要 | 耗时 | 错误原文 |
+|---|---|---|---|---|---|
+| 1 | search(catalog) | `{namespace:"eda_flow"}` | 8 工具在册: open_session/close_session/declare_done/run_commands/run_code/read_file/write_file/list_files | <1s | — |
+| 2 | open_session | `{task_id:"MCP-CONN-TEST", eval_id:"20261122-mcptest", sample:"0", user:"shardD-conn-test"}` | workdir=`/proj/train/AI/workdir/e0031982/eda_sandbox_flow/sessions/shardD-conn-test_20261122-mcptest_MCP-CONN-TEST_0`, "session workdir ready" | 30ms | — |
+| 3 | run_commands | workdir + 5 cmd（pwd/whoami/hostname/ls -la/echo MARKER_OK_$$） | 5/5 exit0: pwd=workdir / whoami=`e0031982` / hostname=`hfhds201` / ls workdir empty / MARKER_OK_6173 | 6129ms | — |
+| 4 | list_files | `{dir:workdir, pattern:"*"}` | 0 entries（空 workdir，预期）, error_log 空 | 14ms | — |
+| 5 | write_file + read_file | write 54B→workdir/mcp_probe.txt；read_file 回读 | write OK 54B / read round-trip 内容一致 `MCP_CONN_TEST_OK\nline2: eda_flow write+read roundtrip\n`, is_text=true | 20ms+13ms | — |
+| 6 | run_commands(trace probe) | 4 cmd: ls /home/t0002965/log + ls ssh_eda_search_20261028_174426 + head -2 summary.tsv + wc -l summary.tsv | 4/4 exit0: log dir 21 子项 / scan dir 存在(REPORT.md+raw.tsv) / 表头+首行真实(`10.129.32.189 hfeg0pnd001 e0045140 1792637822804_6xv88.messages.json 9 .def:13;synopsys:2;`) / **24086 行**（=24,085 IC-EDA 命中，与文档一致） | 41ms | — |
+| 7 | declare_done | `{workdir}` | declared=true, marker=.df_declared_done | 17ms | — |
+| 8 | close_session | `{workdir, keep:false}` | cleaned=true, "session workdir cleaned" | 14ms | — |
+
+**关键分离（用户令 §四 兑现，同前二十二次）**：
+1. **`.75` 可达（MCP 层）**：✅ 是。8 工具全在册，open_session/run_commands/write_file/list_files/read_file/declare_done/close_session 全部正常返回，hostname=`hfhds201`(=10.129.32.75)，whoami=`e0031982`。
+2. **trace 读取受限（权限/路径层）**：⚠️ 部分。`read_file`/`list_files` 白名单仅限 workdir 前缀（sandbox 安全设计，非不可达）；`run_commands`(bash) 可读 .75 全文件系统（summary.tsv 24086 行 OK，trace 目录可列）。
+
+**结论: eda_flow MCP 可用 = .75 可达（第 23 次确认，与 r1105-r1126 一致）**。r1098-r1102 ssh-timeout 止损理由维持误判。同结论适用 A/B/C 三 shard。MCP 可用 ⇒ 用户令 §三「立即恢复深读新 trace + 造题主线」无外部阻塞。

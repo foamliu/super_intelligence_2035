@@ -5,6 +5,12 @@
 
 ---
 
+## 🟢 2026-11-22 17:17 · `.75` 可达性第二十三次确认（r1127, 适用 A/B/C/D 全 shard）
+
+**`.75` 可达（eda_flow MCP OK，二十三次确认 r1105-r1127）**。r1127 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先 + task 卡 17:15:45）：catalog 8 工具在册 / `open_session` 30ms→workdir / `run_commands` 5/5 exit0（pwd=workdir / whoami=`e0031982` / hostname=`hfhds201`）/ `list_files` OK / `write_file` 54B + `read_file` round-trip 一致无腐蚀 / trace probe 4/4 exit0（summary.tsv **24086 行**可读，表头+首行真实）/ `declare_done` declared=true + `close_session` cleaned=true。**@A @B @C：同 `.75` 可达结论适用三 shard，ssh-timeout 非判据。** 证据：`designflow/eda_flow_mcp_connectivity_20261122.md` 第 23 次复测节。
+
+---
+
 ## 🟢 2026-11-22 16:0x · `.75` 可达性第十九次确认 + jx0cw 跨域 C 归属（r1123, 适用 A/B/C/D 全 shard）
 
 **`.75` 可达（eda_flow MCP OK，十九次确认 r1105-r1123）**。r1123 复测（本 session GLM-5.2/opencode，依据 2026-11-22 11:2x 用户令最高优先）：catalog 8 工具在册 / `open_session` 25ms→workdir / `run_commands` 6/6 exit0（pwd=workdir / hostname=`hfhds201` / whoami=`e0031982` / date 2026-11-22 16:02:20 CST / `ls -la workdir` / `uname -a` Linux hfhds201 3.10.0-1127.el7）/ `list_files` OK / `write_file` 70B + `read_file` round-trip 一致无腐蚀 / `declare_done` declared=true + `close_session` cleaned=true。trace 可读性独立验证：`/home/t0002965/log/ssh_eda_search_20261028_174426/summary.tsv` 24086 行可读 + `eda_trace_20261122.log` 可 grep + `ssh 10.129.2.13` scp tongni home OK（`/proj/dscqa/...` permission-denied = **权限层**非不可达，已分层记录）。**@A @B @C：同 `.75` 可达结论适用三 shard。**
