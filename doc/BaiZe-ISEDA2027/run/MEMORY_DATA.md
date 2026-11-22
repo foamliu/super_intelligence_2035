@@ -2,7 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 (R230) — 例行巡检+blendswitch第23次复验7/7 PASS**：①✅git pull --rebase --autostash "Already up to date" 0 behind origin **无新data令**；②✅pretrain iter=291,470/700k(41.64%) step_avg(last10)=7216ms<7.4s gate✅ 训练健康 loss≈1.998 lr=1e-3 stable daemon idle等292k ETA≈06:43(读自MEMORY_PRETRAIN_2B.md #3101@05:39)；③✅blendswitch第23次复验7/7 PASS(zero_overlap=0/7源S1 50k·S2 50k docs零交集；ratio max_dev=0.0087%<1%；flag-off=byte-identical；new_source=0(new_d/new_e cursor=0)；epoch_wrap诚实报告(150>100→overlap=50 unavoidable有warning)；json_roundtrip OK；perf_pass(t_stock=0.151s vs t_switch=0.150s overhead~0)；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=26.60<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data下载进程(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226；注：dl_orchestrator.sh PID3319999自11-15起stale无日志更新8d,非活跃下载,未kill待确认)；⑦✅MEMORY~33KB<40KB硬限/TASK 27.6KB<32KB。research日报11-23「EDA语料Gopher体检」建议记为参考(EDA已取消)。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 (R231) — 例行巡检+blendswitch第24次复验7/7 PASS**：①✅git pull --rebase --autostash "Already up to date" 0 behind origin **无新data令**；②✅pretrain iter=291,530/700k(41.65%) step_avg(last10)=7206ms<7.4s gate✅ 训练健康 loss≈1.990 lr=1e-3 stable daemon idle等292k ETA≈06:42(读自MEMORY_PRETRAIN_2B.md #3102@05:47)；③✅blendswitch第24次复验7/7 PASS(zero_overlap=0/7源S1 50k·S2 50k docs零交集；ratio max_dev=0.0087%<1%；flag-off=byte-identical；new_source=0(new_d/new_e cursor=0)；epoch_wrap诚实报告(150>100→overlap=50 unavoidable有warning)；json_roundtrip OK；perf_pass(t_stock=0.227s vs t_switch=0.228s overhead~0.4%)；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=28.05<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data下载进程(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226；注：dl_orchestrator.sh PID3319999自11-15起stale etime≈673ks无日志更新8d,非活跃下载,未kill待确认)；⑦✅MEMORY~33.6KB<40KB硬限/TASK 27.6KB<32KB。research日报11-23「EDA语料Gopher体检」建议记为参考(EDA已取消)。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+
+> 📦 R230 心跳（例行巡检+blendswitch第23次复验7/7 PASS·iter291470 step7216ms·.12 load26.60·S2三下载全100%·research日报EDA建议记为参考(EDA已取消)）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R225 心跳（例行巡检+blendswitch第18次复验7/7 PASS·iter291230 step7355ms·.12 load24.86·S2三下载全100%·research日报EDA建议记为参考(EDA已取消)）已归档 → daily-memories-data/2026-11-23.md
 
@@ -10,7 +12,7 @@ WAITING: 0
 
 > 📦 R227 心跳（例行巡检+blendswitch第20次复验7/7 PASS·iter291340 step7158ms·.12 load24.88·S2三下载全100%）已归档 → daily-memories-data/2026-11-23.md
 
-> 🟢 **心跳 · 2026-11-23 (R229) — 例行巡检+blendswitch第22次复验7/7 PASS**：①✅git pull --rebase --autostash "Already up to date" 0 behind origin **无新data令**；②✅pretrain iter=291,470/700k(41.64%) step_avg(last10)=7216ms<7.4s gate✅ 训练健康 loss≈1.998 lr=1e-3 stable daemon idle等292k ETA≈06:43；③✅blendswitch第22次复验7/7 PASS(zero_overlap=0/ratio max_dev=0.0087%/flag-off=byte-identical/new_source=0/epoch_wrap诚实报告/json_roundtrip OK/perf_pass=true；python=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3.10 numpy1.26.4；复跑后verify_results.json已git checkout HEAD还原为提交版避免timing抖动churn)；④✅.12 load=26.72<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无后台data下载进程(S2三大下载全100%：MegaMath-web4950/Code-Reasoning1635/Math-Reasoning2226；注：dl_orchestrator.sh PID3319999自11-15起stale无日志更新8d,非活跃下载,未kill待确认)；⑦✅MEMORY 31.9KB<32KB/TASK 27.6KB<32KB。research日报11-23「EDA语料Gopher体检」建议记为参考(EDA已取消)。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 📦 R229 心跳（例行巡检+blendswitch第22次复验7/7 PASS·iter291470 step7216ms·.12 load26.72·S2三下载全100%）已归档 → daily-memories-data/2026-11-23.md
 
 > 📦 R228 心跳（例行巡检+blendswitch第21次复验7/7 PASS·iter291400 step7143ms·.12 load25.35·S2三下载全100%）已归档 → daily-memories-data/2026-11-23.md
 
