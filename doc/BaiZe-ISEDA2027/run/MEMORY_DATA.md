@@ -2,9 +2,9 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-22 (R201) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：例行巡检（无新令）。git fetch origin f56611fd8b→ed666073fa(designflow shard D，非data令)，无新 data 指令。方案F blendswitch 第25次复验 7/7 PASS（miniforge3 py /nas_train/app.e0031982/miniforge3/bin/python）：zero_overlap=0(7共享源 overlap_docs=0) / ratio_switch max dev=0.0087%≤1%✅ / flag_off_equivalence byte-identical✅ / new_source_zero_overlap=0✅ / epoch_wrap honest report✅ / json_roundtrip✅ / perf one-time switch cost small✅。复跑后 verify_results.json 已还原提交版（避免机器噪声 perf）。交付物完好：blend_switcher.py(14KB)+test(9KB)+validate_overlap.py+README_PATCH.md+verify_results.json / v5报告13,813B≤20KB✅ / v4报告14,625B≤15KB✅。pretrain iter≈286.3k/700k(40.9%) step avg7099ms 0NaN/0skip✅(pretrain#3024, lr=1e-3 stable, 286k eval RUNNING daemon) / 350k ETA≈11-28不变(63700步×7.1s≈5.2天) / 700k ETA≈12-27不变。PC-1~PC-5全✅ / 污染扫描✅ / 无后台任务 / MEMORY_DATA 29.4KB<40KB✅ / TASK 30.7KB<40KB✅。WAITING=0**。
+> 🟢 **心跳 · 2026-11-22 (R202) — 走 F 自定义改造（权重热更新 + 跨 blend 游标映射）+ patch/验证状态=CPU全通过 + 零重叠实测=0 + 350k 倒计时≈6天(11-28)**：例行巡检（无新令）。git fetch origin 无新提交（HEAD=019b05e0f3 pretrain#3025，无新 data 指令）。方案F blendswitch 第26次复验 7/7 PASS（miniforge3 py /nas_train/app.e0031982/miniforge3/bin/python）：zero_overlap=0(7共享源 overlap_docs=0) / ratio_switch max dev=0.0087%≤1%✅ / flag_off_equivalence byte-identical✅ / new_source_zero_overlap=0✅ / epoch_wrap honest report✅ / json_roundtrip✅ / perf one-time switch cost small✅。复跑后 verify_results.json 已还原提交版（避免机器噪声 perf）。交付物完好：blend_switcher.py(14KB)+test(9KB)+validate_overlap.py+README_PATCH.md+verify_results.json / v5报告13,813B≤20KB✅(0外链0script) / v4报告14,625B≤15KB✅(0外链0script)。pretrain iter≈286.4k/700k(40.9%) step avg7096ms 0NaN/0skip✅(pretrain#3025, lr=1e-3 stable, 286k eval RUNNING daemon) / 350k ETA≈11-28不变(63630步×7.1s≈5.2天) / 700k ETA≈12-27不变。PC-1~PC-5全✅ / 污染扫描✅ / 无后台任务 / .12 load=25.1✅ / /nas_user 42T✅(≥5T红线) / MEMORY_DATA 29.4KB<40KB✅ / TASK 30.7KB<40KB✅。WAITING=0**。
 
-> 📦 R200~R170 心跳（方案F blendswitch例行巡检+第3-25次复验，均7/7 PASS zero_overlap=0）已归档 → daily-memories-data/2026-11-22.md
+> 📦 R201~R170 心跳（方案F blendswitch例行巡检+第3-26次复验，均7/7 PASS zero_overlap=0）已归档 → daily-memories-data/2026-11-22.md
 
 
 > _(R171 心跳已归档 daily-memories-data/2026-11-22.md · R171: v4报告结论段修正三层表述+~12%加权透明表(token口径0.201≈20%)+WBS支撑17h≈2.1人日)
@@ -96,7 +96,7 @@ WAITING: 0
 ```
 PHASE:        S2前置+污染闸门全完成 — PC-1✅~PC-5✅ + 扩展黑名单✅ + S2新源扫描✅(48K docs/0命中) → WAITING=0
 已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(6benchmark/9277tasks);✅PC-4 main版blend_s2_preblend.tsv(12源/含nemotron 0.067+megamath_web 0.060+finemath 0.005/weight_sum=1.0/gen_blend --verify通过);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(R136刷新main版/pushed);✅MegaMath-web下载DONE(4950parquet/826GB);✅MegaMath-web分词DONE(4950/4950=100%/218.1B tok);✅Code-Reasoning下载DONE(1637parquet/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2228parquet/0inc);✅DATA_MAPPING.md更新;✅论文Fig-1三饼图+Fig-2调优+TABLE IV精简+数据源/Decay/LongCtx引用补齐(latexmk 0err);✅EDA-Eval 536-task黑名单重跑复现(R137/正控158/158);✅扩展黑名单blacklist_extended建成(R138/5359tasks/4847354 13-gram/正控164/164);✅S2新源污染扫描(R139/4源×12K=48K docs/全0命中);✅方案F blendswitch交付(R170-R171/commit 68742cfbe4/blend_switcher.py+v5报告+v4修正+CPU验证7/7零重叠=0)
-当前动作:     R189例行巡检:iter≈285.0k/700k(40.71%) step7267ms 0NaN/0skip✅(pretrain #3004);方案F blendswitch第14次复验7/7 PASS(zero_overlap=0);git fetch无新令;PC-1~PC-5全✅/无后台任务/.12 load=28.8✅
+当前动作:     R202例行巡检:iter≈286.4k/700k(40.91%) step7096ms 0NaN/0skip✅(pretrain #3025);方案F blendswitch第26次复验7/7 PASS(zero_overlap=0);git fetch无新令;PC-1~PC-5全✅/无后台任务/.12 load=25.1✅
 下一步:       ①等pretrain到350k(~11-28)启动S2(blend TSV已就绪/SEED=5678待转告pretrain线) ②S2投料前可按S1口径对4新源做全量扫描(>150K docs)作为加强验证(非阻塞/contam_venv已就绪)
 阻塞:         无(全部前置完成;无后台任务;.12 load≈24<120✅;/nas_user 42T可用✅>5T红线)
 ERROR_COUNT:  0
