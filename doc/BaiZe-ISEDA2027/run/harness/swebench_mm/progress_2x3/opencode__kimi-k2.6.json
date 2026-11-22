@@ -4127,16 +4127,30 @@
   "carbon-design-system__carbon-8222": {
     "instance_id": "carbon-design-system__carbon-8222",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 737.2,
+    "rc": 0,
+    "model_patch_len": 5073,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "Results\nAll 51 relevant tests pass. (The 4 failures in the existing `Button accessibility` block are due to missing `@testing-library` dependencies in this environment, not related to these changes.)\n",
+    "stderr_tail": "m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Button/Button-test.js\u001b[90m [offset=329, limit=60]\u001b[0m\n\u001b[0m→ \u001b[0mRead packages/react/src/components/Button/Button-test.js\u001b[90m [offset=172, limit=20]\u001b[0m\n"
   },
   "carbon-design-system__carbon-8279": {
     "instance_id": "carbon-design-system__carbon-8279",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 836.2,
+    "rc": 0,
+    "model_patch_len": 5961,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e.g., `calls onChange when clicked`, `does not toggle selected state when clicked`).\n   - Updated prop-respecting tests to check the rendered `<input>`'s `checked` attribute.\n\nAll 42 Tile tests pass.\n",
+    "stderr_tail": ")\n\nTest Suites: 1 passed, 1 total\nTests:       42 passed, 42 total\nSnapshots:   0 total\nTime:        2.661 s\nRan all test suites matching /packages\\/react\\/src\\/components\\/Tile\\/Tile-test.js/i.\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-8296": {
     "instance_id": "carbon-design-system__carbon-8296",

@@ -3598,9 +3598,16 @@
   "carbon-design-system__carbon-4952": {
     "instance_id": "carbon-design-system__carbon-4952",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1427.3,
+    "rc": 0,
+    "model_patch_len": 4579,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e full suite passes\\n- Consider applying the same composition logic to `FilterableMultiSelect` if IME support is needed there as well\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-4991": {
     "instance_id": "carbon-design-system__carbon-4991",

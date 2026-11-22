@@ -6091,16 +6091,29 @@
   "openlayers__openlayers-14619": {
     "instance_id": "openlayers__openlayers-14619",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 3114,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-14627": {
     "instance_id": "openlayers__openlayers-14627",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 41.7,
+    "rc": 0,
+    "model_patch_len": 439,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "e in `src/ol/extent.js:811`:\n- Added early return when `isEmpty(extent)` — returns an empty extent via `createOrUpdateEmpty(dest)` instead of feeding `Infinity` coordinates to the transform function.\n",
+    "stderr_tail": "      ✔ leaves real world extent untouched\n      ✔ slices +180 crossing extents\n      ✔ slices -180 crossing extents\n      ✔ fits infinite extents to the projection extent\n\n\n  101 passing (70ms)\n\u001b[0m\n"
   },
   "openlayers__openlayers-14659": {
     "instance_id": "openlayers__openlayers-14659",
