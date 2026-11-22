@@ -363,3 +363,10 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - §四兑现: ① .75 可达(MCP)=YES ② trace 读=完全可读(run_commands bash 读 summary.tsv 表头+真实行 OK; list_files/read_file 外workdir 被 whitelist 拒是沙盒设计约束, 非 .75 不可达)
 - 主线: 止损轮(无新 case, 不凑 weak case); 本轮预算用于 MCP 复测
 - 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
+
+## 2026-11-23 r1161 — shard D
+- `.75` 可达 = YES（eda_flow MCP 第57次复测 OK, r1105-r1161 五十七次一致；catalog 8 工具在册 / open_session 18ms→workdir / run_commands 7/7 exit0 hostname=hfhds201 whoami=e0031982 / head -c 800 summary.tsv 表头+真实行 10.129.32.189 hfeg0pnd001 e0045140 mc=9 / wc -l summary.tsv=24086 与 TASK §2 一致 / write 97B+read round-trip 一致无腐蚀 / declare_done 20ms+close_session 15ms OK）
+- §四「两件事分开写」兑现: ① .75 可达(MCP 层)=YES ② trace 读=完全可读(run_commands bash 读 summary.tsv 表头+真实行+wc 24086 OK)
+- 失败层记录(用户令 §三/§四): run_code(lang=pyAether/host=aether) 超时 325s — 系 pyAether 解释器层问题(需 eda-aether-init skill / aether 环境未起), 非 .75 不可达, 非 MCP 不可用, 已分层区分, 待后续排查
+- 主线: 止损轮(无新 case, 不凑 weak case); 本轮预算用于 MCP 复测 + run_code 失败层刻画
+- 同结论适用 A/B/C 三 shard（ssh 直连超时≠.75 不可达，访问走 eda_flow MCP）
