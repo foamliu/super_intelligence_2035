@@ -5106,16 +5106,30 @@
   "highlightjs__highlight.js-3154": {
     "instance_id": "highlightjs__highlight.js-3154",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 606.6,
+    "rc": 0,
+    "model_patch_len": 1673,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "t/markup/ruby/heredoc.txt` — added test case for `<<-'MESSAGE'`\n- `test/markup/ruby/heredoc.expect.txt` — added expected output\n\nThe only pre-existing test failure (`crystal` detection) is unrelated.\n",
+    "stderr_tail": " Fix Ruby heredoc regex to support single/double-quoted delimiters (e.g., <<-'MESSAGE')\n[✓] Update test markup files with heredoc without interpolation test cases\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3203": {
     "instance_id": "highlightjs__highlight.js-3203",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 40.2,
+    "rc": 0,
+    "model_patch_len": 372,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "e\n```\n\n**Fix applied:** `src/languages/powershell.js:239` — changed regex from `(-)[\\w\\d]+` to `(--?)[\\w\\d]+` so double-hyphen flags like `--flag` are now highlighted the same as single-hyphen flags.\n",
+    "stderr_tail": "\">// recognize built-ins</span>\\n<span class=\"hljs-keyword\">return</span> <span class=\"hljs-number\">0</span>;  <span class=\"hljs-comment\">// recognize keyword that started the expression</span>'\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3207": {
     "instance_id": "highlightjs__highlight.js-3207",

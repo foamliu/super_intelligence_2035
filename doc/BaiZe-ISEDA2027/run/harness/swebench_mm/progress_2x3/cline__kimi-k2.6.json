@@ -2762,23 +2762,44 @@
   "carbon-design-system__carbon-12332": {
     "instance_id": "carbon-design-system__carbon-12332",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 376.1,
+    "rc": 0,
+    "model_patch_len": 4340,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " ensure that the vertical progress indicator skeleton text is properly aligned with the circles, matching the expected visual design.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-12384": {
     "instance_id": "carbon-design-system__carbon-12384",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 464.3,
+    "rc": 0,
+    "model_patch_len": 4875,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "t story for easy copy and paste | ✅ `ReadOnly` story added |\\n| RTL tests for the read-only class on the prop | ✅ 4 new tests added |\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-12398": {
     "instance_id": "carbon-design-system__carbon-12398",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 553.8,
+    "rc": 0,
+    "model_patch_len": 6872,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "-only checkbox\\n\\nAll changes follow existing Carbon patterns established by similar components like `RadioButtonGroup` and `Toggle`.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-12402": {
     "instance_id": "carbon-design-system__carbon-12402",

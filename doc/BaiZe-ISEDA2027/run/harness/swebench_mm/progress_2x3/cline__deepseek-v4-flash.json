@@ -4091,23 +4091,44 @@
   "carbon-design-system__carbon-8022": {
     "instance_id": "carbon-design-system__carbon-8022",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1235.1,
+    "rc": 0,
+    "model_patch_len": 10392,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "in the vanilla JS component provides synchronous cleanup that prevents the debounced fade-out from leaving a stale tooltip visible.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-8092": {
     "instance_id": "carbon-design-system__carbon-8092",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 215.6,
+    "rc": 0,
+    "model_patch_len": 10062,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " `false`, with a warning text message displayed below the select. The invalid state always takes precedence over the warning state.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-8130": {
     "instance_id": "carbon-design-system__carbon-8130",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 476.8,
+    "rc": 0,
+    "model_patch_len": 2928,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "t-switcher-btn` inherits the same `border: 1px solid $ui-04` — `$ui-04` contrast against `$ui-02` (white) is ~3.3:1, meeting WCAG |\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "carbon-design-system__carbon-8222": {
     "instance_id": "carbon-design-system__carbon-8222",
