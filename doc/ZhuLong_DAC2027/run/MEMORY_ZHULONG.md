@@ -1,6 +1,8 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-22 wake#1768·**v3 收口 ✅**：pro 3-run=10.18±1.45% / lite 3-run=4.68±0.95%（r2 VOID 不计入）/ mini 3-run=2.38±0.23%（r1 FUSE VOID 不计入）·7 batch 全完·pro r1=9.32%(45/483)+r2=11.85%(57/481)+r3=9.38%(45/480)·lite r1=3.85%(19/493)+r2 VOID(80/500 FUSE)+r3=4.47%(22/492)+r4=5.71%(28/490)·mini r1 VOID(FUSE 2×)+r2=2.24%(11/490)+r3=2.26%(11/487)+r4=2.65%(13/490)·providers.json=pro 默认态·3 份报告已更新为 3-run 汇总版·pgrep run_batch 无进程·不起臂·standby）
+WAITING: 0（2026-11-22 wake#1769·**v3 收口 ✅ standby 复核**：pro 3-run=10.18±1.45% / lite 3-run=4.68±0.95%（r2 VOID 不计入）/ mini 3-run=2.38±0.23%（r1 FUSE VOID 不计入）·7 batch 全完·providers.json=pro 默认态✅·3 份报告已更新为 3-run 汇总版✅·pgrep run_batch 无进程✅·cases_lite=500✅·cline 就位✅·git HEAD=origin/main✅·不起臂·原文不改·standby）
+
+- wake#1769（2026-11-22·opencode 交互式·v3 收口后 standby 心跳）：用户粘贴全 ZHULONG_TASK.md（顶部仍=v3 令·无新令）。自检：① pgrep run_batch.sh 无进程✅；② providers.json=pro 默认态（apiKey ...25cdc15f / model doubao-seed-2.0-pro-cloud / baseUrl 正确）✅；③ cases_lite.txt=500✅；④ 3 份报告（pro/lite/mini）均为 3-run 汇总版（grep '3-run' 命中✅，mtime 11-22 13:53）✅；⑤ git pull --rebase = Already up to date（HEAD=origin/main）✅；⑥ cline 就位 /home/app.e0031982/.local/bin/cline✅。v3 任务 7 batch 全完·3 模型 3-run 全出·无新令·不起臂·不跑评测·不改原文/题/check·收口 WAITING=0·standby。
 
 - [wake#1748 详条已滚出·2026-11-22 wake#1749 维护] 见 `daily-memories/2026-11-22.md` §[wake#1748 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r2 跑中 95%·全 infra-clean✅·不起臂·原文不改）。
 - [wake#1752 详条已滚出·2026-11-22 wake#1754 维护] 见 `daily-memories/2026-11-22.md` §[wake#1752 rolled-out]（opencode 交互式 v3 令 standby 心跳：mini_r3 跑中 57%·infra-clean✅·不起臂·原文不改）。
