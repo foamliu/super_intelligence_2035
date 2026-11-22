@@ -6,6 +6,9 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-23 06:0x）**：作者 **320** 人（编号最大 **320**）· X 已核验 **126**（本轮 **+2**：`@tanishqkumar07` 经 `x.com/tanishqkumar07` 经代理 `200` / 184,282 B，`og:title` = `Tanishq Kumar (@tanishqkumar07) on X`，`og:description` = `CS PhD student @StanfordAILab. prev math undergrad @Harvard.`；`@ZackAnkner` 经 `x.com/ZackAnkner` `200` / 171,351 B，`og:title` = `Zack Ankner (@ZackAnkner) on X`，`og:description` = `Prev @MIT.`；Yifei Zhou 主页无 X 链接 ⇒ 记「未找到 X」，不猜）· 已发信 **145**（台账 #1–#145；今日 5/12）· 回信 **0**（0/145）。以下历史快照行保留原文（不追改），计数以本行为准。
+
+
 > **当前计数（2026-11-22 18:0x）**：作者 **312** 人（编号最大 **312**）· X 已核验 **121**（本轮 **+2**：`@rsalakhu` 经 `x.com/rsalakhu` `200`，`og:title` = `Russ Salakhutdinov (@rsalakhu) on X`，`og:description` = `CSO @ Sooth Labs, Professor @ CMU, President Elect ICML Board, Ex-VP of Research @ Meta (Multimodal LLMs, AI Agents), ex-Director of AI at @Apple`；`@CaimingXiong` 经 `x.com/CaimingXiong` `200`，`og:title` = `Caiming Xiong (@CaimingXiong) on X`，`og:description` = `Co-founder of @Recursive_SI.  ex-SVP of Salesforce AI Research | ex-MetaMind`）· 已发信 **140**（台账 #1–#140；今日 12/12 已满 ⇒ 本窗不发）· 回信 **0**（0/140）。<br>**第九十二轮增量（2026-11-22 18:0x）**：作者网 310 → **312**（#311 Ruslan Salakhutdinov **A 级** `rsalakhu@cs.cmu.edu`（CMU 本人主页 `cs.cmu.edu/~rsalakhu/` `200` / 9,400 B 页内明文 `rsalakhu[at]cs.cmu.edu`）/ #312 Caiming Xiong **无邮箱**（`caimingxiong.github.io` `404`、`www.caimingxiong.com` `000`、Recursive 团队页 `404` / `000` ⇒ 不猜地址；X 已双源核验）），来自 B 轨 #343 Dropout / #344 BLIP。⚠️ 同名反例当场拦下：`@JunnanLi` 虽 `200` 但 `og:title` = `雷弟尬尬 (@JunnanLi) on X`、`og:description` = `微博 雷弟_尬尬` ⇒ 与 BLIP 一作无关，**不记**；`@tmikolov` / `@MikolovTomas` 均 `404` ⇒ Mikolov 记「未找到 X」。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **当前计数（2026-11-22 15:0x）**：作者 **310** 人（编号最大 **310**）· X 已核验 **119**（本轮 **+2**：`@tianjun_zhang` 经 `x.com/tianjun_zhang` `200` / 190,919 B，`og:title` = `Tianjun Zhang (@tianjun_zhang) on X`，`og:description` = `@peano_ai | Prev @meta @GoogleDeepMind @berkeley_ai | Project Lead of LiveCodeBench, RAFT and Gorilla LLM`；`@DBahdanau` 经 `x.com/DBahdanau` `200` / 199,403 B，`og:title` = `🇺🇦 Dzmitry Bahdanau (@DBahdanau) on X`，`og:description` = `Team member at @periodiclabs.`）· 已发信 **140**（台账 #1–#140）· 回信 **0**（0/140）。以下历史快照行保留原文（不追改），计数以本行为准。
@@ -4501,6 +4504,46 @@
 | 邮箱 | **未找到**（`https://stellabiderman.com/` 直连与经代理均 `000`，无页内明文可核 ⇒ 🚫 不猜地址、不发信） |
 | 主页 | **未找到**（站点本轮不可达，以 X 页为公开身份页） |
 | X 账号 | **@BlancheMinerva**（`x.com/BlancheMinerva` 经代理 `200` / **180,911 B**；`og:title` = `Stella Biderman (@BlancheMinerva) on X`；`og:description` = `Ensuring that tech companies don't have a monopoly on being able to do research on cutting edge AI @AiEleuther. She/her` ⇒ 双源核验） |
+
+### 318. Yifei Zhou
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yifei Zhou（`语言=中文(判据=拼音姓名族属 + 主页自述 Berkeley PhD；🚫 未因机构在美国 / 论文英文判英文)`） |
+| 机构 | **UC Berkeley**（EECS PhD；主页自述 `Berkeley` / `PhD`） |
+| 代表论文 | **ArCHer: Training Language Model Agents via Hierarchical Multi-Turn RL**（`2402.19446`，B 轨 #352，**一作**） |
+| 邮箱 | **yifei_zhou@berkeley.edu**（来源：本人主页 `https://yifeizhou02.github.io/` `HTTP 200` / **8,421 B**，页内明文；同页未列其他地址） |
+| 主页 | <https://yifeizhou02.github.io/>（`200` / 8,421 B；`yifeizhou.com` 直连 `000` ⇒ 不用） |
+| X 账号 | **未找到**（主页无 `x.com` / `twitter.com` 链接；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-23 06:01 CST，作者请教信第 **144** 封，中文 **171** 汉字，`SENT OK`）· X 无账号可 follow |
+| 备注 | 本封三问围绕 **utterance 级 value 的折扣与 bootstrapping**、**off-policy 数据的来源策略与混合比**、**相对 token-level PPO 的失败任务**，分别回填 **harness**（多轮 agent 训练骨架）/ **zhulong**（长程信用分配目标）/ **data**（交互日志按策略代际分层）。本封未用「我在做某某项目」的模板开场，改为直接点出论文的两层结构与我们困惑的对齐点。 |
+
+### 319. Tanishq Kumar
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tanishq Kumar（`语言=英文(判据=姓名族属无中文/日韩信号 + 美国机构 Stanford；英文兜底)`） |
+| 机构 | **Stanford**（X bio：`CS PhD student @StanfordAILab. prev math undergrad @Harvard.`） |
+| 代表论文 | **Scaling Laws for Precision**（`2411.04330`，B 轨 #353，**一作**） |
+| 邮箱 | **tanishq@stanford.edu**（来源：本人主页 `https://tanishqkumar.github.io/` `HTTP 200` / **1,542 B**，页内明文） |
+| 主页 | <https://tanishqkumar.github.io/>（`200` / 1,542 B） |
+| X 账号 | **@tanishqkumar07**（`x.com/tanishqkumar07` 经代理 `200` / **184,282 B**；`og:title` = `Tanishq Kumar (@tanishqkumar07) on X`；`og:description` = `CS PhD student @StanfordAILab. prev math undergrad @Harvard.` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-23 06:01 CST，作者请教信第 **145** 封，英文 **143** 词，`SENT OK`）· X 待 follow（需登录态） |
+| 备注 | 本封三问围绕 **effective parameter count 的定义与拟合形式是否跨模型族稳定**、**哪些张量对 4/8-bit 训练最敏感（是否需要混合精度而非统一低精度）**、**量化退化斜率能否用短跑外推到长跑（决定预训练前后何时量化）**，分别回填 **pretrain** / **zhulong**（成本口径）/ **data**（数据预算上限）。与同轮 #144 的开头句、问句句式零共用。 |
+
+### 320. Zachary Ankner
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zachary Ankner（`语言=英文(判据=英语姓名族属 + 美国机构 MIT；本窗未发信，仅建档)`） |
+| 机构 | **MIT**（X bio：`Prev @MIT.`；论文 `2411.04330` 二作） |
+| 代表论文 | **Scaling Laws for Precision**（`2411.04330`，B 轨 #353，**二作**） |
+| 邮箱 | **ankner@mit.edu**（来源：本人主页 `https://zackankner.com/` `HTTP 200` / **9,991 B**，页内明文） |
+| 主页 | <https://zackankner.com/>（`200` / 9,991 B） |
+| X 账号 | **@ZackAnkner**（`x.com/ZackAnkner` 经代理 `200` / **171,351 B**；`og:title` = `Zack Ankner (@ZackAnkner) on X`；`og:description` = `Prev @MIT.`；主页亦挂 `twitter.com/ZackAnkner` 链接 ⇒ 双源核验） |
+| 状态 | **待跟踪**（X 待 follow，需登录态；**本窗未发信**：同一论文 `2411.04330` 已发一作 Tanishq Kumar ⇒ 按「同论文 ≤1」不发） |
+| 备注 | 若日后拿到一作未回的信号，第二封的问题应落在「**465+ 次预训练实验的精度分层**与 **1.7B / 26B token 之外的外推误差**」，而不是重复本窗已问的三点。 |
+
 | 状态 | **待跟踪**（X 待 follow，需登录态；无可用邮箱 ⇒ 本线不发信） |
 | 备注 | 价值点：GPT-NeoX 是「20B dense LM 开放训练栈 + The Pile 数据可审计」的公开基线，可作为我们 pretrain 数据配比与评测 shot 口径的对照；若日后拿到邮箱，问题应落到「The Pile 各子集配比与 long-context 训练顺序如何影响 few-shot 稳定性」，而非泛问是否开源（已开源）。 |
 

@@ -10,6 +10,9 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **353** 条（**第九十五轮 2026-11-23 06:0x 补 3 条 → 353**：Scaling Vision Transformers `2106.04560`（**1,908**，CVPR 2022；2B 参数 ViT，ImageNet top-1 **90.45%**，10-shot **84.86%**）/ ArCHer `2402.19446`（**241**，**&lt;500 按「方法论常青 / agent 训练线」收**，预印本；utterance 级 off-policy critic + token 级策略两层并行，样本效率约 **100×**，7B 规模仍提升）/ Scaling Laws for Precision `2411.04330`（**113**，**&lt;500 按「开创范式」收**，OpenAlex `conference-paper`；低精度降低「有效参数量」，量化退化随训练 token 增加，**465+** 次预训练拟合、验证到 **1.7B / 26B token**）；核验：arXiv `id_list` 单批 **`200` + atom**（14,084 B / 5 entry，`published`：2021-06-08 / 2024-02-29 / 2024-11-07）+ abs 页 **3/3 `200`**（42,603 / 45,033 / 42,646 B）+ OpenAlex **3/3 `200`**（1,908 / 241 / 113，查询日 2026-11-23；`conference-paper` / `preprint` / `conference-paper`）；三 ID 条目级查重 **0 命中**（同批候选 YOLOv10 `2405.14458`、OpenCLIP scaling `2212.07143` 元数据已核但本轮未收，留作下轮）；覆盖轴 = 视觉塔的模型-数据-算力三轴标定 / 多轮 agent 的分层 RL 与信用分配 / 精度感知的缩放律与量化-数据预算权衡；本轮归属：pretrain **+2** · vision **+2** · data **+2** · harness **+2** · zhulong **+2** · designflow **+1**（一篇可多线））
+
+
 **本轮快照**：累计 **350** 条（**第九十四轮 2026-11-23 03:0x 补 3 条 → 350**：GPT-NeoX-20B `2204.06745`（**753**，arXiv `comment` = ACL Workshop on Challenges & Perspectives in Creating Large Language Models；20B dense 自回归，Pile 语料，开放权重，5-shot 增益大于同规模 GPT-3 / FairSeq）/ InstructBLIP `2305.06500`（**2,302**，预印本；instruction-aware Q-Former，**26 数据集 / 13 held-in + 13 held-out**，balanced sampling，ScienceQA 图上下文 **90.7%**）/ RTLCoder `2312.08617`（**252**，**&lt;500 按「本领域权威」收**，LAD 2024；**RTLCoder-27K >27,000** 条三阶段生成，7B 超 GPT-3.5、VerilogEval Machine 超 GPT-4）；核验：arXiv `id_list` 单批 **`200` + atom**（9,106 B / 3 entry，`published`：2022-04-14 / 2023-05-11 / 2023-12-14）+ abs 页 **3/3 `200`**（43,276 / 43,211 / 44,917 B，`citation_title` + `citation_date` 逐字）+ OpenAlex **3/3 `200`**（753 / 2,302 / 252，查询日 2026-11-23；GPT-NeoX、InstructBLIP 为 `preprint`，RTLCoder 为 `conference-paper`）；三 ID 条目级查重 **0 命中**（⚠️ 写入前拦下一处 ID 误记：候选池旧记 RTLCoder 为 `2312.03755`，`abs` 实测该 ID 是 *Near-real-time Earthquake-induced Fatality Estimation*（无关）⇒ 按 `ti:"RTLCoder"` 检索得真 ID **`2312.08617`**，旧记作废）；覆盖轴 = 开放权重 dense LM 的训练与 few-shot 评估 / 指令感知连接器 + 数据集间均衡采样 / EDA 领域的可执行数据生成与轻量模型；本轮归属：pretrain **+2** · vision **+2** · data **+3** · harness **+2** · zhulong **+1** · designflow **+2**（一篇可多线））
 
 **本轮快照**：累计 **347** 条（**第九十三轮 2026-11-23 00:0x 补 3 条 → 347**：Gopher `2112.11446`（**1,730**，预印本；280B dense，152 任务多数 SOTA，规模收益集中在阅读理解 / 事实核查 / 毒性识别，逻辑与数学推理收益较小）/ CAMEL `2303.17760`（**2,892**，arXiv `comment` = NeurIPS 2023；role-playing + inception prompting，50×50 角色 × 10 任务 = 25,000 段对话，归纳四类协作失败）/ WebGPT `2112.09332`（**2,810**，预印本；GPT-3 + 文本浏览器，模仿学习后按人类偏好做拒绝采样，答案须带浏览时收集的引用；ELI5 上相对人类示范 56% 胜、相对 Reddit 最高票 69% 胜）；核验：arXiv `id_list` 单批 **`200` + atom**（12,641 B / 3 entry，`published` 齐备：2021-12-08 / 2023-03-31 / 2021-12-17）+ abs 页 **3/3 `200`**（55,213 / 44,311 / 43,980 B，`citation_title` + `citation_date` 逐字核：2021/12/08 · 2023/03/31 · 2021/12/17）+ OpenAlex **3/3 `200`**（1,730 / 2,892 / 2,810，查询日 2026-11-23，`type` 均 `preprint`）；三 ID 在 `PAPERS.md` / `SEEN.md` / `papers.jsonl` 条目级查重 **0 命中**（PaLM `2204.02311` / Voyager `2305.16291` / Generative Agents `2304.03442` / AutoGen `2308.08155` 经查**均已是表内条目** ⇒ 剔除）；覆盖轴 = dense LM 的规模-任务谱与数据/毒性整体分析 / 角色扮演式多智能体协作的四类失败模式 / 浏览-引用-人类偏好三段式长答；本轮归属：pretrain **+2** · harness **+3** · data **+3** · zhulong **+2** · vision **+0** · designflow **+2**（一篇可多线））
@@ -6068,7 +6071,58 @@
 
 ---
 
-## 候选池（下轮起逐轮补，**被引数本轮未查**，勿引用）
+## 351. Scaling Vision Transformers
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling Vision Transformers |
+| 作者（前 3） | Xiaohua Zhai · Alexander Kolesnikov · Neil Houlsby（共 **4** 位；末位 Lucas Beyer；arXiv `citation_author` 逐字核；机构据论文页为 Google Research / Brain） |
+| 年份 | **2022**（arXiv v1 `2021-06-08`；v2 为 CVPR 2022 版） |
+| 会议 / 期刊 | **CVPR 2022**（arXiv `comment` = `CVPR 2022`；OpenAlex `type=conference-paper`，DOI `10.1109/cvpr52688.2022.01179`） |
+| 被引数 | **1,908**（OpenAlex `10.48550/arxiv.2106.04560`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2106.04560> ｜ arXiv DOI `10.48550/arxiv.2106.04560` ｜ 会议 DOI `10.1109/cvpr52688.2022.01179` |
+| 一句话贡献 | 把 ViT 的模型、数据与算力**同时向上和向下扫**，系统刻画误差率–数据–算力的关系；过程中改进架构与训练以省显存、提精度，最终训出 **2B 参数** ViT，在 ImageNet 上达到 **90.45% top-1**，每类仅 **10** 个样本时仍有 **84.86% top-1**。 |
+| 与我们工作的关系 | **vision（主 · 视觉塔规模标定）**：这是「视觉塔要多大、数据要多少才不浪费算力」的公开标定曲线，可直接用来给我们的视觉编码器定规模与训练步数，而不是凭经验拍。<br>**pretrain（主 · 缩放律口径）**：把语言模型的 scaling law 方法搬到视觉侧，说明误差随数据/算力的饱和形态；我们的预训练配方做规模决策时应使用同一套「固定算力下扫数据」的读法。<br>**data（数据量轴）**：摘要明确同时缩放模型**与数据**，可作为我们图文数据配比与数据量上限的对照。<br>**harness（评测口径）**：ImageNet top-1 与 10-shot 迁移两个口径并列报告，提醒我们「全量微调成绩」与「少样本迁移成绩」不能混谈。<br>**zhulong（容量-数据权衡）**：可作为「同算力下加参数还是加数据」的消融参照。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十五轮 · 06:00 时窗） |
+| 核验状态 | arXiv `id_list=2106.04560` 批量请求 **`200` + atom**（`published` = `2021-06-08T17:47:39Z`）；abs 页 **`200` / 42,603 B**；OpenAlex **`200`（1,908 / 2022 / conference-paper）**；`90.45%` / `84.86%` / `two billion parameters` / `10 examples per class` 逐字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 352. ArCHer: Training Language Model Agents via Hierarchical Multi-Turn RL
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ArCHer: Training Language Model Agents via Hierarchical Multi-Turn RL |
+| 作者（前 3） | Yifei Zhou · Andrea Zanette · Jiayi Pan（共 **5** 位；末位 Aviral Kumar；arXiv `citation_author` 逐字核；机构据论文页为 UC Berkeley 等） |
+| 年份 | **2024**（arXiv v1 `2024-02-29`） |
+| 会议 / 期刊 | **预印本**（OpenAlex `type=preprint`，DOI `10.48550/arxiv.2402.19446`；元数据未给会议名 ⇒ 不写） |
+| 被引数 | **241**（OpenAlex `10.48550/arxiv.2402.19446`，查询日 **2026-11-23**；**&lt;500，按「方法论常青 / agent 训练线」收**） |
+| arXiv / DOI | <https://arxiv.org/abs/2402.19446> ｜ arXiv DOI `10.48550/arxiv.2402.19446` |
+| 一句话贡献 | 针对单轮 RL 无法处理多轮信用分配的问题，提出**分层 RL**：高层用 **off-policy 值函数**在 utterance 级汇总奖励，低层用该值函数训练每个 utterance 内的 **token 级策略**，两个 RL 算法并行；在 agent 任务上样本效率约 **100×**，并且在测试到的 **7B** 规模内模型越大越好。 |
+| 与我们工作的关系 | **harness（主 · 多轮 agent 训练与评测）**：把「一次任务 = 多轮交互」显式建成 utterance 级 MDP，为我们 agent harness 的训练/评测切分提供了可复用骨架（轮级奖励、轮级价值）。<br>**zhulong（主 · RL 目标设计）**：utterance 级 critic + token 级 policy 的分层目标，是 Zhulong 思考轴之外的另一条「长程信用分配」方案；消融时应把「轮级 advantage 归一化」列为变量。<br>**data（轨迹复用）**：off-policy 数据混合直接决定样本效率，提示我们把 agent 交互日志按策略代际分层存放。<br>**pretrain**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：多轮工具流（生成 → 仿真 → 修错）可套用其轮级奖励结构，作为 L4/L5 的 agent 训练参考。 |
+| 首次收录 | **2026-11-23**（第九十五轮 · 06:00 时窗） |
+| 核验状态 | arXiv `id_list=2402.19446` 批量请求 **`200` + atom**（`published` = `2024-02-29T18:45:56Z`）；abs 页 **`200` / 45,033 B**；OpenAlex **`200`（241 / 2024 / preprint）**；`100x` / `7 billion` / 两层 RL 描述逐字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 353. Scaling Laws for Precision
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling Laws for Precision |
+| 作者（前 3） | Tanishq Kumar · Zachary Ankner · Benjamin F. Spector（共 **6** 位；arXiv `citation_author` 逐字核；机构据论文页为 Stanford / MIT 等） |
+| 年份 | **2024**（arXiv v1 `2024-11-07`；OpenAlex `publication_year` = 2025） |
+| 会议 / 期刊 | **预印本**（arXiv；OpenAlex `type=conference-paper`，但元数据未给会议名，DOI 仍为 arXiv DOI ⇒ 不写具体会议） |
+| 被引数 | **113**（OpenAlex `10.48550/arxiv.2411.04330`，查询日 **2026-11-23**；**&lt;500，按「开创范式（精度感知缩放律）」收**） |
+| arXiv / DOI | <https://arxiv.org/abs/2411.04330> ｜ arXiv DOI `10.48550/arxiv.2411.04330` |
+| 一句话贡献 | 提出**精度感知的缩放律**：低精度训练等价于降低模型的「**有效参数量**」，据此可预测低精度训练与训练后量化的额外损失；并发现量化退化**随训练数据量增加而变大**，多到一定程度后**继续加预训练数据反而有害**；训练侧同一函数形式还能预测「不同部分用不同精度」的损失，并提示**更大模型用更低精度训练可能更省算力**；在 **465+** 次预训练实验上拟合，验证到 **1.7B 参数 / 26B token**。 |
+| 与我们工作的关系 | **pretrain（主 · 精度与算力配方）**：把「用 fp8/4-bit 训会不会掉点」变成可计算的损失项，可直接用于我们预训练精度与模型规模的联合选型。<br>**zhulong（主 · 成本口径）**：量化退化随 token 数增长 ⇒ 成本对比必须把「训练 token 数 × 精度」一起算，不能只报显存或吞吐。<br>**data（数据预算）**：摘要明确指出「过量预训练数据可能有害（在量化推理下）」，为我们定数据上限提供了反直觉的判据。<br>**harness（评测口径）**：任何量化后评测都必须标明量化位宽与校准集，否则不同报告的分数不可比。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十五轮 · 06:00 时窗） |
+| 核验状态 | arXiv `id_list=2411.04330` 批量请求 **`200` + atom**（`published` = `2024-11-07T00:10:10Z`）；abs 页 **`200` / 42,646 B**；OpenAlex **`200`（113 / 2025 / conference-paper）**；`465` / `1.7B` / `26B tokens` 逐字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+
 
 | arXiv ID | 标题（arXiv 实测） | 首次提交 | 拟服务线 | 为什么算经典（待核被引） |
 |:--|:--|:--|:--|:--|
