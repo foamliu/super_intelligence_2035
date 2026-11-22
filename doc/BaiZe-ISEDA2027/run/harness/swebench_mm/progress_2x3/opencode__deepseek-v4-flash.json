@@ -6587,9 +6587,16 @@
   "prettier__prettier-9866": {
     "instance_id": "prettier__prettier-9866",
     "route": "opencode__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 809.4,
+    "rc": 0,
+    "model_patch_len": 600,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "/print/jsx.js` to use the JSX-consistent `matchJsxWhitespaceRegex` for splitting, then finding the first non-empty word, instead of using `.trim()` which uses Unicode's broader whitespace definition.\n",
+    "stderr_tail": " ideographic space (U+3000)\n[✓] Find relevant JSX text handling code in prettier\n[✓] Reproduce bug and identify root cause\n[✓] Implement fix for .trim() usage in jsx.js\n[✓] Verify fix with tests\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-2778": {
     "instance_id": "scratchfoundation__scratch-gui-2778",
@@ -6608,16 +6615,30 @@
   "scratchfoundation__scratch-gui-3342": {
     "instance_id": "scratchfoundation__scratch-gui-3342",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 405.2,
+    "rc": 0,
+    "model_patch_len": 4687,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "current costume/backdrop data URI from `vm.editingTarget`. Computed on mount, on target updates, and on workspace updates, passed down via `costumeURL` prop. `shouldComponentUpdate` respects changes.\n",
+    "stderr_tail": "✓] Modify BlocksComponent (presentational) to accept costumeURL and render watermark\n[✓] Modify Blocks container to compute costume URL and pass to BlocksComponent\n[✓] Verify with lint/typecheck\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-4568": {
     "instance_id": "scratchfoundation__scratch-gui-4568",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 190.2,
+    "rc": 0,
+    "model_patch_len": 8285,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "king prompts for new values → values are sent to the VM via `requestUpdateMonitor`. The VM is responsible for persisting these values, and the GUI renders them on re-render via the monitor data flow.\n",
+    "stderr_tail": "enu items for slider range/step\n[✓] Update monitor container with slider min/max/step handlers\n[✓] Update monitor-list to pass step prop\n[✓] Verify implementation - check all files and run tests\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-5039": {
     "instance_id": "scratchfoundation__scratch-gui-5039",

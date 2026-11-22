@@ -5574,9 +5574,16 @@
   "openlayers__openlayers-12467": {
     "instance_id": "openlayers__openlayers-12467",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 399.8,
+    "rc": 0,
+    "model_patch_len": 948,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "s while passing original coordinates to `moveTo`/`lineTo` — a different pattern that doesn't cause the same center-position jitter.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-12683": {
     "instance_id": "openlayers__openlayers-12683",

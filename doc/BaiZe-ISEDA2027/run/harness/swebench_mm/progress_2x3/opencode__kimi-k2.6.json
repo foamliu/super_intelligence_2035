@@ -4715,23 +4715,44 @@
   "grommet__grommet-6494": {
     "instance_id": "grommet__grommet-6494",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1054.0,
+    "rc": 0,
+    "model_patch_len": 9546,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ed a new `FormField` test case specifically for `RangeInput` inside a `FormField`\n- All relevant tests pass (the only failures are pre-existing unrelated `ReactDOMTestUtils.act` deprecation warnings)\n",
+    "stderr_tail": "lore codebase for RangeInput and FormField styles\n[✓] Identify root cause of off-center RangeInput in FormField\n[✓] Implement fix with minimal changes\n[✓] Verify fix (tests or visual inspection)\n\u001b[0m\n"
   },
   "grommet__grommet-6600": {
     "instance_id": "grommet__grommet-6600",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 280.4,
+    "rc": 0,
+    "model_patch_len": 9079,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "h more space for filters\n- neither — inline filters (existing behavior)\n\nAll DataFilters tests pass (the one `renders` failure is a pre-existing React deprecation warning unrelated to these changes).\n",
+    "stderr_tail": "Filters component implementation\n[✓] Understand existing drop prop behavior\n[✓] Implement layer prop for DataFilters\n[✓] Add/update tests for layer prop\n[✓] Verify implementation works correctly\n\u001b[0m\n"
   },
   "grommet__grommet-6722": {
     "instance_id": "grommet__grommet-6722",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 517.3,
+    "rc": 0,
+    "model_patch_len": 3937,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "tal\"]}\n    />\n  </NameValuePair>\n</NameValueList>\n```\n\nThis will ensure both the name (`dt`) and value (`dd`) are vertically centered within their grid row, aligning them on the same horizontal line.\n",
+    "stderr_tail": "s\n[✓] Find and read NameValuePair and NameValueList source files\n[✓] Identify root cause of vertical misalignment\n[✓] Implement fix for alignment\n[✓] Verify fix with tests/storybook if available\n\u001b[0m\n"
   },
   "grommet__grommet-6749": {
     "instance_id": "grommet__grommet-6749",
