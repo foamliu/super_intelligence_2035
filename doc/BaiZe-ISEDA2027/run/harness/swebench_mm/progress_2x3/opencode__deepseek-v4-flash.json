@@ -5896,23 +5896,44 @@
   "openlayers__openlayers-13823": {
     "instance_id": "openlayers__openlayers-13823",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 703.1,
+    "rc": 0,
+    "model_patch_len": 1251,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "pi: false` (image pixel ratio of 1) on HiDPI displays (device pixel ratio of 2), the canvas is sized according to the image's pixel ratio rather than the display's, reducing memory usage by up to 4x.\n",
+    "stderr_tail": "ue\nol@6.14.2-dev /dev/shm/harness_mm_2x3/workdirs/opencode__deepseek-v4-flash/openlayers_openlayers\n└── (empty)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/ol/renderer/canvas/TileLayer.js\u001b[90m [limit=60, offset=260]\u001b[0m\n"
   },
   "openlayers__openlayers-13860": {
     "instance_id": "openlayers__openlayers-13860",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 845.9,
+    "rc": 0,
+    "model_patch_len": 480,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "95-198`:\n```js\n      if (!layout) {\n        layout = GeometryLayout.XY;\n        stride = 2;\n      }\n```\n\nAll 1783 node tests pass (the 1 failing test in `proj.test.js` is pre-existing and unrelated).\n",
+    "stderr_tail": "dos\n[✓] Investigate the GeoJSON RangeError: Invalid array length bug\n[✓] Identify the root cause in coordinate/layout parsing\n[✓] Implement fix in setLayout to validate stride\n[✓] Verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-13893": {
     "instance_id": "openlayers__openlayers-13893",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 99.0,
+    "rc": 0,
+    "model_patch_len": 502,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ke `0° 03′ 01″ E` appear at irregular intervals while the grid lines are actually regular.\n\n`Math.round` ensures that tiny floating-point errors (< 0.5 in the last digit) don't cause a 1-second jump.\n",
+    "stderr_tail": "/null\n/dev/shm/harness_mm_2x3/workdirs/opencode__deepseek-v4-flash/openlayers_openlayers/test/browser/spec/ol/graticule.test.js\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/ol/coordinate.js\u001b[90m [limit=5, offset=169]\u001b[0m\n"
   },
   "openlayers__openlayers-13974": {
     "instance_id": "openlayers__openlayers-13974",
