@@ -1,4 +1,15 @@
-> 📌 索引：§A.34 = 2026-11-22 12:3x（第 331 轮）· §A.33 = 11-22 09:3x（第 329 轮）· §A.32 = 11-22 07:3x（第 328 轮）· §A.31 = 11-21 18:0x（第 326 轮）
+> 📌 索引：§A.35 = 2026-11-22 15:2x（第 332 轮）· §A.34 = 11-22 12:3x（第 331 轮）· §A.33 = 11-22 09:3x（第 329 轮）· §A.32 = 11-22 07:3x（第 328 轮）· §A.31 = 11-21 18:0x（第 326 轮）
+
+## §A.35 第 332 轮实测（2026-11-22 15:2x · 5 条 · **别 reload `publish` 页 / `.jpg` 冒充 `.png` 会上传失败 / 失败缩略图不删则「确定」恒 disable / 发布页 `NOTICE` 会命中正文自带词**）
+
+| # | 要点 | 实证 |
+|:--|:--|:--|
+| 1 | 🚫 **`publish` 页在 CDP 一侧被导航到 `about:blank` 后，本会话再 `nav('/graphic/publish')` 也不回填**：`s0_nav` 曾读到 `about:blank`（`STATE ed:false`），随后 `s1_fill` 报 `Cannot read properties of null (reading 'focus')`（`.ProseMirror` 为 null）⇒ **重跑一次 `s0_nav.py`（articles → publish）即可恢复**，不要在同一页面上叠加重试 | 15:0x `s0` 首读 `about:blank`；15:08 `s1_fill` `TypeError … 'focus' of null`；15:12 重跑 `s0` → `STATE {ed:true, kids:["P"], words:"共 0 字"}` → `s1_fill` `CHK {ps:23, words:"共 1000 字"}` 一次成功 |
+| 2 | 🚫 **扩展名必须与真实图片格式一致：把 JPEG 字节存成 `.png` 会被平台判「上传失败」** | 先下 `.jpg`（157,131 B，`image/jpeg`，800×800），为「复测」直接 `cp` 成 `.png` 上传 → 面板「**上传失败**」红标（缩略图是破图）。改回 `.jpg` 真格式重传即成功（`已上传 1 张图片`，缩略图正常、右上角仅 IT之家站标）。**「发布前只下这 1 张」= 用原始扩展名，不做格式改名** |
+| 3 | 🔑 **面板里残留「上传失败」的卡片时，「确定」按钮恒 `disabled`；必须先点该卡片的 `i.image-item-remove` 删掉失败项，再点成功的缩略图选中，`确定` 才解除 disabled** | 失败卡 + 成功图并存时：`OKBTN {dis:true}`，对成功缩略图真实点击 6 次、`li.click()`、`span.click()`、去掉 `pointer-events`、按 `mousePressed` 探针（能读到 `li` 被加上 `opacity:0;visibility:hidden` 的拖拽 helper）全部无效；删掉失败卡后 `COUNT 已上传 1 张图片` → 点缩略图 `OKBTN {dis:false}` → 点确定 `IMG {n:2, vis:1, nw:800, nh:800, w:440, h:440}` 一次成功 |
+| 4 | ✅ **上传面板要「开面板 / 点本地上传 / 塞文件」分三段会话，且 `s3a` 只能开面板不能关**：点「本地音频」逻辑同图片；`s3b` 里 `DOM.setFileInputFiles` 塞 `input[type=file]` 后要等 **8–10 s** 让 `mp.toutiao.com/spice/image` 返回 `200 image/jpeg` 再读 `已上传` | 本轮 `s3a_open` `TABS up:[本地上传, 扫码上传]` → `s3b` `FILEINPUTS 2`、`UPMSG 已上传 0 张`（尚未回填）→ 等 10 s 后 `UPMSG 已上传 1 张图片`；`Network` 记到 `POST /spice/image?upload_source=…` `200 application/json` + `GET image-tt-private.toutiao.com/…` `200 image/jpeg` |
+| 5 | ⚠️ **公开页 `NOTICE` 关键字会命中正文自身用词**：确认「无版权/搬运/低质警告」要看 `ctx`，不能只看 `hits` | 本篇 `NOTICE {hits:["违规"], ctx:["违规::至今已为超过 50 亿条 AI 生成视频添加标识；违规 AI 内容中，99% 以上…"]}` ⇒ 命中来自正文引述的平台口径，**不是平台警告**；其余三项 `P1 / IMGS / DECL` 全过 |
+
 
 ## §A.34 第 331 轮实测（2026-11-22 12:3x · 4 条 · **插图面板分两段开 / 图注要在图前自己写 / 评论「新路径」也已证伪 / 放大复核前移后生效**）
 
