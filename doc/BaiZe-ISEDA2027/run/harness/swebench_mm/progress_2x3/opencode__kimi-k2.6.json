@@ -4253,16 +4253,30 @@
   "carbon-design-system__carbon-9074": {
     "instance_id": "carbon-design-system__carbon-9074",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 360.3,
+    "rc": 0,
+    "model_patch_len": 4918,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ld not run in this environment due to a missing `@testing-library/react` dependency in the local `node_modules`, but the test was added and the implementation follows the same pattern as `FormGroup`.\n",
+    "stderr_tail": " and find FormGroup and RadioButtonGroup components\n[✓] Implement custom legend id support in FormGroup\n[✓] Implement custom legend id support in RadioButtonGroup\n[✓] Run tests to verify changes\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-9136": {
     "instance_id": "carbon-design-system__carbon-9136",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 218.1,
+    "rc": 0,
+    "model_patch_len": 1081,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rops.ref, ref)}\n                  />\n    ...\n  };\n+ });\n```\n\nThis follows the same pattern used by `TextInput` and other components in the codebase. The syntax of the modified file has been verified.\n",
+    "stderr_tail": "\n\u001b[0m→ \u001b[0mRead packages/react/src/components/ComboBox/index.js\n\u001b[0m\n\u001b[0m$ \u001b[0mrm /dev/shm/harness_mm_2x3/workdirs/opencode__kimi-k2.6/carbon-design-system_carbon/jest.temp.config.js\n(no output)\n\u001b[0m\n"
   },
   "carbon-design-system__carbon-9189": {
     "instance_id": "carbon-design-system__carbon-9189",

@@ -5076,16 +5076,30 @@
   "highlightjs__highlight.js-3154": {
     "instance_id": "highlightjs__highlight.js-3154",
     "route": "cline__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1292.0,
+    "rc": 0,
+    "model_patch_len": 2333,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "w heredoc test cases pass correctly\\n- The single pre-existing failure (crystal vs ruby auto-detection) is unrelated to this change\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3203": {
     "instance_id": "highlightjs__highlight.js-3203",
     "route": "cline__deepseek-v4-flash",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 207.8,
+    "rc": 0,
+    "model_patch_len": 1746,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": " `literal` class\\n- Comparison operators (`-eq`, `-match`, `-notin`) continue to be correctly highlighted with the `operator` class\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3207": {
     "instance_id": "highlightjs__highlight.js-3207",

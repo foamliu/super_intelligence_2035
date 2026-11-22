@@ -6258,9 +6258,16 @@
   "openlayers__openlayers-15466": {
     "instance_id": "openlayers__openlayers-15466",
     "route": "opencode__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "deepseek-v4-flash",
+    "wall_s": 1869.0,
+    "rc": 0,
+    "model_patch_len": 10668,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ir paired text)\n- Updated both collision checks in the DRAW_IMAGE handler (for the deferred image args and for the current item) to use `collidesWithOtherFeatures` instead of `declutterTree.collides`\n",
+    "stderr_tail": "+++++-\n src/ol/style/Text.js             | 27 +++++++++++++++\n 4 files changed, 115 insertions(+), 25 deletions(-)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/ol/render/canvas/Executor.js\u001b[90m [limit=50, offset=924]\u001b[0m\n"
   },
   "openlayers__openlayers-15484": {
     "instance_id": "openlayers__openlayers-15484",
