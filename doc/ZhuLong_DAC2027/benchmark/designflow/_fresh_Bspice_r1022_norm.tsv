@@ -1,0 +1,27 @@
+touched normalized: 4329
+fresh count: 27
+144 1794970399930_lq85o rose3wang verilog:244;rtl:127;spectre:68;analog:26;synthesis:18;netlist:18;syste
+122 1794998870519_ewijv e0031668 rtl:285;synopsys:263;binary:68;skipper:10;hspice:9;verilog:8;pex:7;drc
+121 1794798547678_ibtdi rose3wang verilog:243;spectre:68;rtl:60;analog:26;netlist:18;synthesis:14;system
+81 1795164433311_o7ljl joeyl hspice:205;pdk:190;netlist:130;synopsys:88;binary:32;schematic:13;tran
+56 1794811780551_4cdcu junlingw .lef:143;pyaether:44;hspice:41;aether:39;schematic:31;netlist:19;mosfe
+51 1794916721930_h7j6o e0048916 aether:286;hspice:55;mixed-signal:38;virtuoso:36;analog:29;synopsys:20
+33 1795074707573_7xh6n e0018590 synopsys:54;hspice:35;aether:30;skipper:20;waveview:18;virtuoso:17;cal
+20 1794991406828_z8gd8 mingguo verilog:28;synopsys:17;rtl:15;skipper:3;hspice:2;spectre:1;netlist:1;c
+19 1795045735447_0nrld colinxu binary:17;cadence:9;pdk:6;vhdl:4;verilog:3;spectre:3;icfb:2;pex:1;.def
+10 1793171332542_c2una e0041392 binary:9;hspice:4;waveview:2;aether:2;rtl:1;
+9 1795152550043_rrx5s leo1ye hspice:19;aether:6;mosfet:5;waveview:4;netlist:4;pyaether:2;virtuoso:1
+9 1794813983875_1xu8a terrytao hspice:20;pdk:16;netlist:8;cmos:6;schematic:2;binary:2;
+9 1794296680831_xy7vv joeyl cadence:16;aether:13;hspice:9;.def:9;netlist:6;pdk:4;virtuoso:2;opamp:
+8 1795235433677_4adps caozhang aether:14;mosfet:9;hspice:5;synopsys:3;spectre:3;netlist:3;verilog:2;v
+8 1794297825345_iic1c joeyl hspice:35;cadence:10;waveview:2;netlist:2;aether:2;analog:1;
+8 1793080766125_v5bel serwing cmos:22;pyaether:14;aether:7;virtuoso:6;hspice:6;mosfet:5;cadence:3;tr
+8 1792744698024_mjenc ruichen waveview:19;aether:12;pdk:8;verilog:4;hspice:4;cadence:4;skipper:3;drc
+6 1794816151495_w44qo ynbai hspice:12;pdk:10;netlist:6;synopsys:4;aether:3;virtuoso:1;transistor:1
+6 1793063128278_v0mky e0035227 hspice:9;virtuoso:5;schematic:5;voltus:2;transistor:2;netlist:2;cadenc
+6 1792397240623_b3weg joeyl binary:8;spectre:4;
+6 1791790142681_jnhb2 joeyl hspice:7;cmos:3;spectre:2;pdk:2;netlist:2;verilog:1;
+5 1794967361667_ipr5l junyin hspice:6;schematic:4;cmos:4;netlist:3;pex:1;analog:1;
+5 1794916836811_zhuvs youmingz hspice:52;netlist:33;aether:31;drc:8;spectre:3;virtuoso:2;waveview:1;v
+5 1794450037273_ug6lk joeyl hspice:12;netlist:3;schematic:1;pyaether:1;
+5 1794200890482_27dss e0041392 hspice:4;binary:3;verilog:2;synopsys:2;
