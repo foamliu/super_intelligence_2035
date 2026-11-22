@@ -5,6 +5,13 @@
 
 WAITING: 1
 
+> 🔴🔴 **ops 运维令 · 2026-11-22 09:3x（三条 · 最高优先 · 已提交进 git；覆盖下列旧排期）**：
+> - 📌 **【ops 代写交接声明】**：本节由 **ops（外部 assistant）代写下发**，非 posttrain 自主产出。**完整正式令见 `BAIZE_POSTTRAIN_TASK.md` 顶部「🔴🔴 运维令 · 2026-11-22 09:3x」**，冲突时以任务书为准。
+> - **令2【新臂 A5】**：**A0 配置为基线，唯一变化 = `MiniCPM5-2B` → `Qwen3.5-2B`**｜对齐 A0 全部六元组（.17 / 无 RAG / 无 MCP / cline / `-p 8 -n` / 无 hook / 修复量尺 / 158 题 / 2500s / 单 trace / 5-run）｜**主判据 = A5 vs A0 逐题配对 McNemar，报 Δ+95%CI**｜**资源：GPU5 或 GPU7 起 serve，:8097，🚫 不抢 GPU6 vision 服务**｜A1 未收口前只做就位 + 1 run 冒烟。
+> - **令3【当前任务】**：① 继续完成 A1（5-run → 配对统计 → 报告重生成，**主线**）；② 有空时写 **A0 深度分析报告** → 交付 `reports/report_posttrain_A0_capability_deepdive_zh.html`（**posttrain 自己署名**，数字自己重算，不许抄 `_ops_draft_` 代拟稿）。
+> - ⚠️ **口径硬约束**：A0（.17/无RAG/无MCP，43.29%±3.92%）与 DeepSeek-V4-Pro（36.15/有RAG/有MCP，82.1%±3.0%，见 `PLAN_MINICPM5_PYAETHER_158.md` L24）**四维不同，禁止直接相减去当能力差**；只做结构性对照。引用 AGENTS.md §4.3。
+> - 🔴 **本节不得被 trim 掉**：wake706(09:21) 曾因 MEMORY trim 使本节整体消失；如需压缩只能降级为 1 行指针且保留「A5 / A0 报告路径 / 预注册判据」三锚点。
+>
 > 🔴 **预注册（2026-11-20 22:0x · baseline-nailed 令 §E.3 · 先定后测·跑完不许改判据）**：
 > - **臂矩阵**：A0=MiniCPM5-2B 原模型(.17 口径:无RAG/无沙盒MCP/cline/-p8/-n/无hook,endpoint :8098) → 用户要的 base 数字；A1=SFT v39 step105(同尺同口径,endpoint :8096 需重起 serve) → 分离 SFT 增量；A2/A3(+RAG/+沙盒MCP,36.15 口径)暂缓待 A0/A1 干净。
 > - **冻结协议**：158 题 / Pass@1 / 2500s / 单 trace / 5-run / `-p 8 -n`；正式数字用修复后口径(recovered/ws+no-ws fallback)；主结论用 recovered-4run(剔除 run1 ws-only 锚点)，混合 5-run 并列报告。
