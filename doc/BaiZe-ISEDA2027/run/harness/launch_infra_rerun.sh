@@ -21,15 +21,22 @@ export WORKDIR_TAG="${WORKDIR_TAG:-_glm53}"
 export RUN_ID_PREFIX="${RUN_ID_PREFIX:-verified_full}"
 export EVAL_MAX_WORKERS="${EVAL_MAX_WORKERS:-4}"
 
-# 窗口检查
+# 窗口检查 (belt-and-suspenders; orchestrator 也有 in_window() 自检)
 H=$(date +%H)
 if [ "$H" -ge 21 ] || [ "$H" -lt 9 ]; then
-  echo "[launch] 窗口内 (hour=$H); 启动 infra 重跑"
+  echo "[launch] 窗口内 (hour=$H); 启动 infra 重跑 (background)"
 else
   echo "[launch] 窗口外 (hour=$H); park. 下一窗口 21:00."
   exit 0
 fi
 
-# 用 predict_guarded.sh 包裹 (ulimit200GiB + OMP8 + nice19 + ionice3)
+# 后台运行: setsid 脱离 cline 60min 超时; orchestrator 自管窗口结束(09:00 REGEN+stop)
+# 不传 --skip-window-check: 让 orchestrator 在每路之间检查 in_window()，09:00 自动停
+LOG="$VF_DIR/logs/rerun_infra_nightly.log"
+mkdir -p "$VF_DIR/logs"
 cd "$VF_DIR"
-exec bash "$HARNESS_DIR/predict_guarded.sh" python3 rerun_infra_verified.py --skip-window-check "$@"
+setsid bash "$HARNESS_DIR/predict_guarded.sh" python3 rerun_infra_verified.py "$@" \
+  > "$LOG" 2>&1 < /dev/null &
+LAUNCH_PID=$!
+echo "[launch] 后台启动 PID=$LAUNCH_PID · log=$LOG"
+echo "[launch] orchestrator 将在 09:00 窗口结束时自动 REGEN+stop"
