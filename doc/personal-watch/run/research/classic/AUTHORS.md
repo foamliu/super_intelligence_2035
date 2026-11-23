@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-23 21:0x）**：作者 **338** 人（编号最大 **338**）· X 已核验 **130**（本轮 **+1**：`@VictorSanh` 经 `x.com/VictorSanh` 经代理 `200` / 163,390 B，`og:title` = `Victor Sanh (@VictorSanh) on X`，`og:description` = `Beaker ... Prev. early crew @huggingface | AI x NYC`；反例 `@m_dehghani` 只有 **1 follower / 3 following** ⇒ 判他人，不记）· 已发信 **152**（台账 #1–#152）· 回信 **0**（0/152，0 封到期，最早 11-25）。本轮 **+3**：Bin Xiao（Florence-2 一作，中文，无公开明文邮箱 ⇒ 仅建档）· Victor Sanh（T0 一作，英文，X 双源）· Mostafa Dehghani（UL2 共同一作，英文，论文页邮箱单源）。
+
 > **当前计数（2026-11-23 18:0x）**：作者 **335** 人（编号最大 **335**）· X 已核验 **129**（本轮 **+2**：`@RicoSennrich` 经 `x.com/RicoSennrich` 经代理 `200` / 160,280 B，`og:title` = `Rico Sennrich (@RicoSennrich) on X`、`og:description` = `SNSF Professor at University of Zurich`，且检索结果与 Instalker 侧写互证；`@jiawzhao` 由本人主页 `www.jiaweizhao.com`（`200` / 18,586 B）外链 `x.com/jiawzhao` + 推文页 `og:title` = `Jiawei Zhao (@jiawzhao) on X`、`og:description` = `Research Scientist at Meta FAIR @AIatMeta, PhD @Caltech, GaLore, DeepConf` 双源核验；Biao Zhang 无可核主页 / X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **152**（台账 #1–#152；今日 **12/12** 已达每日硬上限 ⇒ 本窗不发信）· 回信 **0**（0/152）。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **当前计数（2026-11-23 15:3x 补轮）**：作者 **332** 人（编号最大 **332**）· X 已核验 **127**（本轮 **+0**：三位新增作者——Di He / Mingjie Liu / Haoxing Ren——主页或论文页均无 x.com / twitter.com 外链；`mingjieliu.github.io` 实测 `404` ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **152**（台账 #1–#152；今日 **12/12** 已达每日硬上限 ⇒ 本补轮不发信）· 回信 **0**（0/152）。以下历史快照行保留原文（不追改），计数以本行为准。
@@ -4755,3 +4757,43 @@
 | X 账号 | **未找到**（无可核主页或 X 外链；不猜 handle） |
 | 状态 | **待跟踪**（仅建档，无可用地址 ⇒ 本线不发信） |
 | 备注 | `语言=中文(判据=拼音姓名族属)`。建档价值：RMSNorm 原始作者，若后续从 OpenReview / 新论文拿到当前地址，问题应聚焦「pRMSNorm 的 p 敏感性 + pre-LN 长序列下的 re-centering 结论」；🚫 不用旧 Edinburgh 地址发信。 |
+
+### 336. Bin Xiao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bin Xiao（`语言=中文(判据=拼音姓名族属「Bin Xiao」可还原中文名 + 主页自述现职 Microsoft；姓名族属优先于美国机构)`） |
+| 机构 | **Microsoft Superintelligence Team**（本人主页 `200` / 30,195 B 自述 `Member of Technical Staff · Microsoft Superintelligence Team · Redmond, WA`；论文署名时为 Microsoft） |
+| 代表论文 | **Florence-2: Advancing a Unified Representation for a Variety of Vision Tasks**（`2311.06242`，B 轨 #369，一作；主页列 Florence-1 / Florence-2 / Phi-3 Vision / CvT / HRNet） |
+| 邮箱 | **无公开明文地址**（主页 `https://leoxiaobin.github.io/` `200` / 30,195 B 仅外链 GitHub / HuggingFace / Scholar，**无 `mailto:`**；Google Scholar 仅显示 `Verified email at microsoft.com`，不公开明文 ⇒ **不猜** `@microsoft.com` 前缀） |
+| 主页 | <https://leoxiaobin.github.io/>（`200` / 30,195 B；另有 `github.com/leoxiaobin`、`huggingface.co/leoxiaobin` 外链） |
+| X 账号 | **未找到**（主页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（仅建档，无可用地址 ⇒ 本线不发信） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + SCUT 背景线索)`。发信问题候选（只对 Florence-2 成立）：① **FLD-5B 的「自动标注 → 模型精炼 → 再标注」共迭代几轮**、每轮人工抽检一致率是多少（决定我们能否复用该闭环）；② 0.23B → 0.77B 在零样本 COCO caption 上 **CIDEr 133.0 → 135.6** 的增益，主要来自参数量还是标注量；③ 统一 seq2seq 下检测框 token 与分割 polygon token 共用同一 task prompt 时，如何避免两种输出格式互相干扰。 |
+
+### 337. Victor Sanh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Victor Sanh（`语言=英文(判据=姓名族属越南/法国不确定 + 现机构 Beaker 美国；判据冲突 ⇒ 英文兜底)`） |
+| 机构 | **Beaker**（X 主页自述 `Beaker (@withbeaker) - continuous improvement for production agents | Prev. early crew @huggingface`）；论文署名时为 **Hugging Face** |
+| 代表论文 | **Multitask Prompted Training Enables Zero-Shot Task Generalization**（`2110.08207`，B 轨 #370，一作） |
+| 邮箱 | **victor@huggingface.co**（来源：ar5iv 全文 `2110.08207` `200` / 309,166 B 首页明文；⚠️ 该地址是 **2021 年论文期**地址，X 自述已离开 Hugging Face ⇒ 记为**旧机构地址，未独立核验当前可用，不用于发信**） |
+| 主页 | **未找到**（`victorsanh.com` 实测 `000` / 无响应 ⇒ 不采用） |
+| X 账号 | **@VictorSanh**（核验：`x.com/VictorSanh` 经代理 `200` / 163,390 B，`og:title` = `Victor Sanh (@VictorSanh) on X`，`og:description` = `Beaker ... Prev. early crew @huggingface | AI x NYC` ⇒ 身份可对上） |
+| 状态 | **待跟踪**（地址待核，本线不发信） |
+| 备注 | `语言=英文(判据=姓名族属不确定+美国机构)`。发信问题候选（只对 T0 成立）：① **62 数据集 / 12 任务**的模板池，每数据集模板数与留出任务零样本方差如何权衡（论文是否做过模板数消融）；② T0-3B 与 T0-11B 在**留出任务**上的差距是否随模板措辞改变（提示鲁棒性）；③ 「多任务 SFT vs 继续预训练」在**同等算力**下是否做过对照（决定我们把预算投数据还是投 token）。 |
+
+### 338. Mostafa Dehghani
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mostafa Dehghani（`语言=英文(判据=姓名族属波斯/伊朗，不属中/日/韩；机构 Google DeepMind ⇒ 英文)`） |
+| 机构 | **Google DeepMind**（论文署名时为 Google Research / Brain；本轮**未独立核验当前人员页**） |
+| 代表论文 | **UL2: Unifying Language Learning Paradigms**（`2205.05131`，B 轨 #371，共同一作 / 第二作者） |
+| 邮箱 | **dehghani@google.com**（来源：ar5iv 全文 `2205.05131` `200` / 633,921 B 首页明文，出现 **6** 次；⚠️ **单源、2022 年论文页地址**，未找到独立主页二次核实 ⇒ 发信前须再核） |
+| 主页 | **未找到**（`mostafadehghani.com` 实测 `200` 但为**同名商业站**（`/business/`、`/contact/`），非研究者本人 ⇒ 不采用、不引用其 `contact@` 地址） |
+| X 账号 | **未找到**（`x.com/m_dehghani` 经代理 `200` 但 `og:description` = `1 followers · 3 following` ⇒ 判为他人账号；不记、不猜） |
+| 状态 | **待跟踪**（邮箱单源，本线发信前需二次核实） |
+| 备注 | `语言=英文(判据=姓名族属波斯 + Google DeepMind)`。发信问题候选（只对 UL2 成立）：① **MoD 的 R/S/X 采样比例是否随模型规模变化**（表 1 的 `r ∈ {0.15,0.5}`、`μ ∈ {3,8,64}` 是 20B 单点结论吗）；② **mode switching 在任务类型未知时如何选模式**，论文是否有自动判别实验；③ 20B UL2 → Flan-UL2 的 MMLU / Big-Bench 提升里，**多少来自 FLAN 指令数据、多少来自 MoD 预训练**（成本归因）。 |
+
