@@ -2,7 +2,7 @@
 
 WAITING: 0
 
-> 🟢 **心跳 · 2026-11-23 09:50 (R267) — 例行巡检+blendswitch第60次复验7/7 PASS**：①✅git fetch origin local=in-sync **无新data令**(BAIZE_DATA_TASK.md/MEMORY_DATA.md远端==本地0 diff)；②✅pretrain iter=293,470/700k(41.92%) step avg(last15)=7389ms(7256-7519) 训练健康 loss≈1.99(1.967-1.998) 0NaN/0skip✅ lr=1e-3 stable(读自MEMORY_PRETRAIN_2B.md #3131@09:40)；350k倒计时≈(350k-293.47k)×7.389s≈417,662s≈116.0h≈4.8天→~11-28；③✅blendswitch第60次复验7/7 PASS(zero_overlap=0(total_overlap_docs=0)；ratio max_dev 0.0087%<1%；flag-off=byte-identical；new_source=0；epoch_wrap诚实报告；json_roundtrip OK；perf_pass:switch overhead 101.65%即一次性切换成本极小绝对0.15s)；复跑=uv run --no-project --with numpy==1.26.4 --python 3.12 test_blend_switch.py；verify_results.json已git checkout HEAD还原为提交版避免timing churn；④✅.12 load=28.32/27.56/26.74<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无下载进程(S2三源全100%,0 .incomplete)；⑦✅research日报2026-11-23:data线条目=EDA Gopher体检(EDA已取消→忽略)+论文归属指针(均衡采样权重与held-out掉点归因/语法过功能错样本占比/换基座是否重生成→均属paper-writing归因标注,非可执行任务,记为参考N/A)；⑧✅MEMORY 36.2KB(≤40KB硬上限OK)/TASK 27.0KB<32KB✅。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-23 09:58 (R268) — 例行巡检+blendswitch第61次复验7/7 PASS**：①✅git fetch origin local=in-sync(HEAD=0a8c10f031) **无新data令**(BAIZE_DATA_TASK.md/MEMORY_DATA.md远端==本地0 diff)；②✅pretrain iter=293,540/700k(41.93%) step avg(last15)=7402ms(7292-7545) 训练健康 loss≈1.985 0NaN/0skip✅ lr=1e-3 stable(读自MEMORY_PRETRAIN_2B.md #3132@09:47)；350k倒计时≈(350k-293.54k)×7.402s≈417,840s≈116.1h≈4.8天→~11-28；③✅blendswitch第61次复验7/7 PASS(zero_overlap=0(total_overlap_docs=0)；ratio max_dev 0.0087%<1%；flag-off=byte-identical；new_source=0；epoch_wrap诚实报告；json_roundtrip OK；perf_pass:stock 0.334s/switch 0.220s/track 0.022s一次性成本极小)；复跑=uv run --no-project --with numpy==1.26.4 --python 3.12 test_blend_switch.py；verify_results.json已git checkout HEAD还原为提交版避免timing churn；④✅.12 load=27.93/27.48/27.02<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无下载进程(S2三源全100%,0 .incomplete)；⑦✅research日报2026-11-23:data线条目=EDA Gopher体检(EDA已取消→忽略)+论文归属指针(均衡采样权重与held-out掉点归因→均属paper-writing归因标注,非可执行任务,记为参考N/A)；⑧✅MEMORY归档后<32KB✅/TASK 27.0KB<32KB✅。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
 > 📦 R266 心跳（例行巡检+blendswitch第59次复验7/7 PASS·iter293470 step7389ms·.12 load26.32/26.46/26.14·0下载进程）已归档 → daily-memories-data/2026-11-23.md
 > 📦 R265 心跳（例行巡检+blendswitch第58次复验7/7 PASS·iter293400 step7369ms·.12 load26.79/26.36/26.01·0下载进程）已归档 → daily-memories-data/2026-11-23.md
 > 📦 R264 心跳（例行巡检+blendswitch第57次复验7/7 PASS·iter293330 step7374ms·.12 load24.00/25.03/25.50·0下载进程）已归档 → daily-memories-data/2026-11-23.md
@@ -71,11 +71,7 @@ WAITING: 0
 > 📦 R207 心跳（第31次复验7/7 PASS zero_overlap=0 / v5报告13,813B / v4报告14,625B）已归档 → daily-memories-data/2026-11-22.md
 
 > 📦 R206~R170 心跳（方案F blendswitch例行巡检+第3-30次复验，均7/7 PASS zero_overlap=0）已归档 → daily-memories-data/2026-11-22.md
-
-
 > _(R171 心跳已归档 daily-memories-data/2026-11-22.md · R171: v4报告结论段修正三层表述+~12%加权透明表(token口径0.201≈20%)+WBS支撑17h≈2.1人日)
-
-
 > _(R170 心跳已归档 daily-memories-data/2026-11-22.md · R170: v5报告交付+blend_switcher.py实现(BlendSwitcher+update_weights+BlendHotSwitchSampler 14KB)+CPU验证7/7 PASS zero_overlap=0+validate_overlap.py+README_PATCH.md(4处patch)+base commit=14c215dc)
 
 > _(R169 心跳已归档 daily-memories-data/2026-11-22.md · R169: v4报告交付+方案F stock不可行核查+§0.1修正+S1→S2接力 LR恒1e-3)
@@ -99,50 +95,11 @@ WAITING: 0
 
 > _(R41~R13 心跳已归档 daily-memories-data/2026-11-20.md · iter~261k→267k step~7.0~8.2s MM-web 5.9%→32.3% Math-Reasoning 72%→92.8% Nemotron✅完成 193/193 195.4B tok / Code-Reasoning✅ / R18 Nemotron 完成里程碑)_
 > _(R9, R8, R7, R4 心跳已归档 daily-memories-data/2026-11-19.md · iter~260k step~7.05s Nemotron 82-88% MM-web分词启动(ETA~40h) Math-Reasoning 72%)_
-
-
-> 🔴 **用户令 2026-11-18 — S2 overlap 研究 + PC-4 blend TSV + Nemotron/finemath 分词 · 已交付**：
-> **S2 overlap 报告**：`reports/report_s2_data_overlap_study.md`（455行/6方案/Megatron源码逐行分析）。结论：当前blend不排除S1已训数据；同种子重叠~83-100%；推荐方案D+E（补新源stack-v3/MegaMath天然零重叠 + S2换SEED=5678）；完全排除不可行。
-> **PC-4 blend TSV**：`code/baize-llm/configs/blend_s2_preblend.tsv`（fallback版, 10源/prop=1.0/web40/code40/math20, 已加入finemath-4plus prop=0.005/epoch=0.78）。待Nemotron分词完成更新为main版。
-> **Nemotron-CC-Math 分词**：🔄后台运行中 PID 1791931（27/193 shards, ~1.35B tok/shard, ~36.6B tok已产出, ETA~36.6h, RAYON=8, nice19, ionice3, log→/tmp/tok_nemotron_math.log）。
-> **finemath-4plus 分词**：✅DONE（64/64 shards, 9.4B tokens, 0 errors, 5528s）→已加入blend TSV(prop=0.005)。
-> **MegaMath PC-2 分词**：✅ALL DONE（5 subsets: text-code-block 200 shards + web-pro 100 + qa 32 + translated-code 16 + code 16 = 364 .json / 243GB; pc2_fast_split .12+.29 均已完成退出）。
-> **MegaMath-web 下载**：🔄运行中 PID 489801（3252/4950=66%, 断点续传, nice19/ionice3/max-workers2, log→/tmp/dl_megamath_web_restart.log）。
-> **Code-Reasoning 下载**：🔄运行中 PID 489797（1532/1637=94%, 2.8TB已落盘, 2 .incomplete, ETA~17min, 断点续传, nice19/ionice3/max-workers2, log→/tmp/dl_code_reasoning_restart3.log）。
-> **Math-Reasoning 下载**：🔄运行中 PID 3697171（1076/2228=48%, 2.0TB已落盘, 断点续传稳定无崩溃, nice19/ionice3/max-workers2, log→/tmp/dl_math_reasoning_restart4.log）。
-> **.12 负载**：33.82 ✅ (<120 红线, 不挤 pretrain)；.29 负载：38.75 ✅。
-
-> 🔴 **用户令 2026-11-18 14:2x — .12 CPU 僵尸清理 + 分词分机 · 已执行**：
-> **清理清单**：KILL PID 2350098 (`pc2_fast.py --subset megamath-text-code-block`, 9449%CPU=94核, ppid=1孤儿, 跑9h, batch encode用94线程抢CPU) + KILL PID 4060821 (`pc2_v3.py`, 99%CPU=1核, 跑8.5h, 与pc2_fast重叠做text-code-block但web-pro/qa/translated-code已完成→wasteful overlap)。
-> **分机方案**：.12 `pc2_fast_split.py --subset megamath-text-code-block --start-idx 155 --end-idx 178` (shards 155-177/23个, RAYON_NUM_THREADS=8, nice=19, ionice=3, PID 2430086) + .29 `pc2_fast_split.py --subset megamath-text-code-block --start-idx 178 --end-idx 200` (shards 178-199/22个, RAYON_NUM_THREADS=16, nice=19, ionice=3, PID 3935896)。megamath-code 16 parquets schema不含text列(file_info/repo_info struct)→pc2_fast.py不兼容, 待后续单独处理。
-> **处理后负载**：.12 loadavg 214→27.9(1min) ✅ (目标<120)；.29 loadavg 39 ✅；pretrain训练(torchrun PID 2501551)拿到CPU。脚本 /tmp/pc2_fast_split.py 已部署 .12+.29。
-
-> 🔴 **用户令 2026-11-13a**：stack-v3-train 全量下载→✅StepA/B DONE(8192parquet/3.3TB); StepC分词→✅全DONE(8192/8192/476B tok/1.8TB/0ERR/92041s); StepD校验→✅通过(0ERR/no failed_shards/0 zero-byte/MANIFEST✅); ✅源清理(/nas_train+/nas_inference=0files); DATA_MAPPING H.14已更新
-
-> 🔴 **用户令 2026-11-13b**：分词数据搬到/nas_user→✅StepA DONE; 分词新shard→✅StepC全DONE(8192/8192/476B tok); StepD校验→✅通过→DATA_MAPPING更新→commit
-
-> 🔴 **用户令 2026-11-17 下载优先级调整**：按S2落地需求排序,预训练语料优先。下载优先级#1 MegaMath-web(142/4950files/3%/PID26529/log→/tmp/dl_megamath_web.log); #2 Nemotron-CC-Math-v1(130/196files/184GB/66%)→原PID3734806因ProxyError503崩溃,已重启PID318055/log→/tmp/dl_nemotron_math_v3.log(--token认证); #3 finemath→✅DONE(288parquet/140GB/0inc); #4 Code-Reasoning(1301/1637/80%/2.4TB/PID3734799); #5 Math-Reasoning(809/2228/36%/1.5TB/PID3734800); #6-10小数据集全✅DONE(OpenMathInstruct-2 12GB/OpenCodeReasoning 9.1GB/OpenCodeInstruct 6.4GB/code_contests 7.2GB/NuminaMath-1.5 507MB); 所有日志→/tmp/dl_*; nice19/ionice3/max-workers2/HF_HUB_DISABLE_XET=1; /nas_user 48T可用✅(≥5T红线)
->
-> ✅ **用户令 2026-11-17 — S1/S2报告两份均已交付并commit**：①可行性报告report_s1s2_split_data.md(28KB/7节/commit cb4c93743) ②细化方案v2 report_s1s2_split_data_v2_zh.html(52KB/中文HTML/7节含blend TSV/甘特图/epoch核算/污染检查/Go-NoGo)。结论：4:4:2可行，stack-v3补code缺口(476B→过滤后286~405B)，MegaMath补math缺口(92~371B)，关键路径PC-1~PC-4预计11-23前就绪
->
-> ✅ **用户令 2026-11-17 16:3x — 修正v2报告重大错误·已完成(v2.6, commit 53986ea18, pushed)**：①350k切换点修正为~11-26(原误为12-25) ②700k终点修正为~12-25 ③甘特图改为11-17→11-30 ④余量修正为~3天(原误为4周) ⑤Go/No-Go时间项全部更新 ⑥前置截止日期前移(PC-1 11-19/PC-2 11-21/PC-3 11-21/PC-4 11-23/PC-5 11-25) ⑦新增§2.1下载优先级表(10项,S2预训练语料#1~#3优先) ⑧epoch核算增Nemotron-CC-Math/finemath改善分析 ⑨全文数值审计通过(prop/epoch/timing均一致)
->
-> 🔴 **用户令 2026-11-15 08:5x（IFM 3个数学/代码数据集+调研）**：✅IFM/MegaMath第一批DONE(364parquet/216GB/0inc/5子集); ✅MegaMath≡LLM360/MegaMath(sha 3cbc646); ✅调研报告DONE(17KB/6节含Top5+总表+污染检查+SVG); ✅HfApi实测3repo精确文件数/字节已写入DATA_MAPPING(MegaMath=5314parquet/1.118TB/Math-Reasoning=2226parquet/4.463TB/Code-Reasoning=1635parquet/3.277TB); ⏳MegaMath第二批(megamath-web 4950files/887GB)待IFM完成后启动; /nas_user 49T可用→✅红线≥5T
-
-> ✅ **用户令 2026-11-15 09:0x（5个agent datasets评估+下载）→全部验收项已满足**：✅Toucan-1.5M(409files/21GB/0inc); ✅AgentTrove(121files/19GB/0inc); ✅neulab ADP 15子集(277files/79GB/0inc); ✅adp_subset_plan.md; ✅agent-data-protocol clone; ✅污染检查CONTAMINATION_CHECK_AGENT_IFM.md; ✅DATA_MAPPING.md D1-D4; 🚫orca P2/🚫freeinference P3; 📝转告harness线freeinference workload(已记MEMORY+DATA_MAPPING)
-
+> 📦 旧已交付用户令摘要（2026-11-13 ~ 11-18：S2 overlap研究/PC-4 blend TSV/Nemotron+finemath分词/CPU僵尸清理/stack-v3全量下载/下载优先级/IFM数据集/agent datasets — 全部已交付，S2三源下载全100%）已归档 → daily-memories-data/2026-11-23.md「归档块1」
 > ⚠️ **`WAITING` 只认本文件顶部这一行**（`baize_data_loop.sh` 用 `^WAITING:[[:space:]]*1` 匹配）。
 > **不要在正文/流水里再写任何以 `WAITING:` 开头的行**——否则会误触发 30 分钟长睡。
 
-> 🟢 **✅ vision图文对调研报告DONE（唤醒1448,2026-11-11）**：用户令11-11→归因(10-13下载4路69.6M对未用=格式不兼容parquet/tar+无人接管线+实验设计限制)+平台盘点(中文9源/多语言2源/领域7源/已在盘7源)+推荐Top5(InternVL-SA1B零成本/TaiSu最佳中文/WebMix-38M规模/LAION-Chinese商用/PlotQA领域)+许可合规+下一步建议→report_vision_textpair_sourcing_zh.html(28321B/6节/0外链/HTML valid)落reports/→commit data rpt: pushed。
-
-> 🟢 **✅ stack-v3-train 2TB下载全DONE（唤醒1422,03:56）**：batch7 FINISH@03:46:06→4600parquet/1,987,930,402,327B(1.85TiB)/0inc；2TB ROI复盘:token~2,025B/重叠2.4%/97.6%独特/ROI判定✅有价值→停止下载进入过滤+分词。
-
-> 🟢 **✅ stack-v3-train 分词全DONE（唤醒1478,2026-11-13 10:1x）**：主跑4600/4600shard完成(47068s/173M docs/245.8B tok/279ERR);rerun 40shard完成(4492s/3.4B tok/0ERR);二次rerun确认40shard全SKIP(已有tokenized);tokenized输出926GB@/nas_train/.../tokenized/HuggingFaceCode/stack-v3-train/;无tokenize进程在跑→分词完全结束。
-
-> 🟢 **✅ EDA脚本价值分析DONE（唤醒1468,2026-11-12 23:5x）**：用户令11-12→Phase A全扫4600shard(97M repos/1.28B files/5.86TiB/vendor1.3%/4963s)+Phase B分层抽样3200文件(9类)→V1=18/V2=149/V3=3033→外推V1~828文件/~0.01B token→Tcl唯一显著EDA命中(39.2%)/SKILL未检出/PyAether 0命中→报告report_data_stackv3_eda_script_value_zh.html(43KB/8节+附录/0外链/0script)落reports/→DATA_MAPPING.md§H.13新增→commit data eda:。
-> 📝 **结论**：V1(直接可用)~828文件/~0.01B tok, V2(可挖掘)~6854文件/~0.04B tok, V3(低价值)~139518文件；报告路径reports/report_data_stackv3_eda_script_value_zh.html；建议：stack-v3对EDA脚本直接贡献有限，SKILL/PyAether需外部数据源。
-
+> 📦 旧详细报告条目（vision图文对调研/stack-v3下载+分词+EDA脚本价值分析 — 全部已交付，报告均落 reports/）已归档 → daily-memories-data/2026-11-23.md「归档块2」
 > 📦 唤醒1522-1531 原文已归档 → daily-memories-data/2026-11-15.md~2026-11-16.md（StepC完成+IFM下载启动+Code-Reasoning崩溃修复重启+多轮巡检,共10轮,详见日文件）
 > 📦 唤醒1493-1520 原文已归档 → daily-memories-data/2026-11-14.md~2026-11-15.md（StepB完成+StepC分词启动+崩溃修复+IFM/agent datasets进度,共~25轮,详见日文件）
 > 📦 唤醒1490-1492 原文已归档 → daily-memories-data/2026-11-13.md（StepB下载进度巡检+StepC auto-wait修复重启×3轮,详见日文件）
