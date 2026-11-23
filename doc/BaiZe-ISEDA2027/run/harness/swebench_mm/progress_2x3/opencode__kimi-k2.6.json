@@ -5034,9 +5034,16 @@
   "highlightjs__highlight.js-3000": {
     "instance_id": "highlightjs__highlight.js-3000",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 544.6,
+    "rc": 0,
+    "model_patch_len": 1767,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "comments are properly highlighted\n\n**Added tests:**\n- `test/markup/php/arrow_functions.txt`\n- `test/markup/php/arrow_functions.expect.txt`\n\nAll 1642 tests pass, including the new arrow function test.\n",
+    "stderr_tail": "ers\n    ✓ should markup string\n    ✓ should markup tag\n\n  zephir\n    ✓ should markup default\n\n\n  1642 passing (8s)\n  3 pending\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/languages/php.js\u001b[90m [offset=130, limit=70]\u001b[0m\n"
   },
   "highlightjs__highlight.js-3018": {
     "instance_id": "highlightjs__highlight.js-3018",
