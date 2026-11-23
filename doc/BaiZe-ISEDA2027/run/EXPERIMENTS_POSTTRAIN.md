@@ -12107,3 +12107,84 @@ python3 bpt_attribution_p0_dev_compare.py \
 **MEMORY**：31587B ≤32KB（wake537/538 流水压缩为 📦 指针）。
 
 **纪律**：0 infra 误操作,未碰 GPU/运行中 eval/隧道/别线/eda_fastmcp 代码（只读）。本轮纯 CPU 报告生成器开发 + 初步报告落盘。
+
+---
+
+## §F. SFT 退化根因诊断（wake751 · 2026-11-23 · 零 GPU/零 ckpt · 主线 SFT 设计预研）
+
+> **触发**：A1(SFT v39 step105) 5-run=4.56%±1.70% vs A0(base) 43.29%±3.92%，Δ=−38.73pp（McNemar χ²=68.01 p=0.0）⇒ SFT **显著退化**。本节从落盘 JSON + SFT 语料自算根因，为正式 SFT（待 pretrain ckpt ETA≈2026-12-25）提供可迁移的设计纠偏。**数据源**：`baseline_A0_base_5run_summary.json` / `baseline_A1_sft_5run_summary.json` / `baseline_A0_vs_A1_paired_compare.json` / `baseline_A0_base_run1_pertask.json` / `baseline_A1_sft_run1_pertask.json` / `sft_pyaether_corpus_v2.jsonl`。
+
+### F1. 退化的方向性与幅度（配对检验）
+
+| McNemar（majority，pass_count≥3） | 计数 |
+|:--|--:|
+| both_pass | 1 |
+| A0_only（base 过/SFT 挂） | **70** |
+| A1_only（SFT 过/base 挂） | **0** |
+| both_fail | 87 |
+| discordant | 70 |
+| χ²_continuity / p | 68.01 / 0.0 |
+
+- any_pass（pass_count≥1）阈值下亦 A0_only=79 / A1_only=2 ⇒ 即便最宽松口径，SFT 仅「救回」2 题、毁掉 79 题。
+- ⇒ **退化是单向、灾难性的**：SFT 几乎不救任何题，却系统性毁掉 base 能过的题。这排除了「SFT 仅在难题上无效」的温和解释，指向**行为模式坍塌**。
+
+### F2. 失败模式坍塌到 F1_no_code
+
+| 臂 | pass_all | fail_all | partial | 主导 fail_mode |
+|:--|--:|--:|--:|:--|
+| A0 base | 25 | 51 | 82 | F5_logic=51 / F1_no_code=36 / F4_api=31 |
+| A1 SFT | **0** | **128** | 30 | **F1_no_code=127** / F3_timeout=13 / F5_logic=11 / F4_api=7 |
+
+- A1 的 158 题里 **127 题（80%）产出空代码**（F1_no_code），pass_all=0。base 的主失败是 F5_logic（代码跑通但断言失败=能力问题），SFT 后主失败坍塌为 F1_no_code（根本不产码=行为问题）。
+- four_metric：A1 agent_loop_entry_rate=0.6228（base 约 0.88–1.0）、tool_call_count=39.3、error_rate=0.014、rag_queried=0.7025。
+
+### F3. 工具行为对照：submit_and_exit 风暴 + 检索坍塌（run1 聚合）
+
+| 工具 | A0 base run1 | A1 SFT run1 | 变化 |
+|:--|--:|--:|:--|
+| search_apis | 1969 | 355 | **−82%** |
+| get_api_details | 978 | 564 | −42% |
+| submit_and_exit | 138 | **760** | **+451%** |
+| run_code | 81 | 42 | −48% |
+| editor | 217 | 243 | +12% |
+| read_files | 239 | 971 | +306% |
+| run_commands | 684 | 765 | +12% |
+
+- **检索坍塌**：search_apis 从 1969 跌到 355（−82%）⇒ SFT 模型放弃了 base 的「搜 API→读详情」检索回路。
+- **submit 风暴**：submit_and_exit 从 138 暴涨到 760（+451%）⇒ SFT 模型反复 premature-submit（提交即失败再提交）的退化循环。
+- **执行-修错回路丧失**：run_code 从 81 降到 42 ⇒ 几乎不靠「执行→看错→修」自纠错。
+- ⇒ SFT 把 base 的「search→get_details→editor→run_code→fix→submit」健康回路，替换成「read_files→run_commands→submit 风暴→空代码」退化回路。
+
+### F4. 根因：训练分布 vs 部署分布失配（SFT 语料为静态单轮 doc→code，0% agentic 轨迹）
+
+`sft_pyaether_corpus_v2.jsonl`（19524 条，替代 v1 用于训练）：
+
+| 字段 | 值 |
+|:--|:--|
+| type 分布 | S1_doc_to_code=8012 / S2_api_lookup=8012 / S3_multi_api_chain=89 / S4_error_recovery=3411 |
+| quality_tier | high=11733 / low=7090 / medium=701 |
+| 平均 completion 长度 | 258 字符（极短，单代码片段） |
+| 含 tool-call 格式的 completion | **0 / 19524（0%）** |
+| 含 ```python 代码块的 completion | 19524 / 19524（100%） |
+
+- 语料**全部是静态单轮 doc→code 补全对**：prompt 给 API 文档，completion 直接给一个短 python 代码块，**零条 agentic 多轮工具调用轨迹**（无 search_apis/get_api_details/editor/run_code/submit 的有序序列）。
+- **机理**：在此语料上 SFT 教会模型「文档已给→直接写一段短代码→结束」。这与 cline 部署环境（必须多轮 search→edit→run→fix→submit）**根本不兼容**：
+  1. S1/S2 把 API 文档直接塞进 prompt ⇒ 模型学到「不用 search，信息已在上下文」⇒ 部署时检索坍塌（search_apis −82%）。
+  2. completion 是单代码块无工具调用 ⇒ 模型学到「写一段就结束」⇒ 部署时 submit 风暴（submit_and_exit +451%）+ 空代码（F1_no_code=127）。
+  3. 无 run_code/修错轨迹 ⇒ 自纠错回路丧失（run_code −48%）。
+- ⇒ **退化非能力天花板，而是 SFT 把 base 的健康 agentic 回路覆盖成了与部署环境失配的静态补全行为**。这也解释了为何退化是单向灾难性的（McNemar A1_only=0）：失配行为对几乎所有题都有害。
+
+### F5. 可迁移纠偏建议（正式 SFT，待 pretrain ckpt）
+
+1. **语料形态必须改为 agentic 多轮轨迹**：从 A0 成功 run（pass_all=25 + partial=82 题）收割真实「search→get_details→editor→run_code→fix→submit」序列作为 SFT 正例，使训练分布对齐部署分布。当前 v1/v2 静态 doc→code 语料（0% 轨迹）**不得原样用于正式 SFT**。
+2. **检索保真**：SFT 正例须保留 search_apis/get_api_details 的检索前缀（而非 S1/S2 那样把文档直接喂进 prompt），否则会再次教坏模型「不检索」。
+3. **行为保真评测闸门**：post-SFT 须报告 agent_loop_entry_rate / search_apis 频次 / submit_and_exit 频次 vs base，任一坍塌（如 search_apis 频次 < base 50% 或 submit_and_exit > base 200%）即判 SFT 失败、停跑重做，**先于**看 Pass@1。
+4. **混合/格式保真**：若保留部分静态补全语料，须与 agentic 轨迹混合作 format-preserving SFT，并设保留率下限，避免静态分布压倒轨迹分布。
+5. **预注册判据（沿用）**：正式 SFT 判 Δ>0 且 paired-bootstrap CI 下界>0 才算正向；负结果照报。
+
+### F6. 诚实性 / 局限
+
+- A1=替身 SFT（MiniCPM5-2B base 上的 v39 step105），正式 SFT 基座为 BaiZe pretrain ckpt（不同基座）⇒ 退化幅度可能不完全迁移；但**根因（语料形态失配）与纠偏建议（轨迹化 SFT + 行为保真闸门）与基座无关，可迁移**。
+- 本节未重训、未碰 GPU/协议/题面/check.py/超时/−p；纯 CPU 从落盘 JSON+语料自算。
+- S4_error_recovery=3411 条虽含「错误恢复」语义，但 completion 仍为静态代码块（0% tool-call 格式），不构成 agentic 轨迹，无法补救检索/submit 行为。
+
