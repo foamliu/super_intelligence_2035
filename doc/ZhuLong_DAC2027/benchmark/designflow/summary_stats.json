@@ -191,7 +191,7 @@
   },
   "sessions": 3846,
   "shard_mc": {
-    "A": 5,
+    "A": 10,
     "B": 5,
     "C": 5,
     "D": 5
@@ -203,7 +203,8 @@
     "overtuned_at": "2026-11-19T12:4x+08:00 (r794)",
     "overtuned_by": "r794 (mc5-9 A-pure liveness: 33/34 ALIVE)",
     "triggered_at": "2026-11-18T14:1x+08:00 (r731, OVERTURNED)",
-    "verdict": "mc>=5 pool expansion (11-15 order) CONFIRMED EFFECTIVE for shard A: 33 fresh ALIVE A-pure candidates in mc5-9 band alone (top 34 by A-pure filter, 4-shard mutex applied). r731 stop_loss was a misjudgment based on (a) strict A-pure filter excluding legal analysis-Q&A tasks + (b) 0-case rounds that were budget constraints not pool exhaustion. shard_mc.A=5 active."
+    "verdict": "mc>=5 pool expansion (11-15 order) CONFIRMED EFFECTIVE for shard A: 33 fresh ALIVE A-pure candidates in mc5-9 band alone (top 34 by A-pure filter, 4-shard mutex applied). r731 stop_loss was a misjudgment based on (a) strict A-pure filter excluding legal analysis-Q&A tasks + (b) 0-case rounds that were budget constraints not pool exhaustion. shard_mc.A=5 active.",
+    "r1064_stop_loss_triggered": "2026-11-23T20:1x+08:00 (r1064). 16:4x stop-loss clause FIRED: mc>=5 consecutive 3 0-case rounds (r1062, r1063, r1064) after last case r1061 (CcoptCellExtractDelete-001). Due-diligence peek r1064: top-25 A-keyword rows / 7 unique sessions on scan ssh_eda_search_20261123_064315 ALL cross-domain-dominant (1hkwu virtuoso:6610->C, ukkn7 aether/drc->C, w4x70 verilog/netlist/schematic->D, x4b0p drc/calibre->C, xxz7c netlist/hspice->B/D, ijh76 virtuoso->C, aneeo drc/virtuoso->C). strict A-dominant fresh=0 confirmed r1021-r1064. mc>=5 expansion INEFFECTIVE: lowering threshold to 5 did not yield new A-domain material (all fresh are C/B/D-dominant or operator/low-mc). Action: shard_mc.A reverted 5->10 per 16:4x clause; pivot to non-candidate output (§4.9 anti-hardcode audit). Note: B/C/D left at 5 (other shards' autonomous thresholds, not touched)."
   },
   "summary_1113_dedup_sessions": 4418,
   "target_mc": 10,
