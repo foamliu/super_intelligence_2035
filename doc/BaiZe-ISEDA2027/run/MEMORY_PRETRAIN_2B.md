@@ -1,5 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-> #3218（2026-11-24 01:35, 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301390/700000(43.06%) step_avg(recent15)=7168ms(7.17s,7049-7327全<7.4s✅)·loss≈1.99(1.988) 0NaN/0skip✅·load(directive#2)无eval负载 .29=21.84/22.85/23.55/.12=26.39/26.08/26.37✅·step-time(directive#3)无eval负载·baseline=7.17s·backlog 270k-300k全清42ckpt(42/42 results.json,directive#1✅)·L1分数(directive#1要求写出):270k=58.38% 272k=55.25% 274k=57.75% 276k=57.50% 278k=54.87% 280k=55.38% 282k=56.38% 284k=56.00% 286k=56.00% 288k=56.62% 290k=52.62% 292k=56.12% 294k=57.00% 296k=56.75% 298k=57.75% 300k=55.50%(limit=100噪声大±3pp,趋势~56-58%平稳)·L1报告42/42ckpt@00:15(36091B,含300k✅)·daemon idle(PID1081392 alive~53.6h,waiting 302k)·302k NOT on disk(latest=iter_0300000,ETA~02:47,~72min)·GGUF已清理(0残留✅)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter301390@01:34:40) daemon=/tmp/baize_l1_autoqueue_continuous.log(idle@01:30:36) ckpt=.../nemo_experiments/baize2b/checkpoints(latest=iter_0300000) results=.../lm_eval_results(42/42dirs)·复现=bash code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh·纯监控未碰train.sh/configs/.bak/训练进程(铁律悍守)·体积MEMORY≈29.1KB<32KB✅ TASK≈25.3KB<32KB✅）→ daily-memories/2026-11-24.md
+> #3219（2026-11-24 01:46, 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301480/700000(43.07%) step_avg(recent5)=7200ms(7.20s,7140-7302全<7.4s✅)·loss≈1.99(1.983) 0NaN/0skip✅·load(directive#2)无eval负载 .29=24.25/24.47/24.11/.12=26.71/27.21/26.87✅·step-time(directive#3)无eval负载·baseline=7.20s·backlog 270k-300k全清42ckpt(42/42 results.json,directive#1✅)·L1分数已写出(270k=58.38% 272k=55.25% 300k=55.50%)·L1报告42/42ckpt@00:15(36091B,含300k✅)·daemon idle(PID1081392 alive~53.8h,waiting 302k)·302k NOT on disk(latest=iter_0300000,ETA~02:48,~62min)·llama-server=0running✅·GGUF已清理(0残留✅)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter301480@01:45:28) daemon=/tmp/baize_l1_autoqueue_continuous.log(idle@01:45:37) ckpt=.../nemo_experiments/baize2b/checkpoints(latest=iter_0300000) results=.../lm_eval_results(42/42dirs)·复现=bash code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh·纯监控未碰train.sh/configs/.bak/训练进程(铁律悍守)·体积MEMORY≈29.9KB<32KB✅ TASK≈25.3KB<32KB✅）→ daily-memories/2026-11-24.md
+
+> 📦 #3218（2026-11-24 01:35, 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301390 step7.17s·backlog全清42ckpt·302k NOT on disk(ETA~02:47)）→ daily-memories/2026-11-24.md；需要时再读。
 
 > 📦 #3217（2026-11-24 01:30, 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301320 step7.13s·backlog全清42ckpt·302k NOT on disk(ETA~02:50)）→ daily-memories/2026-11-24.md；需要时再读。
 
@@ -155,7 +157,7 @@
 > 📦 §#2990–#3034（已归档，含 #3030 286k eval DONE·#3029-#2990 286k/284k/282k eval RUNNING监控轮）→ daily-memories/2026-11-22.md；需要时再读。
 > 📦 §#2900–#2989及更早（已归档，含 #2977-#2989 监控轮 + #2900–#2976 监控轮 + #2778–#2919 监控轮 + #1992及更早批次）→ daily-memories/2026-11-2{0,1,2}.md & ARCHIVE_OPERATOR_PRETRAIN.md；需要时再读。
 
-WAITING: 0(✅ 2026-11-24 01:35 #3218 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301390/700000(43.06%) step~7.17s全<7.4s✅·loss≈1.99 0NaN/0skip✅·load .29=21.84/.12=26.39✅(无eval负载)·backlog 270k-300k全清42ckpt(42/42 results.json)·L1分数已写出(270k=58.38% 272k=55.25% 300k=55.50%)·daemon idle waiting 302k(ETA~02:47)·纯监控未碰训练进程(铁律悍守))
+WAITING: 0(✅ 2026-11-24 01:46 #3219 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301480/700000(43.07%) step~7.20s全<7.4s✅·loss≈1.99 0NaN/0skip✅·load .29=24.25/.12=26.71✅(无eval负载)·backlog 270k-300k全清42ckpt(42/42 results.json)·L1分数已写出(270k=58.38% 272k=55.25% 300k=55.50%)·daemon idle waiting 302k(ETA~02:48)·纯监控未碰训练进程(铁律悍守))
 
 ---
 
