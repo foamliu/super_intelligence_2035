@@ -1493,3 +1493,4 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1794799001872_zjplv	xxchen	hfeg0plg18	214	physical_verify	case	EDA-Eval-DesignFlow-SearchDrcLaunchSqliteFix-001	2026-11-24 01:09	
 1789975385741_egm8i.messages.json					case	EDA-Eval-DesignFlow-AutoPlacementStep3-001	2026-11-24 01:30	r1028: force-claim from D parked(wrong-domain); real C pg_layout task, k=16 all gates pass
 1795163655095_ci2dm.messages.json	xxchen	hfeg0plg18	138	physical_verify	parked		2026-11-24 01:55	r1029 GUI-debug reframe infeasible: ci2dm PyQt5 drcpv-tool GUI enhancement, src not on .75-accessible host, see deepread
+1795004863729_g6vwv.messages.json	yh1yang	hfeg0pkn004	148	layout_aether	claimed		2026-11-24 02:04	
