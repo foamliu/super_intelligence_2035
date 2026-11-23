@@ -10,6 +10,9 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **365** 条（**第九十九轮 2026-11-23 15:3x 补轮 补 3 条 → 365**：DeiT `2012.12877`（**5,971**，OpenAlex `preprint`；ImageNet-only 训练、单机 <3 天的 86M ViT，单裁 top-1 **83.1%**（无外部数据）、带 convnet 教师时 **85.2%**；**distillation token** 通过注意力向教师学习）/ Pre-LN `2002.04745`（**1,133**，OpenAlex `preprint`；均值场理论证明 Post-LN 在初始化时**靠近输出层的期望梯度大** ⇒ 必须 warm-up；把 LayerNorm 放进残差块内（Pre-LN）后梯度性质良好 ⇒ **可去掉 warm-up**，且持平基线的同时减少训练时间与调参）/ Zero-shot-CoT `2205.11916`（**10,093**，NeurIPS 2022，OpenAlex `conference-paper`；只在答案前加一句 **“Let's think step by step”**、不用任何手写 few-shot；text-davinci-002 上 **MultiArith 17.7% → 78.7%**、**GSM8K 10.4% → 40.7%**，540B PaLM 同量级提升）；核验：arXiv `id_list` 单批 **`200` + atom**（8,506 B / 3 entry，`published`：2020-02-12 / 2022-05-24 / 2020-12-23；Zero-shot-CoT `comment` = `Accepted to NeurIPS2022`）+ abs 页 **3/3 `200`**（44,669 / 45,193 / 42,739 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **2/2 `200`**（392,812 / 213,678 B；Zero-shot-CoT 未取 ar5iv，数字取自 arXiv 官方摘要）+ OpenAlex **3/3 `200`**（1,133 / 10,093 / 5,971，查询日 2026-11-23）；三 ID 三处条目级查重 **0 命中**；⚠️ **两处 ID / 重复拦截**：① 候选池把 VerilogEval 记成 `2309.07635`，abs 页实测为 *Decay estimates for one Aharonov-Bohm solenoid in a uniform magnetic field I*（math-ph，无关）；② 真 ID `2309.07544` 经条目级复核**已在表内 #7** ⇒ 整条剔除，改收 Zero-shot-CoT；本轮归属：vision **+2** · pretrain **+2** · data **+2** · harness **+2** · zhulong **+2** · designflow **+1**（一篇可多线））
+
+
 **本轮快照**：累计 **359** 条（**第九十七轮 2026-11-23 12:0x 补 3 条 → 359**：CoCa `2205.01917`（**2,265**，TMLR 2022；`n_uni` / `n_multi` 解耦解码器 + 对比与 captioning 双目标；ViT-giant 1B / 合计 2.1B，batch 65,536、500k 步、λ_Cap=2.0 / λ_Con=1.0；ImageNet 零样本 **86.3%** / 冻结头 **90.6%** / 微调 **91.0%**）/ TTT `2407.04620`（**394**，**&lt;500 按「开创范式」收**，预印本；隐藏状态 = 在线训练的小模型，TTT-Linear / TTT-MLP 线性复杂度，**32k** 内持续降困惑度而 Mamba **16k** 后平台化，mini-batch **b=16**、对偶形式 **>5×**）/ HNSW `1603.09320`（**3,810**，TPAMI 42(4):824–836；指数衰减随机层级的多层邻近图，召回-延迟可调，向量库事实标准））；核验：abs 页 **3/3 `200`**（44,421 / 44,717 / 44,259 B，`citation_title` + `citation_date` 逐字）+ ar5iv **2/2 `200`**（269,704 / 435,524 B；HNSW 无 ar5iv 文本，改 PDF 首页 `pdftotext`）+ OpenAlex **3/3 `200`**（2,265 / 394 / 3,810，查询日 2026-11-23）+ arXiv `id_list` 批量 **`200` + atom**（TTT / HNSW；先一次 `429`，按 ≥3 s 限速重试成功）；三 ID 三处查重 **0 命中**；⚠️ **ID 误记在写入前拦截**：候选池旧记 VeriGen 为 `2308.15666`，`id_list` 实测该 ID 为 *Convergence of non-linear diagonal frame filtering for regularizing inverse problems*（math.NA，无关），真 ID `2308.00708` **已在表内 #210** ⇒ 整条剔除，改收 HNSW；本轮归属：vision **+1** · pretrain **+2** · data **+2** · harness **+2** · zhulong **+2** · designflow **0**（一篇可多线））
 
 
@@ -6380,4 +6383,55 @@
 | 与我们工作的关系 | **data（主 · 去重与近重复）**：句向量是语料去重 / 近重复检测的底座；SimCSE 说明「dropout 即最小数据增广」，我们做 embedding 去重时须固定 dropout 与池化方式，否则相似度阈值不可跨批次比较。<br>**harness（主 · 检索评测）**：STS 的 Spearman + 正/负例构造是可复用的检索评测口径；报告检索质量时须同时给正例来源与硬负例来源。<br>**pretrain（表征侧）**：对比目标能缓解各向异性，可作为一个无需标注的表征正则项候选，但须与下游任务增益一起验证。<br>**zhulong**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-23**（第九十八轮 · 15:00 时窗） |
 | 核验状态 | abs 页 **`200` / 43,059 B**，`citation_title` + `citation_date` = `2021/04/18` 逐字；OpenAlex **`200`（5,562 / 2021 / conference-paper / EMNLP）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 363. Training data-efficient image transformers & distillation through attention
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Training data-efficient image transformers &amp; distillation through attention |
+| 作者（前 3） | Hugo Touvron · Matthieu Cord · Matthijs Douze（共 **6** 位；另 Francisco Massa · Alexandre Sablayrolles · Hervé Jégou；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-12-23`） |
+| 会议 / 期刊 | OpenAlex `type=preprint`、`source` = arXiv（Cornell University）；arXiv `comment` 为空 ⇒ **本轮未核到正式会议版本**，不写 ICML（避免跨源口径混用） |
+| 被引数 | **5,971**（OpenAlex `10.48550/arxiv.2012.12877`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2012.12877> ｜ arXiv DOI `10.48550/arxiv.2012.12877` |
+| 一句话贡献 | **DeiT**：只用在 ImageNet 上、**不借助任何外部数据**的训练，就把纯注意力视觉 Transformer 做到可用——参考模型 **86M** 参数、**单台机器 < 3 天**、单裁 top-1 **83.1%**；核心新意是引入一个 **distillation token**，让学生通过**注意力**向教师（可以是 convnet）学习分类，带 convnet 教师时最高到 **85.2%**，迁移到其他任务也具竞争力。 |
+| 与我们工作的关系 | **vision（主 · 视觉塔训练预算）**：它把「ViT 必须靠上亿图文对预训练」这一前提拆开——给定固定数据预算时，**训练日程 + 强增广 + 蒸馏**可以替代数据规模；我们做视觉塔选型时必须把「数据量」与「训练日程」分开报告，不能把收益全归给数据。<br>**data（主 · 数据预算对照）**：ImageNet-only 的 83.1% 是我们「有限图文对下先对齐全量预训练还是先用小数据蒸馏」的对照点；预注册判据：若小数据蒸馏臂在下游不达全量预训练臂的 95%，则该替代路线不成立。<br>**harness（评测口径）**：distillation token 与 cls token 并存 ⇒ 评测时必须说明用哪个 token 头、单裁还是多裁；只报最高分不报口径的对比不可比。<br>**pretrain**：蒸馏接口（teacher logits 走注意力而非 KL 单点）可作为「大模型给小模型供信号」的一种候选实现，但需与 KL 蒸馏同算力对比。<br>**zhulong**：无直接建议（显式写「无」；非推理成本口径）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十九轮 · 15:3x 补轮） |
+| 核验状态 | abs 页 **`200` / 42,739 B**，`citation_title` + `citation_date` = `2020/12/23` 逐字；ar5iv 全文 **`200` / 213,678 B**；OpenAlex **`200`（5,971 / 2020 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 364. On Layer Normalization in the Transformer Architecture
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | On Layer Normalization in the Transformer Architecture |
+| 作者（前 3） | Ruibin Xiong · Yunchang Yang · Di He（共 **10** 位；末位 Tie-Yan Liu；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-02-12`） |
+| 会议 / 期刊 | OpenAlex `type=preprint`、`source` = arXiv（Cornell University）；arXiv `comment` 为空 ⇒ 不写会议名 |
+| 被引数 | **1,133**（OpenAlex `10.48550/arxiv.2002.04745`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2002.04745> ｜ arXiv DOI `10.48550/arxiv.2002.04745` |
+| 一句话贡献 | 用**均值场理论**解释「Transformer 为什么非要 learning-rate warm-up」：原版 **Post-LN**（LayerNorm 夹在残差块之间）在初始化时，**靠近输出层的参数期望梯度很大**，直接上大学习率就不稳，warm-up 是在绕这个坑；若把 LayerNorm 放进残差块内（即 **Pre-LN**），初始化时梯度性质良好，于是可以**去掉 warm-up**，在广泛任务上取得与基线相当的结果，同时**显著减少训练时间与超参调优**。 |
+| 与我们工作的关系 | **pretrain（主 · 训练稳定性）**：这是「层归一化位置 = 初始化梯度尺度」的原始论证；我们排 loss spike / 早崩时，必须先记录 LN 位置（Pre-LN 还是 Post-LN）与是否 warm-up，否则无法归因。预注册判据：同一配方只改 LN 位置，若 Post-LN 在 warm-up 后仍出现前 1k 步梯度爆炸 ⇒ 判为结构性问题而非数据问题。<br>**zhulong（主 · 成本口径）**：去掉 warm-up 等于省掉一段只升温不产出的步数；成本表必须写「是否含 warm-up 步数」，只报总步数的对比会掩盖这项差异。<br>**harness（评测口径）**：报告训练曲线时必须同时给 LN 位置、warm-up 步数与峰值学习率；缺任一项的长上下文 / 稳定性结论不进结论表。<br>**data**：无直接建议（显式写「无」；与数据配比无关）。<br>**vision**：无直接建议（显式写「无」；论文只做 NLP 实验）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十九轮 · 15:3x 补轮） |
+| 核验状态 | abs 页 **`200` / 44,669 B**，`citation_title` + `citation_date` = `2020/02/12` 逐字；ar5iv 全文 **`200` / 392,812 B**（页内明文 `dihe@microsoft.com` / `shuxin.zheng@microsoft.com`，仅作作者联系线索，**未用旧地址发信**）；OpenAlex **`200`（1,133 / 2020 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 365. Large Language Models are Zero-Shot Reasoners
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Large Language Models are Zero-Shot Reasoners |
+| 作者（前 3） | Takeshi Kojima · Shixiang Shane Gu · Machel Reid（共 **5** 位；另 Yutaka Matsuo · Yusuke Iwasawa；arXiv `citation_author` 逐字核） |
+| 年份 | **2022**（arXiv v1 `2022-05-24`） |
+| 会议 / 期刊 | **NeurIPS 2022**（arXiv `comment` = `Accepted to NeurIPS2022`；OpenAlex `type=conference-paper`） |
+| 被引数 | **10,093**（OpenAlex `10.48550/arxiv.2205.11916`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2205.11916> ｜ arXiv DOI `10.48550/arxiv.2205.11916` |
+| 一句话贡献 | **Zero-shot-CoT**：不写任何手写的 few-shot 示例，只在每个答案前加一句 **“Let's think step by step”**，就能把 LLM 的零样本推理拉起来——同一套单模板在算术（MultiArith / GSM8K / AQUA-RAT / SVAMP）、符号（Last Letter / Coin Flip）与逻辑（Date Understanding / Tracking Shuffled Objects）任务上全面超过普通零样本，例如 text-davinci-002 上 **MultiArith 17.7% → 78.7%**、**GSM8K 10.4% → 40.7%**，540B PaLM 上也有同量级提升；作者据此建议「在做微调数据或 few-shot 示例之前，先把零样本基线测透」。 |
+| 与我们工作的关系 | **harness（主 · 评测基线）**：这是推理评测的**最小最强零样本基线**——任何 CoT / 微调 / RL 的增益都必须先减去这条基线；报告推理成绩时须写明是否使用该单模板、模板原文是什么。预注册判据：<b>不报零样本基线的推理提升</b> ⇒ 不进结论表。<br>**data（主 · 先测基线再造数据）**：论文的结论直接约束数据侧——**先量零样本能力，再决定造多少推理数据**；我们做推理 SFT / 蒸馏前须先用同一模板测基座，避免用数据去补「一句提示就能拿到」的能力。<br>**pretrain（能力侧）**：CoT 能力在预训练后已部分存在（只是没被激发），这影响我们判断「推理能力该在预训练还是在后训练补」；须用同一模板在中间 checkpoint 上测，画出「能力何时出现」。<br>**zhulong（成本口径）**：单模板零样本几乎不增 token 预算，而多步 CoT 会显著增加输出 token；成本表须把「提示模板 + 平均输出 token」与准确率一起报，不能只报准确率。<br>**vision**：无直接建议（显式写「无」；纯文本推理实验）。<br>**designflow**：无直接建议（显式写「无」；不涉及 EDA 题面 / 判分）。 |
+| 首次收录 | **2026-11-23**（第九十九轮 · 15:3x 补轮） |
+| 核验状态 | abs 页 **`200` / 45,193 B**，`citation_title` + `citation_date` = `2022/05/24` 逐字；arXiv `id_list` **`200` + atom**（3,733 B / 1 entry，`comment` = NeurIPS2022）；OpenAlex **`200`（10,093 / 2022 / conference-paper）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
 

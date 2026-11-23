@@ -6,6 +6,9 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-23 15:3x 补轮）**：作者 **332** 人（编号最大 **332**）· X 已核验 **127**（本轮 **+0**：三位新增作者——Di He / Mingjie Liu / Haoxing Ren——主页或论文页均无 x.com / twitter.com 外链；`mingjieliu.github.io` 实测 `404` ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **152**（台账 #1–#152；今日 **12/12** 已达每日硬上限 ⇒ 本补轮不发信）· 回信 **0**（0/152）。以下历史快照行保留原文（不追改），计数以本行为准。
+
+
 > **当前计数（2026-11-23 09:0x）**：作者 **323** 人（编号最大 **323**）· X 已核验 **127**（本轮 **+1**：`@mehdidc` 经 `x.com/mehdidc` 经代理 `200` / 135,314 B，`og:title` = `mehdi cherti (@mehdidc) on X`，`og:description` = `PostDoc at Jülich Supercomputing Center (JSC), Germany / LAION.`，主页 `mehdidc.github.io` 亦挂该链接 ⇒ 双源；Yupan Huang 主页无 X 链接且 `x.com/HYPJUDY` 的 `og:title` 仅为 `X`（无 profile 内容）⇒ 记「未找到」；Ao Wang 无主页 ⇒ 记「未找到」，均不猜）· 已发信 **148**（台账 #1–#148；今日 8/12）· 回信 **0**（0/148）。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **当前计数（2026-11-23 06:0x）**：作者 **320** 人（编号最大 **320**）· X 已核验 **126**（本轮 **+2**：`@tanishqkumar07` 经 `x.com/tanishqkumar07` 经代理 `200` / 184,282 B，`og:title` = `Tanishq Kumar (@tanishqkumar07) on X`，`og:description` = `CS PhD student @StanfordAILab. prev math undergrad @Harvard.`；`@ZackAnkner` 经 `x.com/ZackAnkner` `200` / 171,351 B，`og:title` = `Zack Ankner (@ZackAnkner) on X`，`og:description` = `Prev @MIT.`；Yifei Zhou 主页无 X 链接 ⇒ 记「未找到 X」，不猜）· 已发信 **145**（台账 #1–#145；今日 5/12）· 回信 **0**（0/145）。以下历史快照行保留原文（不追改），计数以本行为准。
@@ -4670,4 +4673,43 @@
 | X 账号 | **未找到**（不猜 handle） |
 | 状态 | **待跟踪**（无公开明文邮箱 ⇒ 只建档不发） |
 | 备注 | 与 Yiqing Hu 同为 USTC 侧作者；建档用于后续若出现公开邮箱或主页时补全，避免现在猜地址污染回信率归因。 |
+
+### 330. Di He 贺笛
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Di He 贺笛（`语言=中文(判据=中文姓名「贺笛」+ 中文主页标题 + 北京大学中文机构；🚫 未因论文英文 / 旧邮箱 @microsoft.com 判英文)`） |
+| 机构 | **Peking University**（本人主页 `https://dihe-pku.github.io/` `HTTP 200` / **27,555 B**，`<title>About me - Di He (贺笛)</title>`，页内 `Assistant Professor` + `Peking University`） |
+| 代表论文 | **On Layer Normalization in the Transformer Architecture**（`2002.04745`，B 轨 #364，第三作者 / 该工作核心作者之一）；相关工作：Transformer 训练稳定性 |
+| 邮箱 | **di_he@pku.edu.cn**（来源：`dihe-pku.github.io` `200` / 27,555 B 页内明文；**当前机构主页地址**，未使用 ar5iv 全文里的旧地址 `dihe@microsoft.com`） |
+| 主页 | `https://dihe-pku.github.io/` `HTTP 200` / **27,555 B** |
+| X 账号 | **未找到**（主页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（本轮不发明信：今日 **12/12** 已达每日硬上限；地址与专属问题已备，留待下一时窗） |
+| 备注 | 建档目的：Pre-LN / warm-up 这条「训练稳定性」线索的第一手作者。若后续发信，问题应聚焦「均值场推导对 2B 规模、低精度训练是否仍成立」，而非摘要已有内容。 |
+
+### 331. Mingjie Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mingjie Liu（`语言=中文(判据=拼音姓名族属「Mingjie Liu」+ 中文姓名可还原；机构为 NVIDIA 美国 ⇒ 按「姓名族属优先于机构」判中文；若回信为英文再切换)`） |
+| 机构 | **NVIDIA**（ar5iv 全文 `2309.07544` 作者块与邮箱域 `@nvidia.com`） |
+| 代表论文 | **VerilogEval: Evaluating Large Language Models for Verilog Code Generation**（`2309.07544`，B 轨 #7，一作） |
+| 邮箱 | **mingjiel@nvidia.com**（来源：ar5iv 全文 `https://ar5iv.labs.arxiv.org/html/2309.07544` `200` / **181,517 B** 首页邮箱列表；单源） |
+| 主页 | **未找到**（`https://mingjieliu.github.io/` 实测 `404` ⇒ 不猜其他域名） |
+| X 账号 | **未找到**（无主页可核，论文页未挂 X；不猜 handle） |
+| 状态 | **待跟踪**（今日 12/12 已满，未发信） |
+| 备注 | 建档目的：designflow 线「题面 + 可执行判分」的直接作者；后续若发信，问题应落在「仿真比对判分对时序 / 复位语义的覆盖边界」这类题面设计细节。 |
+
+### 332. Haoxing Ren
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Haoxing Ren（`语言=中文(判据=拼音姓名族属「Haoxing Ren」+ 中文姓名可还原；机构 NVIDIA 美国 ⇒ 姓名族属优先判中文)`） |
+| 机构 | **NVIDIA**（ar5iv 全文 `2309.07544` 邮箱域 `@nvidia.com`） |
+| 代表论文 | **VerilogEval: Evaluating Large Language Models for Verilog Code Generation**（`2309.07544`，B 轨 #7，末位作者 / 通常为通讯） |
+| 邮箱 | **haoxingr@nvidia.com**（来源：同上 ar5iv 全文 `200` / 181,517 B 首页邮箱列表；单源） |
+| 主页 | **未找到**（本轮未取到可核个人主页；不猜） |
+| X 账号 | **未找到**（不猜 handle） |
+| 状态 | **待跟踪**（同一论文 ≤1 原则下，优先联系一作 Mingjie Liu；本条仅建档备选） |
+| 备注 | 建档目的：若一作无应答，按 §3「不催」原则也不追发同论文 ⇒ 本条长期只作关系网节点，不作补发对象。 |
 

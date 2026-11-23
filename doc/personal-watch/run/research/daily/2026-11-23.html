@@ -755,8 +755,68 @@
 </ul>
 
 
+<h2>15:3x 补轮 · 🅱 B 轨 +3 → 365 · 作者网 +3 → 332 · ✉ 0 封（今日 12/12 已满）</h2>
+
+<p style="font-size:13.5px;color:#59636e;">本补轮 A 轨不动：今日 5/5 已满（00:00–15:00 时窗完成），不凑第 6 篇；B 轨不占 5 篇额度。发信今日已达 12/12 硬上限 ⇒ 只做选题、建档与草稿，不发信。</p>
+
+<h3 class="sec">📚 B 轨经典论文（+3 → 365；覆盖轴：视觉塔预算 / 训练稳定性 / 推理零样本基线）</h3>
+
+<table class="plain">
+  <tr><th>#</th><th>论文 / 出处</th><th>被引</th><th>一句话贡献（作者自报数字）</th><th>归属线</th></tr>
+  <tr><td>363</td><td><b>Training data-efficient image transformers &amp; distillation through attention</b>（DeiT）<br><a href="https://arxiv.org/abs/2012.12877">arXiv 2012.12877</a> · 2020-12-23 · OpenAlex <code>preprint</code></td><td><b>5,971</b></td><td>ImageNet-only、无外部数据，<b>86M</b> 参数 ViT 在<b>单机 &lt;3 天</b>内训到单裁 top-1 <b>83.1%</b>；引入 <b>distillation token</b> 经注意力向教师学习，带 convnet 教师时最高 <b>85.2%</b>。</td><td>vision（主）· data · harness · pretrain</td></tr>
+  <tr><td>364</td><td><b>On Layer Normalization in the Transformer Architecture</b>（Pre-LN）<br><a href="https://arxiv.org/abs/2002.04745">arXiv 2002.04745</a> · 2020-02-12 · OpenAlex <code>preprint</code></td><td><b>1,133</b></td><td>均值场理论：<b>Post-LN</b> 初始化时靠近输出层的期望梯度大 ⇒ 必须 warm-up；把 LN 放进残差块内（<b>Pre-LN</b>）梯度性质良好 ⇒ <b>可去掉 warm-up</b>，结果持平而训练时间与调参更少。</td><td>pretrain（主）· zhulong · harness</td></tr>
+  <tr><td>365</td><td><b>Large Language Models are Zero-Shot Reasoners</b>（Zero-shot-CoT）<br><a href="https://arxiv.org/abs/2205.11916">arXiv 2205.11916</a> · 2022-05-24 · <b>NeurIPS 2022</b></td><td><b>10,093</b></td><td>只用一句 <b>“Let's think step by step”</b>、无任何手写 few-shot，同一模板在算术 / 符号 / 逻辑任务上超过普通零样本：text-davinci-002 上 <b>MultiArith 17.7% → 78.7%</b>、<b>GSM8K 10.4% → 40.7%</b>，540B PaLM 同量级提升。</td><td>harness（主）· data · pretrain · zhulong</td></tr>
+</table>
+
+<p style="font-size:13.5px;color:#59636e;">⚠️ <b>写入前两处拦截</b>：① 候选池把 VerilogEval 记成 <code>2309.07635</code>，abs 页实测为 *Decay estimates for one Aharonov-Bohm solenoid in a uniform magnetic field I*（math-ph，无关）；② 其真 ID <code>2309.07544</code> 经条目级复核 <b>已在表内 #7</b> ⇒ 整条剔除，改收 Zero-shot-CoT。</p>
+
+<h3 class="sec">👥 作者关系网（+3 → 332；X 已核验 127，本轮 +0）</h3>
+
+<table class="plain">
+  <tr><th>#</th><th>姓名 / 机构</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td>330</td><td>Di He 贺笛 · Peking University（Assistant Professor）</td><td><code>di_he@pku.edu.cn</code>（本人主页 <code>dihe-pku.github.io</code> <code>200</code> / <b>27,555 B</b> 页内明文；<b>当前机构地址</b>，未用 ar5iv 里的旧地址 <code>dihe@microsoft.com</code>）</td><td>未找到（主页无 X 外链）</td><td>待跟踪（今日 12/12 满，未发）</td></tr>
+  <tr><td>331</td><td>Mingjie Liu · NVIDIA（VerilogEval 一作）</td><td><code>mingjiel@nvidia.com</code>（ar5iv 全文 <code>200</code> / <b>181,517 B</b> 首页邮箱列表；单源）</td><td>未找到（<code>mingjieliu.github.io</code> <code>404</code>）</td><td>待跟踪</td></tr>
+  <tr><td>332</td><td>Haoxing Ren · NVIDIA（VerilogEval 末位）</td><td><code>haoxingr@nvidia.com</code>（同上 ar5iv 首页邮箱列表；单源）</td><td>未找到（不猜）</td><td>待跟踪（同论文 ≤1，只备选）</td></tr>
+</table>
+
+<h3 class="sec">✉ 作者请教信（本补轮 0 封 · 累计 152 · 回信率 0/152）</h3>
+
+<ul class="tight">
+  <li><b>本补轮 0 封</b>：今日已 <b>12/12</b>，按 <code>RESEARCH_MAIL_SPEC §3</code> 每日硬上限 ⇒ 只选题、建档、备问题，不发信；下一时窗再审。</li>
+  <li><b>回信状态复核</b>：<code>已回复</code> <b>0</b> / <code>无应答(&gt;14d)</code> <b>0</b> / <code>未到期</code> <b>152</b>；<b>0 封到期</b>（最早 <b>2026-11-25</b>，#1–#7 剩 2 天）；<code>replies/</code> 仍只有 <code>README.md</code>。</li>
+  <li><b>0 回信仍按待诊断信号处理</b>：显示名 <code>AI+EDA 招聘 · 自动</code>（待运维改）+ 通道只发不收（无 IMAP/POP3，回信可能已到但读不到）两项不变。</li>
+</ul>
+
+<h3 class="sec">🗣 voice_ready / 📰 news_ready（15:3x 补轮）</h3>
+<ul class="tight">
+  <li><b>voice_ready：本期无</b>（X 推文页需登录态，未做双源核验 ⇒ 不标 voice_ready）。</li>
+  <li><b>news_ready：0 条</b>（三篇均为 2020–2023 方法 / 基准论文，无「发布 / 首次 / 开源」事件点；不硬凑）。</li>
+</ul>
+
+<h3 class="sec">15:3x 补轮 · 对各线的可执行建议（6 线齐全）</h3>
+
+<table class="plain">
+  <tr><th>线</th><th>可执行建议（动作 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>把「LN 位置 × warm-up」作为一组必报配置</b>（<code>2002.04745</code>）：在 2B 配方上预注册两组对照——Pre-LN 无 warm-up vs Post-LN 带 warm-up，其余完全相同。判据：<b>Pre-LN 臂前 1k 步梯度范数峰值 &gt; Post-LN 臂</b> 或 <b>最终 loss 差 &gt; 0.01</b> ⇒ 结论记为「不适用本规模」，不改默认配方。</td></tr>
+  <tr><td><b>vision</b></td><td><b>视觉塔选型表新增「数据预算」列</b>（<code>2012.12877</code>）：同一塔在 (a) 仅域内数据 + 强增广 + 蒸馏、(b) 大规模图文对预训练 两条件下各报一行；判据：<b>只报单一数据条件</b>的视觉塔对比不进选型表。</td></tr>
+  <tr><td><b>harness</b></td><td><b>推理评测先报零样本基线</b>（<code>2205.11916</code>）：同一句模板原文（“Let's think step by step”）+ 是否使用该模板 + 平均输出 token；再报 CoT / 微调 / RL 的增益。判据：<b>不报零样本基线</b> ⇒ 该推理提升不进结论表。</td></tr>
+  <tr><td><b>data</b></td><td><b>造推理数据前先量零样本能力</b>（<code>2205.11916</code>）：先用单模板测基座，再决定推理 SFT / 蒸馏的数据量；登记「基线准确率 / 数据量 / 增益」。判据：<b>增益 &gt; 零样本基线提升</b> 才计入数据收益，否则视为「一句提示即可得」。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>成本表加「是否含 warm-up 步数」列</b>（<code>2002.04745</code>）：把 warm-up 段单独计价（只升温不产出）；判据：<b>两支总步数相同但 warm-up 不同</b>时，必须按有效训练步数折算成本，否则对比作废。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>沿用表内 #7 VerilogEval 的判分范式</b>（<code>2309.07544</code>，本轮复核已在表内、不重复收录）：新增题一律先要「golden 解 + 仿真比对脚本」，以 HDLBits 156 题为 L4 基线；判据：<b>无法给出仿真比对</b> ⇒ 最高只记 L2，不进 L4。</td></tr>
+</table>
+
+<h3 class="sec">附录 · 15:3x 补轮核验（可复核）</h3>
+<ul class="tight">
+  <li><b>arXiv</b>：<code>id_list=2205.11916,2012.12877,2002.04745</code> <code>200</code> + <code>atom</code>（<b>8,506 B / 3 entry</b>；<code>published</code> = 2020-02-12T00:33:03Z / 2022-05-24T09:22:26Z / 2020-12-23T18:42:10Z；Zero-shot-CoT <code>comment</code> = <code>Accepted to NeurIPS2022</code>）。</li>
+  <li><b>abs 页</b> 3/3 <code>200</code>（44,669 / 45,193 / 42,739 B，<code>citation_title</code> + <code>citation_date</code> 逐字）。</li>
+  <li><b>ar5iv 全文</b> 2/2 <code>200</code>（392,812 / 213,678 B；Zero-shot-CoT 未取 ar5iv，数字取自 arXiv 官方摘要）；三篇均<b>未做 PDF 逐页复核</b>。</li>
+  <li><b>OpenAlex</b> 3/3 <code>200</code>：1,133（2020 / preprint）/ 10,093（2022 / conference-paper）/ 5,971（2020 / preprint），查询日 <b>2026-11-23</b>。</li>
+  <li><b>去重</b>：三 ID 在 <code>PAPERS.md</code> 条目级查重 <b>0 命中</b>（B 轨不进 <code>SEEN.md</code> / <code>papers.jsonl</code>）；同批候选 VerilogEval <code>2309.07544</code> 复核<b>已在表内 #7</b> ⇒ 剔除不重复收。</li>
+  <li><b>X 可达性自检</b>：<code>x.com</code> 经 Mihomo 代理 <code>200</code>；三位新增作者无 X 依据 ⇒ 记「未找到」，<b>不猜 handle</b>。</li>
+</ul>
+
 <footer>
-  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-23 15:0x CST（含 00:00 / 03:00 / 06:00 / 09:00 / 12:00 / 15:00 时窗）
+  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-23 15:3x CST（含 00:00 / 03:00 / 06:00 / 09:00 / 12:00 / 15:00 时窗 + 15:3x B 轨补轮）
 </footer>
 
 </div>
