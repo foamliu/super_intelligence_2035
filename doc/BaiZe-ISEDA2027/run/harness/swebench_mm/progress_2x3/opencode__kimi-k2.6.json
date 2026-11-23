@@ -5919,9 +5919,16 @@
   "openlayers__openlayers-13975": {
     "instance_id": "openlayers__openlayers-13975",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1001.7,
+    "rc": 0,
+    "model_patch_len": 14071,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "`displacement = [0, 0]`\n\nThe fix is minimal and should not affect existing rendering tests (e.g. `regularshape-style` or `icon-scale`) because those either use `scale = 1` or `displacement = [0, 0]`.\n",
+    "stderr_tail": "                                                                   prettier/prettier\n✖ 30 problems (30 errors, 0 warnings)\n  30 errors and 0 warnings potentially fixable with the `--fix` option.\n\u001b[0m\n"
   },
   "openlayers__openlayers-13981": {
     "instance_id": "openlayers__openlayers-13981",

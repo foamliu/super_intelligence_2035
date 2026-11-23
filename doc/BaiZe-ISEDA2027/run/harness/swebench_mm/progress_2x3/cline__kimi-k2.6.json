@@ -5419,16 +5419,29 @@
   "openlayers__openlayers-11088": {
     "instance_id": "openlayers__openlayers-11088",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.7,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-11226": {
     "instance_id": "openlayers__openlayers-11226",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 549.2,
+    "rc": 0,
+    "model_patch_len": 2864,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "tion\\\"` that creates two polygons sharing a vertex `[10, 0]`, drags it to `[10, -5]`, and asserts both polygons are updated correctly\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-11377": {
     "instance_id": "openlayers__openlayers-11377",
