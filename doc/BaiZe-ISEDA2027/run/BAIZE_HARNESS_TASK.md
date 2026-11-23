@@ -1,5 +1,44 @@
 # BAIZE_HARNESS_TASK.md
 
+### 🔴 用户令 · 2026-11-23（**全量 infra 排查 + 夜间重跑（21:00–09:00）· 从 cline 起**）
+
+> **背景（已核实）**：7-way 里 cline 的 Pass% 被 93 个空 patch 拖低（opencode 仅 1 / hermes 仅 4）。运维已初查：cline 这 93 个空 patch 中 **58 个是 infra**（38 Token 额度 429 + 13 超时 + 5 上游 5xx + 2 鉴权），但最终 eval 的 `infra_or_quota` 却记为 0 —— infra 失败被并进「能力失败」桶，夸大了能力差距。详见 `reports/report_harness_cline_lag_analysis_zh.html`。
+
+#### 第一步 — 深入排查各线真实 infra failed case 数量（7 路全查）
+
+1. 对**每一路**（cline-patched / codex / opencode / claude-code / pi / hermes / deepseek-harness），把 eval 里所有未 resolved 的 case，按 `progress_glm53_*.json` 的 `stdout_tail`/`stderr_tail`/`quota_blocked`/`timeout` 逐题分类（复用并推广 `swebench_verified_full/c2_cline_R2233.py` 的框架）：
+   - **infra**：Token 额度/429/rate-limit、超时、上游 500/502/503/504、鉴权 401/403/forbidden/适配器、`quota_blocked`/`timeout` 标志位。
+   - **ability**：确实产出了 real patch、但 apply+test 失败（这是能力，不重跑）。
+   - **待定**：空 patch 且 rc=0 无报错（无法从 tail 判定，如实标注、不强挤进任一桶）。
+2. 产出**每路一张表**：`infra_failed（需重跑）/ ability_failed（不重跑）/ 待定（需 transcript）` 三列 + 逐题清单，落一份中文 HTML（复用报告纪律：0 script/0 外链）。
+
+#### 第二步 — 重跑 infra failed（从 cline 起，按 infra 数量降序）
+
+1. **只重跑 infra 类**（含「待定」里的空 patch —— 空 patch 重跑成本低、大概率能出分），🚫 不重跑 ability 类（那是能力，重跑无意义、属造假风险）。
+2. **顺序**：cline → 其余按 infra 数量降序。
+3. 重跑 = 重新 predict（对 infra 空 patch 题再跑一次 cline 出 patch）→ 复核 → eval → 把 resolved/failed/infra 结果**合并回** `eval_glm53_*.json`，并 REGEN 7way 报告。
+
+#### 第三步 — 重跑时间窗：每晚 21:00 – 次日 09:00（12 小时，避高峰）
+
+1. **只在窗口内启动/继续重跑**；判断 = 本地时间小时数：
+   ```bash
+   H=$(date +%H); [ "$H" -ge 21 ] || [ "$H" -lt 9 ] && echo 窗口内 && run_rerun || echo 窗口外 && park
+   ```
+2. 窗口外（09:00–21:00）：**只 park**——不启动新 predict/eval，把重跑队列存着，等下一个 21:00 窗口。
+3. 原因：避开 glm-5.3-flash 网关白天使用高峰（额度 429 正是高峰产物）+ 白天 CPU 争抢。
+
+#### 纪律（沿用既有护栏，不得因"夜间"放松）
+
+- 重跑过程**必须继续守硬护栏**：docker eval `--memory 128g --cpus 16`、宿主 predict `ulimit -v 209715200` + nice19 + OMP≤8、`harness_resource_guard.sh`（PID931671）常开、pretrain step ≤7.4s 越界即降载、load 闸。
+- 并发克制：夜间重跑也**限并发 ≤2 路**，别再触发额度。
+- 只动本线文件；不碰 pretrain/data/vision/zhulong。额度 429 重试要带**退避**（如指数退避 + 重试上限），不要裸刷网关。
+- 诚实：重跑结果标注「夜间重跑」口径；`WAITING` 按窗口与在途任务管理。
+
+#### 交付
+
+- ① 中文 HTML：`reports/report_harness_infra_rerun_plan_zh.html`（各线 infra/ability/待定 三列清单 + 重跑顺序 + 窗口策略 + 每晚进度）。
+- ② 每晚窗口结束后，7way 报告 REGEN（resolved 更新后按 resign 序重排）；`MEMORY` 心跳记「infra 重跑：已回收 X 题」。
+
 ### 🔴 用户令 · 2026-11-20 16:3x（**harness 解冻 · 恢复评测 · 覆盖 14:5x 冻结令**）
 
 > Phase 0 冻结态已验收通过（loop CPU 节流 LIVE / 护栏守护 PID931671 存活 / 自检 clean / pretrain step~7.28s≤7.4s / 无 eval 容器）。现**解冻**，恢复被打断的评测。🚫 解冻 ≠ 回到无护栏态：**Step 1 硬护栏必须先落地，Step 2 再分批恢复**。
