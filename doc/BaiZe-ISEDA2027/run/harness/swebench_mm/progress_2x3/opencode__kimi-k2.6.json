@@ -5573,16 +5573,30 @@
   "openlayers__openlayers-12467": {
     "instance_id": "openlayers__openlayers-12467",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1791.8,
+    "rc": 0,
+    "model_patch_len": 11127,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "heck` ✅ passed\n- `npm run test-node` ✅ 1714 tests passed\n\nThe `npm run lint` failed due to a missing `@babel/eslint-parser` dependency in the test environment, which is unrelated to the code changes.\n",
+    "stderr_tail": "Builder to include snapToPixel placeholder in DRAW_IMAGE instructions\n[✓] Update Executor to read style snapToPixel and combine with renderer snapToPixel\n[✓] Verify changes compile/run correctly\n\u001b[0m\n"
   },
   "openlayers__openlayers-12683": {
     "instance_id": "openlayers__openlayers-12683",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 766.6,
+    "rc": 0,
+    "model_patch_len": 2093,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "h color + pixelRatio=2**: origin is correctly scaled (`16 → 32`)\n  - **Without color + pixelRatio=2**: origin remains unscaled (`16 → 16`)\n  - **Hit detection**: origin is never scaled (remains `16`)\n",
+    "stderr_tail": "045, limit=30]\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore codebase to find Icon style rendering code\n[✓] Identify root cause of offset issue with color + pixel ratio\n[✓] Implement fix\n[✓] Test the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-12695": {
     "instance_id": "openlayers__openlayers-12695",
