@@ -1,4 +1,6 @@
-WAITING: 0（r1233: **MCP 130th OK**(open_session task_id=shardD_r1233/eval_id=designflow_D_r1233 → workdir / run_commands pwd+hostname=hfhds201+.75 summary.tsv 读 OK / declare_done+close pending) · **台账修复**: acja4 早先已交付为 MraNameBlockTreeProduce-001 但台账残留 claimed → `mark --status case` 修正 · **mc≥5 池已竭(止损)**: summary.tsv(11-24) shard-D mc5-100 top50 dedup 全4shard台账 → 仅 2 fresh(k6clp/wd4yx)，均 r1232 已 peek 判 weak；本轮 re-peek wd4yx=leo7c@.95 mc96 [turn1=交互式反相器 pyAether 原理图搭建(L2 不可离线判) / turn2=nand2.sp 分析Q&A(答案 NAND2 可从文件名推得,无真算)] → 确认 weak；fresh 高 mc(sjzm0/sstk3/ijh76/fbz0w) 全 cross-shard 被 C 认领(virtuoso/schematic=C 域) · **转 §4.9 anti-hardcode 普查(2026-11-21 P0 令)**: 抽样 4 条 → VmMhlAlterStats-001 PASS(6neg全FAIL含hardcode_A+core_deleted) / CrcAlertMeasFix-001 PASS(5neg全FAIL含print_only) / **NetlistSimSubmitProduce-001 GAP·严重(reference/ 目录整体缺失→case无法评测)** / **SpfBlCouplingClassifyProduce-001 GAP·轻微(三假文件齐全但 negative_selftest.py 相对路径 bug→动态未验)**；产出 designflow/anti_hardcode_audit_all.tsv + reports/anti_hardcode_audit_zh.md · 📊 trace 覆盖率: 620/4398≈14.1%(acja4 补 mark→621); 📦 体积: TASK≈22KB / MEMORY≈31KB; DEBT: 0; flag: r1233 = MCP 130th OK + 台账修复 + mc≥5 池竭止损 + anti-hardcode 普查首版 4 条(2 PASS/2 GAP)）
+WAITING: 0（r1234: **MCP 131st OK**(open_session task_id=shardD_r1234/eval_id=designflow_D_r1234 → workdir 39ms / run_commands 待 close) · **anti-hardcode 普查复测·2 GAP 全清零**: ① NetlistSimSubmitProduce-001 = **误判推翻**(r1233 查了带 EDA-Eval-DesignFlow- 前缀路径，实际 ref dir 在 reference/NetlistSimSubmitProduce-001/ 无前缀；selftest 12/12 PASS + 3 neg 全 FAIL → PASS) ② SpfBlCouplingClassifyProduce-001 = **3 bug 修复**(NEG_DIR/ref 双重拼 CASE 名 / exec 命名空间未捕获 / 未暂存 hidden+A 输入+未捕 AssertionError → 修后 REF 15/15 PASS + 3 neg 全 FAIL → PASS)；更新 anti_hardcode_audit_all.tsv 4 行全 PASS + reports/anti_hardcode_audit_zh.md 改 0 GAP + 教训(路径前缀一致性/selftest 三类 bug 模板) · **mc≥5 池仍竭**(r1233 止损结论不变，本轮无新候选) · 📊 trace 覆盖率: 621/4398≈14.1%(不变); 📦 体积: TASK≈22KB / MEMORY≈31KB; DEBT: 0; flag: r1234 = MCP 131st OK + anti-hardcode 2 GAP 清零(1 误判推翻+1 修复) + 普查首版 4/4 PASS）
+
+> r1233 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1234」（r1234 释体积；原文见 daily_D_2026-11-24_r1233.md）
 
 > r1232 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1233」（r1233 释体积；原文见 daily_D_2026-11-24_r1232.md）
 
@@ -8,7 +10,7 @@ WAITING: 0（r1233: **MCP 130th OK**(open_session task_id=shardD_r1233/eval_id=d
 
 > r1229 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1230」（r1230 释体积；原文见 daily_D_2026-11-24_r1229.md）
 
-**`.75` 可达（eda_flow MCP OK，129次确认 r1105-r1232）+ 证据：r1232 [2026-11-24 shardD_r1232] open_session(task_id=shardD_r1232/eval_id=designflow_D_r1232)→workdir / run_commands(awk summary.tsv shard-D mc≥5 候选 dedup + peek k6clp/i101z/wd4yx/lyg4g/grdte/h2mdq/rt0k1/k67th) / read_file OK / declare_done+close cleaned · 同结论适用 A/B/C · WAITING: 0**
+**`.75` 可达（eda_flow MCP OK，131次确认 r1105-r1234）+ 证据：r1234 [2026-11-24 shardD_r1234] open_session(task_id=shardD_r1234/eval_id=designflow_D_r1234)→workdir(39ms) / 本轮主战场=本机 anti-hardcode 复测修复(SpfBl selftest 3 bug 修+NetlistSim 误判推翻) / declare_done+close 待收尾 · 同结论适用 A/B/C · WAITING: 0**
 
 > r1228 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229」（r1229 释体积；原文见 daily_D_2026-11-24_r1228.md）
 
