@@ -1,14 +1,17 @@
-# anti-hardcode 普查报告（D 线抽样首版 · 2026-11-24 r1233，r1234 复测修正）
+# anti-hardcode 普查报告（D 线 · 2026-11-24 r1233 首版 / r1234 复测 / r1235 扩样至 20）
 
 ## 范围
-`benchmarks/EDA-Eval-DesignFlow/cases/D/` 抽样 4 条（覆盖 11-20~11-23，k=12~15）。
+`benchmarks/EDA-Eval-DesignFlow/cases/D/` 抽样 **20 条**（覆盖 11-20~11-24，k=0~15，优先 k<12 老题）。
+方法：对每个 case 跑 `negative/negative_selftest.py`（REF 须 PASS，全部 negative/fake 须 FAIL）。任一假提交 PASS ⇒ GAP。
+判据：§4.9 (a)空壳 (b)只 print 期望 (c)删核心逻辑 三假全 FAIL。
 
 ## 汇总
-- 总数(抽样): 4
-- GAP 数: 0
-- PASS 数: 4
+- 总数(抽样): **20**
+- GAP 数: **0**
+- PASS 数: **20**
 - 按 shard: 全 D
-- 按年度: 11-20(1) 11-21(1) 11-23(2)
+- 按 k: k=0(1) k=9(1) k=11(4) k=12(12) k=15(2)
+- 按年度: 11-20(1) 11-21(1) 11-23(4) 11-24(14)
 
 ## r1234 复测修正（推翻 r1233 的 2 条 GAP 判定）
 1. **NetlistSimSubmitProduce-001**：r1233 误判为 GAP·严重（声称 `reference/` 整体缺失）。
@@ -22,29 +25,41 @@
    - 复测：REF 15/15 PASS + N1_print_only/N2_hardcode_a/N3_core_deleted 全 FAIL。
    - 结论：**PASS**。
 
-## PASS 案例（anti-hardcode 闸门有效）
-- VmMhlAlterStats-001: 6 neg 全 FAIL(含 hardcode_A + core_deleted)，REF PASS。
-- CrcAlertMeasFix-001: 5 neg 全 FAIL(含 print_only)。
-- NetlistSimSubmitProduce-001: 3 neg 全 FAIL(empty/print_only/core_deleted)，REF 12/12 PASS。
-- SpfBlCouplingClassifyProduce-001: 3 neg 全 FAIL(print_only/hardcode_a/core_deleted)，REF 15/15 PASS（r1234 修 selftest 后）。
+## r1235 扩样（+16 条，累计 20，全 PASS）
+新增 16 条全部 selftest rc=0（REF PASS + 全 neg FAIL），0 GAP：
+| case_id | k | selftest 信号 |
+|---|---|---|
+| HierNameViolateCrossProbeProduce-001 | 0 | "SELFTEST OK: all negatives FAIL"（注:k=0=test_rationale 缺"N条断言",metadata 闸门 gap,非 check 无牙）|
+| Ddr5ClDelayPivot-001 | 9 | "NEGATIVE SELF-TEST: ALL PASS"（5 neg 全 correctly FAILed）|
+| AvcPatternCompare-001 | 11 | REF:PASS / NEG_RC=0 n_fail=6/6 |
+| InvSpiceSim-001 | 11 | NEG_RC=0（3 §4.9 deg + hardcode_b 全 FAIL）|
+| NetlistBroadcastFlow-001 | 11 | NEG_RC=0（deg_print_only/core_deleted FAIL）|
+| Waveform-001 | 11 | REFERENCE check=True / neg_fake_hardcode_b FAIL |
+| AeDelCellCurCellProduce-001 | 12 | "ALL NEGATIVES FAIL — selftest PASS" |
+| CellConstraintsTplProduceQA-001 | 12 | 3 stub 全 pass=False（4/12,7/12,7/12）|
+| AddrRtlGateMap-001 | 12 | rc=0（core_deleted/empty 11 conds FAIL）|
+| AetherPartialNetlistExtractQA-001 | 12 | REF_PASS=True NEG_RC=0（§4.9 empty_zip FAIL）|
+| AnalogDlyCellLogicDeriveProduce-001 | 12 | rc=0（core_deleted/hardcode_a FAIL as expected）|
+| AutoCellRmAvPf-001 | 12 | ref PASS:True / hardcode_b FAIL(o) |
+| ClcTruthTableFlowExplainQA-001 | 12 | rc=0（hardcode_a/always_ok false）|
+| DbcoaZqCalCircuitExplainQA-001 | 12 | rc=0（print_only/core_deleted FAIL correct）|
+| Ddr6OdtModifyMethodQA-001 | 12 | rc=0（print_only/core_deleted rc=1 FAIL as expected）|
+| EccTopCircuitCompare-001 | 12 | rc=0（empty/hardcode_A/core_deleted 全 FAIL_expected）|
 
 ## 教训
-- **路径前缀一致性**：cases/D/ 的 JSON 文件名带 `EDA-Eval-DesignFlow-` 前缀，但部分 reference/ 子目录不带前缀（如 `NetlistSimSubmitProduce-001`）。普查脚本必须以 case JSON 内的实际引用为准，不能假设 ref dir 名 == case 文件名。后续普查脚本应用 `json.load(cases/D/<f>)` 解析出真实 ref 路径，而非字符串拼接前缀。
+- **路径前缀一致性**：cases/D/ 的 JSON 文件名带 `EDA-Eval-DesignFlow-` 前缀，但部分 reference/ 子目录不带前缀（如 `NetlistSimSubmitProduce-001`、`AvcPatternCompare-001`、`Ddr5ClDelayPivot-001`）。普查脚本必须以 case JSON 内的实际引用为准 / 双候选探测，不能假设 ref dir 名 == case 文件名。r1235 批量脚本已用 `ref_dir_for(cid)` 双候选探测，0 误判。
 - **selftest 三类常见 bug 模板**：路径双重拼接 / exec 命名空间未捕获 / 未暂存 hidden 输入 + 未捕异常。后续造题 selftest 模板须含此四项。
-
-## 方法
-对每个 case 跑 `negative_selftest.py`（REF 须 PASS，全部 negative 须 FAIL）。任一假提交 PASS ⇒ GAP。
-判据：§4.9 (a)空壳 (b)只 print 期望 (c)删核心逻辑 三假全 FAIL。
+- **selftest 输出格式不统一**：各 case 的 PASS/FAIL 摘要关键词不一（"SELFTEST OK" / "NEG_RC=0" / "ALL PASS" / "ref PASS:True"）。统一判据用 **rc==0**（selftest 自身断言通过 = REF PASS + 全 neg FAIL），最稳。
+- **k=0 metadata gap**：HierNameViolateCrossProbeProduce-001 的 `test_rationale` 缺"N条断言"格式（k 解析为 0），anti-hardcode 闸门本身 PASS，但 §4.6 test_rationale 闸门有 gap——属另一条治理线，不影响本普查判定。
 
 ## 复现命令
 ```bash
-cd benchmarks/EDA-Eval-DesignFlow/reference/<case_id>      # 或 .../negative/
-python3 negative_selftest.py
-# 注意：部分 ref dir 无 EDA-Eval-DesignFlow- 前缀，以实际目录为准
+cd benchmarks/EDA-Eval-DesignFlow
+# 单条（注意部分 ref dir 无 EDA-Eval-DesignFlow- 前缀，以实际目录为准）
+cd reference/<case_id>/negative && python3 negative_selftest.py   # rc=0 ⇒ PASS
 ```
 
 ## 后续
-- 本轮抽样 4 条全 PASS（mc≥5 池已竭，止损转 anti-hardcode，见 MEMORY r1233/r1234）。
-- 下轮继续抽样 ≥20 条，优先 k<12 老题 + 11-17 初始批次。
-- 普查脚本须改为从 case JSON 解析真实 ref 路径，避免前缀误判。
-- GAP 案例按职责边界处置：D 自己的 case 直接修；A/B/C 的 case 写 discuss/board.md P0 条目。
+- 本轮抽样 20 条全 PASS（mc≥5 池已竭，止损转 anti-hardcode，见 MEMORY r1233~r1235）。
+- 已达 §4.9 普查 ≥20 条首版目标。后续轮次可继续扩样（D 共 642 case / 306 带 selftest），或转 test_rationale 补断言清单 / ledger 治理。
+- GAP 案例按职责边界处置：D 自己的 case 直接修；A/B/C 的 case 写 discuss/board.md P0 条目（本批全 D，无跨线）。
