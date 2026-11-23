@@ -1,3 +1,9 @@
+## r1090 (归档 2026-11-23)
+
+WAITING: 0（11-23 **r1090 0-case 治理轮（fresh 池重建+修正 r1089 dedup bug+claim 5ew0s）** · **.75 OK**: eda_flow session(...shardB-r1090-peek_0) open+ssh/scp 通 hfhds201/hfeg0plg100/hfeg0plg69. scan 仍 ssh_eda_search_20261123_064315. **🔴 修正 r1089 dedup bug**: r1089 报 fresh_b_spice_r1089_uniq.tsv=1376/153 fresh — 但 ledger sid 含 `.messages.json` 后缀而 pool sid 已 strip，dedup 失配导致 ledger 命中被漏判为 fresh（膨胀）。本轮规范化两端 sid（strip `.messages(.archive).json`）重算 → **真 fresh=90**（见 fresh_b_spice_r1090_fresh.tsv，uniq=1204）。wvtff(r1089 case) 现正确 excluded ✓。 **5 候选 peek**: 9t9um(joeyl mc245 opamp)=DelvtoNetlistModifier 近dup skip; g1i2s(shanliny mc176 mos_compara)=MosComparaReportGen 近dup skip; h7j6o(e0048916 mc49)=GUI 启动 weak skip; samw8(jason1t mc126)=layout 读取 C-ish skip; **5ew0s(wendy1w@hfeg0plg100/mc147) peek OK**: U0 '读取 WRTIME_V4_tWRTBV4SW_schematic.netlist 然后 *****PVT***** .lib ...tt .lib...' → 网表+PVT .lib 分析任务(B spice_sim, 89msgs/1.1MB, accessible ✓)。 **claim**: 5ew0s → ledger_B claimed ✓ (next-round 合成目标)。 **指标**: 📊 trace 覆盖率: covered=567/target=4398=12.9%(mc≥10, 不变). 🎯 通过率: 最近20条 20/20=100%(观察值). 📦 MEMORY_B<32KB ✓. **DEBT: 1**（5ew0s 深读未合成，下轮首选；r1057 campaign「55 legacy 缺 selftest」余 53）。 **下一步**: r1091 深读 5ew0s → 合成 PVT/netlist 分析 case；或从 fresh_b_spice_r1090_fresh.tsv(余 89) 选料(top: 2m9z2/xkwxk junlingw GENGUI 近dup 风险; 5z9ge han1liu mc102; a9yov junxu mc65 opamp; ofbxi guangmingz mc107)。
+
+---
+
 # ARCHIVE_OPERATOR_DESIGNFLOW_B.md — shard B 已闭合轮次原文归档
 
 > 本文件存 shard B 已闭合轮次的完整心跳原文；MEMORY_DESIGNFLOW_B.md 仅留 1 行指针。
