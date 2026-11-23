@@ -1691,3 +1691,17 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794882363587_ycoi6	t0003117	hfeg0pkn004	99	spice_sim	case	EDA-Eval-DesignFlow-SpiceNetlistFaultAnalyzer-001	2026-11-23 12:39	
 1795155095017_ixdcf	junlingw	hfeg0pkn005	213	spice_sim	case	EDA-Eval-DesignFlow-ProbeBlockProduce-001	2026-11-23 13:01	
 1795165640416_g1i2s.messages.json	shanliny	hfeg0plg107	176	spice_sim	case	EDA-Eval-DesignFlow-SpTemplatePvtGroupRender-001	2026-11-23 13:23	
+1795137081100_sniau	junlingw	hfeg0pkn005	193	spice_sim	case	EDA-Eval-DesignFlow-PowerSupplyDcTypeGenProduce-001	2026-11-23 13:51	
+1795000312337_9t9um	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795000506084_gn43h	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795000699164_dq5p2	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795000046498_lsazo	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795003698691_mvi3y	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795003838435_0dnig	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795051474522_ikyvh	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795052463640_9qw7j	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795052983739_pzwk5	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795056837031_jnv8r	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795077814739_m9brd	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795080095563_6pc5q	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
+1795052969133_1fj8l	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
