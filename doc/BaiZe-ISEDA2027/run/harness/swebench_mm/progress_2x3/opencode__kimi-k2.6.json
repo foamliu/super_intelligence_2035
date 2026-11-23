@@ -5146,9 +5146,16 @@
   "highlightjs__highlight.js-3278": {
     "instance_id": "highlightjs__highlight.js-3278",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1899.3,
+    "rc": 0,
+    "model_patch_len": 2268,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "he top‑level `CLASS_OR_EXTENDS` rule, so `string` may get the `title.class.inherited` scope. That is a separate, much smaller issue; the critical “swallowing the rest of the file” bug is now fixed.)*\n",
+    "stderr_tail": "  response.ignoreMatch();\n         }\n       }\n\u001b[0m\n\u001b[0m$ \u001b[0mgit status --short\nM src/languages/javascript.js\n?? test/markup/typescript/generics.expect.txt\n?? test/markup/typescript/generics.txt\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3287": {
     "instance_id": "highlightjs__highlight.js-3287",

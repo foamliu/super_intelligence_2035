@@ -4462,9 +4462,16 @@
   "eslint__eslint-8850": {
     "instance_id": "eslint__eslint-8850",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1747.6,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "08,\"outputTokens\":45071,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":1744051,\"text\":\"The operation timed out.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "s (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n{\"ts\":\"2026-11-23T02:32:47.405Z\",\"type\":\"error\",\"message\":\"The operation timed out.\"}\n"
   },
   "eslint__eslint-9348": {
     "instance_id": "eslint__eslint-9348",
@@ -4481,9 +4488,16 @@
   "eslint__eslint-9436": {
     "instance_id": "eslint__eslint-9436",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 746.6,
+    "rc": 0,
+    "model_patch_len": 14087,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "\\\"Literal\\\"\\n  }\\n]\\n```\\n\\nOnly the constant conditions (`true`) are underlined, not the entire `if` block or `something(...)` call.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "grommet__grommet-2061": {
     "instance_id": "grommet__grommet-2061",
