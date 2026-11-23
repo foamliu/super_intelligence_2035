@@ -1491,3 +1491,4 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1795333820194_mx3xq	eunicef	hfeg0pkn004	192	pg_layout	parked		2026-11-23 23:52	weak: single-word user input 'aether', no real design-flow task
 1794924287186_13jki	jzeng	hfeg0pkn002	160	physical_verify	case	V4PatchMultiRuleSkip-001	2026-11-24 00:18	
 1794799001872_zjplv	xxchen	hfeg0plg18	214	physical_verify	case	EDA-Eval-DesignFlow-SearchDrcLaunchSqliteFix-001	2026-11-24 01:09	
+1789975385741_egm8i.messages.json					case	EDA-Eval-DesignFlow-AutoPlacementStep3-001	2026-11-24 01:30	r1028: force-claim from D parked(wrong-domain); real C pg_layout task, k=16 all gates pass

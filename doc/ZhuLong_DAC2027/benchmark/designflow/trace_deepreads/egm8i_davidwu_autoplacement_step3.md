@@ -5,7 +5,7 @@
 - mc=98, keywords: aether:704; schematic:283; pyaether:126; floorplan:124; dbopencv:78; drc:47; verilog:19; cmos:18
 - agent: lead, deepseek-v4-flash, cwd `/proj/train/V0_fillimplant_drgqa/workdir/davidwu`
 - status: idle (job still running at end per U#57)
-- 台账: was parked in shard D ("weak/non-D-domain/debug/skill-invoke") — **误判**, 实为 C 域 pg_layout flow-driving; r1027 force-claim 到 C
+- 台账: was parked in shard D ("weak/non-D-domain/debug/skill-invoke") — **误判**, 实为 C 域 pg_layout flow-driving; r1028 force-claim 到 C
 
 ## 真实任务 (58 user_input, 核心 3 条)
 
