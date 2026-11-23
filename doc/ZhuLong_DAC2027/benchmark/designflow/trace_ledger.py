@@ -75,10 +75,13 @@ def _set_shard(s):
 
 COLS = ["session_file", "user", "host", "match_count", "domain", "status",
         "case_id", "updated_at", "note"]
-VALID_STATUS = ("claimed", "deepread", "case", "parked", "seeded")
+VALID_STATUS = ("claimed", "deepread", "case", "parked", "seeded", "retired")
 # 'seeded' = shard agent 已把 trace 种入 jsonl (出完 case)，等同 'case' 计入覆盖
+# 'retired' = 已下线 case (intent-dup / subset / wrong-domain 迁出 / over_constrained)，
+#   保留台账行供审计；不计入覆盖(COVERED)但计入已动过(TOUCHED)——session 已看过不应回 fresh 池
+#   (r1035: 11-15 重做令 "标 retired + 理由, 从通过率分母剔除, jsonl 行保留")
 COVERED = ("case", "seeded")                   # 计入"已覆盖"
-TOUCHED = ("claimed", "deepread", "case", "parked", "seeded")   # 计入"已动过"
+TOUCHED = ("claimed", "deepread", "case", "parked", "seeded", "retired")   # 计入"已动过"
 
 
 def _now():
