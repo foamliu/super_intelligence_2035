@@ -1,6 +1,17 @@
-> 📌 索引：§A.39 = 2026-11-23 07:0x（第 336 轮）· §A.38 = 2026-11-22 21:3x（第 335 轮）· §A.37 = 2026-11-22 18:0x（第 334 轮）· §A.36 = 2026-11-22 15:3x（第 333 轮）· §A.35 = 11-22 15:2x（第 332 轮）· §A.34 = 11-22 12:3x（第 331 轮）· §A.33 = 11-22 09:3x（第 329 轮）· §A.32 = 11-22 07:3x（第 328 轮）· §A.31 = 11-21 18:0x（第 326 轮）
+> 📌 索引：§A.40 = 2026-11-23 10:0x（第 338 轮）· §A.39 = 2026-11-23 07:0x（第 336 轮）· §A.38 = 2026-11-22 21:3x（第 335 轮）· §A.37 = 2026-11-22 18:0x（第 334 轮）· §A.36 = 2026-11-22 15:3x（第 333 轮）· §A.35 = 11-22 15:2x（第 332 轮）· §A.34 = 11-22 12:3x（第 331 轮）· §A.33 = 11-22 09:3x（第 329 轮）· §A.32 = 11-22 07:3x（第 328 轮）· §A.31 = 11-21 18:0x（第 326 轮）
+
+## §A.40 第 338 轮实测（2026-11-23 10:0x · 4 条 · **footer 浮层把「预览并发布」遮成 `SPAN 定时发布` / 二次点「预览并发布」会清空编辑器 / 后台列表 URL 走 `<a class=title>` / 新标签页复核要手写 `Page.navigate`**）
+
+| # | 要点 | 实证 |
+|:--|:--|:--|
+| 1 | 🔑 **`预览并发布` 是页面底部 `position:fixed` 工具条里的按钮；正文很长（`sy≈1500`）时，工具条会被顶起并把按钮位置让给「定时发布」（`SPAN`）** ⇒ 按「文本 = 预览并发布」找按钮会落空，按老坐标点会点到 `SPAN 定时发布` 或什么都不发生。**判定法**：先读 `FOOT {footPos:'fixed', footY, sy, ih, vh, title}`；若 `DIALOG {hasConfirm:false, hasClose:false}` 而 `FOUND {"定时发布":[x,y,"SPAN"]}` 同时出现 ⇒ 就是被遮挡，**不要重复点** | 第 337 轮 `once5.out`：`FOOT {'x':1123,'y':933,'footPos':'fixed','footY':899,'sy':1464,'ih':967}` + `DIALOG {"hasConfirm":false}`；`fin2.out`：`FOUND {"定时发布":[998,933,"SPAN"]}` 且 `MODAL {"hasPreview":false}` ⇒ 该轮 09:50–09:54 反复失败、未发出 |
+| 2 | 🚫 **同一发布页上第二次点 `预览并发布` 会把编辑器重置**（标题与正文全清，`共 0 字`）—— 因为第 1 次点击其实已打开过编辑/预览态，第 2 次命中「返回编辑 → 关闭 → 重置」的残留 state。**铁律：每篇发布动作在同一标签页只跑一轮**；一旦读到 `共 0 字` ⇒ 关掉该页、`/graphic/articles` → `publish` 重开（`STATE {ed:true, title:"", words:"共 0 字", imgs:0}` 才算干净），**在干净页上重填**，不要在坏页上修补 | 第 337 轮 `tst.out`：`TID CLICK_预览 {'x':894,'y':933,'w':2048,'h':967} hasClose True` → `NEW GEO {"title":"","vw":1186}` ⇒ 编辑器被清空；`dbg2.out` 同源复现 `MODAL {hasPreview:true}` 但正文已空 |
+| 3 | ⚠️ **后台 `/profile_v4/graphic/articles` 列表里每行有 2 个同 href 的 `<a>`（一个空文本、一个是 `a.title`）** ⇒ 用「文本 = 标题」筛 `a` 会拿到空的；应 `[...document.querySelectorAll('a')].filter(a=>/graphic|article|item/.test(a.getAttribute('href')))` 再按 `innerText` 匹配，或直接取 `a.title`。拿到的形如 `https://www.toutiao.com/item/<id>/?enter_from=mp_group_management`，**去掉 query 后即公开页 URL**（`/article/<id>/` 与 `/item/<id>/` 等价） | 第 338 轮 `geturl.out`：`{cnt:91, links:[]}`（只用 `href` 且 `innerText` 为空的按 `slice(0,4)` 取了空的链接）；`findlink.py` 打出 `{h:"https://www.toutiao.com/item/7711181219639149092/?enter_from=mp_group_management", t:"第一个报数的公司"}` |
+| 4 | ⚠️ **`cdp.cmd_open()` 返回的是 `None`**（内部 `print` 已打出 id）⇒ 想在新标签页里做公开页复核，别用它的返回值；**自己 `cdp.session(tid)` 后手写 `Page.enable` → `Page.navigate` → 轮询 `Page.loadEventFired`（45s 上限）→ `session.close()`** 即可，同一会话上的 `cdp.nav()` 若页面 30s 内没 load 完会抛 `TimeoutError` 而**没真的导航** | 第 338 轮 `s6b_find.py`：`NEWTAB None` → `TypeError: can only concatenate str (not "NoneType") to str`；改用自写的 `chkpub2.py` 后 `P1 {url:/article/7711181219639149092/, canon 一致, artH:3453}` 一次成功 |
+| 5 | ✅ **竖长图（898×2161）配图文文章没问题**：编辑器里显示 440×1059，公开页渲染 **676×1627**、`naturalWidth 898` 未裁切、`broken:0`；比「横图」更占屏但图注与正文都正常 —— 只要不是「评论区截图」这类半幅空白图，竖长图可接受 | 第 338 轮 `IMGS {n:1, vis:1, broken:0, nw:898, nh:2161, w:676, h:1627, complete:true}` + `pub_img.jpg` 目视 |
 
 ## §A.39 第 336 轮实测（2026-11-23 07:0x · 2 条 · **`corners` 放大到 2400px 后截图必超时 ⇒ 改「定尺视口 + 逐角原分辨率」 / 图注框回读会误命中润色提示语**）
+
 
 | # | 要点 | 实证 |
 |:--|:--|:--|
