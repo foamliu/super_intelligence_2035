@@ -840,3 +840,4 @@ huqxk					parked		2026-11-23 03:22	r1012 peek: e0044587@hfeg0pnd001 mc6 -
 1794971727393_xpdg0	t0002965	hfeg0plg75	220	operator	parked		2026-11-23 07:55	r1021: t0002965 operator/scanner account not real design user, skip
 1794978137972_yl0mz	e0040367	hfeg0pkn003	29	cross_domain	parked		2026-11-23 07:55	r1021: rtl:30+waveview:18+aether:15 mixed B/C/D, cross-domain skip
 1794895164006_z9pe8	t0002965	hfeg0plg75	140	operator	parked		2026-11-23 07:55	r1021: t0002965 operator/scanner account not real design user, skip
+1793004252449_aet4o.messages.json	t0002616	hfeg0pkn004	126	eda_other	case	EDA-Eval-DesignFlow-SramFarCellSelect-001-v2	2026-11-23 08:45	r1024 backfill: jsonl case genuinely missing from all 4 shard ledgers (phantom-check jsonl-extra)
