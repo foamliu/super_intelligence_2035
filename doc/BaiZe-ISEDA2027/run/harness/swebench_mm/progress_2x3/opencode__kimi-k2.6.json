@@ -4993,9 +4993,16 @@
   "highlightjs__highlight.js-2960": {
     "instance_id": "highlightjs__highlight.js-2960",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 543.3,
+    "rc": 0,
+    "model_patch_len": 9265,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "`{}`, `<>`, `||`, `##`).\n\n### Verification\n\n- The sample code from the issue now highlights `m(/$)` correctly as a single regexp span.\n- All **1,638 tests pass** (including the new Perl markup test).\n",
+    "stderr_tail": "t.js\n[✓] Identify the regex/matching logic that needs fixing\n[✓] Implement the fix for m-style regex with arbitrary delimiters\n[✓] Add or update tests for the fix\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2969": {
     "instance_id": "highlightjs__highlight.js-2969",

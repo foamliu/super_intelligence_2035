@@ -4323,9 +4323,15 @@
   "carbon-design-system__carbon-9812": {
     "instance_id": "carbon-design-system__carbon-9812",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.6,
+    "rc": -1,
+    "model_patch_len": 6378,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "carbon-design-system__carbon-9994": {
     "instance_id": "carbon-design-system__carbon-9994",
