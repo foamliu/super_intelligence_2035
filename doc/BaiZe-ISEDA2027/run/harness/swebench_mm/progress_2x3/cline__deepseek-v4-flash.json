@@ -6625,15 +6625,29 @@
   "scratchfoundation__scratch-gui-8492": {
     "instance_id": "scratchfoundation__scratch-gui-8492",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 10.0,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "failed",
+    "stdout_tail": "ens\":0,\"outputTokens\":0,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":6287,\"text\":\"本次Token额度已用完，请等待1小时27秒后重试\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "{\"ts\":\"2026-11-23T07:47:17.906Z\",\"type\":\"error\",\"message\":\"本次Token额度已用完，请等待1小时27秒后重试\"}\n"
   },
   "scratchfoundation__scratch-gui-8891": {
     "instance_id": "scratchfoundation__scratch-gui-8891",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 9.2,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "failed",
+    "stdout_tail": "ens\":0,\"outputTokens\":0,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":6172,\"text\":\"本次Token额度已用完，请等待1小时12秒后重试\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "{\"ts\":\"2026-11-23T07:47:32.519Z\",\"type\":\"error\",\"message\":\"本次Token额度已用完，请等待1小时12秒后重试\"}\n"
   }
 }
