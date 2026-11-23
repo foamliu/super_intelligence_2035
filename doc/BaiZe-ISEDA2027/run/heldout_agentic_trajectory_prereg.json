@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "id": "heldout_agentic_trajectory_prereg",
+    "wake": "wake759",
+    "date": "2026-11-23",
+    "purpose": "Frozen pre-registration of the protocol that harvests REAL agentic trajectories on held-out (non-eval) PyAether tasks and mixes them into the formal SFT corpus. Decided BEFORE any execution. Not changed afterwards.",
+    "closes": "secG6.1 / secI6 / secJ5.5 open next-step (real agentic trajectories to fix secF 0%-agentic root cause)",
+    "red_line": "sec5.1: 158 eval tasks' prompt/signature/assertion never enter training. secH4 signature gate retained. Only held-out (non-eval) APIs used.",
+    "zero_gpu": true,
+    "no_protocol_change": true,
+    "skeleton_status": "baize_posttrain_heldout_agentic_trajectory_gen.py is a write-only skeleton (compile-clean, dry-run-validate PASS). The runner is a documented stub (NotImplementedError) pending authorization."
+  },
+  "task_pool": {
+    "source": "Reuse the TIERED 2842 held-out task prompts from heldout_sft_corpus_tiered.jsonl (secJ8). Each pair already carries a non-eval `instruction` (held-out task prompt) + `doctest_code` (reference example = pass-oracle).",
+    "no_new_task_synthesis": true,
+    "reason": "造题 / check.py is designflow's job (本线使命: 不是主业). secK reuses the held-out prompts secI/secJ already produced; it does NOT synthesize new tasks or check functions.",
+    "size": 2842,
+    "categories": "inherit TIERED category distribution (secJ8)"
+  },
+  "trajectory_generation_protocol": {
+    "model": "base MiniCPM5-2B (GPU4 :8098 standby) for base预演, OR BaiZe pretrain ckpt (ETA approx 2026-12-25) for formal run",
+    "harness": "cline harness, A0 口径: search_apis / get_api_details / run_code / editor / submit_and_exit",
+    "anti_cheat": "PreToolUse hook enabled, identical across all arms (sec5.2)",
+    "single_trace": true,
+    "timeout_s": 2500,
+    "pass_at_1": true,
+    "parallelism": "-p 8 -n (frozen eval protocol; serial discipline vs zhulong: pgrep run_cline_script empty + ss port check before start)"
+  },
+  "pass_oracle": {
+    "rule": "A held-out task 'passes' if the trajectory submits executable code whose behavior matches the reference doctest. Execution happens in the EDA sandbox (run_code via dual-nix-tunnel) during the RUN; the runner records pass_verdict.",
+    "honesty_note": "Some doctest examples lack assertions; for those, pass = code executes without error AND produces the documented output shape. Ambiguous cases are dropped (not forced to pass)."
+  },
+  "gates": {
+    "contamination_gate": {
+      "source": "secH4 re-check on the harvested REAL trajectory code surface",
+      "rules": [
+        "target API must be held-out (available_for_sft_apis)",
+        "excluded HIGH-risk helpers (dbNewCV, dbCreateLib) must NOT appear in trajectory code",
+        "no eval entry-point `def <name>(` signature may leak"
+      ],
+      "on_fail": "drop trajectory + log reason"
+    },
+    "behavior_gate": {
+      "source": "secF5.3 / secG3 healthy-template gate",
+      "thresholds": {
+        "search_apis_min": 1,
+        "submit_and_exit_max": 3,
+        "agent_loop_entry_required": true,
+        "must_end_with_submit": true,
+        "search_before_code": true
+      },
+      "rationale": "A1 SFT collapsed to search_apis -82% + submit_and_exit +451% (storm) + F1_no_code. Healthy template (secG3) = search -> get_details -> editor -> run_code -> fix -> submit ONCE.",
+      "on_fail": "drop trajectory + log reason (do NOT relax thresholds post-hoc)"
+    }
+  },
+  "mix": {
+    "formal_sft_corpus": "TIERED 2842 doc->code pairs + harvested real agentic trajectories (pass both gates)",
+    "agentic_share_min": 0.30,
+    "rationale": "secF root cause = 0% agentic in A1 SFT corpus. Pre-registered >= 30% real agentic share to fix the deployment-distribution mismatch.",
+    "on_share_below_min": "harvest more trajectories (do NOT lower the threshold); if still below after exhausting the pool, report honestly as blocked, do not ship a < 30% corpus as 'fixed'"
+  },
+  "blocked_pre_requisites": [
+    "served base/pretrain ckpt on GPU4 :8098 (or pretrain ckpt ETA approx 2026-12-25)",
+    "dual-nix-tunnel sandbox up (ssh -p 3333 -> 36.15, run_code e2e PASS)",
+    "serial discipline vs zhulong (pgrep run_cline_script empty + ss -tlnp port check)",
+    "operator/user authorization (burns GPU + sandbox time)"
+  ],
+  "prereg_judgement_for_eval": {
+    "gate": "Formal SFT corpus must pass TIERED gate + contamination_gate + behavior_gate AND agentic_share >= 30%",
+    "success": "post-SFT delta > 0 AND paired-bootstrap CI lower bound > 0 vs A0 (secF5.5)",
+    "behavior_sentinel": "post-SFT search_apis frequency >= base*0.5 AND submit_and_exit <= base*2.0; collapse => SFT failed, stop and redo BEFORE looking at Pass@1 (secF5.3)",
+    "negative_result": "report honestly, do not白洗"
+  },
+  "deliverables_when_authorized": [
+    "heldout_agentic_trajectories.jsonl (harvested pass trajectories, both gates)",
+    "heldout_agentic_trajectory_manifest.json (counts + gate stats + share)",
+    "formal_sft_corpus_mixed.jsonl (TIERED + agentic, share >= 30%)",
+    "secK execution section appended to EXPERIMENTS_POSTTRAIN.md"
+  ],
+  "reproduce": {
+    "skeleton_dry_run": "python3 baize_posttrain_heldout_agentic_trajectory_gen.py --dry-run-validate",
+    "task_pool_size": "python3 baize_posttrain_heldout_agentic_trajectory_gen.py --task-pool-size"
+  },
+  "baseline_unchanged": "A0=43.29%+-3.92% / A1=4.56%+-1.70% / delta=-38.73pp"
+}

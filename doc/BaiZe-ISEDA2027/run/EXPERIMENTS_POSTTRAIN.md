@@ -12421,3 +12421,53 @@ python3 bpt_attribution_p0_dev_compare.py \
 - **诚实性**：TIERED 2842 对仍是 doc→code **骨架**（形态对齐 §G3 健康模板），非真实 cline agentic 轨迹；正式 SFT 语料 = TIERED 对 + §G6.1 真实 agentic 轨迹（占比预注册 ≥30%）。2 个 HIGH helper 作 sentinel：post-SFT 若 dbNewCV/dbCreateLib 相关 158 题异常上升 ⇒ 触发泄漏复检。
 - 零 GPU/零 ckpt；未碰 GPU0-3/6/协议·题面·check.py·超时·-p/未起 SFT/RL 训练/未 kill 任何进程。基线表不变 A0=43.29%±3.92% / A1=4.56%±1.70% / Δ=−38.73pp。
 
+## §K. Held-out 真实 agentic 轨迹收割预注册 + 脚本骨架（wake759 · 2026-11-23 · 零 GPU/零 ckpt · 只写不跑 · 主线 SFT 设计预研）
+
+> **目的**：闭合 §G6.1 / §I6 / §J5.5 的开放下一步——为「base+cline 在 held-out（非 eval）API 子集上跑**真实** agentic 轨迹」定义**冻结预注册协议** + **可复用脚本骨架**，使正式 SFT 语料 = TIERED 2842 doc→code 对 + 真实 agentic 轨迹（agentic 占比预注册 ≥30%，修 §F「0% agentic」根因）。本节**只写预注册 + 骨架，不跑**（待 pretrain ckpt ETA≈2026-12-25，或 base 预演授权 + GPU + 沙盒 + 串行清空）。脚本 `baize_posttrain_heldout_agentic_trajectory_gen.py`（compile-clean + dry-run-validate PASS）。
+
+### K1. 链位置
+- §F 诊断根因 = A1 SFT 语料 0% agentic（静态单轮 doc→code）⇒ 覆盖 base 健康回路 ⇒ 灾难性退化（McNemar χ²=68.01 p=0.0）。
+- §G 收割 25 条 pass_all 轨迹作**行为模板**（含 eval 内容 ⇒ 红线 ⇒ 不可作训练数据）。
+- §H 界定 3930 可用 API（97.71%）+ §H4 复检闸门。
+- §I/§J 发 TIERED 2842 doc→code **骨架**（形态对齐 §G3，但非真实轨迹）。
+- **§K（本节）= 缺失的一环**：在 held-out 任务上跑出**真实** pass agentic 轨迹 → 过双闸门 → 与 TIERED 混合（agentic 占比 ≥30%）。
+
+### K2. 任务池（不自己造题）
+- **复用** `heldout_sft_corpus_tiered.jsonl`（2842）的 `instruction`（非 eval held-out 任务 prompt）+ `doctest_code`（参考示例 = pass-oracle）。
+- **不合成新任务 / 不写 check.py**（本线使命：造题是 designflow 的活，做了不算产出）。held-out prompt 已由 §I/§J 产出，§K 只复用。
+- `python3 baize_posttrain_heldout_agentic_trajectory_gen.py --task-pool-size` → **2842** ✅。
+
+### K3. 冻结预注册（先定后跑，跑完不许改 · `heldout_agentic_trajectory_prereg.json`）
+1. **轨迹生成**：base MiniCPM5-2B（GPU4 :8098 standby，base 预演）或 pretrain ckpt（ETA≈2026-12-25）+ cline harness（A0 口径：search_apis/get_api_details/run_code/editor/submit_and_exit）+ PreToolUse anti-cheat hook + 单 trace + 2500s + Pass@1；`-p 8 -n`；**串行纪律**：起跑前 `pgrep -f run_cline_script` 为空 + `ss -tlnp | grep -E ':(30|80)'` 清空（避让 zhulong）。
+2. **pass-oracle**：轨迹提交的代码在沙盒（run_code 经 dual-nix-tunnel）执行，行为匹配参考 doctest = pass；无断言的 doctest = 代码无错且产出文档化输出形态 = pass；歧义项**丢弃**（不强行判 pass）。
+3. **contamination_gate（§H4 复检）**：target API 必须 held-out；excluded HIGH-risk helper（dbNewCV/dbCreateLib）不得出现在轨迹代码；无 eval `def <entry_point>(` 签名泄漏；任一命中 ⇒ 丢弃 + 计数。
+4. **behavior_gate（§F5.3/§G3）**：search_apis≥1 / submit_and_exit≤3 / agent_loop_entry / 末工具=submit_and_exit / 检索先于编码；任一坍塌 ⇒ 丢弃（**不许事后放宽阈值**）。
+5. **混合**：正式 SFT 语料 = TIERED 2842 doc→code + 过双闸门的真实 agentic 轨迹；**agentic 占比预注册 ≥30%**；若跑空池仍 <30% ⇒ 诚实报 blocked，**不许降阈值**或把 <30% 语料当「已修复」交付。
+6. **预注册判据（正式 SFT 后评测启用）**：语料过 TIERED + contamination + behavior 三闸门 + agentic 占比 ≥30%；成功 = Δ>0 且 paired-bootstrap CI 下界>0（§F5.5）；行为 sentinel：post-SFT search_apis≥base*0.5 且 submit_and_exit≤base*2.0，坍塌 ⇒ SFT 失败、停跑重做（**先于**看 Pass@1）；负结果照报。
+
+### K4. 骨架验证（dry-run，零 GPU/零沙盒）
+`python3 baize_posttrain_heldout_agentic_trajectory_gen.py --dry-run-validate` → ALL GATES WIRED OK：
+- contamination_gate：good 轨迹 pass=True；bad 轨迹（含 dbNewCV）pass=False（reasons=`excluded_helper_in_code:dbNewCV`）✅。
+- behavior_gate：good 轨迹 pass=True；bad 轨迹（search_apis=0/submit=9/无检索前缀）pass=False（reasons=`search_apis_below_min,submit_storm,no_search_before_code`）✅。
+- mix：1 agentic / 11 total = 9.09% < 30% ⇒ share_ok=False（正确标记，不放宽）✅。
+- task_pool_available=True ✅。
+
+### K5. 阻塞前提（runner 未授权前不跑）
+1. base/pretrain ckpt serve 于 GPU4 :8098（base 预演 OK；pretrain ckpt ETA≈2026-12-25）；
+2. dual-nix-tunnel 沙盒通（ssh -p 3333→36.15，run_code e2e PASS）；
+3. 串行清空（pgrep run_cline + ss 端口）；
+4. 运维/用户授权（耗 GPU + 沙盒时间）。
+- runner 主体为 `raise NotImplementedError` 的文档化 stub，待上述全绿后填实。
+
+### K6. 交付物
+- `baize_posttrain_heldout_agentic_trajectory_gen.py`（骨架，compile-clean + dry-run-validate PASS，可复跑）。
+- `heldout_agentic_trajectory_prereg.json`（冻结预注册，先定后跑）。
+- 授权后追加：`heldout_agentic_trajectories.jsonl` + `_manifest.json` + `formal_sft_corpus_mixed.jsonl`（agentic 占比 ≥30%）+ §K 执行节。
+
+### K7. 诚实性 / 局限
+- 本节**未跑**任何轨迹（runner 是 stub）；零 GPU/零 ckpt/零沙盒。
+- 未碰 GPU0-3/6/协议·题面·check.py·超时·-p/未起 SFT/RL 训练/未 kill 任何进程。
+- 任务池复用 TIERED 2842 prompt——其 doctest 参考示例质量参差（§I8 已记），pass-oracle 对无断言 doctest 用「无错 + 输出形态匹配」是粗粒度代理，正式跑时须抽样人工复核。
+- agentic 占比 ≥30% 是预注册下限，非保证可达；若 base 预演 pass 率低 ⇒ 真实轨迹可能不足 ⇒ 届时诚实报 blocked，不降阈值。
+- 基线表不变 A0=43.29%±3.92% / A1=4.56%±1.70% / Δ=−38.73pp。
+
