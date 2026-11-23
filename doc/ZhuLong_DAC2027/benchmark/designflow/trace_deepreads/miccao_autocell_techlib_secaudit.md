@@ -50,6 +50,6 @@ list_allowed_files（双目录树 depth=3）→ read_files（dram/globals.tcl + 
 
 ## 状态
 
-- **DEBT**: 本轮（r1216）只深读，未合成 case。原因：40min 硬预算已用于 MCP 连通性复测 + 12 候选 peek 筛选（多数 fresh 候选为 analysis-Q&A weak）+ 本深读；剩余预算不足以走完 assets/reference/hidden/negative/self-verify 全流程。
-- **下轮（r1217）直接用本笔记合成** EDA-Eval-DesignFlow-TechlibSecAuditProduce-001（L1 analog_context k≥12）。
-- 台账：9pcjd → claimed（待下轮 mark case）
+- **⚠️ 已在台账（不可造题）**：claim 时 REFUSED — 9pcjd 已在台账 status=case, case_id=EDA-Eval-DesignFlow-AutoCellParamSecurityAudit-001 (2026-11-15 23:42)。但 `cases/D/` 下**无该 JSON 文件**（phantom case_id，ledger 数据质量问题，待清理）。
+- 本笔记保留作 r1216 freshness-methodology bug 排查的副产物（详见 MEMORY_D r1216 流水）。**不要据此 9pcjd 造题**（会重复）。
+- r1216 真正发现：freshness 判据必须用 **全 4 shard 台账并集 + 剥 .messages.json 后缀**（单 shard D 台账 + 带 suffix 的 sid 会漏判，导致误 peek 已 claim 的 trace）。
