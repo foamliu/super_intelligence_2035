@@ -5216,9 +5216,16 @@
   "highlightjs__highlight.js-3367": {
     "instance_id": "highlightjs__highlight.js-3367",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1038.1,
+    "rc": 0,
+    "model_patch_len": 3055,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "92 tests pass.\n- Manual checks confirm:\n  - `print(1if 0==0else\"b\")` → `1` and `0` are numbers, `if`/`else` are keywords.\n  - `07`, `0b1e1`, `1abc` remain plain text (no partial number highlighting).\n",
+    "stderr_tail": "n><span class=\"hljs-keyword\">if</span> <span class=\"hljs-number\">0</span>==<span class=\"hljs-number\">0</span><span class=\"hljs-keyword\">else</span><span class=\"hljs-string\">&quot;b&quot;</span>)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3381": {
     "instance_id": "highlightjs__highlight.js-3381",
