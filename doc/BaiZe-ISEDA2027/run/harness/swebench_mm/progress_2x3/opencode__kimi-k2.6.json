@@ -5461,9 +5461,16 @@
   "openlayers__openlayers-11401": {
     "instance_id": "openlayers__openlayers-11401",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1180.1,
+    "rc": 0,
+    "model_patch_len": 610,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ":\n1. Rendering: an icon with `scale: [-1, 1]` placed at the canvas edge is still drawn.\n2. Hit detection: the same icon is drawn during hit detection.\n\nBoth `eslint` and `tsc --pretty --noEmit` pass.\n",
+    "stderr_tail": "mnpx tsc --pretty --noEmit\n(no output)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore repo and locate icon rendering/hit detection code\n[✓] Identify bug in negative scale handling\n[✓] Implement fix and verify\n\u001b[0m\n"
   },
   "openlayers__openlayers-11545": {
     "instance_id": "openlayers__openlayers-11545",
