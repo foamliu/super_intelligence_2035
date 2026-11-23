@@ -5711,37 +5711,72 @@
   "openlayers__openlayers-13155": {
     "instance_id": "openlayers__openlayers-13155",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 690.8,
+    "rc": 0,
+    "model_patch_len": 10492,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "would always use `gl.LINEAR` smoothing, causing pixel value distortion for sources like DEM data that need `imageSmoothing: false`. The change supports `TileImage`, `DataTile`, and `GeoTIFF` sources.\n",
+    "stderr_tail": "LTile renderer\n[✓] Add imageSmoothing support to DataTile and GeoTIFF sources if needed\n[✓] Update tests for TileTexture and WebGLTile renderer\n[✓] Verify changes with existing tests or examples\n\u001b[0m\n"
   },
   "openlayers__openlayers-13198": {
     "instance_id": "openlayers__openlayers-13198",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 355.6,
+    "rc": 0,
+    "model_patch_len": 1824,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "enderer/canvas/vectorlayer.test.js` that verifies a vector layer with a background can be rendered over a container without a background color.\n\nBoth the source change and the new test pass `eslint`.\n",
+    "stderr_tail": "d the bug: vector layers with background fail when rendered over other layers\n[✓] Find the relevant code causing the assertion error\n[✓] Implement a fix\n[✓] Verify the fix with tests or examples\n\u001b[0m\n"
   },
   "openlayers__openlayers-13212": {
     "instance_id": "openlayers__openlayers-13212",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 201.5,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "empty_patch",
+    "stdout_tail": "apping them in a template-driven `DataTile` loader. If you (or someone on the team) opens a PR, it would likely be welcomed as a direct replacement for the `cog-pyramid` anti-pattern in the examples.\n",
+    "stderr_tail": " Explore pyramid example and WebGLTileLayers\n[✓] Analyze WMTS source for tile grid/template patterns\n[✓] Assess feasibility and complexity of implementation\n[•] Provide detailed response to user\n\u001b[0m\n"
   },
   "openlayers__openlayers-13226": {
     "instance_id": "openlayers__openlayers-13226",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 731.9,
+    "rc": 0,
+    "model_patch_len": 2605,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " files.\n- `tsc --pretty` shows no new type errors (the few existing errors are unrelated and pre‑existing).\n- A standalone Node script confirmed the old code throws and the fixed code runs correctly.\n",
+    "stderr_tail": "xplore codebase to understand WebGLTileLayer bug with wrapX false sources\n[✓] Identify the root cause and implement fix\n[✓] Add or update tests to cover this scenario\n[✓] Run tests to verify fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-13269": {
     "instance_id": "openlayers__openlayers-13269",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1056.9,
+    "rc": 0,
+    "model_patch_len": 5289,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e coordinates inward by `gutter / imageWidth` and `gutter / imageHeight`, so the quad only samples the interior of the image (excluding the gutter), producing output identical to the canvas renderer.\n",
+    "stderr_tail": " clipping should happen in WebGLTile renderer\n[✓] Implement fix for gutter clipping in WebGLTile renderer\n[✓] Add rendering test for WebGLTile with TileWMS gutter\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-13333": {
     "instance_id": "openlayers__openlayers-13333",
