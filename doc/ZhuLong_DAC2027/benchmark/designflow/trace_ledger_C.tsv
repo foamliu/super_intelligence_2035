@@ -1296,7 +1296,7 @@ fqrc2	e0039786	hfeg0plg76	436	physical_verify	parked		2026-11-19 02:13	r788 deep
 1794275240977_d2enp	gokuguo	hfeg0plg53	15	layout_virtuoso	case	EDA-Eval-DesignFlow-LayermapPairAudit-001	2026-11-19 08:10	
 1790214684453_ocopa	e0041123	10.129.40.58	42	physical_verify	case	EDA-Eval-DesignFlow-DRCRuleQuery-001	2026-11-19 08:37	
 1793600834008_rqtjy.messages.json	claire1l	10.129.8.124	33	physical_verify	case	EDA-Eval-DesignFlow-ItfDirTreeDiffReport-001	2026-11-19 09:06	
-1795001459152_a85ce	connorw	hfeg0pkn003	235	physical_verify	case	EDA-Eval-DesignFlow-LvsConfigReport-001	2026-11-19 09:41	
+1795001459152_a85ce	connorw	hfeg0pkn003	235	physical_verify	parked	EDA-Eval-DesignFlow-LvsConfigReport-001	2026-11-23 14:11	r998 peek: connorw 'run lvs' single-msg run-existing, not produce-task
 1783476214859_q3z4m	e0014566	10.129.2.10	38	physical_verify	case	EDA-Eval-DesignFlow-AutoViaAgentGen-001	2026-11-19 10:26	
 1791889999605_9m82z	ellawu	10.129.2.14	26	physical_verify	case	EDA-Eval-DesignFlow-TvfDeckAnalyzeReport-001	2026-11-19 12:06	r809 infra-block: pyAether guest t0002997 (uid=204385), ssh to 10.129.2.14 Permission denied; re-claim when pyAether restarts as e0031982 (D r768 pattern); top fresh_true_C_r808.tsv candidate (phys_score=1750, mc=26, drc:1617)
 1792742868238_3v5rl	ellawu	10.129.2.14	14	physical_verify	case	EDA-Eval-DesignFlow-PgDummyFlowAnalyze-001	2026-11-19 12:34	
@@ -1437,21 +1437,21 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1789644520518_1mmir.messages.json					case	EDA-Eval-DesignFlow-SkillRepoAudit-001	2026-11-23 00:34	
 1795159951898_jaay4.messages.json	chengk	hfeg0pkn003	305	layout_aether	case	EDA-Eval-DesignFlow-MdPyBlockCompileCjkAudit-001	2026-11-23 01:08	
 1795071241845_e1gmg	e0049049	hfeg0pkn001	399	layout_virtuoso	parked		2026-11-23 01:31	deepread: pure Virtuoso startup troubleshooting (env/licenset/OA platform/libcrypto/CDS.log lock). No Python scripting — 138 run_approved_command + 29 editor (env config edits), 0 .py writes. Not a clean offline-Python subproblem. Skip.
-1794918791243_xgund	e0046686	hfeg0plg68	201	physical_verify	case	EDA-Eval-DesignFlow-SolidoPvtBlockMatchFix-001	2026-11-23 01:44	
+1794918791243_xgund	e0046686	hfeg0plg68	201	physical_verify	parked	EDA-Eval-DesignFlow-SolidoPvtBlockMatchFix-001	2026-11-23 14:11	r998 peek: e0046686 SPF-weakcell Qt-UI-alignment + spice_generator patch sprawl (U225-U251 all button alignment), spice_sim=B/D + UI非EDA-physical
 1794732338684_jju5b.messages.json	jzeng	hfeg0pkn002	180	physical_verify	case	EDA-Eval-DesignFlow-ViaPadGeom-001	2026-11-23 02:51	
 1795054205299_nxmto	pdsong	hfeg0pkn004	196	pg_layout	case	EDA-Eval-DesignFlow-CpmIncNetlistAnalyze-001	2026-11-23 03:18	
 1795156640138_cnxqz.messages.json	bowenguo	hfeg0pfn120	85	physical_verify	case	EDA-Eval-DesignFlow-NicapCellMapAnalyze-001	2026-11-23 03:54	
 1795172781182_e7fik	ganli	hfeg0pkn002	142	physical_verify	parked		2026-11-23 04:23	r982 peek REJECT: single-turn how-to Q&A 'skipper怎么实现clip' prose deliverable, assistant found no independent Clip command -> check-teeth fail (排除标准②); pivot to 2slkf
 1795329849230_2slkf	e0039786	hfhds201	172	layout_virtuoso	case	ParaIlArrayComposer-001	2026-11-23 04:43	
 1794987555129_579yv.messages.json	adaml	hfhds201	162	physical_verify	case	EDA-Eval-DesignFlow-SkillEditManifestVerify-001	2026-11-23 05:08	
-1794983929216_w4hlp	jcgu	hfeg0pkn002	231	physical_verify	case	EDA-Eval-DesignFlow-TerminalGuiLaunchPortingFlow-001	2026-11-23 05:34	
+1794983929216_w4hlp	jcgu	hfeg0pkn002	231	physical_verify	parked	EDA-Eval-DesignFlow-TerminalGuiLaunchPortingFlow-001	2026-11-23 14:11	r998 peek: jcgu GUI-launch-via-terminal + porting验证 run-existing/explain, not produce-task
 1794985223851_bhcud	e0047488	hfeg0plg54	29	physical_verify	parked		2026-11-23 06:11	QA-only conceptual trace (no deliverable) — parked r985
 1794902730841_w7iht	eric9zhu	hfhds201	188	physical_verify	case	EDA-Eval-DesignFlow-GtCheckResistanceSkill-001	2026-11-23 06:11	
 1794877997747_2kujt.messages.json	steveny	hfeg0pnd001	243	layout_aether	case	EDA-Eval-DesignFlow-CadSourceSceneIndexGen-001	2026-11-23 06:33	
 1795236890519_jylo7.messages.json					case	EDA-Eval-DesignFlow-PcellLibMigrateAudit-001	2026-11-23 07:00	
 1795316615041_rrpe6.messages.json	xxchen	hfeg0plg18	703	physical_verify	case	EDA-Eval-DesignFlow-DrcResultsItemCollect-001	2026-11-23 07:26	
 1795334271776_rvgtj.messages.json	xxchen	hfeg0plg06	254	physical_verify	case	EDA-Eval-DesignFlow-DrcpvStaticAudit-001	2026-11-23 08:14	
-1794830783269_mj3pw	jzeng	hfeg0pkn002	263	pg_layout	case	PgViaAutoGen-001	2026-11-23 09:11	
+1794830783269_mj3pw	jzeng	hfeg0pkn002	263	pg_layout	parked	PgViaAutoGen-001	2026-11-23 14:11	r998 peek: jzeng V4-via-gen between same-power M4/M5 = DUPLICATE of existing case AutoViaV4Dir3DY-001 (same user jzeng + same IMCleAutoVia.py + same V4-M4-M5 theme, mj3pw adds same-power+2um-pad but too close)
 1794795450092_wlzg5	jiashengz	hfeg0plg92	238	layout_aether	case	EDA-Eval-DesignFlow-StdcellsClassify-001	2026-11-23 09:34	
 1795084452944_z9h81	xxchen	hfeg0plg19	321	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleParamValidator-001	2026-11-23 10:29	
 1795244789633_tdbkn	hktklin	hfeg0pkn003	205	layout_virtuoso	case	EDA-Eval-DesignFlow-SkillPcellLibRename-001	2026-11-23 11:05	
@@ -1460,3 +1460,8 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1794812159537_exhq3	dsgao	hfhds201	140	physical_verify	case	EDA-Eval-DesignFlow-PexPostDutBuild-001	2026-11-23 13:10	
 1795045078666_y1q1z	e02141	hfhds201	187	physical_verify	parked		2026-11-23 12:50	domain-mismatch: TCAD Sentaurus sprocess/sdevice deck, lvs:520 被路径 /rundata/drgqa/V0/ver/lvs 虚高, 非 C-domain
 1795045425613_3yqt8	e02141	hfhds201	187	physical_verify	parked		2026-11-23 12:50	domain-mismatch: TCAD Sentaurus sprocess/sdevice deck, lvs:520 被路径 /rundata/drgqa/V0/ver/lvs 虚高, 非 C-domain
+1795339255756_usgf7.messages.json	aryaoy	hfeg0pkn005	312	physical_verify	parked		2026-11-23 13:52	r998 peek: grill-me planning session for dlycell PVT rise/fall delay measurement skill = characterization/spice_sim (B/D), not C physical_verify; only 6 msgs, planning Q&A no produce-task deliverable, teeth-fail
+1795336202705_cbnlq					parked		2026-11-23 14:11	r998 peek: xxchen drcpv GUI debug-existing (ModuleNotFoundError gui), 2 real user msgs = '报错了' debug help, not produce-task
+1795339041571_d61gw					parked		2026-11-23 14:11	r998 peek: xxchen drcpv GUI config-default-dir tweak, modify-existing-tool not produce-task
+1795332331813_36w9p					parked		2026-11-23 14:11	r998 peek: xxchen drcpv QA-GUI optimization (button layout/columns), modify-existing-GUI not produce-task
+1794817866160_2p49w					parked		2026-11-23 14:11	r998 peek: jzeng '优化IMCleAutoVia.py生成V4' = DUPLICATE of AutoViaV4Dir3DY-001 (same user/tool/theme)
