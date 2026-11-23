@@ -1457,3 +1457,6 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1795244789633_tdbkn	hktklin	hfeg0pkn003	205	layout_virtuoso	case	EDA-Eval-DesignFlow-SkillPcellLibRename-001	2026-11-23 11:05	
 1794829326520_ynfsl.messages.json	xxchen	hfeg0plg18	352	physical_verify	case	EDA-Eval-DesignFlow-SpaceCheckCornerFilter-001	2026-11-23 11:31	
 1788921250887_04qh0	junxu	hfeg0pkn005	222	layout_virtuoso	case	EDA-Eval-DesignFlow-WireMethodPlan-001	2026-11-23 12:24	
+1794812159537_exhq3	dsgao	hfhds201	140	physical_verify	case	EDA-Eval-DesignFlow-PexPostDutBuild-001	2026-11-23 13:10	
+1795045078666_y1q1z	e02141	hfhds201	187	physical_verify	parked		2026-11-23 12:50	domain-mismatch: TCAD Sentaurus sprocess/sdevice deck, lvs:520 被路径 /rundata/drgqa/V0/ver/lvs 虚高, 非 C-domain
+1795045425613_3yqt8	e02141	hfhds201	187	physical_verify	parked		2026-11-23 12:50	domain-mismatch: TCAD Sentaurus sprocess/sdevice deck, lvs:520 被路径 /rundata/drgqa/V0/ver/lvs 虚高, 非 C-domain
