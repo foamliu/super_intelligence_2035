@@ -1737,3 +1737,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1791770402098_b99hz	e0041392	hfeg0plg77	4	spice_sim	parked		2026-11-24 05:53	r1125 peek: askeda 查 NanoSpice 精度 doc-search Q&A 7msgs, 同 r1114 已拒同 user pattern
 1793068955174_danx7	wnyu	hfeg0plg07	3	spice_sim	parked		2026-11-24 05:53	r1125 peek: hi+LPDDR6你有了解吗 general Q&A 8msgs, 无 produce 齿
 1794992158581_5z9ge.messages.json	han1liu	hfeg0plg11	102	spice_sim	parked		2026-11-24 06:07	r1126 peek: han1liu HFSS/S-parameter touchstone 互容互感提取 + shmoo eye sim flow; SI/PI domain 非 B spice_sim/characterization; hspice:67 incidental (.sp gen by shmoo); REJECT out-of-domain
+1794556652593_tji0y	alenxu	hfhds201	20	spice_sim	case	EDA-Eval-DesignFlow-McSkewDistPlotProduce-001	2026-11-24 06:30	
