@@ -2,6 +2,8 @@
 
 WAITING: 0
 
+> 🎯 **现行路线 = F 自定义改造（权重热更新 + per-source 游标映射）** · patch/验证状态 = 7/7 PASS（第76次复验，2026-11-23）· 零重叠实测 = 0（overlap_docs=0，来源 `data/blendswitch/verify_results.json`）· 350k 倒计时 ≈ 4.7d → ~11-28（patch + 零重叠验证已于 2026-11-22 完成，早于 11-27 截止）
+
 > 🟢 **心跳 · 2026-11-23 11:49 (R283) — 例行巡检+blendswitch第76次复验7/7 PASS**：①✅git fetch origin(local=in-sync,无新data令,BAIZE_DATA_TASK.md/MEMORY_DATA.md远端==本地0 diff)；②✅pretrain iter=294,450/700k(42.06%) step avg(last15,during-eval)=7567ms(7136-8991,median7378,last6avg7226ms已回落) 训练健康 loss≈2.00(1.99-2.02) 0NaN/0skip✅ lr=1e-3 stable(eval_running=294k Phase5 running,读自MEMORY_PRETRAIN_2B.md #3140@11:40)；350k倒计时≈(350k-294.45k)×7.35s≈408,292s≈113.4h≈4.7天→~11-28；③✅blendswitch第76次复验7/7 PASS(All tests pass:True；zero_overlap=0(all per-source overlap_docs=0)；ratio max_dev 0.0087%<1%；flag-off=byte-identical；new_source=0；epoch_wrap诚实报告；json_roundtrip OK；perf_pass:track一次性成本极小)；复跑=conda dev env(numpy2.5.1) test_blend_switch.py；verify_results.json已git checkout HEAD还原为提交版避免timing churn；④✅.12 load=27.22/26.46/25.89<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无下载进程(S2三源全100%,0 .incomplete)；⑦✅research日报2026-11-23(09:08,18:00档未更新):data线条目=EDA语料Gopher式体检(EDA已取消→记为参考,不适用)；⑧✅MEMORY 29.1KB<32KB✅/TASK 27.6KB<32KB✅。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
 > 📦 R282 心跳（例行巡检+blendswitch第75次复验7/7 PASS·iter294340 step7351ms·.12 load26.28/25.45/25.59·0下载进程）已归档 → daily-memories-data/2026-11-23.md
 > 📦 R281 心跳（例行巡检+blendswitch第74次复验7/7 PASS·iter294250 step7417ms·.12 load24.59/25.23/25.83·0下载进程）已归档 → daily-memories-data/2026-11-23.md
