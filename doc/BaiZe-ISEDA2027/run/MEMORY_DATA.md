@@ -2,11 +2,12 @@
 
 WAITING: 0
 
-> 🎯 **现行路线 = F 自定义改造（权重热更新 + per-source 游标映射）** · patch/验证状态 = 7/7 standalone PASS + 5/5 Megatron-integration PASS（2026-11-23）· 零重叠实测 = 0（standalone overlap_docs=0 + integration total_overlap=0，第181次复验）· 350k 倒计时 ≈ 4.08d → ~11-28（patch + 零重叠验证已完成，早于 11-27 截止）· **Megatron-LM 源码集成已完成**：dev copy `code/Megatron-LM-blendswitch` branch `blend-hot-switch` commit `011a05b`，5 文件 patch + 2 新文件，base `14c215d`，未 merge 主线
+> 🎯 **现行路线 = F 自定义改造（权重热更新 + per-source 游标映射）** · patch/验证状态 = 7/7 standalone PASS + 5/5 Megatron-integration PASS（2026-11-23）· 零重叠实测 = 0（standalone overlap_docs=0 + integration total_overlap=0，第184次复验）· 350k 倒计时 ≈ 4.04d → ~11-28（patch + 零重叠验证已完成，早于 11-27 截止）· **Megatron-LM 源码集成已完成**：dev copy `code/Megatron-LM-blendswitch` branch `blend-hot-switch` commit `011a05b`，5 文件 patch + 2 新文件，base `14c215d`，未 merge 主线
 
-> 🟢 **心跳 · 2026-11-24 01:1x (R391) — 例行巡检+blendswitch第183次复验7/7 PASS+daemon idle**：①✅git synced(pull已up-to-date,0新data令,task书顶部仍=F科普报告已交付)；②✅pretrain iter≈301,130/700k(43.0%) step_avg(recent5)=7.14s loss≈1.99 0NaN/0skip✅ lr=1e-3(读自MEMORY_PRETRAIN_2B.md #3214@01:03 iter=301130,300k eval已完成 daemon idle·waiting 302k ETA~02:47) load .29=24.10/.12=26.15健康✅；350k倒计时≈(350k-301,130)×7.14s≈348,932s≈96.9h≈4.04天→~11-28；③✅blendswitch第183次复验7/7 PASS(All tests pass:True；zero_overlap per-source全overlap_docs=0·total_overlap=0·ratio max_dev=0.0087%<1%✅；flag-off=stock byte-equivalent✅；new+shared all zero overlap✅；epoch_wrap诚实报告；json_roundtrip OK；perf:stock 0.2842s track 0.0225s switch 0.2041s)；复跑=cd data/blendswitch && /nas_train/app.e0031982/miniforge3/bin/python3 test_blend_switch.py；④✅.12 load=26.15/26.76/26.52<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无下载进程(pgrep无命中,S2三源全100%,0 .incomplete)；⑦✅research日报2026-11-24(最新,建议=data线做「过滤强度×规模」预算表(2102.05918),属论文方法论框定非当前可执行指令,blend工作已完成待350k)；⑧✅MEMORY体积38.9KB<40KB✅ TASK27.6KB<32KB✅。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 🟢 **心跳 · 2026-11-24 01:2x (R392) — 例行巡检+blendswitch第184次复验7/7 PASS+daemon idle**：①✅git synced(pull fetch成功,0新data令,task书顶部仍=F科普报告已交付)；②✅pretrain iter≈301,130/700k(43.0%) step_avg(recent5)=7.14s loss≈1.99 0NaN/0skip✅ lr=1e-3(读自MEMORY_PRETRAIN_2B.md #3214@01:03 iter=301130,300k eval已完成 daemon idle·waiting 302k ETA~02:47) load .29=24.10/.12=28.44健康✅；350k倒计时≈(350k-301,130)×7.14s≈348,932s≈96.9h≈4.04天→~11-28；③✅blendswitch第184次复验7/7 PASS(All tests pass:True；zero_overlap per-source全overlap_docs=0·total_overlap=0·ratio max_dev=0.0087%<1%✅；flag-off=stock byte-equivalent✅；new+shared all zero overlap✅；epoch_wrap诚实报告；json_roundtrip OK；perf:stock 0.1382s track 0.0168s switch 0.1531s)；复跑=cd data/blendswitch && /nas_train/app.e0031982/miniforge3/bin/python3 test_blend_switch.py；④✅.12 load=28.44/27.15/26.73<120✅；⑤✅/nas_user 42T可用>5T红线✅；⑥✅无下载进程(pgrep无命中,S2三源全100%,0 .incomplete)；⑦✅research日报2026-11-24(最新,建议=data线做「过滤强度×规模」预算表(2102.05918),属论文方法论框定非当前可执行指令,blend工作已完成待350k)；⑧✅MEMORY体积<40KB✅(归档R296-R280后) TASK27.6KB<32KB✅。全部用户令已交付。待pretrain到350k(~11-28)启动S2。WAITING=0。
+> 📦 R391 心跳（例行巡检+blendswitch第183次复验7/7 PASS·iter≈301,130 step7.14s·300k eval done daemon idle·.12 load28.44·0下载进程）已归档 → daily-memories-data/2026-11-24.md
 > 📦 R390 心跳（例行巡检+blendswitch第182次复验7/7 PASS·iter≈301000 step7.11s·300k eval已完成daemon idle·.12 load26.15·0下载进程）已归档 → daily-memories-data/2026-11-24.md
-> 📦 R389 心跳（例行巡检+blendswitch第181次复验7/7 PASS·iter≈300940 step7.19s·300k eval已完成daemon idle·.12 load26.58·0下载进程）已归档 → daily-memories-data/2026-11-24.md
+> 📦 R389 心跳（例行巡检+blendswitch第184次复验7/7 PASS·iter≈300940 step7.19s·300k eval已完成daemon idle·.12 load26.58·0下载进程）已归档 → daily-memories-data/2026-11-24.md
 > 📦 R388 心跳（例行巡检+blendswitch第180次复验7/7 PASS·iter≈300820 step7.16s·300k eval已完成daemon idle·.12 load26.53·0下载进程）已归档 → daily-memories-data/2026-11-24.md
 > 📦 R387 心跳（例行巡检+blendswitch第179次复验7/7 PASS·iter≈300820 step7.16s·300k eval已完成daemon idle·.12 load26.53·0下载进程）已归档 → daily-memories-data/2026-11-24.md
 > 📦 R386 心跳（例行巡检+blendswitch第178次复验7/7 PASS·iter≈300750 step7.18s·300k eval已完成daemon idle·.12 load27.48·0下载进程）已归档 → daily-memories-data/2026-11-24.md
@@ -64,21 +65,7 @@ WAITING: 0
 > 📦 R299 心跳（例行巡检+blendswitch第92次复验7/7 PASS·iter295400 step7.33s·.12 load28.54/26.88/26.69·0下载进程）已归档 → daily-memories-data/2026-11-23.md
 > 📦 R298 心跳（例行巡检+blendswitch第91次复验7/7 PASS·iter295250 step7.28s·.12 load25.86/26.77/26.77·0下载进程）已归档 → daily-memories-data/2026-11-23.md
 > 📦 R297 心跳（例行巡检+blendswitch第90次复验7/7 PASS·iter295190 step7.25s·.12 load26.06/26.99/26.69·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R296 心跳（例行巡检+blendswitch第89次复验7/7 PASS·iter295100 step7210ms·.12 load24.87/26.23/26.28·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R295 心跳（例行巡检+blendswitch第88次复验7/7 PASS·iter295100 step7210ms·.12 load25.97/25.97/26.11·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R294 心跳（例行巡检+blendswitch第87次复验7/7 PASS·iter295030 step7239ms·.12 load25.10/25.33/25.96·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R293 心跳（例行巡检+blendswitch第86次复验7/7 PASS·iter295030 step7239ms·.12 load25.64/26.01/26.26·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R292 心跳（例行巡检+blendswitch第85次复验7/7 PASS·iter294980 step7341ms·.12 load25.61/26.21/26.39·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R291 心跳（例行巡检+blendswitch第84次复验7/7 PASS·iter294890 step7318ms·.12 load25.84/26.70/26.52·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R290 心跳（例行巡检+blendswitch第83次复验7/7 PASS·iter294810 step7284ms·.12 load26.71/26.62/26.37·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R289 心跳（例行巡检+blendswitch第82次复验7/7 PASS·iter294810 step7284ms·.12 load24.79/25.79/26.04·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R288 心跳（例行巡检+blendswitch第81次复验7/7 PASS·iter294690 step7222ms·.12 load27.53/26.67/26.32·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R285 心跳（例行巡检+blendswitch第78次复验7/7 PASS·iter294600 step7280ms·.12 load26.25/26.65/26.29·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R284 心跳（例行巡检+blendswitch第77次复验7/7 PASS·iter294530 step7321ms·.12 load27.36/26.42/26.03·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R283 心跳（例行巡检+blendswitch第76次复验7/7 PASS·iter294450 step7351-7567ms·.12 load27.22/26.46/25.89·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R282 心跳（例行巡检+blendswitch第75次复验7/7 PASS·iter294340 step7351ms·.12 load26.28/25.45/25.59·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R281 心跳（例行巡检+blendswitch第74次复验7/7 PASS·iter294250 step7417ms·.12 load24.59/25.23/25.83·0下载进程）已归档 → daily-memories-data/2026-11-23.md
-> 📦 R280 心跳（例行巡检+blendswitch第73次复验7/7 PASS·iter294250 step7417ms·.12 load27.45/26.28/26.26·0下载进程）已归档 → daily-memories-data/2026-11-23.md
+> 📦 R296~R280 心跳（例行巡检+blendswitch第73~89次复验均7/7 PASS·iter294250~295100·step7210~7417ms·.12 load均<30·0下载进程）已批量归档 → daily-memories-data/2026-11-23.md
 > 📦 R279 心跳（例行巡检+blendswitch第72次复验7/7 PASS·iter293940 step7392ms·.12 load25.29/25.64/26.10·0下载进程）已归档 → daily-memories-data/2026-11-23.md
 > 📦 R277 心跳（例行巡检+blendswitch第70次复验7/7 PASS·iter293940 step7392ms·.12 load25.15/26.47/26.57·0下载进程）已归档 → daily-memories-data/2026-11-23.md
 > 📦 R276 心跳（例行巡检+blendswitch第69次复验7/7 PASS·iter293940 step7392ms·.12 load25.99/26.16/26.43·0下载进程）已归档 → daily-memories-data/2026-11-23.md
