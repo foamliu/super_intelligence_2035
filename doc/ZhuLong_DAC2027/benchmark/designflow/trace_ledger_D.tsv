@@ -2008,3 +2008,4 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1787217250604_508od.messages.json	junxu	hfeg0plg79	2514	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoWireAutoRoute-001	2026-11-23 08:10	cross-shard reclaim: C case LayoutLabelArgOrderFix-001 abandoned (not in any jsonl) + wrong-domain (508od schematic-dominant schematic:2518 NO layout kw, C mis-claimed layout_virtuoso); D reclaims for U1132 auto-route intent (virtuoso_wire_route). Precedent: dr7mm r1165 reclaim-from-C.
 1794815174300_xotrf	cliu	hfeg0plg19	275	schematic_netlist	case	EDA-Eval-DesignFlow-VerilogMirrorCompareAnalyze-001	2026-11-23 09:03	
 1795159586165_1nlsg.messages.json	e0046686	hfhds201	89	schematic_netlist	case	EDA-Eval-DesignFlow-AutoSimErrHandlingAudit-001	2026-11-23 09:47	
+1795081185032_a076c					case	EDA-Eval-DesignFlow-DdrMarginSkillProduce-001	2026-11-23 10:11	
