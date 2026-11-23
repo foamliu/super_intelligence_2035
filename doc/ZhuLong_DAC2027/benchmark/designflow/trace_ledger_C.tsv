@@ -1466,3 +1466,5 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1795332331813_36w9p					parked		2026-11-23 14:11	r998 peek: xxchen drcpv QA-GUI optimization (button layout/columns), modify-existing-GUI not produce-task
 1794817866160_2p49w					parked		2026-11-23 14:11	r998 peek: jzeng '优化IMCleAutoVia.py生成V4' = DUPLICATE of AutoViaV4Dir3DY-001 (same user/tool/theme)
 1795224247115_bpyy5	zhiguo1w	hfeg0plg06	69	physical_verify	case	EDA-Eval-DesignFlow-DummyFlowTypeCmpRectAnalyze-001	2026-11-23 14:59	
+1795141886345_qjw8t	e0047722	hfeg0plg75	60	physical_verify	case	EDA-Eval-DesignFlow-DrcWaiveScreener-001	2026-11-23 15:31	
+1794903862654_2pume	colinxu	hfeg0pkn002	56	layout_virtuoso	parked		2026-11-23 15:31	r1000 peek: live-Virtuoso cellview-open task (ddGetLibList/deOpen/readOnly), not offline-synthesizable, needs live Virtuoso+stdcells_ac lib; parked
