@@ -12355,3 +12355,50 @@ python3 bpt_attribution_p0_dev_compare.py \
 - skeleton 为**骨架**（doc→code 正例），**非真实 cline agentic 轨迹**——真实轨迹须 §G6.1 base+cline 跑出；本 §I 是地基/冷启动，不替代真实轨迹。
 - 严格 §H4 口径丢弃 77% doctest；放宽口径是正式 SFT 前的预注册决策点，本 §I 不替决策。
 - 零 GPU/零 ckpt；未碰 GPU0-3/6/协议·题面·check.py·超时·-p/未起 SFT/RL 训练/未 kill 任何进程。基线表不变 A0=43.29%±3.92% / A1=4.56%±1.70% / Δ=−38.73pp。
+
+## §J. STRICT vs RELAXED vs TIERED 隔离预注册决策（wake755 · 2026-11-23 · 零 GPU/零 ckpt · 主线 SFT 设计预研）
+
+### J1. 目的：闭合 §I4/§I8 的预注册决策点
+- §I 用 STRICT 口径产出 664 对（77% doctest 被闸门丢弃，因 doctest 参考文档用禁用 API 作 setup helper）。§I 明确把「是否放宽为仅 target API 隔离」留为正式 SFT 前的预注册决策点，本 §J 用数字闭合它。
+- **预注册纪律**：决策在**任何正式 SFT run 之前**冻结；跑完不许改口径（与 §E.3/wake754 同纪律）。
+
+### J2. 三口径定义
+| 口径 | 规则 |
+|:--|:--|
+| STRICT（§I 已发） | target API held-out **且** emitted 全文不含任一 forbidden API（含 setup helper） |
+| RELAXED | 仅 target API held-out；允许 forbidden API 作 setup helper（参考文档来源） |
+| TIERED（本 §J 预注册采纳） | target API held-out；允许 LOW/MEDIUM 风险 helper；**排除 HIGH 风险 helper**；§H4 signature 闸门**两种模式都保留** |
+
+### J3. 量化结果（`isolation_prereg_analysis.json`，全 2904 doctest API 扫描）
+| 口径 | 通过对数 | 相对 STRICT 倍数 |
+|:--|--:|--:|
+| STRICT | 682 | 1.00× |
+| RELAXED | 2904 | 4.26× |
+| **TIERED（排除 HIGH）** | **2842** | **4.17×** |
+
+- STRICT 丢弃率 76.5%（2222/2904）。
+- TIERED 相对 RELAXED 仅损失 62 对（2.1%），即排除 dbNewCV(59)+dbCreateLib(19) 的并集。
+
+### J4. helper 风险分级（37 个 distinct forbidden API 作 helper）
+- 风险等级 = `eval_task_frequency ≥ 10` 且 `rich args` ⇒ HIGH；二者居一 ⇒ MEDIUM；皆无 ⇒ LOW。
+- **HIGH（2 个，TIERED 排除）**：`dbNewCV`（59 对 / 21 eval 任务 / rich）、`dbCreateLib`（19 对 / 23 eval 任务 / rich）——这两个是 eval 任务核心 Database-Create API，rich args，**真正有泄漏 eval-task 模式的风险**，即便放宽也必须排除。
+- **MEDIUM（20 个）**：如 `aeOpenDesign`(547)、`emyString`(453)、`emyBoxF`/`dbCrtRect`/`aeCreateTreeItem` 等——eval 频率低（多为 1-8 任务）或 args 偏 generic。
+- **LOW（15 个）**：**`emyInitAether` 是主导 helper（1822 对，占 relaxed-only 的 82%）**，仅 2 eval 任务使用、generic 无参 init——这是 EDA 环境通用初始化，泄漏风险极低。
+
+### J5. 预注册决策（冻结 · 先定后测 · 正式 SFT 前不得改）
+1. **正式 SFT doc→code 语料隔离口径 = TIERED**（排除 HIGH-risk helper `dbNewCV`/`dbCreateLib`，余 forbidden API 允许作 generic setup helper）。
+2. **两条硬闸在所有模式都保留**：① target API 必须 held-out（来自 §H `available_for_sft_apis`）；② §H4 signature 闸门——emitted 全文不得出现任一 eval 任务的 `def <entry_point>(` 签名。
+3. **理由**：STRICT 过度保守（丢弃 emyInitAether 这类通用 init，损失 4.17× 语料）；纯 RELAXED 引入 dbNewCV/dbCreateLib 这两个 eval-central rich-arg API 的高泄漏风险；TIERED 兼顾语料规模（4.17× STRICT）与防泄漏（排除仅 2 个 HIGH-risk API，保留 97.9% RELAXED yield）。
+4. **预注册判据（正式 SFT 后评测时启用）**：SFT 语料须通过 TIERED 闸门 + behavior_gate（§F5.3）；若 post-SFT 在 158 题上相对 A0 出现「dbNewCV/dbCreateLib 相关任务」的异常通过率上升 ⇒ 触发泄漏复检（即便已排除，作 sentinel）。
+5. **不替代 §G6.1 真实 agentic 轨迹**：TIERED 2842 对仍是 doc→code 骨架；正式 SFT 语料 = TIERED doc→code 对 + §G6.1 真实 agentic 轨迹（agentic 占比预注册 ≥30%，修 §F「0% agentic」根因）。
+
+### J6. 交付物
+- `baize_posttrain_isolation_prereg_analysis.py`（分析脚本，syntax OK + 实跑 PASS）。
+- `isolation_prereg_analysis.json`（三口径量化 + 37 helper 风险分级 + 预注册推荐）。
+
+### J7. 诚实性 / 局限
+- 风险分级用 `n_tasks≥10 AND rich-args` 作 HIGH 启发式，非穷举泄漏证明；正式 SFT 前可对 MEDIUM helper 做抽样人工复核。
+- arg-shape 判定（generic vs rich）基于 doctest 首个调用行的参数复杂度，是粗粒度代理。
+- TIERED 的 2842 是**潜在**doc→code 对规模；正式 SFT 实际用量受 §G6.1 真实 agentic 轨迹占比与训练预算约束。
+- 零 GPU/零 ckpt；未碰 GPU0-3/6/协议·题面·check.py·超时·-p/未起 SFT/RL 训练/未 kill 任何进程。基线表不变 A0=43.29%±3.92% / A1=4.56%±1.70% / Δ=−38.73pp。
+
