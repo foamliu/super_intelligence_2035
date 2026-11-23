@@ -161,6 +161,8 @@
     "django__django-16082",
     "django__django-16100",
     "django__django-16116",
+    "django__django-16145",
+    "django__django-16255",
     "django__django-16333",
     "django__django-16493",
     "django__django-16527",
@@ -212,6 +214,7 @@
     "pydata__xarray-3095",
     "pydata__xarray-3677",
     "pydata__xarray-3993",
+    "pydata__xarray-4075",
     "pydata__xarray-4629",
     "pydata__xarray-4695",
     "pydata__xarray-4966",
@@ -334,7 +337,6 @@
     "astropy__astropy-14598",
     "astropy__astropy-7336",
     "astropy__astropy-7606",
-    "django__django-10097",
     "django__django-10554",
     "django__django-10999",
     "django__django-11087",
@@ -390,8 +392,6 @@
     "django__django-15957",
     "django__django-16136",
     "django__django-16139",
-    "django__django-16145",
-    "django__django-16255",
     "django__django-16256",
     "django__django-16263",
     "django__django-16315",
@@ -423,7 +423,6 @@
     "pydata__xarray-2905",
     "pydata__xarray-3151",
     "pydata__xarray-3305",
-    "pydata__xarray-4075",
     "pydata__xarray-4094",
     "pydata__xarray-4356",
     "pydata__xarray-4687",
@@ -507,7 +506,9 @@
     "sympy__sympy-23950",
     "sympy__sympy-24539"
   ],
-  "infra_or_quota": [],
+  "infra_or_quota": [
+    "django__django-10097"
+  ],
   "total_predictions": 500,
   "evaluated": 500,
   "no_patch": [],
@@ -608,6 +609,6 @@
   ],
   "merged_R2784_sympy-24066": "RESOLVED",
   "rerun_merged": "2026-11-23 21:33:02",
-  "incr_merged": "2026-11-24 05:54:59",
+  "incr_merged": "2026-11-24 07:27:11",
   "merge_note": "manual fix: sympy-16450 resolved per eval run rerun_incr_cline-patched_11240317 (overwritten by orphan 0316 process)"
 }

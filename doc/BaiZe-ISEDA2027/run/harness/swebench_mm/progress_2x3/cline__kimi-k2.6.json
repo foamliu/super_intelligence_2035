@@ -5808,23 +5808,44 @@
   "openlayers__openlayers-13547": {
     "instance_id": "openlayers__openlayers-13547",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1825.8,
+    "rc": 0,
+    "model_patch_len": 15759,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "the gutter pixels, **eliminating interpolation artifacts and visible seams**.\\n- TypeScript compiles cleanly and all node tests pass.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-13648": {
     "instance_id": "openlayers__openlayers-13648",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1032.8,
+    "rc": 0,
+    "model_patch_len": 4123,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "eScript check shows no new errors in `GeoTIFF.js` (only pre-existing `geotiff` module-not-found errors due to missing `npm install`).\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-13654": {
     "instance_id": "openlayers__openlayers-13654",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 131.0,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "empty_patch",
+    "stdout_tail": "y require either a WebGL-based reprojection shader or a data-to-canvas-to-data pipeline, both of which are significant undertakings).\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-13669": {
     "instance_id": "openlayers__openlayers-13669",
