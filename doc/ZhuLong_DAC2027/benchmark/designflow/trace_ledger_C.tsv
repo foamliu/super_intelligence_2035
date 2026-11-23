@@ -1509,3 +1509,4 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1794999105032_qrkzg	e0025768	hfeg0pkn001	21	physical_verify	parked		2026-11-24 02:57	r1032 peek: dup of 90j7n (same e0025768 analysis-report-gen session json->md), 47msgs, teeth-fail
 1795141940424_cpd1g	ellawu	hfeg0pkn001	24	physical_verify	parked		2026-11-24 02:57	r1032 peek: DRC deck analysis-Q&A(Calibre SVRF SHRINK PRB_RANGE dummy fill deck, user asks can-expand-prboundary), 26msgs, prose deliverable teeth-fail; near-dup ellawu DRC deck flow (9m82z/urahg/hlzhf/5p3r3 already cases)
 1794965367964_6mjph	zhililu	hfeg0plg10	13	physical_verify	parked		2026-11-24 02:57	r1032 peek: cross-domain (circuit timing analysis DischgCnt/Cnt_ks/Cnt_clk +1 count, spice/schematic), 15msgs, belongs to D shard spice_sim
+1795395353963_t0dhm	felixw	hfeg0pkn004	399	physical_verify	claimed		2026-11-24 03:38	
