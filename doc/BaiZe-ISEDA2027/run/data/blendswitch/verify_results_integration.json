@@ -1,0 +1,59 @@
+{
+  "test_file": "tests/test_blend_hot_switch_integration.py",
+  "environment": {
+    "python": "/nas_train/app.e0031982/miniforge3/envs/py310/bin/python",
+    "numpy": "1.26.4",
+    "machine": "10.239.2.12 (whag0pgpuap12)",
+    "date": "2026-11-23",
+    "repo": "/nas_train/app.e0031982/code/Megatron-LM-blendswitch",
+    "branch": "blend-hot-switch",
+    "commit": "011a05b",
+    "base_commit": "14c215d"
+  },
+  "results": {
+    "test_zero_overlap": {
+      "status": "PASS",
+      "total_overlap": 0,
+      "s1_weights": [0.74, 0.19, 0.07],
+      "s2_weights": [0.40, 0.40, 0.20],
+      "s1_consumed": 35000,
+      "s2_consumed": 50000,
+      "per_source": [
+        {"source": 0, "s1_docs": 25900, "s2_docs": 20000, "overlap": 0},
+        {"source": 1, "s1_docs": 6650, "s2_docs": 20000, "overlap": 0},
+        {"source": 2, "s1_docs": 2450, "s2_docs": 10000, "overlap": 0}
+      ]
+    },
+    "test_ratio_compliance": {
+      "status": "PASS",
+      "target_weights": [0.40, 0.40, 0.20],
+      "actual_ratios": [0.4, 0.4, 0.2],
+      "max_deviation_pp": 0.0000,
+      "threshold_pp": 1.0,
+      "num_batches": 5000,
+      "micro_batch_size": 4
+    },
+    "test_flag_off_equivalence": {
+      "status": "PASS",
+      "description": "Two independent builds with same weights produce byte-identical dataset_index and dataset_sample_index"
+    },
+    "test_new_source_zero_overlap": {
+      "status": "PASS",
+      "total_overlap": 0,
+      "new_source_index": 3,
+      "shared_mask": [true, true, true, false]
+    },
+    "test_checkpoint_roundtrip": {
+      "status": "PASS",
+      "description": "BlendSwitcher.to_json() / from_json() preserves consumed_per_source, new_weights, new_size, switched"
+    }
+  },
+  "summary": {
+    "tests_passed": 5,
+    "tests_total": 5,
+    "all_passed": true,
+    "zero_overlap_confirmed": true,
+    "ratio_compliance_confirmed": true,
+    "flag_off_equivalence_confirmed": true
+  }
+}

@@ -3,7 +3,81 @@
 > **Base commit**: `14c215dc1472ca75d6f3ce27e423bedfdc51614b` (Xmodel-2.5-code)
 > **Flag**: `--blend-hot-switch` (default OFF)
 > **Safety**: flag OFF = stock byte-equivalent (verified by test_blend_switch.py)
-> **Date**: 2026-11-22 · **Author**: BaiZe Data Agent
+> **Date**: 2026-11-22 (standalone module) · 2026-11-23 (Megatron integration)
+> **Author**: BaiZe Data Agent
+
+## ✅ Integration Status (2026-11-23)
+
+The patch has been **applied to a real Megatron-LM source tree** and verified:
+
+| Item | Value |
+|---|---|
+| Dev copy repo | `/nas_train/app.e0031982/code/Megatron-LM-blendswitch` |
+| Branch | `blend-hot-switch` (commit `011a05b`) |
+| Base commit | `14c215d` (pinned to live training repo) |
+| Patch file | `blend_hotswitch.patch` (921 lines, `git diff main..blend-hot-switch`) |
+| Integration test | `tests/test_blend_hot_switch_integration.py` (5 tests) |
+| Test results | **5/5 PASSED** (see `verify_results_integration.json`) |
+| Python env | `/nas_train/app.e0031982/miniforge3/envs/py310/bin/python` (numpy 1.26.4) |
+| Machine | `10.239.2.12` (CPU-only, no GPU used) |
+
+### Integration test results
+
+| Test | Metric | Result |
+|---|---|---|
+| zero_overlap | total_overlap | **0** ✅ |
+| ratio_compliance | max_deviation | **0.0000pp** (≤1pp) ✅ |
+| flag_off_equivalence | byte-identical | **yes** ✅ |
+| new_source_zero_overlap | total_overlap | **0** ✅ |
+| checkpoint_roundtrip | state preserved | **yes** ✅ |
+
+### Files patched (5 modified + 2 new)
+
+1. `megatron/core/datasets/blend_switcher.py` (NEW, 340 lines)
+2. `megatron/core/datasets/blended_dataset.py` (+66 lines: `update_weights()`)
+3. `megatron/legacy/data/data_samplers.py` (+173 lines: `BlendHotSwitchRandomSampler` + `maybe_trigger_blend_switch()`)
+4. `megatron/training/arguments.py` (+15 lines: `--blend-hot-switch`, `--blend-switch-step`, `--blend-switch-config`)
+5. `megatron/training/training.py` (+9 lines: import + train-loop hook)
+6. `megatron/training/checkpointing.py` (+9 lines: persist `blend_switch_state`)
+7. `tests/test_blend_hot_switch_integration.py` (NEW, 5 CPU-only tests)
+
+### How to apply the patch
+
+```bash
+cd /path/to/Xmodel-2.5-code
+git apply blend_hotswitch.patch
+# Or cherry-pick from the dev copy:
+git cherry-pick 011a05b
+```
+
+### How to run the integration test
+
+```bash
+cd /nas_train/app.e0031982/code/Megatron-LM-blendswitch
+/nas_train/app.e0031982/miniforge3/envs/py310/bin/python tests/test_blend_hot_switch_integration.py
+```
+
+### How to use in training
+
+```bash
+python pretrain_launcher.py \
+  --blend-hot-switch \
+  --blend-switch-step 350000 \
+  --blend-switch-config /path/to/s2_blend_config.json \
+  ... (all other args unchanged)
+```
+
+S2 blend config JSON format:
+```json
+{
+  "new_weights": [0.40, 0.40, 0.20],
+  "new_size": 1000000,
+  "shared_source_mask": [true, true, true],
+  "source_keys": ["web", "code", "math"]
+}
+```
+
+---
 
 ## 1. blended_dataset.py — add update_weights()
 

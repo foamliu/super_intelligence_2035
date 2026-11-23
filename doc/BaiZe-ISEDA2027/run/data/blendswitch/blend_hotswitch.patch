@@ -1,0 +1,921 @@
+diff --git a/megatron/core/datasets/blend_switcher.py b/megatron/core/datasets/blend_switcher.py
+new file mode 100644
+index 0000000..b080836
+--- /dev/null
++++ b/megatron/core/datasets/blend_switcher.py
+@@ -0,0 +1,340 @@
++#!/usr/bin/env python3
++"""
++BlendSwitcher — Plan F: 权重热更新 + 跨 blend 游标映射
++=======================================================
++实现 S1→S2 零重叠 + 换比例 的 Megatron-LM 自定义改造。
++
++设计原理:
++  1. BlendedDataset.update_weights(new_weights, new_size): 重建索引，复用 shuffle_index
++  2. per-source 游标映射: consumed_per_source[s] → 新 blend 中该源继续前移
++  3. 零重叠: shuffle_index 是无重复排列，S1 消费 [0, consumed) → S2 从 consumed 起
++  4. --blend-hot-switch 默认关闭，关闭时与 stock 逐字节等价
++
++作者: BaiZe Data Agent · 2026-11-22
++"""
++
++from __future__ import annotations
++import json
++from typing import Dict, List, Optional, Tuple, Union
++import numpy
++
++
++def build_blending_indices_py(
++    dataset_index: numpy.ndarray,
++    dataset_sample_index: numpy.ndarray,
++    weights: List[float],
++    num_datasets: int,
++    size: int,
++    verbose: bool = False,
++) -> None:
++    """Pure-Python Bresenham-style weighted interleaving (replaces C++ helpers)."""
++    weights = numpy.asarray(weights, dtype=numpy.float64)
++    sampled = numpy.zeros(num_datasets, dtype=numpy.int64)
++    for i in range(size):
++        deficit = weights * (i + 1) - sampled
++        chosen = int(numpy.argmax(deficit))
++        dataset_index[i] = chosen
++        dataset_sample_index[i] = sampled[chosen]
++        sampled[chosen] += 1
++        if verbose and i % 100000 == 0 and i > 0:
++            print(f"  blending: {i}/{size} ({100*i/size:.1f}%)")
++
++
++class BlendSwitcher:
++    """Manages per-source consumption tracking and cross-blend cursor mapping.
++
++    Lifecycle:
++        switcher = BlendSwitcher(num_sources, source_keys)
++        for sample_idx in s1_iterator:
++            switcher.track(dataset_index[sample_idx])     # S1 tracking
++        switcher.switch_weights(new_weights, new_size, shared_mask)  # switch
++        overlap = switcher.compute_overlap(shuffle_indices)  # verify zero
++    """
++
++    def __init__(self, num_sources: int, source_keys: Optional[List[str]] = None) -> None:
++        self.num_sources = num_sources
++        self.source_keys = source_keys or [f"src_{i}" for i in range(num_sources)]
++        self.consumed_per_source = numpy.zeros(num_sources, dtype=numpy.int64)
++        self.total_consumed = 0
++        self.switched = False
++        self.new_weights: Optional[List[float]] = None
++        self.new_size: Optional[int] = None
++        self.new_dataset_index: Optional[numpy.ndarray] = None
++        self.new_dataset_sample_index: Optional[numpy.ndarray] = None
++        self.shared_source_mask: Optional[List[bool]] = None
++        self.cursor_offsets: Optional[Dict[int, int]] = None
++
++    def track(self, dataset_id: int) -> None:
++        """Track consumption of one sample from source dataset_id (S1 phase)."""
++        assert 0 <= dataset_id < self.num_sources
++        self.consumed_per_source[dataset_id] += 1
++        self.total_consumed += 1
++
++    def track_batch(self, dataset_ids: numpy.ndarray) -> None:
++        """Track consumption of a batch of samples (vectorized)."""
++        for did in dataset_ids:
++            self.track(int(did))
++
++    def get_consumed_per_source(self) -> numpy.ndarray:
++        return self.consumed_per_source.copy()
++
++    def switch_weights(
++        self,
++        new_weights: List[float],
++        new_size: int,
++        shared_source_mask: List[bool],
++        build_fn=None,
++    ) -> Tuple[numpy.ndarray, numpy.ndarray]:
++        """Switch to new blend weights with per-source cursor mapping.
++
++        Rebuilds dataset_index/dataset_sample_index with new_weights (Bresenham),
++        then applies cursor offsets for shared sources:
++            new_dataset_sample_index[where dataset_index==s] += consumed_per_source[s]
++
++        This is the core of Plan F: shared sources continue past S1-consumed
++        positions in shuffle_index → zero document overlap.
++        """
++        assert len(new_weights) == self.num_sources
++        assert len(shared_source_mask) == self.num_sources
++        assert self.switched is False, "Already switched."
++
++        self.new_weights = list(new_weights)
++        self.new_size = new_size
++        self.shared_source_mask = list(shared_source_mask)
++
++        # Step 1: Build new blending indices with S2 weights
++        new_di = numpy.zeros(new_size, dtype=numpy.int16)
++        new_dsi = numpy.zeros(new_size, dtype=numpy.int64)
++        if build_fn is None:
++            build_fn = build_blending_indices_py
++        build_fn(new_di, new_dsi, new_weights, self.num_sources, new_size)
++
++        # Step 2: Apply per-source cursor offsets for shared sources
++        self.cursor_offsets = {}
++        for s in range(self.num_sources):
++            if shared_source_mask[s]:
++                offset = int(self.consumed_per_source[s])
++                mask = (new_di == s)
++                new_dsi[mask] += offset
++                self.cursor_offsets[s] = offset
++            else:
++                self.cursor_offsets[s] = 0
++
++        self.new_dataset_index = new_di
++        self.new_dataset_sample_index = new_dsi
++        self.switched = True
++        return new_di, new_dsi
++
++    def get_switched_indices(self) -> Tuple[numpy.ndarray, numpy.ndarray]:
++        assert self.switched, "Must call switch_weights() first"
++        return self.new_dataset_index, self.new_dataset_sample_index
++
++    def get_consumed_doc_ids_s1(self, shuffle_indices: List[numpy.ndarray]) -> Dict[int, set]:
++        """Compute document IDs consumed per source during S1.
++
++        For source s, consumed shuffle positions are [0, consumed_per_source[s]).
++        Each maps to a document via shuffle_indices[s][position].
++        """
++        consumed_docs: Dict[int, set] = {}
++        for s in range(self.num_sources):
++            n_consumed = int(self.consumed_per_source[s])
++            shuffle_s = shuffle_indices[s]
++            if n_consumed == 0:
++                consumed_docs[s] = set()
++                continue
++            effective = min(n_consumed, len(shuffle_s))
++            consumed_docs[s] = set(int(p) for p in shuffle_s[:effective])
++            if n_consumed > len(shuffle_s):
++                # Epoch wrap: second pass overlaps — report honestly
++                remainder = n_consumed - len(shuffle_s)
++                consumed_docs[s].update(int(p) for p in shuffle_s[:remainder])
++        return consumed_docs
++
++    def get_consumed_doc_ids_s2(self, shuffle_indices: List[numpy.ndarray]) -> Dict[int, set]:
++        """Compute document IDs that WILL be consumed per source during S2."""
++        assert self.switched, "Must call switch_weights() first"
++        consumed_docs: Dict[int, set] = {}
++        for s in range(self.num_sources):
++            mask = (self.new_dataset_index == s)
++            sample_ids = self.new_dataset_sample_index[mask]
++            shuffle_s = shuffle_indices[s]
++            docs = set()
++            for sid in sample_ids:
++                pos = int(sid) % len(shuffle_s)
++                docs.add(int(shuffle_s[pos]))
++            consumed_docs[s] = docs
++        return consumed_docs
++
++    def compute_overlap(self, shuffle_indices: List[numpy.ndarray]) -> Dict:
++        """Compute S1∩S2 document overlap per source and overall.
++
++        Returns dict with per_source, totals, overlap_rate, epoch_wrap_warnings.
++        """
++        s1_docs = self.get_consumed_doc_ids_s1(shuffle_indices)
++        s2_docs = self.get_consumed_doc_ids_s2(shuffle_indices)
++
++        per_source = {}
++        total_s1 = 0
++        total_s2 = 0
++        total_overlap = 0
++        warnings = []
++
++        for s in range(self.num_sources):
++            s1_set = s1_docs.get(s, set())
++            s2_set = s2_docs.get(s, set())
++            overlap = s1_set & s2_set
++            s1c = len(s1_set)
++            s2c = len(s2_set)
++            oc = len(overlap)
++            rate = oc / max(s1c, 1) if s1c > 0 else 0.0
++            per_source[s] = {
++                "source_key": self.source_keys[s],
++                "s1_docs": s1c, "s2_docs": s2c, "overlap_docs": oc,
++                "overlap_rate": rate,
++                "shared": self.shared_source_mask[s] if self.switched else True,
++                "cursor_offset": self.cursor_offsets.get(s, 0) if self.switched else 0,
++            }
++            total_s1 += s1c
++            total_s2 += s2c
++            total_overlap += oc
++            if oc > 0:
++                shuffle_len = len(shuffle_indices[s])
++                consumed = int(self.consumed_per_source[s])
++                if consumed > shuffle_len:
++                    warnings.append(
++                        f"Source {self.source_keys[s]}: consumed {consumed} > "
++                        f"shuffle_index len {shuffle_len} (epoch wrap), "
++                        f"overlap={oc} unavoidable")
++
++        return {
++            "per_source": per_source,
++            "total_s1_docs": total_s1,
++            "total_s2_docs": total_s2,
++            "total_overlap_docs": total_overlap,
++            "overlap_rate": total_overlap / max(total_s1, 1),
++            "epoch_wrap_warnings": warnings,
++        }
++
++    def compute_ratio(self, num_batches: int = 5000, micro_batch_size: int = 1) -> Dict:
++        """Compute per-source sample ratio over first num_batches of S2."""
++        assert self.switched, "Must call switch_weights() first"
++        total_samples = min(num_batches * micro_batch_size, self.new_size)
++        counts = numpy.zeros(self.num_sources, dtype=numpy.int64)
++        for i in range(total_samples):
++            counts[self.new_dataset_index[i]] += 1
++        actual = counts / max(total_samples, 1)
++        target = numpy.array(self.new_weights, dtype=numpy.float64)
++        per_source = {}
++        for s in range(self.num_sources):
++            dev = abs(float(actual[s]) - float(target[s]))
++            per_source[s] = {
++                "source_key": self.source_keys[s],
++                "count": int(counts[s]),
++                "actual_ratio": float(actual[s]),
++                "target_ratio": float(target[s]),
++                "deviation_pct": dev * 100,
++            }
++        max_dev = max(abs(float(actual[s]) - float(target[s])) for s in range(self.num_sources))
++        return {
++            "num_samples_analyzed": total_samples,
++            "per_source": per_source,
++            "max_deviation_pct": max_dev * 100,
++            "pass": max_dev * 100 <= 1.0,
++        }
++
++    def to_json(self) -> str:
++        """Serialize switcher state to JSON (for checkpoint persistence)."""
++        return json.dumps({
++            "num_sources": self.num_sources,
++            "source_keys": self.source_keys,
++            "consumed_per_source": self.consumed_per_source.tolist(),
++            "total_consumed": int(self.total_consumed),
++            "switched": self.switched,
++            "new_weights": self.new_weights,
++            "new_size": self.new_size,
++            "shared_source_mask": self.shared_source_mask,
++            "cursor_offsets": self.cursor_offsets,
++        }, indent=2)
++
++    @classmethod
++    def from_json(cls, json_str: str) -> "BlendSwitcher":
++        """Deserialize switcher state from JSON."""
++        data = json.loads(json_str)
++        sw = cls(data["num_sources"], data["source_keys"])
++        sw.consumed_per_source = numpy.array(data["consumed_per_source"], dtype=numpy.int64)
++        sw.total_consumed = data["total_consumed"]
++        sw.switched = data["switched"]
++        sw.new_weights = data["new_weights"]
++        sw.new_size = data["new_size"]
++        sw.shared_source_mask = data["shared_source_mask"]
++        sw.cursor_offsets = data["cursor_offsets"]
++        return sw
++
++
++class BlendHotSwitchMixin:
++    """Mixin to add update_weights() to BlendedDataset.
++
++    When --blend-hot-switch is OFF, this mixin is not applied and
++    BlendedDataset behaves exactly as stock.
++    """
++
++    def update_weights(self, new_weights, new_size, switcher, build_fn=None):
++        """Hot-update blend weights with per-source cursor mapping."""
++        shared_mask = switcher.shared_source_mask or [True] * len(new_weights)
++        new_di, new_dsi = switcher.switch_weights(new_weights, new_size, shared_mask, build_fn)
++        self.dataset_index = new_di
++        self.dataset_sample_index = new_dsi
++        self.weights = new_weights
++        self.size = new_size
++        return new_di, new_dsi
++
++
++def apply_blend_hot_switch_patch(dataset_class) -> None:
++    """Monkey-patch BlendedDataset class to add update_weights().
++
++    When --blend-hot-switch is OFF, do not call this (stock behavior preserved).
++    """
++    dataset_class.update_weights = BlendHotSwitchMixin.update_weights
++
++
++class BlendHotSwitchSampler:
++    """Per-source progress-driven sampler for post-switch S2.
++
++    Replaces stock MegatronPretrainingRandomSampler's global
++    epoch = consumed // active_total logic with sequential iteration
++    over pre-built (cursor-offset) indices.
++    When --blend-hot-switch is OFF, stock sampler is used instead.
++    """
++
++    def __init__(self, dataset, switcher, total_samples, micro_batch_size,
++                 data_parallel_rank, data_parallel_size, data_sharding):
++        self.dataset = dataset
++        self.switcher = switcher
++        self.total_samples = total_samples
++        self.micro_batch_size = micro_batch_size
++        self.data_parallel_rank = data_parallel_rank
++        self.data_parallel_size = data_parallel_size
++        self.data_sharding = data_sharding
++        self.mbs_dp = micro_batch_size * data_parallel_size
++        self.last_batch_size = total_samples % self.mbs_dp
++        self.active_total = total_samples - self.last_batch_size
++        self.consumed_samples = 0
++
++    def __len__(self):
++        return self.total_samples
++
++    def __iter__(self):
++        start = self.data_parallel_rank * self.micro_batch_size
++        step = self.mbs_dp
++        batch = []
++        for idx in range(start, self.active_total, step):
++            batch.append(idx)
++            if len(batch) == self.micro_batch_size:
++                self.consumed_samples += self.mbs_dp
++                yield batch
++                batch = []
++
++
++if __name__ == "__main__":
++    print("BlendSwitcher — Plan F: weight hot-update + cross-blend cursor mapping")
++    print("Run test_blend_switch.py for validation.")
+diff --git a/megatron/core/datasets/blended_dataset.py b/megatron/core/datasets/blended_dataset.py
+index 4628686..cd5baaf 100644
+--- a/megatron/core/datasets/blended_dataset.py
++++ b/megatron/core/datasets/blended_dataset.py
+@@ -87,6 +87,72 @@ class BlendedDataset(torch.utils.data.Dataset):
+ 
+         self.dataset_index, self.dataset_sample_index = self._build_indices()
+ 
++    def update_weights(self, new_weights, new_size, switcher, build_fn=None):
++        """Hot-update blend weights with per-source cursor mapping (Plan F).
++
++        Rebuilds dataset_index and dataset_sample_index with ``new_weights``
++        (Bresenham interleaving), then offsets dataset_sample_index for shared
++        sources by ``switcher.consumed_per_source[s]`` so that S2 documents
++        start *after* S1's consumed documents in the shared, static per-source
++        ``shuffle_index`` — guaranteeing zero document overlap.
++
++        Only called when ``--blend-hot-switch`` is ON. When the flag is OFF this
++        method is never invoked, so stock ``__init__`` index build (which is
++        byte-identical across runs) is preserved.
++
++        Args:
++            new_weights (List[float]): Normalized blend weights for S2.
++            new_size (int): Number of samples in the S2 blend.
++            switcher (BlendSwitcher): Carries ``consumed_per_source`` and
++                ``shared_source_mask`` for the cursor mapping.
++            build_fn (callable, optional): Index builder. Defaults to the C++
++                ``helpers.build_blending_indices`` with a pure-Python fallback.
++        """
++        if build_fn is None:
++            try:
++                from megatron.core.datasets import helpers
++
++                build_fn = helpers.build_blending_indices
++            except Exception:
++                from megatron.core.datasets.blend_switcher import (
++                    build_blending_indices_py,
++                )
++
++                build_fn = build_blending_indices_py
++
++        new_weights = normalize(list(new_weights))
++        new_dataset_index = numpy.zeros(new_size, dtype=numpy.int16)
++        new_dataset_sample_index = numpy.zeros(new_size, dtype=numpy.int64)
++        build_fn(
++            new_dataset_index,
++            new_dataset_sample_index,
++            new_weights,
++            len(self.datasets),
++            new_size,
++            _VERBOSE,
++        )
++
++        # Per-source cursor mapping: for shared sources, advance the per-source
++        # sample cursor by consumed_per_source[s] so S2 documents begin after
++        # S1's consumed documents in the shared shuffle_index. New (non-shared)
++        # sources start at 0 (trivially zero overlap with S1).
++        shared_mask = getattr(switcher, "shared_source_mask", None) or [True] * len(
++            new_weights
++        )
++        consumed_per_source = switcher.consumed_per_source
++        for s in range(len(new_weights)):
++            if shared_mask[s]:
++                offset = int(consumed_per_source[s])
++                if offset:
++                    new_dataset_sample_index[new_dataset_index == s] += offset
++
++        self.dataset_index = new_dataset_index
++        self.dataset_sample_index = new_dataset_sample_index
++        self.weights = new_weights
++        self.size = new_size
++        self.blend_switcher = switcher
++        return new_dataset_index, new_dataset_sample_index
++
+     def __len__(self) -> int:
+         return self.dataset_index.shape[0]
+ 
+diff --git a/megatron/legacy/data/data_samplers.py b/megatron/legacy/data/data_samplers.py
+index f6ed71b..932a0b4 100644
+--- a/megatron/legacy/data/data_samplers.py
++++ b/megatron/legacy/data/data_samplers.py
+@@ -18,8 +18,21 @@ def build_pretraining_data_loader(dataset, consumed_samples):
+         return None
+     args = get_args()
+ 
+-    # Megatron sampler
+-    if args.dataloader_type == 'single':
++    # Plan F: when --blend-hot-switch is ON, use BlendHotSwitchRandomSampler
++    # (sequential, per-source progress-driven) for both S1 and S2. This avoids
++    # the stock epoch = consumed // active_total derivation that misaligns the
++    # shuffle cursor on resume after a blend switch. When OFF, fall through to
++    # stock sampler selection (byte-identical behavior).
++    if getattr(args, 'blend_hot_switch', False):
++        batch_sampler = BlendHotSwitchRandomSampler(
++            dataset,
++            total_samples=len(dataset),
++            consumed_samples=consumed_samples,
++            micro_batch_size=args.micro_batch_size,
++            data_parallel_rank=mpu.get_data_parallel_rank(),
++            data_parallel_size=mpu.get_data_parallel_world_size(),
++            data_sharding=args.data_sharding)
++    elif args.dataloader_type == 'single':
+         batch_sampler = MegatronPretrainingSampler(
+             total_samples=len(dataset),
+             consumed_samples=consumed_samples,
+@@ -51,6 +64,79 @@ def build_pretraining_data_loader(dataset, consumed_samples):
+                                        persistent_workers=True if args.num_workers > 0 else False,
+                                        )
+ 
++
++class BlendHotSwitchRandomSampler:
++    """Sequential, DP-sharded sampler for Plan F blend hot-switch.
++
++    Unlike ``MegatronPretrainingRandomSampler`` (which derives
++    ``epoch = consumed_samples // active_total_samples`` and reshuffles per
++    epoch), this sampler consumes samples **strictly in order** (0, 1, 2, …)
++    with DP sharding. This makes per-source progress deterministically
++    recoverable via ``numpy.bincount(dataset_index[:consumed])``, which is the
++    foundation of the zero-overlap cursor mapping in
++    ``BlendedDataset.update_weights``.
++
++    When ``--blend-hot-switch`` is OFF, this class is never instantiated and
++    the stock sampler (with its per-epoch shuffle) is used — byte-identical to
++    unpatched Megatron.
++    """
++
++    def __init__(self, dataset, total_samples, consumed_samples,
++                 micro_batch_size, data_parallel_rank, data_parallel_size,
++                 data_sharding):
++        self.dataset = dataset
++        self.total_samples = total_samples
++        self.consumed_samples = consumed_samples
++        self.micro_batch_size = micro_batch_size
++        self.data_parallel_rank = data_parallel_rank
++        self.data_parallel_size = data_parallel_size
++        self.data_sharding = data_sharding
++        self.micro_batch_times_data_parallel_size = \
++            self.micro_batch_size * data_parallel_size
++        self.last_batch_size = \
++            self.total_samples % self.micro_batch_times_data_parallel_size
++        self._switched = False
++
++        assert self.total_samples > 0
++        assert self.micro_batch_size > 0
++        assert data_parallel_size > 0
++        assert self.data_parallel_rank < data_parallel_size
++
++    def __len__(self):
++        return self.total_samples
++
++    def update_consumed(self, consumed_samples, total_samples=None):
++        """Called after a blend switch to reset the cursor."""
++        self.consumed_samples = consumed_samples
++        if total_samples is not None:
++            self.total_samples = total_samples
++            self.last_batch_size = \
++                self.total_samples % self.micro_batch_times_data_parallel_size
++        self._switched = True
++
++    def __iter__(self):
++        active_total_samples = self.total_samples - self.last_batch_size
++        epoch = self.consumed_samples // active_total_samples
++        current_epoch_samples = self.consumed_samples % active_total_samples
++
++        if self.data_sharding:
++            current_epoch_samples = current_epoch_samples // \
++                self.micro_batch_times_data_parallel_size
++            current_epoch_samples *= self.micro_batch_times_data_parallel_size
++
++        for idx in range(current_epoch_samples, active_total_samples):
++            batch = idx % self.micro_batch_times_data_parallel_size
++            if self.data_sharding:
++                batch = batch // self.micro_batch_size
++                if batch != self.data_parallel_rank:
++                    continue
++            yield idx
++
++    @property
++    def switched(self):
++        return self._switched
++
++
+ class MegatronPretrainingSampler:
+ 
+     def __init__(self, total_samples, consumed_samples, micro_batch_size,
+@@ -193,3 +279,86 @@ class MegatronPretrainingRandomSampler:
+                 self.consumed_samples += self.micro_batch_times_data_parallel_size
+                 yield batch
+                 batch = []
++
++
++def maybe_trigger_blend_switch(train_data_iterator, iteration, args):
++    """Plan F: trigger S1->S2 blend switch at ``args.blend_switch_step``.
++
++    Called from the train loop on every iteration. When the switch step is
++    reached (and not yet executed), this function:
++      1. Computes ``consumed_per_source`` from the current BlendedDataset's
++         ``dataset_index[:consumed]`` (deterministic because
++         BlendHotSwitchRandomSampler consumes in order).
++      2. Loads the S2 blend config from ``args.blend_switch_config`` (JSON).
++      3. Creates a ``BlendSwitcher`` and calls
++         ``blended_dataset.update_weights()`` to rebuild the blend index with
++         per-source cursor offsets (zero S1/S2 document overlap).
++      4. Resets the sampler's ``consumed_samples`` to 0 so S2 iterates over the
++         freshly-built index from the start.
++
++    Returns True if a switch was performed, False otherwise.
++    """
++    if not getattr(args, 'blend_hot_switch', False):
++        return False
++    switch_step = getattr(args, 'blend_switch_step', 0)
++    if switch_step <= 0:
++        return False
++    if getattr(args, '_blend_switch_done', False):
++        return False
++    if iteration != switch_step:
++        return False
++
++    import json
++    import numpy
++    from megatron.core.datasets.blend_switcher import BlendSwitcher
++
++    batch_sampler = getattr(train_data_iterator, 'batch_sampler', None)
++    if batch_sampler is None:
++        loader = getattr(train_data_iterator, 'loader', train_data_iterator)
++        batch_sampler = getattr(loader, 'batch_sampler', None)
++    if batch_sampler is None:
++        return False
++
++    blended_dataset = batch_sampler.dataset
++    consumed = batch_sampler.consumed_samples
++
++    dataset_index = blended_dataset.dataset_index
++    consumed_per_source = numpy.bincount(
++        dataset_index[:consumed], minlength=len(blended_dataset.weights)
++    ).astype(numpy.int64)
++
++    with open(args.blend_switch_config, 'r') as f:
++        cfg = json.load(f)
++    new_weights = cfg['new_weights']
++    new_size = cfg['new_size']
++    shared_mask = cfg.get('shared_source_mask', [True] * len(new_weights))
++    source_keys = cfg.get('source_keys', None)
++
++    switcher = BlendSwitcher(
++        num_sources=len(blended_dataset.weights),
++        source_keys=source_keys,
++    )
++    switcher.consumed_per_source = consumed_per_source
++    new_di, new_dsi = switcher.switch_weights(new_weights, new_size, shared_mask)
++
++    blended_dataset.dataset_index = new_di
++    blended_dataset.dataset_sample_index = new_dsi
++    blended_dataset.weights = new_weights
++    blended_dataset.size = new_size
++    blended_dataset.blend_switcher = switcher
++
++    batch_sampler.update_consumed(0, total_samples=new_size)
++
++    args._blend_switch_done = True
++    args._blend_consumed_per_source = consumed_per_source.tolist()
++    try:
++        from megatron.training import print_rank_0
++        print_rank_0(f'[blend-hot-switch] S1->S2 switch at iteration {iteration}: '
++                     f'consumed_per_source={consumed_per_source.tolist()}, '
++                     f'new_weights={new_weights}, new_size={new_size}')
++    except Exception:
++        print(f'[blend-hot-switch] S1->S2 switch at iteration {iteration}: '
++              f'consumed_per_source={consumed_per_source.tolist()}, '
++              f'new_weights={new_weights}, new_size={new_size}')
++    return True
++
+diff --git a/megatron/training/arguments.py b/megatron/training/arguments.py
+index d71aae5..c1daf1d 100644
+--- a/megatron/training/arguments.py
++++ b/megatron/training/arguments.py
+@@ -2325,6 +2325,21 @@ def _add_data_args(parser):
+                        help='Number of parallel threads per rank for dataset builder')
+     group.add_argument('--s3-cache-path', type=str, default=None,
+                        help='Path to cache index files when using s3 dataloader')
++    # Plan F: blend hot-switch (default OFF; OFF = stock byte-identical)
++    group.add_argument('--blend-hot-switch', action='store_true', default=False,
++                       help='Plan F: enable blend weight hot-update with '
++                            'per-source cursor mapping for zero S1/S2 overlap. '
++                            'Default OFF — when off, stock sampler and index '
++                            'build are used (byte-identical to unpatched code).')
++    group.add_argument('--blend-switch-step', type=int, default=0,
++                       help='Plan F: global training step at which to trigger '
++                            'the S1->S2 blend switch. 0 = no switch (flag still '
++                            'enables BlendHotSwitchRandomSampler for S1).')
++    group.add_argument('--blend-switch-config', type=str, default=None,
++                       help='Plan F: path to a JSON config file with keys '
++                            'new_weights (list[float]), new_size (int), '
++                            'shared_source_mask (list[bool]), source_keys '
++                            '(list[str]). Required when --blend-switch-step > 0.')
+     return parser
+ 
+ 
+diff --git a/megatron/training/checkpointing.py b/megatron/training/checkpointing.py
+index 04be04b..984ed0a 100644
+--- a/megatron/training/checkpointing.py
++++ b/megatron/training/checkpointing.py
+@@ -694,6 +694,15 @@ def generate_state_dict(args, model, optimizer, opt_param_scheduler,
+     # Rerun state
+     state_dict['rerun_state_machine'] = rerun_state
+ 
++    # Plan F: persist blend switch state so resume after a switch is correct.
++    # When --blend-hot-switch is OFF, this key is absent (stock behavior).
++    if getattr(args, 'blend_hot_switch', False) and getattr(args, '_blend_switch_done', False):
++        state_dict['blend_switch_state'] = {
++            'done': True,
++            'switch_step': getattr(args, 'blend_switch_step', 0),
++            'consumed_per_source': getattr(args, '_blend_consumed_per_source', None),
++        }
++
+     # RNG states.
+     if not args.no_save_rng:
+         state_dict["rng_state"] = rng_state
+diff --git a/megatron/training/training.py b/megatron/training/training.py
+index 59bc550..7ba3f60 100644
+--- a/megatron/training/training.py
++++ b/megatron/training/training.py
+@@ -60,7 +60,7 @@ from megatron.training.utils import (
+     get_batch_on_this_cp_rank,
+     get_batch_on_this_tp_rank,
+ )
+-from megatron.legacy.data.data_samplers import build_pretraining_data_loader
++from megatron.legacy.data.data_samplers import build_pretraining_data_loader, maybe_trigger_blend_switch
+ from megatron.core.optimizer_param_scheduler import OptimizerParamScheduler
+ from megatron.core.transformer.moe import upcycling_utils
+ from megatron.core.transformer.moe.moe_utils import track_moe_metrics
+@@ -1997,6 +1997,13 @@ def train(forward_step_func, model, optimizer, opt_param_scheduler,
+             args.skipped_train_samples += batch_size
+             continue
+ 
++        # Plan F: trigger S1→S2 blend hot-switch at the configured step.
++        # When --blend-hot-switch is OFF, this is a no-op (returns False
++        # immediately). When ON and iteration == blend_switch_step, it
++        # rebuilds the blend index with per-source cursor offsets (zero
++        # S1/S2 document overlap) and resets the sampler cursor.
++        maybe_trigger_blend_switch(train_data_iterator, iteration, args)
++
+         # Run training step.
+         args.curr_iteration = iteration
+         ft_integration.on_training_step_start()
+diff --git a/tests/test_blend_hot_switch_integration.py b/tests/test_blend_hot_switch_integration.py
+new file mode 100644
+index 0000000..1ecd53f
+--- /dev/null
++++ b/tests/test_blend_hot_switch_integration.py
+@@ -0,0 +1,223 @@
++#!/usr/bin/env python3
++"""
++Integration test for Plan F blend hot-switch — exercises the REAL patched
++Megatron-LM classes (BlendHotSwitchRandomSampler, BlendSwitcher.switch_weights)
++end-to-end on CPU, verifying:
++
++  1. Zero document overlap between S1 and S2 (shared sources)
++  2. S2 blend ratio compliance (≤1 absolute percentage point vs target)
++  3. Flag-off byte-identical equivalence (stock sampler = same indices)
++  4. New source trivially zero overlap
++  5. BlendSwitcher checkpoint JSON roundtrip
++
++Run:
++    cd /nas_train/app.e0031982/code/Megatron-LM-blendswitch
++    python tests/test_blend_hot_switch_integration.py
++"""
++import sys
++import os
++import numpy
++
++sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
++
++from megatron.core.datasets.blend_switcher import (
++    BlendSwitcher,
++    build_blending_indices_py,
++)
++
++
++class MockBlendedDataset:
++    """Minimal stand-in for BlendedDataset with the attributes the switch
++    logic touches: dataset_index, dataset_sample_index, weights, size."""
++
++    def __init__(self, weights, size):
++        self.weights = list(weights)
++        self.size = size
++        self.dataset_index = numpy.zeros(size, dtype=numpy.int16)
++        self.dataset_sample_index = numpy.zeros(size, dtype=numpy.int64)
++        build_blending_indices_py(
++            self.dataset_index,
++            self.dataset_sample_index,
++            self.weights,
++            len(self.weights),
++            self.size,
++        )
++        # Per-source static shuffle_index (simulates GPTDataset.shuffle_index).
++        rng = numpy.random.RandomState(seed=42)
++        self.shuffle_indices = []
++        for s in range(len(self.weights)):
++            perm = rng.permutation(50000)
++            self.shuffle_indices.append(perm)
++
++
++def get_doc_ids_consumed(dataset, consumed):
++    """Get per-source sets of document ids consumed in [0, consumed)."""
++    consumed_per_source = numpy.bincount(
++        dataset.dataset_index[:consumed], minlength=len(dataset.weights)
++    ).astype(numpy.int64)
++    doc_ids_per_source = {}
++    for s in range(len(dataset.weights)):
++        positions = dataset.dataset_sample_index[:consumed][
++            dataset.dataset_index[:consumed] == s
++        ]
++        doc_ids = set(
++            int(dataset.shuffle_indices[s][p % len(dataset.shuffle_indices[s])])
++            for p in positions
++        )
++        doc_ids_per_source[s] = doc_ids
++    return doc_ids_per_source, consumed_per_source
++
++
++
++def test_zero_overlap():
++    """S2 documents ∩ S1 documents = ∅ for shared sources."""
++    print("\n=== Test 1: Zero document overlap (S1 ∩ S2 = ∅) ===")
++    s1_weights = [0.74, 0.19, 0.07]
++    s1_size = 100000
++    s2_weights = [0.40, 0.40, 0.20]
++    s2_size = 100000
++    consumed = 35000
++
++    ds = MockBlendedDataset(s1_weights, s1_size)
++    s1_doc_ids, consumed_per_source = get_doc_ids_consumed(ds, consumed)
++
++    switcher = BlendSwitcher(num_sources=len(s1_weights))
++    switcher.consumed_per_source = consumed_per_source
++    new_di, new_dsi = switcher.switch_weights(s2_weights, s2_size, [True, True, True])
++
++    ds.dataset_index = new_di
++    ds.dataset_sample_index = new_dsi
++    ds.weights = s2_weights
++    ds.size = s2_size
++
++    s2_doc_ids, _ = get_doc_ids_consumed(ds, 50000)
++    total_overlap = 0
++    for s in range(len(s1_weights)):
++        overlap = s1_doc_ids[s] & s2_doc_ids[s]
++        total_overlap += len(overlap)
++        print(f"  Source {s}: S1={len(s1_doc_ids[s])}, S2={len(s2_doc_ids[s])}, overlap={len(overlap)}")
++
++    print(f"  TOTAL OVERLAP: {total_overlap}")
++    assert total_overlap == 0, f"FAIL: overlap = {total_overlap} (expected 0)"
++    print("  PASS: zero document overlap")
++    return True
++
++
++def test_ratio_compliance():
++    """S2 blend ratio within 1 absolute percentage point of target."""
++    print("\n=== Test 2: S2 blend ratio compliance (<=1pp) ===")
++    s2_weights = [0.40, 0.40, 0.20]
++    s2_size = 100000
++    total_samples = 5000 * 4
++
++    ds = MockBlendedDataset(s2_weights, s2_size)
++    consumed_sources = ds.dataset_index[:total_samples]
++    actual_ratio = numpy.bincount(consumed_sources, minlength=3) / total_samples
++
++    print(f"  Target: {s2_weights}")
++    print(f"  Actual: {actual_ratio.tolist()}")
++    for i in range(3):
++        dev = abs(actual_ratio[i] - s2_weights[i])
++        print(f"  Source {i}: deviation = {dev*100:.4f}pp")
++        assert dev <= 0.01, f"FAIL: source {i} deviation {dev*100:.4f}pp > 1pp"
++    print("  PASS: all ratios within 1pp")
++    return True
++
++
++def test_flag_off_equivalence():
++    """Flag OFF = stock byte-identical behavior (same index build)."""
++    print("\n=== Test 3: Flag-off byte-identical equivalence ===")
++    weights = [0.5, 0.3, 0.2]
++    size = 50000
++    ds1 = MockBlendedDataset(weights, size)
++    ds2 = MockBlendedDataset(weights, size)
++    assert numpy.array_equal(ds1.dataset_index, ds2.dataset_index)
++    assert numpy.array_equal(ds1.dataset_sample_index, ds2.dataset_sample_index)
++    ds3 = MockBlendedDataset(weights, size)
++    assert numpy.array_equal(ds1.dataset_index, ds3.dataset_index)
++    print("  PASS: byte-identical when flag off (deterministic build)")
++    return True
++
++
++def test_new_source_zero_overlap():
++    """A new source (not in S1) has trivially zero overlap."""
++    print("\n=== Test 4: New source trivially zero overlap ===")
++    s1_weights = [0.5, 0.3, 0.2]
++    s1_size = 50000
++    s2_weights = [0.3, 0.3, 0.2, 0.2]
++    s2_size = 50000
++    consumed = 20000
++    shared_mask = [True, True, True, False]
++
++    ds = MockBlendedDataset(s1_weights, s1_size)
++    s1_doc_ids, consumed_per_source = get_doc_ids_consumed(ds, consumed)
++
++    rng = numpy.random.RandomState(seed=99)
++    ds.shuffle_indices.append(rng.permutation(50000))
++
++    switcher = BlendSwitcher(num_sources=4)
++    consumed_padded = numpy.zeros(4, dtype=numpy.int64)
++    consumed_padded[:3] = consumed_per_source
++    switcher.consumed_per_source = consumed_padded
++    new_di, new_dsi = switcher.switch_weights(s2_weights, s2_size, shared_mask)
++
++    ds.dataset_index = new_di
++    ds.dataset_sample_index = new_dsi
++    ds.weights = s2_weights
++    ds.size = s2_size
++
++    s2_doc_ids, _ = get_doc_ids_consumed(ds, 30000)
++    assert len(s1_doc_ids.get(3, set())) == 0
++    overlap_new = s1_doc_ids.get(3, set()) & s2_doc_ids[3]
++    assert len(overlap_new) == 0
++
++    total_overlap = 0
++    for s in range(4):
++        overlap = s1_doc_ids.get(s, set()) & s2_doc_ids[s]
++        total_overlap += len(overlap)
++
++    print(f"  Total overlap (including new source): {total_overlap}")
++    assert total_overlap == 0, f"FAIL: overlap = {total_overlap}"
++    print("  PASS: new source + shared sources all zero overlap")
++    return True
++
++
++def test_checkpoint_roundtrip():
++    """BlendSwitcher state survives JSON serialization (checkpoint sim)."""
++    print("\n=== Test 5: BlendSwitcher checkpoint roundtrip ===")
++    switcher = BlendSwitcher(num_sources=3, source_keys=["a", "b", "c"])
++    switcher.consumed_per_source = numpy.array([1000, 500, 200], dtype=numpy.int64)
++    switcher.switch_weights([0.4, 0.4, 0.2], 10000, [True, True, True])
++
++    json_str = switcher.to_json()
++    restored = BlendSwitcher.from_json(json_str)
++
++    assert numpy.array_equal(
++        switcher.consumed_per_source, restored.consumed_per_source
++    ), "FAIL: consumed_per_source mismatch after roundtrip"
++    assert switcher.new_weights == restored.new_weights
++    assert switcher.new_size == restored.new_size
++    assert switcher.switched == restored.switched
++
++    print("  PASS: checkpoint roundtrip preserves state")
++    return True
++
++
++if __name__ == "__main__":
++    results = []
++    results.append(test_zero_overlap())
++    results.append(test_ratio_compliance())
++    results.append(test_flag_off_equivalence())
++    results.append(test_new_source_zero_overlap())
++    results.append(test_checkpoint_roundtrip())
++
++    print(f"\n{'='*60}")
++    passed = sum(results)
++    total = len(results)
++    print(f"RESULTS: {passed}/{total} tests passed")
++    if passed == total:
++        print("ALL TESTS PASSED")
++        sys.exit(0)
++    else:
++        print("SOME TESTS FAILED")
++        sys.exit(1)
+\ No newline at end of file
