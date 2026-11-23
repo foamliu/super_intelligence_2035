@@ -54,7 +54,7 @@ D	EDA-Eval-DesignFlow-ClkOscStim-001	15	y	unknown	ok	static-skip	static-skip	y	P
 D	EDA-Eval-DesignFlow-ClosureDeckBuilder-001	43	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-ClosureDeckBuilder-001
 D	EDA-Eval-DesignFlow-CmlDivSwingVarSizingQA-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-CmlDivSwingVarSizingQA-001
 D	EDA-Eval-DesignFlow-CmlMp5SweepCurrentAnalysisQA-001	37	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-CmlMp5SweepCurrentAnalysisQA-001
-D	EDA-Eval-DesignFlow-CmpEmPolyThkCalc-001	19	n	unknown	ok	static-skip	static-skip	n	GAP	no-negative	EDA-Eval-DesignFlow-CmpEmPolyThkCalc-001
+D	EDA-Eval-DesignFlow-CmpEmPolyThkCalc-001	19	n	unknown	ok	static-skip	static-skip	y	PASS	[r1194 fixed: added negative/ 3 samples + negative_selftest.py, all FAIL, ref PASS]	EDA-Eval-DesignFlow-CmpEmPolyThkCalc-001
 D	EDA-Eval-DesignFlow-CompressNetlist-001	32	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-CompressNetlist-001
 D	EDA-Eval-DesignFlow-CompressNetlistToggle-001	11	y	unknown	n/a	static-skip	static-skip	inline	PASS(inline)		(inline)
 D	EDA-Eval-DesignFlow-ConnFileNetChk-001	32	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-ConnFileNetChk-001

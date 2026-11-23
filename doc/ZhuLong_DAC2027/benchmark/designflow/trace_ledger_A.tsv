@@ -37,7 +37,7 @@
 1793089887669_4c5ws					parked		2026-11-03 08:04	surveyed r37: pure Q&A/consultation (how to view png, install bcompare, list LP tools by flow stage, spyglass vs VCLP/CLP). No delivery. 67 msgs.
 1793078585671_z2knw					parked		2026-11-03 08:04	surveyed r37: resume-prior-stuck-session ('最近的一个对话卡死了...你继续干'), finesim MatrixRun analog sim. A-rule② violation (depends on prior state), gold fuzzy. 136 msgs.
 1789630394053_3dekw					parked		2026-11-03 08:04	surveyed r37: 'plese get simaple of digital design flow' single turn = generic template/sample request, not focused verifiable deliverable. pyAether:435=schematic-floorplan, not pure digital.
-1789624027491_t45kv					case	EDA-Eval-DesignFlow-PRStartMethodSelect-001	2026-11-15 17:13	r577 revived (pool_reaudit): PR start method select, pnr_signoff, B-档, k=14
+1789624027491_t45kv					case	EDA-Eval-DesignFlow-PRStartMethodSelect-001-v2	2026-11-15 17:13	r577 revived (pool_reaudit): PR start method select, pnr_signoff, B-档, k=14
 1791940499909_2pdn0	e0045128	hfeg0pkn001	34	eda_other	case	EDA-Eval-DesignFlow-ToolRcFormatMapQa-001	2026-11-17 19:26	r692 deepread DONE: C-A analysis-Q&A tool->RC-format mapping (genus/DC/starRC x TLUPlus/QRC + milkyway/TLUplus suffix + DC-physical-must-milkyway). 20 msgs, verbatim 6 user turns + assistant answers extracted. Synth plan ToolRcFormatMapQa-001 (eda_other, k>=10, B=Innovus/Tempus/ICC2/PT variant). DEBT 1 r693. See trace_deepreads/r692_2pdn0_tool_rc_format_qa.md
 1790219850745_1f34q	johnl	hfeg0pfn119	35	digital	case	EDA-Eval-DesignFlow-DCCombHier-001	2026-11-03 08:38	
 1788770994295_x4b0p	xinqiaoz	hfeg0pkn004	1367	pnr_signoff	case	EDA-Eval-DesignFlow-CalVcoEnvWorkaround-001	2026-11-15 14:30	r570 revived (pool_reaudit 可造): env-config/Calibre VCO workaround, B-档 synthesis in progress, deepread note x4b0p_pdkqa_drc_calibre_vco.md 复用
@@ -325,7 +325,7 @@
 1792055475403_wuuc7	e0039102	hfeg0plg74	97	verification	parked		2026-11-10 13:17	duplicate task of shard-D RegrCaseFilter-001 (same e0039102 user, identical regression-case-filtering prompt, jason17w lpddr5 ddgoa.0812 dir); NOT a shard-A case
 1793268918911_brnqb	e02141	hfeg0plg56	717	digital	parked		2026-11-10 14:38	r316 wrong-shard: Sentaurus TCAD (synopsys=sentaurus device sim, kw cmos/.gds/bandgap/mosfet), not digital front-end. e02141 cluster (cwq7f/1wvdl/f6x1i/hgqho/l1u7n/yiohr/ckiw9/o0dm6) same TCAD pattern
 1792902413837_3p5vl	alanji	hfeg0plg99	275	verification	case	EDA-Eval-DesignFlow-PkgVarPassDutTb-001-v2	2026-11-16 06:38	r616 落地: C-A analysis-Q&A 复活首条, k=15, A.jsonl 340->341, DEBT 0
-1792033394584_xd7ut	tongfanl	hfhds201	277	digital	case	EDA-Eval-DesignFlow-WtmWriteArrayScope-001	2026-11-15 11:28	r316 analysis-only: '帮我分析下这个环境并回答WTM模式write是否发到array' = analysis question, not produce/diagnosis
+1792033394584_xd7ut	tongfanl	hfhds201	277	digital	case	EDA-Eval-DesignFlow-WtmWriteArrayScope-001-v2	2026-11-15 11:28	r316 analysis-only: '帮我分析下这个环境并回答WTM模式write是否发到array' = analysis question, not produce/diagnosis
 1793972832447_zxb65	thomas1w	hfeg0pjn100	133	verification	case	EDA-Eval-DesignFlow-MbistRepairReArmDiag-001	2026-11-10 15:39	
 1793237499232_nph58	jkxu	hfeg0pkn002	297	verification	parked		2026-11-10 15:59	multi-topic-consultation-starts-perf-diag-then-pivots-to-partition-config-coverage-MSIE-build-U0-diagnosis-has-no-clean-resolution
 1791446512697_3s3zx	xuebaok	hfeg0pkn002	347	digital	parked		2026-11-20 09:33	r847深读:不可造(无牙check),session无解终止assistant搜matrixrun未果以ask_question结束,无ground-truth gold
@@ -430,7 +430,7 @@
 1792722189804_6e2db.messages.json	t0002470	10.129.8.233	96	digital	case	EDA-Eval-DesignFlow-EillenLogMerge-001	2026-11-13 01:57	
 1792983391097_swhjl	stevenh	10.129.35.244	103	digital	parked		2026-11-13 02:24	Q&A-only single-turn (U#0 tell-me-how-to-improve-task-reusability -> essay asst[82] 8832ch analysis, no produce-task). reconfirms r433/r439 A-fresh quality-depletion. peek x9i0b/uemp5/xqkry same batch: x9i0b U#10 produce-task but same triple-judge project as r428 + simple text-insert; uemp5/xqkry Q&A weak
 1793705624840_2b5i8					case	EDA-Eval-DesignFlow-RefModelBugFix-001	2026-11-13 03:10	
-1791790886127_58vqx	xinqiaoz	hfeg0pkn005	875	pnr_signoff	case		2026-11-13 04:00	
+1791790886127_58vqx	xinqiaoz	hfeg0pkn005	875	pnr_signoff	case	EDA-Eval-DesignFlow-DrcSyntaxTest-001	2026-11-13 04:00	
 1792461332006_3mgw6	shanliny	10.129.2.10	11	verification	case	EDA-Eval-DesignFlow-SramPipelineMisalignDiag-001	2026-11-13 04:36	
 1789037783068_c1nkc	ruijiz	10.129.40.209	30	verification	case	EDA-Eval-DesignFlow-RegrRunnerGen-001	2026-11-13 05:05	
 1793672550629_mm45d	e0039102	hfeg0plg74	14	verification	case	EDA-Eval-DesignFlow-RegrCaseDedup-001	2026-11-13 06:26	
@@ -538,7 +538,7 @@
 1794635703422_kem74	ericw	hfeg0pfn034	147	verification	parked		2026-11-14 20:18	analysis Q&A only: 3 user questions all 'where defined/why different' about vecgen_drexp vs vecgen getCmdTask(), no produce-task no deliverable, REJECT
 1794548666331_7y20f					parked		2026-11-14 20:21	analysis Q&A (分析UPF-581报错原因), dc.log asset on /proj/lacaa permission-denied for e0031982, cannot extract real asset, REJECT
 1794549413194_eoxs4	gracew	hfeg0plg92	333	verification	case	EDA-Eval-DesignFlow-CpForceBindInject-001	2026-11-14 21:28	
-1794553984282_g5ise	e0039602	hfeg0pkn003	verilog:785;netlist:204;drc:66;lvs:11;cadence:8;rtl:7;systemverilog:3;waveview:2;	verilog	case		2026-11-14 22:32	r537: VltRetryWave2-001 delivered, A.jsonl=284
+1794553984282_g5ise	e0039602	hfeg0pkn003	verilog:785;netlist:204;drc:66;lvs:11;cadence:8;rtl:7;systemverilog:3;waveview:2;	verilog	case	EDA-Eval-DesignFlow-VltRetryWave2-001	2026-11-14 22:32	r537: VltRetryWave2-001 delivered, A.jsonl=284
 1794551642078_rqp94.messages.json	chuanqiz	hfeg0plg79	165	verification	parked		2026-11-14 22:41	produce-task too trivial: single-line # removal from hcells_merge_CVPS L3375 (would be >50% pass L1); 5/6 user inputs are analysis Q&A; hcell/LVS task is C-domain-ish; REJECT for A casemaking
 1794551446322_sco0b.messages.json	eva1li	hfeg0plg74	85	verification	parked		2026-11-14 22:42	analysis Q&A only: 8/8 user inputs are search/where/what questions (CMD_JUMP_cov/TYPE_tb/csfck1_state/PowerUp/compare_enable/SetDataRateSpeedMR/cmdtcal), no produce-task no deliverable; REJECT
 1794557869660_0g9n6.messages.json	thomas1w	hfeg0plg98	42	verification	parked		2026-11-14 22:45	debug/analysis only: 1 user input '仿真卡死帮我看下' (sim hang), agent wrote diagnostic grep scripts diag_find/diag_grep/diag_log, no produce-task deliverable; REJECT
@@ -842,4 +842,3 @@ huqxk					parked		2026-11-23 03:22	r1012 peek: e0044587@hfeg0pnd001 mc6 -
 1794895164006_z9pe8	t0002965	hfeg0plg75	140	operator	parked		2026-11-23 07:55	r1021: t0002965 operator/scanner account not real design user, skip
 1793004252449_aet4o.messages.json	t0002616	hfeg0pkn004	126	eda_other	case	EDA-Eval-DesignFlow-SramFarCellSelect-001-v2	2026-11-23 08:45	r1024 backfill: jsonl case genuinely missing from all 4 shard ledgers (phantom-check jsonl-extra)
 anner account not real design user, skip								
-1793004252449_aet4o.messages.json	t0002616	hfeg0pkn004	126	eda_other	case	EDA-Eval-DesignFlow-SramFarCellSelect-001-v2	2026-11-23 08:45	r1024 backfill: jsonl case genuinely missing from all 4 shard ledgers (phantom-check jsonl-extra)
