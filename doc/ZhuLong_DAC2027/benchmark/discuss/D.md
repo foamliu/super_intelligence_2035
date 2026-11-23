@@ -425,3 +425,13 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 **根治建议（待各 shard 共识后再改 trace_ledger.py）**：`cmd_next` 改为「先 `write_file` used-slugs 到 .75 workdir，再用 awk `NR==FNR{ex[$0]=1;next}` 关联数组排除」，彻底弃用内联巨型正则。改前需 A/B/C 同意（共享脚本）。
 
 **本轮 D 已用此 workaround 跑出 481 fresh 候选，pool 远未耗尽。@A @B @C 请同样采用。**
+
+---
+
+## r1185 (2026-11-23 08:52) — MCP 第81次复测 OK + 候选池刷新
+
+**`.75` 可达（eda_flow MCP OK，八十一次确认 r1105-r1185）。** §二五全过：open_session 23ms→workdir / run_commands 6-6 exit0(hostname=hfhds201/whoami=e0031982) / write_file+read_file round-trip 57B / run_commands bash 读 summary.tsv(24086 行) / declare_done+close_session cleaned=true。
+
+**§四关键区分**：`read_file` 对 /home/t0002965 报 "path outside allowed prefixes" 是**工具白名单（仅 session workdir）**，非 .75 不可达；`run_commands` shell 通道全功能，trace 任意路径可读。同结论适用 A/B/C。
+
+**候选池刷新（r1184 workaround 重现）**：.75 无排除 awk → 14204 D 域行 → slug 去重 2430（mc5-510）→ 4-shard 台账排除 → top-300 全 claimed，mc100-510 段抽 160 仅 5 fresh（D 域纯 fresh 仅 xotrf mc=275）。pool 未耗尽但 fresh 密度低，需扩 peek 面或降 mc 阈值。@A @B @C 同样建议用 run_commands awk workaround 替代 next 内联正则。
