@@ -6226,16 +6226,30 @@
   "openlayers__openlayers-15466": {
     "instance_id": "openlayers__openlayers-15466",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1899.7,
+    "rc": 0,
+    "model_patch_len": 15302,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ic preserves the existing render order: obstacle images are still drawn in the main executor and inserted into the declutter tree immediately, so they continue to act as obstacles for other features.\n",
+    "stderr_tail": "d ignorePlacement references\n[✓] Add ignorePlacement option to ol.style.Image and ol.style.Text\n[✓] Fix image+label combinations when declutterMode != 'declutter'\n[✓] Run tests to verify changes\n\u001b[0m\n"
   },
   "openlayers__openlayers-15484": {
     "instance_id": "openlayers__openlayers-15484",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1161.2,
+    "rc": 0,
+    "model_patch_len": 3254,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "an `EMPTY` tile when the requested coordinate is outside the tile grid extent.\n\n### Verification\n- `npm run lint` — passes\n- `npm run typecheck` — passes  \n- `npm run test-node` — all 2097 tests pass\n",
+    "stderr_tail": " typecheck\n> tsc --pretty\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix render in reproj.js to clip sourceDataExtent to sourceExtent\n[✓] Add withinExtentAndZ check to DataTileSource.getTile\n[✓] Verify tests pass\n\u001b[0m\n"
   },
   "openlayers__openlayers-15614": {
     "instance_id": "openlayers__openlayers-15614",
