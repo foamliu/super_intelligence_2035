@@ -2032,3 +2032,4 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1794913542002_lorih	reedchen	hfeg0pkn002	88	schematic_netlist	case	EDA-Eval-DesignFlow-DqBusStimulusGen-001	2026-11-23 21:10	
 1794899351856_fxbe5.messages.json	ypzheng	hfeg0plg103	96	schematic_netlist	case	EDA-Eval-DesignFlow-PostsimMapSignalHierProduce-001	2026-11-23 21:39	
 1795080491910_unfeh	kepeim	hfeg0pgn090	44	schematic_netlist	parked		2026-11-23 21:51	analysis-only Q&A: user asks 'can you draw layout from schematic'; agent researches SDL docs/APIs (dbSdlMapSchematic2Layout etc) and gives consultation answer; no computable deliverable, no script to run on hidden B -> weak for design_flow toothed check; r1215 deepread
+1795069196158_qm71w.messages.json	xiwang	hfeg0plg107	134	schematic_netlist	case	EDA-Eval-DesignFlow-HierNameViolateCrossProbeProduce-001	2026-11-23 22:55	
