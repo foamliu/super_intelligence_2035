@@ -1,6 +1,8 @@
 # MEMORY_ZHULONG.md — ZhuLong（DAC2027）EDA 消融评测 · 运行时状态
 
-WAITING: 0（2026-11-24 wake#1894·**强模型 3-run ✅ 收口**：deepseek-v4-pro-cloud × Lite 500 × Pass@1 × thinking low × timeout 2400 × cline 3.0.51 + PreToolUse hook × workers 16·**强模型 3-run = 20.85±1.03%（deepseek-v4-pro-cloud，canary 两证过未降级）**·r1=21.78%(105/482)·r2=19.75%(96/486)·r3=21.02%(103/490 dedup)·3/3 clean·0 FUSE/0 quota/0 熔断✅·**身份四证✅**（model=`deepseek-v4-pro-cloud` / apiKey末8=`8aa0785e` / baseUrl=`http://agi-gateway.cxmt.com/cloud/v1` / maxTokens=16384 / reasoning.enabled=false·canary 两证过未降级 glm-5.2）·**McNemar vs doubao-pro 10.18±1.45%**：majority vs majority b=69 c=2 p≈0.0000 **高度显著**·报告 `reports/report_edafb_lite500_dsv4pro_eval_zh.html` 已交付·providers.json 已还原 pro 默认态（doubao-seed-2.0-pro-cloud key...3dd97aea）✅·standby·不起臂·不改原文/题/check/宏/TBD·v3 三组数字不动·等用户裁定回填）
+WAITING: 0（2026-11-24 wake#1895·**强模型 3-run ✅ 收口**：deepseek-v4-pro-cloud × Lite 500 × Pass@1 × thinking low × timeout 2400 × cline 3.0.51 + PreToolUse hook × workers 16·**强模型 3-run = 20.85±1.03%（deepseek-v4-pro-cloud，canary 两证过未降级）**·r1=21.78%(105/482)·r2=19.75%(96/486)·r3=21.02%(103/490 dedup)·3/3 clean·0 FUSE/0 quota/0 熔断✅·**身份四证✅**（model=`deepseek-v4-pro-cloud` / apiKey末8=`8aa0785e` / baseUrl=`http://agi-gateway.cxmt.com/cloud/v1` / maxTokens=16384 / reasoning.enabled=false·canary 两证过未降级 glm-5.2）·**McNemar vs doubao-pro 10.18±1.45%**：majority vs majority b=69 c=2 p≈0.0000 **高度显著**·报告 `reports/report_edafb_lite500_dsv4pro_eval_zh.html` 已交付·providers.json 已还原 pro 默认态（doubao-seed-2.0-pro-cloud key...3dd97aea）✅·standby·不起臂·不改原文/题/check/宏/TBD·v3 三组数字不动·等用户裁定回填）
+
+- wake#1895（2026-11-24 standby 心跳·强模型 3-run 已收口·无新指令）：pgrep run_batch/run_one/zhulong_strong=NONE✅·providers.json=pro 默认态✅（doubao-seed-2.0-pro-cloud key...3dd97aea·baseUrl agi-gateway/cloud/v1·maxTokens 16384·reasoning.enabled=false·updatedAt 2026-11-22T18:50）·cases_lite=500✅·git fetch behind/ahead=0/0 同步✅（HEAD ef4d4382d3 他线 posttrain commit·.git/gc.log warning 非阻塞·不动）·ops inbox RUN_ID=146（11-17 旧只读·无新指令）✅·research 日报 2026-11-24 zhulong 建议「成本表加判分构造成本列」属论文写作层·与本令「🚫 不改论文宏与 18 处 \TBD·等用户裁定回填」冲突 ⇒ 暂不纳入（同 wake#1891/1893/1894 判断）·**强模型 3-run 收口态不变**：deepseek-v4-pro-cloud 3-run=20.85±1.03%（r1=21.78/r2=19.75/r3=21.02·3/3 clean·0 FUSE·身份四证✅·McNemar vs doubao-pro b=69 c=2 p≈0.0000 高度显著·Δ=+10.67pp ~2.0× gap）·**MEMORY 维护**：滚出 wake#1748-#1867 多条 rolled-out 指针合并为 5 条摘要指针（原文不改·见 daily-memories/2026-11-22.md 与 2026-11-23.md 各 §rolled-out）·30.3KB≤32KB✅·WAITING=0 standby·不起臂·不改原文/题/check/宏/TBD·v3 三组数字不动·等用户裁定回填。
 
 - wake#1894（2026-11-24 standby 心跳·强模型 3-run 已收口·无新指令）：pgrep run_batch/run_one/zhulong_strong=NONE✅·providers.json=pro 默认态✅（doubao-seed-2.0-pro-cloud key...3dd97aea·baseUrl agi-gateway/cloud/v1·maxTokens 16384·reasoning.enabled=false·updatedAt 2026-11-22T18:50）·cases_lite=500✅·git pull --rebase up-to-date✅（.git/gc.log warning 非阻塞·不动）·ops inbox RUN_ID=146（11-17 旧只读·无新指令）✅·research 日报 2026-11-24 zhulong 建议「成本表加判分构造成本列」属论文写作层·与本令「🚫 不改论文宏与 18 处 \TBD·等用户裁定回填」冲突 ⇒ 暂不纳入（同 wake#1891/1893 判断）·**强模型 3-run 收口态不变**：deepseek-v4-pro-cloud 3-run=20.85±1.03%（r1=21.78/r2=19.75/r3=21.02·3/3 clean·0 FUSE·身份四证✅·McNemar vs doubao-pro b=69 c=2 p≈0.0000 高度显著·Δ=+10.67pp ~2.0× gap）·WAITING=0 standby·不起臂·不改原文/题/check/宏/TBD·v3 三组数字不动·等用户裁定回填。
 
@@ -36,67 +38,13 @@ WAITING: 0（2026-11-24 wake#1894·**强模型 3-run ✅ 收口**：deepseek-v4-
 
 - [wake#1868 详条已滚出·2026-11-23 wake#1869 维护] 见 `daily-memories/2026-11-23.md` §[wake#1868]（opencode 交互式·r3 跑中 22%·0 FUSE·身份四证✅·不干预）。
 
-- [wake#1867 详条已滚出·2026-11-23 wake#1869 维护] 见 `daily-memories/2026-11-23.md` §[wake#1867]（opencode 交互式·r3 跑中 17%·0 FUSE·身份四证✅·不干预）。
-
-- [wake#1866 详条已滚出·2026-11-23 wake#1870 维护] 见 `daily-memories/2026-11-23.md` §[wake#1866]（opencode 交互式·r3 跑中 11%·0 FUSE·身份四证✅·不干预）。
-
-- [wake#1865 详条已滚出·2026-11-23 wake#1868 维护] 见 `daily-memories/2026-11-23.md` §[wake#1865 rolled-out]（opencode 交互式·r3 跑中早期 4%·0 FUSE·身份四证✅·不干预）。
-
-- [wake#1864 详条已滚出·2026-11-23 wake#1865 维护] 见 `daily-memories/2026-11-23.md` §[wake#1864]（opencode 交互式·r2 收口中 99% early 19.79%·r2 实际 DONE 19.75% @ 16:23:06·0 FUSE·身份四证✅·不干预）。
-
-- [wake#1863 详条已滚出·2026-11-23 wake#1864 维护] 见 `daily-memories/2026-11-23.md` §[wake#1863]（opencode 交互式·r2 跑中 96% early 20.47%·0 FUSE·身份四证✅·不干预）。
-
-- [wake#1862 详条已滚出·2026-11-23 wake#1863 维护] 见 `daily-memories/2026-11-23.md` §[wake#1862]（opencode 交互式·r2 跑中 89% early 21.25%·0 FUSE·身份四证✅·不干预）。
-
-- [wake#1861 详条已滚出·2026-11-23 wake#1862 维护] 见 `daily-memories/2026-11-23.md` §[wake#1861]（opencode 交互式·r2 跑中 84% early 21.27%·0 FUSE·身份四证✅·不干预）。
+- [wake#1861-#1867 详条已滚出·2026-11-24 wake#1895 维护合并] 见 `daily-memories/2026-11-23.md` §[wake#1861-#1867 rolled-out]（均 opencode 交互式·r2 跑中监控心跳·17→89%·0 FUSE·身份四证✅·不干预）。
 
 - wake#1860（2026-11-23 13:57 opencode 交互式·**强模型 3-run r2 跑中·健康 77%**）：见 `daily-memories/2026-11-23.md` §[wake#1860]（r1 DONE 21.78% + r2 389/500 77% early 21.90%·0 FUSE·身份四证✅·不干预）。
-- [wake#1859 详条已滚出·2026-11-23 wake#1860 维护] 见 `daily-memories/2026-11-23.md` §[wake#1859 rolled-out]（opencode 交互式·r2 跑中 344/500 68% early 21.86%·0 FUSE·身份四证✅·不干预）。
-
-- [wake#1858 详条已滚出·2026-11-23 wake#1859 维护] 见 `daily-memories/2026-11-23.md` §[wake#1858]（opencode 交互式·r1 DONE 21.78% + r2 跑中 320/500 64% early 21.79%·0 FUSE·身份四证✅·不干预）。
-- [wake#1857 详条已滚出·2026-11-23 wake#1859 维护] 见 `daily-memories/2026-11-23.md` §[wake#1857]（opencode 交互式·r2 跑中 287/500·status 文件误拆分已修复 0 数据丢失·0 FUSE·身份四证✅·不干预）。
-- [wake#1856 详条已滚出·2026-11-23 wake#1859 维护] 见 `daily-memories/2026-11-23.md` §[wake#1856]（opencode 交互式·r2 跑中 244/500 49% early 20.92%·0 FUSE·身份四证✅·不干预）。
-- [wake#1855 详条已滚出·2026-11-23 wake#1856 维护] 见 `daily-memories/2026-11-23.md` §[wake#1855]（opencode 交互式·r2 跑中 225/500 45% early 20.27%·0 FUSE·身份四证✅·不干预）。
-- [wake#1853 详条已滚出·2026-11-23 wake#1854 维护] 见 `daily-memories/2026-11-23.md` §[wake#1853]（opencode 交互式·r1 DONE 21.78% + r2 跑中 162/500 32%·0 FUSE·身份四证✅·不干预）。
-- [wake#1851 详条已滚出·2026-11-23 wake#1852 维护] 见 `daily-memories/2026-11-23.md` §[wake#1851]（opencode 交互式·r1 DONE 21.78% + r2 跑中 104/500·0 FUSE·身份四证✅·不干预）。
-
-- [wake#1851 详条已滚出·2026-11-23 wake#1852 维护] 见 `daily-memories/2026-11-23.md` §[wake#1851]（opencode 交互式·r1 DONE 21.78% + r2 跑中 104/500·0 FUSE·身份四证✅·不干预）。
-
-- [wake#1847 详条已滚出·2026-11-23 wake#1848 维护] 见 `daily-memories/2026-11-23.md` §[wake#1847]（opencode 交互式·r1-attempt-2 收口中·99%·495/500·21.80% early·0 FUSE·身份四证✅·不干预）。
-- [wake#1850 详条已滚出·2026-11-23 wake#1851 维护] 见 `daily-memories/2026-11-23.md` §[wake#1850]（opencode 交互式·r1 DONE 21.78% + r2 跑中 73/500·0 FUSE·身份四证✅·不干预）。
-- [wake#1848 详条已滚出·2026-11-23 wake#1849 维护] 见 `daily-memories/2026-11-23.md` §[wake#1848]（opencode 交互式·r1 DONE 21.78% + r2 跑中 12/500·0 FUSE·身份四证✅·不干预）。
-- [wake#1849 详条已滚出·2026-11-23 wake#1853 维护] 见 `daily-memories/2026-11-23.md` §[wake#1849]（opencode 交互式·r1 DONE 21.78% + r2 跑中 44/500·0 FUSE·身份四证✅·不干预）。
-- [wake#1846 详条已滚出·2026-11-23 wake#1848 维护] 见 `daily-memories/2026-11-23.md` §[wake#1846]（opencode 交互式·r1-attempt-2 监控心跳·93%·469/500·22.6% early·0 FUSE·身份四证✅·不干预）。
-- [wake#1840 详条已滚出·2026-11-23 wake#1842 维护] 见 `daily-memories/2026-11-23.md` §[wake#1840 rolled-out]（opencode 交互式·r1-attempt-2 监控心跳·健康·281/500·23.10% early·0 FUSE·身份四证✅·主动修复 /tmp 阻塞风险 3M→1063M + 写报告生成器 zhulong_strong_3run_report.py + McNemar early sanity 显著 p≈0·不干预）。**结论**：r1 健康跑中，/tmp 阻塞风险已预防性缓解，报告生成器就绪，等下轮 wake 继续监控·不起臂·不改原文/题/check·v3 三组数字不动。
-- [wake#1841 详条已滚出·2026-11-23 wake#1843 维护] 见 `daily-memories/2026-11-23.md` §[wake#1841]（opencode 交互式·r1-attempt-2 监控心跳·健康·310/500·22.9% early·0 FUSE·身份四证✅·不干预）。
-- [wake#1842 详条已滚出·2026-11-23 wake#1843 维护] 见 `daily-memories/2026-11-23.md` §[wake#1842 rolled-out]（opencode 交互式·r1-attempt-2 监控心跳·健康·349/500·23.2% early·0 FUSE·身份四证✅·不干预）。
-- [wake#1845 详条已滚出·2026-11-23 wake#1848 维护] 见 `daily-memories/2026-11-23.md` §[wake#1845]（opencode 交互式·r1-attempt-2 监控心跳·88%·443/500·23.1% early·0 FUSE·身份四证✅·不干预）。
-- [wake#1844 详条已滚出·2026-11-23 wake#1848 维护] 见 `daily-memories/2026-11-23.md` §[wake#1844]（opencode 交互式·r1-attempt-2 监控心跳·414/500·23.0% early·0 FUSE·身份四证✅·不干预）。
-- [wake#1843 详条已滚出·2026-11-23 wake#1848 维护] 见 `daily-memories/2026-11-23.md` §[wake#1843]（opencode 交互式·r1-attempt-2 监控心跳·386/500·23.3% early·0 FUSE·身份四证✅·不干预）。
-- [wake#1839 详条已滚出·2026-11-23 wake#1840 维护] 见 `daily-memories/2026-11-23.md` §[wake#1839 rolled-out]（opencode 交互式·r1-attempt-2 监控心跳·健康·245/500·24.27% early·0 FUSE·身份四证✅·不干预）。
-- [wake#1838 详条已滚出·2026-11-23 wake#1841 维护] 见 `daily-memories/2026-11-23.md` §[wake#1838 rolled-out]（opencode 交互式·r1-attempt-2 监控心跳·健康·217/500·23.58% early·0 FUSE·身份四证✅·不干预）。
-- [wake#1837 详条已滚出·2026-11-23 wake#1838 维护] 见 `daily-memories/2026-11-23.md` §[wake#1837 rolled-out]（opencode 交互式·r1-attempt-2 监控心跳·健康·183/500·22.9% early·0 FUSE·身份四证✅·不干预）。
-- [wake#1836 详条已滚出·2026-11-23 wake#1837 维护] 见 `daily-memories/2026-11-23.md` §[wake#1836 rolled-out]（opencode 交互式·r1-attempt-2 监控心跳·健康·155/500·23.2% early·0 FUSE·身份四证✅·不干预）。
-- [wake#1830/1832/1833/1834 详条已滚出·2026-11-23 wake#1837 维护合并] 见 `daily-memories/2026-11-23.md` §[wake#1830 rolled-out]/§[wake#1832 rolled-out]/§[wake#1833 rolled-out]/§[wake#1834 rolled-out]（均 opencode 交互式·r1-attempt-2 监控心跳·健康·56→80→101→125/500·0 FUSE·身份四证✅·不干预；wake#1830 = r1-attempt-1 VOID + 5 项修复 + r1-attempt-2 启动）。
-- [wake#1828 详条已滚出·2026-11-22 wake#1830 维护] 见 `daily-memories/2026-11-22.md` §[wake#1828 rolled-out]（opencode 交互式·新令执行：强模型 3-run 启动·canary 两证过·PID 2647461·r1 健康跑中·v3 三组数字不动·不起臂·原文不改）。
-
-- [wake#1827 详条已滚出·2026-11-22 wake#1828 维护] 见 `daily-memories/2026-11-22.md` §[wake#1827 rolled-out]（opencode 交互式 v3 收口后 standby 心跳·pgrep 无 run_batch✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 同步✅·ops inbox 无新指令✅·research 日报 zhulong 建议偏视频/多模态·忽略✅·不起臂·原文不改）。
-
-- [wake#1826 详条已滚出·2026-11-22 wake#1827 维护] 见 `daily-memories/2026-11-22.md` §[wake#1826 rolled-out]（opencode 交互式 v3 收口后 standby 心跳·pgrep 无 run_batch✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 同步✅·ops inbox 无新指令✅·research 日报 zhulong 建议偏视频/多模态·忽略✅·不起臂·原文不改）。
-
-- [wake#1825 详条已滚出·2026-11-22 wake#1826 维护] 见 `daily-memories/2026-11-22.md` §[wake#1825 rolled-out]（opencode 交互式 v3 收口后 standby 心跳·pgrep 无 run_batch✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 同步✅·ops inbox 无新指令✅·不起臂·原文不改）。
-
-- [wake#1824 详条已滚出·2026-11-22 wake#1827 维护] 见 `daily-memories/2026-11-22.md` §[wake#1824 rolled-out]（opencode 交互式 v3 收口后 standby 心跳·pgrep 无 run_batch✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 同步✅·ops inbox 无新指令✅·不起臂·原文不改）。
-
-- [wake#1823 + wake#1819-#1822 详条已滚出·2026-11-22 wake#1827 维护合并] 见 `daily-memories/2026-11-22.md` §[wake#1823] + §[wake#1819-#1822 rolled-out]（均 opencode 交互式 v3 收口后 standby 心跳·pgrep 无 run_batch✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 同步✅·ops inbox 无新指令✅·research 日报 zhulong 建议偏视频/多模态·忽略✅·不起臂·原文不改）。
-
-- [wake#1818 + wake#1816-#1817 + wake#1812-#1814 详条已滚出·2026-11-22 wake#1827 维护合并] 见 `daily-memories/2026-11-22.md` §[wake#1818]/§[wake#1816-#1817 rolled-out]/§[wake#1812-#1814 rolled-out]（均 opencode 交互式 v3 收口后 standby 心跳·ps 无 run_batch✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 或落后他线 1 commit 不强拉✅·research 日报 zhulong 建议偏视频/多模态成本口径·忽略✅·不起臂·原文不改）。
-
-- [wake#1814 详条已滚出·2026-11-22 wake#1819 维护] 见 `daily-memories/2026-11-22.md` §[wake#1814]（opencode 交互式 v3 收口后 standby 心跳·ps 无 run_batch✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 同步✅·research 日报 zhulong 建议偏视频/多模态·忽略✅·不起臂·原文不改）。
-
-- [wake#1805-#1811 详条已滚出·2026-11-22 wake#1814 维护] 见 `daily-memories/2026-11-22.md` §[wake#1805-#1811 rolled-out]（均 opencode 交互式 v3 收口后 standby 心跳·ps 无 run_batch 进程✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 0/0 或落后他线 1 commit 不强拉✅·research 日报 zhulong 建议偏视频/多模态成本口径·忽略✅·不起臂·原文不改）。
-
-- [wake#1748-#1818 详条已滚出·2026-11-22 wake#1827 维护合并] 见 `daily-memories/2026-11-22.md` 各 §[wake#XXXX rolled-out]（均 opencode 交互式：v3 收口后 standby 心跳 + 11-22 新令执行 wake#1828 强模型 3-run 启动·pgrep 无 run_batch/pro 默认态/cases_lite=500/cline 就位/git 同步✅·v3 7 batch 全完·pro 3-run=10.18±1.45% / lite 3-run=4.68±0.95% / mini 3-run=2.38±0.23%·`\MzeroAnchor=10.1%` 回填 commit `4fa407d35` clean compile 12p/0err/0undef·release order 已交付·四条 11-19 红令全交付·不起臂·原文不改）。
+- [wake#1840-#1859 详条已滚出·2026-11-24 wake#1895 维护合并] 见 `daily-memories/2026-11-23.md` §[wake#1840-#1859 rolled-out]（均 opencode 交互式·r1-attempt-2 收口 + r2 跑中监控心跳·245→389/500·22.9→21.9% early·0 FUSE·身份四证✅·不干预；wake#1840 含 /tmp 阻塞预防 + 报告生成器就绪 + McNemar early sanity p≈0）。
+- [wake#1836-#1847 详条已滚出·2026-11-24 wake#1895 维护合并] 见 `daily-memories/2026-11-23.md` §[wake#1836-#1847 rolled-out]（均 opencode 交互式·r1-attempt-2 监控心跳·健康·155→443/500·22.9→23.1% early·0 FUSE·身份四证✅·不干预）。
+- [wake#1828-#1837 详条已滚出·2026-11-24 wake#1895 维护合并] 见 `daily-memories/2026-11-22.md` §[wake#1828 rolled-out]（强模型 3-run 启动·canary 两证过·r1 健康跑中）+ `daily-memories/2026-11-23.md` §[wake#1830-#1837 rolled-out]（r1-attempt-1 VOID + 5 项修复 + r1-attempt-2 启动·监控心跳 56→183/500·0 FUSE·身份四证✅·不干预）。
+- [wake#1748-#1827 详条已滚出·2026-11-24 wake#1895 维护合并] 见 `daily-memories/2026-11-22.md` 各 §[wake#XXXX rolled-out]（均 opencode 交互式：v3 收口后 standby 心跳·pgrep 无 run_batch✅·providers=pro 默认态✅·cases_lite=500✅·cline 就位✅·git 同步✅·v3 7 batch 全完·pro=10.18±1.45%/lite=4.68±0.95%/mini=2.38±0.23%·`\MzeroAnchor=10.1%` 回填 commit `4fa407d35` clean compile 12p/0err/0undef·四条 11-19 红令全交付·不起臂·原文不改）。
 
 > 🟢 **结案结论（用户认知 · 2026-11-17 09:3x 用户令 · 必写 · subagent 消融线最终结论）**：
 > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：**1. 单 agent 表现优于多 agent；2. 在多 agent 中，自主 spawn subagent 优于用户定制。** 上述两条由 2026 暑假清华大学博士研究积累的认知仍然稳固。」
@@ -113,7 +61,7 @@ WAITING: 0（2026-11-24 wake#1894·**强模型 3-run ✅ 收口**：deepseek-v4-
 | CONFIG | CLI_AGENT=cline 3.0.51 / 强模型=deepseek-v4-pro-cloud@/cloud/v1 key ...8aa0785e / maxTokens=16384 / reasoning.enabled=false（thinking low 由 CLI flag）/ workers 16 / cases_lite.txt 500 / 串行脚本 /tmp/zhulong_strong_serial_eval.sh PID 3070368。 |
 | ROUND | 强模型 3-run ✅ 收口：**r1 DONE @ 06:33·105/482=21.78%·infra_clean=YES**·**r2 DONE @ 16:23·96/486=19.75%·infra_clean=YES**·**r3 DONE @ 00:32·103/490=21.02% (dedup)·infra_clean=YES**·**3-run mean±std = 20.85±1.03%**。v3 三组已收口不动。 |
 | PHASE | ✅ done（强模型 3-run 收口·3/3 clean·McNemar vs doubao-pro p≈0.0000 高度显著·报告已交付）。subagent 消融线已 done_all（2026-11-17 用户令·A0=69.2/A1=66.7/A2=53.3%·单 agent > 多 agent·自主 spawn > 用户定制）。 |
-| WAITING | 0（2026-11-24 wake#1878·强模型 3-run 收口·standby）。 |
+| WAITING | 0（2026-11-24 wake#1895·强模型 3-run 收口·standby）。 |
 | ERROR_COUNT | 0 |
 | BASE_DIR | `/nasdata/app.e0031982/code/eda_fastmcp`（36.15 服务器路径；当前 2.12 开发机为 `/nas_train/`，两机独立挂载并非迁移） |
 | 基座 | 编排=`glm-5.2`；eval backbone=`deepseek-v4-flash`（复测·运维令二十七②·✅HTTP 200 key 02_...c43c1f4a-03c6-4148-b722-f4c8604c78d3 + /v1·**maxTokens=16384 in providers.json**（≥8192·原记8192实际16384）修复 null-content 问题·reasoning.enabled=false 保持）|
