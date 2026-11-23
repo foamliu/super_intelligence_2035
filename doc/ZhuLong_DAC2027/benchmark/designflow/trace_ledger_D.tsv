@@ -2023,3 +2023,4 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1789532254516_5fsin	junxu	hfeg0pkn005	174	waveform	case	EDA-Eval-DesignFlow-SxCmdRefClassify-001	2026-11-23 17:07	
 1788845188396_c4wsu.messages.json	junxu	hfeg0pkn005	155	schematic	case	EDA-Eval-DesignFlow-FifoStructNetlistGen-001	2026-11-23 17:36	
 1794898759753_654ry	e06365	hfeg0pkn001	100	analog_context	parked		2026-11-23 18:06	deepread r1207: real intent=find DRJPA refresh circuits + extract R_RefRH termOrder/pins; agent searched /proj/drjpa/V0/libs/drjpa_digital found 13 R_Ref*/T_*Refresh cells, read data.dm (binary OA, empty in trace), final report 15 pins. NOT offline-synthesizable: data.dm is binary OA not text + /proj/drjpa perm-denied from .75 (e0031982 cant read drjpa project). Needs live-Aether or host-side(e06365) capture. Park for reframe.
+1795144745219_ezpe5	max7c	hfeg0pkn005	123	schematic_netlist	case	EDA-Eval-DesignFlow-AsyncRiskResetWaiveGen-001	2026-11-23 18:29	
