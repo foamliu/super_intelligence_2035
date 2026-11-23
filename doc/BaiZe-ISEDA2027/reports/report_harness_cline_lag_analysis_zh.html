@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>cline 落后 opencode/hermes 根因分析 · SWE-bench Verified 7-way</title>
+<style>
+body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1080px;margin:0 auto;padding:24px;background:#f8f9fa;color:#2c3e50;line-height:1.7}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:12px}
+h2{color:#1a5276;margin-top:34px;border-left:6px solid #2980b9;padding-left:12px}
+h3{color:#2874a6;margin-top:22px}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em}
+th,td{border:1px solid #ccc;padding:8px 12px;text-align:left;vertical-align:top}
+th{background:#2980b9;color:#fff}
+tr:nth-child(even){background:#eef4f9}
+.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c;font-weight:bold}.warn{color:#e67e22;font-weight:bold}
+.big{font-size:1.4em;font-weight:bold}
+.key{background:#fef9e7;border-left:5px solid #f39c12;padding:12px 16px;margin:16px 0}
+.info{background:#ebf5fb;border-left:5px solid #3498db;padding:12px 16px;margin:16px 0}
+.crit{background:#fdedec;border-left:5px solid #e74c3c;padding:12px 16px;margin:16px 0}
+.ok{background:#eafaf1;border-left:5px solid #27ae60;padding:12px 16px;margin:16px 0}
+code{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:0.92em}
+.bar{height:18px;background:#e74c3c;border-radius:3px;display:inline-block;vertical-align:middle}
+.bar.g{background:#27ae60}.bar.o{background:#e67e22}.bar.b{background:#2980b9}
+.small{font-size:0.85em;color:#7f8c8d}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.8em;color:#fff;margin-right:4px}
+.tag.infra{background:#e67e22}.tag.ability{background:#2980b9}.tag.timeout{background:#8e44ad}
+</style>
+</head>
+<body>
+
+<h1>cline 落后 opencode / hermes 根因分析</h1>
+<div class="info">
+<p><strong>评测</strong>：SWE-bench Verified 500 题 · 7 路横评　|　<strong>基座</strong>：glm-5.3-flash　|　<strong>口径</strong>：Pass% = resolved/500</p>
+<p><strong>核心对比</strong>：cline <span class="fail">303/500 = 60.6%</span> · opencode <span class="pass">415/500 = 83.0%</span> · hermes <span class="pass">444/500 = 88.8%</span></p>
+<p><strong>数据源</strong>：<code>run/harness/swebench_verified_full/reports/eval_glm53_*.json</code>（最终 resolved/failed/empty_patch）＋ <code>progress_glm53_*.json</code>（逐题 wall_s / returncode / stdout·stderr tail / quota / timeout）＋ <code>predictions_glm53/*.json</code>（model_patch）</p>
+</div>
+
+<h2>一、结论（TL;DR）</h2>
+<div class="crit">
+<p><span class="big">cline 落后的第一根因不是「不会写代码」，而是「<span class="fail">93 个空 patch</span>」。</span></p>
+<p>cline 在 500 题里有 <strong>93 题（18.6%）交的是空 patch</strong>（model_patch 为空），而 opencode 只有 <strong>1 题</strong>、hermes 只有 <strong>4 题</strong>。这 92~89 题的空 patch 差异，解释了 cline 对 opencode 差距的 <strong>约 82%</strong>、对 hermes 差距的 <strong>约 63%</strong>。</p>
+<p>而这 93 个空 patch 里，<strong>超过六成是基础设施故障</strong>（Token 额度 429 消耗尽、超时、上游 5xx、鉴权），并非模型「能力差」。真正的「写出 patch 但测试不过」的能力差距只占次要地位。</p>
+</div>
+
+<h2>二、三路失败结构对账（分母=500）</h2>
+<table>
+<thead><tr><th>Harness</th><th>resolved</th><th>failed 合计</th><th>其中 empty patch</th><th>其中 real-patch 测试失败</th><th>Pass%</th></tr></thead>
+<tbody>
+<tr><td><strong>cline</strong>*</td><td class="pass">303</td><td class="fail">197</td><td class="fail"><strong>93 (47% of failed)</strong></td><td>104</td><td class="fail"><strong>60.6%</strong></td></tr>
+<tr><td><strong>opencode</strong></td><td class="pass">415</td><td class="fail">85</td><td class="pass">1</td><td>84</td><td class="pass">83.0%</td></tr>
+<tr><td><strong>hermes</strong></td><td class="pass">444</td><td class="fail">56</td><td class="pass">4</td><td>44 (另有 8 no_patch)</td><td class="pass">88.8%</td></tr>
+</tbody>
+</table>
+<p class="small">* 7-way 报告里的「cline」实际是 <code>cline-patched</code> 这一路（harness 内部代码名）。三路 eval 的 <code>infra_or_quota</code> 均为 0 —— 即这些 empty patch 在最终口径里<strong>未被归为 infra</strong>，而是被并进了空 patch/能力桶，这是本次分析的关键口径缺陷（见 §五）。</p>
+
+<h2>三、差距分解：empty patch 是主因</h2>
+<table>
+<thead><tr><th>对比</th><th>总差距</th><th>empty patch 差异所致</th><th>real-patch 失败差异所致</th></tr></thead>
+<tbody>
+<tr><td>cline vs opencode</td><td class="fail">112</td><td class="fail"><strong>92（82%）</strong></td><td>20（18%）</td></tr>
+<tr><td>cline vs hermes</td><td class="fail">141</td><td class="fail"><strong>89（63%）</strong></td><td>52（37%）</td></tr>
+</tbody>
+</table>
+
+<h2>四、93 个空 patch 的内部归因</h2>
+<div class="key">
+<p>对 cline 的 93 个 empty patch 逐题检查 <code>progress_glm53_cline-patched.json</code> 里的 stderr/stdout tail，分类如下：</p>
+</div>
+<table>
+<thead><tr><th>空 patch 原因</th><th>数量</th><th>占比</th><th>性质（红线判定）</th></tr></thead>
+<tbody>
+<tr><td>Token 额度耗尽（429 / rate-limit）</td><td class="fail"><strong>38</strong></td><td>40.9%</td><td><span class="tag infra">infra</span></td></tr>
+<tr><td>超时（timeout / timed out）</td><td class="fail">13</td><td>14.0%</td><td><span class="tag infra">infra</span></td></tr>
+<tr><td>上游 5xx（500/502/503/504）</td><td>5</td><td>5.4%</td><td><span class="tag infra">infra</span></td></tr>
+<tr><td>鉴权/适配器（401/403/forbidden）</td><td>2</td><td>2.2%</td><td><span class="tag infra">infra</span></td></tr>
+<tr><td>「干净退出但无 diff」（rc=0 无报错）</td><td class="warn">35</td><td>37.6%</td><td><span class="tag ability">待定（见下）</span></td></tr>
+</tbody>
+</table>
+
+<div class="crit">
+<p><strong>结论</strong>：93 个空 patch 中 <span class="big">约 62.5%（58 个）是 infra 故障</span>（38 额度 + 13 超时 + 5 上游 5xx + 2 鉴权），按项目红线「429/5xx/timeout/adapter = infra，非能力」应当**重跑**，而不是记作能力失败。</p>
+</div>
+
+<h3>4.1 额度耗尽的直接证据</h3>
+<p>多个空 patch 实例的 stderr 尾含网关原文，例如：</p>
+<pre style="background:#f0f0f0;padding:10px;border-radius:4px;overflow-x:auto"><code>django__django-15315 → {"type":"error","message":"本次Token额度已用完，请等待19分钟后重试"} → model_patch: 0 bytes
+django__django-15368 → {"type":"error","message":"本次Token额度已用完，请等待11分钟后重试"} → model_patch: 0 bytes</code></pre>
+<p class="small">这些是 glm-5.3-flash 网关的<strong>瞬时额度限制</strong>撞上了 cline 的较慢节奏（见 §五），直接导致 patch 为空 —— 与模型解题能力无关。</p>
+
+<h3>4.2 「干净退出但无 diff」的 35 题</h3>
+<p>这 35 题 stderr 为空、<code>returncode=0</code>、stdout 尾只有 harness 脚手架的 <code>cleanup: git reset --hard &lt;hash&gt;</code>，即 <strong>cline 会话跑完但没有产出可提取的 diff</strong>。wall time 分布很宽：有 <code>19s</code> 秒退（django-13112，几乎没做事）、也有 <code>1800s</code>（顶满 30 分钟超时）。由于 progress 尾只保留了脚手架日志、未保留 cline 会话正文，这 35 题需要 transcript 级复查才能判定是「模型自认无需修改」还是「diff 提取失败」——本报告如实标注为「待定」，不臆断。</p>
+
+<h2>五、第二根因：cline 最慢，更容易撞额度和超时</h2>
+<table>
+<thead><tr><th>Harness</th><th>wall_s 均值</th><th>中位数</th><th>p90</th><th>max</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td><strong>cline</strong></td><td class="fail">620s</td><td>432s</td><td class="fail">1800s</td><td>1801s</td><td class="fail">最长，p90 顶格</td></tr>
+<tr><td>opencode</td><td>462s</td><td>247s</td><td>1347s</td><td>1801s</td><td>中等</td></tr>
+<tr><td>hermes</td><td>410s</td><td>233s</td><td>1124s</td><td>1801s</td><td class="pass">最快</td></tr>
+</tbody>
+</table>
+<p>cline 平均每题慢 20~50%，且 p90 已经压到 1800s 的 30 分钟上限。更慢 → 同样时间段内更容易踩中网关的瞬时 Token 额度窗口、更容易超时 → 空 patch 更多，形成一个自我强化的恶性循环。此外 cline 的 <code>no_patch</code>（progress 口径）= 108，是 opencode（47）的 2.3 倍、hermes（32）的 3.4 倍，进一步印证「产出率」才是首要瓶颈。</p>
+
+<h2>六、次要根因：给了 patch 的成功率也偏低</h2>
+<div class="key">
+<p><strong>条件修复率</strong>（在「确实产出了非空 patch」的题里，最终 resolved 的比例）：</p>
+<table>
+<thead><tr><th>Harness</th><th>非空 patch 题数</th><th>其中 resolved</th><th>条件修复率</th></tr></thead>
+<tbody>
+<tr><td>cline</td><td>407</td><td>303</td><td class="fail">74.4%</td></tr>
+<tr><td>opencode</td><td>499</td><td>415</td><td class="warn">83.2%</td></tr>
+<tr><td>hermes</td><td>496</td><td>444</td><td class="pass">89.5%</td></tr>
+</tbody>
+</table>
+</div>
+<p>即便排除空 patch，cline 的「一修就对」比例仍比 opencode 低 ~9pp、比 hermes 低 ~15pp。这是**真实存在、但次等量级**的能力/端到端差距（生成的 patch 质量或自测不充分）。但它只解释差距的 18%（vs opencode），远小于空 patch 的 82% 贡献。</p>
+
+<h2>七、结论与建议</h2>
+<h3>结论（按贡献排序）</h3>
+<ol>
+<li><span class="fail"><strong>主因</strong></span>：cline 空 patch 93 题（18.6%），其中 ~62% 是 infra（额度/超时/5xx/鉴权），~38% 待 transcript 复查 —— 这一项解释了它对 opencode 差距的 ~82%。</li>
+<li><span class="warn"><strong>次因</strong></span>：cline 竞速最慢（均值 620s、p90 顶格 1800s），更容易撞额度/超时，放大第 1 条。</li>
+<li><span class="warn"><strong>第三</strong></span>：给 patch 后的条件成功率 74.4%，低于 opencode 83.2% / hermes 89.5% 的真实（但次要）差距。</li>
+</ol>
+
+<h3>建议动作</h3>
+<ol>
+<li><strong>把 58 个 infra 空 patch 立即重跑</strong>：额度（38）+ 超时（13）+ 5xx（5）+ 鉴权（2），用重试机制补齐，预计至少回收其中相当一部分（额度/超时是瞬时态，重跑大概率能出 patch）。<strong>这是性价比最高的一步</strong>。</li>
+<li><strong>修口径</strong>：empty patch 若由 429/超时/5xx/鉴权导致，应回填进 <code>infra_or_quota</code> 桶，不要并进「能力失败」；否则 cline 的 60.6% 是被 infra 拖低的假象。</li>
+<li><strong>给 cline 降并发 + 加额度退避</strong>：cline 慢，就别跟 opencode/hermes 同并发抢同一把 glm-5.3-flash 额度的网关；单独额度 key 或错峰，配合 429 自动退避重试。</li>
+<li><strong>保留 cline 会话 transcript</strong>：当前 predict 只留脚手架 stdout/stderr tail，缺 cline 会话正文 → 35 个「干净退出无 diff」无法判定根因。后续 predict 落盘 cline transcript，归因才有据可依。</li>
+</ol>
+
+<div class="ok">
+<p><strong>反直觉但必须说清</strong>：这张表如果拿给只看数字的人，会得出「cline 比 opencode 差 22pp」的结论；但把 infra 空 patch 拆出来后，cline 的「真实编码能力」与 opencode 的差距其实缩小到 ~9pp（74.4% vs 83.2% 条件修复率）这一量级 —— <strong>剩余差距是 infra 管理差距，不是模型智商差距</strong>。</p>
+</div>
+
+<hr>
+<p class="small">
+分析脚本（可复算）：
+<code>reports/eval_glm53_{cline-patched,opencode,hermes}.json</code> 的 <code>resolved / failed / empty_patch</code> 字段；
+<code>reports/progress_glm53_{cline-patched,opencode,hermes}.json</code> 的逐题 <code>wall_s / returncode / quota_blocked / timeout / retried / stdout_tail / stderr_tail</code>。
+生成时间：2026-11-23 · 运维（operator）归因分析。
+</p>
+
+</body>
+</html>
