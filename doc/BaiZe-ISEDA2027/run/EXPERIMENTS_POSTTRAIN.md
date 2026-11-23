@@ -12304,3 +12304,54 @@ python3 bpt_attribution_p0_dev_compare.py \
 - `md`(43) 疑为非 API 的属性 token（如 pandas/变量），已落入 not_in_pool，不污染可用集；正式生成训练集时若引用此类 token 须人工判定。
 - 全量 API 池来自 `api_summary_api_only.json`（4022）；若池版本更新须重跑本审计刷新边界。
 - 本审计只界定隔离边界，**不生成训练数据**；未碰 GPU/沙盒/协议/题面/check.py/超时/−p/未起 SFT/RL 训练/未 kill 任何进程。基线表不变 A0=43.29%±3.92% / A1=4.56%±1.70% / Δ=−38.73pp。
+
+## §I. Held-out (contamination-isolated) SFT 语料合成器 (wake754 · 2026-11-23 18:0x · 零 GPU/零 ckpt · 主线 SFT 设计预研)
+
+### I1. 目的：修 §F 根因
+- §F 根因：A1 SFT 语料 = v2 静态单轮 doc→code（19524 对，0% agentic 轨迹）⇒ 覆盖 base 健康回路 ⇒ 灾难性退化 A0 43.29%→A1 4.56%（McNemar χ²=68.01 p=0.0）。
+- §I 构建**修正 SFT 语料的地基**：从 §H 判定的 3930 个 contamination-isolated API 的**参考文档**合成 doc→code 训练对（§5.1 明确允许「用 API 参考文档合成训练对」），并**形态对齐 §G3 健康模板**（search→get_api_details→editor→run_code→submit_and_exit，单次 submit），使 SFT 模型学健康回路而非坍塌到 F1_no_code。
+
+### I2. 数据源
+- 可用 API 集：`sft_contamination_isolation_audit.json` → `available_for_sft_apis`（3930，§H 产物）。
+- API 参考文档：`/nas_data/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json`（8463 API，含 api_name/api_type/api_descriptions（含 `>>>` doctest 示例）/category）。
+- held-out API = `available ∩ has_refdoc` = **3877**；其中含 doctest 示例 = **2904**。
+
+### I3. 合成口径
+- 对每个 held-out API：解析 `api_descriptions` 的首个 `>>>` doctest 块 → 清洗为可执行代码；提取签名；提取首句描述。
+- 输出训练对 = `instruction`（API+描述+签名+健康回路指令）+ `doctest_code`（参考文档示例）+ `agentic_trajectory_skeleton`（§G3 模板：search_apis→get_api_details→editor→run_code→submit_and_exit，submit 计数=1，对照 A1 +451% submit 风暴）+ `reference_doc_excerpt`。
+- **§H4 复检闸门**：emitted 全文 ∩ `forbidden_api_set`(111) = ∅ 且无 `forbidden_signatures`(158) 的 `def <name>(` 泄漏；任一命中 ⇒ 丢弃该对 + 计数。
+
+### I4. 结果（核心数字）
+| 项 | 值 |
+|:--|--:|
+| available_for_sft_apis | 3930 |
+| held-out API 有参考文档 | 3877 |
+| held-out API 有 doctest | 2904 |
+| **闸门通过（emitted）** | **664** |
+| 闸门丢弃（含禁用 API/签名） | 2240 |
+| 通过率 | 22.9% (664/2904) |
+| 闸门状态 | SOME_DROPPED（闸门生效，非污染泄漏） |
+
+- **🔴 诚实发现**：77.1% doctest 被闸门丢弃——因其参考文档示例使用了禁用 API 作为 setup helper（如 `emyInitAether`/`dbNewCV`/`dbCheckAndSaveDesign`/`dbCreateLib`，均为 eval 任务常用 Database/Init 类）。这**不是 bug，是闸门正确生效**：严格 §H4「禁用 forbidden_api_frequency 任一 API」规则下，凡 doctest 引用任一 eval-used API 即排除。剩余 664 对是**严格干净**的（target API 可用 + 无禁用 API helper + 无禁用签名）。
+- **设计抉择（待正式 SFT 前预注册）**：是否放宽为「仅 target API 隔离」（允许 `emyInitAether` 等通用 setup helper）。本 §I 采严格口径为安全基线；放宽须先预注册再跑，不得事后改。
+
+### I5. 形态对齐验证（抽样）
+- 样例 `sft_heldout_CallingCounter`（Misc Commands）：doctest 干净（`@pyScript.CallingCounter` 装饰器 + count/clearCount 用法），skeleton 工具序列 = `[search_apis, tool_result, get_api_details, tool_result, editor, run_code, submit_and_exit]`，submit_count=1，gate.pass=True。
+- 全 664 对均 submit_count=1（§G3 健康模板，对照 A1 submit 风暴 +451%）。
+- 类别分布 top：Qt Extension/Deprecated widgets(204)、Ae Commands/Extension(109)、Ae Commands/Other(87)、Extension/SimInfo(78)——覆盖广，非单一类别偏置。
+
+### I6. 与 §G/§H 衔接
+- §I 产出 = **doc→code SFT 正例（形态对齐健康模板）+ held-out 任务池地基**。
+- §G6.1 后续（待 pretrain ckpt 或 base 预演）：在 held-out API 子集合成任务 → base+cline 跑**真实** agentic 轨迹 → §H4 复检闸门 → 与 §I doc→code 对混合为正式 SFT 语料（agentic 轨迹占比 > 0，修 §F「0% agentic」根因）→ behavior_gate()(§F5.3) 评测。
+- §I 的 664 对可作 SFT 语料的 doc→code 部分冷启动；真实 agentic 轨迹占比须在正式 SFT 前预注册（建议 ≥30% 以覆盖健康回路）。
+
+### I7. 交付物
+- `baize_posttrain_heldout_sft_synthesizer.py`（脚本，syntax OK + 实跑 PASS，可复跑 `--full-stats`）。
+- `heldout_sft_corpus_synthesized.jsonl`（664 对，2.28MB：instruction/doctest_code/agentic_trajectory_skeleton/reference_doc_excerpt/contamination_gate）。
+- `heldout_sft_corpus_manifest.json`（summary + 类别分布 + 形态对齐 + 闸门状态 + 基线不变声明）。
+
+### I8. 诚实性 / 局限
+- doctest 提取取首个 `>>>` 块；多示例 API 仅取首块（正式 SFT 可扩为全示例）。
+- skeleton 为**骨架**（doc→code 正例），**非真实 cline agentic 轨迹**——真实轨迹须 §G6.1 base+cline 跑出；本 §I 是地基/冷启动，不替代真实轨迹。
+- 严格 §H4 口径丢弃 77% doctest；放宽口径是正式 SFT 前的预注册决策点，本 §I 不替决策。
+- 零 GPU/零 ckpt；未碰 GPU0-3/6/协议·题面·check.py·超时·-p/未起 SFT/RL 训练/未 kill 任何进程。基线表不变 A0=43.29%±3.92% / A1=4.56%±1.70% / Δ=−38.73pp。
