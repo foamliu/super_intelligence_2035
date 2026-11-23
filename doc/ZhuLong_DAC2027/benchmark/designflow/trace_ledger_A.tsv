@@ -853,4 +853,4 @@ anner account not real design user, skip
 1795078501935_2ajng	leo27li	hfeg0pkn003	82	pnr_signoff	case	EDA-Eval-DesignFlow-CcoptCellExtractDelete-001	2026-11-23 19:36	
 1791945402134_azuve	xingx	hfeg0pkn003	11	verification	parked		2026-11-23 22:49	NOFILE rotated away (3 IPs all gone)
 1791968046078_f4n69	laryu	hfeg0pkn001	12	digital	parked		2026-11-23 22:59	cross_domain->C: pyAether dbCrtPin/dbCrtLabel layout API Q&A (layout_aether), not A-domain
-1789980012503_iyqdr					parked		2026-11-23 23:02	VIABLE-DEFERRED: A-domain(verification) verilog:119 dominant, SKILL .il script debug-Q&A (CXMTseCVPSHierSearch.il 708 lines, .HierSearch mkdir in CXMTseCVPSHierSearch_all@L258-260 cond ddGetObj(lib cell)); live file confirmed; needs full .il fetch+case build next round
+1789980012503_iyqdr					case	EDA-Eval-DesignFlow-HierSearchMissingDiagQA-001	2026-11-23 23:53	VIABLE-DEFERRED: A-domain(verification) verilog:119 dominant, SKILL .il script debug-Q&A (CXMTseCVPSHierSearch.il 708 lines, .HierSearch mkdir in CXMTseCVPSHierSearch_all@L258-260 cond ddGetObj(lib cell)); live file confirmed; needs full .il fetch+case build next round
