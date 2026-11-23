@@ -1733,3 +1733,6 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794191817353_i7p2y	e0041392	hfeg0plg77	4	spice_sim	parked		2026-11-24 05:44	r1124 peek: U#0 invoke ask-eda skill (Dify RAG) doc-search; same user e0041392 as b99hz(r1114 rejected NanoSpice-精度 doc-search); no produce; REJECT
 1795006285185_7c6ni	alan17z	hfhds201	3	characterization	parked		2026-11-24 05:44	r1124 peek: U#0='Context summary' continuation merging 3 IBIS skills→ibis-extract skill-mgmt; same user/pattern as gug8y(r958 parked); skill-management env-config not produce; REJECT
 1795006180806_k5jur	alan17z	hfhds201	3	characterization	parked		2026-11-24 05:44	r1124 peek: U#0='Context summary' continuation merging 3 IBIS skills→ibis-extract skill-mgmt; sibling of 7c6ni same user same pattern; skill-mgmt not produce; REJECT
+1793063128278_v0mky	e0035227	hfeg0plg54	6	spice_sim	parked		2026-11-24 05:53	r1125 peek: 电源网络 IR-drop vague 12msgs, off-domain (PG/IR-drop 非 B spice produce)
+1791770402098_b99hz	e0041392	hfeg0plg77	4	spice_sim	parked		2026-11-24 05:53	r1125 peek: askeda 查 NanoSpice 精度 doc-search Q&A 7msgs, 同 r1114 已拒同 user pattern
+1793068955174_danx7	wnyu	hfeg0plg07	3	spice_sim	parked		2026-11-24 05:53	r1125 peek: hi+LPDDR6你有了解吗 general Q&A 8msgs, 无 produce 齿
