@@ -856,3 +856,4 @@ anner account not real design user, skip
 1789980012503_iyqdr					case	EDA-Eval-DesignFlow-HierSearchMissingDiagQA-001	2026-11-23 23:53	VIABLE-DEFERRED: A-domain(verification) verilog:119 dominant, SKILL .il script debug-Q&A (CXMTseCVPSHierSearch.il 708 lines, .HierSearch mkdir in CXMTseCVPSHierSearch_all@L258-260 cond ddGetObj(lib cell)); live file confirmed; needs full .il fetch+case build next round
 1792113124796_ay35u.messages.json	e13zhang	hfeg0pkn004	13	verification	case	EDA-Eval-DesignFlow-VcsCompileErrorDiagnoseProduce-001	2026-11-24 00:24	
 1795143264722_46vx0.messages.json					case	EDA-Eval-DesignFlow-Lp6StimListHeaderProduce-001	2026-11-24 00:24	
+1793618006543_5qlqi	lorikx	hfeg0pkn002	13	digital	case	SramSelLogicAnalyzeProduce-001	2026-11-24 00:53	
