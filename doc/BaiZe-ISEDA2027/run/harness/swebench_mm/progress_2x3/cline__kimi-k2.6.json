@@ -5459,16 +5459,30 @@
   "openlayers__openlayers-11401": {
     "instance_id": "openlayers__openlayers-11401",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1591.0,
+    "rc": 0,
+    "model_patch_len": 610,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ETIMEDOUT`). Once dependencies are restored, run:\\n  ```bash\\n  npm test\\n  # or specifically\\n  npm run karma -- --single-run\\n  ```\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-11545": {
     "instance_id": "openlayers__openlayers-11545",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 441.4,
+    "rc": 0,
+    "model_patch_len": 3249,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e -c -`). The fix is minimal and follows the same DOM structure pattern already used by canvas-based layer renderers in the codebase.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-11649": {
     "instance_id": "openlayers__openlayers-11649",

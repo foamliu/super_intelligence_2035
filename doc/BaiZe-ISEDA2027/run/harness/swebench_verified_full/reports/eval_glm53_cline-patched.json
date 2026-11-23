@@ -115,6 +115,7 @@
     "django__django-14373",
     "django__django-14434",
     "django__django-14493",
+    "django__django-14500",
     "django__django-14539",
     "django__django-14559",
     "django__django-14608",
@@ -313,6 +314,7 @@
     "sympy__sympy-23824",
     "sympy__sympy-24066",
     "sympy__sympy-24213",
+    "sympy__sympy-24443",
     "sympy__sympy-24562",
     "sympy__sympy-24661"
   ],
@@ -363,7 +365,6 @@
     "django__django-14315",
     "django__django-14376",
     "django__django-14404",
-    "django__django-14500",
     "django__django-14534",
     "django__django-14580",
     "django__django-14792",
@@ -504,7 +505,6 @@
     "sympy__sympy-22456",
     "sympy__sympy-22714",
     "sympy__sympy-23950",
-    "sympy__sympy-24443",
     "sympy__sympy-24539"
   ],
   "infra_or_quota": [],
@@ -608,5 +608,5 @@
   ],
   "merged_R2784_sympy-24066": "RESOLVED",
   "rerun_merged": "2026-11-23 21:33:02",
-  "incr_merged": "2026-11-24 02:19:03"
+  "incr_merged": "2026-11-24 02:47:35"
 }

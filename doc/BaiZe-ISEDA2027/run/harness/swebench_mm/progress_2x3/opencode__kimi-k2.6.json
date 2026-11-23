@@ -5989,9 +5989,16 @@
   "openlayers__openlayers-14100": {
     "instance_id": "openlayers__openlayers-14100",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1142.5,
+    "rc": 0,
+    "model_patch_len": 4565,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "KeyQueued` call updated to use `getUid(tile)`\n- **`test/browser/spec/ol/tilequeue.test.js`** - Added regression test for tiles with identical keys\n\nAll existing tests pass and type checking succeeds.\n",
+    "stderr_tail": " find LayerGroup/TileLayer rendering code\n[✓] Identify root cause of sequential tile loading in LayerGroup\n[✓] Implement fix for concurrent tile loading\n[✓] Verify fix with tests or reproduction\n\u001b[0m\n"
   },
   "openlayers__openlayers-14332": {
     "instance_id": "openlayers__openlayers-14332",
