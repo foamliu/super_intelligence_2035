@@ -14,16 +14,16 @@
   "dedup_sessions": 8938,
   "generated": "2026-11-19T02:30:00+08:00",
   "hits_total": 46472,
-  "hosts": 689,
-  "mc10": 4398,
-  "mc100": 1875,
+  "hosts": 681,
+  "mc10": 4529,
+  "mc100": 1917,
   "mc1000": 16,
   "mc15": null,
-  "mc20": 8081,
+  "mc20": 3869,
   "mc25": 2376,
-  "mc30": 3378,
+  "mc30": 3477,
   "mc300": 439,
-  "mc5": 4876,
+  "mc5": 5034,
   "mc500": 133,
   "mc5_recompute": {
     "auto_stop": {
@@ -83,13 +83,11 @@
     ]
   },
   "mc_matrix": {
-    "a_pure_mc10_fresh": 646,
-    "all_shard_mc10": 4065,
-    "all_shard_mc10_fresh": 771,
-    "note": "r940 POOL_SWITCH to 11-21 15:18 scan. Full fresh/touched recompute pending local mirror of summary.tsv (5.5MB, not yet mirrored to designflow/). Headline pool numbers from .75-side awk. mc-matrix recompute command (once mirrored): python3 designflow/trace_ledger.py [--shard A] mc-matrix --src designflow/summary_1121_151844.tsv --json",
-    "round": "r940",
-    "shard_A_pool_mc10_broad": 3941,
-    "src": "ssh_eda_search_20261121_151844/summary.tsv"
+    "round": "r1082",
+    "src": "ssh_eda_search_20261124_023802/summary.tsv",
+    "shard_A_pool_mc10_broad": 2347,
+    "a_fresh_mc10": 240,
+    "note": "r1082 POOL_SWITCH to 11-24 02:38 scan. Fresh A-domain (4-shard ledger diff) = 240 (UP from 38). Stop-loss premise overturned."
   },
   "mc_matrix_1105_hist": {
     "computed_at": "2026-11-11",
@@ -166,30 +164,29 @@
   "note": "r384: scansync (11/09 still latest, no new scan) + stale-candidates-file finding (candidates_mc10.tsv=11/05, gyja8 gone) + 4 fresh A-dominant peeked from 11/09 direct (xinm9/y7550/5szsv/ux82s all weak/not-viable, 0 case). A.jsonl 210 unchanged. PIVOT (a/b/c/d) still awaits user decision.",
   "note_mc30": "顶层 mcN 现统一取自 11/09 全量扫描 raw summary.tsv (38082 行 / 5999 dedup session by session_file). mc_matrix.* 仍基于 11/05 curated summary_1105.tsv (1928 shard-A-keyword dedup, slug 级取最大 mc) 用于 ledger fresh 复算; 两源口径不同, 勿混用. target_mc=10 时覆盖率分母取 mc_matrix.mc10.pool=1929 (与 ledger 同源).",
   "pool_switch": {
-    "by": "r940 (15:1x user directive: launch new full 698-host scan to expand candidate pool)",
-    "delta_mc10": 1202,
-    "delta_rows": 33867,
-    "delta_shardA_pool_mc10": 1427,
-    "done_at": "2026-11-21T15:55+08:00",
-    "from": "ssh_eda_search_20261121_005100/summary.tsv (5433 rows, mc10=3164, shard_A_pool=2514)",
-    "note": "r940 POOL_SWITCH: 11-21 15:18 full rescan (698 hosts, 666 reachable, 32 unreachable). 7x row expansion. A-domain mc>=10 candidate pool (Python A_KW filter) = 15039 rows. Top fresh A-digital candidates identified: lorikx jzlbn (verilog:745, mc399 — BUT already cased as FsdbVerdiInteg-001, duplicate-collision reverted), lein udmg8 (verilog:2675, mc396), e0039602 s9bc9 (verilog:1555+lvs:872, mc392), jinhaoli jkvft (netlist:1553+verilog:821, mc390), mike 06htj (synopsys:1314+verilog:312, mc395). Next round: pick from these (verify not in ledger first).",
-    "scan_path": "/home/t0002965/log/ssh_eda_search_20261121_151844/summary.tsv",
-    "scan_rows": 39300,
-    "to": "ssh_eda_search_20261121_151844/summary.tsv (39300 rows, mc10=4366, shard_A_pool=3941)"
+    "by": "r1082 (15:1x user directive: full 698-host scan to expand pool)",
+    "done_at": "2026-11-24T02:45+08:00",
+    "from": "ssh_eda_search_20261123_064315/summary.tsv (46473 rows, mc10=4398)",
+    "to": "ssh_eda_search_20261124_023802/summary.tsv (52378 rows, mc10=4529)",
+    "delta_rows": 5905,
+    "delta_mc10": 131,
+    "scan_path": "/home/t0002965/log/ssh_eda_search_20261124_023802/summary.tsv",
+    "scan_rows": 52378,
+    "unreachable": 27,
+    "note": "r1082 POOL_SWITCH: 11-24 full 698-host scan via orchestrator.sh (7min, -P 20). 27 unreachable (3.9%, healthy). A-domain mc>=10 broad pool=2347. Fresh A-domain (not in 4-shard ledger)=240 (UP from 38). Top A-pure fresh: fwzs7(nevinrao verilog:1247+sv:207 SV checker diag), x4oei(max7c verilog:1013 log summary), cf4rv(e0039602 netlist:1309+verilog:1030 run_whole.py orchestrator). Stop-loss premise (fresh=0) OVERTURNED by new scan. fwzs7 claimed for r1083 case synthesis."
   },
-  "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261121_005100/summary.tsv",
+  "prev_scan_path": "/home/t0002965/log/ssh_eda_search_20261123_064315/summary.tsv",
   "prev_sessions": 2289,
-  "scan_path": "/home/t0002965/log/ssh_eda_search_20261123_064315/summary.tsv",
+  "scan_path": "/home/t0002965/log/ssh_eda_search_20261124_023802/summary.tsv",
   "scan_rows": 39300,
   "scan_sha256": "e3fcb418bc0bacc01a174bc465ef40ce30f8684a5752894027d2672552389cd1",
   "scansync": {
-    "prev_scan": "/home/t0002965/log/ssh_eda_search_20261122_172249/summary.tsv",
-    "new_scan": "/home/t0002965/log/ssh_eda_search_20261123_064315/summary.tsv",
-    "new_sessions_vs_prev_mc5": 741,
-    "new_sessions_vs_prev_mc10": 659,
-    "pool_switch_note": "r1019 full 698-host scan via orchestrator.sh; POOL_SWITCH from 20261122_172249 to 20261123_064315; digA2 narrow-C_KW filter (ac>cc&&ac>bc&&ac>=5&&mc>=5) on new scan -> 760 dedup A-dom cands -> 38 fresh (4-shard ledger diff 4460 sids)"
+    "prev_scan": "/home/t0002965/log/ssh_eda_search_20261123_064315/summary.tsv",
+    "new_scan": "/home/t0002965/log/ssh_eda_search_20261124_023802/summary.tsv",
+    "new_sessions_vs_prev_mc10": "~131 (mc10 4398->4529)",
+    "pool_switch_note": "r1082 full 698-host scan via orchestrator.sh; POOL_SWITCH from 20261123_064315 to 20261124_023802; fresh A-domain (4-shard ledger diff) = 240 (UP from 38, stop-loss premise overturned)"
   },
-  "sessions": 3846,
+  "sessions": 9245,
   "shard_mc": {
     "A": 10,
     "B": 5,
@@ -283,7 +280,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-23T07:58:00+08:00",
+  "updated_at": "2026-11-24T02:50:00+08:00",
   "users_mc10": 559,
   "users_mc100": 182,
   "users_mc30": 401,
