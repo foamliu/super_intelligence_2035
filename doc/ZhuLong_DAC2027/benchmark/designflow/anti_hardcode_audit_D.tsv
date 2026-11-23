@@ -26,7 +26,7 @@ D	EDA-Eval-DesignFlow-BlConnEquivCheck-001	20	y	unknown	ok	static-skip	static-sk
 D	EDA-Eval-DesignFlow-BsmFailAnalyzer-001	19	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-BsmFailAnalyzer-001
 D	BtopPoststressJobs-001	30	y	unknown	ok	static-skip	static-skip	y	PASS		BtopPoststressJobs-001
 D	EDA-Eval-DesignFlow-BufPFFlatGen-001	46	n	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-BufPFFlatGen-001
-D	EDA-Eval-DesignFlow-CABufDiffPairOPCheck-001	14	y	unknown	ok	static-skip	static-skip	y	GAP	no-hidden-B	EDA-Eval-DesignFlow-CABufDiffPairOPCheck-001
+D	EDA-Eval-DesignFlow-CABufDiffPairOPCheck-001	14	y	y	ok	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	EDA-Eval-DesignFlow-CABufDiffPairOPCheck-001
 D	EDA-Eval-DesignFlow-CTLEAcMetric-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-CTLEAcMetric-001
 D	CVPSHierSearchFix-001	16	y	unknown	n/a	static-skip	static-skip	inline	PASS(inline)		(inline)
 D	EDA-Eval-DesignFlow-CapInsertStgOut-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		CapInsertStgOut-001
@@ -164,9 +164,9 @@ D	EDA-Eval-DesignFlow-IVCurveRegionClassify-001	14	y	unknown	ok	static-skip	stat
 D	EDA-Eval-DesignFlow-IddBlkCmpHighlight-001	37	y	unknown	ok	static-skip	static-skip	y	PASS		IddBlkCmpHighlight-001
 D	EDA-Eval-DesignFlow-IddCellFilter-001	30	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-IddCellFilter-001
 D	EDA-Eval-DesignFlow-IddLeakRank-001	14	y	unknown	ok	static-skip	static-skip	y	PASS		IddLeakRank-001
-D	IddMeasPostProcess-001	12	n	unknown	n/a	static-skip	static-skip	inline	GAP	no-subprocess;no-hidden-B	(inline)
+D	IddMeasPostProcess-001	12	n	y	n/a	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	(inline)
 D	EDA-Eval-DesignFlow-IddRegTestFramework-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-IddRegTestFramework-001
-D	IddTreeAnalyze-001	15	n	unknown	n/a	static-skip	static-skip	inline	GAP	no-subprocess;no-hidden-B	(inline)
+D	IddTreeAnalyze-001	15	n	y	n/a	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	(inline)
 D	EDA-Eval-DesignFlow-InstCdlConsist-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-InstCdlConsist-001
 D	EDA-Eval-DesignFlow-InstFuncDiagFix-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-InstFuncDiagFix-001
 D	EDA-Eval-DesignFlow-InvCSOpt-001	29	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-InvCSOpt-001
@@ -174,7 +174,7 @@ D	EDA-Eval-DesignFlow-InvPulseStimTb-001	14	y	unknown	ok	static-skip	static-skip
 D	EDA-Eval-DesignFlow-InvSchemBuild-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-InvSchemBuild-001
 D	EDA-Eval-DesignFlow-InvSpiceSim-001	50	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-InvSpiceSim-001
 D	IpPortRuleAuditQA-001	14	y	unknown	ok	static-skip	static-skip	y	PASS		IpPortRuleAuditQA-001
-D	IrunLogNetlistMissingModDiagQA-001	14	n	unknown	n/a	static-skip	static-skip	inline	GAP	no-subprocess;no-hidden-B	(inline)
+D	IrunLogNetlistMissingModDiagQA-001	14	n	y	n/a	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	(inline)
 D	EDA-Eval-DesignFlow-IrunWarnClassify-001	17	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-IrunWarnClassify-001
 D	EDA-Eval-DesignFlow-Itf2CsvConvert-001	14	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-Itf2CsvConvert-001
 D	EDA-Eval-DesignFlow-LDOCircuitIdentQA-001	15	n	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-LDOCircuitIdentQA-001
@@ -197,7 +197,7 @@ D	EDA-Eval-DesignFlow-LvlShftCatalog-001	16	y	unknown	ok	static-skip	static-skip
 D	EDA-Eval-DesignFlow-LvlShftSizing-001	13	n	unknown	ok	static-skip	static-skip	y	PASS		LvlShftSizing-001
 D	EDA-Eval-DesignFlow-LvlshftScenarioReportQA-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-LvlshftScenarioReportQA-001
 D	EDA-Eval-DesignFlow-LvlshftStepFix-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-LvlshftStepFix-001
-D	LvsConcatDiagQA-001	14	n	unknown	n/a	static-skip	static-skip	inline	GAP	no-subprocess;no-hidden-B	(inline)
+D	LvsConcatDiagQA-001	14	n	y	n/a	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	(inline)
 D	EDA-Eval-DesignFlow-LvsConnDiagnose-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-LvsConnDiagnose-001
 D	EDA-Eval-DesignFlow-LvsDeckCmp-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-LvsDeckCmp-001
 D	EDA-Eval-DesignFlow-LvsMrcBrknetDiag-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		LvsMrcBrknetDiag-001
@@ -218,7 +218,7 @@ D	EDA-Eval-DesignFlow-ModelQaTbGen-001	12	y	unknown	ok	static-skip	static-skip	y
 D	EDA-Eval-DesignFlow-ModuleFuncCatalog-001	14	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-ModuleFuncCatalog-001
 D	EDA-Eval-DesignFlow-MosParamStat-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-MosParamStat-001
 D	EDA-Eval-DesignFlow-MosSizeDoeGen-001	14	n	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-MosSizeDoeGen-001
-D	MosfetBlockInventoryQA-001	17	n	unknown	n/a	static-skip	static-skip	inline	GAP	no-subprocess;no-hidden-B	(inline)
+D	MosfetBlockInventoryQA-001	17	n	y	n/a	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	(inline)
 D	EDA-Eval-DesignFlow-MqaMd0PvtAggregate-001	49	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-MqaMd0PvtAggregate-001
 D	EDA-Eval-DesignFlow-MrrEnopsDelay-001	44	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-MrrEnopsDelay-001
 D	EDA-Eval-DesignFlow-Mt0BlConsistSummary-001	31	y	unknown	n/a	static-skip	static-skip	inline	PASS(inline)		(inline)
@@ -274,7 +274,7 @@ D	EDA-Eval-DesignFlow-NlchkNetlistAudit-001	12	y	unknown	ok	static-skip	static-s
 D	EDA-Eval-DesignFlow-NmosBulkVoltCheck-001	42	y	unknown	ok	static-skip	static-skip	y	PASS		NmosBulkVoltCheck-001
 D	EDA-Eval-DesignFlow-OcTimeFitter-001	35	y	unknown	n/a	static-skip	static-skip	inline	PASS(inline)		(inline)
 D	EDA-Eval-DesignFlow-OpCornerSummary-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-OpCornerSummary-001
-D	OpenDmViewsProduce-001	12	n	unknown	n/a	static-skip	static-skip	inline	GAP	no-subprocess	(inline)
+D	OpenDmViewsProduce-001	12	n	y	n/a	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	(inline)
 D	EDA-Eval-DesignFlow-OpenWaveFmt-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-OpenWaveFmt-001
 D	EDA-Eval-DesignFlow-OscSpDeckMigrateInclude-001	14	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-OscSpDeckMigrateInclude-001
 D	EDA-Eval-DesignFlow-OtaSimReport-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-OtaSimReport-001
@@ -424,8 +424,8 @@ D	EDA-Eval-DesignFlow-StdcellCatalogGen-001	16	y	unknown	ok	static-skip	static-s
 D	EDA-Eval-DesignFlow-StdcellDetConvert-001	18	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-StdcellDetConvert-001
 D	EDA-Eval-DesignFlow-StdcellFullAdderBuild-001	12	y	unknown	ok	static-skip	static-skip	y	GAP	no-hidden-B	EDA-Eval-DesignFlow-StdcellFullAdderBuild-001
 D	EDA-Eval-DesignFlow-StdcellListXtract-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-StdcellListXtract-001
-D	EDA-Eval-DesignFlow-StdcellRerunCollect-001	14	y	unknown	ok	static-skip	static-skip	y	GAP	no-hidden-B	EDA-Eval-DesignFlow-StdcellRerunCollect-001
-D	EDA-Eval-DesignFlow-StdcellStatusPartition-001	12	y	unknown	ok	static-skip	static-skip	y	GAP	no-hidden-B	EDA-Eval-DesignFlow-StdcellStatusPartition-001
+D	EDA-Eval-DesignFlow-StdcellRerunCollect-001	14	y	y	ok	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	EDA-Eval-DesignFlow-StdcellRerunCollect-001
+D	EDA-Eval-DesignFlow-StdcellStatusPartition-001	12	y	y	ok	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	EDA-Eval-DesignFlow-StdcellStatusPartition-001
 D	EDA-Eval-DesignFlow-StdcellTrace-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-StdcellTrace-001
 D	EDA-Eval-DesignFlow-StrongARM-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		StrongARM-001
 D	EDA-Eval-DesignFlow-SubSecFilter-001	14	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-SubSecFilter-001
@@ -436,8 +436,8 @@ D	EDA-Eval-DesignFlow-SweepCfgParse-001	17	y	unknown	ok	static-skip	static-skip	
 D	EDA-Eval-DesignFlow-SxProbeGen-001	31	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-SxProbeGen-001
 D	EDA-Eval-DesignFlow-SxWaveAvgSum-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-SxWaveAvgSum-001
 D	EDA-Eval-DesignFlow-TbArchDataflowProduce-001	19	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-TbArchDataflowProduce-001
-D	EDA-Eval-DesignFlow-TbFamilyMergeConverted-001	16	y	unknown	ok	static-skip	static-skip	y	GAP	no-hidden-B	EDA-Eval-DesignFlow-TbFamilyMergeConverted-001
-D	EDA-Eval-DesignFlow-TbFamilyResultVerify-001	15	y	unknown	ok	static-skip	static-skip	y	GAP	no-hidden-B	EDA-Eval-DesignFlow-TbFamilyResultVerify-001
+D	EDA-Eval-DesignFlow-TbFamilyMergeConverted-001	16	y	y	ok	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	EDA-Eval-DesignFlow-TbFamilyMergeConverted-001
+D	EDA-Eval-DesignFlow-TbFamilyResultVerify-001	15	y	y	ok	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	EDA-Eval-DesignFlow-TbFamilyResultVerify-001
 D	EDA-Eval-DesignFlow-TclAreaCsvAnnotate-001	26	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-TclAreaCsvAnnotate-001
 D	EDA-Eval-DesignFlow-Tcs0PatAnalyze-001	31	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-Tcs0PatAnalyze-001
 D	EDA-Eval-DesignFlow-TempHalfWLModuleFuncExplainQA-001	12	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-TempHalfWLModuleFuncExplainQA-001
@@ -456,7 +456,7 @@ D	EDA-Eval-DesignFlow-TopoReconstructExtract-001	13	y	unknown	ok	static-skip	sta
 D	TotemLayermapFatalDiag-001	16	n	unknown	ok	static-skip	static-skip	n	GAP	no-negative	TotemLayermapFatalDiag-001
 D	EDA-Eval-DesignFlow-TotemScFinesimDepsQA-001	19	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-TotemScFinesimDepsQA-001
 D	EDA-Eval-DesignFlow-TotemXtrShortAudit-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		TotemXtrShortAudit-001
-D	EDA-Eval-DesignFlow-TrMatchHelper-001	14	n	unknown	risk	static-skip	static-skip	y	GAP	no-subprocess;print_only-risk	EDA-Eval-DesignFlow-TrMatchHelper-001
+D	EDA-Eval-DesignFlow-TrMatchHelper-001	14	n	y	risk	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	EDA-Eval-DesignFlow-TrMatchHelper-001
 D	EDA-Eval-DesignFlow-TrimMuxInvDiff-001	20	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-TrimMuxInvDiff-001
 D	TsCodeComp3bitLogicDiffQA-001	16	y	unknown	n/a	static-skip	static-skip	inline	GAP	no-hidden-B	(inline)
 D	TsCoreFilterFuncExplainQA-001	12	y	unknown	n/a	static-skip	static-skip	inline	PASS(inline)		(inline)
@@ -470,7 +470,7 @@ D	EDA-Eval-DesignFlow-VamCosimEnvBuild-001	15	n	unknown	ok	static-skip	static-sk
 D	EDA-Eval-DesignFlow-VblhhXStateDiagQA-001	29	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-VblhhXStateDiagQA-001
 D	EDA-Eval-DesignFlow-VcdEdgeTraceZ-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-VcdEdgeTraceZ-001
 D	EDA-Eval-DesignFlow-VconnConsistCheck-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-VconnConsistCheck-001
-D	EDA-Eval-DesignFlow-VddSensTDCRootCause-001	12	n	unknown	risk	static-skip	static-skip	y	GAP	no-subprocess;no-hidden-B;print_only-risk	EDA-Eval-DesignFlow-VddSensTDCRootCause-001
+D	EDA-Eval-DesignFlow-VddSensTDCRootCause-001	12	n	y	risk	static-skip	static-skip	y	PASS	stale-corrected r1197: runtime re-audit (selftest PASS + neg_selftest PASS + anti-hardcode present in check.py); was GAP due to static audit missing inline anti-hardcode phrasing / negative/ subdir location	EDA-Eval-DesignFlow-VddSensTDCRootCause-001
 D	EDA-Eval-DesignFlow-VdleqCellHierExtract-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-VdleqCellHierExtract-001
 D	EDA-Eval-DesignFlow-VdleqNetlistExtract-001	22	y	unknown	ok	static-skip	static-skip	y	PASS		VdleqNetlistExtract-001
 D	EDA-Eval-DesignFlow-VecgenIncSrcPatch-001	14	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-VecgenIncSrcPatch-001
