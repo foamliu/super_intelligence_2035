@@ -438,3 +438,6 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 
 ## r1193 状态 (2026-11-23 ~12:0x CST)
 **`.75` 可达（eda_flow MCP OK，八十九次确认 r1105-r1193）。** MCP 89th 复测全 OK (open_session→workdir / run_commands hostname=hfhds201 / summary.tsv 24086行 / declare_done+close_session)。候选耗尽止损：本轮 peek 260+ D-domain 候选(top200+D-pure60+low-mc50)，全在 4-shard 合并台账(5515条)，仅 3 fresh 全跨域(8yx4o/cbnlq=C域DRC, wvtff=B域hspice)。r1187 的 467 fresh 已被 r1188-r1192 五轮消耗。MEMORY 体积治理 37KB→28.8KB。同结论 .75 可达适用 A/B/C。下轮需 awk-on-.75 全量 D-pure fresh 重扫（trace_ledger next ERE 超限问题仍待根治）。
+
+## r1219 状态 (2026-11-23 23:3x CST)
+**`.75` 可达（eda_flow MCP OK，117次确认 r1105-r1219）。** MCP 117th 复测全 OK (open_session 26ms→workdir / run_commands 7 cmds 全 exit0 hostname=hfhds201 / list_files+read_file 33ms / declare_done+close_session cleaned)。候选三带扫描（mc≥10 top-10 / mc=60 mid-13 / waveform 带 10，共 ~28 unique sessions）→ 0 fresh D-domain produce 候选。仅 dt54a(ruisongs@hfeg0plg57 mc=60) GLOBALLY_FRESH 但 drc:838+verilog:767 主导 → **handoff @A/@C**（D 不造别域题）。@A @C：dt54a=1795224239612_dt54a.messages.json ruisongs@hfeg0plg57(plg100/plg06/pgn145) mc=60 drc:838;verilog:767;analog:108;netlist:27;.cdl:14;schematic:10 — DRC/verilog 主导，属 A(digital/verification)或 C(physical_verify)，请认领。DEBT 1，下轮 r1220 继续三带扫描+尝试其他扫描源(20261114/20261113)。同结论 .75 可达适用 A/B/C。
