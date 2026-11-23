@@ -65,34 +65,43 @@ setsid bash ops_relay.sh > /tmp/baize_ops_relay.log 2>&1 < /dev/null &
 
 ---
 
-## 9. 双机中继（2026-10-24 起）：每台服务器一个，**任务按机器投递**
+## 9. 多机中继（2026-10-24 起）：每台服务器一个，**任务按机器投递**
 
-两台机各跑一个 `ops_relay_v2.sh`（v1 `ops_relay.sh` 共用 `.last_run_id`，会**双执行**，已废弃）。
+三台机各跑一个 `ops_relay_v2.sh`（v1 `ops_relay.sh` 共用 `.last_run_id`，会**双执行**，已废弃）。
 
 **投递语法**（写在 `inbox.md` 第 3 行的注释里）：
 
 | 写法 | 谁执行 |
 |---|---|
-| `<!-- RUN_ID: 163 -->` | **both** —— 两台机各执行一次 |
+| `<!-- RUN_ID: 163 -->` | **both** —— 三台机各执行一次 |
 | `<!-- RUN_ID: 164 \| TARGET: 29 -->` | **只在 `.29`** |
 | `<!-- RUN_ID: 165 \| TARGET: 12 -->` | **只在 `.12`** |
+| `<!-- RUN_ID: 166 \| TARGET: 17 -->` | **只在 `.17`** |
 
-**游标**：每台机各一份 `ops/.last_run_id.<TAG>`（TAG = hostname 末尾两位，如 `29` / `12`）。
+**游标**：每台机各一份 `ops/.last_run_id.<TAG>`（TAG = `29` / `12` / `17`）。
 - 不是投给本机的 RUN_ID **不会推进**本机游标 ⇒ 之后的 `both` 或投给本机的更大 RUN_ID 仍会执行。
 - 因此 `TARGET` 只影响"这一条给谁"，不会漏掉后续任务。
+
+**⚠️ `.17` 的 TAG 特殊处理**：`.17` 的 hostname 是 `s0pgpuap12`（末两位 `12`，与真正的 `.12` 冲突），
+因此 `.17` 启动时**必须显式设 `HOSTTAG=17`**，不能依赖 hostname 自动提取。
 
 **启动 / 停止**
 
 ```bash
-# 启动（每台机各执行一次；TAG 自动从 hostname 取）
+# 启动 — .29 / .12（TAG 自动从 hostname 取）
 setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops_relay_v2.sh \
   > /tmp/baize_ops_relay.<TAG>.log 2>&1 < /dev/null &
+
+# 启动 — .17（必须显式 HOSTTAG=17，因 hostname 末两位是 12 会冲突）
+setsid bash -lc "export HOSTTAG=17; exec bash /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/ops_relay_v2.sh" \
+  > /tmp/baize_ops_relay.17.log 2>&1 < /dev/null &
+
 # 停止
 pkill -f ops_relay_v2.sh
 ```
 
-**注意**：两台机**共享同一个 NFS 工作副本**，所以 `inbox.md`/`outbox.md`/`state` 都是同一份文件；
-v2 用"每机一份 state"消除了 v1 的抢单竞态，但 **`git push` 仍可能撞车**（v2 已内置 3 次重试 + rebase）。
+**注意**：三台机中 `.29`/`.12` 共享同一个 NFS 工作副本（`/nas_train/...`），`.17` 用独立 NFS 路径（`/nas_data/...`）但同一个 git 仓库；
+所以 `inbox.md`/`outbox.md` 经 git 同步后三机一致。v2 用"每机一份 state"消除了 v1 的抢单竞态，但 **`git push` 仍可能撞车**（v2 已内置 3 次重试 + rebase）。
 
 ---
 

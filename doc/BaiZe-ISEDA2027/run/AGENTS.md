@@ -72,7 +72,10 @@
 
 ## 3.5 ⚠️ 已知的运维级问题（**会复发，需周期性检查**）
 
-### (1) `ops_relay.sh` 的「多个副本」—— ⚠️ **2026-10-03 更正：多半是「子进程」，不是副本**
+### (1) `ops_relay` 的「多个副本」—— ⚠️ **2026-10-03 更正：多半是「子进程」，不是副本**
+
+> **三台机各跑一个 `ops_relay_v2.sh`**：`.29`（TAG=29）、`.12`（TAG=12）、`.17`（TAG=17，显式设置因 hostname 冲突）。
+> 投递语法与启动方式见 `ops/README.md` §9。
 
 > **2026-10-03 实测（RUN_ID 8，`.29`）**：`ps -eo pid=,ppid=,etimes=,args=` 看到 2 行，但
 > ```
@@ -131,7 +134,7 @@ ps -eo pid=,ppid=,etimes=,args= | grep 'ops_relay\.sh' | grep -v grep
 |:--|:--|:--|
 | `10.239.2.29` | pretrain · harness | 8×H100；pretrain 占 GPU，harness 不占 GPU |
 | `10.239.2.12` | data | 8×H100；data 多为 CPU/IO |
-| `10.252.32.17` | posttrain · vision | 8×A40；**2026-11-09（周一）起分配 4 张给 post-train**；**2026-11-13 vision 迁入（空卡）** |
+| `10.252.32.17` | posttrain · vision · **ops-relay** | 8×A40；**2026-11-09（周一）起分配 4 张给 post-train**；**2026-11-13 vision 迁入（空卡）**；**2026-11-23 ops-relay v2 启动（TAG=17，PID 1409258）** |
 | `10.251.36.15` | zhulong · designflow | ZhuLong 项目（独立于 BaiZe） |
 
 > 🔗 **SSH 隧道**：`10.251.36.15` ↔ `10.252.32.17` 之间经一台 Windows 11 中继打通（两机端口 22 被防火墙挡，但 ICMP 互通）。细节见 `doc/dual-nix-tunnel.md`。
