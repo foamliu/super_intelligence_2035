@@ -69,6 +69,12 @@ ol{margin:6px 0 0;padding-left:20px;}
 .assert-head{display:flex;align-items:baseline;gap:10px;margin:14px 0 4px;}
 .assert-head h5{margin:0;}
 .assert-head .cnt{font-size:12px;color:var(--muted);}
+.task-explain{background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:8px;padding:14px 18px;margin:12px 0 4px;font-size:13.5px;line-height:1.75;color:#4a3a10;}
+.task-explain .te-title{font-weight:700;color:#92600a;font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.task-explain .te-title::before{content:"💡";font-size:15px;}
+.task-explain b{color:#7c5408;}
+.assert-tbl td.desc{line-height:1.6;}
+.assert-tbl td.desc .why{display:block;font-size:11.5px;color:var(--muted);margin-top:3px;font-style:italic;}
 </style>
 </head>
 <body>
@@ -131,21 +137,26 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">1855s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">read_files×13 · eda_flow__write_file×12 · editor×7 · eda_flow__run_commands×5 · run_commands×4 · list_files×2 · open_session×1 · search×1 · declare_done×1</div></div>
   </div>
+  <div class="task-explain">
+    <div class="te-title">这个任务在做什么（大白话）</div>
+    <div>芯片设计里有两份描述同一颗电路的文件：<b>.inst</b>（SiliconSmart 工具的实例描述，写明每个子电路有哪些端口、电源、地、触发器）和 <b>CDL 网表</b>（电路连线清单）。这两份理论上该一致，但人手维护常对不上：端口漏了、电源名拼错、驱动方向标反。<b>本任务让 agent 写一个"对账脚本"</b>：自动读这两份文件，逐 cell 比对端口/电源/地/管脚方向四个维度，输出一份差异报告（哪一致、哪不一致）。脚本要能在<b>没见过的隐藏测试电路</b>上跑（不是写死答案）。</div>
+    <div style="margin-top:8px;"><b>判分类比</b>：就像让 AI 写一个"对账程序"，自动核对两份 Excel 报表——agent 交付的程序在 6 个隐藏的真实电路上跑，结果要和判分器内置的参考 parser 逐项一致。</div>
+  </div>
   <div class="assert-head"><h5>断言清单（check.py 共 15 条 a–o，全部 PASS）</h5><span class="cnt">15/15 PASS</span></div>
   <table class="assert-tbl">
-    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述（大白话）</th><th>结果</th></tr></thead>
     <tbody>
-      <tr><td class="num">1</td><td class="id">a</td><td>submit.zip 存在 + inst_cdl_consistency.py 在 zip 内 + 可编译</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">2</td><td class="id">b</td><td>run 在 hidden B 上成功 + 输出 valid JSON + 含 cells list</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">3</td><td class="id">c</td><td>所有期望 cells 都在 SUT 报告里</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">4</td><td class="id">d</td><td>summary 字段正确</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">5</td><td class="id">e–i</td><td>每 cell 的 class/supplies/grounds/ports/pins 对齐参考 parser</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">6</td><td class="id">j</td><td>一致 cell 标记 consistent</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">7</td><td class="id">k</td><td>B_nor2_dir_mismatch.direction_match == False</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">8</td><td class="id">l</td><td>B_mux_supply_mismatch.supply_match == False</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">9</td><td class="id">m</td><td>B_flop4_port_mismatch.port_match == False</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">10</td><td class="id">n</td><td>port counts 对齐参考 parser</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">11</td><td class="id">o</td><td>不一致 cell 的 diffs 非空/非缺失</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">1</td><td class="id">a</td><td class="desc"><b>交付物齐全且能跑</b>：submit.zip 存在、里面有 inst_cdl_consistency.py、能 import 不报语法错<span class="why">为啥查：脚本都不存在或跑不起来，后面全免谈</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td class="desc"><b>在隐藏电路上能跑出 JSON</b>：脚本在 6 个隐藏 cell 上运行成功、输出是合法 JSON、JSON 里有 cells 列表<span class="why">为啥查：脚本不能跑崩，输出得是程序能解析的格式</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td class="desc"><b>6 个 cell 一个不漏</b>：期望的 6 个 cell 全部出现在报告里<span class="why">为啥查：漏 cell = 没分析完，报告不完整</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td class="desc"><b>summary 字段对</b>：报告头部的统计摘要（总 cell 数、一致数、不一致数）正确<span class="why">为啥查：摘要错了，下游分析会基于错误数据</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">5</td><td class="id">e–i</td><td class="desc"><b>逐 cell 四维度对账</b>：每个 cell 的 class（flop/latch/combo/passive）、supplies（电源网）、grounds（地网）、ports（端口列表）、pins（管脚方向）都要和参考 parser 一致<span class="why">为啥查：这是任务核心——四维度任何一个对不上就说明 parser 理解错了电路</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">6</td><td class="id">j</td><td class="desc"><b>一致 cell 要标"一致"</b>：本该一致的 cell，报告里 verdict 必须是 consistent<span class="why">为啥查：明明一致却标"不一致" = 误报，会让工程师白查</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">7</td><td class="id">k</td><td class="desc"><b>故意埋的"方向不一致"bug 要被抓到</b>：B_nor2_dir_mismatch 这个 cell 的方向确实不一致，报告的 direction_match 必须是 False<span class="why">为啥查：这是测试题埋的"假差异"，抓不到说明 parser 漏检</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">8</td><td class="id">l</td><td class="desc"><b>故意埋的"电源不一致"bug 要被抓到</b>：B_mux_supply_mismatch 的 supply_match 必须是 False<span class="why">为啥查：电源网对不上会导致仿真用错电压，必须能检出</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">9</td><td class="id">m</td><td class="desc"><b>故意埋的"端口不一致"bug 要被抓到</b>：B_flop4_port_mismatch 的 port_match 必须是 False<span class="why">为啥查：端口对不上 = 管脚连错，是严重错误</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">10</td><td class="id">n</td><td class="desc"><b>端口数对齐</b>：每个 cell 的端口数和参考 parser 一致<span class="why">为啥查：端口数错了，下游连级会错</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">11</td><td class="id">o</td><td class="desc"><b>不一致的 cell 要列出具体差异</b>：标"不一致"的 cell，diffs 字段不能为空或缺失<span class="why">为啥查：只说"不一致"不说哪里不一致 = 没用，工程师还得自己查</span></td><td class="verdict pass">PASS</td></tr>
     </tbody>
   </table>
   <h5>行为序列图</h5>
@@ -295,22 +306,28 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">2056s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">read_files×10 · list_files×10 · eda_flow__run_commands×8 · editor×6 · run_commands×5 · write_file×3 · search×2 · read_file×2 · open_session×1 · fetch_web_content×1</div></div>
   </div>
+  <div class="task-explain">
+    <div class="te-title">这个任务在做什么（大白话）</div>
+    <div>CDL 网表里写了成千上万个器件（MOS 管 M...、子电路 X...）。设计团队需要知道："这套工艺库里到底用了哪些器件类型？每种用了多少个？最大的 MOS 管宽多少？"<b>本任务让 agent 写一个"器件盘点脚本"</b>：扫描一堆 CDL 网表文件，统计 device_types（器件类型清单）、by_type（每种多少个）、mos_w_values（MOS 管宽度列表）、largest_w（最宽的那个管子是哪个、在哪个子电路里）。</div>
+    <div style="margin-top:8px;"><b>判分类比</b>：就像让 AI 写一个"仓库盘点程序"——给它一堆货物清单文件，程序要能数出每种货多少件、最大那件在哪。判分器用<b>没给 agent 看过的隐藏清单</b>来测，结果要和标准答案逐项对得上。</div>
+    <div style="margin-top:8px;color:#b91c1c;"><b>这个 case 失败的关键</b>：agent 写出了脚本，但判分器一启动就报错——<b>找不到测试数据</b>（assets/inputs 目录缺失）。根因是 agent 在沙盒里探索目录时把资产组织搞错了，导致 judge 把脚本拷到临时目录后找不到配套的测试网表。<b>脚本本身可能没问题，但交付布局让判分器没法运行</b>。</div>
+  </div>
   <div class="assert-head"><h5>断言清单（check.py 共 15 条 a–o）</h5><span class="cnt" style="color:var(--red);font-weight:700;">败在断言 a · 1/15 PASS</span></div>
   <table class="assert-tbl">
-    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述（大白话）</th><th>结果</th></tr></thead>
     <tbody>
-      <tr class="fail-row"><td class="num">1</td><td class="id">a</td><td>submit.zip 存在 + 可解压 + parse_devusage.py 在 zip 内 + <b>judge setup 资产齐全</b><br><span class="muted small">判分报错：<span class="mono">fail: a judge setup missing: .../assets/EDA-Eval-DesignFlow-DevUsageExtract-001/inputs</span></span></td><td class="verdict fail">FAIL</td></tr>
-      <tr><td class="num">2</td><td class="id">b</td><td>py_compile 通过</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">3</td><td class="id">c</td><td>是真正的 CDL parser（有 regex/.SUBCKT/M-inst 逻辑，无 hardcode）</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">4</td><td class="id">d</td><td>device_usage.json 在 zip 内 + valid JSON + 含必需 keys</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">5</td><td class="id">e</td><td>parser 在 hidden B 上成功运行</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">6</td><td class="id">f</td><td>B device_types 与期望一致</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">7</td><td class="id">g</td><td>B by_type 每 master count 对齐</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">8</td><td class="id">h</td><td>B subckts 对齐</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">9</td><td class="id">i</td><td>B mos_w_values 对齐</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">10</td><td class="id">j–k</td><td>B largest_w (w/instance/subckt/hierarchy) 对齐</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">11</td><td class="id">l–m</td><td>B subckt_count + total_instances 对齐</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">12</td><td class="id">n–o</td><td>parser 在 A 上成功 + A/B device set 不同（cross-input guard）</td><td class="verdict skip">未触达</td></tr>
+      <tr class="fail-row"><td class="num">1</td><td class="id">a</td><td class="desc"><b>判分环境就绪</b>：submit.zip 存在、能解压、里面有 parse_devusage.py、<b>且判分器能找到配套的测试数据文件</b><span class="why">为啥查：判分器要先把脚本和测试数据都准备好才能开始测；这一步就找不到测试数据，后面全跑不了</span><br><span class="muted small" style="font-style:normal;">判分报错：<span class="mono">fail: a judge setup missing: .../assets/.../inputs</span></span></td><td class="verdict fail">FAIL</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td class="desc"><b>脚本能编译</b>：py_compile 不报语法错<span class="why">为啥查：语法错 = 脚本根本跑不起来</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td class="desc"><b>是真 parser 不是写死答案</b>：脚本里要有正则解析 .SUBCKT/M 实例的逻辑，不能把答案硬编码进去<span class="why">为啥查：硬编码 = 换一份网表就废了，不是真本事</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td class="desc"><b>device_usage.json 在 zip 里且合法</b>：JSON 存在、能解析、含必需的 keys<span class="why">为啥查：这是交付的核心产物，缺了就没法判</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">5</td><td class="id">e</td><td class="desc"><b>parser 在隐藏网表 B 上跑得动</b>：不报错、能产出输出 JSON<span class="why">为啥查：在 A 上跑通不算，要在没见过的 B 上也能跑</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">6</td><td class="id">f</td><td class="desc"><b>器件类型清单对</b>：device_types 集合和标准答案一致<span class="why">为啥查：类型都数错，后面统计全错</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">7</td><td class="id">g</td><td class="desc"><b>每种器件数量对</b>：by_type 里每个 master 的 count 和标准答案一致<span class="why">为啥查：这是"盘点"的核心数字</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">8</td><td class="id">h</td><td class="desc"><b>子电路归属对</b>：每个 master 出现在哪些 subckt 里，要对齐<span class="why">为啥查：定位器件在哪个子电路，是 debug 的关键</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">9</td><td class="id">i</td><td class="desc"><b>MOS 管宽度列表对</b>：mos_w_values 每 master 的宽度列表对齐<span class="why">为啥查：宽度影响器件尺寸，是工艺关键参数</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">10</td><td class="id">j–k</td><td class="desc"><b>最宽的管子定位准</b>：largest_w 的 w/instance/subckt/hierarchy 四个字段都对<span class="why">为啥查：这是"找最大器件"任务的直接答案</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">11</td><td class="id">l–m</td><td class="desc"><b>总数对</b>：subckt_count 和 total_instances 对齐<span class="why">为啥查：总数错了说明 parser 漏抓或多抓了</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">12</td><td class="id">n–o</td><td class="desc"><b>跨输入一致性</b>：parser 在 A 上也能跑，且 A 和 B 的器件集合不同（证明不是写死）<span class="why">为啥查：A/B 器件集相同 = 大概率硬编码了答案</span></td><td class="verdict skip">未触达</td></tr>
     </tbody>
   </table>
   <h5>行为序列图</h5>
@@ -470,25 +487,30 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">2398s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">eda_flow__run_commands×19 · eda_flow__run_code×4 · read_files×3 · write_file×3 · run_commands×1 · get_api_details×1 · open_session×1 · editor×1 · pyAether_run_code×1</div></div>
   </div>
+  <div class="task-explain">
+    <div class="te-title">这个任务在做什么（大白话）</div>
+    <div>在 Aether（国产 EDA 工具）里，工程师经常需要"把某个电路版图截图存成 PNG"——用来做报告、做对比、做回归检查。但每次手点 GUI 截图太慢，<b>本任务让 agent 写一个截图脚本 screenshot_verify.py</b>：调用 pyAether 的 API（aeOpenDesign 打开版图 + aeCapture 截图存盘），自动完成"读规格 → 开版图 → 截图 → 存文件"全流程，并验证 API 真的可用（不是假装调一下就返回成功）。</div>
+    <div style="margin-top:8px;"><b>判分类比</b>：就像让 AI 写一个"自动截屏程序"——给它一个窗口规格，程序要能打开正确的窗口、截到图、存成文件。判分器用<b>mock pyAether</b>（假的 API 环境）来测，看 agent 调的 API 对不对、参数对不对、截图文件真的落地没有。</div>
+  </div>
   <div class="assert-head"><h5>断言清单（check.py 共 15 条 a–o，全部 PASS）</h5><span class="cnt">15/15 PASS</span></div>
   <table class="assert-tbl">
-    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述（大白话）</th><th>结果</th></tr></thead>
     <tbody>
-      <tr><td class="num">1</td><td class="id">a</td><td>deliverable 存在 + screenshot_verify.py 在 zip 内</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">2</td><td class="id">b</td><td>py_compile 通过</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">3</td><td class="id">c</td><td>接受 CLI 参数（sys.argv / argparse）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">4</td><td class="id">d</td><td>在 B（hidden cell）上运行成功</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">5</td><td class="id">e</td><td>aeOpenDesign init 调用正确（参数齐全）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">6</td><td class="id">f</td><td>aeOpenDesign 调用 + lib 参数对</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">7</td><td class="id">g</td><td>cell 参数对（B 期望 cell）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">8</td><td class="id">h</td><td>view 参数对（B 期望 view）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">9</td><td class="id">i</td><td>aeCapture 调用 + output 路径参数对</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">10</td><td class="id">j</td><td>输出截图文件存在</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">11</td><td class="id">k</td><td>capture 在 open 之后调用（调用顺序正确）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">12</td><td class="id">l</td><td>B2（empty cell）退出非零（失败检测正确）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">13</td><td class="id">m</td><td>B3（layout view）成功 + 输出文件存在</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">14</td><td class="id">n</td><td>无禁止 import（非反作弊拦截）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">15</td><td class="id">o</td><td>calls_x == call_lines（无伪造调用记录）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">1</td><td class="id">a</td><td class="desc"><b>交付物存在</b>：submit.zip 里有 screenshot_verify.py<span class="why">为啥查：脚本都没有，后面全免谈</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td class="desc"><b>脚本能编译</b>：py_compile 不报语法错<span class="why">为啥查：语法错 = 跑不起来</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td class="desc"><b>接受命令行参数</b>：用 sys.argv 或 argparse 接收输入（不是写死路径）<span class="why">为啥查：写死路径 = 换个 cell 就废，不是通用工具</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td class="desc"><b>在隐藏 cell B 上能跑</b>：脚本不报错正常退出<span class="why">为啥查：在 A 上跑通不算，要在没见过的 B 上也能跑</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">5</td><td class="id">e</td><td class="desc"><b>aeOpenDesign 初始化参数齐全</b>：init 调用有 ≥2 个参数且第 2 个非空<span class="why">为啥查：init 参数残缺 = API 没正确启动</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">6</td><td class="id">f</td><td class="desc"><b>aeOpenDesign 调了 + lib 名对</b>：打开版图时传的 library 名字和 B 期望的一致<span class="why">为啥查：lib 名错 = 打开了错的库</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">7</td><td class="id">g</td><td class="desc"><b>cell 名对</b>：打开的 cell 名字和 B 期望的一致<span class="why">为啥查：cell 名错 = 截了别人的图</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">8</td><td class="id">h</td><td class="desc"><b>view 名对</b>：打开的 view（schematic/layout）和 B 期望的一致<span class="why">为啥查：view 错 = 截了原理图而非版图（或反之）</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">9</td><td class="id">i</td><td class="desc"><b>aeCapture 调了 + output 路径对</b>：用了"存到指定路径"的截图 API（不是存剪贴板），且输出路径和 B 期望的一致<span class="why">为啥查：不存到指定路径 = 找不到截图文件</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">10</td><td class="id">j</td><td class="desc"><b>截图文件真的落地</b>：output 路径下确实有这个文件<span class="why">为啥查：API 返回成功但文件没存 = 假成功</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">11</td><td class="id">k</td><td class="desc"><b>调用顺序对</b>：先 aeOpenDesign 再 aeCapture（不能还没打开就截图）<span class="why">为啥查：顺序反了 = 截图必失败或截空</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">12</td><td class="id">l</td><td class="desc"><b>错误处理：空 cell 要报错</b>：给一个不存在的 empty cell，脚本必须退出非零（不能假装成功）<span class="why">为啥查：对错误不报错 = 下游以为成功，bug 会潜伏</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">13</td><td class="id">m</td><td class="desc"><b>layout view 也能截</b>：B3 用 layout view，脚本要成功 + 输出文件存在<span class="why">为啥查：只支持 schematic 不支持 layout = 工具不完整</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">14</td><td class="id">n</td><td class="desc"><b>没 import 禁止模块</b>：不绕过 mock 直接连真 Aether（反作弊）<span class="why">为啥查：绕过 mock = 假装调 API，实际没调</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">15</td><td class="id">o</td><td class="desc"><b>调用记录真实</b>：脚本里的 API 调用数 == mock 记录的调用行数（没伪造）<span class="why">为啥查：调用数对不上 = 脚本可能在伪造日志</span></td><td class="verdict pass">PASS</td></tr>
     </tbody>
   </table>
   <h5>行为序列图</h5>
@@ -623,26 +645,32 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">1123s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">editor×8 · read_files×7 · write_file×5 · run_commands×3 · search×2 · read_file×2 · open_session×1 · run_commands(eda)×1</div></div>
   </div>
+  <div class="task-explain">
+    <div class="te-title">这个任务在做什么（大白话）</div>
+    <div>电源完整性仿真（PowerIREM + Totem-SC + FineSim）跑挂了，报错有两个根因：① 配置文件 aplmmx.config 里 <code>CHECK_MODEL_CORNER=1</code>（该关的检查没关，导致 APLMMX 模型视图创建失败）；② incFile 里写了 <code>.model ./</code>（FineSim 不认这种写法）。<b>本任务让 agent 写一个"修复脚本" fix_pwrirem.py</b>：自动定位这两个 bug、改配置、产出修复后的 .fixed 文件 + 一份 patch_report.json（记录"发现了什么 bug、改之前是什么、改之后是什么"）。</div>
+    <div style="margin-top:8px;"><b>判分类比</b>：就像让 AI 当"修理工"——给它一台报错的机器，它要找出故障、修好、还要写一份"维修单"说清修了啥。判分器不只看"机器能转了"，还看"维修单写全没"。</div>
+    <div style="margin-top:8px;color:#b91c1c;"><b>这个 case 失败的关键</b>：agent 把机器修好了（配置确实改对了，断言 a–m 全过），<b>但"维修单"漏写了一条</b>——patch_report.json 里没记录 B1 bug 的"修改前状态"（before=1）。判分器认为：你说不清修了啥 = 没真正理解故障 = 不算修对。<b>会修不会记</b>，这是典型的"动手能力强但文档意识弱"。</div>
+  </div>
   <div class="assert-head"><h5>断言清单（check.py 共 16 条 a–p）</h5><span class="cnt" style="color:var(--red);font-weight:700;">败在断言 n · 13/16 PASS</span></div>
   <table class="assert-tbl">
-    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述（大白话）</th><th>结果</th></tr></thead>
     <tbody>
-      <tr><td class="num">1</td><td class="id">a</td><td>submit.zip 存在 + 可解压 + ≥4 entries</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">2</td><td class="id">b</td><td>fix_pwrirem.py 在 zip 内</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">3</td><td class="id">c</td><td>patch_report.json 在 zip 内</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">4</td><td class="id">d</td><td>含 --config/--incfiles/--outdir CLI 参数</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">5</td><td class="id">e</td><td>不 hardcode VdivAct（A design_name）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">6</td><td class="id">f</td><td>不 hardcode A incFile name（incFile_G4B_CIP）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">7</td><td class="id">g</td><td>fix_pwrirem.py 在 B 上运行成功</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">8</td><td class="id">h</td><td>aplmmx.config.fixed 存在</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">9</td><td class="id">i</td><td>incfile.fixed 存在</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">10</td><td class="id">j</td><td>CHECK_MODEL_CORNER=0（已修复）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">11</td><td class="id">k</td><td>无 residual .model ./（已修复）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">12</td><td class="id">l</td><td>spice_model_lint 通过</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">13</td><td class="id">m</td><td>runme_drycheck 通过</td><td class="verdict pass">PASS</td></tr>
-      <tr class="fail-row"><td class="num">14</td><td class="id">n</td><td>patch_report 含 B1 bug（CHECK_MODEL_CORNER, before=1）<br><span class="muted small">判分报错：<span class="mono">n: no B1 bug with before=1 (bugs=[{type:check_model_corner_enabled, file:aplmmx.config, line:50, detail:CHECK_MODEL_CORNER=1 makes Totem-SC abort...}])</span><br><b>根因</b>：agent 修复了配置但 patch_report.json 漏报此 bug（未在 report 里记录 before=1 的 B1 bug 条目）</span></td><td class="verdict fail">FAIL</td></tr>
-      <tr><td class="num">15</td><td class="id">o</td><td>patch_report 含 B2 .model ./ bug（B incfile）</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">16</td><td class="id">p</td><td>report validation 两项均为 0（lint + drycheck）</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">1</td><td class="id">a</td><td class="desc"><b>交付物齐全</b>：submit.zip 存在、能解压、至少 4 个文件<span class="why">为啥查：4 个交付物（脚本 + 2 fixed + report）少一个都不行</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td class="desc"><b>修复脚本在</b>：fix_pwrirem.py 在 zip 里<span class="why">为啥查：这是核心交付物</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td class="desc"><b>维修单在</b>：patch_report.json 在 zip 里<span class="why">为啥查：维修单缺失 = 无法判断修了啥</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td class="desc"><b>脚本接受标准 CLI 参数</b>：含 --config / --incfiles / --outdir<span class="why">为啥查：写死路径 = 换个配置就废，不是通用工具</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">5</td><td class="id">e</td><td class="desc"><b>不 hardcode A 的设计名</b>：脚本里 "VdivAct" 出现 ≤2 次（不能写死成 A 的设计名）<span class="why">为啥查：写死 A 名 = 只能修这一个 case，不通用</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">6</td><td class="id">f</td><td class="desc"><b>不 hardcode A 的 incFile 名</b>：脚本里不出现 "incFile_G4B_CIP"<span class="why">为啥查：同上，不能写死文件名</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">7</td><td class="id">g</td><td class="desc"><b>脚本在隐藏配置 B 上跑得通</b>：不报错正常退出<span class="why">为啥查：在 A 上能跑不算，要在没见过的 B 上也能跑</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">8</td><td class="id">h</td><td class="desc"><b>修好的配置存在</b>：aplmmx.config.fixed 文件产出<span class="why">为啥查：这是修复的直接产物</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">9</td><td class="id">i</td><td class="desc"><b>修好的 incFile 存在</b>：incFile.fixed 文件产出<span class="why">为啥查：第二个 bug 的修复产物</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">10</td><td class="id">j</td><td class="desc"><b>Bug1 真修了</b>：修后配置里 CHECK_MODEL_CORNER=0（原来是 1）<span class="why">为啥查：这是 Bug1 的直接验证——值真的改成 0 了</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">11</td><td class="id">k</td><td class="desc"><b>Bug2 真修了</b>：修后 incFile 里没有 .model ./ 残留<span class="why">为啥查：Bug2 的直接验证——坏写法都清掉了</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">12</td><td class="id">l</td><td class="desc"><b>lint 检查通过</b>：spice_model_lint 跑修后文件，退出 0<span class="why">为啥查：第三方 lint 工具也认可修复</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">13</td><td class="id">m</td><td class="desc"><b>drycheck 通过</b>：runme_drycheck 跑修后配置，退出 0<span class="why">为啥查：模拟真实仿真流程，确认修复有效</span></td><td class="verdict pass">PASS</td></tr>
+      <tr class="fail-row"><td class="num">14</td><td class="id">n</td><td class="desc"><b>维修单记录了 Bug1 的"修改前状态"</b>：patch_report 里要有 B1 bug 条目（CHECK_MODEL_CORNER），且 before 字段 = 1<span class="why">为啥查：维修单要说清"原来啥样"——只说修了不说原来啥样，无法审计是否真懂了故障</span><br><span class="muted small" style="font-style:normal;">判分报错：<span class="mono">n: no B1 bug with before=1 (bugs=[{type:check_model_corner_enabled, file:aplmmx.config, line:50, ...}])</span></span></td><td class="verdict fail">FAIL</td></tr>
+      <tr><td class="num">15</td><td class="id">o</td><td class="desc"><b>维修单记录了 Bug2</b>：patch_report 里要有 B2 bug 条目（.model ./），且关联到 B 的 incfile<span class="why">为啥查：第二个 bug 也要记全</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">16</td><td class="id">p</td><td class="desc"><b>维修单的 validation 字段对</b>：lint 和 drycheck 的退出码都记成 0<span class="why">为啥查：维修单要附"验证结果"，不能只说修了不验证</span></td><td class="verdict skip">未触达</td></tr>
     </tbody>
   </table>
   <h5>行为序列图</h5>
@@ -765,24 +793,29 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">812s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">read_files×9 · eda_flow__run_commands×9 · run_commands×2 · read_file×2 · editor×2 · open_session×1 · search×1 · list_files×1 · write_file×1 · declare_done×1</div></div>
   </div>
+  <div class="task-explain">
+    <div class="te-title">这个任务在做什么（大白话）</div>
+    <div>DRAM 芯片里有个叫 GrDecPwr 的电源节点，工程师要看它的波形来确认"ACT（激活）和 PRE（预充电）两个动作的边沿时刻准不准"。仿真工具会导出 CSV 格式的波形数据（时间 vs 电压），<b>本任务让 agent 写一个"边沿测量脚本" grdecpwr_measure.py</b>：读 CSV → 算出每个 design × corner 组合的 7 个测量值（idle 静态电压、vwlp 峰值电压、ACT 上升时间、PRE 稳定电压、PRE 下降时间、vwlp 时刻、稳定时刻）→ 汇总成一份输出 CSV。要求纯标准库实现（不能用 numpy/pandas，证明会手写算法）。</div>
+    <div style="margin-top:8px;"><b>判分类比</b>：就像让 AI 写一个"心电波形分析程序"——给它一堆心电图 CSV，程序要算出每次心跳的关键时刻和电压值。判分器用<b>没给 agent 看过的隐藏 CSV</b>来测，每个测量值都要和标准答案在容差内对齐。</div>
+  </div>
   <div class="assert-head"><h5>断言清单（check.py 共 15 条 a–o，全部 PASS）</h5><span class="cnt">15/15 PASS</span></div>
   <table class="assert-tbl">
-    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述（大白话）</th><th>结果</th></tr></thead>
     <tbody>
-      <tr><td class="num">1</td><td class="id">a</td><td>zip 可解压 + 恰好 1 个 .py 脚本</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">2</td><td class="id">b</td><td>py_compile 通过</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">3</td><td class="id">c</td><td>不 hardcode A-specific literal（反作弊）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">4</td><td class="id">d</td><td>B run 成功 + 输出 CSV 含 design/corner header</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">5</td><td class="id">e</td><td>B (design,corner) 集合与 oracle 一致（6 行全到）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">6</td><td class="id">f</td><td>idle_V 对齐</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">7</td><td class="id">g</td><td>vwlp_V 对齐</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">8</td><td class="id">h</td><td>ACT_tr_ns 对齐（10-90% swing + linear interp）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">9</td><td class="id">i</td><td>PRE_stable_V 对齐</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">10</td><td class="id">j</td><td>PRE_tf_us 对齐（90-10% fall swing + falling-edge interp）</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">11</td><td class="id">k</td><td>t_vwlp_us 对齐</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">12</td><td class="id">l</td><td>t_stable_us + PRE_total_us 对齐</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">13</td><td class="id">m–n</td><td>C run 成功 + C output 对齐</td><td class="verdict pass">PASS</td></tr>
-      <tr><td class="num">14</td><td class="id">o</td><td>确定性检查（多次运行输出一致）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">1</td><td class="id">a</td><td class="desc"><b>交付物干净</b>：zip 能解压 + 恰好 1 个 .py 脚本（不能塞一堆杂物）<span class="why">为啥查：多个脚本 = 判分器不知道跑哪个</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td class="desc"><b>脚本能编译</b>：py_compile 不报语法错<span class="why">为啥查：语法错 = 跑不起来</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td class="desc"><b>不 hardcode A 的特征字面量</b>：脚本里不能出现 A 样例特有的 design 名/电压值（反作弊）<span class="why">为啥查：写死 A 的值 = 换 B 就废，不是真算法</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td class="desc"><b>在隐藏 CSV B 上跑得通 + 输出格式对</b>：脚本成功跑完、输出 CSV 存在、表头是 design,corner,...<span class="why">为啥查：格式错了 = 下游工具解析不了</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">5</td><td class="id">e</td><td class="desc"><b>6 行全到</b>：B 的 (design, corner) 组合 6 个（2 版本 × 3 corner）一个不漏<span class="why">为啥查：漏行 = 没跑完所有测试点</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">6</td><td class="id">f</td><td class="desc"><b>静态电压对</b>：idle_V 和标准答案在容差内<span class="why">为啥查：静态电压是基准，错了后面全错</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">7</td><td class="id">g</td><td class="desc"><b>峰值电压对</b>：vwlp_V（脉冲最高点电压）对齐<span class="why">为啥查：峰值错了 = 找错了脉冲</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">8</td><td class="id">h</td><td class="desc"><b>ACT 上升时间对</b>：ACT_tr_ns（激活边沿 10-90% swing + 线性插值）对齐<span class="why">为啥查：上升时间 = 边沿陡峭度，是时序关键参数</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">9</td><td class="id">i</td><td class="desc"><b>PRE 稳定电压对</b>：PRE_stable_V（预充电稳定后的电压）对齐<span class="why">为啥查：稳定电压错 = 没等到稳态就测了</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">10</td><td class="id">j</td><td class="desc"><b>PRE 下降时间对</b>：PRE_tf_us（90-10% fall swing + 下降沿插值）对齐<span class="why">为啥查：下降时间和上升时间算法不同（90-10% vs 10-90%），常出错</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">11</td><td class="id">k</td><td class="desc"><b>峰值时刻对</b>：t_vwlp_us（脉冲最高点出现的时刻）对齐<span class="why">为啥查：时刻错了 = 时序分析会错位</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">12</td><td class="id">l</td><td class="desc"><b>稳定时刻 + 持续时长对</b>：t_stable_us（稳定时刻）+ PRE_total_us（= t_stable - t_vwlp）对齐<span class="why">为啥查：持续时长是派生量，错 = 前面时刻有错</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">13</td><td class="id">m–n</td><td class="desc"><b>第三组输入 C 也能跑 + 输出对齐</b>：在另一组隐藏 CSV 上同样跑通且数值对<span class="why">为啥查：证明脚本通用，不是只针对 B 调参</span></td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">14</td><td class="id">o</td><td class="desc"><b>确定性</b>：多次运行输出 sha256 一致（每次跑结果一样）<span class="why">为啥查：随机结果 = 算法有 bug，不可复现</span></td><td class="verdict pass">PASS</td></tr>
     </tbody>
   </table>
   <h5>行为序列图</h5>
@@ -905,23 +938,29 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">52s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">read_files×3 · fetch_web_content×3 · run_commands×2 · open_session×1</div></div>
   </div>
+  <div class="task-explain">
+    <div class="te-title">这个任务在做什么（大白话）</div>
+    <div>仿真工具 SimVision 看波形时，需要加载一个 .svwf 文件（波形信号列表）。但工程师手上只有一份 hierarchy list（.txt，列出芯片里所有层级的信号路径）。<b>本任务让 agent 写一个转换脚本</b>：把 hier list .txt 转成 simvision 能 load 的 .svwf 文件，转换时还要把顶层名从 DDR5TOP 改成 TOP.Chip（适配不同仿真环境）。脚本要支持 --replace-top 参数（可指定新顶层名或禁用替换）。</div>
+    <div style="margin-top:8px;"><b>判分类比</b>：就像让 AI 写一个"格式转换器"——把一份信号清单从格式 A 转成格式 B，还要支持改顶层名。判分器用<b>没给 agent 看过的隐藏清单</b>来测，转换结果要逐行对得上，还要验证 --replace-top 参数真的生效。</div>
+    <div style="margin-top:8px;color:#b91c1c;"><b>这个 case 失败的关键</b>：agent <b>根本没产出任何交付物</b>。它联网查了 3 次 .svwf 格式怎么写（这是离线题，不该联网），查了 3 次还没搞明白格式，然后只跑了 9 轮迭代 / 52 秒就<b>静默退出</b>——outputs/ 目录是空的，0 次 write_file/editor。判分器一看没 submit.zip 直接判 FAIL，16 条断言一条都没机会跑。<b>这是典型的"遇到不熟悉的东西 → 查不到 → 直接放弃"</b>。</div>
+  </div>
   <div class="assert-head"><h5>断言清单（check.py 共 16 条 a–p）</h5><span class="cnt" style="color:var(--red);font-weight:700;">败在前置（未产出 submit.zip）· 0/16 触达</span></div>
   <table class="assert-tbl">
-    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述（大白话）</th><th>结果</th></tr></thead>
     <tbody>
-      <tr class="fail-row"><td class="num">0</td><td class="id">前置</td><td>submit.zip 产出（agent 须在 outputs/ 下写出交付物）<br><span class="muted small">判分报错：<span class="mono">no submit.zip produced (cline wrote nothing under outputs/)</span><br><b>根因</b>：agent 仅 9 轮迭代 / 52s，0 次 write_file/editor，联网查 svwf 格式 3 次未果后静默退出，<b>根本没产出任何交付物</b>，check.py 未触达</span></td><td class="verdict fail">FAIL</td></tr>
-      <tr><td class="num">1</td><td class="id">a</td><td>deliverable 存在 + 可解压 + 含 .py 脚本 + 无禁止泄漏</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">2</td><td class="id">b</td><td>py_compile 通过</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">3</td><td class="id">c</td><td>在 B 上运行成功 + 输出非空</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">4</td><td class="id">d</td><td>输出含 SVWF comment header（≥2 行 '#'）</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">5</td><td class="id">e</td><td>输出含 'waveform add -signals' Tcl 命令</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">6</td><td class="id">f–g</td><td>输出含 Tcl format wrapper + #waveform blocks == #B input lines</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">7</td><td class="id">h–i</td><td>paths 从 [format {PATH}] 解析出 + 以期望前缀开头</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">8</td><td class="id">j–k</td><td>嵌入 I_DDR6TOP_Mirror 保留 + parsed paths == replace_top(B, TOP.Chip)</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">9</td><td class="id">l–m</td><td>--replace-top TOP.Test 成功 + --replace-top= (disable) 保留原 top</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">10</td><td class="id">n</td><td>B output 含 B-only token + 无 A-only token（反 hardcode）</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">11</td><td class="id">o</td><td>不 hardcode /rundata 或 /proj 绝对路径</td><td class="verdict skip">未触达</td></tr>
-      <tr><td class="num">12</td><td class="id">p</td><td>非确定性输出检查（多次运行 sha256 一致）</td><td class="verdict skip">未触达</td></tr>
+      <tr class="fail-row"><td class="num">0</td><td class="id">前置</td><td class="desc"><b>submit.zip 产出</b>：agent 须在 outputs/ 下写出交付物 zip<span class="why">为啥查：没交付物 = 判分器无从下手，16 条断言全跑不了</span><br><span class="muted small" style="font-style:normal;">判分报错：<span class="mono">no submit.zip produced (cline wrote nothing under outputs/)</span></span></td><td class="verdict fail">FAIL</td></tr>
+      <tr><td class="num">1</td><td class="id">a</td><td class="desc"><b>交付物干净</b>：zip 能解压、含 .py 脚本、无禁止泄漏（不 import reference/check.py）<span class="why">为啥查：偷看答案文件 = 作弊</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td class="desc"><b>脚本能编译</b>：py_compile 不报语法错<span class="why">为啥查：语法错 = 跑不起来</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td class="desc"><b>在隐藏 hier list B 上跑得通 + 输出非空</b>：脚本成功跑完、产出 .svwf 文件且非空<span class="why">为啥查：在 A 上跑通不算，要在没见过的 B 上也能跑</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td class="desc"><b>SVWF 格式头部对</b>：输出文件开头有 ≥2 行 '#' 注释（SVWF 格式要求）<span class="why">为啥查：格式头错 = simvision 不认这个文件</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">5</td><td class="id">e</td><td class="desc"><b>含 waveform add -signals 命令</b>：输出里有 simvision 加载信号的 Tcl 命令<span class="why">为啥查：没这个命令 = simvision 不知道要加载哪些信号</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">6</td><td class="id">f–g</td><td class="desc"><b>Tcl format wrapper 对 + waveform 块数对</b>：输出用 [format {...}] 包裹路径，且 #waveform 块数 == B 输入行数<span class="why">为啥查：每行 hier 对应一个 waveform 块，漏了 = 信号丢失</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">7</td><td class="id">h–i</td><td class="desc"><b>路径解析对</b>：从 [format {PATH}] 解析出信号路径 + 以期望前缀开头<span class="why">为啥查：路径错了 = simvision 加载错信号</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">8</td><td class="id">j–k</td><td class="desc"><b>顶层替换对</b>：嵌入的 I_DDR6TOP_Mirror 保留 + 解析出的路径 == replace_top(B, TOP.Chip)<span class="why">为啥查：核心需求——把 DDR5TOP 换成 TOP.Chip，不能漏替换也不能多替换</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">9</td><td class="id">l–m</td><td class="desc"><b>--replace-top 参数生效</b>：--replace-top TOP.Test 能换成 TOP.Test；--replace-top=（空）保留原顶层名<span class="why">为啥查：CLI 参数要真的起作用，不能是摆设</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">10</td><td class="id">n</td><td class="desc"><b>反 hardcode</b>：B 输出含 B-only token + 不含 A-only token（不能把 A 的答案抄过来）<span class="why">为啥查：含 A token = 大概率写死了 A 的路径</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">11</td><td class="id">o</td><td class="desc"><b>不 hardcode 绝对路径</b>：脚本里不出现 /rundata 或 /proj 这种机器绝对路径<span class="why">为啥查：写死绝对路径 = 换台机器就废</span></td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">12</td><td class="id">p</td><td class="desc"><b>确定性</b>：多次运行输出 sha256 一致（每次跑结果一样）<span class="why">为啥查：随机结果 = 算法有 bug，不可复现</span></td><td class="verdict skip">未触达</td></tr>
     </tbody>
   </table>
   <h5>行为序列图</h5>
