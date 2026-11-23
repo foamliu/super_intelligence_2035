@@ -283,6 +283,7 @@
     "sympy__sympy-13877",
     "sympy__sympy-13878",
     "sympy__sympy-14531",
+    "sympy__sympy-14976",
     "sympy__sympy-15349",
     "sympy__sympy-16766",
     "sympy__sympy-16886",
@@ -483,7 +484,6 @@
     "sympy__sympy-13974",
     "sympy__sympy-14248",
     "sympy__sympy-14711",
-    "sympy__sympy-14976",
     "sympy__sympy-15017",
     "sympy__sympy-15345",
     "sympy__sympy-15599",
@@ -608,5 +608,5 @@
   ],
   "merged_R2784_sympy-24066": "RESOLVED",
   "rerun_merged": "2026-11-23 21:33:02",
-  "incr_merged": "2026-11-24 00:36:04"
+  "incr_merged": "2026-11-24 02:19:03"
 }

@@ -5933,30 +5933,58 @@
   "openlayers__openlayers-13981": {
     "instance_id": "openlayers__openlayers-13981",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 630.9,
+    "rc": 0,
+    "model_patch_len": 2817,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "2`.\n\nI also verified the fix with a standalone script that confirmed the old behavior produced a rotation center of `30` (offset point) while the new behavior correctly produces `20` (feature point).\n",
+    "stderr_tail": "vector layer and immediate renderers\n[✓] Identify the inconsistency in rotation/offset handling between renderers\n[✓] Implement fix for consistent rendering\n[✓] Verify fix with tests or examples\n\u001b[0m\n"
   },
   "openlayers__openlayers-14015": {
     "instance_id": "openlayers__openlayers-14015",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 393.0,
+    "rc": 0,
+    "model_patch_len": 2736,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "e** – verifies `tileTextureCache_.count_` drops to 0 after `setSource()`\n2. **Cache cleared on projection change** – verifies `tileTextureCache_.count_` drops to 0 after switching the view projection\n",
+    "stderr_tail": "ayer and texture cache implementation\n[✓] Identify root cause of stale textures after setSource()/projection change\n[✓] Implement fix to clear invalid cache\n[✓] Verify fix with tests or examples\n\u001b[0m\n"
   },
   "openlayers__openlayers-14051": {
     "instance_id": "openlayers__openlayers-14051",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 147.4,
+    "rc": 0,
+    "model_patch_len": 606,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " the same WebGL `TileLayer` renderer\n- How layer min/max zoom is actually handled elsewhere (via `inView`, using resolution/view zoom checks)\n\nNo other renderer files had this same incorrect pattern.\n",
+    "stderr_tail": "etMinZoom\\(\\)|layer\\.getMinZoom\\(\\)\"\u001b[90m in src/ol/renderer · 0 matches\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Investigate incorrect use of layer.getMinZoom() in TileLayer.js\n[✓] Implement fix and verify\n\u001b[0m\n"
   },
   "openlayers__openlayers-14066": {
     "instance_id": "openlayers__openlayers-14066",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1048.7,
+    "rc": 0,
+    "model_patch_len": 5388,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "urce/images/ycbcr.tif` — a small 4×4 YCbCr GeoTIFF used to verify the `auto` behavior.\n\n### Verification\n- `npm run lint` passes\n- `npm run typecheck` passes\n- `npm run test-node` passes (1779 tests)\n",
+    "stderr_tail": " GeoTIFF source and convertToRGB handling\n[✓] Implement convertToRGB: 'auto' logic for GeoTIFF sources\n[✓] Add tests for the new auto behavior\n[✓] Update documentation/type definitions if needed\n\u001b[0m\n"
   },
   "openlayers__openlayers-14100": {
     "instance_id": "openlayers__openlayers-14100",
