@@ -37,8 +37,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-23</h1>
-  <div class="sub"><b>00:00 + 03:00 + 06:00 时窗 · A 轨 0/5（公告批连续 21 窗未前进，已超 72h，不凑数）· B 轨第九十五轮 +3 → 353 · 作者网 320（X 已核验 126）· 作者信 145 · 回信率 0/145</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-23 06:0x CST（含 00:00 / 03:00 / 06:00 三个时窗）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>00:00 + 03:00 + 06:00 + 09:00 时窗 · A 轨 0/5（公告批连续 22 窗未前进，已超 72h，不凑数）· B 轨第九十六轮 +3 → 356 · 作者网 323（X 已核验 127）· 作者信 148 · 回信率 0/148</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-23 09:0x CST（含 00:00 / 03:00 / 06:00 / 09:00 四个时窗）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -377,8 +377,124 @@
   <li><b>数字口径</b>：被引数 = OpenAlex（查询日 2026-11-23）；论文数字 = 作者自报，本线未复现；<b>未做 PDF 逐页复核</b>。</li>
 </ul>
 
+<h3 class="sec">09:00 时窗 · A 轨（0 / 5 · 公告批第 22 窗未前进）</h3>
+
+<div class="card">
+  <h2>本窗仍 0 篇 · 原因与证据（可复核）</h2>
+  <ul class="tight">
+    <li><b>检索实测</b>：<code>cat:cs.CL&amp;max_results=5&amp;sortBy=submittedDate</code> <code>HTTP 200</code> + <code>application/atom+xml</code>（<b>13,563 B / 5 entry</b>，<code>--noproxy '*'</code> 直连）；最新 <code>published</code> = <b><code>2026-11-19T18:57:25Z</code></b>。</li>
+    <li><b>交叉核对</b>：<code>cs.LG</code> <code>200</code> / 12,929 B（上界 <code>18:59:53Z</code>）、<code>cs.CV</code> <code>200</code> / 12,769 B（<code>18:59:57Z</code>）、<code>cs.SE</code> <code>200</code> / 12,476 B（<code>18:54:19Z</code>）—— 四个分类上界一致，说明<b>不是检索失败</b>。</li>
+    <li><b>时效判定</b>：距本窗（2026-11-23 09:00 CST = 2026-11-23 01:00 UTC）已约 <b>78.0 小时 &gt; 72h</b> ⇒ 按 §0.1 不收录、显式写 <b>0 篇</b>，<b>不拿超窗论文凑数</b>。</li>
+  </ul>
+</div>
+
+<h3 class="sec">09:00 时窗 · B 轨 经典论文（+3 → 356）</h3>
+
+<table class="plain">
+  <tr><th>#</th><th>标题 / 作者（前 3）</th><th>年份 · 出处</th><th>被引</th><th>一句话贡献（摘要口径）</th><th>归属线</th></tr>
+  <tr>
+    <td>354</td>
+    <td><a href="https://arxiv.org/abs/2405.14458">YOLOv10: Real-Time End-to-End Object Detection</a><br>Ao Wang · Hui Chen · Lihao Liu（共 7 位，末位 Guiguang Ding）</td>
+    <td>2024 · <b>NeurIPS 2024</b>（arXiv <code>comment</code>）</td>
+    <td><b>8,380</b></td>
+    <td><b>一致双分配（一对多 + 一对一）</b>实现 NMS-free 端到端训练，再按效率-精度逐组件压缩冗余；YOLOv10-S 同 AP 比 RT-DETR-R18 快 <b>1.8×</b>、参数与 FLOPs 小 <b>2.8×</b>；YOLOv10-B 同性能比 YOLOv9-C 延迟低 <b>46%</b>、参数少 <b>25%</b>。</td>
+    <td>vision · harness · designflow · data</td>
+  </tr>
+  <tr>
+    <td>355</td>
+    <td><a href="https://arxiv.org/abs/2212.07143">Reproducible scaling laws for contrastive language-image learning</a><br>Mehdi Cherti · Romain Beaumont · Ross Wightman（共 9 位，末位 Jenia Jitsev）</td>
+    <td>2022 · <b>CVPR 2023</b>（arXiv <code>comment</code>）</td>
+    <td><b>1,976</b></td>
+    <td>公开 LAION + 开源 OpenCLIP 重做 CLIP 缩放律：训练到 <b>20 亿</b>图文对，零样本分类 / 检索 / 线性探针 / 端到端微调四类下游均呈<b>幂律</b>；并发现<b>训练分布改变缩放指数</b>（OpenAI 与 OpenCLIP 同架构仍不同）。</td>
+    <td>vision · data · pretrain · harness · zhulong</td>
+  </tr>
+  <tr>
+    <td>356</td>
+    <td><a href="https://arxiv.org/abs/2204.08387">LayoutLMv3: Pre-training for Document AI with Unified Text and Image Masking</a><br>Yupan Huang · Tengchao Lv · Lei Cui（共 5 位，末位 Furu Wei）</td>
+    <td>2022 · <b>ACM Multimedia 2022</b>（arXiv <code>comment</code>）</td>
+    <td><b>1,324</b></td>
+    <td><b>统一文本/图像掩码</b> + <b>word-patch alignment</b>（判断词对应图像 patch 是否被掩码）预训练文档多模态 Transformer；文本为主（表单 / 票据 / DocVQA）与图像为主（文档分类 / 版面分析）两类任务均达 SOTA。</td>
+    <td>designflow · data · vision · harness</td>
+  </tr>
+</table>
+
+<p style="font-size:13.5px;color:#59636e;">核验：arXiv <code>id_list</code> 单批 <code>200</code> + atom（9,082 B / 3 entry，<code>published</code> = 2022-04-18 / 2024-05-23 / 2022-12-14）；abs 页 <b>3/3 <code>200</code></b>（42,870 / 44,088 / 46,482 B，<code>citation_title</code> + <code>citation_date</code> 逐字）；ar5iv 全文 <b>3/3 <code>200</code></b>（189,452 / 416,581 / 680,995 B）；OpenAlex <b>3/3 <code>200</code></b>（1,324 / 8,380 / 1,976，查询日 2026-11-23，均 <code>conference-paper</code>）。三 ID 条目级查重 <b>0 命中</b>。</p>
+
+
+<h3 class="sec">👥 作者关系网（09:00 时窗 +3 → 323；X 已核验 127）</h3>
+
+<table class="plain">
+  <tr><th>#</th><th>姓名 / 机构</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td>321</td><td>Yupan Huang 黄宇攀 · 中山大学（论文署名；现 MSRA Vancouver）</td><td><code>huangyp28@mail2.sysu.edu.cn</code>（ar5iv 全文 <code>200</code> / 189,452 B 作者块）；主页另挂 <code>hypjudy28@gmail.com</code></td><td>未找到（<code>x.com/HYPJUDY</code> 无 profile 内容，不猜）</td><td>已发信 #146</td></tr>
+  <tr><td>322</td><td>Mehdi Cherti · Jülich Supercomputing Centre / LAION</td><td><code>m.cherti@fz-juelich.de</code>（ar5iv 全文 <code>200</code> / 680,995 B 作者块）</td><td><code>@mehdidc</code>（<code>200</code> / 135,314 B，双源核验）</td><td>已发信 #147 · X 待 follow</td></tr>
+  <tr><td>323</td><td>Ao Wang · 清华大学软件学院</td><td><code>wa22@mails.tsinghua.edu.cn</code>（ar5iv 全文 <code>200</code> / 416,581 B 作者块；无主页 ⇒ 单源，时效不可验证）</td><td>未找到（不猜）</td><td>已发信 #148</td></tr>
+</table>
+
+<h3 class="sec">✉ 作者请教信（09:00 时窗 3 封 · 累计 148 · 回信率 0/148）</h3>
+
+<div class="card">
+  <h2>#146 · LayoutLMv3 一作 Yupan Huang（中文 248 汉字）</h2>
+  <ul class="tight">
+    <li><b>语言判据</b>：拼音姓名族属可还原「黄宇攀」+ 中文主页 + 中山大学 ⇒ 中文；🚫 未因现机构在加拿大 / 论文英文判英文。</li>
+    <li><b>专属细节</b>：统一文本/图像掩码、<b>word-patch alignment</b>、文本为主与图像为主五类文档任务。</li>
+    <li><b>三问</b>：① OCR 词框缺失或偏移时对齐目标如何降级、框噪声下的收益衰减；② 文本 span 与图像 blockwise 掩码比例是否分模态单独调；③ 只用图像分支（无 OCR）时版面分析与文档分类各掉多少点。</li>
+    <li><b>回填</b>：designflow（文档/版图结构抽取的可执行判分）/ data（把 OCR 质量当数据变量）/ vision（无 OCR 视觉分支对照）。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>#147 · OpenCLIP scaling 共同一作 Mehdi Cherti（英文 156 词）</h2>
+  <ul class="tight">
+    <li><b>语言判据</b>：姓名族属无中文/日韩信号，可能为北非/法语区但无法确认 + 德国机构 ⇒ 判据冲突，按 §2 英文兜底（未强写母语称谓以免写错）。</li>
+    <li><b>专属细节</b>：训练到 <b>20 亿</b>图文对、<b>四类下游</b>各一条幂律、训练分布改变指数、等算力下 ViT-B/32 vs ViT-L/14 的交叉点。</li>
+    <li><b>三问</b>：① LAION 的哪个属性（caption 长度 / 语言构成 / 重复率 / 噪声）最影响指数、是否有固定架构与固定 token 的对照；② 四类下游指数不同是否意味着表征质量与可微调性应分开定预算；③ 20 亿对之后增益是否主要来自数据、等算力交叉点在哪。</li>
+    <li><b>回填</b>：data（分布是自变量）/ pretrain（表征质量 vs 可微调性）/ zhulong（成本口径）。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>#148 · YOLOv10 一作 Ao Wang（中文 234 汉字）</h2>
+  <ul class="tight">
+    <li><b>语言判据</b>：拼音姓名族属可还原「王傲」+ 清华 <code>.edu.cn</code> 机构 ⇒ 中文；🚫 未因论文英文判英文。</li>
+    <li><b>专属细节</b>：一致双分配（一对多 + 一对一）、<code>rank-guided block design</code>、<b>1.8×</b> / <b>2.8×</b> / <b>46%</b> / <b>25%</b>。</li>
+    <li><b>三问</b>：① 两个分支的监督权重或匹配代价如何平衡、去 NMS 后密集小目标重复框如何抑制与 AP_small 掉点；② 「冗余度」用哪个可测指标、换到工业缺陷数据是否需重排 block；③ 1.8× 的测速分辨率与 batch、batch=1 时无 NMS 的延迟分解。</li>
+    <li><b>回填</b>：harness（AP + 分辨率 + batch + 硬件 + 是否含 NMS 成组报）/ vision（检测基线选型）/ designflow（漏检 vs 重框两条判分轴）。</li>
+  </ul>
+</div>
+
+<p style="font-size:13.5px;color:#59636e;">落款：三封均为固定两行（<code>祝好，</code> / <code>Best regards,</code> 下一行 <code>Yang Liu</code>），其后无任何行；正文不含项目名；三封开头句与问句零共用。发送回执：<code>SENT OK 09:04:01</code>（三封）。今日 8/12，未超每日硬上限。</p>
+
+
+<h3 class="sec">🗣 voice_ready / 📰 news_ready</h3>
+<ul class="tight">
+  <li><b>voice_ready：本期无</b>（X 推文页需登录态，未做双源核验 ⇒ 不标 voice_ready）。</li>
+  <li><b>news_ready：0 条</b>（三篇为 2022–2024 年方法 / 缩放律论文，无本窗事件点；不硬凑）。</li>
+</ul>
+
+<h3 class="sec">09:00 时窗 · 对各线的可执行建议（6 线齐全）</h3>
+
+<table class="plain">
+  <tr><th>线</th><th>可执行建议（动作 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>固定算力、只换数据分布</b>（读法取自 <code>2212.07143</code>）：固定模型与 token 数，换两个数据子集（全量 vs 去重+质量筛），各拟合一条幂律。预注册：<b>两指数差 &lt;5%</b> ⇒ 后续数据侧只做去重，不做配比调优。</td></tr>
+  <tr><td><b>vision</b></td><td><b>检测基线与筛查节拍表统一加四列</b>（<code>2405.14458</code>）：「是否含 NMS / batch / 分辨率 / 硬件」。预注册：<b>去 NMS 后 batch=1 延迟下降 &lt;10%</b> ⇒ 后处理不是瓶颈，不再优化。</td></tr>
+  <tr><td><b>harness</b></td><td><b>「无 NMS 端到端」与「带 NMS」作为两行基线同时入库</b>，禁止混报；新增判据：任一检测分数缺分辨率或 batch 即判口径不合格。</td></tr>
+  <tr><td><b>data</b></td><td><b>文档/版图数据加「OCR 框缺失率 + 框偏移分布」两列</b>（<code>2204.08387</code> 的 word-patch alignment 依赖）。预注册：<b>OCR 缺失率 &gt;10% 的批次不进入对齐目标训练</b>。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>成本口径新增「等算力下的数据-模型取舍」一列</b>（引用 <code>2212.07143</code>），禁止只报单一规模的最优点。预注册：<b>数据翻倍与参数翻倍的每算力增益差 &lt;1 pp</b> ⇒ 该轴不单独做消融。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>检测类题面加「漏检 / 重框」两条独立判分轴</b>（YOLOv10 的 <code>AP_small</code> 与重复框失败模式），文档类题面标 OCR 引擎与版本。预注册：<b>两条轴不能同时给出的题，降级为单一 axis 题</b>。</td></tr>
+</table>
+
+<h3 class="sec">附录 · 09:00 时窗检索式与核验（可复核）</h3>
+<ul class="tight">
+  <li><b>A 轨检索</b>：<code>cat:cs.CL&amp;max_results=5</code> <code>200</code>（13,563 B / 5 entry）；交叉核 cs.LG <code>200</code> / 12,929 B、cs.CV <code>200</code> / 12,769 B、cs.SE <code>200</code> / 12,476 B；上界均停在 2026-11-19。</li>
+  <li><b>B 轨核验</b>：arXiv <code>id_list=2405.14458,2212.07143,2204.08387</code> 单批 <code>200</code> + atom（9,082 B / 3 entry，先一次 <code>429</code>，按 ≥3 s 限速重试成功）；abs 页 3/3 <code>200</code>（42,870 / 44,088 / 46,482 B）；ar5iv 3/3 <code>200</code>（189,452 / 416,581 / 680,995 B）；OpenAlex 3/3 <code>200</code>（1,324 / 8,380 / 1,976）。</li>
+  <li><b>查重</b>：三 ID 在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> 条目级 0 命中（前几轮已核元数据、本轮转正，未重复收）。</li>
+  <li><b>主页证据</b>：<code>hypjudy.github.io</code> <code>200</code> / 26,832 B（页内 <code>hypjudy28@gmail.com</code>；无 X 链接）；<code>mehdidc.github.io</code> <code>200</code> / 16,094 B（挂 <code>x.com/mehdidc</code>）；X <code>@mehdidc</code> <code>200</code> / 135,314 B（<code>og:title</code> + <code>og:description</code> 双源）。Ao Wang 无个人主页 ⇒ 邮箱只有 ar5iv 作者块一源，已在台账标注「时效不可验证」。</li>
+  <li><b>数字口径</b>：被引数 = OpenAlex（查询日 2026-11-23）；论文数字 = 作者自报，本线未复现；<b>未做 PDF 逐页复核</b>。</li>
+</ul>
+
+
 <footer>
-  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-23 06:0x CST（含 00:00 / 03:00 / 06:00 时窗）
+  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-23 09:0x CST（含 00:00 / 03:00 / 06:00 / 09:00 时窗）
 </footer>
 
 </div>

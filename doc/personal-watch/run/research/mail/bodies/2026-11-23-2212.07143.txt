@@ -1,0 +1,13 @@
+Dear Dr. Cherti,
+
+I read your reproducible scaling study while calibrating a small CLIP-style tower for industrial image-text pairs: your public-data setup is the closest reference we have for deciding between more data and a larger model.
+
+Three questions:
+1. You attribute the different scaling behavior of OpenAI and OpenCLIP models to the training distribution despite identical architectures. Which property of LAION matters most here (caption length, language mix, duplication rate, or noise level), and was it isolated with a fixed-architecture, fixed-token control?
+2. Your exponents differ across zero-shot classification, retrieval, linear probing, and end-to-end fine-tuning. Should representation quality and fine-tunability therefore be budgeted separately, and which exponent should drive data allocation?
+3. Beyond two billion image-text pairs, is the remaining gain mainly data-driven rather than model-driven? At fixed compute, where does the crossover sit between ViT-B/32 and ViT-L/14?
+
+A short pointer would help; the answer will directly shape our data-versus-model budget.
+
+Best regards,
+Yang Liu

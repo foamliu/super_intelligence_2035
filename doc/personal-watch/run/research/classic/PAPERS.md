@@ -10,6 +10,9 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **356** 条（**第九十六轮 2026-11-23 09:0x 补 3 条 → 356**：YOLOv10 `2405.14458`（**8,380**，NeurIPS 2024；一致双分配（一对多 + 一对一）→ NMS-free 端到端；YOLOv10-S 同 AP 比 RT-DETR-R18 快 **1.8×**、参数/FLOPs 小 **2.8×**；YOLOv10-B 同性能比 YOLOv9-C 延迟低 **46%**、参数少 **25%**）/ Reproducible scaling laws for CLIP `2212.07143`（**1,976**，CVPR 2023；公开 LAION + OpenCLIP，训练到 **20 亿**图文对；零样本分类 / 检索 / 线性探针 / 端到端微调四类下游均呈幂律；**训练分布改变缩放律**）/ LayoutLMv3 `2204.08387`（**1,324**，ACM MM 2022；统一文本/图像掩码 + **word-patch alignment**；文本为主与图像为主两类文档任务均 SOTA）；核验：arXiv `id_list` 单批 **`200` + atom**（9,082 B / 3 entry，`published`：2022-04-18 / 2024-05-23 / 2022-12-14；`comment` = ACM Multimedia 2022 / NeurIPS 2024 Camera-ready / CVPR 2023）+ abs 页 **3/3 `200`**（42,870 / 44,088 / 46,482 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **3/3 `200`**（189,452 / 416,581 / 680,995 B）+ OpenAlex **3/3 `200`**（1,324 / 8,380 / 1,976，查询日 2026-11-23；均 `conference-paper`，会议 DOI 已核）；三 ID 条目级查重 **0 命中**；覆盖轴 = 端到端实时检测的成本基线 / 公开数据下 CLIP 缩放律与「分布即变量」/ 文档-版面多模态的 OCR 依赖；本轮归属：vision **+3** · data **+3** · harness **+2** · designflow **+2** · pretrain **+1** · zhulong **+1**（一篇可多线））
+
+
 **本轮快照**：累计 **353** 条（**第九十五轮 2026-11-23 06:0x 补 3 条 → 353**：Scaling Vision Transformers `2106.04560`（**1,908**，CVPR 2022；2B 参数 ViT，ImageNet top-1 **90.45%**，10-shot **84.86%**）/ ArCHer `2402.19446`（**241**，**&lt;500 按「方法论常青 / agent 训练线」收**，预印本；utterance 级 off-policy critic + token 级策略两层并行，样本效率约 **100×**，7B 规模仍提升）/ Scaling Laws for Precision `2411.04330`（**113**，**&lt;500 按「开创范式」收**，OpenAlex `conference-paper`；低精度降低「有效参数量」，量化退化随训练 token 增加，**465+** 次预训练拟合、验证到 **1.7B / 26B token**）；核验：arXiv `id_list` 单批 **`200` + atom**（14,084 B / 5 entry，`published`：2021-06-08 / 2024-02-29 / 2024-11-07）+ abs 页 **3/3 `200`**（42,603 / 45,033 / 42,646 B）+ OpenAlex **3/3 `200`**（1,908 / 241 / 113，查询日 2026-11-23；`conference-paper` / `preprint` / `conference-paper`）；三 ID 条目级查重 **0 命中**（同批候选 YOLOv10 `2405.14458`、OpenCLIP scaling `2212.07143` 元数据已核但本轮未收，留作下轮）；覆盖轴 = 视觉塔的模型-数据-算力三轴标定 / 多轮 agent 的分层 RL 与信用分配 / 精度感知的缩放律与量化-数据预算权衡；本轮归属：pretrain **+2** · vision **+2** · data **+2** · harness **+2** · zhulong **+2** · designflow **+1**（一篇可多线））
 
 
@@ -6119,6 +6122,58 @@
 | 与我们工作的关系 | **pretrain（主 · 精度与算力配方）**：把「用 fp8/4-bit 训会不会掉点」变成可计算的损失项，可直接用于我们预训练精度与模型规模的联合选型。<br>**zhulong（主 · 成本口径）**：量化退化随 token 数增长 ⇒ 成本对比必须把「训练 token 数 × 精度」一起算，不能只报显存或吞吐。<br>**data（数据预算）**：摘要明确指出「过量预训练数据可能有害（在量化推理下）」，为我们定数据上限提供了反直觉的判据。<br>**harness（评测口径）**：任何量化后评测都必须标明量化位宽与校准集，否则不同报告的分数不可比。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-23**（第九十五轮 · 06:00 时窗） |
 | 核验状态 | arXiv `id_list=2411.04330` 批量请求 **`200` + atom**（`published` = `2024-11-07T00:10:10Z`）；abs 页 **`200` / 42,646 B**；OpenAlex **`200`（113 / 2025 / conference-paper）**；`465` / `1.7B` / `26B tokens` 逐字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 354. YOLOv10: Real-Time End-to-End Object Detection
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | YOLOv10: Real-Time End-to-End Object Detection |
+| 作者（前 3） | Ao Wang · Hui Chen · Lihao Liu（共 **7** 位；arXiv `citation_author` 逐字核；机构据论文页为清华大学软件学院 / BNRist） |
+| 年份 | **2024**（arXiv v1 `2024-05-23`；v2 `2024-10-30`） |
+| 会议 / 期刊 | **NeurIPS 2024**（arXiv `comment` = `Code: https://github.com/THU-MIG/yolov10; NeurIPS 2024 Camera-ready Version`；OpenAlex `type=conference-paper`，DOI `10.52202/079017-3429`） |
+| 被引数 | **8,380**（OpenAlex `10.48550/arxiv.2405.14458`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2405.14458> ｜ arXiv DOI `10.48550/arxiv.2405.14458` ｜ 会议 DOI `10.52202/079017-3429` |
+| 一句话贡献 | 从**后处理**与**模型结构**两端推 YOLO 的性能-效率边界：用**一致双分配（一对多 + 一对一）**实现 **NMS-free** 的端到端训练，再用**整体效率-精度驱动的模型设计**逐组件压缩冗余；结果 YOLOv10-S 在相近 AP 下比 RT-DETR-R18 **快 1.8×**、参数与 FLOPs **小 2.8×**，YOLOv10-B 相比 YOLOv9-C 在同性能下延迟 **低 46%**、参数 **少 25%**。 |
+| 与我们工作的关系 | **vision（主 · 实时检测基线）**：我们做缺陷/版面实时筛查时，先量「无 NMS 端到端」的延迟上限，可避免把后处理耗时算进模型外。<br>**harness（主 · 延迟评测口径）**：论文把「同 AP 下的延迟」当主指标；我们的评测表必须成组报 **AP + 分辨率 + batch + 硬件 + 是否含 NMS**，否则跨模型不可比。<br>**designflow（判分轴）**：`AP_small` 与重复框是两条独立失败轴，造题时应对应「漏检」与「重框」两种判分。<br>**data（标注口径）**：一对一分配依赖更干净的标注；数据侧须给出每图目标数分布与相邻目标比例。<br>**pretrain**：无直接建议（显式写「无」）。<br>**zhulong**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十六轮 · 09:00 时窗） |
+| 核验状态 | arXiv `id_list=2405.14458` 批量请求 **`200` + atom**（`published` = `2024-05-23T11:44:29Z`）；abs 页 **`200` / 44,088 B**；OpenAlex **`200`（8,380 / 2024 / conference-paper）**；`1.8` / `2.8` / `46` / `25` / `non-maximum suppression` 逐字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 355. Reproducible scaling laws for contrastive language-image learning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Reproducible scaling laws for contrastive language-image learning |
+| 作者（前 3） | Mehdi Cherti · Romain Beaumont · Ross Wightman（共 **9** 位；末位 Jenia Jitsev；arXiv `citation_author` 逐字核；机构据论文页为 LAION / Jülich Supercomputing Centre） |
+| 年份 | **2022**（arXiv v1 `2022-12-14`；v2 `2024-07-13`） |
+| 会议 / 期刊 | **CVPR 2023**（arXiv `comment` = `CVPR 2023. Version with minor extension…`；OpenAlex `type=conference-paper`，DOI `10.1109/cvpr52729.2023.00276`） |
+| 被引数 | **1,976**（OpenAlex `10.48550/arxiv.2212.07143`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2212.07143> ｜ arXiv DOI `10.48550/arxiv.2212.07143` ｜ 会议 DOI `10.1109/cvpr52729.2023.00276` |
+| 一句话贡献 | 用**公开 LAION 数据 + 开源 OpenCLIP 代码**重做 CLIP 的缩放律：训练到 **20 亿图文对**，在零样本分类、检索、线性探针、端到端微调四类下游上均呈**幂律**；并发现**训练分布会改变缩放行为**——OpenAI 与 OpenCLIP 模型在相同架构、相近配方下指数不同；全部模型与评测流程开源以保证可复现。 |
+| 与我们工作的关系 | **vision（主 · 视觉塔规模-数据预算）**：这是我们给 CLIP 式双塔定「加数据还是加参数」的公开标定曲线，可直接替换经验拍脑袋。<br>**data（主 · 分布即变量）**：摘要明确「训练分布改变缩放律」⇒ 数据配比/清洗不是预训练前的杂务，而是缩放律的自变量；我们的数据实验必须固定 token 数、只换分布。<br>**pretrain（配方口径）**：四类下游各拟一条幂律，提醒我们把「表征质量（线性探针）」与「可微调性（端到端）」分开评估。<br>**harness（评测口径）**：零样本 / 检索 / 线性探针 / 微调四张表不可混报；每张表须标数据规模与模型规模。<br>**zhulong**：成本对比应引用其等算力比较方式（固定 compute 扫数据/模型）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十六轮 · 09:00 时窗） |
+| 核验状态 | arXiv `id_list=2212.07143` 批量请求 **`200` + atom**（`published` = `2022-12-14T10:24:50Z`）；abs 页 **`200` / 46,482 B**；OpenAlex **`200`（1,976 / 2023 / conference-paper）**；`two billion image-text pairs` / `zero-shot classification, retrieval, linear probing, and end-to-end fine-tuning` / `training distribution plays a key role` 逐字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 356. LayoutLMv3: Pre-training for Document AI with Unified Text and Image Masking
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | LayoutLMv3: Pre-training for Document AI with Unified Text and Image Masking |
+| 作者（前 3） | Yupan Huang · Tengchao Lv · Lei Cui（共 **5** 位；末位 Furu Wei；arXiv `citation_author` 逐字核；机构据论文页为中山大学 / 微软亚洲研究院） |
+| 年份 | **2022**（arXiv v1 `2022-04-18`；v2 `2022-07-19`） |
+| 会议 / 期刊 | **ACM Multimedia 2022**（arXiv `comment` = `ACM Multimedia 2022`；OpenAlex `type=conference-paper`，DOI `10.1145/3503161.3548112`） |
+| 被引数 | **1,324**（OpenAlex `10.48550/arxiv.2204.08387`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2204.08387> ｜ arXiv DOI `10.48550/arxiv.2204.08387` ｜ 会议 DOI `10.1145/3503161.3548112` |
+| 一句话贡献 | 用**统一的文本/图像掩码**预训练文档多模态 Transformer（图像侧 blockwise 掩码），并加 **word-patch alignment** 目标——判断某个词对应的图像 patch 是否被掩码，从而学跨模态对齐；同一套简单架构在**文本为主**（表单理解、票据理解、DocVQA）与**图像为主**（文档图像分类、版面分析）两类任务上都达 SOTA。 |
+| 与我们工作的关系 | **designflow（主 · 文档/版图结构抽取）**：版图截图、表格、PDF 规范书都可归到「文本 + 版面 + 图像」三模态；其统一掩码 + 对齐目标是造题与判分前的表征基线。<br>**data（主 · OCR 依赖）**：word-patch alignment 强依赖 OCR 词框，提示我们把「OCR 质量」作为数据变量显式记录（框缺失率、偏移分布）。<br>**vision（文档视觉编码）**：image-centric 任务说明视觉分支可独立支撑版面分析，为「无 OCR 场景」提供对照。<br>**harness（评测口径）**：表单/票据/DocVQA/文档分类/版面分析五类任务分开报，且须标 OCR 引擎与版本。<br>**pretrain**：无直接建议（显式写「无」）。<br>**zhulong**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十六轮 · 09:00 时窗） |
+| 核验状态 | arXiv `id_list=2204.08387` 批量请求 **`200` + atom**（`published` = `2022-04-18T16:19:52Z`）；abs 页 **`200` / 42,870 B**；OpenAlex **`200`（1,324 / 2022 / conference-paper）**；`unified text and image masking` / `word-patch alignment` / `document layout analysis` 逐字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
 
 ---
 

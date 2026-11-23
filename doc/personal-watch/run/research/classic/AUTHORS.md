@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-23 09:0x）**：作者 **323** 人（编号最大 **323**）· X 已核验 **127**（本轮 **+1**：`@mehdidc` 经 `x.com/mehdidc` 经代理 `200` / 135,314 B，`og:title` = `mehdi cherti (@mehdidc) on X`，`og:description` = `PostDoc at Jülich Supercomputing Center (JSC), Germany / LAION.`，主页 `mehdidc.github.io` 亦挂该链接 ⇒ 双源；Yupan Huang 主页无 X 链接且 `x.com/HYPJUDY` 的 `og:title` 仅为 `X`（无 profile 内容）⇒ 记「未找到」；Ao Wang 无主页 ⇒ 记「未找到」，均不猜）· 已发信 **148**（台账 #1–#148；今日 8/12）· 回信 **0**（0/148）。以下历史快照行保留原文（不追改），计数以本行为准。
+
 > **当前计数（2026-11-23 06:0x）**：作者 **320** 人（编号最大 **320**）· X 已核验 **126**（本轮 **+2**：`@tanishqkumar07` 经 `x.com/tanishqkumar07` 经代理 `200` / 184,282 B，`og:title` = `Tanishq Kumar (@tanishqkumar07) on X`，`og:description` = `CS PhD student @StanfordAILab. prev math undergrad @Harvard.`；`@ZackAnkner` 经 `x.com/ZackAnkner` `200` / 171,351 B，`og:title` = `Zack Ankner (@ZackAnkner) on X`，`og:description` = `Prev @MIT.`；Yifei Zhou 主页无 X 链接 ⇒ 记「未找到 X」，不猜）· 已发信 **145**（台账 #1–#145；今日 5/12）· 回信 **0**（0/145）。以下历史快照行保留原文（不追改），计数以本行为准。
 
 
@@ -4547,3 +4549,42 @@
 | 状态 | **待跟踪**（X 待 follow，需登录态；无可用邮箱 ⇒ 本线不发信） |
 | 备注 | 价值点：GPT-NeoX 是「20B dense LM 开放训练栈 + The Pile 数据可审计」的公开基线，可作为我们 pretrain 数据配比与评测 shot 口径的对照；若日后拿到邮箱，问题应落到「The Pile 各子集配比与 long-context 训练顺序如何影响 few-shot 稳定性」，而非泛问是否开源（已开源）。 |
 
+
+### 321. Yupan Huang 黄宇攀
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yupan Huang（`语言=中文(判据=拼音姓名族属可还原「黄宇攀」+ 中文主页 + 中山大学；不因现机构在加拿大判英文)`） |
+| 机构 | **中山大学**（论文署名；主页自述 2023 年博士毕业，现为 **MSRA Vancouver** 高级研究员） |
+| 代表论文 | **LayoutLMv3**（`2204.08387`，B 轨 #356，**一作**） |
+| 邮箱 | **huangyp28@mail2.sysu.edu.cn**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2204.08387` `HTTP 200` / **189,452 B** 作者块）；主页另挂 **hypjudy28@gmail.com**（`https://hypjudy.github.io/` `HTTP 200` / **26,832 B** 页内明文），本封只发前者 |
+| 主页 | <https://hypjudy.github.io/>（`200` / 26,832 B） |
+| X 账号 | **未找到**（主页无 X 链接；`x.com/HYPJUDY` 返回 `200` 但 `og:title` = `X`、无 profile 内容 ⇒ 判为无效，不记 handle） |
+| 状态 | **已发信**（2026-11-23 09:04 CST，作者请教信第 **146** 封，中文 **248** 汉字，`SENT OK`）· X 未找到 |
+| 备注 | 三问围绕 **word-patch alignment 在 OCR 框缺失/偏移时如何降级**、**文本 span 掩码与图像 blockwise 掩码是否需要分模态调比例**、**只用图像分支（无 OCR）时版面分析与文档图像分类各掉多少点**，分别回填 **designflow**（文档/版图结构抽取的可执行判分）/ **data**（把 OCR 质量当数据变量）/ **vision**（无 OCR 视觉分支对照）。专属细节：统一文本/图像掩码、word-patch alignment、五类文档任务。 |
+
+### 322. Mehdi Cherti
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mehdi Cherti（`语言=英文(判据=姓名族属无中文/日韩信号，可能为北非/法语区但无法确认 + 德国机构 ⇒ 判据冲突，按 §2 英文兜底；未强写母语称谓以免写错)`） |
+| 机构 | **Jülich Supercomputing Centre (JSC), Research Center Jülich** / **LAION**（主页与论文署名一致） |
+| 代表论文 | **Reproducible scaling laws for contrastive language-image learning**（`2212.07143`，B 轨 #355，**共同一作**） |
+| 邮箱 | **m.cherti@fz-juelich.de**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2212.07143` `HTTP 200` / **680,995 B** 作者块；主页未见明文邮箱） |
+| 主页 | <https://mehdidc.github.io/>（`200` / 16,094 B） |
+| X 账号 | **@mehdidc**（`x.com/mehdidc` 经代理 `200` / **135,314 B**；`og:title` = `mehdi cherti (@mehdidc) on X`；`og:description` = `PostDoc at Jülich Supercomputing Center (JSC), Germany / LAION.`；主页亦挂 `https://x.com/mehdidc` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-23 09:04 CST，作者请教信第 **147** 封，英文 **156** 词，`SENT OK`）· X 待 follow（需登录态） |
+| 备注 | 三问围绕 **训练分布中哪个属性（caption 长度 / 语言构成 / 重复率 / 噪声）最影响缩放指数，是否有固定架构与固定 token 的对照**、**四类下游指数不同是否意味着表征质量与可微调性应分开定预算**、**20 亿图文对之后增益是否主要来自数据而非模型，等算力下 ViT-B/32 与 ViT-L/14 的交叉点在哪**，分别回填 **data** / **pretrain**（含 vision 双塔预训练）/ **zhulong**（成本口径）。 |
+
+### 323. Ao Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ao Wang（`语言=中文(判据=拼音姓名族属可还原「王傲」+ 清华 .edu.cn 机构；不因论文英文判英文)`） |
+| 机构 | **清华大学软件学院**（论文署名；arXiv `citation_author` + ar5iv 作者块） |
+| 代表论文 | **YOLOv10: Real-Time End-to-End Object Detection**（`2405.14458`，B 轨 #354，**一作**） |
+| 邮箱 | **wa22@mails.tsinghua.edu.cn**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2405.14458` `HTTP 200` / **416,581 B** 作者块，紧接通讯作者 Guiguang Ding 之后；无个人主页 ⇒ 未取到第二源，地址时效不可验证） |
+| 主页 | **未找到**（搜索仅得 Google Scholar / OpenReview 资料页，无个人主页） |
+| X 账号 | **未找到**（无主页可挂；不猜 handle） |
+| 状态 | **已发信**（2026-11-23 09:04 CST，作者请教信第 **148** 封，中文 **234** 汉字，`SENT OK`） |
+| 备注 | 三问围绕 **一对多 / 一对一两个分支的监督权重或匹配代价平衡、去 NMS 后密集小目标重复框如何抑制与 AP_small 掉点**、**rank-guided block design 的「冗余度」用哪个可测指标、换到工业缺陷数据是否需重排**、**YOLOv10-S 比 RT-DETR-R18 快 1.8× 的测速分辨率与 batch、batch=1 时无 NMS 的延迟分解**，分别回填 **harness**（实时检测延迟评测口径）/ **vision**（检测基线选型）/ **designflow**（漏检 vs 重框两条判分轴）。 |
