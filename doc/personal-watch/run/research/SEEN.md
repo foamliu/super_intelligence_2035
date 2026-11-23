@@ -5714,3 +5714,6 @@
 | 2026-11-22 | 2611.26409 | WeMM-Video: Pushing the Frontiers of Open-Source Omni-Modal Video Understanding | cs.CV | 收录 |
 | 2026-11-22 | 2611.26334 | Online Temporal Rotations for 2 Bit KV-Cache Quantization in Video Diffusion Transformers | cs.CV | 收录 |
 
+| 2026-11-23 | 2611.27196 | EDAGoat: An EDA-Aware Agent for Project-Level GPU Optimization | cs.AI | 收录 |
+| 2026-11-23 | 2611.27506 | How Many Bytes Has a BPE Model Seen? Estimating Byte-Token Exposure in Pretraining from Corpus Statistics and Embedding Norms | cs.CL | 收录 |
+| 2026-11-23 | 2611.27607 | Tasklets: A Unit-Test Benchmark for Language Model Architectures | cs.CL | 收录 |

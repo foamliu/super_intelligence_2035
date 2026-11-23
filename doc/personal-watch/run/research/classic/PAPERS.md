@@ -10,6 +10,9 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **359** 条（**第九十七轮 2026-11-23 12:0x 补 3 条 → 359**：CoCa `2205.01917`（**2,265**，TMLR 2022；`n_uni` / `n_multi` 解耦解码器 + 对比与 captioning 双目标；ViT-giant 1B / 合计 2.1B，batch 65,536、500k 步、λ_Cap=2.0 / λ_Con=1.0；ImageNet 零样本 **86.3%** / 冻结头 **90.6%** / 微调 **91.0%**）/ TTT `2407.04620`（**394**，**&lt;500 按「开创范式」收**，预印本；隐藏状态 = 在线训练的小模型，TTT-Linear / TTT-MLP 线性复杂度，**32k** 内持续降困惑度而 Mamba **16k** 后平台化，mini-batch **b=16**、对偶形式 **>5×**）/ HNSW `1603.09320`（**3,810**，TPAMI 42(4):824–836；指数衰减随机层级的多层邻近图，召回-延迟可调，向量库事实标准））；核验：abs 页 **3/3 `200`**（44,421 / 44,717 / 44,259 B，`citation_title` + `citation_date` 逐字）+ ar5iv **2/2 `200`**（269,704 / 435,524 B；HNSW 无 ar5iv 文本，改 PDF 首页 `pdftotext`）+ OpenAlex **3/3 `200`**（2,265 / 394 / 3,810，查询日 2026-11-23）+ arXiv `id_list` 批量 **`200` + atom**（TTT / HNSW；先一次 `429`，按 ≥3 s 限速重试成功）；三 ID 三处查重 **0 命中**；⚠️ **ID 误记在写入前拦截**：候选池旧记 VeriGen 为 `2308.15666`，`id_list` 实测该 ID 为 *Convergence of non-linear diagonal frame filtering for regularizing inverse problems*（math.NA，无关），真 ID `2308.00708` **已在表内 #210** ⇒ 整条剔除，改收 HNSW；本轮归属：vision **+1** · pretrain **+2** · data **+2** · harness **+2** · zhulong **+2** · designflow **0**（一篇可多线））
+
+
 **本轮快照**：累计 **356** 条（**第九十六轮 2026-11-23 09:0x 补 3 条 → 356**：YOLOv10 `2405.14458`（**8,380**，NeurIPS 2024；一致双分配（一对多 + 一对一）→ NMS-free 端到端；YOLOv10-S 同 AP 比 RT-DETR-R18 快 **1.8×**、参数/FLOPs 小 **2.8×**；YOLOv10-B 同性能比 YOLOv9-C 延迟低 **46%**、参数少 **25%**）/ Reproducible scaling laws for CLIP `2212.07143`（**1,976**，CVPR 2023；公开 LAION + OpenCLIP，训练到 **20 亿**图文对；零样本分类 / 检索 / 线性探针 / 端到端微调四类下游均呈幂律；**训练分布改变缩放律**）/ LayoutLMv3 `2204.08387`（**1,324**，ACM MM 2022；统一文本/图像掩码 + **word-patch alignment**；文本为主与图像为主两类文档任务均 SOTA）；核验：arXiv `id_list` 单批 **`200` + atom**（9,082 B / 3 entry，`published`：2022-04-18 / 2024-05-23 / 2022-12-14；`comment` = ACM Multimedia 2022 / NeurIPS 2024 Camera-ready / CVPR 2023）+ abs 页 **3/3 `200`**（42,870 / 44,088 / 46,482 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **3/3 `200`**（189,452 / 416,581 / 680,995 B）+ OpenAlex **3/3 `200`**（1,324 / 8,380 / 1,976，查询日 2026-11-23；均 `conference-paper`，会议 DOI 已核）；三 ID 条目级查重 **0 命中**；覆盖轴 = 端到端实时检测的成本基线 / 公开数据下 CLIP 缩放律与「分布即变量」/ 文档-版面多模态的 OCR 依赖；本轮归属：vision **+3** · data **+3** · harness **+2** · designflow **+2** · pretrain **+1** · zhulong **+1**（一篇可多线））
 
 
@@ -6274,3 +6277,55 @@
 > ✅ 已晋级（第三轮转正，勿再留在候选池）：`2104.09864` RoFormer（#9）· `2310.06770` SWE-bench（#10）· `2303.11366` Reflexion（#11）· `2201.11903` CoT（#12）。
 
 <!-- 维护纪律：新条目按「首次收录日」追加到末尾（不插入到旧条目之间、不改历史数字）；被引数变动只在新条目里写，旧条目保留原查询日。 -->
+
+---
+
+## 357. CoCa: Contrastive Captioners are Image-Text Foundation Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | CoCa: Contrastive Captioners are Image-Text Foundation Models |
+| 作者（前 3） | Jiahui Yu · Zirui Wang · Vijay Vasudevan（共 **6** 位；末位 Yonghui Wu；arXiv `citation_author` 逐字核；机构据论文页为 Google Research / Google Brain） |
+| 年份 | **2022**（arXiv v1 `2022-05-04`） |
+| 会议 / 期刊 | **TMLR 2022**（arXiv `comment` = `Preprint`；OpenAlex `type=article`，`primary_location.source` = `Transactions on machine learning research`；⚠️ 会议/期刊名按 OpenAlex，arXiv 侧未标） |
+| 被引数 | **2,265**（OpenAlex `10.48550/arxiv.2205.01917`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2205.01917> ｜ arXiv DOI `10.48550/arxiv.2205.01917` |
+| 一句话贡献 | 把**对比目标**与**生成式 captioning 目标**放进同一个图像-文本编码器-解码器里联合预训练：解码器**解耦**为底部 `n_uni` 层（不做交叉注意力，输出供对比损失）与顶部 `n_multi` 层（做交叉注意力，输出供 captioning）；主模型图像编码器 ViT-giant **1B** 参数、合计 **2.1B**，在 JFT-3B + ALIGN 上以 batch **65,536**、**500k** 步训练（λ_Cap=2.0 / λ_Con=1.0），ImageNet 零样本 **86.3%**、冻结编码器 + 学习头 **90.6%**、微调 **91.0%**。 |
+| 与我们工作的关系 | **vision（主 · 视觉塔与图文对齐目标）**：这是我们判断「一个编码器-解码器同时干检索与生成」与「CLIP + 独立 captioner 两段式」哪条更省算力的公开标定；解耦解码器的层数划分是可直接照抄的配置项。<br>**pretrain（主 · 多目标准备）**：λ_Cap 与 λ_Con 的 2:1、65,536 batch、50 万步是我们设「对比 / 生成」两类损失权重与训练长度的起点；论文明确「更大的 captioning 权重更好」。<br>**data（主 · 图文对来源配比）**：每 batch 一半 JFT（标签当文本）一半 ALIGN（噪声 alt-text）⇒ 我们做图文数据配比时必须分开报「干净标签 vs 噪声 alt-text」比例。<br>**harness（评测口径）**：零样本分类 / 检索 / 多模态理解（VQA·SNLI-VE·NLVR2）/ captioning 四类表分开报，不能混成一个平均。<br>**zhulong**：成本参考为 2,048 张 TPUv4 约 5 天（论文自报），可作等算力对比锚点。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十七轮 · 12:00 时窗） |
+| 核验状态 | arXiv `id_list` 未用（直接 abs 页）；abs 页 **`200` / 44,421 B**，`citation_title` + `citation_date` = `2022/05/04` 逐字；ar5iv 全文 **`200` / 269,704 B**（`n_uni` / `n_multi` 解耦解码器、batch 65,536、500k 步、λ_Cap=2.0 / λ_Con=1.0、288×288 patch 18×18 ⇒ 256 token、2048 TPUv4 ≈5 天、86.3 / 90.6 / 91.0 逐字取自正文）；OpenAlex **`200`（2,265 / 2022 / article / TMLR）**；**未做 PDF 逐页复核**。 |
+
+---
+
+## 358. Learning to (Learn at Test Time): RNNs with Expressive Hidden States
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Learning to (Learn at Test Time): RNNs with Expressive Hidden States |
+| 作者（前 3） | Yu Sun · Xinhao Li · Karan Dalal（共 **12** 位；含 Yoon Kim、Jacob Andreas、Xiaolong Wang；arXiv `citation_author` 逐字核；机构据论文页为 Stanford / UCSD / UC Berkeley / Meta） |
+| 年份 | **2024**（arXiv v1 `2024-07-05`；v4 `2025-08-31`） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` = `The current version contains updates on related work and limitations. All experiments were completed in the first version`；OpenAlex `type=preprint`） |
+| 被引数 | **394**（OpenAlex `10.48550/arxiv.2407.04620`，查询日 **2026-11-23**；**&lt;500，按「开创范式」收**——把序列层的隐藏状态定义为一个可在线训练的小模型，是 2024 年后 TTT / 测试时记忆线的起点） |
+| arXiv / DOI | <https://arxiv.org/abs/2407.04620> ｜ arXiv DOI `10.48550/arxiv.2407.04620` |
+| 一句话贡献 | 提出 **TTT 层**：隐藏状态本身是一个机器学习模型（TTT-Linear 的隐藏状态是线性模型、TTT-MLP 是两层 MLP），更新规则是**在测试序列上做一步自监督梯度下降**，因而保持**线性复杂度**又能让状态容量随上下文增长；125M–1.3B 规模下与强 Transformer、Mamba 对比：8k 上下文困惑度相当，但 TTT-Linear / TTT-MLP 能像 Transformer 一样在 **32k** 内持续降困惑度，而 Mamba 在 **16k** 后平台化；mini-batch `b=16`、对偶形式比原始实现 **>5×** 加速。 |
+| 与我们工作的关系 | **pretrain（主 · 序列层选型）**：这是我们判断「SSM vs 线性注意力 vs TTT」在长上下文上的可测差异的对照实验设计（同 FLOPs、Pile 8k + Books3 1k–32k）。<br>**zhulong（主 · 长上下文的成本-收益口径）**：论文把「状态容量」换算成困惑度随上下文的变化，正对应我们做长上下文消融时要报的「每 token 成本 vs 有效上下文长度」两轴。<br>**harness（评测口径）**：评测须固定训练 FLOPs（对齐 Mamba 1.4B）并分别报 8k 与 32k；只报短上下文会掩盖线性层的真实差异。<br>**data（语料侧）**：Pile 中 >8k 的序列稀少 ⇒ 长上下文能力必须在 Books3 这类长文档子集上单独评测。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十七轮 · 12:00 时窗） |
+| 核验状态 | arXiv `id_list=2407.04620` 批量请求 **`200` + atom**（`published` = `2024-07-05T16:23:20Z`，`updated` = `2025-08-31T18:32:59Z`）；abs 页 **`200` / 44,717 B**（`citation_title` + `citation_date` = `2024/07/05`）；ar5iv 全文 **`200` / 435,524 B**（`b=16`、`b=1` online GD、对偶形式 `>5×`、8k / 16k / 32k、125M–1.3B 逐字取自正文与 Fig. 7 说明）；OpenAlex **`200`（394 / 2024 / preprint）**；**未做 PDF 逐页复核**。 |
+
+---
+
+## 359. Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs |
+| 作者（前 3） | Yu. A. Malkov · D. A. Yashunin（共 **2** 位；arXiv `citation_author` 逐字核；机构据论文页为 Yandex） |
+| 年份 | **2016**（arXiv v1 `2016-03-30`；v4 `2018-08-14`） |
+| 会议 / 期刊 | **IEEE TPAMI 2018**（arXiv `comment` = `13 pages, 15 figures`；OpenAlex `type=article`，`source` = `IEEE Transactions on Pattern Analysis and Machine Intelligence`，Vol. **42** Issue **4** pp. **824–836**，会议/期刊 DOI `10.1109/tpami.2018.2889473`） |
+| 被引数 | **3,810**（OpenAlex `10.48550/arxiv.1603.09320`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1603.09320> ｜ arXiv DOI `10.48550/arxiv.1603.09320` ｜ 期刊 DOI `10.1109/tpami.2018.2889473` |
+| 一句话贡献 | 提出 **HNSW**：纯图结构的近似最近邻检索，用**指数衰减的随机层级**增量构建多层邻近图，上层负责粗导航、底层负责精搜索，无需额外的粗搜结构即可同时拿到高召回与低延迟；成为向量库（Faiss / Milvus / hnswlib 等）的事实标准索引。 |
+| 与我们工作的关系 | **data（主 · 去重与近重复检索的底座）**：我们的语料去重 / 近重复检测 / 基准题泄漏检测都会落到 ANN 索引上；HNSW 的「层级概率分布 + `ef` 参数」是把召回与延迟做成可调曲线的最小知识，选型与调参可直接引这一篇。<br>**harness（主 · 检索评测口径）**：论文同时报 **recall vs 距离计算次数 / 查询时间** 两条轴 ⇒ 我们报 RAG 检索质量时必须成对报「召回 + 延迟」，单报召回无法比较索引。<br>**pretrain（数据侧）**：去重阈值与 ANN 召回的相互作用决定「漏掉的近重复」比例，须在数据流水线里显式记录。<br>**zhulong**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十七轮 · 12:00 时窗） |
+| 核验状态 | arXiv `id_list=1603.09320` 批量请求 **`200` + atom**（`published` = `2016-03-30T19:29:44Z`，`updated` = `2018-08-14T19:29:07Z`）；abs 页 **`200` / 44,259 B**（`citation_title` + `citation_date` = `2016/03/30`；`comment` = `13 pages, 15 figures`）；PDF 首页 `pdftotext` 可解析（679,936 B，`%PDF` 校验通过，但尾部有 xref/trailer 语法告警 ⇒ 仅首页文本可用）；OpenAlex **`200`（3,810 / 2018 / article / TPAMI 42(4):824–836）**；**未做 PDF 逐页复核**。 |
+

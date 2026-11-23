@@ -1,0 +1,12 @@
+您好，
+
+我是刘杨，做 LLM agent 与 EDA 自动化方向的研究，主页 https://foamliu.github.io/。agent 改动 EDA 工具代码后如何保证设计仍然正确，是我们最不敢放手的一环；EDAGoat 用 mandatory validation 把这一步做成流程约束，所以想请教三个实现问题。
+
+1. MV 要求 agent 针对其改动可能影响的 EDA 约束去测试；这份「改动—约束—测试」的对应是人工整理的固定清单，还是 agent 从 diff 自己推出？由 agent 推时误判率有多高？
+2. 摘要里 DeepSeek 上 OE 单独只 6/15 合格、加 MV 才 13/15，几何均值 1.11× 到 1.53×：MV 的收益主要是筛掉错误改动，还是把搜索导回正确方向？trace 上被拦下最多的是哪一类失败？
+3. 加速比用 complete-solve runtime，是否含编译与校验开销？单卡上这两项占比大约多少？
+
+如方便，盼简短指点；答复会直接用于我们 agent 校验环与判分口径的设计。
+
+祝好，
+Yang Liu

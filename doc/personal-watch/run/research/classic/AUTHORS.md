@@ -11,6 +11,9 @@
 > **当前计数（2026-11-23 06:0x）**：作者 **320** 人（编号最大 **320**）· X 已核验 **126**（本轮 **+2**：`@tanishqkumar07` 经 `x.com/tanishqkumar07` 经代理 `200` / 184,282 B，`og:title` = `Tanishq Kumar (@tanishqkumar07) on X`，`og:description` = `CS PhD student @StanfordAILab. prev math undergrad @Harvard.`；`@ZackAnkner` 经 `x.com/ZackAnkner` `200` / 171,351 B，`og:title` = `Zack Ankner (@ZackAnkner) on X`，`og:description` = `Prev @MIT.`；Yifei Zhou 主页无 X 链接 ⇒ 记「未找到 X」，不猜）· 已发信 **145**（台账 #1–#145；今日 5/12）· 回信 **0**（0/145）。以下历史快照行保留原文（不追改），计数以本行为准。
 
 
+> **当前计数（2026-11-23 12:0x）**：作者 **326** 人（编号最大 **326**）· X 已核验 **127**（本轮 **+0**：三位新增作者——Zirui Wang / Yu Sun / Chengxi Li——的论文与 ar5iv 全文**均未挂 X 链接**，无主页第二源可核 ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **151**（台账 #1–#151）· 回信 **0**（0/151）。以下历史快照行保留原文（不追改），计数以本行为准。
+
+
 > **当前计数（2026-11-22 18:0x）**：作者 **312** 人（编号最大 **312**）· X 已核验 **121**（本轮 **+2**：`@rsalakhu` 经 `x.com/rsalakhu` `200`，`og:title` = `Russ Salakhutdinov (@rsalakhu) on X`，`og:description` = `CSO @ Sooth Labs, Professor @ CMU, President Elect ICML Board, Ex-VP of Research @ Meta (Multimodal LLMs, AI Agents), ex-Director of AI at @Apple`；`@CaimingXiong` 经 `x.com/CaimingXiong` `200`，`og:title` = `Caiming Xiong (@CaimingXiong) on X`，`og:description` = `Co-founder of @Recursive_SI.  ex-SVP of Salesforce AI Research | ex-MetaMind`）· 已发信 **140**（台账 #1–#140；今日 12/12 已满 ⇒ 本窗不发）· 回信 **0**（0/140）。<br>**第九十二轮增量（2026-11-22 18:0x）**：作者网 310 → **312**（#311 Ruslan Salakhutdinov **A 级** `rsalakhu@cs.cmu.edu`（CMU 本人主页 `cs.cmu.edu/~rsalakhu/` `200` / 9,400 B 页内明文 `rsalakhu[at]cs.cmu.edu`）/ #312 Caiming Xiong **无邮箱**（`caimingxiong.github.io` `404`、`www.caimingxiong.com` `000`、Recursive 团队页 `404` / `000` ⇒ 不猜地址；X 已双源核验）），来自 B 轨 #343 Dropout / #344 BLIP。⚠️ 同名反例当场拦下：`@JunnanLi` 虽 `200` 但 `og:title` = `雷弟尬尬 (@JunnanLi) on X`、`og:description` = `微博 雷弟_尬尬` ⇒ 与 BLIP 一作无关，**不记**；`@tmikolov` / `@MikolovTomas` 均 `404` ⇒ Mikolov 记「未找到 X」。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **当前计数（2026-11-22 15:0x）**：作者 **310** 人（编号最大 **310**）· X 已核验 **119**（本轮 **+2**：`@tianjun_zhang` 经 `x.com/tianjun_zhang` `200` / 190,919 B，`og:title` = `Tianjun Zhang (@tianjun_zhang) on X`，`og:description` = `@peano_ai | Prev @meta @GoogleDeepMind @berkeley_ai | Project Lead of LiveCodeBench, RAFT and Gorilla LLM`；`@DBahdanau` 经 `x.com/DBahdanau` `200` / 199,403 B，`og:title` = `🇺🇦 Dzmitry Bahdanau (@DBahdanau) on X`，`og:description` = `Team member at @periodiclabs.`）· 已发信 **140**（台账 #1–#140）· 回信 **0**（0/140）。以下历史快照行保留原文（不追改），计数以本行为准。
@@ -4588,3 +4591,43 @@
 | X 账号 | **未找到**（无主页可挂；不猜 handle） |
 | 状态 | **已发信**（2026-11-23 09:04 CST，作者请教信第 **148** 封，中文 **234** 汉字，`SENT OK`） |
 | 备注 | 三问围绕 **一对多 / 一对一两个分支的监督权重或匹配代价平衡、去 NMS 后密集小目标重复框如何抑制与 AP_small 掉点**、**rank-guided block design 的「冗余度」用哪个可测指标、换到工业缺陷数据是否需重排**、**YOLOv10-S 比 RT-DETR-R18 快 1.8× 的测速分辨率与 batch、batch=1 时无 NMS 的延迟分解**，分别回填 **harness**（实时检测延迟评测口径）/ **vision**（检测基线选型）/ **designflow**（漏检 vs 重框两条判分轴）。 |
+
+### 324. Zirui Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zirui Wang（`语言=中文(判据=拼音姓名族属「Zirui Wang」+ 论文英文与 Google 机构不改变族属判断；🚫 未因 gmail / 美国机构判英文)`） |
+| 机构 | **Google Research**（论文署名；ar5iv 作者块与 `jiahuiyu@google.com` 同页） |
+| 代表论文 | **CoCa: Contrastive Captioners are Image-Text Foundation Models**（`2205.01917`，B 轨 #357，**共同一作**） |
+| 邮箱 | **ziruiw@google.com**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2205.01917` `HTTP 200` / **269,704 B** 作者块 `Email: ziruiw@google.com`；单源，未见主页第二源 ⇒ 标注「时效不可验证」） |
+| 主页 | **未找到**（本轮未取到可核个人主页） |
+| X 账号 | **未找到**（论文与 ar5iv 全文未挂 X 链接；不猜 handle） |
+| 状态 | **已发信**（2026-11-23 12:06 CST，作者请教信第 **149** 封，中文 **223** 汉字，`SENT OK`）· 无 X 可 follow |
+| 备注 | 三问围绕 **`n_uni` / `n_multi` 解耦解码器的分界按固定层数还是固定比例、分界下移时检索与 caption 指标如何变**、**λ_Cap=2.0 / λ_Con=1.0 是否与 batch 65,536、500k 步一起调过、只保零样本分类时 λ 往哪偏**、**288×288 / patch 18×18 ⇒ 256 token 下分辨率翻倍对零样本 / 检索 / VQA 的回报差**，分别回填 **vision**（视觉塔形态）/ **pretrain**（多目标权重）/ **harness**（三类评测分开报）。守「同一论文 ≤1」：CoCa 本轮只发此一封（#136 是 Parti `2206.10789`，另一篇）。 |
+
+### 325. Yu Sun
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yu Sun（`语言=中文(判据=拼音姓名族属「Yu Sun」可还原「孙宇」+ 中文名常见组合；🚫 未因 Stanford / 论文英文判英文)`） |
+| 机构 | **Stanford University**（论文「Correspondence to」作者，与 Xinhao Li / Karan Dalal 并列共同一作） |
+| 代表论文 | **Learning to (Learn at Test Time): RNNs with Expressive Hidden States**（`2407.04620`，B 轨 #358，**共同一作 / 通讯**） |
+| 邮箱 | **ys646@stanford.edu**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2407.04620` `HTTP 200` / **435,524 B** 作者块 `Correspondence to: ys646@stanford.edu, xil202@ucsd.edu, kdalal@berkeley.edu`；单源，未取到主页第二源） |
+| 主页 | **未找到**（本轮未取到可核个人主页） |
+| X 账号 | **未找到**（论文与 ar5iv 全文未挂 X 链接；不猜 handle） |
+| 状态 | **已发信**（2026-11-23 12:06 CST，作者请教信第 **150** 封，中文 **232** 汉字，`SENT OK`）· 无 X 可 follow |
+| 备注 | 三问围绕 **TTT mini-batch `b=16` 的敏感曲线、推到 1.3B / 32k 时 `b=1` 的精度收益是否值那份显存与 I/O**、**可学习内层 η（输入 token 的函数）的初值与上界、内层发散的判据与回滚**、**TTT-MLP 的 memory I/O 瓶颈：状态放片上还是 HBM、隐维多大时性价比开始掉**，分别回填 **pretrain**（序列层选型）/ **zhulong**（长上下文成本-收益口径）/ **harness**（同 FLOPs + 8k/32k 双表）。 |
+
+### 326. Chengxi Li
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chengxi Li（`语言=中文(判据=拼音姓名族属「Chengxi Li」+ 香港中文大学（中文机构）；🚫 未因论文英文判英文)`） |
+| 机构 | **The Chinese University of Hong Kong（CSE）**（论文首页署名 `Department of Computer Science and Engineering, CUHK, Hong Kong SAR, China`） |
+| 代表论文 | **EDAGoat: An EDA-Aware Agent for Project-Level GPU Optimization**（`2611.27196`，**A 轨本窗第 1 篇**，一作） |
+| 邮箱 | **cxli23@cse.cuhk.edu.hk**（来源：PDF 首页作者邮箱列表 `https://arxiv.org/pdf/2611.27196`（`%PDF` 校验通过、446,464 B、`pdftotext` 可解析）`{cxli23, lxiao23, ytwang1, whlin23, xzxiong26, hzhao, fyyoung}@cse.cuhk.edu.hk`；与 arXiv 首页作者名单逐一对应） |
+| 主页 | **未找到**（本轮未取到可核个人主页） |
+| X 账号 | **未找到**（论文与 PDF 未挂；不猜 handle） |
+| 状态 | **已发信**（2026-11-23 12:06 CST，作者请教信第 **151** 封，中文 **230** 汉字，`SENT OK`）· 无 X 可 follow |
+| 备注 | 三问围绕 **MV 的「改动—约束—测试」对应是人工固定清单还是 agent 从 diff 自推、自推时误判率**、**DeepSeek 上 OE 6/15 → 加 MV 13/15、几何均值 1.11×→1.53× 的收益来源是筛掉错误改动还是导回正确方向、trace 上被拦最多的是哪类失败**、**complete-solve runtime 是否含编译与校验开销、单卡占比**，分别回填 **designflow**（校验环与判分口径）/ **harness**（agent 加速比评测口径）/ **zhulong**（成本口径）。 |
+
