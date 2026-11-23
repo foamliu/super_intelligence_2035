@@ -3,12 +3,12 @@
   "harness_code": "cline-patched",
   "done": 500,
   "total": 95,
-  "patch_produced": 382,
+  "patch_produced": 386,
   "infra": 0,
   "timeout": 0,
   "quota_blocked": 13,
-  "no_patch": 105,
-  "last_update": "2026-11-23 23:03:53",
+  "no_patch": 101,
+  "last_update": "2026-11-23 23:51:53",
   "results": [
     {
       "instance_id": "astropy__astropy-12907",
@@ -2198,15 +2198,15 @@
       "instance_id": "django__django-14493",
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 1800.6,
-      "model_patch_len": 0,
+      "wall_s": 130.4,
+      "model_patch_len": 2437,
       "quota_blocked": false,
       "timeout": false,
       "retried": false,
-      "stdout_tail": "ab1b8c9f3be\",\"conversationId\":\"conv_1795443238450_8bw7fdc\",\"parentAgentId\":null}}\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__django__django-14493.json\n[run_single] cleanup: git reset --hard 7272e1963ffdf39c1d4fe225d5425a45dd095d11\n",
+      "stdout_tail": "the single pass.\",\"model\":{\"id\":\"glm-5.3-flash\",\"provider\":\"openai-compatible\"}}\n\n[run_single] model_patch: 2437 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__django__django-14493.json\n[run_single] cleanup: git reset --hard 7272e1963ffdf39c1d4fe225d5425a45dd095d11\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__django__django-14493.json",
-      "classification": "no-patch"
+      "classification": "patch-produced"
     },
     {
       "instance_id": "django__django-14500",
@@ -2982,15 +2982,15 @@
       "instance_id": "django__django-15973",
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 17.1,
-      "model_patch_len": 0,
+      "wall_s": 1800.5,
+      "model_patch_len": 617,
       "quota_blocked": false,
       "timeout": false,
       "retried": false,
-      "stdout_tail": "?: Unable to connect. Is the computer able to access the url? (ConnectionRefused)\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__django__django-15973.json\n[run_single] cleanup: git reset --hard 2480554dc4ada4ecf3f6a08e318735a2e50783f3\n",
+      "stdout_tail": "7cf3e38fd\",\"conversationId\":\"conv_1795446236072_6ta167h\",\"parentAgentId\":null}}\\n'\n[run_single] model_patch: 617 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__django__django-15973.json\n[run_single] cleanup: git reset --hard 2480554dc4ada4ecf3f6a08e318735a2e50783f3\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__django__django-15973.json",
-      "classification": "no-patch"
+      "classification": "patch-produced"
     },
     {
       "instance_id": "django__django-15987",
@@ -3738,15 +3738,15 @@
       "instance_id": "matplotlib__matplotlib-23476",
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 17.0,
-      "model_patch_len": 0,
+      "wall_s": 259.3,
+      "model_patch_len": 1263,
       "quota_blocked": false,
       "timeout": false,
       "retried": false,
-      "stdout_tail": "e to connect. Is the computer able to access the url? (ConnectionRefused)\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__matplotlib__matplotlib-23476.json\n[run_single] cleanup: git reset --hard 33a0599711d26dc2b79f851c6daed4947df7c167\n",
+      "stdout_tail": " change.\",\"model\":{\"id\":\"glm-5.3-flash\",\"provider\":\"openai-compatible\"}}\n\n[run_single] model_patch: 1263 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__matplotlib__matplotlib-23476.json\n[run_single] cleanup: git reset --hard 33a0599711d26dc2b79f851c6daed4947df7c167\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__matplotlib__matplotlib-23476.json",
-      "classification": "no-patch"
+      "classification": "patch-produced"
     },
     {
       "instance_id": "matplotlib__matplotlib-24026",
@@ -5264,15 +5264,15 @@
       "instance_id": "scikit-learn__scikit-learn-25747",
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 17.1,
-      "model_patch_len": 0,
+      "wall_s": 433.1,
+      "model_patch_len": 3436,
       "quota_blocked": false,
       "timeout": false,
       "retried": false,
-      "stdout_tail": " connect. Is the computer able to access the url? (ConnectionRefused)\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__scikit-learn__scikit-learn-25747.json\n[run_single] cleanup: git reset --hard 2c867b8f822eb7a684f0d5c4359e4426e1c9cfe0\n",
+      "stdout_tail": "ied.\",\"model\":{\"id\":\"glm-5.3-flash\",\"provider\":\"openai-compatible\"}}\n\n[run_single] model_patch: 3436 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__scikit-learn__scikit-learn-25747.json\n[run_single] cleanup: git reset --hard 2c867b8f822eb7a684f0d5c4359e4426e1c9cfe0\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__scikit-learn__scikit-learn-25747.json",
-      "classification": "no-patch"
+      "classification": "patch-produced"
     },
     {
       "instance_id": "scikit-learn__scikit-learn-25931",

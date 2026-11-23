@@ -21,3 +21,10 @@ sleep "$secs"
 echo "[watcher] $(date '+%F %T') firing launch_infra_rerun.sh"
 bash "$LAUNCH"
 echo "[watcher] $(date '+%F %T') launch returned; orchestrator running in background"
+
+# ARM stop script for 09:00 (kills orchestrator at window end, then re-arms this watcher)
+STOP="$HARNESS_DIR/nightly_rerun_stop.sh"
+if [ -f "$STOP" ]; then
+  setsid bash "$STOP" > /tmp/nightly_rerun_stop.log 2>&1 < /dev/null &
+  echo "[watcher] $(date '+%F %T') armed stop script PID=$! for 09:00"
+fi
