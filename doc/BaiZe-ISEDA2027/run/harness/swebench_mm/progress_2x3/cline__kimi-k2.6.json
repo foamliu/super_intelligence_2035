@@ -4502,9 +4502,16 @@
   "grommet__grommet-2061": {
     "instance_id": "grommet__grommet-2061",
     "route": "cline__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 110.8,
+    "rc": 0,
+    "model_patch_len": 519,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "d in grommet v1\\n\\nThe snapshots only capture HTML structure/class names, so they do not need to be updated for this CSS-only change.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "grommet__grommet-2124": {
     "instance_id": "grommet__grommet-2124",
@@ -4523,16 +4530,30 @@
   "grommet__grommet-2131": {
     "instance_id": "grommet__grommet-2131",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 450.8,
+    "rc": 0,
+    "model_patch_len": 1588,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "t/Select.js`\\n- `/dev/shm/harness_mm_2x3/workdirs/cline__kimi-k2.6/grommet_grommet/src/js/components/Select/__tests__/Select-test.js`\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "grommet__grommet-2695": {
     "instance_id": "grommet__grommet-2695",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 102.9,
+    "rc": 0,
+    "model_patch_len": 472,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "olor/opacity transitions (useful for hover states) while eliminating the broken path morphing animation when the meter value updates.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "grommet__grommet-5243": {
     "instance_id": "grommet__grommet-5243",

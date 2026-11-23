@@ -5160,30 +5160,58 @@
   "highlightjs__highlight.js-3287": {
     "instance_id": "highlightjs__highlight.js-3287",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 317.4,
+    "rc": 0,
+    "model_patch_len": 2041,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "iling comment is still recognized as a comment\n- `` wire result = `CONSTANT + variable; // comment`` — verifies macro references are NOT incorrectly treated as meta scope\n\nThe Verilog tests all pass.\n",
+    "stderr_tail": "/misc.txt\n+++ b/test/markup/verilog/misc.txt\n@@ -35,3 +35,6 @@ module counter\n     end\n \n endmodule\n+\n+`define CONSTANT value // this is a comment\n+wire result = `CONSTANT + variable; // comment\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3301": {
     "instance_id": "highlightjs__highlight.js-3301",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 432.5,
+    "rc": 0,
+    "model_patch_len": 3377,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " fix:\n```html\n<span class=\"hljs-attribute\">color</span>: /* comment */ red;\n```\n\nAfter fix:\n```html\n<span class=\"hljs-attribute\">color</span>: <span class=\"hljs-comment\">/* comment */</span> red;\n```\n",
+    "stderr_tail": "ould markup inline\n    ✓ should markup keys\n    ✓ should markup numbers\n    ✓ should markup string\n    ✓ should markup tag\n\n  zephir\n    ✓ should markup default\n\n\n  1667 passing (7s)\n  3 pending\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3312": {
     "instance_id": "highlightjs__highlight.js-3312",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 162.9,
+    "rc": 0,
+    "model_patch_len": 359,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "negative lookaheads.\n\n**Verification:** Rebuilt the library and confirmed `switch(x)` now renders as `<span class=\"hljs-keyword\">switch</span>` just like `if`, `while`, and `for`. All C++ tests pass.\n",
+    "stderr_tail": "ld markup default\n\u001b[0m\n\u001b[0m$ \u001b[0mnpx mocha test/markup/index.js 2>&1 | grep -E \"failing|AssertionError\" | head -20\n(no output)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/languages/cpp.js\u001b[90m [offset=400, limit=30]\u001b[0m\n"
   },
   "highlightjs__highlight.js-3316": {
     "instance_id": "highlightjs__highlight.js-3316",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 412.5,
+    "rc": 0,
+    "model_patch_len": 24302,
+    "n_images": 6,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "kup/cpp/primitive-types.expect.txt`\n- `test/markup/cpp/template-complexity.expect.txt`\n\n### `CHANGES.md`\n- Added entries documenting the C++ and Arduino changes\n\nAll **1669 tests pass** successfully.\n",
+    "stderr_tail": "uage definition and related files\n[✓] Move primitive types from RESERVED_TYPES to RESERVED_KEYWORDS in C++\n[✓] Update Arduino language definition if needed\n[✓] Update tests\n[✓] Update CHANGES.md\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3367": {
     "instance_id": "highlightjs__highlight.js-3367",
