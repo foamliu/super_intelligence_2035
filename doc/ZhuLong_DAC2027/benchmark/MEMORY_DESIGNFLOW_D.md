@@ -1,4 +1,5 @@
-WAITING: 0（r1237: **MCP 134th OK**(open_session task_id=D-MCP-PROBE/eval_id=20261124-mcprobe/user=shardD → workdir 95ms / run_commands pwd+whoami=e0031982+hostname=hfhds201+date+ls+wc-l summary.tsv=24086 全 exit 0 / declare_done+close cleaned=true; 注: list_files/read_file 对 /home/t0002965 路径被白名单挡(仅允许 workdir)，trace 经 run_commands shell 可读) · **修 test_rationale gap**: SramHierAdapter-001(schematic_netlist): k_rationale=23≠实际 14、format 用 (a)-(n) 字母→`14 条断言：①…⑭` 1:1 映射 check.py (a)-(n) 14 分组条件, k_rationale=k_check=23→14, test 字段未动, negative_selftest rc=0(4 neg 全 FAIL: empty/print_only/core_deleted/hardcode_b) + ref PASS, k=14>=8 GATE PASS · **mc≥5 池仍竭**(ledger next 全已知 session 已过滤, r1233 止损不变, 无新候选, 本轮按 §6 转不依赖新候选产出) · 📊 trace 覆盖率: 627/4529≈13.8%(不变); 📦 体积: TASK≈22KB / MEMORY≈31KB; DEBT: 0; flag: r1237 = MCP 134th OK + SramHierAdapter test_rationale 修复）
+WAITING: 0（r1238: **MCP 135th OK**(open_session D-PROBE/eval_id=20261124-r1238 → workdir / run_commands awk 取 mc8-40 候选 + ssh 验证 6 台 + declare_done+close cleaned=true) · **池竭根因确诊**: 6 个 D 域 fresh 候选 session 文件全部被定期清理(uf49q@hfeg0plg84/93dkg@hfeg0plg91/dxcca@hfeg0pkn001/67yv0@hfeg0pkn004/vjetl@hfhds206/8bdja@hfeg0pkn003，find+ls 均 "No such file"，用户 home 存在但 .cline/data/sessions 下文件已删)——**非台账过滤**，r1237 "池竭=ledger next 全已知 session 已过滤"判断不准，真正瓶颈=session 文件定期清理致无法深读 · uf49q claim+parked(session deleted) · **test_rationale 格式 0 gap**(642 D cases 全 `k 条断言：` k≥8 合规，r1237 SramHierAdapter 是最后一个格式 gap) · 本轮 peek 7 个本域 fresh(7 FRESH)，验证 6 个 session 文件均不可读，符合止损条件 → 转维护产出 · 后续建议: 寻找 session 文件备份/归档路径或更近期未清理 session · 📊 trace 覆盖率: 627/4529≈13.8%(不变); 📦 体积: TASK≈22KB / MEMORY≈31KB; DEBT: 0; flag: r1238 = MCP 135th OK + 池竭根因=session 文件定期清理(非台账过滤) + test_rationale 格式全合规）
+> r1237 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1238」（r1238 释体积；原文见 daily_D_2026-11-24_r1237.md）
 > r1236 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1237」（r1237 释体积；原文见 daily_D_2026-11-24_r1236.md）
 > r1235 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1236」（r1236 释体积；原文见 daily_D_2026-11-24_r1235.md）
 
@@ -14,7 +15,7 @@ WAITING: 0（r1237: **MCP 134th OK**(open_session task_id=D-MCP-PROBE/eval_id=20
 
 > r1229 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1230」（r1230 释体积；原文见 daily_D_2026-11-24_r1229.md）
 
-**`.75` 可达（eda_flow MCP OK，133次确认 r1105-r1236）+ 证据：r1236 [2026-11-24 shardD MCP-CONNECTIVITY-TEST] open_session(task_id=MCP-CONNECTIVITY-TEST/eval_id=20261124-mcptest/user=shardD)→workdir(16ms) / run_commands pwd+whoami+hostname=hfhds201+date+ls 全 exit 0 / list_files OK / write_file 44B+read_file round-trip OK / trace 目录可读 summary.tsv 24086 行 / declare_done+close cleaned=true · 同结论适用 A/B/C · WAITING: 0**
+**`.75` 可达（eda_flow MCP OK，135次确认 r1105-r1238）+ 证据：r1236 [2026-11-24 shardD MCP-CONNECTIVITY-TEST] open_session(task_id=MCP-CONNECTIVITY-TEST/eval_id=20261124-mcptest/user=shardD)→workdir(16ms) / run_commands pwd+whoami+hostname=hfhds201+date+ls 全 exit 0 / list_files OK / write_file 44B+read_file round-trip OK / trace 目录可读 summary.tsv 24086 行 / declare_done+close cleaned=true · 同结论适用 A/B/C · WAITING: 0**
 
 > r1228 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229」（r1229 释体积；原文见 daily_D_2026-11-24_r1228.md）
 
