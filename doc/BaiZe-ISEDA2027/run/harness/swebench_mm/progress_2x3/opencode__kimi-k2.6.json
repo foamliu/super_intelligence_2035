@@ -4937,30 +4937,58 @@
   "highlightjs__highlight.js-2899": {
     "instance_id": "highlightjs__highlight.js-2899",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 212.3,
+    "rc": 0,
+    "model_patch_len": 242779,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "-comment begin pattern to `/\\\\*\\\\*(?!/)`\n- **`test/markup/dart/empty-block-comment.txt`** & **`.expect.txt`**: Added a regression test for this case\n\nAll 405 markup tests pass, including the new one.\n",
+    "stderr_tail": " markup numbers\n    ✓ should markup string\n    ✓ should markup tag\n\n  zephir\n    ✓ should markup default\n\n\n  405 passing (1s)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/languages/dart.js\u001b[90m [offset=149, limit=25]\u001b[0m\n"
   },
   "highlightjs__highlight.js-2927": {
     "instance_id": "highlightjs__highlight.js-2927",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 283.6,
+    "rc": 0,
+    "model_patch_len": 2952,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " `123LL`, `456ull`, `789llu`, and `101lu` to ensure they highlight correctly.\n\n**Verification:**\n- Build succeeded\n- All 413 markup tests pass\n- All 187 detection tests pass\n- All 5 parser tests pass\n",
+    "stderr_tail": "ify the regex causing the LL suffix highlighting issue\n[✓] Fix the regex to correctly highlight both Ls in LL suffix\n[✓] Add/update tests for LL suffix highlighting\n[✓] Verify the fix with tests\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2932": {
     "instance_id": "highlightjs__highlight.js-2932",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 810.7,
+    "rc": 0,
+    "model_patch_len": 244352,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ".txt` covering:\n- Double backslash at end of line (no continuation)\n- Triple backslash at end of line (continuation)\n- A subsequent key to verify lines don't bleed together\n\nAll **1,623 tests pass**.\n",
+    "stderr_tail": " markup keys\n    ✓ should markup numbers\n    ✓ should markup string\n    ✓ should markup tag\n\n  zephir\n    ✓ should markup default\n\n\n  1623 passing (7s)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/languages/properties.js\n"
   },
   "highlightjs__highlight.js-2958": {
     "instance_id": "highlightjs__highlight.js-2958",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 206.2,
+    "rc": 0,
+    "model_patch_len": 631,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "/markup/xml/namespace-prefix.expect.txt` — added expected markup.\n\n**Verification:** Rebuilt the project and ran the full test suite. All **1638 tests pass**, including the new namespace-prefix test.\n",
+    "stderr_tail": "ould markup inline\n    ✓ should markup keys\n    ✓ should markup numbers\n    ✓ should markup string\n    ✓ should markup tag\n\n  zephir\n    ✓ should markup default\n\n\n  1638 passing (6s)\n  3 pending\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2960": {
     "instance_id": "highlightjs__highlight.js-2960",
