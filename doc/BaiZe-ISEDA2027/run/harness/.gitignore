@@ -7,6 +7,11 @@ swebench_verified_full/reports/eval_*.json
 swebench_verified_full/reports/predict_*.json
 swebench_verified_full/reports/progress_*.json
 swebench_verified_full/logs/evaluation/
+# ── infra rerun 运行时产物（可复现，不入库）──────────────────────────────
+swebench_verified_full/rerun_infra_state.json
+swebench_verified_full/rerun_ids/
+swebench_verified_full/logs/rerun_predict_*.log
+swebench_verified_full/logs/rerun_eval_*.log
 **/baseline_rewards*.json
 *.nfs*
 
