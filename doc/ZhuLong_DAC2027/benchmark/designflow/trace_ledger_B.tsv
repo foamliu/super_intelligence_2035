@@ -1706,7 +1706,7 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795080095563_6pc5q	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
 1795052969133_1fj8l	joeyl	hfeg0pkn004	245	spice_sim	parked		2026-11-23 13:51	near-dup DelvtoNetlistModifier-001 (r1028 6pm3i): same joeyl/ulvt_delvto/reduce_vth.py/delvto workflow
 1795341648818_wvtff.messages.json	weiyue	hfeg0plg78	471	spice_sim	case	EDA-Eval-DesignFlow-HspiceSweepWatchRender-001	2026-11-23 14:52	
-1794894548787_5ew0s	wendy1w	hfeg0plg100	147	spice_sim	claimed		2026-11-23 15:22	
+1794894548787_5ew0s	wendy1w	hfeg0plg100	147	spice_sim	case	EDA-Eval-DesignFlow-WlHierarchyTraceProduce-001	2026-11-24 05:29	
 1795090353918_ofbxi	guangmingz	hfeg0plg97	107	spice_sim	case	EDA-Eval-DesignFlow-VamCosimPortDeclGen-001	2026-11-23 16:10	
 1794817983296_j4ir1	jiangbaol	hfeg0plg99	46	characterization	case	EDA-Eval-DesignFlow-SlicerMeasureGen-001	2026-11-23 17:01	
 1795008667388_qlvo2.messages.json	kevin3d	hfeg0pkn004	56	spice_sim	case	EDA-Eval-DesignFlow-FinesimIgnoreDiffProduce-001	2026-11-23 17:34	
@@ -1726,3 +1726,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795002844868_jq8zl	lvyy	hfeg0pgn093	110	spice_sim	case	EDA-Eval-DesignFlow-ResCornerPctCompareProduce-001	2026-11-24 03:34	
 1795425823004_7pvru	e0044979	hfhds201	58	spice_sim	case	EDA-Eval-DesignFlow-ConlyPinDropDiagProduce-001	2026-11-24 04:32	
 1795418883724_ounw7.messages.json	pirinliu	hfeg0plg77	55	spice_sim	case	EDA-Eval-DesignFlow-MosCharMultiCornerDeckGenProduce-001	2026-11-24 04:59	
+1795415354499_6mbnf	ziangw	hfeg0pkn001	274	spice_sim	case	EDA-Eval-DesignFlow-HspiceLibDiffClaimVerify-001	2026-11-24 05:29	
