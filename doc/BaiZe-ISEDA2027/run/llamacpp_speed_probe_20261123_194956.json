@@ -1,0 +1,65 @@
+{
+  "mode": "assemble",
+  "generated_at": "2026-11-23 19:53:53",
+  "env": {
+    "outdir": "/tmp/baize_llamacpp_probe_20261123_194956",
+    "gguf_f16_exists": true,
+    "quant_file": "/nas_data/app.e0031982/models/qwen35_gguf/qwen3.5-2b-Q4_K_M.gguf",
+    "llama_dir": "/home/app.e0031982/tools/llama.cpp",
+    "server_up": true,
+    "tool_support": "jinja",
+    "llama_rev": "969d733",
+    "ctx": "131072",
+    "nproc": "128",
+    "convert_ok": true,
+    "model": "/nas_data/app.e0031982/models/Qwen3.5-2B",
+    "threads_list": "8 16 32",
+    "hostname": "s0pgpuap12",
+    "quant_exists": true
+  },
+  "bench": {
+    "rows": [
+      {
+        "threads": 8,
+        "pp512_tok_s": 276.52,
+        "tg128_tok_s": 27.96
+      },
+      {
+        "threads": 16,
+        "pp512_tok_s": 528.48,
+        "tg128_tok_s": 30.16
+      },
+      {
+        "threads": 32,
+        "pp512_tok_s": 593.94,
+        "tg128_tok_s": 29.84
+      }
+    ]
+  },
+  "loads": {
+    "c1": "/tmp/baize_llamacpp_probe_20261123_194956/load_c1.json",
+    "c8": "/tmp/baize_llamacpp_probe_20261123_194956/load_c8.json",
+    "c8_long": "/tmp/baize_llamacpp_probe_20261123_194956/load_c8_long.json"
+  },
+  "single_stream_tok_s": 30.16,
+  "best_threads": 16,
+  "aggregate_8way_tok_s": 132.52,
+  "aggregate_8way_longprompt_tok_s": 69.1,
+  "batching_gain": 3.55,
+  "gates": {
+    "G0_convert_ok": true,
+    "G1_server_up": true,
+    "G2_aggregate_8way_tok_s": 132.52,
+    "G2_verdict": "PASS",
+    "G4_max_repeated_8gram": 1,
+    "G4_repetition_ok": true
+  },
+  "projection": {
+    "total_output_tokens_5run": 9837870,
+    "hours_5run": 20.6,
+    "per_agent_tok_s": 16.57,
+    "mean_task_decode_s": 752.0,
+    "timeout_headroom_ratio": 0.301
+  },
+  "verdict": "FEASIBLE"
+}

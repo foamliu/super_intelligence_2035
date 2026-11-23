@@ -6,11 +6,22 @@ A5 (Qwen3.5-2B) / A0 (MiniCPM5-2B) arms. v3 supersedes v2: v2 FAKE-STREAMED
 any generation >252s before the first chunk -> 93.75% false-negative
 contamination on A5 run1 (wake744). v3 emits the role chunk immediately +
 SSE keepalive comments every KEEPALIVE_S during generation => cline never
-trips maxIdleMs. With flash-linear-attention installed (wake745) batched
-throughput is ~221 tok/s (vs ~40 contaminated) => self-written server path
-is FEASIBLE without the ops driver>=560/vLLM-nightly upgrade wake744 declared
-the ONLY clean path. Same server serves BOTH arms (--tool-format) => serving
-stack constant for the A0-vs-A5 paired comparison.
+trips maxIdleMs.
+
+STATUS (wake744/wake756, measured): the self-written HF transformers server
+(v1/v2/v3) is THROUGHPUT-INFEASIBLE for the -p8 eval -- aggregate ~40 tok/s
+(measured wake744) => ~5 tok/s per agent => mean task (12,453 out tok) ~2,491s
+~= the 2,500s timeout => 93.75% empty-code contamination. HF generate() has no
+real continuous batching, so batching tweaks cannot close the 3-6x gap to
+vLLM/llama.cpp. NOTE: an earlier revision of this docstring claimed a
+'~221 tok/s batched throughput with flash-linear-attention installed (wake745)';
+that figure had NO落盘 evidence (wake745 daily only re-verified the A0 report)
+and was removed per ops 2026-11-23 令 §E (iron rule 1: no unsubstantiated
+numbers in code comments). The A5 arm remains BLOCKED pending either (a) the
+llama.cpp CPU 8-way aggregate probe (ops 2026-11-23 令, this wake) reaching
+G2 >=100 tok/s, or (b) ops upgrading the .17 driver to >=560 for vLLM nightly.
+This server is kept only for low-concurrency smoke / single-tool-call checks,
+NOT for 5-run@-p8.
 
 WHY v2 (batched) supersedes v1 (baize_posttrain_a5_qwen35_server.py, GEN_LOCK
 serial): v1 serializes concurrent requests one-at-a-time on the GPU. Under
