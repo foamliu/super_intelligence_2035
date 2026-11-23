@@ -5941,37 +5941,72 @@
   "openlayers__openlayers-14015": {
     "instance_id": "openlayers__openlayers-14015",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 885.8,
+    "rc": 0,
+    "model_patch_len": 472,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "` / `getRevision()` is used throughout the codebase (e.g., geometry caching, canvas TileLayer's `renderedRevision`, ImageWMS, etc.)\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-14051": {
     "instance_id": "openlayers__openlayers-14051",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 39.5,
+    "rc": 0,
+    "model_patch_len": 606,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "rmine whether the layer should be rendered. The tile grid's own `getMinZoom()` provides the correct lower bound for tile iteration.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-14066": {
     "instance_id": "openlayers__openlayers-14066",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 735.8,
+    "rc": 0,
+    "model_patch_len": 5155,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "y switch for RGB. Full validation of auto-detection triggering for CMYK/YCbCr/CIELab images would require additional test fixtures.\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-14100": {
     "instance_id": "openlayers__openlayers-14100",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 820.2,
+    "rc": 0,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "empty_patch",
+    "stdout_tail": "ource fairness in `loadMoreTiles`), or to create a test case that measures tile request interleaving across layers in a LayerGroup?\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-14332": {
     "instance_id": "openlayers__openlayers-14332",
     "route": "cline__deepseek-v4-flash",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "deepseek-v4-flash",
+    "wall_s": 634.7,
+    "rc": 0,
+    "model_patch_len": 595,
+    "n_images": 0,
+    "text_only": true,
+    "classification": "has_patch",
+    "stdout_tail": "ansforms (`[1,0,0,1,...]`) since `√(1²+0²) = 1`\\n\\n### Files Modified\\n- `src/ol/render.js` (lines 99-102) — the only change needed\",\"model\":{\"id\":\"deepseek-v4-flash\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-14414": {
     "instance_id": "openlayers__openlayers-14414",

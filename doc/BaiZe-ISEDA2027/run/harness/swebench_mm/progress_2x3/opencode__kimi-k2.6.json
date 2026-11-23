@@ -5272,9 +5272,16 @@
   "highlightjs__highlight.js-3457": {
     "instance_id": "highlightjs__highlight.js-3457",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1816.5,
+    "rc": 0,
+    "model_patch_len": 1895,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ing like `*Is **Combined***` continues to work correctly ✅\n\nI also added corresponding test cases to `test/markup/markdown/bold_italics.txt` and updated the expected output.\n\nAll **1705 tests pass**.\n",
+    "stderr_tail": "js-strong\">**text**</span><span class=\"hljs-emphasis\">*</span>\n\"***text*\" => <span class=\"hljs-strong\">**<span class=\"hljs-emphasis\">*text*</span></span>\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/languages/markdown.js\n"
   },
   "highlightjs__highlight.js-3516": {
     "instance_id": "highlightjs__highlight.js-3516",
@@ -5291,16 +5298,30 @@
   "highlightjs__highlight.js-3559": {
     "instance_id": "highlightjs__highlight.js-3559",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 761.6,
+    "rc": 0,
+    "model_patch_len": 2142,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "updated the type rule's `end` regex\n- `test/markup/kotlin/class.txt` and `class.expect.txt` — added regression tests for `class G : A { }` and `class H : A, B { }`\n\nAll 1717 tests pass after the fix.\n",
+    "stderr_tail": "m# \u001b[0mTodos\n[✓] Explore the repository structure and find Kotlin language definition\n[✓] Identify the bug in Kotlin class inheritance bracket highlighting\n[✓] Implement fix and verify with test\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3644": {
     "instance_id": "highlightjs__highlight.js-3644",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 262.5,
+    "rc": 0,
+    "model_patch_len": 1311,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "t.expect.txt` covering both `#[[...]]` and `#[=[...]=]` bracket comments.\n\n### Verification\nBuild and markup tests pass:\n```bash\nnpm run build\nONLY_LANGUAGES=cmake npm run test-markup\n# 2 passing\n```\n",
+    "stderr_tail": ".\n\n  cmake\n    ✔ should markup default\n\n\n  2 passing (18ms)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/languages/cmake.js\n\u001b[0m→ \u001b[0mRead test/markup/cmake/default.txt\n\u001b[0m→ \u001b[0mRead test/markup/cmake/default.expect.txt\n"
   },
   "openlayers__openlayers-10340": {
     "instance_id": "openlayers__openlayers-10340",
