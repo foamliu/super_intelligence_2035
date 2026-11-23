@@ -5434,9 +5434,16 @@
   "openlayers__openlayers-11226": {
     "instance_id": "openlayers__openlayers-11226",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1282.4,
+    "rc": 0,
+    "model_patch_len": 3514,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ed files. I wasn't able to run the full Karma browser test suite in this environment because Chrome is not installed, but the fix is a minimal, targeted change that directly addresses the root cause.\n",
+    "stderr_tail": "\n[✓] Explore codebase to find Modify interaction code\n[✓] Identify bug in GeometryCollection handling\n[✓] Implement fix for Modify interaction with GeometryCollection\n[✓] Run tests to verify fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-11377": {
     "instance_id": "openlayers__openlayers-11377",

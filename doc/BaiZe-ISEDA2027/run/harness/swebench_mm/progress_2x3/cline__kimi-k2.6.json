@@ -4821,16 +4821,30 @@
   "highlightjs__highlight.js-2726": {
     "instance_id": "highlightjs__highlight.js-2726",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 815.5,
+    "rc": 0,
+    "model_patch_len": 1854,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "s\\n- `test/markup/latex/braces.txt` — input test cases from the issue\\n- `test/markup/latex/braces.expect.txt` — expected HTML output\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-2727": {
     "instance_id": "highlightjs__highlight.js-2727",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1026.6,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "53,\"outputTokens\":20142,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":1023356,\"text\":\"The operation timed out.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "s (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n{\"ts\":\"2026-11-23T08:54:49.329Z\",\"type\":\"error\",\"message\":\"The operation timed out.\"}\n"
   },
   "highlightjs__highlight.js-2740": {
     "instance_id": "highlightjs__highlight.js-2740",
