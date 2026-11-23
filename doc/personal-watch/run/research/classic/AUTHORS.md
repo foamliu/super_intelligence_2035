@@ -4631,3 +4631,43 @@
 | 状态 | **已发信**（2026-11-23 12:06 CST，作者请教信第 **151** 封，中文 **230** 汉字，`SENT OK`）· 无 X 可 follow |
 | 备注 | 三问围绕 **MV 的「改动—约束—测试」对应是人工固定清单还是 agent 从 diff 自推、自推时误判率**、**DeepSeek 上 OE 6/15 → 加 MV 13/15、几何均值 1.11×→1.53× 的收益来源是筛掉错误改动还是导回正确方向、trace 上被拦最多的是哪类失败**、**complete-solve runtime 是否含编译与校验开销、单卡占比**，分别回填 **designflow**（校验环与判分口径）/ **harness**（agent 加速比评测口径）/ **zhulong**（成本口径）。 |
 
+
+### 327. Chang Nie
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chang Nie（`语言=中文(判据=拼音姓名族属「Chang Nie」+ 南京大学中文机构；🚫 未因论文英文 / 邮箱域判英文)`） |
+| 机构 | **Nanjing University**（arXiv HTML 作者块 `Affiliation: Nanjing University`） |
+| 代表论文 | **MemOnce: A Scalable Memory Architecture for Large Language Models**（`2611.27973`，A 轨本窗第 1 篇，一作 / Main Contact） |
+| 邮箱 | **changnie@smail.nju.edu.cn**（来源：arXiv HTML 全文 `https://arxiv.org/html/2611.27973` `HTTP 200` / **625,847 B** 首页脚注 `Main Contact: changnie@smail.nju.edu.cn, bradyfu24@gmail.com`；与作者名单第一位逐字对应；单源 ⇒ 未见独立主页第二源） |
+| 主页 | 项目页 `https://clare-nie.github.io/MemOnce/` `HTTP 200` / 18,043 B（未见个人主页与 X 链接） |
+| X 账号 | **未找到**（论文 HTML、项目页均未挂；不猜 handle） |
+| 状态 | **已发信**（2026-11-23 15:06 CST，作者请教信第 **152** 封，中文 **251** 汉字，`SENT OK`）· 无 X 可 follow |
+| 备注 | 三问围绕 **「稀疏索引跨层只算一次」在解码每步是否复用同一索引、关键信息落到上一步未选窗口时的兜底与 miss 率**、**只存最后一层隐藏状态再还原各层 KV 丢掉什么、改存中间层在 needle-in-a-haystack 与下游表征上更好还是更差**、**1M 上下文下 memory cache 降 1313× 而 prefill 延迟只降 6.9× 的剩余时间在解码 kernel 还是显存带宽**，分别回填 **pretrain**（记忆层选型）/ **zhulong**（长上下文成本模型）/ **harness**（长上下文与表征两类评测分开报）。守「同一论文 ≤1」：MemOnce 本轮只发此一封。 |
+
+### 328. Chaoyou Fu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chaoyou Fu（`语言=中文(判据=拼音姓名族属「Chaoyou Fu」+ 南京大学中文机构 + 中文主页；🚫 未因论文英文判英文)`） |
+| 机构 | **Nanjing University**（arXiv HTML 作者块 `Affiliation: Nanjing University`） |
+| 代表论文 | **MemOnce: A Scalable Memory Architecture for Large Language Models**（`2611.27973`，A 轨本窗第 1 篇，共同一作 / Main Contact） |
+| 邮箱 | **bradyfu24@gmail.com**（来源：同上 arXiv HTML `200` / 625,847 B 首页脚注 `Main Contact`；单源） |
+| 主页 | `https://bradyfu.github.io/` `HTTP 200` / **11,511 B**，`<title>Chaoyou Fu-Homepage`；页内挂 Google Scholar `4A1xYQwAAAAJ` |
+| X 账号 | **未找到**（主页无 X / Twitter 链接；不猜 handle） |
+| 状态 | **待跟踪**（本轮不重复发信：MemOnce 已由一作 Chang Nie 承接，同一论文 ≤1）· 无 X 可 follow |
+| 备注 | 主页确认身份；后继若一作无应答，可按 §3「不催」原则不再追发同论文。研究侧关注其多模态 / 长上下文表征工作与 MemOnce 的零样本表征迁移结果。 |
+
+### 329. Songlin Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Songlin Liu（`语言=中文(判据=拼音姓名族属 + 中国科学技术大学中文机构；🚫 未因论文英文判英文)`） |
+| 机构 | **University of Science and Technology of China**（arXiv HTML 作者块 `Affiliation: University of Science and Technology of China`） |
+| 代表论文 | **MemOnce: A Scalable Memory Architecture for Large Language Models**（`2611.27973`，A 轨本窗第 1 篇，共同作者） |
+| 邮箱 | **未找到**（arXiv HTML 作者块只给通讯 `changnie@smail.nju.edu.cn` / `bradyfu24@gmail.com`，未给本人邮箱；不猜地址） |
+| 主页 | **未找到**（本轮未取到可核个人主页） |
+| X 账号 | **未找到**（不猜 handle） |
+| 状态 | **待跟踪**（无公开明文邮箱 ⇒ 只建档不发） |
+| 备注 | 与 Yiqing Hu 同为 USTC 侧作者；建档用于后续若出现公开邮箱或主页时补全，避免现在猜地址污染回信率归因。 |
+

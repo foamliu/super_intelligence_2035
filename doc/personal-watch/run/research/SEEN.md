@@ -5717,3 +5717,5 @@
 | 2026-11-23 | 2611.27196 | EDAGoat: An EDA-Aware Agent for Project-Level GPU Optimization | cs.AI | 收录 |
 | 2026-11-23 | 2611.27506 | How Many Bytes Has a BPE Model Seen? Estimating Byte-Token Exposure in Pretraining from Corpus Statistics and Embedding Norms | cs.CL | 收录 |
 | 2026-11-23 | 2611.27607 | Tasklets: A Unit-Test Benchmark for Language Model Architectures | cs.CL | 收录 |
+| 2026-11-23 | 2611.27973 | MemOnce: A Scalable Memory Architecture for Large Language Models | cs.CL | 收录 |
+| 2026-11-23 | 2611.27951 | Topology Hub Optimal Transport: Eliminating Long Context Dilution at Flash Speed | cs.LG | 收录 |

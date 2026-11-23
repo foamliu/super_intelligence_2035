@@ -37,13 +37,13 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-23</h1>
-  <div class="sub"><b>00:00 + 03:00 + 06:00 + 09:00 + 12:00 时窗 · A 轨 3/5（12:00 公告批前进至 11-20，重回 72h 窗内）· B 轨第九十七轮 +3 → 359 · 作者网 326（X 已核验 127）· 作者信 151 · 回信率 0/151</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-23 12:0x CST（含 00:00 / 03:00 / 06:00 / 09:00 / 12:00 五个时窗）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
+  <div class="sub"><b>00:00 + 03:00 + 06:00 + 09:00 + 12:00 + 15:00 时窗 · A 轨 5/5（15:00 补齐）· B 轨第九十八轮 +3 → 362 · 作者网 329（X 已核验 127）· 作者信 152 · 回信率 0/152</b> · 数据源：arXiv 官方 API（<code>export.arxiv.org/api/query</code>）</div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-23 15:0x CST（含 00:00 / 03:00 / 06:00 / 09:00 / 12:00 / 15:00 六个时窗）</b> ｜ 双轨制：A 轨（最新论文 50%）＋ B 轨（经典论文 + 作者关系网 + 研究者言论 50%）</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
 <div class="note">
-  <b>A 轨口径（可核验 · 本窗 0 篇）</b>：<code>cat:cs.CL&amp;max_results=5&amp;sortBy=submittedDate</code> <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（13,563 B / 5 entry，<code>--noproxy '*'</code> 直连），最新 <code>published</code> = <b><code>2026-11-19T18:57:25Z</code></b>；交叉核查 <code>cs.LG</code>（<code>200</code> / 5,610 B）上界 <code>18:59:53Z</code>、<code>cs.CV</code>（<code>200</code> / 5,629 B）上界 <code>18:59:57Z</code>、<code>cs.SE</code>（<code>200</code> / 5,137 B）上界 <code>18:54:19Z</code>。
+  <b>A 轨口径（00:00 时窗留档 · 当时 0 篇）</b>：<code>cat:cs.CL&amp;max_results=5&amp;sortBy=submittedDate</code> <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（13,563 B / 5 entry，<code>--noproxy '*'</code> 直连），最新 <code>published</code> = <b><code>2026-11-19T18:57:25Z</code></b>；交叉核查 <code>cs.LG</code>（<code>200</code> / 5,610 B）上界 <code>18:59:53Z</code>、<code>cs.CV</code>（<code>200</code> / 5,629 B）上界 <code>18:59:57Z</code>、<code>cs.SE</code>（<code>200</code> / 5,137 B）上界 <code>18:54:19Z</code>。
   距 03:00 时窗（2026-11-23 03:00 CST）已约 <b>72.05 小时</b>，<b>越过 §0.1 的 72h 窗</b> ⇒ A 轨<b>不收录</b>，并显式写「0 篇」；<b>不拿超窗论文凑 5 篇</b>。公告批连续第 <b>20</b> 窗未前进，已在心跳记为待观察信号（非「没有新论文」）。
 </div>
 
@@ -51,7 +51,7 @@
   <b>🔁 12:00 时窗更新（可核验）</b>：<code>cat:cs.CL&amp;max_results=20</code> <code>HTTP 200</code> + <code>application/atom+xml</code>（<b>48,590 B / 20 entry</b>），公告批<b>已前进</b>：最新 <code>published</code> = <b><code>2026-11-20T15:41:48Z</code></b>（连续 22 窗停滞结束）；交叉核 cs.LG <code>200</code> / 7,626 B 上界 <code>15:42:07Z</code>、cs.CV <code>200</code> / 21,085 B 上界 <code>15:41:48Z</code>、cs.SE <code>200</code> / 21,664 B 上界 <code>15:17:40Z</code>。距本窗（2026-11-23 04:06 UTC）约 <b>60.4h &lt; 72h</b> ⇒ <b>重回 §0.1 时效窗内，本窗补收 3 篇</b>（今日 3/5）。
 </div>
 
-<h3 class="sec">A 轨 · 今日推荐（3 / 5）</h3>
+<h3 class="sec">A 轨 · 今日推荐（5 / 5）</h3>
 
 <div class="card">
   <h2>1 · EDAGoat: An EDA-Aware Agent for Project-Level GPU Optimization</h2>
@@ -91,6 +91,32 @@
     <tr><th>推荐理由</th><td>我们评新序列层时常在「换任务就不可比」上吃亏；这套单元测试把能力轴拆开、成本压到小模型可跑，正好当我们 pretrain 侧「任何新层先过 unit test 再上大模型」的闸门。</td></tr>
   </table>
 </div>
+<div class="card">
+  <h2>4 · MemOnce: A Scalable Memory Architecture for Large Language Models</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.27973">MemOnce: A Scalable Memory Architecture for Large Language Models</a></td></tr>
+    <tr><th>中文一句话</th><td>只把最后一层的一小部分隐藏状态缓存成紧凑 memory，再按需解码回各层 KV；memory sparse attention 的稀疏索引<b>跨层只算一次</b>。适配 Qwen3.5-4B 后在 1M 上下文下 memory state cache 降 <b>1313×</b>、prefill 延迟降 <b>6.9×</b>、吞吐升 <b>3.5×</b>、整体 memory performance <b>+5.77%</b>。</td></tr>
+    <tr><th>作者 / 机构</th><td>Chang Nie · Chaoyou Fu · Songlin Liu（共 5 位；Nanjing University / USTC）</td></tr>
+    <tr><th>提交日期</th><td>2026-11-20（arXiv v1，<code>cs.CL</code>）</td></tr>
+    <tr><th>分类 / 标签</th><td><code>cs.CL</code> ｜ 🏷 <b>借鉴</b>（长上下文记忆架构；服务 pretrain + zhulong + harness）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.27973">arxiv.org/abs/2611.27973</a>（项目页 <a href="https://clare-nie.github.io/MemOnce/">clare-nie.github.io/MemOnce</a>）</td></tr>
+    <tr><th>推荐理由</th><td>长上下文两条老路各有一半问题：全量 KV 线性涨显存、线性层压缩又丢细节。MemOnce 把「存什么 / 怎么解回 / 索引多久算一次」三段拆开，是 zhulong 长上下文成本模型可以直接照做的对照臂。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>5 · Topology Hub Optimal Transport: Eliminating Long Context Dilution at Flash Speed</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.27951">Topology Hub Optimal Transport: Eliminating Long Context Dilution at Flash Speed</a></td></tr>
+    <tr><th>中文一句话</th><td>用「局部窗口 + K 个共享 hub」的 hub-and-spoke 最优传输替代稠密 L×L 注意力，以有界支撑容量门控（simplex sparsemax <code>O(L log L)</code> 或无排序 thresholded ReLU <code>O(L)</code>）把干扰项质量压到零；在 L4 上以 L=128 训练、在 <b>L=262,144</b> 零样本绑定召回 <b>97.40%</b>（α=0）/ <b>98.83%</b>（α=0.05），softmax 门控 hub OT 仅 <b>3.52%</b>。</td></tr>
+    <tr><th>作者 / 机构</th><td>Dylan Forde（共 1 位；论文未标机构）</td></tr>
+    <tr><th>提交日期</th><td>2026-11-20（arXiv v1，<code>cs.LG</code>）</td></tr>
+    <tr><th>分类 / 标签</th><td><code>cs.LG</code> ｜ 🏷 <b>借鉴</b>（长上下文注意力 / 零样本召回评测；服务 pretrain + zhulong + harness）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.27951">arxiv.org/abs/2611.27951</a></td></tr>
+    <tr><th>推荐理由</th><td>把「长上下文里少数关键事实被归一化质量稀释」做成可测的零样本绑定召回，并给出 O(L) 门控与 Triton 核的实现细节；对我们做长上下文消融时「同算力、同召回口径」的基线很有用。</td></tr>
+  </table>
+</div>
+
 
 <div class="card">
   <h2>00:00–09:00 时窗 0 篇 · 原因说明（当时可用，留档不删）</h2>
@@ -640,8 +666,97 @@
 </ul>
 
 
+<h3 class="sec">15:00 时窗 · A 轨补齐 5/5（可核验）</h3>
+<div class="note">
+  <b>🔁 15:00 时窗更新</b>：<code>cat:cs.CL&amp;max_results=20</code> <code>HTTP 200</code> + <code>application/atom+xml</code>（<b>48,824 B / 20 entry</b>），最新 <code>published</code> = <b><code>2026-11-20T18:51:29Z</code></b>（cs.LG 交叉核 <code>200</code> / 25,815 B 上界 <code>18:58:45Z</code>）。距本窗（2026-11-23 07:00 UTC）约 <b>60.0h &lt; 72h</b> ⇒ 补收 <b>2 篇</b>（<code>2611.27973</code> / <code>2611.27951</code>，已并入上方 A 轨卡片 4 / 5），今日 <b>5/5 满</b>。核验：arXiv <code>id_list</code> 单批 <code>200</code> + atom（<b>5,890 B / 2 entry</b>）；abs 页 2/2 <code>200</code>（42,477 / 42,903 B，<code>citation_title</code> + <code>citation_date</code> = 2026/11/20 逐字）；MemOnce 另有 arXiv HTML 全文 <code>200</code> / <b>625,847 B</b>。
+</div>
+
+<h3 class="sec">15:00 时窗 · B 轨经典论文（第九十八轮 +3 → 362）</h3>
+
+<table class="plain">
+  <tr><th>#</th><th>标题 / 作者（前 3）</th><th>年份 · 出处</th><th>被引</th><th>一句话贡献</th><th>归属线</th></tr>
+  <tr>
+    <td>360</td>
+    <td><a href="https://arxiv.org/abs/1701.06538">Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer</a><br>Noam Shazeer · Azalia Mirhoseini · Krzysztof Maziarz（共 6 位）</td>
+    <td>2017 · <b>预印本</b>（OpenAlex <code>preprint</code> / arXiv）</td>
+    <td><b>7,067</b></td>
+    <td>首个可规模训练的稀疏门控 MoE：数千前馈专家 + 可训练门控，每样本只激活少数专家，以少量计算效率损失换 <b>&gt;1000×</b> 容量；堆叠 LSTM 间插入后最大 <b>137B</b> 参数，语言建模 / 机器翻译以更低计算量优于当时 SOTA。</td>
+    <td>pretrain · zhulong · harness · data</td>
+  </tr>
+  <tr>
+    <td>361</td>
+    <td><a href="https://arxiv.org/abs/2208.07339">LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale</a><br>Tim Dettmers · Mike Lewis · Younes Belkada（共 4 位）</td>
+    <td>2022 · <b>NeurIPS 2022</b></td>
+    <td><b>2,757</b></td>
+    <td>Int8 矩阵乘 + 向量级量化 + 混合精度分解：把系统性离群维度单独送 16-bit，仍让 <b>&gt;99.9%</b> 数值在 8-bit 相乘；175B checkpoint 直接转 Int8 后无性能退化，OPT-175B / BLOOM 可落在单台消费级 GPU 服务器。</td>
+    <td>pretrain · zhulong · harness</td>
+  </tr>
+  <tr>
+    <td>362</td>
+    <td><a href="https://arxiv.org/abs/2104.08821">SimCSE: Simple Contrastive Learning of Sentence Embeddings</a><br>Tianyu Gao · Xingcheng Yao · Danqi Chen（共 3 位）</td>
+    <td>2021 · <b>EMNLP 2021</b></td>
+    <td><b>5,562</b></td>
+    <td>无监督版把同句喂两次、只靠 dropout 噪声作正例（去掉即表征坍缩）；有监督版用 NLI entailment 作正例、contradiction 作硬负例；BERT-base 在 STS 上 <b>76.3%</b> / <b>81.6%</b> Spearman，较此前最好高 <b>4.2% / 2.2%</b>。</td>
+    <td>data · harness · pretrain</td>
+  </tr>
+</table>
+
+<p style="font-size:13.5px;color:#59636e;">核验：abs 页 <b>3/3 <code>200</code></b>（45,350 / 44,198 / 43,059 B，<code>citation_title</code> + <code>citation_date</code> 逐字）；OpenAlex <b>3/3 <code>200</code></b>（7,067 / 2,757 / 5,562，查询日 2026-11-23）；三 ID 在 <code>PAPERS.md</code> / <code>SEEN.md</code> / <code>papers.jsonl</code> 条目级查重 <b>0 命中</b>。</p>
+
+
+<h3 class="sec">👥 作者关系网（15:00 时窗 +3 → 329；X 已核验 127，本轮 +0）</h3>
+
+<table class="plain">
+  <tr><th>#</th><th>姓名 / 机构</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td>327</td><td>Chang Nie · Nanjing University（MemOnce 一作 / Main Contact）</td><td><code>changnie@smail.nju.edu.cn</code>（arXiv HTML 全文 <code>200</code> / <b>625,847 B</b> 首页 <code>Main Contact</code>；单源）</td><td>未找到（不猜）</td><td>已发信 #152</td></tr>
+  <tr><td>328</td><td>Chaoyou Fu · Nanjing University（MemOnce 共同一作 / Main Contact）</td><td><code>bradyfu24@gmail.com</code>（同上 <code>Main Contact</code>；单源）</td><td>未找到（主页无 X 链接）</td><td>待跟踪（同论文 ≤1，不追发）</td></tr>
+  <tr><td>329</td><td>Songlin Liu · USTC（MemOnce 共同作者）</td><td>未找到（HTML 作者块只给共同通讯，未给本人；不猜）</td><td>未找到（不猜）</td><td>待跟踪</td></tr>
+</table>
+
+<h3 class="sec">✉ 作者请教信（15:00 时窗 1 封 · 累计 152 · 回信率 0/152）</h3>
+
+<div class="card">
+  <h2>#152 · MemOnce 一作 Chang Nie（中文 251 汉字）· <code>SENT OK 15:06:02</code></h2>
+  <ul class="tight">
+    <li><b>语言判据</b>：拼音姓名族属「Chang Nie」+ 南京大学（中文机构）⇒ 中文；🚫 未因论文英文 / 邮箱域判英文。</li>
+    <li><b>专属细节</b>：只缓存最后一层少量隐藏状态为 memory、按需解码回 KV、稀疏索引<b>跨层只算一次</b>、Qwen3.5-4B 在 1M 上下文下 1313× / 6.9× / 3.5× / +5.77%。</li>
+    <li><b>三问</b>：① 跨层只算一次的索引在解码每步是否复用、关键信息落到上一步未选窗口时的兜底与 miss 率；② 只存最后一层再还原各层 KV 丢掉什么、改存中间层在 needle 与下游表征上更好还是更差；③ 1313× 与 6.9× 的差距说明剩余时间在解码 kernel 还是显存带宽。</li>
+    <li><b>回填</b>：pretrain（记忆层选型）/ zhulong（长上下文成本模型）/ harness（长上下文与表征两类评测分开报）。</li>
+  </ul>
+</div>
+
+<p style="font-size:13.5px;color:#59636e;">落款：固定两行（<code>祝好，</code> 下一行 <code>Yang Liu</code>），其后无任何行；正文不含项目名；只发一作、不群发。今日 <b>12/12</b>，已达每日硬上限，本窗后不再发信。回信状态：<code>已回复</code> 0 / <code>无应答(&gt;14d)</code> 0 / <code>未到期</code> 152；0 封到期（最早 2026-11-25）。</p>
+
+<h3 class="sec">🗣 voice_ready / 📰 news_ready（15:00 时窗）</h3>
+<ul class="tight">
+  <li><b>voice_ready：本期无</b>（X 推文页需登录态，未做双源核验 ⇒ 不标 voice_ready）。</li>
+  <li><b>news_ready：0 条</b>（本窗两篇为架构 / 注意力方法类，无「发布 / 首次 / 开源」事件点；不硬凑）。</li>
+</ul>
+
+<h3 class="sec">15:00 时窗 · 对各线的可执行建议（6 线齐全）</h3>
+
+<table class="plain">
+  <tr><th>线</th><th>可执行建议（动作 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>把 MemOnce 作为长上下文记忆层对照臂</b>（<code>2611.27973</code>）：与全量 KV / 线性层固定同算力、同数据，比较 1M 上下文下的 cache 与召回。预注册：<b>cache 降幅 &lt;100× 或 needle 召回掉 &gt;5pp</b> ⇒ 不进候选。</td></tr>
+  <tr><td><b>vision</b></td><td><b>无</b>（本窗两篇为语言侧记忆与注意力，不触及视觉编码器 / 图文对）。</td></tr>
+  <tr><td><b>harness</b></td><td><b>长上下文结论必须同时给三类口径</b>：零样本绑定召回（<code>2611.27951</code>）、多针检索、下游表征（<code>2611.27973</code>）。预注册：<b>只报其中一类</b> ⇒ 该结论不进结论表。</td></tr>
+  <tr><td><b>data</b></td><td><b>句向量去重基线固定 dropout 与池化</b>（<code>2104.08821</code>「dropout 即最小增广」），并记录正 / 负例来源。预注册：<b>换模型或换 dropout 后相似度阈值不可跨批次比较</b> ⇒ 重新标定阈值，不沿旧值。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>成本表加两组列</b>：MoE「总参数 vs 激活参数」（<code>1701.06538</code>）、量化「比特 vs 质量差」（<code>2208.07339</code>）。预注册：<b>只报总量或只报比特</b> ⇒ 成本结论判口径不合格。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>无</b>（本窗五篇均不涉及 EDA 题面 / 判分）。</td></tr>
+</table>
+
+<h3 class="sec">附录 · 15:00 时窗检索式与核验（可复核）</h3>
+<ul class="tight">
+  <li><b>A 轨检索</b>：<code>cat:cs.CL&amp;max_results=20</code> <code>200</code>（48,824 B / 20 entry）；cs.LG 交叉核 <code>200</code> / 25,815 B（上界 <code>2026-11-20T18:58:45Z</code>）；cs.CV <code>200</code> / 25,495 B（<code>18:44:57Z</code>）、cs.SE <code>200</code> / 25,167 B（<code>18:18:55Z</code>）。两篇 A 轨取 <code>id_list</code> 单批 <code>200</code> + atom（5,890 B / 2 entry）+ abs 页 2/2 <code>200</code>（42,477 / 42,903 B）+ MemOnce arXiv HTML <code>200</code> / 625,847 B。</li>
+  <li><b>B 轨核验</b>：abs 页 3/3 <code>200</code>（45,350 / 44,198 / 43,059 B）；OpenAlex 3/3 <code>200</code>（7,067 / 2,757 / 5,562）。</li>
+  <li><b>发信地址核验</b>：arXiv HTML <code>2611.27973</code> <code>200</code> / 625,847 B 页内 <code>Main Contact: changnie@smail.nju.edu.cn, bradyfu24@gmail.com</code>；项目页 <code>clare-nie.github.io/MemOnce/</code> <code>200</code> / 18,043 B；<code>bradyfu.github.io</code> <code>200</code> / 11,511 B（<code>&lt;title&gt;Chaoyou Fu-Homepage</code>）。</li>
+  <li><b>去重</b>：A 轨两 ID（<code>2611.27973</code> / <code>2611.27951</code>）与 B 轨三 ID（<code>1701.06538</code> / <code>2208.07339</code> / <code>2104.08821</code>）在 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>PAPERS.md</code> 条目级查重 <b>0 命中</b>。</li>
+  <li><b>数字口径</b>：被引数 = OpenAlex（查询日 2026-11-23）；论文数字 = 作者自报，本线未复现；<b>未做 PDF 逐页复核</b>。</li>
+</ul>
+
+
 <footer>
-  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-23 12:0x CST（含 00:00 / 03:00 / 06:00 / 09:00 / 12:00 时窗）
+  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-23 15:0x CST（含 00:00 / 03:00 / 06:00 / 09:00 / 12:00 / 15:00 时窗）
 </footer>
 
 </div>

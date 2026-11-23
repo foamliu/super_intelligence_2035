@@ -6329,3 +6329,55 @@
 | 首次收录 | **2026-11-23**（第九十七轮 · 12:00 时窗） |
 | 核验状态 | arXiv `id_list=1603.09320` 批量请求 **`200` + atom**（`published` = `2016-03-30T19:29:44Z`，`updated` = `2018-08-14T19:29:07Z`）；abs 页 **`200` / 44,259 B**（`citation_title` + `citation_date` = `2016/03/30`；`comment` = `13 pages, 15 figures`）；PDF 首页 `pdftotext` 可解析（679,936 B，`%PDF` 校验通过，但尾部有 xref/trailer 语法告警 ⇒ 仅首页文本可用）；OpenAlex **`200`（3,810 / 2018 / article / TPAMI 42(4):824–836）**；**未做 PDF 逐页复核**。 |
 
+
+---
+
+## 360. Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer |
+| 作者（前 3） | Noam Shazeer · Azalia Mirhoseini · Krzysztof Maziarz（共 **6** 位；含 Andy Davis · Quoc Le · Geoffrey Hinton；arXiv `citation_author` 逐字核） |
+| 年份 | **2017**（arXiv v1 `2017-01-23`） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` 为空；OpenAlex `type=preprint`，`source` = arXiv (Cornell University)；⚠️ 会议名未在 arXiv/OpenAlex 标注，不臆写） |
+| 被引数 | **7,067**（OpenAlex `10.48550/arxiv.1701.06538`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1701.06538> ｜ arXiv DOI `10.48550/arxiv.1701.06538` |
+| 一句话贡献 | 第一个可规模训练的**稀疏门控 MoE 层**：最多数千个前馈子网络 + 可训练门控网络，为每个样本只激活极少数专家，在 GPU 集群上以「仅少量计算效率损失」换到 **>1000×** 模型容量；在堆叠 LSTM 之间卷积式插入后得到最大 **137B** 参数的语言模型，在语言建模与机器翻译上以更低计算量优于当时 SOTA。 |
+| 与我们工作的关系 | **pretrain（主 · 稀疏路由与容量因子）**：这是我们设「总参数 vs 激活参数」两套口径、以及门控负载均衡（expert capacity / drop token）的起点文献；137B 总量只激活小部分专家是 MoE 成本模型的原始标定。<br>**zhulong（主 · 成本口径）**：论文把「容量」与「每样本计算」显式拆开，正对应我们做训练/推理成本消融时必须分开报的两列，不能只报总参数量。<br>**harness（评测口径）**：MoE 的分专家行为会让「平均分」掩盖单专家退化 ⇒ 评测须按任务/领域切片报，并记录 token 丢弃率。<br>**data（数据侧）**：专家分化与训练语料领域构成相关，做配比实验时须固定路由超参，否则配比效应与路由效应混在一起。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十八轮 · 15:00 时窗） |
+| 核验状态 | abs 页 **`200` / 45,350 B**，`citation_title` + `citation_date` = `2017/01/23` 逐字；OpenAlex **`200`（7,067 / 2017 / preprint / arXiv）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 361. LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale |
+| 作者（前 3） | Tim Dettmers · Mike Lewis · Younes Belkada（共 **4** 位；末位 Luke Zettlemoyer；arXiv `citation_author` 逐字核） |
+| 年份 | **2022**（arXiv v1 `2022-08-15`） |
+| 会议 / 期刊 | **NeurIPS 2022**（OpenAlex `type=conference-paper`，`source` = neural information processing systems；arXiv `comment` 为空） |
+| 被引数 | **2,757**（OpenAlex `10.48550/arxiv.2208.07339`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2208.07339> ｜ arXiv DOI `10.48550/arxiv.2208.07339` |
+| 一句话贡献 | 提出 **LLM.int8()**：对 Transformer 的 FFN 与注意力投影做 Int8 矩阵乘，用**向量级量化**（每个内积独立归一化常数）处理大多数特征，再以**混合精度分解**把系统性离群维度单独送 16-bit 乘法——仍让 **>99.9%** 的数值在 8-bit 下相乘，从而把 175B 参数 checkpoint 直接转 Int8 后无性能退化地推理，使 OPT-175B / BLOOM 可落在单台消费级 GPU 服务器上。 |
+| 与我们工作的关系 | **pretrain（主 · 量化与离群值）**：这是我们判断「训练后量化能否无损」的原始证据——离群维度是结构性的、不是随机噪声；做量化感知训练或 KV/权重低比特时必须显式处理离群通道。<br>**zhulong（主 · 显存成本口径）**：论文把「显存减半」与「是否掉点」绑定报告，正对应我们成本表要同时写比特数与质量差，不能只写省了多少 GB。<br>**harness（评测口径）**：量化前后必须逐任务对比并单列离群敏感任务；只报平均分不足以发现局部退化。<br>**data**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十八轮 · 15:00 时窗） |
+| 核验状态 | abs 页 **`200` / 44,198 B**，`citation_title` + `citation_date` = `2022/08/15` 逐字；OpenAlex **`200`（2,757 / 2022 / conference-paper / NeurIPS）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 362. SimCSE: Simple Contrastive Learning of Sentence Embeddings
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SimCSE: Simple Contrastive Learning of Sentence Embeddings |
+| 作者（前 3） | Tianyu Gao · Xingcheng Yao · Danqi Chen（共 **3** 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2021**（arXiv v1 `2021-04-18`） |
+| 会议 / 期刊 | **EMNLP 2021**（OpenAlex `type=conference-paper`，`source` = Conference on Empirical Methods in Natural Language Processing (EMNLP)；arXiv `comment` 为空） |
+| 被引数 | **5,562**（OpenAlex `10.48550/arxiv.2104.08821`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2104.08821> ｜ arXiv DOI `10.48550/arxiv.2104.08821` |
+| 一句话贡献 | 极简对比学习做句向量：**无监督**版把同一句喂两次、只靠标准 dropout 噪声构造正例（去掉 dropout 会表征坍缩）；**有监督**版用 NLI 的 entailment 对作正例、contradiction 对作硬负例；BERT-base 在 STS 上平均 Spearman **76.3%**（无监督）/ **81.6%**（有监督），分别比此前最好结果高 **4.2% / 2.2%**，并从理论与实验说明对比目标把各向异性表征空间正则得更均匀。 |
+| 与我们工作的关系 | **data（主 · 去重与近重复）**：句向量是语料去重 / 近重复检测的底座；SimCSE 说明「dropout 即最小数据增广」，我们做 embedding 去重时须固定 dropout 与池化方式，否则相似度阈值不可跨批次比较。<br>**harness（主 · 检索评测）**：STS 的 Spearman + 正/负例构造是可复用的检索评测口径；报告检索质量时须同时给正例来源与硬负例来源。<br>**pretrain（表征侧）**：对比目标能缓解各向异性，可作为一个无需标注的表征正则项候选，但须与下游任务增益一起验证。<br>**zhulong**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第九十八轮 · 15:00 时窗） |
+| 核验状态 | abs 页 **`200` / 43,059 B**，`citation_title` + `citation_date` = `2021/04/18` 逐字；OpenAlex **`200`（5,562 / 2021 / conference-paper / EMNLP）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
