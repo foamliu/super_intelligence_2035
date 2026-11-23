@@ -5628,9 +5628,16 @@
   "openlayers__openlayers-12965": {
     "instance_id": "openlayers__openlayers-12965",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1649.2,
+    "rc": 0,
+    "model_patch_len": 9744,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ication\n- `eslint` passes with no errors.\n- TypeScript compilation (`tsc --noEmit`) passes.\n- Node test suite: **1732 passing** (the 1 failing test is a pre-existing unrelated issue in `ol/proj.js`).\n",
+    "stderr_tail": "e and context creation\n[✓] Design a shared WebGL context approach for WebGL TileLayers on the same map\n[✓] Implement the shared WebGL context solution\n[✓] Run tests and verify the implementation\n\u001b[0m\n"
   },
   "openlayers__openlayers-13013": {
     "instance_id": "openlayers__openlayers-13013",

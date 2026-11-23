@@ -5070,16 +5070,30 @@
   "highlightjs__highlight.js-3154": {
     "instance_id": "highlightjs__highlight.js-3154",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1090.3,
+    "rc": 0,
+    "model_patch_len": 2293,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "=\\\"hljs-title\\\">not_a_string_anymore</span><span class=\\\"hljs-params\\\">()</span></span>\\n<span class=\\\"hljs-keyword\\\">end</span>\\n```\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3203": {
     "instance_id": "highlightjs__highlight.js-3203",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 293.7,
+    "rc": 0,
+    "model_patch_len": 375,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " `-bar` as literals:\\n\\n```\\nfoo <span class=\\\"hljs-literal\\\">--bar</span> baz\\nfoo <span class=\\\"hljs-literal\\\">-bar</span> baz\\n```\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3207": {
     "instance_id": "highlightjs__highlight.js-3207",
