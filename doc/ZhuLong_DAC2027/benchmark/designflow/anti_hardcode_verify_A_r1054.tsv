@@ -1,0 +1,2 @@
+case_id	k_check	empirical_verdict	stale_GAP	contract_risk	import_ok	notes
+EDA-Eval-DesignFlow-FsdbDumpConvert-001	11	§4.9OK	n/a	no	yes	r1054 复验: r1053 "import error" 为 stale __pycache__ 瞬态(已不可复现, HERE 走 abspath 与 cwd 无关). ref解 check() PASS; §4.9 三假(empty/passthrough-no-transform/hardcode-prints-expected) 全 FAIL; bundled negative_selftest.py 4 neg(naive_empty/print_only/no_transform/core_removed) 全 FAIL. cond a-k 11 条独立可FAIL, B=hidden base_B structurally distinct(module regress_tb/vcd regress.vcd/depth2/scope regress_tb.dut_inst). case 合规, 非 defect.
