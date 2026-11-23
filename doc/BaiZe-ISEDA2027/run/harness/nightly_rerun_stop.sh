@@ -58,15 +58,24 @@ else
   log "orchestrator stopped"
 fi
 
-# ── 2. REGEN 7way 报告 ──
+# ── 2. Incremental eval+merge of recovered patches, then REGEN 7way 报告 ──
 cd "$HARNESS_DIR"
-if [ -f gen_report_glm53_7way.py ]; then
-  log "REGEN 7way report..."
-  python3 gen_report_glm53_7way.py > /tmp/regen_nightly_stop.log 2>&1
+if [ -f "$VF_DIR/incremental_eval_merge.py" ]; then
+  log "incremental eval+merge of recovered patches (--all --regen)..."
+  nice -n 19 ionice -c 3 python3 "$VF_DIR/incremental_eval_merge.py" --all --regen \
+      > /tmp/incr_eval_merge_nightly.log 2>&1
   if [ $? -eq 0 ]; then
-    log "REGEN OK"
+    log "incremental eval+merge OK (see /tmp/incr_eval_merge_nightly.log)"
   else
-    log "REGEN FAILED (see /tmp/regen_nightly_stop.log)"
+    log "incremental eval+merge FAILED (see /tmp/incr_eval_merge_nightly.log); falling back to REGEN only"
+    if [ -f gen_report_glm53_7way.py ]; then
+      python3 gen_report_glm53_7way.py > /tmp/regen_nightly_stop.log 2>&1
+    fi
+  fi
+else
+  log "incremental_eval_merge.py not found; REGEN only"
+  if [ -f gen_report_glm53_7way.py ]; then
+    python3 gen_report_glm53_7way.py > /tmp/regen_nightly_stop.log 2>&1
   fi
 fi
 
