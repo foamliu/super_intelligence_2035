@@ -5722,3 +5722,5 @@
 | 2026-11-24 | 2611.27895 | TEA-Bench-BR: Can Coding Agents Turn a Branching Clinical Specification into Correct Code? | cs.SE | 收录 |
 | 2026-11-24 | 2611.27750 | RoSci: Exploring Robustness in Science VLMs | cs.CL | 收录 |
 | 2026-11-24 | 2611.27764 | Enhancing Attention with Higher-Order Attention | cs.CL | 收录 |
+| 2026-11-24 | 2611.27734 | AutoOntologyBench: A Task-Grounded Benchmark for Agentic Knowledge Engineering | cs.CL | 收录 |
+| 2026-11-24 | 2611.27831 | DistDNA: Language Model Fingerprinting under Stochastic Decoding | cs.LG | 收录 |

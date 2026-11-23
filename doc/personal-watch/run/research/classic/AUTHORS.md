@@ -7,6 +7,7 @@
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
 > **当前计数（2026-11-23 21:0x）**：作者 **338** 人（编号最大 **338**）· X 已核验 **130**（本轮 **+1**：`@VictorSanh` 经 `x.com/VictorSanh` 经代理 `200` / 163,390 B，`og:title` = `Victor Sanh (@VictorSanh) on X`，`og:description` = `Beaker ... Prev. early crew @huggingface | AI x NYC`；反例 `@m_dehghani` 只有 **1 follower / 3 following** ⇒ 判他人，不记）· 已发信 **152**（台账 #1–#152）· 回信 **0**（0/152，0 封到期，最早 11-25）。本轮 **+3**：Bin Xiao（Florence-2 一作，中文，无公开明文邮箱 ⇒ 仅建档）· Victor Sanh（T0 一作，英文，X 双源）· Mostafa Dehghani（UL2 共同一作，英文，论文页邮箱单源）。
+> **当前计数（2026-11-24 03:0x）**：作者 **344** 人（编号最大 **344**）· X 已核验 **130**（本轮 **+0**：Matthias Minderer / Alexey Gritsenko / Bingsheng He 三人均无可访问 X 外链，🚫 不猜 handle）· 已发信 **156**（台账 #1–#156；今日 **4/12**）· 回信 **0**（0/156，0 封到期，最早 11-25）。本轮 **+3**：Matthias Minderer（OWL-ViT 一作，德文姓名，论文页 Google 旧地址 ⇒ 仅建档）· Alexey Gritsenko（OWL-ViT 二作，英文，论文页旧地址 ⇒ 仅建档）· Bingsheng He 何炳生（DistDNA 通讯，中文，NUS 官方主页当前地址 ⇒ 已发信 #156）。
 > **当前计数（2026-11-24 00:0x）**：作者 **341** 人（编号最大 **341**）· X 已核验 **130**（本轮 **+0**：三位新增作者——Wonjae Kim / Amanpreet Singh / Chao Jia——论文页与可访问主页均无 x.com / twitter.com 外链，`amanpreetsingh.github.io` 实测 `000` ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **155**（台账 #1–#155；今日 **3/12**）· 回信 **0**（0/155，0 封到期，最早 11-25）。本轮 **+3**：Wonjae Kim（ViLT 一作，韩文姓名，2021 旧地址 ⇒ 仅建档）· Amanpreet Singh（FLAVA 一作，英文，无地址）· Chao Jia（ALIGN 一作，中文，Google 论文页地址单源）。
 
 
@@ -4839,3 +4840,42 @@
 | X 账号 | **未找到**（论文页与 ar5iv 全文均无 x.com / twitter.com 外链；不猜 handle） |
 | 状态 | **待跟踪**（邮箱单源，本线发信前需二次核实） |
 | 备注 | `语言=中文(判据=拼音姓名族属+Google Research)`。发信问题候选（只对 ALIGN 成立）：① 「十亿对、不做昂贵过滤」里**最低限度的清洗**到底保留了什么（alt-text 长度阈值 / 语言过滤 / 去重），去掉后指标掉多少；② 简单双塔在检索上超过 cross-attention，这个结论是否随**规模**变化（更大模型下差距会收敛吗）；③ ImageNet 零样本对 prompt 模板的敏感性有没有量化。 |
+### 342. Matthias Minderer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Matthias Minderer（`语言=Deutsch 称谓问候+英文正文(判据=德文姓名族属 + ETH Zürich 学历；机构瑞士)`） |
+| 机构 | **Microsoft AI Zürich**（主页 2026-11-24 自述；论文署名时为 Google Brain / Google DeepMind） |
+| 代表论文 | **Simple Open-Vocabulary Object Detection with Vision Transformers**（`2205.06230`，B 轨 #376，一作） |
+| 邮箱 | `mjlm@google.com`（ar5iv `2205.06230` `200` / 422,625 B 首页明文 **2** 处；⚠️ **旧机构地址**：主页已写明现职 Microsoft AI ⇒ **仅建档，不用该地址发信**） |
+| 主页 | <https://mjlm.github.io/>（`HTTP 200` / 14,425 B；页内**无 mailto / 明文邮箱**） |
+| X 账号 | **未找到**（主页与论文全文均无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（旧地址 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 OWL-ViT 成立）：① 图像级预训练量增加带来的检测增益，在**固定检测微调步数**下是否仍成立；② 零样本与单样本两种条件的**每类示例数**如何影响长尾类；③ 文本编码器换成更大模型后，开放词表召回与误检的 trade-off。 |
+
+### 343. Alexey Gritsenko
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alexey Gritsenko（`语言=英文(判据=斯拉夫姓名族属，不在中/日/韩；机构美国/英国 ⇒ 英文兜底)`） |
+| 机构 | **Google DeepMind**（论文署名时；本轮**未独立核验当前人员页**） |
+| 代表论文 | **Simple Open-Vocabulary Object Detection with Vision Transformers**（`2205.06230`，B 轨 #376，二作） |
+| 邮箱 | `agritsenko@google.com`（同上 ar5iv 首页明文 **2** 处；**单源旧地址 ⇒ 发信前须再核**） |
+| 主页 | **未找到**（本轮未检索到可核验个人主页） |
+| X 账号 | **未找到**（无可访问主页可核；不猜 handle） |
+| 状态 | **待跟踪**（单源旧地址 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 OWL-ViT 成立）：① 端到端检测微调时，图文对比预训练权重是否全部解冻；② 单样本图像条件检测的**示例选择**对结果方差的影响；③ 长尾类别上文本头与闭集头的差距。 |
+
+### 344. Bingsheng He（何炳生）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bingsheng He 何炳生（`语言=中文(判据=拼音姓名族属可还原中文名 + 新加坡 NUS 华人课题组)`） |
+| 机构 | **National University of Singapore**（Department of Computer Science；NUS 官方主页 `200` / 18,121 B 自述 Professor） |
+| 代表论文 | **DistDNA: Language Model Fingerprinting under Stochastic Decoding**（`2611.27831`，A 轨本窗第 2 篇，末位作者 / 通讯组） |
+| 邮箱 | `dcsheb@nus.edu.sg`（NUS 官方主页 `https://www.comp.nus.edu.sg/~hebs/` `200` / 18,121 B 页内 `Email: dcsheb(at)nus.edu.sg`；**当前地址，2026-11-24 复核**） |
+| 主页 | <https://www.comp.nus.edu.sg/~hebs/>（`HTTP 200` / 18,121 B） |
+| X 账号 | **未找到**（主页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **已发信**（#156，2026-11-24 03:03:29，中文 202 字） |
+| 备注 | 发信问题候选（只对 DistDNA 成立）：① 每 prompt 采样条数 R 的饱和点（O(1/R) 方差项）；② 参考指纹覆盖的 temperature / top-p 档位与未见解码设置的外推；③ 115 个 checkpoint 中同基座仅差 SFT 的混淆率。 |
+

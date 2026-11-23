@@ -10,6 +10,9 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **377** 条（**第一百零三轮 2026-11-24 03:0x 补 3 条 → 377**：MoCo `1911.05722`（**19,477**，CVPR 2020、OpenAlex `conference-paper`；把对比学习当字典查询：队列 + 动量编码器，字典规模与 mini-batch 解耦，冻结特征线性协议下 ImageNet 有竞争力，迁移到 PASCAL VOC / COCO 等 **7** 个检测/分割任务可超过监督预训练）/ OWL-ViT `2205.06230`（**362**，ECCV 2022、OpenAlex 记 `preprint`；标准 ViT + 图文对比预训练 + 端到端检测微调，做零样本文本条件与单样本图像条件检测；**&lt;500 按「本领域权威」收**）/ PaLI `2209.06794`（**976**，ICLR 2023 `Notable-top-5%`、OpenAlex 记 `preprint`；联合放大视觉与语言，训练 **4B** 参数 ViT-e，预训练图文集 **10B** 图 / **>100** 语言，在 captioning、VQA、场景文字理解等刷新 SOTA）；核验：arXiv `id_list` 批量 **`200` + atom**（8,424 B / 3 entry，`published` = 2019-11-13T18:53:26Z / 2022-05-12T17:20:36Z / 2022-09-14T17:24:07Z；PaLI 单批 `200` / 4,394 B）+ abs 页 **3/3 `200`**（42,639 / 43,027 / 45,703 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **3/3 `200`**（658,843 / 422,625 / 397,253 B）+ OpenAlex **3/3 `200`**（19,477 / 362 / 976，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；⚠️ 候选 `2301.03728` 经 OpenAlex 实测为 *Scaling Laws for Generative Mixed-Modal Language Models*（非预期的 ViT-22B）⇒ 弃；本轮归属：vision **+3** · pretrain **+2** · harness **+2** · data **+2** · designflow **+1** · zhulong **0**（一篇可多线））
+
+
 **本轮快照**：累计 **374** 条（**第一百零二轮 2026-11-24 00:0x 补 3 条 → 374**：ViLT `2102.03334`（**1,835**，ICML 2021 Long Presentation，OpenAlex `conference-paper`；把图像输入简化成与文本相同的 convolution-free patch 投影，去掉 region supervision 与 conv 骨干；摘要称比此前 VLP **快数十倍**，下游持平或更好）/ FLAVA `2112.04482`（**1,142**，CVPR 2022，`conference-paper`；单一整体模型同时覆盖视觉 / 语言 / 跨模态 / 多模态，**35** 个任务）/ ALIGN `2102.05918`（**6,929**，ICML 2021、OpenAlex 记 `preprint`；Conceptual Captions 中 **>10 亿** image alt-text、**不做昂贵过滤**，简单双塔 + 对比损失，主张规模可补偿噪声，零样本检索刷新 Flickr30K / MSCOCO SOTA）；核验：arXiv `id_list` 批量 **`200` + atom**（`published` = 2021-02-05T18:36:11Z / 2021-12-08T18:59:16Z / 2021-02-11T10:08:12Z）+ abs 页 **3/3 `200`**（41,847 / 41,473 / 45,205 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **3/3 `200`**（236,747 / 296,786 / 228,755 B）+ OpenAlex **3/3 `200`**（1,835 / 1,142 / 6,929，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；本轮归属：vision **+3** · data **+2** · harness **+2** · pretrain **+1** · zhulong **0** · designflow **0**（一篇可多线））
 
 
@@ -6601,4 +6604,54 @@
 | 与我们工作的关系 | **data（主 · 噪声图文对规模化）**：ALIGN 的核心论点是「过滤成本 → 规模」的置换；data 线应预注册对照：同一预算下「强过滤小语料」vs「弱过滤十亿级语料」，判据必须同时报**下游零样本 / 检索指标 + 数据清洗人力 / 算力成本**；只报指标、不报成本 ⇒ 不进结论表。<br>**vision（双塔表征基线）**：简单双塔即可在检索上超过复杂 cross-attention ⇒ vision 线做检索任务时应先跑双塔基线，避免用大模型掩盖数据问题。<br>**pretrain（规模律参照）**：可作为「数据规模 × 噪声」的早期经验点，但论文未给幂律拟合 ⇒ 不得当作 scaling law 引用。<br>**harness（检索口径）**：Flickr30K / MSCOCO 的零样本检索设置须写清训练集与评测集切分；切分不明 ⇒ 数字不可比。<br>**zhulong**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-24**（第一百零二轮 · 00:00 时窗） |
 | 核验状态 | abs 页 **`200` / 45,205 B**，`citation_title` + `citation_date` = `2021/02/11` 逐字、`Comments` = `ICML 2021`；arXiv API `id_list` 批量 **`200` + atom**（`published` = `2021-02-11T10:08:12Z`）；ar5iv 全文 **`200` / 228,755 B**（首页明文邮箱 `chaojia@google.com`、`yinfeiy@google.com`，各 2 处）；OpenAlex **`200`（6,929 / 2021 / preprint）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+
+## 375. Momentum Contrast for Unsupervised Visual Representation Learning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Momentum Contrast for Unsupervised Visual Representation Learning |
+| 作者（前 3） | Kaiming He · Haoqi Fan · Yuxin Wu（共 **5** 位；另 Saining Xie · Ross Girshick；论文署名时为 Facebook AI Research；arXiv `citation_author` 逐字核） |
+| 年份 | **2019**（arXiv v1 `2019-11-13T18:53:26Z`；v3 `2020-03-23`） |
+| 会议 / 期刊 | **CVPR 2020**（arXiv `comment` 原文 `CVPR 2020 camera-ready`；OpenAlex `type=conference-paper`） |
+| 被引数 | **19,477**（OpenAlex `10.48550/arxiv.1911.05722`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1911.05722> ｜ arXiv DOI `10.48550/arxiv.1911.05722` |
+| 一句话贡献 | **MoCo**：把对比学习看成「字典查询」，用一个**队列**保存历史样本的编码、用一个**动量滑动平均**的编码器产生 key，使字典可以做得又大又一致，且**字典规模与 mini-batch 大小解耦**；在常见线性评测协议下 ImageNet 分类有竞争力，更关键的是学到的表征迁移到 PASCAL VOC / COCO 等 **7 个检测 / 分割任务**时可超过监督预训练对应模型（摘要原文 `sometimes surpassing it by large margins`），作者据此认为无监督与监督表征在多数视觉任务上的差距已大幅缩小。 |
+| 与我们工作的关系 | **vision（主 · 自监督视觉塔基线）**：若 vision 线要在无标注图像上做预训练，MoCo 的「队列 + 动量编码器」是最小可行基线；对比实验须固定字典大小 K 与 batch size，报告单独改一个旋钮的曲线（否则无法区分「更大字典」与「更大 batch」的收益）。<br>**pretrain（动量教师 / EMA）**：动量更新编码器不需要反传到 key 分支，这一结构与后续 EMA teacher 类方法同源；pretrain 线若要上 EMA，须预注册动量系数 m 的扫描区间与 teacher 更新频率，并记录「梯度是否只走 query 分支」的实现检查。<br>**data（无标签图像预算）**：MoCo 的价值在于把标注预算换成图像预算；data 线应把「无标签图像数 × 训练 epoch」写进配置，并报告在同等 GPU-hours 下与监督预训练的对照。<br>**harness**：线性探针协议（frozen features + linear classifier）须写清学习率与 epoch；只报 kNN 或只报微调 ⇒ 不可与论文数字比较。<br>**zhulong**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零三轮 · 03:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,639 B**，`citation_title` + `citation_date` = `2019/11/13` 逐字、`Comments` = `CVPR 2020 camera-ready...`；arXiv API `id_list` 批量 **`200` + atom**（`published` = `2019-11-13T18:53:26Z`）；ar5iv 全文 **`200` / 658,843 B**（页内未检出明文邮箱）；OpenAlex **`200`（19,477 / 2020 / conference-paper）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 376. Simple Open-Vocabulary Object Detection with Vision Transformers
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Simple Open-Vocabulary Object Detection with Vision Transformers |
+| 作者（前 3） | Matthias Minderer · Alexey Gritsenko · Austin Stone（共 **15** 位；另 Maxim Neumann · Dirk Weissenborn · Alexey Dosovitskiy · Aravindh Mahendran · Anurag Arnab · Mostafa Dehghani · Zhuoran Shen · Xiao Wang · Xiaohua Zhai · Thomas Kipf · Neil Houlsby；论文署名时为 Google Research / Google DeepMind；arXiv `citation_author` 逐字核） |
+| 年份 | **2022**（arXiv v1 `2022-05-12T17:20:36Z`；v2 `2022-10-07`） |
+| 会议 / 期刊 | **ECCV 2022**（arXiv `comment` 原文 `ECCV 2022 camera-ready version`；OpenAlex `type=preprint`，故被引按预印本记录） |
+| 被引数 | **362**（OpenAlex `10.48550/arxiv.2205.06230`，查询日 **2026-11-24**；**&lt;500 ⇒ 按「本领域权威」收录**：开放词表检测的标志性工作，其「ViT + 文本编码器 + 端到端检测微调」配方被后续 VLM / grounding 工作广泛沿用） |
+| arXiv / DOI | <https://arxiv.org/abs/2205.06230> ｜ arXiv DOI `10.48550/arxiv.2205.06230` |
+| 一句话贡献 | **OWL-ViT**：给出把图文模型迁移到**开放词表目标检测**的强配方——标准 Vision Transformer 仅做最小改动 + 图文对比预训练 + 端到端检测微调；缩放分析显示提高**图像级预训练量**与**模型规模**都能在下游检测上稳定增益，并给出实现零样本文本条件检测与**单样本图像条件检测**所需的适配策略与正则化。 |
+| 与我们工作的关系 | **vision（主 · 开放词表检测）**：若视觉塔要处理「类别不在闭集里」的目标（缺陷 / 版图图形 / 器件类别），OWL-ViT 说明可用文本嵌入替代固定分类头；试点须预注册「闭集头 vs 文本头」同数据同算力对照，并单列**长尾类**指标。<br>**harness（开放集评测）**：零样本与单样本两种条件必须分开报，且写明每类给出几个示例；把两者混成一个平均分 ⇒ 不进结论表。<br>**designflow（未知题型 / 未知缺陷类别）**：可用「文本描述当类别」的方式扩展题面识别范围，但判分仍须可执行（检测框与掩码的 IoU 阈值、每类样本数）。<br>**data**：无直接建议（显式写「无」）。<br>**pretrain**：无直接建议（显式写「无」）。<br>**zhulong**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零三轮 · 03:00 时窗） |
+| 核验状态 | abs 页 **`200` / 43,027 B**，`citation_title` + `citation_date` = `2022/05/12` 逐字、`Comments` = `ECCV 2022 camera-ready version`；arXiv API `id_list` 批量 **`200` + atom**（`published` = `2022-05-12T17:20:36Z`）；ar5iv 全文 **`200` / 422,625 B**（首页明文 `mjlm@google.com` / `agritsenko@google.com` 各 2 处，**旧机构地址**）；OpenAlex **`200`（362 / 2022 / preprint）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 377. PaLI: A Jointly-Scaled Multilingual Language-Image Model
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | PaLI: A Jointly-Scaled Multilingual Language-Image Model |
+| 作者（前 3） | Xi Chen · Xiao Wang · Soravit Changpinyo（共 **29** 位署名；另 AJ Piergiovanni 等；论文署名时为 Google Research；arXiv `citation_author` 逐字核） |
+| 年份 | **2022**（arXiv v1 `2022-09-14T17:24:07Z`） |
+| 会议 / 期刊 | **ICLR 2023（Notable-top-5%）**（arXiv `comment` 原文；OpenAlex `type=preprint`，被引按预印本记） |
+| 被引数 | **976**（OpenAlex `10.48550/arxiv.2209.06794`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2209.06794> ｜ arXiv DOI `10.48550/arxiv.2209.06794` |
+| 一句话贡献 | **PaLI（Pathways Language and Image model）**：用「视觉 + 文本输入 → 生成文本」的统一接口覆盖视觉、语言与多模态任务；复用大规模预训练的编码器-解码器语言模型与 ViT，并**联合放大两侧**（训练 **4B** 参数 ViT-e），预训练语料为含 **10B** 图像与文本、覆盖 **100+** 语言的新图文混合集，在 captioning、VQA、场景文字理解等任务上达到 SOTA，同时保持简单、模块化、可扩展的设计。 |
+| 与我们工作的关系 | **vision（主 · 视觉塔容量）**：PaLI 的对照点是「语言塔远大于视觉塔」——它专门训练 4B ViT-e 来量化视觉容量增益；vision 线评估视觉编码器时须把**参数量与图像分辨率**一并列出，只报精度不报容量 ⇒ 无法归因。<br>**pretrain（联合缩放）**：可作为「视觉与语言必须同步放大」的经验证据；但论文未给幂律拟合 ⇒ 不得当 scaling law 引用。<br>**data（多语图文混合）**：10B 图 / 100+ 语言的混合配方提示「语言覆盖」也是数据配比维度；data 线若要加中文图文对，应预注册「加中文后英文任务是否退化」的对照。<br>**harness**：多任务统一接口下，每任务指标与 prompt 模板须写清；跨语言任务须分语种报。<br>**zhulong**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零三轮 · 03:00 时窗） |
+| 核验状态 | abs 页 **`200` / 45,703 B**，`citation_title` + `citation_date` = `2022/09/14` 逐字、`Comments` = `ICLR 2023 (Notable-top-5%)`；arXiv API 单批 **`200` + atom**（`published` = `2022-09-14T17:24:07Z`）；ar5iv 全文 **`200` / 397,253 B**（页内仅通用地址 `pali-communications@google.com` ⇒ 个人邮箱记「未找到」）；OpenAlex **`200`（976 / 2022 / preprint）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
 
