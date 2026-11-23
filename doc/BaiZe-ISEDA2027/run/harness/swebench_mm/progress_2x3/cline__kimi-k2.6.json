@@ -4752,16 +4752,30 @@
   "grommet__grommet-6749": {
     "instance_id": "grommet__grommet-6749",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1023.3,
+    "rc": 0,
+    "model_patch_len": 3388,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "test confirms selecting a group value via `DataTableGroup` causes `DataTable` to group by that property through the `Data` view state\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "grommet__grommet-7025": {
     "instance_id": "grommet__grommet-7025",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 752.2,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "379,\"outputTokens\":16230,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":748594,\"text\":\"The operation timed out.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "s (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n{\"ts\":\"2026-11-23T07:20:53.875Z\",\"type\":\"error\",\"message\":\"The operation timed out.\"}\n"
   },
   "highlightjs__highlight.js-2684": {
     "instance_id": "highlightjs__highlight.js-2684",
