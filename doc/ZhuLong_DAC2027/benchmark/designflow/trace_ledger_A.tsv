@@ -842,3 +842,4 @@ huqxk					parked		2026-11-23 03:22	r1012 peek: e0044587@hfeg0pnd001 mc6 -
 1794895164006_z9pe8	t0002965	hfeg0plg75	140	operator	parked		2026-11-23 07:55	r1021: t0002965 operator/scanner account not real design user, skip
 1793004252449_aet4o.messages.json	t0002616	hfeg0pkn004	126	eda_other	case	EDA-Eval-DesignFlow-SramFarCellSelect-001-v2	2026-11-23 08:45	r1024 backfill: jsonl case genuinely missing from all 4 shard ledgers (phantom-check jsonl-extra)
 anner account not real design user, skip								
+1794829264163_7ypz6	dechaoc	hfeg0pkn004	16217	verification	case	EDA-Eval-DesignFlow-XrunCuvunfSegfaultDiagnose-001	2026-11-23 12:21	r1034 backfill orphan A case via cross-shard force (C parked=A-domain, no C case). verification dechaoc mc16217, 15 assertions, k==circled.
