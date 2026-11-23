@@ -1,5 +1,19 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+
+> ## 🚨 2026-11-23 运维令 · 停止追加 jsonl，改写 cases/ 文件 · 最高优先（覆盖本文件中一切关于 jsonl 的指令）
+>
+> **用户令**：「执行修复」→ 发现 agent 每次唤醒加载的是 `BAIZE_DESIGNFLOW_BENCH_TASK_<shard>.md`（本文件），不是 `agent_workspace/BAIZE_DESIGNFLOW_BENCH_TASK.md`。本文件中所有「追加 jsonl / 只往 X.jsonl 追加 / DoD 写进 jsonl / 你的 case 只追加到 X.jsonl」指令均已被本令覆盖。
+>
+> **立即生效**：
+> 1. 📝 新增 case 时**只写** `benchmarks/EDA-Eval-DesignFlow/cases/<shard>/<task_id>.json`（一个 JSON 文件），不要碰任何 `*.jsonl`。
+> 2. 🚫 **不要 `git add` 任何 `*.jsonl`**（即使 `git add -f` 能绕过 .gitignore，也不要用）。jsonl 文件已物理删除，重建是违规。
+> 3. 🚫 **不要用 `_append*.py` / `append_jsonl.py` / `build_jsonl_entry.py` 辅助脚本** append jsonl。新 case 直接用 `editor` / `write_to_file` 写 `cases/<shard>/<task_id>.json`。
+> 4. ✅ **"dangling case"（cases/ 有但 jsonl 无）是正常状态**。jsonl 已不存在，不要"补 jsonl 条目"，不要把 cases/ 与 jsonl 对账。
+> 5. 🔧 评测前 evaluator 自动调 `scripts/build_jsonl.py` 从 `cases/` 生成临时 jsonl。你不需要手动生成或维护 jsonl。
+>
+> **优先级**：本令 > 本文件中任何关于 jsonl 的指令 > loop shard 卡 > 任何前令。若本文件下方说「追加 jsonl / 只往 X.jsonl / DoD 写进 jsonl」，**全部忽略，按本令写 cases/ 文件**。
+
 > ## 🔴 2026-11-21 17:0x 用户令 · mc 降到 5（4 shard 统一）· 最高优先
 
 > **用户原话**：「4个shard mc都降为5吧，保持一致」
@@ -42,7 +56,7 @@
 
 1. **真实 trace 才有资格**：每条 case 必带 `metadata.trace_source{user, host, session_file, match_count, real_task_summary}`。没有真实 trace 的 case 一律删除，🚫 不许改个名字保留。
 2. **不脱敏（全产物）**：`user` / `host` / `session_file` / `/home/<user>` 路径 / `prompt` / `attachments` / 深读笔记 / MEMORY **一律保留原值**；只有 **key / token / 密码** 需掩码。🚫 prompt 里出现"脱敏""不要出现真实用户名"字样视为违规。
-3. **单一 jsonl**：只往 `benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow.jsonl` 追加；🚫 新建 jsonl（>500 条才按 `metadata.domain` 拆 4 个）。
+3. **per-case 文件**（运维令 2026-11-23 覆盖）：每条 case 写 `benchmarks/EDA-Eval-DesignFlow/cases/<shard>/<task_id>.json`（一个 JSON 文件）。🚫 **不要碰任何 `*.jsonl`**（jsonl 已物理删除，是 build 产物，由 `scripts/build_jsonl.py` 从 cases/ 生成）。
 4. **只读纪律**：对 698 机只 `find`/`ls`/`cat`/`head -c`/`awk`/`python3` 只读；🚫 写目标机、🚫 `rm`/`tee`/`>`；🚫 本机自扫；🚫 lineage 自审计 / §X 递归。
 5. **git 双仓**：workspace → `super_intelligence_2035` **main**；用例产物 → `EDA-Flow-Bench` **master**；🚫 `git add -A`。
 6. **体积**：本 TASK ≤32KB（红线 40KB）、MEMORY ≤32KB；超限按 §8 归档（原文搬 ARCHIVE，留 1 行指针）。
@@ -89,9 +103,9 @@ metadata:    { trace_source{...}, domain, test_rationale }
 一轮 = 一条 case 从选料到落库，**建议不要拆成两轮**（拆开会拉长交付周期）：
 
 - **深读是硬闸门，但不是独立的一轮**：必须先解析完整对话流（`scp` `messages.json` → user 意图 / assistant 工具链 / 关键产物 → `designflow/trace_deepreads/<sid>_<主题>.md`）才允许合成；已有笔记可直接复用，不重复深读。
-- **DoD（交付定义）**：1 条 case 通过自验并写进 `EDA-Eval-DesignFlow.jsonl` 才算交付；**深读笔记是中间产物，不算交付**。
+- **DoD（交付定义）**：1 条 case 通过自验并写进 `cases/<shard>/<task_id>.json` 才算交付（运维令 2026-11-23 覆盖）；**深读笔记是中间产物，不算交付**。🚫 不要写进任何 jsonl。
 - **每轮做多少条由你判断**：只要上下文不失控、每条都过质检，一轮做 1 条或 3 条都可以。**硬要求是质量不是数量**：未过闸门的 case 一律标 `incomplete`，不进 jsonl、不计通过率。
-- **深读笔记是中间产物，不算交付**；DoD 仍是「通过自验并写进本 shard jsonl」。
+- **深读笔记是中间产物，不算交付**；DoD 是「通过自验并写进 `cases/<shard>/<task_id>.json`」（运维令 2026-11-23 覆盖，不再用 jsonl）。
 - **单条 trace 过大时**（>2MB 或 >600 msgs）可以本轮只深读，心跳记 `DEBT: 1 deepread 未合成`。连续多轮只深读会让产出滞后——如果确实需要（例如在追一个大线索），说明理由并给出交付 ETA。
 - **选 trace 走台账（去重与进度的事实源）**：`python3 designflow/trace_ledger.py next --n 5` → 在 `.75` 上取候选 → 选第一条 → `claim` 落台账。
   - 出完 case：`mark --session <s> --status case --case-id <EDA-Eval-DesignFlow-XXX>`（覆盖率的唯一分子）；
@@ -187,7 +201,7 @@ git commit -m "designflow #<轮次>: <一句话>" && git push origin master
 **你是 shard B（spice_char）**。只负责以下 domain：characterization, spice_sim
 
 ### 你的文件（不要碰别的 shard 的文件）
-- **jsonl**：`benchmarks/EDA-Eval-DesignFlow/EDA-Eval-DesignFlow_B.jsonl`（只往这个文件追加 case）
+- **case 文件**（运维令 2026-11-23 覆盖）：`benchmarks/EDA-Eval-DesignFlow/cases/<shard>/<task_id>.json`（每条 case 一个 JSON 文件，不再用 jsonl）
 - **台账**：`designflow/trace_ledger_B.tsv`（通过 `trace_ledger.py --shard B` 自动使用）
 - **心跳**：`MEMORY_DESIGNFLOW_B.md`（只写这个文件）
 - **日记忆**：`daily-memories-designflow/daily_B_*.md`
@@ -200,8 +214,8 @@ python3 designflow/trace_ledger.py --shard B mark --session <s> --status case --
 ```
 
 ### 合并
-- **不要碰主 jsonl**（`EDA-Eval-DesignFlow.jsonl`），它由 merge 脚本自动合并 4 个 shard 生成
-- 你的 case 只追加到 `EDA-Eval-DesignFlow_B.jsonl`
+- **不要碰任何 `*.jsonl`**（运维令 2026-11-23 覆盖）：shard jsonl 和 main jsonl 均已物理删除，merge 脚本在缺文件时优雅 skip
+- 你的 case 只写进 `cases/<shard>/<task_id>.json`（运维令 2026-11-23 覆盖，不再追加 jsonl）
 
 ### 收尾提交（只提交自己 shard 的文件）
 ```bash
