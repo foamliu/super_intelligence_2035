@@ -97,15 +97,49 @@ def build_agentic_skeleton(api, sig, refdoc, code_lines):
     ]
 
 
-def contamination_check(text, forbidden_api_set, forbidden_sigs):
-    """secH4 gate: forbidden API name or forbidden signature must not appear."""
-    hits_api = sorted([a for a in forbidden_api_set
-                       if re.search(r'\b' + re.escape(a) + r'\b', text or '')])
+def contamination_check(helper_text, helper_forbidden_set, sig_text, forbidden_sigs):
+    """secH4 gate (two-scope, matches secJ pre-reg analysis).
+    - helper_text (doctest CODE only): scan for eval-used APIs that are STILL
+      forbidden as helpers under the active mode (STRICT=all 111; TIERED=only the
+      HIGH-risk excluded_helpers, e.g. dbNewCV/dbCreateLib). Code-only scope matches
+      the secJ analysis (helper usage is about the code the model learns to produce).
+    - sig_text (full emitted text): scan for forbidden def-signatures from the 158
+      eval tasks (entry-point leakage). The signature gate is ALWAYS enforced in
+      every mode (secH4 retained in ALL modes per sft_isolation_prereg_decision).
+    The TARGET API is guaranteed held-out upstream (we only iterate over
+    available_for_sft_apis)."""
+    hits_api = sorted([a for a in helper_forbidden_set
+                       if re.search(r'\b' + re.escape(a) + r'\b', helper_text or '')])
     hits_sig = []
     for (dn, al) in forbidden_sigs:
-        if dn and re.search(r'\bdef\s+' + re.escape(dn) + r'\s*\(', text or ''):
+        if dn and re.search(r'\bdef\s+' + re.escape(dn) + r'\s*\(', sig_text or ''):
             hits_sig.append(dn)
     return hits_api, sorted(set(hits_sig))
+
+
+def detect_eval_helpers(text, full_forbidden_set, helper_risk):
+    """Transparency log: which eval-used APIs appear as helpers in this pair, and
+    their pre-registered risk grade (LOW/MEDIUM/HIGH). Does NOT gate; used only to
+    annotate each emitted pair and the manifest so the TIERED helper allowance is
+    auditable per pair."""
+    seen = {}
+    for a in full_forbidden_set:
+        if re.search(r'\b' + re.escape(a) + r'\b', text or ''):
+            seen[a] = helper_risk.get(a, 'UNKNOWN')
+    return seen
+
+
+def load_helper_risk(analysis_path):
+    """Load {api: risk_grade} from isolation_prereg_analysis.json helper_analysis.top_helpers."""
+    risk = {}
+    try:
+        d = json.load(open(analysis_path, 'r', encoding='utf-8'))
+        for h in d.get('helper_analysis', {}).get('top_helpers', []):
+            if isinstance(h, dict) and h.get('api'):
+                risk[h['api']] = h.get('risk_grade', 'UNKNOWN')
+    except Exception:
+        pass
+    return risk
 
 
 def main():
@@ -113,24 +147,51 @@ def main():
     ap.add_argument('--audit', default='sft_contamination_isolation_audit.json',
                     help='secH audit json (provides available_for_sft_apis + forbidden sets)')
     ap.add_argument('--apiinfo', default='/nas_data/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json')
-    ap.add_argument('--out', default='heldout_sft_corpus_synthesized.jsonl')
+    ap.add_argument('--out', default='heldout_sft_corpus_synthesized.jsonl',
+                    help='output jsonl (default STRICT wake754 historical file; for a fresh '
+                         'code-only-scope strict run, pass --out heldout_sft_corpus_strict.jsonl)')
     ap.add_argument('--manifest', default='heldout_sft_corpus_manifest.json')
-    ap.add_argument('--limit', type=int, default=80, help='max pairs to emit (sample)')
+    ap.add_argument('--limit', type=int, default=100000, help='max pairs to emit')
     ap.add_argument('--full-stats', action='store_true', help='also scan full pool for doctest stats')
+    ap.add_argument('--mode', choices=['strict', 'tiered'], default='strict',
+                    help='isolation mode. strict=STRICT (no forbidden API anywhere as helper, '
+                         'wake754 664-pair shipment). tiered=TIERED (secJ frozen pre-reg: allow '
+                         'LOW/MED eval-used APIs as helpers, exclude HIGH-risk excluded_helpers '
+                         '[dbNewCV,dbCreateLib]; secH4 signature gate retained).')
+    ap.add_argument('--prereg-decision', default='sft_isolation_prereg_decision.json',
+                    help='secJ frozen pre-reg decision json (provides excluded_helpers for tiered)')
+    ap.add_argument('--prereg-analysis', default='isolation_prereg_analysis.json',
+                    help='secJ analysis json (provides helper risk grades for transparency)')
     args = ap.parse_args()
+
+    if args.mode == 'tiered':
+        if not args.out.endswith('_tiered.jsonl') and args.out == 'heldout_sft_corpus_synthesized.jsonl':
+            args.out = 'heldout_sft_corpus_tiered.jsonl'
+        if args.manifest == 'heldout_sft_corpus_manifest.json':
+            args.manifest = 'heldout_sft_corpus_tiered_manifest.json'
 
     audit = json.load(open(args.audit, 'r', encoding='utf-8'))
     available = set(audit['available_for_sft_apis'])
-    forbidden_api_set = set()
+    full_forbidden_api_set = set()
     for item in audit.get('forbidden_api_frequency', []):
         if isinstance(item, dict) and item.get('api'):
-            forbidden_api_set.add(item['api'])
+            full_forbidden_api_set.add(item['api'])
         elif isinstance(item, str):
-            forbidden_api_set.add(item)
+            full_forbidden_api_set.add(item)
     forbidden_sigs = []
     for t in audit.get('per_task', []):
         for s in t.get('signatures', []):
             forbidden_sigs.append((s.get('def', ''), s.get('args', '')))
+
+    # Build the helper-forbidden set per isolation mode.
+    excluded_helpers = []
+    if args.mode == 'tiered':
+        dec = json.load(open(args.prereg_decision, 'r', encoding='utf-8'))
+        excluded_helpers = sorted(dec.get('rule', {}).get('excluded_helpers', []))
+        helper_forbidden_set = set(excluded_helpers)  # only HIGH-risk excluded helpers forbidden
+    else:
+        helper_forbidden_set = set(full_forbidden_api_set)  # STRICT: all eval-used APIs forbidden as helpers
+    helper_risk = load_helper_risk(args.prereg_analysis) if args.mode == 'tiered' else {}
 
     apiinfo = json.load(open(args.apiinfo, 'r', encoding='utf-8'))
     heldout_apis = sorted([a for a in available if a in apiinfo and apiinfo[a].get('api_descriptions')])
@@ -140,6 +201,10 @@ def main():
     has_doctest = 0
     emitted = []
     dropped_gate = 0
+    dropped_by_helper_api = 0
+    dropped_by_sig = 0
+    pairs_with_allowed_helper = 0
+    helper_use_counter = Counter()
 
     for api in heldout_apis:
         info = apiinfo[api]
@@ -158,11 +223,22 @@ def main():
                        'fetch its details, write the code, run it, then submit once.'
                        % (api, oneliner, sig))
         skeleton = build_agentic_skeleton(api, sig, desc, code_lines)
-        gate_text = instruction + '\n' + '\n'.join(code_lines) + '\n' + sig
-        hits_api, hits_sig = contamination_check(gate_text, forbidden_api_set, forbidden_sigs)
+        code_text = '\n'.join(code_lines)
+        full_text = instruction + '\n' + code_text + '\n' + sig
+        hits_api, hits_sig = contamination_check(code_text, helper_forbidden_set, full_text, forbidden_sigs)
         if hits_api or hits_sig:
             dropped_gate += 1
+            if hits_api:
+                dropped_by_helper_api += 1
+            if hits_sig:
+                dropped_by_sig += 1
             continue
+        # transparency: which eval-used APIs appear as helpers (allowed under TIERED)
+        eval_helpers = detect_eval_helpers(code_text, full_forbidden_api_set, helper_risk) if args.mode == 'tiered' else {}
+        if eval_helpers:
+            pairs_with_allowed_helper += 1
+            for h in eval_helpers:
+                helper_use_counter[h] += 1
         rec = {
             'id': 'sft_heldout_%s' % api,
             'api': api,
@@ -176,7 +252,10 @@ def main():
             'agentic_trajectory_skeleton': skeleton,
             'reference_doc_excerpt': desc[:1600],
             'contamination_gate': {
+                'mode': args.mode,
+                'excluded_helpers': excluded_helpers,
                 'forbidden_api_hit': [], 'forbidden_sig_hit': [], 'pass': True,
+                'allowed_eval_helpers': eval_helpers,
             },
         }
         emitted.append(rec)
@@ -195,28 +274,40 @@ def main():
 
     manifest = {
         'meta': {
-            'purpose': 'Held-out (contamination-isolated) SFT corpus synthesizer (secI). '
+            'purpose': 'Held-out (contamination-isolated) SFT corpus synthesizer (secI/secJ). '
                         'Fixes secF root cause: corrected SFT corpus must contain agentic-form '
                         'trajectories, not only static single-turn doc->code.',
+            'mode': args.mode,
+            'mode_rule': ('STRICT: no eval-used API anywhere as helper (wake754 664-pair shipment).'
+                          if args.mode == 'strict' else
+                          'TIERED (secJ frozen pre-reg): target API held-out; LOW/MED eval-used APIs '
+                          'allowed as helpers; HIGH-risk excluded_helpers %s forbidden; secH4 signature '
+                          'gate retained in ALL modes.' % (excluded_helpers or [])),
             'red_line': 'Only API reference docs used; 158 eval prompt/signature/assertion '
                          'never enter training (sec5.1). secH4 re-check gate enforced.',
             'audit_source': os.path.abspath(args.audit),
             'apiinfo_source': os.path.abspath(args.apiinfo),
+            'prereg_decision': (os.path.abspath(args.prereg_decision) if args.mode == 'tiered' else None),
             'zero_gpu': True,
             'no_protocol_change': True,
         },
         'summary': {
+            'mode': args.mode,
             'n_available_for_sft_apis': len(available),
-            'n_forbidden_apis': len(forbidden_api_set),
+            'n_forbidden_apis': len(full_forbidden_api_set),
             'n_forbidden_signatures': len(forbidden_sigs),
             'n_heldout_apis_with_refdoc': len(heldout_apis),
             'n_heldout_apis_with_doctest': n_heldout_with_doctest,
             'n_emitted_pairs': len(emitted),
             'n_dropped_by_gate': dropped_gate,
+            'n_dropped_by_helper_api': dropped_by_helper_api,
+            'n_dropped_by_sig': dropped_by_sig,
+            'n_pairs_with_allowed_helper': pairs_with_allowed_helper,
             'emit_limit': args.limit,
         },
         'category_distribution': dict(cat_counter.most_common()),
         'api_type_distribution': dict(type_counter.most_common()),
+        'tiered_helper_usage': (dict(helper_use_counter.most_common()) if args.mode == 'tiered' else {}),
         'form_alignment': {
             'template': 'search_apis -> get_api_details -> editor -> run_code -> submit_and_exit',
             'submit_count_per_pair': 1,
@@ -226,8 +317,14 @@ def main():
                     'on these held-out tasks are harvested later (secG6.1, base+cline, pretrain ckpt).',
         },
         'contamination_gate': {
-            'rule': 'forbidden_api_set intersection emitted_text == empty AND no forbidden def-signature leak',
+            'rule': ('STRICT: forbidden_api_set intersection emitted_text == empty'
+                     if args.mode == 'strict' else
+                     'TIERED: excluded_helpers intersection emitted_text == empty AND no forbidden def-signature'),
+            'excluded_helpers': excluded_helpers,
+            'signature_gate_retained': True,
             'n_dropped': dropped_gate,
+            'n_dropped_by_helper_api': dropped_by_helper_api,
+            'n_dropped_by_sig': dropped_by_sig,
             'status': 'PASS' if dropped_gate == 0 else 'SOME_DROPPED',
         },
         'baseline_unchanged': 'A0=43.29%+-3.92% / A1=4.56%+-1.70% / delta=-38.73pp',

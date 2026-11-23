@@ -12402,3 +12402,22 @@ python3 bpt_attribution_p0_dev_compare.py \
 - TIERED 的 2842 是**潜在**doc→code 对规模；正式 SFT 实际用量受 §G6.1 真实 agentic 轨迹占比与训练预算约束。
 - 零 GPU/零 ckpt；未碰 GPU0-3/6/协议·题面·check.py·超时·-p/未起 SFT/RL 训练/未 kill 任何进程。基线表不变 A0=43.29%±3.92% / A1=4.56%±1.70% / Δ=−38.73pp。
 
+### J8. TIERED 语料实发与独立复验（wake756 · 2026-11-23 19:1x · 零 GPU/零 ckpt · §J 冻结决策落地）
+- **目的**：§J5 冻结了「正式 SFT doc→code 隔离口径 = TIERED」的预注册决策，但 §J3 的 2842 只是**分析阶段**的潜在规模。本节把决策**落地为实际可训练语料**并独立复验闸门。
+- **脚本扩展**：`baize_posttrain_heldout_sft_synthesizer.py` 增加 `--mode {strict,tiered}`。两作用域闸门（与 §J 分析口径一致）：① helper-API 检测只在 **doctest 代码**上扫（helper 用途=模型学到的代码）；② §H4 signature 闸门在**全文**上扫（eval entry-point 泄漏），**所有模式都保留**。TIERED 模式从 `sft_isolation_prereg_decision.json` 读 `excluded_helpers=[dbNewCV,dbCreateLib]`，仅这两个 HIGH-risk API 作 helper 被禁，其余 forbidden API 允许作 generic setup helper；每对记录 `allowed_eval_helpers`（含风险分级）作透明审计。
+- **实发结果**（与 §J3 预注册数字逐项对齐）：
+  | 口径 | §J3 预注册 | 本节实发 | 一致 |
+  |:--|--:|--:|:--:|
+  | STRICT（code-only scope） | 682 | 682 | ✅ |
+  | TIERED | 2842 | 2842 | ✅ |
+  | TIERED dropped by HIGH helper | 62 | 62 | ✅ |
+  | TIERED dropped by sig | — | 0 | ✅ |
+- **口径勘误（重要）**：§I/wake754 的 STRICT 发了 **664** 对，用的是**更宽作用域**闸门（在 instruction+code+signature 全文上扫 forbidden API，多丢 18 对）。本节 §J 一致口径（code-only）STRICT = **682**。`heldout_sft_corpus_synthesized.jsonl`（664，wake754 历史 broad-scope 版）**保留不动**；§J 一致口径 STRICT 参考版另存 `heldout_sft_corpus_strict.jsonl`（682）。**权威语料 = TIERED `heldout_sft_corpus_tiered.jsonl`（2842）**。
+- **独立复验**（不依赖合成器自身闸门，重读 audit + jsonl 复查）：
+  - `heldout_sft_corpus_tiered.jsonl`：n_pairs=2842；excluded HIGH helper（dbNewCV/dbCreateLib）出现在 code 的对数=**0**；eval `def <entry_point>(` 签名泄漏=**0**；target API 非 held-out=**0** ⇒ **ALL_CLEAN=True**。
+  - 抽样：api=`EmyGetInstNamePrefix`，allowed helper=`emyString`(MEDIUM)，符合 TIERED 规则。
+- **交付物**：`heldout_sft_corpus_tiered.jsonl`（2842 对，11.88MB）+ `heldout_sft_corpus_tiered_manifest.json`（7.1KB）+ `heldout_sft_corpus_strict.jsonl`（682，§J 一致口径参考）+ `heldout_sft_corpus_strict_manifest.json` + 扩展后的 `baize_posttrain_heldout_sft_synthesizer.py`。
+- **复现命令**：`python3 baize_posttrain_heldout_sft_synthesizer.py --mode tiered`（→ 2842）；`--mode strict --out heldout_sft_corpus_strict.jsonl`（→ 682）。
+- **诚实性**：TIERED 2842 对仍是 doc→code **骨架**（形态对齐 §G3 健康模板），非真实 cline agentic 轨迹；正式 SFT 语料 = TIERED 对 + §G6.1 真实 agentic 轨迹（占比预注册 ≥30%）。2 个 HIGH helper 作 sentinel：post-SFT 若 dbNewCV/dbCreateLib 相关 158 题异常上升 ⇒ 触发泄漏复检。
+- 零 GPU/零 ckpt；未碰 GPU0-3/6/协议·题面·check.py·超时·-p/未起 SFT/RL 训练/未 kill 任何进程。基线表不变 A0=43.29%±3.92% / A1=4.56%±1.70% / Δ=−38.73pp。
+
