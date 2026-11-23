@@ -1484,3 +1484,4 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1794893106158_bcyqg.messages.json	jzeng	hfeg0plg85	134	physical_verify	parked		2026-11-23 18:01	r1005 REJECT: optimize-existing gen_v4_between_power_m4m5.py, jzeng via-M4-M5-power cluster撞重(AutoViaV4Dir3DY-001已采)
 1794825699351_mxlxx	xxchen	hfeg0plg19	341	physical_verify	case	EDA-Eval-DesignFlow-WidthLengthQaPatternGen-001	2026-11-23 21:02	
 1794991068908_8yx4o	xxchen	hfeg0plg19	301	physical_verify	case	EDA-Eval-DesignFlow-EncloseShort3DPatternGen-001	2026-11-23 21:51	enclose_short3D 45pattern: 2 types (oblique_edge+double_oblique_hline), CoreM0C_ENC_005_01Min, deepread done, DEBT synthesis next round (time budget)
+1794967961276_dp48n.messages.json	junweiw	hfeg0pkn001	132	layout_aether	case	EDA-Eval-DesignFlow-RnodeScatterScript-001	2026-11-23 22:38	
