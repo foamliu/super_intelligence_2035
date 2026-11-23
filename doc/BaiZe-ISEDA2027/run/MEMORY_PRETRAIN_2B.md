@@ -1,5 +1,7 @@
 # MEMORY_PRETRAIN_2B.md — BaiZe Stage(i) LLM 预训练（Mamba2-hybrid 2B 超参搜索）运行时状态
-> #3213（2026-11-24 00:57, 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301070/700000(43.01%) step_avg(recent5)=7104ms(7.10s,6991-7220,全<7.4s✅)·loss≈1.99 0NaN/0skip✅ lr=1e-3 grad norm0.087-0.114✅(1 outlier 0.258@300900非持续)·load(directive#2)无eval负载 .29=23.94/24.08/23.96/.12=26.54/26.11/26.30✅·step-time(directive#3)无eval负载·baseline=7.10s·backlog 270k-300k全清42ckpt(42/42 results.json,directive#1✅)·daemon idle(PID1081392 alive~52.9h,waiting 302k)·302k NOT on disk(ETA~02:46)·L1报告42/42ckpt@00:15(36091B,含300k=56.88%✅)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter301070@00:56:29) daemon=/tmp/baize_l1_autoqueue_continuous.log(idle@00:55:32)·纯监控未碰train.sh/configs/.bak/训练进程(铁律悍守)·体积MEMORY≈27.0KB<32KB✅ TASK≈25.3KB<32KB✅）→ daily-memories/2026-11-24.md
+> #3214（2026-11-24 01:03, 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301130/700000(43.02%) step_avg(recent5)=7144ms(7.14s,6993-7236,全<7.4s✅)·loss≈1.99 0NaN/0skip✅ lr=1e-3 grad norm0.090-0.114✅(1 outlier 0.258@300900非持续)·load(directive#2)无eval负载 .29=24.10/23.92/23.95/.12=29.07/27.09/26.53✅·step-time(directive#3)无eval负载·baseline=7.14s·backlog 270k-300k全清42ckpt(42/42 results.json,directive#1✅)·daemon idle(PID1081392 alive~53.1h,waiting 302k)·302k NOT on disk(ETA~02:47)·L1报告42/42ckpt@00:15(36091B,含300k=56.88%✅)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter301130@01:03:39) daemon=/tmp/baize_l1_autoqueue_continuous.log(idle@01:00:32)·纯监控未碰train.sh/configs/.bak/训练进程(铁律悍守)·体积MEMORY≈27.5KB<32KB✅ TASK≈25.3KB<32KB✅）→ daily-memories/2026-11-24.md
+
+> 📦 #3213（2026-11-24 00:57, 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301070/700000(43.01%) step_avg(recent5)=7104ms(7.10s,6991-7220,全<7.4s✅)·backlog 270k-300k全清42ckpt·302k NOT on disk(ETA~02:46)）→ daily-memories/2026-11-24.md；需要时再读。
 
 > 📦 #3212（2026-11-24 00:49, 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301000/700000(43.0%) step~7.11s·backlog全清42ckpt·302k NOT on disk(ETA~02:50)）→ daily-memories/2026-11-24.md；需要时再读。
 
@@ -145,7 +147,7 @@
 > 📦 §#2990–#3034（已归档，含 #3030 286k eval DONE·#3029-#2990 286k/284k/282k eval RUNNING监控轮）→ daily-memories/2026-11-22.md；需要时再读。
 > 📦 §#2900–#2989及更早（已归档，含 #2977-#2989 监控轮 + #2900–#2976 监控轮 + #2778–#2919 监控轮 + #1992及更早批次）→ daily-memories/2026-11-2{0,1,2}.md & ARCHIVE_OPERATOR_PRETRAIN.md；需要时再读。
 
-WAITING: 0(✅ 2026-11-24 00:57 #3213 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301070/700000(43.01%) step~7.10s全<7.4s✅·loss≈1.99 0NaN/0skip✅·load .29=23.94/.12=26.54✅(无eval负载)·backlog 270k-300k全清42ckpt(42/42 results.json)·L1报告42/42ckpt含300k=56.88%✅·daemon idle waiting 302k(ETA~02:46)·纯监控未碰训练进程(铁律悍守))
+WAITING: 0(✅ 2026-11-24 01:03 #3214 放行autoqueue令·监控巡检·daemon idle·训练健康iter=301130/700000(43.02%) step~7.14s全<7.4s✅·loss≈1.99 0NaN/0skip✅·load .29=24.10/.12=29.07✅(无eval负载)·backlog 270k-300k全清42ckpt(42/42 results.json)·L1报告42/42ckpt含300k=56.88%✅·daemon idle waiting 302k(ETA~02:47)·纯监控未碰训练进程(铁律悍守))
 
 ---
 
