@@ -823,8 +823,8 @@ huqxk					parked		2026-11-23 03:22	r1012 peek: e0044587@hfeg0pnd001 mc6 -
 1795087991243_e0x94					parked		2026-11-23 06:34	r1018 peek: not clean A-domain produce-task
 1795166931389_wg5qc					parked		2026-11-23 06:34	r1018 peek: not clean A-domain produce-task
 1794881653088_w7f26					parked		2026-11-23 06:34	r1018 peek: not clean A-domain produce-task
-1795159788338_gw1z7.messages.json	zhiqihe	hfeg0plg103	106	eda_other	case	EDA-Eval-DesignFlow-VlogFindLibSubdepParseProduce-001	2026-11-23 07:10	
-1794807475487_qm8x2.messages.json	thomas1w	hfeg0pjn197	41	verification	case	EDA-Eval-DesignFlow-RedBistColFilterAuditProduce-001	2026-11-23 07:39	
+1795159788338_gw1z7.messages.json	zhiqihe	hfeg0plg103	106	eda_other	case	EDA-Eval-DesignFlow-VlogFindLibSubdepParseProduce-001	2026-11-24 00:24	
+1794807475487_qm8x2.messages.json	thomas1w	hfeg0pjn197	41	verification	case	EDA-Eval-DesignFlow-RedBistColFilterAuditProduce-001	2026-11-24 00:24	
 1793688118297_2yua1	e0041392	hfeg0pkn002	32	cross_domain	parked		2026-11-23 07:55	r1021: .gds:38+gdsii:28+.def:8 dominant C-domain (gds/def), cross-shard C skip
 1795165374371_3byhk	dechaoc	hfeg0pkn004	243	cross_domain	parked		2026-11-23 07:55	r1021: drc:3404 dominant C (drc>verilog:3386 in C-KW), intent-dup r990 per r1009 MEMORY; drc-dominant C skip
 1794892278585_77z85	cliu	hfeg0pkn002	89	cross_domain	parked		2026-11-23 07:55	r1021: verilog:761+lvs:244+drc:201 lvs/drc-dominant C skip
@@ -854,3 +854,5 @@ anner account not real design user, skip
 1791945402134_azuve	xingx	hfeg0pkn003	11	verification	parked		2026-11-23 22:49	NOFILE rotated away (3 IPs all gone)
 1791968046078_f4n69	laryu	hfeg0pkn001	12	digital	parked		2026-11-23 22:59	cross_domain->C: pyAether dbCrtPin/dbCrtLabel layout API Q&A (layout_aether), not A-domain
 1789980012503_iyqdr					case	EDA-Eval-DesignFlow-HierSearchMissingDiagQA-001	2026-11-23 23:53	VIABLE-DEFERRED: A-domain(verification) verilog:119 dominant, SKILL .il script debug-Q&A (CXMTseCVPSHierSearch.il 708 lines, .HierSearch mkdir in CXMTseCVPSHierSearch_all@L258-260 cond ddGetObj(lib cell)); live file confirmed; needs full .il fetch+case build next round
+1792113124796_ay35u.messages.json	e13zhang	hfeg0pkn004	13	verification	case	EDA-Eval-DesignFlow-VcsCompileErrorDiagnoseProduce-001	2026-11-24 00:24	
+1795143264722_46vx0.messages.json					case	EDA-Eval-DesignFlow-Lp6StimListHeaderProduce-001	2026-11-24 00:24	
