@@ -2015,3 +2015,5 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1794999346452_d1jo3					case	EDA-Eval-DesignFlow-SchNetlistExtract-001	2026-11-23 12:29	D reclaim from C; schematic_netlist case
 1789560867469_6b740	junxu	hfeg0pkn005	166	waveform	case	EDA-Eval-DesignFlow-WvCliCoreProduce-001	2026-11-23 13:52	
 1794790671331_5sbqn	ypzheng	hfeg0plg103	122	waveform	case	EDA-Eval-DesignFlow-WlToggleClassify-001	2026-11-23 14:19	
+1795140832305_x2jan	gallopc	hfeg0pkn004	100	waveform	parked		2026-11-23 14:36	host hfeg0pkn004 ssh hangs (ConnectTimeout ignored, timeout 124); try other host
+1789635000404_9568y	junxu	hfeg0pkn005	91	waveform	case	EDA-Eval-DesignFlow-FifoPvtCornerAudit-001	2026-11-23 14:53	
