@@ -1485,3 +1485,5 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1794825699351_mxlxx	xxchen	hfeg0plg19	341	physical_verify	case	EDA-Eval-DesignFlow-WidthLengthQaPatternGen-001	2026-11-23 21:02	
 1794991068908_8yx4o	xxchen	hfeg0plg19	301	physical_verify	case	EDA-Eval-DesignFlow-EncloseShort3DPatternGen-001	2026-11-23 21:51	enclose_short3D 45pattern: 2 types (oblique_edge+double_oblique_hline), CoreM0C_ENC_005_01Min, deepread done, DEBT synthesis next round (time budget)
 1794967961276_dp48n.messages.json	junweiw	hfeg0pkn001	132	layout_aether	case	EDA-Eval-DesignFlow-RnodeScatterScript-001	2026-11-23 22:38	
+1795140324339_wdc44	e0047600	hfeg0pkn002	154	physical_verify	parked		2026-11-23 23:09	session file not present on recorded hosts 10.129.2.11/10.129.40.209 (rotated/cleaned); r1024 retried 6878r instead
+1794791688016_6878r					case	EDA-Eval-DesignFlow-ViewerRoot404Diag-001	2026-11-23 23:09	
