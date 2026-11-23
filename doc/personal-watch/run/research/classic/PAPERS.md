@@ -10,6 +10,9 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **380** 条（**第一百零四轮 2026-11-24 06:0x 补 3 条 → 380**：BYOL `2006.07733`（**8,808**，NeurIPS 2020、OpenAlex `conference-paper`；online/target 双网络，target 用慢速滑动平均更新，**不用负样本**，ResNet-50 线性评测 **74.3%**、更大 ResNet **79.6%**，迁移/半监督持平或更好）/ DINO `2104.14294`（**11,688**，ICCV 2021 pp. 9630–9640；自监督 ViT 特征显式含语义分割结构，小 ViT k-NN **78.3%**、ViT-Base 线性 **80.1%**；强调动量编码器 + multi-crop + 小 patch）/ ColBERT `2004.12832`（**453 <500 按「方法论常青」收**，SIGIR 2020、OpenAlex 记 `preprint`；BERT 分别编码 query/doc + 逐 token late interaction（MaxSim），文档向量可离线预计算且对剪枝友好，可端到端向量检索；效果与 BERT 类相当，每查询快两个数量级、FLOPs 少四个数量级）；核验：arXiv `id_list` 批量 **`200` + atom**（7,976 B / 3 entry，`published` = 2020-04-27T14:21:03Z / 2020-06-13T22:35:21Z / 2021-04-29T12:28:51Z）+ DINO 单批 **`200` / 2,699 B** + abs 页 **3/3 `200`**（45,586 / 42,724 / 43,149 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **3/3 `200`**（904,685 / 640,182 / 201,593 B）+ OpenAlex **3/3 `200`**（8,808 / 11,688 / 453，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；⚠️ 候选 `2103.16302` 经 abs 实测为 *Rethinking Spatial Dimensions of Vision Transformers*（PiT，非 DINO）⇒ 弃、改用真 ID `2104.14294`；本轮归属：vision **+3** · pretrain **+2** · data **+2** · harness **+2** · designflow **+1** · zhulong **+1**（一篇可多线））
+
+
 **本轮快照**：累计 **377** 条（**第一百零三轮 2026-11-24 03:0x 补 3 条 → 377**：MoCo `1911.05722`（**19,477**，CVPR 2020、OpenAlex `conference-paper`；把对比学习当字典查询：队列 + 动量编码器，字典规模与 mini-batch 解耦，冻结特征线性协议下 ImageNet 有竞争力，迁移到 PASCAL VOC / COCO 等 **7** 个检测/分割任务可超过监督预训练）/ OWL-ViT `2205.06230`（**362**，ECCV 2022、OpenAlex 记 `preprint`；标准 ViT + 图文对比预训练 + 端到端检测微调，做零样本文本条件与单样本图像条件检测；**&lt;500 按「本领域权威」收**）/ PaLI `2209.06794`（**976**，ICLR 2023 `Notable-top-5%`、OpenAlex 记 `preprint`；联合放大视觉与语言，训练 **4B** 参数 ViT-e，预训练图文集 **10B** 图 / **>100** 语言，在 captioning、VQA、场景文字理解等刷新 SOTA）；核验：arXiv `id_list` 批量 **`200` + atom**（8,424 B / 3 entry，`published` = 2019-11-13T18:53:26Z / 2022-05-12T17:20:36Z / 2022-09-14T17:24:07Z；PaLI 单批 `200` / 4,394 B）+ abs 页 **3/3 `200`**（42,639 / 43,027 / 45,703 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **3/3 `200`**（658,843 / 422,625 / 397,253 B）+ OpenAlex **3/3 `200`**（19,477 / 362 / 976，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；⚠️ 候选 `2301.03728` 经 OpenAlex 实测为 *Scaling Laws for Generative Mixed-Modal Language Models*（非预期的 ViT-22B）⇒ 弃；本轮归属：vision **+3** · pretrain **+2** · harness **+2** · data **+2** · designflow **+1** · zhulong **0**（一篇可多线））
 
 
@@ -6654,4 +6657,58 @@
 | 与我们工作的关系 | **vision（主 · 视觉塔容量）**：PaLI 的对照点是「语言塔远大于视觉塔」——它专门训练 4B ViT-e 来量化视觉容量增益；vision 线评估视觉编码器时须把**参数量与图像分辨率**一并列出，只报精度不报容量 ⇒ 无法归因。<br>**pretrain（联合缩放）**：可作为「视觉与语言必须同步放大」的经验证据；但论文未给幂律拟合 ⇒ 不得当 scaling law 引用。<br>**data（多语图文混合）**：10B 图 / 100+ 语言的混合配方提示「语言覆盖」也是数据配比维度；data 线若要加中文图文对，应预注册「加中文后英文任务是否退化」的对照。<br>**harness**：多任务统一接口下，每任务指标与 prompt 模板须写清；跨语言任务须分语种报。<br>**zhulong**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-24**（第一百零三轮 · 03:00 时窗） |
 | 核验状态 | abs 页 **`200` / 45,703 B**，`citation_title` + `citation_date` = `2022/09/14` 逐字、`Comments` = `ICLR 2023 (Notable-top-5%)`；arXiv API 单批 **`200` + atom**（`published` = `2022-09-14T17:24:07Z`）；ar5iv 全文 **`200` / 397,253 B**（页内仅通用地址 `pali-communications@google.com` ⇒ 个人邮箱记「未找到」）；OpenAlex **`200`（976 / 2022 / preprint）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+
+---
+
+## 378. Bootstrap your own latent: A new approach to self-supervised Learning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Bootstrap your own latent: A new approach to self-supervised Learning |
+| 作者（前 3） | Jean-Bastien Grill · Florian Strub · Florent Altché（共 **14** 位；另 Corentin Tallec · Pierre H. Richemond · Elena Buchatskaya · Carl Doersch · Bernardo Avila Pires · Zhaohan Daniel Guo · Mohammad Gheshlaghi Azar · Bilal Piot · Koray Kavukcuoglu · Rémi Munos · Michal Valko；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-06-13T22:35:21Z`） |
+| 会议 / 期刊 | **NeurIPS 2020**（arXiv 无 `comment`；OpenAlex `type=conference-paper`、`source` = `neural information processing systems`；口径分列） |
+| 被引数 | **8,808**（OpenAlex `10.48550/arxiv.2006.07733`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2006.07733> ｜ arXiv DOI `10.48550/arxiv.2006.07733` |
+| 一句话贡献 | **BYOL**：用 online 网络预测 target 网络在**另一个增广视图**下的表示，target 由 online 的**慢速滑动平均**更新；**不使用负样本对**，在 ResNet-50 线性评测下达到 **74.3%** ImageNet top-1、更大 ResNet 达 **79.6%**，并在迁移与半监督基准上与当时 SOTA 持平或更好。 |
+| 与我们工作的关系 | **vision（主 · 无负样本自监督基线）**：若 vision 线在无标注图像上预训练视觉塔，BYOL 是「不要负样本」的最小对照；实验必须固定增广算子与 target 动量 τ 的调度，否则「BYOL 更强」与「增广更强」无法区分。<br>**pretrain（EMA teacher 的实现检查）**：target 只做前向、梯度只走 online 分支；pretrain 线上 EMA 必须记录「哪些参数被 stop-gradient」「τ 的起止值与上升曲线」，并检查 BN 统计量是否也走 EMA。<br>**data（无标签图像预算）**：BYOL 把标注预算换成图像预算；data 线须把「无标签图像数 × epoch」写进配置，并报告同 GPU-hours 下与监督预训练的对照，而不是只报 ImageNet 线性分。<br>**harness（线性评测协议）**：必须写清 frozen features + linear classifier 的学习率 / epoch / 是否用 BN，否则无法与论文 74.3% 对齐。<br>**zhulong**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零四轮 · 06:00 时窗） |
+| 核验状态 | abs 页 **`200` / 45,586 B**，`citation_title` + `citation_date` = `2020/06/13` 逐字；arXiv API `id_list` 批量 **`200` + atom**（7,976 B / 3 entry，`published` = `2020-06-13T22:35:21Z`）；ar5iv 全文 **`200` / 904,685 B**（首页明文 `jbgrill@google.com` / `fstrub@google.com` 等各 2 处，**2020 年论文页地址**）；OpenAlex **`200`（8,808 / 2020 / conference-paper）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 379. Emerging Properties in Self-Supervised Vision Transformers
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Emerging Properties in Self-Supervised Vision Transformers |
+| 作者（前 3） | Mathilde Caron · Hugo Touvron · Ishan Misra（共 **7** 位；另 Hervé Jégou · Julien Mairal · Piotr Bojanowski · Armand Joulin；arXiv `citation_author` 逐字核） |
+| 年份 | **2021**（arXiv v1 `2021-04-29T12:28:51Z`） |
+| 会议 / 期刊 | **ICCV 2021**（arXiv `comment` = `21 pages`；OpenAlex `type=conference-paper`、`source` = `IEEE/CVF International Conference on Computer Vision (ICCV)`、pp. **9630–9640**；口径分列） |
+| 被引数 | **11,688**（OpenAlex `10.48550/arxiv.2104.14294`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2104.14294> ｜ arXiv DOI `10.48550/arxiv.2104.14294` |
+| 一句话贡献 | **DINO**：把自监督 ViT 的训练写成**无标签的自蒸馏**；发现自监督 ViT 特征**显式含有语义分割信息**（监督 ViT 与 convnet 都不明显），且是很强的 k-NN 分类器（小 ViT 在 ImageNet 上 **78.3%** top-1），并强调**动量编码器、multi-crop、小 patch** 三个要素；ViT-Base 线性评测达 **80.1%** top-1。 |
+| 与我们工作的关系 | **vision（主 · ViT 自监督特征）**：若视觉塔要同时服务分类与**区域级**任务（缺陷定位 / 版图图形），DINO 的「特征自带分割结构」值得作为对照轴；试点须固定 patch size 与 multi-crop 的裁剪尺度，并同时报 k-NN 与线性探针，避免只挑好看的一项。<br>**pretrain（自蒸馏目标）**：teacher 用 momentum encoder、输出做 centering + sharpening（温度 τ_s / τ_t）——pretrain 线若引入自蒸馏，须预注册这两个温度的扫描区间，并记录是否出现「塌缩到单一维度」的失败模式。<br>**data（无标签预训练）**：DINO 不需要标签，但 multi-crop 等价于增加视图预算；data 线应把「每图裁剪数」计入数据吞吐，不要只记图像数。<br>**harness（k-NN / 线性两套协议）**：两套协议必须分开报并写清 k 与距离度量；混合成一个分数 ⇒ 不可比。<br>**designflow（区域语义的可迁移性）**：注意力图可用于弱定位，但须用可执行 IoU 阈值验证，不能只看可视化「像」。<br>**zhulong**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零四轮 · 06:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,724 B**，`citation_title` + `citation_date` = `2021/04/29` 逐字、`Comments` = `21 pages`；arXiv API **`200` + atom**（2,699 B / 1 entry，`published` = `2021-04-29T12:28:51Z`）；ar5iv 全文 **`200` / 640,182 B**（页内明文 `mathilde@fb.com` 1 处，**2021 年论文页地址**）；OpenAlex **`200`（11,688 / 2021 / conference-paper）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 380. ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT |
+| 作者（前 3） | Omar Khattab · Matei Zaharia（共 **2** 位；Stanford University；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-04-27T14:21:03Z`） |
+| 会议 / 期刊 | **SIGIR 2020**（arXiv `comment` 原文 `Accepted at SIGIR 2020`；OpenAlex `type=preprint`、`source` = arXiv ⇒ 被引按预印本记） |
+| 被引数 | **453**（OpenAlex `10.48550/arxiv.2004.12832`，查询日 **2026-11-24**；**&lt;500 ⇒ 按「方法论常青」收录**：late interaction 是 ColBERTv2 / PLAID 与大量 RAG 检索栈的公共基线，至今被反复对比） |
+| arXiv / DOI | <https://arxiv.org/abs/2004.12832> ｜ arXiv DOI `10.48550/arxiv.2004.12832` |
+| 一句话贡献 | **ColBERT**：用 BERT **分别编码 query 与 document**，再用一个便宜的 **late interaction** 步骤（逐 token 相似度 + MaxSim）建模细粒度相关性；因为文档表示可**离线预计算**，查询时只做轻量交互，并且该交互**对剪枝友好**，可直接用向量相似度索引在大规模语料上做端到端检索；在作者测试的 **两个 passage search 数据集**上效果与 BERT 类模型相当（优于所有非 BERT 基线），每查询**快两个数量级、FLOPs 少四个数量级**。 |
+| 与我们工作的关系 | **harness（主 · 检索评测口径）**：若 harness 要评「规格 / 文档检索」子任务，ColBERT 提示必须把**候选深度 k**、是否两段式（先 BM25 召回再 late interaction 重排）、以及 MRR@10 / Recall@k 分开报；只报端到端平均分 ⇒ 无法定位是召回还是重排的问题。<br>**data（索引成本口径）**：逐 token 存向量意味着索引大小 ≈ token 数 × 维度 × 精度；data 线建索引账本时须新增「原文 token / 向量条数 / 索引字节数 / 查询 QPS」四列，否则「检索更好」无法换算成成本。<br>**zhulong（长文档成本）**：长文档的 token 级索引会线性膨胀；成本表应把「索引存储 + 查询算力」与生成成本并列，避免只算 GPU 训练成本。<br>**designflow（EDA 文档 / 规格检索）**：MaxSim 对**标识符精确匹配**可能不如词法匹配敏感；若用于 spec / 寄存器名检索，应预注册「纯 late interaction」vs「late interaction ∪ BM25」的对照，并按标识符类查询单列指标。<br>**pretrain**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零四轮 · 06:00 时窗） |
+| 核验状态 | abs 页 **`200` / 43,149 B**，`citation_title` + `citation_date` = `2020/04/27` 逐字、`Comments` = `Accepted at SIGIR 2020`；arXiv API `id_list` 批量 **`200` + atom**（7,976 B / 3 entry，`published` = `2020-04-27T14:21:03Z`）；ar5iv 全文 **`200` / 201,593 B**（首页明文 `okhattab@stanford.edu` / `matei@cs.stanford.edu` 各 2 处，**2020 年论文页地址**）；OpenAlex **`200`（453 / 2020 / preprint）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
 

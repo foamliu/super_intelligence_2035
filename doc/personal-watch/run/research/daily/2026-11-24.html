@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-24（A 轨 5/5 · B 轨第一百零三轮 → 377） · research 线</title>
+<title>论文观察日报 · 2026-11-24（A 轨 5/5 · B 轨第一百零四轮 → 380） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -37,8 +37,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-24</h1>
-  <div class="sub"><b>03:00 时窗 · A 轨 5/5 · B 轨第一百零三轮 +3 → 377 · 作者网 344 · 发信累计 156 封 · 回信率 0/156</b></div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-24 03:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
+  <div class="sub"><b>06:00 时窗 · A 轨 5/5（本轮 0 新收）· B 轨第一百零四轮 +3 → 380 · 作者网 347 · 发信累计 157 封 · 回信率 0/157</b></div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-24 06:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -181,6 +181,67 @@
   <li><b>作者网 +3</b>：Matthias Minderer / Alexey Gritsenko（仅建档，旧地址）/ Bingsheng He（NUS 当前地址，已发信）⇒ 341 → <b>344</b>；X 仍 <b>130</b>。</li>
   <li><b>发信 +1</b>：#156 Bingsheng He 中文 202 字，<code>SENT OK 03:03:29</code> ⇒ 累计 <b>156</b>；回信率 <b>0/156</b>，0 封到期。</li>
   <li><b>去重与纠错</b>：<code>2611.27506</code> / <code>2611.27607</code> / <code>2611.27973</code> 已收录 ⇒ 跳过；候选 <code>2301.03728</code> 实测为另一篇论文 ⇒ 弃。</li>
+</ul>
+
+<div class="note">
+  <b>A 轨口径（06:00 时窗复核）</b>：<code>cat:cs.CL&amp;max_results=5&amp;sortBy=submittedDate</code> <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（<b>13,309 B / 5 entry</b>），<code>published</code> 上界仍 <b><code>2026-11-20T18:51:29Z</code></b>；距本窗（2026-11-23 22:00 UTC）约 <b>75.1h &gt; 72h</b> ⇒ 公告批已出窗，且今日 5/5 已满 ⇒ <b>本轮 0 新收</b>，不凑第 6 篇。
+</div>
+
+<h3 class="sec">🅱 B 轨 · 06:00 时窗（第一百零四轮 +3 → 380）</h3>
+<table class="plain">
+  <tr><th>#</th><th>论文</th><th>年份 / 会议</th><th>被引</th><th>一句话贡献</th><th>归属线</th></tr>
+  <tr><td>378</td><td><a href="https://arxiv.org/abs/2006.07733">Bootstrap your own latent: A new approach to self-supervised Learning</a>（Jean-Bastien Grill 等，14 位）</td><td>2020 · NeurIPS 2020（OpenAlex）</td><td><b>8,808</b></td><td>online 网络预测 target 在另一增广视图下的表示，target 用慢速滑动平均更新；<b>不用负样本</b>，ResNet-50 线性评测 <b>74.3%</b>、更大 ResNet <b>79.6%</b>，迁移 / 半监督持平或更好。</td><td>vision（主）· pretrain · data · harness</td></tr>
+  <tr><td>379</td><td><a href="https://arxiv.org/abs/2104.14294">Emerging Properties in Self-Supervised Vision Transformers</a>（Mathilde Caron 等，7 位）</td><td>2021 · ICCV 2021 pp. 9630–9640</td><td><b>11,688</b></td><td>无标签自蒸馏（DINO）：自监督 ViT 特征<b>显式含语义分割结构</b>，小 ViT k-NN <b>78.3%</b>、ViT-Base 线性 <b>80.1%</b>；强调动量编码器 + multi-crop + 小 patch。</td><td>vision（主）· pretrain · data · harness · designflow</td></tr>
+  <tr><td>380</td><td><a href="https://arxiv.org/abs/2004.12832">ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT</a>（Omar Khattab · Matei Zaharia，Stanford）</td><td>2020 · SIGIR 2020</td><td><b>453</b>（&lt;500 按「方法论常青」收）</td><td>BERT 分别编码 query / document + 逐 token late interaction（MaxSim）；文档向量可离线预计算、交互对剪枝友好，可做端到端向量检索；效果与 BERT 类相当，每查询快两个数量级、FLOPs 少四个数量级。</td><td>harness（主）· data · zhulong · designflow</td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted);">被引数 = OpenAlex（查询日 <b>2026-11-24</b>）；会议 = arXiv <code>comment</code> + OpenAlex <code>source</code>，两套口径分列。元数据核验：<code>id_list</code> 批量 <code>200</code> + atom（7,976 B / 3 entry）+ DINO 单批 <code>200</code> / 2,699 B；abs 3/3 <code>200</code>（45,586 / 42,724 / 43,149 B）；ar5iv 3/3 <code>200</code>（904,685 / 640,182 / 201,593 B）；OpenAlex 3/3 <code>200</code>（8,808 / 11,688 / 453）；三 ID 条目级查重 0 命中。⚠️ 候选 <code>2103.16302</code> 经 abs 实测为 <i>Rethinking Spatial Dimensions of Vision Transformers</i>（PiT，非 DINO）⇒ 弃、改用真 ID <code>2104.14294</code>。</p>
+
+<h3 class="sec">👥 作者关系网（+3 → 347）</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名</th><th>机构</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td>345</td><td>Omar Khattab</td><td>MIT EECS &amp; CSAIL（Assistant Professor）</td><td><b>okhattab@mit.edu</b>（本人主页 <code>omarkhattab.com</code> <code>200</code> / 17,356 B 页内 mailto；<b>当前地址</b>）</td><td>未找到</td><td><b>已发信</b>（#157）</td></tr>
+  <tr><td>346</td><td>Matei Zaharia</td><td>UC Berkeley（Professor of EECS；Databricks CTO）</td><td><b>matei@berkeley.edu</b>（本人主页 <code>people.eecs.berkeley.edu/~matei/</code> <code>200</code> / 57,922 B 页内明文；<b>当前地址</b>）</td><td>未找到</td><td>待跟踪（同一论文 ≤1 封 ⇒ 本窗不发）</td></tr>
+  <tr><td>347</td><td>Mathilde Caron</td><td>Google Research（Grenoble；背景，未取得官方人员页）</td><td><b>未找到当前地址</b>（仅 2021 年 <code>mathilde@fb.com</code>；<code>mathilde-caron.github.io</code> <code>404</code> ⇒ 不发信、不猜）</td><td>未找到（<code>@mcaron31</code> 单源未二次核验 ⇒ 不记）</td><td>待跟踪（仅建档）</td></tr>
+</table>
+
+<h3 class="sec">✉ 作者请教信（本时窗 1 封 → 累计 157）</h3>
+<div class="card">
+  <h2>#157 · Omar Khattab（MIT）· ColBERT <code>2004.12832</code> · 英文 199 词</h2>
+  <table class="kv">
+    <tr><th>地址复核</th><td><code>https://omarkhattab.com/</code> <code>200</code> / 17,356 B，页内明文 <code>okhattab@mit.edu</code>；<code>meta description</code> 自述 <code>Assistant Professor at MIT</code>；未用 2020 年论文页旧地址 <code>okhattab@stanford.edu</code>。</td></tr>
+    <tr><th>问题（只对 ColBERT 成立）</th><td>① 逐 token 文档向量的索引压缩档位与 MRR@10 拐点；② 「快两个数量级 / FLOPs 少四个数量级」在候选深度 k 变大后何时失效；③ 代码标识符密集查询下 MaxSim 是否稀释精确匹配、是否与 BM25 取并集。</td></tr>
+    <tr><th>发送状态</th><td><code>SENT OK 06:04:34</code>（今日 <b>5/12</b>）；落款两行、其后无行；正文无项目名；与今日前四封开头句 / 问句零共用。</td></tr>
+    <tr><th>回信状态</th><td><b>未到期</b>（到期日 2026-12-08）｜ 累计回信率 <b>0/157</b>，0 封到期（最早 11-25）</td></tr>
+  </table>
+</div>
+
+<h3 class="sec">对各线的可执行建议（6 线 · 06:00）</h3>
+<table class="plain">
+  <tr><th>线</th><th>可执行建议</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>EMA teacher 写进 runbook</b>（<code>2006.07733</code> / <code>2104.14294</code>）：新增三列「哪些参数 stop-gradient / 动量 τ 起止值与上升曲线 / BN 统计量是否也走 EMA」；判据 = 任一项缺失则该 run 不进对照表。<b>自蒸馏温度预注册</b>：τ_s / τ_t 至少扫 3 档，并记录「塌缩到单一维度」的失败模式。</td></tr>
+  <tr><td><b>vision</b></td><td><b>视觉塔自监督对照拆成三轴</b>（<code>2104.14294</code>）：patch size × multi-crop 裁剪尺度 × 是否动量编码器；同时报 k-NN 与线性探针两套协议，禁止只报好看的一项。<b>非自然图像最小验证</b>：先在版图 / 显微图上跑 DINO 特征 + 可执行 IoU 阈值，再决定是否迁移。</td></tr>
+  <tr><td><b>harness</b></td><td><b>检索评测协议固定四元组</b>（<code>2004.12832</code>）：候选深度 k、是否两段式（BM25 召回 → late interaction 重排）、MRR@10、Recall@k；缺任一项的「检索更好」不进结论表。<b>混合检索对照</b>：纯向量 vs 向量 ∪ BM25，按标识符类查询单列。</td></tr>
+  <tr><td><b>data</b></td><td><b>索引账本新增四列</b>（<code>2004.12832</code>）：原文 token / 向量条数 / 索引字节数 / 查询 QPS；否则「检索更强」无法换算成本。<b>无标签图像预算</b>（<code>2006.07733</code>）：配置写「图像数 × 每图裁剪数 × epoch」，同 GPU-hours 与监督预训练对照。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>成本表并列「索引存储 + 查询算力」</b>（<code>2004.12832</code>）：长文档的 token 级索引线性膨胀，须与生成成本同时报；不允许只算训练 GPU 成本。<b>检索收益口径</b>：先报每查询延迟分解（编码 / 检索 / 重排），再报端到端提升。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>规格 / 寄存器名检索加精确匹配基线</b>（<code>2004.12832</code>）：MaxSim 之外必须有 BM25 / 子串匹配对照，并按「含标识符」与「纯自然语言」两类查询分桶报召回；<b>区域级语义</b>（<code>2104.14294</code>）只作弱定位线索，判分仍用可执行 IoU / 掩码阈值。</td></tr>
+</table>
+
+<h3 class="sec">附录 · 06:00 时窗检索式与核验（可复核）</h3>
+<ul class="tight">
+  <li><b>A 轨复核</b>：<code>cat:cs.CL&amp;max_results=5&amp;sortBy=submittedDate</code>（<code>--noproxy '*'</code>）<code>200</code> / <code>application/atom+xml</code> / <b>13,309 B / 5 entry</b>；<code>published</code> 上界 <code>2026-11-20T18:51:29Z</code>（距本窗 2026-11-23 22:00 UTC 约 <b>75.1h &gt; 72h</b>）⇒ 今日 5/5 已满，本轮 0 新收。</li>
+  <li><b>B 轨元数据</b>：arXiv <code>id_list=2006.07733,2103.16302,2004.12832</code> 批量 <code>200</code> + atom（<b>7,976 B / 3 entry</b>）；DINO 单批 <code>id_list=2104.14294</code> <code>200</code> + atom（2,699 B / 1 entry）；abs 3/3 <code>200</code>（45,586 / 42,724 / 43,149 B，<code>citation_title</code> + <code>citation_date</code> 逐字）；ar5iv 3/3 <code>200</code>（904,685 / 640,182 / 201,593 B）；OpenAlex 3/3 <code>200</code>（8,808 / 11,688 / 453，查询日 2026-11-24）。</li>
+  <li><b>去重与纠错</b>：三 ID 在 <code>PAPERS.md</code> 条目级查重 <b>0 命中</b>（B 轨不进 <code>SEEN.md</code> / <code>papers.jsonl</code>）；候选 <code>2103.16302</code> 经 abs 实测为 <i>Rethinking Spatial Dimensions of Vision Transformers</i>（PiT，非 DINO）⇒ 当场弃、改用 <code>2104.14294</code>。</li>
+  <li><b>作者地址</b>：<code>omarkhattab.com</code> <code>200</code> / 17,356 B（<code>okhattab@mit.edu</code>）；<code>people.eecs.berkeley.edu/~matei/</code> <code>200</code> / 57,922 B（<code>matei@berkeley.edu</code>）；<code>khattab.com</code> <code>403</code>、<code>mathilde-caron.github.io</code> <code>404</code>、<code>di.ens.fr/~caron/</code> <code>404</code> ⇒ 不作来源、不猜地址。</li>
+  <li><b>数字口径</b>：被引数 = OpenAlex（查询日 2026-11-24）；论文数字 = 作者自报，本线未复现；ColBERT 453 &lt; 500 ⇒ 按「方法论常青」收录并写明理由。</li>
+</ul>
+
+<h3 class="sec">本轮变更说明（03:00 → 06:00）</h3>
+<ul class="tight">
+  <li><b>A 轨不动</b>：今日 5/5 已满，且 <code>published</code> 上界距本窗 75.1h 已出 72h 窗 ⇒ 0 新收，不凑第 6 篇。</li>
+  <li><b>新增 3 篇 B 轨</b>：BYOL <code>2006.07733</code>、DINO <code>2104.14294</code>、ColBERT <code>2004.12832</code> ⇒ 377 → <b>380</b>；ColBERT 453 &lt; 500 按「方法论常青」收录。</li>
+  <li><b>作者网 +3</b>：Omar Khattab（MIT 当前地址，已发信）/ Matei Zaharia（Berkeley 当前地址，同论文不发）/ Mathilde Caron（无当前地址，仅建档）⇒ 344 → <b>347</b>；X 仍 <b>130</b>。</li>
+  <li><b>发信 +1</b>：#157 Omar Khattab 英文 199 词，<code>SENT OK 06:04:34</code> ⇒ 累计 <b>157</b>；回信率 <b>0/157</b>，0 封到期。</li>
+  <li><b>纠错</b>：候选 <code>2103.16302</code> 实为 PiT（非 DINO）⇒ 弃；DINO 真 ID 为 <code>2104.14294</code>。</li>
 </ul>
 
 <footer>

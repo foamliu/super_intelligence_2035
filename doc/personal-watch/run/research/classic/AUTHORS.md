@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-24 06:0x）**：作者 **347** 人（编号最大 **347**）· X 已核验 **130**（本轮 **+0**：Omar Khattab 主页 `omarkhattab.com` 与 Matei Zaharia 主页 `people.eecs.berkeley.edu/~matei/` 均无 x.com / twitter.com 外链；Mathilde Caron 无可核主页 ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **157**（台账 #1–#157；今日 **5/12**）· 回信 **0**（0/157，0 封到期，最早 11-25）。本轮 **+3**：Omar Khattab（ColBERT 一作，英文，MIT 当前主页邮箱 ⇒ 已发信 #157）· Matei Zaharia（ColBERT 二作，英文，UC Berkeley 当前主页邮箱 ⇒ 本窗不发，同论文 ≤1 封）· Mathilde Caron（DINO 一作，法文姓名，未见当前可核邮箱 ⇒ 仅建档）。
 > **当前计数（2026-11-23 21:0x）**：作者 **338** 人（编号最大 **338**）· X 已核验 **130**（本轮 **+1**：`@VictorSanh` 经 `x.com/VictorSanh` 经代理 `200` / 163,390 B，`og:title` = `Victor Sanh (@VictorSanh) on X`，`og:description` = `Beaker ... Prev. early crew @huggingface | AI x NYC`；反例 `@m_dehghani` 只有 **1 follower / 3 following** ⇒ 判他人，不记）· 已发信 **152**（台账 #1–#152）· 回信 **0**（0/152，0 封到期，最早 11-25）。本轮 **+3**：Bin Xiao（Florence-2 一作，中文，无公开明文邮箱 ⇒ 仅建档）· Victor Sanh（T0 一作，英文，X 双源）· Mostafa Dehghani（UL2 共同一作，英文，论文页邮箱单源）。
 > **当前计数（2026-11-24 03:0x）**：作者 **344** 人（编号最大 **344**）· X 已核验 **130**（本轮 **+0**：Matthias Minderer / Alexey Gritsenko / Bingsheng He 三人均无可访问 X 外链，🚫 不猜 handle）· 已发信 **156**（台账 #1–#156；今日 **4/12**）· 回信 **0**（0/156，0 封到期，最早 11-25）。本轮 **+3**：Matthias Minderer（OWL-ViT 一作，德文姓名，论文页 Google 旧地址 ⇒ 仅建档）· Alexey Gritsenko（OWL-ViT 二作，英文，论文页旧地址 ⇒ 仅建档）· Bingsheng He 何炳生（DistDNA 通讯，中文，NUS 官方主页当前地址 ⇒ 已发信 #156）。
 > **当前计数（2026-11-24 00:0x）**：作者 **341** 人（编号最大 **341**）· X 已核验 **130**（本轮 **+0**：三位新增作者——Wonjae Kim / Amanpreet Singh / Chao Jia——论文页与可访问主页均无 x.com / twitter.com 外链，`amanpreetsingh.github.io` 实测 `000` ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **155**（台账 #1–#155；今日 **3/12**）· 回信 **0**（0/155，0 封到期，最早 11-25）。本轮 **+3**：Wonjae Kim（ViLT 一作，韩文姓名，2021 旧地址 ⇒ 仅建档）· Amanpreet Singh（FLAVA 一作，英文，无地址）· Chao Jia（ALIGN 一作，中文，Google 论文页地址单源）。
@@ -4878,4 +4879,43 @@
 | X 账号 | **未找到**（主页无 x.com / twitter.com 外链；不猜 handle） |
 | 状态 | **已发信**（#156，2026-11-24 03:03:29，中文 202 字） |
 | 备注 | 发信问题候选（只对 DistDNA 成立）：① 每 prompt 采样条数 R 的饱和点（O(1/R) 方差项）；② 参考指纹覆盖的 temperature / top-p 档位与未见解码设置的外推；③ 115 个 checkpoint 中同基座仅差 SFT 的混淆率。 |
+
+### 345. Omar Khattab
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Omar Khattab（`语言=英文(判据=阿拉伯姓名族属，不在中/日/韩；机构美国 ⇒ 英文兜底)`） |
+| 机构 | **MIT EECS & CSAIL**（Assistant Professor；主页 `omarkhattab.com` `200` / 17,356 B，`meta description` 自述 `Assistant Professor at MIT working on natural language processing and AI systems`） |
+| 代表论文 | **ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT**（`2004.12832`，B 轨 #380，一作） |
+| 邮箱 | **okhattab@mit.edu**（本人主页 `https://omarkhattab.com/` `200` / 17,356 B 页内 `mailto` 明文，**当前地址，2026-11-24 06:0x 复核**；未用论文页 2020 旧地址 `okhattab@stanford.edu`） |
+| 主页 | <https://omarkhattab.com/>（`HTTP 200` / 17,356 B；`khattab.com` 直连 `403` / 5,352 B，不作为来源） |
+| X 账号 | **未找到**（主页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **已发信**（#157，2026-11-24 06:0x，英文 ≤200 词） |
+| 备注 | 发信问题候选（只对 ColBERT 成立）：① 逐 token 文档向量的**索引存储**在长文档 / 代码语料上如何压缩，压缩到哪一档 MRR 开始掉；② 相对 BERT cross-encoder「快两个数量级 / FLOPs 少四个数量级」是在多深的候选集上测的，k 变大后优势何时消失；③ 标识符密集查询下 MaxSim 是否会稀释精确匹配，是否建议与 BM25 做并集。 |
+
+### 346. Matei Zaharia
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Matei Zaharia（`语言=英文(判据=罗马尼亚姓名族属不在中/日/韩/德法西意葡荷北欧俄；机构美国 ⇒ 英文兜底)`） |
+| 机构 | **UC Berkeley**（Professor of EECS；Databricks co-founder & CTO；主页 `people.eecs.berkeley.edu/~matei/` `200` / 57,922 B 页内自述） |
+| 代表论文 | **ColBERT**（`2004.12832`，B 轨 #380，二作）· 另 Apache Spark / MLflow 等项目作者 |
+| 邮箱 | **matei@berkeley.edu**（本人主页 `https://people.eecs.berkeley.edu/~matei/` `200` / 57,922 B 页内明文，**当前地址，2026-11-24 06:0x 复核**；未用论文页 2020 旧地址 `matei@cs.stanford.edu`） |
+| 主页 | <https://people.eecs.berkeley.edu/~matei/>（`HTTP 200` / 57,922 B） |
+| X 账号 | **未找到**（主页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（本窗不发：与 #345 同一论文，遵守「同一论文 ≤1 封」） |
+| 备注 | 后续问题候选（只对 ColBERT 成立）：① 端到端向量索引与「BM25 先召回再重排」两段式在生产负载下的延迟分解；② 索引更新（文档增删）是否触发全量重编码；③ 逐 token 向量的存储成本在 Databricks 类系统里如何做分层。 |
+
+### 347. Mathilde Caron
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mathilde Caron（`语言=法文称谓问候+英文正文(判据=法文姓名族属 + 法国教育/机构背景)`） |
+| 机构 | **Google Research（Grenoble）**（据公开检索快照 2026-09；本轮**未取得官方人员页**独立核验，仅作背景，不作发信依据） |
+| 代表论文 | **Emerging Properties in Self-Supervised Vision Transformers**（`2104.14294`，B 轨 #379，一作） |
+| 邮箱 | **未找到当前地址**（论文页仅有 2021 年 `mathilde@fb.com`，**旧机构地址 ⇒ 不发信**；未猜 `@google.com`） |
+| 主页 | **未找到**（`mathilde-caron.github.io` 实测 `404`；`di.ens.fr/~caron/` 实测 `404`） |
+| X 账号 | **未找到**（无可核主页；检索快照出现 `@mcaron31` 但**单源未能用 X 页 `og:description` 二次核验** ⇒ 不登记） |
+| 状态 | **待跟踪**（仅建档；无当前可核地址 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 DINO 成立）：① multi-crop 的裁剪尺度分布对 k-NN 78.3% 的贡献拆分；② centering + sharpening 的温度 τ_s / τ_t 扫描区间与塌缩失败模式；③ 自监督 ViT 的分割结构在**非自然图像**（版图 / 显微图）上是否仍成立，需什么最小验证。 |
 
