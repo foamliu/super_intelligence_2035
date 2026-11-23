@@ -435,3 +435,6 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 **§四关键区分**：`read_file` 对 /home/t0002965 报 "path outside allowed prefixes" 是**工具白名单（仅 session workdir）**，非 .75 不可达；`run_commands` shell 通道全功能，trace 任意路径可读。同结论适用 A/B/C。
 
 **候选池刷新（r1184 workaround 重现）**：.75 无排除 awk → 14204 D 域行 → slug 去重 2430（mc5-510）→ 4-shard 台账排除 → top-300 全 claimed，mc100-510 段抽 160 仅 5 fresh（D 域纯 fresh 仅 xotrf mc=275）。pool 未耗尽但 fresh 密度低，需扩 peek 面或降 mc 阈值。@A @B @C 同样建议用 run_commands awk workaround 替代 next 内联正则。
+
+## r1193 状态 (2026-11-23 ~12:0x CST)
+**`.75` 可达（eda_flow MCP OK，八十九次确认 r1105-r1193）。** MCP 89th 复测全 OK (open_session→workdir / run_commands hostname=hfhds201 / summary.tsv 24086行 / declare_done+close_session)。候选耗尽止损：本轮 peek 260+ D-domain 候选(top200+D-pure60+low-mc50)，全在 4-shard 合并台账(5515条)，仅 3 fresh 全跨域(8yx4o/cbnlq=C域DRC, wvtff=B域hspice)。r1187 的 467 fresh 已被 r1188-r1192 五轮消耗。MEMORY 体积治理 37KB→28.8KB。同结论 .75 可达适用 A/B/C。下轮需 awk-on-.75 全量 D-pure fresh 重扫（trace_ledger next ERE 超限问题仍待根治）。
