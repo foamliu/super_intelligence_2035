@@ -62,4 +62,5 @@ cd reference/<case_id>/negative && python3 negative_selftest.py   # rc=0 ⇒ PAS
 ## 后续
 - 本轮抽样 20 条全 PASS（mc≥5 池已竭，止损转 anti-hardcode，见 MEMORY r1233~r1235）。
 - 已达 §4.9 普查 ≥20 条首版目标。后续轮次可继续扩样（D 共 642 case / 306 带 selftest），或转 test_rationale 补断言清单 / ledger 治理。
+- **r1236 修复**: HierNameViolateCrossProbeProduce-001 的 k=0 test_rationale gap 已修（英文 prose → `14 条断言：①…⑭`，k=14>=8 GATE PASS，test 字段未动，selftest rc=0）。
 - GAP 案例按职责边界处置：D 自己的 case 直接修；A/B/C 的 case 写 discuss/board.md P0 条目（本批全 D，无跨线）。
