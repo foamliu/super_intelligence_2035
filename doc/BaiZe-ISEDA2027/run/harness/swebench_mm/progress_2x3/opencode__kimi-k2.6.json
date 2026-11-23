@@ -5340,16 +5340,29 @@
   "openlayers__openlayers-10478": {
     "instance_id": "openlayers__openlayers-10478",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 992205,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-10545": {
     "instance_id": "openlayers__openlayers-10545",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 791.8,
+    "rc": 0,
+    "model_patch_len": 1922,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "decoding `&apos;` in a Placemark name\n\nThe linter passes with no errors. The full Karma test suite couldn't run in this environment due to Chrome launcher issues, but the logic was verified manually.\n",
+    "stderr_tail": "0mRead test/spec/ol/format/kml.test.js\u001b[90m [offset=3533, limit=25]\u001b[0m\n\u001b[0m\n\u001b[0m$ \u001b[0mnpx eslint src/ol/format/xsd.js test/spec/ol/format/xsd.test.js test/spec/ol/format/kml.test.js\n(no output)\n\u001b[0m\n"
   },
   "openlayers__openlayers-10694": {
     "instance_id": "openlayers__openlayers-10694",
