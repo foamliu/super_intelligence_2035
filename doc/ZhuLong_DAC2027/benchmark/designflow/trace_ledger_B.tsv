@@ -1717,3 +1717,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795162772386_ca1eo	t0003060	hfeg0pkn001	95	spice_sim	case	EDA-Eval-DesignFlow-NetlistSimFlowGenProduce-001	2026-11-23 22:51	
 1794189436247_nnm1i	thomasz	hfeg0pfn060	14	spice_sim	case	EDA-Eval-DesignFlow-RunsimScriptDiffProduce-001	2026-11-23 23:15	r1109: FineSim->PrimeSim runsim script diff analyzer produce, k=20; cross-shard released from D (D mis-parked B-domain trace)
 1795003637713_vyxnz	chuanqiz	hfeg0pnd001	75	characterization	case	EDA-Eval-DesignFlow-SisPintypeResolveProduce-001	2026-11-24 00:26	
+1794798222398_424c3	tongni	hfeg0plg65	67	spice_sim	case	EDA-Eval-DesignFlow-OpampDummyCheckProduce-001	2026-11-24 00:42	
