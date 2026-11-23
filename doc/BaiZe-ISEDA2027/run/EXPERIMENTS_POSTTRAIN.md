@@ -12253,3 +12253,54 @@ python3 bpt_attribution_p0_dev_compare.py \
 - 行为模板基于 A0 base（MiniCPM5-2B）轨迹；正式基座为 BaiZe pretrain ckpt，行为分布可能略有差异，须 post-SFT 重测对照。
 
 
+
+## §H. 训练数据污染隔离审计 (Contamination-Isolation Audit) (wake753 · 2026-11-23 17:0x · 零 GPU/零 ckpt · 主线 SFT 设计预研)
+
+> **目的**：§G6.1 前置——为「在非 eval held-out PyAether 任务上生成同形态 agentic 轨迹」界定**污染隔离边界**（红线 §5.1：158 eval 任务的 prompt+函数签名+断言代码绝对不能进任何训练集；允许用 API 参考文档合成训练对，但必须按 API 名/函数签名隔离）。脚本 `baize_posttrain_contamination_isolation_audit.py`（syntax OK + 实跑 PASS，可复跑）。
+
+### H1. 数据源
+- eval 数据集：`/nas_data/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl`（158 任务，字段 task_id/prompt/entry_point/test/metadata）。
+- 全量 PyAether API 池：`/nas_data/app.e0031982/code/eda_fastmcp/kb/api_summary_api_only.json`（4022 个去重 API 名）。
+
+### H2. 提取口径
+- **禁用 API 名**：对每条 eval 任务，正则提取 prompt+test 中 `pyScript.<Name>(` / `pyAether.<Name>(` / 下标访问 `<obj>["<Name>"]` 的 API 名 token，并并入 `metadata.source` 的末段 API 名。
+- **禁用函数签名**：提取 prompt 中 `def <name>(<args>)` + entry_point。
+- **可供 SFT 使用的 API 集** = 全量池 − 禁用 API 集。
+
+### H3. 审计结果（核心数字）
+| 项 | 值 |
+|:--|--:|
+| eval 任务数 | 158 |
+| PyAether 全量 API 池 | 4022 |
+| 禁用 API 名（出现在 eval 任务） | 111 |
+| 　其中在池内 | 92 |
+| 　其中不在池内（动态/拼写/metadata 非源） | 19 |
+| 禁用函数签名数 | 158（每任务 1） |
+| **可供 SFT 使用的 API 数（池 − 禁用）** | **3930** |
+| 可用 API 占池比例 | **97.71%** |
+
+- **禁用 API 频次 Top**：`md`(43, 非 API 的属性 token)、`dbGetAllLibs`(24)、`dbDelLib`(24)、`dbCreateLib`(23)、`dbNewCV`(21)、`dbCloseCV`(20)、`dbOpenCVByType`(16) 等——集中在 Database & Design Management 类。
+- **不在池内的 19 个**为 metadata.source 的非 API 标签（如 `Training Material`、`CAD Practical Example 01/03/05/06/09/10`）或动态/类型对象名（`CStringList`/`dmCellObj`/`dmLibObj`/`emyInitDb`/`getType`/`md`），均非真实可调 API，不影响可用集计算。
+
+### H4. 隔离规则（预注册 · 先定后用 · 跑完不许改）
+1. **API 名隔离**：held-out SFT/RL 训练任务只能使用 `available_for_sft_apis`（3930 个）；禁止使用 `forbidden_api_frequency` 列出的任一 API。
+2. **函数签名隔离**：训练任务的 `def <name>(<args>)` 不得与 `per_task[*].signatures`（158 条）任一条逐字相同。
+3. **prompt/断言隔离**：训练任务的 prompt 文本与断言代码不得复制 158 eval 任务的对应内容。
+4. **可合成**：允许用来自 `available_for_sft_apis` 的 API 参考文档合成 doc→code 训练对，按上述规则隔离。
+5. **复检闸门**：生成训练集后用本脚本重跑，确认 `forbidden_api_set ∩ 训练集API = ∅` 且 `forbidden_signatures ∩ 训练集签名 = ∅`；任一非空 ⇒ 训练集污染，停跑重做。
+
+### H5. 与 §G 的衔接
+- §G6.1「在非 eval held-out PyAether 任务上生成同形态 agentic 轨迹」的**前置边界已界定**：可用 3930 个 API（97.71% 池）构造 held-out 任务，保证 train-on-test 隔离。
+- 后续（待 pretrain ckpt ETA≈2026-12-25，或先以 MiniCPM5-2B base 预演）：在 held-out API 子集上合成任务 → 用 base 模型 + cline harness 跑 agentic 轨迹 → 经 §H4 复检闸门 → 作为正式 SFT 正例（形态对齐 §G3 健康模板：search→get_details→editor→run_code→fix→submit，单次 submit）。
+- behavior_gate()（§F5.3/§G）作为 post-SFT 行为保真评测闸门，与本污染隔离闸门并列（前者防行为失配，后者防数据污染）。
+
+### H6. 交付物
+- `baize_posttrain_contamination_isolation_audit.py`（脚本，syntax OK + 实跑 PASS，可复跑）。
+- `sft_contamination_isolation_audit.json`（188KB：summary + 禁用 API 频次 + 不在池名单 + 可用 API 全量 + 类别分布 + per_task 158 条含 extracted_apis/signatures）。
+- `sft_contamination_isolation_audit.md`（中文摘要）。
+
+### H7. 诚实性 / 局限
+- API 名提取基于正则属性/下标访问；极少数动态拼接 API 名（字符串变量）可能漏提取（已记入 `forbidden_apis_not_in_pool`，复检时人工核对）。
+- `md`(43) 疑为非 API 的属性 token（如 pandas/变量），已落入 not_in_pool，不污染可用集；正式生成训练集时若引用此类 token 须人工判定。
+- 全量 API 池来自 `api_summary_api_only.json`（4022）；若池版本更新须重跑本审计刷新边界。
+- 本审计只界定隔离边界，**不生成训练数据**；未碰 GPU/沙盒/协议/题面/check.py/超时/−p/未起 SFT/RL 训练/未 kill 任何进程。基线表不变 A0=43.29%±3.92% / A1=4.56%±1.70% / Δ=−38.73pp。

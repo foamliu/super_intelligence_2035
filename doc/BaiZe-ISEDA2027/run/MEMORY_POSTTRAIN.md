@@ -86,6 +86,8 @@ WAITING: 1
 - Q: 红线？→ A: ① 158 任务禁入训练集（污染隔离）② anti-cheat 全程开 + 报 cheat rate ③ 5-run mean±std + 配对检验 ④ 评测协议冻结不改。
 
 ## 本唤醒流水
+> ✅ **wake753（2026-11-23 17:0x · §H 训练数据污染隔离审计 · 主线 SFT 设计预研 · 有交付 · WAITING:1）**：本轮零 GPU/零 ckpt。①**A5 阻塞复验**：driver=550.54.14(<560) 未变 + 无新 ops A5 决策 commit ⇒ A5 仍 BLOCKED(Option② ops 升级驱动≥560)；主线阻塞 pretrain ckpt ETA≈2026-12-25。②**§H 落地**（§G6.1 前置）：新建 `baize_posttrain_contamination_isolation_audit.py`(syntax OK+实跑 PASS)，从 158 eval 数据集(`EDA-Eval-PyAether-v20260311.jsonl`)正则提取禁用 API 名(`pyScript.<Name>(`/下标/source)+禁用函数签名，对照全量池 `api_summary_api_only.json`(4022 API) 计算**可供 SFT 使用的 API=3930(97.71% 池)**；禁用 111 API(92 在池+19 metadata 非源标签如"Training Material"/"CAD Practical Example")、158 签名。③**预注册隔离规则**：held-out SFT/RL 任务只用 `available_for_sft_apis`；签名/prompt/断言不得逐字复制 eval；生成训练集后用本脚本复检 `forbidden ∩ 训练=∅` 否则停跑重做。④产出 `sft_contamination_isolation_audit.json`(188KB)+`.md`+`EXPERIMENTS_POSTTRAIN.md` §H。未碰 GPU0-3/6/协议·题面·check.py·超时·-p/未起 SFT/RL 训练/未 kill 任何进程。基线表不变 A0=43.29%±3.92%/A1=4.56%±1.70%/Δ=-38.73pp。
+
 
 > 📦 wake750/wake749（2026-11-23 14:0x–15:0x · A0 报告执行复验 byte-identical + 里程碑报告丢失修复 · 均已被 wake752 取代为最新复验基线）→ 原文见 daily-memories-posttrain/2026-11-23.md。**合并结论**：wake749 修复里程碑报告 `doc/BaiZe-ISEDA2027/reports/report_posttrain_baseline_nailed_zh.html` 工作树丢失（byte-identical to HEAD 599446ecd4,16433B）+ 勘误 GPU5=本线 A5 v3 server idle；wake750 重跑 A0 deepdive 生成器 `cmp` BYTE_IDENTICAL + 数字双核验通过 + A5 阻塞执行复核(driver<560,vLLM 认不了 qwen3_5)。需要时再读。
 
