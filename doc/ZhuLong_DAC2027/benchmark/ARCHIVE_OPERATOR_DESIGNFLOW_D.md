@@ -1735,3 +1735,19 @@ WAITING: 0（r1203: MCP 100th OK + 2m9z2(junlingw@hfeg0pkn005 mc=190 netlist 2.3
 
 WAITING: 0（r1204: MCP 101th OK + xkwxk(junlingw@hfeg0pkn005 mc=186 netlist 2.3MB/741msgs .snapshot 路径)深读+合成 EDA-Eval-DesignFlow-SpiceOptionAudit-001(L1 schematic_netlist k=15) · 与 r1203 2m9z2 同用户同 GENGUI 代码库但后半段(msgs 157-552)全新意图: GUI 大规模改造(窗口尺寸/滚动条/表格同步缩小/ANALYSIS 页对勾改造/tab 重排)+FineSim SPICE 语法讲解(.option 块 msg489/corner .lib msg504/MOSFET 实例 msg531/topic 总览 msg552) · 抽可离线判分内核 spice_option_audit.py: 读含 .option/*.option 行网表片段→正则 ^\s*(\*)?\s*\.option\b 识别选项行(*开头 is_commented=True)→正则 (\w+)\s*(?:=\s*(\S+))? 切 token(支持 key=value/key = value/裸 key=True)→每条判 is_commented/is_finesim_proprietary(finesim_ 前缀)/category(8 类 sim_mode/model/speed/partition/convergence/output/power/generic + unknown)→产出 option_audit.json · 与 r1203 PyDepGraphAudit 内核完全不相交(文件类型/正则/分类体系/输出结构全不同) · A(14 token 真实 .option 块衍生 generic×2+output×6+各1类+2注释行)/B1(18 token 含 unknown finesim_experimental+3注释行+空行+*普通注释测试 line_no 跳行, 覆盖全8类+unknown)/B2(11 token custom_opt=unknown+2注释行) · k_check=15(①zip含脚本 ②B1 exit0+合法JSON ③B1 options=18反A=14 ④每条8字段 ⑤is_commented全匹配 ⑥is_finesim_proprietary全匹配 ⑦category全匹配全8类+unknown ⑧key+value全匹配 ⑨line_no+token_index排序全匹配 ⑩summary四计数全匹配 ⑪by_category全匹配 ⑫确定性3次md5 ⑬B2 options=11反A/B1+by_category ⑭B2 category+is_commented ⑮B2 key+value+is_finesim_proprietary) · §4.9 三假全 FAIL(condition 3 拦截) · 自验 reference 15/15 PASS + 3 负样本全 FAIL + negative_selftest PASS(BUG):0 + round-trip 从 case JSON 抽 test 重跑全 PASS · 按 11-23 运维令只写 cases/D/<id>.json 不碰 jsonl · 台账 xkwxk→case · .75 session declare_done+close_session 已关闭 · 同结论 .75 可达适用 A/B/C · DEBT: 余 fresh 候选 5fsin(waveform)/c4wsu(schematic)/fiknl(schematic) + mc-matrix 复算 + P0-001 全量64 待 A/B/C 回执(已挂10轮) · 📊 trace 覆盖率: 606/4398≈13.8%; 📦 体积: TASK≈22KB / MEMORY≈29KB; flag: r1204 = MCP 101th OK + xkwxk→SpiceOptionAudit-001 k=15 交付 · 详见 daily_D_2026-11-23_r1204.md）
 
+
+## 归档批次 r1210（2026-11-23，释 MEMORY 体积）
+MCP 53rd-86th 期间 16 条 r 指针从 MEMORY 移入：r1157/r1165/r1166/r1167/r1172/r1173/r1174/r1175/r1176/r1177/r1180/r1181/r1183/r1185/r1186/r1190。要点：
+- r1190: MCP 86th + l0j38→NetlistMimicResistorAudit-001 k=13
+- r1186: MCP 82nd + xotrf→VerilogMirrorCompareAnalyze-001 k=12（原文 daily_D_2026-11-23_r1186.md）
+- r1185: MCP 81st + 候选池刷新 + xotrf claim/DEBT
+- r1183: MCP 79th + cross-shard reclaim 508od→VirtuosoWireAutoRoute-001 k=15
+- r1181: MCP 77th + 闸门交付
+- r1180: MCP 76th + sroz5→VirtuosoCliLabelPlacer-001 k=12
+- r1177: MCP 73rd + 1x4za→VirtuosoCliFeedbackReport-001 k=12
+- r1176/r1175/r1174/r1173/r1172: 归档批次 r1177/r1180
+- r1167: MCP 63rd + 6 fresh D-pure refill + lpsj7 parked(FSDB v6.3 不可读)
+- r1166: MCP 62nd + NOPREFIX GAP 修复 2 条
+- r1165: MCP 61st + dr7mm cross-shard reclaim → HierPinFanoutProduce-001 k=13
+- r1157: MCP 53rd + ufv1f deepread+parked
+原文见各 daily_D_2026-11-23_r1*.md。
