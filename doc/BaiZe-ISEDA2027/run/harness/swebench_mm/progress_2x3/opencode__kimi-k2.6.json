@@ -5230,23 +5230,44 @@
   "highlightjs__highlight.js-3381": {
     "instance_id": "highlightjs__highlight.js-3381",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 886.6,
+    "rc": 0,
+    "model_patch_len": 862,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "The reported sample `foo = _undef\\nbar` now highlights correctly (no spurious `def` or function title)\n- Normal `def foo():` and `class Foo:` highlighting still works correctly\n- All 1,696 tests pass\n",
+    "stderr_tail": "Python language definition in highlight.js\n[✓] Identify why `_undef` is partially matched as `def` keyword\n[✓] Fix the Python language definition\n[✓] Verify the fix with the provided sample code\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3411": {
     "instance_id": "highlightjs__highlight.js-3411",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 369.9,
+    "rc": 0,
+    "model_patch_len": 566,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ession test with the exact sample from the issue\n- `test/markup/typescript/type-parameters.expect.txt`: Added expected highlighting output\n\nAll JavaScript and TypeScript markup tests pass (33 tests).\n",
+    "stderr_tail": " ✓ should markup type-parameters\n\n\n  13 passing (82ms)\n\u001b[0m\n\u001b[0m→ \u001b[0mRead src/languages/javascript.js\u001b[90m [offset=286, limit=25]\u001b[0m\n\u001b[0m→ \u001b[0mRead test/markup/typescript/type-parameters.expect.txt\n"
   },
   "highlightjs__highlight.js-3438": {
     "instance_id": "highlightjs__highlight.js-3438",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 323.1,
+    "rc": 0,
+    "model_patch_len": 1119,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "l|variant|function)\\\\s*<(?!<)',\n```\n\n### Verification\n- Rebuilt the library (`npm run build`).\n- Confirmed the provided C++ snippet now highlights correctly.\n- All **482** existing markup tests pass.\n",
+    "stderr_tail": "locate relevant files.\n[✓] Find the root cause of the rendering failure for the provided C++ snippet.\n[✓] Implement the fix for the C++ highlighting issue.\n[✓] Verify the fix resolves the issue.\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3457": {
     "instance_id": "highlightjs__highlight.js-3457",

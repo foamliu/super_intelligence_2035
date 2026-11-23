@@ -4586,9 +4586,16 @@
   "grommet__grommet-6239": {
     "instance_id": "grommet__grommet-6239",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 992.3,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "077,\"outputTokens\":24275,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":988878,\"text\":\"The operation timed out.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "s (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n{\"ts\":\"2026-11-23T03:53:02.438Z\",\"type\":\"error\",\"message\":\"The operation timed out.\"}\n"
   },
   "grommet__grommet-6246": {
     "instance_id": "grommet__grommet-6246",
