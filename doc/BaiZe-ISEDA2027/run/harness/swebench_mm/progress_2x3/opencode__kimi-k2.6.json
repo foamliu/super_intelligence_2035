@@ -6003,9 +6003,16 @@
   "openlayers__openlayers-14332": {
     "instance_id": "openlayers__openlayers-14332",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 841.6,
+    "rc": 0,
+    "model_patch_len": 996,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "correctly by the CSS rotation alone.\n\n**`test/node/ol/render.test.js`** — Added 3 unit tests verifying correct behavior for rotated tile layers and unrotated vector layers.\n\nAll 1798 node tests pass.\n",
+    "stderr_tail": "dering\n[✓] Identify root cause in tile layer vs vector layer rendering code\n[✓] Implement fix for incorrect rendering at 90/270 degree rotations\n[✓] Verify fix by running relevant tests/examples\n\u001b[0m\n"
   },
   "openlayers__openlayers-14414": {
     "instance_id": "openlayers__openlayers-14414",
