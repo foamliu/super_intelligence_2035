@@ -6198,16 +6198,30 @@
   "openlayers__openlayers-15271": {
     "instance_id": "openlayers__openlayers-15271",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 648.8,
+    "rc": 0,
+    "model_patch_len": 9645,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ression tests  \n\n### Usage example\n\n```js\nconst rules = [\n  {\n    filter: ['==', ['id'], 'my-feature-id'],\n    style: {\n      'circle-radius': 10,\n      'circle-fill-color': 'red',\n    },\n  },\n];\n```\n",
+    "stderr_tail": "vas/style.js`\n[✓] Add `id` operator to WebGL expressions in `src/ol/style/expressions.js`\n[✓] Add tests for `id` operator in expression parser, CPU evaluator, canvas style, and WebGL expressions\n\u001b[0m\n"
   },
   "openlayers__openlayers-15365": {
     "instance_id": "openlayers__openlayers-15365",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 693.9,
+    "rc": 0,
+    "model_patch_len": 4911,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "decluttered `VectorTileLayer` inside a `LayerGroup` with `opacity: 0.1` (using the same expected image as the existing direct-opacity declutter test, since the visual result should now be identical).\n",
+    "stderr_tail": "ffective group opacity in postRender and renderDeclutter\n[✓] Add unit tests for postRender and renderDeclutter opacity behavior\n[✓] Add rendering test for vectortile group opacity with declutter\n\u001b[0m\n"
   },
   "openlayers__openlayers-15466": {
     "instance_id": "openlayers__openlayers-15466",
