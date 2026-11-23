@@ -6254,9 +6254,16 @@
   "openlayers__openlayers-15614": {
     "instance_id": "openlayers__openlayers-15614",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 945.3,
+    "rc": 0,
+    "model_patch_len": 2153,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "yer.js` passes\n\n(Chrome isn't available in this environment, so I couldn't run the browser rendering tests directly, but the logic is consistent with the existing `VectorTileLayer` opacity handling.)\n",
+    "stderr_tail": "t_ = null;\n+    } else {\n+      this.releaseCompositionContext_();\n+    }\n \n     this.postRender(context, frameState);\n\u001b[0m\n\u001b[0m$ \u001b[0mnpx eslint src/ol/renderer/canvas/VectorLayer.js\n(no output)\n\u001b[0m\n"
   },
   "openlayers__openlayers-15683": {
     "instance_id": "openlayers__openlayers-15683",
