@@ -2029,3 +2029,4 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1795070048011_njcex	guangmingz	hfeg0plg97	29	schematic_netlist	parked		2026-11-23 19:57	messages.json not found on hfeg0plg97 (subdir glob returned None, likely archived/rotated)
 1795160037277_gvw5m	e0023936	hfeg0plg97	27	waveform	parked		2026-11-23 20:02	thin sine-wave TCL one-line math.sin kernel cant reach k8; WaveView sandbox unreachable
 1794894769318_yezv5	ray1hu	hfeg0pgn145	28	analog_context	case	EDA-Eval-DesignFlow-XlsxPriAuditProduce-001	2026-11-23 20:17	L1 analog_context k=12 CSV priority audit; ref PASS + 4 fakes FAIL round-trip OK
+1794913542002_lorih	reedchen	hfeg0pkn002	88	schematic_netlist	claimed		2026-11-23 20:55	
