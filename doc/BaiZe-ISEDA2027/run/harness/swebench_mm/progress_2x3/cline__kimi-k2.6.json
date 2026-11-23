@@ -5098,9 +5098,16 @@
   "highlightjs__highlight.js-3207": {
     "instance_id": "highlightjs__highlight.js-3207",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 376.4,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "9055,\"outputTokens\":2515,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":373000,\"text\":\"The operation timed out.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "s (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n{\"ts\":\"2026-11-23T12:49:52.056Z\",\"type\":\"error\",\"message\":\"The operation timed out.\"}\n"
   },
   "highlightjs__highlight.js-3212": {
     "instance_id": "highlightjs__highlight.js-3212",
