@@ -7,7 +7,8 @@ import json, os, html
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(BASE, "swebench_verified_full", "infra_rerun_classify_7way.json")
-OUT = os.path.join(os.path.dirname(BASE), "..", "reports",
+# BASE = run/harness  ->  os.path.dirname(BASE) = run  ->  run/reports
+OUT = os.path.join(os.path.dirname(BASE), "reports",
                    "report_harness_infra_rerun_plan_zh.html")
 OUT = os.path.normpath(OUT)
 
@@ -201,8 +202,9 @@ __RERUN_ROWS__
 __DETAIL_SECTIONS__
 <h2>五、每晚进度（滚动更新）</h2>
 <div class="ok">
-<p><strong>2026-11-23（首日）</strong>：Step 1 全量 infra 排查完成（本报告）。当前时间 09:47 CST = <strong>窗口外</strong>，重跑队列已 park，等待今晚 21:00 启动。重跑队列总计 <strong>__GRAND_RERUN__ 题</strong>（infra=__GRAND_INFRA__ + pending=__GRAND_PEND__），顺序见 §3.1。</p>
-<p class="small">每晚窗口结束后更新本节：已回收 X 题 / 7way 报告 REGEN 状态 / MEMORY 心跳。</p>
+<p><strong>2026-11-23（首日 · 夜间窗口 LIVE）</strong>：Step 1 全量 7 路 infra 排查完成（本报告）。重跑队列总计 <strong>__GRAND_RERUN__ 题</strong>（infra=__GRAND_INFRA__ + pending=__GRAND_PEND__），顺序见 §3.1。</p>
+<p><strong>重跑进度</strong>：21:55 orchestrator（<code>rerun_infra_verified.py</code>）启动，首路 cline-patched 95 题预测中（gw_proxy 9090/9091/9092 三代理已修复启动，agent 真正连上 API、产非空 patch）。预计速率 ~7min/题，95 题约 11h，可容于 12h 窗口。窗口结束 09:00 自动 REGEN 7way 报告 + 停止。</p>
+<p class="small">每晚窗口结束后更新本节：已回收 X 题 / 7way 报告 REGEN 状态 / MEMORY 心跳「infra 重跑：已回收 X 题」。</p>
 </div>
 <hr>
 <p class="small">
