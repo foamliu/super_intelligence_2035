@@ -6170,16 +6170,30 @@
   "openlayers__openlayers-15229": {
     "instance_id": "openlayers__openlayers-15229",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 564.0,
+    "rc": 0,
+    "model_patch_len": 2341,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "nged shader generation so `rotateWithView` rotation is applied in pixel space\n- `test/browser/spec/ol/webgl/shaderbuilder.test.js` — updated the expected shader string in the rotateWithView test case\n",
+    "stderr_tail": "on rotation/shader logic\n[✓] Identify the root cause of icon distortion with non-square viewport and icon-rotate-with-view\n[✓] Implement the fix\n[✓] Verify the fix manually or via existing tests\n\u001b[0m\n"
   },
   "openlayers__openlayers-15234": {
     "instance_id": "openlayers__openlayers-15234",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 608.8,
+    "rc": 0,
+    "model_patch_len": 2547,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rm, tmpCoords);\n   ```\n\nThis makes `WebGLPointsLayer` behave consistently with `VectorLayer` and `WebGLVectorLayerRenderer` when `useGeographic()` is active. The fix passes linting and syntax checks.\n",
+    "stderr_tail": "GLPointsLayer and related renderer code\n[✓] Identify why WebGLPointsLayer ignores featureProjection/useGeographic\n[✓] Implement fix for WebGLPointsLayer to respect useGeographic\n[✓] Test the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-15271": {
     "instance_id": "openlayers__openlayers-15271",
