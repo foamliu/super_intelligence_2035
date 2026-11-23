@@ -5781,9 +5781,15 @@
   "openlayers__openlayers-13333": {
     "instance_id": "openlayers__openlayers-13333",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.1,
+    "rc": -1,
+    "model_patch_len": 6017,
+    "n_images": 4,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-13509": {
     "instance_id": "openlayers__openlayers-13509",
