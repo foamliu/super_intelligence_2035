@@ -1649,3 +1649,16 @@ r1093 指针原文归档（r1099 释体积，保留 r1099/r1098/r1097/r1096/r109
 > r1177 指针：MCP 第73次复测 OK(§二五项全过: open_session 22ms/run_commands 8-8 exit0 hostname=hfhds201/summary.tsv 24086 行真实行可读/write_file+read_file+list_files workdir round-trip 40B 一致/read_file+list_files 对 /home/t0002965/log 返回 outside allowed prefixes 但 run_commands bash 全可读/declare_done declared=true+close_session cleaned=true) · §四兑现: ①.75 可达(MCP)=YES ②trace 读=run_commands bash 全可读 · 证据 designflow/eda_flow_mcp_connectivity_20261123_r1177.md · 主线 r1176 DEBT 兑现: 基于 1x4za 深读(junxu mc=379 schematic_netlist)合成 EDA-Eval-DesignFlow-VirtuosoCliFeedbackReport-001(L1, k=12 断言) · 意图=用户搭 cli_test_fifo 评估 virtuoso-cli, 终交付结构化反馈报告; SUT 写 feedback_report.py 读 transcript(md) 解析 API 短板输出 JSON · A=FIFO(symbol view/bus 封装, <> 可用/[] 被拒) + 隐藏 B1=shift_reg(delete wire/orient, [] 可用/<> 被拒, 与 A 相反) + B2=mux8to1(array 实例/pin swap, <> 与 [] 均可用但宽度须匹配) · B1/B2 与 A 结构性不相交 · check.py 12 条独立断言(a-l: subprocess 在 B1/B2 跑候选+反硬编码 A 跑+确定性 B1×3 md5 一致+B1≠B2) · 自验 reference 12/12 PASS + 3 负样本(print_only/core_deleted/hardcode_a)全 FAIL · 台账 1x4za→case · D.jsonl 557→558 · 同结论 .75 可达适用 A/B/C(已同步 discuss/D.md) · 详见 daily_D_2026-11-23_r1177.md
 
 > r1180 指针：MCP 76th OK + sroz5(junxu mc=1101 schematic_netlist 848msgs)深读+合成 EDA-Eval-DesignFlow-VirtuosoCliLabelPlacer-001(L1 几何算法 k=12 断言 a-l; A=fifo_4x3+隐藏 B1=mux_8x1/B2=shiftreg_4x1 结构性不相交; check.py subprocess 在 B1/B2 跑候选+反硬编码+确定性; 自验 12/12 PASS+3 负样本全 FAIL) · 台账 sroz5→case · D.jsonl 558→559 · 详见 daily_D_2026-11-23_r1180.md
+
+
+---
+
+## r1162 流水 (2026-11-23 01:25-01:38 CST · loop shard D task 卡 01:25:18)
+- MCP 第58次复测 OK (r1105-r1162 五十八次一致): open_session 12ms / run_commands 8/8 exit0 (hostname=hfhds201 / summary.tsv 24086 行) / list_files+read_file workdir OK (外workdir whitelist 拒=沙盒约束) / declare_done+close_session OK · §四: .75 可达(MCP)=YES, trace 读=run_commands bash 全可读
+- 候选普查: awk top10 on /home/t0002965/log/ssh_eda_search_20261122_172249/summary.tsv (3081835B, 新扫描) → D 域候选 junxu/e0031668/haoyut/e0014566 多条
+- 选 ukkn7 (e0031668@hfhds201, mc=1627, netlist:811/analog:195/drc:1004) → 深读: ERC_AI_CHECK 流程, 工作目录 /home/e0031668/work/ERC, 用户原话「跑完所有 follow，只看 erc 报错里面的 2.1-2.8 的」, 原始 ERC_Wesign.csv 27007 行含小节 2.1/2.2/2.4/2.6/2.7/2.8/3.1-3.9/4.1-4.3/5.1-5.2, 过滤后 2.1-2.8 共 11567 行
+- 合成 EDA-Eval-DesignFlow-ErcSectionFilterProduce-001 (L1, schematic_netlist): A=erc_raw_sample_A.csv(330行,目标 2.1/2.2/2.7+非目标 3.8/3.9/4.1) / 隐藏 B=erc_raw_sample_B.csv(373行,目标 2.4/2.6/2.7/2.8+非目标 3.1/5.1, 2.1/2.2/2.3/2.5 缺失须报0) / check 13 断言(退出码/CSV存在/表头/无泄漏/非目标排除/集合相等3种子/行数/汇总9行/8小节齐全/计数==实际/计数==groundtruth/total一致/2.4前缀解析) / 自验: ref PASS + 3 负样本(fake_print_only/fake_core_deleted/fake_hardcode_a) 全 FAIL(AssertionError: seed=1 60/60 target rows missing)
+- 🚫 防串台教训(重要): ukkn7 已被 shard A 台账占用 (case_id=EDA-Eval-DesignFlow-Verification-001, 2026-10-30 21:42), 跨 shard 互斥=一 trace 一 case。我误用 raw awk 选料未先过 ledger 去重 → 已撤回 D.jsonl 追加(回 558 行) + case artifacts 改名 .PARKED_ukkn7_Atrace 保留待 re-source 到 fresh D 域 trace。后续选料必须用 `trace_ledger.py --shard D next` (内置 ledger 去重) 或 claim 前先查台账
+- DEBT: ErcSectionFilterProduce-001 已建成+自验, 待 re-source 到一个 fresh(未 ledgered) D 域 ERC trace 即可复活入 jsonl + ledger mark case
+- 📊 trace 覆盖率: covered=586/9542=6.1%; 🎯 通过率: 观察值(6 PASS/6 跑); 📦 体积: TASK≈25KB / MEMORY≈30KB
+

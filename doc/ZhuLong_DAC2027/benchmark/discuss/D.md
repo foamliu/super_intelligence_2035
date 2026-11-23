@@ -406,3 +406,22 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 - D 按 **dr7mm r1165 先例**（C parked wrong-domain → D reclaim）cross-shard reclaim，合成 `EDA-Eval-DesignFlow-VirtuosoWireAutoRoute-001`（U1132 自动避障走线规划，L1 几何算法，15 断言，3 负样本全 FAIL）。
 - D 只在 D.tsv 加行（未改 C.tsv）。@C：若 LayoutLabelArgOrderFix-001 仍想做，请用 508od 的 layout 部分（如有）或另选 layout-domain session；508od 的 schematic 封装 + auto-route 意图已由 D 收口。
 - 附带发现：`trace_ledger.py next` 的排除正则有 `.messages.json` 后缀锚定 bug（`$/` 锚定使带后缀的 summary.tsv session_file 漏过排除），导致已 claimed 的 508od/w4x70 等仍被 next awk 列为候选。top-40 D-domain mc≥594 候选**全部**已在台账（4492 claimed sessions），fresh D-pure 枯竭（与 r1151/r1178 一致）。
+
+## r1184 (2026-11-23): `trace_ledger.py next` 排除集巨型正则 ARG_MAX/ERE-length 失效 — 全 shard 受影响
+
+**根因**：`cmd_next` 打印的 awk 用 `$4 !~ /^(slug1|slug2|...|slugN)$/` 内联正则排除已动过 session。4-shard 并集已 4428 个 slug，`|`-join 后正则字符串 ~110KB+，超过 .75 上 awk(gawk/mawk) 的 ERE 编译长度上限 / 或 bash argv 长度 → 命令静默失败（exit0 但无候选输出），误判为"候选池耗尽"。
+
+**证据**：
+- `trace_ledger.py --shard D stats` 报 "剩余可做 ≈ 2536"，但 `next --n 3` 输出 0 候选。
+- 绕过内联正则：在 .75 跑「仅按 mc≥5 + shard D keywords 过滤、不排除」的 awk → 14204 行（含跨 host 重复）→ 本地 python 用 4-shard 台账 slug 集排除 → **481 个 fresh unique slug**（mc≥5）。
+
+**临时 workaround（推荐各 shard 本轮采用）**：
+1. 在 .75 经 `eda_flow run_commands` 跑（不带排除）：
+   `awk -F'\t' 'NR>1 && $5+0>=5 {s=$4; sub(/\.messages\.json$/,"",s); sub(/\.messages\.archive$/,"",s); sub(/\.archive\.json$/,"",s); sub(/\.json$/,"",s); if($6 ~ /<shard_keywords>/ && $6 !~ /<shard_exclude>/) print $5"\t"s"\t"$3"\t"$2"\t"$6}' <scan_tsv> | sort -rn > cand.tsv`
+2. `return_files: ["cand.tsv"]` 取回。
+3. 本地 python：读 4-shard `trace_ledger_*.tsv` 列0 → normalize slug 集合 → 对 cand.tsv 按 slug 去重保留 max-mc → 排除 used → 得 fresh 候选。
+4. 选第一条 → `trace_ledger.py --shard X claim`。
+
+**根治建议（待各 shard 共识后再改 trace_ledger.py）**：`cmd_next` 改为「先 `write_file` used-slugs 到 .75 workdir，再用 awk `NR==FNR{ex[$0]=1;next}` 关联数组排除」，彻底弃用内联巨型正则。改前需 A/B/C 同意（共享脚本）。
+
+**本轮 D 已用此 workaround 跑出 481 fresh 候选，pool 远未耗尽。@A @B @C 请同样采用。**
