@@ -5104,23 +5104,44 @@
   "highlightjs__highlight.js-3207": {
     "instance_id": "highlightjs__highlight.js-3207",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 979.6,
+    "rc": 0,
+    "model_patch_len": 422,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "erification\n- Rebuilt the library (`npm run build`)\n- Ran all tests: **1659 passing, 3 pending** - all green\n\nThe function captures now render as plain text (\"completely white\") as the user expected.\n",
+    "stderr_tail": "ng\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Fix Elixir function capture highlighting by adding a mode for &ident/arity syntax\n[✓] Add test cases for function capture highlighting\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3212": {
     "instance_id": "highlightjs__highlight.js-3212",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 213.9,
+    "rc": 0,
+    "model_patch_len": 1578,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "`0123`, and floats like `0.3`/`-0.5`.\n\n**`test/markup/elixir/numbers.txt` & `numbers.expect.txt`**\n- Added test cases for `0`, `0123`, `0.3`, and `-0.5`.\n\nAll existing Elixir markup tests still pass.\n",
+    "stderr_tail": "'elixir' }).value;\n  if (actual.trim() !== expected.trim()) {\n    console.log('FAIL:', f);\n    allPass = false;\n  }\n});\nif (allPass) console.log('All elixir tests pass');\n\"\nAll elixir tests pass\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3249": {
     "instance_id": "highlightjs__highlight.js-3249",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 245.8,
+    "rc": 0,
+    "model_patch_len": 1157,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "the *entire language* is `case_insensitive`. Since LaTeX is case-sensitive overall, the explicit character-class approach (`[tT][eE][xX]`) was the correct fix.\n\nAll markup tests for `latex` now pass.\n",
+    "stderr_tail": "istency\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Find and read src/languages/latex.js to understand the current MAGIC_COMMENT implementation\n[✓] Make TeX magic comment matching case insensitive\n[✓] Test the fix\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-3278": {
     "instance_id": "highlightjs__highlight.js-3278",
