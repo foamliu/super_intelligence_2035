@@ -815,8 +815,70 @@
   <li><b>X 可达性自检</b>：<code>x.com</code> 经 Mihomo 代理 <code>200</code>；三位新增作者无 X 依据 ⇒ 记「未找到」，<b>不猜 handle</b>。</li>
 </ul>
 
+<h2>18:00 时窗 · 🅰 A 轨不动（今日 5/5 已满）· 🅱 B 轨 +3 → 368 · 作者网 +3 → 335 · ✉ 0 封（今日 12/12 已满）</h2>
+
+<p style="font-size:13.5px;color:#59636e;">本时窗 A 轨不动：今日 <b>5/5</b> 已由 00:00–15:00 时窗完成；<code>cat:cs.CL</code> 上界仍 <code>2026-11-20T18:51:29Z</code>（距本窗 <b>63.1h &lt; 72h</b>），但额度已满 ⇒ <b>不凑第 6 篇</b>。B 轨不占 5 篇额度。发信今日已达 <b>12/12</b> 硬上限 ⇒ 只做选题、建档与备问题，不发信。</p>
+
+<h3 class="sec">📚 B 轨经典论文（+3 → 368；覆盖轴：归一化实现 / 优化器显存 / 数据质量阈值）</h3>
+
+<table class="plain">
+  <tr><th>#</th><th>论文 / 出处</th><th>被引</th><th>一句话贡献（作者自报数字）</th><th>归属线</th></tr>
+  <tr><td>366</td><td><b>Root Mean Square Layer Normalization</b>（RMSNorm）<br><a href="https://arxiv.org/abs/1910.07467">arXiv 1910.07467</a> · 2019-10-16 · <b>NeurIPS 2019</b></td><td><b>1,903</b></td><td>丢掉 LayerNorm 的 re-centering、只按 <b>RMS</b> 归一化，并给出只用 <b>p%</b> 输入估 RMS 的 <b>pRMSNorm</b>；多任务 / 多架构下与 LayerNorm 持平而运行时间降 <b>7%~64%</b>。</td><td>pretrain（主）· zhulong · harness</td></tr>
+  <tr><td>367</td><td><b>GaLore: Memory-Efficient LLM Training by Gradient Low-Rank Projection</b><br><a href="https://arxiv.org/abs/2403.03507">arXiv 2403.03507</a> · 2024-03-06 · <b>ICML 2024 Oral</b></td><td><b>648</b></td><td>梯度低秩投影 ⇒ <b>全参数学习</b>下优化器状态内存降 <b>65.5%</b>、8-bit 再降 <b>82.5%</b>、总训练内存降 <b>63.3%</b>；LLaMA 1B/7B + C4 <b>19.7B</b> token；首次在 <b>24GB RTX 4090</b> 无模型并行 / 重算 / offload 预训练 7B。</td><td>pretrain（主）· zhulong · data · harness</td></tr>
+  <tr><td>368</td><td><b>Qwen2 Technical Report</b><br><a href="https://arxiv.org/abs/2407.10671">arXiv 2407.10671</a> · 2024-07-15 · OpenAlex <code>preprint</code></td><td><b>5,530</b></td><td>0.5–72B dense + <b>57B-A14B MoE</b>；预训练数据 <b>3T → 7T</b> token，放宽质量阈值得到的 <b>12T</b> 无显著提升 ⇒ 选 7T；72B base MMLU <b>84.2</b> / GPQA 37.9 / HumanEval 64.6 / GSM8K 89.5 / BBH 82.4，Instruct MT-Bench <b>9.1</b> / Arena-Hard 48.1 / LiveCodeBench 35.7，约 <b>30</b> 种语言。</td><td>data（主）· pretrain · harness · zhulong</td></tr>
+</table>
+
+<p style="font-size:13px;color:#59636e;">⚠️ <b>ID 误记当场拦截</b>：候选池把 GaLore 记成 <code>2402.04347</code>，abs 页实测为 <i>The Hedgehog &amp; the Porcupine: Expressive Linear Attentions with Softmax Mimicry</i>（无关）⇒ 用真 ID <code>2403.03507</code> 复核后收录。同批候选 Florence-2 <code>2311.06242</code> / T0 <code>2110.08207</code> / UL2 <code>2205.05131</code> / RTLLM <code>2309.05076</code> / PrefixRL <code>2111.05477</code> / ABCD <code>2012.00571</code> 本轮未收，留下轮。</p>
+
+<h3 class="sec">👥 作者关系网（+3 → 335 · X 已核验 129，本轮 +2）</h3>
+
+<table class="plain">
+  <tr><th>#</th><th>姓名 / 机构</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td>333</td><td>Rico Sennrich · University of Zurich（Institute of Computational Linguistics）</td><td><code>rico.sennrich@uzh.ch</code>（UZH 官方人员页 <code>200</code> / <b>65,239 B</b> 页内 <code>mailto:</code>；<b>当前地址</b>，未用论文旧写法 <code>sennrich@cl.uzh.ch</code>）</td><td><b>@RicoSennrich</b>（<code>x.com</code> <code>200</code> / 160,280 B，<code>og:title</code> + <code>og:description</code> = SNSF Professor at University of Zurich）</td><td>待跟踪（今日 12/12 满，未发）</td></tr>
+  <tr><td>334</td><td>Jiawei Zhao · Meta Superintelligence Labs（论文时为 Caltech / Meta FAIR）</td><td><code>jwzhao@meta.com</code>（本人主页 <code>www.jiaweizhao.com</code> <code>200</code> / <b>18,586 B</b> 页内 <code>jwzhao at meta dot com</code>；未用旧 <code>jiawei@caltech.edu</code>）</td><td><b>@jiawzhao</b>（主页外链 + 推文页 <code>og:title</code> / <code>og:description</code> = Meta FAIR / Caltech / GaLore 双源）</td><td>待跟踪</td></tr>
+  <tr><td>335</td><td>Biao Zhang · Google DeepMind（论文时为 University of Edinburgh）</td><td><b>无当前可核明文地址</b>（论文页 <code>B.Zhang@ed.ac.uk</code> 为旧地址，已赴 GDM ⇒ 不采用、不猜 <code>@google.com</code>）</td><td>未找到（<code>bzhang.page</code> <code>000</code>；GitHub <code>bzhangGo</code> <code>200</code> 但无 X 外链）</td><td>待跟踪（仅建档，不发信）</td></tr>
+</table>
+
+<h3 class="sec">✉ 作者请教信（本窗 0 封 · 累计 152 · 回信率 0/152）</h3>
+
+<ul class="tight">
+  <li><b>本窗 0 封</b>：今日已 <b>12/12</b>，按 <code>RESEARCH_MAIL_SPEC §3</code> 每日硬上限 ⇒ 只选题、建档、备问题，不发信；不突破上限、不硬凑。</li>
+  <li><b>回信状态复核</b>：<code>已回复</code> <b>0</b> / <code>无应答(&gt;14d)</code> <b>0</b> / <code>未到期</code> <b>152</b>；<b>0 封到期</b>（最早 <b>2026-11-25</b>，#1–#7 剩 2 天）；<code>replies/</code> 仍只有 <code>README.md</code>。</li>
+  <li><b>下一自然日待发队列</b>：Rico Sennrich（pRMSNorm 的 p 敏感性 / 长序列 packing）、Jiawei Zhao（秩 r 与 8-bit 子空间漂移）、Di He（Pre-LN 在 2B / 低精度）、Mingjie Liu（仿真判分边界）。</li>
+  <li><b>0 回信仍按待诊断信号处理</b>：显示名 <code>AI+EDA 招聘 · 自动</code>（待运维改）+ 通道只发不收（无 IMAP/POP3）两项不变。</li>
+</ul>
+
+<h3 class="sec">🗣 voice_ready / 📰 news_ready（18:00 时窗）</h3>
+<ul class="tight">
+  <li><b>voice_ready：本期无</b>（X 推文页需登录态，未做双源核验 ⇒ 不标 voice_ready）。</li>
+  <li><b>news_ready：0 条</b>（三篇均为 2019–2024 方法 / 技术报告，无「发布 / 首次 / 开源」事件点；不硬凑）。</li>
+</ul>
+
+<h3 class="sec">18:00 时窗 · 对各线的可执行建议（6 线齐全）</h3>
+
+<table class="plain">
+  <tr><th>线</th><th>可执行建议（动作 / 实验设计 / 预注册判据）</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>模型配置表把 <code>norm_type / eps / 是否 pRMSNorm</code> 列为必填</b>（<code>1910.07467</code>）：2B 上预注册「只改 norm 类型」对照（RMSNorm vs LayerNorm，其余全固定）。判据：<b>前 1k 步 grad-norm 分位数跨度 &gt;3×</b> ⇒ 先固定 <code>eps</code> 与 norm 位置再谈优化器，不改默认配方。另把 <code>optimizer_state_bytes</code> 单列，按「GaLore vs AdamW vs LoRA、同 token 数」做三臂对照（<code>2403.03507</code>）。</td></tr>
+  <tr><td><b>vision</b></td><td><b>无</b>（本轮三篇均不触及视觉编码器 / 图文对；显式写「无」，不凑数）。</td></tr>
+  <tr><td><b>harness</b></td><td><b>归一化结论必须同时报 <code>norm_type</code> + <code>eps</code> + packing 方式</b>（<code>1910.07467</code>）；技术报告类论文必须把 base 与 instruct 分数<b>分表</b>报（<code>2407.10671</code>）。判据：混报 base / instruct 或缺失 norm 配置 ⇒ 该结论不进结论表。</td></tr>
+  <tr><td><b>data</b></td><td><b>新增「放宽质量阈值、只扩量」对照臂</b>（<code>2407.10671</code> 的 3T→7T vs 12T）：判据 = 低质扩容臂在固定 token 预算下验证 loss <b>不低于</b>高质臂，才允许扩量；否则预算投到筛选。做 token 预算实验时<b>固定优化器实现</b>（<code>2403.03507</code>），避免与优化器收益混淆。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>成本表加三列：优化器状态内存 / 总训练内存 / 硬件型号</b>（<code>2403.03507</code>），并加「norm 实现」列（<code>1910.07467</code>）。判据：只报「能训多大模型」不报 batch / 序列长度 / token 数 ⇒ 成本对比判口径不合格。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>无</b>（本轮三篇均不涉及 EDA 题面 / 判分；显式写「无」）。</td></tr>
+</table>
+
+<h3 class="sec">附录 · 18:00 时窗检索式与核验（可复核）</h3>
+<ul class="tight">
+  <li><b>A 轨检索</b>：<code>cat:cs.CL&amp;max_results=5</code>（<code>--noproxy '*'</code>）<code>200</code> / <code>application/atom+xml</code> / <b>13,309 B / 5 entry</b>；<code>published</code> 上界 <code>2026-11-20T18:51:29Z</code>（距本窗 63.1h &lt; 72h）；今日额度已满 ⇒ 不新增。</li>
+  <li><b>B 轨元数据</b>：arXiv <code>id_list=1910.07467,2403.03507,2407.10671</code> <code>200</code> + atom（<b>10,910 B / 3 entry</b>；<code>published</code> = 2019-10-16T16:44:22Z / 2024-07-15T12:35:42Z / 2024-03-06T07:29:57Z；<code>comment</code> = <code>NeurIPS 2019</code> / <code>26 pages, 1 figure</code> / <code>ICML 2024 (Oral)</code>）。</li>
+  <li><b>abs 页</b> 3/3 <code>200</code>（42,264 / 51,347 / 43,302 B，<code>citation_title</code> + <code>citation_date</code> 逐字）；<b>ar5iv 全文</b> 3/3 <code>200</code>（208,520 / 346,984 / 558,608 B）；<b>Qwen2 arXiv HTML</b> <code>2407.10671v4</code> <code>200</code> / 355,126 B（逐字核实 3T→7T、12T 无显著提升、131,072 tokens）。</li>
+  <li><b>OpenAlex</b> 3/3 <code>200</code>：1,903（2019 / conference-paper）/ 5,530（2024 / preprint）/ 648（2024 / preprint），查询日 <b>2026-11-23</b>；三篇均<b>未做 PDF 逐页复核</b>。</li>
+  <li><b>去重</b>：三 ID 在 <code>PAPERS.md</code> 条目级查重 <b>0 命中</b>（B 轨不进 <code>SEEN.md</code> / <code>papers.jsonl</code>）。</li>
+  <li><b>X 可达性自检</b>：<code>x.com</code> 经 Mihomo 代理 <code>200</code>；本轮新增 <code>@RicoSennrich</code> / <code>@jiawzhao</code> 双源核验 ⇒ X 已核验 <b>129</b>；Biao Zhang 无依据 ⇒ 「未找到」，不猜 handle。</li>
+  <li><b>数字口径</b>：被引数 = OpenAlex（查询日 2026-11-23）；论文数字 = 作者自报，本线未复现。</li>
+</ul>
+
 <footer>
-  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-23 15:3x CST（含 00:00 / 03:00 / 06:00 / 09:00 / 12:00 / 15:00 时窗 + 15:3x B 轨补轮）
+  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-23 18:00 CST（含 00:00 / 03:00 / 06:00 / 09:00 / 12:00 / 15:00 / 18:00 时窗 + 15:3x B 轨补轮）
 </footer>
 
 </div>

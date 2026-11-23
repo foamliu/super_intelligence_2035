@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-23 18:0x）**：作者 **335** 人（编号最大 **335**）· X 已核验 **129**（本轮 **+2**：`@RicoSennrich` 经 `x.com/RicoSennrich` 经代理 `200` / 160,280 B，`og:title` = `Rico Sennrich (@RicoSennrich) on X`、`og:description` = `SNSF Professor at University of Zurich`，且检索结果与 Instalker 侧写互证；`@jiawzhao` 由本人主页 `www.jiaweizhao.com`（`200` / 18,586 B）外链 `x.com/jiawzhao` + 推文页 `og:title` = `Jiawei Zhao (@jiawzhao) on X`、`og:description` = `Research Scientist at Meta FAIR @AIatMeta, PhD @Caltech, GaLore, DeepConf` 双源核验；Biao Zhang 无可核主页 / X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **152**（台账 #1–#152；今日 **12/12** 已达每日硬上限 ⇒ 本窗不发信）· 回信 **0**（0/152）。以下历史快照行保留原文（不追改），计数以本行为准。
+
 > **当前计数（2026-11-23 15:3x 补轮）**：作者 **332** 人（编号最大 **332**）· X 已核验 **127**（本轮 **+0**：三位新增作者——Di He / Mingjie Liu / Haoxing Ren——主页或论文页均无 x.com / twitter.com 外链；`mingjieliu.github.io` 实测 `404` ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **152**（台账 #1–#152；今日 **12/12** 已达每日硬上限 ⇒ 本补轮不发信）· 回信 **0**（0/152）。以下历史快照行保留原文（不追改），计数以本行为准。
 
 
@@ -4713,3 +4715,43 @@
 | 状态 | **待跟踪**（同一论文 ≤1 原则下，优先联系一作 Mingjie Liu；本条仅建档备选） |
 | 备注 | 建档目的：若一作无应答，按 §3「不催」原则也不追发同论文 ⇒ 本条长期只作关系网节点，不作补发对象。 |
 
+### 333. Rico Sennrich
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Rico Sennrich（`语言=英文(判据=姓名族属德语区、机构为瑞士 UZH；按「德/法/西… 姓名 + 对应国家机构」规则本应母语称谓问候 + 英文正文，但 152 封台账从未发过德文，且论文与主页全英文 ⇒ 本轮按英文草拟，待回信语言确认后再调)`） |
+| 机构 | **University of Zurich**（Institute of Computational Linguistics；UZH 官方人员页 `200` / 65,239 B） |
+| 代表论文 | **Root Mean Square Layer Normalization**（`1910.07467`，B 轨 #366，共同作者）· 另：Subword Regularization / BPE-dropout（NMT 方向） |
+| 邮箱 | **rico.sennrich@uzh.ch**（来源：UZH 官方人员页 <https://www.cl.uzh.ch/en/research-groups/texttechnologies/Team/Current-Members/sennrich.html> `200` / 65,239 B 页内 `mailto:` 明文；**当前机构地址**，未用论文 PDF 上的旧写法 `sennrich@cl.uzh.ch`） |
+| 主页 | <https://www.cl.uzh.ch/en/about-us/people/team/compling/sennrich.html>（UZH 团队页，`200`） |
+| X 账号 | **@RicoSennrich**（核验：`x.com/RicoSennrich` 经代理 `200` / 160,280 B，`og:title` = `Rico Sennrich (@RicoSennrich) on X`，`og:description` = `SNSF Professor at University of Zurich`） |
+| 状态 | **待跟踪**（今日 **12/12** 已达每日硬上限 ⇒ 不发信；下一自然日候选） |
+| 备注 | `语言=英文(判据=姓名族属德语区+UZH；未用德文正文，理由见上行)`。发信问题候选（只对 RMSNorm 成立）：① pRMSNorm 用 p% 输入估 RMS 时，p 的选择如何影响统计量方差与可用最大学习率，论文里有没有 p 的敏感性表；② 「re-centering 可丢」的结论在 **pre-LN + 长序列 packing** 下是否仍成立（论文是 2019 年 RNN/Transformer 口径）；③ 7%~64% 的运行时间差里，有多少来自减均值、多少来自算子融合实现（答复会影响我们是否把 norm 当独立成本项）。 |
+
+
+
+### 334. Jiawei Zhao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jiawei Zhao（`语言=中文(判据=拼音姓名族属「Jiawei Zhao」可还原中文名；机构现为 Meta Superintelligence Labs 美国 ⇒ 按「姓名族属优先于机构」判中文)`） |
+| 机构 | **Meta Superintelligence Labs**（本人主页自述；论文署名时为 Caltech / Meta FAIR） |
+| 代表论文 | **GaLore: Memory-Efficient LLM Training by Gradient Low-Rank Projection**（`2403.03507`，B 轨 #367，一作）· 另：DeepConf / GRESO |
+| 邮箱 | **jwzhao@meta.com**（来源：本人主页 <https://www.jiaweizhao.com/> `200` / 18,586 B 页内写 `jwzhao at meta dot com (work)`；**当前机构地址**，未用论文 ar5iv 里的旧 `jiawei@caltech.edu`） |
+| 主页 | <https://www.jiaweizhao.com/>（`200` / 18,586 B；`jiaweizhao.github.io` 实测 `404`） |
+| X 账号 | **@jiawzhao**（核验：本人主页外链 `x.com/jiawzhao`；推文页 `og:title` = `Jiawei Zhao (@jiawzhao) on X`，`og:description` = `Research Scientist at Meta FAIR @AIatMeta, PhD @Caltech, GaLore, DeepConf` ⇒ 双源） |
+| 状态 | **待跟踪**（今日 **12/12** 已达每日硬上限 ⇒ 不发信；下一自然日候选） |
+| 备注 | `语言=中文(判据=拼音姓名族属，优先于 Meta 美国机构)`。发信问题候选（只对 GaLore 成立）：① 低秩投影的秩 r 与更新间隔如何影响 7B 上的 loss 曲线（论文的 19.7B token 设置里 r 取多少）；② 8-bit GaLore 的 82.5% 优化器内存降幅是否以量化误差换来的——在 2B / 中文语料上是否出现梯度子空间漂移导致的 spike；③ 24GB 单卡跑 7B 时，batch × 序列长度被压到多少（决定它能否用于我们的 2B 长上下文配方）。 |
+
+### 335. Biao Zhang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Biao Zhang（`语言=中文(判据=拼音姓名族属「Biao Zhang」可还原中文名；现机构 Google DeepMind 美国/英国 ⇒ 姓名族属优先)`） |
+| 机构 | **Google DeepMind**（OpenReview 个人页 `~Biao_Zhang2`：`Researcher Google DeepMind (google.com) 2023 – Present`；论文署名时为 University of Edinburgh） |
+| 代表论文 | **Root Mean Square Layer Normalization**（`1910.07467`，B 轨 #366，一作）· 另：Prompting LLM for Machine Translation（ICML 2023） |
+| 邮箱 | **无当前可核明文地址**（论文 ar5iv 页内 `B.Zhang@ed.ac.uk` 是 2019 年 Edinburgh 旧地址，本人已赴 Google DeepMind ⇒ 按「年代久 / 机构变更先查当前主页」规则**不采用**、不猜 `@google.com`） |
+| 主页 | **未找到**（`bzhang.page` 实测 `000`/DNS 失败并落到 GitHub Pages `Site not found`；GitHub `github.com/bzhangGo` `200` / 164,648 B 但页内无个人站点 / 邮箱外链） |
+| X 账号 | **未找到**（无可核主页或 X 外链；不猜 handle） |
+| 状态 | **待跟踪**（仅建档，无可用地址 ⇒ 本线不发信） |
+| 备注 | `语言=中文(判据=拼音姓名族属)`。建档价值：RMSNorm 原始作者，若后续从 OpenReview / 新论文拿到当前地址，问题应聚焦「pRMSNorm 的 p 敏感性 + pre-LN 长序列下的 re-centering 结论」；🚫 不用旧 Edinburgh 地址发信。 |

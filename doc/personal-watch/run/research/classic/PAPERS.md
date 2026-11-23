@@ -10,6 +10,8 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **368** 条（**第一百轮 2026-11-23 18:0x 补 3 条 → 368**：RMSNorm `1910.07467`（**1,903**，NeurIPS 2019，OpenAlex `conference-paper`；去掉 LayerNorm 的 re-centering、只按 RMS 归一化，并给出 **pRMSNorm**；多任务 / 多架构下与 LayerNorm 持平而运行时间降 **7%~64%**）/ GaLore `2403.03507`（**648**，arXiv `comment` = `ICML 2024 (Oral)`、OpenAlex 记 `preprint`；梯度低秩投影让**全参数训练**的优化器状态内存降 **65.5%**，8-bit 版再降 **82.5%**、总训练内存降 **63.3%**；LLaMA 1B / 7B + C4 **19.7B** token，首次在 **24GB 消费卡（RTX 4090）** 上无模型并行 / 重算 / offload 预训练 7B）/ Qwen2 `2407.10671`（**5,530**，预印本；0.5–72B dense + **57B-A14B MoE**；预训练数据从 Qwen1.5 的 **3T** 扩到 **7T** token，放宽质量阈值得到的 **12T** 反而无显著提升 ⇒ 选 7T；Qwen2-72B base MMLU **84.2** / GPQA 37.9 / HumanEval 64.6 / GSM8K 89.5 / BBH 82.4，Instruct MT-Bench **9.1** / Arena-Hard 48.1 / LiveCodeBench 35.7，约 **30** 种语言）；核验：arXiv `id_list` 单批 **`200` + atom**（10,910 B / 3 entry，`published`：2019-10-16 / 2024-07-15 / 2024-03-06；`comment` = NeurIPS 2019 / `26 pages, 1 figure` / `ICML 2024 (Oral)`）+ abs 页 **3/3 `200`**（42,264 / 51,347 / 43,302 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **3/3 `200`**（208,520 / 346,984 / 558,608 B）+ arXiv HTML Qwen2 `2407.10671v4` **`200` / 355,126 B**（页内核实 `expanded from 3 trillion tokens ... to 7 trillion tokens` 与 `12 trillion` 段落）+ OpenAlex **3/3 `200`**（1,903 / 5,530 / 648，查询日 2026-11-23）；三 ID 三处条目级查重 **0 命中**（同批候选 Florence-2 `2311.06242` / T0 `2110.08207` / UL2 `2205.05131` / RTLLM `2309.05076` / PrefixRL `2111.05477` / ABCD `2012.00571` 本轮未收，留作下轮）；⚠️ **ID 误记当场拦截**：候选池把 GaLore 记成 `2402.04347`，abs 页实测为 *The Hedgehog &amp; the Porcupine: Expressive Linear Attentions with Softmax Mimicry*（无关）⇒ 真 ID `2403.03507` 复核后收录；本轮归属：pretrain **+3** · data **+2** · zhulong **+2** · harness **+2** · vision **0** · designflow **0**（一篇可多线））
+
 **本轮快照**：累计 **365** 条（**第九十九轮 2026-11-23 15:3x 补轮 补 3 条 → 365**：DeiT `2012.12877`（**5,971**，OpenAlex `preprint`；ImageNet-only 训练、单机 <3 天的 86M ViT，单裁 top-1 **83.1%**（无外部数据）、带 convnet 教师时 **85.2%**；**distillation token** 通过注意力向教师学习）/ Pre-LN `2002.04745`（**1,133**，OpenAlex `preprint`；均值场理论证明 Post-LN 在初始化时**靠近输出层的期望梯度大** ⇒ 必须 warm-up；把 LayerNorm 放进残差块内（Pre-LN）后梯度性质良好 ⇒ **可去掉 warm-up**，且持平基线的同时减少训练时间与调参）/ Zero-shot-CoT `2205.11916`（**10,093**，NeurIPS 2022，OpenAlex `conference-paper`；只在答案前加一句 **“Let's think step by step”**、不用任何手写 few-shot；text-davinci-002 上 **MultiArith 17.7% → 78.7%**、**GSM8K 10.4% → 40.7%**，540B PaLM 同量级提升）；核验：arXiv `id_list` 单批 **`200` + atom**（8,506 B / 3 entry，`published`：2020-02-12 / 2022-05-24 / 2020-12-23；Zero-shot-CoT `comment` = `Accepted to NeurIPS2022`）+ abs 页 **3/3 `200`**（44,669 / 45,193 / 42,739 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **2/2 `200`**（392,812 / 213,678 B；Zero-shot-CoT 未取 ar5iv，数字取自 arXiv 官方摘要）+ OpenAlex **3/3 `200`**（1,133 / 10,093 / 5,971，查询日 2026-11-23）；三 ID 三处条目级查重 **0 命中**；⚠️ **两处 ID / 重复拦截**：① 候选池把 VerilogEval 记成 `2309.07635`，abs 页实测为 *Decay estimates for one Aharonov-Bohm solenoid in a uniform magnetic field I*（math-ph，无关）；② 真 ID `2309.07544` 经条目级复核**已在表内 #7** ⇒ 整条剔除，改收 Zero-shot-CoT；本轮归属：vision **+2** · pretrain **+2** · data **+2** · harness **+2** · zhulong **+2** · designflow **+1**（一篇可多线））
 
 
@@ -6434,4 +6436,58 @@
 | 与我们工作的关系 | **harness（主 · 评测基线）**：这是推理评测的**最小最强零样本基线**——任何 CoT / 微调 / RL 的增益都必须先减去这条基线；报告推理成绩时须写明是否使用该单模板、模板原文是什么。预注册判据：<b>不报零样本基线的推理提升</b> ⇒ 不进结论表。<br>**data（主 · 先测基线再造数据）**：论文的结论直接约束数据侧——**先量零样本能力，再决定造多少推理数据**；我们做推理 SFT / 蒸馏前须先用同一模板测基座，避免用数据去补「一句提示就能拿到」的能力。<br>**pretrain（能力侧）**：CoT 能力在预训练后已部分存在（只是没被激发），这影响我们判断「推理能力该在预训练还是在后训练补」；须用同一模板在中间 checkpoint 上测，画出「能力何时出现」。<br>**zhulong（成本口径）**：单模板零样本几乎不增 token 预算，而多步 CoT 会显著增加输出 token；成本表须把「提示模板 + 平均输出 token」与准确率一起报，不能只报准确率。<br>**vision**：无直接建议（显式写「无」；纯文本推理实验）。<br>**designflow**：无直接建议（显式写「无」；不涉及 EDA 题面 / 判分）。 |
 | 首次收录 | **2026-11-23**（第九十九轮 · 15:3x 补轮） |
 | 核验状态 | abs 页 **`200` / 45,193 B**，`citation_title` + `citation_date` = `2022/05/24` 逐字；arXiv `id_list` **`200` + atom**（3,733 B / 1 entry，`comment` = NeurIPS2022）；OpenAlex **`200`（10,093 / 2022 / conference-paper）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+
+---
+
+## 366. Root Mean Square Layer Normalization
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Root Mean Square Layer Normalization |
+| 作者（前 3） | Biao Zhang · Rico Sennrich（共 **2** 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2019**（arXiv v1 `2019-10-16`） |
+| 会议 / 期刊 | **NeurIPS 2019**（arXiv `comment` = `NeurIPS 2019`；OpenAlex `type=conference-paper`、`source` = neural information processing systems） |
+| 被引数 | **1,903**（OpenAlex `10.48550/arxiv.1910.07467`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1910.07467> ｜ arXiv DOI `10.48550/arxiv.1910.07467` |
+| 一句话贡献 | **RMSNorm**：假设 LayerNorm 的 **re-centering（减均值）不变性可以丢掉**，只按 **root mean square（RMS）** 归一化 summed inputs，保留 re-scaling 不变性与「隐式学习率自适应」；由此计算更简单，并给出只用 **p%** 输入估计 RMS 的 **pRMSNorm**（不破坏上述性质）；在 RNN / CNN / Transformer、多种激活与初始化、三种框架的多任务实验中，性能与 LayerNorm 持平，而**运行时间降低 7%~64%**。 |
+| 与我们工作的关系 | **pretrain（主 · 归一化实现与训练稳定性）**：我们 2B 配方用的是 RMSNorm/LayerNorm 家族，这条是「去掉 re-centering 是否安全」的原始论证；排 loss spike / 早崩时，模型配置表必须能区分 `norm_type(RMSNorm\|LayerNorm)`、`eps`、是否 **pRMSNorm**（部分估计会改变统计量方差）。预注册判据：同一数据配比下只改 `norm_type`，若前 1k 步 grad-norm 分位数跨度 **>3×**，先固定 `eps` 与归一化位置再谈优化器。<br>**zhulong（成本口径）**：7%~64% 是**运行时间**口径（作者自报、2019 年硬件与模型），只能用于「归一化这一小块的成本敏感度」排序，🚫 不能外推成端到端训练加速；成本表须注明 norm 实现。<br>**harness（报告口径）**：归一化结论（含长上下文 / 变长 packing）必须同时给 `norm_type` + `eps` + 池化/打包方式，缺任一项不进结论表。<br>**data**：无直接建议（显式写「无」；不改变数据配比结论）。<br>**vision**：无直接建议（显式写「无」；论文未做视觉塔对照）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第一百轮 · 18:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,264 B**，`citation_title` + `citation_date` = `2019/10/16` 逐字；arXiv `id_list` **`200` + atom**（10,910 B / 3 entry 同批，`comment` = `NeurIPS 2019`）；ar5iv 全文 **`200` / 208,520 B**（页内明文 `B.Zhang@ed.ac.uk` / `sennrich@cl.uzh.ch`，**仅作联系线索**；Biao Zhang 现于 Google DeepMind，旧 Edinburgh 地址**未用于发信**）；OpenAlex **`200`（1,903 / 2019 / conference-paper）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。 |
+
+
+
+---
+
+## 367. GaLore: Memory-Efficient LLM Training by Gradient Low-Rank Projection
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | GaLore: Memory-Efficient LLM Training by Gradient Low-Rank Projection |
+| 作者（前 3） | Jiawei Zhao · Zhenyu Zhang · Beidi Chen（共 **6** 位；另 Zhangyang Wang · Anima Anandkumar · Yuandong Tian；arXiv `citation_author` 逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-03-06`） |
+| 会议 / 期刊 | arXiv `comment` = **`ICML 2024 (Oral)`**；OpenAlex `type=preprint`、`source` = arXiv（Cornell University）⇒ 会议名按 arXiv `comment` 记，被引数按 OpenAlex 预印本记录记（口径不混用） |
+| 被引数 | **648**（OpenAlex `10.48550/arxiv.2403.03507`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2403.03507> ｜ arXiv DOI `10.48550/arxiv.2403.03507` |
+| 一句话贡献 | **GaLore**：不做 LoRA 式「冻结权重 + 低秩增量」，而是把**梯度**投影到低秩子空间、优化器状态只在这个子空间里维护，从而**保持全参数学习**；优化器状态内存最多降 **65.5%**，8-bit GaLore 进一步把优化器内存降 **82.5%**、总训练内存降 **63.3%**（对 BF16 基线）；在 LLaMA 1B / 7B + C4 最多 **19.7B** token 的预训练与 RoBERTa / GLUE 微调上保持性能，并首次演示在 **24GB 消费级 GPU（如 RTX 4090）**、无模型并行 / 梯度重算 / offload 的情况下预训练 7B 模型。 |
+| 与我们工作的关系 | **pretrain（主 · 显存预算与优化器状态）**：这条把「省显存」从改参数化（LoRA）改成改**梯度统计**，意味着全参数路径也可能在单卡上跑到 7B；我们要评估 2B 的 checkpoint / 优化器状态占用时，应把 `optimizer_state_bytes` 单列，并预注册对照：GaLore（秩 r、投影更新间隔）vs AdamW 全量 vs LoRA，三者同 token 数比 loss。<br>**zhulong（成本口径）**：成本表新增「优化器状态内存 / 总训练内存」两列与硬件型号；预注册判据：只报「能训多大模型」不报 batch / 序列长度 / token 数的成本对比 ⇒ 判为口径不合格。<br>**data（数据规模轴）**：19.7B token 的 C4 预训练说明低秩投影在大 token 预算下仍可用；数据侧做 token 预算实验时须固定优化器实现，否则数据量与优化器收益会混在一起。<br>**harness（可复现性）**：复现报告须写清秩 r、子空间更新频率、8-bit 量化器与 seed；缺一项即不可复现。<br>**vision**：无直接建议（显式写「无」；论文只做语言模型）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第一百轮 · 18:00 时窗） |
+| 核验状态 | abs 页 **`200` / 43,302 B**，`citation_title` + `citation_date` = `2024/03/06` 逐字；arXiv `id_list` **`200` + atom**（`comment` = `ICML 2024 (Oral)`）；ar5iv 全文 **`200` / 558,608 B**（页内明文 `jiawei@caltech.edu` / `yuandong@meta.com`）；作者个人主页 `www.jiaweizhao.com` **`200` / 18,586 B**（现职 **Meta Superintelligence Labs**，页内写 `jwzhao at meta dot com`）；OpenAlex **`200`（648 / 2024 / preprint）**；数字取自 arXiv 官方摘要，**未做 PDF 逐页复核**。⚠️ 候选池旧记 ID `2402.04347` 实测为 *The Hedgehog &amp; the Porcupine*（无关），已更正为 `2403.03507`。 |
+
+---
+
+## 368. Qwen2 Technical Report
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Qwen2 Technical Report |
+| 作者（前 3） | An Yang · Baosong Yang · Binyuan Hui（共 **62** 位；arXiv `citation_author` 逐字核，署名主体为 Qwen Team） |
+| 年份 | **2024**（arXiv v1 `2024-07-15`） |
+| 会议 / 期刊 | 预印本（arXiv `comment` = `26 pages, 1 figure`；OpenAlex `type=preprint`、`source` = arXiv（Cornell University）） |
+| 被引数 | **5,530**（OpenAlex `10.48550/arxiv.2407.10671`，查询日 **2026-11-23**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2407.10671> ｜ arXiv DOI `10.48550/arxiv.2407.10671` |
+| 一句话贡献 | **Qwen2**：给出 **0.5B–72B** 的 dense 模型与一个 **57B-A14B MoE** 模型的全套 base / instruct 权重；核心可复用的是**数据决策**——预训练语料从 Qwen1.5 的 **3T** token 扩到 **7T** token，而「放宽质量阈值」得到的 **12T** 数据集**没有显著优于 7T**，团队据此选择更高质量、成本更低的 7T；基座 **Qwen2-72B** 报 MMLU **84.2** / GPQA **37.9** / HumanEval **64.6** / GSM8K **89.5** / BBH **82.4**，Instruct 版 MT-Bench **9.1** / Arena-Hard **48.1** / LiveCodeBench **35.7**，覆盖约 **30** 种语言。 |
+| 与我们工作的关系 | **data（主 · 质量阈值 vs 数据量）**：3T→7T 的扩容与 12T「低质扩容无效」是本轮最可直接落地的结论；动作：在 data 线的配比实验里新增一个「放宽质量阈值、只扩量」对照臂，预注册判据：**低质扩容臂在固定 token 预算下的验证 loss 不低于高质臂** ⇒ 才允许扩量；否则把预算投到筛选而不是采更多。<br>**pretrain（主 · 规模档与架构）**：0.5–72B dense + 57B-A14B MoE 提供了「同代 dense 与 MoE 并存」的对照档；72B 支持到 **131,072** token 上下文（正文自述），我们在长上下文配方上应记录 MoE 的激活参数与 KV 预算。<br>**harness（评测口径）**：base 与 instruct 两套分数必须分开报（MMLU vs MT-Bench / Arena-Hard / LiveCodeBench），且注明评测框架版本；预注册判据：混报 base / instruct 分数 ⇒ 该对比不进结论表。<br>**zhulong（成本口径）**：72B + 7T token 的训练 token 账可作规模成本参照；成本表须区分「总参数 / 激活参数 / 训练 token 数」三项。<br>**vision**：无直接建议（显式写「无」；本报告为语言模型，视觉版本 Qwen2-VL 另有论文）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-23**（第一百轮 · 18:00 时窗） |
+| 核验状态 | abs 页 **`200` / 51,347 B**，`citation_title` + `citation_date` = `2024/07/15` 逐字；arXiv `id_list` **`200` + atom**（`comment` = `26 pages, 1 figure`）；ar5iv 全文 **`200` / 346,984 B** + arXiv HTML `2407.10671v4` **`200` / 355,126 B**（逐字核实 `expanded from 3 trillion tokens in Qwen1.5 ... to 7 trillion tokens`、`12 trillion token dataset` 与 `131,072 tokens`）；OpenAlex **`200`（5,530 / 2024 / preprint）**；数字取自 arXiv 官方摘要与 arXiv HTML 正文，**未做 PDF 逐页复核**。 |
 
