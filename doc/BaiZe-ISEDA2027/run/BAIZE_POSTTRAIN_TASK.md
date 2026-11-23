@@ -1,5 +1,15 @@
 # BAIZE_POSTTRAIN_TASK.md
 
+### 🔴🔴 运维令 · 2026-11-23 19:0x（**P0 插入 · llama.cpp 测速 · 不改变 A5 预注册**）
+
+> **用户令**：测 llama.cpp + Qwen3.5-2B（CPU）8 线程 decode 30–60 tok/s 这条路线是否可行。
+> **完整令文（含预注册判据 / 交付 / 纪律 / 判定表）** → **`run/OPS_LLAMACPP_SPEED_PROBE.md`**
+> （本文件不再重复，避免超 40KB 硬限）。
+> 一句话：跑 `bash run/baize_posttrain_llamacpp_speed_probe.sh`（~45 min，CPU-only），
+> 只看 **8 路聚合 tok/s**：≥100 PASS / 64–100 CONDITIONAL / <64 FAIL；G0 转换失败即整条路线作废。
+> 🚫 不跑 158 题、不碰 GPU、不改协议；G2 PASS 先报告再等令。
+
+
 ### 🔴🔴 运维令 · 2026-11-22 09:3x（**最高优先 · 覆盖下列全部旧令的排期**）
 
 > **用户原话**：「把指令下发给 posttrain，让他写一份吧。」（针对 A0 能力对照报告的署名与执行主体）
