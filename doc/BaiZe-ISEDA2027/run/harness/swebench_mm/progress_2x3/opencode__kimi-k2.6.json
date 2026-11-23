@@ -5475,37 +5475,72 @@
   "openlayers__openlayers-11545": {
     "instance_id": "openlayers__openlayers-11545",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 827.0,
+    "rc": 0,
+    "model_patch_len": 2164,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "\n  return this.container;\n}\n```\n\n**`test/spec/ol/renderer/webgl/pointslayer.test.js`** — Added a `#renderFrame` test to assert the returned element has the expected `className` and contains a canvas.\n",
+    "stderr_tail": "yntax OK\"\nnpx acorn --module --ecma2020 test/spec/ol/renderer/webgl/pointslayer.test.js > /dev/null && echo \"pointslayer.test.js syntax OK\"\nPointsLayer.js syntax OK\npointslayer.test.js syntax OK\n\u001b[0m\n"
   },
   "openlayers__openlayers-11649": {
     "instance_id": "openlayers__openlayers-11649",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 737.8,
+    "rc": 0,
+    "model_patch_len": 1830,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "h a Node script against proj4js: for `EPSG:4258` the computed defaults are correctly `degrees` and `neu`, while projected CRS (e.g. `EPSG:21781`) and explicitly-defined geographic CRS are unaffected.\n",
+    "stderr_tail": "m# \u001b[0mTodos\n[✓] Fix ol/proj/proj4.js to default units and axisOrientation for geographic projections\n[✓] Add test for geographic projection registration from proj4js\n[✓] Run tests to verify fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-12141": {
     "instance_id": "openlayers__openlayers-12141",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 437.0,
+    "rc": 0,
+    "model_patch_len": 2848,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ccess !== undefined) {\n    success(features);\n  }\n}\n```\n\nThis matches the pattern already shown in the `VectorSource` documentation for custom loaders, where `addFeatures` is called before `success`.\n",
+    "stderr_tail": " \u001b[0mGrep \"loadFeaturesXhr\"\u001b[90m in . · 4 matches\u001b[0m\n\u001b[0m→ \u001b[0mRead src/ol/source/VectorTile.js\u001b[90m [offset=520, limit=60]\u001b[0m\n\u001b[0m→ \u001b[0mRead src/ol/featureloader.js\u001b[90m [offset=145, limit=30]\u001b[0m\n"
   },
   "openlayers__openlayers-12172": {
     "instance_id": "openlayers__openlayers-12172",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 536.3,
+    "rc": 0,
+    "model_patch_len": 2743,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "t is correctly applied to `getAnchor()`.\n- Added displacement to the clone test and added an assertion that `getDisplacement()` values match.\n\nBoth `eslint` and `tsc` pass cleanly with these changes.\n",
+    "stderr_tail": "/ol/style · 7 matches\u001b[0m\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Investigate icon style clipping with displacement in OpenLayers\n[✓] Identify root cause and implement fix\n[✓] Verify fix with tests or examples\n\u001b[0m\n"
   },
   "openlayers__openlayers-12194": {
     "instance_id": "openlayers__openlayers-12194",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 235.4,
+    "rc": 0,
+    "model_patch_len": 1055,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "- `lineDashOffset` is now multiplied by `pixelRatio_`\n\nThis ensures that dashed lines rendered via Canvas Immediate look consistent with those rendered on a map, regardless of the device pixel ratio.\n",
+    "stderr_tail": "✓] Identify where pixelRatio is applied (or not) to lineDash\n[✓] Implement fix to scale lineDash by pixelRatio in Canvas Immediate\n[✓] Verify fix with existing tests or by running relevant tests\n\u001b[0m\n"
   },
   "openlayers__openlayers-12373": {
     "instance_id": "openlayers__openlayers-12373",
