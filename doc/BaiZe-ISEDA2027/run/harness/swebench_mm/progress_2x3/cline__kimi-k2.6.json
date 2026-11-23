@@ -5154,30 +5154,58 @@
   "highlightjs__highlight.js-3287": {
     "instance_id": "highlightjs__highlight.js-3287",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 535.1,
+    "rc": 0,
+    "model_patch_len": 2810,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " meta, comment is a comment\\n- `` `CONSTANT + variable; // comment`` — only `` `CONSTANT`` is meta, the rest is normal code + comment\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3301": {
     "instance_id": "highlightjs__highlight.js-3301",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 289.8,
+    "rc": 0,
+    "model_patch_len": 933,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ">;\\n}\\n```\\n\\nThe fix is minimal, follows the existing patterns used by `less.js` and `stylus.js`, and is fully covered by new tests.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3312": {
     "instance_id": "highlightjs__highlight.js-3312",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 322.5,
+    "rc": 0,
+    "model_patch_len": 362,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "kup test (`control-statements.txt` / `.expect.txt`) covering `if`, `switch`, `while`, `for`, and `catch`.\\n- All **1669** tests pass.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3316": {
     "instance_id": "highlightjs__highlight.js-3316",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 857.1,
+    "rc": 0,
+    "model_patch_len": 24463,
+    "n_images": 6,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "nd Notepad++. Standard library typedefs with `_t` suffix (e.g., `int8_t`, `size_t`, `ptrdiff_t`) continue to be highlighted as types.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-3367": {
     "instance_id": "highlightjs__highlight.js-3367",

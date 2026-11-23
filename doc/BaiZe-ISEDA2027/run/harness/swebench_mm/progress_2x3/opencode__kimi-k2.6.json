@@ -5642,37 +5642,71 @@
   "openlayers__openlayers-13013": {
     "instance_id": "openlayers__openlayers-13013",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-13020": {
     "instance_id": "openlayers__openlayers-13020",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 605.6,
+    "rc": 0,
+    "model_patch_len": 3332,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "style object.\n    - `setStyle()` updates style variables.\n    - `setStyle()` disposes the old renderer and creates a new one.\n    - `setStyle()` actually changes the rendered output (red pixel test).\n",
+    "stderr_tail": "expect(Array.from(targetContext.getImageData(0, 0, 1, 1).data)).to.eql([\n+          255,\n+          0,\n+          0,\n+          255,\n+        ]);\n+        done();\n+      });\n+    });\n+  });\n });\n\u001b[0m\n"
   },
   "openlayers__openlayers-13069": {
     "instance_id": "openlayers__openlayers-13069",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 505.0,
+    "rc": 0,
+    "model_patch_len": 4043,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " are properly initialized arrays. For the existing test image (which has no GDAL statistics metadata), it confirms they remain `undefined`, ensuring the new code path doesn't break existing behavior.\n",
+    "stderr_tail": "rmalization logic\n[✓] Understand how getGDALMetadata and statistics are currently used\n[✓] Implement STATISTICS_MAXIMUM/MINIMUM as default max/min for normalization\n[✓] Verify the implementation\n\u001b[0m\n"
   },
   "openlayers__openlayers-13119": {
     "instance_id": "openlayers__openlayers-13119",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 955.0,
+    "rc": 0,
+    "model_patch_len": 5229,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "le layers to be composited with additive blending, which is exactly what you need for blending colored microscopy images. The default `'standard'` mode preserves the existing alpha-blending behavior.\n",
+    "stderr_tail": "✓] Pass blendMode to WebGLTileLayerRenderer and store it\n[✓] Apply additive blend mode in renderer renderFrame method\n[✓] Add unit tests for blendMode option\n[✓] Verify existing tests still pass\n\u001b[0m\n"
   },
   "openlayers__openlayers-13150": {
     "instance_id": "openlayers__openlayers-13150",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 300.7,
+    "rc": 0,
+    "model_patch_len": 720,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " with how the default post-processing pass works.\n\n**Verification:**\n- `eslint src/ol/layer/Heatmap.js` passes\n- `npm run test-node` passes (the one pre-existing failure in `ol/proj.js` is unrelated)\n",
+    "stderr_tail": "p implementation and understand opacity handling\n[✓] Compare with WebGL Points layer opacity handling to find difference\n[✓] Identify and apply fix for Heatmap layer opacity\n[✓] Verify fix works\n\u001b[0m\n"
   },
   "openlayers__openlayers-13155": {
     "instance_id": "openlayers__openlayers-13155",
