@@ -765,6 +765,26 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">812s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">read_files×9 · eda_flow__run_commands×9 · run_commands×2 · read_file×2 · editor×2 · open_session×1 · search×1 · list_files×1 · write_file×1 · declare_done×1</div></div>
   </div>
+  <div class="assert-head"><h5>断言清单（check.py 共 15 条 a–o，全部 PASS）</h5><span class="cnt">15/15 PASS</span></div>
+  <table class="assert-tbl">
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td class="id">a</td><td>zip 可解压 + 恰好 1 个 .py 脚本</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td>py_compile 通过</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td>不 hardcode A-specific literal（反作弊）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td>B run 成功 + 输出 CSV 含 design/corner header</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">5</td><td class="id">e</td><td>B (design,corner) 集合与 oracle 一致（6 行全到）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">6</td><td class="id">f</td><td>idle_V 对齐</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">7</td><td class="id">g</td><td>vwlp_V 对齐</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">8</td><td class="id">h</td><td>ACT_tr_ns 对齐（10-90% swing + linear interp）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">9</td><td class="id">i</td><td>PRE_stable_V 对齐</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">10</td><td class="id">j</td><td>PRE_tf_us 对齐（90-10% fall swing + falling-edge interp）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">11</td><td class="id">k</td><td>t_vwlp_us 对齐</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">12</td><td class="id">l</td><td>t_stable_us + PRE_total_us 对齐</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">13</td><td class="id">m–n</td><td>C run 成功 + C output 对齐</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">14</td><td class="id">o</td><td>确定性检查（多次运行输出一致）</td><td class="verdict pass">PASS</td></tr>
+    </tbody>
+  </table>
   <h5>行为序列图</h5>
   <svg viewBox="0 0 760 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;">
 <line x1="60" y1="96" x2="740" y2="96" stroke="#cbd5e1" stroke-width="1"/>
@@ -885,6 +905,25 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">52s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">read_files×3 · fetch_web_content×3 · run_commands×2 · open_session×1</div></div>
   </div>
+  <div class="assert-head"><h5>断言清单（check.py 共 16 条 a–p）</h5><span class="cnt" style="color:var(--red);font-weight:700;">败在前置（未产出 submit.zip）· 0/16 触达</span></div>
+  <table class="assert-tbl">
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr class="fail-row"><td class="num">0</td><td class="id">前置</td><td>submit.zip 产出（agent 须在 outputs/ 下写出交付物）<br><span class="muted small">判分报错：<span class="mono">no submit.zip produced (cline wrote nothing under outputs/)</span><br><b>根因</b>：agent 仅 9 轮迭代 / 52s，0 次 write_file/editor，联网查 svwf 格式 3 次未果后静默退出，<b>根本没产出任何交付物</b>，check.py 未触达</span></td><td class="verdict fail">FAIL</td></tr>
+      <tr><td class="num">1</td><td class="id">a</td><td>deliverable 存在 + 可解压 + 含 .py 脚本 + 无禁止泄漏</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td>py_compile 通过</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td>在 B 上运行成功 + 输出非空</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td>输出含 SVWF comment header（≥2 行 '#'）</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">5</td><td class="id">e</td><td>输出含 'waveform add -signals' Tcl 命令</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">6</td><td class="id">f–g</td><td>输出含 Tcl format wrapper + #waveform blocks == #B input lines</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">7</td><td class="id">h–i</td><td>paths 从 [format {PATH}] 解析出 + 以期望前缀开头</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">8</td><td class="id">j–k</td><td>嵌入 I_DDR6TOP_Mirror 保留 + parsed paths == replace_top(B, TOP.Chip)</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">9</td><td class="id">l–m</td><td>--replace-top TOP.Test 成功 + --replace-top= (disable) 保留原 top</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">10</td><td class="id">n</td><td>B output 含 B-only token + 无 A-only token（反 hardcode）</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">11</td><td class="id">o</td><td>不 hardcode /rundata 或 /proj 绝对路径</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">12</td><td class="id">p</td><td>非确定性输出检查（多次运行 sha256 一致）</td><td class="verdict skip">未触达</td></tr>
+    </tbody>
+  </table>
   <h5>行为序列图</h5>
   <svg viewBox="0 0 760 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;">
 <line x1="60" y1="96" x2="740" y2="96" stroke="#cbd5e1" stroke-width="1"/>
