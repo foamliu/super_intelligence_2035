@@ -1677,3 +1677,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1795065278472_r11v3.messages.json	willz	hfeahpc501	19	spice_sim	case	EDA-Eval-DesignFlow-Vvdd2cStimRewriteProduce-001	2026-11-23 06:54	
 1789374352756_57i4y	junxu	hfeg0pkn005	161	spice_sim	case	EDA-Eval-DesignFlow-FinesimMt0ParserProduce-001	2026-11-23 07:30	r1071: junxu block-sim SKILL extract_results.py reframe -> FineSim .mt0.csv parser, k=15
 1794905183946_8b4hl	guangmingz	hfeg0pkn004	30	spice_sim	case	EDA-Eval-DesignFlow-DsimSkillLogAnalyzer-001	2026-11-23 07:48	
+1795067835708_imgh7	thqu	hfeg0pkn004	48	spice_sim	case	EDA-Eval-DesignFlow-SubcktUnclosedDiagProduce-001	2026-11-23 08:07	
