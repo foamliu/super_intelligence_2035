@@ -7,6 +7,9 @@
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
 > **当前计数（2026-11-23 21:0x）**：作者 **338** 人（编号最大 **338**）· X 已核验 **130**（本轮 **+1**：`@VictorSanh` 经 `x.com/VictorSanh` 经代理 `200` / 163,390 B，`og:title` = `Victor Sanh (@VictorSanh) on X`，`og:description` = `Beaker ... Prev. early crew @huggingface | AI x NYC`；反例 `@m_dehghani` 只有 **1 follower / 3 following** ⇒ 判他人，不记）· 已发信 **152**（台账 #1–#152）· 回信 **0**（0/152，0 封到期，最早 11-25）。本轮 **+3**：Bin Xiao（Florence-2 一作，中文，无公开明文邮箱 ⇒ 仅建档）· Victor Sanh（T0 一作，英文，X 双源）· Mostafa Dehghani（UL2 共同一作，英文，论文页邮箱单源）。
+> **当前计数（2026-11-24 00:0x）**：作者 **341** 人（编号最大 **341**）· X 已核验 **130**（本轮 **+0**：三位新增作者——Wonjae Kim / Amanpreet Singh / Chao Jia——论文页与可访问主页均无 x.com / twitter.com 外链，`amanpreetsingh.github.io` 实测 `000` ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **155**（台账 #1–#155；今日 **3/12**）· 回信 **0**（0/155，0 封到期，最早 11-25）。本轮 **+3**：Wonjae Kim（ViLT 一作，韩文姓名，2021 旧地址 ⇒ 仅建档）· Amanpreet Singh（FLAVA 一作，英文，无地址）· Chao Jia（ALIGN 一作，中文，Google 论文页地址单源）。
+
+
 
 > **当前计数（2026-11-23 18:0x）**：作者 **335** 人（编号最大 **335**）· X 已核验 **129**（本轮 **+2**：`@RicoSennrich` 经 `x.com/RicoSennrich` 经代理 `200` / 160,280 B，`og:title` = `Rico Sennrich (@RicoSennrich) on X`、`og:description` = `SNSF Professor at University of Zurich`，且检索结果与 Instalker 侧写互证；`@jiawzhao` 由本人主页 `www.jiaweizhao.com`（`200` / 18,586 B）外链 `x.com/jiawzhao` + 推文页 `og:title` = `Jiawei Zhao (@jiawzhao) on X`、`og:description` = `Research Scientist at Meta FAIR @AIatMeta, PhD @Caltech, GaLore, DeepConf` 双源核验；Biao Zhang 无可核主页 / X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **152**（台账 #1–#152；今日 **12/12** 已达每日硬上限 ⇒ 本窗不发信）· 回信 **0**（0/152）。以下历史快照行保留原文（不追改），计数以本行为准。
 
@@ -4797,3 +4800,42 @@
 | 状态 | **待跟踪**（邮箱单源，本线发信前需二次核实） |
 | 备注 | `语言=英文(判据=姓名族属波斯 + Google DeepMind)`。发信问题候选（只对 UL2 成立）：① **MoD 的 R/S/X 采样比例是否随模型规模变化**（表 1 的 `r ∈ {0.15,0.5}`、`μ ∈ {3,8,64}` 是 20B 单点结论吗）；② **mode switching 在任务类型未知时如何选模式**，论文是否有自动判别实验；③ 20B UL2 → Flan-UL2 的 MMLU / Big-Bench 提升里，**多少来自 FLAN 指令数据、多少来自 MoD 预训练**（成本归因）。 |
 
+
+### 339. Wonjae Kim
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wonjae Kim（`语言=한국어(判据=韩文姓名族属 + 论文署名机构 Kakao Brain 在韩国)`） |
+| 机构 | **Kakao Brain**（论文署名时；本轮**未独立核验当前人员页**） |
+| 代表论文 | **ViLT: Vision-and-Language Transformer Without Convolution or Region Supervision**（`2102.03334`，B 轨 #372，一作） |
+| 邮箱 | **wonjae.kim@navercorp.com**（来源：ar5iv 全文 `2102.03334` `200` / 236,747 B 首页明文，出现 **1** 处；⚠️ 2021 年论文期地址，未独立核验当前可用 ⇒ 记为**旧地址，不用于发信**） |
+| 主页 | **未找到**（本轮未检索到可核验的个人主页） |
+| X 账号 | **未找到**（论文页与 ar5iv 全文均无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（地址为旧机构地址 ⇒ 本线不发信） |
+| 备注 | `语言=한국어(判据=韩文姓名族属+Kakao Brain)`。发信问题候选（只对 ViLT 成立）：① 用 patch 线性投影替代 region 特征后，下游损失中**分辨率**与**监督信号**各占多少（是否做过 384 vs 768 的对照）；② 图文对比损失与 word-patch alignment 损失的权重如何设，去掉 alignment 会掉多少；③ 摘要的 `up to tens of times faster` 是在何种硬件 / batch / 精度下测的（缺口径的加速比不可比）。 |
+
+### 340. Amanpreet Singh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Amanpreet Singh（`语言=英文(判据=姓名族属南亚/旁遮普，不属中/日/韩；机构美国 ⇒ 英文)`） |
+| 机构 | **Meta AI (FAIR)**（论文署名时；本轮**未独立核验当前人员页**） |
+| 代表论文 | **FLAVA: A Foundational Language And Vision Alignment Model**（`2112.04482`，B 轨 #373，一作） |
+| 邮箱 | **未找到**（ar5iv 全文 `2112.04482` `200` / 296,786 B 内无明文邮箱；`amanpreetsingh.github.io` 实测 **`000`** ⇒ 不猜地址） |
+| 主页 | **未找到**（`amanpreetsingh.github.io` 无响应） |
+| X 账号 | **未找到**（无可访问主页可核 X；不猜 handle） |
+| 状态 | **待跟踪**（无可用地址 ⇒ 本线不发信） |
+| 备注 | `语言=英文(判据=姓名族属南亚+Meta AI)`。发信问题候选（只对 FLAVA 成立）：① **35 个任务**里单塔模型相对双塔的**失效任务**是哪几类（决定我们是否要保留双塔）；② 对比损失、掩码多模态建模、图文匹配等多目标的**权重与采样比例**；③ 「foundation」主张的判据是平均分还是**每类任务都有下限**（有没有任务显著落后于专用模型）。 |
+
+### 341. Chao Jia
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chao Jia（`语言=中文(判据=拼音姓名族属；不因机构在美国判英文)`） |
+| 机构 | **Google Research**（论文署名时；本轮**未独立核验当前人员页**） |
+| 代表论文 | **Scaling Up Visual and Vision-Language Representation Learning With Noisy Text Supervision**（`2102.05918`，B 轨 #374，一作） |
+| 邮箱 | **chaojia@google.com**（来源：ar5iv 全文 `2102.05918` `200` / 228,755 B 首页明文，出现 **2** 处；⚠️ **单源、2021 年论文页地址** ⇒ 发信前须再核） |
+| 主页 | **未找到**（本轮未检索到可核验的个人主页） |
+| X 账号 | **未找到**（论文页与 ar5iv 全文均无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（邮箱单源，本线发信前需二次核实） |
+| 备注 | `语言=中文(判据=拼音姓名族属+Google Research)`。发信问题候选（只对 ALIGN 成立）：① 「十亿对、不做昂贵过滤」里**最低限度的清洗**到底保留了什么（alt-text 长度阈值 / 语言过滤 / 去重），去掉后指标掉多少；② 简单双塔在检索上超过 cross-attention，这个结论是否随**规模**变化（更大模型下差距会收敛吗）；③ ImageNet 零样本对 prompt 模板的敏感性有没有量化。 |

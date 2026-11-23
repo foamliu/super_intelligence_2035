@@ -10,6 +10,9 @@
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
 
+**本轮快照**：累计 **374** 条（**第一百零二轮 2026-11-24 00:0x 补 3 条 → 374**：ViLT `2102.03334`（**1,835**，ICML 2021 Long Presentation，OpenAlex `conference-paper`；把图像输入简化成与文本相同的 convolution-free patch 投影，去掉 region supervision 与 conv 骨干；摘要称比此前 VLP **快数十倍**，下游持平或更好）/ FLAVA `2112.04482`（**1,142**，CVPR 2022，`conference-paper`；单一整体模型同时覆盖视觉 / 语言 / 跨模态 / 多模态，**35** 个任务）/ ALIGN `2102.05918`（**6,929**，ICML 2021、OpenAlex 记 `preprint`；Conceptual Captions 中 **>10 亿** image alt-text、**不做昂贵过滤**，简单双塔 + 对比损失，主张规模可补偿噪声，零样本检索刷新 Flickr30K / MSCOCO SOTA）；核验：arXiv `id_list` 批量 **`200` + atom**（`published` = 2021-02-05T18:36:11Z / 2021-12-08T18:59:16Z / 2021-02-11T10:08:12Z）+ abs 页 **3/3 `200`**（41,847 / 41,473 / 45,205 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **3/3 `200`**（236,747 / 296,786 / 228,755 B）+ OpenAlex **3/3 `200`**（1,835 / 1,142 / 6,929，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；本轮归属：vision **+3** · data **+2** · harness **+2** · pretrain **+1** · zhulong **0** · designflow **0**（一篇可多线））
+
+
 **本轮快照**：累计 **371** 条（**第一百零一轮 2026-11-23 21:0x 补 3 条 → 371**：Florence-2 `2311.06242`（**861**，CVPR 2024，OpenAlex `conference-paper`；文本任务提示 → 文本序列的 seq2seq 统一视觉模型，FLD-5B = **54 亿标注 / 1.26 亿图**，靠「自动标注 → 模型精炼 → 再标注」迭代；0.23B / 0.77B 两档，零样本 COCO caption CIDEr **133.0 / 135.6**）/ T0 `2110.08207`（**2,273**，ICLR 2022 Spotlight、OpenAlex 记 `preprint`；**62 数据集 / 12 任务 + 每数据集多套提示措辞**的多任务提示微调，留出任务零样本常超 **16×** 大模型、BIG-bench 子集超 **6×**）/ UL2 `2205.05131`（**627**，预印本；**Mixture-of-Denoisers**：R 常规 span / S 按序 prefix / X 极端去噪，表 1 用 `r ∈ {0.15,0.5}`、`μ ∈ {3,8,64}`；**20B**、**50** 任务 SOTA、零样本 SuperGLUE 胜 **175B GPT-3**、单样本摘要约 **3×** T5-XXL、Flan-UL2 与 FLAN-PaLM 62B 相当）；核验：arXiv 单 ID 查询 **3/3 `200` + atom**（`published` = 2023-11-10T18:59:08Z / 2021-10-15T17:08:57Z / 2022-05-10T19:32:20Z；批量 `id_list` 先遇 **`429`** 后改单查成功）+ abs 页 **3/3 `200`**（41,312 / 50,287 / 45,566 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **3/3 `200`**（597,282 / 309,166 / 633,921 B）+ OpenAlex **3/3 `200`**（861 / 2,273 / 627，查询日 2026-11-23）；三 ID 条目级查重 **0 命中**；本轮归属：vision **+1** · data **+2** · harness **+2** · pretrain **+2** · zhulong **+1** · designflow **0**（一篇可多线））
 
 **本轮快照（前一）**：累计 **368** 条（**第一百轮 2026-11-23 18:0x 补 3 条 → 368**：RMSNorm `1910.07467`（**1,903**，NeurIPS 2019，OpenAlex `conference-paper`；去掉 LayerNorm 的 re-centering、只按 RMS 归一化，并给出 **pRMSNorm**；多任务 / 多架构下与 LayerNorm 持平而运行时间降 **7%~64%**）/ GaLore `2403.03507`（**648**，arXiv `comment` = `ICML 2024 (Oral)`、OpenAlex 记 `preprint`；梯度低秩投影让**全参数训练**的优化器状态内存降 **65.5%**，8-bit 版再降 **82.5%**、总训练内存降 **63.3%**；LLaMA 1B / 7B + C4 **19.7B** token，首次在 **24GB 消费卡（RTX 4090）** 上无模型并行 / 重算 / offload 预训练 7B）/ Qwen2 `2407.10671`（**5,530**，预印本；0.5–72B dense + **57B-A14B MoE**；预训练数据从 Qwen1.5 的 **3T** 扩到 **7T** token，放宽质量阈值得到的 **12T** 反而无显著提升 ⇒ 选 7T；Qwen2-72B base MMLU **84.2** / GPQA 37.9 / HumanEval 64.6 / GSM8K 89.5 / BBH 82.4，Instruct MT-Bench **9.1** / Arena-Hard 48.1 / LiveCodeBench 35.7，约 **30** 种语言）；核验：arXiv `id_list` 单批 **`200` + atom**（10,910 B / 3 entry，`published`：2019-10-16 / 2024-07-15 / 2024-03-06；`comment` = NeurIPS 2019 / `26 pages, 1 figure` / `ICML 2024 (Oral)`）+ abs 页 **3/3 `200`**（42,264 / 51,347 / 43,302 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **3/3 `200`**（208,520 / 346,984 / 558,608 B）+ arXiv HTML Qwen2 `2407.10671v4` **`200` / 355,126 B**（页内核实 `expanded from 3 trillion tokens ... to 7 trillion tokens` 与 `12 trillion` 段落）+ OpenAlex **3/3 `200`**（1,903 / 5,530 / 648，查询日 2026-11-23）；三 ID 三处条目级查重 **0 命中**（同批候选 Florence-2 `2311.06242` / T0 `2110.08207` / UL2 `2205.05131` / RTLLM `2309.05076` / PrefixRL `2111.05477` / ABCD `2012.00571` 本轮未收，留作下轮）；⚠️ **ID 误记当场拦截**：候选池把 GaLore 记成 `2402.04347`，abs 页实测为 *The Hedgehog &amp; the Porcupine: Expressive Linear Attentions with Softmax Mimicry*（无关）⇒ 真 ID `2403.03507` 复核后收录；本轮归属：pretrain **+3** · data **+2** · zhulong **+2** · harness **+2** · vision **0** · designflow **0**（一篇可多线））
@@ -6546,4 +6549,56 @@
 | 与我们工作的关系 | **pretrain（主 · 去噪目标混合）**：MoD 把「span 长度 / 损坏率 / 是否按序」做成可混合的轴，且用 **mode switching** 显式绑定下游任务类型；我们的预训练配方应把 `denoiser_mix(r, μ, S 比例)` 写成配置项，并预注册对照：固定 token 数，MoD vs 单一 span corruption，比较验证 loss 与下游零样本；判据：**只报平均 loss 不报 mode 配置** ⇒ 该对比不进结论表。<br>**data（配比轴）**：MoD 本质是在**目标函数维度**做数据增广，同一语料可产出不同去噪视图；data 线做配比实验时须固定 `denoiser_mix`，否则「数据配比收益」和「目标混合收益」会混在一起。<br>**harness（模式与提示口径）**：mode switching 意味着同一 checkpoint 在不同任务上要指定模式；评测报告须写明「任务 → 模式」映射与 few-shot 设置，并单列 zero-shot / one-shot / chain-of-thought 三种口径（论文对 MMLU / Big-Bench 分开口径报）。<br>**zhulong（成本口径）**：20B 规模与 50 任务 SOTA 可作规模参照，但成本表须区分「总参数 / 训练 token / MoD 各模式采样比例」；缺模式比例 ⇒ 训练成本不可复算。<br>**vision**：无直接建议（显式写「无」；纯文本预训练目标）。<br>**designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-23**（第一百零一轮 · 21:00 时窗） |
 | 核验状态 | abs 页 **`200` / 45,566 B**，`citation_title` + `citation_date` = `2022/05/10` 逐字、`Comments` = `Updated Q1 2023 with Flan-UL2 20B release! :)`；arXiv API `search_query=id:2205.05131` **`200` + atom**（4,043 B / 1 entry，`published` = `2022-05-10T19:32:20Z`）；ar5iv 全文 **`200` / 633,921 B**（逐字核实 Table 1 的 `r ∈ {0.15, 0.5}` / `μ ∈ {3, 8, 64}`、`50 well-established supervised NLP tasks`、`175B GPT-3`、`about 3x`、`FLAN-PaLM 62B`）；OpenAlex **`200`（627 / 2022 / preprint）**；数字取自 arXiv 摘要与 ar5iv 正文，**未做 PDF 逐页复核**。 |
+
+
+---
+
+## 372. ViLT: Vision-and-Language Transformer Without Convolution or Region Supervision
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ViLT: Vision-and-Language Transformer Without Convolution or Region Supervision |
+| 作者（前 3） | Wonjae Kim · Bokyung Son · Ildoo Kim（共 **3** 位；论文署名时为 Kakao Brain；arXiv `citation_author` 逐字核） |
+| 年份 | **2021**（arXiv v1 `2021-02-05T18:36:11Z`；v2 `2021-06-10`） |
+| 会议 / 期刊 | **ICML 2021 Long Presentation**（arXiv `comment` 原文；OpenAlex `type=conference-paper`） |
+| 被引数 | **1,835**（OpenAlex `10.48550/arxiv.2102.03334`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2102.03334> ｜ arXiv DOI `10.48550/arxiv.2102.03334` |
+| 一句话贡献 | **ViLT**：指出主流 VLP 的瓶颈不在多模态交互，而在**输入特征抽取**——区域监督（目标检测）与卷积骨干让「抽特征」比「做交互」更贵，且表达能力被视觉嵌入器与其预定义视觉词表封顶；ViLT 把图像处理简化成与文本完全相同的 **convolution-free** 方式（patch 线性投影），得到 monolithic Transformer；摘要称比此前 VLP 模型**快数十倍**（`up to tens of times faster`），下游任务性能持平或更好。 |
+| 与我们工作的关系 | **vision（主 · 视觉编码器取舍）**：ViLT 是「去掉检测器 / 去掉 conv 骨干」这一路线的奠基性对照——若我们的图文预训练仍依赖 region 特征，特征抽取成本会压过交互计算；vision 线应把「视觉输入 = patch 投影」作为基线，并记录与 conv/检测器方案的**同等算力**对比（只报精度不报特征抽取耗时 ⇒ 对比不进结论表）。<br>**data（标注成本）**：不依赖 region 标注 ⇒ 可直接吃网页图文对；data 线可据此把「region 标注预算」转为「图文对清洗预算」，但须预注册：同一清洗阈值下比较有无 region 监督的收益。<br>**harness（速度口径）**：论文把「快数十倍」当贡献，评测表须把**吞吐（pairs/s）与硬件/精度**一起写；缺硬件口径的加速比不算证据。<br>**pretrain**：无直接建议（显式写「无」；不涉及语言模型预训练配方）。<br>**zhulong**：无直接建议（显式写「无」；非 thinking/语言轴）。<br>**designflow**：无直接建议（显式写「无」；非 EDA 题面 / 判分）。 |
+| 首次收录 | **2026-11-24**（第一百零二轮 · 00:00 时窗） |
+| 核验状态 | abs 页 **`200` / 41,847 B**，`citation_title` + `citation_date` = `2021/02/05` 逐字、`Comments` = `ICML 2021 Long Presentation`；arXiv API `id_list` 批量 **`200` + atom**（`published` = `2021-02-05T18:36:11Z`）；ar5iv 全文 **`200` / 236,747 B**（首页明文邮箱 `wonjae.kim@navercorp.com`，仅 1 处）；OpenAlex **`200`（1,835 / 2021 / conference-paper）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 373. FLAVA: A Foundational Language And Vision Alignment Model
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | FLAVA: A Foundational Language And Vision Alignment Model |
+| 作者（前 3） | Amanpreet Singh · Ronghang Hu · Vedanuj Goswami（共 **7** 位；另 Guillaume Couairon · Wojciech Galuba · Marcus Rohrbach · Douwe Kiela；论文署名时为 Meta AI；arXiv `citation_author` 逐字核） |
+| 年份 | **2021**（arXiv v1 `2021-12-08T18:59:16Z`；v3 `2022-03-29`） |
+| 会议 / 期刊 | **CVPR 2022**（arXiv `comment` 原文；OpenAlex `type=conference-paper`） |
+| 被引数 | **1,142**（OpenAlex `10.48550/arxiv.2112.04482`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2112.04482> ｜ arXiv DOI `10.48550/arxiv.2112.04482` |
+| 一句话贡献 | **FLAVA**：指出现有视觉 / 视觉语言模型要么是 cross-modal（对比式双塔）、要么是 multi-modal（早期融合），且通常只覆盖部分模态或任务；提出用**单一整体模型**同时做视觉、语言、跨模态与多模态任务，在覆盖这些模态的 **35** 个任务上展示性能，主张「真正的视觉语言基础模型应当同时擅长三类任务」。 |
+| 与我们工作的关系 | **vision（主 · 单塔 vs 双塔）**：FLAVA 把「对比式双塔」与「早期融合单塔」放进同一模型，是 vision 线选型的直接对照；动作：预注册「双塔检索 / 单塔生成 / 联合」三档，在**同一图文对数据与同一算力**下比较，报告各自的失效任务。<br>**pretrain（多目标混合）**：多任务联合训练会把损失权重变成新超参；pretrain 线须把各目标权重与采样比例写入配置，并做「去掉某一目标」的消融（否则无法归因）。<br>**harness（任务覆盖面）**：35 任务的口径可作评测广度参照，但必须写明每任务的指标与采样设置；只报平均分、不报逐任务 ⇒ 不进结论表。<br>**data**：无直接建议（显式写「无」；论文未给数据配比结论）。<br>**zhulong**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零二轮 · 00:00 时窗） |
+| 核验状态 | abs 页 **`200` / 41,473 B**，`citation_title` + `citation_date` = `2021/12/08` 逐字、`Comments` = `CVPR 2022`；arXiv API `id_list` 批量 **`200` + atom**（`published` = `2021-12-08T18:59:16Z`）；ar5iv 全文 **`200` / 296,786 B**（命令因 25s 超时退出码 28，但响应体已完整落盘；页内**未检出明文邮箱** ⇒ 作者邮箱记「未找到」）；OpenAlex **`200`（1,142 / 2021 / conference-paper）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 374. Scaling Up Visual and Vision-Language Representation Learning With Noisy Text Supervision
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling Up Visual and Vision-Language Representation Learning With Noisy Text Supervision |
+| 作者（前 3） | Chao Jia · Yinfei Yang · Ye Xia（共 **10** 位；另 Yi-Ting Chen · Zarana Parekh · Hieu Pham · Quoc V. Le · Yunhsuan Sung · Zhen Li · Tom Duerig；Google Research；arXiv `citation_author` 逐字核） |
+| 年份 | **2021**（arXiv v1 `2021-02-11T10:08:12Z`；v2 `2021-06-11`） |
+| 会议 / 期刊 | **ICML 2021**（arXiv `comment` 原文；OpenAlex `type=preprint`、`source` = arXiv ⇒ 会议按 `comment` 记、被引按 OpenAlex 预印本记，口径不混用） |
+| 被引数 | **6,929**（OpenAlex `10.48550/arxiv.2102.05918`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2102.05918> ｜ arXiv DOI `10.48550/arxiv.2102.05918` |
+| 一句话贡献 | **ALIGN**：直接用 Conceptual Captions 中**超过十亿**对 image alt-text、**不做昂贵过滤与后处理**的噪声数据，配一个简单双塔架构 + 对比损失对齐图文表征；结论是**语料规模可以补偿噪声**——在如此简单的学习方案下得到 SOTA 表征，视觉侧迁移到 ImageNet / VTAB 分类表现强，并对齐后的表征支持零样本图像分类、在 Flickr30K / MSCOCO 检索上刷新 SOTA（对比更复杂的 cross-attention 模型），还可做复杂文本与「文本+图像」查询的跨模态检索。 |
+| 与我们工作的关系 | **data（主 · 噪声图文对规模化）**：ALIGN 的核心论点是「过滤成本 → 规模」的置换；data 线应预注册对照：同一预算下「强过滤小语料」vs「弱过滤十亿级语料」，判据必须同时报**下游零样本 / 检索指标 + 数据清洗人力 / 算力成本**；只报指标、不报成本 ⇒ 不进结论表。<br>**vision（双塔表征基线）**：简单双塔即可在检索上超过复杂 cross-attention ⇒ vision 线做检索任务时应先跑双塔基线，避免用大模型掩盖数据问题。<br>**pretrain（规模律参照）**：可作为「数据规模 × 噪声」的早期经验点，但论文未给幂律拟合 ⇒ 不得当作 scaling law 引用。<br>**harness（检索口径）**：Flickr30K / MSCOCO 的零样本检索设置须写清训练集与评测集切分；切分不明 ⇒ 数字不可比。<br>**zhulong**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零二轮 · 00:00 时窗） |
+| 核验状态 | abs 页 **`200` / 45,205 B**，`citation_title` + `citation_date` = `2021/02/11` 逐字、`Comments` = `ICML 2021`；arXiv API `id_list` 批量 **`200` + atom**（`published` = `2021-02-11T10:08:12Z`）；ar5iv 全文 **`200` / 228,755 B**（首页明文邮箱 `chaojia@google.com`、`yinfeiy@google.com`，各 2 处）；OpenAlex **`200`（6,929 / 2021 / preprint）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
 

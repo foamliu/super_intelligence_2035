@@ -5719,3 +5719,6 @@
 | 2026-11-23 | 2611.27607 | Tasklets: A Unit-Test Benchmark for Language Model Architectures | cs.CL | 收录 |
 | 2026-11-23 | 2611.27973 | MemOnce: A Scalable Memory Architecture for Large Language Models | cs.CL | 收录 |
 | 2026-11-23 | 2611.27951 | Topology Hub Optimal Transport: Eliminating Long Context Dilution at Flash Speed | cs.LG | 收录 |
+| 2026-11-24 | 2611.27895 | TEA-Bench-BR: Can Coding Agents Turn a Branching Clinical Specification into Correct Code? | cs.SE | 收录 |
+| 2026-11-24 | 2611.27750 | RoSci: Exploring Robustness in Science VLMs | cs.CL | 收录 |
+| 2026-11-24 | 2611.27764 | Enhancing Attention with Higher-Order Attention | cs.CL | 收录 |
