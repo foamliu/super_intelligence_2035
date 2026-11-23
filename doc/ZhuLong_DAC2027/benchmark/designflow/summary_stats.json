@@ -27,11 +27,11 @@
   "mc500": 133,
   "mc5_recompute": {
     "auto_stop": {
-      "consecutive_zero_case_rounds": 0,
+      "consecutive_zero_case_rounds": 1,
       "threshold_rounds": 3,
       "triggered_at": null,
       "triggered_by": null,
-      "note": "r1000 = 1st (and only) 0-case round in NEW mc=5 period (16:4x order reset shard_mc.A=5; r995 rescan ssh_eda_search_20261122_172249 + r995-r999 5 consecutive successes reset counter). r1001 produced 1 case (CosimEnvProjectExtractProduce-001, ozvhc) → counter reset to 0. r1002 produced 1 case (SimRerunStatusAuditProduce-001, or2tj) → counter stays 0. r1003 produced 1 case (PtCellExtractProduce-001, 1r7vq, pnr_signoff) → counter stays 0. r1004 produced 1 case (NetlistHierExtractProduce-001, 4lezu, digital) → counter stays 0. STOP-LOSS NOT triggered (0/3). fresh A-pure pool (digA filter on scan 20261122_172249): r1004 recompute 817 dedup cands / 82 fresh after 4-shard ledger diff (4165 normalized sids) — pool NOT exhausted (82-1=81 fresh remaining after r1004 selection). A.jsonl 462 (r1004 +1)."
+      "note": "r1020 produced 1 case (RedBistColFilterAuditProduce-001, qm8x2, verification) → counter stays 0. r1021 = 1st 0-case round after r1020 case (counter=1/3, NOT triggered). r1021 genuine pool exhaustion on scan ssh_eda_search_20261123_064315: digA2 narrow-C_KW filter (ac>cc&&ac>bc&&ac>=5&&mc>=5, sum-of-nums) → 738 dedup A-dom cands → 4-shard ledger diff (4238 normalized sids) → 15 fresh → ALL 15 attributed+parked (3byhk/77z85/dxxm5/v2zbq drc/lvs-dominant C; wcio5 mixed-C/BD proprietary-fixture; g2oge/qs9e9 cross-domain; 2yua1/yl0mz/v45s0 B-C-D mixed; xpdg0/z9pe8 t0002965 operator; anz5s intent-dup of gw1z7 r1019; b74x3/mg83q mc6 too-low). fresh_now=0 after parking. Daily scan quota used (r1019 ran 20261123_064315). Next: r1022 wait for tomorrow's scan quota OR pivot to non-candidate output (§4.9 anti-hardcode普查/test_rationale补断言/ledger治理). A.jsonl 475 (r1021 +0)."
     },
     "computed_at": "2026-11-18T08:30:00+08:00",
     "computed_by": "r718 (mc>=5 adoption flip)",
@@ -282,7 +282,7 @@
     },
     "src": "designflow/summary_1105.tsv (11/05 curated, shard-A keyword filter, slug dedup)"
   },
-  "updated_at": "2026-11-23T07:10:39.078238+08:00",
+  "updated_at": "2026-11-23T07:58:00+08:00",
   "users_mc10": 559,
   "users_mc100": 182,
   "users_mc30": 401,
