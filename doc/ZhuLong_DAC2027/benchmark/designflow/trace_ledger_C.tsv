@@ -1469,3 +1469,5 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1795141886345_qjw8t	e0047722	hfeg0plg75	60	physical_verify	case	EDA-Eval-DesignFlow-DrcWaiveScreener-001	2026-11-23 15:31	
 1794903862654_2pume	colinxu	hfeg0pkn002	56	layout_virtuoso	parked		2026-11-23 15:31	r1000 peek: live-Virtuoso cellview-open task (ddGetLibList/deOpen/readOnly), not offline-synthesizable, needs live Virtuoso+stdcells_ac lib; parked
 1794813263342_n7oew	kaixuanx	hfeg0plg57	25	physical_verify	case	EDA-Eval-DesignFlow-SpfMosLengthRewrite-001	2026-11-23 16:15	
+1795000068380_fiknl.messages.json	yh1yang	hfeg0pkn004	154	layout_aether	parked		2026-11-23 16:29	DUPLICATE of AetherSocketBridgeNav-001 (olgpe forked from fiknl; same yh1yang pyAether socket-bridge nav task)
+1794820735285_q8bpv.messages.json	yinyus	hfeg0plg58	161	physical_verify	case	EDA-Eval-DesignFlow-NicapBlockCreatePlanner-001	2026-11-23 16:52	
