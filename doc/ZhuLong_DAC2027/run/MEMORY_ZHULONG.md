@@ -6,6 +6,8 @@ WAITING: 0（2026-11-24 wake#1907·**强模型 3-run ✅ 收口**：deepseek-v4-
 
 - wake#1907（2026-11-24 opencode 交互式·standby 心跳·强模型 3-run 已收口·无新指令）：pgrep run_batch/run_one/zhulong_strong=TRULY_NONE✅（排除 pgrep 自身 shell 误匹配）·providers.json=pro 默认态✅（openai-compatible·model=doubao-seed-2.0-pro-cloud·apiKey末8=3dd97aea·baseUrl=agi-gateway/cloud/v1·maxTokens=16384·reasoning.enabled=false）·cases_lite=500✅·cline 就位✅（/home/app.e0031982/.local/bin/cline）·**git [behind 1]=pretrain 线 commit `4cc6bdd8b8`（data blend heartbeat·非 zhulong 指令）⇒ 无新指令·本地改动全在 `benchmark/`=designflow 线（MEMORY_C/trace_ledger_C/D/.scratch_r992 等·非本线·不动不 clean 不 stash）⇒ 不 pull-rebase 避免触碰他线在途文件**·ops inbox RUN_ID=146（11-17 起未变·旧只读·无新指令）✅·**强模型 3-run 收口态不变**：deepseek-v4-pro-cloud 3-run=20.85±1.03%（r1=21.78/r2=19.75/r3=21.02·3/3 clean·0 FUSE·身份四证✅·McNemar vs doubao-pro b=69 c=2 p≈0.0000 高度显著·Δ=+10.67pp ~2.0× gap）·报告 `reports/report_edafb_lite500_dsv4pro_eval_zh.html`(5346B) 在位✅·⚠️**磁盘 watch**：`/home` 100%（1.9G avail·低于 infra 阈值 8G·当前无 eval 运行不阻塞·若后续起 eval 需先清理；不动 designflow 的 .scratch_r992 等他线文件）·`/nasdata` 25%（2.3T avail·充足）·research 日报 2026-11-24 zhulong 建议「成本表加判分构造成本列」属论文写作层·与本令「🚫 不改论文宏与 18 处 \TBD·等用户裁定回填」冲突 ⇒ 暂不纳入·**MEMORY 维护**：滚出 wake#1905 到 `daily-memories/2026-11-24.md` §[wake#1905 rolled-out]·WAITING=0 standby·不起臂·不改原文/题/check/宏/TBD·v3 三组数字不动·等用户裁定回填。
 
+- wake#1908（2026-11-24 opencode 交互式·standby 心跳·强模型 3-run 已收口·无新指令）：pgrep run_batch/run_one/zhulong_strong=TRULY_NONE✅（排除 pgrep 自身 shell 误匹配）·providers.json=pro 默认态✅（model=doubao-seed-2.0-pro-cloud·apiKey末8=3dd97aea·baseUrl=agi-gateway/cloud/v1）·cases_lite=500✅·cline 就位✅（/home/app.e0031982/.local/bin/cline）·**git 同步 origin/main**（本地改动仅 `benchmark/`=designflow 线在途文件 MEMORY_DESIGNFLOW_D.md/trace_ledger_D.tsv·非本线·不动不 clean 不 stash）·ops inbox RUN_ID=146（11-17 起未变·旧只读·无新指令）✅·**强模型 3-run 收口态不变**：deepseek-v4-pro-cloud 3-run=20.85±1.03%（r1=21.78/r2=19.75/r3=21.02·3/3 clean·0 FUSE·身份四证✅·McNemar vs doubao-pro b=69 c=2 p≈0.0000 高度显著·Δ=+10.67pp ~2.0× gap）·报告 `reports/report_edafb_lite500_dsv4pro_eval_zh.html`(5346B) 在位✅·⚠️**磁盘 watch**：`/home` 100%（1.9G avail·低于 infra 阈值 8G·当前无 eval 运行不阻塞·若后续起 eval 需先清理；不动 designflow 的他线文件）·`/nasdata` 25%（2.3T avail·充足）·**MEMORY 维护**：滚出 wake#1874+#1870 重复详条到 `daily-memories/2026-11-23.md` 指针·WAITING=0 standby·不起臂·不改原文/题/check/宏/TBD·v3 三组数字不动·等用户裁定回填。
+
 - [wake#1906 详条已滚出·2026-11-24 wake#1907 维护] 见 `daily-memories/2026-11-24.md` §[wake#1906 rolled-out]（opencode 交互式·standby 心跳·强模型 3-run 已收口·无新指令·pgrep NONE✅·providers=pro 默认态✅·cases_lite=500✅·git 0/0✅·ops RUN_ID=146 旧只读✅·3-run=20.85±1.03% 收口态不变·报告已交付·/home 100% 磁盘 watch·MEMORY 维护滚出 wake#1904·不起臂·等用户裁定回填）。
 
 - [wake#1904 详条已滚出·2026-11-24 wake#1906 维护] 见 `daily-memories/2026-11-24.md` §[wake#1904 rolled-out]（opencode 交互式·standby 心跳·强模型 3-run 已收口·用户重发 TASK 无新指令·pgrep NONE✅·providers=pro 默认态✅·cases_lite=500✅·git 0/0✅·ops RUN_ID=146 旧只读✅·3-run=20.85±1.03% 收口态不变·报告已交付·research 日报建议属论文写作层与本令冲突暂不纳入·不起臂·等用户裁定回填）。
@@ -30,13 +32,13 @@ WAITING: 0（2026-11-24 wake#1907·**强模型 3-run ✅ 收口**：deepseek-v4-
 
 - [wake#1874 详条已滚出·2026-11-23 wake#1875 维护] 见 `daily-memories/2026-11-23.md` §[wake#1874]（opencode 交互式·r3 跑中 60%·0 FUSE·身份四证✅·不干预）。
 
-- wake#1874（2026-11-23 22:21 opencode 交互式·**强模型 3-run r3 跑中·60% 健康·慢patch 正常·不干预**）：见 `daily-memories/2026-11-23.md` §[wake#1874]（r1 DONE 21.78% + r2 DONE 19.75% + r3 跑中 300/500 60% early 27.21%·0 FUSE·身份四证✅·不干预）。
+- [wake#1874 详条已滚出·2026-11-24 wake#1908 维护] 见 `daily-memories/2026-11-23.md` §[wake#1874]（opencode 交互式·r3 跑中 60%·0 FUSE·身份四证✅·不干预）。
 
 - [wake#1871-#1873 详条已滚出·2026-11-24 wake#1877 维护] 见 `daily-memories/2026-11-23.md` §[wake#1871]/§[wake#1872]/§[wake#1873]（均 opencode 交互式·r3 跑中 43%→49%→54%·0 FUSE·身份四证✅·不干预）。
 
 - [wake#1870 详条已滚出·2026-11-23 wake#1871 维护] 见 `daily-memories/2026-11-23.md` §[wake#1870]（opencode 交互式·r3 跑中 34%·0 FUSE·身份四证✅·不干预）。
 
-- wake#1870（2026-11-23 20:0x opencode 交互式·**强模型 3-run r3 跑中·34% 健康·慢patch 正常·不干预**）：见 `daily-memories/2026-11-23.md` §[wake#1870]（r1 DONE 21.78% + r2 DONE 19.75% + r3 跑中 174/500 34% early 25.73%·0 FUSE·身份四证✅·不干预）。
+- [wake#1870 详条已滚出·2026-11-24 wake#1908 维护] 见 `daily-memories/2026-11-23.md` §[wake#1870]（opencode 交互式·r3 跑中 34%·0 FUSE·身份四证✅·不干预）。
 
 - [wake#1869 详条已滚出·2026-11-23 wake#1870 维护] 见 `daily-memories/2026-11-23.md` §[wake#1869]（opencode 交互式·r3 跑中 28%·0 FUSE·身份四证✅·不干预）。
 
