@@ -1482,3 +1482,4 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1794796391826_8pb89.messages.json	robin1l	hfeg0plg87	99	physical_verify	parked		2026-11-23 18:01	r1005 REJECT: how-to Q&A (Aether shape替换成via), aether-tool-qa问答无deliverable
 1794877815851_91zh8.messages.json	alexli	hfeg0plg101	118	physical_verify	parked		2026-11-23 18:01	r1005 REJECT: sim-debug sprawl (finesim cluster queue polling, 952msg), B/D域后仿优化非C域
 1794893106158_bcyqg.messages.json	jzeng	hfeg0plg85	134	physical_verify	parked		2026-11-23 18:01	r1005 REJECT: optimize-existing gen_v4_between_power_m4m5.py, jzeng via-M4-M5-power cluster撞重(AutoViaV4Dir3DY-001已采)
+1794825699351_mxlxx	xxchen	hfeg0plg19	341	physical_verify	case	EDA-Eval-DesignFlow-WidthLengthQaPatternGen-001	2026-11-23 21:02	
