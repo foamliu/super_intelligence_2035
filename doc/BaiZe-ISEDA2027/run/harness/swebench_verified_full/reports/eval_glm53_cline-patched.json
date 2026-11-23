@@ -257,6 +257,7 @@
     "sphinx-doc__sphinx-7440",
     "sphinx-doc__sphinx-7454",
     "sphinx-doc__sphinx-7889",
+    "sphinx-doc__sphinx-7910",
     "sphinx-doc__sphinx-8120",
     "sphinx-doc__sphinx-8265",
     "sphinx-doc__sphinx-8459",
@@ -463,7 +464,6 @@
     "sphinx-doc__sphinx-7590",
     "sphinx-doc__sphinx-7748",
     "sphinx-doc__sphinx-7757",
-    "sphinx-doc__sphinx-7910",
     "sphinx-doc__sphinx-7985",
     "sphinx-doc__sphinx-8035",
     "sphinx-doc__sphinx-8056",
@@ -608,6 +608,6 @@
   ],
   "merged_R2784_sympy-24066": "RESOLVED",
   "rerun_merged": "2026-11-23 21:33:02",
-  "incr_merged": "2026-11-24 03:30:18",
+  "incr_merged": "2026-11-24 03:50:45",
   "merge_note": "manual fix: sympy-16450 resolved per eval run rerun_incr_cline-patched_11240317 (overwritten by orphan 0316 process)"
 }
