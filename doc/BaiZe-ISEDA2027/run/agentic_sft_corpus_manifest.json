@@ -1,0 +1,86 @@
+{
+  "arm": "A0_base",
+  "source": "EXPERIMENTS_POSTTRAIN.md §F5.1 agentic trajectory harvest (zero GPU)",
+  "min_pass_count": 5,
+  "n_records": 25,
+  "skipped": {},
+  "gate_stats": {
+    "pass": 22,
+    "fail": 3
+  },
+  "behavior_metric_distributions": {
+    "search_apis": {
+      "1": 1,
+      "2": 3,
+      "3": 3,
+      "4": 2,
+      "5": 5,
+      "6": 2,
+      "7": 2,
+      "8": 2,
+      "11": 1,
+      "13": 2,
+      "23": 1,
+      "32": 1
+    },
+    "get_api_details": {
+      "1": 2,
+      "2": 5,
+      "3": 11,
+      "4": 3,
+      "6": 1,
+      "8": 3
+    },
+    "run_code": {
+      "0": 16,
+      "1": 6,
+      "2": 1,
+      "4": 1,
+      "10": 1
+    },
+    "submit_and_exit": {
+      "1": 25
+    },
+    "editor": {
+      "0": 2,
+      "1": 18,
+      "2": 4,
+      "4": 1
+    },
+    "total_tool_calls": {
+      "10": 2,
+      "13": 2,
+      "14": 3,
+      "15": 3,
+      "19": 2,
+      "20": 1,
+      "21": 2,
+      "22": 1,
+      "23": 1,
+      "24": 1,
+      "26": 1,
+      "35": 2,
+      "36": 1,
+      "46": 1,
+      "59": 1,
+      "60": 1
+    }
+  },
+  "pass_count_of_harvested": {
+    "5": 25
+  },
+  "n_messages_stats": {
+    "min": 18,
+    "max": 78,
+    "mean": 37.8
+  },
+  "corpus_path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/agentic_sft_corpus_candidate.jsonl",
+  "contamination_warning": "🔴 红线(§5.1)：本语料 25 条轨迹全部来自 158 eval 任务的成功 run，含其 prompt/函数签名/断言代码 ⇒ 不可直接用作「将在 158 题上评测的模型」的 SFT 训练数据，否则评测 Δ 不可解释（train-on-test 污染）。",
+  "correct_usage": [
+    "作为 behavior/format 模板：量化健康 agentic 回路结构（search→get_details→editor→run_code→fix→submit，单次 submit，检索前缀保真），定义正式 SFT 的目标分布",
+    "behavior_gate() 函数供 post-SFT eval 复用（§F5.3）：search_apis<base*0.5 或 submit>base*2.0 即判 SFT 失败",
+    "正式 SFT 训练数据须在非 eval 的 held-out PyAether 任务（如 2k-5k 合成题池，API 名/签名隔离）上生成同形态 agentic 轨迹，本语料仅作行为模板而非训练样本"
+  ],
+  "note": "候选 agentic SFT 语料（多轮工具调用轨迹），对齐 cline 部署分布；正式 SFT 待 pretrain ckpt ETA≈2026-12-25；行为保真闸门 behavior_gate() 供 post-SFT eval 复用（§F5.3）。",
+  "caveat": "本语料仅来自 A0 base 成功 run；正式 SFT 须设保留率下限 + 行为保真闸门，预注册 Δ>0 且 CI 下界>0 才算正向（§F5.5）。"
+}

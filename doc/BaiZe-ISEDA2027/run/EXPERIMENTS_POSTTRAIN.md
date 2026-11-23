@@ -12188,3 +12188,68 @@ python3 bpt_attribution_p0_dev_compare.py \
 - 本节未重训、未碰 GPU/协议/题面/check.py/超时/−p；纯 CPU 从落盘 JSON+语料自算。
 - S4_error_recovery=3411 条虽含「错误恢复」语义，但 completion 仍为静态代码块（0% tool-call 格式），不构成 agentic 轨迹，无法补救检索/submit 行为。
 
+## §G. Agentic 轨迹收割 + 健康 agentic 回路行为模板（wake752 · 2026-11-23 · 零 GPU/零 ckpt · 主线 SFT 设计预研）
+
+> **目的**：§F5.1 落地——从 A0 base 成功 run 收割真实 cline 多轮工具调用轨迹，量化「健康 agentic 回路」行为模板，为正式 SFT（待 pretrain ckpt）定义目标分布。脚本 `baize_posttrain_harvest_agentic_sft_corpus.py`（syntax OK + 实跑 PASS）。
+
+### G1. 数据源与收割口径
+
+- `baseline_A0_base_5run_summary.json` → `per_task_pass_count_by_run` {task:[r1..r5]}。
+- `baseline_A0_base_run{1..5}_pertask.json` → eval_dir / session_id / 行为指标。
+- `<eval_dir>/trace/<task_id>/<session_id>.messages.json` → 原始 cline 会话（messages：text/tool_use/tool_result 块）。
+- **预注册判据**（先写后跑，跑完不许改）：只收割 pass_count>=5 的题（pass_all=25）；同题多 run 都过 ⇒ 取 search_calls 最高（检索保真最好）的 run；每题 1 条轨迹。
+
+### G2. 收割结果
+
+| 指标 | 值 |
+|:--|--:|
+| 收割记录数 | 25 |
+| 行为保真闸门 pass / fail | 22 / 3（fail 均为 search_apis 略低于 base*0.5 的边缘例，无 submit 风暴） |
+| n_messages min/mean/max | 18 / 37.8 / 78 |
+| pass_count_5run | 全部 =5（25 条均 pass_all） |
+
+### G3. 健康 agentic 回路行为模板（25 条 pass_all 轨迹聚合，§F5 对照）
+
+| 工具 | 健康轨迹 mean | A1 SFT run1（§F3） | 方向 |
+|:--|--:|--:|:--|
+| search_apis | **7.32** | 355（−82% vs A0 base 1969） | 健康=高频检索；SFT 坍塌 |
+| search_apis_by_keyword | 3.88 | — | — |
+| get_api_details | 3.48 | 564（−42%） | 健康=确认签名；SFT 降 |
+| run_code | 0.88 | 42（−48%） | — |
+| editor | 1.20 | 243（+12%） | — |
+| read_files | 1.48 | 971（+306%） | SFT 暴涨=退化回路 |
+| run_commands | 4.72 | 765（+12%） | — |
+| **submit_and_exit** | **1.00** | **760（+451%）** | **健康=单次 submit；SFT 风暴** |
+| total_tool_calls | 23.96 | — | — |
+
+- **首工具**：search_apis=18 / run_commands=6 / read_files=1。
+- **末工具**：submit_and_exit=25/25（干净终止，无 premature-submit）。
+- **检索先于编码**：24/25（96%）首非 run_commands 工具为 search_apis/get_api_details（§F5.2 检索保真在健康轨迹中成立）。
+- ⇒ **健康模板 = search→get_details→editor→run_code→fix→submit，单次 submit，检索前缀保真**；这正是 A1 SFT 丢失的回路（§F3：检索坍塌 −82% + submit 风暴 +451% + 自纠错回路丧失 −48%）。
+
+### G4. 🔴 污染隔离红线勘误（重要）
+
+- 收割的 25 条轨迹**全部来自 158 eval 任务的成功 run**，会话中**含 eval 任务的 prompt / 函数签名 / 断言代码**（实测 task 002 会话含 `def`/`assert`/`EDA-Eval-PyAether-002` 标识）。
+- ⇒ **不可直接用作「将在 158 题上评测的模型」的 SFT 训练数据**，否则 train-on-test 污染，评测 Δ 不可解释（违反 §5.1 红线）。
+- §F5.1「从 A0 成功 run 收割序列作为 SFT 正例」需**修正口径**：本语料的合法用途 = **行为/格式模板**（定义目标分布）+ **behavior_gate() 参考指标**；正式 SFT 训练数据须在**非 eval 的 held-out PyAether 任务**（如 2k-5k 合成题池，API 名/签名隔离）上生成同形态 agentic 轨迹。
+- 每条记录已写入 `contamination` 字段（`eval_task_in_training=True` + red_line + legitimate_use）；manifest 写入 `contamination_warning` + `correct_usage`。
+
+### G5. 交付物
+
+- `baize_posttrain_harvest_agentic_sft_corpus.py`（脚本，syntax OK + 实跑 PASS，可复跑）。
+- `agentic_sft_corpus_candidate.jsonl`（25 条 agentic 轨迹，6.09MB；含 conversation/system_prompt/behavior_metrics/behavior_gate/contamination）。
+- `agentic_sft_corpus_manifest.json`（汇总 + 行为指标分布 + 闸门统计 + 污染警告 + 正确用法）。
+
+### G6. 后续（待 pretrain ckpt ETA≈2026-12-25）
+
+1. 在非 eval held-out PyAether 任务上生成同形态 agentic 轨迹（复用本行为模板）。
+2. behavior_gate() 接入 post-SFT eval：search_apis<base*0.5 或 submit>base*2.0 即判 SFT 失败、停跑重做（先于看 Pass@1）。
+3. 预注册：正式 SFT 判 Δ>0 且 paired-bootstrap CI 下界>0 才算正向；负结果照报（§F5.5）。
+
+### G7. 诚实性 / 局限
+
+- 本节未碰 GPU/协议/题面/check.py/超时/−p；纯 CPU 从落盘 JSON+trace 自算。
+- 25 条 = pass_all 子集（最健康）；partial（82 题）的轨迹质量参差，未纳入（可作后续扩展，须设更严闸门）。
+- 行为模板基于 A0 base（MiniCPM5-2B）轨迹；正式基座为 BaiZe pretrain ckpt，行为分布可能略有差异，须 post-SFT 重测对照。
+
+
