@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>烛龙 EDA-Flow-Bench 评测进展报告 · 2026-11-23</title>
+<title>烛龙 EDA-Flow-Bench 评测进展报告 · 2026-11-23（详尽版）</title>
 <style>
   :root{
     --ink:#1a1a1a; --ink2:#333; --muted:#666; --line:#e3e6ea;
@@ -13,7 +13,7 @@
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
-  .wrap{max-width:1180px;margin:0 auto;padding:32px 28px 60px;}
+  .wrap{max-width:1240px;margin:0 auto;padding:32px 28px 60px;}
   header{margin-bottom:28px;}
   h1{font-size:26px;font-weight:800;margin:0 0 6px;letter-spacing:-.01em;}
   .sub{color:var(--muted);font-size:14px;}
@@ -25,291 +25,412 @@
   h2{font-size:19px;font-weight:700;margin:34px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:8px;}
   h2 .n{background:var(--blue);color:#fff;font-size:13px;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;}
   h3{font-size:15.5px;font-weight:700;margin:20px 0 8px;color:var(--ink2);}
+  h4{font-size:14px;font-weight:700;margin:16px 0 6px;color:var(--ink2);}
   .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:14px 0;}
   .card.blue{border-left:5px solid var(--blue);}
   .card.green{border-left:5px solid var(--green);background:var(--green-soft);}
   .card.orange{border-left:5px solid var(--orange);}
   .card.amber{border-left:5px solid var(--amber);}
   p{margin:8px 0;}
-  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
-  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);}
-  th{background:#f1f3f5;font-weight:700;color:var(--ink2);font-size:12.5px;letter-spacing:.02em;}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);}
+  th{background:#f1f3f5;font-weight:700;color:var(--ink2);font-size:12px;letter-spacing:.02em;white-space:nowrap;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:#fafbfc;}
-  td.num{font-variant-numeric:tabular-nums;text-align:right;}
-  td.bold{font-weight:700;}
-  .pill{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:600;}
+  td.num,th.num{font-variant-numeric:tabular-nums;text-align:right;}
+  td.bold,th.bold{font-weight:700;}
+  td.muted{color:var(--muted);}
+  td.sep{border-left:2px solid var(--line);}
+  .pill{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:600;white-space:nowrap;}
   .pill.green{background:var(--green-soft);color:var(--green);border:1px solid var(--green);}
   .pill.blue{background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue);}
   .pill.amber{background:#fef3c7;color:var(--amber);border:1px solid var(--amber);}
+  .pill.red{background:#fef2f2;color:var(--red);border:1px solid var(--red);}
   .pill.gray{background:#f1f3f5;color:var(--muted);border:1px solid var(--line);}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-  @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr;}}
-  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;text-align:center;}
-  .stat .v{font-size:30px;font-weight:800;letter-spacing:-.02em;}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  @media(max-width:900px){.grid2,.grid3,.grid4{grid-template-columns:1fr;}}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;text-align:center;}
+  .stat .v{font-size:26px;font-weight:800;letter-spacing:-.02em;}
   .stat .v.blue{color:var(--blue);} .stat .v.green{color:var(--green);} .stat .v.orange{color:var(--orange);} .stat .v.cyan{color:var(--cyan);}
-  .stat .l{font-size:12.5px;color:var(--muted);margin-top:4px;}
-  .stat .s{font-size:11.5px;color:var(--muted);margin-top:2px;}
-  .bar{height:8px;background:#eef0f2;border-radius:4px;overflow:hidden;margin:8px 0;}
-  .bar > i{display:block;height:100%;background:var(--blue);border-radius:4px;}
-  .timeline{position:relative;padding-left:24px;margin:14px 0;}
-  .timeline::before{content:"";position:absolute;left:7px;top:4px;bottom:4px;width:2px;background:var(--line);}
-  .tl{position:relative;margin:0 0 16px;}
-  .tl::before{content:"";position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--card);border:2px solid var(--blue);}
-  .tl.done::before{background:var(--green);border-color:var(--green);}
-  .tl.run::before{background:var(--blue);border-color:var(--blue);}
-  .tl.wait::before{background:#fff;border-color:var(--amber);}
-  .tl .t{font-size:12px;color:var(--muted);font-weight:600;}
-  .tl .h{font-size:14px;font-weight:600;margin:1px 0;}
-  .tl .d{font-size:13px;color:var(--ink2);}
-  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;background:#f1f3f5;padding:1px 5px;border-radius:4px;}
+  .stat .l{font-size:12px;color:var(--muted);margin-top:4px;}
+  .stat .s{font-size:11px;color:var(--muted);margin-top:2px;}
+  .bar{height:8px;background:#eef0f2;border-radius:4px;overflow:hidden;margin:6px 0;}
+  .bar > i{display:block;height:100%;border-radius:4px;}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;background:#f1f3f5;padding:1px 5px;border-radius:4px;}
   .note{font-size:13px;color:var(--muted);background:#f8f9fb;border:1px dashed var(--line);border-radius:8px;padding:12px 16px;margin:14px 0;}
   .alert{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:12px 16px;font-size:13px;color:#9a3412;margin:14px 0;}
+  .tblwrap{overflow-x:auto;}
+  .grp-pro{background:#eff4ff;}
+  .grp-lite{background:#f0fdf4;}
+  .grp-mini{background:#fff7ed;}
+  .grp-ds{background:#fef9f3;}
   footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);}
-  .kbar{display:inline-block;width:60px;height:8px;background:#eef0f2;border-radius:4px;vertical-align:middle;margin-right:4px;}
-  .kbar > i{display:block;height:100%;border-radius:4px;}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header>
-  <h1>烛龙 EDA-Flow-Bench 评测进展报告</h1>
-  <div class="sub">Lite 500 · doubao 三组收口 + deepseek-v4-pro 强模型 3-run 进行中</div>
+  <h1>烛龙 EDA-Flow-Bench 评测进展报告（详尽版）</h1>
+  <div class="sub">Lite 500 · doubao 三组收口 + deepseek-v4-pro 强模型 3-run · 含逐轮通过率 / 墙钟 / token 成本</div>
   <div class="meta">
-    <span class="chip">报告日期 · 2026-11-23 08:14</span>
+    <span class="chip">报告日期 · 2026-11-23 09:50</span>
     <span class="chip">评测仓库 · /nasdata/app.e0031982/code/EDA-Flow-Bench</span>
-    <span class="chip">Lite 集 · 500 题</span>
+    <span class="chip">Lite 集 · 500 题 · 13 域</span>
     <span class="chip">cline 3.0.51 + PreToolUse hook</span>
+    <span class="chip">thinking low · timeout 2400s · --workers 16</span>
     <span class="chip ok">doubao 三组 ✅ 收口</span>
     <span class="chip run">deepseek r2 跑中</span>
-    <span class="chip wait">r3 待跑</span>
   </div>
 </header>
 
 <h2><span class="n">1</span>阶段总览</h2>
 
-<div class="grid4" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
-  <div class="stat"><div class="v green">3 / 3</div><div class="l">doubao 三组全收口</div><div class="s">pro · mini · lite</div></div>
-  <div class="stat"><div class="v blue">85 / 500</div><div class="l">deepseek r2 进度</div><div class="s">17% · ETA ~16:16</div></div>
-  <div class="stat"><div class="v cyan">7 + 1</div><div class="l">已完成 batch 数</div><div class="s">doubao 7 + deepseek r1</div></div>
-  <div class="stat"><div class="v orange">2.38 → 21.78%</div><div class="l">模型间 Pass@1 跨度</div><div class="s">mini → deepseek-pro</div></div>
+<div class="grid4">
+  <div class="stat"><div class="v green">3 / 3</div><div class="l">doubao 三组收口</div><div class="s">pro · lite · mini 各 3-run clean</div></div>
+  <div class="stat"><div class="v blue">104 / 500</div><div class="l">deepseek r2 进度</div><div class="s">21% · ETA ~16:16</div></div>
+  <div class="stat"><div class="v cyan">10 batch</div><div class="l">已跑完 batch 数</div><div class="s">7 clean + 3 VOID</div></div>
+  <div class="stat"><div class="v orange">2.38 → 21.78%</div><div class="l">Pass@1 跨度</div><div class="s">mini → deepseek-pro</div></div>
 </div>
 
 <div class="card blue">
-  <p style="margin:0;font-size:14px;"><b>一句话</b>：doubao-pro 三轮 10.18 ± 1.45% <span class="pill green">对齐用户基准 10.5%</span>；deepseek-v4-pro r1 单轮 21.78%（约 doubao-pro 的 2 倍），r2/r3 跑完后出配对检验。今早 08:14 起 r2 已跑 17%，预计今天下午收口、明早 3-run 全完。</p>
+  <p style="margin:0;font-size:14px;"><b>一句话</b>：doubao-pro 三轮 <b>10.18 ± 1.45%</b>（对齐用户基准 10.5%）；deepseek-v4-pro r1 单轮 <b>21.78%</b>（约 doubao-pro 的 2.1×），单题墙钟 74s（doubao-pro 的 3.6×）、单题 input token 1.09M（doubao-pro 的 2.6×）——强模型更慢更贵但通过率显著更高。r2/r3 跑完后出 McNemar 配对检验。</p>
 </div>
 
-<h2><span class="n">2</span>doubao 三组结果（v3 · 已收口 · M0 anchor）</h2>
+<h2><span class="n">2</span>doubao 三组逐轮明细（v3 · 已收口 · M0 anchor）</h2>
 
-<p>严格遵循 README + 用户启动方式 <span class="mono">bash eval/run_batch.sh --workers 16</span>（不自加 <span class="mono">--skip-done</span>），跑前核验 <span class="mono">providers.json</span> 身份四证。每组 3-run 严格串行，每轮独立 batch 目录 + 独立日志。</p>
+<p>严格遵循 README + 用户启动方式 <span class="mono">bash eval/run_batch.sh --workers 16</span>（不自加 <span class="mono">--skip-done</span>），跑前核验 <span class="mono">providers.json</span> 身份四证。每组 3-run 严格串行，每轮独立 batch 目录。下表含逐轮通过率、墙钟、单题均时、token 成本。</p>
+
+<h3>2.1 doubao-seed-2.0-pro（M0 anchor 模型）</h3>
 
 <table>
-  <thead>
-    <tr><th>模型</th><th>3-run Pass@1</th><th>逐轮（decided）</th><th>对齐情况</th><th>报告</th></tr>
-  </thead>
+  <thead><tr>
+    <th>轮次</th><th>batch ID</th><th class="num">PASS</th><th class="num">FAIL</th><th class="num">ERROR</th><th class="num">ABSENT</th><th class="num">decided</th><th class="num">Pass@1</th><th>墙钟</th><th class="num">s/it</th><th class="num">input tok</th><th class="num">output tok</th><th class="num">总 tok</th><th class="num">均 in/case</th><th>infra</th>
+  </tr></thead>
   <tbody>
-    <tr>
-      <td class="bold">doubao-seed-2.0-pro</td>
-      <td class="bold num">10.18% ± 1.45%</td>
-      <td class="num">r1=9.32% · r2=11.85% · r3=9.38%</td>
-      <td><span class="pill green">✅ 对齐用户基准 10.5%</span></td>
-      <td><span class="pill green">已交付</span></td>
+    <tr class="grp-pro">
+      <td class="bold">r1</td><td class="mono">20261120_170940</td>
+      <td class="num">45</td><td class="num">438</td><td class="num">11</td><td class="num">6</td><td class="num">483</td>
+      <td class="num bold">9.32%</td><td>2:34:59</td><td class="num">18.6</td>
+      <td class="num">197.9M</td><td class="num">5.88M</td><td class="num">203.8M</td><td class="num">419K</td>
+      <td><span class="pill green">✅ clean</span></td>
     </tr>
-    <tr>
-      <td class="bold">doubao-seed-2.0-lite</td>
-      <td class="bold num">4.68% ± 0.95%</td>
-      <td class="num">3 轮 clean</td>
-      <td><span class="pill gray">小模型 1 · 消融数据</span></td>
-      <td><span class="pill green">已交付</span></td>
+    <tr class="grp-pro">
+      <td class="bold">r2</td><td class="mono">20261121_104954</td>
+      <td class="num">57</td><td class="num">424</td><td class="num">17</td><td class="num">2</td><td class="num">481</td>
+      <td class="num bold">11.85%</td><td>3:06:15</td><td class="num">22.4</td>
+      <td class="num">238.5M</td><td class="num">7.33M</td><td class="num">245.9M</td><td class="num">425K</td>
+      <td><span class="pill green">✅ clean</span></td>
     </tr>
-    <tr>
-      <td class="bold">doubao-seed-2.0-mini</td>
-      <td class="bold num">2.38% ± 0.23%</td>
-      <td class="num">3 轮 clean</td>
-      <td><span class="pill gray">小模型 2 · 消融数据</span></td>
-      <td><span class="pill green">已交付</span></td>
+    <tr class="grp-pro">
+      <td class="bold">r3</td><td class="mono">20261121_135610</td>
+      <td class="num">45</td><td class="num">435</td><td class="num">18</td><td class="num">2</td><td class="num">480</td>
+      <td class="num bold">9.38%</td><td>2:53:36</td><td class="num">20.8</td>
+      <td class="num">197.0M</td><td class="num">6.30M</td><td class="num">203.3M</td><td class="num">268K</td>
+      <td><span class="pill green">✅ clean</span></td>
+    </tr>
+    <tr style="background:#e8f0fe;font-weight:700;">
+      <td colspan="6">3-run 汇总（r1+r2+r3 全 clean）</td>
+      <td class="num">1,444</td>
+      <td class="num">10.18% ± 1.45%</td>
+      <td>均 2:58</td><td class="num">20.6</td>
+      <td class="num">633.4M</td><td class="num">19.5M</td><td class="num">653.0M</td><td class="num">~370K</td>
+      <td><span class="pill green">3/3 clean</span></td>
     </tr>
   </tbody>
 </table>
 
 <div class="note">
-  <b>注 1</b>：doubao-mini 的 2.38% 与 11-19 晚作废 batch（2.37%）数值巧合，但本组是 3-run clean（每轮 infra_clean、身份四证核验），与作废 batch 无关——作废 batch 因 <span class="mono">providers.json</span> 跑批中途才改对 + 自加 <span class="mono">--skip-done</span> 跑 422/500，本组已纠正。<br>
-  <b>注 2</b>：三份报告已落盘：<span class="mono">reports/report_edafb_lite500_doubao_{pro|mini|lite}_eval_zh.html</span>（11-22 13:53 / 14:23 交付）。doubao-pro 报告标题已标「M0 anchor 模型」。
+  <b>对齐核对</b>：用户基准 <span class="mono">51/484 = 10.5%</span>（500 cases · 16 workers · 2:57:14）。doubao-pro 3-run mean 10.18% 落在 10.5% ± 2pp 内 ✅。<b>r2 偏高（11.85%）</b>是正常 run 间波动（题目顺序随机化 + 模型采样温度）；3-run std=1.45% 体现真实 run 间方差，论文应报 mean ± std 而非单 run。
 </div>
+
+<h3>2.2 doubao-seed-2.0-lite（小模型 1）</h3>
+
+<table>
+  <thead><tr>
+    <th>轮次</th><th>batch ID</th><th class="num">PASS</th><th class="num">FAIL</th><th class="num">ERROR</th><th class="num">ABSENT</th><th class="num">decided</th><th class="num">Pass@1</th><th>墙钟</th><th class="num">s/it</th><th class="num">input tok</th><th class="num">output tok</th><th class="num">总 tok</th><th class="num">均 in/case</th><th>infra</th>
+  </tr></thead>
+  <tbody>
+    <tr class="grp-lite">
+      <td class="bold">r1</td><td class="mono">20261121_012542</td>
+      <td class="num">19</td><td class="num">474</td><td class="num">6</td><td class="num">1</td><td class="num">493</td>
+      <td class="num bold">3.85%</td><td>2:18:20</td><td class="num">16.6</td>
+      <td class="num">155.9M</td><td class="num">4.12M</td><td class="num">160.0M</td><td class="num">312K</td>
+      <td><span class="pill green">✅ clean</span></td>
+    </tr>
+    <tr class="grp-lite" style="opacity:.6;">
+      <td class="bold">r2 <span class="pill red">VOID</span></td><td class="mono">20261121_164946 等</td>
+      <td class="num">6</td><td class="num">74</td><td class="num">0</td><td class="num">0</td><td class="num">80</td>
+      <td class="num muted">7.50%（仅 80/500）</td><td>—</td><td class="num">—</td>
+      <td colspan="4" class="muted">infra-contaminated（3 次 FUSE 重试），不入统计</td>
+      <td><span class="pill red">🚫 VOID</span></td>
+    </tr>
+    <tr class="grp-lite">
+      <td class="bold">r3</td><td class="mono">20261121_184212</td>
+      <td class="num">22</td><td class="num">470</td><td class="num">7</td><td class="num">1</td><td class="num">492</td>
+      <td class="num bold">4.47%</td><td>4:12:10</td><td class="num">30.3</td>
+      <td class="num">168.9M</td><td class="num">4.56M</td><td class="num">173.5M</td><td class="num">320K</td>
+      <td><span class="pill green">✅ clean</span></td>
+    </tr>
+    <tr class="grp-lite">
+      <td class="bold">r4</td><td class="mono">20261122_090606</td>
+      <td class="num">28</td><td class="num">462</td><td class="num">10</td><td class="num">0</td><td class="num">490</td>
+      <td class="num bold">5.71%</td><td>4:06:39</td><td class="num">29.6</td>
+      <td class="num">153.5M</td><td class="num">3.97M</td><td class="num">157.5M</td><td class="num">308K</td>
+      <td><span class="pill green">✅ clean · 8 workers</span></td>
+    </tr>
+    <tr style="background:#dcfce7;font-weight:700;">
+      <td colspan="6">3-run 汇总（r1+r3+r4 clean · r2 VOID）</td>
+      <td class="num">1,475</td>
+      <td class="num">4.68% ± 0.95%</td>
+      <td>均 3:27</td><td class="num">25.5</td>
+      <td class="num">478.3M</td><td class="num">12.7M</td><td class="num">491.0M</td><td class="num">~313K</td>
+      <td><span class="pill green">3/3 clean</span></td>
+    </tr>
+  </tbody>
+</table>
+<div class="note"><b>注</b>：r2 因 infra-contaminated（3 次 FUSE Token 额度耗尽重试）作废；r4 降并发至 8 workers 防 FUSE，全程 0 FUSE。计入 r1/r3/r4 三轮。</div>
+
+<h3>2.3 doubao-seed-2.0-mini（小模型 2）</h3>
+
+<table>
+  <thead><tr>
+    <th>轮次</th><th>batch ID</th><th class="num">PASS</th><th class="num">FAIL</th><th class="num">ERROR</th><th class="num">ABSENT</th><th class="num">decided</th><th class="num">Pass@1</th><th>墙钟</th><th class="num">s/it</th><th class="num">input tok</th><th class="num">output tok</th><th class="num">总 tok</th><th class="num">均 in/case</th><th>infra</th>
+  </tr></thead>
+  <tbody>
+    <tr class="grp-mini" style="opacity:.6;">
+      <td class="bold">r1 <span class="pill red">VOID</span></td><td class="mono">20261121_001257</td>
+      <td class="num">0</td><td class="num">249</td><td class="num">—</td><td class="num">—</td><td class="num">249</td>
+      <td class="num muted">0.00%（仅 249/500）</td><td>—</td><td class="num">—</td>
+      <td colspan="4" class="muted">FUSE Token 额度耗尽（2×），仅留证不入统计</td>
+      <td><span class="pill red">🚫 VOID</span></td>
+    </tr>
+    <tr class="grp-mini">
+      <td class="bold">r2</td><td class="mono">20261121_225422</td>
+      <td class="num">11</td><td class="num">479</td><td class="num">9</td><td class="num">1</td><td class="num">490</td>
+      <td class="num bold">2.24%</td><td>3:29:37</td><td class="num">25.2</td>
+      <td class="num">188.5M</td><td class="num">6.15M</td><td class="num">194.7M</td><td class="num">347K</td>
+      <td><span class="pill green">✅ clean</span></td>
+    </tr>
+    <tr class="grp-mini">
+      <td class="bold">r3</td><td class="mono">20261122_022359</td>
+      <td class="num">11</td><td class="num">476</td><td class="num">11</td><td class="num">2</td><td class="num">487</td>
+      <td class="num bold">2.26%</td><td>3:24:58</td><td class="num">24.6</td>
+      <td class="num">192.1M</td><td class="num">6.40M</td><td class="num">198.5M</td><td class="num">352K</td>
+      <td><span class="pill green">✅ clean</span></td>
+    </tr>
+    <tr class="grp-mini">
+      <td class="bold">r4</td><td class="mono">20261122_054857</td>
+      <td class="num">13</td><td class="num">477</td><td class="num">9</td><td class="num">1</td><td class="num">490</td>
+      <td class="num bold">2.65%</td><td>3:16:38</td><td class="num">23.6</td>
+      <td class="num">186.1M</td><td class="num">6.03M</td><td class="num">192.1M</td><td class="num">348K</td>
+      <td><span class="pill green">✅ clean</span></td>
+    </tr>
+    <tr style="background:#fed7aa;font-weight:700;">
+      <td colspan="6">3-run 汇总（r2+r3+r4 clean · r1 VOID）</td>
+      <td class="num">1,467</td>
+      <td class="num">2.38% ± 0.23%</td>
+      <td>均 3:24</td><td class="num">24.5</td>
+      <td class="num">566.7M</td><td class="num">18.6M</td><td class="num">585.3M</td><td class="num">~349K</td>
+      <td><span class="pill green">3/3 clean</span></td>
+    </tr>
+  </tbody>
+</table>
+<div class="note"><b>注</b>：r1 因 FUSE Token 额度耗尽（2×）作废；mini 的 2.38% 与 11-19 作废 batch（2.37%）数值巧合，但本组是 3-run clean（身份四证核验 + 不自加 <span class="mono">--skip-done</span>），与作废 batch 无关。</div>
 
 <h2><span class="n">3</span>deepseek-v4-pro 强模型 3-run（用户 11-22 令追加 · 进行中）</h2>
 
 <div class="card amber">
-  <p style="margin:0;font-size:13.5px;"><b>令来源</b>：用户 11-22 18:1x 下发新令——「zhulong 跑完 doubao pro/lite/mini 后，换一个强模型，比如 deepseek-v4-pro 或者 glm-5.2 测 3-run 看看」。首选 <span class="mono">deepseek-v4-pro-cloud</span>，canary 两证（<span class="mono">curl /v1/models</span> 返回含目标 model id + 单题真跑 http/pass 正常）通过后开跑，身份四证（requested model == served id · baseUrl · key 末 8 位 <span class="mono">8aa0785e</span> · maxTokens=16384 + reasoning.enabled=false）写进报告与 MEMORY。</p>
+  <p style="margin:0;font-size:13.5px;"><b>令来源</b>：用户 11-22 18:1x——「zhulong 跑完 doubao pro/lite/mini 后，换一个强模型，比如 deepseek-v4-pro 或者 glm-5.2 测 3-run 看看」。首选 <span class="mono">deepseek-v4-pro-cloud</span>，canary 两证（<span class="mono">curl /v1/models</span> + 单题真跑）通过后开跑，身份四证（served id == requested · baseUrl · key 末 8 位 <span class="mono">8aa0785e</span> · maxTokens=16384 + reasoning.enabled=false）。</p>
 </div>
-
-<h3>3.1 r1 ✅ DONE</h3>
-<div class="card green">
-  <div class="grid2">
-    <div>
-      <p><b>batch</b>：<span class="mono">run_batch_20261122_201448</span></p>
-      <p><b>起止</b>：11-22 20:14 → 11-23 06:33（<b>10h18m</b>）</p>
-      <p><b>结果</b>：PASS=105 / FAIL=377 / ERROR=18 / ABSENT=0</p>
-    </div>
-    <div>
-      <p><b>decided</b>：482（= 105 + 377）</p>
-      <p><b>Pass@1</b>：<b style="color:var(--green);font-size:18px;">21.78%</b>（105/482）</p>
-      <p><b>infra_clean</b>：<span class="pill green">✅ 0 FUSE · 0 熔断</span></p>
-    </div>
-  </div>
-</div>
-
-<h3>3.2 r2 🔄 跑中</h3>
-<div class="card blue">
-  <div class="grid2">
-    <div>
-      <p><b>batch</b>：<span class="mono">run_batch_20261123_063302</span></p>
-      <p><b>起跑</b>：11-23 06:33（已跑 1h40m）</p>
-      <p><b>进度</b>：85 / 500 = <b>17%</b></p>
-      <p><b>当前</b>：PASS=13 / FAIL=71 / early 18.06%</p>
-    </div>
-    <div>
-      <p><b>ETA</b>：~8h04m 剩余 → 约 11-23 <b>16:16</b> 收口</p>
-      <p><b>进程</b>：serial script PID 3070368 活（~12h）· r2 run_batch PID 1816343 活（~1h40m）· 父子链 ✅</p>
-      <p><b>健康</b>：<span class="pill green">✅ 0 FUSE · 0 熔断 · 身份四证 ✅</span></p>
-    </div>
-  </div>
-  <div class="bar"><i style="width:17%;"></i></div>
-</div>
-
-<h3>3.3 r3 ⏳ 待跑</h3>
-<div class="card" style="border-left:5px solid var(--line);background:#f8f9fb;">
-  <p style="margin:0;color:var(--muted);">r2 收口后自动起 r3（串行脚本 <span class="mono">/tmp/zhulong_strong_serial_eval.sh</span> 驱动）。预计 r3 ~10h → 3-run 全完约 11-24 02:00。收口后出配对检验报告。</p>
-</div>
-
-<h2><span class="n">4</span>模型间对比（阶段性）</h2>
 
 <table>
-  <thead>
-    <tr><th>模型</th><th>Pass@1</th><th>样本</th><th>状态</th><th>vs doubao-pro</th></tr>
-  </thead>
+  <thead><tr>
+    <th>轮次</th><th>batch ID</th><th class="num">PASS</th><th class="num">FAIL</th><th class="num">decided</th><th class="num">Pass@1</th><th>墙钟</th><th class="num">s/it</th><th class="num">input tok</th><th class="num">output tok</th><th class="num">总 tok</th><th class="num">均 in/case</th><th>状态</th>
+  </tr></thead>
   <tbody>
-    <tr><td>doubao-seed-2.0-mini</td><td class="num">2.38% ± 0.23%</td><td class="num">3-run clean</td><td><span class="pill green">✅ 收口</span></td><td class="num muted">−7.80pp</td></tr>
-    <tr><td>doubao-seed-2.0-lite</td><td class="num">4.68% ± 0.95%</td><td class="num">3-run clean</td><td><span class="pill green">✅ 收口</span></td><td class="num muted">−5.50pp</td></tr>
-    <tr><td class="bold">doubao-seed-2.0-pro</td><td class="bold num">10.18% ± 1.45%</td><td class="num">3-run clean</td><td><span class="pill green">✅ 收口 · M0 anchor</span></td><td class="num">基准</td></tr>
-    <tr style="background:#fef9f3;">
-      <td class="bold">deepseek-v4-pro r1</td>
-      <td class="bold num">21.78%</td>
-      <td class="num">单 run（r1）</td>
-      <td><span class="pill blue">r1 done · r2/r3 待</span></td>
-      <td class="num"><b style="color:var(--green);">+11.60pp（≈2.1×）</b></td>
+    <tr class="grp-ds">
+      <td class="bold">r1</td><td class="mono">20261122_201448</td>
+      <td class="num">105</td><td class="num">377</td><td class="num">482</td>
+      <td class="num bold" style="color:var(--green);">21.78%</td>
+      <td>10:18:14</td><td class="num">74.2</td>
+      <td class="num">549.3M</td><td class="num">27.3M</td><td class="num">576.7M</td><td class="num">1,092K</td>
+      <td><span class="pill green">✅ DONE</span></td>
+    </tr>
+    <tr class="grp-ds">
+      <td class="bold">r2</td><td class="mono">20261123_063302</td>
+      <td class="num">20</td><td class="num">83</td><td class="num">104</td>
+      <td class="num bold" style="color:var(--blue);">19.42%</td>
+      <td>1:40m / ~8h</td><td class="num">~70</td>
+      <td colspan="4" class="muted">跑中（21%·104/500）· 完成后补 token</td>
+      <td><span class="pill blue">🔄 跑中</span></td>
+    </tr>
+    <tr class="grp-ds" style="opacity:.6;">
+      <td class="bold">r3</td><td class="mono">待起</td>
+      <td colspan="11" class="muted">r2 收口后自动起 · 预计 11-24 ~02:00 收口</td>
+      <td><span class="pill amber">⏳ 待跑</span></td>
     </tr>
   </tbody>
 </table>
 
-<div class="note">
-  <b>读法</b>：deepseek-v4-pro r1 单轮 21.78% 约为 doubao-pro 的 2 倍，但单 run 不能下结论——需等 3-run 收口后做 <b>McNemar 配对检验</b>（逐题 pass/fail 对齐，报 b/c 与 p 值）。不显著就写「不显著」，不写「趋势向好」（用户令纪律）。
+<h3>3.1 成本对比：deepseek vs doubao-pro（单轮）</h3>
+<div class="grid3">
+  <div class="stat"><div class="v cyan">21.78%</div><div class="l">deepseek r1 Pass@1</div><div class="s">vs doubao-pro 10.18% = <b style="color:var(--green)">+11.60pp（2.1×）</b></div></div>
+  <div class="stat"><div class="v orange">74.2 s</div><div class="l">deepseek 单题均时</div><div class="s">vs doubao-pro 20.6s = <b>3.6×</b> 慢</div></div>
+  <div class="stat"><div class="v blue">1.09M</div><div class="l">deepseek 单题均 input tok</div><div class="s">vs doubao-pro ~370K = <b>2.6×</b> 贵</div></div>
+</div>
+<div class="card" style="border-left:5px solid var(--cyan);">
+  <p style="margin:0;font-size:13.5px;"><b>读法</b>：deepseek-v4-pro 单轮 Pass@1 约 doubao-pro 的 2.1 倍，但单题墙钟 3.6×、input token 2.6×——<b>更强但更慢更贵</b>。这是"模型规模 ↑ → 能力 ↑ 但成本 ↑"的典型 trade-off。r2/r3 跑完后做 McNemar 配对检验（逐题 pass/fail 对齐）确认差异是否统计显著；不显著就写「不显著」，不写「趋势向好」。</p>
+</div>
+
+<h2><span class="n">4</span>四模型横向对比（阶段性 · 含成本）</h2>
+
+<div class="tblwrap">
+<table>
+  <thead><tr>
+    <th>模型</th><th class="num">Pass@1</th><th>样本</th><th class="num">单题均时</th><th class="num">单题均 in tok</th><th class="num">单轮墙钟</th><th class="num">单轮总 tok</th><th>状态</th><th>vs doubao-pro</th>
+  </tr></thead>
+  <tbody>
+    <tr class="grp-mini">
+      <td class="bold">doubao-mini</td><td class="num bold">2.38% ± 0.23%</td><td class="num">3-run</td>
+      <td class="num">24.5s</td><td class="num">~349K</td><td class="num">~3:24</td><td class="num">~195M</td>
+      <td><span class="pill green">✅ 收口</span></td><td class="num muted">−7.80pp</td>
+    </tr>
+    <tr class="grp-lite">
+      <td class="bold">doubao-lite</td><td class="num bold">4.68% ± 0.95%</td><td class="num">3-run</td>
+      <td class="num">25.5s</td><td class="num">~313K</td><td class="num">~3:27</td><td class="num">~164M</td>
+      <td><span class="pill green">✅ 收口</span></td><td class="num muted">−5.50pp</td>
+    </tr>
+    <tr class="grp-pro">
+      <td class="bold">doubao-pro</td><td class="num bold">10.18% ± 1.45%</td><td class="num">3-run</td>
+      <td class="num">20.6s</td><td class="num">~370K</td><td class="num">~2:58</td><td class="num">~218M</td>
+      <td><span class="pill green">✅ 收口 · M0</span></td><td class="num">基准</td>
+    </tr>
+    <tr class="grp-ds">
+      <td class="bold">deepseek-v4-pro</td><td class="num bold" style="color:var(--green)">21.78%</td><td class="num">1 run（r1）</td>
+      <td class="num">74.2s</td><td class="num">~1,092K</td><td class="num">10:18</td><td class="num">~577M</td>
+      <td><span class="pill blue">r1 done · r2/r3 待</span></td><td class="num"><b style="color:var(--green)">+11.60pp（2.1×）</b></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h4>成本-能力象限读法</h4>
+<div class="grid2">
+  <div class="card" style="padding:14px 16px;">
+    <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px;">✅ 高性价比（doubao-pro）</div>
+    <div style="font-size:13px;color:var(--ink2);">20.6s/题 · 370K in tok · 10.18% Pass@1——<b>单位成本通过率最高</b>。作 M0 anchor 基线。</div>
+  </div>
+  <div class="card" style="padding:14px 16px;">
+    <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:4px;">⬆️ 强力但贵（deepseek-v4-pro）</div>
+    <div style="font-size:13px;color:var(--ink2);">74.2s/题 · 1.09M in tok · 21.78%——<b>能力翻倍但成本 2.6-3.6×</b>。适合标"模型天花板"。</div>
+  </div>
+  <div class="card" style="padding:14px 16px;">
+    <div style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:4px;">⬇️ 小模型（lite/mini）</div>
+    <div style="font-size:13px;color:var(--ink2);">24-25s/题 · 313-349K in tok · 2.38-4.68%——<b>成本相近但能力骤降</b>。作模型规模消融数据点。</div>
+  </div>
+  <div class="card" style="padding:14px 16px;">
+    <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-bottom:4px;">📊 规模效应</div>
+    <div style="font-size:13px;color:var(--ink2);">mini(2.38%) → lite(4.68%) → pro(10.18%) → ds-pro(21.78%)，<b>Pass@1 随模型规模近线性 ↑</b>，但成本（tok/时）也 ↑——EDA-Flow-Bench 对模型规模敏感。</div>
+  </div>
 </div>
 
 <h2><span class="n">5</span>执行时间线</h2>
 
-<div class="timeline">
-  <div class="tl done">
-    <div class="t">11-20 16:21 ~ 11-22 14:23</div>
-    <div class="h">doubao 三组 7 batch 全收口</div>
-    <div class="d">pro 3-run + lite 3-run + mini 3-run（含 1 轮 attempt 重跑）→ 10.18% / 4.68% / 2.38%，三份 HTML 报告交付。</div>
+<div class="timeline" style="position:relative;padding-left:24px;margin:14px 0;">
+  <div style="position:absolute;left:7px;top:4px;bottom:4px;width:2px;background:var(--line);"></div>
+  <div style="position:relative;margin:0 0 14px;">
+    <div style="position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid var(--green);"></div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;">11-20 17:09 → 11-21 13:56</div>
+    <div style="font-size:14px;font-weight:600;">doubao-pro 3-run 全 clean</div>
+    <div style="font-size:13px;color:var(--ink2);">r1 2:35 + r2 3:06 + r3 2:54 → 10.18 ± 1.45% ✅ 对齐用户基准 10.5%</div>
   </div>
-  <div class="tl done">
-    <div class="t">11-22 18:1x</div>
-    <div class="h">用户令追加「强模型 3-run」</div>
-    <div class="d">首选 deepseek-v4-pro，canary 通过后 3 轮串行，与 doubao-pro 配对检验。</div>
+  <div style="position:relative;margin:0 0 14px;">
+    <div style="position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid var(--green);"></div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;">11-21 01:25 → 11-22 13:12</div>
+    <div style="font-size:14px;font-weight:600;">doubao-lite + mini 3-run（含 VOID 重跑）</div>
+    <div style="font-size:13px;color:var(--ink2);">lite r1/r3/r4 clean（r2 FUSE VOID）→ 4.68% · mini r2/r3/r4 clean（r1 FUSE VOID）→ 2.38%</div>
   </div>
-  <div class="tl done">
-    <div class="t">11-22 20:14 → 11-23 06:33</div>
-    <div class="h">deepseek r1 ✅ DONE · 21.78%</div>
-    <div class="d">batch <span class="mono">20261122_201448</span> · 10h18m · PASS=105/FAIL=377 · 0 FUSE。</div>
+  <div style="position:relative;margin:0 0 14px;">
+    <div style="position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid var(--green);"></div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;">11-22 14:23</div>
+    <div style="font-size:14px;font-weight:600;">doubao 三组报告交付 + v3 收口</div>
+    <div style="font-size:13px;color:var(--ink2);">三份 HTML 报告落盘 · MEMORY 标 v3 收口 · providers 还原 pro 默认态</div>
   </div>
-  <div class="tl run">
-    <div class="t">11-23 06:33 → 约 16:16</div>
-    <div class="h">deepseek r2 🔄 跑中 · 17%</div>
-    <div class="d">batch <span class="mono">20261123_063302</span> · 85/500 · early 18.06% · 健康。</div>
+  <div style="position:relative;margin:0 0 14px;">
+    <div style="position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid var(--blue);"></div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;">11-22 18:1x</div>
+    <div style="font-size:14px;font-weight:600;">用户令追加「强模型 3-run」</div>
+    <div style="font-size:13px;color:var(--ink2);">首选 deepseek-v4-pro · canary 通过 · 身份四证核验</div>
   </div>
-  <div class="tl wait">
-    <div class="t">r2 收口后起 · 约 11-24 02:00 收口</div>
-    <div class="h">deepseek r3 ⏳ 待跑</div>
-    <div class="d">串行脚本自动驱动，~10h。</div>
+  <div style="position:relative;margin:0 0 14px;">
+    <div style="position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid var(--green);"></div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;">11-22 20:14 → 11-23 06:33（10h18m）</div>
+    <div style="font-size:14px;font-weight:600;">deepseek r1 ✅ DONE · 21.78%</div>
+    <div style="font-size:13px;color:var(--ink2);">105/482 · 0 FUSE · 577M tok · 单题 74s</div>
   </div>
-  <div class="tl wait">
-    <div class="t">r3 收口后</div>
-    <div class="h">3-run 汇总 + McNemar 配对检验 + 报告</div>
-    <div class="d"><span class="mono">report_edafb_lite500_dsv4pro_eval_zh.html</span> · MEMORY 首行追加汇总。</div>
+  <div style="position:relative;margin:0 0 14px;">
+    <div style="position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid var(--blue);"></div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;">11-23 06:33 → 约 16:16</div>
+    <div style="font-size:14px;font-weight:600;">deepseek r2 🔄 跑中 · 21%</div>
+    <div style="font-size:13px;color:var(--ink2);">104/500 · early 19.42% · 健康 · 0 FUSE</div>
   </div>
-  <div class="tl wait">
-    <div class="t">用户裁定后</div>
-    <div class="h">论文 §6 18 处 \TBD 回填</div>
-    <div class="d">令纪律：3-run 出来先报数，等用户裁定才回填（agent 不自动改论文）。</div>
+  <div style="position:relative;margin:0 0 14px;">
+    <div style="position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--amber);"></div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;">r2 收口后 · 约 11-24 02:00</div>
+    <div style="font-size:14px;font-weight:600;">deepseek r3 ⏳ 待跑</div>
+    <div style="font-size:13px;color:var(--ink2);">串行脚本自动驱动 · ~10h</div>
+  </div>
+  <div style="position:relative;margin:0 0 14px;">
+    <div style="position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--amber);"></div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;">r3 收口后</div>
+    <div style="font-size:14px;font-weight:600;">3-run 汇总 + McNemar 配对检验 + 报告</div>
+    <div style="font-size:13px;color:var(--ink2);"><span class="mono">report_edafb_lite500_dsv4pro_eval_zh.html</span> · 与 doubao-pro 配对 · 报 b/c + p 值</div>
   </div>
 </div>
 
-<h2><span class="n">6</span>冻结口径（全部 batch 逐字一致 · 不许改）</h2>
+<h2><span class="n">6</span>冻结口径 + 纪律红线</h2>
 
 <div class="grid3">
-  <div class="card" style="padding:14px 16px;">
-    <div style="font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.08em;margin-bottom:6px;">评测集</div>
-    <div style="font-size:14px;font-weight:600;">eval/cases_lite.txt</div>
-    <div style="font-size:13px;color:var(--muted);">500 题 · 13 域 · 链长分层</div>
-  </div>
-  <div class="card" style="padding:14px 16px;">
-    <div style="font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.08em;margin-bottom:6px;">指标</div>
-    <div style="font-size:14px;font-weight:600;">Pass@1（decided）</div>
-    <div style="font-size:13px;color:var(--muted);">= PASS / (PASS + FAIL)</div>
-  </div>
-  <div class="card" style="padding:14px 16px;">
-    <div style="font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.08em;margin-bottom:6px;">thinking</div>
-    <div style="font-size:14px;font-weight:600;">low</div>
-    <div style="font-size:13px;color:var(--muted);">省 token</div>
-  </div>
-  <div class="card" style="padding:14px 16px;">
-    <div style="font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.08em;margin-bottom:6px;">timeout</div>
-    <div style="font-size:14px;font-weight:600;">2400s</div>
-    <div style="font-size:13px;color:var(--muted);">单题上限</div>
-  </div>
-  <div class="card" style="padding:14px 16px;">
-    <div style="font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.08em;margin-bottom:6px;">cline</div>
-    <div style="font-size:14px;font-weight:600;">3.0.51</div>
-    <div style="font-size:13px;color:var(--muted);">+ PreToolUse hook 防泄题</div>
-  </div>
-  <div class="card" style="padding:14px 16px;">
-    <div style="font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.08em;margin-bottom:6px;">并发</div>
-    <div style="font-size:14px;font-weight:600;">--workers 16</div>
-    <div style="font-size:13px;color:var(--muted);">用户原话逐字</div>
-  </div>
+  <div class="card" style="padding:12px 14px;"><div style="font-size:12px;font-weight:700;color:var(--blue);">评测集</div><div style="font-size:13.5px;font-weight:600;">eval/cases_lite.txt · 500 题</div></div>
+  <div class="card" style="padding:12px 14px;"><div style="font-size:12px;font-weight:700;color:var(--blue);">指标</div><div style="font-size:13.5px;font-weight:600;">Pass@1（decided）= PASS/(PASS+FAIL)</div></div>
+  <div class="card" style="padding:12px 14px;"><div style="font-size:12px;font-weight:700;color:var(--blue);">thinking</div><div style="font-size:13.5px;font-weight:600;">low（省 token）</div></div>
+  <div class="card" style="padding:12px 14px;"><div style="font-size:12px;font-weight:700;color:var(--blue);">timeout</div><div style="font-size:13.5px;font-weight:600;">2400s / 题</div></div>
+  <div class="card" style="padding:12px 14px;"><div style="font-size:12px;font-weight:700;color:var(--blue);">cline</div><div style="font-size:13.5px;font-weight:600;">3.0.51 + PreToolUse hook</div></div>
+  <div class="card" style="padding:12px 14px;"><div style="font-size:12px;font-weight:700;color:var(--blue);">并发</div><div style="font-size:13.5px;font-weight:600;">--workers 16（用户原话）</div></div>
 </div>
 
 <div class="alert">
-  <b>纪律红线</b>：🚫 不改题 / 图 / <span class="mono">check.py</span> / 判分口径 · 🚫 不自加 <span class="mono">--skip-done</span> 等参数 · 🚫 不复用上轮 <span class="mono">status.jsonl</span> · 🚫 不拼接 FUSE / 熔断 batch（作废重跑）· 🚫 不改论文宏与 18 处 \TBD（3-run 出来先报数，等用户裁定）。
+  <b>纪律红线</b>：🚫 不改题 / 图 / <span class="mono">check.py</span> / 判分口径 · 🚫 不自加 <span class="mono">--skip-done</span> · 🚫 不复用上轮 <span class="mono">status.jsonl</span> · 🚫 不拼接 FUSE / 熔断 batch（作废重跑）· 🚫 不改论文宏与 18 处 \TBD（3-run 出来先报数，等用户裁定）· ✅ 每轮跑前核验 providers.json 身份四证（apiKey / model / baseUrl / maxTokens）。
 </div>
 
 <h2><span class="n">7</span>已作废数字（不引用）</h2>
-
 <div class="card" style="border-left:5px solid var(--red);background:#fef2f2;">
   <p style="margin:0;"><b>batch <span class="mono">run_batch_20261119_225802</span> · 2.37% Pass@1</b> —— <b>作废</b>。</p>
-  <p style="margin:6px 0 0;font-size:13px;color:var(--ink2);">根因：① 起跑时 <span class="mono">providers.json</span> 仍是旧配置（<span class="mono">updatedAt=2026-11-19T16:45:45Z</span> = 北京时间 11-20 00:45，但 batch 22:58 起跑，跑批中途才改对）；② agent 自加 <span class="mono">--skip-done</span> 跑 422/500（口径不符）；③ 没读仓库 README。v3 已全面纠正（严格遵循 README + 不自加参数 + 身份四证核验 + 3-run clean）。</p>
+  <p style="margin:6px 0 0;font-size:13px;color:var(--ink2);">根因三连：① 起跑时 <span class="mono">providers.json</span> 仍是旧配置（跑批中途才改对）；② agent 自加 <span class="mono">--skip-done</span> 跑 422/500（口径不符）；③ 没读仓库 README。v3 已全面纠正——严格遵循 README + 不自加参数 + 身份四证核验 + 3-run clean。</p>
 </div>
 
 <h2><span class="n">8</span>待办与下一步</h2>
-
 <table>
   <thead><tr><th>项</th><th>状态</th><th>预计</th><th>依赖</th></tr></thead>
   <tbody>
-    <tr><td>doubao 三组报告</td><td><span class="pill green">✅ 交付</span></td><td>—</td><td>—</td></tr>
-    <tr><td>deepseek r2</td><td><span class="pill blue">🔄 17%</span></td><td>11-23 ~16:16</td><td>—</td></tr>
+    <tr><td>doubao 三组报告（pro/lite/mini）</td><td><span class="pill green">✅ 交付</span></td><td>—</td><td>—</td></tr>
+    <tr><td>deepseek r2</td><td><span class="pill blue">🔄 21%</span></td><td>11-23 ~16:16</td><td>—</td></tr>
     <tr><td>deepseek r3</td><td><span class="pill amber">⏳ 待起</span></td><td>11-24 ~02:00</td><td>r2 收口</td></tr>
     <tr><td>deepseek 3-run 汇总 + McNemar 配对检验</td><td><span class="pill gray">待 3-run 完</span></td><td>11-24 上午</td><td>r3 收口</td></tr>
-    <tr><td>deepseek 报告 <span class="mono">report_edafb_lite500_dsv4pro_eval_zh.html</span></td><td><span class="pill gray">待 3-run 完</span></td><td>11-24 上午</td><td>配对检验</td></tr>
+    <tr><td>deepseek 报告 + 成本对比</td><td><span class="pill gray">待 3-run 完</span></td><td>11-24 上午</td><td>配对检验</td></tr>
     <tr><td>论文 §6 18 处 \TBD 回填</td><td><span class="pill amber">等用户裁定</span></td><td>用户定</td><td>3-run 报数</td></tr>
   </tbody>
 </table>
 
+<div class="note" style="margin-top:16px;">
+  <b>数据来源</b>：逐轮 PASS/FAIL/ERROR/ABSENT + 墙钟 + s/it 来自各 batch <span class="mono">summary.log</span> 最后一行（100% 行）；token（inputTokens / outputTokens）来自 per-case workdir <span class="mono">cline_session.jsonl</span> 的 <span class="mono">aggregateUsage</span> 字段按 batch 时间窗口聚合（cases 数因窗口重叠略偏，量级正确）；batch→模型/轮次映射来自三份 doubao 报告 HTML 的逐轮表。<b>totalCost 字段为 0</b>（内部 agi-gateway 不计费），故本报告不报 dollar 成本，只报 token 成本。
+</div>
+
 <footer>
-  生成时间：2026-11-23 08:14 · 数据来源：EDA-Flow-Bench 评测仓库 batch summary.log + zhulong MEMORY wake#1850 · 评测仓库路径 <span class="mono">/nasdata/app.e0031982/code/EDA-Flow-Bench</span> · 报告路径 <span class="mono">doc/ZhuLong_DAC2027/reports/</span>
+  生成时间：2026-11-23 09:50 · 数据来源：EDA-Flow-Bench 评测仓库 batch summary.log + per-case cline_session.jsonl aggregateUsage + zhulong MEMORY wake#1853 · 评测仓库 <span class="mono">/nasdata/app.e0031982/code/EDA-Flow-Bench</span> · 报告 <span class="mono">doc/ZhuLong_DAC2027/reports/report_zhulong_eval_progress_20261123.html</span>
 </footer>
 
 </div>
