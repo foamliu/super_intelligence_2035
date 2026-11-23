@@ -3,14 +3,18 @@
 
 Self-contained Chinese HTML, 0 script, 0 external links (per report discipline).
 """
-import json, os, html
+import json, os, html, datetime, glob
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(BASE, "swebench_verified_full", "infra_rerun_classify_7way.json")
+EVAL_DIR = os.path.join(BASE, "swebench_verified_full", "reports")
+PRED_DIR = os.path.join(BASE, "swebench_verified_full", "predictions_glm53")
+IDS_DIR = os.path.join(BASE, "swebench_verified_full", "rerun_ids")
 # BASE = run/harness  ->  os.path.dirname(BASE) = run  ->  run/reports
 OUT = os.path.join(os.path.dirname(BASE), "reports",
                    "report_harness_infra_rerun_plan_zh.html")
 OUT = os.path.normpath(OUT)
+NOW = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
 d = json.load(open(SRC))
 routes = d["routes"]
@@ -117,6 +121,49 @@ for r in rerun_order:
         detail_sections += "<h4>⚪ pending_eval（待评测·非重跑）· %d 题</h4>" % len(peval_items)
         detail_sections += detail_table(peval_items, "peval")
 
+# --- Nightly progress (dynamic from eval + prediction files) ---
+progress_rows = ""
+total_recovered = 0
+total_rerun_predicted = 0
+total_rerun_nonempty = 0
+for r in rerun_order:
+    rd = routes[r]
+    baseline_resolved = rd["resolved"]
+    # current resolved from eval file
+    ef = os.path.join(EVAL_DIR, f"eval_glm53_{r}.json")
+    cur_resolved = baseline_resolved
+    if os.path.isfile(ef):
+        ev = json.load(open(ef))
+        rv = ev.get("resolved", [])
+        cur_resolved = len(rv) if isinstance(rv, list) else rv
+    recovered = cur_resolved - baseline_resolved
+    # rerun prediction progress
+    ids_fn = os.path.join(IDS_DIR, f"{r}_rerun_ids.txt")
+    rerun_total = 0
+    rerun_nonempty = 0
+    if os.path.isfile(ids_fn):
+        ids = [l.strip() for l in open(ids_fn) if l.strip()]
+        rerun_total = len(ids)
+        for rid in ids:
+            pf = os.path.join(PRED_DIR, f"{r}__{rid}.json")
+            if os.path.isfile(pf):
+                try:
+                    pd = json.load(open(pf))
+                    mp = pd[0].get("model_patch", "") if isinstance(pd, list) and pd else pd.get("model_patch", "")
+                    if mp and mp.strip():
+                        rerun_nonempty += 1
+                except Exception:
+                    pass
+    total_recovered += max(0, recovered)
+    total_rerun_predicted += rerun_nonempty
+    total_rerun_nonempty += rerun_nonempty
+    pct_cur = "%.1f%%" % (cur_resolved / 500 * 100)
+    progress_rows += (
+        "<tr><td><strong>%s</strong></td><td>%d</td><td>%d</td>"
+        "<td class='pass'>+%d</td><td>%d</td><td>%d</td><td>%s</td></tr>" % (
+            esc(LABEL[r]), baseline_resolved, cur_resolved,
+            max(0, recovered), rerun_total, rerun_nonempty, pct_cur))
+
 HTML = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -148,7 +195,7 @@ code{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:0.9em}
 <body>
 <h1>harness 7-way infra 排查与夜间重跑计划</h1>
 <div class="info">
-<p><strong>评测</strong>：SWE-bench Verified 500 题 · 7 路横评　|　<strong>基座</strong>：glm-5.3-flash　|　<strong>生成</strong>：2026-11-23</p>
+<p><strong>评测</strong>：SWE-bench Verified 500 题 · 7 路横评　|　<strong>基座</strong>：glm-5.3-flash　|　<strong>生成</strong>：__NOW__</p>
 <p><strong>背景</strong>：cline 的 Pass% 被 93 个空 patch 拖低，其中多数是基础设施故障（Token 额度 429 / 超时 / 上游 5xx / 鉴权），但最终 eval 的 <code>infra_or_quota</code> 却记为 0 —— infra 失败被并进「能力失败」桶。本报告对 7 路全部未 resolved 的 case 做系统分类，列出需重跑的 infra/pending 题与不重跑的 ability 题。</p>
 <p><strong>数据源</strong>：<code>eval_glm53_*.json</code>（resolved/failed/empty_patch/infra_or_quota）＋ <code>progress_glm53_*.json</code>（逐题 wall_s/returncode/quota_blocked/timeout/stdout·stderr_tail）＋ <code>predictions_glm53/*.json</code>（model_patch）</p>
 <p><strong>分类脚本</strong>：<code>run/harness/swebench_verified_full/infra_rerun_classify_7way.py</code>（复用并推广 <code>c2_cline_R2233.py</code> 框架）</p>
@@ -202,16 +249,23 @@ __RERUN_ROWS__
 __DETAIL_SECTIONS__
 <h2>五、每晚进度（滚动更新）</h2>
 <div class="ok">
-<p><strong>2026-11-23（首日 · 夜间窗口 LIVE）</strong>：Step 1 全量 7 路 infra 排查完成（本报告）。重跑队列总计 <strong>__GRAND_RERUN__ 题</strong>（infra=__GRAND_INFRA__ + pending=__GRAND_PEND__），顺序见 §3.1。</p>
-<p><strong>重跑进度</strong>：21:55 orchestrator（<code>rerun_infra_verified.py</code>）启动，首路 cline-patched 95 题预测中（gw_proxy 9090/9091/9092 三代理已修复启动，agent 真正连上 API、产非空 patch）。预计速率 ~7min/题，95 题约 11h，可容于 12h 窗口。窗口结束 09:00 自动 REGEN 7way 报告 + 停止。</p>
-<p class="small">每晚窗口结束后更新本节：已回收 X 题 / 7way 报告 REGEN 状态 / MEMORY 心跳「infra 重跑：已回收 X 题」。</p>
+<p><strong>2026-11-23（Step 1 交付 · 夜间窗口 LIVE）</strong>：Step 1 全量 7 路 infra 排查完成（本报告）。重跑队列总计 <strong>__GRAND_RERUN__ 题</strong>（infra=__GRAND_INFRA__ + pending=__GRAND_PEND__），顺序见 §3.1。</p>
+<p><strong>2026-11-23 → 2026-11-24（第 1 夜 · 21:00–09:00 窗口 · LIVE）</strong>：orchestrator（<code>rerun_infra_verified.py</code> PID4191374）于 23:49 启动（首轮 21:00–21:33 因额度 429 全空，重启后正常）。首路 cline-patched 95 题预测中，速率 ~17min/题。已回收 <strong>__TOTAL_RECOVERED__ 题</strong>（resolved 净增）。每晚窗口结束 09:00 自动增量 eval+merge + REGEN 7way 报告 + 重新 ARM watcher。</p>
+<table>
+<thead><tr><th>Harness</th><th>基线 resolved</th><th>当前 resolved</th><th>已回收</th><th>重跑题数</th><th>已产非空 patch</th><th>当前 Pass%</th></tr></thead>
+<tbody>
+__PROGRESS_ROWS__
+</tbody>
+</table>
+<p class="small">基线 resolved = 分类时（2026-11-23 12:45）的 resolved 数。当前 resolved = 最新 <code>eval_glm53_*.json</code>。已回收 = 当前 − 基线。已产非空 patch = rerun_ids 中已产出非空 model_patch 的题数（含已 eval 和待 eval）。</p>
+<p class="small">更新时间：__NOW__ · harness 线（夜间重跑 LIVE）</p>
 </div>
 <hr>
 <p class="small">
 分析脚本：<code>run/harness/swebench_verified_full/infra_rerun_classify_7way.py</code>　|　
 生成器：<code>run/harness/gen_infra_rerun_plan.py</code>　|　
 JSON：<code>run/harness/swebench_verified_full/infra_rerun_classify_7way.json</code><br>
-生成时间：2026-11-23 · harness 线（夜间重跑计划 · Step 1 交付）。
+生成时间：__NOW__ · harness 线（夜间重跑计划 · Step 1 交付 + Step 2 LIVE）。
 </p>
 </body>
 </html>"""
@@ -222,7 +276,10 @@ HTML = (HTML
         .replace("__DETAIL_SECTIONS__", detail_sections)
         .replace("__GRAND_RERUN__", str(grand_rerun))
         .replace("__GRAND_INFRA__", str(grand_infra))
-        .replace("__GRAND_PEND__", str(grand_pend)))
+        .replace("__GRAND_PEND__", str(grand_pend))
+        .replace("__PROGRESS_ROWS__", progress_rows)
+        .replace("__TOTAL_RECOVERED__", str(total_recovered))
+        .replace("__NOW__", NOW))
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, "w", encoding="utf-8") as f:

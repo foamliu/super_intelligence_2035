@@ -608,6 +608,6 @@
   ],
   "merged_R2784_sympy-24066": "RESOLVED",
   "rerun_merged": "2026-11-23 21:33:02",
-  "incr_merged": "2026-11-24 04:22:34",
+  "incr_merged": "2026-11-24 04:52:58",
   "merge_note": "manual fix: sympy-16450 resolved per eval run rerun_incr_cline-patched_11240317 (overwritten by orphan 0316 process)"
 }

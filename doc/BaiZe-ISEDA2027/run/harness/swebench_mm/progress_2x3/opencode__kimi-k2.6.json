@@ -6100,37 +6100,72 @@
   "openlayers__openlayers-14719": {
     "instance_id": "openlayers__openlayers-14719",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 679.9,
+    "rc": 0,
+    "model_patch_len": 2683,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "regression test in `test/browser/spec/ol/renderer/canvas/ImageLayer.test.js` that verifies `drawImage` is called with integer coordinates when the transform would otherwise produce fractional values.\n",
+    "stderr_tail": "t)\n\u001b[0m\n\u001b[0m# \u001b[0mTodos\n[✓] Explore the codebase to find WMS image rendering code\n[✓] Identify the root cause of blurry WMS images\n[✓] Implement a fix for the blurry image issue\n[✓] Test the fix\n\u001b[0m\n"
   },
   "openlayers__openlayers-14932": {
     "instance_id": "openlayers__openlayers-14932",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 669.2,
+    "rc": 0,
+    "model_patch_len": 841,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ected.png`\n\nThey currently reflect the buggy alignment. After this code change you can update them by running:\n\n```bash\nnpm run test-rendering -- --fix --match \"text-style-linestring-(nice|ugly)\"\n```\n",
+    "stderr_tail": "5.20.207',\n      port: 443\n    }\n  ]\n}\n\u001b[0m\n\u001b[0m→ \u001b[0mRead test/rendering/cases/text-style-linestring-ugly/main.js\u001b[90m [offset=80, limit=40]\u001b[0m\n\u001b[0m✱ \u001b[0mGrep \"defaultTextAlign\"\u001b[90m 10 matches\u001b[0m\n"
   },
   "openlayers__openlayers-14945": {
     "instance_id": "openlayers__openlayers-14945",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 859.0,
+    "rc": 0,
+    "model_patch_len": 2770,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ent due to missing Chrome/Puppeteer, but the affected unit-test expectations were manually updated and verified.\n\nThe fix is minimal and directly addresses the root cause described in the bug report.\n",
+    "stderr_tail": " OSM(),\n }),\n new ImageLayer({\n   source: new ImageArcGISRest({\n-    ratio: 1,\n     params: {},\n     url: url,\n   }),\n }),\n\n\u001b[0m\n\u001b[0m→ \u001b[0mRead examples/arcgis-image.js\u001b[90m [offset=10, limit=15]\u001b[0m\n"
   },
   "openlayers__openlayers-15114": {
     "instance_id": "openlayers__openlayers-15114",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 441.6,
+    "rc": 0,
+    "model_patch_len": 3769,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "eature` with right-hand rule oriented polygon (CCW outer, CW hole)\n\nBoth verify that the polygon is **not** incorrectly split into multiple polygons.\n\nAll existing node tests (1869) continue to pass.\n",
+    "stderr_tail": "plore codebase to understand WebGL polygon rendering\n[✓] Find the root cause of the winding order issue in WebGL fill\n[✓] Implement fix for linear rings / winding order\n[✓] Verify fix with tests\n\u001b[0m\n"
   },
   "openlayers__openlayers-15168": {
     "instance_id": "openlayers__openlayers-15168",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1053.0,
+    "rc": 0,
+    "model_patch_len": 6182,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "in the output canvas.\n\nFor tile sources (`ReprojTile`, `ReprojDataTile`), `sourceResolution` is always a single number from the tile grid, so the `Array.isArray` check keeps their behavior unchanged.\n",
+    "stderr_tail": "Identify the bug in raster reprojection where square pixels are assumed\n[✓] Implement a fix to preserve source pixel count and avoid mis-alignments\n[✓] Test the fix and ensure it works correctly\n\u001b[0m\n"
   },
   "openlayers__openlayers-15229": {
     "instance_id": "openlayers__openlayers-15229",
