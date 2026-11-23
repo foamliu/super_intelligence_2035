@@ -5559,9 +5559,16 @@
   "openlayers__openlayers-12393": {
     "instance_id": "openlayers__openlayers-12393",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1116.6,
+    "rc": 0,
+    "model_patch_len": 2690,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "st expectations have been updated to match the new behavior. The rendering tests that involve non-square extents may need their `expected.png` reference images regenerated on a system with a browser.\n",
+    "stderr_tail": "g Math.ceil\n[✓] Update unit tests in imagestatic.test.js for new expected dimensions\n[✓] Run browser and rendering tests to verify changes\n[✓] Regenerate rendering test expected images if needed\n\u001b[0m\n"
   },
   "openlayers__openlayers-12467": {
     "instance_id": "openlayers__openlayers-12467",
