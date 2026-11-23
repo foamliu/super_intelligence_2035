@@ -57,6 +57,18 @@ th.num{width:36px;}
 @media(max-width:760px){.grid2{grid-template-columns:1fr;}.case-stats{flex-direction:column;}}
 footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);}
 ol{margin:6px 0 0;padding-left:20px;}
+.assert-tbl{font-size:12px;margin:10px 0 16px;}
+.assert-tbl th{font-size:11px;}
+.assert-tbl td.id{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:700;text-align:center;width:34px;}
+.assert-tbl td.verdict{width:64px;text-align:center;font-weight:700;font-size:11px;padding:4px 6px;}
+.assert-tbl td.verdict.pass{color:var(--green);}
+.assert-tbl td.verdict.fail{color:#fff;background:var(--red);border-radius:3px;}
+.assert-tbl td.verdict.skip{color:var(--muted);}
+.assert-tbl tr.fail-row{background:var(--red-soft);}
+.assert-tbl tr.fail-row td{font-weight:600;}
+.assert-head{display:flex;align-items:baseline;gap:10px;margin:14px 0 4px;}
+.assert-head h5{margin:0;}
+.assert-head .cnt{font-size:12px;color:var(--muted);}
 </style>
 </head>
 <body>
@@ -119,6 +131,23 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">1855s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">read_files×13 · eda_flow__write_file×12 · editor×7 · eda_flow__run_commands×5 · run_commands×4 · list_files×2 · open_session×1 · search×1 · declare_done×1</div></div>
   </div>
+  <div class="assert-head"><h5>断言清单（check.py 共 15 条 a–o，全部 PASS）</h5><span class="cnt">15/15 PASS</span></div>
+  <table class="assert-tbl">
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td class="id">a</td><td>submit.zip 存在 + inst_cdl_consistency.py 在 zip 内 + 可编译</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td>run 在 hidden B 上成功 + 输出 valid JSON + 含 cells list</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td>所有期望 cells 都在 SUT 报告里</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td>summary 字段正确</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">5</td><td class="id">e–i</td><td>每 cell 的 class/supplies/grounds/ports/pins 对齐参考 parser</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">6</td><td class="id">j</td><td>一致 cell 标记 consistent</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">7</td><td class="id">k</td><td>B_nor2_dir_mismatch.direction_match == False</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">8</td><td class="id">l</td><td>B_mux_supply_mismatch.supply_match == False</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">9</td><td class="id">m</td><td>B_flop4_port_mismatch.port_match == False</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">10</td><td class="id">n</td><td>port counts 对齐参考 parser</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">11</td><td class="id">o</td><td>不一致 cell 的 diffs 非空/非缺失</td><td class="verdict pass">PASS</td></tr>
+    </tbody>
+  </table>
   <h5>行为序列图</h5>
   <svg viewBox="0 0 760 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;">
 <line x1="60" y1="96" x2="740" y2="96" stroke="#cbd5e1" stroke-width="1"/>
@@ -266,6 +295,24 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">2056s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">read_files×10 · list_files×10 · eda_flow__run_commands×8 · editor×6 · run_commands×5 · write_file×3 · search×2 · read_file×2 · open_session×1 · fetch_web_content×1</div></div>
   </div>
+  <div class="assert-head"><h5>断言清单（check.py 共 15 条 a–o）</h5><span class="cnt" style="color:var(--red);font-weight:700;">败在断言 a · 1/15 PASS</span></div>
+  <table class="assert-tbl">
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr class="fail-row"><td class="num">1</td><td class="id">a</td><td>submit.zip 存在 + 可解压 + parse_devusage.py 在 zip 内 + <b>judge setup 资产齐全</b><br><span class="muted small">判分报错：<span class="mono">fail: a judge setup missing: .../assets/EDA-Eval-DesignFlow-DevUsageExtract-001/inputs</span></span></td><td class="verdict fail">FAIL</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td>py_compile 通过</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td>是真正的 CDL parser（有 regex/.SUBCKT/M-inst 逻辑，无 hardcode）</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td>device_usage.json 在 zip 内 + valid JSON + 含必需 keys</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">5</td><td class="id">e</td><td>parser 在 hidden B 上成功运行</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">6</td><td class="id">f</td><td>B device_types 与期望一致</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">7</td><td class="id">g</td><td>B by_type 每 master count 对齐</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">8</td><td class="id">h</td><td>B subckts 对齐</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">9</td><td class="id">i</td><td>B mos_w_values 对齐</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">10</td><td class="id">j–k</td><td>B largest_w (w/instance/subckt/hierarchy) 对齐</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">11</td><td class="id">l–m</td><td>B subckt_count + total_instances 对齐</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">12</td><td class="id">n–o</td><td>parser 在 A 上成功 + A/B device set 不同（cross-input guard）</td><td class="verdict skip">未触达</td></tr>
+    </tbody>
+  </table>
   <h5>行为序列图</h5>
   <svg viewBox="0 0 760 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;">
 <line x1="60" y1="96" x2="740" y2="96" stroke="#cbd5e1" stroke-width="1"/>
@@ -423,6 +470,27 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">2398s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">eda_flow__run_commands×19 · eda_flow__run_code×4 · read_files×3 · write_file×3 · run_commands×1 · get_api_details×1 · open_session×1 · editor×1 · pyAether_run_code×1</div></div>
   </div>
+  <div class="assert-head"><h5>断言清单（check.py 共 15 条 a–o，全部 PASS）</h5><span class="cnt">15/15 PASS</span></div>
+  <table class="assert-tbl">
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td class="id">a</td><td>deliverable 存在 + screenshot_verify.py 在 zip 内</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td>py_compile 通过</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td>接受 CLI 参数（sys.argv / argparse）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td>在 B（hidden cell）上运行成功</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">5</td><td class="id">e</td><td>aeOpenDesign init 调用正确（参数齐全）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">6</td><td class="id">f</td><td>aeOpenDesign 调用 + lib 参数对</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">7</td><td class="id">g</td><td>cell 参数对（B 期望 cell）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">8</td><td class="id">h</td><td>view 参数对（B 期望 view）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">9</td><td class="id">i</td><td>aeCapture 调用 + output 路径参数对</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">10</td><td class="id">j</td><td>输出截图文件存在</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">11</td><td class="id">k</td><td>capture 在 open 之后调用（调用顺序正确）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">12</td><td class="id">l</td><td>B2（empty cell）退出非零（失败检测正确）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">13</td><td class="id">m</td><td>B3（layout view）成功 + 输出文件存在</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">14</td><td class="id">n</td><td>无禁止 import（非反作弊拦截）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">15</td><td class="id">o</td><td>calls_x == call_lines（无伪造调用记录）</td><td class="verdict pass">PASS</td></tr>
+    </tbody>
+  </table>
   <h5>行为序列图</h5>
   <svg viewBox="0 0 760 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;">
 <line x1="60" y1="96" x2="740" y2="96" stroke="#cbd5e1" stroke-width="1"/>
@@ -555,6 +623,28 @@ ol{margin:6px 0 0;padding-left:20px;}
     <div class="cs"><div class="csv">1123s</div><div class="csl">耗时</div></div>
     <div class="cs" style="flex:2;"><div class="csl" style="margin-bottom:2px;">工具分布</div><div class="csd">editor×8 · read_files×7 · write_file×5 · run_commands×3 · search×2 · read_file×2 · open_session×1 · run_commands(eda)×1</div></div>
   </div>
+  <div class="assert-head"><h5>断言清单（check.py 共 16 条 a–p）</h5><span class="cnt" style="color:var(--red);font-weight:700;">败在断言 n · 13/16 PASS</span></div>
+  <table class="assert-tbl">
+    <thead><tr><th class="num">#</th><th>ID</th><th>断言描述</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td class="id">a</td><td>submit.zip 存在 + 可解压 + ≥4 entries</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">2</td><td class="id">b</td><td>fix_pwrirem.py 在 zip 内</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">3</td><td class="id">c</td><td>patch_report.json 在 zip 内</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">4</td><td class="id">d</td><td>含 --config/--incfiles/--outdir CLI 参数</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">5</td><td class="id">e</td><td>不 hardcode VdivAct（A design_name）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">6</td><td class="id">f</td><td>不 hardcode A incFile name（incFile_G4B_CIP）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">7</td><td class="id">g</td><td>fix_pwrirem.py 在 B 上运行成功</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">8</td><td class="id">h</td><td>aplmmx.config.fixed 存在</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">9</td><td class="id">i</td><td>incfile.fixed 存在</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">10</td><td class="id">j</td><td>CHECK_MODEL_CORNER=0（已修复）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">11</td><td class="id">k</td><td>无 residual .model ./（已修复）</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">12</td><td class="id">l</td><td>spice_model_lint 通过</td><td class="verdict pass">PASS</td></tr>
+      <tr><td class="num">13</td><td class="id">m</td><td>runme_drycheck 通过</td><td class="verdict pass">PASS</td></tr>
+      <tr class="fail-row"><td class="num">14</td><td class="id">n</td><td>patch_report 含 B1 bug（CHECK_MODEL_CORNER, before=1）<br><span class="muted small">判分报错：<span class="mono">n: no B1 bug with before=1 (bugs=[{type:check_model_corner_enabled, file:aplmmx.config, line:50, detail:CHECK_MODEL_CORNER=1 makes Totem-SC abort...}])</span><br><b>根因</b>：agent 修复了配置但 patch_report.json 漏报此 bug（未在 report 里记录 before=1 的 B1 bug 条目）</span></td><td class="verdict fail">FAIL</td></tr>
+      <tr><td class="num">15</td><td class="id">o</td><td>patch_report 含 B2 .model ./ bug（B incfile）</td><td class="verdict skip">未触达</td></tr>
+      <tr><td class="num">16</td><td class="id">p</td><td>report validation 两项均为 0（lint + drycheck）</td><td class="verdict skip">未触达</td></tr>
+    </tbody>
+  </table>
   <h5>行为序列图</h5>
   <svg viewBox="0 0 760 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;">
 <line x1="60" y1="96" x2="740" y2="96" stroke="#cbd5e1" stroke-width="1"/>
