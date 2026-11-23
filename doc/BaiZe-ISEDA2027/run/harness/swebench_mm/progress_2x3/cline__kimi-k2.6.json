@@ -4946,9 +4946,16 @@
   "highlightjs__highlight.js-2927": {
     "instance_id": "highlightjs__highlight.js-2927",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 626.0,
+    "rc": 0,
+    "model_patch_len": 3582,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "irms correct highlighting for all suffix combinations (`123LL`, `123ull`, `123llu`, `0xFFull`, `0b1010LL`, `-123LL`, `1.5e10f`, etc.)\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "highlightjs__highlight.js-2932": {
     "instance_id": "highlightjs__highlight.js-2932",
