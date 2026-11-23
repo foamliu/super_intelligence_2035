@@ -1739,3 +1739,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794992158581_5z9ge.messages.json	han1liu	hfeg0plg11	102	spice_sim	parked		2026-11-24 06:07	r1126 peek: han1liu HFSS/S-parameter touchstone 互容互感提取 + shmoo eye sim flow; SI/PI domain 非 B spice_sim/characterization; hspice:67 incidental (.sp gen by shmoo); REJECT out-of-domain
 1794556652593_tji0y	alenxu	hfhds201	20	spice_sim	case	EDA-Eval-DesignFlow-McSkewDistPlotProduce-001	2026-11-24 06:30	
 1794807222702_5kkei	ypzheng	hfeg0plg103	46	spice_sim	case	EDA-Eval-DesignFlow-WaveToggleWlClassifyProduce-001	2026-11-24 07:12	
+1795146011560_ntu0p.messages.json	e0025730	hfeg0plg49	68	spice_sim	case	EDA-Eval-DesignFlow-SenseMarginBlBatchSpecProduce-001	2026-11-24 07:39	
