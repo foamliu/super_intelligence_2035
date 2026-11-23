@@ -5601,16 +5601,29 @@
   "openlayers__openlayers-12695": {
     "instance_id": "openlayers__openlayers-12695",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.1,
+    "rc": -1,
+    "model_patch_len": 6040,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-12962": {
     "instance_id": "openlayers__openlayers-12962",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 727.8,
+    "rc": 0,
+    "model_patch_len": 3169,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " lint` shows no new errors in the modified files.\n\nThis fix matches the existing pattern used by `CanvasVectorLayerRenderer` and resolves the stacking problem for tile layers with opacity values ≤ 1.\n",
+    "stderr_tail": "t.<anonymous> (file:///dev/shm/harness_mm_2x3/workdirs/opencode__kimi-k2.6/openlayers_openlayers/test/node/ol/proj.test.js:812:22)\n      at process.processImmediate (node:internal/timers:483:21)\n\u001b[0m\n"
   },
   "openlayers__openlayers-12965": {
     "instance_id": "openlayers__openlayers-12965",
