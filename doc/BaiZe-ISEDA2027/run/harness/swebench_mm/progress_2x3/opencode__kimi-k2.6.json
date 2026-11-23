@@ -5007,9 +5007,16 @@
   "highlightjs__highlight.js-2969": {
     "instance_id": "highlightjs__highlight.js-2969",
     "route": "opencode__kimi-k2.6",
-    "blocked": "git fetch base_commit failed (shallow)",
-    "classification": "blocked",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1493.2,
+    "rc": 0,
+    "model_patch_len": 677,
+    "n_images": 3,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": ", etc.).\n- Negative cases (e.g., `func?4`, `5?a`, `? abc`) are still not falsely highlighted.\n- Existing test suites pass: `npm run test-markup` (424 passing) and `npm run test-detect` (187 passing).\n",
+    "stderr_tail": "\nPASS: func?4 not highlighted\nPASS: 5?a not highlighted\nPASS: ? abc not highlighted\nPASS: ?abc partially highlighted correctly\n\u001b[0m\n\u001b[0m$ \u001b[0mrm -f test_ruby_char.js test_ruby_neg.js\n(no output)\n\u001b[0m\n"
   },
   "highlightjs__highlight.js-2972": {
     "instance_id": "highlightjs__highlight.js-2972",
