@@ -1,5 +1,16 @@
 # BAIZE_POSTTRAIN_TASK.md
 
+### 🔴🔴 运维令 · 2026-11-23 22:0x（**P0 · A5 单 run：Q4_K_M + llama.cpp · 覆盖当日排期**）
+
+> **用户令**：用 Q4_K_M 量化 + llama.cpp 跑一个 A5 看结果。
+> **完整令文** → **`run/OPS_A5_LLAMACPP_Q4KM_RUN1.md`**（口径 / 预检门 / 看门狗 / 交付 / 纪律）。
+> 执行三步：`bash run/baize_posttrain_a5_llamacpp_serve.sh`（起服+预检，FAIL 即停）
+> → `bash run/baize_posttrain_5run_eval.sh --endpoint http://127.0.0.1:8095/v1 --model qwen3.5-2b-a5 --label qwen35_q4km_llamacpp --run 1`
+> → 收口（还原 providers.json 并核 sha256）。
+> 🔴 只跑 **run1 单次**；Q4_K_M 口径**不得**与 A0 的 vLLM fp16 43.29% 做配对/相减。
+> 🔴 20/45 min 看门狗：前 10 题 ≥3 题空代码 ⇒ 立即停，判 infra，不许当能力结论。
+
+
 ### 🔴🔴 运维令 · 2026-11-22 09:3x（**最高优先 · 覆盖下列全部旧令的排期**）
 
 > **用户原话**：「把指令下发给 posttrain，让他写一份吧。」（针对 A0 能力对照报告的署名与执行主体）
