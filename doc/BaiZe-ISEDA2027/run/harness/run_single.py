@@ -6,7 +6,7 @@ call needed).  Runs a specified harness driver, captures the git diff as
 `model_patch`, and writes a predictions.json for `r1_eval.py`.
 """
 from __future__ import annotations
-import argparse, json, os, subprocess, sys, time
+import argparse, json, os, shutil, subprocess, sys, time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -18,6 +18,29 @@ def reset_workdir(workdir: Path, base_commit: str):
     """Hard-reset the workdir to base_commit and remove untracked files."""
     _run(["git", "reset", "--hard", base_commit], workdir, timeout=120)
     _run(["git", "clean", "-fdq"], workdir, timeout=120)
+
+
+_SHARED_CLINE_DATA = "/nas_train/app.e0031982/harness_work/cline_harness_data"
+
+
+def _seed_cline_data_dir(data_dir: str):
+    """Seed a fresh per-instance cline --data-dir from the shared (proven) dir.
+
+    A brand-new data-dir lacks globalState.json/settings, so cline falls back to
+    platform.openai.com and fails on the dummy key (empty patch).  Copy the routing
+    config so isolated per-instance dirs behave identically to the historic shared
+    dir.  (2026-11-24, parallel-predict fix.)
+    """
+    if data_dir == _SHARED_CLINE_DATA or (Path(data_dir) / "globalState.json").exists():
+        return
+    src = Path(_SHARED_CLINE_DATA)
+    dst = Path(data_dir)
+    dst.mkdir(parents=True, exist_ok=True)
+    for name in ("globalState.json", "secrets.json"):
+        if (src / name).exists():
+            shutil.copy2(src / name, dst / name)
+    if (src / "settings").exists() and not (dst / "settings").exists():
+        shutil.copytree(src / "settings", dst / "settings")
 
 
 def run_cline_patched(instance, workdir, timeout):
@@ -32,7 +55,12 @@ def run_cline_patched(instance, workdir, timeout):
     import types
     from run_harness import CLINE_BIN, UNIFIED_MODEL, ClineDriver
     driver = ClineDriver()
-    data_dir = "/nas_train/app.e0031982/harness_work/cline_harness_data"
+    # 2026-11-24: per-instance data-dir (env CLINE_DATA_DIR) so parallel predict
+    # workers don't collide on a single cline --data-dir.  Serial flow keeps the
+    # historic shared dir.
+    data_dir = os.environ.get(
+        "CLINE_DATA_DIR", "/nas_train/app.e0031982/harness_work/cline_harness_data")
+    _seed_cline_data_dir(data_dir)
     def run_patched(self, instance, workdir, timeout=3600):
         cmd = [CLINE_BIN, "-c", str(workdir), "--data-dir", data_dir,
                "-P", "openai", "-m", UNIFIED_MODEL, "-k", DUMMY_KEY,

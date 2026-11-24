@@ -9,7 +9,8 @@ For each route (cline first, rest by infra_failed count desc):
   3. merge    — update eval_glm53_<route>.json with new resolved/failed/infra.
 After all routes (or window end): REGEN 7way report.
 
-Concurrency: ≤2 routes (env RERUN_MAX_CONCURRENT, default 1 for first night).
+Concurrency: routes run sequentially; within a route PREDICT runs parallel
+  (env RERUN_PREDICT_WORKERS, default 8) with 429 adaptive backoff (8->4->2).
 Resume: is_predicted() skips already-predicted; state file tracks completion.
 
 USAGE (inside 21:00–09:00 window):
@@ -75,12 +76,14 @@ def get_rerun_ids(route: str) -> list[str]:
 def run_predict(route: str, ids: list[str], dry_run: bool = False) -> bool:
     ids_file = IDS_DIR / f"{route}_rerun_ids.txt"
     env = os.environ.copy()
+    workers = int(os.environ.get("RERUN_PREDICT_WORKERS", "8"))
     cmd = ["python3", str(RUN_VERIFIED), "predict",
-           "--harness", route, "--ids-file", str(ids_file)]
+           "--harness", route, "--ids-file", str(ids_file),
+           "--workers", str(workers)]
     if dry_run:
-        log(f"  [DRY] predict {route}: {len(ids)} ids")
+        log(f"  [DRY] predict {route}: {len(ids)} ids (workers={workers})")
         return True
-    log(f"  PREDICT {route}: {len(ids)} rerun ids")
+    log(f"  PREDICT {route}: {len(ids)} rerun ids (workers={workers})")
     try:
         proc = subprocess.run(cmd, cwd=str(HERE), env=env,
                               capture_output=True, text=True,

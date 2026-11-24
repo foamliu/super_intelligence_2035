@@ -16,7 +16,8 @@ docker eval) with improvements per operator directive:
 Report naming: write "cline" (not "cline-patched") per naming convention.
 """
 from __future__ import annotations
-import argparse, json, os, subprocess, sys, time
+import argparse, json, os, subprocess, sys, time, threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -56,6 +57,73 @@ def log(msg: str):
     print(f"[verified-full {time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
+# ---------------------------------------------------------------------------
+# Parallel-predict helpers (2026-11-24: parallelize PREDICT, 429 adaptive backoff)
+# ---------------------------------------------------------------------------
+DATA_DIRS = Path(f"/dev/shm/harness_verified_full{WORKDIR_TAG}/cline_data")
+
+_repo_locks: dict[str, threading.Lock] = {}
+_repo_locks_guard = threading.Lock()
+
+
+def _get_repo_lock(repo: str) -> threading.Lock:
+    """Serialize same-repo instances sharing one git workdir (checkout/reset race)."""
+    with _repo_locks_guard:
+        lk = _repo_locks.get(repo)
+        if lk is None:
+            lk = threading.Lock()
+            _repo_locks[repo] = lk
+        return lk
+
+
+class AdaptiveConcurrency:
+    """429-aware slot limiter: start at cap, halve on 429 (floor), ramp +1 per clean window.
+
+    Ladder per user directive (2026-11-24): 8 -> 4 -> 2 on 429; recover +1 after a
+    clean window (default 15 min) up to cap.
+    """
+    def __init__(self, cap: int, floor: int = 2, ramp_clean_s: float = 900.0):
+        self.cap = max(floor, cap)
+        self.floor = floor
+        self.limit = self.cap
+        self._cv = threading.Condition()
+        self._active = 0
+        self._last_429 = None
+        self._last_change = time.time()
+        self.ramp_clean_s = ramp_clean_s
+
+    def acquire(self):
+        with self._cv:
+            while self._active >= self.limit:
+                self._cv.wait(timeout=5.0)
+            self._active += 1
+
+    def release(self, rate_limited: bool = False):
+        with self._cv:
+            self._active -= 1
+            if rate_limited:
+                self._last_429 = time.time()
+                self._last_change = time.time()
+                new = max(self.floor, self.limit // 2)
+                if new != self.limit:
+                    log(f"  [adaptive] 429 -> concurrency {self.limit} -> {new}")
+                    self.limit = new
+            else:
+                self._maybe_ramp()
+            self._cv.notify_all()
+
+    def _maybe_ramp(self):
+        if self.limit >= self.cap or self._last_429 is None:
+            return
+        if time.time() - self._last_429 < self.ramp_clean_s:
+            return
+        if time.time() - self._last_change < self.ramp_clean_s:
+            return
+        self.limit += 1
+        self._last_change = time.time()
+        log(f"  [adaptive] clean ramp -> concurrency {self.limit}")
+
+
 def load_ids(max_n: int | None, offset: int = 0, ids_file: Path | None = None) -> list[str]:
     src = ids_file or IDS_FILE
     ids = src.read_text().split()
@@ -85,7 +153,7 @@ def ensure_instance_json(iid: str, insts: dict[str, dict]):
     f.write_text(json.dumps(minimal, ensure_ascii=False))
 
 
-def run(cmd, cwd=None, timeout=300, with_proxy=True):
+def run(cmd, cwd=None, timeout=300, with_proxy=True, extra_env=None):
     """Run subprocess with proxy control (mirrors pilot's run())."""
     e = os.environ.copy()
     if with_proxy:
@@ -98,6 +166,8 @@ def run(cmd, cwd=None, timeout=300, with_proxy=True):
             e.pop(k, None)
         e["no_proxy"] = "*"
         e["NO_PROXY"] = "*"
+    if extra_env:
+        e.update(extra_env)
     p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True,
                        timeout=timeout, env=e)
     return p.stdout, p.stderr, p.returncode
@@ -155,9 +225,13 @@ def git_clone_or_fetch(repo: str, base_commit: str, workdir: Path) -> tuple[bool
     return rc == 0, "init+shallow fetch"
 
 
-def predict_one(harness: str, inst: dict, workdir: Path) -> dict:
+def predict_one(harness: str, inst: dict, workdir: Path, data_dir: Path | None = None) -> dict:
     iid = inst["instance_id"]
     bc = inst["base_commit"]
+    extra_env = None
+    if data_dir is not None:
+        data_dir.mkdir(parents=True, exist_ok=True)
+        extra_env = {"CLINE_DATA_DIR": str(data_dir)}
     try:
         ok, msg = git_clone_or_fetch(inst["repo"], bc, workdir)
     except subprocess.TimeoutExpired:
@@ -176,7 +250,8 @@ def predict_one(harness: str, inst: dict, workdir: Path) -> dict:
     t0 = time.time()
     timed_out = False
     try:
-        out, err, rc = run(cmd, workdir, timeout=TIMEOUT_RUN + 120, with_proxy=False)
+        out, err, rc = run(cmd, workdir, timeout=TIMEOUT_RUN + 120,
+                           with_proxy=False, extra_env=extra_env)
     except subprocess.TimeoutExpired:
         out, err, rc = f"[agent TIMEOUT after {TIMEOUT_RUN + 120}s]", "", -1
         timed_out = True
@@ -210,7 +285,7 @@ def predict_one(harness: str, inst: dict, workdir: Path) -> dict:
         t0r = time.time()
         try:
             out, err, rc = run(cmd, workdir, timeout=TIMEOUT_RUN + 120,
-                               with_proxy=False)
+                               with_proxy=False, extra_env=extra_env)
         except subprocess.TimeoutExpired:
             out, err, rc = f"[agent TIMEOUT after {TIMEOUT_RUN + 120}s]", "", -1
             timed_out = True
@@ -225,9 +300,12 @@ def predict_one(harness: str, inst: dict, workdir: Path) -> dict:
                 pass
 
     blocked = ("quota" in out.lower() or "429" in out or "forbidden" in out.lower())
+    rate_limited = ("429" in out or "rate limit" in out.lower()
+                    or "too many" in out.lower())
     return {"instance_id": iid, "harness": harness, "returncode": rc,
             "wall_s": round(wall, 1), "model_patch_len": patch_len,
-            "quota_blocked": blocked, "timeout": timed_out,
+            "quota_blocked": blocked, "rate_limited": rate_limited,
+            "timeout": timed_out,
             "retried": retried,
             "stdout_tail": out[-400:], "stderr_tail": err[-400:] if err else "",
             "predictions_file": str(pred_out)}
@@ -282,7 +360,24 @@ def merge_predictions(harness: str, ids: list[str]) -> Path:
     return merged
 
 
-def phase_predict(harness: str, ids: list[str], insts: dict[str, dict]) -> list[dict]:
+def _record_result(harness: str, results: list[dict], r: dict):
+    cls = ("infra" if r.get("classification") == "infra"
+           else "blocked" if r.get("classification") == "blocked"
+           else "timeout" if r.get("timeout")
+           else "quota-blocked" if r.get("quota_blocked")
+           else "no-patch" if r["model_patch_len"] == 0
+           else "patch-produced")
+    r["classification"] = cls
+    log(f"  -> {cls} (patch={r['model_patch_len']}B wall={r.get('wall_s')}s)")
+    idx = next((j for j, rr in enumerate(results) if rr["instance_id"] == r["instance_id"]), None)
+    if idx is not None:
+        results[idx] = r
+    else:
+        results.append(r)
+
+
+def phase_predict(harness: str, ids: list[str], insts: dict[str, dict],
+                  workers: int = 1) -> list[dict]:
     PRED_DIR.mkdir(parents=True, exist_ok=True)
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
     results = []
@@ -295,37 +390,58 @@ def phase_predict(harness: str, ids: list[str], insts: dict[str, dict]) -> list[
         except Exception:
             pass
 
+    pending = []
     for i, iid in enumerate(ids):
         if is_predicted(harness, iid):
             existing = next((r for r in results if r["instance_id"] == iid), None)
             if existing:
                 log(f"[{i+1}/{len(ids)}] {iid} SKIP (predicted, patch={existing.get('model_patch_len',0)}B)")
-                continue
             else:
                 log(f"[{i+1}/{len(ids)}] {iid} SKIP (prediction file exists)")
                 results.append({"instance_id": iid, "harness": harness,
                                 "classification": "resumed", "model_patch_len": 1})
                 write_progress(harness, results, len(ids))
-                continue
-        inst = insts[iid]
-        ensure_instance_json(iid, insts)
-        workdir = WORKDIRS / harness / inst["repo"].replace("/", "_")
-        log(f"[{i+1}/{len(ids)}] PREDICT {disp(harness)} on {iid}")
-        r = predict_one(harness, inst, workdir)
-        cls = ("infra" if r.get("classification") == "infra"
-               else "blocked" if r.get("classification") == "blocked"
-               else "timeout" if r.get("timeout")
-               else "quota-blocked" if r.get("quota_blocked")
-               else "no-patch" if r["model_patch_len"] == 0
-               else "patch-produced")
-        r["classification"] = cls
-        log(f"  -> {cls} (patch={r['model_patch_len']}B wall={r.get('wall_s')}s)")
-        idx = next((j for j, rr in enumerate(results) if rr["instance_id"] == iid), None)
-        if idx is not None:
-            results[idx] = r
         else:
-            results.append(r)
-        write_progress(harness, results, len(ids))
+            pending.append(iid)
+
+    if not pending:
+        (REPORT_DIR / f"predict_{EVAL_TAG}{harness}.json").write_text(json.dumps(results, indent=2))
+        merge_predictions(harness, ids)
+        return results
+
+    parallel = workers > 1
+    pool = AdaptiveConcurrency(cap=workers) if parallel else None
+    log(f"predict {harness}: workers={workers} pending={len(pending)} "
+        f"({'parallel' if parallel else 'serial'})")
+
+    def _worker(iid):
+        inst = insts[iid]
+        with _get_repo_lock(inst["repo"]):
+            ensure_instance_json(iid, insts)
+            workdir = WORKDIRS / harness / inst["repo"].replace("/", "_")
+            data_dir = DATA_DIRS / f"{harness}__{iid}" if parallel else None
+            if parallel:
+                pool.acquire()
+            r = None
+            try:
+                r = predict_one(harness, inst, workdir, data_dir=data_dir)
+            finally:
+                if parallel:
+                    pool.release(rate_limited=bool(r) and bool(r.get("rate_limited", False)))
+        return r
+
+    if parallel:
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            futs = {ex.submit(_worker, iid): iid for iid in pending}
+            for fut in as_completed(futs):
+                r = fut.result()
+                _record_result(harness, results, r)
+                write_progress(harness, results, len(ids))
+    else:
+        for iid in pending:
+            r = _worker(iid)
+            _record_result(harness, results, r)
+            write_progress(harness, results, len(ids))
 
     (REPORT_DIR / f"predict_{EVAL_TAG}{harness}.json").write_text(json.dumps(results, indent=2))
     merge_predictions(harness, ids)
@@ -393,6 +509,9 @@ def main():
     ap.add_argument("--max", type=int, default=None, help="cap #instances (gate=10, full=500)")
     ap.add_argument("--offset", type=int, default=0, help="skip first N instances")
     ap.add_argument("--ids-file", default=None, help="custom instance-id list (e.g. gate_10_ids.txt)")
+    ap.add_argument("--workers", type=int,
+                    default=int(os.environ.get("PREDICT_WORKERS", "1")),
+                    help="predict concurrency (>=2 enables parallel + 429 backoff)")
     args = ap.parse_args()
 
     ids_file = Path(args.ids_file) if args.ids_file else None
@@ -401,7 +520,7 @@ def main():
     insts = load_instances()
 
     if args.phase in ("predict", "gate", "all"):
-        phase_predict(args.harness, ids, insts)
+        phase_predict(args.harness, ids, insts, workers=args.workers)
     if args.phase in ("eval", "gate", "all"):
         phase_eval(args.harness, ids)
     if args.phase in ("report", "gate"):
