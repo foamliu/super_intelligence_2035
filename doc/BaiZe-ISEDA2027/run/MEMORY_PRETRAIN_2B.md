@@ -1,3 +1,5 @@
+> #3260（2026-11-24 08:40, 放行autoqueue令·监控巡检·daemon idle无eval负载·训练健康iter=304930/700000(43.56%) step_avg(recent15)=7168ms(7.17s,7080-7299,0/15>7.4s✅)·loss≈1.98(1.973-1.995) 0NaN/0skip✅·lr=1e-3 grad norm0.083-0.140✅·load(directive#2 daemon idle无eval) .29=21.92(1m)/.12=25.89(1m)✅·step-time(directive#3)no-eval baseline(#3247 06:47)=7.23s→daemon-idle now(recent15)=7.17s Δ-0.06s NOT elevated✅<7.4s gate(0/15>7.4s)·backlog 270k-304k全清44/44ckpt(directive#1✅维持)·304k=59.00%(latest done,08:10:31)·270k=59.75%/272k=56.75%(11-21令积压点已补评✅)·L1报告44/44ckpt@08:18(37018B,harness口径✅,daemon自动刷新)·daemon idle(PID1081392 etimes~60.7h)sleep300s等306k(latest ckpt=iter_0304000,训练@304930,lands~10:48,daemon auto-pick)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter304930@08:38:54) daemon=/tmp/baize_l1_autoqueue_continuous.log([idle]@08:36:04) ckpt=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints(latest iter_0304000) results=.../lm_eval_results/gguf_iter_304000_fixed_8set/results.json report=run/reports/report_pretrain_llamacpp_scaling_zh.html(44/44ckpt,37018B@08:18)·复现=bash code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh·纯监控未碰train.sh/configs/.bak/训练进程/daemon(铁律悍守)·体积MEMORY≈31.9KB<32KB✅ TASK≈24.7KB<32KB✅）→ daily-memories/2026-11-24.md
+
 > #3259（2026-11-24 08:34, 放行autoqueue令·监控巡检·daemon idle无eval负载·训练健康iter=304890/700000(43.56%) step_avg(recent15)=7159ms(7.16s,7059-7299,0/15>7.4s✅)·loss≈1.98(1.972-1.995) 0NaN/0skip✅·lr=1e-3 grad norm0.084-0.140✅·load(directive#2 daemon idle无eval) .29=26.13(1m)/.12=28.11(1m)✅·step-time(directive#3)no-eval baseline(#3247 06:47)=7.23s→daemon-idle now(recent15)=7.16s Δ-0.07s NOT elevated✅<7.4s gate(0/15>7.4s)·backlog 270k-304k全清44/44ckpt(directive#1✅维持)·304k=59.00%(latest done,08:10:31)·270k=59.75%/272k=56.75%(11-21令积压点已补评✅)·L1报告44/44ckpt@08:18(37018B,harness口径✅,daemon自动刷新)·daemon idle(PID1081392 etimes~60h)sleep300s等306k(latest ckpt=iter_0304000,训练@304890,lands~10:47,daemon auto-pick)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter304890@08:34:07) daemon=/tmp/baize_l1_autoqueue_continuous.log([idle]@08:31:03) ckpt=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints(latest iter_0304000) results=.../lm_eval_results/gguf_iter_304000_fixed_8set/results.json report=run/reports/report_pretrain_llamacpp_scaling_zh.html(44/44ckpt,37018B@08:18)·复现=bash code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh·纯监控未碰train.sh/configs/.bak/训练进程/daemon(铁律悍守)·体积MEMORY≈30.3KB<32KB✅ TASK≈24.7KB<32KB✅）→ daily-memories/2026-11-24.md
 
 > #3258（2026-11-24 08:29, 放行autoqueue令·监控巡检·daemon idle无eval负载·训练健康iter=304840/700000(43.55%) step_avg(recent15)=7149ms(7.15s,7059-7299,0/15>7.4s✅)·loss≈1.98(1.972-1.991) 0NaN/0skip✅·lr=1e-3 grad norm0.083-0.124✅·load(directive#2 daemon idle无eval) .29=23.75(1m)/.12=26.07(1m)✅·step-time(directive#3)no-eval baseline(#3247 06:47)=7.23s→daemon-idle now(recent15)=7.15s Δ-0.08s NOT elevated✅<7.4s gate(0/15>7.4s)·backlog 270k-304k全清44/44ckpt(directive#1✅维持)·304k=59.00%(latest done,08:10:31)·270k=59.75%/272k=56.75%(11-21令积压点已补评✅)·L1报告44/44ckpt@08:18(37018B,harness口径✅,daemon自动刷新)·daemon idle(PID1081392 etimes~60h)sleep300s等306k(latest ckpt=iter_0304000,训练@304840,lands~10:48,daemon auto-pick)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter304840@08:28:09) daemon=/tmp/baize_l1_autoqueue_continuous.log([idle]@08:26:03) ckpt=/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/checkpoints(latest iter_0304000) results=.../lm_eval_results/gguf_iter_304000_fixed_8set/results.json report=run/reports/report_pretrain_llamacpp_scaling_zh.html(44/44ckpt,37018B@08:18)·复现=bash code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh·纯监控未碰train.sh/configs/.bak/训练进程/daemon(铁律悍守)·体积MEMORY≈28.9KB<32KB✅ TASK≈25.3KB<32KB✅）→ daily-memories/2026-11-24.md
@@ -137,7 +139,7 @@
 > 📦 §#2990–#3034（已归档，含 #3030 286k eval DONE·#3029-#2990 286k/284k/282k eval RUNNING监控轮）→ daily-memories/2026-11-22.md；需要时再读。
 > 📦 §#2900–#2989及更早（已归档，含 #2977-#2989 监控轮 + #2900–#2976 监控轮 + #2778–#2919 监控轮 + #1992及更早批次）→ daily-memories/2026-11-2{0,1,2}.md & ARCHIVE_OPERATOR_PRETRAIN.md；需要时再读。
 
-WAITING: 0(✅ 2026-11-24 08:34 #3259 放行autoqueue令·daemon idle无eval负载·训练健康iter=304890/700000(43.56%) step7.16s(0/15>7.4s✅)·loss≈1.98 0NaN/0skip✅·load .29=26.13 .12=28.11✅·step no-eval7.23s→daemon-idle7.16s Δ-0.07s NOT elevated✅·backlog 270k-304k全清44/44ckpt✅·304k=59.00%·270k=59.75%/272k=56.75%(积压点已补评✅)·L1报告44/44ckpt@08:18✅·daemon idle等306k(lands~10:47)·纯监控未碰训练进程/daemon(铁律悍守))
+WAITING: 0(✅ 2026-11-24 08:40 #3260 放行autoqueue令·daemon idle无eval负载·训练健康iter=304930/700000(43.56%) step7.17s(0/15>7.4s✅)·loss≈1.98 0NaN/0skip✅·load .29=21.92 .12=25.89✅·step no-eval7.23s→daemon-idle7.17s Δ-0.06s NOT elevated✅·backlog 270k-304k全清44/44ckpt✅·304k=59.00%·270k=59.75%/272k=56.75%(积压点已补评✅)·L1报告44/44ckpt@08:18✅·daemon idle等306k(lands~10:48)·纯监控未碰训练进程/daemon(铁律悍守))
 
 ---
 
@@ -155,16 +157,4 @@ WAITING: 0(✅ 2026-11-24 08:34 #3259 放行autoqueue令·daemon idle无eval负�
 - **建议（🚫 不自行改生产配置）**：
   1. **短期(当前~350k,50%)**：维持现状继续监控。每 20k ckpt 跑 L1+L2(HF)，观察 MMLU 是否从 25% 起步上升、生成能力是否随训练改善。
   2. **评测改进**：L2 已切换到 HF transformers（五重验证完成）。L3 需 GPU 窗口(vLLM)或等 SSH .17 恢复。L4 已移交 post-train（不再 pretrain 负责）。
-  3. **中期(350k~decay前)**：若 MMLU 仍≈25%，考虑 decay phase 增加 code/math 占比(从 6% 提到 15-20%)。
-  4. **长期**：L3 agentic 需 post-train SFT/RL（posttrain 线负责）；L4 已由 post-train 主责。
-- **需要的输入**：用户裁定 ① 维持现状等 350k 再判 ② 提前调整 decay phase 配比 ③ 等 .17 SSH 恢复后接 L3 ④ 等 700k 训完在 post-train 阶段补 L3。
-
----
-
-## 关键笔记（运维常驻参考）
-- seq_length=**4096**（=2¹²，用户直令 2026-10-14 固定口径）；改 seq 必须同时改 provider（recipe 已穿透）。
-- WSD 语义：`--lr-decay-iters`=退火尾段；stable 段=train_iters-warmup-decay 自动。P-5b 口径 warmup238/decay477/4771步。
-- 数据：P-5b 用 `data/p5b_l3/p5b_l3_train_s{0..15}`（16 片 1:1 blend ≈20.6B token）；P-8 主体=Ultra-FineWeb-L3 全量（base 下载中）。
-- 环境：**训练**=`py310` env（`PYTHONPATH=/nas_train/app.e0031982/omegaconf_230`；python=`/nas_train/app.e0031982/miniforge3/envs/py310/bin`）；**推理/sglang 服务**=`vllm` env（sglang 0.5.9 + vllm 0.14.1 + flashinfer 0.6.3 + lm_eval 0.4.13，Python 3.12）。
-- 进程识别：单次 8 卡=1 torchrun master + 8 worker（pretrain_launcher）+ 每 rank 11×pt_data_worker，勿误判重复拉练。
-- ⚠️ **机器甄别（防误判·2026-10-19 #601 立此存照）**：pretrain watchdog loop（`baize_pretrain_loop.sh` PID1294448�
+ 
