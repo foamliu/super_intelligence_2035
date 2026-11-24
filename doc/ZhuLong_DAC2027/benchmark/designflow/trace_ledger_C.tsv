@@ -1530,3 +1530,5 @@ t0dhm					case	EDA-Eval-DesignFlow-CalibreDrcRunsetPatch-001	2026-11-24 03:55
 1795395238902_cxsbx	e0047600	hfeg0pkn002	176	physical_verify	case	EDA-Eval-DesignFlow-VddVssStripeAudit-001	2026-11-24 13:21	r1054 physical_verify; k_check=18; hidden B; 4 neg + 3 fakes FAIL
 1794898673878_fm8au	ellawu	hfeg0plg49	32	physical_verify	case	EDA-Eval-DesignFlow-TvfVarUsageAudit-001	2026-11-24 14:16	
 1795403976977_plj82.messages.json	xxchen	hfeg0pkn003	89	physical_verify	claimed		2026-11-24 14:16	
+1793277903334_9dj4b	shuoran	hfeg0plg90	50	physical_verify	claimed		2026-11-24 16:35	
+1794794717563_3t3gh	jzeng	hfeg0plg56	50	layout_aether	case	PyaetherGlobalDeclSyntaxFix-001	2026-11-24 16:50	
