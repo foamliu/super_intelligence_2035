@@ -6,9 +6,6 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-24 21:0x）**：作者 **359** 人（编号最大 **359**）· X 已核验 **134**（本轮 **+1**：`@taku910` 由 GitHub 个人页 `https://github.com/taku910`（`200` / 167,121 B，`itemprop="name"` = `Taku Kudo`）+ 代理抓 `x.com/taku910` `200` / 143,680 B，`og:title` = `Taku Kudo (@taku910) on X` ⇒ **同名同 handle 跨平台双源**，`og:description` 为空已如实记；反例 `x.com/NikitaKitaev` `og:title` = `Китаев Никита`、`og:description` = `9 followers · 5 following. Ukraine` ⇒ 判他人、不记；`@lukaszkaiser` 仅 X 页单源（`og:title` 姓名一致 + 14,273 followers / San Francisco，本人无可核主页外链；`lukaszkaiser.com` 仅 114 B 停放页）⇒ 🚫 不计入已核验、不猜）· 已发信 **164**（台账 #1–#164；今日 **12/12**，达每日硬上限 ⇒ 本窗后不再发）· 回信 **0**（0/164，0 封到期，最早 11-25）。本轮 **+3**：Nikita Kitaev（Reformer 一作，英文，本人主页 `kitaev.com` 明文 `kitaev@berkeley.edu` ⇒ 已发信 #164）· Łukasz Kaiser（Reformer 二作 / Transformer 共同作者，英文，无当前可核邮箱 ⇒ 仅建档，X 单源未核）· Taku Kudo（SentencePiece 一作，日文，GitHub 个人页无明文邮箱 ⇒ 仅建档，X 双源）。
-
-
 > **当前计数（2026-11-24 18:0x）**：作者 **356** 人（编号最大 **356**）· X 已核验 **133**（本轮 **+1**：`@NoamShazeer` 由本人站点 `https://noamshazeer.com/`（`200` / 487,056 B）页内 `href` 外链 `x.com/NoamShazeer` + 代理抓 `x.com/NoamShazeer` `200` / 158,413 B，`og:title` = `Noam Shazeer (@NoamShazeer) on X`、`og:description` = `Engineer` ⇒ 双源核；`x.com/manzilzaheer` 仅单源（`og:title` 姓名一致但个人主页无 X 外链、`og:description` 为通用关注数）⇒ 🚫 不计入已核验、不猜；Wenhui Wang 未见 X）· 已发信 **163**（台账 #1–#163；今日 **11/12**）· 回信 **0**（0/163，0 封到期，最早 11-25）。本轮 **+3**：Wenhui Wang 王文辉（MiniLM 一作，中文，MSR 官方页 mailto 解码 + 论文页双源 ⇒ 已发信 #162）· Manzil Zaheer（Big Bird 一作，英文，个人站点邮箱为图片、无当前明文 ⇒ 仅建档）· Noam Shazeer（GLU Variants 唯一作者，英文，论文页 `noam@google.com` 为 2020 旧地址、站点无邮箱 ⇒ 仅建档，X 双源）。
 
 > **当前计数（2026-11-24 15:0x）**：作者 **353** 人（编号最大 **353**）· X 已核验 **132**（本轮 **+1**：`@kelvin_guu` 由 Kelvin Guu 本人主页 `https://www.kelvinguu.com/`（`200` / 16,482 B）Contact 节外链 `twitter.com/kelvin_guu`，并经代理抓 `x.com/kelvin_guu` `200` / 180,185 B，`og:title` = `Kelvin Guu (@kelvin_guu) on X`、`og:description` = `Principal Research Scientist / Director @ Google DeepMind. Leading teams of 40+ …` ⇒ 双源核；蓝振忠 `westlake.edu.cn` 官方页无 X 外链、杨植麟无可核当前主页 ⇒ 记「未找到 X」，不猜）· 已发信 **161**（台账 #1–#161；今日 **9/12**）· 回信 **0**（0/161，0 封到期，最早 11-25）。本轮 **+3**：蓝振忠 Zhenzhong Lan（ALBERT 一作，中文，西湖大学官方师资页当前地址 ⇒ 已发信 #160）· 杨植麟 Zhilin Yang（XLNet 一作，中文，无当前可核地址 ⇒ 仅建档）· Kelvin Guu（REALM 一作，英文，本人站点当前地址 + X 双源 ⇒ 已发信 #161）。
@@ -5047,43 +5044,4 @@
 | 状态 | **待跟踪**（仅建档；无当前可核邮箱 ⇒ 本线不发信；X 已核验，follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
 | 备注 | 发信问题候选（只对 GLU Variants 成立）：① 表 1 的 `GEGLU` / `SwiGLU` 优势在 524,288 步后仅约 0.04 log-perplexity，这个差在更大 `d_model` / 更多层时是否会同比例放大，还是被优化噪声吞掉；② `d_ff` 统一乘 2/3 是否对 GLU 变体公平（三矩阵的常数项与内存访问不同）；③ 无 bias 写法在低精度训练下是否需要恢复 bias 以稳住激活尺度。 |
 
-
-### 357. Nikita Kitaev
-
-| 字段 | 内容 |
-|:--|:--|
-| 姓名 | Nikita Kitaev（`语言=英文(判据=姓名族属东欧/英语通用 + 美国 UC Berkeley 机构；论文英文、无中文/日文/韩文信号 ⇒ 英文兜底)`） |
-| 机构 | **UC Berkeley**（本人主页 `kitaev.com` 自述 Berkeley；Reformer 论文期为学生） |
-| 代表论文 | **Reformer: The Efficient Transformer**（`2001.04451`，B 轨 #390，一作）· 另： constituency parsing 相关（ACL 2022） |
-| 邮箱 | **`kitaev@berkeley.edu`**（来源：本人主页 `https://kitaev.com/` `HTTP 200` / **6,092 B**，页内明文；2026-11-24 21:0x 复核连抓 3 次均 `200` / 6,092 B，发信前再核 1 次 `200` / 6,092 B） |
-| 主页 | <https://kitaev.com/>（`HTTP 200` / 6,092 B；页内链 `/publications/`、GitHub `github.com/nikitakit`） |
-| X 账号 | **未找到 X**：`x.com/nikitakitaev` 代理抓 `200` / 101,865 B，但 `og:title` = `Китаев Никита (@NikitaKitaev) on X`、`og:description` = `9 followers · 5 following. Ukraine. Joined Jul 2012` ⇒ **明确非本人**，🚫 不登记 |
-| 状态 | **已发信**（#164，2026-11-24 21:06:23，英文，正文 **198 词**） |
-| 备注 | `语言=英文(判据=姓名族属 + 美国机构)`。发信问题（只对 Reformer 成立）：① LSH 注意力里 `n_rounds` 取几轮、降到 1 轮时质量掉多快，64K enwik8 上是否出现桶大小偏斜（代码/日志重复 token）；② 可逆残差在 mixed precision 下是否仍「无影响」，与常规 gradient checkpointing 在 ~2K 短序列上的吞吐对比；③ chunked FFN 的 chunk 大小如何选、收益是否依赖 `4× d_ff` 比例。 |
-
-### 358. Łukasz Kaiser
-
-| 字段 | 内容 |
-|:--|:--|
-| 姓名 | Łukasz Kaiser（`语言=英文(判据=波兰姓名族属无对应母语栏 + 美国 Google 机构；无中/日/韩信号 ⇒ 英文兜底)`） |
-| 机构 | **Google DeepMind**（Reformer 论文期 Google Brain；Transformer 共同作者） |
-| 代表论文 | **Reformer: The Efficient Transformer**（`2001.04451`，B 轨 #390，二作）· **Attention Is All You Need**（`1706.03762`，B 轨表内）· Tensor2Tensor / Neural GPUs |
-| 邮箱 | **未找到当前明文**（`lukaszkaiser.com` 与 `www.lukaszkaiser.com` 均 `HTTP 200` / **114 B** 停放页；`research.google` 人员页本机 `000` ⇒ 不用论文旧地址、不猜） |
-| 主页 | **未找到**（上述域名仅停放页；无其他可核个人页） |
-| X 账号 | **单源未核**：`x.com/lukaszkaiser` 经代理 `200` / 174,299 B，`og:title` = `Lukasz Kaiser (@lukaszkaiser) on X`、`og:description` = `14273 followers · 99 following. San Francisco.`；但**无可核主页外链作第二源** ⇒ 🚫 不计入已核验、不 follow |
-| 状态 | **待跟踪**（仅建档；无当前可核邮箱 ⇒ 本线不发信） |
-| 备注 | 发信问题候选（只对 Reformer 成立）：LSH 桶排序是否用 `torch.sort` 的稳定排序、bucket 内 padding 造成的无效 token 比例；可逆层要求「无 dropout 残差分支」的约束在后续大模型训练里是否可接受。 |
-
-### 359. Taku Kudo
-
-| 字段 | 内容 |
-|:--|:--|
-| 姓名 | Taku Kudo（工藤拓）（`语言=日本語(判据=日文姓名族属 + 日本姓名；机构 Google 日本相关)`） |
-| 机构 | **Google**（SentencePiece 作者；论文期 Google Research） |
-| 代表论文 | **SentencePiece**（`1808.06226`，B 轨 #392，一作）· **Subword Regularization**（`1804.10959`，B 轨表内） |
-| 邮箱 | **未找到当前明文**（GitHub 个人页 `https://github.com/taku910` `HTTP 200` / 167,121 B 无 `mailto:`；未发现可核个人主页 ⇒ 不用论文旧地址、不猜） |
-| 主页 | **未找到**（仅 GitHub `github.com/taku910`，`200` / 167,121 B，`itemprop="name"` = `Taku Kudo`） |
-| X 账号 | **@taku910**（跨平台双源 2026-11-24 21:0x：GitHub 个人页 `github.com/taku910`（`200` / 167,121 B，`itemprop="name"` = `Taku Kudo`）+ 代理抓 `x.com/taku910` `200` / 143,680 B，`og:title` = `Taku Kudo (@taku910) on X`；`og:description` 为空已如实记） |
-| 状态 | **待跟踪**（仅建档；无当前可核邮箱 ⇒ 本线不发信；X 已核验，follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
-| 备注 | 发信问题候选（只对 SentencePiece 成立）：① 8k 共享词表在 ja→en 上超 80k 词级基线（29.55 vs 28.24），这个结论在「中文 + 代码混语料」是否仍成立、词表继续下探到 4k 的拐点在哪；② NFKC 归一化与无损切分冲突时（全角/半角、连字）如何取舍；③ `O(N²)` 朴素 BPE 的加速实现在 100GB 级语料上的实际吞吐与内存上限。 |
 
