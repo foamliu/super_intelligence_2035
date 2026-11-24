@@ -13,7 +13,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	CentroidPlaceAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T23:45	ChkSaveHistDedup-001	C	1	1	1	1	?	?	green	L	
 2026-11-24T22:26	CmMaOpTableGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-25T01:30	CombCellNetlistSyn-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=5, L3 OK) -- need build ref zip from solve script	
+2026-11-25T01:55	CombCellNetlistSyn-001	C	1	1	1	1	?	?	green	r1081: built reference_submit.zip (comb_cell_netlist.py); L2 ref PASS (exact run_one.sh judge replica) + L3 5neg FAIL distinct + L1 OK	
 2026-11-24T22:26	ConnChkSummaryGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	ConnPriorityDupCheck-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-25T01:30	ConvexEnclosePcellGen-001	C	1	1	1	1	?	?	green	audit r1080: ref PASS + 6 neg selftest OK	
@@ -22,10 +22,10 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	DRCHierLossAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-25T01:30	DRCKDeckOpt-001	C	1	1	0	1	?	?	p0_fixed	audit r1080: L2 rc=1 ref FAIL (nneg=6, L3 OK)	
 2026-11-24T22:26	DRCPatManifest-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-25T01:30	DRCPatPlacePlan-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=0, L3 OK via in-ref negs) -- need ref zip	
+2026-11-25T01:55	DRCPatPlacePlan-001	C	1	1	1	1	?	?	green	r1081: built reference_submit.zip (drc_pat_planner.py); L2 ref PASS (exact judge replica w/ A-asset symlink) + L3 4neg FAIL distinct (selftest embedded) + L1 OK	
 2026-11-24T22:26	DRCPatPlan-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DRQAPlan2Skill-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-25T01:30	DbusMetalFlowReport-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=5, L3 OK) -- need ref zip	
+2026-11-25T01:55	DbusMetalFlowReport-001	C	1	1	1	1	?	?	green	r1081: built reference_submit.zip (gold/dbus_metal_flow.py); L2 ref PASS + L3 5neg FAIL distinct + L1 OK	
 2026-11-24T22:26	DdgoaDeviceAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	DeckIncludeResolve-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-25T01:30	DrcDeckOptimize-001	C	1	1	0	0	?	?	p1_fixed	audit r1080: no ref_submit + no selftest + 0 neg -- need full L2/L3 build	
@@ -86,7 +86,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	MetalOptRuleExpand-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	NetDelSaveAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	NetHierTrace-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-25T01:30	NetlistExtractSkill-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=0, L3 OK) -- need ref zip	
+2026-11-25T01:55	NetlistExtractSkill-001	C	1	1	1	1	?	?	green	r1081: built reference_submit.zip (3 files .il+.il+.md); L2 ref PASS + L3 4neg FAIL distinct (selftest embedded) + L1 OK	
 2026-11-24T22:26	NicapNetlistPivot-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	PCellFlowPlan-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-25T01:30	PDKQA-001	C	1	1	0	1	?	?	p0_fixed	audit r1080: L2 build err missing tests_skeleton/run_all_tests.py (judge-layout artifact?) -- re-verify	
@@ -123,11 +123,11 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	SkillFlowAnalyzer-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	SkillM1ShapeDeleteAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	SkillMenuRoute-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-25T01:30	SshTestProfileBuilder-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=3, L3 OK) -- need ref zip	
+2026-11-25T01:55	SshTestProfileBuilder-001	C	1	1	0	1	?	?	p1_fixed	r1081: deeper issue -- assets/EDA-Eval-DesignFlow-SshTestProfileBuilder-001/ EMPTY (config_A.json missing, no hidden/config_B.json+config_B2.json) + check.py path bug (looks for workdir/assets/SshTestProfileBuilder-001 short-name but run_one.sh judge uses full-name CASE_FULL and no g1g2/assets/). NOT mechanical: needs hidden-B inputs (config_B/B2.json) created + path resolver fix (BENCH_CASES_DIR fallback). ref zip built but L2 still FAIL	
 2026-11-24T22:26	StarrcReleaseNoteGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T23:30	StrongARMComp-001	C	1	1	1	1	?	?	green	L2 fix: spec resolver _resolve_spec() for A/B/B2 specs (harness flattens A inputs/strongarm_spec.json into workdir root; B/B2 under workdir/hidden); ref PASS + 6 neg FAIL distinct (L4/L5 eval-machine run pending)	
 2026-11-24T23:30	SyncBatchArchivePlan-001	C	1	1	1	1	?	?	green	L2 fix: asset_a (visible A manifest_A/stable_A) resolver (workdir/asset_a -> workdir/assets/<case> -> workdir flat) + hidden under workdir/hidden + built reference_submit.zip; ref PASS + 3 neg FAIL distinct (L4/L5 eval-machine run pending)	
-2026-11-25T01:30	TechDisplayPacketNorm-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=4, L3 OK) -- need ref zip	
+2026-11-25T01:55	TechDisplayPacketNorm-001	C	1	1	1	1	?	?	green	r1081: built reference_submit.zip (fix_techdisplay_ref.py->fix_techdisplay.py); L2 ref PASS + L3 4neg FAIL distinct + L1 OK	
 2026-11-24T22:26	ToolchainID-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	TrMatchHelperGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	VTTFLayerMap-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
