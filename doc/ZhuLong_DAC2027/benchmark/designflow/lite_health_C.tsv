@@ -136,3 +136,8 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-25T01:30	VirtuosoLaunchRecipeGen-001	C	1	1	1	1	?	?	green	r1079 green (recipe_gen.py ref); audit r1080 L2 FileNotFoundError = judge-layout artifact (check.py reads ASSET_DIR/manifest_A.json via HERE/../../assets/CASE, not populated in quick audit) -- not a check.py defect	
 2026-11-24T22:26	VlogPortAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	WaiveParamMultiParse-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-25T02:30	DRCKDeckOpt-001	C	1	1	1	1	?	?	green	r1082: BENCH_CASES_DIR resolver in check.py (inputs/ subdir unreachable in flat judge staging) -> L2 ref PASS + 6 neg FAIL distinct(e/o/h/m/f) + L1 OK
+2026-11-25T02:30	AutoViaGen-001	C	1	1	1	1	?	?	green	r1082: BENCH_CASES_DIR resolver in check.py (inputs/ subdir unreachable) -> L2 ref PASS + 4 neg FAIL distinct(n/d/k) + L1 OK
+2026-11-25T02:30	AutoCellKitMap-001	C	1	1	1	1	?	?	green	r1082: BENCH_CASES_DIR resolver in check.py (netlist_A/hidden subdirs unreachable) -> L2 ref PASS + 6 neg FAIL distinct(a/p/e/h/n) + L1 OK
+2026-11-25T02:30	PDKQA-001	C	1	1	1	1	?	?	green	r1082: reclassified -- r1080 quick-audit L2 FAIL was judge-layout artifact; real run_one.sh harness judge verdict=PASS True
+2026-11-25T02:30	PdFloorplanGen-001	C	1	1	1	1	?	?	green	r1082: os.walk followlinks=True + BENCH_CASES_DIR fallback for A/hidden subdirs + built 5 negatives(c/e/h/i/n distinct) -> L2 ref PASS + L3 selftest RC=0
