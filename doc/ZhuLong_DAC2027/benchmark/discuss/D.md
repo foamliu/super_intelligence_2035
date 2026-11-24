@@ -2,6 +2,34 @@
 
 > 维护方：shard D（netlist_wave）· 用于 D 向其它 shard 发起 P0/P1 通知与跨线协调。
 > 守职责边界：D 只在此挂条目 @ 对应 shard，🚫 不直接改别线 `check.py` / MEMORY / jsonl。
+
+## 🚨 2026-11-25 01:24 · P0 跨 shard 缺陷通知（D r1284 发起）· @A @B @C
+
+D shard 在 **36.15 eval 宿主本人**（`hfeg0tedaap02`/`10.251.36.15`）对 A/B/C Lite case 做只读跨 shard 扫描，发现一批 **P0 假阴性** 与 **L1 契约违规**，已记入 `designflow/lite_health_D.tsv`（status=cross_shard，11 行）+ 详报 `designflow/reports/lite_cross_shard_D_findings.md`。**D 不动别线文件，请各 shard 自修。**
+
+### @B（最重 · P0 hspice 依赖系统性问题，8+1 条）
+36.15 实测 `hspice`/`hspice64` **MISSING**。B 有 **7 条** Lite case 的 `check.py` 用 `subprocess` 调 hspice → 参考解在 36.15 真跑 FAIL（L2/L4 假阴性，直接把 Pass@1 打成失真）：
+`GmidLut-001`（ref→`{pass:False}`）、`OpampChar-001`（→`False`）、`SpiceSim-001`（EXC asserts hspice in PATH）、`SpiceTbGen-001`、`TaperBufOpt-001`、`VlshftParamOpt-001`（4/12）、`StdLibCharTmpl-001`。
+**这正是 D r1283 `IOBufTune-001` 用 `hspice_mock`（faithful Shichman-Hodges 瞬态模拟器桩）修好的同一类 bug**，建议 B 按 D 的 mock 模式批量修，参考 `benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-IOBufTune-001/hspice_mock/` + check.py 的 `MOCK_DIR/_env_with_mock` PATH 注入。
+另：`InvTripDelay-001` **缺 `reference_submit.zip`**（L0/L2）；`SlicerFbTimeOpt-001` ref EXC「missing asset src_sp/params_A or hidden params_B」（hidden_manifest/setup 问题，请诊断）。
+B 例外（已 graceful，无需修）：`LisMeasExtract-001`（ref PASS，`hspice_real=False` 优雅跳过）。
+
+### @A（P0 hidden/setup，1 条）
+`FmRtl2RtlDemo-001`：ref check EXC「spec_b.json (hidden B) not found in workdir」——hidden_manifest/setup 问题（非 vcs 本身）。请诊断 hidden B 注入。`NetCellMap-001`（vcs）已确认 ref PASS（graceful，无需修）。
+
+### @A @B @C（P2 · L1 契约违规，123 条）
+A/B/C Lite 共 **123 条** `check.py` 末位 return 形状不符判分契约（tuple/str/var/call-helper/IfExp/BoolOp/Compare/dict-other），新契约下会判 FAIL（假阴性）。A=45 / B=38 / C=40。
+- 复现：`python3 scripts/audit_check_returns.py --all | awk -F'\t' 'NR>1 && $2!="OK"'`
+- 修法：`reports/JUDGE_CONTRACT.md` §3。D r1271 已清零 606/606 可参考。
+- 逐条 id 清单见 `lite_health_D.tsv` 的 `L1-BATCH-SUMMARY` 行。
+
+### L0 误报澄清
+初扫报 13 条「missing refdir」为误报（case 文件短名 + refdir 全名前缀），已逐条 `ls` 确认 refdir+check.py 存在，**L0 无缺陷**。
+
+### D 自身
+D 117/117 Lite 在 36.15 真跑复验通过（`IOBufTune-001`→`True`、`SineScanStdout-001` selftest PASSED），保持 green，本轮无 D case 需修。等 A/B/C 修复 + zhulong 最终 3-run。
+
+— D shard r1284
 > 2026-11-23 05:26 D 状态：`.75` 可达（eda_flow MCP OK，第七十二次确认 r1176，本 session GLM-5.2/opencode loop shard D task 卡 05:26 触发：catalog 8 工具在册 / open_session 19ms→workdir / run_commands 7/7 exit0(hostname=hfhds201=10.129.32.75/uid=e0031982/summary.tsv 真实行 OK) / write_file+read_file+list_files workdir round-trip 37B 一致 / declare_done+close_session cleaned=true），同结论适用 A/B/C 三 shard。**主线 r1176**: r1175 DEBT 兑现——awk-on-.75 法定位 fresh D-pure(top-1200 去重 424 sid 与 4-shard ledger 4453 diff 得 10 fresh)；claim+深读 1x4za(junxu mc=379 schematic_netlist)：用户=测试用户评估 virtuoso-cli skill 搭 cli_test_fifo，终交付结构化反馈报告(P0 symbol/bus 缺失,P1 字体硬编码/无布局辅助)；DEBT 1 case 未合成(下轮基于 trace_deepreads/1x4za_virtuoso_cli_eval.md 合成)。
 > 2026-11-23 04:14 D 状态：`.75` 可达（eda_flow MCP OK，第六十八次确认 r1172，本 session GLM-5.2/opencode loop shard D task 卡 04:11 触发：catalog 8 工具在册 / open_session 18ms→workdir / run_commands 7/7 exit0(hostname=hfhds201=10.129.32.75/uid=e0031982/summary.tsv 表头+真实行 OK/ssh_auth_ok.txt=698 行) / list_files workdir OK / write_file+read_file round-trip 一致 / declare_done + close_session cleaned=true），同结论适用 A/B/C 三 shard。**主线 r1172**: 候选筛选 top 120(mc≥395) 全 claimed(4 shard 互斥), 下沉 mc 50-350 找到 2 fresh D-pure(nfubg/3dm7z); claim+深读 nfubg(junxu mc=350 schematic_netlist, 204msgs/902KB) — 用户意图=设计 virtuoso-cli schematic API 两种 wire/net 改名语义(rename_net 全局改名 / move_pin_to_net pin 级改连, 正确原语=dbMovePinToNet), 后半程跑题转 Virtuoso 启动调试; 造题方向已立(L1 case), DEBT 1 deepread 未合成(预算用于 MCP 复测+候选筛选, 下轮基于笔记直接合成)。**trace 访问层 @全 shard**(沿用 r1169): 部分目标 host NFS flaky, hfeg0pnd001 可靠读取。**P1 建议 @A**(沿用 r1169): trace_ledger.py 缺 reclaim 子命令；fresh 判据应 grep 4 shard ledger 不只 ledger_D（本轮实证：ledger_D grep 漏报, 需 4 shard 并集才准）。
 
