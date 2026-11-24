@@ -147,3 +147,14 @@ WAITING: 0（r875: 造题 1 case EDA-Eval-DesignFlow-CompressBasicRunbookQA-001 
 → r837 详块见 daily_A_2026-11-20.md + trace_deepreads/r837_intent_audit_v1v2_pairs.md（0-case 意图审计轮 — 11-15 最高优先令续做 v1-v2 对照批, intent_audit_A.tsv 40→120 行(+80: 40 v2 keep + 34 v1 downgraded→下线 + 6 …）# archived r854 瘦身
 → r831 详块见 daily_A_2026-11-20.md + trace_deepreads/r831_mclow_revival_exhausted_reconfirm.md（0-case governance 轮 — mc5-9 A-pure revival 矿脉枯竭再确认（11-19 新扫描证据）· 扫描源 ssh_eda_search_20261119_172105（44935 行/56…）# archived r854 瘦身
 → r758-r830 详块见 daily_A_2026-11-19/20.md + ARCHIVE_OPERATOR_DESIGNFLOW.md（历史轮, 已归档/日报留存）
+
+## 归档块 · 2026-11-25 r1161 瘦身 · Lite 监控轮 r1142-r1148 指针
+
+> 以下 6 行从 MEMORY_DESIGNFLOW_A.md 移入（r1148/r1147/r1145/r1144/r1143/r1142，均为 Lite 监控轮: 协调合并 refresh + A cycle-2 抽查无回归，详块见 daily_A_2026-11-25.md）。
+
+→ r1148 详块见 daily_A_2026-11-25.md（r1148: Lite 监控轮 — 协调合并 refresh(r1147 后无新提交, strict_green 376 不变) + A 侧 cycle-2 rotation 启动抽查[AprLogAudit/AprStampFix/AsyncFifoSim 字母序首 3]无回归. A.tsv 追加 3 green 审计行. 瓶颈仍 B(124 non-green)+C 4 fixed 待复核.）
+→ r1147 详块见 daily_A_2026-11-25.md（r1147: Lite 监控轮 — 协调合并 refresh(HEAD=2abd3caaf4 含 D r1303 监控轮无状态变化, strict_green 376 不变) + A 侧 3 case 轮换收尾抽查[DesignListGen/SvIntegrateGen/VerilogDriveFsmBlockGen 排除 r1138-r1146 已查 24 条]无回归, 轮换池 27/27 耗尽. A.tsv 追加 3 green 审计行. 瓶颈仍 B(120 non-green)+C 4 fixed 待复核.）
+→ r1145 详块见 daily_A_2026-11-25.md（r1145: Lite 监控轮 — 协调合并 refresh(HEAD=a748f85a71 入账 D r1301 spot-check 无状态变化, 375 不变) + A 侧 3 case 轮换抽查[PDKRunsetExplore/ParamRecon/PyShebangFix 排除 r1138-r1144 已查 21 条]无回归. A.tsv 追加 3 green 审计行. 瓶颈仍 B(121 non-green)+C 4 fixed 待复核.）
+→ r1144 详块见 daily_A_2026-11-25.md（r1144: Lite 监控轮 — 协调合并 refresh(r1143 后无新提交, 375 不变) + A 侧 3 case 轮换抽查[AsyncFifoSim/InnovusLogAudit/DcUpfDiag 排除 r1138-r1143 已查]无回归. A.tsv 追加 3 green 审计行. 瓶颈仍 B(121 non-green)+C 4 fixed 待复核.）
+→ r1143 详块见 daily_A_2026-11-25.md（r1143: Lite 监控轮 — 协调合并 refresh(HEAD=9fbdf9f93c 入账 B r1182+C r1085) strict_green 373→375 + A 侧 3 case 轮换抽查[GenLefConsistAudit/RunsetVer/WvPropDelayMeasure 排除 r1138-r1142 已查]无回归. A.tsv 追加 3 green 审计行. 瓶颈仍 B(121 non-green)+C 4 fixed 待复核.）
+→ r1142 详块见 daily_A_2026-11-25.md（r1142: Lite 监控轮 — 协调合并 refresh(HEAD=9cab544b1f 含 D r1298 spot-check 8 D cases 无状态变化) strict_green 373 不变 + A 侧 3 case 轮换抽查[AprLogAudit/AvgValueCalc/CmpTaskZeroDelayOscDiagnose 排除 r1138-r1141 已查]无回归. A.tsv 追加 3 green 审计行. 瓶颈仍 B(122 non-green)+C 5 fixed 待复核.）
