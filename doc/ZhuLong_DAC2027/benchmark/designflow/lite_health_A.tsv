@@ -35,7 +35,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-FilelistFlattenGen-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-FlatNet-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-FloatPinToTop-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T22:30:21	EDA-Eval-DesignFlow-FmRtl2RtlDemo-001	A	1	1	u	1	u	u	p0_pending	L4 risk: check.py invokes vcs subprocess; needs eval-machine runtime verify	
+2026-11-24T22:33:48	EDA-Eval-DesignFlow-FmRtl2RtlDemo-001	A	1	1	1	1	1	1	green	P0 false-alarm cleared: vcs call is cond (o) OPTIONAL (skipped if no sim). Ref PASS 14/14, 9 negs FAIL (4 distinct first-fail a/b/h/n). No GUI dep. L0-L5 all PASS.	
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-FsdbVerdiInteg-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-GenLefConsistAudit-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-GpioPortRefactor-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
@@ -89,7 +89,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-StdcellFamilyRefMatch-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-StdcellMatch-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-SvConvTimeoutSkip-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T22:30:21	EDA-Eval-DesignFlow-SvIntegrateGen-001	A	1	1	u	0	u	u	p1_pending	L3 broken (selftest/negs missing)	
+2026-11-24T22:33:48	EDA-Eval-DesignFlow-SvIntegrateGen-001	A	1	1	1	1	1	1	p0_fixed	P0+P1 fix: vcs/vlogan were HARD deps in cond h/i (ref failed at h: vlogan not found) -> faithful in-process SV structural mock (_mock_vlogan/_mock_vcs: module/endmodule balance, paren/bracket balance, declared-module instantiation port+net resolution, simv marker). Assertion count/strictness unchanged (15 conds a-o). check returns True (contract). selftest made standalone (abs paths). REF PASS, 5 negs FAIL, 4 distinct (c/d/e/m).	
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-SvPackedFlatten-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-SvTbBugFix-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:30:21	EDA-Eval-DesignFlow-SynLintFlow-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
