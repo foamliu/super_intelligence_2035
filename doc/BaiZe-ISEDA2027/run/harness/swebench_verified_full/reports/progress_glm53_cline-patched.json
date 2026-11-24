@@ -8,7 +8,7 @@
   "timeout": 0,
   "quota_blocked": 13,
   "no_patch": 73,
-  "last_update": "2026-11-24 11:45:33",
+  "last_update": "2026-11-24 11:54:30",
   "results": [
     {
       "instance_id": "astropy__astropy-12907",
@@ -5959,12 +5959,13 @@
       "instance_id": "sphinx-doc__sphinx-9658",
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 17.1,
+      "wall_s": 1800.5,
       "model_patch_len": 0,
       "quota_blocked": false,
+      "rate_limited": false,
       "timeout": false,
       "retried": false,
-      "stdout_tail": "Unable to connect. Is the computer able to access the url? (ConnectionRefused)\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sphinx-doc__sphinx-9658.json\n[run_single] cleanup: git reset --hard 232dbe41c5250eb7d559d40438c4743483e95f15\n",
+      "stdout_tail": "cf8fc560\",\"conversationId\":\"conv_1795490672187_yqftpz6\",\"parentAgentId\":null}}\\n'\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sphinx-doc__sphinx-9658.json\n[run_single] cleanup: git reset --hard 232dbe41c5250eb7d559d40438c4743483e95f15\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sphinx-doc__sphinx-9658.json",
       "classification": "no-patch"
