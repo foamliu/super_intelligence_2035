@@ -1,10 +1,10 @@
 # OPS INBOX — 运维下发命令（外部运维编辑，中继只读）
-<!-- RUN_ID: 290 | TARGET: 12 -->
-## RUN_ID 290 — **pretrain / data 静默体检（只读 · 2026-11-24 22:4x）**
+<!-- RUN_ID: 291 -->
+## RUN_ID 291 — **pretrain / data 静默体检（只读 · 2026-11-24 22:4x）**
 
 > 背景：pretrain 自 **19:17**、data 自 **19:57** 起无新提交（静默 2.5–3.2h，常态 10–20min/条），
 > 怀疑 ① loop 已死 ② `git push` 失败（.12 的 github 需要代理 92.23）③ `.git/index` 损坏 / `index.lock` 残留 ④ NFS D-state。
-> 另：`.29` 与 `.12` 共享同一 NFS 工作副本，**命令可能落在任一台**；本块会打印 `exec_host` 并对另一台做 bounded ssh。
+> 另：`.29` 与 `.12` 共享同一 NFS 工作副本，**本令不设 TARGET（任一中继可执行）；命令可能落在任一台**；本块会打印 `exec_host` 并对另一台做 bounded ssh。
 > **只读**：不 kill / 不重启 / 不改配置 / 不删文件。
 
 ```bash
@@ -78,5 +78,5 @@ echo "== H. github 连通性（.12 需要代理 92.23）=="
 timeout 15 curl -sS -o /dev/null -w "github=%{http_code}\n" https://github.com 2>&1 | tail -1
 echo
 echo "（只读：未 kill / 未重启 / 未改配置）"
-echo "=== DONE 290 | $(date '+%F %T') ==="
+echo "=== DONE 291 | $(date '+%F %T') ==="
 ```
