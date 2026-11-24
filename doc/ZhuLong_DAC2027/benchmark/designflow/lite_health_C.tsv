@@ -64,7 +64,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	Gds2Lef-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	GdsLayerAreaMeasure-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	GdsRectGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:50	GenReleaseNoteMerge-001	C	1	1	0	1	?	?	p0_fixed	L2 ERROR: assets dir missing (no ASSETS_SRC) -- case has no assets dir, needs investigation	
+2026-11-24T23:30	GenReleaseNoteMerge-001	C	1	1	1	1	?	?	green	L2 fix: hidden-B path resolver (workdir/hidden/entries_B{,2}.json fallback to workdir/assets/<case>/hidden/) + built reference_submit.zip; ref PASS + 3 neg FAIL distinct (L4/L5 eval-machine run pending)	
 2026-11-24T22:26	HeadlessLatchSkillGen-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
 2026-11-24T22:26	ImplantFillDummyLeftoverDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	InnovusFpLogDiag-001	C	1	1	1	0	?	?	p1_fixed	L3 only 2 neg (<3, needs补 neg)	
@@ -75,8 +75,8 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	LayoutAether-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
 2026-11-24T22:26	LayoutAnalyzeReport-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	LayoutVirtuoso-001	C	1	1	1	0	?	?	p1_fixed	L3 only 2 neg (<3, needs补 neg)	
-2026-11-24T22:50	LefPostprocessFix-001	C	1	1	0	0	?	?	p0_fixed	L2 FAIL: hidden B input dir missing (assets/CASE/hidden/inputs_B path) -- check.py expects inputs_B subdir under hidden	
-2026-11-24T22:50	LibCellList-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL: prompt/check script name mismatch (prompt=gen_lib_cell.py, check=gen_lib_cell_list.py) -- needs prompt/check reconciliation	
+2026-11-24T23:30	LefPostprocessFix-001	C	1	1	1	1	?	?	green	L2 fix: hidden-B path resolver (workdir/hidden/inputs_B fallback to workdir/assets/CASE/hidden/inputs_B) -- harness stages hidden under workdir/hidden not workdir/assets/CASE/hidden; ref PASS 16/16 + 5 neg FAIL distinct (L4/L5 eval-machine run pending)	
+2026-11-24T23:30	LibCellList-001	C	1	1	1	1	?	?	green	L2 fix: SCRIPT_NAME gen_lib_cell_list.py->gen_lib_cell.py (match prompt) + read hidden B filenames from hidden_manifest.json + rename B netlist libs (drvqa_cmos_stdcells->stdb_b, stdcells_ac->acstd_b) to match manifest B_LIBS so cross-input guard j passes; ref PASS 13/13 + 5 neg FAIL distinct (L4/L5 eval-machine run pending)	
 2026-11-24T22:26	LvsDeepReportAnalyzer-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	LvsSeedPromoDetect-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	M1ShapeDelete-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
@@ -113,10 +113,10 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	RsCalcFlowOrch-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	RsCalcMesh-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:50	RsCalcShortDiag-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL: missing assets/CASE/artifacts (A subdir staging) -- harness flattens A attachments, check expects subdir	
-2026-11-24T22:50	RscalcHandoffDocGen-001	C	1	1	0	1	?	?	p0_fixed	L2 ERROR: assets dir missing (no ASSETS_SRC) -- case has no assets dir, needs investigation	
+2026-11-24T23:30	RscalcHandoffDocGen-001	C	1	1	1	1	?	?	green	L2 fix: hidden-B path resolver (workdir/hidden/flow_state_B{,2}.json fallback to workdir/assets/<case>/hidden/) + built reference_submit.zip; ref PASS + 3 neg FAIL distinct (L4/L5 eval-machine run pending)	
 2026-11-24T22:26	RtextChkPlan-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:50	SchHierDescentReport-001	C	1	1	0	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (refzip PASS)	
-2026-11-24T22:50	SchNetPrefixHilightGen-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL: hidden B inputs missing in workdir -- check.py path resolution issue	
+2026-11-24T23:30	SchNetPrefixHilightGen-001	C	1	1	1	1	?	?	green	L2 fix: hidden-B path resolver (workdir/hidden/net_inventory_B.json + hilight_config_B.json fallback to workdir root) -- harness stages hidden under workdir/hidden; ref dict-pass-ok 15/15 + 6 neg FAIL distinct (L4/L5 eval-machine run pending)	
 2026-11-24T22:26	SchPinAnalyze-001	C	1	1	1	1	?	?	green	L1 var/list/str->dict-pass-ok fixed this round (audit OK, compile OK)	
 2026-11-24T22:26	SchWireRebuildGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	ScmosStructId-001	C	1	1	1	1	?	?	green	L1 var/list/str->dict-pass-ok fixed this round (audit OK, compile OK)	
@@ -125,8 +125,8 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	SkillMenuRoute-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	SshTestProfileBuilder-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
 2026-11-24T22:26	StarrcReleaseNoteGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:50	StrongARMComp-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL: A spec path (assets/CASE/inputs/ subdir) + plan_A.json in zip -- harness A-staging + ref repackage needed	
-2026-11-24T22:50	SyncBatchArchivePlan-001	C	1	1	0	1	?	?	p0_fixed	L2 ERROR: assets dir missing (no ASSETS_SRC) -- case has no assets dir, needs investigation	
+2026-11-24T23:30	StrongARMComp-001	C	1	1	1	1	?	?	green	L2 fix: spec resolver _resolve_spec() for A/B/B2 specs (harness flattens A inputs/strongarm_spec.json into workdir root; B/B2 under workdir/hidden); ref PASS + 6 neg FAIL distinct (L4/L5 eval-machine run pending)	
+2026-11-24T23:30	SyncBatchArchivePlan-001	C	1	1	1	1	?	?	green	L2 fix: asset_a (visible A manifest_A/stable_A) resolver (workdir/asset_a -> workdir/assets/<case> -> workdir flat) + hidden under workdir/hidden + built reference_submit.zip; ref PASS + 3 neg FAIL distinct (L4/L5 eval-machine run pending)	
 2026-11-24T22:26	TechDisplayPacketNorm-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
 2026-11-24T22:26	ToolchainID-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	TrMatchHelperGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
