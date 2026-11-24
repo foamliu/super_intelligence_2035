@@ -6087,16 +6087,30 @@
   "openlayers__openlayers-14659": {
     "instance_id": "openlayers__openlayers-14659",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 739.9,
+    "rc": 0,
+    "model_patch_len": 5136,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "wFeature()` and `drawCircle()` with `userTransform` to prevent regression\\n\\nAll existing node tests continue to pass (1801 passing).\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-14719": {
     "instance_id": "openlayers__openlayers-14719",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1062.0,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "72,\"outputTokens\":29169,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":1058522,\"text\":\"The operation timed out.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "s (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n{\"ts\":\"2026-11-24T03:23:37.156Z\",\"type\":\"error\",\"message\":\"The operation timed out.\"}\n"
   },
   "openlayers__openlayers-14932": {
     "instance_id": "openlayers__openlayers-14932",
