@@ -1527,3 +1527,4 @@ t0dhm					case	EDA-Eval-DesignFlow-CalibreDrcRunsetPatch-001	2026-11-24 03:55
 1795416159128_iys5y	kenwang	hfeg0pkn004	59	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckCodegenFromDesc-001	2026-11-24 11:57	
 1795419713877_cu4d7	hktklin	hfeg0plg87	71	layout_virtuoso	parked		2026-11-24 12:07	near-dup of r1042/r1048 (hktklin tap_p->lacaa_common + _SKILL L20/AMN2P same task)
 1795158646140_hofj2.messages.json	yizhusun	hfeg0plg75	31	physical_verify	case	EDA-Eval-DesignFlow-LvsFlagFlipRunme-001	2026-11-24 12:45	
+1795395238902_cxsbx	e0047600	hfeg0pkn002	176	physical_verify	case	EDA-Eval-DesignFlow-VddVssStripeAudit-001	2026-11-24 13:21	r1054 physical_verify; k_check=18; hidden B; 4 neg + 3 fakes FAIL
