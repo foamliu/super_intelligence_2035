@@ -43,6 +43,35 @@ def _seed_cline_data_dir(data_dir: str):
         shutil.copytree(src / "settings", dst / "settings")
 
 
+def _extract_cline_usage(stdout: str):
+    """Parse cline --json (JSONL) stdout → (input_tokens, output_tokens) from last run_result.
+
+    cline --json streams one JSON object per line; the final `run_result` carries
+    `aggregateUsage`(或 `usage`) with camelCase inputTokens/outputTokens. 未采集/解析失败 → (None, None)。
+    """
+    if not stdout:
+        return (None, None)
+    inp = out = None
+    for line in stdout.splitlines():
+        s = line.strip()
+        if not s.startswith("{"):
+            continue
+        try:
+            obj = json.loads(s)
+        except Exception:
+            continue
+        if obj.get("type") != "run_result":
+            continue
+        u = obj.get("aggregateUsage") or obj.get("usage") or {}
+        if isinstance(u, dict):
+            it, ot = u.get("inputTokens"), u.get("outputTokens")
+            if isinstance(it, (int, float)):
+                inp = int(it)
+            if isinstance(ot, (int, float)):
+                out = int(ot)
+    return (inp, out)
+
+
 def run_cline_patched(instance, workdir, timeout):
     """Run cline with --data-dir + -P openai (independent cline_harness_data).
 
@@ -71,6 +100,7 @@ def run_cline_patched(instance, workdir, timeout):
         })
         r.harness = self.name
         r.model_patch = git_patch(workdir)  # R1744 fix: always extract patch; rc!=0 may still have real edits
+        r.input_tokens, r.output_tokens = _extract_cline_usage(r.stdout)
         return r
     driver.run = types.MethodType(run_patched, driver)
     return driver.run(instance, workdir, timeout)
@@ -135,7 +165,9 @@ def main():
     if args.out_predictions:
         model_name = args.model_name or f"{res.harness}-{os.environ.get('HARNESS_MODEL', 'kimi-k2.6-cloud')}"
         pred = {"instance_id": inst["instance_id"],
-                "model_name_or_path": model_name, "model_patch": patch}
+                "model_name_or_path": model_name, "model_patch": patch,
+                "usage": {"input_tokens": getattr(res, "input_tokens", None),
+                          "output_tokens": getattr(res, "output_tokens", None)}}
         Path(args.out_predictions).write_text(json.dumps([pred], indent=2))
         print(f"[run_single] wrote predictions -> {args.out_predictions}")
 
