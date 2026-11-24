@@ -22,8 +22,8 @@ WAITING: 1
 
 PHASE:        11-24令(cline PREDICT并行化收尾)·步骤1-2闭环✅(cline335/500=67.0%)·冲突修复✅(killed PID2792129避免双发21:00竞态)·nightly_rerun_watcher PID3117637等21:00→orchestrator首路cline-patched(66ids --workers8)→auto eval+merge+regen→后续codex/dsh/cc/pi/hermes/oc
 已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·SWE-bench Verified predict 7路·§11-19报告重写✅(R2758)·MM容器下载COMPLETE(580/580)✅·Phase 0 冻结验收通过✅·Step 1 硬护栏全落地✅(guard PID931671✅)·**11-24令步骤1-2闭环**(LIVE predict --workers 8 merged 41/96·auto-eval 13: 7resolved+6failed+0infra·MERGED r=335·7way REGEN OK)·**cline=335/500=67.0%(↑7)**·R3005 冲突检测+修复(killed night_predict_cline_round2.sh PID2792129 vs nightly_rerun_watcher双发21:00→orchestrator统一处理7路)
-当前动作:     R3005: 冲突检测+修复(15:24窗口外)·killed PID2792129(night_predict_cline_round2.sh)因与PID3117637(nightly_rerun_watcher)双发21:00 cline-patched predict→竞态·orchestrator(rerun_infra_verified.py)统一处理:cline首路(96ids·skip30·predict66 --workers8+4env)→codex365→dsh273→cc184→pi284→hermes101→oc54·判据全绿(guard PID931671~96.1h零越界·mem1170G·load25.61·pretrain7.14s)·MM 2路kimi仍RUN(CPU低✅)
-下一步:     ①21:00窗口→orchestrator自动启动cline-patched predict 66ids --workers8→eval+merge+regen ②下轮唤醒查logs/rerun_infra_nightly.log→各路进度+cline新Pass% ③cline完成后→codex→dsh→cc→pi→hermes→oc按ORDER ④MM 2×3 2路kimi retry pass监控→has_patch爬升→MM eval
+当前动作:     R3005: 窗口外(15:53)·park状态·11-24令步骤1已完成(LIVE predict --workers 8 merged 41/96·438 non-empty patch)·cline-patched 6个重跑实例待eval·按11-23令窗口外不启动新eval·等21:00窗口再处理·冲突修复完成(killed PID2792129避免双发21:00竞态)·orchestrator(rerun_infra_verified.py)统一处理7路重跑·判据全绿(guard PID931671~96.1h零越界·mem1170G·load25.61·pretrain7.14s)·MM 2路kimi仍RUN(CPU低✅)
+下一步:     ①21:00窗口→先执行cline-patched 6实例eval+merge+regen→再启动orchestrator cline-patched predict 66ids --workers8 ②下轮唤醒查状态 ③cline完成后→codex→dsh→cc→pi→hermes→oc按ORDER ④MM 2×3 2路kimi retry pass监控→has_patch爬升→MM eval
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK~31.7KB（✅≤32KB） / MEMORY≈8KB（✅≤32KB）
