@@ -136,7 +136,7 @@ D	EDA-Eval-DesignFlow-FsdbPowerWindowAnalysis-001	16	y	unknown	ok	static-skip	st
 D	EDA-Eval-DesignFlow-FsdbPwlExtract-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-FsdbPwlExtract-001
 D	EDA-Eval-DesignFlow-FsdbSpfbaPowerfillCatalog-001	12	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-FsdbSpfbaPowerfillCatalog-001
 D	EDA-Eval-DesignFlow-FullAdderSchemBuild-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		FullAdderSchemBuild-001
-D	EDA-Eval-DesignFlow-FuseAddrCompare-001	35	y	unknown	ok	static-skip	static-skip	y	PASS	r1266 FIX: added negative/ (4 fakes: fake_empty/fake_print_expected/fake_core_deleted/naive_no_commented) + negative_selftest.py; REF PASS + all 4 FAIL (NEG_RC=0); standalone fakes py_compile OK + runtime FAIL-consistent	FuseAddrCompare-001
+D	EDA-Eval-DesignFlow-FuseAddrCompare-001	35	n	unknown	ok	static-skip	static-skip	n	GAP	no-negative	FuseAddrCompare-001
 D	EDA-Eval-DesignFlow-GateLibResultMapFilter-001	14	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-GateLibResultMapFilter-001
 D	EDA-Eval-DesignFlow-GenRunFuncExplainQA-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-GenRunFuncExplainQA-001
 D	EDA-Eval-DesignFlow-GenSPv2-001	31	n	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-GenSPv2-001
@@ -264,8 +264,8 @@ D	EDA-Eval-DesignFlow-NetlistStructDF-001	17	y	unknown	ok	static-skip	static-ski
 D	EDA-Eval-DesignFlow-NetlistStructDiff-001	26	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-NetlistStructDiff-001
 D	EDA-Eval-DesignFlow-NetlistSubstPlan-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-NetlistSubstPlan-001
 D	EDA-Eval-DesignFlow-NetlistSvPair-001	17	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-NetlistSvPair-001
-D	EDA-Eval-DesignFlow-NetlistSvRulesReorg-001	22	y	unknown	ok	static-skip	static-skip	y	PASS	r1267 FIX: added negative/ subdir (4 fakes + negative_selftest.py NEG_RC=0) + netlist_sv_rules_reorg_ref.py (reference reorganizer). check.py unchanged (16 conditions, hidden B + embedded C anti-hardcode + 3-seed determinism). REF PASS=True, 4 fakes FAIL on distinct asserts (01/03/04/08).	EDA-Eval-DesignFlow-NetlistSvRulesReorg-001
-D	EDA-Eval-DesignFlow-NetlistVdomPrefixCount-001	35	n	unknown	ok	static-skip	static-skip	y	PASS	r1268 FIX: added negative/ subdir (4 fakes: empty/hardcode_b/core_deleted/naive_grep_all) + negative_selftest.py. NEG_RC=0 (REF PASS + 4 fakes FAIL on distinct cond a/c/h/j). No change to check.py/assertion logic/count.	EDA-Eval-DesignFlow-NetlistVdomPrefixCount-001
+D	EDA-Eval-DesignFlow-NetlistSvRulesReorg-001	22	n	unknown	ok	static-skip	static-skip	n	GAP	no-negative	EDA-Eval-DesignFlow-NetlistSvRulesReorg-001
+D	EDA-Eval-DesignFlow-NetlistVdomPrefixCount-001	35	n	unknown	ok	static-skip	static-skip	n	GAP	no-negative	EDA-Eval-DesignFlow-NetlistVdomPrefixCount-001
 D	EDA-Eval-DesignFlow-NetlistVoltDomainCheck-001	17	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-NetlistVoltDomainCheck-001
 D	NetlistWaiter-001	13	y	unknown	n/a	static-skip	static-skip	inline	PASS(inline)		(inline)
 D	EDA-Eval-DesignFlow-NlHierLoc-001	14	n	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-NlHierLoc-001
@@ -280,7 +280,7 @@ D	EDA-Eval-DesignFlow-OscSpDeckMigrateInclude-001	14	y	unknown	ok	static-skip	st
 D	EDA-Eval-DesignFlow-OtaSimReport-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-OtaSimReport-001
 D	EDA-Eval-DesignFlow-PGcheckTcl-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-PGcheckTcl-001
 D	EDA-Eval-DesignFlow-ParallelMeasFanout-001	14	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-ParallelMeasFanout-001
-D	ParasiticsAnnotDiag-001	14	y	y	FAIL	FAIL	FAIL	PASS	r1250 FIX: stub test→self-contained check.py (B+A' base64 inline, no __file__); k=14; REF PASS+4neg FAIL+exec-style PASS. r1249 GAP(no-subprocess) resolved.		
+D	ParasiticsAnnotDiag-001	14	y	y	FAIL	FAIL	FAIL	PASS	r1250 FIX: stub test→self-contained check.py (B+A' base64 inline, no __file__); k=14; REF PASS+4neg FAIL+exec-style PASS. r1249 GAP(no-subprocess) resolved.
 D	EDA-Eval-DesignFlow-PassModuleSplice-001	12	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-PassModuleSplice-001
 D	PatternHierResolverProduce-001	18	y	unknown	n/a	static-skip	static-skip	inline	PASS(inline)		(inline)
 D	EDA-Eval-DesignFlow-PatternParamAudit-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-PatternParamAudit-001
@@ -511,7 +511,7 @@ D	EDA-Eval-DesignFlow-WtmWriteDataReviewQA-001	23	n	unknown	ok	static-skip	stati
 D	EDA-Eval-DesignFlow-WvAcReportGen-001	16	n	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-WvAcReportGen-001
 D	EDA-Eval-DesignFlow-WvDispCfg-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-WvDispCfg-001
 D	WvDisplaySignalInWv-001	20	y	unknown	ok	static-skip	static-skip	y	PASS		WvDisplaySignalInWv-001
-D	EDA-Eval-DesignFlow-WvEdgeTiming-001	17	y	unknown	risk	static-skip	static-skip	y	PASS	r1265 FIX: HIDDEN path __file__-relative (cwd-independent, matches judge ../../assets/CID/hidden symlink); negative_selftest contract-updated (True=PASS); judge-sim REF PASS + 3 fake FAIL (print_only/core_deleted/empty_shell). Was GAP(no-subprocess;print_only-risk) static false-positive: runtime confirms print_only FAILs on hidden B.	EDA-Eval-DesignFlow-WvEdgeTiming-001
+D	EDA-Eval-DesignFlow-WvEdgeTiming-001	17	n	unknown	risk	static-skip	static-skip	y	GAP	no-subprocess;print_only-risk	EDA-Eval-DesignFlow-WvEdgeTiming-001
 D	EDA-Eval-DesignFlow-WvEyeDiagExtTrigMethodQA-001	29	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-WvEyeDiagExtTrigMethodQA-001
 D	EDA-Eval-DesignFlow-WvEyeSelect-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-WvEyeSelect-001
 D	EDA-Eval-DesignFlow-WvFsdbBatchOpenCmd-001	31	y	unknown	ok	static-skip	static-skip	y	PASS		WvFsdbBatchOpenCmd-001

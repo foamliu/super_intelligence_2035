@@ -92,10 +92,6 @@ class DriverResult:
     returncode: int = 0
     timed_out: bool = False
     wall_s: float = 0.0
-    # 2026-11-24: token usage extracted from harness structured output (cline --json).
-    # None = 未采集（历史 run 无）；成功解析 run_result 后即填实际值（可为 0，fast-fail）。
-    input_tokens: int | None = None
-    output_tokens: int | None = None
 
 
 def _run(cmd: list[str], cwd: Path, timeout: int, env: dict | None = None) -> DriverResult:

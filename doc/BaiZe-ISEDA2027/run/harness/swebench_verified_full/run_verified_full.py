@@ -302,22 +302,9 @@ def predict_one(harness: str, inst: dict, workdir: Path, data_dir: Path | None =
     blocked = ("quota" in out.lower() or "429" in out or "forbidden" in out.lower())
     rate_limited = ("429" in out or "rate limit" in out.lower()
                     or "too many" in out.lower())
-    input_tokens = output_tokens = None
-    if pred_out.exists():
-        try:
-            preds = json.loads(pred_out.read_text())
-            if preds:
-                u = preds[0].get("usage", {}) or {}
-                if isinstance(u.get("input_tokens"), (int, float)):
-                    input_tokens = int(u["input_tokens"])
-                if isinstance(u.get("output_tokens"), (int, float)):
-                    output_tokens = int(u["output_tokens"])
-        except Exception:
-            pass
     return {"instance_id": iid, "harness": harness, "returncode": rc,
             "wall_s": round(wall, 1), "model_patch_len": patch_len,
             "quota_blocked": blocked, "rate_limited": rate_limited,
-            "input_tokens": input_tokens, "output_tokens": output_tokens,
             "timeout": timed_out,
             "retried": retried,
             "stdout_tail": out[-400:], "stderr_tail": err[-400:] if err else "",

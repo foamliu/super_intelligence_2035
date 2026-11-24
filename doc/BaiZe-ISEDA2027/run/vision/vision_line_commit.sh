@@ -50,7 +50,6 @@ VISION_WHITELIST=(
   doc/BaiZe-ISEDA2027/run/daily-memories-vision
   doc/BaiZe-ISEDA2027/run/vision
   doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh
-  doc/BaiZe-ISEDA2027/run/reports
   doc/BaiZe-ISEDA2027/run/GPU29_ALLOC.md
 )
 

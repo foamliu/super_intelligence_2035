@@ -1,13 +1,7 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 1
-> 🆕 **R3011 · 2026-11-24 18:06 — park监控轮·窗口外(18:06)·11-24令步骤1-4全闭环✅·夜间infra就绪✅**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活~98.9h(355948s)✅零越界 ②mem avail1175G≥512G✅ ③load25.40≤120✅ ④无失控harness进程✅(MM cline×kimi PID2131928 CPU0.0%✅) ⑤pretrain step~7.26s≤7.4s✅. **7路eval JSON全核实**: cline335/500=67.0%✅·codex115/428·dsh195/311·cc295/500=59.0%✅·pi247/443·hermes444/500=88.8%✅·opencode416/500=83.2%✅. **分类JSON刷新**: infra371+ability492+pending604. **rerun_ids**: cline54·codex329·dsh265·cc141·pi159·hermes12·oc1=**961total**✅. **夜间infra就绪**: ①nightly_rerun_watcher PID3117637 alive(~8.9h)·sleep到21:00✅ ②launch_infra_rerun.sh env=4vars+gw_proxy 3端口✅ ③nightly_rerun_stop.sh就绪(NFS self-heal✅) ④rerun_infra_state.json不存在(fresh start)✅ ⑤7way报告5787B✅ ⑥orchestrator order: cline→codex→dsh→cc→pi→hermes→oc✅. **并行MM 2×3**: cline×kimi retry PID2131928 ~92.8h·460/480·CPU0.0%✅·总2602/2880has_patch. 📦 TASK~31.7KB MEMORY~8.5KB
-> 📦 R3010 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·park监控轮·窗口外17:45·步骤1-4全闭环·分类JSON+rerun_ids刷新·夜间infra就绪·判据全绿·MM 2路kimi RUN）。需要时再读。
-> 📦 R3009 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·park监控轮·窗口外17:19·步骤1-2闭环·全链路复核+夜间infra就绪确认·判据全绿·MM 2路kimi RUN）。需要时再读。
-> 📦 R3008 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·park监控轮·窗口外16:55·步骤1-2闭环·全链路复核+夜间infra就绪确认·判据全绿·MM 2路kimi RUN）。需要时再读。
-> 📦 R3007 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·park监控轮·窗口外16:32·步骤1-2闭环·全链路复核+夜间infra就绪确认·判据全绿·MM 2路kimi RUN）。需要时再读。
-> 📦 R3005 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·冲突检测+修复·killed PID2792129避免双发21:00竞态·orchestrator统一处理7路·判据全绿·MM 2路kimi RUN）。需要时再读。
-> 📦 R3004 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·park监控轮#2·15:01窗口外·步骤1-2闭环·night launcher正确parking·判据全绿·MM 2路kimi RUN）。需要时再读。
+> 🆕 **R3004 · 2026-11-24 15:01 — park监控轮#2·15:01窗口外(09:00-21:00)·11-24令步骤1-2已闭环(cline335/500=67.0%)·night launcher PID2792129正确parking等21:00 round2·判据全绿**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活~95.8h(344759s)✅零越界 ②mem avail1171G≥512G✅ ③load25.50≤120✅ ④pretrain step7.14s≤7.4s✅ ⑤无失控进程✅(top=llama-server270%+cline224%=pretrain线非本线). **全链路核实**: ①eval JSON=resolved335/failed165/infra0/evaluated500✅ ②predictions=434nonempty/66empty✅ ③7way报告REGEN@13:30含cline335✅ ④night launcher脚本4env+workers8+nice19/ionice3/ulimit✅ ⑤round2 IDs=66✅ ⑥infra rerun plan HTML=235KB覆盖7路3列(infra/ability/待定)✅. **rerun顺序(按infra数量降序)**: cline(96,R1done41merged→R2=66ids@21:00)→codex(365)→pi(284)→deepseek(273)→cc(184)→hermes(101)→oc(54). **7way当前**: hermes444/88.8%·opencode416/83.2%·**cline335/67.0%**·cc295/59.0%·pi247/49.4%·deepseek195/39.0%·codex115/23.0%. **并行MM 2×3**: cline×kimi397has·oc×kimi444has·2路retry仍RUN(PID2131928~89h·CPU低✅)·总2598/2880has_patch. 📦 TASK~31.7KB MEMORY~8KB
 > 📦 R3003 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·park监控轮+TASK归档·14:35窗口外·步骤1-2闭环·night launcher正确parking·TASK归档5块37→31.7KB·判据全绿·MM 2路kimi RUN）。需要时再读。
 > 📦 R3002 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·park监控轮·14:14窗口外·11-24令步骤1-2已闭环·night launcher正确parking·判据全绿·MM 2路kimi RUN）。需要时再读。
 > 📦 R3001 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·park监控轮·eval JSON核实335 holding·night launcher正确parking·判据全绿·MM 2路kimi RUN）。需要时再读。
@@ -25,16 +19,16 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-24令(cline PREDICT并行化收尾)·步骤1-4全闭环✅(cline335/500=67.0%)·分类JSON+rerun_ids刷新✅(961total↓396stale)·nightly_rerun_watcher PID3117637等21:00→orchestrator首路cline-patched(54ids --workers8)→auto eval+merge+regen→后续codex329/dsh265/cc141/pi159/hermes12/oc1
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·SWE-bench Verified predict 7路·§11-19报告重写✅(R2758)·MM容器下载COMPLETE(580/580)✅·Phase 0 冻结验收通过✅·Step 1 硬护栏全落地✅(guard PID931671✅)·**11-24令步骤1-4全闭环**(LIVE predict --workers 8 merged 41/96·auto-eval 13: 7resolved+6failed+0infra·MERGED r=335·7way REGEN OK·分类JSON刷新·rerun_ids去stale 1357→961)·**cline=335/500=67.0%(↑7)**·R3005 冲突检测+修复
-当前动作:     R3011: 窗口外(18:06)·park状态·11-24令步骤1-4全闭环·nightly_rerun_watcher PID3117637 alive(~8.9h) sleep到21:00·launch_infra_rerun.sh就绪(4env+gw_proxy 3端口+RERUN_PREDICT_WORKERS=8)·orchestrator order: cline54→codex329→dsh265→cc141→pi159→hermes12→oc1=961·nightly_rerun_stop.sh就绪(09:00 auto stop+incr eval+REGEN+re-arm·NFS self-heal✅)·判据全绿(guard PID931671~98.9h零越界·mem1175G·load25.40·pretrain~7.26s)·MM cline×kimi retry PID2131928 RUN(460/480·CPU0.0%✅)
-下一步:     ①21:00窗口→nightly_rerun_watcher自动触发launch_infra_rerun.sh→orchestrator处理7路(cline54→codex329→dsh265→cc141→pi159→hermes12→oc1·每路predict --workers8+eval+merge+save state) ②09:00窗口结束→nightly_rerun_stop.sh自动kill orchestrator+REGEN 7way ③下轮唤醒查orchestrator日志+rstate+各路eval JSON ④MM 2×3 cline×kimi retry pass监控→has_patch爬升→MM eval
+PHASE:        11-24令(cline PREDICT并行化收尾)·步骤1-2闭环✅(LIVE predict merged 41/96 + auto-eval+merge+REGEN→cline335/500=67.0%)·night launcher PID2792129 parking等21:00→round2 predict --workers 8 on 66 ids→auto eval+regen
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·SWE-bench Verified predict 7路·§11-19报告重写✅(R2758)·MM容器下载COMPLETE(580/580)✅·Phase 0 冻结验收通过✅·Step 1 硬护栏全落地✅(guard PID931671✅)·**11-24令步骤1-2闭环**(LIVE predict --workers 8 merged 41/96·auto-eval 13 re-eval: 7resolved+6failed+0infra·MERGED r=335·7way REGEN OK)·**cline=335/500=67.0%(↑7)**·R3001-3004 park监控确认335 holding+night launcher正确parking+infra rerun plan HTML覆盖7路✅
+当前动作:     R3004: park监控轮#2(15:01窗口外)·11-24令步骤1-2已闭环(全链路核实6项✅)·night launcher PID2792129正确parking(14:53最新轮询等21:00)·round2 ids=66·判据全绿(guard PID931671~95.8h零越界·mem1171G·load25.50·pretrain7.14s)·MM 2路kimi仍RUN(CPU低✅)
+下一步:     ①下轮唤醒查logs/parallel_cline_predict_round2.log→merged则报cline新Pass%+确认7way REGEN ②night launcher 21:00自动启动round2 predict --workers 8 on 66 ids→auto eval+regen ③cline完成后→codex365→pi284→deepseek273→cc184→hermes101→oc54按infra数量降序 ④MM 2×3 2路kimi retry pass监控→has_patch爬升→MM eval
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK~31.7KB（✅≤32KB） / MEMORY≈8KB（✅≤32KB）
  SWE-bench Verified Pass%(分母恒500): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%(↑7 infra回收)·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
  真实 Pass% (TB-2.1, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
- SWE-bench Multimodal 2×3 predict(6路全480/480 entries·2路kimi retry pass仍RUN): cline×deepseek393has(DONE)·cline×doubao466has(DONE)·cline×kimi401has(↑4·retry 460/480↑2)·oc×deepseek453has(DONE)·oc×doubao448has(DONE)·oc×kimi444has(DONE)=2602/2880 has_patch·4路DONE·1路process仍RUN(PID2131928~91h·nice19/OMP8/ulimit200GiB·CPU低✅无失控)
+ SWE-bench Multimodal 2×3 predict(6路全480/480 entries·2路kimi retry pass仍RUN): cline×deepseek393has(DONE)·cline×doubao466has(DONE)·cline×kimi397has(↑1·retry)·oc×deepseek453has(DONE)·oc×doubao448has(DONE)·oc×kimi444has(↑2·retry)=2598/2880 has_patch·4路DONE·2路processes仍RUN(PID2131928~89h·nice19/OMP8/ulimit200GiB·CPU低✅无失控)
 ## 启动说明（首次唤醒）
 
 1. **先读** `BAIZE_HARNESS_TASK.md` 全文。

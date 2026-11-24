@@ -443,20 +443,3 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 
 ## r1219 状态 (2026-11-23 23:3x CST)
 **`.75` 可达（eda_flow MCP OK，117次确认 r1105-r1219）。** MCP 117th 复测全 OK (open_session 26ms→workdir / run_commands 7 cmds 全 exit0 hostname=hfhds201 / list_files+read_file 33ms / declare_done+close_session cleaned)。候选三带扫描（mc≥10 top-10 / mc=60 mid-13 / waveform 带 10，共 ~28 unique sessions）→ 0 fresh D-domain produce 候选。仅 dt54a(ruisongs@hfeg0plg57 mc=60) GLOBALLY_FRESH 但 drc:838+verilog:767 主导 → **handoff @A/@C**（D 不造别域题）。@A @C：dt54a=1795224239612_dt54a.messages.json ruisongs@hfeg0plg57(plg100/plg06/pgn145) mc=60 drc:838;verilog:767;analog:108;netlist:27;.cdl:14;schematic:10 — DRC/verilog 主导，属 A(digital/verification)或 C(physical_verify)，请认领。DEBT 1，下轮 r1220 继续三带扫描+尝试其他扫描源(20261114/20261113)。同结论 .75 可达适用 A/B/C。
-
-## r1262 (2026-11-24 15:2x CST) — 判分契约修复收尾审计 + 1 P0 结构性 bug
-
-**`.75` 可达（eda_flow MCP OK，158次确认 r1105-r1262）。** MCP 158th 复测全 OK (open_session 28ms→workdir / run_commands 5 cmds exit0 hostname=hfhds201/whoami=e0031982 / summary.tsv 24086行可读 / declare_done+close_session cleaned)。
-
-**判分契约修复（2026-11-24 运维令）shard D 收尾审计**：直接审计 reference/<id>/check.py（judge 实际使用文件，run_one.sh L363 cp 到 judge dir）。结果：**OK 500 / VIOLATION 0 / NO_RETURN 0 / NO_CHECK 1 真实 + 1 误报 / NO_REF ~14（命名不匹配误报 105 已剔除）/ PARSE_ERROR 0**。
-- SkillToAether-001：audit 误报 VIOLATION（IfExp `True if ok else False` 实际返回 bool，合规）→ 无需改。
-- DumWLDeckExplainQA-001：audit 误报 NO_CHECK（`check = run_check` alias，run_check `return True`，合规）→ 无需改。
-- **cases/D JSON `test` 字段 65 NO_RETURN 是契约 stub `def check(deliverable, workdir): ...`（非判分文件），不影响判分**；judge 用 reference/check.py。
-
-### ✅ P0 结构性 bug — RESOLVED (r1263, 2026-11-24)
-
-**EDA-Eval-DesignFlow-EsdEmTechViaKeyErrorDiag-001**：~~reference/check.py (653 行) 有 `def main()` + `def _emit(conds)`（用 `sys.exit(0 if npass==len else 1)`）但**没有 `def check(deliverable, workdir)`**~~ **已修复 (r1263)**：重构 `main()`→`check(deliverable, workdir)`（judge 契约入口，deliverable=submit.zip 路径，回退 `workdir/outputs/submit.zip` 兼容 CLI）；`_emit(conds)` 的 `sys.exit(...)` 改 `return npass==len(conds)`（bool）；8 个 `_emit(conds); return` 早退点全改 `return _emit(conds)`（cleanup 重排到 emit 前）；保留 `def main()` + `__main__` wrapper 供 negative_selftest.py subprocess 调用（`python3 check.py <workdir>`）。**断言逻辑/条数零改动（仍 20 条 a–t）**。自验：judge-replica `import check; m.check('submit.zip','.')` → 20/20 PASS → return True；negative_selftest 3 假提交全 FAIL（teeth OK）。cases/D JSON `test` 字段同步更新（原嵌旧 main() 版 22KB，现同步为修复版）。复现：`grep -n "def check\|def main" benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-EsdEmTechViaKeyErrorDiag-001/check.py`。
-
-### 🔴 P0 结构性 bug（非返回值形状，按运维令 §7 不在契约修复轮顺手改）— 历史记录
-
-**EDA-Eval-DesignFlow-EsdEmTechViaKeyErrorDiag-001**：reference/check.py (653 行) 有 `def main()` + `def _emit(conds)`（用 `sys.exit(0 if npass==len else 1)`）但**没有 `def check(deliverable, workdir)`**，也无 `check = ...` alias。judge 调 `m.check(deliverable, workdir)` → **AttributeError → 判 FAIL**（即使交付件正确）。这是 D 自己的 case，下轮需重构 main()→check()（sys.exit 改 return True/False，保留全部断言逻辑/条数）。复现：`grep -n "def check\|def main" benchmarks/EDA-Eval-DesignFlow/reference/EDA-Eval-DesignFlow-EsdEmTechViaKeyErrorDiag-001/check.py`。

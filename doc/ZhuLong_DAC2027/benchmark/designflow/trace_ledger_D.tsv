@@ -1924,7 +1924,7 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1794905973396_bqpjv	clarawu	hfeg0pkn005	39	schematic_netlist	parked		2026-11-19 21:1x	r958 triage: U#0 clean Ron-linearity-smoothness-from-.md0 produce intent + GOLD fetchable (A#6 ron_linearity_smoothness.py 5987B + real 64pt rpu_50 d1_min=-8.56/d1_max=-0.70/d2_min=-4.80/d2_max=+5.15) BUT dup of existing RonSmoothnessGen-001+RonCurveSmoothness-001 (ua9tu same user clarawu same Ron-smoothness-from-.md0 task cross-session != legit 2nd-case per r938 discuss sibling-dup vs follow-up-question rule); REJECT as duplicate
 1795002165385_19znu.messages.json	reedchen	hfeg0pkn004	159	schematic_netlist	case	EDA-Eval-DesignFlow-I319BufferDelete-001	2026-11-19 23:04	
 1794897784136_jjg2c	jiashengz	hfeg0pkn002	99	schematic_netlist	case	EDA-Eval-DesignFlow-StdCellFromNetlistProduce-001	2026-11-20 04:25	
-1794795731500_05ev4.messages.json	my7li	hfeg0plg56	409	analog_context	case	EDA-Eval-DesignFlow-DqAbusLioYioMappingExtractProduce-001	2026-11-24 16:51	NFS stale handle on hfeg0pkn002: ls shows file 2.37MB but head/cat/stat ENOENT cluster-wide (hfeg0pnd001 empty dir); r1264
+1794795731500_05ev4.messages.json	my7li	hfeg0plg56	409	analog_context	case	EDA-Eval-DesignFlow-DqAbusLioYioMappingExtractProduce-001	2026-11-20 05:11	
 1794806896875_ibmuc	jiashengz	hfeg0plg92	538	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistStructureGraphProduce-001	2026-11-20 11:15	
 1794991410253_ze989	clarawu	hfeg0plg14	33	analog_context	case	EDA-Eval-DesignFlow-DronDv2ExtractProduce-001	2026-11-20 06:39	
 1794980358021_wwqts	wenfeiz	hfeg0pgn145	162	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistInstHierTrace-001	2026-11-20 07:17	
@@ -1939,7 +1939,7 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1794296966966_l4tfv					case	EDA-Eval-DesignFlow-WaveformInvSearchProduce-001	2026-11-20 16:48	revival from B-parked(11-11 file-search consultation); 11-15 reaudit retrieval/QA legit; waveform domain=D; A-faithful U#76 verbatim; 15 assertions a-o; synthesized-reframe real fs->manifest JSON
 1795078545832_fxlzf.messages.json	joeyl	hfeg0plg74	246	schematic_netlist	parked		2026-11-20 17:08	
 1794877076915_2mwdb.messages.json	jingjiew	hfeg0plg97	357	schematic_netlist	parked		2026-11-20 17:10	
-1795053942204_k9tbi.messages.json	tianqizh	hfeg0plg89	442	waveform	case	EDA-Eval-DesignFlow-WvTblAnalogPlotProduce-001	2026-11-24 16:51	NFS automount flaky on hfeg0pjn120: ls -la glob shows file 1.24MB once then vanishes; head ENOENT; r1264
+1795053942204_k9tbi.messages.json	tianqizh	hfeg0plg89	442	waveform	case	EDA-Eval-DesignFlow-WvTblAnalogPlotProduce-001	2026-11-24 13:58	
 1795080497883_q5elb.messages.json	guangmingz	hfeg0pfn048	271	schematic_netlist	case	EDA-Eval-DesignFlow-VamCosimEnvBuild-001	2026-11-20 17:41	
 1794882024123_3prfp.messages.json	mre	hfeg0pkn005	111	waveform	case	EDA-Eval-DesignFlow-SimPvtExtractProduce-001	2026-11-20 18:03	
 1794809382329_bw5c1.messages.json	zjqiao	hfhds201	165	schematic_netlist	case	EDA-Eval-DesignFlow-HcellNetlistXrefProduce-001	2026-11-20 18:50	
@@ -2057,4 +2057,3 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1795398722406_6c0ct.messages.json	dsgao	10.129.2.10	123	waveform	case	EDA-Eval-DesignFlow-FarMegCouplingCompare-001	2026-11-24 10:11	
 1795438412247_bgeor.messages.json	rongjiez	hfeg0plg58	59	schematic_netlist	claimed		2026-11-24 10:50	
 1795070642632_n6hk1.messages.json	cuij	hfeg0plg15	67	schematic_netlist	case	EDA-Eval-DesignFlow-PcellGenProduce-001	2026-11-24 14:27	
-1795415966940_88tdv.messages.json	mengzh	hfeg0plg09	107	waveform	case	EDA-Eval-DesignFlow-SineScanStdout-001	2026-11-24 16:59	near-duplicate of CosWaveWdf-001 (same vague waveform-gen intent + exploratory Q&A about real-time control, no differentiated produce kernel)

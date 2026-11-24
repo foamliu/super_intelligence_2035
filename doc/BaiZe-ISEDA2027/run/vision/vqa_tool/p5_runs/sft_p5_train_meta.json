@@ -1,9 +1,0 @@
-{
-  "seed": 11,
-  "epochs": 3,
-  "steps": 3120,
-  "n_records": 1040,
-  "final_loss_avg25": 0.0406,
-  "adapter_dir": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/p5_runs/sft_p5_adapter_seed11",
-  "wall_s": 635.4
-}

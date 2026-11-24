@@ -33,31 +33,19 @@ for h in HARNESSES:
         eval_n = d.get("n", 0)
         resolved = len(d.get("resolved", []))
         infra_cases = d.get("infra_or_quota", [])
-    # predict counts + empty patches + token usage
+    # predict counts + empty patches
     files = glob.glob(os.path.join(PRED_DIR, f"{h}__*.json"))
     predict_n = len(files)
     real = 0
     empties = []
-    tok_in = 0
-    tok_out = 0
-    tok_n = 0
     for f in files:
         try:
             d = json.load(open(f))
             patch = ""
             if isinstance(d, list):
                 patch = " ".join(p.get("model_patch", "") for p in d)
-                u = (d[0].get("usage") if d else {}) or {}
             elif isinstance(d, dict):
                 patch = d.get("model_patch", "")
-                u = d.get("usage") or {}
-            else:
-                u = {}
-            it, ot = u.get("input_tokens"), u.get("output_tokens")
-            if isinstance(it, (int, float)) or isinstance(ot, (int, float)):
-                tok_in += int(it or 0)
-                tok_out += int(ot or 0)
-                tok_n += 1
             if patch.strip():
                 real += 1
             else:
@@ -78,9 +66,6 @@ for h in HARNESSES:
         "pass_pct": pass_pct,
         "infra_cases": infra_cases,
         "empties": empties,
-        "tok_in": tok_in,
-        "tok_out": tok_out,
-        "tok_n": tok_n,
         "done": predict_n >= 500,
     })
 
@@ -91,18 +76,12 @@ total_resolved = sum(r["resolved"] for r in rows)
 total_predict = sum(r["predict"] for r in rows)
 
 # ---- build HTML ----
-def fmt_tok(r):
-    if r["tok_n"] == 0:
-        return "未采集"
-    return f"{r['tok_in']:,} / {r['tok_out']:,}"
-
 main_rows = ""
 for i, r in enumerate(rows_sorted, 1):
     main_rows += (
         f"<tr><td>{i}</td><td><strong>{esc(r['harness'])}</strong></td>"
         f"<td class='pass' style='font-weight:bold'>{r['resolved']}/500</td>"
-        f"<td style='font-size:1.35em;font-weight:bold;color:#27ae60'>{r['pass_pct']:.1f}%</td>"
-        f"<td style='font-size:.85em'>{fmt_tok(r)}</td></tr>\n"
+        f"<td style='font-size:1.35em;font-weight:bold;color:#27ae60'>{r['pass_pct']:.1f}%</td></tr>\n"
     )
 
 pred_rows = ""
@@ -154,9 +133,9 @@ HTML = f"""<!DOCTYPE html>
 </div>
 
 <h2 style="font-size:1.5em;border-left:8px solid #e74c3c">★ 主表 · SWE-bench Verified（500 题 × 7 路 · Pass% = resolved/500 · 按 Pass% 降序）</h2>
-<table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>Resolved/500</th><th>Pass%</th><th>Tokens (in / out)</th></tr></thead><tbody>
+<table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>Resolved/500</th><th>Pass%</th></tr></thead><tbody>
 {main_rows}</tbody></table>
-<div class="note"><p>分母恒 500。Pass% = resolved/500。Tokens = 已落盘 <code>usage</code> 的题累计 input/output（<code>未采集</code> = 历史 run 未存 token）。未跑完的路按已 resolved 数 / 500 计算，不含未跑题的假设。每个格子只写一个数字。</p></div>
+<div class="note"><p>分母恒 500。Pass% = resolved/500。未跑完的路按已 resolved 数 / 500 计算，不含未跑题的假设。每个格子只写一个数字。</p></div>
 
 <h2>1. Predict 进度</h2>
 <table><thead><tr><th>Harness</th><th>Predict/500</th><th>剩余</th><th>Empty patch</th><th>状态</th></tr></thead><tbody>
