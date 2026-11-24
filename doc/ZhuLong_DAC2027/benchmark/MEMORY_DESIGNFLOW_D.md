@@ -203,3 +203,5 @@ WAITING: 0（r1212: MCP 110th OK + 候选筛选+lorih 深读（DEBT，case 下�
 > r1184 流水原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1193」（r1193 释体积；infra 修复 trace_ledger next ERE 超限 + §4.9 审计 15 case 0 违规）
 
 - r1223(dqrb6) 流水原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1252」（MCP 第121次确认 + dqrb6 深读合成 EDA-Eval-DesignFlow-AnalogDlyCellLogicDeriveProduce-001 L1 analog_context k=12 交付；A/B 结构不相交 + 三假+hardcode_a 全 FAIL + gold 12/12；详见 daily_D_2026-11-24_r1223_dqrb6.md）
+
+> r1259 探针（无新 case）：r1258 WvTblAnalogPlotProduce-001 已双仓提交（EDA-Flow-Bench f96792a11 / super_intelligence_2035 e081920a85）。本轮 r1259 候选搜索：2026-11-24 scan summary.tsv 全量扫描 D 域（waveview/cosmos/skill/netlist/spiros/spectrum/analog/schematic，排除 B 域 sim），mc≥30 候选≈80 条全部跨 shard 已 claimed（A/B/C/D 任一）或 parked-for-cause（Q&A/file-org/false-positive-kw）；mc 30-39 band 仅 dxcca(truly-free) 但 SSH hfeg0pkn001 两次超时 + .spi 嫌 B 域；hfhds201(.75 本地) D 候选全部已 case（j26fe/9dytw/1nsgi 等 e0039602 系列被 D 深耕）。结论：当前 scan 的 mc≥30 D 候选池已采尽。下一轮策略：等 2026-11-25 新 scan / 或放宽 mc≥15(A-style) / 或跨 shard reclaim parked。MCP 第156次 open_session+declare_done+close OK。
