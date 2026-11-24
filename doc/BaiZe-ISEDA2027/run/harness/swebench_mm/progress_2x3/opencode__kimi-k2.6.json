@@ -6544,37 +6544,70 @@
   "prettier__prettier-9514": {
     "instance_id": "prettier__prettier-9514",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 6300,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "prettier__prettier-9866": {
     "instance_id": "prettier__prettier-9866",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.2,
+    "rc": -1,
+    "model_patch_len": 2496,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "scratchfoundation__scratch-gui-2778": {
     "instance_id": "scratchfoundation__scratch-gui-2778",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 32.9,
+    "rc": 0,
+    "model_patch_len": 347,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "Updated `autoprefixer` from `^8.1.0` to `^9.0.0` in `package.json`.\n\nTo apply the update, run:\n```bash\nnpm install\n```\n",
+    "stderr_tail": " \"autoprefixer\": \"^8.1.0\",\n+  \"autoprefixer\": \"^9.0.0\",\n   \"babel-core\": \"^6.23.1\",\n   \"babel-eslint\": \"^8.0.1\",\n   \"babel-loader\": \"^7.1.0\",\n   \"babel-plugin-syntax-dynamic-import\": \"^6.18.0\",\n\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-3342": {
     "instance_id": "scratchfoundation__scratch-gui-3342",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1210.6,
+    "rc": 0,
+    "model_patch_len": 1039,
+    "n_images": 6,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "on. As the issue notes, this is **\"not a dealbreaker\"** — the watermark is rendered on top with low opacity and `pointer-events: none`, so it remains visible but doesn't interfere with block editing.\n",
+    "stderr_tail": "tion, and zoom controls\n[✓] Implement watermark component and integrate into blocks workspace\n[✓] Add CSS for sizing, positioning, opacity, and RTL support\n[✓] Test and verify the implementation\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-4568": {
     "instance_id": "scratchfoundation__scratch-gui-4568",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 367.4,
+    "rc": 0,
+    "model_patch_len": 4227,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "twork access is unavailable for `npm install`. However, the existing monitor-list tests should continue to pass since no existing props or behavior were modified — only new optional props were added.\n",
+    "stderr_tail": "d where slider min/max are defined and used\n[✓] Implement UI for changing slider min/max (context menu or dialog)\n[✓] Ensure imported 2.0 project ranges are preserved\n[✓] Test the implementation\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-5039": {
     "instance_id": "scratchfoundation__scratch-gui-5039",

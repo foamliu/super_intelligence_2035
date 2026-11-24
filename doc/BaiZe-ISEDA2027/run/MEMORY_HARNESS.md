@@ -1,7 +1,8 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 1
-> 🆕 **R3000 · 2026-11-24 13:27 — 🔴修复：R2999的335被git操作revert回328·已从12:48 eval存档恢复+REGEN+commit**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活~94h✅零越界 ②mem avail1185G≥512G✅ ③load24.5≤120✅ ④pretrain step7.24s≤7.4s✅ ⑤无失控进程✅. **★R2999心跳报335但eval JSON+7way报告实际显示328**——根因：12:48 merge写335到eval JSON(未commit)→后续git操作(可能pull --rebase --autostash)将tracked eval JSON revert回10:22 commit的328→REGEN重跑生成328报告. **本轮修复**：从`logs/evaluation/rerun_incr_cline-patched_11241242/`的13个report.json重新apply merge(7 resolved+6 failed=与12:48 log一致)→eval JSON=335/165/0→7way REGEN OK@13:26→**立即commit防再revert**. **7way当前**: hermes444/88.8%·opencode416/83.2%·**cline335/67.0%**·cc295/59.0%·pi247/49.4%·deepseek195/39.0%·codex115/23.0%. **62 empty patch剩余**→**night launcher PID2792129 armed**(等21:00→round2 predict --workers 8 on 66 ids→auto eval+regen). **下一步**: 下轮唤醒查round2 log→merged则报新Pass%→剩余empty等下个21:00窗口. **并行MM 2×3**: 2路kimi仍RUN(PID2131928~88h). 📦 TASK~37KB MEMORY~7KB
+> 🆕 **R3001 · 2026-11-24 13:51 — park监控轮·13:50窗口外(09:00-21:00)·night launcher PID2792129正确parking等21:00·eval JSON确认335/500=67.0%(R3000修复holding未再revert)·判据全绿**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活~94h✅零越界 ②mem avail1185G≥512G✅ ③load23.5≤120✅ ④pretrain step7.12-7.20s≤7.4s✅ ⑤无失控进程✅. **eval JSON核实**: n=500 resolved=335 failed=165 infra=[] evaluated=500→**cline=335/500=67.0%✅(R3000 fix holding)**. **round2 log**: `parallel_cline_predict_round2.log`=launcher 12:53启动→每600s轮询→"outside window(H=13),sleeping600s"→**正确parking等21:00**. **round2 ids**: `cline-patched_rerun_ids_round2.txt`=66 empty patch待重跑. **night launcher脚本**: 21:00→predict --workers 8(4 env vars✅·nice19/ionice3/ulimit200GiB)→auto incremental_eval_merge.py --regen. **7way当前**: hermes444/88.8%·opencode416/83.2%·**cline335/67.0%**·cc295/59.0%·pi247/49.4%·deepseek195/39.0%·codex115/23.0%. **并行MM 2×3**: cline×kimi396has(↑28)·oc×kimi442has(↑25)·2路processes仍RUN(PID2131928~88h·CPU低✅). 📦 TASK~37KB MEMORY~26KB
+> 📦 R3000 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·修复轮·eval JSON被git revert回328→从12:48 eval存档恢复335→7way REGEN→立即commit·判据全绿·night launcher armed·MM 2路kimi RUN）。需要时再读。
 > 📦 R2997 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·监控轮#4·LIVE predict 59 logged+4 patch-produced·网关恢复adaptive→6·438/500 nonempty·判据全绿·auto-eval armed PID433403·cline328/500=65.6%·MM 2路kimi RUN）。需要时再读。
 > 📦 R2996 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·监控轮#3·LIVE predict 55 logged+3 patch-produced·网关恢复·判据全绿·auto-eval未armed·cline328/500=65.6%·MM 2路kimi RUN）。需要时再读。
 > 📦 R2993 流水已归档 → daily-memories-harness/2026-11-24.md（11-23令·park轮·incr eval reconcile RUNNING→FINISH·cline328/500=65.6%·判据全绿·watcher re-armed·MM 2路kimi RUN）。需要时再读。
@@ -16,16 +17,16 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-24令(cline PREDICT并行化收尾)·LIVE predict COMPLETE✅·auto-eval COMPLETE✅·cline=335/500=67.0%·🔴eval JSON revert已修复(R3000)·night launcher PID2792129 armed(等21:00→round2 predict --workers 8→auto eval+regen)
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·SWE-bench Verified predict 7路·§11-19报告重写✅(R2758)·MM容器下载COMPLETE(580/580)✅·Phase 0 冻结验收通过✅·Step 1 硬护栏全落地✅(guard PID931671✅)·**11-24令 LIVE predict --workers 8 COMPLETE**(merged 41/96·auto-eval 13 re-eval: 7resolved+6failed+0infra)·**cline=335/500=67.0%(↑7)**·7way报告REGEN OK·**night launcher PID2792129 armed for 21:00**·**R3000修复：eval JSON被git revert回328→从12:48 eval存档恢复335+REGEN+commit**
-当前动作:     R3000: 修复eval JSON revert(335→328→恢复335)·cline335/500=67.0%·62 empty patch剩余·night launcher PID2792129 armed(等21:00→round2 predict --workers 8 on 66 ids→auto eval+regen)·判据全绿(guard PID931671~94h零越界·mem1185G·load24.5·pretrain7.24s)·MM 2路kimi仍RUN
-下一步:     ①下轮唤醒查logs/parallel_cline_predict_round2.log→merged则报cline新Pass%+确认7way REGEN ②剩余cline empty patch继续等21:00窗口(night launcher PID2792129 armed)→后续各路predict加--workers 8守21:00-09:00窗口 ③cline完成后→codex365→deepseek273→cc184→pi284→hermes101→oc54按infra数量降序 ④MM 2×3 2路kimi retry pass监控→has_patch爬升→MM eval
+PHASE:        11-24令(cline PREDICT并行化收尾)·LIVE predict COMPLETE✅·auto-eval COMPLETE✅·cline=335/500=67.0%·eval JSON确认holding(R3001)·night launcher PID2792129 parking等21:00→round2 predict --workers 8→auto eval+regen
+已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·codex.py fix①②③✅·SWE-bench Verified predict 7路·§11-19报告重写✅(R2758)·MM容器下载COMPLETE(580/580)✅·Phase 0 冻结验收通过✅·Step 1 硬护栏全落地✅(guard PID931671✅)·**11-24令 LIVE predict --workers 8 COMPLETE**(merged 41/96·auto-eval 13 re-eval: 7resolved+6failed+0infra)·**cline=335/500=67.0%(↑7)**·7way报告REGEN OK·**R3000修复eval JSON revert**·**R3001 park监控确认335 holding+night launcher正确parking**
+当前动作:     R3001: park监控轮(13:50窗口外)·eval JSON核实335/500=67.0%(R3000 fix holding✅)·night launcher PID2792129正确parking(每600s轮询等21:00)·round2 ids=66 empty patch·判据全绿(guard PID931671~94h零越界·mem1185G·load23.5·pretrain7.12-7.20s)·MM 2路kimi仍RUN(CPU低✅)
+下一步:     ①下轮唤醒查logs/parallel_cline_predict_round2.log→merged则报cline新Pass%+确认7way REGEN ②night launcher 21:00自动启动round2 predict --workers 8 on 66 ids→auto eval+regen ③cline完成后→codex365→deepseek273→cc184→pi284→hermes101→oc54按infra数量降序 ④MM 2×3 2路kimi retry pass监控→has_patch爬升→MM eval
 阻塞:         无
 ERROR_COUNT:  0
  体积: TASK~37KB（⚠️>32KB软限·<40KB硬限·下次唤醒归档） / MEMORY≈26KB（✅≤32KB）
  SWE-bench Verified Pass%(分母恒500): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%(↑7 infra回收)·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
  真实 Pass% (TB-2.1, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
- SWE-bench Multimodal 2×3 predict(6路全480/480 entries·2路kimi retry pass仍RUN): cline×deepseek393has(DONE)·cline×doubao466has(DONE)·cline×kimi368has(400/480·retry)·oc×deepseek453has(DONE)·oc×doubao448has(DONE)·oc×kimi417has(432/480·retry)=2545/2880 has_patch·4路DONE·2路processes仍RUN(PID2131928~87h·nice19/OMP8/ulimit200GiB·CPU低✅无失控)
+ SWE-bench Multimodal 2×3 predict(6路全480/480 entries·2路kimi retry pass仍RUN): cline×deepseek393has(DONE)·cline×doubao466has(DONE)·cline×kimi396has(↑28·retry)·oc×deepseek453has(DONE)·oc×doubao448has(DONE)·oc×kimi442has(↑25·retry)=2598/2880 has_patch·4路DONE·2路processes仍RUN(PID2131928~88h·nice19/OMP8/ulimit200GiB·CPU低✅无失控)
 ## 启动说明（首次唤醒）
 
 1. **先读** `BAIZE_HARNESS_TASK.md` 全文。
