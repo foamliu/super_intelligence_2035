@@ -6503,16 +6503,30 @@
   "prettier__prettier-4202": {
     "instance_id": "prettier__prettier-4202",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 400.3,
+    "rc": 0,
+    "model_patch_len": 4880,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "f the previous 800+ character separator lines.\n\nAll 771 markdown tests pass. The few unrelated failures in the full suite are pre-existing issues with `snapshot-diff` dependencies and CSS formatting.\n",
+    "stderr_tail": "e table separator line length is determined\n[✓] Implement limit to turn off table normalizing for excessively long lines\n[✓] Add/update tests for the new behavior\n[✓] Run tests to verify the fix\n\u001b[0m\n"
   },
   "prettier__prettier-6319": {
     "instance_id": "prettier__prettier-6319",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 796.7,
+    "rc": 0,
+    "model_patch_len": 4102,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": " `5 |> # * 2` now formats correctly to `5 |> # * 2;`\n- All existing minimal pipeline syntax (e.g., `a |> b |> c`, `foo |> (bar ?? baz)`) continues to work\n- **All 968 test suites (7,494 tests) pass**\n",
+    "stderr_tail": "stand pipeline operator parsing\n[✓] Identify where pipeline proposal options are set\n[✓] Fix parser to support smart pipeline proposal with # placeholder\n[✓] Test the fix with the provided input\n\u001b[0m\n"
   },
   "prettier__prettier-8536": {
     "instance_id": "prettier__prettier-8536",

@@ -3,12 +3,12 @@
   "harness_code": "cline-patched",
   "done": 500,
   "total": 96,
-  "patch_produced": 411,
+  "patch_produced": 414,
   "infra": 0,
   "timeout": 0,
   "quota_blocked": 13,
-  "no_patch": 76,
-  "last_update": "2026-11-24 11:24:29",
+  "no_patch": 73,
+  "last_update": "2026-11-24 11:45:33",
   "results": [
     {
       "instance_id": "astropy__astropy-12907",
@@ -6298,15 +6298,16 @@
       "instance_id": "sympy__sympy-14711",
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 17.1,
-      "model_patch_len": 0,
+      "wall_s": 367.1,
+      "model_patch_len": 2180,
       "quota_blocked": false,
+      "rate_limited": false,
       "timeout": false,
       "retried": false,
-      "stdout_tail": "rl?: Unable to connect. Is the computer able to access the url? (ConnectionRefused)\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-14711.json\n[run_single] cleanup: git reset --hard c6753448b5c34f95e250105d76709fe4d349ca1f\n",
+      "stdout_tail": "th no regressions.\",\"model\":{\"id\":\"glm-5.3-flash\",\"provider\":\"openai-compatible\"}}\n\n[run_single] model_patch: 2180 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-14711.json\n[run_single] cleanup: git reset --hard c6753448b5c34f95e250105d76709fe4d349ca1f\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-14711.json",
-      "classification": "no-patch"
+      "classification": "patch-produced"
     },
     {
       "instance_id": "sympy__sympy-14976",
@@ -6340,15 +6341,16 @@
       "instance_id": "sympy__sympy-15345",
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 17.0,
-      "model_patch_len": 0,
+      "wall_s": 84.2,
+      "model_patch_len": 1792,
       "quota_blocked": false,
+      "rate_limited": false,
       "timeout": false,
       "retried": false,
-      "stdout_tail": "rl?: Unable to connect. Is the computer able to access the url? (ConnectionRefused)\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-15345.json\n[run_single] cleanup: git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n",
+      "stdout_tail": "lated to this fix.\",\"model\":{\"id\":\"glm-5.3-flash\",\"provider\":\"openai-compatible\"}}\n\n[run_single] model_patch: 1792 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-15345.json\n[run_single] cleanup: git reset --hard 9ef28fba5b4d6d0168237c9c005a550e6dc27d81\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-15345.json",
-      "classification": "no-patch"
+      "classification": "patch-produced"
     },
     {
       "instance_id": "sympy__sympy-15349",
@@ -6396,15 +6398,16 @@
       "instance_id": "sympy__sympy-15875",
       "harness": "cline-patched",
       "returncode": 0,
-      "wall_s": 17.1,
-      "model_patch_len": 0,
+      "wall_s": 917.9,
+      "model_patch_len": 1272,
       "quota_blocked": false,
+      "rate_limited": false,
       "timeout": false,
       "retried": false,
-      "stdout_tail": "rl?: Unable to connect. Is the computer able to access the url? (ConnectionRefused)\"}\n\n[run_single] model_patch: 0 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-15875.json\n[run_single] cleanup: git reset --hard b506169ad727ee39cb3d60c8b3ff5e315d443d8e\n",
+      "stdout_tail": "pe\":\"run_aborted\",\"reason\":\"external_abort\",\"message\":\"aborted by another client\"}\n\n[run_single] model_patch: 1272 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-15875.json\n[run_single] cleanup: git reset --hard b506169ad727ee39cb3d60c8b3ff5e315d443d8e\n",
       "stderr_tail": "",
       "predictions_file": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-15875.json",
-      "classification": "no-patch"
+      "classification": "patch-produced"
     },
     {
       "instance_id": "sympy__sympy-15976",
