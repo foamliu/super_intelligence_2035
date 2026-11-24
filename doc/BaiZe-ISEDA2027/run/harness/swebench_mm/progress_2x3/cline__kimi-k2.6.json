@@ -6269,9 +6269,16 @@
   "openlayers__openlayers-15683": {
     "instance_id": "openlayers__openlayers-15683",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1696.7,
+    "rc": 0,
+    "model_patch_len": 7913,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "equal `frameState.size * resolution`, so behavior is unchanged. For rotated maps, the canvas now correctly matches the viewport size.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-15685": {
     "instance_id": "openlayers__openlayers-15685",
