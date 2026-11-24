@@ -1939,7 +1939,7 @@ xlym9					case	EDA-Eval-DesignFlow-SpiceIbisConvMethodQA-001	2026-11-19 07:49
 1794296966966_l4tfv					case	EDA-Eval-DesignFlow-WaveformInvSearchProduce-001	2026-11-20 16:48	revival from B-parked(11-11 file-search consultation); 11-15 reaudit retrieval/QA legit; waveform domain=D; A-faithful U#76 verbatim; 15 assertions a-o; synthesized-reframe real fs->manifest JSON
 1795078545832_fxlzf.messages.json	joeyl	hfeg0plg74	246	schematic_netlist	parked		2026-11-20 17:08	
 1794877076915_2mwdb.messages.json	jingjiew	hfeg0plg97	357	schematic_netlist	parked		2026-11-20 17:10	
-1795053942204_k9tbi.messages.json	tianqizh	hfeg0plg89	442	waveform	parked		2026-11-20 17:11	
+1795053942204_k9tbi.messages.json	tianqizh	hfeg0plg89	442	waveform	case	EDA-Eval-DesignFlow-WvTblAnalogPlotProduce-001	2026-11-24 13:58	
 1795080497883_q5elb.messages.json	guangmingz	hfeg0pfn048	271	schematic_netlist	case	EDA-Eval-DesignFlow-VamCosimEnvBuild-001	2026-11-20 17:41	
 1794882024123_3prfp.messages.json	mre	hfeg0pkn005	111	waveform	case	EDA-Eval-DesignFlow-SimPvtExtractProduce-001	2026-11-20 18:03	
 1794809382329_bw5c1.messages.json	zjqiao	hfhds201	165	schematic_netlist	case	EDA-Eval-DesignFlow-HcellNetlistXrefProduce-001	2026-11-20 18:50	
