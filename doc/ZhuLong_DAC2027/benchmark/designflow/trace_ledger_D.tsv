@@ -2057,4 +2057,4 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1795398722406_6c0ct.messages.json	dsgao	10.129.2.10	123	waveform	case	EDA-Eval-DesignFlow-FarMegCouplingCompare-001	2026-11-24 10:11	
 1795438412247_bgeor.messages.json	rongjiez	hfeg0plg58	59	schematic_netlist	claimed		2026-11-24 10:50	
 1795070642632_n6hk1.messages.json	cuij	hfeg0plg15	67	schematic_netlist	case	EDA-Eval-DesignFlow-PcellGenProduce-001	2026-11-24 14:27	
-1795415966940_88tdv.messages.json	mengzh	hfeg0plg09	107	waveform	parked		2026-11-24 16:45	near-duplicate of CosWaveWdf-001 (same vague waveform-gen intent + exploratory Q&A about real-time control, no differentiated produce kernel)
+1795415966940_88tdv.messages.json	mengzh	hfeg0plg09	107	waveform	case	EDA-Eval-DesignFlow-SineScanStdout-001	2026-11-24 16:59	near-duplicate of CosWaveWdf-001 (same vague waveform-gen intent + exploratory Q&A about real-time control, no differentiated produce kernel)
