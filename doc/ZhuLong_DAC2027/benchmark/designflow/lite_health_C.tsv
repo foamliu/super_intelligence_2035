@@ -7,11 +7,11 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	AutoCellKitMap-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
 2026-11-24T22:26	AutoViaGen-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
 2026-11-24T22:26	AutoViaPFAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:50	AutoViaSelAnalyze-001	C	1	1	0	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (ref solution PASS)	
+2026-11-24T22:50	AutoViaSelAnalyze-001	C	1	1	1	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (ref solution PASS)	
 2026-11-24T22:26	CTLESchGenAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	CalibreLvsRepDiag-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	CentroidPlaceAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:50	ChkSaveHistDedup-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL: ref solution candidate exit=1 on hidden B (Traceback in chk_save_hist_dedup.py) -- real solution bug, needs investigation	
+2026-11-24T23:45	ChkSaveHistDedup-001	C	1	1	1	1	?	?	green	L	
 2026-11-24T22:26	CmMaOpTableGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	CombCellNetlistSyn-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
 2026-11-24T22:26	ConnChkSummaryGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
@@ -37,8 +37,8 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	DrcPairWaiveClassify-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DrcPatCheckAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DrcPatQaDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:50	DrcPatternPkgGen-001	C	1	1	0	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (refzip PASS)	
-2026-11-24T22:50	DrcPatternReportComposer-001	C	1	1	0	1	?	?	green	L2 FIX: renamed solution.py -> drc_pattern_report.py (prompt/check expect this name); ref PASS via real harness	
+2026-11-24T22:50	DrcPatternPkgGen-001	C	1	1	1	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (refzip PASS)	
+2026-11-24T22:50	DrcPatternReportComposer-001	C	1	1	1	1	?	?	green	L2 FIX: renamed solution.py -> drc_pattern_report.py (prompt/check expect this name); ref PASS via real harness	
 2026-11-24T22:26	DrcPcellBatchConvert-v2	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DrcQaAutoPipe-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DrcRuleCellMatch-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
@@ -48,12 +48,12 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	DummyCfgCheck-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:50	DummyDeck-001	C	1	1	0	0	?	?	p0_fixed	L2 FAIL: check expects report_A.json in zip (ref only has dummy_deck_diag.py) + asset_a/ path issue -- needs ref repackage + path fix	
 2026-11-24T22:26	DummyGeoVerify-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:50	DummyHeaderQaResolver-001	C	1	1	0	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (ref solution PASS)	
+2026-11-24T22:50	DummyHeaderQaResolver-001	C	1	1	1	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (ref solution PASS)	
 2026-11-24T22:50	DummyMeas-001	C	1	1	0	0	?	?	p0_fixed	L2 FAIL: FileNotFoundError -- likely skipper GUI binary missing (L4 eval-machine dep)	
 2026-11-24T22:26	DummyQA-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
 2026-11-24T22:26	DummyQaCliNoConfig-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DummyQaDataPrep-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:50	DummyTargetLayerCmp-001	C	1	1	0	1	?	?	green	L2 FIX: robust hidden-B/A input path resolution (hidden/ subdir + abs paths); ref PASS via real harness	
+2026-11-24T22:50	DummyTargetLayerCmp-001	C	1	1	1	1	?	?	green	L2 FIX: robust hidden-B/A input path resolution (hidden/ subdir + abs paths); ref PASS via real harness	
 2026-11-24T22:26	ERCBootPlan-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	ERCFilter-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	EccDsaLocate-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
@@ -92,7 +92,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	PDKQA-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
 2026-11-24T22:26	PFMergeAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	PFMergeDupAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:50	PGAssemblyLVS-001	C	1	1	0	1	?	?	green	L2 FIX: created reference_submit.zip with plan_gen.py + plan_A.json (prompt requires both); ref PASS via real harness	
+2026-11-24T22:50	PGAssemblyLVS-001	C	1	1	1	1	?	?	green	L2 FIX: created reference_submit.zip with plan_gen.py + plan_A.json (prompt requires both); ref PASS via real harness	
 2026-11-24T22:26	PGLayout-001	C	1	1	?	0	?	?	p2_fixed	L1 var/list/str->dict-pass-ok fixed this round (audit OK, compile OK); L2 harness-limited: check.py needs asset_a subdir in workdir (not a check.py defect); L3 only 0 neg (<3, needs补 neg)	
 2026-11-24T22:26	PRBoundary-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
 2026-11-24T22:26	PdFloorplanGen-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
@@ -102,8 +102,8 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	PowerFillMergeGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	QaCellRuleLabelGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	RNodeCovAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:50	RNodePlan-001	C	1	1	0	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (ref solution PASS)	
-2026-11-24T22:50	RTextChkPlan-001	C	1	1	0	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (ref solution PASS)	
+2026-11-24T22:50	RNodePlan-001	C	1	1	1	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (ref solution PASS)	
+2026-11-24T22:50	RTextChkPlan-001	C	1	1	1	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (ref solution PASS)	
 2026-11-24T22:26	ResFlow-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	RoutingTrackFinder-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	RsCalcCfgSync-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
@@ -112,10 +112,10 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	RsCalcFlowCompare-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	RsCalcFlowOrch-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	RsCalcMesh-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:50	RsCalcShortDiag-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL: missing assets/CASE/artifacts (A subdir staging) -- harness flattens A attachments, check expects subdir	
+2026-11-24T23:45	RsCalcShortDiag-001	C	1	1	1	1	?	?	green	L	
 2026-11-24T23:30	RscalcHandoffDocGen-001	C	1	1	1	1	?	?	green	L2 fix: hidden-B path resolver (workdir/hidden/flow_state_B{,2}.json fallback to workdir/assets/<case>/hidden/) + built reference_submit.zip; ref PASS + 3 neg FAIL distinct (L4/L5 eval-machine run pending)	
 2026-11-24T22:26	RtextChkPlan-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:50	SchHierDescentReport-001	C	1	1	0	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (refzip PASS)	
+2026-11-24T22:50	SchHierDescentReport-001	C	1	1	1	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (refzip PASS)	
 2026-11-24T23:30	SchNetPrefixHilightGen-001	C	1	1	1	1	?	?	green	L2 fix: hidden-B path resolver (workdir/hidden/net_inventory_B.json + hilight_config_B.json fallback to workdir root) -- harness stages hidden under workdir/hidden; ref dict-pass-ok 15/15 + 6 neg FAIL distinct (L4/L5 eval-machine run pending)	
 2026-11-24T22:26	SchPinAnalyze-001	C	1	1	1	1	?	?	green	L1 var/list/str->dict-pass-ok fixed this round (audit OK, compile OK)	
 2026-11-24T22:26	SchWireRebuildGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
