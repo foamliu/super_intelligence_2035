@@ -1,3 +1,4 @@
+# RESOLVED 2026-11-25 r1151: all 9 cases runtime-verified contract-compliant + ref PASS (8 return True, VcdToFsdb returns {'pass':True}). AST flags were helper-fn returns / false alarms, NOT check() success-path violations. No P0 found. See lite_health_A.tsv r1151 rows for per-case detail.
 ts	case_id	shard	scan_signal	reverify_reason
 2026-11-25T06:10:00	EDA-Eval-DesignFlow-AprLogAudit-001	A	return Name:out	check() has 'return out' path (Name, non-bool). Success path may be 'return True' (L?) — needs runtime _pass() test with ref submit.zip (audit_apr.py). Prior green used __main__ 'print(check(...))' which doesn't assert bool.
 2026-11-25T06:10:00	EDA-Eval-DesignFlow-PDKRunsetExplore-001	A	return Tuple x4	check() has 4 Tuple returns. Was r1130 'fixed' but tuples remain — needs runtime _pass() test (gold_explorer.py). May be failure-path tuples w/ True success path.
