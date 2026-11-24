@@ -98,7 +98,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-25T01:30	PdFloorplanGen-001	C	1	1	0	0	?	?	p0_fixed	audit r1080: L2 AssertionError [a] hidden B + L3 FAIL	
 2026-11-24T22:26	PgLayoutMergeAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	PortPropagate-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-25T01:30	PowerFill-001	C	1	1	0	1	?	?	p0_fixed	audit r1080: L2 rc=1 ref FAIL (L3 OK)	
+2026-11-25T03:48	PowerFill-001	C	1	1	1	1	1	1	green	r1085: L4 calibredrv mock (pure-stdlib GDSII parser) emulates calibredrv -a layout peek for all pf_audit.py flags (-topcell/-cellcount/-precision/-format/-units/-bbox/-layers/-cells/-celltext); calibrated vs real calibredrv 2020.1_36 on .75 sandbox. topcell/cellcount/bbox/layers/cells/celltext parsed from binary (bbox={min_x,min_y,width,height} from top-cell own elems excl SREF/AREF); units/precision from UNITS record via calibrated mapping (verified 0.00025/4000.0 for PF UNITS). check.py wires CALIBREDRV->mock (DummyDeck pattern). L2 ref 13/13 PASS + L3 5neg FAIL distinct (c/m/d) + L1 dict-pass-ok + L0 full-name refdir + L5 workdir-clean. hidden_manifest +check_runs_wv/calibredrv=false	
 2026-11-24T22:26	PowerFillMergeGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	QaCellRuleLabelGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	RNodeCovAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
