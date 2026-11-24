@@ -1,0 +1,691 @@
+{
+  "tag": "p5_pre_sft",
+  "n": 64,
+  "correct": 40,
+  "accuracy": 0.625,
+  "skill_acc": {
+    "type_classification": {
+      "n": 8,
+      "correct": 7,
+      "acc": 0.875
+    },
+    "cycle_count": {
+      "n": 8,
+      "correct": 6,
+      "acc": 0.75
+    },
+    "amplitude_read": {
+      "n": 8,
+      "correct": 1,
+      "acc": 0.125
+    },
+    "freq_comparison": {
+      "n": 8,
+      "correct": 4,
+      "acc": 0.5
+    },
+    "duty_cycle": {
+      "n": 8,
+      "correct": 2,
+      "acc": 0.25
+    },
+    "rise_edge": {
+      "n": 8,
+      "correct": 8,
+      "acc": 1.0
+    },
+    "glitch_detect": {
+      "n": 8,
+      "correct": 8,
+      "acc": 1.0
+    },
+    "multichannel_freq": {
+      "n": 8,
+      "correct": 4,
+      "acc": 0.5
+    }
+  },
+  "results": [
+    {
+      "id": "q0",
+      "skill": "type_classification",
+      "gt": "square",
+      "answer": "square",
+      "pred": "square",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 8.89
+    },
+    {
+      "id": "q1",
+      "skill": "type_classification",
+      "gt": "sine",
+      "answer": "sine",
+      "pred": "sine",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q2",
+      "skill": "type_classification",
+      "gt": "sawtooth",
+      "answer": "triangle",
+      "pred": "triangle",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q3",
+      "skill": "type_classification",
+      "gt": "square",
+      "answer": "square",
+      "pred": "square",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q4",
+      "skill": "type_classification",
+      "gt": "sine",
+      "answer": "sine",
+      "pred": "sine",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q5",
+      "skill": "type_classification",
+      "gt": "sine",
+      "answer": "sine",
+      "pred": "sine",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q6",
+      "skill": "type_classification",
+      "gt": "square",
+      "answer": "square",
+      "pred": "square",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q7",
+      "skill": "type_classification",
+      "gt": "triangle",
+      "answer": "triangle",
+      "pred": "triangle",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q8",
+      "skill": "cycle_count",
+      "gt": "5",
+      "answer": "5",
+      "pred": "5",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q9",
+      "skill": "cycle_count",
+      "gt": "2",
+      "answer": "2",
+      "pred": "2",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q10",
+      "skill": "cycle_count",
+      "gt": "2",
+      "answer": "2",
+      "pred": "2",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.33
+    },
+    {
+      "id": "q11",
+      "skill": "cycle_count",
+      "gt": "5",
+      "answer": "5",
+      "pred": "5",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q12",
+      "skill": "cycle_count",
+      "gt": "5",
+      "answer": "7",
+      "pred": "7",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q13",
+      "skill": "cycle_count",
+      "gt": "2",
+      "answer": "2",
+      "pred": "2",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q14",
+      "skill": "cycle_count",
+      "gt": "4",
+      "answer": "5",
+      "pred": "5",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q15",
+      "skill": "cycle_count",
+      "gt": "2",
+      "answer": "2",
+      "pred": "2",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q16",
+      "skill": "amplitude_read",
+      "gt": "5",
+      "answer": "To find the **peak-to-peak amplitude** of the waveform, we need to determine the total vertical distance from the **lowest point** to the **highest point** of the waveform, measured in grid divisions.\n\nLooking at the waveform:\n\n- The **lowest point** (trough) is at **1 division below the center line**.\n- The **highest point** (peak) is at **1 division above the center line**.\n\nSo, peak-to-peak amplitude = (1 division above) + (1 division below) = **2 divisions**.\n\nThis is because peak-to-peak is the full height of",
+      "pred": "2",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.51
+    },
+    {
+      "id": "q17",
+      "skill": "amplitude_read",
+      "gt": "4",
+      "answer": "To find the **peak-to-peak amplitude**, we measure the total vertical distance from the **lowest point** (trough) to the **highest point** (peak) of the waveform.\n\nLooking at the graph:\n\n- The waveform starts at 0, goes up to a peak, down to a trough, up to another peak, and down to another trough.\n- Counting grid divisions vertically:\n  - From the **lowest point (trough)** to the **highest point (peak)**:\n    - The trough is at **2 divisions below the axis**.\n    - The peak is at **2",
+      "pred": "2",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.52
+    },
+    {
+      "id": "q18",
+      "skill": "amplitude_read",
+      "gt": "4",
+      "answer": "To find the **peak-to-peak amplitude** of the waveform, we look at the difference between the **maximum** and **minimum** values of the signal over time.\n\nFrom the graph:\n\n- The waveform starts at a certain level (let’s say y = 1 division below the zero line).\n- It rises to a peak at y = 3 divisions above the zero line.\n- Then it drops back down to y = 1 division below the zero line.\n- Then it rises again to y = 3 divisions above the zero line.\n- And so on.\n\nSo, the **maximum",
+      "pred": "3",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.61
+    },
+    {
+      "id": "q19",
+      "skill": "amplitude_read",
+      "gt": "7",
+      "answer": "To find the **peak-to-peak amplitude** of the waveform, we need to determine the total vertical distance between the highest and lowest points of the waveform.\n\nLooking at the graph:\n\n- The waveform consists of two linear segments (slopes) that go from bottom to top.\n- The **lowest point** of the waveform is at the very bottom of the left segment — which appears to be **1 division below the x-axis**.\n- The **highest point** of the waveform is at the very top of the right segment — which appears to be **1 division above the x-axis**.\n\nSo, peak-to",
+      "pred": "1",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.55
+    },
+    {
+      "id": "q20",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "To find the **peak-to-peak amplitude** of the waveform, we look at the total vertical distance from the lowest point to the highest point of the waveform.\n\nFrom the graph:\n\n- The waveform starts at the **bottom** of a grid square (let’s say y = -1).\n- It rises to the **top** of a grid square (y = +1).\n- Then it drops back down to the bottom again.\n\nSo, from minimum to maximum:  \n**1 (up) + 1 (down) = 2 divisions**\n\nBut peak-to-peak is simply the total vertical",
+      "pred": "2",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.55
+    },
+    {
+      "id": "q21",
+      "skill": "amplitude_read",
+      "gt": "5",
+      "answer": "To find the **peak-to-peak amplitude** of the waveform, we look at the total vertical distance from the lowest point to the highest point of the waveform.\n\nFrom the graph:\n\n- The **lowest point** of the waveform is at **grid line 1** (below the zero line).\n- The **highest point** of the waveform is at **grid line 7** (above the zero line).\n\nSo, peak-to-peak = highest - lowest = 7 - 1 = **6 divisions**.\n\n✅ Final Answer: **6**",
+      "pred": "6",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.27
+    },
+    {
+      "id": "q22",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "To find the **peak-to-peak amplitude** of the waveform, we look at the vertical distance between the **highest point** (peak) and the **lowest point** (trough) of the waveform.\n\nFrom the graph:\n\n- The **peak** reaches **3 grid divisions above** the zero line.\n- The **trough** reaches **3 grid divisions below** the zero line.\n\nSo, peak-to-peak amplitude = (peak) - (trough) = 3 - (-3) = **6 divisions**.\n\nAlternatively, since it’s symmetric around zero, peak-to-peak =",
+      "pred": "6",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 3.63
+    },
+    {
+      "id": "q23",
+      "skill": "amplitude_read",
+      "gt": "7",
+      "answer": "To find the **peak-to-peak amplitude** of the waveform in vertical grid divisions:\n\n- The waveform is drawn on a grid where each square = 1 division.\n- The waveform starts at the **bottom** of the grid (0 divisions from bottom).\n- It reaches its **maximum** at the **top** of the grid (10 divisions from bottom).\n\nSo, the total vertical span (peak-to-peak) is:\n\n> **10 - 0 = 10 divisions**\n\n---\n\n✅ Final Answer: **10**",
+      "pred": "10",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.33
+    },
+    {
+      "id": "q24",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "Looking at the graph:\n\n- **Signal A (blue)** completes more cycles in the same horizontal span than **Signal B (red)**.\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since Signal A has **more peaks and troughs** over the same distance, it has a **higher frequency**.\n\n✅ Therefore, the signal with the **higher frequency** is:  \n**A (blue)**\n\n---\n\n**Answer: A**",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 2.92
+    },
+    {
+      "id": "q25",
+      "skill": "freq_comparison",
+      "gt": "B",
+      "answer": "Looking at the graph:\n\n- **Signal A (blue)** completes **more cycles** in the same horizontal distance compared to **Signal B (red)**.\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since **Signal A has more cycles over the same interval**, it has a **higher frequency**.\n\n✅ Therefore, the answer is: **A**\n\n---\n\n**Answer: A**",
+      "pred": "A",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 2.66
+    },
+    {
+      "id": "q26",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "Looking at the graph:\n\n- **Signal A (blue)** completes **more cycles** in the same horizontal distance compared to Signal B (red).\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since Signal A has **more peaks and troughs** over the same interval, it has a **higher frequency**.\n\n✅ Therefore, the signal with the **higher frequency** is:\n\n> **A (blue)**\n\n---\n\n**Answer: A**",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 3.07
+    },
+    {
+      "id": "q27",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "Looking at the graph:\n\n- The **blue signal (A)** completes **more cycles** in the same horizontal span compared to the red signal (B).\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since the blue wave oscillates **more frequently** — it goes through more peaks and troughs over the same distance — it has the **higher frequency**.\n\n✅ Therefore, the answer is: **A**\n\n---\n\n**Answer: A**",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 3.03
+    },
+    {
+      "id": "q28",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "Looking at the graph:\n\n- **Signal A (blue)** completes **more cycles** in the same horizontal distance compared to **Signal B (red)**.\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since **Signal A has more cycles over the same interval**, it has a **higher frequency**.\n\n✅ Therefore, the answer is: **A**",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 2.46
+    },
+    {
+      "id": "q29",
+      "skill": "freq_comparison",
+      "gt": "B",
+      "answer": "Looking at the graph:\n\n- The **blue signal (A)** completes **more cycles** over the same horizontal distance than the **red signal (B)**.\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since signal A has more cycles in the same interval, it has a **higher frequency**.\n\n✅ Therefore, the answer is: **A**",
+      "pred": "A",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 2.44
+    },
+    {
+      "id": "q30",
+      "skill": "freq_comparison",
+      "gt": "B",
+      "answer": "Looking at the graph:\n\n- **Signal A (blue)** completes **more cycles** in the same horizontal distance compared to **Signal B (red)**.\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since **Signal A has more cycles over the same interval**, it has a **higher frequency**.\n\n✅ Therefore, the answer is: **A**\n\n---\n\n**Answer: A**",
+      "pred": "A",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 2.67
+    },
+    {
+      "id": "q31",
+      "skill": "freq_comparison",
+      "gt": "B",
+      "answer": "Looking at the graph:\n\n- The **blue signal (A)** completes **more cycles** over the same horizontal distance than the **red signal (B)**.\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since signal A has more cycles in the same interval, it has a **higher frequency**.\n\n✅ Therefore, the answer is: **A**",
+      "pred": "A",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 2.47
+    },
+    {
+      "id": "q32",
+      "skill": "duty_cycle",
+      "gt": "50",
+      "answer": "To find the **duty cycle** of a square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the given waveform:\n\n- The **high time** (duration the signal is high) = **2 units**\n- The **period** (total duration of one full cycle) = **4 units**\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "pred": "50",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 3.31
+    },
+    {
+      "id": "q33",
+      "skill": "duty_cycle",
+      "gt": "75",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) = **2 units**\n- The **period** (total duration of one full cycle) = **4 units**\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "pred": "50",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.29
+    },
+    {
+      "id": "q34",
+      "skill": "duty_cycle",
+      "gt": "50",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) = **2 units** (from t=0 to t=2)\n- The **period** (total duration of one full cycle) = **4 units** (from t=0 to t=4)\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final",
+      "pred": "50",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 3.61
+    },
+    {
+      "id": "q35",
+      "skill": "duty_cycle",
+      "gt": "75",
+      "answer": "To find the **duty cycle** of a square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) = **2 units**\n- The **period** (total duration of one full cycle) = **4 units**\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "pred": "50",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.29
+    },
+    {
+      "id": "q36",
+      "skill": "duty_cycle",
+      "gt": "75",
+      "answer": "To find the **duty cycle** of a square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) = **2 units**\n- The **period** (total duration of one full cycle) = **4 units**\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "pred": "50",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.38
+    },
+    {
+      "id": "q37",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) is **2 units** (from t=0 to t=2).\n- The **period** (total duration of one full cycle) is **4 units** (from t=0 to t=4).\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final",
+      "pred": "50",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.6
+    },
+    {
+      "id": "q38",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) = **2 grid units**\n- The **period** (total duration of one full cycle) = **4 grid units**\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "pred": "50",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.37
+    },
+    {
+      "id": "q39",
+      "skill": "duty_cycle",
+      "gt": "75",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the image:\n\n- The **high time** (duration the signal is high) is **4 units** (counting the blue horizontal lines above the axis).\n- The **period** (total duration of one full cycle) is **8 units** (from the first high to the next high, or equivalently, 4 high + 4 low).\n\nSo,\n\n> Duty Cycle = (4 / 8) ×",
+      "pred": "100",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.57
+    },
+    {
+      "id": "q40",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q41",
+      "skill": "rise_edge",
+      "gt": "gradual",
+      "answer": "gradual",
+      "pred": "gradual",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.19
+    },
+    {
+      "id": "q42",
+      "skill": "rise_edge",
+      "gt": "gradual",
+      "answer": "gradual",
+      "pred": "gradual",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.19
+    },
+    {
+      "id": "q43",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q44",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q45",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q46",
+      "skill": "rise_edge",
+      "gt": "gradual",
+      "answer": "gradual",
+      "pred": "gradual",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.19
+    },
+    {
+      "id": "q47",
+      "skill": "rise_edge",
+      "gt": "gradual",
+      "answer": "gradual",
+      "pred": "gradual",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.19
+    },
+    {
+      "id": "q48",
+      "skill": "glitch_detect",
+      "gt": "no",
+      "answer": "no",
+      "pred": "no",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q49",
+      "skill": "glitch_detect",
+      "gt": "yes",
+      "answer": "yes",
+      "pred": "yes",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q50",
+      "skill": "glitch_detect",
+      "gt": "yes",
+      "answer": "yes",
+      "pred": "yes",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q51",
+      "skill": "glitch_detect",
+      "gt": "yes",
+      "answer": "yes",
+      "pred": "yes",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q52",
+      "skill": "glitch_detect",
+      "gt": "yes",
+      "answer": "yes",
+      "pred": "yes",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q53",
+      "skill": "glitch_detect",
+      "gt": "no",
+      "answer": "no",
+      "pred": "no",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.16
+    },
+    {
+      "id": "q54",
+      "skill": "glitch_detect",
+      "gt": "yes",
+      "answer": "yes",
+      "pred": "yes",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.19
+    },
+    {
+      "id": "q55",
+      "skill": "glitch_detect",
+      "gt": "no",
+      "answer": "no",
+      "pred": "no",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.15
+    },
+    {
+      "id": "q56",
+      "skill": "multichannel_freq",
+      "gt": "B",
+      "answer": "To determine which signal has the **higher frequency**, we need to compare how many complete cycles each signal completes over the same time interval — typically one horizontal grid line (which represents a fixed time period).\n\nLooking at the graph:\n\n- **Blue (A)**: Completes about **4 full cycles** in the visible range.\n- **Green (B)**: Completes about **3 full cycles** in the same range.\n- **Red (C)**: Completes about **2 full cycles** in the same range.\n\nSince **frequency is inversely proportional to the period** (time per cycle), the signal",
+      "pred": "C",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.57
+    },
+    {
+      "id": "q57",
+      "skill": "multichannel_freq",
+      "gt": "C",
+      "answer": "To determine which signal has the **highest frequency**, we need to compare how many complete cycles each signal completes over the same time interval.\n\n- **Frequency** is defined as the number of cycles per unit time.\n- Looking at the graph, all three signals (blue, green, red) are plotted over the **same horizontal time axis** (i.e., same duration).\n- We can count the number of full cycles in that time window:\n\n- **Blue (A)**: completes about **2 full cycles**\n- **Green (B)**: completes about **3 full cycles**\n- **Red (C",
+      "pred": "C",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 3.61
+    },
+    {
+      "id": "q58",
+      "skill": "multichannel_freq",
+      "gt": "A",
+      "answer": "To determine which signal has the **highest frequency**, we need to compare how many complete cycles each signal makes over the same time interval — typically one full horizontal span of the graph (e.g., from left to right edge).\n\n### Step-by-step:\n\n- **Signal A (blue)**:  \n  Count the number of full cycles in the displayed region.  \n  → It completes **4 full cycles**.\n\n- **Signal B (green)**:  \n  → It completes **3 full cycles**.\n\n- **Signal C (red)**:  \n  → It completes **2 full cycles**.\n\nSince **frequency is inversely",
+      "pred": "C",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.6
+    },
+    {
+      "id": "q59",
+      "skill": "multichannel_freq",
+      "gt": "B",
+      "answer": "To determine which signal has the **higher frequency**, we need to count how many complete cycles each wave completes over the same time interval (or distance along the x-axis).\n\nLooking at the graph:\n\n- **Blue (A)**: From left to right, it completes **4 full cycles** in the visible range.\n- **Green (B)**: Also completes **4 full cycles** in the same range.\n- **Red (C)**: Completes **3 full cycles** in the same range.\n\nSince frequency is defined as the number of cycles per unit time (or distance), and all three are shown over",
+      "pred": "C",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.62
+    },
+    {
+      "id": "q60",
+      "skill": "multichannel_freq",
+      "gt": "C",
+      "answer": "To determine which signal has the **highest frequency**, we need to count the number of complete cycles each signal completes over the same time interval (in this case, over the visible portion of the graph).\n\n- **Frequency** is defined as the number of cycles per unit time. So, more cycles = higher frequency.\n\nLet’s count approximately:\n\n- **Blue (A)**: From left to right, it completes about **6 full cycles**.\n- **Green (B)**: Completes about **4 full cycles**.\n- **Red (C)**: Completes about **5 full cycles**.\n\nSince **Blue (",
+      "pred": "C",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 3.65
+    },
+    {
+      "id": "q61",
+      "skill": "multichannel_freq",
+      "gt": "C",
+      "answer": "To determine which signal has the **higher frequency**, we need to count the number of complete cycles each signal completes over the same time interval (in this case, from left to right).\n\n- **Frequency** is defined as the number of cycles per unit time. So, more cycles = higher frequency.\n\nLet’s count the number of full cycles for each signal over the visible portion of the graph:\n\n- **Blue (A)**: From left to right, we can count about **4 full cycles**.\n- **Green (B)**: About **3 full cycles**.\n- **Red (C)**: About **5",
+      "pred": "C",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 3.63
+    },
+    {
+      "id": "q62",
+      "skill": "multichannel_freq",
+      "gt": "C",
+      "answer": "To determine which signal has the **higher frequency**, we need to compare how many complete cycles each signal completes over the same time interval shown in the graph.\n\n### Key Concept:\n- **Frequency** is the number of cycles per unit time.\n- In a graph like this (assuming the horizontal axis represents time), **more cycles = higher frequency**.\n\n---\n\n### Observing the Graph:\n\n- **Blue (A)**: Completes about **3 full cycles** in the displayed time.\n- **Green (B)**: Completes about **2 full cycles** in the same time.\n- **Red (",
+      "pred": "B",
+      "correct": false,
+      "reward": -0.5,
+      "latency_s": 3.59
+    },
+    {
+      "id": "q63",
+      "skill": "multichannel_freq",
+      "gt": "B",
+      "answer": "To determine which signal has the **highest frequency**, we need to compare how many complete cycles each signal makes over the same time interval.\n\n- **Frequency** is defined as the number of cycles per unit time.\n- Looking at the graph, we can count the number of full cycles (from peak to peak or trough to trough) for each signal over the same horizontal span (e.g., from left edge to right edge of the plot).\n\nLet’s estimate:\n\n- **Signal A (blue)**: In the same horizontal distance, it completes about **4 full cycles**.\n- **Signal B (green)**: It",
+      "pred": "B",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 3.61
+    }
+  ],
+  "ts": "2026-11-24T16:13:08"
+}
