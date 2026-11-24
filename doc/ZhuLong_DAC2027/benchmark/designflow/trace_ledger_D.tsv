@@ -2061,3 +2061,4 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1794798608422_z4w3g					case	EDA-Eval-DesignFlow-SpfSwapPostSim-001	2026-11-24 20:26	
 1795415966940_88tdv	mengzh	hfeg0pkn004	107	waveform	case	EDA-Eval-DesignFlow-SineScanStdout-001	2026-11-24 21:12	
 1795413139008_zpd9f					parked		2026-11-24 21:12	wrong-domain: admin task (analyze user history sessions by dept -> MD report), not EDA waveform/analog/netlist; pyaether/waveview kw incidental
+1795411956334_rr6qb	shushengz	hfeg0pkn004	306	analog_context	case	EDA-Eval-DesignFlow-XistorTypeSizeHierCount-001	2026-11-24 22:36	
