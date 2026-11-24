@@ -1520,3 +1520,4 @@ t0dhm					case	EDA-Eval-DesignFlow-CalibreDrcRunsetPatch-001	2026-11-24 03:55
 1795416282474_8kvnr					case	EDA-Eval-DesignFlow-SpaceLongSideNotConnectGen-001	2026-11-24 07:18	
 1795420854701_fxwte					case	AetherStandaloneInstList-001	2026-11-24 08:00	
 1795052208789_8e4wm	jmgu	hfeg0plg79	78	physical_verify	case	EmptyWidthQaPatternGen-001	2026-11-24 08:27	
+1795231971092_l3gmz	eric9zhu	hfeg0pkn005	146	layout_virtuoso	case	EDA-Eval-DesignFlow-ParasiticDiodeBackAnnotate-001	2026-11-24 08:50	
