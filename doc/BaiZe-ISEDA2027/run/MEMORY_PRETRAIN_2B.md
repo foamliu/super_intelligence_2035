@@ -1,3 +1,4 @@
+> #3256（2026-11-24 08:12, 放行autoqueue令·监控巡检·**304k eval DONE✅ harness-avg=59.00%**·训练健康iter=304700/700000(43.53%) step_avg(recent15)=7220ms(7.22s,7119-7354,0/15>7.4s✅)·loss≈1.98(1.977-1.987) 0NaN/0skip✅·lr=1e-3 grad norm0.083-0.116✅·load(directive#2)eval-end .29=27.98/.12=28.73→post-eval .29=24.61/.12=28.23✅·step-time(directive#3)no-eval baseline(#3247 06:47)=7.23s→during-eval(recent15)=7.22s Δ-0.01s NOT elevated✅→post-eval(304690-700)=7304/7197ms<7.4s✅·backlog 270k-304k全清44/44ckpt(directive#1✅)·304k=59.00%(latest done,08:10:31,per-task:arc_c=0.32/arc_e=0.67/boolq=0.56/hellaswag=0.59/obqa=0.35/piqa=0.75/sciq=0.82/winogrande=0.66)·302k=59.13%/270k=59.75%/272k=56.75%(11-21令积压点已补评✅)·L1报告44/44ckpt@08:10(37018B,harness口径✅,daemon自动刷新)·daemon idle sleep300s等306k(lands~10:47,daemon auto-pick)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter304700@08:11:28) daemon=/tmp/baize_l1_autoqueue_continuous.log(iter_304000 DONE@08:10:31,[idle]@08:11:01) ckpt=.../nemo_experiments/baize2b/checkpoints/iter_0304000 results=.../lm_eval_results/gguf_iter_304000_fixed_8set/results.json(26002B@08:10) report=run/reports/report_pretrain_llamacpp_scaling_zh.html(44/44ckpt,37018B@08:10)·复现=bash code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh·纯监控未碰train.sh/configs/.bak/训练进程(铁律悍守)·体积MEMORY≈27.5KB<32KB✅ TASK≈25.3KB<32KB✅）→ daily-memories/2026-11-24.md
 > #3255（2026-11-24 07:59, 放行autoqueue令·监控巡检·304k eval RUNNING(daemon auto-pick,lm_eval[5/6]~67min in,ETA~08:08-13)·训练健康iter=304600/700000(43.51%) step_avg(recent15)=7222ms(7.22s,7149-7353,0/15>7.4s✅)·loss≈1.99(1.980-1.996) 0NaN/0skip✅·lr=1e-3 grad norm0.087-0.105✅·load(directive#2)eval负载中 .29=29.22/28.48/28.09 .12=23.49/25.49/26.19✅·step-time(directive#3)no-eval baseline(#3247 06:47)=7.23s→during-eval(recent15 07:44-07:59)=7222ms(7.22s)Δ-0.01s NOT elevated✅<7.4s gate(0/15>7.4s)·backlog 270k-302k全清43/43ckpt(directive#1✅维持)·302k=59.13%(latest done)·270k=59.75%/272k=56.75%(11-21令积压点已补评✅)·L1报告43/43ckpt@04:46(36561B,harness口径✅,304k eval后daemon自动刷新)·304k eval IN PROGRESS(daemon PID1081392,llama-server PID1404552 -t4 nice19 health=ok etimes~4015s≈67min,lm_eval PID1416689 etimes~3985s,results dir空待写,~8-13min to go)·306k NOT on disk(latest ckpt=iter_0304000,训练@304600,lands~10:47,daemon auto-pick)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter304600@07:59:28) daemon=/tmp/baize_l1_autoqueue_continuous.log([5/6]eval iter_304000@06:52:54) ckpt_dir=.../nemo_experiments/baize2b/checkpoints(latest iter_0304000) report=run/reports/report_pretrain_llamacpp_scaling_zh.html(43/43ckpt,36561B@04:46)·复现=bash code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh·纯监控未碰train.sh/configs/.bak/训练进程/daemon(铁律悍守)·体积MEMORY≈30.1KB<32KB✅(归档#3253后) TASK≈25.3KB<32KB✅）→ daily-memories/2026-11-24.md
 
 
@@ -116,48 +117,6 @@
 > 📦 #3171（2026-11-23 17:38, 放行autoqueue令·监控巡检·daemon idle·训练健康iter=297380 step7.14s(0/15>7.4s✅)·load .29=23.52/.12=25.96✅·backlog全清·298k NOT on disk(ETA~18:52)）→ daily-memories/2026-11-23.md；需要时再读。
 > 📦 #3170（2026-11-23 17:23, 放行autoqueue令·监控巡检·daemon idle·训练健康iter=297280 step7.12s(0/15>7.4s✅)·load .29=24.63/.12=24.06✅·backlog全清·298k NOT on disk(ETA~18:49)）→ daily-memories/2026-11-23.md；需要时再读。
 
-> 📦 #3166（2026-11-23 16:41, 放行autoqueue令·监控巡检·daemon idle·训练健康iter=296950 step7.26s(2/15瞬时spike非持续)·load .29=22.26/.12=27.68✅·backlog全清·298k NOT on disk(ETA~18:50)）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3165（2026-11-23 16:33, 放行autoqueue令·daemon idle无eval负载·backlog 270k-296k全清15ckpt·训练健康iter=296840 step7.17s·load正常·298k NOT on disk(ETA~18:46)）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3164（2026-11-23 16:18, 放行autoqueue令·**296k eval DONE✅ harness-avg=59.12%**·训练健康iter=296680 step7.10s·step-time spike 16:06-16:13 transient自愈·backlog全清15ckpt·L1报告40/40ckpt含296k✅）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3163（2026-11-23 16:06, 放行autoqueue令·296k eval RUNNING(62min in,ETA~16:18)·训练健康iter=296640 step7125ms·during-eval avg7065ms<7.4s gate✅·load .29=25.86/.12=22.81✅·backlog 270k-294k全清14ckpt·296k RUNNING）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3162（2026-11-23 15:53, 放行autoqueue令·296k eval RUNNING(~49min in,ETA~16:18)·训练健康iter=296530 step6982ms·step-time pre7.10s→during7.06s Δ=-36ms✅·load .29=25.11/.12=24.76✅·backlog 270k-294k全清14ckpt·296k RUNNING ETA~16:18）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3161（2026-11-23 15:43, 放行autoqueue令·296k eval RUNNING(~38min in,ETA~16:18)·训练健康iter=296440 step7.14s·step-time pre7.10s→during7.07s Δ=-27ms✅·backlog 270k-294k全清14ckpt·296k RUNNING ETA~16:18）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3160（2026-11-23 15:33, 放行autoqueue令·296k eval RUNNING(~29min in,ETA~16:18)·训练健康iter=296360 step7.03s·step-time pre7.09s→during7.04s Δ=-36ms✅·backlog 270k-294k全清14ckpt·296k RUNNING ETA~16:18）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3159（2026-11-23 15:21, 放行autoqueue令·296k eval RUNNING(~17min in,ETA~16:18)·训练健康iter=296250 step7.04s·step-time pre7.09s→during7.04s Δ=-49ms✅·backlog 270k-294k全清14ckpt·296k RUNNING ETA~16:18）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3158（2026-11-23 15:09, 放行autoqueue令·296k eval RUNNING(daemon retry成功)·训练健康iter=296160 step7.02s·step-time pre7.03s→during7.03s Δ=-5ms✅·backlog 270k-294k全清14ckpt·296k RUNNING ETA~16:18）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3157（2026-11-23 14:55, 放行autoqueue令·296k落盘·daemon health-gate PAUSE eval·训练健康iter=296010 step7.46s·backlog 270k-294k全清14ckpt·296k NOT evaluated(paused)）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3156（2026-11-23 14:46, 放行autoqueue令·监控巡检·daemon idle无eval负载·训练健康iter=295960 step_avg=7460ms·loss≈2.00 0NaN/0skip✅·load .29=24.60/.12=26.37✅·baseline漂移7.46s超7.4s gate无eval负载·backlog 270k-294k全清14ckpt(directive#1✅)·296k NOT on disk(ETA~14:51)）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3155（2026-11-23 14:35, 放行autoqueue令·监控巡检·daemon idle无eval负载·训练健康iter=295870/700000(42.27%) step_avg(last15)=7397ms(7.40s)·loss≈2.00 0NaN/0skip✅·load .29=23.75/.12=25.16✅·backlog 270k-294k全清14ckpt(directive#1✅)·296k NOT on disk(ETA~14:51)）→ daily-memories/2026-11-23.md；需要时再读。
-
-> 📦 #3154（2026-11-23 14:28, 放行autoqueue令·daemon idle·训练健康iter=295820 step7.42s·baseline漂移>7.4s gate无eval负载·backlog全清·296k NOT on disk）→ daily-memories/2026-11-23.md；需要时再读。
-
-
-> 📦 #3153（2026-11-23 14:18, 放行autoqueue令·daemon idle·训练健康iter=295720 step7.40s·baseline漂移~7.4s gate无eval负载·backlog全清·296k NOT on disk）→ daily-memories/2026-11-23.md；需要时再读。
-
-
-> 📦 #3152（2026-11-23 14:07, 放行autoqueue令·监控+报告修复·daemon idle·训练健康iter=295650 step7.41s·L1报告修复为34753B含294k=59.00%✅·backlog全清·296k NOT on disk）→ daily-memories/2026-11-23.md；需要时再读。
-
-
-> 📦 #3151（2026-11-23 13:46, 放行autoqueue令·daemon idle监控巡检·训练健康iter=295480 step7.42s·load正常·backlog全清·296k NOT on disk ETA~14:50）→ daily-memories/2026-11-23.md；需要时再读。
-
-
-> 📦 #3150（2026-11-23 13:37, 放行autoqueue令·daemon idle监控巡检·训练健康iter=295400 step7.33s·load正常·backlog全清·296k NOT on disk ETA~14:48）→ daily-memories/2026-11-23.md；需要时再读。
-
-
-> 📦 #3149（2026-11-23 13:19, 放行autoqueue令·daemon idle监控巡检·训练健康iter=295250 step7.28s·load正常·backlog全清·296k NOT on disk ETA~14:50）→ daily-memories/2026-11-23.md；需要时再读。
-
-
 > 📦 §#3143–#3148（2026-11-23 12:25–13:11, 放行autoqueue令·daemon idle监控巡检6轮·backlog全清270k-294k 14ckpt·训练健康step~7.21-7.34s(all<7.4s gate✅,daemon idle确认非eval致)·load正常·296k NOT on disk ETA≈14:48→daily-memories/2026-11-23.md；需要时再读。）
 
 > 📦 #3142（2026-11-23 12:10, 放行autoqueue令·**294k eval DONE✅Avg=59.00%**(arc_c32/arc_e68/boolq59/hella55/obqa35/piqa77/sciq85/wino61,74min)·训练健康iter=294690 step7.22s·step-time三段:pre7.35s→during7.28s→post7.22s eval未拖训练✅·backlog全清270k-294k 14ckpt·L1报告39/40ckpt含294k✅）→ daily-memories/2026-11-23.md；需要时再读。
@@ -167,12 +126,12 @@
 > 📦 #3137（2026-11-23 10:37, 放行autoqueue令·daemon idle无eval负载·backlog全清270k-292k 13ckpt·训练健康iter=293940 step7.39s<gate·load正常·294k NOT on disk ETA~10:45）→ daily-memories/2026-11-23.md；需要时再读。
 
 
-> 📦 §#3060–#3164（2026-11-23 00:20–16:33, 放行autoqueue令·监控巡检轮~50条(#3060-#3164含#3127-#3136等)·backlog 270k-296k全清·训练健康step~7.0-7.5s·load正常·含292k=60.63%(历史最高)/294k=59.00%/290k=55.25%等eval DONE·daemon idle/eval交替·eval未拖训练✅）→ daily-memories/2026-11-23.md；需要时再读。
+> 📦 §#3060–#3166（2026-11-23 00:20–16:41, 放行autoqueue令·监控巡检轮~52条(#3060-#3166含#3127-#3136等)·backlog 270k-296k全清·训练健康step~7.0-7.5s·load正常·含292k=60.63%(历史最高)/294k=59.00%/296k=59.12%/290k=55.25%等eval DONE·daemon idle/eval交替·eval未拖训练✅）→ daily-memories/2026-11-23.md；需要时再读。
 > 📦 §#3047–#3057（2026-11-22 22:31–23:56, 放行autoqueue令·288k eval RUNNING监控轮11条·backlog全清270k-286k·训练健康step~7.1-7.3s·load正常·daemon eval 288k·288k于00:04 DONE harness_avg=58.50%）→ daily-memories/2026-11-22.md；需要时再读。
 > 📦 §#2990–#3034（已归档，含 #3030 286k eval DONE·#3029-#2990 286k/284k/282k eval RUNNING监控轮）→ daily-memories/2026-11-22.md；需要时再读。
 > 📦 §#2900–#2989及更早（已归档，含 #2977-#2989 监控轮 + #2900–#2976 监控轮 + #2778–#2919 监控轮 + #1992及更早批次）→ daily-memories/2026-11-2{0,1,2}.md & ARCHIVE_OPERATOR_PRETRAIN.md；需要时再读。
 
-WAITING: 0(✅ 2026-11-24 07:59 #3255 放行autoqueue令·304k eval RUNNING(daemon auto-pick,lm_eval[5/6]~67min in,ETA~08:08-13)·训练健康iter=304600/700000(43.51%) step7.22s(0/15>7.4s✅)·loss≈1.99 0NaN/0skip✅·load .29=29.22(eval负载,step gate hold) .12=23.49✅·step no-eval7.23s→during-eval7.22s Δ-0.01s NOT elevated✅·backlog 270k-302k全清43/43ckpt✅·302k=59.13%·270k=59.75%/272k=56.75%(11-21令积压点已补评✅)·L1报告43/43ckpt@04:46✅·304k eval IN PROGRESS(daemon PID1081392,llama-server PID1404552 health=ok)·306k lands~10:47·纯监控未碰训练进程/daemon(铁律悍守))
+WAITING: 0(✅ 2026-11-24 08:12 #3256 放行autoqueue令·304k eval DONE✅ harness-avg=59.00%(08:10:31)·训练健康iter=304700/700000(43.53%) step7.22s(0/15>7.4s✅)·loss≈1.98 0NaN/0skip✅·load post-eval .29=24.61 .12=28.23✅·step no-eval7.23s→during-eval7.22s Δ-0.01s→post-eval7.20s NOT elevated✅·backlog 270k-304k全清44/44ckpt✅·304k=59.00%·270k=59.75%/272k=56.75%(积压点已补评✅)·L1报告44/44ckpt@08:10✅·daemon idle等306k(lands~10:47)·纯监控未碰训练进程/daemon(铁律悍守))
 
 ---
 
