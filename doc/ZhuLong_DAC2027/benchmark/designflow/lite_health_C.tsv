@@ -46,7 +46,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	DrcVarMisMatchDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	DrcWaiveDeckGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	DummyCfgCheck-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:50	DummyDeck-001	C	1	1	0	0	?	?	p0_fixed	L2 FAIL: check expects report_A.json in zip (ref only has dummy_deck_diag.py) + asset_a/ path issue -- needs ref repackage + path fix	
+2026-11-25T00:10	DummyDeck-001	C	1	1	1	1	1	1	green	L4 calibredrv GUI->mock (calibredrv_mock.py pure-stdlib GDSII LAYER/DATATYPE parser, validated on QA_A/QA_B/LTM/LM1) + L1 contract list->dict-pass + L2 _find_asset_a flat-workdir resolver (harness copies A flat not asset_a/) + reference_submit.zip built (dummy_deck_diag.py+report_A.json) + negselftest --calibredrv mock; ref 14/14 PASS + 5neg FAIL (§4.9 trio contours distinct)	120
 2026-11-24T22:26	DummyGeoVerify-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:50	DummyHeaderQaResolver-001	C	1	1	1	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (ref solution PASS)	
 2026-11-24T22:50	DummyMeas-001	C	1	1	0	0	?	?	p0_fixed	L2 FAIL: FileNotFoundError -- likely skipper GUI binary missing (L4 eval-machine dep)	
