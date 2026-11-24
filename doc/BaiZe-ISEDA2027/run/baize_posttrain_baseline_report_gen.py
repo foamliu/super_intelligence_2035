@@ -244,13 +244,14 @@ def render(audit, b4, a0, a0_kind, a1, cmp, run1):
         rej = run1.get("aggregate_reject_reasons", {})
         atc_str = " · ".join("%s=%s" % (k, v) for k, v in sorted(atc.items(), key=lambda x: -x[1])[:10])
         rej_str = " · ".join("%s=%s" % (k, v) for k, v in rej.items())
-        H.append('<p><b>聚合工具调用</b>(run1, top10)：%s。<br><b>拒绝原因</b>：%s。<br><span class="note">注：rag_queried_rate 计的是本地 PyAether API 检索工具(search_apis 等，.17 harness 自带)，<b>非</b>远程 RAG recall(:9002，A0 口径未启用)。</span></p>' % (esc(atc_str), esc(rej_str)))
+        H.append('<p><b>聚合工具调用</b>(run1, top10)：%s。<br><b>拒绝原因</b>：%s。<br><span class="note">注：rag_queried_rate 计的是 PyAether API 检索工具(search_apis 等)；<b>search_apis 内部调用 .env 的 RAG_RECALL_URL(localhost:9002) 做向量召回</b>，但 :9002 自 2026-11-13 起被 nvidia_gpu_exporter 占用、本地 recall 服务已死 ⇒ 向量召回全线失效、纯 BM25 兜底（向量=0 条 16487 次）。故 A0 的检索为退化口径(BM25-only)，基线含 infra 故障成分，修复后需重测（见下检索降级声明）。</span></p>' % (esc(atc_str), esc(rej_str)))
+        H.append('<div class="warn"><b>🔴 检索 infra 降级声明（wake783 · 2026-11-24 独立复核 · 铁律2 infra≠能力）</b>：A0/A1/A5 eval 期间 search_apis 向量召回后端 localhost:9002 自 2026-11-13 起失效（被 nvidia_gpu_exporter 占用返回 HTML、本地 recall 服务 Aug13 死亡）；MCP 日志 recall error 共 17164 次（11-20=509/11-21=8884/11-22=2854/11-23=1548），「向量=0 条」16487 次、向量召回从未成功（纯 BM25 兜底）。⇒ A0=43.29%/A1=4.56% 基线含检索 infra 故障成分，修复后（.env 启用 10.252.32.15:9001 实测正常 / 修本地 recall）基线需重测。证据：eda_fastmcp/logs/app.log / kb/recall_api.log / .env。</div>')
     H.append("<h2>四、口径六元组（caliber six-tuple）</h2>")
     H.append(table([
         ["1. 模型/底模", "MiniCPM5-2B <b>base</b>", "SFT v39 step105"],
         ["2. harness", ".17 cline harness", "36.15 zhulong harness"],
         ["3. 量尺/抽取器", "<b>修复后</b>(读 pyAether_code no-ws)", "broken ws-only(丢 no-ws)"],
-        ["4. 远程 RAG", "无(:9002 未启用)", "有"],
+        ["4. RAG 向量召回", "调用但失效(:9002 被 exporter 占,自 11-13 BM25 兜底)", "有(36.15 远程)"],
         ["5. 沙盒 MCP(codegen 期)", "无", "有"],
         ["6. 协议", "158题/Pass@1/2500s/单trace/<b>5-run 目标</b>/-p8 -n", "同协议(但量尺/模型/harness 不同)"],
     ], ["元", "A0(本轮)", "旧 6.84% 5-run(不可比)"]))

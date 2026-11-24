@@ -106,14 +106,15 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:0.88em}
 <tr><td>error_rate_mean(报错率)</td><td><b>0.74%</b></td></tr>
 <tr><td>rag_queried_rate(API 检索工具命中率)</td><td><b>100.00%</b></td></tr>
 </table>
-<p><b>聚合工具调用</b>(run1, top10)：search_apis=1969 · get_api_details=978 · run_commands=684 · search_apis_by_keyword=476 · read_files=239 · editor=217 · submit_and_exit=138 · run_code=81 · process=1 · runner__search_apis=1。<br><b>拒绝原因</b>：other-type-error=32 · unavailable-tool=6。<br><span class="note">注：rag_queried_rate 计的是本地 PyAether API 检索工具(search_apis 等，.17 harness 自带)，<b>非</b>远程 RAG recall(:9002，A0 口径未启用)。</span></p>
+<p><b>聚合工具调用</b>(run1, top10)：search_apis=1969 · get_api_details=978 · run_commands=684 · search_apis_by_keyword=476 · read_files=239 · editor=217 · submit_and_exit=138 · run_code=81 · process=1 · runner__search_apis=1。<br><b>拒绝原因</b>：other-type-error=32 · unavailable-tool=6。<br><span class="note">注：rag_queried_rate 计的是 PyAether API 检索工具(search_apis 等)；<b>search_apis 内部调用 .env 的 RAG_RECALL_URL(localhost:9002) 做向量召回</b>，但 :9002 自 2026-11-13 起被 nvidia_gpu_exporter 占用、本地 recall 服务已死 ⇒ 向量召回全线失效、纯 BM25 兜底（向量=0 条 16487 次）。故 A0 的检索为退化口径(BM25-only)，基线含 infra 故障成分，修复后需重测（见下检索降级声明）。</span></p>
+<div class="warn"><b>🔴 检索 infra 降级声明（wake783 · 2026-11-24 独立复核 · 铁律2 infra≠能力）</b>：A0/A1/A5 eval 期间 search_apis 向量召回后端 localhost:9002 自 2026-11-13 起失效（被 nvidia_gpu_exporter 占用返回 HTML、本地 recall 服务 Aug13 死亡）；MCP 日志 recall error 共 17164 次（11-20=509/11-21=8884/11-22=2854/11-23=1548），「向量=0 条」16487 次、向量召回从未成功（纯 BM25 兜底）。⇒ A0=43.29%/A1=4.56% 基线含检索 infra 故障成分，修复后（.env 启用 10.252.32.15:9001 实测正常 / 修本地 recall）基线需重测。证据：eda_fastmcp/logs/app.log / kb/recall_api.log / .env。</div>
 <h2>四、口径六元组（caliber six-tuple）</h2>
 <table>
 <tr><th>元</th><th>A0(本轮)</th><th>旧 6.84% 5-run(不可比)</th></tr>
 <tr><td>1. 模型/底模</td><td>MiniCPM5-2B <b>base</b></td><td>SFT v39 step105</td></tr>
 <tr><td>2. harness</td><td>.17 cline harness</td><td>36.15 zhulong harness</td></tr>
 <tr><td>3. 量尺/抽取器</td><td><b>修复后</b>(读 pyAether_code no-ws)</td><td>broken ws-only(丢 no-ws)</td></tr>
-<tr><td>4. 远程 RAG</td><td>无(:9002 未启用)</td><td>有</td></tr>
+<tr><td>4. RAG 向量召回</td><td>调用但失效(:9002 被 exporter 占,自 11-13 BM25 兜底)</td><td>有(36.15 远程)</td></tr>
 <tr><td>5. 沙盒 MCP(codegen 期)</td><td>无</td><td>有</td></tr>
 <tr><td>6. 协议</td><td>158题/Pass@1/2500s/单trace/<b>5-run 目标</b>/-p8 -n</td><td>同协议(但量尺/模型/harness 不同)</td></tr>
 </table>

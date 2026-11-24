@@ -123,6 +123,7 @@ H.append('<div class="warn"><b>首屏口径声明（不许含糊）</b><br>'
   '<b>禁止直接相减</b>：两侧<b>规模（2B vs V4-Pro 云端大模型）</b>与<b>启动机器（.17 vs 36.15）</b>不同 ⇒ 差值同时含「能力」与「环境」两成分，<b>不得把两个百分比直接相减当作纯能力差</b>（参见 <code>doc/AGENTS.md §4.3「大模型参照不可与 2B 比较」</code>）。本报告<b>只做结构性/行为学对照，不做裸分数排名</b>。</div>'
   % (pct(A0_MEAN), pct(A0_STD), pct(DS_SCORE), pct(DS_STD), pct(r83["meta"]["deepseek_avg_overall"])))
 H.append('<div class="note"><b>⚠️ 口径勘误（数据为准）</b>：任务书 §C 与预注册把 A0 标注为「无 RAG / 无沙盒 MCP」，但落盘逐题工具调用数据<b>显示 A0 实际使用了</b> RAG 知识工具（run1 聚合 <code>search_apis</code>＝1969 / <code>get_api_details</code>＝978 / <code>search_apis_by_keyword</code>＝476）与沙盒 MCP（<code>run_code</code>＝81，经 dual-nix-tunnel）与 <code>run_commands</code>＝684，且全程挂 PreToolUse 反作弊 hook。故 <b>A0 实际口径 = cline harness 全工具（含 RAG + 沙盒 + hook）</b>，与 DeepSeek 侧「有 RAG + 有 MCP」<b>在工具维度上一致</b>。因此两侧 RAG/MCP 维度<b>不构成差异源</b>，~38.8pp 差距的主要差异源是<b>模型能力（2B vs V4-Pro）</b>与<b>启动机器（.17 vs 36.15）</b>。勘误依据 = 落盘 JSON 的 <code>aggregate_tool_calls</code>。</div>')
+H.append('<div class="warn"><b>🔴 检索 infra 降级声明（wake783 · 2026-11-24 独立复核 · 铁律2 infra≠能力）</b>：A0/A1/A5 三臂 eval 期间，eda_fastmcp MCP <code>search_apis</code> 的向量召回后端（<code>.env RAG_RECALL_URL=http://localhost:9002/recall</code>）<b>自 2026-11-13 起全线失效</b>——:9002 被 nvidia_gpu_exporter 占用返回 HTML、本地 recall 服务已死亡；MCP 日志 <code>eda_fastmcp/logs/app.log</code> 显示 recall error 共 17164 次（11-20=509 / 11-21=8884 / 11-22=2854 / 11-23=1548），「向量=0 条」出现 16487 次、<b>向量召回从未成功</b>（全程纯 BM25 兜底）。故本报告所有「RAG/检索」指标（rag_queried_rate、search_apis=1969 等）反映的是<b>退化检索口径</b>（向量召回失效、BM25-only），<b>非</b>完整向量+BM25 检索。⇒ <b>A0=43.29% / A1=4.56% 基线含检索 infra 故障成分</b>，修复检索后（方案A：<code>.env</code> 启用 <code>10.252.32.15:9001</code>，实测返回精准向量结果 aeGetCurDesign@0.8815；方案B：修本地 recall）<b>基线需重测</b>。此为已知局限，按 §三 诚实性要求照写；修复前不得把当前基线当「检索完整口径」的最终数。</div>')
 H.append('<div class="cards">'
   '<div class="card"><div class="k">A0 base 5-run Pass@1</div><div class="v">%s</div><div class="u">MiniCPM5-2B · .17 · ± %s</div></div>'
   '<div class="card"><div class="k">DeepSeek-V4-Pro 5/5</div><div class="v">%s</div><div class="u">36.15 · ± %s · 不可与2B直接比</div></div>'
@@ -167,7 +168,7 @@ H.append('<h2>§八 核心结论：哪些能力接近，哪些明显不足</h2>'
   '<div class="ok"><b>接近的能力</b>：<br>'
   '1. <b>工具协议掌握</b>——F2 工具格式错误仅 %d 题，agent 回路进入率 %s，广度 6–7 种/题 ⇒ MiniCPM5-2B 已能正确发起多工具 agent 回路，与 DeepSeek 失败结构（都不卡协议）一致。<br>'
   '2. <b>简单题覆盖</b>——25 题 5/5 全过，trivial/easy 档有相当通过率。<br>'
-  '3. <b>RAG 检索使用</b>——RAG 查询率 %s，能主动检索 API 文档。</div>'
+  '3. <b>RAG 检索使用</b>——RAG 查询率 %s，能主动检索 API 文档（⚠️ 但向量召回 infra 自 11-13 失效、实为 BM25 兜底退化口径，见首屏「检索 infra 降级声明」；不应解读为「完整检索能力已接近 DeepSeek」）。</div>'
   '<div class="warn"><b>明显不足的能力</b>：<br>'
   '1. <b>逻辑/语义正确性</b>——F5 逻辑错 %d 题（%s）为主，AssertionError %d 条；代码跑通但断言不满足，这是与 DeepSeek 拉开差距的主因（~38.8pp 含能力+环境）。<br>'
   '2. <b>稳定产出可执行代码</b>——F1 未产出代码 %d 题、Generation fail %d 条；部分题 2500s 内未稳定产出。<br>'
@@ -190,9 +191,10 @@ tidx = tbl(["证据", "路径 / 命令"], [
     ["本报告生成脚本", "run/baize_posttrain_A0_deepdive_gen.py (+ _html.py)"],
     ["复现命令", "cd run && python3 baize_posttrain_A0_deepdive_gen.py && python3 baize_posttrain_A0_deepdive_html.py"],
     ["A0 口径勘误依据", "aggregate_tool_calls: search_apis=1969 / run_code=81 (run1)"],
+    ["检索 infra 降级证据(wake783)", "eda_fastmcp/logs/app.log (recall error 17164 次,自 2026-11-13) / .env RAG_RECALL_URL=localhost:9002 / kb/recall_api.log"],
 ])
 H.append('<h2>证据索引（产物路径 + 复现命令）</h2>%s' % tidx)
-H.append('<div class="foot">本报告由 BaiZe post-train agent 以第一责任方身份撰写并署名（三条令 §三）。所有数字由 <code>baize_posttrain_A0_deepdive_gen.py</code> 从落盘 JSON 自行计算，未抄 _ops_draft_ 代拟稿。生成时间 2026-11-23。</div>')
+H.append('<div class="foot">本报告由 BaiZe post-train agent 以第一责任方身份撰写并署名（三条令 §三）。所有数字由 <code>baize_posttrain_A0_deepdive_gen.py</code> 从落盘 JSON 自行计算，未抄 _ops_draft_ 代拟稿。生成时间 2026-11-23；wake783（2026-11-24）增补「检索 infra 降级声明」（向量召回自 11-13 失效、向量=0 条 16487 次，基线含 infra 故障成分，修复后需重测）。</div>')
 H.append('</div></body></html>')
 with open(OUT, "w") as f:
     f.write("".join(H))
