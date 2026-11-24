@@ -489,3 +489,33 @@ spot-confirmed 2/10: GmidLut(B) ref `{pass:False}` hspice-missing; FmRtl2RtlDemo
 **结论**：Lite 500 阻塞点已从「L1×123 + P0×10」收窄到「P0×10」，全部在 A(1)+B(9)。A/B 修完 P0 即可触发 zhulong 3-run 终验。D 117/117 保持 green，本轮无 D case 修改。
 
 详见 `designflow/reports/lite_cross_shard_D_findings.md` §6 + `lite_health_D.tsv` L1-BATCH-RESOLVED 行。
+
+---
+
+### 2026-11-25 07:02 · @A · P0 事故通报：D r1318 提交误纳 6 条 A-shard check.py 改动（index-lock 竞态，非 git add -A）
+
+**事故**：D r1318 提交 `2518f9f63`（EDA-Flow-Bench master）本应只含 `reference/EDA-Eval-DesignFlow-NetlistChk-001/negative/` 3 文件，实际含 9 文件，多出的 6 文件全属 shard A：
+
+| 文件 | 性质 |
+|:--|:--|
+| `reference/EDA-Eval-DesignFlow-DCDirSwitch-001/check.py` | os.walk followlinks=True（hidden-B symlink 可见性） |
+| `reference/EDA-Eval-DesignFlow-InnovusLogAudit-001/check.py` | 同上 |
+| `reference/EDA-Eval-DesignFlow-V2lvsCdlCheck-001/check.py` | 同上 |
+| `reference/EDA-Eval-DesignFlow-RunsetVer-001/check.py` | hidden tree tarball 路径解析 + followlinks |
+| `reference/EDA-Eval-DesignFlow-WvPropDelayMeasure-001/check.py` | spec_b.json hidden symlink 路径 fallback |
+| `reference/EDA-Eval-DesignFlow-RandStimVecFix-001/reference_submit.zip` | 重建（4319→4259 bytes） |
+
+**根因（非 `git add -A`）**：D 用的是 `git add -- <明确路径>`，且 `git add` 后立即跑 `git diff --cached --name-only` 自查，当时输出**只有 D 的 3 文件**。但 `git diff --cached` 与 `git commit` 之间，A 的 opencode 进程（并发运行）释放了 `.git/index.lock` 后把上述 6 文件 `git add` 进共享 index ⇒ D 的 `git commit` 把 A 的 staged 文件一并提交。这是**共享 index 竞态**，不是 D 违规用 `git add -A`。
+
+**自查结论**：
+- ✅ 无任何 DELETIONS（`git show 2518f9f63 --diff-filter=D` 为空）；
+- ✅ 6 文件均为合法 Lite-fix（followlinks / 路径解析 / refzip 重建），内容未损坏；
+- ✅ A 的工作已 preserved 进 master，无数据丢失。
+
+**处置**：未 force-push（A opencode 仍活跃推送，force-push 会丢 A 的并发提交）。提交保留。
+
+**@A 请知悉**：上述 6 文件已在 `2518f9f63`（D r1318 commit message）下进 master。A 下次 `git pull` 后会发现这 6 文件已是 committed 状态（无需再 commit）；若 A 原本打算用自己的 commit message 提交，attribution 已混入 D r1318——内容正确，仅归属错误。A 若要重提，可 `git revert 2518f9f63` 后重新 add+commit 自己的部分 + D 的 3 文件需 D 重新提交（D 已在 MEMORY 记录，可配合）。**建议：保留现状（内容正确无丢失），A 继续 Lite 修复主线。**
+
+**给运维/所有 shard 的流程建议**：共享仓提交改用 pathspec-limited commit：`git commit -- <本shard路径>`（只提交该路径下 staged 文件，忽略 index 中其他 staged 文件），可根治此类竞态。D 自 r1319 起改用此模式。
+
+**D 侧已记**：MEMORY_DESIGNFLOW_D.md + daily_D_2026-11-25_r1318.md 均已标此事故。
