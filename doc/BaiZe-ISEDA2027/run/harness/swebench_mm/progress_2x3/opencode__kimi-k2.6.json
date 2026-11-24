@@ -6281,36 +6281,57 @@
   "openlayers__openlayers-15685": {
     "instance_id": "openlayers__openlayers-15685",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1898.5,
+    "rc": 0,
+    "model_patch_len": 4701,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "s` — added a test that verifies the tile area is cleared when the render container is reused in vector mode.\n\nBoth `npm run lint` and `npm run typecheck` pass, and the node test suite passes as well.\n",
+    "stderr_tail": "ates a strictly increasing sequence\n\n  ol/vec/mat4.js\n    create()\n      ✔ returns the expected matrix\n    fromTransform()\n      ✔ sets the expected transform on the matrix\n\n\n  2106 passing (2s)\n\u001b[0m\n"
   },
   "openlayers__openlayers-15787": {
     "instance_id": "openlayers__openlayers-15787",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 370.0,
+    "rc": 0,
+    "model_patch_len": 1079,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ture.test.js`** — New unit tests verifying texture recreation on context change\n\n## Verification\n\n- `npm run test-node` — 2109 tests passing\n- `npm run lint` — passing\n- `npm run typecheck` — passing\n",
+    "stderr_tail": "eLayer and palette handling\n[✓] Identify the root cause of WebGL texture/context issues after removeLayer/addLayer\n[✓] Implement a fix for the bug\n[✓] Verify the fix with relevant tests/examples\n\u001b[0m\n"
   },
   "openlayers__openlayers-15796": {
     "instance_id": "openlayers__openlayers-15796",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 551.1,
+    "rc": 0,
+    "model_patch_len": 1998,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "un test-node` passes.\n- Browser/rendering tests couldn’t be run locally because Chrome/Puppeteer isn’t installed in this environment, but the fix is minimal and directly addresses the reported issue.\n",
+    "stderr_tail": " renderer.targetContext_;\n+      renderer.targetContext_ = null;\n+    });\n+  });\n+\n   describe('renderFrame', function () {\n     const projection = getProjection('EPSG:3857');\n     let renderer;\n\u001b[0m\n"
   },
   "openlayers__openlayers-15825": {
     "instance_id": "openlayers__openlayers-15825",
     "route": "opencode__kimi-k2.6",
     "harness": "opencode",
     "model": "kimi-k2.6-cloud",
-    "wall_s": 161.0,
-    "rc": -6,
+    "wall_s": 1920.2,
+    "rc": -1,
     "model_patch_len": 0,
     "n_images": 0,
     "text_only": false,
-    "classification": "failed",
-    "stderr_tail": "de\n[ ] Identify the root cause of missing tiles near antimeridian in WebGLTileLayer with GeoTIFF source\n[ ] Implement fix and verify\n\u001b[0m\n\u001b[0m• \u001b[0mExplore OL reprojection code\u001b[90m Explore Agent\u001b[0m\n"
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-7554": {
     "instance_id": "openlayers__openlayers-7554",
