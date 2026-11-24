@@ -1,0 +1,138 @@
+ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
+2026-11-24T22:26	ABMatchPlacementCheck-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	AdjViaSelect-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	AntPatternConfigAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	ArgusDeckEquivAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	AutoCellClassify-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	AutoCellKitMap-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-24T22:26	AutoViaGen-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-24T22:26	AutoViaPFAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	AutoViaSelAnalyze-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	CTLESchGenAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	CalibreLvsRepDiag-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	CentroidPlaceAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	ChkSaveHistDedup-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	CmMaOpTableGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	CombCellNetlistSyn-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	ConnChkSummaryGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	ConnPriorityDupCheck-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	ConvexEnclosePcellGen-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-24T22:26	DRCDeckSyncPlan-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DRCDeckWinClean-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	DRCHierLossAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DRCKDeckOpt-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-24T22:26	DRCPatManifest-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	DRCPatPlacePlan-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-24T22:26	DRCPatPlan-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DRQAPlan2Skill-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DbusMetalFlowReport-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	DdgoaDeviceAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	DeckIncludeResolve-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DrcDeckOptimize-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	DrcDensityParseJudge-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DrcLegacyFallback-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	DrcLogAnalyzer-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DrcLogHugeCellOverlap-001	C	1	1	1	0	?	?	p1_fixed	L3 only 2 neg (<3, needs补 neg)	
+2026-11-24T22:26	DrcMatchRca-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DrcPairWaiveClassify-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DrcPatCheckAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DrcPatQaDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	DrcPatternPkgGen-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect)	
+2026-11-24T22:26	DrcPatternReportComposer-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	DrcPcellBatchConvert-v2	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DrcQaAutoPipe-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DrcRuleCellMatch-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	DrcUnusedVarClassify-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	DrcVarMisMatchDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	DrcWaiveDeckGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	DummyCfgCheck-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	DummyDeck-001	C	1	1	0	0	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 only 2 neg (<3, needs补 neg)	
+2026-11-24T22:26	DummyGeoVerify-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DummyHeaderQaResolver-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	DummyMeas-001	C	1	1	0	0	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	DummyQA-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-24T22:26	DummyQaCliNoConfig-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	DummyQaDataPrep-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	DummyTargetLayerCmp-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	ERCBootPlan-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	ERCFilter-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	EccDsaLocate-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	EncloseSide1PatternGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	ErcSetupGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	FindCircuitByPath-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	GDSBump2-001	C	1	1	0	0	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	Gds2Lef-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	GdsLayerAreaMeasure-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	GdsRectGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	GenReleaseNoteMerge-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	HeadlessLatchSkillGen-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-24T22:26	ImplantFillDummyLeftoverDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	InnovusFpLogDiag-001	C	1	1	1	0	?	?	p1_fixed	L3 only 2 neg (<3, needs补 neg)	
+2026-11-24T22:26	InnovusProjLogDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	InnovusPwrRtDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	LVSDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	LVSLogFilter-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	LayoutAether-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-24T22:26	LayoutAnalyzeReport-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	LayoutVirtuoso-001	C	1	1	1	0	?	?	p1_fixed	L3 only 2 neg (<3, needs补 neg)	
+2026-11-24T22:26	LefPostprocessFix-001	C	1	1	0	0	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	LibCellList-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	LvsDeepReportAnalyzer-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	LvsSeedPromoDetect-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	M1ShapeDelete-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	MVValueCmp-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	MVVarNamingAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	MaxAreaRatioSidewallSolver-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	MetalOptRuleExpand-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	NetDelSaveAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	NetHierTrace-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	NetlistExtractSkill-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-24T22:26	NicapNetlistPivot-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	PCellFlowPlan-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	PDKQA-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-24T22:26	PFMergeAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	PFMergeDupAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	PGAssemblyLVS-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	PGLayout-001	C	1	1	?	0	?	?	p2_fixed	L1 var/list/str->dict-pass-ok fixed this round (audit OK, compile OK); L2 harness-limited: check.py needs asset_a subdir in workdir (not a check.py defect); L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	PRBoundary-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	PdFloorplanGen-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	PgLayoutMergeAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	PortPropagate-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	PowerFill-001	C	1	1	?	1	?	?	p2_fixed	L1 var/list/str->dict-pass-ok fixed this round (audit OK, compile OK); L2 harness-limited: check.py needs asset_a subdir in workdir (not a check.py defect); L3 no negative_selftest.py	
+2026-11-24T22:26	PowerFillMergeGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	QaCellRuleLabelGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	RNodeCovAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	RNodePlan-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	RTextChkPlan-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	ResFlow-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	RoutingTrackFinder-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	RsCalcCfgSync-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	RsCalcChkPtGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	RsCalcCkPtAudit-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	RsCalcFlowCompare-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	RsCalcFlowOrch-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	RsCalcMesh-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	RsCalcShortDiag-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect)	
+2026-11-24T22:26	RscalcHandoffDocGen-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	RtextChkPlan-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	SchHierDescentReport-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	SchNetPrefixHilightGen-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect); L3 no negative_selftest.py	
+2026-11-24T22:26	SchPinAnalyze-001	C	1	1	1	1	?	?	green	L1 var/list/str->dict-pass-ok fixed this round (audit OK, compile OK)	
+2026-11-24T22:26	SchWireRebuildGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	ScmosStructId-001	C	1	1	1	1	?	?	green	L1 var/list/str->dict-pass-ok fixed this round (audit OK, compile OK)	
+2026-11-24T22:26	SkillFlowAnalyzer-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	SkillM1ShapeDeleteAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	SkillMenuRoute-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	SshTestProfileBuilder-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-24T22:26	StarrcReleaseNoteGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	StrongARMComp-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect)	
+2026-11-24T22:26	SyncBatchArchivePlan-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect)	
+2026-11-24T22:26	TechDisplayPacketNorm-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-24T22:26	ToolchainID-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	TrMatchHelperGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	VTTFLayerMap-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	ViaFillSvrfGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T22:26	VirtualNotLayerGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	VirtuosoLaunchRecipeGen-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL/err: needs per-case investigation (harness packaging or real defect)	
+2026-11-24T22:26	VlogPortAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
+2026-11-24T22:26	WaiveParamMultiParse-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
