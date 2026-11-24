@@ -37,7 +37,7 @@ L3 是把"会写单脚本"推向"会编排设计流程"的下一阶段评测主�
 
 - **进展 1：评测框架搭建完成。** 跑通"题目 → agent 执行 → `check.py` 判分 → 报告"全链路；改进沙盒以支持 **Linux 命令执行 \+ session 概念 \+ 并发**，为多 Case 并行评测提供基础。500 任务主评测集已成形（4 shard 并行造题，覆盖 13 个 EDA domain），Full 集 2,186 个 case。
 
-- **进展 2：真实 Trace 挖掘 Case。** 基于烛龙在长鑫 PDC / TYA 团队上线后的真实会话 Trace，挖掘并构建了一批 Case（Lite \+ Full）。针对烛龙自身与若干 LLM 评测集跑评测，**可跑出符合预期的结果**：deepseek\-v4\-pro 3\-run **20\.85±1\.03%**（r1=21\.78/r2=19\.75/r3=21\.02，3/3 clean）/ doubao\-pro 3\-run 10\.18±1\.18% / doubao\-lite 4\.68±0\.77% / doubao\-mini 2\.39±0\.19%；doubao\-pro 对齐用户基准 10\.5%，验证评测流程正确。**McNemar 配对检验**（deepseek vs doubao\-pro，majority\-vote 逐题对齐）：b=69, c=2, p≈0\.0000，**高度显著**，Δ=+10\.67pp（约 2\.0× gap）。
+- **进展 2：真实 Trace 挖掘 Case。** 基于烛龙在长鑫 PDC / TYA 团队上线后的真实会话 Trace，挖掘并构建了一批 Case（Lite \+ Full）。针对烛龙 \+ 若干 LLM（doubao\-pro / lite / mini \+ deepseek\-v4\-pro）跑评测，**可跑出符合预期的结果**：deepseek\-v4\-pro 3\-run **20\.85±1\.03%**（r1=21\.78/r2=19\.75/r3=21\.02，3/3 clean）/ doubao\-pro 3\-run 10\.18±1\.18% / doubao\-lite 4\.68±0\.77% / doubao\-mini 2\.39±0\.19%；doubao\-pro 对齐用户基准 10\.5%，验证评测流程正确。**McNemar 配对检验**（deepseek vs doubao\-pro，majority\-vote 逐题对齐）：b=69, c=2, p≈0\.0000，**高度显著**，Δ=+10\.67pp（约 2\.0× gap）。
 
 - **进展 3：人工核验启动。** Case 的人工核验正在进行，逐题审查任务形态、资产完备性、断言覆盖度。
 
