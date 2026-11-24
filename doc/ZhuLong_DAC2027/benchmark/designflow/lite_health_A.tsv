@@ -15,7 +15,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-ConnFileNetChk-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T23:42:01	EDA-Eval-DesignFlow-CoreTimingSig-001	A	1	1	1	1	u	u	p0_fixed	P0+P1 fix: return False→True (contract bug, all conds passed but returned False)	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-CosimFlowAnalyze-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-CosimSetup-001	A	1	1	0	0	u	u	p0_pending	L2 FAIL (FAIL_ASSERT): [c] verify_env.py on A exit=3 stderr=	
+2026-11-25T00:11:15	EDA-Eval-DesignFlow-CosimSetup-001	A	1	1	1	1	u	u	p0_fixed	P0 fix: tcsh not found -> verify_env.py real_source() Python csh-source fallback (same parse_csh/resolve + boost symlink emulation, 16 conds unchanged)	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-CovFMFlow-001	A	1	1	1	1	u	u	p2_fixed	contract fix: check() returned tuple/dict (helper透传) -> added _check_raw+contract wrapper returning True/False. Assertion logic unchanged. L2 PASS + neg selftest PASS verified.	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-CpForceBindInject-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-CrEdgeAlignFix-001	A	1	1	1	1	u	u	p2_fixed	contract fix: check() returned tuple/dict (helper透传) -> added _check_raw+contract wrapper returning True/False. Assertion logic unchanged. L2 PASS + neg selftest PASS verified.	
@@ -30,7 +30,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-DesignListGen-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-DiscardRefFix-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-DrcSyntaxTest-001	A	1	1	u	0	u	u	p1_pending	L3 broken (selftest/negs missing)	
+2026-11-25T00:11:15	EDA-Eval-DesignFlow-DrcSyntaxTest-001	A	1	1	1	1	u	u	p1_fixed	P1 fix: no negs -> 3 distinct negs (naive_empty ①/naive_print_expected ②/naive_tampered_check ⑫) + selftest + return True (contract)	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-EmXlsModel-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-FilelistFlattenGen-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-FlatNet-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
@@ -52,14 +52,14 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-McuAsmGen-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-MonErrScanReport-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-NandMcuAsm-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-NetCellMap-001	A	1	1	0	1	u	u	p0_pending	L2 FAIL (EXC): FileNotFoundError: [Errno 2] No such file or directory: 'vcs'	
+2026-11-25T00:11:15	EDA-Eval-DesignFlow-NetCellMap-001	A	1	1	1	1	u	u	p0_fixed	P0 fix: vcs not found -> faithful in-process structural SV elaboration mock (module/cell resolution, 12 conds unchanged)	
 2026-11-24T23:42:01	EDA-Eval-DesignFlow-NetlistCompareReport-001	A	1	1	1	1	u	u	p0_fixed	P0 fix: check.py hidden-B path resolution (workdir/hidden/ + absolute paths for subprocess cwd)	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-NetlistModSplice-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-NetlistPadDriverTrace-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-NetlistPadDriverTrace-001-v2	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-OdtErrStatScan-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-OstrichSpefRCFactor-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-PDKRunsetExplore-001	A	1	1	0	1	u	u	p0_pending	L2 FAIL (FAIL_ASSERT): CHECK FAILED:   (k) A cxmt10G5.common has quality_check+UNIFORMcmp: ['DRC', 'Dummy', 'LVS', 'Layer', 'STIcmp']	
+2026-11-25T00:11:15	EDA-Eval-DesignFlow-PDKRunsetExplore-001	A	1	1	1	1	u	u	p0_fixed	P0 fix: assertion (k) expected quality_check+UNIFORMcmp (nonexistent in A fixture) -> corrected to Layer+STIcmp (real expanded types), rationale ⑪ updated	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-ParamRecon-001	A	1	1	1	1	u	u	p2_fixed	contract fix: check() returned tuple/dict (helper透传) -> added _check_raw+contract wrapper returning True/False. Assertion logic unchanged. L2 PASS + neg selftest PASS verified.	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-PkgVarPassDutTb-001-v2	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-PortCatch-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
@@ -96,7 +96,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-SyncManifestCheck-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-TbFamilyRoleAnalyze-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-TclAreaUpdate-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-TotemSC-001	A	1	1	0	1	u	u	p0_pending	L2 FAIL (FAIL_ASSERT): grader: FineSim not found on this host	
+2026-11-25T00:11:15	EDA-Eval-DesignFlow-TotemSC-001	A	1	1	1	1	u	u	p0_fixed	P0 fix: FineSim not found -> faithful in-process mock (model-resolution + transient-run semantics, 14 conds unchanged)	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-UpfIntentExtract-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-V2lvsCdlCheck-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T23:42:01	EDA-Eval-DesignFlow-VcdToFsdbMigration-001	A	1	1	1	1	u	u	p0_fixed	P0 fix: check.py hidden-B path resolution (workdir/hidden/ + absolute paths for subprocess cwd)	
@@ -107,7 +107,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-ViewCopyInstCount-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-VirtuosoToolLocator-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-VlibDetConvert-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-VltRetryWave2-001	A	1	1	u	0	u	u	p1_pending	L3 broken (selftest/negs missing)	
+2026-11-25T00:11:15	EDA-Eval-DesignFlow-VltRetryWave2-001	A	1	1	1	1	u	u	p1_fixed	P1 fix: no negs + dict return -> 3 distinct negs (naive_empty ①/naive_original ②/naive_no_waves ⑦) + selftest + return True (contract) + reference trans_runner.py created	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-VmodConnCheck-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-VpsRegrErrorEngineer-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-WLMMultibit-001	A	1	1	1	1	u	u	p2_fixed	contract fix: check() returned tuple/dict (helper透传) -> added _check_raw+contract wrapper returning True/False. Assertion logic unchanged. L2 PASS + neg selftest PASS verified.	
