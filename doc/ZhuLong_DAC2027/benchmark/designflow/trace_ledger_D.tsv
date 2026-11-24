@@ -2011,7 +2011,7 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1795084563745_l0j38.messages.json	zlhou	hfeg0plg15	142	schematic_netlist	case	EDA-Eval-DesignFlow-NetlistMimicResistorAudit-001	2026-11-23 10:31	
 1794897186406_0yu3c	harrywu	hfeg0plg72	265	analog_context	case	EDA-Eval-DesignFlow-CellTopologyClassifyProduce-001	2026-11-23 11:00	
 1794987785630_0wsvo.messages.json	yingyu	hfeg0plg54	204	schematic_netlist	case	EDA-Eval-DesignFlow-Lib2dbFlowGuideProduce-001	2026-11-23 11:39	
-1794999346452_d1jo3					case	EDA-Eval-DesignFlow-SchNetlistExtract-001	2026-11-23 12:29	D reclaim from C; schematic_netlist case
+1794999346452_d1jo3					case	EDA-Eval-DesignFlow-SchNetlistExtract-001	2026-11-24 12:07	r1251 repair: inline check.py (12 assertions, B=nand2x1 4inst vs A=invVx2 2inst; 3 neg FAIL; ref PASS) into cases/D JSON test field; was stub pointer
 1789560867469_6b740	junxu	hfeg0pkn005	166	waveform	case	EDA-Eval-DesignFlow-WvCliCoreProduce-001	2026-11-23 13:52	
 1794790671331_5sbqn	ypzheng	hfeg0plg103	122	waveform	case	EDA-Eval-DesignFlow-WlToggleClassify-001	2026-11-23 14:19	
 1795140832305_x2jan	gallopc	hfeg0pkn004	100	waveform	parked		2026-11-23 14:36	host hfeg0pkn004 ssh hangs (ConnectTimeout ignored, timeout 124); try other host
