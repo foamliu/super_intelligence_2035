@@ -5850,23 +5850,44 @@
   "openlayers__openlayers-13669": {
     "instance_id": "openlayers__openlayers-13669",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1095.0,
+    "rc": 0,
+    "model_patch_len": 3245,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "cation\\nAll **1,783** Node tests pass, including the 4 new GeoTIFF NaN tests, confirming the fix works and introduces no regressions.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-13823": {
     "instance_id": "openlayers__openlayers-13823",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 748.8,
+    "rc": 0,
+    "model_patch_len": 2445,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "naffected because it creates images with `imagePixelRatio = pixelRatio`, so the canvas size remains the same for vector image layers.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-13860": {
     "instance_id": "openlayers__openlayers-13860",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 941.0,
+    "rc": 0,
+    "model_patch_len": 6885,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "- `test/node/ol/geom/flat/deflate.test.js`\\n  - `test/node/ol/geom/flat/inflate.test.js`\\n\\nAll 76 affected tests pass after the fix.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-13893": {
     "instance_id": "openlayers__openlayers-13893",
