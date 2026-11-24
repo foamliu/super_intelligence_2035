@@ -7,7 +7,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-Backannot-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-BankskewVecgenCfg-001	A	1	1	1	1	u	u	pending	L2 verified: built zip (gen_bankskew_cfg.py + spec_a.json), ref PASS	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-CalVcoEnvWorkaround-001	A	1	1	1	1	u	u	pending	L2 verified: built zip from test_env_ref.py (renamed test_env.py), ref PASS	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-CaselistPerlDriverGen-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
+2026-11-25 00:57	EDA-Eval-DesignFlow-CaselistPerlDriverGen-001	A	1	1	1	1	u	u	p0_fixed	r1132: L2 fixed - built reference_submit.zip (caselist_perl_driver_ref.py as gen_perl_driver.py); check() PASS 16/16; negs FAIL. L4/L5 pending eval-machine run	4
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-CdlNetlistAnalyze-001	A	1	1	1	1	u	u	pending	L2 verified: built zip from analyze_netlist.py, hidden from assets/, ref PASS	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-CdlNetlistAnalyze-001-v2	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-CkmuxXlsxExport-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
@@ -20,7 +20,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-CpForceBindInject-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-CrEdgeAlignFix-001	A	1	1	1	1	u	u	p2_fixed	contract fix: check() returned tuple/dict (helper透传) -> added _check_raw+contract wrapper returning True/False. Assertion logic unchanged. L2 PASS + neg selftest PASS verified.	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-CrcErrBitDiag-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-CxdpLintMakefileGen-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
+2026-11-25 00:57	EDA-Eval-DesignFlow-CxdpLintMakefileGen-001	A	1	1	1	1	u	u	p0_fixed	r1132: L2 fixed - restored missing hidden/stub_gen_lib_path.py + stub_gen_design_list.pl (copied from visible-A generic CAD tools); built reference_submit.zip (gold/gen_makefile.py); check() PASS all; negs ALL GOOD. L4/L5 pending	5
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-DCDirSwitch-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-DRCDeckOpt-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-DcLsfQueueMigrate-001	A	1	1	1	1	u	u	pending	L2 verified: built zip from migrate_dc_ref.py (renamed), ref PASS	
@@ -28,7 +28,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-DeadLoopScan-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-DelayCellParamGen-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-DesignListGen-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
+2026-11-25 00:57	EDA-Eval-DesignFlow-DftTestmaxLaunchFlow-001	A	1	1	1	1	u	u	p0_fixed	r1132: L2 fixed - reference gen_dft_launch_flow.py was a NEGATIVE stub (hardcoded A scan_cells=75, missing RTL files); rewrote as spec-driven generator reading spec_b (TESTMAX/VCS/VERDI homes, scan_cells, RTL files, TB); run_dft.sh graceful tool-fallback writes dft_compile.log with B scan_cells; check() PASS 16/16; 4 negs FAIL. L4/L5 pending	6
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-DiscardRefFix-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-25T00:11:15	EDA-Eval-DesignFlow-DrcSyntaxTest-001	A	1	1	1	1	u	u	p1_fixed	P1 fix: no negs -> 3 distinct negs (naive_empty ①/naive_print_expected ②/naive_tampered_check ⑫) + selftest + return True (contract)	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-EmXlsModel-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
@@ -50,7 +50,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-Lpddr5CovTermitFix-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-MakeConvenienceTarget-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-McuAsmGen-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-MonErrScanReport-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
+2026-11-25 00:57	EDA-Eval-DesignFlow-MonErrScanReport-001	A	1	1	u	1	u	u	pending	r1132: missing reference solution - check.py expects gen_mon_scan_report.py in zip but reference/ has none (only check.py/spec_b/negative). assets/ has gen_mon_scan_report.py (visible-A, would leak if used as ref). DEFER next round: write spec-driven reference generator	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-NandMcuAsm-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-25T00:11:15	EDA-Eval-DesignFlow-NetCellMap-001	A	1	1	1	1	u	u	p0_fixed	P0 fix: vcs not found -> faithful in-process structural SV elaboration mock (module/cell resolution, 12 conds unchanged)	
 2026-11-24T23:42:01	EDA-Eval-DesignFlow-NetlistCompareReport-001	A	1	1	1	1	u	u	p0_fixed	P0 fix: check.py hidden-B path resolution (workdir/hidden/ + absolute paths for subprocess cwd)	
@@ -64,14 +64,14 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-PkgVarPassDutTb-001-v2	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-PortCatch-001	A	1	1	1	1	u	u	pending	L2 verified: built zip (port_catch.py + report_A.json), ref PASS	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-PyShebangFix-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-RandStimVecFix-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
+2026-11-25 00:57	EDA-Eval-DesignFlow-RandStimVecFix-001	A	1	1	u	1	u	u	pending	r1132: missing reference solution - check.py __main__ expects rand_stim_gen_new_ref.py but file absent from reference/ (only check.py/negative). assets/ has rand_stim_gen.py (buggy original, not the fixed _new). DEFER next round: write fixed reference generator	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-RedhawkGenInputs-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-RefModelBugFix-001	A	1	1	1	1	u	u	p2_fixed	contract fix: check() returned tuple/dict (helper透传) -> added _check_raw+contract wrapper returning True/False. Assertion logic unchanged. L2 PASS + neg selftest PASS verified.	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-RefreshRunAnalyze-001	A	1	1	1	1	u	u	pending	L2 verified: built zip from analyze_refresh_run.py, ref PASS 14/14	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-RefreshRunAnalyze-001-v2	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-RegrCaseFilter-001	A	1	1	1	1	u	u	pending	L2 verified: built zip from regr_case_filter.py, ref PASS	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-RegrCheckMacroMap-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-RegrunMakefileGen-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
+2026-11-25 00:57	EDA-Eval-DesignFlow-RegrCheckMacroMap-001	A	1	1	1	1	u	u	p0_fixed	r1132: L2 fixed - built reference_submit.zip (run regr_check_macro_map_ref.py on B -> JSON); check() PASS 13/13; negs FAIL. L4/L5 pending	3
+2026-11-25 00:57	EDA-Eval-DesignFlow-RegrunMakefileGen-001	A	1	1	u	1	u	u	pending	r1132: missing reference solution - check.py expects gen_regrun_makefile.py in zip but reference/ has none (only check.py/spec_b/negative). assets/ has gen_regrun_makefile.py (visible-A, would leak if used as ref). DEFER next round: write spec-driven reference generator	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-RunRegrSubmit-001	A	1	1	1	1	u	u	pending	L2 verified: built zip from run_regr_driver_ref.py (renamed), ref PASS	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-RunRegrSubmit-001-v2	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T23:42:01	EDA-Eval-DesignFlow-RunsetVer-001	A	1	1	1	1	u	u	p0_fixed	P0+P1 fix: verify-script artifact (tarball in refdir, harness copies as sibling); added 3 negs+selftest	
@@ -86,12 +86,12 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-SpefLogAnalyze-001	A	1	1	1	1	u	u	p2_fixed	P2 contract fix: no return -> return True. L2 verified: built zip from spef_log_analyze.py, ref PASS	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-SpefMismatchModuleLocalize-001	A	1	1	1	1	u	u	p2_fixed	contract fix: check() returned tuple/dict (helper透传) -> added _check_raw+contract wrapper returning True/False. Assertion logic unchanged. L2 PASS + neg selftest PASS verified.	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-StaFlowScaffold-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-StdcellFamilyRefMatch-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
+2026-11-25 00:57	EDA-Eval-DesignFlow-StdcellFamilyRefMatch-001	A	1	1	1	1	u	u	p0_fixed	r1132: L2 fixed - built reference_submit.zip (stdcell_family_ref_match_ref.py); check() PASS 20/20; negs FAIL. L4/L5 pending	3
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-StdcellMatch-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-SvConvTimeoutSkip-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-SvIntegrateGen-001	A	1	1	1	1	1	1	p0_fixed	P0+P1 fix: vcs/vlogan were HARD deps in cond h/i (ref failed at h: vlogan not found) -> faithful in-process SV structural mock (_mock_vlogan/_mock_vcs: module/endmodule balance, paren/bracket balance, declared-module instantiation port+net resolution, simv marker). Assertion count/strictness unchanged (15 conds a-o). check returns True (contract). selftest made standalone (abs paths). REF PASS, 5 negs FAIL, 4 distinct (c/d/e/m).	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-SvPackedFlatten-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-SvTbBugFix-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
+2026-11-25 00:57	EDA-Eval-DesignFlow-SvPackedFlatten-001	A	1	1	1	1	u	u	p0_fixed	r1132: L2 fixed - built reference_submit.zip (run sv_packed_flatten_ref.py on B -> ddr6_interface.sv + flatten_report.json); check() PASS 14/14; negs FAIL. L4/L5 pending	4
+2026-11-25 00:57	EDA-Eval-DesignFlow-SvTbBugFix-001	A	1	1	u	1	u	u	pending	r1132: missing reference solution - check.py expects gen_sv_bugfix.py in zip but reference/ has none (only check.py/spec_a/spec_b/negative). assets/ has no gen_sv_bugfix.py. DEFER next round: write spec-driven reference generator	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-SynLintFlow-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-SyncManifestCheck-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-TbFamilyRoleAnalyze-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
@@ -102,14 +102,14 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T23:42:01	EDA-Eval-DesignFlow-VcdToFsdbMigration-001	A	1	1	1	1	u	u	p0_fixed	P0 fix: check.py hidden-B path resolution (workdir/hidden/ + absolute paths for subprocess cwd)	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-VecgenProbeDiag-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T23:42:01	EDA-Eval-DesignFlow-Verification-001	A	1	1	1	1	u	u	p0_fixed	P0 fix: check.py hidden-B path resolution (workdir/hidden/ + absolute paths for subprocess cwd)	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-VerilogDriveFsmBlockGen-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
+2026-11-25 00:57	EDA-Eval-DesignFlow-VerilogDriveFsmBlockGen-001	A	1	1	0	1	u	u	pending	r1132: P0 UNRESOLVED - assets/EDA-Eval-DesignFlow-VerilogDriveFsmBlockGen-001/ missing entirely; check.py expects hidden/ (input_file+stimulus_file+netlist_file+manifest) in workdir; B inputs never created -> case incomplete. reference_submit.zip has only .pl. DEFER next round: create hidden B inputs (input.list + stimulus + netlist) per trace intent	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-VerilogrunPreserve-001	A	1	1	1	1	u	u	p2_fixed	contract fix: check() returned tuple/dict (helper透传) -> added _check_raw+contract wrapper returning True/False. Assertion logic unchanged. L2 PASS + neg selftest PASS verified.	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-ViewCopyInstCount-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-VirtuosoToolLocator-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-VlibDetConvert-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-25T00:11:15	EDA-Eval-DesignFlow-VltRetryWave2-001	A	1	1	1	1	u	u	p1_fixed	P1 fix: no negs + dict return -> 3 distinct negs (naive_empty ①/naive_original ②/naive_no_waves ⑦) + selftest + return True (contract) + reference trans_runner.py created	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-VmodConnCheck-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T15:14:17	EDA-Eval-DesignFlow-VpsRegrErrorEngineer-001	A	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
+2026-11-25 00:57	EDA-Eval-DesignFlow-VpsRegrErrorEngineer-001	A	1	1	0	1	u	u	pending	r1132: P0 UNRESOLVED - check() cond a requires zip contain engineer.py + VPC.json + modified_verilogrun/ + run_report.json (generated outputs); cond h re-runs VCS on modified verilogrun (L4 risk if eval machine lacks vcs). reference_submit.zip has only engineer.py. DEFER next round: run engineer.py on spec_A to gen outputs + repackage; verify L4 vcs availability	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-WLMMultibit-001	A	1	1	1	1	u	u	p2_fixed	contract fix: check() returned tuple/dict (helper透传) -> added _check_raw+contract wrapper returning True/False. Assertion logic unchanged. L2 PASS + neg selftest PASS verified.	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-WaveSig-001	A	1	1	1	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T15:14:17	EDA-Eval-DesignFlow-WtmWriteArrayScope-001-v2	A	1	1	1	1	u	u	pending	L2 verified: existing submit.zip, ref PASS	
