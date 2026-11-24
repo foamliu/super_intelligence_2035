@@ -15,3 +15,9 @@ grpo_mllm_runs/grpo_train_images/
 grpo_mllm_runs/smoke/grpo_train_images/
 # Regenerable LoRA adapter binary from smoke test (reproduced by grpo_mllm_wave.py smoke run)
 grpo_mllm_runs/smoke/step2/adapter_model.safetensors
+
+# GRPOv2 regenerable binaries (deterministic via grpo_mllm_wave_v2.py, fixed seed)
+grpo_mllm_runs_v2/grpo_v2_train_images/
+grpo_mllm_runs_v2/step*/adapter_model.safetensors
+grpo_mllm_runs_v2/smoke/step*/adapter_model.safetensors
+grpo_mllm_runs_v2/smoke/grpo_v2_train_images/
