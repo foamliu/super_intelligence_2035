@@ -274,3 +274,40 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-25T01:55:00	EDA-Eval-DesignFlow-TaperBufOpt-001	B	1	1	0	?	0	?	p0_pending	selftest: REF candidate fails on A rc=1; sim - needs diagnosis/mock	-
 2026-11-25T01:55:00	EDA-Eval-DesignFlow-Vcc2scActDeckGen-001	B	1	1	0	?	0	?	p0_pending	selftest: SOME FAILED; sim - needs diagnosis/mock	-
 2026-11-25T01:55:00	EDA-Eval-DesignFlow-VwlpRefDeckSet-001	B	1	1	0	?	0	?	p0_pending	selftest: FAILURE; sim - needs diagnosis/mock	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-DblTailSlicerDeckGen-001	B	1	1	1	1	1	1	green_verified	r1176 verify: built reference_submit.zip (gen_slicer_deck.py); check.check(ref_zip,wd) PASS; selftest all negs FAIL distinct; python-only L4 OK	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-DupSubcktDefDiag-001	B	1	1	1	1	1	1	green_verified	r1176: built ref_zip; L2 PASS; selftest DISTINCT=True ALL_FAIL_OK; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-NetlistWLReduce-001	B	1	1	1	1	1	1	green_verified	r1176: built ref_zip (wl_reduce_ref.py->wl_reduce.py); L2 PASS; selftest negs FAIL distinct; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-SiInpTokenRm-001	B	1	1	1	1	1	1	green_verified	r1176: built ref_zip (siinp_rm_ref.py->solution.py); L2 PASS; selftest 4 negs FAIL; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-SubcktInstParamInj-001	B	1	1	1	1	1	1	green_verified	r1176: built ref_zip; L2 PASS; selftest negs FAIL distinct; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-TrtfMeasDeckGen-001	B	1	1	1	1	1	1	green_verified	r1176: built ref_zip; L2 PASS; selftest negs FAIL; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-WtmFileReview-001	B	1	1	1	1	1	1	green_verified	r1176: built ref_zip (wtm_review.py); L2 PASS; selftest 3 negs FAIL; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-WtmPatternDirReview-001	B	1	1	1	1	1	1	green_verified	r1176: built ref_zip (review_wtm_dir.py); L2 PASS; selftest 4 negs FAIL; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-XrunLogErrDiag-001	B	1	1	1	1	1	1	green_verified	r1176: built ref_zip; L2 PASS; selftest negs FAIL distinct; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-FsdbScopeSignalLocate-001	B	1	1	1	1	1	1	green_verified	r1176: built ref_zip (analyze_fsdb_scope_signal_ref.py->candidate.py); L2 PASS; selftest 4 negs FAIL; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-ClampPwrStateExtract-001	B	1	1	1	1	1	1	green_verified	r1176: L2 PASS (check.check ref_zip); selftest ALL_NEGATIVES_FAIL=PASS distinct; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-BisecMt0SmCalc-001	B	1	1	1	1	1	1	green_verified	r1176: L2 PASS; selftest NEG_OK all 6 fail; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-LatchSubcktLocate-001	B	1	1	1	1	1	1	green_verified	r1176: L2 PASS; selftest 4 negs FAIL distinct (e/f/f/f); python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-RonMonoDiag-001	B	1	1	1	1	1	1	green_verified	r1176: L2 PASS; selftest 6 negs FAIL distinct (b/d/e/j/f/d); python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-SiOutDiag-001	B	1	1	1	1	1	1	green_verified	r1176: L2 PASS; selftest ref PASS + 5 negs FAIL; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-TbMeasCheck-001	B	1	1	1	1	1	1	green_verified	r1176: L2 PASS; selftest negs FAIL distinct; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-SubcktExtract-001	B	1	1	1	1	1	1	green_verified	r1176: L2 PASS; selftest RESULT ALL-OK negs FAIL distinct; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-SimSavedCornerComplete-001	B	1	1	1	1	1	1	green_verified	r1176: L2 PASS; selftest 5 negs FAIL; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-FsdbPulseFilter-001	B	1	1	1	1	1	1	green_verified	r1176: selftest confirms ref PASSES check(rc=0) + 4 negs FAIL; python-only (harness empty-wd L2 artifact, selftest is truth)	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-GaaFetDeckAugment-001	B	1	1	1	1	1	1	green_verified	r1176: selftest ref positive control PASS + 4 negs FAIL; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-SentaurusDeckSetupSummary-001	B	1	1	1	1	1	1	green_verified	r1176: selftest ref PASSES check(rc=0) + 3 negs FAIL; python-only	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-CmlBwExtensionHandbook-001	B	1	1	0	1	0	0	p1_pending	r1176: NO ref solution .py in refdir (only check.py); L3 selftest negs FAIL OK; L2 NO_REF. Need ref solution located/created	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-DeckConsistencyCheck-001	B	1	1	0	1	0	0	p1_pending	r1176: NO ref .py; selftest negs FAIL OK; L2 NO_REF (was p1_fixed for negs, ref still missing)	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-DelayCornerIdent-001	B	1	1	0	1	0	0	p1_pending	r1176: NO ref .py; selftest negs FAIL OK; L2 NO_REF	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-McVthSpVariantGen-001	B	1	1	0	1	0	0	p1_pending	r1176: NO ref .py; L2 NO_REF (was p1_pending path-bug; deeper issue: no ref solution file)	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-Mt0Reorg-001	B	1	1	0	1	0	0	p1_pending	r1176: NO ref .py; L2 NO_REF (no ref solution file)	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-PexStimulusBuild-001	B	1	1	0	1	0	0	p1_pending	r1176: NO ref .py; selftest negs FAIL OK; L2 NO_REF (was p1_fixed for negs, ref missing)	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-SharedLibDeployFix-001	B	1	1	0	1	0	0	p1_pending	r1176: NO ref .py; L2 NO_REF	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-SlicerSweepFomOpt-001	B	1	1	0	1	0	0	p1_pending	r1176: NO ref .py; L2 NO_REF	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-VSplit-001	B	1	1	0	1	0	0	p1_pending	r1176: NO ref .py; selftest negs FAIL OK; L2 NO_REF (was p1_fixed for negs, ref missing)	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-Ddr6RptCmdExtract-001	B	1	1	0	1	0	0	p1_pending	r1176: ref .py exists (extract_cmds_ref.py) but deliverable needs cmd_report.json+extract_cmds.py (ref must be RUN to gen json); selftest negs FAIL OK; partial ref_zip removed	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-StackedMOSOpAnalysis-001	B	1	1	0	1	0	0	p1_pending	r1176: ref .py exists (op_analyze_ref.py) but deliverable needs op_analysis.json+op_analyze.py (run ref to gen json); selftest negs FAIL OK; partial ref_zip removed	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-RsCalcAutoVia-001	B	1	1	0	1	0	0	p1_pending	r1176: multi-file deliverable (common.config/gen_autovia_agent.py/prompt_flow.md/rscalc.config/run_autovia_config.il); selftest negs FAIL OK; partial ref_zip removed; need full ref deliverable packaging	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-XmelabCuvpomPortDiag-001	B	1	1	0	1	0	0	p1_pending	r1176: ref .py exists (analyze_xmelab_cuvpom_ref.py) but arcname mismatch (check found no .py in zip); selftest negs FAIL OK; partial ref_zip removed; need correct arcname	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-BridgeCfgDiag-001	B	1	1	0	1	0	0	p1_pending	r1176: built ref_zip; harness empty-wd L2 FAIL (script ran, report not produced -- check likely reads assets from workdir); selftest negs FAIL OK; need re-verify with assets in workdir	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-PdkLayerLocate-001	B	1	1	0	1	0	0	p1_pending	r1176: built ref_zip; harness empty-wd L2 FAIL (report not produced); selftest negs FAIL OK; need re-verify with assets in workdir	-
+2026-11-25T02:30:00	EDA-Eval-DesignFlow-TscodecompTbVerify-001	B	1	1	0	1	0	0	p0_pending	r1176: L2 FAIL cond [k] 'hidden B != A (different sizing/corner)' -- ref solution output fails check; selftest negs FAIL OK; needs ref/check diagnosis	-
