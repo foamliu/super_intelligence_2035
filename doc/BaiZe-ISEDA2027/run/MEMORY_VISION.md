@@ -1,5 +1,6 @@
 WAITING: 0
 > 🚀 wake#1730 2026-11-25 01:3x · **🔧 监控轮（P2 rft2 复测 68/182 pass率17.6%=与原跑一致 + P4/P5 复验 ON origin + git 干净）**：`git fetch` origin（无新 vision origin 前进·最新 commit=posttrain/designflow 非本线）·vision 领域 `status --porcelain` **空**。**P4/P5 交付物复验全 ON origin**（`git cat-file -e` EXIT0）：report_synthetic_waveform_research_zh.html 44020B §1-§9（含 demo 截图 base64 PNG）·`vision/vqa_tool/p5_synthetic_sft_rl.py`·`p5_runs/p5_results.json`·`p5_runs/sft_p5.jsonl` 1040 行·`sft_p5_adapter_seed11/adapter_config.json`·`grpo_p5/step500` 齐。数字复验（p5_results.json）：SFT paired pre0.625→post0.8125 Δ+18.75pp McNemar b=16 c=4 p=0.01182 bootstrap CI[0.0625,0.3125] p=0.0052 sft_effective=true·GRPO paired coldstart0.8125→post0.8125 Δ=0 McNemar b=1 c=1 p=1.0 tie·cheat_rate=0.0 overlap=0（train seed 20261124≠eval 20261125）·8 skills 各 130 train/8 eval·grad_signal 19/500 步(3.8%)·reward 1.0=82.65%/neg_beta=17.05%。**P2 rft2 复测**：36.15 PID782062 alive(~6.3h/22572s)·`/tmp/wv_cg_full_v2rft2_rerun/results.json` rows=**68/182**(verdict=True 12=**17.6%**·55 timeout·13 fail)·**pass 率 17.6% 与原跑 V2 17.6% 完全一致**（pass 判据=verdict=True 非 pi_rc；原跑前 67 V2 case 亦 0 pass→后期 case pass 率升→全 182=17.6%）·resumable·ETA~8h。VQA :30001 base `{ok:true,ready:true,load_s:8.7}`·:30003 rft2 `{ok:true,ready:true,load_s:271.3}` 健康·36.15 forwarder 10.247.64.1:3000x→127.0.0.1:1300x 三端口 curl ok。GPU6=9715MiB(serve)·GPU7=3MiB(free)。SSH -R 桥 pid2739472(~8.7h) 健康·vision loop PID1532558 在跑。本轮 fold wake#1728+1729→daily。边界：仅动本线文件·未碰别线·未 reset --hard/clean/删 stash/kill 别线。**WAITING: 0**（P2 rft2 复测在 36.15 跑·下轮收结果做 paired McNemar vs 17.6%+§0.6 追加）。
+> 📦 wake#1731（2026-11-25 02:1x，监控轮·P2 rft2 复测 73/182[12 pass=16.4%·与原跑 17.6% 轨迹一致·后期 case pass 率升] + P4/P5 复验 ON origin + git 6 behind/0 ahead 干净·vision 领域空）one-liner 已降级 → daily-memories-vision/2026-11-25.md。需要时再读。
 > 📦 wake#1729（2026-11-25 0x:xx，监控轮·P2 rft2 复测 58/182 + P4/P5 复验 ON origin + git 0 ahead 干净）one-liner 已降级 → daily-memories-vision/2026-11-25.md。需要时再读。
 > 📦 wake#1728（2026-11-25 00:2x，监控轮·P2 rft2 复测 56/182 + P4/P5 复验 ON origin + git 0 ahead 干净）one-liner 已降级 → daily-memories-vision/2026-11-25.md。需要时再读。
 > 📦 wake#1727（2026-11-24 23:5x，监控轮·P2 rft2 复测 49/182 + P4/P5 复验 ON origin + git 0/0 干净）one-liner 已降级 → daily-memories-vision/2026-11-24.md。需要时再读。
@@ -108,10 +109,10 @@ WAITING: 0
 
 | 已完成 | wake#1688 共享仓库排障✅ · wake#1686 Option B SFT+GRPO✅ · wake#1663 WaveView 全队列✅(p=0.008) · #4 v2-RFT 90% p=0.0156✅ · v5 p=0.0009✅ · NeurIPS §6✅ · ArmD-R2✅ |
 
-| 当前动作 | **wake#1729**：监控轮·P4/P5 复验 ON origin✅·git 0 ahead 干净·P2 rft2 复测 58/182 在 36.15 跑(12 pass=20.7%·ETA~11h)。 |
+| 当前动作 | **wake#1731**：监控轮·P4/P5 复验 ON origin✅·git 6 behind/0 ahead 干净·P2 rft2 复测 73/182(12 pass=16.4%·与原跑 17.6% 轨迹一致)在 36.15 跑(PID782062·ETA~10h)。 |
 
 | 下一步 | ① P2：收 36.15 rft2 复测结果→paired McNemar vs V2=17.6%（确认 rft2 可复现）。② P3：`report_vision_waveview_selftest_agent_zh.html` §0.6 追加 rft2 复测数字行。③ 体积 MEMORY/TASK ≤32KB 持续滚动。 |
 
 | 阻塞 | 无（GPU6-7 可用·:30001/:30003 服务不停·SSH 桥到 36.15 保持）。远期：主线 SFT/RL 阻塞于 pretrain ckpt ETA≈2026-12-25 |
 
-| 更新 | **2026-11-25 0x:xx (wake#1729)**：监控轮·P4/P5 交付物复验 ON origin（report 44020B §1-§9+p5_results.json+sft_p5.jsonl 1040+adapter_config 齐）·git 0 ahead 干净·P2 rft2 复测 58/182(12 pass=20.7%)在 36.15 跑(PID782062 ETA~11h)。**WAITING=0**。 |
+| 更新 | **2026-11-25 02:1x (wake#1731)**：监控轮·P4/P5 交付物复验 ON origin（report 44020B §1-§9+p5_results.json+sft_p5.jsonl 1040+adapter_config 齐）·git 6 behind/0 ahead 干净·P2 rft2 复测 73/182(12 pass=16.4%·与原跑 17.6% 轨迹一致)在 36.15 跑(PID782062 ETA~10h)。**WAITING=0**。 |
