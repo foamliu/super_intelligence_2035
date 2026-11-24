@@ -9,6 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **395** 条（**第一百零九轮 2026-11-25 00:0x 补 3 条 → 395**：word2vec-SGNS `1310.4546`（**39,109**，NIPS 2013；高频词下采样 + negative sampling 替代层次 softmax + 短语发现，解决 “Air Canada” 类固定搭配；摘要只给定性、未给超参 ⇒ 不写未核数字）/ RNN Encoder–Decoder + GRU `1406.1078`（**11,916**，EMNLP 2014；一个 RNN 编码为定长向量、另一个解码，联合训练最大化条件概率；reset/update 门即 GRU；作为 SMT 附加特征带来实测提升；摘要未给 BLEU ⇒ 不写未核分数）/ DistilBERT `1910.01108`（**13,823**，NeurIPS 2019 EMC² Workshop；预训练期蒸馏，三损失 = LM + 蒸馏 + cosine-distance；参数减 **40%**、保留约 **97%**、推理快 **60%**）；核验：abs 页 **3/3 `200`**（42,263 / 43,729 / 42,394 B，`citation_title` + `citation_date` 逐字）+ OpenAlex **3/3 `200`**（39,109 / 11,916 / 13,823，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**（`1301.3781` / `1409.0473` / `1810.04805` 已在表内，分别为初版 / 注意力版 / BERT，非重复）；本轮归属：data **+3** · pretrain **+3** · posttrain **+2** · harness **+2** · zhulong **+2** · vision **+0** · designflow **+1**（一篇可多线））
+
 **本轮快照**：累计 **392** 条（**第一百零八轮 2026-11-24 21:0x 补 3 条 → 392**：Reformer `2001.04451`（**3,436**，arXiv `comments` = ICLR 2020；LSH 注意力 shared-QK `O(L²)→O(L log L)` + 可逆残差激活只存 1 份而非 N 份 + FFN 分块消 `d_ff`；enwik8 `2^16=64K` / imagenet-64 12K 序列，12 层 20K 步 `1.19 bits/dim`、调优后 `1.05`）/ SpanBERT `1907.10529`（**2,572**，TACL 2020、DOI `10.1162/tacl_a_00300`；`Geo(p=0.2)`、`ℓ_max=10`、平均跨度 3.8 词、15% 掩码 80/10/10 + span-boundary objective；SQuAD 1.1 **94.6** F1 / 2.0 **88.7** F1 / OntoNotes **79.6** F1）/ SentencePiece `1808.06226`（**5,426**，EMNLP 2018 demo、DOI `10.18653/v1/d18-2012`；BPE + unigram 直接从原始句子学，无需预分词、无损；KFTT 440k 句 ja→en BLEU 28.24→**29.55**（8k 共享词表）、en→ja 20.06→**21.62**）；核验：abs 页 **3/3 `200`**（42,495 / 41,879 / 41,055 B，`citation_title` + `citation_date` + `comments` 逐字）+ ar5iv **3/3 `200`**（200,472 / 205,735 / 107,776 B）+ OpenAlex **3/3 `200`**（3,436 / 2,572 / 5,426，查询日 2026-11-24）；⚠️ arXiv API `id_list` 两次 **`429 Rate exceeded`** ⇒ `published` 时间戳未取，年份以 abs 页 `citation_date` 为准（如实标注）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+3** · data **+2** · harness **+2** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
 
 **本轮快照**：累计 **389** 条（**第一百零七轮 2026-11-24 18:0x 补 3 条 → 389**：GLU Variants `2002.05202`（**3,036**，2020 预印本；GLU / Bilinear / ReGLU / GEGLU / SwiGLU，三矩阵 ⇒ `d_ff` × **2/3**（3072→2048），C4 524,288 步 log-perplexity `ReLU` 1.677 vs `GEGLU` **1.633** / `SwiGLU` **1.636**）/ MiniLM `2002.10957`（**3,400**，NeurIPS 2020；只蒸最后一层自注意力 + 新增 **V-V scaled dot-product**，teacher assistant；50% 参数/计算保留 **>99%**）/ Big Bird `2007.14062`（**3,828**，NeurIPS 2020；window + global + random 稀疏注意力，二次→线性，Turing complete，同硬件 **8×** 序列长度）；核验：abs 页 **3/3 `200`**（2,771 反爬页 → export 40,173 / 44,625 / 44,590 B，`citation_title` + `citation_date` 逐字）+ arXiv API **3/3 `200` + atom**（`published` = 2020-02-12T19:57:13Z / 2020-02-25T15:21:10Z / 2020-07-28T08:34:04Z）+ ar5iv GLU **`200` / 141,894 B**、MiniLM **`200` / 319,259 B**、BigBird **超时 0/1** + OpenAlex **3/3 `200`**（3,036 / 3,400 / 3,828，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+3** · data **+2** · harness **+2** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
@@ -6927,4 +6929,49 @@
 | 核验状态 | abs 页 **`200` / 41,055 B**，`citation_title` + `citation_date` + `comments`（`Accepted as a demo paper at EMNLP2018`）逐字；ar5iv 全文 **`200` / 107,776 B**（表 1 BLEU 28.24 / 29.55 / 29.85 / 20.06 / 21.62 / 20.8、KFTT 440k、16k 词表、`O(N²)` 逐字核对）；OpenAlex **`200`**（5,426 / 2018 / `conference-paper`）。⚠️ arXiv API `id_list` 连续两次 **`429`** ⇒ `published` 时间戳未取，年份以 abs 页 `citation_date` 为准。 |
 
 | 核验状态 | abs 页 **`200` / 44,590 B**，`citation_title` + `citation_date` = `2020/07/28` 逐字，摘要逐字取回；arXiv API **`200` + atom**（`published` = `2020-07-28T08:34:04Z`，11 位作者逐字）；ar5iv 抓取 **超时未取回**（30s，`000`）⇒ 本条目数字仅到摘要粒度，**未做 PDF 逐页复核**；OpenAlex **`200`**（3,828 / 2020 / `conference-paper`）。 |
+
+## 393. Distributed Representations of Words and Phrases and their Compositionality
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Distributed Representations of Words and Phrases and their Compositionality |
+| 作者（前 3） | Tomas Mikolov · Ilya Sutskever · Kai Chen（共 **5** 位；另 Greg Corrado / Jeffrey Dean；arXiv `citation_author` 逐字核） |
+| 年份 | **2013**（v1 `2013-10-16`；abs 页 `citation_date` = `2013/10/16`） |
+| 会议 / 期刊 | **NIPS 2013**（OpenAlex `type=conference-paper`；arXiv 无 `comments`） |
+| 被引数 | **39,109**（OpenAlex `10.48550/arXiv.1310.4546`，查询日 **2026-11-25**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1310.4546> ｜ `10.48550/arXiv.1310.4546` |
+| 一句话贡献 | **word2vec skip-gram 的工程化三件套**：① 对**高频词下采样**（subsampling）——既显著提速、又让词的表示更规整；② 提出 **negative sampling** 作为层次 softmax 的简单替代，降低训练成本；③ 给出从文本中**发现短语**的简单方法，解决「词袋式表示无法表达 “Air Canada” 这类固定搭配」的固有缺陷，并展示可为**数百万短语**学到向量。 |
+| 与我们工作的关系 | **data（主 · 词表与语料配方）**：中文长尾（寄存器名 / 信号名 / 器件型号）与代码混语料里，高频 token（空格、括号、缩进）会主导共现统计；本文的「高频下采样」是可直接进配方的一步，但必须与词表大小、序列预算一起预注册（下采样改变有效 token 数）。短语发现对「多词标识符 / 器件型号」的切分有直接参考。<br>**pretrain（表示学习基线）**：任何新 embedding / tokenizer 方案，最低限度应报与负采样 skip-gram 的同条件对照，否则无法排除「只是换了优化目标」。<br>**zhulong（成本口径）**：下采样率与负采样数都是显式的算力旋钮，成本表应记录二者，避免把「更快」误当成「更准」。<br>**harness**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow（规格文本）**：短语发现可用来识别「必须整体保留」的规格术语，但判分仍以可执行断言为准。 |
+| 首次收录 | **2026-11-25**（第一百零九轮 · 00:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,263 B**，`citation_title` + `citation_date` 逐字，摘要逐字取回；OpenAlex **`200`**（39,109 / 2013 / `conference-paper`，查询日 2026-11-25）。⚠️ 摘要只给定性描述、未给超参与分数 ⇒ 本行不写未核数字；**未做 PDF 逐页复核**。条目级查重：`1301.3781`（word2vec 初版）已在表内，本条为 **SGNS / 下采样 / 短语**改进版，非重复。 |
+
+## 394. Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation |
+| 作者（前 3） | Kyunghyun Cho · Bart van Merriënboer · Çağlar Gülçehre（共 **7** 位；另 Dzmitry Bahdanau / Fethi Bougares / Holger Schwenk / Yoshua Bengio；arXiv `citation_author` 逐字核） |
+| 年份 | **2014**（v1 `2014-06-03`；abs 页 `citation_date` = `2014/06/03`） |
+| 会议 / 期刊 | **EMNLP 2014**（arXiv `comments` = `EMNLP 2014`；OpenAlex `type=preprint`） |
+| 被引数 | **11,916**（OpenAlex `10.48550/arXiv.1406.1078`，查询日 **2026-11-25**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1406.1078> ｜ `10.48550/arXiv.1406.1078` |
+| 一句话贡献 | 提出 **RNN Encoder–Decoder**：一个 RNN 把源序列编码成**定长向量**，另一个 RNN 将其解码为目标序列，二者**联合训练**以最大化给定源序列时的目标序列条件概率；同时给出带 **reset / update 门**的 **GRU**。作为统计机器翻译（SMT）对数线性模型的**附加特征**，实测带来翻译质量提升，并定性展示学到的短语表示在语义 / 句法上有结构。 |
+| 与我们工作的关系 | **pretrain（主 · 序列到序列与门控）**：GRU 的门控是今天所有线性复杂度 / 状态空间模型的直系祖先；「把变长序列压成定长向量会丢什么」是长上下文与循环深度实验的必答问题。任何「循环复用层」方案都应以本文的定长压缩为最小对照。<br>**posttrain（序列决策）**：agent 轨迹是变长序列，encoder–decoder 的联合训练口径可作 SFT 数据打包的参照（输入 / 输出如何切分、如何算条件概率）。<br>**harness（评测口径）**：本文明确 SMT 指标（BLEU）是在**外部系统**上测的，模型本身只是特征 ⇒ 复现时须分开报「特征增益」与「端到端系统增益」。<br>**data**：短语级建模对多词术语的分词有参考价值。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百零九轮 · 00:00 时窗） |
+| 核验状态 | abs 页 **`200` / 43,729 B**，`citation_title` + `citation_date` + `comments`（`EMNLP 2014`）逐字，摘要逐字取回；OpenAlex **`200`**（11,916 / 2014 / `preprint`，查询日 2026-11-25）。⚠️ 摘要未给 BLEU 数值 ⇒ 本行不写未核分数；**未做 PDF 逐页复核**。条目级查重：`1409.0473`（Bahdanau 注意力）已在表内，本条为**无注意力的 RNN Encoder–Decoder + GRU**，非重复。 |
+
+## 395. DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter |
+| 作者（前 3） | Victor Sanh · Lysandre Debut · Julien Chaumond（共 **4** 位；另 Thomas Wolf；arXiv `citation_author` 逐字核） |
+| 年份 | **2019**（v1 `2019-10-02`；abs 页 `citation_date` = `2019/10/02`） |
+| 会议 / 期刊 | **NeurIPS 2019 EMC² Workshop**（arXiv `comments` = 5th Workshop on Energy Efficient ML and Cognitive Computing - NeurIPS 2019；OpenAlex `type=preprint`） |
+| 被引数 | **13,823**（OpenAlex `10.48550/arXiv.1910.01108`，查询日 **2026-11-25**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1910.01108> ｜ `10.48550/arXiv.1910.01108` |
+| 一句话贡献 | 把知识蒸馏放到**预训练阶段**（而非只在任务头上蒸馏）：学生模型用**三损失**——语言建模损失 + 蒸馏损失 + **cosine-distance** 损失——继承教师归纳偏置；结果是把 BERT 参数量减 **40%**、保留约 **97%** 语言理解能力、推理快 **60%**，并给出端侧计算的概念验证与对比研究。 |
+| 与我们工作的关系 | **pretrain（主 · 小模型配方）**：2B 线若要从更大教师蒸馏，本文给出可复现的三损失骨架与「预训练期蒸馏」口径；关键是把教师软标签温度、蒸馏损失权重、cosine 损失层选择三项写成配置，缺一不可比。<br>**posttrain（压缩与部署）**：蒸馏后 SFT / RL 的起点会变，需预注册「蒸馏学生是否仍吃得下同一套 RLVR」并单独重测基线。<br>**data（教师生成数据）**：若用教师生成 SFT 数据，须报告「纯真实数据 / 纯蒸馏 / 混合」三档，避免把教师能力当成学生能力。<br>**harness（评测公平）**：97% / 60% 是相对 BERT-base 的**作者自报**；我们复测必须同任务集、同评测脚本、同硬件，并分列「精度保留率」与「推理加速比」。<br>**vision**：无直接建议（显式写「无」）。<br>**zhulong**：蒸馏训练成本应计入总成本，不能只报学生推理成本。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百零九轮 · 00:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,394 B**，`citation_title` + `citation_date` + `comments` 逐字，摘要逐字取回；OpenAlex **`200`**（13,823 / 2019 / `preprint`，查询日 2026-11-25）。⚠️ 摘要给 40% / 97% / 60% 三个数（逐字核），其余实验分数**未做 PDF 逐页复核**。条目级查重：`1810.04805`（BERT）已在表内，本条为**蒸馏版**，非重复。 |
 

@@ -5724,3 +5724,6 @@
 | 2026-11-24 | 2611.27764 | Enhancing Attention with Higher-Order Attention | cs.CL | 收录 |
 | 2026-11-24 | 2611.27734 | AutoOntologyBench: A Task-Grounded Benchmark for Agentic Knowledge Engineering | cs.CL | 收录 |
 | 2026-11-24 | 2611.27831 | DistDNA: Language Model Fingerprinting under Stochastic Decoding | cs.LG | 收录 |
+| 2026-11-25 | 2611.31094 | Unlocking the Power of Loops in Pretrained LLMs with Loop Residuals | cs.CL | 收录 |
+| 2026-11-25 | 2611.31166 | Precision-Aware Learning Rate Transfer Across Block Count in LLM Post-Training | cs.LG | 收录 |
+| 2026-11-25 | 2611.31198 | ToolSmith: An Automatic Tool-Generation Framework for Multimodal Search Agents | cs.CL | 收录 |

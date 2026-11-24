@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-25 00:0x）**：作者 **362** 人（编号最大 **362**）· X 已核验 **137**（本轮 **+3**：`@kchonyc` 由 Kyunghyun Cho 本人主页 `https://kyunghyuncho.me/`（`200` / 37,026 B）页内 `href` 外链 `twitter.com/kchonyc` + 代理抓 `x.com/kchonyc` `200` / 163,832 B，`og:title` = `Kyunghyun Cho (@kchonyc) on X`、bio 自述 NYU 教授 + Ortet AI CEO ⇒ 双源；`@LysandreJik` 由 HF 个人页 `huggingface.co/lysandre`（经代理 `200` / 338,187 B）外链 `twitter.com/LysandreJik` + 代理抓 `x.com/LysandreJik` `200` / 181,803 B，`og:title` = `Lysandre (@LysandreJik) on X`、`og:description` = `Chief Open-Source Officer (COSO) at Hugging Face` ⇒ 双源；`@taku910` 上一轮已核 ⇒ 计入本轮基数。Tomas Mikolov 记「未找到 X」：`@tmikolov` / `@MikolovTomas` 历史均 `404`，本轮未再猜）· 已发信 **165**（台账 #1–#165；今日 **1/12**）· 回信 **0**（0/165；**11-25 起 #1–#7 满 14 天 ⇒ 转 `无应答(>14d)`**）。本轮 **+3**：Tomas Mikolov（word2vec-SGNS 一作，英文/捷克，当前机构主页 `404`、站点 `000` ⇒ 仅建档，不猜地址）· Kyunghyun Cho 조경현（RNN Encoder–Decoder 一作，한국어，NYU contact 页当前地址 ⇒ 已发信 #165）· Lysandre Debut（DistilBERT 二作，法文姓名，HF 个人页无明文邮箱 ⇒ 仅建档，X 双源）。
+
 > **当前计数（2026-11-24 21:0x）**：作者 **359** 人（编号最大 **359**）· X 已核验 **134**（本轮 **+1**：`@taku910` 由 GitHub 个人页 `https://github.com/taku910`（`200` / 167,121 B，`itemprop="name"` = `Taku Kudo`）+ 代理抓 `x.com/taku910` `200` / 143,680 B，`og:title` = `Taku Kudo (@taku910) on X` ⇒ **同名同 handle 跨平台双源**，`og:description` 为空已如实记；反例 `x.com/NikitaKitaev` `og:title` = `Китаев Никита`、`og:description` = `9 followers · 5 following. Ukraine` ⇒ 判他人、不记；`@lukaszkaiser` 仅 X 页单源（`og:title` 姓名一致 + 14,273 followers / San Francisco，本人无可核主页外链；`lukaszkaiser.com` 仅 114 B 停放页）⇒ 🚫 不计入已核验、不猜）· 已发信 **164**（台账 #1–#164；今日 **12/12**，达每日硬上限 ⇒ 本窗后不再发）· 回信 **0**（0/164，0 封到期，最早 11-25）。本轮 **+3**：Nikita Kitaev（Reformer 一作，英文，本人主页 `kitaev.com` 明文 `kitaev@berkeley.edu` ⇒ 已发信 #164）· Łukasz Kaiser（Reformer 二作 / Transformer 共同作者，英文，无当前可核邮箱 ⇒ 仅建档，X 单源未核）· Taku Kudo（SentencePiece 一作，日文，GitHub 个人页无明文邮箱 ⇒ 仅建档，X 双源）。
 
 
@@ -1966,12 +1968,22 @@
 
 **⚠️ 已知局限（如实记）**：① 登录前 profile 页只给 8–9 条热门/近期推文，**不能当完整时间线**用；② 正文含转义引号时可能被截断 ⇒ 只采用「两处一致」的条目；③ `syndication.twitter.com` 时间线接口本轮返回 **`429`**（未用，不绕过）；④ 不抓回复串（成本高、噪声大）。
 
+### X 新增（第一百零九轮 · 2026-11-25 00:0x）
+
+| # | 姓名 | handle | URL | 证据 | 备注 |
+|:--|:--|:--|:--|:--|:--|
+| X136（本轮新增） | Kyunghyun Cho 조경현 | `@kchonyc` | <https://x.com/kchonyc> | `200` / 163,832 B，`og:title` = `Kyunghyun Cho (@kchonyc) on X`、`og:description` = `a mediocre combination of a mediocre professor at @nyuniversity and a mediocre CEO at @OrtetAI`；handle 源自本人主页 `kyunghyuncho.me` 页内 `href="https://twitter.com/kchonyc"` ⇒ 双源 | RNN Encoder–Decoder + GRU 一作（B 轨 #394）⇒ 序列建模 / 长上下文判断源；本轮已发信 #165 |
+| X137（本轮新增） | Lysandre Debut | `@LysandreJik` | <https://x.com/LysandreJik> | `200` / 181,803 B，`og:title` = `Lysandre (@LysandreJik) on X`、`og:description` = `Chief Open-Source Officer (COSO) at Hugging Face`；handle 源自 HF 个人页 `huggingface.co/lysandre` 页内 `href="twitter.com/LysandreJik"` ⇒ 双源 | DistilBERT 二作（B 轨 #395）⇒ 开源权重 / 小模型分发的一手来源 |
+
+> Tomas Mikolov（word2vec-SGNS 一作）本轮**未找到 X**：`@tmikolov` / `@MikolovTomas` 历史核验均 `404`，本轮未再猜。
+
 ---
 
 ## 三、发信记录（本线经典轨）
 
 | 日期 | 对象 | 论文 | 邮箱来源 | 结果 |
 |:--|:--|:--|:--|:--|
+| 2026-11-25 00:05（**第一百零九轮**） | Kyunghyun Cho 조경현 | `1406.1078` RNN Encoder–Decoder | 本人主页 `https://kyunghyuncho.me/contact/` `200` / 33,507 B，防爬写法 `kyunghyun.cho _at_ nyu.edu`（按页面规则还原；未用 2014 论文旧地址） | `SENT OK`（`kyunghyun.cho@nyu.edu`，**한국어 297 字含空格 / 251 字不含空格**；🚦 发送前字数已核；新日期起计今日 **1/12**） |
 | 2026-11-11 11:36 | Tri Dao | `2205.14135` FlashAttention | 个人 CV PDF（2026 版） | `SENT OK`（见 `research/mail/发送记录.md`） |
 | 2026-11-11 11:43 | Shunyu Yao | `2210.03629` ReAct | 本人主页 `mailto:` | `SENT OK`（`shunyuy@princeton.edu`） |
 | 2026-11-11 11:43 | Haoxing Ren | `2311.00176` ChipNeMo · `2309.07544` VerilogEval | 公司站 `mailto:`（`info@agentrys.ai`，请转交） | `SENT OK`（公司公开信箱） |
@@ -5086,4 +5098,43 @@
 | X 账号 | **@taku910**（跨平台双源 2026-11-24 21:0x：GitHub 个人页 `github.com/taku910`（`200` / 167,121 B，`itemprop="name"` = `Taku Kudo`）+ 代理抓 `x.com/taku910` `200` / 143,680 B，`og:title` = `Taku Kudo (@taku910) on X`；`og:description` 为空已如实记） |
 | 状态 | **待跟踪**（仅建档；无当前可核邮箱 ⇒ 本线不发信；X 已核验，follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
 | 备注 | 发信问题候选（只对 SentencePiece 成立）：① 8k 共享词表在 ja→en 上超 80k 词级基线（29.55 vs 28.24），这个结论在「中文 + 代码混语料」是否仍成立、词表继续下探到 4k 的拐点在哪；② NFKC 归一化与无损切分冲突时（全角/半角、连字）如何取舍；③ `O(N²)` 朴素 BPE 的加速实现在 100GB 级语料上的实际吞吐与内存上限。 |
+
+### 360. Tomas Mikolov
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tomas Mikolov（`语言=英文兜底(判据=捷克姓名族属；无中文/日文/韩文信号 ⇒ 英文；若将来可发，按东欧姓名用一句母语问候 + 英文正文)`） |
+| 机构 | **CIIRC / Czech Technical University**（背景；word2vec 论文期为 Google） |
+| 代表论文 | **Distributed Representations of Words and Phrases and their Compositionality**（`1310.4546`，B 轨 #393，一作）· **Efficient Estimation of Word Representations in Vector Space**（`1301.3781`，B 轨表内，一作） |
+| 邮箱 | **未找到当前明文**（`fit.vut.cz/person/imikolov/` 跟随后 `HTTP 404`；`cs.cmu.edu/~imikolov/` `404`；`tomasmikolov.com` `000`；未发现可核当前个人主页 ⇒ 不用论文旧地址、不猜） |
+| 主页 | **未找到当前可核主页**（上述三个候选均 `404/000`；不猜） |
+| X 账号 | **未找到 X**（历史核验 `x.com/tmikolov` / `x.com/MikolovTomas` 均 `404`；本轮未再猜 handle） |
+| 状态 | **待跟踪**（仅建档；无可核邮箱 ⇒ 本线不发信） |
+| 备注 | `语言=英文兜底(判据=捷克姓名族属)`。发信问题候选（只对 SGNS 成立）：① 高频词下采样率改变有效 token 数，在小词表（8k–16k）+ 代码混语料上是否仍让表示更规整；② negative sampling 的负样本数 k 与词频分布 `3/4` 幂的关系，在长尾标识符上是否失效；③ 短语发现的打分阈值在多词器件型号 / 寄存器名上会不会把不该合并的相邻词并成一个 token。 |
+
+### 361. Kyunghyun Cho 조경현
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kyunghyun Cho 조경현（`语言=한국어(判据=韩文姓名族属 + 韩国教育背景 KAIST/Aalto；🚫 不因机构 NYU、论文英文改判英文)`） |
+| 机构 | **New York University**（Professor, Computer Science & Center for Data Science；本人主页与 X bio 同述）· **Ortet AI**（CEO，X bio 自述） |
+| 代表论文 | **Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation**（`1406.1078`，B 轨 #394，一作；GRU）· **Neural Machine Translation by Jointly Learning to Align and Translate**（`1409.0473`，B 轨表内，二作） |
+| 邮箱 | **`kyunghyun.cho@nyu.edu`**（来源：本人主页 `https://kyunghyuncho.me/contact/` `HTTP 200` / **33,507 B**，页内防爬写法 `kyunghyun.cho _at_ nyu.edu`，按页面规则还原；2026-11-25 00:0x 复核；未用 2014 论文旧地址） |
+| 主页 | <https://kyunghyuncho.me/>（`HTTP 200` / 37,026 B；含 `/research-group/`、`/posts/`、`/contact/`） |
+| X 账号 | **@kchonyc**（主页外链 `twitter.com/kchonyc` + 代理抓 `x.com/kchonyc` `200` / 163,832 B，`og:title` = `Kyunghyun Cho (@kchonyc) on X`、`og:description` = `a mediocre combination of a mediocre professor at @nyuniversity and a mediocre CEO at @OrtetAI` ⇒ 双源核验） |
+| 状态 | **已发信**（#165，2026-11-25 00:05:14，한국어，正文 **297 字含空格 / 251 字不含空格**） |
+| 备注 | `语言=한국어(判据=姓名族属 + 韩国教育背景)`。发信问题（只对 RNN Encoder–Decoder / GRU 成立）：① 今天重设 update/reset 门，长代码·日志里哪个门先成瓶颈、有无关 reset 的消融；② 不用注意力时缓解定长向量信息损失的最小改动；③ 短语级特征当年提升 BLEU，在子词分词下是否仍成立。 |
+
+### 362. Lysandre Debut
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lysandre Debut（`语言=法文姓名(判据=法文姓名族属 + 法国教育背景 Hugging Face 巴黎系；若可发用一句法语称谓问候 + 英文正文)`） |
+| 机构 | **Hugging Face**（Chief Open-Source Officer / COSO；X bio 自述） |
+| 代表论文 | **DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter**（`1910.01108`，B 轨 #395，二作） |
+| 邮箱 | **未找到明文**（HF 个人页 `huggingface.co/lysandre` 经代理 `200` / 338,187 B 仅见 `git@hf.co` 与 git 地址；GitHub 个人页无 `mailto:` ⇒ 不发信、不猜） |
+| 主页 | <https://huggingface.co/lysandre>（经代理 `HTTP 200` / 338,187 B）· GitHub <https://github.com/Lysandre>（`200` / 147,114 B） |
+| X 账号 | **@LysandreJik**（HF 个人页外链 `twitter.com/LysandreJik` + 代理抓 `x.com/LysandreJik` `200` / 181,803 B，`og:title` = `Lysandre (@LysandreJik) on X`、`og:description` = `Chief Open-Source Officer (COSO) at Hugging Face` ⇒ 双源核验） |
+| 状态 | **待跟踪**（仅建档；无明文邮箱 ⇒ 本线不发信；X 已核验，follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | 发信问题候选（只对 DistilBERT 成立）：① 三损失（LM / 蒸馏 / cosine-distance）的权重与教师软标签温度如何选，去掉 cosine 损失掉多少；② BERT-base 教师到 6 层学生的层映射是固定比例还是按能力选层；③ 端侧概念验证用的是哪一档延迟预算、97% 保留是在哪组任务上算的。 |
 
