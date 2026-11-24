@@ -97,7 +97,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-Sram6tTbBuild-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-SramSNM-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-StackedMOSOpAnalysis-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
-2026-11-24T22:24:08	EDA-Eval-DesignFlow-StdLibCharTmpl-001	B	1	1	?	1	0	?	p0_pending	L4_SIM_BINARY:hspice	
+2026-11-24T23:27:30	EDA-Eval-DesignFlow-StdLibCharTmpl-001	B	1	1	1	1	1	1	green_verified	P0 fix: hspice absent on eval host -> embedded mock (real .mt0/.lis from .75 HSPICE V-2023.12-SP1-1 for ref B/A decks, self-contained in check.py); ref 15/15 PASS; 7 neg distinct FAIL(b/c/g/e/d/l/h)+3fakes(empty/print/core-deleted)齐; L1 audit OK shapes=[True]; wall 0.19s; L0-L5全PASS	0.19
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-StimPWL-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-StimScriptCfgLocate-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-StrongarmBaselineAnalyze-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
