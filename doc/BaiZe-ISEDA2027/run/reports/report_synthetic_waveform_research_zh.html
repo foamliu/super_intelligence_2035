@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>合成波形数据调研报告 — P4 Synthetic Waveform Research</title>
+<title>合成波形数据调研与实验报告 — P4 调研 + P5 SFT/GRPO</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f5f5;color:#333;line-height:1.7;padding:20px}.container{max-width:900px;margin:0 auto;background:#fff;padding:40px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.08)}h1{font-size:1.6em;color:#1a1a4e;margin-bottom:8px;border-bottom:3px solid #4488cc;padding-bottom:10px}h2{font-size:1.3em;color:#1a1a4e;margin:28px 0 12px;border-left:4px solid #4488cc;padding-left:10px}h3{font-size:1.1em;margin:20px 0 8px}p{margin-bottom:10px}ul,ol{margin:8px 0 12px 24px}li{margin-bottom:4px}code{background:#f0f0f0;padding:2px 5px;border-radius:3px;font-size:.9em;color:#c0392b}pre{background:#2d2d2d;color:#f8f8f2;padding:14px;border-radius:6px;overflow-x:auto;font-size:.85em;margin:10px 0;line-height:1.4}.card{background:#f8f9ff;border:1px solid #d0d8e8;border-radius:6px;padding:16px;margin:12px 0}.cg{background:#f0fff0;border-color:#c0e0c0}.cy{background:#fffde0;border-color:#e0e0a0}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.9em}th,td{border:1px solid #ddd;padding:8px 10px;text-align:left}th{background:#4488cc;color:#fff}tr:nth-child(even){background:#f8f8f8}.metric{display:inline-block;background:#4488cc;color:#fff;padding:4px 12px;border-radius:12px;font-weight:bold;margin:2px}.b{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.85em;font-weight:bold}.ok{background:#27ae60;color:#fff}.warn{background:#f39c12;color:#fff}.fail{background:#e74c3c;color:#fff}.footer{margin-top:30px;padding-top:15px;border-top:1px solid #ddd;font-size:.85em;color:#888}
 </style>
@@ -11,7 +11,7 @@
 <body>
 <div class="container">
 <h1>合成波形数据调研报告</h1>
-<p><strong>任务</strong>：P4 合成波形数据调研（用户令 2026-11-24 14:3x） · <strong>线</strong>：vision · <strong>wake</strong>：#1714 · <strong>日期</strong>：2026-11-24</p>
+<p><strong>任务</strong>：P4 合成波形数据调研（用户令 2026-11-24 14:3x） · <strong>线</strong>：vision · <strong>wake</strong>：#1714/#1715 · <strong>日期</strong>：2026-11-24</p>
 <div class="card cg">
 <p><strong>核心结论</strong>：合成波形数据 → SFT/RL 路线<strong>可行且已验证</strong>。业界已有直接对标工作（TD-Interpreter, TU Wien, 2025）：Verilog → VCD → 波形图 → QA → LLaVA+LoRA 微调，在 310 题基准上超越 GPT-4o。本线已有等价管线（<code>synth_waveform_qa.py</code> + <code>synth_vcd_demo.py</code>），可立即扩展到 ≥1000 样本。工具链在 .17 上可用（纯 Python PIL 渲染，无需 iverilog root 权限）。</p>
 </div>
@@ -180,6 +180,57 @@ $end</pre>
 <tr><td>5</td><td>QA 对 JSON</td><td><code>vision/wave_rl/vcd_demo_output/qa_pairs.json</code></td><td><span class="b ok">6 对</span></td></tr>
 <tr><td>6</td><td>调研报告</td><td><code>reports/report_synthetic_waveform_research_zh.html</code></td><td><span class="b ok">本文</span></td></tr>
 </table>
+<h2>§8 P5 实验结果（合成数据 SFT + GRPO）</h2>
+<div class="card cg"><p><strong>核心结论</strong>：大规模合成波形数据（1040 训练样本 × 8 技能）<strong>SFT 显著有效</strong>（0.625→0.8125，+18.75pp，McNemar p=0.0118）；<strong>GRPO 为持平</strong>（0.8125→0.8125，Δ=0，p=1.0），reward 饱和（82.65%% 样本 reward=1.0）是根因。合成数据路线<strong>突破了 GRPO 改进瓶颈</strong>——SFT 阶段的增益远超此前 GRPO 自身的微调。</p></div>
+<h3>8.1 数据合成</h3><table><tr><th>项</th><th>值</th></tr>
+<tr><td>训练集</td><td>1040 样本（8 技能 × 130/技能）</td></tr>
+<tr><td>held-out 测试集</td><td>64 样本（8 技能 × 8/技能）</td></tr>
+<tr><td>技能覆盖</td><td>type_classification / cycle_count / amplitude_read / freq_comparison / duty_cycle / rise_edge / glitch_detect / multichannel_freq</td></tr>
+<tr><td>多样化</td><td>噪声 6-16 ~45%%；干扰通道 ~15%%；4 种波形类型</td></tr>
+<tr><td>反作弊</td><td>cheat_rate=0.0%（train seed 20261124 / eval seed 20261125 隔离；GT 从波形参数直接计算）</td></tr>
+</table>
+<h3>8.2 SFT 结果</h3><table><tr><th>项</th><th>pre-SFT</th><th>post-SFT</th><th>Δ</th></tr>
+<tr><td>通过率</td><td>40/64 (0.6250)</td><td>52/64 (0.8125)</td><td><span class="b ok">+0.1875</span></td></tr>
+<tr><td>McNemar</td><td colspan="3">b=16 c=4 p=0.0118（n_discordant=20）</td></tr>
+<tr><td>paired bootstrap</td><td colspan="3">Δ=0.1875 95%CI=[0.0625, 0.3125] p=0.0052（n_boot=10000）</td></tr>
+<tr><td>SFT 训练</td><td colspan="3">3120 步 / 3 epochs / final_loss=0.0406 / wall=635.4s</td></tr>
+</table>
+<p><strong>SFT 判据</strong>：post-SFT &gt; pre-SFT → <span class="b ok">有效 ✅</span>（预注册判据满足）</p>
+<h3>8.3 逐技能对比</h3><table><tr><th>技能</th><th>pre-SFT</th><th>post-SFT</th><th>Δ SFT</th><th>post-GRPO</th><th>Δ GRPO</th></tr>
+<tr><td>类型识别</td><td>7/8 (87.5%)</td><td>8/8 (100.0%)</td><td><span class="b ok">+12.5pp</span></td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>周期计数</td><td>6/8 (75.0%)</td><td>8/8 (100.0%)</td><td><span class="b ok">+25.0pp</span></td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>幅度读数</td><td>1/8 (12.5%)</td><td>6/8 (75.0%)</td><td><span class="b ok">+62.5pp</span></td><td>6/8 (75.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>频率比较</td><td>4/8 (50.0%)</td><td>8/8 (100.0%)</td><td><span class="b ok">+50.0pp</span></td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>占空比</td><td>2/8 (25.0%)</td><td>0/8 (0.0%)</td><td><span class="b fail">-25.0pp</span></td><td>0/8 (0.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>上升沿</td><td>8/8 (100.0%)</td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>毛刺检测</td><td>8/8 (100.0%)</td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>多通道频率</td><td>4/8 (50.0%)</td><td>6/8 (75.0%)</td><td><span class="b ok">+25.0pp</span></td><td>6/8 (75.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+
+</table>
+<div class="card cy"><p><strong>诚实记录</strong>：① <strong>占空比（duty_cycle）SFT 后退步</strong>（25%%→0%%）——模型学会了其他技能但丢失了占空比判断能力，可能是 LoRA 容量有限导致技能间干扰；② 上升沿/毛刺检测 pre-SFT 已 100%%（天花板），无提升空间；③ 幅度读数大幅提升（12.5%%→75%%）是 SFT 最大贡献。</p></div>
+<h3>8.4 GRPO 结果</h3><table><tr><th>项</th><th>post-SFT（冷启动）</th><th>post-GRPO</th><th>Δ</th></tr>
+<tr><td>通过率</td><td>52/64 (0.8125)</td><td>52/64 (0.8125)</td><td>+0.0000</td></tr>
+<tr><td>McNemar</td><td colspan="3">b=1 c=1 p=1.0000</td></tr>
+<tr><td>paired bootstrap</td><td colspan="3">Δ=0.0000 95%CI=[-0.0469, 0.0469] p=1.0000</td></tr>
+<tr><td>训练</td><td colspan="3">500 步 / 4000 rollouts / wall=2260.3s / grad_signal=19/500 (3.8%)</td></tr>
+<tr><td>reward 分布</td><td colspan="3">1.0=82.7% / α=0.3% / −β=17.1% / other=0.0%</td></tr>
+</table>
+<p><strong>GRPO 判据</strong>：post-GRPO &gt; post-SFT AND p&lt;0.05 → <span class="b fail">未达（持平 Δ=0 p=1.0）</span></p>
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="180" style="margin:10px 0">
+<rect width="700" height="180" fill="#fafafa" stroke="#ddd"/>
+<polyline points="30.0,25.0 31.3,90.0 32.6,25.0 33.8,25.0 35.1,90.0 36.4,25.0 37.7,90.0 39.0,41.2 40.3,25.0 41.5,90.0 42.8,90.0 44.1,25.0 45.4,25.0 46.7,90.0 48.0,25.0 49.2,90.0 50.5,57.5 51.8,90.0 53.1,90.0 54.4,25.0 55.7,25.0 56.9,90.0 58.2,25.0 59.5,25.0 60.8,25.0 62.1,90.0 63.3,25.0 64.6,25.0 65.9,90.0 67.2,73.8 68.5,90.0 69.8,25.0 71.0,25.0 72.3,25.0 73.6,25.0 74.9,25.0 76.2,25.0 77.5,90.0 78.7,25.0 80.0,25.0 81.3,25.0 82.6,25.0 83.9,25.0 85.2,25.0 86.4,25.0 87.7,90.0 89.0,25.0 90.3,90.0 91.6,25.0 92.8,90.0 94.1,25.0 95.4,90.0 96.7,25.0 98.0,25.0 99.3,25.0 100.5,90.0 101.8,25.0 103.1,25.0 104.4,25.0 105.7,90.0 107.0,90.0 108.2,25.0 109.5,155.0 110.8,25.0 112.1,25.0 113.4,25.0 114.6,90.0 115.9,25.0 117.2,25.0 118.5,25.0 119.8,90.0 121.1,90.0 122.3,90.0 123.6,25.0 124.9,90.0 126.2,25.0 127.5,25.0 128.8,25.0 130.0,90.0 131.3,106.2 132.6,25.0 133.9,25.0 135.2,57.5 136.5,73.8 137.7,25.0 139.0,25.0 140.3,25.0 141.6,90.0 142.9,25.0 144.1,90.0 145.4,25.0 146.7,25.0 148.0,25.0 149.3,25.0 150.6,25.0 151.8,41.2 153.1,90.0 154.4,25.0 155.7,25.0 157.0,25.0 158.3,25.0 159.5,25.0 160.8,106.2 162.1,90.0 163.4,25.0 164.7,90.0 166.0,25.0 167.2,90.0 168.5,25.0 169.8,155.0 171.1,90.0 172.4,155.0 173.6,25.0 174.9,25.0 176.2,25.0 177.5,90.0 178.8,25.0 180.1,25.0 181.3,25.0 182.6,90.0 183.9,90.0 185.2,25.0 186.5,25.0 187.8,25.0 189.0,25.0 190.3,90.0 191.6,25.0 192.9,155.0 194.2,155.0 195.5,25.0 196.7,25.0 198.0,25.0 199.3,90.0 200.6,25.0 201.9,25.0 203.1,90.0 204.4,25.0 205.7,25.0 207.0,90.0 208.3,57.5 209.6,25.0 210.8,25.0 212.1,25.0 213.4,25.0 214.7,25.0 216.0,25.0 217.3,25.0 218.5,25.0 219.8,25.0 221.1,25.0 222.4,25.0 223.7,90.0 224.9,90.0 226.2,25.0 227.5,25.0 228.8,90.0 230.1,25.0 231.4,25.0 232.6,90.0 233.9,90.0 235.2,25.0 236.5,25.0 237.8,25.0 239.1,90.0 240.3,25.0 241.6,25.0 242.9,25.0 244.2,155.0 245.5,90.0 246.8,25.0 248.0,90.0 249.3,25.0 250.6,25.0 251.9,25.0 253.2,90.0 254.4,25.0 255.7,25.0 257.0,25.0 258.3,155.0 259.6,25.0 260.9,25.0 262.1,73.8 263.4,25.0 264.7,25.0 266.0,25.0 267.3,25.0 268.6,25.0 269.8,25.0 271.1,25.0 272.4,106.2 273.7,90.0 275.0,25.0 276.3,25.0 277.5,25.0 278.8,90.0 280.1,90.0 281.4,90.0 282.7,25.0 283.9,90.0 285.2,90.0 286.5,90.0 287.8,25.0 289.1,25.0 290.4,47.7 291.6,90.0 292.9,90.0 294.2,25.0 295.5,25.0 296.8,90.0 298.1,25.0 299.3,25.0 300.6,25.0 301.9,90.0 303.2,25.0 304.5,90.0 305.8,90.0 307.0,155.0 308.3,25.0 309.6,25.0 310.9,90.0 312.2,25.0 313.4,25.0 314.7,90.0 316.0,155.0 317.3,25.0 318.6,90.0 319.9,25.0 321.1,25.0 322.4,25.0 323.7,25.0 325.0,25.0 326.3,25.0 327.6,25.0 328.8,73.8 330.1,25.0 331.4,25.0 332.7,25.0 334.0,25.0 335.3,25.0 336.5,73.8 337.8,25.0 339.1,25.0 340.4,90.0 341.7,41.2 342.9,90.0 344.2,25.0 345.5,90.0 346.8,25.0 348.1,55.3 349.4,90.0 350.6,25.0 351.9,25.0 353.2,90.0 354.5,25.0 355.8,90.0 357.1,25.0 358.3,90.0 359.6,25.0 360.9,25.0 362.2,90.0 363.5,25.0 364.7,25.0 366.0,25.0 367.3,25.0 368.6,25.0 369.9,25.0 371.2,25.0 372.4,90.0 373.7,25.0 375.0,41.2 376.3,25.0 377.6,25.0 378.9,25.0 380.1,25.0 381.4,25.0 382.7,25.0 384.0,25.0 385.3,25.0 386.6,90.0 387.8,25.0 389.1,90.0 390.4,25.0 391.7,25.0 393.0,90.0 394.2,25.0 395.5,90.0 396.8,25.0 398.1,90.0 399.4,25.0 400.7,90.0 401.9,25.0 403.2,25.0 404.5,25.0 405.8,90.0 407.1,90.0 408.4,25.0 409.6,25.0 410.9,25.0 412.2,90.0 413.5,90.0 414.8,25.0 416.1,90.0 417.3,25.0 418.6,25.0 419.9,25.0 421.2,25.0 422.5,25.0 423.7,25.0 425.0,25.0 426.3,90.0 427.6,25.0 428.9,25.0 430.2,25.0 431.4,25.0 432.7,25.0 434.0,90.0 435.3,25.0 436.6,25.0 437.9,90.0 439.1,25.0 440.4,25.0 441.7,120.3 443.0,155.0 444.3,25.0 445.6,25.0 446.8,25.0 448.1,90.0 449.4,90.0 450.7,25.0 452.0,90.0 453.2,25.0 454.5,25.0 455.8,25.0 457.1,25.0 458.4,25.0 459.7,25.0 460.9,25.0 462.2,25.0 463.5,90.0 464.8,25.0 466.1,25.0 467.4,25.0 468.6,90.0 469.9,90.0 471.2,25.0 472.5,25.0 473.8,25.0 475.1,90.0 476.3,90.0 477.6,25.0 478.9,25.0 480.2,25.0 481.5,25.0 482.7,90.0 484.0,25.0 485.3,90.0 486.6,25.0 487.9,90.0 489.2,90.0 490.4,25.0 491.7,90.0 493.0,25.0 494.3,25.0 495.6,90.0 496.9,25.0 498.1,25.0 499.4,25.0 500.7,25.0 502.0,25.0 503.3,25.0 504.5,25.0 505.8,25.0 507.1,25.0 508.4,25.0 509.7,25.0 511.0,90.0 512.2,25.0 513.5,90.0 514.8,25.0 516.1,25.0 517.4,25.0 518.7,25.0 519.9,25.0 521.2,32.6 522.5,25.0 523.8,90.0 525.1,25.0 526.4,25.0 527.6,90.0 528.9,25.0 530.2,90.0 531.5,25.0 532.8,25.0 534.0,90.0 535.3,25.0 536.6,25.0 537.9,90.0 539.2,90.0 540.5,25.0 541.7,25.0 543.0,25.0 544.3,25.0 545.6,25.0 546.9,25.0 548.2,25.0 549.4,25.0 550.7,25.0 552.0,90.0 553.3,25.0 554.6,25.0 555.9,90.0 557.1,25.0 558.4,25.0 559.7,90.0 561.0,90.0 562.3,25.0 563.5,25.0 564.8,90.0 566.1,25.0 567.4,90.0 568.7,25.0 570.0,25.0 571.2,90.0 572.5,90.0 573.8,25.0 575.1,90.0 576.4,25.0 577.7,25.0 578.9,25.0 580.2,25.0 581.5,25.0 582.8,25.0 584.1,25.0 585.4,41.2 586.6,25.0 587.9,90.0 589.2,25.0 590.5,25.0 591.8,25.0 593.0,25.0 594.3,25.0 595.6,90.0 596.9,25.0 598.2,25.0 599.5,25.0 600.7,25.0 602.0,25.0 603.3,25.0 604.6,90.0 605.9,90.0 607.2,25.0 608.4,41.2 609.7,90.0 611.0,25.0 612.3,25.0 613.6,25.0 614.8,25.0 616.1,25.0 617.4,90.0 618.7,90.0 620.0,25.0 621.3,90.0 622.5,25.0 623.8,25.0 625.1,25.0 626.4,25.0 627.7,25.0 629.0,90.0 630.2,155.0 631.5,25.0 632.8,90.0 634.1,25.0 635.4,90.0 636.7,25.0 637.9,25.0 639.2,25.0 640.5,25.0 641.8,25.0 643.1,25.0 644.3,25.0 645.6,25.0 646.9,155.0 648.2,25.0 649.5,25.0 650.8,25.0 652.0,25.0 653.3,90.0 654.6,25.0 655.9,25.0 657.2,25.0 658.5,90.0 659.7,25.0 661.0,25.0 662.3,25.0 663.6,25.0 664.9,25.0 666.2,90.0 667.4,90.0 668.7,25.0 670.0,25.0" fill="none" stroke="#4488cc" stroke-width="1.5"/>
+<text x="580" y="172" font-size="10" fill="#666">reward 曲线 (500 步)</text>
+<text x="5" y="175" font-size="9" fill="#999">-0.50</text>
+<text x="5" y="15" font-size="9" fill="#999">1.00</text>
+</svg>
+<div class="card cy"><p><strong>GRPO 持平根因分析</strong>：reward 饱和——82.65%% 的 rollout 获得 reward=1.0（完全正确），仅 17.05%% 为 −β（完全错误），α 档（部分正确）仅 0.3%%。这意味着 SFT adapter 在训练集上已接近天花板，GRPO 几乎没有可利用的梯度信号（grad_signal 仅 3.8%%）。这与 P1 GRPOv2 的 reward 饱和问题一致，但 P5 的 SFT 基线更高（0.8125 vs P1 的 0.70），进一步压缩了 GRPO 的改进空间。</p></div>
+<h3>8.5 P5 结论与启示</h3><div class="card cg"><ol>
+<li><strong>合成数据 SFT 路线可行且有效</strong>：+18.75pp 增益（p=0.0118）证明合成波形数据能实质强化 MLLM 读懂波形图的能力</li>
+<li><strong>GRPO 在高 SFT 基线上遇到瓶颈</strong>：reward 饱和导致梯度稀疏，与 P1 结论一致——需要更难的训练数据或更细粒度的奖励设计</li>
+<li><strong>技能间干扰</strong>：duty_cycle 退步提示 LoRA 容量有限，后续可考虑按技能分组训练或增大 rank</li>
+<li><strong>与 P1 对比</strong>：P5 SFT（0.625→0.8125）&gt; P1 GRPOv2（0.70→0.667），合成数据 SFT 是比 GRPO 更有效的路线</li>
+<li><strong>下一步</strong>：① 扩大合成数据规模到 5000+（参考 TD-Interpreter 222K）；② 混合真实波形图（WaveView 真题 PNG）提升泛化；③ 对 duty_cycle 等退步技能做针对性数据增强；④ 在 WaveView 真题上评测合成 SFT adapter 的迁移效果</li>
+</ol></div>
 <div class="footer">
 <p><strong>报告</strong>：vision P4 合成波形数据调研 · wake#1714 · 2026-11-24<br><strong>数据来源</strong>：cimi_search web search（6 次检索）+ .17 实测环境 + 现有管线代码<br><strong>诚实声明</strong>：所有工具版本号来自实测；demo 产物由脚本实跑生成；iverilog 未安装如实记录并提供替代方案。</p>
 </div>

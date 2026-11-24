@@ -1,0 +1,19 @@
+{
+  "coldstart_acc": 0.8125,
+  "post_grpo_acc": 0.8125,
+  "delta_acc": 0.0,
+  "mcnemar": {
+    "b_improved": 1,
+    "c_regressed": 1,
+    "p_value": 1.0,
+    "n_discordant": 2
+  },
+  "paired_bootstrap": {
+    "delta": 0.0,
+    "ci_lo": -0.0469,
+    "ci_hi": 0.0469,
+    "p": 1.0,
+    "n_boot": 10000
+  },
+  "verdict": "tie (delta=0 p=1.0)"
+}
