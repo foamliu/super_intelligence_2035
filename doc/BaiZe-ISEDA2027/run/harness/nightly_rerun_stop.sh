@@ -11,7 +11,16 @@
 # 预测文件逐题落盘，kill 不丢已完成题目 (is_predicted() 重启后跳过非空 patch)。
 set -u
 
-HARNESS_DIR="$(cd "$(dirname "$0")" && pwd)"
+# ── NFS self-healing: copy self to /tmp (local fs) and re-exec ──
+# Root cause fix (2026-11-24): script on NFS → "Stale file handle" crash
+# during long sleep (21:00→09:00).  Copying to /tmp avoids NFS handle staleness.
+_SELF_TMP="/tmp/nightly_rerun_stop.sh"
+if [ "$(readlink -f "$0" 2>/dev/null)" != "$_SELF_TMP" ]; then
+  cp "$0" "$_SELF_TMP"
+  exec bash "$_SELF_TMP"
+fi
+
+HARNESS_DIR="/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness"
 VF_DIR="$HARNESS_DIR/swebench_verified_full"
 WATCHER="$HARNESS_DIR/nightly_rerun_watcher.sh"
 LOG="$VF_DIR/logs/rerun_infra_nightly.log"
