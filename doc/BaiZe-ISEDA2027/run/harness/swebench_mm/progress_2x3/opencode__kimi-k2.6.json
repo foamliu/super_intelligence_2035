@@ -6531,9 +6531,15 @@
   "prettier__prettier-8536": {
     "instance_id": "prettier__prettier-8536",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1920.5,
+    "rc": -1,
+    "model_patch_len": 609424,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "prettier__prettier-9514": {
     "instance_id": "prettier__prettier-9514",
