@@ -9,6 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **392** 条（**第一百零八轮 2026-11-24 21:0x 补 3 条 → 392**：Reformer `2001.04451`（**3,436**，arXiv `comments` = ICLR 2020；LSH 注意力 shared-QK `O(L²)→O(L log L)` + 可逆残差激活只存 1 份而非 N 份 + FFN 分块消 `d_ff`；enwik8 `2^16=64K` / imagenet-64 12K 序列，12 层 20K 步 `1.19 bits/dim`、调优后 `1.05`）/ SpanBERT `1907.10529`（**2,572**，TACL 2020、DOI `10.1162/tacl_a_00300`；`Geo(p=0.2)`、`ℓ_max=10`、平均跨度 3.8 词、15% 掩码 80/10/10 + span-boundary objective；SQuAD 1.1 **94.6** F1 / 2.0 **88.7** F1 / OntoNotes **79.6** F1）/ SentencePiece `1808.06226`（**5,426**，EMNLP 2018 demo、DOI `10.18653/v1/d18-2012`；BPE + unigram 直接从原始句子学，无需预分词、无损；KFTT 440k 句 ja→en BLEU 28.24→**29.55**（8k 共享词表）、en→ja 20.06→**21.62**）；核验：abs 页 **3/3 `200`**（42,495 / 41,879 / 41,055 B，`citation_title` + `citation_date` + `comments` 逐字）+ ar5iv **3/3 `200`**（200,472 / 205,735 / 107,776 B）+ OpenAlex **3/3 `200`**（3,436 / 2,572 / 5,426，查询日 2026-11-24）；⚠️ arXiv API `id_list` 两次 **`429 Rate exceeded`** ⇒ `published` 时间戳未取，年份以 abs 页 `citation_date` 为准（如实标注）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+3** · data **+2** · harness **+2** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
+
 **本轮快照**：累计 **389** 条（**第一百零七轮 2026-11-24 18:0x 补 3 条 → 389**：GLU Variants `2002.05202`（**3,036**，2020 预印本；GLU / Bilinear / ReGLU / GEGLU / SwiGLU，三矩阵 ⇒ `d_ff` × **2/3**（3072→2048），C4 524,288 步 log-perplexity `ReLU` 1.677 vs `GEGLU` **1.633** / `SwiGLU` **1.636**）/ MiniLM `2002.10957`（**3,400**，NeurIPS 2020；只蒸最后一层自注意力 + 新增 **V-V scaled dot-product**，teacher assistant；50% 参数/计算保留 **>99%**）/ Big Bird `2007.14062`（**3,828**，NeurIPS 2020；window + global + random 稀疏注意力，二次→线性，Turing complete，同硬件 **8×** 序列长度）；核验：abs 页 **3/3 `200`**（2,771 反爬页 → export 40,173 / 44,625 / 44,590 B，`citation_title` + `citation_date` 逐字）+ arXiv API **3/3 `200` + atom**（`published` = 2020-02-12T19:57:13Z / 2020-02-25T15:21:10Z / 2020-07-28T08:34:04Z）+ ar5iv GLU **`200` / 141,894 B**、MiniLM **`200` / 319,259 B**、BigBird **超时 0/1** + OpenAlex **3/3 `200`**（3,036 / 3,400 / 3,828，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+3** · data **+2** · harness **+2** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
 
 **本轮快照**：累计 **386** 条（**第一百零六轮 2026-11-24 15:0x 补 3 条 → 386**：ALBERT `1909.11942`（**8,430**，2019 预印本、OpenAlex `preprint`；factorized embedding（`V×H` 拆 `V×E` + `E×H`）+ 跨层参数共享 + SOP 替换 NSP，参数少于 BERT-large 仍在 GLUE / RACE / SQuAD 刷新 SOTA；⚠️ 摘要只给定性结论 ⇒ 本行不写未核分数）/ XLNet `1906.08237`（**8,627**，NeurIPS 2019、OpenAlex `conference-paper`；排列式广义自回归 + Transformer-XL，20 任务超 BERT）/ REALM `2002.08909`（**1,345**，2020 预印本；隐变量知识检索器，**MLM 作唯一信号**端到端反传穿过百万文档级检索，Open-QA 三个基准绝对准确率 **+4~16 点**）；核验：arXiv 单查 `search_query=id:<ID>` **3/3 `200` + atom**（2,658 / 2,829 / 2,917 B，`published` = 2019-09-26T07:06:13Z / 2019-06-19T17:35:48Z / 2020-02-10T18:40:59Z）+ abs 页 **3/3 `200`**（43,671 / 43,660 / 42,789 B，`citation_title` + `citation_date` 逐字）+ ar5iv **0/3**（ALBERT 抓取 30s 超时；XLNet / REALM 未取，数字仅到摘要粒度）+ OpenAlex **3/3 `200`**（8,430 / 8,627 / 1,345，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+3** · data **+3** · harness **+2** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
@@ -6872,5 +6874,57 @@
 | 一句话贡献 | **BigBird**：把全注意力的**二次**依赖降为**线性**的稀疏注意力（摘要口径），并证明它仍是序列函数的**通用近似器**且 **Turing complete**，从而保留全注意力模型的理论性质；理论分析指出 **`O(1)` 个 global token（如 CLS）** 参与稀疏注意力是有益的。工程上在同等硬件下可处理**最长 8×** 的序列，并在问答 / 摘要等长文档任务上显著提升，另给出基因组数据的新应用。 |
 | 与我们工作的关系 | **pretrain（主 · 长上下文结构）**：若 2B 线要上长上下文，BigBird 的「window + global + random」是可直接对照的稀疏骨架；预注册需固定 global token 数（`O(1)`）与 window 大小两档，否则「线性复杂度」不可复现。<br>**harness（长文档评测）**：8× 序列长度是**同等硬件**口径，报分必须写最大长度与显存；长文档任务要区分「截断 / 稀疏 / 检索」三种喂法。<br>**data（长文档语料）**：长序列收益依赖长文档样本占比；data 线要先报「≥8K token 文档比例」再决定是否投入稀疏注意力。<br>**zhulong（成本口径）**：线性注意力降低的是**序列维度的显存与 FLOPs**，但 global token 仍全连接；成本表要把 window / global / random 三路分别计。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow（长规格文档）**：芯片规格书天然是长文档，但本文未测 EDA 域 ⇒ 只作候选。 |
 | 首次收录 | **2026-11-24**（第一百零七轮 · 18:00 时窗） |
+
+---
+
+## 390. Reformer: The Efficient Transformer
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Reformer: The Efficient Transformer |
+| 作者（前 3） | Nikita Kitaev · Łukasz Kaiser · Anselm Levskaya（共 **3** 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（v1 `2020-01-13`；abs 页 `citation_date` = `2020/01/13`） |
+| 会议 / 期刊 | **ICLR 2020**（arXiv `comments` 逐字 = `ICLR 2020`；OpenAlex 记 `preprint` ⇒ 会议口径取 arXiv `comments`，两源分列） |
+| 被引数 | **3,436**（OpenAlex `10.48550/arxiv.2001.04451`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2001.04451> ｜ arXiv DOI `10.48550/arxiv.2001.04451` |
+| 一句话贡献 | **Reformer**：用三项改动把长序列 Transformer 的显存拆开算 —— ① LSH 注意力（shared-QK，同一线性层出 Q/K，复杂度 `O(L²) → O(L log L)`）；② **可逆残差层**（RevNets）使激活只存 **1 份**而非 **N 份**（N = 层数）；③ FFN 内激活**分块**处理，消掉 `d_ff` 因子。实验：enwik8 切成 `2^16 = 64K` token 子序列、imagenet-64 用 12K 序列；消融用 3 层模型；12 层 enwik8 训 20K 步（dropout 0.1）测试 **1.19 bits/dim**，继续调优到 **1.05 bits/dim**；`n_rounds` 轮哈希与 shared-QK 均被单独消融（shared-QK 不劣于常规注意力）。 |
+| 与我们工作的关系 | **pretrain（主 · 长上下文显存预算）**：把「激活份数 / `d_ff` / `L²` 注意力」三项分开记账，可直接移植进 2B 线的显存模型；预注册需固定 `n_rounds`、chunk 大小、是否 shared-QK 三个旋钮，否则「同显存」对比不可复现。<br>**zhulong（成本口径）**：可逆层省的是**激活**，不省参数与 FLOPs；成本表要把「显存节省」与「训练吞吐变化」分列，不能合并成「更便宜」。<br>**harness（长序列评测）**：报 `bits/dim` 时必须同时给序列长度、层数、步数、dropout，缺一项即不可比。<br>**data（长文档语料）**：收益依赖 ≥64K 的长样本占比，data 线需先报长文档比例。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零八轮 · 21:00 时窗） |
+| 核验状态 | abs 页 `https://export.arxiv.org/abs/2001.04451` **`200` / 42,495 B**，`citation_title` + `citation_date`（`2020/01/13`）+ `comments`（`ICLR 2020`）逐字；ar5iv 全文 **`200` / 200,472 B**（`2^16 = 64K` / 12K / 3 层消融 / `n_rounds` / 可逆层 / 12 层 20K 步 1.19 bits/dim 逐字核对）；OpenAlex **`200`**（3,436 / 2020 / `preprint`）。⚠️ arXiv API `id_list` 连续两次 **`429 Rate exceeded`** ⇒ `published` 时间戳未取，年份以 abs 页 `citation_date` 为准并如实标注。 |
+
+---
+
+## 391. SpanBERT: Improving Pre-training by Representing and Predicting Spans
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SpanBERT: Improving Pre-training by Representing and Predicting Spans |
+| 作者（前 3） | Mandar Joshi · Danqi Chen · Yinhan Liu（共 **6** 位；另 Daniel S. Weld · Luke Zettlemoyer · Omer Levy；arXiv `citation_author` 逐字核） |
+| 年份 | **2019**（v1 `2019-07-24`，v3 `2020-01-18`；abs 页 `citation_date` = `2019/07/24`） |
+| 会议 / 期刊 | **TACL**（arXiv `comments` = `Accepted at TACL`；OpenAlex `type=article`、DOI `10.1162/tacl_a_00300`） |
+| 被引数 | **2,572**（OpenAlex `10.1162/tacl_a_00300`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1907.10529> ｜ TACL DOI `10.1162/tacl_a_00300` |
+| 一句话贡献 | **SpanBERT**：把 BERT 的 token 级掩码换成**连续词跨度**掩码 —— 每步从几何分布 `ℓ ~ Geo(p)` 采长度、均匀选起点、只采完整词，试验 `p ∈ {0.1, 0.2, 0.4}` 取 **`p=0.2`** 并截断 `ℓ_max = 10`（平均跨度 **3.8** 词），总掩码仍为 **15%**（其中 **80%** `[MASK]` / **10%** 随机词 / **10%** 原样）；并新增 **span-boundary objective（SBO）**：只用跨度两端观测 token 的表示预测整段被掩内容，**不依赖段内 token 表示**。同数据同规模（BERT-large 口径）单模型 SQuAD 1.1 **94.6** F1 / SQuAD 2.0 **88.7** F1，OntoNotes 指代消解 **79.6** F1。 |
+| 与我们工作的关系 | **pretrain（主 · 掩码目标设计）**：中文长尾词表与代码语料里「词」边界模糊，`Geo(p)` 的 `p` 与 `ℓ_max` 必须按 tokenizer 重新标定（否则平均跨度会随子词切分漂移）；预注册要把「跨度按词还是按子词」写成显式字段。<br>**data（语料形状）**：本文按**完整词**采样跨度，代码 / 日志语料需先定「词」的定义（标识符 / 运算符），否则同一 `p` 的实际信息量不同。<br>**harness（读数口径）**：SQuAD F1 与 OntoNotes F1 属**跨度选择类**任务，不能拿通用 GLUE 平均分替代；报分须标任务族。<br>**zhulong（成本口径）**：SBO 只加一次边界投影，训练开销可忽略；成本表可视为「近零成本改目标」。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow（规格文本）**：端口名 / 信号名是强边界实体，跨度掩码可能优于 token 掩码，但本文未测 EDA 域 ⇒ 只作候选。 |
+| 首次收录 | **2026-11-24**（第一百零八轮 · 21:00 时窗） |
+| 核验状态 | abs 页 **`200` / 41,879 B**，`citation_title` + `citation_date` + `comments`（`Accepted at TACL`）逐字；ar5iv 全文 **`200` / 205,735 B**（`Geo(p)` / `p=0.2` / `ℓ_max=10` / `mean 3.8` / 15%·80/10/10 逐字核对）；OpenAlex **`200`**（2,572 / 2020 / `article`，DOI 为 TACL 正式版）。⚠️ arXiv API `id_list` 连续两次 **`429`** ⇒ `published` 时间戳未取，年份以 abs 页 `citation_date` 为准。 |
+
+---
+
+## 392. SentencePiece: A simple and language independent subword tokenizer and detokenizer for Neural Text Processing
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | SentencePiece: A simple and language independent subword tokenizer and detokenizer for Neural Text Processing |
+| 作者（前 3） | Taku Kudo · John Richardson（共 **2** 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2018**（v1 `2018-08-19`；abs 页 `citation_date` = `2018/08/19`） |
+| 会议 / 期刊 | **EMNLP 2018 System Demonstrations**（arXiv `comments` = `Accepted as a demo paper at EMNLP2018`；OpenAlex `type=conference-paper`、DOI `10.18653/v1/d18-2012`） |
+| 被引数 | **5,426**（OpenAlex `10.18653/v1/d18-2012`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1808.06226> ｜ EMNLP demo DOI `10.18653/v1/d18-2012` |
+| 一句话贡献 | **SentencePiece**：把子词训练/切分/反切分做成**直接从原始句子**工作的语言无关工具（内置 BPE 与 unigram 两种算法），不需要预分词（pre-tokenization），因此可做到**无损**、端到端；提供 C++ / Python 实现、Apache 2 许可。英日互译验证（KFTT，**440k** 句）：ja→en 词级基线（80k/80k）BLEU **28.24** → SentencePiece 8k 共享词表 **29.55**（加预分词 29.85）；en→ja 基线 **20.06** → **21.62**（加预分词 20.8）；另在 16k 词表下对比训练/切分速度，并给出 BPE 朴素实现 `O(N²)` 的加速方案。 |
+| 与我们工作的关系 | **data（主 · tokenizer 与词表口径）**：中文长尾（寄存器名 / 信号名 / 器件型号）与代码混语料，必须固定「是否预分词 + 词表大小 + 归一化（NFKC）」三件事；本文的 8k 共享词表实验说明**小词表 + 共享**在跨语种时不掉点，可直接作为 2B 线词表下探的实验设计。<br>**pretrain（词表-模型联动）**：词表变小 ⇒ 序列变长、embedding 变小，需与 `d_model` / 序列预算一起预注册，不能单独改词表。<br>**harness（可复现性）**：BLEU 对预分词与归一化极其敏感（本文引 Post 2018）；评测包必须记录 tokenizer 版本与 NFKC 开关。<br>**zhulong（成本口径）**：`O(N²)` 朴素 BPE 在大语料上不可接受，训练侧成本要计入 tokenizer 训练时间。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow（规格文本）**：无损切分对「名字必须逐字保留」的规格文本是硬需求，可优先于 BPE 变体。 |
+| 首次收录 | **2026-11-24**（第一百零八轮 · 21:00 时窗） |
+| 核验状态 | abs 页 **`200` / 41,055 B**，`citation_title` + `citation_date` + `comments`（`Accepted as a demo paper at EMNLP2018`）逐字；ar5iv 全文 **`200` / 107,776 B**（表 1 BLEU 28.24 / 29.55 / 29.85 / 20.06 / 21.62 / 20.8、KFTT 440k、16k 词表、`O(N²)` 逐字核对）；OpenAlex **`200`**（5,426 / 2018 / `conference-paper`）。⚠️ arXiv API `id_list` 连续两次 **`429`** ⇒ `published` 时间戳未取，年份以 abs 页 `citation_date` 为准。 |
+
 | 核验状态 | abs 页 **`200` / 44,590 B**，`citation_title` + `citation_date` = `2020/07/28` 逐字，摘要逐字取回；arXiv API **`200` + atom**（`published` = `2020-07-28T08:34:04Z`，11 位作者逐字）；ar5iv 抓取 **超时未取回**（30s，`000`）⇒ 本条目数字仅到摘要粒度，**未做 PDF 逐页复核**；OpenAlex **`200`**（3,828 / 2020 / `conference-paper`）。 |
 
