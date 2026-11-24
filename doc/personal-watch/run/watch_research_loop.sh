@@ -7,7 +7,7 @@ export https_proxy=http://127.0.0.1:7897
 export NO_PROXY=localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
 export no_proxy=$NO_PROXY
 # personal-watch（观察哨）· **research agent** 自动推进循环（arXiv 论文采集/整理）
-# 让 cline 读任务书（WATCH_RESEARCH_TASK.md）连续推进，并每约 PUSH_INTERVAL 秒兜底做一次 git 同步 + commit + push。
+# 让 opencode 读任务书（WATCH_RESEARCH_TASK.md）连续推进，并每约 PUSH_INTERVAL 秒兜底做一次 git 同步 + commit + push。
 # ⏰ 唤醒节律（**2026-10-07 用户令：由「每 30 分钟」改为「每天 8 次 —— 每 3 小时：00/03/06/09/12/15/18/21」**）：
 #   定时模式（**默认**，SCHEDULE_HOURS=0,3,6,9,12,15,18,21）：只在时窗边界调用 cline；其余时间**纯 bash 分段睡眠（零 token）**，
 #     每 SLEEP_CHUNK 秒刷新存活标记 /tmp/watch_research_loop.hb（供外部判活）—— 目的就是「**别再烧用户自己的 token**」。
@@ -39,7 +39,7 @@ REL="doc/personal-watch/run"     # 本任务在仓库中的相对目录（只提
 # ⚠️ 模型名用 DeepSeek 官方 API 的**规范 ID**（2026-10-03 实测 `GET https://api.deepseek.com/models` → HTTP 200）：
 #     `deepseek-flash`（1M ctx，text+image）/ `deepseek-v4-pro`（1M ctx，text）。
 #   🚫 `deepseek-v4-pro-fp4` 本机网关不认；🚫 `deepseek-v4-flash` 不是官方 ID。
-MODEL="deepseek-flash"          # 论文检索/整理用 flash（便宜/快）；要更强可换 deepseek-v4-pro
+MODEL="${WATCH_MODEL:-deepseek/deepseek-flash}"          # 论文检索/整理用 flash（便宜/快）；要更强可换 deepseek-v4-pro
 # 推理强度（cline `--thinking`）：none|low|medium|high|xhigh；省略=用 provider 默认（flash 默认 high）。
 THINKING="low"                  # 采集+整理为主，不需要深推理；要更省可设 none
 CLINE_TIMEOUT=1500              # 单次 cline 最多 25 分钟（与 BaiZe 一致）
@@ -74,27 +74,31 @@ if [ "${WATCH_NO_LOGINPATH:-0}" != "1" ]; then
     if [ -n "$_login_path" ]; then PATH="${_login_path}:${PATH}"; fi
 fi
 export PATH
-CLINE_BIN="${CLINE_BIN:-}"
-if [ -z "$CLINE_BIN" ]; then CLINE_BIN="$(command -v cline 2>/dev/null || true)"; fi
-if [ -z "$CLINE_BIN" ]; then
-    echo "[loop] ❌ 找不到 cline（PATH=$PATH）→ 本线无法工作"
-    if [ "${WATCH_NO_CLINE_SELFHEAL:-0}" != "1" ]; then
-        echo "[loop] 🩹 尝试自动重装 cline（npm i -g cline@latest，最多 240s；日志 → $CLINE_LOG）"
+OPENCODE_BIN="${OPENCODE_BIN:-}"
+if [ -z "$OPENCODE_BIN" ]; then OPENCODE_BIN="$(command -v opencode 2>/dev/null || true)"; fi
+if [ -z "$OPENCODE_BIN" ] && [ -x "$HOME/.nvm/versions/node/v24.21.0/bin/opencode" ]; then
+    OPENCODE_BIN="$HOME/.nvm/versions/node/v24.21.0/bin/opencode"
+fi
+if [ ! -x "${OPENCODE_BIN:-}" ]; then
+    echo "[loop] ❌ 找不到 opencode（PATH=$PATH）→ 本线无法工作"
+    if [ "${WATCH_NO_AGENT_SELFHEAL:-0}" != "1" ]; then
+        echo "[loop] 🩹 尝试自动重装 opencode（npm i -g opencode-ai@latest，最多 240s；日志 → $CLINE_LOG）"
         (
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" >/dev/null 2>&1
-            timeout 240 npm i -g cline@latest --no-fund --no-audit
+            timeout 240 npm i -g opencode-ai@latest --no-fund --no-audit
         ) >> "$CLINE_LOG" 2>&1 || true
-        CLINE_BIN="$(command -v cline 2>/dev/null || true)"
+        OPENCODE_BIN="$(command -v opencode 2>/dev/null || true)"
     fi
-    if [ -n "$CLINE_BIN" ]; then
-        echo "[loop] 🩹 自愈成功：cline=$CLINE_BIN"
+    if [ -x "${OPENCODE_BIN:-}" ]; then
+        echo "[loop] 🩹 自愈成功：opencode=$OPENCODE_BIN"
     else
-        echo "[loop] 🩹 自愈失败：cline 仍不可用（详见 $CLINE_LOG）；请人工修 PATH/重装"
+        echo "[loop] 🩹 自愈失败：opencode 仍不可用（详见 $CLINE_LOG）；请人工修 PATH/重装"
     fi
 else
-    echo "[loop] ✅ cline=$CLINE_BIN · $(timeout 15 "$CLINE_BIN" --version 2>/dev/null | head -1)"
+    echo "[loop] ✅ opencode=$OPENCODE_BIN · $(timeout 15 "$OPENCODE_BIN" --version 2>/dev/null | head -1)"
 fi
+
 
 # ── git 兜底同步：fetch → 必要时 pull --rebase → 只提交本线文件 → push ──
 git_sync_and_push() {
@@ -155,7 +159,7 @@ waiting_is_1() {
 }
 
 # cline 级致命错误特征（**不要**用裸 `error:` —— agent 干活时会把 API 报错当证据贴出来，会误判）
-FATAL_RE='(supported API model names|额度已用完|hook dispatch failed|[Uu]nauthoriz|[Aa]uthentication (failed|error)|请等待[0-9]+分钟|cline: command not found|cline: not found)'
+FATAL_RE='(supported API model names|额度已用完|hook dispatch failed|[Uu]nauthoriz|[Aa]uthentication (failed|error)|请等待[0-9]+分钟|cline: command not found|cline: not found|opencode: command not found|opencode: not found|AI_APICallError|ProviderModelNotFoundError)'
 
 # ── ⏰ 定时唤醒：下一个时窗的 epoch 秒（SCHEDULE_HOURS=0,3,6,9,12,15,18,21 ⇒ 每 3 小时共 8 个时窗）──
 next_slot_epoch() {
@@ -215,17 +219,17 @@ fi
 
 RETRY=0     # 本时窗内的致命错重试计数（定时模式用）
 while true; do
-    echo "[loop] $(date '+%F %T') wake up, invoking cline ... [mode=${SCHEDULE_HOURS:-adaptive}]"
+    echo "[loop] $(date '+%F %T') wake up, invoking opencode ... [mode=${SCHEDULE_HOURS:-adaptive}]"
     FORCE_SHORT=0
     if [[ -f "$TASK_MD" ]]; then
         prompt="$(< "$TASK_MD")"
-        "${CLINE_BIN:-cline}" -c "$CWD" --auto-approve true -m "$MODEL" -t "$CLINE_TIMEOUT" --thinking "$THINKING" "$prompt" < /dev/null 2>&1 | tee "$CLINE_LOG"
+        timeout "$CLINE_TIMEOUT" "$OPENCODE_BIN" run --dir "$CWD" -m "$MODEL" --agent "${OPENCODE_AGENT:-build}" --auto "$prompt" < /dev/null 2>&1 | tee "$CLINE_LOG"
         rc="${PIPESTATUS[0]}"
-        echo "[loop] $(date '+%F %T') cline returned (exit ${rc}); log=$CLINE_LOG"
+        echo "[loop] $(date '+%F %T') opencode returned (exit ${rc}); log=$CLINE_LOG"
         # 兜底：cline 常"报错仍 exit 0"（模型名错 / 额度耗尽）→ 从日志抓错，失败则强制短睡重试，不空耗
         if [ "${rc:-0}" -ne 0 ] || grep -qiE "$FATAL_RE" "$CLINE_LOG" 2>/dev/null; then
             FORCE_SHORT=1
-            echo "[loop] $(date '+%F %T') ⚠️ 检测到 cline 失败/报错 → 本轮强制短睡重试（不睡长觉）"
+            echo "[loop] $(date '+%F %T') ⚠️ 检测到 opencode 失败/报错 → 本轮强制短睡重试（不睡长觉）"
         fi
     else
         echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
@@ -238,7 +242,7 @@ while true; do
         if [ "$FORCE_SHORT" -eq 1 ]; then
             RETRY=$((RETRY + 1))
             if [ "$RETRY" -le "$SCHEDULE_RETRY_MAX" ]; then
-                echo "[loop] $(date '+%F %T') ⚠️ cline 失败/报错 → 本时窗内重试 ${RETRY}/${SCHEDULE_RETRY_MAX}（sleep ${SLEEP_RETRY}s 后立刻重试）"
+                echo "[loop] $(date '+%F %T') ⚠️ opencode 失败/报错 → 本时窗内重试 ${RETRY}/${SCHEDULE_RETRY_MAX}（sleep ${SLEEP_RETRY}s 后立刻重试）"
                 sleep "$SLEEP_RETRY"
                 continue
             fi
