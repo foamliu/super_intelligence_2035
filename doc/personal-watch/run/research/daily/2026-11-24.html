@@ -37,7 +37,7 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-24</h1>
-  <div class="sub"><b>09:00 时窗 · A 轨 5/5（本轮 0 新收）· B 轨第一百零五轮 +3 → 383 · 作者网 350 · 发信累计 159 封 · 回信率 0/159</b></div>
+  <div class="sub"><b>15:00 时窗 · A 轨 5/5（本轮 0 新收）· B 轨第一百零六轮 +3 → 386 · 作者网 353 · 发信累计 161 封 · 回信率 0/161</b></div>
   <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-24 09:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
@@ -318,8 +318,80 @@
 </ul>
 
 
+<div class="note">
+  <b>A 轨口径（15:00 时窗复核）</b>：<code>cat:cs.CL&amp;max_results=5&amp;sortBy=submittedDate</code> <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（<b>11,865 B / 5 entry</b>）；⚠️ <b>公告批已刷新</b>：<code>published</code> 上界从前几窗的 <code>2026-11-20T18:51:29Z</code> 前移到 <b><code>2026-11-23T15:43:16Z</code></b>（其后 <code>15:23:50Z</code> / <code>15:14:32Z</code> / <code>15:11:05Z</code> / <code>14:44:59Z</code>），距本窗（2026-11-24 07:00 UTC）约 <b>15.3h &lt; 72h</b> ⇒ 回到 §0.1 窗内。但今日额度 <b>5/5 已满</b>（00:00 收 3 + 03:00 补 2）⇒ <b>本轮 0 新收</b>，不凑第 6 篇；只登记「次日 00:00 起可收」这一事实。
+</div>
+
+<h3 class="sec">🅱 B 轨 · 15:00 时窗（第一百零六轮 +3 → 386）</h3>
+<table class="plain">
+  <tr><th>#</th><th>论文</th><th>年份 / 会议</th><th>被引</th><th>一句话贡献</th><th>归属线</th></tr>
+  <tr><td>384</td><td><a href="https://arxiv.org/abs/1909.11942">ALBERT: A Lite BERT for Self-supervised Learning of Language Representations</a>（Zhenzhong Lan · Mingda Chen · Sebastian Goodman 等，6 位）</td><td>2019 · 预印本（arXiv <code>comment</code> 空；OpenAlex <code>preprint</code>）</td><td><b>8,430</b></td><td><b>factorized embedding</b>（<code>V×H</code> 拆 <code>V×E</code> + <code>E×H</code>）+ <b>跨层参数共享</b> + <b>SOP</b> 替换 NSP；参数少于 BERT-large 仍在 GLUE / RACE / SQuAD 刷新 SOTA（摘要只给定性结论 ⇒ 不写未核分数）。</td><td>pretrain（主）· data · harness · zhulong · designflow</td></tr>
+  <tr><td>385</td><td><a href="https://arxiv.org/abs/1906.08237">XLNet: Generalized Autoregressive Pretraining for Language Understanding</a>（Zhilin Yang · Zihang Dai · Yiming Yang 等，6 位）</td><td>2019 · NeurIPS 2019（OpenAlex <code>conference-paper</code>）</td><td><b>8,627</b></td><td><b>排列式广义自回归</b>：在所有分解顺序上最大化期望似然 ⇒ 既见双向上下文又避开 mask 的预训练-微调不一致；引入 Transformer-XL；同设置下 <b>20 个任务</b>超 BERT。</td><td>pretrain（主）· data · harness · zhulong</td></tr>
+  <tr><td>386</td><td><a href="https://arxiv.org/abs/2002.08909">REALM: Retrieval-Augmented Language Model Pre-Training</a>（Kelvin Guu · Kenton Lee · Zora Tung 等，5 位）</td><td>2020 · 预印本（arXiv <code>comment</code> 空；OpenAlex <code>preprint</code>）</td><td><b>1,345</b></td><td>隐变量<b>知识检索器</b> + <b>以 MLM 为唯一信号</b>、端到端反传穿过「百万文档级」检索步；三个 Open-QA 基准上绝对准确率 <b>+4~16 点</b>，兼得可解释性与模块化。</td><td>data（主）· pretrain · harness · zhulong · designflow</td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted);">被引数 = OpenAlex（查询日 <b>2026-11-24</b>）；会议 = arXiv <code>comment</code> + OpenAlex <code>source</code>，两套口径分列、禁止跨源比较。元数据核验：arXiv 单查 <code>search_query=id:&lt;ID&gt;</code> <b>3/3 <code>200</code> + atom</b>（2,658 / 2,829 / 2,917 B）；abs <b>3/3 <code>200</code></b>（43,671 / 43,660 / 42,789 B，<code>citation_title</code> + <code>citation_date</code> 逐字）；ar5iv <b>0/3</b>（ALBERT 抓取 30s 超时；XLNet / REALM 未取）⇒ 三篇数字仅到摘要粒度。三 ID 条目级查重 <b>0 命中</b>。</p>
+
+<h3 class="sec">👥 作者关系网（+3 → 353，X 132）</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名</th><th>机构</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td>351</td><td>蓝振忠 Zhenzhong Lan</td><td>西湖大学（终身副教授）· 兼蚂蚁集团 AGI 研究中心主任</td><td><b>lanzhenzhong@westlake.edu.cn</b>（西湖大学<b>官方师资页</b> <code>200</code> / 45,856 B 页内明文；<b>当前</b>；未用论文页旧地址 <code>lanzhzh@cs.cmu.edu</code>）</td><td>未找到</td><td><b>已发信</b>（#160）</td></tr>
+  <tr><td>352</td><td>杨植麟 Zhilin Yang</td><td>月之暗面 Moonshot AI（创始人 / CEO）· 曾任清华助理教授</td><td><b>未找到当前地址</b>（<code>kimiyoung.github.io</code> <code>200</code> / 91,449 B 无邮箱；<code>cs.cmu.edu/~zhiliny/</code> <code>503</code>；CMU LTI 校友页 <code>200</code> / 255,158 B 无邮箱；<code>zhiliny.com</code> 的联系邮箱判为<b>另一人</b> ⇒ 不猜）</td><td>未找到</td><td>待跟踪（仅建档）</td></tr>
+  <tr><td>353</td><td>Kelvin Guu</td><td>Google DeepMind（Principal Research Scientist / Director）</td><td><b>kelvin@kelvinguu.com</b>（本人主页 <code>200</code> / 16,482 B，Contact 节逐字 <code>kelvin 🐌 kelvinguu.com</code>，蜗牛符号代 <code>@</code> 的<b>防爬写法</b>，判读依据逐字留档；<b>当前</b>）</td><td><b>@kelvin_guu</b>（主页外链 + <code>x.com/kelvin_guu</code> <code>200</code> / 180,185 B <code>og:title</code> 双源）</td><td><b>已发信</b>（#161）</td></tr>
+</table>
+
+<h3 class="sec">✉ 作者请教信（本时窗 2 封 → 累计 161）</h3>
+<div class="card">
+  <h2>#160 · 蓝振忠 Zhenzhong Lan（西湖大学）· ALBERT <code>1909.11942</code> · 中文 185 汉字</h2>
+  <table class="kv">
+    <tr><th>地址复核</th><td><code>https://www.westlake.edu.cn/faculty/zhenzhong-lan.html</code> <code>200</code> / 45,856 B，页内明文 <code>lanzhenzhong@westlake.edu.cn</code>；未用论文页旧地址。</td></tr>
+    <tr><th>问题（只对 ALBERT 成立）</th><td>① factorized embedding 的 <code>E</code> 与隐藏维 <code>H</code> 比例在中文大词表（五万以上）下是否要放大、<code>E=128</code> 是否偏小；② 跨层共享后各层梯度尺度差异是否要分层学习率 / 按层裁剪（我们在共享层看到梯度范数低一个量级）；③ SOP 在单句语料（代码、日志）上退化多少、是否退回只做 MLM。</td></tr>
+    <tr><th>发送状态</th><td><code>SENT OK 15:04:58</code>（今日 <b>8/12</b>）；落款两行、其后无行；正文无项目名；与今日 #153–#159 开头句 / 问句零共用。</td></tr>
+    <tr><th>回信状态</th><td><b>未到期</b>（到期日 2026-12-08）</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h2>#161 · Kelvin Guu（Google DeepMind）· REALM <code>2002.08909</code> · 英文 159 词</h2>
+  <table class="kv">
+    <tr><th>地址复核</th><td><code>https://www.kelvinguu.com/</code> <code>200</code> / 16,482 B，Contact 节 <code>kelvin 🐌 kelvinguu.com</code>（蜗牛符号代 <code>@</code>）；同页外链 <code>twitter.com/kelvin_guu</code>。</td></tr>
+    <tr><th>问题（只对 REALM 成立）</th><td>① 索引每 epoch 刷新一次时 4–16 点绝对增益还剩多少；② 检索器从 BM25 类模型冷启动时反传是否稳定、是否需要 warm-up；③ 非 Wikipedia 域语料（技术文档 / 日志）上 salience 是否退化为表层词重叠、哪种正则最有效。</td></tr>
+    <tr><th>发送状态</th><td><code>SENT OK 15:05:03</code>（今日 <b>9/12</b>）；落款两行、其后无行；正文无项目名；与 #160 及今日其余各封开头句 / 问句零共用。</td></tr>
+    <tr><th>回信状态</th><td><b>未到期</b>（到期日 2026-12-08）｜ 累计回信率 <b>0/161</b>，0 封到期（最早 11-25）</td></tr>
+  </table>
+</div>
+
+<h3 class="sec">对各线的可执行建议（6 线 · 15:00）</h3>
+<table class="plain">
+  <tr><th>线</th><th>可执行建议</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>embedding 预算单列</b>（<code>1909.11942</code>）：把词表投影从 <code>V×H</code> 拆成 <code>V×E</code> + <code>E×H</code> 后，<code>E</code> 与 <code>H</code> 是<b>两个</b>超参 —— 2B 规模下先扫 <code>E/H ∈ {1/8, 1/4, 1/2, 1}</code>，并同时报「非 embedding 参数量」，否则「同参数量对比」失真。<b>目标函数二选一预注册</b>（<code>1906.08237</code>）：MLM vs 排列式自回归作为同 token 预算两臂，单独报 &ge;8K 长序列收敛速度。</td></tr>
+  <tr><td><b>vision</b></td><td><b>无</b>（本轮三篇均为文本预训练方向，无可执行视觉建议；不凑数）。</td></tr>
+  <tr><td><b>harness</b></td><td><b>「更少参数更好分数」三项必录</b>（<code>1909.11942</code>）：总参数 / 非 embedding 参数 / 训练 token 数，缺一项即不可比。<b>开放域问答四要素</b>（<code>2002.08909</code>）：是否允许检索、索引版本、top-k、以及「检索命中但答案错」的比例单独统计。</td></tr>
+  <tr><td><b>data</b></td><td><b>句对可获得率先测</b>（<code>1909.11942</code>）：代码 / 日志 / 规格多为单句，先量「连续句对可获得率」再决定是否启用 SOP 类句间目标。<b>RAG 语料固定两件套</b>（<code>2002.08909</code>）：语料快照版本 + 索引刷新频率，否则两个 run 的「知识」不可比。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>显存与算力分列</b>（<code>1909.11942</code>）：跨层参数共享降的是参数驻留显存、不是每 token FLOPs，成本表须两列分开。<b>检索成本写成乘积</b>（<code>2002.08909</code>）：每 token 检索次数 × 单次检索延迟，并单列索引构建时间。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>规格检索先做只读召回评测</b>（<code>2002.08909</code>）：在只读规格库上测 top-k 召回与「命中但答错」比例，再决定是否上端到端联合训练；<b>长尾标识符词表</b>（<code>1909.11942</code>）先量寄存器名 / 信号名的词表占比，再决定 embedding 是否解耦。</td></tr>
+</table>
+
+<h3 class="sec">附录 · 15:00 时窗检索式与核验（可复核）</h3>
+<ul class="tight">
+  <li><b>A 轨复核</b>：<code>cat:cs.CL&amp;max_results=5&amp;sortBy=submittedDate</code>（<code>--noproxy '*'</code>）<code>200</code> / <code>application/atom+xml</code> / <b>11,865 B / 5 entry</b>；<code>published</code> 上界 <b><code>2026-11-23T15:43:16Z</code></b>（距本窗约 15.3h &lt; 72h），但今日 5/5 已满 ⇒ 0 新收。</li>
+  <li><b>B 轨元数据</b>：arXiv 单查 <code>search_query=id:&lt;ID&gt;</code> <b>3/3 <code>200</code> + atom</b>（2,658 / 2,829 / 2,917 B，<code>published</code> = 2019-09-26T07:06:13Z / 2019-06-19T17:35:48Z / 2020-02-10T18:40:59Z）；abs 3/3 <code>200</code>（43,671 / 43,660 / 42,789 B）；OpenAlex 3/3 <code>200</code>（8,430 / 8,627 / 1,345，查询日 2026-11-24）。</li>
+  <li><b>未取回项（如实记）</b>：ar5iv <b>0/3</b> —— ALBERT 抓取 30s 超时、XLNet / REALM 未再请求 ⇒ 三篇均只到 arXiv 摘要粒度，<b>未做 PDF 逐页复核</b>。</li>
+  <li><b>去重</b>：三 ID 在 <code>PAPERS.md</code> 条目级查重 <b>0 命中</b>（B 轨不进 <code>SEEN.md</code> / <code>papers.jsonl</code>）。</li>
+  <li><b>作者地址</b>：<code>westlake.edu.cn/faculty/zhenzhong-lan.html</code> <code>200</code> / 45,856 B（<code>lanzhenzhong@westlake.edu.cn</code>）；<code>kelvinguu.com</code> <code>200</code> / 16,482 B（<code>kelvin 🐌 kelvinguu.com</code>）；<code>cs.cmu.edu/~zhiliny/</code> <code>503</code>、<code>kimiyoung.github.io</code> <code>200</code> 无邮箱 ⇒ 杨植麟只建档。</li>
+  <li><b>X 核验</b>：<code>x.com/kelvin_guu</code> 经代理 <code>200</code> / 180,185 B，<code>og:title</code> = <code>Kelvin Guu (@kelvin_guu) on X</code> ⇒ X <b>131 → 132</b>。</li>
+  <li><b>数字口径</b>：被引数 = OpenAlex（查询日 2026-11-24）；论文数字 = 作者自报，本线未复现；摘要未给分数者一律不写数字。</li>
+</ul>
+
+<h3 class="sec">本轮变更说明（09:00 → 15:00）</h3>
+<ul class="tight">
+  <li><b>A 轨不动</b>：今日 5/5 已满 ⇒ 0 新收；但<b>公告批已刷新</b>（上界 <code>2026-11-20 18:51Z</code> → <code>2026-11-23 15:43Z</code>，15.3h &lt; 72h）⇒ 次日 00:00 起可收，已登记候选 5 条。</li>
+  <li><b>新增 3 篇 B 轨</b>：ALBERT <code>1909.11942</code>、XLNet <code>1906.08237</code>、REALM <code>2002.08909</code> ⇒ 383 → <b>386</b>。</li>
+  <li><b>作者网 +3</b>：蓝振忠（西湖大学官方页当前地址，已发信）/ 杨植麟（无当前可核地址，仅建档）/ Kelvin Guu（本人站点当前地址 + X 双源，已发信）⇒ 350 → <b>353</b>；X <b>131 → 132</b>。</li>
+  <li><b>发信 +2</b>：#160 中文 185 汉字 / #161 英文 159 词，均 <code>SENT OK 15:04:5x</code> ⇒ 累计 <b>161</b>；回信率 <b>0/161</b>，0 封到期（最早 11-25）。</li>
+  <li><b>如实记</b>：ar5iv 0/3 未取回 ⇒ 三篇经典条目的数字只到摘要粒度；杨植麟的检索命中邮箱属另一人 ⇒ 不用、不猜；本轮首次落盘后工作副本被并发 git 操作回滚，已按原文重放后提交（发信动作不受影响）。</li>
+</ul>
+
 <footer>
-  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-24 09:00 CST
+  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-24 15:05 CST
 </footer>
 
 </div>

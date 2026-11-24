@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-24 15:0x）**：作者 **353** 人（编号最大 **353**）· X 已核验 **132**（本轮 **+1**：`@kelvin_guu` 由 Kelvin Guu 本人主页 `https://www.kelvinguu.com/`（`200` / 16,482 B）Contact 节外链 `twitter.com/kelvin_guu`，并经代理抓 `x.com/kelvin_guu` `200` / 180,185 B，`og:title` = `Kelvin Guu (@kelvin_guu) on X`、`og:description` = `Principal Research Scientist / Director @ Google DeepMind. Leading teams of 40+ …` ⇒ 双源核；蓝振忠 `westlake.edu.cn` 官方页无 X 外链、杨植麟无可核当前主页 ⇒ 记「未找到 X」，不猜）· 已发信 **161**（台账 #1–#161；今日 **9/12**）· 回信 **0**（0/161，0 封到期，最早 11-25）。本轮 **+3**：蓝振忠 Zhenzhong Lan（ALBERT 一作，中文，西湖大学官方师资页当前地址 ⇒ 已发信 #160）· 杨植麟 Zhilin Yang（XLNet 一作，中文，无当前可核地址 ⇒ 仅建档）· Kelvin Guu（REALM 一作，英文，本人站点当前地址 + X 双源 ⇒ 已发信 #161）。
+
 > **当前计数（2026-11-24 06:0x）**：作者 **347** 人（编号最大 **347**）· X 已核验 **130**（本轮 **+0**：Omar Khattab 主页 `omarkhattab.com` 与 Matei Zaharia 主页 `people.eecs.berkeley.edu/~matei/` 均无 x.com / twitter.com 外链；Mathilde Caron 无可核主页 ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **157**（台账 #1–#157；今日 **5/12**）· 回信 **0**（0/157，0 封到期，最早 11-25）。本轮 **+3**：Omar Khattab（ColBERT 一作，英文，MIT 当前主页邮箱 ⇒ 已发信 #157）· Matei Zaharia（ColBERT 二作，英文，UC Berkeley 当前主页邮箱 ⇒ 本窗不发，同论文 ≤1 封）· Mathilde Caron（DINO 一作，法文姓名，未见当前可核邮箱 ⇒ 仅建档）。
 > **当前计数（2026-11-23 21:0x）**：作者 **338** 人（编号最大 **338**）· X 已核验 **130**（本轮 **+1**：`@VictorSanh` 经 `x.com/VictorSanh` 经代理 `200` / 163,390 B，`og:title` = `Victor Sanh (@VictorSanh) on X`，`og:description` = `Beaker ... Prev. early crew @huggingface | AI x NYC`；反例 `@m_dehghani` 只有 **1 follower / 3 following** ⇒ 判他人，不记）· 已发信 **152**（台账 #1–#152）· 回信 **0**（0/152，0 封到期，最早 11-25）。本轮 **+3**：Bin Xiao（Florence-2 一作，中文，无公开明文邮箱 ⇒ 仅建档）· Victor Sanh（T0 一作，英文，X 双源）· Mostafa Dehghani（UL2 共同一作，英文，论文页邮箱单源）。
 > **当前计数（2026-11-24 03:0x）**：作者 **344** 人（编号最大 **344**）· X 已核验 **130**（本轮 **+0**：Matthias Minderer / Alexey Gritsenko / Bingsheng He 三人均无可访问 X 外链，🚫 不猜 handle）· 已发信 **156**（台账 #1–#156；今日 **4/12**）· 回信 **0**（0/156，0 封到期，最早 11-25）。本轮 **+3**：Matthias Minderer（OWL-ViT 一作，德文姓名，论文页 Google 旧地址 ⇒ 仅建档）· Alexey Gritsenko（OWL-ViT 二作，英文，论文页旧地址 ⇒ 仅建档）· Bingsheng He 何炳生（DistDNA 通讯，中文，NUS 官方主页当前地址 ⇒ 已发信 #156）。
@@ -4961,4 +4963,43 @@
 | X 账号 | **未找到**（无可核个人主页；不猜 handle） |
 | 状态 | **待跟踪**（旧论文页地址 ⇒ 本线不发信） |
 | 备注 | 发信问题候选（只对 DeBERTa 成立）：① content / position 两套向量是否共享投影、解耦矩阵的参数量如何随头数增长；② v3 用 RTD 替换 MLM 后，与 disentangled attention 的增益是否可叠加；③ 半数据超 RoBERTa-Large 的对照里，训练步数与 tokenizer 是否完全一致。 |
+
+### 351. 蓝振忠 Zhenzhong Lan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | 蓝振忠 Zhenzhong Lan（`语言=中文(判据=拼音姓名族属可还原中文名「蓝振忠」+ 西湖大学 / 蚂蚁集团中国机构；不因论文英文、曾在 CMU 读博判英文)`） |
+| 机构 | **西湖大学**工学院人工智能系（终身副教授，深度学习实验室负责人）· 兼蚂蚁集团通用人工智能研究中心主任 · 西湖心辰创始人（据西湖大学官方师资页 2026-11-24 抓取） |
+| 代表论文 | **ALBERT: A Lite BERT for Self-supervised Learning of Language Representations**（`1909.11942`，B 轨 #384，一作） |
+| 邮箱 | **lanzhenzhong@westlake.edu.cn**（西湖大学官方师资页 `https://www.westlake.edu.cn/faculty/zhenzhong-lan.html` `HTTP 200` / 45,856 B，页内明文，**当前机构官方地址，2026-11-24 15:0x 复核**；未用论文页旧地址 `lanzhzh@cs.cmu.edu`） |
+| 主页 | <https://www.westlake.edu.cn/faculty/zhenzhong-lan.html>（中文官方页，`200` / 45,856 B） |
+| X 账号 | **未找到**（官方页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **已发信**（#160，2026-11-24 15:04:58，中文，正文 185 汉字） |
+| 备注 | 发信问题候选（只对 ALBERT 成立）：① factorized embedding 的 `E` 与 `H` 比例在中文大词表（五万以上）下是否要放大、`E=128` 是否偏小；② 跨层参数共享后各层梯度尺度差异是否需要分层学习率 / 按层裁剪（我们观察到共享层梯度范数低一个量级）；③ SOP 在单句语料（代码、日志）上退化多少、是否直接退回只做 MLM。 |
+
+### 352. 杨植麟 Zhilin Yang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | 杨植麟 Zhilin Yang（`语言=中文(判据=拼音姓名族属可还原中文名「杨植麟」+ 清华 / 月之暗面中国机构；不因论文英文、CMU 读博判英文)`） |
+| 机构 | **月之暗面 Moonshot AI**（创始人 / CEO，据公开检索快照 2026-11；本轮**未取得官方人员页**独立核验，仅作背景）· 曾任清华大学助理教授（OpenReview 履历页 2021– ） |
+| 代表论文 | **XLNet: Generalized Autoregressive Pretraining for Language Understanding**（`1906.08237`，B 轨 #385，一作）· 另 Transformer-XL 共同一作 |
+| 邮箱 | **未找到当前地址**（`kimiyoung.github.io` `200` / 91,449 B 无明文邮箱；`cs.cmu.edu/~zhiliny/` `503`；CMU LTI 校友页 `200` / 255,158 B 无邮箱；检索命中的 `zhiliny.com` contact 为**另一人**的 `zhilin_yang@hotmail.com` ⇒ **不用、不猜**） |
+| 主页 | <https://kimiyoung.github.io/>（`HTTP 200` / 91,449 B；内容仍以 CMU 博士生身份自述，**非当前机构页**） |
+| X 账号 | **未找到**（无可核当前主页外链；不猜 handle） |
+| 状态 | **待跟踪**（仅建档；无当前可核地址 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 XLNet 成立）：① 排列目标的采样在多大词表 / 多长片段下开始抵消双向上下文收益；② 双流注意力相对 MLM 的每步 wall-clock 倍数；③ 「20 任务超 BERT」在 token 数对齐后还剩多少。 |
+
+### 353. Kelvin Guu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kelvin Guu（`语言=英文(判据=英文姓名族属 + Google DeepMind 美国机构；无双语信号)`） |
+| 机构 | **Google DeepMind**（Principal Research Scientist / Director；本人主页 2026-11-24 自述，X `og:description` 同述） |
+| 代表论文 | **REALM: Retrieval-Augmented Language Model Pre-Training**（`2002.08909`，B 轨 #386，一作） |
+| 邮箱 | **kelvin@kelvinguu.com**（本人主页 `https://www.kelvinguu.com/` `HTTP 200` / 16,482 B，Contact 节逐字为 `kelvin 🐌 kelvinguu.com` —— 以蜗牛符号代替 `@` 的防爬写法，2026-11-24 15:0x 复核；**当前个人站点地址**，判读依据逐字留档） |
+| 主页 | <https://www.kelvinguu.com/>（`HTTP 200` / 16,482 B） |
+| X 账号 | **@kelvin_guu**（主页 Contact 节外链 `twitter.com/kelvin_guu` + 经代理抓 `x.com/kelvin_guu` `200` / 180,185 B，`og:title` = `Kelvin Guu (@kelvin_guu) on X`、`og:description` = `Principal Research Scientist / Director @ Google DeepMind. Leading teams of 40+ (research/eng/PM/UI/UX) turning SOTA research into new AI products` ⇒ 双源核验） |
+| 状态 | **已发信**（#161，2026-11-24 15:05:03，英文 159 词） |
+| 备注 | 发信问题候选（只对 REALM 成立）：① 索引每 epoch 刷新一次时，4–16 点绝对增益还剩多少；② 检索器从 BM25 类模型冷启动时反传是否稳定、需不需要 warm-up；③ 非 Wikipedia 域语料（技术文档 / 日志）上 salience 模型是否退化为表层词重叠、哪种正则最有效。 |
 

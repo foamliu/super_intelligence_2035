@@ -9,6 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **386** 条（**第一百零六轮 2026-11-24 15:0x 补 3 条 → 386**：ALBERT `1909.11942`（**8,430**，2019 预印本、OpenAlex `preprint`；factorized embedding（`V×H` 拆 `V×E` + `E×H`）+ 跨层参数共享 + SOP 替换 NSP，参数少于 BERT-large 仍在 GLUE / RACE / SQuAD 刷新 SOTA；⚠️ 摘要只给定性结论 ⇒ 本行不写未核分数）/ XLNet `1906.08237`（**8,627**，NeurIPS 2019、OpenAlex `conference-paper`；排列式广义自回归 + Transformer-XL，20 任务超 BERT）/ REALM `2002.08909`（**1,345**，2020 预印本；隐变量知识检索器，**MLM 作唯一信号**端到端反传穿过百万文档级检索，Open-QA 三个基准绝对准确率 **+4~16 点**）；核验：arXiv 单查 `search_query=id:<ID>` **3/3 `200` + atom**（2,658 / 2,829 / 2,917 B，`published` = 2019-09-26T07:06:13Z / 2019-06-19T17:35:48Z / 2020-02-10T18:40:59Z）+ abs 页 **3/3 `200`**（43,671 / 43,660 / 42,789 B，`citation_title` + `citation_date` 逐字）+ ar5iv **0/3**（ALBERT 抓取 30s 超时；XLNet / REALM 未取，数字仅到摘要粒度）+ OpenAlex **3/3 `200`**（8,430 / 8,627 / 1,345，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+3** · data **+3** · harness **+2** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
+
 **本轮快照**：累计 **383** 条（**第一百零五轮 2026-11-24 09:0x 补 3 条 → 383**：Sentence-BERT `1908.10084`（**24,624**，EMNLP 2019、OpenAlex 会议版 `conference-paper`；siamese / triplet BERT 句向量，10,000 句找最相似对从 BERT 的约 5,000 万次推理（~65 小时）降到 SBERT 约 **5 秒**且保持 STS 精度；⚠️ arXiv DOI 记录仅 94 次，按会议版 DOI 记 24,624 并分列）/ DeBERTa `2006.03654`（**2,546**，2020 预印本、OpenAlex `preprint`；disentangled attention：每个词拆成 content / position 两向量、注意力用两组解耦矩阵；enhanced mask decoder 在解码层注入绝对位置；半数据即超 RoBERTa-Large（MNLI +0.9 / SQuAD v2.0 +2.3 / RACE +3.6 点），48 层 **1.5B** 单模型 SuperGLUE **89.9** 首超人（89.8）、集成 **90.3**）/ Test-time compute scaling `2408.03314`（**2,592**，ICLR 2025、OpenAlex `conference-paper`；两条路：稠密 process-based verifier 搜索 / 按 prompt 自适应更新响应分布，效果随 prompt 难度变化 ⇒ compute-optimal 按难度分配算力，效率比 best-of-N 高 **>4×**，FLOPs 对齐下小模型可胜 **14×** 大模型）；核验：arXiv 单查 `search_query=id:<ID>` **3/3 `200` + atom**（2,567 / 3,739 / 3,382 B，`published` = 2019-08-27T08:50:17Z / 2020-06-05T19:54:34Z / 2024-08-06T17:35:05Z；批量 `id_list` 两次 **`429`** ⇒ 改单查）+ abs 页 **3/3 `200`**（41,707 / 46,461 / 44,439 B，`citation_title` + `citation_date` 逐字）+ ar5iv **2/3 部分取回**（DeBERTa 258,225 B / TTC 81,023 B，均在 25s 超时前截断；SBERT 61,868 B 截断，页内未抽出个人邮箱）+ OpenAlex **3/3 `200`**（94→会议版 24,624 / 2,546 / 2,592，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+2** · harness **+2** · data **+1** · zhulong **+2** · designflow **+2** · vision **+0**（一篇可多线））
 
 
@@ -6764,6 +6766,57 @@
 | 与我们工作的关系 | **harness（主 · 推理预算与判分）**：论文把「难度」变成分配变量；harness 若评 agent，须记录每题的采样条数 / 是否走 verifier / 是否触发 revision，否则同名指标不可比。<br>**zhulong（推理成本口径）**：>4× 与 14× 都是**算力对齐**结论；成本表必须把 verifier 调用次数单列，并把「等 FLOPs」的换算公式写死，禁止只报分数提升。<br>**designflow（可验证奖励）**：EDA / 代码任务有廉价精确验证（编译、测试），正对应论文所说的「稠密 verifier」；建议先测「verifier 调用 : 生成调用」的配比，而不是直接上大规模采样。<br>**pretrain（预训练 vs 推理的算力权衡）**：论文给出「小模型 + 推理算力」可替代部分参数规模的证据；pretrain 线做 2B 规模决策时应把推理预算作为外生变量写进对照，不能只比训练 loss。<br>**data**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-24**（第一百零五轮 · 09:00 时窗） |
 | 核验状态 | abs 页 **`200` / 44,439 B**，`citation_title` + `citation_date` = `2024/08/06` 逐字；arXiv API 单查 **`200` + atom**（3,382 B，`published` = `2024-08-06T17:35:05Z`）；ar5iv 全文**部分取回** `200` / 81,023 B（25s 超时截断，首页明文 `csnell22@berkeley.edu`）；OpenAlex **`200`**（2,592 / 2025 / `conference-paper`）；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 384. ALBERT: A Lite BERT for Self-supervised Learning of Language Representations
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | ALBERT: A Lite BERT for Self-supervised Learning of Language Representations |
+| 作者（前 3） | Zhenzhong Lan · Mingda Chen · Sebastian Goodman（共 **6** 位；另 Kevin Gimpel · Piyush Sharma · Radu Soricut；arXiv `citation_author` 逐字核） |
+| 年份 | **2019**（arXiv v1 `2019-09-26T07:06:13Z`） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` 为空；OpenAlex `type=preprint`、`source` = arXiv / Cornell University ⇒ 不臆断会议） |
+| 被引数 | **8,430**（OpenAlex `10.48550/arxiv.1909.11942`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1909.11942> ｜ arXiv DOI `10.48550/arxiv.1909.11942` |
+| 一句话贡献 | **ALBERT**：三项改动 —— ① **factorized embedding parameterization**，把词表投影 `V×H` 拆成 `V×E` + `E×H`，解耦词表规模与隐藏维；② **cross-layer parameter sharing**，层间共享全部/部分参数；③ **SOP**（sentence-order prediction）替换 NSP，把自监督目标改成句间**顺序**连贯；结果是在参数少于 BERT-large 的前提下于 GLUE / RACE / SQuAD 刷新 SOTA（⚠️ 摘要只给定性结论、未给具体分数 ⇒ 本行**不写未核数字**）。 |
+| 与我们工作的关系 | **pretrain（主 · 小模型参数预算）**：2B 级以下模型的最大约束是「参数放哪」；ALBERT 给出的是**参数-容量解耦**的最小配方 —— 若 pretrain 线要压缩 embedding（词表 × 隐藏维通常占小模型参数的大头），必须把 `E`（embedding 维）与 `H`（隐藏维）作为两个独立超参扫，而不是固定 `E=H`，并同时报「非 embedding 参数量」，否则「同参数量对比」会失真。<br>**data（SOP 的数据条件）**：SOP 依赖**连续句对**；代码 / 日志 / 规格文档多为单句或弱篇章结构，data 线应先测「句对可获得率」，再决定是否启用句间目标。<br>**harness（口径）**：ALBERT 类工作报「更少参数更好分数」，harness 必须同时记录**总参数 / 非 embedding 参数 / 训练 token 数**三项，缺一项即不可比。<br>**zhulong（成本口径）**：跨层共享降低的是**显存占用**而非 FLOPs（每层仍要算一遍）；成本表须把「参数驻留显存」与「每 token 计算量」分列。<br>**designflow（规格文本）**：解耦词表投影对「大量寄存器名 / 信号名」的长尾词表可能有利，但论文未测 EDA 域 ⇒ 只作候选。<br>**vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零六轮 · 15:00 时窗） |
+| 核验状态 | abs 页 **`200` / 43,671 B**，`citation_title` + `citation_date` = `2019/09/26` 逐字；arXiv API 单查 `search_query=id:1909.11942` **`200` + atom**（2,658 B，`published` = `2019-09-26T07:06:13Z`）；OpenAlex **`200`**（8,430 / 2019 / `preprint`，查询日 2026-11-24）；ar5iv 抓取**超时未取回**（30s）⇒ 本条目数字仅到摘要粒度，**未做 PDF 逐页复核**。 |
+
+---
+
+## 385. XLNet: Generalized Autoregressive Pretraining for Language Understanding
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | XLNet: Generalized Autoregressive Pretraining for Language Understanding |
+| 作者（前 3） | Zhilin Yang · Zihang Dai · Yiming Yang（共 **6** 位；另 Jaime Carbonell · Ruslan Salakhutdinov · Quoc V. Le；arXiv `citation_author` 逐字核） |
+| 年份 | **2019**（arXiv v1 `2019-06-19T17:35:48Z`） |
+| 会议 / 期刊 | **NeurIPS 2019**（OpenAlex `type=conference-paper`、`source` = Neural Information Processing Systems；arXiv `comment` 只写代码地址，未标会议 ⇒ 会议口径取 OpenAlex，两源分列） |
+| 被引数 | **8,627**（OpenAlex `10.48550/arxiv.1906.08237`，会议版记录，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1906.08237> ｜ arXiv DOI `10.48550/arxiv.1906.08237` |
+| 一句话贡献 | **XLNet**：把去噪自编码（BERT 的 mask 目标）换成**广义自回归** —— 在**所有分解顺序的排列**上最大化期望似然，从而既见到双向上下文、又避开 mask 造成的「预训练-微调不一致」与掩码位置间依赖丢失；同时把 **Transformer-XL** 的片段级循环与相对位置引入预训练；在同等实验设置下于 **20 个任务**上超过 BERT（含问答、自然语言推理、情感分析、文档排序）。 |
+| 与我们工作的关系 | **pretrain（主 · 目标函数选择）**：排列语言建模是「不做 mask 也能双向」的一条独立路线；若 pretrain 线要改目标，应把它与 MLM 作为**同 token 预算下的两个 arm** 预注册，并单独报「长序列（≥8K）上的收敛速度」，因为 Transformer-XL 的片段循环在小片段下才是主要变量。<br>**data（顺序即数据）**：排列目标对**语料内部顺序**不敏感、但对**片段切分**敏感；data 线须固定切分脚本版本，否则两个 arm 的数据视图不同、结论无效。<br>**harness（复现口径）**：XLNet 的增益部分来自更大数据与更长训练（论文以「可比设置」表述）；harness 比对时必须对齐 token 数与步数，不能只对齐参数量。<br>**zhulong（成本口径）**：排列采样 + 双流注意力的实现开销高于标准 MLM；成本表要写「每步相对 MLM 的 wall-clock 倍数」，不能只写最终分数。<br>**designflow**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零六轮 · 15:00 时窗） |
+| 核验状态 | abs 页 **`200` / 43,660 B**，`citation_title` + `citation_date` = `2019/06/19` 逐字；arXiv API 单查 **`200` + atom**（2,829 B，`published` = `2019-06-19T17:35:48Z`；`comment` = `Pretrained models and code are available at https://github.com/zihangdai/xlnet`）；OpenAlex **`200`**（8,627 / 2019 / `conference-paper`，查询日 2026-11-24）；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 386. REALM: Retrieval-Augmented Language Model Pre-Training
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | REALM: Retrieval-Augmented Language Model Pre-Training |
+| 作者（前 3） | Kelvin Guu · Kenton Lee · Zora Tung（共 **5** 位；另 Panupong Pasupat · Ming-Wei Chang；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-02-10T18:40:59Z`） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` 为空；OpenAlex `type=preprint`、`source` = arXiv ⇒ 不臆断 ICML 2020） |
+| 被引数 | **1,345**（OpenAlex `10.48550/arxiv.2002.08909`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2002.08909> ｜ arXiv DOI `10.48550/arxiv.2002.08909` |
+| 一句话贡献 | **REALM**：给语言模型加一个**隐变量知识检索器**，预训练 / 微调 / 推理三个阶段都从大语料（如 Wikipedia）检索文档并对其注意力；**首次**给出在**无检索标注**下预训练检索器的方法 —— 以 **masked language modeling 作为唯一学习信号**，端到端把梯度反传穿过「百万文档级」的检索步；在三个 Open-QA 基准上同时胜过显式与隐式知识存储的 SOTA，绝对准确率提升 **4–16 点**，并附带可解释性与模块化。 |
+| 与我们工作的关系 | **data（主 · 检索语料与索引）**：REALM 把「知识放参数」改成「知识放索引」；data 线要造 RAG 语料时，必须同时固定**语料快照版本**与**索引刷新频率**，否则两个 run 的「知识」不可比。<br>**pretrain（联合训练顺序）**：检索器与 LM 的联合预训练存在冷启动问题；pretrain 线若要接检索，建议先固定检索器做一轮、再解冻做端到端，并把「解冻时机」作为消融项。<br>**harness（开放域问答口径）**：4–16 点是**绝对准确率**而非相对提升；harness 报分必须写清「是否允许检索、索引版本、top-k」，且把「检索命中但答案错」单独统计。<br>**zhulong（成本口径）**：检索步的成本随语料规模线性增长；成本表要写「每 token 检索次数 × 单次检索延迟」，并单列索引构建时间。<br>**designflow（规格检索）**：EDA 规格文档天然适合「检索 + 注意力」；建议先在**只读**规格上做检索召回评测，再考虑端到端联合训练。<br>**vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零六轮 · 15:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,789 B**，`citation_title` + `citation_date` = `2020/02/10` 逐字；arXiv API 单查 **`200` + atom**（2,917 B，`published` = `2020-02-10T18:40:59Z`）；OpenAlex **`200`**（1,345 / 2020 / `preprint`，查询日 2026-11-24）；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
 
 ---
 

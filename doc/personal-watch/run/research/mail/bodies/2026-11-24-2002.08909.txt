@@ -1,0 +1,16 @@
+Dear Dr. Guu,
+
+I am Yang Liu, a researcher working on LLM agents; my page is https://foamliu.github.io/.
+
+I keep returning to REALM (arXiv:2002.08909) while designing a retrieval layer for a small pre-trained model. What I find most useful is that the retriever is trained without retrieval labels, using masked language modelling as the only signal and backpropagating through a retrieval step over millions of documents.
+
+Three questions:
+
+1. How much of the reported 4–16 point absolute Open-QA gain survives if the MIPS index is refreshed once per epoch rather than every few hundred steps?
+2. Does that gradient remain stable when the retriever starts from a BM25-style model instead of a trained dual encoder, or does it need a warm-up phase first?
+3. On a non-Wikipedia domain corpus (technical documents, logs), did the salience model collapse onto surface lexical overlap? If so, which regulariser helped most?
+
+Even a short answer would help us scope the design.
+
+Best regards,
+Yang Liu
