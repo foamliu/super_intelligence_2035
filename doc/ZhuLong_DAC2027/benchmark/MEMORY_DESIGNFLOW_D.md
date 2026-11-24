@@ -1,4 +1,6 @@
-WAITING: 0（r1242: **MCP 139th OK**(open_session D-r1242-PROBE→workdir / run_commands pwd+hostname=hfhds201+date / awk 过滤 summary.tsv 52378行 mc6-150 D域关键词→694 dedup 候选 / 读 au4qn.messages.json 330KB 127msgs / declare_done+close cleaned=true) · **r1242 交付 1 case**: au4qn(e0023936@hfhds201, mc=61, waveform, 127msgs/330KB) → `EDA-Eval-DesignFlow-McpSseApiDocParseProduce-001` k_check=12(≥8 ✓)。真实意图: 用户反复用自启的 EDA-MCP-SERVER(MCP SSE, uvicorn, v1.25.0) 调 search_apis/get_api_details 查 EDA API 文档(pyAether open schematic + tcl draw sine wave)。抽离线可判分内核 = 解析抓取的 MCP SSE 会话流(event/data 帧 + JSON-RPC), 归一化 search_apis(similarity 命中)+get_api_details(签名/params/returns) 为结构化 API 文档报告 JSON · B=hidden_b/mcp_session.sse(tcl WaveView draw sine wave: 8 search 命中 sx_update_wv..sx_append_line + 16 details sx_create_signal/sx_add_param/sx_equation/sx_new_wv.. 18 unique WaveView API) 与 A(pyAether open schematic: ae*/db*/emy*/le* 12 aether/database/layout API) 结构性不相交 · 12 断言: zip含py/exit0/合法JSON/顶层键/server+version/tools/总数18/必备5 API/category全WaveView且无A域泄漏/sx_create_signal params(name,type,width)+returns含sig_obj+signature/search命中8个降序+相似度[0,1]/确定性2次一致 · 3 negative(print_only/core_deleted/hardcode_a) 全 FAIL · selftest ref 12/12 PASS+3neg FAIL · 选料: mc143-150 top12 全台账化→mc20-70 找3 fresh(owpwr/au4qn/bgeor)→au4qn 在 .75 直读+多域(waveform+schematic+netlist) · 📊 trace 覆盖率: 631/4529≈13.9%(+1); 📦 体积: TASK≈22KB / MEMORY≈31KB; DEBT: 0; flag: r1242 = MCP 139th OK + au4qn→McpSseApiDocParseProduce-001 k=12 交付）
+WAITING: 0（r1243: **MCP 140th OK**(open_session D-r1243→workdir / awk filter summary.tsv mc8-150→833 dedup 候选 / ssh peek 12 fresh / declare_done+close cleaned=true) · **r1243 交付 1 case**: bjxrk(colinxu@hfeg0pgn041, mc=8, waveform, 16msgs/87KB) → `EDA-Eval-DesignFlow-FsdbWaveformParseAnalyzeProduce-001` k_check=10(≥8 ✓)。真实意图: 用户触发 finesim-fsdb-reader skill，用 fscript 从 .fsdb dump 信号→解析表{signal:[(t,v)]}→判定 digital/analog→边沿/脉冲计数 或 过零/统计→JSON 报告。trace 在 probe 截断但意图完整；判分内核离线化。B=hidden/fsdb_dump_B.tbl(5 信号: clk/actcmd/csn digital + iread/vramp analog, 50点 0..4.9n, vramp 双极性带过零) 与 A(4 信号 40点 0..3.9n) 结构性不相交 · 10 断言: zip含py+exit0+JSON / 信号集==B5 / found+type+n_points+t_start+t_end / digital 边沿计数自洽+脉冲valid / analog 极值+zc一致 / 边沿脉冲数+过零数 vs 独立重算 / 分类正确(clk dig/iread+vramp ana) / 确定性两次一致 / 随机化3种子子表分类一致 · 3 negative 全 FAIL · selftest ref PASS+3neg FAIL · 选料: mc8-150 全833候选→top160全台账化→低mc 52 fresh→peek 12(多为 Q&A/env-config/MISSING)→bjxrk 唯一 clean produce · 📊 trace 覆盖率: 632/4529≈13.9%(+1); 📦 体积: TASK≈22KB / MEMORY≈31KB; DEBT: 0; flag: r1243 = MCP 140th OK + bjxrk→FsdbWaveformParseAnalyzeProduce-001 k=10 交付）
+
+> r1242 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1243」（r1243 释体积；原文见 daily_D_2026-11-24_r1241.md）
 
 > r1241 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1242」（r1242 释体积；原文见 daily_D_2026-11-24_r1241.md）
 
@@ -17,27 +19,9 @@ WAITING: 0（r1242: **MCP 139th OK**(open_session D-r1242-PROBE→workdir / run_
 
 > r1230 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1231」（r1231 释体积；原文见 daily_D_2026-11-24_r1230.md） 破题 · 📊 trace 覆盖率: 617/4398≈14.0%（r1230 +1→618）; 📦 体积: TASK≈22KB / MEMORY≈31KB; DEBT: 0; flag: r1230 = MCP 127th OK + xinfv→PexSpfQaMonotonicityCheck-001 k=15 交付）
 
-> r1229 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1230」（r1230 释体积；原文见 daily_D_2026-11-24_r1229.md）
+> r1220-r1229 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229/r1230」（释体积；原文见 daily_D_2026-11-24_r12{20..29}.md）
 
-**`.75` 可达（eda_flow MCP OK，135次确认 r1105-r1238）+ 证据：r1236 [2026-11-24 shardD MCP-CONNECTIVITY-TEST] open_session(task_id=MCP-CONNECTIVITY-TEST/eval_id=20261124-mcptest/user=shardD)→workdir(16ms) / run_commands pwd+whoami+hostname=hfhds201+date+ls 全 exit 0 / list_files OK / write_file 44B+read_file round-trip OK / trace 目录可读 summary.tsv 24086 行 / declare_done+close cleaned=true · 同结论适用 A/B/C · WAITING: 0**
-
-> r1228 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229」（r1229 释体积；原文见 daily_D_2026-11-24_r1228.md）
-
-> r1226 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229」（r1229 释体积；原文见 daily_D_2026-11-24_r1226.md）
-
-> r1227 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229」（r1229 释体积；原文见 daily_D_2026-11-24_r1227.md）
-
-> r1225 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229」（r1229 释体积；原文见 daily_D_2026-11-24_r1225.md）
-
-> r1224 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229 (续)」（r1229 释体积；原文见 daily_D_2026-11-24_r1224.md）
-
-> r1223 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229 (续)」（r1229 释体积；原文见 daily_D_2026-11-24_r1223.md）
-
-> r1222 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229 (续)」（r1229 释体积；原文见 daily_D_2026-11-24_r1222.md）
-
-> r1221 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229 (续)」（r1229 释体积；原文见 daily_D_2026-11-24_r1221.md）
-
-> r1220 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1229 (续)」（r1229 释体积；原文见 daily_D_2026-11-24_r1220.md）
+**`.75` 可达（eda_flow MCP OK，140次确认 r1105-r1243）· 同结论适用 A/B/C · WAITING: 0**
 
 > r1219 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1220」（r1220 释体积；MCP 117th OK + 连通性复测逐项记录 + 三带扫描 0 case DEBT + dt54a handoff A/C，原文见 daily_D_2026-11-23_r1219.md）
 
