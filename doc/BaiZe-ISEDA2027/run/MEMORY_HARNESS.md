@@ -1,7 +1,7 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 1
-> 🆕 **R2994 · 2026-11-24 11:17 — 11-24令·cline PREDICT并行化收尾监控轮·LIVE predict仍RUN·判据全绿**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活~92h✅零越界 ②mem avail1177G≥512G✅ ③load28.9≤120✅ ④pretrain step~7.1s≤7.4s✅ ⑤无失控进程✅ ⑥docker已prune(6.47GB回收·0活容器). **LIVE predict PID1891311**(--workers 8·10:46起): 34 nonempty/96·62空patch在补·**全部62返回空**(白天429·8→4→2退回·11:14爬回3)·~11题剩余(900s超时中)·**未结束**(log无merged N/96). **incr eval(R2993 PID3639172)已FINISH**→7way报告REGEN@11:16·**cline=328/500=65.6%**. 白天predict回收0/62→真回收推迟今晚21:00窗口. **下一步**: poll predict→结束后`incremental_eval_merge.py --route cline-patched --regen`. **并行MM 2×3**: 2路kimi仍RUN. 📦 TASK~34KB MEMORY~31KB
+WAITING: 0
+> 🆕 **R2995 · 2026-11-24 11:48 — 11-24令·cline PREDICT并行化收尾监控轮#2·LIVE predict仍RUN·网关恢复中·判据全绿**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活~92h✅零越界 ②mem avail1172G≥512G✅ ③load29.6≤120✅ ④pretrain step~7.1s≤7.4s✅ ⑤无失控进程✅ ⑥docker已prune. **LIVE predict PID1891311**(--workers 8·10:46起): **57/96 processed·37 rerun nonempty(+3今日新补)**·39剩余(34已有patch·5空)·网关恢复(concurrency 5·3 patch-produced@11:28/11:30/11:45)·2 worker RUN(sphinx-9658 24min·sympy-15976 3min)·**未结束**(log无merged N/96). **incr eval(R2993)已FINISH**→cline=328/500=65.6%. **下一步**: poll predict→结束后`python3 swebench_verified_full/incremental_eval_merge.py --route cline-patched --regen`. **并行MM 2×3**: 2路kimi仍RUN. 📦 TASK~34KB MEMORY~31KB
 > 📦 R2993 流水已归档 → daily-memories-harness/2026-11-24.md（11-23令·park轮·incr eval reconcile RUNNING→FINISH·cline328/500=65.6%·判据全绿·watcher re-armed·MM 2路kimi RUN）。需要时再读。
 > 📦 R2991 流水已归档 → daily-memories-harness/2026-11-24.md（11-23令·09:00窗口结束过渡·手动kill orch+启动incr eval+re-arm watcher·判据全绿·cline325/500=65.0%·MM has_patch2545）。需要时再读。
 > 📦 R2990 流水已归档 → daily-memories-harness/2026-11-24.md（11-23令·infra重跑LIVE轮#21·08:40监控+清理·cline325/500=65.0%·8 IDs待09:00 stop·判据全绿·orchestrator 34/96 nonempty·MM has_patch2545）。需要时再读。
