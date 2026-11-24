@@ -1,0 +1,10 @@
+ts	case_id	shard	scan_signal	reverify_reason
+2026-11-25T06:10:00	EDA-Eval-DesignFlow-AprLogAudit-001	A	return Name:out	check() has 'return out' path (Name, non-bool). Success path may be 'return True' (L?) — needs runtime _pass() test with ref submit.zip (audit_apr.py). Prior green used __main__ 'print(check(...))' which doesn't assert bool.
+2026-11-25T06:10:00	EDA-Eval-DesignFlow-PDKRunsetExplore-001	A	return Tuple x4	check() has 4 Tuple returns. Was r1130 'fixed' but tuples remain — needs runtime _pass() test (gold_explorer.py). May be failure-path tuples w/ True success path.
+2026-11-25T06:10:00	EDA-Eval-DesignFlow-VmodConnCheck-001	A	return Tuple	check() has Tuple return + return True. Needs runtime test (check_vconn.py) to confirm ref hits True not Tuple.
+2026-11-25T06:11:00	EDA-Eval-DesignFlow-V2lvsCdlCheck-001	A	return Name:p	check() has 'return p' (Name). No ref .py in refdir (CLI mode). Needs runtime test — find/build ref solution.
+2026-11-25T06:11:00	EDA-Eval-DesignFlow-DelayCellParamGen-001	A	const '' + return Name:blk	check() has 'return blk' path. Refs: delay_gen.py + delay_cell_rules.py. Needs runtime _pass() test.
+2026-11-25T06:11:00	EDA-Eval-DesignFlow-IrunSimDiagnose-001-v2	A	None + Name:name + Name:n	check() has Name returns. No ref .py in refdir (selftest rc=0 but __main__ uses 'if ok' which is truthy for tuple). Needs runtime test.
+2026-11-25T06:11:00	EDA-Eval-DesignFlow-SyncManifestCheck-001	A	return Tuple x2	check() has Tuple returns. Ref: check_manifest.py. __main__ 'result = check(...)'. Needs runtime _pass() test.
+2026-11-25T06:11:00	EDA-Eval-DesignFlow-DRCDeckOpt-001	A	None + Tuple x4 + call:join/read	check() has Tuple + None returns. Ref: gold_apply_opt.py. No __main__. Needs runtime _pass() test.
+2026-11-25T06:11:00	EDA-Eval-DesignFlow-VcdToFsdbMigration-001	A	dict-no-pass	check() returns dict without pass/ok key. Ref: vcd_to_fsdb_migration.py. Needs runtime _pass() test — dict-no-pass is a contract VIOLATION (likely P0).
