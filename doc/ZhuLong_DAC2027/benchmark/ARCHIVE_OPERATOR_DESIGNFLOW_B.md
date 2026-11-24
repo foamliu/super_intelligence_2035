@@ -3027,3 +3027,6 @@ WAITING: 0（11-24 **r1161 判分契约 list+compare 8 收口(11-24 运维令 ·
 → r1002 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1002 1-case: sgk0l → SanadjRblDeckSweep-001）
 → r1001 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1001 1-case: e692a → DbcVaractorSpTestGen-001）
 → r1000 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1000 1-case: n488u → Mt0TempDedupProduce-001）
+
+## r1182 (2026-11-25) Lite-fix P0 收口 PostsimPortAudit-001 finesim-mock→green
+P0=finesim absent on eval host(36.15). 修法=finesim-mock 模式(参考 r1169/r1179 self-contained): .75 上跑真 FineSim V-2023.12-1 产 A(deck_A.sp sa_amp_a 4端口对齐)+B(deck_B.sp cmp_pre_b netlist 4端口 vs SPF 5端口多 extra_b pin)的 run.log, 验证真 log 经 ref parse_log 产 identical 值(A: finesim_ran/back_anno/sim_success=true; B: port_mismatch=true mismatch_instance=xdut mismatch_counts=[4,5] sim_concluded=true sim_success=false). check.py 自包含: FINESIM_MOCK_SRC 内嵌 deck-driven python 桩源码 + _ensure_finesim 探测真 finesim 不可用时写 temp bin_dir + 装 finesim mock 到 PATH. 桩 deck-driven: 解析 deck .inc refs+.subckt 端口列表+Xdut 实例行, 比较 conn_count vs SPF subckt port_count. 自验: ref 15/15 PASS, 6 neg 全 FAIL distinct first-fail {a,c,j,g,f,k}, 3 §4.9 fakes distinct FAIL, L1 OK, L4/L5 OK. case JSON sync, hidden_manifest added.
