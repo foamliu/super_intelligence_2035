@@ -6255,9 +6255,16 @@
   "openlayers__openlayers-15614": {
     "instance_id": "openlayers__openlayers-15614",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1485.9,
+    "rc": 0,
+    "model_patch_len": 9690,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "dering test case for a vector layer with `declutter: true` and `opacity: 0.5`.\\n\\nBoth `eslint` and `tsc` pass on the modified files.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "openlayers__openlayers-15683": {
     "instance_id": "openlayers__openlayers-15683",

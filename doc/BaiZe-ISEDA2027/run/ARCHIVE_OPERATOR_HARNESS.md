@@ -2402,3 +2402,36 @@ sudo sh -c "echo $$ > /sys/fs/cgroup/harness/cgroup.procs"   # 或在启动 loop
 
 > **结论**：Step 1 硬护栏已落地（docker eval --memory 128g --cpus 16 · predict ulimit -v 209715200 + nice19 + OMP≤8 · guard PID931671 常开）。Step 2 分批恢复已执行（Verified predict 续跑 → incr_eval backlog → MM 2×3 predict 启动）。判据全绿持续至今。护栏定义已由 11-23 令纪律节沿用。
 
+---
+
+## 归档 2026-11-24（TASK 体积维护：5 个已闭合块搬迁）
+
+### ✅ 用户令 · 2026-11-19（SWE-bench Verified 报告重写）· ✅ 已交付（R2758）
+
+> **交付结论（R2758 · 2026-11-19 11:4x）**：报告 `report_harness_glm53_7way_swebench_tb_zh.html` 已重写（23748→4840B）。①★主表 SWE-bench Verified 7路置顶·Pass%=resolved/500·单数字无区间无~·按降序：hermes444/500=88.8%·opencode415/500=83.0%·cline296/500=59.2%·cc295/500=59.0%·pi235/500=47.0%·deepseek168/500=33.6%·codex108/500=21.6%。②删 Terminal-Bench表/ETA/磁盘/kimi对比。③保留 predict进度+待跑backlog(deepseek241/codex109/pi95/cline40)+待重跑infra(pi1+codex1)。④生成器 `gen_report_glm53_7way.py` 重写(537→162行)·footer stray text已清。0script/0外链✅。
+
+### ✅ 用户令 · 2026-11-18 — 下载 SWE-bench Multimodal 评测容器 · ✅ 已交付（R2763）
+
+> **用户原话**：「一边补 SWE-bench Verified 评测，一边下载 SWE-bench Multimodal 的评测容器」
+> **指令**：在继续补 SWE-bench Verified 评测的同时，并行下载 SWE-bench Multimodal 的评测容器。不要影响 pretrain 训练吞吐（nice19/ionice3，不抢 .29 CPU）。
+> **交付结论（R2763 · 2026-11-19 14:5x）**：MM 容器下载 **COMPLETE**——`pull_state.txt`=580、`pull_progress.log` 末行 `=== DOWNLOAD COMPLETE === Total: 580 | Pulled: 580 | Skipped: 0 | Failed: 0`（2026-11-19 12:14:49）。全程 nice19/ionice=idle、不抢 .29 CPU✅。SWE-bench Verified 评测并行补跑未中断（4 路 predict alive）。下载产物落 `run/harness/swebench_mm/`（images/instances/test.parquet/dev.parquet，均 gitignored 机器产物）。
+
+### ✅ 用户令 · 2026-11-17 14:5x（修复 codex 适配器假低分 + 重跑）· ✅ 已交付（R2661）
+
+> **交付结论**：codex.py 修复①（exit-code非0不误杀·解析stdout NDJSON·agent_worked→verifier照常判分）+ ②（429退避重试2/4/8/16s上限4次）+ ③（turn.failed记录与适配器掐断分开归类）均已实现并验证。全部89题重跑COMPLETE（83题第一轮+55题第三轮·网关已清）+merge→**codex 25/89=28.1%**（从修复前1/89=1.1%回升✅fix①生效）。audit_tb21_review_7way.py 已同步修正（codex_agent_worked&&!has_verifier→rate_limit=infra·lines169-180）。三报告codex行已更新为「修复前1/89=1.1%系适配器假低分（82题被exit-code误杀），修复重跑后25/89=28.1%」。心跳第一行已给：codex 修复重跑后新 Pass%=28.1%。
+
+### ✅ 用户令 · 2026-11-17 10:2x（纠正归因口径：未真跑题必须重跑，不得「剔除分母假设计入」）· ✅ 已交付（R2661）
+
+> **交付结论**：「修正后 Pass%」已从两份报告撤回（仅保留口径纠正声明）。全部7路 infra/synthetic/quota/conn_refused 题已全部重跑COMPLETE（待重跑=0）。真实 Pass% = passed/89（分母恒89）已为最终值：cline 42/89=47.2% · **codex 25/89=28.1%**（从1/89=1.1%回升✅fix①生效） · opencode 45/89=50.6% · cc 30/89=33.7% · pi 35/89=39.3% · hermes 41/89=46.1% · deepseek 11/89=12.4%。BLOCKED(infra) 硬约束题（hermes qemu/mteb Py3.9<3.11·cline pytorch-model-recovery CLI崩溃3attempts）显式注明原因、单列不误算为通过。能力题重跑仍fail已计为fail。两报告「失败归因复核」节已改为「重跑完成」真实口径。心跳第一行已给：撤回修正后Pass%声明+各路真实Pass%。
+
+### ✅ 用户令 · 2026-11-15 10:2x（并发放量 + 429 自适应回退）· 已交付+验收4/4通过(R2512)+实跑验证(R2503-R2593)
+
+> **用户原话**：「harness：趁周末并发可以开的高一些。评测是否可以有些放量和回退机制。长鑫工作时间是:8:30-17:30，工作时间内如果遇到 429 就回退减少并发；工作时间之外如果一段时间没有 429 就增加并发。」
+> **已交付（代码，可直接用）**：
+> - `run/harness/adaptive_concurrency.py`：并发控制器。时段 `work=周一~周五 08:30–17:30`（上限 **4**）/`off=其余含周末`（上限 **10**）；**429 ⇒ 立即减半**（最低 1）并冷却 20min；**非冷却期连续 20min 无 429 ⇒ +1**；两次调整最小间隔 10min；`off→work` 切换时把并发压回工作日上限。状态/事件落 `run/harness/manifests/`（已 gitignore）。
+> - `run/harness/terminalbench/rerun_tb21_cline_quota.py`：新增 `--n-concurrent auto`、`--chunk-size N`、`--adaptive-state`。分块串行跑，**每块结束扫日志里的 429/quota**，据此记录升降，**下一块即生效**。
+> - `run/harness/terminalbench/launch_tb21_adaptive.sh`：一行封装（默认 `chunk=12`，可用 `HARNESS_CHUNK_SIZE` 覆盖）。
+> - `rerun_tb21_7way_quota.py`：支持 `RERUN_N_CONCURRENT=auto` / `RERUN_CHUNK_SIZE=N` 环境变量透传。
+> **纪律**：1. 默认行为不变：不显式传 `auto` 时并发仍是 1。2. 正在跑的 cc rerun 不打断。3. 429 归因红线不变：命中 429 的 trial 仍按「quota-blocked」单列，不得计入能力失败。4. 并发调高只影响吞吐，不得改变单题超时、判据、题集。
+> **验收**：`python3 run/harness/adaptive_concurrency.py status` 打印 mode/current/cap/next/reason；`--now` 注入4时刻自检通过；实跑日志见 `[adaptive] part k: 429 xN -> n_concurrent=...`；`--dry-run` 不推进状态。
+

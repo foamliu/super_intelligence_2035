@@ -6612,22 +6612,43 @@
   "scratchfoundation__scratch-gui-5039": {
     "instance_id": "scratchfoundation__scratch-gui-5039",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1843.1,
+    "rc": 0,
+    "model_patch_len": 993360,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "rdered `reset()` before `_onDragEnd()`\n- `test/unit/util/drag-recognizer.test.js` — added a test verifying `gestureInProgress()` returns `false` inside the drag-end callback\n\nAll relevant tests pass.\n",
+    "stderr_tail": " for sprite right-click/duplicate menu logic\n[✓] Identify root cause of missing duplicate menu on right-click\n[✓] Implement fix in drag-recognizer.js and add test\n[✓] Verify fix by running tests\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-8492": {
     "instance_id": "scratchfoundation__scratch-gui-8492",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 485.4,
+    "rc": 0,
+    "model_patch_len": 1616,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "t()` is still present to prevent unwanted default browser behavior (like text selection), but the event now bubbles up so react-modal can properly track that the interaction started inside the modal.\n",
+    "stderr_tail": "t-modal usage and sound recording modal\n[✓] Find the root cause of modal closing on outside drag\n[✓] Implement fix to prevent work loss when dragging outside modal\n[✓] Verify fix works correctly\n\u001b[0m\n"
   },
   "scratchfoundation__scratch-gui-8891": {
     "instance_id": "scratchfoundation__scratch-gui-8891",
     "route": "opencode__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "opencode",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 441.6,
+    "rc": 0,
+    "model_patch_len": 1379,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "th components, the **active option has a blue background** and the **inactive option has a white background**, making the selected state easy to distinguish even in grayscale or for colorblind users.\n",
+    "stderr_tail": ")\n[✓] Understand current styling and identify colorblind-unfriendly patterns\n[✓] Update styles to use background color for active state instead of colored-in vs grayed-out icons\n[✓] Test changes\n\u001b[0m\n"
   }
 }
