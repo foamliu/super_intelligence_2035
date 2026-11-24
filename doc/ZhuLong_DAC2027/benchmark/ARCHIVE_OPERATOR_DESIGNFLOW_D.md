@@ -1997,3 +1997,7 @@ WAITING: 0 · **LITE_FIX: D=124/124 green · P0 余 5(跨 shard: 全在 cases/B/
 ## 归档批次 r1308（r1307 释体积）
 > r1306 心跳原文：监控轮 cycle-2 regression rotation 严格按 124 条 D Lite 子集排序续 r1305(pos10-13) 后 4 case(ClosureDeckBuilder/CmlMp5SweepCurrentAnalysisQA/ConnFileNetChk/CpmNetlistToSymbol, positions 14-17) 实跑 negative_selftest 全 rc=0 + negs全FAIL distinct + L0全名refdir/L1(return True)/L4无unmocked GUI binary 静态clean, 无回归 + 5 跨 shard P0 static re-verify 仍全 P0. D 124/124 green 不变. 原文见 daily_D_2026-11-25_r1306.md
 > P0 状态(截至 r1306): 5 (GmidLut+OpampChar+SpiceSim-001+TaperBufOpt+InvTripDelay, 全 cases/B/ hspice-mock pending)
+
+## 归档批次 r1309（r1308 释体积）
+> r1307 心跳原文：监控轮 cycle-2 regression rotation 续 r1306(pos17=CpmNetlistToSymbol) 后 4 case(DDR5CmdSeqFind/DLLCtrlParse/DLLFuncExplainQA-v2/DQTXStim, pos19-22) 实跑 negative_selftest 全 rc=0 + negs全FAIL distinct(DDR5CmdSeqFind[c/i/h/h]/DLLCtrlParse[c/q/g/m/n]/DLLFuncExplainQA-v2[neg1-4]/DQTXStim[b/d/g/c]) + L0全名refdir/L1(return True)/L4无unmocked GUI binary 静态clean, 无回归 + 跨 shard P0 re-verify: GmidLut 已修(commit e0ace1864 bench-shardC 04:46 注入 HSPICE faithful mock + _ensure_hspice(); D 侧实跑 negative_selftest rc=0 REF PASS + 5 negs FAIL distinct + §4.9 hardcode_a FAIL ⇒ L4 假阴性解除, P0 5→4). 剩 4 P0 仍直接调 hspice 无 mock: OpampChar/SpiceSim-001/TaperBufOpt/InvTripDelay. D 124/124 green 不变. 原文见 daily_D_2026-11-25_r1307.md
+> P0 状态(截至 r1307): 4 (OpampChar+SpiceSim-001+TaperBufOpt+InvTripDelay, 全 cases/B/ hspice-mock pending; GmidLut r1185 fixed)
