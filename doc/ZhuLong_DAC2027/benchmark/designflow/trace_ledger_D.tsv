@@ -2052,3 +2052,5 @@ sroz5	junxu	virtuoso	mc1101	schematic_netlist	case	EDA-Eval-DesignFlow-VirtuosoC
 1795424420539_d7g3y	michael1l	hfeg0plg87	126	schematic_netlist	case	EDA-Eval-DesignFlow-GdsCellStructCompareProduce-001	2026-11-24 08:14	
 1794978325918_au4qn					case	EDA-Eval-DesignFlow-McpSseApiDocParseProduce-001	2026-11-24 08:38	
 1792387840615_bjxrk	colinxu	hfeg0pgn041	8	waveform	case	EDA-Eval-DesignFlow-FsdbWaveformParseAnalyzeProduce-001	2026-11-24 09:10	
+1795241697250_8bdja	chengk	10.129.8.224	37	analog_context	case	EDA-Eval-DesignFlow-IDDPTUPowerBudgetCalc-001	2026-11-24 09:36	
+1795410995906_l0yho	davidwu	10.129.8.227	23	analog_context	parked		2026-11-24 09:37	consulting Q&A: 用户问'如何用AI提高calibre lvs debug效率'，要可落地方案；RAG search_apis+skills+read_files 给咨询性答复，无计算性交付物→§4.2/4.3不满足→weak，r1244 peek
