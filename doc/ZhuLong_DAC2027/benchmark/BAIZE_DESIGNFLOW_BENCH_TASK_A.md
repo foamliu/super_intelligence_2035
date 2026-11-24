@@ -14,6 +14,25 @@
 >
 > **优先级**：本令 > 本文件中任何关于 jsonl 的指令 > loop shard 卡 > 任何前令。若本文件下方说「追加 jsonl / 只往 X.jsonl / DoD 写进 jsonl」，**全部忽略，按本令写 cases/ 文件**。
 
+> ## 🔧 2026-11-24 运维令 · 判分契约修复 · 按需执行（与造题并行）
+>
+> **背景**：框架判分契约已修（commit `6c1a50ee9`），两条判分通路统一为严格契约：**仅 `return True` / `return {'pass':True}` / `return {'ok':True}` 算 PASS，其余一律 FAIL**。当前 ~70% check.py 的返回值形状不符合新契约（tuple/str/None/dict 非法键），在新契约下会被判 FAIL——即使交付件正确。
+>
+> **你要做什么**：
+> 1. 📖 读契约规范：`/nasdata/app.e0031982/code/EDA-Flow-Bench/reports/JUDGE_CONTRACT.md`（**先读这个文件**，里面有完整的 PASS/FAIL 定义 + 每种违规形状的修法示例）
+> 2. 🔧 扫自己的 check.py 返回值，按契约修：tuple→`return True/False`，str→`return True/False`，无 return→补 `return True`，dict 非 pass/ok 键→加 `pass` 键
+> 3. ✅ **只改返回值形状，不改断言逻辑、不改断言条数、不改判分严格度**
+> 4. 🚫 不改 case 的 prompt / assets / hidden
+> 5. 📝 修好的 case 在自己 MEMORY 记一行
+>
+> **优先级**：tuple 返回（最大类）> str > None/无 return > dict 非法键 > 辅助函数透传
+>
+> **自验**：`SKIP_RUN=1 eval/run_one.sh <task_id> --shard <你的shard>`，看 status.jsonl verdict=PASS
+>
+> **不需要改的**：已经 `return True`/`return False`/`return {'pass':True/False}` 的 case（~62%），不用动。
+>
+> **时间线**：立即开始，不等 ref 自验清单。每日看 zhulong 的 lite 500 × 3-run 体检报告确认进度。完成信号：连续 2 天 Pass@1 标准差收敛 + broken case 清单清零。
+
 > ## 🎯 任务初衷（最高优先级 · 一切规则与之冲突时以本段为准）
 >
 > **基于真实 trace 创建评测用例，评价 agent 解决用户真实任务并交付结果的能力。**
