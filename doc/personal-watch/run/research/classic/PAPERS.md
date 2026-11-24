@@ -9,6 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **389** 条（**第一百零七轮 2026-11-24 18:0x 补 3 条 → 389**：GLU Variants `2002.05202`（**3,036**，2020 预印本；GLU / Bilinear / ReGLU / GEGLU / SwiGLU，三矩阵 ⇒ `d_ff` × **2/3**（3072→2048），C4 524,288 步 log-perplexity `ReLU` 1.677 vs `GEGLU` **1.633** / `SwiGLU` **1.636**）/ MiniLM `2002.10957`（**3,400**，NeurIPS 2020；只蒸最后一层自注意力 + 新增 **V-V scaled dot-product**，teacher assistant；50% 参数/计算保留 **>99%**）/ Big Bird `2007.14062`（**3,828**，NeurIPS 2020；window + global + random 稀疏注意力，二次→线性，Turing complete，同硬件 **8×** 序列长度）；核验：abs 页 **3/3 `200`**（2,771 反爬页 → export 40,173 / 44,625 / 44,590 B，`citation_title` + `citation_date` 逐字）+ arXiv API **3/3 `200` + atom**（`published` = 2020-02-12T19:57:13Z / 2020-02-25T15:21:10Z / 2020-07-28T08:34:04Z）+ ar5iv GLU **`200` / 141,894 B**、MiniLM **`200` / 319,259 B**、BigBird **超时 0/1** + OpenAlex **3/3 `200`**（3,036 / 3,400 / 3,828，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+3** · data **+2** · harness **+2** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
+
 **本轮快照**：累计 **386** 条（**第一百零六轮 2026-11-24 15:0x 补 3 条 → 386**：ALBERT `1909.11942`（**8,430**，2019 预印本、OpenAlex `preprint`；factorized embedding（`V×H` 拆 `V×E` + `E×H`）+ 跨层参数共享 + SOP 替换 NSP，参数少于 BERT-large 仍在 GLUE / RACE / SQuAD 刷新 SOTA；⚠️ 摘要只给定性结论 ⇒ 本行不写未核分数）/ XLNet `1906.08237`（**8,627**，NeurIPS 2019、OpenAlex `conference-paper`；排列式广义自回归 + Transformer-XL，20 任务超 BERT）/ REALM `2002.08909`（**1,345**，2020 预印本；隐变量知识检索器，**MLM 作唯一信号**端到端反传穿过百万文档级检索，Open-QA 三个基准绝对准确率 **+4~16 点**）；核验：arXiv 单查 `search_query=id:<ID>` **3/3 `200` + atom**（2,658 / 2,829 / 2,917 B，`published` = 2019-09-26T07:06:13Z / 2019-06-19T17:35:48Z / 2020-02-10T18:40:59Z）+ abs 页 **3/3 `200`**（43,671 / 43,660 / 42,789 B，`citation_title` + `citation_date` 逐字）+ ar5iv **0/3**（ALBERT 抓取 30s 超时；XLNet / REALM 未取，数字仅到摘要粒度）+ OpenAlex **3/3 `200`**（8,430 / 8,627 / 1,345，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+3** · data **+3** · harness **+2** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
 
 **本轮快照**：累计 **383** 条（**第一百零五轮 2026-11-24 09:0x 补 3 条 → 383**：Sentence-BERT `1908.10084`（**24,624**，EMNLP 2019、OpenAlex 会议版 `conference-paper`；siamese / triplet BERT 句向量，10,000 句找最相似对从 BERT 的约 5,000 万次推理（~65 小时）降到 SBERT 约 **5 秒**且保持 STS 精度；⚠️ arXiv DOI 记录仅 94 次，按会议版 DOI 记 24,624 并分列）/ DeBERTa `2006.03654`（**2,546**，2020 预印本、OpenAlex `preprint`；disentangled attention：每个词拆成 content / position 两向量、注意力用两组解耦矩阵；enhanced mask decoder 在解码层注入绝对位置；半数据即超 RoBERTa-Large（MNLI +0.9 / SQuAD v2.0 +2.3 / RACE +3.6 点），48 层 **1.5B** 单模型 SuperGLUE **89.9** 首超人（89.8）、集成 **90.3**）/ Test-time compute scaling `2408.03314`（**2,592**，ICLR 2025、OpenAlex `conference-paper`；两条路：稠密 process-based verifier 搜索 / 按 prompt 自适应更新响应分布，效果随 prompt 难度变化 ⇒ compute-optimal 按难度分配算力，效率比 best-of-N 高 **>4×**，FLOPs 对齐下小模型可胜 **14×** 大模型）；核验：arXiv 单查 `search_query=id:<ID>` **3/3 `200` + atom**（2,567 / 3,739 / 3,382 B，`published` = 2019-08-27T08:50:17Z / 2020-06-05T19:54:34Z / 2024-08-06T17:35:05Z；批量 `id_list` 两次 **`429`** ⇒ 改单查）+ abs 页 **3/3 `200`**（41,707 / 46,461 / 44,439 B，`citation_title` + `citation_date` 逐字）+ ar5iv **2/3 部分取回**（DeBERTa 258,225 B / TTC 81,023 B，均在 25s 超时前截断；SBERT 61,868 B 截断，页内未抽出个人邮箱）+ OpenAlex **3/3 `200`**（94→会议版 24,624 / 2,546 / 2,592，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+2** · harness **+2** · data **+1** · zhulong **+2** · designflow **+2** · vision **+0**（一篇可多线））
@@ -6819,4 +6821,56 @@
 | 核验状态 | abs 页 **`200` / 42,789 B**，`citation_title` + `citation_date` = `2020/02/10` 逐字；arXiv API 单查 **`200` + atom**（2,917 B，`published` = `2020-02-10T18:40:59Z`）；OpenAlex **`200`**（1,345 / 2020 / `preprint`，查询日 2026-11-24）；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
 
 ---
+
+
+---
+
+## 387. GLU Variants Improve Transformer
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | GLU Variants Improve Transformer |
+| 作者（前 3） | Noam Shazeer（**唯一作者**；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-02-12T19:57:13Z`） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` 为空；OpenAlex `type=preprint`、`source` = arXiv / Cornell University ⇒ 不臆断会议） |
+| 被引数 | **3,036**（OpenAlex `10.48550/arxiv.2002.05202`，查询日 **2026-11-24**；**≥500 直接满足判据**；按「方法论常青 / 现今 LLM FFN 默认 SwiGLU」收） |
+| arXiv / DOI | <https://arxiv.org/abs/2002.05202> ｜ arXiv DOI `10.48550/arxiv.2002.05202` |
+| 一句话贡献 | **GLU Variants**：把 Transformer FFN 的第一层线性 + 激活替换为**门控线性单元**及其变体 —— `GLU`（`σ(xW)⊗xV`）/ `Bilinear`（`(xW)⊗xV`）/ `ReGLU` / `GEGLU` / `SwiGLU`（式 6）；因变体有 **3 个权重矩阵**（原 FFN 为 2 个），为保持参数与计算不变，把 `d_ff` 乘以 **2/3**（T5-base 口径 `3072 → 2048`；`d_model=768`、12 层、`h=12`、`d_k=d_v=64`）。C4 span-filling 训练 **524,288** 步后，heldout log-perplexity（表 1）：`ReLU` **1.677** / `GELU` 1.679 / `Swish` 1.683 / `GLU` 1.663 / `Bilinear` 1.648 / `ReGLU` 1.645 / **`GEGLU` 1.633** / **`SwiGLU` 1.636**（65,536 步时同序，`GEGLU` 1.942 最低）。 |
+| 与我们工作的关系 | **pretrain（主 · FFN 结构与参数对齐）**：若 2B 配方采用 SwiGLU，必须同时按 **2/3** 缩 `d_ff`，否则「同参数量 / 同 FLOPs」对比失真；预注册里要把 `d_ff` 与激活类型作为**联合**超参，而不是只换激活。<br>**zhulong（成本口径）**：3 个权重矩阵意味着同等 `d_ff` 下参数与 FLOPs 上升 50%，收益只在「缩到 2/3 后」成立；成本表必须写清是否做了 **2/3 折算**。<br>**harness（可比性）**：跨模型比 loss 时必须记录 `d_ff`、激活、是否 no-bias（本文沿用 T5 的无 bias 写法），缺一项即不可比。<br>**data**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零七轮 · 18:00 时窗） |
+| 核验状态 | abs 页 `https://arxiv.org/abs/2002.05202` **`200` / 2,771 B**（反爬精简页，无 `citation_*` 元标签）⇒ 改 `https://export.arxiv.org/abs/2002.05202` **`200` / 40,173 B**，`citation_title` + `citation_date` = `2020/02/12` 逐字；arXiv API `id_list` **`200` + atom**（`published` = `2020-02-12T19:57:13Z`）；ar5iv **`200` / 141,894 B**（表 1 / 式 6 / `2/3` 逐字核对；页内作者邮箱 `noam@google.com` 为 **2020 论文期地址**，未作发信依据）；OpenAlex **`200`**（3,036 / 2020 / `preprint`）。 |
+
+---
+
+## 388. MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers |
+| 作者（前 3） | Wenhui Wang · Furu Wei · Li Dong（共 **6** 位；另 Hangbo Bao · Nan Yang · Ming Zhou；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-02-25T15:21:10Z`） |
+| 会议 / 期刊 | **NeurIPS 2020**（OpenAlex `type=conference-paper`、`source` = Neural Information Processing Systems；arXiv `comment` 只写代码地址 `https://github.com/microsoft/unilm/tree/master/minilm` ⇒ 会议口径取 OpenAlex，两源分列） |
+| 被引数 | **3,400**（OpenAlex `10.48550/arxiv.2002.10957`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2002.10957> ｜ arXiv DOI `10.48550/arxiv.2002.10957` |
+| 一句话贡献 | **MiniLM**：提出 **deep self-attention distillation** —— 学生只模仿教师**最后一个 Transformer 层**的自注意力模块；除既有的注意力分布（`scaled dot-product of queries and keys`）外，新增 **values 之间的 scaled dot-product（V-V 关系）** 作为蒸馏知识；并证明引入 **teacher assistant** 有助于大模型蒸馏。结果：用教师 **50%** 参数与计算时，在 SQuAD 2.0 与多个 GLUE 任务上保留 **>99%** 精度；多语言模型上也有竞争力。 |
+| 与我们工作的关系 | **pretrain（主 · 小模型压缩配方）**：2B 以下的容量约束下，「蒸最后一层自注意力」比逐层全蒸更省显存；但新增的 V-V 项是否值得保留，需要单独消融后才能进配方。<br>**data（教师信号）**：蒸馏依赖教师在同一 tokenizer / 同域语料上的前向；data 线要固定「教师版本 + 语料快照」，否则学生看到的知识不可比。<br>**harness（口径）**：>99% 是相对**教师**的保留率，且以 50% 参数与计算为前提；报分必须同时写清教师型号、参数比、计算比，缺一项即不可横向比较。<br>**zhulong（成本口径）**：省的是**在线服务的参数驻留与每 token FLOPs**，训练阶段仍需教师前向；成本表要把「蒸馏训练成本」与「推理节省」分列。<br>**designflow（规格文本）**：中文长尾词表（寄存器名 / 信号名）下词表规模与蒸馏收益的关系未测 ⇒ 只作候选。<br>**vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零七轮 · 18:00 时窗） |
+| 核验状态 | abs 页 **`200` / 44,625 B**，`citation_title` + `citation_date` = `2020/02/25` 逐字；arXiv API **`200` + atom**（`published` = `2020-02-25T15:21:10Z`，6 位作者逐字）；ar5iv **`200` / 319,259 B**（摘要 + 作者邮箱块逐字，`{wenwan,fuwei,lidong1,t-habao,nanya,mingzhou}@microsoft.com`）；OpenAlex **`200`**（3,400 / 2020 / `conference-paper`）。 |
+
+---
+
+## 389. Big Bird: Transformers for Longer Sequences
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Big Bird: Transformers for Longer Sequences |
+| 作者（前 3） | Manzil Zaheer · Guru Guruganesh · Avinava Dubey（共 **11** 位；另 Joshua Ainslie · Chris Alberti · Santiago Ontanon · Philip Pham · Anirudh Ravula · Qifan Wang · Li Yang · Amr Ahmed；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-07-28T08:34:04Z`） |
+| 会议 / 期刊 | **NeurIPS 2020**（OpenAlex `type=conference-paper`、`source` = Neural Information Processing Systems；arXiv `comment` 为空 ⇒ 会议口径取 OpenAlex，不臆断） |
+| 被引数 | **3,828**（OpenAlex `10.48550/arxiv.2007.14062`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2007.14062> ｜ arXiv DOI `10.48550/arxiv.2007.14062` |
+| 一句话贡献 | **BigBird**：把全注意力的**二次**依赖降为**线性**的稀疏注意力（摘要口径），并证明它仍是序列函数的**通用近似器**且 **Turing complete**，从而保留全注意力模型的理论性质；理论分析指出 **`O(1)` 个 global token（如 CLS）** 参与稀疏注意力是有益的。工程上在同等硬件下可处理**最长 8×** 的序列，并在问答 / 摘要等长文档任务上显著提升，另给出基因组数据的新应用。 |
+| 与我们工作的关系 | **pretrain（主 · 长上下文结构）**：若 2B 线要上长上下文，BigBird 的「window + global + random」是可直接对照的稀疏骨架；预注册需固定 global token 数（`O(1)`）与 window 大小两档，否则「线性复杂度」不可复现。<br>**harness（长文档评测）**：8× 序列长度是**同等硬件**口径，报分必须写最大长度与显存；长文档任务要区分「截断 / 稀疏 / 检索」三种喂法。<br>**data（长文档语料）**：长序列收益依赖长文档样本占比；data 线要先报「≥8K token 文档比例」再决定是否投入稀疏注意力。<br>**zhulong（成本口径）**：线性注意力降低的是**序列维度的显存与 FLOPs**，但 global token 仍全连接；成本表要把 window / global / random 三路分别计。<br>**vision**：无直接建议（显式写「无」）。<br>**designflow（长规格文档）**：芯片规格书天然是长文档，但本文未测 EDA 域 ⇒ 只作候选。 |
+| 首次收录 | **2026-11-24**（第一百零七轮 · 18:00 时窗） |
+| 核验状态 | abs 页 **`200` / 44,590 B**，`citation_title` + `citation_date` = `2020/07/28` 逐字，摘要逐字取回；arXiv API **`200` + atom**（`published` = `2020-07-28T08:34:04Z`，11 位作者逐字）；ar5iv 抓取 **超时未取回**（30s，`000`）⇒ 本条目数字仅到摘要粒度，**未做 PDF 逐页复核**；OpenAlex **`200`**（3,828 / 2020 / `conference-paper`）。 |
 

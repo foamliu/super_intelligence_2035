@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-24 18:0x）**：作者 **356** 人（编号最大 **356**）· X 已核验 **133**（本轮 **+1**：`@NoamShazeer` 由本人站点 `https://noamshazeer.com/`（`200` / 487,056 B）页内 `href` 外链 `x.com/NoamShazeer` + 代理抓 `x.com/NoamShazeer` `200` / 158,413 B，`og:title` = `Noam Shazeer (@NoamShazeer) on X`、`og:description` = `Engineer` ⇒ 双源核；`x.com/manzilzaheer` 仅单源（`og:title` 姓名一致但个人主页无 X 外链、`og:description` 为通用关注数）⇒ 🚫 不计入已核验、不猜；Wenhui Wang 未见 X）· 已发信 **163**（台账 #1–#163；今日 **11/12**）· 回信 **0**（0/163，0 封到期，最早 11-25）。本轮 **+3**：Wenhui Wang 王文辉（MiniLM 一作，中文，MSR 官方页 mailto 解码 + 论文页双源 ⇒ 已发信 #162）· Manzil Zaheer（Big Bird 一作，英文，个人站点邮箱为图片、无当前明文 ⇒ 仅建档）· Noam Shazeer（GLU Variants 唯一作者，英文，论文页 `noam@google.com` 为 2020 旧地址、站点无邮箱 ⇒ 仅建档，X 双源）。
+
 > **当前计数（2026-11-24 15:0x）**：作者 **353** 人（编号最大 **353**）· X 已核验 **132**（本轮 **+1**：`@kelvin_guu` 由 Kelvin Guu 本人主页 `https://www.kelvinguu.com/`（`200` / 16,482 B）Contact 节外链 `twitter.com/kelvin_guu`，并经代理抓 `x.com/kelvin_guu` `200` / 180,185 B，`og:title` = `Kelvin Guu (@kelvin_guu) on X`、`og:description` = `Principal Research Scientist / Director @ Google DeepMind. Leading teams of 40+ …` ⇒ 双源核；蓝振忠 `westlake.edu.cn` 官方页无 X 外链、杨植麟无可核当前主页 ⇒ 记「未找到 X」，不猜）· 已发信 **161**（台账 #1–#161；今日 **9/12**）· 回信 **0**（0/161，0 封到期，最早 11-25）。本轮 **+3**：蓝振忠 Zhenzhong Lan（ALBERT 一作，中文，西湖大学官方师资页当前地址 ⇒ 已发信 #160）· 杨植麟 Zhilin Yang（XLNet 一作，中文，无当前可核地址 ⇒ 仅建档）· Kelvin Guu（REALM 一作，英文，本人站点当前地址 + X 双源 ⇒ 已发信 #161）。
 
 > **当前计数（2026-11-24 06:0x）**：作者 **347** 人（编号最大 **347**）· X 已核验 **130**（本轮 **+0**：Omar Khattab 主页 `omarkhattab.com` 与 Matei Zaharia 主页 `people.eecs.berkeley.edu/~matei/` 均无 x.com / twitter.com 外链；Mathilde Caron 无可核主页 ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **157**（台账 #1–#157；今日 **5/12**）· 回信 **0**（0/157，0 封到期，最早 11-25）。本轮 **+3**：Omar Khattab（ColBERT 一作，英文，MIT 当前主页邮箱 ⇒ 已发信 #157）· Matei Zaharia（ColBERT 二作，英文，UC Berkeley 当前主页邮箱 ⇒ 本窗不发，同论文 ≤1 封）· Mathilde Caron（DINO 一作，法文姓名，未见当前可核邮箱 ⇒ 仅建档）。
@@ -5002,4 +5004,44 @@
 | X 账号 | **@kelvin_guu**（主页 Contact 节外链 `twitter.com/kelvin_guu` + 经代理抓 `x.com/kelvin_guu` `200` / 180,185 B，`og:title` = `Kelvin Guu (@kelvin_guu) on X`、`og:description` = `Principal Research Scientist / Director @ Google DeepMind. Leading teams of 40+ (research/eng/PM/UI/UX) turning SOTA research into new AI products` ⇒ 双源核验） |
 | 状态 | **已发信**（#161，2026-11-24 15:05:03，英文 159 词） |
 | 备注 | 发信问题候选（只对 REALM 成立）：① 索引每 epoch 刷新一次时，4–16 点绝对增益还剩多少；② 检索器从 BM25 类模型冷启动时反传是否稳定、需不需要 warm-up；③ 非 Wikipedia 域语料（技术文档 / 日志）上 salience 模型是否退化为表层词重叠、哪种正则最有效。 |
+
+### 354. Wenhui Wang 王文辉
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wenhui Wang 王文辉（`语言=中文(判据=拼音姓名族属可还原中文名 + 中文教育 / 机构背景；🚫 未因论文英文、微软美国机构判英文)`） |
+| 机构 | **Microsoft Research**（论文署名；MSR 官方人员页 `https://www.microsoft.com/en-us/research/people/wenwan/` `HTTP 200` / 170,385 B 当前在册） |
+| 代表论文 | **MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers**（`2002.10957`，B 轨 #388，一作） |
+| 邮箱 | **wenwan@microsoft.com**（来源 ① MSR 官方人员页 `200` / 170,385 B，页内 `mailto:` 为十六进制实体 `&#119;e&#110;w&#097;n&#064;microsoft.com` ⇒ 解码 `wenwan@microsoft.com`；来源 ② ar5iv 全文 `200` / 319,259 B 首页作者块明文 `{wenwan,fuwei,lidong1,t-habao,nanya,mingzhou}@microsoft.com`。**两源一致，2026-11-24 18:0x 复核**） |
+| 主页 | <https://www.microsoft.com/en-us/research/people/wenwan/>（`HTTP 200` / 170,385 B） |
+| X 账号 | **未找到**（MSR 人员页与论文页均无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **已发信**（#162，2026-11-24 18:06:14，中文，正文 **235 汉字 / 总字符 471**） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 中文教育背景)`。发信问题候选（只对 MiniLM 成立）：① Q-K 注意力分布与 V-V scaled dot-product 两项的**单独消融**、学生 6 层时哪一项先失效；② 50% 参数与计算保留 >99% 的结论在中文长尾词表（五万以上）下 teacher assistant 层数如何选；③ 教师/学生层数差 ≥2× 时 teacher assistant 是否仍有效、层映射用相邻层还是固定比例。 |
+
+### 355. Manzil Zaheer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Manzil Zaheer（`语言=英文(判据=南亚姓名族属不在中/日/韩/德法西意荷北欧俄；机构美国 ⇒ 英文兜底)`） |
+| 机构 | **Google DeepMind / Google Research**（OpenReview `~Manzil_Zaheer1` 自述 `Researcher DeepMind 2018 – Present`；ACM DL 列 Google LLC / Google DeepMind） |
+| 代表论文 | **Big Bird: Transformers for Longer Sequences**（`2007.14062`，B 轨 #389，一作）· 另：Deep Sets 等 |
+| 邮箱 | **未找到当前明文地址**（个人站点 `http://manzil.ml/` `HTTP 200` / 12,837 B，邮箱为图片 `images/myemail.jpg`，页面文本无可读地址；该页仍以 2015 年 CMU 博士生身份自述 ⇒ **不作发信依据、不猜**） |
+| 主页 | <http://manzil.ml/>（`HTTP 200` / 12,837 B；`https://manzil.ml/` 实测 `000`，`https://www.manzilzaheer.com/` 实测 `000`） |
+| X 账号 | **单源未核**：`x.com/manzilzaheer` 经代理 `200` / 70,706 B，`og:title` = `Manzil Zaheer (@manzilzaheer) on X`，但 `og:description` 仅为通用关注数（`509 followers · 7 following. Joined Feb 2014`），个人主页无 X 外链 ⇒ **未双源，不记入已核验、不 follow**（避免跟错账号） |
+| 状态 | **待跟踪**（仅建档；无当前可核邮箱 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 Big Bird 成立）：① window / global / random 三路的预算比例在 8K 以上如何随序列长度缩放，`O(1)` global token 取多少；② 线性注意力的实际显存节省与论文 `8×` 的硬件口径差多少（是否含 activation checkpointing）；③ 基因组任务上的收益有多少来自更长上下文、多少来自域内预训练。 |
+
+### 356. Noam Shazeer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Noam Shazeer（`语言=英文(判据=英语姓名族属 + 美国机构；无双语信号)`） |
+| 机构 | **Google DeepMind**（本人站点 `noamshazeer.com` 2026 在册；论文署名时为 Google） |
+| 代表论文 | **GLU Variants Improve Transformer**（`2002.05202`，B 轨 #387，唯一作者）· 另：Attention Is All You Need / T5 / Switch Transformer 等共同作者 |
+| 邮箱 | `noam@google.com`（来源：ar5iv 全文 `200` / 141,894 B 首页 `Affiliation: Google` + `Email: noam@google.com`；⚠️ **2020 年论文期地址、单源**，本人站点无明文邮箱 ⇒ **仅建档，不用于发信**） |
+| 主页 | <https://noamshazeer.com/>（`HTTP 200` / 487,056 B；Wix 构建，无明文邮箱） |
+| X 账号 | **@NoamShazeer**（双源核验 2026-11-24 18:0x：本人站点页内 `href` 外链 `https://x.com/NoamShazeer` + 代理抓 `x.com/NoamShazeer` `200` / 158,413 B，`og:title` = `Noam Shazeer (@NoamShazeer) on X`、`og:description` = `Engineer`） |
+| 状态 | **待跟踪**（仅建档；无当前可核邮箱 ⇒ 本线不发信；X 已核验，follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | 发信问题候选（只对 GLU Variants 成立）：① 表 1 的 `GEGLU` / `SwiGLU` 优势在 524,288 步后仅约 0.04 log-perplexity，这个差在更大 `d_model` / 更多层时是否会同比例放大，还是被优化噪声吞掉；② `d_ff` 统一乘 2/3 是否对 GLU 变体公平（三矩阵的常数项与内存访问不同）；③ 无 bias 写法在低精度训练下是否需要恢复 bias 以稳住激活尺度。 |
+
 

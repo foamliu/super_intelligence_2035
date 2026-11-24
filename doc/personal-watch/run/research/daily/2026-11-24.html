@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-24（A 轨 5/5 · B 轨第一百零四轮 → 380） · research 线</title>
+<title>论文观察日报 · 2026-11-24（A 轨 5/5 · B 轨第一百零七轮 → 389） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -37,8 +37,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-24</h1>
-  <div class="sub"><b>15:00 时窗 · A 轨 5/5（本轮 0 新收）· B 轨第一百零六轮 +3 → 386 · 作者网 353 · 发信累计 161 封 · 回信率 0/161</b></div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-24 09:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
+  <div class="sub"><b>18:00 时窗 · A 轨 5/5（本轮 0 新收）· B 轨第一百零七轮 +3 → 389 · 作者网 356（X 133）· 发信累计 163 封 · 回信率 0/163</b></div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-24 18:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -390,8 +390,78 @@
   <li><b>如实记</b>：ar5iv 0/3 未取回 ⇒ 三篇经典条目的数字只到摘要粒度；杨植麟的检索命中邮箱属另一人 ⇒ 不用、不猜；本轮首次落盘后工作副本被并发 git 操作回滚，已按原文重放后提交（发信动作不受影响）。</li>
 </ul>
 
+<h3 class="sec">🅱 B 轨 · 18:00 时窗（第一百零七轮 +3 → 389）</h3>
+<table class="plain">
+  <tr><th>#</th><th>论文</th><th>年份 / 会议</th><th>被引</th><th>一句话贡献</th><th>归属线</th></tr>
+  <tr><td>387</td><td><a href="https://arxiv.org/abs/2002.05202">GLU Variants Improve Transformer</a>（Noam Shazeer，唯一作者）</td><td>2020 · 预印本（arXiv <code>comment</code> 空；OpenAlex <code>preprint</code>）</td><td><b>3,036</b></td><td><b>GLU / Bilinear / ReGLU / GEGLU / SwiGLU</b> 替换 FFN 第一层线性+激活；因三矩阵，为保持参数与计算不变把 <code>d_ff</code> 乘 <b>2/3</b>（3072→2048）；C4 span-filling <b>524,288</b> 步后 heldout log-perplexity：<code>ReLU</code> 1.677 vs <b><code>GEGLU</code> 1.633</b> / <b><code>SwiGLU</code> 1.636</b>。</td><td>pretrain（主）· zhulong · harness</td></tr>
+  <tr><td>388</td><td><a href="https://arxiv.org/abs/2002.10957">MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers</a>（Wenhui Wang · Furu Wei · Li Dong 等，6 位）</td><td>2020 · NeurIPS 2020（OpenAlex <code>conference-paper</code>）</td><td><b>3,400</b></td><td><b>深层自注意力蒸馏</b>：只蒸教师<b>最后一层</b>的自注意力；新增 <b>V-V scaled dot-product</b> 作为知识（在 Q-K 分布之外）；引入 <b>teacher assistant</b>；用教师 <b>50%</b> 参数与计算仍在 SQuAD 2.0 / 多个 GLUE 任务保留 <b>&gt;99%</b>。</td><td>pretrain（主）· data · harness · zhulong · designflow</td></tr>
+  <tr><td>389</td><td><a href="https://arxiv.org/abs/2007.14062">Big Bird: Transformers for Longer Sequences</a>（Manzil Zaheer · Guru Guruganesh · Avinava Dubey 等，11 位）</td><td>2020 · NeurIPS 2020（OpenAlex <code>conference-paper</code>）</td><td><b>3,828</b></td><td><b>window + global + random</b> 稀疏注意力，把二次依赖降为<b>线性</b>；证明仍是序列函数通用近似器且 <b>Turing complete</b>；<code>O(1)</code> global token 有益；同硬件可处理 <b>8×</b> 序列长度，长文档 QA / 摘要显著提升。</td><td>pretrain（主）· harness · data · zhulong · designflow</td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted);">被引数 = OpenAlex（查询日 <b>2026-11-24</b>）；会议 = arXiv <code>comment</code> + OpenAlex <code>source</code>，两套口径分列、禁止跨源比较。元数据核验：abs <b>3/3 <code>200</code></b>（GLU 反爬精简页 2,771 B → <code>export</code> 40,173 B / MiniLM 44,625 B / BigBird 44,590 B，<code>citation_title</code> + <code>citation_date</code> 逐字）；arXiv API <b>3/3 <code>200</code> + atom</b>（<code>published</code> = 2020-02-12T19:57:13Z / 2020-02-25T15:21:10Z / 2020-07-28T08:34:04Z）；ar5iv GLU <code>200</code> / 141,894 B、MiniLM <code>200</code> / 319,259 B、BigBird <b>30s 超时 0/1</b>。三 ID 条目级查重 <b>0 命中</b>。</p>
+
+<h3 class="sec">👥 作者关系网（+3 → 356，X 133）</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名</th><th>机构</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td>354</td><td>Wenhui Wang 王文辉</td><td>Microsoft Research（MiniLM 一作）</td><td><b>wenwan@microsoft.com</b>（MSR 官方人员页 <code>200</code> / 170,385 B，<code>mailto:</code> 十六进制实体解码 + ar5iv 全文 <code>200</code> / 319,259 B 作者块明文，<b>双源</b>）</td><td>未找到</td><td><b>已发信</b>（#162）</td></tr>
+  <tr><td>355</td><td>Manzil Zaheer</td><td>Google DeepMind / Google Research（Big Bird 一作）</td><td><b>未找到当前明文</b>（<code>http://manzil.ml/</code> <code>200</code> / 12,837 B，邮箱为图片 <code>images/myemail.jpg</code>；<code>https://manzilzaheer.com/</code> 与 <code>https://manzil.ml/</code> 均 <code>000</code> ⇒ 不猜）</td><td>单源未核（<code>@manzilzaheer</code> 页 <code>og:title</code> 姓名一致，但主页无外链，不记已核验）</td><td>待跟踪（仅建档）</td></tr>
+  <tr><td>356</td><td>Noam Shazeer</td><td>Google DeepMind（GLU Variants 唯一作者）</td><td><b>noam@google.com</b>（ar5iv 全文 <code>200</code> / 141,894 B 首页；⚠️ <b>2020 论文期单源旧地址</b>，站点无明文邮箱 ⇒ 不发信）</td><td><b>@NoamShazeer</b>（站点 <code>href</code> 外链 + <code>x.com/NoamShazeer</code> <code>200</code> / 158,413 B <code>og:title</code> 双源）</td><td>待跟踪（仅建档）</td></tr>
+</table>
+
+
+<h3 class="sec">✉ 作者请教信（本时窗 2 封 → 累计 163）</h3>
+<div class="card">
+  <h2>#162 · Wenhui Wang 王文辉（Microsoft Research）· MiniLM <code>2002.10957</code> · 中文 235 汉字</h2>
+  <table class="kv">
+    <tr><th>地址复核</th><td><code>https://www.microsoft.com/en-us/research/people/wenwan/</code> <code>200</code> / 170,385 B，<code>mailto:</code> 十六进制实体解码 <code>wenwan@microsoft.com</code>；与论文页 <code>{wenwan,...}@microsoft.com</code> 双源一致。</td></tr>
+    <tr><th>问题（只对 MiniLM 成立）</th><td>① Q-K 注意力分布与 <b>V-V scaled dot-product</b> 两项的单独消融、学生 <b>6 层</b>时哪项先失效；② 50% 参数与计算保留 99% 在中文长尾词表（五万以上）下 teacher assistant 层数怎么选；③ 教师/学生层数差 <b>≥2×</b> 时 teacher assistant 是否仍有效、层映射按相邻层还是固定比例。</td></tr>
+    <tr><th>发送状态</th><td><code>SENT OK 18:06:14</code>（今日 <b>10/12</b>）；落款两行、其后无行；正文无项目名；与 #163 及今日其余各封开头句 / 问句零共用。</td></tr>
+    <tr><th>回信状态</th><td><b>未到期</b>（到期日 2026-12-08）</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h2>#163 · Rico Sennrich（University of Zurich）· RMSNorm <code>1910.07467</code> · 德文称谓 + 英文 175 词</h2>
+  <table class="kv">
+    <tr><th>地址复核</th><td><code>https://www.cl.uzh.ch/en/research-groups/texttechnologies/Team/Current-Members/sennrich.html</code> <code>200</code> / 65,239 B，页内明文 <code>rico.sennrich@uzh.ch</code>；未用论文旧写法 <code>sennrich@cl.uzh.ch</code>；UZH <code>/about-us/people/team/compling/...</code> 实测 <code>404</code>。</td></tr>
+    <tr><th>问题（只对 RMSNorm 成立）</th><td>① pRMSNorm 的 <code>p%</code> 是否有敏感性表、<code>p=1/4</code> 是默认还是调出来的；② 「re-centering 可丢」在 <b>pre-LN + 长序列 packing</b> 下是否仍成立；③ <b>7%–64%</b> 运行时间差里减均值与算子融合各占多少。</td></tr>
+    <tr><th>发送状态</th><td><code>SENT OK 18:06:14</code>（今日 <b>11/12</b>）；落款两行、其后无行；正文无项目名；与 #162 语言不同、开头句 / 问句零共用。</td></tr>
+    <tr><th>回信状态</th><td><b>未到期</b>（到期日 2026-12-08）｜ 累计回信率 <b>0/163</b>，0 封到期（最早 11-25）</td></tr>
+  </table>
+</div>
+
+<h3 class="sec">对各线的可执行建议（6 线 · 18:00）</h3>
+<table class="plain">
+  <tr><th>线</th><th>可执行建议</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>FFN 超参联合扫</b>（<code>2002.05202</code>）：若采用 SwiGLU/GEGLU，<code>d_ff</code> 必须同时乘 <b>2/3</b>，否则同参数量对比失真 —— 预注册把「激活类型 × <code>d_ff</code>（1、2/3、1/2）× 是否 no-bias」三轴一起扫。<b>蒸馏损失先做两臂消融</b>（<code>2002.10957</code>）：<code>Q-K only</code> vs <code>Q-K + V-V</code>，学生固定 6 层，报 SQuAD 2.0 与 GLUE 保留率。<b>长上下文骨架对照</b>（<code>2007.14062</code>）：window + global + random 与全注意力在 8K 下比显存 / 每 token FLOPs，global token 数固定 <code>O(1)</code> 两档。</td></tr>
+  <tr><td><b>vision</b></td><td><b>无</b>（本轮三篇均为文本预训练 / 长序列方向，无可执行视觉建议；不凑数）。</td></tr>
+  <tr><td><b>harness</b></td><td><b>跨模型 loss 三项必录</b>（<code>2002.05202</code>）：<code>d_ff</code>、激活类型、是否 no-bias。<b>蒸馏保留率四要素</b>（<code>2002.10957</code>）：教师型号、参数比、计算比、评测集；只写「&gt;99%」不可横向比较。<b>长序列报分</b>（<code>2007.14062</code>）：最大长度 + 峰值显存 + 是否 activation checkpointing。</td></tr>
+  <tr><td><b>data</b></td><td><b>长文档占比先量</b>（<code>2007.14062</code>）：先报「≥8K token 文档比例」，再决定是否投入稀疏注意力。<b>蒸馏教师快照固定</b>（<code>2002.10957</code>）：教师版本 + tokenizer + 语料快照三件套，缺一项学生知识不可比。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>GLU 成本写明是否 2/3 折算</b>（<code>2002.05202</code>）：三矩阵在同等 <code>d_ff</code> 下参数与 FLOPs 升 50%，收益只在折算后成立。<b>蒸馏训练成本与推理节省分列</b>（<code>2002.10957</code>）。<b>稀疏注意力三路分计</b>（<code>2007.14062</code>）：window / global / random 的显存与 FLOPs 不合并报。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>中文长尾标识符先度量</b>（<code>2002.10957</code>）：寄存器名 / 信号名在词表中的占比与长度分布，再决定是否走蒸馏压缩；<b>长规格文档作候选</b>（<code>2007.14062</code>）：先测规格书 token 长度分布，论文未测 EDA 域 ⇒ 不上预注册。</td></tr>
+</table>
+
+<h3 class="sec">附录 · 18:00 时窗检索式与核验（可复核）</h3>
+<ul class="tight">
+  <li><b>A 轨复核</b>：今日 5/5 已满 ⇒ 0 新收（<code>cat:cs.CL&amp;max_results=3&amp;sortBy=submittedDate</code> <code>200</code> / <code>application/atom+xml</code>）。</li>
+  <li><b>B 轨元数据</b>：abs <b>3/3 <code>200</code></b>（GLU <code>arxiv.org</code> 反爬页 2,771 B → <code>export.arxiv.org</code> 40,173 B / MiniLM 44,625 B / BigBird 44,590 B）；arXiv API <b>3/3 <code>200</code> + atom</b>；OpenAlex <b>3/3 <code>200</code></b>（3,036 / 3,400 / 3,828，查询日 2026-11-24）。</li>
+  <li><b>未取回项（如实记）</b>：ar5iv BigBird 抓取 30s 超时 ⇒ BigBird 数字仅到摘要粒度、<b>未做 PDF 逐页复核</b>；GLU / MiniLM ar5iv <code>200</code>（141,894 / 319,259 B）已取回。</li>
+  <li><b>去重</b>：三 ID 在 <code>PAPERS.md</code> 条目级查重 <b>0 命中</b>（B 轨不进 <code>SEEN.md</code> / <code>papers.jsonl</code>）。</li>
+  <li><b>作者地址</b>：MSR <code>people/wenwan/</code> <code>200</code> / 170,385 B（mailto 实体解码）；UZH <code>Current-Members/sennrich.html</code> <code>200</code> / 65,239 B；<code>manzil.ml</code> <code>200</code> / 12,837 B 但邮箱为图片 ⇒ 只建档。</li>
+  <li><b>X 核验</b>：<code>x.com/NoamShazeer</code> 经代理 <code>200</code> / 158,413 B，<code>og:title</code> = <code>Noam Shazeer (@NoamShazeer) on X</code>，且站点页内 <code>href</code> 外链 ⇒ X <b>132 → 133</b>。</li>
+  <li><b>数字口径</b>：被引数 = OpenAlex（查询日 2026-11-24）；论文数字 = 作者自报，本线未复现。</li>
+</ul>
+
+<h3 class="sec">本轮变更说明（15:00 → 18:00）</h3>
+<ul class="tight">
+  <li><b>A 轨不动</b>：今日 5/5 已满 ⇒ 0 新收；不凑第 6 篇。</li>
+  <li><b>新增 3 篇 B 轨</b>：GLU Variants <code>2002.05202</code>、MiniLM <code>2002.10957</code>、Big Bird <code>2007.14062</code> ⇒ 386 → <b>389</b>。</li>
+  <li><b>作者网 +3</b>：Wenhui Wang（MSR 双源地址，已发信）/ Manzil Zaheer（邮箱为图片，仅建档）/ Noam Shazeer（旧地址 + X 双源，仅建档）⇒ 353 → <b>356</b>；X <b>132 → 133</b>。</li>
+  <li><b>发信 +2</b>：#162 中文 235 汉字 / #163 德文称谓 + 英文 175 词，均 <code>SENT OK 18:06:14</code> ⇒ 累计 <b>163</b>；回信率 <b>0/163</b>，0 封到期（最早 11-25）。</li>
+  <li><b>如实记</b>：BigBird ar5iv 超时 ⇒ 数字仅到摘要；Manzil 邮箱不可读、Noam 仅有 2020 旧地址 ⇒ 均不发信；Matei Zaharia 与 #345 同论文 ⇒ 守「同一论文 ≤1 封」不补发。</li>
+</ul>
+
+
 <footer>
-  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-24 15:05 CST
+  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-24 18:06 CST
 </footer>
 
 </div>

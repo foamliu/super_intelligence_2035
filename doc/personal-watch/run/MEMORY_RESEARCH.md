@@ -12,23 +12,23 @@ WAITING: 1
 
 ```
 PHASE:        双轨（A 最新论文 50% / B 经典论文 50% + 作者关系网 + 研究者言论投料）；loop 按 0,3,6,9,12,15,18,21 八时窗唤醒
-已完成:       [r253 · 本地 2026-11-24 15:0x · 15:00 时窗：A 轨 0 新收（今日 5/5 已满；公告批已刷新至 11-23 15:43Z，15.3h 在窗但额度已满）＋ B 轨 +3 → 386（ALBERT / XLNet / REALM）＋ 作者网 +3 → 353（X 132）＋ 发信 2 封 → 161 ＋ 回信率 0/161]
-  ① 网络：`cat:cs.CL&max_results=5&sortBy=submittedDate`（`--noproxy '*'`）**`200` + `application/atom+xml`**（13,309 B / 5 entry，`published` 上界仍 `2026-11-20T18:51:29Z`，距本窗 2026-11-24 01:00 UTC 约 **78.1h > 72h** ⇒ 已出窗）；B 轨 arXiv 批量 `id_list` 两次 **`429`** ⇒ 改单查 `search_query=id:<ID>` **3/3 `200` + atom**（2,567 / 3,739 / 3,382 B）+ abs 3/3 `200`（41,707 / 46,461 / 44,439 B）+ ar5iv 2/3 部分（258,225 / 81,023 B，25s 截断）+ OpenAlex 3/3 `200`（94→会议版 24,624 / 2,546 / 2,592，查询日 2026-11-24）。
-  ② A 轨 **0 新收**：今日 5/5 已满且公告批 78.1h 出窗 ⇒ 不凑第 6 篇。
-  ③ B 轨 **+3 → 383**：Sentence-BERT `1908.10084`（**24,624** 会议版 DOI `10.18653/v1/d19-1410`；arXiv DOI 记 94，分列；siamese/triplet，10,000 句找最相似对 65h → ~5s）/ DeBERTa `2006.03654`（**2,546**，2020 预印本；content/position 解耦注意力 + enhanced mask decoder，半数据超 RoBERTa-Large，1.5B 单模型 SuperGLUE 89.9）/ Test-time compute scaling `2408.03314`（**2,592**，ICLR 2025；compute-optimal 分配 >4× best-of-N，FLOPs 对齐胜 14× 大模型）；三 ID 条目级查重 0 命中。
-  ④ 作者网 **+3 → 350**：#348 Nils Reimers（德文；`info@nils-reimers.de` 站点 contact 当前地址，已发信）/ #349 Charlie Snell（英文；`csnell22@berkeley.edu` 主页 mailto 当前地址，X `@sea_snell` 双源，已发信）/ #350 Pengcheng He（中文；仅 2020 论文页地址、MSR 人员页重定向 ⇒ 仅建档）；X +1 → 131。
-  ⑤ 发信 **2 封**（累计 **159**）：#158 德文问候 + 英文 191 词 `SENT OK 09:06:52`、#159 英文 197 词 `09:06:52`；落款两行、其后无行；正文无项目名；与今日 #153–#157 开头句 / 问句零共用；今日 **7/12**。
-  ⑥ 回信率 **0 / 159**，**0 封到期**（最早 2026-11-25，#1–#7 剩 1 天）；`replies/` 仍只有 `README.md`；通道只发不收。
-  ⑦ voice_ready **0** / news_ready **0**（方法 / 基准类，无本窗事件点）。
-  ⑧ 交付：`daily/2026-11-24.html` 09:00 节 + `daily/index.html` 当日行（5/5 · 383 · 350 · 131 · 159 · 0/159）+ `research/2026-11-24.md` §8 + `PAPERS.md` #381–#383（+ 新快照 383）+ `AUTHORS.md` #348–#350（+ 计数行 350）+ `发送记录.md` §09:00 + draft / body 各 2。
+已完成:       [r254 · 本地 2026-11-24 18:0x · 18:00 时窗：A 轨 0 新收（今日 5/5 已满）＋ B 轨 +3 → 389（GLU Variants / MiniLM / Big Bird）＋ 作者网 +3 → 356（X 133）＋ 发信 2 封 → 163 ＋ 回信率 0/163]
+  ① 网络：arXiv abs 3/3 `200`（GLU `arxiv.org` 反爬页 2,771 B → `export` 40,173 B / MiniLM 44,625 B / BigBird 44,590 B）+ arXiv API `id_list` 3/3 `200` + atom（`published` = 2020-02-12T19:57:13Z / 2020-02-25T15:21:10Z / 2020-07-28T08:34:04Z）+ ar5iv GLU 141,894 B / MiniLM 319,259 B、BigBird 30s 超时 + OpenAlex 3/3 `200`（3,036 / 3,400 / 3,828）+ X 自检 `200`。
+  ② A 轨 **0 新收**：今日 5/5 已满 ⇒ 不凑第 6 篇。
+  ③ B 轨 **+3 → 389**：GLU Variants `2002.05202`（**3,036**；GLU/Bilinear/ReGLU/GEGLU/SwiGLU，三矩阵 ⇒ `d_ff`×2/3；C4 524,288 步 log-perplexity ReLU 1.677 vs GEGLU 1.633 / SwiGLU 1.636）/ MiniLM `2002.10957`（**3,400**，NeurIPS 2020；只蒸最后一层自注意力 + V-V scaled dot-product + teacher assistant；50% 参数/计算保留 >99%）/ Big Bird `2007.14062`（**3,828**，NeurIPS 2020；window+global+random 线性稀疏注意力，Turing complete，8× 序列长度）；三 ID 条目级查重 0 命中。
+  ④ 作者网 **+3 → 356**：#354 Wenhui Wang（中文；MSR 人员页 mailto 十六进制解码 + ar5iv 作者块双源 `wenwan@microsoft.com`，已发信）/ #355 Manzil Zaheer（英文；`manzil.ml` 邮箱为图片 ⇒ 仅建档；`@manzilzaheer` 单源未核）/ #356 Noam Shazeer（英文；仅 2020 论文页 `noam@google.com` ⇒ 仅建档；X `@NoamShazeer` 双源）；X +1 → 133。
+  ⑤ 发信 **2 封**（累计 **163**）：#162 Wenhui Wang 中文 235 汉字 `SENT OK 18:06:14`、#163 Rico Sennrich 德文称谓 + 英文 175 词 `18:06:14`；落款两行、其后无行；正文无项目名；两封语言不同、开头句 / 问句零共用，也与今日 #153–#161 不同；今日 **11/12**。
+  ⑥ 回信率 **0 / 163**，**0 封到期**（最早 2026-11-25，#1–#7 剩 1 天）；`replies/` 仍只有 `README.md`；通道只发不收。
+  ⑦ voice_ready **0** / news_ready **0**（2020 经典方法论文，无本窗事件点）。
+  ⑧ 交付：`daily/2026-11-24.html` 18:00 节 + `daily/index.html` 当日行（5/5 · 389 · 356 · 133 · 163 · 0/163）+ `research/2026-11-24.md` §10 + `PAPERS.md` #387–#389（+ 新快照 389）+ `AUTHORS.md` #354–#356（+ 计数行 356）+ `发送记录.md` §18:00 + draft / body 各 2。
 
-  前一: [r251 · 2026-11-24 06:00 时窗 · A 0 新收 · B +3 → 380（BYOL / DINO / ColBERT）· 作者网 +3 → 347 · 信 1 → 157 · 回信率 0/157] 详情见 `daily-memories-research/2026-11-24.md`。
+  前一: [r253 · 2026-11-24 15:00 时窗 · A 0 新收 · B +3 → 386（ALBERT / XLNet / REALM）· 作者网 +3 → 353 · 信 2 → 161 · 回信率 0/161] 详情见 `daily-memories-research/2026-11-24.md`。
 
-当前动作:     ✅ 15:00 时窗闭环：A 轨 0 新收（今日 5/5 已满；公告批已刷新至 11-23 15:43Z、15.3h 在窗但额度已满 ⇒ 次日 00:00 起可收，已登记 5 条候选）；B 轨 +3 → 386；作者网 +3 → 353（X 132）；发信 2 封 → 161；回信率 0/161。
-下一步:       ① 下一时窗（18:00）：A 轨今日已 5/5 ⇒ 0 新收；**公告批已刷新**（上界 11-23T15:43:16Z，次日 00:00 时约 24h ≤72h）⇒ 次日 00:00 起按 §0.1 收 3 篇，选前查重；② B 轨 +3：从必读清单外高引且未收录的经典里选，**选前先条目级查重**（`grep arxiv.org/abs/<ID>`）；③ 发信队列：Rico Sennrich（UZH 人员页仍 404）/ Mostafa Dehghani（单源待核）/ Victor Sanh（旧 HF 地址）⇒ 均需先核当前地址，核不到不发；④ 11-25 首批到期 → #1–#7 转 `无应答(>14d)`，做地址级别 × 论文年代分层；⑤ 运维：发件显示名 / SMTP 只发不收 / 任务书 44 KB 超红线。
-补推记录:     2026-11-24 09:0x · 本轮 commit 前 `git pull --rebase --autostash`；若 push 被拒按 `fetch + rebase origin/main` 重试（最多 5 次），不 `add -A`。
-本轮新增:     A 轨 0（今日 5/5）· B 轨 +3（386）· 作者网 +3（353）· X 已核验 +1（132）· 作者信 +2（161，今日 9/12）· voice_ready 0 · news_ready 0 · 回信率 0/161
-阻塞:         ① 🔴 发件显示名 `AI+EDA 招聘 · 自动`（最可能的 0 回信原因），需运维改配置；② 发件通道只发不收（无 IMAP/POP3）⇒ 回信可能已到但读不到；③ `WATCH_RESEARCH_TASK.md` 44 KB 超红线且 agent 只读 ⇒ 需授权；④ 多数新收作者无当前可核地址（Mathilde Caron 仅 2021 旧地址 / BYOL 作者仅 2020 论文页地址）⇒ 只建档、不猜地址；⑤ `mostafadehghani.com` 已被博彩站占用，**不可**当作者主页/邮箱来源。
+当前动作:     ✅ 18:00 时窗闭环：A 轨 0 新收（今日 5/5 已满）；B 轨 +3 → 389；作者网 +3 → 356（X 133）；发信 2 封 → 163；回信率 0/163。
+下一步:       ① 下一时窗（21:00）：A 轨今日已 5/5 ⇒ 0 新收；**次日 00:00 起**按 §0.1 收 3 篇，选前查重；② B 轨 +3：从必读清单外高引且未收录的经典里选，**选前先条目级查重**（`grep arxiv.org/abs/<ID>`）；③ 发信队列：Mostafa Dehghani（单源待核）/ Victor Sanh（旧 HF 地址）/ Manzil Zaheer（邮箱为图片）⇒ 均需先核当前地址，核不到不发；④ 11-25 首批到期 → #1–#7 转 `无应答(>14d)`，做地址级别 × 论文年代分层；⑤ 运维：发件显示名 / SMTP 只发不收 / 任务书 44 KB 超红线。
+补推记录:     2026-11-24 18:0x · 本轮 commit 前 `git pull --rebase --autostash`；若 push 被拒按 `fetch + rebase origin/main` 重试（最多 5 次），不 `add -A`。
+本轮新增:     A 轨 0（今日 5/5）· B 轨 +3（389）· 作者网 +3（356）· X 已核验 +1（133）· 作者信 +2（163，今日 11/12）· voice_ready 0 · news_ready 0 · 回信率 0/163
+阻塞:         ① 🔴 发件显示名 `AI+EDA 招聘 · 自动`（最可能的 0 回信原因），需运维改配置；② 发件通道只发不收（无 IMAP/POP3）⇒ 回信可能已到但读不到；③ `WATCH_RESEARCH_TASK.md` 44 KB 超红线且 agent 只读 ⇒ 需授权；④ 多数新收作者无当前可核地址（Manzil Zaheer 邮箱为图片 / Noam Shazeer 仅 2020 旧地址）⇒ 只建档、不猜地址；⑤ `mostafadehghani.com` 已被博彩站占用，**不可**当作者主页/邮箱来源。
 ERROR_COUNT:  118（本轮 0 新增）
 ```
 
@@ -64,7 +64,7 @@ ERROR_COUNT:  118（本轮 0 新增）
 - **上次采集窗口**：`2026-11-24 15:0x`（**第二百五十三轮 · 15:00 时窗**：A 轨 **0 新收**（今日 5/5 已满；公告批已刷新至 `2026-11-23T15:43:16Z`、15.3h 在窗但额度已满）；B 轨 **+3 → 386**（ALBERT / XLNet / REALM）；作者网 **+3 → 353**（X 132）；发信 **2**（#160 蓝振忠 / #161 Kelvin Guu，今日 9/12））
 - **TOP-K 窗口（第 2 批专用，第 3 批沿用）**：`2026-09-03 ~ 2026-10-01`（**≤30d / 720h**，`window_mode=override`；候选池 **1118** 篇 → TOP-20）
 - **累计收录**：`371` 篇（A 轨；`SEEN.md` 为唯一防重台账；本日 A 轨已收 5 篇 → 今日 5/5）
-- **B 轨（经典论文 · 2026-11-11 新增）**：`research/classic/PAPERS.md`（滚动清单，**386 篇**，8 字段 + OpenAlex 单源被引 + arXiv `comment` 会议口径 + 首次收录日；**一百零五轮累计，必读清单 37/37 全覆盖**）· `research/classic/AUTHORS.md`（**353 人**关系网 + X 只读证据 + 待 follow 清单 + 发信记录 + 言论台账 V1–V34）；**B 轨不占 5 篇额度、不进 `SEEN.md`**。作者信草稿 `research/mail/drafts/<arXiv_ID>.md`；正文一律落 `research/mail/bodies/`
+- **B 轨（经典论文 · 2026-11-11 新增）**：`research/classic/PAPERS.md`（滚动清单，**389 篇**，8 字段 + OpenAlex 单源被引 + arXiv `comment` 会议口径 + 首次收录日；**一百零七轮累计，必读清单 37/37 全覆盖**）· `research/classic/AUTHORS.md`（**356 人**关系网 + X 只读证据 + 待 follow 清单 + 发信记录 + 言论台账 V1–V34）；**B 轨不占 5 篇额度、不进 `SEEN.md`**。作者信草稿 `research/mail/drafts/<arXiv_ID>.md`；正文一律落 `research/mail/bodies/`
 
 
 ---
