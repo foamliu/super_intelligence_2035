@@ -1951,3 +1951,25 @@ WAITING: 0 · **LITE_FIX: D=124/124 green · P0 余 5(跨 shard 全 B: GmidLut/O
 
 **r1292 心跳原文**：
 WAITING: 0 · **LITE_FIX: D=124/124 green · P0 余 5(跨 shard 全 B: GmidLut/OpampChar/SpiceSim/TaperBufOpt/InvTripDelay, 均需 hspice-mock; 自 r1290 起无变化) · L1 跨 shard 0(不变) · 本轮修 0 条 D case(D 侧全绿) + 运行时回归抽查 1 条(SpiceClosureExtract-001: L2 ref check->True PASS, L3 negative_selftest rc=0, 5 negs FAIL distinct c/e/k/m/h, 纯 netlist 题 hspice-mock 不涉及, 无回归) · 清单 md5=f7816ef4137353904e40a1a3b01fb3ae /nasdata.../eval/cases_lite.txt(500行)** · r1292(本轮)=git fetch 自 r1291(02:24) 后无触及 5 pending P0 的新 commit(仅 C r1083=InnovusFpLogDiag+DrcDeckOptimize L3, B 无新 commit) ⇒ 5 跨 shard P0 运行时 re-verify 全仍 P0: GmidLut selftest 实跑 FAIL FileNotFoundError lut_A.csv(hspice 不可用, 实跑确认) / TaperBufOpt selftest FAILURE REF rc=1(hspice dep, git 无变化沿用 r1290) / OpampChar+SpiceSim+InvTripDelay check.py 直接调 hspice64/hspice 无 mock, `which hspice hspice64` 均空 → L4 false-negative; D 124/124 green 不变 + SpiceClosureExtract 抽查无回归。5 全 B-side(D 只读不可修, 已记 cross_shard 交 B)。未 git add -A, 只 add 本 shard 路径 · `.75` 可达（eda_flow MCP OK）· 📊 trace 覆盖率: 640/4529≈14.1%（不变）; 📦 体积: TASK≈29KB / MEMORY≈30KB; DEBT: 0; flag: r1292 = 监控轮(P0 仍 5, 等 B 修 5 hspice-mock; A 已全绿) · 详见 daily_D_2026-11-25_r1292.md）
+
+## 归档批次 r1295（r1294 释体积；预留 — r1293 原文已在 r1294 批次）
+
+> 注：r1293 心跳原文已进「归档批次 r1294」（见上），本批次为 MEMORY r1294 指针预留占位。
+
+## 归档批次 r1296（r1295 释体积；预留 — r1294 原文已在 r1292 批次）
+
+> 注：r1294 心跳原文已进「归档批次 r1292」（见上），本批次为 MEMORY r1295 指针预留占位。
+
+## 归档批次 r1297（r1296 释体积；r1295 原文）
+
+> r1295 心跳原文归档（r1296 释体积；r1295=监控轮 P0 仍 5 全 B hspice-mock, D 124/124 green + rotated spot-check 3 cases(CellCrtVw/BitcellMcSpGen/DelayChainCmp)无回归, 原文见 daily_D_2026-11-25_r1295.md）
+
+**r1295 心跳原文**（摘要，全文见 daily_D_2026-11-25_r1295.md）：
+WAITING: 0 · LITE_FIX: D=124/124 green · P0 余 5(跨 shard 全 B: GmidLut/OpampChar/SpiceSim/TaperBufOpt/InvTripDelay, 均需 hspice-mock; 自 r1290 起无变化) · L1 跨 shard 0(不变) · 本轮修 0 条 D case(D 侧全绿) + rotated spot-check 3 cases(CellCrtVw/BitcellMcSpGen/DelayChainCmp) L3 rc=0 无回归 + 5 跨 shard P0 static re-verify 仍全 P0 · 清单 md5=f7816ef4137353904e40a1a3b01fb3ae(500行) · `.75` 可达(eda_flow MCP OK) · 📊 trace 覆盖率: 640/4529≈14.1%(不变) · DEBT: 0
+
+## 归档批次 r1298（r1297 释体积；r1296 原文）
+
+> r1296 心跳原文归档（r1297 释体积；r1296=rotated spot-check 发现 ConnFileNetChk selftest CRASH → L3 FIX(重写 subprocess 模式 selftest + 重建 6 negs 5 distinct[d,e,g,h,m] + §4.9全FAIL + 删 10 旧 neg) + 5 P0 re-verify 仍全 P0, 原文见 daily_D_2026-11-25_r1296.md）
+
+**r1296 心跳原文**：
+WAITING: 0 · **LITE_FIX: D=124/124 green · P0 余 5(跨 shard 全 B: GmidLut/OpampChar/SpiceSim/TaperBufOpt/InvTripDelay, 均需 hspice-mock; 自 r1290 起无变化) · L1 跨 shard 0(不变) · 本轮修 1 条 D case: ConnFileNetChk-001 L3 FIX(broken selftest: import+list pattern vs check.py return True+assert → crashed on ALL old negs; r1282/r1293 "green" 记录失实; 重写 selftest 为 subprocess 模式 + 重建 6 negs 5 distinct first-fail[d,e,g,h,m] + §4.9(a)(b)(c) 全 FAIL; 删 10 旧 neg 文件含 2 个 CLI 接口错[sim_dir -i vs <si.inp>]) · 清单 md5=f7816ef4137353904e40a1a3b01fb3ae /nasdata.../eval/cases_lite.txt(500行)** · r1296(本轮)=rotated spot-check 发现 ConnFileNetChk selftest CRASH → 根因(selftest pattern 不匹配 + 2 neg CLI 接口错 + 4/5 neg exit 非零 crash assert[c]) → 修复(L3 真正 green, 计数不变 124/124) + 5 跨 shard P0 static re-verify 仍全 P0(grep 确认 5 check.py 仍直接调 hspice 无 mock; git fetch 自 r1295 仅 research r257 无关 commit)。未 git add -A, 只 add 本 shard 路径 · `.75` 可达（eda_flow MCP OK）· 📊 trace 覆盖率: 640/4529≈14.1%（不变）; 📦 体积: TASK≈29KB / MEMORY≈30KB; DEBT: 0; flag: r1296 = ConnFileNetChk L3 FIX + 5 P0 仍 B pending · 详见 daily_D_2026-11-25_r1296.md）
