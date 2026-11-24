@@ -3,6 +3,7 @@ WAITING: 0
 
 > 🚀 wake#1721 2026-11-24 21:3x · **🔧 交付修复轮（§9 报告 + transfer eval 文件补提交）**：发现 wake#1720 git read-tree HEAD 重建 index 后，§9 报告(44020B)+p5_real_waveview_transfer_eval json/py+MEMORY/daily 心跳**未入 HEAD**（wake#1720 误报 ON origin 实为 pre-§9 版 39335B）。本轮经 worktree 隔离补提交：report §9 + transfer eval json/py + MEMORY(fold wake#1686/1687)+daily。P4/P5 全部交付物复验落盘且 ON origin：report 44020B §1-§9，sft_p5.jsonl 1040，SFT 0.625->0.8125 +18.75pp p=0.0118，GRPO tie p=1.0，cheat0，transfer case 0/10 条件级 +13.64pp。P2 rft2 复测 36.15 跑。边界：仅动本线文件，未碰别线，未 reset --hard/clean/删 stash/kill 别线。**WAITING: 0**。
 > 🚀 wake#1722 2026-11-24 22:1x · **🔧 监控轮（P4/P5 复验 ON origin + P2 rft2 复测进度 ~35/182 + git 0 ahead 干净）**：`git fetch`+`rev-list` 共享 HEAD **10 behind/0 ahead**（全非本线 origin 前进·未分叉·safe 态）·vision 领域 `status --porcelain` **空**。**P4/P5 交付物复验全 ON origin**（`git cat-file -e` EXIT0）：report_synthetic_waveform_research_zh.html 44020B §1-§9·p5_synthetic_sft_rl.py·p5_runs/p5_results.json。数字 spot-check：sft_p5.jsonl 1040 行·SFT pre0.625→post0.8125 Δ+18.75pp McNemar b16/c4 p=0.0118 显著✅·GRPO cold0.8125→post0.8125 tie Δ0 p=1.0 照写✅·cheat_rate=0.0 overlap0✅·sft_p5_adapter_seed11+grpo_p5/step500 各含 adapter_config.json+adapter_model.safetensors✅·P5.3 transfer eval case 0/10 条件级 +13.64pp p=0.1094。**P2 rft2 复测**：36.15 PID782062 alive(~2.9h/10394s)·results.json 577 行(~35/182 case)·resumable·ETA~4-6h。VQA :30001 base `{ok:true,ready:true,load_s:8.7}`·:30003 rft2 `{ok:true,ready:true,load_s:271.3}` 健康。GPU6=serve·GPU7=free。SSH 桥 -R 健康。本轮无新交付物（vision 领域已干净·P2 未跑完）→ 仅心跳。边界：仅动本线文件·未碰别线·未 reset --hard/clean/删 stash/kill 别线。**WAITING: 0**（P2 rft2 复测在 36.15 跑·下轮收结果做 paired McNemar vs 17.6%+§0.6 追加）。
+> 🚀 wake#1723 2026-11-24 23:0x · **🔧 监控轮（P2 rft2 复测进行中 34/182 + P4/P5 复验 ON origin + git 0 ahead 干净）**：`git fetch` origin `0488391e9f..97952f5aa8`·共享 HEAD **17 behind/0 ahead**（全非本线 origin 前进·未分叉·safe 态）·vision 领域 `status --porcelain` 仅 MEMORY_VISION.md(wake#1722 心跳未提交)。**P4/P5 交付物复验全 ON origin**（`git cat-file -e` EXIT0）：report_synthetic_waveform_research_zh.html 44020B §1-§9·`vision/vqa_tool/p5_synthetic_sft_rl.py`·p5_runs/p5_results.json。**P2 rft2 复测**：36.15 PID782062 alive(~3.2h/11594s)·`/tmp/wv_cg_full_v2rft2_rerun/results.json` 629 行=**34/182 case**(5 pass=14.7%)·resumable·ETA~14h（每 case ~6min·大量 360s timeout）。VQA :30001 base `{ok:true,ready:true,load_s:8.7}`·:30003 rft2 `{ok:true,ready:true,load_s:271.3}` 健康。GPU6=9715MiB(serve)·GPU7=3MiB(free)。SSH -R 桥 pid2739472(~5.7h)·watchdog pid3961251 健康。本轮无新交付物（P2 未跑完）→ 仅心跳+提交 wake#1722 滞留心跳。边界：仅动本线文件·未碰别线·未 reset --hard/clean/删 stash/kill 别线。**WAITING: 0**（P2 rft2 复测在 36.15 跑·下轮收结果做 paired McNemar vs 17.6%+§0.6 追加）。
 
 
 
@@ -103,10 +104,10 @@ WAITING: 0
 
 | 已完成 | wake#1688 共享仓库排障✅ · wake#1686 Option B SFT+GRPO✅ · wake#1663 WaveView 全队列✅(p=0.008) · #4 v2-RFT 90% p=0.0156✅ · v5 p=0.0009✅ · NeurIPS §6✅ · ArmD-R2✅ |
 
-| 当前动作 | **wake#1722**：监控轮·P4/P5 复验 ON origin✅·git 0 ahead 干净·P2 rft2 复测 ~35/182 在 36.15 跑(ETA~4-6h)。 |
+| 当前动作 | **wake#1723**：监控轮·P4/P5 复验 ON origin✅·git 0 ahead 干净·P2 rft2 复测 34/182 在 36.15 跑(ETA~14h)。 |
 
 | 下一步 | ① P2：收 36.15 rft2 复测结果→paired McNemar vs V2=17.6%（确认 rft2 可复现）。② P3：`report_vision_waveview_selftest_agent_zh.html` §0.6 追加 rft2 复测数字行。③ 体积 MEMORY/TASK ≤32KB 持续滚动。 |
 
 | 阻塞 | 无（GPU6-7 可用·:30001/:30003 服务不停·SSH 桥到 36.15 保持）。远期：主线 SFT/RL 阻塞于 pretrain ckpt ETA≈2026-12-25 |
 
-| 更新 | **2026-11-24 22:1x (wake#1722)**：监控轮·P4/P5 交付物复验 ON origin（report 44020B §1-§9+p5_runs/齐全+p5_synthetic_sft_rl.py）·git 10 behind/0 ahead 干净·P2 rft2 复测 ~35/182 在 36.15 跑(PID782062 ETA~4-6h)。**WAITING=0**。 |
+| 更新 | **2026-11-24 23:0x (wake#1723)**：监控轮·P4/P5 交付物复验 ON origin（report 44020B §1-§9+p5_runs/齐全+p5_synthetic_sft_rl.py）·git 17 behind/0 ahead 干净·P2 rft2 复测 34/182 在 36.15 跑(PID782062 ETA~14h)。**WAITING=0**。 |
