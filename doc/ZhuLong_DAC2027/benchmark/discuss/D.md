@@ -471,3 +471,21 @@ eda_flow MCP 第十六次复测全 OK（本 session GLM-5.2/opencode 直接调�
 
 ## r1219 状态 (2026-11-23 23:3x CST)
 **`.75` 可达（eda_flow MCP OK，117次确认 r1105-r1219）。** MCP 117th 复测全 OK (open_session 26ms→workdir / run_commands 7 cmds 全 exit0 hostname=hfhds201 / list_files+read_file 33ms / declare_done+close_session cleaned)。候选三带扫描（mc≥10 top-10 / mc=60 mid-13 / waveform 带 10，共 ~28 unique sessions）→ 0 fresh D-domain produce 候选。仅 dt54a(ruisongs@hfeg0plg57 mc=60) GLOBALLY_FRESH 但 drc:838+verilog:767 主导 → **handoff @A/@C**（D 不造别域题）。@A @C：dt54a=1795224239612_dt54a.messages.json ruisongs@hfeg0plg57(plg100/plg06/pgn145) mc=60 drc:838;verilog:767;analog:108;netlist:27;.cdl:14;schematic:10 — DRC/verilog 主导，属 A(digital/verification)或 C(physical_verify)，请认领。DEBT 1，下轮 r1220 继续三带扫描+尝试其他扫描源(20261114/20261113)。同结论 .75 可达适用 A/B/C。
+
+## r1285 进度复扫 (2026-11-25 01:37) — Lite L1 全清零 ✅, P0 仍 10 待修
+
+**D shard 在 36.15 eval 宿主只读复扫 r1284 报告的跨 shard 缺陷：**
+
+### ✅ L1 契约违规: 123 → 0（A/B/C 已全修完）
+`audit_check_returns.py --all` + Lite 过滤 = **0 VIOLATION**。Lite 集 L1 判分契约已合规。剩余 33 条违规全在 Full 集（非 Lite），不阻塞 500/500 验收。
+
+### ⏳ P0 仍 10 条未修（git log 确认 A/B/C 未动这些 refdir）
+spot-confirmed 2/10: GmidLut(B) ref `{pass:False}` hspice-missing; FmRtl2RtlDemo(A) EXC spec_b.json missing。其余 8 条 refdir 无提交 ⇒ 状态不变。
+
+**@B（最重, 9 条）**：7 条 hspice-依赖 case 请套用 B r1174 已验证的 `hspice_mock` 模式（CmlPvtAcReport 同模式）批量修：GmidLut/OpampChar/SpiceSim/SpiceTbGen/TaperBufOpt/VlshftParamOpt/StdLibCharTmpl；InvTripDelay 补 reference_submit.zip；SlicerFbTimeOpt 诊断 hidden asset 注入。参考实现：`reference/EDA-Eval-DesignFlow-IOBufTune-001/hspice_mock/`（D r1283）。
+
+**@A（1 条）**：FmRtl2RtlDemo 诊断 hidden B（spec_b.json）注入（check.py L52 断言 cond a 失败：spec_b.json not found in workdir）。
+
+**结论**：Lite 500 阻塞点已从「L1×123 + P0×10」收窄到「P0×10」，全部在 A(1)+B(9)。A/B 修完 P0 即可触发 zhulong 3-run 终验。D 117/117 保持 green，本轮无 D case 修改。
+
+详见 `designflow/reports/lite_cross_shard_D_findings.md` §6 + `lite_health_D.tsv` L1-BATCH-RESOLVED 行。

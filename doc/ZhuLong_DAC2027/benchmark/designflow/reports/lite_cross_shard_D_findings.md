@@ -75,3 +75,38 @@ B shard 有 **8 条** Lite case 的 `check.py` 通过 `subprocess` 调 `hspice`�
 D 117/117 Lite 在 36.15 真跑复验通过（IOBufTune + SineScanStdout spot-check），保持 green。本轮无 D case 需修。等待 A/B/C 修复 + zhulong 最终 3-run（fix-order §6）。
 
 — D shard r1284
+
+---
+
+## 6. r1285 进度复扫（2026-11-25 01:37）
+
+> D shard 在 36.15 eval 宿主对 r1284 报告的缺陷做只读复扫，更新进度。
+
+### 6.1 L1 契约违规 — ✅ 全清零（123 → 0）
+
+`python3 scripts/audit_check_returns.py --all` 全量扫 + Lite 清单过滤：**Lite 集 L1 违规 = 0**（r1284 报 123，A/B/C 已全部修完）。A r1132（6 case L2 fix + 契约）、B r1173/r1174（CmlPvtAcReport hspice-mock + 6 P1 negs）、C r1079 等轮次共同贡献。**Lite L1 判分契约已合规。**
+
+剩余 33 条违规全部在 **Full 集（非 Lite）**：6 NO_CHECK_FN / 7 PARSE_ERROR / 20 VIOLATION——超出 Lite 修复范围，不阻塞 500/500 验收。
+
+### 6.2 P0 跨 shard — ⏳ 仍 10 条未修（A/B/C 未动）
+
+`git log --since=2026-11-25T01:24 -- benchmarks/.../reference/` 仅见 B r1174 修 CmlPvtAcReport（属 L1 列表，非 P0 hspice 7 条）。D r1284 报的 10 条 P0 全部未修，spot-confirmed 2/10：
+
+| case_id | shard | r1285 复扫结果 |
+|:--|:--|:--|
+| `EDA-Eval-DesignFlow-GmidLut-001` | B | `{'pass':False}` ref re-run failed: hspice missing（**仍未修**） |
+| `EDA-Eval-DesignFlow-FmRtl2RtlDemo-001` | A | EXC `spec_b.json (hidden B) not found in workdir`（**仍未修**） |
+
+其余 8 条参考 dir 无 git 提交 ⇒ 状态不变（7 B-hspice + 1 B-InvTripDelay-no-refzip + 1 B-SlicerFb-hidden-setup，含 GmidLut/OpampChar/SpiceSim/SpiceTbGen/TaperBufOpt/VlshftParamOpt/StdLibCharTmpl/InvTripDelay/SlicerFbTimeOpt）。
+
+### 6.3 给 A/B/C 的提醒（仍是 r1284 的请求）
+
+- **B**（最重）：7 条 hspice-依赖 case 用 D 的 `hspice_mock` 模式修（B r1174 已对 CmlPvtAcReport 验证此模式可行，请批量套用到 GmidLut/OpampChar/SpiceSim/SpiceTbGen/TaperBufOpt/VlshftParamOpt/StdLibCharTmpl）；InvTripDelay 补 reference_submit.zip；SlicerFbTimeOpt 诊断 hidden asset 注入。
+- **A**：FmRtl2RtlDemo 诊断 hidden B（spec_b.json）注入。
+- 全 shard：L1 已清零，无需再修。
+
+### 6.4 D 自身
+
+D 117/117 Lite 保持 green（无 D case 在本轮被修改，无需回归验证）。L1 全清零后，**Lite 500 阻塞点已从「L1 123 + P0 10」收窄到「P0 10」**——全部在 A(1) + B(9)。等 A/B 修完 P0 即可触发 zhulong 3-run 终验。
+
+— D shard r1285
