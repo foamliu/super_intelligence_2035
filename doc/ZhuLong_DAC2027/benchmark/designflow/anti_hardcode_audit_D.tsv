@@ -511,7 +511,7 @@ D	EDA-Eval-DesignFlow-WtmWriteDataReviewQA-001	23	n	unknown	ok	static-skip	stati
 D	EDA-Eval-DesignFlow-WvAcReportGen-001	16	n	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-WvAcReportGen-001
 D	EDA-Eval-DesignFlow-WvDispCfg-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-WvDispCfg-001
 D	WvDisplaySignalInWv-001	20	y	unknown	ok	static-skip	static-skip	y	PASS		WvDisplaySignalInWv-001
-D	EDA-Eval-DesignFlow-WvEdgeTiming-001	17	n	unknown	risk	static-skip	static-skip	y	GAP	no-subprocess;print_only-risk	EDA-Eval-DesignFlow-WvEdgeTiming-001
+D	EDA-Eval-DesignFlow-WvEdgeTiming-001	17	y	unknown	risk	static-skip	static-skip	y	PASS	r1265 FIX: HIDDEN path __file__-relative (cwd-independent, matches judge ../../assets/CID/hidden symlink); negative_selftest contract-updated (True=PASS); judge-sim REF PASS + 3 fake FAIL (print_only/core_deleted/empty_shell). Was GAP(no-subprocess;print_only-risk) static false-positive: runtime confirms print_only FAILs on hidden B.	EDA-Eval-DesignFlow-WvEdgeTiming-001
 D	EDA-Eval-DesignFlow-WvEyeDiagExtTrigMethodQA-001	29	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-WvEyeDiagExtTrigMethodQA-001
 D	EDA-Eval-DesignFlow-WvEyeSelect-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-WvEyeSelect-001
 D	EDA-Eval-DesignFlow-WvFsdbBatchOpenCmd-001	31	y	unknown	ok	static-skip	static-skip	y	PASS		WvFsdbBatchOpenCmd-001
