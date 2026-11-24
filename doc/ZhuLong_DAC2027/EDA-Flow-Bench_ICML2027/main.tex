@@ -47,22 +47,22 @@
 \newcommand{\etal}{\textit{et al.}\xspace}
 \newcommand{\TBD}{\textbf{TBD}\xspace}
 
-% 评测集分层（2026-11-19 用户令）：
-%   Full = 数千（several thousand）、持续增长、论文中不给具体数字。
-%   Lite = 500，从 Full 按领域覆盖平衡 + 链长分布筛选的代表性子集，用于一般评测（token/时间预算有限）。
-%   arm-level experiments run on Lite；696-run 冻结快照是 Full-set 描述性 baseline（采样自 Full）。
-\newcommand{\FullScale}{several thousand}
-\newcommand{\LiteSet}{500}
-% 冻结评测快照：2026-11-09 run_batch_20261109_171201 = 696 runs
-%   （62 PASS + 558 FAIL + 70 ERROR + 6 ABSENT）
-\newcommand{\Neval}{696}
-% M0 描述性基线 Pass@1（冻结 696-run Full-set 快照·DeepSeek-V4-Pro·2026-11-09）
-\newcommand{\MzeroPass}{10.0\%}
-% M0 臂级比较锚点 Pass@1（top-120-of-Lite 子集·doubao-seed-2.0-pro-cloud·2026-11-20 实测 12/119 decided）
-%   注：与 \MzeroPass 不同基座、不同子集；\MzeroPass 是 Full-set 描述性快照，\MzeroAnchor 是臂对比的同子集锚点。
-\newcommand{\MzeroAnchor}{10.1\%}
-% 脚本层基线对比
-\newcommand{\ScriptPass}{76.5\%}
+% 评测集（2026-11-23 用户令：单一 500 任务集，不出现 Full/Lite 两层）：
+%   500 任务，覆盖 13 个 EDA domain，按链长/工具链深度分层。
+\newcommand{\Ncases}{500}
+% M0 基线 Pass@1（DeepSeek-V4-Pro-cloud · 3-run mean ± std · 2026-11-24）
+%   r1=21.78%(105/482) · r2=19.75%(96/486) · r3=21.02%(103/490) · mean=20.85% ± 1.03%
+\newcommand{\MzeroPass}{20.85\%}
+\newcommand{\MzeroStd}{1.03}
+% 4 骨干对比（Lite 500 · Pass@1 · 3-run mean ± std）
+\newcommand{\DSvPro}{20.85\%}
+\newcommand{\DSvProStd}{1.03}
+\newcommand{\DoubaoPro}{10.18\%}
+\newcommand{\DoubaoProStd}{1.18}
+\newcommand{\DoubaoLite}{4.68\%}
+\newcommand{\DoubaoLiteStd}{0.77}
+\newcommand{\DoubaoMini}{2.39\%}
+\newcommand{\DoubaoMiniStd}{0.19}
 
 % 图表路径
 \graphicspath{{figures/}}

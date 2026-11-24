@@ -1,19 +1,17 @@
-% abstract word count: ~198 rendered (ICML convention 150-250; reweighted so EDA-Flow-Bench leads as the first contribution with the two-tier Full/Lite structure, then the cognitive hypotheses/mechanisms and the ablation; core numbers 7.6x / 10.0% / 76.5% / 696 / 62/620 / 7.1x domain gap, three formulas pointer, honest route, and no-release are all retained; Full set count is qualitative per 2026-11-19 tiering order; compressed from ~217 to <=200 rendered words per criterion ⑨ of the 2026-11-19 tiering red order by trimming redundant phrasing -- "in a production environment", "that is not uniform", "this collapse is", "model-", "results are reported as", "supported", "detailed", "used" -- without dropping any required data point)
+% abstract word count: ~200 rendered (ICML 150-250; single 500-task set per 2026-11-23 order; M0 = DeepSeek-V4-Pro 3-run 20.85±1.03%; 4-backbone comparison; no 76.5%/7.6x/696/Full-Lite two-tier; H1/H2/H3 + 10-arm ablation + no-release retained)
 \begin{abstract}
-We introduce \bench{}, a two-tier benchmark: a \emph{Full} set of \FullScale{} long-chain EDA design-flow tasks across 13 domains (continuously growing, count not reported) and a \emph{Lite} set of \LiteSet{} curated tasks for general evaluation under bounded token/time budgets. Each task derives from real IC-design engineer coding-agent traces, with a \mode{} contract (submit.zip + $\geq$8 executable assertions + a PreToolUse anti-leakage hook). On a frozen \Neval{}-run Full-set snapshot, a single frontier backbone reaches only \textbf{\MzeroPass{} Pass@1} (62/620 decided runs) versus \textbf{\ScriptPass{}} on single-script EDA benchmarks---a 7.6$\times$ gap, non-uniform across domains (7.1$\times$ highest vs lowest). We hypothesize a mechanistically tractable \emph{memory and self-improvement} deficit, not merely a capacity ceiling, and \emph{formulate} 3 core falsifiable hypotheses (H1/H2/H3) decomposed into 7 sub-hypotheses, mapping three cognitive-neuroscience mechanisms (surprise-gated writing, weapon-focus compression, state-aware retrieval) to computable formulas (\S\ref{sec:harness}). To test them we \emph{design} a 10-arm main ablation (3 appendix arms) with an equal-token killer control (N1) and a cross-domain transfer contamination probe (M4), run on the Lite set. M0 is evaluated on Lite (\MzeroAnchor{}, doubao-seed-2.0-pro-cloud); other arms are to be evaluated. Negative results are publishable boundary conditions. No data or code is released; reproducibility is via a protocol description and an NDA-gated review package.
+We introduce \bench{}, a benchmark of \Ncases{} long-chain EDA design-flow tasks across 13 domains, each derived from real IC-design engineer coding-agent traces, with a \mode{} contract (submit.zip + $\geq$8 executable assertions + a PreToolUse anti-leakage hook). On this benchmark, a single frontier backbone (DeepSeek-V4-Pro) reaches only \textbf{\MzeroPass{}$\pm$\MzeroStd{} Pass@1} over 3 runs, while three weaker backbones range from \DoubaoMini{} to \DoubaoPro{}---a 2.0$\times$ spread non-uniform across domains. We hypothesize a mechanistically tractable \emph{memory and self-improvement} deficit, not merely a capacity ceiling, and \emph{formulate} 3 core falsifiable hypotheses (H1/H2/H3) decomposed into 7 sub-hypotheses, mapping three cognitive-neuroscience mechanisms (surprise-gated writing, weapon-focus compression, state-aware retrieval) to computable formulas (\S\ref{sec:harness}). To test them we \emph{design} a 10-arm main ablation (3 appendix arms) with an equal-token killer control (N1) and a cross-domain transfer contamination probe (M4). M0 is evaluated; other arms are to be evaluated. Negative results are publishable boundary conditions. No data or code is released; reproducibility is via a protocol description and an NDA-gated review package.
 \end{abstract}
 
 % 【中文】
-% 我们引入 \bench{}——一个两层基准：\emph{Full} 集含 \FullScale{} 个长链 EDA 设计流任务、跨 13 个领域
-% （持续增长、不报告具体数字），以及 \emph{Lite} 集 \LiteSet{} 个经筛选的任务，用于在有限 token/时间
-% 预算下的一般评测。每个任务源自真实 IC 设计工程师的 coding-agent trace，含 \mode{}
-% 契约（submit.zip + $\geq$8 个可执行断言 + PreToolUse 反泄漏钩子）。在一份冻结的 \Neval{}-run
-% Full-set 快照上，单一前沿骨干仅达到 \textbf{\MzeroPass{} Pass@1}（62/620 已判定 run），而单脚本
-% EDA 基准为 \textbf{\ScriptPass{}}——7.6$\times$ 跳变，且跨域不均匀（通过率最高领域是最低领域的 7.1$\times$）。
-% 我们假设一个在机制上可处理的\emph{记忆与自我改进}缺失，而非单纯的能力上限，
-% 并\emph{提出} 3 条核心可证伪假设（H1/H2/H3）下设 7 条子假设，将三个认知神经科学机制
-%（惊异门控写入、武器焦点压缩、状态感知检索）映射为可计算公式（\S\ref{sec:harness}）。
-% 为检验这些假设，我们\emph{设计} 10 臂主消融（3 臂附录），含等 token 杀手对照（N1）与
-% 跨域迁移污染探针（M4），在 Lite 集上运行。M0 可从冻结快照获得；其他臂待评测。
+% 我们引入 \bench{}——一个含 \Ncases{} 个长链 EDA 设计流任务、跨 13 个领域的基准，每个任务源自
+% 真实 IC 设计工程师的 coding-agent trace，含 \mode{} 契约（submit.zip + $\geq$8 个可执行断言 +
+% PreToolUse 反泄漏钩子）。在该基准上，单一前沿骨干（DeepSeek-V4-Pro）3 轮仅达到
+% \textbf{\MzeroPass{}$\pm$\MzeroStd{} Pass@1}，三个较弱骨干从 \DoubaoMini{} 到 \DoubaoPro{}
+% 不等——2.0$\times$ 跨域不均匀差距。我们假设一个在机制上可处理的\emph{记忆与自我改进}缺失，
+% 而非单纯的能力上限，并\emph{提出} 3 条核心可证伪假设（H1/H2/H3）下设 7 条子假设，
+% 将三个认知神经科学机制（惊异门控写入、武器焦点压缩、状态感知检索）映射为可计算公式
+%（\S\ref{sec:harness}）。为检验这些假设，我们\emph{设计} 10 臂主消融（3 臂附录），含等 token
+% 杀手对照（N1）与跨域迁移污染探针（M4）。M0 已评测；其他臂待评测。
 % 阴性结果作为可发表的边界条件。不发布任何数据或代码；可复现性通过协议描述与
 % NDA 受控评审包支持。

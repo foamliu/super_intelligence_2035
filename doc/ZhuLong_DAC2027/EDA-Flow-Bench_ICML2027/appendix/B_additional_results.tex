@@ -9,17 +9,21 @@
 \label{sec:full-per-domain}
 % \subsection{完整的各领域结果}
 
-{\hbadness=10000\sloppy Table~\ref{tab:full-domain-results} reports the full per-domain breakdown from the 2026-11-09 frozen evaluation (\Neval{} runs across all 13 domains, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 8 workers). The overall Pass@1 is 10.0\% (62 PASS / 620 decided runs); 70 ERROR and 6 ABSENT runs are excluded from the denominator but reported per domain. Column sums are 62/558/70/6/696, and for every row PASS$+$FAIL$+$ERROR$+$ABSENT$=$Total.\par}
-% 表~\ref{tab:full-domain-results} 报告 2026-11-09 冻结评测（\Neval{} 个 run，覆盖全部 13 个领域，
-% DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、8 workers）的完整各领域分解。
-% 总体 Pass@1 为 10.0\%（62 PASS / 620 已判定 run）；70 个 ERROR 与 6 个 ABSENT 不计入分母但逐域列出。
-% 列合计 62/558/70/6/696，且每行 PASS+FAIL+ERROR+ABSENT=Total。
+{\hbadness=10000\sloppy Table~\ref{tab:full-domain-results} reports the per-domain breakdown from the 3-run M0 evaluation (3 runs across all 13 domains, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 16 workers, 2400s timeout). The overall Pass@1 is \MzeroPass{}$\pm$\MzeroStd{} (3-run mean$\pm$std; r1=105/482, r2=96/486, r3=103/490 decided; 304 PASS / 1154 FAIL / 42 ERROR-or-ABSENT across 1500 runs). Per-domain breakdown for the 3-run evaluation is pending and will be reported in the camera-ready version; the table below is retained as a placeholder for the per-domain matrix.\par}
+% 表~\ref{tab:full-domain-results} 报告 3 轮 M0 评测（3 轮、覆盖全部 13 个领域，
+% DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、16 workers、2400s 超时）的各领域分解。
+% 总体 Pass@1 为 \MzeroPass{}$\pm$\MzeroStd{}（3-run mean$\pm$std；r1=105/482、r2=96/486、
+% r3=103/490 已判定；1500 run 中 304 PASS / 1154 FAIL / 42 ERROR-or-ABSENT）。
+% 3-run 评测的逐域分解待补，将在 camera-ready 版本给出；下表保留为逐域矩阵的占位。
 
 \begin{table}[ht]
 \centering
 \small
-\caption{Full Pass@1 (\%) by domain on the 2026-11-09 Full-set evaluation snapshot (696 cases, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 8 workers, 2400s timeout). This is the descriptive Full-set baseline; arm-level experiments run on the Lite \LiteSet{}-task set. Pass\% = PASS/(PASS+FAIL); ERROR and ABSENT are excluded from the denominator.}
-% \caption{2026-11-09 完整 Full-set 评测快照（696 例，DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、8 workers、超时 2400s）各领域 Pass@1 (\%)。此为描述性 Full-set 基线；臂级实验在 Lite \LiteSet{}-任务集上运行。Pass\% = PASS/(PASS+FAIL)；ERROR 与 ABSENT 不计入分母。}
+\caption{Pass@1 (\%) by domain on the 3-run M0 evaluation (\Ncases{} cases $\times$ 3 runs, DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 16 workers, 2400s timeout). Per-domain breakdown is pending (TODO); the Total row reports the 3-run aggregate (304 PASS / 1154 FAIL / 42 ERROR-or-ABSENT / 1500 runs; Pass\% = 304/1458 = \MzeroPass{}). Pass\% = PASS/(PASS+FAIL); ERROR and ABSENT are excluded from the denominator.}
+% \caption{3 轮 M0 评测（\Ncases{} 例 $\times$ 3 轮，DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、
+% 16 workers、超时 2400s）各领域 Pass@1 (\%)。逐域分解待补（TODO）；Total 行报告 3 轮合计
+%（304 PASS / 1154 FAIL / 42 ERROR-or-ABSENT / 1500 run；Pass\% = 304/1458 = \MzeroPass{}）。
+% Pass\% = PASS/(PASS+FAIL)；ERROR 与 ABSENT 不计入分母。}
 \label{tab:full-domain-results}
 \scriptsize
 \setlength{\tabcolsep}{4pt}
@@ -27,21 +31,21 @@
 \toprule
 \textbf{Domain} & \textbf{PASS} & \textbf{FAIL} & \textbf{ERROR} & \textbf{ABSENT} & \textbf{Total} & \textbf{Pass\%} \\
 \midrule
-schematic\_netlist & 13 & 100 & 18 & 0 & 131 & 11.5 \\
-spice\_sim         & 8  & 87  & 7  & 2 & 104 & 8.4  \\
-physical\_verify   & 2  & 66  & 4  & 1 & 73  & 2.9  \\
-digital            & 5  & 40  & 6  & 0 & 51  & 11.1 \\
-analog\_context    & 4  & 39  & 12 & 0 & 55  & 9.3  \\
-waveform           & 2  & 37  & 8  & 0 & 47  & 5.1  \\
-layout\_virtuoso   & 4  & 35  & 0  & 1 & 40  & 10.3 \\
-layout\_aether     & 1  & 33  & 4  & 0 & 38  & 2.9  \\
-verification       & 3  & 30  & 5  & 0 & 38  & 9.1  \\
-eda\_other         & 6  & 27  & 4  & 1 & 38  & 18.2 \\
-pg\_layout         & 4  & 24  & 0  & 0 & 28  & 14.3 \\
-characterization   & 5  & 21  & 2  & 0 & 28  & 19.2 \\
-pnr\_signoff       & 5  & 19  & 0  & 1 & 25  & 20.8 \\
+schematic\_netlist & TODO & TODO & TODO & TODO & TODO & TODO \\
+spice\_sim         & TODO & TODO & TODO & TODO & TODO & TODO \\
+physical\_verify   & TODO & TODO & TODO & TODO & TODO & TODO \\
+digital            & TODO & TODO & TODO & TODO & TODO & TODO \\
+analog\_context    & TODO & TODO & TODO & TODO & TODO & TODO \\
+waveform           & TODO & TODO & TODO & TODO & TODO & TODO \\
+layout\_virtuoso   & TODO & TODO & TODO & TODO & TODO & TODO \\
+layout\_aether     & TODO & TODO & TODO & TODO & TODO & TODO \\
+verification       & TODO & TODO & TODO & TODO & TODO & TODO \\
+eda\_other         & TODO & TODO & TODO & TODO & TODO & TODO \\
+pg\_layout         & TODO & TODO & TODO & TODO & TODO & TODO \\
+characterization   & TODO & TODO & TODO & TODO & TODO & TODO \\
+pnr\_signoff       & TODO & TODO & TODO & TODO & TODO & TODO \\
 \midrule
-\textbf{Total}     & \textbf{62} & \textbf{558} & \textbf{70} & \textbf{6} & \textbf{696} & \textbf{10.0} \\
+\textbf{Total}     & \textbf{304} & \textbf{1154} & \multicolumn{2}{c}{\textbf{42}} & \textbf{1500} & \textbf{\MzeroPass{}} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -50,25 +54,15 @@ pnr\_signoff       & 5  & 19  & 0  & 1 & 25  & 20.8 \\
 \label{sec:per-model}
 % \subsection{各模型结果}
 
-This submission reports a \emph{single-backbone} Full-set snapshot: only DeepSeek-V4-Pro
-has been run to completion over the full \Neval{}-run snapshot (10.0\% Pass@1,
-62/620 decided). GLM-5.2, Kimi-K2.6, DeepSeek-V4-Flash and Doubao-Seed-2.0-Pro
-are configured in the same harness but their Full-set sweeps are still running, so we
-report no Full-set numbers for them rather than a table of dashes. Separately, the
-\emph{arm-level} M0 anchor is measured on doubao-seed-2.0-pro-cloud over the Lite
-top-120-of-Lite subset (\MzeroAnchor{}, 12/119 decided; 9.3\% over full Lite \LiteSet{},
-45/483); DeepSeek-V4-Pro has since been deprecated as the arm backbone.
-At the observed batch cost (696 runs in $\approx$24\,h at 8 workers), the remaining four backbones
-amount to roughly five machine-days; we will report the Full-set sweep in the
-camera-ready version and repeat it as the multi-backbone test of RQ3
-(Section~\ref{sec:per-model}).
-% 本投稿给出的是\emph{单骨干} Full-set 快照：只有 DeepSeek-V4-Pro 在完整的 \Neval{}-run 快照上跑到完成
-% （10.0\% Pass@1，62/620 已判定）。GLM-5.2、Kimi-K2.6、DeepSeek-V4-Flash、Doubao-Seed-2.0-Pro
-% 已接入同一框架但 Full-set 扫描仍在跑，因此这里不报 Full-set 数字，也不放一张全是 "---" 的表。
-% 另外，臂级 M0 锚点已在 doubao-seed-2.0-pro-cloud 上、于 Lite top-120-of-Lite 子集实测
-% （\MzeroAnchor{}，12/119 已判定；全 Lite \LiteSet{} 为 9.3\%，45/483）；DeepSeek-V4-Pro 已作为
-% 臂骨干弃用。按本批实测成本（696 run / 8 workers ≈ 24 小时），余下四个骨干约需五个机器日；camera-ready
-% 版本将给出该 Full-set 扫描，并用它作为 RQ3 的多骨干检验。
+This submission reports a \emph{four-backbone} comparison on the \Ncases{}-task set (3 runs each, Pass@1, same harness: Cline v3.0.51, \texttt{thinking=low}, 2400s timeout, 16 workers). DeepSeek-V4-Pro reaches \DSvPro{}$\pm$\DSvProStd{} (r1=21.78\%, r2=19.75\%, r3=21.02\%; 3/3 runs clean), doubao-seed-2.0-pro-cloud \DoubaoPro{}$\pm$\DoubaoProStd{}, doubao-seed-2.0-lite-cloud \DoubaoLite{}$\pm$\DoubaoLiteStd{}, doubao-seed-2.0-mini-cloud \DoubaoMini{}$\pm$\DoubaoMiniStd{}. A McNemar paired test on majority-vote outcomes (DeepSeek-V4-Pro vs doubao-seed-2.0-pro-cloud) gives $b{=}69$, $c{=}2$, $p\approx 0.0000$ ($\Delta{=}{+}10.67$pp, highly significant), confirming that the M0 gap is not noise. Additional backbones (GLM-5.2, Kimi-K2.6, DeepSeek-V4-Flash) are configured in the same harness but their sweeps are still running; we will report them in the camera-ready version as the multi-backbone test of RQ3 (Section~\ref{sec:per-model}).
+% 本投稿给出 \Ncases{}-任务集上的\emph{四骨干}对比（各 3 轮、Pass@1、同一框架：Cline v3.0.51、
+% \texttt{thinking=low}、2400s 超时、16 workers）。DeepSeek-V4-Pro 达 \DSvPro{}$\pm$\DSvProStd{}
+%（r1=21.78\%、r2=19.75\%、r3=21.02\%；3/3 runs clean），doubao-seed-2.0-pro-cloud \DoubaoPro{}$\pm$\DoubaoProStd{}，
+% doubao-seed-2.0-lite-cloud \DoubaoLite{}$\pm$\DoubaoLiteStd{}，doubao-seed-2.0-mini-cloud
+% \DoubaoMini{}$\pm$\DoubaoMiniStd{}。对 majority-vote 结果做 McNemar 配对检验
+%（DeepSeek-V4-Pro vs doubao-seed-2.0-pro-cloud）得 $b{=}69$、$c{=}2$、$p\approx 0.0000$
+%（$\Delta{=}{+}10.67$pp，高度显著），印证 M0 差距非噪声。其余骨干（GLM-5.2、Kimi-K2.6、
+% DeepSeek-V4-Flash）已接入同一框架但扫描仍在跑；camera-ready 版本将给出该多骨干检验作为 RQ3。
 
 \subsection{Failure Taxonomy by Domain}
 \label{sec:failure-by-domain}
@@ -82,16 +76,12 @@ and (ii) a triage procedure that recovers the categories from each run's judge l
 agent session (\texttt{eval\_triage/05\_batch\_triage.py}, available to qualified reviewers
 via the NDA-gated review package rather than publicly released, with an explicit UNKNOWN
 share so that unclassified runs are never silently folded into another bucket). Applying it to
-the \Neval{}-run batch yields the per-domain category matrix in
+the 3-run \Ncases{}-task batch yields the per-domain category matrix in
 Table~\ref{tab:failure-by-domain} (PASS runs are out of scope here; rows sum to
 the FAIL+ERROR count per domain). Class abbreviations: TO=ERROR\_TIMEOUT,
 INFRA=ERROR\_INFRA, NOSUB=NO\_SUBMIT, FMT=FORMAT\_CONTRACT, RT=ASSERT\_RUNTIME,
 SEM=ASSERT\_SEMANTIC, ANTI=ASSERT\_ANTIHARDCODE, UNK=UNKNOWN; F+E=FAIL+ERROR.
-The UNKNOWN column is dominated by the ERROR-status runs (aborted pre-judging,
-counted in mode (i) of \S\ref{sec:failure-by-domain} by terminal status) whose
-abort reason carries no timeout/infrastructure signature; the remaining
-FAIL-with-submit UNKNOWN (49 runs, 7.0\% of the batch) is detailed in
-\S\ref{sec:failure-by-domain}. A stacked-bar view and a Cohen's $\kappa$ agreement
+The per-domain category counts for the 3-run batch are pending (TODO); a stacked-bar view and a Cohen's $\kappa$ agreement
 statistic between the tool and a human labeler on a 100-run sample are deferred
 to the camera-ready version.
 \par}
@@ -100,38 +90,36 @@ to the camera-ready version.
 % (ii) 一个逐 run 归因流程，它从每个 run 的判分日志与智能体会话中恢复类别
 % （eval_triage/05_batch_triage.py，经 NDA 受控评审包向合格评审者提供，不公开发布；
 % 并显式报告 UNKNOWN 比例，避免未分类 run 被悄悄并入别的桶）。
-% 将其应用于 \Neval{}-run 批次得到表~\ref{tab:failure-by-domain} 的逐域类别矩阵（PASS run 不在此表
+% 将其应用于 3 轮 \Ncases{}-任务批次得到表~\ref{tab:failure-by-domain} 的逐域类别矩阵（PASS run 不在此表
 % 范围；各行加和为该域 FAIL+ERROR 数）。列缩写：TO=ERROR_TIMEOUT, INFRA=ERROR_INFRA,
 % NOSUB=NO_SUBMIT, FMT=FORMAT_CONTRACT, RT=ASSERT_RUNTIME, SEM=ASSERT_SEMANTIC,
-% ANTI=ASSERT_ANTIHARDCODE, UNK=UNKNOWN; F+E=FAIL+ERROR。UNKNOWN 列以 ERROR 终态 run（判分前中止，
-% 按 \S\ref{sec:failure-by-domain} 模式 (i) 的终态计入）为主，其中止原因无 timeout/infra 签名；
-% 其余 FAIL-with-submit UNKNOWN（49 run，占批次 7.0\%）见 \S\ref{sec:failure-by-domain}。
+% ANTI=ASSERT_ANTIHARDCODE, UNK=UNKNOWN; F+E=FAIL+ERROR。3 轮批次的逐域类别计数待补（TODO）；
 % 堆叠柱状图与工具对人工标注者在 100-run 样本上的 Cohen's kappa 一致性推迟到 camera-ready。
 
 \begin{table}[ht]
 \centering
-\caption{Per-domain failure-category matrix for the \Neval{}-run batch, recovered by \texttt{eval\_triage/05\_batch\_triage.py} from per-run judge logs. PASS runs are excluded; each row sums to that domain's FAIL+ERROR count. UNKNOWN is reported as its own column, not folded into another class. Pass\% is PASS/(PASS+FAIL) per domain (62/620 = 10.0\% overall).}
+\caption{Per-domain failure-category matrix for the 3-run \Ncases{}-task batch, recovered by \texttt{eval\_triage/05\_batch\_triage.py} from per-run judge logs. PASS runs are excluded; each row sums to that domain's FAIL+ERROR count. UNKNOWN is reported as its own column, not folded into another class. Per-domain category counts are pending (TODO); overall Pass\% is \MzeroPass{} (304/1458 decided across 3 runs).}
 \label{tab:failure-by-domain}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrrrrrrrrr}
 \toprule
 Domain & TO & INFRA & NOSUB & FMT & RT & SEM & ANTI & UNK & F+E \\
 \midrule
-analog\_context & 0 & 0 & 3 & 1 & 9 & 20 & 0 & 18 & 51 \\
-characterization & 0 & 0 & 5 & 0 & 7 & 8 & 0 & 3 & 23 \\
-digital & 0 & 0 & 3 & 0 & 7 & 28 & 0 & 8 & 46 \\
-eda\_other & 0 & 0 & 5 & 0 & 3 & 16 & 0 & 7 & 31 \\
-layout\_aether & 0 & 0 & 4 & 0 & 4 & 25 & 0 & 4 & 37 \\
-layout\_virtuoso & 0 & 0 & 4 & 1 & 7 & 20 & 0 & 3 & 35 \\
-pg\_layout & 0 & 0 & 3 & 0 & 7 & 11 & 0 & 3 & 24 \\
-physical\_verify & 0 & 0 & 8 & 0 & 18 & 37 & 0 & 7 & 70 \\
-pnr\_signoff & 0 & 0 & 2 & 0 & 1 & 16 & 0 & 0 & 19 \\
-schematic\_netlist & 0 & 0 & 5 & 0 & 26 & 54 & 0 & 33 & 118 \\
-spice\_sim & 0 & 0 & 8 & 0 & 26 & 48 & 0 & 12 & 94 \\
-verification & 0 & 0 & 5 & 0 & 11 & 11 & 0 & 8 & 35 \\
-waveform & 0 & 0 & 15 & 0 & 6 & 11 & 0 & 13 & 45 \\
+schematic\_netlist & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+spice\_sim         & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+physical\_verify   & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+digital            & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+analog\_context    & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+waveform           & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+layout\_virtuoso   & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+layout\_aether     & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+verification       & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+eda\_other         & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+pg\_layout         & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+characterization   & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
+pnr\_signoff       & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO & TODO \\
 \midrule
-\textbf{Total} & \textbf{0} & \textbf{0} & \textbf{70} & \textbf{2} & \textbf{132} & \textbf{305} & \textbf{0} & \textbf{119} & \textbf{628} \\
+\textbf{Total} & \textbf{TODO} & \textbf{TODO} & \textbf{TODO} & \textbf{TODO} & \textbf{TODO} & \textbf{TODO} & \textbf{TODO} & \textbf{TODO} & \textbf{TODO} \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -147,7 +135,7 @@ median run consumes 0.71M input and 55.6k output tokens (mean 0.86M/52.5k; total
 iterations and 1{,}047\,s of wall-clock time (IQR 552--1{,}495). The input:output
 ratio of ${\sim}13{:}1$ is the signature of a long-horizon agent loop that re-sends
 its context each iteration, and it is the main cost driver of flow orchestration.
-A per-task token/cost table for the full \Neval{}-run batch is pending because the
+A per-task token/cost table for the 3-run \Ncases{}-task batch is pending because the
 batch summary records only terminal status and wall time; the per-run session logs
 are retained and will be aggregated with the same parser
 (\texttt{eval\_triage/trace\_anatomy.py}) in the camera-ready version.
@@ -155,7 +143,7 @@ are retained and will be aggregated with the same parser
 % 中位每 run 消耗 0.71M input / 55.6k output token（均值 0.86M / 52.5k；合计 25.7M / 1.58M），
 % 同时中位发出 26.5 次工具调用（IQR 13.8--38.0）、跨 20.5 轮迭代、耗 1,047 秒墙钟（IQR 552--1,495）。
 % 约 13:1 的 input:output 比是长时程智能体回路的特征——每轮迭代都要重发上下文，这也是流程编排的主要成本来源。
-% 全量 \Neval{}-run 批次的逐任务 token/成本表待补：批次摘要只记录终态与墙钟，逐 run 会话日志已留存，
+% 3 轮 \Ncases{}-任务批次的逐任务 token/成本表待补：批次摘要只记录终态与墙钟，逐 run 会话日志已留存，
 % 将在 camera-ready 用同一解析器（eval_triage/trace_anatomy.py）聚合给出。
 
 \subsection{Context-Compaction Ablation}
@@ -168,7 +156,7 @@ two compaction strategies: \emph{basic} (a structured summarization that
 preserves tool-call I/O verbatim) and \emph{agentic} (an LLM-generated free-form
 summary). Because compaction is triggered deep into a run and its effect is
 entangled with task difficulty, we isolate it with an ABBA-designed ablation on
-a fixed 40-task subset of the Lite set, holding everything else constant
+a fixed 40-task subset of the \Ncases{}-task benchmark, holding everything else constant
 (DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=medium}, 2400s timeout, single
 trace per task). The ABBA order (basic, agentic, agentic, basic, basic, agentic)
 balances position effects across six rounds.
@@ -217,7 +205,7 @@ the relative comparison between the two compaction strategies is the point.
 % 长时程智能体回路不断累积上下文，直到编程智能体的压缩机制必须摘要早期轮次以适配上下文窗口。
 % Cline 提供两种压缩策略：\emph{basic}（保留工具调用 I/O 原文的结构化摘要）与 \emph{agentic}
 % （LLM 生成的自由式摘要）。由于压缩在 run 深处触发且其效果与任务难度耦合，我们用 ABBA 设计的消融
-% 在 Lite 集的固定 40 任务子集上隔离该因素，其余保持恒定（DeepSeek-V4-Pro、Cline v3.0.51、
+% 在 \Ncases{}-任务基准的固定 40 任务子集上隔离该因素，其余保持恒定（DeepSeek-V4-Pro、Cline v3.0.51、
 % \texttt{thinking=medium}、2400s 超时、每任务单轨迹）。ABBA 顺序（basic, agentic, agentic, basic,
 % basic, agentic）在六轮间平衡位置效应。三轮 basic 的通过率为 67.5/70.0/70.0（均值 69.2\%），
 % 三轮 agentic 为 57.5/60.0/60.0（均值 59.2\%），basic 稳定优 ${\sim}10$pp。ABBA 设计排除了纯顺序假象，

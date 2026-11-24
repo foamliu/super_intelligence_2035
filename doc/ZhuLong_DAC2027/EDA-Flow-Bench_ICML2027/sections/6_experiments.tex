@@ -2,26 +2,26 @@
 \label{sec:experiments}
 % 【中文】\section{实验}
 
-{\hbadness=10000\sloppy \textbf{Experimental status.} We formulate 3 core hypotheses (H1--H3) and 7 sub-hypotheses (details in \S\ref{sec:hypotheses}). M0 is \emph{evaluated} on the Lite top-120-of-Lite subset (\MzeroAnchor{} Pass@1, 12/119 decided; doubao-seed-2.0-pro-cloud, Cline v3.0.51, \texttt{thinking=low}, 2400s, 2026-11-20); a frozen 696-run Full-set snapshot (\MzeroPass{}, DeepSeek-V4-Pro) remains the descriptive baseline. M1--M8 and N1--N2 are to be evaluated. Negative results are reported as publishable boundary conditions.\par}
+{\hbadness=10000\sloppy \textbf{Experimental status.} We formulate 3 core hypotheses (H1--H3) and 7 sub-hypotheses (details in \S\ref{sec:hypotheses}). M0 is \emph{evaluated} on the full \Ncases{}-task set over 3 independent runs (\MzeroPass{}$\pm$\MzeroStd{} Pass@1; DeepSeek-V4-Pro, Cline v3.0.51, \texttt{thinking=low}, 2400s, 16 workers; r1=105/482, r2=96/486, r3=103/490; 3/3 clean, 0 FUSE/quota/burnout). M1--M8 and N1--N2 are to be evaluated. Negative results are reported as publishable boundary conditions.\par}
 % 【中文】
 % \textbf{实验状态。} 本文提出 3 条核心假设（H1--H3）与 7 条子假设（H1a--c、H2a--c、
-% H3）。M0 基线已在 Lite top-120-of-Lite 子集上\emph{实测}（\MzeroAnchor{} Pass@1、
-% 12/119 已判定；doubao-seed-2.0-pro-cloud、Cline v3.0.51、\texttt{thinking=low}、2400s 超时、
-% 2026-11-20）；冻结的 696-run Full-set 快照（\MzeroPass{}、DeepSeek-V4-Pro）仍为描述性基线。
-% 所有其他臂（M1--M8、N1--N2）待评测。阴性结果将作为可发表的边界条件报告，
-% 涵盖长链 EDA 编排中的 RSI 与情绪记忆机制。
+% H3）。M0 基线已在完整 \Ncases{} 任务集上\emph{实测}（3 轮独立运行，
+% \MzeroPass{}$\pm$\MzeroStd{} Pass@1；DeepSeek-V4-Pro、Cline v3.0.51、\texttt{thinking=low}、
+% 2400s 超时、16 workers；r1=105/482、r2=96/486、r3=103/490；3/3 clean、0 FUSE/额度/熔断）。
+% 所有其他臂（M1--M8、N1--N2）待评测。阴性结果将作为可发表的边界条件报告。
 
-\textbf{M0 baseline anchor.} Table~\ref{tab:m0-baseline} reports the frozen snapshot anchoring M0. The 7.1$\times$ domain gap and failure-class split are descriptive of the baseline; they motivate the memory/RSI hypotheses but are \emph{not} used to pre-claim any arm's result (full breakdown in \S\ref{sec:analysis}).
+\textbf{M0 baseline \& backbone comparison.} Table~\ref{tab:m0-baseline} reports the M0 3-run snapshot. Table~\ref{tab:model-comparison} compares 4 backbones on the same \Ncases{}-task set (3 runs each, identical harness). The strongest backbone (DeepSeek-V4-Pro) reaches \MzeroPass{}$\pm$\MzeroStd{}, roughly 2.0$\times$ the weakest viable backbone (doubao-seed-2.0-pro-cloud, \DoubaoPro{}$\pm$\DoubaoProStd{}); a paired McNemar test on majority-vote per-task outcomes confirms the gap is highly significant ($b=69$, $c=2$, $p\approx 0.0000$, $\Delta{=}+10.67$pp).
 % 【中文】
-% \textbf{M0 基线锚点。} 表~\ref{tab:m0-baseline} 报告锚定 M0 的冻结快照。7.1$\times$ 的领域差距
-%（pnr\_signoff 20.8\% vs.\ physical\_verify/layout\_aether 2.9\%）与失败类别划分（无输出 21.0\%、
-% 语义 62.8\%、契约 0.3\%、UNKNOWN 7.0\%）是对基线的描述；它们激发记忆/RSI 假设，但\emph{未}用于
-% 预先声称任何臂的结果。
-% 【中文】表 1：M0 基线（冻结 696-run 快照，2026-11-09）。Pass\% = PASS/(PASS+FAIL)。完整各领域表见附录~\ref{sec:additional-results}。
+% \textbf{M0 基线与骨干对比。} 表~\ref{tab:m0-baseline} 报告 M0 的 3 轮快照。
+% 表~\ref{tab:model-comparison} 在同一 \Ncases{} 任务集上对比 4 个骨干（各 3 轮、同一 harness）。
+% 最强骨干（DeepSeek-V4-Pro）达到 \MzeroPass{}$\pm$\MzeroStd{}，约为最弱可用骨干
+%（doubao-seed-2.0-pro-cloud，\DoubaoPro{}$\pm$\DoubaoProStd{}）的 2.0$\times$；
+% 逐题 majority-vote 的 McNemar 配对检验确认差距高度显著
+%（$b=69$、$c=2$、$p\approx 0.0000$、$\Delta{=}+10.67$pp）。
 
 \begin{table}[ht]
 \centering
-\caption{M0 baseline (frozen 696-run Full-set snapshot, 2026-11-09). Pass\% = PASS/(PASS+FAIL). Full per-domain table in Appendix~\ref{sec:additional-results}.}
+\caption{M0 baseline (3-run snapshot on the \Ncases{}-task set, DeepSeek-V4-Pro, 2026-11-24). Pass\% = PASS/(PASS+FAIL). Full per-domain table in Appendix~\ref{sec:additional-results}.}
 \label{tab:m0-baseline}
 \scriptsize
 \setlength{\tabcolsep}{4pt}
@@ -29,29 +29,45 @@
 \toprule
 \textbf{Metric} & \textbf{Count} & \textbf{Rate} \\
 \midrule
-PASS & 62 & --- \\
-FAIL & 558 & --- \\
-ERROR & 70 & --- \\
-ABSENT & 6 & --- \\
+PASS (3 runs total) & 304 & --- \\
+FAIL (3 runs total) & 1154 & --- \\
+ERROR (3 runs total) & 42 & --- \\
 \midrule
-Pass@1 (decided) & 62/620 & \textbf{10.0\%} \\
-no-output / aborted & 146/696 & 21.0\% \\
-semantic / partial & 437/696 & 62.8\% \\
-contract / format & 2/696 & 0.3\% \\
-UNKNOWN & 49/696 & 7.0\% \\
+Pass@1 (r1) & 105/482 & 21.78\% \\
+Pass@1 (r2) & 96/486 & 19.75\% \\
+Pass@1 (r3) & 103/490 & 21.02\% \\
+Pass@1 (mean$\pm$std) & --- & \textbf{\MzeroPass{}$\pm$\MzeroStd{}} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{H1/H2/H3 criteria-check framework.} Each sub-hypothesis's pass/fail is determined by the pre-specified falsification threshold (\S\ref{sec:hypotheses}). Table~\ref{tab:criteria-check} gives the evaluation framework with results \TBD.
+\begin{table}[ht]
+\centering
+\caption{Backbone comparison on the \Ncases{}-task set (3 runs each, same harness: Cline v3.0.51, \texttt{thinking=low}, 2400s, 16 workers). McNemar test on majority-vote per-task outcomes (DeepSeek-V4-Pro vs doubao-pro): $b=69$, $c=2$, $p\approx 0.0000$, $\Delta{=}+10.67$pp.}
+\label{tab:model-comparison}
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Backbone} & \textbf{Pass@1 (mean$\pm$std)} & \textbf{decided/run} & \textbf{clean} \\
+\midrule
+DeepSeek-V4-Pro & \textbf{\DSvPro{}$\pm$\DSvProStd{}} & 482/486/490 & 3/3 \\
+doubao-seed-2.0-pro & \DoubaoPro{}$\pm$\DoubaoProStd{} & 483/483/484 & 3/3 \\
+doubao-seed-2.0-lite & \DoubaoLite{}$\pm$\DoubaoLiteStd{} & 482/484/484 & 3/3 \\
+doubao-seed-2.0-mini & \DoubaoMini{}$\pm$\DoubaoMiniStd{} & 483/483/484 & 3/3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{H1/H2/H3 criteria-check framework.} Each sub-hypothesis's pass/fail is determined by the pre-specified falsification threshold (\S\ref{sec:hypotheses}). Table~\ref{tab:criteria-check} gives the evaluation framework; results are \TBD{} (arms M1--M8, N1--N2 not yet evaluated).
 % 【中文】
 % \textbf{H1/H2/H3 判据检验框架。} 每条子假设的通过/失败由事前规定的证伪阈值（\S\ref{sec:hypotheses}）
-% 决定。表~\ref{tab:criteria-check} 给出评测框架，结果为 \TBD。
-% 【中文】表 2：判据检验（结果 \TBD{}，待评测）。
+% 决定。表~\ref{tab:criteria-check} 给出评测框架，结果为 \TBD{}（臂 M1--M8、N1--N2 尚未评测）。
+% 【中文】表 3：判据检验（结果 \TBD{}，臂未评测）。
 
 \begin{table}[ht]
 \centering
-\caption{Criteria check (results \TBD{}).}
+\caption{Criteria check (results \TBD{}; arms M1--M8, N1--N2 pending evaluation).}
 \label{tab:criteria-check}
 \scriptsize
 \begin{tabularx}{\columnwidth}{@{}llYcc@{}}
@@ -70,18 +86,17 @@ H3 & single vs spawn & single $\geq$ spawn & \TBD & \TBD \\
 \end{tabularx}
 \end{table}
 
-\textbf{Arm-table convergence \& power notes.} The main 10-arm table drops M1/M8 to appendix; M2 is the H2a/H2b control (H1a weak-control criteria withdrawn, \S\ref{sec:arms}). M6's fail-streak test is exploratory at the minimal matrix (H2c deferred to ideal matrix). The minimal-matrix M0 anchor is the same-subset M0 on the top-120-of-Lite (\MzeroAnchor{}, 12/119 decided), not the 696-run Full-set \MzeroPass{}.
+\textbf{Arm-table convergence \& power notes.} The main 10-arm table drops M1/M8 to appendix; M2 is the H2a/H2b control (H1a weak-control criteria withdrawn, \S\ref{sec:arms}). M6's fail-streak test is exploratory at the minimal matrix (H2c deferred to ideal matrix). The minimal-matrix M0 anchor is the 3-run M0 on the full \Ncases{}-task set (\MzeroPass{}$\pm$\MzeroStd{}), not a subset.
 % 【中文】
 % \textbf{臂表收敛与功效注。} 主 10 臂表将 M1（静态 SOP）与 M8（负效价）移至附录，M2 作为 H2a/H2b 对照
 % 运行（非主臂；其 H1a 弱对照判据已撤回，§\ref{sec:arms}）。M6 的失败连续检验在最小矩阵下为探索性
-%（$\sim$40 题、功效 $<$0.3）；H2c 判据延至理想矩阵。最小矩阵的 M0 比较锚点为同 top-120-of-Lite
-% 子集上实测的 M0（\MzeroAnchor{}，12/119 已判定），而非 696-run Full-set \MzeroPass{}（§\ref{sec:benchmark}）。
+%（H2c 判据延至理想矩阵）。最小矩阵的 M0 比较锚点为完整 \Ncases{} 任务集上的 3 轮 M0
+%（\MzeroPass{}$\pm$\MzeroStd{}），而非子集。
 
-\textbf{M0 measurement \& reused assets.} The frozen 696-run Full-set snapshot (DeepSeek-V4-Pro) provides the descriptive baseline \MzeroPass{} only; the M0 arm anchor is measured directly on the arm backbone doubao-seed-2.0-pro-cloud over the Lite top-120-of-Lite subset: \MzeroAnchor{} Pass@1 (12/119 decided, 2026-11-20). The full Lite \LiteSet{} M0 under the same backbone is 9.3\% (45/483 decided). For H1b stratification, we re-use the trace-length distribution from 47 pilot runs (median 26.5 calls, IQR 13.8--38.0) to define short ($<$14)/mid (14--38)/long ($>$38) strata. M0 is evaluated; M1--M8 and N1--N2 are pending.
+\textbf{M0 measurement \& reused assets.} M0 is measured directly on the arm backbone DeepSeek-V4-Pro over the full \Ncases{}-task set: \MzeroPass{}$\pm$\MzeroStd{} Pass@1 (3 runs, r1=105/482, r2=96/486, r3=103/490, 2026-11-24). For H1b stratification, we re-use the trace-length distribution from 47 pilot runs (median 26.5 calls, IQR 13.8--38.0) to define short ($<$14)/mid (14--38)/long ($>$38) strata. M0 is evaluated; M1--M8 and N1--N2 are pending.
 % 【中文】
-% \textbf{M0 实测与复用资产。} 冻结的 696-run Full-set 快照（DeepSeek-V4-Pro）仅提供描述性基线 \MzeroPass{}；
-% M0 臂级锚点直接在臂骨干 doubao-seed-2.0-pro-cloud 上、于 Lite top-120-of-Lite 子集实测：
-% \MzeroAnchor{} Pass@1（12/119 已判定，2026-11-20）。同一骨干下全 Lite \LiteSet{} 的 M0 为 9.3\%
-%（45/483 已判定）。对需要分层的臂（H1b），我们复用 47 条插桩试点 run 的轨迹长度分布
+% \textbf{M0 实测与复用资产。} M0 直接在臂骨干 DeepSeek-V4-Pro 上、于完整 \Ncases{} 任务集实测：
+% \MzeroPass{}$\pm$\MzeroStd{} Pass@1（3 轮，r1=105/482、r2=96/486、r3=103/490，2026-11-24）。
+% 对需要分层的臂（H1b），我们复用 47 条插桩试点 run 的轨迹长度分布
 %（中位 26.5 调用，IQR 13.8--38.0）来定义短（$<$14）/中（14--38）/长（$>$38）分层。M0 已评测；
 % M1--M8、N1--N2 待评测。

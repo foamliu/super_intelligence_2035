@@ -65,15 +65,15 @@ H3 & Single-agent $\geq$ autonomous-spawn in flow (nested in M3+S1) & autonomous
 \end{tabularx}
 \end{center}
 
-\textbf{Statistics.} McNemar (paired, direction-consistent) + paired bootstrap 95\% CI (1000 resamples); $\alpha=0.05$ (Bonferroni $\alpha=0.05/3=0.0167$ for the 3-hypothesis family). Minimum matrix: 120 tasks/arm (top-120 of the Lite \LiteSet{}-task set by chain length); \emph{ideal matrix = Lite $\times$ 3 repeats} (\LiteSet{} tasks $\times$ 3, power $\geq$0.8). \emph{Power positioning:} at $n{=}120$, McNemar power for a 3pp effect is $\approx$0.62, so minimal-matrix results are reported as \textbf{pilot signal}, not primary verdicts; H1/H2 verdicts are deferred to the ideal matrix (Lite $\times$ 3, power $\geq$0.8). M6's fail-streak subset ($\sim$40 tasks at $n{=}120$, power $<$0.3) is exploratory; H2c is deferred to the ideal matrix (fail-streak $\geq$80). The abstract reports no specific pp numbers for arms.
+\textbf{Statistics.} McNemar (paired, direction-consistent) + paired bootstrap 95\% CI (1000 resamples); $\alpha=0.05$ (Bonferroni $\alpha=0.05/3=0.0167$ for the 3-hypothesis family). Minimum matrix: the full \Ncases{}-task set per arm; \emph{ideal matrix = \Ncases{} $\times$ 3 repeats} (\Ncases{} tasks $\times$ 3, power $\geq$0.8). \emph{Power positioning:} at $n{=}\Ncases{}$, McNemar power for a 3pp effect is ample, so the minimal matrix can in principle carry primary verdicts; nonetheless H1/H2 verdicts are deferred to the ideal matrix (\Ncases{} $\times$ 3, power $\geq$0.8) for stability. M6's fail-streak subset is exploratory at the minimal matrix; H2c is deferred to the ideal matrix (fail-streak $\geq$80). The abstract reports no specific pp numbers for arms.
 % 【中文】
 % \textbf{统计。} McNemar（配对、方向一致）+ 配对 bootstrap 95\% CI（1000 次重采样）；$\alpha=0.05$
-%（3 假设族 Bonferroni $\alpha=0.05/3=0.0167$）。最小矩阵：120 任务/臂（按链长取 Lite \LiteSet{}-任务集
-% 的 top-120）；\emph{理想矩阵 = Lite $\times$ 3 重复}（\LiteSet{} 任务 $\times$ 3、功效 $\geq$0.8）。
-% \emph{功效定位：} $n{=}120$ 下 3pp 效应的 McNemar 功效 $\approx$0.62，
-% 故最小矩阵结果作为\textbf{试点信号}报告，不作主要判据；H1/H2 主要判据延至理想矩阵
-%（Lite $\times$ 3、功效 $\geq$0.8）。M6 的失败连续子集（$n{=}120$ 时 $\sim$40 题、3pp 功效 $<$0.3）
-% 仅为探索性；H2c 判据延至理想矩阵（失败连续 $\geq$80 题）。摘要不报告各臂具体 pp 数字。
+%（3 假设族 Bonferroni $\alpha=0.05/3=0.0167$）。最小矩阵：每臂完整 \Ncases{}-任务集；
+% \emph{理想矩阵 = \Ncases{} $\times$ 3 重复}（\Ncases{} 任务 $\times$ 3、功效 $\geq$0.8）。
+% \emph{功效定位：} $n{=}\Ncases{}$ 下 3pp 效应的 McNemar 功效充足，最小矩阵原则上可承载主要判据；
+% 但为稳健起见，H1/H2 主要判据仍延至理想矩阵（\Ncases{} $\times$ 3、功效 $\geq$0.8）。
+% M6 的失败连续子集在最小矩阵下仅为探索性；H2c 判据延至理想矩阵（失败连续 $\geq$80 题）。
+% 摘要不报告各臂具体 pp 数字。
 
 \subsection{10-Arm Main Ablation (3 Appendix)}
 \label{sec:arms}
@@ -87,7 +87,7 @@ H3 & Single-agent $\geq$ autonomous-spawn in flow (nested in M3+S1) & autonomous
 \toprule
 \textbf{Arm} & \textbf{Hyp} & \textbf{Variable} & \textbf{Criteria} \\
 \midrule
-M0 & H1a & no memory (baseline) & anchor = M0 Pass@1 on same top-120-of-Lite subset (\MzeroAnchor{}, 12/119 decided, doubao-seed-2.0-pro-cloud); 696-run \MzeroPass{} is Full-set descriptive only \\
+M0 & H1a & no memory (baseline) & anchor = M0 Pass@1 on full \Ncases{}-task set (\MzeroPass{}$\pm$\MzeroStd{}, 3-run, DeepSeek-V4-Pro) \\
 M3 & H1a & auto memory + reliability gating & \textbf{M3$\geq$M0+3pp} \\
 S1 & H1c & RSI, no memory; inter-session persistence explicitly forbidden (incl.\ harness-level file residue) & S1$\leq$M0 (cross-session RSI null under no inter-session persistence) \\
 M3+S1 & H1b,c & memory + RSI & interaction $\geq$2pp; $\Delta_{\text{long}}\geq\Delta_{\text{mid}}\geq\Delta_{\text{short}}$ \\
@@ -97,22 +97,20 @@ N2 & H2$^-$ & error/irrelevant memory & N2$\leq$M0; M3$\geq$N2+5pp \\
 M4 & H1+H2 & transfer: train-domain write, target-domain read & $\geq$M0+2pp; leak rate $=0$ (machine-judgeable proxy: n-gram overlap of memory entries vs target-domain prompt/filename/assertion literals; manual only borderline) \\
 \midrule
 M5 & H2a & surprise-gated writing ($w=\alpha\cdot$surprise$+\beta\cdot$penalty) & M5$\geq$M2+3pp; token $\Delta\leq$10\% \\
-M6 & H2c & state-aware retrieval (score=sim$+\gamma\cdot$state\_match) & fail-streak M6$\geq$M3+3pp (minimal-matrix exploratory: $\sim$40 tasks, power $<$0.3; H2c verdict deferred to ideal matrix, fail-streak $\geq$80) \\
+M6 & H2c & state-aware retrieval (score=sim$+\gamma\cdot$state\_match) & fail-streak M6$\geq$M3+3pp (minimal-matrix exploratory; H2c verdict deferred to ideal matrix, fail-streak $\geq$80) \\
 M7 & H2b & weapon-focus compression ($r_{\text{cp}}$) & M7$\geq$M2+2pp; memory $\leq$0.6$\times$ \\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-\textbf{Appendix arms.} M2 (auto memory, no gating) is the H2a/H2b control arm---it appears in H2 criteria rows (M5 vs M2, M7 vs M2) but is \emph{not} a main-table arm; its prior H1a weak-control criteria (M2$\geq$M0+2pp and M3$\geq$M2+1pp) are \textbf{withdrawn} (1pp is below detectable effect at $n{=}120$). M1 (static SOP memory) and M8 (negative-valence bias) are appendix robustness checks.
+\textbf{Appendix arms.} M2 (auto memory, no gating) is the H2a/H2b control arm---it appears in H2 criteria rows (M5 vs M2, M7 vs M2) but is \emph{not} a main-table arm; its prior H1a weak-control criteria (M2$\geq$M0+2pp and M3$\geq$M2+1pp) are \textbf{withdrawn} (1pp is below the pre-registered effect size of interest). M1 (static SOP memory) and M8 (negative-valence bias) are appendix robustness checks.
 % 【中文】
 % \textbf{附录臂。} M2（自动记忆、无门控）作为 H2a/H2b 对照臂评测——出现在 H2 判据行（M5 vs M2、M7 vs M2），
 % 但\emph{不}是主表臂；其先前的 H1a 弱对照判据（M2$\geq$M0+2pp 与 M3$\geq$M2+1pp）\textbf{撤回}
-%（1pp 在 $n{=}120$ 下低于可检效应，§5.3）。M1（静态 SOP 记忆）与 M8（负效价偏倚）为附录稳健性检验，不进主 10 臂表。
+%（1pp 低于预注册的目标效应量）。M1（静态 SOP 记忆）与 M8（负效价偏倚）为附录稳健性检验，不进主 10 臂表。
 
-All arms use the same \texttt{check.py}, same $\geq$8 assertions, same 2400s timeout, same backbone (\textbf{doubao-seed-2.0-pro-cloud}; the frozen 696-run snapshot used DeepSeek-V4-Pro, which has since been deprecated). M1--M8 and N1--N2 results are \TBD (pending evaluation); M0's minimal-matrix anchor is the same-subset M0 on the top-120-of-Lite (\MzeroAnchor{}, 12/119 decided), not the 696-run Full-set \MzeroPass{} (descriptive baseline snapshot).
+All arms use the same \texttt{check.py}, same $\geq$8 assertions, same 2400s timeout, same backbone (\textbf{DeepSeek-V4-Pro}). M1--M8 and N1--N2 results are \TBD (pending evaluation); M0's minimal-matrix anchor is the M0 Pass@1 on the full \Ncases{}-task set (\MzeroPass{}$\pm$\MzeroStd{}, 3-run, DeepSeek-V4-Pro).
 % 【中文】
 % 所有臂使用相同的 \texttt{check.py}、相同的 $\geq$8 断言、相同的 2400s 超时、相同的骨干
-%（\textbf{doubao-seed-2.0-pro-cloud}；冻结 696-run 快照使用的是 DeepSeek-V4-Pro，现已下线）。
-% M1--M8、N1--N2 的结果为 \TBD（待评测）；M0 在最小矩阵中的比较锚点为
-% 同 top-120-of-Lite 子集上实测的 M0 Pass@1（\MzeroAnchor{}，12/119 已判定），而非 696-run
-% Full-set \MzeroPass{}（后者仍为描述性基线快照）。
+%（\textbf{DeepSeek-V4-Pro}）。M1--M8、N1--N2 的结果为 \TBD（待评测）；M0 在最小矩阵中的比较锚点为
+% 完整 \Ncases{}-任务集上实测的 M0 Pass@1（\MzeroPass{}$\pm$\MzeroStd{}，3-run，DeepSeek-V4-Pro）。

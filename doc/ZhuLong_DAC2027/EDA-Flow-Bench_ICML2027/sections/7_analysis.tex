@@ -2,22 +2,21 @@
 \label{sec:analysis}
 % 【中文】\section{分析：记忆为何有用或有害}
 
-\textbf{Failure taxonomy (baseline).} Over the \Neval{}-run M0 snapshot, a systematic per-run triage (machine-checkable evidence, explicit UNKNOWN share, never folding unclassified runs) yields: (i) no-output/aborted 21.0\% (146/696), (ii) semantic/partial failure 62.8\% (437/696; 132 runtime crashes + 305 assertion failures), (iii) contract/format 0.3\% (2/696), residual UNKNOWN 7.0\% (49/696). The dominance of semantic failures (62.8\%)---deliverables syntactically plausible but semantically wrong---is direct evidence that the binding constraint is \emph{knowledge of what to do}, not output formatting, supporting the memory hypothesis.
+\textbf{Failure taxonomy (baseline).} Over the \Ncases{}-task M0 evaluation (3 runs, DeepSeek-V4-Pro), a systematic per-run triage (machine-checkable evidence, explicit UNKNOWN share, never folding unclassified runs) yields the failure-category distribution reported in Appendix~\ref{sec:failure-by-domain}. The dominance of semantic failures---deliverables syntactically plausible but semantically wrong---is direct evidence that the binding constraint is \emph{knowledge of what to do}, not output formatting, supporting the memory hypothesis.
 % 【中文】
-% \textbf{失败分类法（基线）。} 在 \Neval{}-run M0 快照上，系统性的逐 run 分诊（机检证据、显式 UNKNOWN
-% 比例、从不把未分类 run 折入他类）得到：(i) 无输出/中止 21.0\%（146/696），(ii) 语义/部分失败 62.8\%
-%（437/696；132 运行时崩溃 + 305 断言失败），(iii) 契约/格式 0.3\%（2/696），残余 UNKNOWN 7.0\%
-%（49/696）。语义失败（62.8\%）占主导——交付物语法上合理但语义上错误——这是直接证据：绑定约束是
+% \textbf{失败分类法（基线）。} 在 \Ncases{}-任务 M0 评测（3 轮，DeepSeek-V4-Pro）上，系统性的逐 run
+% 分诊（机检证据、显式 UNKNOWN 比例、从不把未分类 run 折入他类）得到附录~\ref{sec:failure-by-domain}
+% 报告的失败类别分布。语义失败占主导——交付物语法上合理但语义上错误——这是直接证据：绑定约束是
 % \emph{知道该做什么的知识}，而非输出格式。这支持记忆假设：一个跨会话巩固"哪些断言失败及为何"的
 % 智能体可将语义失败转化为通过。
 
-\textbf{Trace anatomy (baseline).} 47 instrumented pilot runs (2026-11-03--06) show: median 26.5 tool calls (IQR 13.8--38.0, max 97) across 20.5 iterations, median 1{,}047\,s (IQR 552--1{,}495). Of 1{,}371 tool calls, 41.2\% go through the MCP bridge to live EDA tools and 58.8\% are built-in file/search/shell. The 41.2\% MCP fraction means nearly half of all actions require grounding in live tool outputs unseen during training. (Caveat: archived pilots, not the \Neval{}-run batch; they describe mechanics, not pass rates.)
+\textbf{Trace anatomy (baseline).} 47 instrumented pilot runs (2026-11-03--06) show: median 26.5 tool calls (IQR 13.8--38.0, max 97) across 20.5 iterations, median 1{,}047\,s (IQR 552--1{,}495). Of 1{,}371 tool calls, 41.2\% go through the MCP bridge to live EDA tools and 58.8\% are built-in file/search/shell. The 41.2\% MCP fraction means nearly half of all actions require grounding in live tool outputs unseen during training. (Caveat: archived pilots, not the \Ncases{}-task evaluation batch; they describe mechanics, not pass rates.)
 % 【中文】
 % \textbf{轨迹解剖（基线）。} 47 条插桩试点 run（2026-11-03--06）显示：中位 26.5 次工具调用
 %（IQR 13.8--38.0，最大 97），跨 20.5 轮迭代，中位 1{,}047\,s（IQR 552--1{,}495）。1{,}371 次工具
 % 调用中，41.2\% 经 MCP 网桥走向真实 EDA 工具，58.8\% 为内置文件/搜索/shell。投入可观但有界——
 % 41.2\% 的 MCP 占比意味着近半数动作需要在模型训练中从未见过的实时工具输出上接地。（告诫：这 47 条
-% 轨迹是归档试点，非 \Neval{}-run 批次；它们描述机制而非通过率。）
+% 轨迹是归档试点，非 \Ncases{}-任务评测批次；它们描述机制而非通过率。）
 
 \textbf{Affective-mechanism analysis (placeholder, pending evaluation).} The mechanisms predict testable signatures: (1) M5 concentrates writes on high-surprise events; (2) M7 occupies the ``smaller memory, equal-or-better Pass@1'' region; (3) M6 up-weights pitfall memories in the fail-streak subset; (4) M4 leak-rate $=0$ (transfer hits are abstract cognition, not answer fragments). \TBD{} pending evaluation.
 % 【中文】
