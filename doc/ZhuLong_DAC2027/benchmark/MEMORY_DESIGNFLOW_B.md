@@ -1,4 +1,5 @@
-WAITING: 0（11-24 **r1146 §4.9 governance 轮**: fresh B-spice 池仍耗尽(r1125/r1126/r1131/r1143/r1145 五轮 reconfirm, 无新 scan)。转 §4.9 自治：r1144 phantom-revival 引入 13 条无 reference/ 目录 case, r1145 已重建 ResCornerTempSweep-001(13→12), 本轮重建 TieJitterIncGenProduce-001 refdir(12→11)：check.py(逐字节==case JSON test) + tie_jitter_inc_gen_ref.py(纯 stdlib, parse key=value config, HSPICE 后缀 t/g/meg/k/m/u/n/p/f/a, .param vthr/tper/t0 + vref_tie n_tie_ideal pulse + 每信号每沿 trig/targ .measure + tie_sum/mean_tie/per-edge tiedev+tiedev2/tiedev2_sum/tie_sqsum + rms_tie(de-meaned sqrt(tiedev2_sum/count)) + rms_tie_raw) + 3 neg(neg_empty/neg_print_only/neg_core_deleted 删 de-meaned 统计) + negative_selftest.py。自验 12/12 PASS + 3 neg FAIL + 3-seed sha256 一致。台账 B 不动(1769: case 597/parked 1172)。covered=597/4529=13.2%(不变)。🎯 最近20条 20/20=100%(观察值,本轮未 pi 实跑)。📦 MEMORY_B<32KB ✓。DEBT:11 条无 refdir case 待重建。详见 trace_deepreads/r1146_tiejitter_refdir_rebuild.md）
+WAITING: 0（11-24 **r1147 §4.9 governance 轮**: fresh B-spice 池仍耗尽(r1125/r1126/r1131/r1143/r1145/r1146 六轮 reconfirm, 无新 scan)。转 §4.9 自治：r1144 phantom-revival 引入 13 条无 reference/ 目录 case, r1145 重建 ResCornerTempSweep-001(13→12), r1146 重建 TieJitterIncGenProduce-001(12→11), 本轮重建 DutyOffsetAlertMaxProduce-001 refdir(11→10)：check.py(逐字节==case JSON test, 10790B) + duty_offset_alert_max_ref.py(纯 stdlib, parse FineSimPro .mt0 跳 $ 头行, fmt_pduty %.1f 查 spec key, abs(dutyout-offset) per alter# 取 max, ×multiplier, JSON 输出 alerts+multiplier+n_alerts) + 3 neg(neg_empty/neg_print_only 硬编码 A 5alter pduty0.3/0.5/0.7 mult454/neg_core_deleted 取 max(dutyout) 无 offset 减法无 abs) + negative_selftest.py(top-level harness)。自验 ref PASS + 3 neg FAIL + 3-seed sha256(dd25e29fdf91) 一致。台账 B 不动(1769: case 597/parked 1172)。covered=597/4529=13.2%(不变)。🎯 最近20条 20/20=100%(观察值,本轮未 pi 实跑)。📦 MEMORY_B<32KB ✓。DEBT:10 条无 refdir case 待重建。详见 trace_deepreads/r1147_dutyoffset_refdir_rebuild.md）
+→ r1146 已归档（11-24 r1146 §4.9 governance 轮: 重建 TieJitterIncGenProduce-001 refdir(13→12), check.py+tie_jitter_inc_gen_ref.py+3neg+selftest, ref 12/12 PASS+3neg FAIL+3-seed; 详见 trace_deepreads/r1146_tiejitter_refdir_rebuild.md）
 → r1145 已归档（11-24 r1145 §4.9 governance 轮: 重建 ResCornerTempSweep-001 refdir(13→12), check.py+res_corner_temp_sweep_ref.py+3neg+selftest, ref PASS+3neg FAIL+3-seed; 详见 trace_deepreads/r1145_rescorner_refdir_rebuild.md）
 → r1144 已归档（11-24 r1144 phantom-revival 治理轮: 推翻 r1143「dangling gap=0」, 实测 gap=30, 从 git commit 27e5ff3fe 恢复 30 phantom case JSON 落 cases/B, gap 30→0；⚠ 30 revived 中 13 条无 reference/ 目录(遗留债务, r1145 起逐条重建)；详见 trace_deepreads/r1144_phantom_revival_30cases.md）
 → r1143 已归档（11-24 r1143 0-case stop-loss 轮: ⚠「dangling gap=0」结论被 r1144 推翻(实为 gap=30)；无新 scan + fresh 池耗尽 仍成立；详见 trace_deepreads/r1143_0case_stoploss_no_new_scan.md）
@@ -131,8 +132,8 @@ WAITING: 0（11-24 **r1146 §4.9 governance 轮**: fresh B-spice 池仍耗尽(r1
 → r1007 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1007 0-case stop-loss + §4.9 自查 + 11 stale-commit 丢失 case 恢复）
 → r1006 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1006 1-case 产出轮 kjutt → SpLibIncTokenRewrite-001 落库）
 → r1005 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1005 0-case DEBT 轮 13-fresh-pool peek → kjutt deepread+claimed）
-→ r1004 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1004 1-case 产出轮 neh60 fresh → Dvohdv2ZqRefFix-001）
-→ r1003 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1003 1-case 产出轮（q5dn1 fresh → HcellNetlistXcheck-001 落库））
-→ r1002 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1002 1-case 产出轮（sgk0l fresh → SanadjRblDeckSweep-001 落库））
-→ r1001 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1001 1-case 产出轮（2vuso near-dup revert → e692a fresh → DbcVaractorSpTestGen-001 落库））
-→ r1000 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1000 1-case 产出轮（n488u DEBT 兑现 → Mt0TempDedupProduce-001 落库））
+→ r1004 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1004 1-case: neh60 → Dvohdv2ZqRefFix-001）
+→ r1003 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1003 1-case: q5dn1 → HcellNetlistXcheck-001）
+→ r1002 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1002 1-case: sgk0l → SanadjRblDeckSweep-001）
+→ r1001 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1001 1-case: e692a → DbcVaractorSpTestGen-001）
+→ r1000 已归档见 ARCHIVE_OPERATOR_DESIGNFLOW_B.md（r1000 1-case: n488u → Mt0TempDedupProduce-001）
