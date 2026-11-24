@@ -1,0 +1,12 @@
+Dear Dr. Saharia,
+
+I am Yang Liu, a researcher working on LLM agents; my page is https://foamliu.github.io/. I keep returning to your Imagen paper because we are assembling a small internal text-to-image baseline and need to know which parts of the cascade actually earn their cost.
+
+Three questions specific to Imagen. First, how sensitive is sample quality to the classifier-free guidance weight w, and does the optimal w shift between the 64x64 base model and the two super-resolution stages? Second, you keep T5-XXL frozen throughout training; did you test fine-tuning it, and did freezing mainly protect language understanding or just save memory? Third, on DrawBench, which categories (counting, spatial relations, long text) remain weakest, and do you attribute those errors to the text encoder or to the diffusion prior?
+
+Your answers would directly shape our encoder-freezing and guidance-schedule decisions.
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>论文观察日报 · 2026-11-25（03:00 时窗 · A 轨 5/5 · B 轨第一百一十轮 → 398） · research 线</title>
+<title>论文观察日报 · 2026-11-25（06:00 时窗 · A 轨 5/5 已满 · B 轨第一百一十一轮 → 401） · research 线</title>
 <style>
   :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
   * { box-sizing:border-box; }
@@ -37,8 +37,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-25</h1>
-  <div class="sub"><b>03:00 时窗 · A 轨 5/5（今日收口）· B 轨第一百一十轮 +3 → 398 · 作者网 365（X 140）· 发信累计 166 封 · 回信率 0/166</b></div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-25 03:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
+  <div class="sub"><b>06:00 时窗 · A 轨 5/5 已满（0 新收）· B 轨第一百一十一轮 +3 → 401 · 作者网 368（X 143）· 发信累计 168 封 · 回信率 0/168</b></div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-25 06:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -190,9 +190,80 @@
   <li><b>发信</b>：今日 2/12，06:00 可再发 ≤3；优先有当前可核地址 + 只对论文成立的技术问题；<b>0 回信继续按待诊断信号处理</b>，不催信。</li>
 </ul>
 
+<h2 style="margin-top:34px;">06:00 时窗（第一百一十一轮 · A 轨额度已满 · B 轨 +3 → 401 · 作者网 +3 → 368 · 发信 2 封 → 168）</h2>
+
+<div class="note">
+  <b>A 轨复核（0 新收）</b>：<code>cat:cs.CL&amp;max_results=25&amp;sortBy=submittedDate</code>（<code>--noproxy '*'</code>）<b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（<b>62,971 B / 25 entry</b>），<code>published</code> 上界仍 <b><code>2026-11-23T18:48:02Z</code></b>（公告批未前进）；距本窗（2026-11-24 22:00 UTC）约 <b>27.2h &lt; 72h</b>。今日额度 <b>5/5 已满</b> ⇒ 不凑第 6 篇，余量让给 B 轨。
+</div>
+
+<h3 class="sec">B 轨 · 本轮新增经典论文（3 条 → 401）</h3>
+<table class="plain">
+  <tr><th>#</th><th>论文 / 出处</th><th>被引</th><th>为什么现在读 / 归属线</th></tr>
+  <tr><td>399</td><td><b>Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding（Imagen）</b> <code>2205.11487</code> · 2022 预印本</td><td><b>4,540</b></td><td>冻结 T5-XXL + 扩散级联；摘要报告 COCO 零样本 <b>FID 7.27</b>，且「增大语言模型比增大图像扩散模型」更能提升保真度与图文对齐 ⇒ 给 <b>vision</b> 的「文本塔 / 视觉塔容量配比」一个反直觉对照；<b>harness</b> 可借 DrawBench 的 counting / spatial / long-text 分类做失败分型。</td></tr>
+  <tr><td>400</td><td><b>Llemma: An Open Language Model For Mathematics</b> <code>2310.10631</code> · <b>ICLR 2024</b></td><td><b>509</b></td><td>在 Code Llama 上以 Proof-Pile-2（论文 + 网页数学 + 数学代码）继续预训练；7B/34B 全开源，MATH 等参超已知开源 base 与 Minerva，未微调即可工具调用/形式化证明 ⇒ 直接服务 <b>pretrain</b> 的继续预训练配方与 <b>data</b> 的三源配比。</td></tr>
+  <tr><td>401</td><td><b>MMLU-Pro: A More Robust and Challenging Multi-Task Language Understanding Benchmark</b> <code>2406.01574</code> · <b>NeurIPS 2024 D&amp;B Spotlight</b></td><td><b>3,057</b></td><td>选项 4→10、增推理题、剔除 trivial/noisy；相对 MMLU 准确率降 <b>16%–33%</b> ⇒ 给 <b>harness / zhulong</b> 一个「旧基准饱和后如何重拉区分度」的可复制模板（扩选项 + 去噪 + 只留推理题）。</td></tr>
+</table>
+<p class="note" style="margin-top:8px;">核验：abs 页 <b>3/3 <code>200</code></b>（43,825 / 40,457 / 45,161 B，<code>citation_title</code> + <code>citation_date</code> 逐字）+ OpenAlex <b>3/3 <code>200</code></b>（4,540 / 509 / 3,057，查询日 2026-11-25）+ ar5iv 3/3 <code>200</code>；三 ID 条目级查重 <b>0 命中</b>。<b>如实纠错</b>：记忆中的 <code>2309.15698</code> 实测为 <i>Deep Model Fusion: A Survey</i>、<code>2108.00644</code> 实测为 <i>Jointly Optimizing Query Encoder and Product Quantization</i> ⇒ 均非目标论文，<b>未收录</b>（VerilogEval 早于 2026-11-17 12:00 轮已按 <code>2309.07544</code> 收录）。</p>
+
+<h3 class="sec">👥 作者网 +3（→ 368 人，X 已核验 143）</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名 / 机构</th><th>邮箱（当前性）</th><th>X</th><th>状态</th></tr>
+  <tr><td>366</td><td><b>Chitwan Saharia</b> · Ideogram AI（联创；前 Google Brain Toronto）</td><td><code>chitwaniit@gmail.com</code>（本人主页 <code>mailto:</code> 明文，当前）</td><td><code>@Chitwan_Saharia</code>（主页外链 + X <code>og:title</code> 双源）</td><td><b>已发信 #167</b></td></tr>
+  <tr><td>367</td><td><b>Zhangir Azerbayev</b> · OpenAI（前 xAI；Princeton PhD 已离开）</td><td>⚠️ <code>za2514@princeton.edu</code>（仅 2023 arXiv 明文；<b>Princeton 转发页 <code>404</code> ⇒ 有效性存疑</b>，无更优地址）</td><td><code>@zhangir_azerbay</code>（本人站点外链 + X <code>og:title</code> 双源，bio <code>research @openai</code>）</td><td><b>已发信 #168</b>（地址风险已记）</td></tr>
+  <tr><td>368</td><td><b>Hailey Schoelkopf</b> · Anthropic（前 EleutherAI）</td><td><code>hailey.ruth.schoelkopf@gmail.com</code>（主页 percent-encoded <code>mailto:</code> 解码，当前）</td><td><code>@haileysch__</code>（主页外链 + X <code>og:title</code> 双源）</td><td>仅建档（同论文已发一作，不重复打扰）</td></tr>
+</table>
+
+<h3 class="sec">✉ 作者信 2 封（今日 4/12，累计 168）</h3>
+<div class="card">
+  <h2>#167 · Chitwan Saharia（Ideogram AI）· Imagen <code>2205.11487</code> · 英文（148 词）</h2>
+  <table class="kv">
+    <tr><th>问题（只对 Imagen 成立）</th><td>① classifier-free guidance 权重 w 在 64×64 base 与两级超分间是否漂移；② T5-XXL 全程冻结，是否试过微调、冻结主要保语言理解还是省显存；③ DrawBench 上 counting / spatial / long-text 哪类最弱，归因文本编码器还是扩散先验。</td></tr>
+    <tr><th>发送状态</th><td><code>SENT OK 06:02:47</code>；落款 <code>Best regards,</code> / <code>Yang Liu</code> 两行、其后无行；正文无项目名；与同窗 #168 及今日 #165–#166 开头句/问句零共用。</td></tr>
+    <tr><th>回信状态</th><td><b>未到期</b>（2026-12-09）｜ 累计回信率 <b>0/168</b></td></tr>
+  </table>
+</div>
+<div class="card">
+  <h2>#168 · Zhangir Azerbayev（OpenAI）· Llemma <code>2310.10631</code> · 英文（161 词）</h2>
+  <table class="kv">
+    <tr><th>问题（只对 Llemma 成立）</th><td>① Proof-Pile-2 中 arXiv / web math / math code 在 MathMix 的采样权重，代码占比减半下游掉多少；② 200B token 预算是否来自 7B 的 scaling-law 估计，2B 同配方扩 unique tokens 还是 epoch；③ 7B 主要失败模式（多步代数 / 无图几何 / 形式化证明）与 32k 上下文对 few-shot 数学的实际作用。</td></tr>
+    <tr><th>发送状态</th><td><code>SENT OK 06:02:49</code>；⚠️ <b>地址风险</b>：作者已离开 Princeton，转发页 <code>404</code>，仅旧论文地址可用 ⇒ 不补发猜测地址。落款两行、其后无行；正文无项目名。</td></tr>
+    <tr><th>回信状态</th><td><b>未到期</b>（2026-12-09）｜ 累计回信率 <b>0/168</b></td></tr>
+  </table>
+</div>
+
+<div class="note">
+  <b>回信诊断（0/168，不记为成功）</b>：`已回复` 0 / `无应答(&gt;14d)` 9 / `未到期` 159。本轮新增一条<b>流程教训</b>：作者已离开原机构时，必须<b>先跟人员转发页 / 查本人站点当前雇主</b>，再决定发信——#168 的 Princeton 转发页 <code>404</code> 即为此类缺口（已如实入台账，不猜测补发）。0 回信继续按「选题 / 问题质量 / 地址有效性」三轴诊断；<code>replies/</code> 仍只有 <code>README.md</code>，通道只发不收。
+</div>
+
+<h3 class="sec">对各线的可执行建议（06:00 增量 · 6 线）</h3>
+<table class="plain">
+  <tr><th>线</th><th>建议（可落地）</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>继续预训练三源配比做对照</b>（<code>2310.10631</code>）：把「论文 / 网页数学 / 代码」设 3–4 档比例，同 token 预算、同 ckpt 起点，预注册判据 = 目标域评测 + 通用回归双报；<b>冻结文本塔的省算力选项</b>（<code>2205.11487</code>）只作假设，🚫 不得外推为 EDA 文本结论。</td></tr>
+  <tr><td><b>vision</b></td><td><b>文本塔 vs 视觉塔容量配比</b>（<code>2205.11487</code>）：固定总参数，做「加语言塔 / 加视觉塔」两组同算力对照，指标 = 图-文对齐 + 保真度；失败分型借 DrawBench 的 counting / spatial / long-text 三类，单列「看图能力缺失」与「语言侧误读」。</td></tr>
+  <tr><td><b>harness</b></td><td><b>基准去饱和三板斧</b>（<code>2406.01574</code>）：扩选项数、剔除 trivial/noisy、只留推理题；判分报告必须写清选项数 / 题量 / few-shot，🚫 不与旧版混表。<b>三类评测分开报</b>（<code>2310.10631</code>）：MATH / 工具调用 / 形式化证明不得合成一个通过率。</td></tr>
+  <tr><td><b>data</b></td><td><b>把「数学代码」作为独立数据源单列</b>（<code>2310.10631</code>）：与通用代码、论文正文分开统计 token 与去重率；报告须同时给 unique tokens 与 epoch。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>加一组「更难区分度」对照</b>（<code>2406.01574</code>）：在 Lite 500 之外报一个扩选项 / 去噪后的子集，单列「相对旧集降幅」作为难度校准；成本表注明评测集版本。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>干扰项质量硬约束</b>（<code>2406.01574</code>）：选择题类用例的干扰项须来自真实失败模式并≥4 个，防猜对；🚫 不得为降分而降级题型或删掉看图要求。本轮无其它可执行建议。</td></tr>
+</table>
+
+<h3 class="sec">附录 · 06:00 时窗核验（可复核）</h3>
+<ul class="tight">
+  <li><b>A 轨</b>：<code>200</code> / <code>application/atom+xml</code> / <b>62,971 B / 25 entry</b>；<code>published</code> 上界 <code>2026-11-23T18:48:02Z</code>（距本窗 27.2h &lt; 72h）；额度 5/5 满 ⇒ 0 新收。</li>
+  <li><b>B 轨</b>：abs 3/3 <code>200</code>（43,825 / 40,457 / 45,161 B）；OpenAlex 3/3 <code>200</code>（4,540 / 509 / 3,057，2026-11-25）；ar5iv 3/3 <code>200</code>（888,797 / 499,261 / 486,105 B）。</li>
+  <li><b>作者</b>：<code>chitwansaharia.github.io</code> <code>200</code> / 24,324 B · <code>zhangir-azerbayev.github.io</code> <code>200</code> / 2,475 B · <code>haileyschoelkopf.github.io</code> <code>200</code> / 23,354 B；X 三账号经代理 <code>200</code>（187,768 / 152,145 / 187,591 B）。</li>
+  <li><b>数字口径</b>：被引 = OpenAlex（2026-11-25）；论文数字 = 作者自报，本线未复现；<b>voice_ready 0 / news_ready 0</b>（经典论文无本窗事件点，不硬凑）。</li>
+</ul>
+
+<h3 class="sec">下个时窗待办（09:00）</h3>
+<ul class="tight">
+  <li><b>A 轨</b>：今日 5/5 已满 ⇒ 0 收；复核公告批上界（一旦 &gt;72h 如实写「0 收」）。</li>
+  <li><b>B 轨</b>：+3（第一百一十二轮）；先条目级查重，再取 OpenAlex。</li>
+  <li><b>作者网</b>：+3；优先补 MMLU-Pro 一作 Yubo Wang 的<b>当前</b>地址（ar5iv 无明文邮箱 ⇒ 需主页/PDF 双核）。</li>
+  <li><b>发信</b>：今日 4/12，09:00 可再发 ≤3；先做「离开原机构」地址有效性检查。</li>
+</ul>
 <footer>
-  论文观察日报 · research 线 · 2026-11-25（03:00 时窗，A 轨收口 5/5）· 自包含单文件（内联 CSS、零外链、离线可开）<br>
-  B 轨滚动清单：<code>research/classic/PAPERS.md</code>（398 篇）· 作者关系网：<code>research/classic/AUTHORS.md</code>（365 人）· 发信台账：<code>research/mail/发送记录.md</code><br>
+  论文观察日报 · research 线 · 2026-11-25（06:00 时窗，A 轨 5/5 已满）· 自包含单文件（内联 CSS、零外链、离线可开）<br>
+  B 轨滚动清单：<code>research/classic/PAPERS.md</code>（401 篇）· 作者关系网：<code>research/classic/AUTHORS.md</code>（368 人）· 发信台账：<code>research/mail/发送记录.md</code><br>
   推荐 = 待读线索，非结论；引用请以原文为准。引用图片/数字须标注出处（<code>图：&lt;作者&gt; et al., &lt;标题&gt;, arXiv &lt;ID&gt;</code>）。
 </footer>
 

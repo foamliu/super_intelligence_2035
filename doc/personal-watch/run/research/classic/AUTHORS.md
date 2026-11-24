@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-25 06:0x）**：作者 **368** 人（编号最大 **368**）· X 已核验 **143**（本轮 **+3**：`@Chitwan_Saharia` 由本人主页 `https://chitwansaharia.github.io/`（`200` / 24,324 B）页内 `href="https://twitter.com/Chitwan_Saharia"` + 代理抓 `x.com/Chitwan_Saharia` `200` / 187,768 B，`og:title` = `Chitwan Saharia (@Chitwan_Saharia) on X`、`og:description` = `Past: Sr. Research Scientist @GoogleAI || B. Tech, CSE, @IITBombay` ⇒ 双源；⚠️ 另有一同名账号 `@ChitwanSaharia`（`200` / 74,201 B）**无本人主页外链**、粉丝量与简介均弱 ⇒ **不采用、不登记**；`@zhangir_azerbay` 由本人站点 `https://zhangir-azerbayev.github.io/`（`200` / 2,475 B）bio-links 外链 `twitter.com/zhangir_azerbay` + 代理抓 `x.com/zhangir_azerbay` `200` / 152,145 B，`og:title` = `Zhangir Azerbayev (@zhangir_azerbay) on X`、`og:description` = `research @openai` ⇒ 双源；`@haileysch__` 由本人主页 `https://haileyschoelkopf.github.io/`（`200` / 23,354 B）外链 `twitter.com/haileysch__` + 代理抓 `x.com/haileysch__` `200` / 187,591 B，`og:title` = `Hailey Schoelkopf (@haileysch__) on X`、`og:description` = `hillclimbing towards generality @anthropicai | prev @AiEleuther` ⇒ 双源）· 已发信 **168**（台账 #1–#168；今日 **4/12**）· 回信 **0**（0/168；#1–#9 已转 `无应答(>14d)`）。本轮 **+3**：Chitwan Saharia（Imagen 一作，英文，本人主页当前 `mailto:` ⇒ 已发信 #167）· Zhangir Azerbayev（Llemma 一作，英文，**仅 2023 论文地址可用、Princeton 转发页 `404` ⇒ 地址有效性存疑**，已发信 #168 并如实记风险）· Hailey Schoelkopf（Llemma 二作，英文，本人主页 percent-encoded `mailto:` ⇒ 仅建档，同论文已发一作、不重复打扰）。
+
 > **当前计数（2026-11-25 03:0x）**：作者 **365** 人（编号最大 **365**）· X 已核验 **140**（本轮 **+3**：`@dpkingma` 由代理抓 `x.com/dpkingma` `200` / 182,386 B，`og:title` = `Durk Kingma (@dpkingma) on X`、bio 自述 Anthropic / 前 Google Brain·DeepMind / OpenAI founding team / VAE 与 Adam 作者 ⇒ 姓名与成果强匹配但为**单源**，如实记；`@luyu_gao` 由 Luyu Gao 本人主页 `https://luyug.github.io/`（`200` / 8,375 B）外链 `twitter.com/luyu_gao` + 代理抓 `x.com/luyu_gao` `200` / 152,990 B，`og:title` = `Luyu Gao (@luyu_gao) on X` ⇒ 双源；`@PY_Z001` 由 Perry Zhang 本人主页 `https://jzhang38.github.io/`（`200` / 19,215 B）外链 `twitter.com/PY_Z001` + 代理抓 `x.com/PY_Z001` `200` / 203,588 B，`og:title` = `Perry Zhang (@PY_Z001) on X`、bio `TinyLlama, FastVideo, Seedance` ⇒ 双源）· 已发信 **166**（台账 #1–#166；今日 **2/12**）· 回信 **0**（0/166；#1–#9 已转 `无应答(>14d)`）。本轮 **+3**：Diederik P. (Durk) Kingma（VAE 一作，荷兰姓名，本人站点无 mailto ⇒ 仅建档）· Luyu Gao（PAL 一作，中文，CMU 主页当前地址 ⇒ 已发信 #166）· Perry (Peiyuan) Zhang（TinyLlama 一作，中文，主页当前地址 ⇒ 仅建档）。
 
 > **当前计数（2026-11-25 00:0x）**：作者 **362** 人（编号最大 **362**）· X 已核验 **137**（本轮 **+3**：`@kchonyc` 由 Kyunghyun Cho 本人主页 `https://kyunghyuncho.me/`（`200` / 37,026 B）页内 `href` 外链 `twitter.com/kchonyc` + 代理抓 `x.com/kchonyc` `200` / 163,832 B，`og:title` = `Kyunghyun Cho (@kchonyc) on X`、bio 自述 NYU 教授 + Ortet AI CEO ⇒ 双源；`@LysandreJik` 由 HF 个人页 `huggingface.co/lysandre`（经代理 `200` / 338,187 B）外链 `twitter.com/LysandreJik` + 代理抓 `x.com/LysandreJik` `200` / 181,803 B，`og:title` = `Lysandre (@LysandreJik) on X`、`og:description` = `Chief Open-Source Officer (COSO) at Hugging Face` ⇒ 双源；`@taku910` 上一轮已核 ⇒ 计入本轮基数。Tomas Mikolov 记「未找到 X」：`@tmikolov` / `@MikolovTomas` 历史均 `404`，本轮未再猜）· 已发信 **165**（台账 #1–#165；今日 **1/12**）· 回信 **0**（0/165；**11-25 起 #1–#7 满 14 天 ⇒ 转 `无应答(>14d)`**）。本轮 **+3**：Tomas Mikolov（word2vec-SGNS 一作，英文/捷克，当前机构主页 `404`、站点 `000` ⇒ 仅建档，不猜地址）· Kyunghyun Cho 조경현（RNN Encoder–Decoder 一作，한국어，NYU contact 页当前地址 ⇒ 已发信 #165）· Lysandre Debut（DistilBERT 二作，法文姓名，HF 个人页无明文邮箱 ⇒ 仅建档，X 双源）。
@@ -5178,3 +5180,42 @@
 | X 账号 | **@PY_Z001**（主页外链 `twitter.com/PY_Z001` + 代理抓 `x.com/PY_Z001` `HTTP 200` / 203,588 B，`og:title` = `Perry Zhang (@PY_Z001) on X`、bio = `TinyLlama, FastVideo, Seedance. Opinions are my own` ⇒ 双源） |
 | 状态 | **待跟踪**（仅建档；X 进「待 follow 清单」，🚫 不假装已 follow） |
 | 备注 | `语言=中文(判据=姓名族属)`。发信问题候选（只对 TinyLlama 成立）：① 1T token / 3 epoch 下，loss 在哪个阶段开始平台化、是否值得加 epoch；② 1.1B 规模上 FlashAttention + Lit-GPT 的实测吞吐增益与显存占用各是多少；③ 小模型在代码 / 结构化输出任务上的退化模式，与 2B 级是否同构。 |
+
+### 366. Chitwan Saharia
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chitwan Saharia（`语言=英文(判据=姓名族属非中/日/韩 + 印度 IIT Bombay 教育背景 + 美国机构)`） |
+| 机构 | **Ideogram AI**（联合创始人兼研究员；本人主页自述 `I am co-founder and researcher at Ideogram AI`）· 前 **Google Brain, Toronto**（Senior Research Scientist）· IIT Bombay 本科 |
+| 代表论文 | **Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding（Imagen）**（`2205.11487`，B 轨 #399，一作） |
+| 邮箱 | **`chitwaniit@gmail.com`**（本人主页 `https://chitwansaharia.github.io/` `HTTP 200` / 24,324 B，页内 `mailto:` 明文；当前公开地址；**已发信**） |
+| 主页 | <https://chitwansaharia.github.io/>（`HTTP 200` / 24,324 B；2026-11-25 06:0x 复核） |
+| X 账号 | **@Chitwan_Saharia**（主页外链 `twitter.com/Chitwan_Saharia` + 代理抓 `x.com/Chitwan_Saharia` `HTTP 200` / 187,768 B，`og:title` = `Chitwan Saharia (@Chitwan_Saharia) on X`、`og:description` = `Past: Sr. Research Scientist @GoogleAI \|\| B. Tech, CSE, @IITBombay` ⇒ 双源；⚠️ 同名 `@ChitwanSaharia` 无主页外链 ⇒ 不采用） |
+| 状态 | **已发信**（**#167**，2026-11-25 06:02:47，英文 148 词）+ **待跟踪 X**（进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | 发信问题（只对 Imagen 成立）：① classifier-free guidance 权重 w 在 64×64 base 与两级超分间是否漂移；② T5-XXL 全程冻结，是否试过微调、冻结主要保语言理解还是省显存；③ DrawBench 上 counting / spatial / long-text 哪类最弱，归因于文本编码器还是扩散先验。台账见 `mail/发送记录.md` §06:00。 |
+
+### 367. Zhangir Azerbayev
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhangir Azerbayev（`语言=英文(判据=姓名族属哈萨克/俄语系，非中/日/韩；本人站点与论文均为英文)`） |
+| 机构 | **OpenAI**（本人站点自述 `I work on deep learning at OpenAI`）· 前 **xAI**（reasoning）· 曾为 **Princeton Vision & Learning Lab** PhD（本人站点自述已 drop out） |
+| 代表论文 | **Llemma: An Open Language Model For Mathematics**（`2310.10631`，B 轨 #400，一作） |
+| 邮箱 | ⚠️ **`za2514@princeton.edu`**（arXiv abs 页 2023 版明文；**Princeton 人员转发页 `https://www.cs.princeton.edu/people/forwarding/za2514` 实测 `404` ⇒ 地址有效性存疑**；本人站点与 GitHub 均无明文当前邮箱 ⇒ **无更优地址，不猜**；已按该地址发信） |
+| 主页 | <https://zhangir-azerbayev.github.io/>（`HTTP 200` / 2,475 B；bio-links：GitHub / Twitter / CV）· <https://github.com/zhangir-azerbayev>（`200` / 158,109 B） |
+| X 账号 | **@zhangir_azerbay**（本人站点外链 `twitter.com/zhangir_azerbay` + 代理抓 `x.com/zhangir_azerbay` `HTTP 200` / 152,145 B，`og:title` = `Zhangir Azerbayev (@zhangir_azerbay) on X`、`og:description` = `research @openai` ⇒ 双源） |
+| 状态 | **已发信**（**#168**，2026-11-25 06:02:49，英文 161 词；地址风险已记）+ **待跟踪 X** |
+| 备注 | **教训（如实记）**：发信前只核了 arXiv 明文地址，**未先跟一次 Princeton 转发页**（`404`）⇒ 本轮暴露「地址有效性核验顺序」缺口；后续对「已离开原机构的作者」必须先跟转发页 / 查本人站点当前雇主域名，再决定发或不发。发信问题：① Proof-Pile-2 中 arXiv / web math / math code 在 MathMix 的采样权重，代码占比减半后下游掉多少；② 200B token 预算是否来自 7B 的 scaling-law 估计，2B 同配方该扩 unique tokens 还是 epoch；③ 7B 主要失败模式（多步代数 / 无图几何 / 形式化证明）与 32k 上下文对 few-shot 数学的实际作用。 |
+
+### 368. Hailey Schoelkopf
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hailey Schoelkopf（`语言=英文(判据=姓名族属英语系 + 美国机构)`） |
+| 机构 | **Anthropic**（X bio：`hillclimbing towards generality @anthropicai`）· 前 **EleutherAI**（`prev @AiEleuther`）· Llemma 二作 |
+| 代表论文 | **Llemma: An Open Language Model For Mathematics**（`2310.10631`，B 轨 #400，二作） |
+| 邮箱 | **`hailey.ruth.schoelkopf@gmail.com`**（本人主页 `https://haileyschoelkopf.github.io/` `HTTP 200` / 23,354 B，页内 percent-encoded `mailto:` 按 URL 解码还原；当前公开地址；**未发信**） |
+| 主页 | <https://haileyschoelkopf.github.io/>（`HTTP 200` / 23,354 B） |
+| X 账号 | **@haileysch__**（主页外链 `twitter.com/haileysch__` + 代理抓 `x.com/haileysch__` `HTTP 200` / 187,591 B，`og:title` = `Hailey Schoelkopf (@haileysch__) on X`、`og:description` = `hillclimbing towards generality @anthropicai \| prev @AiEleuther \| views my own` ⇒ 双源） |
+| 状态 | **待跟踪**（仅建档；同一论文本轮已发一作 #168 ⇒ 按「同作者/同论文 ≤1 封」不再发；X 进「待 follow 清单」） |
+| 备注 | 若后续就 Llemma 数据集细节单独请教，问题候选：① Proof-Pile-2 的去重与许可证过滤规则；② 数学代码与科学论文的 token 级重叠如何处理；③ 7B / 34B 的公开 ckpt 在工具调用上的评测脚本是否与 paper 一致。 |

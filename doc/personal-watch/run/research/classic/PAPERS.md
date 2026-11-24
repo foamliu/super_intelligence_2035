@@ -9,6 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **401** 条（**第一百一十一轮 2026-11-25 06:0x 补 3 条 → 401**：Imagen `2205.11487`（**4,540**，2022 预印本；文本扩散级联 + 冻结 T5-XXL 文本编码器，摘要报告 COCO 零样本 **FID 7.27**，并发现「增大语言模型比增大图像扩散模型」更能提升保真度与图文对齐）/ Llemma `2310.10631`（**509**，ICLR 2024；在 Code Llama 上以 Proof-Pile-2（科学论文 + 含数学的网页 + 数学代码）继续预训练，7B/34B 全量开源，MATH 上超过已知开源 base 模型并等参超 Minerva，未再微调即可工具调用与形式化定理证明）/ MMLU-Pro `2406.01574`（**3,057**，NeurIPS 2024 D&B Spotlight；选项 4→10、增推理题、剔除 trivial/noisy，相对 MMLU 准确率降 **16%–33%**）；核验：abs 页 **3/3 `200`**（43,825 / 40,457 / 45,161 B，`citation_title` + `citation_date` 逐字）+ OpenAlex **3/3 `200`**（4,540 / 509 / 3,057，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；另 **纠错并弃用**两个记忆中的 ID：`2309.15698` 实测为 *Deep Model Fusion: A Survey*、`2108.00644` 实测为 *Jointly Optimizing Query Encoder and Product Quantization* ⇒ 均非目标论文，未收录；本轮归属：vision **+1** · pretrain **+1** · data **+2** · posttrain **+1** · harness **+2** · zhulong **+1** · designflow **+1**（一篇可多线））
+
 **本轮快照**：累计 **398** 条（**第一百一十轮 2026-11-25 03:0x 补 3 条 → 398**：VAE `1312.6114`（**45,270**，2013 v1 / ICLR 2014 会议版；重参数化 ELBO + 识别模型做 amortized 推断，连续隐变量有向概率模型可在大数据上训练；摘要无实验分数 ⇒ 不写未核数字）/ PAL `2211.10435`（**859**，ICML 2023；LLM 只生成程序作中间推理、求解交给 Python 解释器；13 个数学/符号/算法任务，GSM8K 上 Codex + PAL 比 PaLM-540B CoT 绝对 +15% top-1）/ TinyLlama `2401.02385`（**1,248**，2024 技术报告；1.1B 模型 / 约 **1T** token / 约 **3 epoch**，沿用 Llama 2 架构与 tokenizer）；核验：abs 页 **3/3 `200`**（41,755 / 44,028 / 39,154 B，`citation_title` + `citation_date` 逐字）+ OpenAlex **3/3 `200`**（45,270 / 859 / 1,248，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+2** · posttrain **+2** · vision **+1** · data **+2** · harness **+1** · designflow **+1** · zhulong **+1**（一篇可多线））
 
 **本轮快照**：累计 **395** 条（**第一百零九轮 2026-11-25 00:0x 补 3 条 → 395**：word2vec-SGNS `1310.4546`（**39,109**，NIPS 2013；高频词下采样 + negative sampling 替代层次 softmax + 短语发现，解决 “Air Canada” 类固定搭配；摘要只给定性、未给超参 ⇒ 不写未核数字）/ RNN Encoder–Decoder + GRU `1406.1078`（**11,916**，EMNLP 2014；一个 RNN 编码为定长向量、另一个解码，联合训练最大化条件概率；reset/update 门即 GRU；作为 SMT 附加特征带来实测提升；摘要未给 BLEU ⇒ 不写未核分数）/ DistilBERT `1910.01108`（**13,823**，NeurIPS 2019 EMC² Workshop；预训练期蒸馏，三损失 = LM + 蒸馏 + cosine-distance；参数减 **40%**、保留约 **97%**、推理快 **60%**）；核验：abs 页 **3/3 `200`**（42,263 / 43,729 / 42,394 B，`citation_title` + `citation_date` 逐字）+ OpenAlex **3/3 `200`**（39,109 / 11,916 / 13,823，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**（`1301.3781` / `1409.0473` / `1810.04805` 已在表内，分别为初版 / 注意力版 / BERT，非重复）；本轮归属：data **+3** · pretrain **+3** · posttrain **+2** · harness **+2** · zhulong **+2** · vision **+0** · designflow **+1**（一篇可多线））
@@ -7021,3 +7023,48 @@
 | 与我们工作的关系 | **pretrain（主 · 2B 级配方与预算）**：与 MiniCPM5-2B 同量级，可作「token 数 × epoch × 规模」的公开对照；复测时三列必须同时报。<br>**data**：1T token 的语料量级与 3 epoch 重复策略，是我们做数据配比时的现实基线。<br>**posttrain（替身基模）**：可作轻量基线，但须与 MiniCPM5-2B 分口径比较。<br>**zhulong（成本口径）**：小模型训练成本可作成本表下界。<br>**harness**：同规模对比须同任务集、同评测脚本。<br>**vision / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-25**（第一百一十轮 · 03:00 时窗） |
 | 核验状态 | abs 页 **`200` / 39,154 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（1,248 / 2024 / `preprint`，查询日 2026-11-25）。⚠️ 1.1B / 1T token / 3 epoch 取自摘要（逐字核），**未做 PDF 逐页复核**；摘要未给具体任务分数 ⇒ 不写未核数字。条目级查重：`2401.02385` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 399. Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding（Imagen）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding |
+| 作者（前 3） | Chitwan Saharia · William Chan · Saurabh Saxena（共 **14** 位；另 Lala Li · Jay Whang · Emily Denton · Seyed Kamyar Seyed Ghasemipour · Burcu Karagol Ayan · S. Sara Mahdavi · Rapha Gontijo Lopes · Tim Salimans · Jonathan Ho · David J Fleet · Mohammad Norouzi；arXiv `citation_author` 逐字核） |
+| 年份 | **2022**（v1 `2022-05-23`；abs 页 `citation_date` = `2022/05/23`） |
+| 会议 / 期刊 | **arXiv 预印本**（OpenAlex `type=preprint`、`primary_location.source` = arXiv；正式会议版未在本次核验中出现 ⇒ 不臆断） |
+| 被引数 | **4,540**（OpenAlex `10.48550/arXiv.2205.11487`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2205.11487> ｜ `10.48550/arXiv.2205.11487` |
+| 一句话贡献 | 提出文本到图像扩散级联，核心发现是**冻结的通用大语言模型（T5）就是很强的文本编码器**：加大语言模型对样本保真度与图文对齐的提升**大于**加大图像扩散模型；摘要报告 COCO 零样本 **FID 7.27**（未在 COCO 上训练），并提出 **DrawBench** 做系统化人工评测。 |
+| 与我们工作的关系 | **vision（主 · 多模态编码器选型）**：与我们「视觉编码器怎么选、图文对怎么用」直接相关——本文给出「文本侧大模型冻结即可、容量往语言侧倾斜」的对照，可作 MLLM 文本塔 / 视觉塔容量配比实验的假设来源。<br>**pretrain**：T5-XXL 冻结仍能提升下游，提示「冻结骨干 + 轻适配」是省算力选项；但结论在图像生成任务上成立，🚫 不可直接外推到 EDA 文本 / 代码预训练。<br>**harness**：DrawBench 的**分类维度**（counting / spatial / long text）可借来设计波形图理解的失败分类，判分仍须人工 + 自动双轨。<br>**data**：图文对规模与质量并重，本文用「未在 COCO 训练却测 COCO」的口径可借来防评测集污染。<br>**posttrain / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十一轮 · 06:00 时窗） |
+| 核验状态 | abs 页 **`200` / 43,825 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（4,540 / 2022 / `preprint`，查询日 2026-11-25）；ar5iv **`200` / 888,797 B**（页内明文 `sahariac@google.com` 等 8 个作者邮箱，均为 2022 论文地址 ⇒ **作者信改用本人主页当前地址**，见 `AUTHORS.md` #366）。⚠️ FID 7.27 / 零样本 COCO 取自摘要（逐字核），**未做 PDF 表格复核**。条目级查重：`2205.11487` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 400. Llemma: An Open Language Model For Mathematics
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Llemma: An Open Language Model For Mathematics |
+| 作者（前 3） | Zhangir Azerbayev · Hailey Schoelkopf · Keiran Paster（共 **9** 位；另 Marco Dos Santos · Stephen McAleer · Albert Q. Jiang · Jia Deng · Stella Biderman · Sean Welleck；arXiv `citation_author` 逐字核） |
+| 年份 | **2023**（v1 `2023-10-16`；abs 页 `citation_date` = `2023/10/16`） |
+| 会议 / 期刊 | **ICLR 2024**（OpenAlex `type=conference-paper`、`primary_location.source` = International Conference on Learning Representations；arXiv `comments` 未列会议，如实分列） |
+| 被引数 | **509**（OpenAlex `10.48550/arXiv.2310.10631`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2310.10631> ｜ `10.48550/arXiv.2310.10631` |
+| 一句话贡献 | 在 **Code Llama** 上用 **Proof-Pile-2**（科学论文 + 含数学的网页 + 数学代码）继续预训练得到 Llemma；MATH 上**等参**超过已知开源 base 模型与未公开的 Minerva 套件，且**不再微调**即可做工具调用与形式化定理证明；开源 7B/34B 模型、数据集与复现代码。 |
+| 与我们工作的关系 | **pretrain（主 · 继续预训练配方）**：与我们 2B 级「领域退火 / 继续预训练」同构——可借其「代码 + 网页 + 论文」三源混合做配比对照，且 7B/34B 双规模可看规模敏感性。<br>**data（主 · 配方与去重）**：Proof-Pile-2 的三源划分与「数学代码」单列，正好对应我们「代码语料该占多少」的问题；须同口径报 unique tokens 与 epoch。<br>**posttrain**：开源 base + 未微调即可工具调用 ⇒ 可作「先配方后 RL」的干净起点基线。<br>**harness**：MATH / 工具调用 / 形式化证明三类评测要分开报，🚫 不可混成一个通过率。<br>**zhulong / vision / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十一轮 · 06:00 时窗） |
+| 核验状态 | abs 页 **`200` / 40,457 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（509 / 2024 / `conference-paper`，查询日 2026-11-25）；ar5iv **`200` / 499,261 B**（页内明文 `za2514@princeton.edu`）。⚠️ 摘要未给 token 总量与具体分数 ⇒ 正文不写未核数字（作者信中的「200B 预算」为**提问**，非本清单结论）。条目级查重：`2310.10631` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 401. MMLU-Pro: A More Robust and Challenging Multi-Task Language Understanding Benchmark
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | MMLU-Pro: A More Robust and Challenging Multi-Task Language Understanding Benchmark |
+| 作者（前 3） | Yubo Wang · Xueguang Ma · Ge Zhang（共 **17** 位；另 Yuansheng Ni · Abhranil Chandra · Shiguang Guo · Weiming Ren · Aaran Arulraj · Xuan He · Ziyan Jiang · Tianle Li · Max Ku · Kai Wang · Alex Zhuang · Rongqi Fan · Xiang Yue · Wenhu Chen；arXiv `citation_author` 逐字核） |
+| 年份 | **2024**（v1 `2024-06-03`；abs 页 `citation_date` = `2024/06/03`） |
+| 会议 / 期刊 | **NeurIPS 2024 Datasets & Benchmarks Track（Spotlight）**（arXiv `comments` 逐字：`accepted and published at NeurIPS 2024 Track Datasets and Benchmarks (Spotlight)`；OpenAlex `type=conference-paper`） |
+| 被引数 | **3,057**（OpenAlex `10.52202/079017-3018` 会议版记录；arXiv DOI 记录同源，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2406.01574> ｜ `10.48550/arXiv.2406.01574` |
+| 一句话贡献 | 针对 MMLU 已饱和：把**选项从 4 扩到 10**、加入更偏推理的题、剔除 trivial/noisy 题；相对 MMLU 使准确率**下降 16%–33%**，从而重新拉开模型间差距。 |
+| 与我们工作的关系 | **harness（主 · 评测基准设计）**：我们自己的 EDA 判分也面临「题太易、区分度饱和」——可借其「扩选项 + 去噪声 + 只留推理题」三板斧，并把「相对旧基准降多少」作为难度校准指标。<br>**zhulong（主 · 评测口径）**：报告模型分数时必须写清选项数、题量、是否 few-shot；🚫 不可与 4 选项 MMLU 混表。<br>**posttrain**：可作「后训练是否真提升推理」的更难区分度基准之一（仍须同 harness 复测）。<br>**designflow**：造题时可参考「干扰项要真的像、且数量足够」以防猜对，但 🚫 不得为降分而降级题型。<br>**pretrain / vision / data**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十一轮 · 06:00 时窗） |
+| 核验状态 | abs 页 **`200` / 45,161 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（3,057 / 2024 / `conference-paper`，查询日 2026-11-25）；ar5iv **`200` / 486,105 B**（未检出明文邮箱 ⇒ 本轮不对该文作者发信）。⚠️ 16%–33% 取自摘要（逐字核），**未做 PDF 表格复核**。条目级查重：`2406.01574` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
