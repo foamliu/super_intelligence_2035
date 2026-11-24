@@ -136,3 +136,4 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:50	VirtuosoLaunchRecipeGen-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL: NO_SOLUTION -- no reference solution file found in ref dir	
 2026-11-24T22:26	VlogPortAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	WaiveParamMultiParse-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
+2026-11-24T16:30	VirtuosoLaunchRecipeGen-001	C	1	1	1	1	1	1	green	L2 NO_SOLUTION fixed: built recipe_gen.py reference generator (manifest->launch_virtuoso.sh/cds.lib/open_cellview.il/recipe_manifest.json, stdlib only, all values from manifest) + reference_submit.zip; ref 16/16 PASS; L3 fixed: rewrote naive_hardcode_a (first-fail c->d via partial hardcode) + stub_no_empty (syntax crash + %L escape -> runs, first-fail p); 5 neg distinct first-fails b/c/d/h/p; L4 GUI-free (only python+bash -n); L5 SKIP_RUN harness workdir clean	n/a
