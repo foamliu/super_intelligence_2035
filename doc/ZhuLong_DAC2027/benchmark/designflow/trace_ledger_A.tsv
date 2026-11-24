@@ -888,4 +888,4 @@ anner account not real design user, skip
 1795403502548_ll3lj	szcao	hfeg0pkn004	60	verification	case	VerilogBeginEndBalanceCheckProduce-001	2026-11-24 16:32	
 1795400302725_xlnvg.messages.json	e0039602	hfhds201	10	digital	case	EDA-Eval-DesignFlow-VlibTransToolAnalyzeProduce-001	2026-11-24 18:26	
 1795395413373_99p2s.messages.json	e0045144	hfeg0pkn004	20	digital	case	EDA-Eval-DesignFlow-StrapGenericRefactorProduce-001	2026-11-24 18:50	
-1795435967577_eu1ev.messages.json	max7c	hfeg0pkn005	29	verification	case	EDA-Eval-DesignFlow-InstnameBracketConvertProduce-001	2026-11-24 20:40	r1121 cased: instName 尾下划线->尖括号 produce-task, k=17, A-faithful+hidden-B. r1118 曾 claimed-弃(过用), 本轮重选 cased.
+1795435967577_eu1ev.messages.json	max7c	hfeg0pkn005	29	verification	case	EDA-Eval-DesignFlow-InstNameNotationConvert-001	2026-11-24 20:48	r1121 cased: instName 尾下划线->尖括号 produce-task, k=17, A-faithful+hidden-B. r1118 曾 claimed-弃(过用), 本轮重选 cased.
