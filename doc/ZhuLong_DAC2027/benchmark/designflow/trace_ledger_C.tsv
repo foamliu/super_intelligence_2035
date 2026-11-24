@@ -1523,3 +1523,4 @@ t0dhm					case	EDA-Eval-DesignFlow-CalibreDrcRunsetPatch-001	2026-11-24 03:55
 1795231971092_l3gmz	eric9zhu	hfeg0pkn005	146	layout_virtuoso	case	EDA-Eval-DesignFlow-ParasiticDiodeBackAnnotate-001	2026-11-24 08:50	
 1795426299983_t99ng	hktklin	hfeg0plg87	142	layout_virtuoso	case	PcellSkillRefactor-001	2026-11-24 09:53	
 1788936621788_d52pq	jiaqis	hfeg0plg77	29	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckStructureAudit-001	2026-11-24 10:49	
+1795414075340_yvy1d	cyzhu	hfeg0pgn124	140	physical_verify	case	EDA-Eval-DesignFlow-SpfCapIncrementBackAnnotate-001	2026-11-24 11:19	
