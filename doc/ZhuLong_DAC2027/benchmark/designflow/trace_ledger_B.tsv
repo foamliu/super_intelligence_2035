@@ -1749,7 +1749,7 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794897762023_yjwjo.messages.json	zhenglu	hfeg0plg09	12	spice_sim	parked		2026-11-24 08:35	Q&A: dtech_spice 目录有无 sram model / 网表 x 开头器件是什么, 无 produce
 1792026518930_p7mti.messages.json	e0041392	hfeg0plg77	4	spice_sim	parked		2026-11-24 08:35	skill-mgmt: ask-eda skill 调用上下文, 4msgs, 非 produce
 1795050083064_nwnuw.messages.json	shanliny	hfeg0plg107	23	spice_sim	parked		2026-11-24 08:35	meta-tooling: 开发脚本访问指定目录操作, 非 B 域 spice produce
-1794970325758_527j4.messages.json	shanliny	hfeg0plg107	24	characterization	claimed		2026-11-24 09:23	r1135 build-round deepread done; case synthesis deferred to next round (DEBT)
+1794970325758_527j4.messages.json	shanliny	hfeg0plg107	24	characterization	case	EDA-Eval-DesignFlow-SramWmRmMeasGenProduce-001	2026-11-24 09:59	r1135 build-round deepread done; case synthesis deferred to next round (DEBT)
 1794904051049_xwi92.messages.json	steveny	hfeg0pnd001	14	spice_sim	parked		2026-11-24 08:35	git-commit: 把该提交提交到 git, 非 spice produce
 1793080766125_v5bel.messages.json	serwing	hfhds234	8	spice_sim	parked		2026-11-24 08:35	analysis-Q&A: ptn_lv/ntn_pv 温度特性+RC延迟链 ff/ss corner delay 温度反相分析, 无 produce
 1794810577319_wfszb.messages.json	e0039816	hfeg0plg99	4	spice_sim	parked		2026-11-24 08:35	vague-analysis: 从两份文件拿数据分析, 2msgs 无具体意图, 无 produce
