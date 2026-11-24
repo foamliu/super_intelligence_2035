@@ -37,8 +37,8 @@
 
 <header class="hero">
   <h1>论文观察日报 · 2026-11-24</h1>
-  <div class="sub"><b>06:00 时窗 · A 轨 5/5（本轮 0 新收）· B 轨第一百零四轮 +3 → 380 · 作者网 347 · 发信累计 157 封 · 回信率 0/157</b></div>
-  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-24 06:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
+  <div class="sub"><b>09:00 时窗 · A 轨 5/5（本轮 0 新收）· B 轨第一百零五轮 +3 → 383 · 作者网 350 · 发信累计 159 封 · 回信率 0/159</b></div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-24 09:0x CST</b> ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
   <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
 </header>
 
@@ -244,8 +244,82 @@
   <li><b>纠错</b>：候选 <code>2103.16302</code> 实为 PiT（非 DINO）⇒ 弃；DINO 真 ID 为 <code>2104.14294</code>。</li>
 </ul>
 
+<div class="note">
+  <b>A 轨口径（09:00 时窗复核）</b>：<code>cat:cs.CL&amp;max_results=5&amp;sortBy=submittedDate</code> <b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（<b>13,309 B / 5 entry</b>），<code>published</code> 上界仍 <b><code>2026-11-20T18:51:29Z</code></b>；距本窗（2026-11-24 01:00 UTC）约 <b>78.1h &gt; 72h</b> ⇒ 公告批已出窗，且今日 <b>5/5</b> 已满 ⇒ <b>本轮 0 新收</b>，不凑第 6 篇。
+</div>
+
+<h3 class="sec">🅱 B 轨 · 09:00 时窗（第一百零五轮 +3 → 383）</h3>
+<table class="plain">
+  <tr><th>#</th><th>论文</th><th>年份 / 会议</th><th>被引</th><th>一句话贡献</th><th>归属线</th></tr>
+  <tr><td>381</td><td><a href="https://arxiv.org/abs/1908.10084">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</a>（Nils Reimers · Iryna Gurevych，UKP / TU Darmstadt）</td><td>2019 · EMNLP 2019</td><td><b>24,624</b>（会议版 DOI；arXiv DOI 记录仅 94，两口径分列）</td><td>siamese / triplet BERT 句向量，10,000 句找最相似对从约 5,000 万次推理（~65 小时）降到约 <b>5 秒</b>且保持 BERT 级 STS 精度。</td><td>harness（主）· data · zhulong · designflow · pretrain</td></tr>
+  <tr><td>382</td><td><a href="https://arxiv.org/abs/2006.03654">DeBERTa: Decoding-enhanced BERT with Disentangled Attention</a>（Pengcheng He · Xiaodong Liu · Jianfeng Gao 等，4 位）</td><td>2020 · 预印本（arXiv comment 未标会议）</td><td><b>2,546</b></td><td>content / position <b>解耦注意力</b> + enhanced mask decoder；半数据即超 RoBERTa-Large（MNLI +0.9 / SQuAD v2.0 +2.3 / RACE +3.6 点），<b>1.5B</b> 单模型 SuperGLUE <b>89.9</b> 首超人（89.8）、集成 90.3。</td><td>pretrain（主）· data · harness · zhulong · designflow</td></tr>
+  <tr><td>383</td><td><a href="https://arxiv.org/abs/2408.03314">Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters</a>（Charlie Snell · Jaehoon Lee · Kelvin Xu 等，4 位）</td><td>2024 · ICLR 2025（OpenAlex）</td><td><b>2,592</b></td><td>两条推理期扩算力路径（稠密 process verifier 搜索 / 按 prompt 自适应更新分布）效果随难度变化 ⇒ <b>compute-optimal</b> 分配相对 best-of-N 效率 <b>&gt;4×</b>；FLOPs 对齐下可胜 <b>14×</b> 大模型。</td><td>harness（主）· zhulong · designflow · pretrain</td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted);">被引数 = OpenAlex（查询日 <b>2026-11-24</b>）；会议 = arXiv <code>comment</code> + OpenAlex <code>source</code>，两套口径分列。元数据核验：arXiv 单查 <code>search_query=id:&lt;ID&gt;</code> <b>3/3 <code>200</code> + atom</b>（2,567 / 3,739 / 3,382 B；批量 <code>id_list</code> 两次 <b><code>429</code></b> ⇒ 改单查）；abs 3/3 <code>200</code>（41,707 / 46,461 / 44,439 B）；ar5iv 2/3 部分取回（DeBERTa 258,225 B / TTC 81,023 B，25s 超时截断）；OpenAlex 3/3 <code>200</code>（94→会议版 24,624 / 2,546 / 2,592）。三 ID 条目级查重 <b>0 命中</b>。</p>
+
+<h3 class="sec">👥 作者关系网（+3 → 350，X 131）</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名</th><th>机构</th><th>邮箱（来源）</th><th>X</th><th>状态</th></tr>
+  <tr><td>348</td><td>Nils Reimers</td><td>Cohere（论文时为 TU Darmstadt · UKP）</td><td><b>info@nils-reimers.de</b>（本人站点 contact 页 <code>200</code> / 11,424 B 页内 mailto；站点联系邮箱，<b>当前</b>）</td><td>未找到</td><td><b>已发信</b>（#158）</td></tr>
+  <tr><td>349</td><td>Charlie Snell</td><td>UC Berkeley（EECS 博士生）</td><td><b>csnell22@berkeley.edu</b>（本人主页 <code>sea-snell.github.io</code> <code>200</code> / 23,486 B 页内 mailto；<b>当前地址</b>）</td><td><b>@sea_snell</b>（主页外链 + <code>x.com/sea_snell</code> <code>200</code> <code>og:title</code> 双源）</td><td><b>已发信</b>（#159）</td></tr>
+  <tr><td>350</td><td>Pengcheng He</td><td>Microsoft Research（论文署名时）</td><td><b>仅 2020 论文页</b> <code>penhe@microsoft.com</code>（MSR 人员页重定向、无个人主页 ⇒ 旧地址不发信）</td><td>未找到</td><td>待跟踪（仅建档）</td></tr>
+</table>
+
+
+<h3 class="sec">✉ 作者请教信（本时窗 2 封 → 累计 159）</h3>
+<div class="card">
+  <h2>#158 · Nils Reimers（Cohere）· Sentence-BERT <code>1908.10084</code> · 德文问候 + 英文 191 词</h2>
+  <table class="kv">
+    <tr><th>地址复核</th><td><code>https://www.nils-reimers.de/contact/</code> <code>200</code> / 11,424 B，页内 <code>mailto:info@nils-reimers.de</code>；未用论文页旧地址。</td></tr>
+    <tr><th>问题（只对 SBERT 成立）</th><td>① 「~5 秒」是否含索引构建，多大语料下 GPU 批处理 cross-encoder + 近似最近邻会重新追平；② 去掉 SNLI/MNLI 段只留 STS 对，STS 分数还剩多少；③ 超过 512 token 的截断 / 分块池化 / 分块向量取 max，哪种退化最小。</td></tr>
+    <tr><th>发送状态</th><td><code>SENT OK 09:06:52</code>（今日 <b>6/12</b>）；落款两行、其后无行；正文无项目名；与今日前五封开头句 / 问句零共用。</td></tr>
+    <tr><th>回信状态</th><td><b>未到期</b>（到期日 2026-12-08）</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h2>#159 · Charlie Snell（UC Berkeley）· Test-time compute scaling <code>2408.03314</code> · 英文 197 词</h2>
+  <table class="kv">
+    <tr><th>地址复核</th><td><code>https://sea-snell.github.io/</code> <code>200</code> / 23,486 B，页内 <code>mailto:csnell22@berkeley.edu</code>。</td></tr>
+    <tr><th>问题（只对 test-time scaling 成立）</th><td>① 无标签时如何估 prompt 难度、4× 增益中难度估计本身占多少；② 精确但昂贵的验证（编译 / 跑测试）下是否偏向 revision、verifier 调用 : 生成调用 配比；③ 14× 参数的 FLOPs 对齐是否含 verifier 训练算力、小模型 pass@1 近 0 时是否仍成立。</td></tr>
+    <tr><th>发送状态</th><td><code>SENT OK 09:06:52</code>（今日 <b>7/12</b>）；落款两行、其后无行；正文无项目名；与 #158 开头句 / 问句零共用。</td></tr>
+    <tr><th>回信状态</th><td><b>未到期</b>（到期日 2026-12-08）｜ 累计回信率 <b>0/159</b>，0 封到期（最早 11-25）</td></tr>
+  </table>
+</div>
+
+<h3 class="sec">对各线的可执行建议（6 线 · 09:00）</h3>
+<table class="plain">
+  <tr><th>线</th><th>可执行建议</th></tr>
+  <tr><td><b>pretrain</b></td><td><b>位置编码消融拆成四项</b>（<code>2006.03654</code>）：content 投影 / position 投影是否共享、解耦矩阵是否按头分设、绝对位置是否只在解码层注入、相对位置窗口大小；判据 = 缺任一项不进对照表。<b>同时报 2K 与 &ge;8K 序列</b>，否则「解耦注意力更好」可能只是短序列现象。</td></tr>
+  <tr><td><b>vision</b></td><td><b>无</b>（本轮三篇均为文本 / 推理方向，无可执行视觉建议；不凑数）。</td></tr>
+  <tr><td><b>harness</b></td><td><b>相似度评测分两条路径报</b>（<code>1908.10084</code>）：pairwise cross-encoder 重排 vs 独立句向量 + 余弦，写明维度与归一化；禁止合成一个分数。<b>推理预算入日志</b>（<code>2408.03314</code>）：每题记采样条数 / 是否走 verifier / 是否 revision，否则跨 run 不可比。</td></tr>
+  <tr><td><b>data</b></td><td><b>句对数据配方预注册</b>（<code>1908.10084</code>）：SNLI+MNLI 段与 STS 段的比例作为独立变量，必须报去掉 NLI 段的掉分；<b>半数据对照固定 tokenizer 与步数</b>（<code>2006.03654</code>），否则「数据更省」与「训练更久」无法区分。</td></tr>
+  <tr><td><b>zhulong</b></td><td><b>成本公式写死再报收益</b>（<code>1908.10084</code> / <code>2408.03314</code>）：句向量方案报「索引构建 + 查询」两段；test-time 方案报「生成调用 + verifier 调用」两段，并把等 FLOPs 换算公式写进表头；只报端到端提升不进结论。</td></tr>
+  <tr><td><b>designflow</b></td><td><b>长规格段落先做 chunk 消融</b>（<code>1908.10084</code>）：截断 / 分块池化 / 分块向量取 max 三选一前先测召回；<b>可验证奖励优先</b>（<code>2408.03314</code>）：EDA / 代码有廉价精确验证，先测 verifier : generation 配比，再决定是否扩采样。</td></tr>
+</table>
+
+
+
+<h3 class="sec">附录 · 09:00 时窗检索式与核验（可复核）</h3>
+<ul class="tight">
+  <li><b>A 轨复核</b>：<code>cat:cs.CL&amp;max_results=5&amp;sortBy=submittedDate</code>（<code>--noproxy '*'</code>）<code>200</code> / <code>application/atom+xml</code> / <b>13,309 B / 5 entry</b>；<code>published</code> 上界 <code>2026-11-20T18:51:29Z</code>（距本窗 2026-11-24 01:00 UTC 约 <b>78.1h &gt; 72h</b>）⇒ 今日 5/5 已满，本轮 0 新收。</li>
+  <li><b>B 轨元数据</b>：批量 <code>id_list=1908.10084,2006.03654,2408.03314</code> 两次 <b><code>429</code></b> ⇒ 改单查 <code>search_query=id:&lt;ID&gt;</code> <b>3/3 <code>200</code> + atom</b>（2,567 / 3,739 / 3,382 B，<code>published</code> = 2019-08-27T08:50:17Z / 2020-06-05T19:54:34Z / 2024-08-06T17:35:05Z）；abs 3/3 <code>200</code>（41,707 / 46,461 / 44,439 B，<code>citation_title</code> + <code>citation_date</code> 逐字）；ar5iv 2/3 部分取回（DeBERTa 258,225 B / TTC 81,023 B，25s 超时截断）；OpenAlex 3/3 <code>200</code>（94→会议版 24,624 / 2,546 / 2,592，查询日 2026-11-24）。</li>
+  <li><b>去重</b>：三 ID 在 <code>PAPERS.md</code> 条目级查重 <b>0 命中</b>（B 轨不进 <code>SEEN.md</code> / <code>papers.jsonl</code>）；<code>2307.03172</code>（Lost in the Middle）等候选已收录 ⇒ 跳过。</li>
+  <li><b>作者地址</b>：<code>nils-reimers.de/contact/</code> <code>200</code> / 11,424 B（<code>info@nils-reimers.de</code>）；<code>sea-snell.github.io</code> <code>200</code> / 23,486 B（<code>csnell22@berkeley.edu</code>）；<code>x.com/sea_snell</code> 经代理 <code>200</code> / 165,575 B（<code>og:title</code> 双源）；MSR 人员页 <code>people/penhe/</code> 重定向到人员列表 ⇒ 不作个人主页来源、不猜地址。</li>
+  <li><b>数字口径</b>：被引数 = OpenAlex（查询日 2026-11-24）；SBERT 按会议版 DOI 记 24,624，与 arXiv DOI 记录的 94 分列，<b>禁止跨源比较</b>；论文数字 = 作者自报，本线未复现。</li>
+</ul>
+
+<h3 class="sec">本轮变更说明（06:00 → 09:00）</h3>
+<ul class="tight">
+  <li><b>A 轨不动</b>：今日 5/5 已满，且 <code>published</code> 上界距本窗 78.1h 已出 72h 窗 ⇒ 0 新收，不凑第 6 篇。</li>
+  <li><b>新增 3 篇 B 轨</b>：Sentence-BERT <code>1908.10084</code>、DeBERTa <code>2006.03654</code>、Test-time compute scaling <code>2408.03314</code> ⇒ 380 → <b>383</b>。</li>
+  <li><b>作者网 +3</b>：Nils Reimers（站点 contact 当前地址，已发信）/ Charlie Snell（Berkeley 主页当前地址 + X 双源，已发信）/ Pengcheng He（仅 2020 论文页地址，仅建档）⇒ 347 → <b>350</b>；X <b>130 → 131</b>。</li>
+  <li><b>发信 +2</b>：#158 Nils Reimers（德文问候 + 英文 191 词）、#159 Charlie Snell（英文 197 词），均 <code>SENT OK 09:06:52</code> ⇒ 累计 <b>159</b>；回信率 <b>0/159</b>，0 封到期。</li>
+  <li><b>核验教训</b>：arXiv 批量 <code>id_list</code> 连续 <b><code>429</code></b> ⇒ 单查 <code>search_query=id:</code> 可用（限速 ≥3s 仍要守）。</li>
+</ul>
+
+
 <footer>
-  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-24 03:00 CST
+  research 线 · 观察哨 ｜ 本页自包含（内联 CSS、零外部脚本）｜ 双轨：A 最新 50% / B 经典 50% ｜ 推荐 = 待读线索，非结论 ｜ 2026-11-24 09:00 CST
 </footer>
 
 </div>

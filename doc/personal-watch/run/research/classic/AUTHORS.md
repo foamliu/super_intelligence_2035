@@ -9,6 +9,9 @@
 > **当前计数（2026-11-24 06:0x）**：作者 **347** 人（编号最大 **347**）· X 已核验 **130**（本轮 **+0**：Omar Khattab 主页 `omarkhattab.com` 与 Matei Zaharia 主页 `people.eecs.berkeley.edu/~matei/` 均无 x.com / twitter.com 外链；Mathilde Caron 无可核主页 ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **157**（台账 #1–#157；今日 **5/12**）· 回信 **0**（0/157，0 封到期，最早 11-25）。本轮 **+3**：Omar Khattab（ColBERT 一作，英文，MIT 当前主页邮箱 ⇒ 已发信 #157）· Matei Zaharia（ColBERT 二作，英文，UC Berkeley 当前主页邮箱 ⇒ 本窗不发，同论文 ≤1 封）· Mathilde Caron（DINO 一作，法文姓名，未见当前可核邮箱 ⇒ 仅建档）。
 > **当前计数（2026-11-23 21:0x）**：作者 **338** 人（编号最大 **338**）· X 已核验 **130**（本轮 **+1**：`@VictorSanh` 经 `x.com/VictorSanh` 经代理 `200` / 163,390 B，`og:title` = `Victor Sanh (@VictorSanh) on X`，`og:description` = `Beaker ... Prev. early crew @huggingface | AI x NYC`；反例 `@m_dehghani` 只有 **1 follower / 3 following** ⇒ 判他人，不记）· 已发信 **152**（台账 #1–#152）· 回信 **0**（0/152，0 封到期，最早 11-25）。本轮 **+3**：Bin Xiao（Florence-2 一作，中文，无公开明文邮箱 ⇒ 仅建档）· Victor Sanh（T0 一作，英文，X 双源）· Mostafa Dehghani（UL2 共同一作，英文，论文页邮箱单源）。
 > **当前计数（2026-11-24 03:0x）**：作者 **344** 人（编号最大 **344**）· X 已核验 **130**（本轮 **+0**：Matthias Minderer / Alexey Gritsenko / Bingsheng He 三人均无可访问 X 外链，🚫 不猜 handle）· 已发信 **156**（台账 #1–#156；今日 **4/12**）· 回信 **0**（0/156，0 封到期，最早 11-25）。本轮 **+3**：Matthias Minderer（OWL-ViT 一作，德文姓名，论文页 Google 旧地址 ⇒ 仅建档）· Alexey Gritsenko（OWL-ViT 二作，英文，论文页旧地址 ⇒ 仅建档）· Bingsheng He 何炳生（DistDNA 通讯，中文，NUS 官方主页当前地址 ⇒ 已发信 #156）。
+> **当前计数（2026-11-24 09:0x）**：作者 **350** 人（编号最大 **350**）· X 已核验 **131**（本轮 **+1**：`@sea_snell` 由 Charlie Snell 本人主页 `https://sea-snell.github.io/`（`200` / 23,486 B）外链 `twitter.com/sea_snell`，并经代理抓 `x.com/sea_snell` `200` / 165,575 B，`og:title` = `Charlie Snell (@sea_snell) on X`、`og:description` = `my friend told me to tweet more. I stare at my computer a lot and make things` ⇒ 双源核；Nils Reimers 站点无 X 外链、Pengcheng He 无可核主页 ⇒ 记「未找到 X」，不猜）· 已发信 **159**（台账 #1–#159；今日 **7/12**）· 回信 **0**（0/159，0 封到期，最早 11-25）。本轮 **+3**：Nils Reimers（SBERT 一作，德文姓名，site contact 地址 ⇒ 已发信 #158）· Charlie Snell（test-time compute 一作，英文，Berkeley 主页当前地址 ⇒ 已发信 #159）· Pengcheng He（DeBERTa 一作，中文，仅 2020 论文页地址 ⇒ 仅建档）。
+
+
 > **当前计数（2026-11-24 00:0x）**：作者 **341** 人（编号最大 **341**）· X 已核验 **130**（本轮 **+0**：三位新增作者——Wonjae Kim / Amanpreet Singh / Chao Jia——论文页与可访问主页均无 x.com / twitter.com 外链，`amanpreetsingh.github.io` 实测 `000` ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **155**（台账 #1–#155；今日 **3/12**）· 回信 **0**（0/155，0 封到期，最早 11-25）。本轮 **+3**：Wonjae Kim（ViLT 一作，韩文姓名，2021 旧地址 ⇒ 仅建档）· Amanpreet Singh（FLAVA 一作，英文，无地址）· Chao Jia（ALIGN 一作，中文，Google 论文页地址单源）。
 
 
@@ -4918,4 +4921,44 @@
 | X 账号 | **未找到**（无可核主页；检索快照出现 `@mcaron31` 但**单源未能用 X 页 `og:description` 二次核验** ⇒ 不登记） |
 | 状态 | **待跟踪**（仅建档；无当前可核地址 ⇒ 本线不发信） |
 | 备注 | 发信问题候选（只对 DINO 成立）：① multi-crop 的裁剪尺度分布对 k-NN 78.3% 的贡献拆分；② centering + sharpening 的温度 τ_s / τ_t 扫描区间与塌缩失败模式；③ 自监督 ViT 的分割结构在**非自然图像**（版图 / 显微图）上是否仍成立，需什么最小验证。 |
+
+
+### 348. Nils Reimers
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nils Reimers（`语言=Deutsch 称谓问候+英文正文(判据=德文姓名族属「Nils Reimers」+ 德国 UKP / TU Darmstadt 学术背景；现职在加拿大不改变族属判据)`） |
+| 机构 | **Cohere**（论文署名时为 TU Darmstadt · UKP Lab；本人站点 2026 自述从事 consulting） |
+| 代表论文 | **Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks**（`1908.10084`，B 轨 #381，一作） |
+| 邮箱 | **info@nils-reimers.de**（本人站点 `https://www.nils-reimers.de/contact/` `200` / 11,424 B 页内 `mailto:` 明文，**当前地址，2026-11-24 09:0x 复核**；⚠️ 这是站点 contact 邮箱而非个人学术邮箱；未使用论文页旧地址） |
+| 主页 | <https://www.nils-reimers.de/>（`HTTP 200` / 38,619 B） |
+| X 账号 | **未找到**（站点各页均无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **已发信**（#158，2026-11-24 09:06:52，德文称谓问候 + 英文正文 191 词） |
+| 备注 | 发信问题候选（只对 SBERT 成立）：① 「~5 秒」是否含索引构建，还是仅查询编码 + 余弦检索；② 去掉 SNLI/MNLI 段只留 STS 对，STS 分数还剩多少；③ 超过 512 token 的长文档用截断 / 分块池化 / 分块向量取 max，哪一种 STS 退化最小。 |
+
+### 349. Charlie Snell
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Charlie Snell（`语言=英文(判据=英文姓名族属 + UC Berkeley 美国机构；无双语信号)`） |
+| 机构 | **UC Berkeley**（EECS 博士生；主页 2026-11-24 自述） |
+| 代表论文 | **Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters**（`2408.03314`，B 轨 #383，一作） |
+| 邮箱 | **csnell22@berkeley.edu**（本人主页 `https://sea-snell.github.io/` `200` / 23,486 B 页内 `mailto:` 明文，**当前地址，2026-11-24 09:0x 复核**） |
+| 主页 | <https://sea-snell.github.io/>（`HTTP 200` / 23,486 B） |
+| X 账号 | **@sea_snell**（主页外链 `twitter.com/sea_snell` + 代理抓 `x.com/sea_snell` `200` / 165,575 B，`og:title` = `Charlie Snell (@sea_snell) on X`、`og:description` = `my friend told me to tweet more. I stare at my computer a lot and make things` ⇒ 双源核验） |
+| 状态 | **已发信**（#159，2026-11-24 09:06:52，英文 197 词） |
+| 备注 | 发信问题候选（只对 test-time scaling 成立）：① 无标签时如何估 prompt 难度（verifier 分数分布 / 独立模型 / rollout），4× 增益里难度估计本身占多少；② 精确但昂贵的验证（编译 / 跑测试）下，compute-optimal 是否偏向 revision 而非 verifier 搜索，verifier 调用 : 生成调用 配比是多少；③ 14× 参数的 FLOPs 对齐结论是否含 verifier 训练算力，在小模型 pass@1 近 0 的题上是否仍成立。 |
+
+### 350. Pengcheng He
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Pengcheng He（`语言=中文(判据=拼音姓名族属可还原中文名「何鹏程」+ Microsoft Research 华人研究者)`） |
+| 机构 | **Microsoft Research**（论文署名时；本轮未取得当前官方人员页） |
+| 代表论文 | **DeBERTa: Decoding-enhanced BERT with Disentangled Attention**（`2006.03654`，B 轨 #382，一作） |
+| 邮箱 | `penhe@microsoft.com`（ar5iv `200` / 258,225 B 部分取回，首页明文；⚠️ **2020 年论文页地址**，MSR 人员页 `people/penhe/` 已重定向到人员列表 ⇒ **仅建档，不发信**） |
+| 主页 | **未找到**（`microsoft.com/en-us/research/people/penhe/` 重定向到人员列表，无个人页） |
+| X 账号 | **未找到**（无可核个人主页；不猜 handle） |
+| 状态 | **待跟踪**（旧论文页地址 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 DeBERTa 成立）：① content / position 两套向量是否共享投影、解耦矩阵的参数量如何随头数增长；② v3 用 RTD 替换 MLM 后，与 disentangled attention 的增益是否可叠加；③ 半数据超 RoBERTa-Large 的对照里，训练步数与 tokenizer 是否完全一致。 |
 

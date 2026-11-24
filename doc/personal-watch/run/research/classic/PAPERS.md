@@ -9,6 +9,9 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **383** 条（**第一百零五轮 2026-11-24 09:0x 补 3 条 → 383**：Sentence-BERT `1908.10084`（**24,624**，EMNLP 2019、OpenAlex 会议版 `conference-paper`；siamese / triplet BERT 句向量，10,000 句找最相似对从 BERT 的约 5,000 万次推理（~65 小时）降到 SBERT 约 **5 秒**且保持 STS 精度；⚠️ arXiv DOI 记录仅 94 次，按会议版 DOI 记 24,624 并分列）/ DeBERTa `2006.03654`（**2,546**，2020 预印本、OpenAlex `preprint`；disentangled attention：每个词拆成 content / position 两向量、注意力用两组解耦矩阵；enhanced mask decoder 在解码层注入绝对位置；半数据即超 RoBERTa-Large（MNLI +0.9 / SQuAD v2.0 +2.3 / RACE +3.6 点），48 层 **1.5B** 单模型 SuperGLUE **89.9** 首超人（89.8）、集成 **90.3**）/ Test-time compute scaling `2408.03314`（**2,592**，ICLR 2025、OpenAlex `conference-paper`；两条路：稠密 process-based verifier 搜索 / 按 prompt 自适应更新响应分布，效果随 prompt 难度变化 ⇒ compute-optimal 按难度分配算力，效率比 best-of-N 高 **>4×**，FLOPs 对齐下小模型可胜 **14×** 大模型）；核验：arXiv 单查 `search_query=id:<ID>` **3/3 `200` + atom**（2,567 / 3,739 / 3,382 B，`published` = 2019-08-27T08:50:17Z / 2020-06-05T19:54:34Z / 2024-08-06T17:35:05Z；批量 `id_list` 两次 **`429`** ⇒ 改单查）+ abs 页 **3/3 `200`**（41,707 / 46,461 / 44,439 B，`citation_title` + `citation_date` 逐字）+ ar5iv **2/3 部分取回**（DeBERTa 258,225 B / TTC 81,023 B，均在 25s 超时前截断；SBERT 61,868 B 截断，页内未抽出个人邮箱）+ OpenAlex **3/3 `200`**（94→会议版 24,624 / 2,546 / 2,592，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+2** · harness **+2** · data **+1** · zhulong **+2** · designflow **+2** · vision **+0**（一篇可多线））
+
+
 
 **本轮快照**：累计 **380** 条（**第一百零四轮 2026-11-24 06:0x 补 3 条 → 380**：BYOL `2006.07733`（**8,808**，NeurIPS 2020、OpenAlex `conference-paper`；online/target 双网络，target 用慢速滑动平均更新，**不用负样本**，ResNet-50 线性评测 **74.3%**、更大 ResNet **79.6%**，迁移/半监督持平或更好）/ DINO `2104.14294`（**11,688**，ICCV 2021 pp. 9630–9640；自监督 ViT 特征显式含语义分割结构，小 ViT k-NN **78.3%**、ViT-Base 线性 **80.1%**；强调动量编码器 + multi-crop + 小 patch）/ ColBERT `2004.12832`（**453 <500 按「方法论常青」收**，SIGIR 2020、OpenAlex 记 `preprint`；BERT 分别编码 query/doc + 逐 token late interaction（MaxSim），文档向量可离线预计算且对剪枝友好，可端到端向量检索；效果与 BERT 类相当，每查询快两个数量级、FLOPs 少四个数量级）；核验：arXiv `id_list` 批量 **`200` + atom**（7,976 B / 3 entry，`published` = 2020-04-27T14:21:03Z / 2020-06-13T22:35:21Z / 2021-04-29T12:28:51Z）+ DINO 单批 **`200` / 2,699 B** + abs 页 **3/3 `200`**（45,586 / 42,724 / 43,149 B，`citation_title` + `citation_date` 逐字）+ ar5iv 全文 **3/3 `200`**（904,685 / 640,182 / 201,593 B）+ OpenAlex **3/3 `200`**（8,808 / 11,688 / 453，查询日 2026-11-24）；三 ID 条目级查重 **0 命中**；⚠️ 候选 `2103.16302` 经 abs 实测为 *Rethinking Spatial Dimensions of Vision Transformers*（PiT，非 DINO）⇒ 弃、改用真 ID `2104.14294`；本轮归属：vision **+3** · pretrain **+2** · data **+2** · harness **+2** · designflow **+1** · zhulong **+1**（一篇可多线））
 
@@ -6709,6 +6712,58 @@
 | 与我们工作的关系 | **harness（主 · 检索评测口径）**：若 harness 要评「规格 / 文档检索」子任务，ColBERT 提示必须把**候选深度 k**、是否两段式（先 BM25 召回再 late interaction 重排）、以及 MRR@10 / Recall@k 分开报；只报端到端平均分 ⇒ 无法定位是召回还是重排的问题。<br>**data（索引成本口径）**：逐 token 存向量意味着索引大小 ≈ token 数 × 维度 × 精度；data 线建索引账本时须新增「原文 token / 向量条数 / 索引字节数 / 查询 QPS」四列，否则「检索更好」无法换算成成本。<br>**zhulong（长文档成本）**：长文档的 token 级索引会线性膨胀；成本表应把「索引存储 + 查询算力」与生成成本并列，避免只算 GPU 训练成本。<br>**designflow（EDA 文档 / 规格检索）**：MaxSim 对**标识符精确匹配**可能不如词法匹配敏感；若用于 spec / 寄存器名检索，应预注册「纯 late interaction」vs「late interaction ∪ BM25」的对照，并按标识符类查询单列指标。<br>**pretrain**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-24**（第一百零四轮 · 06:00 时窗） |
 | 核验状态 | abs 页 **`200` / 43,149 B**，`citation_title` + `citation_date` = `2020/04/27` 逐字、`Comments` = `Accepted at SIGIR 2020`；arXiv API `id_list` 批量 **`200` + atom**（7,976 B / 3 entry，`published` = `2020-04-27T14:21:03Z`）；ar5iv 全文 **`200` / 201,593 B**（首页明文 `okhattab@stanford.edu` / `matei@cs.stanford.edu` 各 2 处，**2020 年论文页地址**）；OpenAlex **`200`（453 / 2020 / preprint）**；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+
+## 381. Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks |
+| 作者（前 3） | Nils Reimers · Iryna Gurevych（共 **2** 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2019**（arXiv v1 `2019-08-27T08:50:17Z`） |
+| 会议 / 期刊 | **EMNLP 2019**（arXiv `comment` 原文 `Published at EMNLP 2019`；OpenAlex 会议版 `10.18653/v1/d19-1410`、`type=conference-paper`） |
+| 被引数 | **24,624**（OpenAlex 会议版 DOI `10.18653/v1/d19-1410`，查询日 **2026-11-24**；⚠️ arXiv DOI `10.48550/arxiv.1908.10084` 记录仅 **94** 次 ⇒ 两口径分列，不混用；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1908.10084> ｜ 会议版 DOI `10.18653/v1/d19-1410` ｜ arXiv DOI `10.48550/arxiv.1908.10084` |
+| 一句话贡献 | **Sentence-BERT（SBERT）**：在预训练 BERT 上加 **siamese / triplet** 结构，得到可用**余弦相似度**直接比较的句向量；把「在 10,000 句里找最相似一对」从 BERT 的约 **5,000 万次推理（~65 小时）**降到约 **5 秒**且保持 BERT 级准确率，在常见 STS 与迁移任务上优于当时的其他句向量方法。 |
+| 与我们工作的关系 | **harness（主 · 检索 / 相似度评测）**：SBERT 的对比口径是「pairwise cross-encoder vs 独立句向量」；若 harness 评规格 / 文档相似度，必须分开报「pairwise 重排」与「独立向量 + 余弦」两条路径，并写明句向量维度与归一化方式，否则分数不可比。<br>**data（NLI / STS 训练配方）**：论文的价值不只在结构，还在「SNLI + MNLI 约百万句对 → STS」的两段式数据配方；data 线若要造句对数据，应把「NLI 段 / STS 段」比例作为独立变量预注册，并报告去掉 NLI 段后的掉分。<br>**zhulong（推理成本口径）**：65 小时 → 5 秒是**成本口径**的经典换算；成本表应把「打分对数 × 单对延迟」写成显式公式，句向量方案须同时报索引构建时间，避免只报查询时间。<br>**designflow（规格段落匹配）**：EDA 规格段落常 >512 token，SBERT 的池化与截断策略直接决定召回；须把 chunk 方案（截断 / 分块池化 / 分块向量取 max）作为消融项。<br>**pretrain（句向量目标）**：triplet / 对比目标 + 池化选择可作为句级预训练目标的最小实现；但论文未给规模化结论 ⇒ 不得当 scaling 依据。<br>**vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零五轮 · 09:00 时窗） |
+| 核验状态 | abs 页 **`200` / 41,707 B**，`citation_title` + `citation_date` = `2019/08/27` 逐字、`Comments` = `Published at EMNLP 2019`；arXiv API 单查 `search_query=id:1908.10084` **`200` + atom**（2,567 B，`published` = `2019-08-27T08:50:17Z`；批量 `id_list` 两次 **`429`**）；ar5iv 全文**部分取回** `200` / 61,868 B（25s 超时截断，未抽出个人邮箱）；OpenAlex **`200`**（会议版 24,624 / 2019 / `conference-paper`；arXiv DOI 记录 94）；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 382. DeBERTa: Decoding-enhanced BERT with Disentangled Attention
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | DeBERTa: Decoding-enhanced BERT with Disentangled Attention |
+| 作者（前 3） | Pengcheng He · Xiaodong Liu · Jianfeng Gao（共 **4** 位；另 Weizhu Chen；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（arXiv v1 `2020-06-05T19:54:34Z`） |
+| 会议 / 期刊 | **预印本**（arXiv `comment` 未标会议，仅写 v2 / v3 版本变化；OpenAlex `type=preprint`、`source` = arXiv ⇒ 不臆断会议） |
+| 被引数 | **2,546**（OpenAlex `10.48550/arxiv.2006.03654`，查询日 **2026-11-24**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2006.03654> ｜ arXiv DOI `10.48550/arxiv.2006.03654` |
+| 一句话贡献 | **DeBERTa**：两项结构改动 —— ① **disentangled attention**，每个词用 **content 与 position 两套向量**表示，注意力权重分别在内容与相对位置上用解耦矩阵计算；② **enhanced mask decoder**，在解码层注入绝对位置来预测被掩码 token；再加虚拟对抗训练微调；**用一半训练数据**即在多任务上稳定超 RoBERTa-Large（MNLI **+0.9**、SQuAD v2.0 **+2.3**、RACE **+3.6** 点），放大到 **48 层 / 1.5B** 后单模型 SuperGLUE **89.9** 首次超人类 **89.8**，集成 **90.3**。 |
+| 与我们工作的关系 | **pretrain（主 · 位置编码与注意力分解）**：content / position 解耦是相对位置偏置的一种显式拆法；若 pretrain 线要改位置编码，应把「内容项与位置项是否共享投影」列成独立消融，并同时报短序列与长序列（≥8K）的损失曲线，避免只在 2K 上下文上验证。<br>**data（半数据效率）**：论文的对照点是「半数据仍超 RoBERTa-Large」；data 线复现时必须固定 tokenizer 与训练步数，否则「数据更省」与「训练更久」无法区分。<br>**harness（SuperGLUE 口径）**：单模型 89.9 与集成 90.3 是两个数；harness 报分必须写明单模型 / 集成、macro-average、以及是否含 RTD（v3 换了目标函数）。<br>**zhulong（长上下文成本）**：解耦注意力只改变权重计算方式、不改变序列长度的二次复杂度；成本表不应把它当长上下文方案，须同时报显存随长度的增长。<br>**designflow（标识符敏感任务）**：content / position 分开建模对「寄存器名 + 位置敏感」的规格文本可能有增益，但论文未测代码 / EDA 域 ⇒ 只作候选，不作结论。<br>**vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零五轮 · 09:00 时窗） |
+| 核验状态 | abs 页 **`200` / 46,461 B**，`citation_title` + `citation_date` = `2020/06/05` 逐字、`Comments` 逐字取回；arXiv API 单查 **`200` + atom**（3,739 B，`published` = `2020-06-05T19:54:34Z`）；ar5iv 全文**部分取回** `200` / 258,225 B（25s 超时截断，首页明文 `penhe@microsoft.com` / `xiaodl@microsoft.com` / `jfgao@microsoft.com` / `wzchen@microsoft.com`，**2020 年论文页地址**）；OpenAlex **`200`**（2,546 / 2020 / `preprint`）；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
+
+---
+
+## 383. Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters |
+| 作者（前 3） | Charlie Snell · Jaehoon Lee · Kelvin Xu（共 **4** 位；另 Aviral Kumar；arXiv `citation_author` 逐字核） |
+| 年份 | **2024**（arXiv v1 `2024-08-06T17:35:05Z`） |
+| 会议 / 期刊 | **ICLR 2025**（arXiv 无 `comment`；OpenAlex `type=conference-paper`、`source` = `International Conference on Learning Representations`、落地页为 ICLR 2025 proceedings） |
+| 被引数 | **2,592**（OpenAlex `10.48550/arxiv.2408.03314`，查询日 **2026-11-24**；**≥500 直接满足判据**；2024 年论文、按「方法论常青 / 开创 test-time scaling 范式」收） |
+| arXiv / DOI | <https://arxiv.org/abs/2408.03314> ｜ arXiv DOI `10.48550/arxiv.2408.03314` |
+| 一句话贡献 | **Test-time compute scaling**：系统比较两条推理期扩算力的路径 —— ① 对**稠密、基于过程的 verifier 奖励模型**做搜索；② 在测试时按 prompt **自适应更新响应分布**；发现两者的有效性**强烈依赖 prompt 难度**，据此提出 **compute-optimal** 分配策略，把 test-time 扩算力的效率相对 best-of-N 提升 **>4×**；在 FLOPs 对齐评测中，对「较小模型已有非平凡成功率」的问题，test-time 算力可胜过 **14×** 大的模型。 |
+| 与我们工作的关系 | **harness（主 · 推理预算与判分）**：论文把「难度」变成分配变量；harness 若评 agent，须记录每题的采样条数 / 是否走 verifier / 是否触发 revision，否则同名指标不可比。<br>**zhulong（推理成本口径）**：>4× 与 14× 都是**算力对齐**结论；成本表必须把 verifier 调用次数单列，并把「等 FLOPs」的换算公式写死，禁止只报分数提升。<br>**designflow（可验证奖励）**：EDA / 代码任务有廉价精确验证（编译、测试），正对应论文所说的「稠密 verifier」；建议先测「verifier 调用 : 生成调用」的配比，而不是直接上大规模采样。<br>**pretrain（预训练 vs 推理的算力权衡）**：论文给出「小模型 + 推理算力」可替代部分参数规模的证据；pretrain 线做 2B 规模决策时应把推理预算作为外生变量写进对照，不能只比训练 loss。<br>**data**：无直接建议（显式写「无」）。<br>**vision**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-24**（第一百零五轮 · 09:00 时窗） |
+| 核验状态 | abs 页 **`200` / 44,439 B**，`citation_title` + `citation_date` = `2024/08/06` 逐字；arXiv API 单查 **`200` + atom**（3,382 B，`published` = `2024-08-06T17:35:05Z`）；ar5iv 全文**部分取回** `200` / 81,023 B（25s 超时截断，首页明文 `csnell22@berkeley.edu`）；OpenAlex **`200`**（2,592 / 2025 / `conference-paper`）；数字取自 arXiv 摘要，**未做 PDF 逐页复核**。 |
 
 ---
 
