@@ -1,5 +1,37 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-24 用户令（最新）— 启动 doubao-pro 3-run（评测框架回归验证）· 最高优先 · 覆盖 standby**
+
+> **用户原话**：「启动 doubao-pro 3-run」
+
+**一、背景**：评测框架今天做了重构，glm-5.2 旧数据作废。现在用 doubao-pro 跑 3-run 验证重构后的框架。
+
+**二、模型与口径**
+- 模型：`doubao-seed-2.0-pro-cloud` @ `http://agi-gateway.cxmt.com/cloud/v1`（providers.json 已还原 pro 默认：model=doubao-seed-2.0-pro-cloud / key 末 8 位 `25cdc15f` / maxTokens=16384 / reasoning=false）
+- 冻结口径（与历史 doubao-pro 3-run 逐字一致）：`eval/cases_lite.txt` **500 题** / Pass@1 / `thinking low` / `timeout 2400` / cline 3.0.51 + PreToolUse hook / 登录 shell + PATH + `https_proxy` / `--workers 16`。
+- 若出现 `[FUSE]` / `额度耗尽` / `熔断` ⇒ 本轮作废、等 ≥30 min、并发减半（16→8→4→2），🚫 不拼接。
+- 🚫 不改题/图/`check.py`/判分口径；🚫 不加 `--skip-done` 等自创参数；🚫 复用上轮 `status.jsonl`。
+
+**三、执行**
+- 3 轮严格串行（r1→r2→r3），每轮独立 batch 目录 + 独立日志 + 独立 `status_doubao_pro_r{N}.jsonl`。
+- 每轮跑前 canary 两证（curl /v1/models + 单题真跑）；身份四证写进报告与 MEMORY。
+- 跑前 `cp providers.json providers.json.doubao_pro.bak`，每轮结束立即还原 pro 默认态防串台。
+
+**四、交付**
+1. 报告 `reports/report_edafb_lite500_doubao_pro_eval_zh.html`（中文单文件、内联 CSS、**0 外链 0 script**；3 轮并入一份 + 逐轮表 + `infra_clean`）。
+2. 3-run 汇总：`[r1,r2,r3] / mean±std / decided 分母 / infra_clean`；`grep -c 'FUSE|额度耗尽|熔断'` 必须为 **0** 才计入。
+3. **与历史 doubao-pro 3-run（10.18±1.18%）对比**：若新 3-run 与历史差异大，分析是否框架重构导致（写进报告）。
+4. `MEMORY_ZHULONG.md` 首行追加：「doubao-pro 3-run（框架回归）= x.xx±y.yy%」。
+
+**五、约束**
+- 🚫 不动 v3+强模型 4 组已收口数字（doubao pro/lite/mini + deepseek-v4-pro 3-run）。
+- 🚫 不改论文宏与已回填的 §6 数字。
+- 跑完后 standby 等用户新令。
+
+---
+
+> ✅ **2026-11-24 早令 — 停止 glm-5.2 评测已执行**（wake#2009 standby·评测框架重构·glm-5.2 旧数据作废）。下方为归档令。
+
 > 🔴 **2026-11-24 用户令（更新）— 立即停止 glm-5.2 评测，回归 standby 等待 · 最高优先 · 覆盖 standby**
 
 > **用户原话**：「glm-5.2 的评测停下来，评测框架今天做了重构，需要回归。zhulong agent 只需停止评测，回归我安排其它 agent 做。」
