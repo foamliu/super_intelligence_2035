@@ -1756,3 +1756,4 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1793863216680_1ju7i.messages.json	alrenc	hfeg0plg103	7	spice_sim	parked		2026-11-24 08:35	launch-app: 帮我打开 solido 软件, 非 produce
 1795066378649_yqtos.messages.json	rowanl	hfeg0plg07	17	spice_sim	parked		2026-11-24 08:35	trivial: hello/为什么输入不了中文, 无 produce
 1795073541719_k6clp.messages.archive.json	reedchen	hfeg0plg93	2	spice_sim	parked		2026-11-24 08:35	continuation+skill-mgmt: U2 把工作更新到 skill, 非自包含 produce, mc2 archive 噪声
+1795402743159_7xub5.messages.json	yinyus	hfeg0plg67	417	spice_sim	case	EDA-Eval-DesignFlow-WaveformPwlStimGenProduce-001	2026-11-24 10:42	
