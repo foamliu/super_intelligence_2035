@@ -1741,3 +1741,18 @@ y4kgh	zjqiao	hfeahpc505	88	spice_sim	case	EDA-Eval-DesignFlow-CrcAlertFixGen-001
 1794807222702_5kkei	ypzheng	hfeg0plg103	46	spice_sim	case	EDA-Eval-DesignFlow-WaveToggleWlClassifyProduce-001	2026-11-24 07:12	
 1795146011560_ntu0p.messages.json	e0025730	hfeg0plg49	68	spice_sim	case	EDA-Eval-DesignFlow-SenseMarginBlBatchSpecProduce-001	2026-11-24 07:39	
 1793085965170_lbsbf					case	EDA-Eval-DesignFlow-QuotedUnitValueNormalize-001	2026-11-24 08:07	
+1795058253161_5qlyc.messages.json	reedchen	hfeg0plg93	41	spice_sim	parked		2026-11-24 08:35	doc-Q&A: output.ic 是什么+后仿加速原因 (FineSim DC checkpoint), 无 produce 齿
+1795140090097_yetqt.messages.json	krisluo	hfeg0plg96	13	spice_sim	parked		2026-11-24 08:35	analysis-Q&A: FineSim 后仿激励写法(vin_xx编号/PU vs VPULSE/dc=显式), 无 produce
+1792478252896_tadz1.messages.json	t0002801	hfhds217	4	spice_sim	parked		2026-11-24 08:35	vague: 生成检查STD的tcl模板(TT/1.8V/25C) 但未指明工具/检查项, assistant 仅澄清未产出, mc4 噪声
+1795235433677_4adps.messages.json	caozhang	hfhds208	8	spice_sim	parked		2026-11-24 08:35	doc-Q&A: NanoSpice option 未知值默认值/未知态信号初始值, 无 produce
+1794296680831_xy7vv.messages.json	joeyl	hfeg0plg74	9	spice_sim	parked		2026-11-24 08:35	workspace-cleanup: 清理工作目录乱文件, 非 spice produce
+1794897762023_yjwjo.messages.json	zhenglu	hfeg0plg09	12	spice_sim	parked		2026-11-24 08:35	Q&A: dtech_spice 目录有无 sram model / 网表 x 开头器件是什么, 无 produce
+1792026518930_p7mti.messages.json	e0041392	hfeg0plg77	4	spice_sim	parked		2026-11-24 08:35	skill-mgmt: ask-eda skill 调用上下文, 4msgs, 非 produce
+1795050083064_nwnuw.messages.json	shanliny	hfeg0plg107	23	spice_sim	parked		2026-11-24 08:35	meta-tooling: 开发脚本访问指定目录操作, 非 B 域 spice produce
+1794970325758_527j4.messages.json	shanliny	hfeg0plg107	24	characterization	parked		2026-11-24 08:35	complex-continuation: SRAM M4B2 64x8 RM/WM meas 引擎 sram_meas_gen.py 真交付, 但依赖 80MB DSPF+前序 session+3 处未确认定义, 单轮不可自包含封装; deferred 待专项 build 轮
+1794904051049_xwi92.messages.json	steveny	hfeg0pnd001	14	spice_sim	parked		2026-11-24 08:35	git-commit: 把该提交提交到 git, 非 spice produce
+1793080766125_v5bel.messages.json	serwing	hfhds234	8	spice_sim	parked		2026-11-24 08:35	analysis-Q&A: ptn_lv/ntn_pv 温度特性+RC延迟链 ff/ss corner delay 温度反相分析, 无 produce
+1794810577319_wfszb.messages.json	e0039816	hfeg0plg99	4	spice_sim	parked		2026-11-24 08:35	vague-analysis: 从两份文件拿数据分析, 2msgs 无具体意图, 无 produce
+1793863216680_1ju7i.messages.json	alrenc	hfeg0plg103	7	spice_sim	parked		2026-11-24 08:35	launch-app: 帮我打开 solido 软件, 非 produce
+1795066378649_yqtos.messages.json	rowanl	hfeg0plg07	17	spice_sim	parked		2026-11-24 08:35	trivial: hello/为什么输入不了中文, 无 produce
+1795073541719_k6clp.messages.archive.json	reedchen	hfeg0plg93	2	spice_sim	parked		2026-11-24 08:35	continuation+skill-mgmt: U2 把工作更新到 skill, 非自包含 produce, mc2 archive 噪声
