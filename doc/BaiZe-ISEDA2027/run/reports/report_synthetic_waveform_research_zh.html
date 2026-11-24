@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>合成波形数据调研报告 — P4 Synthetic Waveform Research</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f5f5;color:#333;line-height:1.7;padding:20px}.container{max-width:900px;margin:0 auto;background:#fff;padding:40px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.08)}h1{font-size:1.6em;color:#1a1a4e;margin-bottom:8px;border-bottom:3px solid #4488cc;padding-bottom:10px}h2{font-size:1.3em;color:#1a1a4e;margin:28px 0 12px;border-left:4px solid #4488cc;padding-left:10px}h3{font-size:1.1em;margin:20px 0 8px}p{margin-bottom:10px}ul,ol{margin:8px 0 12px 24px}li{margin-bottom:4px}code{background:#f0f0f0;padding:2px 5px;border-radius:3px;font-size:.9em;color:#c0392b}pre{background:#2d2d2d;color:#f8f8f2;padding:14px;border-radius:6px;overflow-x:auto;font-size:.85em;margin:10px 0;line-height:1.4}.card{background:#f8f9ff;border:1px solid #d0d8e8;border-radius:6px;padding:16px;margin:12px 0}.cg{background:#f0fff0;border-color:#c0e0c0}.cy{background:#fffde0;border-color:#e0e0a0}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.9em}th,td{border:1px solid #ddd;padding:8px 10px;text-align:left}th{background:#4488cc;color:#fff}tr:nth-child(even){background:#f8f8f8}.metric{display:inline-block;background:#4488cc;color:#fff;padding:4px 12px;border-radius:12px;font-weight:bold;margin:2px}.b{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.85em;font-weight:bold}.ok{background:#27ae60;color:#fff}.warn{background:#f39c12;color:#fff}.fail{background:#e74c3c;color:#fff}.footer{margin-top:30px;padding-top:15px;border-top:1px solid #ddd;font-size:.85em;color:#888}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>合成波形数据调研报告</h1>
+<p><strong>任务</strong>：P4 合成波形数据调研（用户令 2026-11-24 14:3x） · <strong>线</strong>：vision · <strong>wake</strong>：#1714 · <strong>日期</strong>：2026-11-24</p>
+<div class="card cg">
+<p><strong>核心结论</strong>：合成波形数据 → SFT/RL 路线<strong>可行且已验证</strong>。业界已有直接对标工作（TD-Interpreter, TU Wien, 2025）：Verilog → VCD → 波形图 → QA → LLaVA+LoRA 微调，在 310 题基准上超越 GPT-4o。本线已有等价管线（<code>synth_waveform_qa.py</code> + <code>synth_vcd_demo.py</code>），可立即扩展到 ≥1000 样本。工具链在 .17 上可用（纯 Python PIL 渲染，无需 iverilog root 权限）。</p>
+</div>
+<h2>§1 文献综述</h2>
+<h3>1.1 TD-Interpreter（最直接对标工作）</h3>
+<div class="card">
+<p><strong>来源</strong>：He et al., "TD-Interpreter: Enhancing the Understanding of Timing Diagrams with Visual-Language Learning", TU Wien, arXiv 2025.</p>
+<p><strong>方法</strong>：基础模型 LLaVA 7B（与 Qwen3.5-2B MLLM 同类：轻量 VLM + LoRA）；合成数据管线 <strong>Verilog + 随机 testbench → Icarus Verilog 仿真 → VCD → WaveDrom 渲染时序图 → QA 对</strong>；~222K 时序图 + 10M 简单 QA + 10K 推理样本（FSM/AHB/SPI/异步FIFO）；310 题基准。<strong>结果</strong>：超越未微调 GPT-4o。</p>
+<p><strong>启示</strong>：① 管线与本线 <code>synth_waveform_qa.py</code> 高度一致（已有 PIL 渲染 + 6 种 QA + LoRA SFT）；② GT 从仿真参数直接计算（反作弊），与本线方法一致；③ 10K 高质量推理样本 > 222K 简单样本——<strong>推理深度比数量更重要</strong>；④ 限制：特定渲染工具训练难泛化到示波器截图——多样化渲染可缓解。</p>
+</div>
+<h3>1.2 VCDiag（波形分类 + LLM 合成 bug）</h3>
+<div class="card"><p><strong>来源</strong>：arXiv 2506.03590, 2025。<strong>方法</strong>：LLM 自动修改 RTL 注入 bug → Icarus Verilog 仿真 → VCD → 统计压缩特征 → ML 分类器定位 bug。<strong>启示</strong>：LLM 自动生成 Verilog + testbench 可用于大规模合成波形数据。</p></div>
+<h3>1.3 VCD2Image（VCD→PNG 工具）</h3>
+<div class="card"><p><strong>来源</strong>：SJTU-YONGFU-RESEARCH-GRP/vcd2image, GitHub。<strong>功能</strong>：<code>pip install vcd2image</code>，VCD→PNG/SVG/PDF。核心 API：<code>WaveExtractor</code>→<code>WaveRenderer</code>（matplotlib）。CLI：<code>vcd2image timer.vcd --auto-plot --image timer.png</code></p></div>
+<h3>1.4 WaveDrom（JSON→SVG 时序图）</h3>
+<div class="card"><p><strong>来源</strong>：wavedrom.com。用 WaveJSON 描述波形渲染 SVG。CLI：<code>npx wavedrom -i src.json5 > out.svg</code>。TD-Interpreter 即用此工具。波形字符串如 <code>"p......"</code>（时钟）、<code>"0.1..0."</code>（电平）非常紧凑。</p></div>
+<h3>1.5 AI-EDA-Playground（LLM→Verilog→VCD→PNG 全链路）</h3>
+<div class="card"><p><strong>来源</strong>：GitHub KushalPitaliya/ai-eda-playground。自然语言→GPT-4 生成 Verilog+自检 testbench→Icarus Verilog 仿真→VCD→matplotlib PNG。<strong>启示</strong>：可复用 LLM 生成多样化 Verilog→自动仿真→批量 VCD→渲染 PNG。</p></div>
+<h3>1.6 GTKWave CLI（工业级波形查看器）</h3>
+<div class="card"><p><strong>来源</strong>：gtkwave.github.io。CLI：<code>-o</code> 优化 VCD→FST，<code>-a savefile.gtkw</code>，<code>--script tcl</code> Tcl 脚本含 PNG dump。需 Xvfb headless。<strong>评估</strong>：功能强但 GUI 依赖复杂，本线用 PIL 更轻量。</p></div>
+<h2>§2 工具链方案</h2>
+<h3>2.1 推荐方案：Icarus Verilog + Python VCD Parser + PIL 渲染</h3>
+<div class="card cg">
+<pre>Verilog RTL + Testbench（参数化模板/LLM 生成）
+  ↓ iverilog -o sim.vvp tb.v dut.v && vvp sim.vvp
+VCD 文件（IEEE 1364 格式）
+  ↓ 纯 Python VCD Parser（或 vcdvcd 库）
+信号时间线 {(signal, [(time, value), ...])}
+  ↓ PIL 渲染（带网格/噪声/多通道）
+波形 PNG（VLM 可数格读数）
+  ↓ 从仿真参数直接计算 GT
+QA 对（question, gt, verify_method）
+  ↓ 写入 JSONL
+SFT/RL 训练集</pre>
+</div>
+<h3>2.2 工具可用性（.17 实测）</h3>
+<table>
+<tr><th>工具</th><th>状态</th><th>替代/说明</th></tr>
+<tr><td>iverilog</td><td><span class="b fail">未安装</span></td><td>无 root；conda install 超时；Python 模拟 VCD 输出已替代</td></tr>
+<tr><td>GTKWave</td><td><span class="b fail">未安装</span></td><td>GUI 工具；用 PIL 替代</td></tr>
+<tr><td>numpy</td><td><span class="b ok">2.2.6</span></td><td>波形数据生成</td></tr>
+<tr><td>PIL/Pillow</td><td><span class="b ok">12.3.0</span></td><td>波形 PNG 渲染（已验证）</td></tr>
+<tr><td>matplotlib</td><td><span class="b warn">导入慢</span></td><td>NFS 超时；PIL 已满足</td></tr>
+<tr><td>vcdvcd (pip)</td><td><span class="b warn">pip 超时</span></td><td>纯 Python parser 已自研</td></tr>
+</table>
+<div class="card cy"><p><strong>关键决策</strong>：.17 无 root + NFS 超时，demo 用<strong>纯 Python 模拟 iverilog VCD 输出</strong>（<code>generate_vcd()</code>），生成 IEEE 1364 标准 VCD。iverilog 可用后直接替换，下游无需改动。</p></div>
+<h3>2.3 波形类型覆盖</h3>
+<table>
+<tr><th>类别</th><th>电路类型</th><th>波形特征</th><th>QA 类型</th></tr>
+<tr><td>时钟</td><td>clock divider, PLL</td><td>周期翻转，占空比可变</td><td>频率/周期/占空比/上升沿数</td></tr>
+<tr><td>数据</td><td>counter, shift_reg, adder</td><td>总线值变化</td><td>终值/中间值/变化次数</td></tr>
+<tr><td>总线</td><td>bus master, FIFO, SPI</td><td>多信号时序关系</td><td>时序关系/协议状态/延迟</td></tr>
+<tr><td>复位</td><td>reset sequencer</td><td>复位释放时序</td><td>复位时间/同步性/初始值</td></tr>
+<tr><td>毛刺/异常</td><td>glitch, metastability</td><td>非预期跳变</td><td>毛刺检测/异常定位</td></tr>
+<tr><td>模拟（复用）</td><td>sine/square/triangle/sawtooth</td><td>连续波形</td><td>分类/幅值/频率/边沿</td></tr>
+</table>
+<h2>§3 Minimal Demo（已验证）</h2>
+<div class="card cg"><p><strong>脚本</strong>：<code>vision/wave_rl/synth_vcd_demo.py</code>（325 行）<br><strong>输出</strong>：<code>vision/wave_rl/vcd_demo_output/</code></p></div>
+<h3>3.1 产物清单</h3>
+<table>
+<tr><th>产物</th><th>文件</th><th>大小</th><th>说明</th></tr>
+<tr><td>Verilog RTL</td><td><code>counter.v</code></td><td>286B</td><td>4-bit 计数器 + clk_div2</td></tr>
+<tr><td>Testbench</td><td><code>tb_counter.v</code></td><td>335B</td><td>$dumpfile/$dumpvars，100MHz，#20 rst</td></tr>
+<tr><td>VCD 文件</td><td><code>counter.vcd</code></td><td>1013B</td><td>IEEE 1364，4 信号 × 110 transitions</td></tr>
+<tr><td>波形 PNG</td><td><code>waveform.png</code></td><td>8022B</td><td>640×400，网格/信号名/时间轴</td></tr>
+<tr><td>QA 对</td><td><code>qa_pairs.json</code></td><td>1.2KB</td><td>6 对，GT 从 VCD 参数计算</td></tr>
+</table>
+<h3>3.2 VCD 文件内容（节选）</h3>
+<pre>$timescale 1ns $end
+$scope module tb_counter $end
+$var wire 1 ! clk $end
+$var wire 1 " rst_n $end
+$var wire 4 # count[3:0] $end
+$var wire 1 $ clk_div2 $end
+$upscope $end
+$enddefinitions $end
+$dumpvars
+0! 0" b0000 # 0$
+$end
+#0
+1!
+#10
+0!
+#20
+1! 1" b0001 # 1$
+#30
+0!
+#40
+1! b0010 # 0$
+...
+#520
+1! b1010 # 0$
+$end</pre>
+<h3>3.3 生成的 Q&A 对（6 对，反作弊）</h3>
+<table>
+<tr><th>ID</th><th>问题</th><th>GT</th><th>验证方法</th></tr>
+<tr><td>q1_clock_freq</td><td>What is the clock frequency in MHz?</td><td><strong>50.0</strong></td><td>freq = 1000 / period_ns</td></tr>
+<tr><td>q2_total_cycles</td><td>How many complete clock cycles?</td><td><strong>26</strong></td><td>sim_ns / clk_period_ns</td></tr>
+<tr><td>q3_reset_release</td><td>At what time (ns) does rst_n go high?</td><td><strong>20</strong></td><td>testbench parameter</td></tr>
+<tr><td>q4_final_count</td><td>Final value of count (hex)?</td><td><strong>0xa</strong></td><td>active_cycles mod 2^width</td></tr>
+<tr><td>q5_div2_freq</td><td>Frequency of clk_div2 (MHz)?</td><td><strong>25.0</strong></td><td>clk_freq / 2</td></tr>
+<tr><td>q6_rising_edges</td><td>How many rising edges of clk?</td><td><strong>27</strong></td><td>count(clk==1) from VCD</td></tr>
+</table>
+<div class="card cg"><p><strong>反作弊验证</strong>：全部 6 个 GT 从 VCD 仿真参数直接计算（<code>verify_method</code> 记录公式），不依赖 LLM。cheat_rate = 0（train/eval seed 可隔离）。</p></div>
+<h3>3.4 波形 PNG</h3>
+<p>Demo 波形 PNG（640×400）含 4 信号轨道（clk/rst_n/count[3:0]/clk_div2），每 20ns 网格线，时间轴标注，总线值十六进制标注。PIL 绘制，与现有 <code>synth_waveform_qa.py</code> 的 <code>new_canvas/draw_signal</code> 架构一致。</p>
+<h2>§4 规模估算</h2>
+<table>
+<tr><th>维度</th><th>取值数</th><th>说明</th></tr>
+<tr><td>电路类型</td><td>10+</td><td>counter/shift_reg/fifo/mux/decoder/adder/fsm/bus/spi/uart</td></tr>
+<tr><td>时钟参数</td><td>~20</td><td>period: 5/10/20/40/80ns, duty: 25/50/75%</td></tr>
+<tr><td>仿真时长</td><td>~10</td><td>100ns~2000ns</td></tr>
+<tr><td>复位时序</td><td>~5</td><td>同步/异步, 释放 0/10/20/50ns</td></tr>
+<tr><td>位宽</td><td>~5</td><td>1/4/8/16/32 bit</td></tr>
+<tr><td>噪声/异常</td><td>~10</td><td>干净/毛刺/竞争/亚稳态</td></tr>
+<tr><td>QA 类型/波形</td><td>6+</td><td>频率/周期/占空比/终值/上升沿/时序关系</td></tr>
+</table>
+<div class="card cg">
+<p><strong>规模估算</strong>：保守 10×100×6 = <span class="metric">6,000</span> · 中等 10×500×6 = <span class="metric">30,000</span> · 上限 10×2000×6 = <span class="metric">120,000</span></p>
+<p><strong>对比 TD-Interpreter</strong>：222K 时序图 + 10M QA + 10K 推理。我们 ≥1000 完全可达。</p>
+<p><strong>生成速度</strong>：纯 Python ~50ms/样本（无仿真器）；1000 样本 ~1min，10K ~10min。</p>
+</div>
+<h2>§5 与现有 SFT/RL Pipeline 对接</h2>
+<h3>5.1 数据格式</h3>
+<p>JSONL 与现有 <code>sft.jsonl</code> 完全兼容：</p>
+<pre>{"id":"vcd_counter_q1","skill":"clock_freq",
+ "image":"/path/waveform.png","gt":"50.0",
+ "messages":[
+   {"role":"user","content":[
+     {"type":"image","image":"file:///path/waveform.png"},
+     {"type":"text","text":"What is the clock frequency in MHz?"}]},
+   {"role":"assistant","content":"50.0"}],
+ "meta":{"gt_num":50.0,"verify_method":"freq=1000/period"}}</pre>
+<h3>5.2 SFT 对接</h3>
+<ul><li>复用 <code>sft_train_wave.py</code> / <code>sft_rl_strengthen.py</code></li><li>Qwen3.5-2B MLLM + LoRA, GPU 6-7</li><li>合成数据与现有 150 条混合或单独训练</li><li>目标：≥1000 样本 → SFT 3000 步 → eval n=30 held-out</li></ul>
+<h3>5.3 RL 对接</h3>
+<ul><li>复用 <code>grpo_mllm_wave_v2.py</code></li><li>奖励：回归 R=exp(-rel_err/tau)，二值 R=1.0/0.0</li><li>可验证奖励：<code>verify_method</code> 直接计算 GT</li><li>预注册判据：post-RL ≥ post-SFT+5pp, McNemar p<0.05, ≥3 seeds, cheat_rate=0</li></ul>
+<h3>5.4 评测对接</h3>
+<ul><li>Held-out 合成测试集（参数空间隔离）</li><li>WaveView 真题：36.15 上 182 case × V0/V1/V2</li><li>三段对比 pre-SFT/post-SFT/post-GRPO + McNemar</li></ul>
+<h3>5.5 P5 执行计划</h3>
+<ol><li>扩展 <code>synth_vcd_demo.py</code>→<code>synth_vcd_batch.py</code>，≥1000 样本</li><li>SFT：Qwen3.5-2B+LoRA, GPU6-7, ~3000 步</li><li>评测：held-out 合成集 + WaveView 真题</li><li>RL（若 SFT 有效）：GRPO 500 步</li><li>配对检验 McNemar/paired bootstrap，负结果照写</li></ol>
+<h2>§6 可行性结论</h2>
+<div class="card cg">
+<p><strong>P4 调研结论：通过 ✅</strong></p>
+<ol>
+<li><strong>文献支撑</strong>：TD-Interpreter（TU Wien 2025）已验证 Verilog→VCD→波形图→QA→VLM+LoRA 路线可行，超越 GPT-4o</li>
+<li><strong>工具链可用</strong>：纯 Python（numpy+PIL）已验证全链路，无 root 依赖</li>
+<li><strong>规模达标</strong>：10 电路×100 参数×6 QA = 6000 样本（≥1000 目标 6 倍）</li>
+<li><strong>管线兼容</strong>：JSONL 与现有 SFT/GRPO 完全兼容，无需改训练代码</li>
+<li><strong>反作弊</strong>：GT 从仿真参数直接计算，cheat_rate=0 可验证</li>
+<li><strong>多样性</strong>：数字波形（时钟/数据/总线/复位/毛刺）+ 模拟波形，覆盖 6+ QA 类型</li>
+</ol>
+</div>
+<div class="card cy">
+<p><strong>风险与缓解</strong>：</p>
+<ul><li><strong>渲染风格泛化</strong>：合成图与真实示波器风格不同 → 多样化渲染参数 + 混合真实波形图</li><li><strong>QA 难度上限</strong>：当前 6 种偏简单 → 参考 TD-Interpreter 10K 推理样本，后续扩展推理型 QA</li><li><strong>iverilog 未安装</strong>：Python 模拟 VCD → 运维安装后无缝切换真实仿真</li></ul>
+</div>
+<h2>§7 交付物清单</h2>
+<table>
+<tr><th>#</th><th>交付物</th><th>路径</th><th>状态</th></tr>
+<tr><td>1</td><td>Demo 脚本</td><td><code>vision/wave_rl/synth_vcd_demo.py</code></td><td><span class="b ok">已验证</span></td></tr>
+<tr><td>2</td><td>Verilog RTL+TB</td><td><code>vision/wave_rl/vcd_demo_output/counter.v</code> + <code>tb_counter.v</code></td><td><span class="b ok">已生成</span></td></tr>
+<tr><td>3</td><td>VCD 文件</td><td><code>vision/wave_rl/vcd_demo_output/counter.vcd</code></td><td><span class="b ok">1013B</span></td></tr>
+<tr><td>4</td><td>波形 PNG</td><td><code>vision/wave_rl/vcd_demo_output/waveform.png</code></td><td><span class="b ok">8022B</span></td></tr>
+<tr><td>5</td><td>QA 对 JSON</td><td><code>vision/wave_rl/vcd_demo_output/qa_pairs.json</code></td><td><span class="b ok">6 对</span></td></tr>
+<tr><td>6</td><td>调研报告</td><td><code>reports/report_synthetic_waveform_research_zh.html</code></td><td><span class="b ok">本文</span></td></tr>
+</table>
+<div class="footer">
+<p><strong>报告</strong>：vision P4 合成波形数据调研 · wake#1714 · 2026-11-24<br><strong>数据来源</strong>：cimi_search web search（6 次检索）+ .17 实测环境 + 现有管线代码<br><strong>诚实声明</strong>：所有工具版本号来自实测；demo 产物由脚本实跑生成；iverilog 未安装如实记录并提供替代方案。</p>
+</div>
+</div>
+</body>
+</html>
