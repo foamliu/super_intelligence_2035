@@ -6325,9 +6325,15 @@
   "openlayers__openlayers-15825": {
     "instance_id": "openlayers__openlayers-15825",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1921.5,
+    "rc": -1,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "infra",
+    "stdout_tail": "[agent TIMEOUT after 1920s]"
   },
   "openlayers__openlayers-7554": {
     "instance_id": "openlayers__openlayers-7554",
