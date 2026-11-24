@@ -11,7 +11,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-CellMap-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-CellVerilogExtract-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-Characterization-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
-2026-11-24T22:51:27	EDA-Eval-DesignFlow-CircWfReport-001	D	1	1	u	0	u	u	p1	r1280: selftest aborts -- reference_submit fails check() (L2 issue, ref solution broken); needs L2 fix next round	
+2026-11-24T23:45	EDA-Eval-DesignFlow-CircWfReport-001	D	1	1	1	1	u	u	p1_fixed	r1281: selftest pass-detect fixed (check() returns bool True not 'PASS' str); ref PASS + 10 negs FAIL distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-ClampLeakPwrAnalyze-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-ClosureDeckBuilder-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-CmlMp5SweepCurrentAnalysisQA-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
@@ -49,14 +49,14 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-LibCell-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-MBistAnalyze-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-MBistTopoExplainQA-v2	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T22:51:27	EDA-Eval-DesignFlow-MbistCellFind-001	D	1	1	u	0	u	u	p1	r1280: NEG_RC=1 -- a negative PASSES check() (toothiness gap); needs check.py teeth strengthened next round	
+2026-11-24T23:45	EDA-Eval-DesignFlow-MbistCellFind-001	D	1	1	1	1	u	u	p1_fixed	r1281: check.py _finalize added (returned True ignoring conds c-p + __main__ _summarize crashed on bool); selftest rewritten exit-code+label; ref PASS + 7 negs FAIL 4 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-MillerOpampTopoAudit-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-ModuleFuncCatalog-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-MosSizeDoeGen-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-MrrEnopsDelay-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T22:51:27	EDA-Eval-DesignFlow-NetPathHL-001	D	1	1	u	0	u	u	p1	r1280: no negative_selftest.py at any location + no negative/ dir; needs full neg set + selftest built next round	
+2026-11-24T23:45	EDA-Eval-DesignFlow-NetPathHL-001	D	1	1	1	1	u	u	p1_fixed	r1281: full build -- assets(A/B/B2 disjoint traces)+ref parse_netpath.py+reference_submit.zip+5 negs+selftest+prompt/task_brief/hidden_manifest; ref PASS + 5 negs FAIL labels f/h/i/j/q	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-NetRcPathDiff-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
-2026-11-24T22:51:27	EDA-Eval-DesignFlow-NetlistBisectLocalize-001	D	1	1	u	0	u	u	p1	r1280: selftest/check interface mismatch -- check() returns bool (new contract) but selftest expects list of (label,ok,detail) tuples; selftest needs rewrite to parse AssertionError label	
+2026-11-24T23:45	EDA-Eval-DesignFlow-NetlistBisectLocalize-001	D	1	1	1	1	u	u	p1_fixed	r1281: check.py _finalize added (returned True ignoring conds c-p); selftest rewritten AssertionError-label; ref PASS + 6 negs FAIL 6 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-NetlistChk-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-NetlistCmp-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-NetlistCxiFilter-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
@@ -68,7 +68,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-NetlistStructDiff-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-PGcheckTcl-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-PortMismatchDiag-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T22:51:27	EDA-Eval-DesignFlow-PrbsTmCircuitSummaryQA-001	D	1	1	u	0	u	u	p1	r1280: selftest at negative/ reports OVERALL FAILED; needs diagnosis (ref or neg issue) next round	
+2026-11-24T23:45	EDA-Eval-DesignFlow-PrbsTmCircuitSummaryQA-001	D	1	1	1	1	u	u	p1_fixed	r1281: check.py __main__ prints PASS/FAIL (was printing bool True); ref PASS + 5 negs FAIL distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-PwrIremCfgFix-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-PyaetherScreenshotVerifyQA-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-RasFuncExplainQA-v2	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
@@ -87,12 +87,12 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-SchPinAdd-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-Schematic-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-ScmosStructFind-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
-2026-11-24T22:51:27	EDA-Eval-DesignFlow-SelFigReport-001	D	1	1	u	0	u	u	p1	r1280: selftest aborts -- reference did not PASS check() (L2 issue, ref solution broken); needs L2 fix next round	
+2026-11-24T23:45	EDA-Eval-DesignFlow-SelFigReport-001	D	1	1	1	1	u	u	p1_fixed	r1281: selftest pass-detect fixed (check() returns bool not 'PASS' str); ref PASS + 6 negs FAIL distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-SiOutDiag-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-SimSpGen-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-SimlibIndex-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-SineZeroCrossFreqPeak-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
-2026-11-24T22:51:27	EDA-Eval-DesignFlow-SkillToAether-001	D	1	1	u	0	u	u	p1	r1280: a negative PASSES check() (toothiness gap); needs check.py teeth strengthened next round	
+2026-11-24T23:45	EDA-Eval-DesignFlow-SkillToAether-001	D	1	1	1	1	u	u	p1_fixed	r1281: check() re-raises AssertionError w/ label (bool-wrapper swallowed _check_impl raises -> selftest misread PASS); selftest ref-PASS check added; ref PASS + 5 negs FAIL labels h/j/k/l/o	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-SpStimGen-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-SpiceClosureExtract-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-SpiceDeckGen-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
@@ -113,7 +113,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-VerdictJoinPassLib-001	D	1	1	u	1	u	u	pending	L4_GUI_HINT:calibre; L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-VerilogDriveFsmBlock-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-VerilogrunMod-001	D	1	1	u	1	u	u	p1_fixed	r1280: canonical negative/negative_selftest.py added (wrapper exec's root selftest with __file__=root + sys.path[0]=CASE_ROOT + cwd=CASE_ROOT); verified all negs FAIL with >=3 distinct labels	
-2026-11-24T22:51:27	EDA-Eval-DesignFlow-VparamDeadAudit-001	D	1	1	u	0	u	u	p1	r1280: NEG_RC=1 -- a negative PASSES check() (toothiness gap); needs check.py teeth strengthened next round	
+2026-11-24T23:45	EDA-Eval-DesignFlow-VparamDeadAudit-001	D	1	1	1	1	u	u	p1_fixed	r1281: selftest pass-detect fixed (check() returns bool True not 'PASS' str); ref PASS + 3 negs FAIL distinct labels	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-VrefcsMrrSeq-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-VwlpDetectMDrive-001	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
 2026-11-24T22:51:27	EDA-Eval-DesignFlow-WaveView-002	D	1	1	u	1	u	u	pending	L0/L1/L3 verified OK; L2/L4/L5 pending runtime verify	
