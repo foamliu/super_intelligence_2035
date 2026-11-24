@@ -1,31 +1,38 @@
 # BAIZE_VISION_TASK.md
 
-### 🔴 用户令 · 2026-11-24 08:5x（放行下一步：GRPO 改进 + 真题复测）
+### 🔴 用户令 · 2026-11-24 14:3x（合成波形数据调研 + SFT/RL 路线探索）
 
-> **Option B 已验收**（SFT 3-seed 74.4% / RFT2 90% / GRPO 86.7% 负结果如实记录）。现在放行 vision agent 自己提出的 4 条改进建议（来自 GRPO 报告 §5.5），按以下优先级执行：
+> **背景**：P1 GRPOv2 = 负结果（0.6667 < 0.70，McNemar p=1.0），P2 真题复测在 36.15 跑（resumable）。在等 P2 结果的同时，**开辟新路线：用 EDA 环境合成波形数据，生成大规模 SFT/RL 训练集，以继续强化 2B MLLM 读懂波形图的能力。**
 >
-> **P1 — GRPO 改进训练（GPU 6-7）**：
-> 1. **从 SFT 冷启动**（而非已 0.90 的 RFT2），留出 headroom 让 GRPO 有学习空间。
-> 2. **奖励分解**：把 reward 从「全对=1 / 全错=0」改为「区间内 vs 越界」分段奖励，β>α（越界惩罚大于区间内奖励），减少全对饱和（189/224 步 reward=1.0 的根因）。
-> 3. **更难/长尾训练题**：增加噪声、多通道、非整数周期等难例，提高 group 内奖励方差（当前仅 2/224 步有梯度）。
-> 4. **跑 ≥500 步**，报 reward 曲线 + cheat rate + 配对检验（与冷启动对比，McNemar / paired bootstrap）。
+> **目标**：探索「合成数据 → SFT/RL」这条路线能否突破目前 GRPO 改进遇到的瓶颈（reward 饱和、梯度稀疏、held-out 不提升）。
 >
-> **P2 — 真题 benchmark 复测**：
-> 1. 把 post-GRPO adapter 装入 `:30003`，**在 EDA-Eval-DesignFlow-WaveView 全队列（182 case）重跑 V2 臂**。
-> 2. 与现有 V2=17.6% 基线做配对检验，看改进后的 adapter 是否在真题上也有提升。
-> 3. 如果新 GRPO 跑出了比 rft2_adapter_seed11 更好的 adapter，用新 adapter 重跑；否则用现有 rft2 adapter 复测确认 baseline 可复现。
+> **具体任务**：
 >
-> **P3 — 交付**：
-> 1. 更新 `report_vision_wave_grpo_mllm_result_zh.html`：新增 GRPOv2 结果节（改进点 + 数字 + 对比表 + 负结果照写）。
-> 2. 更新 `report_vision_waveview_selftest_agent_zh.html` §0.6：如果真题复测有新数字，追加一行。
-> 3. 心跳 + daily 照常。
+> **P4 — 合成波形数据调研（用 research MCP / web search）**：
+> 1. **用 `cimi_search` 调研**以下方向（搜关键词：synthetic waveform generation EDA, VCD/FSDB waveform simulation for ML training, synthetic signal data for vision-language model, waveform2image dataset generation, Verilog testbench auto-generation for waveform synthesis）：
+>    - 如何用 EDA 工具链（Icarus Verilog / Verilator / GTKWave / vcd2fst）**批量生成波形文件**（VCD/FST/FSDB）
+>    - 如何把波形文件**渲染成波形图 PNG**（GTKWave CLI / waveform-image tools / 自研脚本）
+>    - 如何**自动生成配套问答对**（周期/幅度/占空比/边沿/毛刺/多通道关系等问答，附标准答案用于 SFT/RL reward）
+>    - 业界是否有类似工作（合成波形数据训 VLM/waveform understanding）
+> 2. **评估可行性**：在 `.17` 上用 Icarus Verilog + GTKWave CLI 做一个 minimal demo（生成 1 个波形 PNG + 1 个 Q&A pair），验证工具链可用。
+> 3. **产出调研报告**：`run/reports/report_synthetic_waveform_research_zh.html`，包含：文献综述、工具链方案、demo 截图、规模估算（能生成多少种波形 × 多少 Q&A）、与现有 SFT/RL pipeline 的对接方案。
+>
+> **P5 — 合成数据生成 + SFT/RL（P4 调研通过后执行）**：
+> 1. 基于 P4 方案，**批量合成**波形图 + Q&A 对（目标：≥1000 样本，覆盖周期/幅度/占空比/边沿/毛刺/多通道等类型）。
+> 2. 用合成数据做 **SFT**（在 Qwen3.5-2B + LoRA 上，复用现有训练 pipeline）。
+> 3. 在 **held-out 合成测试集 + WaveView 真题**上评测，看合成数据是否带来增益。
+> 4. 如果 SFT 有提升，继续做 **RL**（GRPO with decomposed reward，复用 P1 的改进）。
+> 5. 配对检验（McNemar / paired bootstrap），负结果照写。
 >
 > **约束**：
-> - 预注册：开跑前先在 MEMORY 写明臂设计 + 判据，跑完不许改判据。
-> - 反作弊常开，报 cheat rate。
-> - GPU 6-7 可用（:30001/:30003 服务不停）；SSH 桥到 36.15 保持。
-> - 负结果照写，不许粉饰。
-> - WAITING=0（无阻塞，连续推进）。
+> - **用 research MCP（`cimi_search` / `cimi_fetch`）做 web search**——已配好，autoApprove 已开。
+> - 合成数据必须**多样化**：不同波形类型（clock/data/bus/reset）、不同参数范围、不同噪声水平、不同通道数。
+> - **反作弊**：合成数据的答案必须是**可验证的**（从波形参数直接计算，不是 LLM 生成），报 cheat rate。
+> - GPU 6-7 可用；SSH 桥到 36.15 保持（P2 真题复测继续跑，不中断）。
+> - 负结果照写；预注册判据先写 MEMORY 再跑。
+> - WAITING=0（连续推进）。
+
+### 📦 §用户令·2026-11-24 08:5x（GRPO改进+真题复测）✅ P1=负结果(0.6667<0.70,p=1.0)·P2 在36.15跑(resumable)·P3 §11报告已落(28613B)。详见 MEMORY wake#1710/1711。
 
 ### 📦 §用户令·2026-11-20 16:2x（写 vision 工作总报告）✅ 已交付（wake#1708+：`report_vision_overall_work_zh.html` 38460B 已 ON origin，`git cat-file -e` OK）。需要时再读。
 
