@@ -6283,9 +6283,16 @@
   "openlayers__openlayers-15685": {
     "instance_id": "openlayers__openlayers-15685",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 859.2,
+    "rc": 1,
+    "model_patch_len": 0,
+    "n_images": 0,
+    "text_only": false,
+    "classification": "failed",
+    "stdout_tail": "150,\"outputTokens\":15431,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalCost\":0},\"durationMs\":856144,\"text\":\"The operation timed out.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "s (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n{\"ts\":\"2026-11-24T07:22:58.409Z\",\"type\":\"error\",\"message\":\"The operation timed out.\"}\n"
   },
   "openlayers__openlayers-15787": {
     "instance_id": "openlayers__openlayers-15787",
