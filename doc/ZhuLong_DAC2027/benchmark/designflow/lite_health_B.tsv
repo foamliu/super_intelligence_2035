@@ -129,3 +129,4 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-XmelabCuvpomPortDiag-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-XrunLogErrDiag-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-ZqPatternTimingAnalyze-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime
+2026-11-24T14:58:06	EDA-Eval-DesignFlow-PostsimToggleDiag-001	B	1	1	1	1	1	1	green_verified	P0 fix: finesim absent on eval host -> mock finesim (pre-generated real .pt0/.log from .75 FineSim V-2023.12-1 for fixed B/A netlists, faithful .pt0 waveforms); ref 15/15 PASS; 6 neg distinct FAIL+3fakes; L4 no GUI binary (mock=tclsh-free python copy); L5 precomp in reference/ not SUT sandbox	0.2
