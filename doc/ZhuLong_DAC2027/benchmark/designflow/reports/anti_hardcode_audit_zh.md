@@ -59,8 +59,29 @@ cd benchmarks/EDA-Eval-DesignFlow
 cd reference/<case_id>/negative && python3 negative_selftest.py   # rc=0 ⇒ PASS
 ```
 
+## r1277 扩样（+3 低 k 老题 + 14-stub GAP 关闭，累计 30 条全 PASS）
+
+DEBT:3（连续三轮无新 case）触发「转不依赖新候选产出」条款，本轮按 11-21 令做 §4.9 anti-hardcode 自查，优先 k<12 老题。
+
+**新增 3 条**（全部 selftest 4/4 PASS：REF PASS + print_only/core_deleted/hardcode_a 全 FAIL）：
+
+| case_id | k | selftest 信号 | 备注 |
+|---|---|---|---|
+| CdlTruthTableVerify-001 | 9 | 4/4 groups passed | hidden B=R_2stepSenseAdjTempCtrl_defaultLT.netlist vs A=..._0822.netlist；hardcode_a FAIL 证 B≠A |
+| SpfSwapPostSim-001 | 10 | REF PASS + 3 fake FAIL | check() inline 在 JSON test 字段，hidden B 内嵌为 B_FILES(CalibBlock 9 ports vs A 不同) |
+| FifoStructNetlistGen-001 | 11 | NEGATIVE SELFTEST: ALL OK | hidden B1/B2 fifo_spec vs A fifo_spec_A 结构不同 |
+
+**14-stub GAP 关闭**：r1250 发现 14 个 D case test 字段是 stub 指针（无 `def check`，全 broken）。r1277 复测 `python3 -c "sum(1 for f in glob('cases/D/*.json') if 'def check' not in json.load(open(f))['test'])"` → **0 stub 剩余**，14 个全部已 inline 修复。audit_all.tsv 该 meta-row 判定 GAP→RESOLVED。
+
+## 汇总（r1277 更新）
+- 总数(抽样): **30**（29 case-level PASS + 1 meta RESOLVED）
+- GAP 数: **0**（14-stub GAP 已关闭）
+- 全部 D shard，0 跨线
+- 按 k: k=9(2) k=10(1) k=11(5) k=12(13) k=15(3) k=16(1) k=0→已修 k=14(1)
+- 判分契约（11-24 令）shard D 608/608 合规，0 VIOLATION（r1276 AST 审计）
+
 ## 后续
-- 本轮抽样 20 条全 PASS（mc≥5 池已竭，止损转 anti-hardcode，见 MEMORY r1233~r1235）。
-- 已达 §4.9 普查 ≥20 条首版目标。后续轮次可继续扩样（D 共 642 case / 306 带 selftest），或转 test_rationale 补断言清单 / ledger 治理。
+- 本轮抽样 30 条全 PASS（mc≥5 池已竭，止损转 anti-hardcode，见 MEMORY r1233~r1235/r1277）。
+- 已达 §4.9 普查 ≥20 条首版目标。后续轮次可继续扩样（D 共 609 case），或转 test_rationale 补断言清单 / ledger 治理 / 跨 shard A/B/C 抽样普查（11-21 令，按职责边界只报告不改）。
 - **r1236 修复**: HierNameViolateCrossProbeProduce-001 的 k=0 test_rationale gap 已修（英文 prose → `14 条断言：①…⑭`，k=14>=8 GATE PASS，test 字段未动，selftest rc=0）。
 - GAP 案例按职责边界处置：D 自己的 case 直接修；A/B/C 的 case 写 discuss/board.md P0 条目（本批全 D，无跨线）。
