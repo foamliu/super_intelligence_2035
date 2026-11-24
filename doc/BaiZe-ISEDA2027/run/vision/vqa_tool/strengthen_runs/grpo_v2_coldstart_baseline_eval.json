@@ -1,0 +1,348 @@
+{
+  "tag": "grpo_v2_coldstart_baseline",
+  "n": 30,
+  "correct": 16,
+  "accuracy": 0.5333,
+  "mean_reward": 0.5527,
+  "skill_acc": {
+    "type_classification": {
+      "n": 5,
+      "correct": 3,
+      "acc": 0.6,
+      "mean_reward": 0.6
+    },
+    "cycle_count": {
+      "n": 5,
+      "correct": 3,
+      "acc": 0.6,
+      "mean_reward": 0.6356
+    },
+    "amplitude_read": {
+      "n": 5,
+      "correct": 1,
+      "acc": 0.2,
+      "mean_reward": 0.2363
+    },
+    "freq_comparison": {
+      "n": 5,
+      "correct": 4,
+      "acc": 0.8,
+      "mean_reward": 0.8
+    },
+    "duty_cycle": {
+      "n": 5,
+      "correct": 0,
+      "acc": 0.0,
+      "mean_reward": 0.0441
+    },
+    "rise_edge": {
+      "n": 5,
+      "correct": 5,
+      "acc": 1.0,
+      "mean_reward": 1.0
+    }
+  },
+  "results": [
+    {
+      "id": "q0",
+      "skill": "type_classification",
+      "gt": "square",
+      "answer": "square",
+      "pred": "square",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 11.95
+    },
+    {
+      "id": "q1",
+      "skill": "type_classification",
+      "gt": "sine",
+      "answer": "sine",
+      "pred": "sine",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.25
+    },
+    {
+      "id": "q2",
+      "skill": "type_classification",
+      "gt": "sawtooth",
+      "answer": "triangle",
+      "pred": "triangle",
+      "correct": false,
+      "reward": 0.0,
+      "latency_s": 0.25
+    },
+    {
+      "id": "q3",
+      "skill": "type_classification",
+      "gt": "sawtooth",
+      "answer": "triangle",
+      "pred": "triangle",
+      "correct": false,
+      "reward": 0.0,
+      "latency_s": 0.23
+    },
+    {
+      "id": "q4",
+      "skill": "type_classification",
+      "gt": "square",
+      "answer": "square",
+      "pred": "square",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.23
+    },
+    {
+      "id": "q5",
+      "skill": "cycle_count",
+      "gt": "3",
+      "answer": "4",
+      "pred": "4",
+      "correct": false,
+      "reward": 0.1084,
+      "latency_s": 0.24
+    },
+    {
+      "id": "q6",
+      "skill": "cycle_count",
+      "gt": "3",
+      "answer": "3",
+      "pred": "3",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.2
+    },
+    {
+      "id": "q7",
+      "skill": "cycle_count",
+      "gt": "4",
+      "answer": "4",
+      "pred": "4",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q8",
+      "skill": "cycle_count",
+      "gt": "5",
+      "answer": "7",
+      "pred": "7",
+      "correct": false,
+      "reward": 0.0695,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q9",
+      "skill": "cycle_count",
+      "gt": "3",
+      "answer": "3",
+      "pred": "3",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q10",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "To find the **peak-to-peak amplitude** of the waveform, we look at the vertical distance between the **highest point** (peak) and the **lowest point** (trough) of the waveform.\n\nFrom the graph:\n\n- The **peak** reaches **3 grid divisions above** the zero line.\n- The **trough** reaches **3 grid divisions below** the zero line.\n\nSo, peak-to-peak amplitude = (peak) - (trough) = 3 - (-3) = **6 divisions**.\n\nAlternatively, since it’s symmetric around zero, peak-to-peak =",
+      "pred": "6",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 4.93
+    },
+    {
+      "id": "q11",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "To find the **peak-to-peak amplitude** of the waveform, we look at the vertical distance between the highest and lowest points of the waveform.\n\nFrom the graph:\n\n- The **peak** (highest point) is at the top of a grid square → that’s **1 division above the center line**.\n- The **trough** (lowest point) is at the bottom of a grid square → that’s **1 division below the center line**.\n\nSo, peak-to-peak = (peak) - (trough) = 1 - (-1) = **2 divisions**.\n\nAlternatively, since it’s",
+      "pred": "2",
+      "correct": false,
+      "reward": 0.0117,
+      "latency_s": 4.94
+    },
+    {
+      "id": "q12",
+      "skill": "amplitude_read",
+      "gt": "7",
+      "answer": "To find the **peak-to-peak amplitude**, we measure the total vertical distance from the **highest point** (peak) to the **lowest point** (trough) of the waveform, in grid divisions.\n\nLooking at the waveform:\n\n- The **peak** reaches **2 grid divisions above** the center line.\n- The **trough** reaches **2 grid divisions below** the center line.\n\nSo, peak-to-peak = 2 (above) + 2 (below) = **4 divisions**.\n\n✅ Final Answer: **4**",
+      "pred": "4",
+      "correct": false,
+      "reward": 0.0574,
+      "latency_s": 4.57
+    },
+    {
+      "id": "q13",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "To find the **peak-to-peak amplitude**, we measure the total vertical distance from the highest point (peak) to the lowest point (trough) of the waveform, in grid divisions.\n\nLooking at the graph:\n\n- The waveform starts at 0, goes up to a peak.\n- Then down to a trough.\n- Then back up to the next peak, etc.\n\nFrom the image, we can count:\n\n- From the **highest point** (peak) to the **lowest point** (trough), it spans **4 grid divisions**.\n\nThis is because:\n- One full cycle (",
+      "pred": "4",
+      "correct": false,
+      "reward": 0.1084,
+      "latency_s": 5.06
+    },
+    {
+      "id": "q14",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "To find the **peak-to-peak amplitude** of the waveform, we look at the difference between the highest and lowest points of the signal over one full cycle.\n\nFrom the image:\n\n- The waveform starts at **0 divisions** (baseline).\n- It goes down to **-1 division** (one grid square below baseline).\n- Then it goes back up to **0 divisions**.\n- Then down to **-1 division**, up to **0**, down to **-1**, up to **0**, down to **-1**, up to **0**.\n\nSo, the **peak** is at **-1 division** (",
+      "pred": "1",
+      "correct": false,
+      "reward": 0.0039,
+      "latency_s": 4.99
+    },
+    {
+      "id": "q15",
+      "skill": "freq_comparison",
+      "gt": "B",
+      "answer": "Looking at the graph:\n\n- **Signal A (blue)** completes more cycles in the same horizontal distance compared to **Signal B (red)**.\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since **Signal A** has more peaks (or zero crossings) over the same interval, it has a **higher frequency**.\n\n✅ Therefore, the signal with the **higher frequency** is:  \n**A (blue)**\n\n---\n\n**Answer: A**",
+      "pred": "A",
+      "correct": false,
+      "reward": 0.0,
+      "latency_s": 4.21
+    },
+    {
+      "id": "q16",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "Looking at the graph:\n\n- **Signal A (blue)** completes **more cycles** in the same horizontal distance compared to Signal B (red).\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since Signal A has **more peaks and troughs** over the same interval, it has a **higher frequency**.\n\n✅ Therefore, the signal with the **higher frequency** is:\n\n> **A (blue)**\n\n---\n\n**Answer: A**",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 4.21
+    },
+    {
+      "id": "q17",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "Looking at the graph:\n\n- **Signal A (blue)** completes **more cycles** in the same horizontal distance compared to Signal B (red).\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since Signal A has **more peaks and troughs** over the same interval, it has a **higher frequency**.\n\n✅ Therefore, the signal with the **higher frequency** is:\n\n> **A (blue)**\n\n---\n\n**Answer: A**",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 4.22
+    },
+    {
+      "id": "q18",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "Looking at the graph:\n\n- The **blue signal (A)** completes **more cycles** in the same horizontal span compared to the red signal (B).\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since the blue wave oscillates **more frequently** — it goes through more peaks and troughs over the same distance — it has the **higher frequency**.\n\n✅ Therefore, the answer is: **A**\n\n---\n\n**Answer: A**",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 4.2
+    },
+    {
+      "id": "q19",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "Looking at the graph:\n\n- **Signal A (blue)** completes more cycles in the same horizontal span than **Signal B (red)**.\n- Frequency is defined as the number of cycles per unit time (or space, in this case).\n- Since Signal A has **more peaks and troughs** over the same distance, it has a **higher frequency**.\n\n✅ Therefore, the signal with the **higher frequency** is:  \n**A (blue)**\n\n---\n\n**Answer: A**",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 4.07
+    },
+    {
+      "id": "q20",
+      "skill": "duty_cycle",
+      "gt": "75",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) = **2 units**\n- The **period** (total duration of one full cycle) = **4 units**\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "pred": "50",
+      "correct": false,
+      "reward": 0.1084,
+      "latency_s": 4.58
+    },
+    {
+      "id": "q21",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) is **2 units** (from t=0 to t=2).\n- The **period** (total duration of one full cycle) is **4 units** (from t=0 to t=4).\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final",
+      "pred": "50",
+      "correct": false,
+      "reward": 0.0013,
+      "latency_s": 4.94
+    },
+    {
+      "id": "q22",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) is **2 units** (from t=0 to t=2).\n- The **period** (total duration of one full cycle) is **4 units** (from t=0 to t=4).\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final",
+      "pred": "50",
+      "correct": false,
+      "reward": 0.0013,
+      "latency_s": 4.89
+    },
+    {
+      "id": "q23",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) = **2 grid units**\n- The **period** (total duration of one full cycle) = **4 grid units**\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "pred": "50",
+      "correct": false,
+      "reward": 0.0013,
+      "latency_s": 4.58
+    },
+    {
+      "id": "q24",
+      "skill": "duty_cycle",
+      "gt": "75",
+      "answer": "To find the **duty cycle** of a square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) = **2 units**\n- The **period** (total duration of one full cycle) = **4 units**\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "pred": "50",
+      "correct": false,
+      "reward": 0.1084,
+      "latency_s": 4.55
+    },
+    {
+      "id": "q25",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q26",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.2
+    },
+    {
+      "id": "q27",
+      "skill": "rise_edge",
+      "gt": "gradual",
+      "answer": "gradual",
+      "pred": "gradual",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.24
+    },
+    {
+      "id": "q28",
+      "skill": "rise_edge",
+      "gt": "gradual",
+      "answer": "gradual",
+      "pred": "gradual",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.24
+    },
+    {
+      "id": "q29",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    }
+  ],
+  "ts": "2026-11-24T11:27:21"
+}
