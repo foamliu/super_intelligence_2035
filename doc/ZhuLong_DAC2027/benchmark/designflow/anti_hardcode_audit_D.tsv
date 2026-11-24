@@ -136,7 +136,7 @@ D	EDA-Eval-DesignFlow-FsdbPowerWindowAnalysis-001	16	y	unknown	ok	static-skip	st
 D	EDA-Eval-DesignFlow-FsdbPwlExtract-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-FsdbPwlExtract-001
 D	EDA-Eval-DesignFlow-FsdbSpfbaPowerfillCatalog-001	12	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-FsdbSpfbaPowerfillCatalog-001
 D	EDA-Eval-DesignFlow-FullAdderSchemBuild-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		FullAdderSchemBuild-001
-D	EDA-Eval-DesignFlow-FuseAddrCompare-001	35	n	unknown	ok	static-skip	static-skip	n	GAP	no-negative	FuseAddrCompare-001
+D	EDA-Eval-DesignFlow-FuseAddrCompare-001	35	y	unknown	ok	static-skip	static-skip	y	PASS	r1266 FIX: added negative/ (4 fakes: fake_empty/fake_print_expected/fake_core_deleted/naive_no_commented) + negative_selftest.py; REF PASS + all 4 FAIL (NEG_RC=0); standalone fakes py_compile OK + runtime FAIL-consistent	FuseAddrCompare-001
 D	EDA-Eval-DesignFlow-GateLibResultMapFilter-001	14	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-GateLibResultMapFilter-001
 D	EDA-Eval-DesignFlow-GenRunFuncExplainQA-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-GenRunFuncExplainQA-001
 D	EDA-Eval-DesignFlow-GenSPv2-001	31	n	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-GenSPv2-001
