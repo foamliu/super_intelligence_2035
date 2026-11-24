@@ -1,5 +1,7 @@
 WAITING: 0
-> 🚀 wake#1719 2026-11-24 20:4x · **🔧 监控轮（P4+P5+P5.3 全部 DONE·验证 ON origin·P2 rft2 复测在 36.15 跑）**：复验 4 项交付物全 ON origin（`git cat-file -e origin/main:` OK：report_synthetic_waveform_research_zh.html 44020B[§1-§9 齐·TD-Interpreter/iverilog/GTKWave/synth_vcd_demo/6000 规模/1040 样本/0.0118/cheat_rate=0/McNemar 全含]·report_vision_wave_grpo_mllm_result_zh.html·MEMORY_VISION.md·daily 2026-11-24.md）。**14:3x 令 P4+P5 全部完成**：P4 调研报告 7 节+demo PASS✅；P5 SFT 1040 样本 pre0.625→post0.8125 Δ+18.75pp McNemar p=0.0118 显著✅·GRPO tie Δ=0 p=1.0 照写✅·cheat_rate=0✅·P5.3 真题迁移 case 级 0/10(分布 gap)条件级 +13.64pp(p=0.1094 趋势)照写✅。**P2 rft2 复测**：36.15 PID782062 alive(~85min)·14/182 case started·2 VERDICT=True·resumable·ETA~10-15h(每 case 至多 360s timeout)。共享 HEAD merge --ff-only 在后台跑(NFS 慢·origin 持续被别线前进·全非本线 designflow/data)。GPU6=9715MiB(serve :30001+:30003 rft2)·GPU7=3MiB(free)。SSH -R 桥/watchdog 健康。边界：仅动本线文件·未碰别线·未 reset --hard/clean/删 stash/kill 别线。**WAITING: 0**（rft2 复测在 36.15 跑·下轮收结果做 paired McNemar vs 17.6%）。
+> 🚀 wake#1720 2026-11-24 21:0x · **🔧 监控轮（git index 损坏修复 + P4/P5 复验 + P2 rft2 复测进行中）**：唤醒发现共享 `.git/index` **0 字节损坏**（`fatal: index file smaller than expected`·疑 NFS 并发 git 写入致截断）→ `git read-tree HEAD` 重建 index→14.6MB 恢复正常（`git log`/`git rev-list` OK·HEAD=`2555062cb3`·4 behind/0 ahead 未分叉·全非本线 origin 前进）。**P4/P5 复验全部通过**：① report_synthetic_waveform_research_zh.html 44020B §1-§9 齐·数字 spot-check 与 JSON 一致(0.625/0.8125/0.0118/1040/cheat0/McNemar/0-10/13.64/0.1094 全命中)·ON origin✅；② p5_runs/ 齐全(sft_p5.jsonl 1040 行·sft_p5_adapter_seed11+grpo_p5/step500 各含 adapter_config.json+adapter_model.safetensors·p5_results.json/p5_sft_paired_test.json/grpo_p5_paired_test.json/grpo_p5_cheat_check.json/p5_real_waveview_transfer_eval.json 全落盘)；③ p5_synthetic_sft_rl.py ON origin✅。**P2 rft2 复测**：36.15 PID782062 alive(~103min)·resumable·ETA~4-6h。GPU6=serve(:30001+:30003 rft2)·GPU7=free。SSH 桥/watchdog 健康。边界：仅动本线文件·未碰别线·未 reset --hard/clean/删 stash/kill 别线。**WAITING: 0**（rft2 复测在 36.15 跑·下轮收结果做 paired McNemar vs 17.6%）。
+
+> 📦 wake#1719（2026-11-24 20:4x，监控轮·P4+P5+P5.3 验证 ON origin·P2 rft2 复测 14/182）one-liner 已降级 → daily-memories-vision/2026-11-24.md。需要时再读。
 
 > 📦 wake#1718（2026-11-24 20:0x，P5.3 WaveView 真题迁移评测 DONE·case 0/10·条件级 +13.64pp p=0.1094·报告 §9 追加 44020B）one-liner 已降级 → daily-memories-vision/2026-11-24.md。需要时再读。
 
@@ -7,7 +9,6 @@ WAITING: 0
 
 > 📦 wake#1715（2026-11-24 17:3x，P5 合成数据 SFT+GRPO DONE·SFT +18.75pp p=0.0118 显著·GRPO tie Δ=0 p=1.0·cheat_rate=0·p5_runs/ + p5_synthetic_sft_rl.py）one-liner 已降级 → daily-memories-vision/2026-11-24.md。需要时再读。
 
-> 📦 wake#1714（2026-11-24 15:1x，P4 合成波形数据调研 DONE·cimi_search 6次·demo synth_vcd_demo.py PASS·报告16498B·P4通过✅）one-liner 已降级 → daily-memories-vision/2026-11-24.md。需要时再读。
 
 > 📦 wake#1712（2026-11-24 14:1x，P2 监控轮 + 数据一致性自检·无新交付）one-liner 已降级 → daily-memories-vision/2026-11-24.md（HEAD 0/12 behind·P2 8/182·grpo_v2_final_eval.json WT==origin=correct20/0.6667 shared-HEAD 滞后假象·canonical eval=20/0.6667 McNemar p1.0 cheat0 与 wake#1710 一致·auto-commit 来自 loop helper 非 rogue）。需要时再读。
 
@@ -91,16 +92,16 @@ WAITING: 0
 
 |:---|:---|
 
-| PHASE | 🔴 **wake#1710 用户令 2026-11-24 08:5x**：P1 GRPOv2 训练 DONE=**负结果**(post 0.6667<冷启动0.70·McNemar p=1.0·cheat=0)；P2 真题复测在 36.15 跑(step500 adapter@:30003·182 case V2 臂·ETA~6h)；P3 §11 报告节已落(负结果照写)。前置 Option B：base0.60→SFT0.70→RFT2 0.90→GRPOv1 0.8667。WaveView 全队列 V0 20/182·V1 28/182·V2 32/182·p=0.008。端点 .17 :30001/:30002/:30003。 |
+| PHASE | 🔴 **wake#1720（14:3x 令 P4+P5 全部 DONE）**：P4 合成波形调研报告 44020B §1-§9 + demo PASS✅；P5 SFT 1040 样本 pre0.625→post0.8125 Δ+18.75pp McNemar p=0.0118 显著✅·GRPO tie p=1.0 照写✅·cheat=0✅·P5.3 真题迁移 case 0/10 条件级 +13.64pp p=0.1094✅。P2 rft2 复测在 36.15 跑(PID782062·ETA~4-6h)。前置：base0.60→SFT0.70→RFT2 0.90→GRPOv1 0.8667→GRPOv2 0.6667(负)。WaveView 全队列 V0/V1/V2 p=0.008。端点 .17 :30001/:30003。 |
 
 | WAITING | 0（P2 在 36.15 跑·无外部阻塞·连续推进；下轮收 P2 结果+§0.6） |
 
 | 已完成 | wake#1688 共享仓库排障✅ · wake#1686 Option B SFT+GRPO✅ · wake#1663 WaveView 全队列✅(p=0.008) · #4 v2-RFT 90% p=0.0156✅ · v5 p=0.0009✅ · NeurIPS §6✅ · ArmD-R2✅ |
 
-| 当前动作 | **wake#1710**：用户令 2026-11-24 08:5x——P1 GRPOv2 训练 DONE=负结果(0.6667<0.70·p=1.0·cheat=0·grad23/500·reward 粒度化破饱和)；P2 step500 adapter@:30003 + 36.15 V2-only rerun 跑起(ETA~6h)；P3 §11 报告节已落。 |
+| 当前动作 | **wake#1720**：14:3x 令 P4+P5 全部 DONE 并复验 ON origin；git index 损坏修复(read-tree HEAD)；P2 rft2 复测在 36.15 跑(ETA~4-6h)。 |
 
-| 下一步 | ① P2：收 36.15 V2-only rerun 结果→paired McNemar vs V2=17.6%；step500 真题≤17.6% 则回落 rft2 复测可复现。② P3：`report_vision_waveview_selftest_agent_zh.html` §0.6 追加新数字行。③ 体积 MEMORY/TASK ≤32KB 持续滚动。 |
+| 下一步 | ① P2：收 36.15 rft2 复测结果→paired McNemar vs V2=17.6%（确认 rft2 可复现）。② P3：`report_vision_waveview_selftest_agent_zh.html` §0.6 追加 rft2 复测数字行。③ 体积 MEMORY/TASK ≤32KB 持续滚动。 |
 
 | 阻塞 | 无（GPU6-7 可用·:30001/:30003 服务不停·SSH 桥到 36.15 保持）。远期：主线 SFT/RL 阻塞于 pretrain ckpt ETA≈2026-12-25 |
 
-| 更新 | **2026-11-24 13:3x (wake#1710)**：P1 GRPOv2 训练 DONE=负结果(post 0.6667<冷启动0.70·McNemar p=1.0·bootstrap p=0.8164·cheat=0·grad23/500·reward 粒度化破 v1 饱和)；P2 step500@:30003 + 36.15 V2-only rerun 跑起(ETA~6h)；P3 §11 报告节已落(28613B·0外链·0script·负结果照写)。**WAITING=0**。 |
+| 更新 | **2026-11-24 21:0x (wake#1720)**：P4+P5 全部 DONE 并复验 ON origin（report 44020B §1-§9 + p5_runs/ 齐全 + p5_synthetic_sft_rl.py）；git index 0B 损坏→read-tree HEAD 修复；P2 rft2 复测在 36.15 跑(PID782062 ETA~4-6h)。**WAITING=0**。 |
