@@ -1,5 +1,47 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-24 用户令 — 扩大模型范围：3 个新模型各跑 Lite 500 × 3-run · 最高优先 · 覆盖 standby**
+
+> **用户原话**：「安排 zhulong agent 扩大模型范围继续跑 lite 3-run，下面三个模型：glm-5.2 / deepseek-v4-flash / kimi-k2.6-cloud」
+
+**一、起点**：doubao 三组（pro 10.18±1.18% / lite 4.68±0.77% / mini 2.39±0.19%）+ deepseek-v4-pro-cloud（20.85±1.03%）均已 3-run 收口。本令为**新增 3 组**，🚫 不改已收口 4 组任何数字与 batch。
+
+**二、3 个新模型（逐字照用户给定的 auth 参数）**
+
+| # | model id | baseUrl | key 末 8 位 | 备注 |
+|:--|:--|:--|:--|:--|
+| 1 | `glm-5.2` | `http://agi-gateway.cxmt.com/cloud/v1` | `88ea2f23` | key 完整串 `...c2759d74-49f1-410a-89ea-2cf188ea2f23` |
+| 2 | `deepseek-v4-flash` | `http://agi-gateway.cxmt.com/v1` | `604c78d3` | ⚠️ baseUrl 是 `/v1` **不是** `/cloud/v1`；key `...c43c1f4a-03c6-4148-b722-f4c8604c78d3` |
+| 3 | `kimi-k2.6-cloud` | `http://agi-gateway.cxmt.com/cloud/v1` | `ebbf9a9f` | key `...80a707b0-4402-4c19-88d1-a3d4ebbf9a9f` |
+
+**三、冻结口径（与 doubao 三组 + deepseek 强模型逐字一致，不许改）**
+- `eval/cases_lite.txt` **500 题** / Pass@1 / `thinking low` / `timeout 2400` / cline 3.0.51 + PreToolUse hook / 登录 shell + PATH + `https_proxy` / `--workers 16`。
+- 若出现 `[FUSE]` / `额度耗尽` / `熔断` ⇒ 按 v3 专规：本轮作废、等 ≥30 min、并发减半（16→8→4→2），🚫 不拼接。
+- 🚫 不改题/图/`check.py`/判分口径；🚫 不加 `--skip-done` 等自创参数；🚫 复用上轮 `status.jsonl`。
+
+**四、执行顺序**：按表内编号 **1→2→3 串行**（glm-5.2 → deepseek-v4-flash → kimi-k2.6-cloud）。每个模型 **3 轮严格串行**（r1→r2→r3），每轮独立 batch 目录 + 独立日志。跑前 `cp providers.json providers.json.<model>_default.bak`，每轮结束**立即还原** pro 默认态防串台。
+
+**五、每个模型开跑前 canary 两证**
+1. `curl <baseUrl>/models` 返回含目标 model id；
+2. 单题真跑（1 case：非空输出、非 null-content、http/pass 正常）。
+两证齐 ⇒ 开跑；任一失败 ⇒ 在 MEMORY + 报告写清「不可用的具体证据（HTTP 码 + 返回原文）」，**跳过该模型**继续下一个，🚫 不卡住整条线。
+
+**六、身份四证**（写进每份报告与 MEMORY）：`requested model == curl /v1/models 的 served id`、baseUrl、key 末 8 位、`maxTokens=16384` + `reasoning.enabled=false`。
+
+**七、每模型交付**
+1. 报告 `reports/report_edafb_lite500_<model>_eval_zh.html`（中文单文件、内联 CSS、**0 外链 0 script**；同模型多轮并入一份 + 逐轮表 + `infra_clean`）。
+2. 3-run 汇总：`[r1,r2,r3] / mean±std / decided 分母 / infra_clean`；`grep -c 'FUSE\|额度耗尽\|熔断'` 必须为 **0** 才计入。
+3. **与 doubao-pro（10.18±1.18%）做 McNemar 配对检验**：逐题 pass/fail 对齐算 McNemar（b/c）并报 p；不显著就写「不显著」，🚫 不写「趋势向好」。
+4. `MEMORY_ZHULONG.md` 首行追加：「`<model>` 3-run = x.xx±y.yy%」。
+
+**八、全部 3 模型跑完后**
+- 交付汇总报告（7 模型横评：doubao pro/lite/mini + deepseek-v4-pro + glm-5.2 + deepseek-v4-flash + kimi-k2.6-cloud）。
+- 🚫 不改论文宏与已回填的 §6 数字（等用户裁定是否扩表）。
+
+---
+
+> ✅ **2026-11-22 18:1x 用户令 — 强模型 3-run 已收口**（deepseek-v4-pro-cloud 20.85±1.03%，McNemar vs doubao-pro b=69 c=2 p≈0.0000 高度显著）。下方为历史归档，新令覆盖。
+
 > 🔴 **2026-11-22 18:1x 用户令 — doubao pro/lite/mini 收口后，追加「强模型 3-run」：优先 `deepseek-v4-pro-cloud`，不可用则 `glm-5.2` · 最高优先 · 覆盖 standby**
 
 > **用户原话**：「zhulong 跑完 doubao pro/lite/mini 后，换一个强模型，比如 deepseek-v4-pro 或者 glm-5.2 测 3-run 看看」
