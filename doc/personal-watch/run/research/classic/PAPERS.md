@@ -9,6 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **398** 条（**第一百一十轮 2026-11-25 03:0x 补 3 条 → 398**：VAE `1312.6114`（**45,270**，2013 v1 / ICLR 2014 会议版；重参数化 ELBO + 识别模型做 amortized 推断，连续隐变量有向概率模型可在大数据上训练；摘要无实验分数 ⇒ 不写未核数字）/ PAL `2211.10435`（**859**，ICML 2023；LLM 只生成程序作中间推理、求解交给 Python 解释器；13 个数学/符号/算法任务，GSM8K 上 Codex + PAL 比 PaLM-540B CoT 绝对 +15% top-1）/ TinyLlama `2401.02385`（**1,248**，2024 技术报告；1.1B 模型 / 约 **1T** token / 约 **3 epoch**，沿用 Llama 2 架构与 tokenizer）；核验：abs 页 **3/3 `200`**（41,755 / 44,028 / 39,154 B，`citation_title` + `citation_date` 逐字）+ OpenAlex **3/3 `200`**（45,270 / 859 / 1,248，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+2** · posttrain **+2** · vision **+1** · data **+2** · harness **+1** · designflow **+1** · zhulong **+1**（一篇可多线））
+
 **本轮快照**：累计 **395** 条（**第一百零九轮 2026-11-25 00:0x 补 3 条 → 395**：word2vec-SGNS `1310.4546`（**39,109**，NIPS 2013；高频词下采样 + negative sampling 替代层次 softmax + 短语发现，解决 “Air Canada” 类固定搭配；摘要只给定性、未给超参 ⇒ 不写未核数字）/ RNN Encoder–Decoder + GRU `1406.1078`（**11,916**，EMNLP 2014；一个 RNN 编码为定长向量、另一个解码，联合训练最大化条件概率；reset/update 门即 GRU；作为 SMT 附加特征带来实测提升；摘要未给 BLEU ⇒ 不写未核分数）/ DistilBERT `1910.01108`（**13,823**，NeurIPS 2019 EMC² Workshop；预训练期蒸馏，三损失 = LM + 蒸馏 + cosine-distance；参数减 **40%**、保留约 **97%**、推理快 **60%**）；核验：abs 页 **3/3 `200`**（42,263 / 43,729 / 42,394 B，`citation_title` + `citation_date` 逐字）+ OpenAlex **3/3 `200`**（39,109 / 11,916 / 13,823，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**（`1301.3781` / `1409.0473` / `1810.04805` 已在表内，分别为初版 / 注意力版 / BERT，非重复）；本轮归属：data **+3** · pretrain **+3** · posttrain **+2** · harness **+2** · zhulong **+2** · vision **+0** · designflow **+1**（一篇可多线））
 
 **本轮快照**：累计 **392** 条（**第一百零八轮 2026-11-24 21:0x 补 3 条 → 392**：Reformer `2001.04451`（**3,436**，arXiv `comments` = ICLR 2020；LSH 注意力 shared-QK `O(L²)→O(L log L)` + 可逆残差激活只存 1 份而非 N 份 + FFN 分块消 `d_ff`；enwik8 `2^16=64K` / imagenet-64 12K 序列，12 层 20K 步 `1.19 bits/dim`、调优后 `1.05`）/ SpanBERT `1907.10529`（**2,572**，TACL 2020、DOI `10.1162/tacl_a_00300`；`Geo(p=0.2)`、`ℓ_max=10`、平均跨度 3.8 词、15% 掩码 80/10/10 + span-boundary objective；SQuAD 1.1 **94.6** F1 / 2.0 **88.7** F1 / OntoNotes **79.6** F1）/ SentencePiece `1808.06226`（**5,426**，EMNLP 2018 demo、DOI `10.18653/v1/d18-2012`；BPE + unigram 直接从原始句子学，无需预分词、无损；KFTT 440k 句 ja→en BLEU 28.24→**29.55**（8k 共享词表）、en→ja 20.06→**21.62**）；核验：abs 页 **3/3 `200`**（42,495 / 41,879 / 41,055 B，`citation_title` + `citation_date` + `comments` 逐字）+ ar5iv **3/3 `200`**（200,472 / 205,735 / 107,776 B）+ OpenAlex **3/3 `200`**（3,436 / 2,572 / 5,426，查询日 2026-11-24）；⚠️ arXiv API `id_list` 两次 **`429 Rate exceeded`** ⇒ `published` 时间戳未取，年份以 abs 页 `citation_date` 为准（如实标注）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+3** · data **+2** · harness **+2** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
@@ -6975,3 +6977,47 @@
 | 首次收录 | **2026-11-25**（第一百零九轮 · 00:00 时窗） |
 | 核验状态 | abs 页 **`200` / 42,394 B**，`citation_title` + `citation_date` + `comments` 逐字，摘要逐字取回；OpenAlex **`200`**（13,823 / 2019 / `preprint`，查询日 2026-11-25）。⚠️ 摘要给 40% / 97% / 60% 三个数（逐字核），其余实验分数**未做 PDF 逐页复核**。条目级查重：`1810.04805`（BERT）已在表内，本条为**蒸馏版**，非重复。 |
 
+## 396. Auto-Encoding Variational Bayes
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Auto-Encoding Variational Bayes |
+| 作者（前 3） | Diederik P. Kingma · Max Welling（共 **2** 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2013**（v1 `2013-12-20`；abs 页 `citation_date` = `2013/12/20`；OpenAlex `publication_year` 2013） |
+| 会议 / 期刊 | **ICLR 2014 会议版**（arXiv `comments` 仅记 typo 修正、未列会议；OpenAlex `type=preprint`，如实分列） |
+| 被引数 | **45,270**（OpenAlex `10.48550/arXiv.1312.6114`，查询日 **2026-11-25**；**≥500 直接满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1312.6114> ｜ `10.48550/arXiv.1312.6114` |
+| 一句话贡献 | 把变分下界（ELBO）**重参数化**，得到一个可用标准随机梯度优化的下界估计器；再用**识别模型（encoder）**拟合难解后验，使带连续隐变量的有向概率模型能在大数据上做 amortized 推断与学习。 |
+| 与我们工作的关系 | **vision（主 · 生成式表示 / 隐变量）**：把「图像 → 隐变量 → 重建」作为专用视觉容量的最小生成式对照，回答「视觉编码器该给多少专用容量」。<br>**pretrain（表示学习目标对照）**：ELBO 的「重建 + KL」两项可作为自监督目标的基线，比较时须固定隐变量维度与 KL 权重。<br>**data（合成数据）**：隐空间采样可做受控分布外样本，用于压力测试；但合成样本不得与真实样本混算通过率。<br>**harness**：重建类指标（似然 / 重建误差）与下游任务指标必须分列，不得拿重建好当能力结论。<br>**posttrain / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十轮 · 03:00 时窗） |
+| 核验状态 | abs 页 **`200` / 41,755 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（45,270 / 2013 / `preprint`，查询日 2026-11-25）。⚠️ 摘要只给定性贡献、无实验数字 ⇒ 本行不写未核分数；**未做 PDF 逐页复核**。条目级查重：`1312.6114` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 397. PAL: Program-aided Language Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | PAL: Program-aided Language Models |
+| 作者（前 3） | Luyu Gao · Aman Madaan · Shuyan Zhou（共 **8** 位；另 Uri Alon · Pengfei Liu · Yiming Yang · Jamie Callan · Graham Neubig；arXiv `citation_author` 逐字核） |
+| 年份 | **2022**（v1 `2022-11-18`；abs 页 `citation_date` = `2022/11/18`；OpenAlex `publication_year` 2023 为会议版） |
+| 会议 / 期刊 | **ICML 2023**（OpenAlex `type=conference-paper`；arXiv `comments` 只写共同一作与代码链接、未列会议，如实分列） |
+| 被引数 | **859**（OpenAlex `10.48550/arXiv.2211.10435`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2211.10435> ｜ `10.48550/arXiv.2211.10435` |
+| 一句话贡献 | 让 LLM 只负责把自然语言问题**分解成程序**（中间推理步骤），把**求解交给 Python 解释器**；在 13 个数学 / 符号 / 算法推理任务上优于更大模型的 CoT，Codex + PAL 在 GSM8K 上比 PaLM-540B CoT 绝对高 **15%** top-1。 |
+| 与我们工作的关系 | **posttrain（主 · 代码即推理 / 可验证执行）**：EDA 脚本任务天然适合「模型写程序、环境执行判分」；SFT 轨迹应成对保存「自然语言分解 + 可执行程序 + 执行结果」。<br>**harness**：判分优先用解释器执行结果，LLM 评审只作辅助，并锁 judge 版本 / prompt / 温度。<br>**designflow**：题型应保留「可执行中间步骤」，单列解释器失败 / 工具不可用两类 infra 错误，不计能力失败。<br>**data**：程序化轨迹与纯文本轨迹分开统计，不得混算通过率。<br>**pretrain**：无直接建议（显式写「无」）。<br>**vision / zhulong**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十轮 · 03:00 时窗） |
+| 核验状态 | abs 页 **`200` / 44,028 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（859 / 2023 / `conference-paper`，查询日 2026-11-25）。⚠️ 13 任务与 +15% 取自摘要（逐字核），**未做 PDF 逐页复核**。条目级查重：`2211.10435` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 398. TinyLlama: An Open-Source Small Language Model
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | TinyLlama: An Open-Source Small Language Model |
+| 作者（前 3） | Peiyuan Zhang · Guangtao Zeng · Tianduo Wang（共 **4** 位；另 Wei Lu；arXiv `citation_author` 逐字核） |
+| 年份 | **2024**（v1 `2024-01-04`；abs 页 `citation_date` = `2024/01/04`；OpenAlex `publication_year` 2024） |
+| 会议 / 期刊 | **技术报告**（arXiv `comments` = `Technical Report`；OpenAlex `type=preprint`） |
+| 被引数 | **1,248**（OpenAlex `10.48550/arXiv.2401.02385`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2401.02385> ｜ `10.48550/arXiv.2401.02385` |
+| 一句话贡献 | 公开一个 **1.1B** 小模型：约 **1T token**、约 **3 epoch**，沿用 Llama 2 架构与 tokenizer，借 FlashAttention / Lit-GPT 提效；同规模开源模型中表现显著更好，ckpt 与代码公开。 |
+| 与我们工作的关系 | **pretrain（主 · 2B 级配方与预算）**：与 MiniCPM5-2B 同量级，可作「token 数 × epoch × 规模」的公开对照；复测时三列必须同时报。<br>**data**：1T token 的语料量级与 3 epoch 重复策略，是我们做数据配比时的现实基线。<br>**posttrain（替身基模）**：可作轻量基线，但须与 MiniCPM5-2B 分口径比较。<br>**zhulong（成本口径）**：小模型训练成本可作成本表下界。<br>**harness**：同规模对比须同任务集、同评测脚本。<br>**vision / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十轮 · 03:00 时窗） |
+| 核验状态 | abs 页 **`200` / 39,154 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（1,248 / 2024 / `preprint`，查询日 2026-11-25）。⚠️ 1.1B / 1T token / 3 epoch 取自摘要（逐字核），**未做 PDF 逐页复核**；摘要未给具体任务分数 ⇒ 不写未核数字。条目级查重：`2401.02385` 在 `PAPERS.md` 中 **0 命中**，非重复。 |

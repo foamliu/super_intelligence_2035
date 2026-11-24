@@ -5727,3 +5727,5 @@
 | 2026-11-25 | 2611.31094 | Unlocking the Power of Loops in Pretrained LLMs with Loop Residuals | cs.CL | 收录 |
 | 2026-11-25 | 2611.31166 | Precision-Aware Learning Rate Transfer Across Block Count in LLM Post-Training | cs.LG | 收录 |
 | 2026-11-25 | 2611.31198 | ToolSmith: An Automatic Tool-Generation Framework for Multimodal Search Agents | cs.CL | 收录 |
+| 2026-11-25 | 2611.31185 | CO-GRAFT: Attributing Reinforcement Learning Gains in Search Agents via Role-Level Policy Grafting | cs.IR |
+| 2026-11-25 | 2611.31113 | Attention Temperature Confounds Zero-Shot Context Extension | cs.LG |

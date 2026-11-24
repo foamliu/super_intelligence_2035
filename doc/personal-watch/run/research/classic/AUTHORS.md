@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-25 03:0x）**：作者 **365** 人（编号最大 **365**）· X 已核验 **140**（本轮 **+3**：`@dpkingma` 由代理抓 `x.com/dpkingma` `200` / 182,386 B，`og:title` = `Durk Kingma (@dpkingma) on X`、bio 自述 Anthropic / 前 Google Brain·DeepMind / OpenAI founding team / VAE 与 Adam 作者 ⇒ 姓名与成果强匹配但为**单源**，如实记；`@luyu_gao` 由 Luyu Gao 本人主页 `https://luyug.github.io/`（`200` / 8,375 B）外链 `twitter.com/luyu_gao` + 代理抓 `x.com/luyu_gao` `200` / 152,990 B，`og:title` = `Luyu Gao (@luyu_gao) on X` ⇒ 双源；`@PY_Z001` 由 Perry Zhang 本人主页 `https://jzhang38.github.io/`（`200` / 19,215 B）外链 `twitter.com/PY_Z001` + 代理抓 `x.com/PY_Z001` `200` / 203,588 B，`og:title` = `Perry Zhang (@PY_Z001) on X`、bio `TinyLlama, FastVideo, Seedance` ⇒ 双源）· 已发信 **166**（台账 #1–#166；今日 **2/12**）· 回信 **0**（0/166；#1–#9 已转 `无应答(>14d)`）。本轮 **+3**：Diederik P. (Durk) Kingma（VAE 一作，荷兰姓名，本人站点无 mailto ⇒ 仅建档）· Luyu Gao（PAL 一作，中文，CMU 主页当前地址 ⇒ 已发信 #166）· Perry (Peiyuan) Zhang（TinyLlama 一作，中文，主页当前地址 ⇒ 仅建档）。
+
 > **当前计数（2026-11-25 00:0x）**：作者 **362** 人（编号最大 **362**）· X 已核验 **137**（本轮 **+3**：`@kchonyc` 由 Kyunghyun Cho 本人主页 `https://kyunghyuncho.me/`（`200` / 37,026 B）页内 `href` 外链 `twitter.com/kchonyc` + 代理抓 `x.com/kchonyc` `200` / 163,832 B，`og:title` = `Kyunghyun Cho (@kchonyc) on X`、bio 自述 NYU 教授 + Ortet AI CEO ⇒ 双源；`@LysandreJik` 由 HF 个人页 `huggingface.co/lysandre`（经代理 `200` / 338,187 B）外链 `twitter.com/LysandreJik` + 代理抓 `x.com/LysandreJik` `200` / 181,803 B，`og:title` = `Lysandre (@LysandreJik) on X`、`og:description` = `Chief Open-Source Officer (COSO) at Hugging Face` ⇒ 双源；`@taku910` 上一轮已核 ⇒ 计入本轮基数。Tomas Mikolov 记「未找到 X」：`@tmikolov` / `@MikolovTomas` 历史均 `404`，本轮未再猜）· 已发信 **165**（台账 #1–#165；今日 **1/12**）· 回信 **0**（0/165；**11-25 起 #1–#7 满 14 天 ⇒ 转 `无应答(>14d)`**）。本轮 **+3**：Tomas Mikolov（word2vec-SGNS 一作，英文/捷克，当前机构主页 `404`、站点 `000` ⇒ 仅建档，不猜地址）· Kyunghyun Cho 조경현（RNN Encoder–Decoder 一作，한국어，NYU contact 页当前地址 ⇒ 已发信 #165）· Lysandre Debut（DistilBERT 二作，法文姓名，HF 个人页无明文邮箱 ⇒ 仅建档，X 双源）。
 
 > **当前计数（2026-11-24 21:0x）**：作者 **359** 人（编号最大 **359**）· X 已核验 **134**（本轮 **+1**：`@taku910` 由 GitHub 个人页 `https://github.com/taku910`（`200` / 167,121 B，`itemprop="name"` = `Taku Kudo`）+ 代理抓 `x.com/taku910` `200` / 143,680 B，`og:title` = `Taku Kudo (@taku910) on X` ⇒ **同名同 handle 跨平台双源**，`og:description` 为空已如实记；反例 `x.com/NikitaKitaev` `og:title` = `Китаев Никита`、`og:description` = `9 followers · 5 following. Ukraine` ⇒ 判他人、不记；`@lukaszkaiser` 仅 X 页单源（`og:title` 姓名一致 + 14,273 followers / San Francisco，本人无可核主页外链；`lukaszkaiser.com` 仅 114 B 停放页）⇒ 🚫 不计入已核验、不猜）· 已发信 **164**（台账 #1–#164；今日 **12/12**，达每日硬上限 ⇒ 本窗后不再发）· 回信 **0**（0/164，0 封到期，最早 11-25）。本轮 **+3**：Nikita Kitaev（Reformer 一作，英文，本人主页 `kitaev.com` 明文 `kitaev@berkeley.edu` ⇒ 已发信 #164）· Łukasz Kaiser（Reformer 二作 / Transformer 共同作者，英文，无当前可核邮箱 ⇒ 仅建档，X 单源未核）· Taku Kudo（SentencePiece 一作，日文，GitHub 个人页无明文邮箱 ⇒ 仅建档，X 双源）。
@@ -5138,3 +5140,41 @@
 | 状态 | **待跟踪**（仅建档；无明文邮箱 ⇒ 本线不发信；X 已核验，follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
 | 备注 | 发信问题候选（只对 DistilBERT 成立）：① 三损失（LM / 蒸馏 / cosine-distance）的权重与教师软标签温度如何选，去掉 cosine 损失掉多少；② BERT-base 教师到 6 层学生的层映射是固定比例还是按能力选层；③ 端侧概念验证用的是哪一档延迟预算、97% 保留是在哪组任务上算的。 |
 
+### 363. Diederik P. (Durk) Kingma
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Diederik P. (Durk) Kingma（`语言=英文兜底(判据=荷兰姓名族属 Diederik/Kingma + 荷兰 University of Amsterdam 博士；无中文/日文/韩文信号)`） |
+| 机构 | **Anthropic**（X bio 自述；prev Google Brain / DeepMind，OpenAI founding team）· University of Amsterdam PhD 2017（本人站点） |
+| 代表论文 | **Auto-Encoding Variational Bayes**（`1312.6114`，B 轨 #396，一作）· **Adam: A Method for Stochastic Optimization**（`1412.6980`，B 轨表内，一作） |
+| 邮箱 | **未找到当前明文**（本人站点 `dpkingma.com` `HTTP 200` / 5,959 B，仅 Publications / Brief Bio / Links，无 `mailto:`；不猜 `@anthropic.com` / `@google.com`） |
+| 主页 | <https://dpkingma.com/>（`HTTP 200` / 5,959 B） |
+| X 账号 | **@dpkingma**（站点无 X 外链；代理抓 `x.com/dpkingma` `HTTP 200` / 182,386 B，`og:title` = `Durk Kingma (@dpkingma) on X`、`og:description` = `@AnthropicAI. Prev. @Google Brain/DeepMind, founding team @OpenAI. Computer scientist; inventor of the VAE, Adam optimizer, and other methods. ML PhD.` ⇒ **单源身份强匹配**，如实记「非双源」） |
+| 状态 | **待跟踪**（仅建档；无明文邮箱 ⇒ 本线不发信；X 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | `语言=英文兜底(判据=荷兰姓名族属 + 荷兰机构)`。发信问题候选（只对 VAE 成立）：① 重参数化后 KL 项权重对下游表示质量的影响，去掉 KL 退化成 AE 时最先坏在哪类任务；② 识别模型容量与隐变量维度如何配，2B 级视觉前端上是否有可迁移的经验比例；③ 用 ELBO 做表示学习时，重建指标与下游指标脱钩的常见原因。 |
+
+### 364. Luyu Gao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Luyu Gao（`语言=中文(判据=拼音姓名族属 Luyu Gao + 华人姓名习惯；🚫 不因 CMU 美国机构 / 英文论文改判英文)`） |
+| 机构 | **Carnegie Mellon University · Language Technologies Institute（LTI）**（PhD student；本人主页自述） |
+| 代表论文 | **PAL: Program-aided Language Models**（`2211.10435`，B 轨 #397，一作） |
+| 邮箱 | **`luyug@cs.cmu.edu`**（本人主页 `https://luyug.github.io/` `HTTP 200` / 8,375 B，页内 `mailto:` 明文；2026-11-25 03:0x 复核；未用 2022 论文旧地址） |
+| 主页 | <https://luyug.github.io/>（`HTTP 200` / 8,375 B） |
+| X 账号 | **@luyu_gao**（主页外链 `twitter.com/luyu_gao` + 代理抓 `x.com/luyu_gao` `HTTP 200` / 152,990 B，`og:title` = `Luyu Gao (@luyu_gao) on X` ⇒ 双源；`og:description` 为空，如实记） |
+| 状态 | **已发信**（#166，2026-11-25 03:0x，中文，正文见 `drafts/2211.10435.md` / `bodies/2026-11-25-2211.10435.txt`） |
+| 备注 | `语言=中文(判据=姓名族属 + CMU LTI)`。发信问题（只对 PAL 成立）：① 13 个任务里解释器执行失败（语法错 / 运行时错）时，重试 / 回退 CoT / 直接判错各占多少；② few-shot 中自然语言分解步骤与可执行代码如何对齐，是否强制每步可单独运行；③ GSM8K 上相对 PaLM-540B CoT 的 +15% 是绝对百分点，需要外部工具链时最小可行改动是什么。 |
+
+### 365. Perry (Peiyuan) Zhang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Perry (Peiyuan) Zhang（`语言=中文(判据=拼音姓名族属 Peiyuan Zhang + 华人姓名习惯；🚫 不因美国机构 / 英文论文改判英文)`） |
+| 机构 | **ByteDance Seed**（Seedance 核心团队，前研究者；本人页）· **UC San Diego** PhD 背景（本人页「Before that, I was a PhD student at UC San Diego」） |
+| 代表论文 | **TinyLlama: An Open-Source Small Language Model**（`2401.02385`，B 轨 #398，一作） |
+| 邮箱 | **`pez010@ucsd.edu`**（本人主页 `https://jzhang38.github.io/` `HTTP 200` / 19,215 B，页内 `mailto:` 明文；当前公开地址；未发信） |
+| 主页 | <https://jzhang38.github.io/>（`HTTP 200` / 19,215 B） |
+| X 账号 | **@PY_Z001**（主页外链 `twitter.com/PY_Z001` + 代理抓 `x.com/PY_Z001` `HTTP 200` / 203,588 B，`og:title` = `Perry Zhang (@PY_Z001) on X`、bio = `TinyLlama, FastVideo, Seedance. Opinions are my own` ⇒ 双源） |
+| 状态 | **待跟踪**（仅建档；X 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | `语言=中文(判据=姓名族属)`。发信问题候选（只对 TinyLlama 成立）：① 1T token / 3 epoch 下，loss 在哪个阶段开始平台化、是否值得加 epoch；② 1.1B 规模上 FlashAttention + Lit-GPT 的实测吞吐增益与显存占用各是多少；③ 小模型在代码 / 结构化输出任务上的退化模式，与 2B 级是否同构。 |
