@@ -79,53 +79,53 @@
         "source_key": "en_v1_4",
         "count": 2612,
         "actual_ratio": 0.5224,
-        "target_ratio": 0.5223880597014926,
-        "deviation_pct": 0.0011940298507373548
+        "target_ratio": 0.5223880597014924,
+        "deviation_pct": 0.0011940298507595593
       },
       "1": {
         "source_key": "ufw_l1_en_hq",
         "count": 224,
         "actual_ratio": 0.0448,
-        "target_ratio": 0.04477611940298508,
-        "deviation_pct": 0.002388059701492057
+        "target_ratio": 0.044776119402985065,
+        "deviation_pct": 0.0023880597014934446
       },
       "2": {
         "source_key": "ufw_zh",
         "count": 149,
         "actual_ratio": 0.0298,
-        "target_ratio": 0.02985074626865672,
-        "deviation_pct": 0.005074626865671922
+        "target_ratio": 0.02985074626865671,
+        "deviation_pct": 0.005074626865670881
       },
       "3": {
         "source_key": "math_l1",
         "count": 187,
         "actual_ratio": 0.0374,
-        "target_ratio": 0.0373134328358209,
-        "deviation_pct": 0.008656716417910354
+        "target_ratio": 0.03731343283582089,
+        "deviation_pct": 0.008656716417911048
       },
       "4": {
         "source_key": "math_l3",
         "count": 112,
         "actual_ratio": 0.0224,
-        "target_ratio": 0.02238805970149254,
-        "deviation_pct": 0.0011940298507460284
+        "target_ratio": 0.022388059701492533,
+        "deviation_pct": 0.0011940298507467223
       },
       "5": {
         "source_key": "code_l2",
         "count": 1343,
         "actual_ratio": 0.2686,
-        "target_ratio": 0.26865671641791045,
-        "deviation_pct": 0.005671641791044069
+        "target_ratio": 0.2686567164179104,
+        "deviation_pct": 0.0056716417910385175
       },
       "6": {
         "source_key": "code_l3",
         "count": 373,
         "actual_ratio": 0.0746,
-        "target_ratio": 0.0746268656716418,
-        "deviation_pct": 0.002686567164179865
+        "target_ratio": 0.07462686567164178,
+        "deviation_pct": 0.002686567164178477
       }
     },
-    "max_deviation_pct": 0.008656716417910354,
+    "max_deviation_pct": 0.008656716417911048,
     "pass": true
   },
   "ratio_switch_pass": true,
@@ -210,9 +210,9 @@
   "json_roundtrip": true,
   "json_roundtrip_pass": true,
   "perf": {
-    "t_stock": 0.20477867126464844,
-    "t_switch_only": 0.2047135829925537,
-    "t_track": 0.02276444435119629
+    "t_stock": 0.20722579956054688,
+    "t_switch_only": 0.20576000213623047,
+    "t_track": 0.03322124481201172
   },
   "perf_pass": true
 }
