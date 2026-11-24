@@ -1,0 +1,131 @@
+ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-AOI21ArcChar-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-AlterDeckSplit-001	B	1	1	?	0	?	?	p1_pending	L3:neg=1,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-BisecMt0SmCalc-001	B	1	1	?	0	?	?	p1_pending	L3:neg=7,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-BistOscRccReorder-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-BridgeCfgDiag-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-ButterflyCurve-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CTLEAC-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CTLESpec-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CTLETranDeck-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CabufPvtDatAudit-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CdlBulkSanitize-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-ClampPwrStateExtract-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CmlBwExtensionHandbook-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CmlDivOscDiag-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CmlPvtAcReport-001	B	1	1	?	0	?	?	p1_pending	L3:neg=2,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CmlSweepHeadroomDiag-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-Coord3DProj-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CosimRunBlockOpt-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CtleAcChar-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-DQSEHFlagNoEffectDiag-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-DblTailSlicerDeckGen-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-DcaStimSweepGen-001	B	1	1	?	0	?	?	p1_pending	L3:neg=1,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-Ddr6RptCmdExtract-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-DeckConsistencyCheck-001	B	1	1	?	0	?	?	p1_pending	L3:neg=3,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-DelayChainEdgeMeas-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-DelayCornerIdent-001	B	1	1	?	0	?	?	p1_pending	L3:neg=3,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-DelaySigma-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-DffSetupHoldChar-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-DupSubcktDefDiag-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-FifoDelayOptDiag-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-FineSimModelScopeFix-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-FineSimNoRefCktFix-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-FineSimWorkflowRunner-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-FinesimLaunchAgent-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-FinesimMatrixrunAgent-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-FsdbPulseFilter-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-FsdbScopeSignalLocate-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-GaaFetDeckAugment-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-GmidLut-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-GrDecPwrVerifTb-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-InvPVTchar-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-InvTripDelay-001	B	1	1	?	0	?	?	p1_pending	L3:neg=1,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-LatchSubcktLocate-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-LisMeasExtract-001	B	1	1	1	1	1	?	green_verified	L2 PASS 12/12 via hspice fallback; L4 OK (no sim binary needed)	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-LvLvioSweep-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-MBistTopAnalyze-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-MR7PsdScopeAnalyze-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-McVthSpVariantGen-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-MinpulseRewriteRun-001	B	1	1	?	0	?	?	p1_pending	L3:neg=1,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-ModelLibVerDiff-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-MonteCarloDeckGen-001	B	1	1	?	0	?	?	p1_pending	L3:neg=7,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-Mt0Reorg-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-Mt0TskewCalc-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-NetlistCmp-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-NetlistLintHsp-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-NetlistModSummary-001	B	1	1	?	0	?	?	p1_pending	L3:neg=3,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-NetlistStructDiff-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-NetlistWLReduce-001	B	1	1	?	0	?	?	p1_pending	L3:neg=8,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-OpampACSpec-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-OpampChar-001	B	1	1	?	0	?	?	p1_pending	L3:neg=7,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-OtaAcReport-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-PFDdeadZone-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-PUvddSweep-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-PVTalterChar-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-PdkLayerLocate-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-PexStimulusBuild-001	B	1	1	?	0	?	?	p1_pending	L3:neg=3,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-PlatInvsThick-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-PlatMosThinIdsatIoffSweep-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-PorCapSweep-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-PostsimPortAudit-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-PostsimToggleDiag-001	B	1	1	?	1	0	?	p0_pending	L4_SIM_BINARY:finesim	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-PwlStimTransform-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-RcurrDirClassify-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-RonMonoDiag-001	B	1	1	?	0	?	?	p1_pending	L3:neg=7,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-RsCalcAutoVia-001	B	1	1	?	0	?	?	p1_pending	L3:neg=1,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SentaurusDeckSetupSummary-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SharedLibDeployFix-001	B	1	1	?	0	?	?	p1_pending	L3:neg=1,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SiInpTokenRm-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SiOutDiag-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SimExpl-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SimModelMismatchDiag-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SimProgressCheck-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SimSavedCornerComplete-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SimSpecJudge-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SlicerFbTimeOpt-001	B	1	1	?	0	0	?	p0_pending	L4_SIM_BINARY:hspice	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SlicerSweepFomOpt-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SnmButterflyCalc-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-Sp2tVerilogaSwitch-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SpGen-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SpRcAlterGen-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SpfAutosimSetup-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SpfNtsvMissingDiag-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SpiceMeasInjector-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SpiceSim-001	B	1	1	?	0	?	?	p1_pending	L3:neg=1,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SpiceTbGen-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-Sram6tTbBuild-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SramSNM-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-StackedMOSOpAnalysis-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-StdLibCharTmpl-001	B	1	1	?	1	0	?	p0_pending	L4_SIM_BINARY:hspice	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-StimPWL-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-StimScriptCfgLocate-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-StrongarmBaselineAnalyze-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-StrongarmFomSweep-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SubcktExtract-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SubcktInstParamInj-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SwitchTbGen-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-TaperBufOpt-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-TbMeasCheck-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-TbSpiceMeasureAudit-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-TmVerifyTbGen-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-Tr0TrTfMeas-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-TranStimSync-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-TrimMarginSpec-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-TrtfMeasDeckGen-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-TscodecompTbVerify-001	B	1	1	?	0	?	?	p1_pending	L3:neg=1,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-TxRonSize-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-TzqlatLocate-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-VSplit-001	B	1	1	?	0	?	?	p1_pending	L3:neg=3,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-Vcc2scActDeckGen-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-Vcc2scTranGen-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-VcoKvcoChar-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-VlshftParamOpt-001	B	1	1	?	0	0	?	p0_pending	L4_SIM_BINARY:hspice	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-VsimFinesimAdapt-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-VwlpRefDeckSet-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-WtmFileReview-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-WtmPatternDirReview-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-WtmWriteArrayScope-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-XmelabCuvpomPortDiag-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-XrunLogErrDiag-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-ZqPatternTimingAnalyze-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
