@@ -6450,9 +6450,16 @@
   "prettier__prettier-14961": {
     "instance_id": "prettier__prettier-14961",
     "route": "cline__kimi-k2.6",
-    "classification": "error",
-    "error": "[Errno 11] Resource temporarily unavailable",
-    "model_patch_len": 0
+    "harness": "cline",
+    "model": "kimi-k2.6-cloud",
+    "wall_s": 1311.0,
+    "rc": 0,
+    "model_patch_len": 5872,
+    "n_images": 1,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "ct argument |\\n\\nThe `tests/config/install-prettier.js` file already contained an ESM interop fix that was part of the existing work.\",\"model\":{\"id\":\"kimi-k2.6-cloud\",\"provider\":\"openai-compatible\"}}\n",
+    "stderr_tail": "      at emitWarning (/$bunfs/root/cline-checkpoint-off:168902:24)\n      at logWarnings (/$bunfs/root/cline-checkpoint-off:179200:16)\n      at transform (/$bunfs/root/cline-checkpoint-off:179957:22)\n\n"
   },
   "prettier__prettier-16347": {
     "instance_id": "prettier__prettier-16347",
