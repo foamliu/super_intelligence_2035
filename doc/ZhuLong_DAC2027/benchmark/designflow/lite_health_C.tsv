@@ -159,3 +159,25 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-25T06:15	HeadlessLatchSkillGen-001	C	1	1	1	1	1	1	green	r1091 false-green fix: check() NO return + print PASS to stdout -> add return True + redirect print to stderr. harness PASS. 5neg FAIL distinct.	-
 2026-11-25T06:15	StrongARMComp-001	C	1	1	1	1	1	1	green	r1091 false-green fix: _resolve_spec BENCH_CASES_DIR fallback (harness flattens assets/inputs/ subdir; cf RsCalcShortDiag r1076) + created 3 negatives (empty_shell/core_deleted/hardcode_a) + negative_selftest.py + extracted plan_A.json to ref root. harness PASS. 3neg FAIL distinct (c/d/o).	-
 2026-11-25T06:15	DrcPatternReportComposer-001	C	1	1	1	1	1	1	green	r1091 false-green fix: reference_submit.zip missing (r1074 claim unverifiable) -> built zip from drc_pattern_report.py. harness PASS. 4neg FAIL + ref PASS.	-
+2026-11-24T22:47	DRCPatPlan-001	C	1	1	1	1	1	1	green	r1092 false-green->true-green: BENCH_CASES_DIR asset-root override (harness flattens subdirs inputs/A/lib_root_A)	1
+2026-11-24T22:47	RsCalcMesh-001	C	1	1	1	1	1	1	green	r1092 false-green->true-green: BENCH_CASES_DIR asset-root override (harness flattens subdirs inputs/A/lib_root_A)	1
+2026-11-24T22:47	M1ShapeDelete-001	C	1	1	1	1	1	1	green	r1092 false-green->true-green: BENCH_CASES_DIR asset-root override (harness flattens subdirs inputs/A/lib_root_A)	1
+2026-11-24T22:47	ScmosStructId-001	C	1	1	1	1	1	1	green	r1092 false-green->true-green: BENCH_CASES_DIR asset-root override (harness flattens subdirs inputs/A/lib_root_A)	1
+2026-11-24T22:47	LayoutAnalyzeReport-001	C	1	1	1	1	1	1	green	r1092: BENCH_CASES_DIR override + dict-return->{'pass':bool} contract	1
+2026-11-24T22:47	ERCBootPlan-001	C	1	1	1	1	1	1	green	r1092: BENCH_CASES_DIR override + tuple-return->True contract	1
+2026-11-24T22:47	CmMaOpTableGen-001	C	1	1	1	1	1	1	green	r1092: BENCH_CASES_DIR override + golden_*.csv resolver (harness stages *.py/*.json not *.csv)	1
+2026-11-24T22:47	SkillM1ShapeDeleteAudit-001	C	1	1	1	1	1	1	green	r1092: list-return->{'pass':bool} contract (NO_RETURN-style false-green)	1
+2026-11-24T22:47	VlogPortAudit-001	C	1	1	1	?	1	1	green	r1092: tuple-return->True contract; L3 negselftest missing (P1 debt)	1
+2026-11-24T22:47	SchWireRebuildGen-001	C	1	1	1	?	1	1	green	r1092: add return True (was None->FAIL); L3 negselftest missing (P1 debt)	1
+2026-11-24T22:47	ConnPriorityDupCheck-001	C	1	1	1	1	1	1	green	r1092: os.walk followlinks=True + BENCH_CASES_DIR fallback (subdir A/ attachment not staged)	1
+2026-11-24T22:47	ToolchainID-001	C	1	1	1	?	1	1	green	r1092: abspath(workdir) (candidate cwd=tmp broke relative hidden_b); L3 negselftest missing (P1 debt)	1
+2026-11-24T22:47	ViaFillSvrfGen-001	C	1	1	1	?	1	1	green	r1092: BENCH_CASES_DIR fallback for bundle/ subdir (flattened); L3 negselftest missing (P1 debt)	1
+2026-11-24T22:47	PCellFlowPlan-001	C	1	1	1	?	1	1	green	r1092: BENCH_CASES_DIR override (pcell_A/ netlist_A/ subdirs flattened); L3 negselftest missing (P1 debt)	1
+2026-11-24T22:47	GenReleaseNoteMerge-001	C	1	1	1	1	1	1	green	r1092 confirmed true-green: short-name case (Lite list/case_json/assets=short); verify script forced full name -> ERROR artifact; real eval (short task_id) PASS	1
+2026-11-24T22:47	RscalcHandoffDocGen-001	C	1	1	1	1	1	1	green	r1092 confirmed true-green: short-name case (Lite list/case_json/assets=short); verify script forced full name -> ERROR artifact; real eval (short task_id) PASS	1
+2026-11-24T22:47	SyncBatchArchivePlan-001	C	1	1	1	1	1	1	green	r1092 confirmed true-green: short-name case (Lite list/case_json/assets=short); verify script forced full name -> ERROR artifact; real eval (short task_id) PASS	1
+2026-11-24T22:47	DummyQA-001	C	1	1	0	1	0	1	p0_fixed	r1092 DEBT: ref candidate exit=1 on b_syntax_good; needs rules_syntax_checker mock (Calibre GUI, L4) like skipper_mock precedent	1
+2026-11-24T22:47	LVSLogFilter-001	C	1	1	0	1	0	1	p0_fixed	r1092 DEBT: harness IsADirectory on assets/lvs_runs (dir listed as attachment); needs case-JSON attachment fix or harness dir-copy	1
+2026-11-24T22:47	PowerFillMergeGen-001	C	1	1	0	1	0	1	p0_fixed	r1092 DEBT: L2.live IsADirectoryError in check_live (real Virtuoso SKILL on .75); needs mock conversion like r1088 skipper_mock	1
+2026-11-24T22:47	RsCalcChkPtGen-001	C	1	1	0	1	0	1	p0_fixed	r1092 DEBT: L2.live IsADirectoryError in check_live (pyAether on .75); needs mock conversion	1
+2026-11-24T22:48	PGLayout-001	C	1	1	1	1	1	1	green	r1092 re-confirm true-green (harness verify PASS 14/14); supersedes stale p0_fixed rows (r1089 fix landed but green row not appended)	1
