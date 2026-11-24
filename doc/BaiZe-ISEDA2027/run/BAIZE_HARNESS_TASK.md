@@ -1,5 +1,22 @@
 # BAIZE_HARNESS_TASK.md
 
+### 🔴 用户令 · 2026-11-24（**cline 重跑 PREDICT 并行化：8 workers + 429 退回 4/2**）· 已实现 commit `e4d0718d70` · ⬜ 待你收尾
+
+> **用户原话（助手转达）**：「昨晚推进慢，cline 才冲跑 30 条。今天加并行，比如加到 8，遇到 429 再回退到 4 或 2。」
+
+> **已实现（直接复用，勿重做/勿 revert）**：
+> 1. `swebench_verified_full/run_verified_full.py`：`predict` 新增 `--workers N`（默认 8 · env `PREDICT_WORKERS`）；`ThreadPoolExecutor` 并行 + **按 repo 串行锁**（同 repo 共享 git workdir，防 checkout 竞态）；`AdaptiveConcurrency` 429 自动 **8→4→2**（floor 2，干净 15min 后 +1 爬回）。eval 仍 docker mem128g/cpu16 不变。
+> 2. `run_single.py`：并行 worker 用独立 cline `--data-dir`（`$CLINE_DATA_DIR`），并 `_seed_cline_data_dir()` 从共享 `cline_harness_data` copy `globalState.json`/`secrets.json`/`settings`——否则全新 data-dir 回落 platform.openai.com 报 "Incorrect API key" 空 patch（已踩坑）。
+> 3. `rerun_infra_verified.py`：`run_predict` 传 `--workers`（env `RERUN_PREDICT_WORKERS` 默认 8）。
+
+> **当前 LIVE**（助手已启动，**勿重复启动 / 勿 kill**，只盯）：`run_verified_full.py predict --harness cline-patched --ids-file rerun_ids/cline-patched_rerun_ids.txt --workers 8`（log=`harness/swebench_verified_full/logs/parallel_cline_predict.log`）。96 条已补 34，剩 62 空 patch 在补。429 回退已触发（日志 `[adaptive] 429 -> 8 -> 4 -> 2`）；白天网关限流，回落 2 后单条恢复正常时长。
+
+> **你接手后**：
+> 1. 等 LIVE predict 自然结束（log 尾部见 `merged N/96`）；
+> 2. `python3 swebench_verified_full/incremental_eval_merge.py --route cline-patched --regen`（eval 新补 patch + 合并进 `eval_glm53_cline-patched.json` + REGEN 7way 报告）；
+> 3. 后续各路 predict 一律加 `--workers 8`（夜间可跑满 8，429 自动退回），仍守 11-23 令的 21:00–09:00 窗口 + 护栏；「≤2 路」指 route 级，与单路 predict 的 `--workers` 不冲突。
+> 4. ⚠️ predict 必须带 4 个环境变量，否则写错目录到 `predictions/`（漏 `predictions_glm53`）：`PRED_SUBDIR=predictions_glm53 WORKDIR_TAG=_glm53 EVAL_TAG=glm53_ MODEL_SUFFIX=glm-5.3-flash`。
+
 ### 🔴 用户令 · 2026-11-23（**全量 infra 排查 + 夜间重跑（21:00–09:00）· 从 cline 起**）
 
 > **背景（已核实）**：7-way 里 cline 的 Pass% 被 93 个空 patch 拖低（opencode 仅 1 / hermes 仅 4）。运维已初查：cline 这 93 个空 patch 中 **58 个是 infra**（38 Token 额度 429 + 13 超时 + 5 上游 5xx + 2 鉴权），但最终 eval 的 `infra_or_quota` 却记为 0 —— infra 失败被并进「能力失败」桶，夸大了能力差距。详见 `reports/report_harness_cline_lag_analysis_zh.html`。
