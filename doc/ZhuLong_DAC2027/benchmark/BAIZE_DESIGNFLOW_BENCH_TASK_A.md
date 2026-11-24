@@ -1,6 +1,13 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
 
+> ## 🥇 2026-11-24 22:0x 用户令 · 4 shard 优先修 Lite 集（500） · 最高优先（排期覆盖造题/扩池/治理）
+>
+> **用户原话**：「安排 designflow 4 shard 优先修复 lite 集」。**完整规格（每轮先读）**：`doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_LITE_FIX_ORDER.md`。
+> **执行**：本 shard 只修 `cases/A/` 且属于 Lite 清单的条目，判据 **L0–L5 全 PASS**；**造新题/扩池/治理一律让位**；每轮 `designflow/lite_health_A.tsv` 增量 + MEMORY 顶部一行 `LITE_FIX: A=<green>/<n> · P0 余 <m>`。
+> **验收**：4 shard 合计 **500/500 全绿**（`retired_broken=0`，退一补一保持 500），再由 zhulong 用同一清单跑 1 次 3-run（broken=0）才入账。
+
+
 > ## 🚨 2026-11-23 运维令 · 停止追加 jsonl，改写 cases/ 文件 · 最高优先（覆盖本文件中一切关于 jsonl 的指令）
 >
 > **用户令**：「执行修复」→ 发现 agent 每次唤醒加载的是 `BAIZE_DESIGNFLOW_BENCH_TASK_<shard>.md`（本文件），不是 `agent_workspace/BAIZE_DESIGNFLOW_BENCH_TASK.md`。本文件中所有「追加 jsonl / 只往 X.jsonl 追加 / DoD 写进 jsonl / 你的 case 只追加到 X.jsonl」指令均已被本令覆盖。
