@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-15563",
-    "model_name_or_path": "claude-code-glm-5.3-flash",
-    "model_patch": "diff --git a/django/db/models/sql/subqueries.py b/django/db/models/sql/subqueries.py\nindex 04063f73b..fecaafc53 100644\n--- a/django/db/models/sql/subqueries.py\n+++ b/django/db/models/sql/subqueries.py\n@@ -73,7 +73,8 @@ class UpdateQuery(Query):\n         for offset in range(0, len(pk_list), GET_ITERATOR_CHUNK_SIZE):\n             self.clear_where()\n             self.add_filter(\n-                \"pk__in\", pk_list[offset : offset + GET_ITERATOR_CHUNK_SIZE]\n+                f\"{self.model._meta.pk.attname}__in\",\n+                pk_list[offset : offset + GET_ITERATOR_CHUNK_SIZE],\n             )\n             self.get_compiler(using).execute_sql(NO_RESULTS)\n \n@@ -134,7 +135,9 @@ class UpdateQuery(Query):\n             query = UpdateQuery(model)\n             query.values = values\n             if self.related_ids is not None:\n-                query.add_filter(\"pk__in\", self.related_ids)\n+                query.add_filter(\n+                    f\"{model._meta.pk.attname}__in\", self.related_ids\n+                )\n             result.append(query)\n         return result\n \n"
-  }
-]

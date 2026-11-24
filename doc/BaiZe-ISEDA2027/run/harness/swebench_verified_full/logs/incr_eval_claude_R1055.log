@@ -1,40 +1,0 @@
-=== incr_eval_claude R1055 START Sat Oct 31 02:53:28 PM CST 2026 ===
-[Sat Oct 31 02:53:28 PM CST 2026] === merge claude-code predictions ===
-claude-code: 312 real patches merged
-[Sat Oct 31 02:53:28 PM CST 2026] === claude-code eval START 1 new instances ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:26<00:00, 26.60s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:26<00:00, 26.60s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:26<00:00, 26.60s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 1
-Unremoved images: 1
-Report written to claude-code-kimi-k2.6-cloud.verified_full_claude-code.json
-[Sat Oct 31 02:53:59 PM CST 2026] === claude-code eval DONE ===
-[Sat Oct 31 02:53:59 PM CST 2026] === regen eval summaries ===
-regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
-  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
-  opencode: unchanged (n=488 resolved=395 failed=93 infra=0)
-  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
-  claude-code: WROTE eval_claude-code.json  n=312 resolved=240 failed=72 infra=0
-  codex: unchanged (n=198 resolved=156 failed=42 infra=0)
-  hermes: unchanged (n=29 resolved=22 failed=7 infra=0)
-  deepseek-harness: unchanged (n=36 resolved=29 failed=7 infra=0)
-[Sat Oct 31 02:54:00 PM CST 2026] === gen report HTML ===
-written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (15370B)
-  cline        done=500/500 patch=442 no_patch=51 infra=0 eval=Y resolved=326
-  opencode     done=500/500 patch=488 no_patch=2 infra=0 eval=Y resolved=395
-  pi           done=500/500 patch=410 no_patch=23 infra=59 eval=Y resolved=298
-  claude-code  done=398/500 patch=312 no_patch=80 infra=0 eval=Y resolved=240
-  codex        done=461/500 patch=199 no_patch=72 infra=185 eval=Y resolved=156
-  hermes       done=44/500 patch=29 no_patch=15 infra=0 eval=Y resolved=22
-  deepseek-harness done=160/500 patch=34 no_patch=4 infra=112 eval=Y resolved=29
-=== incr_eval_claude R1055 DONE Sat Oct 31 02:54:00 PM CST 2026 ===

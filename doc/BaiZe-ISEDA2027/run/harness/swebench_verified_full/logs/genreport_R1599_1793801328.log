@@ -1,8 +1,0 @@
-written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (17110B)
-  cline        done=500/500 patch=459 no_patch=32 infra=0 eval=Y resolved=337
-  opencode     done=500/500 patch=497 no_patch=-7 infra=0 eval=Y resolved=401
-  pi           done=500/500 patch=463 no_patch=4 infra=25 eval=Y resolved=333
-  claude-code  done=500/500 patch=358 no_patch=67 infra=67 eval=Y resolved=273
-  codex        done=500/500 patch=362 no_patch=120 infra=12 eval=Y resolved=284
-  hermes       done=500/500 patch=229 no_patch=84 infra=185 eval=Y resolved=184
-  deepseek-harness done=442/500 patch=221 no_patch=2 infra=119 eval=Y resolved=184

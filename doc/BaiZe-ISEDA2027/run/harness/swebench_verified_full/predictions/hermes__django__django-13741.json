@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-13741",
-    "model_name_or_path": "hermes-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/contrib/auth/forms.py b/django/contrib/auth/forms.py\nindex b9eb33329..9a6614a80 100644\n--- a/django/contrib/auth/forms.py\n+++ b/django/contrib/auth/forms.py\n@@ -56,6 +56,7 @@ class ReadOnlyPasswordHashField(forms.Field):\n \n     def __init__(self, *args, **kwargs):\n         kwargs.setdefault(\"required\", False)\n+        kwargs.setdefault(\"disabled\", True)\n         super().__init__(*args, **kwargs)\n \n     def bound_data(self, data, initial):\n"
-  }
-]

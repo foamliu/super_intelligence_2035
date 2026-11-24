@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-16642",
-    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/http/response.py b/django/http/response.py\nindex f62dec8ce..17e630be3 100644\n--- a/django/http/response.py\n+++ b/django/http/response.py\n@@ -612,6 +612,8 @@ class FileResponse(StreamingHttpResponse):\n                     \"bzip2\": \"application/x-bzip\",\n                     \"gzip\": \"application/gzip\",\n                     \"xz\": \"application/x-xz\",\n+                    \"compress\": \"application/x-compress\",\n+                    \"br\": \"application/x-brotli\",\n                 }.get(encoding, content_type)\n                 self.headers[\"Content-Type\"] = (\n                     content_type or \"application/octet-stream\"\ndiff --git a/tests/responses/test_fileresponse.py b/tests/responses/test_fileresponse.py\nindex 952fe4dd7..a4e4e0c64 100644\n--- a/tests/responses/test_fileresponse.py\n+++ b/tests/responses/test_fileresponse.py\n@@ -255,6 +255,8 @@ class FileResponseTests(SimpleTestCase):\n             (\".tar.gz\", \"application/gzip\"),\n             (\".tar.bz2\", \"application/x-bzip\"),\n             (\".tar.xz\", \"application/x-xz\"),\n+            (\".tar.Z\", \"application/x-compress\"),\n+            (\".tar.br\", \"application/x-brotli\"),\n         )\n         for extension, mimetype in test_tuples:\n             with self.subTest(ext=extension):\n"
-  }
-]

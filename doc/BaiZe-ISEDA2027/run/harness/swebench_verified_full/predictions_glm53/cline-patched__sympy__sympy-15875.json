@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-15875",
-    "model_name_or_path": "cline-glm-5.3-flash",
-    "model_patch": "diff --git a/sympy/core/add.py b/sympy/core/add.py\nindex 83a5f2ae..e1bef095 100644\n--- a/sympy/core/add.py\n+++ b/sympy/core/add.py\n@@ -560,8 +560,9 @@ def _eval_is_zero(self):\n         if b.is_zero:\n             if not im_or_z and not im:\n                 return True\n-            if im and not im_or_z:\n-                return False\n+            # issue 15872: imaginary args may cancel each other,\n+            # e.g. -2*I + (1 + I)**2 = -2*I + 2*I = 0, so no decision\n+            # can be made here when imaginary args are present\n         if b.is_zero is False:\n             return False\n \ndiff --git a/sympy/core/tests/test_arit.py b/sympy/core/tests/test_arit.py\nindex e2398a4e..1484dd2b 100644\n--- a/sympy/core/tests/test_arit.py\n+++ b/sympy/core/tests/test_arit.py\n@@ -1990,6 +1990,15 @@ def test_Add_is_zero():\n def test_issue_14392():\n     assert (sin(zoo)**2).as_real_imag() == (nan, nan)\n \n+\n+def test_issue_15872():\n+    # is_zero should be None (not False) when it cannot be decided;\n+    # imaginary args like -2*I and (1 + I)**2 may cancel each other\n+    e = -2*I + (1 + I)**2\n+    assert e.is_zero is None\n+    assert e.expand().is_zero is True\n+\n+\n def test_divmod():\n     assert divmod(x, y) == (x//y, x % y)\n     assert divmod(x, 3) == (x//3, x % 3)\n"
-  }
-]

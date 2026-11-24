@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-20801",
-    "model_name_or_path": "claude-code-glm-5.3-flash",
-    "model_patch": "diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py\nindex 79f6a7d1..a2557d52 100644\n--- a/sympy/core/numbers.py\n+++ b/sympy/core/numbers.py\n@@ -1386,10 +1386,10 @@ def __eq__(self, other):\n             other = _sympify(other)\n         except SympifyError:\n             return NotImplemented\n-        if not self:\n-            return not other\n         if isinstance(other, Boolean):\n             return False\n+        if not self:\n+            return not other\n         if other.is_NumberSymbol:\n             if other.is_irrational:\n                 return False\ndiff --git a/sympy/core/tests/test_numbers.py b/sympy/core/tests/test_numbers.py\nindex 8b3e9912..d3170a3f 100644\n--- a/sympy/core/tests/test_numbers.py\n+++ b/sympy/core/tests/test_numbers.py\n@@ -1673,6 +1673,13 @@ def test_bool_eq():\n     assert 1 == True\n     assert S.One == True\n     assert S.One != S.true\n+    # https://github.com/sympy/sympy/issues/20532\n+    assert S(0.0) != S.false\n+    assert S.false != S(0.0)\n+    assert S(0.0) != False\n+    assert S(1.0) != S.true\n+    assert S.true != S(1.0)\n+    assert S(1.0) != True\n \n \n def test_Float_eq():\n"
-  }
-]

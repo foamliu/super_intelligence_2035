@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-13023",
-    "model_name_or_path": "cline-glm-5.3-flash",
-    "model_patch": "diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py\nindex 0fd69059ee..28374272f4 100644\n--- a/django/db/models/fields/__init__.py\n+++ b/django/db/models/fields/__init__.py\n@@ -1501,7 +1501,7 @@ class DecimalField(Field):\n             return self.context.create_decimal_from_float(value)\n         try:\n             return decimal.Decimal(value)\n-        except decimal.InvalidOperation:\n+        except (decimal.InvalidOperation, TypeError, ValueError):\n             raise exceptions.ValidationError(\n                 self.error_messages['invalid'],\n                 code='invalid',\ndiff --git a/tests/model_fields/test_decimalfield.py b/tests/model_fields/test_decimalfield.py\nindex e284005aa0..e6c303faa8 100644\n--- a/tests/model_fields/test_decimalfield.py\n+++ b/tests/model_fields/test_decimalfield.py\n@@ -24,6 +24,10 @@ class DecimalFieldTests(TestCase):\n         msg = '\u201cabc\u201d value must be a decimal number.'\n         with self.assertRaisesMessage(ValidationError, msg):\n             f.to_python('abc')\n+        msg = '\u201c{}\u201d value must be a decimal number.'\n+        for value in ({'a': 1}, [1, 2], [1, 2, 3], object()):\n+            with self.assertRaisesMessage(ValidationError, msg.format(value)):\n+                f.to_python(value)\n \n     def test_default(self):\n         f = models.DecimalField(default=Decimal('0.00'))\n"
-  }
-]

@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-12304",
-    "model_name_or_path": "pi-glm-5.3-flash",
-    "model_patch": "diff --git a/django/db/models/enums.py b/django/db/models/enums.py\nindex f48143dda..1c652d67b 100644\n--- a/django/db/models/enums.py\n+++ b/django/db/models/enums.py\n@@ -61,6 +61,10 @@ class ChoicesMeta(enum.EnumMeta):\n class Choices(enum.Enum, metaclass=ChoicesMeta):\n     \"\"\"Class for creating enumerated choices.\"\"\"\n \n+    @property\n+    def do_not_call_in_templates(self):\n+        return True\n+\n     def __str__(self):\n         \"\"\"\n         Use value when cast to str, so that Choices set as model instance\ndiff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py\nindex b9356479d..073fd2cc8 100644\n--- a/tests/model_enums/tests.py\n+++ b/tests/model_enums/tests.py\n@@ -257,3 +257,13 @@ class CustomChoicesTests(SimpleTestCase):\n         with self.assertRaisesMessage(TypeError, msg):\n             class Identifier(uuid.UUID, models.Choices):\n                 A = '972ce4eb-a95f-4a56-9339-68c208a76f18'\n+\n+    def test_do_not_call_in_templates(self):\n+        enums = [\n+            Separator, Constants, Set, MoonLandings, DateAndTime, MealTimes,\n+            Frequency, Number, IPv4Address, IPv6Address, IPv4Network,\n+            IPv6Network,\n+        ]\n+        for choice_enum in enums:\n+            with self.subTest(choice_enum.__name__):\n+                self.assertTrue(choice_enum.do_not_call_in_templates)\n"
-  }
-]

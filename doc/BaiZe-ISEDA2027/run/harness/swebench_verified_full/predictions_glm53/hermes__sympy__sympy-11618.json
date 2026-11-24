@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-11618",
-    "model_name_or_path": "hermes-glm-5.3-flash",
-    "model_patch": "diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py\nindex 5930484..c49faa6 100644\n--- a/sympy/geometry/point.py\n+++ b/sympy/geometry/point.py\n@@ -265,7 +265,19 @@ def distance(self, p):\n         >>> p3.distance(Point(0, 0))\n         sqrt(x**2 + y**2)\n \n+        >>> Point(0, 0).distance(Point(1, 0, 2))\n+        sqrt(5)\n+\n         \"\"\"\n+        if type(p) is not type(self):\n+            p1, p2 = list(self.args), list(p.args if isinstance(p, Point) else p)\n+            len_diff = len(p1) - len(p2)\n+            if len_diff > 0:\n+                p2 += [S.Zero]*len_diff\n+            else:\n+                p1 += [S.Zero]*(-len_diff)\n+            return sqrt(sum([(a - b)**2 for a, b in zip(p1, p2)]))\n+\n         return sqrt(sum([(a - b)**2 for a, b in zip(\n             self.args, p.args if isinstance(p, Point) else p)]))\n \ndiff --git a/sympy/geometry/tests/test_point.py b/sympy/geometry/tests/test_point.py\nindex c7b2d30..e88a85c 100644\n--- a/sympy/geometry/tests/test_point.py\n+++ b/sympy/geometry/tests/test_point.py\n@@ -244,6 +244,14 @@ def test_issue_9214():\n     assert Point3D.are_collinear(p1, p2, p3) is False\n \n \n+def test_issue_11617():\n+    p1 = Point3D(1, 0, 2)\n+    p2 = Point2D(2, 0)\n+\n+    assert p1.distance(p2) == sqrt(5)\n+    assert p2.distance(p1) == sqrt(5)\n+\n+\n def test_transform():\n     p = Point(1, 1)\n     assert p.transform(rotate(pi/2)) == Point(-1, 1)\n"
-  }
-]

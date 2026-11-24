@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "scikit-learn__scikit-learn-10908",
-    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sklearn/feature_extraction/text.py b/sklearn/feature_extraction/text.py\nindex 9b1ebd6..86b3c61 100644\n--- a/sklearn/feature_extraction/text.py\n+++ b/sklearn/feature_extraction/text.py\n@@ -993,6 +993,7 @@ class CountVectorizer(BaseEstimator, VectorizerMixin):\n \n     def get_feature_names(self):\n         \"\"\"Array mapping from feature integer indices to feature name\"\"\"\n+        self._validate_vocabulary()\n         self._check_vocabulary()\n \n         return [t for t, i in sorted(six.iteritems(self.vocabulary_),\n"
-  }
-]

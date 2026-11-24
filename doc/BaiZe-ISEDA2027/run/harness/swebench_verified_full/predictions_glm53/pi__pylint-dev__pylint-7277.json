@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pylint-dev__pylint-7277",
-    "model_name_or_path": "pi-glm-5.3-flash",
-    "model_patch": "diff --git a/doc/whatsnew/fragments/7139.bugfix b/doc/whatsnew/fragments/7139.bugfix\nnew file mode 100644\nindex 00000000..a192f8ec\n--- /dev/null\n+++ b/doc/whatsnew/fragments/7139.bugfix\n@@ -0,0 +1,3 @@\n+Fix `modify_sys_path` in `pylint/__init__.py` so it does not remove the first item of ``sys.path`` if it is not ``\"\"`` or the current working directory.\n+\n+Closes #7139\n"
-  }
-]

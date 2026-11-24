@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-10999",
-    "model_name_or_path": "cline-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/utils/dateparse.py b/django/utils/dateparse.py\nindex 8d08b7d1..a0377587 100644\n--- a/django/utils/dateparse.py\n+++ b/django/utils/dateparse.py\n@@ -29,7 +29,7 @@ datetime_re = re.compile(\n standard_duration_re = re.compile(\n     r'^'\n     r'(?:(?P<days>-?\\d+) (days?, )?)?'\n-    r'((?:(?P<hours>-?\\d+):)(?=\\d+:\\d+))?'\n+    r'((?:(?P<hours>-?\\d+):)(?=-?\\d+:-?\\d+))?'\n     r'(?:(?P<minutes>-?\\d+):)?'\n     r'(?P<seconds>-?\\d+)'\n     r'(?:\\.(?P<microseconds>\\d{1,6})\\d{0,6})?'\ndiff --git a/tests/utils_tests/test_dateparse.py b/tests/utils_tests/test_dateparse.py\nindex 8d464278..b13f897a 100644\n--- a/tests/utils_tests/test_dateparse.py\n+++ b/tests/utils_tests/test_dateparse.py\n@@ -115,6 +115,10 @@ class DurationParseTests(unittest.TestCase):\n             ('-172800', timedelta(days=-2)),\n             ('-15:30', timedelta(minutes=-15, seconds=30)),\n             ('-1:15:30', timedelta(hours=-1, minutes=15, seconds=30)),\n+            ('-1:-15:30', timedelta(hours=-1, minutes=-15, seconds=30)),\n+            ('-1:15:-30', timedelta(hours=-1, minutes=15, seconds=-30)),\n+            ('-1:-15:-30', timedelta(hours=-1, minutes=-15, seconds=-30)),\n+            ('1:-15:-30', timedelta(hours=1, minutes=-15, seconds=-30)),\n             ('-30.1', timedelta(seconds=-30, milliseconds=-100)),\n         )\n         for source, expected in test_values:\n"
-  }
-]

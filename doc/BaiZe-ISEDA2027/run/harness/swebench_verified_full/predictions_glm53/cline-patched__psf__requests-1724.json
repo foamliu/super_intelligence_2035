@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "psf__requests-1724",
-    "model_name_or_path": "cline-glm-5.3-flash",
-    "model_patch": "diff --git a/requests/models.py b/requests/models.py\nindex f82f56a..2d49061 100644\n--- a/requests/models.py\n+++ b/requests/models.py\n@@ -307,7 +307,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):\n         \"\"\"Prepares the given HTTP method.\"\"\"\n         self.method = method\n         if self.method is not None:\n-            self.method = self.method.upper()\n+            self.method = to_native_string(self.method.upper())\n \n     def prepare_url(self, url, params):\n         \"\"\"Prepares the given HTTP URL.\"\"\"\ndiff --git a/test_requests.py b/test_requests.py\nindex a593db3..0d3b77d 100755\n--- a/test_requests.py\n+++ b/test_requests.py\n@@ -434,6 +434,15 @@ class RequestsTestCase(unittest.TestCase):\n         assert b'name=\"stuff\"' in prep.body\n         assert b'name=\"b\\'stuff\\'\"' not in prep.body\n \n+    def test_unicode_method_name(self):\n+        files = {'file': open('test_requests.py', 'rb')}\n+        try:\n+            r = requests.request(\n+                method=u'POST', url=httpbin('/post'), files=files)\n+            assert r.status_code == 200\n+        finally:\n+            files['file'].close()\n+\n     def test_custom_content_type(self):\n         r = requests.post(httpbin('post'),\n                           data={'stuff': json.dumps({'a': 123})},\n"
-  }
-]

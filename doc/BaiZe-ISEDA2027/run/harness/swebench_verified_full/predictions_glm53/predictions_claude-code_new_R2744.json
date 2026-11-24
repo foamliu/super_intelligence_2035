@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-13647",
-    "model_name_or_path": "claude-code-glm-5.3-flash",
-    "model_patch": "diff --git a/sympy/matrices/common.py b/sympy/matrices/common.py\nindex 056d9bc497..4aa75e4d77 100644\n--- a/sympy/matrices/common.py\n+++ b/sympy/matrices/common.py\n@@ -86,7 +86,7 @@ def entry(i, j):\n                 return self[i, j]\n             elif pos <= j < pos + other.cols:\n                 return other[i, j - pos]\n-            return self[i, j - pos - other.cols]\n+            return self[i, j - other.cols]\n \n         return self._new(self.rows, self.cols + other.cols,\n                          lambda i, j: entry(i, j))\ndiff --git a/sympy/matrices/tests/test_commonmatrix.py b/sympy/matrices/tests/test_commonmatrix.py\nindex 8dc4d717cd..96fcc74535 100644\n--- a/sympy/matrices/tests/test_commonmatrix.py\n+++ b/sympy/matrices/tests/test_commonmatrix.py\n@@ -200,6 +200,12 @@ def test_col_insert():\n         l = [0, 0, 0]\n         l.insert(i, 4)\n         assert flatten(zeros_Shaping(3).col_insert(i, c4).row(0).tolist()) == l\n+    # issue 13628\n+    V = 2*ShapingOnlyMatrix(3, 2, lambda i, j: 1)\n+    assert eye_Shaping(3).col_insert(1, V) == \\\n+        Matrix([[1, 2, 2, 0],\n+                [0, 2, 2, 1],\n+                [0, 2, 2, 0]])\n \n def test_extract():\n     m = ShapingOnlyMatrix(4, 3, lambda i, j: i*3 + j)\n"
-  }
-]

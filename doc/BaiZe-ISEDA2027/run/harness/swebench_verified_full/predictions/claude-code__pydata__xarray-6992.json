@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pydata__xarray-6992",
-    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/xarray/core/dataset.py b/xarray/core/dataset.py\nindex 620f32f..86ec036 100644\n--- a/xarray/core/dataset.py\n+++ b/xarray/core/dataset.py\n@@ -4177,7 +4177,7 @@ class Dataset(\n         }\n         variables.update(new_variables)\n \n-        coord_names = set(new_variables) | self._coord_names\n+        coord_names = (set(new_variables) | self._coord_names) & variables.keys()\n \n         return self._replace(variables, coord_names=coord_names, indexes=indexes)\n \n"
-  }
-]

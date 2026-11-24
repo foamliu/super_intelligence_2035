@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-17655",
-    "model_name_or_path": "hermes-glm-5.3-flash",
-    "model_patch": "diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py\nindex 7c978c47be..ee679a556b 100644\n--- a/sympy/geometry/point.py\n+++ b/sympy/geometry/point.py\n@@ -278,6 +278,10 @@ def __mul__(self, factor):\n         coords = [simplify(x*factor) for x in self.args]\n         return Point(coords, evaluate=False)\n \n+    def __rmul__(self, factor):\n+        \"\"\"Multiply a factor by point's coordinates.\"\"\"\n+        return self.__mul__(factor)\n+\n     def __neg__(self):\n         \"\"\"Negate the point.\"\"\"\n         coords = [-x for x in self.args]\ndiff --git a/sympy/geometry/tests/test_point.py b/sympy/geometry/tests/test_point.py\nindex 475d1d403f..9bf346bfc4 100644\n--- a/sympy/geometry/tests/test_point.py\n+++ b/sympy/geometry/tests/test_point.py\n@@ -91,6 +91,7 @@ def test_point():\n     assert (-p3).__rsub__(p4) == p3.midpoint(p4).scale(2, 2)\n \n     assert p4 * 5 == Point(5, 5)\n+    assert 5 * p4 == Point(5, 5)\n     assert p4 / 5 == Point(0.2, 0.2)\n \n     raises(ValueError, lambda: Point(0, 0) + 10)\n"
-  }
-]

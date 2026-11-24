@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-22080",
-    "model_name_or_path": "codex-glm-5.3-flash",
-    "model_patch": "diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py\nindex b669a2c7..c70ef68c 100644\n--- a/sympy/printing/pycode.py\n+++ b/sympy/printing/pycode.py\n@@ -6,7 +6,7 @@\n from collections import defaultdict\n from itertools import chain\n from sympy.core import S\n-from .precedence import precedence\n+from .precedence import precedence, PRECEDENCE\n from .codeprinter import CodePrinter\n \n _kw_py2and3 = {\n@@ -233,8 +233,11 @@ def _print_ComplexInfinity(self, expr):\n         return self._print_NaN(expr)\n \n     def _print_Mod(self, expr):\n-        PREC = precedence(expr)\n-        return ('{} % {}'.format(*map(lambda x: self.parenthesize(x, PREC), expr.args)))\n+        # Python's % has higher precedence than unary minus, so both\n+        # operands must be parenthesized when they are not atoms.\n+        args = [self.parenthesize(arg, PRECEDENCE[\"Atom\"], strict=True)\n+                for arg in expr.args]\n+        return '{} % {}'.format(*args)\n \n     def _print_Piecewise(self, expr):\n         result = []\n"
-  }
-]

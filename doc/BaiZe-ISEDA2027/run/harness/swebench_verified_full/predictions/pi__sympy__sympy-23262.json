@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-23262",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/utilities/lambdify.py b/sympy/utilities/lambdify.py\nindex da67263b..50f841f2 100644\n--- a/sympy/utilities/lambdify.py\n+++ b/sympy/utilities/lambdify.py\n@@ -961,9 +961,10 @@ def _recursive_to_string(doprint, arg):\n             left, right = \"()\"\n         else:\n             raise NotImplementedError(\"unhandled type: %s, %s\" % (type(arg), arg))\n-        return left +', '.join(_recursive_to_string(doprint, e) for e in arg) + right\n-    elif isinstance(arg, str):\n-        return arg\n+        inner = ', '.join(_recursive_to_string(doprint, e) for e in arg)\n+        if isinstance(arg, tuple) and len(arg) == 1:\n+            inner += ','\n+        return left + inner + right\n     else:\n         return doprint(arg)\n \ndiff --git a/sympy/utilities/tests/test_lambdify.py b/sympy/utilities/tests/test_lambdify.py\nindex 023c2fb5..7bb1426c 100644\n--- a/sympy/utilities/tests/test_lambdify.py\n+++ b/sympy/utilities/tests/test_lambdify.py\n@@ -1192,7 +1192,9 @@ def test_issue_14941():\n     # test tuple\n     f2 = lambdify([x, y], (y, x), 'sympy')\n     assert f2(2, 3) == (3, 2)\n-\n+    # test single element tuple\n+    f2b = lambdify([], tuple([1]))\n+    assert f2b() == (1,)\n     # test list\n     f3 = lambdify([x, y], [y, x], 'sympy')\n     assert f3(2, 3) == [3, 2]\n"
-  }
-]

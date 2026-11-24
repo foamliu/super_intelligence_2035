@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "psf__requests-5414",
-    "model_name_or_path": "codex-glm-5.3-flash",
-    "model_patch": "diff --git a/requests/models.py b/requests/models.py\nindex e7d292d..f685325 100644\n--- a/requests/models.py\n+++ b/requests/models.py\n@@ -403,7 +403,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):\n                 host = self._get_idna_encoded_host(host)\n             except UnicodeError:\n                 raise InvalidURL('URL has an invalid label.')\n-        elif host.startswith(u'*'):\n+        elif host.startswith(u'*') or host.startswith(u'.'):\n             raise InvalidURL('URL has an invalid label.')\n \n         # Carefully reconstruct the network location\ndiff --git a/tests/test_requests.py b/tests/test_requests.py\nindex 463e8bf..0d8c61b 100644\n--- a/tests/test_requests.py\n+++ b/tests/test_requests.py\n@@ -2488,6 +2488,8 @@ class TestPreparingURLs(object):\n             b\"http://*\",\n             u\"http://*.google.com\",\n             u\"http://*\",\n+            u\"http://.google.com\",\n+            u\"http://.\",\n             u\"http://\u2603.net/\"\n         )\n     )\n"
-  }
-]

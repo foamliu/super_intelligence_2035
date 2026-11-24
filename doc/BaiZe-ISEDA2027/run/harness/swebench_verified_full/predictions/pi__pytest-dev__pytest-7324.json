@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pytest-dev__pytest-7324",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/src/_pytest/mark/expression.py b/src/_pytest/mark/expression.py\nindex 04c7341..59b7983 100644\n--- a/src/_pytest/mark/expression.py\n+++ b/src/_pytest/mark/expression.py\n@@ -161,7 +161,11 @@ def not_expr(s: Scanner) -> ast.expr:\n         return ret\n     ident = s.accept(TokenType.IDENT)\n     if ident:\n-        return ast.Name(ident.value, ast.Load())\n+        return ast.Subscript(\n+            ast.Name(\"__matcher__\", ast.Load()),\n+            ast.Index(ast.Str(ident.value)),\n+            ast.Load(),\n+        )\n     s.reject((TokenType.NOT, TokenType.LPAREN, TokenType.IDENT))\n \n \n@@ -213,6 +217,6 @@ class Expression:\n         Returns whether the expression matches or not.\n         \"\"\"\n         ret = eval(\n-            self.code, {\"__builtins__\": {}}, MatcherAdapter(matcher)\n+            self.code, {\"__builtins__\": {}, \"__matcher__\": MatcherAdapter(matcher)}, {}\n         )  # type: bool\n         return ret\n"
-  }
-]

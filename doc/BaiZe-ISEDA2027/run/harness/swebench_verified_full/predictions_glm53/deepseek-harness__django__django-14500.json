@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-14500",
-    "model_name_or_path": "deepseek-harness-glm-5.3-flash",
-    "model_patch": "diff --git a/tests/migrations/test_repro_31873.py b/tests/migrations/test_repro_31873.py\nnew file mode 100644\nindex 0000000000..25b11e0150\n--- /dev/null\n+++ b/tests/migrations/test_repro_31873.py\n@@ -0,0 +1,24 @@\n+from django.db import connection\n+from django.db.migrations.executor import MigrationExecutor\n+from django.db.migrations.recorder import MigrationRecorder\n+from django.test import override_settings\n+\n+from .test_base import MigrationTestBase\n+\n+\n+@override_settings(MIGRATION_MODULES={\"migrations\": \"migrations.test_migrations_squashed\"})\n+class SquashUnapplyTests(MigrationTestBase):\n+    def test_unapply_does_not_record_squashed_as_applied(self):\n+        executor = MigrationExecutor(connection)\n+        executor.migrate([(\"migrations\", \"0001_squashed_0002\")])\n+        recorder = MigrationRecorder(connection)\n+        self.assertIn(\n+            (\"migrations\", \"0001_squashed_0002\"),\n+            recorder.applied_migrations(),\n+        )\n+        executor.loader.build_graph()\n+        executor.migrate([(\"migrations\", None)])\n+        self.assertNotIn(\n+            (\"migrations\", \"0001_squashed_0002\"),\n+            recorder.applied_migrations(),\n+        )\n"
-  }
-]

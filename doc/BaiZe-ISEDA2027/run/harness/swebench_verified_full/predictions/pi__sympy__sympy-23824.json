@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-23824",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/physics/hep/gamma_matrices.py b/sympy/physics/hep/gamma_matrices.py\nindex 23284e4a..bf43facf 100644\n--- a/sympy/physics/hep/gamma_matrices.py\n+++ b/sympy/physics/hep/gamma_matrices.py\n@@ -694,7 +694,7 @@ def kahane_simplify(expression):\n \n     # If `first_dum_pos` is not zero, it means that there are trailing free gamma\n     # matrices in front of `expression`, so multiply by them:\n-    for i in range(0, first_dum_pos):\n+    for i in range(first_dum_pos - 1, -1, -1):\n         [ri.insert(0, free_pos[i]) for ri in resulting_indices]\n \n     resulting_expr = S.Zero\ndiff --git a/sympy/physics/hep/tests/test_gamma_matrices.py b/sympy/physics/hep/tests/test_gamma_matrices.py\nindex 27509803..36ec624e 100644\n--- a/sympy/physics/hep/tests/test_gamma_matrices.py\n+++ b/sympy/physics/hep/tests/test_gamma_matrices.py\n@@ -262,6 +262,15 @@ def test_kahane_simplify1():\n     assert r.equals(-2*G(sigma)*G(rho)*G(nu))\n \n \n+def test_kahane_leading_gamma_matrix_bug():\n+    mu, nu, rho, sigma = tensor_indices(\"mu, nu, rho, sigma\", LorentzIndex)\n+    t = G(mu)*G(-mu)*G(rho)*G(sigma)\n+    r = kahane_simplify(t)\n+    assert r.equals(4*G(rho)*G(sigma))\n+    t = G(rho)*G(sigma)*G(mu)*G(-mu)\n+    r = kahane_simplify(t)\n+    assert r.equals(4*G(rho)*G(sigma))\n+\n def test_gamma_matrix_class():\n     i, j, k = tensor_indices('i,j,k', LorentzIndex)\n \n"
-  }
-]

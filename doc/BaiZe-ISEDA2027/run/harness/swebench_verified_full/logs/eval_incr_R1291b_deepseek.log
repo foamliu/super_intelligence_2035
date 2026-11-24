@@ -1,8 +1,0 @@
-[incr-eval 13:39:21] === incr_eval for deepseek-harness: ['django__django-13658', 'django__django-13670'] ===
-[incr-eval 13:39:21] merged 112/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_deepseek-harness.json
-[incr-eval 13:39:21] EVAL deepseek-harness on 2 instances: ['django__django-13658', 'django__django-13670']
-[incr-eval 13:40:38]   eval finished rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_incr_verified_full_deepseek-harness_1793597961.log
-[incr-eval 13:40:38]   django__django-13658: RESOLVED
-[incr-eval 13:40:38]   django__django-13670: RESOLVED
-[incr-eval 13:40:38] updated /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_deepseek-harness.json: resolved=92 failed=20 infra=0
-[incr-eval 13:40:38] === incr_eval DONE ===

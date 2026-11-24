@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-24562",
-    "model_name_or_path": "hermes-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py\nindex 52f7ea45..117788a5 100644\n--- a/sympy/core/numbers.py\n+++ b/sympy/core/numbers.py\n@@ -1627,6 +1627,8 @@ def __new__(cls, p, q=None, gcd=None):\n \n         if not isinstance(p, SYMPY_INTS):\n             p = Rational(p)\n+            if not isinstance(q, SYMPY_INTS):\n+                q = Rational(q)\n             q *= p.q\n             p = p.p\n         else:\n"
-  }
-]

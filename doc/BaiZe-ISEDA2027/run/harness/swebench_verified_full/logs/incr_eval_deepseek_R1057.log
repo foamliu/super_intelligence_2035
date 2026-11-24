@@ -1,6 +1,0 @@
-=== incr_eval_deepseek R1057 START Sat Oct 31 03:16:50 PM CST 2026 ===
-[Sat Oct 31 03:16:50 PM CST 2026] === merge deepseek-harness predictions ===
-deepseek-harness: 37 real patches merged
-[Sat Oct 31 03:16:50 PM CST 2026] === deepseek-harness eval START 1 new instance ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]

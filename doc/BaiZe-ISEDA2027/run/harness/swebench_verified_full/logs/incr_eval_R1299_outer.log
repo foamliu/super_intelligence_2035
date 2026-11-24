@@ -1,48 +1,0 @@
-[R1299] start 15:44:04
-[R1299] === merge codex predictions ===
-codex: 270 patches merged, 270 eval IDs
-[R1299] === codex eval START scikit-learn__scikit-learn-25973 ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:29<00:00, 29.51s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:29<00:00, 29.51s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:29<00:00, 29.51s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 4
-Unremoved images: 1
-Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
-[R1299] === codex eval DONE rc=0 ===
-[R1299] === regen eval summaries for codex ===
-regen_eval_summaries: codex
-  codex: WROTE eval_codex.json  n=270 resolved=213 failed=57 infra=0
-[R1299] === merge deepseek-harness predictions ===
-deepseek-harness: 116 patches merged, 116 eval IDs
-[R1299] === deepseek-harness eval START django__django-13809 ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [01:17<00:00, 77.70s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:17<00:00, 77.71s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:17<00:00, 77.71s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 1
-Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
-[R1299] === deepseek-harness eval DONE rc=0 ===
-[R1299] === regen eval summaries for deepseek-harness ===
-regen_eval_summaries: deepseek-harness
-  deepseek-harness: WROTE eval_deepseek-harness.json  n=116 resolved=96 failed=20 infra=0
-[R1299] ALL DONE 15:46:00

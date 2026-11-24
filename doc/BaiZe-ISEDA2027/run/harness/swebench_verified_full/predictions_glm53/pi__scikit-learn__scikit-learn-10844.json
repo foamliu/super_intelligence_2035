@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "scikit-learn__scikit-learn-10844",
-    "model_name_or_path": "pi-glm-5.3-flash",
-    "model_patch": "diff --git a/sklearn/metrics/cluster/supervised.py b/sklearn/metrics/cluster/supervised.py\nindex a987778..9bcca75 100644\n--- a/sklearn/metrics/cluster/supervised.py\n+++ b/sklearn/metrics/cluster/supervised.py\n@@ -856,7 +856,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):\n     tk = np.dot(c.data, c.data) - n_samples\n     pk = np.sum(np.asarray(c.sum(axis=0)).ravel() ** 2) - n_samples\n     qk = np.sum(np.asarray(c.sum(axis=1)).ravel() ** 2) - n_samples\n-    return tk / np.sqrt(pk * qk) if tk != 0. else 0.\n+    return np.sqrt(tk / pk) * np.sqrt(tk / qk) if tk != 0. else 0.\n \n \n def entropy(labels):\ndiff --git a/sklearn/metrics/cluster/tests/test_supervised.py b/sklearn/metrics/cluster/tests/test_supervised.py\nindex 8da03d1..67a69b0 100644\n--- a/sklearn/metrics/cluster/tests/test_supervised.py\n+++ b/sklearn/metrics/cluster/tests/test_supervised.py\n@@ -252,6 +252,12 @@ def test_fowlkes_mallows_score():\n                                         [0, 1, 2, 3, 4, 5])\n     assert_almost_equal(worst_score, 0.)\n \n+    # Overflow can occur when the number of samples is big enough\n+    n_samples = 100000\n+    labels_a = np.repeat(np.arange(n_samples // 2), 2)\n+    labels_b = np.sort(np.repeat(np.arange(n_samples // 2), 2))\n+    assert_almost_equal(fowlkes_mallows_score(labels_a, labels_b), 1.)\n+\n \n def test_fowlkes_mallows_score_properties():\n     # handcrafted example\n"
-  }
-]

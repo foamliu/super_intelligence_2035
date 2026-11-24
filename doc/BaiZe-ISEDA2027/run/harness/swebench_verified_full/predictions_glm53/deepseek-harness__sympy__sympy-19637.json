@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-19637",
-    "model_name_or_path": "deepseek-harness-glm-5.3-flash",
-    "model_patch": "diff --git a/sympy/core/sympify.py b/sympy/core/sympify.py\nindex a3f1ce285..4266773df 100644\n--- a/sympy/core/sympify.py\n+++ b/sympy/core/sympify.py\n@@ -513,7 +513,7 @@ def kernS(s):\n             while kern in s:\n                 kern += choice(string.ascii_letters + string.digits)\n             s = s.replace(' ', kern)\n-        hit = kern in s\n+            hit = kern in s\n \n     for i in range(2):\n         try:\n"
-  }
-]

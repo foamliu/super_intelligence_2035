@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-15268",
-    "model_name_or_path": "deepseek-harness-glm-5.3-flash",
-    "model_patch": "diff --git a/django/db/migrations/operations/models.py b/django/db/migrations/operations/models.py\nindex c120f5d32d..e1fcb6a2c2 100644\n--- a/django/db/migrations/operations/models.py\n+++ b/django/db/migrations/operations/models.py\n@@ -491,6 +491,17 @@ class AlterTogetherOptionOperation(ModelOptionOperation):\n             kwargs\n         )\n \n+    def reduce(self, operation, app_label):\n+        # Optimize across operations that alter the other option\n+        # (unique_together and index_together are independent), e.g. so that\n+        # AlterUniqueTogether/AlterIndexTogether pairs of remove/add\n+        # operations can collapse into single operations.\n+        if (isinstance(operation, AlterTogetherOptionOperation) and\n+                self.name_lower == operation.name_lower and\n+                self.option_name != operation.option_name):\n+            return True\n+        return super().reduce(operation, app_label)\n+\n     def state_forwards(self, app_label, state):\n         state.alter_model_options(\n             app_label,\n"
-  }
-]

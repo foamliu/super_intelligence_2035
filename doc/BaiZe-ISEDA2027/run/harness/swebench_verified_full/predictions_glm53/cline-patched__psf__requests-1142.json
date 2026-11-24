@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "psf__requests-1142",
-    "model_name_or_path": "cline-glm-5.3-flash",
-    "model_patch": "diff --git a/requests/models.py b/requests/models.py\nindex 9926045..2926f57 100644\n--- a/requests/models.py\n+++ b/requests/models.py\n@@ -386,7 +386,12 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):\n         self.body = body\n \n     def prepare_content_length(self, body):\n-        self.headers['Content-Length'] = '0'\n+        \"\"\"Prepare the Content-Length header based on the given body.\n+\n+        If no body is given (``None``), no Content-Length header is set:\n+        a Content-Length of ``0`` should only be sent when a request\n+        actually carries a body.\n+        \"\"\"\n         if hasattr(body, 'seek') and hasattr(body, 'tell'):\n             body.seek(0, 2)\n             self.headers['Content-Length'] = str(body.tell())\n"
-  }
-]

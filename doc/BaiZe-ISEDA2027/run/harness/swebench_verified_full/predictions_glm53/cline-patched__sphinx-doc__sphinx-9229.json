@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sphinx-doc__sphinx-9229",
-    "model_name_or_path": "cline-glm-5.3-flash",
-    "model_patch": "diff --git a/tests/roots/test-ext-autodoc/target/classes.py b/tests/roots/test-ext-autodoc/target/classes.py\nindex a3b4c647..7526e65b 100644\n--- a/tests/roots/test-ext-autodoc/target/classes.py\n+++ b/tests/roots/test-ext-autodoc/target/classes.py\n@@ -30,3 +30,6 @@ class Quux(List[Union[int, float]]):\n \n \n Alias = Foo\n+\n+#: docstring\n+OtherAlias = Bar\ndiff --git a/tests/test_ext_autodoc_autoclass.py b/tests/test_ext_autodoc_autoclass.py\nindex 096dc939..ee0c00ae 100644\n--- a/tests/test_ext_autodoc_autoclass.py\n+++ b/tests/test_ext_autodoc_autoclass.py\n@@ -327,3 +327,15 @@ def test_class_alias(app):\n         '',\n         '   alias of :class:`target.classes.Foo`',\n     ]\n+\n+\n+def test_class_alias_having_doccomment(app):\n+    actual = do_autodoc(app, 'class', 'target.classes.OtherAlias')\n+    assert list(actual) == [\n+        '',\n+        '.. py:attribute:: OtherAlias',\n+        '   :module: target.classes',\n+        '',\n+        '   docstring',\n+        '',\n+    ]\n"
-  }
-]

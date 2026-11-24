@@ -1,3 +1,0 @@
-regen_eval_summaries: cline-patched
-  cline-patched: scanned 5 run dir(s), 460 instances with report.json
-  cline-patched: WROTE eval_cline-patched.json  n=469 resolved=338 failed=122 infra=0 no_patch=9)

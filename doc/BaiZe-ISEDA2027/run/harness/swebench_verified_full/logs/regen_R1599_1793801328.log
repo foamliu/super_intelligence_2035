@@ -1,3 +1,0 @@
-regen_eval_summaries: deepseek-harness
-  deepseek-harness: scanned 6 run dir(s), 223 instances with report.json
-  deepseek-harness: WROTE eval_deepseek-harness.json  n=230 resolved=184 failed=39 infra=0 no_patch=7)

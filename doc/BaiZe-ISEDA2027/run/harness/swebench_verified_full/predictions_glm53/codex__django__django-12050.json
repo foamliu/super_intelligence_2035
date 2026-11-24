@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-12050",
-    "model_name_or_path": "codex-glm-5.3-flash",
-    "model_patch": "diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py\nindex ea51912e8b..90475d6fb9 100644\n--- a/django/db/models/sql/query.py\n+++ b/django/db/models/sql/query.py\n@@ -1073,7 +1073,7 @@ class Query(BaseExpression):\n                         ))\n                 else:\n                     resolved_values.append(sub_value)\n-            value = tuple(resolved_values)\n+            value = type(value)(resolved_values)\n         return value\n \n     def solve_lookup_type(self, lookup):\ndiff --git a/tests/lookup/tests.py b/tests/lookup/tests.py\nindex e6334fece1..6c564baca2 100644\n--- a/tests/lookup/tests.py\n+++ b/tests/lookup/tests.py\n@@ -87,6 +87,10 @@ class LookupTests(TestCase):\n         self.assertQuerysetEqual(Article.objects.filter(id__iexact=str(self.a1.id)),\n                                  ['<Article: Article 1>'])\n \n+    def test_lookup_value_iterable_type_is_preserved(self):\n+        query = Article.objects.filter(headline__in=['Article 1']).query\n+        self.assertEqual(query.where.children[0].rhs, ['Article 1'])\n+\n     @skipUnlessDBFeature('supports_date_lookup_using_string')\n     def test_lookup_date_as_str(self):\n         # A date lookup can be performed using a string search\n"
-  }
-]

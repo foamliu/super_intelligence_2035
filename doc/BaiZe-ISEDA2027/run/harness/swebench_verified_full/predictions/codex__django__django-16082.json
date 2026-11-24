@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-16082",
-    "model_name_or_path": "codex-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py\nindex 5e3c7cab8..978138b86 100644\n--- a/django/db/models/expressions.py\n+++ b/django/db/models/expressions.py\n@@ -533,6 +533,8 @@ _connector_combinations = [\n             Combinable.SUB,\n             Combinable.MUL,\n             Combinable.DIV,\n+            Combinable.MOD,\n+            Combinable.POW,\n         )\n     },\n     # Bitwise operators.\ndiff --git a/tests/expressions/tests.py b/tests/expressions/tests.py\nindex 39e6c18b1..8103c355a 100644\n--- a/tests/expressions/tests.py\n+++ b/tests/expressions/tests.py\n@@ -2416,7 +2416,14 @@ class CombinedExpressionTests(SimpleTestCase):\n             (IntegerField, FloatField, FloatField),\n             (FloatField, IntegerField, FloatField),\n         ]\n-        connectors = [Combinable.ADD, Combinable.SUB, Combinable.MUL, Combinable.DIV]\n+        connectors = [\n+            Combinable.ADD,\n+            Combinable.SUB,\n+            Combinable.MUL,\n+            Combinable.DIV,\n+            Combinable.MOD,\n+            Combinable.POW,\n+        ]\n         for lhs, rhs, combined in tests:\n             for connector in connectors:\n                 with self.subTest(\n"
-  }
-]

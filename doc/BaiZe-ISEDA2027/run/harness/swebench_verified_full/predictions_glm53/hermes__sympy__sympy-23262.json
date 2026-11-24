@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-23262",
-    "model_name_or_path": "hermes-glm-5.3-flash",
-    "model_patch": "diff --git a/sympy/utilities/lambdify.py b/sympy/utilities/lambdify.py\nindex da67263b19..c6b7f0bcba 100644\n--- a/sympy/utilities/lambdify.py\n+++ b/sympy/utilities/lambdify.py\n@@ -961,6 +961,8 @@ def _recursive_to_string(doprint, arg):\n             left, right = \"()\"\n         else:\n             raise NotImplementedError(\"unhandled type: %s, %s\" % (type(arg), arg))\n+        if len(arg) == 1 and isinstance(arg, tuple):\n+            return left + ', '.join(_recursive_to_string(doprint, e) for e in arg) + ',' + right\n         return left +', '.join(_recursive_to_string(doprint, e) for e in arg) + right\n     elif isinstance(arg, str):\n         return arg\ndiff --git a/sympy/utilities/tests/test_lambdify.py b/sympy/utilities/tests/test_lambdify.py\nindex 023c2fb55a..60089c79ee 100644\n--- a/sympy/utilities/tests/test_lambdify.py\n+++ b/sympy/utilities/tests/test_lambdify.py\n@@ -1341,6 +1341,16 @@ def test_issue_22739():\n     assert abs(f.subs(point) - F(*point.values())) <= 1e-10\n \n \n+def test_issue_23282():\n+    # https://github.com/sympy/sympy/issues/23282\n+    # The printer should keep the trailing comma for a 1-element tuple\n+    expr = (1,)\n+    f = lambdify([], expr)\n+    assert f() == (1,)\n+    g = lambdify([], [expr])\n+    assert g() == [(1,)]\n+\n+\n def test_issue_19764():\n     if not numpy:\n         skip(\"numpy not installed\")\n"
-  }
-]

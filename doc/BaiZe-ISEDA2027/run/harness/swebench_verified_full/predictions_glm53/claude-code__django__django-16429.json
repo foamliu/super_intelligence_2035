@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-16429",
-    "model_name_or_path": "claude-code-glm-5.3-flash",
-    "model_patch": "diff --git a/django/utils/timesince.py b/django/utils/timesince.py\nindex 701c49bab..27a19c75f 100644\n--- a/django/utils/timesince.py\n+++ b/django/utils/timesince.py\n@@ -97,6 +97,8 @@ def timesince(d, now=None, reversed=False, time_strings=None, depth=2):\n             d.hour,\n             d.minute,\n             d.second,\n+            0,\n+            d.tzinfo,\n         )\n     else:\n         pivot = d\ndiff --git a/tests/utils_tests/test_timesince.py b/tests/utils_tests/test_timesince.py\nindex bf05f32f5..617a1c5c7 100644\n--- a/tests/utils_tests/test_timesince.py\n+++ b/tests/utils_tests/test_timesince.py\n@@ -1,6 +1,6 @@\n import datetime\n \n-from django.test import TestCase\n+from django.test import TestCase, override_settings\n from django.test.utils import requires_tz_support\n from django.utils import timezone, translation\n from django.utils.timesince import timesince, timeuntil\n@@ -120,6 +120,13 @@ class TimesinceTests(TestCase):\n                         \"0\\xa0minut\",\n                     )\n \n+    @requires_tz_support\n+    @override_settings(USE_TZ=True)\n+    def test_long_interval_with_tz(self):\n+        now = timezone.now()\n+        d = now - datetime.timedelta(days=31)\n+        self.assertEqual(timesince(d), \"1\\xa0month\")\n+\n     @requires_tz_support\n     def test_different_timezones(self):\n         \"\"\"When using two different timezones.\"\"\"\n"
-  }
-]

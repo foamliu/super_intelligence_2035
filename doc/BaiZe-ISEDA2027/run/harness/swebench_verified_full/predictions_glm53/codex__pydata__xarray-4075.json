@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pydata__xarray-4075",
-    "model_name_or_path": "codex-glm-5.3-flash",
-    "model_patch": "diff --git a/xarray/core/weighted.py b/xarray/core/weighted.py\nindex 996d2e4..a7d9c53 100644\n--- a/xarray/core/weighted.py\n+++ b/xarray/core/weighted.py\n@@ -142,6 +142,9 @@ class Weighted:\n         # we need to mask data values that are nan; else the weights are wrong\n         mask = da.notnull()\n \n+        # bool -> int, because `xr.dot` of two bool arrays returns a bool array\n+        mask = mask.astype(int)\n+\n         sum_of_weights = self._reduce(mask, self.weights, dim=dim, skipna=False)\n \n         # 0-weights are not valid\ndiff --git a/xarray/tests/test_weighted.py b/xarray/tests/test_weighted.py\nindex 2453121..7ecd62c 100644\n--- a/xarray/tests/test_weighted.py\n+++ b/xarray/tests/test_weighted.py\n@@ -139,6 +139,19 @@ def test_weighted_mean_no_nan(weights, expected):\n     assert_equal(expected, result)\n \n \n+@pytest.mark.parametrize(\"weights\", ([True, True, False], [True, False, False]))\n+def test_weighted_mean_boolean_weights(weights):\n+\n+    da = DataArray([1.0, 1.0, 1.0])\n+    weights = DataArray(np.array(weights, dtype=bool))\n+\n+    result = da.weighted(weights).mean()\n+\n+    expected = DataArray(1.0)\n+\n+    assert_equal(expected, result)\n+\n+\n @pytest.mark.parametrize(\n     (\"weights\", \"expected\"), (([4, 6], 2.0), ([1, 0], np.nan), ([0, 0], np.nan))\n )\n"
-  }
-]

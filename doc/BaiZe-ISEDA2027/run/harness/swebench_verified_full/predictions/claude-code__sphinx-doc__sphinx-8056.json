@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sphinx-doc__sphinx-8056",
-    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sphinx/ext/napoleon/docstring.py b/sphinx/ext/napoleon/docstring.py\nindex b3daa06f..c1bd0224 100644\n--- a/sphinx/ext/napoleon/docstring.py\n+++ b/sphinx/ext/napoleon/docstring.py\n@@ -392,15 +392,19 @@ class GoogleDocstring:\n         lines = []\n         for _name, _type, _desc in fields:\n             _desc = self._strip_empty(_desc)\n+            names = [name.strip() for name in _name.split(',')]\n             if any(_desc):\n                 _desc = self._fix_field_desc(_desc)\n-                field = ':%s %s: ' % (field_role, _name)\n-                lines.extend(self._format_block(field, _desc))\n+                for name in names:\n+                    field = ':%s %s: ' % (field_role, name)\n+                    lines.extend(self._format_block(field, _desc))\n             else:\n-                lines.append(':%s %s:' % (field_role, _name))\n+                for name in names:\n+                    lines.append(':%s %s:' % (field_role, name))\n \n             if _type:\n-                lines.append(':%s %s: %s' % (type_role, _name, _type))\n+                for name in names:\n+                    lines.append(':%s %s: %s' % (type_role, name, _type))\n         return lines + ['']\n \n     def _format_field(self, _name: str, _type: str, _desc: List[str]) -> List[str]:\n"
-  }
-]

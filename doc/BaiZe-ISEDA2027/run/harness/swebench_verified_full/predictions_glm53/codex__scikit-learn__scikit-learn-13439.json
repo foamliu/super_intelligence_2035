@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "scikit-learn__scikit-learn-13439",
-    "model_name_or_path": "codex-glm-5.3-flash",
-    "model_patch": "diff --git a/sklearn/pipeline.py b/sklearn/pipeline.py\nindex 7eaf9a46..b6b9ad91 100644\n--- a/sklearn/pipeline.py\n+++ b/sklearn/pipeline.py\n@@ -199,6 +199,10 @@ class Pipeline(_BaseComposition):\n             if trans is not None and trans != 'passthrough':\n                 yield idx, name, trans\n \n+    def __len__(self):\n+        \"\"\"Returns the length of the Pipeline\"\"\"\n+        return len(self.steps)\n+\n     def __getitem__(self, ind):\n         \"\"\"Returns a sub-pipeline or a single esimtator in the pipeline\n \ndiff --git a/sklearn/tests/test_pipeline.py b/sklearn/tests/test_pipeline.py\nindex 8d6fe8f7..ec99d03f 100644\n--- a/sklearn/tests/test_pipeline.py\n+++ b/sklearn/tests/test_pipeline.py\n@@ -533,6 +533,7 @@ def test_pipeline_slice():\n     pipe = Pipeline([('transf1', Transf()),\n                      ('transf2', Transf()),\n                      ('clf', FitParamT())])\n+    assert 3 == len(pipe)\n     pipe2 = pipe[:-1]\n     assert isinstance(pipe2, Pipeline)\n     assert pipe2.steps == pipe.steps[:-1]\n"
-  }
-]

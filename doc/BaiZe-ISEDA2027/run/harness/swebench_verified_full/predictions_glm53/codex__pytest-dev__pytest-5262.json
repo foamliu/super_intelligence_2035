@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pytest-dev__pytest-5262",
-    "model_name_or_path": "codex-glm-5.3-flash",
-    "model_patch": "diff --git a/changelog/5247.bugfix.rst b/changelog/5247.bugfix.rst\nnew file mode 100644\nindex 0000000..754cbd2\n--- /dev/null\n+++ b/changelog/5247.bugfix.rst\n@@ -0,0 +1,2 @@\n+``EncodedFile`` now advertises a text mode, without ``b``, so third-party code\n+which inspects ``mode`` does not attempt to write bytes to it.\ndiff --git a/src/_pytest/capture.py b/src/_pytest/capture.py\nindex 25eab7f..1178d52 100644\n--- a/src/_pytest/capture.py\n+++ b/src/_pytest/capture.py\n@@ -429,6 +429,11 @@ class EncodedFile(object):\n         self.buffer = buffer\n         self.encoding = encoding\n \n+    @property\n+    def mode(self):\n+        \"\"\"Ensure that file.mode does not contain 'b' (binary).\"\"\"\n+        return getattr(self.buffer, \"mode\", \"\").replace(\"b\", \"\")\n+\n     def write(self, obj):\n         if isinstance(obj, six.text_type):\n             obj = obj.encode(self.encoding, \"replace\")\ndiff --git a/testing/test_capture.py b/testing/test_capture.py\nindex 5d80eb6..cc5bba6 100644\n--- a/testing/test_capture.py\n+++ b/testing/test_capture.py\n@@ -952,6 +952,11 @@ def test_dupfile_on_textio():\n     assert not hasattr(f, \"name\")\n \n \n+def test_encoded_file_mode_is_text():\n+    f = capture.EncodedFile(io.BytesIO(), \"UTF8\")\n+    assert f.mode == \"+\"\n+\n+\n @contextlib.contextmanager\n def lsof_check():\n     pid = os.getpid()\n"
-  }
-]

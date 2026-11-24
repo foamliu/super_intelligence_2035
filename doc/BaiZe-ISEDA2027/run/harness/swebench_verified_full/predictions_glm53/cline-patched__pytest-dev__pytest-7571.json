@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pytest-dev__pytest-7571",
-    "model_name_or_path": "cline-glm-5.3-flash",
-    "model_patch": "diff --git a/repro_issue.py b/repro_issue.py\nnew file mode 100644\nindex 0000000..dd18495\n--- /dev/null\n+++ b/repro_issue.py\n@@ -0,0 +1,10 @@\n+import logging\n+\n+\n+def test_foo(caplog):\n+    caplog.set_level(42)\n+\n+\n+def test_bar(caplog):\n+    print(\"handler level:\", caplog.handler.level)\n+    print(\"root logger level:\", logging.getLogger().level)\n"
-  }
-]

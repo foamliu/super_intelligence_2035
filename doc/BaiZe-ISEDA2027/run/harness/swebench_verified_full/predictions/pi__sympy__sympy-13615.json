@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-13615",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/sets/sets.py b/sympy/sets/sets.py\nindex 917717bb..2e363e85 100644\n--- a/sympy/sets/sets.py\n+++ b/sympy/sets/sets.py\n@@ -217,7 +217,17 @@ def _complement(self, other):\n             return S.EmptySet\n \n         elif isinstance(other, FiniteSet):\n-            return FiniteSet(*[el for el in other if self.contains(el) != True])\n+            new_args = []\n+            unk_args = []\n+            for el in other:\n+                c = sympify(self.contains(el))\n+                if c is S.false:\n+                    new_args.append(el)\n+                elif c is not S.true:\n+                    unk_args.append(el)\n+            if unk_args:\n+                return Complement(FiniteSet(*new_args, *unk_args), self, evaluate=False)\n+            return FiniteSet(*new_args)\n \n     def symmetric_difference(self, other):\n         \"\"\"\n"
-  }
-]

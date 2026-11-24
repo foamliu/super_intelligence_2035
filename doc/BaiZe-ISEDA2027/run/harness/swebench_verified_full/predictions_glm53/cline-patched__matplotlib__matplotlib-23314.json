@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "matplotlib__matplotlib-23314",
-    "model_name_or_path": "cline-glm-5.3-flash",
-    "model_patch": "diff --git a/lib/mpl_toolkits/mplot3d/axes3d.py b/lib/mpl_toolkits/mplot3d/axes3d.py\nindex 9db44b799..5479bc1af 100644\n--- a/lib/mpl_toolkits/mplot3d/axes3d.py\n+++ b/lib/mpl_toolkits/mplot3d/axes3d.py\n@@ -387,6 +387,8 @@ class Axes3D(Axes):\n \n     @martist.allow_rasterization\n     def draw(self, renderer):\n+        if not self.get_visible():\n+            return\n         self._unstale_viewLim()\n \n         # draw the background patch\ndiff --git a/lib/mpl_toolkits/tests/test_mplot3d.py b/lib/mpl_toolkits/tests/test_mplot3d.py\nindex 966eb50b2..b30a73492 100644\n--- a/lib/mpl_toolkits/tests/test_mplot3d.py\n+++ b/lib/mpl_toolkits/tests/test_mplot3d.py\n@@ -851,6 +851,14 @@ def test_axes3d_rotated():\n     ax.view_init(90, 45, 0)  # look down, rotated. Should be square\n \n \n+@check_figures_equal(extensions=['png'])\n+def test_axes3d_set_visible(fig_test, fig_ref):\n+    # a hidden 3d Axes should not be drawn at all (issue #20351)\n+    ax = fig_test.add_subplot(projection='3d')\n+    ax.scatter(1, 1, 1)\n+    ax.set_visible(False)\n+\n+\n def test_plotsurface_1d_raises():\n     x = np.linspace(0.5, 10, num=100)\n     y = np.linspace(0.5, 10, num=100)\n"
-  }
-]

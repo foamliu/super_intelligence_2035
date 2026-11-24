@@ -1,35 +1,0 @@
-Traceback (most recent call last):
-  File "/home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/trial/trial.py", line 497, in run
-    await self._prepare()
-  File "/home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/trial/trial.py", line 543, in _prepare
-    await self._setup_agent()
-  File "/home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/trial/trial.py", line 1720, in _setup_agent
-    await asyncio.wait_for(
-    ...<2 lines>...
-    )
-  File "/home/app.e0031982/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/asyncio/tasks.py", line 488, in wait_for
-    return await fut
-           ^^^^^^^^^
-  File "/home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/agents/installed/base.py", line 1087, in setup
-    await self.install(environment)
-  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/agents/opencode.py", line 64, in install
-    await self.exec_as_root(
-    ...<4 lines>...
-    )
-  File "/home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/agents/installed/base.py", line 1019, in exec_as_root
-    return await self._exec(
-           ^^^^^^^^^^^^^^^^^
-        environment, command, user="root", env=env, cwd=cwd, timeout_sec=timeout_sec
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/agents/installed/base.py", line 999, in _exec
-    raise self._classify_exec_error(command, result)
-harbor.agents.installed.base.NetworkConnectionError: Command failed (exit 56): curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-stdout: [0m
-[0;2mInstalling [0mopencode [0;2mversion: [0m1.19.3[0m
-#=#=#                                                                          ##O#-#                                                                         ##O=#  #                  ... [6480 chars truncated] ...                                                       -=O=#   #   #   #                                                              -=O#- #   #   #                                                                -=#=-#  #    #                                                                 -#O=#  #   #                                                                   -#O#-#   #                                                                     #=#=#   #                                                                      ##O#- #                                                                        #=#=-#                                                                         curl: (56) Failure when receiving data from the peer
-
-
-
-stderr: None

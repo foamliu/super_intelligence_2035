@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-12419",
-    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py\nindex b4d7598..b9220aa 100644\n--- a/sympy/matrices/expressions/matexpr.py\n+++ b/sympy/matrices/expressions/matexpr.py\n@@ -479,7 +479,8 @@ def _entry(self, i, j):\n         if i == j:\n             return S.One\n         else:\n-            return S.Zero\n+            from sympy import KroneckerDelta\n+            return KroneckerDelta(i, j)\n \n     def _eval_determinant(self):\n         return S.One\n"
-  }
-]

@@ -1,8 +1,0 @@
-case_id	k_check(empty+printjunk §4.9 regression)	empirical_verdict	stale_GAP	contract_risk	import_ok	notes
-EDA-Eval-DesignFlow-TclAreaUpdate-001	16	§4.9OK	yes	no	yes	r1053 三假(empty/print_expected/core_deleted)全 FAIL: empty->c(no out file) / print_expected->c / core_deleted->d(PDCAP!=12.000). check 跑 A/B/C-probe 三输入 subprocess, cond o+p anti-hardcode. audit GAP 是 r273 重建前旧快照, 已 stale.
-EDA-Eval-DesignFlow-DrcDocConvert-001	11	§4.9OK	yes	no	yes	empty->FAIL / printjunk->FAIL. check 有 cross-input+hardcode+subprocess 指示. audit GAP stale.
-EDA-Eval-DesignFlow-DDR4TbFramework-001	15	§4.9OK	yes	no	yes	empty->FAIL / printjunk->FAIL (check 静态分析交付脚本, 无需 subproc 仍能挡空壳). audit 标 no-subproc 猜 true-GAP, 实测 §4.9OK. stale.
-EDA-Eval-DesignFlow-StdcellMatch-001	14	§4.9OK	yes	no	yes	empty->FAIL / printjunk->FAIL. cross+hardcode+subprocess. stale.
-EDA-Eval-DesignFlow-VCSMakefile-001	10	§4.9OK	yes	no	yes	empty->FAIL / printjunk->FAIL. cross-input+subprocess. stale.
-EDA-Eval-DesignFlow-Bl6CompcodeMerge-001	22	§4.9OK(strict)	yes	yes(returns "FAIL" string not raise)	yes	empty->check returns "FAIL" string (nfail=4, cond b_has_func_* 全 FAIL) / printjunk->SystemExit. 严格契约(r is True or r=='PASS')下 §4.9OK; 但若框架用 truthy(if r:) 判定, "FAIL" 字符串 truthy 会被误判 PASS — contract risk, 建议改 raise-on-fail. audit GAP stale(实际有 anti-hardcode).
-EDA-Eval-DesignFlow-FsdbDumpConvert-001	11	UNVERIFIABLE	?	?	NO(import error)	check.py 加载即 import error, 无法跑 §4.9 回归. 独立 defect, 需修 check.py import 后再验. 非 anti-hardcode 问题.

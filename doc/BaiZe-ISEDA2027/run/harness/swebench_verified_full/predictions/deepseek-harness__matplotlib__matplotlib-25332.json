@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "matplotlib__matplotlib-25332",
-    "model_name_or_path": "deepseek-harness-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/lib/matplotlib/cbook.py b/lib/matplotlib/cbook.py\nindex c9699b2e2..d272faa29 100644\n--- a/lib/matplotlib/cbook.py\n+++ b/lib/matplotlib/cbook.py\n@@ -846,6 +846,22 @@ class Grouper:\n         siblings = self._mapping.get(weakref.ref(a), [weakref.ref(a)])\n         return [x() for x in siblings]\n \n+    def __getstate__(self):\n+        # Convert weakrefs to actual objects for pickling\n+        self.clean()\n+        unique_groups = {id(group): group for group in self._mapping.values()}\n+        return {\n+            'groups': [[x() for x in group] for group in unique_groups.values()]\n+        }\n+\n+    def __setstate__(self, state):\n+        # Convert actual objects back to weakrefs after unpickling\n+        self._mapping = {}\n+        for group in state['groups']:\n+            refs = [weakref.ref(x) for x in group]\n+            for ref in refs:\n+                self._mapping[ref] = refs\n+\n \n class GrouperView:\n     \"\"\"Immutable view over a `.Grouper`.\"\"\"\n"
-  }
-]

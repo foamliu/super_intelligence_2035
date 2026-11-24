@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "scikit-learn__scikit-learn-12585",
-    "model_name_or_path": "codex-glm-5.3-flash",
-    "model_patch": "diff --git a/sklearn/base.py b/sklearn/base.py\nindex 56ffb18b..34998270 100644\n--- a/sklearn/base.py\n+++ b/sklearn/base.py\n@@ -48,7 +48,7 @@ def clone(estimator, safe=True):\n     # XXX: not handling dictionaries\n     if estimator_type in (list, tuple, set, frozenset):\n         return estimator_type([clone(e, safe=safe) for e in estimator])\n-    elif not hasattr(estimator, 'get_params'):\n+    elif not hasattr(estimator, 'get_params') or isinstance(estimator, type):\n         if not safe:\n             return copy.deepcopy(estimator)\n         else:\ndiff --git a/sklearn/tests/test_base.py b/sklearn/tests/test_base.py\nindex ebcb3892..50466fe1 100644\n--- a/sklearn/tests/test_base.py\n+++ b/sklearn/tests/test_base.py\n@@ -119,6 +119,15 @@ def test_clone_2():\n     assert_false(hasattr(new_selector, \"own_attribute\"))\n \n \n+def test_clone_estimator_types():\n+    # Check that clone accepts estimator types as parameters.\n+    estimator = MyEstimator(l1=StandardScaler)\n+    cloned_estimator = clone(estimator)\n+\n+    assert estimator is not cloned_estimator\n+    assert cloned_estimator.l1 is StandardScaler\n+\n+\n def test_clone_buggy():\n     # Check that clone raises an error on buggy estimators.\n     buggy = Buggy()\n"
-  }
-]

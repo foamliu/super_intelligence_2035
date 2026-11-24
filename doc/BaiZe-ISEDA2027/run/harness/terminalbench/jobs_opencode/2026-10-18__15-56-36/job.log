@@ -1,54 +1,0 @@
-Agent 'opencode' does not declare an options_model; leftover kwargs are ignored
-Running command: curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-Command failed
-Classified failed command as NetworkConnectionError (pattern: 'curl: \\(\\d+\\)')
-Trial bn-fit-modify__sj9zY75 failed: Command failed (exit 56): curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-stdout: [0m
-[0;2mInstalling [0mopencode [0;2mversion: [0m1.19.3[0m
-#=#=#                                                                          ##O#-#                                                                         ##O=#  #                  ... [6480 chars truncated] ...                                                       -=O=#   #   #   #                                                              -=O#- #   #   #                                                                -=#=-#  #    #                                                                 -#O=#  #   #                                                                   -#O#-#   #                                                                     #=#=#   #                                                                      ##O#- #                                                                        #=#=-#                                                                         curl: (56) Failure when receiving data from the peer
-
-
-
-stderr: None
-Collecting main service artifacts
-Not retrying trial because the maximum number of retries has been reached
-Agent 'opencode' does not declare an options_model; leftover kwargs are ignored
-Running command: curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-Command failed
-Trial break-filter-js-from-html__gtnf9w2 failed: Command failed (exit 127): curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-stdout: bash: line 1: curl: command not found
-
-
-stderr: None
-Collecting main service artifacts
-Not retrying trial because the maximum number of retries has been reached
-Agent 'opencode' does not declare an options_model; leftover kwargs are ignored
-Running command: curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-Command failed
-Trial chess-best-move__tV5EqDo failed: Command failed (exit 1): curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-stdout: [0;31mFailed to fetch version information[0m
-
-
-stderr: None
-Collecting main service artifacts
-Not retrying trial because the maximum number of retries has been reached
-Agent 'opencode' does not declare an options_model; leftover kwargs are ignored
-Running command: curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-Command failed
-Trial fix-git__KVyWztr failed: Command failed (exit 127): curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-stdout: bash: line 1: curl: command not found
-
-
-stderr: None
-Collecting main service artifacts
-Not retrying trial because the maximum number of retries has been reached
-Agent 'opencode' does not declare an options_model; leftover kwargs are ignored
-Running command: curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-Command failed
-Trial log-summary-date-ranges__2p3rNdP failed: Command failed (exit 127): curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-stdout: bash: line 1: curl: command not found
-
-
-stderr: None
-Collecting main service artifacts
-Not retrying trial because the maximum number of retries has been reached

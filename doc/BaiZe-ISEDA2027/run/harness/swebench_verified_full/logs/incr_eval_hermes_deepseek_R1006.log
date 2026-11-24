@@ -1,62 +1,0 @@
-=== incr_eval_hermes_deepseek R1006 START Sat Oct 31 05:33:04 AM CST 2026 ===
-[Sat Oct 31 05:33:04 AM CST 2026] Waiting for incr_eval PID 3159156 to finish...
-[Sat Oct 31 05:33:34 AM CST 2026] incr_eval PID 3159156 finished. Starting hermes+deepseek eval.
-[Sat Oct 31 05:33:34 AM CST 2026] === merge hermes predictions ===
-hermes: 14 patches merged, 14 eval IDs
-[Sat Oct 31 05:33:34 AM CST 2026] === hermes eval START 14 instances ===
-Running 14 instances...
-  0%|          | 0/14 [00:00<?, ?it/s]  7%|▋         | 1/14 [00:22<04:48, 22.18s/it]1 ran successfully, 0 failed:   7%|▋         | 1/14 [00:22<04:48, 22.18s/it]1 ran successfully, 0 failed:  14%|█▍        | 2/14 [00:22<02:14, 11.20s/it]2 ran successfully, 0 failed:  14%|█▍        | 2/14 [00:22<02:14, 11.20s/it]2 ran successfully, 0 failed:  21%|██▏       | 3/14 [00:23<01:26,  7.83s/it]3 ran successfully, 0 failed:  21%|██▏       | 3/14 [00:23<01:26,  7.83s/it]3 ran successfully, 0 failed:  29%|██▊       | 4/14 [00:25<01:04,  6.42s/it]4 ran successfully, 0 failed:  29%|██▊       | 4/14 [00:25<01:04,  6.42s/it]4 ran successfully, 0 failed:  36%|███▌      | 5/14 [00:32<00:58,  6.52s/it]5 ran successfully, 0 failed:  36%|███▌      | 5/14 [00:32<00:58,  6.52s/it]5 ran successfully, 0 failed:  43%|████▎     | 6/14 [00:44<00:59,  7.40s/it]6 ran successfully, 0 failed:  43%|████▎     | 6/14 [00:44<00:59,  7.40s/it]6 ran successfully, 0 failed:  50%|█████     | 7/14 [00:46<00:46,  6.57s/it]7 ran successfully, 0 failed:  50%|█████     | 7/14 [00:46<00:46,  6.57s/it]7 ran successfully, 0 failed:  57%|█████▋    | 8/14 [00:46<00:34,  5.77s/it]8 ran successfully, 0 failed:  57%|█████▋    | 8/14 [00:46<00:34,  5.77s/it]8 ran successfully, 0 failed:  64%|██████▍   | 9/14 [00:48<00:26,  5.37s/it]9 ran successfully, 0 failed:  64%|██████▍   | 9/14 [00:48<00:26,  5.37s/it]9 ran successfully, 0 failed:  71%|███████▏  | 10/14 [01:09<00:27,  6.98s/it]10 ran successfully, 0 failed:  71%|███████▏  | 10/14 [01:09<00:27,  6.98s/it]10 ran successfully, 0 failed:  79%|███████▊  | 11/14 [01:18<00:21,  7.12s/it]11 ran successfully, 0 failed:  79%|███████▊  | 11/14 [01:18<00:21,  7.12s/it]11 ran successfully, 0 failed:  86%|████████▌ | 12/14 [02:08<00:21, 10.74s/it]12 ran successfully, 0 failed:  86%|████████▌ | 12/14 [02:08<00:21, 10.74s/it]12 ran successfully, 0 failed:  93%|█████████▎| 13/14 [05:36<00:25, 25.86s/it]13 ran successfully, 0 failed:  93%|█████████▎| 13/14 [05:36<00:25, 25.86s/it]13 ran successfully, 0 failed: 100%|██████████| 14/14 [09:25<00:00, 40.37s/it]14 ran successfully, 0 failed: 100%|██████████| 14/14 [09:25<00:00, 40.37s/it]14 ran successfully, 0 failed: 100%|██████████| 14/14 [09:25<00:00, 40.37s/it]
-All instances run.
-Total instances: 14
-Instances submitted: 14
-Instances completed: 14
-Instances incomplete: 0
-Instances resolved: 10
-Instances unresolved: 4
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 14
-Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
-[Sat Oct 31 05:43:03 AM CST 2026] === hermes eval DONE rc=0 ===
-[Sat Oct 31 05:43:03 AM CST 2026] === merge deepseek-harness predictions ===
-deepseek-harness: 19 patches merged, 19 eval IDs
-[Sat Oct 31 05:43:03 AM CST 2026] === deepseek-harness eval START 19 instances ===
-Running 19 instances...
-  0%|          | 0/19 [00:00<?, ?it/s]  5%|▌         | 1/19 [00:24<07:18, 24.38s/it]1 ran successfully, 0 failed:   5%|▌         | 1/19 [00:24<07:18, 24.38s/it]1 ran successfully, 0 failed:  11%|█         | 2/19 [00:24<03:31, 12.45s/it]2 ran successfully, 0 failed:  11%|█         | 2/19 [00:24<03:31, 12.45s/it]2 ran successfully, 0 failed:  16%|█▌        | 3/19 [00:25<02:13,  8.33s/it]3 ran successfully, 0 failed:  16%|█▌        | 3/19 [00:25<02:13,  8.33s/it]3 ran successfully, 0 failed:  21%|██        | 4/19 [00:25<01:34,  6.31s/it]4 ran successfully, 0 failed:  21%|██        | 4/19 [00:25<01:34,  6.31s/it]4 ran successfully, 0 failed:  26%|██▋       | 5/19 [00:27<01:17,  5.56s/it]5 ran successfully, 0 failed:  26%|██▋       | 5/19 [00:27<01:17,  5.56s/it]5 ran successfully, 0 failed:  32%|███▏      | 6/19 [00:28<01:02,  4.83s/it]6 ran successfully, 0 failed:  32%|███▏      | 6/19 [00:28<01:02,  4.83s/it]6 ran successfully, 0 failed:  37%|███▋      | 7/19 [00:30<00:51,  4.33s/it]7 ran successfully, 0 failed:  37%|███▋      | 7/19 [00:30<00:51,  4.33s/it]7 ran successfully, 0 failed:  42%|████▏     | 8/19 [00:48<01:06,  6.07s/it]8 ran successfully, 0 failed:  42%|████▏     | 8/19 [00:48<01:06,  6.07s/it]8 ran successfully, 0 failed:  47%|████▋     | 9/19 [00:48<00:54,  5.41s/it]9 ran successfully, 0 failed:  47%|████▋     | 9/19 [00:48<00:54,  5.41s/it]9 ran successfully, 0 failed:  53%|█████▎    | 10/19 [00:50<00:45,  5.08s/it]10 ran successfully, 0 failed:  53%|█████▎    | 10/19 [00:50<00:45,  5.08s/it]10 ran successfully, 0 failed:  58%|█████▊    | 11/19 [00:53<00:38,  4.84s/it]11 ran successfully, 0 failed:  58%|█████▊    | 11/19 [00:53<00:38,  4.84s/it]11 ran successfully, 0 failed:  63%|██████▎   | 12/19 [00:55<00:32,  4.62s/it]12 ran successfully, 0 failed:  63%|██████▎   | 12/19 [00:55<00:32,  4.62s/it]12 ran successfully, 0 failed:  68%|██████▊   | 13/19 [00:56<00:26,  4.38s/it]13 ran successfully, 0 failed:  68%|██████▊   | 13/19 [00:56<00:26,  4.38s/it]13 ran successfully, 0 failed:  74%|███████▎  | 14/19 [00:58<00:20,  4.16s/it]14 ran successfully, 0 failed:  74%|███████▎  | 14/19 [00:58<00:20,  4.16s/it]14 ran successfully, 0 failed:  79%|███████▉  | 15/19 [01:11<00:19,  4.80s/it]15 ran successfully, 0 failed:  79%|███████▉  | 15/19 [01:11<00:19,  4.80s/it]15 ran successfully, 0 failed:  84%|████████▍ | 16/19 [01:13<00:13,  4.62s/it]16 ran successfully, 0 failed:  84%|████████▍ | 16/19 [01:13<00:13,  4.62s/it]16 ran successfully, 0 failed:  89%|████████▉ | 17/19 [01:15<00:08,  4.44s/it]17 ran successfully, 0 failed:  89%|████████▉ | 17/19 [01:15<00:08,  4.44s/it]17 ran successfully, 0 failed:  95%|█████████▍| 18/19 [01:15<00:04,  4.21s/it]18 ran successfully, 0 failed:  95%|█████████▍| 18/19 [01:15<00:04,  4.21s/it]18 ran successfully, 0 failed: 100%|██████████| 19/19 [05:13<00:00, 16.48s/it]19 ran successfully, 0 failed: 100%|██████████| 19/19 [05:13<00:00, 16.48s/it]19 ran successfully, 0 failed: 100%|██████████| 19/19 [05:13<00:00, 16.48s/it]
-All instances run.
-Total instances: 19
-Instances submitted: 19
-Instances completed: 19
-Instances incomplete: 0
-Instances resolved: 15
-Instances unresolved: 4
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 0
-Unremoved images: 19
-Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
-[Sat Oct 31 05:48:20 AM CST 2026] === deepseek-harness eval DONE rc=0 ===
-[Sat Oct 31 05:48:20 AM CST 2026] === regen eval summaries ===
-regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
-  cline-patched: unchanged (n=442 resolved=325 failed=116 infra=1)
-  opencode: unchanged (n=488 resolved=394 failed=93 infra=1)
-  pi: unchanged (n=403 resolved=294 failed=109 infra=0)
-  claude-code: unchanged (n=288 resolved=218 failed=69 infra=1)
-  codex: unchanged (n=185 resolved=144 failed=41 infra=0)
-  hermes: unchanged (n=14 resolved=10 failed=4 infra=0)
-  deepseek-harness: WROTE eval_deepseek-harness.json  n=19 resolved=15 failed=4 infra=0
-[Sat Oct 31 05:48:21 AM CST 2026] === gen report HTML ===
-written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (15349B)
-  cline        done=500/500 patch=442 no_patch=51 infra=0 eval=Y resolved=325
-  opencode     done=500/500 patch=488 no_patch=2 infra=0 eval=Y resolved=394
-  pi           done=494/500 patch=404 no_patch=23 infra=59 eval=Y resolved=294
-  claude-code  done=367/500 patch=289 no_patch=73 infra=0 eval=Y resolved=218
-  codex        done=439/500 patch=187 no_patch=62 infra=185 eval=Y resolved=144
-  hermes       done=19/500 patch=13 no_patch=6 infra=0 eval=Y resolved=10
-  deepseek-harness done=25/500 patch=17 no_patch=5 infra=1 eval=Y resolved=15
-=== incr_eval_hermes_deepseek R1006 DONE Sat Oct 31 05:48:21 AM CST 2026 ===

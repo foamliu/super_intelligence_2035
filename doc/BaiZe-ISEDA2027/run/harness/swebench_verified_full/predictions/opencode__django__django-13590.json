@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-13590",
-    "model_name_or_path": "opencode-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py\nindex 4648daf3..cc2c2453 100644\n--- a/django/db/models/sql/query.py\n+++ b/django/db/models/sql/query.py\n@@ -1077,10 +1077,14 @@ class Query(BaseExpression):\n         elif isinstance(value, (list, tuple)):\n             # The items of the iterable may be expressions and therefore need\n             # to be resolved independently.\n-            return type(value)(\n+            resolved = [\n                 self.resolve_lookup_value(sub_value, can_reuse, allow_joins)\n                 for sub_value in value\n-            )\n+            ]\n+            if hasattr(value, '_fields'):\n+                # named tuples must be reconstructed by unpacking arguments.\n+                return type(value)(*resolved)\n+            return type(value)(resolved)\n         return value\n \n     def solve_lookup_type(self, lookup):\n"
-  }
-]

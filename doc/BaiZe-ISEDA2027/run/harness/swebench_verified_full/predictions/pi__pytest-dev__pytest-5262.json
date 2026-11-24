@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pytest-dev__pytest-5262",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py\nindex 25eab7f..127e8a4 100644\n--- a/src/_pytest/capture.py\n+++ b/src/_pytest/capture.py\n@@ -447,6 +447,11 @@ class EncodedFile(object):\n         \"\"\"Ensure that file.name is a string.\"\"\"\n         return repr(self.buffer)\n \n+    @property\n+    def mode(self):\n+        \"\"\"Ensure that file.mode does not contain 'b', as our write() only accepts text.\"\"\"\n+        return self.buffer.mode.replace(\"b\", \"\")\n+\n     def __getattr__(self, name):\n         return getattr(object.__getattribute__(self, \"buffer\"), name)\n \ndiff --git a/testing/test_capture.py b/testing/test_capture.py\nindex 5d80eb6..d69735e 100644\n--- a/testing/test_capture.py\n+++ b/testing/test_capture.py\n@@ -1460,6 +1460,13 @@ def test_pickling_and_unpickling_encoded_file():\n     ef_as_str = pickle.dumps(ef)\n     pickle.loads(ef_as_str)\n \n+def test_encoded_file_mode(tmpdir):\n+    # Issue #5341 EncodedFile.mode should not contain 'b' since write() expects text\n+    f = open(str(tmpdir.join(\"test\")), \"wb+\")\n+    ef = capture.EncodedFile(f, \"utf-8\")\n+    assert \"b\" not in ef.mode\n+    f.close()\n+\n \n def test_global_capture_with_live_logging(testdir):\n     # Issue 3819\n"
-  }
-]

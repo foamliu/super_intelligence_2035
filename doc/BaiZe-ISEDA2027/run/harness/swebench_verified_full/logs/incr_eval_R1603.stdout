@@ -1,8 +1,0 @@
-[incr-eval 23:29:50] === incr_eval R1603 for cline-patched: ['pytest-dev__pytest-10356', 'pytest-dev__pytest-5631'] ===
-[incr-eval 23:29:50] merged 466/476 predictions -> predictions/predictions_cline-patched.json
-[incr-eval 23:29:50] EVAL cline-patched on 2 instances: ['pytest-dev__pytest-10356', 'pytest-dev__pytest-5631']
-[incr-eval 23:30:02] eval finished rc=0; log -> logs/eval_incr_verified_full_cline-patched_R1603_1793806202.log
-[incr-eval 23:30:02] pytest-dev__pytest-10356: FAILED
-[incr-eval 23:30:02] pytest-dev__pytest-5631: RESOLVED
-[incr-eval 23:30:02] updated reports/eval_cline-patched.json: resolved=343 failed=123 infra=0 no_patch=10 n=476
-[incr-eval 23:30:02] === incr_eval R1603 DONE (56s) ===

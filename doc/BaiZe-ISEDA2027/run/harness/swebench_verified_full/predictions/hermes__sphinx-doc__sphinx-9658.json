@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sphinx-doc__sphinx-9658",
-    "model_name_or_path": "hermes-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py\nindex b562f47f..ee6a382f 100644\n--- a/sphinx/ext/autodoc/mock.py\n+++ b/sphinx/ext/autodoc/mock.py\n@@ -40,7 +40,7 @@ class _MockObject:\n         return super().__new__(cls)\n \n     def __init__(self, *args: Any, **kwargs: Any) -> None:\n-        self.__qualname__ = ''\n+        self.__qualname__ = self.__class__.__qualname__\n \n     def __len__(self) -> int:\n         return 0\ndiff --git a/tests/test_ext_autodoc_mock.py b/tests/test_ext_autodoc_mock.py\nindex 497bd8a6..bf1cd898 100644\n--- a/tests/test_ext_autodoc_mock.py\n+++ b/tests/test_ext_autodoc_mock.py\n@@ -150,3 +150,23 @@ def test_ismock():\n \n         assert ismock(mod2) is False\n         assert ismock(mod2.Sphinx) is False\n+\n+\n+def test_mock_object_qualname():\n+    mock = _MockObject()\n+    assert mock.__qualname__ == '_MockObject'\n+\n+    mod1 = _MockModule('foo.bar')\n+    assert mod1.Class.__qualname__ == 'Class'\n+    assert mod1.Class.sub.__qualname__ == 'sub'\n+\n+\n+def test_mock_object_restify():\n+    from sphinx.util.typing import restify\n+\n+    mock = _MockObject()\n+    assert restify(mock) == ':py:class:`sphinx.ext.autodoc.mock._MockObject`'\n+\n+    mod1 = _MockModule('foo.bar')\n+    assert restify(mod1.Class) == ':py:class:`foo.bar.Class`'\n+    assert restify(mod1.Class.sub) == ':py:class:`foo.bar.Class.sub`'\n"
-  }
-]

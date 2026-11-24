@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "astropy__astropy-7166",
-    "model_name_or_path": "codex-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/astropy/utils/misc.py b/astropy/utils/misc.py\nindex de3fb01d..cceaeb95 100644\n--- a/astropy/utils/misc.py\n+++ b/astropy/utils/misc.py\n@@ -528,7 +528,7 @@ class InheritDocstrings(type):\n                 not key.startswith('_'))\n \n         for key, val in dct.items():\n-            if (inspect.isfunction(val) and\n+            if ((inspect.isfunction(val) or isinstance(val, property)) and\n                 is_public_member(key) and\n                 val.__doc__ is None):\n                 for base in cls.__mro__[1:]:\ndiff --git a/astropy/utils/tests/test_misc.py b/astropy/utils/tests/test_misc.py\nindex 4f632e8d..6c0ee9da 100644\n--- a/astropy/utils/tests/test_misc.py\n+++ b/astropy/utils/tests/test_misc.py\n@@ -88,6 +88,20 @@ def test_inherit_docstrings():\n         # TODO: Maybe if __doc__ is None this test should be skipped instead?\n         assert Subclass.__call__.__doc__ == \"FOO\"\n \n+def test_inherit_docstrings_property():\n+    class Base(metaclass=misc.InheritDocstrings):\n+        @property\n+        def foo(self):\n+            \"FOO\"\n+            return 1\n+\n+    class Subclass(Base):\n+        @property\n+        def foo(self):\n+            return 2\n+\n+    assert Base.foo.__doc__ == \"FOO\"\n+    assert Subclass.foo.__doc__ == \"FOO\"\n \n def test_set_locale():\n     # First, test if the required locales are available\n"
-  }
-]

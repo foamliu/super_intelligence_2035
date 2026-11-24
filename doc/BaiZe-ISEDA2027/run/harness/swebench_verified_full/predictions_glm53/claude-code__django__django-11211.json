@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-11211",
-    "model_name_or_path": "claude-code-glm-5.3-flash",
-    "model_patch": "diff --git a/django/contrib/contenttypes/fields.py b/django/contrib/contenttypes/fields.py\nindex ed98ecb48c..0a0f9774de 100644\n--- a/django/contrib/contenttypes/fields.py\n+++ b/django/contrib/contenttypes/fields.py\n@@ -191,7 +191,17 @@ class GenericForeignKey(FieldCacheMixin):\n         for ct_id, fkeys in fk_dict.items():\n             instance = instance_dict[ct_id]\n             ct = self.get_content_type(id=ct_id, using=instance._state.db)\n-            ret_val.extend(ct.get_all_objects_for_this_type(pk__in=fkeys))\n+            # For doing the join in Python, we have to convert both the FK\n+            # value and the object's pk to the same type. The object_id field\n+            # (a CharField in most cases) doesn't have to be of the same type\n+            # as the related model's pk (an UUIDField in this case).\n+            object_id_converter = self.model._meta.get_field(self.fk_field).to_python\n+            ret_val.extend(\n+                obj for obj in ct.get_all_objects_for_this_type(pk__in=fkeys)\n+                # Django uses pk for these objects (self.fk_field isn't\n+                # guaranteed to be named pk).\n+                if setattr(obj, 'pk', object_id_converter(obj.pk)) is None or True\n+            )\n \n         # For doing the join in Python, we have to match both the FK val and the\n         # content type, so we use a callable that returns a (fk, class) pair.\n"
-  }
-]

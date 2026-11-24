@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "psf__requests-6028",
-    "model_name_or_path": "opencode-glm-5.3-flash",
-    "model_patch": "diff --git a/requests/utils.py b/requests/utils.py\nindex 1c2ae4e..e0c1a69 100644\n--- a/requests/utils.py\n+++ b/requests/utils.py\n@@ -974,6 +974,9 @@ def prepend_scheme_if_needed(url, new_scheme):\n     if not netloc:\n         netloc, path = path, netloc\n \n+    if auth:\n+        netloc = '@'.join([auth, netloc])\n+\n     if scheme is None:\n         scheme = new_scheme\n     if path is None:\ndiff --git a/tests/test_utils.py b/tests/test_utils.py\nindex c2186b8..29ab227 100644\n--- a/tests/test_utils.py\n+++ b/tests/test_utils.py\n@@ -602,6 +602,8 @@ def test_parse_header_links(value, expected):\n         ('example.com/path', 'http://example.com/path'),\n         ('//example.com/path', 'http://example.com/path'),\n         ('example.com:80', 'http://example.com:80'),\n+        ('http://user:pass@example.com/path', 'http://user:pass@example.com/path'),\n+        ('http://user:pass@example.com:8080/path', 'http://user:pass@example.com:8080/path'),\n     ))\n def test_prepend_scheme_if_needed(value, expected):\n     assert prepend_scheme_if_needed(value, 'http') == expected\n"
-  }
-]

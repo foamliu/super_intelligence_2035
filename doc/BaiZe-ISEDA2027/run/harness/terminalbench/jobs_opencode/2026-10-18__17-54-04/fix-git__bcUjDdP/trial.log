@@ -1,6 +1,0 @@
-Running command: ln -sf /opt/node/bin/node /usr/local/bin/node && ln -sf /opt/node/bin/npm /usr/local/bin/npm && ln -sf /opt/node/bin/npx /usr/local/bin/npx && mkdir -p /usr/local/lib/node_modules && npm config set prefix /usr/local && node --version && npm --version
-Command outputs captured
-Running command: npm install -g opencode-ai 2>&1 | tail -5
-Command outputs captured
-Trial fix-git__bcUjDdP failed: 'DockerEnvironment' object has no attribute 'default_working_dir'
-Collecting main service artifacts

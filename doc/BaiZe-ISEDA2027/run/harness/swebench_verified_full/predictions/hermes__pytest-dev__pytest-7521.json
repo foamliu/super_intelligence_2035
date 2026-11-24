@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pytest-dev__pytest-7521",
-    "model_name_or_path": "hermes-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py\nindex 3f9c60f..f538b67 100644\n--- a/src/_pytest/capture.py\n+++ b/src/_pytest/capture.py\n@@ -388,6 +388,7 @@ class FDCaptureBinary:\n                 TemporaryFile(buffering=0),  # type: ignore[arg-type]\n                 encoding=\"utf-8\",\n                 errors=\"replace\",\n+                newline=\"\",\n                 write_through=True,\n             )\n             if targetfd in patchsysdict:\ndiff --git a/testing/test_capture.py b/testing/test_capture.py\nindex a3bd4b6..2d6bb60 100644\n--- a/testing/test_capture.py\n+++ b/testing/test_capture.py\n@@ -889,6 +889,15 @@ class TestFDCapture:\n         cap.done()\n         assert s == \"hello\"\n \n+    def test_carriage_return(self, tmpfile):\n+        fd = tmpfile.fileno()\n+        cap = capture.FDCapture(fd)\n+        cap.start()\n+        os.write(fd, b\"hello\\r\")\n+        s = cap.snap()\n+        cap.done()\n+        assert s == \"hello\\r\"\n+\n     def test_simple_many(self, tmpfile):\n         for i in range(10):\n             self.test_simple(tmpfile)\n"
-  }
-]

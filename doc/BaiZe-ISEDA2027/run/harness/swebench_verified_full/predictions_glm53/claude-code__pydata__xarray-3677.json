@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pydata__xarray-3677",
-    "model_name_or_path": "claude-code-glm-5.3-flash",
-    "model_patch": "diff --git a/xarray/core/merge.py b/xarray/core/merge.py\nindex 10c7804..4058ff3 100644\n--- a/xarray/core/merge.py\n+++ b/xarray/core/merge.py\n@@ -809,6 +809,11 @@ def dataset_merge_method(\n     # method due for backwards compatibility\n     # TODO: consider deprecating it?\n \n+    from .dataarray import DataArray\n+\n+    if isinstance(other, DataArray):\n+        other = other.to_dataset()\n+\n     if isinstance(overwrite_vars, Iterable) and not isinstance(overwrite_vars, str):\n         overwrite_vars = set(overwrite_vars)\n     else:\ndiff --git a/xarray/tests/test_merge.py b/xarray/tests/test_merge.py\nindex c1e6c7a..0b1d4bf 100644\n--- a/xarray/tests/test_merge.py\n+++ b/xarray/tests/test_merge.py\n@@ -159,6 +159,19 @@ class TestMergeMethod:\n         with raises_regex(ValueError, \"should be coordinates or not\"):\n             data.merge(data.reset_coords())\n \n+    def test_merge_dataarray(self):\n+        ds = xr.Dataset({\"a\": 0})\n+        da = xr.DataArray(1, name=\"b\")\n+\n+        actual = ds.merge(da)\n+        expected = xr.merge([ds, da])\n+        assert actual.identical(expected)\n+\n+        ds2 = xr.Dataset({\"c\": 0})\n+        actual = ds.merge(ds2).merge(da)\n+        expected = xr.merge([ds, ds2, da])\n+        assert actual.identical(expected)\n+\n     def test_merge_broadcast_equals(self):\n         ds1 = xr.Dataset({\"x\": 0})\n         ds2 = xr.Dataset({\"x\": (\"y\", [0, 0])})\n"
-  }
-]

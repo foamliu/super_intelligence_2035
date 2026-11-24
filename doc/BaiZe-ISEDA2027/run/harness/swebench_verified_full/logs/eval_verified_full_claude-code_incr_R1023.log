@@ -1,19 +1,0 @@
-292 instances already run, skipping...
-Running 7 instances...
-  0%|          | 0/7 [00:00<?, ?it/s] 14%|█▍        | 1/7 [00:25<02:33, 25.65s/it]1 ran successfully, 0 failed:  14%|█▍        | 1/7 [00:25<02:33, 25.65s/it]1 ran successfully, 0 failed:  29%|██▊       | 2/7 [00:26<01:05, 13.05s/it]2 ran successfully, 0 failed:  29%|██▊       | 2/7 [00:26<01:05, 13.05s/it]2 ran successfully, 0 failed:  43%|████▎     | 3/7 [00:27<00:36,  9.06s/it]3 ran successfully, 0 failed:  43%|████▎     | 3/7 [00:27<00:36,  9.06s/it]3 ran successfully, 0 failed:  57%|█████▋    | 4/7 [00:27<00:20,  6.87s/it]4 ran successfully, 0 failed:  57%|█████▋    | 4/7 [00:27<00:20,  6.87s/it]4 ran successfully, 0 failed:  71%|███████▏  | 5/7 [00:29<00:11,  5.94s/it]5 ran successfully, 0 failed:  71%|███████▏  | 5/7 [00:29<00:11,  5.94s/it]5 ran successfully, 0 failed:  86%|████████▌ | 6/7 [00:30<00:05,  5.14s/it]6 ran successfully, 0 failed:  86%|████████▌ | 6/7 [00:30<00:05,  5.14s/it]6 ran successfully, 0 failed: 100%|██████████| 7/7 [30:19<00:00, 259.91s/it]7 ran successfully, 0 failed: 100%|██████████| 7/7 [30:19<00:00, 259.91s/it]7 ran successfully, 0 failed: 100%|██████████| 7/7 [30:19<00:00, 259.91s/it]
-Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
-Check (logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
-All instances run.
-Total instances: 299
-Instances submitted: 299
-Instances completed: 298
-Instances incomplete: 0
-Instances resolved: 227
-Instances unresolved: 71
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 12
-Instances with empty patches: 0
-Instances with errors: 1
-Unstopped containers: 0
-Unremoved images: 299
-Report written to claude-code-kimi-k2.6-cloud.verified_full_claude-code.json

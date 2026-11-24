@@ -1,3 +1,0 @@
-Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
-Trial fix-git__PmnEi79 failed: Agent setup timed out after 600.0 seconds
-Collecting main service artifacts

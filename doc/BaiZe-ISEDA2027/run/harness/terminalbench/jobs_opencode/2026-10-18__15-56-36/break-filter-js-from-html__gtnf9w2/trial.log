@@ -1,8 +1,0 @@
-Running command: curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-Command failed
-Trial break-filter-js-from-html__gtnf9w2 failed: Command failed (exit 127): curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-stdout: bash: line 1: curl: command not found
-
-
-stderr: None
-Collecting main service artifacts

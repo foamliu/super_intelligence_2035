@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pydata__xarray-3677",
-    "model_name_or_path": "hermes-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/xarray/core/merge.py b/xarray/core/merge.py\nindex 10c7804..41ee410 100644\n--- a/xarray/core/merge.py\n+++ b/xarray/core/merge.py\n@@ -808,6 +808,10 @@ def dataset_merge_method(\n     # we are locked into supporting overwrite_vars for the Dataset.merge\n     # method due for backwards compatibility\n     # TODO: consider deprecating it?\n+    from .dataarray import DataArray\n+\n+    if isinstance(other, DataArray):\n+        other = other.to_dataset()\n \n     if isinstance(overwrite_vars, Iterable) and not isinstance(overwrite_vars, str):\n         overwrite_vars = set(overwrite_vars)\ndiff --git a/xarray/tests/test_merge.py b/xarray/tests/test_merge.py\nindex c1e6c7a..2d1b3d1 100644\n--- a/xarray/tests/test_merge.py\n+++ b/xarray/tests/test_merge.py\n@@ -253,3 +253,10 @@ class TestMergeMethod:\n         with pytest.raises(xr.MergeError):\n             ds3 = xr.Dataset({\"a\": (\"y\", [2, 3]), \"y\": [1, 2]})\n             ds1.merge(ds3, compat=\"no_conflicts\")\n+\n+    def test_merge_dataarray(self):\n+        ds = xr.Dataset({\"a\": 0})\n+        da = xr.DataArray(1, name=\"b\")\n+        expected = xr.merge([ds, da])\n+        actual = ds.merge(da)\n+        assert expected.identical(actual)\n"
-  }
-]

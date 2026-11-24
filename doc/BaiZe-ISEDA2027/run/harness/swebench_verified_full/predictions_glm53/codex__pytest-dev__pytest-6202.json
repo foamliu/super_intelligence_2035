@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pytest-dev__pytest-6202",
-    "model_name_or_path": "codex-glm-5.3-flash",
-    "model_patch": "diff --git a/src/_pytest/python.py b/src/_pytest/python.py\nindex b8b365a..5f2af31 100644\n--- a/src/_pytest/python.py\n+++ b/src/_pytest/python.py\n@@ -286,7 +286,7 @@ class PyobjMixin(PyobjContext):\n             parts.append(name)\n         parts.reverse()\n         s = \".\".join(parts)\n-        return s.replace(\".[\", \"[\")\n+        return s\n \n     def reportinfo(self):\n         # XXX caching?\ndiff --git a/testing/test_collection.py b/testing/test_collection.py\nindex 8050e80..92e1cde 100644\n--- a/testing/test_collection.py\n+++ b/testing/test_collection.py\n@@ -711,6 +711,19 @@ class Test_genitems:\n         assert s.endswith(\"test_example_items1.testone\")\n         print(s)\n \n+    def test_getmodpath_preserves_parametrized_ids(self, testdir):\n+        p = testdir.makepyfile(\n+            \"\"\"\n+            import pytest\n+\n+            @pytest.mark.parametrize(\"a\", [\"..[\"])\n+            def test_boo(a):\n+                pass\n+            \"\"\"\n+        )\n+        items, _ = testdir.inline_genitems(p)\n+        assert items[0].getmodpath() == \"test_boo[..[]\"\n+\n     def test_class_and_functions_discovery_using_glob(self, testdir):\n         \"\"\"\n         tests that python_classes and python_functions config options work\n"
-  }
-]

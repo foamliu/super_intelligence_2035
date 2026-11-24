@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "psf__requests-6028",
-    "model_name_or_path": "opencode-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/requests/utils.py b/requests/utils.py\nindex 1c2ae4e..d834c5f 100644\n--- a/requests/utils.py\n+++ b/requests/utils.py\n@@ -974,6 +974,11 @@ def prepend_scheme_if_needed(url, new_scheme):\n     if not netloc:\n         netloc, path = path, netloc\n \n+    if auth:\n+        # parse_url doesn't provide the netloc with auth\n+        # so we'll add it ourselves.\n+        netloc = '@'.join([auth, netloc])\n+\n     if scheme is None:\n         scheme = new_scheme\n     if path is None:\ndiff --git a/tests/test_utils.py b/tests/test_utils.py\nindex c2186b8..8e98397 100644\n--- a/tests/test_utils.py\n+++ b/tests/test_utils.py\n@@ -602,6 +602,14 @@ def test_parse_header_links(value, expected):\n         ('example.com/path', 'http://example.com/path'),\n         ('//example.com/path', 'http://example.com/path'),\n         ('example.com:80', 'http://example.com:80'),\n+        (\n+            'http://user:pass@example.com/path?query',\n+            'http://user:pass@example.com/path?query'\n+        ),\n+        (\n+            'http://user@example.com/path?query',\n+            'http://user@example.com/path?query'\n+        )\n     ))\n def test_prepend_scheme_if_needed(value, expected):\n     assert prepend_scheme_if_needed(value, 'http') == expected\n"
-  }
-]

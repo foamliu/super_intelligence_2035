@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "astropy__astropy-8707",
-    "model_name_or_path": "hermes-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py\nindex 8c1ac5d7..58d98253 100644\n--- a/astropy/io/fits/card.py\n+++ b/astropy/io/fits/card.py\n@@ -553,6 +553,9 @@ class Card(_Verify):\n         card(s).\n         \"\"\"\n \n+        if isinstance(image, bytes):\n+            image = image.decode('ascii')\n+\n         card = cls()\n         card._image = _pad(image)\n         card._verified = False\ndiff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py\nindex ad07e6d5..f1fbf768 100644\n--- a/astropy/io/fits/header.py\n+++ b/astropy/io/fits/header.py\n@@ -334,10 +334,10 @@ class Header:\n \n         Parameters\n         ----------\n-        data : str\n+        data : str or bytes\n            String containing the entire header.\n \n-        sep : str, optional\n+        sep : str or bytes, optional\n             The string separating cards from each other, such as a newline.  By\n             default there is no card separator (as is the case in a raw FITS\n             file).\n@@ -348,6 +348,11 @@ class Header:\n             A new `Header` instance.\n         \"\"\"\n \n+        if isinstance(data, bytes):\n+            data = decode_ascii(data)\n+        if isinstance(sep, bytes):\n+            sep = decode_ascii(sep)\n+\n         cards = []\n \n         # If the card separator contains characters that may validly appear in\n"
-  }
-]

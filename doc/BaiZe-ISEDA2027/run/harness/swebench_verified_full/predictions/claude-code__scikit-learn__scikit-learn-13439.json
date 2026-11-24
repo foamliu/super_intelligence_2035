@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "scikit-learn__scikit-learn-13439",
-    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sklearn/pipeline.py b/sklearn/pipeline.py\nindex 7eaf9a46..d1d03656 100644\n--- a/sklearn/pipeline.py\n+++ b/sklearn/pipeline.py\n@@ -199,6 +199,12 @@ class Pipeline(_BaseComposition):\n             if trans is not None and trans != 'passthrough':\n                 yield idx, name, trans\n \n+    def __len__(self):\n+        \"\"\"\n+        Returns the length of the Pipeline\n+        \"\"\"\n+        return len(self.steps)\n+\n     def __getitem__(self, ind):\n         \"\"\"Returns a sub-pipeline or a single esimtator in the pipeline\n \ndiff --git a/sklearn/tests/test_pipeline.py b/sklearn/tests/test_pipeline.py\nindex 8d6fe8f7..09d862c9 100644\n--- a/sklearn/tests/test_pipeline.py\n+++ b/sklearn/tests/test_pipeline.py\n@@ -529,6 +529,15 @@ def test_pipeline_fit_transform():\n     assert_array_almost_equal(X_trans, X_trans2)\n \n \n+def test_pipeline_len():\n+    pipe = Pipeline([('transf1', Transf()),\n+                     ('transf2', Transf()),\n+                     ('clf', FitParamT())])\n+    assert 3 == len(pipe)\n+    pipe = Pipeline([('transf1', Transf())])\n+    assert 1 == len(pipe)\n+\n+\n def test_pipeline_slice():\n     pipe = Pipeline([('transf1', Transf()),\n                      ('transf2', Transf()),\n"
-  }
-]

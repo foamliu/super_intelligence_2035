@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-13109",
-    "model_name_or_path": "codex-glm-5.3-flash",
-    "model_patch": "diff --git a/django/db/models/fields/related.py b/django/db/models/fields/related.py\nindex d517d7269b..c2aea9c730 100644\n--- a/django/db/models/fields/related.py\n+++ b/django/db/models/fields/related.py\n@@ -914,7 +914,7 @@ class ForeignKey(ForeignObject):\n             return\n \n         using = router.db_for_read(self.remote_field.model, instance=model_instance)\n-        qs = self.remote_field.model._default_manager.using(using).filter(\n+        qs = self.remote_field.model._base_manager.using(using).filter(\n             **{self.remote_field.field_name: value}\n         )\n         qs = qs.complex_filter(self.get_limit_choices_to())\ndiff --git a/tests/managers_regress/tests.py b/tests/managers_regress/tests.py\nindex 7fa6815959..e18a57ca30 100644\n--- a/tests/managers_regress/tests.py\n+++ b/tests/managers_regress/tests.py\n@@ -161,6 +161,12 @@ class ManagersRegressionTests(TestCase):\n         relation = related.test_fk.create()\n         self.assertEqual(related.test_fk.get(), relation)\n \n+    def test_fk_validate_uses_base_manager(self):\n+        \"\"\"ForeignKey.validate() ignores filters from the default manager.\"\"\"\n+        related = RelatedModel.objects.create()\n+        relation = RelationModel(fk=related)\n+        relation.full_clean(exclude=['gfk_ctype', 'gfk_id'])\n+\n \n @isolate_apps('managers_regress')\n class TestManagerInheritance(SimpleTestCase):\n"
-  }
-]

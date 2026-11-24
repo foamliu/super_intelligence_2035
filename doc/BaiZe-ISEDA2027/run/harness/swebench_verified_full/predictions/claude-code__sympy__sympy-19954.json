@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-19954",
-    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/combinatorics/perm_groups.py b/sympy/combinatorics/perm_groups.py\nindex de94ddabb..ca2d1ee09 100644\n--- a/sympy/combinatorics/perm_groups.py\n+++ b/sympy/combinatorics/perm_groups.py\n@@ -2195,7 +2195,8 @@ def _number_blocks(blocks):\n                 # respect to the already discovere ones\n                 minimal = True\n                 to_remove = []\n-                for i, r in enumerate(rep_blocks):\n+                for i in range(len(rep_blocks) - 1, -1, -1):\n+                    r = rep_blocks[i]\n                     if len(r) > len(rep) and rep.issubset(r):\n                         # i-th block system is not minimal\n                         del num_blocks[i], blocks[i]\n"
-  }
-]

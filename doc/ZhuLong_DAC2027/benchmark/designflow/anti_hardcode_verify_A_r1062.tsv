@@ -1,2 +1,0 @@
-case_id	domain	k_check	ref_pass	bundled_negs	a_empty	b_hardcodeA	c_coredeleted	verdict	note
-EDA-Eval-DesignFlow-StimulusPatternExtend-001	eda_other	10	PASS	5/5 FAIL	FAIL(cond1)	PASS(theoretical-ceiling)	FAIL(cond5a)	§4.9OK	produce-task(deliverable=edited .sp files); hardcode-A PASS=theoretical ceiling(SUT can't see ref, B used only for cond9 specificity-oracle b_only_tokens); cond10 randomization 3-seed; §4.1 hidden-B isolation OK(attachments only A files, hidden/ not in SUT sandbox). GAP stale (static-analysis artifact, same as r1060/r1053/r1054 pattern).

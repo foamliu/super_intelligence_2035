@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pydata__xarray-6992",
-    "model_name_or_path": "claude-code-glm-5.3-flash",
-    "model_patch": "diff --git a/xarray/core/dataset.py b/xarray/core/dataset.py\nindex 620f32f..b937a4f 100644\n--- a/xarray/core/dataset.py\n+++ b/xarray/core/dataset.py\n@@ -4178,6 +4178,8 @@ class Dataset(\n         variables.update(new_variables)\n \n         coord_names = set(new_variables) | self._coord_names\n+        if drop:\n+            coord_names -= set(drop_variables)\n \n         return self._replace(variables, coord_names=coord_names, indexes=indexes)\n \ndiff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py\nindex fc2806c..68397e3 100644\n--- a/xarray/tests/test_dataset.py\n+++ b/xarray/tests/test_dataset.py\n@@ -3253,6 +3253,14 @@ class TestDataset:\n         with pytest.raises(ValueError, match=r\".*not coordinates with an index\"):\n             ds.reset_index(\"y\")\n \n+    def test_reset_index_drop_stale_coord_names(self) -> None:\n+        # GH#6905\n+        ds = xr.Dataset(coords={\"a\": (\"x\", [1, 2, 3]), \"b\": (\"x\", [\"a\", \"b\", \"c\"])})\n+        obj = ds.set_index(z=[\"a\", \"b\"]).reset_index(\"z\", drop=True)\n+        assert len(obj._coord_names) == len(obj._variables)\n+        assert obj._coord_names == set(obj._variables)\n+        assert_identical(obj, ds.rename(x=\"z\"))\n+\n     def test_reset_index_keep_attrs(self) -> None:\n         coord_1 = DataArray([1, 2], dims=[\"coord_1\"], attrs={\"attrs\": True})\n         ds = Dataset({}, {\"coord_1\": coord_1})\n"
-  }
-]

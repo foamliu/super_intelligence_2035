@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "matplotlib__matplotlib-23476",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/lib/matplotlib/backend_bases.py b/lib/matplotlib/backend_bases.py\nindex 9ae2982c..99d0eee2 100644\n--- a/lib/matplotlib/backend_bases.py\n+++ b/lib/matplotlib/backend_bases.py\n@@ -1653,7 +1653,8 @@ class FigureCanvasBase:\n         self.toolbar = None  # NavigationToolbar2 will set me\n         self._is_idle_drawing = False\n         # We don't want to scale up the figure DPI more than once.\n-        figure._original_dpi = figure.dpi\n+        if not hasattr(figure, '_original_dpi'):\n+            figure._original_dpi = figure.dpi\n         self._device_pixel_ratio = 1\n         super().__init__()  # Typically the GUI widget init (if any).\n \ndiff --git a/lib/matplotlib/tests/test_pickle.py b/lib/matplotlib/tests/test_pickle.py\nindex 0d0a5e59..fcc40dac 100644\n--- a/lib/matplotlib/tests/test_pickle.py\n+++ b/lib/matplotlib/tests/test_pickle.py\n@@ -216,6 +216,17 @@ def test_unpickle_canvas():\n     fig2 = pickle.load(out)\n     assert fig2.canvas is not None\n \n+def test_pickle_preserves_original_dpi():\n+    fig = mfigure.Figure(dpi=100)\n+    fig._original_dpi = 100\n+    # Simulate what a high-DPI canvas does:\n+    fig.dpi = 200\n+    out = BytesIO()\n+    pickle.dump(fig, out)\n+    out.seek(0)\n+    fig2 = pickle.load(out)\n+    assert fig2._original_dpi == 100\n+    assert fig2.dpi == 200\n \n def test_mpl_toolkits():\n     ax = parasite_axes.host_axes([0, 0, 1, 1])\n"
-  }
-]

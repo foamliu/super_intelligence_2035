@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pytest-dev__pytest-5262",
-    "model_name_or_path": "opencode-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py\nindex 25eab7f..5601711 100644\n--- a/src/_pytest/capture.py\n+++ b/src/_pytest/capture.py\n@@ -447,6 +447,10 @@ class EncodedFile(object):\n         \"\"\"Ensure that file.name is a string.\"\"\"\n         return repr(self.buffer)\n \n+    @property\n+    def mode(self):\n+        return self.buffer.mode.replace(\"b\", \"\")\n+\n     def __getattr__(self, name):\n         return getattr(object.__getattribute__(self, \"buffer\"), name)\n \ndiff --git a/testing/test_capture.py b/testing/test_capture.py\nindex 5d80eb6..bf0f431 100644\n--- a/testing/test_capture.py\n+++ b/testing/test_capture.py\n@@ -1461,6 +1461,13 @@ def test_pickling_and_unpickling_encoded_file():\n     pickle.loads(ef_as_str)\n \n \n+def test_encoded_file_mode():\n+    buffer = io.BytesIO()\n+    buffer.mode = \"rb+\"\n+    ef = capture.EncodedFile(buffer, \"utf-8\")\n+    assert ef.mode == \"r+\"\n+\n+\n def test_global_capture_with_live_logging(testdir):\n     # Issue 3819\n     # capture should work with live cli logging\n"
-  }
-]

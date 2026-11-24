@@ -1,51 +1,0 @@
-=== incr_eval_1route R1539 START Wed Nov  4 08:51:46 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
-[Wed Nov  4 08:51:46 AM CST 2026] === merge codex predictions ===
-codex: 344 real patches merged
-[Wed Nov  4 08:51:46 AM CST 2026] === codex eval START 1 new instances ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [01:35<00:00, 95.76s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:35<00:00, 95.76s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:35<00:00, 95.76s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 0
-Instances unresolved: 1
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 2
-Unremoved images: 1
-Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
-[Wed Nov  4 08:53:26 AM CST 2026] === codex eval DONE ===
-[Wed Nov  4 08:53:26 AM CST 2026] === merge deepseek-harness predictions ===
-deepseek-harness: 199 real patches merged
-[Wed Nov  4 08:53:26 AM CST 2026] === deepseek-harness eval START 1 new instances ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:25<00:00, 25.99s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.99s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:25<00:00, 25.99s/it]
-All instances run.
-Total instances: 1
-Instances submitted: 1
-Instances completed: 1
-Instances incomplete: 0
-Instances resolved: 1
-Instances unresolved: 0
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 0
-Instances with empty patches: 0
-Instances with errors: 0
-Unstopped containers: 6
-Unremoved images: 1
-Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
-[Wed Nov  4 08:53:56 AM CST 2026] === deepseek-harness eval DONE ===
-[Wed Nov  4 08:53:56 AM CST 2026] === regen eval summaries ===
-regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
-  cline-patched: unchanged (n=500 resolved=326 failed=116 infra=0 no_patch=58)
-  opencode: unchanged (n=500 resolved=401 failed=96 infra=0 no_patch=3)
-  pi: unchanged (n=475 resolved=333 failed=130 infra=0 no_patch=12)
-  claude-code: unchanged (n=433 resolved=273 failed=85 infra=0 no_patch=75)
-  codex: WROTE eval_codex.json  n=468 resolved=273 failed=71 infra=0 no_patch=124)
-  hermes: unchanged (n=314 resolved=184 failed=46 infra=0 no_patch=84)
-  deepseek-harness: WROTE eval_deepseek-harness.json  n=206 resolved=164 failed=35 infra=0 no_patch=7)
-=== incr_eval_1route R1539 DONE Wed Nov  4 08:53:57 AM CST 2026 ===

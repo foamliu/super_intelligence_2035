@@ -1,6 +1,0 @@
-[verified-full 13:20:23] resume: loaded 10 existing results
-[verified-full 13:20:23] [1/500] PREDICT pi on sphinx-doc__sphinx-8120
-[verified-full 13:35:15]   -> patch-produced (patch=2635B wall=887.4s)
-[verified-full 13:35:15] [2/500] PREDICT pi on sphinx-doc__sphinx-8265
-[verified-full 13:43:13]   -> patch-produced (patch=2369B wall=475.8s)
-[verified-full 13:43:13] [3/500] PREDICT pi on sphinx-doc__sphinx-8269

@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "psf__requests-1724",
-    "model_name_or_path": "deepseek-harness-glm-5.3-flash",
-    "model_patch": "diff --git a/requests/sessions.py b/requests/sessions.py\nindex cc72f65..7ac2ba8 100644\n--- a/requests/sessions.py\n+++ b/requests/sessions.py\n@@ -13,6 +13,7 @@ from collections import Mapping\n from datetime import datetime\n \n from .compat import cookielib, OrderedDict, urljoin, urlparse, urlunparse\n+from .compat import builtin_str as _builtin_str\n from .cookies import cookiejar_from_dict, extract_cookies_to_jar, RequestsCookieJar\n from .models import Request, PreparedRequest\n from .hooks import default_hooks, dispatch_hook\n@@ -311,7 +312,7 @@ class Session(SessionRedirectMixin):\n         \"\"\"\n         # Create the Request.\n         req = Request(\n-            method = method.upper(),\n+            method = _builtin_str(method).upper(),\n             url = url,\n             headers = headers,\n             files = files,\n"
-  }
-]

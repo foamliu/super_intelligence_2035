@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "scikit-learn__scikit-learn-15100",
-    "model_name_or_path": "claude-code-glm-5.3-flash",
-    "model_patch": "diff --git a/sklearn/feature_extraction/tests/test_text.py b/sklearn/feature_extraction/tests/test_text.py\nindex 7b7697ff..00904aa4 100644\n--- a/sklearn/feature_extraction/tests/test_text.py\n+++ b/sklearn/feature_extraction/tests/test_text.py\n@@ -97,6 +97,16 @@ def test_strip_accents():\n     expected = 'this is a test'\n     assert strip_accents_unicode(a) == expected\n \n+    # strings that are already in NFKD form\n+    a = 'o\\u0308'  # 'o' + COMBINING DIAERESIS\n+    expected = 'o'\n+    assert strip_accents_unicode(a) == expected\n+\n+    # composed form, one code point: 'LATIN SMALL LETTER O WITH DIAERESIS'\n+    a = '\u00f6'\n+    expected = 'o'\n+    assert strip_accents_unicode(a) == expected\n+\n \n def test_to_ascii():\n     # check some classical latin accentuated symbols\ndiff --git a/sklearn/feature_extraction/text.py b/sklearn/feature_extraction/text.py\nindex bb5a9d64..11236d95 100644\n--- a/sklearn/feature_extraction/text.py\n+++ b/sklearn/feature_extraction/text.py\n@@ -130,10 +130,7 @@ def strip_accents_unicode(s):\n         ASCII equivalent.\n     \"\"\"\n     normalized = unicodedata.normalize('NFKD', s)\n-    if normalized == s:\n-        return s\n-    else:\n-        return ''.join([c for c in normalized if not unicodedata.combining(c)])\n+    return ''.join([c for c in normalized if not unicodedata.combining(c)])\n \n \n def strip_accents_ascii(s):\n"
-  }
-]

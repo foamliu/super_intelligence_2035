@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "astropy__astropy-7606",
-    "model_name_or_path": "opencode-glm-5.3-flash",
-    "model_patch": "diff --git a/astropy/units/core.py b/astropy/units/core.py\nindex e9bd986d..9d483f67 100644\n--- a/astropy/units/core.py\n+++ b/astropy/units/core.py\n@@ -1710,7 +1710,8 @@ class UnrecognizedUnit(IrreducibleUnit):\n         _unrecognized_operator\n \n     def __eq__(self, other):\n-        other = Unit(other, parse_strict='silent')\n+        if isinstance(other, str):\n+            other = Unit(other, parse_strict='silent')\n         return isinstance(other, UnrecognizedUnit) and self.name == other.name\n \n     def __ne__(self, other):\ndiff --git a/astropy/units/tests/test_units.py b/astropy/units/tests/test_units.py\nindex 000c12d2..66543364 100644\n--- a/astropy/units/tests/test_units.py\n+++ b/astropy/units/tests/test_units.py\n@@ -198,6 +198,14 @@ def test_unknown_unit3():\n         unit5 = u.Unit(None)\n \n \n+def test_unrecognized_unit_none():\n+    # Regression test for #5065: comparing an UnrecognizedUnit with\n+    # None should return False, not raise a TypeError.\n+    x = u.Unit('asdf', parse_strict='silent')\n+    assert (x == None) is False\n+    assert (x != None) is True\n+\n+\n @raises(TypeError)\n def test_invalid_scale():\n     x = ['a', 'b', 'c'] * u.m\n"
-  }
-]

@@ -1,4 +1,0 @@
-Running command: pip install --break-system-packages --upgrade pip && pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
-Command outputs captured
-Trial fix-git__xeAGM4i failed: 'DockerEnvironment' object has no attribute 'default_working_dir'
-Collecting main service artifacts

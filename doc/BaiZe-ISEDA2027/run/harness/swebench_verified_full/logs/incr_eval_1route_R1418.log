@@ -1,6 +1,0 @@
-=== incr_eval_1route R1418 START Tue Nov  3 01:24:45 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
-[Tue Nov  3 01:24:45 PM CST 2026] === merge deepseek-harness predictions ===
-deepseek-harness: 155 real patches merged
-[Tue Nov  3 01:24:46 PM CST 2026] === deepseek-harness eval START 1 new instances ===
-Running 1 instances...
-  0%|          | 0/1 [00:00<?, ?it/s]

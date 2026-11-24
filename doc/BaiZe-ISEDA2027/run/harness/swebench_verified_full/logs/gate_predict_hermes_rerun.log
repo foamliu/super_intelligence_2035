@@ -1,4 +1,0 @@
-[verified-full 11:27:06] resume: loaded 10 existing results
-[verified-full 11:27:06] [1/9] PREDICT hermes on sympy__sympy-11618
-[verified-full 11:36:45]   -> patch-produced (patch=1269B wall=578.7s)
-[verified-full 11:36:45] [2/9] PREDICT hermes on sphinx-doc__sphinx-10323

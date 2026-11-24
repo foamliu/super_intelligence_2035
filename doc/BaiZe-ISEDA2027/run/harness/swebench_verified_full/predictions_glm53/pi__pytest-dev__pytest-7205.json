@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "pytest-dev__pytest-7205",
-    "model_name_or_path": "pi-glm-5.3-flash",
-    "model_patch": "diff --git a/changelog/7126.bugfix.rst b/changelog/7126.bugfix.rst\nnew file mode 100644\nindex 0000000..4873685\n--- /dev/null\n+++ b/changelog/7126.bugfix.rst\n@@ -0,0 +1 @@\n+Fix crash with ``BytesWarning`` when using ``--setup-show`` with a bytes parameter.\n"
-  }
-]

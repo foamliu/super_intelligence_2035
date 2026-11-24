@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-20590",
-    "model_name_or_path": "hermes-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/core/_print_helpers.py b/sympy/core/_print_helpers.py\nindex 96d7e726..b72e022e 100644\n--- a/sympy/core/_print_helpers.py\n+++ b/sympy/core/_print_helpers.py\n@@ -6,6 +6,7 @@\n \"\"\"\n \n class Printable:\n+    __slots__ = ()\n     \"\"\"\n     The default implementation of printing for SymPy classes.\n \n"
-  }
-]

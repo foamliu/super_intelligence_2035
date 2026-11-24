@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-11728",
-    "model_name_or_path": "pi-glm-5.3-flash",
-    "model_patch": "diff --git a/django/contrib/admindocs/utils.py b/django/contrib/admindocs/utils.py\nindex 1ce4594501..27c9e5d4f6 100644\n--- a/django/contrib/admindocs/utils.py\n+++ b/django/contrib/admindocs/utils.py\n@@ -180,7 +180,8 @@ def replace_named_groups(pattern):\n             elif val == ')' and prev_char != '\\\\':\n                 unmatched_open_brackets -= 1\n             prev_char = val\n-\n+        else:\n+            group_pattern_and_name.append((pattern[start:end + idx + 1], group_name))\n     # Replace the string for named capture groups with their group names.\n     for group_pattern, group_name in group_pattern_and_name:\n         pattern = pattern.replace(group_pattern, group_name)\n@@ -212,7 +213,8 @@ def replace_unnamed_groups(pattern):\n             elif val == ')' and prev_char != '\\\\':\n                 unmatched_open_brackets -= 1\n             prev_char = val\n-\n+        else:\n+            group_indices.append((start, start + 1 + idx + 1))\n     # Remove unnamed group matches inside other unnamed capture groups.\n     group_start_end_indices = []\n     prev_end = None\n"
-  }
-]

@@ -1,1 +1,0 @@
-2026-11-13 designflow 日报：执行 1109→1113 全量重扫描扩池（mc≥10 fresh 518→737, +42%），4 shard 切换新池后产出回暖（A 11 轮 +2 case, B 16 轮 +6 case 含 1113 池首条, D 27 轮 +4 case, C 49 轮 r522 破 92 连续 0-case 找到 L2 produce-task 候选），jsonl 全集 1218→1226；压缩消融 ABBA 6 轮全部完成，basic 稳定优 agentic ~10pp（69.2% vs 59.2%）；论文完成刷新（Full/Lite 叙事 + 去infra化 + 压缩消融入附录，已推送 833ed5d89）。

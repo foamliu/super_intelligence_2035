@@ -1,76 +1,0 @@
-388 instances already run, skipping...
-Running 25 instances...
-  0%|          | 0/25 [00:00<?, ?it/s]  4%|▍         | 1/25 [00:22<08:55, 22.32s/it]1 ran successfully, 0 failed:   4%|▍         | 1/25 [00:22<08:55, 22.32s/it]1 ran successfully, 0 failed:   8%|▊         | 2/25 [00:24<04:47, 12.50s/it]2 ran successfully, 0 failed:   8%|▊         | 2/25 [00:24<04:47, 12.50s/it]2 ran successfully, 0 failed:  12%|█▏        | 3/25 [00:46<05:38, 15.37s/it]3 ran successfully, 0 failed:  12%|█▏        | 3/25 [00:46<05:38, 15.37s/it]3 ran successfully, 0 failed:  16%|█▌        | 4/25 [00:56<04:57, 14.17s/it]4 ran successfully, 0 failed:  16%|█▌        | 4/25 [00:56<04:57, 14.17s/it]4 ran successfully, 0 failed:  20%|██        | 5/25 [01:18<05:12, 15.60s/it]5 ran successfully, 0 failed:  20%|██        | 5/25 [01:18<05:12, 15.60s/it]5 ran successfully, 0 failed:  24%|██▍       | 6/25 [01:28<04:41, 14.82s/it]6 ran successfully, 0 failed:  24%|██▍       | 6/25 [01:28<04:41, 14.82s/it]6 ran successfully, 0 failed:  28%|██▊       | 7/25 [01:31<03:56, 13.12s/it]7 ran successfully, 0 failed:  28%|██▊       | 7/25 [01:31<03:56, 13.12s/it]7 ran successfully, 0 failed:  32%|███▏      | 8/25 [01:34<03:19, 11.75s/it]8 ran successfully, 0 failed:  32%|███▏      | 8/25 [01:34<03:19, 11.75s/it]8 ran successfully, 0 failed:  36%|███▌      | 9/25 [01:34<02:47, 10.47s/it]9 ran successfully, 0 failed:  36%|███▌      | 9/25 [01:34<02:47, 10.47s/it]9 ran successfully, 0 failed:  40%|████      | 10/25 [01:34<02:22,  9.48s/it]10 ran successfully, 0 failed:  40%|████      | 10/25 [01:34<02:22,  9.48s/it]10 ran successfully, 0 failed:  44%|████▍     | 11/25 [01:43<02:11,  9.42s/it]11 ran successfully, 0 failed:  44%|████▍     | 11/25 [01:43<02:11,  9.42s/it]11 ran successfully, 0 failed:  48%|████▊     | 12/25 [01:49<01:59,  9.16s/it]12 ran successfully, 0 failed:  48%|████▊     | 12/25 [01:49<01:59,  9.16s/it]12 ran successfully, 0 failed:  52%|█████▏    | 13/25 [01:52<01:44,  8.67s/it]13 ran successfully, 0 failed:  52%|█████▏    | 13/25 [01:52<01:44,  8.67s/it]13 ran successfully, 0 failed:  56%|█████▌    | 14/25 [01:52<01:28,  8.07s/it]14 ran successfully, 0 failed:  56%|█████▌    | 14/25 [01:52<01:28,  8.07s/it]14 ran successfully, 0 failed:  60%|██████    | 15/25 [02:06<01:24,  8.42s/it]15 ran successfully, 0 failed:  60%|██████    | 15/25 [02:06<01:24,  8.42s/it]15 ran successfully, 0 failed:  64%|██████▍   | 16/25 [02:10<01:13,  8.18s/it]16 ran successfully, 0 failed:  64%|██████▍   | 16/25 [02:10<01:13,  8.18s/it]16 ran successfully, 0 failed:  68%|██████▊   | 17/25 [02:11<01:02,  7.76s/it]17 ran successfully, 0 failed:  68%|██████▊   | 17/25 [02:11<01:02,  7.76s/it]17 ran successfully, 0 failed:  72%|███████▏  | 18/25 [02:17<00:53,  7.63s/it]18 ran successfully, 0 failed:  72%|███████▏  | 18/25 [02:17<00:53,  7.63s/it]18 ran successfully, 0 failed:  76%|███████▌  | 19/25 [02:25<00:45,  7.63s/it]19 ran successfully, 0 failed:  76%|███████▌  | 19/25 [02:25<00:45,  7.63s/it]19 ran successfully, 0 failed:  80%|████████  | 20/25 [02:28<00:37,  7.42s/it]20 ran successfully, 0 failed:  80%|████████  | 20/25 [02:28<00:37,  7.42s/it]20 ran successfully, 0 failed:  84%|████████▍ | 21/25 [02:46<00:31,  7.94s/it]21 ran successfully, 0 failed:  84%|████████▍ | 21/25 [02:46<00:31,  7.94s/it]21 ran successfully, 0 failed:  88%|████████▊ | 22/25 [03:06<00:25,  8.47s/it]22 ran successfully, 0 failed:  88%|████████▊ | 22/25 [03:06<00:25,  8.47s/it]22 ran successfully, 0 failed:  92%|█████████▏| 23/25 [03:47<00:19,  9.87s/it]23 ran successfully, 0 failed:  92%|█████████▏| 23/25 [03:47<00:19,  9.87s/it]23 ran successfully, 0 failed:  96%|█████████▌| 24/25 [04:10<00:10, 10.44s/it]24 ran successfully, 0 failed:  96%|█████████▌| 24/25 [04:10<00:10, 10.44s/it]24 ran successfully, 0 failed: 100%|██████████| 25/25 [30:17<00:00, 72.70s/it]25 ran successfully, 0 failed: 100%|██████████| 25/25 [30:17<00:00, 72.70s/it]25 ran successfully, 0 failed: 100%|██████████| 25/25 [30:17<00:00, 72.70s/it]
-Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
-Check (logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
-All instances run.
-Total instances: 413
-Instances submitted: 413
-Instances completed: 412
-Instances incomplete: 0
-Instances resolved: 302
-Instances unresolved: 110
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 19
-Instances with empty patches: 0
-Instances with errors: 1
-Unstopped containers: 0
-Unremoved images: 413
-Report written to cline-kimi-k2.6-cloud.verified_full_cline-patched.json
-412 instances already run, skipping...
-Running 7 instances...
-  0%|          | 0/7 [00:00<?, ?it/s] 14%|█▍        | 1/7 [00:22<02:15, 22.57s/it]1 ran successfully, 0 failed:  14%|█▍        | 1/7 [00:22<02:15, 22.57s/it]1 ran successfully, 0 failed:  29%|██▊       | 2/7 [00:23<00:58, 11.68s/it]2 ran successfully, 0 failed:  29%|██▊       | 2/7 [00:23<00:58, 11.68s/it]2 ran successfully, 0 failed:  43%|████▎     | 3/7 [00:23<00:31,  7.82s/it]3 ran successfully, 0 failed:  43%|████▎     | 3/7 [00:23<00:31,  7.82s/it]3 ran successfully, 0 failed:  57%|█████▋    | 4/7 [00:26<00:19,  6.64s/it]4 ran successfully, 0 failed:  57%|█████▋    | 4/7 [00:26<00:19,  6.64s/it]4 ran successfully, 0 failed:  71%|███████▏  | 5/7 [00:37<00:14,  7.40s/it]5 ran successfully, 0 failed:  71%|███████▏  | 5/7 [00:37<00:14,  7.40s/it]5 ran successfully, 0 failed:  86%|████████▌ | 6/7 [02:06<00:21, 21.12s/it]6 ran successfully, 0 failed:  86%|████████▌ | 6/7 [02:06<00:21, 21.12s/it]6 ran successfully, 0 failed: 100%|██████████| 7/7 [30:18<00:00, 259.79s/it]7 ran successfully, 0 failed: 100%|██████████| 7/7 [30:18<00:00, 259.79s/it]7 ran successfully, 0 failed: 100%|██████████| 7/7 [30:18<00:00, 259.79s/it]
-Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
-Check (logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
-All instances run.
-Total instances: 419
-Instances submitted: 419
-Instances completed: 418
-Instances incomplete: 0
-Instances resolved: 306
-Instances unresolved: 112
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 19
-Instances with empty patches: 0
-Instances with errors: 1
-Unstopped containers: 0
-Unremoved images: 419
-Report written to cline-kimi-k2.6-cloud.verified_full_cline-patched.json
-418 instances already run, skipping...
-Running 11 instances...
-  0%|          | 0/11 [00:00<?, ?it/s]  9%|▉         | 1/11 [00:22<03:47, 22.79s/it]1 ran successfully, 0 failed:   9%|▉         | 1/11 [00:22<03:47, 22.79s/it]1 ran successfully, 0 failed:  18%|█▊        | 2/11 [00:23<01:44, 11.66s/it]2 ran successfully, 0 failed:  18%|█▊        | 2/11 [00:23<01:44, 11.66s/it]2 ran successfully, 0 failed:  27%|██▋       | 3/11 [00:34<01:31, 11.43s/it]3 ran successfully, 0 failed:  27%|██▋       | 3/11 [00:34<01:31, 11.43s/it]3 ran successfully, 0 failed:  36%|███▋      | 4/11 [00:34<01:00,  8.62s/it]4 ran successfully, 0 failed:  36%|███▋      | 4/11 [00:34<01:00,  8.62s/it]4 ran successfully, 0 failed:  45%|████▌     | 5/11 [00:35<00:42,  7.00s/it]5 ran successfully, 0 failed:  45%|████▌     | 5/11 [00:35<00:42,  7.00s/it]5 ran successfully, 0 failed:  55%|█████▍    | 6/11 [00:38<00:32,  6.47s/it]6 ran successfully, 0 failed:  55%|█████▍    | 6/11 [00:38<00:32,  6.47s/it]6 ran successfully, 0 failed:  64%|██████▎   | 7/11 [00:47<00:26,  6.74s/it]7 ran successfully, 0 failed:  64%|██████▎   | 7/11 [00:47<00:26,  6.74s/it]7 ran successfully, 0 failed:  73%|███████▎  | 8/11 [00:56<00:21,  7.11s/it]8 ran successfully, 0 failed:  73%|███████▎  | 8/11 [00:56<00:21,  7.11s/it]8 ran successfully, 0 failed:  82%|████████▏ | 9/11 [01:06<00:14,  7.40s/it]9 ran successfully, 0 failed:  82%|████████▏ | 9/11 [01:06<00:14,  7.40s/it]9 ran successfully, 0 failed:  91%|█████████ | 10/11 [01:13<00:07,  7.36s/it]10 ran successfully, 0 failed:  91%|█████████ | 10/11 [01:13<00:07,  7.36s/it]10 ran successfully, 0 failed: 100%|██████████| 11/11 [30:19<00:00, 165.38s/it]11 ran successfully, 0 failed: 100%|██████████| 11/11 [30:19<00:00, 165.38s/it]11 ran successfully, 0 failed: 100%|██████████| 11/11 [30:19<00:00, 165.38s/it]
-Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
-Check (logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
-All instances run.
-Total instances: 429
-Instances submitted: 429
-Instances completed: 428
-Instances incomplete: 0
-Instances resolved: 313
-Instances unresolved: 115
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 19
-Instances with empty patches: 0
-Instances with errors: 1
-Unstopped containers: 0
-Unremoved images: 429
-Report written to cline-kimi-k2.6-cloud.verified_full_cline-patched.json
-428 instances already run, skipping...
-Running 14 instances...
-  0%|          | 0/14 [00:00<?, ?it/s]  7%|▋         | 1/14 [00:22<04:58, 22.97s/it]1 ran successfully, 0 failed:   7%|▋         | 1/14 [00:22<04:58, 22.97s/it]1 ran successfully, 0 failed:  14%|█▍        | 2/14 [00:25<02:33, 12.78s/it]2 ran successfully, 0 failed:  14%|█▍        | 2/14 [00:25<02:33, 12.78s/it]2 ran successfully, 0 failed:  21%|██▏       | 3/14 [00:28<01:43,  9.39s/it]3 ran successfully, 0 failed:  21%|██▏       | 3/14 [00:28<01:43,  9.39s/it]3 ran successfully, 0 failed:  29%|██▊       | 4/14 [00:38<01:37,  9.73s/it]4 ran successfully, 0 failed:  29%|██▊       | 4/14 [00:38<01:37,  9.73s/it]4 ran successfully, 0 failed:  36%|███▌      | 5/14 [00:41<01:14,  8.28s/it]5 ran successfully, 0 failed:  36%|███▌      | 5/14 [00:41<01:14,  8.28s/it]5 ran successfully, 0 failed:  43%|████▎     | 6/14 [00:43<00:57,  7.21s/it]6 ran successfully, 0 failed:  43%|████▎     | 6/14 [00:43<00:57,  7.21s/it]6 ran successfully, 0 failed:  50%|█████     | 7/14 [00:43<00:43,  6.21s/it]7 ran successfully, 0 failed:  50%|█████     | 7/14 [00:43<00:43,  6.21s/it]7 ran successfully, 0 failed:  57%|█████▋    | 8/14 [01:11<00:53,  8.90s/it]8 ran successfully, 0 failed:  57%|█████▋    | 8/14 [01:11<00:53,  8.90s/it]8 ran successfully, 0 failed:  64%|██████▍   | 9/14 [01:13<00:40,  8.15s/it]9 ran successfully, 0 failed:  64%|██████▍   | 9/14 [01:13<00:40,  8.15s/it]9 ran successfully, 0 failed:  71%|███████▏  | 10/14 [01:17<00:31,  7.78s/it]10 ran successfully, 0 failed:  71%|███████▏  | 10/14 [01:17<00:31,  7.78s/it]10 ran successfully, 0 failed:  79%|███████▊  | 11/14 [01:20<00:21,  7.30s/it]11 ran successfully, 0 failed:  79%|███████▊  | 11/14 [01:20<00:21,  7.30s/it]11 ran successfully, 0 failed:  86%|████████▌ | 12/14 [01:23<00:13,  6.96s/it]12 ran successfully, 0 failed:  86%|████████▌ | 12/14 [01:23<00:13,  6.96s/it]12 ran successfully, 0 failed:  93%|█████████▎| 13/14 [01:36<00:07,  7.41s/it]13 ran successfully, 0 failed:  93%|█████████▎| 13/14 [01:36<00:07,  7.41s/it]13 ran successfully, 0 failed: 100%|██████████| 14/14 [30:18<00:00, 129.86s/it]14 ran successfully, 0 failed: 100%|██████████| 14/14 [30:18<00:00, 129.86s/it]14 ran successfully, 0 failed: 100%|██████████| 14/14 [30:18<00:00, 129.86s/it]
-Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
-Check (logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
-All instances run.
-Total instances: 442
-Instances submitted: 442
-Instances completed: 441
-Instances incomplete: 0
-Instances resolved: 325
-Instances unresolved: 116
-Instances with likely infrastructure failures: 0
-Instances with ambiguous failures: 19
-Instances with empty patches: 0
-Instances with errors: 1
-Unstopped containers: 0
-Unremoved images: 442
-Report written to cline-kimi-k2.6-cloud.verified_full_cline-patched.json

@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-14017",
-    "model_name_or_path": "pi-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/db/models/query_utils.py b/django/db/models/query_utils.py\nindex c957ffa56..afb524bb3 100644\n--- a/django/db/models/query_utils.py\n+++ b/django/db/models/query_utils.py\n@@ -41,7 +41,10 @@ class Q(tree.Node):\n \n     def _combine(self, other, conn):\n         if not isinstance(other, Q):\n-            raise TypeError(other)\n+            if getattr(other, 'conditional', False):\n+                other = Q(other)\n+            else:\n+                raise TypeError(other)\n \n         # If the other Q() is empty, ignore it and just use `self`.\n         if not other:\ndiff --git a/tests/expressions/tests.py b/tests/expressions/tests.py\nindex 08ea0a51d..fd8c0ec2e 100644\n--- a/tests/expressions/tests.py\n+++ b/tests/expressions/tests.py\n@@ -815,6 +815,14 @@ class BasicExpressionsTests(TestCase):\n             Employee.objects.filter(Exists(is_poc) | Q(salary__lt=15)),\n             [self.example_inc.ceo, self.max],\n         )\n+        self.assertCountEqual(\n+            Employee.objects.filter(Q(salary__gte=30) & Exists(is_ceo)),\n+            [self.max],\n+        )\n+        self.assertCountEqual(\n+            Employee.objects.filter(Q(salary__lt=15) | Exists(is_poc)),\n+            [self.example_inc.ceo, self.max],\n+        )\n \n \n class IterableLookupInnerExpressionsTests(TestCase):\n"
-  }
-]

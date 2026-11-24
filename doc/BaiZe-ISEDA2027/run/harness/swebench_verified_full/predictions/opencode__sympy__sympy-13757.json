@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-13757",
-    "model_name_or_path": "opencode-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sympy/polys/polytools.py b/sympy/polys/polytools.py\nindex d5ac051f..0d57e361 100644\n--- a/sympy/polys/polytools.py\n+++ b/sympy/polys/polytools.py\n@@ -102,6 +102,8 @@ class Poly(Expr):\n \n     \"\"\"\n \n+    _op_priority = 10.001\n+\n     __slots__ = ['rep', 'gens']\n \n     is_commutative = True\ndiff --git a/sympy/polys/tests/test_polytools.py b/sympy/polys/tests/test_polytools.py\nindex 1f889e9f..bf2beb30 100644\n--- a/sympy/polys/tests/test_polytools.py\n+++ b/sympy/polys/tests/test_polytools.py\n@@ -644,6 +644,7 @@ def test_Poly_add():\n \n     assert Poly(x, x) + 1 == Poly(x + 1, x)\n     assert 1 + Poly(x, x) == Poly(x + 1, x)\n+    assert x + Poly(1, x) == Poly(x + 1, x)\n \n \n def test_Poly_sub():\n@@ -660,6 +661,7 @@ def test_Poly_sub():\n \n     assert Poly(x, x) - 1 == Poly(x - 1, x)\n     assert 1 - Poly(x, x) == Poly(1 - x, x)\n+    assert x - Poly(1, x) == Poly(x - 1, x)\n \n \n def test_Poly_mul():\n@@ -677,6 +679,10 @@ def test_Poly_mul():\n     assert Poly(x, x) * 2 == Poly(2*x, x)\n     assert 2 * Poly(x, x) == Poly(2*x, x)\n \n+    assert x * Poly(1, x) == Poly(x, x)\n+    assert x * Poly(x, x) == Poly(x**2, x)\n+    assert S(-2) * Poly(x, x) == Poly(-2*x, x)\n+\n \n def test_Poly_sqr():\n     assert Poly(x*y, x, y).sqr() == Poly(x**2*y**2, x, y)\n"
-  }
-]

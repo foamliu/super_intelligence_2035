@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "django__django-13569",
-    "model_name_or_path": "cline-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/django/db/models/functions/math.py b/django/db/models/functions/math.py\nindex 304e11222..bc5f00965 100644\n--- a/django/db/models/functions/math.py\n+++ b/django/db/models/functions/math.py\n@@ -145,6 +145,9 @@ class Random(NumericOutputFieldMixin, Func):\n     function = 'RANDOM'\n     arity = 0\n \n+    def get_group_by_cols(self, alias=None):\n+        return []\n+\n     def as_mysql(self, compiler, connection, **extra_context):\n         return super().as_sql(compiler, connection, function='RAND', **extra_context)\n \ndiff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py\nindex f8aeceb2d..033821cb3 100644\n--- a/tests/aggregation/tests.py\n+++ b/tests/aggregation/tests.py\n@@ -437,6 +437,13 @@ class AggregateTestCase(TestCase):\n             ]\n         )\n \n+    def test_random_ordering_annotation(self):\n+        \"\"\"\n+        Ordering by ? shouldn't affect aggregation results (#31503).\n+        \"\"\"\n+        qs = Book.objects.filter(id=self.b1.id).annotate(num_authors=Count('authors')).order_by('?').values('id', 'num_authors')\n+        self.assertEqual(list(qs), [{'id': self.b1.id, 'num_authors': 2}])\n+\n     def test_fkey_aggregate(self):\n         explicit = list(Author.objects.annotate(Count('book__id')))\n         implicit = list(Author.objects.annotate(Count('book')))\n"
-  }
-]

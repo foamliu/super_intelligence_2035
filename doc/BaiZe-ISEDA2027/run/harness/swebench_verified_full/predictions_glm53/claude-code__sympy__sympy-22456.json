@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sympy__sympy-22456",
-    "model_name_or_path": "claude-code-glm-5.3-flash",
-    "model_patch": "diff --git a/sympy/codegen/ast.py b/sympy/codegen/ast.py\nindex a02714b1..35d0b35b 100644\n--- a/sympy/codegen/ast.py\n+++ b/sympy/codegen/ast.py\n@@ -895,7 +895,6 @@ class String(Token):\n \n     \"\"\"\n     __slots__ = ('text',)\n-    not_in_args = ['text']\n     is_Atom = True\n \n     @classmethod\ndiff --git a/sympy/codegen/tests/test_ast.py b/sympy/codegen/tests/test_ast.py\nindex 00c5d4cf..8cf3aeab 100644\n--- a/sympy/codegen/tests/test_ast.py\n+++ b/sympy/codegen/tests/test_ast.py\n@@ -266,6 +266,7 @@ def test_String():\n     assert st.is_Atom\n     assert st == String('foobar')\n     assert st.text == 'foobar'\n+    assert st.func(*st.args) == st\n     assert st.func(**st.kwargs()) == st\n \n \n"
-  }
-]

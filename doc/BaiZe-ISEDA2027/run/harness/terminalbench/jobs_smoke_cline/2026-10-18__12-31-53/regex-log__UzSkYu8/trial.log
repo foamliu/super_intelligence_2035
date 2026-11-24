@@ -1,6 +1,0 @@
-Skipping image OS validation for alexgshaw/regex-log:20251031: docker inspect returned 1
-Trial regex-log__UzSkYu8 failed: Docker compose command failed for environment regex-log. Command: docker compose --project-name regex-log__uzskyu8__env --project-directory /home/app.e0031982/terminal-bench/regex-log/environment -f /tmp/tmpsii0xdmz/regex-log__UzSkYu8__env-docker-compose-resources.json -f /home/app.e0031982/.local/share/uv/tools/harbor/lib/python3.14/site-packages/harbor/environments/docker/docker-compose-prebuilt.yaml -f /tmp/network-host-overlay-minimal2.yml -f /tmp/tmpg060i34w/docker-compose-environment.json -f /tmp/tmptg8z7ic7/docker-compose-mounts.json up --detach --wait. Return code: 1. Stdout:  main Pulling 
- main Error Get "https://registry-1.docker.io/v2/": net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)
-Error response from daemon: Get "https://registry-1.docker.io/v2/": net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)
-. Stderr: None. 
-Collecting main service artifacts

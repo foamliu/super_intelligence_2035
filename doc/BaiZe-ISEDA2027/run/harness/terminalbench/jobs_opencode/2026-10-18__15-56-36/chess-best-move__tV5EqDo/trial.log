@@ -1,8 +1,0 @@
-Running command: curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-Command failed
-Trial chess-best-move__tV5EqDo failed: Command failed (exit 1): curl -fsSL https://opencode.ai/install | bash 2>&1 | tail -5
-stdout: [0;31mFailed to fetch version information[0m
-
-
-stderr: None
-Collecting main service artifacts

@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "matplotlib__matplotlib-21568",
-    "model_name_or_path": "claude-code-glm-5.3-flash",
-    "model_patch": "diff --git a/tmp/repro_before.png b/tmp/repro_before.png\nnew file mode 100644\nindex 000000000..4e157715e\nBinary files /dev/null and b/tmp/repro_before.png differ\n"
-  }
-]

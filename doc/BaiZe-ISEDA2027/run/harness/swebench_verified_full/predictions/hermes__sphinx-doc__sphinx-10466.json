@@ -1,7 +1,0 @@
-[
-  {
-    "instance_id": "sphinx-doc__sphinx-10466",
-    "model_name_or_path": "hermes-kimi-k2.6-cloud",
-    "model_patch": "diff --git a/sphinx/builders/gettext.py b/sphinx/builders/gettext.py\nindex e8bc547..68a2186 100644\n--- a/sphinx/builders/gettext.py\n+++ b/sphinx/builders/gettext.py\n@@ -32,7 +32,12 @@ class Message:\n     \"\"\"An entry of translatable message.\"\"\"\n     def __init__(self, text: str, locations: List[Tuple[str, int]], uuids: List[str]):\n         self.text = text\n-        self.locations = locations\n+        self.locations = []\n+        seen: Set[Tuple[str, int]] = set()\n+        for loc in locations:\n+            if loc not in seen:\n+                seen.add(loc)\n+                self.locations.append(loc)\n         self.uuids = uuids\n \n \ndiff --git a/tests/test_build_gettext.py b/tests/test_build_gettext.py\nindex 3c4617e..1025922 100644\n--- a/tests/test_build_gettext.py\n+++ b/tests/test_build_gettext.py\n@@ -8,9 +8,15 @@ from subprocess import PIPE, CalledProcessError\n \n import pytest\n \n+from sphinx.builders.gettext import Message\n from sphinx.util.osutil import cd\n \n \n+def test_message_deduplicates_locations():\n+    msg = Message('hello', [('a.rst', 1), ('b.rst', 2), ('a.rst', 1), ('b.rst', 2)], ['u1', 'u2', 'u3', 'u4'])\n+    assert msg.locations == [('a.rst', 1), ('b.rst', 2)]\n+\n+\n @pytest.mark.sphinx('gettext', srcdir='root-gettext')\n def test_build_gettext(app):\n     # Generic build; should fail only when the builder is horribly broken.\n"
-  }
-]
