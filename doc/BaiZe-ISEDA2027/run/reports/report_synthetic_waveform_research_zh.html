@@ -231,6 +231,43 @@ $end</pre>
 <li><strong>与 P1 对比</strong>：P5 SFT（0.625→0.8125）&gt; P1 GRPOv2（0.70→0.667），合成数据 SFT 是比 GRPO 更有效的路线</li>
 <li><strong>下一步</strong>：① 扩大合成数据规模到 5000+（参考 TD-Interpreter 222K）；② 混合真实波形图（WaveView 真题 PNG）提升泛化；③ 对 duty_cycle 等退步技能做针对性数据增强；④ 在 WaveView 真题上评测合成 SFT adapter 的迁移效果</li>
 </ol></div>
+<h2>§9 P5.3 WaveView 真题迁移评测（合成 SFT → 真实波形图）</h2>
+<div class="card cg"><p><strong>核心结论</strong>：合成 SFT adapter 在<strong>真实 WaveView PNG 上呈现「部分迁移」</strong>——case 级通过率 0/10（与基模相同，McNemar p=1.0），但<strong>条件级准确率显著提升</strong>（35.45%%→49.09%%，+13.64pp，P5SFT 在 10 题中 8 题条件数更多，sign test p=0.1094 趋势）。这说明合成 SFT 确实强化了模型从真实波形图读取单个属性的能力，但尚不足以通过完整 case（全部条件都答对）。与 P2 一致：<strong>合成训练分布与真实波形题存在 gap</strong>，case 级迁移未达成，但条件级有正向信号。</p></div>
+<h3>9.1 评测设计</h3>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>题集</td><td>10 道 WaveView 真题 PNG（designflow restored，sha256 校验，本地只读副本 <code>vision/real_waveview_images/</code>）</td></tr>
+<tr><td>BASE 臂</td><td>base Qwen3.5-2B VQA（:30001，GPU6）读真实 PNG</td></tr>
+<tr><td>P5SFT 臂</td><td>base + p5 SFT LoRA adapter（:30004，<strong>GPU7 独立端点，不干扰 rft2 复测</strong>）读真实 PNG</td></tr>
+<tr><td>判分</td><td>本地 <code>waveview_selftest_cases.check_case</code>（questions + oracle + tols，<strong>无需 36.15 check.py</strong>）</td></tr>
+<tr><td>脚本</td><td><code>vision/vqa_tool/p5_runs/p5_real_waveview_transfer_eval.py</code>（HTTP VQA only，脚本内不解码图像，audit clean）</td></tr>
+<tr><td>反作弊</td><td>真实图像，无 train/eval 重叠（合成训练 seed 20261124 / 真题为 designflow 原图）</td></tr>
+</table>
+<h3>9.2 结果</h3>
+<table>
+<tr><th>指标</th><th>BASE</th><th>P5SFT</th><th>Δ</th></tr>
+<tr><td>case 级通过率（全条件 PASS）</td><td>0/10 (0.0%%)</td><td>0/10 (0.0%%)</td><td>+0.0000</td></tr>
+<tr><td>case 级 McNemar</td><td colspan="3">n10=0 n01=0 p=1.0000（0 discordant）</td></tr>
+<tr><td><strong>条件级准确率（aggregate）</strong></td><td>39/110 (35.45%%)</td><td>54/110 (49.09%%)</td><td><span class="b ok">+0.1364</span></td></tr>
+<tr><td>条件级胜负（per-case k_pass）</td><td colspan="3">P5SFT 8 胜 / 0 平 / 2 负（sign test p=0.1094，趋势未达 0.05）</td></tr>
+</table>
+<h3>9.3 逐题条件数对比</h3>
+<table>
+<tr><th>题（tag）</th><th>BASE k_pass</th><th>P5SFT k_pass</th><th>k_total</th><th>Δ</th></tr>
+<tr><td>WaveMaxFind (β9)</td><td>4</td><td>2</td><td>9</td><td><span class="b fail">−2</span></td></tr>
+<tr><td>TempSelWaveform (α4)</td><td>5</td><td>8</td><td>9</td><td><span class="b ok">+3</span></td></tr>
+<tr><td>TempThreshChar (β10)</td><td>2</td><td>5</td><td>10</td><td><span class="b ok">+3</span></td></tr>
+<tr><td>EyeApertureSelect (α1)</td><td>2</td><td>3</td><td>9</td><td><span class="b ok">+1</span></td></tr>
+<tr><td>WaveView-002 (β8)</td><td>6</td><td>5</td><td>13</td><td><span class="b fail">−1</span></td></tr>
+<tr><td>SimFailFsdbProbe (β11)</td><td>4</td><td>7</td><td>12</td><td><span class="b ok">+3</span></td></tr>
+<tr><td>RiseEdgeMarginMeas (α2)</td><td>5</td><td>6</td><td>9</td><td><span class="b ok">+1</span></td></tr>
+<tr><td>FsdbWrDqMeas (β7)</td><td>2</td><td>6</td><td>12</td><td><span class="b ok">+4</span></td></tr>
+<tr><td>DqReadPathWaveDebug (α3)</td><td>3</td><td>5</td><td>13</td><td><span class="b ok">+2</span></td></tr>
+<tr><td>WaveCmpWrap (β6)</td><td>6</td><td>7</td><td>14</td><td><span class="b ok">+1</span></td></tr>
+</table>
+<div class="card cy"><p><strong>诚实解读</strong>：① <strong>case 级迁移未达成</strong>——10 题无一全条件通过，与 P2（GRPOv2 step500 真题 3.3%%）同根因：合成训练分布与真实波形题存在 gap，模型在真实图上无法把所有属性同时读对；② <strong>条件级有正向信号</strong>——P5SFT 在 8/10 题上答对更多条件，aggregate +13.64pp，说明合成 SFT 确实学到了可迁移的波形读图能力（如周期/幅度/边沿读数），只是精度不足以通过整题；③ sign test p=0.1094 未达 0.05，n=10 偏小，<strong>不宣称显著</strong>，仅作趋势报告；④ 这与「合成 SFT 在合成 held-out 上 +18.75pp 显著」形成对照——<strong>同分布增益大，跨分布（合成→真实）增益缩小且未达 case 级</strong>，呼应 P2/P1 的泛化瓶颈结论。</p></div>
+<h3>9.4 落盘</h3>
+<p><code>vision/vqa_tool/p5_runs/p5_real_waveview_transfer_eval.json</code>（summary + rows_base + rows_p5 + trace）· <code>p5_real_waveview_transfer_eval.py</code>（可复算）。GPU7 端点 :30004（P5 SFT adapter）评测后已释放。</p>
 <div class="footer">
 <p><strong>报告</strong>：vision P4 合成波形数据调研 · wake#1714 · 2026-11-24<br><strong>数据来源</strong>：cimi_search web search（6 次检索）+ .17 实测环境 + 现有管线代码<br><strong>诚实声明</strong>：所有工具版本号来自实测；demo 产物由脚本实跑生成；iverilog 未安装如实记录并提供替代方案。</p>
 </div>
