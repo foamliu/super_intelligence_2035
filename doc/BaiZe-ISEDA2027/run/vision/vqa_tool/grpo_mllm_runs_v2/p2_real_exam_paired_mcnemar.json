@@ -1,0 +1,16 @@
+{
+  "comparison": "V2_rft2_adapter vs V2_step500_grpo2",
+  "n_common": 182,
+  "rft2_pass": 32,
+  "rft2_rate": 0.1758,
+  "step500_pass": 6,
+  "step500_rate": 0.033,
+  "mcnemar_b": 29,
+  "mcnemar_c": 3,
+  "mcnemar_n": 32,
+  "mcnemar_p": 3e-06,
+  "delta_pp": -14.29,
+  "n11_both_pass": 3,
+  "n00_both_fail": 147,
+  "verdict": "step500_significantly_worse"
+}
