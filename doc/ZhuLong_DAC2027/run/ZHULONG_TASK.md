@@ -1,5 +1,27 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-24 用户令（更新）— 立即停止 glm-5.2 评测，回归 standby 等待 · 最高优先 · 覆盖 standby**
+
+> **用户原话**：「glm-5.2 的评测停下来，评测框架今天做了重构，需要回归。zhulong agent 只需停止评测，回归我安排其它 agent 做。」
+
+**一、立即停止动作（已由运维执行，agent 验证残留并补刀）**
+1. 运维已杀掉 glm-5.2 串行脚本 + run_batch 主进程；agent 需**验证并补杀残留** glm-5.2 run_one/cline worker（匹配 `run_one.*glm-5.2` / `cline.*glm-5.2.*cline_eval` / `run_task.*EDA-Eval`），🚫 **不动** t0002147 的 dsv4pro / designflow opencode / 其它线。
+2. 🚫 **不重新拉起** glm-5.2 / deepseek-v4-flash / kimi-k2.6-cloud 任何评测。
+3. glm-5.2 r1 部分结果（~87 judged）保留在 `status_glm52_r1.jsonl`，**不删不分析不报告**（评测框架已重构，旧数据作废）。
+
+**二、回归 standby**
+- `WAITING: 1`，30min 轮询，不起臂，不跑评测。
+- MEMORY 首行更新为：「glm-5.2 评测已停（用户令·评测框架重构需回归）·standby·等用户新令」。
+- 不动 v3+强模型 4 组已收口数字（doubao pro/lite/mini + deepseek-v4-pro 3-run）。
+
+**三、待用户新令**
+- 评测框架回归完成后，用户会下新令是否重跑 3 个新模型。
+- 在新令下达前，🚫 不自行启动任何评测。
+
+---
+
+> ✅ **2026-11-24 早令 — 扩大模型范围 3 个新模型各跑 Lite 500 × 3-run 已暂停**（glm-5.2 r1 跑至 ~87/500 时用户令停·评测框架重构需回归）。下方为暂停令归档，不再生效。
+
 > 🔴 **2026-11-24 用户令 — 扩大模型范围：3 个新模型各跑 Lite 500 × 3-run · 最高优先 · 覆盖 standby**
 
 > **用户原话**：「安排 zhulong agent 扩大模型范围继续跑 lite 3-run，下面三个模型：glm-5.2 / deepseek-v4-flash / kimi-k2.6-cloud」
