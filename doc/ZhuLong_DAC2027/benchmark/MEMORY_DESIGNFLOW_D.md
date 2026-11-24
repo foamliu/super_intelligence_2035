@@ -1,4 +1,6 @@
-WAITING: 0 · **LITE_FIX: D=124/124 green · P0 余 5(跨 shard: A1 GmidLut + B4 OpampChar/SpiceSim/TaperBufOpt/InvTripDelay, 均需 hspice-mock; 自 r1290 起无变化) · L1 跨 shard 0(不变) · 本轮 0 fix(监控轮) · 清单 md5=f7816ef4137353904e40a1a3b01fb3ae /nasdata.../eval/cases_lite.txt(500行)** · r1298(本轮)=监控轮 rotated spot-check 8 fresh D Lite case(CellMap/CircWfReport/AutoCellFlow/DDR5CmdSeqFind/Characterization/NetlistCmp/DLLCtrlParse/IOBufTune) 实跑 negative_selftest 全 rc=0 + negs全FAIL distinct(DDR5CmdSeqFind+NetlistCmp selftest 显式验 ref PASS), 无回归 + 5 跨 shard P0 static re-verify 仍全 P0(git fetch 自 r1297 B r1181 PFDdeadZone + r1180 TscodecompTbVerify + r1179 FineSimWorkflowRunner + r1178 StrongarmFomSweep + r1177 NetlistLintHsp + A r1138-r1140 监控轮 均非 5 pending; grep 确认 5 check.py 仍直接调 hspice 无 mock[GmidLut L29/L44 / OpampChar L26/L81 / SpiceSim-001(B) L13/L263 / TaperBufOpt L21/L132 / InvTripDelay L31/L83]). D 124/124 green 不变(连续4轮 spot-check 仅 r1296 发现 1 失实已修). 未 git add -A, 只 add 本 shard 路径 · `.75` 可达（eda_flow MCP OK）· 📊 trace 覆盖率: 640/4529≈14.1%（不变; LITE_FIX 期间暂停选料）; 📦 体积: TASK≈29KB / MEMORY≈30KB; DEBT: 0; flag: r1298 = 监控轮 8 fresh D spot-check 无回归 + 5 P0 仍 B/A pending · 详见 daily_D_2026-11-25_r1298.md）
+WAITING: 0 · **LITE_FIX: D=124/124 green · P0 余 5(跨 shard: A1 GmidLut + B4 OpampChar/SpiceSim/TaperBufOpt/InvTripDelay, 均需 hspice-mock; 自 r1290 起无变化) · L1 跨 shard 0(不变) · 本轮 0 fix(监控轮) · 清单 md5=f7816ef4137353904e40a1a3b01fb3ae /nasdata.../eval/cases_lite.txt(500行)** · r1299(本轮)=监控轮 rotated spot-check 8 fresh D Lite case(CellVerilogExtract/ClosureDeckBuilder/CmlMp5SweepCurrentAnalysisQA/DlyChainTrace/DominoPVTsweep/DQTXStim/FinesimIgnoreGen/GrDecPwrMeasure) 实跑 negative_selftest 全 rc=0 + negs全FAIL distinct(首失败 labels b/g/i/d/f/c/m/h 各异) + §4.9三假全FAIL, 无回归(连续4轮 spot-check 仅 r1296 发现 1 失实已修) + 5 跨 shard P0 static re-verify 仍全 P0(git fetch 自 r1298 B f56db584f+A 53f2c23da+B fdd19883d/0d9ff0835/95644003d/A f2d8d884b 均非 5 pending; grep 确认 5 check.py 仍直接调 hspice 无 mock[GmidLut L29/L44 / OpampChar L26/L86 / SpiceSim-001(B) L13/L254/L263 / TaperBufOpt L21/L132/L139 / InvTripDelay L31/L83/L88]). D 124/124 green 不变. 未 git add -A, 只 add 本 shard 路径 · `.75` 可达（eda_flow MCP OK）· 📊 trace 覆盖率: 640/4529≈14.1%（不变; LITE_FIX 期间暂停选料）; 📦 体积: TASK≈29KB / MEMORY≈30KB; DEBT: 0; flag: r1299 = 监控轮 8 fresh D spot-check 无回归 + 5 P0 仍 A/B pending · 详见 daily_D_2026-11-25_r1299.md）
+
+> r1298 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1300」（r1299 释体积；r1298=监控轮 rotated spot-check 8 fresh D Lite case 无回归 + 5 P0 re-verify 仍全 A/B pending, 原文见 daily_D_2026-11-25_r1298.md）
 > r1297 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1299」（r1298 释体积；r1297=监控轮 rotated spot-check 7 D Lite case 无回归 + 5 P0 re-verify 仍全 P0, 原文见 daily_D_2026-11-25_r1297.md）
 > r1296 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1298」（r1297 释体积；r1296=rotated spot-check 发现 ConnFileNetChk selftest CRASH → L3 FIX(重写 subprocess 模式 selftest + 重建 6 negs 5 distinct[d,e,g,h,m] + §4.9全FAIL + 删 10 旧 neg) + 5 P0 re-verify 仍全 P0, 原文见 daily_D_2026-11-25_r1296.md）
 > r1293 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1295」（r1294 释体积；r1293=监控轮 P0 仍 5 全 B hspice-mock, D 124/124 green + L3 batch 60/60 + L2 6/6 无回归, 原文见 daily_D_2026-11-25_r1293.md）
@@ -33,29 +35,7 @@ WAITING: 0 · **LITE_FIX: D=124/124 green · P0 余 5(跨 shard: A1 GmidLut + B4
 
 > r1255 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1256」（r1256 释体积；原文见 daily_D_2026-11-24_r1255.md）
 
-> r1254 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1255」（r1255 释体积；原文见 daily_D_2026-11-24_r1254.md）
-
-> r1253 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1254」（r1254 释体积；原文见 daily_D_2026-11-24_r1253.md）
-
-> r1252 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1253」（r1253 释体积；原文见 daily_D_2026-11-24_r1252.md）
-> r1251 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1252」（r1252 释体积；原文见 daily_D_2026-11-24_r1251.md）
-
-> r1249 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1249」（r1250 释体积；原文见 daily_D_2026-11-24_r1249.md）
-
-> r1246 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1247」（r1247 释体积；原文见 daily_D_2026-11-24_r1246.md）
-
-> r1245 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1246」（r1246 释体积；原文见 daily_D_2026-11-24_r1245.md）
-
-> r1244 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1245」（r1245 释体积；原文见 daily_D_2026-11-24_r1244.md）
-> r1243 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1244」（r1244 释体积；原文见 daily_D_2026-11-24_r1243.md）
-> r1242 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1243」（r1243 释体积；原文见 daily_D_2026-11-24_r1241.md）
-
-> r1241 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1242」（r1242 释体积；原文见 daily_D_2026-11-24_r1241.md）
-
-> r1239 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1240」（r1240 释体积；原文见 daily_D_2026-11-24_r1239.md）
-> r1237 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1238」（r1238 释体积；原文见 daily_D_2026-11-24_r1237.md）
-> r1236 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1237」（r1237 释体积；原文见 daily_D_2026-11-24_r1236.md）
-> r1235 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1236」（r1236 释体积；原文见 daily_D_2026-11-24_r1235.md）
+> r1235-r1254 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1236-r1255」（释体积；20 轮 11-24 原文见 daily_D_2026-11-24_r12{35..54}.md）
 
 
 > r1234 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1235」（r1235 释体积；原文见 daily_D_2026-11-24_r1234.md）
