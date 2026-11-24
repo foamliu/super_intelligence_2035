@@ -1,4 +1,6 @@
-WAITING: 0（r1255: **`.75` 可达（eda_flow MCP OK，第 152 次确认）**——open_session(task_id=MCP-Probe-001/eval_id=20261124-mcpprobe-D)→workdir / run_commands 3/3 exit0(hostname=hfhds201/whoami=e0031982/date=2026-11-24 12:46:07) / close_session cleaned · **本轮产出 = TopCellNameQuery-001 stub→inline（14-stub 队列 5/14，5 真 stub dedup 3/5）**：r1254 DEBT 列 3 真 stub 之一。**dedup 判定**：build_jsonl.py `_fname_sort_key` long-prefix first-wins ⇒ canonical = `EDA-Eval-DesignFlow-TopCellNameQuery-001.json`（长名），短名 `TopCellNameQuery-001.json` 标 retired（不删数据，红线 §1.5）。**关键：check.py 原 HERE/__file__-based 路径需 workdir-first 改写**（r1252 CurWindowSchematicName 模式）——新增 `_find_hidden(name, workdir)` 四级查找（workdir/hidden/<name> → workdir/<name> → os.walk → __file__-relative try/except NameError 兜底），3 隐藏文件 window_spec_B/B2/rag_results_B 全改走该 helper。操作：① check.py path-resolution block 重写（HERE/HIDDEN_DIR/WIN_B/WIN_B2/RAG_B 5 常量 → _find_hidden helper）+ check() 内 win_b_path/win_b2_path/rag_b_path 局部变量 + _run_candidate 调用改局部变量 ② 去 shebang+去 __main__ 块 → inline 进 canonical test 字段（263→12419 字符）③ 短名 dup 标 metadata.status=retired + retire_note ④ build_jsonl --shard D 入 jsonl 且 test 非 stub（len=12419, has def check, no __main__, has _find_hidden, status=none canonical；短名 status=retired 被 exclude，51 处 retired 之一）。**自验全过（3 路径）**：A1(run_one.sh,workdir=assets)/A2(negative_selftest,__file__ fallback)/B(string-exec session-backend 无 __file__)：ref 全 PASS + 4 neg(empty_stub/hardcode_a/print_only/wrong_api)全 FAIL 且理由正确（hardcode_a=libName drjqa_stdcells≠primitivesLib anti-hardcode ✓ / wrong_api=geGetWindowCellView≠geGetTopLevelCellView ✓ / empty_stub+print_only=no report ✓）；assert __file__ not in ns。**anti-hardcode ✓**：check 只在 B（top=TopAmp/primitivesLib）+ B2（null topCellView）上算 ground truth + 跑候选；A 的 TrimDelay/drjqa_stdcells 进 hardcode_a 必 FAIL（e[B] libName 断言）。**镜像设计 ✓**：与 CurWindowSchematicName-001 互为镜像（本 case 正解 geGetTopLevelCellView，CurWindow 翻转用 geGetWindowCellView），hidden B 用 top!=displayed 强制区分。domain=schematic_netlist（D）✓。trace_source: e0014566@hfeg0pkn001(10.129.2.10), session 1792031877409_9vjrk.messages.json, mc=17 ✓。test_rationale k=16 ✓（与 check a-p 16 条独立条件对齐）。**剩余 2 真 stub**（TopCellNameResolver/TotemLayermapFatalDiag）同样有重复文件，下轮逐个 dedup+inline（注：需先各查 check.py 是否 workdir-first，否则按 r1252 workdir-first 改写）· 📊 trace 覆盖率: 635/4529≈14.0%（不变，stub 修复不计覆盖率）; 📦 体积: TASK≈27KB / MEMORY≈31KB; DEBT: 1（14-stub 队列剩 9，其中 2 真 stub 需 dedup+inline、6 已 inline 待复核）; flag: r1255 = MCP 152nd OK + TopCellNameQuery-001 stub→inline（workdir-first 改写，dedup 3/5 真 stub）+ r1254 心跳归档 · 详见 daily_D_2026-11-24_r1255.md）
+WAITING: 0（r1256: **`.75` 可达（eda_flow MCP OK，第 153 次确认）**——open_session(task_id=MCP-Probe-001/eval_id=20261124-mcpprobe-D-r1256)→workdir / list_files OK / read_file(/etc/hostname) 被 path-prefix 策略挡（沙盒权限范围限制非不可达）/ declare_done+close_session cleaned · **本轮产出 = TopCellNameResolver-001 stub→inline（14-stub 队列 6/14，5 真 stub dedup 4/5）**：r1255 DEBT 列 2 真 stub 之一。**dedup 判定**：build_jsonl.py `_fname_sort_key` long-prefix first-wins ⇒ canonical = `EDA-Eval-DesignFlow-TopCellNameResolver-001.json`（长名），短名 `TopCellNameResolver-001.json` 标 retired（不删数据，红线 §1.5）。**关键：check.py 原 HERE/__file__-based 路径需 workdir-first 改写**（r1252/r1255 模式）——新增 `_find_hidden(name, workdir)` 四级查找（workdir/hidden/<name> → workdir/<name> → os.walk → __file__-relative try/except NameError 兜底），3 隐藏文件 window_spec_B/B2/rag_results_B 全改走该 helper。操作：① check.py 5 常量(HERE/HIDDEN_DIR/WIN_B/WIN_B2/RAG_B) → _find_hidden helper + check() 内 win_b_path/win_b2_path/rag_b_path 局部变量 + _run_candidate 3 处调用(B/B2/二次B)改局部变量 ② 去 shebang+去 __main__ 块 → inline 进 canonical test 字段（11861→12704 字符）③ 短名 dup 标 metadata.status=retired + retire_note ④ build_jsonl --shard D 入 jsonl 且 test 非 stub（len=12704, has def check, no __main__, has _find_hidden, status=none canonical；短名 status=retired 被 exclude，52 处 retired 之一）。**自验全过（3 路径）**：A2(negative_selftest,reference/check.py 文件态)/A1(string-exec with __file__,workdir=assets)/B(string-exec 无 __file__ session-backend)：ref 全 PASS + 3 neg(empty_stub/hardcode_a/print_only)全 FAIL 且理由正确（hardcode_a=top_cell.libName='myLib' expected 'primitivesLib' anti-hardcode ✓ / empty_stub+print_only=no report ✓）；assert __file__ not in ns。**anti-hardcode ✓**：check 只在 B（topCellView=非 A）+ B2（null topCellView）上算 ground truth + 跑候选；A 的 topInvChain/myLib 进 hardcode_a 必 FAIL（e[B] libName 断言）。domain=schematic_netlist（D）✓。tr：r1254 DEBT 列 3 真 stub 之一。**dedup 判定**：build_jsonl.py `_fname_sort_key` long-prefix first-wins ⇒ canonical = `EDA-Eval-DesignFlow-TopCellNameQuery-001.json`（长名），短名 `TopCellNameQuery-001.json` 标 retired（不删数据，红线 §1.5）。**关键：check.py 原 HERE/__file__-based 路径需 workdir-first 改写**（r1252 CurWindowSchematicName 模式）——新增 `_find_hidden(name, workdir)` 四级查找（workdir/hidden/<name> → workdir/<name> → os.walk → __file__-relative try/except NameError 兜底），3 隐藏文件 window_spec_B/B2/rag_results_B 全改走该 helper。操作：① check.py path-resolution block 重写（HERE/HIDDEN_DIR/WIN_B/WIN_B2/RAG_B 5 常量 → _find_hidden helper）+ check() 内 win_b_path/win_b2_path/rag_b_path 局部变量 + _run_candidate 调用改局部变量 ② 去 shebang+去 __main__ 块 → inline 进 canonical test 字段（263→12419 字符）③ 短名 dup 标 metadata.status=retired + retire_note ④ build_jsonl --shard D 入 jsonl 且 test 非 stub（len=12419, has def check, no __main__, has _find_hidden, status=none canonical；短名 status=retired 被 exclude，51 处 retired 之一）。**自验全过（3 路径）**：A1(run_one.sh,workdir=assets)/A2(negative_selftest,__file__ fallback)/B(string-exec session-backend 无 __file__)：ref 全 PASS + 4 neg(empty_stub/hardcode_a/print_only/wrong_api)全 FAIL 且理由正确（hardcode_a=libName drjqa_stdcells≠primitivesLib anti-hardcode ✓ / wrong_api=geGetWindowCellView≠geGetTopLevelCellView ✓ / empty_stub+print_only=no report ✓）；assert __file__ not in ns。**anti-hardcode ✓**：check 只在 B（top=TopAmp/primitivesLib）+ B2（null topCellView）上算 ground truth + 跑候选；A 的 TrimDelay/drjqa_stdcells 进 hardcode_a 必 FAIL（e[B] libName 断言）。**镜像设计 ✓**：与 CurWindowSchematicName-001 互为镜像（本 case 正解 geGetTopLevelCellView，CurWindow 翻转用 geGetWindowCellView），hidden B 用 top!=displayed 强制区分。domain=schematic_netlist（D）✓。trace_source: e0014566@hfeg0pkn001(10.129.2.10), session 1792031877409_9vjrk.messages.json, mc=17 ✓。test_rationale k=16 ✓（与 check a-p 16 条独立条件对齐）。**剩余 2 真 stub**（TopCellNameResolver/TotemLayermapFatalDiag）同样有重复文件，下轮逐个 dedup+inline（注：需先各查 check.py 是否 workdir-first，否则按 r1252 workdir-first 改写）· 📊 trace 覆盖率: 635/4529≈14.0%（不变，stub 修复不计覆盖率）; 📦 体积: TASK≈27KB / MEMORY≈31KB; DEBT: 1（14-stub 队列剩 9，其中 2 真 stub 需 dedup+inline、6 已 inline 待复核）; flag: r1255 = MCP 152nd OK + TopCellNameQuery-001 stub→inline（workdir-first 改写，dedup 3/5 真 stub）+ r1254 心跳归档 · 详见 daily_D_2026-11-24_r1255.md）
+
+> r1255 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1256」（r1256 释体积；原文见 daily_D_2026-11-24_r1255.md）
 
 > r1254 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1255」（r1255 释体积；原文见 daily_D_2026-11-24_r1254.md）
 
@@ -178,65 +180,7 @@ WAITING: 0（r1212: MCP 110th OK + 候选筛选+lorih 深读（DEBT，case 下�
 
 > r1083 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
 
-> r1082 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1081 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1079 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1078 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1077 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1076 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1070 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1071 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-> r1073 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1072 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1069 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-
-> r1068 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1074 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1075 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1080 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1066 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-> r1067 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-
-> r1057 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-> r1056 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-> r1065 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1063 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1062 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1061 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1060 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1059 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-
-
-> r1055 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1053 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1052 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1051 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1049 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
+> r1049→r1082 指针原文归档（共 30 条，均归档批次 r1088）→ ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积；r1066/r1067/r1068/r1069/r1070/r1071/r1072/r1073/r1074/r1075/r1076/r1077/r1078/r1079/r1080/r1081/r1082/r1051/r1052/r1053/r1055/r1056/r1057/r1059/r1060/r1061/r1062/r1063/r1065/r1049）
 
 > r1048/r1047 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1055」（r1055 释体积，保留 r1055/r1053/r1052/r1051/r1049 最近 5 指针）
 
