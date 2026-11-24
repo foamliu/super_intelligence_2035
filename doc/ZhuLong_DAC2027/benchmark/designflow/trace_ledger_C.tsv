@@ -1394,7 +1394,7 @@ u94w0	jcgu	hfeg0plg81	299	physical_verify	case	EDA-Eval-DesignFlow-LicHostToIpRe
 1788917814838_yd21d	xinqiaoz	10.129.2.11	50	physical_verify	parked		2026-11-21 23:44	r924 REJECT: U#1 = 'do we have global instruction doc, where to install' env-config Q&A. 18 msgs too short.
 1790126908419_sl69t	lizwen	hfeg0plg09	22	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckBlockReformat-001	2026-11-22 00:51	
 1794707679075_ivy3t.messages.json	kenwang	hfeg0plg16	59	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckDescCodeNumAudit-001	2026-11-22 01:24	
-1794899388341_serxv.messages.json	nathany	hfeg0plg95	72	physical_verify	case	EDA-Eval-DesignFlow-HierPathKwClassifier-001	2026-11-22 01:47	
+1794899388341_serxv.messages.json	nathany	hfeg0plg95	72	physical_verify	case	EDA-Eval-DesignFlow-HierPathKeywordClassify-001	2026-11-24 12:19	
 1795003452646_oa2tl.messages.json	pdsong	hfeg0pgn024	68	physical_verify	case	EDA-Eval-DesignFlow-CoordTransformTrigRefactor-001	2026-11-22 02:11	
 1795228793423_gohxq	felixw	hfeg0plg54	29	physical_verify	case	EDA-Eval-DesignFlow-CalibreDrcLayoutPathBlankDiag-001	2026-11-22 02:45	
 1795142640082_qfv34.messages.json					case	EDA-Eval-DesignFlow-NetlistCellReplaceDiffAnalyzer-001	2026-11-22 03:26	
@@ -1525,3 +1525,4 @@ t0dhm					case	EDA-Eval-DesignFlow-CalibreDrcRunsetPatch-001	2026-11-24 03:55
 1788936621788_d52pq	jiaqis	hfeg0plg77	29	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckStructureAudit-001	2026-11-24 10:49	
 1795414075340_yvy1d	cyzhu	hfeg0pgn124	140	physical_verify	case	EDA-Eval-DesignFlow-SpfCapIncrementBackAnnotate-001	2026-11-24 11:19	
 1795416159128_iys5y	kenwang	hfeg0pkn004	59	physical_verify	case	EDA-Eval-DesignFlow-DrcDeckCodegenFromDesc-001	2026-11-24 11:57	
+1795419713877_cu4d7	hktklin	hfeg0plg87	71	layout_virtuoso	parked		2026-11-24 12:07	near-dup of r1042/r1048 (hktklin tap_p->lacaa_common + _SKILL L20/AMN2P same task)
