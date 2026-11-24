@@ -4,8 +4,8 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	AntPatternConfigAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	ArgusDeckEquivAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	AutoCellClassify-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:26	AutoCellKitMap-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
-2026-11-24T22:26	AutoViaGen-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-25T01:30	AutoCellKitMap-001	C	1	1	0	1	?	?	p0_fixed	audit r1080: L2 rc=1 ref FAIL (nneg=6, L3 OK) -- need investigate why ref fails	
+2026-11-25T01:30	AutoViaGen-001	C	1	1	0	1	?	?	p0_fixed	audit r1080: L2 rc=1 ref FAIL (nneg=5, L3 OK)	
 2026-11-24T22:26	AutoViaPFAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:50	AutoViaSelAnalyze-001	C	1	1	1	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (ref solution PASS)	
 2026-11-24T22:26	CTLESchGenAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
@@ -13,26 +13,26 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	CentroidPlaceAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T23:45	ChkSaveHistDedup-001	C	1	1	1	1	?	?	green	L	
 2026-11-24T22:26	CmMaOpTableGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:26	CombCellNetlistSyn-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-25T01:30	CombCellNetlistSyn-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=5, L3 OK) -- need build ref zip from solve script	
 2026-11-24T22:26	ConnChkSummaryGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	ConnPriorityDupCheck-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:26	ConvexEnclosePcellGen-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-25T01:30	ConvexEnclosePcellGen-001	C	1	1	1	1	?	?	green	audit r1080: ref PASS + 6 neg selftest OK	
 2026-11-24T22:26	DRCDeckSyncPlan-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:26	DRCDeckWinClean-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-25T01:30	DRCDeckWinClean-001	C	1	1	1	1	?	?	green	audit r1080: ref PASS + 8 neg selftest OK	
 2026-11-24T22:26	DRCHierLossAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:26	DRCKDeckOpt-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-25T01:30	DRCKDeckOpt-001	C	1	1	0	1	?	?	p0_fixed	audit r1080: L2 rc=1 ref FAIL (nneg=6, L3 OK)	
 2026-11-24T22:26	DRCPatManifest-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:26	DRCPatPlacePlan-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-25T01:30	DRCPatPlacePlan-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=0, L3 OK via in-ref negs) -- need ref zip	
 2026-11-24T22:26	DRCPatPlan-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DRQAPlan2Skill-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:26	DbusMetalFlowReport-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-25T01:30	DbusMetalFlowReport-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=5, L3 OK) -- need ref zip	
 2026-11-24T22:26	DdgoaDeviceAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	DeckIncludeResolve-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:26	DrcDeckOptimize-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-25T01:30	DrcDeckOptimize-001	C	1	1	0	0	?	?	p1_fixed	audit r1080: no ref_submit + no selftest + 0 neg -- need full L2/L3 build	
 2026-11-24T22:26	DrcDensityParseJudge-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DrcLegacyFallback-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	DrcLogAnalyzer-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:26	DrcLogHugeCellOverlap-001	C	1	1	1	0	?	?	p1_fixed	L3 only 2 neg (<3, needs补 neg)	
+2026-11-25T01:30	DrcLogHugeCellOverlap-001	C	1	1	1	1	?	?	green	audit r1080: ref PASS + 6 neg selftest OK	
 2026-11-24T22:26	DrcMatchRca-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DrcPairWaiveClassify-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DrcPatCheckAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
@@ -41,7 +41,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:50	DrcPatternReportComposer-001	C	1	1	1	1	?	?	green	L2 FIX: renamed solution.py -> drc_pattern_report.py (prompt/check expect this name); ref PASS via real harness	
 2026-11-24T22:26	DrcPcellBatchConvert-v2	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DrcQaAutoPipe-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:26	DrcRuleCellMatch-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-25T01:30	DrcRuleCellMatch-001	C	1	1	1	1	?	?	green	audit r1080: ref PASS + 6 neg selftest OK	
 2026-11-24T22:26	DrcUnusedVarClassify-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	DrcVarMisMatchDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	DrcWaiveDeckGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
@@ -49,8 +49,8 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-25T00:10	DummyDeck-001	C	1	1	1	1	1	1	green	L4 calibredrv GUI->mock (calibredrv_mock.py pure-stdlib GDSII LAYER/DATATYPE parser, validated on QA_A/QA_B/LTM/LM1) + L1 contract list->dict-pass + L2 _find_asset_a flat-workdir resolver (harness copies A flat not asset_a/) + reference_submit.zip built (dummy_deck_diag.py+report_A.json) + negselftest --calibredrv mock; ref 14/14 PASS + 5neg FAIL (§4.9 trio contours distinct)	120
 2026-11-24T22:26	DummyGeoVerify-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:50	DummyHeaderQaResolver-001	C	1	1	1	1	?	?	green	L2 PASS confirmed via real run_one.sh harness (ref solution PASS)	
-2026-11-24T22:50	DummyMeas-001	C	1	1	0	0	?	?	p0_fixed	L2 FAIL: FileNotFoundError -- likely skipper GUI binary missing (L4 eval-machine dep)	
-2026-11-24T22:26	DummyQA-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-25T01:30	DummyMeas-001	C	1	1	1	1	?	?	green	r1079 green (skipper_mock.py); audit L2 false-FAIL = judge-layout env artifact, not check.py defect	
+2026-11-25T01:30	DummyQA-001	C	1	1	1	1	?	?	green	audit r1080: ref PASS + 3 neg selftest OK	
 2026-11-24T22:26	DummyQaCliNoConfig-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	DummyQaDataPrep-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:50	DummyTargetLayerCmp-001	C	1	1	1	1	?	?	green	L2 FIX: robust hidden-B/A input path resolution (hidden/ subdir + abs paths); ref PASS via real harness	
@@ -60,21 +60,21 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	EncloseSide1PatternGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	ErcSetupGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	FindCircuitByPath-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:50	GDSBump2-001	C	1	1	0	0	?	?	p0_fixed	L2 FAIL: B run exit=1 out_exists=False -- likely skipper GUI binary missing (L4 eval-machine dep)	
+2026-11-25T01:30	GDSBump2-001	C	1	1	0	0	0	?	p0_fixed	r1080: L1 tuple->dict-pass-ok fixed; L4 BLOCKED -- skipper GUI mock unverifiable (parser yields A nlpp=33/36 vs GT=34; cannot confirm Empyrean dbLibLayers TEXT-lpp semantics without real binary). ESCALATE: need real skipper run output or author GT method, else retired_broken	
 2026-11-24T22:26	Gds2Lef-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	GdsLayerAreaMeasure-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	GdsRectGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T23:30	GenReleaseNoteMerge-001	C	1	1	1	1	?	?	green	L2 fix: hidden-B path resolver (workdir/hidden/entries_B{,2}.json fallback to workdir/assets/<case>/hidden/) + built reference_submit.zip; ref PASS + 3 neg FAIL distinct (L4/L5 eval-machine run pending)	
-2026-11-24T22:26	HeadlessLatchSkillGen-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-25T01:30	HeadlessLatchSkillGen-001	C	1	1	1	1	?	?	green	audit r1080: ref PASS + selftest OK (negs in ref/ not negative/)	
 2026-11-24T22:26	ImplantFillDummyLeftoverDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:26	InnovusFpLogDiag-001	C	1	1	1	0	?	?	p1_fixed	L3 only 2 neg (<3, needs补 neg)	
+2026-11-25T01:30	InnovusFpLogDiag-001	C	1	1	1	0	?	?	p1_fixed	audit r1080: L2 ref PASS but L3 no selftest (nneg=2 <3) -- need +1 neg + selftest	
 2026-11-24T22:26	InnovusProjLogDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	InnovusPwrRtDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	LVSDiag-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	LVSLogFilter-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:26	LayoutAether-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-25T01:30	LayoutAether-001	C	1	1	1	1	?	?	green	audit r1080: ref PASS + selftest OK	
 2026-11-24T22:26	LayoutAnalyzeReport-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:26	LayoutVirtuoso-001	C	1	1	1	0	?	?	p1_fixed	L3 only 2 neg (<3, needs补 neg)	
+2026-11-25T01:30	LayoutVirtuoso-001	C	1	1	1	1	?	?	green	audit r1080: ref PASS + selftest OK	
 2026-11-24T23:30	LefPostprocessFix-001	C	1	1	1	1	?	?	green	L2 fix: hidden-B path resolver (workdir/hidden/inputs_B fallback to workdir/assets/CASE/hidden/inputs_B) -- harness stages hidden under workdir/hidden not workdir/assets/CASE/hidden; ref PASS 16/16 + 5 neg FAIL distinct (L4/L5 eval-machine run pending)	
 2026-11-24T23:30	LibCellList-001	C	1	1	1	1	?	?	green	L2 fix: SCRIPT_NAME gen_lib_cell_list.py->gen_lib_cell.py (match prompt) + read hidden B filenames from hidden_manifest.json + rename B netlist libs (drvqa_cmos_stdcells->stdb_b, stdcells_ac->acstd_b) to match manifest B_LIBS so cross-input guard j passes; ref PASS 13/13 + 5 neg FAIL distinct (L4/L5 eval-machine run pending)	
 2026-11-24T22:26	LvsDeepReportAnalyzer-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
@@ -86,19 +86,19 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	MetalOptRuleExpand-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	NetDelSaveAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	NetHierTrace-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:26	NetlistExtractSkill-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-25T01:30	NetlistExtractSkill-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=0, L3 OK) -- need ref zip	
 2026-11-24T22:26	NicapNetlistPivot-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	PCellFlowPlan-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:26	PDKQA-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-25T01:30	PDKQA-001	C	1	1	0	1	?	?	p0_fixed	audit r1080: L2 build err missing tests_skeleton/run_all_tests.py (judge-layout artifact?) -- re-verify	
 2026-11-24T22:26	PFMergeAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	PFMergeDupAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:50	PGAssemblyLVS-001	C	1	1	1	1	?	?	green	L2 FIX: created reference_submit.zip with plan_gen.py + plan_A.json (prompt requires both); ref PASS via real harness	
-2026-11-24T22:26	PGLayout-001	C	1	1	?	0	?	?	p2_fixed	L1 var/list/str->dict-pass-ok fixed this round (audit OK, compile OK); L2 harness-limited: check.py needs asset_a subdir in workdir (not a check.py defect); L3 only 0 neg (<3, needs补 neg)	
-2026-11-24T22:26	PRBoundary-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
-2026-11-24T22:26	PdFloorplanGen-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-25T01:30	PGLayout-001	C	1	1	0	0	?	?	p0_fixed	audit r1080: L2 FileNotFoundError + L3 selftest FAIL	
+2026-11-25T01:30	PRBoundary-001	C	1	1	1	1	?	?	green	audit r1080: ref PASS + 6 neg selftest OK	
+2026-11-25T01:30	PdFloorplanGen-001	C	1	1	0	0	?	?	p0_fixed	audit r1080: L2 AssertionError [a] hidden B + L3 FAIL	
 2026-11-24T22:26	PgLayoutMergeAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	PortPropagate-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:26	PowerFill-001	C	1	1	?	1	?	?	p2_fixed	L1 var/list/str->dict-pass-ok fixed this round (audit OK, compile OK); L2 harness-limited: check.py needs asset_a subdir in workdir (not a check.py defect); L3 no negative_selftest.py	
+2026-11-25T01:30	PowerFill-001	C	1	1	0	1	?	?	p0_fixed	audit r1080: L2 rc=1 ref FAIL (L3 OK)	
 2026-11-24T22:26	PowerFillMergeGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	QaCellRuleLabelGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	RNodeCovAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
@@ -108,7 +108,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	RoutingTrackFinder-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	RsCalcCfgSync-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	RsCalcChkPtGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T22:26	RsCalcCkPtAudit-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-25T01:30	RsCalcCkPtAudit-001	C	1	1	1	1	?	?	green	audit r1080: ref PASS + 4 neg selftest OK	
 2026-11-24T22:26	RsCalcFlowCompare-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	RsCalcFlowOrch-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	RsCalcMesh-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
@@ -123,18 +123,16 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:26	SkillFlowAnalyzer-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	SkillM1ShapeDeleteAudit-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	SkillMenuRoute-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:26	SshTestProfileBuilder-001	C	1	1	1	0	?	?	p1_fixed	L3 only 1 neg (<3, needs补 neg)	
+2026-11-25T01:30	SshTestProfileBuilder-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=3, L3 OK) -- need ref zip	
 2026-11-24T22:26	StarrcReleaseNoteGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T23:30	StrongARMComp-001	C	1	1	1	1	?	?	green	L2 fix: spec resolver _resolve_spec() for A/B/B2 specs (harness flattens A inputs/strongarm_spec.json into workdir root; B/B2 under workdir/hidden); ref PASS + 6 neg FAIL distinct (L4/L5 eval-machine run pending)	
 2026-11-24T23:30	SyncBatchArchivePlan-001	C	1	1	1	1	?	?	green	L2 fix: asset_a (visible A manifest_A/stable_A) resolver (workdir/asset_a -> workdir/assets/<case> -> workdir flat) + hidden under workdir/hidden + built reference_submit.zip; ref PASS + 3 neg FAIL distinct (L4/L5 eval-machine run pending)	
-2026-11-24T22:26	TechDisplayPacketNorm-001	C	1	1	1	0	?	?	p1_fixed	L3 only 0 neg (<3, needs补 neg)	
+2026-11-25T01:30	TechDisplayPacketNorm-001	C	1	1	0	1	?	?	p1_fixed	audit r1080: no reference_submit.zip (nneg=4, L3 OK) -- need ref zip	
 2026-11-24T22:26	ToolchainID-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	TrMatchHelperGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	VTTFLayerMap-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	ViaFillSvrfGen-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
 2026-11-24T22:26	VirtualNotLayerGen-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
-2026-11-24T22:50	VirtuosoLaunchRecipeGen-001	C	1	1	0	1	?	?	p0_fixed	L2 FAIL: NO_SOLUTION -- no reference solution file found in ref dir	
+2026-11-25T01:30	VirtuosoLaunchRecipeGen-001	C	1	1	1	1	?	?	green	r1079 green (recipe_gen.py ref); audit r1080 L2 FileNotFoundError = judge-layout artifact (check.py reads ASSET_DIR/manifest_A.json via HERE/../../assets/CASE, not populated in quick audit) -- not a check.py defect	
 2026-11-24T22:26	VlogPortAudit-001	C	1	1	1	1	?	?	green	L3 no negative_selftest.py	
 2026-11-24T22:26	WaiveParamMultiParse-001	C	1	1	1	1	?	?	green	L4/L5 eval-machine run pending	
-2026-11-24T16:30	VirtuosoLaunchRecipeGen-001	C	1	1	1	1	1	1	green	L2 NO_SOLUTION fixed: built recipe_gen.py reference generator (manifest->launch_virtuoso.sh/cds.lib/open_cellview.il/recipe_manifest.json, stdlib only, all values from manifest) + reference_submit.zip; ref 16/16 PASS; L3 fixed: rewrote naive_hardcode_a (first-fail c->d via partial hardcode) + stub_no_empty (syntax crash + %L escape -> runs, first-fail p); 5 neg distinct first-fails b/c/d/h/p; L4 GUI-free (only python+bash -n); L5 SKIP_RUN harness workdir clean	n/a
-2026-11-25T01:05	DummyMeas-001	C	1	1	1	1	1	1	green	L4 skipper GUI binary missing on eval host -> built skipper_mock.py (pure stdlib GDSII parser: topcell/cellnum/Layer-Purpose table/cell bbox/filesize/precision/format/maxlevel; drives candidate Tcl via tclsh8.6 with dbImport/dbLibTopCell/dbLibSummary procs returning parsed values; validated on A LM1.gds + B LTM.gds against guideline ground truth); check.py SKIPPER default -> mock path + chmod 0o755 + sys.executable invocation when .py; L3 added 3rd stored neg naive_truncate_bbox.tcl (bbox int-truncation, first-fail g) -> 3 neg distinct first-fails m/f/g + 3 fakes c/m/d; L2 ref 13/13 PASS; L1 shapes=[True]; L5 SKIP_RUN harness workdir clean; hidden_manifest+check_runs_wv=false+L_level=L2 added	n/a
