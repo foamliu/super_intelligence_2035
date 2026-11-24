@@ -189,3 +189,5 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-25T07:25	SchWireRebuildGen-001	C	1	1	1	1	1	1	green	r1094 P1->green: added root-level negative_selftest.py wrapper (delegates to negative/); inner negselftest passed (5 negs FAIL-OK distinct cond c/f); no assertion logic changed; ref harness PASS; L1 audit OK
 2026-11-25T07:25	ToolchainID-001	C	1	1	1	1	1	1	green	r1094 P1->green: added root-level negative_selftest.py wrapper (delegates to negative/); inner negselftest passed (6 negs FAIL good); no assertion logic changed; ref harness PASS; L1 audit OK
 2026-11-25T07:25	PCellFlowPlan-001	C	1	1	1	1	1	1	green	r1094 P1->green: added root-level negative_selftest.py wrapper (delegates to negative/); inner negselftest passed (6/6 negs FAIL correct, ref_ok=True); no assertion logic changed; ref harness PASS; L1 audit OK
+2026-11-25T07:45:00	EDA-Eval-DesignFlow-AutoViaGen-001	C	1	1	1	1	1	1	green	r1096 re-verify harness verdict=PASS reason=True (lite_verify_ref_C.sh SKIP_RUN=1)	-
+2026-11-25T07:45:00	EDA-Eval-DesignFlow-CentroidPlaceAudit-001	C	1	1	1	1	1	1	green	r1096 re-verify harness verdict=PASS reason=True (lite_verify_ref_C.sh SKIP_RUN=1)	-
