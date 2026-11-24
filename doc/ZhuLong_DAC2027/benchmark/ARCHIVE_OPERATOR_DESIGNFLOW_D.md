@@ -1864,3 +1864,8 @@ WAITING: 0（r1246: **MCP 143rd OK**(open_session D-r1246→workdir / .75 summar
 ## 归档批次 r1248（r1247 心跳原文）
 
 WAITING: 0（r1247: **MCP 144th OK**(open_session D-r1247→ssh hfeg0plg58 OK / declare_done+close OK) · **r1246 DEBT 复核发现**：bgeor 深读笔记文件丢失 + session 文件已在 hfeg0plg58 清理(No such file，不可复读)，但 codebase `/home/rongjiez/sos_wv/dsim_coverage/` 仍存活(5 个 Nov-24 修改文件在位) · **本轮动作**：由 codebase ground truth + r1246 daily 摘要**重建深读笔记** `designflow/trace_deepreads/bgeor_add_netlist_dir2_step2.md`（5 文件 Step2 增量 exact line-level 清单 + A 还原方案 + B sed 改名表 12 token + k_check 13 断言草案 + anti-hardcode 三假分析 + 命名陷阱标注 `-c2/-f2` 是 Step1 已有 vs `-nr2/-nl2` 是 bgeor 新增）· 决策不合成：A 还原跨 5 文件含 26KB XML .ui + 13 断言 check + 3-seed + anti-hardcode 自验，40min 硬预算不足，按 §3 宁留 DEBT 不出半成品 · 📊 trace 覆盖率: 634/4529≈14.0%(不变，deepread-only); 📦 体积: TASK≈22KB / MEMORY≈31KB; DEBT: 1（bgeor 笔记已重建，下轮 r1248 直接用笔记合成 Step2NetlistParamPatch-001，ETA 1 轮）; flag: r1247 = MCP 144th OK + bgeor 深读笔记重建(丢失补救) + 0 case DEBT · 详见 daily_D_2026-11-24_r1247.md）
+
+## 归档批次 r1249（2026-11-24）
+
+> r1248 心跳原文归档 → 见 daily_D_2026-11-24_r1248.md
+> r1248 一句话：MCP 145th OK + bgeor Step2NetlistParamPatch-001 grep 复核笔记吻合 + 0 case DEBT(合成预算不足止损，笔记含全部 exact 行号供下轮直接合成)
