@@ -9,11 +9,11 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-CTLESpec-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-CTLETranDeck-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-CabufPvtDatAudit-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
-2026-11-24T22:24:08	EDA-Eval-DesignFlow-CdlBulkSanitize-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CdlBulkSanitize-001	B	1	1	?	0	?	?	p2_fixed	L4_path: os.walk followlinks=True added (hidden symlink reachable); ref+JSON synced	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-ClampPwrStateExtract-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-CmlBwExtensionHandbook-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-CmlDivOscDiag-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
-2026-11-24T22:24:08	EDA-Eval-DesignFlow-CmlPvtAcReport-001	B	1	1	?	0	?	?	p1_pending	L3:neg=2,selftest=True	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-CmlPvtAcReport-001	B	1	1	?	0	?	?	p2_fixed	L4_path: os.walk followlinks=True added (hidden symlink reachable); ref+JSON synced	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-CmlSweepHeadroomDiag-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-Coord3DProj-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-CosimRunBlockOpt-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
@@ -83,7 +83,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-SimProgressCheck-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-SimSavedCornerComplete-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-SimSpecJudge-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
-2026-11-24T22:24:08	EDA-Eval-DesignFlow-SlicerFbTimeOpt-001	B	1	1	?	0	0	?	p0_pending	L4_SIM_BINARY:hspice	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-SlicerFbTimeOpt-001	B	1	1	?	0	0	?	p2_fixed	L4_path: os.walk followlinks=True added (hidden symlink reachable); ref+JSON synced	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-SlicerSweepFomOpt-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-SnmButterflyCalc-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-Sp2tVerilogaSwitch-001	B	1	1	?	0	?	?	p1_pending	L3:neg=0,selftest=True	
@@ -101,7 +101,7 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-StimPWL-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-StimScriptCfgLocate-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-StrongarmBaselineAnalyze-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
-2026-11-24T22:24:08	EDA-Eval-DesignFlow-StrongarmFomSweep-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-StrongarmFomSweep-001	B	1	1	?	1	?	?	p2_fixed	L4_path: os.walk followlinks=True added (hidden symlink reachable); ref+JSON synced	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-SubcktExtract-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-SubcktInstParamInj-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-SwitchTbGen-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
@@ -119,13 +119,13 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-VSplit-001	B	1	1	?	0	?	?	p1_pending	L3:neg=3,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-Vcc2scActDeckGen-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-Vcc2scTranGen-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
-2026-11-24T22:24:08	EDA-Eval-DesignFlow-VcoKvcoChar-001	B	1	1	?	0	?	?	p1_pending	L3:neg=6,selftest=False	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-VcoKvcoChar-001	B	1	1	?	0	?	?	p2_fixed	L4_path: os.walk followlinks=True added (hidden symlink reachable); ref+JSON synced	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-VlshftParamOpt-001	B	1	1	?	0	0	?	p0_pending	L4_SIM_BINARY:hspice	
-2026-11-24T22:24:08	EDA-Eval-DesignFlow-VsimFinesimAdapt-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-VsimFinesimAdapt-001	B	1	1	?	1	?	?	p2_fixed	L4_path: os.walk followlinks=True added (hidden symlink reachable); ref+JSON synced	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-VwlpRefDeckSet-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-WtmFileReview-001	B	1	1	?	0	?	?	p1_pending	L3:neg=4,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-WtmPatternDirReview-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-WtmWriteArrayScope-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-XmelabCuvpomPortDiag-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
 2026-11-24T22:24:08	EDA-Eval-DesignFlow-XrunLogErrDiag-001	B	1	1	?	0	?	?	p1_pending	L3:neg=5,selftest=False	
-2026-11-24T22:24:08	EDA-Eval-DesignFlow-ZqPatternTimingAnalyze-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime	
+2026-11-24T22:24:08	EDA-Eval-DesignFlow-ZqPatternTimingAnalyze-001	B	1	1	?	1	?	?	green_pending_runtime	L0/L1/L3-static OK; L2/L4/L5 need runtime
