@@ -137,7 +137,7 @@ vbxlf.messages.json	jason17w	hfeg0pnd002	262	spice_sim	parked		2026-11-05 12:30	
 1793670518248_ap4dl.messages.archive.json	e0029495	hfeg0pkn002	1	spice_sim	case	EDA-Eval-DesignFlow-CdlBulkSanitize-001	2026-11-06 05:01	
 1793886971551_nekpi.messages.json	yifansun	hfeg0pkn001	743	spice_sim	case	EDA-Eval-DesignFlow-LvLvioSweep-001	2026-11-06 05:00	
 1793879856361_1281g.messages.json	hairuizh	hfeg0pkn002	366	spice_sim	case	EDA-Eval-DesignFlow-PlatInvsThick-001	2026-11-06 13:30	
-1793328354943_p7jfx.messages.json	tongni	hfeg0pkn001	481	spice_sim	parked		2026-11-22 09:58	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
+1793328354943_p7jfx.messages.json	tongni	hfeg0pkn001	481	spice_sim	case	EDA-Eval-DesignFlow-SpSpecCovAudit-001	2026-11-24 12:17	case JSON never committed B.jsonl gitignored at creation ref exists needs reconstruction
 1793270732926_ebmf3.messages.json	chapinc	hfeg0pkn002	97	spice_sim	case	EDA-Eval-DesignFlow-BatchBsubHspice-001	2026-11-06 08:38	
 1793777902964_ah9my.messages.json	e0024852	hfeg0pkn002	213	spice_sim	case	EDA-Eval-DesignFlow-LisMeasExtract-001	2026-11-06 09:12	
 1793707646524_71h8j.messages.json					case	EDA-Eval-DesignFlow-SramIreadGen-001	2026-11-06 09:56	
