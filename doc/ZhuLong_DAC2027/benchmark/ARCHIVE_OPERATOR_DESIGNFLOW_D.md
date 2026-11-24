@@ -1869,3 +1869,7 @@ WAITING: 0（r1247: **MCP 144th OK**(open_session D-r1247→ssh hfeg0plg58 OK / 
 
 > r1248 心跳原文归档 → 见 daily_D_2026-11-24_r1248.md
 > r1248 一句话：MCP 145th OK + bgeor Step2NetlistParamPatch-001 grep 复核笔记吻合 + 0 case DEBT(合成预算不足止损，笔记含全部 exact 行号供下轮直接合成)
+
+## 归档批次 r1249（r1250 释体积）
+- r1249 心跳原文见 daily_D_2026-11-24_r1249.md
+- 摘要：MCP 146th OK + §4.9 audit 5 条(1 GAP 已修 SpiceUndefParamScan + 2 dangling GAP 误判, r1250 已纠正) + 0 case DEBT 保留(Step2NetlistParamPatch-001)

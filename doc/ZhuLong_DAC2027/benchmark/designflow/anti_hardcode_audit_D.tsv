@@ -280,7 +280,7 @@ D	EDA-Eval-DesignFlow-OscSpDeckMigrateInclude-001	14	y	unknown	ok	static-skip	st
 D	EDA-Eval-DesignFlow-OtaSimReport-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-OtaSimReport-001
 D	EDA-Eval-DesignFlow-PGcheckTcl-001	15	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-PGcheckTcl-001
 D	EDA-Eval-DesignFlow-ParallelMeasFanout-001	14	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-ParallelMeasFanout-001
-D	ParasiticsAnnotDiag-001	9	n	unknown	n/a	static-skip	static-skip	inline	GAP	no-subprocess	(inline)
+D	ParasiticsAnnotDiag-001	14	y	y	FAIL	FAIL	FAIL	PASS	r1250 FIX: stub test→self-contained check.py (B+A' base64 inline, no __file__); k=14; REF PASS+4neg FAIL+exec-style PASS. r1249 GAP(no-subprocess) resolved.
 D	EDA-Eval-DesignFlow-PassModuleSplice-001	12	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-PassModuleSplice-001
 D	PatternHierResolverProduce-001	18	y	unknown	n/a	static-skip	static-skip	inline	PASS(inline)		(inline)
 D	EDA-Eval-DesignFlow-PatternParamAudit-001	16	y	unknown	ok	static-skip	static-skip	y	PASS		EDA-Eval-DesignFlow-PatternParamAudit-001
