@@ -1,4 +1,14 @@
+> 📌 索引：**§A.48 = 2026-11-24 13:0x（第 346 轮 · 插图必须先点 `.syl-toolbar-tool.image` / `input[type=file]` 有 2 个会上传 2 份 / `ttcore-remove-blot` 删多余图 / `.pgc-img` 与 `.pgc-img-wrapper` 并存 / Python 里没有 `t.indexOf`）**
 > 📌 索引：§A.46 = 2026-11-24 09:5x（第 344 轮 · **submit-btn disable 是 CSS 类 / cdp.evaluate 内联中文正则易 JSERR / 评论框 insertText 后内容归零 / 发布链路一次成型**）· §A.45 = 2026-11-24 07:4x（第 343 轮 · **取图复核需完整 UA+Referer / 新稿 id 从 `.article-card` 取 / RSS-only 条目写「图片：无」/ 转已发布即复核四硬标准**）· §A.44 = 2026-11-23 21:5x（第 342 轮 · **IT之家漏正文兜底 / `PUBID` 恒 NONE / 自赞先 navigate / 声明正判据读 label 文本**）· §A.43 = 2026-11-23 18:5x（第 341 轮 · **`value="3"` 有两个复选框**）· §A.42 = 2026-11-23 15:3x（第 340 轮 · 并发接续核验）· §A.41 = 2026-11-23 12:0x（第 339 轮）· §A.40 = 2026-11-23 10:0x（第 338 轮）· §A.39 = 2026-11-23 07:0x（第 336 轮）· §A.38 = 2026-11-22 21:3x（第 335 轮）· §A.37 = 2026-11-22 18:0x（第 334 轮）· §A.36 = 2026-11-22 15:3x（第 333 轮）· §A.35 = 11-22 15:2x（第 332 轮）· §A.34 = 11-22 12:3x（第 331 轮）· §A.33 = 11-22 09:3x（第 329 轮）· §A.32 = 11-22 07:3x（第 328 轮）· §A.31 = 11-21 18:0x（第 326 轮）
+## §A.48 第 346 轮实测（2026-11-24 13:0x · 6 条 · **插图入口 + 重复上传 + 删多余图 + git 共享副本纪律**）
+
+1. 🖼 **插图入口 = `.syl-toolbar-tool.image`**（`document.querySelector('.syl-toolbar-tool.image')`）。按可见文本找 `图片` **找不到**（工具栏图标无文本节点）；不点它，面板不展开、`input[type=file]` 数量为 **0**，`s3b_upload_full.py` 会静默跳过并打出 `FILEINPUTS 0 / IMG {n:0}`。
+2. ⚠️ **面板打开后 `input[type=file]` 有 2 个** ⇒ 一次 `DOM.setFileInputFiles(files=[IMG], nodeId=ids[0])` 会**上传两份同图**（实测 `已上传 2 张图片`）。只想要 1 张时：上传后数 `img.offsetWidth>0`，多余的删掉。
+3. 🗑 **删多余图**：hover 到那张图 → 图框右上角出现 `ttcore-remove-blot` 角标（不在 DOM 文本里，也不带 `del/close` 类名）→ 点 `rect.x+宽度/2+230, rect.y-225` 或直接点角标中心。删完复查「可见 img 数 == 1」。
+4. 🧩 **`.pgc-img`（隐藏模板，`offsetWidth=0`）与 `.pgc-img-wrapper`（可见图）并存** ⇒ 判「几张图」只能数 `offsetWidth>0` 的；`editor.querySelectorAll('img').length` 会虚高一倍（实测 `n:4` 实际可见 2 张）。
+5. 🐍 **本地脚本是 Python，不是 JS**：从旧脚本抄 `t.indexOf('已上传')` 会 `AttributeError: 'str' object has no attribute 'indexOf'`（脚本前半段已执行完，上传已发生）⇒ 用 `t.find()`；失败后**不要重跑上传**，先查 `img` 数。
+6. 🔀 **git 共享副本纪律（同日事故）**：`git pull --rebase --autostash` 中断后 worktree 会被拨到 `origin/main`，本线刚写的文件「看起来消失」；🚫 不要跑 `git read-tree` / `reset`（会造出 `AUTO_MERGE` 把后续 pull 全卡住）；先看 `.git/rebase-merge`（orig-head / autostash），再只保留本线冲突行、其它线文件 `git checkout HEAD -- <file>`。
+
 ## §A.46 第 344 轮实测（2026-11-24 09:5x · 4 条 · **「disable」是类名不是属性 / 内联中文正则触发 JSERR / 评论框 insertText 后内容归零 / 本轮带 1 图发布链路一次成型可作模板**）
 
 | # | 要点 | 实证 |
