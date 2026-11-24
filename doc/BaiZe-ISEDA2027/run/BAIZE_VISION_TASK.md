@@ -1,20 +1,33 @@
 # BAIZE_VISION_TASK.md
 
-### 🔴 用户令 · 2026-11-20 16:2x（写 vision 工作总报告）
+### 🔴 用户令 · 2026-11-24 08:5x（放行下一步：GRPO 改进 + 真题复测）
 
-> **写一份 vision 线的整体工作报告（中文 HTML 单文件）**，交付到 `run/reports/report_vision_overall_work_zh.html`。
+> **Option B 已验收**（SFT 3-seed 74.4% / RFT2 90% / GRPO 86.7% 负结果如实记录）。现在放行 vision agent 自己提出的 4 条改进建议（来自 GRPO 报告 §5.5），按以下优先级执行：
 >
-> **覆盖范围**（从最早到现在，按时间线组织）：
-> 1. **波形 RL 探索（CPU 阶段，.12）**：v2–v5 系列，v5 统计显著正结果（A16%→B37%→C53% p=0.0009），CPU 冒烟/50步实验，报告 `report_vision_cot_vqa_result_zh.html`
-> 2. **VQA SSH 桥接通道**：从 .17 到 36.15 的反向 SSH 桥建通、三端口健康检查、watchdog 自愈
-> 3. **WaveView 真题挖掘与自测**：到 36.15 挖 273→225→10 带图题；三段 V0/V1/V2 评测；MLLM-as-VQA 价值验证
-> 4. **EDA-Eval-DesignFlow-WaveView 子集构建**：自主构建 225 行子集；全队列 546 行 V0/V1/V2 对比（V0=11.0% / V1=15.4% / V2=17.6%，McNemar V0vsV2 p=0.008）
-> 5. **GPU 迁回训练（Option B）**：Qwen3.5-2B 完整 MLLM（不剥离视觉塔）LoRA 微调；SFT 3-seed 74.4%、RFT2 90%、GRPO 86.7%（负结果如实记录）；GRPO 诊断（reward 饱和、仅 2/224 步有梯度）
-> 6. **posttrain loop 排障**：诊断 DEAD 根因、worktree 隔离 git 推送协议
+> **P1 — GRPO 改进训练（GPU 6-7）**：
+> 1. **从 SFT 冷启动**（而非已 0.90 的 RFT2），留出 headroom 让 GRPO 有学习空间。
+> 2. **奖励分解**：把 reward 从「全对=1 / 全错=0」改为「区间内 vs 越界」分段奖励，β>α（越界惩罚大于区间内奖励），减少全对饱和（189/224 步 reward=1.0 的根因）。
+> 3. **更难/长尾训练题**：增加噪声、多通道、非整数周期等难例，提高 group 内奖励方差（当前仅 2/224 步有梯度）。
+> 4. **跑 ≥500 步**，报 reward 曲线 + cheat rate + 配对检验（与冷启动对比，McNemar / paired bootstrap）。
 >
-> **格式要求**：中文、单文件 HTML、0 外链、0 script、内联 SVG 图表、关键数字卡片、每节有数据表格、诚实性声明。从已有的各阶段报告和落盘 JSON 中提取真实数字，不要编造。
+> **P2 — 真题 benchmark 复测**：
+> 1. 把 post-GRPO adapter 装入 `:30003`，**在 EDA-Eval-DesignFlow-WaveView 全队列（182 case）重跑 V2 臂**。
+> 2. 与现有 V2=17.6% 基线做配对检验，看改进后的 adapter 是否在真题上也有提升。
+> 3. 如果新 GRPO 跑出了比 rft2_adapter_seed11 更好的 adapter，用新 adapter 重跑；否则用现有 rft2 adapter 复测确认 baseline 可复现。
 >
-> **验收标准**：报告 push 到 origin，`git cat-file -e origin/main:run/reports/report_vision_overall_work_zh.html` OK。
+> **P3 — 交付**：
+> 1. 更新 `report_vision_wave_grpo_mllm_result_zh.html`：新增 GRPOv2 结果节（改进点 + 数字 + 对比表 + 负结果照写）。
+> 2. 更新 `report_vision_waveview_selftest_agent_zh.html` §0.6：如果真题复测有新数字，追加一行。
+> 3. 心跳 + daily 照常。
+>
+> **约束**：
+> - 预注册：开跑前先在 MEMORY 写明臂设计 + 判据，跑完不许改判据。
+> - 反作弊常开，报 cheat rate。
+> - GPU 6-7 可用（:30001/:30003 服务不停）；SSH 桥到 36.15 保持。
+> - 负结果照写，不许粉饰。
+> - WAITING=0（无阻塞，连续推进）。
+
+### 📦 §用户令·2026-11-20 16:2x（写 vision 工作总报告）✅ 已交付（wake#1708+：`report_vision_overall_work_zh.html` 38460B 已 ON origin，`git cat-file -e` OK）。需要时再读。
 
 ### 📦 §用户令·2026-11-20 08:4x（诊断 posttrain loop 存活性 + 修 git 推送）✅ 已交付（wake#1702/1703/1704：posttrain loop **DEAD** 确认·`baize_posttrain_loop.sh` worktree 隔离 `git_sync_and_push()` 改造 + 13 段白名单 + `bash -n` PASS·报告 `run/reports/report_posttrain_loop_git_diag_zh.html` 19002B·5 交付文件全 ON origin `f831265a9`（`merge-base --is-ancestor` EXIT0）·未重启/未 kill/未 reset --hard/未声称一次过 push·待运维带正确 PATH 重启 loop）→ 详见报告 + `MEMORY_VISION.md` wake#1702/1703/1704；原文指令见 git history commit `f831265a9`。需要时再读。
 
