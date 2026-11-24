@@ -17,8 +17,10 @@
 
 1. **Lite 清单来源**：以 zhulong 实际评测用的那份为准 —— 先 `find /nasdata/app.e0031982/code/EDA-Flow-Bench -maxdepth 3 -name 'cases_lite*'`，把 **绝对路径 + 行数 + md5 + 首次读取时间** 记进 MEMORY 顶部一行。🚫 不许自己另造一份 Lite 清单。
 2. **Lite = 500**（论文宏 `\LiteSet=500`，冻结，见 `doc/AGENTS.md` §10）。**任何增删都必须"退一补一"**，总条数恒 500；换题记录进 `designflow/lite_manifest_diff.tsv`（`ts / shard / removed_id / added_id / reason`），并向 A（汇总人）+ zhulong 报备。
-3. **只修自己的槽位**：只动 `cases/<本 shard>/` 下**且在 Lite 清单里**的条目；别 shard 的 case 一律只读（发现缺陷 → 在 `designflow/lite_health_<本shard>.tsv` 记 `cross_shard: <id> <问题>`，交回对应 shard）。
-4. **先盘点后修**：每 shard 第一轮先产出 `designflow/lite_health_<shard>.tsv` 全量 500 行的本 shard 部分（含 `status` 分类），再按 §3 的优先级动手。
+3. **只修自己的槽位**：只动 `cases/<本 shard>/` 下**且在 Lite 清单里**的条目 —— **"条目"包含该 case 的 `reference/<全名>/`（`check.py` / `negative/` / `negative_selftest.py` / `solve.py`）**，这些是修 L0–L4 的主战场，不是"别线文件"；**别 shard 的 case 与 reference 一律只读**（发现缺陷 → 在 `designflow/lite_health_<本shard>.tsv` 记 `cross_shard: <id> <问题>`，交回对应 shard）。
+   - **id 归一化**：Lite 清单可能写短名（`<TaskId>-001`）或全名（`EDA-Eval-DesignFlow-<TaskId>-001`）⇒ 匹配前统一剥离 `EDA-Eval-DesignFlow-` 前缀，把归一化规则与"本 shard Lite 条数"一起写进 MEMORY 一行。
+4. **共享仓提交纪律**（血泪条款）：🚫 `git add -A`；只 `git add -- <本 shard 明确路径>`；push 前 `git diff --stat origin/main...HEAD` 自查**不得含别线删除**（参考 2026-11-24 `df04b80945` 事故）。
+5. **先盘点后修**：每 shard 第一轮先产出 `designflow/lite_health_<shard>.tsv` 全量 500 行的本 shard 部分（含 `status` 分类），再按 §3 的优先级动手。
 
 ---
 
