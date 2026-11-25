@@ -147,11 +147,11 @@ def setup_opencode_providers(routes: list[dict]):
     for r in routes:
         if r["harness"] != "opencode":
             continue
-        pid = f"mm-{r['llm']}"
+        pid = f"mm-{r['model']}"
         if pid not in providers:
             providers[pid] = {
                 "npm": "@ai-sdk/openai-compatible",
-                "name": f"MM {r['llm']} (direct gateway)",
+                "name": f"MM {r['model']} (direct gateway)",
                 "options": {
                     "baseURL": r["base_url"],
                     "apiKey": r["api_key"],
@@ -408,7 +408,7 @@ def run_cline_mm(route, instance, workdir, image_infos, proxy_port, timeout,
 def run_opencode_mm(route, instance, workdir, image_infos, timeout):
     """Run opencode with images via -f flag (native multimodal). Returns (patch, out, err, rc)."""
     prompt = instance["problem_statement"]
-    provider_model = f"mm-{route['llm']}/{route['model']}"
+    provider_model = f"mm-{route['model']}/{route['model']}"
     # NOTE: prompt must come BEFORE -f flags (yargs array flag consumes subsequent args)
     cmd = [OPENCODE_BIN, "run", "--dir", str(workdir),
            "--model", provider_model, "--auto", prompt]
