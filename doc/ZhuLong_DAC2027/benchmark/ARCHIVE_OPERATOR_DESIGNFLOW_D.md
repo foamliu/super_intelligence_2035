@@ -2076,3 +2076,11 @@ WAITING: 0 · **LITE_FIX: D=124/124 green · P0 余 3(跨 shard cases/B/ hspice-
 ## 归档批次 r1337（r1336 心跳原文）
 
 r1336 = 监控轮 cycle-4 续 pos5-8: 4 green spot-check(Backannot-001/BitcellMcSpGen-001/BufPFFlatGen-001/CTLEAcMetric-001) 无回归; L1 audit_check_returns 4 条全 OK(shapes=[True] x4) + L2 ref-PASS 独立临时目录真跑全 PASS; L3 negselftest 跑通 negs FAIL distinct; L4 静态 4 条 check.py 0 unmocked GUI/spice binary; L5 carry-over. 跨 shard P0 re-verify: B HEAD r1200(e06bfd894) 仍未变, 仅修 DelayChainEdgeMeas-001 portability, 未及 OpampChar/SpiceSim-001/InvTripDelay 3 条仍 P0. Lite 清单 md5 复核一致(500 unique, D Lite 124). 原文见 daily_D_2026-11-25_r1336.md。
+
+## 归档批次 r1338（r1337 心跳原文 · 补录，r1339 轮修复 dangling 引用）
+
+r1337 = 监控轮 cycle-4 pos9-12: 4 green spot-check 无回归 + 跨 shard P0 3 pending(B HEAD r1200 e06bfd894 未变). 原文见 daily_D_2026-11-25_r1337.md.
+
+## 归档批次 r1339（r1338 心跳原文）
+
+r1338 = 监控轮 cycle-4 pos13-16: 4 green spot-check(ClampLeakPwrAnalyze-001/ClosureDeckBuilder-001/CmlMp5SweepCurrentAnalysisQA-001/ConnFileNetChk-001) 无回归; L1 audit 4 条全 OK + L2 ref-PASS 真跑全 PASS + L3 negs FAIL distinct + L4 静态 0 unmocked GUI/spice binary + L5 carry-over. 跨 shard P0 re-verify: B HEAD r1200(e06bfd894 DelayChainEdgeMeas-001 portability) 仍未触碰 3 P0(OpampChar/SpiceSim-001/InvTripDelay). 原文见 daily_D_2026-11-25_r1338.md.
