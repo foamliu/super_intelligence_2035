@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-25 22:xx · loop 重启补跑）**：作者 **374** 人（编号最大 **374**）· X 已核验 **147**（本轮 **+3**：`@baaadas` / `@hardmaru` / `@StefanoErmon`，均经代理抓 `x.com/<handle>` `HTTP 200`，`og:title` + `og:description` 双源核身份）· 已发信 **171**（台账 #1–#171；今日 **7/12**）· 回信 **0**（0/171；已回复 0 / 无应答>14d 9 / 未到期 162）。本轮 **+3**：Jiaming Song（DDIM 一作，中文，`tsong.me` 当前明文地址 ⇒ 已发信 #171）· David Ha（World Models 一作，英文，无公开邮箱 ⇒ 仅建档，X 双源）· Stefano Ermon（DDIM 资深作者，英文/意大利，Stanford 页当前地址 + X 双源 ⇒ 仅建档，同论文已发一作、守「同一论文 ≤1」）。
+
 > **当前计数（2026-11-25 09:0x）**：作者 **371** 人（编号最大 **371**）· X 已核验 **144**（本轮 **+1**：`@hwchung27` 由 GitHub 个人页 <https://github.com/hwchung27>（`HTTP 200` / 152,262 B）bio-links 外链 `twitter.com/hwchung27` + 代理抓 `x.com/hwchung27` `HTTP 200` / 207,174 B，`og:title` = `Hyung Won Chung (@hwchung27) on X`、`og:description` = `AI Research Scientist @Meta Superintelligence Labs. Past: @OpenAI / @Google Brain / PhD @MIT` ⇒ 双源；Yubo Wang / Suriya Gunasekar 无可核 X 外链、同名账号判他人 ⇒ 记「未找到 X」，不猜）· 已发信 **170**（台账 #1–#170；今日 **6/12**）· 回信 **0**（0/170；#1–#9 已转 `无应答(>14d)`）。本轮 **+3**：Yubo Wang（MMLU-Pro 一作，中文，UWaterloo 官方仓作者列表当前地址 ⇒ 已发信 #169）· Suriya Gunasekar（Textbooks II / phi 系列，英文，MSR 主页当前地址 ⇒ 已发信 #170）· Hyung Won Chung（Flan-T5 一作，英文，无当前可信邮箱 ⇒ 仅建档，X 双源）。
 
 > **当前计数（2026-11-25 06:0x）**：作者 **368** 人（编号最大 **368**）· X 已核验 **143**（本轮 **+3**：`@Chitwan_Saharia` 由本人主页 `https://chitwansaharia.github.io/`（`200` / 24,324 B）页内 `href="https://twitter.com/Chitwan_Saharia"` + 代理抓 `x.com/Chitwan_Saharia` `200` / 187,768 B，`og:title` = `Chitwan Saharia (@Chitwan_Saharia) on X`、`og:description` = `Past: Sr. Research Scientist @GoogleAI || B. Tech, CSE, @IITBombay` ⇒ 双源；⚠️ 另有一同名账号 `@ChitwanSaharia`（`200` / 74,201 B）**无本人主页外链**、粉丝量与简介均弱 ⇒ **不采用、不登记**；`@zhangir_azerbay` 由本人站点 `https://zhangir-azerbayev.github.io/`（`200` / 2,475 B）bio-links 外链 `twitter.com/zhangir_azerbay` + 代理抓 `x.com/zhangir_azerbay` `200` / 152,145 B，`og:title` = `Zhangir Azerbayev (@zhangir_azerbay) on X`、`og:description` = `research @openai` ⇒ 双源；`@haileysch__` 由本人主页 `https://haileyschoelkopf.github.io/`（`200` / 23,354 B）外链 `twitter.com/haileysch__` + 代理抓 `x.com/haileysch__` `200` / 187,591 B，`og:title` = `Hailey Schoelkopf (@haileysch__) on X`、`og:description` = `hillclimbing towards generality @anthropicai | prev @AiEleuther` ⇒ 双源）· 已发信 **168**（台账 #1–#168；今日 **4/12**）· 回信 **0**（0/168；#1–#9 已转 `无应答(>14d)`）。本轮 **+3**：Chitwan Saharia（Imagen 一作，英文，本人主页当前 `mailto:` ⇒ 已发信 #167）· Zhangir Azerbayev（Llemma 一作，英文，**仅 2023 论文地址可用、Princeton 转发页 `404` ⇒ 地址有效性存疑**，已发信 #168 并如实记风险）· Hailey Schoelkopf（Llemma 二作，英文，本人主页 percent-encoded `mailto:` ⇒ 仅建档，同论文已发一作、不重复打扰）。
@@ -5260,3 +5262,43 @@
 | X 账号 | **@hwchung27**（GitHub 个人页外链 `twitter.com/hwchung27` + 代理抓 `x.com/hwchung27` `HTTP 200` / 207,174 B，`og:title` = `Hyung Won Chung (@hwchung27) on X`、`og:description` = `AI Research Scientist @Meta Superintelligence Labs. Past: @OpenAI / @Google Brain / PhD @MIT` ⇒ 双源） |
 | 状态 | **待跟踪**（仅建档；无当前可信邮箱 ⇒ 不发信；X 进「待 follow 清单」，🚫 不假装已 follow） |
 | 备注 | 高价值 posttrain 联系人（Flan-T5 一作，指令微调规模化）。若后续获得当前公开邮箱，问题候选：① 1.8K 任务里任务数增益 vs 模型规模增益如何权衡、2B 是否值得堆到 1.8K 任务；② CoT 微调数据占比与对非推理任务的副作用；③ Flan-T5 与 Flan-PaLM 同配方跨架构差异。 |
+
+
+### 372. Jiaming Song
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jiaming Song（`语言=中文(判据=拼音姓名族属可还原中文名「宋」+ 华人学者；不因现职 Meta / 邮箱 gmail 判英文)`） |
+| 机构 | 现 **Meta**（X bio 自述 `I need a vacation @Meta`）· Stanford PhD（导师 Stefano Ermon）；DDIM 一作 |
+| 代表论文 | **Denoising Diffusion Implicit Models（DDIM）**（`2010.02502`，B 轨 #406，一作） |
+| 邮箱 | **`jiaming.tsong@gmail.com`**（本人主页 <https://tsong.me/> `HTTP 200` / 7,389 B，页内 `mailto:` 明文；当前可用） |
+| 主页 | <https://tsong.me/>（`HTTP 200` / 7,389 B；2026-11-25 22:xx 复核） |
+| X 账号 | **@baaadas**（本人主页外链 `twitter.com/baaadas` + 代理抓 `x.com/baaadas` `HTTP 200` / 197,406 B，`og:title` = `Jiaming Song (@baaadas) on X`、`og:description` = `I need a vacation @Meta` ⇒ 双源） |
+| 状态 | **已发信**（**#171**，2026-11-25 22:46:04，中文 276 汉字）+ 待跟踪 |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 华人学者)`。发信问题（只对 DDIM 成立）：① 固定 NFE 下 η（η=1⇔DDPM / η=0 确定性）与步数的联合选取、有无可外推经验表；② 非马尔可夫方差 schedule 在 latent 空间（4× 下采样）或更高分辨率下原 β/α 累计量是否仍可用；③ 视频/时序扩散跳步采样的帧间一致性。台账 `mail/发送记录.md` §22:xx。 |
+
+### 373. David Ha
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | David Ha（`语言=英文(判据=西式姓名族属 David Ha + 日本机构 Sakana AI；未发信)`） |
+| 机构 | **Sakana AI**（Co-Founder & CEO，X bio 自述）· 前 **Google Brain** / **Stability AI**；World Models 一作 |
+| 代表论文 | **World Models**（`1803.10122`，B 轨 #407，一作） |
+| 邮箱 | **未找到可信当前地址**（`hardmaru.github.io` 经直连与代理均 `404`；无可读明文邮箱 ⇒ 🚫 不猜、不发信） |
+| 主页 | 未找到可访问当前主页（`hardmaru.github.io` `404`） |
+| X 账号 | **@hardmaru**（代理抓 `x.com/hardmaru` `HTTP 200` / 197,717 B，`og:title` = `hardmaru (@hardmaru) on X`、`og:description` = `Co-Founder and CEO @SakanaAILabs 🎏` ⇒ 双源） |
+| 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信；X 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | 世界模型/生成式智能高价值联系人。若后续获当前公开邮箱，问题候选：① VAE 潜空间维度与 RNN 预测对最终策略迁移的敏感度；② 「梦境训练」与真实环境训练的比例如何取；③ 搬到视频/时序生成时潜空间压缩与重建保真的权衡。 |
+
+### 374. Stefano Ermon
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Stefano Ermon（`语言=英文/意大利(判据=意大利姓名族属 + Stanford 美国机构；本窗未发信)`） |
+| 机构 | **Stanford University**（CS 教授）· **Inception AI** 联合创始人；DDIM 资深作者（X bio 亦自述 FlashAttention / DPO / GAIL / score-based 模型共同发明者） |
+| 代表论文 | **Denoising Diffusion Implicit Models（DDIM）**（`2010.02502`，B 轨 #406，末位作者） |
+| 邮箱 | **`ermon@cs.stanford.edu`**（本人 Stanford 页 <https://cs.stanford.edu/~ermon/> `HTTP 200` / 135,381 B，页内 `ermon AT cs.stanford.edu` 按页面规则还原；当前机构地址） |
+| 主页 | <https://cs.stanford.edu/~ermon/>（`HTTP 200` / 135,381 B；2026-11-25 22:xx 复核） |
+| X 账号 | **@StefanoErmon**（本人页外链 `twitter.com/StefanoErmon` + 代理抓 `x.com/StefanoErmon` `HTTP 200` / 183,036 B，`og:title` = `Stefano Ermon (@StefanoErmon) on X`、`og:description` 含 `AI Prof @Stanford` 与 DDIM ⇒ 双源） |
+| 状态 | **待跟踪**（本窗**不发信**：DDIM 同一论文已发一作 #171，守「同一论文 ≤1 封」；如后续换其另一篇已收录论文再评估） |
+| 备注 | 若未来发信按意大利语称谓问候 + 英文正文（§2）。高价值：扩散/生成建模、DPO/FlashAttention 关联。 |

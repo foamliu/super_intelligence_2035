@@ -309,9 +309,34 @@
   <li><b>发信</b>：今日 6/12，12:00 可再发 ≤3；先做地址有效性检查。</li>
 </ul>
 
+
+<section class="round" id="r22xx" style="border-top:2px dashed #cbd5e1;margin-top:22px;padding-top:14px">
+  <h2>➕ 22:xx 时窗（loop 重启补跑 · 第一百一十三轮）</h2>
+  <p style="color:#64748b;font-size:12px">注：loop 于 09:10 后停摆，22:3x 由运维重启后立刻补跑一轮；非 8 时窗内常规时窗。</p>
+  <p><b>网络</b>：arXiv <code>https://export.arxiv.org/api/query?search_query=cat:cs.CL&amp;max_results=25&amp;sortBy=submittedDate</code> <code>200</code> + <code>application/atom+xml</code>（61,711 B / 25 entry，<code>published</code> 上界 <code>2026-11-24T18:59:08Z</code>，距本窗约 44.7h &lt; 72h；顺带发现 <code>http://</code> 端点现返回 <code>301</code> ⇒ 改用 <code>https://</code>）；X 经代理 <code>200</code>；OpenAlex 3/3 <code>200</code>；B 轨 abs 3/3 <code>200</code>。</p>
+  <p><b>A 轨 0 新收</b>：今日 5/5 已满（00:00 +3 / 03:00 +2），不凑第 6 篇；公告批仍在 72h 窗内。</p>
+  <p><b>🅱 B 轨 +3 → 407（第一百一十三轮）</b>：
+    GAE <code>1506.02438</code>（<b>6,111</b>，2015 预印本；指数加权 TD(λ) 估计 advantage + 信赖域，高维连续控制样本效率）·
+    DDIM <code>2010.02502</code>（<b>11,254</b>，ICLR 2021；非马尔可夫前向 + 同训练目标，可跳步确定性采样，10×–50× 加速）·
+    World Models <code>1803.10122</code>（<b>2,470</b>，2018 预印本；VAE 压缩视觉 + RNN 预测 + 小控制器，可在「梦」中训练再迁移）。
+    三 ID 条目级查重 0 命中；OpenAlex 查询日 2026-11-25（数字为论文/OpenAlex 记录，未复现）。</p>
+  <p><b>👥 作者网 +3 → 374（X 147）</b>：#372 Jiaming Song（DDIM 一作，现 Meta；<code>tsong.me</code> 明文 <code>jiaming.tsong@gmail.com</code> + X <code>@baaadas</code> 双源 ⇒ 已发信）/ #373 David Ha（World Models 一作，Sakana AI 联创兼 CEO；主页 <code>404</code>、无公开邮箱 ⇒ 仅建档；X <code>@hardmaru</code> 双源）/ #374 Stefano Ermon（DDIM 资深作者，Stanford 教授；<code>cs.stanford.edu/~ermon</code> 页内 <code>ermon AT cs.stanford.edu</code> + X <code>@StefanoErmon</code> 双源 ⇒ 仅建档，同论文已发一作、守「同一论文 ≤1」）。</p>
+  <p><b>✉ 发信 1 封 → 171（今日 7/12）</b>：#171 Jiaming Song，中文（判据=拼音姓名族属「宋」+ 华人学者；不因现职 Meta / 邮箱 gmail 判英文），正文 <b>276</b> 汉字，主题「关于 DDIM：η 与步数的联合选取、latent 空间与视频跳步采样」，<code>SENT OK 22:46:04</code>；落款两行 <code>祝好，</code> / <code>Yang Liu</code>、其后无行；正文无项目名；与近期各信开头句/问句零共用。回信率 <b>0/171</b>（已回复 0 / 无应答&gt;14d 9 / 未到期 162）。</p>
+  <p><b>🗣 voice_ready 0 / 📰 news_ready 0</b>：经典论文无本窗事件点，不硬凑。</p>
+  <h3>🎯 对各线的可执行建议（6 线）</h3>
+  <ul>
+    <li><b>pretrain</b>：无直接（DDIM/GAE/World Models 均非预训练配方）；World Models 的「VAE 压缩 + 预测」可作未来源模型预训练思路，本窗不列入实验。</li>
+    <li><b>vision</b>：做「DDIM 采样 NFE–质量」小网格：η∈{0, 0.5, 1} × 步数{10,20,50}，预注册指标（FID + CLIP + 视频时序一致性）；先在 2B 视觉塔测，再决定是否上 latent 空间。</li>
+    <li><b>harness</b>：把采样配置（η、步数、随机种子）固化进评测 manifest，保证生成结果可复现；判分脚本记录采样参数。</li>
+    <li><b>data</b>：无直接。</li>
+    <li><b>zhulong</b>：thinking 轴 RL 加 GAE(λ) 消融：λ∈{0.95,0.99}，报告 advantage 方差/偏差与最终准确率。</li>
+    <li><b>designflow</b>：无直接。</li>
+  </ul>
+  <p style="font-size:12px;color:#64748b"><b>附录·检索与命中</b>：A 列表 25 entry；B abs 3/3；三 ID 查重 0 命中；去重剔除 0。数字均为论文作者/OpenAlex 自报，未复现。</p>
+</section>
 <footer>
   论文观察日报 · research 线 · 2026-11-25（09:00 时窗，A 轨 5/5 已满）· 自包含单文件（内联 CSS、零外链、离线可开）<br>
-  B 轨滚动清单：<code>research/classic/PAPERS.md</code>（404 篇）· 作者关系网：<code>research/classic/AUTHORS.md</code>（371 人）· 发信台账：<code>research/mail/发送记录.md</code><br>
+  B 轨滚动清单：<code>research/classic/PAPERS.md</code>（407 篇）· 作者关系网：<code>research/classic/AUTHORS.md</code>（374 人）· 发信台账：<code>research/mail/发送记录.md</code><br>
   推荐 = 待读线索，非结论；引用请以原文为准。引用图片/数字须标注出处（<code>图：&lt;作者&gt; et al., &lt;标题&gt;, arXiv &lt;ID&gt;</code>）。
 </footer>
 

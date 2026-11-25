@@ -9,6 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **407** 条（**第一百一十三轮 2026-11-25 22:xx loop 重启补跑 +3 → 407**：GAE `1506.02438`（**6,111**，2015 预印本；指数加权 TD(λ) 估计 advantage + 信赖域，高维连续控制样本效率） / DDIM `2010.02502`（**11,254**，ICLR 2021；非马尔可夫前向 + 同训练目标，可跳步确定性采样，10×–50× 加速） / World Models `1803.10122`（**2,470**，2018 预印本；VAE 压缩视觉 + RNN 预测 + 小控制器，可在「梦」中训练再迁移）；核验：abs 3/3 `200`（45,252 / 42,459 / 42,705 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（6,111 / 11,254 / 2,470，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；本轮归属：vision +2 · posttrain +1 · pretrain +1 · harness +1 · zhulong +1 · data +0 · designflow +0）
+
 **本轮快照**：累计 **404** 条（**第一百一十二轮 2026-11-25 09:0x 补 3 条 → 404**：FLAN-T5 `2210.11416`（**5,968**，2022 预印本；任务数规模化 + 模型规模 + CoT 微调三轴，1.8K 任务，Flan-PaLM 540B 平均比 PaLM 540B **+9.4%**、5-shot MMLU **75.2%**，开源 Flan-T5）/ Textbooks II phi-1.5 `2309.05463`（**878**，2023 技术报告；LLM 合成「教科书质量」数据，1.3B 模型自然语言可比 **5×** 大模型，小学算术/基础编程超多数非前沿 LLM，兼有大模型式好/坏特质）/ BIG-bench `2206.04615`（**2,190**，2022 预印本；**204** 任务 / **450** 作者 / **132** 机构，性能与校准随规模改善但绝对仍差、低于人类基线）；核验：abs 页 **3/3 `200`**（47,877 / 42,368 / 121,674 B，`citation_title` + `citation_date` 逐字）+ ar5iv **3/3 `200`**（1,361,779 / 235,713 / 1,479,357 B）+ OpenAlex **3/3 `200`**（5,968 / 878 / 2,190，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；另 **纠错弃用** `2308.03296`（实测为 *Studying LLM Generalization with Influence Functions*，非 phi/Textbooks）⇒ 未收录；本轮归属：pretrain **+2** · posttrain **+2** · data **+2** · harness **+3** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
 
 **本轮快照**：累计 **401** 条（**第一百一十一轮 2026-11-25 06:0x 补 3 条 → 401**：Imagen `2205.11487`（**4,540**，2022 预印本；文本扩散级联 + 冻结 T5-XXL 文本编码器，摘要报告 COCO 零样本 **FID 7.27**，并发现「增大语言模型比增大图像扩散模型」更能提升保真度与图文对齐）/ Llemma `2310.10631`（**509**，ICLR 2024；在 Code Llama 上以 Proof-Pile-2（科学论文 + 含数学的网页 + 数学代码）继续预训练，7B/34B 全量开源，MATH 上超过已知开源 base 模型并等参超 Minerva，未再微调即可工具调用与形式化定理证明）/ MMLU-Pro `2406.01574`（**3,057**，NeurIPS 2024 D&B Spotlight；选项 4→10、增推理题、剔除 trivial/noisy，相对 MMLU 准确率降 **16%–33%**）；核验：abs 页 **3/3 `200`**（43,825 / 40,457 / 45,161 B，`citation_title` + `citation_date` 逐字）+ OpenAlex **3/3 `200`**（4,540 / 509 / 3,057，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；另 **纠错并弃用**两个记忆中的 ID：`2309.15698` 实测为 *Deep Model Fusion: A Survey*、`2108.00644` 实测为 *Jointly Optimizing Query Encoder and Product Quantization* ⇒ 均非目标论文，未收录；本轮归属：vision **+1** · pretrain **+1** · data **+2** · posttrain **+1** · harness **+2** · zhulong **+1** · designflow **+1**（一篇可多线））
@@ -7115,3 +7117,49 @@
 | 与我们工作的关系 | **harness（主 · 基准设计）**：204 任务的「分层 + 专挑超能力题 + 人类基线 + 校准」四件套，正好对应我们 EDA 判分「题太易 / 只有准确率没有校准」的问题——可借其校准指标与人类基线做法。<br>**zhulong（主 · 评测口径）**：跨规模、跨架构（dense vs MoE）同表对比，须写清模型规模、是否稀疏、是否 few-shot；🚫 不可把不同架构的绝对分数直接横比。<br>**designflow**：任务多样性组织（按领域/难度分层）可参考，但 🚫 不得为降分而降级题型。<br>**pretrain / posttrain**：校准随规模改善但绝对仍差 ⇒ 评测应同时报 calibration，而非只看 acc。<br>**vision / data**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-25**（第一百一十二轮 · 09:00 时窗） |
 | 核验状态 | abs 页 **`200` / 121,674 B**，`citation_title` + `citation_date` 逐字；ar5iv **`200` / 1,479,357 B**（摘要逐字核）；OpenAlex **`200`**（2,190 / 2023 / `preprint`，查询日 2026-11-25；`primary_location.source` 记为 Macquarie University，属大型协作的元数据异常，如实记录、不作会议结论）。⚠️ 204 / 450 / 132 取自摘要（逐字核；`citation_author` 实际 451 条，如实分列），**未做 PDF 逐页复核**。条目级查重：`2206.04615` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+
+## 405. High-Dimensional Continuous Control Using Generalized Advantage Estimation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | High-Dimensional Continuous Control Using Generalized Advantage Estimation |
+| 作者（前 3） | John Schulman · Philipp Moritz · Sergey Levine（另 Michael Jordan · Pieter Abbeel；arXiv `citation_author` 逐字核） |
+| 年份 | **2015**（v1 `2015/06/08`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **arXiv 预印本**（OpenAlex `type=preprint`、`primary_location.source` = arXiv；后续 ICLR 2016 会议版未在本次核验中出现 ⇒ 不臆断） |
+| 被引数 | **6,111**（OpenAlex `10.48550/arXiv.1506.02438`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1506.02438> ｜ `10.48550/arXiv.1506.02438` |
+| 一句话贡献 | 提出 **GAE（Generalized Advantage Estimation）**：用类似 TD(λ) 的指数加权估计 advantage，在策略梯度的**偏差–方差**间连续插值；配合对策略与值函数的信赖域优化（TRPO 路线），在高维连续控制任务上显著提升样本效率。 |
+| 与我们工作的关系 | **posttrain（主 · RL / RLHF 的 advantage 估计）**：我们 PPO 类 RL 的 advantage 用 GAE 估计，λ / γ 直接控制方差–偏差权衡；本文给出 λ 插值的原始口径，可转成消融。<br>**zhulong（主 · thinking 轴 RL）**：thinking RL 的 advantage 估计可加 GAE(λ) 消融（λ∈{0.95,0.99}），报告 advantage 方差与最终准确率。<br>**pretrain / vision / data / harness / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十三轮 · 22:xx 时窗） |
+| 核验状态 | abs 页 **`200` / 45,252 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（6,111 / 2015 / `preprint`，查询日 2026-11-25）。⚠️ 具体实验数字取自摘要（逐字核），**未做 PDF 表格复核**。条目级查重：`1506.02438` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 406. Denoising Diffusion Implicit Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Denoising Diffusion Implicit Models |
+| 作者（前 3） | Jiaming Song · Chenlin Meng · Stefano Ermon（3 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（v1 `2020/10/06`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICLR 2021**（OpenAlex `type=preprint`、`primary_location.source` = arXiv；会议版未在本次核验中出现 ⇒ 会议口径仅作补充、不臆断页码） |
+| 被引数 | **11,254**（OpenAlex `10.48550/arXiv.2010.02502`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2010.02502> ｜ `10.48550/arXiv.2010.02502` |
+| 一句话贡献 | 提出 **DDIM**：构造一类**非马尔可夫**前向过程，训练目标与 DDPM 相同但反向过程可**跳步**确定性采样（η=0）并在 η=1 时退回 DDPM；实测比 DDPM 快 **10×–50×**（墙钟），支持计算量–质量权衡与语义插值。 |
+| 与我们工作的关系 | **vision（主 · 扩散/视频生成采样加速）**：视频生成线的采样成本是瓶颈；DDIM 的「同训练目标 + 可跳步」是可直接复用的加速手段，η 与步数联合选取可转成 NFE–质量网格实验。<br>**harness（主 · 可复现评测）**：采样 η / 步数须写入评测 manifest，否则生成结果不可复现。<br>**pretrain / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十三轮 · 22:xx 时窗） |
+| 核验状态 | abs 页 **`200` / 42,459 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（11,254 / 2020 / `preprint`，查询日 2026-11-25）。⚠️ 10×–50× 与 η 取自摘要（逐字核），**未做 PDF 表格复核**。条目级查重：`2010.02502` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 407. World Models
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | World Models |
+| 作者（前 3） | David Ha · Jürgen Schmidhuber（2 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2018**（v1 `2018/03/27`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **arXiv 预印本**（OpenAlex `type=preprint`、arXiv；后续 NeurIPS 2018 版未在本次核验中出现 ⇒ 不臆断） |
+| 被引数 | **2,470**（OpenAlex `10.48550/arXiv.1803.10122`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1803.10122> ｜ `10.48550/arXiv.1803.10122` |
+| 一句话贡献 | 用 **VAE** 把高维视觉观测压成低维潜表示、用 **RNN** 在潜空间做时序预测，再在其上训一个很小的 controller；策略甚至可完全在模型「梦境」中训练后再迁移回真实环境，是「世界模型」范式的代表作。 |
+| 与我们工作的关系 | **vision（主 · 视觉压缩 / 世界模型）**：VAE 潜表示 + 预测的分层结构，对视频线的「压缩表示 + 时序预测」有直接借鉴。<br>**pretrain（主 · 潜表示学习）**：无监督学压缩时空表示，可作预训练目标候选（与像素重建 / 对比目标对照）。<br>**harness / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十三轮 · 22:xx 时窗） |
+| 核验状态 | abs 页 **`200` / 42,705 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（2,470 / 2018 / `preprint`，查询日 2026-11-25）。⚠️ 方法描述取自摘要（逐字核），**未做 PDF 表格复核**。条目级查重：`1803.10122` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
