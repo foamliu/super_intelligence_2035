@@ -1,0 +1,169 @@
+{
+  "analysis": "P2 rft2 retest vs original V2 (rft2) paired McNemar",
+  "original_snapshot": "vision/waveview_mining/codegen_full_results_snapshot.json",
+  "retest_results": "vision/waveview_mining/p2_rft2_retest_results.json",
+  "n_common": 182,
+  "n_only_original": 0,
+  "n_only_retest": 0,
+  "original_v2_pass": 32,
+  "original_v2_rate": 0.1758,
+  "retest_v2_pass": 43,
+  "retest_v2_rate": 0.2363,
+  "delta_pp": 6.04,
+  "both_pass": 19,
+  "both_fail": 126,
+  "mcnemar_b": 13,
+  "mcnemar_c": 24,
+  "mcnemar_p_two_sided": 0.100178,
+  "flips": [
+    {
+      "case_id": "EDA-Eval-DesignFlow-CaSkewEdgeStat-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-CircuitIdentPromptGuide-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-CosineWaveAnalyze-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-CrStateDesyncFix-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-DqDqsAlign-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-FineSimTskew-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-FmFreqVsTAnalyze-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-FsdbMeasRunGen-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-FsdbPulseFilter-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-FsdbScopeSignalLocate-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-GenSPv2-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-IVCurveRegionClassify-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-MrrEnopsDelay-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-NandMcuAsm-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-NetlistCmp-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-PwlConvert-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-PwrCornerSweep-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-RegrRunnerGen-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-RonMismatchMd0-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-ScriptCompareMergeReviewQA-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-ShortCfgTrace-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-SimResultDirExplain-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-Sp2tVerilogaSwitch-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-SpTemplateOpt-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-VAMSGen-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-VamCellReco-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-VcdToFsdbMigration-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-VmMhlAlterStats-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-WaveCmpWarnPort-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-WaveviewModuleUpdate-001",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-WaveviewModuleUpdate-001-v2",
+      "dir": "pass->fail"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-Wr4thCkMeas-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-WvEdgeTiming-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-WvEyeSelect-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-WvGridLayout-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-WvNetVIDisplayQA-001",
+      "dir": "fail->pass"
+    },
+    {
+      "case_id": "EDA-Eval-DesignFlow-XrunLogStatusCheck-001",
+      "dir": "fail->pass"
+    }
+  ],
+  "conclusion": "reproducible (no significant difference)"
+}
