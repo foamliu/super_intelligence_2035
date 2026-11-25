@@ -2477,3 +2477,5 @@ WAITING: 0（r1215: MCP 113th OK [2026-11-22 用户令连通性复测] + unfeh(k
 
 > r1046→r1041 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1052」（r1052 释体积，保留 r1052/r1051/r1049/r1048/r1047）
 
+
+> r1382 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1383」（r1383 释体积；r1382=VconnConsistCheck-001 p1_fixed->green 升级(r1361 L3 fix 验证 PASS: 4 negs distinct {h,e,j,c} §4.9 trio 全FAIL) + batch L0/L1 on 124 D Lite 全 OK(37 用 _selftest.py 动态 refzip) + cycle-5 pos72-75 4 green spot-check(AutoCellDrcFlowGen/PGcheckTcl/WvAcReportGen/RsCalcFlow) 无回归 + 跨 shard P0 2 pending(挂42轮 r1341-r1382; B HEAD r1220(SimExpl) 仍未触 2 条; OpampChar=refzip EXISTS+L1/L3 OK 仅 L4/L2 待 mock; InvTripDelay=L0/L2/L3/L4 全 FAIL 缺 refzip+selftest crash+真调 hspice), 原文见 daily_D_2026-11-25_r1382.md）
