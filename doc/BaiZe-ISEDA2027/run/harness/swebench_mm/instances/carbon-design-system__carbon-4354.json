@@ -1,0 +1,47 @@
+{
+  "base_commit": "42d1e19a4a4bcfd6d83f20fc652ebbefcd062d4d",
+  "created_at": "2019-10-16T15:23:24Z",
+  "eval_type": "pass_and_fail",
+  "image": "swebench/sweb.eval.x86_64.carbon-design-system_1776_carbon-4354:latest",
+  "image_assets": {
+    "patch": [],
+    "problem_statement": [
+      "https://user-images.githubusercontent.com/10718366/66932600-b933a280-efec-11e9-9c45-aa7065f852b3.png"
+    ],
+    "test_patch": []
+  },
+  "instance_id": "carbon-design-system__carbon-4354",
+  "log_parser": "parse_log_carbon",
+  "repo": "carbon-design-system/carbon",
+  "version": "10",
+  "patch": "diff --git a/packages/react/src/components/UIShell/HeaderMenu.js b/packages/react/src/components/UIShell/HeaderMenu.js\nindex 28954eb1aca3..9f82399a2200 100644\n--- a/packages/react/src/components/UIShell/HeaderMenu.js\n+++ b/packages/react/src/components/UIShell/HeaderMenu.js\n@@ -72,7 +72,9 @@ class HeaderMenu extends React.Component {\n   /**\n    * Toggle the expanded state of the menu on click.\n    */\n-  handleOnClick = () => {\n+  handleOnClick = e => {\n+    e.preventDefault();\n+\n     this.setState(prevState => ({\n       expanded: !prevState.expanded,\n     }));\n@@ -180,7 +182,7 @@ class HeaderMenu extends React.Component {\n           aria-haspopup=\"menu\" // eslint-disable-line jsx-a11y/aria-proptypes\n           aria-expanded={this.state.expanded}\n           className={`${prefix}--header__menu-item ${prefix}--header__menu-title`}\n-          href=\"javascript:void(0)\"\n+          href=\"#\"\n           onKeyDown={this.handleOnKeyDown}\n           ref={this.handleMenuButtonRef}\n           role=\"menuitem\"\n",
+  "test_patch": "diff --git a/packages/react/src/components/UIShell/__tests__/__snapshots__/HeaderMenu-test.js.snap b/packages/react/src/components/UIShell/__tests__/__snapshots__/HeaderMenu-test.js.snap\nindex c28cc5aca714..77ac05ba88aa 100644\n--- a/packages/react/src/components/UIShell/__tests__/__snapshots__/HeaderMenu-test.js.snap\n+++ b/packages/react/src/components/UIShell/__tests__/__snapshots__/HeaderMenu-test.js.snap\n@@ -16,7 +16,7 @@ exports[`HeaderMenu should render 1`] = `\n         aria-expanded={false}\n         aria-haspopup=\"menu\"\n         className=\"bx--header__menu-item bx--header__menu-title\"\n-        href=\"javascript:void(0)\"\n+        href=\"#\"\n         onKeyDown={[Function]}\n         role=\"menuitem\"\n         tabIndex={0}\n",
+  "eval_script": "#!/bin/bash\nset -uxo pipefail\ncd /testbed\ngit config --global --add safe.directory /testbed\nsource $NVM_DIR/nvm.sh\ngit status\ngit show\ngit -c core.fileMode=false diff 42d1e19a4a4bcfd6d83f20fc652ebbefcd062d4d\nmkdir -p node_modules/accessibility-checker/lib/engine 2>/dev/null || true\ngit checkout 42d1e19a4a4bcfd6d83f20fc652ebbefcd062d4d packages/react/src/components/UIShell/__tests__/__snapshots__/HeaderMenu-test.js.snap\ngit apply -v - <<'EOF_114329324912'\ndiff --git a/packages/react/src/components/UIShell/__tests__/__snapshots__/HeaderMenu-test.js.snap b/packages/react/src/components/UIShell/__tests__/__snapshots__/HeaderMenu-test.js.snap\nindex c28cc5aca714..77ac05ba88aa 100644\n--- a/packages/react/src/components/UIShell/__tests__/__snapshots__/HeaderMenu-test.js.snap\n+++ b/packages/react/src/components/UIShell/__tests__/__snapshots__/HeaderMenu-test.js.snap\n@@ -16,7 +16,7 @@ exports[`HeaderMenu should render 1`] = `\n         aria-expanded={false}\n         aria-haspopup=\"menu\"\n         className=\"bx--header__menu-item bx--header__menu-title\"\n-        href=\"javascript:void(0)\"\n+        href=\"#\"\n         onKeyDown={[Function]}\n         role=\"menuitem\"\n         tabIndex={0}\n\nEOF_114329324912\nif ! git diff --quiet HEAD -- package.json 2>/dev/null; then echo \"package.json changed by patch; re-syncing dependencies\"; export PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true; if [ -f yarn.lock ]; then timeout 900 yarn install --silent > /dev/null 2>&1 || true; else timeout 900 npm install --silent > /dev/null 2>&1 || true; fi; chmod -R a+rX node_modules > /dev/null 2>&1 || true; fi\n: '>>>>> Start Test Output'\nyarn test --maxWorkers=4 packages/react/src/components/UIShell/\n: '>>>>> End Test Output'\ngit checkout 42d1e19a4a4bcfd6d83f20fc652ebbefcd062d4d packages/react/src/components/UIShell/__tests__/__snapshots__/HeaderMenu-test.js.snap\n",
+  "problem_statement": "[React]: \"javascript:void(0)\" href value in HeaderMenu throws React warning\n\r\n\r\n## What package(s) are you using?\r\n\r\n\r\n\r\n- [x] `carbon-components`\r\n- [x] `carbon-components-react`\r\n\r\n## Detailed description\r\n\r\nFor the [`HeaderMenu` component](https://github.com/carbon-design-system/carbon/blob/master/packages/react/src/components/UIShell/HeaderMenu.js#L183) in UIShell, a React warning is emitted to the console as an error. The warning reads that a future React version will block javascript URLs (i.e. \"javascript:void(0)\").\r\n\r\nReplacing \"javascript:void(0)\" with \"#\" would remove the warning.\r\n\r\n## Steps to reproduce the issue\r\n\r\n1. Visit Reduced Test case in [CodeSandbox](https://codesandbox.io/s/codesandbox-xfnip)\r\n2. Open the console\r\n3. React warning is printed in the console as an error\r\n\r\n## Additional information\r\n\r\n<img width=\"703\" alt=\"React warning\" src=\"https://user-images.githubusercontent.com/10718366/66932600-b933a280-efec-11e9-9c45-aa7065f852b3.png\">\r\n\r\n\n",
+  "hints_text": "",
+  "FAIL_TO_PASS": [
+    "packages/react/src/components/UIShell/__tests__/HeaderMenu-test.js"
+  ],
+  "PASS_TO_PASS": [
+    "packages/react/src/components/UIShell/__tests__/HeaderMenuButton-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNavFooter-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNavMenu-test.js",
+    "packages/react/src/components/UIShell/__tests__/HeaderGlobalBar-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNavMenuItem-test.js",
+    "packages/react/src/components/UIShell/__tests__/Header-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNav-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNavSwitcher-test.js",
+    "packages/react/src/components/UIShell/__tests__/Link-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNavLinkText-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNavDetails-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNavLink-test.js",
+    "packages/react/src/components/UIShell/__tests__/HeaderName-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNavItems-test.js",
+    "packages/react/src/components/UIShell/__tests__/HeaderGlobalAction-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNavHeader-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNavIcon-test.js",
+    "packages/react/src/components/UIShell/__tests__/HeaderMenuItem-test.js",
+    "packages/react/src/components/UIShell/__tests__/SideNavItem-test.js",
+    "packages/react/src/components/UIShell/__tests__/SkipToContent-test.js"
+  ]
+}

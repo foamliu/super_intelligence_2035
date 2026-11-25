@@ -1,0 +1,29 @@
+{
+  "base_commit": "583b137b65ff0c4fb1a15fe2e162a755a95ee722",
+  "created_at": "2020-09-24T16:03:25Z",
+  "eval_type": "pass_and_fail",
+  "image": "swebench/sweb.eval.x86_64.carbon-design-system_1776_carbon-6906:latest",
+  "image_assets": {
+    "patch": [],
+    "problem_statement": [
+      "https://user-images.githubusercontent.com/30597411/88697380-7c93ec00-d0d2-11ea-8a4c-9513647ab79f.png"
+    ],
+    "test_patch": []
+  },
+  "instance_id": "carbon-design-system__carbon-6906",
+  "log_parser": "parse_log_carbon",
+  "repo": "carbon-design-system/carbon",
+  "version": "12",
+  "patch": "diff --git a/packages/react/src/components/MultiSelect/FilterableMultiSelect.js b/packages/react/src/components/MultiSelect/FilterableMultiSelect.js\nindex 18d79762c464..283767fa4a32 100644\n--- a/packages/react/src/components/MultiSelect/FilterableMultiSelect.js\n+++ b/packages/react/src/components/MultiSelect/FilterableMultiSelect.js\n@@ -398,9 +398,9 @@ export default class FilterableMultiSelect extends React.Component {\n                       aria-controls={`${id}__menu`}\n                       aria-autocomplete=\"list\"\n                       ref={(el) => (this.inputNode = el)}\n+                      id={`${id}-input`}\n                       {...getInputProps({\n                         disabled,\n-                        id,\n                         placeholder,\n                         onKeyDown: this.handleOnInputKeyDown,\n                       })}\n@@ -423,7 +423,7 @@ export default class FilterableMultiSelect extends React.Component {\n                   </ListBox.Field>\n                   {isOpen && (\n                     <ListBox.Menu\n-                      role=\"group\"\n+                      role=\"listbox\"\n                       aria-label={ariaLabel}\n                       id={`${id}-menu`}>\n                       {sortItems(\n",
+  "test_patch": "diff --git a/packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap b/packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap\nindex f9ab080b0a89..15dd9af58bc1 100644\n--- a/packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap\n+++ b/packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap\n@@ -133,7 +133,7 @@ exports[`MultiSelect.Filterable should render 1`] = `\n                   autoComplete=\"off\"\n                   className=\"bx--text-input bx--text-input--empty\"\n                   disabled={false}\n-                  id=\"test-filterable-multiselect\"\n+                  id=\"test-filterable-multiselect-input\"\n                   onBlur={[Function]}\n                   onChange={[Function]}\n                   onKeyDown={[Function]}\n",
+  "eval_script": "#!/bin/bash\nset -uxo pipefail\ncd /testbed\ngit config --global --add safe.directory /testbed\nsource $NVM_DIR/nvm.sh\ngit status\ngit show\ngit -c core.fileMode=false diff 583b137b65ff0c4fb1a15fe2e162a755a95ee722\nmkdir -p node_modules/accessibility-checker/lib/engine 2>/dev/null || true\ngit checkout 583b137b65ff0c4fb1a15fe2e162a755a95ee722 packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap\ngit apply -v - <<'EOF_114329324912'\ndiff --git a/packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap b/packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap\nindex f9ab080b0a89..15dd9af58bc1 100644\n--- a/packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap\n+++ b/packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap\n@@ -133,7 +133,7 @@ exports[`MultiSelect.Filterable should render 1`] = `\n                   autoComplete=\"off\"\n                   className=\"bx--text-input bx--text-input--empty\"\n                   disabled={false}\n-                  id=\"test-filterable-multiselect\"\n+                  id=\"test-filterable-multiselect-input\"\n                   onBlur={[Function]}\n                   onChange={[Function]}\n                   onKeyDown={[Function]}\n\nEOF_114329324912\nif ! git diff --quiet HEAD -- package.json 2>/dev/null; then echo \"package.json changed by patch; re-syncing dependencies\"; export PUPPETEER_SKIP_DOWNLOAD=true PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true; if [ -f yarn.lock ]; then timeout 900 yarn install --silent > /dev/null 2>&1 || true; else timeout 900 npm install --silent > /dev/null 2>&1 || true; fi; chmod -R a+rX node_modules > /dev/null 2>&1 || true; fi\n: '>>>>> Start Test Output'\nyarn test --maxWorkers=1 packages/react/src/components/MultiSelect/\n: '>>>>> End Test Output'\ngit checkout 583b137b65ff0c4fb1a15fe2e162a755a95ee722 packages/react/src/components/MultiSelect/__tests__/__snapshots__/FilterableMultiSelect-test.js.snap\n",
+  "problem_statement": "DAP errors with MultiSelect.Filterable\nI am seeing this with\r\n\"carbon-components\": \"10.14.0\",\r\n\"carbon-components-react\": \"7.14.0\",\r\n\r\nIt is also reproducible with the Carbon React storybook.\r\n\r\n![image](https://user-images.githubusercontent.com/30597411/88697380-7c93ec00-d0d2-11ea-8a4c-9513647ab79f.png)\r\n\n",
+  "hints_text": "",
+  "FAIL_TO_PASS": [
+    "packages/react/src/components/MultiSelect/__tests__/FilterableMultiSelect-test.js"
+  ],
+  "PASS_TO_PASS": [
+    "packages/react/src/components/MultiSelect/tools/__tests__/sorting-test.js",
+    "packages/react/src/components/MultiSelect/__tests__/MultiSelect-test.js"
+  ]
+}
