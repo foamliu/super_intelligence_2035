@@ -24,15 +24,15 @@ PHASE:        双轨（A 最新论文 50% / B 经典论文 50% + 作者关系网
   ⑦ 回信率 **0 / 173**（已回复 0 / 无应答>14d 9 / 未到期 164）；`replies/` 仍只有 `README.md`；通道只发不收；0 回信仍当待诊断信号。
   ⑧ voice_ready **0** / news_ready **1**（BriConstrain：碰撞自由 31%→91%（BrickNet）/ 15%→65%（ICLF），可发头条）。
   ⑨ 交付：`daily/2026-11-26.html` + `daily/index.html` 当日行（5/5 · 413 · 380 · 151 · 173 · 0/173）+ `research/2026-11-26.md` + `PAPERS.md` #411–#413（快照 413）+ `AUTHORS.md` #378–#380（计数行 380）+ `发送记录.md` §03:xx + draft/body 各 1 + `SEEN.md`/`papers.jsonl` +5。
-  ⑩ **推送仍未闭环（🔴 见阻塞⑦）**：本地历史含 news/research 约 391 MB 待推 + partial/shallow clone；已改走侧分支 `research-backlog-r262` 一次性上传对象，再 fetch+rebase+push main。侧分支上传在本轮结束前未完成 ⇒ 下轮第一件事续传/补推。
+  ⑩ **✅ 推送已闭环（本轮）**：先把本地历史对象推到侧分支 `research-backlog-r262`（一次上传约 391 MB，避开 non-fast-forward 竞争），随后 `fetch + rebase origin/main` 并 `git push HEAD:main` 成功（`56679802f5..c6a1d7e397`），`rev-list origin/main...HEAD = 0 0`；侧分支已删除。
 
   前一: [r257 · 2026-11-25 03:00 时窗 · A +2 → 5/5 · B +3 → 398 · 作者网 +3 → 365（X 140）· 信 1 → 166 · 回信率 0/166] 详情见 `daily-memories-research/2026-11-25.md`。
 
 当前动作:     ✅ 03:00 时窗闭环：A 轨 5/5（今日首窗收满）；B +3 → 413；作者网 +3 → 380（X 151）；发信 1 → 173（今日 1/12）；news_ready 1；回信率 0/173。
-下一步:       ① 06:00 时窗：A 额度已满 ⇒ 0 新收（不凑第 6 篇）；② B 轨 +3（第一百一十六轮）；③ 作者网 +3；④ 发信：今日 1/12，可再发（先做地址有效性检查）；⑤ 回信诊断延续（0/173，0 回信仍当待诊断信号）；⑥ **补推**（侧分支续传 + rebase + push main）。
-补推记录:     🔴 未闭环：本地待推约 391 MB（news 308.1 MB + research 63.7 MB）+ partial/shallow clone；已推对象到侧分支 `research-backlog-r262`（上传未在本轮完成），下轮续传后 `git push origin HEAD:main`。详见阻塞 ⑦。
+下一步:       ① 06:00 时窗：A 额度已满 ⇒ 0 新收（不凑第 6 篇）；② B 轨 +3（第一百一十六轮）；③ 作者网 +3；④ 发信：今日 1/12，可再发（先做地址有效性检查）；⑤ 回信诊断延续（0/173，0 回信仍当待诊断信号）。
+补推记录:     ✅ 已补推闭环：约 391 MB（news 308.1 MB + research 63.7 MB）经侧分支 `research-backlog-r262` 上传后，rebase origin/main + push main 成功（`56679802f5..c6a1d7e397`），本地与 origin `0 0`；临时侧分支已删除。
 本轮新增:     A 轨 +5（今日 5/5）· B 轨 +3（413）· 作者网 +3（380）· X +2（151）· 作者信 +1（173，今日 1/12）· voice_ready 0 · news_ready 1 · 回信率 0/173
-阻塞:         ① 🔴 发件显示名 `AI+EDA 招聘 · 自动`（最可能的 0 回信原因），需运维改配置；② 发件通道只发不收（无 IMAP/POP3）；③ `WATCH_RESEARCH_TASK.md` 44 KB 超红线且 agent 只读 ⇒ 需授权；④ #168 地址有效性存疑（Princeton 转发页 404）；⑤ BIG-bench 一作 Aarohi Srivastava 主页 JS 渲染、CV PDF 404 ⇒ 当前邮箱未核，不猜；⑥ loop 兜底 `git add` 范围仍需核查（09:10 曾误入约 1GB 二进制，已本地清理）；⑦ 🔴 **推送未闭环**：约 391 MB 待推 + partial/shallow + origin 持续前进 ⇒ 已改走侧分支一次性上传对象，本轮未传完，需下轮续传并在安静窗口补推 main。
+阻塞:         ① 🔴 发件显示名 `AI+EDA 招聘 · 自动`（最可能的 0 回信原因），需运维改配置；② 发件通道只发不收（无 IMAP/POP3）；③ `WATCH_RESEARCH_TASK.md` 44 KB 超红线且 agent 只读 ⇒ 需授权；④ #168 地址有效性存疑（Princeton 转发页 404）；⑤ BIG-bench 一作 Aarohi Srivastava 主页 JS 渲染、CV PDF 404 ⇒ 当前邮箱未核，不猜；⑥ loop 兜底 `git add` 范围仍需核查（09:10 曾误入约 1GB 二进制，已本地清理）（⑦ 推送活锁已于本轮闭环：侧分支上传对象 + rebase + push main 成功，见补推记录）。
 ERROR_COUNT:  121（本轮 +1：推送活锁 — 约 391 MB 待推 / partial+shallow / origin 持续前进，已改侧分支上传；上轮 http 301 已改 https 已记）
 ```
 
