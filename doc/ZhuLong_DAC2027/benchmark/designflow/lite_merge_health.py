@@ -152,6 +152,7 @@ def read_tsv(path):
     if not lines:
         return
     header = lines[0].split("\t")
+    seq = 0
     for ln in lines[1:]:
         ln = ln.rstrip("\r")
         if not ln:
@@ -160,6 +161,13 @@ def read_tsv(path):
         if len(parts) < len(header):
             parts += [""] * (len(header) - len(parts))
         row = dict(zip(header, parts))
+        # _seq = monotonic append-order within this file (ground truth of "last
+        # action"). Agents sometimes append a row with a ts earlier than a
+        # preceding row (e.g. a green_verified back-dated after a stale
+        # p0_pending); picking "latest by ts" then keeps the stale row. File
+        # order is the reliable signal; ts is only a tiebreaker.
+        row["_seq"] = seq
+        seq += 1
         cid = row.get("case_id", "")
         if not cid or cid.startswith("L1-BATCH") or cid.startswith("P0-REVERIFY"):
             continue
@@ -167,17 +175,22 @@ def read_tsv(path):
 
 
 def latest_rows():
-    """normalized case_id -> latest row (by ts) across all per-shard tsvs.
+    """normalized case_id -> latest row across all per-shard tsvs.
 
-    Returns dict cid -> (row, src_shard). The caller (owner-aware merge) decides
-    whether to use the owner's row or fall back.
+    "Latest" = greatest (_seq, ts): within a single shard file, the last-
+    appended row wins even if its ts is mis-ordered (agents back-date rows);
+    across shards, ts breaks ties. Returns dict cid -> (row, src_shard). The
+    caller (owner-aware merge) decides whether to use the owner's row or fall
+    back.
     """
     latest = {}
     for s in SHARDS:
         for row in read_tsv(os.path.join(DFLOW, f"lite_health_{s}.tsv")):
             cid = norm(row["case_id"])
             ts = row.get("ts", "")
-            if cid not in latest or ts >= latest[cid][0]["ts"]:
+            seq = row.get("_seq", 0)
+            if cid not in latest or (seq, ts) >= latest[cid][0]["_key"]:
+                row["_key"] = (seq, ts)
                 latest[cid] = (row, s)
     return latest
 
@@ -197,8 +210,12 @@ def owner_latest_rows(owner_map, latest):
         for row in read_tsv(os.path.join(DFLOW, f"lite_health_{s}.tsv")):
             cid = norm(row["case_id"])
             ts = row.get("ts", "")
+            seq = row.get("_seq", 0)
             d = per_owner.setdefault(cid, {})
-            if s not in d or ts >= d[s]["ts"]:
+            # last-appended row wins (file order), ts as tiebreaker (see
+            # latest_rows docstring for the back-dated-row rationale)
+            if s not in d or (seq, ts) >= d[s].get("_key", (-1, "")):
+                row["_key"] = (seq, ts)
                 d[s] = row
     result = {}
     for cid, ow in owner_map.items():
@@ -224,15 +241,19 @@ def main():
         for row in read_tsv(os.path.join(DFLOW, f"lite_health_{s}.tsv")):
             cid = norm(row["case_id"])
             ts = row.get("ts", "")
+            seq = row.get("_seq", 0)
             d = per_owner.setdefault(cid, {})
-            if s not in d or ts >= d[s]["ts"]:
+            # last-appended row wins (file order), ts as tiebreaker (see
+            # latest_rows docstring for the back-dated-row rationale)
+            if s not in d or (seq, ts) >= d[s].get("_key", (-1, "")):
+                row["_key"] = (seq, ts)
                 d[s] = row
     # global latest (cid -> (row, src_shard)) for fallback
     latest = {}
     for cid, sd in per_owner.items():
         best = None
         for s, r in sd.items():
-            if best is None or r["ts"] >= best[0]["ts"]:
+            if best is None or r.get("_key", (-1, "")) >= best[0].get("_key", (-1, "")):
                 best = (r, s)
         if best:
             latest[cid] = best
