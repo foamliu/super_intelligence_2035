@@ -75,9 +75,9 @@ WAITING: 0
 ```
 PHASE:        S2前置+污染闸门全完成 — PC-1✅~PC-5✅ + 扩展黑名单✅ + S2新源扫描✅(48K docs/0命中) + 方案F blendswitch交付✅(7/7零重叠=0) → WAITING=0
 已完成:       ✅PC-1 L4过滤(430.7B/90.5%);✅PC-2 MegaMath分词ALL DONE(5 subsets/364 shards/243GB);✅PC-3污染闸门(6benchmark/9277tasks);✅PC-4 main版blend_s2_preblend.tsv(12源/含nemotron 0.067+megamath_web 0.060+finemath 0.005/weight_sum=1.0/gen_blend --verify通过);✅S2重叠研究报告;✅finemath-4plus分词DONE(9.4B tok);✅v3报告(R136刷新main版/pushed);✅MegaMath-web下载DONE(4950parquet/826GB);✅MegaMath-web分词DONE(4950/4950=100%/218.1B tok);✅Code-Reasoning下载DONE(1637parquet/0inc);✅Nemotron-CC-Math分词DONE(193/193/195.4B tok/0errors);✅Math-Reasoning下载DONE(2228parquet/0inc);✅DATA_MAPPING.md更新;✅论文Fig-1三饼图+Fig-2调优+TABLE IV精简+数据源/Decay/LongCtx引用补齐(latexmk 0err);✅EDA-Eval 536-task黑名单重跑复现(R137/正控158/158);✅扩展黑名单blacklist_extended建成(R138/5359tasks/4847354 13-gram/正控164/164);✅S2新源污染扫描(R139/4源×12K=48K docs/全0命中);✅方案F blendswitch交付(R170-R171/commit 68742cfbe4/blend_switcher.py+v5报告+v4修正+CPU验证7/7零重叠=0)
-当前动作:     R663例行巡检:iter≈323,080/700k(46.2%) step≈7.53s(harness CPU争抢⚠️NOT eval-caused) 训练健康✅ loss=1.98 0NaN/0skip lr=1e-3(322k eval DONE harness_avg=56.88%·324k NOT on disk ETA~23:28)；方案F blendswitch第455次fresh复验7/7 PASS(zero_overlap=0)+Megatron源码集成5/5 PASS(commit 011a05b未merge主线)；git synced(0新data令)；PC-1~PC-5全✅/S2三下载全100%/无后台任务/.12 load=25.74/26.10/26.55✅/350k倒计时≈2.2d→~11-28
+当前动作:     R664例行巡检:iter≈323,060/700k(46.2%) step≈7.53s(harness CPU争抢⚠️NOT eval-caused) 训练健康✅ loss=1.98 0NaN/0skip lr=1e-3(322k eval DONE harness_avg=56.88%·324k NOT on disk ETA~23:28)；方案F blendswitch第456次fresh复验7/7 PASS(zero_overlap=0)+Megatron源码集成5/5 PASS(commit 011a05b未merge主线)；git synced(0新data令)；PC-1~PC-5全✅/S2三下载全100%/无后台任务/.12 load=26.33/26.47/26.58✅/350k倒计时≈2.3d→~11-28
 下一步:       ①等pretrain到350k(~11-28)启动S2(blend TSV已就绪/SEED=5678待转告pretrain线) ②S2投料前可按S1口径对4新源做全量扫描(>150K docs)作为加强验证(非阻塞/contam_venv已就绪) ③research日报(11-25)data建议=借鉴类(TinyLlama/PAL/Llemma/BIG-bench/phi-1.5)已评估,不影响当前S1→S2切换
-阻塞:         无(全部前置完成;S2三下载全100%;无后台任务;.12 load≈25.74/26.10/26.55<120✅;/nas_user 42T可用✅>5T红线)
+阻塞:         无(全部前置完成;S2三下载全100%;无后台任务;.12 load≈26.33/26.47/26.58<120✅;/nas_user 42T可用✅>5T红线)
 ERROR_COUNT:  0
 未完成指令:   无(全部用户令已交付;PC-1~PC-5全部完成;main版blend TSV已就绪)→WAITING=0
 ```
