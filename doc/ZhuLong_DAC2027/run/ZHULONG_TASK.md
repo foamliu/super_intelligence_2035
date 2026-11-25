@@ -1,5 +1,39 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-25 用户令（最新）— 当前 r1 重跑#3 完成后，整组 doubao-pro 3-run 重跑一遍 · 最高优先 · 覆盖 standby**
+
+> **用户原话**：「今晚 doubao-pro 3-run 跑完后，重新跑一遍。理由：designflow 在持续做框架重构和 Case 修复」
+
+**一、背景**：当前 r1 重跑#3（w=4）正在进行中（ETA ~22:00 收口）。但 designflow 4 shard 在持续做框架重构（评分契约修复 commit `db8c8d1b3` + `6c1a50ee9`）和 Lite-500 Case 修复（shard B/C/D 正在把 P0/P1 case 修到 green，每天有新 commit）。当前这组 3-run（含 r1 重跑#3）的判分口径可能还在变化中，跑完即"过期"。用户令：**再跑一遍**，用最新框架 + 最新 Case。
+
+**二、执行顺序（串行）**
+1. **等当前 r1 重跑#3 跑完**（不要中断），算出当前 3-run mean±std（new r1 + r2 + r3），记进 MEMORY + 报告（标"重跑前基线"）。
+2. **当前 3-run 收口后，立即起全新 3-run**（r1'→r2'→r3' 严格串行），用**当时最新的** run_one.sh / check.py / cases/。
+3. 新 3-run 的 status 文件用新名：`status_doubao_pro_rerun2_r{1,2,3}.jsonl`（不覆盖当前 r1/r2/r3，保留对照）。
+
+**三、口径（与历史 doubao-pro 3-run 逐字一致）**
+- doubao-seed-2.0-pro-cloud @ cloud/v1 / 500 题 / Pass@1 / thinking low / timeout 2400 / cline 3.0.51 + PreToolUse hook / 登录 shell + PATH + https_proxy。
+- workers 起步 w=8（w=16 已知 FUSE 风险高；w=4 太慢）。若 w=8 FUSE → 降 w=4。
+- 每轮跑前 **restart_hub**（清 bloat）+ **strict canary 两证**（curl /v1/models + 单题真跑且 verdict 非 no-output）。身份四证写进报告与 MEMORY。
+- 若出现 FUSE / 额度耗尽 / 熔断 ⇒ 本轮作废、等 ≥30 min、并发减半，🚫 不拼接。
+- 🚫 不改题/图/check.py/判分口径；🚫 --skip-done；🚫 复用上轮 status。
+
+**四、交付**
+1. 报告 `reports/report_edafb_lite500_doubao_pro_rerun2_eval_zh.html`（中文单文件、内联 CSS、0 外链 0 script；3 轮并入一份 + 逐轮表 + infra_clean + 与"重跑前基线"对比）。
+2. 3-run 汇总：`[r1',r2',r3'] / mean±std / decided 分母 / infra_clean`；FUSE/额度/熔断必须为 0 才计入。
+3. **与历史 doubao-pro 3-run（10.18±1.18%）+ 当前 3-run（重跑前基线）对比**，分析 designflow 框架重构 + Case 修复对 Pass@1 的影响。
+4. `MEMORY_ZHULONG.md` 首行追加：「doubao-pro 3-run rerun#2（框架重构+Case修复后）= x.xx±y.yy%」。
+
+**五、约束**
+- 🚫 不动当前 r1/r2/r3 的 status 文件（保留对照）。
+- 🚫 不动 v3+强模型 4 组已收口数字（doubao pro/lite/mini + deepseek-v4-pro 3-run）。
+- 🚫 不改论文宏与已回填的 §6 数字。
+- 跑完 standby 等用户新令。
+
+---
+
+> ✅ **2026-11-25 早令 — 重跑 doubao-pro r1（hub 修复后）正在进行中**（r1 重跑#3 w=4 · ETA ~22:00 · 跑完后起全新 3-run rerun#2）。下方为归档令。
+
 > 🔴 **2026-11-25 用户令（最新）— 重跑 doubao-pro r1（hub 修复后）· 最高优先 · 覆盖 standby**
 
 > **用户原话**：「安排 zhulong agent 重跑 r1」
