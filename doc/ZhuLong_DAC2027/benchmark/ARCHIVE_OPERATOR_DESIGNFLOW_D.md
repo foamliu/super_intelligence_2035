@@ -2126,3 +2126,9 @@ WAITING: 0 · **LITE_FIX: D=121/121 all-good(116 green+3 p0_fixed+2 p1_fixed) ·
 ### r1346 心跳原文
 
 r1346=监控轮 cycle-4 pos48-51(full-name sort 口径): 4 green spot-check(MBistAnalyze-001/MbistCellFind-001/MBistTopoExplainQA-v2/MillerOpampTopoAudit-001) 无回归; L1 audit 4 条全 OK; L0 全名 refdir EXISTS(4/4); L4 静态: MBistAnalyze+MBistTopoExplainQA 各 1 hspice 命中但 comment-only, MbistCellFind+Miller 0 命中; L2/L3/L5: MillerOpampTopoAudit 本轮 fresh runtime neg selftest rc=0, 其余 3 条 carry-over r1282/r1283 无回归. 跨 shard P0 re-verify: EDA-Flow-Bench HEAD=c5cc73b76(B r1205 13 py-only P0 fix, 未触 3 hspice-mock case); 3 条 B case 仍 P0(OpampChar hspice5 mock0 refzip YES / SpiceSim-001 hspice13 mock0 refzip YES / InvTripDelay hspice8 mock0 refzip NO). 原文见 daily_D_2026-11-25_r1346.md。
+
+## 归档批次 r1348（2026-11-25，释 MEMORY 体积）
+
+### r1347 心跳原文
+
+r1347=监控轮 cycle-4 pos52-55(full-name sort 口径): 4 green spot-check(ModuleFuncCatalog-001/MosSizeDoeGen-001/MrrEnopsDelay-001/NetlistBisectLocalize-001) 无回归; L1 audit 4 条全 OK(ModuleFuncCatalog check=>run()=>len(FAILED)==0 bool / MosSizeDoeGen check=>True / MrrEnopsDelay check=>True / NetlistBisectLocalize check=>_finalize=>True); L0 全名 refdir EXISTS(4/4); L4 静态 0 GUI/spice binary hits(4/4); L2/L3/L5: 4 条本轮 fresh runtime neg selftest 全 rc=0(ModuleFuncCatalog 5 negs 4 distinct[a,b,c,e] / MosSizeDoeGen 6 negs 6 distinct[b,d,e,h,i,j] / MrrEnopsDelay 4 negs 3 distinct[h,d,f] / NetlistBisectLocalize 6 negs 6 distinct[b,p,n,f,h,i]), REF 全 PASS + §4.9 三假全 FAIL distinct, 无 L0/L2 trap. 跨 shard P0 re-verify: EDA-Flow-Bench HEAD=c5cc73b76(B r1205, git show --stat 确认 0 命中 OpampChar/SpiceSim/InvTripDelay), 3 条 B case 仍 P0(OpampChar hspice5 mock0 refzip YES last=e483d12a0 r1159 / SpiceSim-001 hspice13 mock0 refzip YES last=aef039225 r128 / InvTripDelay hspice8 mock0 refzip NO last=e483d12a0 r1159); B 未停摆(r1204/r1205 活跃 2026-11-25)只是这 3 条 hspice-mock 未排上. 原文见 daily_D_2026-11-25_r1347.md。
