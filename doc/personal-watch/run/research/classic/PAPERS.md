@@ -9,6 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **416** 条（**第一百一十六轮 2026-11-26 03:2x 补轮 +3 → 416**：Prefix-Tuning `2101.00190`（**6,994**，ACL 2021；冻结 LM + 每层 KV 连续前缀，只学 0.1% 参数，GPT-2 表到文 / BART 摘要）/ Prompt Tuning `2104.08691`（**7,194**，EMNLP 2021；输入层 soft prompt，T5 规模消融：>十亿参数后与全量微调 "closes the gap"）/ ELMo `1802.05365`（**15,678**，NAACL 2018；深层 biLM 内部状态的可学习函数，6 个 NLP 任务提升 SOTA）；核验：abs 3/3 `200`（41,057 / 42,929 / 41,344 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（6,994 / 7,194 / 15,678，查询日 2026-11-26）；三 ID 条目级查重 **0 命中**；覆盖轴 = 参数高效适配的两条源头（prefix vs soft prompt）+ 上下文词表示；本轮归属：pretrain +3 · posttrain +2 · zhulong +2 · data +1 · vision +0 · harness +0 · designflow +0）
+
 **本轮快照**：累计 **410** 条（**第一百一十四轮 2026-11-25 23:xx +3 → 410**：BPE / subword `1508.07909`（**10,660**，ACL 2016；BPE 子词切分把生僻词编码成子词序列，开放词表 + 更小词表） / PrefixRL `2205.07000`（**89**，DAC 2021；**&lt;500 按「本领域权威 / 奠基」收**：tabula rasa + synthesis-in-the-loop 的并行前缀电路 RL，作者自报同延迟下面积 −16.0% / −30.2%） / DCGAN `1511.06434`（**17,772**，2015 预印本；步幅卷积替代池化 + G/D 双侧 BN + 去全连接隐层 + LeakyReLU 的稳定化约束）；核验：abs 3/3 `200`（42,500 / 44,319 / 42,018 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（10,660 / 89 / 17,772，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；⚠️ 记忆里误记 PrefixRL 为 `2111.05497`（实测 attosecond 物理论文）⇒ 经 arXiv 标题检索纠正为 `2205.07000`；本轮归属：data +1 · pretrain +2 · vision +1 · designflow +1 · zhulong +1 · harness +1 · posttrain +0）
 
 **本轮快照（前一）**：累计 **407** 条（**第一百一十三轮 2026-11-25 22:xx loop 重启补跑 +3 → 407**：GAE `1506.02438`（**6,111**，2015 预印本；指数加权 TD(λ) 估计 advantage + 信赖域，高维连续控制样本效率） / DDIM `2010.02502`（**11,254**，ICLR 2021；非马尔可夫前向 + 同训练目标，可跳步确定性采样，10×–50× 加速） / World Models `1803.10122`（**2,470**，2018 预印本；VAE 压缩视觉 + RNN 预测 + 小控制器，可在「梦」中训练再迁移）；核验：abs 3/3 `200`（45,252 / 42,459 / 42,705 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（6,111 / 11,254 / 2,470，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；本轮归属：vision +2 · posttrain +1 · pretrain +1 · harness +1 · zhulong +1 · data +0 · designflow +0）
@@ -7255,3 +7257,48 @@
 | 与我们工作的关系 | **posttrain（主 · RL）**：优先回放是 RLVR / RLHF 采样器的经典基线；可对照「均匀 vs 按 TD/奖励误差优先」对样本效率的影响。<br>**zhulong（主 · 奖励与采样）**：与其扩大 rollout 数量，先做「优先级函数 + 偏差校正」消融，可能更省算力。<br>**pretrain / vision / harness / data / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-26**（第一百一十五轮 · 03:xx 时窗） |
 | 核验状态 | abs 页 **`200` / 41,400 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（4,541 / 2015 / `preprint`，查询日 2026-11-26）。41/49 数字取自摘要（逐字核）。条目级查重：`1511.05952` 在 `PAPERS.md` 中 **0 命中**，非重复（David Silver 已于 `AUTHORS.md` #35 建档，本轮不重复收录）。 |
+
+## 414. Prefix-Tuning: Optimizing Continuous Prompts for Generation
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Prefix-Tuning: Optimizing Continuous Prompts for Generation |
+| 作者（前 3） | Xiang Lisa Li · Percy Liang（2 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2021**（v1 `2021/01/01`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ACL 2021**（long paper；OpenAlex `type=conference-paper` / `publication_year=2021`，DOI `10.18653/v1/2021.acl-long.353`） |
+| 被引数 | **6,994**（OpenAlex `10.48550/arXiv.2101.00190`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2101.00190> ｜ `10.48550/arXiv.2101.00190` |
+| 一句话贡献 | 冻结 LM 全部参数，只优化一段**任务专属的连续前缀（prefix）**，让后续 token 像对待「virtual tokens」一样对其做注意力；在 **GPT-2 表到文生成**与 **BART 摘要**上，只学 **0.1%** 参数即在全量数据下与全量微调相当、低资源下更好，并对**训练中未见主题**外推更好。 |
+| 与我们工作的关系 | **pretrain（主 · 参数高效适配）**：把「冻结主干 + 小参数适配」作为多任务/多域的默认路线，prefix 只作用于每层 KV，可与 LoRA 做同参数量对照。<br>**posttrain（主 · 生成任务适配）**：摘要、表到文这类生成任务的低资源适配口径，可用于我们 SFT 前的快速验证。<br>**zhulong（主 · 消融设计）**：prefix 长度、作用层数、是否用重参数化 MLP 三个开关是廉价消融维度。<br>**vision / data / harness / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十六轮 · 03:2x 补轮） |
+| 核验状态 | abs 页 **`200` / 41,057 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（6,994 / 2021 / `conference-paper`，查询日 2026-11-26）。0.1% 与「GPT-2 表到文 / BART 摘要」取自摘要（逐字核），未做 PDF 表格复核。条目级查重：`2101.00190` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 415. The Power of Scale for Parameter-Efficient Prompt Tuning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | The Power of Scale for Parameter-Efficient Prompt Tuning |
+| 作者（前 3） | Brian Lester · Rami Al-Rfou · Noah Constant（3 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2021**（v1 `2021/04/18`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **EMNLP 2021**（main；OpenAlex `type=conference-paper` / `publication_year=2021`，DOI `10.18653/v1/2021.emnlp-main.243`） |
+| 被引数 | **7,194**（OpenAlex `10.48550/arXiv.2104.08691`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2104.08691> ｜ `10.48550/arXiv.2104.08691` |
+| 一句话贡献 | 在**输入层**学习一段「soft prompt」并用反向传播适配**冻结**的语言模型；用 T5 做规模消融，证明该方法**随规模变得更 competitive**：模型超过十亿参数后与全量模型微调打平（原文 "closes the gap"），并在域迁移鲁棒性上优于全量微调。 |
+| 与我们工作的关系 | **pretrain（主 · 规模相关适配结论）**：把「适配收益随规模变化」作为预注册假设，验证我们基座在 2B 档位是否已进入 soft-prompt 打平区间。<br>**zhulong（主 · 成本口径）**：一个冻结模型服务多任务，是推理/存储成本对比的基线。<br>**posttrain（次 · 域迁移）**：soft prompt 对域迁移更稳，可作为域适配的低成本前置。<br>**vision / data / harness / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十六轮 · 03:2x 补轮） |
+| 核验状态 | abs 页 **`200` / 42,929 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（7,194 / 2021 / `conference-paper`，查询日 2026-11-26）。"closes the gap" 与 T5 规模消融取自摘要（逐字核）。条目级查重：`2104.08691` 在 `PAPERS.md` 中 **0 命中**，非重复；与 #414 Prefix-Tuning 为**不同论文**（本文摘要明示是对 Li & Liang 2021 的简化与对照），不合并。 |
+
+## 416. Deep Contextualized Word Representations
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Deep Contextualized Word Representations |
+| 作者（前 3） | Matthew E. Peters · Mark Neumann · Mohit Iyyer（另 Matt Gardner / Christopher Clark / Kenton Lee / Luke Zettlemoyer；arXiv `citation_author` 逐字核） |
+| 年份 | **2018**（v1 `2018/02/15`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **NAACL-HLT 2018**（OpenAlex `type=conference-paper` / `publication_year=2018`，DOI `10.18653/v1/n18-1202`） |
+| 被引数 | **15,678**（OpenAlex `10.48550/arXiv.1802.05365`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1802.05365> ｜ `10.48550/arXiv.1802.05365` |
+| 一句话贡献 | 提出 **ELMo**：词表示是**深层双向语言模型内部状态的可学习函数**，同时建模词的复杂用法与随语境变化（多义）；把该表示接到已有模型上，在 **6 个 NLP 任务**（含问答、文本蕴含、情感分析）上显著提升 SOTA，并分析指出**暴露预训练网络深层内部状态**是关键。 |
+| 与我们工作的关系 | **pretrain（主 · 上下文表示）**：把「取哪几层、如何加权」作为特征工程化的历史基线，提醒我们在冻结特征 vs 端到端微调之间做对照。<br>**data（次 · 半监督信号）**：下游可混合不同层的半监督信号，对应我们多任务数据配比时的层级加权思路。<br>**vision / harness / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十六轮 · 03:2x 补轮） |
+| 核验状态 | abs 页 **`200` / 41,344 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（15,678 / 2018 / `conference-paper`，查询日 2026-11-26）。6 任务与「深层内部状态关键」取自摘要（逐字核）。条目级查重：`1802.05365` 在 `PAPERS.md` 中 **0 命中**，非重复。 |

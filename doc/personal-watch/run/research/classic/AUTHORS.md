@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-26 03:2x 补轮）**：作者 **383** 人（编号最大 **383**）· X 已核验 **151**（本轮 **+0**：三位一作均无可核本人 X 外链；`@mattthemathman` 属同名他人博客 ⇒ 不登记）· 已发信 **173**（台账 #1–#173；今日 **1/12**）· 回信 **0**（0/173；已回复 0 / 无应答>14d 9 / 未到期 164）。本轮 **+3**：Xiang Lisa Li（Prefix-Tuning 一作，中文，未定位本人当前主页 ⇒ 仅建档）· Brian Lester（Prompt Tuning 一作，英文，Google Research 页无个人邮箱 / 无本人 X ⇒ 仅建档）· Matthew E. Peters（ELMo 一作，英文，本人当前主页未定位 / 同名站点冲突 ⇒ 仅建档）。
+
 > **当前计数（2026-11-26 03:xx）**：作者 **380** 人（编号最大 **380**）· X 已核验 **151**（本轮 **+2**：`@prafdhar` 由本人站点 <https://prafulladhariwal.com/>（`200` / 38,647 B）`twitter:creator` 字段外链 + 代理抓 `x.com/prafdhar` `200` / 182,967 B，`og:title` = `Prafulla Dhariwal (@prafdhar) on X` ⇒ 双源；`@tom_schaul` 由代理抓 `x.com/tom_schaul` `200` / 128,408 B，`og:title` = `Tom Schaul (@tom_schaul) on X` ⇒ 姓名双源（`x.com/schaul` 为 `404`）；Tero Karras `x.com/TeroKarras` 为 `404` ⇒ 记「未找到 X」，不猜）· 已发信 **173**（台账 #1–#173；今日 **1/12**）· 回信 **0**（0/173；已回复 0 / 无应答>14d 9 / 未到期 164）。本轮 **+3**：Tero Karras（StyleGAN 一作，英文，NVIDIA 人员页无邮箱 / 无 X ⇒ 仅建档）· Prafulla Dhariwal（Diffusion-Beat-GANs 一作，英文，无公开邮箱 + X 双源 ⇒ 仅建档）· Tom Schaul（PER 一作，英文，无公开邮箱 / 未找到主页 + X 双源 ⇒ 仅建档）。以下历史快照行保留原文（不追改），计数以本行为准。
 
 > **当前计数（2026-11-25 23:xx）**：作者 **377** 人（编号最大 **377**）· X 已核验 **149**（本轮 **+2**：`@Luke_Metz` 由本人主页 <https://lukemetz.github.io/>（经代理 `200` / 40,689 B）外链 `twitter.com/Luke_Metz` + 代理抓 `x.com/Luke_Metz` `200` / 178,100 B，`og:title` = `Luke Metz (@Luke_Metz) on X` ⇒ 双源；`@soumithchintala` 由本人站点 `soumith.ch` `200` / 9,532 B 外链 `twitter.com/soumithchintala` + 代理抓 `x.com/soumithchintala` `200` / 204,293 B，`og:title` + bio 双源；Rajarshi Roy 主页无 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **172**（台账 #1–#172；今日 **8/12**）· 回信 **0**（0/172；已回复 0 / 无应答>14d 9 / 未到期 163）。本轮 **+3**：Luke Metz（DCGAN 二作，英文，本人主页当前明文地址 + X 双源 ⇒ 已发信 #172）· Soumith Chintala（DCGAN 三作，英文，邮箱仅模板占位 ⇒ 仅建档，X 双源）· Rajarshi Roy（PrefixRL 一作，英文，主页无邮箱 / 无 X ⇒ 仅建档）。
@@ -5384,3 +5386,42 @@
 | X 账号 | **@tom_schaul**（代理抓 `x.com/tom_schaul` `200`，`og:title` = `Tom Schaul (@tom_schaul) on X` ⇒ 姓名双源；`x.com/schaul` 为 `404`） |
 | 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信） |
 | 备注 | posttrain RL 采样方向作者。问题候选：① TD 误差优先级的偏差校正（IS 权重）在大模型 RLHF 下如何取舍；② 优先级函数用奖励误差 vs 价值误差的差异；③ 优先回放与「按难度课程采样」是否可叠加。 |
+
+### 381. Xiang Lisa Li
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xiang Lisa Li（`语言=中文(判据=华人姓名族属；机构 Stanford 为辅)`） |
+| 机构 | **Stanford University** · Prefix-Tuning 一作 |
+| 代表论文 | **Prefix-Tuning: Optimizing Continuous Prompts for Generation**（`2101.00190`，B 轨 #414，一作） |
+| 邮箱 | **未找到**（未能定位本人当前主页；`xianglisali.com` `000`、`xianglisali.github.io` `404`、`cs.stanford.edu/people/xlisali/` `403` ⇒ 🚫 不猜、不发信） |
+| 主页 | **未找到**（上述候选均不可读或 403；未发现可核当前主页） |
+| X 账号 | **未找到 X**（无本人主页可核外链；`github.com/lisaxiang` 身份未能确认 ⇒ 🚫 不登记） |
+| 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信） |
+| 备注 | 参数高效适配方向作者，中文母语。问题候选：① prefix 只作用于每层 KV 时，前缀长度与跨任务迁移的边际收益拐点；② 表到文/摘要之外，代码生成上 prefix 是否仍优于 LoRA；③ 重参数化 MLP 推理时可丢弃，训练/推理成本能否分开记账。 |
+
+### 382. Brian Lester
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Brian Lester（`语言=英文(判据=英语姓名族属 + 美国机构 Google Research)`） |
+| 机构 | **Google Research** · Prompt Tuning 一作 |
+| 代表论文 | **The Power of Scale for Parameter-Efficient Prompt Tuning**（`2104.08691`，B 轨 #415，一作） |
+| 邮箱 | **未找到**（<https://research.google/people/brianlester/> `200` 页内无个人邮箱 ⇒ 🚫 不猜、不发信） |
+| 主页 | <https://research.google/people/brianlester/>（`HTTP 200` / 737,018 B；2026-11-26 复核；页面标题 `Brian J. Lester`） |
+| X 账号 | **未找到 X**（该页仅外链机构账号 `x.com/GoogleResearch` + LinkedIn showcase ⇒ 非本人 handle，不登记） |
+| 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信） |
+| 备注 | soft prompt / 规模相关适配方向作者。问题候选：①「>十亿参数后打平全量微调」是否依赖 prompt 长度随规模调整；② 域迁移鲁棒性增益在代码/结构化输出任务上是否仍成立；③ 冻结主干 + soft prompt 的多任务服务，存储/切换成本相对 per-task head 如何记账。 |
+
+### 383. Matthew E. Peters
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Matthew E. Peters（`语言=英文(判据=英语姓名族属 + 美国机构 AI2)`） |
+| 机构 | **Allen Institute for AI (AI2)**（ELMo 发表时；现况未核）· ELMo 一作 |
+| 代表论文 | **Deep Contextualized Word Representations**（`1802.05365`，B 轨 #416，一作） |
+| 邮箱 | **未找到**（未定位本人当前可核主页；`mattpeters.net` 为另一位 Matt Peters（Oklahoma about.me）⇒ 不采用；`allenai.org/team/matthewp` `404` ⇒ 🚫 不猜、不发信） |
+| 主页 | **未找到**（同名站点冲突 + 机构页 `404`，均不采用） |
+| X 账号 | **未找到 X**（`@mattthemathman` 属同名他人博客（Moz 数据科学）⇒ 未核为本人，不登记） |
+| 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信） |
+| 备注 | 上下文词表示方向作者。问题候选：① 取哪几层 + learned mix 加权在低资源下相对端到端微调的差距边界；②「深层内部状态关键」的结论在今天的 decoder-only LM 上如何映射；③ 多任务时不同层的半监督信号能否按任务自动选层。 |
