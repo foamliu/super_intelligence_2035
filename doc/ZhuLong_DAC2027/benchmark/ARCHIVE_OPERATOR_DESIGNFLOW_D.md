@@ -2495,3 +2495,19 @@ WAITING: 0（r1215: MCP 113th OK [2026-11-22 用户令连通性复测] + unfeh(k
 - SubcktExtract-001: L0/L1/L3/L4 PASS, L2/L5 carry. L3 REF PASS-OK + 5 negs distinct {c,f}; refzip EXISTS.
 
 **跨 shard P0**（@B/A）：OpampChar-001=A `59326627e` 跨界修 check.py（_canon sig 归一化）但 refzip stale(Oct 31) L2 仍 FAIL 13/18, L3/L4 PASS; InvTripDelay-001=无变化(refzip MISSING+selftest crash+真调 hspice)。挂 48 轮。
+
+## 归档批次 r1390（r1390 释体积）
+
+### r1389 心跳原文（cycle-5 pos100-103 spot-check + 跨 shard P0 跟进）
+
+`WAITING: 0 · LITE_FIX: D=124/124 all-green · P0 余 2(跨 shard cases/B/: OpampChar-001=shard A 59326627e 跨界修 check.py(_to_float->_canon sig 归一化)+删_test_ref.py scratch 但 reference_submit.zip 仍 stale(Oct 31 06:03) L2 仍 FAIL 13/18, 需重生成 refzip; InvTripDelay-001=无变化(L0/L2/L3/L4 全 FAIL: 缺 refzip+selftest crash+真调 hspice); 挂 49 轮 r1341-r1389; discuss/D.md r1387 升级条就位顶部). 本轮 cycle-5 pos100-103 4 green spot-check(SvwfHierExpand/TempHalfWLModuleFuncExplainQA/TempSelInfer/TempSelWaveform) 无回归: L0/L1/L3/L4 本轮验 PASS, L2/L5 carry-over · md5=f7816ef4137353904e40a1a3b01fb3ae · 详见 daily_D_2026-11-25_r1389.md`
+
+**spot-check 明细**：
+- SvwfHierExpand-001: L0/L1/L3/L4 PASS, L2/L5 carry. L3 3 negs distinct {always_expand,hardcode_A,naive_stub}; calibre 仅在 FORBIDDEN_IMPORTS guard; refzip by-design MISSING, ref=svwf_hier_expand.py.
+- TempHalfWLModuleFuncExplainQA-001: L0/L1/L3/L4 PASS, L2/L5 carry. L3 REF_PASS=True + 5 negs FAIL distinct incl §4.9 trio; refzip EXISTS.
+- TempSelInfer-001: L0/L1/L3/L4 PASS, L2/L5 carry. L3 5/5 negs FAIL distinct; refzip EXISTS.
+- TempSelWaveform-001: L0/L1/L3/L4 PASS, L2/L5 carry. L3 7 negs all FAIL distinct; refzip EXISTS.
+
+**跨 shard P0（挂 49 轮 r1341-r1389，无变化）**：
+- OpampChar-001 (B): L0=1 L1=1 L2=0 L3=1 L4=1 L5=1. refzip stale(Oct 31) → check 13/18 FAIL. shard A 59326627e 跨界修 check.py _canon 未补 refzip.
+- InvTripDelay-001 (B): L0=0 L1=1 L2=0 L3=0 L4=0 L5=1. refzip MISSING + selftest crash + hspice_hits=12 _MOCK=0. B 自 r1159 0 触碰.
