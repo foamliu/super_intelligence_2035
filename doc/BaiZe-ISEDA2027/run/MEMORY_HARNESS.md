@@ -40,13 +40,13 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·等执行
-已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅(gw_proxy+run_single+incr_eval_merge)·launch_doubao_7way.sh✅
-当前动作:     等执行：(1)停旧 Verified 进程 (2)run launch_doubao_7way.sh (3)重启 MM kimi retry
-下一步:     doubao-pro 7-way predict → eval → 报告；MM kimi retry → MM eval
+PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·doubao-pro 7way LIVE + 灾难恢复完成
+已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**灾难恢复✅**(2be0088aff删57448文件→从da51ea66fe恢复reports/eval_glm53_*.json+predictions_glm53/+swebench_mm/+verified_500_ids.txt+harness_resource_guard.sh+rerun_ids/+rerun_infra_state.json)·**doubao-pro 7way LIVE✅**(7路全启动 PID 820186/820223/820278/820587/822120/831792/833471·已产出predictions)·**cline-patched eval修复✅**(93 empty→33 recovered→添加27到failed→dry-run确认33待re-eval)·**nightly_rerun_watcher armed✅**(PID2791637 sleeping until 21:00)
+当前动作:     doubao-pro 7way predict 运行中(7路×500题·workers=1·白天无429)·nightly_rerun_watcher PID2791637 armed for 21:00·判据全绿(guard~114h·mem1143G·load29.10·pretrain无train.py)
+下一步:     ①doubao-pro 7way predict完成→eval+报告 ②21:00窗口→nightly_rerun_watcher→orchestrator从codex起(glm53 infra重跑) ③MM kimi retry需重启 ④下轮唤醒查doubao-pro progress
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK~31.7KB / MEMORY≈6KB
+ 体积: TASK~31.7KB / MEMORY≈7KB
 
  SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
  SWE-bench Multimodal 2×3 predict: 4路DONE·2路kimi retry需重启·has_patch=2615/2880(90.8%)

@@ -1,11 +1,5 @@
 {
   "completed_routes": [],
-  "per_route": {
-    "cline-patched": {
-      "n_rerun": 93,
-      "note": "R1 done: 33 recovered (27 resolved+6 failed). 62 still empty - need round2 predict.",
-      "ts": "2026-11-25 09:19:00"
-    }
-  },
-  "nights": 1
+  "per_route": {},
+  "nights": 0
 }
