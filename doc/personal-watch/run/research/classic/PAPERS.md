@@ -9,7 +9,9 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
-**本轮快照**：累计 **407** 条（**第一百一十三轮 2026-11-25 22:xx loop 重启补跑 +3 → 407**：GAE `1506.02438`（**6,111**，2015 预印本；指数加权 TD(λ) 估计 advantage + 信赖域，高维连续控制样本效率） / DDIM `2010.02502`（**11,254**，ICLR 2021；非马尔可夫前向 + 同训练目标，可跳步确定性采样，10×–50× 加速） / World Models `1803.10122`（**2,470**，2018 预印本；VAE 压缩视觉 + RNN 预测 + 小控制器，可在「梦」中训练再迁移）；核验：abs 3/3 `200`（45,252 / 42,459 / 42,705 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（6,111 / 11,254 / 2,470，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；本轮归属：vision +2 · posttrain +1 · pretrain +1 · harness +1 · zhulong +1 · data +0 · designflow +0）
+**本轮快照**：累计 **410** 条（**第一百一十四轮 2026-11-25 23:xx +3 → 410**：BPE / subword `1508.07909`（**10,660**，ACL 2016；BPE 子词切分把生僻词编码成子词序列，开放词表 + 更小词表） / PrefixRL `2205.07000`（**89**，DAC 2021；**&lt;500 按「本领域权威 / 奠基」收**：tabula rasa + synthesis-in-the-loop 的并行前缀电路 RL，作者自报同延迟下面积 −16.0% / −30.2%） / DCGAN `1511.06434`（**17,772**，2015 预印本；步幅卷积替代池化 + G/D 双侧 BN + 去全连接隐层 + LeakyReLU 的稳定化约束）；核验：abs 3/3 `200`（42,500 / 44,319 / 42,018 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（10,660 / 89 / 17,772，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；⚠️ 记忆里误记 PrefixRL 为 `2111.05497`（实测 attosecond 物理论文）⇒ 经 arXiv 标题检索纠正为 `2205.07000`；本轮归属：data +1 · pretrain +2 · vision +1 · designflow +1 · zhulong +1 · harness +1 · posttrain +0）
+
+**本轮快照（前一）**：累计 **407** 条（**第一百一十三轮 2026-11-25 22:xx loop 重启补跑 +3 → 407**：GAE `1506.02438`（**6,111**，2015 预印本；指数加权 TD(λ) 估计 advantage + 信赖域，高维连续控制样本效率） / DDIM `2010.02502`（**11,254**，ICLR 2021；非马尔可夫前向 + 同训练目标，可跳步确定性采样，10×–50× 加速） / World Models `1803.10122`（**2,470**，2018 预印本；VAE 压缩视觉 + RNN 预测 + 小控制器，可在「梦」中训练再迁移）；核验：abs 3/3 `200`（45,252 / 42,459 / 42,705 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（6,111 / 11,254 / 2,470，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；本轮归属：vision +2 · posttrain +1 · pretrain +1 · harness +1 · zhulong +1 · data +0 · designflow +0）
 
 **本轮快照**：累计 **404** 条（**第一百一十二轮 2026-11-25 09:0x 补 3 条 → 404**：FLAN-T5 `2210.11416`（**5,968**，2022 预印本；任务数规模化 + 模型规模 + CoT 微调三轴，1.8K 任务，Flan-PaLM 540B 平均比 PaLM 540B **+9.4%**、5-shot MMLU **75.2%**，开源 Flan-T5）/ Textbooks II phi-1.5 `2309.05463`（**878**，2023 技术报告；LLM 合成「教科书质量」数据，1.3B 模型自然语言可比 **5×** 大模型，小学算术/基础编程超多数非前沿 LLM，兼有大模型式好/坏特质）/ BIG-bench `2206.04615`（**2,190**，2022 预印本；**204** 任务 / **450** 作者 / **132** 机构，性能与校准随规模改善但绝对仍差、低于人类基线）；核验：abs 页 **3/3 `200`**（47,877 / 42,368 / 121,674 B，`citation_title` + `citation_date` 逐字）+ ar5iv **3/3 `200`**（1,361,779 / 235,713 / 1,479,357 B）+ OpenAlex **3/3 `200`**（5,968 / 878 / 2,190，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；另 **纠错弃用** `2308.03296`（实测为 *Studying LLM Generalization with Influence Functions*，非 phi/Textbooks）⇒ 未收录；本轮归属：pretrain **+2** · posttrain **+2** · data **+2** · harness **+3** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
 
@@ -7163,3 +7165,48 @@
 | 与我们工作的关系 | **vision（主 · 视觉压缩 / 世界模型）**：VAE 潜表示 + 预测的分层结构，对视频线的「压缩表示 + 时序预测」有直接借鉴。<br>**pretrain（主 · 潜表示学习）**：无监督学压缩时空表示，可作预训练目标候选（与像素重建 / 对比目标对照）。<br>**harness / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-25**（第一百一十三轮 · 22:xx 时窗） |
 | 核验状态 | abs 页 **`200` / 42,705 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（2,470 / 2018 / `preprint`，查询日 2026-11-25）。⚠️ 方法描述取自摘要（逐字核），**未做 PDF 表格复核**。条目级查重：`1803.10122` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 408. Neural Machine Translation of Rare Words with Subword Units
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Neural Machine Translation of Rare Words with Subword Units |
+| 作者（前 3） | Rico Sennrich · Barry Haddow · Alexandra Birch（3 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2015**（v1 `2015/08/31`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ACL 2016**（OpenAlex `type=conference-paper`、`publication_year=2016`；具体页码未在本次核验中出现 ⇒ 不臆断） |
+| 被引数 | **10,660**（OpenAlex `10.48550/arXiv.1508.07909`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1508.07909> ｜ `10.48550/arXiv.1508.07909` |
+| 一句话贡献 | 提出把 **BPE（byte pair encoding）** 用于**子词切分**，把生僻词 / 未登录词编码成子词序列，使 NMT 从「固定词表 + 词典回退」转为**开放词表**；同时支持更小的词表与更紧凑的模型。 |
+| 与我们工作的关系 | **data（主 · 分词与词表）**：BPE 是当前代码 / 多语言语料的默认分词基线；子词压缩率、词表大小与 OOV 率是可直接测量的配比变量，可纳入语料构建的预注册指标。<br>**pretrain（主 · 词表与嵌入规模）**：词表 × 维度决定嵌入参数量；小模型（2B 以下）常在「小词表 + 更长序列」与「大词表 + 更短序列」间取舍，本文是这条权衡的原点。<br>**vision / harness / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十四轮 · 23:xx 时窗） |
+| 核验状态 | abs 页 **`200` / 42,500 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（10,660 / 2016 / `conference-paper`，查询日 2026-11-25）。⚠️ 方法描述取自摘要（逐字核），**未做 PDF 表格复核**。条目级查重：`1508.07909` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 409. PrefixRL: Optimization of Parallel Prefix Circuits using Deep Reinforcement Learning
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | PrefixRL: Optimization of Parallel Prefix Circuits using Deep Reinforcement Learning |
+| 作者（前 3） | Rajarshi Roy · Jonathan Raiman · Neel Kant（另 Ilyas Elkin · Robert Kirby · Michael Siu · Stuart Oberman；arXiv `citation_author` 逐字核前 7） |
+| 年份 | **2022**（v1 `2022/05/14`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **DAC 2021**（arXiv 元数据 `citation_doi=10.1109/DAC18074.2021.9586094`；OpenAlex `type=conference-paper`、`publication_year=2021`。⚠️ 会议年 2021 与 arXiv 首次提交 2022 不同源，如实并列、不合并） |
+| 被引数 | **89**（OpenAlex `10.48550/arXiv.2205.07000`，查询日 **2026-11-25**；**&lt;500 ⇒ 按「本领域权威 / 奠基」收**：首个「tabula rasa + synthesis-in-the-loop」的并行前缀电路 RL 设计） |
+| arXiv / DOI | <https://arxiv.org/abs/2205.07000> ｜ `10.1109/DAC18074.2021.9586094` ｜ `10.48550/arXiv.2205.07000` |
+| 一句话贡献 | 用**深度卷积 RL** 在网格化状态–动作空间里从零构造合法的**并行前缀电路**（加法器 / 优先编码器），把综合工具放进训练回路；作者自报在相同延迟下 32b / 64b 加法器面积分别低 **16.0% / 30.2%**，且用开源综合工具与单元库训出的电路在工业单元库下面积与时序优于商用工具生成的加法器。 |
+| 与我们工作的关系 | **designflow（主 · 造题与判分）**：给出「电路结构搜索」的可验证题面三件套——电路族（前缀加法器）、正确性约束（合法前缀图）、真值评估器（综合工具报面积/延迟）；可作 L4/L5 保真度题的参照。<br>**zhulong（主 · 奖励与工具真值）**：核心是「**综合在回路**」——奖励来自真实工具而非代理模型；与我们「LLM 出方案、工具给真值」一致，可加「去掉 synthesis-in-the-loop 的代理奖励」作对照。<br>**harness（评测）**：必须同时报**面积、延迟、工具版本与单元库**，否则跨论文数字不可比。<br>**pretrain / vision / data**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十四轮 · 23:xx 时窗） |
+| 核验状态 | abs 页 **`200` / 44,319 B**，`citation_title` + `citation_date` + `citation_doi` 逐字；OpenAlex **`200`**（89 / 2021 / `conference-paper`，查询日 2026-11-25）。⚠️ **PDF 多次下载被截断**（本地仅 374,330 / 194,877 B，远程 `content-length=851,300 B`）⇒ 数字**仅取自摘要（逐字核）**、未做 PDF 表格复核。条目级查重：`2205.07000` 在 `PAPERS.md` 中 **0 命中**，非重复（⚠️ 记忆里曾误记 `2111.05497`，实测为一份 attosecond 物理论文 ⇒ 已纠正）。 |
+
+## 410. Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks |
+| 作者（前 3） | Alec Radford · Luke Metz · Soumith Chintala（3 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2015**（v1 `2015/11/19`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICLR 2016**（通行口径；OpenAlex 记为 `type=preprint` / `publication_year=2015`，会议版未在本次核验中出现 ⇒ 仅记通行会议名、不臆断页码） |
+| 被引数 | **17,772**（OpenAlex `10.48550/arXiv.1511.06434`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1511.06434> ｜ `10.48550/arXiv.1511.06434` |
+| 一句话贡献 | 提出 **DCGAN**：给 GAN 加一组**架构约束**（用**步幅卷积**替代池化、生成器与判别器都加 **BatchNorm**、去掉全连接隐层、生成器用 **LeakyReLU**），使无监督卷积表征学习稳定可训；学到的卷积核可迁移、潜空间插值平滑。 |
+| 与我们工作的关系 | **vision（主 · 视觉生成与表征）**：这组约束至今是 GAN / 生成式视觉骨干的默认检查单；对视频线的生成器训练稳定性、以及「无限连接隐层」在小分辨率起的结构选择有直接参照。<br>**pretrain（主 · 无监督表征）**：判别器特征可作下游表征，是「生成式预训练 → 判别式下游」早期证据；可与 MAE / 对比学习对照。<br>**harness / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十四轮 · 23:xx 时窗） |
+| 核验状态 | abs 页 **`200` / 42,018 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（17,772 / 2015 / `preprint`，查询日 2026-11-25）。⚠️ 方法描述取自摘要（逐字核），**未做 PDF 表格复核**。条目级查重：`1511.06434` 在 `PAPERS.md` 中 **0 命中**，非重复；Alec Radford 已于 `AUTHORS.md` #33 建档，本轮不重复收录。 |

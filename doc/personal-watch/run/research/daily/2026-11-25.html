@@ -334,9 +334,39 @@
   </ul>
   <p style="font-size:12px;color:#64748b"><b>附录·检索与命中</b>：A 列表 25 entry；B abs 3/3；三 ID 查重 0 命中；去重剔除 0。数字均为论文作者/OpenAlex 自报，未复现。</p>
 </section>
+<section class="round" id="r23xx" style="border-top:2px dashed #cbd5e1;margin-top:22px;padding-top:14px">
+  <h2>➕ 23:xx 时窗（第一百一十四轮）</h2>
+  <p><b>网络</b>：arXiv <code>https://export.arxiv.org/api/query?search_query=cat:cs.CL&amp;max_results=5&amp;sortBy=submittedDate</code> <code>200</code> + <code>application/atom+xml</code>（13,227 B / 5 entry，<code>published</code> 上界 <code>2026-11-24T18:59:08Z</code>，距本窗约 44.5h &lt; 72h）；X 经代理 <code>200</code>；OpenAlex 3/3 <code>200</code>。</p>
+  <p><b>A 轨 0 新收</b>：今日 5/5 已满（00:00 +3 / 03:00 +2），不凑第 6 篇；公告批仍在 72h 窗内。</p>
+  <p><b>🅱 B 轨 +3 → 410（第一百一十四轮）</b>：
+    BPE / subword <code>1508.07909</code>（<b>10,660</b>，ACL 2016；BPE 子词切分，生僻词编码成子词序列，开放词表 + 更小词表）·
+    PrefixRL <code>2205.07000</code>（<b>89</b>，DAC 2021；<b>&lt;500 按「本领域权威 / 奠基」收</b>：tabula rasa + synthesis-in-the-loop 的并行前缀电路 RL，作者自报同延迟下面积 −16.0% / −30.2%）·
+    DCGAN <code>1511.06434</code>（<b>17,772</b>，2015 预印本；步幅卷积替代池化 + G/D 双侧 BN + 去全连接隐层 + LeakyReLU 的稳定化约束）。
+    三 ID 条目级查重 0 命中；OpenAlex 查询日 2026-11-25（数字为论文/OpenAlex 记录，未复现）。</p>
+  <p><b>⚠️ 如实纠错</b>：记忆里把 PrefixRL 记成 <code>2111.05497</code>，abs 实测为 attosecond 物理论文；<code>2010.08065</code> 实测为 FPRaker（非 Chip Placement）⇒ 经 arXiv 标题检索纠正 PrefixRL 真 ID 为 <code>2205.07000</code>；Chip Placement 真 ID <code>2004.10746</code> 已于 #187（11-13）收录，不重复。PrefixRL PDF 多次下载被截断（本地 194,877 B &lt; 远程 851,300 B）⇒ 数字仅取摘要、未做 PDF 表格复核。</p>
+  <p><b>👥 作者网 +3 → 377（X 149）</b>：#375 Luke Metz（DCGAN 二作，现 Thinking Machines / 前 OpenAI；<code>lukemetz.github.io</code> 明文 <code>luke.s.metz@gmail.com</code> + X <code>@Luke_Metz</code> 双源 ⇒ 已发信）/ #376 Soumith Chintala（DCGAN 三作，Meta / PyTorch 联创；站点仅模板占位邮箱 ⇒ 仅建档；X <code>@soumithchintala</code> 双源）/ #377 Rajarshi Roy（PrefixRL 一作，NVIDIA；主页无邮箱、无 X ⇒ 仅建档）。</p>
+  <p><b>✉ 发信 1 封 → 172（今日 8/12）</b>：#172 Luke Metz，英文（判据=西式姓名族属 + 美国机构），正文 <b>181</b> 词，主题「DCGAN: which architectural constraints still matter at scale?」，<code>SENT OK 23:26:38</code>；落款两行 <code>Best regards,</code> / <code>Yang Liu</code>、其后无行；正文无项目名；与今日 #165–#171 开头句/问句零共用。回信率 <b>0/172</b>（已回复 0 / 无应答&gt;14d 9 / 未到期 163）。</p>
+  <p><b>🗣 voice_ready 0 / 📰 news_ready 0</b>：经典论文无本窗事件点，不硬凑。</p>
+  <h3>🧭 回信诊断（0/172）</h3>
+  <ul>
+    <li><b>信号</b>：累计 172 封、0 回信、0 封已回复；#1–#9 已转「无应答(&gt;14d)」。<b>不当成功</b>，按待诊断处理。</li>
+    <li><b>三个最可能原因（按可查性排序）</b>：① 发件显示名 <code>AI+EDA 招聘 · 自动</code>（共享凭据，本线不改）；② 通道只发不收（无 IMAP/POP3，回信可能已到但读不到）；③ 部分收件人地址为论文旧址 / 机构搬迁（如 #168）。</li>
+    <li><b>可自查项</b>：同一作者不重复打扰；每封问题已具体到符号/超参/失败模式。本轮起不再以「多发」为目标。</li>
+  </ul>
+  <h3>🎯 对各线的可执行建议（6 线）</h3>
+  <ul>
+    <li><b>pretrain</b>：BPE 与 DCGAN 均给「表征/词表」侧参照——可把「词表大小 × 序列长度」纳入 2B 预训练的预注册消融（子词压缩率作为协变量记录）。</li>
+    <li><b>vision</b>：DCGAN 的稳定性约束做成检查单，对现有生成器逐条标注「保留/已替换」，替换项须给出对照实验（尤其去掉 BN 或加回线性层时的判别器发散）。</li>
+    <li><b>harness</b>：生成类评测 manifest 记录骨干、归一化方式、潜空间插值配置；无这些字段的结果不入榜。</li>
+    <li><b>data</b>：分词器固定后，报告语料的 OOV 率、子词/词比与有效序列长度，作为数据配比的附加指标。</li>
+    <li><b>zhulong</b>：PrefixRL 的「synthesis-in-the-loop = 真值奖励」可迁移为对照：代理奖励 vs 真实工具奖励，同预算比较（预注册 n 与预算）。</li>
+    <li><b>designflow</b>：造「电路结构搜索」题时固定三件套——电路族、正确性约束（合法前缀图）、真值评估器（综合工具面积/延迟）；跨论文只比同工具同单元库。</li>
+  </ul>
+  <p style="font-size:12px;color:#64748b"><b>附录·检索与命中</b>：A 列表 5 entry（配额已满，仅核窗）；B abs 3/3；三 ID 查重 0 命中；PDF 截断 1/3（PrefixRL）已如实标注。数字均为论文作者/OpenAlex 自报，未复现。</p>
+</section>
 <footer>
-  论文观察日报 · research 线 · 2026-11-25（09:00 时窗，A 轨 5/5 已满）· 自包含单文件（内联 CSS、零外链、离线可开）<br>
-  B 轨滚动清单：<code>research/classic/PAPERS.md</code>（407 篇）· 作者关系网：<code>research/classic/AUTHORS.md</code>（374 人）· 发信台账：<code>research/mail/发送记录.md</code><br>
+  论文观察日报 · research 线 · 2026-11-25（23:xx 时窗，A 轨 5/5 已满）· 自包含单文件（内联 CSS、零外链、离线可开）<br>
+  B 轨滚动清单：<code>research/classic/PAPERS.md</code>（410 篇）· 作者关系网：<code>research/classic/AUTHORS.md</code>（377 人）· 发信台账：<code>research/mail/发送记录.md</code><br>
   推荐 = 待读线索，非结论；引用请以原文为准。引用图片/数字须标注出处（<code>图：&lt;作者&gt; et al., &lt;标题&gt;, arXiv &lt;ID&gt;</code>）。
 </footer>
 

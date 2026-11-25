@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-25 23:xx）**：作者 **377** 人（编号最大 **377**）· X 已核验 **149**（本轮 **+2**：`@Luke_Metz` 由本人主页 <https://lukemetz.github.io/>（经代理 `200` / 40,689 B）外链 `twitter.com/Luke_Metz` + 代理抓 `x.com/Luke_Metz` `200` / 178,100 B，`og:title` = `Luke Metz (@Luke_Metz) on X` ⇒ 双源；`@soumithchintala` 由本人站点 `soumith.ch` `200` / 9,532 B 外链 `twitter.com/soumithchintala` + 代理抓 `x.com/soumithchintala` `200` / 204,293 B，`og:title` + bio 双源；Rajarshi Roy 主页无 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **172**（台账 #1–#172；今日 **8/12**）· 回信 **0**（0/172；已回复 0 / 无应答>14d 9 / 未到期 163）。本轮 **+3**：Luke Metz（DCGAN 二作，英文，本人主页当前明文地址 + X 双源 ⇒ 已发信 #172）· Soumith Chintala（DCGAN 三作，英文，邮箱仅模板占位 ⇒ 仅建档，X 双源）· Rajarshi Roy（PrefixRL 一作，英文，主页无邮箱 / 无 X ⇒ 仅建档）。
+>
 > **当前计数（2026-11-25 22:xx · loop 重启补跑）**：作者 **374** 人（编号最大 **374**）· X 已核验 **147**（本轮 **+3**：`@baaadas` / `@hardmaru` / `@StefanoErmon`，均经代理抓 `x.com/<handle>` `HTTP 200`，`og:title` + `og:description` 双源核身份）· 已发信 **171**（台账 #1–#171；今日 **7/12**）· 回信 **0**（0/171；已回复 0 / 无应答>14d 9 / 未到期 162）。本轮 **+3**：Jiaming Song（DDIM 一作，中文，`tsong.me` 当前明文地址 ⇒ 已发信 #171）· David Ha（World Models 一作，英文，无公开邮箱 ⇒ 仅建档，X 双源）· Stefano Ermon（DDIM 资深作者，英文/意大利，Stanford 页当前地址 + X 双源 ⇒ 仅建档，同论文已发一作、守「同一论文 ≤1」）。
 
 > **当前计数（2026-11-25 09:0x）**：作者 **371** 人（编号最大 **371**）· X 已核验 **144**（本轮 **+1**：`@hwchung27` 由 GitHub 个人页 <https://github.com/hwchung27>（`HTTP 200` / 152,262 B）bio-links 外链 `twitter.com/hwchung27` + 代理抓 `x.com/hwchung27` `HTTP 200` / 207,174 B，`og:title` = `Hyung Won Chung (@hwchung27) on X`、`og:description` = `AI Research Scientist @Meta Superintelligence Labs. Past: @OpenAI / @Google Brain / PhD @MIT` ⇒ 双源；Yubo Wang / Suriya Gunasekar 无可核 X 外链、同名账号判他人 ⇒ 记「未找到 X」，不猜）· 已发信 **170**（台账 #1–#170；今日 **6/12**）· 回信 **0**（0/170；#1–#9 已转 `无应答(>14d)`）。本轮 **+3**：Yubo Wang（MMLU-Pro 一作，中文，UWaterloo 官方仓作者列表当前地址 ⇒ 已发信 #169）· Suriya Gunasekar（Textbooks II / phi 系列，英文，MSR 主页当前地址 ⇒ 已发信 #170）· Hyung Won Chung（Flan-T5 一作，英文，无当前可信邮箱 ⇒ 仅建档，X 双源）。
@@ -5302,3 +5304,42 @@
 | X 账号 | **@StefanoErmon**（本人页外链 `twitter.com/StefanoErmon` + 代理抓 `x.com/StefanoErmon` `HTTP 200` / 183,036 B，`og:title` = `Stefano Ermon (@StefanoErmon) on X`、`og:description` 含 `AI Prof @Stanford` 与 DDIM ⇒ 双源） |
 | 状态 | **待跟踪**（本窗**不发信**：DDIM 同一论文已发一作 #171，守「同一论文 ≤1 封」；如后续换其另一篇已收录论文再评估） |
 | 备注 | 若未来发信按意大利语称谓问候 + 英文正文（§2）。高价值：扩散/生成建模、DPO/FlashAttention 关联。 |
+
+### 375. Luke Metz
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Luke Metz（`语言=英文(判据=西式姓名族属 + 美国机构 Thinking Machines / 前 OpenAI)`） |
+| 机构 | **Thinking Machines**（X bio 自述 `Building new things @thinkymachines`）· DCGAN 发表时在 **OpenAI** |
+| 代表论文 | **DCGAN**（`1511.06434`，B 轨 #410，二作） |
+| 邮箱 | **`luke.s.metz@gmail.com`**（本人主页 <https://lukemetz.github.io/> `HTTP 200` / 40,689 B，页内明文；2026-11-25 复核） |
+| 主页 | <https://lukemetz.github.io/>（`HTTP 200` / 40,689 B；经代理复核） |
+| X 账号 | **@Luke_Metz**（本人主页外链 `twitter.com/Luke_Metz` + 代理抓 `x.com/Luke_Metz` `HTTP 200` / 178,100 B，`og:title` = `Luke Metz (@Luke_Metz) on X` ⇒ 双源） |
+| 状态 | **已发信**（**#172**，2026-11-25 23:2x，英文）+ 待跟踪 |
+| 备注 | `语言=英文(判据=西式姓名族属 + 美国机构)`。发信问题（只对 DCGAN 成立）：① 步幅卷积替代池化 vs G/D 双侧 BatchNorm，哪条对 mode collapse 更关键（决定我们换 ViT 解码器时保留哪条）；② 去掉全连接隐层时，4×4 输入上的 1×1 conv 与可学习投影对判别器稳定性的差异；③ 潜空间插值平滑能否作为「无 mode collapse」的接受判据。台账 `mail/发送记录.md` §23:xx。 |
+
+### 376. Soumith Chintala
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Soumith Chintala（`语言=英文(判据=姓名族属 + 美国机构 Meta / PyTorch)`） |
+| 机构 | **Meta**（X bio：`Building new things @thinkymachines … Cofounded @PyTorch`）；DCGAN 三作 · PyTorch 创始人之一 |
+| 代表论文 | **DCGAN**（`1511.06434`，B 轨 #410，三作） |
+| 邮箱 | **未找到可信明文**（本人站点 <https://soumith.ch/> `HTTP 200` / 9,532 B，页内写 `myfirstname@gmail.com` 为**模板占位**，不是可直接使用的地址 ⇒ 🚫 不据此猜发） |
+| 主页 | <https://soumith.ch/>（`HTTP 200` / 9,532 B；2026-11-25 复核） |
+| X 账号 | **@soumithchintala**（本人主页外链 `twitter.com/soumithchintala` + 代理抓 `x.com/soumithchintala` `HTTP 200` / 204,293 B，`og:title` = `Soumith Chintala (@soumithchintala) on X`、`og:description` = `Building new things @thinkymachines. Also dabble in robotics at NYU. Cofounded @PyTorch…` ⇒ 双源） |
+| 状态 | **待跟踪**（仅建档；无可信明文邮箱 ⇒ 不发信；X 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | 系统栈/训练框架高价值联系人。若后续获当前公开邮箱，问题候选：① DCGAN 的稳定性约束在 PyTorch 生态里如何演化为今天的默认实践；② 大规模训练中 BN 与 group norm 的替换边界；③ 生成模型评测的可复现口径。 |
+
+### 377. Rajarshi Roy
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Rajarshi Roy（`语言=英文(判据=印度裔姓名族属 + 美国机构 NVIDIA)`） |
+| 机构 | **NVIDIA**（streaming multiprocessor / GPU core team；主页自述）· PrefixRL 一作 |
+| 代表论文 | **PrefixRL**（`2205.07000`，B 轨 #409，一作） |
+| 邮箱 | **未找到**（本人主页 <https://rajarshiroy.github.io/> 无 `mailto:`，仅有 LinkedIn / GitHub 外链 ⇒ 🚫 不猜地址、不发信） |
+| 主页 | <https://rajarshiroy.github.io/>（`HTTP 200` / 1,426 B；2026-11-25 复核） |
+| X 账号 | **未找到 X**（主页无 x.com / twitter.com 外链；未凭猜测登记 handle） |
+| 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信） |
+| 备注 | designflow 电路结构搜索的高价值联系人。若后续获当前公开邮箱，问题候选：① 网格状态–动作表示中「合法前缀图」的动作屏蔽如何实现；② synthesis-in-the-loop 的调用预算与奖励噪声；③ 从开源单元库迁移到工业单元库的分布差如何校准。 |

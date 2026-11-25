@@ -1,0 +1,18 @@
+Dear Luke,
+
+I am Yang Liu, a researcher working on LLM agents and multimodal models; you can find my work at https://foamliu.github.io/.
+
+I am reading your DCGAN paper because we are training small vision encoders and image/video generators, and the architectural constraints you identified are still the default checklist. It is unclear to me which constraints remain load-bearing when the backbone changes.
+
+Three specific questions:
+
+1. In Section 4.1 you replaced pooling with strided convolutions. Which mattered more for avoiding mode collapse — strided convolutions or BatchNorm in both G and D? This decides what we keep when swapping the DCGAN generator for a ViT decoder.
+
+2. When you removed fully connected hidden layers, did the 1×1 convolution at the 4×4 input matter more than a learned 4×4×512 projection for discriminator stability? We see divergence when we add a linear layer back.
+
+3. Is smooth latent interpolation evidence of latent continuity, or can it hold even when some modes are dropped? That decides whether we can use it as an accept/reject metric.
+
+Thank you for your time.
+
+Best regards,
+Yang Liu
