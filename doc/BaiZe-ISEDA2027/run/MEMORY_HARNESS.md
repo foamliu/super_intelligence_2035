@@ -1,22 +1,57 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 1
-> 🆕 **R3009 · 2026-11-25 09:19 — 灾后恢复完成+nightly watcher armed**·**心跳第一行**: ✅自检clean✅ ①guard PID931671存活✅ ②mem avail1149G✅ ③load27✅ ④pretrain正常✅ ⑤无失控进程✅. **🔴灾后恢复完成**: commit 2be0088aff误删harness/下57448文件→从da51ea66fe恢复: reports/(85含7 eval JSON)+predictions_glm53/(3641)+swebench_mm/(17)+harness_resource_guard.sh+rerun_ids/(7路)+rerun_infra_state.json. **7way REGEN@09:14**: hermes444/88.8%·opencode416/83.2%·cline335/67.0%(438nonempty/62empty)·cc295/59.0%·pi247/49.4%·dsh195/39.0%·codex115/23.0%. **cline-patched**: R1 predict已结束(438/500 nonempty)·33 recovered已evaled(27resolved+6failed)·62仍empty→今夜round2. **eval JSON核实**: 原93empty_patch中32已resolved+61已failed=93全 accounted·62 prediction仍empty. **nightly watcher ARMED**: PID2791637 sleeping until 21:00→launch_infra_rerun→orchestrator(cline-patched unmarked→re-attempt 62 empties with --workers 8→codex(271)→dsh(96)→cc(141)→pi(158)→hermes(10)→opencode(1)). **MM 2×3**: 旧PID2131928已消失·6路progress全0→需重启(排队). 📦 TASK~31.7KB MEMORY~8.5KB
-> 📦 R3008 流水已归档 → daily-memories-harness/2026-11-24.md（11-24令·park监控轮#5·双线21:00就绪复核·判据全绿·MM 2路kimi RUN）。需要时再读。
-> 📦 R2385 以下历史流水已归档 → daily-memories-harness/2026-11-{07..24}.md（含11-23令Step1/Step2全量infra排查+夜间重跑+park轮·11-17令TB-2.1 7路报告·11-07~11-16历史流水）。需要时再读。
+> 🆕 **用户令 · 2026-11-25 — 停止当前 SWE-bench Verified 评测，改用 doubao-pro 重测全量 500×7 + 记录 token**
+>
+> **用户原话**：「安排 harness 停止手头的评测，重新开始：使用 doubao-pro 模型，从 SWE-bench Verified 开始重测，记录 token 数，7-way 并发（豆包白天用户量很小）。已经基本 predict 完成的 SWE-bench MM 不受影响，继续做完。」
+>
+> **执行步骤**：
+>
+> **第一步 — 停止当前 SWE-bench Verified 工作（不动 MM）**：
+> 1. `kill` nightly_rerun_watcher（PID 2791637，sleeping until 21:00）—— 直接 kill，不触发 21:00 窗口
+> 2. `kill` 任何正在运行的 `run_verified_full.py predict` / `rerun_infra_verified.py` / `incremental_eval_merge.py` 进程
+> 3. `kill` 旧的 gw_proxy 进程（9090/9091/9092）—— 它们配的是 glm-5.3-flash key
+> 4. 🚫 **不碰** MM 相关进程（端口 9095+ 的 mm_proxy、`run_mm_2x3.py predict`）
+>
+> **第二步 — 启动 doubao-pro 7-way**：
+> 1. 已创建启动脚本：`harness/launch_doubao_7way.sh`
+> 2. 直接运行：`bash harness/launch_doubao_7way.sh`
+> 3. 脚本自动完成：API probe → 重启 3 个 gw_proxy（doubao key + /cloud upstream）→ 更新 5 个 harness config → 截断 usage sidecar → 7 路并行 predict
+> 4. 模型 = `doubao-seed-2.0-pro-cloud`，upstream = `http://agi-gateway.cxmt.com/cloud`
+> 5. 预测目录 = `predictions_doubao_pro/`，eval tag = `doubao_pro_`，workdir tag = `_doubao_pro`
+> 6. **白天运行**（doubao 白天用户量小，无需夜间窗口）
+> 7. **token 记录已部署**：gw_proxy.py / gw_proxy_dsh.py / run_single.py / incremental_eval_merge.py 已改造完成，每题 predictions JSON 带 `usage: {input_tokens, output_tokens, total_tokens, n_api_calls}`
+>
+> **第三步 — MM 2×3 继续**：
+> 1. MM 的 cline/opencode × kimi 两路 retry 进程已消失（R3009 记录），需重启
+> 2. 用 `bash harness/swebench_mm/launch_mm_2x3_full.sh` 重启剩余路由（会跳过已完成的）
+> 3. MM 使用独立端口 9095+，不受 doubao gw_proxy 重配影响
+>
+> **第四步 — 监控**：
+> - `bash harness/launch_doubao_7way.sh status` 查 7 路进度 + token 统计
+> - 每路 500 题 × 7 = 3500 predict；doubao-pro 预计比 glm53 快（白天无 429）
+> - predict 全部完成后，跑 eval + 生成报告
+>
+> **纪律**：
+> - 硬护栏不变（guard PID931671 常开、nice19/ionice3/OMP8、docker eval mem128g/cpu16）
+> - 不碰 pretrain/data/vision/zhulong
+> - 🚫 不碰 MM 进程和 MM 预测文件
+> - glm-5.3-flash 的旧 predictions（`predictions_glm53/`）和 eval 结果保留不删，作为对照
 
 ## 📊 进度快照
 
-PHASE:        11-24令(cline PREDICT并行化收尾)·步骤1-2闭环✅(cline335/500=67.0%)·R3009 灾后恢复完成+nightly watcher armed·等21:00窗口
-已完成:       H-B OK·Gate7/7·TB-2.1 oracle5/5·TB-2.1 7路rerun COMPLETE·SWE-bench Verified predict 7路·§11-19报告重写✅·MM容器下载COMPLETE(580/580)✅·Step 1 硬护栏✅(guard PID931671)·**11-24令步骤1-2闭环**: LIVE predict --workers 8→438/500 nonempty→33 recovered已evaled(27resolved+6failed)→cline335/500=67.0%·**R3009灾后恢复**: commit 2be0088aff删57448文件→从da51ea66fe恢复reports/+predictions_glm53/+swebench_mm/+guard+rerun_ids+state✅·7way报告REGEN@09:14
-当前动作:     R3009: 灾后恢复完成(09:19窗口外)·①nightly_rerun_watcher PID2791637 alive(sleeping until 21:00) ②rerun_infra_state.json completed_routes=[]→orchestrator will process all routes ③rerun_ids 7路(cline93/codex250/dsh93/cc128/pi98/hermes4/opencode1) ④eval JSON cline335/500=67.0% holding ⑤7way报告09:14已REGEN·判据全绿(guard PID931671✅·mem1149G·load27)
-下一步:     ①21:00→nightly_rerun_watcher PID2791637→launch_infra_rerun→orchestrator: cline(62empty re-predict --workers 8)→codex(271)→dsh(96)→cc(141)→pi(158)→hermes(10)→opencode(1) ②下轮唤醒查rerun_infra_nightly.log+eval JSON+REGEN ③MM 2×3 6路progress全0→需重启(排队)
+PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·等执行
+已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅(gw_proxy+run_single+incr_eval_merge)·launch_doubao_7way.sh✅
+当前动作:     等执行：(1)停旧 Verified 进程 (2)run launch_doubao_7way.sh (3)重启 MM kimi retry
+下一步:     doubao-pro 7-way predict → eval → 报告；MM kimi retry → MM eval
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK~31.7KB（✅≤32KB） / MEMORY≈8.5KB（✅≤32KB）
- SWE-bench Verified Pass%(分母恒500): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
+ 体积: TASK~31.7KB / MEMORY≈6KB
+
+ SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
+ SWE-bench Multimodal 2×3 predict: 4路DONE·2路kimi retry需重启·has_patch=2615/2880(90.8%)
  真实 Pass% (TB-2.1, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
- SWE-bench Multimodal 2×3 predict: 6路progress全0(旧进程PID2131928已消失)→需重启
+
 ## 启动说明（首次唤醒）
 
 1. **先读** `BAIZE_HARNESS_TASK.md` 全文。
@@ -29,7 +64,9 @@ ERROR_COUNT:  0
 - **harness 源码**：`/nas_train/app.e0031982/harness/`（⚠️ **只读参考，不要改动上游代码**）
 - **产物目录**：`doc/BaiZe-ISEDA2027/run/harness/`
 - **共享工作副本**：`/nas_train/app.e0031982/code/super_intelligence_2035`（同一 NFS · git pull 后各线共享）
-- **SWE-bench Verified 预测**：`run/harness/swebench_verified_full/predictions_glm53/`
-- **SWE-bench Verified 评测**：`run/harness/swebench_verified_full/reports/eval_glm53_*.json`
-- **双报告**：`reports/report_harness_glm53_7way_swebench_tb_zh.html` + `reports/report_harness_cline_special_zh.html`
+- **doubao-pro 启动脚本**：`run/harness/launch_doubao_7way.sh`
+- **doubao-pro 预测目录**：`run/harness/swebench_verified_full/predictions_doubao_pro/`
+- **doubao-pro 评测目录**：`run/harness/swebench_verified_full/reports/eval_doubao_pro_*.json`
+- **glm53 旧预测（对照）**：`run/harness/swebench_verified_full/predictions_glm53/`
+- **token sidecar**：`/tmp/gw_proxy_usage.jsonl`
 - **报告生成器**：`run/harness/gen_report_glm53_7way.py` + `run/harness/gen_cline_special.py`
