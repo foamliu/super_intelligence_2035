@@ -4,10 +4,10 @@
     "python": "/nas_train/app.e0031982/miniforge3/envs/py310/bin/python",
     "numpy": "1.26.4",
     "machine": "10.239.2.12 (whag0pgpuap12)",
-    "date": "2026-11-23",
+    "date": "2026-11-26 (re-verified; import fix 27d6c18)",
     "repo": "/nas_train/app.e0031982/code/Megatron-LM-blendswitch",
     "branch": "blend-hot-switch",
-    "commit": "011a05b",
+    "commit": "27d6c18",
     "base_commit": "14c215d"
   },
   "results": {
