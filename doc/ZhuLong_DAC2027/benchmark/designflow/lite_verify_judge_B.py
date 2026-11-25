@@ -45,9 +45,16 @@ def setup_judge(judge, cid):
     for hd in [d for d in os.listdir(ref_dir) if d.startswith("hidden") and os.path.isdir(os.path.join(ref_dir, d))]:
         src = os.path.join(ref_dir, hd)
         if hd == "hidden":
+            # Mirror run_one.sh: `cp -r "$hd/." "$JUDGE/hidden/"` (recursive merge,
+            # preserves subdirectory structure e.g. rc_delay/Dlyrc_*/minpulse_spf/).
+            # The previous flat-file copy dropped subdirs and caused false negatives.
             for f in os.listdir(src):
                 sp = os.path.join(src, f)
-                shutil.copy2(sp, os.path.join(hidden_dst, f)) if os.path.isfile(sp) else None
+                dp = os.path.join(hidden_dst, f)
+                if os.path.isdir(sp):
+                    shutil.copytree(sp, dp, dirs_exist_ok=True)
+                else:
+                    shutil.copy2(sp, dp)
         else:
             shutil.copytree(src, os.path.join(g2, hd), dirs_exist_ok=True)
     # check.py + ref helpers
