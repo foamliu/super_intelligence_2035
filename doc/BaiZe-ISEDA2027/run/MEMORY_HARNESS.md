@@ -106,11 +106,11 @@ WAITING: 0
 
 PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·7/7 predict COMPLETE·7/7 eval COMPLETE✅·报告已生成✅·MM已停(令D)·全部完成，待新指令
 已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way predict 7/7 COMPLETE✅**(3500/3500=100%)·**doubao-pro 7way eval 7/7 COMPLETE✅**·**报告已生成✅**(report_harness_doubao_pro_7way_swebench_tb_zh.html)·**dsh SDK修复✅**·**MM已KILL✅**(令D)·**agent-arena repo✅**(33 scripts committed)
-当前动作:     idle·全部完成·doubao-pro 7way predict+eval 7/7 COMPLETE✅+报告✅·任务书归档完成(32432B→16994B)·guard PID931671 LIVE·gw_proxy 3进程LIVE·0 eval/predict·0 Docker·load~24/224
+当前动作:     idle·全部完成·例行巡检健康·guard PID931671 LIVE·gw_proxy 3进程LIVE(9090/9091/9092)·0 eval/predict·0 Docker·load~27/224=12%·mem680G/2015G avail1102G
 下一步:     待运维新指令（所有 11-25 令 A/B/C/D 已全部闭环）
 阻塞:         无
 ERROR_COUNT:  0
- 体积: TASK~17.0KB / MEMORY≈31.4KB
+ 体积: TASK~27.0KB / MEMORY≈31.1KB
 
   SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
   SWE-bench Verified Pass% (doubao-pro 口径): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
@@ -164,6 +164,8 @@ ERROR_COUNT:  0
 > #H-021（2026-11-26 07:17, **doubao-pro 7way eval 7/7 COMPLETE✅ + 报告已生成✅**·CC eval JSON 06:27(297/493=59.4%)·pi eval JSON 06:37(270/483=54.0%)·codex eval JSON 07:06(218/464=43.6%)·lingering codex Docker container killed·**7路最终Pass%**: opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%·报告`report_harness_doubao_pro_7way_swebench_tb_zh.html`已生成(7083B·0script/0外链✅)·token统计:7路合计~355k calls/~5.17B input/~99M output·guard PID931671 LIVE·gw_proxy 3进程LIVE·资源OK(load~42/224=19%·0 Docker·0 eval/predict进程)·所有11-25令A/B/C/D全部闭环·WAITING→0·下一步:待运维新指令）
 
 > #H-022（2026-11-26 07:25, 例行巡检·**全部完成·idle**·自检:0 eval/predict进程·0 Docker·guard PID931671 LIVE·gw_proxy 3进程LIVE(9090/9091/9092)·资源OK(load24/224=11%·mem680G/2015G avail1101G·pretrain step7.39s≤7.4s✅)·git已pull up-to-date·**任务书归档**:11-24令+11-23令+11-19MM令→ARCHIVE(归档2026-11-26节)·TASK 32432B→16994B✅·新增11-25令A/B/C/D摘要·MEMORY 30.6KB(OK)·token sidecar 52884 lines·所有11-25令A/B/C/D已闭环·WAITING:0·下一步:待运维新指令）
+
+> #H-023（2026-11-26 07:40, 例行巡检·**idle·健康**·git pull up-to-date(无新指令)·自检:0 eval/predict进程·0 Docker·guard PID931671 LIVE·gw_proxy 3进程LIVE(9090/9091/9092)·资源OK(load26.64/224=12%·mem680G/2015G avail1102G·0 high-CPU harness进程)·报告report_harness_doubao_pro_7way_swebench_tb_zh.html=7083B✅·token sidecar 52884 lines·agent-arena repo 3 commits(a1fc485/a431e3c/a50291c)·TASK 27.0KB/MEMORY 31.1KB(均<32KB✅)·所有11-25令A/B/C/D已闭环·WAITING:0·下一步:待运维新指令）
 
 
 ## 启动说明（首次唤醒）
