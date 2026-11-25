@@ -15,6 +15,11 @@ Usage: echo CID... | python3 lite_verify_judge_B.py
 """
 import os, sys, re, shutil, tempfile, zipfile, subprocess, importlib.util
 
+# Mirror real eval (run_one.sh) env so check.py can locate repo assets via BENCH_CASES_DIR
+_BENCH="/nasdata/app.e0031982/code/EDA-Flow-Bench"
+os.environ.setdefault("BENCH_CASES_DIR", os.path.join(_BENCH,"benchmarks","EDA-Eval-DesignFlow","cases"))
+os.environ.setdefault("BENCH_SCRIPTS_DIR", os.path.join(_BENCH,"scripts"))
+
 BENCH = "/nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow"
 ASSETS_ROOT = os.path.join(BENCH, "assets")
 REF_ROOT = os.path.join(BENCH, "reference")

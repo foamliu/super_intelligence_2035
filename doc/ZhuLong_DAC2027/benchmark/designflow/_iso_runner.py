@@ -1,6 +1,10 @@
 import os,sys,tempfile,zipfile,shutil,importlib.util,json
 sys.path.insert(0,"/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/benchmark/designflow")
 import lite_verify_judge_B as lv
+# Mirror real eval (run_one.sh) env so check.py can locate repo assets via BENCH_CASES_DIR
+_BENCH="/nasdata/app.e0031982/code/EDA-Flow-Bench"
+os.environ.setdefault("BENCH_CASES_DIR", os.path.join(_BENCH,"benchmarks","EDA-Eval-DesignFlow","cases"))
+os.environ.setdefault("BENCH_SCRIPTS_DIR", os.path.join(_BENCH,"scripts"))
 cid=sys.argv[1]
 with tempfile.TemporaryDirectory() as judge:
     g2,err=lv.setup_judge(judge,cid)
