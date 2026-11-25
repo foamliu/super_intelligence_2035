@@ -1,0 +1,14 @@
+刘老师您好，
+
+我是刘杨，做 LLM agent 方向的研究，主页 https://foamliu.github.io/。
+
+我们在为视觉塔做选型，重读了您这篇 ConvNeXt。ConvNeXt-T 在 4.5 GFLOPs 下 82.1%、Swin-T 81.3% 的对照，以及把 ResNet 从 90 epoch 延到 300 epoch 的做法，正对应我们「有限算力下能否用纯 ConvNet」的问题。
+
+两个具体问题：
+1. 若训练预算压到约三分之一（例如 100 epoch、batch 2048），您会优先保留哪几项「现代化」设计（LayerScale 的 1e-6 初值、EMA、layer-wise lr decay），哪几项可以先去掉？答复会决定我们视觉塔的基线配方。
+2. 论文主结果来自 ImageNet-1K 监督预训练。若换成 MAE 式掩码自监督再迁移到图文对齐，您预期 ConvNeXt 相对 ViT 的优势会保留还是缩小？这一条决定我们先做监督还是先做自监督。
+
+感谢您的时间。
+
+祝好，
+Yang Liu

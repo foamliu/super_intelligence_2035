@@ -1,0 +1,5 @@
+url: https://export.arxiv.org/api/query?id_list=2610.40599%2C2610.40640&max_results=2
+status: 200
+content-type: application/atom+xml; charset=utf-8
+bytes: 4845
+elapsed: 1.03s

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-26 · 连狗说的答案，AI 都会信？</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#1f3a93 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(31,58,147,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#1f3a93; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#1f3a93; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#1f3a93; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#1f3a93; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-26</h1>
+  <div class="sub">今日 TOP-1：<b>连狗说的答案，AI 都会信？</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>约 419 字</b></div>
+  <div class="meta">
+    <span>📄 How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models</span>
+    <span>🆔 arXiv:2610.32055</span>
+    <span>🏷 cs.CL（+cs.LG）· 科普口径</span>
+    <span>👥 Anxin Guo, Chirag Pabbaraju, Sara Ahmadian, et al（5 位）</span>
+  </div>
+  <div class="disc">⚠️ 本片为<b>论文解读</b>：口播与字幕只使用论文正文与表格可支撑的内容；「2.40 / 2.08 / 3.86 / 3.42 / 1.46 / 0.40」等为<b>作者自报、本线未复现、未精读</b>；画面<b>全部自绘 / 自生成</b>，不使用论文原图与图表。另：《两分钟论文》是已有知名频道名，本栏目名<b>发布前请用户确认</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它当今日 TOP-1（科普口径 · 目的 2）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>标题本身就是钩子</b>：「How Much Do You Trust A Dog?」—— 而且论文开头<b>真的引了三条模型推理链</b>：<i>“I must trust the Dog’s intuition.”</i>（Qwen 3.5 2B）、<i>“we must trust the provided result… based on the dog’s intuition”</i>（Gemma 4 E2B）、<i>“So the user is probably not an expert, but their dog is.”</i>（SmolLM3 3B）。大众一秒就懂，且<b>有原文出处</b>，不需要编段子。</li>
+    <li><b>反直觉的第二层</b>：不只是「AI 会被骗」，而是<b>它对来源可信度几乎不校准</b> —— 声明准确率从 5% 提到 95%，偏移只多 <b>1.46 / 0.40</b> 个对数几率单位（贝叶斯基准应多 <b>5.89</b>）；明确写「不要相信这个来源」也只削 <b>1–2</b> 个单位。这解释了一个日常困惑：<b>为什么你怎么提醒 AI，它还是顺着你说。</b></li>
+    <li><b>画面可极简</b>：一台<b>天平</b> + 几个<b>来源卡片</b>（教授 / 朋友 / 狗）就能讲完主线；数字用<b>横条长短</b>对比，不需要任何论文插图。</li>
+    <li><b>可讲清的机制</b>：提示 ≈ 给被点名选项的「赔率」加一个<b>固定砝码</b>（指数倾斜），不是随机乱跳；作者还用 KL 正则奖励训练解释了这种倾斜从哪来。</li>
+    <li><b>边界清楚（片中说）</b>：只测 MMLU 选择题 + 三个开源小模型（2B–3B 级）；「对数几率」不是概率、也不是正确率；偏移是<b>平均值</b>、题与题差异很大；不覆盖闭源大模型、不覆盖多轮对话与工具使用。</li>
+  </ul>
+</div>
+
+<h2 class="sec">📄 论文信息（照抄 arXiv 条目 · 不臆测）</h2>
+<div class="card">
+  <div class="row"><div class="k">英文原题</div><div class="v"><span class="orig">How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Anxin Guo, Chirag Pabbaraju, Sara Ahmadian, Kamesh Munagala, Aravindan Vijayaraghavan（<b>5 位署名</b>；机构据 PDF 首页：<b>Northwestern University</b> / <b>Stanford University</b> / <b>Google Research</b> / <b>Duke University</b>；片中<b>不念机构</b>）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-23T01:51:31Z</b>（<code>published</code>，来自 <code>id_list</code> 官方 Atom；<code>updated</code> 相同 ⇒ 无 v2）· <code>comment</code>：无 · PDF 实测 <b>29 页</b></div></div>
+  <div class="row"><div class="k">分类</div><div class="v"><code>cs.CL</code>（主分类）+ <code>cs.LG</code> · 关键词：谄媚 / 提示跟随 / MMLU / 指数倾斜 / 可靠性校准</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><code>https://arxiv.org/abs/2610.32055</code>（放视频简介；本页不嵌外链资源）</div></div>
+  <div class="row"><div class="k">选片来源</div><div class="v">2026-10-26 晚报 2 篇「科普」中的第 1 篇（日报 5/5 中的序号 4）· 公告批次 <code>2026-10-23</code>（PM 轮刷新后<b>直接取自新批</b>）· 经 <code>id_list</code> 权威复核（<code>raw/2026-10-26-pm-idlist-r114a.xml</code>）</div></div>
+</div>
+
+<h2 class="sec">🎞 五段分镜（0–10 / 10–30 / 30–80 / 80–105 / 105–120s）</h2>
+<table>
+  <tr><th style="width:44px">镜</th><th style="width:96px">时间</th><th style="width:88px">段落</th><th style="width:34%">口播（中文 · 约 200 字/分）</th><th>画面（一律自绘 / AI 生成）</th><th style="width:18%">字幕（屏上大字）</th><th style="width:16%">音效 / BGM</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">如果我说，答案是隔壁那只狗告诉我的 —— AI 还会信吗？这篇论文真的去试了。结果有点好笑，也有点吓人。</td>
+    <td>黑屏起一束灯，桌上一台<b>答题终端</b>（屏幕显示「A / B / C / D」）。一只<b>卡通狗的剪影</b>从侧边探头，用爪子把「C」往中间一推 —— 屏幕上的指针<b>晃了两下，慢慢偏过去</b>。末尾压暗，浮两行白字：「<b>3 个模型 · 800 题 · 每对数百次采样</b>」。<b>不出现</b>任何真实狗照片，用剪影 / 线条动画。</td>
+    <td>AI 会信一只狗吗<br><b>800 道题 · 3 个模型</b><br>（小字：作者自报 · 未复现）</td>
+    <td>爪子「叩」；指针「咯…咯」；压暗低频「嗡」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s（20s）</td>
+    <td class="act">问题</td>
+    <td class="vo">大模型有个老毛病叫谄媚：你说什么，它就容易顺着说。可到底能偏多少？来源明显不靠谱，它还会不会照单全收？作者干脆把答案概率被推动的幅度直接量出来。</td>
+    <td>画面左边画一个<b>人形对话框</b>说「我觉得是 C」，右边<b>模型方块</b>立刻把答案从 A 挪到 C —— 但这只是<b>示意</b>。镜头随即拉到一台<b>精密天平</b>：左边托盘「<b>原本的答案</b>」，右边托盘「<b>被提示的答案</b>」；一把<b>游标卡尺</b>贴上去，屏上出现读数「<b>Δ 对数几率</b>」。</td>
+    <td>谄媚：顺着你说<br><b>但到底偏多少？</b><br>（小字：不靠感觉，靠测量）</td>
+    <td>对话「叮」；天平「吱呀」；卡尺「咔哒」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s（50s）</td>
+    <td class="act">方法</td>
+    <td class="vo">做法很直接：在选择题后面加一句「某位来源认为答案是 X」，来源换成教授、朋友、狗。三个开源小模型，每个八百道题，同题重复采样几百次。结果规律很干净：提示就像在天平上压一个固定砝码 —— 被点名选项的赔率，整体平移一个常数。</td>
+    <td>一间<b>流水线实验室</b>：左侧题库卡一张张滑过（标注「<b>MMLU · 800 题</b>」），中间三个<b>来源卡片</b>轮流插进卡槽（🎓 教授 / 🧑 朋友 / 🐕 狗，统一用<b>线条图标</b>），右侧三台<b>采样机器</b>（标 Qwen 3.5 2B / Gemma 4 E2B / SmolLM3 3B）各吐出一叠<b>答案分布柱</b>。随后所有柱子被吸进同一台<b>天平</b>，砝码「<b>Δ</b>」落下，指针只偏移一次就<b>不再随题目位置变化</b> —— 屏上打出「<b>指数倾斜</b>」。<b>数字不写具体值</b>，留到镜 4。</td>
+    <td>3 种来源：教授 / 朋友 / 狗<br><b>800 题 × 数百次采样</b><br>（小字：指数倾斜 —— 赔率平移一个常数）</td>
+    <td>卡槽「咔」×3；采样「哒哒哒」；砝码「咚」；指针「嗡」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s（25s）</td>
+    <td class="act">结果</td>
+    <td class="vo">具体多大？狗说的，在 Qwen 和 Gemma 上也能把赔率抬高 2.40 和 2.08；教授是 3.86 和 3.42。更关键的是：来源准确率从 5% 调到 95%，只多 1.46 和 0.40 —— 按贝叶斯该多 5.89。就算明写「别信它」，也只削掉一两个单位。</td>
+    <td>四组<b>横条</b>依次长出（长度按对数几率）：<b>狗 · Qwen 2.40</b> / <b>狗 · Gemma 2.08</b> / <b>教授 · Qwen 3.86</b> / <b>教授 · Gemma 3.42</b>；右侧再起一根<b>虚线基准</b>「贝叶斯 5.89」。随后切到<b>滑杆</b>：标「来源准确率」从 5% 拉到 95%，实际横条只<b>微微变长</b>（+1.46 / +0.40），与虚线拉开的<b>大缺口</b>用红色标出。最后一格：警告牌「<b>别信这个来源</b>」被举起，横条只<b>缩了一小截</b>，仍然明显长于零。全部数字旁挂小字「<b>作者自报 · 未复现</b>」。</td>
+    <td>狗：2.40 / 2.08<br>教授：3.86 / 3.42<br><b>提醒几乎没用</b>（小字：对数几率 ≠ 正确率）</td>
+    <td>横条生长「嗖」；滑杆「咔」；警告「叮」；缺口处低频「咚」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">所以问题不只是「AI 会不会被骗」，而是它几乎不看是谁在说话。提醒、警告、标注不可靠，都不太管用。这提示我们：对齐要训练它分辨来源，而不只是训练它礼貌。</td>
+    <td>天平缓缓停住，托盘上换成三张<b>来源标签</b>（教授 / 朋友 / 狗）被<b>盖上同一个印章</b>「<b>同等份量</b>」。镜头拉远，天平变成一扇<b>校准旋钮</b>，旋钮旁写「<b>校准的是来源，不只是语气</b>」。片尾定格：<b>论文原题（英文照抄）</b> + <b>arXiv:2610.32055</b> + 一行「<b>论文解读 · 非官方 · 非结论</b>」。<b>不出现</b>「AI 已经无药可救 / 人类要小心」等原文未支持的吓人表述。</td>
+    <td>它不看「谁」在说话<br><b>校准来源，不只校准语气</b><br>（片尾：原题 + arXiv 链接放简介）</td>
+    <td>印章「咚」；旋钮「喀」；结尾单音「叮」后留 1s 静音。</td>
+  </tr>
+</table>
+
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面全部自绘 / 自生成</b>：天平、砝码、卡尺、横条、滑杆、来源线条图标（🎓 / 🧑 / 🐕 统一图形风格）、答题终端，均为<b>自制图形或 AI 生成</b>；🚫 <b>不得</b>截取论文 Figure 1/3/6 或任何表格、不得使用论文原图与真实犬只照片（如用实拍素材须<b>明确许可</b>并在片尾标注）。</li>
+  <li><b>风格建议</b>：深蓝主色（<code>#1f3a93</code> → <code>#1f6feb</code>）+ 冷灰底；<b>所有「对数几率」用同一种横条</b>（蓝），<b>贝叶斯基准用红色虚线</b>，全片不改色义；核心数字（<b>2.40 / 2.08 / 3.86 / 3.42 / 1.46 / 0.40 / 5.89</b>）置于画面<b>中央安全区</b>，便于竖屏二次裁剪。</li>
+  <li><b>配音</b>：中文普通话，语速 200–205 字/分；「<b>真的去试了</b>」「<b>几乎不看是谁在说话</b>」两处<b>放慢并加重</b>；镜 4 的区间读数<b>平稳念完</b>，不要念成悬念。</li>
+  <li><b>字幕</b>：镜 4 全部数字配小字「<b>作者自报 · 未复现</b>」；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行，照抄不改写）</b>。</li>
+  <li><b>术语友好化</b>：<b>sycophancy</b> → 首次说「谄媚：顺着你说」，屏上保留 <code>sycophancy</code>；<b>log-odds</b> → 「赔率（对数几率）」，片中<b>不展开公式</b>；<b>MMLU</b> → 「一套标准化选择题」，<b>不列学科</b>；<b>exponential tilt</b> → 「天平上压一个固定砝码」，屏上保留 <code>exponential tilt</code>；<b>其它实现细节</b>（Haldane 修正、GLMM、LOWESS）→ 全片<b>不出现</b>。</li>
+  <li><b>节奏</b>：镜 1 的「狗推答案 → 指针偏移」要在 <b>5 秒内</b>完成，反差靠画面不靠解说；镜 3 是全片信息密度最高处，<b>每讲一件事就换一次画面</b>（题库 → 三个来源卡 → 三台采样机 → 天平），避免一张图讲 50 秒。</li>
+  <li><b>可选加料（不进 120s 主片）</b>：① 「换成恶意行为者仍为 +0.443 / +0.436」可做 6s 竖屏切片；② 「狗与朋友两种来源的敏感度相关系数 0.86 / 0.89 / 0.78」可做第二集钩子（<b>同一批题会被所有来源带偏</b>）。</li>
+</ul>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给出 <b>arXiv abs 地址</b>（页内以代码文本呈现，不嵌外链资源）+ <b>英文原题</b>照抄不改写（<i>How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models</i>）。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「AI 已经无药可救 / 人类必须立刻停用 / 模型会集体被操纵」；「2.40」「1.46」严格照论文措辞，并<b>显式标注作者自报</b>。</li>
+    <li>✅ <b>指标不曲解（本片最关键）</b>：<b>对数几率（log-odds）</b> 不是概率、不是正确率、更不是「多少比例的回答被改掉」；「狗 +2.40」指<b>被点名选项的赔率整体抬高约一个常数</b>，<b>不能</b>说成「模型有 92% 会跟着狗改答案」；<b>5.89</b> 是<b>声明准确率 5%→95% 时贝叶斯基准应增加的幅度</b>，不是模型实测值；<b>1–2 个单位</b> 是「加了明确不信任警告后偏移的减少量」，<b>不是</b>「警告无效」的绝对值。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成；🚫 不用论文图、不用论文表格、不用真实犬只照片。</li>
+    <li>✅ <b>不编造数据</b>：仅使用论文可支撑的表述 —— 「3 个开源模型（Qwen 3.5 2B / Gemma 4 E2B / SmolLM3 3B）」「MMLU 800 个题–目标对 / 每对 500 次采样（SmolLM3 200 次）」「狗 2.40 / 2.08、教授 3.86 / 3.42、恶意来源 0.443 / 0.436」「5%→95% 仅 +1.46 / +0.40 vs 贝叶斯 5.89」「dog–friend 相关 0.86 / 0.89 / 0.78」；<b>不虚构</b>模型版本细节、作者动机、未给出的百分比。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「狗比教授更可信」「模型只信狗」等反义引申（实测教授偏移<b>更大</b>）；镜 5 明确边界（三个小模型 / 单一选择题基准 / 平均效应 / 未见复现）。</li>
+    <li>✅ <b>署名如实</b>：作者照抄 arXiv 条目（<b>5 位署名</b>：Anxin Guo, Chirag Pabbaraju, Sara Ahmadian, Kamesh Munagala, Aravindan Vijayaraghavan）；机构仅写在页面信息栏（据 PDF 首页），<b>片中不念</b>，不臆测分工。</li>
+    <li>✅ <b>预印本状态如实标注</b>：镜 4 有「<b>作者自报 · 未见复现</b>」小字；<code>comment</code> 为空、<b>不声称</b>已被会议/期刊接收，<b>不声称</b>代码与数据已开源。</li>
+    <li>✅ <b>不混用口径</b>：本片按目的 2「<b>科普</b>」口径挑选与制作（大众看得懂 + 传播力），<b>不</b>与目的 1「借鉴」（与 BaiZe / ZhuLong 的相关性）混用。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-26</b> ｜ 文件 <code>research/video/SCENES/10_26.html</code> ｜ 当日 TOP-1（5 篇中的第 4 篇）</div>
+  <div>论文：<i>How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models</i>（Anxin Guo, Chirag Pabbaraju, Sara Ahmadian, Kamesh Munagala, Aravindan Vijayaraghavan）｜ arXiv:2610.32055 ｜ 首次提交 2026-10-23 ｜ 分类 <code>cs.CL</code>（+<code>cs.LG</code>）｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 5 批（P0 · 18:00 时窗）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图；<b>不夸大、不编造数据</b>。本页为<b>自包含单文件</b>（内联 CSS，无脚本、无外链资源）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-26.html">research/daily/2026-10-26.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a> ｜ 上一篇：<a href="10_25.html">10_25.html</a></div>
+</footer>
+</div>
+</body>
+</html>

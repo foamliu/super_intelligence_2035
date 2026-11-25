@@ -1,0 +1,62 @@
+[
+ {
+  "id": "2610.19439v1",
+  "title": "Progress-Aware Distillation for Mitigating Stagnation in Small Language Model Agents",
+  "published": "2026-10-14T02:31:56Z",
+  "updated": "2026-10-14T02:31:56Z",
+  "authors": [
+   "Yuanpu Cao",
+   "Saket Sathe",
+   "Hanyu Wang",
+   "Ziyi Yin",
+   "Fenglong Ma",
+   "Jinghui Chen"
+  ],
+  "summary": "While LLM-based agent systems have demonstrated remarkable proficiency in reasoning and solving complex real-world tasks, they also come with substantial token consumption and inference latency, limiting their practical deployment. To enhance the efficiency of agent systems, recent efforts have focused on transferring agentic capabilities from large-scale models to small language models (SLMs) via supervised fine-tuning-based distillation. Nevertheless, as interaction trajectories grow longer, involving extended reasoning-action chains and extensive environmental feedback, distilled student agents tend to experience progress stagnation: becoming trapped in unproductive loops characterized by persistent failed strategies and difficulty making meaningful progress. Our systematic analysis shows that this phenomenon consistently occurs across diverse SLMs and task domains. To address this issue, we propose Progress-Aware Distillation (ProD), which explicitly detects and penalizes stagnation in student-generated trajectories. ProD encodes the stagnation gap between student and teacher into an adaptive margin for dynamically penalizing possible stagnation. By iteratively applying this procedure, ProD enables student agents to progressively approximate teacher behavior. Extensive experiments involving 8 SLMs, ranging from 0.6B to 8B parameters, on both in-domain and out-of-domain benchmarks, demonstrate that ProD substantially mitigates progress stagnation while enhancing both the success rates and task-completion efficiency of distilled SLM agents.",
+  "category": "cs.LG",
+  "comment": "Accepted to NeurIPS 2026",
+  "abs": "https://arxiv.org/abs/2610.19439v1",
+  "pdf": "https://arxiv.org/pdf/2610.19439v1"
+ },
+ {
+  "id": "2610.17901v1",
+  "title": "FlashMask-3: Efficient and Expressive Mask-Aware Distributed Attention",
+  "published": "2026-10-13T07:55:51Z",
+  "updated": "2026-10-13T07:55:51Z",
+  "authors": [
+   "Guoxia Wang",
+   "Qianyue He",
+   "Siming Wu",
+   "Haoyang Xie",
+   "Qiwen Bao",
+   "Jinle Zeng",
+   "Jiabin Yang",
+   "Tian Wu",
+   "Dianhai Yu"
+  ],
+  "summary": "Long-context training of large language and multimodal models couples structured attention masks (document, prefix-LM, share-question, sliding-window, block-sparse) with multi-node context parallelism, making the mask a dominant bottleneck. FlashMask's column-wise sparse mask compresses them from $O(n^2)$ to $O(n)$ via four query-axis boundary vectors, covering broad structured patterns. Implemented for Ampere GPUs, it neither exploits FlashAttention-3's TMA/WGMMA warp-specialized pipeline on Hopper nor supports distribution. The column-wise sparse mask is indexed by key positions but stores query-axis interval boundaries. Under any multi-chunk context-parallel assignment, it reduces per-rank mask localization to a provably zero-communication \\emph{clip--shift--max} on the boundary vectors, compatible with the single-GPU kernel. FlashMask-3 introduces a mask-aware Hopper kernel with three-role warp specialization atop FlashAttention-3's TMA/WGMMA pipeline, plus a mask-aware distributed extension: zero-communication mask localization, a sparsity-aware load balancer (HCC-IPO), and a mask-aware compute-communication overlap with mask-driven communication pruning, whose forward all-gather uses topology-aware hierarchical routing. On a single H100 across 12 masks at 4K--128K context, it improves achieved TFLOPs over FlashMask, FlexAttention, and MagiAttention by 45--141%, 34--71%, and 2--44%. At context-parallel degrees 4--32 with 8K sequence per device, it attains 31--75% compute-communication overlap efficiency and improves throughput over Megatron-Core CP ring, Megatron-Core CP all-gather, and MagiAttention by $1.80\\times$--$3.71\\times$, $1.71\\times$--$2.92\\times$, and $1.09\\times$--$1.46\\times$. In end-to-end training of a 118B-A14B MoE at 128K on 128 H100 GPUs, it raises throughput by 7.3--11.0% over a Dual Chunk all-gather baseline, with attention forward+backward 24.5--44.9% faster.",
+  "category": "cs.LG",
+  "comment": "Published as a main conference paper at NeurIPS 2026",
+  "abs": "https://arxiv.org/abs/2610.17901v1",
+  "pdf": "https://arxiv.org/pdf/2610.17901v1"
+ },
+ {
+  "id": "2610.22273v1",
+  "title": "Librarian Agents: Training LLMs to Curate Long-Context Workspaces that Anticipate Future Queries",
+  "published": "2026-10-15T17:35:17Z",
+  "updated": "2026-10-15T17:35:17Z",
+  "authors": [
+   "Anikait Singh",
+   "Teresa Zhang",
+   "Yoonho Lee",
+   "Roshen Sanjay Nair",
+   "Aviral Kumar",
+   "Chelsea Finn"
+  ],
+  "summary": "Reasoning over long document contexts remains a challenge for large language models (LLMs). Standard retrieval methods are inherently reactive, bottlenecking agents with complex, cross-document reasoning at inference time, while precomputed structures like knowledge graphs often fall short because they rely on rigid heuristics. Instead, can we allow agents to perform anticipatory directed curation: learning to proactively reorganize unstructured corpora prior to inference to efficiently serve diverse future queries. We build on a key asymmetry in modern agentic harnesses (e.g., Claude Code): while LLM agents are adept at navigating existing filesystems to solve an immediate task, they are rarely trained to construct reusable workspaces for future use. To instantiate this capability, we introduce Librarian Agents, a framework in which a builder agent transforms raw documents into a hierarchical filesystem of synthetic files and reference links, which forms a workspace tailored for a downstream answering agent. We formulate workspace construction as a Markov decision process and optimize the builder policy via reinforcement learning to directly maximize downstream answering accuracy. Empirically, Librarian Agents outperforms the strongest retrieval and precomputation baselines by 33 percentage points on BrowseComp-Plus, amortizes upfront construction costs across repeated queries, and generalizes zero-shot to unseen domains on BRIGHT with a 31-point average accuracy improvement.",
+  "category": "cs.LG",
+  "comment": "",
+  "abs": "https://arxiv.org/abs/2610.22273v1",
+  "pdf": "https://arxiv.org/pdf/2610.22273v1"
+ }
+]

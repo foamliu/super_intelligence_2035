@@ -1,0 +1,15 @@
+Dear Dr. Thorne,
+
+I am Yang Liu, working on BaiZe-ISEDA2027 and ZhuLong-DAC2027: roughly 2B-parameter domain models for EDA and memory design flows, where post-training aligns the model's tool-calling behaviour.
+
+ORPO's reference-free formulation is directly relevant to us. Three questions:
+
+1. With only tens of thousands of in-domain preference pairs at the ~2B scale, how should lambda be set, and what breaks first: odds-ratio instability, or collapse toward the SFT term?
+
+2. Our pairs come from tool-call traces whose lengths vary far more than in summarization, and error text often dominates the rejected side. Did you observe length bias in the odds-ratio penalty, and would per-token normalisation change your conclusions?
+
+3. When preferences come from verifiable checkers (a tool ran, a DRC passed) rather than human ranking, does the monotonicity assumption behind the odds-ratio objective still hold, and is there a practical way to detect when it fails?
+
+Answers would shape our reward design and preference-data sheet. Thanks for your time.
+
+Yang Liu

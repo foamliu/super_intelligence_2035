@@ -1,0 +1,65 @@
+{
+ "handle": "danijarh",
+ "name": "Danijar Hafner (@danijarh) / X",
+ "bio": "Building general agents for the physical world.\nPrev @GoogleDeepMind @UCBerkeley @UofT",
+ "tweets": [
+  {
+   "id": "2098135808779972690",
+   "created_at": "2026-09-10 19:45 UTC",
+   "created_at_ms": 1789069532000,
+   "text": "Proud to share that I've been recognized as one of the 35 Innovators under 35 by MIT Technology Review!\\\n\\\nDeveloping world models has been an incredible journey over the past 8 years, both training the world models and leveraging them for imagination training and motor control 🌎 https://t.co/j3YbW34d0s",
+   "url": "https://x.com/danijarh/status/2098135808779972690",
+   "handle_guess": "danijarh"
+  },
+  {
+   "id": "2011948441757172205",
+   "created_at": "2026-01-15 23:47 UTC",
+   "created_at_ms": 1768520863000,
+   "text": "Really enjoyed this conversation on the BuzzRobot podcast! 🤖⚡\\\n\\\nWe covered a lot of ground on the future of the field:\\\n- the path from frontier models to AGI\\\n- discovering instead of distilling reasoning\\\n- continual learning\\\n- scalable objectives\\\n- how to solve robotics",
+   "url": "https://x.com/danijarh/status/2011948441757172205",
+   "handle_guess": "danijarh"
+  },
+  {
+   "id": "2011883533820969275",
+   "created_at": "2026-01-15 19:29 UTC",
+   "created_at_ms": 1768505388000,
+   "text": "Key points from my recent conversation with @danijarh \\\n- Architecture doesn’t matter to achieve AGI. What is missing: algorithmic advances and objective function improvements. More compute still matters.\\\n- AI shouldn’t be limited by human reasoning. It will be able to go beyond https://t.co/KYK4wDK4Pc",
+   "url": "https://x.com/danijarh/status/2011883533820969275",
+   "handle_guess": "sopharicks"
+  },
+  {
+   "id": "1998530820475375805",
+   "created_at": "2025-12-09 23:10 UTC",
+   "created_at_ms": 1765321853000,
+   "text": "✨ Excited to share this AMA with @hackclub, a high school community hosting @elonmusk @realGeorgeHotz @3blue1brown and many others.\\\n\\\nWe talk about world models, robotics, and careers in AI. Check it out for an accessible intro to cutting edge research! 🚀\\\nhttps://t.co/WNmcd1zls0",
+   "url": "https://x.com/danijarh/status/1998530820475375805",
+   "handle_guess": "danijarh"
+  },
+  {
+   "id": "1987968769462067218",
+   "created_at": "2025-11-10 19:41 UTC",
+   "created_at_ms": 1762803663000,
+   "text": "Excited for this podcast episode with TalkRL to be out! 🎙️\\\n\\\nWe talk about the story behind Dreamer 4, the details of scalable world models, and the future of robotics (and beyond) 🤖🌏🚀\\\n\\\nThanks for the fun conversation, @TalkRLPodcast",
+   "url": "https://x.com/danijarh/status/1987968769462067218",
+   "handle_guess": "danijarh"
+  },
+  {
+   "id": "1987945882155970707",
+   "created_at": "2025-11-10 18:10 UTC",
+   "created_at_ms": 1762798207000,
+   "text": "E73: Danijar Hafner on Dreamer v4\\\n@danijarh (ex-@GoogleDeepMind RS) on offline world models for safe robotics, Shortcut Forcing for fast diffusion video models, outperforming OpenAI’s VPT with 100× less data, his “APD” theory unifying exploration and empowerment, and more! https://t.co/noRt5uNCHk",
+   "url": "https://x.com/danijarh/status/1987945882155970707",
+   "handle_guess": "TalkRLPodcast"
+  },
+  {
+   "id": "1973072288351396320",
+   "created_at": "2025-09-30 17:07 UTC",
+   "created_at_ms": 1759252066000,
+   "text": "Excited to introduce Dreamer 4, an agent that learns to solve complex control tasks entirely inside of its scalable world model! 🌎🤖\\\n\\\nDreamer 4 pushes the frontier of world model accuracy, speed, and learning complex tasks from offline datasets.\\\n\\\nco-led with @wilson1yan https://t.co/iV9OCkReuq",
+   "url": "https://x.com/danijarh/status/1973072288351396320",
+   "handle_guess": "danijarh"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-14 03:01:20"
+}

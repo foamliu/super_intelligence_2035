@@ -1,0 +1,17 @@
+Dear Professor Lim,
+
+I am Liu Yang, working on BaiZe-ISEDA2027 (a ~2B domain model for chip design) and ZhuLong-DAC2027 (an EDA agent harness). Your DREAM-GAN paper is the closest published work to a question we keep facing: how to move an open-source placer towards commercial quality when the commercial tool is a black box.
+
+1. The similarity loss is learned from placements in a commercial database. With only a small reference set, does the adversarial signal still help, or does it collapse into copying a few reference layouts? What is the first symptom you would watch for?
+
+2. The post-route gains of 8.3% wirelength and 7.4% total power are strong. How far do they survive across PDKs and design styles, and is there a cheap check that tells us early whether they will transfer?
+
+3. We want to use DREAMPlace as a fixed evaluation baseline for agent-generated placements. Which parameters must be frozen so that two runs are comparable, and which can vary without invalidating the comparison?
+
+Thank you for considering these questions.
+
+Best regards,
+
+Liu Yang
+
+Super Intelligence 2035 / BaiZe-ISEDA2027 / ZhuLong-DAC2027

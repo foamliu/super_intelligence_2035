@@ -1,0 +1,20 @@
+--- lastUpdatedDate cs.CL
+status 200 ct application/atom+xml; charset=utf-8 total 124521 elapsed 1.04
+    ('2611.03634v1', '2026-11-02T18:57:36Z', 'WebHarbor: Docking Real Websites for Evolving GUI Agent Environments')
+    ('2606.11435v2', '2026-06-09T20:43:23Z', 'Agent Skill Evaluation and Evolution: Frameworks and Benchmarks')
+    ('2607.23811v3', '2026-07-26T19:20:01Z', 'Memory Efficient Audio Synthesis with Decoupled Temporal Depth Diffusion Transfo')
+--- submittedDate 20261030-20261104 cs.CL
+status 200 ct application/atom+xml; charset=utf-8 total 304 elapsed 0.96
+    ('2611.03634v1', '2026-11-02T18:57:36Z', 'WebHarbor: Docking Real Websites for Evolving GUI Agent Environments')
+    ('2611.03622v1', '2026-11-02T18:52:11Z', 'D&amp;A: Decoupling Description and Assessment Enables VLMs as Zero-Shot Robotic')
+    ('2611.03618v1', '2026-11-02T18:51:04Z', 'Strategist: Evolving Reasoning with Agents')
+--- submittedDate all
+status 200 ct application/atom+xml; charset=utf-8 total 4570 elapsed 0.95
+    ('2611.03647v1', '2026-11-02T18:59:32Z', 'Pixel-UMI: Learning Environment-Aware Whole-Body Manipulation from Sensorized Hu')
+    ('2611.03648v1', '2026-11-02T18:59:32Z', 'Pixel: A Co-Designed Full-Stack Robot System for Learning General-Purpose Mobile')
+    ('2611.03646v1', '2026-11-02T18:59:29Z', 'EgoActionBench: Benchmarking Dense Action Captioning for Egocentric Human Videos')
+--- breadth 5cat
+status 200 ct application/atom+xml; charset=utf-8 total 642318 elapsed 1.07
+    ('2611.03647v1', '2026-11-02T18:59:32Z', 'Pixel-UMI: Learning Environment-Aware Whole-Body Manipulation from Sensorized Hu')
+    ('2611.03648v1', '2026-11-02T18:59:32Z', 'Pixel: A Co-Designed Full-Stack Robot System for Learning General-Purpose Mobile')
+    ('2611.03646v1', '2026-11-02T18:59:29Z', 'EgoActionBench: Benchmarking Dense Action Captioning for Egocentric Human Videos')

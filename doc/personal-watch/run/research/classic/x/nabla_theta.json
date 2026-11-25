@@ -1,0 +1,49 @@
+{
+ "handle": "nabla_theta",
+ "name": "Leo Gao (@nabla_theta) / X",
+ "bio": "working on AGI alignment. prev: GPT-Neo, the Pile, LM evals, RL overoptimization, scaling SAEs to GPT-4, interp via circuit sparsity. EleutherAI cofounder.",
+ "tweets": [
+  {
+   "id": "2121040104496017474",
+   "created_at": "2026-11-13 00:39 UTC",
+   "created_at_ms": 1794530342000,
+   "text": "if you see two people have already made a joke, the best estimate of the number of times the joke has been made is not two",
+   "url": "https://x.com/nabla_theta/status/2121040104496017474",
+   "handle_guess": "nabla_theta"
+  },
+  {
+   "id": "2120758847631655339",
+   "created_at": "2026-11-12 06:01 UTC",
+   "created_at_ms": 1794463285000,
+   "text": "https://t.co/TPWC3SWLOX",
+   "url": "https://x.com/nabla_theta/status/2120758847631655339",
+   "handle_guess": "nabla_theta"
+  },
+  {
+   "id": "2120300055492169780",
+   "created_at": "2026-11-10 23:38 UTC",
+   "created_at_ms": 1794353901000,
+   "text": "python program SHOCKS neural network by speaking fluent neuralese",
+   "url": "https://x.com/nabla_theta/status/2120300055492169780",
+   "handle_guess": "nabla_theta"
+  },
+  {
+   "id": "2120042458751058352",
+   "created_at": "2026-11-10 06:34 UTC",
+   "created_at_ms": 1794292485000,
+   "text": "no babe .  I'm just talking to .  my codices,",
+   "url": "https://x.com/nabla_theta/status/2120042458751058352",
+   "handle_guess": "nabla_theta"
+  },
+  {
+   "id": "1212049535637188609",
+   "created_at": "2019-12-31 16:35 UTC",
+   "created_at_ms": 1577810102000,
+   "text": "The Decade of Deep Learning\\\nhttps://t.co/CmX15LKNkK",
+   "url": "https://x.com/nabla_theta/status/1212049535637188609",
+   "handle_guess": "nabla_theta"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-15 00:01:45"
+}

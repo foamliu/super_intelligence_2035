@@ -1,0 +1,14 @@
+My name is Yang Liu; I research LLM agents and write at https://foamliu.github.io/.
+
+The gap you report — PRM 78.2 against ORM 72.4 and majority voting 69.6 at best-of-1860 — is the cleanest number I know for pricing a process reward model. Two details in the paper decide whether we can copy it.
+
+Three questions:
+
+1. Your PRM800K was collected by active learning and is therefore biased toward answer-incorrect solutions (you say so in the limitations). If a team can label only ~100k steps rather than 800k, is it better to keep that bias or to resample balanced steps?
+2. The 2.6× active-learning gain was measured at a fixed model family. Does the PRM-over-ORM margin shrink as the policy model gets smaller, in the way that best-of-N gains usually do?
+3. You define correctness as "the first mistake", which is well defined for MATH. In a domain where a wrong step is only detectable several steps later — Verilog or EDA flows, say — would step labels still be worth the annotation cost?
+
+Thank you for releasing the labels.
+
+Best regards,
+Yang Liu

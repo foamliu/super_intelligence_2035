@@ -1,0 +1,16 @@
+Sehr geehrter Herr Professor Ronneberger,
+
+I am Yang Liu, a researcher working on LLM agents and vision encoders; my work is at https://foamliu.github.io/.
+
+We are deciding whether our video-diffusion decoder should stay convolutional or move to a transformer, and U-Net remains the reference point for the convolutional side. What strikes me is that a 512×512 segmentation runs under a second on that-era GPU with very few annotated images, so architecture and augmentation work together.
+
+Three questions:
+
+1. The elastic deformation in your augmentation has grid spacing and displacement magnitude as free parameters. For a new domain with much larger structures, how would you re-derive them instead of copying the paper's values?
+2. With overlap-tile, predictions at tile borders depend on mirrored context. Did you observe normalization or intensity discontinuities at seams, and is there a cheap check we can run before trusting a tiled inference pipeline?
+3. When extending U-Net to 3D, with time as an extra axis for video, do the skip connections still help, or do they mainly leak low-level detail that a video decoder should learn itself?
+
+Thank you — the answers would directly change our decoder choice.
+
+Best regards,
+Yang Liu

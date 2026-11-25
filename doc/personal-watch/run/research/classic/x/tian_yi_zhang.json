@@ -1,0 +1,81 @@
+{
+ "handle": "tian_yi_zhang",
+ "name": "Tianyi Zhang (@tian_yi_zhang) / X",
+ "bio": "Assistant professor at Purdue CS, formerly Postdoc at Harvard SEAS and PhD at UCLA CS. Working on SE, HCI, Program Synthesis &amp; Human-AI Interaction.",
+ "tweets": [
+  {
+   "id": "2094533492545642693",
+   "created_at": "2026-08-31 21:11 UTC",
+   "created_at_ms": 1788210673000,
+   "text": "Check out Wei-Hao's new work on inspecting and steering agent behavior!\\\n\\\nMUSE provides hierarchical explanations of agent trajectories, letting users zoom in and out like climbing a ladder of abstraction. Users can stay at a high level for a quick overview or zoom into individual",
+   "url": "https://x.com/tian_yi_zhang/status/2094533492545642693",
+   "handle_guess": "tian_yi_zhang"
+  },
+  {
+   "id": "2094448374636327337",
+   "created_at": "2026-08-31 15:33 UTC",
+   "created_at_ms": 1788190380000,
+   "text": "Thrilled to share that our paper \\",
+   "url": "https://x.com/tian_yi_zhang/status/2094448374636327337",
+   "handle_guess": "_weihao_chen_"
+  },
+  {
+   "id": "2089906915597865152",
+   "created_at": "2026-08-19 02:46 UTC",
+   "created_at_ms": 1787107611000,
+   "text": "Ilias Bilionis and I are looking for a postdoctoral researcher to join the AI effort of the NSF-funded ICoN Programmable Cloud Lab at Purdue University.\\\n\\\nWe aim to develop AI systems that can interact safely and reliably with the physical world (particularly scientific",
+   "url": "https://x.com/tian_yi_zhang/status/2089906915597865152",
+   "handle_guess": "tian_yi_zhang"
+  },
+  {
+   "id": "2074883457323323488",
+   "created_at": "2026-07-08 15:49 UTC",
+   "created_at_ms": 1783525740000,
+   "text": "Check Yuan’s latest work on database agents! Yuan is graduating this summer and has been looking for research positions. Please contact him if you have an opening in your team!",
+   "url": "https://x.com/tian_yi_zhang/status/2074883457323323488",
+   "handle_guess": "tian_yi_zhang"
+  },
+  {
+   "id": "2074648359839928634",
+   "created_at": "2026-07-08 00:14 UTC",
+   "created_at_ms": 1783469688000,
+   "text": "Excited to share our ACL 2026 (Findings) paper, “PV-SQL: Synergizing Database Probing and Rule-based Verification for Text-to-SQL Agents.”\\\n\\\nLLM-based agents have shown strong potential on text-to-SQL tasks, but they still struggle when the user query and database schema become https://t.co/f4muSvsjch",
+   "url": "https://x.com/tian_yi_zhang/status/2074648359839928634",
+   "handle_guess": "bestaskwisher"
+  },
+  {
+   "id": "1938008946712666253",
+   "created_at": "2025-06-25 22:58 UTC",
+   "created_at_ms": 1750892314000,
+   "text": "Check Yuan’s new work about selective prompt anchoring! He developed a new interaction method that allows users to tell the LLM where to pay attention to in the user prompt.",
+   "url": "https://x.com/tian_yi_zhang/status/1938008946712666253",
+   "handle_guess": "tian_yi_zhang"
+  },
+  {
+   "id": "1938003133768360339",
+   "created_at": "2025-06-25 22:35 UTC",
+   "created_at_ms": 1750890928000,
+   "text": "Excited to share our new paper \\",
+   "url": "https://x.com/tian_yi_zhang/status/1938003133768360339",
+   "handle_guess": "bestaskwisher"
+  },
+  {
+   "id": "1917051881110593940",
+   "created_at": "2025-04-29 03:02 UTC",
+   "created_at_ms": 1745895760000,
+   "text": "Please check Wei-Hao's new work about enabling an LLM-based data wrangling system to ask clarification questions about user intent! He will present this work at 5:08pm today at CHI 2025.",
+   "url": "https://x.com/tian_yi_zhang/status/1917051881110593940",
+   "handle_guess": "tian_yi_zhang"
+  },
+  {
+   "id": "1917046252178751936",
+   "created_at": "2025-04-29 02:40 UTC",
+   "created_at_ms": 1745894418000,
+   "text": "I will present our paper \\",
+   "url": "https://x.com/tian_yi_zhang/status/1917046252178751936",
+   "handle_guess": "_weihao_chen_"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-15 00:01:41"
+}

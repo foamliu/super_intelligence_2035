@@ -1,0 +1,18 @@
+
+Subject: Genie in hindsight: three questions from a chip-design agent project
+
+Dear Professor Clune,
+
+I am Liu Yang, working on BaiZe-ISEDA2027 (a ~2B domain model for chip design) and ZhuLong-DAC2027 (an EDA agent harness). We are exploring whether a learned interactive environment could let an agent rehearse tool calls before paying for real runs, and Genie is the paper we keep returning to.
+
+1. Genie learns latent actions without any ground-truth action labels. How did you convince yourselves the latent action space is genuinely controllable rather than absorbing camera or scene variation? Is there a diagnostic you would run before trusting it downstream?
+
+2. Our "actions" are discrete EDA tool invocations with continuous parameters. Would a latent action model still make sense at that granularity, or does it require finer, frame-level control?
+
+3. For narrow industrial data (layout images, waveform plots) with little diversity, which property matters most to scale first: raw hours, scene diversity, or action coverage?
+
+Thank you for considering these questions.
+
+Best regards,
+Liu Yang
+Super Intelligence 2035 / BaiZe-ISEDA2027 / ZhuLong-DAC2027

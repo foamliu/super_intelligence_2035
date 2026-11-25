@@ -1,0 +1,89 @@
+{
+ "handle": "j6mes",
+ "name": "James Thorne (@j6mes) / X",
+ "bio": "CTO at Theia Insights. PhD from @cambridge_cl. Co-organiser of fever workshop (https://t.co/9FTkHRwec2)",
+ "tweets": [
+  {
+   "id": "1865744809132007533",
+   "created_at": "2024-12-08 13:06 UTC",
+   "created_at_ms": 1733663201000,
+   "text": "Looking forward to attending #NeurIPS2024 this week. Come meet @itsnamgyu who will present on block-transformer, which speeds up decoding by up to 20x.",
+   "url": "https://x.com/j6mes/status/1865744809132007533",
+   "handle_guess": "j6mes"
+  },
+  {
+   "id": "1859670671376502870",
+   "created_at": "2024-11-21 18:50 UTC",
+   "created_at_ms": 1732215013000,
+   "text": "NVIDIA's earnings call wasn’t about semiconductors — it was a vision for AI factories, 24/7 inference, and industry transformation.  Using TIIC, we reveal $NVDA's diversification shows the future is broader than chips. What's your take? #AI #NVIDIA #LLMs https://t.co/SdKSkT5yMj",
+   "url": "https://x.com/j6mes/status/1859670671376502870",
+   "handle_guess": "j6mes"
+  },
+  {
+   "id": "1807400609429307590",
+   "created_at": "2024-06-30 13:07 UTC",
+   "created_at_ms": 1719752859000,
+   "text": "Do you know your LLM uses less than 1% of your GPU at inference? Too much time is wasted on KV cache memory access ➡️ We tackle this with the 🎁 Block Transformer: a global-to-local architecture that speeds up decoding up to 20x 🚀\\\n\\\n@kaist_ai @LG_AI_Research w/ @GoogleDeepMind 🧵 https://t.co/ina1b1tl0O",
+   "url": "https://x.com/j6mes/status/1807400609429307590",
+   "handle_guess": "itsnamgyu"
+  },
+  {
+   "id": "1768598101416452511",
+   "created_at": "2024-03-15 11:20 UTC",
+   "created_at_ms": 1710501620000,
+   "text": "New preprint:\\\nAlign LLMs without reference models using ORPO ⬇️\\\nCode and checkpoints available on @huggingface",
+   "url": "https://x.com/j6mes/status/1768598101416452511",
+   "handle_guess": "j6mes"
+  },
+  {
+   "id": "1768541624450293984",
+   "created_at": "2024-03-15 07:35 UTC",
+   "created_at_ms": 1710488155000,
+   "text": "Align LLMs with the preference dataset ONLY with 💡ORPO💡\\\n\\\nWe introduce ORPO, alignment without reference model &amp; SFT! With awesome dataset from @argilla_io  + Mistral(7B) + ORPO, we present 🌟Mistral-ORPO-β🌟\\\n🧵\\\n\\\n👉 AlpacaEval 2.0: 12.20%\\\n👉 IFEval: 66.19%\\\n👉 MT-Bench: 7.32 https://t.co/Tm7Z05S55A",
+   "url": "https://x.com/j6mes/status/1768541624450293984",
+   "handle_guess": "jiwoohong98"
+  },
+  {
+   "id": "1765269482635972744",
+   "created_at": "2024-03-06 06:53 UTC",
+   "created_at_ms": 1709708016000,
+   "text": "Pleased to announce that Theia Insights has raised $6.5M to develop foundational AI technologies for the investment industry. Well done team!",
+   "url": "https://x.com/j6mes/status/1765269482635972744",
+   "handle_guess": "j6mes"
+  },
+  {
+   "id": "1765264349768077615",
+   "created_at": "2024-03-06 06:33 UTC",
+   "created_at_ms": 1709706792000,
+   "text": "🚀Theia Insights is pleased to share news of our recent seed financing. We have secured $6.5M from some incredible investors to continue building #AI-based foundational technologies for the global #investment community - read more here: https://t.co/fWQSxVXJuj https://t.co/Z94SlIgV2A",
+   "url": "https://x.com/j6mes/status/1765264349768077615",
+   "handle_guess": "TheiaInsights"
+  },
+  {
+   "id": "1747684447917338955",
+   "created_at": "2024-01-17 18:16 UTC",
+   "created_at_ms": 1705515417000,
+   "text": "Congratulations Seonghyeon!",
+   "url": "https://x.com/j6mes/status/1747684447917338955",
+   "handle_guess": "j6mes"
+  },
+  {
+   "id": "1747292049072914891",
+   "created_at": "2024-01-16 16:17 UTC",
+   "created_at_ms": 1705421862000,
+   "text": "FLASK🧪 is accepted to ICLR 2024 as Spotlight! Check out our work and see you in Vienna!",
+   "url": "https://x.com/j6mes/status/1747292049072914891",
+   "handle_guess": "SeonghyeonYe"
+  },
+  {
+   "id": "1682209670302408705",
+   "created_at": "2023-07-21 02:03 UTC",
+   "created_at_ms": 1689905014000,
+   "text": "Are open-sourced LLMs really good? 👀\\\n\\\nWe introduce FLASK🧪, a fine-grained evaluation based on skill sets! Even SOTA open-sourced LLMs such as LLaMA2 Chat 70B lag behind proprietary LLMs for some abilities. 🤯\\\n\\\nPaper: https://t.co/ceSYTXbj2e\\\nDemo: https://t.co/hDpOZs5Q5g https://t.co/YeqJLwdhv1",
+   "url": "https://x.com/j6mes/status/1682209670302408705",
+   "handle_guess": "SeonghyeonYe"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 21:05:28"
+}

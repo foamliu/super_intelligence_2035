@@ -1,0 +1,14 @@
+Albert Gu 老师您好：
+
+我是刘杨，做 LLM agent 方向的研究，主页 https://foamliu.github.io/。
+
+我们在为 2B 级预训练选骨干，Mamba 里三处设计直接影响我们的决策：Δt 随输入变化后不能再用卷积，只能走 recurrent 模式的硬件感知 scan；block 里 expansion 取 2、MLP 扩张因子取 2（层数相应乘 1.5 保参数量）；以及 warmup + cosine 降到 1e-5、峰值取 GPT-3 的 5 倍的配方。想请教三点：
+
+1. 2B 规模、中文为主语料时，expansion 与层数的这组配比需要重调吗？state 维度 N 有随 token 数缩放的经验规则吗？
+2. 32k 以上上下文，selective scan 的显存与吞吐拐点大概在哪？是否必须换成 Mamba-2 的 SSD 才敢上生产？
+3. 摘要的 5× 是生成吞吐口径；batch 推理时这个倍数会随 batch 增大收敛到多少？我们要做成本口径，需要知道乘哪个系数。
+
+感谢您的时间。
+
+祝好，
+Yang Liu

@@ -1,0 +1,89 @@
+{
+ "handle": "NandoDF",
+ "name": "Nando de Freitas (@NandoDF) / X",
+ "bio": "I seek to understand intelligence &amp; agency and build AI aligned with compassion, freedom &amp; universal human empowerment through progress in science &amp; engineering",
+ "tweets": [
+  {
+   "id": "2120465322620891145",
+   "created_at": "2026-11-11 10:35 UTC",
+   "created_at_ms": 1794393303000,
+   "text": "It can be catastrophic to trust models trained by someone else. \\\n\\\nOpenness and scrutiny are essential for safe AI.\\\n\\\nThis study makes the point very clear as @JohnCLangford highlights. \\\n\\\nSee also  https://t.co/QoOsexbnHv for a causality and agency perspective.",
+   "url": "https://x.com/NandoDF/status/2120465322620891145",
+   "handle_guess": "NandoDF"
+  },
+  {
+   "id": "2120437487457968561",
+   "created_at": "2026-11-11 08:44 UTC",
+   "created_at_ms": 1794386667000,
+   "text": "A good image to keep in mind for anyone working on AI — our number 1 goal should be compassion",
+   "url": "https://x.com/NandoDF/status/2120437487457968561",
+   "handle_guess": "NandoDF"
+  },
+  {
+   "id": "2120300350297215110",
+   "created_at": "2026-11-10 23:39 UTC",
+   "created_at_ms": 1794353971000,
+   "text": "I've been waiting for this one to come out.  In essence, people should maintain custody of a model from creation, just like they do with binaries. \\\n\\\nWithout that, the model can be setup to exhibit arbitrary behaviors in nigh-undetectable ways.",
+   "url": "https://x.com/NandoDF/status/2120300350297215110",
+   "handle_guess": "JohnCLangford"
+  },
+  {
+   "id": "2120245027804705121",
+   "created_at": "2026-11-10 19:59 UTC",
+   "created_at_ms": 1794340781000,
+   "text": "https://t.co/A6AtCXG3Jp",
+   "url": "https://x.com/NandoDF/status/2120245027804705121",
+   "handle_guess": "DimitrisPapail"
+  },
+  {
+   "id": "2120177218760380688",
+   "created_at": "2026-11-10 15:30 UTC",
+   "created_at_ms": 1794324614000,
+   "text": "The psychological hallmark of empathy is perspective-taking, the capacity to imagine or take the perspective of another person. When you are empathizing, you imagine how someone may feel even though you can’t experience their exact emotion. https://t.co/UnhTIQxECo",
+   "url": "https://x.com/NandoDF/status/2120177218760380688",
+   "handle_guess": "SusanDavid_PhD"
+  },
+  {
+   "id": "2119725157048598984",
+   "created_at": "2026-11-09 09:33 UTC",
+   "created_at_ms": 1794216834000,
+   "text": "Jensen Huang is one of the greatest CEOs in the history of AI. His push for diplomacy and for open AI is extremely important for safety and the future of AI. His desire and actions to support an entire community of entrepreneurs building AI to solve healthcare, energy, science,",
+   "url": "https://x.com/NandoDF/status/2119725157048598984",
+   "handle_guess": "NandoDF"
+  },
+  {
+   "id": "2115211049851134054",
+   "created_at": "2026-10-27 22:36 UTC",
+   "created_at_ms": 1793140587000,
+   "text": "Truly exceptional progress on interactive video. This is the stuff of dreams.",
+   "url": "https://x.com/NandoDF/status/2115211049851134054",
+   "handle_guess": "NandoDF"
+  },
+  {
+   "id": "2115114028338962672",
+   "created_at": "2026-10-27 16:10 UTC",
+   "created_at_ms": 1793117455000,
+   "text": "This is Genie 4, our most realistic and interactive world model yet. 🌐\\\n\\\nExplore dynamic environments in real time to see how the scene responds, sounds, and how the people in it move, react, and speak. https://t.co/6mmSUm9BBO",
+   "url": "https://x.com/NandoDF/status/2115114028338962672",
+   "handle_guess": "GoogleDeepMind"
+  },
+  {
+   "id": "2112964059037655383",
+   "created_at": "2026-10-21 17:47 UTC",
+   "created_at_ms": 1792604863000,
+   "text": "Congratulations @Recursive_SI !!! Fantastic progress @RichardSocher @_rockt and team 👏",
+   "url": "https://x.com/NandoDF/status/2112964059037655383",
+   "handle_guess": "NandoDF"
+  },
+  {
+   "id": "2112944385415426249",
+   "created_at": "2026-10-21 16:29 UTC",
+   "created_at_ms": 1792600172000,
+   "text": "Introducing Flint, @Recursive_SI’s first model: a fast local coding model built with our automated research system, the Eureka Machine.\\\n\\\n• Best-in-class fast local coding\\\n• Up to 2x faster than comparable models: 125+ tokens/sec on a MacBook Pro, 150+ on RTX Spark\\\n• Built from https://t.co/ufg2xScSGw",
+   "url": "https://x.com/NandoDF/status/2112944385415426249",
+   "handle_guess": "RichardSocher"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-14 12:05:21"
+}

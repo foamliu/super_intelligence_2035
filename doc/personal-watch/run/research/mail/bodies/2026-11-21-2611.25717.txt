@@ -1,0 +1,18 @@
+Wang 老师，您好：
+
+我是刘杨，做 LLM agent 与推理成本方向的研究，主页 https://foamliu.github.io/。
+
+我们做 W4A4 时补精度只能换更大 block scale。VR-SparseQuant 用元素级 2:4 稀疏把两条流叠进同一 FP4 预算——不加比特、只加表达；Nemotron-3-Nano-30B-A3B 上 WikiText-2 6.85→5.57 是个强信号。
+
+三点请教：
+
+1. 离线 scale-ratio 校准用多少样本、对校准集多敏感？换模型后恢复还剩多少？
+
+2. 两流重叠是元素级自由选择还是有约束？重尾激活下重叠率上限怎么定？
+
+3. 共享权重 GEMM 累积两流是否需自定义 epilogue？换到 H100 FP8 会退化成什么？
+
+谢谢您的时间。
+
+祝好，
+Yang Liu

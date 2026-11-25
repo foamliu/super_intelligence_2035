@@ -1,0 +1,73 @@
+{
+ "handle": "Yoshua_Bengio",
+ "name": "Yoshua Bengio (@Yoshua_Bengio) / X",
+ "bio": "Turing Award recipient and world&#x27;s most cited scientist.\nWorking towards the safe development of AI for the benefit of all @UMontreal, @LawZero_ &amp; @Mila_Quebec",
+ "tweets": [
+  {
+   "id": "2121361248889577858",
+   "created_at": "2026-11-13 21:55 UTC",
+   "created_at_ms": 1794606909000,
+   "text": "It was great to be in Berlin and Zurich last week to connect with the European scientific community and policymakers on the urgent need for safe-by-design AI.",
+   "url": "https://x.com/Yoshua_Bengio/status/2121361248889577858",
+   "handle_guess": "Yoshua_Bengio"
+  },
+  {
+   "id": "2121318578515329227",
+   "created_at": "2026-11-13 19:05 UTC",
+   "created_at_ms": 1794596735000,
+   "text": "What a week in Berlin and Zurich! We connected with researchers, policymakers and industry leaders in AI safety, and shared how LawZero is working to solve AI misalignment and ensure this technology remains safe and under human control.\\\n\\\nWe’re excited to be opening an office in https://t.co/8hDcI1xsdn",
+   "url": "https://x.com/Yoshua_Bengio/status/2121318578515329227",
+   "handle_guess": "LawZero_"
+  },
+  {
+   "id": "2120151558440484876",
+   "created_at": "2026-11-10 13:48 UTC",
+   "created_at_ms": 1794318496000,
+   "text": "Je salue le leadership du président @EmmanuelMacron qui a rassemblé aujourd’hui des chefs de gouvernement, des dirigeants des grandes entreprises d’IA et des chercheurs internationaux pour discuter des risques croissants liés à l’IA avancée, incluant la perte de contrôle et",
+   "url": "https://x.com/Yoshua_Bengio/status/2120151558440484876",
+   "handle_guess": "Yoshua_Bengio"
+  },
+  {
+   "id": "2120059344259539354",
+   "created_at": "2026-11-10 07:41 UTC",
+   "created_at_ms": 1794296511000,
+   "text": "An important question to ponder:",
+   "url": "https://x.com/Yoshua_Bengio/status/2120059344259539354",
+   "handle_guess": "Yoshua_Bengio"
+  },
+  {
+   "id": "2119871179746107884",
+   "created_at": "2026-11-09 19:14 UTC",
+   "created_at_ms": 1794251649000,
+   "text": "L’intelligence artificielle avance très vite. On l’a déjà vu : cela implique des risques réels pour notre sécurité collective. \\\n                             \\\nNotre travail pour developper nos technologies doit aussi être celui de l’anticipation et de la maîtrise de ses risques. https://t.co/ZBmDYsyAPh",
+   "url": "https://x.com/Yoshua_Bengio/status/2119871179746107884",
+   "handle_guess": "EmmanuelMacron"
+  },
+  {
+   "id": "2119822397788561434",
+   "created_at": "2026-11-09 16:00 UTC",
+   "created_at_ms": 1794240018000,
+   "text": "New paper❗\\\n\\\nDoes understanding how AI models work actually make them safer?\\\n\\\nThis assumption often underlines interpretability research, but different subfields operationalise this intuition in very different ways. Our survey of mechanistic interpretability (MI) for safety https://t.co/rw7EN2Y899",
+   "url": "https://x.com/Yoshua_Bengio/status/2119822397788561434",
+   "handle_guess": "FazlBarez"
+  },
+  {
+   "id": "2117255589667455421",
+   "created_at": "2026-11-02 14:00 UTC",
+   "created_at_ms": 1793628043000,
+   "text": "I was pleased to give remarks at the start of the Digital Summit in Berlin this afternoon. Frontier AI companies continue to push model capabilities further and faster forward, without a convincing plan to make the technology safer. This dynamic carries significant risks to https://t.co/KZU2RWNufC",
+   "url": "https://x.com/Yoshua_Bengio/status/2117255589667455421",
+   "handle_guess": "Yoshua_Bengio"
+  },
+  {
+   "id": "2115068575438241888",
+   "created_at": "2026-10-27 13:10 UTC",
+   "created_at_ms": 1793106619000,
+   "text": "It was great participating in a fireside chat with @camillefrancois at the Attention Conference in Montreal last week. We discussed the ongoing technical work at @LawZero_ to address misalignment and emerging risks for our society and democracy.\\\n\\\nI also had the pleasure to join https://t.co/tvNgnpFoaX",
+   "url": "https://x.com/Yoshua_Bengio/status/2115068575438241888",
+   "handle_guess": "Yoshua_Bengio"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-14 12:04:54"
+}

@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/FeN3PEqwFcuPL+xQssWA9C8NFTk</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.09769,2610.10462&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-08T10:03:43Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.09769,2610.10462" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>2</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.09769v1</id>
+    <title>From Expert-Guided Proof Search to Automated Open-Problem Solving</title>
+    <updated>2026-10-07T09:52:46Z</updated>
+    <link href="https://arxiv.org/abs/2610.09769v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.09769v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models are increasingly contributing to mathematical research, where progress often depends on efficient proof search, incremental improvements and careful verification. We describe Bolzano, a multi-agent open-source system that uses parallel prover agents with a verifier agent and maintains a human-readable research state. Initial manual use on expert-selected problems yielded 8 results whose proofs were checked by domain experts. Motivated by these case studies, we ran Bolzano without problem-specific human guidance on about 3,800 open problems extracted from four sets of papers, solving about 200 open problems. One experiment used papers accepted to STOC 2026, a top conference in theoretical computer science. There, we answered four questions raised in the papers, as confirmed by their authors.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-07T09:52:46Z</published>
+    <arxiv:comment>Accepted at the 6th Workshop on Mathematical Reasoning and AI (MATH-AI), NeurIPS 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Adrián Zámečník</name>
+    </author>
+    <author>
+      <name>Matěj Kripner</name>
+    </author>
+    <author>
+      <name>Martin Koutecký</name>
+    </author>
+    <author>
+      <name>Martin Balko</name>
+    </author>
+    <author>
+      <name>Jan Grebík</name>
+    </author>
+    <author>
+      <name>Pavel Hubáček</name>
+    </author>
+    <author>
+      <name>Robert Šámal</name>
+    </author>
+    <author>
+      <name>Václav Rozhoň</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.10462v1</id>
+    <title>FoldBack: Self-Correcting Masked Generative Policy for Long-Horizon Garment Folding</title>
+    <updated>2026-10-07T17:28:32Z</updated>
+    <link href="https://arxiv.org/abs/2610.10462v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.10462v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present FoldBack, a self-correcting masked generative policy for long-horizon garment folding. Existing long-trajectory policies may continue after a missed or slipped grasp even when the garment has not reached the intended configuration. We structure FoldBack's recovery mechanisms around three inference-time decisions: when to refine and verify, how to roll back, and where and how to retry. FoldBack aligns refinement and grasp verification with pick-and-place events, returns the robot to a retryable pre-grasp configuration while preserving successful grasps, and selectively regenerates the failed segment and selected future actions while avoiding previous failed grasp locations. To our knowledge, FoldBack is the first editable full-trajectory policy to unify these decisions, enabling failed interactions to be detected, undone, and repaired before execution continues, without recovery demonstrations or base-policy retraining. Across 33 real garments from six categories, FoldBack achieves 75.2% final folding success and 0.837 final-mask IoU, versus 45.7% and 0.689 for the strongest prior baseline.</summary>
+    <category term="cs.RO" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-07T17:28:32Z</published>
+    <arxiv:primary_category term="cs.RO"/>
+    <author>
+      <name>Lipeng Zhuang</name>
+    </author>
+    <author>
+      <name>Shiyu Fan</name>
+    </author>
+    <author>
+      <name>Yingdong Ru</name>
+    </author>
+    <author>
+      <name>Zhuo He</name>
+    </author>
+    <author>
+      <name>Florent P. Audonnet</name>
+    </author>
+    <author>
+      <name>Paul Henderson</name>
+    </author>
+    <author>
+      <name>Gerardo Aragon Camarasa</name>
+    </author>
+  </entry>
+</feed>

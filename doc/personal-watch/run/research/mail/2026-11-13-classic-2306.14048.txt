@@ -1,0 +1,15 @@
+Dear Professor Chen,
+
+I am Yang Liu, author of "Superintelligence 2035" and lead of the open BaiZe-ISEDA2027 / ZhuLong-DAC2027 projects: roughly 2B-parameter domain models and agents for chip design and memory systems.
+
+Our agents accumulate long tool logs, error stacks, and waveform summaries, so the KV cache hits the limit well before the weights do. H2O's heavy-hitter insight is directly relevant, and I have three questions:
+
+1. Is the heavy-hitter pattern still as sparse on structured logs and stack traces as on natural text? Is a 20% budget still enough there?
+
+2. In multi-turn tool use, the prefix (system prompt plus tool schemas) is fixed and reused. Should fixed prefixes be excluded from eviction, or does the recency term already handle them?
+
+3. Is the reported "under 2 points drop at 20%" conclusion sensitive to batch size and beam width? What is the first setting where it breaks?
+
+Answers would shape our long-trace cost accounting and evaluation throughput. Thank you for your time.
+
+Yang Liu

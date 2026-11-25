@@ -1,0 +1,14 @@
+Dear Dr. Reid,
+
+My name is Yang Liu; I work on LLM agents, and you can find my work at https://foamliu.github.io/.
+
+I have been reading the Gemini 1.5 report while designing long-context evaluations for our own agent harness. Three details bear directly on a decision we are about to make.
+
+1. In the NLL analysis the power law holds to 1M tokens for documents and about 2M for code, then deviates at 10M. Do you read that knee as a positional/attention-capacity limit, or as a change in corpus composition at those lengths? Is there one ablation that separates the two without full retraining?
+2. Needle recall is already above 99.7% at 1M. For predicting downstream long-document QA in a much smaller model, which signal proved more informative: multi-needle recall, NLL at fixed token positions, or grounding to retrieved evidence?
+3. Was long-context data introduced during pretraining or in a separate adaptation stage? If a 2B model can afford only one 128K extension phase, which would you choose first, and what would you log to catch a silent failure?
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

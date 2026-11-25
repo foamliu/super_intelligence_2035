@@ -1,0 +1,12 @@
+Dear Dr. Kim,
+
+I am Yang Liu, author of Superintelligence 2035 and lead of the BaiZe-ISEDA2027 project, a ~2B domain model for chip design (EDA). OpenVLA is the closest published recipe to what we are assembling — a Llama backbone, a fused DINOv2 + SigLIP vision tower, discretized actions and LoRA fine-tuning — so two of your design choices matter directly to us.
+
+1) The fused DINOv2 + SigLIP encoder: in your ablations, how much of the benefit came from the fusion itself versus the broader data mixture? With only tens of thousands of in-domain images (layout, waveform, SEM), would you still pay for two frozen encoders at 2B scale, or start from a single SigLIP and spend the budget on data?
+
+2) Binning each action dimension into 256 tokens works for a fixed 7-DoF interface. For heterogeneous action spaces — tool calls with different arities and parameter types — would you still bin per dimension, or serialize actions as text? Did you see a failure mode where binning hurt fine-grained control?
+
+Both answers would directly set our vision-tower and action-interface ablations. Thank you for the open release and for any pointer to the relevant ablation tables.
+
+Best regards,
+Yang Liu

@@ -1,0 +1,16 @@
+Dear Dr. Leike,
+
+I am Yang Liu, author of Superintelligence 2035 and lead of the BaiZe-ISEDA2027 project, a ~2B domain model for chip design. It drives EDA tools through multi-turn calls, so actions are structured commands with verifiable outcomes.
+
+Your 2017 paper is where we trace the "preferences as a learned reward" line, and it shapes our choice between human pairwise labels and hand-written verifiers for these trajectories. Three things we could not settle:
+
+1) Feedback density. You showed under 1% of interactions sufficed for Atari and locomotion. For short tool-call episodes (10-30 steps) with a ~2B policy, what label density is needed before a learned reward beats a hand-written verifier, and which failure mode appears first?
+
+2) Reward-model capacity. Your reward model was small; today it would be an LLM. At small scale, is capacity or label noise the binding constraint, and what form of reward hacking would you expect first on tool-call trajectories?
+
+3) Disagreement. How did you aggregate disagreement and ties, and would you keep the pairwise logistic objective when labels are sparse and noisy?
+
+These would shape our reward-design and annotation-budget ablations. Thank you for the paper and for any pointer.
+
+Best regards,
+Yang Liu

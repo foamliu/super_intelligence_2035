@@ -1,0 +1,73 @@
+{
+ "handle": "gneubig",
+ "name": "Graham Neubig (@gneubig) / X",
+ "bio": "Associate professor @LTIatCMU.\nCo-founder/chief scientist @OpenHandsDev.\nI mostly work on modeling language.",
+ "tweets": [
+  {
+   "id": "2120908755399487585",
+   "created_at": "2026-11-12 15:57 UTC",
+   "created_at_ms": 1794499026000,
+   "text": "Personally, I nominate @ClementDelangue for next NVIDIA CEO.",
+   "url": "https://x.com/gneubig/status/2120908755399487585",
+   "handle_guess": "gneubig"
+  },
+  {
+   "id": "2120883918119592037",
+   "created_at": "2026-11-12 14:18 UTC",
+   "created_at_ms": 1794493104000,
+   "text": "This whole thing sucks, and I wish none of it had happened. It’s a really sad day!\\\n\\\nBut I want to make one thing clear: we’ll keep fighting for open-source AI, harder than ever. This is too important to slow down now. Let’s go!",
+   "url": "https://x.com/gneubig/status/2120883918119592037",
+   "handle_guess": "ClementDelangue"
+  },
+  {
+   "id": "2120859655156965550",
+   "created_at": "2026-11-12 12:42 UTC",
+   "created_at_ms": 1794487320000,
+   "text": "Regardless of how good the tech here is (I'm sure it's good) neon green liquid cooled robot hands win by default on looks alone 😄",
+   "url": "https://x.com/gneubig/status/2120859655156965550",
+   "handle_guess": "gneubig"
+  },
+  {
+   "id": "2120728758969929965",
+   "created_at": "2026-11-12 04:01 UTC",
+   "created_at_ms": 1794456112000,
+   "text": "Launching project flow. Our new generation robot hand. \\\n\\\nDirect drive, liquid cooling.\\\n\\\nFrom now, the heating problem is solved for robot hands.\\\n\\\nmore soon… @origami_robo https://t.co/K40EwuMxku",
+   "url": "https://x.com/gneubig/status/2120728758969929965",
+   "handle_guess": "DanielXieee"
+  },
+  {
+   "id": "2120136144062910570",
+   "created_at": "2026-11-10 12:47 UTC",
+   "created_at_ms": 1794314821000,
+   "text": "This is great reading! Clear, concise, but full of information on architecture and optimization decisions for pre training.",
+   "url": "https://x.com/gneubig/status/2120136144062910570",
+   "handle_guess": "gneubig"
+  },
+  {
+   "id": "2119924094473023877",
+   "created_at": "2026-11-09 22:44 UTC",
+   "created_at_ms": 1794264265000,
+   "text": "Sharing the thought process behind the architecture for Marin 535B-A23B, which finished pretraining on 18T tokens last week: https://t.co/jFugRo5xhQ\\\n\\\nEarlier this year the Marin project had 6 full-time employees at Open Athena, a mix of AI veterans and people newer to the space, https://t.co/zGKcWo52bC",
+   "url": "https://x.com/gneubig/status/2119924094473023877",
+   "handle_guess": "classiclarryd"
+  },
+  {
+   "id": "2119487533667221650",
+   "created_at": "2026-11-08 17:49 UTC",
+   "created_at_ms": 1794160180000,
+   "text": "2026 was definitely the year of \\",
+   "url": "https://x.com/gneubig/status/2119487533667221650",
+   "handle_guess": "gneubig"
+  },
+  {
+   "id": "2072730570304430183",
+   "created_at": "2026-07-02 17:14 UTC",
+   "created_at_ms": 1783012452000,
+   "text": "This Fall at CMU we're teaching a new course on AI Agents!\\\n\\\nThe goal is that you learn how to create a scaffold, build evals, and train an agentic LLM using RL.\\\n\\\nWe'll try to balance theory and practice, and introduce modern frameworks and best practices. https://t.co/iPr8FMD5wp",
+   "url": "https://x.com/gneubig/status/2072730570304430183",
+   "handle_guess": "gneubig"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-13 21:02:07"
+}

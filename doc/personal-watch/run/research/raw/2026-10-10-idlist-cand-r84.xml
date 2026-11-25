@@ -1,0 +1,700 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/UZN+3mnWMFKO1FYYWn5KgOQkI8M</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.12274,2610.11548,2610.11214,2610.10619,2610.10629,2610.11959,2610.11659,2610.11575,2610.11231,2610.11367&amp;start=0&amp;max_results=20</title>
+  <updated>2026-10-09T22:05:37Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=20&amp;id_list=2610.12274,2610.11548,2610.11214,2610.10619,2610.10629,2610.11959,2610.11659,2610.11575,2610.11231,2610.11367" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>20</opensearch:itemsPerPage>
+  <opensearch:totalResults>10</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11548v1</id>
+    <title>Conditional Transfer from Controlled Pretraining Mixtures to Code</title>
+    <updated>2026-10-08T09:12:45Z</updated>
+    <link href="https://arxiv.org/abs/2610.11548v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11548v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Synthetic tasks are increasingly used both as probes of language-model capability and as pretraining data. Both uses are often justified by loss reduction: falling loss is treated as informative, and faster loss reduction with more sampling as evidence that a task is worth sampling. We separate three signals. A task is diagnostic when its loss tracks global pretraining progress; it is teachable when its loss responds to its own token budget; and a data source transfers when including it improves a downstream target. We study controlled pretraining in which 70% of the corpus is fixed general Python and the remaining 30% is a simplex over three source families: OpenCodeInstruct, a curated suite of 12 code-adjacent synthetic tasks, and 15 literature-derived probe tasks. Across a task-budget sweep we detect teachability for 14 of 27 tasks, with a sharp asymmetry between the two synthetic families (10/12 curated versus 4/15 literature-derived).
+  Teachability and downstream transfer give different rankings. On the mixture-simplex edge between the curated suite and OpenCodeInstruct, HumanEval pass@20 after a fixed fine-tuning stage rises from 15.9 at pure curated data to its highest observed value, 22.6, at a mixture that is 75% OpenCodeInstruct, then falls to 19.5 at pure OpenCodeInstruct. Curated synthetic data therefore has conditional value: it contributes as a limited share of a mixture that a target-aligned source still dominates. Finally, a loss-based adaptive scheduler exposes the mismatch between residual loss reducibility and downstream transfer. Across three 60k-step free-ratio runs, Ado drives the OpenCodeInstruct share below 5% within the first 5k steps and to 1.2--1.4% by the end of training, and underperforms its matched fixed-mixture controls by 2.4--11.0 percentage points. Optimizing near-term task-loss reduction moves the mixture away from the region that transfers.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T09:12:45Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Ohad Rubin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11659v1</id>
+    <title>DIAL-OPD: Learning More from Fewer Tokens in On-Policy Distillation</title>
+    <updated>2026-10-08T10:36:00Z</updated>
+    <link href="https://arxiv.org/abs/2610.11659v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11659v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>On-policy distillation (OPD) supervises student-generated trajectories with token-level teacher signals. Its sampled-token variant avoids the cost of full-vocabulary probabilities. Yet we find that training on fewer tokens can outperform full-token OPD, challenging the intuition that more supervision improves learning. This motivates selecting tokens by learning value. Existing disagreement-based criteria ignore probability scale: tokens assigned negligible probability by both models, termed low-low tokens, can receive large log-ratio rewards and hinder learning. We propose DIAL-OPD, a token-selection method that bridges log-probability and probability spaces by weighting reward magnitude with the logarithmic mean of teacher and student probabilities. A parameter beta controls this weighting, and the highest-scoring tokens are retained. Across 4 teacher-student pairs and 7 mathematical reasoning benchmarks, we compare DIAL-OPD with 9 baselines. Retaining only 40% of tokens, it outperforms Vanilla OPD and its full-token variants, with mean accuracy gains reaching 5.25 percentage points over Vanilla OPD, and doubles AIME25 Pass@16 from 13.33% to 26.67%. It also achieves up to an 18% relative improvement in mean accuracy over the strongest token-selection baseline at matched retention ratios. With a 4B teacher, DIAL-OPD surpasses the strongest full-token baseline using an 8B teacher at both student scales, showing that effective supervision allocation can outweigh teacher scaling. Further analysis shows that moderate beta balances suppressing low-low tokens against preserving useful disagreements. Token-level evidence reveals that DIAL-OPD filters high-reward tokens with limited reasoning value while preserving supervision critical to reasoning correctness.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T10:36:00Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Anhao Zhao</name>
+    </author>
+    <author>
+      <name>Haoran Xin</name>
+    </author>
+    <author>
+      <name>Junlong Tong</name>
+    </author>
+    <author>
+      <name>Yingqi Fan</name>
+    </author>
+    <author>
+      <name>Xuan Lu</name>
+    </author>
+    <author>
+      <name>Ping Nie</name>
+    </author>
+    <author>
+      <name>Wenjie Li</name>
+    </author>
+    <author>
+      <name>Xiaoyu Shen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11575v1</id>
+    <title>Smoothing the Top-k Exposure Boundary for Sparse Mixture-of-Experts</title>
+    <updated>2026-10-08T09:31:19Z</updated>
+    <link href="https://arxiv.org/abs/2610.11575v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11575v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Sparse Mixture-of-Experts models scale parameter capacity efficiently while maintaining a fixed compute budget per token. However, traditional training paradigms enforce a static choice of top-$k$ experts, which converts a continuous routing distribution into a rigid step function. This constraint introduces a brittle boundary where highly competitive experts are arbitrarily separated into full-supervision and zero-feedback zones based on minor score fluctuations. To address this issue, we propose Elastic Expert Routing, which stochastically samples the active expert budget from a localized discrete distribution centered at $k$. Over multiple training iterations, this mechanism softens the sharp threshold into a gradual probability distribution. Because the sampling neighborhood remains symmetric, this approach matches the expected computational cost of deterministic training, while preserving the inference budget. Extensive experiments demonstrate the efficacy of our method on both supervised fine-tuning and from-scratch pretraining settings. During supervised fine-tuning, elastic routing improves downstream macro-averages on OLMoE-1B-7B and Qwen3-30B-A3B by $+0.84$ and $+2.02$ points, respectively. In addition, in from-scratch pretraining, it outperforms the static top-$k$ baseline by $1.6$ points on average across downstream tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T09:31:19Z</published>
+    <arxiv:comment>13 pages, 4 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yunkai Chai</name>
+    </author>
+    <author>
+      <name>Tong Zhu</name>
+    </author>
+    <author>
+      <name>Xiaoye Qu</name>
+    </author>
+    <author>
+      <name>Xuyang Hu</name>
+    </author>
+    <author>
+      <name>Guanjie Chen</name>
+    </author>
+    <author>
+      <name>Qipeng Guo</name>
+    </author>
+    <author>
+      <name>Yu Cheng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11214v1</id>
+    <title>Bridging KV-Cache Quantization and Linear Attention: From Theory to Pretrained Weight Migration</title>
+    <updated>2026-10-08T04:12:49Z</updated>
+    <link href="https://arxiv.org/abs/2610.11214v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11214v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>KV-cache quantization and linear attention are two representative approaches to tackling the storage and computational costs of Transformers. KV-cache quantization compresses individual KV entries into discrete codes but retains all entries, whereas linear attention recurrently aggregates multiple historical KV contributions into a fixed-size continuous state but can introduce interference. This contrast raises the question of whether per-KV compression and multi-KV aggregation can be bridged within a single mechanism for efficient attention. We identify RAM-Net as such a bridge through soft assignments over a discrete address space. These assignments determine recurrent updates to the continuous slot state associated with each address. Under a restricted RAM-Net construction, we prove that soft address assignments extend hard quantized matching to a separable read-write overlap that locally approximates full-attention similarity and supports recurrent aggregation. These connections further enable Transformer-to-RAM-Net weight migration through a new path based on a soft-quantized intermediate construction. Across nine pretrained Transformer models from 0.3B to 7B parameters, RAM-Net recovers an average of 87.1% of the teachers' accuracy gains over random guessing across six commonsense and knowledge tasks using only a 500M-token budget per model.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T04:12:49Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Kaicheng Xiao</name>
+    </author>
+    <author>
+      <name>Liran Dong</name>
+    </author>
+    <author>
+      <name>Haotian Li</name>
+    </author>
+    <author>
+      <name>Guoliang Xing</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.10629v1</id>
+    <title>The Harness as the Only Mutable Surface: Compliance-Bounded Self-Evolution of LLM Agents in Credit Pipelines, with a Measured Admission Gate</title>
+    <updated>2026-10-07T12:33:48Z</updated>
+    <link href="https://arxiv.org/abs/2610.10629v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.10629v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Self-improving LLM agents can adapt a credit pipeline to a changed rule, but an agent that rewrites itself destroys the artefact a supervisor reviews: a named change, a recorded test, an approval. We argue that self-evolution is reviewable only if it is confined to the runtime harness (instruction text, tool-call logic and primitive composition) while model weights stay fixed, so that every adaptation is a diff with a cause and a test attached. We give a dual-loop engine built on that bound, with one admission gate that writes a hash-chained record before deployment, and we measure the gate in simulation, with a simulated agent and a seeded-search proposer rather than language models. Across three families of supervisory re-interpretation at three severities, 10 seeds each, the gated loop admitted 144 of 7,449 candidate changes, none of which worsened error on held-out history, and restored the false-positive rate to the oracle level without raising missed flags in every low- and mid-severity cell. With the gate replaced by the check an unbounded system applies (fewer errors visible in recent traces), the same loops admitted 309 harmful changes and left missed flags above 10% in 49 of 90 runs: false positives fell because the screen was loosened. Evaluated on pre-shift labels, the gate rejected every candidate, so a re-interpretation must be encoded as a rule that relabels history. Parametric and scope shifts were repaired locally, a structural one only by primitive replacement; at the highest structural severity the gate's fixed tolerance blocked the correct replacement in half the seeds. We map the mechanisms to the EU AI Act's provisions for high-risk credit scoring and note that the April 2026 US model-risk guidance excludes agentic AI from its scope.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-07T12:33:48Z</published>
+    <arxiv:comment>14 pages, 5 tables. Code, configuration and per-run outputs: https://github.com/rav11l/cace-bench (v0.6.0, doi:10.5281/zenodo.23207546)</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Ravil Akhtyamov</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.10619v1</id>
+    <title>TestJack: Should you trust the results in coding benchmarks? Agentic Coding Benchmarks Auditing via Evaluator Evolution</title>
+    <updated>2026-10-07T07:58:04Z</updated>
+    <link href="https://arxiv.org/abs/2610.10619v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.10619v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language model (LLM) agents are rapidly reshaping software engineering, accompanied by an explosion of new code benchmarks. Yet nearly all existing benchmarks still rely on the same decades-old criterion: a solution is correct if it passes a fixed set of unit tests. Such tests are often insufficient: they check only part of what the task requires, so agents can reward hack them or silently miss required behavior while still passing every test. As a result, higher benchmark scores may partly reflect better adaptation to the evaluator rather than better problem solving. Existing works focus on static test augmentation: they strengthen each task's tests once, before any trial is seen, and thus overlook how real trials actually fail. We introduce TestJack, a scalable framework for evaluating patches beyond fixed tests. For each trial, TestJack generates tests targeting prompt requirements the patch may violate, retains only tests passed by the ground-truth patch, and re-examines any trial failures. Each confirmed failure is thus supported by a replayable test. To reduce evaluation cost, we also introduce a lightweight variant which audits a random sample of trials in depth and reuses the resulting tests across all trials for the same task. Across 6 frontier model backends and 5 benchmarks such as DeepSWE and SWE Marathon, we find that about 34.4% of the model trials currently judged correct violate the task requirements, lowering the overall resolution rate from 50.6% to 33.2%. Our results reveal a fundamental limitation of current coding-agent evaluation: as LLMs become better at optimizing against fixed evaluators, those evaluators themselves must become more adaptive.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-07T07:58:04Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Shuangjie Yao</name>
+    </author>
+    <author>
+      <name>Hao Wang</name>
+    </author>
+    <author>
+      <name>Koushik Sen</name>
+    </author>
+    <author>
+      <name>Simin Chen</name>
+    </author>
+    <author>
+      <name>Baishakhi Ray</name>
+    </author>
+    <author>
+      <name>Dawn Song</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11959v1</id>
+    <title>MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement</title>
+    <updated>2026-10-08T13:41:53Z</updated>
+    <link href="https://arxiv.org/abs/2610.11959v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11959v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reinforcement learning (RL) is the central training paradigm for advancing large foundation models towards self-improvement. This report introduces the MiMo-V2.6 series, an omni-modal family that pushes the frontier of model intelligence by scaling RL compute. Prior to RL, we conduct mid-training on a broad multimodal corpus to provide ample exploration space, and build a solid infrastructure on the pretrained hybrid-SWA architecture to support subsequent scale-up. We scale RL compute along three dimensions: (1) larger batches and higher throughput, with an asynchronous training that consumes 1,568 samples and 2.7-3.7B tokens per step at context lengths of up to 1M; (2) more diverse and complex environments, spanning code, general, visual, and cyber domains under a mixture of agent harnesses; and (3) more grader compute, via groupwise agentic grading that yields more accurate reward signals for long-horizon tasks and steers the model towards shorter, more token-efficient solutions. To keep training stable at scale, we freeze the MoE router and establish a multi-layer defense against reward hacking. We further build infrastructure for mixed-task agentic RL, including a unified trajectory representation, high-concurrency multi-framework rollout, decoupled control and data planes, and training-inference consistency. We open-source the training dynamics, RL environments, and RL framework to facilitate reproduction and further research on scaled RL and model self-improvement.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T13:41:53Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Xiaomi LLM-Core Team</name>
+    </author>
+    <author>
+      <name> :</name>
+    </author>
+    <author>
+      <name>Zongming Qiao</name>
+    </author>
+    <author>
+      <name>Ziyue Hua</name>
+    </author>
+    <author>
+      <name>Zirui Ou</name>
+    </author>
+    <author>
+      <name>Zihao Yue</name>
+    </author>
+    <author>
+      <name>Zihan Jiang</name>
+    </author>
+    <author>
+      <name>Zhuo Huang</name>
+    </author>
+    <author>
+      <name>Zhiyang Chen</name>
+    </author>
+    <author>
+      <name>Zhixian Zheng</name>
+    </author>
+    <author>
+      <name>Zhipeng Xu</name>
+    </author>
+    <author>
+      <name>Zhengrui Ma</name>
+    </author>
+    <author>
+      <name>Yuyang Hu</name>
+    </author>
+    <author>
+      <name>Yuhang Dong</name>
+    </author>
+    <author>
+      <name>Yuechen Zhang</name>
+    </author>
+    <author>
+      <name>Yudong Wang</name>
+    </author>
+    <author>
+      <name>Yuanxin Liu</name>
+    </author>
+    <author>
+      <name>Yixin Yang</name>
+    </author>
+    <author>
+      <name>Yishuo Cai</name>
+    </author>
+    <author>
+      <name>Yikai Zhao</name>
+    </author>
+    <author>
+      <name>Yihan Yan</name>
+    </author>
+    <author>
+      <name>Yifan Zhang</name>
+    </author>
+    <author>
+      <name>Yifan Song</name>
+    </author>
+    <author>
+      <name>Xiyu Wei</name>
+    </author>
+    <author>
+      <name>Xing Zhang</name>
+    </author>
+    <author>
+      <name>Xin Zhang</name>
+    </author>
+    <author>
+      <name>Xiaoqian Liu</name>
+    </author>
+    <author>
+      <name>Xiaodong Ji</name>
+    </author>
+    <author>
+      <name>Xiangwei Deng</name>
+    </author>
+    <author>
+      <name>Xueyu Guo</name>
+    </author>
+    <author>
+      <name>Wenhan Ma</name>
+    </author>
+    <author>
+      <name>Weimin Xiong</name>
+    </author>
+    <author>
+      <name>Weikun Wang</name>
+    </author>
+    <author>
+      <name>Weiji Zhuang</name>
+    </author>
+    <author>
+      <name>Shuo Liu</name>
+    </author>
+    <author>
+      <name>Shuhuai Ren</name>
+    </author>
+    <author>
+      <name>Shuhao Gu</name>
+    </author>
+    <author>
+      <name>Shimao Chen</name>
+    </author>
+    <author>
+      <name>Shijie Cao</name>
+    </author>
+    <author>
+      <name>Shihua Yu</name>
+    </author>
+    <author>
+      <name>Shicheng Li</name>
+    </author>
+    <author>
+      <name>Shengjie Zhou</name>
+    </author>
+    <author>
+      <name>Shaolei Zhang</name>
+    </author>
+    <author>
+      <name>Rang Li</name>
+    </author>
+    <author>
+      <name>Qiying Wang</name>
+    </author>
+    <author>
+      <name>Qingkai Fang</name>
+    </author>
+    <author>
+      <name>Qianli Chen</name>
+    </author>
+    <author>
+      <name>Minzheng Wang</name>
+    </author>
+    <author>
+      <name>Liwen Wang</name>
+    </author>
+    <author>
+      <name>Linli Yao</name>
+    </author>
+    <author>
+      <name>Linghao Zhang</name>
+    </author>
+    <author>
+      <name>Liangyu Cheng</name>
+    </author>
+    <author>
+      <name>Liang Zhao</name>
+    </author>
+    <author>
+      <name>Lei Li</name>
+    </author>
+    <author>
+      <name>Jinhao Dong</name>
+    </author>
+    <author>
+      <name>Jinyu Xiang</name>
+    </author>
+    <author>
+      <name>Jianyu Wei</name>
+    </author>
+    <author>
+      <name>Jiangshan Duo</name>
+    </author>
+    <author>
+      <name>Huaqiu Liu</name>
+    </author>
+    <author>
+      <name>Huanjie Fan</name>
+    </author>
+    <author>
+      <name>Hongyi Guan</name>
+    </author>
+    <author>
+      <name>Hongshen Xu</name>
+    </author>
+    <author>
+      <name>Hao Tian</name>
+    </author>
+    <author>
+      <name>Hanyu Li</name>
+    </author>
+    <author>
+      <name>Hailin Zhang</name>
+    </author>
+    <author>
+      <name>Gang Wang</name>
+    </author>
+    <author>
+      <name>Fuli Luo</name>
+    </author>
+    <author>
+      <name>Feng Wei</name>
+    </author>
+    <author>
+      <name>Dong Zhang</name>
+    </author>
+    <author>
+      <name>Dawei Zhu</name>
+    </author>
+    <author>
+      <name>Chiheng Lou</name>
+    </author>
+    <author>
+      <name>Chenhong He</name>
+    </author>
+    <author>
+      <name>Chenhao He</name>
+    </author>
+    <author>
+      <name>Chenghua Liu</name>
+    </author>
+    <author>
+      <name>Bowen Ye</name>
+    </author>
+    <author>
+      <name>Bowen Shen</name>
+    </author>
+    <author>
+      <name>Boshen Xu</name>
+    </author>
+    <author>
+      <name>Bo Yang</name>
+    </author>
+    <author>
+      <name>Bingquan Xia</name>
+    </author>
+    <author>
+      <name>Bangjun Xiao</name>
+    </author>
+    <author>
+      <name>Baixuan Xu</name>
+    </author>
+    <author>
+      <name>Zhouxiang Mao</name>
+    </author>
+    <author>
+      <name>Zhiyang Zhang</name>
+    </author>
+    <author>
+      <name>Zhixiang Xu</name>
+    </author>
+    <author>
+      <name>Zhenru Lin</name>
+    </author>
+    <author>
+      <name>Zhengju Tang</name>
+    </author>
+    <author>
+      <name>Zhaojun Huang</name>
+    </author>
+    <author>
+      <name>Yuzhe Weng</name>
+    </author>
+    <author>
+      <name>Yuxing Xiang</name>
+    </author>
+    <author>
+      <name>Yuxiao Li</name>
+    </author>
+    <author>
+      <name>Yuheng Yang</name>
+    </author>
+    <author>
+      <name>Yuhang Wang</name>
+    </author>
+    <author>
+      <name>Yuchen Liu</name>
+    </author>
+    <author>
+      <name>Yuanyuan Tian</name>
+    </author>
+    <author>
+      <name>Yuanliang Dong</name>
+    </author>
+    <author>
+      <name>Yu Cheng</name>
+    </author>
+    <author>
+      <name>Yongzhe He</name>
+    </author>
+    <author>
+      <name>Yongshun Liang</name>
+    </author>
+    <author>
+      <name>Yong Wang</name>
+    </author>
+    <author>
+      <name>Yiyan Wang</name>
+    </author>
+    <author>
+      <name>Yitian Gong</name>
+    </author>
+    <author>
+      <name>Yijie Zhang</name>
+    </author>
+    <author>
+      <name>Yanshu Xin</name>
+    </author>
+    <author>
+      <name>Xun Zhang</name>
+    </author>
+    <author>
+      <name>Xingjian Zhao</name>
+    </author>
+    <author>
+      <name>Wenyu Yang</name>
+    </author>
+    <author>
+      <name>Wenshan Huang</name>
+    </author>
+    <author>
+      <name>Wenhao Li</name>
+    </author>
+    <author>
+      <name>Tingwei Huang</name>
+    </author>
+    <author>
+      <name>Tianyu Yu</name>
+    </author>
+    <author>
+      <name>Tianyang Lu</name>
+    </author>
+    <author>
+      <name>Taoyu Yang</name>
+    </author>
+    <author>
+      <name>Sinan Du</name>
+    </author>
+    <author>
+      <name>Shutong Tian</name>
+    </author>
+    <author>
+      <name>Shulin Du</name>
+    </author>
+    <author>
+      <name>Shengfan Wang</name>
+    </author>
+    <author>
+      <name>Shanchuan Fang</name>
+    </author>
+    <author>
+      <name>Qihao Zhang</name>
+    </author>
+    <author>
+      <name>Qibin Yang</name>
+    </author>
+    <author>
+      <name>Qian Yu</name>
+    </author>
+    <author>
+      <name>Qian Tu</name>
+    </author>
+    <author>
+      <name>Pengrong Xie</name>
+    </author>
+    <author>
+      <name>Peipei Wang</name>
+    </author>
+    <author>
+      <name>Peidian Li</name>
+    </author>
+    <author>
+      <name>Minkun Guo</name>
+    </author>
+    <author>
+      <name>Mingchen Shao</name>
+    </author>
+    <author>
+      <name>Luohan Gao</name>
+    </author>
+    <author>
+      <name>Lijie Wang</name>
+    </author>
+    <author>
+      <name>Liang Shi</name>
+    </author>
+    <author>
+      <name>Kaiqi Chen</name>
+    </author>
+    <author>
+      <name>Kaiming Liu</name>
+    </author>
+    <author>
+      <name>Kaifei Wang</name>
+    </author>
+    <author>
+      <name>Kai Yang</name>
+    </author>
+    <author>
+      <name>Jinlong Xue</name>
+    </author>
+    <author>
+      <name>Jiechen Zhang</name>
+    </author>
+    <author>
+      <name>Jiaxuan Liu</name>
+    </author>
+    <author>
+      <name>Hongxu An</name>
+    </author>
+    <author>
+      <name>Hao Peng</name>
+    </author>
+    <author>
+      <name>Hanglong Lü</name>
+    </author>
+    <author>
+      <name>Guonan Wang</name>
+    </author>
+    <author>
+      <name>Feiyu Yang</name>
+    </author>
+    <author>
+      <name>Fanyu Cao</name>
+    </author>
+    <author>
+      <name>Fangyue Liu</name>
+    </author>
+    <author>
+      <name>Fan Cui</name>
+    </author>
+    <author>
+      <name>Cong Wang</name>
+    </author>
+    <author>
+      <name>Chun Chen</name>
+    </author>
+    <author>
+      <name>Chenxu Bai</name>
+    </author>
+    <author>
+      <name>Chengxuan Zhu</name>
+    </author>
+    <author>
+      <name>Chenghua Wang</name>
+    </author>
+    <author>
+      <name>Boyi Zeng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.12274v1</id>
+    <title>HarnessSQL: Harness-Native Training for SQL Agents in Realistic Database Environments</title>
+    <updated>2026-10-08T16:36:39Z</updated>
+    <link href="https://arxiv.org/abs/2610.12274v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.12274v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Text-to-SQL models are commonly trained to map questions directly to static queries, whereas real-world database agents operate through stateful, multi-turn interaction with live databases -- inspecting schemas, executing probe queries, diagnosing errors, and revising hypotheses. This creates a critical train-deploy mismatch, as the execution harness that mediates this interaction is introduced only at inference time. To bridge this gap, we propose HarnessSQL, a harness-native post-training framework that preserves the full interaction structure throughout both supervised fine-tuning and reinforcement learning. HarnessSQL builds isolated, executable database environments paired with hidden execution oracles, rolls out teachers directly inside the target SQL harness, and retains only verified trajectories for full-sequence SFT, followed by execution-reward RL. Across Spider 2.0-SQLite, HarnessSQL dramatically boosts the execution accuracy of compact models, raising Qwen3-8B from 15.5% to 45.2% and Qwen3-14B from 22.2% to 54.8%, while transferring effectively to out-of-distribution interactive benchmarks such as BIRD-Interact and LiveSQLBench. Our findings demonstrate that training database agents directly within their execution harness is essential for mastering complex, long-horizon database workflows.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T16:36:39Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Haolin Yang</name>
+    </author>
+    <author>
+      <name>Jipeng Zhang</name>
+    </author>
+    <author>
+      <name>Jian Xie</name>
+    </author>
+    <author>
+      <name>Shuaishuai Gong</name>
+    </author>
+    <author>
+      <name>Sirui Han</name>
+    </author>
+    <author>
+      <name>Yike Guo</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11367v1</id>
+    <title>Stochastic resonance in adaptive dynamical networks</title>
+    <updated>2026-10-08T07:00:01Z</updated>
+    <link href="https://arxiv.org/abs/2610.11367v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11367v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The role of adaptive coupling in controlling collective noise-induced dynamics is demonstrated on an example of stochastic resonance in an ensemble of coupled overdamped bistable oscillators. Specifically, it is found that tuning the adaptive coupling parameters allows one to either enhance or suppress stochastic resonance and to shift the optimal noise intensity that yields the most regular stochastic oscillations. All the revealed effects are studied in numerical simulations for two kinds of adaptive coupling models. The first one is a simplified, phenomenological model designed such that the coupling becomes stronger for oscillators with larger differences between their dynamical variables (two configurations for local interaction and one option for global coupling are under consideration). The second one is a local memristive coupling model that provides a physically motivated realization of adaptive interactions with similar properties. In all the considered cases, adaptive coupling is shown to be a flexible stochastic resonance control tool, both in the absence and in the presence of the static coupling component.</summary>
+    <category term="nlin.AO" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T07:00:01Z</published>
+    <arxiv:comment>15 pages, 8 figures</arxiv:comment>
+    <arxiv:primary_category term="nlin.AO"/>
+    <author>
+      <name>Vladimir V. Semenov</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11231v1</id>
+    <title>Harness Compilation: Which Decisions Should a Small Vision-Language Model Keep?</title>
+    <updated>2026-10-08T04:31:36Z</updated>
+    <link href="https://arxiv.org/abs/2610.11231v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11231v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Small vision-language models may be able to read external evidence yet struggle to obtain it. We introduce Harness Compilation (HC), an offline procedure that adapts the division of work between a frozen small VLM and its external harness. A large teacher uses student execution traces to revise reusable content and control, while a separate validation set selects the deployed harness. Deployment requires neither weight updates nor teacher calls. Across seven visual question-answering settings with students of at most 9B parameters, HC improves scores over bare students by 9.9-23.9 points, averaged over three independent builds per setting. Interventions on five runtime decision types (invocation, selection, argument generation, evidence integration and abstention) show why this allocation matters: requesting evidence and generating open queries can be costly, whereas bounded choices and reading supplied text can remain useful student work. Fact cards benefit all ten evaluated students, but decision policies transfer unevenly. Recompilation for a new student model helps when the transferred interface no longer fits the student. With 100 practice items, HC exceeds answer-only LoRA on three tasks. Larger training budgets can match or surpass a fixed harness, while combining the two improves SlideVQA beyond either alone. These findings support allocating work from measured student behavior rather than uniformly removing decisions.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T04:31:36Z</published>
+    <arxiv:comment>58 pages, 10 figures, including appendices</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Minhao Fan</name>
+    </author>
+    <author>
+      <name>Yinyi Liu</name>
+    </author>
+    <author>
+      <name>Jiayu Zhao</name>
+    </author>
+    <author>
+      <name>Zihan Teng</name>
+    </author>
+    <author>
+      <name>Song Chen</name>
+    </author>
+    <author>
+      <name>Weichen Liu</name>
+    </author>
+  </entry>
+</feed>

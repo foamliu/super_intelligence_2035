@@ -1,0 +1,105 @@
+{
+ "handle": "_lewtun",
+ "name": "Lewis Tunstall (@_lewtun) / X",
+ "bio": "🤠 post-training @huggingface",
+ "tweets": [
+  {
+   "id": "2118981790308446515",
+   "created_at": "2026-11-07 08:20 UTC",
+   "created_at_ms": 1794039602000,
+   "text": "Distillation attacks are getting really sophisticated these days 🤯",
+   "url": "https://x.com/_lewtun/status/2118981790308446515",
+   "handle_guess": "_lewtun"
+  },
+  {
+   "id": "2118870388222664996",
+   "created_at": "2026-11-07 00:57 UTC",
+   "created_at_ms": 1794013041000,
+   "text": "I got impatient waiting for @eliebakouch's take on @reflection_ai's Beam tech report, so I built an elie-style skill that attempts to approximate his voice. Let's see how it does: https://t.co/xhtJIMTEKo",
+   "url": "https://x.com/_lewtun/status/2118870388222664996",
+   "handle_guess": "leavittron"
+  },
+  {
+   "id": "2118796765814313358",
+   "created_at": "2026-11-06 20:04 UTC",
+   "created_at_ms": 1793995488000,
+   "text": "Tired: Agentic summarization of model tech reports\\\nWired: @eliebakouch summarization of model tech reports",
+   "url": "https://x.com/_lewtun/status/2118796765814313358",
+   "handle_guess": "leavittron"
+  },
+  {
+   "id": "2118473597832327267",
+   "created_at": "2026-11-05 22:40 UTC",
+   "created_at_ms": 1793918439000,
+   "text": "As the resident “SFT all the things” person at HF, I approve of this message.",
+   "url": "https://x.com/_lewtun/status/2118473597832327267",
+   "handle_guess": "_lewtun"
+  },
+  {
+   "id": "2118472139422503404",
+   "created_at": "2026-11-05 22:34 UTC",
+   "created_at_ms": 1793918092000,
+   "text": "I haven’t seen Nouamane in person. for more than a year. Now I know why",
+   "url": "https://x.com/_lewtun/status/2118472139422503404",
+   "handle_guess": "_lewtun"
+  },
+  {
+   "id": "2118412817116369254",
+   "created_at": "2026-11-05 18:39 UTC",
+   "created_at_ms": 1793903948000,
+   "text": "📖 The Ultimate MoE Training Handbook 📖\\\n\\\nWe spent 1/2M GPUh to optimize MoE training and wrote the most comprehensive blog about it. With 30k words and 50+ interactive figures it covers everything from profiling to large cluster training.\\\nhttps://t.co/mk6fGoCiqV https://t.co/6vElTuucxR",
+   "url": "https://x.com/_lewtun/status/2118412817116369254",
+   "handle_guess": "Nouamanetazi"
+  },
+  {
+   "id": "2118058972225908825",
+   "created_at": "2026-11-04 19:13 UTC",
+   "created_at_ms": 1793819585000,
+   "text": "One lesson from this launch: climb as far as you can with SFT before relying on expensive RL.\\\n\\\nRL is still the cherry on top, as @ylecun once put it. https://t.co/T5DYdqzTHW",
+   "url": "https://x.com/_lewtun/status/2118058972225908825",
+   "handle_guess": "esonghori2"
+  },
+  {
+   "id": "2118046765857546733",
+   "created_at": "2026-11-04 18:24 UTC",
+   "created_at_ms": 1793816675000,
+   "text": "Today we release Ripple-65B Preview, our 65B dense LLM we pretrained from scratch.\\\n\\\nRipple sets a new state-of-the-art for U.S. open-weight models in agentic coding tasks, surpassing significantly larger models including Muse Spark Open-816B, Beam-501B, Inkling-975B, and Nemotron https://t.co/0Dwh57Rr0J",
+   "url": "https://x.com/_lewtun/status/2118046765857546733",
+   "handle_guess": "RicursiveAI"
+  },
+  {
+   "id": "2117601235633078412",
+   "created_at": "2026-11-03 12:54 UTC",
+   "created_at_ms": 1793710452000,
+   "text": "great to see more specialised models for the natural sciences! \\\n\\\ndespite recent claims on the \\\\",
+   "url": "https://x.com/_lewtun/status/2117601235633078412",
+   "handle_guess": "_lewtun"
+  },
+  {
+   "id": "2117354999156252735",
+   "created_at": "2026-11-02 20:35 UTC",
+   "created_at_ms": 1793651745000,
+   "text": "A cost and timing comparison 💸\\\n\\\nChefNMR2 has up to 2,170× lower median runtime and 360× lower median cost per molecule than the frontier LLMs we tested. 9/ https://t.co/gT4s9oATiJ",
+   "url": "https://x.com/_lewtun/status/2117354999156252735",
+   "handle_guess": "ZhongingAlong"
+  },
+  {
+   "id": "2113214040516268126",
+   "created_at": "2026-10-22 10:21 UTC",
+   "created_at_ms": 1792664463000,
+   "text": "Today we're releasing Carbon-X, a 14B model that brings DNA and natural language together for the first time 🧬\\\n\\\n1. Beats every open language model we tested across DNA benchmarks. Within a point of GPT-6.1 Sol at &gt;1,000× lower inference cost.\\\n\\\n2. Mid-trained on 300B tokens of https://t.co/AquzQACI7t",
+   "url": "https://x.com/_lewtun/status/2113214040516268126",
+   "handle_guess": "_lewtun"
+  },
+  {
+   "id": "2113212025560023513",
+   "created_at": "2026-10-22 10:13 UTC",
+   "created_at_ms": 1792663983000,
+   "text": "Introducing Carbon-X: The best open DNA model.\\\n\\\nWe midtrained a 14B model on DNA and text, and it beats every open language model and matches GPT-6.1 Sol at 1,000x lower cost.\\\n\\\nAsk it about a sequence, what a mutation does, or to generate new DNA.\\\n\\\nhttps://t.co/cpZCkEHHmn https://t.co/QFHlXEMF0O",
+   "url": "https://x.com/_lewtun/status/2113212025560023513",
+   "handle_guess": "LoubnaBenAllal1"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 18:05:03"
+}

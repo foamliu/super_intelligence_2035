@@ -1,0 +1,102 @@
+[
+ {
+  "name": "lastUpdatedDate cs.CL",
+  "url": "https://export.arxiv.org/api/query?search_query=cat:cs.CL&start=0&max_results=5&sortBy=lastUpdatedDate&sortOrder=descending",
+  "status": 200,
+  "ct": "application/atom+xml; charset=utf-8",
+  "total": "124521",
+  "elapsed": 1.04,
+  "rows": [
+   [
+    "2611.03634v1",
+    "2026-11-02T18:57:36Z",
+    "WebHarbor: Docking Real Websites for Evolving GUI Agent Environments"
+   ],
+   [
+    "2606.11435v2",
+    "2026-06-09T20:43:23Z",
+    "Agent Skill Evaluation and Evolution: Frameworks and Benchmarks"
+   ],
+   [
+    "2607.23811v3",
+    "2026-07-26T19:20:01Z",
+    "Memory Efficient Audio Synthesis with Decoupled Temporal Depth Diffusion Transfo"
+   ]
+  ]
+ },
+ {
+  "name": "submittedDate 20261030-20261104 cs.CL",
+  "url": "https://export.arxiv.org/api/query?search_query=cat:cs.CL+AND+submittedDate%3A%5B202610300000+TO+202611042359%5D&start=0&max_results=5&sortBy=submittedDate&sortOrder=descending",
+  "status": 200,
+  "ct": "application/atom+xml; charset=utf-8",
+  "total": "304",
+  "elapsed": 0.96,
+  "rows": [
+   [
+    "2611.03634v1",
+    "2026-11-02T18:57:36Z",
+    "WebHarbor: Docking Real Websites for Evolving GUI Agent Environments"
+   ],
+   [
+    "2611.03622v1",
+    "2026-11-02T18:52:11Z",
+    "D&amp;A: Decoupling Description and Assessment Enables VLMs as Zero-Shot Robotic"
+   ],
+   [
+    "2611.03618v1",
+    "2026-11-02T18:51:04Z",
+    "Strategist: Evolving Reasoning with Agents"
+   ]
+  ]
+ },
+ {
+  "name": "submittedDate all",
+  "url": "https://export.arxiv.org/api/query?search_query=submittedDate%3A%5B202610300000+TO+202611042359%5D&start=0&max_results=5&sortBy=submittedDate&sortOrder=descending",
+  "status": 200,
+  "ct": "application/atom+xml; charset=utf-8",
+  "total": "4570",
+  "elapsed": 0.95,
+  "rows": [
+   [
+    "2611.03647v1",
+    "2026-11-02T18:59:32Z",
+    "Pixel-UMI: Learning Environment-Aware Whole-Body Manipulation from Sensorized Hu"
+   ],
+   [
+    "2611.03648v1",
+    "2026-11-02T18:59:32Z",
+    "Pixel: A Co-Designed Full-Stack Robot System for Learning General-Purpose Mobile"
+   ],
+   [
+    "2611.03646v1",
+    "2026-11-02T18:59:29Z",
+    "EgoActionBench: Benchmarking Dense Action Captioning for Egocentric Human Videos"
+   ]
+  ]
+ },
+ {
+  "name": "breadth 5cat",
+  "url": "https://export.arxiv.org/api/query?search_query=cat:cs.CL+OR+cat:cs.CV+OR+cat:cs.SE+OR+cat:cs.AI+OR+cat:cs.LG&start=0&max_results=3&sortBy=submittedDate&sortOrder=descending",
+  "status": 200,
+  "ct": "application/atom+xml; charset=utf-8",
+  "total": "642318",
+  "elapsed": 1.07,
+  "rows": [
+   [
+    "2611.03647v1",
+    "2026-11-02T18:59:32Z",
+    "Pixel-UMI: Learning Environment-Aware Whole-Body Manipulation from Sensorized Hu"
+   ],
+   [
+    "2611.03648v1",
+    "2026-11-02T18:59:32Z",
+    "Pixel: A Co-Designed Full-Stack Robot System for Learning General-Purpose Mobile"
+   ],
+   [
+    "2611.03646v1",
+    "2026-11-02T18:59:29Z",
+    "EgoActionBench: Benchmarking Dense Action Captioning for Egocentric Human Videos"
+   ]
+  ]
+ }
+]

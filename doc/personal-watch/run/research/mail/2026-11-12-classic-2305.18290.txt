@@ -1,0 +1,14 @@
+Dear Dr. Sharma,
+
+I am Yang Liu, working on BaiZe-ISEDA2027 and ZhuLong-DAC2027, two projects that build small (~2B) domain language models for EDA and memory workflows. Your DPO paper is the one that made preference optimization usable without a separate reward model, and I would like to check whether I read three points correctly.
+
+1. Implicit reward at small scale: with a ~2B policy and only tens of thousands of in-domain tool-call trajectories, does dropping the explicit reward model still hold up, or does the reference model become the bottleneck? Which part degrades first in your experience?
+
+2. Length and format bias: DPO is often reported to exploit answer length. Did you observe that, and would you now add length normalization or a stronger reference-model regularizer?
+
+3. Offline data distribution: our trajectories come from a fixed pool of tool runs, so the preference data is heavily off-policy. How would you detect that the implicit reward has drifted away from the checkable signal we actually care about (a tool runs, DRC passes)?
+
+Your answers would help us decide whether to keep a learned reward at all. Thank you for the paper and your time.
+
+Best regards,
+Yang Liu

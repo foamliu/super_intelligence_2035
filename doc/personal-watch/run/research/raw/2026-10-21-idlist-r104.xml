@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/VPUy/y/mc5VW1MR9pQSv1Cmybfg</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.27999,2610.28434,2610.28087,2610.28632,2610.27894&amp;start=0&amp;max_results=5</title>
+  <updated>2026-10-21T10:04:34Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=5&amp;id_list=2610.27999,2610.28434,2610.28087,2610.28632,2610.27894" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>5</opensearch:itemsPerPage>
+  <opensearch:totalResults>5</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.28434v1</id>
+    <title>Every Model Leaves a Trace: Multi-Resolution LLM Fingerprinting</title>
+    <updated>2026-10-20T16:00:34Z</updated>
+    <link href="https://arxiv.org/abs/2610.28434v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.28434v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models leave model-specific traces in their generated text, but it remains unclear how finely these fingerprints can distinguish related models and which signals remain informative as obvious cues are reduced. We study this through fingerprint resolution, considering both model resolution, from different families to distilled and adapted variants, and signal resolution across behavioral, stylometric, lexical, and semantic evidence. We progressively suppress surface cues, paraphrase outputs, vary the amount of available text, and test generalization across prompt distributions and languages. Our results show that fingerprints persist beyond broad family differences, remaining detectable in distilled models and even LoRA adaptations of the same base model. Although attribution weakens as surface and lexical cues are altered, substantial model-specific signal remains. These signals transfer across prompt sources and languages, with semantic representations proving most robust across languages. These findings show that model identity is recoverable at multiple resolutions, but that recoverability depends on model similarity and the evidence available in the text.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T16:00:34Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Mohammad Reza Modarres</name>
+    </author>
+    <author>
+      <name>Armin Tourajmehr</name>
+    </author>
+    <author>
+      <name>Artin Tavasoli</name>
+    </author>
+    <author>
+      <name>Yadollah Yaghoobzadeh</name>
+    </author>
+    <author>
+      <name>Mohammad Taher Pilehvar</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.27894v1</id>
+    <title>Testing Associative Creativity in Humans and Multimodal LLMs with Difficult-to-Name Visual Stimuli</title>
+    <updated>2026-10-20T09:13:16Z</updated>
+    <link href="https://arxiv.org/abs/2610.27894v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.27894v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We investigate associative creativity in descriptions of abstract visual stimuli by humans and multimodal large language models (MLLMs). While conceptual association is central to human communication, it remains unclear how humans and models adapt when visual stimuli become increasingly difficult to map onto familiar semantic concepts. We evaluate several state-of-the-art MLLMs and human participants along two dimensions of creativity, originality and effectiveness, using two datasets with controlled manipulations of difficulty. SilCC varies naming difficulty through progressively more complex combinations of abstract shapes, and PixCC varies difficulty through increasing levels of random visual noise. Results show that humans produce more diverse associative descriptions than MLLMs, including greater semantic distance, higher entropy, and more novel expressions relative to reference lexica. As difficulty increases, effectiveness declines in SilCC, and humans increasingly shift from holistic associations to descriptions of low-level visual properties in PixCC.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T09:13:16Z</published>
+    <arxiv:comment>Under review</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Manar Ali</name>
+    </author>
+    <author>
+      <name>Lisa Gottschalk</name>
+    </author>
+    <author>
+      <name>Simeon Junker</name>
+    </author>
+    <author>
+      <name>Lisa Hudalla</name>
+    </author>
+    <author>
+      <name>Alon Fishman</name>
+    </author>
+    <author>
+      <name>Joana Cholin</name>
+    </author>
+    <author>
+      <name>Stefan Kopp</name>
+    </author>
+    <author>
+      <name>Hendrik Buschmeier</name>
+    </author>
+    <author>
+      <name>Sina Zarrieß</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.27999v1</id>
+    <title>Matrix-Game 4.0: Harnessing Video Models for Real-Time Playable Game Worlds</title>
+    <updated>2026-10-20T10:41:38Z</updated>
+    <link href="https://arxiv.org/abs/2610.27999v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.27999v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Moving from controllable videos to genuinely playable worlds requires persistent world state, executable game rules, and low-latency interaction. We outline a roadmap for the next generation of Matrix-Game that separates game execution from visual generation through an executable game harness, and introduce Matrix-Game 4.0 as the first system built on this design. A lightweight game engine maintains world state and executes interaction rules, a multimodal coding agent translates player ideas into game code and dynamic scene captions, and a renderer based on autoregressive video model transforms engine-rendered low-poly proxies into detailed visuals, conditioned on dynamic captions and memory references. This framework provides continuous guidance for visual generation and enables natural-language creation and modification of scenes and gameplay. Our renderer is trained on aligned low-poly and high-fidelity video pairs and distilled into a causal generator that generates in four-frame chunks with one or two denoising steps. Together with targeted inference optimizations, Matrix-Game 4.0 enables 480p, 60 FPS gameplay on a single NVIDIA RTX5090 with a key-press-to-display latency of 112ms. Single-step generation achieves 83FPS steady-state throughput with 18.2GiB of peak GPU memory usage. With fixed prompts, steady-state throughput also reaches 67FPS on an RTX5080 and 58FPS on an RTX5070Ti. We demonstrate customizable shooter and driving games with engine-enforced mechanics, and release code, model weights, and low-poly game assets to support research and creation of playable game worlds.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.GR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T10:41:38Z</published>
+    <arxiv:comment>Project page, videos, code and models: https://matrix-game-v4-0.github.io/page/</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Jihai Zhang</name>
+    </author>
+    <author>
+      <name>Runjia Qian</name>
+    </author>
+    <author>
+      <name>Kaiqin Kong</name>
+    </author>
+    <author>
+      <name>Biao Jiang</name>
+    </author>
+    <author>
+      <name>Puyi Wang</name>
+    </author>
+    <author>
+      <name>Siru Chen</name>
+    </author>
+    <author>
+      <name>Tianle Li</name>
+    </author>
+    <author>
+      <name>Guanjie Chen</name>
+    </author>
+    <author>
+      <name>Junyi Wu</name>
+    </author>
+    <author>
+      <name>Chubin Chen</name>
+    </author>
+    <author>
+      <name>Yuanhang Li</name>
+    </author>
+    <author>
+      <name>Kaichen Huang</name>
+    </author>
+    <author>
+      <name>Haobo Zhang</name>
+    </author>
+    <author>
+      <name>Yangguang Li</name>
+    </author>
+    <author>
+      <name>Wei Yu</name>
+    </author>
+    <author>
+      <name>Guibin Chen</name>
+    </author>
+    <author>
+      <name>Yu Cheng</name>
+    </author>
+    <author>
+      <name>Yahui Zhou</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.28632v1</id>
+    <title>Joints, Camera, Action! Co-Generating 3D Motion and Video for Arbitrary Rigs</title>
+    <updated>2026-10-20T17:59:56Z</updated>
+    <link href="https://arxiv.org/abs/2610.28632v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.28632v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Video generation models can now depict remarkably realistic motion. Yet it is unclear how to use this motion beyond pixels: to animate a specific 3D asset and replay the animation in its 3D scene. For instance, a video model can show a monkey jumping over a crossbar, but it cannot return that jump as replayable 3D motion placed in the 3D scene. Here we present a model that directly co-generates the video and 3D motion for any supplied rig, along with a camera that registers this motion to the scene. Prior video-motion models either handle only human skeletons, often adding billions of parameters, or triangulate 3D motion from generated 2D pose maps. We instead keep 3D motion in a separate model that supports arbitrary skeletons, and connect it to a pretrained video model through a small set of cross-attention layers. This separation lets the motion model first learn how skeletons move from motion-only data, which is easier to obtain and augment than paired video. Additionally, our model learns to locate each joint in the video frames, which lets us recover the camera and place the 3D motion in the scene. To train across many skeletons, we use a generative video editor to place animated 3D assets in scenes suited to their actions, curating the edits so their known motion remains valid. Together with human and robot video, this yields nearly 200K training pairs. Our evaluations demonstrate that our model animates diverse rigs from text more faithfully than video-first pipelines, and its motion responds to the surrounding scene. It also turns video into rig motion, rig motion into video, and enables keyframe-based control of the 3D motion. Videos and additional results are available on our project page: https://research.nvidia.com/labs/par/projects/jca/.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.GR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.RO" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T17:59:56Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Noam Rotstein</name>
+    </author>
+    <author>
+      <name>Yoad Tewel</name>
+    </author>
+    <author>
+      <name>Chen Tessler</name>
+    </author>
+    <author>
+      <name>Haggai Maron</name>
+    </author>
+    <author>
+      <name>Gal Chechik</name>
+    </author>
+    <author>
+      <name>Or Litany</name>
+    </author>
+    <author>
+      <name>Yoni Kasten</name>
+    </author>
+    <author>
+      <name>Yuval Atzmon</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.28087v1</id>
+    <title>WildAIGC-Bench: Can AI Image Detectors Handle the Wild? A Benchmark of Generated and Edited Images in Online Circulation</title>
+    <updated>2026-10-20T12:07:16Z</updated>
+    <link href="https://arxiv.org/abs/2610.28087v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.28087v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>AI-generated images linked to news events and online claims can mislead audiences, enable fraud, or cause public controversy. We introduce WildAIGC-Bench, built through recurring collection across news websites, fact-checking sources, and related social media content. The pipeline combines broad coverage, timely updates, and human-verified labels through scheduled discovery, automatic screening and preliminary annotation, and human review of image-specific evidence. The benchmark contains 407 verified AI-generated or edited images, each accompanied by a source webpage link and an evidence summary. Images retain the conditions encountered online, including compression, screenshots, and recapture. Evaluation of dedicated visual detectors, multimodal large language models, and a simple Perception Encoder baseline reveals substantial recall gaps relative to existing benchmarks. WildAIGC-Bench provides both a practical detection challenge and a basis for continued data expansion and source-based verification. The dataset is released at https://github.com/YuZijian/WildAIGC-Bench.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T12:07:16Z</published>
+    <arxiv:comment>19 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Zijian Yu</name>
+    </author>
+    <author>
+      <name>Hangwei Zhang</name>
+    </author>
+    <author>
+      <name>Jun Lan</name>
+    </author>
+    <author>
+      <name>Huijia Zhu</name>
+    </author>
+    <author>
+      <name>Weiqiang Wang</name>
+    </author>
+    <author>
+      <name>Jianfu Zhang</name>
+    </author>
+  </entry>
+</feed>

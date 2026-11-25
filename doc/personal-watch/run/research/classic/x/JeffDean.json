@@ -1,0 +1,65 @@
+{
+ "handle": "JeffDean",
+ "name": "Jeff Dean (@JeffDean) / X",
+ "bio": "Co-founder &amp; CEO of Discovery Loop. Former Chief Scientist, Google. Helped build many Google products, TPUs, Gemini, TensorFlow, MapReduce, Bigtable, ...",
+ "tweets": [
+  {
+   "id": "2118554350859813374",
+   "created_at": "2026-11-06 04:01 UTC",
+   "created_at_ms": 1793937692000,
+   "text": "I'm delighted to partner with @LaudeInstitute (along with my @Sanjay_Ghemawat, John Hennessy, Dave Patterson, Ben Gomes and @andykonwinski) to support funding of open science moonshots!",
+   "url": "https://x.com/JeffDean/status/2118554350859813374",
+   "handle_guess": "JeffDean"
+  },
+  {
+   "id": "2118462545354965148",
+   "created_at": "2026-11-05 21:56 UTC",
+   "created_at_ms": 1793915804000,
+   "text": "anyone who is close to research knows how broken the incentives are. doing open science at the frontier is harder than ever, compute costs alone price most teams out. we kept wondering what might happen if we give the right resources to the right researchers at the right time?",
+   "url": "https://x.com/JeffDean/status/2118462545354965148",
+   "handle_guess": "andykonwinski"
+  },
+  {
+   "id": "2117991230428823983",
+   "created_at": "2026-11-04 14:43 UTC",
+   "created_at_ms": 1793803434000,
+   "text": "Awesome to see high voter turnout yesterday.  Thanks to everyone who took the time to vote!",
+   "url": "https://x.com/JeffDean/status/2117991230428823983",
+   "handle_guess": "JeffDean"
+  },
+  {
+   "id": "2117024473992056955",
+   "created_at": "2026-11-01 22:42 UTC",
+   "created_at_ms": 1793572941000,
+   "text": "Election Tuesday is just two days away.  For those eligible to vote in the U.S., please make time to go to the polls to vote (or mail in your ballot if you haven't already).  Voting is a great privilege of living in a democracy and how we all make our collective voices heard. 🗳️ https://t.co/HaPeX9ueIl",
+   "url": "https://x.com/JeffDean/status/2117024473992056955",
+   "handle_guess": "JeffDean"
+  },
+  {
+   "id": "2114939835077304544",
+   "created_at": "2026-10-27 04:38 UTC",
+   "created_at_ms": 1793075925000,
+   "text": "Communicating effectively about science is really important.  It's nice to see these amazing journalists recognized for their effectiveness at bringing scientific topics to life for broader audiences!",
+   "url": "https://x.com/JeffDean/status/2114939835077304544",
+   "handle_guess": "JeffDean"
+  },
+  {
+   "id": "2114734124057690244",
+   "created_at": "2026-10-26 15:01 UTC",
+   "created_at_ms": 1793026879000,
+   "text": "Congratulations to the 2026 winners of the National Academies Eric and Wendy Schmidt Awards for Excellence in Science Communications given by @theNASEM in partnership with @schmidtsciences!\\\n\\\nLearn more about the winners: https://t.co/5Ip1YDZRAk #scicomm https://t.co/BmqkNrd83U",
+   "url": "https://x.com/JeffDean/status/2114734124057690244",
+   "handle_guess": "SciCommAwards"
+  },
+  {
+   "id": "1069606809126793217",
+   "created_at": "2018-12-03 14:58 UTC",
+   "created_at_ms": 1543849110000,
+   "text": "In April, '17, @jsomers of @NewYorker reached out &amp; said he wanted to do a small profile of me &amp; my longtime colleague Sanjay Ghemawat, watch us work for a few hours, maybe dinner, etc.\\\n\\\nIt came out today. I think it captures our working style really well. https://t.co/cRSMiFfwAP",
+   "url": "https://x.com/JeffDean/status/1069606809126793217",
+   "handle_guess": "JeffDean"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-13 18:01:58"
+}

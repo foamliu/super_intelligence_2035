@@ -1,0 +1,34 @@
+    attempts=1
+--- ① lastUpdatedDate cs.CL
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&start=0&max_results=5&sortBy=lastUpdatedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=124521 n_entries=5 1.37s
+    2611.03634v1 2026-11-02T18:57:36Z 2026-11-02T18:57:36Z cs.AI WebHarbor: Docking Real Websites for Evolving GUI Agent Environments
+    2606.11435v2 2026-06-09T20:43:23Z 2026-11-02T18:56:20Z cs.CL Agent Skill Evaluation and Evolution: Frameworks and Benchmarks
+    2607.23811v3 2026-07-26T19:20:01Z 2026-11-02T18:54:20Z cs.SD Memory Efficient Audio Synthesis with Decoupled Temporal Depth Diffusi
+    2611.03622v1 2026-11-02T18:52:11Z 2026-11-02T18:52:11Z cs.RO D&A: Decoupling Description and Assessment Enables VLMs as Zero-Shot R
+    2611.03618v1 2026-11-02T18:51:04Z 2026-11-02T18:51:04Z cs.AI Strategist: Evolving Reasoning with Agents
+    attempts=1
+--- ② submittedDate 20261030-20261103 (cs.CL)
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+AND+submittedDate%3A%5B202610300000+TO+202611032359%5D&start=0&max_results=5&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=304 n_entries=5 1.59s
+    2611.03634v1 2026-11-02T18:57:36Z 2026-11-02T18:57:36Z cs.AI WebHarbor: Docking Real Websites for Evolving GUI Agent Environments
+    2611.03622v1 2026-11-02T18:52:11Z 2026-11-02T18:52:11Z cs.RO D&A: Decoupling Description and Assessment Enables VLMs as Zero-Shot R
+    2611.03618v1 2026-11-02T18:51:04Z 2026-11-02T18:51:04Z cs.AI Strategist: Evolving Reasoning with Agents
+    2611.03617v1 2026-11-02T18:50:54Z 2026-11-02T18:50:54Z cs.CL Tracing the Scientific Discovery Capacity of LLMs to Their Training Da
+    2611.03605v1 2026-11-02T18:42:32Z 2026-11-02T18:42:32Z cs.CL ufakzeka-kulak: Building and Evaluating a 31.6M-Parameter Turkish Spee
+    attempts=1
+--- ③ submittedDate 20261030-20261103 (全库，不加分类)
+    url=https://export.arxiv.org/api/query?search_query=submittedDate%3A%5B202610300000+TO+202611032359%5D&start=0&max_results=5&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=4570 n_entries=5 2.75s
+    2611.03647v1 2026-11-02T18:59:32Z 2026-11-02T18:59:32Z cs.RO Pixel-UMI: Learning Environment-Aware Whole-Body Manipulation from Sen
+    2611.03648v1 2026-11-02T18:59:32Z 2026-11-02T18:59:32Z cs.RO Pixel: A Co-Designed Full-Stack Robot System for Learning General-Purp
+    2611.03646v1 2026-11-02T18:59:29Z 2026-11-02T18:59:29Z cs.CV EgoActionBench: Benchmarking Dense Action Captioning for Egocentric Hu
+    2611.03645v1 2026-11-02T18:59:19Z 2026-11-02T18:59:19Z astro-ph.GA Episodic Star Formation - II. The Origin of the Fundamental Metallicit
+    2611.03644v1 2026-11-02T18:58:50Z 2026-11-02T18:58:50Z eess.SP Single-visit screening for intracochlear tissue growth validated again
+    attempts=1
+--- ④ 广度 sweep 5 分类
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+OR+cat%3Acs.CV+OR+cat%3Acs.SE+OR+cat%3Acs.AI+OR+cat%3Acs.LG&start=0&max_results=3&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=642318 n_entries=3 4.72s
+    2611.03647v1 2026-11-02T18:59:32Z 2026-11-02T18:59:32Z cs.RO Pixel-UMI: Learning Environment-Aware Whole-Body Manipulation from Sen
+    2611.03648v1 2026-11-02T18:59:32Z 2026-11-02T18:59:32Z cs.RO Pixel: A Co-Designed Full-Stack Robot System for Learning General-Purp
+    2611.03646v1 2026-11-02T18:59:29Z 2026-11-02T18:59:29Z cs.CV EgoActionBench: Benchmarking Dense Action Captioning for Egocentric Hu

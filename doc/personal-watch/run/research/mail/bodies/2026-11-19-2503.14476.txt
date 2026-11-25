@@ -1,0 +1,18 @@
+王老师您好，
+
+DAPO 把 RL 里最贵的四个失败模式各自对应到一个显式开关（Clip-Higher、Dynamic Sampling、Token-Level Loss、Overlong Shaping），这种写法比只报 AIME 分数有用得多。
+
+我是刘杨，做 LLM agent 方向的研究，主页 https://foamliu.github.io/。
+
+我们在 2B 级模型上做可验证奖励的 RL，奖励来自多步工具检查，比 AIME 稀疏，所以 KL、长度惩罚和 clip 范围都要重新定。
+
+两个问题：
+
+1. 你们去掉了 KL 项，这在 AIME 这种答案可验证、奖励较密的设定下成立。若奖励更稀疏（例如多步 EDA 检查，中间步大量零梯度），你们会恢复 KL，还是靠 Dynamic Sampling 过滤掉全对/全错的组来兜底？请二选一并给一句理由。
+
+2. εhigh=0.28 是在 Qwen2.5-32B 上调出来的。换到 2B 模型，εhigh 应随模型规模缩小，还是保持 0.28？你们有小模型上的经验吗？
+
+谢谢你们把四个技巧的消融分开报，这让复现有了抓手。
+
+祝好，
+Yang Liu

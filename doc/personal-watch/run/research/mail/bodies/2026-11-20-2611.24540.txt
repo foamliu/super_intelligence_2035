@@ -1,0 +1,14 @@
+Dear Dr. Sengupta,
+
+I am Yang Liu, a researcher working on LLM pretraining and agents; my work is at https://foamliu.github.io/.
+
+I read your replicated factorial study with interest, particularly the 51.5M-active-parameter setting, the 300M-token budget with 1,024-token sequences, and the all-five configuration at 3.6792 and 3.6750 nats across two seeds. Separating the MoE gain from the Muon and Gated DeltaNet effects is exactly the controlled comparison we lack.
+
+Two questions:
+1. You note that the MoE arm has about 161.3M total but 51.6M active parameters, so its gain can reflect both routing and roughly three times the capacity. Would a parameter-matched dense control change the ranking, and is that control worth running before scaling up?
+2. At 2B active parameters and a 32K context, which of the five switches do you expect to stop compounding first, and is there a cheap pilot that would tell us before committing to a full run?
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

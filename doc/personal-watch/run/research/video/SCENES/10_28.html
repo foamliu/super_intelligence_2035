@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-28 · 物理定律被偷偷改了一条，AI 能发现吗？</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#153e75 0%,#2e8b57 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(21,62,117,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#153e75; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#153e75; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#153e75; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#153e75; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-28</h1>
+  <div class="sub">今日 TOP-1：<b>物理定律被偷偷改了一条，AI 能发现吗？</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>约 445 字</b></div>
+  <div class="meta">
+    <span>📄 Can LLMs Uncover Hidden Physical Laws through Free Exploration?</span>
+    <span>🆔 arXiv:2610.37649</span>
+    <span>🏷 cs.CL（+ cs.AI + cs.MA）· 科普口径</span>
+    <span>👥 Zhen Yang, Wen Wang, Xander Xu, Ying-Cong Chen（4 位）</span>
+  </div>
+  <div class="disc">⚠️ 本片为<b>论文解读</b>：口播与字幕只使用论文正文与表格可支撑的内容；「16.7% / 0% / 97.6% / 19.0% / 28.6% / 14.3% / 4.8% / 10.9 轮 / 约 90 轮」等为<b>作者自报、本线未复现、未精读全篇（附录未读）</b>；画面<b>全部自绘 / 自生成</b>，不使用论文原图与图表。另：《两分钟论文》是已有知名频道名，本栏目名<b>发布前请用户确认</b>。</div>
+</header>
+<h2 class="sec">🎯 为什么选它当今日 TOP-1（科普口径 · 目的 2）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>问题一句话、人人有直觉，而且自带反转</b>：「如果这个世界的物理定律被偷偷改了一条，你能发现吗？那 AI 呢？」—— 不需要任何 AI 背景；答案不是「能 / 不能」，而是「<b>12 个顶级模型里只有 1 个做到，发现率 16.7%，其余 11 个全是 0</b>」。一个「1 个 vs 11 个」就够撑起记忆点。</li>
+    <li><b>画面天然可自绘、且反直觉</b>：玻璃房间里，<b>越重的球落得越慢</b>；红球被推一下后<b>自己重新启动</b>；小球一碰就<b>交换颜色</b>。全是可自绘的物理小剧场，不需要论文插图，也不需要任何模型界面截图。</li>
+    <li><b>失败细节比成功更有故事</b>：一个模型<b>每局平均 10.9 步就收工</b>；另一组模型<b>肯跑约 90 步、每局都能造出可用装置</b>，却<b>一次也没发现</b>，造装置失败率还超过 60% ⇒ 片子可以落一句「<b>会动手 ≠ 会发现</b>」。</li>
+    <li><b>有可引用的「压力测试」</b>：加一句提示 → 16.7% 升到 <b>28.6%</b>；预算 100 → 500 步，反而降到 <b>14.3%</b>（模型约 40 步就自己停）；关掉造工具 → <b>4.8%</b> ⇒「<b>更多算力 ≠ 更多发现</b>」是第二个钩子。</li>
+    <li><b>边界清楚（片中说）</b>：15 个场景（1 正常对照 + 14 各改一条定律）/ 每场景最多 100 轮；<b>判分与场景演化也是 LLM</b>（GPT-6.1-Sol 判正确性与证据、GPT-6-Astra 审装置与生成新场景）；16.7% 属小样本量级；<b>不覆盖</b>真实实验室、<b>不证明</b>「AI 会做科研」；数字作者自报、本线未复现。</li>
+    <li><b>与同日另一篇「科普」候选的分工</b>：<code>2610.36668</code>（Asch 从众的分布化测量）也适合做视频，但它的论据主要是统计表与分布图，<b>画面感弱于</b>本片 ⇒ 本片为 TOP-1，另一篇留作备选。</li>
+  </ul>
+</div>
+
+<h2 class="sec">📄 论文信息（照抄 arXiv 条目 · 不臆测）</h2>
+<div class="card">
+  <div class="row"><div class="k">英文原题</div><div class="v"><span class="orig">Can LLMs Uncover Hidden Physical Laws through Free Exploration?</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Zhen Yang, Wen Wang, Xander Xu, Ying-Cong Chen（<b>4 位署名</b>，无 et al.；机构据 PDF 首页：<b>HKUST(GZ)</b> / <b>Alibaba Group</b> / <b>ZJU</b> / <b>HKUST</b>；片中<b>不念机构</b>）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-27T17:57:00Z</b>（<code>published</code>，来自 <code>id_list</code> 官方 Atom；<code>updated</code> 相同 ⇒ 无 v2）· <code>comment</code>：项目页 <code>zhenyangcs.github.io/LongChang-website/</code> · PDF 实测 <b>14 页</b>（54,304 字符）</div></div>
+  <div class="row"><div class="k">分类</div><div class="v"><code>cs.CL</code>（主分类；cross-list <code>cs.AI</code> + <code>cs.MA</code>）· 关键词：自主科学发现 / 反事实物理世界 / 工具构建 / 多智能体评测 / 无任务探索</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><code>https://arxiv.org/abs/2610.37649</code>（放视频简介；本页不嵌外链资源）</div></div>
+  <div class="row"><div class="k">本文引用口径</div><div class="v">「发现率（D）= 定律说对 <b>且</b> 有实验证据支撑 的比例」，与「定律正确率 C = 19.0%」「证据支撑率 S = 97.6%」<b>分开</b>报 —— 片中必须区分，不能只念 16.7%。</div></div>
+</div>
+
+
+<h2 class="sec">🎞 五段分镜（0–10 / 10–30 / 30–80 / 80–105 / 105–120s）</h2>
+<table>
+  <tr><th style="width:44px">镜</th><th style="width:96px">时间</th><th style="width:88px">段落</th><th style="width:34%">口播（中文 · 约 200 字/分）</th><th>画面（一律自绘 / AI 生成）</th><th style="width:18%">字幕（屏上大字）</th><th style="width:16%">音效 / BGM</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">如果有个世界，越重的球落得越慢 —— 你能发现吗？那 AI 呢？十五个被改过定律的世界，十二个顶级模型，没人告诉它要研究什么。</td>
+    <td><b>纯色深底</b>上落下两颗球：轻的先着地、重的后着地（<b>故意画反</b>），右下角一行小字「<b>这不是 bug</b>」。镜头拉开，露出 <b>15 个并排的小房间图标</b>，其中 <b>14 个亮红边</b>、1 个白边（对照）；再来一排 <b>12 个模型名牌</b>，逐一翻到背面写「？」。<b>零论文截图</b>，全部矢量自绘。</td>
+    <td>越重，落得越慢？<br><b>15 个世界 · 12 个模型</b><br>（小字：作者自报 · 未复现）</td>
+    <td>两声落球「咚、咚」；房间图标点亮「哒哒」；低频「嗡」收尾。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s（20s）</td>
+    <td class="act">问题</td>
+    <td class="vo">科学发现，常常从一次「不对劲」开始：球没被碰，却自己动了。可现有的 AI 基准，多半先把题目和目标交到模型手里。于是作者换个问法：把定律偷偷改掉，只给一间玻璃房和几个物体，看它会不会自己注意到异常、自己提问、自己做实验。</td>
+    <td>左半屏：<b>一个静止的红球</b>，画面无操作；2 秒后红球<b>自己向右滑动又停住</b>，顶部弹出<b>黄色感叹号</b>。右半屏：一张<b>「任务卡」</b>被剪掉（剪刀动画），只留下<b>空白的问号卡</b>。两屏合成一间<b>透明玻璃房</b>线框（MuJoCo 风格），房内只有球、方块、斜板。</td>
+    <td>它会不会自己发现「不对劲」？<br><b>不给任务 · 不给提示</b></td>
+    <td>球滑动「沙」；感叹号「叮」；剪刀「咔嚓」；玻璃房出现「叮—」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s（50s）</td>
+    <td class="act">方法</td>
+    <td class="vo">这就是 LongChang。十五个虚拟世界跑在同一套物理引擎里：一个是正常世界做对照，另外十四个各改一条定律 —— 比如重力反着来，或者颜色一碰就交换。模型当探索者，最多一百步：搬东西、造天平、加挡板，全靠自己。旁边还有几个 AI 当考官：一个生成和演化场景，一个审查工具设计，最后一个拿着「被改过的定律」判报告 —— 既要说对，还要有实验证据。</td>
+    <td>分三层画：① <b>15 个房间</b>排成一行，逐个点开显示「<b>改：重力反向 / 改：碰撞换色 / 改：推动后暂停 10 拍</b>」标签（自绘图标，不用论文 Table 1）；② 中央<b>模型小人</b>拖方块、搭<b>天平 + 挡板</b>，头部浮出「<b>step 1…100</b>」计数器；③ 三个<b>考官头像</b>依次亮起，分别举牌「<b>造场景</b>」「<b>审工具</b>」「<b>判报告：正确？有证据？</b>」，最后合成一枚<b>双勾印章</b>。</td>
+    <td>15 个世界：1 个正常 + 14 个改一条定律<br><b>探索者：最多 100 步</b><br><b>考官也要「证据支撑」</b></td>
+    <td>标签弹出「哒」×3；天平「咔哒」；计数器「滴答」；印章「咚」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s（25s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果是：十二个模型里，只有 GPT-6-Astra 真正发现了定律，发现率 16.7%；另外十一个全是零。过程更耐人寻味：它拿得出证据的比例高达 97.6%，可定律完全说对只有 19% —— 实验像模像样，结论只说对一半。有的模型每局十步就收工；有的肯做九十步、每次都能造出装置，却一次也没发现。</td>
+    <td>屏上先出现 <b>12 根竖条</b>：11 根停在 <b>0%</b>，1 根升到 <b>16.7%</b> 并高亮标签「GPT-6-Astra」。切到<b>两根横条对比</b>：证据支撑 <b>97.6%</b>（几乎满格）vs 定律正确 <b>19.0%</b>（很短）。再切一组<b>「步数 vs 发现」</b>：左边小人走 <b>10.9 步</b>就坐下、右边小人走 <b>约 90 步</b>搭出装置但「发现」栏打叉。所有数字旁挂小字「<b>作者自报 · 未复现</b>」。</td>
+    <td>0% ×11 ｜ <b>16.7%</b> ×1<br>证据 97.6% ｜ 说对 19.0%<br><b>会动手 ≠ 会发现</b></td>
+    <td>竖条生长「嗖」；0% 一排「噗」；横条对比「叮」；打叉「呲」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">给一句提示，发现率升到 28.6%；把预算从一百步加到五百步，反而降到 14.3% —— 它四十步就自己停了。所以这条视频想说的不是「AI 会做科研了」，而是：会动手，不等于会发现。论文链接在简介。</td>
+    <td>两个<b>箭头</b>并排：提示 → <b>16.7% ↑ 28.6%</b>；预算 100→500 → <b>16.7% ↓ 14.3%</b>。随后画面收成一行字「<b>会动手 ≠ 会发现</b>」，再淡出为片尾卡：<b>论文原题（英文照抄）</b> + <b>arXiv:2610.37649</b> + 一行「<b>论文解读 · 非官方 · 非结论</b>」。<b>不出现</b>「AI 已经会做科研 / 科学家要失业」等原文未支持的表述（作者原文是「只有 1 个模型在 16.7% 的运行中发现」）。</td>
+    <td>提示：+11.9 点<br>加预算：反而更低<br><b>会动手 ≠ 会发现</b></td>
+    <td>箭头上升「嗖」、下降「咻」；定格「咚」；片尾单音「叮」后留 1s 静音。</td>
+  </tr>
+</table>
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面</b>：全部<b>矢量自绘 / 文生图自生成</b>；🚫 不使用论文 Figure 1/2/5/6/7 与 Table 1/3/4 的截图；场景一律画成<b>「线框玻璃房 + 简单几何体」</b>，避免让观众误以为是真实机器人实验。</li>
+  <li><b>数字上屏规则</b>：每个百分比第一次出现时，字幕必须带「<b>作者自报</b>」小字；口播不四舍五入到失真（16.7% 不念成「约两成」，19.0% 不念成「两成」）。</li>
+  <li><b>术语处理</b>：<code>MuJoCo</code> 只在画面角落标注，口播念「物理引擎」；<code>discovery rate</code> 口播念「发现率」，并第一次出现时用字幕补一句「= 说对且拿得出实验证据」。</li>
+  <li><b>人名/机构</b>：口播只念模型名（GPT-6-Astra）与论文题；作者与机构放在简介与片尾卡，不在口播里堆。</li>
+  <li><b>节奏</b>：单镜不超过 50s（方法镜），每 8–10s 必须有画面变化（推/拉/换层/数字滚动），BGM 在方法段保持低音量、结果段抬 2 dB。</li>
+  <li><b>比例/时长</b>：竖版 1080×1920（抖音）与横版 1920×1080（B站）各导一版；总时长严格 120s（±1s）；字幕安全区上下各留 12%。</li>
+  <li><b>口播字数核对</b>：镜 1 <b>49</b> 字 / 镜 2 <b>92</b> 字 / 镜 3 <b>133</b> 字 / 镜 4 <b>102</b> 字 / 镜 5 <b>69</b> 字 ⇒ 合计 <b>445 字</b>（按 200 字/分 ≈ 134s；要压到 120s 需 ≈222 字/分，或删镜 3 的「比如重力反着来…」一句 —— 录制时以 <b>120s</b> 为准）。</li>
+  <li><b>TTS（V3 才做）</b>：中性科普音色，语速 200–210 字/分；数字前后各留 80ms 停顿；「16.7%」读「百分之十六点七」。</li>
+</ul>
+
+<h2 class="sec">📝 口播全文（可直接念 · 约 445 字）</h2>
+<div class="card">
+  <p class="vo">如果有个世界，越重的球落得越慢 —— 你能发现吗？那 AI 呢？十五个被改过定律的世界，十二个顶级模型，没人告诉它要研究什么。</p>
+  <p class="vo">科学发现，常常从一次「不对劲」开始：球没被碰，却自己动了。可现有的 AI 基准，多半先把题目和目标交到模型手里。于是作者换个问法：把定律偷偷改掉，只给一间玻璃房和几个物体，看它会不会自己注意到异常、自己提问、自己做实验。</p>
+  <p class="vo">这就是 LongChang。十五个虚拟世界跑在同一套物理引擎里：一个是正常世界做对照，另外十四个各改一条定律 —— 比如重力反着来，或者颜色一碰就交换。模型当探索者，最多一百步：搬东西、造天平、加挡板，全靠自己。旁边还有几个 AI 当考官：一个生成和演化场景，一个审查工具设计，最后一个拿着「被改过的定律」判报告 —— 既要说对，还要有实验证据。</p>
+  <p class="vo">结果是：十二个模型里，只有 GPT-6-Astra 真正发现了定律，发现率 16.7%；另外十一个全是零。过程更耐人寻味：它拿得出证据的比例高达 97.6%，可定律完全说对只有 19% —— 实验像模像样，结论只说对一半。有的模型每局十步就收工；有的肯做九十步、每次都能造出装置，却一次也没发现。</p>
+  <p class="vo">给一句提示，发现率升到 28.6%；把预算从一百步加到五百步，反而降到 14.3% —— 它四十步就自己停了。所以这条视频想说的不是「AI 会做科研了」，而是：会动手，不等于会发现。论文链接在简介。</p>
+</div>
+
+<h2 class="sec">⚖️ 合规与边界（发布前必读）</h2>
+<div class="note">
+  <ol>
+    <li><b>标明「论文解读」</b>：片头或片尾固定一行「论文解读 · 非官方 · 非结论」，简介首行放 arXiv 链接。</li>
+    <li><b>不夸大</b>：禁用「AI 已能自主科研 / 科学家要失业 / 首次实现科学发现」等表述；原文只支持「12 个模型里 1 个在 16.7% 的运行中满足了『说对 + 有证据』」。</li>
+    <li><b>不编造数据</b>：本片所有数字均出自 PDF 正文 / Table 3 / Table 4（16.7 / 0 / 97.6 / 19.0 / 28.6 / 14.3 / 4.8 / 10.9 / 约 90 / 40 步），不得二次加工成新数字。</li>
+    <li><b>不盗图</b>：画面全部自绘 / 自生成；如需引用论文图，必须另行取得授权（本片不引用）。</li>
+    <li><b>口径隔离</b>：本片属「目的 2 · 科普」，<b>不</b>写成「与 BaiZe / ZhuLong 相关」的借鉴结论；如需借鉴版解读，另见当日日报 <code>research/daily/2026-10-28.html</code>。</li>
+    <li><b>未复现声明</b>：本片数字<b>作者自报、本线未复现</b>；PDF 完整性 = 结构校验通过（Range 拼接，sha256 与 CDN etag 未比对成功，详见日报附录 C）—— 若要在视频里强调「我们核过原文」，请先自行重下 PDF 复核。</li>
+    <li><b>栏目名</b>：《两分钟论文》为已有知名频道名，<b>发布前请用户确认</b>是否沿用或改名。</li>
+  </ol>
+</div>
+
+<footer>
+  <p>research 线 · <code>research/video/SCENES/10_28.html</code> ｜ TOP-1 = <i>Can LLMs Uncover Hidden Physical Laws through Free Exploration?</i>（<code>arXiv:2610.37649</code>）· 5 镜 / 120s / 口播 445 字 ｜ 数据源：当日 <code>research/daily/2026-10-28.html</code> 5 篇（早 3 借鉴 + 晚 2 科普）。</p>
+  <p>🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片：TTS / 文生图 / 剪辑）待用户确认工具链。本页自包含（内联 CSS、零外链资源、零 <code>&lt;script&gt;</code>），离线双击可开。</p>
+</footer>
+</div>
+</body>
+</html>
+
+

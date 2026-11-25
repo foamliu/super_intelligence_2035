@@ -1,0 +1,332 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/5PmRydR4bbjrExFH+BgmRTdcTYA</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.40577,2610.37921,2610.39562,2610.38329,2610.40545,2610.40293,2610.40564,2610.37833,2610.39417,2610.38637&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-31T22:02:55Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.40577,2610.37921,2610.39562,2610.38329,2610.40545,2610.40293,2610.40564,2610.37833,2610.39417,2610.38637" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>10</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.38329v1</id>
+    <title>A Case Study of a Multi-Agent Kernel-Optimization Loop That Learns a New AI Accelerator</title>
+    <updated>2026-10-28T06:29:02Z</updated>
+    <link href="https://arxiv.org/abs/2610.38329v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.38329v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Frontier large language models write correct CUDA kernels for most single-operator benchmark tasks, yet their accuracy collapses on accelerators whose architecture and programming language they have rarely seen. We present a case study of an LLM agent loop built for such accelerators. Our example is the FuriosaAI RNGD NPU, programmed in a recent, sparsely documented Rust DSL, where the loop optimized three Gemma-4-12B decode kernels over 12 days on a shared, scarce device. The loop builds its own target knowledge: it writes and checks a summary of the DSL documentation, measures the chip with microbenchmarks, records compiler-derived legality rules, and revisits this knowledge when the toolchain changes, rechecking rules and measurements where it can. A role-based search over per-kernel Design Trees explores whole-kernel designs and accumulates small accepted changes in the best version of each kernel. Because device time is scarce and readings are noisy, cheap checks screen new designs before any device run, and late in the run a change was accepted only after repeated comparisons with the best kernel on the device. The final kernels reach a 9.293x geomean speedup over the official baseline, each within 1.25x of the cycles needed just to move its weights. Our prompts, profiler and acceptance test are available at https://github.com/bgchun-fs/multi-agent-kernel-gen-loop.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-28T06:29:02Z</published>
+    <arxiv:comment>7 pages, 3 figures, 2 tables. Round 1 of the NPU Model Optimization Competition at MICRO 2026. Code: https://github.com/bgchun-fs/multi-agent-kernel-gen-loop</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Byonggon Chun</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40577v1</id>
+    <title>Multi-View MoE: Letting Every Router Shape Expert Computation</title>
+    <updated>2026-10-29T17:45:12Z</updated>
+    <link href="https://arxiv.org/abs/2610.40577v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40577v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Sparse mixture-of-experts (MoE) models expand parameter capacity by activating a small subset of experts per token. Expert selection directly affects model capabilities under a fixed active-expert budget. Dense evaluation of all experts reveals weak agreement between single-router rankings and expert-utility evaluation rankings, especially in middle and deep layers. Richer signals for selection and computation incur additional cost: selection based on internal expert activations requires preliminary computation, while processing multiple full representations separately through the same expert repeats its computation. We propose Multi-View MoE to improve expert selection with multiple routers and reuse their preferences to modulate expert computation under a fixed expert budget. Its Multi-Router submodule aggregates sigmoid scores from independently initialized routers. These routers develop highly differentiated expert preferences during training, allowing experts strongly favored by one router or jointly supported by several routers to be selected. Multi-View further uses each selected expert's relative scores across routers to mix learned latent views into its input, reusing routing preferences for both selection and computation. Each selected expert executes one forward pass, preserving the active-expert count, expert FLOPs, and all-to-all communication volume. On a 24-layer 10B-A1B model trained on 708B tokens, full Multi-View MoE improves the nine-task downstream mean by 1.18 percentage points over the baseline. Multi-Router alone yields a 0.6-percentage-point gain and improves the rank correlation between router scores and evaluated expert utility, with relative increases of 8.1% globally and approximately 58% in the layer with the lowest single-router alignment. Controlled mixing interventions show the model uses input differences that depend on both the expert and the token.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T17:45:12Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zelin Zhao</name>
+    </author>
+    <author>
+      <name>Tianchi Ma</name>
+    </author>
+    <author>
+      <name>Junyuan Shang</name>
+    </author>
+    <author>
+      <name>Shuohuan Wang</name>
+    </author>
+    <author>
+      <name>Dianhai Yu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40564v1</id>
+    <title>Training Foundation Models with a Single Algorithm</title>
+    <updated>2026-10-29T17:42:05Z</updated>
+    <link href="https://arxiv.org/abs/2610.40564v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40564v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Foundation models are typically trained in stages: pretraining, midtraining, supervised fine-tuning (SFT), and reinforcement learning (RL), with changes in both data and learning algorithms. We show that this algorithmic separation is not fundamental. By deriving suitable RL objectives as maximum-likelihood fitting to model-generated target distributions, we place all of these stages under a single likelihood-based training algorithm, unified training. This perspective turns the foundation-model training lifecycle into a problem of choosing which data to train on, in what proportions, and when, with conventional staged training as a special case. We instantiate this framework in a unified training system that mixes static data and RL generations within a single trainer. Across controlled and real-world experiments, unified training improves the accuracy-compute tradeoff and task coverage while preserving broader capabilities, and provides a stronger starting point for continual learning. This work lays the groundwork for a unified science of foundation-model training, connecting mathematical principles, training infrastructure, and the development of model capabilities.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T17:42:05Z</published>
+    <arxiv:comment>67 pages, 31 figures, 22 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Yuda Song</name>
+    </author>
+    <author>
+      <name>Alvin Zhang</name>
+    </author>
+    <author>
+      <name>Fahim Tajwar</name>
+    </author>
+    <author>
+      <name>Daman Arora</name>
+    </author>
+    <author>
+      <name>Jeff Schneider</name>
+    </author>
+    <author>
+      <name>Daniel Khashabi</name>
+    </author>
+    <author>
+      <name>Ruslan Salakhutdinov</name>
+    </author>
+    <author>
+      <name>J. Andrew Bagnell</name>
+    </author>
+    <author>
+      <name>Aarti Singh</name>
+    </author>
+    <author>
+      <name>Andrea Zanette</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40545v1</id>
+    <title>Retrieval as Traversal: Value-Indexed Memory for Stateful Long-Context Agents</title>
+    <updated>2026-10-29T17:37:21Z</updated>
+    <link href="https://arxiv.org/abs/2610.40545v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40545v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Long-context models repeatedly solve closely related retrieval problems. Attention or global retrieval can retain large stores, but each forward pass again searches for what matters. Recurrent compression avoids this search only by deciding earlier what information to preserve. Neither mechanism directly exploits that useful memories at neighbouring retrieval steps may substantially overlap. We propose an alternative in which retrieval is a persistent local traversal through an address space. We separate a memory's content from its address. Utility is defined by the information revealed by retrieving the content, while geometry determines only how cheaply that information can be reached. This leads to a cost-regularised indexing objective that preserves information value inside local neighbourhoods while charging for every memory made locally accessible. Its marginal-value form gives both attractive and exclusion pressures. Thus, complementary memories should be co-retrievable when the additional value exceeds retrieval cost, whereas redundant memories should not occupy the same retrieval set solely because they are individually useful. As a proof of principle, we test only the simplest fixed-geometry instance on MiniGrid Memory. A persistent local traversal head reaches $0.95$ mean return after $0.59$M training steps with a five-token context, compared with $0.94$M for Gaussian absolute addressing and more than $2$M for categorical absolute addressing. The experiment does not test learned geometry or repeated retrieval. Instead, it motivates the hypothesis that stateful retrieval may be easier to learn than stateless. To test the full proposed method further experimentation is necessary.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T17:37:21Z</published>
+    <arxiv:comment>Accepted at the NeurIPS 2026 Workshop on Long-Context Foundation Models (LCFM). 7 pages, 1 table</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Daniel Strauß</name>
+    </author>
+    <author>
+      <name>Zhenshan Bing</name>
+    </author>
+    <author>
+      <name>Alois Knoll</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.37833v1</id>
+    <title>Depth through Recurrence: Towards Ultra-Efficient On-Device ASR</title>
+    <updated>2026-10-27T18:45:35Z</updated>
+    <link href="https://arxiv.org/abs/2610.37833v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.37833v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Modern automatic speech recognition (ASR) systems have achieved remarkable accuracy by scaling model depth and capacity, but at the cost of increased memory, energy, and computational demands. On edge devices where ASR is often most needed, such as watches and glasses, deploying such large models is infeasible due to extremely constrained resources. This raises a fundamental question: can we achieve high representational power in deep ASR models without scaling up parameterization? In this work, we revisit the role of depth and identify layer wise representational dynamics, in which most layers learn functionally similar transformations. Motivated by this insight, we propose a block-recurrent ASR architecture that replaces parameterized depth with a small set of recurrent blocks, each consisting of weight-shared layers, thereby preserving effective depth while drastically reducing model size. Through representation-guided grouping and knowledge distillation, block-recurrent models retain the accuracy of large reference models while using an order of magnitude fewer parameters. Across Open ASR Leaderboard benchmarks, a model with only two shared blocks recovers 97.4% of the accuracy of large models on average. The compact backbone further enables efficient on-device personalization through lightweight MoE-LoRA adaptation, allowing user-specific models to match or surpass the accuracy of general-purpose ASR systems with significantly lower inference cost. By reusing weights across recurrent steps, the proposed architecture reduces memory-access overhead and inference energy consumption. Together, these results show that high quality ASR can be achieved without large parameterization, and that structured recurrence provides a principled path towards ultra-compressed, energy-efficient, and personalized speech recognition on the edge.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-27T18:45:35Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Chen Feng</name>
+    </author>
+    <author>
+      <name>Tianyi Xu</name>
+    </author>
+    <author>
+      <name>Ramchalam Kinattinkara Ramakrishnan</name>
+    </author>
+    <author>
+      <name>Yicheng Lin</name>
+    </author>
+    <author>
+      <name>Shaojie Zhuo</name>
+    </author>
+    <author>
+      <name>Zhaocong Yuan</name>
+    </author>
+    <author>
+      <name>Chenzheng Su</name>
+    </author>
+    <author>
+      <name>Xiaopeng Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.38637v1</id>
+    <title>On-Policy Self-Distillation with Teacher Evolution</title>
+    <updated>2026-10-28T10:51:52Z</updated>
+    <link href="https://arxiv.org/abs/2610.38637v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.38637v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>On-Policy Self-Distillation (OPSD), which aligns a student model's token-level distribution with that of its self-teacher prompted by privileged context, has emerged as a promising direction to mitigate reward sparsity in sequence-level post-training paradigms. However, OPSD often fails to achieve continuous performance gains during training. In this paper, we find that the model's limited self-teaching capability underlies this phenomenon by generating unreliable guidance on certain samples. To address this problem, we propose Teacher-Evolution Self-Distillation (TESD), which enables the self-teacher to generate rollouts and receive environmental feedback based on task correctness and context independence. First, using these rewards as training objectives, we perform teacher-oriented optimization to continuously enhance the model's self-teaching capability during distillation. Second, by estimating teacher guidance reliability from these rewards, we apply adaptive student-oriented optimization to down-weight samples with unreliable guidance. Extensive experiments across multiple datasets and model scales show that TESD consistently outperforms representative token-level and sequence-level methods, highlighting the necessity of improving supervision quality in OPSD.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-28T10:51:52Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Shufan Shen</name>
+    </author>
+    <author>
+      <name>Zhongni Hou</name>
+    </author>
+    <author>
+      <name>Chao Bi</name>
+    </author>
+    <author>
+      <name>Yufei Zhang</name>
+    </author>
+    <author>
+      <name>Guojun Yin</name>
+    </author>
+    <author>
+      <name>Shuhui Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.39562v1</id>
+    <title>Raincheck: Deferred Multimodal Prefill for Efficient Multi-Turn MLLM Inference</title>
+    <updated>2026-10-29T08:01:02Z</updated>
+    <link href="https://arxiv.org/abs/2610.39562v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.39562v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Multi-turn conversations with multimodal large language models (MLLMs) reuse input context, but long multimodal inputs increase time to first token (TTFT). Query-aware hard pruning reduces prefill tokens but permanently excludes information that later questions may require. We propose Raincheck, a framework for deferred multimodal prefill that decouples initial token selection from later information availability. An existing pruning method selects tokens for initial prefill; Raincheck preserves and progressively prefills unselected tokens in source order using unused compute capacity during decode. Unfinished prefill continues after answer return during available scheduling gaps. Attention visibility control and affine state mapping enable context updates after generation begins in full-attention and hybrid recurrent models. Prefill-decode fusion reduces repeated weight reads. We evaluate Qwen3-VL-8B and Qwen3.5-9B with 30% initial multimodal-token retention. Across both models and four pruning methods, Raincheck recovers on average 77.7% and 60.4% of the quality lost to matched hard pruning on MultiVerse and ConvBench, respectively. On MultiVerse, the SGLang implementation reduces mean first-turn TTFT by up to 24.1% relative to full prefill, with less than 0.5% increase in mean time per output token (TPOT).</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T08:01:02Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Wenjie Huang</name>
+    </author>
+    <author>
+      <name>Jun Zhang</name>
+    </author>
+    <author>
+      <name>Hongyaoxing Gu</name>
+    </author>
+    <author>
+      <name>Haoyang Huang</name>
+    </author>
+    <author>
+      <name>Tianqi Xu</name>
+    </author>
+    <author>
+      <name>Xinyue Hao</name>
+    </author>
+    <author>
+      <name>Xinyi Hu</name>
+    </author>
+    <author>
+      <name>Xinle Du</name>
+    </author>
+    <author>
+      <name>Jun Dai</name>
+    </author>
+    <author>
+      <name>Shuang Ge</name>
+    </author>
+    <author>
+      <name>Chen Lei</name>
+    </author>
+    <author>
+      <name>Yue Li</name>
+    </author>
+    <author>
+      <name>Mingcheng Wan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.37921v1</id>
+    <title>FAD-KV: Adaptive Dictionary KV Caching for Efficient Reasoning Decoding</title>
+    <updated>2026-10-27T20:05:31Z</updated>
+    <link href="https://arxiv.org/abs/2610.37921v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.37921v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Key-value (KV) caching is a core mechanism in large language models, where intermediate key and value representations are stored to accelerate autoregressive decoding. As generation length increases, KV cache memory and computation grow linearly, making compression critical for efficient long-output reasoning. Dictionary-based sparse KV compression is appealing because it represents each token's KV states as a sparse combination of learned basis elements (atoms) in a dictionary, preserving token-level structure without enforcing a global low-rank constraint. However, existing dictionary-based methods face two practical limitations during decoding: iterative sparse coding methods such as Orthogonal Matching Pursuit add decoding-time overhead, and static dictionaries may mismatch evolving KV distributions under test-time generation. While adaptive dictionary updates can reduce this mismatch, naive append-only strategies lead to dictionary growth during generation. We propose FAD-KV, a \textbf{F}ast \textbf{A}daptive \textbf{D}ictionary KV caching framework for efficient reasoning decoding. FAD-KV integrates (i) a screening-based sparse coding scheme, where a one-shot Top-\(n\) selection identifies a small candidate pool followed by lightweight coefficient refinement, and (ii) a fixed-size dictionary adaptation mechanism that reuses inactive atoms instead of expanding the dictionary. By controlling both sparse coding cost and adaptive dictionary growth, FAD-KV provides a memory-bounded and computation-efficient KV compression framework for long reasoning workloads. Experiments on reasoning and long-context benchmarks show that FAD-KV achieves a strong quality-efficiency trade-off while avoiding unbounded dictionary growth during decoding.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-27T20:05:31Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yuxuan Zhu</name>
+    </author>
+    <author>
+      <name>David H. Yang</name>
+    </author>
+    <author>
+      <name>Parisa Shiravani</name>
+    </author>
+    <author>
+      <name>Mohammad Mohammadi Amiri</name>
+    </author>
+    <author>
+      <name>Tejaswini Pedapati</name>
+    </author>
+    <author>
+      <name>Subhajit Chaudhury</name>
+    </author>
+    <author>
+      <name>Keerthiram Murugesan</name>
+    </author>
+    <author>
+      <name>Pin-Yu Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.39417v1</id>
+    <title>Well-Specified and Well-Tested? Assessing SWE-bench-Style Datasets with a Self-Evolving Agent</title>
+    <updated>2026-10-29T05:59:36Z</updated>
+    <link href="https://arxiv.org/abs/2610.39417v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.39417v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) have shown strong performance on software engineering (SE) tasks, driving the need for high-quality datasets for reliable training and evaluation. SWE-bench-style datasets (SWE datasets) are widely used to evaluate LLM-based coding agents on real-world software issues, where task clarity and test coverage directly affect whether instances are solvable and verifiable. However, quality issues persist in existing SWE datasets, and manual annotation is costly and labor-intensive, motivating LLM-based annotation. Existing approaches typically rely on static, overly general rubrics, limiting their ability to handle diverse and nuanced scenarios and often yielding high false positive rates. In contrast, human annotators draw on accumulated experience to make context-aware judgments. Inspired by this, we propose ExLabel, an LLM-based, self-evolving, experience-guided assistant for task clarity and test coverage assessment in SWE datasets. ExLabel maintains an evolving experience bank that distills cross-instance knowledge into stable yet adaptive judgment criteria and reuses relevant experience to guide the assessment of new instances. For systematic evaluation, we construct SWE-TQ, a new benchmark spanning eight programming languages, by cleaning human annotations from SWE-bench and Multi-SWE-bench. Experiments with three backbone LLMs show that ExLabel achieves the best F1 across all settings, with relative improvements of 44.2%/49.9% and 24.0%/18.4% over the best baseline for task clarity and test coverage assessment on the Python/Multilingual subsets, respectively. Moreover, a coding model fine-tuned on SWE-rebench data filtered by ExLabel resolves 66.2% of issues on SWE-bench Verified, outperforming the model trained on data filtered by the best baseline by 14.5%.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T05:59:36Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Zhonghao Jiang</name>
+    </author>
+    <author>
+      <name>Xuyang Zheng</name>
+    </author>
+    <author>
+      <name>Yanfu Yan</name>
+    </author>
+    <author>
+      <name>Zhongxin Liu</name>
+    </author>
+    <author>
+      <name>Lingfeng Bao</name>
+    </author>
+    <author>
+      <name>Shuiguang Deng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40293v1</id>
+    <title>MAServeBench: Benchmarking Multi-Agent LLM Serving Systems with Hierarchical Collaboration Workloads</title>
+    <updated>2026-10-29T15:42:15Z</updated>
+    <link href="https://arxiv.org/abs/2610.40293v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40293v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language model (LLM)-based multi-agent systems (MAS) coordinate specialized agents to solve complex tasks, turning each user request into interdependent model and tool operations. Unlike independent requests, these operations become ready at different times and consume evolving context as agents coordinate and exchange results. This creates changing patterns of concurrency, computation, and memory demand that can expose different bottlenecks in LLM serving hardware. Yet benchmarking these effects requires capturing the collaboration rules that generate serving workloads, beyond the requests observed during execution. We present MAServeBench, a benchmark that treats multi-agent collaboration as a configurable dimension of serving workloads for LLM serving and hardware evaluation. Its composable stages capture how agents coordinate and exchange context in documented MAS workflows, enabling native executions to generate different workloads even when task inputs and tools remain unchanged. Hierarchical Semantic Traces preserve realized operations and dependencies for reproducible comparisons of legal release constraints at fixed work. Task-linked measurements connect these workloads to serving execution and GPU/NPU hardware behavior, revealing why serving efficiency does not always translate into timely task completion. The benchmark code is available at https://github.com/ShengxuanQiu/MAServeBench.</summary>
+    <category term="cs.MA" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T15:42:15Z</published>
+    <arxiv:primary_category term="cs.MA"/>
+    <author>
+      <name>Shengxuan Qiu</name>
+    </author>
+    <author>
+      <name>Haochen Huang</name>
+    </author>
+    <author>
+      <name>Shuzhang Zhong</name>
+    </author>
+    <author>
+      <name>Zizhuo Fu</name>
+    </author>
+    <author>
+      <name>Zebin Yang</name>
+    </author>
+    <author>
+      <name>Jianming Tong</name>
+    </author>
+    <author>
+      <name>Meng Li</name>
+    </author>
+  </entry>
+</feed>

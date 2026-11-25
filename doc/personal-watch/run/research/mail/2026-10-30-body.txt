@@ -1,0 +1,57 @@
+【论文日报】2026-10-30（周五）· 5 篇 · 当日 5/5 收口
+口径：早 3 篇 =「借鉴」（与 BaiZe / ZhuLong 在研工作相关）；晚 2 篇 =「科普」（大众可懂 + 有传播力）
+数据源：arXiv 官方 API（export.arxiv.org）+ id_list 权威复核；推荐 = 待读线索，非结论；数字均作者自报，本线未复现。
+
+━━ 一、晚报 2 篇「科普」（公告批次 2026-10-29 到货，直接取自本批 kept 217）━━
+
+4) HairDeck: Animation-Ready Stylized Hair Cards from a Single Image
+   arXiv:2610.40599 ｜ cs.CV（+cs.GR）｜ 首次提交 2026-10-29 ｜ 6 位署名（清华 / CMU / 港中大）
+   为何值得读：把游戏/虚拟人头发业界用的「发卡（hair cards）」，从「自回归解一条长控制点序列」
+   改成「一整套发卡 = 无序集合、一卡一 token」的集合扩散 Transformer，一次去噪生成全部发卡，
+   并同时生成驱动它们的弹簧骨骼链 ⇒ 单张图片即可得到能导出、能动画的资产（27 页 / 23 图）。
+   在同类唯一生成器 CHARM 自己的测试集上：Chamfer 距离 −44%、发卡朝向误差减半以上、快 33 倍。
+   与本线相关性：属「多元素结构化输出的一次性生成」范式，对 ZhuLong 的版图/网表元素生成类任务
+   有表达层迁移价值（非直接可用）。
+   ⚠️ PDF 36.98 MB，超本封 20 MB 附件上限 ⇒ 不附，链接：https://arxiv.org/pdf/2610.40599
+   （本日「科普 TOP-1」，分镜脚本：research/video/SCENES/10_30.html）
+
+5) Collaborative AI agents for autonomous experimental research with solid-state quantum spins
+   arXiv:2610.40589 ｜ cs.AI（+cs.MA, quant-ph）｜ 首次提交 2026-10-29 ｜ 4 位署名（Institute of Science Tokyo）
+   为何值得读：多 agent 分头承担提问 / 理论推导 / 实验设计 / 复核，彼此可以否决或改向，甚至能
+   否决研究问题本身。演示在金刚石色心（固态量子自旋）：agent 自己推出「预测给定一族微波脉冲响应
+   所需的最少标定设置数」；首次实验符合理论，但重复参考测量显示信号漂移 ⇒ agent 判定「不确定」，
+   并在不放宽验收标准的前提下改测量协议，修订版通过标准（17 页 / 5 图，代码 github.com/E-zClap/auctopus）。
+   与本线相关性：对 ZhuLong 的 harness 设计有直接借鉴价值 ——「自我否决 + 验收标准不可放宽 + 记录
+   为什么改协议」，可直接对照我们 generate–execute–refine 循环里的「何时承认失败」规则。
+   附件：2610.40589.pdf（565,605 B / 17 页）
+
+━━ 二、早报 3 篇「借鉴」（取自 2026-10-27 批次候选池，首次提交 2026-10-27）━━
+
+1) Scaling Laws for Tool-Use Agents via Controllable Environment Synthesis
+   arXiv:2610.37648 ｜ cs.LG ｜ Apple ｜ 24 页
+   为何值得读：给出工具型 agent 的四轴可控合成环境（app 数 A × 状态数 S × 数据量 D × 测试时预算 T），
+   并用 P̂ = σ(c0+cA·log2(A·S·D))·σ(b0+bT·log2 T)^ν 拟合规模律（留出区 MAE 0.0285，对比只用数据量
+   的 0.1706）。结论对我们有用：预算该花在「工具/数据库多样性」而不是单纯堆任务条数（>4096 任务后
+   A=64 胜 A=8）。可直接对照 BaiZe/ZhuLong 的 agentic 训练数据配方。
+   附件：2610.37648.pdf（4,483,220 B / 24 页）
+
+2) Collective Dynamics of Self-Reinforcement: How Cross-Task Coupling Drives Policy Collapse in Unsupervised RLVR
+   arXiv:2610.37553 ｜ cs.LG ｜ 单作者（PDF 未标机构，如实记）｜ 20 页
+   为何值得读：给出无标签 RLVR 的「坍缩临界题量」 N_c ≃ ln(1/δ)/(λ² ln[F*/F(a)]) 与耦合强度 Λc ≈ 2.6，
+   小 Transformer 22 条件 × 7 规模 × 6 seeds 的实证：去掉共享方向则永不坍缩、加回共享耦合则剂量依赖
+   恢复；边际熵奖励能止崩但救不回准确率。对我们：无标注 RL 扩题量时的稳定性判据，可先做小规模临界值探测。
+   附件：2610.37553.pdf（749,369 B / 20 页）
+
+3) What Improves During Pretraining? Tracking Knowledge Acquisition with Point-in-Time Models
+   arXiv:2610.37631 ｜ cs.AI（AACL 2026）｜ University of Pennsylvania + UCL ｜ 13 页
+   为何值得读：提出 TVS（跨 8 个年份 PIT-4B 的 NLL 变异系数）作为「时点模型」分层指标：16,239 条 ×
+   6 基准 × 6 模型，最终高 TVS 组 34/36 胜、平均 +7.3 分；但控制 margin 后仅 +1.4 ⇒ 非独立效应；
+   按平均 NLL 分组则 36/36 反向。对我们：预训练评测的聚合分数会掩盖时间信息，评测分层设计可直接借用。
+   附件：2610.37631.pdf（3,822,269 B / 13 页）
+
+━━ 附件与台账 ━━
+· 本封附件 4 个 PDF（早 3 + 晚 1），合计 9,620,463 B ≈ 9.17 MB（≤ 20 MB）。
+· HairDeck（2610.40599，36.98 MB）超限未附，见上方链接；本地已存 research/pdf/2026-10-30/。
+· 当日 5 篇日报：research/daily/2026-10-30.html ｜ 分镜：research/video/SCENES/10_30.html
+· 本轮取数：window_mode=daily（72h）；15/15 查询 HTTP 200（2 条重试后成功）；kept 217 / dropped 357；
+  公告批次已刷新 2026-10-27 → 2026-10-29（独立复核：全库 submittedDate 区间 totalResults 0 → 2571）。

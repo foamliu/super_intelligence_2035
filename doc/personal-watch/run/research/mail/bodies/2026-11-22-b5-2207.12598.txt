@@ -1,0 +1,16 @@
+Geachte heer Salimans,
+
+I am Yang Liu, a researcher working on LLM agents and generative modelling; you can find my work at https://foamliu.github.io/. Your note on classifier-free guidance is the reference we use whenever a diffusion stack has to trade sample fidelity against coverage without training an extra classifier.
+
+Three questions:
+
+1. The unconditional branch is obtained by dropping the condition during joint training. At which dropout probability did you settle, and is that number stable across datasets? We are training on a narrow industrial image domain and worry that a low drop rate leaves the unconditional score too close to the conditional one.
+
+2. Do you apply one guidance weight for the whole trajectory, or does the useful weight drift with the noise level? For few-step distilled samplers the same weight may over-saturate early steps, and we would like to know whether you saw that.
+
+3. Beyond visual inspection, is there a quantitative signal that tells you guidance is too high — colour saturation statistics, CLIP-score plateau, or FID turning over?
+
+Concrete answers would change how we set up our diffusion baseline. Thank you.
+
+Best regards,
+Yang Liu

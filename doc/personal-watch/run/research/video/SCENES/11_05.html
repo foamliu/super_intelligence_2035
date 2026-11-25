@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-11-05 · 让 AI 画 25 只猫，它给你 8 只</title>
+<style>
+  :root { --primary:#123a63; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#0f766e;
+          --bg:#f5f8fa; --card:#fff; --border:#d3dde4; --text:#1f2328; --muted:#55646f; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b2f4f 0%,#0f766e 55%,#39a0a8 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,47,79,.24); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.96; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.93; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.18); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.22); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b2f4f; }
+  code { background:#eef3f6; border:1px solid #dde6ec; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b2f4f; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eaf2f7; color:#0b2f4f; font-weight:600; }
+  tr:nth-child(even) td { background:#fafcfd; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .vo { color:#0b3f52; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+  a { color:var(--accent); word-break:break-all; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>《论文两分钟》分镜脚本 · 2026-11-05</h1>
+  <div class="sub">今日 TOP-1：<b>让 AI 画 25 只猫，它给你 8 只</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>≈413</b> 字（实测汉字数；按 205–215 字/分 ≈ 115–121s，留 5s 给画面停顿）</div>
+  <div class="meta">
+    <span>📅 日期：2026-11-05（CST）</span>
+    <span>🎬 期号：SCENES/11_05</span>
+    <span>📄 来源：arXiv <code>2611.06840</code></span>
+    <span>🏷 口径：科普（大众看得懂 + 有传播力）</span>
+  </div>
+  <div class="disc">⚠️ <b>论文解读 = 非官方 · 非结论</b>；数字均<b>作者自报</b>，本线<b>未复现</b>；画面全部自绘 / 自生成，<b>不使用论文原图</b>。V3（成片：TTS / 图生视频 / 剪辑）<b>未启动</b>，本页只到 V2（分镜脚本）。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它（科普口径 · 四判据）</h2>
+<div class="card">
+  <div class="row"><div class="k">论文原题</div><div class="v"><span class="orig">Same Layout, Different Count: What Number Words Do Past Ten in Text-to-Image Models</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Liang Yue · Eric A. Vance（<b>2 位</b>；据 PDF 首页：<b>University of Colorado Boulder</b>）</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.06840">https://arxiv.org/abs/2611.06840</a>（<code>cs.CV</code> · 提交 <code>2026-11-04T17:57:53Z</code> · 43 页 · 已落地 PDF 并做结构校验：43 页 / 183,509 字符）</div></div>
+  <div class="row"><div class="k">为什么选它</div><div class="v">当日 5 篇里，它是唯一同时满足「人人有体验（AI 画不对手指数 / 杯子数）+ 结论反直觉（布局留着、数量乱跳）+ 有可演示解法（把数量画成构图：59% vs 4%）+ 两分钟讲得完」的一篇。同为科普候选的 <code>2611.06704</code>（吃豆人）画面也强，但「训练越久反而更差」需要解释 RL 背景；本篇零门槛。</div></div>
+</div>
+<div class="ok-box">
+  <b>四判据核对</b>：① <b>大众能懂</b> —— 会打字让 AI 画图的人都能共鸣；② <b>有传播力</b> —— 「AI 十以内会数、十以外瞎画」自带吐槽体质 + 可现场演示；③ <b>可讲清</b> —— 只需讲「同噪声对照 + 两个数字（0.69×、59% vs 4%）」；④ <b>有真实来源</b> —— arXiv ID + abs + 已落地 PDF（结构校验见当日日报附录 C）。
+</div>
+
+
+<h2 class="sec">🎞 分镜表（5 镜 · 120s）</h2>
+<table>
+  <tr><th style="width:52px;">镜号</th><th style="width:92px;">时间轴</th><th style="width:84px;">段落</th><th style="width:30%;">口播文案</th><th style="width:27%;">画面（自绘 / 自生成）</th><th style="width:14%;">屏幕文字</th><th>音效 / BGM</th></tr>
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s</td>
+    <td>钩子</td>
+    <td class="vo">让它画十二只猫，再让它画二十五只。两张图的桌椅摆放、光线、背景，一模一样。只有猫的数量，像被谁随手改了一下。</td>
+    <td>左右分屏：同一间客厅、同一束光，左边 12 只猫、右边数到 8 只就没了。第 6 秒数字「25」在提示词框里被红色划掉，改成「?」；角落小字「自绘示意」。</td>
+    <td>要 25 只<br>给 8 只</td>
+    <td>猫叫几声；「划掉」时钢笔沙沙声；BGM 轻快但压低</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s</td>
+    <td>问题</td>
+    <td class="vo">大家都知道 AI 数不清数，但一直没人说清：过了十以后，那个数字到底还起不起作用？是它跟着数字走、只是跟不准，还是干脆完全不理？这两件事，看分数是分不出来的。</td>
+    <td>①提示词框里「12 / 25 / 30」依次闪；②台秤两端：左边「跟着走但不准」、右边「完全不理」，秤盘停在中间不动；③画面上浮出一句「分数分不出这两件事」。</td>
+    <td>过十之后<br>数字还有用吗？</td>
+    <td>数字闪烁「嗒嗒」；秤盘晃动「吱」；BGM 转成悬念低音</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s</td>
+    <td>方法</td>
+    <td class="vo">作者的招很朴素：固定同一种物体、固定同一张随机底图，一次只改一个东西。然后请一批从没看过提示词的人，去数生成出来的三千零八十八张图。五个开源模型都跑一遍，从 SDXL 到二十亿参数的 Qwen-Image。这样数出来的数量是干净的：没人知道「应该」看到几只。</td>
+    <td>①底图（噪点方块）被钉住，左上角挂锁；②滑块只在一格上移动（数字 12 → 25）；③流水线吐出成排小图，被一格格送进「盲测」房间；④人形图标逐个点计数器，计数板累加到 <b>3,088</b>；⑤五台模型机身并排亮起（SDXL / SD3.5-M / FLUX.1-dev / FLUX.2 [klein] / Qwen-Image）。</td>
+    <td>同噪声对照<br>盲数 3,088 张图<br>5 个开源模型</td>
+    <td>挂锁「咔」；滑块「哒」；传送带「嗡嗡」；计数器「滴滴」；方法段 BGM 降到最低</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s</td>
+    <td>结果</td>
+    <td class="vo">结果挺尴尬。十以内，模型都听话；过了十，SD3.5 和 FLUX.1 就不跟了 —— 你要多少，它给你的中位数都卡在四到八个；FLUX.1 更绝，你越往三十要，它反而缩到一两只。研究者还发现：只重画比八分之一更细的那层噪点，布局不变，数量却能挪动三分之二。而把数量直接画进底图，人眼在百分之五十九的图里数得对；只写在提示词里，只有百分之四。</td>
+    <td>①两段刻度尺：<b>2–8</b> 段绿色（听话）、<b>12–30</b> 段红色（不跟）；②SD3.5 的指针卡在 <b>4.5–8.5</b> 区间来回抖；③FLUX.1 的堆叠方块随数字增大反而缩成 <b>1–2</b> 个；④细网格噪点被橡皮擦掉重画，布局不动、数量标记滑到 <b>0.69×</b>；⑤双柱对比 <b>59%</b> vs <b>4%</b>；⑥角落小字「作者自报 · 本线未复现」。</td>
+    <td>十以后不跟<br>中位 4.5–8.5<br>细噪点挪动 0.69×<br>画进底图 59%<br>只写提示词 4%</td>
+    <td>刻度「嗒嗒」到红区「嗡」；指针抖动「嚓」；双柱「咚」；BGM 抬 2 dB</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s</td>
+    <td>意义 / 展望</td>
+    <td class="vo">所以别光在提示词里写数字，把「多少个」变成构图的一部分。更值得记住的是：超过十个之后，那个精确率指标几乎分不出「跟得松」和「根本不理」。看指标，真的会被骗。论文链接放在简介。</td>
+    <td>①提示词框里的「25」被拖进画布，变成一排小圆点矩阵；②圆点自动排布成构图；③指标仪表盘出现「4% ≈ 5–7%」并打上问号；④最后 1 秒黑场，白字「论文解读 · 非官方 · 非结论 · arXiv:2611.06840」。</td>
+    <td>把数量画进构图<br>指标会骗人<br>arXiv:2611.06840</td>
+    <td>拖拽「唰」；圆点「叮叮」排布；问号「嘟」；BGM 渐弱，最后一拍收静音</td>
+  </tr>
+</table>
+
+<h2 class="sec">📝 口播全文（可直接念）</h2>
+<div class="card">
+  <p class="vo">让它画十二只猫，再让它画二十五只。两张图的桌椅摆放、光线、背景，一模一样。只有猫的数量，像被谁随手改了一下。</p>
+  <p class="vo">大家都知道 AI 数不清数，但一直没人说清：过了十以后，那个数字到底还起不起作用？是它跟着数字走、只是跟不准，还是干脆完全不理？这两件事，看分数是分不出来的。</p>
+  <p class="vo">作者的招很朴素：固定同一种物体、固定同一张随机底图，一次只改一个东西。然后请一批从没看过提示词的人，去数生成出来的三千零八十八张图。五个开源模型都跑一遍，从 SDXL 到二十亿参数的 Qwen-Image。这样数出来的数量是干净的：没人知道「应该」看到几只。</p>
+  <p class="vo">结果挺尴尬。十以内，模型都听话；过了十，SD3.5 和 FLUX.1 就不跟了 —— 你要多少，它给你的中位数都卡在四到八个；FLUX.1 更绝，你越往三十要，它反而缩到一两只。研究者还发现：只重画比八分之一更细的那层噪点，布局不变，数量却能挪动三分之二。而把数量直接画进底图，人眼在百分之五十九的图里数得对；只写在提示词里，只有百分之四。</p>
+  <p class="vo">所以别光在提示词里写数字，把「多少个」变成构图的一部分。更值得记住的是：超过十个之后，那个精确率指标几乎分不出「跟得松」和「根本不理」。看指标，真的会被骗。论文链接放在简介。</p>
+</div>
+
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面</b>：全部<b>矢量自绘 / 文生图自生成</b>；🚫 不使用论文 Figure 与表格截图（刻度尺、指针、双柱对比一律按结论重画示意图，角落标「示意」）。</li>
+  <li><b>数字上屏规则</b>：<code>3,088</code> / <code>4.5–8.5</code> / <code>0.69×</code> / <code>59%</code> / <code>4%</code> 首次出现时，字幕带「<b>作者自报 · 本线未复现</b>」小字；口播把 59% 念「百分之五十九」，字幕仍写精确值。</li>
+  <li><b>不能混的口径</b>：① <code>4.5–8.5</code> 是 <b>SD3.5-Medium</b> 在「超出其有效范围后，不管要求多少」的<b>中位数量区间</b>，<b>不是</b>所有模型；② <code>1–2 只</code> 是 <b>FLUX.1-dev 在请求 30 个时</b>的表现；③ <code>0.69×</code> 是「只重画细尺度噪声」相对「换一个新数字」的<b>数量变化幅度比</b>（按 16 种物体的人眼计数），<b>不是</b>「精度提升 69%」；④ <code>59% vs 4%</code> 是 <b>SD3.5-Medium</b> 在「把数量以噪点网格画进起始 latent」vs「只写在提示词里」下、人眼数出所求数量的比例，<b>不是</b>所有模型都如此；⑤ <code>4%</code> 同时是 SD3.5-M 的精确匹配率 —— 与「松散跟随」模型的 5–7% 几乎分不开，说明<b>指标本身失效</b>，<b>不能</b>读成「两个模型一样差」。</li>
+  <li><b>术语处理</b>：<code>reach</code> 念「有效范围」；<code>starting noise / seed</code> 念「起始底图 / 随机底图」；<code>latent</code> 念「潜空间底图」；<code>exact-match</code> 念「精确命中率」；模型名照念英文（SD3.5、FLUX.1、Qwen-Image）。</li>
+  <li><b>节奏</b>：单镜不超过 50s（方法镜）；每 8–10s 必须有画面变化；BGM 在方法段最低、结果段抬 2 dB；镜 5 收在静音上。</li>
+  <li><b>比例 / 时长</b>：竖版 1080×1920（抖音）与横版 1920×1080（B站）各导一版；总时长严格 120s（±1s）；字幕安全区上下各留 12%。</li>
+  <li><b>口播字数核对</b>：本页口播<b>纯汉字 413 个</b>（脚本实测，含数字读法）；按 <b>205–215 字/分</b> 计约 <b>115–121s</b> ⇒ 结果段（镜 4）在「十以后不跟 / 中位 4.5–8.5」处各留 1.5s 画面停顿补足 120s；若录制超时，优先删方法段「这样数出来的数量是干净的…」一句，<b>不删</b>任何数字句。</li>
+  <li><b>TTS（V3 才做）</b>：中性科普音色，语速 195–205 字/分；数字前后各留 80ms 停顿；「59%」念「百分之五十九」，「4%」念「百分之四」，「0.69」念「零点六九」，「3,088」念「三千零八十八」。</li>
+</ul>
+
+
+<h2 class="sec">⚖️ 合规与边界（发布前必读）</h2>
+<div class="note">
+  <ol>
+    <li><b>标明「论文解读」</b>：片头或片尾固定一行「论文解读 · 非官方 · 非结论」，简介首行放 arXiv 链接（<code>https://arxiv.org/abs/2611.06840</code>）。</li>
+    <li><b>不夸大</b>：禁用「AI 根本不会数数 / 文生图集体崩了 / 已解决计数难题」等表述；原文只支持「<b>在这 5 个开源模型、这套同噪声协议、这些受控物体类型</b>上，超过各自有效范围后数字词对数量的作用变弱且无明确方向；把数量编码进起始 latent 时人眼命中率显著提高」。</li>
+    <li><b>不编造数据</b>：本片所有数字均出自摘要与正文（<code>3,088</code> / <code>4.5–8.5</code> / <code>1–2</code> / <code>0.69×</code> / <code>59%</code> / <code>4%</code> / <code>5–7%</code> / <code>16</code>），不得二次加工成新数字。</li>
+    <li><b>不盗图</b>：画面全部自绘 / 自生成；<b>不使用论文中的任何 Figure、表格截图</b>；生成示意图时也不得直接复制论文示例图。</li>
+    <li><b>不越界推断</b>：本片<b>不</b>讨论「闭源模型表现如何」（论文未测），也<b>不</b>给「怎么调提示词就能画准 100 个」的保证 —— 论文给的是 59% 的命中率。</li>
+    <li><b>口径隔离</b>：本片属「目的 2 · 科普」，<b>不</b>写成「与 BaiZe / ZhuLong 相关」的借鉴结论；当日借鉴版解读见 <code>research/daily/2026-11-05.html</code> 早 3 篇。</li>
+    <li><b>未复现声明</b>：本片数字<b>作者自报、本线未复现</b>；PDF 完整性 = 结构校验通过（<code>%PDF-</code> + <code>%%EOF</code> + <code>pdfinfo</code> / <code>pdftotext</code> 可解析 + 字节 == <code>Content-Range</code> total；8 段 Range 续传拼接，<b>sha256 与 CDN <code>etag</code> 未对齐</b>，见当日日报附录 C）。</li>
+    <li><b>边界提醒</b>：① 只测 <b>5 个开源模型</b>（SDXL / SD3.5-Medium / FLUX.1-dev / FLUX.2 [klein] base 4B / Qwen-Image 20B），<b>不含闭源模型</b>；② 计数靠<b>人工 + 检测器（SAM 3 等三种）</b>交叉，物体类型受限；③ 结论为「十以上作用变弱 / 无方向」，<b>不等于</b>「模型完全没有计数能力」（十以内是跟得住的）；④ 属被测模型的<b>行为学研究</b>，未给出可训练的解法；⑤ 作者承诺公开 3,088 张图的人工计数数据，本线<b>未见仓库链接</b>。</li>
+    <li><b>栏目名</b>：《两分钟论文》为已有知名频道名，<b>发布前请用户确认</b>是否沿用或改名。发布由用户本人执行。</li>
+  </ol>
+</div>
+
+<footer>
+  <p>research 线 · 《论文两分钟》分镜脚本（V2）｜ 2026-11-05 · TOP-1 = <code>2611.06840</code> Same Layout, Different Count: What Number Words Do Past Ten in Text-to-Image Models ｜ 索引：<a href="index.html">SCENES/index.html</a></p>
+  <p>自包含单文件 · 内联 CSS · 零外链 · 零脚本 · 离线可开 ｜ 论文解读 = 非官方 · 非结论；数字作者自报、本线未复现。</p>
+</footer>
+</div>
+</body>
+</html>
+

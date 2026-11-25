@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/K8vmaDZ/EpwbCMMwCViicF87LdY</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.29171,2610.29352,2610.30132,2610.28815,2610.30042,2610.29870,2610.30105,2610.29013&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-22T22:04:40Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.29171,2610.29352,2610.30132,2610.28815,2610.30042,2610.29870,2610.30105,2610.29013" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>8</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.28815v1</id>
+    <title>Forging More Tasks into Better Harnesses: Agentic Harness Evolution via Successive Scale Racing</title>
+    <updated>2026-10-20T18:36:33Z</updated>
+    <link href="https://arxiv.org/abs/2610.28815v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.28815v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Agentic harness evolution optimizes an agent's instructions, tools, and control flow by using its task execution experiences as evolving evidence. While more evolution tasks should intuitively improve performance, our preliminary study reveals a paradoxical failure mode: the performance of existing methods degrades as the task pool expands. Our further analysis demonstrates that this degradation stems from suboptimal evidence selection during optimization, as different evidence combinations lead to substantially different evolution outcomes. To address this issue, we propose Successive Scale Racing (SSR), a framework that adaptively searches for optimal evidence combinations in each evolution round. SSR constructs diverse evidence combinations based on the corresponding task quality and coverage, and efficiently races the resulting candidate harnesses under a small compute budget. Empirically, across three distinct benchmarks, SSR achieves state-of-the-art results in all six configurations. Notably, as the task pool grows from 40 to 200, SSR steadily improves the pass rate from 64.3% to 68.3%, while the baselines' performances all drop. Furthermore, its racing mechanism identifies near-optimal candidates while reducing validation executions by 60%.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T18:36:33Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Jingzhe Liu</name>
+    </author>
+    <author>
+      <name>Jiliang Tang</name>
+    </author>
+    <author>
+      <name>Tong Zhao</name>
+    </author>
+    <author>
+      <name>Neil Shah</name>
+    </author>
+    <author>
+      <name>Clark Mingxuan Ju</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.29352v1</id>
+    <title>Don't Stop Long-Context Continual Pre-Training Too Early: An Empirical Scaling Law</title>
+    <updated>2026-10-21T07:46:55Z</updated>
+    <link href="https://arxiv.org/abs/2610.29352v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.29352v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Long-context continual pre-training (LCCP) is widely used to improve long-context capability, but how its benefits scale with the number of tokens used for LCCP remains unclear. We investigate this question through modeling, monitoring, and validating the benefits of scaling LCCP. First, we establish an empirical additive power law relating long-context performance to model size and the respective token budgets of short-context pre-training and LCCP. Experiments across five model scales and more than one hundred short- and long-context budget configurations show that the fitted law reproduces the observed trends and extrapolates well to held-out model scales. Second, we introduce \textsc{Constant-Last4}, a training and observation protocol that averages the four most recent consecutive checkpoints from a constant-learning-rate run to enable stable monitoring along a single extensible training trajectory. Under this protocol, the same scaling-law form fits well and accurately predicts the LCCP performance trajectory of a 1.22B-parameter model trained on approximately 100B LCCP tokens. Finally, downstream evaluations along this trajectory show continued improvements in long-context performance, with no clear sign of saturation within the evaluated range. These gains persist after both 128K context extension and supervised fine-tuning, with benefits extending to long-context understanding and agentic tasks. Together, these results argue for continuing to scale LCCP rather than stopping early: its gains are stably observable along an extensible trajectory, quantitatively predictable, and transferable to downstream tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T07:46:55Z</published>
+    <arxiv:comment>32 pages, 18 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ziqing Qiao</name>
+    </author>
+    <author>
+      <name>Xiaoyue Xu</name>
+    </author>
+    <author>
+      <name>Sikui Zhang</name>
+    </author>
+    <author>
+      <name>Yinuo Xu</name>
+    </author>
+    <author>
+      <name>Bingxiang He</name>
+    </author>
+    <author>
+      <name>Chaojun Xiao</name>
+    </author>
+    <author>
+      <name>Xu Han</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.29013v1</id>
+    <title>Target Regeneration Shrinks the Gains of Draft-Training Objectives in Speculative Decoding</title>
+    <updated>2026-10-21T00:26:37Z</updated>
+    <link href="https://arxiv.org/abs/2610.29013v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.29013v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Speculative decoding accelerates large language models by verifying drafted tokens in parallel. New draft-training objectives are usually credited with the acceptance they add over cross-entropy on externally written responses, yet many pipelines let the target rewrite them. We ask how much of that gain survives. With a vision-language target and a block drafter, we train three objectives on four versions of one corpus: cross-entropy on corpus tokens, token-level distillation from the target, and distillation gated to positions that would survive verification. Distillation and the gate add large gains on external responses, but after greedy regeneration, distillation adds a smaller gain and the gate little or none. The shrinkage persists across data orders, position weights, verifiers, decoding temperatures and, for distillation, initializations and learning rates. Most of it remains at matched supervised length and at each objective's best measured training length. A second vision corpus shows the shrinkage, as does a text-only replication, for distillation also with an autoregressive drafter. Objective gains should therefore be measured against a target-regenerated baseline and across training lengths. Our code is available at https://github.com/js-lee-AI/TargetRegeneration.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T00:26:37Z</published>
+    <arxiv:comment>19 pages, 6 figures, 15 tables. Code: https://github.com/js-lee-AI/TargetRegeneration</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jungseob Lee</name>
+    </author>
+    <author>
+      <name>Hogun Seong</name>
+    </author>
+    <author>
+      <name>Euijun Choi</name>
+    </author>
+    <author>
+      <name>Sugyeong Eo</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.29870v1</id>
+    <title>PAUSE: Search-Free Steering of Coding Agents Before Their First Source-Code Edit</title>
+    <updated>2026-10-21T15:24:44Z</updated>
+    <link href="https://arxiv.org/abs/2610.29870v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.29870v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Coding agents can invest substantial effort in repository exploration and testing yet still produce unsuccessful patches. Existing online steering methods review trajectories periodically or invoke an advisor when a monitor detects behavioral problems; frequent reviews are costly, and the absence of anomalous behavior does not mean that an agent is on the right track. We propose PAUSE, a framework for steering coding agents with a single planning intervention. Agents reach their first source-code edit at a median of 60% of trajectory progress, after exploration, bug reproduction, and testing. PAUSE intercepts this edit request before it executes, which requires no learned monitor, no search over checkpoints, and no extra model call (search-free). A separate Planner reads the task and the pre-edit transcript and writes one repair plan; the same agent, the Executor, resumes with this plan, keeping its context and workspace. PAUSE applies online, during a live run, and offline, from a recorded trajectory prefix. We evaluate PAUSE on SWE-bench Verified and SWE-bench Multilingual with two Executors and three agent harnesses. With Qwen3-coder as Executor and GPT-5.6 Sol as Planner, online steering improves resolution by 16.8% on Verified in OpenHands and by 14.7% on Multilingual in SWE-agent. In SWE-agent, PAUSE outperforms LivePlan, a rule-triggered advisor, by 3.2% on Verified and 3.7% on Multilingual at similar Planner cost, and is comparable to SICA's periodic overseer at about 11-15% of its Planner cost. Offline, PAUSE recovers 35.4% of eligible failed Verified tasks, and resuming from the recorded prefix uses 33-41% fewer Executor tokens than restarting.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T15:24:44Z</published>
+    <arxiv:comment>21 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Viral Patel</name>
+    </author>
+    <author>
+      <name>Boyin Tan</name>
+    </author>
+    <author>
+      <name>Jason Xue</name>
+    </author>
+    <author>
+      <name>Youcheng Sun</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30132v1</id>
+    <title>LongZero: Enhancing Long-Context Reasoning in LLMs from Zero Data</title>
+    <updated>2026-10-21T17:59:14Z</updated>
+    <link href="https://arxiv.org/abs/2610.30132v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30132v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reinforcement learning (RL) is an effective way to strengthen the long-context reasoning of large language models (LLMs), but it needs training data that are long, diverse, challenging, and verifiable. Human annotation of such data is expensive, naturally occurring data are too scarce to sustain RL, and existing synthesis methods depend on external corpora or stronger teacher models, which become harder to obtain as the trained models get stronger. Recently, RL from zero data, in which a model learns from tasks it proposes itself, has achieved excellent performance, but existing methods target short-context tasks. Therefore, we propose $\textbf{LongZero}$, a method that lets an LLM improve its own long-context reasoning without any external data. Instead of writing questions and answers over existing documents, LongZero first has the model synthesize the question and answer with its supporting evidence in a compact structured form, and only then separately expands the evidence into a long multi-document context. LongZero combines these self-written multi-hop reasoning tasks with self-written multi-round retrieval tasks and trains the model with GRPO. We evaluate LongZero on two LLMs across five long-context reasoning benchmarks and compare it with RL on data synthesized from external corpora. Experimental results show that LongZero can generalize to real tasks, and outperforms both baselines, suggesting a viable and promising path to improving long-context reasoning of LLMs.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T17:59:14Z</published>
+    <arxiv:comment>Code and data are available at https://github.com/zhennan1/LongZero</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zhennan Wan</name>
+    </author>
+    <author>
+      <name>Jianfei Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30042v1</id>
+    <title>HGM-Dual: Lineage-Aware Guided Agent Harness Optimization for Long-Horizon Planning</title>
+    <updated>2026-10-21T17:02:28Z</updated>
+    <link href="https://arxiv.org/abs/2610.30042v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30042v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Harness optimization, which improves an agent's prompts, tools, and workflows, is an increasingly effective way to enhance agents built on frozen or closed-source LLMs. Leading approaches such as the Darwin--Godel Machine and the Huxley--Godel Machine (HGM) rely on recursive self-improvement and were developed mainly for coding, where the competence needed to improve the agent coincides with the competence being improved. Planning tasks, in which an agent must produce a sequence of tool calls that jointly satisfies interacting constraints, break this alignment. There, open-ended self-modification repeatedly explores ineffective changes and consumes substantial evaluation budgets. We introduce HGM-Dual, a diagnostic-guided framework for budget-efficient harness evolution for planning agents. First, HGM-Dual represents agent evolution as lineage-aware context. This context records what each ancestor changed, which behaviors improved or regressed, and which modifications were ineffective, giving the editor explicit edit-outcome attribution instead of an unstructured archive of past agents. Second, HGM-Dual introduces error-conditioned dual-path child generation. For each selected parent, it generates a general child that preserves open-ended exploration and specialized children that target the harness components most likely responsible for the parent's highest-ranked constraint violations. HGM-Dual outperforms the strongest baseline by up to 14.45% relative improvement in case accuracy while matching HGM variants' final performance with 2x-4x fewer evaluation budget.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.NE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T17:02:28Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Sudipta Paul</name>
+    </author>
+    <author>
+      <name>Pengrui Quan</name>
+    </author>
+    <author>
+      <name>Aounon Kumar</name>
+    </author>
+    <author>
+      <name>Nicholas Tzou</name>
+    </author>
+    <author>
+      <name>Vivek Kulkarni</name>
+    </author>
+    <author>
+      <name>Srinivas Chappidi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30105v1</id>
+    <title>Asymmetric On-Policy Distillation Learns In-Context Exploration</title>
+    <updated>2026-10-21T17:50:31Z</updated>
+    <link href="https://arxiv.org/abs/2610.30105v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30105v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Sequential decision-making under partial observability is difficult because agents must explore to infer hidden, task-relevant information before acting effectively. Learning such information-gathering behaviors tabula rasa via online reinforcement learning is sample-inefficient, whereas offline imitation averages expert actions across hidden states and fails to learn exploration. In this work, we propose ASTEROID, a simple and effective student--teacher supervised learning framework that can learn test-time exploration. Although a privileged expert never needs to explore, we demonstrate that a history-conditioned student can learn to do so when trained with on-policy contexts: the student first collects on-policy context under partial observability, and the privileged expert provides action labels conditioned on that context. By distilling expert actions directly conditioned on the student's on-policy history, the student learns to systematically resolve partial observability, i.e., search while uncertain and exploit once the hidden state is revealed. This enables efficient test-time exploration (similar to Bayesian posterior sampling) without incurring the impractical training-data costs of reinforcement learning. Across a diverse range of eleven different environments, including discrete exploration benchmarks, robotic manipulation, navigation, and Procgen environments, ASTEROID achieves ~2x higher returns under fixed exploration budgets, uses ~100x fewer interactions than RL baselines, and outperforms frontier models at exploration. Finally, our method transfers policies trained in simulation to vision-denied real-world robot manipulation, exhibiting efficient exploration and increasing success by +40% over standard distillation. Overall, it provides a simple yet surprisingly effective framework to learn efficient test-time exploration.</summary>
+    <category term="cs.RO" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T17:50:31Z</published>
+    <arxiv:primary_category term="cs.RO"/>
+    <author>
+      <name>Sriyash Poddar</name>
+    </author>
+    <author>
+      <name>Yanda Bao</name>
+    </author>
+    <author>
+      <name>Jacob Krantz</name>
+    </author>
+    <author>
+      <name>Matthew Chang</name>
+    </author>
+    <author>
+      <name>Xavier Puig</name>
+    </author>
+    <author>
+      <name>Roozbeh Mottaghi</name>
+    </author>
+    <author>
+      <name>Natasha Jaques</name>
+    </author>
+    <author>
+      <name>Abhishek Gupta</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.29171v1</id>
+    <title>TrainBridge: Agentic NPU Training Optimization Guided by GPU Compilation Evidence</title>
+    <updated>2026-10-21T04:00:48Z</updated>
+    <link href="https://arxiv.org/abs/2610.29171v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.29171v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We study how to improve training efficiency on Ascend NPUs. In the NPU training programs we study, framework-level compilation optimizations such as operator fusion are only partially applied, leaving fragmented computation and avoidable execution overheads. Profiling-guided tuning can address these inefficiencies, but it often requires costly trial and error. To make training on NPUs more efficient, we propose TrainBridge, an agentic approach for transferring GPU optimization guidance to NPU training. TrainBridge uses the highly optimized execution produced by mature GPU compilation stacks as a task-specific reference for NPU tuning. It extracts optimization intents from the GPU training execution to guide NPU program rewrites and further refines the rewritten program through iterative profiling. Our GPU-to-NPU migration experiments show that TrainBridge achieves an average 1.7x speedup across four workloads covering LLM pretraining, image classification, and vision-language training, and an average speedup of nearly 2.0x across 27 Modded-NanoGPT speedrun records with highly optimized GPU implementations.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T04:00:48Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yupeng Chen</name>
+    </author>
+    <author>
+      <name>Kunxiang Zhao</name>
+    </author>
+    <author>
+      <name>Xingjian Wang</name>
+    </author>
+    <author>
+      <name>Yue Zhao</name>
+    </author>
+    <author>
+      <name>Yijing Wu</name>
+    </author>
+    <author>
+      <name>Ye Liu</name>
+    </author>
+    <author>
+      <name>Kai Li</name>
+    </author>
+    <author>
+      <name>Congliang Chen</name>
+    </author>
+    <author>
+      <name>Ruoyu Sun</name>
+    </author>
+  </entry>
+</feed>

@@ -1,0 +1,49 @@
+{
+ "handle": "Kimi_Moonshot",
+ "name": "Kimi.ai (@Kimi_Moonshot) / X",
+ "bio": "Built by Moonshot AI to empower everyone to be superhuman. \nPR: globalpr@moonshot.ai\nDC: https://t.co/wBsBTn6fmE",
+ "tweets": [
+  {
+   "id": "2118010528123773297",
+   "created_at": "2026-11-04 16:00 UTC",
+   "created_at_ms": 1793808035000,
+   "text": "Releasing the model weights of Kimi K3.1 Pro: https://t.co/tJXcYUeSCj\\\nWe'll keep advancing open intelligence. https://t.co/BbWCJUYYSQ",
+   "url": "https://x.com/Kimi_Moonshot/status/2118010528123773297",
+   "handle_guess": "Kimi_Moonshot"
+  },
+  {
+   "id": "2116005725814280570",
+   "created_at": "2026-10-30 03:14 UTC",
+   "created_at_ms": 1793330053000,
+   "text": "Introducing 3D Make in Kimi. \\\nKimi connects to tools like Blender and CAD tools to create models, assemble scenes, and develop games. \\\nAvailable now on https://t.co/Q150OaO4ww and Kimi Work. https://t.co/pwmv4Ccn00",
+   "url": "https://x.com/Kimi_Moonshot/status/2116005725814280570",
+   "handle_guess": "Kimi_Moonshot"
+  },
+  {
+   "id": "2115777746639196376",
+   "created_at": "2026-10-29 12:08 UTC",
+   "created_at_ms": 1793275698000,
+   "text": "Kimi now works with Gmail, Google Drive, and Google Calendar.\\\n\\\nSummarize Gmail threads, find files in Google Drive, and plan your day with Google Calendar — with secure OAuth access you control.\\\n\\\nTry them at https://t.co/K6zMCNzfou https://t.co/xZTPm33ekM",
+   "url": "https://x.com/Kimi_Moonshot/status/2115777746639196376",
+   "handle_guess": "Kimi_Moonshot"
+  },
+  {
+   "id": "2114450610724708492",
+   "created_at": "2026-10-25 20:14 UTC",
+   "created_at_ms": 1792959284000,
+   "text": "We're sorry for the rate limits and unnecessary quota consumption on the K3.1 Pro subscription plan. These were our issues, and we should have fixed them sooner.\\\n\\\nToday, every subscriber on every plan gets a one-time usage reset, restoring 25% of their monthly quota (usage below",
+   "url": "https://x.com/Kimi_Moonshot/status/2114450610724708492",
+   "handle_guess": "Kimi_Moonshot"
+  },
+  {
+   "id": "2113680701770068067",
+   "created_at": "2026-10-23 17:15 UTC",
+   "created_at_ms": 1792775724000,
+   "text": "Introducing Kimi K3.1 Pro: our most capable 3T-class open-weight model.\\\n\\\n🔹 1M-token context, 2.8T total / 104B active params (MoE), Multimodal.\\\n🔹 Full-project coding: games in Unreal, Unity &amp; Godot.\\\n🔹 Excels at parametric 3D modeling in Blender &amp; CAD.\\\n🔹 More reliable at https://t.co/klydcszv02",
+   "url": "https://x.com/Kimi_Moonshot/status/2113680701770068067",
+   "handle_guess": "Kimi_Moonshot"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 00:07:28"
+}

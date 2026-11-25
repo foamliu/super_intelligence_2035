@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/GsReWrr8RLxnkS06VIBTtsw5rpA</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.39412,2610.40039,2610.40541,2610.40407,2610.39854,2610.39671&amp;start=0&amp;max_results=6</title>
+  <updated>2026-11-01T22:03:32Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=6&amp;id_list=2610.39412,2610.40039,2610.40541,2610.40407,2610.39854,2610.39671" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>6</opensearch:itemsPerPage>
+  <opensearch:totalResults>6</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40039v1</id>
+    <title>How Far Are We From On-Device VLM Inference? A Measurement Study on Edge NPUs</title>
+    <updated>2026-10-29T13:40:04Z</updated>
+    <link href="https://arxiv.org/abs/2610.40039v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40039v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Diverse optimizations spanning model architecture, inference runtime, and hardware acceleration have been proposed for on-device vision-language model (VLM) deployment on edge NPUs. Still, cross-layer coordination of VLM execution on edge NPUs remains largely underexplored. This paper presents an empirical measurement study across six representative VLMs, three real-world edge platforms, and ten multimodal benchmarks. Our evaluation drills down from end-to-end application-level latency and thermal traces down to low-level kernel-scale execution behaviors, challenging several widely held community assumptions. First, softmax dominates attention costs; even lookup-table-based softmax optimizations cannot eliminate pipeline bubbles that severely underutilize NPU matrix units. Second, theoretical speedups from linear attention vanish under real-NPU execution due to prohibitive tensor-rearrangement overhead. Third, no hardware backend universally dominates autoregressive decoding: attention-tensor-shaped parallelism dictates NPU efficiency and shifts the CPU-NPU performance balance. We further find task-specific Sweet Resolutions for VLMs, which deliver meaningful accuracy gains at only modest latency overhead. Complementing these findings, we provide actionable cross-layer recommendations for hardware architects, runtime developers, and model designers.</summary>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T13:40:04Z</published>
+    <arxiv:comment>26 pages, including references and appendices</arxiv:comment>
+    <arxiv:primary_category term="cs.PF"/>
+    <author>
+      <name>Huan Yang</name>
+    </author>
+    <author>
+      <name>Shiqi Jiang</name>
+    </author>
+    <author>
+      <name>Yu Mao</name>
+    </author>
+    <author>
+      <name>Chuanyue Xiong</name>
+    </author>
+    <author>
+      <name>Deyu Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.39854v1</id>
+    <title>Attention, Dynamic Wave and Hybrid Sequence Mixers in Language Models</title>
+    <updated>2026-10-29T11:33:29Z</updated>
+    <link href="https://arxiv.org/abs/2610.39854v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.39854v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) rely on Multi-Head Attention (MHA) for sequence modeling, but scaling to long contexts is constrained by the quadratic cost of attention, motivating sub-quadratic recurrent alternatives. This paper formalizes a Dynamic Wave recurrent layer, based on input-dependent exponential damping and cosine phase modulation, and evaluates three 10.94M-parameter configurations (Pure Transformer, Pure Wave, and Hybrid Wave-Attention) on TinyStories under perplexity, latency, throughput and peak VRAM profiling up to 4096 tokens. The Hybrid configuration reaches the best perplexity, 5.95 on the full held-out split against 6.93 for the Transformer and 7.26 for Pure Wave. The efficiency picture, however, is governed by implementation rather than by architecture. Against an unfused attention baseline, Pure Wave uses 78.7% less peak VRAM at a 4096-token context (1404.3 MB vs. 6601.6 MB); against a fused scaled-dot-product attention kernel the same comparison yields no advantage at all (1404.3 MB vs. 1403.6 MB), and in training mode Pure Wave is 8.3% more expensive than the Transformer. Likewise, hoisting elementwise terms out of the recurrence loop speeds the layer up 2.53-fold with no custom kernel, reducing its latency gap to attention from 2.48-fold to 1.12-fold. A hybrid stack is found to inherit the cost of its more expensive mixer rather than the advantage of its cheaper one, its peak VRAM matching the Pure Transformer to within 0.1%. A closed-form memory model reproduces these measurements and predicts the context length beyond which attention overtakes the vocabulary projection. The findings indicate that reported efficiency gains for recurrent attention replacements must be stated relative to a named attention backend and a named implementation, and that hybridization is best justified on quality grounds.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T11:33:29Z</published>
+    <arxiv:comment>14 pages, 6 figures, 9 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Dmytro Babarytskyi</name>
+    </author>
+    <author>
+      <name>Oleksandr Babarytskyi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40541v1</id>
+    <title>On the Fundamental Limits of Prefill-Based Decoding Length Prediction</title>
+    <updated>2026-10-29T17:36:01Z</updated>
+    <link href="https://arxiv.org/abs/2610.40541v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40541v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Predicting how many tokens a large language model (LLM) will decode, using only prefill-phase hidden states, is a key primitive for inference scheduling. We show that current benchmarks conflate predictor quality with task hardness: when the target model, dataset, or sampling configuration changes, reported accuracy collapses even though the predictor is unchanged. We trace this instability to an overlooked error source---the inherent stochasticity of autoregressive decoding---and derive bounds that every prefill-side method must obey. Our analysis treats decoding as a stopped stochastic process. The per-step stopping probability of a response is not constant but ramps up over hundreds of steps, so the decode length inherits a central limit theorem from the many local decisions that determine where a response ends; this yields per-prompt normality with an explicit error term, together with an affine variance law $σ=αμ+b$ whose slope is the coefficient of variation of the number of response segments. Empirically, the normal law reproduces the per-prompt MAE and the central mass of the decode-length distribution to within a few percent, and the residual departures from normality (mild right skew, slight excess kurtosis) are the ones predicted by the sampling-noise correction. Under fixed model, data, and sampling conditions, a broad design space of predictors (MLP, EGTP, FiLM, soft-label, and Mixture-of-Experts variants) converges to similar performance close to the bound, confirming that \emph{system error dominates model error}. We argue for a benchmarking protocol that fixes the model, data, and sampling parameters and that reports relative-error metrics alongside absolute ones. Code and analysis tools are available at https://github.com/ShwStone/DecodingPredict.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IT" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T17:36:01Z</published>
+    <arxiv:comment>26 pages, 4 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Haowen Shi</name>
+    </author>
+    <author>
+      <name>Xuzhe Yan</name>
+    </author>
+    <author>
+      <name>Fahao Chen</name>
+    </author>
+    <author>
+      <name>Peng Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.39671v1</id>
+    <title>Incentivizing Self-Learning in Large Language Models via Reinforcement Learning</title>
+    <updated>2026-10-29T09:21:26Z</updated>
+    <link href="https://arxiv.org/abs/2610.39671v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.39671v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) draw on parametric knowledge and retrieval-augmented generation (RAG) to solve knowledge-intensive tasks. Yet problem solving in unfamiliar domains calls for tightly coupled knowledge acquisition and reasoning, beyond factual retrieval and aggregation or learning solely from a preassembled context. We study self-learning -- autonomously retrieving, studying, and applying knowledge from long-form reference materials on the fly. To investigate this capability, we formulate a textbook-based mathematical problem-solving task. LLMs must navigate textbook exposition, learn and apply relevant principles, and construct proofs for exercises, with reference solutions withheld. We introduce a BookNavigator interface to support this human-inspired study process and incentivize self-learning through reinforcement learning (RL) with fine-grained rewards. Experiments show that our method improves performance across in-domain and out-of-domain textbooks and subjects, raising Intern-S2-Preview-35B's overall proof accuracy from 51.5% to 79.5% and outperforming RL-trained textbook-free and fixed-retrieval baselines. These gains extend to complex long-context benchmarks involving different task types, with improvements over the base model of 1.7 and 2.3 percentage points on BrowseComp-Plus and CL-bench, respectively. Together, these findings suggest that RL can foster a domain-agnostic self-learning strategy, highlighting the potential of self-learning from long-form corpora to strengthen broader problem-solving capabilities on complex, long-context tasks.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T09:21:26Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Lingkai Kong</name>
+    </author>
+    <author>
+      <name>Yuzhe Gu</name>
+    </author>
+    <author>
+      <name>Haiteng Zhao</name>
+    </author>
+    <author>
+      <name>Zijian Wu</name>
+    </author>
+    <author>
+      <name>Youqing Fang</name>
+    </author>
+    <author>
+      <name>Zhouqi Hua</name>
+    </author>
+    <author>
+      <name>Yanan Sun</name>
+    </author>
+    <author>
+      <name>Kai Chen</name>
+    </author>
+    <author>
+      <name>Wenwei Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.39412v1</id>
+    <title>Dobb: Shard-Local Preconditioning in Block-Diagonal Eigenbases</title>
+    <updated>2026-10-29T05:54:27Z</updated>
+    <link href="https://arxiv.org/abs/2610.39412v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.39412v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Training language models whose parameters and optimizer state exceed a single node's memory requires sharding these tensors across devices. Under tensor parallelism (TP) or fully sharded data parallelism (FSDP), matrix-aware optimizers such as Muon introduce communication to perform global matrix operations across shards. We propose Dobb (Distributed Optimizer with Block-diagonal Eigenbases), a matrix-aware optimizer designed to compute updates locally within parameter shards. Dobb approximates the input-activation second moment with diagonal blocks and tracks a complete basis within each block. It projects momentum into these bases, applies sign normalization to the coefficients, and reconstructs the update. When each block lies within one shard under TP or FSDP, Dobb applies its matrix update locally, requiring no communication beyond data-parallel synchronization of the activation second moments. We benchmark Dobb against Dion, a distributed matrix-aware optimizer designed to retain the benefits of orthonormalized updates while reducing communication. On GPT-2 XL (1.56B parameters), Dobb with 16 blocks reaches a validation loss of 2.476, compared with 2.511 for Dion at rank fraction 1/16. Under FSDP on 32 H100 GPUs, Dobb reduces the amortized optimizer-call time from 124.1 ms for Dion to 9.2 ms.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="math.OC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T05:54:27Z</published>
+    <arxiv:comment>33 pages, 3 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Shi-Yuk Fong</name>
+    </author>
+    <author>
+      <name>Shuhua Yu</name>
+    </author>
+    <author>
+      <name>Jiawei Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40407v1</id>
+    <title>SCARL: Sequence Confidence-Aligned Reinforcement Learning</title>
+    <updated>2026-10-29T16:38:11Z</updated>
+    <link href="https://arxiv.org/abs/2610.40407v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40407v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reinforcement learning with verifiable rewards (RLVR) improves language-model reasoning by scoring sampled responses with a rule-based verifier and reinforcing those that pass. Where a classifier's training couples predicted probability to labels, nothing ties an RLVR policy's confidence in a response to its reward: aligned training would drive responses with the same advantage toward equal confidence, yet the advantage is blind to confidence. Under this sequence-confidence misalignment, a success the policy barely found earns the same update as one it produces with near certainty, and a confident error is corrected no harder than an exploratory one. We propose SCARL (Sequence Confidence-Aligned Reinforcement Learning), which reshapes, but never re-signs, each advantage with the alignment gap between the response's group-relative confidence and the outcome its advantage certifies, normalized into shares of each class's advantage budget. Misaligned samples absorb the force, responses with the same advantage are driven toward equal confidence, and repairing the misalignment doubles as a remedy for the entropy collapse that erodes exploration. SCARL provably reduces to its base estimator when a class's confidences agree, adds no extra passes and one hyperparameter. On Qwen3-4B-Base it lifts average Pass@32 by 2.4 points over DAPO and is best among nine compute-matched methods on both coverage and per-draw accuracy; applied unchanged across four estimators and four backbones, it improves 14 of 16 settings while preserving policy entropy and widening the confidence-correctness separation. Our code is available at https://github.com/kezhh163/scarl.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T16:38:11Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Zhenghong Ke</name>
+    </author>
+    <author>
+      <name>Jingbo Zhou</name>
+    </author>
+    <author>
+      <name>Hua Wu</name>
+    </author>
+  </entry>
+</feed>

@@ -1,0 +1,16 @@
+Dear Dr. Shinn,
+
+I am Yang Liu (Foam), author of Superintelligence 2035 and lead of the BaiZe-ISEDA2027 / ZhuLong-DAC2027 projects at CXMT AI Research. We build code-agent harnesses for EDA tasks and are redesigning our retry policy.
+
+Reflexion's verbal self-reflection is the reference we keep coming back to. Two questions:
+
+1) In your episodic memory buffer, how did you decide what to store (the full trajectory, or a distilled lesson) and when to drop it? We worry that reflections accumulate into context bloat long before they help.
+
+2) On tasks where tests are ground truth (SWE-bench style), did verbal reflection ever beat simply retrying with the failing test output? If most of the gain comes from extra attempts, that changes how we budget retries.
+
+Your answer would decide whether we implement a reflection store at all, or only feed test diffs back.
+
+Thank you for your time.
+
+Yang Liu (Foam)
+CXMT AI Research

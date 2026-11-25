@@ -1,0 +1,81 @@
+{
+ "handle": "KarlPertsch",
+ "name": "Karl Pertsch (@KarlPertsch) / X",
+ "bio": "Robot Foundation Models @physical_int",
+ "tweets": [
+  {
+   "id": "2066541579360465201",
+   "created_at": "2026-06-15 15:21 UTC",
+   "created_at_ms": 1781536881000,
+   "text": "Over the last few weeks we have seen some evidence of benchmark manipulation on RoboArena, in part flagged by members of the robotics community. We take this very seriously and have taken steps to protect the integrity of the benchmark and ensure fair, unbiased evaluations. \\\nMost",
+   "url": "https://x.com/KarlPertsch/status/2066541579360465201",
+   "handle_guess": "KarlPertsch"
+  },
+  {
+   "id": "2065605060084871170",
+   "created_at": "2026-06-13 01:19 UTC",
+   "created_at_ms": 1781313598000,
+   "text": "We observed evidence of benchmark hacking on RoboArena since April. We have taken steps to prevent this in the future, and we have rolled back evals in accordance with these steps to retain the integrity of the benchmark. Read more about our changes here: https://t.co/46xFiLA1Do.",
+   "url": "https://x.com/KarlPertsch/status/2065605060084871170",
+   "handle_guess": "pranav_atreya"
+  },
+  {
+   "id": "2044851852660060281",
+   "created_at": "2026-04-16 18:54 UTC",
+   "created_at_ms": 1776365647000,
+   "text": "Happy to share some new results! π0.7 comes with memory, and algorithmic advances to pull out more performance and generalization from diverse training data! Check it out!",
+   "url": "https://x.com/KarlPertsch/status/2044851852660060281",
+   "handle_guess": "KarlPertsch"
+  },
+  {
+   "id": "2044841263254638862",
+   "created_at": "2026-04-16 18:12 UTC",
+   "created_at_ms": 1776363123000,
+   "text": "Our newest model, π0.7, has some interesting emergent capabilities: it can control a new robot to fold shirts for which we had no shirt folding data, figure out how to use an appliance with language-based coaching, and perform a wide range of dexterous tasks all in one model! https://t.co/s9NxKfb7pe",
+   "url": "https://x.com/KarlPertsch/status/2044841263254638862",
+   "handle_guess": "physical_int"
+  },
+  {
+   "id": "2028957938443026552",
+   "created_at": "2026-03-03 22:17 UTC",
+   "created_at_ms": 1772576243000,
+   "text": "This one has been a long time coming: today we’re introducing MEM, an approach for giving VLAs short-term and long-term memory.\\\n\\\nMemory is such an obvious capability, but adding it isn’t easy (most VLAs today are memory-less). A short thread on challenges, solutions, and the new https://t.co/JWrcW8BII7",
+   "url": "https://x.com/KarlPertsch/status/2028957938443026552",
+   "handle_guess": "KarlPertsch"
+  },
+  {
+   "id": "2026879049784766552",
+   "created_at": "2026-02-26 04:36 UTC",
+   "created_at_ms": 1772080597000,
+   "text": "Use DROID data and PolaRiS sim evals to test your ideas on strong generalist policies!\\\nCongrats to the CoVer-VLA team!",
+   "url": "https://x.com/KarlPertsch/status/2026879049784766552",
+   "handle_guess": "KarlPertsch"
+  },
+  {
+   "id": "2026454135529513414",
+   "created_at": "2026-02-25 00:28 UTC",
+   "created_at_ms": 1771979290000,
+   "text": "Very exciting to see first steps of our models doing useful things in the world!\\\nThanks to Ultra and Weave for being great partners in these deployments!",
+   "url": "https://x.com/KarlPertsch/status/2026454135529513414",
+   "handle_guess": "KarlPertsch"
+  },
+  {
+   "id": "2026447989959762079",
+   "created_at": "2026-02-25 00:03 UTC",
+   "created_at_ms": 1771977825000,
+   "text": "General-purpose AI models are behind some of the most exciting applications we now can't live without. We envision that an analogous “physical intelligence layer” built with models like π0.6 will similarly spur a new wave of applications for the physical world.\\\n\\\nWe’ve recently",
+   "url": "https://x.com/KarlPertsch/status/2026447989959762079",
+   "handle_guess": "physical_int"
+  },
+  {
+   "id": "2026369850541748518",
+   "created_at": "2026-02-24 18:53 UTC",
+   "created_at_ms": 1771959195000,
+   "text": "🧵(6) DROID Eval\\\nCoVer-VLA achieves 14% gains in task progress and 9% in success rate on the challenging red-team PolaRiS benchmark. In the pan cleaning task, π₀.₅ shows incorrect intent, grasping the pan handle. In contrast, CoVer-VLA correctly uses sponge to scrub the pan. https://t.co/CLaDDWa3XL",
+   "url": "https://x.com/KarlPertsch/status/2026369850541748518",
+   "handle_guess": "jackyk02"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 06:02:17"
+}

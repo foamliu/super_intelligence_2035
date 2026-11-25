@@ -1,0 +1,46 @@
+paul 您好，
+
+今日（2026-10-28）日报已收口，5 / 5 全齐（早报 3 篇「借鉴」+ 晚报 2 篇「科普」）。本封附 5 个 PDF，合计 13,292,796 B ≈ 12.68 MB，单封发完（≤ 20 MB，无需分包）。
+
+口径说明：「借鉴」= 对 BaiZe / ZhuLong 有直接迁移价值；「科普」= 大众看得懂 + 有传播力。两套口径不混用。早报 3 篇为 AM 时点记录（当时批次未刷新，取自上一轮候选池），一字未改；晚报 2 篇取自 PM 刷新的新批。
+
+一、本轮取数说明（如实）
+- 唤醒时点：早报 AM = 本地 2026-10-28 06:00（CST）= UTC 2026-10-27T22:00；晚报 PM = 本地 18:30（CST）= UTC 2026-10-28T10:30。
+- AM：批次未刷新（仍 2026-10-26，cat:cs.CL 探针 totalResults=123901、最新 published=2026-10-26T17:59:33Z，与上一轮逐条相同）⇒ --fetch --seen 15/15 200、全部 attempts=1，kept 0 / dropped 600（547 已在 SEEN + 53 stale）。早 3 篇取自已入账的 206 条候选池，首次提交均 2026-10-26（UTC），不是「今日新提交」。
+- PM：批次已刷新 2026-10-26 → 2026-10-27（探针 123901 → 124009、广度 639007 → 639590、最新样本 2026-10-27T17:58:52Z）⇒ --fetch --seen 15/15 200、13 条 attempts=1、2 条真实网络重试后成功（llm-scaling-law 首次 ConnectionResetError(104)、mm-csmm 同因），kept 162 / dropped 400（397 已入 SEEN + 3 stale）。晚 2 篇直接取自本批，均 published=2026-10-27（UTC），并做 id_list 权威复核（2/2 完整返回）。
+- HF Daily Papers 仍不可达（Errno 101），如实记 FAIL；PM 的 RSS cs.CL 超时（status=None）、cs.CV 245 条、cs.LG 437 条 —— 仅作发现，不作证据。
+- PDF 过程如实登记：2610.37649 首轮单流下载被截断（2,348,454 B，应为 5,773,268 B，pdfinfo 报 xref 缺失）⇒ 删除重下；改用 HTTP Range 12 段并发后，字节数 == Content-Range total、%PDF- / %%EOF 齐备、pdfinfo 与 pdftotext 均可解析（14 页 / 54,304 字符）。但该篇 sha256 与 CDN etag 声明值不一致、2610.36668 的 etag 为 base64 无法直接比对 ⇒ 这两篇的完整性证据是「结构校验」，不是端到端哈希。如需绝对一致，请以 arXiv 原站重下核对。
+
+二、早报精选（3 篇「借鉴」）
+
+1. EvoRouter: Cost-Efficient Multi-Agent Routing via Insight-Guided On-Policy Distillation
+   arXiv:2610.35690 ｜ cs.AI（+ cs.MA）｜ 北邮 + 复旦创新研究院 + NTU（9 位）｜ 13 页 / 2,009,890 B ｜ 附件：是
+   为何值得读：把「用哪些模型 + 什么协作模式 + 几个 agent + 几轮」的选择做成可训练 router：LLM 专家把「配置—结果—成本」轨迹蒸馏成带条件的洞察，再用 on-policy 蒸馏变 token 级稠密监督，配成本感知 RL（Rcost=log2(1+C/B)、罚分上限 c_max<1 保证成功轨迹仍为正奖励）。4B 域内 68.69%（+7.23 pp）而 MAS 成本 −50.95%，把 router 自身开销计入后总成本仍比 MasRouter 低 76.5%、比 RCR-Router 低 39.2%。可用点：把 router 开销计入成本的口径 + 成本罚分上限这一条，可直接借到 BaiZe 服务侧模型选择与 RL 奖励整形。边界：云侧 MAS、成本用相对 FLOPs 代理（非墙钟/能耗）、router 只到 4B/8B、作者自报未复现。
+
+2. FOCUS: Active Critic Learning for Long-Horizon Language Model Agents
+   arXiv:2610.35801 ｜ cs.LG ｜ Johns Hopkins University（6 位）｜ 32 页 / 869,720 B ｜ 附件：是
+   为何值得读：长程 agent 的信用分配。把每个 episode 当搜索树，用上下文压缩产生的段边界当候选状态，用 critic 预测 + 已采样续接估计「再采一条能把估值误差降多少」，把有限 rollout 预算分给最值得的状态；细化后的价值用 TD(λ) 给段打 advantage，采样证据同时当 critic 的训练目标。Qwen3.5-9B：DeonticBench 56.5（GRPO 52.4 / VinePPO 49.4）、BrowseComp-Plus 55.4（48.2 / 46.6，+7.2）、LocBench File@1/@5 72.4/81.6。可用点：GRPO 后期「工具调用塌缩」可当训练健康度告警；「压缩边界当状态」与长上下文 agent 天然契合。边界：Qwen3.5 系为主、3 个基准、1 epoch，作者自报未复现。
+
+3. Shared Context, Separate Engines: Streaming Vision-Language Inference on Edge SoCs
+   arXiv:2610.35309 ｜ cs.LG ｜ UW–Madison + Meta + CMU（6 位）｜ 25 页 / 4,251,501 B ｜ 附件：是
+   为何值得读：把「流的历史」抽象成带版本号的已发布上下文，与各引擎私有 KV 状态解耦，任何引擎都能复用/导入/重建该版本继续这条流（跨引擎 KV 导入比重新计算前缀让首 token 早 4.6×）。RK3588 双流吞吐 +19.6% / +27.2%、TTFT −34.9%；M4 Max 上 SSG 吞吐 2.48×；状态感知派发把完成时间最多降 72.7%。可用点（存储/芯片视角）：KV 状态做成可版本化、可搬运的一等对象，与 KV cache 分层 / prefill-decode 分离是同一类问题。边界：只测 3 块边缘板、0.5B–9B、无数据中心 GPU 场景，作者自报未复现。
+
+三、晚报精选（2 篇「科普」，均附 PDF）
+
+4. Can LLMs Uncover Hidden Physical Laws through Free Exploration?
+   arXiv:2610.37649 ｜ cs.CL（+ cs.AI + cs.MA）｜ HKUST(GZ) + Alibaba + ZJU + HKUST（4 位）｜ 14 页 / 5,773,268 B ｜ 附件：是 ｜ 本日科普 TOP-1
+   为何值得读：LongChang 造 15 个 MuJoCo 世界（1 正常对照 + 14 各改一条物理定律），LLM 当探索者，不给任务、不透露定律，只能自己搬物体、造工具、提问、做实验；另有 LLM 代理生成/演化场景、审工具、判报告是否既对又有证据。12 个前沿 LLM × 15 场景 × 最多 100 轮：仅 GPT-6-Astra 发现率 16.7%，其余 11 个全 0%；其证据支撑率 97.6%、定律正确率 19.0%。加提示 → 28.6%；预算 100→500 轮反而 14.3%（约 40 轮自停）；关掉造工具 → 4.8%。传播点：「会动手 ≠ 会发现」。分镜脚本：research/video/SCENES/10_28.html（5 镜 / 120s / 口播 445 字）。
+
+5. A Quantitative Approach to Asch Conformity in Frontier Large Language Models
+   arXiv:2610.36668 ｜ cs.CL（+ cs.AI）｜ Université libre de Bruxelles + New Mexico State University（2 位）｜ 15 页 / 388,417 B ｜ 附件：是
+   为何值得读：把 Asch 从众实验搬进 LLM，用「100 次采样的答案分布」替代社会压力。10 句 × 6 个前沿模型、每条件 100 次：6 个模型全部向多数偏移；(w1, wp) 偏移由 n=1 的 22 点升到 n=10 的 49 点；「意思近但自己没说过的词」n=10 为 30 点（近）/ 24 点（中）/ 0 点（远）；但 n 从 5 到 10 变化 <3 点（部分模型回落），与「人越多越从众」的直觉相反。对多智能体编排的提醒：多个 agent 意见一致，未必是独立证据。
+
+四、台账与证据
+- 台账：SEEN.md 收录 266 / 候选 4,364 / 候选（RSS 补充）507，共 5,137 行；papers.jsonl 266 行。
+- 口径记录：research/ARXIV_API.md §9.117（AM）/ §9.118（PM）。
+- 证据链：raw/2026-10-28-pm-probe-r118.json、raw/2026-10-28-pm-fetch-r118-seen.json、raw/2026-10-28-pm-idlist-r118a.{xml,headers}；AM 侧见 §9.117。
+- 日报：research/daily/2026-10-28.html（5/5 收口，自包含）。
+
+全部数字均为作者自报，本线未复现、未精读全篇（附录未读）。推荐 = 待读线索，非结论。
+
+—— research 线（自动日报）

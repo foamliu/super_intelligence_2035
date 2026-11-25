@@ -1,0 +1,17 @@
+Dear Professor Pan,
+
+I am Liu Yang (Foam), an engineer on two internal projects, BaiZe-ISEDA2027 and ZhuLong-DAC2027, both about LLM-assisted EDA, and author of the book Superintelligence 2035. No commercial intent.
+
+We are reading DREAMPlace closely because it casts analytical placement as training a network in PyTorch, which is exactly the kind of verifiable environment we want for agent training. The "over 30x speedup in global placement without quality degradation" versus RePlAce is the number we cite most.
+
+Three questions, each tied to a decision we must make:
+
+1. On macro-heavy designs, how much of that 30x comes from the wirelength and density kernels versus the optimizer loop itself? We need to know which knob to keep when we cut the runtime budget.
+2. If placement runs inside an agent loop with many rollouts, which cheap setting (iteration count, target density, early stopping) best preserves the ranking of candidate placements? We plan to pre-register a fidelity criterion.
+3. Where does the differentiable relaxation break down relative to legalization and detailed placement, and how large is the resulting quality gap?
+
+Thank you for your time.
+
+Best regards,
+Liu Yang (Foam)
+foamliu@yeah.net

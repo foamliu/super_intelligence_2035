@@ -1,0 +1,34 @@
+    attempts=1
+--- ① lastUpdatedDate cs.CL
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&start=0&max_results=5&sortBy=lastUpdatedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=124606 n_entries=5 0.81s
+    2611.05376v1 2026-11-03T18:59:52Z 2026-11-03T18:59:52Z cs.CL From Autonomous Agents to Cognitive Symbionts: Toward AI-Augmented Hum
+    2611.05373v1 2026-11-03T18:59:15Z 2026-11-03T18:59:15Z cs.LG Aligning Language Models with General Preferences: An Empirical Study 
+    2611.05358v1 2026-11-03T18:54:08Z 2026-11-03T18:54:08Z cs.CL Suppressing Misaligned Behaviors in Language Models, Durably
+    2611.05355v1 2026-11-03T18:52:44Z 2026-11-03T18:52:44Z quant-ph Reading Why: Born-Measured Attention with Exact Word Evidence on Light
+    2605.09995v2 2026-05-11T05:11:04Z 2026-11-03T18:48:51Z cs.CL Annotations Mitigate Post-Training Mode Collapse
+    attempts=1
+--- ② submittedDate 20261101-20261105 (cs.CL)
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+AND+submittedDate%3A%5B202611010000+TO+202611052359%5D&start=0&max_results=5&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=237 n_entries=5 11.34s
+    2611.05376v1 2026-11-03T18:59:52Z 2026-11-03T18:59:52Z cs.CL From Autonomous Agents to Cognitive Symbionts: Toward AI-Augmented Hum
+    2611.05373v1 2026-11-03T18:59:15Z 2026-11-03T18:59:15Z cs.LG Aligning Language Models with General Preferences: An Empirical Study 
+    2611.05358v1 2026-11-03T18:54:08Z 2026-11-03T18:54:08Z cs.CL Suppressing Misaligned Behaviors in Language Models, Durably
+    2611.05355v1 2026-11-03T18:52:44Z 2026-11-03T18:52:44Z quant-ph Reading Why: Born-Measured Attention with Exact Word Evidence on Light
+    2611.05344v1 2026-11-03T18:44:34Z 2026-11-03T18:44:34Z cs.CL A Circuit for In-Context Learning
+    attempts=1
+--- ③ submittedDate 20261101-20261105 (全库，不加分类)
+    url=https://export.arxiv.org/api/query?search_query=submittedDate%3A%5B202611010000+TO+202611052359%5D&start=0&max_results=5&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=3946 n_entries=5 8.91s
+    2611.05378v1 2026-11-03T18:59:58Z 2026-11-03T18:59:58Z hep-th Boundary $c\leq1$ Liouville CFT from the Bootstrap
+    2611.05377v1 2026-11-03T18:59:56Z 2026-11-03T18:59:56Z cs.CV DreamX: Video Diffusion Model is a Universal Latent Action Learner
+    2611.05376v1 2026-11-03T18:59:52Z 2026-11-03T18:59:52Z cs.CL From Autonomous Agents to Cognitive Symbionts: Toward AI-Augmented Hum
+    2611.05375v1 2026-11-03T18:59:47Z 2026-11-03T18:59:47Z cond-mat.stat-mech Quantum Error Correction in Nearly Critical Toric Codes
+    2611.05374v1 2026-11-03T18:59:45Z 2026-11-03T18:59:45Z q-bio.QM A Bayesian Optimized Biquad Filter-Burg Model for Real-Time EEG Phase 
+    attempts=1
+--- ④ 广度 sweep 5 分类
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+OR+cat%3Acs.CV+OR+cat%3Acs.SE+OR+cat%3Acs.AI+OR+cat%3Acs.LG&start=0&max_results=3&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=642920 n_entries=3 0.70s
+    2611.05377v1 2026-11-03T18:59:56Z 2026-11-03T18:59:56Z cs.CV DreamX: Video Diffusion Model is a Universal Latent Action Learner
+    2611.05376v1 2026-11-03T18:59:52Z 2026-11-03T18:59:52Z cs.CL From Autonomous Agents to Cognitive Symbionts: Toward AI-Augmented Hum
+    2611.05373v1 2026-11-03T18:59:15Z 2026-11-03T18:59:15Z cs.LG Aligning Language Models with General Preferences: An Empirical Study 

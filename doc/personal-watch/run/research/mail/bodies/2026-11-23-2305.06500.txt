@@ -1,0 +1,16 @@
+Subject: 关于 InstructBLIP 指令感知 Q-Former 与 held-out 划分的几个问题
+
+戴老师您好：
+
+我是刘杨，做 LLM agent 与多模态方向的研究，主页 https://foamliu.github.io/。我们在为文档理解场景做视觉指令微调，读到 InstructBLIP 把指令同时送入冻结 LLM 与 Q-Former，并用 13 个 held-in 数据集训练、在另外 13 个 held-out 上零样本评测，有几点想请教。
+
+1. 均衡采样按什么量确定各数据集权重？换成领域差异更大的数据时，held-out 掉点主要来自哪个环节？
+
+2. 指令同时进入 Q-Former 与 LLM，两者各自贡献多少？当指令与图像内容冲突时，Q-Former 会优先抽哪一侧信息？
+
+3. 你们只选一个 checkpoint 用于全部数据集，依据是什么？在文档、表格类图上是否需要重训 Q-Former？
+
+这几点会直接决定我们的数据配比与评测口径，谢谢您。
+
+祝好，
+Yang Liu

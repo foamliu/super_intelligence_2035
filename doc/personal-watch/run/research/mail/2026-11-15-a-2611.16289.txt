@@ -1,0 +1,13 @@
+张老师您好，
+
+我是刘杨，做 LLM agent 方向的研究，主页 https://foamliu.github.io/。读到您与王睿鑫的《Eliciting and Mitigating Specification Satisficing in Coding Agents》，我们正在做代码 agent 的 harness 与判分；你们把「agent 用自认可的理由偏离需求」单独命名并前置成两步流程，这一点对我们很直接。
+
+三个问题：
+1. 摘要里的 5.09%（DeepSWE）与 7.06%（SWE-bench Pro hard）是 pass@1 的绝对百分点还是相对提升？五个 backbone 中有没有收益为负的？
+2. 写码前的报告与复核多花多少 token、多少步？是否与 Self-Refine、DeCRIM、ProgCo 在同等预算下做过对照？
+3. 任务描述本身含糊时，第一步要报告的 requirement 以什么为准？会不会把正确的实现选择也报成 satisficing，在第二步被误改？
+
+三点分别影响我们的基线口径、预算记账与需求抽取规则。感谢您的时间。
+
+祝好，
+Yang Liu

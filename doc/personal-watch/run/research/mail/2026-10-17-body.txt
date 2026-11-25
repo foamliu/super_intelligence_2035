@@ -1,0 +1,44 @@
+paul 您好，
+
+今日（2026-10-17）arXiv 当日筛选中精选 5 篇；其中 5 篇全文均已核对，**4 篇 PDF 随附（合计 17,007,768 B ≈ 16.22 MB ≤ 单封 20 MB）**，第 4 篇（Gen4P）原文 PDF 达 **38,108,462 B ≈ 36.3 MB > 20 MB 上限** ⇒ 不附、正文给链接（与 10-13 轮 17MB 超限件同口径处理）。
+
+一、本轮取数说明（如实）
+- 本轮是周六，arXiv 周末不公告：公告批次仍未刷新，仍是 2026-10-15 批（totalResults=633893，最新样本 published=2026-10-15T17:59:59Z）⇒ 0 新增属正常，不是「无数据」。
+- 晚间轮（18:00）按周末口径放宽到 120h 抓取：15/15 查询 ok（均一次成功）、kept 3 / dropped 597；这 3 条都是 2026-10-12 批的旧条目补漏（2610.16621 / 2610.16537 / 2610.16518），非新批、非科普题材 ⇒ 只登记为「候选」，不计入今日 5 篇。
+- 本日 5 篇 = 早报 3 篇（「借鉴」，06:00 轮产出）+ 晚报 2 篇（「科普」，18:00 轮产出），当日收口 5/5。
+- 5 篇均已用 arXiv API id_list 逐条复核（HTTP 200 + application/atom+xml + published 有效）：早 3 见 raw/2026-10-17-idlist-shortlist-r95.{xml,headers}，晚 2 见 raw/2026-10-17-idlist-shortlist-r96.{xml,headers}。
+- 原文标题照抄未改写；文中数字均为「论文作者自报」，我们未复现。
+- 副源 HF Daily Papers 本机不可达（Network is unreachable，Errno 101），如实登记为 FAIL；RSS cs.CL/CV/LG 周末均为空 feed（0/0/0）—— 不影响主源（arXiv API）取数。
+
+二、精选清单（3 篇「借鉴」+ 2 篇「科普 / 选题参考」）
+
+【借鉴｜与 BaiZe / ZhuLong 强相关】
+
+1. Compression Does Not End at Selection: Post-Selection Positional Geometry for Sparse KV Caches
+   arXiv:2610.21126 ｜ 附件：是
+   为何值得读：稀疏 KV 压缩只决定了「留下哪些历史状态」，但留下的 token 仍沿用原始全长位置坐标 —— 在 RoPE 下，被逐出 token 留下的位置空隙会继续干扰 query–key 匹配。本文研究「选择之后的位置几何」，提出 RoPERelay：给缓存键换一套紧凑且保序的 RoPE 坐标（逆旋转 + 再旋转迁移已缓存 key 的相位，并同步当前 query 与后续生成），复用既有 K/V，不重选、不重预填、不加缓存预算。跨 2 个模型 × 6 个稀疏选择器 × 3 个任务的 36 组对比。对口 BaiZe 的长上下文 / 高效推理 / KV cache 主线：与本线 10-16 已入库的 PN-Mix 正好互补（一个管「选哪些、存多精」，一个管「选中之后位置怎么摆」）；后处理式接入成本低，可叠在现有稀疏 / 窗口 KV 方案之上。⚠️ 数字为作者自报，未复现。
+
+2. HPCAgent-Bench: A Framework for Sound Benchmarking of Code-Optimizing Agents, Harnesses, and Skills
+   arXiv:2610.20673 ｜ 附件：是
+   为何值得读：现有 coding-agent 基准把加速器 / 编程模型 / harness 固定死，拆不出各组件贡献，也看不出新增技能与工具是否值回成本。本文给出 689 个 kernel、3 条赛道（循环级优化 / 从 HPC 代码抽取的 kernel / 机器学习模型）；每个 kernel 只在 NumPy 写一次，再派生 C 与 Fortran 参考实现，提交经统一 C ABI 或 Python 接口接入，可跑 CPU/GPU、单机/多机；外部裁判用隐藏 fuzz 输入校验正确性并计时，堵住「针对测试系统作弊」。对口 ZhuLong 的 execution-grounded code agent / harness / 评测：其「harness、技能、工具的贡献」配对实验 + 加权 token 成本，可直接借用为「加一个 MCP 工具 / 技能是否值回成本」的度量方法学。⚠️ 数字为作者自报（comment 自述 20 页 / 9 图 / 17 表），未复现。
+
+3. MLExpert: Towards a Generalist Agentic Model for Autonomous Machine Learning Engineering
+   arXiv:2610.22344 ｜ 附件：是
+   为何值得读：面向「AI 自主开发与改进 AI 系统」的长时程 MLE 任务，难点是每次实验的反馈混着此前多个决策的影响、且一轮 MLE 含大量昂贵实验。本文用后训练得到 MLExpert —— 35B MoE agentic 模型，配套 Kaggle-MLE Factory 造可执行任务与交互 harness；训练上做分层 agentic SFT + 窗口化交互 RL（WIRL，把两次结果之间的多轮决策打包成一个执行窗口共享结果奖励）+ 异步采集与策略校正。桥接 BaiZe（MoE / 后训练）与 ZhuLong（长时程执行）两条主线：其 credit assignment 设计与「可执行任务 + 长时程环境」构造范式都可迁移。⚠️ 数字为作者自报，未复现。
+
+【科普｜选题 / 跨域参考】
+
+4. Gen4P: Video Generators are 4D Perceivers（本日 TOP-1 · 已出《论文两分钟》分镜脚本）
+   arXiv:2610.22371 ｜ 附件：否（原文 PDF 36.3 MB 超单封 20 MB 上限；链接 https://arxiv.org/abs/2610.22371 ）
+   为何值得读：把一个本来是「生成视频」的模型，改造成前馈 4D 感知器：不做迭代去噪，单次编码器前向处理干净的视频 latent，再用轻量 cross-attention 解码器按查询预测所需 4D 属性（按需查询支持灵活空间采样，连续时间查询带来时间灵活性）；并把预训练的视频深度 LoRA 当作冻结的几何先验即插即用，不增加可训练参数。作者称在 3D 点跟踪 / 视频深度 / 相机位姿估计上达到 SOTA 或具竞争力（原文措辞 "state-of-the-art or competitive"）。对口「生成模型内部是否藏着世界表征」这条大问题：可作「生成 ≠ 理解，但生成器可以被改造成测量器」的直观参照。⚠️ 数字与结论为作者自报，未复现；不引申为「AI 已理解物理世界 / 已具备世界模型」。
+
+5. LIBERO-PeRM: Benchmarking Personalized Robotic Manipulation
+   arXiv:2610.22372 ｜ 附件：是
+   为何值得读：机器人操作基准大多假设「一套任务、所有人通用」，但真实用户各有偏好与习惯。本文把「完成任务」与「满足偏好」拆开评估：限定为可用语言表达、可自动评测、可跨任务复用且不改变任务目标的偏好，用程序化流水线基于 LIBERO 生成「含偏好 / 不含偏好」的成对演示，构建 5 个任务套件、共 312 个任务，并给出偏好满足度指标。作者的实验结论（自报）：当前 VLA 策略零样本个性化表现弱；SFT 能让偏好变得可学；混合训练在保留「无偏好」能力上优于顺序适配，但可能削弱动作偏好学习；偏好泛化、分解与冲突处理仍困难。对口具身智能 / 个性化对齐：可作「评测从『做对』走向『按人做对』」的一个样例。⚠️ 数字为作者自报，未复现；不引申为「家用机器人已成熟」。
+
+三、附件
+- 4 个 PDF（按正文序号）：2610.21126（16 页 / 724,384 B）、2610.20673（20 页 / 1,205,152 B）、2610.22344（23 页 / 1,114,838 B）、2610.22372（{{PAGES_22372}} 页 / 13,963,394 B）；合计 **17,007,768 B ≈ 16.22 MB**（单封上限 20 MB）。
+- 未附：2610.22371 Gen4P —— 服务端 `content-length` = 38,108,462 B（≈36.3 MB），超单封上限 ⇒ 仅给 abs 链接；本机带宽 ≈13 KB/s 下亦无法在合理时间下完（已主动终止无谓下载，仅保留 5.9 MB 部分档后删除）。
+- 下载校验：逐文件 `%PDF-` 头 + `%%EOF` 尾 + `pdfinfo` 页数 + `pdftotext` 正文可解析，且**本地字节数 = 服务端 content-length**（逐文件比对）；脚本 `research/raw/pdf_dl_r96.sh`，日志 `research/raw/2026-10-17-pdf-dl-r96.log`（首轮）+ `research/raw/2026-10-17-pdf-dl-r96b.log`（剔除超限件后重跑，3 个已合格文件跳过、仅补 22372）；PDF 落地 `research/pdf/2026-10-17/`（按仓库口径不入 git）。
+
+—— 《超级智能2035》· research 自动日报

@@ -1,0 +1,81 @@
+{
+ "handle": "danqi_chen",
+ "name": "Danqi Chen (@danqi_chen) / X",
+ "bio": "Associate professor @princetonPLI @PrincetonCS\nPreviously: @thinkymachines @facebookai, @stanfordnlp, @Tsinghua_Uni",
+ "tweets": [
+  {
+   "id": "2107160983496249486",
+   "created_at": "2026-10-05 17:28 UTC",
+   "created_at_ms": 1791221302000,
+   "text": "Super proud of what the team has achieved @AdithyaNLP @jeff_cheng_77  (they are both great researchers and chess players)\\\n\\\nA 4B chess LM that plays chess at typical grandmaster level and explains its moves (!)\\\n\\\nI will discuss this work at Berkeley in 30 minutes.\\\n\\\nAlso, I am",
+   "url": "https://x.com/danqi_chen/status/2107160983496249486",
+   "handle_guess": "danqi_chen"
+  },
+  {
+   "id": "2107123924828049691",
+   "created_at": "2026-10-05 15:01 UTC",
+   "created_at_ms": 1791212466000,
+   "text": "The most profound paper of my PhD so far. We truly did something special to make LMs play/explain chess, needing both architectural &amp; algorithmic innovation (natural-language analogue of the Alphazero algorithm) + applicable to many other domains. Please read on and share!\\\n\\\n1/10 https://t.co/Sw9ihlyqUD",
+   "url": "https://x.com/danqi_chen/status/2107123924828049691",
+   "handle_guess": "AdithyaNLP"
+  },
+  {
+   "id": "2059367769322512879",
+   "created_at": "2026-05-26 20:15 UTC",
+   "created_at_ms": 1779826512000,
+   "text": "Hooded six PhD students yesterday, my very first cohort at Princeton: Zexuan Zhong (@ZexuanZhong, 2024), Dan Friedman (@danfriedman0, 2025), Howard Chen (@__howardchen, 2025), Mengzhou Xia (@xiamengzhou, 2025), Tianyu Gao (@gaotianyu1350, 2025), and Alex Wettig (@_awettig, 2026)! https://t.co/Z2HYz7ERRl",
+   "url": "https://x.com/danqi_chen/status/2059367769322512879",
+   "handle_guess": "danqi_chen"
+  },
+  {
+   "id": "2036905017030881494",
+   "created_at": "2026-03-25 20:36 UTC",
+   "created_at_ms": 1774470974000,
+   "text": "LOL. State-of-the-art results on circle packing, Erdős minimum overlap, and the first autocorrelation inequality—just by letting Claude Code run overnight.\\\n\\\nIt’s been really fun to read how coding agents like CC tackle such problems:\\\nhttps://t.co/ChvX7P1HI6",
+   "url": "https://x.com/danqi_chen/status/2036905017030881494",
+   "handle_guess": "danqi_chen"
+  },
+  {
+   "id": "2036888347340349865",
+   "created_at": "2026-03-25 19:30 UTC",
+   "created_at_ms": 1774467000000,
+   "text": "Auto research is on 🔥\\\n\\\nWe give algorithmic problems (like circle packing) to general coding agents, let it run overnight. 🌙\\\n\\\nAgents reach SoTA. But more importantly: we analyze 100+ hours of trajectories to understand how it gets there 🧵 https://t.co/5cVuoIdxVc",
+   "url": "https://x.com/danqi_chen/status/2036888347340349865",
+   "handle_guess": "TengxiaoLiu"
+  },
+  {
+   "id": "1975774548378460601",
+   "created_at": "2025-10-08 04:05 UTC",
+   "created_at_ms": 1759896335000,
+   "text": "I am going to present two papers at #COLM2025 tomorrow from 4:30-6:30pm, as none of our leading authors can attend due to visa issues. \\\n\\\nHaven't done poster presentations for years 🤣🤣 .... so I will do my best!\\\n\\\n#76: LongProc\\\n#80: Goedel-Prover v1 https://t.co/Y2hwqKe8rR",
+   "url": "https://x.com/danqi_chen/status/1975774548378460601",
+   "handle_guess": "danqi_chen"
+  },
+  {
+   "id": "1975745157958947133",
+   "created_at": "2025-10-08 02:08 UTC",
+   "created_at_ms": 1759889327000,
+   "text": "Our Goedel-Prover V1 will be presented at COLM 2025 in Montreal this Wednesday afternoon!\\\nI won’t be there in person, but my amazing and renowned colleague @danqi_chen will be around to help with the poster — feel free to stop by! https://t.co/RK6MizA9T8",
+   "url": "https://x.com/danqi_chen/status/1975745157958947133",
+   "handle_guess": "chijinML"
+  },
+  {
+   "id": "1945347459670270174",
+   "created_at": "2025-07-16 04:59 UTC",
+   "created_at_ms": 1752641951000,
+   "text": "I won't be able to attend #ICML2025.  Please come check out WebOrganizer and MeCo on two different ways of using \\",
+   "url": "https://x.com/danqi_chen/status/1945347459670270174",
+   "handle_guess": "danqi_chen"
+  },
+  {
+   "id": "1945346437061206256",
+   "created_at": "2025-07-16 04:55 UTC",
+   "created_at_ms": 1752641708000,
+   "text": "Presenting two posters at ICML over the next two days:\\\n- Both at 11am - 1:30pm\\\n- Both about how to improve pre-training with domains\\\n- Both at stall # E-2600 in East Exhibition Hall A-B (!)\\\n\\\nTomorrow: WebOrganizer w/ @soldni &amp; @kylelostat\\\nThursday: MeCo by @gaotianyu1350 https://t.co/JTlNMevBvn",
+   "url": "https://x.com/danqi_chen/status/1945346437061206256",
+   "handle_guess": "_awettig"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 18:03:35"
+}

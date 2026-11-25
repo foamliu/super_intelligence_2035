@@ -1,0 +1,50 @@
+paul 您好，
+
+今日（2026-10-27）日报已收口，5 / 5 全齐（早报 3 篇「借鉴」+ 晚报 2 篇「科普」）。本封附 5 个 PDF，合计 8,003,455 B ≈ 7.63 MB，单封发完（≤ 20 MB，无需分包）。
+
+口径说明：「借鉴」= 对 BaiZe / ZhuLong 有直接迁移价值；「科普」= 大众看得懂 + 有传播力。两套口径不混用。早报 3 篇为 AM 时点记录（当时批次未刷新，取自上一轮候选池），一字未改；晚报 2 篇取自 PM 刷新的新批。
+
+一、本轮取数说明（如实）
+- 唤醒时点：本地 2026-10-27 18:00（CST）= UTC 2026-10-27T10:00（周二）。
+- arXiv 公告批次「已刷新」：2026-10-23 → 2026-10-26（cat:cs.CL 探针 totalResults 123669 → 123901、最新样本 published=2026-10-26T17:59:33Z；广度扫描 totalResults 637936 → 639007）。
+- --fetch --seen：window_mode = daily（72h，脚本自动判定，未人工放宽），15/15 查询 200、全部 attempts=1，kept 206 / dropped 366（206 条中 published 2026-10-26 = 131 / 2026-10-25 = 57 / 2026-10-24 = 18）。
+- 晚报 2 篇取自本批，并做 id_list 权威复核：3/3 完整返回（HTTP 200 + application/atom+xml + 含 published），两篇 updated == published（无 v2）。
+- 五篇首次提交分别为 2026-10-23 / 10-23 / 10-23（早 3，UTC）/ 10-26 / 10-26（晚 2，UTC）。早 3 篇不是「今日新提交」，页内三处已明示。
+- HF Daily Papers 仍不可达（Errno 101），如实记 FAIL；RSS 本次非空（cs.CL 374 / cs.CV 483 / cs.LG 321），仅作发现，不作证据。
+- 过程如实登记：2610.34688 首轮下载在读取中途 TimeoutError（连接被截断）→ 丢弃临时文件、改用 curl 重下并重新做四重校验（content-type / %PDF- 头 / %%EOF 尾 / 字节 == content-length），未把截断文件当成功。
+
+二、早报精选（3 篇「借鉴」）
+
+1. Where Rounding Happens Matters: Rounding-Location Alignment Stabilizes LLM Reinforcement Learning
+   arXiv:2610.32951 ｜ cs.LG ｜ ByteDance Seed + Peking University（3 位署名）｜ 17 页 / 1,308,219 B ｜ 附件：是
+   为何值得读：LLM 的 RL 后训练通常「vLLM 采样 + 另一套框架重算 logprob」，即使权重与 BF16 完全相同，kernel 实现差异也会把「本应 on-policy」的更新变成 off-policy 并让训练崩塌。本文不改全局精度、不改学习目标、不改推理引擎与 GEMM/attention kernel，只把三个区域的「舍入位置」对齐（RoPE 路径 / SwiGLU / 残差 RMSNorm：中间量先留 FP32，输出时再舍入到 BF16）。4 个 Qwen 系模型（1.5B / 1.7B / 4B / 8B，PPO-clipped GRPO）：默认 BF16 基线全部崩塌；三区域全对齐全部稳定，只对齐 RoPE 路径也足够；静态 per-token KL 仅降 9.1–25.5%（RoPE 的 Shapley 贡献 81.5% / 91.8% / 76.9%，SwiGLU 在 Qwen3 两模型上为负）。对我们的用处：BaiZe 后训练 RL 若走「双框架」组合，per-token KL 就是现成的早期预警指标（先加监控、零改动），再按「只动 RoPE」做单变量消融。边界：仅 2 个数学数据集、单一架构族、最大 8B；「小 KL 也足以防崩塌」的机制作者只给假设；数字作者自报、未复现。
+
+2. NgramRL: Accelerating RL Post-Training for Structured Generation via Rollout-Aware N-gram Speculative Decoding
+   arXiv:2610.32881 ｜ cs.AI ｜ UC San Diego + West Virginia University（5 位署名）｜ 7 页 / 2,309,478 B ｜ 附件：是
+   为何值得读：RL 后训练的开销主要不是前向/反向而是自回归 rollout（作者引述可占 step 时间 70%+），而常规投机解码要额外草稿模型占显存、且随策略漂移越来越被拒。本文观察到 GRPO 类训练会反复重访同一 prompt，于是用它近期的 rollout 自建 n-gram 查表（放 CPU，不需要草稿模型 / 不需要训练 / 不占常驻 GPU 显存），由 target 模型验证保证分布不变，再加自适应 fan-out 预取。Qwen3-8B / DeepSeek-LLM-7B × GSM8K / Spider 1.0 / CodeContests：warm-cache 下每步提交 3.60–7.77 token（比 SuffixDecoding 高 1.2–1.99×、比 prompt-lookup 最高 7.0×）；Spider 上候选预算 16 时覆盖 96.6%，rollout 吞吐比同步版高 1.38×（理论上限 1.40×），decode 迭代 26.1 ms → 19.2 ms。对我们的用处：BaiZe RL rollout 加速的直接可试方案（不加显存）；ZhuLong 结构化生成（JSON / 工具参数）是同型负载。边界：规模只到 7B/8B、单机、2 个模型族；1.38× 是 rollout 吞吐而非端到端训练加速；历史窗口 w>16 后收益不再增长。
+
+3. When Agents Fail: Model or Harness--Who's to Blame?
+   arXiv:2610.32483 ｜ cs.AI（+cs.CL +cs.SE）｜ Shanghai Artificial Intelligence Laboratory（12 位署名，Preprint under review）｜ 43 页 / 3,268,395 B ｜ 附件：是
+   为何值得读：agent 的跑分是「模型 × harness」的联合结果，只报任务成功率会掩盖失败来源。本文提出五个指标：VCR（能否正常结束并交出可评测结果，与对错无关）、Model–Harness Fit、Cross-Model Fit、Interaction Residuals（扣掉主效应后的配对专属偏差）、Token Load（含失败重试）。4 个通用 harness × 4 个模型 + 2 个原生固定系统，跨 6 个基准，共 111 个设置 / 52,168 条轨迹。结论：harness 排名随模型与基准变化；任务分相同 ≠ 执行画像相同（VitaBench 上 VCR ≥ 98%，但 Mean-of-4 仍横跨 28.1 个百分点）。对我们的用处：ZhuLong 的「工具调用崩了」与「EDA 流程报错」必须分开计数，VCR 正是这个计数器；做 harness A/B 时要按配对看，否则真实存在的配对优势会被正负抵消。边界：4 harness + 4 模型面板有限；Cross-Model Fit 的领先者依赖所选模型与基准；数字作者自报、未复现。
+
+三、晚报精选（2 篇「科普」）
+
+4. Do vision models know that three is three?
+   arXiv:2610.35857 ｜ cs.CV ｜ University of Tübingen + KAIST AI（3 位署名）｜ 15 页 / 556,912 B ｜ 本日科普 TOP-1 ｜ 附件：是
+   为何值得读：「三」可以是手写数字、三根手指、三个球、三个点。本文用线性表征假设当尺子，在 46 个视觉编码器（CLIP / SigLIP / DINO / 掩码重建 / 监督；CNN 与 ViT）× 10 个概念族（数量 / 年龄 / 物体身份 + 7 个 MIT-States 属性）、共 2,530 个（模型, 概念, 形式）检验里，问「2→3 的方向」在形式内（局部）与跨形式（全局）是否一致。结果：局部几乎普遍显著（整体 99.1%，数量 2→3 为 100%），全局只有 52.2%（数量 46.9%；物体身份 99.3%、年龄 94.6% 最高）⇒ 作者命名 fragmented linearity（碎片化线性）。碎片化分数：2→3 上监督 ViT 0.67（接近随机基线）vs CLIP 0；clean→dirty 上 0.92 vs 0.08。碎片化并非固定：局部越强的模型越能跨过去（Kendall τ ∈ [0.38, 0.89]，全 p < 1e-3），在全局线性出现处概念方向可作线性探针跨形式迁移。对我们的用处：这是「表征到底学到了抽象概念还是形式特化」的可测量口径，做 BaiZe 多模态编码器选型时可以借它的「局部 vs 全局」双指标，而不是只看下游任务分数。边界：概念类型有限、反事实样本按嵌入距离近似配对；「线性」是统计显著的方向一致性，不等于真理解；数字作者自报、未复现。
+
+5. From Speech Tokens to Stolen Voices: Attacker-Chosen-Text Speaker Impersonation via Representation Inversion
+   arXiv:2610.34688 ｜ cs.SD（+cs.AI / cs.CR / cs.CV / cs.MM）｜ 哈尔滨工业大学网络空间安全学院（8 位署名）｜ 14 页 / 560,451 B ｜ 附件：是
+   为何值得读：端到端语音模型常把语音前端放在用户设备上，本地把声音转成表征、只把表征发到云端，原始录音不出设备 —— 这常被当成隐私保护。本文提出 STIA：只拿到受害者一段语音的表征片段（无原始音频、无原文），用公开语音数据训练条件流匹配生成模型，把泄漏表征当说话人条件、与攻击者指定文本结合，在冻结的音频编解码器潜空间里合成语音。Emilia 未见说话人、统一 3 秒泄漏：Moshi 前端 CAM++ 余弦 0.78 / 目标文本 WER 3.80%；Kimi-Audio 0.82 / 3.84%；Qwen3-Omni 0.75 / 4.61%；基线 SpInv+TTS 在 Moshi 上只有 0.22 / 13.37%。泄漏时长消融：2s → 0.76 / 6.24%，3s → 0.78 / 3.80%，5s → 0.79 / 3.85%，8s → 0.80 / 3.95% ⇒ 3 秒后文本准确度基本饱和。防御方向：表征认证加密 / 进程隔离 / 限制读取与保留时间 / 应用层再校验。对我们的用处：凡是「端侧提取特征、云端推理」的链路（含语音交互的 agent 入口），都不能把「不上传原始数据」当成隐私已解决；表征要按敏感数据对待。边界：三个前端、英语为主（中文仅 Moshi 单独训练评估）；相似度是自动指标、不等于真实认证系统通过率；输出音质受冻结编解码器限制；数字作者自报、未复现。
+
+四、附件（单封，5 个 PDF）
+- 2610.32951（17 页 / 1,308,219 B）+ 2610.32881（7 页 / 2,309,478 B）+ 2610.32483（43 页 / 3,268,395 B）+ 2610.35857（15 页 / 556,912 B）+ 2610.34688（14 页 / 560,451 B）= 8,003,455 B ≈ 7.63 MB（≤ 20 MB）。
+- 五个 PDF 均通过严格校验（content-type=application/pdf、本地字节 == content-length、%PDF- 头、%%EOF 尾、pdfinfo 页数、pdftotext 字符数）。
+
+五、配套产出
+- 日报：research/daily/2026-10-27.html（5/5 收口；含晚报变更说明（AM → PM）、附录 A–D 与 A′–D′，附录 C/C′ 给 PDF 字节/页数/sha256）
+- 台账：SEEN.md 4,975 行（收录 261 / 候选 4,207，其中 RSS 补充 507）；papers.jsonl 261 行；PDF 5/5 落地
+- 《论文两分钟》分镜：research/video/SCENES/10_27.html（TOP-1 = 2610.35857，5 镜 / 120s / 口播 446 字）；成片与平台发布在用户侧
+
+顺祝工作顺利
+刘洋（《超级智能2035》· BaiZe-ISEDA2027 / ZhuLong-DAC2027）

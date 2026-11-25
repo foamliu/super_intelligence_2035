@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/RVOQUANabKd+BX1N7xVhcVIUCHc</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.42147,2610.41359,2610.41177&amp;start=0&amp;max_results=3</title>
+  <updated>2026-11-02T22:03:52Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=3&amp;id_list=2610.42147,2610.41359,2610.41177" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>3</opensearch:itemsPerPage>
+  <opensearch:totalResults>3</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.41359v1</id>
+    <title>LEAP: Efficient LLM Inference Scheduling with Generalizable Length Prediction</title>
+    <updated>2026-10-30T07:23:27Z</updated>
+    <link href="https://arxiv.org/abs/2610.41359v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.41359v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Length-aware scheduling reduces request latency in LLM serving by prioritizing shorter requests. However, despite their large model sizes, length predictors can suffer degraded ranking performance under domain and task shifts, and adapting them can require costly retraining. Their prediction overhead can further offset the benefits of scheduling. To improve the generalization and efficiency of length-aware scheduling, we propose \textbf{LEAP}, a length prediction system with fast online adaptation and asynchronous CPU execution. LEAP reuses the serving model's prefill hidden states, which contain information about the output length, and extracts this signal through a linear readout. To adapt to substantial domain and task shifts, it updates the readout at test time through recursive least squares, using completed requests as supervision without gradient computation or historical-data replay. Prediction and updates run asynchronously on CPU, while prediction and initial batch ordering overlap the remaining GPU prefill. Across the evaluated cross-domain transfers, LEAP retains strong ranking performance, and online adaptation improves Spearman correlation by 64.7\% under a larger domain shift. Serving experiments show that LEAP reduces average per-token latency by 15.9--40.8\% compared with the evaluated length predictors, while achieving 1.9\% higher throughput with $30{,}569\times$ fewer predictor parameters than the strongest evaluated baseline.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-30T07:23:27Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Kwan Yan</name>
+    </author>
+    <author>
+      <name>Jialun Zhong</name>
+    </author>
+    <author>
+      <name>Yanzeng Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.41177v1</id>
+    <title>TraceSpec: Understanding and Improving Speculative Decoding for LLM Agents</title>
+    <updated>2026-10-30T02:57:43Z</updated>
+    <link href="https://arxiv.org/abs/2610.41177v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.41177v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>LLM agents execute tasks through repeated model calls over evolving histories of reasoning, actions, and tool feedback. Aggregate speculative-decoding metrics merge these distinct decisions, providing limited guidance on where draft supervision is needed. We present TraceSpec, a framework connecting trajectory evaluation with adaptive draft training. It combines dynamic execution with fixed-prefix replay and introduces TraceSpec-Traj, a corpus of 10,000 training states and 2,500 test states spanning browsing and software engineering. Analysis of five speculative baselines reveals that aggregate acceptance can rise with context length while declining within matched late browsing actions. Workload and phase further distinguish these trends, motivating supervision guided by trajectory conditions. TraceSpec trains on intermediate assistant turns and allocates a fixed prediction budget using state-conditioned estimates of prefix-aware acceptance gaps. Across three target sizes and two temperatures, it improves replay throughput by 12.5% to 22.6% over its DSpark base. Qwen3-4B ablations show that adaptive allocation increases accepted length by 3.3% to 10.0% over fixed full-turn supervision, with additional comparisons substantiating the roles of state conditioning and consecutive-token agreement. The resulting evaluation resources, trajectory findings, and training strategy connect the analysis of agent execution to practical draft improvement.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-30T02:57:43Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jihao Zhao</name>
+    </author>
+    <author>
+      <name>Shuaishuai Zu</name>
+    </author>
+    <author>
+      <name>Pengfei Li</name>
+    </author>
+    <author>
+      <name>Biao Qin</name>
+    </author>
+    <author>
+      <name>Guanghuan Fang</name>
+    </author>
+    <author>
+      <name>Ben Feng</name>
+    </author>
+    <author>
+      <name>Baochuan Yang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.42147v1</id>
+    <title>Latent Sparse Attention: Towards Subquadratic Ultra-Long Context Attention</title>
+    <updated>2026-10-30T17:59:34Z</updated>
+    <link href="https://arxiv.org/abs/2610.42147v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.42147v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Agentic workflows are increasingly shifting towards long-horizon tasks, such as open-ended scientific work, where models benefit from long context windows. However, at ultra-long context (above 1M tokens), full attention is prohibitively expensive. A promising approach is sparse attention, in which a dedicated indexer selects a subset of keys for the attention. Yet current methods of indexing either still have quadratic cost in context size or lose accuracy at ultra-long context scale. We address this with Latent Sparse Attention (LSA), an efficient attention method that maintains accuracy at ultra-long context. In LSA, keys are hierarchically clustered in a learned latent space, and queries score the hierarchy of clusters instead of scoring every key, making prefill, decode and training faster at long context. We propose two variants, Distilled-LSA (D-LSA), which can be applied to pre-trained models via distillation, and Native-LSA (N-LSA), which is trained natively on the next-token loss alone. On GLM-5.3-FLASH (QWEN-3.8-27B) at 10M tokens, D-LSA speeds up one attention layer by 22.7x (72.4x) in prefill and 4.6x (42.5x) in decode over its original sparse attention (full attention), while keeping similar accuracy across a variety of tasks. N-LSA matches the accuracy of full attention with a training speedup of 1.6x per layer at 128k tokens. LSA offers practical and efficient attention for models to benefit from ultra-long context.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-30T17:59:34Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Ales Kubicek</name>
+    </author>
+    <author>
+      <name>Andrea Caciolai</name>
+    </author>
+    <author>
+      <name>Liangzu Peng</name>
+    </author>
+    <author>
+      <name>Sukrit Sumant</name>
+    </author>
+    <author>
+      <name>Benjamin Hoover</name>
+    </author>
+    <author>
+      <name>Fraser Greenlee</name>
+    </author>
+    <author>
+      <name>Ruairidh M. Battleday</name>
+    </author>
+    <author>
+      <name>Radim Urban</name>
+    </author>
+    <author>
+      <name>Torsten Hoefler</name>
+    </author>
+    <author>
+      <name>James C. R. Whittington</name>
+    </author>
+  </entry>
+</feed>

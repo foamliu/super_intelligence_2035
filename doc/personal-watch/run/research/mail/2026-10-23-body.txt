@@ -1,0 +1,50 @@
+paul 您好，
+
+今日（2026-10-23）arXiv 筛选中精选 5 篇，当日收口 5/5。5 个 PDF 合计 22,690,111 B ≈ 21.64 MB，超单封 20 MB 上限 ⇒ 按规格分包为 2 封：本封 1/2 附早报 3 篇「借鉴」（5.93 MB），2/2 附晚报 2 篇「科普」（15.71 MB）。
+
+一、本轮取数说明（如实）
+- 本日两轮：早报（AM，本地 06:00）= 3 篇「借鉴」；晚报（PM，本地 18:00）= 2 篇「科普」。AM 时 arXiv 公告批次尚未刷新（仍为 2026-10-21，totalResults 636928，与前一晚 PM 完全相同）⇒ --fetch 15/15 查询 ok 但 kept 0 / dropped 600（成因：整批已在 PM 轮入账 SEEN，非无数据、非窗口越界、非单查询失败）；早报 3 篇取自上一轮 PM 的 156 条候选池。
+- PM 轮批次已刷新：2026-10-21 → 2026-10-22（totalResults 636928 → 637451，+523；最新样本 published=2026-10-22T17:59:53Z）；--fetch（window_mode=daily，72h）15/15 ok（全部 attempts=1）、kept 160 / dropped 429（2026-10-22：137 / 2026-10-21：23）。
+- 副源 HF Daily Papers 本机不可达（Network is unreachable，Errno 101），如实登记 FAIL；RSS cs.CL 超时 / cs.CV 192 / cs.LG 339，仅作发现、不作证据。
+- 5 篇均已用 arXiv API 的 id_list 逐条复核（HTTP 200 + application/atom+xml + published 有效）：AM 3 篇见 raw/2026-10-23-idlist-r107.xml（8/8 返回），PM 2 篇见 raw/2026-10-23-idlist-r108a/b.xml（6/6 返回）。
+- 原文标题照抄未改写；文中数字均为「论文作者自报」，我们未复现；机构一律「以原文 PDF 为准，本线未核」。
+- ⚠️ 口径：早报 3 篇的公告批次仍记 2026-10-21（首次提交 2026-10-21 UTC），晚报 2 篇为 2026-10-22（UTC）；不写「10-23 今日新提交」。早报 3 篇不回改，理由见日报「晚报变更说明」。
+
+二、精选清单（3 篇「借鉴」+ 2 篇「科普 / 选题参考」）
+
+【借鉴｜与 BaiZe / ZhuLong 强相关】
+
+1. Don't Stop Long-Context Continual Pre-Training Too Early: An Empirical Scaling Law
+   arXiv:2610.29352 ｜ 附件：是（32 页 / 2,173,445 B）
+   为何值得读：长上下文续训（LCCP）该投多少 token、什么时候停，此前只有经验手感。作者拟合出加性幂律：损失 = f(模型规模, 短上下文预算, LCCP token 预算)，5 个规模 / 100+ 配置可外推到留出规模；给出 Constant-Last4 观测协议（只在最后 4 个序列位置测），让长上下文评估成本可控；1.22B 模型约 100B LCCP token 的整条轨迹被同一律形式命中；128K 扩展 + SFT 后收益仍在并外溢到 agentic 任务。对我们的用处：给 BaiZe 的续训预算与停止判据一个可计算的先验，而不是拍脑袋定 token 数。
+
+2. TrainBridge: Agentic NPU Training Optimization Guided by GPU Compilation Evidence
+   arXiv:2610.29171 ｜ 附件：是（14 页 / 768,391 B）
+   为何值得读：同一份训练代码，GPU 能跑快、NPU 却慢，缺的不是「知道 GPU 更快」而是「知道差在哪一步」。TrainBridge 把 GPU 编译栈的高度优化执行当任务特定参照 → 抽取优化意图 → 重写 NPU 程序 → 迭代 profiling 闭环。4 个负载平均 1.7×，27 个 Modded-NanoGPT speedrun 任务接近 2.0×。对我们的用处：BaiZe / ZhuLong 若走非 GPU 后端，这是「跨栈迁移」的可复用范式（用证据驱动、而非规则库）。
+
+3. PAUSE: Search-Free Steering of Coding Agents Before Their First Source-Code Edit
+   arXiv:2610.29870 ｜ 附件：是（21 页 / 3,271,312 B）
+   为何值得读：coding agent 前期探索的 token 大多花在「跑偏之后」，而不是「跑偏之前」。PAUSE 在首次源码编辑（轨迹中位约 60% 处）执行前拦截，独立 Planner 据当前轨迹写计划、同一 Executor 续跑，全程 search-free。OpenHands Verified +16.8%、SWE-agent Multilingual +14.7%，Planner 成本约为 SICA 的 11–15%，离线可恢复 35.4% 的失败任务并省 33–41% Executor token。对我们的用处：ZhuLong 的 harness 规划环节可以直接借鉴「编辑前拦一刀」的低成本设计。
+
+【科普｜选题 / 跨域参考】
+
+4. BrickWright: Agentic Creation of Physically Feasible Brick Builds（本日 TOP-1 · 已出《论文两分钟》分镜脚本）
+   arXiv:2610.31651 ｜ 附件：是（20 页 / 5,639,346 B）
+   为何值得读：让 AI「用乐高搭东西」，难点不是画得像，而是搭得住。作者给 coding agent 一套 Python 积木工具箱 BrickLayer（拼装 API + 物理可行性校验器），校验器直接回传「悬空 / 穿模 / 不连通 / 非真实零件」，agent 据此改代码。512 条文本或图片提示上，基线 agent 的物理可行率只有 9%（GPT-6 Luna）到 69%（GPT-6 Astra），BrickWright 引导下全部到 100%；同时提升轻量模型的提示遵循度、对强模型不降，文本→积木还超过专用模型。全程不训练新模型。边界要读清：可行 = 只用真实零件 / 无穿模 / 无悬空 / 尽可能连通，不等于承重、也不等于拼装顺序可用。
+
+5. LLM Multi-Agent Systems Are Vulnerable to Herding and Runaway Cascades
+   arXiv:2610.30769 ｜ 附件：是（32 页 / 10,837,617 B）
+   为何值得读：把经典 Music Lab 从众实验搬进大规模 LLM 群体（对不熟悉的新歌打分，一组能看到他人累计推荐数）。结果显示：可见他人选择会触发失控级联，集体推荐变极端、不可预测、越来越偏离歌曲本身质量；LLM 群体对从众比人更敏感，级联发生后也更难自己纠偏。边界：结论绑定该范式与所选模型 / 提示，人类基线也来自该范式。对多智能体产品是明确的风险提示：让 agent 互相看答案，可能把错误放大成共识。
+
+三、附件（分包）
+- 本封 1/2：2610.29352（32 页 / 2,173,445 B）+ 2610.29171（14 页 / 768,391 B）+ 2610.29870（21 页 / 3,271,312 B）= 6,213,148 B ≈ 5.93 MB（≤ 20 MB）。
+- 另封 2/2：2610.31651（20 页 / 5,639,346 B）+ 2610.30769（32 页 / 10,837,617 B）= 16,476,963 B ≈ 15.71 MB（≤ 20 MB）。
+- 5 个 PDF 均通过严格校验（content-type=application/pdf、本地字节 == content-length、%PDF- 头、%%EOF 尾、pdfinfo 页数、pdftotext 字符数）。
+
+四、配套产出
+- 日报：research/daily/2026-10-23.html（早报 3/5 + 晚报 2/5 = 收口 5/5；含晚报变更说明、PDF 清单、15 查询明细）
+- 《论文两分钟》分镜：research/video/SCENES/10_23.html（TOP-1 BrickWright，5 镜 / 120s / 口播 399 字；成片与平台发布在用户侧）
+- 台账：SEEN.md 4,612 行（收录 241 / 候选 3,864 / RSS 507）；papers.jsonl 241 行
+
+顺祝工作顺利
+刘洋（《超级智能2035》· BaiZe-ISEDA2027 / ZhuLong-DAC2027）

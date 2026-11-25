@@ -1,0 +1,16 @@
+Dear Professor Patterson,
+
+I am Yang Liu, an engineer working on BaiZe (ISEDA 2027) and ZhuLong (DAC 2027), two projects that apply language models to chip design and memory-systems analysis. We re-read "A Case for Intelligent RAM" (IEEE Micro, 1997) because it is the cleanest statement of merging compute and memory when the gap keeps widening, and we now face a similar bandwidth-versus-compute argument with HBM.
+
+Three questions:
+
+1. Your case rested on a 50%-per-year processor-DRAM speed gap plus awkward DRAM organization. Which part of that argument survives HBM and chiplet packaging, and which part was overtaken by them?
+
+2. If you were restating the case today for bandwidth-bound LLM inference, what is the minimum credible experiment — in simulation fidelity, baselines, and metrics — that would make you believe a PIM speedup claim?
+
+3. IRAM did not become mainstream. In hindsight, was the binding constraint manufacturing cost, the programming model, or the absence of a killer application — and which one should a new project solve first?
+
+Any pointers would directly shape our architecture-cost analysis.
+
+Thank you,
+Yang Liu

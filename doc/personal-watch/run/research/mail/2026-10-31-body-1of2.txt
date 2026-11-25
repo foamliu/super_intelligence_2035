@@ -1,0 +1,62 @@
+【论文日报】2026-10-31（周六）· 5 篇 · 当日 5/5 收口（第 1/2 封）
+口径：早 3 篇 =「借鉴」（与 BaiZe / ZhuLong 在研工作相关）；晚 2 篇 =「科普」（大众可懂 + 有传播力）
+数据源：arXiv 官方 API（export.arxiv.org）+ id_list 权威复核；推荐 = 待读线索，非结论；数字均作者自报，本线未复现。
+⚠️ 本日 5 篇 PDF 合计 44,904,331 B ≈ 42.83 MiB > 20 MB 附件上限 ⇒ 按规格分包 2 封：
+   本封（1/2）附「早 3 篇」共 5,988,962 B ≈ 5.71 MB；2/2 附 PhysCount 13.98 MB；
+   MIMO-Bench（2610.38957）PDF ≈ 23.13 MB 超限 ⇒ 只给链接 + 摘要。
+
+━━ 一、早报 3 篇「借鉴」（公告批次 2026-10-29 未刷新，取自 r122 的 217 条候选池）━━
+
+1) Nemotron 3.5 Super and Lightning: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Models for Agentic AI
+   arXiv:2610.38095 ｜ cs.CL（+cs.AI, cs.LG）｜ 首次提交 2026-10-28 ｜ NVIDIA（559 位署名）｜ 79 页
+   为何值得读：开源 MoE + 混合 Mamba–Transformer 两档模型（120B-A12B 多模态 / 30B-A3B 文本），
+   把「大规模蒸馏（各 1T tokens）+ 长上下文 + 原生 MTP 投机解码 + NVFP4 量化」写成阶段配方；
+   后训练 Super 在 SWE-bench Pro 51.78%（作者称超过 Nemotron 3 Ultra，激活参数约少 4.6×）；
+   MTP boosting 把投机解码接受长度 4.287 → 4.718（最高 +21.8%）；NVFP4 中位精度恢复 99.62%。
+   与本线相关性：与 BaiZe 的「MoE + Mamba/attention 混合」架构同族，阶段先后与预算可 2B 缩配；
+   MTP 的「隐状态混合 + 冻结主干预热」是可直接对照的实现细节；「精度恢复 + 吞吐」成对报告口径可抄。
+   ⚠️ 边界：厂商技术报告，数字自报；51.78% 是整套后训练流水线的结果，不能归因到单一技术点。
+   附件：2610.38095.pdf（3,628,821 B / 79 页）
+
+2) Rimuru: Unified Memory Management for Modern LLM Serving via Elastic Expert Offloading
+   arXiv:2610.40305 ｜ cs.OS（+cs.LG）｜ 首次提交 2026-10-29 ｜ 中山大学（珠海）+ 独立研究者 ｜ 14 页
+   为何值得读：把「模型权重池」与「KV 池」并成一个共享页池：不同张量类型用各自页大小 + 页表
+   （memory views）解释同一段内存，配大页对齐 + 多级页分配器（可切分/合并）做跨类型复用，
+   再加页表感知的融合 MoE kernel（直接读非连续专家权重）+ 负载感知调节器 ⇒ vLLM 上的弹性专家卸载。
+   作者自报：相对卸载类基线吞吐 1.39×–19.03×、TTFT 平均降低 98.1%。
+   与本线相关性：命中「存储/内存受限推理」；四条机制可逐条对照我们 serving 栈的可改点。
+   ⚠️ 边界：19.03× 的前提是「4090D 上对走 AVX2 的 KTransformers（该机 CPU 无 AMX）」，非通用加速比；
+   对 SGLang / vLLM 为 1.1×–2.88×；消费级 GPU + Qwen MoE + 合成请求流。
+   附件：2610.40305.pdf（1,924,458 B / 14 页）
+
+3) Every Token Needs Its Own Teacher: Multi-teacher Adaptive On-policy Self-distillation
+   arXiv:2610.40574 ｜ cs.CL ｜ 首次提交 2026-10-29 ｜ TUM / MCML / relAI + Kyoto / NII / ELLIS / Aalto ｜ 19 页
+   为何值得读：用教师干预试验证明「同一条回答里不同 token 偏好的教师并不一样」⇒ 建 7 个教师配置
+   （完整参考 / prefix-0.5 / 0.75 / suffix-0.5 / 0.75 / random-span-0.5 / 0.75，均保留最终答案），
+   用多数投票 + KL 为每个 token 选教师，只对被选中的教师做 on-policy 蒸馏；
+   Qwen3-1.7B/4B/8B 数学推理平均分相对 base +5.9 / +1.5 / +2.8。
+   与本线相关性：给「有参考解（gold patch / 编译器真值）」的场景一条不需要奖励模型的稠密监督路径，
+   「参考暴露多少 = 一个教师」可对上 ZhuLong 的 generate–execute–refine 循环。
+   ⚠️ 边界：仅数学推理（DeepMath-103K）+ 3 个基准；每方法 300 步、按步数对齐，未给等算力对照。
+   附件：2610.40574.pdf（435,683 B / 19 页）
+
+━━ 二、晚报 2 篇「科普」（本封只列清单，正文见 2/2 封）━━
+
+4) PhysCount: Do MLLMs Count Visual Appearances or Physical Entities?（本日科普 TOP-1）
+   arXiv:2610.40530 ｜ cs.CV ｜ 南京大学 + NVIDIA ｜ 38 页
+   一句话：照片里「看见几次」≠「有几个东西」；40 个 MLLM 数「出现」容易、数「实体」难。
+   （PDF 14,658,374 B ≈ 13.98 MB 附在 2/2 封；分镜 research/video/SCENES/10_31.html）
+
+5) What do MLLMs know about 'Waldo'? Evaluating Visual Reasoning under Multi-Instance Multi-Object Challenges
+   arXiv:2610.38957 ｜ cs.CV ｜ IIIT Hyderabad + Microsoft Research India + IIT Hyderabad ｜ 52 页
+   一句话：「找威利」式多实例多物体场景，最好模型属性绑定 IACC 仅 52.8%（人类 89.3%）。
+   ⚠️ PDF 24,250,619 B ≈ 23.13 MB 超 20 MB ⇒ 不附，链接：https://arxiv.org/pdf/2610.38957
+
+━━ 附件与台账 ━━
+· 本封附件 3 个 PDF（早 3 篇），合计 5,988,962 B ≈ 5.71 MB（≤ 20 MB）。
+· 本地 PDF 目录 research/pdf/2026-10-31/（pdf/ 不入 git）。
+· 当日日报：research/daily/2026-10-31.html ｜ 分镜：research/video/SCENES/10_31.html
+· 本轮取数：AM window_mode=daily（72h）15/15 HTTP 200、kept 0 / dropped 600；
+  PM 复验批次仍 2026-10-29（totalResults=124184 / 广度 640516，与 AM 逐条相同；周末停发，
+  独立复核 submittedDate:[202610300000 TO 202610312359] 全库与 cs.CL 均为 0），
+  --fetch --seen 15/15 200（13 条 attempts=1 + 2 条重试后成功）、kept 0 / dropped 600（558 SEEN + 42 stale）。

@@ -1,0 +1,14 @@
+Dear Dr. Driess,
+
+I am Yang Liu, author of Superintelligence 2035 and lead of the BaiZe-ISEDA2027 project, a ~2B domain model for chip design (EDA). π0 is the clearest published example of putting a flow-matching action head on a pretrained VLM, and that is exactly the interface question we face when a model has to emit multi-step tool calls to simulators.
+
+1) With only tens of thousands of in-domain images and traces, rather than robot-scale data, would you still choose flow matching over discretized action tokens? Which failure mode appears first as data shrinks?
+
+2) π0 predicts action chunks. For heterogeneous actions — tool calls with different arities and argument types — how would you define chunk boundaries: a fixed horizon, or semantic sub-goals? Did chunking hurt fine-grained corrections in your ablations?
+
+3) You inherit VLM semantics and train an action expert. If we can tune only one, is frozen backbone plus adapter, or full fine-tuning, the safer default for a narrow domain?
+
+These answers would directly set our vision-tower and action-interface ablations. Thank you for the open report and for any pointer to the relevant tables.
+
+Best regards,
+Yang Liu

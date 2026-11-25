@@ -1,0 +1,73 @@
+{
+ "handle": "demishassabis",
+ "name": "Demis Hassabis (@demishassabis) / X",
+ "bio": "Nobel Laureate. Co-Founder &amp; Chair @GoogleDeepMind; Chief Scientist of Alphabet. Founder &amp; CEO @IsomorphicLabs. Trying to understand the nature of reality...",
+ "tweets": [
+  {
+   "id": "2120210297948696997",
+   "created_at": "2026-11-10 17:41 UTC",
+   "created_at_ms": 1794332501000,
+   "text": "Our latest frontier model Gemini 4 Carbon is rolling out today! Amazing progress from Gemini 3 → Gemini 4 in less than a year… Carbon reverse engineers my original Theme Park binaries, adds a new DeepMind themed ride, and ports it to the web in one shot - kind of mindblowing to https://t.co/99QPwwWfs5",
+   "url": "https://x.com/demishassabis/status/2120210297948696997",
+   "handle_guess": "demishassabis"
+  },
+  {
+   "id": "2115933173175689570",
+   "created_at": "2026-10-29 22:25 UTC",
+   "created_at_ms": 1793312755000,
+   "text": "No.1 💎 https://t.co/k4Werb6ZGV",
+   "url": "https://x.com/demishassabis/status/2115933173175689570",
+   "handle_guess": "demishassabis"
+  },
+  {
+   "id": "2115489550256746502",
+   "created_at": "2026-10-28 17:03 UTC",
+   "created_at_ms": 1793206987000,
+   "text": "⚡Iterating at lightning speed! Gemini 4 Carbon is SOTA across key benchmarks and combines frontier capabilities with deep safety &amp; security research. https://t.co/TC8Y8ziPOI",
+   "url": "https://x.com/demishassabis/status/2115489550256746502",
+   "handle_guess": "demishassabis"
+  },
+  {
+   "id": "2115232001275924722",
+   "created_at": "2026-10-27 23:59 UTC",
+   "created_at_ms": 1793145582000,
+   "text": "Very excited to share Genie 4, our incredible interactive world model, bringing together real-time physics, reasoning, and audio! Simulations within simulations, makes you wonder just how deep the rabbit hole goes... I have a feeling we will be finding out soon enough...",
+   "url": "https://x.com/demishassabis/status/2115232001275924722",
+   "handle_guess": "demishassabis"
+  },
+  {
+   "id": "2115114028338962672",
+   "created_at": "2026-10-27 16:10 UTC",
+   "created_at_ms": 1793117455000,
+   "text": "This is Genie 4, our most realistic and interactive world model yet. 🌐\\\n\\\nExplore dynamic environments in real time to see how the scene responds, sounds, and how the people in it move, react, and speak. https://t.co/6mmSUm9BBO",
+   "url": "https://x.com/demishassabis/status/2115114028338962672",
+   "handle_guess": "GoogleDeepMind"
+  },
+  {
+   "id": "2113352276026990972",
+   "created_at": "2026-10-22 19:30 UTC",
+   "created_at_ms": 1792697421000,
+   "text": "Honoured to be featured in the @WSJ Innovators Issue. I’ve always believed in the power of human ingenuity to solve our hardest problems. I’m confident we can collectively navigate the potential challenges of frontier models and usher in a new golden age of scientific discovery!",
+   "url": "https://x.com/demishassabis/status/2113352276026990972",
+   "handle_guess": "demishassabis"
+  },
+  {
+   "id": "2112884628520317426",
+   "created_at": "2026-10-21 12:32 UTC",
+   "created_at_ms": 1792585925000,
+   "text": "From childhood prodigy to AI pioneer to Nobel Prize winner, Demis Hassabis has always had a simple plan. Step one, solve intelligence. Step two, solve everything else. 🔗 https://t.co/W3SLM55fJy https://t.co/rihg56z69d",
+   "url": "https://x.com/demishassabis/status/2112884628520317426",
+   "handle_guess": "WSJ"
+  },
+  {
+   "id": "1990818894177513831",
+   "created_at": "2025-11-18 16:26 UTC",
+   "created_at_ms": 1763483186000,
+   "text": "For example I’ve been doing a bunch of late night vibe coding with Gemini 3 in @GoogleAIStudio, and it’s so much fun! I recreated a testbed of my game Theme Park 🎢 that I programmed in the 90s in a matter of hours, down to letting players adjust the amount of salt on the chips! https://t.co/vVhx9tz5SD",
+   "url": "https://x.com/demishassabis/status/1990818894177513831",
+   "handle_guess": "demishassabis"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 18:02:21"
+}

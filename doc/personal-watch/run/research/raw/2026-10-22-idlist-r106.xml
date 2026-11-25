@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/2/geHIOvdzuA6vLZk0xOhI4M4vo</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.29025,2610.30086,2610.30035,2610.30125,2610.30089&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-22T10:04:01Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.29025,2610.30086,2610.30035,2610.30125,2610.30089" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>5</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30125v1</id>
+    <title>PhysiCalWorld: In-Context Physics Calibration for World Models</title>
+    <updated>2026-10-21T17:57:59Z</updated>
+    <link href="https://arxiv.org/abs/2610.30125v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30125v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Existing world models typically perceive a scene through current visual frame or a narrow history window. However, these observations may not reveal the physics properties that determine transition dynamics, such as an object's mass distribution, joint damping, or surface friction. Without calibrating these physics factors for world models, predictions tend to regress toward an empirical prior and induce severe drift in novel test scenes. To this end, we propose PhysiCalWorld, which calibrates action-conditioned world models to the instance-specific dynamics via in-context prompting, without fine-tuning or analytical physics modeling. Our method encodes an exploratory interaction clip collected within the test scene into a compact physics descriptor token, which grounds subsequent predictions in the scene's actual physical behavior. PhysiCalWorld is trained end-to-end with the latent prediction loss alone, without physics labels. At inference time, the descriptor token is extracted once and can be reused across rollouts with negligible compute overhead. We evaluate PhysiCalWorld across four environments covering diverse physics variations and show that it substantially improves rollout prediction accuracy and visual planning success rate. The learned descriptors also form a physically structured latent space and generalize beyond the physics ranges seen during training.</summary>
+    <category term="cs.RO" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T17:57:59Z</published>
+    <arxiv:comment>Project page: https://physical-world.github.io/</arxiv:comment>
+    <arxiv:primary_category term="cs.RO"/>
+    <author>
+      <name>Yunhao Luo</name>
+    </author>
+    <author>
+      <name>Wentao He</name>
+    </author>
+    <author>
+      <name>Yinpei Dai</name>
+    </author>
+    <author>
+      <name>Hyelin Nam</name>
+    </author>
+    <author>
+      <name>Hongze Fu</name>
+    </author>
+    <author>
+      <name>Joyce Chai</name>
+    </author>
+    <author>
+      <name>Nima Fazeli</name>
+    </author>
+    <author>
+      <name>Jeong Joon Park</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30086v1</id>
+    <title>Orbitol: Crystal Generation on Wyckoff Orbits</title>
+    <updated>2026-10-21T17:33:59Z</updated>
+    <link href="https://arxiv.org/abs/2610.30086v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30086v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Generative models propose crystalline materials by learning composition and geometry, but unconditional sampling gives no direct control over the space group, which constrains whether responses such as piezoelectricity are symmetry-allowed. We present Orbitol, a crystal generator built on the Crystalite diffusion Transformer that replaces atom tokens with Wyckoff-orbit tokens. Given a space group and a collection of occupied Wyckoff positions, Orbitol generates the atom type and free coordinates of each orbit together with a compatible lattice, so every valid structure is invariant under the operations of the requested group. It generates structures two to three orders of magnitude faster than the symmetry-aware baselines at the evaluated settings. On MP-20, 13.8% of Orbitol's attempts yielded stable or metastable, unique and novel structures that retained the requested space group after relaxation, compared with 10.8% for SGFM, the next best model. We also introduce SPARC, a score that combines retention of the raw detected space group with agreement between the retained-group and training distributions. Finally, we used Orbitol to generate candidates in piezoelectric crystal classes. Of the structures selected by internal screening, 89% passed our density functional theory checks, and 79% also matched no Materials Project or Alexandria entry with the same space group. Their median figure of merit was nine times that of the piezoelectric materials computed in the Materials Project, and 24% of the new candidates ranked in that set's top 10%.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T17:33:59Z</published>
+    <arxiv:comment>39 pages, 9 figures, 13 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Ivan Žugec</name>
+    </author>
+    <author>
+      <name>Joshua Rosenthal</name>
+    </author>
+    <author>
+      <name>Ivor Lončarić</name>
+    </author>
+    <author>
+      <name>Jan-Willem van de Meent</name>
+    </author>
+    <author>
+      <name>Tin Hadži Veljković</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.29025v1</id>
+    <title>Single-Image Food Mass Estimators Do Not Transfer Their Gram Scale Across Datasets</title>
+    <updated>2026-10-21T00:59:03Z</updated>
+    <link href="https://arxiv.org/abs/2610.29025v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.29025v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Estimating food mass from a photograph is central to image-based dietary assessment, but whether trained models transfer to new cameras and foods is unclear. We fine-tuned DINOv2-base on 2,253 weighed Nutrition5k dishes to predict mass from one RGB photograph and compared it with a zero-shot vision-language model, Qwen3-VL-32B, on Nutrition5k and three external datasets: ASA24 studio portions, ECUSTFD whole foods and Food Portion Benchmark meal trays. In domain, the fine-tuned model's mean absolute error was 24.8 g, less than half of Qwen's. On external datasets it did not beat Qwen. For a food it had never seen, it ranked portions by size, but no better than a count of food pixels. Its gram scale was wrong in two ways: it changed with how much of the scene the photograph showed, and it was off by a different factor for each food. Training on other foods or trays from the tested dataset cut the external error by 38 to 65%. DINOv2-large, a larger backbone trained on the same dishes, did not reduce the external error. One labeled photograph of the same food cut the model's ASA24 error to 28.3 g, better than that photograph achieved alone. Prediction intervals that held the true mass for 90% of Nutrition5k dishes held it for at most half of external photographs. Nutrition5k often photographed the same plate several times, so a random test split shared near-identical photographs with training and overstated accuracy. Single-image mass estimators therefore need labeled photographs from the setting where they are used.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T00:59:03Z</published>
+    <arxiv:comment>19 pages, 6 figures, 13 tables. Code, set lists and model weights: https://github.com/yongshenglian/foodmass-transfer</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Yongsheng Lian</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30089v1</id>
+    <title>ProactEgoMem: Benchmarking Proactive Memory in Streaming Egocentric Video</title>
+    <updated>2026-10-21T17:37:58Z</updated>
+    <link href="https://arxiv.org/abs/2610.30089v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30089v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Today's multimodal assistants are typically prompted to interpret the visual evidence presented to them. To offload the cognitive burden of remembering across long horizons, wearable assistants should instead proactively acquire and maintain useful memory as the user's surroundings evolve. Doing so on the user's behalf requires identifying what matters, understanding the scene in real time, and initiating memory maintenance in the background while the user stays focused on their activities. We introduce ProactEgoMem, a benchmark that evaluates proactive memory in streaming egocentric video. Three tasks ground the evaluation in ambient environmental needs: Information Capture (IC) preserves transient yet dense visual information, State Tracking (ST) follows changing object states, and Location Tracking (LT) records object movements. The benchmark defines its protocol at two levels of proactiveness: the Notification Level asks for a single timely notification that satisfies the user's intent, while the deeper Intervention Level asks the agent to maintain memory on the user's behalf through an active start-to-stop tool lifecycle. Parallel ProactEgoMem-Daily and ProactEgoMem-Sci tracks contain 300/100 clips covering daily and scientific use cases, paired with 1000/500 questions in ProactEgoMem-QA, which measures the quality of the proactively acquired memory. Across proprietary, open-source, video-language, and streaming baselines, even the strongest models fail to capture memory both timely and accurately. ProactEgoMem provides a rigorous evaluation foundation for proactive multimodal assistance and for video agents that co-exist with their users.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T17:37:58Z</published>
+    <arxiv:comment>30 pages, 22 figures, Project Page: https://proactegomem.github.io/</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Ruotong Liao</name>
+    </author>
+    <author>
+      <name>Meikel Kokowski</name>
+    </author>
+    <author>
+      <name>Xiaoxiao Sun</name>
+    </author>
+    <author>
+      <name>Yongqin Xian</name>
+    </author>
+    <author>
+      <name>Laura Bravo Sánchez</name>
+    </author>
+    <author>
+      <name>Shiye Su</name>
+    </author>
+    <author>
+      <name>Federico Tombari</name>
+    </author>
+    <author>
+      <name>Serena Yeung-Levy</name>
+    </author>
+    <author>
+      <name>Volker Tresp</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30035v1</id>
+    <title>Plausible but Unimplantable: A Trustworthiness Audit of Shape Completion Foundation Models for Cranial Defect Reconstruction</title>
+    <updated>2026-10-21T16:59:30Z</updated>
+    <link href="https://arxiv.org/abs/2610.30035v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30035v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>A patient who has lost part of the skull vault needs an implant that fits the defect exactly, and such implants are still drawn by hand in CAD by specialists, which makes each case slow and expensive. The task can be considered as a shape completion problem, so pretrained completion models, and now the first shape completion foundation models, look like a way to remove that manual step. We audited three publicly released pretrained shape completion models, two of them foundation models, applied zero-shot to 239 cranial defects, some carved from public skull datasets and some real post-craniectomy cases. Each output was compared with simply returning the patient's own remaining bone, and tested for whether the predicted material could be placed without intersecting the bone that is still there. On the 210 carved defects none of the three improved on doing nothing, and on the 29 real cases only one did so beyond chance. Yet not one output, from any model in any configuration, was implantable: none managed both to stay clear of the bone the patient still has and to place more material than doing nothing, where a task-specific volumetric model, trained for this task and selected on these cases, was implantable on all but one. The output that most convincingly resembles a skull is no more placeable than the rest, and at these point densities implant thickness cannot be read off the emitted points at all, which is a property of the output representation rather than of any one model. On this evidence the shape completion foundation models we could obtain cannot be trusted and, used as released, are not usable in clinical practice. Substantial research towards trustworthy foundation models for shape completion is still needed.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T16:59:30Z</published>
+    <arxiv:comment>ACCV 2026 TrustFMI accepted</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Marek Wodzinski</name>
+    </author>
+    <author>
+      <name>Kamil Kwarciak</name>
+    </author>
+    <author>
+      <name>Daria Hemmerling</name>
+    </author>
+    <author>
+      <name>Mateusz Daniol</name>
+    </author>
+  </entry>
+</feed>

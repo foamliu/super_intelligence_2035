@@ -1,0 +1,18 @@
+Dear Mr. Bainsla,
+
+The step I kept re-reading is Eq. (4): you store r = [k_R(128) | v_U(384) | v_R(128)] in R^640 and let two overlapping strided views stand in for the key and value caches, which only works because w is a fixed model weight.
+
+I am Yang Liu, a researcher working on LLM agents and small-model training; my page is https://foamliu.github.io/.
+
+We care about this because KV memory, not FLOPs, is what caps our long-context batch size.
+
+Two questions:
+
+1. If w were made per-head or trainable (or folded differently in a quantized checkpoint), does the compaction stay exact, or must both K and V be stored again? Please pick one and add a sentence.
+
+2. Of the 2 answers out of 432 that differ from the stock engine, are they concentrated on tasks that need verbatim copying or long-range retrieval, or are they spread at random? That tells us when to switch this on.
+
+Thank you for the bit-identical accounting; it made the trade-off easy to reason about.
+
+Best regards,
+Yang Liu

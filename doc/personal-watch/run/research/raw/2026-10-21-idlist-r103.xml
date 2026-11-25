@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/ieGH8JHBKcAjYBWdPfSzUygn16U</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.26834,2610.26754,2610.26836,2610.26342,2610.25516&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-20T22:06:16Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.26834,2610.26754,2610.26836,2610.26342,2610.25516" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>5</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.26836v1</id>
+    <title>Same Simulation, Different Evidence: Where Retrieved Tool Output Costs LLM Agents Accuracy</title>
+    <updated>2026-10-19T17:57:41Z</updated>
+    <link href="https://arxiv.org/abs/2610.26836v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.26836v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>LLM agents that compute the right answer can still answer wrongly. Agent harnesses increasingly keep long tool outputs out of the context window, saving them to files that the agent searches or reads on demand. We ask where this costs accuracy with a real scientific tool: PHREEQC, a widely used geochemistry simulator from the USGS, whose reports reach 846.8k characters and whose determinism lets every printed value be traced. Agents use it to answer 158 execution-verified multiple-choice items. When agents read the simulator's report through a section index rather than in context, GPT-5.1 and GPT-5.2 lose 11.3 and 7.9 points of accuracy, while Claude Opus 4.6 and Claude Sonnet 4.6 show no detectable cost. Re-running all 11,007 logged simulator calls shows that both GPT models compute the keyed value about as often as before; what changes is the evidence they answer from. Under retrieval they often skip the report, answer from their own higher-precision output files, and misround to a neighboring option, a failure we call evidence substitution. With the simulation held fixed, retrieval still costs GPT-5.2 9.4 points. For GPT-5.4, more frequent correct simulations mask an evidence-use loss of about ten points, leaving a net change indistinguishable from zero. Naming the authoritative output raises accuracy by 6.3-7.9 points over plain retrieval for the three GPT models; for GPT-5.1 and GPT-5.2, inlining outputs that fit works as well, while asking for correct rounding does not. Context-management choices in agent harnesses should be judged by where accuracy is lost, not only by final accuracy.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-19T17:57:41Z</published>
+    <arxiv:comment>15 pages, 4 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Ke Zhang</name>
+    </author>
+    <author>
+      <name>Sahchit Chundur</name>
+    </author>
+    <author>
+      <name>Jerry Peprah Owusu</name>
+    </author>
+    <author>
+      <name>Mohammad Javad Abdolhosseini Qomi</name>
+    </author>
+    <author>
+      <name>Maziar Raissi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.26342v1</id>
+    <title>VibeTraining-Bench: Data-Trainer-Harness Co-Design for Iterative System Improvement</title>
+    <updated>2026-10-19T13:10:54Z</updated>
+    <link href="https://arxiv.org/abs/2610.26342v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.26342v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recursive self-improvement (RSI) requires agents to diagnose system bottlenecks and coordinate improvements across training and inference. We refer to the agents' capability to jointly optimize training data, the trainer, and the inference harness as cross-component co-design. We introduce VibeTraining-Bench, a benchmark for evaluating this capability across tasks spanning terminal operation, software engineering, multi-turn tool use, and mathematical reasoning. Within each task, research agents start from an identical initial agent system under a fixed resource budget. Guided by validation feedback, they iteratively refine data, trainers, and inference harnesses, then select and submit a final agent system for evaluation on the test set. To prevent reward hacking, we enforce three safeguards: test data isolation, separate research and grading containers, and network restrictions for research agents. Our evaluation results show that frontier research agents substantially improve target agent systems. For example, on SWE-bench Verified, GPT-6-Astra raises the target agent system's performance from 32.9% to 53.7%, comparable to the human-developed instruct model's 55.4%. However, there is still room to improve their ability to co-design and iteratively refine data, trainer, and harness to achieve cumulative performance gains. We hope that VibeTraining-Bench will serve as a unified platform for advancing RSI, deepening our understanding of cross-component optimization for agent systems. Code and data are available at https://github.com/D2I-ai/VibeTrainingBench.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-19T13:10:54Z</published>
+    <arxiv:comment>(Technical report (27 pages, 21 figures)</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Ruotian Peng</name>
+    </author>
+    <author>
+      <name>Yuanyi Ren</name>
+    </author>
+    <author>
+      <name>Shuaiqi Liu</name>
+    </author>
+    <author>
+      <name>Xin Guo</name>
+    </author>
+    <author>
+      <name>Fang Zhu</name>
+    </author>
+    <author>
+      <name>Yangyi Huang</name>
+    </author>
+    <author>
+      <name>Yue Wu</name>
+    </author>
+    <author>
+      <name>Zheng Wang</name>
+    </author>
+    <author>
+      <name>Yandong Wen</name>
+    </author>
+    <author>
+      <name>Zhihang Fu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.25516v1</id>
+    <title>Bud ContextCompact 2.0: Context Compaction for Agent Success and Accuracy with Small Language Models and Constrained Context Windows</title>
+    <updated>2026-10-18T20:15:30Z</updated>
+    <link href="https://arxiv.org/abs/2610.25516v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.25516v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Agents that work for many turns outgrow the context window of the model that serves them, and on small language models (SLMs) and constrained inference systems that window is small. Context compaction replaces older turns with a summary so a session can continue, but it is lossy, costs a model call, and can help or hurt depending on when it runs. We describe Bud ContextCompact 2.0, the compaction built into the Bud agent runtime, and evaluate it in two settings. On recall questions over recorded agent sessions, compaction to a 16K budget raised a 1.2B-parameter model's accuracy to 0.335, from 0.247 with truncation and 0.176 with its full 32K history (p &lt; 0.001), and raised a 9B model from 0.515 (truncation) to 0.577 (p = 0.04). On 100 SWE-bench Verified tasks run end to end by a 27B reasoning model on a 49K-token window (556 graded sessions), compaction raised the resolve rate on long sessions from 41% to 53% (+12.3 points, 95% CI +1.6 to +23.0, McNemar p = 0.043), left short sessions unchanged, and used 13% fewer tokens per solved task at equal total cost. The main failure without compaction was not the history overflowing but a reasoning turn exhausting the room the history left. The gain has limits: it vanished under a 45-minute session budget, because each summary took a median of 161 s, and in a threshold study it appeared only when compaction triggered early enough to leave room. An 8B model submitted after about ten turns at 5-8K tokens and never needed compaction. We argue that the accuracy results transfer across hardware, including CPU inference, for an equivalent model and window, while the time cost scales with the hardware and must be budgeted for.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-18T20:15:30Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Jithin VG</name>
+    </author>
+    <author>
+      <name>Ditto PS</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.26834v1</id>
+    <title>Kronecker Delta Rule for Long Context Linear Attention</title>
+    <updated>2026-10-19T17:56:52Z</updated>
+    <link href="https://arxiv.org/abs/2610.26834v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.26834v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We propose KronLSTM, a linear attention architecture based on the Kronecker Delta Rule, a novel update rule for associative matrix memories. KronLSTM extends the xLSTM family with a memory-revision mechanism that corrects targeted associations while modifying the memory only along a single direction in matrix space. This minimally invasive memory revision reduces interference with previously stored information compared with delta-rule updates, making it particularly well suited for long-context language modeling. The resulting memory dynamics can be mathematically described as a Markov chain that converges to a steady-state distribution, while the expected norm of the memory matrix remains uniformly bounded throughout the entire input sequence. Hence, KronLSTM ensures stable memory dynamics without requiring additional normalization and stabilization mechanisms for the memory state. Experiments show that KronLSTM is competitive with, and often outperforms, existing linear attention architectures, including models of the (Gated) DeltaNet family, with particularly strong performance on long context benchmarks. These results establish the Kronecker Delta Rule as an effective and analytically tractable foundation for stable associative memory in recurrent linear attention architectures. Our code (https://github.com/NX-AI/KronLSTM) and models (https://huggingface.co/collections/NX-AI/kronlstm) are open-source.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-19T17:56:52Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Anamaria-Roberta Hartl</name>
+    </author>
+    <author>
+      <name>Levente Zólyomi</name>
+    </author>
+    <author>
+      <name>Michael List</name>
+    </author>
+    <author>
+      <name>Günter Klambauer</name>
+    </author>
+    <author>
+      <name>Sebastian Böck</name>
+    </author>
+    <author>
+      <name>Sepp Hochreiter</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.26754v1</id>
+    <title>TokenGate: Adapting LLMs for Fast and Memory-Efficient Prefill with Learned Token Pruning</title>
+    <updated>2026-10-19T17:15:53Z</updated>
+    <link href="https://arxiv.org/abs/2610.26754v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.26754v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Expert human readers process large inputs (e.g., code repositories and long documents) by skimming to closely read only what matters. On the other hand, language models process all input tokens through each model layer, resulting in significant processing costs for long-context inputs. We introduce TokenGate, a small, drop-in component that extends existing trained models to enable end-to-end learnable token pruning over long-context inputs for fast and memory-efficient prefill. To enable end-to-end learning despite the non-differentiable top-K operator for token pruning, we introduce token-gated attention, a mechanism inspired by Mixture-of-Experts that re-weights attention logits using token importance scores. Across diverse tasks, TokenGate achieves $1.4$-$11.3\times$ faster time-to-first token (TTFT) and $1.5$-$3.4\times$ lower peak memory at no accuracy degradation for prefill in transformers. Compared to the best-performing prior methods for token-pruning, TokenGate gives up to $6.4\times$ faster prefill and $2\times$ lower peak memory. TokenGate natively extends both standard transformers (e.g., Qwen3) and hybrid-attention models (e.g., Qwen3.5) with simple lightweight adaptation comparable to standard parameter-efficient fine-tuning. We make our code available at: https://github.com/tokengate-models/TokenGate.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-19T17:15:53Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Liana Patel</name>
+    </author>
+    <author>
+      <name>Rishabh Ranjan</name>
+    </author>
+    <author>
+      <name>Ion Stoica</name>
+    </author>
+    <author>
+      <name>Matei Zaharia</name>
+    </author>
+    <author>
+      <name>Carlos Guestrin</name>
+    </author>
+  </entry>
+</feed>

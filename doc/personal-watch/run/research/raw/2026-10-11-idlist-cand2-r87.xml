@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/nZPb8jsIXkhSESFe9fckJJByL84</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.11355,2610.10657,2610.10619,2610.10805,2610.11286,2610.10946&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-11T10:02:12Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.11355,2610.10657,2610.10619,2610.10805,2610.11286,2610.10946" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>6</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.10657v1</id>
+    <title>Beyond Owls: Subliminal Learning Can Transfer Learned Capabilities and Backdoors</title>
+    <updated>2026-10-07T16:42:55Z</updated>
+    <link href="https://arxiv.org/abs/2610.10657v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.10657v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In subliminal learning (SL), a teacher model passes on a trait to a student model by distillation on data semantically unrelated to the trait. So far, SL has been demonstrated for only a limited range of traits, including preferences for animals (e.g., owls) and malicious personas. These traits can also be elicited with simple prompts or with steering. Can SL transfer a wider range of traits, including more complex ones? If so, distillation might transfer subtle forms of misalignment (e.g., reward-seeking, scheming, and secret loyalties) without detection.
+  To this end, we test whether SL can transfer a novel capability: predicting the outputs of a randomly initialized MLP. After distilling on unrelated text, the student achieves substantial performance on the task, while falling short of the teacher. We find that a directly optimized steering vector matches SL in distribution but generalizes worse out of distribution.
+  Next, we test whether SL can transfer backdoors. We finetune the teacher to answer in French when the prompt contains a female name, then distill on number sequences containing neither names nor French. The student partially acquires the backdoor, responding in French on 23.5% of prompts with female names versus 0.0% with male names.
+  Finally, we test whether SL can transfer a propensity to hack in an agentic chess environment. We finetune the student on number sequences from a steered hacker teacher. The student hacks in 58.3% of episodes, compared with 10.9% for the unfinetuned model.
+  Thus, we show SL can transfer capabilities, backdoors, and hacking propensities. The amount of transfer is sensitive to the setup. In several experiments, it is made stronger by using logit distillation or by restricting LoRA to the attention layers.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-07T16:42:55Z</published>
+    <arxiv:comment>Code: https://github.com/TruthfulAI-research/beyond_owls</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Jan Dubiński</name>
+    </author>
+    <author>
+      <name>Anna Sztyber-Betley</name>
+    </author>
+    <author>
+      <name>Jan Betley</name>
+    </author>
+    <author>
+      <name>Owain Evans</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11355v1</id>
+    <title>Writing for the Reviewer: Defensive Writing in GPT Models</title>
+    <updated>2026-10-08T06:47:48Z</updated>
+    <link href="https://arxiv.org/abs/2610.11355v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11355v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Researchers increasingly use ChatGPT to revise their papers, and recent GPT versions often narrow or even retract the authors' claims. We call such changes defensive writing when the given material does not support them, and we test two explanations: the model corrects the authors' overclaiming, or it writes for an anticipated reviewer. We ask GPT versions and models from other developers to rewrite paragraphs from papers written before ChatGPT, or to write from an evidence sheet that lists a paper's method and results. Defensive writing grows with GPT version. GPT-6-astra retracts the authors' claims outright, and when it writes from the evidence sheet, it still adds the most ungrounded qualifications. The results favor the anticipated-review explanation, and correcting overclaiming explains only a small part. When the models are only asked to polish, defense stays near the level of the originals; mentioning review raises it, and one round of self-review raises it further. At the same time, fewer than one in ten of the claims GPT-6-astra retracts are overstated. AI reviewers score defensive rewrites higher, while human readers find them harder to read and the authors less certain. Combining AI writing with AI review may amplify this style.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T06:47:48Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Junchi Liao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11286v1</id>
+    <title>When Scene Text Hijacks the Scene: Uncovering, Exploiting, and Mitigating Rendered-Text Semantic Leakage in Image Generation Models</title>
+    <updated>2026-10-08T05:50:40Z</updated>
+    <link href="https://arxiv.org/abs/2610.11286v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11286v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The reliability and accountability of image generative models (IGMs) are essential for building responsible and trustworthy AI systems. Recent IGMs, such as Nano Banana and GPT-Image, now support complex instruction following, realistic image synthesis, and controllable scene-text rendering. As these capabilities expand, safety analysis must also account for new control channels introduced by complex prompts. In this work, we study rendered-text semantic leakage, a largely overlooked phenomenon in open-domain text rendering. Although rendered text is intended to serve as a local visual constraint that should be reproduced verbatim in the generated image, it also carries linguistic semantics that may be interpreted by the model as part of the input instruction. This makes rendered text a potential semantic control channel whose safety implications remain insufficiently understood. We systematically characterize this phenomenon by decoupling the main visual prompt from the rendered text and measuring their individual and compositional effects on generated images. We quantify semantic leakage and rendering fidelity, and further analyze how leakage emerges from intermediate model evidence. We then show that harmful semantics embedded in scene text can persist through LLM-based prompt enhancement pipelines and steer non-text image regions, even when the main visual prompt remains benign. Finally, we propose a preliminary mitigation approach that reduces unsafe semantic transfer from rendered text to non-text regions while preserving the intended text-rendering behavior on FLUX-2-dev. Our findings reveal rendered text as a dual-use carrier of visible data and latent semantics, exposing a text-centric cross-modal attack surface in modern IGMs.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T05:50:40Z</published>
+    <arxiv:comment>To appear in the 2027 IEEE Symposium on Security and Privacy (IEEE S&amp;P 2027)</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Feifei Li</name>
+    </author>
+    <author>
+      <name>Runjie Wang</name>
+    </author>
+    <author>
+      <name>Xiaohan Zhang</name>
+    </author>
+    <author>
+      <name>Zhenxing Qian</name>
+    </author>
+    <author>
+      <name>Mi Wen</name>
+    </author>
+    <author>
+      <name>Mi Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.10805v1</id>
+    <title>Whose Ground Truth? Embracing Ambiguity in Human-Centered AI</title>
+    <updated>2026-10-07T19:05:31Z</updated>
+    <link href="https://arxiv.org/abs/2610.10805v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.10805v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>As AI systems increasingly interact with people and make decisions about them, understanding human interpretations becomes an important part of developing human-centered AI. Conventional machine learning and AI systems are largely developed under the assumption that a single definitive ground truth exists, with variability in human annotations often resolved through aggregation or treated as noise. However, for many human-centered tasks, human interpretation is inherently ambiguous, and multiple interpretations of the same input may be simultaneously reasonable and valid. Reducing such ambiguity to a single target risks overlooking meaningful information about the diversity of human perception, judgment, and experience. In this position paper, we call for a shift towards modeling the interpretation space of plausible human judgments, while distinguishing meaningful ambiguity from annotation noise. We argue that this perspective should guide how AI systems are represented, learned, evaluated, deployed, and governed, supporting more human-centered AI that better reflects the diversity of human interpretation.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-07T19:05:31Z</published>
+    <arxiv:comment>Accepted to NeurIPS 2026 Trustworthy AI for Good Workshop</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Jingyao Wu</name>
+    </author>
+    <author>
+      <name>Mohammad Tariqul Islam</name>
+    </author>
+    <author>
+      <name>Per Rådberg Nagbøl</name>
+    </author>
+    <author>
+      <name>Julie Gerlings</name>
+    </author>
+    <author>
+      <name>Giovanni Leoni</name>
+    </author>
+    <author>
+      <name>Georgiana Fryza</name>
+    </author>
+    <author>
+      <name>Lars Pilegaard Thomsen</name>
+    </author>
+    <author>
+      <name>Jakob Mainz</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.10946v1</id>
+    <title>AI4Fire: Evaluating Large Language Models on Wildfire Tasks</title>
+    <updated>2026-10-07T21:52:18Z</updated>
+    <link href="https://arxiv.org/abs/2610.10946v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.10946v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language models (LLMs) are entering wildfire management, where overstated evaluations can cost property and lives. How do they perform on wildfire tasks, with and without grounding? Bare means a model receives the task input alone. Grounded means it also receives one task-specific addition: for smoke detection, a smoke-free reference frame from the same camera. AI4Fire runs six core models bare and grounded on five wildfire tasks, zero-shot; a sweep adds 29 more. Our literature search on fire tasks found 138 works; none combines this roster, task coverage, and paired bare and grounded runs. We report three findings. (1) Grounding helped most where the addition carried the answer: a read-only SQL tool lifted every core model's database accuracy from at most 16 to at least 88 percent. (2) Simple rules were hard to beat: no core model outperformed repeating today's staffing count, and two open-weight models mostly copied the median of similar earlier fire-days, a worse forecast. (3) Public releases carry hazards: a fire-danger column separates the holdout perfectly, and 67 aerial fire frames carry smoldering or fire-free labels read from a clipped thermal maximum. We release prompts, responses, scores, code, and the survey record.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-07T21:52:18Z</published>
+    <arxiv:comment>51 pages. Code: https://github.com/yzhao062/AI4Fire</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yue Zhao</name>
+    </author>
+    <author>
+      <name>Xiyang Hu</name>
+    </author>
+    <author>
+      <name>Zuobin Xiong</name>
+    </author>
+    <author>
+      <name>Zhangyu Wang</name>
+    </author>
+    <author>
+      <name>Ruolin Li</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.10619v1</id>
+    <title>TestJack: Should you trust the results in coding benchmarks? Agentic Coding Benchmarks Auditing via Evaluator Evolution</title>
+    <updated>2026-10-07T07:58:04Z</updated>
+    <link href="https://arxiv.org/abs/2610.10619v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.10619v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language model (LLM) agents are rapidly reshaping software engineering, accompanied by an explosion of new code benchmarks. Yet nearly all existing benchmarks still rely on the same decades-old criterion: a solution is correct if it passes a fixed set of unit tests. Such tests are often insufficient: they check only part of what the task requires, so agents can reward hack them or silently miss required behavior while still passing every test. As a result, higher benchmark scores may partly reflect better adaptation to the evaluator rather than better problem solving. Existing works focus on static test augmentation: they strengthen each task's tests once, before any trial is seen, and thus overlook how real trials actually fail. We introduce TestJack, a scalable framework for evaluating patches beyond fixed tests. For each trial, TestJack generates tests targeting prompt requirements the patch may violate, retains only tests passed by the ground-truth patch, and re-examines any trial failures. Each confirmed failure is thus supported by a replayable test. To reduce evaluation cost, we also introduce a lightweight variant which audits a random sample of trials in depth and reuses the resulting tests across all trials for the same task. Across 6 frontier model backends and 5 benchmarks such as DeepSWE and SWE Marathon, we find that about 34.4% of the model trials currently judged correct violate the task requirements, lowering the overall resolution rate from 50.6% to 33.2%. Our results reveal a fundamental limitation of current coding-agent evaluation: as LLMs become better at optimizing against fixed evaluators, those evaluators themselves must become more adaptive.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-07T07:58:04Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Shuangjie Yao</name>
+    </author>
+    <author>
+      <name>Hao Wang</name>
+    </author>
+    <author>
+      <name>Koushik Sen</name>
+    </author>
+    <author>
+      <name>Simin Chen</name>
+    </author>
+    <author>
+      <name>Baishakhi Ray</name>
+    </author>
+    <author>
+      <name>Dawn Song</name>
+    </author>
+  </entry>
+</feed>

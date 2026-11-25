@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-29 · AI 什么都读得懂，就是读不懂盲文</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#153e75 0%,#2e8b57 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(21,62,117,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#153e75; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#153e75; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#153e75; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#153e75; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-29</h1>
+  <div class="sub">今日 TOP-1：<b>AI 什么都读得懂，就是读不懂盲文</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>约 440 字</b></div>
+  <div class="meta">
+    <span>📄 Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs</span>
+    <span>🆔 arXiv:2610.36195</span>
+    <span>🏷 cs.CV（+ cs.CL）· 科普口径</span>
+    <span>👥 Kartik Jangra, Atharva Gawane, Siddharth Pulipaka et al.</span>
+  </div>
+  <div class="disc">⚠️ 本片为<b>论文解读</b>：口播与字幕只使用论文正文与表格可支撑的内容；「259 / 215 / 44 / 3% / 53.95% / 88.37% / 62.79% / 180 秒 / $0.51–0.58 / 86.98% / 61.36% / 96.00% / 3.26% / 276k」等为<b>作者自报、本线未复现、未精读全篇（附录未读）</b>；画面<b>全部自绘 / 自生成</b>，不使用论文原图与图表。另：《两分钟论文》是已有知名频道名，本栏目名<b>发布前请用户确认</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它当今日 TOP-1（科普口径 · 目的 2）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>一句反差就够抓人</b>：「AI 都能读发票、读手写体了，怎么读不了一张盲文纸条？」—— 不需要任何 AI 背景，也不需要解释什么是 VLM。</li>
+    <li><b>纠结点天然可视</b>：盲文字符<b>只由小格子里哪几个点凸起</b>决定，考的是<b>数点 + 几何推理</b>；画面可以是<b>放大的凸点格子 + 逐个点亮</b>，完全不需要论文插图。</li>
+    <li><b>三组数字撑起三段叙事</b>：① 通用模型一级<b>除 GPT Sol 系外全部低于 3%</b>（还会「自信地胡说」）；② 靠 agent 套工具能到 <b>88.37%</b>，代价是 <b>约 180 秒 + 50 美分/图</b>；③ 一个 <b>2B 小模型只看合成数据</b>，<b>一次调用</b>做到 <b>86.98% / 61.36%</b>。</li>
+    <li><b>最好的钩子在最后（反转）</b>：同一个模型在自己造的合成数据上 <b>96.00%</b>，换到真实照片一级只剩 <b>3.26%</b> —— 「<b>考得好 ≠ 会</b>」这一句可以收尾，且对所有「用生成数据练模型」的人都成立。</li>
+    <li><b>有社会意义但不煽情</b>：全球至少 <b>22 亿人</b>有视力障碍（论文引 WHO / IAPB 口径，含 4,300 万全盲）；会读盲文的 AI 是<b>盲文读者与不识盲文者之间的桥</b>（老师查作业、家人读便条）。</li>
+    <li><b>边界清楚（片中说）</b>：基准仅 <b>259 张</b>、<b>以一级为主（215/259）</b>；工具辅助成绩依赖具体 harness；作者自报、本线未复现；PDF 完整性 = <b>结构校验</b>（Range 拼接，sha256 与 CDN <code>etag</code> 未对齐）。</li>
+    <li><b>与同日另一篇「科普」候选的分工</b>：<code>2610.37619</code>（第一人称网球：1.1 秒后球位误差 0.91 m、深度信息把 3D 球定位从 0.51 m 降到 0.21 m）画面更好看，但<b>叙事落点不如「96% → 3.26%」锐利</b> ⇒ 本片为 TOP-1，网球那篇留作备选。</li>
+  </ul>
+</div>
+
+<h2 class="sec">📄 论文信息（照抄 arXiv 条目 · 不臆测）</h2>
+<div class="card">
+  <div class="row"><div class="k">英文原题</div><div class="v"><span class="orig">Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Kartik Jangra, Atharva Gawane, Siddharth Pulipaka, Hemachandran Karah, Raj Dabre（<b>5 位署名</b>，无 et al.；机构据 PDF 首页：<b>Nilekani Centre at AI4Bharat</b> · <b>IIT Madras</b> · <b>Mahindra University</b>；片中<b>不念机构</b>）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-26T19:32:41Z</b>（<code>published</code>，来自 <code>id_list</code> 官方 Atom；<code>updated</code> 相同 ⇒ 无 v2）· <code>comment</code>：22 pages, 8 figures, 16 tables；代码/数据 <code>github.com/kartik0806/BrailleBench</code> · PDF 实测 <b>22 页</b>（65,886 字符）</div></div>
+  <div class="row"><div class="k">分类</div><div class="v"><code>cs.CV</code>（主分类；cross-list <code>cs.CL</code>）· 关键词：盲文识别 / 无障碍 / 视觉语言模型 / 合成数据 / sim-to-real / 基准</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><code>https://arxiv.org/abs/2610.36195</code>（放视频简介；本页不嵌外链资源）</div></div>
+  <div class="row"><div class="k">本文引用口径</div><div class="v">完全匹配（Exact Match，EM）= <b>整段转写与原文本完全相同</b>（最严格）；片中必须区分「一级 / 二级」与「单次推理 / 工具辅助」，<b>不能把 88.37%（一级、带工具、3 分钟）与 86.98%（一级、一次调用、2B）混成一句</b>。</div></div>
+</div>
+
+<h2 class="sec">🎞 五段分镜（0–10 / 10–30 / 30–80 / 80–105 / 105–120s）</h2>
+<table>
+  <tr><th style="width:44px">镜</th><th style="width:96px">时间</th><th style="width:88px">段落</th><th style="width:34%">口播（中文 · 约 200 字/分）</th><th>画面（一律自绘 / AI 生成）</th><th style="width:18%">字幕（屏上大字）</th><th style="width:16%">音效 / BGM</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">AI 能读发票、读手写，却读不了一张盲文纸条。两百五十九张真实照片，让一堆顶级模型集体翻车。</td>
+    <td><b>左半屏</b>：一张打印发票被「唰」地识别成一排整齐文字（<b>矢量示意</b>）；<b>右半屏</b>：一张米白色盲文纸条，扫描线扫过后只浮出「<b>?????</b>」。镜头切到<b>俯视特写</b>：一个个<b>凸点格子</b>在暗光里只显出模糊的圆点。右下角小字「<b>259 张真实照片</b>」。</td>
+    <td>读得懂发票<br><b>读不懂盲文</b><br>（小字：作者自报 · 未复现）</td>
+    <td>扫描「唰」；问号出现「叮」；低频「嗡」收尾。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s（20s）</td>
+    <td class="act">问题</td>
+    <td class="vo">盲文不是普通文字：一个字符，全靠小格子里哪几个点凸起来决定。考的是数点和几何，恰恰是视觉模型最不擅长的。而且盲文分两级：一级逐字母拼，二级带缩写，得看上下文。</td>
+    <td><b>6 点格子逐格点亮</b>：每点亮一次，右下角跳出对应字母（<b>自绘</b>，不用论文图）。随后<b>同一条盲文带</b>分成两条轨道：左轨「一级：一个字母一个格子」逐格对应；右轨「二级：一个格子代表一个词」出现<b>缩写合并动画</b>与问号。</td>
+    <td>数点 + 几何<br>一级：逐字母<br><b>二级：靠上下文</b></td>
+    <td>点格「哒、哒」；合并动画「咔」；BGM 起（低音量）。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s（50s）</td>
+    <td class="act">方法</td>
+    <td class="vo">作者建了 BrailleBench：两百五十九张真实盲文照片，二百一十五张一级、四十四张二级，书本、标牌、低分辨率都有。然后让四类系统同台：单次推理的通用模型、OCR 专用、还有会自己裁剪放大的 agent。另一边，他们写了一个合成盲文生成器，造了二十七万六千张带扰动的图，只拿这些假数据，去完整微调一个二十亿参数的小模型。</td>
+    <td><b>三栏并列</b>：①「通用模型 · 一次问答」：一张照片 → 一个答案框；②「OCR 专用」：方框切分；③「Agent · 裁剪/放大/过滤」：出现<b>放大镜 + 三次往返箭头</b>与计时器（<b>约 180 秒</b>）。下半屏切到<b>生成器流水线</b>：版式随机 → 凸点渲染 → 加噪声/模糊/透视 → 堆成「<b>276k</b>」样本塔，再缩成一个 <b>2B</b> 的小方块。</td>
+    <td>259 张 = 215 + 44<br>四类系统同台<br><b>276k 合成图 → 2B 模型</b></td>
+    <td>翻页「沙」；放大镜「叮」；计时器「滴答」加速；样本塔堆叠「咔哒」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s（25s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果很干脆：通用模型一级几乎全在百分之三以下，最强的也只有五十三点九五；会套工具的 Claude Code 能到八十八点三七，但要三分钟、五十美分一张。合成数据训出的 2B 小模型，一次调用就拿到一级八十六点九八、二级六十一点三六。</td>
+    <td><b>横向条形图</b>（自绘）：一排近乎贴地的短条（<b>&lt;3%</b>）→ 一根到 <b>53.95%</b> 的条（标注 GPT-6.1 Sol）→ 一根 <b>88.37%</b> 的条（标注「+ 工具 / 3 分钟 / $0.5」）→ 最后落下一根 <b>86.98%</b> 的条（标注「2B · 一次调用」）。右侧小窗并排「二级：61.36% vs 40.91%」。所有数字旁挂小字「<b>作者自报 · 未复现</b>」。</td>
+    <td>&lt;3% ×多数<br><b>53.95 → 88.37（贵）→ 86.98（快）</b><br>二级 61.36%</td>
+    <td>竖条生长「嗖」；贴地短条「噗」；落条「咚」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">最反直觉的是最后一组：同一个模型，在自己造的合成数据上九十六，换到真实照片，一级只剩三点二六。考得好，不等于会。论文链接在简介。</td>
+    <td>屏幕中央一条<b>水平温度计</b>：左端「合成验证集 96.00%」满格亮绿；镜头一甩，右端「真实照片 一级 3.26%」几乎见底（<b>红色余量</b>）。定格成一行字「<b>考得好 ≠ 会</b>」，淡出为片尾卡：<b>论文原题（英文照抄）</b> + <b>arXiv:2610.36195</b> + 一行「<b>论文解读 · 非官方 · 非结论</b>」。</td>
+    <td>96.00% → <b>3.26%</b><br><b>考得好 ≠ 会</b></td>
+    <td>温度计「滴——」；落差「咻」；定格「咚」；片尾单音「叮」后留 1s 静音。</td>
+  </tr>
+</table>
+
+<h2 class="sec">📝 口播全文（可直接念 · 约 440 字）</h2>
+<div class="card">
+  <p class="vo">AI 能读发票、读手写，却读不了一张盲文纸条。两百五十九张真实照片，让一堆顶级模型集体翻车。</p>
+  <p class="vo">盲文不是普通文字：一个字符，全靠小格子里哪几个点凸起来决定。考的是数点和几何，恰恰是视觉模型最不擅长的。而且盲文分两级：一级逐字母拼，二级带缩写，得看上下文。</p>
+  <p class="vo">作者建了 BrailleBench：两百五十九张真实盲文照片，二百一十五张一级、四十四张二级，书本、标牌、低分辨率都有。然后让四类系统同台：单次推理的通用模型、OCR 专用、还有会自己裁剪放大的 agent。另一边，他们写了一个合成盲文生成器，造了二十七万六千张带扰动的图，只拿这些假数据，去完整微调一个二十亿参数的小模型。</p>
+  <p class="vo">结果很干脆：通用模型一级几乎全在百分之三以下，最强的也只有五十三点九五；会套工具的 Claude Code 能到八十八点三七，但要三分钟、五十美分一张。合成数据训出的 2B 小模型，一次调用就拿到一级八十六点九八、二级六十一点三六。</p>
+  <p class="vo">最反直觉的是最后一组：同一个模型，在自己造的合成数据上九十六，换到真实照片，一级只剩三点二六。考得好，不等于会。论文链接在简介。</p>
+</div>
+
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面</b>：全部<b>矢量自绘 / 文生图自生成</b>；🚫 不使用论文 Figure 1 / Figure 3 与任何表格截图；盲文一律画成<b>「6 点格 + 凸点高光」</b>的示意，避免被误认为真实盲文样品。</li>
+  <li><b>数字上屏规则</b>：每个百分比第一次出现时，字幕必须带「<b>作者自报</b>」小字；口播把 53.95 念「五十三点九五」、86.98 念「八十六点九八」，<b>不四舍五入到「五成四 / 八成七」</b>。</li>
+  <li><b>不能混的口径</b>：88.37% 是<b>一级 + 工具辅助（~180s/图，$0.51–0.58/图）</b>；86.98% 是<b>一级 + 2B 模型一次调用</b>；61.36% 是<b>二级 + 同一次调用</b>；二级的对照是 Claude Code <b>40.91%</b>、Codex <b>0%</b>。</li>
+  <li><b>术语处理</b>：<code>Grade-1 / Grade-2</code> 口播念「一级 / 二级盲文」，第一次出现时字幕补一句「一级逐字母拼、二级带缩写」；<code>exact match</code> 念「完全匹配」，字幕补「整段全对才算」。</li>
+  <li><b>节奏</b>：单镜不超过 50s（方法镜），每 8–10s 必须有画面变化；BGM 在方法段低音量、结果段抬 2 dB。</li>
+  <li><b>比例/时长</b>：竖版 1080×1920（抖音）与横版 1920×1080（B站）各导一版；总时长严格 120s（±1s）；字幕安全区上下各留 12%。</li>
+  <li><b>口播字数核对</b>：镜 1 <b>46</b> 字 / 镜 2 <b>83</b> 字 / 镜 3 <b>151</b> 字 / 镜 4 <b>100</b> 字 / 镜 5 <b>60</b> 字 ⇒ 合计 <b>440 字</b>（按 200 字/分 ≈ 132s；压到 120s 需 ≈220 字/分，或删镜 3「书本、标牌、低分辨率都有」一句 —— 录制以 <b>120s</b> 为准）。</li>
+  <li><b>TTS（V3 才做）</b>：中性科普音色，语速 200–210 字/分；数字前后各留 80ms 停顿；「3.26%」读「百分之三点二六」。</li>
+</ul>
+
+<h2 class="sec">⚖️ 合规与边界（发布前必读）</h2>
+<div class="note">
+  <ol>
+    <li><b>标明「论文解读」</b>：片头或片尾固定一行「论文解读 · 非官方 · 非结论」，简介首行放 arXiv 链接。</li>
+    <li><b>不夸大</b>：禁用「AI 已能替代盲文老师 / 盲人从此不需要盲文 / 首次解决盲文识别」等表述；原文只支持「合成数据微调的 2B 模型在 BrailleBench 一级 86.98%、二级 61.36%」。</li>
+    <li><b>不编造数据</b>：本片所有数字均出自 PDF 正文与表格（259 / 215 / 44 / &lt;3% / 53.95 / 11.16 / 11.36 / 4.55 / 88.37 / 40.91 / 62.79 / 0% / 180s / $0.51–0.58 / 276k / 86.98 / 61.36 / 20.45pp / 96.00 / 3.26 / 0.47 / 82.63 / 72.97），不得二次加工成新数字。</li>
+    <li><b>不盗图</b>：画面全部自绘 / 自生成；如需引用论文图，必须另行取得授权（本片不引用）。</li>
+    <li><b>口径隔离</b>：本片属「目的 2 · 科普」，<b>不</b>写成「与 BaiZe / ZhuLong 相关」的借鉴结论；如需借鉴版解读，见当日日报 <code>research/daily/2026-10-29.html</code>。</li>
+    <li><b>未复现声明</b>：本片数字<b>作者自报、本线未复现</b>；PDF 完整性 = 结构校验通过（Range 分段续传拼接，sha256 与 CDN <code>etag</code> 未对齐，见日报附录 C）。</li>
+    <li><b>栏目名</b>：《两分钟论文》为已有知名频道名，<b>发布前请用户确认</b>是否沿用或改名。</li>
+  </ol>
+</div>
+
+<footer>
+  <p>research 线 · <code>research/video/SCENES/10_29.html</code> ｜ TOP-1 = <i>Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs</i>（<code>arXiv:2610.36195</code>）· 5 镜 / 120s / 口播 440 字 ｜ 数据源：当日 <code>research/daily/2026-10-29.html</code> 5 篇（早 3 借鉴 + 晚 2 科普）。</p>
+  <p>🎯 挑选口径 = 目的 2「科普」（大众看得懂 + 有传播力），<b>非</b>「借鉴」口径。⚠️ V3（成片：TTS / 文生图 / 剪辑）待用户确认工具链。本页自包含（内联 CSS、零外链资源、零 <code>&lt;script&gt;</code>），离线双击可开。</p>
+</footer>
+</div>
+</body>
+</html>

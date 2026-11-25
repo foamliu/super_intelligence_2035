@@ -1,0 +1,81 @@
+{
+ "handle": "LynaZhang",
+ "name": "Li Lyna Zhang (@LynaZhang) / X",
+ "bio": "Principle Researcher at Microsoft Research Asia\nLong context LLM, LLM self-play, Reasoning",
+ "tweets": [
+  {
+   "id": "1976474737690956091",
+   "created_at": "2025-10-10 02:27 UTC",
+   "created_at_ms": 1760063273000,
+   "text": "So happy to see our LongRoPE2 enabling 131k-token context for open dLLMs! 🚀\\\nGreat to be part of a work exploring how diffusion language models differ from autoregressive LLMs in long-context extension. 🙌",
+   "url": "https://x.com/LynaZhang/status/1976474737690956091",
+   "handle_guess": "LynaZhang"
+  },
+  {
+   "id": "1976405617901519010",
+   "created_at": "2025-10-09 21:53 UTC",
+   "created_at_ms": 1760046793000,
+   "text": "🔭 Towards Extending Open dLLMs to 131k Tokens\\\ndLLMs behave differently from AutoRegressive models—they lack attention sinks, making long-context extension tricky.\\\nA few simple tweaks go a long way!!\\\n✍️blog https://t.co/Epf2y2Lnsk\\\n💻code https://t.co/c04Cj5iT1y https://t.co/0uZ2F1St13",
+   "url": "https://x.com/LynaZhang/status/1976405617901519010",
+   "handle_guess": "albert_ge_95"
+  },
+  {
+   "id": "1962695876658545018",
+   "created_at": "2025-09-02 01:55 UTC",
+   "created_at_ms": 1756778136000,
+   "text": "Grateful for @FrankYouChill  insightful comments on our rStar2-Agent paper! It’s always inspiring to see such a deep understanding of the work. We hope our practice in agentic RL can inspire more research, and we look forward to further discussions with the community🚀🚀🚀.",
+   "url": "https://x.com/LynaZhang/status/1962695876658545018",
+   "handle_guess": "LynaZhang"
+  },
+  {
+   "id": "1962180218053144655",
+   "created_at": "2025-08-31 15:46 UTC",
+   "created_at_ms": 1756655194000,
+   "text": "A 14B model just beat a 671B model on math reasoning.\\\n\\\nHere’s how Microsoft’s rStar2-Agent achieves frontier math performance in 1 week of RL training \\\n\\\n- by “thinking smarter, not longer.”  🧵 https://t.co/SWXaUCRGwU",
+   "url": "https://x.com/LynaZhang/status/1962180218053144655",
+   "handle_guess": "FrankYouChill"
+  },
+  {
+   "id": "1961270546928443647",
+   "created_at": "2025-08-29 03:31 UTC",
+   "created_at_ms": 1756438311000,
+   "text": "We introduce rStar-Agent-14B🚀🚀🚀, a 14B model trained with large-scale agentic RL that matches DeepSeek-R1 (671B) on math reasoning. Welcome to check out our technical report, code and recipes! https://t.co/J27OlbsXN6",
+   "url": "https://x.com/LynaZhang/status/1961270546928443647",
+   "handle_guess": "LynaZhang"
+  },
+  {
+   "id": "1961254350459674904",
+   "created_at": "2025-08-29 02:27 UTC",
+   "created_at_ms": 1756434450000,
+   "text": "Microsoft presents rStar2-Agent\\\n\\\nAgentic Reasoning Technical Report\\\n\\\nrStar2-Agent boosts a pre-trained 14B model to state of the art in only 510 RL steps within one week, achieving average pass@1 scores of 80.6% on AIME24 and 69.8% on AIME25, surpassing DeepSeek-R1 (671B) with https://t.co/VvlAEj8Mko",
+   "url": "https://x.com/LynaZhang/status/1961254350459674904",
+   "handle_guess": "_akhaliq"
+  },
+  {
+   "id": "1945096616924307591",
+   "created_at": "2025-07-15 12:22 UTC",
+   "created_at_ms": 1752582146000,
+   "text": "🚀Our rStar-Coder dataset is now released!\\\nA verified dataset of 418K competition-level code problems, each with test cases of varying difficulty. On LiveCodeBench, it boosts Qwen2.5-14B from 23.3% → 62.5%, beating o3-mini (low) by +3.1%.\\\nTry it here: https://t.co/4y50CBcJzi",
+   "url": "https://x.com/LynaZhang/status/1945096616924307591",
+   "handle_guess": "LynaZhang"
+  },
+  {
+   "id": "1896111430837158042",
+   "created_at": "2025-03-02 08:12 UTC",
+   "created_at_ms": 1740903167000,
+   "text": "Thanks @_akhaliq  for the highlight!\\\nLongRoPE2 solves the practical challenges when we apply LongRoPE to Phi-3, and now powers Phi-4 mini. We fixed short-context drop, and achieved effective 128k context length by redefining RoPE OOD boundaries and recalibrate scale factors.",
+   "url": "https://x.com/LynaZhang/status/1896111430837158042",
+   "handle_guess": "LynaZhang"
+  },
+  {
+   "id": "1895338193303806287",
+   "created_at": "2025-02-28 05:00 UTC",
+   "created_at_ms": 1740718813000,
+   "text": "LongRoPE2\\\n\\\nNear-Lossless LLM Context Window Scaling https://t.co/02lgp26FFT",
+   "url": "https://x.com/LynaZhang/status/1895338193303806287",
+   "handle_guess": "_akhaliq"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-13 06:06:49"
+}

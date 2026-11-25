@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-18 · 机器人先看人玩几分钟，再自己玩几小时</title>
+<style>
+  :root { --primary:#1d5c3a; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#1d5c3a 0%,#2e8b57 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(29,92,58,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#1d5c3a; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#1d5c3a; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef6f0; color:#1d5c3a; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#1d5c3a; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-18</h1>
+  <div class="sub">今日 TOP-1：<b>机器人先看人玩几分钟，再自己玩几小时，就学会了手上的细活</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>≈450 字</b></div>
+  <div class="meta">
+    <span>📄 DSP: Dexterity from Supervised Play</span>
+    <span>🆔 arXiv:2610.22340</span>
+    <span>🏷 cs.RO · 科普口径</span>
+    <span>👥 Botao He, Yiming Dou, Yiannis Aloimonos, Jitendra Malik, Akash Sharma, Ruoshi Liu（6 位）</span>
+  </div>
+  <div class="disc">⚠️ 本片为<b>论文解读</b>：口播与字幕<b>只使用 arXiv 摘要可支撑的内容</b>；「69.6%」「1/490」为<b>作者自报、本线未复现</b>；画面<b>全部自绘 / 自生成</b>，不使用论文原图。另：《两分钟论文》是已有知名频道名，本栏目名<b>发布前请用户确认</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它当今日 TOP-1（科普口径 · 目的 2）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>一句话钩子</b>：「<b>机器人先看人玩几分钟，再自己玩几小时，就学会了手上的细活。</b>」不用 AI 背景就能听懂，「玩」本身就带画面。</li>
+    <li><b>有传播力</b>：① <b>反直觉数字</b> —— 效果和强化学习差不多，<b>交互数据却少约 490 倍</b>；② <b>动作可复述</b> —— 「先看 → 自己玩 → 打分挑动作」三步；③ <b>画面强</b> —— 多指手把物体在手心里<b>推着转向、翻面</b>，天然的「手上功夫」镜头。</li>
+    <li><b>可讲清 / 画面好做</b>：核心只有三件事 —— <b>玩耍策略</b>、<b>世界模型</b>、<b>候选动作打分</b>；全部扁平自绘（人手、机械手、方块、预测轨迹、评分柱），<b>无需论文原图</b>。</li>
+    <li><b>边界清楚（片中说）</b>：只验证<b>欠驱动推动</b>与<b>多指手内姿态重定向</b>两类任务（仿真 + 真实），<b>不是通用机器人管家</b>；<code>comment</code> 为空 ⇒ 不提「已开源 / 已录用」；<b>无第三方复现</b>。备选为当日第 5 篇（狗声纹识别）。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🎞 分镜表（逐镜 · 固定五段：钩子 → 问题 → 方法 → 结果 → 意义/展望）</h2>
+<table>
+  <tr>
+    <th style="width:42px;">镜号</th><th style="width:96px;">时间轴（时长）</th><th style="width:72px;">段落</th>
+    <th style="width:250px;">口播文案</th><th>画面描述（自绘 / 自生成）</th><th style="width:180px;">屏幕文字 / 字幕</th><th style="width:150px;">音效 / BGM</th>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">让机器人学会手上的细活，最贵的不是算法，是数据：总得有人一遍遍摆好、一遍遍示范。</td>
+    <td>特写：一双手把一个小方块摆到桌上（自绘 / AI 生成，不用论文素材）；镜头边上浮出<b>秒表</b>和<b>计数器</b>，计数飞快上涨，秒表指针转得发烫；数据洪流图标从桌面涌向一台机器人，机器人「卡住」不动。</td>
+    <td>字幕：<b>机器人学「手上的活」，卡在哪？</b>（小字：不是算法，是数据）</td>
+    <td>摆放「嗒」一声；计数器「哒哒哒」加速；BGM 起，轻电子、带一点紧迫感。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–20s（10s）</td>
+    <td class="act">问题</td>
+    <td class="vo">靠人示范太慢；靠强化学习在真实世界里试，又太贵——要摔几十万次，机器受不了。</td>
+    <td>左右分屏（自绘）：<b>左</b>——一个人反复摆方块的循环箭头，旁边日历一页页翻（慢）；<b>右</b>——机械手在桌面上反复失手，地上堆起「失败」小方块，计数器冲到很高后<b>爆红</b>，弹出一个「成本」警示牌。</td>
+    <td>字幕：<b>人示范：慢</b>｜<b>真实世界试错：贵</b>（小字：几十万次起步）</td>
+    <td>左「唰·唰」翻页；右「哐当」掉落声叠加；爆红时一声短促警报；BGM 略压。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>20–30s（10s）</td>
+    <td class="act">问题</td>
+    <td class="vo">能不能换个思路：先让机器人看人玩几分钟，然后放它自己去玩？玩，不需要标准答案。</td>
+    <td>画面中央出现一个<b>问号变成灯泡</b>（自绘）；灯泡里是两格小画面：<b>「人玩几分钟」</b>（手在桌上随意推方块）→ <b>「机器人自己玩几小时」</b>（机械手在同一个桌面推来推去，时钟快转）。旁边浮出「玩耍 ≠ 完成任务」的小标签。</td>
+    <td>字幕：<b>先看人「玩」，再自己「玩」</b>（小字：玩耍不需要标准答案）</td>
+    <td>问号「叮？」→ 灯泡亮「叮！」；时钟快转「嗒嗒嗒」；BGM 转轻快。</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>30–45s（15s）</td>
+    <td class="act">方法</td>
+    <td class="vo">这篇论文叫 DSP。第一步，人玩几分钟，机器人看着学，得到一个「玩耍策略」——它不追求完成任务，只求把东西推来推去、翻来翻去。</td>
+    <td>左侧「人类玩耍」小窗口（几分钟的进度条很短），一条箭头把<b>行为克隆</b>送进中间一个标着「玩耍策略」的<b>小盒子</b>（自绘）；盒子右侧连着机械手，手在桌面上把方块<b>推着转、翻个面</b>，动作连续、无终止条件。下方三个字母 <b>D S P</b> 逐字亮起。</td>
+    <td>字幕：<b>DSP ＝ 从「有人监督的玩耍」里学灵巧</b>（小字：几分钟人类玩耍 → 行为克隆）</td>
+    <td>进度条「嗖」；盒子合上「咔」；推方块「沙·沙」；DSP 三字母「叮·叮·叮」；BGM 推进一档。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>45–63s（18s）</td>
+    <td class="act">方法</td>
+    <td class="vo">第二步，让这个策略自己上场玩几个小时，把每次动手的结果记下来，训练一个世界模型：给它一个动作，它就能预测物体怎么动。</td>
+    <td>时间轴拉长：<b>「几小时」</b>进度条快速走满，旁边<b>数据桶</b>一格格装满（自绘）；数据流入右侧「世界模型」圆环。圆环里做一次<b>预测演示</b>：一个动作箭头进入 → 方块沿<b>虚线轨迹</b>滑到新位置，虚线终点与真实位置<b>重合打勾</b>。</td>
+    <td>字幕：<b>自己玩几小时 → 训练世界模型</b>（小字：给动作，预测物体怎么动）</td>
+    <td>数据「哗」流入；圆环转动「嗡—」；虚线轨迹「咻」；重合打勾「叮」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">6</span></td>
+    <td>63–80s（17s）</td>
+    <td class="act">方法</td>
+    <td class="vo">第三步，真干活时，玩耍策略先提一堆候选动作，世界模型逐个打分，挑最好的执行；最后把这一整套蒸馏成闭环策略，跑得更快。</td>
+    <td>左：「玩耍策略」盒子<b>一次吐出 5 条候选动作</b>（5 条彩色箭头，自绘）；中：「世界模型」给每条箭头<b>打分</b>（旁边升起 5 根评分柱，最高一根高亮）；右：只有<b>最高分那条</b>被放行去执行，其余变灰淡出。随后一个<b>「蒸馏」漏斗</b>把「策略 + 世界模型」压成一个小方块，标「闭环策略 · 更快」。</td>
+    <td>字幕：<b>候选动作 → 世界模型打分 → 挑最好的</b>｜<b>再蒸馏成闭环策略</b>（小字：推理更快）</td>
+    <td>五条箭头「唰」；评分柱依次「嘟」；最高分「叮—」；漏斗「呼」压缩；BGM 到小高潮但<b>不炸</b>。</td>
+  </tr>
+
+
+
+  <tr>
+    <td><span class="shot-no">7</span></td>
+    <td>80–93s（13s）</td>
+    <td class="act">结果</td>
+    <td class="vo">作者试了两类任务：推开物体，和多指手把物体在手心里翻面。真实世界，成功率比「事后行为克隆」高 69.6%。</td>
+    <td>左右两块「任务卡」（自绘）：<b>左 · 欠驱动推动</b>——机械手把方块沿桌面推到目标圈；<b>右 · 手内姿态重定向</b>——多指手在掌心把方块从一面翻到另一面。两块卡下方升起<b>对比柱</b>：基线矮、本方法高，柱顶标「+69.6%」（作者自报）。</td>
+    <td>字幕：<b>真实世界成功率 +69.6%</b>（小字：对比「事后行为克隆」· <b>作者自报 · 未复现</b>）</td>
+    <td>推到位「咔哒」；翻面「啪」；对比柱「嘟·嘟」升起；BGM 小高潮。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">8</span></td>
+    <td>93–105s（12s）</td>
+    <td class="act">结果</td>
+    <td class="vo">更抓人的是：效果和强化学习差不多，交互数据只要约 1/490。注意，这些数字都是作者自报，还没有第三方复现。</td>
+    <td>两面「仪表盘」（自绘）：<b>左表</b>「效果」两根指针几乎并排（强化学习 / 本方法）；<b>右表</b>「交互数据」一根指针满格、一根只剩一小格，标注「≈1/490」。随后画面切「核查模式」：两张卡上盖<b>半透明印章「作者自报 · 未复现」</b>，旁边一个放大镜扫过。</td>
+    <td>字幕：<b>效果相当 · 数据约 1/490</b>（小字：<b>⚠️ 作者自报 · 本线未复现</b>）</td>
+    <td>指针「嘀」两声；数据表「咔」；盖章「咚」；放大镜「沙沙」；BGM 收一档。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">9</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">它还说明一件事：机器人可以自己「玩」出数据，不用人喂，也不用仿真到现实的迁移。但这是研究，不是产品。</td>
+    <td>镜头拉远：左边「人示范」的图标（一只手）与右边「机器人自己玩」的图标（机械手）之间，画一条<b>逐渐淡出的箭头</b>（象征不再依赖人喂）；下方出现<b>「仿真 → 真实」</b>的迁移箭头，被一条柔和的<b>删除线</b>划过，标「不需要」（摘要原话：without sim-to-real transfer）。末尾淡出，浮出论文原题与编号。</td>
+    <td>字幕：<b>自己「玩」出数据：不靠人喂，也不靠仿真到现实的迁移</b>（小字：arXiv:2610.22340 · 论文解读 · 非结论）</td>
+    <td>拉远「呼—」；删除线划过「嚓」；BGM 收尾、留余地；编号落定「叮」。</td>
+  </tr>
+</table>
+
+
+<div class="ok-box">
+  <b>口播合计</b>：随 9 镜分配 = 40 + 38 + 39 + 62 + 58 + 58 + 52 + 53 + 50 = <b>450 字</b>（按 180–200 字/分 ≈ <b>2 分 15 秒～2 分 30 秒</b>；本脚本按 <b>120s</b> 剪辑 ⇒ 需语速 ≈ <b>225 字/分（偏快）</b> ⇒ <b>建议录制时压到 ~390 字</b>：优先精压镜 4（62 字：只留「人玩几分钟 → 学到玩耍策略」）与镜 5（58 字：只留「自己玩几小时 → 训世界模型」），或把方法段放宽到 30–84s、结果段顺延 84–108s。<b>五段配比（固定）</b>：钩子 <b>0–10s</b> ｜ 问题 <b>10–30s</b> ｜ 方法 <b>30–80s</b> ｜ 结果 <b>80–105s</b> ｜ 意义/展望 <b>105–120s</b>（合计 = <b>120s</b>）。
+</div>
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（人手摆方块 / 秒表与计数器 / 分屏失败堆 / 灯泡里的两格画面 / 玩耍策略盒子 / 数据桶 / 世界模型圆环 / 候选箭头与评分柱 / 蒸馏漏斗 / 两块任务卡 / 两面仪表盘 / 印章 / 拉远图标）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图 / 图注 / 表格 / 项目页截图。</li>
+    <li><b>风格建议</b>：深绿主色（<code>#1d5c3a</code> → <code>#2e8b57</code>）+ 冷灰科技底色；「候选动作」用<b>高亮青色</b>、「被选中的动作」用<b>暖橙</b>，一眼看出「打分挑一个」；核心信息置于画面<b>中央安全区</b>，便于抖音竖屏二次裁剪。</li>
+    <li><b>配音</b>：中文普通话，语速 180–200 字/分；「<b>看人玩</b>」「<b>自己玩</b>」「<b>世界模型打分</b>」三处<b>放慢并加重</b>；镜 8 的「<b>作者自报</b>」语气<b>平稳、不念成免责声明式的敷衍</b>。</li>
+    <li><b>字幕</b>：镜 7/8 的关键数字一律配小字「<b>作者自报 · 未复现</b>」；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行）</b>。</li>
+    <li><b>术语友好化</b>：<b>behavior cloning</b> → 「照着人的动作学」；<b>world model</b> → 「能在脑子里预演后果的模型」；<b>MPC</b> → 「先想几步、挑最好的一步去做」；<b>distillation</b> → 「把大流程压成一个小而快的版本」；<b>any-to-any in-hand reorientation</b> → 「在手心里把物体翻成任意朝向」。首次出现给一句白话字幕。</li>
+    <li><b>配乐</b>：建议使用平台<b>免费 / 已授权</b>曲库，避免版权风险。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给 <b>arXiv abs 链接</b> + <b>英文原题</b>照抄不改写（<i>Dexterity from Supervised Play</i>）。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「颠覆 / 突破 / 碾压 / 已掌握通用灵巧操作 / 可替代人类工人 / 机器人已能做完所有家务」；「比事后行为克隆高 69.6%」「数据少约 490 倍」严格照摘要措辞，并<b>显式标注作者自报</b>。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成；🚫 不用论文图、不用项目页截图、不用他人 demo 录屏。</li>
+    <li>✅ <b>不编造数据</b>：仅使用摘要可支撑的表述 —— 「分钟级人类玩耍 → 行为克隆得到玩耍策略」「自主部署收集<b>小时级</b>交互数据训练世界模型」「推理时玩耍策略为 MPC 提候选动作、由世界模型评估」「在世界模型内自博弈蒸馏出闭环、目标条件策略」「欠驱动推动 + 多指手 any-to-any 手内姿态重定向（仿真 + 真实）」「真实世界成功率 +69.6%」「与 RL 效果相当、交互数据少 490 倍」「无需任务专属示范、无需 sim-to-real 迁移」；<b>不虚构</b>数据集名、排行榜名次或未给出的绝对值。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「机器人已理解物理」等原文未支持的引申；镜 9 的「不靠人喂、不靠仿真到现实迁移」直接对应摘要 <i>without any task-specific demonstrations or sim-to-real transfer</i>，并<b>补一句「这是研究，不是产品」</b>。</li>
+    <li>✅ <b>署名如实</b>：作者照抄 arXiv 条目（Botao He, Yiming Dou, Yiannis Aloimonos, Jitendra Malik, Akash Sharma, Ruoshi Liu，共 6 位）<b>不臆测机构归属</b>；<code>comment</code> 为空 ⇒ <b>不补写</b>「已录用 / 已开源 / 有项目页」。</li>
+    <li>✅ <b>不混用口径</b>：本片按目的 2「<b>科普</b>」口径挑选与制作（大众看得懂 + 传播力），<b>不</b>与目的 1「借鉴」（与 BaiZe / ZhuLong 的相关性）混用。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-18</b> ｜ 文件 <code>research/video/SCENES/10_18.html</code> ｜ 当日 TOP-1（5 篇中的第 4 篇）</div>
+  <div>论文：<i>Dexterity from Supervised Play</i>（Botao He, Yiming Dou, Yiannis Aloimonos, Jitendra Malik, Akash Sharma, Ruoshi Liu）｜ <a href="https://arxiv.org/abs/2610.22340">arXiv:2610.22340</a> ｜ 首次提交 2026-10-15 ｜ 分类 <code>cs.RO</code> ｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 4 批（P0 · 18:00 时窗）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图；<b>不夸大、不编造数据</b>。本页为<b>自包含单文件</b>（内联 CSS，无脚本、无外链资源）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-18.html">research/daily/2026-10-18.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a> ｜ 上一篇：<a href="10_17.html">10_17.html</a></div>
+</footer>
+</div>
+</body>
+</html>
+

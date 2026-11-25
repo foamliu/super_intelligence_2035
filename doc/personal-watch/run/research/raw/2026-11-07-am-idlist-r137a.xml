@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/6DNp1TVbN6pHYHX3dBdUoUKzf94</id>
+  <title>arXiv Query: search_query=&amp;id_list=2611.07707,2611.08363,2611.08133,2611.07263,2611.07552,2611.07605,2611.08082,2611.08216&amp;start=0&amp;max_results=8</title>
+  <updated>2026-11-06T22:02:43Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=8&amp;id_list=2611.07707,2611.08363,2611.08133,2611.07263,2611.07552,2611.07605,2611.08082,2611.08216" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>8</opensearch:itemsPerPage>
+  <opensearch:totalResults>8</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2611.07707v1</id>
+    <title>CAMP: Context-Aware Mapping and Placement for LLMs on 3D-IMC Arrays</title>
+    <updated>2026-11-05T09:27:31Z</updated>
+    <link href="https://arxiv.org/abs/2611.07707v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.07707v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Models (LLMs) incur severe memory-access overheads due to the cost of loading large weight matrices and key-value (KV) caches. Analog In-Memory Computing (AIMC) is an emerging solution that enables computation directly on static weights stored in memory, substantially reducing energy and latency. 3D-IMC further stacks memory arrays into vertical tiers, increasing capacity but revealing a new challenge: how weights are placed in memory determines which matrix-vector multiplications (MVMs) can execute concurrently, affecting latency and throughput. The concurrency aspect of 3D-IMC weight-mapping remains underexplored in the literature, leading to sub-optimal utilization of compute resources on 3D-IMC chips. In this context we propose CAMP (Context-Aware Mapping and Placement), an inference-context-aware weight mapping algorithm for 3D-IMC-based LLM accelerators. CAMP captures the potential resource contention resulting from the architecture, targeted network, and runtime context in a conflict matrix, enabling throughput-optimized weight mapping. This mapping is refined through a profiling-driven feedback loop that efficiently prunes the search space and returns optimized mappings within practical runtimes. CAMP is an offline, software-based solution requiring no hardware changes and improving 3D-IMC compute utilization from 42.4% to 60.3%, delivering up to 2.0x higher 3D-IMC throughput and 1.74x higher end-to-end throughput over state-of-the-art mapping algorithms.</summary>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T09:27:31Z</published>
+    <arxiv:primary_category term="cs.AR"/>
+    <author>
+      <name>Orhun Görkem</name>
+    </author>
+    <author>
+      <name>Athanasios Vasilopoulos</name>
+    </author>
+    <author>
+      <name>Georgios Pagonis</name>
+    </author>
+    <author>
+      <name>Victoria Clerico</name>
+    </author>
+    <author>
+      <name>Hadjer Benmeziane</name>
+    </author>
+    <author>
+      <name>Irem Boybat</name>
+    </author>
+    <author>
+      <name>Hsinyu Tsai</name>
+    </author>
+    <author>
+      <name>Abu Sebastian</name>
+    </author>
+    <author>
+      <name>William Andrew Simon</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.07605v1</id>
+    <title>The Gating Mechanism of KV Cache Eviction</title>
+    <updated>2026-11-05T07:53:37Z</updated>
+    <link href="https://arxiv.org/abs/2611.07605v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.07605v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>KV cache eviction must decide which entries carry information that the rest of the cache can no longer supply. A natural way to estimate this is a learnable gate: give each cached entry a gate on its attention weight and train the gate on the model's own objective. The gate belongs inside the normalizing softmax, where suppressing one entry hands its mass to the others rather than discarding it. That same normalizer absorbs any per-query constant, so a constant gate cancels and reproduces the frozen model exactly. Trained on the language-modeling loss the gate stays near a constant score while its loss falls throughout: optimization succeeds, but a frozen backbone was fit for dense attention, so its loss prefers the no-op, and a near-constant score ranks nothing. The no-op is not a floor the gate improves from but what its objective asks for. A second obstacle survives once the gate moves, since the same gradient charges the gate for errors the frozen model already makes, which no reweighting of positions separates out. Much of the machinery in learnable eviction, from sparsity penalties to relaxations of the discrete decision, works around the first obstacle rather than removing it; both are removed by putting dense attention beyond the gate's reach and making the dense model's predictions its target. Under these two conditions capacity is never the missing ingredient: neither a larger scorer, nor explicit access to the past, nor a trainable backbone helps. The same holds for what eviction unavoidably discards, which is recovered by parameter-free centroids read inside the same softmax far better than by any memory read outside it, since the mass they must return is a share of that normalizer and available nowhere else. At 75\% KV cache compression, this gate reaches 90.14 on RULER at 8K and 46.03 on LongBench with Qwen3-8B, 3.72 and 1.36 points below full-cache inference.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T07:53:37Z</published>
+    <arxiv:comment>https://github.com/Chooovy/IndexMem</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Hao Gu</name>
+    </author>
+    <author>
+      <name>Xintong Yang</name>
+    </author>
+    <author>
+      <name>Zhiwei Li</name>
+    </author>
+    <author>
+      <name>Lei Zhu</name>
+    </author>
+    <author>
+      <name>Jian Yang</name>
+    </author>
+    <author>
+      <name>Qiyuan Zhu</name>
+    </author>
+    <author>
+      <name>Dezhi Li</name>
+    </author>
+    <author>
+      <name>Jingyuan Zhang</name>
+    </author>
+    <author>
+      <name>Zhizhuo Kou</name>
+    </author>
+    <author>
+      <name>Hao Wang</name>
+    </author>
+    <author>
+      <name>Bei Liu</name>
+    </author>
+    <author>
+      <name>Jiacheng Liu</name>
+    </author>
+    <author>
+      <name>Sirui Han</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.07552v1</id>
+    <title>SPARE: Fast Linear Attention Decoding with Compact Recurrent States</title>
+    <updated>2026-11-05T07:00:23Z</updated>
+    <link href="https://arxiv.org/abs/2611.07552v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.07552v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Linear attention reduces the quadratic sequence-length complexity of softmax attention by maintaining fixed-size recurrent states. However, these states scale quadratically with the representation dimension and require repeated data transfers during decoding, creating a substantial GPU memory bottleneck. Recent studies have revealed significant low-rank redundancy in recurrent states, suggesting opportunities for more efficient representations. We introduce SPARE (State Projection for Accelerated Recurrent Execution), a training-free method that exploits this redundancy through fixed low-dimensional subspaces, heterogeneous rank allocation, and lightweight write compensation. By performing recurrent reads and updates directly on compact states, SPARE reduces memory traffic without online decomposition or dense-state reconstruction. SPARE achieves 2.55x full-model decoding speedup, 7.49x lower recurrent-kernel DRAM traffic, and 3.31x lower peak GPU memory, while preserving better associative-retrieval accuracy than structured pruning at matched memory budgets.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T07:00:23Z</published>
+    <arxiv:comment>10 pages, 4 figures, 2 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ke Wan</name>
+    </author>
+    <author>
+      <name>Zaiyi Zheng</name>
+    </author>
+    <author>
+      <name>Chen Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.08082v1</id>
+    <title>DictLLM: Post-training Compression of Large Language Model with Dictionary Kernels</title>
+    <updated>2026-11-05T14:31:12Z</updated>
+    <link href="https://arxiv.org/abs/2611.08082v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.08082v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Efficient deployment of large language models (LLMs) on mobile devices requires balancing performance with compute and memory constraints. Post-training compression is an effective approach to managing this trade-off, while requiring much less computation than in-training counterparts. We propose DictLLM, a dictionary-based compression scheme in which weight matrices within grouped layers are decomposed into a shared dictionary and layer-specific sparse coefficients, directly obtained from a pre-trained model without further training. Specifically, we cast DictLLM as a four-step post-training optimization. First, we obtain shared dictionaries via singular value decomposition (SVD) of input-scaled weight matrices, amortizing rank across grouped layers; second, we sparsify the layer-specific coefficients to the target compression ratio using a dictionary-aware Hessian; and third, we refine the dictionaries given the resulting sparse coefficients. Finally, we aggressively quantize both components using factor-specific Hessian information: input covariance for the dictionaries and the dictionary-aware Hessian for the coefficients. The resulting representation reduces memory footprint by storing a single shared dictionary per layer group, along with sparse layer-specific coefficients. On language modeling and zero-shot reasoning benchmarks, DictLLM consistently outperforms existing post-training low-rank compression methods and pushes the Pareto frontier between model size and performance. DictLLM compresses the original LLaMA-7B model by 5.1x with only a 2.9-point increase in WikiText-2 perplexity, achieving a 3.6x higher compression ratio than the state-of-the-art low-rank method.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T14:31:12Z</published>
+    <arxiv:comment>NeurIPS 2026. Project page: https://jp4327.github.io/dictllm/</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Jinho Park</name>
+    </author>
+    <author>
+      <name>Se Young Chun</name>
+    </author>
+    <author>
+      <name>Mingoo Seok</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.08216v1</id>
+    <title>ProQuant: Progressive Quantization-aware Training for Edge MLLMs</title>
+    <updated>2026-11-05T16:04:31Z</updated>
+    <link href="https://arxiv.org/abs/2611.08216v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.08216v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Multi-modal large language models (MLLMs) with impressive perception and understanding capabilities will enable a range of downstream applications. However, their substantial computational and memory requirements hinder the real-world implementation, particularly for resource-constrained edge devices. Quantization has emerged as an effective solution for deploying large models. While post-training quantization (PTQ) successfully retains the performance at moderate bit-width (e.g., W8A8), it suffers from severe performance degradation under low-bit quantization (e.g., W4A8), especially for small-scale models that are more suitable for edge deployment. In this paper, we propose ProQuant, a novel weight-activation quantization-aware training (QAT) framework tailored for low-bit MLLMs. First, to align the limited finetuning dataset distribution with the pretrained dataset distribution, we propose a self-relabeling (SRL) scheme to resample the responses of the open-source multimodal dataset. Second, we are the first to take a decoupled view of multi-modal (MM) understanding and language modeling abilities. We propose a progressive block activation (PBA) mechanism to prioritize the MM understanding recovery. We also introduce a vision-sensitive factor $\vecτ$ that effectively identifies the MM-critical layers. Extensive experiments across various benchmarks, covering models with 2B-8B parameters, show that ProQuant significantly outperforms existing methods. For example, our W4A8 Qwen3-VL-2B-Instruct improves average accuracy by impressively 6.6% and achieves performance comparable to full precision counterparts with only approximately 1% performance drop. Code is available at https://github.com/yufeixue-ai/ProQuant/.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T16:04:31Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Yufei Xue</name>
+    </author>
+    <author>
+      <name>Yushi Huang</name>
+    </author>
+    <author>
+      <name>Jiawei Shao</name>
+    </author>
+    <author>
+      <name>Pingcheng Dong</name>
+    </author>
+    <author>
+      <name>Yonghao Tan</name>
+    </author>
+    <author>
+      <name>Shiyao Li</name>
+    </author>
+    <author>
+      <name>Kwang-Ting Cheng</name>
+    </author>
+    <author>
+      <name>Jun Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.08133v1</id>
+    <title>Beyond K/V Caches: Cross-Model State Handoff in Hybrid Linear-Attention LLMs</title>
+    <updated>2026-11-05T15:00:50Z</updated>
+    <link href="https://arxiv.org/abs/2611.08133v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.08133v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Production deployments often use different models to balance cost and quality through cascading, routing, and switching models during long conversations. Context accumulates across turns. Each switch requires the target to repeat prefill over this context. Existing methods transfer full-attention (FA) K/V caches across models. Hybrid linear-attention models also retain recurrent states (REC) and convolution histories (Conv). The interaction between Conv and REC complicates cross-model state transfer. Conv perturbations can change keys and values in recurrent layers and alter REC updates. Conv histories are overwritten, but changes in REC can still affect later outputs. More accurate REC reconstruction need not improve continuation. Building on this, we propose Hybrid State Transfer (HST) for all three state types. It uses structured REC maps and preserves history order during Conv alignment. We calibrate the adapters using the frozen target's outputs during continuation. FA cache map updates are merged offline. Across five benchmarks, Qwen3.5 4B$\rightarrow$27B and 9B$\rightarrow$27B achieve mean task retentions of 89.88% and 94.11%, respectively. With source caches already available, separate timing on synthetic 16K inputs yields handoff body speedups of $21.66\times$ and $21.91\times$.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T15:00:50Z</published>
+    <arxiv:comment>12 pages, 4 figures, 9 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jiacheng Cai</name>
+    </author>
+    <author>
+      <name>Tao Zhang</name>
+    </author>
+    <author>
+      <name>Siqi Liang</name>
+    </author>
+    <author>
+      <name>Yun Dai</name>
+    </author>
+    <author>
+      <name>Ziqian Zeng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.08363v1</id>
+    <title>StrataFlux: Memory-Hierarchy-Native Low-Bit LLM Inference</title>
+    <updated>2026-11-05T17:42:06Z</updated>
+    <link href="https://arxiv.org/abs/2611.08363v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.08363v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Quantization reduces the memory and bandwidth demands of large language model (LLM) inference but can degrade accuracy; offloading higher-precision data can instead stall generation. We introduce StrataFlux, a framework that challenges this tradeoff by recovering accuracy lost to low-bit weight and key-value (KV) cache quantization while retaining quantization's memory and speed advantages. StrataFlux co-designs refinement representation, selection, and delivery to make host RAM and solid-state drives useful sources of additional precision. Its selective precision streaming reduces transfer volume, overlaps delivery with computation, and reuses fetched precision across decoding steps so generation need not wait for every transfer. We evaluate 2-4-bit weights and 2-3-bit KV-cache on dedicated GPUs and unified-memory platforms. For 2-bit Llama-3.1-8B-Instruct weights, StrataFlux reduces WikiText-2 perplexity from 9.46 to 8.40 while maintaining 95.4% of the quantized base's throughput on RTX 5090. With 2-bit weights and KV, StrataFlux raises Qwen3-8B's AIME 2024/2025 accuracy from 11.0% to 47.1% at unchanged GPU memory use. At 128K context, Llama-3.1-8B-Instruct with 3-bit weights and 2-bit KV achieves comparable perplexity and speed to vLLM's 4-bit AWQ weights and 8-bit KV on RTX 5090, using approximately half the GPU memory. These results show that GPU-resident precision need not set the accuracy ceiling, nor offloading-tier latency dictate decoding speed.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T17:42:06Z</published>
+    <arxiv:comment>34 pages, 18 figures, 44 tables. Includes appendix</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Jake Hyun</name>
+    </author>
+    <author>
+      <name>Ziyu Zhao</name>
+    </author>
+    <author>
+      <name>Jae-sun Seo</name>
+    </author>
+    <author>
+      <name>Mohamed S. Abdelfattah</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.07263v1</id>
+    <title>HyFlash: A Prefix-Memory Prior for On-Device Speculative Decoding</title>
+    <updated>2026-11-05T00:31:21Z</updated>
+    <link href="https://arxiv.org/abs/2611.07263v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.07263v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Parallel block drafting accelerates speculative decoding by predicting multiple future positions in a single backbone pass, but on-device deployment constrains both drafter capacity and context storage. Under tight memory budgets, drafters must model long-range dependencies and fine-grained draft-position interactions without the growing KV-cache overhead of full-context attention. We propose HyFlash, a compact parallel drafter that introduces a prefix-memory prior to separate long-range context modeling from fine-grained draft-position interactions with limited capacity. Local attention captures recent context and draft-position interactions, while recurrent memory compresses historical target features into fixed-size states. This inductive bias enables effective local and long-range modeling with bounded draft-side memory. Experiments show that HyFlash achieves higher acceptance than full-context attention with substantially less KV storage and with larger gains for shallow drafters and long contexts.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T00:31:21Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jongwoo Ko</name>
+    </author>
+    <author>
+      <name>Pashmina Cameron</name>
+    </author>
+  </entry>
+</feed>

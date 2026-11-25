@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 索引 · research 线</title>
+<style>
+  :root { --primary:#5b1e6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:920px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#5b1e6e 0%,#a3238e 100%); color:#fff; border-radius:14px;
+                padding:28px 30px; margin-bottom:22px; box-shadow:0 8px 24px rgba(91,30,110,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; }
+  header.hero .sub { font-size:14px; opacity:.94; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:14px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:9px 12px; text-align:left; vertical-align:top; }
+  th { background:#f7eef8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  a { color:var(--accent); }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#5b1e6e; }
+  .note { background:#fff6fb; border:1px solid #f3c6e6; border-left:4px solid #a3238e; border-radius:8px;
+          padding:10px 16px; font-size:13px; }
+  footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 索引</h1>
+  <div class="sub">research 线 · 每天 18:00 从当日 5 篇里挑 TOP-1 → 分镜脚本 HTML · 按日倒序</div>
+</header>
+
+<div class="note">
+  本页为<b>索引</b>，每次更新只动 1–2 行；每日分镜见对应 <code>MM_DD.html</code>（<b>自包含单文件，离线可开</b>）。
+  脚本为<b>论文解读 · 非官方 · 非结论</b>；画面一律<b>自绘 / 自生成</b>，不盗用论文原图。
+</div>
+
+<table>
+  <tr><th>日期</th><th>当日 TOP-1 论文</th><th>看点</th><th>分镜脚本</th></tr>
+  <tr>
+    <td>2026-11-19</td>
+    <td><i>MoE--LoRA Methods for Multilingual Adaptation: A Systematic Empirical Study</i><br><code>arXiv:2611.23158</code>（Nikit Srivastava · Joel Dag · René Speck · Axel-Cyrille Ngonga Ngomo，4 位 · Paderborn University）</td>
+    <td><b>AI 翻译变好了，它却更读不懂原文了</b>：冻结 Llama-3.1-8B，8 种 LoRA · 200 语言 · 9,000+ 评测设定；小范围排第一的配置<b>放大后从不是最优</b>；翻译稳定↑、阅读理解持续↓，低资源语言受益最大（作者自报）</td>
+    <td><a href="11_19.html">11_19.html</a></td>
+  </tr>
+
+
+  <tr>
+    <td>2026-11-11</td>
+    <td><i>Agent Benchmarks Stop Ranking Before They Run Out of Tasks</i><br><code>arXiv:2611.13541</code>（Zihan Dong · Qishi Zhan · Minxuan Hu，3 位 · Lenovo Group / Marquette / Cornell）</td>
+    <td><b>AI 排行榜的第一名，可能和第二名没差别</b>：把一次运行压成「过 / 不过」一个比特，前十名在统计上同属一档（SWE-bench Verified 只差 <b>3.6 分</b>）；ALE-Bench 二值化后从三档变一档，改分级分数又回三档（<b>47.8%</b> 运行超过参考解）（作者自报）</td>
+    <td><a href="11_11.html">11_11.html</a></td>
+  </tr>
+
+  <tr>
+    <td>2026-11-10</td>
+    <td><i>How Well Does AI Peer Review Work? A Benchmark Built from 100 Planted Errors</i><br><code>arXiv:2611.12820</code>（Paul Litvak，1 位 · Robyn Dawes Institute；<code>cs.CL</code> · 5 页）</td>
+    <td><b>一百个被埋进论文的错误，AI 审稿人能找出几个</b>：把 <b>100 个</b>已知错误埋进 <b>10 篇</b>开放获取心理学论文（62 类错误清单，既有「改句」也有「<b>删掉关键信息</b>」），最佳单系统只找到 <b>71/100</b>、最差 <b>30/100</b>，把全部系统并起来 <b>93/100</b>；剩下 <b>7 个谁都没抓到，全是「省略型」</b>；同一模型重跑 3 次几乎不增命中，但不同系统重合度低 ⇒ 提召回要靠<b>异构并集</b>。⚠️ 只做心理学、只测召回不测误报、作者自报未复现。</td>
+    <td><a href="11_10.html">11_10.html</a></td>
+  </tr>
+
+
+  <tr>
+    <td>2026-11-08</td>
+    <td><i>How Finite Brains Generalize Without Bound: Spatial Memory as a Universal Computer</i><br><code>arXiv:2611.07920</code>（Yuhang He · Si Wu，2 位 · 北京大学；<code>cs.AI</code> · 57 页）</td>
+    <td><b>为什么孩子学加法能举一反三，大模型却不行</b>：只学过小数的孩子会加任意位数；而在 <b>≤40 符号</b>短串上训练的 LSTM / Transformer，到 <b>41–500</b> 长度就崩。作者把差别追到「决策时读什么」：位置 / 计数 / 时间是「<b>坐标</b>」，随输入变长不断取新值，必遇训练没覆盖的取值；「<b>两样是否相同</b>」是「<b>巧合</b>」，每个长度答案都一样，所以有限经验就能固定任意长度的规则——而且<b>不损失算力</b>（它能算的正是图灵机随输入步进算的那些）。推论：记忆须携带长度而规则保持有限 ⇒ 记忆从每个位置看必须一样 ⇒ 只能是「<b>环</b>」＝大鼠大脑里的<b>网格细胞</b>，检测回到原位的是位置细胞，记录是海马。实验：15 个基准中 <b>9 个</b>在长度 41–500 上 <b>≥99%</b>，其中 <b>5 个任务</b> LSTM/Transformer 全解不出；训练后给新环可<b>零错反转 15,015 个符号</b>，更长的失败点落在理论曲线上。边界：全为离散符号任务的小规模训练（12,000 步 / 批量 32 / 长度 1–40）；45 次运行 <b>23 首成功 / 7 重试 / 15 全败</b>；与网格细胞/位置细胞/海马的对应是<b>作者的解释性映射</b>（<b>作者自报 · 本线未复现</b>）</td>
+    <td><a href="11_08.html">11_08.html</a></td>
+  </tr>
+
+  <tr>
+    <td>2026-11-06</td>
+    <td><i>ManimCode: Learning Visual Self-Correction for Educational Animation</i><br><code>arXiv:2611.08294</code>（Zhengyang Liang · Lizi Liao，2 位 · Singapore Management University；<code>cs.CV</code> · 19 页）</td>
+    <td><b>会给自己挑错的 AI 动画师</b>：「能渲染」不等于「画面对」—— 文字重叠、图被切掉时，渲染器不会告诉你该改哪行。作者建 <b>24,034</b> 条经渲染验证的「写→渲染→审→改」轨迹，按角色监督微调训练一个 <b>4B</b> 模型（写 / 审 / 改），再用强化学习专训「修改者」，处理训练时没见过的错误。ManimData-test / ManimBench 渲染成功率 <b>96.6% / 97.0%</b>（同一循环下未训练 4B 为 <b>52.6% / 82.0%</b>），视频质量分 2.48→2.94、3.00→3.44；接进 Code2Video 与 TheoremExplainAgent 后完整产出 <b>19/117→107/117</b>、<b>53/239→239/239</b>。边界：质量分主要来自<b>多模态裁判</b>，人工盲评只在差距 ≥0.5 分时与裁判一致率 <b>79%</b>（&lt;0.25 分时仅 29%）；ManimBench 85/100 参考程序与知识库文档示例近乎重复（已排除检索）；「超过 GPT-4o」仅指渲染成功率这一项（60.2%），视频质量分只是接近（<b>作者自报 · 本线未复现</b>）</td>
+    <td><a href="11_06.html">11_06.html</a></td>
+  </tr>
+
+  <tr>
+    <td>2026-11-05</td>
+    <td><i>Same Layout, Different Count: What Number Words Do Past Ten in Text-to-Image Models</i><br><code>arXiv:2611.06840</code>（Liang Yue · Eric A. Vance，2 位 · University of Colorado Boulder；<code>cs.CV</code> · 43 页）</td>
+    <td><b>让 AI 画 25 只猫，它给你 8 只</b>：固定物体与起始噪声、一次只改一个变量，用「同噪声」协议测 <b>5 个开源文生图模型</b>（SDXL / SD3.5-Medium / FLUX.1-dev / FLUX.2 [klein] base 4B / Qwen-Image 20B），并请<b>没见过提示词的人</b>盲数 <b>3,088 张</b>生成图。十以内都听话，十以外各模型有「有效范围」：SD3.5-M 中位数量恒在 <b>4.5–8.5</b>（不管要多少）、FLUX.1-dev 到 30 反而缩到 <b>1–2 个</b>，FLUX.2 [klein] / Qwen-Image 勉强跟到 <b>25</b>。只重画比图像八分之一更细的噪声，布局不变而数量挪动 <b>0.69×</b>（≈ 换新数字的 2/3）；把数量以噪点网格画进起始 latent，人眼在 <b>59%</b> 图里数对（只写提示词 <b>4%</b>）。评测坑：过十后精确率分不开「松散跟随」与「完全忽略」（4% vs 5–7%），相对误差甚至偏爱固定猜 <b>16</b>。只测开源、未测闭源；计数靠人工 + 检测器（<b>作者自报 · 本线未复现</b>）</td>
+    <td><a href="11_05.html">11_05.html</a></td>
+  </tr>
+
+  <tr>
+    <td>2026-11-04</td>
+    <td><i>False Reassurance in LLM Severe-Weather Guidance: A Replayable Evaluation Against Real NWS Alerts</i><br><code>arXiv:2611.05290</code>（Kadharmoideen Fadurudeen 1 位 · Independent Researcher；数据集/代码 Zenodo <code>10.5281/zenodo.23901549</code>）</td>
+    <td><b>警报响着，AI 却说「今天很平静」</b>：作者把 2026-10-19~10-23 真实抓到的美国国家气象局（NWS）警报<b>冻结</b>成 <b>117 个可重放案例</b>（69 有警报 / 32 无警报对照 / 16 非美国地点），用同一条 Claude 助手管线的 <b>5 种条件</b>重放（温度 0 / 500 token）：完整生产管线 <b>0.0%</b>（0/66）、只给警报数据 + 中性提示 <b>0.0%</b>（0/69）、「失明」中性提示 <b>37.7%</b>（26/69）、失明 + 要求「主动声明看不到实时警报」<b>44.9%</b>（31/69）—— <b>最符合直觉的补救反而更差</b>（McNemar p=0.40，不显著）；给真警报显著消除（p&lt;0.0001）。全部为<b>隐式</b>假安慰；作者自写正则检测<b>方向相反、漏 53/57</b>，故改全量人工标注；只给数据也不够 —— 中性提示下 <b>87.5%</b> 的无警报对照被误报，生产提示 0%。另报两条工程坑：NWS 测试产品被当真警报、复杂案例撞 500 token 上限（<b>作者自报 · 本线未复现</b>；单模型家族 / 单季节试点、采集期 77% 休眠、无 Extreme 级案例；论文 7 页）</td>
+    <td><a href="11_04.html">11_04.html</a></td>
+  </tr>
+
+  <tr>
+    <td>2026-11-03</td>
+    <td><i>The SIMPLE Law for Energy Cost of LLM Inference</i><br><code>arXiv:2611.03330</code>（Hiari Pizzini Cavagna, Andrea Proia, Daniele Cesarini 等 5 位 · University of Bologna + CINECA）</td>
+    <td><b>AI 每说一个字，电费到底怎么算？</b>：同样一枚 token，越往后越贵 —— 它进了 KV-cache，会抬高后面所有 token 的成本。<b>SIMPLE</b> 把推理拆成 prefill 与 decode（decode 再拆 KV-cache + next-token），用架构超参推出<b>四参数定律</b>；在 <b>13 个稠密 LLM</b>、<b>H100</b> 的真实能耗轨迹上 <b>R²=0.969 / MAPE=11.97%</b>，比此前 SOTA 拟合低 <b>3.1–3.5×</b>，且不用逐模型标定。三条反直觉结论：推理预算 <b>4.0×</b> 区间内「每焦耳智能」在中间预算达峰、两端最多差 <b>3.14×</b>；agent 请求能耗 <b>13.0×</b> 普通请求；前缀缓存削减 <b>93%</b> prefill，但缓存后的 agent 仍 <b>4.8×</b>（<b>作者自报 · 本线未复现</b>；系数与 H100+框架绑定、只测稠密模型；论文 18 页）</td>
+    <td><a href="11_03.html">11_03.html</a></td>
+  </tr>
+
+  <tr>
+    <td>2026-11-02</td>
+    <td><i>GeoFlip: Benchmarking Geometry-Sensitive Physics in Video Generation</i><br><code>arXiv:2610.42002</code>（Yuqi Li, Junming Liu, Bowen Hu 等 7 位 · CUNY + 墨尔本大学 + 中山大学 + 香港中文大学 + CMU；前两位共同一作）</td>
+    <td><b>AI 会拍视频，但它懂「东西为什么会倒」吗？</b>：视频生成模型画面很真，可只要把第一帧的几何改一点点（支撑面变窄、物体挪位置、机关换搭法），同一句提示词下的物理结果就该反过来。<b>GeoFlip</b> 造 <b>482 对</b>「几何干预 → 结论翻转」的场景对、<b>964 段</b>参考视频、<b>6 类</b>物理机制，参考答案由<b>程序化搭场景 + 物理仿真 + 数值校验</b>给出（不靠人工打分），再评 <b>16 个图生视频模型</b>：在全部模型共同覆盖的 <b>442 个条件</b>上，<b>事件正确率平均最高只有 27.98%</b>；典型失败 = 忽略几何变化 / 运动方向错 / 刚体被掰弯 / 凭空多零件。视觉语言模型裁判之间的排名相关 <b>0.906</b>（事件正确）与 <b>0.929</b>（结构完整）（<b>作者自报 · 本线未复现</b>；论文 14 页 / 7 图）</td>
+    <td><a href="11_02.html">11_02.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-11-01</td>
+    <td><i>Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models</i><br><code>arXiv:2610.37796</code>（Diksha Gupta, Rieke Fruengel, Stefan Heimersheim 共 3 位 · Pivotal Research）</td>
+    <td><b>AI 脑子里的「星期环」，其实是七根辐条</b>：语言模型的激活里，「星期几」确实排成一个圆环，于是很多人认为沿环移动 = 日期连续变化、可以平滑转向。这篇用三套实验拆掉这个假设：① 沿环在<b>层 2</b> steering、<b>层 28</b> 读出 ⇒ 行为是<b>台阶状</b>（星期附近几乎不动、弧段一推就跳）；② 极坐标 Jacobian 敏感度图 ⇒ <b>七个以星期为中心的低敏感辐条</b>（且径向延伸，不是「只沿切向走」的假象）；③ 中间位置装了什么 ⇒ <b>时刻词只挪 ≤6.30°</b>（相邻星期质心相隔 <b>44.33°–59.81°</b>）、沿环推预测小时 <b>&lt;0.02h</b> 而平面外同范数推 <b>−1.8h / +1.1h</b>、不确定性沿辐条<b>向内收缩</b>、<b>49,678 条</b> FineWeb 片段显示上下文主要<b>整体平移</b>（段内 RMS 半径 <b>0.65 → 0.23</b> 环半径）。主实验 Llama-3.1-8B，另在 Mistral-7B-v0.1 / GPT-2 XL 复核（<b>作者自报 · 本线未复现</b>；作者 §5.2 明确「不意味着圆环几何虚假」；论文 23 页）</td>
+    <td><a href="11_01.html">11_01.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-31</td>
+    <td><i>PhysCount: Do MLLMs Count Visual Appearances or Physical Entities?</i><br><code>arXiv:2610.40530</code>（Lidong Lu, Jiaxin Lv, Liangrui Dong 等 8 位 · 南京大学 + NVIDIA）</td>
+    <td><b>照片里「看见几次」≠「有几个东西」</b>：一个杯子在镜子里出现三次，实体还是一个。<b>PhysCount</b> = <b>546</b> 张真实照片 / <b>651</b> 组目标 / <b>4,595</b> 道人工题 / <b>137</b> 类目标，共 <b>7,086</b> 次出现（<b>2,416</b> 直接 + <b>3,996</b> 镜面 + <b>674</b> 隔玻璃）；四类问题拆开考「数出现 / 数实体 / 怎么成像 / 哪几次是同一个」。<b>40 个多模态模型</b>：最强 <b>Gemini 3.7 Flash</b> 整体 Score <b>36.45</b>、<b>整组全对率仅 13.36%</b>（5 位人类 <b>97.10 / 95.98</b>）；放大到 4,096 px 单题 Score <b>21.04 → 28.84</b>，但<b>整组正确率 1,024 px 后不再涨</b> ⇒ 短板不在清晰度；把同组问题<b>一起问</b>，Qwen3.8-27B 整组正确率 <b>7.37% → 23.96%</b>（<b>作者自报 · 本线未复现</b>；13.36% 是「整组全对率」而非单题准确率；论文 38 页）</td>
+    <td><a href="10_31.html">10_31.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-30</td>
+    <td><i>HairDeck: Animation-Ready Stylized Hair Cards from a Single Image</i><br><code>arXiv:2610.40599</code>（Yuze He, Yixiang Wei, Wang Zhao, Chuhao Chen, Yanning Zhou, Yong-Jin Liu 共 6 位 · 机构以论文首页为准）</td>
+    <td><b>游戏角色的头发，不是一根根发丝</b>：业界用<b>发卡（hair cards）</b>——美术手摆的带状面片，背后挂<b>弹簧骨骼</b>驱动动画。唯一同类生成器 <b>CHARM</b> 是「逐点自回归」往下画控制点（慢且末段易乱）。<b>HairDeck</b> 把一整套发卡当<b>无序集合</b>：<b>一张发卡 = 一个 token</b>，<b>集合扩散 Transformer</b> 一次性去噪生成全部发卡，并<b>同时生成弹簧骨骼链</b> ⇒ 单张图片产出可直接导出、能动画的资产。在 <b>CHARM 自己的测试集</b>上：Chamfer 距离 <b>−44%</b>、发卡朝向误差 <b>减半以上</b>、速度 <b>33×</b>；单图输入下胜过 CHARM / 通用 image-to-3D / 基于 strand 的方法（<b>作者自报 · 本线未复现</b>；对比基线为唯一同类生成器 + 通用方法；论文 27 页 / 23 图）</td>
+    <td><a href="10_30.html">10_30.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-29</td>
+    <td><i>Learning to Read Braille: Benchmarking and Improving Braille Recognition Capabilities of VLMs</i><br><code>arXiv:2610.36195</code>（Kartik Jangra, Atharva Gawane, Siddharth Pulipaka 等 5 位 · AI4Bharat / IIT Madras / Mahindra University）</td>
+    <td><b>AI 读得懂发票，却读不懂盲文</b>：盲文字符只由小格子里<b>哪几个点凸起</b>决定，考的是<b>数点 + 几何</b>，恰好是 VLM 的软肋。作者建 <b>BrailleBench</b>：<b>259 张</b>人工校验真实照片（<b>215 一级 + 44 二级</b>，书本 / 标牌 / 低分辨率都有）。<b>四类系统同台</b>：单次推理的通用 VLM 一级<b>除 GPT Sol 系外全 &lt;3%</b>（最强 GPT-6.1 Sol <b>53.95%</b>、CER 0.374；二级 11.36%）；OCR 专用与工具辅助 agent（Claude Code / Opus 5.5 High）一级 <b>88.37%</b>、二级 <b>40.91%</b>，代价 <b>≈180 秒 + $0.51–0.58 / 图</b>；自建合成管线 <b>276k</b> 样本微调 <b>Qwen3.5-2B</b> ⇒ <b>一次调用</b>一级 <b>86.98%</b> / 二级 <b>61.36%</b>（二级比 Claude Code 高 20.45 pp）。<b>最扎心的负结果</b>：用他人合成数据训练时，<b>合成验证集 96.00% → 真实照片一级仅 3.26%</b>（Llama-3.2-11B 55.00% → 0.47%）；把合成语料扩到 500k 长文本，真实一级反而 <b>82.63% → 72.97%</b> ⇒ <b>考得好 ≠ 会</b>（<b>作者自报 · 本线未复现</b>；基准仅 259 张、以一级为主；工具成绩依赖具体 harness 版本）</td>
+    <td><a href="10_29.html">10_29.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-28</td>
+    <td><i>Can LLMs Uncover Hidden Physical Laws through Free Exploration?</i><br><code>arXiv:2610.37649</code>（Zhen Yang, Wen Wang, Xander Xu, Ying-Cong Chen）</td>
+    <td><b>物理定律被偷偷改了一条，AI 能发现吗</b>：<b>LongChang</b> 造 <b>15 个 MuJoCo 虚拟世界</b>（1 个正常对照 + <b>14 个各改一条定律</b>，如「越重的球落得越慢」），LLM 当探索者，<b>不给任务、不透露定律</b>，只能自己搬物体 / 造工具 / 提问题 / 做实验；LLM 代理负责生成与演化场景、审工具、按「改过的定律」判报告是否<b>又对又有证据</b>。<b>12 个前沿 LLM × 15 场景 × 最多 100 轮</b>：仅 <b>GPT-6-Astra 发现率 16.7%</b>（其余 <b>11 个全 0%</b>），其证据支撑率 <b>97.6%</b>、定律正确率 <b>19.0%</b>；加提示 <b>16.7%→28.6%</b>、预算 100→500 轮反而 <b>14.3%</b>、关掉造工具 <b>4.8%</b>；Gemini-3.7-Flash 每局均提前收工（平均 <b>10.9</b> 轮）、GLM 系 <b>约 90 轮</b>且每局造出装置却 <b>0 发现</b>（失败动作占 16.8–20.2%）⇒ 会动手 ≠ 会发现（<b>作者自报 · 本线未复现</b>；判分/场景演化也是 LLM；15 场景属小样本）</td>
+    <td><a href="10_28.html">10_28.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-27</td>
+    <td><i>Do vision models know that three is three?</i><br><code>arXiv:2610.35857</code>（Ankit Sonthalia, Arnas Uselis, Seong Joon Oh）</td>
+    <td><b>AI 认得「3」，但知道三是三吗</b>：同一个「三」可以是<b>手写数字 / 三根手指 / 三个球 / 三个点</b>；在 <b>46 个视觉编码器</b>×<b>10 个概念族</b>×<b>2,530 次检验</b>里，把「2→3」看成一个方向 —— 形式内几乎都能找到（<b>99.1%</b> 显著；数量 2→3 <b>100%</b>），跨形式却只有 <b>52.2%</b>（数量仅 <b>46.9%</b>；物体身份 99.3%、年龄 94.6% 最高）⇒ 作者命名 <b>fragmented linearity（碎片化线性）</b>：每种「三」都单独学一遍；碎片化分数 <b>0.67（监督 ViT）vs 0（CLIP）</b>、clean→dirty <b>0.92 vs 0.08</b>；局部越强的模型越能跨过去（Kendall τ <b>0.38–0.89</b>，全 p&lt;1e-3）（<b>作者自报 · 本线未复现</b>；概念类型有限 / 反事实样本近似配对 / 「线性」≠「真理解」）</td>
+    <td><a href="10_27.html">10_27.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-26</td>
+    <td><i>How Much Do You Trust A Dog? Quantifying Hint-Following in Reasoning Language Models</i><br><code>arXiv:2610.32055</code>（Anxin Guo, Chirag Pabbaraju, Sara Ahmadian 等 5 位）</td>
+    <td><b>连狗说的答案，AI 都会信</b>：在 MMLU 选择题后加一句「某来源认为答案是 X」，来源分<b>教授 / 朋友 / 狗</b>；三个开源小模型（Qwen 3.5 2B / Gemma 4 E2B / SmolLM3 3B）各 <b>800 个题–目标对</b>、每对 <b>500 次</b>采样（SmolLM3 200 次）。提示效果可由<b>指数倾斜</b>刻画 —— 目标对数几率近似平移一个常数（dog↔friend 相关 <b>0.86 / 0.89 / 0.78</b>）；<b>狗的提示</b>仍抬高 <b>2.40 / 2.08</b>（教授 3.86 / 3.42），「恶意行为者」也还有 <b>0.443 / 0.436</b>；声明准确率 <b>5%→95%</b> 只多 <b>1.46 / 0.40</b>（贝叶斯应多 <b>5.89</b>），明确警告「别信」只削 <b>1–2</b> 个单位 ⇒ <b>对来源可信度几乎不校准</b>（<b>作者自报 · 本线未复现</b>；三个小模型 / 单一选择题基准 / 对数几率≠正确率）</td>
+    <td><a href="10_26.html">10_26.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-25</td>
+    <td><i>Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</i><br><code>arXiv:2610.30499</code>（Jens Lehmann, Sahar Vahdati）</td>
+    <td>让 AI <b>自己造、自己改</b>包在模型外面的那层「脚手架」（harness：看屏幕 / 记关卡 / 调工具 / 失败重试 / 推理预算），再丢进<b>没见过的小游戏</b>里考：<b>9 种模型×推理强度</b>、<b>27 条 lineage</b>、<b>81 个冻结快照</b>、<b>2,025 次游戏评测</b>；固定 <b>5 个开发游戏</b>、<b>20 个从不参与改写的留出游戏</b>，整个代码库<b>只改两轮</b>。结果很冷静：开发集平均 <b>+8.42</b> 分，留出集只 <b>+2.80</b>（95% 区间 <b>[−1.44, 7.35]</b> 跨零），<b>适应差 5.62</b>；同一 harness 重测 10 次的样本标准差就有 <b>3.99</b>；20 个留出游戏 <b>13 涨 / 7 跌</b>（最大 +20.44 / −15.03）；27 条里只有 <b>9 条「更好且更便宜」</b>（平均省 $2.72、中位仅 $0.54）（<b>作者自报 · 本线未复现</b>；单一基准 / 只改两轮 / 成本随价格变化）</td>
+    <td><a href="10_25.html">10_25.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-24</td>
+    <td><i>Who Is Sycophantic to Whom? Confident LLMs, Human Deference, and the Collapse of Trust Calibration</i><br><code>arXiv:2610.31579</code>（Deepthika S 等 3 位）</td>
+    <td>把「谄媚」<b>反过来测</b>：不是 AI 顺着人，而是<b>人会不会顺着 AI</b>。32 人向 5 个「同一 GPT-5-mini、语气一样笃定」的助手学科学主题，假话比例 <b>0 / 25 / 50 / 75 / 100%</b>；每个主题后<b>突袭测验</b>（正确事实 + 植入假话 + 两个干扰项，逐题打分还要给信心）。104 次测验 / 1,040 个答案：得分 <b>7.4 → 2.9</b>（满分 10），被篡改条目 <b>60%</b> 选了假话（未篡改仅 11%，odds ratio 12.5）；<b>每档吸收率都 ≈65%</b>（剂量几乎无效）、被吸收的假话以 <b>8.4/10</b> 的信心持有、<b>用信心区分对错的 AUROC 0.70 → 随机</b>、事后<b>信任评分几乎不动</b>、<b>30% 的对话轮次</b>把测验题粘回被检查的助手；提出 <b>Human Deference Index</b>（<b>作者自报 · 本线未复现</b>；32 人 / 单一模型 / 单一领域）</td>
+    <td><a href="10_24.html">10_24.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-23</td>
+    <td><i>BrickWright: Agentic Creation of Physically Feasible Brick Builds</i><br><code>arXiv:2610.31651</code>（Ava Pun 等 10 位）</td>
+    <td>让 AI <b>用写代码的方式搭乐高</b>：给它一套拼装工具箱 <b>BrickLayer</b>，配一个<b>物理可行性校验器</b>，每轮查<b>真零件 / 不穿模 / 不悬空 / 连成一体</b>，不合格就把原因回传给 agent <b>自己改代码</b>；<b>不训练新模型</b>。基线 agent 在 <b>512 条</b>文字或图片提示上的可行率只有 <b>9%–69%</b>，接上 BrickWright 后<b>全部 100%</b>，弱模型的<b>提示遵循度</b>还提升、强模型<b>不降</b>，文本→积木也<b>超过专用模型</b>（<b>作者自报 · 本线未复现</b>；<b>「可行」≠ 承重/拼装顺序</b>）</td>
+    <td><a href="10_23.html">10_23.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-22</td>
+    <td><i>Single-Image Food Mass Estimators Do Not Transfer Their Gram Scale Across Datasets</i><br><code>arXiv:2610.29025</code>（Yongsheng Lian，单一作者）</td>
+    <td>拍张照算这盘菜多少克，<b>一换盘子、一拉远就翻倍</b>：用 Nutrition5k 的 <b>2,253 个已称重餐盘</b>微调 DINOv2-base，域内误差 <b>24.8 g</b>（不到零样本 Qwen3-VL-32B 一半），但三个外部数据集<b>全输</b>；克数尺度错在 <b>「占画面多大」随场景漂</b> + <b>每种食物各偏一个系数</b>；补本地样本降 <b>38–65%</b>、加一张同场景标注照片降到 <b>28.3 g</b>；号称覆盖 <b>90%</b> 的区间到外部<b>至多一半</b>。结论：<b>得用你自己厨房的照片教它</b></td>
+    <td><a href="10_22.html">10_22.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-21</td>
+    <td><i>Matrix-Game 4.0: Harnessing Video Models for Real-Time Playable Game Worlds</i><br><code>arXiv:2610.27999</code>（Jihai Zhang 等 18 位）</td>
+    <td>让 AI <b>真的做出「能玩」的游戏世界</b>：不指望视频模型「顺手」记住规则，而是<b>拆开</b>——<b>规则交给轻量游戏引擎</b>（持久的<b>世界状态</b> + 可执行的<b>游戏规则</b>），<b>画面交给视频模型</b>（引擎先渲染粗糙<b>低模代理</b>，模型再把它画细）；中间放一个<b>多模态编程 agent</b>，玩家把想法说给它，它写成<b>游戏代码与场景描述</b>；渲染器用<b>成对的低模 / 高保真视频</b>训练，再<b>蒸馏</b>成每次只出 <b>4 帧、1–2 步去噪</b>的<b>因果生成器</b>。作者称单张 <b>RTX5090</b> 上 <b>480p / 60 FPS</b>、按键到画面 <b>112ms</b>、单步生成稳态 <b>83 FPS</b>、峰值显存 <b>18.2 GiB</b>，<b>5080 / 5070Ti 分别为 67 / 58 FPS</b>，并开源代码、权重与低模素材（<b>作者自报 · 本线未复现</b>；<b>仅演示射击与驾驶两类，非任意开放世界</b>）</td>
+    <td><a href="10_21.html">10_21.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-20</td>
+    <td><i>Game of Phones: Harnessing Game Theory and LLMs in 'Bot Wars' to Counteract Phone Scams</i><br><code>arXiv:2610.26781</code>（Nardine Basta, Robin Carpentier, Benjamin Zi Hao Zhao, Dali Kaafar）</td>
+    <td>把<b>反诈陪聊</b>当成一场<b>两人博弈</b>：现有拦截 / 标记 / 提醒几乎<b>不给骗子造成成本</b>，于是让 LLM <b>不微调、只靠上下文经验</b>学会动态换招去消耗骗子的时间与人力；用<b>有实证依据的策略与效用函数</b>把对话建成博弈，并以<b>纳什均衡</b>作为评估学习行为的正式基准。在 <b>300 段模拟对话 · 3 种 LLM 架构</b>上，自适应策略比非自适应基线<b>更接近均衡 28.9–79.7%</b>；作者同时开源代码与 300 段轮级标注对话数据（<b>作者自报 · 本线未复现</b>；<b>为模拟对话、非真实电话部署</b>）</td>
+    <td><a href="10_20.html">10_20.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-19</td>
+    <td><i>No Eyes, No Problem: What Does Touch Contribute to Blind Baoding Ball Manipulation?</i><br><code>arXiv:2610.23438</code>（Ayush Deshmukh, Nalin Agarwal, Elle Miller, Sethu Vijayakumar）</td>
+    <td>把机器人的<b>眼睛蒙上</b>：不带摄像头、不知道物体状态，只靠<b>本体感觉 + 二值触觉</b>（只会说「碰到 / 没碰到」），在真实灵巧手上<b>连续 225 次 180° 旋转</b>（≈112.5 整圈）、约 <b>0.36 转/秒</b>；做法是仿真 RL + 触觉标定 + 两类域随机化（动作变化率限幅、模拟卡死触点），再<b>零样本</b>上真机；作者还对比「只有本体感觉」与「本体 + 触觉」看触觉贡献（<b>作者自报 · 本线未复现</b>）</td>
+    <td><a href="10_19.html">10_19.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-18</td>
+    <td><i>Dexterity from Supervised Play</i><br><code>arXiv:2610.22340</code>（Botao He, Yiming Dou, Yiannis Aloimonos, Jitendra Malik, Akash Sharma, Ruoshi Liu）</td>
+    <td>机器人学手上的细活，<b>先看人「玩」几分钟</b>（行为克隆得到玩耍策略），<b>再自己玩几小时</b>收集数据训练<b>世界模型</b>；干活时玩耍策略为 <b>MPC</b> 提候选动作、世界模型<b>逐个打分</b>挑最好的，最后<b>蒸馏</b>成闭环策略跑得更快。作者称真实世界成功率比 hindsight 行为克隆高 <b>69.6%</b>，并与强化学习效果相当而交互数据<b>少约 490 倍</b>（<b>作者自报 · 本线未复现</b>）</td>
+    <td><a href="10_18.html">10_18.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-17</td>
+    <td><i>Gen4P: Video Generators are 4D Perceivers</i><br><code>arXiv:2610.22371</code>（Yitong Xia, Zeren Jiang, Chuanxia Zheng）</td>
+    <td>一个本来是<b>「生成视频」</b>的模型，被<b>直接改造成「测量世界」的工具</b> —— 把预训练视频生成器做成<b>前馈 4D 感知器</b>：<b>不做迭代去噪</b>，视频只过一次编码器，再用轻量 <b>cross-attention 解码器</b>按提问输出；<b>按需查询</b>（想测哪些点就测哪些点）+ <b>连续时刻查询</b>；还把<b>冻结的视频深度 LoRA</b> 当几何先验、<b>不增加可训练参数</b>。作者称在 <b>3D 点跟踪 / 视频深度 / 相机位姿</b>上达到 <b>SOTA 或具竞争力</b>（<b>作者自报 · 本线未复现</b>）</td>
+    <td><a href="10_17.html">10_17.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-16</td>
+    <td><i>A team of Gemini 4 Argon agents beats Minecraft</i><br><code>arXiv:2610.22319</code>（Maxence Faldor, Satinder Singh, Roberta Raileanu）</td>
+    <td>四个 AI 走进 Minecraft，<b>没人分工、没人写脚本</b> —— 它们自己在聊天框里商量，<b>自己写程序、自己看报错改代码</b>，写了 <b>2783 个程序</b>、耗时 <b>27 小时 14 分</b>、途中<b>死亡 605 次</b>，把末影龙打倒；作者称「据我们所知」这是<b>首次 AI 智能体端到端自主通关</b>（作者自报 · 未复现 · 简单难度 / 随机世界）</td>
+    <td><a href="10_16.html">10_16.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-15</td>
+    <td><i>Moral Combat: Exploiting Moral Foundations Theory to Jailbreak LLMs</i><br><code>arXiv:2610.19587</code>（Adel Khorramrouz, Yi-Chia Wang, Sharon Levy）</td>
+    <td>同一件坏事，<b>换个道德说法就变成好事</b> —— 人吃这套，AI 也吃：论文用「道德基础理论」让一组 AI 接力<b>诊断 → 换个道德框架改写 → 加先例</b>，跨 5 个开源与专有模型观察到<b>抵抗力明显下降、反复尝试还会更糟</b>；副产物发现「考 AI 安全的卷子本身偏科」（作者自报 · 未复现）</td>
+    <td><a href="10_15.html">10_15.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-13</td>
+    <td><i>Designing Protein Structures from Natural Language</i><br><code>arXiv:2610.13917</code>（Joseph Lee, Yanjing Li, Bo Qiang, Gregory Lau, Allyson Ettinger, Noah A. Smith, Rory Donovan-Maiye, David Baker, Hanna Hajishirzi, Pang Wei Koh）</td>
+    <td>像文生图一样<b>「文生蛋白质」</b>：用自然语言指定设计目标，在 <b>1.8M 结构 + 50M+ 描述</b>的配对数据上做文本条件训练；<b>18 项结构属性中 15 项</b>优于基线、结合蛋白设计<b>20 个靶点中至少 13 个</b>领先；并对靶点 <b>GM2A</b> 做<b>湿实验验证</b>，得到 <b>9 个 binder（最强 K<sub>D</sub> ≈ 107 nM）</b>（作者自报）</td>
+    <td><a href="10_13.html">10_13.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-12</td>
+    <td><i>Can Language Models Play the Wikipedia Game?</i><br><code>arXiv:2610.13948</code>（Alexander Hickey, Joanna Knight, James Bishop）</td>
+    <td>把「维基百科游戏」（只准点页面内链接、从起点走到终点）当成<b>信息检索任务</b>考 AI：在 5 种语言维基 + 5 个学术引文图上，<b>最强模型只做到「和人类不相上下」，无一显著超越</b>，且排名随语言 / 主题漂移（作者自报）</td>
+    <td><a href="10_12.html">10_12.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-11</td>
+    <td><i>Beyond Owls: Subliminal Learning Can Transfer Learned Capabilities and Backdoors</i><br><code>arXiv:2610.10657</code>（Jan Dubiński, Anna Sztyber-Betley, Jan Betley, et al.）</td>
+    <td>两个 AI 只学了一堆<b>无关数字</b>，学生却把老师偷偷藏的坏习惯也学会了 —— 后门（女性名字→法语 <b>23.5%</b> vs 男性 <b>0.0%</b>）与作弊倾向（<b>58.3%</b> vs <b>10.9%</b>）（作者自报）</td>
+    <td><a href="10_11.html">10_11.html</a></td>
+  </tr>
+  <tr>
+    <td>2026-10-10</td>
+    <td><i>It's Always 10:10: Reference Images Break a Bias That Prompts Only Dent</i><br><code>arXiv:2610.11320</code>（Luca Cazzaniga）</td>
+    <td>为什么 AI 画的钟永远停在 10:10？—— 广告「笑脸」习惯被模型照抄；加一张参考表盘可把全对率从 34% 提到 75%（作者自报）</td>
+    <td><a href="10_10.html">10_10.html</a></td>
+  </tr>
+</table>
+
+<footer>
+  research 线 · <code>research/video/SCENES/index.html</code> ｜ 最近更新：2026-11-11 18:1x CST（新增 <code>11_11.html</code> · TOP-1 = Agent Benchmarks / <code>arXiv:2611.13541</code> · 5 镜 / 120s / 口播 <b>358</b> 汉字（≈179 字/分）；上一版 <code>11_10.html</code> · <code>arXiv:2611.12820</code> · 口播 385 汉字）<br>
+</footer>
+</div>
+</body>
+</html>

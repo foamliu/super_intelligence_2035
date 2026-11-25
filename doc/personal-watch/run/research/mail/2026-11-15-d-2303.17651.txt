@@ -1,0 +1,14 @@
+Dear Dr. Madaan,
+
+I am Yang Liu, a researcher working on LLM agents; you can find my work at https://foamliu.github.io/.
+
+Self-Refine is the reference point for the iterative loop in our harness: one model as generator, critic and refiner, with stop(fb_t, t) being either a fixed timestep or a scalar stop score emitted inside the feedback prompt. Three things I cannot settle from the paper:
+
+1. In the 1-vs-k human study, was the refinement arm compute-matched to k independent initial samples at equal token budget? If not, which baseline would you now consider fair?
+2. Vicuna-13B failed mainly on feedback format and on acting on oracle feedback. For a 2B-7B model, would you rather fix the iteration count and distill only the feedback step, instead of letting the small model self-stop?
+3. In the 70-sample error analysis, 25% of failures ignored feedback and 20% introduced a new problem. Did any prompt-level constraint (e.g. requiring a diff-style edit) measurably reduce those two modes?
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

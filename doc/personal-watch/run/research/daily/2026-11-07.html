@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-07（晚报 · 5/5）· research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 6px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.9; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.14); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.18); border-radius:8px; padding:8px 12px; opacity:.95; }
+  .badge { display:inline-block; padding:1px 10px; border-radius:999px; font-size:12.5px; font-weight:700; vertical-align:middle; }
+  .b-am { background:#e6f4ea; color:#0b6b2f; }
+  .b-pm { background:#ddf4ff; color:#0b3d6e; }
+  .b-jz { background:#dafbe1; color:var(--ok); } .b-kp { background:#ffeef8; color:#a3238e; }
+  .progress { margin-top:8px; font-size:13.5px; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .card h3 { margin:0 0 4px; font-size:17px; line-height:1.45; }
+  .card .no { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin-right:8px;
+              border-radius:50%; background:var(--accent); color:#fff; font-size:14px; font-weight:700; vertical-align:middle; }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 108px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#0b3d6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#0b3d6e; }
+  a { color:var(--accent); word-break:break-all; }
+  .reason { background:#f0f6ff; border:1px solid #cfe0f5; border-left:4px solid var(--accent); border-radius:8px;
+            padding:10px 14px; margin-top:10px; font-size:13.5px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border);
+           color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-07 <span class="badge b-pm">晚报 · 5/5</span></h1>
+  <div class="sub">每日 5 篇推荐论文（早 3 / 晚 2）· <b>今日进度 5 / 5</b>（早报 3 篇「借鉴」+ 晚报 2 篇「科普」已齐）· 含 <b>「对各线的可执行建议」</b>（pretrain / vision / harness / data / zhulong / designflow 六线）</div>
+  <div class="meta">
+    <span>📅 2026-11-07（周六）</span>
+    <span>🕕 生成 06:0x CST（早报）· 优化 18:0x CST（晚报）</span>
+    <span>📚 数据源 arXiv（export.arxiv.org）· 官方 API</span>
+    <span>🏷 本页口径：<b>借鉴</b>（3 篇）+ <b>科普</b>（2 篇），两口径分开</span>
+  </div>
+  <div class="disc">⚠️ 免责：本页为 <b>论文解读 / 待读线索</b>，<b>非结论、非官方</b>；所有数字均为<b>作者自报</b>，本线<b>未复现</b>；原题照抄不改写。「对各线的可执行建议」为<b>基于论文的推断，供各线自行评估</b>，非指令。</div>
+</header>
+
+<h2 class="sec">☀️ 早报 · 3 篇「借鉴」<span class="badge b-jz">借鉴</span></h2>
+<p style="font-size:13.5px;color:#59636e;margin:0 0 8px;">按「<b>改动落在系统的哪一层</b>」分层选文，避免同质：<b>① 存储/加速器硬件层</b>（<code>2611.07707</code>，3D 存算一体阵列上的权重映射）→ <b>② 显存/外存层级（量化 + offload）</b>（<code>2611.08363</code>，低比特推理用 RAM/SSD 补精度）→ <b>③ 模型架构 / 服务调度层</b>（<code>2611.08133</code>，混合线性注意力模型的跨模型状态迁移）。三篇均为 <code>2026-11-05</code> 批次，均在本轮 <b>72h 窗口内</b>；三篇选题分别贴近「长鑫存储视角（存算/内存层级）」与「BaiZe / ZhuLong 的推理服务效率」。</p>
+
+<div class="card">
+  <h3><span class="no">1</span>CAMP: Context-Aware Mapping and Placement for LLMs on 3D-IMC Arrays</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">大模型推理受限于把大权重矩阵和 KV cache 反复搬进内存的开销。<b>模拟内存计算（AIMC）</b>把计算直接放在静态权重所在的存储阵列上，能大幅降能耗与延迟；<b>3D-IMC</b> 再把存储阵列垂直叠成多层以提升容量，但引出新问题：<b>权重怎么摆进存储层，决定了哪些矩阵-向量乘（MVM）能并行执行</b>，进而影响延迟与吞吐，而 3D-IMC 的权重映射「并发性」此前研究不足、算力利用率偏低。作者提出 <b>CAMP</b>（上下文感知映射与放置）：用一张「冲突矩阵」把架构、目标网络与运行时上下文造成的资源争用刻画出来，据此做吞吐最优的权重映射，再用基于 profiling 的反馈环剪枝搜索空间、在可用时间内返回优化映射。CAMP 是离线、纯软件方案、不需改硬件；把 3D-IMC 算力利用率从 <b>42.4%</b> 提到 <b>60.3%</b>，相对 SOTA 映射最高 <b>2.0×</b> 的 IMC 吞吐、<b>1.74×</b> 的端到端吞吐。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">CAMP: Context-Aware Mapping and Placement for LLMs on 3D-IMC Arrays</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Orhun Görkem · Athanasios Vasilopoulos · Georgios Pagonis 等（<b>9 位</b>；据 PDF 首页：<b>IBM Research — Rüschlikon</b>，瑞士）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-05</b>（<code>published=2026-11-05T09:27:31Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈36.5h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>20 页</b> / <b>80,619</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AR</code> · <span class="badge b-jz">借鉴</span> · 关键词：3D 存算一体（3D-IMC）/ 模拟内存计算 / 权重映射与放置 / 矩阵-向量乘并发 / LLM 推理加速 / 软硬件协同</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.07707">https://arxiv.org/abs/2611.07707</a>（PDF 已落地：<code>research/pdf/2026-11-07/2611.07707.pdf</code>，3,197,044 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与长鑫存储视角 / BaiZe·ZhuLong 的关系）</b>
+    <ol>
+      <li><b>正对「存算一体 + 内存层级」这条存储侧主线</b>：我们关注的不只是「模型跑多快」，而是<b>权重与 KV 放在哪一层存储、怎么放、能并行取多少</b>。本文把「权重摆放 → 哪些 MVM 可并发 → 吞吐/延迟」这条链路显式建模成<b>冲突矩阵</b>，是「存储布局直接决定算力利用率」的一个可读样本。</li>
+      <li><b>硬数字可回查（摘要）</b>：3D-IMC 算力利用率 <b>42.4% → 60.3%</b>；相对 SOTA 映射算法最高 <b>2.0×</b> IMC 吞吐、<b>1.74×</b> 端到端吞吐。它给出的核心量是<b>「放置算法」本身的增益</b>（不改硬件），正好对应「同一套存储阵列，换一种数据摆放能多榨出多少算力」。</li>
+      <li><b>可迁移的方法论</b>：① 先把「架构 + 网络 + 运行时上下文」形式化成<b>冲突矩阵</b>；② 用 profiling 反馈环<b>剪枝搜索空间</b>、在实用时间内返回映射。这种「把并发冲突显式化 + 反馈剪枝」的框架，对我们评估「权重 / KV 分块如何映射到片上与片外存储」有参考价值，<b>不绑定具体品牌</b>。</li>
+      <li><b>口径要点</b>：AIMC（模拟内存计算）的增益本质是「计算贴着存储做、免去数据搬运」，与数字 SRAM/DRAM 的工程口径不同；本文结论建立在 3D-IMC <b>模拟器</b>上，<b>不是实测芯片</b>。</li>
+      <li><b>边界（必须写清）</b>：① 全部为<b>仿真</b>结果（3D-IMC 模拟器 + profiler），无流片实测；② 针对「权重静态驻留、适合 MVM」的推理负载，<b>不覆盖训练</b>；③ 收益依赖具体网络结构、batch 与上下文，换个模型/上下文需重跑映射；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§ 冲突矩阵建模、§ 反馈环剪枝与搜索时间、§ 与 SOTA 映射的对比设置）+ <b>仅备忘</b>：把它当作「存算一体 / 近存计算」方向上「放置即优化」的参考案例，纳入我们对「内存层级如何影响推理吞吐」的评估清单。
+  </div>
+</div>
+
+
+<div class="card">
+  <h3><span class="no">2</span>StrataFlux: Memory-Hierarchy-Native Low-Bit LLM Inference</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">量化能降低 LLM 推理的显存与带宽需求，但会掉精度；而把高精度数据放到外部、需要时再取回，又会让生成卡顿。<b>StrataFlux</b> 挑战这个权衡：在保留量化省显存/加速优点的同时，把低比特权重与 KV cache 量化损失掉的精度补回来 —— 它把「细化精度」的<b>表示、选择与投递</b>三者协同设计，让<b>主机内存（RAM）与固态硬盘（SSD）</b>成为额外精度的可用来源；<b>选择性精度流式加载</b>减少传输量、把加载与计算重叠、并在多个解码步之间复用已取回的精度，使生成不必等每一次传输。评测覆盖 2–4 bit 权重、2–3 bit KV（独立 GPU 与统一内存平台）：2-bit Llama-3.1-8B-Instruct 把 WikiText-2 困惑度从 <b>9.46</b> 降到 <b>8.40</b>，同时在 RTX 5090 上保持量化版 <b>95.4%</b> 的吞吐；2-bit 权重 + KV 让 Qwen3-8B 的 AIME 2024/2025 从 <b>11.0%</b> 提到 <b>47.1%</b>，GPU 显存占用不变；128K 上下文下，3-bit 权重 + 2-bit KV 的 Llama-3.1-8B-Instruct 在 RTX 5090 上困惑度与速度接近 vLLM 的 4-bit AWQ + 8-bit KV，而显存约用<b>一半</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">StrataFlux: Memory-Hierarchy-Native Low-Bit LLM Inference</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Jake Hyun · Ziyu Zhao · Jae-sun Seo · Mohamed S. Abdelfattah（<b>4 位</b>；据 PDF 首页：<b>Cornell University</b> + <b>Carnegie Mellon University</b>，美国）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-05</b>（<code>published=2026-11-05T17:42:06Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈28.3h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>34 页</b> / <b>127,901</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.LG</code> · <span class="badge b-jz">借鉴</span> · 关键词：低比特推理 / 量化 / KV cache 量化 / 内存层级 / RAM·SSD offload / 精度流式加载 / vLLM·AWQ 对照</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.08363">https://arxiv.org/abs/2611.08363</a>（PDF 已落地：<code>research/pdf/2026-11-07/2611.08363.pdf</code>，1,147,247 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与长鑫存储视角 / BaiZe·ZhuLong 的关系）</b>
+    <ol>
+      <li><b>把「存储层级」直接变成「精度预算」</b>：传统做法是「量化到低比特，认掉精度损失」或「offload 到内存/SSD，认掉延迟」。本文的核心观点是<b>把 RAM / SSD 当成「可回收的精度来源」</b>——不是把整层搬回来，而是<b>选择性地</b>流式取回少量高精度数据、与计算重叠、并跨解码步复用。<b>这正是存储系统（长鑫视角）与推理引擎的交叉点</b>：外存带宽/层次能不能被「用对地方」。</li>
+      <li><b>硬数字可回查（摘要）</b>：2-bit Llama-3.1-8B-Instruct，WikiText-2 困惑度 <b>9.46 → 8.40</b>，RTX 5090 上保持量化版 <b>95.4%</b> 吞吐；2-bit 权重+KV 让 Qwen3-8B 的 <b>AIME 2024/2025 11.0% → 47.1%</b>（GPU 显存不变）；128K 上下文用 3-bit 权重 + 2-bit KV 追平 vLLM 4-bit AWQ + 8-bit KV 的质量与速度、显存约减半。这些是「低比特 + 外存补精度」可直接对标的量。</li>
+      <li><b>对 BaiZe / ZhuLong 的实际可用点</b>：① 我们若已上量化推理，本文给出「<b>什么时候量化掉的那点精度值得用外存补回来</b>」的判断框架；② 「选择性精度流式 + 跨步复用」是一条<b>不重训</b>的精度回收路径，可用于对精度敏感的评测/关键任务；③ 与 vLLM/AWQ 的直接对照，便于我们横向比较。</li>
+      <li><b>口径要点</b>：这是「<b>用外存换精度、但要隐藏其延迟</b>」的思路，收益强依赖<b>外存带宽、预取与计算重叠</b>的工程质量；「显存占用不变」「显存约减半」都是在特定硬件（RTX 5090 / 统一内存平台）测得。</li>
+      <li><b>边界（必须写清）</b>：① 主要在单机 GPU / 统一内存平台评测，<b>未覆盖大规模多卡服务与国产加速器</b>；② 依赖对特定推理栈/加速库的适配（流式加载、kernel 融合）；③ 精度回收靠「选哪些数据补精度」的启发式，极端分布下未验证；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>试跑</b>（中成本、方向明确）：在我们现有的量化推理栈上，挑一个精度敏感的任务（如长上下文检索 / 数学），按「选择性取回高精度权重/KV + 与计算重叠」做一个最小版本，量『精度回收 vs 吞吐损耗』。<b>读原文</b>：§ 精度细化表示与选择策略、§ 流式投递/重叠机制、§ 与 vLLM AWQ 的对照设置。
+  </div>
+</div>
+
+
+<div class="card">
+  <h3><span class="no">3</span>Beyond K/V Caches: Cross-Model State Handoff in Hybrid Linear-Attention LLMs</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">生产部署常用不同模型来平衡成本与质量（级联、路由、长对话中切换模型），上下文跨轮累积，每次切换都要让目标模型对这段上下文<b>重跑 prefill</b>。已有方法只迁移全注意力（FA）的 K/V cache；而<b>混合线性注意力模型</b>还保留<b>循环状态（REC）</b>与<b>卷积历史（Conv）</b>，Conv 与 REC 的交互使跨模型状态转移变复杂：Conv 扰动量会改变循环层里的 key/value 并影响 REC 更新；conv 历史可被覆盖，但 REC 的变化仍会影响后续输出，而且<b>更精确地重建 REC 不一定带来更好的续写</b>。作者提出 <b>HST（Hybrid State Transfer）</b>处理 FA/REC/Conv 三类状态：用结构化 REC 映射、Conv 对齐时保留历史顺序、以冻结目标模型的输出校准适配器、离线合入 FA cache 映射。在 5 个基准上，Qwen3.5 <b>4B→27B</b>、<b>9B→27B</b> 的平均任务保留率分别 <b>89.88%</b>、<b>94.11%</b>；在源 cache 已就绪时，16K 合成输入上「交接主体」加速 <b>21.66×</b>、<b>21.91×</b>。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Beyond K/V Caches: Cross-Model State Handoff in Hybrid Linear-Attention LLMs</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Jiacheng Cai · Tao Zhang · Siqi Liang · Yun Dai · Ziqian Zeng（<b>5 位</b>；据 PDF 首页：<b>South China University of Technology</b>，华南理工大学，中国）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-05</b>（<code>published=2026-11-05T15:00:50Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈31.0h</b>（<b>在 72h 窗口内</b>）· PDF 实测 <b>12 页</b> / <b>37,188</b> 字符（去空白）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.CL</code> · <span class="badge b-jz">借鉴</span> · 关键词：混合线性注意力 / 跨模型状态迁移 / 模型级联·路由 / K/V cache / 循环状态 REC / prefill 复用 / 推理效率</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.08133">https://arxiv.org/abs/2611.08133</a>（PDF 已落地：<code>research/pdf/2026-11-07/2611.08133.pdf</code>，574,682 B，校验见附录 C）</div></div>
+  <div class="reason"><b>推荐理由（借鉴 · 与 BaiZe / ZhuLong 的关系）</b>
+    <ol>
+      <li><b>正对「多模型服务 + 长对话」的真实成本点</b>：生产里常见「小模型起手、难问题切大模型 / 长对话中途换模型」的级联与路由。默认做法是切换后让目标模型<b>把整段上下文重跑一遍 prefill</b>，这是长上下文服务里最贵的一段。<b>本文要省的就是这段 prefill</b>。</li>
+      <li><b>点出了一个被忽视的难点</b>：当模型是<b>混合线性注意力</b>（部分层是线性注意力/循环）时，光搬 K/V cache 不够，还要搬 <b>REC 循环状态 + Conv 卷积历史</b>，而且三者的耦合会让「精确重建」≠「续写更好」。这条「<b>状态搬得准 ≠ 生成得好</b>」是需要实验校准（用冻结目标模型输出对齐）才能发现的坑。</li>
+      <li><b>硬数字可回查（摘要）</b>：5 个基准上，Qwen3.5 <b>4B→27B / 9B→27B</b> 平均任务保留率 <b>89.88% / 94.11%</b>；源 cache 已就绪时，16K 合成输入上交接主体加速 <b>21.66× / 21.91×</b>。注意加速的<b>前提</b>是「源模型 cache 已经算好」，省的是<b>目标模型的重算</b>，不是总预算。</li>
+      <li><b>对 BaiZe / ZhuLong 的可用点</b>：① 若我们的服务用了级联/路由或长对话中换模型，本文给出一份「切换时该搬哪些状态、怎么校准」的清单；② 「用冻结目标输出校准适配器」是一个低风险的工程手段（不动权重）；③ 对<b>混合线性注意力架构</b>的支持是相比「只搬 FA K/V」旧方法的关键增量。</li>
+      <li><b>边界（必须写清）</b>：① 收益以「<b>源模型 cache 已就绪</b>」为前提，端到端节省要看源/目标分工；② 只在 <b>Qwen3.5 家族</b>（同家族不同规模）上验证，跨家族/跨架构迁移未充分验证；③ 任务保留率 <b>&lt;100%</b>（89.88% / 94.11%）说明切换有损，精度敏感任务需评估；④ 作者自报、本线未复现。</li>
+    </ol>
+    <b>建议动作</b>：<b>读原文</b>（§ HST 的三类状态映射、§ Conv 对齐保序、§ 冻结目标校准适配器、§ 5 基准与加速的口径）+ <b>仅备忘</b>：把「切换模型时要不要搬循环状态/卷积历史」写进我们的多模型服务成本评估清单；混合线性注意力架构上尤其注意「只搬 K/V 不够」。
+  </div>
+</div>
+
+
+<h2 class="sec">🌙 晚报 · 2 篇「科普」<span class="badge b-kp">科普</span></h2>
+<p style="font-size:13.5px;color:#59636e;margin:0 0 8px;">科普口径（<b>大众能懂 + 有传播力 + 可讲清</b>，可与本线在研工作无关）。今日 <b>科普 TOP-1</b>（供《论文两分钟》分镜）= <code>2611.08478</code> <b>Scientist World</b>——「让 AI 科学家自己搞科研」最直观、最有传播力（AI 超越人类研究者的比例、6,400 小时研究轨迹都可做成画面）；第 5 篇 <code>2611.08412</code> <b>Gold Rush in AI4Math II</b>——「能否检测出 AI 写的数学证明」是极强的大众话题（AI 代写 vs 帮润色怎么分）。两篇均属 <code>2026-11-05</code> 批次、在 72h 窗口内。</p>
+
+<div class="card">
+  <h3><span class="no">4</span>Scientist World: Grow a Research World for AI-Scientists</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">AI 科学家已经来了，但<b>没有一个「能跑起来」的世界</b>供它们成长：人类科学家有几百年的开放问题与共享思路（论文对人是「可读也可做」），可对 AI 来说，论文只是<b>可读、不可运行</b>。作者把<b>每篇论文变成一个可执行环境</b>——自动抽取论文的开放式研究问题、复现其方法作为<b>基线</b>，AI-Scientist 进入环境后被拿来与人类作者的成果对比。首批发布 <b>1,000 个已核验环境</b>；以此当评测，发现前沿 AI-Scientist <b>已在 74% 的情况下超过人类研究者</b>；同时留下 <b>6,400 小时研究轨迹</b>（每个想法、实验、失败、成功都有记录）；作为训练场，可把小模型的<b>研究构思能力提升 158%</b> 以比肩前沿模型。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">Scientist World: Grow a Research World for AI-Scientists</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Taiming Lu · Sachin Konan · Zhuang Liu（<b>3 位</b>；机构以 PDF 首页署名页为准）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-05</b>（<code>published=2026-11-05T18:58:17Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈23h</b>（<b>在 72h 窗口内</b>）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code> · <span class="badge b-kp">科普</span> · 关键词：AI-Scientist / 可执行环境 / 自动复现基线 / 研究轨迹 / 小模型研究构思 / 科学自动化</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.08478">https://arxiv.org/abs/2611.08478</a>（PDF 已落地：<code>research/pdf/2026-11-07/2611.08478.pdf</code>，校验见附录 C）</div></div>
+  <div class="reason"><b>科普看点（为什么适合两分钟视频）</b>
+    <ol>
+      <li><b>反直觉 + 有画面</b>：「AI 科学家已经比人类强 74%」这类数字天然有传播力；「把每篇论文变成一台可以进去做实验的机器」很有画面感（一个由论文构成的「世界」）。</li>
+      <li><b>可讲清的机制</b>：论文 → 抽取开放问题 → 复现方法作基线 → AI 进去做 → 与人类作者对比。四步能在 30 秒讲完，不需要搬全篇。</li>
+      <li><b>真实来源</b>：arXiv:2611.08478；关键数字（1,000 环境 / 74% / 6,400 小时 / +158%）全部来自摘要，作者自报、本线未复现。</li>
+    </ol>
+    <b>边界（必须写清）</b>：① 「74% 超过人类」是<b>在其自建的 1,000 个环境</b>上的对比，环境由它的 pipeline 自动构造，存在选择性；② 环境=可复现的<b>方法类</b>论文，非全部科研；③ 作者自报，本线未复现。🚫 视频中不得把「74%」讲成「AI 全面超越科学家」。
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="no">5</span>The Gold Rush in AI4Math, II: What are signatures of AI-assisted Proofs?</h3>
+  <div class="row"><div class="k">中文一句话</div><div class="v">AI 在数学里用得越来越多，问题来了：<b>能不能把「AI 参与证明」检测出来，并且和「只是帮忙润色文字」区分开</b>？作者用历史 arXiv 论文 + 近期披露实质使用 AI 的论文 + OpenAI 放出的人工稿，构造 <b>5 个 cohort、共 8,281 篇</b>（含针对<b>同一研究问题</b>的人工/AI 配对）。提出 <b>ProofTrace</b>：把每篇论文表示为「即时证明支撑图」(GIPS) 并抽取可解释的数学组织特征。三大发现：① 特征的主成分投影呈现「AI 参与度梯度」；② 找到 AI 生成证明的<b>反复出现的特征</b>（更少引用外部结果、更依赖中间结论、图连通性改变，且在控制领域/篇幅/图规模后仍稳健）；③ 独立检测实验中，ProofTrace 能区分人类论文与「披露实质用 AI」的论文，且<b>在 AI 改写后仍稳</b>，而 SOTA 文本检测器性能急剧下降。</div></div>
+  <div class="row"><div class="k">原题</div><div class="v"><span class="orig">The Gold Rush in AI4Math, II: What are signatures of AI-assisted Proofs?</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Yuanchuan Guo · Jiashun Jin · Zheng Tracy Ke · Bingcheng Sui（<b>4 位</b>；机构以 PDF 首页署名页为准）</div></div>
+  <div class="row"><div class="k">日期</div><div class="v">首次提交 <b>2026-11-05</b>（<code>published=2026-11-05T18:17:18Z</code>；<code>updated</code> 同日，无 v2）· 距本轮唤醒 <b>≈24h</b>（<b>在 72h 窗口内</b>）</div></div>
+  <div class="row"><div class="k">分类 / 标签</div><div class="v"><code>cs.AI</code> · <span class="badge b-kp">科普</span> · 关键词：AI4Math / AI 生成证明检测 / ProofTrace / GIPS 图 / cohort·配对 / 可解释特征</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><a href="https://arxiv.org/abs/2611.08412">https://arxiv.org/abs/2611.08412</a>（PDF 已落地：<code>research/pdf/2026-11-07/2611.08412.pdf</code>，校验见附录 C）</div></div>
+  <div class="reason"><b>科普看点（为什么适合两分钟视频）</b>
+    <ol>
+      <li><b>强大众话题</b>：「AI 写的证明，你能看出来吗？」直击公众对「AI 代写/学术诚信」的关切；「文本检测器失效、但结构化检测仍稳」是一个反直觉结论。</li>
+      <li><b>可讲清的对比</b>：AI 生成的证明「更少引用别人的结果、更依赖中间结论、结构连通性不同」——三个特征都能用简单图示讲明白。</li>
+      <li><b>真实来源</b>：arXiv:2611.08412；关键数字（8,281 篇 / 5 cohort / ProofTrace）全部来自摘要，作者自报、本线未复现。</li>
+    </ol>
+    <b>边界（必须写清）</b>：① 检测针对「<b>披露</b>实质用 AI」的论文，未披露者不在评测内；② 主要是<b>数学证明</b>域，迁移到代码/自然语言未验证；③ 「SOTA 文本检测器失效」是作者在其数据上的对照结论，本线未复现。🚫 不得讲成「AI 写的论文都能被抓出来」。
+  </div>
+</div>
+
+
+<h2 class="sec">🎯 对各线的可执行建议（pretrain / vision / harness / data / zhulong / designflow）</h2>
+<div class="note">
+  <b>说明</b>：依据均取自本页今日 5 篇（arXiv ID + 摘要关键数字，作者自报、本线未复现）；「建议动作」为<b>基于论文的推断</b>，供各线自行评估，<b>不构成新指令</b>；与各线任务书冲突时以任务书为准。某线本期确无对口论文时，如实写「本线本期无新增可用建议」。
+</div>
+<table>
+  <tr><th>线</th><th>建议动作</th><th>依据（arXiv ID + 关键数字）</th><th>预期收益</th><th>成本</th><th>优先级</th></tr>
+  <tr>
+    <td><b>pretrain</b><br><span style="font-size:12px;color:#59636e;">S1 Mamba2-hybrid 2B 训练中；全量 CPU eval 后台 ~22 天（26.8s/req）</span></td>
+    <td>① 读 StrataFlux 的「选择性精度流式 + 跨解码步复用」，评估在<b>长上下文 eval/推理</b>时用外存补精度替代全高比特 KV 的可行性（注意 GPU 满载，先 CPU 侧评估思路）；② 读 HST 的跨模型状态迁移，评估「长上下文 eval 续跑复用状态、省 prefill」能否缓解当前 ~22 天墙钟。</td>
+    <td><code>2611.08363</code> StrataFlux（2-bit Llama-3.1-8B PPL <b>9.46→8.40</b>、RTX 5090 保 <b>95.4%</b> 吞吐、128K 3-bit+2-bit KV 追平 vLLM AWQ 显存约半）；<code>2611.08133</code> HST（Qwen3.5 16K 交接加速 <b>21.66×/21.91×</b>，任务保留 89.88%/94.11%）</td>
+    <td>若 eval/推理用低比特+外存补精度 → 降显存/延长可评上下文；状态复用或缩短长上下文 eval 墙钟。</td>
+    <td>读原文 2–3h + 小试跑（CPU 侧）</td>
+    <td>中</td>
+  </tr>
+  <tr>
+    <td><b>vision</b><br><span style="font-size:12px;color:#59636e;">v3 GRPO step30/40；奖励仍离散（rise_time/duty_cycle 100% 全错）；小样本显著性</span></td>
+    <td><b>无直接对口「波形奖励设计/LoRA」论文</b>。可侧向借鉴 Scientist World 的「<b>可执行环境 + 与基线对比</b>」评测范式，为波形 VQA 设计「自动判分 + 人工基线对照」，减少人工奖励依赖；其 cohort/配对思路可用于小样本显著性对照设计。</td>
+    <td><code>2611.08478</code> Scientist World（1,000 可执行环境、<b>74%</b> 超人类基线、6,400h 轨迹——「与基线对比」评测范式）</td>
+    <td>为「波形任务自动判分/对照组设计」提供参考，降低人工奖励成本。</td>
+    <td>读原文 1–2h + 设计对照 0.5 天</td>
+    <td>低</td>
+  </tr>
+  <tr>
+    <td><b>harness</b><br><span style="font-size:12px;color:#59636e;">TB4 全 0passed（verifier infra）；7 路 SWE-bench predict；上下文压缩/失败归因</span></td>
+    <td>读 Scientist World 的「paper→可执行环境 + 自动复现基线」pipeline，评估把 TB4 的 verifier 从「仅 agent env 的 overlay」改成「<b>参考基线的可运行对照</b>」以区分「能力不足 vs infra 故障」；并参考其 6,400h trace 记录法（每想法/实验/失败/成功）改进 harness 的 trace 归因与上下文压缩。</td>
+    <td><code>2611.08478</code> Scientist World（1,000 核验环境、自动复现基线 pipeline、6,400h traces）</td>
+    <td>为 TB4「0passed 归因」提供可运行基线对照思路；trace 记录法改善失败归因/上下文压缩。</td>
+    <td>读原文 1–2h</td>
+    <td>中</td>
+  </tr>
+  <tr>
+    <td><b>data</b><br><span style="font-size:12px;color:#59636e;">代码语料 ROI 下载中；去污染黑名单（IA03/terminal-bench/LongBench-v2）</span></td>
+    <td>读 Gold Rush II 的 ProofTrace/GIPS「AI 生成内容检测」特征（更少引用外部结果、更依赖中间结论、图连通性），作为<b>去污染 / 代码语料质量筛</b>的信号参考；借鉴其 cohort+配对（同题人工 vs AI）去污染数据集构造。⚠️ 这是数学证明域，迁移到代码需先做小实验验证。</td>
+    <td><code>2611.08412</code> Gold Rush II（<b>8,281</b> 篇 / 5 cohort / ProofTrace·GIPS；检测在 AI 改写后仍稳）</td>
+    <td>为「AI 生成代码/文本去污染」提供可解释特征与配对实验设计。</td>
+    <td>读原文 1–2h + 域迁移小实验</td>
+    <td>中</td>
+  </tr>
+  <tr>
+    <td><b>zhulong</b><br><span style="font-size:12px;color:#59636e;">两轴消融（thinking 档 × 语言）·28 轮；baseline glm-5.2 83.3%；成本口径</span></td>
+    <td>借鉴 Gold Rush II 的「<b>cohort + 配对 + 控制领域/篇幅/规模</b>」实验设计到两轴消融：给每个 (thinking 档 × 语言) cell 设配对对照并报告控制变量下效应是否稳健；其「主成分投影显示参与度梯度」可用于可视化 thinking×语言的分数梯度（类比 zhulong 的 83.3% baseline 对照口径）。</td>
+    <td><code>2611.08412</code>（5 cohort/8,281 篇、matched pairs、controls field/length/size）+ <code>2611.08478</code>（与人类基线对比范式）</td>
+    <td>提升两轴消融的显著性论证与成本归一化口径。</td>
+    <td>读原文 1h + 改分析脚本 0.5 天</td>
+    <td>中</td>
+  </tr>
+  <tr>
+    <td><b>designflow</b><br><span style="font-size:12px;color:#59636e;">造题 / L1-L5 保真度 / 判分可验证性；断言闸门修复 queue</span></td>
+    <td>借鉴 Scientist World 的「<b>可运行 + 与参考基线比对</b>」作为判分可验证性锚点（对应其 1,000 verified envs）：让每个 case 自带「参考基线的可运行输出」作 verifier 对照，而非只静态 check.py 断言。⚠️ EDA 域需自建基线（无现成），落地成本高。</td>
+    <td><code>2611.08478</code> Scientist World（1,000 核验环境 + 自动复现基线 pipeline）</td>
+    <td>为「判分可验证性」提供「可运行基线对照」思路，减少纯静态断言偏差。</td>
+    <td>概念借鉴 1h；EDA 落地需自建基线（成本高）</td>
+    <td>低</td>
+  </tr>
+</table>
+<div class="ok-box">
+  <b>本期小结</b>：6 线均给出可执行落点（跨线累计 ≫ 2 条）。最强对口 = <b>harness / designflow / data</b>（<code>2611.08478</code> 可执行环境评测范式 + <code>2611.08412</code> 检测/配对设计）；<b>pretrain</b> 侧向（量化+状态复用）；<b>zhulong</b> 借实验设计；<b>vision</b> 本期<b>无直接对口</b>（仅评测范式侧向借鉴，如实标注低优先）。今日 5 篇无一篇直接解决 vision 的「离散奖励 → 连续化」核心问题——建议 vision 继续按自身预注册推进，无需因本日报改排期。
+</div>
+
+<h2 class="sec">附录 A · 本轮检索式与命中数（可核验）</h2>
+<div class="note">
+  <b>批次探针（AM · 4 条查询，间隔 ≥6s / 第 ④ 条 ≥20s，<code>4/4</code> <code>status=200</code> + <code>application/atom+xml; charset=utf-8</code>，全部 <code>attempts=1</code>）</b>：证据文件 <code>research/raw/2026-11-07-am-verify-r137.txt</code>（脚本 <code>raw/verify_r137.py</code>）。
+</div>
+<table>
+  <tr><th>#</th><th>检索式</th><th>totalResults</th><th>最新 published</th><th>耗时</th><th>判读</th></tr>
+  <tr><td>①</td><td><code>cat:cs.CL</code>（lastUpdatedDate ↓）</td><td><b>124,790</b></td><td><code>2026-11-05T18:58:17Z</code>（<code>2611.08478v1</code>）</td><td>1.15s</td><td>与 r136（11-06 PM）<b>逐项相同</b></td></tr>
+  <tr><td>②</td><td><code>cat:cs.CL AND submittedDate:[202611040000 TO 202611082359]</code></td><td><b>159</b></td><td><code>2026-11-05T18:58:17Z</code></td><td>0.75s</td><td>区间右移一天后仍无 11-06 条目</td></tr>
+  <tr><td>③</td><td><code>submittedDate:[202611040000 TO 202611082359]</code>（全库，不加分类）</td><td><b>2,687</b></td><td><code>2026-11-05T18:59:48Z</code>（<code>2611.08489v1</code>，astro-ph.EP）</td><td>0.74s</td><td>全库同样停在 11-05 批次</td></tr>
+  <tr><td>④</td><td>广度 sweep：<code>cat:cs.CL OR cat:cs.CV OR cat:cs.SE OR cat:cs.AI OR cat:cs.LG</code></td><td><b>643,965</b></td><td><code>2026-11-05T18:59:42Z</code></td><td>0.79s</td><td>= r136 PM 的 643,965</td></tr>
+</table>
+<div class="ok-box">
+  <b>AM 轮结论（如实登记）</b>：AM 轮 <b>公告批次未刷新</b>，仍为 <code>2026-11-05</code>（<code>totalResults=124,790</code>、最新 <code>2026-11-05T18:58:17Z</code>、cs.CL 区间 159、全库 2,687、广度 <b>643,965</b>，与 r136 PM <b>逐项一致</b>）。<br>
+  <b>时点解释（非故障）</b>：本地 <b>2026-11-07 06:00 CST</b> = 美东 <b>2026-11-06 17:00 EST</b>；arXiv 下一批公告 = 美东 <b>11-06 20:00 ET</b> = 本地 <b>11-07 09:00</b>，<b>晚于 AM 轮约 3h</b> ⇒ 未刷新符合日历。<b>口径说明</b>：②③ 的 <code>totalResults</code> 相对 r136 PM 下降，是 <code>submittedDate</code> <b>滑动窗口</b>（11-03/11-04 条目滑出、11-05 滑入）所致，<b>不是数据减少</b>；判刷新只看「最新 <code>published</code> 是否前移」+ ① 总量变化。AM 轮<b>未</b>把「未刷新」写成「无新增」，改为在<b>未消费完的 11-05 候选池</b>里按「借鉴」口径补选（见附录 B）。
+</div>
+<div class="note">
+  <b>批次探针（PM · 同口径 4 条查询，<code>4/4</code> <code>status=200</code> + <code>application/atom+xml; charset=utf-8</code>，全部 <code>attempts=1</code>）</b>：证据文件 <code>research/raw/2026-11-07-pm-verify-r138.txt</code>（脚本 <code>raw/verify_r138.py</code>）。
+</div>
+<table>
+  <tr><th>#</th><th>检索式</th><th>totalResults</th><th>最新 published</th><th>耗时</th><th>判读</th></tr>
+  <tr><td>①</td><td><code>cat:cs.CL</code>（lastUpdatedDate ↓）</td><td><b>124,790</b></td><td><code>2026-11-05T18:58:17Z</code>（<code>2611.08478v1</code>）</td><td>1.45s</td><td>与 AM 轮<b>逐项相同</b>（仍未刷新）</td></tr>
+  <tr><td>②</td><td><code>cat:cs.CL AND submittedDate:[202611050000 TO 202611092359]</code></td><td><b>72</b></td><td><code>2026-11-05T18:58:17Z</code></td><td>2.01s</td><td>区间再右移一天，仍无 11-06 条目</td></tr>
+  <tr><td>③</td><td><code>submittedDate:[202611050000 TO 202611092359]</code>（全库）</td><td><b>1,235</b></td><td><code>2026-11-05T18:59:48Z</code>（<code>2611.08489v1</code>，astro-ph.EP）</td><td>1.01s</td><td>全库同样停在 11-05 批次</td></tr>
+  <tr><td>④</td><td>广度 sweep 5 分类</td><td><b>643,965</b></td><td><code>2026-11-05T18:59:42Z</code></td><td>18.67s</td><td>= AM 轮 643,965</td></tr>
+</table>
+<div class="ok-box">
+  <b>PM 轮结论（如实登记）</b>：PM 轮 <b>公告批次仍未刷新</b>，仍为 <code>2026-11-05</code>（<code>totalResults=124,790</code>、最新 <code>2026-11-05T18:58:17Z</code>，与 AM 轮逐项一致）。<br>
+  <b>时点解释（非故障，周末例外）</b>：本地 <b>2026-11-07 18:00 CST（周六）</b> = 美东 <b>2026-11-07 05:00 EST（周六）</b>；<b>arXiv 周末（周六/周日）不公告新批次</b>，最近一次公告批次仍是周五前的 <code>2026-11-05</code> ⇒ 本轮「未刷新」<b>符合日历</b>（§0.1 周末/公告批次例外）。因此 PM 轮<b>不</b>把「未刷新」当「无新增」，改为在<b>未消费完的 11-05 候选池</b>里按「科普」口径补选 2 篇（见附录 B）。<b>候选池</b>：AM 已用 3 篇 ⇒ 余 <b>300</b> 条，PM 从中选 2 篇「科普」。
+</div>
+
+<h2 class="sec">附录 B · 取数 / 去重 / 选文（可核验）</h2>
+<p style="font-size:13.5px;"><b>取数</b>（<code>raw/candidates_r137.py 2026-11-05</code> → <code>raw/2026-11-07-am-candidates-r137.json</code>，5 条<b>单分类</b>各取最新 100 条、间隔 ≥3.2s、<code>5/5</code> <code>status=200</code> + XML）：cs.CL <b>124,790</b> / cs.CV <b>212,479</b> / cs.LG <b>297,729</b> / cs.AI <b>211,462</b> / cs.SE <b>30,857</b>（耗时 1.58 / 1.33 / 1.30 / 1.31 / 1.30s）⇒ 合并去重 <code>published ≥ 2026-11-05</code> = <b>305</b> 条，与 <code>SEEN</code> 重复 <b>2</b>（= 11-06 PM 已收录的 <code>2611.08294</code> / <code>2611.08314</code>）⇒ <b>候选池 303 条</b>。<br>
+<b>权威复核</b>：<code>id_list</code> <b>8/8</b>（3 入选 + 5 备选；<code>raw/2026-11-07-am-idlist-r137a.xml</code>，HTTP 200 / <b>20,543 B</b> / <b>1.17s</b>，全 <code>published</code> 前缀 <code>2026-11-05</code> 断言通过）。</p>
+<table>
+  <tr><th>#</th><th>arXiv ID</th><th>原题（照抄）</th><th>分类</th><th>选用理由（一句话）</th></tr>
+  <tr><td>1</td><td><code>2611.07707</code></td><td>CAMP: Context-Aware Mapping and Placement for LLMs on 3D-IMC Arrays</td><td>cs.AR</td><td>存算一体 / 3D-IMC 的<b>权重放置即优化</b>，长鑫存储视角强相关（存储布局决定算力利用率）。</td></tr>
+  <tr><td>2</td><td><code>2611.08363</code></td><td>StrataFlux: Memory-Hierarchy-Native Low-Bit LLM Inference</td><td>cs.LG</td><td>把 <b>RAM/SSD 当可回收精度来源</b>，量化 + 外存补精度的推理新范式（存储层级 × 推理引擎）。</td></tr>
+  <tr><td>3</td><td><code>2611.08133</code></td><td>Beyond K/V Caches: Cross-Model State Handoff in Hybrid Linear-Attention LLMs</td><td>cs.CL</td><td>多模型级联/路由切换时<b>省 prefill</b>：混合线性注意力要搬 REC/Conv 而非只搬 K/V，服务成本直接相关。</td></tr>
+</table>
+<div class="note">
+  <b>未选强候选（留在池内，供晚报 / 下轮按「科普」或补位再评估）</b>（均已 <code>id_list</code> 复核、<code>published=2026-11-05</code>）：
+  <b><code>2611.07263</code> HyFlash</b>（cs.CL，端侧投机解码的「前缀记忆先验」，SLM/端侧相关，摘要级强候选）·
+  <b><code>2611.07552</code> SPARE</b>（cs.CL，线性注意力解码的紧凑循环状态，2.55× 全模型解码加速）·
+  <b><code>2611.07605</code> The Gating Mechanism of KV Cache Eviction</b>（cs.CL，KV cache 淘汰的可学习门控，75% 压缩下 RULER 90.14）·
+  <b><code>2611.08082</code> DictLLM</b>（cs.AI，字典核的后训练压缩）·
+  <b><code>2611.08216</code> ProQuant</b>（cs.CV，边缘 MLLM 的渐进量化感知训练）。<br>
+  <b>为什么不选它们做本轮「借鉴」</b>：本轮按「硬件层 / 内存层级 / 架构服务层」三轴取稿，已覆盖更有区分度的三条；上述 5 条<b>同质集中在「解码加速 / 量化」</b>，留作储备可在后续轮次或晚报科普轮补位，避免一天内三篇都讲同一件事。
+</div>
+
+<p style="font-size:13.5px;"><b>【PM 晚报 · 科普选取】</b>PM 批次未刷新（周末例外，见附录 A）⇒ 在 AM 未消费完的 <b>300</b> 条候选池中，按<b>科普口径</b>（大众能懂 + 传播力 + 可讲清 + 真实来源，可与本线工作无关）选 2 篇：</p>
+<table>
+  <tr><th>#</th><th>arXiv ID</th><th>原题（照抄）</th><th>分类</th><th>科普看点（一句话）</th></tr>
+  <tr><td>4</td><td><code>2611.08478</code></td><td>Scientist World: Grow a Research World for AI-Scientists</td><td>cs.AI</td><td>「每个想法/实验/失败/成功都有记录」+ <b>74%</b> 超越人类研究者的可传播数字，画面感强（<b>今日科普 TOP-1</b>）。</td></tr>
+  <tr><td>5</td><td><code>2611.08412</code></td><td>The Gold Rush in AI4Math, II: What are signatures of AI-assisted Proofs?</td><td>cs.AI</td><td>「能否检测出 AI 写的数学证明」直击大众关切；「文本检测器失效、结构化检测仍稳」反直觉。</td></tr>
+</table>
+<div class="note">
+  <b>科普口径说明</b>：两篇均可与本线在研工作无关（目的 2）；选题未与「借鉴」口径混用。<b>未选（供后续视频候选池参考）</b>：<code>2611.08438</code> 机制可解释性综述（27 作者，偏抽象）、<code>2611.08442</code> 后量子密码 SoK（话题强但 SoK 偏干）、<code>2611.08392</code> 重症监护患者世界模型（可懂但缺震撼点）。PM 选取 2 篇均已 <code>published=2026-11-05</code>、在 72h 窗口内。
+</div>
+
+
+<h2 class="sec">附录 C · PDF 落地校验（5/5）</h2>
+<table>
+  <tr><th>arXiv ID</th><th>字节数</th><th>页数</th><th>字符（去空白）</th><th>结构校验</th><th>sha256 / etag</th></tr>
+  <tr><td><code>2611.07707</code></td><td>3,197,044</td><td>20</td><td>80,619</td><td>✅ 字节==<code>Content-Range</code> total、头 <code>%PDF-</code>、尾 <code>%%EOF</code>、<code>pdfinfo</code>/<code>pdftotext</code> 可解析</td><td>不一致（etag <code>sha256:54446d51…</code> vs 本地 <code>b2d365a9…</code>）⇒ <b>不声称哈希一致</b></td></tr>
+  <tr><td><code>2611.08363</code></td><td>1,147,247</td><td>34</td><td>127,901</td><td>✅ 同上</td><td>不一致（etag <code>sha256:df6c6bb0…</code> vs 本地 <code>6c59c3ed…</code>）⇒ <b>不声称哈希一致</b></td></tr>
+  <tr><td><code>2611.08133</code></td><td>574,682</td><td>12</td><td>37,188</td><td>✅ 同上</td><td>etag 为 base64 口径（<code>CMWv75aw8pcDEAI=</code>）⇒ 不可比</td></tr>
+  <tr><td><code>2611.08478</code>（PM）</td><td>13,593,519</td><td>63</td><td>169,048</td><td>✅ 字节==<code>Content-Range</code> total、头 <code>%PDF-</code>、尾 <code>%%EOF</code>、<code>pdfinfo</code>/<code>pdftotext</code> 可解析（8 段一次拉满）</td><td>不一致（etag <code>sha256:ed42c14c…</code> vs 本地 <code>62468d64…</code>）⇒ <b>不声称哈希一致</b></td></tr>
+  <tr><td><code>2611.08412</code>（PM）</td><td>5,692,486</td><td>31</td><td>—（全文 <code>pdftotext</code> 超时，前 3 页 10,244 字符）</td><td>✅ 字节==total、头 <code>%PDF-</code>、尾 <code>%%EOF</code>、<code>pdfinfo</code> 31 页可解析；全文 <code>pdftotext</code> 180s 超时（数学符号重）⇒ 以 <b>结构校验 + <code>pdfinfo</code> + 前 3 页文本</b>为准</td><td>不一致（etag <code>sha256:abc82e24…</code> vs 本地 <code>826b6669…</code>）⇒ <b>不声称哈希一致</b></td></tr>
+</table>
+<p style="font-size:13.5px;">落地路径 <code>research/pdf/2026-11-07/</code>（<b>不入 git</b>：<code>.gitignore</code> 排除 <code>pdf/</code> 与 <code>*.pdf</code>）；<b>当日 5 篇合计 24,204,978 B ≈ 23.08 MiB</b>（其中 <code>2611.08478</code> 13.6MB、<code>2611.08412</code> 5.4MB <b>&gt; 5MB ⇒ 严格不入 git</b>，仅登记字节，本地保留）。下载用 <code>raw/pdf_range_resume_r137.py</code>（8 段 Range + 断点续传，固定边缘 IP <code>151.101.67.42</code>）；AM 3 篇 8 段一次拉满；PM 2 篇各 1–2 段遇 <code>TimeoutError</code> 已由<b>续传兜底</b>救回（未把截断文件当成功）。⚠️ 各篇 sha256 与 CDN etag <b>不一致 / 口径不可比</b> ⇒ 只声称<b>结构校验 + 字节 == <code>Content-Range</code> total</b>，不声称哈希一致。</p>
+
+<h2 class="sec">附录 D · 台账与当日进度</h2>
+<ul style="font-size:13.5px;">
+  <li><b>台账（AM+PM）</b>：AM <code>raw/update_r137.py</code> +3；PM <code>raw/update_r138.py</code> +2 ⇒ <code>SEEN.md</code> <b>5,640</b> 行（收录 <b>316</b> / 候选 4,558 / 候选（RSS 补充）507）、<code>papers.jsonl</code> <b>316</b> 行；幂等断言（每 ID 恰好 1 行、<code>published</code> 前缀 <code>2026-11-05</code>）全过。</li>
+  <li><b>索引 / 接口文档</b>：<code>research/daily/index.html</code> 更新 11-07 行（早报 3/5 → <b>晚报 5/5</b> + 覆盖 6 线）；<code>research/INDEX.md</code> 追加本节摘要；<code>research/ARXIV_API.md</code> 追加 §9.137（AM）/ §9.138（PM）。</li>
+  <li><b>当日进度</b>：<b>5 / 5 已收口</b>（早报 3 篇「借鉴」+ 晚报 2 篇「科普」）。晚报轮完成：① 复验批次（周末未刷新，仍 <code>2026-11-05</code>，如实登记，非「无新增」）；② 晚 2 篇「科普」（<code>2611.08478</code> / <code>2611.08412</code>，出自 AM 未消费完的候选池）；③ PDF 补齐 5/5；④ 日报 3/5 → 5/5 + 本「晚报变更说明（AM → PM）」；⑤ <b>「对各线的可执行建议」新增（6 线齐全）</b>；⑥ 🚫 <b>不再发日报邮件</b>（2026-11-07 10:50 用户令：出口改为本文 HTML，停发 <code>paul.liu@cxmt.com</code> 日报）。</li>
+  <li><b>候选池余量</b>：PM 用 2 篇后余 <b>298</b> 条；仍含 <code>2611.07263</code> HyFlash / <code>2611.07552</code> SPARE / <code>2611.07605</code> KV 淘汰门控 / <code>2611.08082</code> DictLLM / <code>2611.08216</code> ProQuant 等强候选，可作下轮补位。</li>
+  <li><b>口径护栏</b>：本页只写「推荐 / 待读」，<b>不写</b>「已验证结论 / 可复现收益 / SOTA 已证」；一切数字均为<b>作者自报</b>、本线未复现。</li>
+</ul>
+
+<h2 class="sec">晚报变更说明（AM → PM）</h2>
+<ul style="font-size:13.5px;">
+  <li><b>标题 / 版式</b>：「论文推荐日报」→ <b>「论文观察日报」</b>（2026-11-07 10:50 用户令的出口改名）；badge「早报 · 3/5」→「晚报 · 5/5」。<i>为什么：出口从「邮件」改为「HTML 日报」，与新职能对齐。</i></li>
+  <li><b>新增 2 篇「科普」</b>：追加第 4 篇 <code>2611.08478</code> Scientist World、第 5 篇 <code>2611.08412</code> Gold Rush in AI4Math II（科普口径，与借鉴口径分开）。<i>为什么：凑齐每日 5 篇（早 3 晚 2）；PM 批次周末未刷新，从 AM 候选池按科普口径补选。</i></li>
+  <li><b>新增「🎯 对各线的可执行建议」整节</b>：6 线（pretrain / vision / harness / data / zhulong / designflow）逐线给「动作 / 依据(arXiv ID+数字) / 收益 / 成本 / 优先级」。<i>为什么：2026-11-07 10:50 用户令核心要求——日报要能被各线 agent 直接执行、对它们有帮助。</i></li>
+  <li><b>附录 A 增补 PM 探针表</b>：记录 PM 轮 4/4 探针结果（周末未刷新，如实登记）。<i>为什么：可核验「未刷新 = 周末例外」而非「无新增」。</i></li>
+  <li><b>附录 B 增补 PM 选文表</b>：记录 PM 2 篇科普选取理由 + 未选备选。<i>为什么：去重与选取可核验。</i></li>
+  <li><b>删去「日报邮件」相关表述</b>：AM 轮「待发第 26 封到 paul.liu@cxmt.com」作废，改为「🚫 不发日报邮件，出口=本 HTML」。<i>为什么：10:50 用户令停发日报邮件；作者请教信职能不受影响（另按 RESEARCH_MAIL_SPEC 执行）。</i></li>
+</ul>
+
+<footer>
+  research 线 · 论文观察日报 · <b>2026-11-07 晚报（5/5）</b> · 数据源 arXiv 官方 API · 生成 <code>2026-11-07 06:0x CST</code> · 优化 <code>2026-11-07 18:0x CST</code><br>
+  推荐 = 待读线索，非结论；所有数字为作者自报、本线未复现；PDF 不入 git（见 <code>research/pdf/README.md</code>）。<br>
+  ⚠️ 本页为自包含单文件（内联 CSS · 零外链 · 离线可开）· 出口 = 本 HTML（2026-11-07 用户令，<b>不再发日报邮件</b>）· 含「对各线的可执行建议」6 线齐全。
+</footer>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,55 @@
+{
+  "generated": "2026-10-08T10:00:34.541919+00:00",
+  "arxiv_api": {
+    "endpoint": "https://export.arxiv.org/api/query",
+    "status": 200,
+    "content_type": "application/atom+xml; charset=utf-8",
+    "ok": true,
+    "total_results": 629290,
+    "n_entries": 3,
+    "sample": [
+      {
+        "arxiv_id": "2610.10539",
+        "published": "2026-10-07T17:59:48Z",
+        "category": "cs.CV"
+      },
+      {
+        "arxiv_id": "2610.10538",
+        "published": "2026-10-07T17:59:41Z",
+        "category": "cs.CV"
+      },
+      {
+        "arxiv_id": "2610.10536",
+        "published": "2026-10-07T17:59:26Z",
+        "category": "cs.LG"
+      }
+    ],
+    "error": null
+  },
+  "hf_daily": {
+    "endpoint": "https://huggingface.co/api/daily_papers",
+    "ok": false,
+    "n_ids": 0,
+    "error": "request failed: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/daily_papers (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f1f14893b00>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"
+  },
+  "arxiv_rss": {
+    "cs.CL": {
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 190,
+      "note": ""
+    },
+    "cs.CV": {
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 262,
+      "note": ""
+    },
+    "cs.LG": {
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 512,
+      "note": ""
+    }
+  }
+}

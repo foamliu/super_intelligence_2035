@@ -1,0 +1,14 @@
+Sehr geehrter Herr Professor Riedel, ich schreibe auf Englisch, um die technischen Details nicht zu verfälschen.
+
+I am Yang Liu, a researcher working on LLM agents and pretraining; my work is at https://foamliu.github.io/.
+
+RETRO is the paper we keep returning to when considering retrieval as a substitute for long context: 2048-token sequences cut into 64-token chunks, k neighbours from BERT keys of width r=128, a 600B-token training database against a 1.75T-token evaluation database, and Pile parity with 25x fewer parameters. We pretrain a ~2B model on a mostly Chinese corpus and cannot tell whether the retrieval branch earns its serving cost. Three questions:
+
+1. Did a crossover appear between your 150M and 7B runs, below which retrieval loses to simply adding training tokens? At ~2B parameters and 1T tokens, which side would you expect?
+2. The 10 ms SCaNN lookup amortizes over 64 tokens; at interactive serving, how much index memory did the 1.75T-token database need, and does the lookup stay outside the latency budget?
+3. Your decontamination uses 13-gram Jaccard at 0.8 with MinHash. Chinese reaches 13-gram overlap by chance more easily; would you tighten the threshold or use tokenizer-aware n-grams?
+
+Thank you.
+
+Best regards,
+Yang Liu

@@ -1,0 +1,60 @@
+{
+  "generated": "2026-10-26T10:00:58.614013+00:00",
+  "arxiv_api": {
+    "endpoint": "https://export.arxiv.org/api/query",
+    "url": "https://export.arxiv.org/api/query?search_query=cat:cs.CL&start=0&max_results=3&sortBy=submittedDate&sortOrder=descending",
+    "status": 200,
+    "content_type": "application/atom+xml; charset=utf-8",
+    "elapsed_s": 2.82,
+    "total_results": 123669,
+    "n_entries": 3,
+    "sample": [
+      {
+        "arxiv_id": "2610.32982v1",
+        "published": "2026-10-23T17:59:56Z",
+        "category": "cs.CL"
+      },
+      {
+        "arxiv_id": "2610.32955v1",
+        "published": "2026-10-23T17:49:43Z",
+        "category": "cs.CL"
+      },
+      {
+        "arxiv_id": "2610.32933v1",
+        "published": "2026-10-23T17:30:40Z",
+        "category": "cs.CL"
+      }
+    ],
+    "ok": true,
+    "error": null
+  },
+  "hf_daily": {
+    "endpoint": "https://huggingface.co/api/daily_papers",
+    "ok": false,
+    "n_ids": 0,
+    "error": "URLError(OSError(101, 'Network is unreachable'))"
+  },
+  "arxiv_rss": {
+    "cs.CL": {
+      "url": "https://rss.arxiv.org/rss/cs.CL",
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 169,
+      "note": ""
+    },
+    "cs.CV": {
+      "url": "https://rss.arxiv.org/rss/cs.CV",
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 205,
+      "note": ""
+    },
+    "cs.LG": {
+      "url": "https://rss.arxiv.org/rss/cs.LG",
+      "status": 200,
+      "content_type": "application/rss+xml",
+      "items": 321,
+      "note": ""
+    }
+  }
+}

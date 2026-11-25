@@ -1,0 +1,45 @@
+论文日报 · 2026-11-06（周五）· 精选 5 篇（BaiZe / ZhuLong 相关）
+
+今日 5 篇已齐：早报 3 篇「借鉴」（与在研工作的相关性）+ 晚报 2 篇「科普」（大众可读性）。以下均为 arXiv 一手预印本，推荐 = 待读线索、非结论；所有数字为作者自报，本线未复现；原题照抄不改写。5 篇 PDF 全部随信附上（合计 6,681,633 B ≈ 6.37 MiB）。
+
+一、早报 · 3 篇「借鉴」
+
+1）2611.06133  Accelerating Long-Context Decoding in Large-Scale Hybrid LLMs Without Retraining
+   作者/机构：João Eduardo Batista · Emil Vatai · Mohamed Wahib（RIKEN Center for Computational Science）
+   提交：2026-11-04 ｜ cs.CL ｜ 19 页
+   为何值得读：混合注意力模型的长上下文 decode，成本集中在少数「全注意力层」。作者不改权重、不重训，只给每层设三个旋钮（固定前缀 256 token + 滑窗 W + Quest 预算 Q），用 NSGA-II 逐层搜（每模型 ≤60 GPU-hours）；6 个混合模型 × 21 个长上下文基准上，每个模型都至少一种配置逐项保住精度（平均差 ≤0.5pp），64k/256k 解码最多快 1.26×/2.22×。边界：短上下文反而更慢；只省计算不省显存；未覆盖国产加速器。
+   链接：https://arxiv.org/abs/2611.06133 ｜ PDF：附
+
+2）2611.06147  SafeStart: Mitigating the Overlooked Safety Cost of Active Expert Reduction in MoE LLM Serving
+   作者/机构：Erfan Baghaei Potraghloo · Saeid Shokoufa 等 7 位（USC + Intel Labs）
+   提交：2026-11-04 ｜ cs.AI ｜ 40 页
+   为何值得读：MoE 服务里「每 token 少跑几个专家」几乎一定会做，但验收通常只看 MMLU/GSM8K。本文审计 9 个 MoE 模型，发现削专家会削弱拒答（越狱模板下有害服从 Qwen1.5-MoE +18.4pp、OLMoE +9.5pp、DeepSeek-V2-Lite +6.6pp，MMLU 掉 <2 分），并把修法压到「prompt + 前 8 个生成 token 跑全专家」——融合 kernel 后在线 TPOT 只 +≤2.4%，保住 ≥85% 加速。边界：单卡 RTX A6000 + vLLM；裁判与越狱模板本身有误差。
+   链接：https://arxiv.org/abs/2611.06147 ｜ PDF：附
+
+3）2611.06828  Systolic Linear Attention: Co-Designing Tile-Grouped Gated Delta Attention for TPUs
+   作者/机构：Gagik Amirkhanyan · Nuojin Cheng（Google）
+   提交：2026-11-04 ｜ cs.LG ｜ 39 页
+   为何值得读：门控 delta 线性注意力是按 GPU 的小 tensor-core 分块设计的，搬到 TPU（256×256 脉动阵列 + 较慢向量单元）会有一半矩阵块空着。作者把 key 宽度加宽到 256、门分 4×64 tile、chunk 求解融进一个 kernel：单层快 1.6×–2.5×、临时 HBM 少 52%–61%；6.5B–63.1B 稀疏 MoE 预训练同等困惑度下快 8%–24%，且免去门 clamp。边界：收益来自 head 共享 + kernel 融合，GPU 上未必成立；匹配种子下仍差约 0.1 PPL。
+   链接：https://arxiv.org/abs/2611.06828 ｜ PDF：附
+
+二、晚报 · 2 篇「科普」（本日科普 TOP-1 = ManimCode）
+
+4）2611.08294  ManimCode: Learning Visual Self-Correction for Educational Animation
+   作者/机构：Zhengyang Liang · Lizi Liao（Singapore Management University）
+   提交：2026-11-05 ｜ cs.CV ｜ 19 页
+   为何值得读：「能渲染」不等于「画面对」——文字重叠、图被切掉，渲染器不会告诉你该改哪行。作者建 24,034 条经渲染验证的「写→渲染→审→改」轨迹，按角色 SFT 训练 4B 模型，再用 RL 专训 Reviser：ManimData-test / ManimBench 渲染成功率 96.6% / 97.0%（同设置未训练 4B 为 52.6% / 82.0%），视频质量分 2.48→2.94、3.00→3.44；接进 Code2Video 与 TheoremExplainAgent 后完整产出 19/117→107/117、53/239→239/239。边界：质量分主要来自多模态裁判，人工盲评仅在差距 ≥0.5 分时一致率 79%。
+   链接：https://arxiv.org/abs/2611.08294 ｜ PDF：附 ｜ 分镜：research/video/SCENES/11_06.html
+
+5）2611.08314  Interpretable many-body interaction laws for collective motion from few trajectories
+   作者/机构：Timon S. Gutleb（University of Leeds）
+   提交：2026-11-05 ｜ cs.LG ｜ 19 页
+   为何值得读：把材料科学的原子团簇展开（ACE）改造成 dACE，把每个个体的加速度严格等变地拆成 1/2/3/4 体项 + 自项；已知规则的 2D/3D 模拟群体上用很少数据逐阶恢复规则，神经网络 SocialNet 需更多数据、多体/手性误差大且只支持 2D。真实数据（斑马鱼 8 段视频 60–100 条、黄金闪鳞鱼 10 次试验 10–151 条）上，dACE 规则在两半数据间更一致；闪鳞鱼 3 体项在邻居变密时与 2 体响应相反。方法学警告：下一帧预测准确率主要测自推进与噪声，不能给交互模型排名。边界：真实数据无「真规则」可比，一致性只是必要条件。
+   链接：https://arxiv.org/abs/2611.08314 ｜ PDF：附
+
+三、今日备注
+
+- 公告批次：PM 轮已从 2026-11-04 刷新到 2026-11-05（cs.CL totalResults 124,696 → 124,790；最新 2026-11-05T18:58:17Z）；PM 候选池 305 条（0 与 SEEN 重复），id_list 6/6 复核通过。
+- PDF：5/5，结构校验（%PDF- 头 + %%EOF + 字节 == Content-Range total）全过；sha256 与 CDN etag 不一致的篇目已如实标注，不声称哈希一致。
+- 免责：推荐 = 待读线索，非结论；不夸大、不曲解；PDF 不入 git。
+
+research 线 · 观察哨

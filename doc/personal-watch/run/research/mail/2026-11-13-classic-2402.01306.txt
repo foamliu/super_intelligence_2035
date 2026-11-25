@@ -1,0 +1,15 @@
+Dear Dr. Muennighoff,
+
+I am Yang Liu, author of "Superintelligence 2035" and lead of the open BaiZe-ISEDA2027 / ZhuLong-DAC2027 projects: roughly 2B-parameter domain models and agents for chip design and memory systems.
+
+Our agents receive mostly binary feedback: a tool run passes or fails, a DRC check passes or not. KTO's ability to learn from a binary desirability signal is directly relevant to us, and I would like to check three points:
+
+1. With no paired preferences, how should lambda_D and lambda_U be set at roughly 2B parameters? Which failure mode appears first when the binary label is noisy or inconsistent?
+
+2. Tool traces have a long tail, often a 10x difference in tokens for the same task. Does binary desirability get dominated by length, and do you normalize the loss by tokens?
+
+3. If "desirable" is defined by an improvement threshold on a metric rather than by human judgment, does KTO's utility assumption still hold? How would you detect that it breaks?
+
+Answers would guide our post-training recipe, reward design, and data labeling. Thank you for your time.
+
+Yang Liu

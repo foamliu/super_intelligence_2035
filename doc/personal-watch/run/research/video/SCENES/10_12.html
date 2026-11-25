@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-12 · AI 能不能玩「维基百科游戏」</title>
+<style>
+  :root { --primary:#5b1e6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#a3238e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#5b1e6e 0%,#a3238e 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(91,30,110,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#5b1e6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#5b1e6e; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f7eef8; color:#5b1e6e; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#5b1e6e; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#fff6fb; border:1px solid #f3c6e6; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-12</h1>
+  <div class="sub">今日 TOP-1：<b>AI 能不能玩「维基百科游戏」？</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>≈426 字</b></div>
+  <div class="meta">
+    <span>📄 Can Language Models Play the Wikipedia Game?</span>
+    <span>🆔 arXiv:2610.13948</span>
+    <span>👥 Alexander Hickey, Joanna Knight, James Bishop</span>
+    <span>🗓 提交 2026-10-09 ｜ cs.AI（cs.IR）</span>
+    <span>🏷 标签：科普（LLM · 信息检索 · 导航 / 评测）</span>
+  </div>
+  <div class="disc">⚠️ <b>论文解读 · 非官方 · 非结论</b>：本片为该论文的<b>科普转述</b>，涉及的成功率 / 排名均为<b>作者自报、未复现</b>；「维基百科游戏」仅为<b>任务设定名</b>，<b>不代表</b>模型具备通用「导航 / 推理」能力。画面<b>全部自绘 / 自生成，不盗用论文原图</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它（TOP-1 挑选口径 = 目的 2「科普」，非「借鉴」）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>大众能懂</b>：几乎人人都玩过「<b>只点链接、从 A 走到 B</b>」的玩法 —— 不需要任何 AI 背景，一看就问「AI 行不行？」。</li>
+    <li><b>有传播力</b>：结论<b>反直觉又克制</b> —— <b>最强模型只能做到「和人类相当」，并没有碾压人类</b>；而且排名会随语言 / 主题漂移。「AI 连猜带点也赢不过人」天然是话题。</li>
+    <li><b>可讲清</b>：核心一句话 —— 「<b>把信息检索变成一场点链接的比赛</b>」。画面好做（一张节点图 + 起点终点 + 点击计数），数字干净（<b>5 种语言 · 5 个数据集 · 人类 vs 模型「不相上下」</b>）。</li>
+    <li><b>有真实来源</b>：arXiv 编号 + abs 链接齐全；原文自述<b>提供建图与导航代码</b>、不依赖第三方 API（<code>comment</code>：64 页 / 17 图 / 10 表）。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🎞 分镜表（逐镜 · 固定五段：钩子 → 问题 → 方法 → 结果 → 意义/展望）</h2>
+<table>
+  <tr>
+    <th style="width:42px;">镜号</th><th style="width:96px;">时间轴（时长）</th><th style="width:72px;">段落</th>
+    <th style="width:250px;">口播文案</th><th>画面描述（自绘 / 自生成）</th><th style="width:180px;">屏幕文字 / 字幕</th><th style="width:150px;">音效 / BGM</th>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">只准点网页里的链接，从「香蕉」一步步点到「相对论」，你能几秒做到？这个人类玩了几十年的小游戏，现在被丢给了 AI。</td>
+    <td>深色底。屏幕中央一个<b>起点卡「🍌 香蕉」</b>与一个<b>终点卡「🪐 相对论」</b>；两者之间连线成一张不断生长的<b>节点小图</b>（自绘）。光标在小图上快速跳动、计数「点击 +1 +1 …」。</td>
+    <td>字幕：<b>「只准点链接，你能走到吗？」</b>（小字：维基百科游戏 · The Wikipedia Game）</td>
+    <td>轻快悬念音；BGM 起，节奏感、带一点点俏皮。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–22s（12s）</td>
+    <td class="act">问题</td>
+    <td class="vo">这就是「维基百科游戏」。看着像游戏，其实是硬核的检索难题：链接几十亿条，没人能装下整张地图，只能靠眼前一步逼近目标。</td>
+    <td>镜头拉远：小图膨胀成一张<b>密不透风的大网络</b>（自绘，节点 + 连线不断增多溢出画面）；旁标一行小字「文档集合太大，无法整体建索引」。</td>
+    <td>字幕：<b>「像游戏，其实是检索难题」</b>（小字：大到无法整体索引）</td>
+    <td>网络膨胀配持续「嗡」低频；BGM 转平稳。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>22–30s（8s）</td>
+    <td class="act">问题</td>
+    <td class="vo">于是研究者拿它来考 AI：在这么大的迷宫里，语言模型的方向感，能追上人类吗？</td>
+    <td>大网络中央浮出一个<b>「？」机器人头像</b>（自绘）；两侧并排两个对照框：「🧑 人类」与「🤖 语言模型」，都指向同一个终点。</td>
+    <td>字幕：<b>AI 的「方向感」，能追上人类吗？</b></td>
+    <td>「？」出现配一声「叮」；BGM 略上扬。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>30–50s（20s）</td>
+    <td class="act">方法</td>
+    <td class="vo">他们不调用现成榜单，而是自己造地图：抓取五种语言的维基百科，拼出完整的页面链接图；又从五个学术数据库，做出引文图。</td>
+    <td>两步动画（自绘）：① 五个<b>语言标签</b>（EN / DE / FR / …）汇入一台「建图机」，吐出各自的<b>页面链接图</b>；② 五个<b>学术数据集</b>标签汇入，吐出<b>论文引文图</b>（节点 + 有向箭头）。</td>
+    <td>字幕：<b>5 种语言维基 · 5 个学术数据集</b>（小字：自建地图，不依赖第三方 API）</td>
+    <td>标签汇入配「唰」；图展开配连续轻「哒」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>50–64s（14s）</td>
+    <td class="act">方法</td>
+    <td class="vo">参赛者分三组：人类、传统关键词检索，以及当红大模型 —— GPT-o3 mini、GPT-4o，还有 QwQ 和 DeepSeek。谁点最少到终点，谁赢。</td>
+    <td>三个并排「赛道」（自绘）：<b>🧑 人类</b> / <b>🔎 TF-IDF</b> / <b>🤖 LLM 组</b>（下标出 GPT-o3 mini、GPT-4o、QwQ:32B、DeepSeek-R1:70B 小芯片图标）。上方记分板显示「点击次数」。</td>
+    <td>字幕：<b>人类 vs 关键词检索 vs 大模型</b>（小字：比谁点击最少）</td>
+    <td>三赛道就位配「咔」；记分板跳动配「哒哒」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">6</span></td>
+    <td>64–80s（16s）</td>
+    <td class="act">方法</td>
+    <td class="vo">而且不只看最快，还看几十组起点终点下的稳定性 —— 真正的检索，不是碰运气赢一次。</td>
+    <td>画面切到一张<b>起点 / 终点组合表</b>（自绘网格，多行多列打勾）；高亮其中若干格，标注「换起点 / 换终点再跑一遍」「换语言再跑一遍」。</td>
+    <td>字幕：<b>不只比一次 —— 多种起点终点 / 多种语言</b></td>
+    <td>表格逐格点亮配「叮」；BGM 铺底不抢戏。</td>
+  </tr>
+
+
+  <tr>
+    <td><span class="shot-no">7</span></td>
+    <td>80–95s（15s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果有点意外：最强模型确实能打，GPT-o3 mini、GPT-4o、QwQ、DeepSeek 已和人类不相上下；但没有模型能显著超过人类。</td>
+    <td>记分板定格：<b>人类</b> 与 <b>四个最强模型</b> 的成功率条<b>几乎等高</b>（自绘并列柱状条，高度接近）；顶部一行大字「无显著超越」。数值仅示意「相当」，<b>不虚构具体百分比</b>。</td>
+    <td>字幕：<b>最强模型 ≈ 人类 ｜ 无一显著超越</b>（小字：作者自报 · 未复现）</td>
+    <td>柱条升起配「咻」；「≈ 人类」配一声「叮」强调。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">8</span></td>
+    <td>95–105s（10s）</td>
+    <td class="act">结果</td>
+    <td class="vo">更妙的是排名还会变：换语言、换主题，谁强谁弱就不同 —— 榜单第一，并不代表它什么都会。</td>
+    <td>同一组模型图标下方，出现<b>语言 / 主题切换轮盘</b>（自绘）；每转一次，模型名次<b>上下互换</b>，冠军图标在几个模型之间来回跳。</td>
+    <td>字幕：<b>换语言 / 换主题 → 排名会变</b></td>
+    <td>轮盘转动「骨碌碌」；名次互换配「啵」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">9</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">大模型很聪明，但在海量信息里找路，它更像熟练的搜索者，而不是全知者。难问题往往不是「知道多少」，而是「能不能一步步找到」。论文链接见简介。</td>
+    <td>回到开场那张节点小图；镜头缓缓拉远，把「起点 → 终点」的一条<b>最优路径</b>高亮成发光金线。画面浮出论文<b>英文原题</b>与作者名。结尾定格一行字 + arXiv 编号，渐暗。</td>
+    <td>字幕：<b>「难的不是知道多少，而是能不能一步步找到」</b> ＋ <code>arXiv:2610.13948</code> ＋「论文链接见简介」</td>
+    <td>BGM 收尾淡出，尾音留白 0.5s。</td>
+  </tr>
+</table>
+
+<div class="ok-box">
+  <b>口播合计</b>：随 9 镜分配 ≈ 47 + 50 + 33 + 51 + 59 + 34 + 59 + 35 + 58 ≈ <b>426 字</b>（按 180–200 字/分 ≈ <b>2 分 08 秒～2 分 22 秒</b>；本脚本按 <b>120s</b> 剪辑，口播可与画面节奏微调）。<b>五段配比</b>：钩子 0–10s ｜ 问题 10–30s ｜ 方法 30–80s ｜ 结果 80–105s ｜ 意义 105–120s。
+</div>
+
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（节点图 / 大网络、赛道、记分板、柱状条、语言轮盘）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图 / 图注 / 代码仓库截图。</li>
+    <li><b>风格建议</b>：白底 + 单一强调色（紫 / 蓝），扁平矢量图标，字号大、留白多；核心信息置于画面<b>中央安全区</b>，便于抖音竖屏二次裁剪。</li>
+    <li><b>配音</b>：中文普通话，语速 180–200 字/分；「GPT-o3 mini / GPT-4o / QwQ / DeepSeek」等模型名<b>放慢</b>，念出「不相上下」「没有显著超过」时<b>加重</b>，强化反差。</li>
+    <li><b>字幕</b>：关键结论上大字幕；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾必须给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行）</b>。</li>
+    <li><b>配乐</b>：建议使用平台<b>免费 / 已授权</b>曲库，避免版权风险。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给 <b>arXiv abs 链接</b> + <b>英文原题</b>照抄不改写。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「SOTA / 颠覆 / 突破」；结论限定在「本任务 / 本数据集」范围内，并说明成功率与排名为<b>作者自报、未复现</b>。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成（含节点图、赛道、记分板、柱状条、轮盘）。</li>
+    <li>✅ <b>不编造数据</b>：仅使用原文摘要可支撑的表述 —— 「5 种语言维基 + 5 个学术数据集」「人类与 TF-IDF 基准」「无一模型显著超过人类」「排名随语言 / 主题变化」；<b>不虚构具体百分比</b>（本轮未逐图核对全部数值）。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「AI 迷路 / AI 完胜人类 / AI 有意识」等原文未支持的引申；「维基百科游戏」明确为<b>任务设定</b>。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-12</b> ｜ 文件 <code>research/video/SCENES/10_12.html</code> ｜ 当日 TOP-1</div>
+  <div>论文：<i>Can Language Models Play the Wikipedia Game?</i>（Alexander Hickey, Joanna Knight, James Bishop）｜ <a href="https://arxiv.org/abs/2610.13948">arXiv:2610.13948</a> ｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 5 批（P0）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图。本页为<b>自包含单文件</b>（内联 CSS，零外链）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-12.html">research/daily/2026-10-12.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a></div>
+</footer>
+</div>
+</body>
+</html>
+

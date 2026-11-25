@@ -1,0 +1,65 @@
+{
+ "handle": "natolambert",
+ "name": "Nathan Lambert (@natolambert) / X",
+ "bio": "Open model research, founder, director @trillium_labs. Prev. co-led Olmo at Ai2.\nWrites @interconnectsai, wrote https://t.co/alRXKINTwE",
+ "tweets": [
+  {
+   "id": "2120890682743443481",
+   "created_at": "2026-11-12 14:45 UTC",
+   "created_at_ms": 1794494717000,
+   "text": "Sending support to all my Nvidia friends today, especially at Nemotron and HuggingFace. I hope your work comes back even stronger after a transition period. It’s absolutely crucial.",
+   "url": "https://x.com/natolambert/status/2120890682743443481",
+   "handle_guess": "natolambert"
+  },
+  {
+   "id": "2120880836488913049",
+   "created_at": "2026-11-12 14:06 UTC",
+   "created_at_ms": 1794492370000,
+   "text": "Rip. Now I have to explain why. Lots of work ahead.",
+   "url": "https://x.com/natolambert/status/2120880836488913049",
+   "handle_guess": "natolambert"
+  },
+  {
+   "id": "2120646905562616261",
+   "created_at": "2026-11-11 22:36 UTC",
+   "created_at_ms": 1794436596000,
+   "text": "Jensen likely already out there raising for his next thing. $2B seed at $100B post.",
+   "url": "https://x.com/natolambert/status/2120646905562616261",
+   "handle_guess": "natolambert"
+  },
+  {
+   "id": "2120644428943753344",
+   "created_at": "2026-11-11 22:26 UTC",
+   "created_at_ms": 1794436006000,
+   "text": "Is there precedent of someone not going down with this big of a blast radius? (Without controlling founder shares,etc) \\\n\\\nRip.",
+   "url": "https://x.com/natolambert/status/2120644428943753344",
+   "handle_guess": "natolambert"
+  },
+  {
+   "id": "2120637473252364379",
+   "created_at": "2026-11-11 21:59 UTC",
+   "created_at_ms": 1794434347000,
+   "text": "NYT says Jensen Huang had a relationship Nvidia's vice president of health care. https://t.co/restNfM7wJ",
+   "url": "https://x.com/natolambert/status/2120637473252364379",
+   "handle_guess": "TheStalwart"
+  },
+  {
+   "id": "2120308727173493160",
+   "created_at": "2026-11-11 00:12 UTC",
+   "created_at_ms": 1794355968000,
+   "text": "Jensen no longer being CEO would be very very bad for the open model cause in the US.",
+   "url": "https://x.com/natolambert/status/2120308727173493160",
+   "handle_guess": "natolambert"
+  },
+  {
+   "id": "2118362983285850288",
+   "created_at": "2026-11-05 15:21 UTC",
+   "created_at_ms": 1793892067000,
+   "text": "I regularly hear from people that my post-training book/writing has helped them get a job at labs by focusing on material that develops intuitions for how training methods work. It's very validating, because this type of \\",
+   "url": "https://x.com/natolambert/status/2118362983285850288",
+   "handle_guess": "natolambert"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-13 03:04:43"
+}

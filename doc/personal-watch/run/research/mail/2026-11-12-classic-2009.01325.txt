@@ -1,0 +1,14 @@
+Dear Dr. Stiennon,
+
+I am Yang Liu, working on BaiZe-ISEDA2027 and ZhuLong-DAC2027, two projects that build small (~2B) domain language models for EDA and storage workflows. As part of a reading track on foundational papers, your 2020 study is the one that made "pairwise human preference -> reward model -> RL" concrete for a real task, so I would like to check whether I understand three points correctly.
+
+1. Preference data: at small scale (a ~2B policy, tens of thousands of in-domain trajectories), how much do annotator agreement and annotator filtering matter relative to the sheer number of comparisons? Which part degrades first as data shrinks?
+
+2. Reward model vs verifiable checkers: you showed that optimizing human preference beats optimizing ROUGE. In our setting many outcomes are checkable (an EDA tool runs, DRC passes). Would you still train an RM, or combine an RM with a checker? If combined, how would you weight them?
+
+3. Ties and length bias: how did you handle ties and answer-length bias in the pairwise data, and what would you do differently today?
+
+Any pointers would help us decide how much annotation budget to reserve, and whether to keep a learned reward at all. Thank you for the paper and for your time.
+
+Best regards,
+Yang Liu

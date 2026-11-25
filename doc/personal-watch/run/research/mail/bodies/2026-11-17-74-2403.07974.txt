@@ -1,0 +1,14 @@
+Dear Dr. Jain,
+
+I am Yang Liu, a researcher working on LLM agents; you can find my work at https://foamliu.github.io/. Your release-date tagging in LiveCodeBench is the closest thing to a monthly contamination alarm I have seen, and we are deciding whether to port it into our own harness.
+
+Three questions come out of that decision. First, when scores drop after a model's cutoff, how do you separate "the newer problems are simply harder" from "the older ones were memorized"? Do you have a control that holds difficulty roughly fixed across windows?
+
+Second, across code generation, self-repair, code execution and test-output prediction, how consistent is the model ranking? Where those four scenarios disagree most, which one would you use to gate a release, and why?
+
+Third, if we adopt roughly 500 dated problems, how many problems per window do we need before the post-cutoff delta is stable to within a few points - and is that variance driven more by problem difficulty or by the source platform?
+
+The answers would shape our harness schema, our release gate, and how we report cost-effectiveness.
+
+Best regards,
+Yang Liu

@@ -1,0 +1,17 @@
+Dear Professor Dettmers,
+
+I am Liu Yang, working on BaiZe-ISEDA2027 (a ~2B domain model for chip design) and ZhuLong-DAC2027 (an EDA agent harness). QLoRA is our reference point for finetuning budget: a frozen 4-bit base plus small adapters, close to 16-bit quality, is exactly the trade-off we need to test on one GPU.
+
+Three questions:
+
+1. At 2B scale, which ingredient carries the quality gap — NF4, double quantization, or paged optimizers? If we could keep only one, which would you keep? This decides our single-GPU SFT recipe.
+
+2. Your Guanaco results use rank 64 / alpha 16 broadly. For narrow domain data (RTL, timing reports) with only tens of thousands of examples, would you lower the rank to avoid overfitting, or keep it and rely on dropout? This sets our LoRA grid.
+
+3. When reporting finetuned quality, do you evaluate merged/dequantized weights, or the adapter-on-4-bit path? We need a reproducible rule for harness scoring.
+
+Thank you for making this practical for small teams.
+
+Best regards,
+Liu Yang
+Super Intelligence 2035 / BaiZe-ISEDA2027 / ZhuLong-DAC2027

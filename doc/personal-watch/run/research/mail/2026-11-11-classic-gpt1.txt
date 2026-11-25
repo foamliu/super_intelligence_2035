@@ -1,0 +1,15 @@
+Dear Prof. Narasimhan,
+
+I am Yang Liu, author of "Superintelligence 2035". I lead BaiZe-ISEDA2027 and ZhuLong-DAC2027, where we build a small (~2B) model for electronic design automation and an evaluation harness for EDA agents. Our two-stage recipe (generative pretraining, then task-format fine-tuning) traces back to your GPT-1 paper, and your later agent work shapes how we score agents.
+
+Two questions where your experience would change our design:
+
+1. ReAct-style explicit Thought/Action loops versus letting the model emit tool calls directly: in hindsight, which task properties make the explicit loop pay off? Our tools (simulation, synthesis) cost minutes per call, so wasted calls are expensive.
+
+2. When grading agents, how much of the measured score comes from the checker versus the user/environment simulator? We report cost per solved task and need a defensible way to count retries and simulated turns.
+
+Happy to share a short summary of our harness if useful. Thank you for your time.
+
+Best regards,
+Yang Liu
+《超级智能2035》author · BaiZe-ISEDA2027 / ZhuLong-DAC2027

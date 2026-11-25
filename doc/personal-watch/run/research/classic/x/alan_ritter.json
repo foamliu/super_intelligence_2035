@@ -1,0 +1,57 @@
+{
+ "handle": "alan_ritter",
+ "name": "Alan Ritter (@alan_ritter) / X",
+ "bio": "Computing professor at Georgia Tech - NLP, ML, AI",
+ "tweets": [
+  {
+   "id": "2115399668653756593",
+   "created_at": "2026-10-28 11:05 UTC",
+   "created_at_ms": 1793185557000,
+   "text": "Come check out our tutorial on multilingual and multicultural LLMs today at 2pm #EMNLP2026\\\n\\\nhttps://t.co/YLYL1WzTs2",
+   "url": "https://x.com/alan_ritter/status/2115399668653756593",
+   "handle_guess": "alan_ritter"
+  },
+  {
+   "id": "2113713606915166217",
+   "created_at": "2026-10-23 19:26 UTC",
+   "created_at_ms": 1792783569000,
+   "text": "En route to Budapest 🇭🇺 for #EMNLP2026! Come chat at our posters in Hall H:\\\n\\\nMonday, Oct 26:\\\n9:00–10:30 — Harm amplification in LLM interactions\\\nhttps://t.co/JxKlHyq6Zx\\\n\\\n11:00–12:30 — LaRA: detecting data contamination in RL post-training\\\nhttps://t.co/th5IHpvOg1\\\n\\\n16:45–18:15 —",
+   "url": "https://x.com/alan_ritter/status/2113713606915166217",
+   "handle_guess": "alan_ritter"
+  },
+  {
+   "id": "2079198892583797082",
+   "created_at": "2026-07-20 13:37 UTC",
+   "created_at_ms": 1784554620000,
+   "text": "It’s great to see so much excitement around self-distillation!   \\\n\\\nHowever, some recent work highlights an important failure mode: when the teacher is given the solution, it can suppress verification, backtracking, and exploration, which make reasoning models effective.\\\n\\\nWe",
+   "url": "https://x.com/alan_ritter/status/2079198892583797082",
+   "handle_guess": "alan_ritter"
+  },
+  {
+   "id": "2073837074806145213",
+   "created_at": "2026-07-05 18:31 UTC",
+   "created_at_ms": 1783276263000,
+   "text": "Excited to be heading to ICML! I will be presenting our paper on rethinking how to train models with expert solutions using self-distillation.\\\n\\\n🗓️ July 8, 2026, 5:00 PM – 6:45, Hall A #2502 https://t.co/uROheItkHd",
+   "url": "https://x.com/alan_ritter/status/2073837074806145213",
+   "handle_guess": "EthanMendes3"
+  },
+  {
+   "id": "2069051123202224371",
+   "created_at": "2026-06-22 13:33 UTC",
+   "created_at_ms": 1782135203000,
+   "text": "Excited to attend #ICML2026 in Seoul 🇰🇷 together with my Ph.D. students: @EthanMendes3, @hyungjoochae, @CherylolGuo!\\\n\\\nWe’ll be presenting work on:\\\n- Multilingual reasoning\\\n- Self-distillation from expert reasoning\\\n- Cloning synthetic web environments\\\n\\\nPoster info + paper links https://t.co/5sfwv0uFcX",
+   "url": "https://x.com/alan_ritter/status/2069051123202224371",
+   "handle_guess": "alan_ritter"
+  },
+  {
+   "id": "2036838263751835893",
+   "created_at": "2026-03-25 16:10 UTC",
+   "created_at_ms": 1774455059000,
+   "text": "📣 New paper by my Ph.D. student @hyungjoochae\\\n\\\nHow can we build a safe, scalable learning environment for web agents?\\\n\\\nPaper: https://t.co/jtndyaCKKQ\\\n\\\nWe introduce VERIENV, which clones real websites into executable synthetic environments using coding agents. https://t.co/ILNgcHmC5j",
+   "url": "https://x.com/alan_ritter/status/2036838263751835893",
+   "handle_guess": "alan_ritter"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-15 00:02:31"
+}

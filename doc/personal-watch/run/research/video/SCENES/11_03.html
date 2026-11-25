@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-11-03 · AI 每说一个字，电费到底怎么算？</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#153e75 0%,#2e8b57 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(21,62,117,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#153e75; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#153e75; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#153e75; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>《论文两分钟》分镜脚本 · 2026-11-03</h1>
+  <div class="sub">今日 TOP-1：<b>AI 每说一个字，电费到底怎么算？</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>≈380</b> 字（按 200 字/分 ≈ 114s，留 6s 画面停顿）</div>
+  <div class="meta">
+    <span>📅 日期：2026-11-03（CST）</span>
+    <span>🎬 期号：SCENES/11_03</span>
+    <span>📄 来源：arXiv <code>2611.03330</code></span>
+    <span>🏷 口径：科普（大众看得懂 + 有传播力）</span>
+  </div>
+  <div class="disc">⚠️ <b>论文解读 = 非官方 · 非结论</b>；数字均<b>作者自报</b>，本线<b>未复现</b>；画面全部自绘 / 自生成，<b>不使用论文原图</b>。V3（成片：TTS / 文生图 / 剪辑）<b>未做</b>，待用户确认工具链。</div>
+</header>
+
+<h2 class="sec">📄 选题卡（为什么选它）</h2>
+<div class="card">
+  <div class="row"><div class="k">论文原题</div><div class="v"><span class="orig">The SIMPLE Law for Energy Cost of LLM Inference</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Hiari Pizzini Cavagna · Andrea Proia · Daniele Cesarini · Zeynep Kiziltan · Andrea Bartolini（<b>5 位</b>；据 PDF 首页：<b>University of Bologna</b>（DEI / DISI，意大利）+ <b>CINECA</b>（意大利超算中心））</div></div>
+  <div class="row"><div class="k">arXiv</div><div class="v"><a href="https://arxiv.org/abs/2611.03330">https://arxiv.org/abs/2611.03330</a>（<code>cs.AI</code>（另挂 cs.LG / cs.PF）· 首次提交 <b>2026-11-02</b> · 18 页 · 作者注：Submitted to Future Generation Computer Systems）</div></div>
+  <div class="row"><div class="k">一句话看点</div><div class="v">同样一枚 token，<b>越往后越贵</b>：它进了 KV-cache，会抬高后面所有 token 的成本。作者把推理拆成 <b>prefill / decode（KV-cache + next-token）</b>，用架构参数推出只有 <b>四个参数</b>的 SIMPLE 定律；在 <b>13 个稠密 LLM</b>、<b>H100</b> 的真实能耗轨迹上 <b>R² = 0.969、MAPE = 11.97%</b>，比此前 SOTA 拟合低 <b>3.1–3.5×</b>，且不用逐模型标定。</div></div>
+  <div class="row"><div class="k">为什么选它（当日 5 篇里）</div><div class="v">
+    <ol>
+      <li><b>大众能懂</b>：「AI 回一句话要耗多少电」人人都能感知（电费、手机发热、数据中心水冷）；「同一句话里的字，价格并不一样」零公式也能讲。</li>
+      <li><b>有传播力</b>：三条反直觉硬数字 —— 推理预算 <b>4×</b> 时「每焦耳智能」最多差 <b>3.14×</b>；agent 请求 <b>13.0×</b>；前缀缓存砍 <b>93%</b> prefill，但缓存后的 agent 仍 <b>4.8×</b>。</li>
+      <li><b>可讲清</b>：核心只有「<b>把电费拆成四块</b>」，两分钟够用，不必搬全篇推导。</li>
+      <li><b>有真实来源</b>：arXiv ID + abs + PDF 可核验（本线已落地 PDF 并做结构校验，18 页 / 77,164 字符）。</li>
+      <li><b>为什么不是另一篇「Four Bridges」</b>：那篇也很有传播力（8 个模型都骗），但需要先讲清四人房间规则；SIMPLE 的生活钩子更直接、数字更少、画面更好做。两篇均已在当日 5/5 日报收录。</li>
+    </ol>
+  </div></div>
+</div>
+
+<h2 class="sec">🎞 分镜表（5 镜 · 120s）</h2>
+<table>
+  <tr><th style="width:52px;">镜号</th><th style="width:96px;">时间轴</th><th style="width:92px;">段落</th><th style="width:30%;">口播文案</th><th style="width:26%;">画面（自绘 / 自生成）</th><th style="width:14%;">屏幕文字</th><th>音效 / BGM</th></tr>
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s</td>
+    <td>钩子</td>
+    <td class="vo">你有没有发现：AI 想得越久，电费越贵？同一个问题，有的回答一秒钟，有的要想半分钟。同一个问题，有的回答一秒钟，有的要想半分钟。更怪的是——想得越久，未必越划算。</td>
+    <td>手机屏幕特写：一句话被逐字打出，每打一个字，屏幕右下角的「电表」就往上跳一格；第 7 秒电表<b>突然加速</b>，画面轻微发烫波纹（自绘 2D 动画，角落标「示意」）。</td>
+    <td>同一个字，价格不一样？</td>
+    <td>打字「哒哒」声 + 电表「滴答」加速；BGM 低频铺底</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s</td>
+    <td>问题</td>
+    <td class="vo">聊天机器人按字收费，可每个字并不等价：前面的字会留在记忆里，让后面的字越来越贵。问题是：贵在哪？贵多少？这不是玄学，是 KV-cache 在记账。这不是玄学，是 KV-cache 在记账。以前只有「拟合」，没有一条能说清原因的定律。</td>
+    <td>①左侧一串 token 方块排成队，逐个点亮；②每个新方块后面拖出一条越来越长的「记忆尾巴」（KV-cache 示意）；③右侧出现一个黑箱，标「以前的模型：每个模型单独拟合」，黑箱上贴满不同的旋钮；④黑箱裂开，露出问号。</td>
+    <td>贵在哪？贵多少？<br>拟合 ≠ 定律</td>
+    <td>方块点亮「叮」；尾巴拉长用上升滑音；黑箱裂开一声闷响</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s</td>
+    <td>方法</td>
+    <td class="vo">这篇论文把推理拆成两段：读题，也就是 prefill；答题，也就是 decode。答题再拆成两块：查记忆，也就是 KV-cache；算下一个字。再代入模型的层数、宽度、分组这些架构参数，推出一个只有四个参数的公式，叫 SIMPLE。它在 13 个开源模型、H100 显卡的真实耗电记录上，解释了 96.9% 的差异，平均误差 11.97%，而且不用每个模型单独调参。</td>
+    <td>①一条流水线分成「读题 / 答题」两段，用两种颜色区分；②「答题」再拆成两个齿轮：「查记忆 KV-cache」「算下一个字」；③四个滑块（层数 / 宽度 / GQA 分组 / 序列长度）被推进一个透明盒子，盒子输出一张「四参数公式卡」；④公式卡飞向 13 个模型方块（OPT / LLaMA / Gemma / Falcon / Qwen2 / Granite），H100 图标在下方；⑤右侧仪表盘：R² 0.969、MAPE 11.97%，指针稳定。</td>
+    <td>prefill / decode<br>KV-cache + next-token<br>4 个参数 · 13 个模型<br>R²=0.969 · MAPE=11.97%</td>
+    <td>流水线「咔哒」分段；齿轮轻转；仪表指针到位「叮」；方法段 BGM 降到低音量</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s</td>
+    <td>结果</td>
+    <td class="vo">结论有三条很反直觉：第一，推理预算放大四倍，「每焦耳智能」先升后降，最多差 3.14 倍；第二，会调工具的 agent，一次请求的能耗是普通请求的 13 倍；第三，前缀缓存能砍掉 93% 的读题能耗，但缓存过的 agent 请求，仍是普通请求的 4.8 倍。换句话说，AI 不是越努力越好，关键在找到那个刚刚好的点。</td>
+    <td>①一张「每焦耳智能」曲线：横轴推理预算 1×→4×，曲线先升后降，峰值处画皇冠，两端标「最多差 3.14×」；②左右对比：普通请求一个小电池，agent 请求一排 13 个小电池；③缓存图标砍掉 93% 的「读题」长条，但「记忆」长条几乎不变，右边总表显示 4.8×；④所有数字角落带「作者自报 · 本线未复现」小字。</td>
+    <td>想得越久 ≠ 越划算<br>agent 13.0×<br>缓存省 93% 读题，仍 4.8×</td>
+    <td>曲线到峰值「叮」；电池排亮起「嗡」；长条被砍「咔嚓」；BGM 抬 2 dB</td>
+  </tr>
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s</td>
+    <td>意义 / 展望</td>
+    <td class="vo">所以，AI 的「思考成本」可以被算出来，也可以被设计。下次看到「再想久一点」，不妨也问一句：这多出来的电，值吗？这不是为了省电费，而是为了让算力花在更值的地方。论文链接放在简介。</td>
+    <td>①曲线收成一条细线，变成「电费账单」的边框；②账单上出现三个小图标：更长输入 / 更长推理 / 更多 agent 轮次；③末尾 1 秒黑场，白字：「论文解读 · 非官方 · 非结论 · arXiv:2611.03330」。</td>
+    <td>思考成本，可以被设计<br>arXiv:2611.03330</td>
+    <td>BGM 渐弱，最后一拍收在静音；黑场无人声</td>
+  </tr>
+</table>
+
+<h2 class="sec">📝 口播全文（可直接念 · ≈380 字）</h2>
+<div class="card">
+  <p class="vo">你有没有发现：AI 想得越久，电费越贵？更怪的是——想得越久，未必越划算。</p>
+  <p class="vo">聊天机器人按字收费，可每个字并不等价：前面的字会留在记忆里，让后面的字越来越贵。问题是：贵在哪？贵多少？以前只有「拟合」，没有一条能说清原因的定律。</p>
+  <p class="vo">这篇论文把推理拆成两段：读题，也就是 prefill；答题，也就是 decode。答题再拆成两块：查记忆，也就是 KV-cache；算下一个字。再代入模型的层数、宽度、分组这些架构参数，推出一个只有四个参数的公式，叫 SIMPLE。它在 13 个开源模型、H100 显卡的真实耗电记录上，解释了 96.9% 的差异，平均误差 11.97%，而且不用每个模型单独调参。</p>
+  <p class="vo">结论有三条很反直觉：第一，推理预算放大四倍，「每焦耳智能」先升后降，最多差 3.14 倍；第二，会调工具的 agent，一次请求的能耗是普通请求的 13 倍；第三，前缀缓存能砍掉 93% 的读题能耗，但缓存过的 agent 请求，仍是普通请求的 4.8 倍。换句话说，AI 不是越努力越好，关键在找到那个刚刚好的点。</p>
+  <p class="vo">所以，AI 的「思考成本」可以被算出来，也可以被设计。下次看到「再想久一点」，不妨也问一句：这多出来的电，值吗？这不是为了省电费，而是为了让算力花在更值的地方。论文链接放在简介。</p>
+</div>
+
+<h2 class="sec">🛠 制作规范（可执行）</h2>
+<ul>
+  <li><b>画面</b>：全部<b>矢量自绘 / 文生图自生成</b>；🚫 不使用论文 Figure 与表格截图（流水线、曲线、电池排一律按结论重画示意图，角落标「示意」）。</li>
+  <li><b>数字上屏规则</b>：<code>13</code> / <code>0.969</code> / <code>11.97%</code> / <code>3.1–3.5×</code> / <code>4×</code> / <code>3.14×</code> / <code>13.0×</code> / <code>93%</code> / <code>4.8×</code> 首次出现时，字幕带「<b>作者自报 · 本线未复现</b>」小字；口播把 11.97% 念「约百分之十二」，字幕仍写精确值。</li>
+  <li><b>不能混的口径</b>：① <code>R²=0.969 / MAPE=11.97%</code> 是「<b>13 个稠密 LLM 的 H100 实测轨迹</b>」上的拟合指标，<b>不是</b>所有模型 / 所有硬件；② <code>3.14×</code> 是「<b>推理预算 4.0× 区间内</b>，每焦耳智能峰值与最低值的比值」，<b>不是</b>「所有任务都差 3.14 倍」；③ <code>13.0×</code> 是「<b>agent 请求 vs 非 agent 请求</b>的每请求能耗」，<b>不是</b>「agent 一定不环保」；④ <code>93%</code> 只指<b>前缀缓存削减的 prefill 部分</b>，KV-cache 部分不受影响，所以缓存后 agent 仍 <code>4.8×</code>。</li>
+  <li><b>术语处理</b>：<code>prefill</code> 念「读题 / 预填充」；<code>decode</code> 念「答题 / 逐字生成」；<code>KV-cache</code> 念「记忆缓存」；<code>GQA</code> 念「分组查询注意力」；<code>Intelligence per Joule</code> 念「每焦耳智能」；<code>SIMPLE</code> 念「辛普尔」或「这条四参数定律」。</li>
+  <li><b>节奏</b>：单镜不超过 50s（方法镜）；每 8–10s 必须有画面变化；BGM 在方法段低音量、结果段抬 2 dB；镜 5 收在静音上。</li>
+  <li><b>比例 / 时长</b>：竖版 1080×1920（抖音）与横版 1920×1080（B站）各导一版；总时长严格 120s（±1s）；字幕安全区上下各留 12%。</li>
+  <li><b>口播字数核对</b>：本页纯汉字约 <b>380</b> 字；按 <b>200 字/分</b> 计约 <b>114s</b>，余下 6s 用于方法段与结果段的画面停顿。</li>
+  <li><b>TTS（V3 才做）</b>：中性科普音色，语速 190–200 字/分；数字前后各留 80ms 停顿；「13.0×」念「十三倍」，「3.14×」念「三点一四倍」。</li>
+</ul>
+
+<h2 class="sec">⚖️ 合规与边界（发布前必读）</h2>
+<div class="note">
+  <ol>
+    <li><b>标明「论文解读」</b>：片头或片尾固定一行「论文解读 · 非官方 · 非结论」，简介首行放 arXiv 链接（<code>https://arxiv.org/abs/2611.03330</code>）。</li>
+    <li><b>不夸大</b>：禁用「AI 全是电老虎 / 大模型马上要停电 / 这家定律颠覆行业」等表述；原文只支持「<b>在 H100 + 特定推理框架、13 个稠密 LLM 的实测轨迹上</b>，四参数 SIMPLE 定律达到 R²=0.969 / MAPE=11.97%，并能解释 agent 请求 13.0×、缓存后仍 4.8× 等趋势」。</li>
+    <li><b>不编造数据</b>：本片所有数字均出自摘要与正文（<code>13</code> / <code>0.969</code> / <code>11.97%</code> / <code>3.1–3.5×</code> / <code>4×</code> / <code>3.14×</code> / <code>13.0×</code> / <code>93%</code> / <code>4.8×</code>），不得二次加工成新数字。</li>
+    <li><b>不盗图</b>：画面全部自绘 / 自生成；<b>不使用论文中的任何 Figure、表格截图</b>。</li>
+    <li><b>口径隔离</b>：本片属「目的 2 · 科普」，<b>不</b>写成「与 BaiZe / ZhuLong 相关」的借鉴结论；当日借鉴版解读见 <code>research/daily/2026-11-03.html</code> 早 3 篇。</li>
+    <li><b>未复现声明</b>：本片数字<b>作者自报、本线未复现</b>；PDF 完整性 = 结构校验通过（<code>%PDF-</code> + <code>%%EOF</code> + <code>pdfinfo</code> / <code>pdftotext</code> 可解析 + 字节 == <code>Content-Range</code> total；分段 Range 续传拼接，<b>sha256 与 CDN <code>etag</code> 未对齐</b>，见当日日报附录 C）。</li>
+    <li><b>边界提醒</b>：四参数<b>与 H100 + 推理框架绑定</b>，作者明写换加速器 / 多卡 / 换框架需重标定；只测稠密模型、不含 MoE，<b>不能</b>直接外推到国产加速器或 MoE 服务。</li>
+    <li><b>栏目名</b>：《两分钟论文》为已有知名频道名，<b>发布前请用户确认</b>是否沿用或改名。</li>
+  </ol>
+</div>
+
+<footer>
+  <p>research 线 · 《论文两分钟》分镜脚本（V2）｜ 2026-11-03 · TOP-1 = <code>2611.03330</code> The SIMPLE Law for Energy Cost of LLM Inference ｜ 索引：<a href="index.html">SCENES/index.html</a></p>
+  <p>自包含单文件 · 内联 CSS · 零外链 · 零脚本 · 离线可开 ｜ 论文解读 = 非官方 · 非结论；数字作者自报、本线未复现。</p>
+</footer>
+</div>
+</body>
+</html>

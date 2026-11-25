@@ -1,0 +1,46 @@
+《论文日报》2026-11-05（周四）· 精选 5 篇
+============================================
+数据源：arXiv 官方 API（export.arxiv.org），全部为 2026-11-03 / 2026-11-04 首次提交、均在 72h 窗口内。
+口径分离：早 3 篇 =「借鉴」（与 BaiZe / ZhuLong 在研工作的相关性）；晚 2 篇 =「科普」（大众能懂 + 传播力）。
+免责：以下为「论文解读 / 待读线索」，非结论、非官方；所有数字均为作者自报，本线未复现；原题照抄不改写。
+本封附件：5 个 PDF，合计 14,711,758 B ≈ 14.03 MiB（< 20 MB，未分包）。
+
+—— 一、借鉴 3 篇（早报 06:00 时窗）——————————————
+
+1) ARLoop: Fully-Open Pre-trained Looped Transformers with Attention Residuals
+   arXiv: 2611.05234（cs.CL，2026-11-03，26 页，PDF 已附）
+   作者/机构：Yuekun Yao, Yupei Du, Dawei Zhu, Huan Sun（The Ohio State University · Saarland University）
+   为何值得读：把 attention residuals 从「层深度」搬到「循环深度」，并发现 looped 模型只需滑动窗口即可 —— 140M R=3 验证 PPL 16.59→16.03、370M 12.28→12.17，收益随循环深度变大（R=1 −0.11 → R=3 −0.53 PPL）；1.2B / 0.5T token / R=3 在 8 个评测全部超过 Huginn-3.5B 并与 Qwen3.5-2B 有竞争力；模型与代码全开放。可借鉴点：若我们在跑共享层 / looped 结构，这是「用参数换计算」里最轻的一处改动（残差聚合方式，QK 结构与数据不动）。
+
+2) LoopVQ: Sub 1-bit KV Cache Quantization for Looped Transformers
+   arXiv: 2611.05304（cs.LG，2026-11-03，17 页，PDF 已附）
+   作者/机构：Minsoo Cheong, Sungjoo Yoo（Seoul National University）
+   为何值得读：looped 模型每循环一次要各存一份 K/V ⇒ KV cache 随循环数线性膨胀。作者沿 loop 轴做通道联合向量量化 + 码本微调，0.5 bit 下 Ouro-1.4B GSM8K 75.82（TaSQ 57.32 / CQ 46.78 / BF16 78.77）、MATH500 69.40（38.80 / 17.80 / 77.20）；SGLang 中 32K 上下文 decode 延迟近乎减半、峰值吞吐 4.3×–6.1×。可借鉴点：page 级 bf16→量化切换 + 跨循环步共享 index，不额外吃内存；先量我们的 KV 占总显存比例再决定是否接。
+
+3) Stabilizing On-Policy Targeted Guidance in Agentic Reinforcement Learning
+   arXiv: 2611.05266（cs.LG，2026-11-03，14 页，PDF 已附）
+   作者/机构：Kevin Frans, Alexander M. Rush, Sergey Levine, Pieter Abbeel, Ashvin Nair（Cursor Research · UC Berkeley）
+   为何值得读：只在「策略失败的轮次」用带评分细则的文本反馈做 on-policy 自蒸馏，再叠逐准则 RL：7 项风格准则 0.00–0.70 → 0.55–0.99，而 coding pass-rate 0.33 持平。可借鉴点：① 只在失败轮注入，避免污染主任务；② 崩溃前兆是熵尖峰，静态小蒸馏权重即可稳住；③ 把 KL 施加到 thinking token 可消除准则间振荡。可先在自有 agentic harness 上挑 1 个可二值判定的准则试跑。
+
+—— 二、科普 2 篇（晚报 18:00 时窗 · 今日 5/5 收口）——————
+
+4) Same Layout, Different Count: What Number Words Do Past Ten in Text-to-Image Models
+   arXiv: 2611.06840（cs.CV，2026-11-04，43 页，PDF 已附 · 本日科普 TOP-1）
+   作者/机构：Liang Yue, Eric A. Vance（University of Colorado Boulder）
+   为何值得读：固定物体与起始噪声、一次只改一个变量，测 5 个开源文生图模型的「数字词有效范围」，并请没见过提示词的人盲数 3,088 张生成图。十以内都听话，十以外崩：SD3.5-M 中位数量恒在 4.5–8.5（不管要多少）、FLUX.1-dev 到 30 反而缩到 1–2 个、FLUX.2 [klein] 与 Qwen-Image 勉强跟到 25。只重画比图像八分之一更细的噪声，布局不变而数量挪动 0.69×（≈ 换新数字的 2/3）；把数量以噪点网格画进起始 latent，59% 的图能数对（只写提示词 4%）。科普看点：人人有体验 + 反直觉 + 可现场演示；已做成《论文两分钟》分镜（video/SCENES/11_05.html）。
+
+5) Where It Breaks: Diagnosing Perception, Memory, and Decision Failures of a Vision-Language Agent in Pac-Man
+   arXiv: 2611.06704（cs.LG，2026-11-04，35 页，PDF 已附）
+   作者/机构：Xinglu Wang, Edward Wang, Yong Zhang, Zhenan Fan（PDF 未标注机构）
+   为何值得读：用 Qwen3.5-9B 训一个只会上下左右的吃豆人 agent，把「看屏幕」与「选动作」拆开查：8 个固定留出迷宫 × 96 局从 0/96 → 77/96（论文另一口径 0% → 80.2%，三条命），但最高 78/96@335、末次完整校验 60/96@425；静态截图读得准 ≠ 交互时准确；另一条 ASCII 策略线继续优化反而掉分。科普看点：「训练越久反而更差」+ 游戏画面自带流量；对 agent harness 评测的三条检查（在用中评感知 / 区分训练与整局验证 / 别只看一个选定分数）也有借鉴价值。
+
+—— 三、本轮检索与核验（可核验）——————————————
+
+· 批次探针（PM）：4/4 HTTP 200 + application/atom+xml，批次已刷新 2026-11-03 → 2026-11-04（cs.CL total 124,606 → 124,696；最新 2026-11-04T18:58:23Z；全库区间 3,946 → 4,479；广度 642,920 → 643,448）。首跑第 ④ 条遇 HTTP 429（限速），加大间隔重跑成功，未当成「无新增」。
+· 取数：单分类 5 查询各 100 条（5/5 200），合并去重后 published ≥ 2026-11-04 共 310 条，与已收录台账重复 0 条。
+· 权威复核：官方 id_list 2/2 命中（HTTP 200 / 5,164 B / 2.96s），published 前缀 2026-11-04 断言通过。
+· PDF：5/5 结构校验通过（%PDF- 头 + %%EOF 尾 + 字节 == Content-Range total + pdfinfo/pdftotext 可解析）。⚠️ sha256 与 CDN etag 未对齐（etag 有 sha256 与 base64 两种口径）⇒ 不声称哈希一致。
+· 台账：SEEN.md 收录 306 条（候选 4,558）；papers.jsonl 306 行。
+· 当日日报：research/daily/2026-11-05.html（5/5，含晚报变更说明）；分镜：research/video/SCENES/11_05.html。
+
+（本邮件由 research 线自动生成 · 内部日报 · 数字作者自报、本线未复现）

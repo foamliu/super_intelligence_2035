@@ -1,0 +1,1768 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/pBrTuDjnZbydV7aOUJ6qLTsxaaI</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.38095,2610.40305,2610.37842&amp;start=0&amp;max_results=3</title>
+  <updated>2026-10-30T22:02:51Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=3&amp;id_list=2610.38095,2610.40305,2610.37842" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>3</opensearch:itemsPerPage>
+  <opensearch:totalResults>3</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40305v1</id>
+    <title>Rimuru: Unified Memory Management for Modern LLM Serving via Elastic Expert Offloading</title>
+    <updated>2026-10-29T15:47:19Z</updated>
+    <link href="https://arxiv.org/abs/2610.40305v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40305v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Modern LLMs strain device memory through large model weights and attention states, particularly in resource-constrained scenarios. Existing systems separately provision memory for model weights and attention states, imposing fixed fixed boundaries that cannot adapt to the changing memory demands of workloads. Under heavy workloads, insufficient state capacity limits request concurrency and reduces throughput; under light workloads, idle memory in one region cannot be reallocated to another, wasting device memory. Meanwhile, modern LLM architectures introduce heterogeneous tensors with diverse layouts and lifetimes, further complicating memory management. These problems motivate unified memory management for heterogeneous tensors. However, a shared pool alone does not make memory directly reusable across tensors with different allocation granularities and execution layouts. This paper presents Rimuru, a modern LLM serving system that unifies memory management through elastic expert offloading. Rimuru establishes a shared page pool to enables elastic memory sharing across heterogeneous tensors. To accommodate different allocation granularities, Rimuru introduces memory views that allow each tensor type to interpret the shared memory space using its own page size and page table. Furthermore, Rimuru combines huge-page alignment with a multi-level page allocator that splits and merges pages, enabling cross-type capacity reuse. A page-table-aware fused MoE kernel directly accesses non-contiguous expert weights, avoiding copy overhead. Building on these mechanisms, Rimuru employs a workload-aware adjuster that dynamically reallocates pages across tensor types according to runtime demands. Implemented on top of vLLM, Rimuru remains compatible with modern LLMs. Evaluations show that Rimuru achieves up to 19.03x baseline throughput and reduces TTFT by 98.1% on average.</summary>
+    <category term="cs.OS" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T15:47:19Z</published>
+    <arxiv:primary_category term="cs.OS"/>
+    <author>
+      <name>Zhiyuan Fang</name>
+    </author>
+    <author>
+      <name>Dingyang Li</name>
+    </author>
+    <author>
+      <name>Jianfeng Zhong</name>
+    </author>
+    <author>
+      <name>Bin Wang</name>
+    </author>
+    <author>
+      <name>Weixi Zhu</name>
+    </author>
+    <author>
+      <name>Cunshu Ni</name>
+    </author>
+    <author>
+      <name>Zicong Hong</name>
+    </author>
+    <author>
+      <name>Wuhui Chen</name>
+    </author>
+    <author>
+      <name>Zibin Zheng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.38095v1</id>
+    <title>Nemotron 3.5 Super and Lightning: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Models for Agentic AI</title>
+    <updated>2026-10-28T00:28:08Z</updated>
+    <link href="https://arxiv.org/abs/2610.38095v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.38095v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We introduce Nemotron 3.5 Super and Nemotron 3.5 Lightning, open and efficient Mixture-of-Experts Hybrid Mamba-Transformer models designed for reasoning, long-context understanding, and agentic workloads. Super is a 120B-parameter, 12B-active multimodal model, while Lightning is a smaller 30B-parameter, 3B-active text model; both designed for efficient deployment. Both models combine large-scale distillation, long-context training, and native speculative decoding, while Super further incorporates Indic continued pretraining and agentic software-engineering mid-training. We develop a comprehensive post-training pipeline spanning supervised fine-tuning and reinforcement learning (RLVR and RLHF), complemented in Super by specialized teacher training and multi- teacher on-policy distillation (MOPD). This transforms Super from a text-only base model into a multimodal agent capable of reasoning over text, images, video, and interactive tool environments. We further explore test-time scaling through parallel agent execution and self-verification. Across training and deployment, we jointly optimize capability and efficiency. Indic continued pretraining improves Indian-language benchmarks by up to 9.82 percentage points, while agentic mid-training strengthens software-engineering capabilities and robustness across agent harnesses. The post-trained Super model achieves 51.78% on SWE-bench Pro, surpassing Nemotron 3 Ultra despite using approximately 4.6x fewer active parameters. Post-training MTP boosting improves speculative- decoding acceptance length by up to 21.8% under probabilistic draft sampling, while NVFP4 quantization achieves 99.62% median accuracy recovery relative to BF16. Inference optimizations enable up to 4,856 output tokens/s/GPU on GB200 while sustaining at least 50 tokens/s/user.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-28T00:28:08Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name> NVIDIA</name>
+    </author>
+    <author>
+      <name> :</name>
+    </author>
+    <author>
+      <name>Aastha Jhunjhunwala</name>
+    </author>
+    <author>
+      <name>Aayushi Ashokkumar Srivastava</name>
+    </author>
+    <author>
+      <name>Abhibha Gupta</name>
+    </author>
+    <author>
+      <name>Abhinav Garg</name>
+    </author>
+    <author>
+      <name>Abhinav Khattar</name>
+    </author>
+    <author>
+      <name>Achsah Wildish</name>
+    </author>
+    <author>
+      <name>Adam Rajfer</name>
+    </author>
+    <author>
+      <name>Adi Renduchintala</name>
+    </author>
+    <author>
+      <name>Adil Asif</name>
+    </author>
+    <author>
+      <name>Adriana Flores Miranda</name>
+    </author>
+    <author>
+      <name>Aileen Zaman</name>
+    </author>
+    <author>
+      <name>Aishwarya Chhabra</name>
+    </author>
+    <author>
+      <name>Akanksha Shukla</name>
+    </author>
+    <author>
+      <name>Akhiad Bercovich</name>
+    </author>
+    <author>
+      <name>Alejandra Rico</name>
+    </author>
+    <author>
+      <name>Aleksa Gordic</name>
+    </author>
+    <author>
+      <name>Aleksander Ficek</name>
+    </author>
+    <author>
+      <name>Alex Gronskiy</name>
+    </author>
+    <author>
+      <name>Alex Steiner</name>
+    </author>
+    <author>
+      <name>Alexander Bukharin</name>
+    </author>
+    <author>
+      <name>Alexandre Milesi</name>
+    </author>
+    <author>
+      <name>Ali Roshan Ghias</name>
+    </author>
+    <author>
+      <name>Ali Shehper</name>
+    </author>
+    <author>
+      <name>Ali Taghibakhshi</name>
+    </author>
+    <author>
+      <name>Alice Gatti</name>
+    </author>
+    <author>
+      <name>Alisa Liu</name>
+    </author>
+    <author>
+      <name>Alok Kumar</name>
+    </author>
+    <author>
+      <name>Alok Tripathy</name>
+    </author>
+    <author>
+      <name>Amala Sanjay Deshmukh</name>
+    </author>
+    <author>
+      <name>Aman Miryala</name>
+    </author>
+    <author>
+      <name>Aman Shanbhag</name>
+    </author>
+    <author>
+      <name>Ameya Sunil Mahabaleshwarkar</name>
+    </author>
+    <author>
+      <name>Ameya Velingker</name>
+    </author>
+    <author>
+      <name>Amir Klein</name>
+    </author>
+    <author>
+      <name>Amir Samani</name>
+    </author>
+    <author>
+      <name>Amit Zuker</name>
+    </author>
+    <author>
+      <name>Amnon Geifman</name>
+    </author>
+    <author>
+      <name>Anahita Bhiwandiwalla</name>
+    </author>
+    <author>
+      <name>Ananth Subramaniam</name>
+    </author>
+    <author>
+      <name>Andre Manoel</name>
+    </author>
+    <author>
+      <name>Andrea Santilli</name>
+    </author>
+    <author>
+      <name>Andrew Tao</name>
+    </author>
+    <author>
+      <name>Andrii Skliar</name>
+    </author>
+    <author>
+      <name>Anil Thomas</name>
+    </author>
+    <author>
+      <name>Anish Mahishi</name>
+    </author>
+    <author>
+      <name>Anna Shors</name>
+    </author>
+    <author>
+      <name>Anna Warno</name>
+    </author>
+    <author>
+      <name>Anuj Doshi</name>
+    </author>
+    <author>
+      <name>Anusha Kamath</name>
+    </author>
+    <author>
+      <name>Anwith Kiran</name>
+    </author>
+    <author>
+      <name>Ao Tang</name>
+    </author>
+    <author>
+      <name>Arham Mehta</name>
+    </author>
+    <author>
+      <name>Arnab Dhara</name>
+    </author>
+    <author>
+      <name>Arnav Komaragiri</name>
+    </author>
+    <author>
+      <name>Arnav Kundu</name>
+    </author>
+    <author>
+      <name>Arti Jain</name>
+    </author>
+    <author>
+      <name>Arun Rao</name>
+    </author>
+    <author>
+      <name>Arun Venkatesan</name>
+    </author>
+    <author>
+      <name>Arushi Goel</name>
+    </author>
+    <author>
+      <name>Asha Anoosheh</name>
+    </author>
+    <author>
+      <name>Ashish Vaswani</name>
+    </author>
+    <author>
+      <name>Ashwath Aithal</name>
+    </author>
+    <author>
+      <name>Asif Ahamed</name>
+    </author>
+    <author>
+      <name>Asma Kuriparambil Thekkumpate</name>
+    </author>
+    <author>
+      <name>Aswin Visva</name>
+    </author>
+    <author>
+      <name>Atefeh Sohrabizadeh</name>
+    </author>
+    <author>
+      <name>Avinash Vem</name>
+    </author>
+    <author>
+      <name>Ayush Dattagupta</name>
+    </author>
+    <author>
+      <name>Benedikt Schifferer</name>
+    </author>
+    <author>
+      <name>Benjamin Chislett</name>
+    </author>
+    <author>
+      <name>Bernard Nguyen</name>
+    </author>
+    <author>
+      <name>Besmira Nushi</name>
+    </author>
+    <author>
+      <name>Bilal Kartal</name>
+    </author>
+    <author>
+      <name>Bita Darvish Rouhani</name>
+    </author>
+    <author>
+      <name>Bobby Chen</name>
+    </author>
+    <author>
+      <name>Boris Ginsburg</name>
+    </author>
+    <author>
+      <name>Boxin Wang</name>
+    </author>
+    <author>
+      <name>Brandon Norick</name>
+    </author>
+    <author>
+      <name>Branislav Kisacanin</name>
+    </author>
+    <author>
+      <name>Brendan Johnson</name>
+    </author>
+    <author>
+      <name>Brian Dang</name>
+    </author>
+    <author>
+      <name>Brian Yu</name>
+    </author>
+    <author>
+      <name>Bryan Catanzaro</name>
+    </author>
+    <author>
+      <name>Byung-Kwan Lee</name>
+    </author>
+    <author>
+      <name>Carlo del Mundo</name>
+    </author>
+    <author>
+      <name>Chankyu Lee</name>
+    </author>
+    <author>
+      <name>Chantal Hwang</name>
+    </author>
+    <author>
+      <name>Charles Wang</name>
+    </author>
+    <author>
+      <name>Charlie Truong</name>
+    </author>
+    <author>
+      <name>Chen Cui</name>
+    </author>
+    <author>
+      <name>Cheng Wang</name>
+    </author>
+    <author>
+      <name>Cheng-Ping Hsieh</name>
+    </author>
+    <author>
+      <name>Chenhan Yu</name>
+    </author>
+    <author>
+      <name>Chenjie Luo</name>
+    </author>
+    <author>
+      <name>Chintan Patel</name>
+    </author>
+    <author>
+      <name>Chris Alexiuk</name>
+    </author>
+    <author>
+      <name>Chris Johnson</name>
+    </author>
+    <author>
+      <name>Chris Wing</name>
+    </author>
+    <author>
+      <name>Christian Munley</name>
+    </author>
+    <author>
+      <name>Coco Li</name>
+    </author>
+    <author>
+      <name>Collin McCarthy</name>
+    </author>
+    <author>
+      <name>Cynthia Gao</name>
+    </author>
+    <author>
+      <name>Dan Su</name>
+    </author>
+    <author>
+      <name>Dan Zhao</name>
+    </author>
+    <author>
+      <name>Dane Corneil</name>
+    </author>
+    <author>
+      <name>Danial Mohseni Taheri</name>
+    </author>
+    <author>
+      <name>Daniel Afrimi</name>
+    </author>
+    <author>
+      <name>Daniel Fatade</name>
+    </author>
+    <author>
+      <name>Daniel Lo</name>
+    </author>
+    <author>
+      <name>Daniel Machlab</name>
+    </author>
+    <author>
+      <name>Daniel Serebrenik</name>
+    </author>
+    <author>
+      <name>Daniele Molinari</name>
+    </author>
+    <author>
+      <name>Daniil Sorokin</name>
+    </author>
+    <author>
+      <name>Daria Gitman</name>
+    </author>
+    <author>
+      <name>Daria Levy</name>
+    </author>
+    <author>
+      <name>David Mosallanezhad</name>
+    </author>
+    <author>
+      <name>David Yu</name>
+    </author>
+    <author>
+      <name>Deepak Narayanan</name>
+    </author>
+    <author>
+      <name>Dev Churiwala</name>
+    </author>
+    <author>
+      <name>Devin O'Kelly</name>
+    </author>
+    <author>
+      <name>Dhruv Nathawani</name>
+    </author>
+    <author>
+      <name>Di Allan Wu</name>
+    </author>
+    <author>
+      <name>Dima Rekesh</name>
+    </author>
+    <author>
+      <name>Dina Yared</name>
+    </author>
+    <author>
+      <name>Dipendra Misra</name>
+    </author>
+    <author>
+      <name>Divyanshu Kakwani</name>
+    </author>
+    <author>
+      <name>Dmitry Belenko</name>
+    </author>
+    <author>
+      <name>Dominic Manno</name>
+    </author>
+    <author>
+      <name>Dongyang Fan</name>
+    </author>
+    <author>
+      <name>Dor Tsur</name>
+    </author>
+    <author>
+      <name>Duncan Riach</name>
+    </author>
+    <author>
+      <name>Dustin VanStee</name>
+    </author>
+    <author>
+      <name>Dylan Lu</name>
+    </author>
+    <author>
+      <name>Edgar Minasyan</name>
+    </author>
+    <author>
+      <name>Ehsan Hosseini-Asl</name>
+    </author>
+    <author>
+      <name>Eileen Long</name>
+    </author>
+    <author>
+      <name>Elena Lantz</name>
+    </author>
+    <author>
+      <name>Ellie Evans</name>
+    </author>
+    <author>
+      <name>Elliott Ning</name>
+    </author>
+    <author>
+      <name>Elvis Chen</name>
+    </author>
+    <author>
+      <name>Emanuel Scoullos</name>
+    </author>
+    <author>
+      <name>Eric Chung</name>
+    </author>
+    <author>
+      <name>Eric Harper</name>
+    </author>
+    <author>
+      <name>Eric Pham-Hung</name>
+    </author>
+    <author>
+      <name>Eric Tramel</name>
+    </author>
+    <author>
+      <name>Eric Yang</name>
+    </author>
+    <author>
+      <name>Erik Arakelyan</name>
+    </author>
+    <author>
+      <name>Evelina Bakhturina</name>
+    </author>
+    <author>
+      <name>Ewa Dobrowolska</name>
+    </author>
+    <author>
+      <name>Fadi Saady</name>
+    </author>
+    <author>
+      <name>Farzan Memarian</name>
+    </author>
+    <author>
+      <name>Fay Wang</name>
+    </author>
+    <author>
+      <name>Fei Jia</name>
+    </author>
+    <author>
+      <name>Felipe Soares</name>
+    </author>
+    <author>
+      <name>Felipe Vieira Frujeri</name>
+    </author>
+    <author>
+      <name>Feng Chen</name>
+    </author>
+    <author>
+      <name>Fengguang Lin</name>
+    </author>
+    <author>
+      <name>Ferenc Galko</name>
+    </author>
+    <author>
+      <name>Frankie Siino</name>
+    </author>
+    <author>
+      <name>Frederic Lafrance</name>
+    </author>
+    <author>
+      <name>Fuxiao Liu</name>
+    </author>
+    <author>
+      <name>Gantavya Bhatt</name>
+    </author>
+    <author>
+      <name>Garvit Kulshreshtha</name>
+    </author>
+    <author>
+      <name>George Armstrong</name>
+    </author>
+    <author>
+      <name>Giulio Lovisotto</name>
+    </author>
+    <author>
+      <name>Gomathy Venkata Krishnan</name>
+    </author>
+    <author>
+      <name>Gosia Lazuka</name>
+    </author>
+    <author>
+      <name>Grace Lam</name>
+    </author>
+    <author>
+      <name>Greg Heinrich</name>
+    </author>
+    <author>
+      <name>Greg Pauloski</name>
+    </author>
+    <author>
+      <name>Grzegorz Chlebus</name>
+    </author>
+    <author>
+      <name>Guilin Liu</name>
+    </author>
+    <author>
+      <name>Guo Chen</name>
+    </author>
+    <author>
+      <name>Guoming Zhang</name>
+    </author>
+    <author>
+      <name>Guyue Huang</name>
+    </author>
+    <author>
+      <name>Haifeng Qian</name>
+    </author>
+    <author>
+      <name>Hanrong Ye</name>
+    </author>
+    <author>
+      <name>Hao Gao</name>
+    </author>
+    <author>
+      <name>Hao Zhang</name>
+    </author>
+    <author>
+      <name>Haoqin Tu</name>
+    </author>
+    <author>
+      <name>Haran Kumar Shiv Kumar</name>
+    </author>
+    <author>
+      <name>Haribhau Hud</name>
+    </author>
+    <author>
+      <name>Harris Nover</name>
+    </author>
+    <author>
+      <name>Harrison Saturley-Hall</name>
+    </author>
+    <author>
+      <name>Harshil Kotamreddy</name>
+    </author>
+    <author>
+      <name>Hemil Desai</name>
+    </author>
+    <author>
+      <name>Henry Estela</name>
+    </author>
+    <author>
+      <name>Hexin Wang</name>
+    </author>
+    <author>
+      <name>Himanshu Singh</name>
+    </author>
+    <author>
+      <name>Hui Wang</name>
+    </author>
+    <author>
+      <name>Hung-Yueh Chiang</name>
+    </author>
+    <author>
+      <name>Igor Gitman</name>
+    </author>
+    <author>
+      <name>Ilia Karmanov</name>
+    </author>
+    <author>
+      <name>Ilya Loshchilov</name>
+    </author>
+    <author>
+      <name>Ingo Guehring</name>
+    </author>
+    <author>
+      <name>Itay Neeman</name>
+    </author>
+    <author>
+      <name>Ivan Moshkov</name>
+    </author>
+    <author>
+      <name>Jacky Kwok</name>
+    </author>
+    <author>
+      <name>Jakub Slowikowski</name>
+    </author>
+    <author>
+      <name>James Shen</name>
+    </author>
+    <author>
+      <name>Jane Polak Scowcroft</name>
+    </author>
+    <author>
+      <name>Jared Casper</name>
+    </author>
+    <author>
+      <name>Jatin Mitra</name>
+    </author>
+    <author>
+      <name>Jeff Willette</name>
+    </author>
+    <author>
+      <name>Jenna Diamond</name>
+    </author>
+    <author>
+      <name>Jenny Chen</name>
+    </author>
+    <author>
+      <name>Jesse Oliver</name>
+    </author>
+    <author>
+      <name>Jessica Medina</name>
+    </author>
+    <author>
+      <name>Jiacheng Xu</name>
+    </author>
+    <author>
+      <name>Jialin Song</name>
+    </author>
+    <author>
+      <name>Jian Hu</name>
+    </author>
+    <author>
+      <name>Jian Tu</name>
+    </author>
+    <author>
+      <name>Jian Zhang</name>
+    </author>
+    <author>
+      <name>Jiantao Jiao</name>
+    </author>
+    <author>
+      <name>Jiaqi Zeng</name>
+    </author>
+    <author>
+      <name>Jie-Fang Zhang</name>
+    </author>
+    <author>
+      <name>Jimmy Zhang</name>
+    </author>
+    <author>
+      <name>Jin Xu</name>
+    </author>
+    <author>
+      <name>Jingyu Xin</name>
+    </author>
+    <author>
+      <name>Jinhang Choi</name>
+    </author>
+    <author>
+      <name>Joey Conway</name>
+    </author>
+    <author>
+      <name>Joey Guman</name>
+    </author>
+    <author>
+      <name>John Kamalu</name>
+    </author>
+    <author>
+      <name>John Liu</name>
+    </author>
+    <author>
+      <name>John Roberts</name>
+    </author>
+    <author>
+      <name>Johnny Greco</name>
+    </author>
+    <author>
+      <name>Jonah Alben</name>
+    </author>
+    <author>
+      <name>Jonas Yang</name>
+    </author>
+    <author>
+      <name>Jonathan Cohen</name>
+    </author>
+    <author>
+      <name>Jonathan Li</name>
+    </author>
+    <author>
+      <name>Jonathan Raiman</name>
+    </author>
+    <author>
+      <name>Joseph Jennings</name>
+    </author>
+    <author>
+      <name>Juhi Mittal</name>
+    </author>
+    <author>
+      <name>Julia Gusak</name>
+    </author>
+    <author>
+      <name>Julien Veron Vialard</name>
+    </author>
+    <author>
+      <name>June Yang</name>
+    </author>
+    <author>
+      <name>Junkeun Yi</name>
+    </author>
+    <author>
+      <name>Jupinder Parmar</name>
+    </author>
+    <author>
+      <name>Ka Shun Shum</name>
+    </author>
+    <author>
+      <name>Kaiwen Shi</name>
+    </author>
+    <author>
+      <name>Kajal Jain</name>
+    </author>
+    <author>
+      <name>Kanishk Singla</name>
+    </author>
+    <author>
+      <name>Karan Sapra</name>
+    </author>
+    <author>
+      <name>Kari Briski</name>
+    </author>
+    <author>
+      <name>Kateryna Chumachenko</name>
+    </author>
+    <author>
+      <name>Katherine Huang</name>
+    </author>
+    <author>
+      <name>Katie Lyons</name>
+    </author>
+    <author>
+      <name>Keith Wyss</name>
+    </author>
+    <author>
+      <name>Keshav Santhanam</name>
+    </author>
+    <author>
+      <name>Keval Morabia</name>
+    </author>
+    <author>
+      <name>Kevin Shih</name>
+    </author>
+    <author>
+      <name>Kezhi Kong</name>
+    </author>
+    <author>
+      <name>Khanh Nguyen</name>
+    </author>
+    <author>
+      <name>Khushi Bhardwaj</name>
+    </author>
+    <author>
+      <name>Kiran Praveen</name>
+    </author>
+    <author>
+      <name>Konstantinos Krommydas</name>
+    </author>
+    <author>
+      <name>Krishna Puvvada</name>
+    </author>
+    <author>
+      <name>Krzysztof Pawelec</name>
+    </author>
+    <author>
+      <name>Kushal Shah</name>
+    </author>
+    <author>
+      <name>Li Ding</name>
+    </author>
+    <author>
+      <name>Lily Lee</name>
+    </author>
+    <author>
+      <name>Linda Liu</name>
+    </author>
+    <author>
+      <name>Linglin Jing</name>
+    </author>
+    <author>
+      <name>Luis Vega</name>
+    </author>
+    <author>
+      <name>Maarten Van Segbroeck</name>
+    </author>
+    <author>
+      <name>Mahan Fathi</name>
+    </author>
+    <author>
+      <name>Mahdi Nazemi</name>
+    </author>
+    <author>
+      <name>Maka Dong</name>
+    </author>
+    <author>
+      <name>Makesh Narsimhan Sreedhar</name>
+    </author>
+    <author>
+      <name>Maor Ashkenazi</name>
+    </author>
+    <author>
+      <name>Marc Cuevas</name>
+    </author>
+    <author>
+      <name>Marcin Chochowski</name>
+    </author>
+    <author>
+      <name>Marco Pavone</name>
+    </author>
+    <author>
+      <name>Markus Kliegl</name>
+    </author>
+    <author>
+      <name>Marta Stepniewska-Dziubinska</name>
+    </author>
+    <author>
+      <name>Martina Gonzalez Vilas</name>
+    </author>
+    <author>
+      <name>Martyna Patelka</name>
+    </author>
+    <author>
+      <name>Matan Rusanovsky</name>
+    </author>
+    <author>
+      <name>Matthieu Le</name>
+    </author>
+    <author>
+      <name>Matty Machczynski</name>
+    </author>
+    <author>
+      <name>Matvei Novikov</name>
+    </author>
+    <author>
+      <name>Mauricio Ferrato</name>
+    </author>
+    <author>
+      <name>Meenakshi Sharma</name>
+    </author>
+    <author>
+      <name>Mehrzad Samadi</name>
+    </author>
+    <author>
+      <name>Melissa Corpuz</name>
+    </author>
+    <author>
+      <name>Melissa Saelzer</name>
+    </author>
+    <author>
+      <name>Meng Xin</name>
+    </author>
+    <author>
+      <name>Mengru Wang</name>
+    </author>
+    <author>
+      <name>Mengxi Wu</name>
+    </author>
+    <author>
+      <name>Meriem Boubdir</name>
+    </author>
+    <author>
+      <name>Michael Boone</name>
+    </author>
+    <author>
+      <name>Michael Callahan</name>
+    </author>
+    <author>
+      <name>Michael Elad</name>
+    </author>
+    <author>
+      <name>Michael Lightstone</name>
+    </author>
+    <author>
+      <name>Michal Bien</name>
+    </author>
+    <author>
+      <name>Michal Zawalski</name>
+    </author>
+    <author>
+      <name>Miguel Martinez</name>
+    </author>
+    <author>
+      <name>Mikail Khona</name>
+    </author>
+    <author>
+      <name>Mike Chrzanowski</name>
+    </author>
+    <author>
+      <name>Mike Ranzinger</name>
+    </author>
+    <author>
+      <name>Mike Wojcikiewicz</name>
+    </author>
+    <author>
+      <name>Min-Hung Chen</name>
+    </author>
+    <author>
+      <name>Ming Kang</name>
+    </author>
+    <author>
+      <name>Mingjie Liu</name>
+    </author>
+    <author>
+      <name>Mingyuan Ma</name>
+    </author>
+    <author>
+      <name>Misha Nekorystnov</name>
+    </author>
+    <author>
+      <name>MJ Mikulski</name>
+    </author>
+    <author>
+      <name>Mohammad Qazim Bhat</name>
+    </author>
+    <author>
+      <name>Mohammad Shoeybi</name>
+    </author>
+    <author>
+      <name>Morgan Purcell</name>
+    </author>
+    <author>
+      <name>Mostofa Patwary</name>
+    </author>
+    <author>
+      <name>Nabin Mulepati</name>
+    </author>
+    <author>
+      <name>Nancy Agarwal</name>
+    </author>
+    <author>
+      <name>Narimane Hennouni</name>
+    </author>
+    <author>
+      <name>Nathan Sala</name>
+    </author>
+    <author>
+      <name>Nave Assaf</name>
+    </author>
+    <author>
+      <name>Nayeon Lee</name>
+    </author>
+    <author>
+      <name>Neal Vaidya</name>
+    </author>
+    <author>
+      <name>Negar Habibi</name>
+    </author>
+    <author>
+      <name>Netanel Haber</name>
+    </author>
+    <author>
+      <name>Nick Gupta</name>
+    </author>
+    <author>
+      <name>Nick Reamaroon</name>
+    </author>
+    <author>
+      <name>Nickson Quak</name>
+    </author>
+    <author>
+      <name>Nidhi Bhatia</name>
+    </author>
+    <author>
+      <name>Nik Spirin</name>
+    </author>
+    <author>
+      <name>Niket Agarwal</name>
+    </author>
+    <author>
+      <name>Nikolai Ludwig</name>
+    </author>
+    <author>
+      <name>Nima Tajbakhsh</name>
+    </author>
+    <author>
+      <name>Nithin Sunny</name>
+    </author>
+    <author>
+      <name>Oleksii Hrinchuk</name>
+    </author>
+    <author>
+      <name>Oleksii Kuchaiev</name>
+    </author>
+    <author>
+      <name>Olivier Delalleau</name>
+    </author>
+    <author>
+      <name>Omer Ullman Argov</name>
+    </author>
+    <author>
+      <name>Pablo Ribalta</name>
+    </author>
+    <author>
+      <name>Padmavathy Subramanian</name>
+    </author>
+    <author>
+      <name>Parth Mannan</name>
+    </author>
+    <author>
+      <name>Pavlo Molchanov</name>
+    </author>
+    <author>
+      <name>Pawel Morkisz</name>
+    </author>
+    <author>
+      <name>Peter Jin</name>
+    </author>
+    <author>
+      <name>Petr Lapukhov</name>
+    </author>
+    <author>
+      <name>Petro Junior Milan</name>
+    </author>
+    <author>
+      <name>Philip Monk</name>
+    </author>
+    <author>
+      <name>Pinky Xu</name>
+    </author>
+    <author>
+      <name>Piotr Januszewski</name>
+    </author>
+    <author>
+      <name>Piotr Laszkiewicz</name>
+    </author>
+    <author>
+      <name>Po-Han Huang</name>
+    </author>
+    <author>
+      <name>Praateek Mahajan</name>
+    </author>
+    <author>
+      <name>Pradeep Thalasta</name>
+    </author>
+    <author>
+      <name>Prakash Gurumurthy</name>
+    </author>
+    <author>
+      <name>Pranav Prashant Thombre</name>
+    </author>
+    <author>
+      <name>Prasoon Varshney</name>
+    </author>
+    <author>
+      <name>Pratyusha Maiti</name>
+    </author>
+    <author>
+      <name>Preeti Chadha</name>
+    </author>
+    <author>
+      <name>Pritam Biswas</name>
+    </author>
+    <author>
+      <name>Pritam Gundecha</name>
+    </author>
+    <author>
+      <name>Przemek Strzelczyk</name>
+    </author>
+    <author>
+      <name>Puhui Meng</name>
+    </author>
+    <author>
+      <name>Pulkit Kumar</name>
+    </author>
+    <author>
+      <name>Rabeeh Karimi Mahabadi</name>
+    </author>
+    <author>
+      <name>Rachel Oberman</name>
+    </author>
+    <author>
+      <name>Rajpreet Thethy</name>
+    </author>
+    <author>
+      <name>Ramani Akkati</name>
+    </author>
+    <author>
+      <name>Rameshwar Shivbhakta</name>
+    </author>
+    <author>
+      <name>Ran Zilberstein</name>
+    </author>
+    <author>
+      <name>Randy Gelhausen</name>
+    </author>
+    <author>
+      <name>Rasoul Shafipour</name>
+    </author>
+    <author>
+      <name>Raviraj Joshi</name>
+    </author>
+    <author>
+      <name>Ray Macalisang</name>
+    </author>
+    <author>
+      <name>Rayen Tian</name>
+    </author>
+    <author>
+      <name>Reka Kovacs</name>
+    </author>
+    <author>
+      <name>Renjie Pi</name>
+    </author>
+    <author>
+      <name>Resha Shetty</name>
+    </author>
+    <author>
+      <name>Ria C</name>
+    </author>
+    <author>
+      <name>Rima Shahbazyan</name>
+    </author>
+    <author>
+      <name>Rishabh Garg</name>
+    </author>
+    <author>
+      <name>Rita Fernandes Neves</name>
+    </author>
+    <author>
+      <name>Ritika Borkar</name>
+    </author>
+    <author>
+      <name>Ritu Gala</name>
+    </author>
+    <author>
+      <name>Riya Talwar</name>
+    </author>
+    <author>
+      <name>Riyad Islam</name>
+    </author>
+    <author>
+      <name>Robert Clark</name>
+    </author>
+    <author>
+      <name>Robert Kirby</name>
+    </author>
+    <author>
+      <name>Roger Waleffe</name>
+    </author>
+    <author>
+      <name>Rohan Joshi</name>
+    </author>
+    <author>
+      <name>Rohan Pillai</name>
+    </author>
+    <author>
+      <name>Rohit Jena</name>
+    </author>
+    <author>
+      <name>Rohit Watve</name>
+    </author>
+    <author>
+      <name>Roi Garnett</name>
+    </author>
+    <author>
+      <name>Roi Koren</name>
+    </author>
+    <author>
+      <name>Rongguang Ye</name>
+    </author>
+    <author>
+      <name>Russell J. Hewett</name>
+    </author>
+    <author>
+      <name>Ryan Prenger</name>
+    </author>
+    <author>
+      <name>Ryan Stewart</name>
+    </author>
+    <author>
+      <name>Ryota Egashira</name>
+    </author>
+    <author>
+      <name>Sadegh Mahdavi</name>
+    </author>
+    <author>
+      <name>Sai Nishanth Padala</name>
+    </author>
+    <author>
+      <name>Salika Dave</name>
+    </author>
+    <author>
+      <name>Sandhya Rani Narravula</name>
+    </author>
+    <author>
+      <name>Sandip Bhaskar</name>
+    </author>
+    <author>
+      <name>Sangkug Lym</name>
+    </author>
+    <author>
+      <name>Sanjeev Satheesh</name>
+    </author>
+    <author>
+      <name>Sarah Amirslani</name>
+    </author>
+    <author>
+      <name>Saran Vikas Murari</name>
+    </author>
+    <author>
+      <name>Saurabh Mishra</name>
+    </author>
+    <author>
+      <name>Saurabh Srivastava</name>
+    </author>
+    <author>
+      <name>Saurav Muralidharan</name>
+    </author>
+    <author>
+      <name>Sean Narenthiran</name>
+    </author>
+    <author>
+      <name>Sean Wang</name>
+    </author>
+    <author>
+      <name>Seokju Cho</name>
+    </author>
+    <author>
+      <name>Seong Hee Lee</name>
+    </author>
+    <author>
+      <name>Seonjin Na</name>
+    </author>
+    <author>
+      <name>Seonmyeong Bak</name>
+    </author>
+    <author>
+      <name>Seph Mard</name>
+    </author>
+    <author>
+      <name>Serge Panev</name>
+    </author>
+    <author>
+      <name>Sergei Kolchenko</name>
+    </author>
+    <author>
+      <name>Sergio Perez</name>
+    </author>
+    <author>
+      <name>Seth Henneman</name>
+    </author>
+    <author>
+      <name>Seth Poulos</name>
+    </author>
+    <author>
+      <name>Shahar Mor</name>
+    </author>
+    <author>
+      <name>Shantanu Acharya</name>
+    </author>
+    <author>
+      <name>Shaokun Zhang</name>
+    </author>
+    <author>
+      <name>Shaona Ghosh</name>
+    </author>
+    <author>
+      <name>Sharath Turuvekere Sreenivas</name>
+    </author>
+    <author>
+      <name>Shaun Kotek</name>
+    </author>
+    <author>
+      <name>Shaya Gharghabi</name>
+    </author>
+    <author>
+      <name>Sheng-Chieh Lin</name>
+    </author>
+    <author>
+      <name>Shengliang Xu</name>
+    </author>
+    <author>
+      <name>Shi Chen</name>
+    </author>
+    <author>
+      <name>Shihao Wang</name>
+    </author>
+    <author>
+      <name>Shilpa Amireddy</name>
+    </author>
+    <author>
+      <name>Shiqing Fan</name>
+    </author>
+    <author>
+      <name>Shiyang Chen</name>
+    </author>
+    <author>
+      <name>Shrimai Prabhumoye</name>
+    </author>
+    <author>
+      <name>Shriram Venugopal</name>
+    </author>
+    <author>
+      <name>Shuang Yu</name>
+    </author>
+    <author>
+      <name>Shubham Gandhi</name>
+    </author>
+    <author>
+      <name>Shubham Pachori</name>
+    </author>
+    <author>
+      <name>Shubham Toshniwal</name>
+    </author>
+    <author>
+      <name>Shuoyang Ding</name>
+    </author>
+    <author>
+      <name>Shwetha Krishnamurthy</name>
+    </author>
+    <author>
+      <name>Simeng Sun</name>
+    </author>
+    <author>
+      <name>Sivakumar Arayandi Thottakara</name>
+    </author>
+    <author>
+      <name>Somshubra Majumdar</name>
+    </author>
+    <author>
+      <name>Soumye Singhal</name>
+    </author>
+    <author>
+      <name>Sridurga Krithivasan</name>
+    </author>
+    <author>
+      <name>Sriharsha Niverty</name>
+    </author>
+    <author>
+      <name>Stephen Ge</name>
+    </author>
+    <author>
+      <name>Sugam Dipak Devare</name>
+    </author>
+    <author>
+      <name>Sukrit Rao</name>
+    </author>
+    <author>
+      <name>Sumeet Kumar Barua</name>
+    </author>
+    <author>
+      <name>Sungsoo Ha</name>
+    </author>
+    <author>
+      <name>Surya Nistala</name>
+    </author>
+    <author>
+      <name>Suseella Panguluri</name>
+    </author>
+    <author>
+      <name>Sweta Priyadarshi</name>
+    </author>
+    <author>
+      <name>Syeda Nahida Akter</name>
+    </author>
+    <author>
+      <name>Talor Abramovich</name>
+    </author>
+    <author>
+      <name>Tanay Varshney</name>
+    </author>
+    <author>
+      <name>Tandeep Singh Chandehoke</name>
+    </author>
+    <author>
+      <name>Teo Ene</name>
+    </author>
+    <author>
+      <name>Terry Kong</name>
+    </author>
+    <author>
+      <name>Thanh Do</name>
+    </author>
+    <author>
+      <name>Thinh Le</name>
+    </author>
+    <author>
+      <name>Tian Zhang</name>
+    </author>
+    <author>
+      <name>Tijmen Blankevoort</name>
+    </author>
+    <author>
+      <name>Tim Romanski</name>
+    </author>
+    <author>
+      <name>Tiyasa Mitra</name>
+    </author>
+    <author>
+      <name>Tom Balough</name>
+    </author>
+    <author>
+      <name>Tom Huang</name>
+    </author>
+    <author>
+      <name>Tomasz Grzegorzek</name>
+    </author>
+    <author>
+      <name>Tomer Asida</name>
+    </author>
+    <author>
+      <name>Tomer Bar Natan</name>
+    </author>
+    <author>
+      <name>Traian Rebedea</name>
+    </author>
+    <author>
+      <name>Trenton Starkey</name>
+    </author>
+    <author>
+      <name>Tugrul Konuk</name>
+    </author>
+    <author>
+      <name>Tuomas Rintamaki</name>
+    </author>
+    <author>
+      <name>Twinkle Vashishth</name>
+    </author>
+    <author>
+      <name>Tyler Kniess</name>
+    </author>
+    <author>
+      <name>Tyler Poon</name>
+    </author>
+    <author>
+      <name>Udi Karpas</name>
+    </author>
+    <author>
+      <name>Ushnish De</name>
+    </author>
+    <author>
+      <name>Utkarsh Vaidya</name>
+    </author>
+    <author>
+      <name>Vahid Noroozi</name>
+    </author>
+    <author>
+      <name>Vanshil Atul Shah</name>
+    </author>
+    <author>
+      <name>Venkat Srinivasan</name>
+    </author>
+    <author>
+      <name>Venkata Karri</name>
+    </author>
+    <author>
+      <name>Venmugil Elango</name>
+    </author>
+    <author>
+      <name>Vibhor Agrawal</name>
+    </author>
+    <author>
+      <name>Vibhu Jawa</name>
+    </author>
+    <author>
+      <name>Victor Cui</name>
+    </author>
+    <author>
+      <name>Victoria Edmonds</name>
+    </author>
+    <author>
+      <name>Vijay Korthikanti</name>
+    </author>
+    <author>
+      <name>Vikas Mehta</name>
+    </author>
+    <author>
+      <name>Vikranth Jeyakumar</name>
+    </author>
+    <author>
+      <name>Vinay Rao</name>
+    </author>
+    <author>
+      <name>Vineeth Kalluru Srinivas</name>
+    </author>
+    <author>
+      <name>Vitaly Kurin</name>
+    </author>
+    <author>
+      <name>Vitaly Lavrukhin</name>
+    </author>
+    <author>
+      <name>Wahidur Rahman</name>
+    </author>
+    <author>
+      <name>Wanli Jiang</name>
+    </author>
+    <author>
+      <name>Wasi Uddin Ahmad</name>
+    </author>
+    <author>
+      <name>Wataru Ishihara</name>
+    </author>
+    <author>
+      <name>Wei Du</name>
+    </author>
+    <author>
+      <name>Wei Ping</name>
+    </author>
+    <author>
+      <name>Wei-Ming Chen</name>
+    </author>
+    <author>
+      <name>Weiheng Chai</name>
+    </author>
+    <author>
+      <name>Weijia Chen</name>
+    </author>
+    <author>
+      <name>Wendy Quan</name>
+    </author>
+    <author>
+      <name>Wenliang Dai</name>
+    </author>
+    <author>
+      <name>Wenyan Cong</name>
+    </author>
+    <author>
+      <name>William Zhang</name>
+    </author>
+    <author>
+      <name>Wojciech Prazuch</name>
+    </author>
+    <author>
+      <name>Xiaowei Ren</name>
+    </author>
+    <author>
+      <name>Xin Yu</name>
+    </author>
+    <author>
+      <name>Xiwen Yu</name>
+    </author>
+    <author>
+      <name>Yan Wang</name>
+    </author>
+    <author>
+      <name>Yang Chen</name>
+    </author>
+    <author>
+      <name>Yang Yu</name>
+    </author>
+    <author>
+      <name>Yangyi Chen</name>
+    </author>
+    <author>
+      <name>Yaniv Galron</name>
+    </author>
+    <author>
+      <name>Yash Jain</name>
+    </author>
+    <author>
+      <name>Yashaswi Karnati</name>
+    </author>
+    <author>
+      <name>Ye Yu</name>
+    </author>
+    <author>
+      <name>Yejin Choi</name>
+    </author>
+    <author>
+      <name>Yemi Ibrahim</name>
+    </author>
+    <author>
+      <name>Yev Meyer</name>
+    </author>
+    <author>
+      <name>Yi Dong</name>
+    </author>
+    <author>
+      <name>Yi-Fu Wu</name>
+    </author>
+    <author>
+      <name>Yian Zhang</name>
+    </author>
+    <author>
+      <name>Yifan Zhang</name>
+    </author>
+    <author>
+      <name>Ying Lin</name>
+    </author>
+    <author>
+      <name>Yiyang Zhou</name>
+    </author>
+    <author>
+      <name>Yoav Miron</name>
+    </author>
+    <author>
+      <name>Yogendra Pandey</name>
+    </author>
+    <author>
+      <name>Yonatan Geifman</name>
+    </author>
+    <author>
+      <name>Yonggan Fu</name>
+    </author>
+    <author>
+      <name>Yoshi Suhara</name>
+    </author>
+    <author>
+      <name>Youngeun Kwon</name>
+    </author>
+    <author>
+      <name>Yu-Cheng Chou</name>
+    </author>
+    <author>
+      <name>Yu-Chiang Frank Wang</name>
+    </author>
+    <author>
+      <name>Yuanguo Kuang</name>
+    </author>
+    <author>
+      <name>Yuekai Zhang</name>
+    </author>
+    <author>
+      <name>Yugi Guvvala</name>
+    </author>
+    <author>
+      <name>Yuki Huang</name>
+    </author>
+    <author>
+      <name>Yunheng Zou</name>
+    </author>
+    <author>
+      <name>Yunsheng Liu</name>
+    </author>
+    <author>
+      <name>Zhenming Wang</name>
+    </author>
+    <author>
+      <name>Zhiding Yu</name>
+    </author>
+    <author>
+      <name>Zhiqi Li</name>
+    </author>
+    <author>
+      <name>Zhiyu Cheng</name>
+    </author>
+    <author>
+      <name>Zhongbo Zhu</name>
+    </author>
+    <author>
+      <name>Zhuolin Yang</name>
+    </author>
+    <author>
+      <name>Zichao Yue</name>
+    </author>
+    <author>
+      <name>Zihan Liu</name>
+    </author>
+    <author>
+      <name>Zijie Yan</name>
+    </author>
+    <author>
+      <name>Zirui Liu</name>
+    </author>
+    <author>
+      <name>Zoe Faul</name>
+    </author>
+    <author>
+      <name>Zuhair Ahmed</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.37842v1</id>
+    <title>Improving Data-Constrained Scaling with Hyperparameter Transfer and Ensembling</title>
+    <updated>2026-10-27T18:52:54Z</updated>
+    <link href="https://arxiv.org/abs/2610.37842v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.37842v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>As growing compute budgets outpace the growth of high-quality training data, large language models must be trained with both compute and data constraints in mind. Unfortunately, existing prescriptions for data-constrained scaling suffer from two important limitations. First, past works hold key hyperparameters such as weight decay fixed with scale, despite the fact that optimal hyperparameters vary wildly with model size and number of epochs. Second, past works neglect ensembling, a promising axis for scaling under data constraints. As a surprising consequence, prior prescriptions can lead to loss that increases with compute budget. We address both limitations by fitting power laws that prescribe how to transfer hyperparameters with scale and scaling laws that prescribe how to allocate compute with ensembling. Training on 100M tokens from FineWeb, our recipe reduces validation loss by over 0.15 nats compared to prior recipes, a 14% decrease in perplexity, and achieves monotonic improvements with compute through ensembling. These gains are achieved using prescriptions fit to smaller runs and validated at up to 12$\times$ larger compute budgets.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-27T18:52:54Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Ethan Baron</name>
+    </author>
+    <author>
+      <name>Shmuel Berman</name>
+    </author>
+    <author>
+      <name>Anirudh Satheesh</name>
+    </author>
+    <author>
+      <name>Akshay Vegesna</name>
+    </author>
+    <author>
+      <name>Samip Dahal</name>
+    </author>
+    <author>
+      <name>Andrew Gordon Wilson</name>
+    </author>
+  </entry>
+</feed>

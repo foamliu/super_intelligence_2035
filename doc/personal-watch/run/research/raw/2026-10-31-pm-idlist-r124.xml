@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/+amaRN6siJqNhiygnKtzyuZcSuk</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.40530,2610.38957&amp;start=0&amp;max_results=2</title>
+  <updated>2026-10-31T10:07:15Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=2&amp;id_list=2610.40530,2610.38957" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>2</opensearch:itemsPerPage>
+  <opensearch:totalResults>2</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.38957v1</id>
+    <title>What do MLLMs know about 'Waldo'? Evaluating Visual Reasoning under Multi-Instance Multi-Object Challenges</title>
+    <updated>2026-10-28T21:40:25Z</updated>
+    <link href="https://arxiv.org/abs/2610.38957v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.38957v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recent advances in Multimodal Large Language Models (MLLMs) have led to significant progress in visual reasoning capabilities. However, existing benchmarks curate image-question pairs pertaining to object categories with few instances, enabling trivial object referencing and limited visual ambiguity. In this work, we introduce MIMO-Bench, a benchmark for evaluating MLLMs in a Multi-Instance per Multi-Object categories (MIMO) setting. Each image-question pair in our benchmark pertains to instances belonging to object categories with multiple instances. The presence of such similar feature distractors causes hindrance in basic visual reasoning tasks, necessitating the referring expression to be composed of multiple visual subtasks to uniquely and unambiguously identify the target object. MIMO-Bench comprises 3,802 image-question pairs across attribute binding and numerical counting tasks. Despite impressive performances on existing benchmarks, both SOTA open-source (InternVL, QwenVL) and proprietary (Gemini, GPT-5) models exhibit substantially lower performance on MIMO-Bench, highlighting their limitations in the MIMO setting. The benchmark will be made publicly available.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-28T21:40:25Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Saumya Mundra</name>
+    </author>
+    <author>
+      <name>Ajoy Mondal</name>
+    </author>
+    <author>
+      <name>Vineeth N Balasubramanian</name>
+    </author>
+    <author>
+      <name>C. V. Jawahar</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40530v1</id>
+    <title>PhysCount: Do MLLMs Count Visual Appearances or Physical Entities?</title>
+    <updated>2026-10-29T17:33:34Z</updated>
+    <link href="https://arxiv.org/abs/2610.40530v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40530v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Images reveal appearances, but counting often asks about physical objects. A single entity may be visible directly, in several reflections, or through glass, so detecting every visible occurrence does not determine how many entities are present. Existing visual counting benchmarks rarely separate these two operations. We introduce PhysCount, a benchmark for evaluating whether multimodal large language models (MLLMs) can distinguish what appears in an image from what physically exists in the scene. PhysCount contains 546 real-world images and 4,595 human-written questions organized into 651 target-specific groups. For each group, annotators locate the relevant appearances, label how each is observed, and identify appearances of the same entity. Four complementary question families test the enumeration of appearances, the enumeration of physical entities, image-formation-specific counting, and appearance--entity correspondence. We measure both accuracy on each family and the proportion of groups answered entirely correctly. Across 40 MLLMs, counting visible appearances is substantially easier than recovering the identities that connect them. Even the strongest model answers every question correctly in only 13.36\% of groups. Performance declines when one entity produces many appearances or when its appearances cross observation modes. Higher image resolution improves access to visual evidence but brings limited gains in complete-group accuracy, whereas answering related questions jointly produces a marked improvement. These results expose a gap between recognizing what is visible and correctly recovering the physical entities behind those observations.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T17:33:34Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Lidong Lu</name>
+    </author>
+    <author>
+      <name>Jiaxin Lv</name>
+    </author>
+    <author>
+      <name>Liangrui Dong</name>
+    </author>
+    <author>
+      <name>Xinyi Mao</name>
+    </author>
+    <author>
+      <name>Lidong Zou</name>
+    </author>
+    <author>
+      <name>Zhenquan Li</name>
+    </author>
+    <author>
+      <name>Tong Lu</name>
+    </author>
+    <author>
+      <name>Guo Chen</name>
+    </author>
+  </entry>
+</feed>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-17 · 会生成视频的 AI，原来也能测量世界</title>
+<style>
+  :root { --primary:#1d5c3a; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#1d5c3a 0%,#2e8b57 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(29,92,58,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#1d5c3a; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#1d5c3a; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef6f0; color:#1d5c3a; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#1d5c3a; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-17</h1>
+  <div class="sub">今日 TOP-1：<b>会生成视频的 AI，原来也能测量世界</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>≈436 字</b></div>
+  <div class="meta">
+    <span>📄 Gen4P: Video Generators are 4D Perceivers</span>
+    <span>🆔 arXiv:2610.22371</span>
+    <span>👥 Yitong Xia, Zeren Jiang, Chuanxia Zheng（3 位，et al.）</span>
+    <span>🗓 提交 2026-10-15 ｜ cs.CV</span>
+    <span>🏷 标签：科普（4D 感知 · 视频生成 · 3D 点跟踪 · 相机位姿）</span>
+  </div>
+  <div class="disc">⚠️ <b>论文解读 · 非官方 · 非结论</b>：本片为该论文的<b>科普转述</b>；「SOTA 或具竞争力」「真实场景能跟踪复杂运动」等均为<b>作者自报、本线未复现</b>（原文措辞为 "state-of-the-art or competitive"）。<b>⚠️ 本片不写「AI 已理解物理世界 / 已具备世界模型 / 已能替代三维重建软件」之类的引申，也不做任何能力排名。</b>画面<b>全部自绘 / 自生成，不盗用论文原图</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它（TOP-1 挑选口径 = 目的 2「科普」，非「借鉴」）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>选它而非另一篇「科普」</b>：今日 2 篇科普为 <code>2610.22371</code>（本文）与 <code>2610.22372</code>（LIBERO-PeRM：给「个性化机器人操作」造基准，看机器人懂不懂你的习惯）。后者也好懂，但画面是「两条机械臂并排」，视觉类型较单一；本文是「<b>手机视频 → 三维形状 / 相机轨迹 / 运动箭头</b>」，<b>画面层次更多、零背景门槛</b>，故定为 TOP-1（另一篇作备选，见日报第 5 条）。</li>
+    <li><b>大众能懂</b>：一句话钩子 —— 「<b>你手机里随手拍的一段视频，AI 不只看懂画面，还能量出三维形状、相机怎么走、每个点怎么动。</b>」不需要任何 AI 背景。</li>
+    <li><b>有传播力</b>：① <b>反直觉</b> —— 一个<b>本来是「生成视频」的模型</b>，被<b>直接改造成「测量世界」的工具</b>；② <b>技术点可复述</b> —— 「<b>不用一步步去噪，一次前向就出答案</b>」；③ <b>画面天然强</b> —— 点云、相机轨迹、运动箭头，三样都是可视化「好看」的东西。</li>
+    <li><b>可讲清 / 画面好做</b>：核心只有三件事 —— <b>视频进去</b>、<b>一次编码 + 一个轻量解码器</b>、<b>按提问输出 4D 属性</b>；全部扁平自绘（手机框 / latent 条 / 提问箭头 / 点云 / 相机轨迹），<b>无需论文原图</b>。</li>
+    <li><b>有真实来源</b>：arXiv 编号 + abs 链接齐全；<code>comment</code> 原文自述项目页 <code>https://gen4p.github.io/</code>（<b>未验证可访问性</b>，片中不放该链接）。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🎞 分镜表（逐镜 · 固定五段：钩子 → 问题 → 方法 → 结果 → 意义/展望）</h2>
+<table>
+  <tr>
+    <th style="width:42px;">镜号</th><th style="width:96px;">时间轴（时长）</th><th style="width:72px;">段落</th>
+    <th style="width:250px;">口播文案</th><th>画面描述（自绘 / 自生成）</th><th style="width:180px;">屏幕文字 / 字幕</th><th style="width:150px;">音效 / BGM</th>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">这段手机视频，AI 不只看懂画面，还要量出三维形状、相机怎么走、每个点怎么动。</td>
+    <td>竖屏手机框居中，画面里是一段<b>日常街景</b>（自绘 / AI 生成，不用论文素材）。视频暂停 → 画面上方浮出<b>半透明三维线框</b>，地面浮起点阵（点云），一条<b>虚线相机轨迹</b>从左上划到右下，几个小箭头标出「点在动」。</td>
+    <td>字幕：<b>AI 不只「看懂」画面</b>（小字：还能量出三维 · 相机 · 运动）</td>
+    <td>手机「咔」一声定格；BGM 起，轻电子、带一点「仪器启动」感。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–20s（10s）</td>
+    <td class="act">问题</td>
+    <td class="vo">过去要算这些，得几十张照片做重建，或者让模型一帧一帧慢慢推。慢，而且容易断。</td>
+    <td>左栏：<b>一排小照片</b>围成一圈，中间「重建」齿轮慢慢转（自绘）；右栏：一条<b>逐帧推进的进度条</b>，每格标「第 N 帧」，进度条走到一半<b>卡住闪红</b>，出现一个断开的链条图标。</td>
+    <td>字幕：<b>以前的办法：多图重建 / 逐帧慢推</b>（小字：慢，且容易断）</td>
+    <td>齿轮「咔哒咔哒」；卡住时一声闷响；BGM 略压。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>20–30s（10s）</td>
+    <td class="act">问题</td>
+    <td class="vo">视频生成模型倒是很会「画」视频，可它画出来的东西，能当尺子用吗？</td>
+    <td>画面右侧出现一块<b>「生成中」的噪点方块</b>，逐格变清晰、变成一段流畅画面（自绘噪点 → 清晰，不用真实视频素材）；左侧伸出一把<b>半透明尺子</b>去量它，尺子刻度<b>虚化 / 打问号</b>。</td>
+    <td>字幕：<b>会「画」≠ 会「量」？</b>（小字：生成模型能当测量工具吗）</td>
+    <td>噪点「沙沙」→ 变清晰时「唰」；尺子靠近配一声轻「叮？」（疑问音）。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>30–45s（15s）</td>
+    <td class="act">方法</td>
+    <td class="vo">这篇论文的答案：能。它叫 Gen4P，做法是——把预训练的视频生成器，直接改造成一台四维测量仪。</td>
+    <td>中央一台<b>抽象「生成器」机器</b>（自绘方块 + 齿轮），入口标「视频生成器」，出口<b>换牌</b>成「4D 感知器」（牌子翻转动画）；机器下方浮出四个字母 <b>G e n 4 P</b>，逐字亮起。<b>不出现论文 LOGO / 原图</b>。</td>
+    <td>字幕：<b>Gen4P ＝ 把视频生成器改造成 4D 感知器</b>（小字：arXiv:2610.22371）</td>
+    <td>翻牌「啪」；四个字母亮起配「叮·叮·叮·叮」；BGM 推进一档。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>45–60s（15s）</td>
+    <td class="act">方法</td>
+    <td class="vo">关键一步：不再一步步去噪。视频只过一次编码器，得到一个干净的表示；再用一个轻量解码器，按你的提问输出答案。</td>
+    <td>上下两层流程图（自绘）：<b>视频 → 编码器（一次前向，画一条直线箭头）→ latent 条</b>；latent 条上伸出若干<b>彩色提问箭头</b>指向右侧「轻量 cross-attention 解码器」小方块 → 输出卡片「三维点 / 深度 / 相机位姿」。画面上<b>划掉</b>传统的「去噪 × 50 步」长链（一条红色斜杠 + 「不用了」小标签）。</td>
+    <td>字幕：<b>一次前向，不做迭代去噪</b>（小字：单次编码 + 轻量解码器）</td>
+    <td>编码「嗖」一声直线滑过；划掉去噪链配「嚓」；输出卡片弹出「啵」。</td>
+  </tr>
+
+
+  <tr>
+    <td><span class="shot-no">6</span></td>
+    <td>60–80s（20s）</td>
+    <td class="act">方法</td>
+    <td class="vo">提问也很灵活：想测哪些点就测哪些点，想测哪一刻就测哪一刻。作者还加了个即插即用的技巧：把现成的视频深度模块冻住当几何先验，不增加可训练参数。</td>
+    <td>分左右两格：<b>左格「按需查询」</b> —— 一张点云上，光标<b>点几个点</b>，只有被点的点发光并被拉出轨迹（其余点保持灰色）；时间轴上<b>拖动滑块</b>到不同时刻，输出卡片跟着变。<b>右格「即插即用」</b> —— 一个标「视频深度插件」的小模块<b>挂上锁头图标（冻结）</b>，接到主模型侧边，旁边计数牌显示「可训练参数 +0」。</td>
+    <td>字幕：<b>按需查询（空间灵活）· 连续时刻（时间灵活）</b>｜<b>冻结的几何先验，+0 参数</b></td>
+    <td>点选「滴·滴」；拖滑块「沙」；挂锁「咔」；计数牌「0」出现配轻「叮」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">7</span></td>
+    <td>80–93s（13s）</td>
+    <td class="act">结果</td>
+    <td class="vo">作者报告：三维点跟踪、视频深度、相机位姿三项，它都达到最好水平或很有竞争力；真实视频里复杂运动也能跟住。</td>
+    <td>三张并排「成绩卡」（自绘，<b>不写具体分数</b>）：① 点跟踪 ② 深度 ③ 相机位姿；每张卡片上一个<b>向上的箭头 + 「SOTA / 有竞争力（作者自报）」</b>标签。右侧小窗放一段<b>抽象运动示意</b>（旋转的物体 + 跟随的轨迹线，自绘），轨迹线始终咬住物体、外形轮廓保持清晰。</td>
+    <td>字幕：<b>三项任务：SOTA 或具竞争力</b>（小字：<b>作者自报 · 本线未复现</b>）</td>
+    <td>三张卡片依次「叮」；轨迹线跟随配连续「咻」；BGM 到小高潮但<b>不炸</b>。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">8</span></td>
+    <td>93–105s（12s）</td>
+    <td class="act">结果</td>
+    <td class="vo">注意，这是作者自报的成绩，还没有第三方复现。而且论文只给了摘要和项目页，细节要等全文细读。</td>
+    <td>画面转「核查模式」：三张成绩卡上盖一枚<b>半透明印章</b>「作者自报 · 未复现」；旁边浮出一份<b>文档图标</b>，标注「摘要 / 项目页」，再浮出一个<b>放大镜</b>在上面扫过，镜内显示「待细读」。</td>
+    <td>字幕：<b>⚠️ 作者自报 · 尚未复现 · 细节待细读</b></td>
+    <td>盖章「咚」一声（不夸张）；放大镜扫过「沙沙」；BGM 收一档。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">9</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">有意思的是：一个用来「生成」视频的模型，转个身就能「测量」世界。也许几何早就藏在生成模型里——但这还是研究，不是产品。</td>
+    <td>镜头拉远：左侧「生成」图标（画笔）与右侧「测量」图标（尺子）之间，画一条<b>双向箭头</b>把它们连起来，中间浮出一个缓慢旋转的<b>半透明立方体线框</b>（象征几何）。末尾淡出，浮出 arXiv 编号与链接（放简介）。</td>
+    <td>字幕：<b>生成 ↔ 测量：同一套模型，两种用法</b>（小字：arXiv:2610.22371 · 论文解读 · 非结论）</td>
+    <td>拉远配柔和「呼—」；BGM 收尾、留余地；链接落定配轻「叮」。</td>
+  </tr>
+</table>
+
+<div class="ok-box">
+  <b>口播合计</b>：随 9 镜分配 ≈ 39 + 38 + 32 + 48 + 53 + 70 + 52 + 45 + 59 ≈ <b>436 字</b>（按 180–200 字/分 ≈ <b>2 分 11 秒～2 分 25 秒</b>；本脚本按 <b>120s</b> 剪辑 ⇒ 需语速约 <b>218 字/分（偏快）</b> ⇒ <b>建议录制时精简到 ~390 字</b>：优先压镜 6（70 字，只留「按需查询 + 冻结先验」两句）与镜 9，或把镜 6 放宽到 60–84s、结果段顺延 84–108s）。<b>五段配比（固定）</b>：钩子 <b>0–10s</b> ｜ 问题 <b>10–30s</b> ｜ 方法 <b>30–80s</b> ｜ 结果 <b>80–105s</b> ｜ 意义/展望 <b>105–120s</b>（合计 = <b>120s</b>）。
+</div>
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（手机框 / 点云 / 相机轨迹 / 生成器机器 / latent 条与提问箭头 / 解码器方块 / 成绩卡 / 印章 / 立方体线框）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图 / 图注 / 表格 / 项目页截图。</li>
+    <li><b>风格建议</b>：深绿主色（<code>#1d5c3a</code> → <code>#2e8b57</code>）+ 冷灰科技底色；「点云 / 轨迹」用<b>高亮青色</b>，与 UI 元素区分；核心信息置于画面<b>中央安全区</b>，便于抖音竖屏二次裁剪。</li>
+    <li><b>配音</b>：中文普通话，语速 180–200 字/分；「<b>不再一步步去噪</b>」「<b>一次前向</b>」两处<b>放慢并加重</b>；镜 8 的「<b>作者自报</b>」语气<b>平稳、不念成免责声明式的敷衍</b>。</li>
+    <li><b>字幕</b>：镜 7 的关键结论一律配小字「<b>作者自报 · 未复现</b>」；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行）</b>。</li>
+    <li><b>术语友好化</b>：<b>latent</b> → 「压缩后的表示」；<b>cross-attention 解码器</b> → 「一个轻量的小解码器（按提问取信息）」；<b>LoRA</b> → 「一个小插件」；<b>4D</b> → 「三维空间 + 时间」。首次出现给一句白话字幕。</li>
+    <li><b>配乐</b>：建议使用平台<b>免费 / 已授权</b>曲库，避免版权风险。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给 <b>arXiv abs 链接</b> + <b>英文原题</b>照抄不改写（<i>Gen4P: Video Generators are 4D Perceivers</i>）。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「颠覆 / 突破 / 碾压 / 已理解物理世界 / 已具备世界模型 / 可替代三维重建软件」；「SOTA 或具竞争力」严格照原文措辞（"state-of-the-art or competitive"）并<b>显式标注作者自报</b>。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成；🚫 不用论文图、不用项目页截图、不用他人 demo 录屏。</li>
+    <li>✅ <b>不编造数据</b>：仅使用摘要可支撑的表述 —— 「预训练视频生成器」「前馈 / 不做迭代去噪」「单次编码器前向处理干净 latent」「轻量 cross-attention 解码器」「按需查询 + 连续时间查询」「冻结的视频深度 LoRA 作几何先验、不增加可训练参数」「3D 点跟踪 / 视频深度 / 相机位姿」；<b>不虚构</b>任何分数、数据集名或排行榜名次。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「AI 已能像人一样感知世界」等原文未支持的引申；镜 9 的「也许几何早就藏在生成模型里」以<b>「也许」+「这还是研究」</b>双重限定呈现，<b>不下结论</b>。</li>
+    <li>✅ <b>署名如实</b>：作者照抄 arXiv 条目（Yitong Xia, Zeren Jiang, Chuanxia Zheng，共 3 位）<b>不臆测机构归属</b>；<code>comment</code> 仅自述项目页，<b>不补写</b>「已录用 / 已开源代码」等原文未给的信息。</li>
+    <li>✅ <b>不混用口径</b>：本片按目的 2「<b>科普</b>」口径挑选与制作（大众看得懂 + 传播力），<b>不</b>与目的 1「借鉴」（与 BaiZe / ZhuLong 相关性）混用。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-17</b> ｜ 文件 <code>research/video/SCENES/10_17.html</code> ｜ 当日 TOP-1</div>
+  <div>论文：<i>Gen4P: Video Generators are 4D Perceivers</i>（Yitong Xia, Zeren Jiang, Chuanxia Zheng）｜ <a href="https://arxiv.org/abs/2610.22371">arXiv:2610.22371</a> ｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 4 批（P0 · 18:00 时窗）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图；<b>不夸大、不编造数据</b>。本页为<b>自包含单文件</b>（内联 CSS，零外链）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-17.html">research/daily/2026-10-17.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a> ｜ 上一篇：<a href="10_16.html">10_16.html</a></div>
+</footer>
+</div>
+</body>
+</html>
+

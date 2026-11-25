@@ -1,0 +1,81 @@
+{
+ "handle": "rm_rafailov",
+ "name": "Rafael Rafailov @ NeurIPS (@rm_rafailov) / X",
+ "bio": "I work on RL at @thinkymachines. Previously at @StanfordAILab @GoogleDeepMind @UCBerkeley",
+ "tweets": [
+  {
+   "id": "2103193200504778836",
+   "created_at": "2026-09-24 18:41 UTC",
+   "created_at_ms": 1790275309000,
+   "text": "Really cool",
+   "url": "https://x.com/rm_rafailov/status/2103193200504778836",
+   "handle_guess": "rm_rafailov"
+  },
+  {
+   "id": "2103179354163536228",
+   "created_at": "2026-09-24 17:46 UTC",
+   "created_at_ms": 1790272007000,
+   "text": "We are approaching cyber-superintelligence. \\\n\\\nBut our systems aren't ready. We must secure our model weights and infrastructure against three new threats: sabotage, escape, and theft.\\\n\\\nThere is a way forward.\\\n\\\nSecure Acceleration:\\\nA Cyberdefense Strategy for Superintelligence https://t.co/FLNPLPVWvF",
+   "url": "https://x.com/rm_rafailov/status/2103179354163536228",
+   "handle_guess": "Shalev_lif"
+  },
+  {
+   "id": "2038261636147064921",
+   "created_at": "2026-03-29 14:26 UTC",
+   "created_at_ms": 1774794417000,
+   "text": "With @tinkerapi RL integration.",
+   "url": "https://x.com/rm_rafailov/status/2038261636147064921",
+   "handle_guess": "rm_rafailov"
+  },
+  {
+   "id": "2037570534205219218",
+   "created_at": "2026-03-27 16:40 UTC",
+   "created_at_ms": 1774629646000,
+   "text": "We are releasing the Harbor cookbook!\\\n\\\nWe designed the Harbor task format to make minimal assumptions about what a task should look like. So we put together a set of reference implementations for building evals and optimizing agents with Harbor.\\\n\\\nv1 has 9  task recipes + 2",
+   "url": "https://x.com/rm_rafailov/status/2037570534205219218",
+   "handle_guess": "harborframework"
+  },
+  {
+   "id": "2035057013466767380",
+   "created_at": "2026-03-20 18:12 UTC",
+   "created_at_ms": 1774030376000,
+   "text": "The Foundation series was my favorite book growing up, building AIs that can accurately model the future and how decisions affect it will be hugely impactful.",
+   "url": "https://x.com/rm_rafailov/status/2035057013466767380",
+   "handle_guess": "rm_rafailov"
+  },
+  {
+   "id": "2035038766067499496",
+   "created_at": "2026-03-20 17:00 UTC",
+   "created_at_ms": 1774026025000,
+   "text": "Mantic used Tinker to RL gpt-oss-120b on judgmental forecasting; the result outperformed frontier models on event predictions. Combined with @_Mantic_AI's forecasting architecture, task-specific training takes us to the cusp of automated superforecasting.",
+   "url": "https://x.com/rm_rafailov/status/2035038766067499496",
+   "handle_guess": "tinkerapi"
+  },
+  {
+   "id": "2031389344444068160",
+   "created_at": "2026-03-10 15:18 UTC",
+   "created_at_ms": 1773155935000,
+   "text": "It’s a lot of compute!",
+   "url": "https://x.com/rm_rafailov/status/2031389344444068160",
+   "handle_guess": "rm_rafailov"
+  },
+  {
+   "id": "2031356627916603876",
+   "created_at": "2026-03-10 13:08 UTC",
+   "created_at_ms": 1773148135000,
+   "text": "We are partnering with @nvidia to power our frontier model training and platforms delivering customizable AI.\\\n\\\nhttps://t.co/JFlf9hJkKh https://t.co/M23RB8dZxI",
+   "url": "https://x.com/rm_rafailov/status/2031356627916603876",
+   "handle_guess": "thinkymachines"
+  },
+  {
+   "id": "1995932252883354089",
+   "created_at": "2025-12-02 19:05 UTC",
+   "created_at_ms": 1764702306000,
+   "text": "I will be at NeurIPS this week! If you want to talk about research, RL, life at @thinkymachines or get some Tinker credits reach out!",
+   "url": "https://x.com/rm_rafailov/status/1995932252883354089",
+   "handle_guess": "rm_rafailov"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 15:03:18"
+}

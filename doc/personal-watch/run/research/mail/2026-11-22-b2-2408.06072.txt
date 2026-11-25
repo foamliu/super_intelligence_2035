@@ -1,0 +1,14 @@
+唐杰老师您好，
+
+我是刘杨，做 LLM agent 与视觉编码方向的研究，主页 https://foamliu.github.io/。我们正在评估「视频生成塔要不要复用语言塔主干」，CogVideoX 把 3D 因果 VAE 与 expert adaptive LayerNorm 放在一起的做法，是少数给出完整消融的公开工作。
+
+三个问题：
+
+1. 3D VAE 的时间维压缩比对 10 秒、16 fps、768×1360 这一档最关键的是哪一维？若我们只做 5 秒短片，时间压缩比是否应下调？
+2. expert adaptive LayerNorm 让文本与视频两路各自归一化后再融合；2B 与 5B 两档参数量变化时，这个融合比例需要重调吗？
+3. 多分辨率 frame pack 在 progressive training 里，先提分辨率还是先提帧数更稳？
+
+这三点会直接改我们的训练日程，谢谢。
+
+祝好，
+Yang Liu

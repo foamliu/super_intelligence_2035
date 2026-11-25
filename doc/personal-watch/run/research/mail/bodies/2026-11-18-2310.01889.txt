@@ -1,0 +1,16 @@
+刘老师您好，
+
+我是刘杨，做 LLM agent 方向的研究，主页 https://foamliu.github.io/。
+
+读《Ring Attention》时我最在意 Table 2：它把每卡最小 block 写成硬件常数 c = FLOPS / Bandwidth，再由 s = 6c 推出最小序列长度。我们正给 2B 级模型做长上下文预训练，集群只有 InfiniBand、没有 NVLink 域，这张表直接决定我们该不该上 ring。
+
+两个问题：
+
+1. A100 InfiniBand 一栏是最小 block 24.5K、最小序列 149.5K，而 NVLink 只要 1.0K / 6.2K。序列短于 150K 时是否就该放弃 ring（二选一：是，受 c 下界限制／否，c 只是保守下界、可用重算把 block 压小），请给一句理由。
+
+2. Table 4 里 MFU 随上下文变长而下降，主要是 self-attention 的 FLOPs 占比上升，还是通信没有被 block 计算完全盖住？有没有一组你们实测的（模型 / 卡数 / 序列长度）可以当我们复现的起点？
+
+谢谢你们把实现开源。
+
+祝好，
+Yang Liu

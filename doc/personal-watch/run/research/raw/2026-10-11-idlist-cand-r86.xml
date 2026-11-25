@@ -1,0 +1,536 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/3Vi4U9d4uyBvNuHixKxB2Swv4Eg</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.11959,2610.11247,2610.11226&amp;start=0&amp;max_results=40</title>
+  <updated>2026-10-10T22:02:33Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=40&amp;id_list=2610.11959,2610.11247,2610.11226" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>40</opensearch:itemsPerPage>
+  <opensearch:totalResults>3</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11247v1</id>
+    <title>Why On-Policy Distillation Sometimes Fails: Vanishing Learning Signals</title>
+    <updated>2026-10-08T04:52:05Z</updated>
+    <link href="https://arxiv.org/abs/2610.11247v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11247v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>On-policy distillation (OPD) enables effective capability transfer between language models, yet the mechanisms underlying its failures are not fully understood. Across code generation and mathematical reasoning, OPD with larger-scale teachers exhibits early loss plateaus, with an average final loss reduction of 25.1% after 200 updates, compared with 96.2% for self-RL teachers, obtained by further reinforcement learning (RL) training of the initial student. To understand this difference, we analyze OPD as an idealized continuous-time dynamical system in the small-learning-rate limit. Our training-log diagnostics associate these plateaus with an early decline in a gradient-based learning-signal proxy while substantial loss remains; these measurements do not establish why the underlying gradient weakens. We further prove a local recovery guarantee for teachers sufficiently close to the initial student in a shared parameterization under regularity conditions, offering a conditional explanation for the success of self-RL teachers in our experiments. Across runs with and without loss plateaus, we observe small relative parameter changes (0.025-0.098%) and high similarity between the student's representations before and after OPD (linear CKA $&gt;0.98$ across layers). These observations suggest that limited representation adaptation may contribute to learning-signal collapse, a hypothesis that remains to be tested. Code is available at https://github.com/leizhao7/opd-learning-signals.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T04:52:05Z</published>
+    <arxiv:comment>50 pages. Code: https://github.com/leizhao7/opd-learning-signals</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Lei Zhao</name>
+    </author>
+    <author>
+      <name>Qichao Zhao</name>
+    </author>
+    <author>
+      <name>Bowen Zuo</name>
+    </author>
+    <author>
+      <name>Qishi Zhan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11226v1</id>
+    <title>When Lower Reconstruction Loss Hurts: Distributionally Robust Refinement for Low-Bit LLM Quantization</title>
+    <updated>2026-10-08T04:22:29Z</updated>
+    <link href="https://arxiv.org/abs/2610.11226v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11226v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Weight-only post-training quantization (PTQ) relies heavily on reconstruction loss minimization to preserve model quality at low precision. We show that the weights favored by minimizing this loss need not yield better model performance on new tasks. In fact, we find that lower reconstruction loss can even degrade model performance on the same calibration data. Our analysis further shows that weights with lower reconstruction loss on calibration data can have higher loss than other weights when the distribution of input activations changes. Motivated by these observations and our analysis, we propose Distributionally Robust Quantization (DRQ), a post-hoc refinement process that minimizes worst-case reconstruction loss over a constrained set of input activation distributions. DRQ refines the integer codes representing quantized weights within the existing quantization grid, keeping quantization parameters and inference operators unchanged. Extensive experiments show that DRQ improves models quantized by six representative PTQ methods, including AWQ, GPTQ, and ParoQuant, and delivers gains across both dense and mixture-of-experts large language models. These results establish DRQ as a general post-hoc refinement framework for weight-only PTQ, achieving better downstream performance without adding inference overhead.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T04:22:29Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Yanlong Zhao</name>
+    </author>
+    <author>
+      <name>Xiaoyuan Cheng</name>
+    </author>
+    <author>
+      <name>Huihang Liu</name>
+    </author>
+    <author>
+      <name>Baihua He</name>
+    </author>
+    <author>
+      <name>Xinyu Zhang</name>
+    </author>
+    <author>
+      <name>Harrison Bo Hua Zhu</name>
+    </author>
+    <author>
+      <name>Wenlong Chen</name>
+    </author>
+    <author>
+      <name>Li Zeng</name>
+    </author>
+    <author>
+      <name>Zhuo Sun</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.11959v1</id>
+    <title>MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement</title>
+    <updated>2026-10-08T13:41:53Z</updated>
+    <link href="https://arxiv.org/abs/2610.11959v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.11959v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reinforcement learning (RL) is the central training paradigm for advancing large foundation models towards self-improvement. This report introduces the MiMo-V2.6 series, an omni-modal family that pushes the frontier of model intelligence by scaling RL compute. Prior to RL, we conduct mid-training on a broad multimodal corpus to provide ample exploration space, and build a solid infrastructure on the pretrained hybrid-SWA architecture to support subsequent scale-up. We scale RL compute along three dimensions: (1) larger batches and higher throughput, with an asynchronous training that consumes 1,568 samples and 2.7-3.7B tokens per step at context lengths of up to 1M; (2) more diverse and complex environments, spanning code, general, visual, and cyber domains under a mixture of agent harnesses; and (3) more grader compute, via groupwise agentic grading that yields more accurate reward signals for long-horizon tasks and steers the model towards shorter, more token-efficient solutions. To keep training stable at scale, we freeze the MoE router and establish a multi-layer defense against reward hacking. We further build infrastructure for mixed-task agentic RL, including a unified trajectory representation, high-concurrency multi-framework rollout, decoupled control and data planes, and training-inference consistency. We open-source the training dynamics, RL environments, and RL framework to facilitate reproduction and further research on scaled RL and model self-improvement.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-08T13:41:53Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Xiaomi LLM-Core Team</name>
+    </author>
+    <author>
+      <name> :</name>
+    </author>
+    <author>
+      <name>Zongming Qiao</name>
+    </author>
+    <author>
+      <name>Ziyue Hua</name>
+    </author>
+    <author>
+      <name>Zirui Ou</name>
+    </author>
+    <author>
+      <name>Zihao Yue</name>
+    </author>
+    <author>
+      <name>Zihan Jiang</name>
+    </author>
+    <author>
+      <name>Zhuo Huang</name>
+    </author>
+    <author>
+      <name>Zhiyang Chen</name>
+    </author>
+    <author>
+      <name>Zhixian Zheng</name>
+    </author>
+    <author>
+      <name>Zhipeng Xu</name>
+    </author>
+    <author>
+      <name>Zhengrui Ma</name>
+    </author>
+    <author>
+      <name>Yuyang Hu</name>
+    </author>
+    <author>
+      <name>Yuhang Dong</name>
+    </author>
+    <author>
+      <name>Yuechen Zhang</name>
+    </author>
+    <author>
+      <name>Yudong Wang</name>
+    </author>
+    <author>
+      <name>Yuanxin Liu</name>
+    </author>
+    <author>
+      <name>Yixin Yang</name>
+    </author>
+    <author>
+      <name>Yishuo Cai</name>
+    </author>
+    <author>
+      <name>Yikai Zhao</name>
+    </author>
+    <author>
+      <name>Yihan Yan</name>
+    </author>
+    <author>
+      <name>Yifan Zhang</name>
+    </author>
+    <author>
+      <name>Yifan Song</name>
+    </author>
+    <author>
+      <name>Xiyu Wei</name>
+    </author>
+    <author>
+      <name>Xing Zhang</name>
+    </author>
+    <author>
+      <name>Xin Zhang</name>
+    </author>
+    <author>
+      <name>Xiaoqian Liu</name>
+    </author>
+    <author>
+      <name>Xiaodong Ji</name>
+    </author>
+    <author>
+      <name>Xiangwei Deng</name>
+    </author>
+    <author>
+      <name>Xueyu Guo</name>
+    </author>
+    <author>
+      <name>Wenhan Ma</name>
+    </author>
+    <author>
+      <name>Weimin Xiong</name>
+    </author>
+    <author>
+      <name>Weikun Wang</name>
+    </author>
+    <author>
+      <name>Weiji Zhuang</name>
+    </author>
+    <author>
+      <name>Shuo Liu</name>
+    </author>
+    <author>
+      <name>Shuhuai Ren</name>
+    </author>
+    <author>
+      <name>Shuhao Gu</name>
+    </author>
+    <author>
+      <name>Shimao Chen</name>
+    </author>
+    <author>
+      <name>Shijie Cao</name>
+    </author>
+    <author>
+      <name>Shihua Yu</name>
+    </author>
+    <author>
+      <name>Shicheng Li</name>
+    </author>
+    <author>
+      <name>Shengjie Zhou</name>
+    </author>
+    <author>
+      <name>Shaolei Zhang</name>
+    </author>
+    <author>
+      <name>Rang Li</name>
+    </author>
+    <author>
+      <name>Qiying Wang</name>
+    </author>
+    <author>
+      <name>Qingkai Fang</name>
+    </author>
+    <author>
+      <name>Qianli Chen</name>
+    </author>
+    <author>
+      <name>Minzheng Wang</name>
+    </author>
+    <author>
+      <name>Liwen Wang</name>
+    </author>
+    <author>
+      <name>Linli Yao</name>
+    </author>
+    <author>
+      <name>Linghao Zhang</name>
+    </author>
+    <author>
+      <name>Liangyu Cheng</name>
+    </author>
+    <author>
+      <name>Liang Zhao</name>
+    </author>
+    <author>
+      <name>Lei Li</name>
+    </author>
+    <author>
+      <name>Jinhao Dong</name>
+    </author>
+    <author>
+      <name>Jinyu Xiang</name>
+    </author>
+    <author>
+      <name>Jianyu Wei</name>
+    </author>
+    <author>
+      <name>Jiangshan Duo</name>
+    </author>
+    <author>
+      <name>Huaqiu Liu</name>
+    </author>
+    <author>
+      <name>Huanjie Fan</name>
+    </author>
+    <author>
+      <name>Hongyi Guan</name>
+    </author>
+    <author>
+      <name>Hongshen Xu</name>
+    </author>
+    <author>
+      <name>Hao Tian</name>
+    </author>
+    <author>
+      <name>Hanyu Li</name>
+    </author>
+    <author>
+      <name>Hailin Zhang</name>
+    </author>
+    <author>
+      <name>Gang Wang</name>
+    </author>
+    <author>
+      <name>Fuli Luo</name>
+    </author>
+    <author>
+      <name>Feng Wei</name>
+    </author>
+    <author>
+      <name>Dong Zhang</name>
+    </author>
+    <author>
+      <name>Dawei Zhu</name>
+    </author>
+    <author>
+      <name>Chiheng Lou</name>
+    </author>
+    <author>
+      <name>Chenhong He</name>
+    </author>
+    <author>
+      <name>Chenhao He</name>
+    </author>
+    <author>
+      <name>Chenghua Liu</name>
+    </author>
+    <author>
+      <name>Bowen Ye</name>
+    </author>
+    <author>
+      <name>Bowen Shen</name>
+    </author>
+    <author>
+      <name>Boshen Xu</name>
+    </author>
+    <author>
+      <name>Bo Yang</name>
+    </author>
+    <author>
+      <name>Bingquan Xia</name>
+    </author>
+    <author>
+      <name>Bangjun Xiao</name>
+    </author>
+    <author>
+      <name>Baixuan Xu</name>
+    </author>
+    <author>
+      <name>Zhouxiang Mao</name>
+    </author>
+    <author>
+      <name>Zhiyang Zhang</name>
+    </author>
+    <author>
+      <name>Zhixiang Xu</name>
+    </author>
+    <author>
+      <name>Zhenru Lin</name>
+    </author>
+    <author>
+      <name>Zhengju Tang</name>
+    </author>
+    <author>
+      <name>Zhaojun Huang</name>
+    </author>
+    <author>
+      <name>Yuzhe Weng</name>
+    </author>
+    <author>
+      <name>Yuxing Xiang</name>
+    </author>
+    <author>
+      <name>Yuxiao Li</name>
+    </author>
+    <author>
+      <name>Yuheng Yang</name>
+    </author>
+    <author>
+      <name>Yuhang Wang</name>
+    </author>
+    <author>
+      <name>Yuchen Liu</name>
+    </author>
+    <author>
+      <name>Yuanyuan Tian</name>
+    </author>
+    <author>
+      <name>Yuanliang Dong</name>
+    </author>
+    <author>
+      <name>Yu Cheng</name>
+    </author>
+    <author>
+      <name>Yongzhe He</name>
+    </author>
+    <author>
+      <name>Yongshun Liang</name>
+    </author>
+    <author>
+      <name>Yong Wang</name>
+    </author>
+    <author>
+      <name>Yiyan Wang</name>
+    </author>
+    <author>
+      <name>Yitian Gong</name>
+    </author>
+    <author>
+      <name>Yijie Zhang</name>
+    </author>
+    <author>
+      <name>Yanshu Xin</name>
+    </author>
+    <author>
+      <name>Xun Zhang</name>
+    </author>
+    <author>
+      <name>Xingjian Zhao</name>
+    </author>
+    <author>
+      <name>Wenyu Yang</name>
+    </author>
+    <author>
+      <name>Wenshan Huang</name>
+    </author>
+    <author>
+      <name>Wenhao Li</name>
+    </author>
+    <author>
+      <name>Tingwei Huang</name>
+    </author>
+    <author>
+      <name>Tianyu Yu</name>
+    </author>
+    <author>
+      <name>Tianyang Lu</name>
+    </author>
+    <author>
+      <name>Taoyu Yang</name>
+    </author>
+    <author>
+      <name>Sinan Du</name>
+    </author>
+    <author>
+      <name>Shutong Tian</name>
+    </author>
+    <author>
+      <name>Shulin Du</name>
+    </author>
+    <author>
+      <name>Shengfan Wang</name>
+    </author>
+    <author>
+      <name>Shanchuan Fang</name>
+    </author>
+    <author>
+      <name>Qihao Zhang</name>
+    </author>
+    <author>
+      <name>Qibin Yang</name>
+    </author>
+    <author>
+      <name>Qian Yu</name>
+    </author>
+    <author>
+      <name>Qian Tu</name>
+    </author>
+    <author>
+      <name>Pengrong Xie</name>
+    </author>
+    <author>
+      <name>Peipei Wang</name>
+    </author>
+    <author>
+      <name>Peidian Li</name>
+    </author>
+    <author>
+      <name>Minkun Guo</name>
+    </author>
+    <author>
+      <name>Mingchen Shao</name>
+    </author>
+    <author>
+      <name>Luohan Gao</name>
+    </author>
+    <author>
+      <name>Lijie Wang</name>
+    </author>
+    <author>
+      <name>Liang Shi</name>
+    </author>
+    <author>
+      <name>Kaiqi Chen</name>
+    </author>
+    <author>
+      <name>Kaiming Liu</name>
+    </author>
+    <author>
+      <name>Kaifei Wang</name>
+    </author>
+    <author>
+      <name>Kai Yang</name>
+    </author>
+    <author>
+      <name>Jinlong Xue</name>
+    </author>
+    <author>
+      <name>Jiechen Zhang</name>
+    </author>
+    <author>
+      <name>Jiaxuan Liu</name>
+    </author>
+    <author>
+      <name>Hongxu An</name>
+    </author>
+    <author>
+      <name>Hao Peng</name>
+    </author>
+    <author>
+      <name>Hanglong Lü</name>
+    </author>
+    <author>
+      <name>Guonan Wang</name>
+    </author>
+    <author>
+      <name>Feiyu Yang</name>
+    </author>
+    <author>
+      <name>Fanyu Cao</name>
+    </author>
+    <author>
+      <name>Fangyue Liu</name>
+    </author>
+    <author>
+      <name>Fan Cui</name>
+    </author>
+    <author>
+      <name>Cong Wang</name>
+    </author>
+    <author>
+      <name>Chun Chen</name>
+    </author>
+    <author>
+      <name>Chenxu Bai</name>
+    </author>
+    <author>
+      <name>Chengxuan Zhu</name>
+    </author>
+    <author>
+      <name>Chenghua Wang</name>
+    </author>
+    <author>
+      <name>Boyi Zeng</name>
+    </author>
+  </entry>
+</feed>

@@ -1,0 +1,254 @@
+{
+ "fetched_at": "2026-11-11 18:01:26",
+ "out": {
+  "arxiv_2001.08361": {
+   "status": 200,
+   "ctype": "application/atom+xml; charset=utf-8",
+   "bytes": 2756,
+   "title": "Scaling Laws for Neural Language Models",
+   "published": "2020-01-23T03:59:20Z"
+  },
+  "oa_kaplan": {
+   "status": 200,
+   "title": "Scaling Laws for Neural Language Models",
+   "year": 2020,
+   "cited": 9945,
+   "doi": "https://doi.org/10.48550/arxiv.2001.08361",
+   "type": "preprint",
+   "venue": "arXiv (Cornell University)",
+   "biblio": {
+    "volume": null,
+    "issue": null,
+    "first_page": null,
+    "last_page": null
+   },
+   "authors": [
+    "Jared Kaplan A",
+    "Sam McCandlish",
+    "Tom Henighan",
+    "Brown, Tom B.",
+    "Benjamin Chess"
+   ]
+  },
+  "oa_dqn": {
+   "status": 200,
+   "title": "Human-level control through deep reinforcement learning",
+   "year": 2015,
+   "cited": 32259,
+   "doi": "https://doi.org/10.1038/nature14236",
+   "type": "article",
+   "venue": "Nature",
+   "biblio": {
+    "volume": "518",
+    "issue": "7540",
+    "first_page": "529",
+    "last_page": "533"
+   },
+   "authors": [
+    "Volodymyr Mnih",
+    "Koray Kavukcuoglu",
+    "David Silver",
+    "Andrei A. Rusu",
+    "Joel Veness"
+   ]
+  },
+  "oa_gpt1_search": {
+   "status": 200,
+   "count": 265217,
+   "results": [
+    {
+     "title": "MPNet: Masked and Permuted Pre-training for Language Understanding",
+     "year": 2020,
+     "cited": 857,
+     "doi": "https://doi.org/10.48550/arxiv.2004.09297",
+     "type": "preprint",
+     "venue": "arXiv (Cornell University)",
+     "authors": [
+      "Kaitao Song",
+      "Xu Tan",
+      "Tao Qin",
+      "Jianfeng Lu",
+      "Tie‐Yan Liu"
+     ]
+    },
+    {
+     "title": "ERNIE 2.0: A Continual Pre-Training Framework for Language Understanding",
+     "year": 2020,
+     "cited": 807,
+     "doi": "https://doi.org/10.1609/aaai.v34i05.6428",
+     "type": "conference-paper",
+     "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+     "authors": [
+      "Yu Sun",
+      "Shuohuan Wang",
+      "Yukun Li",
+      "Shikun Feng",
+      "Hao Tian"
+     ]
+    },
+    {
+     "title": "Self-training Improves Pre-training for Natural Language Understanding",
+     "year": 2021,
+     "cited": 159,
+     "doi": "https://doi.org/10.18653/v1/2021.naacl-main.426",
+     "type": "conference-paper",
+     "venue": "Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT)",
+     "authors": [
+      "Jingfei Du",
+      "Édouard Grave",
+      "Beliz Gunel",
+      "Vishrav Chaudhary",
+      "Onur Çelebi"
+     ]
+    },
+    {
+     "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+     "year": 2018,
+     "cited": 76539,
+     "doi": "https://doi.org/10.48550/arxiv.1810.04805",
+     "type": "preprint",
+     "venue": "arXiv (Cornell University)",
+     "authors": [
+      "Jacob Devlin",
+      "Ming-Wei Chang",
+      "Kenton Lee",
+      "Kristina Toutanova"
+     ]
+    },
+    {
+     "title": "Unified Language Model Pre-training for Natural Language Understanding and Generation",
+     "year": 2019,
+     "cited": 1288,
+     "doi": "https://doi.org/10.48550/arxiv.1905.03197",
+     "type": "preprint",
+     "venue": "arXiv (Cornell University)",
+     "authors": [
+      "Li Dong",
+      "Nan Yang",
+      "Wenhui Wang",
+      "Furu Wei",
+      "Xiaodong Liu"
+     ]
+    }
+   ]
+  },
+  "oa_gpt2_search": {
+   "status": 200,
+   "count": 31599,
+   "results": [
+    {
+     "title": "Instruction Pre-Training: Language Models are Supervised Multitask Learners",
+     "year": 2024,
+     "cited": 69,
+     "doi": "https://doi.org/10.18653/v1/2024.emnlp-main.148",
+     "type": "conference-paper",
+     "venue": "Conference on Empirical Methods in Natural Language Processing (EMNLP)",
+     "authors": [
+      "Daixuan Cheng",
+      "Yuxian Gu",
+      "Shaohan Huang",
+      "Junyu Bi",
+      "Minlie Huang"
+     ]
+    },
+    {
+     "title": "Finetuned Language Models Are Zero-Shot Learners",
+     "year": 2021,
+     "cited": 3459,
+     "doi": "https://doi.org/10.48550/arxiv.2109.01652",
+     "type": "preprint",
+     "venue": "arXiv (Cornell University)",
+     "authors": [
+      "Jason Wei",
+      "Maarten Bosma",
+      "Vincent Y. Zhao",
+      "Kelvin Guu",
+      "Adams Wei Yu"
+     ]
+    },
+    {
+     "title": "Group Diffusion Transformers are Unsupervised Multitask Learners",
+     "year": 2024,
+     "cited": 14,
+     "doi": "https://doi.org/10.48550/arxiv.2410.15027",
+     "type": "preprint",
+     "venue": "arXiv (Cornell University)",
+     "authors": [
+      "Lianghua Huang",
+      "Wei Wang",
+      "Zhi-Fan Wu",
+      "Huanzhang Dou",
+      "Shi, Yupeng"
+     ]
+    },
+    {
+     "title": "Measuring Massive Multitask Language Understanding",
+     "year": 2020,
+     "cited": 5319,
+     "doi": "https://doi.org/10.48550/arxiv.2009.03300",
+     "type": "preprint",
+     "venue": "arXiv (Cornell University)",
+     "authors": [
+      "Dan Hendrycks",
+      "Collin Burns",
+      "Steven Basart",
+      "Andy Zou",
+      "Mantas Mazeika"
+     ]
+    },
+    {
+     "title": "ProtGPT2 is a deep unsupervised language model for protein design",
+     "year": 2022,
+     "cited": 870,
+     "doi": "https://doi.org/10.1038/s41467-022-32007-7",
+     "type": "article",
+     "venue": "Nature Communications",
+     "authors": [
+      "Noelia Ferruz",
+      "Steffen Schmidt",
+      "Birte Höcker"
+     ]
+    }
+   ]
+  },
+  "cr_dqn": {
+   "status": 200,
+   "title": [
+    "Human-level control through deep reinforcement learning"
+   ],
+   "container": [
+    "Nature"
+   ],
+   "page": "529-533",
+   "volume": "518",
+   "issued": {
+    "date-parts": [
+     [
+      2015,
+      2,
+      25
+     ]
+    ]
+   }
+  },
+  "cr_dyna1991": {
+   "status": 200,
+   "title": [
+    "Dyna, an integrated architecture for learning, planning, and reacting"
+   ],
+   "container": [
+    "ACM SIGART Bulletin"
+   ],
+   "page": "160-163",
+   "volume": "2",
+   "issued": {
+    "date-parts": [
+     [
+      1991,
+      7
+     ]
+    ]
+   }
+  }
+ }
+}

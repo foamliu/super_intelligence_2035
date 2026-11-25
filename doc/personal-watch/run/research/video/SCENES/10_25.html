@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-25 · AI 能不能自己改自己的脚手架</title>
+<style>
+  :root { --primary:#1f3a93; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#1f3a93 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(31,58,147,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#1f3a93; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#1f3a93; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef3fb; color:#1f3a93; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#1f3a93; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-25</h1>
+  <div class="sub">今日 TOP-1：<b>AI 能不能自己改自己的「脚手架」</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>360 字</b></div>
+  <div class="meta">
+    <span>📄 Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</span>
+    <span>🆔 arXiv:2610.30499</span>
+    <span>🏷 cs.AI（+cs.SE）· 科普口径</span>
+    <span>👥 Jens Lehmann, Sahar Vahdati</span>
+  </div>
+  <div class="disc">⚠️ 本片为<b>论文解读</b>：口播与字幕只使用论文正文与表格可支撑的内容；「8.42 / 2.80 / 3.99」等为<b>作者自报、本线未复现、未精读</b>；画面<b>全部自绘 / 自生成</b>，不使用论文原图与图表。另：《两分钟论文》是已有知名频道名，本栏目名<b>发布前请用户确认</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它当今日 TOP-1（科普口径 · 目的 2）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>钩子直击最大众化的想象</b>：「AI 能不能自己改自己？」不是哲学讨论 —— 这篇做了<b>可复现的对照实验</b>：27 条独立 lineage、统一编码引导、<b>5 个开发游戏</b>、<b>20 个从不参与改写的留出游戏</b>、81 个冻结快照、2,025 次游戏评测。</li>
+    <li><b>结论能落成一句人话</b>：「它确实会改，但改完不一定更好 —— 开发集平均涨 <b>8.42</b> 分，留出集只涨 <b>2.80</b> 分，而且 95% 区间 <b>[−1.44, 7.35]</b> 跨过零。」</li>
+    <li><b>画面自带戏剧性</b>：ARC-AGI-3 是「陌生小游戏里自己摸索规则」的交互环境，探索 / 失败 / 重试天然有画面；再配<b>开发集 vs 留出集</b>双柱图与<b>逐游戏涨跌</b>散点（最大 +20.44、最大 −15.03），两分钟的结构就齐了。</li>
+    <li><b>还自带一个诚实的转折</b>：同一份冻结 harness 重复评测 10 次，样本标准差就有 <b>3.99 分</b> —— 「涨了 3 分」可能只是噪声。适合做片中的「等一下」。</li>
+    <li><b>边界清楚（片中说）</b>：单一基准 · 只允许<b>两轮</b>改写（更长的自我改进循环未测）· 留出集只有 20 个游戏 · 成本是<b>美元计价的推理开销</b>、随供应商价格变化 · 人类主导系统在公开游戏上已接近满分，但作者明说流程不同、<b>不可直接比</b>。</li>
+  </ul>
+</div>
+
+<h2 class="sec">📄 论文信息（照抄 arXiv 条目 · 不臆测）</h2>
+<div class="card">
+  <div class="row"><div class="k">英文原题</div><div class="v"><span class="orig">Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</span></div></div>
+  <div class="row"><div class="k">作者 / 机构</div><div class="v">Jens Lehmann, Sahar Vahdati（<b>2 位署名</b>；机构据 PDF 首页：<b>Amazon</b> / <b>TU Dresden</b> / <b>Universität Hannover</b> / <b>TIB</b>；片中<b>不念机构</b>）</div></div>
+  <div class="row"><div class="k">首次提交</div><div class="v"><b>2026-10-21T22:29:47Z</b>（<code>published</code>，来自 <code>id_list</code> 官方 Atom；<code>updated</code> 相同 ⇒ 无 v2）· <code>comment</code>：<b>25 pages, 5 figures</b>，含附录与代码/数据补充包</div></div>
+  <div class="row"><div class="k">分类</div><div class="v"><code>cs.AI</code>（主分类）+ <code>cs.SE</code> · 关键词：agent harness / 自我改进 / ARC-AGI-3 / 留出集 / 评测噪声 / 推理成本</div></div>
+  <div class="row"><div class="k">链接</div><div class="v"><code>https://arxiv.org/abs/2610.30499</code>（放视频简介；本页不嵌外链资源）</div></div>
+  <div class="row"><div class="k">选片来源</div><div class="v">2026-10-25 晚报 2 篇「科普」中的第 1 篇（日报 5/5 中的序号 4）· 公告批次 <code>2026-10-22</code>（<b>周日未刷新</b>）· 经 <code>id_list</code> 二次权威复核（<code>raw/2026-10-25-pm-idlist-r112a.xml</code>）</div></div>
+</div>
+
+<h2 class="sec">🎞 五段分镜（0–10 / 10–30 / 30–80 / 80–105 / 105–120s）</h2>
+<table>
+  <tr><th style="width:44px">镜</th><th style="width:96px">时间</th><th style="width:88px">段落</th><th style="width:34%">口播（中文 · 约 200 字/分）</th><th>画面（一律自绘 / AI 生成）</th><th style="width:18%">字幕（屏上大字）</th><th style="width:16%">音效 / BGM</th></tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">AI 能不能自己改自己的软件？这篇让模型自己写、自己改两轮，再把它丢进从没见过的小游戏里考。</td>
+    <td>黑屏起一束灯：中间一个<b>方框</b>（标「模型」），外面套一层<b>半透明外壳</b>（标「harness」）。一只手伸进来，把外壳<b>撕下、重写、再扣回去</b>；扣回的瞬间，方框被推进一个<b>像素小游戏窗口</b>，角色立刻撞墙。末尾压暗，浮两行白字：「<b>27 条 lineage · 2,025 次评测</b>」。</td>
+    <td>AI 能自己改自己吗<br><b>27 条 lineage</b><br>（小字：作者自报 · 未复现）</td>
+    <td>撕纸「唰」；扣回「咔」；撞墙「咚」；压暗低频「嗡」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–30s（20s）</td>
+    <td class="act">问题</td>
+    <td class="vo">先说 harness：它不是模型本身，而是包在模型外面的那层软件 —— 怎么观察屏幕、怎么记住上一关、什么时候调工具、失败了怎么重试、一次想多久。同一个模型，换一层 harness，表现可以差很远 —— 屏幕、记忆、工具，都归它管。</td>
+    <td>把镜 1 的<b>外壳</b>放大成剖面图，里面依次亮起<b>五个抽屉</b>：<b>看</b>（屏幕）／<b>记</b>（记忆）／<b>调</b>（工具）／<b>重试</b>（失败恢复）／<b>想多久</b>（预算）。随后画面一分为二：<b>同一个方框</b>，左边外壳简陋（角色原地打转），右边外壳精细（角色一路通关），中间标「<b>同模型 · 不同 harness</b>」。</td>
+    <td>harness = 模型外面的软件<br><b>看 / 记 / 调 / 重试 / 预算</b><br>（小字：同一个模型，表现可以差很远）</td>
+    <td>抽屉依次「嗒」×5；左右分屏「唰」；通关「叮」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>30–80s（50s）</td>
+    <td class="act">方法</td>
+    <td class="vo">研究者在 ARC-AGI-3 上做对照：这是些从没见过的小游戏，规则要自己摸索。每个模型从同一套最小代码出发，自己写 harness，在五个开发游戏上玩，再把整个代码库改写两轮。每一版都冻住，拿到二十个从不参与改写的留出游戏上测。分数叫 RHAE，把过关和步数折算成相对人类的比例，同时记账花了多少美元。</td>
+    <td>俯视一张<b>实验台</b>：左「<b>开发区 · 5 个游戏</b>」（彩色小方块），右「<b>留出区 · 20 个游戏</b>」（灰蓝色小方块，外面一圈<b>锁链</b>）。中间一条<b>传送带</b>：最小代码仓库 → 写 harness → 在开发区试玩 → <b>冻结快照</b>（落进带编号的冰格 81 格）。传送带转两圈（标 <b>Revision 1 / Revision 2</b>），每圈结束都把冰格里的快照<b>送过锁链</b>去留出区评测，锁链上标「<b>只读 · 不回传</b>」。右下角小仪表：<b>RHAE</b>（过关 + 步数效率 → 相对人类比例）与一枚<b>美元计数器</b>同步跳动。</td>
+    <td>5 个开发 · 20 个留出<br><b>改两轮 · 每版都冻结</b><br>（小字：留出集从不参与改写）</td>
+    <td>传送带「咔嗒咔嗒」；冻结「叮」×2；锁链「哗啦」；美元计数「嘀嘀」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>80–105s（25s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果：开发集平均涨八点四二分，留出集只涨二点八零分，区间从负一点四四到七点三五，跨过零。同一份 harness 重测十次，标准差就有三点九九分；二十个留出游戏里，十三个涨、七个跌。</td>
+    <td>左侧<b>两根大柱</b>：<b>开发集 +8.42</b>（绿）／<b>留出集 +2.80</b>（蓝），留出柱上挂一条<b>灰色误差棒</b>，左端越过零线，标「<b>[−1.44, 7.35]</b>」。右侧切到<b>20 个点</b>的涨跌散点：13 个在零线上（最大 <b>+20.44</b>），7 个在零线下（最大 <b>−15.03</b>）。右下角一张小卡：<b>同一 harness 重测 10 次 → 标准差 3.99</b>，旁边一根轻微抖动的尺子。</td>
+    <td>开发 +8.42 ｜ 留出 +2.80<br><b>区间跨零</b><br>（小字：噪声 SD 3.99 · 作者自报）</td>
+    <td>柱落「嗒·嗒」；误差棒拉过零线「咻」；散点「嗒嗒嗒」；尺子抖「嗡」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">所以它会改，但自己觉得变强，不等于真的变强 —— 二十七个团队里，只有九个既更好又更便宜。论文解读，非官方结论；数字作者自报，未复现。</td>
+    <td>镜头拉回镜 1 的<b>外壳</b>：这次外壳上多了一行小字「<b>开发集：+8.42</b>」，而外壳<b>投在墙上的影子</b>写着「<b>留出集：+2.80</b>」。画面下方浮三行边界小字：「<b>单一基准 · 只改两轮 · 留出集 20 个游戏</b>」「<b>成本为美元计价，随价格变化</b>」「<b>作者自报 · 未见复现</b>」。末尾淡出，浮出<b>英文原题</b>与 <b>arXiv:2610.30499</b>。</td>
+    <td>会改 ≠ 变强<br><b>开发 +8.42 ｜ 留出 +2.80</b><br>（小字：作者自报 · 未复现）</td>
+    <td>影子浮现「咚」；三行小字「嗒·嗒·嗒」；BGM 收尾。</td>
+  </tr>
+</table>
+
+<div class="ok-box">
+  <b>口播合计</b>：随 5 镜分配 = <b>39 + 79 + 116 + 71 + 55 = 360 个汉字</b>（含数字与英文缩写后约 <b>471 字符</b>；按 200 字/分 ≈ <b>108 秒</b>，留 12s 给片头片尾呼吸，正落在 120s 档）。<b>五段配比（固定）</b>：钩子 <b>0–10s</b> ｜ 问题 <b>10–30s</b> ｜ 方法 <b>30–80s</b> ｜ 结果 <b>80–105s</b> ｜ 意义/展望 <b>105–120s</b>（合计 = <b>120s</b>）。若不配音，也可作为<b>图文版长图</b>逐镜使用。
+  <br><b>若实测超时</b>：优先精压镜 3 的「怎么观察屏幕、怎么记住上一关、什么时候调工具」列举（可只说「看、记、调工具、重试、预算」五个词），其次把镜 4 的区间读数改成屏上小字、口播只说「区间跨过零」。
+  <br><b>若实测偏短</b>：镜 3 可加半句「同一个模型，换一层外壳，分数可以从零到接近满分」（约 25 字），仍不超 120s。
+</div>
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（模型方框 + 可撕换外壳 / 五抽屉剖面 + 同模型左右对比 / 实验台传送带 + 冰格快照 + 锁链留出区 / 双柱 + 跨零误差棒 + 20 点散点 + 抖动尺子 / 外壳与墙上的影子）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图 / 图注 / 表格 / 实验界面截图（论文 5 幅图，本线<b>未核</b>其授权与可复用性，片中<b>不作声称</b>）。</li>
+    <li><b>风格建议</b>：深蓝主色（<code>#1f3a93</code> → <code>#1f6feb</code>）+ 冷灰底；<b>开发集统一用绿色</b>、<b>留出集统一用蓝灰</b>，全片不改色义（观众靠颜色就能跟上「自己考的」和「没见过的」）。核心数字（<b>8.42 / 2.80 / 3.99 / 27 / 20</b>）一律置于画面<b>中央安全区</b>，便于竖屏二次裁剪。</li>
+    <li><b>配音</b>：中文普通话，语速 195–200 字/分；「<b>只涨</b>」「<b>跨过零</b>」「<b>不等于真的变强</b>」三处<b>放慢并加重</b>；镜 4 的区间读数（负一点四四到七点三五）<b>平稳念完</b>，不要念成悬念。</li>
+    <li><b>字幕</b>：镜 4 的全部数字配小字「<b>作者自报 · 未复现</b>」；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行，照抄不改写）</b>。</li>
+    <li><b>术语友好化</b>：<b>harness</b> → 首次说「包在模型外面的那层软件」，屏上保留 <code>harness</code>；<b>RHAE</b> → 「相对人类的行动效率：过关 + 步数折算」，片中<b>不展开公式</b>；<b>lineage</b> → 「独立实验线」；<b>held-out</b> → 「留出集 —— 从不参与改写」；<b>其它实现细节</b> → 全片<b>不出现</b>。</li>
+    <li><b>节奏</b>：镜 1 的「撕外壳 → 扣回 → 撞墙」要在 <b>4 秒内</b>完成，反差靠画面不靠解说；镜 3 是全片信息密度最高处，<b>每讲一件事就换一次画面</b>（传送带 → 冰格 → 锁链 → RHAE 表 → 美元计数），避免一张图讲 40 秒。</li>
+    <li><b>可选加料（不进 120s 主片）</b>：① <b>成本四象限</b>「27 条里 9 条更好更便宜 / 6 条更好更贵 / 9 条更便宜但更差 / 3 条双输」可做 6s 竖屏切片；②「平均每局省 $2.72，中位数只省 $0.54」可做第二集钩子（<b>平均数被少数大赢家拉高</b>）。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给出 <b>arXiv abs 地址</b>（页内以代码文本呈现，不嵌外链资源）+ <b>英文原题</b>照抄不改写（<i>Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</i>）。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「AI 已经能递归自我进化 / 智能爆炸已开始 / 模型会自己写所有软件 / 人类工程师要失业」；「+8.42」「+2.80」「3.99」严格照论文措辞，并<b>显式标注作者自报</b>。</li>
+    <li>✅ <b>指标不曲解（本片最关键）</b>：<b>RHAE</b> 是「<b>关卡完成 + 相对人类基线的行动效率</b>」，<b>不是</b>「通关率」也不是「正确率」；<b>留出集 +2.80 且 95% 区间跨零</b> 指「<b>在本实验的两轮改写与 20 个留出游戏上，无法排除「没有提升」</b>」，<b>不是</b>「harness 自我改进完全无效」；<b>3.99</b> 是「<b>同一份冻结 harness 重复评测 10 次</b>」的样本标准差，<b>不是</b>模型间差异、也不是留出集分数的标准差。片中须逐条说清。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成；🚫 不用论文图、不用 ARC-AGI-3 界面截图（若要用游戏画面，须<b>自行录屏自制</b>或使用<b>明确许可</b>的素材，并在片尾标注）。</li>
+    <li>✅ <b>不编造数据</b>：仅使用论文可支撑的表述 —— 「9 种模型×推理强度条件」「27 条 lineage」「81 个冻结快照」「2,025 次游戏评测」「5 个开发游戏 / 20 个留出游戏」「两轮改写」「开发集 +8.42」「留出集 +2.80，95% 区间 [−1.44, 7.35]」「适应差 5.62，区间 [1.78, 9.77]」「重复评测 SD 3.99」「13 涨 / 7 跌，最大 +20.44 / −15.03」「成本四象限 9/6/9/3」「平均省 $2.72 / 中位省 $0.54」；<b>不虚构</b>模型版本细节、运行时长、作者动机。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「AI 自我进化已实现 / 模型已经会改自己代码并变强」等原文未支持的引申；镜 5 明确边界（单一基准 / 两轮 / 20 个留出游戏 / 成本随价格变化 / 未见复现）。</li>
+    <li>✅ <b>署名如实</b>：作者照抄 arXiv 条目（<b>2 位署名</b>：Jens Lehmann, Sahar Vahdati）；机构仅写在页面信息栏（据 PDF 首页），<b>片中不念</b>，不臆测分工。</li>
+    <li>✅ <b>预印本状态如实标注</b>：镜 5 有「<b>作者自报 · 未见复现</b>」小字；<code>comment</code> 只写「25 pages, 5 figures」，<b>不声称</b>已被会议/期刊接收，<b>不声称</b>代码与数据已开源（补充包存在不等于开源许可）。</li>
+    <li>✅ <b>不混用口径</b>：本片按目的 2「<b>科普</b>」口径挑选与制作（大众看得懂 + 传播力），<b>不</b>与目的 1「借鉴」（与 BaiZe / ZhuLong 的相关性）混用。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-25</b> ｜ 文件 <code>research/video/SCENES/10_25.html</code> ｜ 当日 TOP-1（5 篇中的第 4 篇）</div>
+  <div>论文：<i>Can LLMs Improve Their Own Harness? A Controlled Study on ARC-AGI-3</i>（Jens Lehmann, Sahar Vahdati）｜ arXiv:2610.30499 ｜ 首次提交 2026-10-21 ｜ 分类 <code>cs.AI</code>（+<code>cs.SE</code>）｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 5 批（P0 · 18:00 时窗）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图；<b>不夸大、不编造数据</b>。本页为<b>自包含单文件</b>（内联 CSS，无脚本、无外链资源）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-25.html">research/daily/2026-10-25.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a> ｜ 上一篇：<a href="10_24.html">10_24.html</a></div>
+</footer>
+</div>
+</body>
+</html>

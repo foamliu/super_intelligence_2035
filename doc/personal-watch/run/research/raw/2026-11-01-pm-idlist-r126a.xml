@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/BMx/JCh09ioS4XBwyt7odcL9FIE</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.37796,2610.40588,2610.40640,2610.38109&amp;start=0&amp;max_results=4</title>
+  <updated>2026-11-01T10:01:15Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=4&amp;id_list=2610.37796,2610.40588,2610.40640,2610.38109" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>4</opensearch:itemsPerPage>
+  <opensearch:totalResults>4</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.37796v1</id>
+    <title>Spokes, not a Ring: Revisiting the Weekday Manifold in Language Models</title>
+    <updated>2026-10-27T18:15:59Z</updated>
+    <link href="https://arxiv.org/abs/2610.37796v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.37796v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recent work has hypothesised that large language models may represent some concepts as multi-dimensional manifolds instead of single directions. Using these manifolds to interpret or steer representations often assumes that moving along them corresponds to a continuous change in the represented concept. In this work, we test this continuous manifold assumption on the prototypical weekday manifold. Despite its striking circular geometry, we find that the weekday representations behave more like seven discrete states arranged in a circle than a continuous ring. First, we show that local sensitivity has seven minima aligned with the weekdays, producing a step-like mapping between representation and behaviour under on-manifold steering. Second, we test whether any concepts are represented along the manifold outside the seven discrete states, and find neither time of day, uncertainty, nor natural text populate the intermediate space. Together, these results challenge the continuous interpretation of the weekday manifold and motivate testing whether movement along other representation manifolds correspond to meaningful changes in model representations and behaviour.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-27T18:15:59Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Diksha Gupta</name>
+    </author>
+    <author>
+      <name>Rieke Fruengel</name>
+    </author>
+    <author>
+      <name>Stefan Heimersheim</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40588v1</id>
+    <title>Pre-Crime for Agents, at the Last Second: Probing When a Recruited Agent Gives In</title>
+    <updated>2026-10-29T17:47:40Z</updated>
+    <link href="https://arxiv.org/abs/2610.40588v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40588v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>When AI agents share channels and credentials, one agent can press another to break its operator's rule, a first step towards collusion. Output filters check only what an agent has already written. Can an overseer tell beforehand that an agent is about to give in? We show that a linear probe on the agent's activations can, in a controlled multi-agent setting. Across six scenarios, a peer presses a target for up to 20 rounds to reveal a secret, such as a deploy token; the target often refuses, then gives in. Read at each model call before its output is written, the probe picks out the one that leaks. On held-out Qwen3-32B episodes, at a threshold set to flag 5% of benign calls, it catches 82% of leaking calls. At a similar flag rate, a zero-shot decision-model monitor catches 26%. On gpt-oss-20b, a probe on its reasoning reaches AUROC 0.91. A bag-of-words classifier trained on the same calls comes close, so most of the gain comes from training on labels, not activations. The probe also flags permitted disclosures: it reads the coming disclosure more than the violation. The warning is short-range, and halting on any alarm would stop most benign episodes, which a second text check does not fix. A warning raised before generation could let an overseer stop an agent that is about to give in, ahead of others acting on its messages or recruitment spreading through a swarm.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T17:47:40Z</published>
+    <arxiv:comment>49 pages, 11 figures. Code: https://github.com/leonidas1712/precrime-agents</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Leonidas Raghav</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.38109v1</id>
+    <title>Who Called? V33DA: A Physically Verified Multimodal Benchmark for Vocal Attribution in Zebra Finch Groups</title>
+    <updated>2026-10-28T00:46:34Z</updated>
+    <link href="https://arxiv.org/abs/2610.38109v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.38109v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Deciding which member of an animal group produced a vocalization and where that vocalization was produced are central to studying social communication but are rarely evaluated with physically verified ground truth. Existing resources either localize sounds without identifying the caller, or recognize individuals from isolated vocalizations without reliance on the 3D candidate geometry. We close this gap with V33DA, a dataset-centered multimodal benchmark for spatial vocal attribution in social zebra finches: it comprises 33,625 verified events coupling 5-channel audio with three camera views, calibrated 3D pose for every visible candidate, and per-bird radio telemetry across 10 individuals and three experiments. Caller identity is verified from an on-body accelerometer-derived vibration signal; this channel is withheld from benchmark models and used only by an on-body reference ceiling. Given a detected vocalization and the visible candidate birds, the task is to select the caller. We evaluate it under three regimes: session-disjoint testing on familiar birds from held-out recording dates, held-out-experiment transfer to a new cohort, and leave-one-individual-out evaluation on a bird whose vocalizations are held out from training. Reference methods expose a consistent gap between in-domain accuracy and transfer to unseen individuals: methods that can exploit familiar vocal identity perform well on known callers but degrade sharply on unseen ones, whereas candidate-aware methods preserving explicit spatial reasoning transfer substantially better. The on-body reference stays near-perfect across regimes, confirming the internal consistency of the accelerometer-verified labels. We release V33DA with fixed protocols and code for the evaluated methods, and V33DA++, an unevaluated companion set of verified overlapping-call events and +/-2 s context windows.</summary>
+    <category term="cs.SD" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="q-bio.QM" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-28T00:46:34Z</published>
+    <arxiv:comment>Accepted at NeurIPS 2026 (Evaluations and Datasets Track). 43 pages, 3 figures. Dataset: https://huggingface.co/datasets/songbirdini/v33da ; Code: https://github.com/marisbasha/v33da</arxiv:comment>
+    <arxiv:primary_category term="cs.SD"/>
+    <author>
+      <name>Maris Basha</name>
+    </author>
+    <author>
+      <name>Yuhang Wang</name>
+    </author>
+    <author>
+      <name>Xiaoran Chen</name>
+    </author>
+    <author>
+      <name>Longbiao Cheng</name>
+    </author>
+    <author>
+      <name>Luca Yapura</name>
+    </author>
+    <author>
+      <name>Anja T. Zai</name>
+    </author>
+    <author>
+      <name>Mathieu Salzmann</name>
+    </author>
+    <author>
+      <name>Richard Hahnloser</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40640v1</id>
+    <title>SonoWorld4D: From One Video to a 4D Audio-Visual Scene via Diffusion Synchronization</title>
+    <updated>2026-10-29T17:58:45Z</updated>
+    <link href="https://arxiv.org/abs/2610.40640v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40640v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recent progress in visual scene generation has extended beyond static 3D scenes toward the more challenging problem of generating dynamic 4D scenes from minimal input. However, sound, despite being intrinsically coupled with dynamic objects and events, remains largely unmodeled in prior work. We introduce Video-to-4DAVScene, a new task that turns a video into an explorable, time-varying 4D audio-visual scene, and present the SonoWorld4D framework for this task. Given a monocular video, our method generates a 360 static background, reconstructs explicit motion trajectories of dynamic, sound-emitting foreground objects, and synthesizes a physically-grounded sound field consistent across multiple sources through dual-space audio diffusion synchronization. The resulting 4D scene supports real-time novel-view visual and spatial audio rendering. Evaluation on real-world dynamic scenes and a user study demonstrates SonoWorld4D generates 4D audio-visual scenes with perceptually realistic, physically grounded spatial audio consistent with scene geometry and visual content.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SD" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T17:58:45Z</published>
+    <arxiv:comment>Project Page: https://humathe.github.io/sonoworld4d/</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Derong Jin</name>
+    </author>
+    <author>
+      <name>Xiyi Chen</name>
+    </author>
+    <author>
+      <name>Ming C. Lin</name>
+    </author>
+    <author>
+      <name>Ruohan Gao</name>
+    </author>
+  </entry>
+</feed>

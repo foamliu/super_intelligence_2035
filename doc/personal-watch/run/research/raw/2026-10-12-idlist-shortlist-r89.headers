@@ -1,0 +1,15 @@
+HTTP/2 200 
+server: Google Frontend
+via: 1.1 google, 1.1 varnish, 1.1 varnish, 1.1 varnish
+x-cloud-trace-context: d704866f70ba49a2bdd14e9de09f9d86
+content-type: application/atom+xml; charset=utf-8
+accept-ranges: bytes
+age: 0
+date: Mon, 12 Oct 2026 10:02:39 GMT
+x-served-by: cache-lga-kjfk8660020-LGA, cache-lga-kjfk8660020-LGA, cache-lga-kjfk8660036-LGA, cache-nrt-rjaa8190047-NRT
+x-cache: MISS, MISS, MISS
+x-cache-hits: 0, 0, 0
+x-timer: S1791799360.603292,VS0,VE358
+strict-transport-security: max-age=300
+content-length: 11968
+

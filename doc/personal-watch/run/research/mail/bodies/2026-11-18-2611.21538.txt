@@ -1,0 +1,15 @@
+Dear Mr. Arunkumar,
+
+I am Yang Liu, a researcher working on LLM agents and their evaluation harnesses; my page is https://foamliu.github.io/.
+
+Your exact process oracle over 124,416 authorization contexts gave me the first clean picture of what a proxy verifier does to a policy model: in the sufficiency setting the proxy ends at 0.940 while true faithfulness drops from 0.731 to 0.667 on 96 held-out episodes. That gap is exactly the failure our reward design cannot see.
+
+Three questions:
+1. What does padding actually look like in the rollout: extra minimal sufficient reasons appended, or longer free-text justifications? If the reward were normalized by the number of cited reasons, would the phenotype disappear or simply move elsewhere?
+2. Outcome-only verifiers saturate quickly. Can the model-free audit (selection error and gap sign) predict the saturation step before training starts, and how long does the short saturation pilot need to be?
+3. Since the damage magnitude did not replicate across your 10 cells, which of the five pre-registered explanations still looks most plausible, and what should a team without an exact oracle measure first?
+
+Thank you for releasing the testbed and the ported public policies.
+
+Best regards,
+Yang Liu

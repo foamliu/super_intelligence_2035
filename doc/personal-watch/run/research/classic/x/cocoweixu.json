@@ -1,0 +1,57 @@
+{
+ "handle": "cocoweixu",
+ "name": "Wei Xu (@cocoweixu) / X",
+ "bio": "CS professor @GeorgiaTech @gtcomputing @ICatGT @mlatgt. Evaluating &amp; Improving LLMs (multilingual, reasoning, RL, multi-turn, privacy/safety, etc.)",
+ "tweets": [
+  {
+   "id": "2115400321203880059",
+   "created_at": "2026-10-28 11:08 UTC",
+   "created_at_ms": 1793185713000,
+   "text": "Tutorial at EMNLP today at 2pm. Looking forward to seeing everyone!\\\n\\\n#emnlp2026",
+   "url": "https://x.com/cocoweixu/status/2115400321203880059",
+   "handle_guess": "cocoweixu"
+  },
+  {
+   "id": "2114794206216544730",
+   "created_at": "2026-10-26 19:00 UTC",
+   "created_at_ms": 1793041204000,
+   "text": "Best food list #EMNLP2026 - \\\n\\\nGosh, Hungarian restaurant, with live music 🎻🎵\\\n\\\nbeef cheek stew 🥘🐮 https://t.co/a04kJrZ7Ha",
+   "url": "https://x.com/cocoweixu/status/2114794206216544730",
+   "handle_guess": "cocoweixu"
+  },
+  {
+   "id": "2113704616625934338",
+   "created_at": "2026-10-23 18:50 UTC",
+   "created_at_ms": 1792781425000,
+   "text": "🎉 Excited to share that our team will present 4 papers + 1 tutorial in-person at #EMNLP2026 in Budapest! 🇭🇺\\\n\\\n📚 GAVEL: Evaluating long-context and agentic LLMs\\\n🌏 Camellia: Cultural biases in Asian languages\\\n🤝 Harm Amplification: Risks in LLM interactions\\\n🗣️ VakyArth: Pragmatic https://t.co/ozgZrJntC2",
+   "url": "https://x.com/cocoweixu/status/2113704616625934338",
+   "handle_guess": "cocoweixu"
+  },
+  {
+   "id": "2108962306864624068",
+   "created_at": "2026-10-10 16:46 UTC",
+   "created_at_ms": 1791650771000,
+   "text": "Who's coming to Atlanta for NeurIPS this year? 👋",
+   "url": "https://x.com/cocoweixu/status/2108962306864624068",
+   "handle_guess": "cocoweixu"
+  },
+  {
+   "id": "2102038228106715255",
+   "created_at": "2026-09-21 14:12 UTC",
+   "created_at_ms": 1789999942000,
+   "text": "Slated to give a tutorial on “Multilingual and Multicultural LLMs” 🌍 at EMNLP 2026 with @davlanade @vinodkpg @sarahookr @alan_ritter.\\\n\\\nSee you in beautiful Budapest — looking forward to connecting with everyone! 👋\\\n\\\n#emnlp https://t.co/82FITAFtBx",
+   "url": "https://x.com/cocoweixu/status/2102038228106715255",
+   "handle_guess": "cocoweixu"
+  },
+  {
+   "id": "2089386438848622768",
+   "created_at": "2026-08-17 16:18 UTC",
+   "created_at_ms": 1786983520000,
+   "text": "Updated CS 8803 \\",
+   "url": "https://x.com/cocoweixu/status/2089386438848622768",
+   "handle_guess": "cocoweixu"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-15 00:02:27"
+}

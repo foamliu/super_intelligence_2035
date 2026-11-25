@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/L00TqMghdNjh1LO5kBEiZX22t4M</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.29013,2610.30132,2610.30105,2610.28834,2610.29276,2610.30042,2610.29426&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-23T22:09:49Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.29013,2610.30132,2610.30105,2610.28834,2610.29276,2610.30042,2610.29426" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>7</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.29276v1</id>
+    <title>Design and Tuning of Multi-Agent Systems Using Bayesian Evolutionary Optimization</title>
+    <updated>2026-10-21T06:31:27Z</updated>
+    <link href="https://arxiv.org/abs/2610.29276v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.29276v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Designing effective multi-agent systems (MAS) remains a challenging and resource-intensive task. We propose a Bayesian Evolutionary Optimization framework for automatically discovering task-specific MAS topologies. The approach combines evolutionary operators to generate diverse workflow graphs with Bayesian optimization to focus cost intensive evaluations on promising candidates. In contrast to LLM-based candidate selection, our approach uses a graph-aware Gaussian Process and Expected Improvement to provide an explicit selection criterion during evolutionary search. We evaluate the method on BigCodeBench for code generation and on a tabular preprocessing benchmark using TabPFN. On BigCodeBench, evolved architectures achieve the highest overall performance among the evaluated agent systems. On temporal tabular datasets, optimized MAS preprocessing improves over the default TabPFN model on several tasks, while remaining competitive on IID datasets. Overall, the results demonstrate the potential of Bayesian selection for guiding evolutionary MAS search under expensive evaluation budgets.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.MA" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T06:31:27Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Dominik Jehle</name>
+    </author>
+    <author>
+      <name>Tom Zehle</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30132v1</id>
+    <title>LongZero: Enhancing Long-Context Reasoning in LLMs from Zero Data</title>
+    <updated>2026-10-21T17:59:14Z</updated>
+    <link href="https://arxiv.org/abs/2610.30132v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30132v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reinforcement learning (RL) is an effective way to strengthen the long-context reasoning of large language models (LLMs), but it needs training data that are long, diverse, challenging, and verifiable. Human annotation of such data is expensive, naturally occurring data are too scarce to sustain RL, and existing synthesis methods depend on external corpora or stronger teacher models, which become harder to obtain as the trained models get stronger. Recently, RL from zero data, in which a model learns from tasks it proposes itself, has achieved excellent performance, but existing methods target short-context tasks. Therefore, we propose $\textbf{LongZero}$, a method that lets an LLM improve its own long-context reasoning without any external data. Instead of writing questions and answers over existing documents, LongZero first has the model synthesize the question and answer with its supporting evidence in a compact structured form, and only then separately expands the evidence into a long multi-document context. LongZero combines these self-written multi-hop reasoning tasks with self-written multi-round retrieval tasks and trains the model with GRPO. We evaluate LongZero on two LLMs across five long-context reasoning benchmarks and compare it with RL on data synthesized from external corpora. Experimental results show that LongZero can generalize to real tasks, and outperforms both baselines, suggesting a viable and promising path to improving long-context reasoning of LLMs.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T17:59:14Z</published>
+    <arxiv:comment>Code and data are available at https://github.com/zhennan1/LongZero</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zhennan Wan</name>
+    </author>
+    <author>
+      <name>Jianfei Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30042v1</id>
+    <title>HGM-Dual: Lineage-Aware Guided Agent Harness Optimization for Long-Horizon Planning</title>
+    <updated>2026-10-21T17:02:28Z</updated>
+    <link href="https://arxiv.org/abs/2610.30042v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30042v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Harness optimization, which improves an agent's prompts, tools, and workflows, is an increasingly effective way to enhance agents built on frozen or closed-source LLMs. Leading approaches such as the Darwin--Godel Machine and the Huxley--Godel Machine (HGM) rely on recursive self-improvement and were developed mainly for coding, where the competence needed to improve the agent coincides with the competence being improved. Planning tasks, in which an agent must produce a sequence of tool calls that jointly satisfies interacting constraints, break this alignment. There, open-ended self-modification repeatedly explores ineffective changes and consumes substantial evaluation budgets. We introduce HGM-Dual, a diagnostic-guided framework for budget-efficient harness evolution for planning agents. First, HGM-Dual represents agent evolution as lineage-aware context. This context records what each ancestor changed, which behaviors improved or regressed, and which modifications were ineffective, giving the editor explicit edit-outcome attribution instead of an unstructured archive of past agents. Second, HGM-Dual introduces error-conditioned dual-path child generation. For each selected parent, it generates a general child that preserves open-ended exploration and specialized children that target the harness components most likely responsible for the parent's highest-ranked constraint violations. HGM-Dual outperforms the strongest baseline by up to 14.45% relative improvement in case accuracy while matching HGM variants' final performance with 2x-4x fewer evaluation budget.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.NE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T17:02:28Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Sudipta Paul</name>
+    </author>
+    <author>
+      <name>Pengrui Quan</name>
+    </author>
+    <author>
+      <name>Aounon Kumar</name>
+    </author>
+    <author>
+      <name>Nicholas Tzou</name>
+    </author>
+    <author>
+      <name>Vivek Kulkarni</name>
+    </author>
+    <author>
+      <name>Srinivas Chappidi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.29426v1</id>
+    <title>BIRD-RL: Scaling Agentic Reinforcement Learning over Stateful Data-Centric Environments</title>
+    <updated>2026-10-21T08:50:39Z</updated>
+    <link href="https://arxiv.org/abs/2610.29426v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.29426v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>While agentic reinforcement learning (RL) has emerged as a promising paradigm for training small language models (SLMs), existing frameworks are predominantly tool-centric and struggle with data-centric environments. Specifically, applying tool-centric frameworks to stateful tasks like SQL debugging introduces severe spatial inefficiencies since proper environment isolation typically requires a separate database container per rollout. Naively reusing databases without tracking evolving states across multi-turn interactions causes trajectory contamination and cross-trajectory interference, which severely destabilizes policy updates. To overcome these bottlenecks, we introduce BIRD-RL, a novel four-stage agentic RL curriculum that alternately enhances foundational agent reasoning and trajectory-adaptive on-policy exploration to circumvent the instability inherently associated with direct end-to-end learning. Crucially, to support this curriculum, BIRD-RL is driven by a Trajectory-scoped Persistent Execution Infrastructure, which enables safe database replica reuse while preserving trajectory isolation. This design improves spatial RL efficiency by 12.8x, successfully enabling scalable agentic RL for complex data-centric tasks without needs of Kubernettes. Empirical evaluations on the BIRD-CRITIC-SQLite benchmark demonstrate that our 7B and 14B models achieve Success Rates of 44.40% and 48.00%, respectively, showing competitive performance against strong proprietary model-based agents such as Claude-Opus-4.6 Agent (48.20%). Furthermore, BIRD-RL successfully trains unified SLMs capable of both advanced SQL debugging and generation, highlighting its broader potential for multi-objective optimization across heterogeneous, real-world data-centric tasks.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T08:50:39Z</published>
+    <arxiv:comment>Accepted to NeurIPS 2026 Main Track</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Ge Qu</name>
+    </author>
+    <author>
+      <name>Jinyang Li</name>
+    </author>
+    <author>
+      <name>Xiaohan Xu</name>
+    </author>
+    <author>
+      <name>Xiaolong Li</name>
+    </author>
+    <author>
+      <name>Bowen Qin</name>
+    </author>
+    <author>
+      <name>Nan Huo</name>
+    </author>
+    <author>
+      <name>Ziwei Tang</name>
+    </author>
+    <author>
+      <name>Chenhao Ma</name>
+    </author>
+    <author>
+      <name>Reynold Cheng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.29013v1</id>
+    <title>Target Regeneration Shrinks the Gains of Draft-Training Objectives in Speculative Decoding</title>
+    <updated>2026-10-21T00:26:37Z</updated>
+    <link href="https://arxiv.org/abs/2610.29013v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.29013v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Speculative decoding accelerates large language models by verifying drafted tokens in parallel. New draft-training objectives are usually credited with the acceptance they add over cross-entropy on externally written responses, yet many pipelines let the target rewrite them. We ask how much of that gain survives. With a vision-language target and a block drafter, we train three objectives on four versions of one corpus: cross-entropy on corpus tokens, token-level distillation from the target, and distillation gated to positions that would survive verification. Distillation and the gate add large gains on external responses, but after greedy regeneration, distillation adds a smaller gain and the gate little or none. The shrinkage persists across data orders, position weights, verifiers, decoding temperatures and, for distillation, initializations and learning rates. Most of it remains at matched supervised length and at each objective's best measured training length. A second vision corpus shows the shrinkage, as does a text-only replication, for distillation also with an autoregressive drafter. Objective gains should therefore be measured against a target-regenerated baseline and across training lengths. Our code is available at https://github.com/js-lee-AI/TargetRegeneration.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T00:26:37Z</published>
+    <arxiv:comment>19 pages, 6 figures, 15 tables. Code: https://github.com/js-lee-AI/TargetRegeneration</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jungseob Lee</name>
+    </author>
+    <author>
+      <name>Hogun Seong</name>
+    </author>
+    <author>
+      <name>Euijun Choi</name>
+    </author>
+    <author>
+      <name>Sugyeong Eo</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30105v1</id>
+    <title>Asymmetric On-Policy Distillation Learns In-Context Exploration</title>
+    <updated>2026-10-21T17:50:31Z</updated>
+    <link href="https://arxiv.org/abs/2610.30105v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30105v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Sequential decision-making under partial observability is difficult because agents must explore to infer hidden, task-relevant information before acting effectively. Learning such information-gathering behaviors tabula rasa via online reinforcement learning is sample-inefficient, whereas offline imitation averages expert actions across hidden states and fails to learn exploration. In this work, we propose ASTEROID, a simple and effective student--teacher supervised learning framework that can learn test-time exploration. Although a privileged expert never needs to explore, we demonstrate that a history-conditioned student can learn to do so when trained with on-policy contexts: the student first collects on-policy context under partial observability, and the privileged expert provides action labels conditioned on that context. By distilling expert actions directly conditioned on the student's on-policy history, the student learns to systematically resolve partial observability, i.e., search while uncertain and exploit once the hidden state is revealed. This enables efficient test-time exploration (similar to Bayesian posterior sampling) without incurring the impractical training-data costs of reinforcement learning. Across a diverse range of eleven different environments, including discrete exploration benchmarks, robotic manipulation, navigation, and Procgen environments, ASTEROID achieves ~2x higher returns under fixed exploration budgets, uses ~100x fewer interactions than RL baselines, and outperforms frontier models at exploration. Finally, our method transfers policies trained in simulation to vision-denied real-world robot manipulation, exhibiting efficient exploration and increasing success by +40% over standard distillation. Overall, it provides a simple yet surprisingly effective framework to learn efficient test-time exploration.</summary>
+    <category term="cs.RO" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T17:50:31Z</published>
+    <arxiv:primary_category term="cs.RO"/>
+    <author>
+      <name>Sriyash Poddar</name>
+    </author>
+    <author>
+      <name>Yanda Bao</name>
+    </author>
+    <author>
+      <name>Jacob Krantz</name>
+    </author>
+    <author>
+      <name>Matthew Chang</name>
+    </author>
+    <author>
+      <name>Xavier Puig</name>
+    </author>
+    <author>
+      <name>Roozbeh Mottaghi</name>
+    </author>
+    <author>
+      <name>Natasha Jaques</name>
+    </author>
+    <author>
+      <name>Abhishek Gupta</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.28834v1</id>
+    <title>Where Should a Stuck Agent Spend Its Next Tokens? Causal Attribution of Inference-Time Resources</title>
+    <updated>2026-10-20T18:59:01Z</updated>
+    <link href="https://arxiv.org/abs/2610.28834v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.28834v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Inference-time scaling is often treated as a token-budget problem, but a failed coding agent can seek qualitatively different resources: computation, information, or feedback. We introduce Banzhaf Resource Attribution (BRA), a controlled factorial framework that measures each resource's marginal contribution to repair and its interactions while holding the failed state and revision protocol fixed. We evaluate six models on 194 function-level failures from MBPP+ and HumanEval+ and 126 repository-level failures from SWE-bench Verified. Task-relevant specifications consistently improve repair, whereas public-test feedback provides small gains and retrieved code little to none. The value of additional computation declines with model capability, while information remains useful; resource channels largely exhibit diminishing returns, although complementary information can reinforce itself. Yet three of four frontier models select feedback in 95-100% of cases and obtain lower gains than uniform random resource selection. BRA thus exposes a gap between the resources agents prefer and those that measurably improve repair.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T18:59:01Z</published>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Saiyue Lyu</name>
+    </author>
+    <author>
+      <name>Jerrold Huang</name>
+    </author>
+    <author>
+      <name>Yunbei Zhang</name>
+    </author>
+    <author>
+      <name>Janet Wang</name>
+    </author>
+    <author>
+      <name>Zhenting Wang</name>
+    </author>
+    <author>
+      <name>Yingqiang Ge</name>
+    </author>
+    <author>
+      <name>Haibo Zhang</name>
+    </author>
+  </entry>
+</feed>

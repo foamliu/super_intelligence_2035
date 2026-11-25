@@ -1,0 +1,24 @@
+    attempts=1
+--- ① lastUpdatedDate cs.CL
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL&start=0&max_results=5&sortBy=lastUpdatedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=124868 n_entries=5 0.97s
+    2611.09868v1 2026-11-06T18:48:04Z 2026-11-06T18:48:04Z cs.CL CodeQuant2: Enhanced Outlier Mitigation and Adaptive Clustering for Lo
+    2611.09848v1 2026-11-06T18:31:24Z 2026-11-06T18:31:24Z cs.IT How far does a hash-only sender go? A pre-registered map of sender mem
+    2611.09825v1 2026-11-06T18:13:54Z 2026-11-06T18:13:54Z cs.AI BitDecoding-FP4: Native FP4 KV Cache Decoding via Algorithm-System Co-
+    2611.09807v1 2026-11-06T17:56:37Z 2026-11-06T17:56:37Z cs.CL Compaction, decay and reinforcement in a two-tier conversational memor
+    2611.09803v1 2026-11-06T17:54:01Z 2026-11-06T17:54:01Z cs.AI Maya a1: Do the Options Read the Model, or Does Their Position? Order 
+    attempts=1
+--- ② submittedDate 20261108-20261112 (cs.CL)
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+AND+submittedDate%3A%5B202611090000+TO+202611132359%5D&start=0&max_results=8&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=0 n_entries=0 0.69s
+    attempts=1
+--- ③ submittedDate 20261108-20261112 (全库，不加分类)
+    url=https://export.arxiv.org/api/query?search_query=submittedDate%3A%5B202611090000+TO+202611132359%5D&start=0&max_results=8&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=0 n_entries=0 0.70s
+    attempts=1
+--- ④ 广度 sweep 5 分类
+    url=https://export.arxiv.org/api/query?search_query=cat%3Acs.CL+OR+cat%3Acs.CV+OR+cat%3Acs.SE+OR+cat%3Acs.AI+OR+cat%3Acs.LG&start=0&max_results=3&sortBy=submittedDate&sortOrder=descending
+    status=200 ct=application/atom+xml; charset=utf-8 total=644448 n_entries=3 1.69s
+    2611.09894v1 2026-11-06T18:59:57Z 2026-11-06T18:59:57Z cs.CV Video-Coder: Reinforcing Agentic Coding for Video Generation
+    2611.09892v1 2026-11-06T18:59:34Z 2026-11-06T18:59:34Z cs.RO On Agentic Manipulation Policies
+    2611.09891v1 2026-11-06T18:58:50Z 2026-11-06T18:58:50Z cs.AI CPU-ARC: Agentic Reasoning Caching for on-CPU Reasoning Reuse

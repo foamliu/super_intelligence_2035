@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-16 · 四个 AI 组队，27 小时通关 Minecraft</title>
+<style>
+  :root { --primary:#1d5c3a; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#2e8b57;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#1d5c3a 0%,#2e8b57 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(29,92,58,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#1d5c3a; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#1d5c3a; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#eef6f0; color:#1d5c3a; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#1d5c3a; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#f2fbf5; border:1px solid #bfe6cd; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-16</h1>
+  <div class="sub">今日 TOP-1：<b>四个 AI 组队，27 小时通关 Minecraft</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>≈427 字</b></div>
+  <div class="meta">
+    <span>📄 A team of Gemini 4 Argon agents beats Minecraft</span>
+    <span>🆔 arXiv:2610.22319</span>
+    <span>👥 Maxence Faldor, Satinder Singh, Roberta Raileanu</span>
+    <span>🗓 提交 2026-10-15 ｜ cs.AI</span>
+    <span>🏷 标签：科普（多智能体 · 长时程任务 · 自主编程 · agent harness）</span>
+  </div>
+  <div class="disc">⚠️ <b>论文解读 · 非官方 · 非结论</b>：本片为该论文的<b>科普转述</b>；「2783 个程序」「27 小时 14 分钟」「死亡 605 次」「简单（Easy）难度」「首次端到端自主通关」等均为<b>作者自报、本线未复现</b>（原文措辞为「To our knowledge」= <b>据作者所知</b>）。<b>⚠️ 本片不写「AI 已超越人类玩家 / 打游戏比人强」之类的引申，不做任何能力排名或对比结论。</b>画面<b>全部自绘 / 自生成，不盗用论文原图</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它（TOP-1 挑选口径 = 目的 2「科普」，非「借鉴」）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>选它而非另一篇「科普」</b>：今日 2 篇科普为 <code>2610.22319</code>（本文）与 <code>2610.22333</code>（Evaluation Awareness Beyond English，讲「AI 知道自己在被测试就更爱拒答」）。两者都好懂，但本文<b>画面感最强、零背景门槛、话题自带流量</b>，故定为 TOP-1（另一篇作为备选，见日报第 5 条）。</li>
+    <li><b>大众能懂</b>：一句话钩子 —— 「<b>四个 AI 走进 Minecraft，没人给它们分工、也没人写脚本，它们自己把末影龙打了。</b>」不需要任何 AI 背景，玩过游戏的人更是秒懂。</li>
+    <li><b>有传播力</b>：① <b>画面强</b> —— 方块世界、末影龙、死亡 605 次、27 小时「马拉松」，天然有镜头；② <b>反直觉</b> —— 角色分工、写代码、修 bug 全是<b>它们自己商量出来的</b>，不是人安排的；③ <b>结论可复述</b> —— 「<b>AI 自己写程序、互相帮忙、坚持了一整天</b>」＋「<b>死了 605 次也没放弃</b>」。</li>
+    <li><b>可讲清 / 画面好做</b>：核心三件事 —— <b>四个小机器人在方块世界里</b>、<b>它们互相在聊天框里说话</b>、<b>自己敲出代码再自己修</b>；全部用方块 / 像素风格扁平自绘，无需论文原图。</li>
+    <li><b>有真实来源</b>：arXiv 编号 + abs 链接齐全；<code>comment</code> 字段<b>为空</b>（v1 预印本，无期刊信息）。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🎞 分镜表（逐镜 · 固定五段：钩子 → 问题 → 方法 → 结果 → 意义/展望）</h2>
+<table>
+  <tr>
+    <th style="width:42px;">镜号</th><th style="width:96px;">时间轴（时长）</th><th style="width:72px;">段落</th>
+    <th style="width:250px;">口播文案</th><th>画面描述（自绘 / 自生成）</th><th style="width:180px;">屏幕文字 / 字幕</th><th style="width:150px;">音效 / BGM</th>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">四个 AI，走进一个方块世界。没人给它们分工，也没人替它们写一行游戏脚本。目标只有一个：打败末影龙。</td>
+    <td>像素 / 方块风格开场：镜头从高空中降入一片<b>方块地形</b>，四个彩色小机器人（自绘）在草地上落位，头顶各挂一个「<b>?</b>」气泡（表示没有预设分工）。远景天际线上一条<b>龙的剪影</b>一闪而过。</td>
+    <td>字幕：<b>四个 AI · 击败末影龙</b>（小字：没人分工 · 没人写脚本）</td>
+    <td>轻快悬念音；BGM 起，节奏带点「冒险」感。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–22s（12s）</td>
+    <td class="act">问题</td>
+    <td class="vo">玩过《我的世界》的都知道，通关要挖矿、造装备、找要塞、进末地，上千个步骤环环相扣，错一步就得重来。这活儿，AI 干得了吗？</td>
+    <td>一条<b>横向流程图</b>从左推到右，五格依次亮起（自绘）：<b>挖矿 → 造装备 → 找要塞 → 进末地 → 打龙</b>。每格之间画锁链图标；第四格闪红一次，表示「错一步」⇒ 链条整条抖动、退回第一格。</td>
+    <td>字幕：<b>上千个步骤 · 环环相扣</b>（小字：错一步就得重来）</td>
+    <td>格子亮起配「哒哒哒哒哒」；链条抖动配一声闷响；BGM 略紧张。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>22–30s（8s）</td>
+    <td class="act">问题</td>
+    <td class="vo">更麻烦的是，没人告诉它们谁负责什么。四个智能体，得自己商量、自己扛。</td>
+    <td>四个小机器人围成一圈，头顶的「<b>?</b>」气泡变成三条<b>交叉打结的线</b>（自绘），表示分工未定；随后线结慢慢解开，变成四块<b>拼图</b>，缺口形状两两不同。</td>
+    <td>字幕：<b>没有分工表</b>（小字：四个智能体，自己商量）</td>
+    <td>打结配轻微「滋滋」；拼图解线配一声脆「嗒」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>30–48s（18s）</td>
+    <td class="act">方法</td>
+    <td class="vo">论文的方案很直接：给每个 AI 配一个开源机器人库，让它们直接操控游戏里的角色；再加一个共享记忆和一块聊天框。做什么、先做什么，全在聊天框里商量着定。</td>
+    <td>画面切成「<b>画面层 + 悬浮层</b>」两栏：左栏是方块世界，四个小机器人脖子上各插一根<b>数据线</b>连到画面外的「<b>机器人库</b>」图标（自绘）；右栏浮出一块<b>聊天框</b>，四个颜色的对话气泡轮流出句、彼此引用，下方一个「<b>共享记忆</b>」档案盒，气泡内容被<b>归档进盒子</b>（内容用抽象符号表示）。</td>
+    <td>字幕：<b>机器人库直连游戏 ｜ 聊天框协商 + 共享记忆</b>（小字：做什么，由它们自己商量）</td>
+    <td>数据线「滋」一声接入；气泡弹出配连续轻「啵」；归档配「咔」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>48–62s（14s）</td>
+    <td class="act">方法</td>
+    <td class="vo">真正的狠招在这儿 —— 它们不点按钮，而是自己写程序。要挖矿，写一段；要搭路，再写一段。跑不通，就自己看报错、自己改。</td>
+    <td>特写：一块<b>代码窗口</b>在聊天框旁边弹出（自绘，只显示抽象的彩色代码块、<b>不显示真实代码</b>）。上方任务标签「<b>挖矿</b>」→ 代码块自动敲出 → 切到「<b>搭路</b>」→ 又一段代码块敲出。第二次执行时底部冒出<b>红色报错条</b>，代码块自动改动两行、错误条转<b>绿</b>。</td>
+    <td>字幕：<b>不是点按钮 —— 是它自己写代码</b>（小字：报错 → 自己改）</td>
+    <td>键盘「嗒嗒嗒」密集敲击；报错配一声「嘟—」；转绿配上扬「叮」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">6</span></td>
+    <td>62–80s（18s）</td>
+    <td class="act">方法</td>
+    <td class="vo">就这样一路循环：商量计划、写代码、跑起来、失败、再改。研究者只在旁边看直播，可以随时叫停，但整场下来，一次都没出手干预。</td>
+    <td>画面中央一个<b>环形箭头</b>（自绘），四周五个站点依次点亮：<b>商量 → 写码 → 执行 → 失败 → 再改</b>，转满一圈后整体加速、形成一条亮环。右下角一个小窗，画一只<b>手放在「叫停」按钮上但没按下去</b>（研究者在看直播）；小窗上的「<b>0 次干预</b>」计数始终为 0。</td>
+    <td>字幕：<b>计划 → 写码 → 执行 → 失败 → 再改</b>（小字：全程 0 次人工干预）</td>
+    <td>循环站点「咔、咔、咔」；加速时鼓点渐密；「0 次干预」落定配一声安静的低鸣。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">7</span></td>
+    <td>80–93s（13s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果是：从一个随机生成的世界、简单难度起步，这支 AI 小队一共写了 2783 个程序，花了 27 小时 14 分钟，把末影龙打倒。</td>
+    <td>方块世界里，四个小机器人一起举剑，<b>末影龙化作像素碎块散开</b>（自绘，不盗用游戏原图 / 论文原图）。画面上浮出三块<b>数据牌</b>：<b>2783 个程序</b> · <b>27 小时 14 分钟</b> · <b>简单难度 / 随机世界</b>，每块牌角挂小字「<b>作者自报 · 未复现</b>」。</td>
+    <td>字幕：<b>2783 个程序 · 27 小时 14 分 → 龙倒了</b>（小字：作者自报 · 本线未复现）</td>
+    <td>龙碎配「哗啦」像素碎裂音；三块数据牌依次「咚」落定；BGM 推向小高潮。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">8</span></td>
+    <td>93–105s（12s）</td>
+    <td class="act">结果</td>
+    <td class="vo">代价也很实在：过程中它们死了 605 次。作者说，据他们所知，这是第一次有 AI 智能体完成端到端自主通关。</td>
+    <td>画面下方一条<b>死亡计数条</b>快速滚动累加到「<b>605</b>」（自绘）；上方画一排<b>小墓碑 / 重生点</b>图标密集排列，随后每个图标上都盖一枚「<b>继续</b>」的绿勾。右上角一行小字「<b>To our knowledge = 据作者所知</b>」做醒目强调。</td>
+    <td>字幕：<b>途中死亡 605 次 ｜ 「据作者所知」首次端到端自主通关</b>（小字：作者自报 · 未复现）</td>
+    <td>计数滚动配「嗒嗒嗒嗒」；绿勾盖上配连续「叮」；BGM 转沉稳。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">9</span></td>
+    <td>105–120s（15s）</td>
+    <td class="act">意义/展望</td>
+    <td class="vo">他们更在意的不是游戏，而是那种「上千个步骤、一整天不散架」的能力 —— 这正是长周期软件工程要的。论文链接在简介。</td>
+    <td>镜头从方块世界<b>拉远</b>：游戏画面缩小成一块像素方格，被放进一堆更大的方格中（象征<b>现实里的长周期复杂任务</b>）；一根<b>虚线箭头</b>从「方块世界」指向「长时程软件工程 / 企业级任务」标签（自绘）。末尾淡出，浮出 arXiv 编号与链接。</td>
+    <td>字幕：<b>真正的问题：上千步、一整天，计划不散架</b>（小字：arXiv:2610.22319 · 论文解读 · 非结论）</td>
+    <td>拉远配柔和「呼—」；BGM 收尾、留一点余地；链接落定配轻「叮」。</td>
+  </tr>
+
+
+
+</table>
+
+<div class="ok-box">
+  <b>口播合计</b>：随 9 镜分配 ≈ 42 + 49 + 29 + 66 + 46 + 50 + 51 + 45 + 49 ≈ <b>427 字</b>（按 180–200 字/分 ≈ <b>2 分 08 秒～2 分 22 秒</b>；本脚本按 <b>120s</b> 剪辑 ⇒ 需语速约 <b>214 字/分（略快）</b>，或按需把口播精简到 ~400 字 / 微调镜头时长）。<b>五段配比（固定）</b>：钩子 <b>0–10s</b> ｜ 问题 <b>10–30s</b> ｜ 方法 <b>30–80s</b> ｜ 结果 <b>80–105s</b> ｜ 意义/展望 <b>105–120s</b>（合计 = <b>120s</b>）。
+</div>
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（四个小机器人 / 方块地形 / 龙的剪影 / 五格流程图 / 聊天框与共享记忆 / 代码窗口 / 环形循环 / 死亡计数条 / 拉远镜头）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图 / 图注 / 表格，🚫 <b>也不得</b>直接录制或截屏 Minecraft 游戏画面（版权风险）。用<b>像素 / 方块风格的原创素材</b>表达即可。</li>
+    <li><b>风格建议</b>：像素 / 方块风 + 森林绿主色（<code>#1d5c3a</code> → <code>#2e8b57</code>），四只机器人用<b>四种固定颜色</b>贯穿全片（便于观众跟认「谁是谁」）；核心信息置于画面<b>中央安全区</b>，便于抖音竖屏二次裁剪。</li>
+    <li><b>配音</b>：中文普通话，语速 180–200 字/分；讲「<b>一个目标 · 自己写程序 · 互相帮忙</b>」这条主线时<b>放慢</b>；「<b>没人分工、也没人写脚本</b>」「<b>死了 605 次</b>」两处给情绪，但<b>不过度亢奋、不做惊悚处理</b>。</li>
+    <li><b>字幕</b>：关键数字（<b>2783 / 27 小时 14 分 / 605 次</b>）一律配小字「<b>作者自报 · 未复现</b>」；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行）</b>。</li>
+    <li><b>术语友好化</b>：片中用<b>「智能体 / 机器人库 / 聊天框 / 共享记忆」</b>等大众词；<b>智能体（agent）</b>、「<b>据作者所知（To our knowledge）</b>」首次出现时字幕给一句白话（如「智能体 ＝ 会自己动手的 AI」）。</li>
+    <li><b>配乐</b>：建议使用平台<b>免费 / 已授权</b>曲库，避免版权风险（游戏原声 🚫 不可用）。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给 <b>arXiv abs 链接</b> + <b>英文原题</b>照抄不改写（<i>A team of Gemini 4 Argon agents beats Minecraft</i>）。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「SOTA / 颠覆 / 突破 / 碾压人类 / AI 已超越人类玩家」；「首次端到端自主通关」严格照原文限定为「<b>据作者所知（To our knowledge）</b>」，并在镜头 8 与字幕<b>显式展示该限定语</b>。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成；🚫 <b>不进</b>游戏录屏 / 截图（避免游戏素材版权争议）。</li>
+    <li>✅ <b>不编造数据</b>：仅使用原文摘要可支撑的表述 —— 「4 个 <b>Gemini 4 Argon</b> 智能体」「开源库 <b>Mineflayer</b>」「游戏内聊天 + 共享记忆」「<b>2783 个程序</b>」「<b>27 小时 14 分钟</b>」「途中<b>死亡 605 次</b>」「<b>简单（Easy）难度</b> / 随机生成世界」「无预勘种子、无人类编写的专用游戏工具」；<b>不虚构</b>论文未提及的具体数字、分数或排行榜。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「AI 会自己造工具造反 / 通用智能已到」等原文未支持的引申；「首次」只作<b>作者自述</b>转述，本片<b>不下结论</b>。</li>
+    <li>✅ <b>署名如实</b>：作者名单照抄 arXiv 条目（Maxence Faldor, Satinder Singh, Roberta Raileanu，共 3 位）<b>不臆测机构归属</b>；条目 <code>comment</code> 字段为空（v1 预印本，无期刊信息），<b>不补写</b>「已录用 / 已开源代码」等原文未给的信息。</li>
+    <li>✅ <b>不混用口径</b>：本片按目的 2「<b>科普</b>」口径挑选与制作（大众看得懂 + 传播力），<b>不</b>与目的 1「借鉴」（与 BaiZe / ZhuLong 相关性）混用；日报里同一篇的「借鉴 / 科普」标签为准。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-16</b> ｜ 文件 <code>research/video/SCENES/10_16.html</code> ｜ 当日 TOP-1</div>
+  <div>论文：<i>A team of Gemini 4 Argon agents beats Minecraft</i>（Maxence Faldor, Satinder Singh, Roberta Raileanu）｜ <a href="https://arxiv.org/abs/2610.22319">arXiv:2610.22319</a> ｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 5 批（P0 · 18:00 时窗）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图；<b>不夸大、不编造数据</b>。本页为<b>自包含单文件</b>（内联 CSS，零外链）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-16.html">research/daily/2026-10-16.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a> ｜ 上一篇：<a href="10_15.html">10_15.html</a></div>
+</footer>
+</div>
+</body>
+</html>
+
+

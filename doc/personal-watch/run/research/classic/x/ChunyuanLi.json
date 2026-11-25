@@ -1,0 +1,65 @@
+{
+ "handle": "ChunyuanLi",
+ "name": "Chunyuan Li (@ChunyuanLi) / X",
+ "bio": "Agentic Vision @Google DeepMind | Previous: @ xAI, @MSFTResearch; PhD @DukeU",
+ "tweets": [
+  {
+   "id": "1960778197743886798",
+   "created_at": "2025-08-27 18:55 UTC",
+   "created_at_ms": 1756320926000,
+   "text": "Glad that object grounding is finally landed in Grok multimodal voice-mode 👏 highlighting the object of interest in real-time chat! @sishaar @kwotsin @samdodge77",
+   "url": "https://x.com/ChunyuanLi/status/1960778197743886798",
+   "handle_guess": "ChunyuanLi"
+  },
+  {
+   "id": "1960764327906173189",
+   "created_at": "2025-08-27 18:00 UTC",
+   "created_at_ms": 1756317619000,
+   "text": "Did you know you can flip on your camera while voice-chatting with Grok, and it can talk about what it sees? Ever wondered exactly what it's focusing on? Now it highlights it in real-time - like these stickers on my water bottle! 🚀🔍 https://t.co/nwbqCTSkmR",
+   "url": "https://x.com/ChunyuanLi/status/1960764327906173189",
+   "handle_guess": "sishaar"
+  },
+  {
+   "id": "1939574323620335885",
+   "created_at": "2025-06-30 06:38 UTC",
+   "created_at_ms": 1751265528000,
+   "text": "(1/5) A post on \\",
+   "url": "https://x.com/ChunyuanLi/status/1939574323620335885",
+   "handle_guess": "ChunyuanLi"
+  },
+  {
+   "id": "1936822382079164913",
+   "created_at": "2025-06-22 16:23 UTC",
+   "created_at_ms": 1750609414000,
+   "text": "🐯🐅 https://t.co/VUXSdRnqQn",
+   "url": "https://x.com/ChunyuanLi/status/1936822382079164913",
+   "handle_guess": "ChunyuanLi"
+  },
+  {
+   "id": "1936821373961433212",
+   "created_at": "2025-06-22 16:19 UTC",
+   "created_at_ms": 1750609174000,
+   "text": "One example of video understanding on X with Grok. 🚞 https://t.co/gpcGOomSii",
+   "url": "https://x.com/ChunyuanLi/status/1936821373961433212",
+   "handle_guess": "ChunyuanLi"
+  },
+  {
+   "id": "1927974474030121111",
+   "created_at": "2025-05-29 06:25 UTC",
+   "created_at_ms": 1748499909000,
+   "text": "😂 Grok probably explains the Chinese method better than most Chinese students for the math derivation in the video. Thanks.",
+   "url": "https://x.com/ChunyuanLi/status/1927974474030121111",
+   "handle_guess": "ChunyuanLi"
+  },
+  {
+   "id": "1927953220657168531",
+   "created_at": "2025-05-29 05:00 UTC",
+   "created_at_ms": 1748494842000,
+   "text": "Maths technique \\\n https://t.co/MmvswPfaXa",
+   "url": "https://x.com/ChunyuanLi/status/1927953220657168531",
+   "handle_guess": "sciencegirl"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-11 15:02:18"
+}

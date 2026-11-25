@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api//gEM8ccWzKWja7mQhcyVPkBE/Is</id>
+  <title>arXiv Query: search_query=&amp;id_list=2610.28815,2610.28577,2610.28576,2610.30042,2610.28798,2610.29426&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-23T22:09:36Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=2610.28815,2610.28577,2610.28576,2610.30042,2610.28798,2610.29426" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>6</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2610.28815v1</id>
+    <title>Forging More Tasks into Better Harnesses: Agentic Harness Evolution via Successive Scale Racing</title>
+    <updated>2026-10-20T18:36:33Z</updated>
+    <link href="https://arxiv.org/abs/2610.28815v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.28815v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Agentic harness evolution optimizes an agent's instructions, tools, and control flow by using its task execution experiences as evolving evidence. While more evolution tasks should intuitively improve performance, our preliminary study reveals a paradoxical failure mode: the performance of existing methods degrades as the task pool expands. Our further analysis demonstrates that this degradation stems from suboptimal evidence selection during optimization, as different evidence combinations lead to substantially different evolution outcomes. To address this issue, we propose Successive Scale Racing (SSR), a framework that adaptively searches for optimal evidence combinations in each evolution round. SSR constructs diverse evidence combinations based on the corresponding task quality and coverage, and efficiently races the resulting candidate harnesses under a small compute budget. Empirically, across three distinct benchmarks, SSR achieves state-of-the-art results in all six configurations. Notably, as the task pool grows from 40 to 200, SSR steadily improves the pass rate from 64.3% to 68.3%, while the baselines' performances all drop. Furthermore, its racing mechanism identifies near-optimal candidates while reducing validation executions by 60%.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T18:36:33Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Jingzhe Liu</name>
+    </author>
+    <author>
+      <name>Jiliang Tang</name>
+    </author>
+    <author>
+      <name>Tong Zhao</name>
+    </author>
+    <author>
+      <name>Neil Shah</name>
+    </author>
+    <author>
+      <name>Clark Mingxuan Ju</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.30042v1</id>
+    <title>HGM-Dual: Lineage-Aware Guided Agent Harness Optimization for Long-Horizon Planning</title>
+    <updated>2026-10-21T17:02:28Z</updated>
+    <link href="https://arxiv.org/abs/2610.30042v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.30042v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Harness optimization, which improves an agent's prompts, tools, and workflows, is an increasingly effective way to enhance agents built on frozen or closed-source LLMs. Leading approaches such as the Darwin--Godel Machine and the Huxley--Godel Machine (HGM) rely on recursive self-improvement and were developed mainly for coding, where the competence needed to improve the agent coincides with the competence being improved. Planning tasks, in which an agent must produce a sequence of tool calls that jointly satisfies interacting constraints, break this alignment. There, open-ended self-modification repeatedly explores ineffective changes and consumes substantial evaluation budgets. We introduce HGM-Dual, a diagnostic-guided framework for budget-efficient harness evolution for planning agents. First, HGM-Dual represents agent evolution as lineage-aware context. This context records what each ancestor changed, which behaviors improved or regressed, and which modifications were ineffective, giving the editor explicit edit-outcome attribution instead of an unstructured archive of past agents. Second, HGM-Dual introduces error-conditioned dual-path child generation. For each selected parent, it generates a general child that preserves open-ended exploration and specialized children that target the harness components most likely responsible for the parent's highest-ranked constraint violations. HGM-Dual outperforms the strongest baseline by up to 14.45% relative improvement in case accuracy while matching HGM variants' final performance with 2x-4x fewer evaluation budget.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.NE" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T17:02:28Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Sudipta Paul</name>
+    </author>
+    <author>
+      <name>Pengrui Quan</name>
+    </author>
+    <author>
+      <name>Aounon Kumar</name>
+    </author>
+    <author>
+      <name>Nicholas Tzou</name>
+    </author>
+    <author>
+      <name>Vivek Kulkarni</name>
+    </author>
+    <author>
+      <name>Srinivas Chappidi</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.29426v1</id>
+    <title>BIRD-RL: Scaling Agentic Reinforcement Learning over Stateful Data-Centric Environments</title>
+    <updated>2026-10-21T08:50:39Z</updated>
+    <link href="https://arxiv.org/abs/2610.29426v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.29426v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>While agentic reinforcement learning (RL) has emerged as a promising paradigm for training small language models (SLMs), existing frameworks are predominantly tool-centric and struggle with data-centric environments. Specifically, applying tool-centric frameworks to stateful tasks like SQL debugging introduces severe spatial inefficiencies since proper environment isolation typically requires a separate database container per rollout. Naively reusing databases without tracking evolving states across multi-turn interactions causes trajectory contamination and cross-trajectory interference, which severely destabilizes policy updates. To overcome these bottlenecks, we introduce BIRD-RL, a novel four-stage agentic RL curriculum that alternately enhances foundational agent reasoning and trajectory-adaptive on-policy exploration to circumvent the instability inherently associated with direct end-to-end learning. Crucially, to support this curriculum, BIRD-RL is driven by a Trajectory-scoped Persistent Execution Infrastructure, which enables safe database replica reuse while preserving trajectory isolation. This design improves spatial RL efficiency by 12.8x, successfully enabling scalable agentic RL for complex data-centric tasks without needs of Kubernettes. Empirical evaluations on the BIRD-CRITIC-SQLite benchmark demonstrate that our 7B and 14B models achieve Success Rates of 44.40% and 48.00%, respectively, showing competitive performance against strong proprietary model-based agents such as Claude-Opus-4.6 Agent (48.20%). Furthermore, BIRD-RL successfully trains unified SLMs capable of both advanced SQL debugging and generation, highlighting its broader potential for multi-objective optimization across heterogeneous, real-world data-centric tasks.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-21T08:50:39Z</published>
+    <arxiv:comment>Accepted to NeurIPS 2026 Main Track</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Ge Qu</name>
+    </author>
+    <author>
+      <name>Jinyang Li</name>
+    </author>
+    <author>
+      <name>Xiaohan Xu</name>
+    </author>
+    <author>
+      <name>Xiaolong Li</name>
+    </author>
+    <author>
+      <name>Bowen Qin</name>
+    </author>
+    <author>
+      <name>Nan Huo</name>
+    </author>
+    <author>
+      <name>Ziwei Tang</name>
+    </author>
+    <author>
+      <name>Chenhao Ma</name>
+    </author>
+    <author>
+      <name>Reynold Cheng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.28577v1</id>
+    <title>Cache Engineering for Agents</title>
+    <updated>2026-10-20T17:32:24Z</updated>
+    <link href="https://arxiv.org/abs/2610.28577v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.28577v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large Language Model (LLM) agents can handle increasingly complex tasks, navigating long trajectories of observations and actions. As these trajectories grow, key-value (KV) cache I/O and storage become the dominant cost. Trajectories can also exceed the LLM's maximum context length, requiring control over active cache growth. Prior work uses context engineering to reduce cache size by trimming or summarizing history. However, modifying the trajectory prefix invalidates subsequent cached states and triggers costly re-prefilling of retained context. Task accuracy can also suffer when too little context is retained to limit re-prefill costs. We propose cache engineering as a new scheme. It allows agents to directly control their active KV cache without modifying the trajectory or re-prefilling retained context. Specifically, agents can proactively use drop to exclude selected cache from future attention and repos to adjust retained keys' position encodings. We formalize these cache operations and identify history dependence as a serving challenge: identical token sequences can yield different cache states under different cache operation sequences, making prefix matching insufficient for correct cache reuse. Thus, we co-design the AKV serving engine. It provides a stateless interface compatible with existing serving APIs, while internally managing stateful cache reuse, eviction, and restoration. Experiments show that a tool-response rolling-drop cache policy improves average benchmark scores by 1.7 points and reduces average cost by 27.7%, compared with conventional threshold-triggered summarization. With AKV, it achieves up to 1.2x the output throughput and a 1.5x speedup in P95 request latency. Recursive self-improvement of cache policies further reduces cost by 7.1% over expert design. Our code is at https://github.com/thu-nics/AKV.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T17:32:24Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Tianyu Fu</name>
+    </author>
+    <author>
+      <name>Ruoxi Wang</name>
+    </author>
+    <author>
+      <name>Zihan Min</name>
+    </author>
+    <author>
+      <name>Zhongqi Ren</name>
+    </author>
+    <author>
+      <name>Zhihao Li</name>
+    </author>
+    <author>
+      <name>Tengxuan Liu</name>
+    </author>
+    <author>
+      <name>Shengxu Mu</name>
+    </author>
+    <author>
+      <name>Hanling Zhang</name>
+    </author>
+    <author>
+      <name>Yu Wang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.28798v1</id>
+    <title>An Explicit Feedback Contract for Iterative ML-Agent Harnesses</title>
+    <updated>2026-10-20T18:24:29Z</updated>
+    <link href="https://arxiv.org/abs/2610.28798v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.28798v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Iterative ML agents develop models by editing code, running experiments, reading a validation score, and choosing what to try next. In current harnesses this loop is served by an exact validation score returned after every attempt, which leaves the validation split open to adaptive selection. In this work, we introduce an explicit feedback contract for ML-agent harnesses, which specifies what an agent may observe, when iteration should stop, and when the test split may be touched. The contract releases a validation score only when a submission clears a noise threshold computed from the paired standard error, so no margin has to be tuned. We ran experiments on click-through-rate prediction, learning to rank, and a control task with no signal to find. The control is the sharpest case, because the true gain there is zero by construction: an agent reading exact scores ended by reporting a gain of 0.0157, while under the contract it reported 0.0033. On both real tasks the contract narrows the validation-test gap, and test performance is slightly higher rather than lower. The largest difference is in when the agents stop. Exact feedback used its entire budget of thirty submissions on two of the three tasks, including the one where nothing can be learned, while the contract halted after four to twelve. A run that exhausts its budget is usually read as diligence. It is better read as a symptom: when the feedback channel is unbounded, noise keeps supplying improvements to chase.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T18:24:29Z</published>
+    <arxiv:comment>11 pages, 2 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Kehui Yao</name>
+    </author>
+    <author>
+      <name>Chuanbo Hu</name>
+    </author>
+    <author>
+      <name>Jiao Chen</name>
+    </author>
+    <author>
+      <name>Ramin Giahi</name>
+    </author>
+    <author>
+      <name>Reza Yousefi Maragheh</name>
+    </author>
+    <author>
+      <name>Lalitesh Morishetti</name>
+    </author>
+    <author>
+      <name>Ziwei Hong</name>
+    </author>
+    <author>
+      <name>Yiyun Su</name>
+    </author>
+    <author>
+      <name>Jianpeng Xu</name>
+    </author>
+    <author>
+      <name>Evren Korpeoglu</name>
+    </author>
+    <author>
+      <name>Kannan Achan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.28576v1</id>
+    <title>The Token-Energy Law of LLM Decode: Active Bytes and Realized Time Account for Joules per Token</title>
+    <updated>2026-10-20T17:32:08Z</updated>
+    <link href="https://arxiv.org/abs/2610.28576v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.28576v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Energy-efficient deployment of large language models requires understanding how model architecture, hardware, and serving settings shape energy per generated token. We introduce the Token-Energy Law, a compact, interpretable model of GPU-board energy per output token for dense, full-history decoding. It relates token energy to two core dimensions: active bytes and realized decode time. Active bytes describe logical byte demand per output, separating dense weights shared within a decode iteration from private key--value (KV) histories read and updated for each request. Realized decode time is the elapsed decode duration divided by the number of output tokens produced. We combine the two byte coordinates and time in a common affine form, with coefficients calibrated for each model and hardware/runtime configuration. This formulation explains how batching amortizes shared-weight work, longer attended histories increase private KV demand, and throughput determines the time-associated cost per output. Our experiments cover three models under BF16 decoding on NVIDIA Hopper and Blackwell GPUs, including two-GPU tensor parallelism on Hopper. Using fixed coefficients and observed decode time, held-out condition-mean energy estimates differ from measurements by at most 3.73%.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-20T17:32:08Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Chenxu Niu</name>
+    </author>
+    <author>
+      <name>Batuhan Sencer</name>
+    </author>
+    <author>
+      <name>Wei Zhang</name>
+    </author>
+    <author>
+      <name>Yong Chen</name>
+    </author>
+  </entry>
+</feed>

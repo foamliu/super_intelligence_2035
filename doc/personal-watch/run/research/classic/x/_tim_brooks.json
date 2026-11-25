@@ -1,0 +1,81 @@
+{
+ "handle": "_tim_brooks",
+ "name": "Tim Brooks (@_tim_brooks) / X",
+ "bio": "superintelligence @ Meta",
+ "tweets": [
+  {
+   "id": "2074578008296628698",
+   "created_at": "2026-07-07 19:35 UTC",
+   "created_at_ms": 1783452915000,
+   "text": "We’re launching Muse Image today!! 🎉 It’s an agentic image gen model that plans, writes code and uses search tools, and refines its own outputs in chain-of-thought. Image performance improves as we scale test-time compute with higher reasoning. https://t.co/LUuvpixsui https://t.co/1zjxUeurL7",
+   "url": "https://x.com/_tim_brooks/status/2074578008296628698",
+   "handle_guess": "_tim_brooks"
+  },
+  {
+   "id": "1960413428738343410",
+   "created_at": "2025-08-26 18:45 UTC",
+   "created_at_ms": 1756233958000,
+   "text": "Check out Gemini's new native image editing and generation!! It has great consistency and adherence to instructions, and is a lot of fun to play with 😁",
+   "url": "https://x.com/_tim_brooks/status/1960413428738343410",
+   "handle_guess": "_tim_brooks"
+  },
+  {
+   "id": "1960341906790957283",
+   "created_at": "2025-08-26 14:01 UTC",
+   "created_at_ms": 1756216906000,
+   "text": "Image generation with Gemini just got a bananas upgrade and is the new state-of-the-art image generation and editing model. 🤯\\\n\\\nFrom photorealistic masterpieces to mind-bending fantasy worlds, you can now natively produce, edit and refine visuals with new levels of reasoning, https://t.co/hYwA6l4QyY",
+   "url": "https://x.com/_tim_brooks/status/1960341906790957283",
+   "handle_guess": "GoogleDeepMind"
+  },
+  {
+   "id": "1952748022858654125",
+   "created_at": "2025-08-05 15:06 UTC",
+   "created_at_ms": 1754406383000,
+   "text": "🚀Genie 3 is a world model that can simulate minutes of realtime interactive video!!\\\n\\\nIt's a big step forward and the efforts of many amazing folks at DeepMind. Simulating the world is critical to intelligence, and this is just the beginning of what's in store 🌎🎉",
+   "url": "https://x.com/_tim_brooks/status/1952748022858654125",
+   "handle_guess": "_tim_brooks"
+  },
+  {
+   "id": "1952732150928724043",
+   "created_at": "2025-08-05 14:03 UTC",
+   "created_at_ms": 1754402599000,
+   "text": "What if you could not only watch a generated video, but explore it too? 🌐\\\n\\\nGenie 3 is our groundbreaking world model that creates interactive, playable environments from a single text prompt.\\\n\\\nFrom photorealistic landscapes to fantasy realms, the possibilities are endless. 🧵 https://t.co/P0cwFvf5d2",
+   "url": "https://x.com/_tim_brooks/status/1952732150928724043",
+   "handle_guess": "GoogleDeepMind"
+  },
+  {
+   "id": "1926452144133001632",
+   "created_at": "2025-05-25 01:35 UTC",
+   "created_at_ms": 1748136957000,
+   "text": "you can now try Veo 3 with Gemini Pro subscription!",
+   "url": "https://x.com/_tim_brooks/status/1926452144133001632",
+   "handle_guess": "_tim_brooks"
+  },
+  {
+   "id": "1926311143867330938",
+   "created_at": "2025-05-24 16:15 UTC",
+   "created_at_ms": 1748103340000,
+   "text": "Veo 3 dropped about 100 hours ago, and it's been on 🔥🔥🔥 ever since\\\n\\\nNow, we’re excited to announce:\\\n+ 71 new countries have access\\\n+ Pro subscribers get a trial pack of Veo 3 on the web (mobile soon)\\\n+ Ultra subscribers get the highest # of Veo 3 gens w/ refreshes\\\n\\\nHow to try https://t.co/AJGpo8KKpP",
+   "url": "https://x.com/_tim_brooks/status/1926311143867330938",
+   "handle_guess": "joshwoodward"
+  },
+  {
+   "id": "1924895946967810234",
+   "created_at": "2025-05-20 18:32 UTC",
+   "created_at_ms": 1747765931000,
+   "text": "Check out Veo 3 🔥🔥🔥 sound on 🔊",
+   "url": "https://x.com/_tim_brooks/status/1924895946967810234",
+   "handle_guess": "_tim_brooks"
+  },
+  {
+   "id": "1924893837295546851",
+   "created_at": "2025-05-20 18:23 UTC",
+   "created_at_ms": 1747765428000,
+   "text": "Say goodbye to the silent era of video generation: Introducing Veo 3 — with native audio generation. 🗣️\\\n\\\nQuality is up from Veo 2, and now you can add dialogue between characters, sound effects and background noise. \\\n\\\nVeo 3 is available now in the @GeminiApp for Google AI Ultra https://t.co/7rcXeBslyU",
+   "url": "https://x.com/_tim_brooks/status/1924893837295546851",
+   "handle_guess": "Google"
+  }
+ ],
+ "http_status": 200,
+ "fetched_at": "2026-11-12 12:02:08"
+}

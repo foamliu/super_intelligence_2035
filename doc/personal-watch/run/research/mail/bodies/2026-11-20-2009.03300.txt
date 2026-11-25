@@ -1,0 +1,14 @@
+Dear Professor Steinhardt,
+
+I am Yang Liu; I work on evaluation and agents for LLM systems, and my papers are listed at https://foamliu.github.io/.
+
+MMLU is the first sanity check we run on any new harness, so I went back to the construction details: 57 subjects, 14,079 test questions, at least 100 test items per subject, a 1,540-question dev set, and an estimated expert accuracy of 89.8% against 43.9% for GPT-3. Two things still puzzle us.
+
+1. The aggregate hides substantial subject-level variance. With roughly 100 to 1,000 items per subject, do you recommend reporting per-subject intervals or a hierarchical estimate alongside the single number, and how should a team treat subjects where every model sits near the 25% chance level?
+
+2. Because the test set is public and predates most current pretraining corpora, a sudden jump on a few subjects is hard to interpret. Which cheap diagnostic is most informative now: perturbed item variants, a canary-style overlap check, or holding out newly written items?
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

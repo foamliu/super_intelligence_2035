@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《论文两分钟》分镜脚本 · 2026-10-13 · 像文生图一样「文生蛋白质」</title>
+<style>
+  :root { --primary:#5b1e6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --kp:#a3238e;
+          --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.7; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#5b1e6e 0%,#a3238e 100%); color:#fff; border-radius:14px;
+                padding:30px 32px; margin-bottom:22px; box-shadow:0 8px 24px rgba(91,30,110,.22); }
+  header.hero h1 { margin:0 0 6px; font-size:23px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.95; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.92; display:flex; flex-wrap:wrap; gap:8px 18px; }
+  header.hero .meta span { background:rgba(255,255,255,.16); border-radius:999px; padding:2px 12px; }
+  .disc { margin-top:14px; font-size:12.5px; background:rgba(0,0,0,.20); border-radius:8px; padding:8px 12px; opacity:.96; }
+  h2.sec { font-size:19px; margin:34px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin:16px 0;
+          box-shadow:0 1px 3px rgba(27,31,36,.06); }
+  .row { display:flex; gap:10px; margin:7px 0; font-size:14px; }
+  .row .k { flex:0 0 116px; color:var(--muted); font-weight:600; }
+  .row .v { flex:1; }
+  .orig { font-style:italic; color:#5b1e6e; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px;
+         font-family:Consolas,Menlo,monospace; font-size:12.5px; color:#5b1e6e; }
+  a { color:var(--accent); word-break:break-all; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f7eef8; color:#5b1e6e; font-weight:600; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .shot-no { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+             border-radius:50%; background:var(--kp); color:#fff; font-size:13px; font-weight:700; }
+  .act { font-weight:700; color:#5b1e6e; }
+  .vo { color:#0b3d6e; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid var(--warn); border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; }
+  .ok-box { background:#f0fff4; border:1px solid #b7f0c5; border-left:4px solid var(--ok); border-radius:8px;
+            padding:10px 16px; font-size:13px; color:#0d5c22; }
+  .kp-box { background:#fff6fb; border:1px solid #f3c6e6; border-left:4px solid var(--kp); border-radius:8px;
+            padding:10px 16px; font-size:13px; }
+  footer { margin-top:44px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul,ol { margin:6px 0; padding-left:20px; } li { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <h1>🎬《论文两分钟》分镜脚本 · 2026-10-13</h1>
+  <div class="sub">今日 TOP-1：<b>像文生图一样「文生蛋白质」</b> · 论文解读（非官方 · 非结论）· 总时长 <b>120s</b> · 口播 <b>≈451 字</b></div>
+  <div class="meta">
+    <span>📄 Designing Protein Structures from Natural Language</span>
+    <span>🆔 arXiv:2610.13917</span>
+    <span>👥 Joseph Lee, Yanjing Li, Bo Qiang, Gregory Lau, Allyson Ettinger, Noah A. Smith, Rory Donovan-Maiye, David Baker, Hanna Hajishirzi, Pang Wei Koh</span>
+    <span>🗓 提交 2026-10-09 ｜ cs.LG（次 q-bio.BM）</span>
+    <span>🏷 标签：科普（AI for Science · 蛋白质设计 · 条件生成）</span>
+  </div>
+  <div class="disc">⚠️ <b>论文解读 · 非官方 · 非结论</b>：本片为该论文的<b>科普转述</b>，涉及的「15/18 项属性」「13/20 靶点」「界面置信度 +14%」「9 个 binder / K<sub>D</sub> ≈ 107 nM」等均为<b>作者自报、本线未复现</b>；「首个 / 类比文生图」等表述为<b>原文自述</b>。<b>不代表</b>模型具备通用「蛋白质设计 / 药物设计」能力。画面<b>全部自绘 / 自生成，不盗用论文原图</b>。</div>
+</header>
+
+<h2 class="sec">🎯 为什么选它（TOP-1 挑选口径 = 目的 2「科普」，非「借鉴」）</h2>
+<div class="kp-box">
+  <ul>
+    <li><b>选它而非另一篇「科普」</b>：今日晚报 2 篇科普为 <code>2610.13917</code>（本文）与 <code>2610.12866</code>（CaptchaAgent，验证码视觉推理）。两者都「可懂」，但本文的<b>大众传播面更宽、画面更立得住、权威背书更强</b>，故定为 TOP-1（CaptchaAgent 作为备选，可下一期用）。</li>
+    <li><b>大众能懂</b>：一句话钩子 —— 「<b>既然能『一句话生成一张图』，能不能也『一句话设计一个蛋白质』？</b>」不需要任何生物学背景就能接住这个类比。</li>
+    <li><b>有传播力</b>：① <b>概念直观</b> —— 把「文生图」平移到「文生蛋白质」；② <b>硬核证据</b> —— 不止跑分，作者做了<b>湿实验</b>，真做出了 9 个能结合的蛋白（最强 K<sub>D</sub> ≈ 107 nM）；③ <b>名人效应</b> —— 作者含 <b>2024 年诺贝尔化学奖得主 David Baker</b>；④ 属于当下最热的 <b>AI for Science</b> 话题。</li>
+    <li><b>可讲清 / 画面好做</b>：核心三件事 —— <b>配对大字典（1.8M 结构 + 50M+ 描述）</b>、<b>文本条件训练</b>、<b>18 项属性 / 20 个靶点打分</b>；画面可全部用<b>自绘 3D 丝带结构 + 文字卡 + 打分板 + 结合曲线</b>表达。</li>
+    <li><b>有真实来源</b>：arXiv 编号 + abs 链接齐全；<code>comment</code> 自述 <b>53 页 / 9 图</b>，且<b>代码、数据、模型权重开源</b>（<code>github.com/jleechung/prompteina</code>，原文自述）。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🎞 分镜表（逐镜 · 固定五段：钩子 → 问题 → 方法 → 结果 → 意义/展望）</h2>
+<table>
+  <tr>
+    <th style="width:42px;">镜号</th><th style="width:96px;">时间轴（时长）</th><th style="width:72px;">段落</th>
+    <th style="width:250px;">口播文案</th><th>画面描述（自绘 / 自生成）</th><th style="width:180px;">屏幕文字 / 字幕</th><th style="width:150px;">音效 / BGM</th>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">1</span></td>
+    <td>0–10s（10s）</td>
+    <td class="act">钩子</td>
+    <td class="vo">一句话，就能生成一张图，我们已经很熟了。那如果，一句话，也能「造」出一个蛋白质呢？</td>
+    <td>深色底。左边一个<b>输入框</b>，逐字敲出「<b>一个能抓住某靶点的蛋白</b>」；右边一团<b>3D 蛋白质丝带结构</b>（自绘）从半透明线框<b>渐变成实体</b>，缓慢自转。</td>
+    <td>字幕：<b>「一句话生成图」→「一句话造蛋白质」？</b>（小字：类比文生图 · 原文自述）</td>
+    <td>轻快悬念音；BGM 起，科技感、节奏平稳。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">2</span></td>
+    <td>10–24s（14s）</td>
+    <td class="act">问题</td>
+    <td class="vo">蛋白质是生命里的分子机器，长什么样，就决定它能干什么。从零设计一个全新的蛋白质，难就难在：形状、抓谁、在哪儿抓，得同时说清楚。</td>
+    <td>丝带结构放大，旁边浮出「<b>形状 = 功能</b>」标注；再并排三张小需求卡：<b>结构</b> / <b>结合对象</b> / <b>结合位置</b>，用虚线连回结构上对应部位（自绘）。</td>
+    <td>字幕：<b>形状决定功能</b>（小字：结构 + 功能 + 位点，得同时满足）</td>
+    <td>结构展开配「唰」；三张卡落下配三声「哒」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">3</span></td>
+    <td>24–36s（12s）</td>
+    <td class="act">问题</td>
+    <td class="vo">问题是，过去的模型，每一种要求都得专门配一套输入。这篇论文的想法很直接：图像能被语言描述，蛋白质为什么不能？</td>
+    <td>上半屏：四个「专用输入」小图标（结构 / 序列 / 功能 / 位点）各自被一根线单独接到模型，旁边打上灰色小字「一种属性一套输入」；下半屏：一个<b>统一的文字输入框</b>连到模型，标注「自然语言」（自绘对照）。</td>
+    <td>字幕：<b>过去：一种属性一套输入 → 现在：一句话</b></td>
+    <td>上半屏配「机械咔哒」；切换到下半屏配一声清亮「叮」；BGM 略上扬。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">4</span></td>
+    <td>36–56s（20s）</td>
+    <td class="act">方法</td>
+    <td class="vo">于是他们造了一份超大字典：一百八十万个蛋白质结构，配五千多万条文字描述，从整体功能细到某一个氨基酸。</td>
+    <td>左列<b>结构缩略图</b>不断生成流下，右列<b>文字卡</b>与之<b>逐张配对</b>（自绘，配对动画）；计数器滚动到「<b>1.8M 结构</b>」与「<b>50M+ 描述</b>」；镜头推近其中一张卡，文字高亮到<b>某个残基</b>，结构上对应位置同步亮起。</td>
+    <td>字幕：<b>1.8M 结构 ＋ 50M+ 描述</b>（小字：从整体功能 → 单个残基）</td>
+    <td>配对「咔—哒」节奏；计数滚动配连续轻「哒」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">5</span></td>
+    <td>56–70s（14s）</td>
+    <td class="act">方法</td>
+    <td class="vo">再在一个已有的结构生成模型上，做文本条件的预训练和微调，让每段文字都对齐到它该负责的位置。</td>
+    <td>模型框图（自绘）：左「<b>文本编码器</b>」→ 中间「<b>结构生成器</b>」→ 右输出 3D 结构；一条条文字卡的光带流入，落地时结构上对应残基<b>逐个点亮</b>（对齐示意）。角标小字「基于预训练结构生成模型 <b>Proteina-Complexa</b> 适配（原文自述）」。</td>
+    <td>字幕：<b>文本条件预训练 ＋ 微调 → 残基级对齐</b></td>
+    <td>光带流入配「咻」；残基点亮配连续「叮」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">6</span></td>
+    <td>70–82s（12s）</td>
+    <td class="act">方法</td>
+    <td class="vo">怎么比效果？用十八项结构属性来打分，还去和真实的靶点做结合测试。</td>
+    <td>两块评测面板（自绘）：左「<b>18 项结构属性</b>」网格逐格亮起；右「<b>真实靶点结合测试</b>」示意图（靶点口袋 + 候选蛋白尝试嵌入）。角标小字「证据来自原文自述 · 本线未复现」。</td>
+    <td>字幕：<b>18 项结构属性 ＋ 真实靶点结合</b></td>
+    <td>网格点亮配连续「叮」；BGM 稳住不抢戏。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">7</span></td>
+    <td>82–98s（16s）</td>
+    <td class="act">结果</td>
+    <td class="vo">结果是：十八项里，有十五项赢了基线；做结合蛋白设计，二十个靶点里至少十三个领先，界面置信度比最强基线高了百分之十四。</td>
+    <td>两组计数条（自绘）：① <b>15 / 18</b> 属性条填满 15 格；② <b>13 / 20</b> 靶点领先；旁边浮出一枚小徽标「<b>界面置信度 +14%</b>（vs 最强基线）」。数值仅按原文可支撑的<b>离散计数与相对幅度</b>呈现，<b>不虚构图表细节</b>。</td>
+    <td>字幕：<b>15/18 属性 · 13/20 靶点 · 界面置信度 +14%</b>（小字：作者自报 · 未复现）</td>
+    <td>计数条升起配「咻」；「+14%」出现配一声「叮」强调。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">8</span></td>
+    <td>98–112s（14s）</td>
+    <td class="act">结果</td>
+    <td class="vo">但最硬的证据在实验室：针对一个此前没人做出过结合蛋白的靶点，他们做出九个结合蛋白，最强的一个亲和力约一百零七纳摩尔。</td>
+    <td>镜头切到<b>湿实验示意</b>（自绘）：微孔板滴样 → 一条<b>结合曲线</b>由平缓到陡降；画面标出「<b>靶点 GM2A</b>」「<b>9 个 binder</b>」「最强 <b>K<sub>D</sub> ≈ 107 nM</b>」。底部小字「此前无已报道的 de novo binder（原文自述）」。</td>
+    <td>字幕：<b>真的做出来了：9 个 binder ｜ 最强 K<sub>D</sub> ≈ 107 nM</b>（小字：作者自报 · 未复现）</td>
+    <td>曲线下落配「咚」；「107 nM」出现配轻「叮」。</td>
+  </tr>
+
+  <tr>
+    <td><span class="shot-no">9</span></td>
+    <td>112–120s（8s）</td>
+    <td class="act">意义 / 展望</td>
+    <td class="vo">这说明，语言可能成为设计生命分子的新接口。当然，这只是论文里的一步，不是万能钥匙。论文链接放在简介。</td>
+    <td>回到开场画面：文字输入框与 3D 结构之间连起一条<b>发光连线</b>，结构缓缓自转；镜头拉远，画面浮出论文<b>英文原题</b>与作者名；结尾定格一行字 + arXiv 编号，渐暗。</td>
+    <td>字幕：<b>「语言，可能是设计生命分子的新接口」</b>（小字：一步进展 · 非通用能力）＋ <code>arXiv:2610.13917</code> ＋「论文链接见简介」</td>
+    <td>BGM 收尾淡出，尾音留白 0.5s。</td>
+  </tr>
+</table>
+
+<div class="ok-box">
+  <b>口播合计</b>：随 9 镜分配 ≈ 41 + 63 + 54 + 50 + 45 + 32 + 58 + 58 + 50 ≈ <b>451 字</b>（按 180–200 字/分 ≈ <b>2 分 15 秒～2 分 30 秒</b>；本脚本按 <b>120s</b> 剪辑 ⇒ 需语速约 <b>225 字/分（略快）</b>，或按需把口播精简到 ~430 字 / 微调镜头时长）。<b>五段配比</b>：钩子 0–10s ｜ 问题 10–36s ｜ 方法 36–82s ｜ 结果 82–112s ｜ 意义 112–120s。
+</div>
+
+<h2 class="sec">🛠 制作提示（画面 / 配音 / 字幕）</h2>
+<div class="card">
+  <ul>
+    <li><b>画面一律自绘 / 自生成</b>：本脚本所有示意图（输入框 / 3D 丝带结构 / 需求卡 / 配对动画 / 模型框图 / 打分网格 / 计数条 / 湿实验曲线）均<b>自绘或 AI 生成</b>；🚫 <b>不得</b>截取或复用论文原图 / 图注 / 代码仓库截图。</li>
+    <li><b>风格建议</b>：深色底或白底 + 单一强调色（紫 / 蓝绿），扁平矢量图标 + 干净的 3D 丝带渲染；字号大、留白多；核心信息置于画面<b>中央安全区</b>，便于抖音竖屏二次裁剪。</li>
+    <li><b>配音</b>：中文普通话，语速 180–200 字/分；念「<b>一百八十万 / 五千多万</b>」「<b>十五项 / 十三个 / 百分之十四</b>」「<b>一百零七纳摩尔</b>」时<b>放慢、加重</b>，数字要让人听清；「<b>真的做出来了</b>」「<b>新接口</b>」两处给情绪，但<b>不过度亢奋</b>。</li>
+    <li><b>字幕</b>：关键数字上大字幕；片头片尾固定挂「<b>论文解读 · 非官方 · 非结论</b>」；片尾必须给出 <b>arXiv 链接（放简介）</b> 与<b>论文原题（英文另起一行）</b>；数字出现处统一加小字「<b>作者自报 · 未复现</b>」。</li>
+    <li><b>术语友好化</b>：片中用<b>「结合蛋白 / 分子机器 / 氨基酸」</b>等大众词；<b>binder / K<sub>D</sub> / de novo / 残基</b> 等术语首次出现时，字幕给一句白话（如「binder ＝ 能抓住目标的小蛋白；K<sub>D</sub> 越小抓得越紧」）。</li>
+    <li><b>配乐</b>：建议使用平台<b>免费 / 已授权</b>曲库，避免版权风险。</li>
+  </ul>
+</div>
+
+<h2 class="sec">🚦 合规红线自检</h2>
+<div class="note">
+  <ul>
+    <li>✅ <b>明标「论文解读」</b> + 给 <b>arXiv abs 链接</b> + <b>英文原题</b>照抄不改写。</li>
+    <li>✅ <b>不夸大</b>：全片<b>不出现</b>「SOTA / 颠覆 / 突破 / 治愈」；结论限定在「本基准 / 本靶点」范围内，并声明数字为<b>作者自报、本线未复现</b>。</li>
+    <li>✅ <b>不盗用论文原图</b>：画面全部自绘 / 自生成（含 3D 丝带结构 —— 按公开结构示意<b>重新渲染</b>，不用论文截图）。</li>
+    <li>✅ <b>不编造数据</b>：仅使用原文摘要可支撑的表述 —— 「1.8M 结构 / 50M+ 描述」「18 项属性中 15 项优于基线」「20 个靶点中至少 13 个领先」「界面置信度 +14%」「GM2A 上 9 个 binder，最强 K<sub>D</sub> ≈ 107 nM」「基于 Proteina-Complexa 适配」「代码 / 数据 / 权重开源」；<b>不虚构论文未提及的具体百分比或排行榜</b>。</li>
+    <li>✅ <b>不为话题性曲解论文</b>：不使用「AI 造出了新生命 / 攻克疾病 / 取代药物研发」等原文未支持的引申；「首个 / 类比文生图」明确标为<b>原文自述</b>。</li>
+    <li>✅ <b>署名如实</b>：作者名单照抄 arXiv 条目（含 David Baker）<b>不臆测机构归属</b>；「诺贝尔化学奖得主」为公开事实，仅作背景，<b>不暗示其个人为该成果担保</b>。</li>
+    <li>⚠️ <b>栏目名提醒</b>：《两分钟论文》<b>是已有知名频道名</b>，为避免品牌混淆，建议本栏目<b>另起名字</b>；本文件沿用任务书暂用名，<b>发布前请用户确认</b>。</li>
+    <li>ℹ️ <b>V3（真正生成视频）仍待用户确认工具链</b> —— 本文件只到<b>脚本 / 分镜</b>，<b>不做成片</b>；平台发布由<b>用户本人</b>执行。</li>
+  </ul>
+</div>
+
+<footer>
+  <div>🎬 <b>research 线 ·《论文两分钟》分镜脚本</b> ｜ 日期 <b>2026-10-13</b> ｜ 文件 <code>research/video/SCENES/10_13.html</code> ｜ 当日 TOP-1</div>
+  <div>论文：<i>Designing Protein Structures from Natural Language</i>（Joseph Lee, Yanjing Li, Bo Qiang, Gregory Lau, Allyson Ettinger, Noah A. Smith, Rory Donovan-Maiye, David Baker, Hanna Hajishirzi, Pang Wei Koh）｜ <a href="https://arxiv.org/abs/2610.13917">arXiv:2610.13917</a> ｜ 来源指令：<code>WATCH_RESEARCH_TASK.md</code> 第 5 批（P0）</div>
+  <div>⚠️ <b>论文解读 · 非官方 · 非结论</b>；数字为<b>作者自报、未复现</b>；画面<b>自绘 / 自生成</b>，不盗用论文原图。本页为<b>自包含单文件</b>（内联 CSS，零外链）。</div>
+  <div>🧭 当日日报：<a href="../../daily/2026-10-13.html">research/daily/2026-10-13.html</a>（5/5）｜ 分镜索引：<a href="index.html">SCENES/index.html</a></div>
+</footer>
+</div>
+</body>
+</html>

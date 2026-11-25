@@ -1,0 +1,16 @@
+Dear Charlie,
+
+I am Yang Liu, a researcher working on LLM agents and evaluation; you can find my work at https://foamliu.github.io/.
+
+We are deciding how to spend a fixed inference budget on agentic tasks, so your framing matters to us: you evaluate both a dense process-based verifier and an adaptive update of the response distribution, show that the better mechanism depends on prompt difficulty, and report that a compute-optimal allocation improves efficiency by more than 4x over best-of-N.
+
+Three questions:
+
+1. How is prompt difficulty estimated at test time without labels: from the verifier's score distribution, a separate model, or rollouts? What share of the 4x gain comes from the difficulty estimate itself rather than from the allocation rule?
+2. When verification is exact but expensive (compiling code, running tests), does the compute-optimal policy shift toward revision rather than verifier-guided search? What verifier-call to generation-call ratio did you use?
+3. The FLOPs-matched result where test-time compute beats a 14x larger model: does it include verifier training compute, and does it hold on prompts where the smaller model's pass@1 is near zero?
+
+Thank you for your time; answers would directly shape our inference-budget planner.
+
+Best regards,
+Yang Liu
