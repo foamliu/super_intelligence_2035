@@ -1,4 +1,6 @@
-WAITING: 0 · **LITE_FIX: D=124/124 green(不变) · P0 余 3(跨 shard cases/B/ hspice-mock: OpampChar+SpiceSim-001+InvTripDelay, B HEAD ca44229f5 r1194 未触碰 3 P0, D 跟踪 3 未触) · L1 跨 shard 0 · 本轮 cycle-3 pos101-104 regression spot-check · 清单 md5=f7816ef4137353904e40a1a3b01fb3ae** · r1328(本轮)=监控轮 cycle-3 pos101-104: 4 green spot-check(SubSecFilter/SvwfHierExpand/TempHalfWLModuleFuncExplainQA/TempSelInfer) 无回归; 六项全 PASS: L0全名refdir / L1 audit OK(shapes True) / L2 ref-PASS 4/4 runtime 真跑(SubSecFilter 运 solve 产 CSV+script+summary 打包→True; SvwfHierExpand workdir=PARENT→True; TempHalfWL 现成 refzip→True; TempSelInfer→True) / L3 negs全FAIL distinct≥3(SubSecFilter 5 / SvwfHierExpand 3 / TempHalfWL 5 REF_PASS=True / TempSelInfer 5) / L4 clean-static(SvwfHierExpand 'calibre' 仅 FORBIDDEN_IMPORTS 守卫非调用) / L5 offline(SvwfHierExpand FORBIDDEN_IMPORTS 守卫含 requests/urllib/socket). 本轮 0 修复(纯监控轮): 断言/严格度零降, prompt/assets/hidden/check.py 零改. 跨 shard P0 re-verify: B HEAD ca44229f5(08:44) r1194 仍未触碰 3 P0, origin/master 自 08:57 起仅 D 提交, D 只读 handoff. EDA-Flow-Bench 改动=无; 双仓 git add -- 本 shard 路径, 未 git add -A · 📊 trace 覆盖率: 640/4529≈14.1%(LITE_FIX 暂停选料); 📦 体积: TASK≈29KB / MEMORY≈32KB; DEBT: 0; flag: r1328 = cycle-3 pos101-104 全无回归 + 跨 shard P0 3 pending(不变) 详见 daily_D_2026-11-25_r1328.md
+WAITING: 0 · **LITE_FIX: D=124/124 green(不变) · P0 余 3(跨 shard cases/B/ hspice-mock: OpampChar+SpiceSim-001+InvTripDelay, B HEAD 34f4dd257 r1196 未触碰 3 P0, D 跟踪 3 未触) · L1 跨 shard 0 · 本轮 cycle-3 pos105-108 regression spot-check · 清单 md5=f7816ef4137353904e40a1a3b01fb3ae** · r1329(本轮)=监控轮 cycle-3 pos105-108: 4 green spot-check(TempSelWaveform/TempThreshChar/ToggleTrTf/TskewCalc) 无回归; 六项全 PASS: L0全名refdir / L1 audit OK(shapes last=True, TskewCalc 早退 return results=list 审计按 last=True 判 OK 且功能正确) / L2 ref-PASS 4/4 runtime 真跑(建 workdir/hidden symlink 树 mirror run_one.sh §4, ref return True 4/4) / L3 negs全FAIL NEG_RC=0(TempSelWaveform 7 / TempThreshChar 18 / ToggleTrTf 5 distinct{b,h,n,o,p} / TskewCalc 5) / L4 clean-static(无 GUI 二进制调用, grep wv/verdi/innovus/virtuoso/calibre/vcs/hspice/finesim 0 命中) / L5 offline(无 requests/urllib/socket/http.client import). 本轮 0 修复(纯监控轮): 断言/严格度零降, prompt/assets/hidden/check.py 零改. 跨 shard P0 re-verify: B HEAD 34f4dd257(09:16 bench-shardB 心跳) r1196(MinpulseRewriteRun-001 P0 fix) 仍未触碰 3 P0, origin/master 自 08:57 起 D+B 提交, D 只读 handoff. EDA-Flow-Bench 改动=无; 双仓 git add -- 本 shard 路径, 未 git add -A · 📊 trace 覆盖率: 640/4529≈14.1%(LITE_FIX 暂停选料); 📦 体积: TASK≈29KB / MEMORY≈30KB; DEBT: 0; flag: r1329 = cycle-3 pos105-108 全无回归 + 跨 shard P0 3 pending(不变) 详见 daily_D_2026-11-25_r1329.md
+
+> r1328 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1329」（r1329 释体积；r1328=监控轮 cycle-3 pos101-104 4 green 无回归 + 跨 shard P0 3 pending, 原文见 daily_D_2026-11-25_r1328.md）
 
 > r1327 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1328」（r1328 释体积；r1327=监控轮 cycle-3 pos95-98 4 green 无回归 + 跨 shard P0 3 pending, 原文见 daily_D_2026-11-25_r1327.md）
 
@@ -184,33 +186,7 @@ WAITING: 0（r1212: MCP 110th OK + 候选筛选+lorih 深读（DEBT，case 下�
 > r1100 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1193」（r1193 释体积；anti-hardcode 普查处置补全轮 P0-001 全量64）
 > r1101 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1142」（r1142 释体积；anti-hardcode 修复轮 #22, BitlinePrechargeRootCauseQA-001 k=13→18, A-prime z-namespace 交叉击穿 B-hardcode stub）
 > r1099 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1142」（r1142 释体积；anti-hardcode 修复轮 #21, AetherNetHighlightQA-001 k=16→21, A-prime aether_manual_Ap.md 交叉击穿 signature-stub）
-> r1098 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1103」（r1103 释体积，保留 r1103/r1102/r1101/r1100/r1099 最近 5 指针）
-> r1097 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1101」（r1097 全文已在批次 r1101 归档；r1102 释体积，保留 r1102/r1101/r1100/r1099/r1098 最近 5 指针）
-> r1094 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1100」（r1100 释体积，保留 r1100/r1099/r1098/r1097/r1096/r1095 最近 6 指针）
-> r1095 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1101」
-> r1096 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1101」
-> r1093 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1099」（r1099 释体积，保留 r1099/r1098/r1097/r1096/r1095/r1094 最近 6 指针）
-> r1092 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1193」（r1193 释体积；reconsideration 造题轮 #3, CrcReplaceScan-001 k=16）
-
-> r1092 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1098」（r1098 释体积，保留 r1098/r1097/r1096/r1095/r1094/r1093 最近 6 指针）
-> r1091 WAITING 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1094」
-> r1091 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1097」（r1097 释体积，保留 r1097/r1096/r1095/r1094/r1093/r1092 最近 6 指针）
-> r1091 指针摘要：选料+重深读轮(0 case) · 高 mc(≥100) D-pure 候选已全部 ledgered(池采空) · flxzl(e03179 mc162 parked) 重深读解锁 reconsideration(子交付 path-driven 可 checkable) · eda_flow open_session OK · DEBT: 1 份 flxzl 重深读 + D 自有 490 GAP(已修15) + mc-matrix pending
-> r1090 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1094」
-> r1089 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1094」
-> r1088 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1193」（r1193 释体积；造题轮 #2, GenguiVariantAudit-001 k=13）
-> r1087 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1093」（r1093 释体积，保留 r1093/r1092/r1091/r1090/r1089/r1088 最近 6 指针）
-
-
-> r1086 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1092」（r1092 释体积，保留 r1092/r1091/r1090/r1089/r1088/r1087 最近 6 指针）
-
-> r1085 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1092」（r1092 释体积，保留 r1092/r1091/r1090/r1089/r1088/r1087 最近 6 指针）
-
-> r1084 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1089」（r1089 释体积，保留 r1089/r1088/r1087/r1086/r1085 最近 5 指针）
-
-> r1083 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
-
-> r1083 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积，保留 r1088/r1087/r1086/r1085/r1084 最近 5 指针）
+> r1083→r1098 指针原文归档（共 16 条 stub，均已在 ARCHIVE_OPERATOR_DESIGNFLOW_D.md 各批次）→ 释体积合并；摘要：r1088 造题轮#2 GenguiVariantAudit-001 k=13, r1092 reconsideration#3 CrcReplaceScan-001 k=16, r1091 选料+flxzl 重深读(0 case, 池采空), 其余为 MCP 重复轮/止损轮
 
 > r1049→r1082 指针原文归档（共 30 条，均归档批次 r1088）→ ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1088」（r1088 释体积；r1066/r1067/r1068/r1069/r1070/r1071/r1072/r1073/r1074/r1075/r1076/r1077/r1078/r1079/r1080/r1081/r1082/r1051/r1052/r1053/r1055/r1056/r1057/r1059/r1060/r1061/r1062/r1063/r1065/r1049）
 
