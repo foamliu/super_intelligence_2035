@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-26 06:0x）**：作者 **386** 人（编号最大 **386**）· X 已核验 **152**（本轮 **+1**：`@neilhoulsby` 由本人主页 <https://neilhoulsby.github.io/>（`200` / 115,917 B）外链 `twitter.com/neilhoulsby` + 代理抓 `x.com/neilhoulsby` `200` / 187,162 B，`og:title` = `Neil Houlsby (@neilhoulsby) on X` ⇒ 双源；Yaron Lipman 本人站点直连与代理均 `000`、Aaron Harlap 主页无 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **175**（台账 #1–#175；今日 **3/12**）· 回信 **0**（0/175；已回复 0 / 无应答>14d 9 / 未到期 166）。本轮 **+3**：Neil Houlsby（Adapter 一作，英文，主页明文 `neil@anthropic.com` ⇒ 已发信 #174）· Yaron Lipman（Flow Matching 一作，希伯来/英文姓名，主页两路 `000`、无明文邮箱 ⇒ 仅建档）· Aaron Harlap（PipeDream 一作，英文，主页明文 `aaron dot harlap at gmail dot com` ⇒ 已发信 #175，站点较旧已标注风险）。
+
 > **当前计数（2026-11-26 03:2x 补轮）**：作者 **383** 人（编号最大 **383**）· X 已核验 **151**（本轮 **+0**：三位一作均无可核本人 X 外链；`@mattthemathman` 属同名他人博客 ⇒ 不登记）· 已发信 **173**（台账 #1–#173；今日 **1/12**）· 回信 **0**（0/173；已回复 0 / 无应答>14d 9 / 未到期 164）。本轮 **+3**：Xiang Lisa Li（Prefix-Tuning 一作，中文，未定位本人当前主页 ⇒ 仅建档）· Brian Lester（Prompt Tuning 一作，英文，Google Research 页无个人邮箱 / 无本人 X ⇒ 仅建档）· Matthew E. Peters（ELMo 一作，英文，本人当前主页未定位 / 同名站点冲突 ⇒ 仅建档）。
 
 > **当前计数（2026-11-26 03:xx）**：作者 **380** 人（编号最大 **380**）· X 已核验 **151**（本轮 **+2**：`@prafdhar` 由本人站点 <https://prafulladhariwal.com/>（`200` / 38,647 B）`twitter:creator` 字段外链 + 代理抓 `x.com/prafdhar` `200` / 182,967 B，`og:title` = `Prafulla Dhariwal (@prafdhar) on X` ⇒ 双源；`@tom_schaul` 由代理抓 `x.com/tom_schaul` `200` / 128,408 B，`og:title` = `Tom Schaul (@tom_schaul) on X` ⇒ 姓名双源（`x.com/schaul` 为 `404`）；Tero Karras `x.com/TeroKarras` 为 `404` ⇒ 记「未找到 X」，不猜）· 已发信 **173**（台账 #1–#173；今日 **1/12**）· 回信 **0**（0/173；已回复 0 / 无应答>14d 9 / 未到期 164）。本轮 **+3**：Tero Karras（StyleGAN 一作，英文，NVIDIA 人员页无邮箱 / 无 X ⇒ 仅建档）· Prafulla Dhariwal（Diffusion-Beat-GANs 一作，英文，无公开邮箱 + X 双源 ⇒ 仅建档）· Tom Schaul（PER 一作，英文，无公开邮箱 / 未找到主页 + X 双源 ⇒ 仅建档）。以下历史快照行保留原文（不追改），计数以本行为准。
@@ -5425,3 +5427,42 @@
 | X 账号 | **未找到 X**（`@mattthemathman` 属同名他人博客（Moz 数据科学）⇒ 未核为本人，不登记） |
 | 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信） |
 | 备注 | 上下文词表示方向作者。问题候选：① 取哪几层 + learned mix 加权在低资源下相对端到端微调的差距边界；②「深层内部状态关键」的结论在今天的 decoder-only LM 上如何映射；③ 多任务时不同层的半监督信号能否按任务自动选层。 |
+
+### 384. Neil Houlsby
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Neil Houlsby（`语言=英文(判据=英语姓名族属 + 现任 Anthropic Zurich)`） |
+| 机构 | **Anthropic**（Member of Technical Staff，Zurich site lead；主页自述 2025-02 起）· Adapter 发表时为 Google Brain / DeepMind |
+| 代表论文 | **Parameter-Efficient Transfer Learning for NLP**（`1902.00751`，B 轨 #417，一作）· ViT `2010.11929`（共同作者） |
+| 邮箱 | **`neil@anthropic.com`**（本人主页 <https://neilhoulsby.github.io/> `HTTP 200` / 115,917 B 明文，2026-11-26 复核） |
+| 主页 | <https://neilhoulsby.github.io/>（`200` / 115,917 B；页面标题 `Neil Houlsby`） |
+| X 账号 | **`@neilhoulsby`**（主页外链 `twitter.com/neilhoulsby` + 代理抓 `x.com/neilhoulsby` `200` / 187,162 B，`og:title` = `Neil Houlsby (@neilhoulsby) on X` ⇒ 双源） |
+| 状态 | **已发信**（#174，2026-11-26 06:0x） |
+| 备注 | 参数高效适配 / 视觉架构方向作者。问题候选见 `mail/drafts/1902.00751.md`：① adapter 能否组合而不回访旧任务；② 插入位置 / 瓶颈维度 / 零初始化的相对贡献；③ 生成式（代码/RTL）任务上共享 adapter 是否仍保持同等参数共享收益。 |
+
+### 385. Yaron Lipman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yaron Lipman（`语言=英文(判据=希伯来/英语姓名族属 + 以色列机构，母语表未覆盖 ⇒ 英文兜底)`） |
+| 机构 | **Weizmann Institute of Science**（Flow Matching 论文作者机构，OpenAlex authorship 核；现职未核） |
+| 代表论文 | **Flow Matching for Generative Modeling**（`2210.02747`，B 轨 #418，一作） |
+| 邮箱 | **未找到**（本人站点 `yaronlipman.com` / `www.yaronlipman.com` / Weizmann `math/lipman` 直连与代理均 `000`；无可核明文 ⇒ 🚫 不猜、不发信） |
+| 主页 | **未找到**（上述三路均不可达） |
+| X 账号 | **未找到 X**（无本人主页可核外链；同名猜测一律不登记） |
+| 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信） |
+| 备注 | 生成建模 / 连续流方向作者。问题候选：① OT 位移插值路径在低维结构化信号（波形/版图）上是否仍比 diffusion 路径训练更快；② simulation-free 训练下如何选择条件路径宽度以兼顾质量与 NFE；③ 多模态条件（文本 + 约束）注入向量场的最省接法。 |
+
+### 386. Aaron Harlap
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Aaron Harlap（`语言=英文(判据=英语姓名族属 + 美国机构 CMU/Determined AI)`） |
+| 机构 | **Carnegie Mellon University**（PipeDream 一作，PhD；本人主页自述现于 **Determined AI** 构建 ML 系统） |
+| 代表论文 | **PipeDream: Fast and Efficient Pipeline Parallel DNN Training**（`1806.03377`，B 轨 #419，一作；SOSP 2019） |
+| 邮箱 | **`aaron.harlap@gmail.com`**（本人主页 <https://aaronharlap.github.io/> `HTTP 200` / 7,203 B 明文 `aaron dot harlap at gmail dot com`，2026-11-26 复核；⚠️ 站点为 Determined AI 时期，**地址有效性未二次核**，已如实记风险） |
+| 主页 | <https://aaronharlap.github.io/>（`200` / 7,203 B） |
+| X 账号 | **未找到 X**（主页无 x.com / twitter.com 外链） |
+| 状态 | **已发信**（#175，2026-11-26 06:0x） |
+| 备注 | 分布式训练系统方向作者。问题候选见 `mail/drafts/1806.03377.md`：① 权重版本化的显存开销随流水线深度/在飞 micro-batch 数如何增长；② 异构阶段（embedding / lm-head）下的负载均衡；③ time-to-accuracy 优势在 held-out 评测损失上是否仍成立。 |
