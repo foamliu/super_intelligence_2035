@@ -2042,3 +2042,10 @@ WAITING: 0 · **LITE_FIX: D=124/124 green(不变) · P0 余 3(跨 shard 全 case
 > r1322 心跳原文（r1323 替换 top line 时搬入）：
 
 WAITING: 0 · **LITE_FIX: D=124/124 green(不变) · P0 余 3(跨 shard 全 cases/B/ hspice-mock: OpampChar+SpiceSim-001+InvTripDelay, HEAD 69c75a1c0 与 r1321 一致无新提交, D 跟踪 3 未触) · L1 跨 shard 0 · 本轮 cycle-3 pos75-78 spot-check · 清单 md5=f7816ef4137353904e40a1a3b01fb3ae** · r1322(本轮)=监控轮 cycle-3 regression rotation pos75-78: 4 green 全无回归(ClampLeakPwrAnalyze/ClosureDeckBuilder/CmlMp5SweepCurrentAnalysisQA/ConnFileNetChk); 六项全 PASS. 无新修无回归. 跨 shard P0 re-verify: 3/3 仍直接 hspice 无 mock, HEAD 69c75a1c0 不变, D 只读 handoff. 本轮无 EDA-Flow-Bench 改动. 详见 daily_D_2026-11-25_r1322.md
+
+
+## 归档批次 r1327（r1326 释体积）
+
+> r1325 心跳原文（r1326 替换 top line 时搬入）：
+
+WAITING: 0 · **LITE_FIX: D=124/124 green(不变) · P0 余 3(跨 shard 全 cases/B/ hspice-mock: OpampChar+SpiceSim-001+InvTripDelay, HEAD 7dc674f9f, D 跟踪 3 未触; OtaAcReport-001 非 D 跟踪项已由 B r1193 修复) · L1 跨 shard 0 · 本轮 cycle-3 pos87-90 gap-fill spot-check · 清单 md5=f7816ef4137353904e40a1a3b01fb3ae** · r1325(本轮)=监控轮 cycle-3 regression rotation pos87-90 gap-fill(norm-pos 22/26/32/33): 4 green(DQTXStim/DlyChainTrace/FineSimTskew/FinesimIgnoreGen); 六项全 PASS: L0全名refdir / L1 audit全OK(shapes True) / L2 ref-PASS 4/4 / L3 negs全FAIL distinct≥3(DQTXStim 4 {b,d,g,c} / DlyChainTrace 3 {c,d,f} / FineSimTskew 3 {b,d,f} / FinesimIgnoreGen 4 {c,d,g,m}) / L4 clean-static(均 subprocess sys.executable only) / L5 offline. 本轮 0 修复(纯监控轮): 断言条数/严格度零降, prompt/assets/hidden/check.py 零改. 跨 shard P0 re-verify: HEAD 7dc674f9f(r1324 后 D loop auto-commit, 无新 B commit 触碰 3 P0 case), 3/3 仍直接 hspice 无 mock, D 跟踪 3 未触, D 只读 handoff. 本轮 EDA-Flow-Bench 改动=无; 双仓 git add -- 本 shard 路径, 未 git add -A · 📊 trace 覆盖率: 640/4529≈14.1%(不变; LITE_FIX 期间暂停选料); 📦 体积: TASK≈29KB / MEMORY≈31KB; DEBT: 0; flag: r1325 = cycle-3 pos87-90 gap-fill 全无回归 + 跨 shard P0 3 pending(不变) · 详见 daily_D_2026-11-25_r1325.md
