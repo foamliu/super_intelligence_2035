@@ -1,0 +1,12 @@
+Dear Dr. Azerbayev,
+
+My name is Yang Liu and I work on LLM agents (https://foamliu.github.io/). Llemma is the paper I quote whenever our team debates how much code should enter a math-oriented data mixture, so I would like to ask about choices the report leaves implicit.
+
+Specifically: in Proof-Pile-2, what sampling weights did arXiv papers, web math, and mathematical code receive in MathMix, and how much does downstream math accuracy move if the code share is halved? Was the 200B-token budget derived from a scaling-law estimate for the 7B model, or fixed by available compute; and for a 2B model on the same mixture, would you scale unique tokens or epochs? Finally, which failure mode dominates at 7B - multi-step algebra, geometry without diagrams, or formal proof search - and does the 32k context actually help few-shot math, or is most of it unused?
+
+Even rough ranges would help us size a 2B math/code mixture.
+
+Thank you.
+
+Best regards,
+Yang Liu

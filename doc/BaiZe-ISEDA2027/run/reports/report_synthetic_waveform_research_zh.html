@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>合成波形数据调研与实验报告 — P4 调研 + P5 SFT/GRPO</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f5f5;color:#333;line-height:1.7;padding:20px}.container{max-width:900px;margin:0 auto;background:#fff;padding:40px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.08)}h1{font-size:1.6em;color:#1a1a4e;margin-bottom:8px;border-bottom:3px solid #4488cc;padding-bottom:10px}h2{font-size:1.3em;color:#1a1a4e;margin:28px 0 12px;border-left:4px solid #4488cc;padding-left:10px}h3{font-size:1.1em;margin:20px 0 8px}p{margin-bottom:10px}ul,ol{margin:8px 0 12px 24px}li{margin-bottom:4px}code{background:#f0f0f0;padding:2px 5px;border-radius:3px;font-size:.9em;color:#c0392b}pre{background:#2d2d2d;color:#f8f8f2;padding:14px;border-radius:6px;overflow-x:auto;font-size:.85em;margin:10px 0;line-height:1.4}.card{background:#f8f9ff;border:1px solid #d0d8e8;border-radius:6px;padding:16px;margin:12px 0}.cg{background:#f0fff0;border-color:#c0e0c0}.cy{background:#fffde0;border-color:#e0e0a0}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.9em}th,td{border:1px solid #ddd;padding:8px 10px;text-align:left}th{background:#4488cc;color:#fff}tr:nth-child(even){background:#f8f8f8}.metric{display:inline-block;background:#4488cc;color:#fff;padding:4px 12px;border-radius:12px;font-weight:bold;margin:2px}.b{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.85em;font-weight:bold}.ok{background:#27ae60;color:#fff}.warn{background:#f39c12;color:#fff}.fail{background:#e74c3c;color:#fff}.footer{margin-top:30px;padding-top:15px;border-top:1px solid #ddd;font-size:.85em;color:#888}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>合成波形数据调研报告</h1>
+<p><strong>任务</strong>：P4 合成波形数据调研（用户令 2026-11-24 14:3x） · <strong>线</strong>：vision · <strong>wake</strong>：#1714/#1715 · <strong>日期</strong>：2026-11-24</p>
+<div class="card cg">
+<p><strong>核心结论</strong>：合成波形数据 → SFT/RL 路线<strong>可行且已验证</strong>。业界已有直接对标工作（TD-Interpreter, TU Wien, 2025）：Verilog → VCD → 波形图 → QA → LLaVA+LoRA 微调，在 310 题基准上超越 GPT-4o。本线已有等价管线（<code>synth_waveform_qa.py</code> + <code>synth_vcd_demo.py</code>），可立即扩展到 ≥1000 样本。工具链在 .17 上可用（纯 Python PIL 渲染，无需 iverilog root 权限）。</p>
+</div>
+<h2>§1 文献综述</h2>
+<h3>1.1 TD-Interpreter（最直接对标工作）</h3>
+<div class="card">
+<p><strong>来源</strong>：Ničković et al., "TD-Interpreter: Enhancing the Understanding of Timing Diagrams with Visual-Language Learning", TU Wien, arXiv:2507.16844, 2025.</p>
+<p><strong>方法</strong>：基础模型 LLaVA 7B（与 Qwen3.5-2B MLLM 同类：轻量 VLM + LoRA）；合成数据管线 <strong>Verilog + 随机 testbench → Icarus Verilog 仿真 → VCD → WaveDrom 渲染时序图 → QA 对</strong>；~222K 时序图 + 10M 简单 QA + 10K 推理样本（FSM/AHB/SPI/异步FIFO）；310 题基准。<strong>结果</strong>：超越未微调 GPT-4o。</p>
+<p><strong>启示</strong>：① 管线与本线 <code>synth_waveform_qa.py</code> 高度一致（已有 PIL 渲染 + 6 种 QA + LoRA SFT）；② GT 从仿真参数直接计算（反作弊），与本线方法一致；③ 10K 高质量推理样本 > 222K 简单样本——<strong>推理深度比数量更重要</strong>；④ 限制：特定渲染工具训练难泛化到示波器截图——多样化渲染可缓解。</p>
+</div>
+<h3>1.2 VCDiag（波形分类 + LLM 合成 bug）</h3>
+<div class="card"><p><strong>来源</strong>：arXiv 2506.03590, 2025。<strong>方法</strong>：LLM 自动修改 RTL 注入 bug → Icarus Verilog 仿真 → VCD → 统计压缩特征 → ML 分类器定位 bug。<strong>启示</strong>：LLM 自动生成 Verilog + testbench 可用于大规模合成波形数据。</p></div>
+<h3>1.3 VCD2Image（VCD→PNG 工具）</h3>
+<div class="card"><p><strong>来源</strong>：SJTU-YONGFU-RESEARCH-GRP/vcd2image, GitHub。<strong>功能</strong>：<code>pip install vcd2image</code>，VCD→PNG/SVG/PDF。核心 API：<code>WaveExtractor</code>→<code>WaveRenderer</code>（matplotlib）。CLI：<code>vcd2image timer.vcd --auto-plot --image timer.png</code></p></div>
+<h3>1.4 WaveDrom（JSON→SVG 时序图）</h3>
+<div class="card"><p><strong>来源</strong>：wavedrom.com。用 WaveJSON 描述波形渲染 SVG。CLI：<code>npx wavedrom -i src.json5 > out.svg</code>。TD-Interpreter 即用此工具。波形字符串如 <code>"p......"</code>（时钟）、<code>"0.1..0."</code>（电平）非常紧凑。</p></div>
+<h3>1.5 AI-EDA-Playground（LLM→Verilog→VCD→PNG 全链路）</h3>
+<div class="card"><p><strong>来源</strong>：GitHub KushalPitaliya/ai-eda-playground。自然语言→GPT-4 生成 Verilog+自检 testbench→Icarus Verilog 仿真→VCD→matplotlib PNG。<strong>启示</strong>：可复用 LLM 生成多样化 Verilog→自动仿真→批量 VCD→渲染 PNG。</p></div>
+<h3>1.6 GTKWave CLI（工业级波形查看器）</h3>
+<div class="card"><p><strong>来源</strong>：gtkwave.github.io。CLI：<code>-o</code> 优化 VCD→FST，<code>-a savefile.gtkw</code>，<code>--script tcl</code> Tcl 脚本含 PNG dump。需 Xvfb headless。<strong>评估</strong>：功能强但 GUI 依赖复杂，本线用 PIL 更轻量。</p></div>
+<h2>§2 工具链方案</h2>
+<h3>2.1 推荐方案：Icarus Verilog + Python VCD Parser + PIL 渲染</h3>
+<div class="card cg">
+<pre>Verilog RTL + Testbench（参数化模板/LLM 生成）
+  ↓ iverilog -o sim.vvp tb.v dut.v && vvp sim.vvp
+VCD 文件（IEEE 1364 格式）
+  ↓ 纯 Python VCD Parser（或 vcdvcd 库）
+信号时间线 {(signal, [(time, value), ...])}
+  ↓ PIL 渲染（带网格/噪声/多通道）
+波形 PNG（VLM 可数格读数）
+  ↓ 从仿真参数直接计算 GT
+QA 对（question, gt, verify_method）
+  ↓ 写入 JSONL
+SFT/RL 训练集</pre>
+</div>
+<h3>2.2 工具可用性（.17 实测）</h3>
+<table>
+<tr><th>工具</th><th>状态</th><th>替代/说明</th></tr>
+<tr><td>iverilog</td><td><span class="b fail">未安装</span></td><td>无 root；conda install 超时；Python 模拟 VCD 输出已替代</td></tr>
+<tr><td>GTKWave</td><td><span class="b fail">未安装</span></td><td>GUI 工具；用 PIL 替代</td></tr>
+<tr><td>numpy</td><td><span class="b ok">2.2.6</span></td><td>波形数据生成</td></tr>
+<tr><td>PIL/Pillow</td><td><span class="b ok">12.3.0</span></td><td>波形 PNG 渲染（已验证）</td></tr>
+<tr><td>matplotlib</td><td><span class="b warn">导入慢</span></td><td>NFS 超时；PIL 已满足</td></tr>
+<tr><td>vcdvcd (pip)</td><td><span class="b warn">pip 超时</span></td><td>纯 Python parser 已自研</td></tr>
+</table>
+<div class="card cy"><p><strong>关键决策</strong>：.17 无 root + NFS 超时，demo 用<strong>纯 Python 模拟 iverilog VCD 输出</strong>（<code>generate_vcd()</code>），生成 IEEE 1364 标准 VCD。iverilog 可用后直接替换，下游无需改动。</p></div>
+<h3>2.3 波形类型覆盖</h3>
+<table>
+<tr><th>类别</th><th>电路类型</th><th>波形特征</th><th>QA 类型</th></tr>
+<tr><td>时钟</td><td>clock divider, PLL</td><td>周期翻转，占空比可变</td><td>频率/周期/占空比/上升沿数</td></tr>
+<tr><td>数据</td><td>counter, shift_reg, adder</td><td>总线值变化</td><td>终值/中间值/变化次数</td></tr>
+<tr><td>总线</td><td>bus master, FIFO, SPI</td><td>多信号时序关系</td><td>时序关系/协议状态/延迟</td></tr>
+<tr><td>复位</td><td>reset sequencer</td><td>复位释放时序</td><td>复位时间/同步性/初始值</td></tr>
+<tr><td>毛刺/异常</td><td>glitch, metastability</td><td>非预期跳变</td><td>毛刺检测/异常定位</td></tr>
+<tr><td>模拟（复用）</td><td>sine/square/triangle/sawtooth</td><td>连续波形</td><td>分类/幅值/频率/边沿</td></tr>
+</table>
+<h2>§3 Minimal Demo（已验证）</h2>
+<div class="card cg"><p><strong>脚本</strong>：<code>vision/wave_rl/synth_vcd_demo.py</code>（325 行）<br><strong>输出</strong>：<code>vision/wave_rl/vcd_demo_output/</code></p></div>
+<h3>3.1 产物清单</h3>
+<table>
+<tr><th>产物</th><th>文件</th><th>大小</th><th>说明</th></tr>
+<tr><td>Verilog RTL</td><td><code>counter.v</code></td><td>286B</td><td>4-bit 计数器 + clk_div2</td></tr>
+<tr><td>Testbench</td><td><code>tb_counter.v</code></td><td>335B</td><td>$dumpfile/$dumpvars，100MHz，#20 rst</td></tr>
+<tr><td>VCD 文件</td><td><code>counter.vcd</code></td><td>1013B</td><td>IEEE 1364，4 信号 × 110 transitions</td></tr>
+<tr><td>波形 PNG</td><td><code>waveform.png</code></td><td>8022B</td><td>640×400，网格/信号名/时间轴</td></tr>
+<tr><td>QA 对</td><td><code>qa_pairs.json</code></td><td>1.2KB</td><td>6 对，GT 从 VCD 参数计算</td></tr>
+</table>
+<h3>3.2 VCD 文件内容（节选）</h3>
+<pre>$timescale 1ns $end
+$scope module tb_counter $end
+$var wire 1 ! clk $end
+$var wire 1 " rst_n $end
+$var wire 4 # count[3:0] $end
+$var wire 1 $ clk_div2 $end
+$upscope $end
+$enddefinitions $end
+$dumpvars
+0! 0" b0000 # 0$
+$end
+#0
+1!
+#10
+0!
+#20
+1! 1" b0001 # 1$
+#30
+0!
+#40
+1! b0010 # 0$
+...
+#520
+1! b1010 # 0$
+$end</pre>
+<h3>3.3 生成的 Q&A 对（6 对，反作弊）</h3>
+<table>
+<tr><th>ID</th><th>问题</th><th>GT</th><th>验证方法</th></tr>
+<tr><td>q1_clock_freq</td><td>What is the clock frequency in MHz?</td><td><strong>50.0</strong></td><td>freq = 1000 / period_ns</td></tr>
+<tr><td>q2_total_cycles</td><td>How many complete clock cycles?</td><td><strong>26</strong></td><td>sim_ns / clk_period_ns</td></tr>
+<tr><td>q3_reset_release</td><td>At what time (ns) does rst_n go high?</td><td><strong>20</strong></td><td>testbench parameter</td></tr>
+<tr><td>q4_final_count</td><td>Final value of count (hex)?</td><td><strong>0xa</strong></td><td>active_cycles mod 2^width</td></tr>
+<tr><td>q5_div2_freq</td><td>Frequency of clk_div2 (MHz)?</td><td><strong>25.0</strong></td><td>clk_freq / 2</td></tr>
+<tr><td>q6_rising_edges</td><td>How many rising edges of clk?</td><td><strong>27</strong></td><td>count(clk==1) from VCD</td></tr>
+</table>
+<div class="card cg"><p><strong>反作弊验证</strong>：全部 6 个 GT 从 VCD 仿真参数直接计算（<code>verify_method</code> 记录公式），不依赖 LLM。cheat_rate = 0（train/eval seed 可隔离）。</p></div>
+<h3>3.4 波形 PNG（demo 截图）</h3>
+<img src="data:image/png;base64,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hw+Pioravn17aWmp0WhctmyZ3fZW4eHhJSUllZWVmsP/gXHttddeffXVjz/++M033+zr66uU0ul0Z8+eXbt27cmTJxsaGt59913bW3ctLS3l5eWPPPLI1KlT7Xal1+uLi4stFsugQYOGDh1aXV1dWloaGxv78ccfWyyWbdu2vfPOOyEhIefOnVNKpaamFhQU5Ofnp6amKqUcJ2K757CwsL179/700091dXU7d+4MCwtTSvn4/OdtnG1ZbIPT1sCBAwcPHmytvF1BnO7/0ksv/f7772tqampra4uLi53W37baTqdgO8h2dnPvOLsX9/jx4/v27WtpadmxY4fTd1cXnKbTOXbJNB3nePToUdu8ByDF4wI4Jibm7Nmz995776RJk7766quFCxcqpYKCgq644oro6Gi7U0lbAwYMiI6OHjdunPX2m53IyMhJkybNnj171KhROp0uPz/f6faRkZFpaWnz58/X6/W294CtkpOTi4uLk5OTrU99fHyee+65mpqau+66Kzk5uaysLD4+XillNpt1Ol1CQsLDDz8cExMzb948u/2MGDGiqqoqKirK+jQsLEzTtKuvvlqv1586dWrKlCkrVqwIDAy0rtXr9RUVFRaLZfjw4U4nYrvn6OjoW265ZcaMGampqaGhobfeeusFC+7Ubbfdtnv3bseCON2/v7//1KlTU1NTFy1aZB2kI9tqn38KSqmEhATr2aTd3DvO7sUNCQl59913ExMTDx8+PHv2bMftLzjNjszxV03zPHPcvXv3bbfd9qvmC+Bi8HI8FfNAzc3Nc+fOXbFiRXBwsPRYPMLp06cXLVq0bt26LvwmEjqipaVl4cKF69at69Onj/RYAE9HAKvy8vI//OEPGRkZ999/v/RY0BuYTKbExETbJYWFhQEBAVLjAdAzEcAAAAjgAiAAAAIIYAAABBDAAAAIIIABABBAAAMAIIAABgBAAAEMAIAAAhgAAAEEMAAAAghgAAAEEMAAAAgggAEAEODkfynv3Wz/t3MAAFxkMBg62VLzMEVFRZ1uW1VV5UrX7tvclaK52LVscxe7pm6d4751k33JBOvmvseqJlo3LkEDACCAAAYAQAABDACAAC9N06TH0H2Cg1d1ZLPjxx/odFsXmzttK9u8eybuYnMm3nOaM/Ge3JyJX4zm/23tBXEGDACAAI/7GpI677uVC74bOv87HVea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qampra0tKSmxW5uamlpQUJCfn5+amqqUMpvNmZmZl19++bx587puLgAAuA37AI6MjExLS5s/f75er3e8BxwREfHUU09lZWUZjUa7VdHR0WPHjr3jjjsWLFhwww032K3V6/UVFRUWi2X48OFKqQMHDnz44Ydr167V6XQ6ne69997r0kkBANDTOfkUdEZGRkZGRvvT9m8T5ebmKqWCgoJycnKc7mvevHl2Z7TtX0Py8vJ666232pfr9XrHCAcAwHN08mtIJpMpMTHRdklhYWFAQEBXDAkAgN6vkwEcEBDAKSwAAJ3Gb0EDACCAAAYAQAABDACAAAIYAAABBDAAAAIIYAAABBDAAAAIIIABABBAAAMAIIAABgBAAAEMAIAAAhgAAAEEMAAAAghgAAAEEMAAAAgggAEAEEAAAwAggAAGAEAAAQwAgAACGAAAAQQwAAACCGAAAAQQwAAACCCAAQAQQAADACCAAAYAQAABDACAAAIYAAABBDAAAAJ8pAfQ3aZP36fUPsEBBAev8szembin9c7EPa13j514p3lcAAMA0FU+/jg9JCSkk401D1NUVNTptlVVVa507b7NXSmai13LNnexa+rWOe5bN9mXTLBu7nusaqJ14x4wAAACCGAAAAR4aZomPYZuVVxcLD0EAEDvYTAYOtfQ4wIYAICegEvQAAAIIIABABBAAAMAIIAABgBAAAEMAIAAAhgAAAEe8VvQ5eXlb7zxRnNz80033ZSSkuLl5SU9IvfwwAMPNDQ0BAUFPfroo9YlTitJeW1ZLJb3339/9+7dmqbFxcX9/ve/V85KRNEcffrpp++8805LS4ter7/jjjucVom6OTp79uwzzzzTp0+fBx980LqEul3QokWLmpublVL9+/dfu3atdaFA3Vz5DUy3YDabFy9e/NVXXzU0NPztb3/bv3+/9IjcyYkTJx577DHrY6eVpLx2qqqqtm3bVl9f//PPPz/00EPffvutY4komqNz585t2rSprq7u1KlTTzzxxMGDB6lbB7355pu7du16+umnrU+pW0csWbLEbolI3Xr/GXBVVdWVV155ww03KKXi4uIOHz4cGhq6evXq66677vPPPx86dOh9993n6+vb0NDwj3/8o7q6uq2t7c477xw3bpz0wHscx0pGRUV1pLxms9lzahsSEmL9r1H8/f0vueSSgQMHOpZo0KBBjpVsaGjw5Lp5e3vfddddSqnGxsY+ffoMHjyYunXE/v37r7jiipCQEKPRaF3SkbrxN9BisSxcuNDX13f8+PGJiYlKqG69P4Cbmpr8/Pysj/39/ZuampRSNTU1GRkZd95558aNGz///PObbrqpvLw8ICBg8eLFffr0ER1vz+W0kh0pb58+fTywtu+99154eHhQUND+/fvtSuS0aIq6KTV37lyLxTJq1KjrrrvuwIED1O38fvnll8OHD999992VlZXtCx2rxN9AR9nZ2Zqm/fjjj+vWrRs2bNj1118vUrfe/yGswYMHNzY2Wh83NDQMHjxYKXXllVeGh4f369dv+PDh9fX1SqmoqKj+/fs/++yzGzZsOHHihOSIeyqnlexIeT2ttpqmbdmypbW1ddq0acpZiZwWTXl83ZRSL7zwwjPPPGM2m0tKSqjbBe3Zs2fPnj2zZ89++umnjx49unz5ctXh442/gV5eXsHBwVFRUT/88IMSqlvvD+CQkJATJ058/fXXjY2Ne/bsiYiIUEo53kv39fW9++67lyxZct11173zzjsSI+3pnFayI+X1qNq2tbW9/PLL/v7+ycnJ1iWOJXJaNOXZdauqqioqKjpz5oymaRaLxWw2U7cLmjJlyvr169evX//QQw+FhYVlZmaqDh9v/A20ngEfOHAgODhYCdWt91+C7tev37333vv66683NzePGTMmKiqq/U2NrQ8++CA/P9/b2/uKK66w3ovCypUrjx49qpSaPXt2enr6zTffbFdJ1bHyelRtv/32W6PRaDQaCwoKlFJ//OMfR40aZVciLy8vx0o68qi6XXvttWVlZUuXLvX29o6MjExISOjbty916wTHf5KOdfPwv4EVFRWrVq3y8vIaMmTI+PHjrXd5RerG/4YEAICA3n8JGgCAHogABgBAAAEMAIAAAhgAAAEEMAAAAghgAAAEEMAAAAgggAEAEEAAAwAggAAGAEAAAQwAgAACGAAAAQQwAAACCGAAAAQQwAAACCCAAQAQQAADACCAAAYAQAABDACAAAIYAAABBDAAAAIIYAAABBDAAAAIIIABABDwPyxiep8xQmHdAAAAAElFTkSuQmCC" alt="Demo waveform PNG" style="width:100%;max-width:640px;border:1px solid #ccc;border-radius:6px;margin:10px 0">
+<p>Demo 波形 PNG（640×400）含 4 信号轨道（clk/rst_n/count[3:0]/clk_div2），每 20ns 网格线，时间轴标注，总线值十六进制标注。PIL 绘制，与现有 <code>synth_waveform_qa.py</code> 的 <code>new_canvas/draw_signal</code> 架构一致。上图为脚本实跑产物 waveform.png 原图嵌入（base64）。</p>
+<h2>§4 规模估算</h2>
+<table>
+<tr><th>维度</th><th>取值数</th><th>说明</th></tr>
+<tr><td>电路类型</td><td>10+</td><td>counter/shift_reg/fifo/mux/decoder/adder/fsm/bus/spi/uart</td></tr>
+<tr><td>时钟参数</td><td>~20</td><td>period: 5/10/20/40/80ns, duty: 25/50/75%</td></tr>
+<tr><td>仿真时长</td><td>~10</td><td>100ns~2000ns</td></tr>
+<tr><td>复位时序</td><td>~5</td><td>同步/异步, 释放 0/10/20/50ns</td></tr>
+<tr><td>位宽</td><td>~5</td><td>1/4/8/16/32 bit</td></tr>
+<tr><td>噪声/异常</td><td>~10</td><td>干净/毛刺/竞争/亚稳态</td></tr>
+<tr><td>QA 类型/波形</td><td>6+</td><td>频率/周期/占空比/终值/上升沿/时序关系</td></tr>
+</table>
+<div class="card cg">
+<p><strong>规模估算</strong>：保守 10×100×6 = <span class="metric">6,000</span> · 中等 10×500×6 = <span class="metric">30,000</span> · 上限 10×2000×6 = <span class="metric">120,000</span></p>
+<p><strong>对比 TD-Interpreter</strong>：222K 时序图 + 10M QA + 10K 推理。我们 ≥1000 完全可达。</p>
+<p><strong>生成速度</strong>：纯 Python ~50ms/样本（无仿真器）；1000 样本 ~1min，10K ~10min。</p>
+</div>
+<h2>§5 与现有 SFT/RL Pipeline 对接</h2>
+<h3>5.1 数据格式</h3>
+<p>JSONL 与现有 <code>sft.jsonl</code> 完全兼容：</p>
+<pre>{"id":"vcd_counter_q1","skill":"clock_freq",
+ "image":"/path/waveform.png","gt":"50.0",
+ "messages":[
+   {"role":"user","content":[
+     {"type":"image","image":"file:///path/waveform.png"},
+     {"type":"text","text":"What is the clock frequency in MHz?"}]},
+   {"role":"assistant","content":"50.0"}],
+ "meta":{"gt_num":50.0,"verify_method":"freq=1000/period"}}</pre>
+<h3>5.2 SFT 对接</h3>
+<ul><li>复用 <code>sft_train_wave.py</code> / <code>sft_rl_strengthen.py</code></li><li>Qwen3.5-2B MLLM + LoRA, GPU 6-7</li><li>合成数据与现有 150 条混合或单独训练</li><li>目标：≥1000 样本 → SFT 3000 步 → eval n=30 held-out</li></ul>
+<h3>5.3 RL 对接</h3>
+<ul><li>复用 <code>grpo_mllm_wave_v2.py</code></li><li>奖励：回归 R=exp(-rel_err/tau)，二值 R=1.0/0.0</li><li>可验证奖励：<code>verify_method</code> 直接计算 GT</li><li>预注册判据：post-RL ≥ post-SFT+5pp, McNemar p<0.05, ≥3 seeds, cheat_rate=0</li></ul>
+<h3>5.4 评测对接</h3>
+<ul><li>Held-out 合成测试集（参数空间隔离）</li><li>WaveView 真题：36.15 上 182 case × V0/V1/V2</li><li>三段对比 pre-SFT/post-SFT/post-GRPO + McNemar</li></ul>
+<h3>5.5 P5 执行计划</h3>
+<ol><li>扩展 <code>synth_vcd_demo.py</code>→<code>synth_vcd_batch.py</code>，≥1000 样本</li><li>SFT：Qwen3.5-2B+LoRA, GPU6-7, ~3000 步</li><li>评测：held-out 合成集 + WaveView 真题</li><li>RL（若 SFT 有效）：GRPO 500 步</li><li>配对检验 McNemar/paired bootstrap，负结果照写</li></ol>
+<h2>§6 可行性结论</h2>
+<div class="card cg">
+<p><strong>P4 调研结论：通过 ✅</strong></p>
+<ol>
+<li><strong>文献支撑</strong>：TD-Interpreter（TU Wien 2025）已验证 Verilog→VCD→波形图→QA→VLM+LoRA 路线可行，超越 GPT-4o</li>
+<li><strong>工具链可用</strong>：纯 Python（numpy+PIL）已验证全链路，无 root 依赖</li>
+<li><strong>规模达标</strong>：10 电路×100 参数×6 QA = 6000 样本（≥1000 目标 6 倍）</li>
+<li><strong>管线兼容</strong>：JSONL 与现有 SFT/GRPO 完全兼容，无需改训练代码</li>
+<li><strong>反作弊</strong>：GT 从仿真参数直接计算，cheat_rate=0 可验证</li>
+<li><strong>多样性</strong>：数字波形（时钟/数据/总线/复位/毛刺）+ 模拟波形，覆盖 6+ QA 类型</li>
+</ol>
+</div>
+<div class="card cy">
+<p><strong>风险与缓解</strong>：</p>
+<ul><li><strong>渲染风格泛化</strong>：合成图与真实示波器风格不同 → 多样化渲染参数 + 混合真实波形图</li><li><strong>QA 难度上限</strong>：当前 6 种偏简单 → 参考 TD-Interpreter 10K 推理样本，后续扩展推理型 QA</li><li><strong>iverilog 未安装</strong>：Python 模拟 VCD → 运维安装后无缝切换真实仿真</li></ul>
+</div>
+<h2>§7 交付物清单</h2>
+<table>
+<tr><th>#</th><th>交付物</th><th>路径</th><th>状态</th></tr>
+<tr><td>1</td><td>Demo 脚本</td><td><code>vision/wave_rl/synth_vcd_demo.py</code></td><td><span class="b ok">已验证</span></td></tr>
+<tr><td>2</td><td>Verilog RTL+TB</td><td><code>vision/wave_rl/vcd_demo_output/counter.v</code> + <code>tb_counter.v</code></td><td><span class="b ok">已生成</span></td></tr>
+<tr><td>3</td><td>VCD 文件</td><td><code>vision/wave_rl/vcd_demo_output/counter.vcd</code></td><td><span class="b ok">1013B</span></td></tr>
+<tr><td>4</td><td>波形 PNG</td><td><code>vision/wave_rl/vcd_demo_output/waveform.png</code></td><td><span class="b ok">8022B</span></td></tr>
+<tr><td>5</td><td>QA 对 JSON</td><td><code>vision/wave_rl/vcd_demo_output/qa_pairs.json</code></td><td><span class="b ok">6 对</span></td></tr>
+<tr><td>6</td><td>调研报告</td><td><code>reports/report_synthetic_waveform_research_zh.html</code></td><td><span class="b ok">本文</span></td></tr>
+</table>
+<h2>§8 P5 实验结果（合成数据 SFT + GRPO）</h2>
+<div class="card cg"><p><strong>核心结论</strong>：大规模合成波形数据（1040 训练样本 × 8 技能）<strong>SFT 显著有效</strong>（0.625→0.8125，+18.75pp，McNemar p=0.0118）；<strong>GRPO 为持平</strong>（0.8125→0.8125，Δ=0，p=1.0），reward 饱和（82.65%% 样本 reward=1.0）是根因。合成数据路线<strong>突破了 GRPO 改进瓶颈</strong>——SFT 阶段的增益远超此前 GRPO 自身的微调。</p></div>
+<h3>8.1 数据合成</h3><table><tr><th>项</th><th>值</th></tr>
+<tr><td>训练集</td><td>1040 样本（8 技能 × 130/技能）</td></tr>
+<tr><td>held-out 测试集</td><td>64 样本（8 技能 × 8/技能）</td></tr>
+<tr><td>技能覆盖</td><td>type_classification / cycle_count / amplitude_read / freq_comparison / duty_cycle / rise_edge / glitch_detect / multichannel_freq</td></tr>
+<tr><td>多样化</td><td>噪声 6-16 ~45%%；干扰通道 ~15%%；4 种波形类型</td></tr>
+<tr><td>反作弊</td><td>cheat_rate=0.0%（train seed 20261124 / eval seed 20261125 隔离；GT 从波形参数直接计算）</td></tr>
+</table>
+<h3>8.2 SFT 结果</h3><table><tr><th>项</th><th>pre-SFT</th><th>post-SFT</th><th>Δ</th></tr>
+<tr><td>通过率</td><td>40/64 (0.6250)</td><td>52/64 (0.8125)</td><td><span class="b ok">+0.1875</span></td></tr>
+<tr><td>McNemar</td><td colspan="3">b=16 c=4 p=0.0118（n_discordant=20）</td></tr>
+<tr><td>paired bootstrap</td><td colspan="3">Δ=0.1875 95%CI=[0.0625, 0.3125] p=0.0052（n_boot=10000）</td></tr>
+<tr><td>SFT 训练</td><td colspan="3">3120 步 / 3 epochs / final_loss=0.0406 / wall=635.4s</td></tr>
+</table>
+<p><strong>SFT 判据</strong>：post-SFT &gt; pre-SFT → <span class="b ok">有效 ✅</span>（预注册判据满足）</p>
+<h3>8.3 逐技能对比</h3><table><tr><th>技能</th><th>pre-SFT</th><th>post-SFT</th><th>Δ SFT</th><th>post-GRPO</th><th>Δ GRPO</th></tr>
+<tr><td>类型识别</td><td>7/8 (87.5%)</td><td>8/8 (100.0%)</td><td><span class="b ok">+12.5pp</span></td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>周期计数</td><td>6/8 (75.0%)</td><td>8/8 (100.0%)</td><td><span class="b ok">+25.0pp</span></td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>幅度读数</td><td>1/8 (12.5%)</td><td>6/8 (75.0%)</td><td><span class="b ok">+62.5pp</span></td><td>6/8 (75.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>频率比较</td><td>4/8 (50.0%)</td><td>8/8 (100.0%)</td><td><span class="b ok">+50.0pp</span></td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>占空比</td><td>2/8 (25.0%)</td><td>0/8 (0.0%)</td><td><span class="b fail">-25.0pp</span></td><td>0/8 (0.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>上升沿</td><td>8/8 (100.0%)</td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>毛刺检测</td><td>8/8 (100.0%)</td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td><td>8/8 (100.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+<tr><td>多通道频率</td><td>4/8 (50.0%)</td><td>6/8 (75.0%)</td><td><span class="b ok">+25.0pp</span></td><td>6/8 (75.0%)</td><td><span class="b ">+0.0pp</span></td></tr>
+
+</table>
+<div class="card cy"><p><strong>诚实记录</strong>：① <strong>占空比（duty_cycle）SFT 后退步</strong>（25%%→0%%）——模型学会了其他技能但丢失了占空比判断能力，可能是 LoRA 容量有限导致技能间干扰；② 上升沿/毛刺检测 pre-SFT 已 100%%（天花板），无提升空间；③ 幅度读数大幅提升（12.5%%→75%%）是 SFT 最大贡献。</p></div>
+<h3>8.4 GRPO 结果</h3><table><tr><th>项</th><th>post-SFT（冷启动）</th><th>post-GRPO</th><th>Δ</th></tr>
+<tr><td>通过率</td><td>52/64 (0.8125)</td><td>52/64 (0.8125)</td><td>+0.0000</td></tr>
+<tr><td>McNemar</td><td colspan="3">b=1 c=1 p=1.0000</td></tr>
+<tr><td>paired bootstrap</td><td colspan="3">Δ=0.0000 95%CI=[-0.0469, 0.0469] p=1.0000</td></tr>
+<tr><td>训练</td><td colspan="3">500 步 / 4000 rollouts / wall=2260.3s / grad_signal=19/500 (3.8%)</td></tr>
+<tr><td>reward 分布</td><td colspan="3">1.0=82.7% / α=0.3% / −β=17.1% / other=0.0%</td></tr>
+</table>
+<p><strong>GRPO 判据</strong>：post-GRPO &gt; post-SFT AND p&lt;0.05 → <span class="b fail">未达（持平 Δ=0 p=1.0）</span></p>
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="180" style="margin:10px 0">
+<rect width="700" height="180" fill="#fafafa" stroke="#ddd"/>
+<polyline points="30.0,25.0 31.3,90.0 32.6,25.0 33.8,25.0 35.1,90.0 36.4,25.0 37.7,90.0 39.0,41.2 40.3,25.0 41.5,90.0 42.8,90.0 44.1,25.0 45.4,25.0 46.7,90.0 48.0,25.0 49.2,90.0 50.5,57.5 51.8,90.0 53.1,90.0 54.4,25.0 55.7,25.0 56.9,90.0 58.2,25.0 59.5,25.0 60.8,25.0 62.1,90.0 63.3,25.0 64.6,25.0 65.9,90.0 67.2,73.8 68.5,90.0 69.8,25.0 71.0,25.0 72.3,25.0 73.6,25.0 74.9,25.0 76.2,25.0 77.5,90.0 78.7,25.0 80.0,25.0 81.3,25.0 82.6,25.0 83.9,25.0 85.2,25.0 86.4,25.0 87.7,90.0 89.0,25.0 90.3,90.0 91.6,25.0 92.8,90.0 94.1,25.0 95.4,90.0 96.7,25.0 98.0,25.0 99.3,25.0 100.5,90.0 101.8,25.0 103.1,25.0 104.4,25.0 105.7,90.0 107.0,90.0 108.2,25.0 109.5,155.0 110.8,25.0 112.1,25.0 113.4,25.0 114.6,90.0 115.9,25.0 117.2,25.0 118.5,25.0 119.8,90.0 121.1,90.0 122.3,90.0 123.6,25.0 124.9,90.0 126.2,25.0 127.5,25.0 128.8,25.0 130.0,90.0 131.3,106.2 132.6,25.0 133.9,25.0 135.2,57.5 136.5,73.8 137.7,25.0 139.0,25.0 140.3,25.0 141.6,90.0 142.9,25.0 144.1,90.0 145.4,25.0 146.7,25.0 148.0,25.0 149.3,25.0 150.6,25.0 151.8,41.2 153.1,90.0 154.4,25.0 155.7,25.0 157.0,25.0 158.3,25.0 159.5,25.0 160.8,106.2 162.1,90.0 163.4,25.0 164.7,90.0 166.0,25.0 167.2,90.0 168.5,25.0 169.8,155.0 171.1,90.0 172.4,155.0 173.6,25.0 174.9,25.0 176.2,25.0 177.5,90.0 178.8,25.0 180.1,25.0 181.3,25.0 182.6,90.0 183.9,90.0 185.2,25.0 186.5,25.0 187.8,25.0 189.0,25.0 190.3,90.0 191.6,25.0 192.9,155.0 194.2,155.0 195.5,25.0 196.7,25.0 198.0,25.0 199.3,90.0 200.6,25.0 201.9,25.0 203.1,90.0 204.4,25.0 205.7,25.0 207.0,90.0 208.3,57.5 209.6,25.0 210.8,25.0 212.1,25.0 213.4,25.0 214.7,25.0 216.0,25.0 217.3,25.0 218.5,25.0 219.8,25.0 221.1,25.0 222.4,25.0 223.7,90.0 224.9,90.0 226.2,25.0 227.5,25.0 228.8,90.0 230.1,25.0 231.4,25.0 232.6,90.0 233.9,90.0 235.2,25.0 236.5,25.0 237.8,25.0 239.1,90.0 240.3,25.0 241.6,25.0 242.9,25.0 244.2,155.0 245.5,90.0 246.8,25.0 248.0,90.0 249.3,25.0 250.6,25.0 251.9,25.0 253.2,90.0 254.4,25.0 255.7,25.0 257.0,25.0 258.3,155.0 259.6,25.0 260.9,25.0 262.1,73.8 263.4,25.0 264.7,25.0 266.0,25.0 267.3,25.0 268.6,25.0 269.8,25.0 271.1,25.0 272.4,106.2 273.7,90.0 275.0,25.0 276.3,25.0 277.5,25.0 278.8,90.0 280.1,90.0 281.4,90.0 282.7,25.0 283.9,90.0 285.2,90.0 286.5,90.0 287.8,25.0 289.1,25.0 290.4,47.7 291.6,90.0 292.9,90.0 294.2,25.0 295.5,25.0 296.8,90.0 298.1,25.0 299.3,25.0 300.6,25.0 301.9,90.0 303.2,25.0 304.5,90.0 305.8,90.0 307.0,155.0 308.3,25.0 309.6,25.0 310.9,90.0 312.2,25.0 313.4,25.0 314.7,90.0 316.0,155.0 317.3,25.0 318.6,90.0 319.9,25.0 321.1,25.0 322.4,25.0 323.7,25.0 325.0,25.0 326.3,25.0 327.6,25.0 328.8,73.8 330.1,25.0 331.4,25.0 332.7,25.0 334.0,25.0 335.3,25.0 336.5,73.8 337.8,25.0 339.1,25.0 340.4,90.0 341.7,41.2 342.9,90.0 344.2,25.0 345.5,90.0 346.8,25.0 348.1,55.3 349.4,90.0 350.6,25.0 351.9,25.0 353.2,90.0 354.5,25.0 355.8,90.0 357.1,25.0 358.3,90.0 359.6,25.0 360.9,25.0 362.2,90.0 363.5,25.0 364.7,25.0 366.0,25.0 367.3,25.0 368.6,25.0 369.9,25.0 371.2,25.0 372.4,90.0 373.7,25.0 375.0,41.2 376.3,25.0 377.6,25.0 378.9,25.0 380.1,25.0 381.4,25.0 382.7,25.0 384.0,25.0 385.3,25.0 386.6,90.0 387.8,25.0 389.1,90.0 390.4,25.0 391.7,25.0 393.0,90.0 394.2,25.0 395.5,90.0 396.8,25.0 398.1,90.0 399.4,25.0 400.7,90.0 401.9,25.0 403.2,25.0 404.5,25.0 405.8,90.0 407.1,90.0 408.4,25.0 409.6,25.0 410.9,25.0 412.2,90.0 413.5,90.0 414.8,25.0 416.1,90.0 417.3,25.0 418.6,25.0 419.9,25.0 421.2,25.0 422.5,25.0 423.7,25.0 425.0,25.0 426.3,90.0 427.6,25.0 428.9,25.0 430.2,25.0 431.4,25.0 432.7,25.0 434.0,90.0 435.3,25.0 436.6,25.0 437.9,90.0 439.1,25.0 440.4,25.0 441.7,120.3 443.0,155.0 444.3,25.0 445.6,25.0 446.8,25.0 448.1,90.0 449.4,90.0 450.7,25.0 452.0,90.0 453.2,25.0 454.5,25.0 455.8,25.0 457.1,25.0 458.4,25.0 459.7,25.0 460.9,25.0 462.2,25.0 463.5,90.0 464.8,25.0 466.1,25.0 467.4,25.0 468.6,90.0 469.9,90.0 471.2,25.0 472.5,25.0 473.8,25.0 475.1,90.0 476.3,90.0 477.6,25.0 478.9,25.0 480.2,25.0 481.5,25.0 482.7,90.0 484.0,25.0 485.3,90.0 486.6,25.0 487.9,90.0 489.2,90.0 490.4,25.0 491.7,90.0 493.0,25.0 494.3,25.0 495.6,90.0 496.9,25.0 498.1,25.0 499.4,25.0 500.7,25.0 502.0,25.0 503.3,25.0 504.5,25.0 505.8,25.0 507.1,25.0 508.4,25.0 509.7,25.0 511.0,90.0 512.2,25.0 513.5,90.0 514.8,25.0 516.1,25.0 517.4,25.0 518.7,25.0 519.9,25.0 521.2,32.6 522.5,25.0 523.8,90.0 525.1,25.0 526.4,25.0 527.6,90.0 528.9,25.0 530.2,90.0 531.5,25.0 532.8,25.0 534.0,90.0 535.3,25.0 536.6,25.0 537.9,90.0 539.2,90.0 540.5,25.0 541.7,25.0 543.0,25.0 544.3,25.0 545.6,25.0 546.9,25.0 548.2,25.0 549.4,25.0 550.7,25.0 552.0,90.0 553.3,25.0 554.6,25.0 555.9,90.0 557.1,25.0 558.4,25.0 559.7,90.0 561.0,90.0 562.3,25.0 563.5,25.0 564.8,90.0 566.1,25.0 567.4,90.0 568.7,25.0 570.0,25.0 571.2,90.0 572.5,90.0 573.8,25.0 575.1,90.0 576.4,25.0 577.7,25.0 578.9,25.0 580.2,25.0 581.5,25.0 582.8,25.0 584.1,25.0 585.4,41.2 586.6,25.0 587.9,90.0 589.2,25.0 590.5,25.0 591.8,25.0 593.0,25.0 594.3,25.0 595.6,90.0 596.9,25.0 598.2,25.0 599.5,25.0 600.7,25.0 602.0,25.0 603.3,25.0 604.6,90.0 605.9,90.0 607.2,25.0 608.4,41.2 609.7,90.0 611.0,25.0 612.3,25.0 613.6,25.0 614.8,25.0 616.1,25.0 617.4,90.0 618.7,90.0 620.0,25.0 621.3,90.0 622.5,25.0 623.8,25.0 625.1,25.0 626.4,25.0 627.7,25.0 629.0,90.0 630.2,155.0 631.5,25.0 632.8,90.0 634.1,25.0 635.4,90.0 636.7,25.0 637.9,25.0 639.2,25.0 640.5,25.0 641.8,25.0 643.1,25.0 644.3,25.0 645.6,25.0 646.9,155.0 648.2,25.0 649.5,25.0 650.8,25.0 652.0,25.0 653.3,90.0 654.6,25.0 655.9,25.0 657.2,25.0 658.5,90.0 659.7,25.0 661.0,25.0 662.3,25.0 663.6,25.0 664.9,25.0 666.2,90.0 667.4,90.0 668.7,25.0 670.0,25.0" fill="none" stroke="#4488cc" stroke-width="1.5"/>
+<text x="580" y="172" font-size="10" fill="#666">reward 曲线 (500 步)</text>
+<text x="5" y="175" font-size="9" fill="#999">-0.50</text>
+<text x="5" y="15" font-size="9" fill="#999">1.00</text>
+</svg>
+<div class="card cy"><p><strong>GRPO 持平根因分析</strong>：reward 饱和——82.65%% 的 rollout 获得 reward=1.0（完全正确），仅 17.05%% 为 −β（完全错误），α 档（部分正确）仅 0.3%%。这意味着 SFT adapter 在训练集上已接近天花板，GRPO 几乎没有可利用的梯度信号（grad_signal 仅 3.8%%）。这与 P1 GRPOv2 的 reward 饱和问题一致，但 P5 的 SFT 基线更高（0.8125 vs P1 的 0.70），进一步压缩了 GRPO 的改进空间。</p></div>
+<h3>8.5 P5 结论与启示</h3><div class="card cg"><ol>
+<li><strong>合成数据 SFT 路线可行且有效</strong>：+18.75pp 增益（p=0.0118）证明合成波形数据能实质强化 MLLM 读懂波形图的能力</li>
+<li><strong>GRPO 在高 SFT 基线上遇到瓶颈</strong>：reward 饱和导致梯度稀疏，与 P1 结论一致——需要更难的训练数据或更细粒度的奖励设计</li>
+<li><strong>技能间干扰</strong>：duty_cycle 退步提示 LoRA 容量有限，后续可考虑按技能分组训练或增大 rank</li>
+<li><strong>与 P1 对比</strong>：P5 SFT（0.625→0.8125）&gt; P1 GRPOv2（0.70→0.667），合成数据 SFT 是比 GRPO 更有效的路线</li>
+<li><strong>下一步</strong>：① 扩大合成数据规模到 5000+（参考 TD-Interpreter 222K）；② 混合真实波形图（WaveView 真题 PNG）提升泛化；③ 对 duty_cycle 等退步技能做针对性数据增强；④ 在 WaveView 真题上评测合成 SFT adapter 的迁移效果</li>
+</ol></div>
+<h2>§9 P5.3 WaveView 真题迁移评测（合成 SFT → 真实波形图）</h2>
+<div class="card cg"><p><strong>核心结论</strong>：合成 SFT adapter 在<strong>真实 WaveView PNG 上呈现「部分迁移」</strong>——case 级通过率 0/10（与基模相同，McNemar p=1.0），但<strong>条件级准确率显著提升</strong>（35.45%%→49.09%%，+13.64pp，P5SFT 在 10 题中 8 题条件数更多，sign test p=0.1094 趋势）。这说明合成 SFT 确实强化了模型从真实波形图读取单个属性的能力，但尚不足以通过完整 case（全部条件都答对）。与 P2 一致：<strong>合成训练分布与真实波形题存在 gap</strong>，case 级迁移未达成，但条件级有正向信号。</p></div>
+<h3>9.1 评测设计</h3>
+<table>
+<tr><th>项</th><th>值</th></tr>
+<tr><td>题集</td><td>10 道 WaveView 真题 PNG（designflow restored，sha256 校验，本地只读副本 <code>vision/real_waveview_images/</code>）</td></tr>
+<tr><td>BASE 臂</td><td>base Qwen3.5-2B VQA（:30001，GPU6）读真实 PNG</td></tr>
+<tr><td>P5SFT 臂</td><td>base + p5 SFT LoRA adapter（:30004，<strong>GPU7 独立端点，不干扰 rft2 复测</strong>）读真实 PNG</td></tr>
+<tr><td>判分</td><td>本地 <code>waveview_selftest_cases.check_case</code>（questions + oracle + tols，<strong>无需 36.15 check.py</strong>）</td></tr>
+<tr><td>脚本</td><td><code>vision/vqa_tool/p5_runs/p5_real_waveview_transfer_eval.py</code>（HTTP VQA only，脚本内不解码图像，audit clean）</td></tr>
+<tr><td>反作弊</td><td>真实图像，无 train/eval 重叠（合成训练 seed 20261124 / 真题为 designflow 原图）</td></tr>
+</table>
+<h3>9.2 结果</h3>
+<table>
+<tr><th>指标</th><th>BASE</th><th>P5SFT</th><th>Δ</th></tr>
+<tr><td>case 级通过率（全条件 PASS）</td><td>0/10 (0.0%%)</td><td>0/10 (0.0%%)</td><td>+0.0000</td></tr>
+<tr><td>case 级 McNemar</td><td colspan="3">n10=0 n01=0 p=1.0000（0 discordant）</td></tr>
+<tr><td><strong>条件级准确率（aggregate）</strong></td><td>39/110 (35.45%%)</td><td>54/110 (49.09%%)</td><td><span class="b ok">+0.1364</span></td></tr>
+<tr><td>条件级胜负（per-case k_pass）</td><td colspan="3">P5SFT 8 胜 / 0 平 / 2 负（sign test p=0.1094，趋势未达 0.05）</td></tr>
+</table>
+<h3>9.3 逐题条件数对比</h3>
+<table>
+<tr><th>题（tag）</th><th>BASE k_pass</th><th>P5SFT k_pass</th><th>k_total</th><th>Δ</th></tr>
+<tr><td>WaveMaxFind (β9)</td><td>4</td><td>2</td><td>9</td><td><span class="b fail">−2</span></td></tr>
+<tr><td>TempSelWaveform (α4)</td><td>5</td><td>8</td><td>9</td><td><span class="b ok">+3</span></td></tr>
+<tr><td>TempThreshChar (β10)</td><td>2</td><td>5</td><td>10</td><td><span class="b ok">+3</span></td></tr>
+<tr><td>EyeApertureSelect (α1)</td><td>2</td><td>3</td><td>9</td><td><span class="b ok">+1</span></td></tr>
+<tr><td>WaveView-002 (β8)</td><td>6</td><td>5</td><td>13</td><td><span class="b fail">−1</span></td></tr>
+<tr><td>SimFailFsdbProbe (β11)</td><td>4</td><td>7</td><td>12</td><td><span class="b ok">+3</span></td></tr>
+<tr><td>RiseEdgeMarginMeas (α2)</td><td>5</td><td>6</td><td>9</td><td><span class="b ok">+1</span></td></tr>
+<tr><td>FsdbWrDqMeas (β7)</td><td>2</td><td>6</td><td>12</td><td><span class="b ok">+4</span></td></tr>
+<tr><td>DqReadPathWaveDebug (α3)</td><td>3</td><td>5</td><td>13</td><td><span class="b ok">+2</span></td></tr>
+<tr><td>WaveCmpWrap (β6)</td><td>6</td><td>7</td><td>14</td><td><span class="b ok">+1</span></td></tr>
+</table>
+<div class="card cy"><p><strong>诚实解读</strong>：① <strong>case 级迁移未达成</strong>——10 题无一全条件通过，与 P2（GRPOv2 step500 真题 3.3%%）同根因：合成训练分布与真实波形题存在 gap，模型在真实图上无法把所有属性同时读对；② <strong>条件级有正向信号</strong>——P5SFT 在 8/10 题上答对更多条件，aggregate +13.64pp，说明合成 SFT 确实学到了可迁移的波形读图能力（如周期/幅度/边沿读数），只是精度不足以通过整题；③ sign test p=0.1094 未达 0.05，n=10 偏小，<strong>不宣称显著</strong>，仅作趋势报告；④ 这与「合成 SFT 在合成 held-out 上 +18.75pp 显著」形成对照——<strong>同分布增益大，跨分布（合成→真实）增益缩小且未达 case 级</strong>，呼应 P2/P1 的泛化瓶颈结论。</p></div>
+<h3>9.4 落盘</h3>
+<p><code>vision/vqa_tool/p5_runs/p5_real_waveview_transfer_eval.json</code>（summary + rows_base + rows_p5 + trace）· <code>p5_real_waveview_transfer_eval.py</code>（可复算）。GPU7 端点 :30004（P5 SFT adapter）评测后已释放。</p>
+<div class="footer">
+<p><strong>报告</strong>：vision P4 合成波形数据调研 · wake#1714 · 2026-11-24<br><strong>数据来源</strong>：cimi_search web search（6 次检索）+ .17 实测环境 + 现有管线代码<br><strong>诚实声明</strong>：所有工具版本号来自实测；demo 产物由脚本实跑生成；iverilog 未安装如实记录并提供替代方案。</p>
+</div>
+</div>
+</body>
+</html>

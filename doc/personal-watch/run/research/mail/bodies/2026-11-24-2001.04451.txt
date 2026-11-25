@@ -1,0 +1,16 @@
+Dear Dr. Kitaev,
+
+I am Yang Liu, a researcher working on LLM agents; my work is at https://foamliu.github.io/. I keep returning to Reformer because it separates three memory costs we usually lump together when budgeting a small-model pretraining run: the N copies of activations, the d_ff expansion in the feed-forward block, and the L^2 attention matrix.
+
+Three questions:
+
+1. For the LSH attention, what n_rounds did you settle on, and how fast does quality degrade at one round? Our sequences are mostly code and logs with heavily repeated tokens (braces, whitespace), so bucket sizes should be very uneven; did you see such skew on the 64K-token enwik8 variant, and did it need a bucket-size cap?
+
+2. Reversible layers are reported to change training only negligibly. Does that hold in mixed precision, and what is the throughput trade-off against ordinary gradient checkpointing at short sequences (around 2K), where recomputation is cheap?
+
+3. For the chunked feed-forward, how did you pick the chunk size, and does the saving depend on the 4x d_ff ratio? We are deciding whether chunking is worth it below 1B parameters.
+
+A short answer would tell us which lever to implement first.
+
+Best regards,
+Yang Liu

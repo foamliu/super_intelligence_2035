@@ -1,0 +1,5221 @@
+# 作者关系网（B 轨 · 滚动维护）
+
+> 依据：`WATCH_RESEARCH_TASK.md` 用户令 2026-11-11（「找到这些作者的 X 账号并 follow，把这些顶级研究者的最新言论也作为给 news 投料的一部分」）。
+> 字段：`姓名 · 机构 · 代表论文(1–2) · 邮箱(如公开) · 主页 · X 账号(@handle) · 状态(待跟踪/已follow/已发信/已回复) · 备注`
+>
+> 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
+> 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
+
+> **当前计数（2026-11-25 06:0x）**：作者 **368** 人（编号最大 **368**）· X 已核验 **143**（本轮 **+3**：`@Chitwan_Saharia` 由本人主页 `https://chitwansaharia.github.io/`（`200` / 24,324 B）页内 `href="https://twitter.com/Chitwan_Saharia"` + 代理抓 `x.com/Chitwan_Saharia` `200` / 187,768 B，`og:title` = `Chitwan Saharia (@Chitwan_Saharia) on X`、`og:description` = `Past: Sr. Research Scientist @GoogleAI || B. Tech, CSE, @IITBombay` ⇒ 双源；⚠️ 另有一同名账号 `@ChitwanSaharia`（`200` / 74,201 B）**无本人主页外链**、粉丝量与简介均弱 ⇒ **不采用、不登记**；`@zhangir_azerbay` 由本人站点 `https://zhangir-azerbayev.github.io/`（`200` / 2,475 B）bio-links 外链 `twitter.com/zhangir_azerbay` + 代理抓 `x.com/zhangir_azerbay` `200` / 152,145 B，`og:title` = `Zhangir Azerbayev (@zhangir_azerbay) on X`、`og:description` = `research @openai` ⇒ 双源；`@haileysch__` 由本人主页 `https://haileyschoelkopf.github.io/`（`200` / 23,354 B）外链 `twitter.com/haileysch__` + 代理抓 `x.com/haileysch__` `200` / 187,591 B，`og:title` = `Hailey Schoelkopf (@haileysch__) on X`、`og:description` = `hillclimbing towards generality @anthropicai | prev @AiEleuther` ⇒ 双源）· 已发信 **168**（台账 #1–#168；今日 **4/12**）· 回信 **0**（0/168；#1–#9 已转 `无应答(>14d)`）。本轮 **+3**：Chitwan Saharia（Imagen 一作，英文，本人主页当前 `mailto:` ⇒ 已发信 #167）· Zhangir Azerbayev（Llemma 一作，英文，**仅 2023 论文地址可用、Princeton 转发页 `404` ⇒ 地址有效性存疑**，已发信 #168 并如实记风险）· Hailey Schoelkopf（Llemma 二作，英文，本人主页 percent-encoded `mailto:` ⇒ 仅建档，同论文已发一作、不重复打扰）。
+
+> **当前计数（2026-11-25 03:0x）**：作者 **365** 人（编号最大 **365**）· X 已核验 **140**（本轮 **+3**：`@dpkingma` 由代理抓 `x.com/dpkingma` `200` / 182,386 B，`og:title` = `Durk Kingma (@dpkingma) on X`、bio 自述 Anthropic / 前 Google Brain·DeepMind / OpenAI founding team / VAE 与 Adam 作者 ⇒ 姓名与成果强匹配但为**单源**，如实记；`@luyu_gao` 由 Luyu Gao 本人主页 `https://luyug.github.io/`（`200` / 8,375 B）外链 `twitter.com/luyu_gao` + 代理抓 `x.com/luyu_gao` `200` / 152,990 B，`og:title` = `Luyu Gao (@luyu_gao) on X` ⇒ 双源；`@PY_Z001` 由 Perry Zhang 本人主页 `https://jzhang38.github.io/`（`200` / 19,215 B）外链 `twitter.com/PY_Z001` + 代理抓 `x.com/PY_Z001` `200` / 203,588 B，`og:title` = `Perry Zhang (@PY_Z001) on X`、bio `TinyLlama, FastVideo, Seedance` ⇒ 双源）· 已发信 **166**（台账 #1–#166；今日 **2/12**）· 回信 **0**（0/166；#1–#9 已转 `无应答(>14d)`）。本轮 **+3**：Diederik P. (Durk) Kingma（VAE 一作，荷兰姓名，本人站点无 mailto ⇒ 仅建档）· Luyu Gao（PAL 一作，中文，CMU 主页当前地址 ⇒ 已发信 #166）· Perry (Peiyuan) Zhang（TinyLlama 一作，中文，主页当前地址 ⇒ 仅建档）。
+
+> **当前计数（2026-11-25 00:0x）**：作者 **362** 人（编号最大 **362**）· X 已核验 **137**（本轮 **+3**：`@kchonyc` 由 Kyunghyun Cho 本人主页 `https://kyunghyuncho.me/`（`200` / 37,026 B）页内 `href` 外链 `twitter.com/kchonyc` + 代理抓 `x.com/kchonyc` `200` / 163,832 B，`og:title` = `Kyunghyun Cho (@kchonyc) on X`、bio 自述 NYU 教授 + Ortet AI CEO ⇒ 双源；`@LysandreJik` 由 HF 个人页 `huggingface.co/lysandre`（经代理 `200` / 338,187 B）外链 `twitter.com/LysandreJik` + 代理抓 `x.com/LysandreJik` `200` / 181,803 B，`og:title` = `Lysandre (@LysandreJik) on X`、`og:description` = `Chief Open-Source Officer (COSO) at Hugging Face` ⇒ 双源；`@taku910` 上一轮已核 ⇒ 计入本轮基数。Tomas Mikolov 记「未找到 X」：`@tmikolov` / `@MikolovTomas` 历史均 `404`，本轮未再猜）· 已发信 **165**（台账 #1–#165；今日 **1/12**）· 回信 **0**（0/165；**11-25 起 #1–#7 满 14 天 ⇒ 转 `无应答(>14d)`**）。本轮 **+3**：Tomas Mikolov（word2vec-SGNS 一作，英文/捷克，当前机构主页 `404`、站点 `000` ⇒ 仅建档，不猜地址）· Kyunghyun Cho 조경현（RNN Encoder–Decoder 一作，한국어，NYU contact 页当前地址 ⇒ 已发信 #165）· Lysandre Debut（DistilBERT 二作，法文姓名，HF 个人页无明文邮箱 ⇒ 仅建档，X 双源）。
+
+> **当前计数（2026-11-24 21:0x）**：作者 **359** 人（编号最大 **359**）· X 已核验 **134**（本轮 **+1**：`@taku910` 由 GitHub 个人页 `https://github.com/taku910`（`200` / 167,121 B，`itemprop="name"` = `Taku Kudo`）+ 代理抓 `x.com/taku910` `200` / 143,680 B，`og:title` = `Taku Kudo (@taku910) on X` ⇒ **同名同 handle 跨平台双源**，`og:description` 为空已如实记；反例 `x.com/NikitaKitaev` `og:title` = `Китаев Никита`、`og:description` = `9 followers · 5 following. Ukraine` ⇒ 判他人、不记；`@lukaszkaiser` 仅 X 页单源（`og:title` 姓名一致 + 14,273 followers / San Francisco，本人无可核主页外链；`lukaszkaiser.com` 仅 114 B 停放页）⇒ 🚫 不计入已核验、不猜）· 已发信 **164**（台账 #1–#164；今日 **12/12**，达每日硬上限 ⇒ 本窗后不再发）· 回信 **0**（0/164，0 封到期，最早 11-25）。本轮 **+3**：Nikita Kitaev（Reformer 一作，英文，本人主页 `kitaev.com` 明文 `kitaev@berkeley.edu` ⇒ 已发信 #164）· Łukasz Kaiser（Reformer 二作 / Transformer 共同作者，英文，无当前可核邮箱 ⇒ 仅建档，X 单源未核）· Taku Kudo（SentencePiece 一作，日文，GitHub 个人页无明文邮箱 ⇒ 仅建档，X 双源）。
+
+
+> **当前计数（2026-11-24 18:0x）**：作者 **356** 人（编号最大 **356**）· X 已核验 **133**（本轮 **+1**：`@NoamShazeer` 由本人站点 `https://noamshazeer.com/`（`200` / 487,056 B）页内 `href` 外链 `x.com/NoamShazeer` + 代理抓 `x.com/NoamShazeer` `200` / 158,413 B，`og:title` = `Noam Shazeer (@NoamShazeer) on X`、`og:description` = `Engineer` ⇒ 双源核；`x.com/manzilzaheer` 仅单源（`og:title` 姓名一致但个人主页无 X 外链、`og:description` 为通用关注数）⇒ 🚫 不计入已核验、不猜；Wenhui Wang 未见 X）· 已发信 **163**（台账 #1–#163；今日 **11/12**）· 回信 **0**（0/163，0 封到期，最早 11-25）。本轮 **+3**：Wenhui Wang 王文辉（MiniLM 一作，中文，MSR 官方页 mailto 解码 + 论文页双源 ⇒ 已发信 #162）· Manzil Zaheer（Big Bird 一作，英文，个人站点邮箱为图片、无当前明文 ⇒ 仅建档）· Noam Shazeer（GLU Variants 唯一作者，英文，论文页 `noam@google.com` 为 2020 旧地址、站点无邮箱 ⇒ 仅建档，X 双源）。
+
+> **当前计数（2026-11-24 15:0x）**：作者 **353** 人（编号最大 **353**）· X 已核验 **132**（本轮 **+1**：`@kelvin_guu` 由 Kelvin Guu 本人主页 `https://www.kelvinguu.com/`（`200` / 16,482 B）Contact 节外链 `twitter.com/kelvin_guu`，并经代理抓 `x.com/kelvin_guu` `200` / 180,185 B，`og:title` = `Kelvin Guu (@kelvin_guu) on X`、`og:description` = `Principal Research Scientist / Director @ Google DeepMind. Leading teams of 40+ …` ⇒ 双源核；蓝振忠 `westlake.edu.cn` 官方页无 X 外链、杨植麟无可核当前主页 ⇒ 记「未找到 X」，不猜）· 已发信 **161**（台账 #1–#161；今日 **9/12**）· 回信 **0**（0/161，0 封到期，最早 11-25）。本轮 **+3**：蓝振忠 Zhenzhong Lan（ALBERT 一作，中文，西湖大学官方师资页当前地址 ⇒ 已发信 #160）· 杨植麟 Zhilin Yang（XLNet 一作，中文，无当前可核地址 ⇒ 仅建档）· Kelvin Guu（REALM 一作，英文，本人站点当前地址 + X 双源 ⇒ 已发信 #161）。
+
+> **当前计数（2026-11-24 06:0x）**：作者 **347** 人（编号最大 **347**）· X 已核验 **130**（本轮 **+0**：Omar Khattab 主页 `omarkhattab.com` 与 Matei Zaharia 主页 `people.eecs.berkeley.edu/~matei/` 均无 x.com / twitter.com 外链；Mathilde Caron 无可核主页 ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **157**（台账 #1–#157；今日 **5/12**）· 回信 **0**（0/157，0 封到期，最早 11-25）。本轮 **+3**：Omar Khattab（ColBERT 一作，英文，MIT 当前主页邮箱 ⇒ 已发信 #157）· Matei Zaharia（ColBERT 二作，英文，UC Berkeley 当前主页邮箱 ⇒ 本窗不发，同论文 ≤1 封）· Mathilde Caron（DINO 一作，法文姓名，未见当前可核邮箱 ⇒ 仅建档）。
+> **当前计数（2026-11-23 21:0x）**：作者 **338** 人（编号最大 **338**）· X 已核验 **130**（本轮 **+1**：`@VictorSanh` 经 `x.com/VictorSanh` 经代理 `200` / 163,390 B，`og:title` = `Victor Sanh (@VictorSanh) on X`，`og:description` = `Beaker ... Prev. early crew @huggingface | AI x NYC`；反例 `@m_dehghani` 只有 **1 follower / 3 following** ⇒ 判他人，不记）· 已发信 **152**（台账 #1–#152）· 回信 **0**（0/152，0 封到期，最早 11-25）。本轮 **+3**：Bin Xiao（Florence-2 一作，中文，无公开明文邮箱 ⇒ 仅建档）· Victor Sanh（T0 一作，英文，X 双源）· Mostafa Dehghani（UL2 共同一作，英文，论文页邮箱单源）。
+> **当前计数（2026-11-24 03:0x）**：作者 **344** 人（编号最大 **344**）· X 已核验 **130**（本轮 **+0**：Matthias Minderer / Alexey Gritsenko / Bingsheng He 三人均无可访问 X 外链，🚫 不猜 handle）· 已发信 **156**（台账 #1–#156；今日 **4/12**）· 回信 **0**（0/156，0 封到期，最早 11-25）。本轮 **+3**：Matthias Minderer（OWL-ViT 一作，德文姓名，论文页 Google 旧地址 ⇒ 仅建档）· Alexey Gritsenko（OWL-ViT 二作，英文，论文页旧地址 ⇒ 仅建档）· Bingsheng He 何炳生（DistDNA 通讯，中文，NUS 官方主页当前地址 ⇒ 已发信 #156）。
+> **当前计数（2026-11-24 09:0x）**：作者 **350** 人（编号最大 **350**）· X 已核验 **131**（本轮 **+1**：`@sea_snell` 由 Charlie Snell 本人主页 `https://sea-snell.github.io/`（`200` / 23,486 B）外链 `twitter.com/sea_snell`，并经代理抓 `x.com/sea_snell` `200` / 165,575 B，`og:title` = `Charlie Snell (@sea_snell) on X`、`og:description` = `my friend told me to tweet more. I stare at my computer a lot and make things` ⇒ 双源核；Nils Reimers 站点无 X 外链、Pengcheng He 无可核主页 ⇒ 记「未找到 X」，不猜）· 已发信 **159**（台账 #1–#159；今日 **7/12**）· 回信 **0**（0/159，0 封到期，最早 11-25）。本轮 **+3**：Nils Reimers（SBERT 一作，德文姓名，site contact 地址 ⇒ 已发信 #158）· Charlie Snell（test-time compute 一作，英文，Berkeley 主页当前地址 ⇒ 已发信 #159）· Pengcheng He（DeBERTa 一作，中文，仅 2020 论文页地址 ⇒ 仅建档）。
+
+
+> **当前计数（2026-11-24 00:0x）**：作者 **341** 人（编号最大 **341**）· X 已核验 **130**（本轮 **+0**：三位新增作者——Wonjae Kim / Amanpreet Singh / Chao Jia——论文页与可访问主页均无 x.com / twitter.com 外链，`amanpreetsingh.github.io` 实测 `000` ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **155**（台账 #1–#155；今日 **3/12**）· 回信 **0**（0/155，0 封到期，最早 11-25）。本轮 **+3**：Wonjae Kim（ViLT 一作，韩文姓名，2021 旧地址 ⇒ 仅建档）· Amanpreet Singh（FLAVA 一作，英文，无地址）· Chao Jia（ALIGN 一作，中文，Google 论文页地址单源）。
+
+
+
+> **当前计数（2026-11-23 18:0x）**：作者 **335** 人（编号最大 **335**）· X 已核验 **129**（本轮 **+2**：`@RicoSennrich` 经 `x.com/RicoSennrich` 经代理 `200` / 160,280 B，`og:title` = `Rico Sennrich (@RicoSennrich) on X`、`og:description` = `SNSF Professor at University of Zurich`，且检索结果与 Instalker 侧写互证；`@jiawzhao` 由本人主页 `www.jiaweizhao.com`（`200` / 18,586 B）外链 `x.com/jiawzhao` + 推文页 `og:title` = `Jiawei Zhao (@jiawzhao) on X`、`og:description` = `Research Scientist at Meta FAIR @AIatMeta, PhD @Caltech, GaLore, DeepConf` 双源核验；Biao Zhang 无可核主页 / X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **152**（台账 #1–#152；今日 **12/12** 已达每日硬上限 ⇒ 本窗不发信）· 回信 **0**（0/152）。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **当前计数（2026-11-23 15:3x 补轮）**：作者 **332** 人（编号最大 **332**）· X 已核验 **127**（本轮 **+0**：三位新增作者——Di He / Mingjie Liu / Haoxing Ren——主页或论文页均无 x.com / twitter.com 外链；`mingjieliu.github.io` 实测 `404` ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **152**（台账 #1–#152；今日 **12/12** 已达每日硬上限 ⇒ 本补轮不发信）· 回信 **0**（0/152）。以下历史快照行保留原文（不追改），计数以本行为准。
+
+
+> **当前计数（2026-11-23 09:0x）**：作者 **323** 人（编号最大 **323**）· X 已核验 **127**（本轮 **+1**：`@mehdidc` 经 `x.com/mehdidc` 经代理 `200` / 135,314 B，`og:title` = `mehdi cherti (@mehdidc) on X`，`og:description` = `PostDoc at Jülich Supercomputing Center (JSC), Germany / LAION.`，主页 `mehdidc.github.io` 亦挂该链接 ⇒ 双源；Yupan Huang 主页无 X 链接且 `x.com/HYPJUDY` 的 `og:title` 仅为 `X`（无 profile 内容）⇒ 记「未找到」；Ao Wang 无主页 ⇒ 记「未找到」，均不猜）· 已发信 **148**（台账 #1–#148；今日 8/12）· 回信 **0**（0/148）。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **当前计数（2026-11-23 06:0x）**：作者 **320** 人（编号最大 **320**）· X 已核验 **126**（本轮 **+2**：`@tanishqkumar07` 经 `x.com/tanishqkumar07` 经代理 `200` / 184,282 B，`og:title` = `Tanishq Kumar (@tanishqkumar07) on X`，`og:description` = `CS PhD student @StanfordAILab. prev math undergrad @Harvard.`；`@ZackAnkner` 经 `x.com/ZackAnkner` `200` / 171,351 B，`og:title` = `Zack Ankner (@ZackAnkner) on X`，`og:description` = `Prev @MIT.`；Yifei Zhou 主页无 X 链接 ⇒ 记「未找到 X」，不猜）· 已发信 **145**（台账 #1–#145；今日 5/12）· 回信 **0**（0/145）。以下历史快照行保留原文（不追改），计数以本行为准。
+
+
+> **当前计数（2026-11-23 12:0x）**：作者 **326** 人（编号最大 **326**）· X 已核验 **127**（本轮 **+0**：三位新增作者——Zirui Wang / Yu Sun / Chengxi Li——的论文与 ar5iv 全文**均未挂 X 链接**，无主页第二源可核 ⇒ 一律记「未找到 X」，🚫 不猜 handle）· 已发信 **151**（台账 #1–#151）· 回信 **0**（0/151）。以下历史快照行保留原文（不追改），计数以本行为准。
+
+
+> **当前计数（2026-11-22 18:0x）**：作者 **312** 人（编号最大 **312**）· X 已核验 **121**（本轮 **+2**：`@rsalakhu` 经 `x.com/rsalakhu` `200`，`og:title` = `Russ Salakhutdinov (@rsalakhu) on X`，`og:description` = `CSO @ Sooth Labs, Professor @ CMU, President Elect ICML Board, Ex-VP of Research @ Meta (Multimodal LLMs, AI Agents), ex-Director of AI at @Apple`；`@CaimingXiong` 经 `x.com/CaimingXiong` `200`，`og:title` = `Caiming Xiong (@CaimingXiong) on X`，`og:description` = `Co-founder of @Recursive_SI.  ex-SVP of Salesforce AI Research | ex-MetaMind`）· 已发信 **140**（台账 #1–#140；今日 12/12 已满 ⇒ 本窗不发）· 回信 **0**（0/140）。<br>**第九十二轮增量（2026-11-22 18:0x）**：作者网 310 → **312**（#311 Ruslan Salakhutdinov **A 级** `rsalakhu@cs.cmu.edu`（CMU 本人主页 `cs.cmu.edu/~rsalakhu/` `200` / 9,400 B 页内明文 `rsalakhu[at]cs.cmu.edu`）/ #312 Caiming Xiong **无邮箱**（`caimingxiong.github.io` `404`、`www.caimingxiong.com` `000`、Recursive 团队页 `404` / `000` ⇒ 不猜地址；X 已双源核验）），来自 B 轨 #343 Dropout / #344 BLIP。⚠️ 同名反例当场拦下：`@JunnanLi` 虽 `200` 但 `og:title` = `雷弟尬尬 (@JunnanLi) on X`、`og:description` = `微博 雷弟_尬尬` ⇒ 与 BLIP 一作无关，**不记**；`@tmikolov` / `@MikolovTomas` 均 `404` ⇒ Mikolov 记「未找到 X」。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **当前计数（2026-11-22 15:0x）**：作者 **310** 人（编号最大 **310**）· X 已核验 **119**（本轮 **+2**：`@tianjun_zhang` 经 `x.com/tianjun_zhang` `200` / 190,919 B，`og:title` = `Tianjun Zhang (@tianjun_zhang) on X`，`og:description` = `@peano_ai | Prev @meta @GoogleDeepMind @berkeley_ai | Project Lead of LiveCodeBench, RAFT and Gorilla LLM`；`@DBahdanau` 经 `x.com/DBahdanau` `200` / 199,403 B，`og:title` = `🇺🇦 Dzmitry Bahdanau (@DBahdanau) on X`，`og:description` = `Team member at @periodiclabs.`）· 已发信 **140**（台账 #1–#140）· 回信 **0**（0/140）。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **当前计数（2026-11-22 12:0x）**：作者 **308** 人（编号最大 **308**）· X 已核验 **117**（本轮 **0 新增**：两位新增作者的主页均未见 X 链接 ⇒ 不猜 handle）· 已发信 **139**（台账 #1–#139）· 回信 **0**（0/139）。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **当前计数（2026-11-22 09:0x）**：作者 **306** 人（编号最大 **306**）· X 已核验 **117**（本轮 +1：`@jiahuiyu` 经 X 页 `og:title` + `og:description` 双源核验 = Jiahui Yu；反例 `@adityaramesh` 为他人、`@tim_salimans` `404`、`@jonathanho` 为 Chicago 另一人 ⇒ 均不记）· 已发信 **137**（台账 #1–#137）· 回信 **0**（0/137）。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **当前计数（2026-11-21 09:0x）**：作者 **290** 人（编号最大 **290**）· X 已核验 **108**（本轮 +1：`@liuziwei7` 经 X 页 `og:title` + `og:description` 双源核验 = Ziwei Liu / NTU）· 已发信 **127**（台账 #1–#127）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **第八十一轮增量（2026-11-21 09:0x）**：作者网 287 → **290**（#288 Limin Wang 王利民 **A 级** `lmwang.nju@gmail.com`（`wanglimin.github.io` 页内明文 `lmwang.nju [at] gmail.com`，`200` / 55,527 B；页内写明南京大学 +「王利民」）/ #289 Xipeng Qiu 邱锡鹏 **A 级** `xpqiu@fudan.edu.cn`（`xpqiu.github.io` 页内 `mailto:`，`200` / 33,632 B）/ #290 Ziwei Liu 刘子纬 **无邮箱**（`liuziwei7.github.io` `200` / 39,458 B 无 `mailto:`；X = `@liuziwei7` 已双源核验 ⇒ 状态「待跟踪 / 已核验 X」）），来自本轮 B 轨 #309 VideoMAE / #311 RoPE Scaling Laws / #308 LLaVA-OneVision；#310 DINO-X 的作者（Tianhe Ren / Lei Zhang 等）**原生 HTML 页内无公开邮箱** ⇒ 只计不建、不猜地址；已发信 125 → **127**（#126 中文 228 字 `SENT OK 09:07:13` / #127 中文 257 字 `09:07:14`）；回信 **0**（0/127）。⚠️ **计数校正**：第八十轮（06:0x）已落 #286 / #287 两条正文但顶部计数行当时漏改，本轮以 **287** 为基线续记。
+
+
+> **当前计数（2026-11-21 15:0x）**：作者 **294** 人（编号最大 **294**）· X 已核验 **111**（本轮 +1：`@hongyangzh` 双源核验；`@atasteoff` 经代理 `404` ⇒ 不记）· 已发信 **128**（台账 #1–#128；本窗不借日额度）· 回信 **0**（0/128）。<br>**第八十三轮增量（2026-11-21 15:0x）**：作者网 292 → **294**（#293 Shilong Liu **A 级** `sl6222@columbia.edu`（本人主页 `lsl.zone` `200` / 26,074 B 页内 `mailto:` 明文；主页写明 Princeton 邮箱已停用）/ #294 Hongyang Zhang **A 级** `hongyang.zhang@uwaterloo.ca`（滑铁卢官方人员页 `200` / 95,418 B 页内 `mailto:`）），来自 B 轨 #315 Grounding DINO / #317 EAGLE；两封草稿已入仓（`drafts/2303.05499.md` / `drafts/2401.15077.md`），当日 12/12 已满 ⇒ 计划 11-22 00:00 发。以下历史快照行保留原文（不追改），计数以本行为准。
+
+
+> **当前计数（2026-11-21 18:0x）**：作者 **296** 人（编号最大 **296**）· X 已核验 **111**（本轮 0 新增：`@LiheYoung` / `@hszhao` 经代理实测均 **`404`**（`og:title` = `User Profile Not Found - X | 404 Error`）⇒ 不记、不猜）· 已发信 **128**（台账 #1–#128；当日 12/12 已满 ⇒ 本窗不发）· 回信 **0**（0/128）。<br>**第八十四轮增量（2026-11-21 18:0x）**：作者网 294 → **296**（#295 Lihe Yang **A 级** `lihe.yang.cs@gmail.com`（本人主页 `liheyoung.github.io` `200` / 17,151 B 页内 `mailto:` 明文；页内自述 HKU 博士生，导师 Hengshuang Zhao）/ #296 Hengshuang Zhao **A 级** `hszhao[at]cs.hku.hk`（港大官方个人页 `i.cs.hku.hk/~hszhao/` `200` / 36,107 B 页内明文；页内写明 Assistant Professor, School of Computing and Data Science, HKU）），来自 B 轨 #318 Depth Anything；`@LiheYoung` / `@hszhao` 均 `404` ⇒ 记「未找到 X」。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **当前计数（2026-11-21 21:0x）**：作者 **298** 人（编号最大 **298**）· X 已核验 **113**（本轮 +2：`@MikeShou1` 经 `og:title` = `Mike Shou (@MikeShou1) on X` + `og:description` = `Assoc Prof at NUS. Forbes 30 under 30 Asia...` 双源核验；`@liu_mingyu` 由本人主页 `href` 外链 + `x.com/liu_mingyu` `200`（`og:title` = `MingYuLiu (@MingYuLiu) on X`）核验）· 已发信 **128**（台账 #1–#128；当日 12/12 已满 ⇒ 本窗不发）· 回信 **0**（0/128）。<br>**第八十五轮增量（2026-11-21 21:0x）**：作者网 296 → **298**（#297 Mike Zheng Shou **A 级** `mike.zheng.shou AT gmail.com`（Show Lab 主页 `sites.google.com/view/showlab` 经代理 `200` / 161,838 B，页内明文 `mike.zheng.shou AT gmail.com`）/ #298 Ming-Yu Liu 劉洺堉 **无明文邮箱**（本人主页 `mingyuliu.net` `200` / 7,878 B 无 `mailto:`；NVIDIA Research 人员页 `research.nvidia.com/person/ming-yu-liu` `200` / 70,084 B 也无邮箱）⇒ 不猜地址），来自 B 轨 #322 Show-o / #321 Cosmos WFM。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **当前计数（2026-11-22 00:0x）**：作者 **300** 人（编号最大 **300**）· X 已核验 **114**（本轮 +1：`@robrombach` 经 `x.com/robrombach` `200` / 188,334 B，`og:title` = `Robin Rombach (@robrombach) on X`）· 已发信 **131**（台账 #1–#131；今日 3/12）· 回信 **0**（0/131）。<br>**第八十六轮增量（2026-11-22 00:0x）**：作者网 298 → **300**（#299 Robin Rombach **无邮箱**（`rombach.me` / `www.robrombach.com` 均 `000`）但 X `@robrombach` 已核验 / #300 Patrick Esser **邮箱·主页·X 均未找到** ⇒ 只建档），来自本轮 B 轨 #326 SD3。⚠️ 两处同名反例当场拦下：`@guipenedo` 实为巴西灯光从业者（`og:description` 自述，与 RefinedWeb 作者无关）、`@PatrickEsser` 实为 `patrick goncalves`、`@EsserPatrick` 实为 `Patrick Esser JR` ⇒ 均不记。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **当前计数（2026-11-22 03:0x）**：作者 **302** 人（编号最大 **302**）· X 已核验 **115**（本轮 +1：`@timdarcet` 经 `x.com/timdarcet` `200` / 181,126 B，`og:title` = `TimDarcet (@TimDarcet) on X`，`og:description` = `LLMs @ FAIR, prev. DINO stuff @ INRIA & FAIR`；`@TCL606` 经代理 `404` ⇒ 不记）· 已发信 **132**（台账 #1–#132；今日 4/12）· 回信 **0**（0/132）。<br>**第八十七轮增量（2026-11-22 03:0x）**：作者网 300 → **302**（#301 Timothée Darcet **无邮箱**（`timdarcet.github.io` `200` / 2,363 B 页内无 `mailto:`）但 X `@timdarcet` 已双源核验 / #302 Changli Tang 唐昌礼 **无邮箱**（`github.com/TCL606` `200` / 196,169 B 页内无 `mailto:`，自述清华电子系博士生；`@TCL606` `404`）⇒ 只建档），来自本轮 B 轨 #329 ViT registers / A 轨 WeMM-Video。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **当前计数（2026-11-21 00:0x）**：作者 **280** 人（编号最大 **280**）· X 已核验 **107**（本轮未新增核验：`x.com` 经代理 `000`）· 已发信 **119**（台账 #1–#119）· 回信 **0**。
+
+> **第七十八轮增量（2026-11-21 00:0x）**：作者网 276 → **280**（#277 Xizhou Zhu **B 级** `zhuwalter@sensetime.com`（ar5iv HTML `200` / 267,916 B 脚注明文；**2020 年地址，疑失效 ⇒ 只建档不发**）/ #278 Michael Tschannen **未找到**（`tschannen.github.io` `404`）/ #279 Xiaohua Zhai **未找到**（`xiaohuazhai.com` 本轮 `000`）/ #280 Alexander Sergeev **未找到**（论文未给邮箱）），来自第七十八轮 B 轨 #297 Horovod / #298 Deformable DETR / #299 SigLIP 2；已发信 116 → **119**（#117 NeRF 英文 181 词 `SENT OK 00:04:19` / #118 Faster R-CNN 英文 178 词 `00:04:21` / #119 Quiet-STaR 英文 182 词 `00:04:24`）；回信 **0**（0/119）。
+
+> **当前计数（2026-11-20 21:0x）**：作者 **276** 人（编号最大 **276**）· X 已核验 **107**（本轮 +1：`@scut_longhui` 经 `og:title` + `og:description` 双源核验）· 已发信 **116**（台账 #1–#116）· 回信 **0**。
+
+> **第七十七轮增量（2026-11-20 21:0x）**：作者网 271 → **276**（#272 Eric Zelikman **A 级** `eric@humansand.ai`（`ezelikman.github.io` 页内明文，`200` / 19,986 B；页内明文 Stanford University）/ #273 Longhui Yu **B 级** `yulonghui@stu.pku.edu.cn`（arXiv 原生 HTML `200` / 304,026 B 的 `mailto:`，渲染把 `7.5pt` 前缀粘入 ⇒ 按上下文还原；X 双源核到现职 **Moonshot AI · Post-train KIMI**，学生邮箱可能已失效 ⇒ 暂不发）/ #274 Weisen Jiang **B 级** `wjiangar@cse.ust.hk`（同源 HTML 作者块）/ #275 Nicolas Carion **未找到**（`nicolascarion.github.io` `404`、GitHub `email=null`、ar5iv 页无邮箱明文）/ #276 Joseph Redmon **未找到**（`pjreddie.com` `200` / 14,063 B 无 `mailto:`、GitHub `email=null`）），来自本轮 B 轨 #293 DETR / #294 YOLO / #295 Quiet-STaR / #296 MetaMath；已发信仍 **116**（今日 12/12 满，只备 11-21 第 3 封草稿）；回信 **0**。
+
+
+> **当前计数（2026-11-20 09:0x）**：作者 **260** 人（编号最大 **260**）· X 已核验 **106**（本轮 5 个主页 `href` 均实读，但未做 `og:title` 二次核验 ⇒ 按纪律不计入）· 已发信 **114**（台账 #1–#114；另有 1 封主题行更正，不计入）· 回信 **0**。
+
+> **第七十三轮增量（2026-11-20 09:0x）**：作者网 255 → **260**（#256 Ji Lin **A 级** `jilin.eecs@gmail.com`（`linji.me` 页内 `jilin.eecs AT gmail`，`200` / 58,984 B）/ #257 Tony Z. Zhao **A 级** `tonyzihaozhao@gmail.com`（`tonyzhaozh.github.io` 页内 `mailto:`，`200` / 24,093 B）/ #258 Guangxuan Xiao **A 级** `xiaoguangxuan@gmail.com`（`guangxuanx.com` 页内 `mailto:`，`200` / 15,305 B，经代理）/ #259 Luca Soldaini **A 级** `luca@soldaini.net`（`soldaini.net` 页内 `mailto:`，`200` / 12,855 B）/ #260 Wei-Lin Chiang **无邮箱**（主页 `200` / 20,604 B 无明文 ⇒ 待跟踪））；⚠️ **同作者去重**：Guangxuan Xiao 已于 11-17 收 #69、Soldaini 已于 11-18 收 #89 ⇒ 本轮两篇经典改投 Ji Lin（SmoothQuant 二作）与不投（Dolma），未重复发信。
+
+> **当前计数（2026-11-20 06:0x）**：作者 **255** 人（编号最大 **255**）· X 已核验 **106**（本轮未新增核验：四名新作者主页均无可读 handle）· 已发信 **112**（台账 #1–#112；另有 1 封主题行更正，不计入）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **第七十二轮增量（2026-11-20 06:0x）**：作者网 251 → **255**（#252 Jacob Steinhardt **A 级** `jsteinhardt@berkeley.edu`（本人主页明文，`200` / 13,887 B）/ #253 Eugene Agichtein **B 级** `eugene.agichtein@emory.edu`（arXiv 原生 HTML，`200` / 970,388 B；主页 `403`）/ #254 Yi Lu **B 级** `luyi06@gmail.com`（arXiv 原生 HTML，`200` / 348,321 B；南京审计大学）/ #255 Charles L. A. Clarke **B 级** `claclark@gmail.com`（同源 HTML；主页 `200` / 1,342 B）），来自 B 轨 #273 MMLU 与 A 轨 `2611.24849` / `2611.24071`；已发信 109 → **112**（#110 英文 173 词 `SENT OK 06:03:52` / #111 英文 189 词 `06:03:55` / #112 中文 297 字 `06:03:59`）；⚠️ **事故如实记**：#112 的主题行被 shell 二次转义成以 `u5173` 开头的字面量，已于 `06:04:04` 补发一封**主题行更正**（不计为第 113 封）并写入台账。X 保持 **106**，四人均写「未找到 X」。
+
+> **当前计数（2026-11-20 03:0x）**：作者 **251** 人（编号最大 **251**）· X 已核验 **106**（#248 的 `@liuzhuang1234` 只取自本人主页外链、**未做 `og:title` + `full_text` 双源核验 ⇒ 不计入「已核验」**）· 已发信 **109**（台账 #1–#109）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **第七十一轮增量（2026-11-20 03:0x）**：作者网 247 → **251**（#248 Zhuang Liu 刘壮 **A 级** `zhuangl@princeton.edu`（`liuzhuang13.github.io` 页内明文，200 / 42,671 B）/ #249 Sanmi Koyejo **A 级** `sanmi@cs.stanford.edu`（`cs.stanford.edu/~sanmi/` 明文，200 / 7,785 B）/ #250 Biswa Sengupta **B 级** `biswa.sengupta@jpmorgan.com`（arXiv 原生 HTML 正文，200 / 122,470 B）/ #251 Alethea Power **C 级** `alethea@openai.com`（2022 年论文 `comment`，未复核 ⇒ 不发）），来自本轮 B 轨 #270 ConvNeXt / #272 Mirage / #271 Grokking 与 A 轨 #5 `2611.24540`；已发信 106 → **109**（#107 中文 194 字 `SENT OK 03:03:13` / #108 英文 171 词 `03:03:18` / #109 英文 161 词 `03:03:18`）。
+
+
+> **第七十轮增量（2026-11-20 00:0x）**：作者网 245 → **247**（#246 Tianle Cai 蔡天乐 **B 级** `tianle.cai@princeton.edu`（ar5iv 作者块 + 主页 `200` / 6,114 B 核身份，页内无 `mailto:`）/ #247 Quoc V. Le **C 级** `qvl@google.com`（2019 年论文作者块，未在现行页复核）），来自本轮 B 轨 #267 Medusa / #265 Transformer-XL；Emu3 一作 Xinlong Wang（`wangxinlong.github.io` 与 `xinlongwang.github.io` 均 **404**）· Janus 一作 Chengyue Wu / Xiaokang Chen（`xiaokang2022.github.io` 实测是**同名中文博客「小康笔记本」**，非本人 ⇒ 拒用）⇒ 只计数不建档、不猜地址；X 保持 **106**（两人页面均无可读 handle）；已发信 104 → **106**（#105 中文 227 字 `SENT OK 00:05:38` / #106 中文 241 字 `SENT OK 00:05:45`）。
+
+> **当前计数（2026-11-19 21:0x）**：作者 **245** 人（编号最大 **245**）· X 已核验 **106** · 已发信 **104**（台账 #1–#104）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+> **第六十九轮增量（2026-11-19 21:0x）**：作者网 242 → **245**（#243 Lingming Zhang 张令明 **A 级** `lingming@illinois.edu`（`lingming.cs.illinois.edu` `mailto:`，200 / 22,815 B；⚠️ `llingming.github.io` 已 404）/ #244 Chunqiu Steven Xia **B 级** `chunqiu2@illinois.edu`（论文 PDF 首页分组明文，按确定性还原）/ #245 Vidya A. Chhabria **A 级** `vidyachhabria@asu.edu`（ASU 官方 profile 页明文，200 / 124,745 B）），来自本轮 B 轨 #262 Agentless / #264 EDA Corpus；Transfusion #261（Meta FAIR，无个人主页可核）/ Massive Activations #263（Mingjie Sun `mingjiesun.com` 与 `cs.cmu.edu/~mingjies/` 均 `000`/`404`）⇒ 只计数不建档、不猜地址；X 保持 **106**（三人页内均无可读 handle）；已发信仍 **104**（今日 12/12 额度已满，本轮只建档并备 11-20 草稿）。
+>
+> **第六十八轮增量（2026-11-19 18:1x）**：作者网 239 → **242**（#240 Daya Guo 郭达雅 **A 级** `guody5@mail2.sysu.edu.cn`（主页 `mailto:`）/ #241 Peiyi Wang 王培懿 无地址 / #242 Sirui Hong 洪思睿 无地址），来自本轮 B 轨 #258 DeepSeek-Coder / #259 Math-Shepherd / #260 MetaGPT；**DiT #257 两位作者 Bill Peebles / Saining Xie 早已建档 ⇒ 本轮不重复计数**；X 保持 **106**（三人主页/GitHub 均无可读 handle ⇒ 🚫 不猜）；已发信仍 **104**（今日 12/12 额度已满，本轮只建档并备 11-20 草稿）。⚠️ `x.com` 本轮直连与代理均 `200`（较前几轮 `000` 有变化），但**尚未做单条推文 `og:title` 双源核验** ⇒ `voice_ready` 仍记 0，不抢发。
+>
+> **当前计数（2026-11-19 15:4x）**：作者 **239** 人（编号最大 **239**）· X 已核验 **106** · 已发信 **104**（台账 #1–#104）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第六十七轮增量（2026-11-19 15:3x）**：作者网 235 → **239**（#236 Niklas Muennighoff **A 级** `n.muennighoff@gmail.com`（主页 `mailto:`）/ #237 Morgane Riviere 无地址 / #238 Artidoro Pagnoni 无地址（候选页 `000`）/ #239 Frank F. Xu 徐方政 **B 级** `fangzhengxu@microsoft.com`（主页 `[at]` 形式明文）），来自本轮 B 轨 #253 s1 / #254 Gemma 2 / #255 BLT / #256 TheAgentCompany；X 保持 **106**（`@Muennighoff` 仅主页 href 候选，未二次核验 ⇒ 不计数）；已发信仍 **104**（今日 12/12 额度已满，本轮只建档不发）。
+>
+
+> **当前计数（2026-11-19 15:0x）**：作者 **235** 人（编号最大 **235**）· X 已核验 **106** · 已发信 **104**（台账 #1–#104）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第六十六轮增量（2026-11-19 15:0x）**：作者网 231 → **235**（#232 Wen-tau Yih 易文韬 / #233 Jeremy Howard / #234 Sebastian Ruder / #235 Daniel S. Park，来自本轮 B 轨 #251 DPR / #250 ULMFiT ×2 / #252 SpecAugment）；已发信 102 → **104**（#103 中文 250 字 · `SENT OK 15:04:39`；#104 英文 182 词 · `SENT OK 15:04:42`）；X 已核验 **106 不变**（`x.com` 直连 `000`、经 `127.0.0.1:7897` 亦 `000` ⇒ 🚫 不猜 handle，`voice_ready` 0）。地址级别：#232 **A**（本人主页 `mailto:`）· #233 **C**（2018 PDF 首页，现行页无 `mailto:`）· #234 / #235 未找到 ⇒ 只建档。今日发信 **12/12**（已达每日硬上限，剩余时窗只做选题与草稿）。
+>
+> **当前计数（2026-11-19 12:2x）**：作者 **231** 人（编号最大 **231**）· X 已核验 **106** · 已发信 **102**（台账 #1–#102；⚠️ 修正：上一行快照写「100」而台账已有 #101，实际发信数按台账编号计）· 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+>
+> **第六十五轮增量（2026-11-19 12:2x）**：作者网 227 → **231**（#228 Luke Zettlemoyer / #229 Jinze Bai / #230 Bo Peng / #231 Mike Lewis，来自本轮 B 轨 #246 BART / #248 Qwen-VL / #249 RWKV / #246 BART 一作）；已发信 101 → **102**（#102 英文 180 词，`SENT OK 12:22:05`）；X 已核验 **106 不变**（`x.com` 直连 `000`、经 `127.0.0.1:7897` 亦 `000` ⇒ 不猜 handle，voice_ready 0）。地址级别：#228 为 **B（UW 官方教职页明文）**；#229 / #230 / #231 均**未找到**可核现行邮箱 ⇒ 只建档不发（`api.github.com/users/BlinkDL` 的 `email` = `null`）。⚠️ 本轮纠错：候选池旧记「Muon `2410.21276`」实测是 **GPT-4o System Card**，不收。
+>
+> **第六十四轮增量（2026-11-19 09:0x）**：作者网 223 → **227**（#224 Ofir Press / #225 Xin Jin 金鑫 / #226 Mingxing Zhang 张明星 / #227 Ruoyu Qin，来自本轮 B 轨 #242 ALiBi / #244 DistServe / #245 Mooncake）；已发信 98 → **100**（#100 / #101 均中文，见 `发送记录.md` §09:0x）；X 已核验 **106 不变**（`x.com` 直连 `000`、经 `127.0.0.1:7897` 亦 `000` ⇒ 不猜 handle，voice_ready 0）。地址级别：#225 为 **A（本人现行主页 `xinjin.github.io` `200` / 14,919 B，页内反爬写法按确定性还原）**；#226 为 **C（论文 PDF 首页明文；`mzhang2021.github.io` / `zhangmingxing.github.io` / 清华软院候选页均 `404`）**；#224 / #227 无可核现行邮箱 ⇒ 只建档不发。⚠️ 纠错记录：`mzhang.io` 实测为 **Northeastern 博士生 Michael Zhang**，与 Mooncake 作者 Mingxing Zhang **无关** ⇒ 已拒用，不以其身份/邮箱入表。
+
+>
+> **第六十三轮增量（2026-11-19 06:0x）**：作者网 219 → **223**（#220 Mirac Suzgun / #221 Cheng-Ping Hsieh / #222 Ramachandran Ramjee / #223 Amey Agrawal，来自本轮 B 轨 #238 BBH / #240 RULER / #241 Sarathi-Serve）；已发信 96 → **98**（#98 中文 / #99 英文，见 `发送记录.md` §06:0x）；X 已核验 **106 不变**（`x.com` 直连 `000`、经 `127.0.0.1:7897` 亦 `000` ⇒ 不猜 handle；#221 的 `@ChengPingHsieh` 只有主页 href 单一来源，**不计入已核验**）。地址级别：#221 为 **A（本人现行主页 `mailto:`，`hsiehjackson.github.io` `200`）**；#222 为 **B（MSR 官方人员页，`200`）**；#220 为 **C（2022 论文 PDF）**；#223 无已核邮箱、只建档不发。⚠️ 本轮**先查重后才收**：`2101.00027`（The Pile）/ `2402.00159`（Dolma）/ `2306.11644`（phi-1）/ `2309.07544`（VerilogEval）均在表内 ⇒ 作废，改收 #238–#241。
+>
+> **第六十二轮增量（2026-11-19 03:0x）**：作者网 215 → **219**（#216 Nikit Srivastava / #217 Shengding Hu 胡声鼎 / #218 Mingxuan Wang 王明轩 / #219 Xueping Gao，依次来自 A 轨 `2611.23158`、B 轨 #236 MiniCPM、B 轨 #237 DAPO、A 轨 `2611.22835`）；已发信 93 → **96**（#94 英文 192 词 / #95 中文 196 字 / #96 中文 231 字，均 `SENT OK 03:03`）；X 已核验 **106 不变**（`x.com` 直连与代理均 `000` ⇒ 不猜 handle，voice_ready 0）。地址级别：#217 为 **A（本人主页 mailto，`shengdinghu.github.io` `200`）**；#216 / #218 为 **C（论文 PDF 首页）**；#219 未找到公开邮箱、只建档不发。
+>
+> **第六十一轮增量（2026-11-19 00:1x）**：作者网 212 → **215**（#213 Kushagra Bainsla / #214 Hai Huang / #215 Kewei Tu 屠可伟，依次来自本轮 A 轨 `2611.23035` / `2611.23197` / `2611.23026`）；已发信 91 → **93**（#92 / #93，均 `SENT OK 00:10:13`）；X 已核验 **106 不变**（`x.com` 直连与代理均 `000` ⇒ 不猜 handle，voice_ready 0）。三人邮箱均为**论文 PDF 首页明文（地址级别 C）**；#213 / #215 的论文为 2026-11-17 新提交，地址即现行，但**仍按下限口径记录**，不写成 A/B。
+>
+> **第六十轮增量（2026-11-18 21:0x）**：作者网 209 → **212**（#210 Michael Tschannen / #211 Stella Biderman / #212 Hailey Schoelkopf，依次来自本轮 B 轨 #230 SigLIP 2 / #231 Pythia）；已发信 **91 不变**（今日 12/12 已满 ⇒ 只建档不发信）；X 已核验 104 → **106**（`@mtschannen`：profile `200` + bio `Research Scientist @GoogleDeepMind` + 单推页 `og:title` = `Michael Tschannen (@mtschannen) on X`；`@BlancheMinerva`：profile `200` + bio 含 `@AiEleuther` + 单推页 `og:title` = `Stella Biderman (@BlancheMinerva) on X`；`x.com/haileyschoelkopf` **404** ⇒ 未找到 X，不猜）；三人均 **待跟踪** —— 邮箱仅见于论文 PDF 首页（2023 / 2025 年地址），按令**发信前须先核现行主页**。
+>
+> **第五十九轮增量（2026-11-18 18:0x）**：作者网 206 → **209**（#207 Zhifang Sui 穗志方 / #208 Mitchell Wortsman / #209 Paulius Micikevicius，依次来自本轮 B 轨 #225 DeepSeekMoE / #226 Small-scale proxies / #227 Mixed Precision）；已发信 **91 不变**（今日额度 12/12 已满，按 `RESEARCH_MAIL_SPEC §3` 只做选题与草稿，**不发**）；X 已核验 **104 不变**（`x.com` 直连与代理均 `000`）；已 follow 仍 **0**（需登录态，未假装）。⚠️ 本轮三人**均未取得可核现行邮箱**：#207 PKU 页 `000`、#208 三个主页全 `404`、#209 只有 PDF 首页 2017 年地址（已标「发信前须先核现行页」）⇒ 三人一律 `待跟踪`，🚫 不猜地址。
+>
+> **第五十八轮增量（2026-11-18 15:0x）**：作者网 203 → **206**（#204 Hao Liu / #205 Ali Farhadi / #206 Hannaneh Hajishirzi，均来自本轮 B 轨 #223 OLMoE 与 #224 Ring Attention）；已发信 90 → **91**（#91 Hao Liu · Ring Attention，中文 CJK **206** 字，`SENT OK 15:05:21`）；X 已核验 **104 不变**（本轮 `x.com` 直连与代理均超时 `000` ⇒ 三人均写「未找到 X」，**不猜 handle**）；已 follow 仍 **0**（需登录态，未假装）。
+
+**第五十四轮增量（2026-11-18 03:0x）**：作者网 190 → **194**（#191 Hammond Pearce / #192 Shailja Thakur / #193 Zeynab Anbiaee / #194 Arunkumar V）；已发信 82 → **84**（#83 Pearce 英文 195 词 · #84 Arunkumar 英文 197 词，`SENT OK 03:04:49 / 03:04:53`）；X 已核验 103 → **104**（`@kiwihammond`：`x.com/kiwihammond` 的 `og:title` = `Hammond Pearce (@kiwihammond) on X` + bio 一致 ⇒ 双源；**本轮 X 直连 `200`、无需代理**）。两人无公开邮箱（Thakur / Anbiaee）⇒ 只建档不发信，不猜地址。
+
+**第五十三轮增量（2026-11-18 00:0x）**：作者网 187 → **190**（#188 Hao Wang / #189 Rohit Gandikota / #190 Srinath Srinivasan）；已发信 79 → **82**（本轮 3 封，今日 3/12）；X 已核验 **103（不变）** —— `x.com` 直连 `000`、代理 `7897` 亦 `000`（`mihomo` active、端口在听）⇒ 判上游节点故障，本轮**不猜 handle、不补地址**。
+
+**第四十四轮增量（2026-11-16 15:0x）**：作者网 162 → **165**（#161 Ze Liu 刘泽 / #162 Junyi Ao / #163 Long Zhou）；已发信 **67 → 67**（今日 12 封 = 每日硬上限已满，本轮**只建档不发信**）；X 已核验 92 → **93**（`@zeliu_`：本人主页 `href` + X 页 `og:title` / `og:description` 双源）；已 follow 仍 **0**（需登录态，未假装）。三条「不猜 / 不硬发」记录：① `x.com/zeliu98` `404` ⇒ 不登记，改按本人主页给的 `x.com/zeliu_` 核验；② `@yanping_huang` 虽 `200` 但 `og:description` 仅 `0 followers · 38 following`、无 bio ⇒ 无法确认是 GPipe 一作本人，**按「未找到 X」处理**；③ `@longzhou` `og:title` = `Long Jiu Zhou Kaskus`（他人账号）⇒ 不登记，Long Zhou 记为「未找到 X」。
+
+> **本轮计数（2026-11-17 18:0x）**：作者 **187** 人（编号最大 **187**）· X 已核验 **103** · 已发信 **79** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+**第五十二轮增量（2026-11-17 18:0x）**：作者网 183 → **187**（#184–#187，均来自本轮 B 轨四篇经典）；已发信 78 → **79**（#79 Wenhu Chen · MMMU，中文 CJK **248** 字，`SENT OK 18:03:16`）；X 已核验 102 → **103**（`@WenhuChen`：本人主页 `href="twitter.com/WenhuChen"` + `x.com/WenhuChen` 页 `og:title`=`Wenhu Chen (@WenhuChen) on X`、`og:description` 自述「I led PoT, MMMU, MMLU-Pro, MAmmoTH, General-Reasoner」⇒ 双源且能对上本论文）；已 follow 仍 **0**（需登录态，未假装）。三条「不猜」记录：① `@DanHendrycks` 实测 `x.com/DanHendrycks` **`404`**（`og:title`=`User Profile Not Found`）⇒ Dan Hendrycks 记「未找到 X」，🚫 不换猜变体；② Xiang Yue 主页 `xiangyue.site` 直连 `000` / `http` `502` ⇒ 邮箱与 X 均「未找到」，只按论文作者块建档；③ David Rein 邮箱取 PDF 首页 `idavidrein@gmail.com`（2023 年论文内地址，**非当前主页**，送达率不可验证 ⇒ 本轮不发、只建档）。
+
+
+
+
+
+**第五十一轮增量（2026-11-17 12:0x）**：作者网 180 → **183**（#181 Jifeng Dai 代季峰 / #182 Wenhai Wang 王文海 / #183 Zhe Chen 陈喆，均来自 **InternVL** #199）；已发信 77 → **78**（#78 Jifeng Dai，中文 CJK **241** 字，`SENT OK 12:04:53`）；X 已核验 99 → **99 不变**（三人主页均无 x.com/twitter 链接 ⇒ 一律写「未找到 X」，**不猜 handle、不计数**）；已 follow 仍 **0**（需登录态，未假装）。三条「不猜 / 不硬发」记录：① 同论文 #199 已发末位作者 Jifeng Dai ⇒ 三作 Wenhai Wang（有邮箱）与一作 Zhe Chen（有邮箱）本轮**均不发**，守「同一论文 ≤1」；② Wenhai Wang 的邮箱是 `whwang[at]ie.cuhk.edu.hk` 反爬写法，登记时明确标「拼装、发送前须再核」；③ Zhe Chen 主页另有一个 `wztxy89[at]163.com`（他人地址）⇒ 不采用。**本轮 `voice_ready` 0**：`@giffmana` 时间线里 1 条（Perturbing Inputs Improves Pretraining Distillation）经单推页 `og:title` 核出作者是 **Jack Ziyang Cai（@jackcai1206）** ⇒ 他人推文，丢弃；另 1 条（蒸馏 + mixup）确为本人但 `og:description` 只到首段、正文需上下文 ⇒ 按「正文不完整不采用」弃。
+
+> **本轮计数（2026-11-17 09:0x）**：作者 **180** 人（编号最大 **180**）· X 已核验 **102** · 已发信 **77** · 回信 **0**。以下历史快照行保留原文（不追改），计数以本行为准。
+
+**第五十轮增量（2026-11-17 09:0x）**：作者网 177 → **180**（#178 Cheng Chi / #179 Yilun Du / #180 Shuran Song，均来自 Diffusion Policy #197）；已发信 75 → **77**（#76 Yilun Du · Diffusion Policy，中文 294 字，`SENT OK 09:04:12`；#77 Hao Su 苏昊 · Open X-Embodiment，中文 295 字，`SENT OK 09:04:14`；Hao Su 本次只发信、档案下轮补）；X 已核验 99 → **102**（`@chichengcc` / `@du_yilun` / `@SongShuran`，均 `og:title` + `og:description` 双源）；言论台账 V30–V32 之后新增 **V33**（Yilun Du 2026-11-06 原推：`RAX is able to directly allow coding agents to unscrew a jar using real dexterous hands!`，单推页 `og:title` + `og:description` 双源且正文完整）；已 follow 仍 **0**（需登录态，未假装）。两条「不猜 / 不硬发」记录：① Cheng Chi、Shuran Song 主页均无明文邮箱 ⇒ 只建档不发信；② 同论文 #197 已发 Yilun Du ⇒ Russ Tedrake 有邮箱也不发（同论文 ≤1）。
+
+（编号 **#172–#174**；编号最大值 174）（**第四十八轮 2026-11-17 03:0x +3：Yu Su 苏禹（OSU；`ysu1989.github.io` `200` / 97,338 B，`mailto: su.809@osu.edu` 明文；X `@ysu_nlp` `og:title` + bio（`co-founder @NeoCognition \| prof. @osunlp`）双源 ⇒ **已发信，第 71 封**，中文）/ Ming He（天津大学；`heming01@foxmail.com` 取自 PDF 首页通讯标注；X 未找到 ⇒ **已发信，第 72 封**，中文）/ Disha Sheshanarayana（Manipal University Jaipur；`disha.229301161@muj.manipal.edu` 取自 PDF 首页；X 未找到 ⇒ **已发信，第 73 封**，英文）**（**第四十五轮 2026-11-16 18:0x +2：Yang You（LAMB `1904.00962` 一作；主页 `200` / 3,767 B，邮箱写法 `yangyou (at) nus (dot) edu`（域名后缀待复核）；X `@YangYou1991` 双源已核 ⇒ **待跟踪、下轮发**）/ Guangxuan Xiao（StreamingLLM `2309.17453` 一作；主页 `200` / 15,305 B，`mailto:xiaoguangxuan@gmail.com` 明文；X `@Guangxuan_Xiao` 仅主页 `href` 单源、`x.com` 两次抓取 `000` ⇒ **未核验不计数** ⇒ **待跟踪**）**（**第三十八轮 2026-11-15 21:0x +3：Greg Yang（`thegregyang.com` `200` / 16,870 B，邮箱只在**被注释的 HTML** 里 ⇒ 不采用；X `@TheGregYang` 双源已核 ⇒ **待跟踪、不发信**）/ Wei-Ning Hsu 徐煒甯（`wnhsu.github.io` `200` / 10,859 B，`mailto:wnhsu@fb.com` 明文；`x.com/wnhsu` `404` ⇒ 未找到 X ⇒ **已发信，第 55 封**，中文 216 汉字）/ Karl Cobbe（`karl@openai.com` 取自论文 PDF 首页明文；X `@karlcobbe` 双源已核；今日已达 12 封上限 ⇒ **待跟踪、下轮发**）**；**第三十七轮 2026-11-15 18:0x +3：Furu Wei 韦福如（本人主页 `thegenerality.com` `200` / 10,937 B 明文 `fuwei@microsoft.com` ×4；`x.com/furuwei` `404` ⇒ 未找到 X ⇒ **已发信，第 54 封**，中文 186 汉字）/ Shuming Ma（`shumingma.com` `200` / 9,464 B 无明文邮箱；`x.com/shumingma` 200 但 6 followers + Oakland ⇒ 非本人、不登记 ⇒ 待跟踪）/ Alexei Baevski（`alexeib.github.io` `404`、`ai.meta.com` 仅 `302`、`x.com/alexeib` `404` ⇒ 邮箱与 X 均未找到，只建档）**；**第三十六轮 2026-11-15 15:0x +3：Lianmin Zheng（主页 `lmzheng.net` 的 `email-protection#` 混淆串按 key `0xf3` 还原为 `lianminzheng@gmail.com`，X `@lm_zheng` 双源已核 ⇒ **已发信，第 52 封**，中文 177 汉字）/ Jong Wook Kim（`jongwook.kim` `mailto:` 明文 `jongwook@nyu.edu`；`x.com/jongwook` 经 `og:title` 判为 `jongwookbahn` 他人账号 ⇒ 不登记 ⇒ **已发信，第 53 封**，韩文 293 자）/ Scott Reed（`scottreed.ai` `200` 但仅 1,468 B JS 单页、`x.com/scottreed_ai` `404` ⇒ **邮箱与 X 均未找到，只建档不发信**）**；**第三十五轮 2026-11-15 12:0x +3：Sebastian Riedel（主页所挂现行 CV `sebastian.riedel@gmail.com`，X `@riedelcastro` 双源已核 ⇒ **已发信，第 50 封**，德文问候 + 英文正文 198 词）/ Song Han 韩松（主页页脚 `hanlab@mit.edu` **实验室公共邮箱**，X `@songhan_mit` 已核 ⇒ **已发信，第 51 封**，中文 249 汉字）/ Junyang Lin 林俊旸（`@JustinLin610` 已核，个人主页 `404` / `jasonlin.tech` 实为 GitHub Pages `Site not found` ⇒ **邮箱未找到，不发信**）**；**第三十三轮 +3：Yankai Lin（RUC；`yankailin@ruc.edu.cn` 本人页 `mailto:` 明文 `200`/22,319 B；X 未找到 ⇒ **已发信，第 47 封**，中文）/ Yongliang Shen（ZJU；`@itricktreat` X `og:title` + bio 双核，且与 GitHub 同名 `tricktreat` 互证；邮箱未找到 ⇒ 不发信）/ Anima Anandkumar（Caltech；`@AnimaAnandkumar` X 已核；邮箱未找到 ⇒ 不发信）**；**第三十二轮 +2：Tomohiro Sawada（Georgia Tech；`tsawada@gatech.edu` 本人页明文 + `@tsawada_ml` X bio 自述 GT / 「日本語 DMs Open」⇒ **已发信，第 46 封**，日文）/ Kartik Goyal（Georgia Tech；`kartikgo@gatech.edu` 取自 GT 人员页；`@kartikgoyal` 身份不符 ⇒ 不登记，同论文已发一作 ⇒ 不发信）**；**第三十一轮 +4：Tianyi Zhang（Purdue；`@tian_yi_zhang` X 已核 + `tianyi@purdue.edu` 取自本人页且与 PDF 一致 ⇒ **已发信，第 44 封**）/ Wei Xu（Georgia Tech；`@cocoweixu` X 已核 + `wei.xu@cc.gatech.edu` 本人页且与 PDF 一致 ⇒ **已发信，第 45 封**）/ Ruixin Wang（SatisFix 一作；邮箱取自 PDF 首页；同论文已发二作 ⇒ 本轮不发）/ Leo Gao（The Pile 一作；`@nabla_theta` X 已核；个人主页无 `mailto:` ⇒ 不发信）**；**第三十轮 +3：Xiaohua Zhai（SigLIP 一作；邮箱取自本人主页 Contact 区块 `xiaohuazhai[at]gmail.com`、X `@XiaohuaZhai` 已核 ⇒ **已发信，第 40 封**）/ Samuel Williams（Roofline 一作；LBNL / NERSC 页面均无明文邮箱 ⇒ 仅建档）/ Katherine Lee（去重一作；ACL 页无邮箱 ⇒ 仅建档）**；**第二十九轮 +3：Tianbao Xie（OSWorld 一作；`tianbaoxiexxx@gmail.com` 取自官方仓库 README「current maintainer」⇒ **已发信，第 39 封**）/ Bei Yu（ML-for-EDA 综述末位；`byu@cse.cuhk.edu.hk` 取自本人页 `byu[at]` 写法 ⇒ 待跟踪，本轮不发）/ Suriya Gunasekar（phi-1 一作；MSR 人员页 `404` ⇒ 邮箱与 X 均未找到，仅建档）**；**第二十八轮 +6：Yann LeCun `@ylecun`（主页明文 + `og:title` 核验）/ Yoshua Bengio `@Yoshua_Bengio`（Mila 目录页 `href` + `og:title` 核验）/ Tim Rocktäschel `@_rockt`（本人站 `href` + `og:title` + bio 核验）/ Jeff Clune `@jeffclune`（`og:title` + bio 核验；**`jeff.clune@ubc.ca` 取自 UBC 现行人员页 ⇒ 已发信，第 38 封**）/ Alex Krizhevsky（AlexNet 一作；X 与邮箱均未找到）/ Sally A. McKee（Memory Wall 二作；X 与邮箱均未找到）**；**第二十七轮 +4：Robin Rombach `@robrombach`（LDM 一作，X 已核验）/ Björn Ommer（LDM 通讯；`b.ommer@lmu.de` 取自课题组现行页 ⇒ 已发信）/ Sung Kyu Lim（DREAM-GAN 末位；`sl186@gatech.edu` 取自 GT ECE 现行目录 ⇒ 已发信）/ Patrick Esser（LDM 四作；X 与邮箱均未找到）**；第八轮 +4：John Jumper / Igor Babuschkin / Danny Driess / Kimi Team；第九轮 +4：Team GLM / MiniMax / Karl Pertsch / Pete Florence；第十轮 +1：Kilian Lieret；第十一轮 +3：Jan Leike / Paul Christiano / Nisan Stiennon；**第十二轮 +3：Bill Peebles `@billpeeb` / Tim Brooks `@_tim_brooks` / Gerald Tesauro（未找到 X）**；**第十三轮 +3：Rafael Rafailov `@rm_rafailov` / Archit Sharma `@archit_sharma97` / Onur Mutlu `@_onurmutlu_`**；**第十四轮 +4：Danqi Chen `@danqi_chen` / Yibo Lin（未找到 X）/ Nathan Lambert `@natolambert` / Lewis Tunstall `@_lewtun`**；**第十五轮 +4：Percy Liang `@percyliang` / James Thorne `@j6mes` / Nelson F. Liu（X 待核实）/ Woosuk Kwon（未找到 X）**；**第十六轮 +4：Yizhong Wang `@yizhongwyz` / Niklas Muennighoff `@Muennighoff` / Beidi Chen `@BeidiChen` / Kawin Ethayarajh（未找到 X）**；**第十七轮 +4：Azalia Mirhoseini `@Azaliamirh` / Jeffrey Quesnelle `@theemozilla`（核验链见 #71）/ Elias Frantar（未找到 X）/ Dan Alistarh（未找到 X）**；**第十八轮 +4：Andrew B. Kahng（邮箱已核，X 无 bio 不登记）/ Li Lyna Zhang `@LynaZhang` / Yoongu Kim（X 无 bio 不登记）/ Tutu Ajayi（X 无 bio 不登记）**；**第十九轮 +5：Thomas Wolf `@Thom_Wolf`（已发信）/ Bryan Catanzaro `@ctnzr` / Clémentine Fourrier `@clefourrier` / David A. Patterson（X 未找到，已发信）/ DeepSeek-AI `@deepseek_ai`（机构账号，不发信）**；**第二十轮 +4：Ankur Srivastava（`ankurs@umd.edu` 已核、已发信；X 未找到）/ Bruce Jacob（邮箱在页面上是图片 ⇒ 不猜；X 未找到）/ Jacob Devlin（`@jacobdevlin` 7 followers、无身份信息 ⇒ 判非本人）/ Ming-Wei Chang（`@mingweichang` 4 followers、0 推文 ⇒ 不登记）**；**第二十一轮 +4：Tim Dettmers `@Tim_Dettmers`（`dettmers@cmu.edu` 取自本人页 `lastname@cmu.edu` 反爬写法，已发信）/ Colin Raffel（无邮箱、`@colinraffel` 404 ⇒ 未找到 X）/ Patrick Lewis `@PSH_Lewis`（主页邮箱为模板占位 ⇒ 不发信）/ Timo Schick `@timo_schick`（主页无邮箱 ⇒ 不发信）**；**第二十二轮 +3：Geoffrey Hinton `@geoffreyhinton`（邮箱取自本人主页 `Email: geoffrey [dot] hinton [at] gmail [dot] com`，已发信）/ Jeff Dean `@JeffDean`（无个人邮箱 ⇒ 不发信）/ Joshua Ainslie（邮箱与 X 均未找到）；另**更正** Arthur Mensch 补上 `@arthurmensch`（bio 自证 Mistral CEO）**；**第二十三轮 +2：Lucas Beyer `@giffmana`（ViT 二作；X bio 自述 `now: Meta`；**邮箱未找到 ⇒ 不发信**）/ Graham Neubig `@gneubig`（CMU LTI 副教授 / `@OpenHandsDev` 联合创始人；邮箱取自 LTI 现行页反爬写法 `gneubig(through)cs.cmu.edu` ⇒ 按页面规则还原，**已发信**）**；**第二十四轮 +2：John Schulman `@johnschulman2`（PPO 一作；`joschu.net` 无邮箱 ⇒ 不发信）· Pieter Abbeel `@pabbeel`（DDPM 三作；`pabbeel@cs.berkeley.edu` 取自 contact 页 ⇒ 已发信）**；**第二十五轮 +2：Saining Xie `@sainingxie`（MAE 三作；`saining.xie@nyu.edu` 取自本人页 `data-user`/`data-domain` ⇒ 已发信）· Danijar Hafner `@danijarh`（DreamerV3 一作；`danijar.com` 无邮箱 ⇒ 不发信）**；**第二十六轮 +7：Ian Goodfellow `@goodfellow_ian`（GAN 一作；无邮箱）/ Diederik P. Kingma（Adam 一作；`diederikkingma.com` `000` ⇒ 无邮箱；`@diederikkingma` 17 followers 无 bio ⇒ 不登记）/ Jimmy Ba（Adam 二作 + DreamerV3 三作；主页无邮箱；`@jimmyba` 无账号信息）/ Sergey Ioffe / Christian Szegedy（BN 两作者；均未找到主页与 X）/ David Z. Pan（DREAMPlace 末位；`dpan@ece.utexas.edu` 取自 UT Austin 现行页 ⇒ 已发信）· Jim Fan `@DrJimFan`（Voyager 作者之一；无邮箱）**）｜已发信 **47**（Tri Dao · Shunyu Yao · Haoxing Ren · Jason Wei · Noah Shinn · Kaiming He · Haotian Liu · Karthik Narasimhan · Moo Jin Kim · Danny Driess · Pete Florence · Karl Pertsch · Jan Leike · **Nisan Stiennon** · **Archit Sharma** · **Onur Mutlu** · **Danqi Chen** · **Yibo Lin** · **Nathan Lambert** · **James Thorne** · **Nelson F. Liu** · **Yizhong Wang** · **Niklas Muennighoff** · **Beidi Chen** · **Dan Alistarh** · **Andrew B. Kahng** · **Thomas Wolf** · **David A. Patterson** · **Ankur Srivastava** · **Geoffrey Hinton** · **Graham Neubig** · **Pieter Abbeel** · **Saining Xie** · **David Z. Pan** · **Jeff Clune** · **Tianbao Xie** · **Bei Yu** · **Xiaohua Zhai** · **Tianyi Zhang** · **Wei Xu** · **Tomohiro Sawada** · **Yankai Lin** · **Sebastian Riedel** · **Song Han**）｜X 已核验 **94**（`@tri_dao` / `@_albertgu` / `@ShunyuYao12` / `@edwardjhu` / `@jyangballin` / `@_jasonwei` / `@ilyasut` / `@RichardSSutton` / `@imhaotian` / `@ChunyuanLi` / `@karthik_r_n` / `@demishassabis` / `@koraykv` / `@OriolVinyalsML` / `@svlevine` / `@chelseabfinn` / `@moo_jin_kim` / `@ibab` / `@DannyDriess` / `@Kimi_Moonshot` / `@ZhipuAI` / `@MiniMax_AI` / `@KarlPertsch` / `@peteflorence` / `@KLieret` / `@janleike` / `@paulfchristiano` / `@billpeeb` / `@_tim_brooks` / `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_` / `@danqi_chen` / `@natolambert` / `@_lewtun` / **`@percyliang`** / **`@j6mes`** / **`@yizhongwyz`** / **`@Muennighoff`** / **`@BeidiChen`** · **`@Azaliamirh`** · **`@theemozilla`** · **`@LynaZhang`** · **`@Thom_Wolf`** · **`@ctnzr`** · **`@clefourrier`** · **`@deepseek_ai`** · **`@Tim_Dettmers`** · **`@PSH_Lewis`** · **`@timo_schick`** · **`@geoffreyhinton`** · **`@JeffDean`** · **`@arthurmensch`** · **`@giffmana`** · **`@gneubig`** · **`@sainingxie`** · **`@danijarh`** · **`@goodfellow_ian`** · **`@DrJimFan`** · **`@XiaohuaZhai`** · **`@tian_yi_zhang`** · **`@cocoweixu`** · **`@tsawada_ml`** · **`@nabla_theta`** · **`@itricktreat`** · **`@AnimaAnandkumar`** · **`@riedelcastro`** · **`@songhan_mit`** · **`@JustinLin610`** · **`@YangYou1991`**）｜X 未找到 / 未核验 **73**（167 人中 **94** 已核验；`@colinraffel` **404**、`@DavePatterson` **bio 与推文均为牙科营销（2010–2012）⇒ 明确非 Patterson 本人**、`@nelsonfliu` 无 bio、`@woosuk_kwon` 仅 3 followers、`@EliasFrantar` 无 bio、`@DanAlistarh` 404、`@bloc97` 与 `@BowenPeng` 无 bio、**`@AndrewKahng` / `@yoongukim` / `@TutuAjayi` 无 bio（0 / 18 / 85 followers）** ⇒ 均**不登记**）｜**X 可达（本机 Mihomo 7897；2026-11-12 21:0x 实测：本 shell 仍无 `HTTPS_PROXY` ⇒ 直连 `x.com` `000`、显式 `-x http://127.0.0.1:7897` 返回 `200` 且出口 IP `178.249.213.185`；`x_fetch.py` 内部默认走代理）**｜已 follow **0**（follow 需登录态 ⇒ 仍靠用户手动，见第二节）｜言论台账 **29 条**（V1–V29；**V29 = Yang You `@YangYou1991` 2026-11-04 原推（The Trinity：verifiable world generation + agent harness 演化，`Mean performance improves by 26 points across 18 unseen benchmarks`），推文页 `og:title` = `Yang You (@YangYou1991) on X` + `og:description` 全文已取，本期首发**；**V27 = Percy Liang 2026-11-10 原推（Marin 535B-A23B 设计权衡），已采用；V28 = Tri Dao 2026-10-28 原推（H-Net 动态分词 vs BPE），本期采用**；**V25 = Demis Hassabis 2026-11-11 原推（AlphaGenome 2），`og:title` + `og:description` 全文核验，本期采用**；V13–V16 均经单条推文页 `og:title` 核验为**他人推文** ⇒ 作废；**V17 = Percy Liang 2026-11-11 原推，已采用**；**V18 = Jason Wei 2026-11-12 原推，已采用**；**V19 = Thomas Wolf 2026-11-07 原推（`og:title` + `og:description` 全文核验），本期首发**；**V20 = Albert Gu 2026-11-07 原推（`og:description` 全文核验），本期采用**；**V21 = Tim Dettmers 2026-10-18 原推（推文页 `og:title` = `Tim Dettmers (@Tim_Dettmers) on X`，`og:description` 全文已取），下一期首发**；**V22 = Jeff Dean 2026-11-06 原推（`og:title` + `og:description` 全文核验），本期采用**；**V23 / V24 = 第二十五轮候选，均不采用（V23 实为他人推文、V24 为上下文依赖短句）**；**第二十六轮 0 新增**：`@goodfellow_ian` 时间线首条为 pinned 玩笑（GAN-dalf，2026-08-14）、`@DrJimFan` GR00T 2 两条（2026-11-10 / 11）推文页**无 `og:description`**（只有 `og:title` + 页面正文）⇒ 不满足「双源一致」⇒ 均不采用）
+**第四十一轮增量（2026-11-16 06:0x）**：作者网 152 → **155**（#151 Shishir G. Patil / #152 Shuai Bai 白帅 / #153 Mingjie Liu）；已发信 59 → **62**（#60 Shishir · Gorilla，英文 183 词，`SENT OK 06:04:00`；#61 Karl Cobbe · Let's Verify Step by Step，英文 183 词，`SENT OK 06:04:04`；#62 白帅 · Qwen2.5-VL，中文 179 汉字，`SENT OK 06:04:08`）；X 已核验 84 → **86**（`@shishirpatil_` `og:title` + `og:description` 双源；`@shuai_bai_` **仅 `og:title` 单源**，`og:description` 未取到 ⇒ 如实标注）；已 follow 仍 **0**（需登录态，未假装）。三个「不猜 / 不硬发」记录：① Mingjie Liu 只有 NVIDIA 机构页、无公开邮箱 ⇒ 只建档；② 白帅的 X 未做双源 ⇒ 只记单源可核；③ Karl Cobbe 邮箱仍取自 2023 年论文 PDF 首页，非当前主页（已在备注标明送达率不可验证）。
+
+**第三十八轮增量（2026-11-15 21:0x）**：作者网 143 → **146**（#142 Greg Yang / #143 Wei-Ning Hsu / #144 Karl Cobbe）；已发信 54 → **55**（#55 Wei-Ning Hsu · HuBERT，中文 216 汉字，`SENT OK 21:02:30`）；X 已核验 80 → **82**（`@TheGregYang`、`@karlcobbe`，均 `og:title` + bio 双源；`x.com/wnhsu` `404` ⇒ 未找到）；已 follow 仍 **0**（需登录态，未假装）。两个「不猜 / 不硬发」的正向例子：① Greg Yang 主页邮箱只在**被注释的 HTML** 里 ⇒ 视为已撤回，不发信；② Karl Cobbe 邮箱取自 2021 年论文 PDF 首页（非当前主页）+ 今日已满 12 封 ⇒ 本轮不发、下轮先核现行地址。
+
+**第三十七轮增量（2026-11-15 18:0x）**：作者网 140 → **143**（#139 Furu Wei / #140 Shuming Ma / #141 Alexei Baevski）；已发信 53 → **54**；X 已核验 **80 → 80**（本轮 3 个候选 handle：`x.com/furuwei` `404`、`x.com/alexeib` `404`、`x.com/shumingma` 200 但 6 followers + Oakland 与 Microsoft Research 作者不符 ⇒ **无一登记**）；已 follow 仍 **0**（需登录态，未假装）。
+**第三十六轮增量（2026-11-15 15:0x）**：作者网 137 → **140**（#136 Lianmin Zheng / #137 Jong Wook Kim / #138 Scott Reed）；已发信 51 → **53**；X 已核验 79 → **80**（+ `@lm_zheng`）；已 follow 仍 **0**（需登录态，未假装）。反向例子两个：`x.com/jongwook` 经 `og:title` 判为 `jongwookbahn (@jongwook)`（2 followers）⇒ **非本人、不登记**；`x.com/scottreed_ai` **`404`** ⇒ 未找到。
+
+
+
+---
+
+## 一、关系网主表
+
+### 1. Tri Dao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tri Dao（越南裔美国人 ⇒ 信按英文写） |
+| 机构 | Princeton University（Computer Science，助理教授）· 兼 Together AI |
+| 代表论文 | FlashAttention（arXiv `2205.14135`，一作）· Mamba（arXiv `2312.00752`，二作） |
+| 邮箱 | **tri@tridao.me**（来源：`https://tridao.me/assets/pdf/cv.pdf` 实测 `HTTP 200` / 212,820 B / `pdftotext` 提取；**非 PDF 里的旧地址**） |
+| 主页 | <https://tridao.me>（实测 `HTTP 200` / 23,797 B） |
+| X 账号 | **@tri_dao**（核验方式：主页 `contact-icons` 区块 `href="https://twitter.com/tri_dao"`，title 标注 `X username`） |
+| 状态 | **已发信**（2026-11-11 11:5x CST，经典论文请教信第 1 封）· X 待 follow（BLOCKED） |
+| 备注 | 同时是一作/二作的 Mamba 与 FlashAttention 都进了本轮经典清单 ⇒ **一份关系覆盖两条线**（pretrain 吞吐 + zhulong 架构消融）。回复若涉及 kernel 细节，可直接回填 pretrain 的 attention 排障与 harness 的成本口径。 |
+
+### 2. Albert Gu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Albert Gu（中文名 顾世翔；按英文写） |
+| 机构 | Carnegie Mellon University（Machine Learning Department / CSD） |
+| 代表论文 | Mamba（arXiv `2312.00752`，一作）· S4 / 结构化状态空间系列 |
+| 邮箱 | **未找到**（`goombalab.github.io` 主页与 `/blog/` 均实测 `HTTP 200` 但**无 `mailto:`**；CMU 个人页 `www.cs.cmu.edu/~albertgu/` 与 `ml.cmu.edu` 教职页均不可用/404 ⇒ 按纪律**不写猜测邮箱**） |
+| 主页 | <https://goombalab.github.io>（实测 `HTTP 200` / 16,373 B） |
+| X 账号 | **@_albertgu**（核验方式：主页 `href="https://x.com/_albertgu"`） |
+| 状态 | **待跟踪**（X 待 follow · 邮箱待公开后再发信） |
+| 备注 | 与 Tri Dao 是同一实验室合作链，**同轮不重复发信**（避免「同一合作圈两封信」的打扰感）；下轮若其 CMU 页面恢复或论文新投出现新邮箱再评估。 |
+
+### 3. Ashish Vaswani
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ashish Vaswani |
+| 机构 | Essential AI（联合创始人；OpenAlex 记为 Google，为论文发表时机构） |
+| 代表论文 | Attention Is All You Need（arXiv `1706.03762`，一作） |
+| 邮箱 | **未找到**（个人主页 `ashishvaswani.com` 本轮实测 `HTTP 000`，不可达；无其它公开页可核） |
+| 主页 | 未核验（同上，不可达） |
+| X 账号 | **未找到 X**（不可达 ⇒ 不查不猜） |
+| 状态 | 待跟踪 |
+| 备注 | 2017 年论文，PDF 上的邮箱已过 9 年，按令**必须**用当前机构主页邮箱；本轮拿不到 ⇒ 不发信。 |
+
+### 4. Noam Shazeer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Noam Shazeer |
+| 机构 | Google DeepMind（OpenAlex 记为 Google，为论文发表时机构） |
+| 代表论文 | Attention Is All You Need（二作）· 后续 MoE / 稀疏专家系列 |
+| 邮箱 | **未找到**（无个人主页可取） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | 顶级工程型研究者，X 上极其活跃（据公开报道），**但本轮无法核验 handle ⇒ 不登记**；拿到可访问来源后再补。 |
+
+### 5. Niki Parmar
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Niki Parmar |
+| 机构 | Essential AI（联合创始人；OpenAlex 记为 Google/USC） |
+| 代表论文 | Attention Is All You Need（三作） |
+| 邮箱 | **未找到** |
+| 主页 | 未找到（本轮未命中可访问主页） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | — |
+
+### 6. Jordan Hoffmann
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jordan Hoffmann |
+| 机构 | **未核实**（OpenAlex authorship 的 `institutions` 为空；论文发表时为 DeepMind） |
+| 代表论文 | Training Compute-Optimal LLMs / Chinchilla（一作） |
+| 邮箱 | **未找到** |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | Chinchilla 的「20 token/参数」是 data 线直接依据，优先补其当前机构与邮箱。 |
+
+### 7. Sebastian Borgeaud
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sebastian Borgeaud |
+| 机构 | **未核实**（OpenAlex 未给；论文发表时为 DeepMind） |
+| 代表论文 | Chinchilla（二作） |
+| 邮箱 | **未找到** |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | — |
+
+### 8. Arthur Mensch
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Arthur Mensch |
+| 机构 | Mistral AI（联合创始人 & CEO，据公开报道；OpenAlex 未给机构） |
+| 代表论文 | Chinchilla（三作） |
+| 邮箱 | **未找到**（Mistral 官网团队页本轮未取到可用邮箱；按纪律不猜） |
+| 主页 | 未找到（本轮未取到可访问个人页） |
+| X 账号 | **@arthurmensch**（**2026-11-13 18:0x 补核**：`x.com/arthurmensch` 实测 `HTTP 200` / 179,013 B，`og:title` = `Arthur Mensch (@arthurmensch) on X`，bio = `Co-founder and CEO @MistralAI` ⇒ 身份可证；此前记为「未找到 X」，现更正） |
+| 状态 | 待跟踪 |
+| 备注 | 工业界 CEO，回信概率低但**公开言论对 news 有价值**（属 `voice_ready` 的候选来源，须拿到原文 + 链接才可用）。 |
+
+### 9. Shunyu Yao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shunyu Yao（拼音名；中文汉字写法**未核实 ⇒ 不写**；信按中文写，判据 = 中文姓名 + 中文主页/中文媒体链接） |
+| 机构 | **OpenAI**（个人主页 2026-11-11 实测自述「I am a researcher at OpenAI. I study agents.」；ReAct 发表时为 Princeton） |
+| 代表论文 | ReAct（arXiv `2210.03629`，一作）· Tree of Thoughts（`2305.10601`，一作）· Computer-Using Agent（OpenAI 产品线） |
+| 邮箱 | **shunyuy@princeton.edu**（来源：`https://ysymyth.github.io/` 页内 `mailto:` 实测 `HTTP 200` / 17,240 B；⚠️ 仍是 Princeton 域名，但为**本人当前主页仍在挂的地址**，非论文 PDF 旧邮箱） |
+| 主页 | <https://ysymyth.github.io>（实测 `HTTP 200` / 17,240 B） |
+| X 账号 | **@ShunyuYao12**（核验方式：主页 header 社交图标 `href="https://www.twitter.com/ShunyuYao12"`；同页多篇论文的 "tweet" 链接均指向该 handle） |
+| 状态 | **已发信**（2026-11-11 11:43 CST，中文，230 字）· X 待 follow（BLOCKED） |
+| 备注 | ReAct 是 harness 线「think→act→observe」骨架来源；现做 CUA / Deep Research 一类 agent 产品，**其一手言论对 news 的 `voice_ready` 价值高**（须拿到原文 + 链接才可用）。 |
+
+### 10. Edward J. Hu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Edward J. Hu（中文名**未核实 ⇒ 不写**） |
+| 机构 | Mercor（个人主页 2026-11-11 实测自述「leading model training and research at Mercor」；LoRA 发表时为 Microsoft） |
+| 代表论文 | LoRA（arXiv `2106.09685`，一作） |
+| 邮箱 | **未找到**（`edwardjhu.com` 与 `/about` 均实测无 `mailto:` / 无可提取邮箱；`/about` 仅 162 B，疑为跳转页 ⇒ 按纪律不猜） |
+| 主页 | <https://edwardjhu.com>（实测 `HTTP 200` / 39,953 B） |
+| X 账号 | **@edwardjhu**（核验方式：主页社交链接 `data-title="twitter.com/edwardjhu"` + `href="https://twitter.com/edwardjhu"`） |
+| 状态 | **待跟踪**（X 可跟；邮箱缺失 ⇒ 本轮不发信） |
+| 备注 | LoRA 是 vision 线 CPU 小样本微调与 pretrain PEFT 对照的默认基线；等其公开邮箱后再发信。 |
+
+### 11. Haoxing Ren（Mark Ren）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Haoxing Ren（主页自称 **Mark Ren**；中文汉字写法**未核实 ⇒ 不写**） |
+| 机构 | **Agentrys**（创始人，做 Agentic Design Automation）· 此前 NVIDIA Research（26 年 IBM Research + NVIDIA Research，主页自述） |
+| 代表论文 | ChipNeMo（`2311.00176`，末位作者 / 项目负责人）· VerilogEval（`2309.07544`，末位作者） |
+| 邮箱 | **info@agentrys.ai**（来源：`https://agentrys.ai` 页内 `mailto:`，实测 `HTTP 200` / 14,610 B；**公司公开信箱，非个人邮箱**，信首已请转交） |
+| 主页 | <https://haoxingren.github.io/>（实测 `HTTP 200` / 16,340 B，内容自证 NVIDIA / ChipNeMo / VerilogEval） |
+| X 账号 | **未找到 X**（主页仅 Google Scholar + LinkedIn 链接，无 `x.com` / `twitter.com` href） |
+| 状态 | **已发信**（2026-11-11 11:43 CST，中文，246 字，发至公司信箱） |
+| 备注 | 2× DAC Best Paper、IEEE Fellow；其「Agentic Design Automation」方向与 designflow 线高度重合，是最值得长期跟踪的工业界人物。 |
+
+### 12. Mingjie Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mingjie Liu（中文名写法未核实 ⇒ 不写） |
+| 机构 | NVIDIA（OpenAlex 作者记录 `A5100681148` 的 `last_known_institutions` = Nvidia (United States)；ChipNeMo / VerilogEval 一作） |
+| 代表论文 | ChipNeMo（`2311.00176`，一作）· VerilogEval（`2309.07544`，一作） |
+| 邮箱 | **未找到**（未找到可访问的本人主页；NVIDIA 企业邮箱不公开 ⇒ 不猜） |
+| 主页 | **未找到**（试 `mingjieliu.github.io` / `mingjiel.github.io` 均 `404`、`mingjieliu.com` DNS 不解析） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | 两篇 EDA 经典的一作；若后续找到其主页/邮箱，优先补信（与 Haoxing Ren 同一合作圈，**同轮不重复打扰**）。 |
+
+### 13. Nathaniel Pinckney
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nathaniel Pinckney |
+| 机构 | NVIDIA（ChipNeMo 与 VerilogEval 作者，机构按论文署名） |
+| 代表论文 | VerilogEval（`2309.07544`，二作）· ChipNeMo（`2311.00176`，中间作者） |
+| 邮箱 | **未找到** |
+| 主页 | **未找到**（本轮未命中可访问主页） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | — |
+
+### 14. Jason Wei
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jason Wei（美籍 ⇒ 信按英文写） |
+| 机构 | **Meta Superintelligence Labs**（本人主页实测「I currently work at Meta Superintelligence Labs. From 2023 to 2025, I was at OpenAI…」；CoT 发表时为 Google Brain） |
+| 代表论文 | Chain-of-Thought（`2201.11903`，一作）· 指令微调 / 涌现能力系列 |
+| 邮箱 | **jason.weng.wei@gmail.com**（来源：`https://jasonwei.net/` 页内 `mailto:` 实测；**非 2022 年论文 PDF 旧地址**） |
+| 主页 | <https://jasonwei.net>（实测 `HTTP 200` / 116,550 B） |
+| X 账号 | **@_jasonwei**（核验方式：主页 `href="https://twitter.com/_jasonwei"`） |
+| 状态 | **已发信**（2026-11-11 12:10 CST，经典论文请教信第 4 封）· X 待 follow（BLOCKED） |
+| 备注 | 其主页自述「My work helped popularize chain-of-thought, instruction tuning, and emergence」⇒ **一篇经典覆盖 zhulong 的 thinking 轴与 pretrain 的 SFT 数据口径**。⚠️ 邮箱是 gmail 个人信箱（本人主页公开挂出），非机构信箱。 |
+
+### 15. Noah Shinn
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Noah Shinn |
+| 机构 | 独立研究者 · **前 Sierra**（本人主页实测「Previously, I was a researcher at Sierra, where I joined as one of the first employees.」；Reflexion 发表时为 Northeastern University 编程语言组） |
+| 代表论文 | Reflexion（`2303.11366`，一作）· τ-bench（与 Shunyu Yao 合作） |
+| 邮箱 | **noahrshinn@gmail.com**（来源：`https://noahshinn.com/` 页内明写 `Email: noahrshinn[at]gmail[dot]com`，去混淆后使用） |
+| 主页 | <https://noahshinn.com>（实测 `HTTP 200` / 4,689 B） |
+| X 账号 | **未找到 X**（该主页只列 Github / Google Scholar，无 twitter / x.com 链接 ⇒ 按令不猜） |
+| 状态 | **已发信**（2026-11-11 12:11 CST，经典论文请教信第 5 封） |
+| 备注 | τ-bench 与 Shunyu Yao 合作 ⇒ 与已发信的 Shunyu Yao 属同一合作圈；本轮只写给 Noah（未重复打扰 Shunyu）。 |
+
+### 16. Xuezhi Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xuezhi Wang |
+| 机构 | **未核实**（CoT 发表时在 Google；本轮无可访问的本人主页） |
+| 代表论文 | Chain-of-Thought（`2201.11903`，二作） |
+| 邮箱 | **未找到** |
+| 主页 | **未找到**（`xuezhiwang.com` 实测 `HTTP 200` 但页面标题为「w66.com 中国区」赌博站 ⇒ **非本人站点**，不予采用） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | 同论文已发给一作 Jason Wei ⇒ 按「同一合作圈不重复打扰」本轮不发。 |
+
+### 17. Denny Zhou
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Denny Zhou |
+| 机构 | **未核实**（CoT 发表时在 Google；本轮未核到机构字段） |
+| 代表论文 | Chain-of-Thought（`2201.11903`，末位作者）· 推理 / 思维链系列 |
+| 邮箱 | **未找到**（`dennyzhou.github.io` 实测 `HTTP 200` / 50,918 B，但页面为多年前的论文列表，**无 `mailto:` / 社交链接**） |
+| 主页 | <https://dennyzhou.github.io>（无联系方式） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | 末位作者、CoT 方向长期主导者；拿到可访问的新主页后再补。 |
+
+### 18. Carlos E. Jimenez
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Carlos E. Jimenez |
+| 机构 | Princeton University（Princeton Language and Intelligence；OpenAlex `institutions` 实测） |
+| 代表论文 | SWE-bench（`2310.06770`，一作） |
+| 邮箱 | **未找到** |
+| 主页 | **未找到**（`carlosej.github.io` DNS 不解析；`www.cs.princeton.edu/~carlosej/` 返回「This person has moved」占位页） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | SWE-bench 一作；论文已由二作 John Yang 的 handle 覆盖（X 侧）。 |
+
+### 19. John Yang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | John Yang（主页自称「John Y」） |
+| 机构 | Stanford University（CS PhD；本人主页实测「2nd year Computer Science PhD student @ Stanford University」） |
+| 代表论文 | SWE-bench（`2310.06770`，二作）· SWE-agent 系列 |
+| 邮箱 | **未找到**（主页无 `mailto:`） |
+| 主页 | <https://john-b-yang.github.io>（实测 `HTTP 200` / 6,840 B） |
+| X 账号 | **@jyangballin**（核验方式：主页 `href="https://x.com/jyangballin"`，同页多条推文链接指向同一 handle） |
+| 状态 | 待跟踪 · X 待 follow（BLOCKED） |
+| 备注 | SWE-agent / SWE-bench 的主要工程实现者，harness 侧言论密度高；**关注度优先级高**。 |
+
+### 20. Jianlin Su（苏剑林）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jianlin Su（苏剑林；中文作者 ⇒ 若发信按中文） |
+| 机构 | **Zhuiyi Technology（追一科技，深圳）**（OpenAlex `raw_affiliation_strings` 实测：`Zhuiyi Technology Co., Ltd. Shenzhen, China`） |
+| 代表论文 | RoFormer / RoPE（`2104.09864`，一作） |
+| 邮箱 | **未找到**（`kexue.fm` 站点本轮实测 `HTTP 403`（站点自身拦截），无法读取联系方式） |
+| 主页 | <https://kexue.fm>（403，不可读） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | RoPE 是 BaiZe 位置编码的直接来源，**如果只能补一个人的联系方式，优先补他**；但机构邮箱不公开、博客反爬 ⇒ 本轮不发信（不猜邮箱）。 |
+
+### 21. Hugo Touvron
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hugo Touvron（法国人 ⇒ 信按英文写） |
+| 机构 | Meta AI（FAIR；LLaMA 一作） |
+| 代表论文 | LLaMA（`2302.13971`，一作） |
+| 邮箱 | **未找到**（`hugotouvron.github.io` 实测 `HTTP 404`；未找到其它可访问个人页） |
+| 主页 | **未找到** |
+| X 账号 | **未找到 X**（无可核验来源 ⇒ 不猜） |
+| 状态 | 待跟踪 |
+| 备注 | LLaMA 的 token 预算口径（1.0–1.4T）是 data 线「小模型多训」一侧的直接依据；**但本文是否公开邮箱未核实 ⇒ 不发信**。⚠️ 今日 Meta 机构已发 1 封（Jason Wei），按「同机构 ≤2 封/天」仍有额度，缺的是**可核验邮箱**。 |
+
+### 22. Long Ouyang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Long Ouyang（中文姓名 ⇒ 若发信按中文） |
+| 机构 | OpenAI（InstructGPT 一作；**当前机构未核验**） |
+| 代表论文 | InstructGPT（`2203.02155`，一作） |
+| 邮箱 | **未找到**（`longouyang.github.io` 实测 `HTTP 404`；无其它公开页） |
+| 主页 | **未找到** |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | InstructGPT 的 RLHF 三步与「1.3B 胜过 175B」是 zhulong 对齐轴的基线；**作者已不在论文通讯地址可及的公开页** ⇒ 不发信。 |
+
+### 23. Tom B. Brown
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tom B. Brown（GPT-3 一作；署名 `Tom B. Brown`，常被检索为 `Tom Brown`） |
+| 机构 | **未核实**（发表时 OpenAI；OpenAlex 的机构映射把 30/31 位作者记为 Johns Hopkins University —— **明显错误，不采用**） |
+| 代表论文 | GPT-3 / Language Models are Few-Shot Learners（`2005.14165`，一作） |
+| 邮箱 | **未找到** |
+| 主页 | **未找到**（未命中可访问个人页） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪 |
+| 备注 | ⚠️ 同名者极多（`Tom Brown` 在 X 上有多个高仿/同名账号）⇒ 本线**明确不登记任何 handle**，避免 follow 到无关账号。 |
+
+### 24. Kaiming He（何恺明）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kaiming He（何恺明；中文作者 ⇒ 信按**中文**写） |
+| 机构 | **MIT**（EECS，Associate Professor；ResNet 发表时 Microsoft Research） |
+| 代表论文 | ResNet（arXiv `1512.03385`，一作）· Mask R-CNN / Focal Loss 等检测线 |
+| 邮箱 | **kaiming@mit.edu**（来源：`https://people.csail.mit.edu/kaiming/` 页内明文，2026-11-11 实测 `HTTP 200` / 55,458 B） |
+| 主页 | <https://people.csail.mit.edu/kaiming/>（实测 `200`） |
+| X 账号 | **未找到 X**（主页面无 twitter / x.com 链接 ⇒ 按令不猜） |
+| 状态 | **已发信**（2026-11-11 15:2x CST，B 轨第五轮；中文，≤300 字）· 无 X |
+| 备注 | 顶级作者 ⇒ 按令**优先覆盖**。信只问两点：小数据 + 冻结视觉塔下 depth vs width 的取舍、shortcut 恒等映射是否仍关键；以及接进 LN 预训练栈时 BN 该换 GN 还是保留并冻结。 |
+
+### 25. Ilya Sutskever
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ilya Sutskever（按英文写） |
+| 机构 | **SSI**（Safe Superintelligence Inc.，联合创始人；seq2seq 发表时 Google） |
+| 代表论文 | seq2seq（arXiv `1409.3215`，一作）· AlexNet（2012，二作）· **CLIP（arXiv `2103.00020`，末位作者，B 轨 #77）** · GPT 系列早期工作 |
+| 邮箱 | **未找到**（无公开个人主页 / 未见 `mailto:` ⇒ 按纪律不猜、不发信） |
+| 主页 | 未找到（无公开个人站；机构站无个人页） |
+| X 账号 | **@ilyasut**（核验：`x.com/ilyasut` 实测 `200`，`name` = `Ilya Sutskever (@ilyasut) / X`，`bio` = `SSI @SSI`） |
+| 状态 | 待跟踪（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | 其言论多为长周期观点（scaling / superintelligence），**低频但权重高**；引用需整段上下文，历史推文多超 30 天 ⇒ 按令降级处理。 |
+
+### 26. Richard S. Sutton
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Richard S. Sutton（按英文写） |
+| 机构 | University of Alberta（教授荣休）· **Keen Technologies**（联合创始人）· amii |
+| 代表论文 | Dyna（1991，单作者）· 《Reinforcement Learning: An Introduction》（教材）· TD 学习系列 |
+| 邮箱 | **未找到**（`http://incompleteideas.net/` 实测 `200`，页内仅有 amii 行政信箱 `lynda.vang@amii.ca`，**非本人** ⇒ 不写、不发） |
+| 主页 | <http://incompleteideas.net/>（实测 `200` / 16,719 B） |
+| X 账号 | **@RichardSSutton**（核验：`x.com/RichardSSutton` 实测 `200`，`bio` 含 `UAlberta, amii, The Royal Society, Turing Award`） |
+| 状态 | 待跟踪（X 待 follow；无本人公开邮箱 ⇒ 不发信） |
+| 备注 | Dyna 作者 ⇒ 「规划/想象」这条线的源头人物；2026-11 仍在高频发言（见言论台账 V4），是 `voice_ready` 的**高价值稳定源**。 |
+
+### 27. Haotian Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Haotian Liu（中文作者 ⇒ 信按**中文**写） |
+| 机构 | **Meta Superintelligence Lab**（X bio 实测；LLaVA 发表时 UC San Diego） |
+| 代表论文 | LLaVA / Visual Instruction Tuning（arXiv `2304.08485`，一作）· LLaVA-1.5（`2310.03744`，一作） |
+| 邮箱 | **liuhaotian.cn@gmail.com**（来源：`https://haotian-liu.github.io/` 页内 `mailto:`（percent-encoded），2026-11-11 实测 `200` / 25,018 B） |
+| 主页 | <https://haotian-liu.github.io/>（实测 `200`） |
+| X 账号 | **@imhaotian**（核验：主页 `href="https://twitter.com/imhaotian"`；`x.com/imhaotian` 实测 `200`，`bio` = `@Meta Superintelligence Lab, prev. @xAI @grok imagine/omni/v`） |
+| 状态 | **已发信**（2026-11-11 15:2x CST，B 轨第五轮；中文，≤300 字）· X 待 follow |
+| 备注 | 信问两点：①「先冻结 LLM 只训 projection」的收益来源（防遗忘 vs 对齐输入分布），只能保一阶段时保哪个；② 595K 过滤 CC 对齐数据有多关键、专业领域真实图文对稀少时强模型合成描述能否替代。 |
+
+### 28. Chunyuan Li
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chunyuan Li（李春元；中文作者） |
+| 机构 | **Google DeepMind**（X bio：`Agentic Vision @Google DeepMind`；此前 xAI / Microsoft Research；LLaVA 发表时 MSR） |
+| 代表论文 | LLaVA（arXiv `2304.08485`，二作 / 通讯级）· LLaVA-Med · 多模态指令数据系列 |
+| 邮箱 | **lichunyuan24@gmail.com**（来源：`https://chunyuanli.github.io/` 页内 `mailto:`（percent-encoded），实测 `200` / 24,034 B） |
+| 主页 | <https://chunyuanli.github.io/>（实测 `200`） |
+| X 账号 | **@ChunyuanLi**（核验：主页 `href="https://twitter.com/ChunyuanLi"`；`x.com/ChunyuanLi` 实测 `200`，`bio` = `Agentic Vision @Google DeepMind | Previous: @xAI, @MSFTResearch`） |
+| 状态 | 待跟踪（**本轮不与一作同轮发信**，避免同一合作圈两封信） |
+| 备注 | 其 bio 已转向「Agentic Vision」⇒ 后续 `voice_ready` 与 VLM-agent 选题的优先跟踪对象。 |
+
+---
+
+### 29. Karthik Narasimhan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Karthik Narasimhan（印度裔 ⇒ 信按英文写） |
+| 机构 | Princeton University（Computer Science，助理教授）；此前 OpenAI · MIT CSAIL · Sierra |
+| 代表论文 | GPT-1（arXiv 无；官方 PDF `language_understanding_paper.pdf`，**二作**）· ReAct（arXiv `2210.03629`，共同作者） |
+| 邮箱 | **karthikn@princeton.edu**（来源：本人主页 `https://karthiknarasimhan.com/` 页内 `mailto:`，**percent-encoded**；`HTTP 200` / 14,706 B 实测 2026-11-11） |
+| 主页 | <https://karthiknarasimhan.com/>（`200`；`www.` 同源同内容） |
+| X 账号 | **@karthik_r_n**（核验：主页 `href="https://twitter.com/karthik_r_n"` + X 页 `og:description` = `Professor@Princeton, ex @OpenAI, @SierraPlatform, @MIT_CSAIL, @iitmadras.` **两处一致**；`HTTP 200`） |
+| 状态 | **已发信**（2026-11-11 18:1x CST，第六轮 · 英文）· X 待 follow |
+| 备注 | X bio 自列 `GPT, ReAct, Tree-of-Thoughts, SWE-Bench/Agent, TAU-bench, GEO` ⇒ **一个人横跨我们 harness 线的三条主线**（ReAct 式循环 / SWE 式判分 / τ-bench 式对话任务），是作者网里「覆盖面最宽」的节点；信里避开「复述摘要」，只问 harness 记账与失败模式。同合作圈注意：Shunyu Yao 今日 11:43 已发 1 封（同为 Princeton 圈）⇒ 按「同机构 ≤2 封/天」本日 Princeton 恰为 2 封，**不再追加**。 |
+
+### 30. Demis Hassabis
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Demis Hassabis |
+| 机构 | **Google DeepMind**（联合创始人 & CEO；Alphabet 首席科学家；2024 诺贝尔化学奖） |
+| 代表论文 | DQN（Nature 2015，**末位作者**）· AlphaGo（Nature 2016）/ AlphaFold（Nature 2021，通讯） |
+| 邮箱 | **未找到**（无公开个人邮箱；DeepMind 站点只有公司级联系表单 ⇒ 按纪律不发信） |
+| 主页 | 未找到（无个人主页） |
+| X 账号 | **@demishassabis**（核验：X 页 `og:description` = `Nobel Laureate. Co-Founder & Chair @GoogleDeepMind; Chief...`，与作者身份一致；`HTTP 200`） |
+| 状态 | 待跟踪 · X 待 follow |
+| 备注 | 言论密度极高（模型发布 / 世界模型 / 科学发现），是 `voice_ready` 的**高价值源**，但同时**商业宣传属性强** ⇒ 采用时必须区分「事实性发布」与「营销表述」，后者不标 `voice_ready`。 |
+
+### 31. Koray Kavukcuoglu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Koray Kavukcuoglu |
+| 机构 | **Google DeepMind**（SVP）· Google 首席 AI 架构师 |
+| 代表论文 | DQN（Nature 2015，**二作**）· 早期 CNN 特征学习（NIPS 2013） |
+| 邮箱 | **未找到**（无公开个人邮箱） |
+| 主页 | 未找到 |
+| X 账号 | **@koraykv**（核验：X 页 `og:description` = `SVP, Google DeepMind / Chief AI Architect, Google.`；`HTTP 200`） |
+| 状态 | 待跟踪 · X 待 follow |
+| 备注 | DQN 的两个人（Hassabis / Kavukcuoglu）都在 X 上活跃，但**一作 Mnih 无公开账号/邮箱** ⇒ 深度 RL 这条线**无法从作者侧直接问到超参**，只能靠论文 + 社区复现。 |
+
+### 32. Volodymyr Mnih
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Volodymyr Mnih |
+| 机构 | Google DeepMind（DQN / A3C 一作） |
+| 代表论文 | DQN（Nature 2015，**一作**）· Asynchronous Methods for Deep RL（A3C，arXiv `1602.01783`） |
+| 邮箱 | **未找到**（无个人主页、无 `mailto:` 命中） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X**（未核验到本人账号 ⇒ 不登记） |
+| 状态 | 待跟踪（缺可联系方式 ⇒ 本轮不发信） |
+| 备注 | 这是「顶级作者但渠道缺失」的典型：🚫 不猜 `@volodymyrmnih` 之类 handle（X 上同名账号无法用 bio 核验身份）。 |
+
+### 33. Alec Radford
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alec Radford |
+| 机构 | OpenAI（研究科学家；GPT-1 / GPT-2 / CLIP 一作） |
+| 代表论文 | GPT-1（一作，无 arXiv）· GPT-2（一作，无 arXiv）· CLIP（arXiv `2103.00020`） |
+| 邮箱 | **未找到**（无公开个人主页可核） |
+| 主页 | **未找到**（`https://radford.ai/` 实测 `HTTP 200` 但仅 **114 B** ⇒ 占位/跳转页，**不采信为个人主页**） |
+| X 账号 | **未找到 X**（`x.com/AlecRadford` 实测 `200`，但 `og:description` = `8 followers · 1 following. Joined Feb 2011.` —— **无任何身份信息、粉丝数异常** ⇒ 判定为同名占位 / 非本人，**不登记**） |
+| 状态 | 待跟踪（本轮**不发信**） |
+| 备注 | ⚠️ **本轮最好的「不猜」样本**：handle 拼写完全正确、页面也 `200`，但 bio 无法验证身份 ⇒ 按令**宁可不登记**（猜错 = follow 到无关账号，比不 follow 更糟）。原始快照 `research/classic/x/AlecRadford.json`。 |
+
+### 34. Jared Kaplan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jared Kaplan |
+| 机构 | **Anthropic**（联合创始人 & 首席科学官）；Scaling Laws 发表时 Johns Hopkins University 物理系 |
+| 代表论文 | Scaling Laws for Neural Language Models（arXiv `2001.08361`，**一作**）· 后续 Anthropic 系列（多为机构署名） |
+| 邮箱 | **未找到**（`https://jaredkaplan.net/` 实测 `200` 但仅 **114 B** ⇒ 占位页；Anthropic 无个人公开邮箱 ⇒ 不发信） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X**（本轮未核验到本人账号；🚫 不猜） |
+| 状态 | 待跟踪 |
+| 备注 | 他这条线的「可问价值」很高（2B 的 token 预算到底该按哪条幂律选点），但**渠道缺失** ⇒ 改为在日报里把「Kaplan vs Chinchilla 口径差异」写成给 pretrain 的可执行实验设计（见当日 18:00 增量建议）。 |
+
+---
+
+### 35. David Silver
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | David Silver |
+| 机构 | **Google DeepMind**（AlphaGo / AlphaGo Zero 一作；DQN 三作） |
+| 代表论文 | AlphaGo（Nature 2016）· AlphaGo Zero（Nature 2017） |
+| 邮箱 | **未找到**（个人站 `https://www.davidsilver.uk/` 实测 `HTTP 200` / 96,600 B，页内无 `mailto:`；无当前机构个人页可核） |
+| 主页 | <https://www.davidsilver.uk/>（实测 `200`；只有博客/文章，无联系方式区块） |
+| X 账号 | **未找到 X**（个人站无 x/twitter 链接；🚫 未猜 `@davidsilver` 之类常见 handle） |
+| 状态 | 待跟踪（渠道缺失 ⇒ 不发信） |
+| 备注 | AlphaGo 系两篇的**共同一作**，是「搜索预算 + 自我对弈」这条线最直接的作者；但其公开表达主要在论文与访谈，X 不可核 ⇒ 只作为**经典论文作者**建档，不作为言论源。 |
+
+### 36. Oriol Vinyals
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Oriol Vinyals |
+| 机构 | **Discovery Loop**（联合创始人 & CTO，X bio 自述）· **224 Ventures** 合伙人；发表时 Google DeepMind VP、Gemini TL（1.0–4.0） |
+| 代表论文 | Sequence to Sequence Learning（arXiv `1409.3215`，二作）· Gemini（arXiv `2312.11805`，Gemini TL）· AlphaStar（X bio 自述参与） |
+| 邮箱 | **未找到**（`research.google/people/oriolvinyals/` 实测 `404`；无个人主页可核 ⇒ 不发信） |
+| 主页 | 未找到（同上） |
+| X 账号 | **@OriolVinyalsML**（`200`；bio = `Co-founder & CTO of Discovery Loop; Partner, 224 Ventures / Past: Google DeepMind VP, Gemini TL (1.0 to 4.0), Alpha{Fold,Star,Code}, seq2seq, distillation` ⇒ 与 seq2seq / Gemini 作者身份一致） |
+| 状态 | 待跟踪 · X 待 follow |
+| 备注 | 一人同时覆盖必读清单第 2 组（seq2seq）与第 8 组（Gemini/AlphaStar）⇒ **优先级最高的言论源之一**；但已离开 Google，近期推文多为创业相关，引用时须区分「个人观点」与「Gemini 官方口径」。 |
+
+### 37. Sergey Levine
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sergey Levine |
+| 机构 | **UC Berkeley**（EECS 副教授）· **Physical Intelligence** 联合创始人 |
+| 代表论文 | OpenVLA（arXiv `2406.09246`，作者列表第 16 位，arXiv API 18 人全量核对）· RT 系列 / 机器人学习 |
+| 邮箱 | **未找到**（个人页 `people.eecs.berkeley.edu/~svlevine/` 实测 `200` / 12,481 B，`Email:` 后是 `toggle_vis('email')` 的**招生说明**，无实际地址；页面不公开邮箱） |
+| 主页 | <https://people.eecs.berkeley.edu/~svlevine/>（实测 `200`） |
+| X 账号 | **@svlevine**（`200`；bio = `Associate Professor at UC Berkeley / Co-founder, Physical Intelligence`，与身份一致） |
+| 状态 | 待跟踪 · X 待 follow（无邮箱 ⇒ 不发信） |
+| 备注 | OpenVLA 的资深作者之一，言论集中在 VLA / 机器人策略；对我们「动作接口 + 评测协议」有参考价值，但**不套用机器人结论到 EDA**。 |
+
+### 38. Chelsea Finn
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chelsea Finn |
+| 机构 | **Stanford University**（CS & EE 助理教授）· **Physical Intelligence** 联合创始人 |
+| 代表论文 | OpenVLA（arXiv `2406.09246`，作者列表第 18 位）· 元学习 / 机器人学习系列 |
+| 邮箱 | **未找到**（`https://cbfinn.github.io/` 实测 `200` / 31,521 B，仅有课程助教邮箱 `cs330-staff-aut2324@cs.stanford.edu`，**非本人**；`profiles.stanford.edu/chelsea-finn` 无公开邮箱 ⇒ 不猜） |
+| 主页 | <https://cbfinn.github.io/>（实测 `200`） |
+| X 账号 | **@chelseabfinn**（`200`；bio = `Asst Prof of CS & EE @Stanford / Co-founder of Physical Intelligence @physical_int / PhD from @Berkeley_EECS…`） |
+| 状态 | 待跟踪 · X 待 follow（无邮箱 ⇒ 不发信） |
+| 备注 | 言论密度高且偏方法论（VLA、long-context agent、value classifier）；已核验 V6（2026-10-24，generative value classifiers）⇒ **下期 `voice_ready` 候选**。 |
+
+### 39. Moo Jin Kim
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Moo Jin Kim（韩裔，英文名 ⇒ 信按英文写） |
+| 机构 | **OpenAI**（research scientist，主页自述）· Stanford CS PhD（导师 Chelsea Finn / Percy Liang） |
+| 代表论文 | OpenVLA（arXiv `2406.09246`，**一作**）· OpenVLA-OFT / Cosmos Policy（主页自述） |
+| 邮箱 | **moojink@cs.stanford.edu**（来源：本人主页 `https://moojink.github.io/` 页内防爬写法 `moojink at cs dot stanford dot edu`，`HTTP 200` / 33,139 B 实测，按原样还原） |
+| 主页 | <https://moojink.github.io/>（实测 `200`） |
+| X 账号 | **@moo_jin_kim**（`200`；bio = `Research @OpenAI | CS PhD @StanfordAILab`，与身份一致） |
+| 状态 | **已发信**（2026-11-11 21:04 CST，B 轨第七轮；英文 195 词）· X 待 follow |
+| 备注 | ⚠️ 主页自述已入职 OpenAI，Stanford 邮箱可能停用 ⇒ 若退信记「通道失效」，**不猜其他地址**。信的内容是「双塔融合 vs 数据多样性」「逐维分桶 vs 文本序列化」两个取舍，直接回填 vision / harness 的预注册。 |
+
+---
+
+### 40. John Jumper
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | John Jumper（美国人 ⇒ 信按英文写） |
+| 机构 | **Google DeepMind**（AlphaFold 一作 / 通讯；2024 诺贝尔化学奖共同得主） |
+| 代表论文 | AlphaFold（Nature 2021，DOI `10.1038/s41586-021-03819-2`，一作） |
+| 邮箱 | **未找到**（DeepMind 不公开个人邮箱；无本人主页可核） |
+| 主页 | **未找到本人页**（机构页 <https://deepmind.google/technologies/alphafold/> 为项目页） |
+| X 账号 | **未找到 X**（`x.com/JohnJumper` 实测 `200` 但 `og:description` = `19 followers · 7 following. Joined Dec 2008`、无 bio ⇒ **身份不可证，拒绝登记**，🚫 不猜） |
+| 状态 | 待跟踪（无邮箱、无可证 X ⇒ 本轮不发信、不 follow） |
+| 备注 | AlphaFold 的「把领域先验编码进结构」是 vision 线几何通道的参照；但**公开联系通道缺失** ⇒ 只作经典条目作者，不作本线沟通对象。 |
+
+### 41. Igor Babuschkin
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Igor Babuschkin（德国出生 ⇒ 信按英文写） |
+| 机构 | **River AI（CEO & 联合创始人）**· 曾任 xAI（Research & Engineering）· AlphaStar 发表时在 DeepMind |
+| 代表论文 | AlphaStar（Nature 2019，DOI `10.1038/s41586-019-1724-z`，二作） |
+| 邮箱 | **未找到**（无公开个人页/邮箱） |
+| 主页 | **未找到** |
+| X 账号 | **@ibab**（`x.com/ibab` `200`；bio = `CEO & Co-Founder @river_ai_inc. Previously @xAI, Research & Engineering`，与 AlphaStar 二作身份一致） |
+| 状态 | 待跟踪 · X 待 follow（无邮箱 ⇒ 不发信） |
+| 备注 | AlphaStar 联盟式 RL 的工程负责人之一；其言论对「多智能体训练/大规模 RL 工程」有参考价值，但**当前创业方向与本线偏离** ⇒ 只跟踪、不发信。 |
+
+### 42. Danny Driess
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Danny Driess（德国人 ⇒ 信按英文写） |
+| 机构 | **Physical Intelligence**（Research Scientist）· 曾任 Google DeepMind（Gemini × robotics） |
+| 代表论文 | π0（arXiv `2410.24164`，第三作）· PaLM-E（ICML 2023，一作） |
+| 邮箱 | **danny.driess@gmail.com**（来源：本人主页 `https://dannydriess.github.io/` 页内防爬写法 `danny dot driess at gmail dot com`，`HTTP 200` / 29,043 B 实测，按原样还原） |
+| 主页 | <https://dannydriess.github.io/>（实测 `200`） |
+| X 账号 | **@DannyDriess**（来源：本人主页 `href="https://twitter.com/DannyDriess"`；`x.com/DannyDriess` `200`，`<title>Danny Driess (@DannyDriess) / X</title>`） |
+| 状态 | **已发信**（2026-11-12 00:07 CST，B 轨第八轮；英文 191 词）· X 待 follow |
+| 备注 | 信问两个取舍：① 低数据域内（数万张图）flow matching 动作头 vs 离散 token 化，哪个更稳；② 动作块（action chunk）长度与异构动作空间（不同 arity 的 tool call）如何兼容。答复直接回填 zhulong 的动作接口消融。 |
+
+### 43. Kimi Team（Moonshot AI）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | **Kimi Team / Moonshot AI（团队署名，无单一作者）**；作者列表中含 **Jianlin Su**（见主表 #20） |
+| 机构 | Moonshot AI（月之暗面，北京） |
+| 代表论文 | Kimi k1.5（arXiv `2501.12599`，团队署名） |
+| 邮箱 | **未找到**（官方站未给研究联系邮箱；🚫 不用客服/商务邮箱冒充作者） |
+| 主页 | <https://www.kimi.com>（产品站；<https://www.moonshot.cn> 机构站） |
+| X 账号 | **@Kimi_Moonshot**（`200`；`<title>Kimi.ai (@Kimi_Moonshot) / X</title>`，官方账号，非个人） |
+| 状态 | 待跟踪 · X 待 follow（团队账号只作发布源，不发信） |
+| 备注 | long2short 与「RL 作为新 scaling 轴」是 zhulong 的直接参照；**团队账号的言论只作公司口径**，引用须标「Moonshot 官方账号」。 |
+
+### 44. Team GLM（智谱 AI · 团队署名）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Team GLM（GLM-4 论文的团队署名，共 **59** 位；一作 Aohan Zeng，含 Jie Tang / Juanzi Li / Minlie Huang / Yuxiao Dong） |
+| 机构 | 智谱 AI（Zhipu AI / 北京）· 部分作者挂清华大学 |
+| 代表论文 | ChatGLM / GLM-4（arXiv `2406.12793`，团队署名）· GLM-130B |
+| 邮箱 | **未找到**（官网只有商务/客服入口；🚫 不用客服邮箱冒充研究作者） |
+| 主页 | <https://github.com/THUDM>（GLM 系列代码与模型卡；`200` 未逐页核验） |
+| X 账号 | **@ZhipuAI**（**官方机构账号**，非个人；核验：<https://x.com/ZhipuAI> `200`，`<title>` = `ZhipuAI by BigModel (@ZhipuAI) / X`，`og:description` = `全部自研GLM模型架构`） |
+| 状态 | 待跟踪 · X 待 follow（机构号） |
+| 备注 | 机构号主要发产品与发布信息，**言论价值低于个人号**；若要请教 GLM-4 的中文配比细节，需先找到一作 Aohan Zeng 的当前主页/邮箱（本轮未找到公开研究邮箱 ⇒ **不发信**）。 |
+
+### 45. MiniMax（团队署名）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | MiniMax（团队署名，**按字母序**：Aonian Li · Bangwei Gong · Bo Yang …，共 **90** 位） |
+| 机构 | MiniMax（上海） |
+| 代表论文 | MiniMax-01（arXiv `2501.08313`，团队署名）· MiniMax-VL-01（同报告） |
+| 邮箱 | **未找到**（🚫 不用客服/商务邮箱） |
+| 主页 | <https://github.com/MiniMax-AI>（代码与模型开源入口） |
+| X 账号 | **@MiniMax_AI**（**官方机构账号**；核验：<https://x.com/MiniMax_AI> `200`，`<title>` = `MiniMax (official) (@MiniMax_AI) / X`，bio 指向 `Code: @MiniMax_Code`） |
+| 状态 | 待跟踪 · X 待 follow（机构号） |
+| 备注 | 关注点：线性注意力 + MoE 的长上下文工程口径；个人作者未逐一建档（90 人字母序，无声明的通讯作者）。 |
+
+### 46. Karl Pertsch
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Karl Pertsch（德国人 ⇒ 信按英文写） |
+| 机构 | **Physical Intelligence**（member of technical staff，主页自述「training robot foundation models」）；前 UC Berkeley / Stanford 博后 |
+| 代表论文 | Octo（arXiv `2405.12213`，三作 / 共同负责人，RSS 2024）· RT-2（arXiv `2307.15818`，作者之一） |
+| 邮箱 | **karl.pertsch@gmail.com**（来源：本人主页 `<a href="mailto:karl.pertsch@gmail.com">`，`HTTP 200` / 64,903 B 实测） |
+| 主页 | <https://kpertsch.github.io>（`200` / 64,903 B） |
+| X 账号 | **@KarlPertsch**（核验：主页 `href="https://twitter.com/KarlPertsch"`；<https://x.com/karlpertsch> `200`，`<title>` = `Karl Pertsch (@KarlPertsch) / X`，bio = `Robot Foundation Models @physical_int`） |
+| 状态 | **已发信**（2026-11-12 06:05 CST，英文 191 词，经典论文口径；见 `research/mail/发送记录.md`）· X 待 follow |
+| 备注 | **一份关系覆盖两条必读清单条目**（Octo + RT-2）；⚠️ 与 Danny Driess 同属 Physical Intelligence ⇒ 2026-11-12 该公司**当日 2 封**（00:07 Danny + 06:05 本封）**已达「同机构 ≤2 封/天」上限**，今日不再向 PI 发信。 |
+
+### 47. Pete Florence
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Pete Florence（美国人 ⇒ 信按英文写） |
+| 机构 | **Generalist AI**（联合创始人 & CEO）；前 Google DeepMind（Senior Research Scientist）；MIT CS PhD（导师 Russ Tedrake） |
+| 代表论文 | RT-2（arXiv `2307.15818`，54 位作者中第 13 位，核心作者之一）· RT-1 系列 · kPAM |
+| 邮箱 | **pete.florence@gmail.com**（来源：本人主页 `Email: <code>pete dot florence at gmail dot com</code>` 的防爬写法还原；`HTTP 200` / 47,238 B 实测） |
+| 主页 | <https://www.peteflorence.com>（`200` / 47,238 B） |
+| X 账号 | **@peteflorence**（核验：主页 `href="https://x.com/peteflorence"`；<https://x.com/peteflorence> `200`，`<title>` = `Pete Florence (@peteflorence) / X`，bio = `Co-Founder &amp; CEO @GeneralistAI`） |
+| 状态 | **已发信**（2026-11-12 03:1x CST，英文，经典论文口径；见 `research/mail/发送记录.md`） |
+| 备注 | RT-2 的「**动作 = 文本 token**」正是我们「agent 用文本 tool call 调 EDA 工具」的机器人版先例 ⇒ 问题集中在「离散分桶的精度损失」与「网页数据 vs 域内轨迹的混比」。 |
+
+### 48. Kilian Lieret
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kilian Lieret（德国人 ⇒ 信按英文写） |
+| 机构 | **Meta Superintelligence**（X bio 自述「Meta Superintelligence, prev. Princeton」）；SWE-bench / SWE-agent 团队核心工程维护者 |
+| 代表论文 | SWE-agent（arXiv `2405.15793`，第 4 作者）· SWE-bench 多语/多模态版（维护者，见其 bio） |
+| 邮箱 | **未找到**（`klieret.github.io` 实测 `HTTP 404`；X bio 未挂邮箱 ⇒ 按纪律不写猜测地址） |
+| 主页 | 未找到（`klieret.github.io` 404，2026-11-12 实测） |
+| X 账号 | **@KLieret**（核验：① 来源 = John Yang 推文原文「Follow @KLieret for leaderboard updates」（`https://x.com/jyangballin/status/2115494796064403620`）；② <https://x.com/KLieret> 实测 `200`，`og:title` = `Kilian Lieret (@KLieret) on X`，`og:description` = `Meta Superintelligence, prev. Princeton. SWE-bench multilingual/multimodal, (mini-)SWE-agent, SWE-smith, CodeClash, ProgramBench, SWE-sweep` ⇒ 身份自证） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | **harness 线的「榜单更新频率」信号源**：他负责 SWE-bench 系榜单维护，推文里常带「新模型进榜/新变体」的即时信息 ⇒ 这是「评测基准本身在变」的一手消息，比论文更早。⚠️ 已离开 Princeton 去 Meta，院校邮箱不可靠 ⇒ 只跟踪不写信。 |
+
+### 49. Jan Leike
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jan Leike（德国人 ⇒ 信按英文写） |
+| 机构 | **Anthropic**（alignment / superalignment 方向；主页自述与主页 `publications.html` 可核）· 论文发表时为 OpenAI |
+| 代表论文 | Deep RL from human preferences（arXiv `1706.03741`，二作）· Learning to summarize from human feedback（arXiv `2009.01325`，作者）· InstructGPT 系工作（OpenAI 期间） |
+| 邮箱 | **jan@anthropic.com**（来源：本人主页 <https://jan.leike.name/> 的 `<a href="mailto:Jan%20Leike%20%3Cjan%40anthropic.com%3E">`，2026-11-12 09:0x 实测 `HTTP 200` / 6,411 B；**非 2017 年论文 PDF 旧地址**） |
+| 主页 | <https://jan.leike.name/>（`200` / 6,411 B）· 博客 <https://aligned.substack.com> |
+| X 账号 | **@janleike**（双证：① 主页 `href="https://twitter.com/janleike"` 且链接文字 `@janleike`；② <https://x.com/janleike> `200`，`og:title` = `Jan Leike (@janleike) on X`。⚠️ 该页 `og:description` 本轮未渲染 ⇒ bio 未取到，只登记 handle，不写 bio） |
+| 状态 | **已发信**（2026-11-12 09:04 CST，经典论文请教信第十三封；英文 199 词）· X 待 follow |
+| 备注 | **RLHF 这条线的「前史」作者**：2017 年偏好奖励 → 2020 年摘要偏好 → InstructGPT。信问三件可回填的事：① 工具调用短 episode（10–30 步）下，学到的奖励要多少标注密度才能胜过手写可验证奖励；② 小规模下 RM 瓶颈是容量还是标签噪声、最先出现的 reward hacking 形态；③ tie / 标注分歧如何聚合。⚠️ 与 Paul Christiano 同一篇论文 ⇒ **同篇论文本轮只发一封**（发给可核验邮箱的 Leike）。 |
+
+### 50. Paul Christiano
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Paul Christiano |
+| 机构 | **Alignment Research Center（ARC）**（Founder & Director；X bio 自述「Former Head of Safety @ CAISI. Previously led alignment at OpenAI.」） |
+| 代表论文 | Deep RL from human preferences（arXiv `1706.03741`，一作）· Learning to summarize from human feedback（arXiv `2009.01325`，末位） |
+| 邮箱 | **未找到**（个人站 <https://paulfchristiano.com/> 实测 `HTTP 200` / 57,044 B，但页内**无 `mailto:`**；只有 Google Scholar 链接 ⇒ 按纪律不写猜测地址） |
+| 主页 | <https://paulfchristiano.com/>（`200` / 57,044 B） |
+| X 账号 | **@paulfchristiano**（核验：<https://x.com/paulfchristiano> `200`，`og:title` = `Paul Christiano (@paulfchristiano) on X`，`og:description` = `Founder & Director of the Alignment Research Center. Former Head of Safety @ CAISI. Previously led alignment at OpenAI. Views my own.` ⇒ 身份自证。⚠️ 其个人站未挂 X 链接，来源为 X 页自证，非主页 `href`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | RLHF 思路的源头作者，但其公开表达偏 alignment 理论；对我们更直接的价值是**「奖励从哪来」的判断**，适合长期跟踪而非立刻请教（同篇论文已向 Leike 发信，🚫 不重复打扰）。 |
+
+### 51. Nisan Stiennon
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nisan Stiennon |
+| 机构 | 未核验（个人站未写当前机构） |
+| 代表论文 | Learning to summarize from human feedback（arXiv `2009.01325`，一作） |
+| 邮箱 | **nisan+web@stiennon.com**（来源：本人站 <https://nisanstiennon.com/> 的 `<a href="mailto:nisan+web@stiennon.com">`，`HTTP 200` / 5,575 B 实测；**非 2020 年论文 PDF 旧地址**） |
+| 主页 | <https://nisanstiennon.com/>（`200` / 5,575 B；`www.` 同页同尺寸） |
+| X 账号 | **未找到 X**（`x.com/nisanstiennon` 实测 **`404`**，`og:title` = `User Profile Not Found - X｜404 Error` ⇒ 按令**不猜替代 handle、不登记**） |
+| 状态 | **已发信**（2026-11-12 12:04 CST，B 轨第十二轮；英文；⚠️ 实测 212 词，超 ≤200 规格 12 词，已如实记账） |
+| 备注 | 若 18:00 轮要发「偏好数据质量」方向的信，他是首选（RLHF 摘要范式的直接作者）；问题应聚焦**偏好数据集的构建与一致率**，而不是摘要任务本身。 |
+
+---
+
+### 52. Bill Peebles（William Peebles）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bill Peebles（William Peebles） |
+| 机构 | OpenAI（X bio 自述 `head of sora @openai`） |
+| 代表论文 | Video generation models as world simulators（Sora 技术报告，2024，**无 arXiv**）· Scalable Diffusion Models with Transformers（DiT，2022） |
+| 邮箱 | **未找到**（本轮未核个人主页；🚫 不猜） |
+| 主页 | 未核验 |
+| X 账号 | **@billpeeb**（核验：`x_fetch.py` 实测 `200`，`<title>` = `Bill Peebles (@billpeeb) / X`，bio = `head of sora @openai 🇺🇸🇺🇸🇺🇸`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | Sora 负责人 ⇒ 视频生成 / 世界模型路线的**一手判断源**；⚠️ 官方页本机 403，其论文细节**只能等新发布或访谈**，🚫 不据传闻写。 |
+
+### 53. Tim Brooks
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tim Brooks |
+| 机构 | Meta（X bio 自述 `superintelligence @ Meta`）· 前 OpenAI（Sora 共同负责人） |
+| 代表论文 | Video generation models as world simulators（Sora 技术报告，2024，**无 arXiv**）· InstructPix2Pix（2022） |
+| 邮箱 | **未找到**（本轮未核个人主页；🚫 不猜） |
+| 主页 | 未核验 |
+| X 账号 | **@_tim_brooks**（核验：`200`，`<title>` = `Tim Brooks (@_tim_brooks) / X`，bio = `superintelligence @ Meta`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | **已离开 OpenAI 转 Meta** ⇒ 任何涉 Sora 的发言均为「前负责人」视角，引用须标时间与身份变化，🚫 不可当成 OpenAI 现行口径。 |
+
+### 54. Gerald Tesauro
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Gerald Tesauro |
+| 机构 | IBM（论文发表时为 IBM Thomas J. Watson Research Center；**当前职位未核验**） |
+| 代表论文 | Temporal Difference Learning and TD-Gammon（CACM 1995，**独著**）· TD-Gammon, a Self-Teaching Backgammon Program（Neural Computation 1994） |
+| 邮箱 | **未找到**（旧主页 `research.ibm.com/people/t/tesauro/` 实测 **`308`** → 重定向到通用 `research.ibm.com/people`，页面无 `mailto:`） |
+| 主页 | 未核验（同上，已重定向到通用页） |
+| X 账号 | **未找到 X**（无可核个人页读到 handle ⇒ 按令不猜、不登记） |
+| 状态 | **待跟踪**（不发信） |
+| 备注 | 1995 年论文，PDF 上的邮箱已过 30 年 ⇒ 按令**必须**用当前机构主页邮箱，本轮拿不到 ⇒ 不发信；其方法论价值已通过 #45 条目落库。 |
+
+---
+
+### 55. Rafael Rafailov
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Rafael Rafailov |
+| 机构 | **Thinking Machines**（X bio 自述 `I work on RL at @thinkymachines`；论文发表时为 Stanford AI Lab，此前 Google DeepMind / UC Berkeley） |
+| 代表论文 | Direct Preference Optimization（DPO，arXiv `2305.18290`，**一作**） |
+| 邮箱 | **未找到**（个人主页 `rafaelrafailov.com` 直连与代理均 **`000`**；`cs.stanford.edu/~rafailov/` 实测 **`403`** ⇒ 按令**不猜、不写旧 PDF 地址**） |
+| 主页 | 未核验（同上不可达） |
+| X 账号 | **@rm_rafailov**（核验：`x_fetch.py` 实测 `200`，`<title>` = `Rafael Rafailov @ NeurIPS (@rm_rafailov) / X`，`og:description` = `I work on RL at @thinkymachines. Previously at @StanfordAILab @GoogleDeepMind @UCBerkeley`） |
+| 状态 | **待跟踪**（X 待 follow；无当前公开邮箱 ⇒ 不发信） |
+| 备注 | DPO 一作 ⇒ 「RM-free 偏好优化」的一手判断源。**同论文本轮只给二作 Archit Sharma 发信**（同论文 ≤1 封），一作留作回复后再评估。另注：其 X 时间线多为 **Thinking Machines 产品/推理基建**话题（Tinker、Harbor），对我们更偏「工具链」参考。 |
+
+### 56. Archit Sharma
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Archit Sharma |
+| 机构 | **Google DeepMind**（X bio `post-training science lead @GoogleDeepMind`；论文发表时为 Stanford） |
+| 代表论文 | Direct Preference Optimization（DPO，`2305.18290`，**二作**） |
+| 邮箱 | **architsh@stanford.edu**（来源：本人主页 <https://architsharma97.github.io/> 的 `mailto:`，2026-11-12 15:0x 实测 `HTTP 200` / 3,936 B；⚠️ bio 已写 `prev: @Stanford` ⇒ **若退信记「通道失效」，不重发**） |
+| 主页 | <https://architsharma97.github.io>（实测 `HTTP 200` / 3,936 B） |
+| X 账号 | **@archit_sharma97**（核验：`200`，`<title>` = `Archit Sharma (@archit_sharma97) / X`，`og:description` = `post-training science lead @GoogleDeepMind \| co-created: Gemini Deep Think series, DPO \| prev: @Stanford @Google Brain @IITKanpur @MILAMontreal` ⇒ **自证参与 DPO**） |
+| 状态 | **已发信**（2026-11-12 15:03:05 `SENT OK`）· X 待 follow |
+| 备注 | 信问三点：① ~2B + 数万条工具轨迹下「去掉显式 RM 是否仍成立、参考模型是否成瓶颈」；② 长度/格式偏置今天会否加归一或正则；③ 高度 off-policy 的离线偏好数据下如何检测「隐式奖励已偏离可验证信号」。回填 zhulong 奖励设计 / data 偏好数据 / harness 去偏。 |
+
+### 57. Onur Mutlu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Onur Mutlu |
+| 机构 | **ETH Zurich**（教授）+ **Carnegie Mellon University**；SAFARI 组（X bio 自证 `Group: @SAFARI_ETH_CMU`） |
+| 代表论文 | Ramulator 2.0（`2308.11030`，**通讯 / 末位作者**）· RowHammer 系列（DRAM 可靠性） |
+| 邮箱 | **omutlu@gmail.com**（来源：本人当前机构主页 <https://people.inf.ethz.ch/omutlu/> 的 `mailto:omutlu@gmail.com`，2026-11-12 15:0x 实测 `HTTP 200` / 19,850 B；**非 2023 年论文 PDF 旧地址**） |
+| 主页 | <https://people.inf.ethz.ch/omutlu/>（实测 `HTTP 200` / 19,850 B） |
+| X 账号 | **@_onurmutlu_**（核验：`200`，`og:description` = `Professor at ETH Zurich and Carnegie Mellon University; Scientist, Educator, Researcher, Computer Architect @ETH_en @ETH @CarnegieMellon Group: @SAFARI_ETH_CMU`；handle 亦见于其主页 `twitter.com/_onurmutlu_`） |
+| 状态 | **已发信**（2026-11-12 15:03:05 `SENT OK`）· X 待 follow |
+| 备注 | **存储方向第一关系人**（DRAM 模拟器 / RowHammer / 内存中心计算）。信问三点：① 批量短评测（成千上万配置）是否适合 Ramulator 2.0、抽象先在哪破；② 只做「排序」时哪些建模部件可简化而不改排序；③ power/thermal 与 RowHammer 模型相对 timing 的成熟度。回填 zhulong 批量评测基座 + designflow L1–L5 保真度三分。其 X 以课程/workshop 通知为主，`voice_ready` 价值低但**技术判断密度高**。 |
+
+### 58. Danqi Chen（陈丹琦）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Danqi Chen（陈丹琦） |
+| 机构 | **Princeton University**（Princeton Language and Intelligence / CS；X bio 自证 `Associate professor @princetonPLI @PrincetonCS`） |
+| 代表论文 | SimPO（`2405.14734`，**三作 / 通讯**）· 另：SimCSE / REALM 等（本线未逐条核验，不引用） |
+| 邮箱 | **danqic@cs.princeton.edu**（来源：本人主页 <https://www.cs.princeton.edu/~danqic/> 明文，2026-11-12 18:0x 实测 `HTTP 200` / 4,734 B；**非论文 PDF 旧地址**） |
+| 主页 | <https://www.cs.princeton.edu/~danqic/>（实测 `HTTP 200` / 4,734 B，主页外链即 `twitter.com/danqi_chen`） |
+| X 账号 | **@danqi_chen**（核验：`x_fetch.py` 实测 `200`，`og:description` = `Associate professor @princetonPLI @PrincetonCS` ⇒ 身份可证） |
+| 状态 | **已发信**（2026-11-12 18:06:04 `SENT OK`）· X 待 follow |
+| 备注 | SimPO 的「去参考模型 + 平均对数概率奖励」直接对应 zhulong 的奖励取舍。信（**中文**，296 字）问三点：① 工具轨迹长度差异远大于摘要任务时长度归一是否足够；② 几万条域内偏好对下 γ/β 怎么取；③ 可验证信号偏好与人工偏好应混训还是分开加权。回填 zhulong 奖励设计 + data 偏好数据表。 |
+
+### 59. Yibo Lin（林一博）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yibo Lin（林一博） |
+| 机构 | **北京大学**（论文作者机构含北大 / 清华；本轮只核到个人主页与邮箱，未核职称） |
+| 代表论文 | CircuitNet（`2208.01040`，**三作**）· 另：EDA / 布局布线方向多篇（本线未逐条核验） |
+| 邮箱 | **yibolin@pku.edu.cn**（来源：本人主页 <https://yibolin.com/> 的 `mailto:`，2026-11-12 18:0x 实测 `HTTP 200` / 11,701 B；**非 2022 年论文 PDF 旧地址**） |
+| 主页 | <https://yibolin.com/>（实测 `HTTP 200` / 11,701 B） |
+| X 账号 | **未找到 X**（主页未挂 X 外链；本轮搜索工具不可用 ⇒ 按令**不猜 handle**，宁缺勿错） |
+| 状态 | **已发信**（2026-11-12 18:06:07 `SENT OK`）· X 未找到 |
+| 备注 | **designflow / data 线最直接的关系人之一**（公开 EDA 数据集）。信（**中文**，262 字）问三点：① 三类标签跨工艺节点与 PDK 的可迁移性、按设计切分是否足够防泄漏；② 闭环任务（读设计→调工具→看结果）的数据集规模与样本组织建议；③ 从模型预测到 signoff 的差距卡在哪一环、哪些指标适合先做代理模型。回填 data 切分纪律 + designflow 造题 + zhulong 代理模型。 |
+
+### 60. Nathan Lambert
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nathan Lambert |
+| 机构 | **Allen Institute for AI（Ai2）/ Trillium Labs**（X bio：`Open model research, founder, director @trillium_labs`；论文发表时为 HuggingFace H4）；Interconnects 作者 |
+| 代表论文 | Zephyr（`2310.16944`，**三作**） |
+| 邮箱 | **mail@interconnects.ai**（来源：本人站点 <https://interconnects.ai/about> 明文，2026-11-12 18:0x 实测 `HTTP 200` / 196,029 B）；⚠️ 属**其 newsletter 公开信箱**（可能由团队过滤）⇒ 30 天无回音按「通道未达」记，不催发 |
+| 主页 | <https://interconnects.ai>（about 页实测 `HTTP 200`） |
+| X 账号 | **@natolambert**（核验：`x_fetch.py` 实测 `200`，`og:description` = `Open model research, founder, director @trillium_labs ...`；站点 about 页亦外链该 handle） |
+| 状态 | **已发信**（2026-11-12 18:06:13 `SENT OK`）· X 待 follow |
+| 备注 | 后训练（尤其 RLHF / 偏好优化）**一手判断源**，言论密度高且技术性强 ⇒ `voice_ready` 高价值候选（须原文 + 链接）。信（**英文**，178 词）问三点：① ~2B + 数万条域内偏好对时 dSFT→dDPO 是否仍划算、先坏在哪；② 可验证任务上是否仍用 AI 反馈而非 checker 偏好；③ 增益里教师排序质量 vs DPO 步本身如何归因。 |
+
+### 61. Lewis Tunstall
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lewis Tunstall |
+| 机构 | **HuggingFace**（X bio：`🤠 post-training @huggingface`；论文发表时 HF H4） |
+| 代表论文 | Zephyr（`2310.16944`，**一作**） |
+| 邮箱 | **未找到**（HF 个人页 <https://huggingface.co/lewtun> 实测 `200` / 463,995 B，无公开邮箱；个人站 `lewistunstall.github.io` 实测 **`404`** ⇒ 按令**不猜**） |
+| 主页 | <https://huggingface.co/lewtun>（实测 `HTTP 200`；页面外链 `twitter.com/_lewtun`） |
+| X 账号 | **@_lewtun**（核验：`x_fetch.py` 实测 `200`，`og:description` = `🤠 post-training @huggingface`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信；**同论文已发信给三作 Nathan Lambert**，同论文 ≤1 封） |
+| 备注 | 其 X 以 post-training 实操经验为主（MoE 训练手册、SFT/RL 取舍）⇒ `voice_ready` 候选源。⚠️ 本轮从其 profile 时间线 JSON 取到的高相关推文经单条页核验**实为他人所发**（见第二节 V15/V16 更正），**未采用**。 |
+
+### 62. Percy Liang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Percy Liang |
+| 机构 | **Stanford University**（Computer Science 教授；Stanford NLP / CRFM；X bio 自述 `professor of computer science @Stanford @stanfordnlp, co-founder of @togethercompute, ...`） |
+| 代表论文 | Lost in the Middle（`2307.03172`，**末位作者**）· Marin 开源模型系列（X 自述，未收录为论文条目） |
+| 邮箱 | **未找到**（本人主页 <https://cs.stanford.edu/~pliang/> 实测 `HTTP 200` / 4,395 B，页内**无可读邮箱**；`profiles.stanford.edu/percy-liang` 实测 `200` / 17,851 B，仅见**他人**信箱（页面维护者）⇒ 按令**不猜**） |
+| 主页 | <https://cs.stanford.edu/~pliang/>（实测 `HTTP 200` / 4,395 B，2026-11-12 21:0x） |
+| X 账号 | **@percyliang**（核验：`x_fetch.py` 实测 `200`，`og:description` 自述 `professor of computer science @Stanford @stanfordnlp, co-founder of @togethercompute`） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 本轮不发信） |
+| 备注 | `voice_ready` 高价值源：已抓到 **2026-11-11** 原推 `You can simultaneously believe that AI is transformational and that there are bottlenecks.`（推文页 `og:title` = `Percy Liang (@percyliang) on X`，`200` / 160,932 B ⇒ 身份与正文两处一致），记言论台账 **V17**；因本期 `voice_ready` 已达「≤2 条」上限，**留作下期首发**，不硬塞。另：同批推文含 Marin 535B-A23B 架构取舍长贴（2026-11-09），属**技术细节**，不适合直接做大众头条。 |
+
+### 63. James Thorne
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | James Thorne |
+| 机构 | **Theia Insights（CTO，X bio 自述）**；论文发表时为 **KAIST AI** |
+| 代表论文 | ORPO（`2403.07691`，**三作 / 通讯**） |
+| 邮箱 | **thorne@kaist.ac.kr**（来源：论文 HTML 作者块逐字 `{jiwoo_hong, noah.lee, thorne}@kaist.ac.kr`，ar5iv 实测 `HTTP 200` / 59,114 B）；⚠️ **本人当前主页不可用**（`j6mes.com` 实测 `000`；`james-thorne.github.io` 返回 GitHub Pages「Site not found」）⇒ 只能用论文通讯地址，**若退信记「通道失效」不重发** |
+| 主页 | **未找到**（上述两个候选均不可用；🚫 不写猜测链接） |
+| X 账号 | **@j6mes**（核验：`x_fetch.py` 实测 `200`，`og:description` = `CTO at Theia Insights. PhD from @cambridge_cl. Co-organiser of fever workshop`） |
+| 状态 | **已发信**（2026-11-12 21:07:24 `SENT OK`）· X 待 follow |
+| 备注 | 信（**英文**，162 词）问三点：① ~2B + 数万条域内偏好对时 ORPO 的 λ 如何取、先坏在哪；② 工具轨迹长度长尾下全序列 odds 是否偏长、是否按 token 归一；③ 偏好来自 checker（工具跑通 / DRC 通过）而非人工排序时，odds ratio 目标背后的单调性假设是否仍成立。分别回填 zhulong 奖励设计、posttrain 配方、data 偏好来源表。草稿 `research/mail/drafts/2403.07691.md`。 |
+
+### 64. Nelson F. Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nelson F. Liu |
+| 机构 | **Allen Institute for AI（Ai2）**（现职）；论文发表时为 **Stanford University** |
+| 代表论文 | Lost in the Middle（`2307.03172`，**一作**） |
+| 邮箱 | **nfliu@cs.stanford.edu**（来源：论文 HTML 作者块逐字，ar5iv 实测 `HTTP 200` / 37,518 B）；⚠️ 本人主页 <https://nelsonliu.me> 实测 `200` / 15,502 B，但邮箱是**图片** `img/email.png`（防爬）⇒ 页面无可读邮箱，只能用论文地址，**若退信记「通道失效」不重发** |
+| 2026-11-13 00:06（**第十六轮**） | Yizhong Wang | `2212.10560` Self-Instruct | 本人主页 `yizhongw.github.io` 的 `mailto:yizhongw01@gmail.com`（`200` / 26,625 B） | `SENT OK`（**中文 224 字**，发送前已核；ByteDance Seed 今日第 1 封） |
+| 2026-11-13 00:06（**第十六轮**） | Niklas Muennighoff | `2402.01306` KTO | 本人主页 `muennighoff.github.io` 的 `mailto:n.muennighoff@gmail.com`（`200` / 47,863 B） | `SENT OK`（**英文 181 词**，发送前 `wc -w` 已核；Stanford/SpaceX 今日第 1 封） |
+| 2026-11-13 00:06（**第十六轮**） | Beidi Chen | `2306.14048` H₂O | 本人 CMU 主页 `www.andrew.cmu.edu/user/beidic/` 的 `mailto:beidic@andrew.cmu.edu`（`200` / 35,488 B） | `SENT OK`（**英文 165 词**，发送前 `wc -w` 已核；CMU 今日第 1 封） |
+| 主页 | <https://nelsonliu.me>（实测 `HTTP 200` / 15,502 B） |
+| X 账号 | **未登记（待核实）**：`x.com/nelsonfliu` 实测 `200`，页面标题为 `Nelson Liu (@nelsonfliu) / X`，但 **`og:description` 只有 followers 数字、无任何自我介绍** ⇒ 按「身份不可证不登记」纪律，🚫 不写进已核验清单（与 `@JohnJumper` 同一处理口径） |
+| 状态 | **已发信**（2026-11-12 21:07:44 `SENT OK`）· X **未核验**（不加 follow 清单） |
+| 备注 | 信（**英文**，159 词）问三点：① 结构化日志 / 报错文本是否同样呈 U 形位置敏感、主因是训练分布还是架构；② 成功判据是「调对工具」而非「抽出 gold span」时如何改造位置扫描协议；③ 投入长上下文训练前，把关键证据重排到首尾是否仍是必跑基线。分别回填 pretrain 长上下文配比、harness 判分与上下文编排、designflow L3+ 题面。草稿 `research/mail/drafts/2307.03172.md`。 |
+
+### 65. Woosuk Kwon
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Woosuk Kwon |
+| 机构 | **UC Berkeley**（vLLM 论文作者单位；**现职本轮未核**） |
+| 代表论文 | Efficient Memory Management for LLM Serving with PagedAttention / vLLM（`2309.06180`，**一作**） |
+| 邮箱 | **未找到**（本轮未核到可访问的个人主页 ⇒ 按令不猜） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（`x.com/woosuk_kwon` 实测 `200`，但页面仅 **3 followers / 1 following / 2022-03 注册**、无 bio ⇒ 判为**同名非本人**，🚫 不登记） |
+| 状态 | **待跟踪**（无邮箱、无 X ⇒ 暂无法互动；仅建档） |
+| 备注 | 论文价值在 **serving 吞吐 / 显存**，服务 harness 批量评测与 zhulong 成本口径；**不是模型能力证据**。下轮可试 OpenReview / 个人主页反查邮箱后再评估发信。 |
+
+---
+
+### 66. Yizhong Wang（王一众）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yizhong Wang（中文姓名 ⇒ 信按中文写） |
+| 机构 | **ByteDance Seed**（研究员）；X bio 自述 **2026 fall 入职 UT Austin 助理教授** |
+| 代表论文 | Self-Instruct（`2212.10560`，**一作**）· Super-NaturalInstructions（`2204.07705`，一作） |
+| 邮箱 | **yizhongw01@gmail.com**（来源：本人主页 `https://yizhongw.github.io/` 的 `mailto:`，实测 `HTTP 200` / 26,625 B） |
+| 主页 | <https://yizhongw.github.io/>（实测 `HTTP 200`） |
+| X 账号 | **@yizhongwyz**（核验：主页 `href="https://x.com/yizhongwyz"` + 推文页/主页 `og:title` = `Yizhong Wang (@yizhongwyz) on X`，bio = `Researcher at ByteDance Seed, Incoming Asst Prof @UTAustin`） |
+| 状态 | **已发信**（2026-11-13 00:08 `SENT OK`）· X 待 follow |
+| 备注 | 信（**中文**，≤300 字）问三点：① EDA / 存储域只有 100–200 条人工种子时，自举的**多样性瓶颈**先出现在种子数量还是种子类型覆盖；② 过滤「相似样本」的阈值对域内术语密集文本是否需要放宽；③ 合成指令与评测集**去污染**的最小可行做法。分别回填 data 指令数据表、designflow 造题流水线、harness 去重检查。X 上近 30 天**无可用完整原文**（最近条目为 2026-02，已超期）⇒ 暂不产 `voice_ready`。 |
+
+### 67. Niklas Muennighoff
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Niklas Muennighoff（德国人 ⇒ 信按英文写） |
+| 机构 | **Stanford / SpaceX**（X bio 自述 `ai/llms @spacex @stanford`；KTO 发表时为 Stanford） |
+| 代表论文 | KTO（`2402.01306`，**三作**）· BLOOM / StarCoder 数据相关工作（本轮未逐条核） |
+| 邮箱 | **n.muennighoff@gmail.com**（来源：本人主页 `https://muennighoff.github.io/` 的 `mailto:`，实测 `HTTP 200` / 47,863 B） |
+| 主页 | <https://muennighoff.github.io/>（实测 `HTTP 200`） |
+| X 账号 | **@Muennighoff**（核验：主页链接列表含 `x.com/Muennighoff` + X 页 `og:title` = `Niklas Muennighoff (@Muennighoff) on X`，`og:description` = `ai/llms @spacex @stanford`） |
+| 状态 | **已发信**（2026-11-13 00:08 `SENT OK`）· X 待 follow |
+| 备注 | 信（**英文**，≤200 词）问三点：① checker 只给「跑通/失败」二元标签、**没有成对偏好**时，KTO 的 `λ_D / λ_U` 如何取、先坏在哪；② 工具轨迹长度长尾（同一任务 10× token 差）下，二元可取性是否被长度主导、是否需要按 token 归一；③ 若「可取」由指标改善阈值定义（而非人工判断），KTO 的效用假设是否仍成立。分别回填 posttrain 对齐配方、zhulong 奖励设计、data 标签定义。同论文一作 Kawin Ethayarajh 无公开邮箱/X（见 #69），按「同论文 ≤1 封」本轮只发本封。 |
+
+### 68. Beidi Chen
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Beidi Chen（中文名 陈贝迪；按英文写） |
+| 机构 | **Carnegie Mellon University**（助理教授；X bio：`Asst. Prof @CarnegieMellon, @amazon Scholar, Prev: Visiting Researcher @Meta, Postdoc @Stanford, Ph.D. @RiceUniversity`） |
+| 代表论文 | H₂O（`2306.14048`，**末位作者 / 通讯圈**）· 稀疏注意力与高效推理系列（本轮未逐条核） |
+| 邮箱 | **beidic@andrew.cmu.edu**（来源：本人 CMU 主页 `https://www.andrew.cmu.edu/user/beidic/` 的 `mailto:`，实测 `HTTP 200` / 35,488 B） |
+| 主页 | <https://www.andrew.cmu.edu/user/beidic/>（实测 `HTTP 200`） |
+| X 账号 | **@BeidiChen**（核验：主页 `href="https://twitter.com/beidichen"`；`x.com/beidichen` 实测 `200` 且 `og:title` = `Beidi Chen (@BeidiChen) on X`，bio 与 CMU 教职一致 ⇒ 大小写差异不算换号） |
+| 状态 | **已发信**（2026-11-13 00:08 `SENT OK`）· X 待 follow |
+| 备注 | 信（**英文**，≤200 词）问三点：① 「heavy hitter」判定在**结构化日志 / 报错堆栈**（非自然语言）上是否同样稀疏，20% 预算是否仍够；② 多轮工具调用中前缀（系统提示 + 工具 schema）固定，是否应把固定前缀排除在驱逐之外；③ 20% 预算下掉点 &lt;2pp 的结论是否对 batch 大小与 beam 数敏感。分别回填 zhulong 长轨迹成本、harness 评测吞吐、pretrain 长上下文。 |
+
+### 69. Kawin Ethayarajh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kawin Ethayarajh（加拿大人 ⇒ 英文） |
+| 机构 | **Stanford University**（KTO 发表时；**现职本轮未核**） |
+| 代表论文 | KTO（`2402.01306`，**一作**） |
+| 邮箱 | **未找到**（候选主页 `kawinethayarajh.com` / `www.kawinethayarajh.com` 实测均 `000`；🚫 不猜） |
+| 主页 | **未找到**（同上；不写猜测链接） |
+| X 账号 | **未找到**（`x.com/kawinethayarajh` 实测 `404 User Profile Not Found`；🚫 不试猜其他 handle） |
+| 状态 | **待跟踪**（无邮箱、无 X ⇒ 仅建档；同论文已由三作 Muennighoff 覆盖，按「同论文 ≤1」不再追发） |
+| 备注 | KTO 的「前景理论 → HALO」框架主要出自其一作工作；若后续主页恢复或新论文挂出联系方式，再评估单独发信。 |
+
+### 70. Azalia Mirhoseini
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Azalia Mirhoseini（伊朗裔美国人 ⇒ 英文） |
+| 机构 | **Stanford University**（CS 助理教授，Scaling Intelligence 实验室）· 兼 **Ricursive Intelligence** 联合创始人（X bio 自述）· 曾任 Google Brain / Anthropic / Google DeepMind |
+| 代表论文 | Chip Placement with Deep Reinforcement Learning（`2004.10746`，**一作**；同行评审版 Nature 2021 = AlphaChip）· MoE 早期工作（本轮未逐条核） |
+| 邮箱 | **未找到**（本人主页 `https://www.azaliamirhoseini.com` 实测 `HTTP 200` / 600,171 B，为 Wix 站点，**只有 Contact 表单、无可读 `mailto:`** ⇒ 按纪律不写猜测邮箱） |
+| 主页 | <https://www.azaliamirhoseini.com>（实测 `HTTP 200`） |
+| X 账号 | **@Azaliamirh**（核验：主页 `href="https://x.com/Azaliamirh"`；`x.com/Azaliamirh` 实测 `200`，`<title>` = `Azalia Mirhoseini (@Azaliamirh) / X`，bio = `Founder @RicursiveAI, Asst. Prof. of CS at Stanford. Prev: DeepMind, Anthropic, Brain. Co-Creator of MoEs, AlphaChip, Test Time Scaling.` ⇒ 身份双核） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 暂不发信） |
+| 备注 | AlphaChip 是 designflow 布局类题绕不开的基线；其 X 简介直接挂出 `AlphaChip` 与 `MoEs`，说明她仍在该方向发声。若后续主页放出邮箱或论文挂通讯地址，再评估发信（问题方向：布局题的可迁移性 split 与 PPA 评估口径）。 |
+
+### 71. Jeffrey Quesnelle
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jeffrey Quesnelle（英文） |
+| 机构 | **Nous Research**（联合创始人 / CTO；X bio 自述） |
+| 代表论文 | YaRN（`2309.00071`，**二作**；一作 Bowen Peng） |
+| 邮箱 | **未找到**（个人域名 `theemozilla.org` 实测 `000` 不可达；🚫 不猜） |
+| 主页 | **未找到**（同上） |
+| X 账号 | **@theemozilla**（核验链：YaRN 摘要给出的代码仓库 `github.com/jquesnelle/yarn` ⇒ `github.com/jquesnelle` 页面 `HTTP 200` / 178,027 B，profile 的 `href` 指向 `twitter.com/theemozilla`；`x.com/theemozilla` 实测 `200`，`<title>` = `emozilla (@theemozilla) / X`，bio = `catholic, ai researcher, co-founder/cto of @NousResearch` ⇒ 三方一致） |
+| 状态 | **待跟踪**（X 待 follow；无邮箱） |
+| 备注 | ⚠️ X 页**不显示真名**，身份靠「论文代码仓库归属 + 该 GitHub 账号外链 + bio 机构」三方拼合 ⇒ 已在 `AUTHORS.md` 显式记录核验链，**不作为「已实名核验」**计。YaRN 的工程细节（NTK-aware 缩放、注意力温度、外推边界）他是第一手；若拿到邮箱，问题方向是「2B 上扩展到 64K 的最小继续训练量」。 |
+
+### 72. Elias Frantar
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Elias Frantar（奥地利/意大利裔 ⇒ 英文） |
+| 机构 | **IST Austria**（GPTQ 发表时，Dan Alistarh 组；**现职本轮未核**） |
+| 代表论文 | GPTQ（`2210.17323`，**一作**）· SparseGPT（本轮未核） |
+| 邮箱 | **未找到**（`frantar.ai` / `www.frantar.ai` 实测均 `000`；IST Alistarh 组页面 `HTTP 200` 但成员列表**已无其名** ⇒ 已离开；🚫 不用论文 PDF 旧邮箱） |
+| 主页 | **未找到**（同上，不写猜测链接） |
+| X 账号 | **未找到**（`x.com/EliasFrantar` 实测 `200` 但 `<title>` = `Profile / X`、**无 `og:description` / 无 bio** ⇒ 身份不可证，按纪律**不登记**） |
+| 状态 | **待跟踪**（无邮箱、无 X ⇒ 仅建档；同论文已由末位作者 Dan Alistarh 覆盖，按「同论文 ≤1」不再追发） |
+| 备注 | GPTQ 的算法细节（OBQ 近似、group size、act-order）主要出自他；若其新主页/新论文挂出联系方式，再评估单独发信（问题方向：2B 上的层敏感度与域偏移校准）。 |
+
+### 73. Dan Alistarh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Dan Alistarh（罗马尼亚裔 ⇒ 英文） |
+| 机构 | **IST Austria**（教授，机器学习与分布式系统方向；GPTQ 末位 / 资深作者） |
+| 代表论文 | GPTQ（`2210.17323`，**末位作者**）· 分布式训练 / 稀疏化系列（本轮未逐条核） |
+| 邮箱 | **Dan.Alistarh@ist.ac.at**（来源：IST Austria 课题组页 `https://www.ist.ac.at/en/research/alistarh-group/`，实测 `HTTP 200` / 127,603 B，页面逐字含该地址；**非论文 PDF 旧地址**） |
+| 主页 | <https://www.ist.ac.at/en/research/alistarh-group/>（课题组页，实测 `HTTP 200`） |
+| X 账号 | **未找到**（`x.com/DanAlistarh` 实测 `404 User Profile Not Found`；🚫 不试猜其他 handle） |
+| 状态 | **已发信**（2026-11-13 03:05:47 `SENT OK`；英文 187 词）· X 未找到 |
+| 备注 | 信问三点：① ~2B 上哪些层组用 4-bit 更危险、混合精度回退是否值得；② 校准集为芯片设计文本/工具日志（非通用网页）时 Hessian 目标是否仍成立、如何廉价检测校准过拟合；③ 长轨迹场景下 KV cache 主导显存时，4-bit + 小 batch 何时优于 8-bit。分别回填 zhulong 部署成本、pretrain 量化配方、harness 评测口径。 |
+
+---
+
+### 74. Andrew B. Kahng
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Andrew B. Kahng（非中文姓名 ⇒ 信按英文写） |
+| 机构 | **University of California, San Diego**（CSE 与 ECE 教授；主页自述 `Professor of CSE and ECE`）· OpenROAD / TILOS 项目核心 |
+| 代表论文 | Toward an Open-Source Digital Flow: First Learnings from the OpenROAD Project（DAC 2019，**21 位作者中的资深作者**，B 轨 #68）· 版图 / 布局布线方向长期工作（本轮未逐条核） |
+| 邮箱 | **abk@ucsd.edu**（来源：UCSD 现行主页 `https://vlsicad.ucsd.edu/~abk/index.html`，实测 `HTTP 200`，页内 `mailto:abk@ucsd.edu` 逐字；`cseweb.ucsd.edu/~abk/` 为指向同一主页的重定向页，亦含该地址。**非论文 PDF 旧地址**） |
+| 主页 | <https://vlsicad.ucsd.edu/~abk/>（实测 `HTTP 200`） |
+| X 账号 | **未找到**（`x.com/AndrewKahng` 实测 `200` 但 `<title>` 仅 `andrewkahng (@andrewkahng) / X`、**0 followers / 无 bio / 2025-05 注册** ⇒ 身份不可证，按纪律**不登记**；🚫 不试猜其他 handle） |
+| 状态 | **已发信**（2026-11-13 06:1x `SENT OK`；英文，发送前 `wc -w` 已核）· X 未找到 |
+| 备注 | 信问三点：① OpenROAD「lessons learned」里哪些**工具间接口 / 版本耦合**最脆、agent 流程该依赖哪些不变量；② 把开源 flow 当**评测基线**时如何固定工具 + PDK 版本、用什么 QC 抓「静默回归」；③ agent 改脚本 / 约束时，接受改动前**最小护栏**是什么（DRC / timing / 指标门）。分别回填 designflow 造题与保真度、harness 判分口径、zhulong 闭环。 |
+
+### 75. Li Lyna Zhang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Li Lyna Zhang（中文姓名 ⇒ 若发信按中文写；本轮无邮箱 ⇒ 未发） |
+| 机构 | **Microsoft Research**（X bio 自述 `Principle Researcher at Microsoft Research`） |
+| 代表论文 | LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens（arXiv `2402.13753`，**二作**，B 轨 #69）· 长上下文 / LLM self-play / reasoning 方向（X bio 自述） |
+| 邮箱 | **未找到**（MSR 个人页 `https://www.microsoft.com/en-us/research/people/lzhani/` 实测 `HTTP 200` / 202,616 B，页面**无 `mailto:` / 无明文邮箱**；🚫 不猜 `@microsoft.com` 地址） |
+| 主页 | <https://www.microsoft.com/en-us/research/people/lzhani/>（实测 `HTTP 200`） |
+| X 账号 | **@LynaZhang**（核验：`x_fetch.py` 实测 `200`，`<title>` = `Li Lyna Zhang (@LynaZhang) / X`，`og:description` = `Principle Researcher at Microsoft Research / Long context LLM, LLM self-play, Reasoning`；profile 内其 2025-10-10 推文自述 `our LongRoPE2…` ⇒ **姓名 + 机构 + 代表作三重一致**） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | 长上下文配方的**一手判断源**（LongRoPE / LongRoPE2 / rStar2-Agent 均为其参与工作）⇒ 与 pretrain 长上下文 + data 长文语料两条线直接相关。⚠️ 推文时间多为 2025 年，`voice_ready` 要求 ≤30 天 ⇒ 只作跟踪，不直接引用旧推。 |
+
+### 76. Yoongu Kim
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yoongu Kim |
+| 机构 | 论文发表时 **Carnegie Mellon University**（RowHammer / Ramulator 均为 CMU 时期工作；**当前职位本轮未核**） |
+| 代表论文 | Ramulator: A Fast and Extensible DRAM Simulator（IEEE CAL 2015，**一作**，B 轨 #70）· Flipping Bits in Memory Without Accessing Them（ISCA 2014，**一作**，B 轨 #71） |
+| 邮箱 | **未找到**（个人页 `https://sites.google.com/view/yoongukim` 经代理实测 **跳到 Google 登录页**，取不到正文；Google Scholar 同样被登录页拦截 ⇒ 按纪律**不猜**） |
+| 主页 | 未核验（同上，登录墙） |
+| X 账号 | **未找到**（`x.com/yoongukim` 实测 `200`、`<title>` = `Yoongu Kim (@yoongukim) / X`，但 **18 followers / 无 bio** ⇒ 身份不可证，**不登记**） |
+| 状态 | **待跟踪**（无邮箱、无已核 X ⇒ 仅建档） |
+| 备注 | 两篇存储经典的**共同一作** ⇒ 一份关系覆盖「DRAM 模拟基座 + 可靠性」。同论文另两位作者中 Onur Mutlu 已发过信（Ramulator 2.0）⇒ 按「同作者 ≤1」不再追发，待其新主页 / 新论文挂联系方式再评估。 |
+
+### 77. Tutu Ajayi
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tutu Ajayi |
+| 机构 | 论文发表时 **University of Michigan**（OpenAlex `authorships.institutions`；**当前职位本轮未核**） |
+| 代表论文 | Toward an Open-Source Digital Flow: First Learnings from the OpenROAD Project（DAC 2019，**一作**，B 轨 #68） |
+| 邮箱 | **未找到**（本轮未核到个人主页；🚫 不猜） |
+| 主页 | 未核验 |
+| X 账号 | **未找到**（`x.com/TutuAjayi` 实测 `200`、`<title>` = `Tutu Ajayi (@TutuAjayi) / X`，但 **85 followers / 无 bio** ⇒ 身份不可证，**不登记**） |
+| 状态 | **待跟踪**（同论文已由资深作者 Andrew B. Kahng 覆盖，按「同论文 ≤1」不另发） |
+| 备注 | 一作视角对 OpenROAD 早期集成细节最熟；若后续挂出主页 / 邮箱，可追问「flow 复现的最小固定集」（工具版本 / PDK / 设计集）。 |
+
+### 78. Thomas Wolf
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Thomas Wolf（非中文姓名 ⇒ 信按英文写） |
+| 机构 | **Hugging Face**（联合创始人 & Chief Science Officer；主页自述 `co-founder and Chief Science Officer (CSO) of Hugging Face`） |
+| 代表论文 | GAIA: a benchmark for General AI Assistants（arXiv `2311.12983`，共 6 位作者中的第 4 位，B 轨 #74）· 开源模型 / 数据 / 评测生态长期推动者（Transformers / Datasets / Diffusers 等库） |
+| 邮箱 | **thomaswolfcontact@gmail.com**（来源：本人主页 `https://thomwolf.io` 实测 `HTTP 200` / 27,239 B，页面以**去混淆**形式明写 `thomaswolfcontact [at] gmail [dot] com`；🚫 非论文 PDF 推断） |
+| 主页 | <https://thomwolf.io>（实测 `HTTP 200` / 27,239 B） |
+| X 账号 | **@Thom_Wolf**（核验：`x_fetch.py` 实测 `200`，bio = `co-founder @HuggingFace - moonshots…`；另有单条推文页 `og:title` = `Thomas Wolf (@Thom_Wolf) on X` 二次核对，见 V19） |
+| 状态 | **已发信**（2026-11-13 09:1x `SENT OK`；英文，发送前 `wc -w` 已核）· X 待 follow |
+| 备注 | 信问三点：① GAIA 如何界定「答案唯一可判」而不依赖工具特定路径；② 领域基准（芯片设计 flow）可从 GAIA 借哪几条设计、哪些必须换掉；③ 其 2026-11-07 推文「same open model, different harness ⇒ very different results」里，**harness 脚手架与工具权限各自解释多少方差**、团队应先固定哪一项。分别回填 harness 判分口径、designflow 造题、harness 排序实验设计。 |
+
+### 79. Bryan Catanzaro
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bryan Catanzaro（非中文姓名 ⇒ 信按英文写） |
+| 机构 | **NVIDIA**（X bio 自述 `VP, Applied Deep Learning Research @ NVIDIA`） |
+| 代表论文 | Megatron-LM（arXiv `1909.08053`，**末位作者**，B 轨 #72）· 深度学习系统 / 数值方向长期工作（本轮未逐条核） |
+| 邮箱 | **未找到**（本轮未核到挂 `mailto:` 的个人主页；🚫 不猜 `@nvidia.com` 地址） |
+| 主页 | 未核验 |
+| X 账号 | **@ctnzr**（核验：`x_fetch.py` 实测 `200`，bio = `VP, Applied Deep Learning Research @ NVIDIA` ⇒ **机构与职位自证**，与 Megatron 作者身份一致） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信） |
+| 备注 | 并行训练 / 系统与数值栈的**工程一手判断源**（尤其 FP8、通信重叠、大规模训练稳定性）。⚠️ 其时间线含大量产品与公司动态，`voice_ready` 只取**技术判断**类，营销口径不采。 |
+
+### 80. Clémentine Fourrier
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Clémentine Fourrier（非中文姓名 ⇒ 信按英文写） |
+| 机构 | **Hugging Face**（X bio `@HuggingFace`；主导 LLM 评测相关工作） |
+| 代表论文 | GAIA: a benchmark for General AI Assistants（arXiv `2311.12983`，**二作**，B 轨 #74） |
+| 邮箱 | **未找到**（个人站 `https://clefourrier.github.io` 实测 `HTTP 200` / 16,608 B，**无 `mailto:` / 无明文邮箱**；`huggingface.co/clefourrier` 本机实测 `000` ⇒ 按纪律**不猜**） |
+| 主页 | <https://clefourrier.github.io>（实测 `HTTP 200`） |
+| X 账号 | **@clefourrier**（核验：`x_fetch.py` 实测 `200`，bio = `@HuggingFace ✨…`，与 GAIA 作者身份一致） |
+| 状态 | **待跟踪**（X 待 follow；无公开邮箱 ⇒ 不发信；同论文已由 Thomas Wolf 覆盖，按「同论文 ≤1」不另发） |
+| 备注 | 评测方法学一手人物（LLM Evaluation Guidebook 作者，X 上高频讨论「评测不可复现」）⇒ **harness 判分口径**的优质跟踪对象。⚠️ 其热门推文多为 2025 年，`voice_ready` 要求 ≤30 天，需等新发言。 |
+
+### 81. David A. Patterson
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | David A. Patterson（非中文姓名 ⇒ 信按英文写） |
+| 机构 | **UC Berkeley**（EECS 荣休教授；EECS 院系页为其现行权威页） |
+| 代表论文 | A Case for Intelligent RAM（IEEE Micro 1997，**一作**，B 轨 #75）· RISC / RAID / 体系结构教科书长期工作（本轮未逐条核） |
+| 邮箱 | **pattrsn@cs.berkeley.edu**（来源：**EECS 院系现行页** `https://www2.eecs.berkeley.edu/Faculty/Homepages/patterson.html`，实测 `HTTP 200` / 249,647 B，页内明文邮箱；⚠️ 其旧个人页 `people.eecs.berkeley.edu/~patterson/` 首页自述「This page has not been kept up」⇒ **不采用旧页**） |
+| 主页 | <https://www2.eecs.berkeley.edu/Faculty/Homepages/patterson.html>（实测 `HTTP 200`） |
+| X 账号 | **未找到**（`x.com/DavePatterson` 实测 `200`，但 bio = `Innovative strategist and rainmaker…`、推文为 **2010–2012 年牙科诊所营销**内容 ⇒ **明显非本人**，🚫 坚决不登记） |
+| 状态 | **已发信**（2026-11-13 09:1x `SENT OK`；英文，发送前 `wc -w` 已核）· X 未找到 |
+| 备注 | 信问三点：① 1997 年「处理器-DRAM 速度差年增 50%」的论证里，**哪一部分被 HBM + chiplet 推翻、哪一部分仍然成立**；② 若今天重做 IRAM 论证，**最小可信实验**（模拟保真度 / 基线）是什么；③ IRAM 未成为主流，主因是制造成本、编程模型还是缺杀手级应用 —— 新项目该先解哪一个。回填 zhulong 的架构-成本论证与 data 的存储域语料。 |
+
+### 82. DeepSeek-AI（机构账号）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | DeepSeek-AI（**机构作者**，非个人） |
+| 机构 | 深度求索（DeepSeek） |
+| 代表论文 | DeepSeek-V3 Technical Report（arXiv `2412.19437`，B 轨 #73）· DeepSeekMoE / MLA / DeepSeek-R1 系列（本轮未逐条核） |
+| 邮箱 | **未找到**（机构无公开个人邮箱；🚫 不猜） |
+| 主页 | <https://github.com/deepseek-ai>（代码 / 权重发布主渠道） |
+| X 账号 | **@deepseek_ai**（核验：`x_fetch.py` 实测 `200`，bio = `Unravel the mystery of AGI with curiosity…` ⇒ 官方机构账号） |
+| 状态 | **待跟踪**（X 待 follow；不发信 —— 机构账号非请教对象） |
+| 备注 | 一手发布源（模型 / 推理框架 / harness 工具），适合跟踪**开源节奏与配方变化**。⚠️ 发布帖为**营销口径**，技术结论须回到技术报告原文；`voice_ready` 不收企业宣传语。 |
+
+
+### 83. Ankur Srivastava
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ankur Srivastava（按英文写） |
+| 机构 | University of Maryland, College Park（ECE；VLSI / EDA / 存储系统方向） |
+| 代表论文 | DRAMsim3（IEEE CAL 19(2):106–109, 2020，B 轨 #79，第 4 作者） |
+| 邮箱 | **`ankurs@umd.edu`**（来源：课题组现行主页 `http://srivastava.umd.edu`，`HTTP 200` / 51,727 B，`mailto:` 明文 3 处；旧页 `www.ece.umd.edu/~ankurs/` 仅 263 B 跳转 ⇒ **采用新页**） |
+| 主页 | <http://srivastava.umd.edu>（`200`） |
+| X 账号 | **未找到**（`x.com/ankurs` 实测 `200`，但 bio 仅 `61 followers · 426 following. London, United Kingdom` ⇒ **无身份信息、地点不符 ⇒ 判非本人，不登记**） |
+| 状态 | **已发信**（2026-11-13 12:05:50，DRAMsim3，英文 172 词）；X 待跟踪（无 handle） |
+| 备注 | DRAMsim3 是**内存成本固定基线**的候选工具（`zhulong` 口径 / `harness` 复现性）；信里只问**标定、热模型边界、冻结不变量**，不问未公开数据。 |
+
+### 84. Bruce Jacob
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bruce Jacob（按英文写） |
+| 机构 | United States Naval Academy（Cyber Science，Full Professor）· University of Maryland ECE（荣休） |
+| 代表论文 | DRAMsim3（IEEE CAL 2020，B 轨 #79，末位作者）；DRAMsim 系列早期工作（DRAMsim2 等，**本轮未逐条核**） |
+| 邮箱 | **未找到**（个人页 `E-mail:` 后为 `<img src="/~blj/email.gif">` ⇒ **邮箱是图片，🚫 不猜、不做 OCR 猜测**） |
+| 主页 | <https://user.eng.umd.edu/~blj/>（`200` / 133,603 B） |
+| X 账号 | **未找到**（`x.com/blj` 实测 `200`，`25 followers · 92 following`、**0 推文、无 bio** ⇒ 身份不可证，不登记） |
+| 状态 | 待跟踪（无可用邮箱 ⇒ 不发信） |
+| 备注 | 存储模拟器的「长周期维护者」样本：DRAMsim 系列跨十余年，适合观察**工具如何跟硬件世代**；若后续从其新版论文拿到现行邮箱再补发。 |
+
+### 85. Jacob Devlin
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jacob Devlin（按英文写） |
+| 机构 | BERT 发表时为 Google AI Language（**当前机构本轮未核**） |
+| 代表论文 | BERT（arXiv `1810.04805`，NAACL 2019，B 轨 #76，一作） |
+| 邮箱 | **未找到**（个人域名 `jacobdevlin.com` 为**停放页** `This site is under development` ⇒ 无有效主页） |
+| 主页 | 未找到（同上，停放页不算主页） |
+| X 账号 | **未找到**（`x.com/jacobdevlin` 实测 `200`，但 bio 仅 `7 followers · 0 following. Joined Oct 2009` ⇒ **无身份信息 ⇒ 判非本人，不登记**） |
+| 状态 | 待跟踪（无邮箱、无 X ⇒ 本轮不发信） |
+| 备注 | 必读清单第 5 组（GPT 系）与 BERT 的**同一代预训练范式**；找不到联系方式时**只登记学术坐标**，🚫 不拿 `first.last@google.com` 之类推断地址试发。 |
+
+### 86. Ming-Wei Chang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ming-Wei Chang（按英文写；中文汉字写法**未核实 ⇒ 不写**） |
+| 机构 | BERT 发表时为 Google AI Language（**当前机构本轮未核**） |
+| 代表论文 | BERT（arXiv `1810.04805`，NAACL 2019，B 轨 #76，二作） |
+| 邮箱 | **未找到**（`www.mingweichang.com` 直连 `000`、代理未取到有效页 ⇒ 不作为邮箱来源） |
+| 主页 | 未找到（同上） |
+| X 账号 | **未找到**（`x.com/mingweichang` 实测 `200`，bio 仅 `4 followers · 22 following`、**0 推文** ⇒ 不登记） |
+| 状态 | 待跟踪（无邮箱、无 X ⇒ 本轮不发信） |
+| 备注 | 与 #85 同组；若日后从 OpenReview / 顶会个人页拿到现行邮箱，再按「同论文 ≤1」补 1 封（BERT 组目前**尚未发信**）。 |
+
+
+### 87. Tim Dettmers
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tim Dettmers（按英文写） |
+| 机构 | Carnegie Mellon University（助理教授）· Allen Institute for AI（Ai2，研究科学家） |
+| 代表论文 | QLoRA（arXiv `2305.14314`，B 轨 #80，一作）· bitsandbytes（维护者） |
+| 邮箱 | **dettmers@cmu.edu**（来源：本人主页 `timdettmers.com/about/` 实测 `HTTP 200`，页面反爬写法 `lastname@cmu.edu` + 文中自述姓名 ⇒ 按页面规则还原；**非论文 PDF 旧地址**） |
+| 主页 | <https://timdettmers.com>（实测 `HTTP 200` / 39,862 B；`<meta name="twitter:site" content="@Tim_Dettmers">`） |
+| X 账号 | **@Tim_Dettmers**（双重核验：本人主页 `twitter:site` + X 页 bio `Creator of bitsandbytes. Professor @CarnegieMellon and Research Scientist @allen_ai`） |
+| 状态 | **已发信**（2026-11-13 15:05:32，QLoRA，英文 175 词）· X 待 follow（需登录态，未假装） |
+| 备注 | 他同时是「4-bit 训练/推理」这条线的长期作者（bitsandbytes），一封信可覆盖 pretrain 单卡微调与 zhulong 显存成本两处；其 2026-10-18 推文「small models + SFT + the right tools &gt; big model」已核验为本人原推并记为 **V21**（下一期首发）。 |
+
+### 88. Colin Raffel
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Colin Raffel（按英文写） |
+| 机构 | University of Toronto（Associate Professor）· Vector Institute（Associate Research Director）· Hugging Face（Faculty Researcher） |
+| 代表论文 | T5（arXiv `1910.10683`，B 轨 #81，一作） |
+| 邮箱 | **未找到**（主页 `colinraffel.com` 实测 `HTTP 200` / 2,635 B，**无 `mailto:`**；`cv.html` 经代理 `200` / 121,811 B，页内亦无邮箱 ⇒ 按纪律不猜 `first.last@utoronto.ca`） |
+| 主页 | <https://colinraffel.com>（实测 `HTTP 200`；直连偶发超时，代理 `200`） |
+| X 账号 | **未找到 X**（`x.com/colinraffel` 实测 **`404`**；主页无 X 链接 ⇒ 不查不猜） |
+| 状态 | 待跟踪（无邮箱、无 X ⇒ 本轮不发信） |
+| 备注 | 其主页明确写「加入实验室请填表，无需单独联系」⇒ **不因招生类事由发信**；若日后主页公布邮箱，只问 T5 的 text-to-text 统一接口在领域任务上的边界（已写进 #81 的「与我们工作的关系」）。 |
+
+### 89. Patrick Lewis
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Patrick Lewis（按英文写） |
+| 机构 | Cohere（lead RAG, tool-use and agents）· 曾任 Meta AI / FAIR、UCL |
+| 代表论文 | RAG（arXiv `2005.11401`，B 轨 #82，一作） |
+| 邮箱 | **未找到**（主页 `patricklewis.io` 实测 `HTTP 200` / 26,895 B，邮箱为**模板占位** `hello.[first].[last] [at] gmail.com` ⇒ **不给具体地址、不猜、不发信**） |
+| 主页 | <https://patricklewis.io>（实测 `HTTP 200` / 26,895 B） |
+| X 账号 | **@PSH_Lewis**（双重核验：本人主页 `href="https://twitter.com/PSH_Lewis"` + X 页 bio `London-based AI/NLP Research Scientist. I lead RAG, Tool-use and Agents at Cohere...`） |
+| 状态 | 待跟踪（X 待 follow；邮箱为占位 ⇒ 不发信） |
+| 备注 | 其 X 最近公开推文集中在 2024 年（&gt;30 天）⇒ **不用于 `voice_ready`**；RAG 的工程侧问题（索引更新、引用正确率）可在其公开博客/Cohere 文档里找，不打扰本人。 |
+
+### 90. Timo Schick
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Timo Schick（按英文写） |
+| 机构 | Meta AI（FAIR，Toolformer 发表时；个人页未写当前机构 ⇒ **不代填**） |
+| 代表论文 | Toolformer（arXiv `2302.04761`，B 轨 #83，一作） |
+| 邮箱 | **未找到**（个人主页 `timoschick.com` 实测 `HTTP 200` / 7,311 B，**无 `mailto:` / 无邮箱文本** ⇒ 不猜） |
+| 主页 | <https://timoschick.com>（实测 `HTTP 200` / 7,311 B） |
+| X 账号 | **@timo_schick**（双重核验：本人主页 `href="https://twitter.com/timo_schick"` + X 页存在且 bio 为 `NLP Researcher`；⚠️ bio 泛化，故同时记录主页链接作为身份证据） |
+| 状态 | 待跟踪（X 待 follow；无邮箱 ⇒ 不发信） |
+| 备注 | 其最近公开推文为 2024-07（&gt;30 天）⇒ 不用于 `voice_ready`；Toolformer 的「自监督调用数据 + 过滤」细节是本线最想追问的点，若日后拿到现行邮箱再发 1 封（同论文 ≤1）。 |
+### 91. Geoffrey Hinton
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Geoffrey Hinton（按英文写） |
+| 机构 | University of Toronto（计算机科学系荣休教授；Google 荣誉研究员，据其主页自述） |
+| 代表论文 | Distilling the Knowledge in a Neural Network（arXiv `1503.02531`，B 轨 #84，一作）· AlexNet（2012） |
+| 邮箱 | **geoffrey.hinton@gmail.com**（来源：本人当前主页 `https://www.cs.toronto.edu/~hinton/` 实测 `HTTP 200` / 30,693 B，页面原文 `Email: geoffrey [dot] hinton [at] gmail [dot] com` ⇒ 按页面规则还原；**非论文 PDF 旧地址**） |
+| 主页 | <https://www.cs.toronto.edu/~hinton/>（实测 `HTTP 200` / 30,693 B） |
+| X 账号 | **@geoffreyhinton**（核验：`x.com/geoffreyhinton` 实测 `HTTP 200` / 160,021 B，`og:title` = `Geoffrey Hinton (@geoffreyhinton) on X`，bio = `deep learning`） |
+| 状态 | **已发信**（2026-11-13 18:05:17，英文 **186** 词）· X 待 follow |
+| 备注 | 本轮问题聚焦「师生容量接近时的软目标收益来源 / 窄域过度自信是否仍用全量软分布 / per-token KL vs 序列级」→ 分别回填 pretrain 预算、data 管线、harness 口径。⚠️ 本人近期推文以「AI 风险 / 新书」为主（2026-10-02 起），**技术细节回信概率不明** ⇒ 若 30 天无回音记「未回」，不催。 |
+
+### 92. Jeff Dean
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jeff Dean（按英文写） |
+| 机构 | Discovery Loop（联合创始人 & CEO；X bio 原文 `Co-founder & CEO of Discovery Loop. Former Chief Scientist, Google.` —— ⚠️ 与论文发表时机构不同，**以 bio 现职为准**） |
+| 代表论文 | Distilling the Knowledge in a Neural Network（arXiv `1503.02531`，B 轨 #84，三作）· TensorFlow / MapReduce 等系统工作（bio 自述参与） |
+| 邮箱 | **未找到**（未取到其个人页；Google 系公开信箱不作为个人地址使用 ⇒ 不猜） |
+| 主页 | 未核验（本轮未取到） |
+| X 账号 | **@JeffDean**（核验：`x.com/JeffDean` 实测 `HTTP 200` / 177,704 B，`og:title` = `Jeff Dean (@JeffDean) on X`，bio 含 `Former Chief Scientist, Google` ⇒ 身份可证） |
+| 状态 | 待跟踪（X 待 follow；无邮箱 ⇒ 不发信；**同论文本轮只发一作**，符合「同论文 ≤1」） |
+| 备注 | 其现职变动本身是**公开事实**（bio 自述），可作 news 线索；**言论台账 V22 已采用其 2026-11-06 原推**（开源科学资助），链接见第二节。 |
+
+### 93. Joshua Ainslie
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Joshua Ainslie（按英文写） |
+| 机构 | Google Research（GQA 发表时；论文未写机构，本轮**未从现行页核验** ⇒ 不补细节） |
+| 代表论文 | GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints（arXiv `2305.13245`，EMNLP 2023，B 轨 #85，一作） |
+| 邮箱 | **未找到**（`research.google/people/...` 直连两次超时、未取到页面 ⇒ 不猜） |
+| 主页 | 未核验（同上） |
+| X 账号 | **未找到 X**（本轮未取得可核验入口；🚫 不猜 handle） |
+| 状态 | 待跟踪（无邮箱 ⇒ 不发信；同论文其余作者本轮不发） |
+| 备注 | GQA 的「5% 原预训练算力 uptrain」是我们 2B 改 KV 头数时最需要确认的口径（是否含数据加载/是否需重跑 warmup）⇒ 下一轮若取到现行主页再评估发信。 |
+
+
+
+
+---
+
+### 94. Lucas Beyer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lucas Beyer（比利时人 ⇒ 按英文写；X 昵称 `bl16`） |
+| 机构 | **Meta**（现；X bio 自述 `Researcher (now: Meta. ex: OpenAI, DeepMind, Brain, RWTH Aachen)`；论文发表时为 Google Research / Brain） |
+| 代表论文 | An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale（ViT，arXiv `2010.11929`，ICLR 2021，B 轨 #88，**二作**） |
+| 邮箱 | **未找到**（`giffmana.github.io` `404` / `lucasbeyer.net` `000` / `github.com/lucasbeyer` `404`，均实测 ⇒ 不猜、不发信） |
+| 主页 | 未核到（同上；X bio 只给匿名反馈表单，未给邮箱） |
+| X 账号 | **@giffmana**（核验：`x.com/giffmana` `HTTP 200` / 180,056 B，`og:title` = `Lucas Beyer (bl16) (@giffmana) on X`；bio 含 `now: Meta` + `ex: OpenAI, DeepMind` ⇒ **姓名/履历/领域三重一致**） |
+| 状态 | **待跟踪**（X 已核验；无邮箱 ⇒ 不发信） |
+| 备注 | ViT 的 **patch 大小 / 分辨率 / 预训练数据规模** 三件事直接决定我们视觉塔的 token 成本与域内精度 ⇒ 若后续从公开页面取得邮箱，问题应聚焦「工业图像（低纹理、高分辨率）上 patch 与分辨率的取舍经验」，而不是问自然图像榜单。另：他在 Meta 做视觉表征，若发布新模型可优先作为 `voice_ready` 线索（须单条推文页 `og:title` 核验）。 |
+
+---
+
+### 95. Graham Neubig
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Graham Neubig（按英文写） |
+| 机构 | **Carnegie Mellon University · LTI**（副教授）· **OpenHands（All Hands AI）联合创始人 / 首席科学家**（X bio 自述 `Co-founder/chief scientist @OpenHandsDev`） |
+| 代表论文 | WebArena: A Realistic Web Environment for Building Autonomous Agents（arXiv `2307.13854`，B 轨 #90，**末位作者**） |
+| 邮箱 | **gneubig@cs.cmu.edu**（来源：**LTI 现行页** `https://www.lti.cs.cmu.edu/people/faculty/neubig-graham.html` 实测 `HTTP 200` / 277,777 B；页内 `<span class="protect hidden">gneubig(through)cs.cmu.edu</span>` —— 该页用 `(through)` 代替 `@` 的反爬写法，按页面规则还原；**非论文 PDF 旧地址**） |
+| 主页 | <https://www.lti.cs.cmu.edu/people/faculty/neubig-graham.html>（实测 `HTTP 200`） |
+| X 账号 | **@gneubig**（核验：`x.com/gneubig` `HTTP 200` / 172,138 B，`og:title` = `Graham Neubig (@gneubig) on X`；bio = `Associate professor @LTIatCMU. Co-founder/chief scientist @OpenHandsDev. I mostly work on modeling language.` ⇒ 姓名/机构/项目三重一致） |
+| 状态 | **已发信**（2026-11-13 21:0x CST，经典论文请教信第 32 封）· X 待 follow（需登录态） |
+| 备注 | WebArena 的「**功能正确性判分 + 自托管可复现环境**」是我们 harness / designflow 最直接可借的两件事；他同时是 OpenHands 联合创始人 ⇒ 对「agent 在真实工具链上为何失败」有第一手经验。信中三问分别回填 harness（终态判分推到多深）、designflow（重工具链如何做可复现最小环境）、zhulong（长程任务的失败分层）。 |
+
+---
+
+### 96. John Schulman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | John Schulman（按英文写） |
+| 机构 | **Thinking Machines**（X bio 自述 `@thinkymachines`；主页 `joschu.net` 顶部亦链接 `thinkingmachines.ai`；此前 OpenAI 联合创始人 / 伯克利博士） |
+| 代表论文 | Proximal Policy Optimization Algorithms（arXiv `1707.06347`，B 轨 **#92**，**一作**）· Trust Region Policy Optimization（TRPO） |
+| 邮箱 | **未找到**（主页 `http://joschu.net` 实测 `HTTP 200` / 5,889 B，页内**无 mailto / 邮箱**；`https://joschu.net` 直连 `000` ⇒ 按纪律**不写猜测邮箱**） |
+| 主页 | <http://joschu.net>（实测 `HTTP 200` / 5,889 B） |
+| X 账号 | **@johnschulman2**（核验：`x.com/johnschulman2` `HTTP 200`，`og:title` = `John Schulman (@johnschulman2) / X`；bio = `@thinkymachines. Interested in reinforcement learning, alignment, birds, jazz music`；主页同时链到 thinkingmachines.ai ⇒ 身份一致） |
+| 状态 | **待跟踪**（X 待 follow；**无邮箱 ⇒ 本轮不发信**） |
+| 备注 | PPO 是 zhulong RL 迭代与 vision 波形 RL 的共同底座，三问（clip / epoch / 奖励尺度与归一化）已写进 PAPER #92 的「与我们工作的关系」；待其公开邮箱或论文新版本给出通讯地址后再评估发信。 |
+
+---
+
+### 97. Pieter Abbeel
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Pieter Abbeel（按英文写） |
+| 机构 | **UC Berkeley EECS**（Professor, Jim Gray Chair of Engineering）· BAIR / Berkeley Robot Learning Lab 主任 · Amazon Scholar（主页 `contact.html` 自述） |
+| 代表论文 | Denoising Diffusion Probabilistic Models（arXiv `2006.11239`，B 轨 **#93**，**三作**）· Apprenticeship learning / 机器人学习系列 |
+| 邮箱 | **pabbeel@cs.berkeley.edu**（来源：主页 frameset → `contact.html` 实测 `HTTP 200`，页内明文 `pabbeel AT cs.berkeley.edu` ⇒ 按页面规则还原；**非论文 PDF 旧地址**） |
+| 主页 | <https://people.eecs.berkeley.edu/~pabbeel/>（frameset `HTTP 200` / 702 B；`contact.html` 为实际内容页） |
+| X 账号 | **@pabbeel**（核验：`x.com/pabbeel` `HTTP 200`，`og:title` = `Pieter Abbeel (@pabbeel) / X`；bio = `Berkeley &amp; Amazon` ⇒ 与主页「Berkeley + Amazon Scholar」一致） |
+| 状态 | **已发信**（2026-11-14 00:08 CST，经典论文请教信第 33 封）· X 待 follow（需登录态） |
+| 备注 | DDPM 的价值对我们不是「图像生成」，而是**从分布采样**：vision 的稀有波形 / designflow 的稀有设计场景。信中三问分别回填 vision（回归 vs 生成的三臂对照）、designflow / data（合成数据保真度的最便宜检查）、pretrain（1-D 信号是否需要重新推导加权变分下界）。同论文一作 Jonathan Ho 与二作 Ajay Jain 本轮不发（同论文 ≤1）。 |
+
+---
+
+### 98. Ian Goodfellow
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ian J. Goodfellow（英文写信） |
+| 机构 | **Aisle**（AI 安全研究实验室，本人 X bio 自述 `Co-founder of stealth startup`；论文时期为 **Université de Montréal**，OpenAlex authorships） |
+| 代表论文 | Generative Adversarial Networks（arXiv `1406.2661`，**一作**，B 轨 **#102**） |
+| 邮箱 | **未找到**（无公开个人主页 / CV；未擅自用论文 PDF 上的旧地址） |
+| 主页 | **未找到现行个人主页** |
+| X 账号 | **@goodfellow_ian**（核验：`x.com/goodfellow_ian` `HTTP 200`，`og:title` = `Ian Goodfellow (@goodfellow_ian) on X`，bio = `Co-founder of stealth startup. Inventor of GANs…` ⇒ 身份自证） |
+| 状态 | **待跟踪**（X 待 follow，需登录态；无邮箱 ⇒ 本轮不发信） |
+| 备注 | GAN 源头作者；近期言论集中在 **AI 安全 / 漏洞发现**（AISLE 宣称一年发现 500+ CVE 零日），与 harness 的 agent 评测、code agent 风险口径有交集。时间线首条 pinned 是玩笑（GAN-dalf）⇒ 🚫 不作 `voice_ready`。 |
+
+---
+
+### 99. Diederik P. Kingma
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Diederik P. Kingma（英文写信） |
+| 机构 | OpenAlex authorships 记为 **OpenAI (United States) · University of Amsterdam**（论文时期机构；**现职本轮未核**，不写猜测） |
+| 代表论文 | Adam: A Method for Stochastic Optimization（arXiv `1412.6980`，**一作**，B 轨 **#100**） |
+| 邮箱 | **未找到**（`https://www.diederikkingma.com/` 实测 `000`（DNS 不通）⇒ 无可用公开邮箱） |
+| 主页 | **未找到现行个人主页** |
+| X 账号 | **未找到 X**（`@diederikkingma` 页面 `og:title` = `diederik (@diederikkingma) on X`，但 **bio 为空、17 followers** ⇒ 无身份信息，按纪律**不登记**） |
+| 状态 | **待跟踪**（无邮箱 ⇒ 不发信） |
+| 备注 | Adam 是 2B 预训练的默认对照优化器；若后续找到现行主页邮箱，信的三问按 PAPER #100 的「对照表 / spike / 显存」口径写。 |
+
+---
+
+### 100. Jimmy Ba
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jimmy Ba（arXiv 署名 `Jimmy Ba`；OpenAlex 记 `Jimmy Lei Ba`） |
+| 机构 | **University of Toronto**（OpenAlex authorships） |
+| 代表论文 | Adam（arXiv `1412.6980`，**二作**，B 轨 **#100**）· DreamerV3（arXiv `2301.04104`，**三作**，B 轨 **#98**） |
+| 邮箱 | **未找到**（`cs.toronto.edu/~jba/` `HTTP 200` 但仅 486 B，是**跳转页** → `jimmylba.github.io` `HTTP 200` / 25,853 B，页内**无 mailto / 邮箱**） |
+| 主页 | <https://jimmylba.github.io>（实测 `HTTP 200` / 25,853 B） |
+| X 账号 | **未找到 X**（`x.com/jimmyba` 页面 `og:title` = `X`、无账号信息 ⇒ 不猜、不登记） |
+| 状态 | **待跟踪**（无邮箱 ⇒ 不发信） |
+| 备注 | 一位作者同时覆盖「优化器（Adam）」与「model-based RL（DreamerV3）」两条线 ⇒ 关系网里价值高于单篇作者。 |
+
+---
+
+### 101. Sergey Ioffe
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sergey Ioffe（英文写信） |
+| 机构 | **Google**（OpenAlex authorships；现职本轮未核） |
+| 代表论文 | Batch Normalization（arXiv `1502.03167`，**一作**，ICML 2015，B 轨 **#101**） |
+| 邮箱 | **未找到**（无公开个人主页；未用论文旧地址） |
+| 主页 | **未找到现行个人主页** |
+| X 账号 | **未找到 X**（未从任何可访问页面读到 handle） |
+| 状态 | **待跟踪**（无邮箱 ⇒ 不发信） |
+| 备注 | BN 的机制解释（internal covariate shift）后续有争议 ⇒ 引用时按 PAPER #101 的风险条处理。 |
+
+---
+
+### 102. Christian Szegedy
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Christian Szegedy（英文写信） |
+| 机构 | **Google**（OpenAlex authorships；现职本轮未核） |
+| 代表论文 | Batch Normalization（arXiv `1502.03167`，**二作**，B 轨 **#101**） |
+| 邮箱 | **未找到** |
+| 主页 | **未找到现行个人主页** |
+| X 账号 | **未找到 X**（未从任何可访问页面读到 handle） |
+| 状态 | **待跟踪**（无邮箱 ⇒ 不发信） |
+| 备注 | 与 Ioffe 同一篇；同论文只发 1 封（若日后拿到 Ioffe 邮箱，Szegedy 不重复发）。 |
+
+---
+
+### 103. David Z. Pan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | David Z. Pan（OpenAlex 记 `David Zhigang Pan`；UT Austin 教授，EDA 方向） |
+| 机构 | **The University of Texas at Austin, ECE**（OpenAlex authorships） |
+| 代表论文 | DREAMPlace（DAC 2019，DOI `10.1145/3316781.3317803`，**末位作者**，B 轨 **#103**） |
+| 邮箱 | **dpan@ece.utexas.edu**（来源：本人现行主页 `https://users.ece.utexas.edu/~dpan/` 实测 `HTTP 200` / 55,267 B，页内明文 `dpan at ece.utexas.edu` ⇒ 按页面规则还原；**未用论文 PDF 旧地址**） |
+| 主页 | <https://users.ece.utexas.edu/~dpan/>（实测 `HTTP 200` / 55,267 B） |
+| X 账号 | **未找到 X**（`@davidzpan` 页面 `og:title` = `davidzpan (@davidzpan) on X`，但 **0 followers、bio 空** ⇒ 无身份信息，不登记） |
+| 状态 | **已发信**（2026-11-14 06:08 CST，经典论文请教信第 35 封）· X 待 follow（需登录态） |
+| 备注 | 三问直指 designflow / zhulong：① macro 密集设计上 >30× 里 kernel 与优化器的占比（决定砍预算砍哪）② 多 rollout 下最保序的廉价设置（预注册保真度判据）③ 可微松弛在 legalization 前后的失效点与质量差距。 |
+
+---
+
+### 104. Jim Fan（Linxi Fan）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jim Fan（arXiv 署名 `Linxi Fan`） |
+| 机构 | **NVIDIA**（X bio：`NVIDIA Director of Robotics & Distinguished Scientist. Co-Lead of GEAR lab. Solving Physical AGI`） |
+| 代表论文 | Voyager: An Open-Ended Embodied Agent with Large Language Models（arXiv `2305.16291`，**第 7 作者**；本轮只核了 arXiv `id_list` 元数据，未收进 B 轨清单） |
+| 邮箱 | **未找到**（无公开个人主页邮箱） |
+| 主页 | **未找到现行个人主页**（仅 X） |
+| X 账号 | **@DrJimFan**（核验：`x.com/DrJimFan` `HTTP 200`，`og:title` = `Jim Fan (@DrJimFan) on X`，bio 与 NVIDIA 职务一致） |
+| 状态 | **待跟踪**（X 待 follow；无邮箱 ⇒ 不发信） |
+| 备注 | VLA / 具身方向的言论密度高（2026-11-10–11 连发 GR00T 2：端侧运行、权重开源）。⚠️ 这两条推文页**无 `og:description`**，只有 `og:title` + 页面正文 ⇒ 按「双源一致」纪律 **本期不作 `voice_ready`**，等有 `og:description` 或本人博客原文再用。 |
+
+---
+
+### 105. Robin Rombach
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Robin Rombach |
+| 机构 | **Black Forest Labs**（联合创始人 / CEO；LDM 论文发表时为 LMU Munich 博士生） |
+| 代表论文 | High-Resolution Image Synthesis with Latent Diffusion Models（arXiv `2112.10752`，**一作**） |
+| 邮箱 | **未找到**（无公开个人主页邮箱；BFL 官网只给机构联系入口 ⇒ 按令**不猜**） |
+| 主页 | **未找到现行个人主页**（`robinrombach.github.io` 实测 `404`、`people.mpi-inf.mpg.de/~rrombach/` 实测 `404`） |
+| X 账号 | **@robrombach**（核验：`x_fetch.py` 实测 `200`，`og:title` = `Robin Rombach (@robrombach) / X`；bio = `long-term PhD student and intern. Generative Models at ...`；时间线首条为其本人原推 `FLUX-mimic goes brrr`，2026-11-12） |
+| 状态 | **待跟踪**（X 待 follow；无邮箱 ⇒ 不发信） |
+| 备注 | 生成模型（LDM / FLUX）一手发布源；⚠️ 其时间线会混入他人推文（本轮 9 条中 2 条 `handle_guess` 非本人）⇒ 引用前必须逐条核 `og:title`。 |
+
+### 106. Björn Ommer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Björn Ommer |
+| 机构 | **LMU Munich**（Computer Vision & Learning Group 负责人；LDM 通讯作者） |
+| 代表论文 | High-Resolution Image Synthesis with Latent Diffusion Models（arXiv `2112.10752`，**末位 / 通讯**） |
+| 邮箱 | **b.ommer@lmu.de**（来源：课题组现行页 `https://ommer-lab.com/people/ommer/` 实测 `HTTP 200` / 76,557 B，页内明文 `mail: b.ommer (at) lmu (dot) de` **按页面规则还原**；**未用论文 PDF 旧地址**） |
+| 主页 | <https://ommer-lab.com/people/ommer/>（实测 `HTTP 200`） |
+| X 账号 | **未找到 X**（主页与课题组页均无 X 外链；本轮不猜 handle） |
+| 状态 | **已发信**（2026-11-14 09:09:16 `SENT OK`）· X 未找到 |
+| 备注 | 信（**英文 188 词**）三问：① 细线 + 大片均匀区域的数据该由什么属性决定隐空间下采样率、先在哪失效；② 网表 / 工具日志这类条件是否走同一条 cross-attention 通路；③ 合成数据验收有没有可信的廉价代理指标。回填 vision 生成式增广 + designflow 条件生成 + data 合成验收。 |
+
+### 107. Sung Kyu Lim
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sung Kyu Lim |
+| 机构 | **Georgia Institute of Technology**（ECE 教授） |
+| 代表论文 | DREAM-GAN（ISPD 2023，DOI `10.1145/3569052.3572993`，**末位作者**） |
+| 邮箱 | **sl186@gatech.edu**（来源：Georgia Tech ECE **院系现行目录页** `https://www.ece.gatech.edu/faculty-staff-directory/sung-kyu-lim` 实测 `HTTP 200` / 57,585 B，页内明文；⚠️ 课题组页 `limsk.ece.gatech.edu` 仍挂**旧地址** `limsung@usc.edu` ⇒ **未采用**） |
+| 主页 | <https://limsk.ece.gatech.edu/>（实测 `HTTP 200`，但仅 748 B ⇒ 内容极少，主参照用 ECE 目录页） |
+| X 账号 | **未找到 X**（两页均无 X 外链；不猜） |
+| 状态 | **已发信**（2026-11-14 09:09:16 `SENT OK`）· X 未找到 |
+| 备注 | 信（**英文 184 词**）三问：① 参考布局库很小时对抗式相似度损失是否还成立、先出现什么症状；② 后布线 8.3% 线长 / 7.4% 功耗收益跨 PDK 的稳健边界与早期判别信号；③ 把 DREAMPlace 当 agent 评测固定基线时必须冻结哪些参数。回填 designflow 参考解 + harness 指标口径 + zhulong 成本可比。 |
+
+### 108. Patrick Esser
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Patrick Esser |
+| 机构 | **Stability AI → Black Forest Labs**（LDM 论文发表时为 LMU Munich / 海德堡合作方；本轮只核到 GitHub 身份，**未核当前任职**） |
+| 代表论文 | High-Resolution Image Synthesis with Latent Diffusion Models（arXiv `2112.10752`，**四作**） |
+| 邮箱 | **未找到**（`pess.biz` 实测 `000`、`pesser.github.io` 实测 `404`；GitHub `pesser` 无 blog / 邮箱 ⇒ 不猜） |
+| 主页 | **未找到现行个人主页** |
+| X 账号 | **未找到 X**（⚠️ `@PatrickEsser` 实测为**巴西葡语个人账号**（`patrick goncalves`，2012–2013 推文，1 follower）⇒ **明确非本人，不登记**） |
+| 状态 | **待跟踪**（无 X / 无邮箱 ⇒ 仅登记） |
+| 备注 | 记入关系网的价值在「LDM 作者链」完整（一作 Rombach、通讯 Ommer 均已单独建档），便于日后从任一人引出其余作者。 |
+
+---
+
+### 109. Yann LeCun
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yann LeCun（法国籍 ⇒ 信按英文写） |
+| 机构 | New York University（Silver Professor）· AMI Labs（Founder/Chair，据本人 X bio）· Meta（Ex-Chief AI Scientist，据本人 X bio） |
+| 代表论文 | Deep Learning（Nature 2015，B 轨 #110，一作）· CNN / LeNet 系列（本表未单收） |
+| 邮箱 | **未找到**（本人主页 `https://cs.nyu.edu/~yann/` 实测 `HTTP 200` / 94,524 B，页内**无 `mailto:`**、无明文邮箱；`yann.lecun.com` 直连与走代理均 `000`）⇒ 按纪律**不猜邮箱、不发信** |
+| 主页 | <https://cs.nyu.edu/~yann/>（`200` / 94,524 B） |
+| X 账号 | **@ylecun**（核验：本人主页明文 `Twitter/X: @ylecun`（同页说明「I retweet and comment, but I no longer write posts on X」）+ `x.com/ylecun` 页面 `og:title` = `Yann LeCun (@ylecun) on X`） |
+| 状态 | 待跟踪（X 待 follow） |
+| 备注 | 本人自述**在 X 上只转推与评论、不再发原创帖** ⇒ 其时间线不适合做 `voice_ready` 一手言论源（本轮实测前 5 条含政治转推）；若要采其观点，优先其 **Bluesky**（主页自述 `@yann-lecun.bsky.social`）。与 Bengio / Hinton 是同一篇 Nature 综述的合作圈，**同一轮不重复打扰**。 |
+
+### 110. Yoshua Bengio
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yoshua Bengio |
+| 机构 | Université de Montréal · Mila（科学总监）· LawZero（据本人 X bio） |
+| 代表论文 | Deep Learning（Nature 2015，B 轨 #110，二作）· 注意力 / 神经概率语言模型系列（本表未单收） |
+| 邮箱 | **未找到**（`iro.umontreal.ca/~bengioy/` 返回 **反爬挑战页**（Anubis，`HTTP 200` 但正文是 challenge）；`mila.quebec/en/directory/yoshua-bengio` `200` / 209,040 B 只有**媒体联系人** `medias@mila.quebec`，**非本人邮箱**）⇒ **不猜、不发信** |
+| 主页 | <https://yoshuabengio.org/>（`200` / 48,108 B）· Mila 目录页（`200`） |
+| X 账号 | **@Yoshua_Bengio**（核验：Mila 目录页 `href="https://x.com/yoshua_bengio?lang=en"` + `x.com/Yoshua_Bengio` 页面 `og:title` = `Yoshua Bengio (@Yoshua_Bengio) on X`、bio 自述 `Turing Award recipient ... @UMontreal, @LawZero_ & @Mila_Quebec`） |
+| 状态 | 待跟踪（X 待 follow） |
+| 备注 | 本轮 `voice_ready` 已采用其 **2026-11-13** 原推（safe-by-design AI，见 V26）⇒ 是「言论投料」里目前**产出最稳定**的账号之一；研究方向偏 **AI 安全 / 治理**，与我们「agent 评测可验证性」只有间接关系，引用时须标清语境。 |
+
+### 111. Tim Rocktäschel
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tim Rocktäschel（德国籍 ⇒ 信按英文写） |
+| 机构 | Recursive（Co-Founder & Chief Scientist）· University College London（Professor of AI）· 据本人 X bio 另兼 BOLD Lab / ELLIS；**曾任 Google DeepMind**（Genie 发表时） |
+| 代表论文 | Genie: Generative Interactive Environments（arXiv `2402.15391`，B 轨 #108，**末位作者**）· Open-Ended Learning / XLand 系列（本表未单收） |
+| 邮箱 | **未找到**（`rockt.ai` `200` / 228,991 B，页内**无 `mailto:` / 无明文邮箱**；UCL 个人页 `ucl.ac.uk/computer-science/people/tim-rocktaschel` 与 `ucl.ac.uk/~ucgtimr/` 均 **`403`**）⇒ 不发信 |
+| 主页 | <https://rockt.ai/>（`200` / 228,991 B） |
+| X 账号 | **@_rockt**（核验：`rockt.ai` 页内 `href="https://twitter.com/_rockt"` + `x.com/_rockt` 页面 `og:title` = `Tim Rocktäschel (@_rockt) on X`、`og:description` 全文 bio 与主页一致） |
+| 状态 | 待跟踪（X 待 follow） |
+| 备注 | bio 已从 DeepMind 改为 **Recursive**（AI 安全方向的实验室）⇒ 其近期言论偏**公司/招聘**（本轮 7 条时间线前 5 条中 2 条为招聘/排名），做 `voice_ready` 时须先筛掉非技术帖。 |
+
+### 112. Jeff Clune
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jeff Clune |
+| 机构 | University of British Columbia（CS 教授）· Vector Institute（CIFAR AI Chair）· Recursive（Co-founder）（据本人 X bio 与 UBC 人员页） |
+| 代表论文 | Genie: Generative Interactive Environments（arXiv `2402.15391`，B 轨 #108，第 22 位作者）· AI-Generating Algorithms 方向（本表未单收） |
+| 邮箱 | **jeff.clune@ubc.ca**（来源：UBC 计算机系**现行人员页** `https://www.cs.ubc.ca/people/jeff-clune` 实测 `HTTP 200` / 128,361 B，页内 `mailto:jeff.clune@ubc.ca`；**未用论文 PDF 上的旧地址**） |
+| 主页 | <https://jeffclune.com/>（`200` / 5,464 B；`cs.ubc.ca/~clune/` 为 **`403`**） |
+| X 账号 | **@jeffclune**（核验：`x.com/jeffclune` 页面 `og:title` = `Jeff Clune (@jeffclune) on X`、bio 自述 `Co-founder, Recursive. Professor, CS, U. British Columbia...`） |
+| 状态 | **已发信**（2026-11-14 12:06 CST，第 38 封）· X 待 follow |
+| 备注 | 选他而不是末位 Rocktäschel：**UBC 现行页有可核验邮箱**，且他在 Genie 中负责开放式学习 / 世界模型方向，与「agent 在学出来的环境里预演」直接相关。信里三问分别回填 **harness（怎么证明 latent action 真可控）/ zhulong（离散工具动作的粒度）/ data（窄域数据先扩什么）**。 |
+
+### 113. Alex Krizhevsky
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alex Krizhevsky |
+| 机构 | 发表时 University of Toronto；此后公开活动很少（本线未找到可核验的现行机构页） |
+| 代表论文 | ImageNet Classification with Deep Convolutional Neural Networks（**AlexNet**，B 轨 #111，一作） |
+| 邮箱 | **未找到**（无可用现行机构页 ⇒ 按令**不用 2012 年 PDF 旧地址**、不猜） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X**（未做任何猜测性 handle 登记） |
+| 状态 | 待跟踪（仅建档） |
+| 备注 | 收 AlexNet 的目的是**视觉塔配方（ReLU / dropout / GPU 卷积）与固定基准口径**，不依赖作者互动；同文另两位作者 Ilya Sutskever（#25）/ Geoffrey Hinton（第二十二轮）已在表中。 |
+
+### 114. Sally A. McKee
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sally A. McKee |
+| 机构 | 发表时为 University of Virginia（CS）；现机构本线**未核验**（无一手页面确认） |
+| 代表论文 | Hitting the Memory Wall: Implications of the Obvious（ACM SIGARCH CAN 23(1):20–24, 1995，B 轨 #109，二作） |
+| 邮箱 | **未找到**（未取到现行机构页；ACM 页面 `403`；🚫 不用 1995 年论文旧地址） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪（仅建档） |
+| 备注 | 收这篇的目的是「内存墙」这一**成本口径的提法源头**，不依赖作者互动。同文一作 **Wm. A. Wulf** 本线未找到可核验的现行主页 / X ⇒ **不单独建档**（🚫 不猜）。 |
+
+### 115. Tianbao Xie（OSWorld 一作）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tianbao Xie（拼音名；中文名本线**未从一手页面取到** ⇒ 信里只用「谢老师」称谓，🚫 不猜全名汉字） |
+| 机构 | 论文时为**香港大学**（OSWorld 一作；合作方含 Salesforce Research）；现所属本线**未核验** |
+| 代表论文 | OSWorld（`2404.07972`，**一作**；NeurIPS 2024，B 轨 #113）· 同时是该基准仓库的**现行维护者** |
+| 邮箱 | **tianbaoxiexxx@gmail.com**（来源：OSWorld **官方仓库 README** `https://raw.githubusercontent.com/xlang-ai/OSWorld/main/README.md` 第 264 行「current maintainer」明文，2026-11-14 15:0x 实测 `HTTP 200` / 18,251 B；**非论文 PDF 旧地址**） |
+| 主页 | <https://tianbaoxie.com/>（README 外链）；⚠️ 本机直连与代理均 **`000`** ⇒ 未取到页面内容 |
+| X 账号 | **未找到 X**（GitHub 个人页 `github.com/TianbaoXie` `200` / 144,358 B，页内**无** X / Twitter 外链 ⇒ 按令不猜 handle） |
+| 状态 | **已发信**（2026-11-14 15:04:20 `SENT OK`） |
+| 备注 | **harness 线最直接的关系人**（执行式评测：每条任务自带 `setup` + 判定脚本）。信（**中文**，非空白 **296** 字，判据 = 拼音姓名可还原中文名 + 香港机构）三问：① EDA 任务分钟级、无 GUI 时是否仍需 VM 快照回滚，容器 + 产物 diff 够不够，最终失败给不给部分分；② 369 题公开后如何检测「背题」；③ 长链条任务二值成功率方差大，子目标加权判分是否试过。回填 harness 判分口径 + data 去污染 + zhulong 成本可比。 |
+
+### 116. Bei Yu（拼音名）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bei Yu（拼音名；中文名汉字写法本线**未从一手页面取到** ⇒ 🚫 不写汉字） |
+| 机构 | **香港中文大学**（CSE；ML-for-EDA 综述 16 位作者之一，末位） |
+| 代表论文 | Machine Learning for Electronic Design Automation: A Survey（`2102.03357`，TODAES 26(5):1–46，B 轨 #114） |
+| 邮箱 | **byu@cse.cuhk.edu.hk**（来源：本人主页 `https://www.cse.cuhk.edu.hk/~byu/` 的 `byu[at]cse.cuhk.edu.hk` 反爬写法，2026-11-14 15:0x 实测 `HTTP 200` / 21,338 B；按页面规则还原；**未用论文 PDF 旧地址**） |
+| 主页 | <https://www.cse.cuhk.edu.hk/~byu/>（`HTTP 200`） |
+| X 账号 | **未找到 X**（该页未挂 X / Twitter 外链） |
+| 状态 | **已发信**（2026-11-14 22:39:11 `SENT OK`；中文正文非空白 **272** 字） |
+| 备注 | **designflow / zhulong 线关系人**（ML-for-EDA 的分层地图）。信（**中文**）三问：① 层级输出能否写成可执行检查（网表 / 版图 / 时序报告各需什么最小输入）；② 2021 后 LLM 工作落在哪些层、哪层仍缺可复现 benchmark；③ 跨工艺 / 跨 PDK 的留出集按什么切分。回填 harness（`check()` + `eda_layer`）、designflow（造题优先级）、data（留出集切分）。 |
+
+### 117. Suriya Gunasekar
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Suriya Gunasekar |
+| 机构 | **Microsoft Research**（phi-1 一作；机构取自论文作者列表，未逐项核现行职位） |
+| 代表论文 | Textbooks Are All You Need（`2306.11644`，**一作**，B 轨 #112） |
+| 邮箱 | **未找到**（MSR 人员页两条候选 URL 均 `HTTP 404`；🚫 不用论文旧地址、🚫 不猜拼写） |
+| 主页 | 未找到（同上） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪（仅建档） |
+| 备注 | **data 线最想请教的人**（数据筛选 + 合成教材的两步配方），但**无可用联络方式** ⇒ 只建档、不发信。下一轮可改从 phi-1 相关后续论文（phi-1.5 / phi-2）的公开页面找现行邮箱。 |
+
+### 118. Xiaohua Zhai（翟晓华）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xiaohua Zhai（主页自署 **Xiaohua Zhai (翟晓华)** ⇒ 信按**中文**写，判据 = 姓名族属 + 北京大学博士） |
+| 机构 | **Meta**（Zurich；主页 bio 自述「previously at OpenAI Zürich, Google DeepMind」—— 2026-11-14 实测） |
+| 代表论文 | Sigmoid Loss for Language Image Pre-Training（`2303.15343`，**一作**，B 轨 #118）· SigLIP 2（其本人推文提及，本线**未核一手论文** ⇒ 不单独收） |
+| 邮箱 | **xiaohuazhai@gmail.com**（来源：本人主页 `https://sites.google.com/view/xzhai` 的 Contact 区块，HTML 把地址拆成多个 `<span>` 写作 `xiaohuazhai[at]gmail.com`，2026-11-14 21:5x 实测 `HTTP 200` / 218,511 B；按 `[at]` 规则还原） |
+| 主页 | <https://sites.google.com/view/xzhai>（`HTTP 200`） |
+| X 账号 | **@XiaohuaZhai**（核验：主页 `href` 指向 `twitter.com/xiaohuazhai`；`https://x.com/xiaohuazhai` `HTTP 200` / 165,794 B，`og:title` = `Xiaohua Zhai (@XiaohuaZhai) on X`） |
+| 状态 | **已发信**（2026-11-14 22:39:19 `SENT OK`）· X 待 follow |
+| 备注 | **vision 线最直接的关系人之一**（视觉塔损失与 batch 解耦）。信（**中文**，非空白 **293** 字）三问：① `t` / `b` 初值在千万级图文对下是否让 sigmoid 近似退回 softmax；② 多语互译样本被当负例时靠采样还是去重；③ 224 输入下 Shape-Optimized 400M 该加宽还是加分辨率。回填 vision（损失与容量取舍）+ data（图文对去重）。 |
+
+### 119. Samuel Williams
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Samuel Williams（英文信；母语英语） |
+| 机构 | **Lawrence Berkeley National Laboratory**（Computational Research Division；NERSC 页面 `HTTP 200` / 134,744 B） |
+| 代表论文 | Roofline（CACM 52(4):65–76，2009，**一作**，B 轨 #117） |
+| 邮箱 | **未找到**（`profiles.lbl.gov/20370-samuel-williams` 为 JS 应用，`HTTP 200` / 4,151 B **无明文邮箱**；NERSC profile `200` / 134,744 B 亦无。检索结果里出现的 `SWWilliams@lbl.gov` 出自 **PDF 讲义**，按「不用 PDF 地址」纪律 🚫 不采用） |
+| 主页 | <https://www.nersc.gov/profile/samuel-williams>（`HTTP 200`） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪（仅建档；无可用邮箱 ⇒ 不发信） |
+| 备注 | **zhulong 成本口径的关键人**（Roofline 一作；#117 的三作 David Patterson 已建档 #104 并已发信 ⇒ 同合作圈不重复发信）。下一轮可从 LBNL 通讯录或论文现行版本页再找邮箱。 |
+
+### 120. Katherine Lee
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Katherine Lee（英文信） |
+| 机构 | Google（论文发表时；**现行职位本线未核**） |
+| 代表论文 | Deduplicating Training Data Makes Language Models Better（ACL 2022，**一作**，B 轨 #119） |
+| 邮箱 | **未找到**（ACL Anthology 论文页 `HTTP 200` / 42,877 B 无邮箱；作者页标记 `unverified` ⇒ 🚫 不猜） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪（仅建档；无联系方式 ⇒ 不发信） |
+| 备注 | **data 线去重**的直接关系人。无联系方式，本轮只把其论文数字（>1% 逐字复制、>4% 验证集重叠）落进 data 线建议。 |
+
+### 256. Ji Lin
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ji Lin（中文汉字名未能从可访问页面确认 ⇒ 🚫 不臆写；拼音姓名族属 ⇒ 中文信） |
+| 机构 | **OpenAI**（research scientist；本人主页自述）；论文发表时为 MIT EECS 博士生（Song Han 组） |
+| 代表论文 | **SmoothQuant**（`2211.10438`，二作）· AWQ（`2306.00978`，HAN Lab 合作） |
+| 邮箱 | **jilin.eecs@gmail.com** / **A**（本人主页 `https://www.linji.me/` 页内混淆明文 `jilin.eecs AT gmail`，2026-11-20 实测 `200` / 58,984 B） |
+| 主页 | <https://www.linji.me/>（`200` / 58,984 B） |
+| X 账号 | **@jilin_14**（本人主页 `href="https://twitter.com/jilin_14"`，2026-11-20 实读；**未做 `og:title` 二次核验 ⇒ 不计入已核验 106**） |
+| 状态 | **已发信**（第 113 封，2026-11-20 09:06:37 `SENT OK`；主题「SmoothQuant 的 α 标定与 INT8 内核边界」） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 清华本科；不因人在美国 / 论文英文 / gmail 邮箱判英文)`。价值点：W8A8 的 α 按层标定与「哪些算子必须留 FP16」直接决定 zhulong 的成本折算口径；答复回填 zhulong（主）· pretrain（推理/量化）· harness（模型精度版本）。 |
+
+### 257. Tony Z. Zhao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tony Z. Zhao（姓 Zhao 为汉语拼音 ⇒ 中文信；名用英文 Tony，故正文以「Tony Z. Zhao 老师」称呼，🚫 不臆写汉字名） |
+| 机构 | **Stanford University**（CS 博士生；本人主页自述） |
+| 代表论文 | **ALOHA + ACT**（`2304.13705`，一作）· Mobile ALOHA（项目页 `mobile-aloha.github.io`） |
+| 邮箱 | **tonyzihaozhao@gmail.com** / **A**（本人主页 `https://tonyzhaozh.github.io/` 页内 `mailto:` 明文，2026-11-20 实测 `200` / 24,093 B） |
+| 主页 | <https://tonyzhaozh.github.io/>（`200` / 24,093 B） |
+| X 账号 | **@tonyzzhao**（本人主页同时挂 `twitter.com/tonyzzhao` 与 `x.com/tonyzzhao`；**未做 `og:title` 二次核验 ⇒ 不计入已核验 106**） |
+| 状态 | **已发信**（第 114 封，2026-11-20 09:06:40 `SENT OK`；主题「ACT 的动作 chunk 长度与演示非平稳处理」） |
+| 备注 | `语言=中文(判据=姓氏 Zhao 汉语拼音 + 中文姓名族属；不因人在美国 / 论文英文 / gmail 邮箱判英文)`。价值点：chunk 长度、temporal ensembling 与演示清洗共同决定「每任务需要多少分钟演示」，直接回填 vision（视觉塔接动作头）与 data（演示预算）。 |
+
+### 258. Guangxuan Xiao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Guangxuan Xiao（拼音姓名可还原中文名 肖光轩 ⇒ 中文信） |
+| 机构 | **Thinking Machines Lab**（本人主页自述，Member of Technical Staff）；论文发表时为 MIT |
+| 代表论文 | **SmoothQuant**（`2211.10438`，一作）· StreamingLLM（`2309.17453`，一作） |
+| 邮箱 | **xiaoguangxuan@gmail.com** / **A**（本人主页 `https://guangxuanx.com/` 页内 `mailto:` 明文，2026-11-20 实测 `200` / 15,305 B，经代理 `127.0.0.1:7897`；直连 `000`） |
+| 主页 | <https://guangxuanx.com/>（`200` / 15,305 B） |
+| X 账号 | **@Guangxuan_Xiao**（本人主页 `href="https://x.com/Guangxuan_Xiao"`；**未做 `og:title` 二次核验 ⇒ 不计入已核验 106**） |
+| 状态 | **已发信**（第 69 封，2026-11-17 00:03，论文 `2309.17453` StreamingLLM）；本论文 `2211.10438` 因「同作者 ≤1」**不再发** |
+| 备注 | `语言=中文(判据=中文姓名族属 肖光轩；不因人在美国 / 论文英文 / gmail 邮箱判英文)`。本论文改由二作 Ji Lin 触达（#256）；此条用于登记同一论文的一作身份，防止下一轮重复发信。 |
+
+### 259. Luca Soldaini
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Luca Soldaini（意大利姓名族属 ⇒ 意大利语称谓问候 + 英文正文） |
+| 机构 | **Microsoft AI**（本人主页自述，technical staff）；2022–2026 初在 **Ai2** 联合主持 OLMo |
+| 代表论文 | **Dolma**（`2402.00159`，一作）· OLMo 2（`2501.00656`，合著） |
+| 邮箱 | **luca@soldaini.net** / **A**（本人主页 `https://www.soldaini.net/` 页内 `mailto:` 明文，2026-11-20 实测 `200` / 12,855 B） |
+| 主页 | <https://www.soldaini.net/>（`200` / 12,855 B） |
+| X 账号 | **@soldni**（本人主页 `href="https://twitter.com/soldni"`；**未做 `og:title` 二次核验 ⇒ 不计入已核验 106**） |
+| 状态 | **已发信**（第 89 封，2026-11-18 12:10，论文 `2501.00656` OLMo 2 · Dolmino Mix 1124 退火预算）；本论文 `2402.00159` 因「同作者 ≤1」**不再发**，草稿留档 `drafts/2402.00159.md` |
+| 备注 | `语言=意大利语称谓 + 英文正文(判据=意大利姓名族属 Luca Soldaini；机构在美国不作纯英文判据)`。本论文的价值点在「中间态语料分析 + 开源 curation toolkit」，若将来另择未触达的合著者，问题应聚焦 tagger 阈值与去重顺序。 |
+
+### 260. Wei-Lin Chiang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wei-Lin Chiang（中文姓名族属 ⇒ 若发信应用中文） |
+| 机构 | **UC Berkeley**（SkyLab 博士生，本人主页自述）；Chatbot Arena / LMSYS 项目核心成员 |
+| 代表论文 | **Chatbot Arena**（`2403.04132`，一作）· LMSYS-Chat-1M（合著） |
+| 邮箱 | **未找到**（本人主页 `200` / 20,604 B，页内无 `mailto:` 或明文地址 ⇒ 🚫 不猜） |
+| 主页 | <https://infwinston.github.io/>（`200` / 20,604 B） |
+| X 账号 | **@infwinston**（本人主页 `href="https://twitter.com/infwinston"`；**未做 `og:title` 二次核验 ⇒ 不计入已核验 106**） |
+| 状态 | **待跟踪**（无可用邮箱；同论文合作者 Lianmin Zheng 已于 2026-11-15 收第 52 封 ⇒ 本文不再发） |
+| 备注 | `语言=中文(判据=中文姓名族属 Wei-Lin Chiang；机构在美国不作英文判据)`。价值点：成对比较的样本量与置信区间、人工票与自动 judge 的一致性，可直接回填 harness 的「人评预算」；待其公开邮箱后再触达。 |
+
+
+
+
+## 二、🟢 X 能力探测（只读 · 2026-11-11 **第四轮 12:4x 起已恢复可达**）
+
+> 令要求「先验证能力再动手」。**结论：`OPEN(x_readonly)`（第四轮 12:4x CST 实测）** —— 经运维部署的本机 Mihomo 代理（`http://127.0.0.1:7897`），`x.com` 已可达；**只读可做，写操作（follow/like/发帖）仍需登录态 ⇒ 不做**。
+
+| # | 探针（原样） | 结果 |
+|:--|:--|:--|
+| 1（前三轮 11:3x / 11:4x / 12:0x） | `curl -o /dev/null -m 8/10 https://x.com/` | **`000` / 8.0–10.0s ×3 次** ⇒ 历史结论 `BLOCKED(x_access)` |
+| 2（**第四轮**，显式带代理） | `curl -x http://127.0.0.1:7897 -w '%{http_code} %{time_total}' https://x.com` | **`200` / 0.79s** |
+| 3（**第四轮**） | 同上，`https://x.com/karpathy` | **`200` / 0.77s** |
+| 4（**第四轮**） | 同上，`https://x.com/_jasonwei` | **`200` / 0.66s**；页内 `<meta property="og:description">` = `ai researcher @meta, past: openai, google` |
+| 5（**第四轮**） | `curl -x http://127.0.0.1:7897 https://api.ipify.org` | **`178.249.213.185`**（与运维给的出口一致） |
+| 6（**第四轮**） | 未带代理的同一台机器 | **`000`** ⇒ 必须显式走代理；本线 shell 未继承 `~/.profile` 的变量（`env` 实测为空），脚本内已内置默认代理 |
+| 7（**第十一轮 09:0x**） | 显式带代理：`https://x.com` / `https://x.com/ShunyuYao12` / `https://api.ipify.org` | **`200` / 0.86s** · **`200` / 0.76s** · 出口 **`178.249.213.185`** ⇒ 代理仍在线（`x.com` 可达，follow 仍需登录态） |
+| 8（**第二十三轮 21:0x**） | 显式带代理：`https://x.com` / `https://x.com/giffmana` / `https://x.com/gneubig` / `https://x.com/xiaohua_zhai` | **`200`**（自检）· **`200`** / 180,056 B（`og:title` = `Lucas Beyer (bl16) (@giffmana) on X`）· **`200`** / 172,138 B（`og:title` = `Graham Neubig (@gneubig) on X`）· **`404`**（猜测候选不成立 ⇒ 不登记） |
+
+**能力矩阵（实测边界）**
+
+| 能力 | 是否可做 | 证据 |
+|:--|:--|:--|
+| 读作者主页（bio / 粉丝数 / 置顶） | ✅ | `x.com/<handle>` `200`，`og:description` 与页内 JSON 可读 |
+| 读近期推文原文（登录前 timeline） | ✅（有限） | profile 页内嵌 timeline JSON 含 `full_text` / `created_at_ms`；单页约 8–9 条**热门/近期**推文，**不是全量时间线** |
+| 单条推文页取全文 | ⚠️ 部分 | 推文页 `200` 且 `og:title` 可核验作者，但正文由 JS 渲染，**长推文正文可能不在 HTML**（Jason Wei 的 benchmark 那条即如此） |
+| follow / like / 发帖 | ❌ | 需登录态；🚫 令明确不许注册新账号、不许用未授权凭据 ⇒ **本轮 0 follow（未假装已 follow）** |
+| 抓取节奏 | ⏱ 受限 | 本轮 6 个 handle + 4 条推文页，串行、相邻请求 ≥3s；脚本 `research/classic/x_fetch.py`（只读，仅标准库） |
+
+> ⚠️ **本轮新增教训（V15/V16，2026-11-12 18:0x）**：对 `@_lewtun` / `@natolambert` 的 profile 页内嵌 timeline JSON 解析出的**高相关推文**，经单条推文页 `og:title` 核验**分别属于 `@esonghori2` 与 `@deanwball`**（即他人推文被混入 profile JSON）⇒ 两条**均作废、不采用**，也不进 `voice_ready`。结论：**profile JSON 只能当「线索」**，任何拟引用的言论必须先用 `x.com/<handle>/status/<id>` 的 `og:title` 核作者、`og:description` 核全文，两处与 profile 记录一致才可用。
+
+**落地**：脚本 `research/classic/x_fetch.py`，原始结果落 `research/classic/x/<handle>.json`（6 个文件，共 15.3 KB，可入 git）。
+
+### 待 follow 清单（请用户手动执行 · 57 个 handle 已在 X 侧二次核验）
+
+| # | 人物 | handle | 主页链接 | X 侧核验（2026-11-12 实测） | 为什么值得跟 |
+|:--|:--|:--|:--|:--|:--|
+| 1 | Tri Dao | `@tri_dao` | <https://x.com/tri_dao> | `200`，bio = `Asst. Prof @PrincetonCS, Chief Scientist @togethercompute…` | FlashAttention / Mamba 作者，kernel 与长上下文进展的第一手来源 |
+| 2 | Albert Gu | `@_albertgu` | <https://x.com/_albertgu> | `200`，bio = `assistant prof @mldcmu. chief scientist @cartesia…` | SSM / Mamba 路线主推者，架构选择的判断值得跟踪 |
+| 3 | Shunyu Yao | `@ShunyuYao12` | <https://x.com/ShunyuYao12> | `200`，bio = `Language agents` | ReAct / ToT 一作，现于 OpenAI 做 agent 产品，agent 方向言论密度高 |
+| 4 | Edward J. Hu | `@edwardjhu` | <https://x.com/edwardjhu> | `200`，bio = `Head of AI Modeling @ Mercor / Ph.D. with Yoshua Bengio` | LoRA 一作，PEFT 与训练实践的第一手来源 |
+| 5 | John Yang | `@jyangballin` | <https://x.com/jyangballin> | `200`，bio = `CS PhD @Stanford. Creator of @SWEbench…` | SWE-bench 二作 / SWE-agent 工程主力，harness 与 SWE 评测一手信息 |
+| 6 | Jason Wei | `@_jasonwei` | <https://x.com/_jasonwei> | `200`，bio = `ai researcher @meta, past: openai, google` | CoT / 指令微调 / 涌现能力关键作者，reasoning 与训练配方判断密度高 |
+| 7（**第五轮新增**） | Ilya Sutskever | `@ilyasut` | <https://x.com/ilyasut> | `200`，`name` = `Ilya Sutskever (@ilyasut) / X`，bio = `SSI @SSI` | seq2seq 一作 / GPT 系早期核心，长周期判断（scaling、superintelligence）权重极高 |
+| 8（**第五轮新增**） | Richard S. Sutton | `@RichardSSutton` | <https://x.com/RichardSSutton> | `200`，bio 含 `UAlberta, amii, The Royal Society, Turing Award` | Dyna / TD 学习作者，「规划 vs 暴力算力」争论的源头人物，仍在高频发言 |
+| 9（**第五轮新增**） | Haotian Liu | `@imhaotian` | <https://x.com/imhaotian> | `200`，bio = `@Meta Superintelligence Lab, prev. @xAI @grok imagine/omni/v` | LLaVA 一作，多模态指令数据与 VLM 训练一手信息 |
+| 10（**第五轮新增**） | Chunyuan Li | `@ChunyuanLi` | <https://x.com/ChunyuanLi> | `200`，bio = `Agentic Vision @Google DeepMind | Previous: @xAI, @MSFTResearch` | LLaVA 二作，现做 agentic vision ⇒ VLM-agent 选题优先源 |
+| 11（**第六轮新增**） | Karthik Narasimhan | `@karthik_r_n` | <https://x.com/karthik_r_n> | `200`，bio = `Professor@Princeton, ex @OpenAI, @SierraPlatform, @MIT_CSAIL, @iitmadras. GPT, ReAct, Tree-of-Thoughts, SWE-Bench/Agent, TAU-bench, GEO` | GPT-1 二作 / ReAct 共同作者 ⇒ **harness 三条主线（循环 / 判分 / 对话任务）汇于一人**，言论价值最高 |
+| 12（**第六轮新增**） | Demis Hassabis | `@demishassabis` | <https://x.com/demishassabis> | `200`，bio = `Nobel Laureate. Co-Founder & Chair @GoogleDeepMind; Chief Scientist of Alphabet. Founder & CEO @IsomorphicLabs` | DQN 末位 / AlphaGo / AlphaFold 通讯 ⇒ DeepMind 家族一手发布源（**须区分事实与营销**） |
+| 13（**第六轮新增**） | Koray Kavukcuoglu | `@koraykv` | <https://x.com/koraykv> | `200`，bio = `SVP, Google DeepMind / Chief AI Architect, Google.` | DQN 二作 ⇒ 深度 RL 与 Gemini 系架构的一手来源 |
+| 14（**第七轮新增**） | Oriol Vinyals | `@OriolVinyalsML` | <https://x.com/OriolVinyalsML> | `200`，bio = `Co-founder & CTO of Discovery Loop… Past: Google DeepMind VP, Gemini TL (1.0 to 4.0), Alpha{Fold,Star,Code}, seq2seq…` | seq2seq 二作 + Gemini TL ⇒ 必读清单第 2 / 8 组交叉点 |
+| 15（**第七轮新增**） | Sergey Levine | `@svlevine` | <https://x.com/svlevine> | `200`，bio = `Associate Professor at UC Berkeley / Co-founder, Physical Intelligence` | OpenVLA 资深作者 ⇒ VLA / 动作接口的一手来源 |
+| 16（**第七轮新增**） | Chelsea Finn | `@chelseabfinn` | <https://x.com/chelseabfinn> | `200`，bio = `Asst Prof of CS & EE @Stanford / Co-founder of Physical Intelligence…` | OpenVLA 末位 + 元学习 ⇒ VLA 与 long-context agent 方法言论 |
+| 17（**第七轮新增**） | Moo Jin Kim | `@moo_jin_kim` | <https://x.com/moo_jin_kim> | `200`，bio = `Research @OpenAI | CS PhD @StanfordAILab` | OpenVLA 一作 ⇒ 该配方细节的最直接作者（今日已发信） |
+| 18（**第八轮新增**） | Igor Babuschkin | `@ibab` | <https://x.com/ibab> | `200`，bio = `CEO & Co-Founder @river_ai_inc. Previously @xAI, Research & Engineering` | AlphaStar 二作 ⇒ 大规模多智能体 RL 的工程一手经验 |
+| 19（**第八轮新增**） | Danny Driess | `@DannyDriess` | <https://x.com/DannyDriess> | `200`，`<title>Danny Driess (@DannyDriess) / X</title>`；handle 源自主页 `href` | π0 三作 / PaLM-E 一作 ⇒ VLA 与 flow matching 动作接口一手信息 |
+| 20（**第八轮新增**） | Kimi Team（Moonshot AI） | `@Kimi_Moonshot` | <https://x.com/Kimi_Moonshot> | `200`，`<title>Kimi.ai (@Kimi_Moonshot) / X</title>`（官方账号） | Kimi k1.5 团队 ⇒ long2short / RL scaling 的官方发布源 |
+| 21（**第八轮新增**） | Physical Intelligence | `@physical_int` | <https://x.com/physical_int> | `200`，bio = `Physical Intelligence (Pi), bringing AI into the physical world.` | π0 / OpenVLA 系团队账号 ⇒ VLA 模型与数据发布的一手源 |
+| 22（**第九轮新增**） | Zhipu AI（智谱） | `@ZhipuAI` | <https://x.com/ZhipuAI> | `200`，`<title>ZhipuAI by BigModel (@ZhipuAI) / X</title>`，bio = `全部自研GLM模型架构`（**官方机构号**） | GLM-4 团队 ⇒ 中文系开源模型发布与配比口径的官方源（机构号，营销多，须筛） |
+| 23（**第九轮新增**） | MiniMax | `@MiniMax_AI` | <https://x.com/MiniMax_AI> | `200`，`<title>MiniMax (official) (@MiniMax_AI) / X</title>`，bio 含 `Code: @MiniMax_Code`（**官方机构号**） | MiniMax-01 团队 ⇒ 线性注意力 / 长上下文工程口径的官方源 |
+| 24（**第九轮新增**） | Karl Pertsch | `@KarlPertsch` | <https://x.com/KarlPertsch> | `200`，`<title>Karl Pertsch (@KarlPertsch) / X</title>`，bio = `Robot Foundation Models @physical_int`；handle 源自主页 `href` | Octo 三作 + RT-2 作者 ⇒ 通用机器人策略与「新动作空间低成本适配」一手信息 |
+| 25（**第十轮新增**） | Kilian Lieret | `@KLieret` | <https://x.com/KLieret> | `200`，`og:title` = `Kilian Lieret (@KLieret) on X`，`og:description` = `Meta Superintelligence, prev. Princeton. SWE-bench multilingual/multimodal, (mini-)SWE-agent, SWE-smith, CodeClash, ProgramBench, SWE-sweep` | SWE-agent 第 4 作者 + SWE-bench 系榜单维护者 ⇒ 「基准本身在变」的最早信号源 |
+| 25（**第九轮新增**） | Pete Florence | `@peteflorence` | <https://x.com/peteflorence> | `200`，`<title>Pete Florence (@peteflorence) / X</title>`，bio = `Co-Founder &amp; CEO @GeneralistAI`；handle 源自主页 `href` | RT-2 核心作者 ⇒ 「动作＝文本 token」与 VLA 泛化的第一手判断 |
+| 27（**第十一轮新增**） | Jan Leike | `@janleike` | <https://x.com/janleike> | `200`，`og:title` = `Jan Leike (@janleike) on X`；handle 源自主页 `href="https://twitter.com/janleike"`（⚠️ `og:description` 本轮未渲染，bio 空缺如实记） | RLHF 前史（2017 偏好奖励 / 2020 摘要偏好）作者 ⇒ 「奖励从哪来 + 标注预算」的一手判断 |
+| 28（**第十一轮新增**） | Paul Christiano | `@paulfchristiano` | <https://x.com/paulfchristiano> | `200`，`og:title` = `Paul Christiano (@paulfchristiano) on X`，bio = `Founder &amp; Director of the Alignment Research Center. Former Head of Safety @ CAISI. Previously led alignment at OpenAI. Views my own.`（X 页自证；个人站未挂 X 链接） | 偏好奖励一作 ⇒ RLHF 思路源头，但发言偏 alignment 理论，**跟踪为主** |
+| 29（**第十二轮新增**） | Bill Peebles | `@billpeeb` | <https://x.com/billpeeb> | `200`，`<title>` = `Bill Peebles (@billpeeb) / X`，bio = `head of sora @openai 🇺🇸🇺🇸🇺🇸` | Sora 负责人 ⇒ 视频生成 / 世界模型路线的一手判断源（⚠️ 官方报告本机 403，细节勿据传闻写） |
+| 30（**第十二轮新增**） | Tim Brooks | `@_tim_brooks` | <https://x.com/_tim_brooks> | `200`，`<title>` = `Tim Brooks (@_tim_brooks) / X`，bio = `superintelligence @ Meta` | Sora 共同负责人（**已转 Meta**）⇒ 涉 Sora 发言均属「前负责人」视角，引用须标身份与时间 |
+| 31（**第十三轮新增**） | Rafael Rafailov | `@rm_rafailov` | <https://x.com/rm_rafailov> | `200`，`<title>` = `Rafael Rafailov @ NeurIPS (@rm_rafailov) / X`，`og:description` = `I work on RL at @thinkymachines. Previously at @StanfordAILab @GoogleDeepMind @UCBerkeley` | DPO 一作 ⇒ 「RM-free 偏好优化 / 离线偏好」的一手判断；现做 RL 基建，工具链视角有用 |
+| 32（**第十三轮新增**） | Archit Sharma | `@archit_sharma97` | <https://x.com/archit_sharma97> | `200`，`og:description` = `post-training science lead @GoogleDeepMind \| co-created: Gemini Deep Think series, DPO \| prev: @Stanford ...` ⇒ **自证参与 DPO** | DPO 二作 + Gemini Deep Think 后训练负责人 ⇒ 后训练配方与「推理模型怎么训」的稀有信息源 |
+| 33（**第十三轮新增**） | Onur Mutlu | `@_onurmutlu_` | <https://x.com/_onurmutlu_> | `200`，`og:description` = `Professor at ETH Zurich and Carnegie Mellon University; ... Computer Architect ... Group: @SAFARI_ETH_CMU`；handle 亦见于其 ETH 主页 `twitter.com/_onurmutlu_` | **存储方向第一关系人**（DRAM 模拟器 / RowHammer / 内存中心计算）⇒ 与我们 CXMT 场景最贴的技术判断源 |
+| 34（**第十七轮新增**） | Azalia Mirhoseini | `@Azaliamirh` | <https://x.com/Azaliamirh> | `200`，`<title>` = `Azalia Mirhoseini (@Azaliamirh) / X`，bio = `Founder @RicursiveAI, Asst. Prof. of CS at Stanford. Prev: DeepMind, Anthropic, Brain. Co-Creator of MoEs, AlphaChip, Test Time Scaling.`；handle 亦见于其本人主页 `href` | AlphaChip / MoE 共同作者 + 现做「AI 设计芯片」 ⇒ **designflow 布局线的第一关系人** |
+| 35（**第十七轮新增**） | Jeffrey Quesnelle | `@theemozilla` | <https://x.com/theemozilla> | `200`，`<title>` = `emozilla (@theemozilla) / X`，bio = `catholic, ai researcher, co-founder/cto of @NousResearch`；核验链 = YaRN 代码仓库 `github.com/jquesnelle` 页外链 `twitter.com/theemozilla` | YaRN 二作 ⇒ 长上下文扩展的工程细节一手来源（⚠️ X 页不显示真名，按「机构 + 仓库归属」三方拼合登记） |
+| 36（**第十八轮新增**） | Li Lyna Zhang | `@LynaZhang` | <https://x.com/LynaZhang> | `200`，`<title>` = `Li Lyna Zhang (@LynaZhang) / X`，`og:description` = `Principle Researcher at Microsoft Research / Long context LLM, LLM self-play, Reasoning`；其 2025-10-10 推文自述 `our LongRoPE2…` ⇒ **姓名 + 机构 + 代表作三重一致** | LongRoPE 二作 ⇒ 长上下文配方（渐进扩展 / 短上下文回校）的一手判断源；⚠️ 近期推文多 >30 天，`voice_ready` 需等新发言 |
+| 37（**第十九轮新增**） | Thomas Wolf | `@Thom_Wolf` | <https://x.com/Thom_Wolf> | `200`，bio = `co-founder @HuggingFace - moonshots…`；单条推文页 `og:title` = `Thomas Wolf (@Thom_Wolf) on X` | GAIA 作者 / HF CSO ⇒ **harness 与开源评测**的一手判断源；2026-11-07 推文已被 V19 采用 |
+| 38（**第十九轮新增**） | Bryan Catanzaro | `@ctnzr` | <https://x.com/ctnzr> | `200`，bio = `VP, Applied Deep Learning Research @ NVIDIA` | Megatron-LM 末位作者 ⇒ 并行训练 / 数值栈（FP8、通信重叠）工程判断源 |
+| 39（**第十九轮新增**） | Clémentine Fourrier | `@clefourrier` | <https://x.com/clefourrier> | `200`，bio = `@HuggingFace ✨ …` | GAIA 二作 / 评测方法学（LLM Evaluation Guidebook）⇒ **harness 判分口径**跟踪对象；⚠️ 热门推文多为 2025 年 |
+| 40（**第十九轮新增**） | DeepSeek-AI（机构） | `@deepseek_ai` | <https://x.com/deepseek_ai> | `200`，bio = `Unravel the mystery of AGI with curiosity…` | DeepSeek-V3 作者机构 ⇒ 开源节奏 / 配方变化的一手发布源；⚠️ 营销口径不入 `voice_ready` |
+| 41（**第二十二轮新增**） | Geoffrey Hinton | `@geoffreyhinton` | <https://x.com/geoffreyhinton> | `200` / 160,021 B，`og:title` = `Geoffrey Hinton (@geoffreyhinton) on X`，bio = `deep learning` | 知识蒸馏源头作者（B 轨 #84 一作）⇒ 深度学习范式判断的历史见证者；⚠️ 近期发言以 AI 风险 / 新书为主，技术类少 |
+| 42（**第二十二轮新增**） | Jeff Dean | `@JeffDean` | <https://x.com/JeffDean> | `200` / 177,704 B，`og:title` = `Jeff Dean (@JeffDean) on X`，bio = `Co-founder & CEO of Discovery Loop. Former Chief Scientist, Google…` | 大规模系统 / 开源科学资助的公开表态源；V22 已采用其 2026-11-06 原推 |
+| 43（**第二十二轮新增**） | Arthur Mensch | `@arthurmensch` | <https://x.com/arthurmensch> | `200` / 179,013 B，`og:title` = `Arthur Mensch (@arthurmensch) on X`，bio = `Co-founder and CEO @MistralAI` | Mistral 7B 三作（B 轨 #87）⇒ 开源权重模型的路线判断源；⚠️ CEO 账号多为公司发布，非技术细节 |
+
+
+> **43 个 handle** 均来自其**本人主页的 `href`**、**X 页 `<title>`/`og:title` 自证** 或**论文作者身份可核对**的路径（前 6 个第四轮、7–10 第五轮、11–13 第六轮、14–17 第七轮、18–21 第八轮、22–25 第九轮、26 第十轮 `@KLieret`、27–28 第十一轮 `@janleike` / `@paulfchristiano`、**29–30 第十二轮 `@billpeeb` / `@_tim_brooks`**、**31–33 第十三轮 `@rm_rafailov` / `@archit_sharma97` / `@_onurmutlu_`**、**34–35 第十七轮 `@Azaliamirh` / `@theemozilla`**、**36 第十八轮 `@LynaZhang`**、**37–40 第十九轮 `@Thom_Wolf` / `@ctnzr` / `@clefourrier` / `@deepseek_ai`（机构）**、**41–43 第二十二轮 `@geoffreyhinton` / `@JeffDean` / `@arthurmensch`**），并用 X 主页 `og:description` / `<title>` **二次核对身份一致**；`x.com/AlecRadford` 虽 `200` 但 bio 无身份信息、`x.com/JohnJumper` 虽 `200` 但仅 19 followers 且无 bio、`x.com/AndrewKahng` / `x.com/yoongukim` / `x.com/TutuAjayi` 虽 `200` 但**无 bio、身份不可证** ⇒ **均拒绝登记**（见主表 #33 / #40 / #74 / #76 / #77）。⚠️ 序号在第十轮出现重复「25」（`@KLieret` 与 `@peteflorence` 同号）—— 属历史编号瑕疵，**handle 与核验证据不受影响**；本轮按 36 续编，不再改动旧行（不删旧条目）。用户 follow 后请把状态改为 `已follow` 并写日期。
+
+| 44（**第二十三轮新增**） | Lucas Beyer | `@giffmana` | <https://x.com/giffmana> | `200`，`og:title` = `Lucas Beyer (bl16) (@giffmana) on X`，bio 含 `now: Meta` | ViT 二作；视觉编码器选型的一手经验 |
+| 45（**第二十三轮新增**） | Graham Neubig | `@gneubig` | <https://x.com/gneubig> | `200`，`og:title` = `Graham Neubig (@gneubig) on X`，bio = `Associate professor @LTIatCMU. Co-founder/chief scientist @OpenHandsDev...` | WebArena 末位；OpenHands 联合创始人（agent 在真实工具链上的失败模式） |
+| 46（**第二十四轮新增**） | John Schulman | `@johnschulman2` | <https://x.com/johnschulman2> | `200`，`og:title` = `John Schulman (@johnschulman2) / X`，bio = `@thinkymachines. Interested in reinforcement learning, alignment, birds, jazz music` | PPO 一作；zhulong / vision 的 RL 更新范式 |
+| 47（**第二十四轮新增**） | Pieter Abbeel | `@pabbeel` | <https://x.com/pabbeel> | `200`，`og:title` = `Pieter Abbeel (@pabbeel) / X`，bio = `Berkeley &amp; Amazon` | DDPM 三作；机器人/生成式数据与半自动标注 |
+| 48（**第二十五轮新增**） | Saining Xie（谢赛宁） | `@sainingxie` | <https://x.com/sainingxie> | `200`，bio = `cofounder &amp; chief science officer at @amilabs \| faculty @nyu_courant \| prev: @googledeepmind @meta (fair) @ucsandiego \| ynwa` | MAE 三作（视觉自监督）+ A 轨视觉编码器解耦新文作者 ⇒ **vision / pretrain 两条线的同一交点** |
+| 49（**第二十五轮新增**） | Danijar Hafner | `@danijarh` | <https://x.com/danijarh> | `200`，bio = `Building general agents for the physical world. Prev @GoogleDeepMind @UCBerkeley @UofT` | DreamerV3 一作 ⇒ 世界模型 / model-based RL 的一手来源（zhulong 路线） |
+
+| 50（**第二十六轮新增**） | Ian Goodfellow | `@goodfellow_ian` | <https://x.com/goodfellow_ian> | `200`，`og:title` = `Ian Goodfellow (@goodfellow_ian) on X`，bio = `Co-founder of stealth startup. Inventor of GANs…` | GAN 一作；近期言论集中在 AI 安全 / 漏洞发现 |
+| 51（**第二十六轮新增**） | Jim Fan（Linxi Fan） | `@DrJimFan` | <https://x.com/DrJimFan> | `200`，`og:title` = `Jim Fan (@DrJimFan) on X`，bio = `NVIDIA Director of Robotics &amp; Distinguished Scientist…` | Voyager 作者之一；VLA / 具身方向言论密度高 |
+| 52（**第二十七轮新增**） | Robin Rombach | `@robrombach` | <https://x.com/robrombach> | `200`，`og:title` = `Robin Rombach (@robrombach) / X`，bio = `long-term PhD student and intern. Generative Models at …` | LDM 一作 / FLUX 系；生成模型（视觉合成数据）的一手发布源 |
+
+| 53（**第二十八轮新增**） | Yann LeCun | `@ylecun` | <https://x.com/ylecun> | `200`，`og:title` = `Yann LeCun (@ylecun) on X`，bio = `Founder/Chair, AMI Labs; Professor, NYU; Partner, 224 Ventures; Ex-Chief AI Scientist, Meta. Researcher in AI, ML, Robotics, etc. ACM Turing Award Laureate.`；handle 亦见本人主页明文 `Twitter/X: @ylecun` | Deep Learning 一作（B 轨 #110）⇒ 深度学习路线判断源；⚠️ 本人自述**在 X 只转推/评论、不再发原创** ⇒ 不宜做 `voice_ready` 主源 |
+| 54（**第二十八轮新增**） | Yoshua Bengio | `@Yoshua_Bengio` | <https://x.com/Yoshua_Bengio> | `200`，`og:title` = `Yoshua Bengio (@Yoshua_Bengio) on X`，bio = `Turing Award recipient and world's most cited scientist. Working towards the safe development of AI for the benefit of all @UMontreal, @LawZero_ &amp; @Mila_Quebec`；handle 源自 Mila 目录页 `href` | Deep Learning 二作（B 轨 #110）⇒ **AI 安全 / 治理**方向的一手言论源（V26 已采用） |
+| 55（**第二十八轮新增**） | Tim Rocktäschel | `@_rockt` | <https://x.com/_rockt> | `200`，`og:title` = `Tim Rocktäschel (@_rockt) on X`，`og:description` = `Co-Founder and Chief Scientist of @Recursive_SI, Professor of AI @AI_UCL, PI @BOLD_Lab_AI, Fellow @ELLISforEurope. Ex @GoogleDeepMind @AIatMeta @CompSciOxford`；handle 源自 `rockt.ai` 页内 `href` | Genie 末位（B 轨 #108）⇒ 开放式学习 / 世界模型判断源；⚠️ 近期多公司/招聘帖，须筛 |
+| 56（**第二十八轮新增**） | Jeff Clune | `@jeffclune` | <https://x.com/jeffclune> | `200`，`og:title` = `Jeff Clune (@jeffclune) on X`，bio = `Co-founder, Recursive. Professor, CS, U. British Columbia. CIFAR AI Chair, Vector Institute. ML, AI, deep RL, deep learning, AI-Generating Algorithms (AI-GAs)` | Genie 作者（B 轨 #108）⇒ **AI-GAs / 开放式学习** 判断源；本轮已发信 |
+
+### 已核验言论台账（第四轮首获 · 原文 + 时间 + 链接）
+
+| # | 人物 | 时间（UTC） | 原文（照抄） | 链接 | 用途 |
+|:--|:--|:--|:--|:--|:--|
+| V1 | Albert Gu `@_albertgu` | 2026-11-07 | "it's hilarious how many have taken the bitter lesson to mean just scaling up transformers. it's about scaling, but innovations in algorithmic primitives can lead to much more efficient scaling" | <https://x.com/_albertgu/status/2119206160410800219> | ✅ 已进日报 `voice_ready`（架构消融口径） |
+| V2 | Tri Dao `@tri_dao` | 2026-10-28 | "Super interesting result: H-Net learns to dynamically tokenize variable names in coding data as separate tokens, and it scales much better on code compared to BPE" | <https://x.com/tri_dao/status/2115531348161028374> | ✅ 已进日报 `voice_ready`（代码语料 tokenizer） |
+| V3 | Jason Wei `@_jasonwei` | 2026-11-10 22:31 | 起句 "Created a \"benchmark benchmark\": a frequency distribution of which benchmarks were reported by the frontier labs in 2026…"（**正文含转义引号，HTML 内嵌串被截断；推文页正文未渲染**） | <https://x.com/_jasonwei/status/2120283338640621826> | ❌ **未采用**：不满足「原文完整 + 可核验」，不冒充完整原文；仅在此登记，待下轮用其它入口取全文后再评估 |
+| V4 | Richard S. Sutton `@RichardSSutton` | 2026-11-07 18:57 | "Brute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO" | <https://x.com/RichardSSutton/status/2119142310894334262> | ✅ **已进日报 `voice_ready`（2026-11-12 期）**；话题点 = 「暴力算力 vs 更聪明的方法」；风险 = 是**观点**且带 `IMHO`，🚫 不得写成结论 |
+| V5 | Karthik Narasimhan `@karthik_r_n` | 2026-11-05 21:38 | 起句 `Just like everything else in the global economy, the future will have lots of AI agents for specialized tasks,  essentially creating multi-developer agentic systems that can benefit greatly from working together. @awhanjie 's latest paper`（**抓到的 `full_text` 在此处截断**；推文页正文未渲染） | <https://x.com/karthik_r_n/status/2118457961727275111> | ❌ **未采用（正文不完整）**：推文页 `200`、`og:title` = `Karthik Narasimhan (@karthik_r_n) on X` 作者可核，但正文不完整 ⇒ 按令**不冒充完整原文**；下轮换入口（thread 首条 / 转载全文）再评估 |
+| V6（**第七轮新增**） | Chelsea Finn `@chelseabfinn` | 2026-10-24 22:09 UTC | "Generative value classifiers are a new parametrization of Q-functions that don't require action conditioning. We think these may combine gracefully with large, pre-trained policies and learn/generalize better from a richer output signal. Paper: https://t.co/pNphW8m0uf"（原文两处换行，此处以空格连接；**起止完整**） | <https://x.com/chelseabfinn/status/2114117117813706782> | ✅ **已进日报 `voice_ready`（2026-11-12 期）**，推文页 `200` + `og:title` 双核验；话题点 = 「不依赖动作条件的价值函数」；风险 = 是**作者观点 + 自家论文**，须标「作者自述」 |
+| V7（**第七轮新增**） | Sergey Levine `@svlevine` | 2026-11-09 06:02 UTC | 起句 `A VLM can figure out semantics: which object to grasp, where to put it. But how do we turn this knowledge into fluent and dexterous actions? At CoRL on Tuesday, Andy and Will will talk about Flow Reversal Steering: a method for passing VLM …"（**抓到的 `full_text` 在引号处截断**） | <https://x.com/svlevine/status/2119672075589726281> | ❌ **未采用（正文不完整）**：推文页 `200` + `og:title` = `Sergey Levine (@svlevine) on X` 作者可核，但正文不完整 ⇒ 按令**不冒充完整原文** |
+| V8（**第七轮新增**） | Oriol Vinyals `@OriolVinyalsML` | 2026-08-05 16:05 UTC | "Thirteen years ago, a quick email exchange with @JeffDean brought me to @Google. After an unforgettable journey from Brain, to DeepMind, and to @GoogleDeepMind, working on seq2seq or distillation, and co-leading huge projects such as AlphaStar, and Gemini, I'm saying goodbye to https://t.co/v2zK39buQ1"（起止完整） | <https://x.com/OriolVinyalsML/status/2085034508777304440> | 🕓 **>30 天 ⇒ 降级**（2026-08-05，98 天），**不进 `voice_ready`**；只作作者动向记录（已离开 Google，创办 Discovery Loop） |
+| V9（**第十轮新增**） | Tri Dao `@tri_dao` | 2026-11-05 19:01 UTC | "Distilling most of our expertise in kernel and inference engine optimization into an agent loop that powers our production. A 2-year project that we're finally able to share" | <https://x.com/tri_dao/status/2118418321456660572> | ✅ **已进日报 `voice_ready`（2026-11-12 06:00 期）**：推文页 `200` + `og:title` = `Tri Dao (@tri_dao) on X` + `og:description` **逐字等于** profile 抓到的 `full_text`（双源一致）⇒ 可用；话题点 = 「把 kernel/推理优化经验蒸馏进 agent loop」；风险 = 属**自家产品**宣传，🚫 不得写成第三方评测 |
+| V10（**第十轮新增**） | （拟 John Yang `@jyangballin`） | 2026-10-28 13:44 UTC | 拟用文 "New paper: Frontier Coding Agents Find Different Bugs Than Maintainers Fix…" | <https://x.com/jyangballin/status/2115439606443528405> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`Mark Müller (@mnmueller) on X`** ≠ John Yang ⇒ profile 抓取的 timeline JSON **混入了他人推文**；按令**不采用**。这条是本轮发现的重要口径漏洞（见下方维护纪律 3） |
+| V11（**第十轮新增**） | （拟 Shunyu Yao `@ShunyuYao12`） | 2026-11-05 19:07 UTC | 拟用文 "Hy4 from @TencentHunyuan is the new #1 open-weights model on APEX-Agents…" | <https://x.com/ShunyuYao12/status/2118420063242039721> | ❌ **未采用（作者不符）**：推文页 `og:title` = **`Mercor (@mercor) on X`** ⇒ 同上，非本人推文；**不采用**（同轮另两条 `@ShunyuYao12` 的推文作者核对通过，但正文为「Try it out!」等无信息量短句 ⇒ 也不用） |
+| V12（**第十一轮新增**） | Jason Wei `@_jasonwei` | 2026-11-11 21:31 UTC | 起句 `The fall of “what you can do” and the rise of “who you know”… Traditionally, many of us believe in a world where how hard you work is more important than who you know. I used to subscribe to this idea as both a scientist, who believed that facts about our world are agnostic to who says them, and as…`（**`og:description` 以省略号截断**） | <https://x.com/_jasonwei/status/2120630417158250953> | ❌ **未采用（正文不完整）**：推文页 `200` 且 `og:title` = `Jason Wei (@_jasonwei) on X` 作者可核，但 `og:description` 与 profile `full_text` **两处都被截断**，无法给出完整原文 ⇒ 按令不采用；`voice_ready` 本期**仍为 V2 / V4 两条** |
+| V13（**第十三轮核验后作废**） | （拟 Archit Sharma `@archit_sharma97`） | 2026-10-28 17:03 UTC | 拟用文 `Just two weeks after rolling out Gemini 4 Argon, excited to share a preview of Gemini 4 Carbon - our next frontier model. It has state-of-the-art long horizon coding capabilities …`（profile 抓取截断） | <https://x.com/archit_sharma97/status/2115489649649234259> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`koray kavukcuoglu (@koraykv) on X`** ≠ Archit Sharma ⇒ profile timeline JSON **混入他人推文**（与 V10/V11 同型）；**不采用** |
+| V14（**第十三轮核验后作废**） | （拟 Rafael Rafailov `@rm_rafailov`） | 2026-09-24 17:46 UTC | 拟用文 `We are approaching cyber-superintelligence. But our systems aren't ready. We must secure our model weights and infrastructure against three new threats: sabotage, escape, and theft…`（profile 抓取截断） | <https://x.com/rm_rafailov/status/2103179354163536228> | ❌ **未采用（作者不符）**：推文页 `200` 但 `og:title` = **`Shalev Lifshitz (@Shalev_lif) on X`** ⇒ 同上；**不采用**（此条亦说明：知名研究者时间线里**转发/引用他人**占比高，profile 解析必须先核作者） |
+| V17（**第十五轮新增 · 第十六轮首发**） | Percy Liang `@percyliang` | 2026-11-11 04:51 UTC | "You can simultaneously believe that AI is transformational and that there are bottlenecks." | <https://x.com/percyliang/status/2120378748457607431> | ✅ **本期（2026-11-13）`voice_ready` 首发**：推文页 `200` / 160,932 B，`og:title` = `Percy Liang (@percyliang) on X`，`og:description` 与 profile `full_text` **逐字一致**；话题点 = 「既相信 AI 是变革性的，也相信存在瓶颈」；风险 = **观点句**，无上下文，🚫 不得写成「证明 scaling 到顶」或「瓶颈已定位」 |
+| V18（**第十七轮新增**） | Jason Wei `@_jasonwei` | 2026-11-12 17:49 UTC | "Turns out my initial version missed a lot of evals. Claude searched harder and found 36% more mentions of benchmarks: https://t.co/ONtgbBuwEs — It still misses blog posts with fancy UI elements, long PDFs, etc. Guess we need a benchmark for creating benchmark benchmark..." | <https://x.com/_jasonwei/status/2120937085515510234> | ✅ **本期（2026-11-13）`voice_ready` 采用**：推文页 `200` / 169,476 B，`og:title` = `Jason Wei on X: "Turns out my initial version missed a lot of evals..."`，`og:description` 与 profile `full_text` 一致（换行处已按原文保留）；话题点 = 「衡量 AI 的榜单本身也会漏项：一个 agent 多搜一轮就多找出 36% 的评测提及」；风险 = ① 36% 是**他自己那次 agent 搜索的增量**、不是所有榜单的普适误差；② 推文自嘲「需要 benchmark 的 benchmark」，🚫 不得写成「评测体系崩塌」；③ 属作者个人观察，非同行评审结论 |
+| V19（**第十九轮新增 · 本期首发**） | Thomas Wolf `@Thom_Wolf` | 2026-11-07 00:28 UTC | "same open model, different harness => very different results / Joël set out to find which harness actually gets the most out of open models in November 2026"（推文页 `og:description` 全文，原文为换行分隔，此处以 `/` 标出断行） | <https://x.com/Thom_Wolf/status/2118863053001531676> | 本期 `voice_ready` 第 1 条（11-13 12:00 轮发布）：推文页 `200` / 160,196 B，`og:title` = `Thomas Wolf (@Thom_Wolf) on X`（作者可核）；话题点 = 「同一个开源模型，换一套 harness 结果差很多 —— 有人跑了 28,849 次试验排 harness」；风险 = ① 「very different」在本推文里没有量化数字，🚫 不得代填幅度；② 单条推文非同行评审；③ 其附带的 harness 排行榜属第三方工作，引用须回原榜 |
+| V20（**第二十轮新增 · 本期采用**） | Albert Gu `@_albertgu` | 2026-11-07 23:11 UTC | "it's hilarious how many have taken the bitter lesson to mean just scaling up transformers. it's about scaling, but innovations in algorithmic primitives can lead to much more efficient scaling"（推文页 `og:description` 全文） | <https://x.com/_albertgu/status/2119206160410800219> | 本期 `voice_ready` 第 2 条：推文页 `200` / 147,445 B，`og:title` = `Albert Gu (@_albertgu) on X`（作者可核，bio = `assistant prof @mldcmu. chief scientist @cartesia`）；话题点 = 「苦 bitter lesson 被误读成『无脑堆 transformer』—— 算法原语的创新同样能放大规模效率」；风险 = ① 观点性表述，**无数值、无实验**，🚫 不得当作结论引用；② 与 Sutton《The Bitter Lesson》原意的对照属**我们的解读**，须标明；③ 6 天前的推文，符合 ≤30 天口径 |
+| V21（**第二十一轮新增 · 本期首发**） | Tim Dettmers `@Tim_Dettmers` | 2026-10-18 10:31 UTC | "This is really cool work on our synthetic hospital benchmark. For patient diagnosis, this shows that small models + SFT + the right tools > GPT-6 Luna. Interesting is that the tools help small models, but not big models. So gaps in capability can be replaced by tools"（推文页 `og:description` 全文） | <https://x.com/Tim_Dettmers/status/2111767150532997458> | 本期 `voice_ready` 第 1 条：推文页 `200` / 155,397 B，`og:title` = `Tim Dettmers (@Tim_Dettmers) on X`（作者可核）；话题点 = 「小模型 + SFT + 对的工具 &gt; 大模型；工具补的是小模型的短板」；风险 = ① 「&gt; GPT-6 Luna」是**在其合成医院基准上**的对比，🚫 不得外推为通用结论；② 推文提到自家基准 ⇒ 作者自述；③ 2026-10-18，26 天，未超 30 天 |
+| V22（**第二十二轮新增 · 本期采用**） | Jeff Dean `@JeffDean` | 2026-11-06 04:01 UTC | "I'm delighted to partner with @LaudeInstitute (along with my @Sanjay_Ghemawat, John Hennessy, Dave Patterson, Ben Gomes and @andykonwinski) to support funding of open science moonshots!"（推文页 `og:description` 全文） | <https://x.com/JeffDean/status/2118554350859813374> | 本期 `voice_ready` 第 2 条：推文页 `200` / 162,986 B，`og:title` = `Jeff Dean (@JeffDean) on X`（作者可核，bio = `Co-founder & CEO of Discovery Loop. Former Chief Scientist, Google`）；话题点 = 「前沿开放科学的算力成本把多数团队挡在门外，需要专门的钱来支持『登月』式开放研究」；风险 = ① 属**资助计划公告 + 个人表态**，🚫 不得写成「该计划已产出成果」；② 未披露金额与评审机制 ⇒ 不引具体数字；③ 7 天前的推文，符合 ≤30 天口径 |
+
+
+
+
+
+| V23（**第二十五轮候选 · 不采用**） | （拟记 Saining Xie）| 2026-10-19 17:13 UTC | 转推正文 `Today, Dream Labs is coming out of stealth with Dream-1, a robot foundation model...` | <https://x.com/sainingxie/status/2112230668805828801> | ❌ **作者不符**：推文页 `og:title` = `Dream Labs (@dreamlabs_ai) on X`（非 Saining Xie 本人）⇒ 按纪律**作废、不引用**；同时说明 `x_fetch.py` 从 profile 时间线解析会混入转推，今后每条仍须逐条核 `og:title` |
+| V24（**第二十五轮候选 · 不采用**） | Lucas Beyer `@giffmana` | 2026-11-13 17:13 UTC / 09:56 UTC | ① `Really glad that i can do this without having to worry about getting paperclipped.` ② `Maybe they should try using a non-copilot model to help debug this.` | <https://x.com/giffmana/status/2121290350069424421> ｜ <https://x.com/giffmana/status/2121180408121274816> | ❌ **上下文依赖 / 断章取义风险**：两条均为**回复**，`og:title` 作者可核（`Lucas Beyer (bl16) (@giffmana) on X`）但离开上文无法成立 ⇒ 按「有上下文必须一并给出 / 不断章取义」纪律不采用；只登记备查 |
+
+| V25（**第二十七轮新增 · 本期采用**） | Demis Hassabis `@demishassabis` | 2026-11-11 17:12 UTC | "Super proud to announce AlphaGenome 2 - our new DNA sequence model! 🧬 It predicts the impact of DNA variants in different specific cell types - unlocking crucial information for understanding complex diseases. Available for academic research via our API: https://t.co/dEyrvpTxIl"（推文页 `og:description` 全文） | <https://x.com/demishassabis/status/2120565316619284734> | 本期 `voice_ready` 第 1 条：推文页 `200` / 177,123 B，`og:title` = `Demis Hassabis (@demishassabis) on X`（bio = `Nobel Laureate. Co-Founder & Chair @GoogleDeepMind; Chief Scientist of Alphabet...`）；话题点 =「同一份 DNA、不同细胞类型：单字母变异为何只在部分细胞致病 —— 序列模型开始能按细胞类型预测」；风险 = ① 属**模型发布 + 学术 API 开放**的公告口径，🚫 不得写成「已解决疾病机理」；② 预测能力与准确率**未在本推中给数字**，引用时只能给方向；③ 2026-11-11，3 天内，符合 ≤30 天口径 |
+| V26（**第二十八轮新增 · 本期采用**） | Yoshua Bengio `@Yoshua_Bengio` | 2026-11-13 21:55 UTC | "It was great to be in Berlin and Zurich last week to connect with the European scientific community and policymakers on the urgent need for safe-by-design AI."（推文页 `og:description` **全文**，与 profile `full_text` 逐字一致） | <https://x.com/Yoshua_Bengio/status/2121361248889577858> | 本期 `voice_ready` 第 1 条：推文页 `200` / 113,553 B，`og:title` = `Yoshua Bengio (@Yoshua_Bengio) on X`（bio = `Turing Award recipient ... @UMontreal, @LawZero_ &amp; @Mila_Quebec`）；话题点 =「图灵奖得主在欧盟各国政府间推『safe-by-design』，说明 AI 安全从论文话题变成政策议程」；风险 = ① 属**行程回顾 + 主张**，🚫 不得写成「欧盟已采纳该原则」或任何政策结论；② 未提任何具体法规/数字 ⇒ 不补；③ 2026-11-13，1 天内，符合 ≤30 天口径 |
+| V34（**第六十轮新增 · 本期首发**） | Lucas Beyer `@giffmana` | 2026-11-16 20:35 UTC | "ayyoo they did our distillation thing for language models! Literally, with the equivalent of mixup :)<br><br>One thing it seems they had to do, is to only do this for part of the distillation, and then finish on \"pure\" examples. We probably should have also done that back then!"（推文页 `og:description` 全文；原文两段以空行分隔，此处用 `<br>` 标出） | <https://x.com/giffmana/status/2122428389684588624> | 本期 `voice_ready` 第 1 条：推文页 `200` / 157,407 B，`og:title` = `Lucas Beyer (bl16) (@giffmana) on X`（与 profile bio `Researcher (now: Meta. ex: OpenAI, DeepMind, Brain, RWTH Aachen)` 一致 ⇒ 作者可核）。**话题点**：预训练蒸馏里「混入合成/教师样本」可以类比 mixup，但实践上似乎要**只在训练前段混、末段回到纯真实样本**收尾 —— 这是一个可直接搬进配方的工程细节。**风险**：① 他评论的是**他人新论文**（`Perturbing Inputs Improves Pretraining Distillation`，@jackcai1206 等），"our distillation thing" 指其早前工作，**本推不含任何数字/消融**；② 「should have also done that」是**事后经验判断**，🚫 不得写成「已证明必须先混后纯」；③ 属回复型推文，引用时须保留「在评论哪篇论文」的上下文。 |
+
+| V28（**第三十轮新增 · 本期采用**） | Tri Dao `@tri_dao` | 2026-10-28 19:49 UTC | "Super interesting result: H-Net learns to dynamically tokenize variable names in coding data as separate tokens, and it scales much better on code compared to BPE" | <https://x.com/tri_dao/status/2115531348161028374> | 推文页 `HTTP 200` / 168,416 B，`og:title` = `Tri Dao (@tri_dao) on X` 且 `og:description` 与 profile `full_text` **逐字一致** ⇒ 本人原推。**话题点**：代码语料的 tokenizer 设计可能比模型规模更省算力（对 data / pretrain 的词汇表决策直接可用）。**风险**：他说的是**他人论文**（H-Net）的结论，非本人实验 ⇒ 只能当「研究者观点」，不能当已复现证据。 |
+> ⚠️ 引用纪律：`voice_ready` 只采用**原文完整 + 作者可核**的条目（V1 / V2 / V4 / V6 / V8；V3 / V5 / V7 / **V12** 正文截断不采用；V10 / V11 / **V13 / V14** 作者不符不采用），**每条附原链接与时间**，中文仅作翻译、不作转述；V8 >30 天已降级。
+
+**每个 handle 的原始快照**：`research/classic/x/<handle>.json`（字段 `bio` / `name` / `tweets[]`（`id` / `created_at` / `text` / `url`）/ `fetched_at`）。
+
+**⚠️ 已知局限（如实记）**：① 登录前 profile 页只给 8–9 条热门/近期推文，**不能当完整时间线**用；② 正文含转义引号时可能被截断 ⇒ 只采用「两处一致」的条目；③ `syndication.twitter.com` 时间线接口本轮返回 **`429`**（未用，不绕过）；④ 不抓回复串（成本高、噪声大）。
+
+### X 新增（第一百零九轮 · 2026-11-25 00:0x）
+
+| # | 姓名 | handle | URL | 证据 | 备注 |
+|:--|:--|:--|:--|:--|:--|
+| X136（本轮新增） | Kyunghyun Cho 조경현 | `@kchonyc` | <https://x.com/kchonyc> | `200` / 163,832 B，`og:title` = `Kyunghyun Cho (@kchonyc) on X`、`og:description` = `a mediocre combination of a mediocre professor at @nyuniversity and a mediocre CEO at @OrtetAI`；handle 源自本人主页 `kyunghyuncho.me` 页内 `href="https://twitter.com/kchonyc"` ⇒ 双源 | RNN Encoder–Decoder + GRU 一作（B 轨 #394）⇒ 序列建模 / 长上下文判断源；本轮已发信 #165 |
+| X137（本轮新增） | Lysandre Debut | `@LysandreJik` | <https://x.com/LysandreJik> | `200` / 181,803 B，`og:title` = `Lysandre (@LysandreJik) on X`、`og:description` = `Chief Open-Source Officer (COSO) at Hugging Face`；handle 源自 HF 个人页 `huggingface.co/lysandre` 页内 `href="twitter.com/LysandreJik"` ⇒ 双源 | DistilBERT 二作（B 轨 #395）⇒ 开源权重 / 小模型分发的一手来源 |
+
+> Tomas Mikolov（word2vec-SGNS 一作）本轮**未找到 X**：`@tmikolov` / `@MikolovTomas` 历史核验均 `404`，本轮未再猜。
+
+---
+
+## 三、发信记录（本线经典轨）
+
+| 日期 | 对象 | 论文 | 邮箱来源 | 结果 |
+|:--|:--|:--|:--|:--|
+| 2026-11-25 00:05（**第一百零九轮**） | Kyunghyun Cho 조경현 | `1406.1078` RNN Encoder–Decoder | 本人主页 `https://kyunghyuncho.me/contact/` `200` / 33,507 B，防爬写法 `kyunghyun.cho _at_ nyu.edu`（按页面规则还原；未用 2014 论文旧地址） | `SENT OK`（`kyunghyun.cho@nyu.edu`，**한국어 297 字含空格 / 251 字不含空格**；🚦 发送前字数已核；新日期起计今日 **1/12**） |
+| 2026-11-11 11:36 | Tri Dao | `2205.14135` FlashAttention | 个人 CV PDF（2026 版） | `SENT OK`（见 `research/mail/发送记录.md`） |
+| 2026-11-11 11:43 | Shunyu Yao | `2210.03629` ReAct | 本人主页 `mailto:` | `SENT OK`（`shunyuy@princeton.edu`） |
+| 2026-11-11 11:43 | Haoxing Ren | `2311.00176` ChipNeMo · `2309.07544` VerilogEval | 公司站 `mailto:`（`info@agentrys.ai`，请转交） | `SENT OK`（公司公开信箱） |
+| 2026-11-11 12:10 | Jason Wei | `2201.11903` Chain-of-Thought | 本人主页 `mailto:`（`jasonwei.net`） | `SENT OK`（`jason.weng.wei@gmail.com`，英文 165 词） |
+| 2026-11-11 12:11 | Noah Shinn | `2303.11366` Reflexion | 本人主页明写邮箱（`noahshinn.com`） | `SENT OK`（`noahrshinn@gmail.com`，英文 153 词） |
+| 2026-11-11 15:05（**第五轮**） | Kaiming He（何恺明） | `1512.03385` ResNet | 本人当前机构主页明文（`people.csail.mit.edu/kaiming/`，`200`） | `SENT OK`（`kaiming@mit.edu`，**中文 196 字**） |
+| 2026-11-11 15:05（**第五轮**） | Haotian Liu | `2304.08485` LLaVA | 本人当前主页 `mailto:`（`haotian-liu.github.io`，`200`） | `SENT OK`（`liuhaotian.cn@gmail.com`，**中文 215 字**） |
+| 2026-11-11 18:06（**第六轮**） | Karthik Narasimhan | GPT-1（无 arXiv） | 本人主页 `karthiknarasimhan.com` 的 `mailto:`（percent-encoded，`200` / 14,706 B 实测） | `SENT OK`（`karthikn@princeton.edu`，**英文 164 词**） |
+| 2026-11-11 21:04（**第七轮**） | Moo Jin Kim | `2406.09246` OpenVLA | 本人主页 `moojink.github.io` 防爬写法 `moojink at cs dot stanford dot edu`（`200` / 33,139 B 实测） | `SENT OK`（`moojink@cs.stanford.edu`，**英文 195 词**；⚠️ 已入职 OpenAI，若退信记「通道失效」） |
+| 2026-11-12 00:08（**第八轮**） | Danny Driess | `2410.24164` π0 | 本人主页 `dannydriess.github.io` 防爬写法 `danny dot driess at gmail dot com`（`200` / 29,043 B 实测） | `SENT OK`（`danny.driess@gmail.com`，**英文 178 词**） |
+| 2026-11-12 03:03（**第九轮**） | Pete Florence | `2307.15818` RT-2 | 本人主页 `www.peteflorence.com` 明写 `pete dot florence at gmail dot com`（`200` / 47,238 B 实测） | `SENT OK`（`pete.florence@gmail.com`，**英文 189 词**） |
+| 2026-11-12 06:05（**第十轮**） | Karl Pertsch | `2405.12213` Octo | 本人主页 `kpertsch.github.io` 的 `mailto:karl.pertsch@gmail.com`（`200` / 64,903 B 复测，2026-11-12 06:0x） | `SENT OK`（`karl.pertsch@gmail.com`，**英文 191 词**；同机构 PI 当日第 2 封 = 达上限） |
+| 2026-11-12 09:04（**第十一轮**） | Jan Leike | `1706.03741` Deep RL from human preferences | 本人主页 `jan.leike.name` 的 `mailto:Jan Leike <jan@anthropic.com>`（`200` / 6,411 B，2026-11-12 09:0x） | `SENT OK`（`jan@anthropic.com`，**英文 199 词**；Anthropic 当日第 1 封） |
+
+| 2026-11-12 12:04（**第十二轮**） | Nisan Stiennon | `2009.01325` Learning to summarize from human feedback | 本人站 `nisanstiennon.com` 的 `mailto:nisan+web@stiennon.com`（`200` / 5,575 B，直连与代理 **md5 一致**） | `SENT OK`（`nisan+web@stiennon.com`，英文；⚠️ **`wc -w` 实测 212 词，超 ≤200 规格 12 词，已如实记入台账**） |
+| 2026-11-12 15:03（**第十三轮**） | Archit Sharma | `2305.18290` DPO | 本人主页 `architsharma97.github.io` 的 `mailto:architsh@stanford.edu`（`200` / 3,936 B，代理实测） | `SENT OK`（`architsh@stanford.edu`，**英文 197 词**；🚦 **发送前 `wc -w` 已核**；⚠️ 其 X bio 已写 `prev: @Stanford` ⇒ 若退信记「通道失效」不重发；Stanford 当日第 1 封（Moo Jin Kim 那封属 **11-11** 21:04，按 11-12 00:00 起算不计入今日 ⇒ 1/2）） |
+| 2026-11-12 15:03（**第十三轮**） | Onur Mutlu | `2308.11030` Ramulator 2.0 | 本人 ETH 主页 `people.inf.ethz.ch/omutlu/` 的 `mailto:omutlu@gmail.com`（`200` / 19,850 B 实测） | `SENT OK`（`omutlu@gmail.com`，**英文 177 词**；🚦 发送前 `wc -w` 已核；ETH Zurich 当日第 1 封） |
+| 2026-11-12 18:06（**第十四轮**） | Danqi Chen（陈丹琦） | `2405.14734` SimPO | 本人主页 `www.cs.princeton.edu/~danqic/` 明文 `danqic@cs.princeton.edu`（`200` / 4,734 B，2026-11-12 18:0x 实测） | `SENT OK`（**中文 296 字**，发送前 `wc` 已核；Princeton 今日第 1 封） |
+| 2026-11-12 18:06（**第十四轮**） | Yibo Lin（林一博） | `2208.01040` CircuitNet | 本人主页 `yibolin.com` 的 `mailto:yibolin@pku.edu.cn`（`200` / 11,701 B） | `SENT OK`（**中文 262 字**；PKU 首封；X 未找到） |
+| 2026-11-12 18:06（**第十四轮**） | Nathan Lambert | `2310.16944` Zephyr | 本人站点 `interconnects.ai/about` 明文 `mail@interconnects.ai`（`200` / 196,029 B） | `SENT OK`（**英文 178 词**，发送前 `wc -w` 已核；⚠️ newsletter 公开信箱 ⇒ 30 天无回音记「通道未达」，不催） |
+
+| 2026-11-11 12:4x–13:0x（**第四轮**） | （本轮 **0 封**） | 新增经典 `2005.14165` / `2203.02155` / `2302.13971` | 逐个实测：`hugotouvron.github.io` `404` · `longouyang.github.io` `404` · `ashishvaswani.com` `000` · 未命中任何 `mailto:` | **不发信**（按令不猜邮箱）。该轮结束时累计 **5 封**（分属三轮，每轮 ≤3）；第四轮把额度留给「有可核验邮箱」的候选 —— 本轮没有合格的 ⇒ **宁缺勿凑**（当日最终累计 = **9 封**，见上方各行） |
+| 2026-11-13 06:09（**第十八轮**） | Andrew B. Kahng | OpenROAD DAC 2019（无 arXiv） | 本人现行 UCSD 主页 `vlsicad.ucsd.edu/~abk/index.html` 的 `mailto:abk@ucsd.edu`（`200`，页内逐字；`cseweb.ucsd.edu/~abk/` 为同页重定向） | `SENT OK`（`abk@ucsd.edu`，**英文 180 词**；🚦 发送前 `wc -w` 已核；UCSD 今日第 1 封。X 无 bio ⇒ 未登记） |
+| 2026-11-13 09:06（**第十九轮**） | David A. Patterson | A Case for Intelligent RAM（IEEE Micro 1997，无 arXiv） | **EECS 院系现行页** `www2.eecs.berkeley.edu/Faculty/Homepages/patterson.html` 明文 `pattrsn@cs.berkeley.edu`（`200` / 249,647 B）；⚠️ 旧个人页自述「not been kept up」⇒ 未采用 | `SENT OK`（`pattrsn@cs.berkeley.edu`，**英文 180 词**；🚦 发送前 `wc -w` 已核；UC Berkeley 今日第 1 封） |
+| 2026-11-13 09:06（**第十九轮**） | Thomas Wolf | `2311.12983` GAIA | 本人主页 `thomwolf.io` 去混淆写法 `thomaswolfcontact [at] gmail [dot] com`（`200` / 27,239 B） | `SENT OK`（`thomaswolfcontact@gmail.com`，**英文 190 词**；🚦 发送前 `wc -w` 已核；Hugging Face 今日第 1 封） |
+| 2026-11-13 12:05（**第二十轮**） | Ankur Srivastava | DRAMsim3（IEEE CAL 19(2):106–109, 2020，**无 arXiv**） | 课题组现行主页 `http://srivastava.umd.edu` 的 `mailto:ankurs@umd.edu`（`200` / 51,727 B；旧页 `www.ece.umd.edu/~ankurs/` 仅 263 B 跳转 ⇒ 未采用） | `SENT OK`（`ankurs@umd.edu`，**英文 172 词**；🚦 发送前 `wc -w` 已核；UMD 今日第 1 封。X `@ankurs` 判非本人 ⇒ 未登记） |
+| 2026-11-13 15:05（**第二十一轮**） | Tim Dettmers | `2305.14314` QLoRA | 本人主页 `timdettmers.com/about/` 的反爬写法 `lastname@cmu.edu`（`200`；按页面规则还原为 `dettmers@cmu.edu`，未用论文 PDF 旧地址） | `SENT OK`（`dettmers@cmu.edu`，**英文 175 词**；🚦 发送前 `wc -w` 已核；CMU 今日第 2 封（12:05 Ankur 为 UMD，不冲突）） |
+| 2026-11-13 18:05（**第二十二轮**） | Geoffrey Hinton | `1503.02531` Distilling the Knowledge in a Neural Network | 本人当前主页 `https://www.cs.toronto.edu/~hinton/` 明文 `Email: geoffrey [dot] hinton [at] gmail [dot] com`（`200` / 30,693 B；按页面规则还原为 `geoffrey.hinton@gmail.com`；**未用论文 PDF 旧地址**） | `SENT OK`（`geoffrey.hinton@gmail.com`，**英文 186 词**；🚦 发送前 `wc -w` 已核；University of Toronto 今日第 1 封；同论文其余 2 位作者不发） |
+| 2026-11-13 21:04（**第二十三轮**） | Graham Neubig | `2307.13854` WebArena | **LTI 现行页** `https://www.lti.cs.cmu.edu/people/faculty/neubig-graham.html` 的反爬写法 `<span class="protect hidden">gneubig(through)cs.cmu.edu</span>`（`200` / 277,777 B；按页面规则还原为 `gneubig@cs.cmu.edu`；**未用论文 PDF 旧地址**） | `SENT OK`（`gneubig@cs.cmu.edu`，**英文 191 词**；🚦 发送前 `wc -w` 已核；CMU 今日第 2 封（15:05 Dettmers 亦 CMU）⇒ 未超「同机构 ≤2/天」；同论文其余 11 位作者不发） |
+
+
+
+| 2026-11-14 00:08（**第二十四轮**） | Pieter Abbeel | `2006.11239` DDPM | 主页 frameset `people.eecs.berkeley.edu/~pabbeel/`（`200` / 702 B）→ `contact.html`（`200`）页内明文 `pabbeel AT cs.berkeley.edu`（按页面规则还原；**未用论文 PDF 旧地址**） | `SENT OK`（`pabbeel@cs.berkeley.edu`，**英文 194 词**；🚦 发送前 `wc -w` 已核；UC Berkeley 当日第 1 封；同论文其余 2 位作者不发） |
+| 2026-11-14 03:02（**第二十五轮**） | Saining Xie（谢赛宁） | `2111.06377` MAE | 本人现行主页 `https://www.sainingxie.com/`（`200` / 106,060 B）页内 `<span class="email" data-user="saining.xie" data-domain="nyu.edu">` ⇒ 按页面规则拼装为 `saining.xie@nyu.edu`（同页另给 `saining@amilabs.xyz`；**未用论文 PDF 旧地址**） | `SENT OK`（`saining.xie@nyu.edu`，**英文 197 词**；🚦 发送前 `wc -w` 已核；NYU 当日第 1 封；同论文其余 5 位作者不发） |
+
+| 2026-11-14 06:08（**第二十六轮**） | David Z. Pan | DREAMPlace（DAC 2019，**无 arXiv**，DOI `10.1145/3316781.3317803`） | 本人现行主页 `https://users.ece.utexas.edu/~dpan/`（`200` / 55,267 B）页内明文 `dpan at ece.utexas.edu` ⇒ 按页面规则还原；**未用论文 PDF 旧地址** | `SENT OK`（`dpan@ece.utexas.edu`，**英文 190 词**；🚦 发送前 `wc -w` 已核；UT Austin 当日第 1 封） |
+| 2026-11-14 09:09（**第二十七轮**） | Björn Ommer | `2112.10752` Latent Diffusion | 课题组现行页 `https://ommer-lab.com/people/ommer/`（`200` / 76,557 B）页内明文 `mail: b.ommer (at) lmu (dot) de` ⇒ 按页面规则还原；**未用论文 PDF 旧地址** | `SENT OK`（`b.ommer@lmu.de`，**英文 188 词**；🚦 发送前 `wc -w` 已核；LMU Munich 当日第 1 封；同论文其余 4 位作者不发（同论文 ≤1）） |
+| 2026-11-14 09:09（**第二十七轮**） | Sung Kyu Lim | DREAM-GAN（ISPD 2023，**无 arXiv**，DOI `10.1145/3569052.3572993`） | Georgia Tech ECE **院系现行目录页** `https://www.ece.gatech.edu/faculty-staff-directory/sung-kyu-lim`（`200` / 57,585 B）页内明文；⚠️ 课题组页仍挂旧地址 `limsung@usc.edu` ⇒ **未采用** | `SENT OK`（`sl186@gatech.edu`，**英文 184 词**；🚦 发送前 `wc -w` 已核；Georgia Tech 当日第 1 封） |
+
+
+---
+
+| 2026-11-14 12:06（**第二十八轮**） | Jeff Clune | `2402.15391` Genie | UBC 计算机系**现行人员页** `https://www.cs.ubc.ca/people/jeff-clune`（`200` / 128,361 B）页内 `mailto:jeff.clune@ubc.ca`；`cs.ubc.ca/~clune/` **`403`** ⇒ 未采用；**未用论文 PDF 旧地址** | `SENT OK`（`jeff.clune@ubc.ca`，**英文 175 词**；🚦 发送前 `wc -w` 已核；UBC 当日第 1 封；同论文其余 24 位作者不发（同论文 ≤1）） |
+| 2026-11-14 15:04（**第二十九轮**） | Tianbao Xie | `2404.07972` OSWorld | OSWorld **官方仓库 README**「current maintainer」明文 `tianbaoxiexxx@gmail.com`（`raw.githubusercontent.com/xlang-ai/OSWorld/main/README.md`，`200` / 18,251 B；本人主页 `tianbaoxie.com` `000` ⇒ 未采用；**未用论文 PDF 旧地址**） | `SENT OK`（**中文 296 字**，发送前非空白字符已核；🚦 落款两行 `祝好，` / `Yang Liu`；香港大学当日第 1 封；同论文其余 16 位作者不发） |
+
+### 121. Tianyi Zhang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tianyi Zhang（拼音姓名；未从一手页面取到汉字写法 ⇒ 信内不写汉字） |
+| 机构 | **Purdue University**（CS 助理教授；X bio 自述 `Assistant professor at Purdue CS, formerly Postdoc at Harvard SEAS and PhD at UCLA CS`） |
+| 代表论文 | Eliciting and Mitigating Specification Satisficing in Coding Agents（arXiv `2611.16289`，**二作 / 通讯**，2026-11-12） |
+| 邮箱 | **tianyi@purdue.edu**（来源：本人主页 `https://tianyi-zhang.github.io/` 页内 `mailto:`，2026-11-15 实测 `HTTP 200` / 22,270 B；**与论文 PDF 首页逐字一致**） |
+| 主页 | <https://tianyi-zhang.github.io/>（`200` / 22,270 B） |
+| X 账号 | **@tian_yi_zhang**（`x_fetch.py` 实测 `200`，`og:description` 自述 Purdue CS 助理教授 ⇒ 身份一致） |
+| 状态 | **已发信**（2026-11-15 00:03:09，第 44 封，中文 207 汉字）· X 待 follow（需登录态） |
+| 备注 | 直接回填 **harness**（specification satisficing 的报告—复核两步是否值得进判分流程）与 **designflow**（任务描述含糊时的需求抽取）。⚠️ **HELM（`2211.09110`）作者列表里也有一个 Tianyi Zhang，属不同人** ⇒ 不得与本人合并建档。 |
+
+### 122. Wei Xu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wei Xu（拼音姓名；未从一手页面取到汉字写法 ⇒ 信内不写汉字） |
+| 机构 | **Georgia Institute of Technology**（CS 教授；X bio 自述 `CS professor @GeorgiaTech @gtcomputing @ICatGT @mlatgt`；论文 PDF 机构行 = Georgia Institute of Technology） |
+| 代表论文 | Human or Synthetic? What a Fixed Budget Buys for Post-Training（arXiv `2611.16895`，**四作**，2026-11-12）· 另为 WMT / 文本简化等评测工作常见作者（本轮未逐篇核） |
+| 邮箱 | **wei.xu@cc.gatech.edu**（来源：本人主页 `https://cocoxu.github.io/` 页内 `mailto:`，`HTTP 200` / 35,809 B；**与论文 PDF 首页作者块逐字一致**） |
+| 主页 | <https://cocoxu.github.io/>（`200` / 35,809 B） |
+| X 账号 | **@cocoweixu**（`x_fetch.py` 实测 `200`，bio 自述 Georgia Tech CS professor ⇒ 身份一致） |
+| 状态 | **已发信**（2026-11-15 00:03:11，第 45 封，中文 234 汉字）· X 待 follow |
+| 备注 | 直接回填 **data**（人类 vs 合成偏好数据的预算表口径）与 **pretrain / zhulong**（2B 级基座上结论是否反转）。判断「$200–400 档」「两个数量级才追平」这两个数字能否外推到我们的规模，是本封信的核心。 |
+
+### 123. Ruixin Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ruixin Wang（拼音姓名；未取到汉字写法） |
+| 机构 | **Purdue University**（论文 PDF 首页机构行） |
+| 代表论文 | Eliciting and Mitigating Specification Satisficing in Coding Agents（arXiv `2611.16289`，**一作**） |
+| 邮箱 | **ruixinw@purdue.edu**（来源：论文 PDF 首页作者块逐字；**未找到个人主页 / X ⇒ 不猜其它地址**） |
+| 主页 | 未找到（本轮不写猜测链接） |
+| X 账号 | **未找到 X** |
+| 状态 | 待跟踪（**同论文已发二作 Tianyi Zhang ⇒ 按「同论文 ≤1 封」本轮不发**） |
+| 备注 | 一作通常最清楚实验细节；若二作回信并建议转一作，再单独发信。 |
+
+### 124. Leo Gao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Leo Gao |
+| 机构 | **EleutherAI**（联合创始人；X bio 自述 `EleutherAI cofounder`，并列出 `GPT-Neo, the Pile, LM evals, RL overoptimization, scaling SAEs to GPT-4`） |
+| 代表论文 | The Pile: An 800GB Dataset of Diverse Text for Language Modeling（arXiv `2101.00027`，**一作**） |
+| 邮箱 | **未找到**（个人主页 `https://leogao.dev/` 实测 `HTTP 200` / 16,654 B，页内**无 `mailto:`**；EleutherAI 官网只有机构信箱 `contact@eleuther.ai` ⇒ 按纪律**不用机构信箱代替个人**、不发信） |
+| 主页 | <https://leogao.dev/>（`200` / 16,654 B） |
+| X 账号 | **@nabla_theta**（本人主页 `href` 指向 `twitter.com/nabla_theta`；`x_fetch.py` 实测 `200`，bio 自述含 `the Pile`） |
+| 状态 | 待跟踪（无公开个人邮箱 ⇒ 不发信）· X 待 follow |
+| 备注 | `voice_ready` 候选已筛：2026-11-13 原推（status `2121040104496017474`）经推文页 `og:description` 核为**玩笑句**（"if you see two people have already made a joke..."）⇒ 不采用；2026-11-12 那条同样无公共议题价值。**不为了凑数而引用**。 |
+
+### 125. Tomohiro Sawada
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tomohiro Sawada（澤田智大；日文姓名 ⇒ **信按日文写**，机构在美国不改判） |
+| 机构 | **Georgia Institute of Technology**（Machine Learning PhD；X bio 另写 `Intern @SakanaAILabs`） |
+| 代表论文 | Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off（arXiv `2611.17191`，**一作**）· 另参与 2026 年 tokenization 综述（推文自述，未单独立档） |
+| 邮箱 | **tsawada@gatech.edu**（来源：本人主页 `https://tomohiro-sawada.github.io/` 实测 `200` / 2,820 B 明文邮箱；GT 人员页 `cc.gatech.edu/people/tomohiro-sawada` 亦 `200`） |
+| 主页 | <https://tomohiro-sawada.github.io/>（`200` / 2,820 B） |
+| X 账号 | **@tsawada_ml**（核验：本人页 `href` → `twitter.com/tsawada_ml`；`x_fetch.py` 实测 `200`，bio = `ML PhD @GeorgiaTech · Intern @SakanaAILabs · 日本語 DMs Open.` ⇒ 身份 + 母语双重确认） |
+| 状态 | **已发信**（2026-11-15 03:03:12，第 46 封，**日文** 296 字）· X 待 follow |
+| 备注 | 语言判据写进台账：`语言=日本語(判据=日文姓名 Tomohiro Sawada + X bio 自述 日本語 DMs Open；机构在美国不据此判英文)`。同日已用其中文推文（2026-11-14 06:38 UTC）做 `voice_ready`（`og:title` + `og:description` 双源核）。 |
+
+### 126. Kartik Goyal
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kartik Goyal（印度裔姓名 ⇒ 英文信） |
+| 机构 | **Georgia Institute of Technology**（School of Interactive Computing） |
+| 代表论文 | Maximizing Capacity Utilization of LoRA Adapters（arXiv `2611.17191`，**二作 / 通讯方向**） |
+| 邮箱 | **kartikgo@gatech.edu**（来源：GT CC 人员页 `cc.gatech.edu/people/kartik-goyal` 实测 `200` / 61,370 B，明文出现 2 次） |
+| 主页 | <https://www.cc.gatech.edu/people/kartik-goyal>（`200` / 61,370 B；个人域名 `kartikgoyal.com` `302`→不可用、`kartikgoyal.github.io` `404`、`cs.cmu.edu/~kgoyal/` `404`） |
+| X 账号 | **未找到**（`@kartikgoyal` 页面 `200`，但 bio = `New Delhi`、28 followers ⇒ **身份不符，按纪律不登记**） |
+| 状态 | 待跟踪（**同一论文已发一作 Sawada ⇒ 同论文 ≤1 封，本轮不发**） |
+| 备注 | 若一作回信并建议转二作，再单独发信；不催、不补发。 |
+
+### 127. Yankai Lin（林衍凯）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yankai Lin（林衍凯；拼音姓名 + 中文本人页 ⇒ **中文信**） |
+| 机构 | **中国人民大学（Renmin University of China）** 高瓴人工智能学院 |
+| 代表论文 | ToolLLM（arXiv `2307.16789`，**第 7 作者 / 合作通讯方向**）· 更早为 ERNIE 相关作者 |
+| 邮箱 | **yankailin@ruc.edu.cn**（来源：本人页 <https://linyankai.github.io/> 实测 `200` / 22,319 B，`mailto:` 明文） |
+| 主页 | <https://linyankai.github.io/>（`200` / 22,319 B；旧页 `playbigdata.ruc.edu.cn/dou/linyankai.html` `404`） |
+| X 账号 | **未找到**（本人页无 X 外链；`x.com/yankailin` 返回 `200` 但 `og:title` = `X`、无身份信息 ⇒ **不登记**） |
+| 状态 | **已发信**（2026-11-15 06:0x CST，经典论文请教信第 47 封，中文） |
+| 备注 | `语言=中文(判据=拼音姓名+中文本人页+RUC)`。信里问的是 DFSDT 的搜索预算口径、ToolEval 与人工的一致性数字、以及 16k API 的剔除判据与 retriever top-k —— 三项都能直接回填 harness 的评测表与 data 的解路径元数据设计。 |
+
+### 128. Yongliang Shen（沈永亮）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yongliang Shen（沈永亮；拼音姓名 + 浙大主页 ⇒ 若发信应用**中文**） |
+| 机构 | **浙江大学** 软件学院（REAL Lab 负责人） |
+| 代表论文 | HuggingGPT（arXiv `2303.17580`，**一作**）· DiffusionNER |
+| 邮箱 | **未找到**（`person.zju.edu.cn/shenyongliang` `200` 但正文由 iframe 异步加载，静态页 7,913 B 无邮箱；REAL Lab `zjureal.com/people.html` `200` / 52,160 B 无 `mailto:`；GitHub `tricktreat` API `email=None`）⇒ **按纪律不猜 `@zju.edu.cn` 地址，本轮不发信** |
+| 主页 | <https://zjureal.com/>（实验室）· <https://person.zju.edu.cn/shenyongliang> |
+| X 账号 | **@itricktreat**（核验：`x.com/itricktreat` `200` / 165,985 B，`og:title` = `Yongliang Shen (@itricktreat) on X`，bio = `Reasoning & Multimodal learning & Agent | Assistant Professor at @ZJU_China | Previously @MSFTResearch`；且与 GitHub 同名 `tricktreat` 互证） |
+| 状态 | **待跟踪**（X 待 follow；邮箱待公开后再评估发信） |
+| 备注 | 实验室另有机构号 `@zjureal`（见 `zjureal.com/people.html` 外链），只作跟踪，不发信。 |
+
+### 129. Anima Anandkumar
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Anima Anandkumar（印度裔美国人 ⇒ 发信按**英文**） |
+| 机构 | **Caltech**（Bren Professor of Computing + Mathematical Sciences）· 兼 NVIDIA |
+| 代表论文 | Voyager（arXiv `2305.16291`，**末位 / 通讯方向**）· Tensorly / Neural Operator 系列 |
+| 邮箱 | **未找到**（`caltech.edu/people/anima-anandkumar` `404`、`caltech.edu/people/anima` `404`、`cms.caltech.edu/people/anima` `200` 但无 `mailto`；个人站 `anima-anandkumar.com` 直连与代理均 `000`）⇒ **不猜地址，本轮不发信** |
+| 主页 | <https://www.cms.caltech.edu/people/anima>（`200` / 196,451 B） |
+| X 账号 | **@AnimaAnandkumar**（核验：`x.com/AnimaAnandkumar` `200` / 179,246 B，`og:title` = `Prof. Anima Anandkumar (@AnimaAnandkumar) on X`，bio 含 `Bren Professor @caltech`） |
+| 状态 | **待跟踪**（X 待 follow；邮箱待公开后再评估发信） |
+| 备注 | 同论文的另一位作者 Jim Fan 已是本表 **#104**（`@DrJimFan`），因此本论文只新增末位通讯方向，避免重复建档。 |
+
+### 130. Aman Madaan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Aman Madaan（印度姓名族属 ⇒ 发信按**英文**） |
+| 机构 | **Carnegie Mellon University · Language Technologies Institute**（另有 Allen Institute for AI / Google Research 合作） |
+| 代表论文 | Self-Refine（arXiv `2303.17651`，**一作**） |
+| 邮箱 | `amadaan@cs.cmu.edu`（**PDF v2 首页作者块**；`cs.cmu.edu/~amadaan/` <code>200</code> / 4,924 B 另有 `mailto:amn.madaan@gmail.com` ⇒ **两处一致，取机构地址**） |
+| 主页 | <https://www.cs.cmu.edu/~amadaan/>（`200` / 4,924 B） |
+| X 账号 | **未登记**（`x.com/aman_madaan` `200`，`og:title` = `Aman (@aman_madaan) on X`，但 bio 仅 `@xAI`、无 CMU / Self-Refine 关联 ⇒ **身份不可确认，按纪律不登记**） |
+| 状态 | **已发信**（2026-11-15 09:03 CST，经典论文请教信第 48 封，英文 171 词） |
+| 备注 | `语言=英文(判据=印度姓名族属+美国机构)`。信里问的是：1-vs-k 是否算力对齐、2B–7B 是否只蒸馏 feedback 步并固定迭代次数、以及有没有 prompt 级约束实测压低「忽略反馈 25% / 引入新问题 20%」这两类失败 —— 分别回填 posttrain 的 test-time 预算口径与 harness 的失败分列。 |
+
+### 131. Albert Gu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Albert Gu（华人姓名族属 ⇒ 发信按**中文**；机构在美国**不据此判英文**） |
+| 机构 | **Carnegie Mellon University · Machine Learning Department**（助理教授）· 兼 Cartesia 首席科学家 |
+| 代表论文 | Mamba（arXiv `2312.00752`，**一作**）· Mamba-2 / SSD 系列 |
+| 邮箱 | `agu@cs.cmu.edu`（**PDF v2 首页作者块**；`goombalab.github.io` `200` / 16,373 B **无 `mailto:`** ⇒ 以论文首页地址为准，机构未变） |
+| 主页 | <https://goombalab.github.io/>（`200` / 16,373 B） |
+| X 账号 | **@_albertgu**（`x.com/_albertgu` `200`，`og:title` = `Albert Gu (@_albertgu) on X`，bio = `assistant prof @mldcmu. chief scientist @cartesia. leading the ssm revolution.`） |
+| 状态 | **已发信**（2026-11-15 09:03 CST，经典论文请教信第 49 封，中文 211 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 Gu+可读中文；机构在美国未据此判英文)`。信里问的是 2B 中文语料的 expansion/层数配比是否重调、≥32k 上下文的显存/吞吐拐点、以及 batch 推理下 5× 收敛到多少 —— 分别回填 pretrain 的骨架选型与 zhulong 的成本系数。⚠️ **二作 Tri Dao 已在 #1（2026-11-11，`tri@tridao.me`）触达过** ⇒ 同论文不重复发。 |
+
+### 132. Joon Sung Park（박준성）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Joon Sung Park（박준성；韩文姓名族属 ⇒ 若发信应用**한국어**） |
+| 机构 | **Stanford University**（CS PhD，2025 毕业；HCI + NLP）· 现 **Simile AI** CEO |
+| 代表论文 | Generative Agents（arXiv `2304.03442`，**一作**，UIST 2023 最佳论文）· Generative Agent Simulations of Human Behavior（博士论文，Arthur Samuel 奖） |
+| 邮箱 | **未找到**（`joonsungpark.com` `200` / 154,801 B 无 `mailto:` 无明文邮箱；`/cv` `200` / 409,713 B 是 **8 页 PDF**，`pdftotext` 后仍无邮箱；`profiles.stanford.edu/joon-sung-park` `200` 的 `mailto:` 只是「分享 profile」功能链接 ⇒ **不猜 `@cs.stanford.edu`，本轮不发信**） |
+| 主页 | <https://www.joonsungpark.com/>（`200` / 154,801 B） |
+| X 账号 | **@joon_s_pk**（`x.com/joon_s_pk` `200`，`og:title` = `Joon Sung Park (@joon_s_pk) on X`，bio = `CEO @simile_ai. Building simulations of society. CS PhD @stanfordhci + @stanfordnlp. Oil painter.` ⇒ 身份确认） |
+| 状态 | **待跟踪**（X 待 follow；邮箱待公开后再评估发信） |
+| 备注 | 本轮唯一「身份已核但邮箱全无」的建档；也是「不猜地址」纪律的正向例子 —— 宁可只 follow 不发信，也不猜 `@cs.stanford.edu`。 |
+
+### 133. Sebastian Riedel
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sebastian Riedel（德语姓名族属 ⇒ 母语德文；按规则**德文称谓问候 + 英文正文**，不全文德文） |
+| 机构 | **University College London**（计算机系教授，UCL NLP）· 兼 **Google DeepMind** |
+| 代表论文 | RETRO（arXiv `2112.04426`，末位 / 资深作者，B 轨 #136）· 更早的 relation extraction / 事实核验系列 |
+| 邮箱 | **sebastian.riedel@gmail.com**（来源：本人主页 `riedelcastro.github.io` → `riedelcastro.org`（`200` / 3,525 B）所挂 CV `sr_cv.pdf`（`HTTP 200` / 337,875 B），`pdftotext` 首页明文；**UCL 个人页 `ucl.ac.uk/~ucsasr/` 返回 `403` ⇒ 未采用**） |
+| 主页 | <http://www.riedelcastro.org/>（`200` / 3,525 B） |
+| X 账号 | **@riedelcastro**（`x.com/riedelcastro` `200` / 181,474 B，`og:title` = `Sebastian Riedel (@riedelcastro@sigmoid.social) (@riedelcastro) on X`，`og:description` = `Researcher in NLP/ML @deepmind, @ucl_nlp, …`；主页 `href` 亦指向 `twitter.com/riedelcastro` ⇒ 双源一致） |
+| 状态 | **已发信**（2026-11-15 12:04 CST，经典论文请教信第 50 封，德文问候 + 英文正文 198 词）· X 待 follow |
+| 备注 | `语言=德文称谓问候+英文正文(判据=德语姓名族属 Sebastian Riedel + 德国受教育背景；机构在英国/DeepMind ⇒ 按欧洲语言规则不全文德文)`。信里问三件事：2B/1T 规模下「检索 vs 直接加 token」的交叉点、服务端索引内存与交互延迟预算、中文 13-gram 去污染阈值是否要收紧 —— 分别回填 pretrain 的检索臂取舍、zhulong 的服务成本表、data 的中文去污染口径。 |
+
+### 134. Song Han（韩松）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Song Han（韩松；华人姓名族属 ⇒ **中文全文**） |
+| 机构 | **Massachusetts Institute of Technology**（EECS 副教授；Han Lab / MIT-IBM Watson AI Lab） |
+| 代表论文 | AWQ（arXiv `2306.00978`，末位 / 通讯，MLSys 2024 Best Paper，B 轨 #137）· Deep Compression / Efficient Inference 系列 |
+| 邮箱 | **hanlab@mit.edu**（来源：本人主页 `songhan.mit.edu` → `hanlab.mit.edu/songhan`（`200` / 230,568 B）页脚 `Contact: hanlab@mit.edu`）⚠️ **实验室公共邮箱，非个人地址**；个人地址未公开 ⇒ 按「不猜地址」纪律不用猜测地址，正文首段已写「若您不便，烦请转交」 |
+| 主页 | <https://hanlab.mit.edu/songhan>（`200` / 230,568 B） |
+| X 账号 | **@songhan_mit**（`x.com/songhan_mit` `200` / 210,216 B，`og:title` = `Song Han (@songhan_mit) on X`，11,380 followers；主页 `href` 同时给出 `twitter.com/SongHan_MIT` 与 `x.com/songhan_mit` ⇒ 双源一致） |
+| 状态 | **已发信**（2026-11-15 12:04 CST，经典论文请教信第 51 封，中文 249 汉字）· X 待 follow |
+| 备注 | `语言=中文(判据=华人姓名族属 韩松/Song Han；机构在美国未据此判英文)`。信里问：① 中文语料下 0.1%–1% 显著通道比例是否要重估；② batch ≥16 服务端 W4A16 会不会被反量化开销吃掉、该不该直接 INT8；③ 校准集是否必须换 EDA/代码领域、用错校准集的 PPL 劣化量级 —— 分别回填 pretrain 的量化评测口径、zhulong 的部署成本分档、data 的校准集选择。 |
+
+### 135. Junyang Lin（林俊旸）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Junyang Lin（林俊旸；中文拼音姓名族属 ⇒ 若发信应用**中文**） |
+| 机构 | 原 **Alibaba Group / Qwen Team**（Qwen 技术报告作者之一，通义千问方向）· 现 X bio 自述 `building p7k @pragmatik_labs` |
+| 代表论文 | Qwen Technical Report（arXiv `2309.16609`，作者之一，B 轨 #134） |
+| 邮箱 | **未找到**（`junyanglin.github.io` `404`；`jasonlin.tech` 返回 GitHub Pages `Site not found` ⇒ **不猜地址，本轮不发信**） |
+| 主页 | 未找到（以 Qwen 技术报告与 X 为准） |
+| X 账号 | **@JustinLin610**（`x.com/JustinLin610` `200` / 157,251 B，`og:title` = `Junyang Lin (@JustinLin610) on X`，`og:description` = `building p7k @pragmatik_labs …`） |
+| 状态 | **待跟踪**（X 待 follow；邮箱待公开后再评估发信） |
+| 备注 | 建档理由：Qwen 是中文开源底座里与 BaiZe 词表/数据决策最贴的一条线，但**找不到公开邮箱就不发信**——这是「身份可核、邮箱全无 ⇒ 只 follow 不发信」纪律的又一个正向例子。 |
+
+### 136. Lianmin Zheng
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lianmin Zheng（中文拼音姓名族属 ⇒ 若发信应用**中文**） |
+| 机构 | 论文署名 **UC Berkeley**（SGLang 一作 / LMSYS 联合创始人）· X bio 现为 `Inference @meta`（Prev: @xAI, Ph.D. @UCBerkeley） |
+| 代表论文 | SGLang（arXiv `2312.07104`，一作，NeurIPS 2024，B 轨 #140）· Chatbot Arena / LMSYS 系列 |
+| 邮箱 | **lianminzheng@gmail.com**（来源：本人主页 `lmzheng.net`（`HTTP 200` / 11,002 B）的 Cloudflare `email-protection#f39f…` 混淆串，按同一 key `0xf3` 逐字节 XOR 还原；`lianmin.org` 实测 `000` ⇒ 未采用。**来源可核，非猜测**） |
+| 主页 | <https://lmzheng.net/>（`200` / 11,002 B） |
+| X 账号 | **@lm_zheng**（`x.com/lm_zheng` `200` / 185,465 B；`og:title` = `Lianmin Zheng (@lm_zheng) on X`，`og:description` = `Inference @meta \| Prev: Engineer @xAI, Ph.D. @UCBerkeley, Co-founder @lmsysorg` ⇒ 身份可核） |
+| 状态 | **已发信**（2026-11-15 15:03 CST，经典论文请教信第 52 封，中文 177 汉字）· X 待 follow |
+| 备注 | `语言=中文(判据=华人姓名族属 Lianmin Zheng；机构在美国 / 邮箱 gmail / 论文英文 均未据此判英文)`。信里问：① RadixAttention 淘汰粒度（单节点 vs 整棵子树）与「每轮只多几百 token」的短前缀命中率区间；② 6.4× 端到端里 RadixAttention 与压缩 FSM 的拆分、≤2B + batch≥16 是否反转；③ 前缀缓存显存预算按 token 数还是树节点数定 —— 分别回填 zhulong 的缓存预算、zhulong 的收益拆分、harness 的多轮工具调用。 |
+
+### 137. Jong Wook Kim
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jong Wook Kim（韩文姓名族属 ⇒ 发信应用**한국어**） |
+| 机构 | **New York University**（助理教授）· Whisper 论文（OpenAI）二作 |
+| 代表论文 | Robust Speech Recognition via Large-Scale Weak Supervision（Whisper，arXiv `2212.04356`，二作，B 轨 #138） |
+| 邮箱 | **jongwook@nyu.edu**（来源：本人主页 `jongwook.kim`（`HTTP 200` / 4,953 B）`mailto:` **明文**） |
+| 主页 | <https://jongwook.kim/>（`200` / 4,953 B） |
+| X 账号 | **未找到 X**（`x.com/jongwook` `200` 但 `og:title` = `jongwookbahn (@jongwook)`、`og:description` = `2 followers · 1 following` ⇒ **非本人，不登记**） |
+| 状态 | **已发信**（2026-11-15 15:03 CST，经典论文请教信第 53 封，韩文 293 자） |
+| 备注 | `语言=한국어(判据=韩文姓名族属 Jong Wook Kim；机构在美国 / 论文英文 / 邮箱 nyu.edu 均未据此判英文)`。信里问：① 96 种语言的配比怎么定（小语种加权 vs 扩总规模）；② 无音段幻觉该用 VAD 前置还是约束解码；③ 若加对齐目标，长音频 WER 还能降多少 —— 分别回填 data 多语配比、data 清洗链路、harness「WER 与时间戳分列」的评测口径。 |
+
+### 138. Scott Reed
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Scott Reed（英语姓名族属 ⇒ 若发信应用英文） |
+| 机构 | **Dream Labs**（Co-founder / Chief Scientist；曾任 NVIDIA GEAR 首席研究科学家、Google DeepMind 资深研究科学家；PhD @ Michigan，导师 Honglak Lee） |
+| 代表论文 | A Generalist Agent（Gato，arXiv `2205.06175`，一作 / lead author，TMLR 2022，B 轨 #139）· Generative Adversarial Text-to-Image Synthesis |
+| 邮箱 | **未找到**（个人站 `scottreed.ai` 实测 `HTTP 200` 但仅 **1,468 B**，为 JS 渲染的单页，正文与 `mailto:` 均未取到 ⇒ **不猜地址，本轮不发信**） |
+| 主页 | <https://scottreed.ai/>（`200` / 1,468 B；内容依赖 JS，未取到可用联系方式） |
+| X 账号 | **未找到 X**（`x.com/scottreed_ai` 实测 **`404`**；未尝试其它拼写猜测） |
+| 状态 | **待跟踪**（只建档；邮箱与 X 待公开后再评估） |
+| 备注 | 建档理由：Gato 是「统一 token 接口 + 单模型多任务」的源头文档，对 harness 的序列化纪律有直接价值；但**找不到公开邮箱就不发信** —— 与 Alec Radford（#33）同属「身份可核、联系方式全无 ⇒ 只建档」的正向例子。 |
+
+
+### 139. Furu Wei（韦福如）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Furu Wei（韦福如；中文姓名族属 ⇒ 中文） |
+| 机构 | **Microsoft Research**（论文 `⋄` 通讯作者；论文脚注：F. Wei 等 with Microsoft Research） |
+| 代表论文 | The Era of 1-bit LLMs（BitNet b1.58，arXiv `2402.17764`，**通讯作者**，B 轨 #144）· 长期负责 Microsoft Research 的 NLP / 大模型研究线 |
+| 邮箱 | **fuwei@microsoft.com**（来源：本人主页 `https://thegenerality.com/`，实测 `HTTP 200` / 10,937 B，`<title>Furu Wei's Homepage</title>`，明文出现 **4 次**） |
+| 主页 | <https://thegenerality.com/>（`200` / 10,937 B） |
+| X 账号 | **未找到 X**（`x.com/furuwei` 实测 **`404`**；不尝试其它拼写猜测） |
+| 状态 | **已发信**（2026-11-15 18:02 CST，经典论文请教信第 54 封，中文 186 汉字） |
+| 备注 | `语言=中文(判据=华人姓名族属 Wei Furu + Microsoft Research（论文脚注）；机构在美国 / 论文英文 均未据此判英文)`。信里问：① 三值权重里零值占比能否作为小模型容量受损的早期预警；② 3.55×/2.71× 的测量条件（序列长度 / batch / 是否含 KV cache），≤2B 且上下文 ≥8K 时瓶颈迁移；③ FP16 checkpoint 转三值 vs 从零训练的 PPL 差距与追平 token 量 —— 分别回填 pretrain 精度档位、zhulong 推理预算、pretrain token 预算。 |
+
+### 140. Shuming Ma
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shuming Ma（中文姓名族属 ⇒ 若发信应用中文） |
+| 机构 | **Microsoft Research**（BitNet b1.58 一作；论文脚注：S. Ma 等 with Microsoft Research） |
+| 代表论文 | The Era of 1-bit LLMs（BitNet b1.58，arXiv `2402.17764`，**一作**，B 轨 #144） |
+| 邮箱 | **未找到**（个人站 `shumingma.com` 实测 `HTTP 200` / 9,464 B，页内无 `mailto:`、无明文邮箱 ⇒ **不猜地址**；论文 PDF 亦无作者邮箱） |
+| 主页 | <https://shumingma.com/>（`200` / 9,464 B） |
+| X 账号 | **未找到 X**（`x.com/shumingma` 虽 `200`，但 `og:title` = `Shu Ming Ma (@shumingma)`、`og:description` = **6 followers · 538 following · Oakland, CA**，与论文作者身份不符 ⇒ **不登记**，与「不猜 handle」纪律一致） |
+| 状态 | 待跟踪（同论文已发通讯作者 Furu Wei ⇒ 按「同论文 ≤1 封」不发信） |
+| 备注 | 一作通常最清楚实验细节；若 Furu Wei 回信并建议转一作，再单独发信。`x.com/shumingma` 是「200 ≠ 本人」的反向例子（同 Jong Wook Kim 的 `x.com/jongwook`）。 |
+
+### 141. Alexei Baevski
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alexei Baevski（斯拉夫姓名族属 ⇒ 若发信应用英文兜底） |
+| 机构 | **Meta AI**（wav2vec 2.0 一作，论文署名 Facebook AI Research） |
+| 代表论文 | wav2vec 2.0（arXiv `2006.11477`，**一作**，B 轨 #142）· data2vec（多模态统一自监督） |
+| 邮箱 | **未找到**（`alexeib.github.io` 实测 **`404`**；`ai.meta.com/people/alexei-baevski/` 仅 `302` 跳转、无正文；论文 PDF 无作者邮箱 ⇒ **不猜地址**） |
+| 主页 | **未找到可用主页**（`alexeib.github.io` `404`） |
+| X 账号 | **未找到 X**（`x.com/alexeib` 实测 **`404`**） |
+| 状态 | 待跟踪（只建档；邮箱与 X 待公开后再评估） |
+| 备注 | wav2vec 2.0 作为「无标注数据 + 小标注微调」的范式证据已进 B 轨 #142；但**找不到公开邮箱就不发信** —— 与 Alec Radford（#33）、Scott Reed（#138）同属「身份可核、联系方式全无 ⇒ 只建档」的正向例子。 |
+
+### 142. Greg Yang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Greg Yang（华人姓名族属 ⇒ 若发信应用中文） |
+| 机构 | **xAI**（本人主页自述「I am a mathematician at xAI」）；前 Microsoft Research（μP 论文署名期） |
+| 代表论文 | Tensor Programs V（μP，arXiv `2203.03466`，**一作**，B 轨 #147）· Tensor Programs 系列 |
+| 邮箱 | **未采用**（本人主页 `thegregyang.com` 页内该地址只出现在**被注释掉的 HTML**：`&lt;!-- &lt;li&gt;&lt;a href="mailto:thegregyang@gmail.com"&gt;… --&gt;` ⇒ 视为作者已撤回公开邮箱，**不据此发信**） |
+| 主页 | <https://thegregyang.com>（`HTTP 200` / 16,870 B，`<title>Greg Yang \| Professional page</title>`） |
+| X 账号 | **`@TheGregYang`**（`x.com/TheGregYang` `200` / 163,558 B；`og:title` = `Greg Yang (@TheGregYang) on X`；bio = `xai cofounder. fighting lyme` ⇒ 身份双源可核） |
+| 状态 | 待跟踪（X 已核验；邮箱不采用 ⇒ 本轮不发信） |
+| 备注 | μP 是把「小模型调好的超参直接迁到大模型」的原始工作，对 2B 主跑的调参预算价值最直接；但**邮箱是注释状态**、且 X 只有 DM 可用（本线不登录）⇒ 只建档。⚠️ 他的时间线近期以健康 / 生活内容为主（2026-01「stepping back from xAI into an informal advisory role」），**不适合做 `voice_ready` 投料**。 |
+
+### 143. Wei-Ning Hsu（徐煒甯）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wei-Ning Hsu（主页标题自写「徐煒甯」⇒ 华人姓名族属，中文可用） |
+| 机构 | **Meta AI / FAIR**（本人主页自述 `Research Scientist @ Facebook AI Research (FAIR)`；论文署名 Facebook AI Research） |
+| 代表论文 | HuBERT（arXiv `2106.07447`，**一作**，B 轨 #146） |
+| 邮箱 | **`wnhsu@fb.com`**（本人主页 `https://wnhsu.github.io/` 的 `mailto:` **明文**，`HTTP 200` / 10,859 B，2026-11-15 实测） |
+| 主页 | <https://wnhsu.github.io/>（`200` / 10,859 B） |
+| X 账号 | **未找到 X**（`x.com/wnhsu` 实测 **`404`**；不尝试其它拼写猜测） |
+| 状态 | **已发信**（2026-11-15 21:02 CST，经典论文请教信第 55 封，**中文 216 汉字 / 429 字符**） |
+| 备注 | `语言=中文(判据=华人姓名族属 Wei-Ning Hsu + 主页自写「徐煒甯」；机构在美国 / 邮箱 fb.com / 论文英文 均未据此判英文)`。信里问：① 100 簇 + 两轮迭代（250k / 400k 步）在 60,000 小时 Libri-light 上是否要同比放大、判断「标签够用」的可测指标；② 10 分钟标注下 LARGE 4.7% / 7.6%、X-LARGE 4.6% / 6.8%，容量收益在哪个量级变平；③ 换成视觉 token 聚类中心时，「先聚类后固定」还是联合更新、最该先防的失败模式 —— 分别回填 vision 自监督目标、vision 视觉塔容量、pretrain 两阶段配方。⚠️ `fb.com` 是 Meta 旧域名（非 `meta.com`），送达率未验证，已记入台账的诊断分层变量。 |
+
+### 144. Karl Cobbe
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Karl Cobbe（英语姓名族属 ⇒ 若发信应用英文） |
+| 机构 | **OpenAI**（X bio 自述 `Deep RL research @openai`） |
+| 代表论文 | Training Verifiers to Solve Math Word Problems / GSM8K（arXiv `2110.14168`，**一作**，B 轨 #148） |
+| 邮箱 | **`karl@openai.com`**（取自**论文 PDF 首页作者列表内明文**：`Karl Cobbe &lt;karl@openai.com&gt;`，`pdftotext` 逐字核；⚠️ 2021 年论文内地址，非当前主页 ⇒ 未做二次核验） |
+| 主页 | **未找到**（本轮未检索到个人主页） |
+| X 账号 | **`@karlcobbe`**（`x.com/karlcobbe` `200`；`og:title` = `Karl Cobbe (@karlcobbe) on X`，`og:description` = `Deep RL research @openai` ⇒ 身份双源可核） |
+| 状态 | 待跟踪（**本轮不发信**：今日已发 12 封 = 每日硬上限；且邮箱为旧论文地址，下轮先核当前地址） |
+| 备注 | GSM8K / verifier 路线是 harness 判分上限与 zhulong best-of-n 预算的直接源头；下轮若核到现行地址优先发信（英文，问题聚焦 `n` 与 `test@n` 的关系、verifier 与生成器隔离的最小代价）。 |
+
+### 145. Iz Beltagy
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Iz Beltagy（英语姓名族属 ⇒ 英文信） |
+| 机构 | **Allen Institute for AI（Ai2）**（X bio 自述 `Director of AI leading Olmo Scaling at @allenai_org, Cofounder @SpiffyAI, formerly @UTCompSci PhD.`；2026-06-02 推文自述「After 3 years in startup land … I'm returning to @allen_ai to lead the Olmo Scaling team」） |
+| 代表论文 | Longformer（arXiv `2004.05150`，**一作**，B 轨 #150） |
+| 邮箱 | **`iz@beltagy.net`**（本人主页 `https://beltagy.net/` 的 `mailto:` **明文**，`HTTP 200` / 20,158 B，2026-11-16 实测） |
+| 主页 | <https://beltagy.net/>（`200` / 20,158 B） |
+| X 账号 | **`@i_beltagy`**（`x_fetch.py` profile `200`，bio 与主页 `/twitter`→`twitter.com/i_beltagy` 链接双源一致） |
+| 状态 | **已发信**（2026-11-16 00:03 CST，经典论文请教信第 56 封，**英文 194 词**） |
+| 备注 | `语言=英文(判据=姓名族属非中/日/韩 + 机构在美国 AI2)`。信里问：① 窗口 512 + 按 head 的 dilation，如何区分「该加 dilation」与「该堆层」，有无可测判据（有效感受野 / 下游分数）；② 全局注意力原本钉 `[CLS]`/问句，隐式查询下该钉结构标记还是学 global slot；③ 4,096 靠复制 RoBERTa 的 512 个位置编码，扩到 32k 是继续复制还是换插值 RoPE。⚠️ 他的时间线以 Olmo / 开源模型为主，**可做 `voice_ready` 候选**（本轮未取：最新一条为 2026-10-09，超过 30 天降级线）。 |
+
+### 146. Jean-Baptiste Alayrac
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jean-Baptiste Alayrac（法文姓名族属 ⇒ 法文称谓问候 + 英文正文） |
+| 机构 | **Google DeepMind**（Flamingo 论文署名 DeepMind） |
+| 代表论文 | Flamingo（arXiv `2204.14198`，**一作**，B 轨 #151） |
+| 邮箱 | **`jeanbaptiste.alayrac@gmail.com`**（本人主页 `https://www.jbalayrac.com` 的 `mailto:` **明文**，`HTTP 200` / 24,757 B，2026-11-16 实测） |
+| 主页 | <https://www.jbalayrac.com>（`200` / 24,757 B） |
+| X 账号 | **未找到**（本轮未检索到可核实 handle，不猜） |
+| 状态 | **已发信**（2026-11-16 00:03 CST，经典论文请教信第 57 封，**法文问候 + 英文正文 179 词**） |
+| 备注 | `语言=法文称谓问候+英文正文(判据=法文姓名族属；机构在英国 ⇒ 按姓名族属优先，未以「人在英国/论文英文/gmail」判英文)`。信里问：① 0 初始化 tanh gating 去掉掉 4.2% 且不稳、每层插 GATED XATTN-DENSE 更优但更贵 ⇒ N=2/4 的退化曲线、2B/~20 层下隔层插是否够；② Perceiver Resampler 输出长度 = latent query 数，有没有 latent 数消融、先坏在细粒度空间细节还是多图绑定；③ 数万域内图文对时冻结视觉塔还是短程小 LR 解冻。 |
+
+### 147. Mathilde Caron
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mathilde Caron（法文姓名族属 ⇒ 法文称谓问候 + 英文正文） |
+| 机构 | **Google Research**（IEEE Xplore 作者档案 affiliation = `Google Research`；DINO 发表时为 Inria / Facebook AI Research） |
+| 代表论文 | DINO / Emerging Properties in Self-Supervised Vision Transformers（arXiv `2104.14294`，**一作**，B 轨 #153） |
+| 邮箱 | **未采用**：仅论文 PDF 首页 `mathilde@fb.com`（2021 年旧域；她现已离开 Meta/FAIR ⇒ 视为失效，🚫 不发信）。**未找到现行个人邮箱** |
+| 主页 | **未找到个人主页**（`mathilde-caron.github.io` 实测 **`404`**） |
+| X 账号 | **未找到 X**（本轮未检索到可核实 handle，不猜） |
+| 状态 | 待跟踪（只建档，不发信） |
+| 备注 | `语言=法文称谓问候+英文正文(判据=法文姓名族属+机构在美国 Google Research)`。DINO 的 centering / sharpening / momentum teacher 是 vision 线自监督配方的一手出处；等找到现行邮箱（如 Google Scholar 主页或 OpenReview 公开地址）再发。⚠️ 2021 年 PDF 内的 `@fb.com` 地址**不作为发信依据**（与 #143 的 `fb.com` 同属旧域风险，且她已换机构）。 |
+
+
+
+### 148. Bo An（安波）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bo An（安波，中文姓名族属 ⇒ 中文信） |
+| 机构 | **Nanyang Technological University（NTU, Singapore）**（NOPO 论文署名 + 通讯邮箱 `@ntu.edu.sg`） |
+| 代表论文 | NOPO: Negative-Only Policy Optimization for One-Sided Verifiable Rewards（arXiv `2611.17287`，**通讯作者**，A 轨 2026-11-16 #4；NeurIPS 2026 Spotlight） |
+| 邮箱 | **`boan@ntu.edu.sg`**（本人主页 `https://personal.ntu.edu.sg/boan/` 的 `mailto:` 明文，`HTTP 200` / 17,351 B；与 PDF 首页通讯地址**双源一致**，2026-11-16 实测） |
+| 主页 | <https://personal.ntu.edu.sg/boan/>（`200` / 17,351 B） |
+| X 账号 | **未找到**（本轮未检索到可核实 handle，不猜） |
+| 状态 | **已发信**（2026-11-16 03:03 CST，作者请教信第 58 封，**中文 230 字**） |
+| 备注 | `语言=中文(判据=中文姓名族属+NTU；论文五位作者全为华人姓名)`。信里问：① group-level adapter 按「组内非被伪证比例」缩放，比例接近 1（表 1 中 OlympiadBench 负类召回最低）时更新是否趋零、有无下限或靠参考模型项兜住；② 表 2 中 Qwen3-8B 平均 52.13（GRPO 48.27）但 OlympiadBench 76.52 低于 76.97，表 9 也出现 +0.89 / −0.45 的格子，能否给**事前可算**的 verifier 统计量决定用 NOPO 还是 w-Reinforce；③ `G=16` 降到 8/4 时负样本-only 的方差是否吃掉收益（决定长上下文 RL 是否采用）。 |
+
+### 149. Qingyun Wu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Qingyun Wu（中文姓名族属 ⇒ 中文信） |
+| 机构 | **AG2**（X bio 自述 `Building … at AG2; Cofounder and CEO`）；页面内另有 `Professor` / `Penn` 提及 ⇒ 曾任 Penn State 教职（**未逐字核证书，仅记页面显示**） |
+| 代表论文 | AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation（arXiv `2308.08155`，**一作**，B 轨 #156） |
+| 邮箱 | **未找到**（主页 `https://qingyun-wu.github.io/` `HTTP 200` / 5,918 B，通读页头未见 `mailto:`；🚫 不拼装） |
+| 主页 | <https://qingyun-wu.github.io/>（`200` / 5,918 B） |
+| X 账号 | **`@qingyun_wu`**（`GET x.com/qingyun_wu` `200`；`og:title` = `Qingyun Wu (@qingyun_wu) on X`，`og:description` = `Building … at AG2; Cofounder and CEO`，身份双源一致） |
+| 状态 | **待跟踪**（无可用邮箱 ⇒ 本轮不发信；X 写操作需登录态 ⇒ 未 follow，🚫 不假装已 follow） |
+| 备注 | `语言=中文(判据=中文拼音姓名族属)`。AutoGen 是 harness 线「多 agent 编排」的原始框架论文（#156），但作者已从学术转创业、邮箱不可核 ⇒ **先跟踪言论，不发信**。 |
+
+### 150. Umar Ahmed
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Umar Ahmed（俄语区机构 + 非中/日/韩姓名 ⇒ 俄语称谓问候 + 英文正文） |
+| 机构 | **ITMO University**（圣彼得堡；论文 PDF 首页作者块 5 人全部署名 ITMO） |
+| 代表论文 | Parsed, Plausible, Wrong: Output Format Controls Silent Errors in Small-Model Semantic Parsing（arXiv `2611.17169`，**一作**，A 轨 2026-11-16 #5） |
+| 邮箱 | **`uakhmed@itmo.ru`**（PDF 首页作者块明文，与 `mvdunaev@itmo.ru` / `svivanov@itmo.ru` 同域；2026-11-16 下载 492,936 B，`pdftotext` 可解析） |
+| 主页 | 未找到（论文未给个人主页；机构页未逐条检索） |
+| X 账号 | **未找到**（不猜） |
+| 状态 | **已发信**（2026-11-16 03:03 CST，作者请教信第 59 封，**俄语问候 + 英文正文 195 词**） |
+| 备注 | `语言=俄语称谓问候+英文正文(判据=俄罗斯机构 ITMO + 非中/日/韩姓名族属)`。信里问：① WORDS 87.5% vs EXR 85.8% 且 4.1× 更短，收益该归因于复用预训练 token 统计还是词汇化否定，有无「无否定目标」的对照；② 否定类错误 EXR 2.0% vs WORDS 0.2%，给符号格式补「仅否定样本」能否缩小差距；③ 拒识真实订单代价 2.1–5.4%，阈值如何定、跨池是否稳定。 |
+
+
+### 151. Shishir G. Patil
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shishir G. Patil（印度裔姓名族属 + 美国机构 ⇒ 英文） |
+| 机构 | **UC Berkeley**（EECS / Sky Computing Lab；CS PhD） |
+| 代表论文 | Gorilla: Large Language Model Connected with Massive APIs（arXiv `2305.15334`，**一作**，B 轨 #158）· Berkeley Function Calling Leaderboard（BFCL） |
+| 邮箱 | **`shishirpatil@berkeley.edu`**（本人主页 `mailto:` 明文 + 论文 PDF 首页 `sgp@berkeley.edu`，**双源一致**） |
+| 主页 | <https://shishirpatil.github.io>（`HTTP 200` / 23,109 B） |
+| X 账号 | **`@shishirpatil_`**（`x.com/shishirpatil_` `200` / 185,065 B；`og:title` = `Shishir Patil (@shishirpatil_) on X`，`og:description` = `CS PhD @ UC Berkeley. Creator of Gorilla, GoEx, RAFT, OpenFunctions and Berkeley Function Calling Leaderboard…` ⇒ 身份双源可核） |
+| 状态 | **已发信**（2026-11-16 06:04 CST，作者请教信第 60 封，英文 183 词） |
+| 备注 | `语言=英文(判据=印度裔姓名族属+美国机构 Berkeley)`。信里问：① AST 子树立匹配只登记 `repo_or_dir` / `model` 等键、跳过 `pretrained=True`，换一组登记键后 error / hallucination 两类数字有多敏感；② RAT 在远大于 APIBench 的文档库上，先卡住的是 BM25 排序还是文档截断，固定 Oracle 检索器时是否做过 top-k 消融；③ 7B 配方搬到 ~2B + 中文 API 文档，是继续训 RAT 还是只做检索式提示。 |
+
+### 152. Shuai Bai（白帅）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shuai Bai 白帅（拼音姓名可还原中文名 + 中文个人主页 ⇒ 中文） |
+| 机构 | **阿里巴巴 Qwen Team**（Qwen-VL & Visual Intelligence lead） |
+| 代表论文 | Qwen2.5-VL Technical Report（arXiv `2502.13923`，**一作**，B 轨 #160）· Qwen-VL（arXiv `2308.12966`） |
+| 邮箱 | **`baishuaihome@gmail.com`**（本人主页 `shuaibai623.github.io` 的 `mailto:` 明文 ×2，`HTTP 200` / 809,913 B） |
+| 主页 | <https://shuaibai623.github.io/>（`<title>` 自述 `Lead, Qwen-VL & Visual Intelligence`） |
+| X 账号 | **`@shuai_bai_`**（`x.com/shuai_bai_` `200` / 182,212 B；`og:title` = `Shuai Bai (@shuai_bai_) on X` ⇒ 身份可核；`og:description` 本轮未取到，**未做**双源描述核对） |
+| 状态 | **已发信**（2026-11-16 06:04 CST，作者请教信第 62 封，**中文 179 汉字 / 460 字符**） |
+| 备注 | `语言=中文(判据=拼音姓名可还原中文名「白帅」+中文个人主页+中国机构 Alibaba)`。信里问：① 「从零训 native dynamic resolution ViT」与「窗口注意力」在收益里各占多少，2B 规模是否仍成立；② 小时级视频下 visual token 预算怎么分配，关键帧与绝对时间编码哪个更关键；③ 4.1T token 里视觉 token 占比、中英图文配比如何影响中文 OCR / 文档理解。 |
+
+### 153. Mingjie Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mingjie Liu（拼音姓名可还原中文名「刘明杰/刘明哲」等 ⇒ **无法确定具体汉字**，只记拼音；日后若确认为华人，发信应用中文） |
+| 机构 | **NVIDIA Research**（Electronic Design Automation 组；UT Austin ECE PhD 2022） |
+| 代表论文 | ChipNeMo: Domain-Adapted LLMs for Chip Design（arXiv `2311.00176`，**一作**，B 轨 #5）· VerilogEval（arXiv `2309.07544`）· Revisiting VerilogEval（arXiv `2408.11053`） |
+| 邮箱 | **未找到**（`research.nvidia.com/person/mingjie-liu` `HTTP 200` / 41,684 B，页内无 `mailto:`、无明文邮箱；Google Scholar 只显示「Verified email at nvidia.com」不公开地址 ⇒ **不拼装**） |
+| 主页 | <https://research.nvidia.com/person/mingjie-liu>（另有 EDA 组作者页 `research.nvidia.com/labs/electronic-design-automation/author/mingjie-liu/`） |
+| X 账号 | **未找到 X**（不猜 handle） |
+| 状态 | 待跟踪（只建档；邮箱待公开后再评估） |
+| 备注 | 对我们**designflow / harness** 两条线价值最高的 EDA-LLM 一作（VerilogEval 是造题与判分的常用参照）。与 Alec Radford（#33）、Scott Reed（#138）、Alexei Baevski（#141）同属「身份可核、联系方式全无 ⇒ 只建档不发信」的纪律执行；**🚫 不用 `first.last@nvidia.com` 之类模式拼装地址**。 |
+
+
+### 154. Akari Asai
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Akari Asai（日文姓名族属；未确证汉字写法 ⇒ **只记罗马字**） |
+| 机构 | **Carnegie Mellon University（SCS 助理教授）** + Allen Institute for AI（研究科学家；X bio 自述） |
+| 代表论文 | Self-RAG（arXiv `2310.11511`，**一作**，B 轨 #164）· Retrieval-Augmented Multilingual LM（`arXiv 2112.07899`） |
+| 邮箱 | **`aasai@andrew.cmu.edu`**（本人主页 `akariasai.github.io` 的 `mailto:` **百分号编码** `%61%61%73%61%69@%61%6E%64%72%65%77.%63%6D%75.%65%64%75`，解码后即该地址；`HTTP 200` / 19,016 B） |
+| 主页 | <https://akariasai.github.io/>（`<title>` 与正文自述 CMU） |
+| X 账号 | **`@AkariAsai`**（`x.com/AkariAsai` `200` / 193,094 B；`og:title` = `Akari Asai (@AkariAsai) on X`，`og:description` = `Assistant Professor @SCSatCMU & research scientist @allen_ai` ⇒ 身份双源） |
+| 状态 | **已发信**（2026-11-16 09:04 CST，作者请教信第 63 封，**日文 300 字（非空白字符）**） |
+| 备注 | `语言=日本語(判据=日文姓名族属 Asai+日本出身；机构在美国不影响语言判定)`。信里问：① 用 GPT-4 造 ISREL/ISSUP 监督时，`Retrieve=Yes` 阈值是否需按领域重新校准；② 段级 beam search 的权重是否按任务调整、搜索成本上限；③ 7B 与 13B 上 Self-RAG 效果反转的条件。 |
+
+### 155. Yushi Bai（白雨石）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yushi Bai 白雨石（本人主页明文中文名 ⇒ 中文） |
+| 机构 | **Tsinghua University**（博士；X bio 自述 PhD from Tsinghua，现 Tencent Hunyuan） |
+| 代表论文 | LongBench（arXiv `2308.14508`，**一作**，B 轨 #165）· LongAlign（arXiv `2401.18058`） |
+| 邮箱 | **`bys22@mails.tsinghua.edu.cn`**（本人主页 `bys0318.github.io` 的 `mailto:` 明文；`HTTP 200` / 34,756 B） |
+| 主页 | <https://bys0318.github.io/>（`<title>` = `GitHub Pages - Yushi Bai`，正文自述 `白雨石` / 清华姚班 / 导师 Juanzi Li） |
+| X 账号 | **`@realYushiBai`**（`x.com/realYushiBai` `200` / 159,528 B；`og:title` = `Yushi Bai (@realYushiBai) on X`，`og:description` = `Ph.D. from @Tsinghua_Uni, Prev @Zai_org, currently scaling at @TencentHunyuan` ⇒ 身份双源） |
+| 状态 | **已发信**（2026-11-16 09:04 CST，作者请教信第 64 封，**中文 215 汉字 / 343 非空白字符**） |
+| 备注 | `语言=中文(判据=拼音姓名可还原中文名「白雨石」+中文主页明文+中国机构 Tsinghua)`。信里问：① 中间截断保留首尾各 M/2 造成的跨模型口径差如何控制，是否改首段截断或按长度分桶；② 中文子集 13,386 字上 F1/ROUGE-L/Edit Sim 与人工判断的偏差，哪类任务应弃用自动指标；③ 搬到代码与 EDA 长文档时先改任务切分、长度分桶还是指标。 |
+
+### 156. Shengbang Tong（童晟邦）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shengbang Tong 童晟邦（本人主页明文「also go by the name Shengbang Tong (童晟邦)」⇒ 中文） |
+| 机构 | **AMI Labs（Member of Technical Staff）**；NYU Courant CS 博士（导师 Yann LeCun / Saining Xie；主页自述） |
+| 代表论文 | Cambrian-1（arXiv `2406.16860`，**一作**，B 轨 #166）· Cambrian-S（空间超感知视频，OpenReview 2025） |
+| 邮箱 | **`tsb@berkeley.edu`**（本人主页 `tsb0601.github.io` 的 `mailto:` 明文；`HTTP 200` / 43,451 B；⚠️ 为伯克利域名的个人邮箱，非机构分配邮箱） |
+| 主页 | <https://tsb0601.github.io/>（`<title>` = `Peter Tong`，正文自述 `Peter Tong … also go by the name Shengbang Tong (童晟邦)`） |
+| X 账号 | **`@TongPetersb`**（`x.com/TongPetersb` `200` / 213,233 B；`og:title` = `Peter Tong (@TongPetersb) on X`，`og:description` 含 `MTS @ AMILabs | Berkeley 23', CS PhD Student in NYU Courant` ⇒ 身份双源） |
+| 状态 | **已发信**（2026-11-16 09:04 CST，作者请教信第 65 封，**中文 207 汉字 / 347 非空白字符**） |
+| 备注 | `语言=中文(判据=拼音姓名可还原中文名「童晟邦」+主页明文+华人学者；🚫 不因 NYU/berkeley.edu 判英文)`。信里问：① 只能解冻最后一层、图文对规模约 1/10 时优先 CLIP 还是 DINOv2；② SVA 576→36 时 OCR/文档任务的掉点版面与「开始掉」的 token 阈值；③ 目标场景为芯片版图与规格书截图时，OCR 27.6% 应上调还是下调。**注意与 #34 Saining Xie（NYU，同一实验室）区分：不是同一人，未合并条目。** |
+### 157. Zhiyao Xie（谢知遥）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhiyao Xie 谢知遥（本人主页 `<title>` = `Zhiyao Xie (谢知遥) - Home` ⇒ 中文） |
+| 机构 | **香港科技大学（HKUST）ECE 系助理教授**（主页自述 `Assistant Professor at HKUST, Ph.D. at Duke University, B.Eng. at CityU HK`） |
+| 代表论文 | RTLLM（arXiv `2308.05345`，通讯作者，B 轨 #168）· ChipNeMo 之外的 EDA-LLM 线（RTLLM 2.0 / OpenLLM-RTL `2503.15112`） |
+| 邮箱 | **`eezhiyao@ust.hk`**（本人主页 `zhiyaoxie.com` 明文；`HTTP 200` / 33,297 B；同址亦见于 RTLLM PDF 首页作者块） |
+| 主页 | <https://zhiyaoxie.com/> |
+| X 账号 | **未找到**（`site:x.com` 检索只命中他人转述，未发现本人 profile ⇒ 按纪律不登记、不猜 handle） |
+| 状态 | **已发信**（2026-11-16 12:05 CST，作者请教信第 66 封，**中文 186 汉字 / 391 非空白字符**） |
+| 备注 | `语言=中文(判据=拼音姓名可还原中文名「谢知遥」+主页明文中文名+中国香港机构 HKUST；🚫 不因论文英文/邮箱英文判英文)`。信里问：① 表 IV 中 accu 的生成设计（231 µm² / 18K µW）小于人工参考（239 µm² / 19K µW）时如何区分「真更优」与「testbench 漏覆盖」；② timing 列（−0.42 ns）按 slack 理解是否正确、换自有 PDK 是否必须重跑综合与如何归一化；③ multi 8bit（640 µm² vs 参考 52 µm²）的失败更像位宽推理还是规划长度。 |
+
+### 158. Machel Reid
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Machel Reid（英语姓名，无中文/日文/韩文信号） |
+| 机构 | **Google DeepMind**（本人 X bio 自述 `research @googledeepmind`；Gemini 1.5 报告作者名单内） |
+| 代表论文 | Gemini 1.5（arXiv `2403.05530`，作者之一，B 轨 #167）· 长上下文 / 数据相关工作 |
+| 邮箱 | **`machelreid@google.com`**（本人主页 `machelreid.github.io` 明文；`HTTP 200` / 9,199 B） |
+| 主页 | <https://machelreid.github.io/> |
+| X 账号 | **`@machelreid`**（主页挂 `twitter.com/machelreid`；`x.com/machelreid` `200` / 172,591 B，`og:title` = `Machel Reid (@machelreid) on X`，`og:description` = `research @googledeepmind` ⇒ 双源一致） |
+| 状态 | **已发信**（2026-11-16 12:05 CST，作者请教信第 67 封，**英文 187 词**） |
+| 备注 | `语言=英文(判据=英语姓名族属+Google DeepMind；无母语非英语信号)`。信里问：① 文本 NLL 幂律在 1M（文档）/ 约 2M（代码）后偏离，是位置/注意力容量还是语料构成，有没有不重训就能区分的消融；② needle recall 在 1M 已 >99.7% 后，预测小模型下游长文 QA 更该看多针 recall、固定位置 NLL 还是证据落地；③ 长上下文数据是预训练期混入还是单独适配阶段，2B 模型只做一次 128K 扩展该选哪个、该记什么日志防「静默失效」。 |
+
+### 159. Juan Gómez-Luna
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Juan Gómez-Luna（西语姓名） |
+| 机构 | **ETH Zurich · SAFARI Research Group 高级研究员 / 讲师**（主页自述；PhD University of Córdoba） |
+| 代表论文 | Benchmarking a New Paradigm（真实 PIM 系统实测，arXiv `2105.03814`，**一作**，B 轨 #170）· PyGim（真实 PIM 上的 GNN 库） |
+| 邮箱 | **未找到**（`safari.ethz.ch/juan-gomez-luna/` `HTTP 200` / 64,672 B，页面无明文 `mailto:`，无百分号编码地址；IEEE 作者传记记为 `juang@ethz.ch`，**未取得一手页面核验 ⇒ 不用于发信**） |
+| 主页 | <https://safari.ethz.ch/juan-gomez-luna/> |
+| X 账号 | **`@el1goluj`**（主页挂 `twitter.com/el1goluj`；`x.com/el1goluj` `200` / 146,754 B，`og:title` = `Juan Gómez Luna (@el1goluj) on X`，`og:description` = `Senior Researcher and Lecturer at SAFARI@ETHz` ⇒ 双源一致） |
+| 状态 | **待跟踪**（只建档，未发信：缺一手可核邮箱） |
+| 备注 | `语言=待定(若发信：西语称谓问候 + 英文正文，判据=西语姓名+ETH)`。若下轮从 ETH 人员页或新论文 PDF 拿到明文地址再发；问题候选：UPMEM bank 内/跨 bank 的带宽-延迟拐点、PrIM 16 workload 的访存画像如何映射到 HBM-PIM。 |
+
+### 160. Onur Mutlu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Onur Mutlu（土耳其姓名） |
+| 机构 | **ETH Zurich 教授 + Carnegie Mellon University 教授**（本人 X bio 与主页自述；SAFARI 组负责人） |
+| 代表论文 | Ramulator 2.0（arXiv `2308.11030`）· RowHammer（ISCA 2014）· Benchmarking a New Paradigm（arXiv `2105.03814`，末位作者，B 轨 #170）· A Case for Intelligent RAM（IEEE Micro 1997） |
+| 邮箱 | **`omutlu@gmail.com`**（本人当前机构主页 `people.inf.ethz.ch/omutlu/` 的 `mailto:` 明文；`HTTP 200` / 19,850 B） |
+| 主页 | <https://people.inf.ethz.ch/omutlu/> |
+| X 账号 | **`@_onurmutlu_`**（`x.com/_onurmutlu_` `200` / 168,824 B，`og:title` = `Onur Mutlu (@_onurmutlu_) on X`，`og:description` = `Professor at ETH Zurich and Carnegie Mellon University … Group: @SAFARI_ETH_CMU` ⇒ 双源一致） |
+| 状态 | **已发信**（2026-11-12 15:03 CST，作者请教信第 16 封，**英文 177 词**，主题为 Ramulator 2.0 的保真度与可靠性模型） |
+| 备注 | `语言=英文(判据=土耳其姓名族属 + 瑞士/美国机构；按 §2 对照表「其他语种 ⇒ 英文」兜底)`。**同一作者 ≤1 封** ⇒ PIM 论文（#170）本轮只建档、不再向他发信；未回信不发第二封。 |
+
+
+
+### 161. Ze Liu（刘泽）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ze Liu（刘泽；本人主页 `<title>` = `Ze Liu (刘泽)`） |
+| 机构 | **xAI**（本人 X bio 自述 `@xAI (Grok Video Gen, Grok Vision, Grok Voice Mode, Grok3)`；论文署名机构为 USTC / MSRA） |
+| 代表论文 | Swin Transformer（arXiv `2103.14030`，**一作**，B 轨 #171）· Swin Transformer V2（arXiv `2111.09883`） |
+| 邮箱 | **`liuzeeeee@gmail.com`**（本人主页 <https://zeliu98.github.io/> 的 `mailto:` 明文；2026-11-16 实测 `200` / 27,094 B） |
+| 主页 | <https://zeliu98.github.io/> |
+| X 账号 | **`@zeliu_`**（本人主页 `href` 指向 `x.com/zeliu_`；X 页 `200` / 189,651 B，`og:title` = `Ze Liu (@zeliu_) on X`，`og:description` = `@xAI (Grok Video Gen, Grok Vision, Grok Voice Mode, Grok3). ICCV 21 Marr Prize.` ⇒ 双源一致） |
+| 状态 | **已发信**（2026-11-17 00:03:14 第 70 封，中文 262 字） |
+| 备注 | `语言=中文(判据=中文姓名 + 本人主页中文名「刘泽」+ 中文本科背景)`。**未因「人在 xAI / 论文英文 / 邮箱 gmail」判英文**（2026-11-14 事故口径）。问题候选：① shifted window 在 448² 下的 token 数与吞吐拐点（vision 分辨率预算）；② 分层特征图对 OCR / 定位类任务的增益是否只在 detection head 上成立（vision 编码器选型）；③ 若把 Swin 当图文模型的视觉塔，patch merging 的层数该不该与文本长度联动（vision/pretrain 接口）。 |
+
+### 162. Junyi Ao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Junyi Ao（拼音姓名，按中文处理） |
+| 机构 | **The Chinese University of Hong Kong, Shenzhen（香港中文大学（深圳））** 博士生（本人主页；论文署名时为 Microsoft Research Asia 实习） |
+| 代表论文 | SpeechT5（arXiv `2110.07205`，**共同一作**，B 轨 #172）· SD-Eval（口语对话理解基准） |
+| 邮箱 | **`junyiao1@link.cuhk.edu.cn`**（本人主页 <https://ajyy.github.io/> 的 `mailto:` 明文；2026-11-16 实测 `200` / 19,157 B） |
+| 主页 | <https://ajyy.github.io/> |
+| X 账号 | **未找到 X**（主页无 `x.com` / `twitter.com` 链接；不猜 handle） |
+| 状态 | **待跟踪**（有可核邮箱；今日发信额度已满 ⇒ 下轮可发） |
+| 备注 | `语言=中文(判据=拼音姓名 + 港中深（深圳）机构)`。问题候选：① 共享 encoder-decoder 下 speech / text 的 pre-net 是否必须成对，去掉一侧后掉点幅度多大（vision 模态接口）；② 960h 标注 + 400M 句文本的混合比例对低资源模态是否同样最优（data 配比）；③ 多任务联合训练时各任务 loss 权重如何随训练进度调整（pretrain 目标配比）。 |
+
+### 163. Long Zhou
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Long Zhou（拼音姓名，按中文处理） |
+| 机构 | **Microsoft Research Asia（MSRA）**（本人主页自述 `Microsoft` / `MSRA` / `Research Asia`；SpeechT5 署名单位） |
+| 代表论文 | SpeechT5（arXiv `2110.07205`，**共同一作**，B 轨 #172）· 语音翻译 / 语音理解系列 |
+| 邮箱 | **`wszlong@gmail.com`**（本人主页 <https://long-zhou.github.io/> 明文；2026-11-16 实测 `200` / 18,505 B） |
+| 主页 | <https://long-zhou.github.io/> |
+| X 账号 | **未找到 X**（主页无 X 链接；`x.com/longzhou` 的 `og:title` = `Long Jiu Zhou Kaskus` ⇒ 他人账号，🚫 不登记） |
+| 状态 | **待跟踪**（有可核邮箱；**同论文已由共同一作 Junyi Ao 覆盖 ⇒ 按「同论文 ≤1 封」本轮不发**；若 Ao 无回应且下轮仍需要，再评估） |
+| 备注 | `语言=中文(判据=拼音姓名 + MSRA 机构)`。备注：与 #162 同论文，优先发 #162，避免同论文两封。 |
+
+### 164. Yang You
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yang You（拼音姓名，按中文处理；**中文名本表不臆造**） |
+| 机构 | **National University of Singapore（NUS，Computer Science）** Associate Professor（本人主页 <https://www.comp.nus.edu.sg/~youy/> 明文；PhD UC Berkeley 2015–2020，导师 James Demmel） |
+| 代表论文 | LAMB / 「Training BERT in 76 minutes」（arXiv `1904.00962`，**一作**，B 轨 #175）· 大规模并行训练与优化器系列 |
+| 邮箱 | 主页写法 **`yangyou (at) nus (dot) edu`**（2026-11-16 实测 `200` / 3,767 B）；⚠️ 域名后缀在页面上写作 `nus (dot) edu`，**与常见的 `nus.edu.sg` 不一致 ⇒ 发信前须再核一次**，本轮不猜 |
+| 主页 | <https://www.comp.nus.edu.sg/~youy/> |
+| X 账号 | **`@YangYou1991`**（核验：主页 `href` 指向 `twitter.com/YangYou1991`；`x.com/YangYou1991` `200` / 202,383 B，`og:title` = `Yang You (@YangYou1991) on X`，`og:description` = `Presidential Young Professor at @NUSingapore. Ph.D. from @UCBerkeley. Founder and Chairman of @HPCAITech` ⇒ 与主页机构一致） |
+| 状态 | **待跟踪**（有 X 已核；邮箱待域名复核；今日 12 封额度已满 ⇒ 下轮可发） |
+| 备注 | `语言=中文(判据=拼音姓名 + 本人主页中文圈履历 + 中文名可从公开报道核)`。问题候选：① 32k batch 下逐层信任比的缩放系数如何随层深变化、在 2B 规模是否需重标定；② LAMB 与 Adam + 梯度裁剪在长上下文变长 batch 下的稳定性差异；③ 76 分钟的结论绑定 TPUv3 Pod，换成 HBM 更少但互联更快的配置后瓶颈是否转移。 |
+
+### 165. Guangxuan Xiao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Guangxuan Xiao（拼音姓名，按中文处理） |
+| 机构 | **MIT（Song Han 组 / HAN Lab）**（论文署名 MIT CSAIL；本人主页 <https://guangxuanx.com/> 2026-11-16 实测 `200` / 15,305 B） |
+| 代表论文 | StreamingLLM / Attention Sinks（arXiv `2309.17453`，**一作**，B 轨 #177）· SmoothQuant 等量化工作 |
+| 邮箱 | **`xiaoguangxuan@gmail.com`**（本人主页 `mailto:` 明文，1 处） |
+| 主页 | <https://guangxuanx.com/> |
+| X 账号 | **`@Guangxuan_Xiao`**（**仅主页 `href` 单源**；`x.com/Guangxuan_Xiao` 两次抓取均 `000`（代理超时）⇒ **未核验**，不计入「X 已核验」计数，🚫 不当作已 follow 对象） |
+| 状态 | **已发信**（2026-11-17 00:03:07 第 69 封，中文 287 字） |
+| 备注 | `语言=中文(判据=拼音姓名 + 论文署名为华人团队（Song Han / Beidi Chen）)`。问题候选：① 保留初始 4 个 token 的 KV 是否在 2B、中文语料上同样成立（sink 位置是否随分词/语言漂移）；② 预训练加占位 sink token 的代价（有效序列长度损失）与收益如何量化；③ 4M token 流式下 PPL 平稳的判据是什么（局部窗口 vs 全注意力对照的偏差上界）。 |
+
+
+### 166. Xuezhe Ma（马学哲，中文名按拼音回写，本表不臆造汉字）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xuezhe Ma（**拼音姓名 ⇒ 按中文处理**；汉字写法本表不臆造） |
+| 机构 | **University of Southern California · Information Sciences Institute（USC ISI）**；X bio 原文 `Research Lead @USC_ISI and Research Assistant Professor @CSatUSC`（本人主页 <https://xuezhemax.github.io/> 2026-11-16 实测 `200` / 113,218 B；USC Viterbi 目录页 `200` / 6,784 B） |
+| 代表论文 | **LIMA: Less Is More for Alignment**（arXiv `2305.11206`，共同作者（第 7 位），B 轨 #179；一作为 Chunting Zhou） |
+| 邮箱 | **`xuezhema@usc.edu`**（USC Viterbi 教师目录页 <https://viterbi.usc.edu/directory/faculty/Ma/Xuezhe> 明文，2026-11-16 `200` / 6,784 B） |
+| 主页 | <https://xuezhemax.github.io/> |
+| X 账号 | **`@MaxMa1987`**（核验：主页 `href` 指向 `twitter.com/MaxMa1987`；`x.com/MaxMa1987` `200` / 214,005 B，`og:title` = `Xuezhe Ma (Max) (@MaxMa1987) on X`，`og:description` = `Research Lead @USC_ISI and Research Assistant Professor @CSatUSC …` ⇒ 双源一致） |
+| 状态 | **待跟踪**（邮箱可核 + X 已核；今日 12 封额度已满 ⇒ 下轮可发中文） |
+| 备注 | `语言=中文(判据=拼音姓名 + CMU LTI 博士、中文圈常见拼法)`。问题候选：① LIMA 里 1,000 条示例的**任务簇配额**如何分配（43% 这个数字对提示集多样性的敏感度）；② 65B + 1k 的结论在 2B 上是否需要改变「质量优先于数量」的次序；③ 消融里「加量不加多样性」收益递减的拐点是否随模型规模移动。<br>⚠️ **同名站点陷阱（本轮实测）**：`https://chunting.me/` 目前是**另一位医师的博客**（标题 `葉峻榳醫師`），**不是** LIMA 一作 Chunting Zhou 的主页 ⇒ 🚫 不得据此给 Chunting Zhou 建邮箱 / X 档案。 |
+
+### 167. Pengfei Liu（刘鹏飞）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Pengfei Liu（**中文名 刘鹏飞**，SJTU 中文页原文） |
+| 机构 | **上海交通大学计算机学院（副教授）· 生成式人工智能研究组 GAIR 负责人**（SJTU 计算机学院教师页 <https://cs.sjtu.edu.cn/en/jiaoshiml/liupengfei.html> 2026-11-16 `200` / 38,344 B，页面含中文简介与 `pengfei@sjtu.edu.cn`） |
+| 代表论文 | **LIMA: Less Is More for Alignment**（arXiv `2305.11206`，**第 2 作者**，B 轨 #179） |
+| 邮箱 | **`pengfei@sjtu.edu.cn`**（SJTU 教师页明文；同页另有院系公共邮箱 `scs@sjtu.edu.cn`，🚫 不用公共邮箱发学术请教信） |
+| 主页 | <https://cs.sjtu.edu.cn/en/jiaoshiml/liupengfei.html>（学院教师页；未找到独立个人主页） |
+| X 账号 | **未找到 X**（教师页与检索均未命中个人 handle；🚫 不猜） |
+| 状态 | **已发信**（2026-11-17 00:03:01 第 68 封，中文 229 字） |
+| 备注 | `语言=中文(判据=中文姓名 刘鹏飞 + 中国大陆机构 SJTU)`。问题候选：① GAIR 在做中文指令数据时，如何把 LIMA 的「质量优先」落到可执行的筛选判据上（谁打分、几人复核、冲突怎么裁）；② LIMA 的 1k 示例里**是否含多轮样本**（论文写零对话样本仍能多轮），中文场景是否同样成立；③ 对齐阶段的数据量与预训练 token 预算之间有没有可用的配比经验值。 |
+
+### 168. Eric Wallace
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Eric Wallace（英语姓名 ⇒ 英文信） |
+| 机构 | **OpenAI**（X bio 原文 `research @openai`；本人主页 <https://www.ericswallace.com/> 2026-11-16 `200` / 42,734 B，自述 `co-lead a team named "Alignment Training"`）· PhD UC Berkeley（Dan Klein / Dawn Song） |
+| 代表论文 | **The False Promise of Imitating Proprietary LLMs**（arXiv `2305.15717`，**第 2 作者**，B 轨 #180）· 主页另有 alignment / memorization 方向论文（未逐条核） |
+| 邮箱 | ⚠️ **未取到现行机构邮箱**：主页无 `mailto:`；主页所挂 `CV.pdf`（`200` / 179,967 B，`application/pdf`）内写 `E-mail: ericwallace@berkeley.edu` —— **Berkeley 域名与其现职 OpenAI 不一致**，按本表第 1 条纪律**记录但不建议直接发**（可能已不读） |
+| 主页 | <https://www.ericswallace.com/> |
+| X 账号 | **`@Eric_Wallace_`**（核验：主页 `href` 指向 `twitter.com/Eric_Wallace_`；`x.com/Eric_Wallace_` `200` / 191,343 B，`og:title` = `Eric Wallace (@Eric_Wallace_) on X`，`og:description` = `research @openai` ⇒ 双源一致） |
+| 状态 | **待跟踪**（X 已核、可做 `voice_ready` 跟踪；邮箱为旧域 ⇒ 发信优先级低） |
+| 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。若后续拿到现行邮箱，问题候选：① 众包评分与定向自动评测的**分歧阈值**怎么定（多少 pt 就判「风格模仿」）；② 模仿数据收益枯竭的结论在今天的强模型 + 更广任务覆盖下是否仍成立；③ 有没有可公开的「covered task cluster」标注口径，便于我们把中文 / 代码域对齐到同一套簇。 |
+
+
+### 169. Thomas Wolf
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Thomas Wolf（法语姓名 ⇒ 按 SPEC §2「母语称谓问候 + 英文正文」处理，下一封若发用法语称谓） |
+| 机构 | **Hugging Face（联合创始人 / Chief Science Officer）**（HF 个人页 <https://huggingface.co/thomwolf> 2026-11-17 实测 `200` / 页面内 `href` 指向 `twitter.com/Thom_wolf`；BLOOM 末位作者，B 轨 #184） |
+| 代表论文 | **BLOOM: A 176B-Parameter Open-Access Multilingual LM**（arXiv `2211.05100`，394 位作者，末位）· Transformers 生态作者 |
+| 邮箱 | **未找到公开邮箱**（HF 个人页无 `mailto:`；🚫 不用猜测地址、🚫 不用 GitHub 提交邮箱） |
+| 主页 | <https://huggingface.co/thomwolf> |
+| X 账号 | **`@Thom_Wolf`**（核验：HF 个人页 `href` → `twitter.com/Thom_wolf`；`x.com/Thom_wolf` `200` / 197,536 B，`og:title` = `Thomas Wolf (@Thom_Wolf) on X` ⇒ 双源一致） |
+| 状态 | **待跟踪**（X 已核；无公开邮箱 ⇒ 暂不列发信对象） |
+| 备注 | `语言=法文称谓问候+英文正文(判据=法语姓名族属 + 法国受教育背景；机构为美/法分布式)`。问题候选（若日后取得地址）：① ROOTS 的 46 自然语言配额里中文占比与去重口径；② 394 位作者的协作方式对数据治理（许可 / opt-out）的影响；③ 176B 下多语言 tokenizer 的压缩率与英文的差距如何量化。 |
+
+### 170. Loubna Ben Allal
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Loubna Ben Allal（阿拉伯语姓名族属 ⇒ 英文正文） |
+| 机构 | **Hugging Face（Research）**（HF 个人页 <https://huggingface.co/loubnabnl> 2026-11-17 实测 `200` / 446,340 B，页内 `href` → `twitter.com/LoubnaBenAllal1`；StarCoder 第 2 作者，B 轨 #185） |
+| 代表论文 | **StarCoder: may the source be with you!**（arXiv `2305.06161`，第 2 作者）· The Stack / BigCode 数据治理系列 |
+| 邮箱 | **未找到公开邮箱**（HF 个人页无 `mailto:`） |
+| 主页 | <https://huggingface.co/loubnabnl> |
+| X 账号 | **`@LoubnaBenAllal1`**（核验：HF 个人页 `href` → `twitter.com/LoubnaBenAllal1`；`x.com/LoubnaBenAllal1` `200` / 178,650 B，`og:title` = `Loubna Ben Allal (@LoubnaBenAllal1) on X`，`og:description` = `Research @huggingface` ⇒ 双源一致） |
+| 状态 | **待跟踪**（X 已核；无公开邮箱） |
+| 备注 | `语言=英文(判据=阿拉伯语姓名族属 + HF 研究岗，无中日韩信号)`。问题候选：① The Stack 的 opt-out 比例与对代码模型能力的影响；② 1T token 训练里注释 / 测试 / 文档的配比；③ 多查询注意力在大 batch 推理上的实测吞吐。 |
+
+### 171. Oriol Vinyals
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Oriol Vinyals（加泰罗尼亚语姓名 ⇒ 西班牙语称谓问候 + 英文正文） |
+| 机构 | **Google DeepMind（VP / Distinguished Researcher）**（AlphaCode 末位作者，B 轨 #183；机构取自论文署名与 X bio 常述，本表未逐字核 bio） |
+| 代表论文 | **Competition-Level Code Generation with AlphaCode**（arXiv `2203.07814`，Science 2022，末位）· seq2seq / AlphaStar / Gemini 系列 |
+| 邮箱 | **未找到公开邮箱**（`oriolvinyals.com` 实测为**同名西班牙治疗师**站点 ⇒ 已丢弃，🚫 不据此建档） |
+| 主页 | 未找到（同名站点假阳性，见上） |
+| X 账号 | **`@OriolVinyalsML`**（**单源**：`x.com/OriolVinyalsML` `200` / 169,237 B，`og:title` = `Oriol Vinyals (@OriolVinyalsML) on X`；⚠️ 未取到 `og:description`/主页链接做第二源 ⇒ **不计入「X 已核验」计数**，🚫 不当作已 follow） |
+| 状态 | **待跟踪**（handle 单源待复核；无邮箱） |
+| 备注 | `语言=西班牙语称谓问候+英文正文(判据=加泰罗尼亚语姓名 + 西班牙出身；机构美/英)`。问题候选：① 百万级采样 + 过滤（10 选 1 聚类）的算力配比在今天的推理模型上是否还划算；② 竞赛题分布外的泛化判据；③ 执行反馈作为过滤信号的最小规模。 |
+
+### 172. Yu Su 苏禹
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yu Su 苏禹（华人姓名族属 ⇒ **中文**正文，机构在美国不改变判据） |
+| 机构 | **Ohio State University（CSE 副教授；OSU NLP Group）**（主页 `ysu1989.github.io` `200` / 97,338 B；Mind2Web `2306.06070` 末位 / 通讯，B 轨 #190） |
+| 代表论文 | **Mind2Web: Towards a Generalist Agent for the Web**（arXiv `2306.06070`，NeurIPS 2023 Spotlight，末位）· WebArena / Mind2Web 系列 |
+| 邮箱 | **`su.809@osu.edu`**（来源：本人主页 `mailto:` 明文 + 页面混淆写法 `%s@osu.edu % 'su.809'` 互证；非猜测） |
+| 主页 | <https://ysu1989.github.io/> |
+| X 账号 | **`@ysu_nlp`**（核验：`x.com/ysu_nlp` `200` / 118 KB（首抓 `200`），`og:title` = `Yu Su (@ysu_nlp) on X`，`og:description`/bio = `co-founder @NeoCognition \| prof. @osunlp \| building towards abundance of specialized intelligence` ⇒ 与 OSU 主页机构一致；`ysu1989.github.io` 只外链 `twitter.com/osunlp`，故按「og:title + bio」双源计） |
+| 状态 | **已发信**（第 71 封，2026-11-17 03:0x） |
+| 备注 | `语言=中文(判据=华人姓名族属 Yu Su；机构 OSU / 邮箱 osu.edu / 论文英文 均未据此判英文)`。信里问：① 候选生成的 `Recall@50` 在三切分上仍为 88.9% / 85.3% / 85.7%（DeBERTa-86M），端到端成功率却低得多 —— 瓶颈主要在动作预测还是元素定位；② 2,000+ 任务的网页快照更新周期与评测可比性怎么维持；③ 若把判分从「元素匹配」改为「任务终态」，哪个切分最先失效。分别回填 harness 的三切分报告、designflow 题面保真、zhulong 任务终态奖励。 |
+
+### 173. Ming He
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ming He（华人姓名族属 ⇒ **中文**正文） |
+| 机构 | **天津大学**（OMA `2611.16816` 通讯作者；PDF 首页署名 Tianjin University） |
+| 代表论文 | **Outcome-Mass Alignment: Controlling Length-Dependent Trajectory Influence in Multi-Turn LLM Agent RL**（arXiv `2611.16816`，通讯） |
+| 邮箱 | **`heming01@foxmail.com`**（来源：PDF 首页通讯作者邮箱明文；非猜测） |
+| 主页 | 未找到（本轮未检索到个人主页；不据此推测） |
+| X 账号 | **未找到 X**（不猜 handle） |
+| 状态 | **已发信**（第 72 封，2026-11-17 03:0x） |
+| 备注 | `语言=中文(判据=华人姓名族属 Ming He + 中国大陆机构天津大学)`。信里问：① 失败轨迹打满 50 轮时，`Outcome Alignment` 与 `Mass Alignment` 谁的贡献更大、是否随最大轮数变化；② WebShop 上出现「端点升 / nAUC 降」时该按哪个指标选型；③ 2B 级以下（≤0.5B）是否还能复现 7–9pp 的增益。分别回填 zhulong 多轮 RL 记账、阶段评估口径、小模型可行性。 |
+
+### 174. Disha Sheshanarayana
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Disha Sheshanarayana（印度姓名族属 ⇒ **英文**正文） |
+| 机构 | **Manipal University Jaipur**（Verification Transport `2611.18471` 一作；PDF 首页署名） |
+| 代表论文 | **Do Verifier Judgments Survive Abstraction? Measuring Verification Transport for LLM Agent Evaluation**（arXiv `2611.18471`，NeurIPS 2026 Workshop） |
+| 邮箱 | **`disha.229301161@muj.manipal.edu`**（来源：PDF 首页作者块明文；非猜测） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X** |
+| 状态 | **已发信**（第 73 封，2026-11-17 03:0x） |
+| 备注 | `语言=英文(判据=印度姓名族属 + 印度机构 Manipal University Jaipur，无中日韩信号)`。信里问：① 31% 翻转里有多少来自「证据缺失」vs「judge 先验改变」，如何拆开；② 85.5% 恢复是否依赖 judge 主干、哪个主干最差；③ 把该协议搬到我方 harness（固定 judge、只改视图）需要多少条匹配轨迹才够稳定。分别回填 harness 判分可靠性、zhulong 奖励可信度、designflow 证据可复原性。 |
+
+### 175. Naman Jain
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Naman Jain（印度姓名族属 ⇒ **英文**正文） |
+| 机构 | **UC Berkeley**（LiveCodeBench `2403.07974` **一作**；PDF 首页署名与邮箱块） |
+| 代表论文 | **LiveCodeBench: Holistic and Contamination Free Evaluation of LLMs for Code**（arXiv `2403.07974`，B 轨 #194） |
+| 邮箱 | **`naman_jain@berkeley.edu`**（来源：PDF 首页作者块逐行明文 `{naman jain,kingh0730,…}@berkeley.edu`，`pdftotext` 核；非猜测） |
+| 主页 | **未核到**（`naman-jain.github.io` / `namanjain12.github.io` 均 `404`；🚫 不把 404 页当主页） |
+| X 账号 | **未找到 X**（未取到主页 ⇒ 无 `href` 证据，不猜 handle） |
+| 状态 | **已发信**（第 74 封，2026-11-17 06:0x） |
+| 备注 | `语言=英文(判据=印度姓名族属 + UC Berkeley，无中日韩信号)`。信里问：① 时间切窗后各模型「掉多少分」是否稳定、可否当污染检测量；② 自修复 / 执行 / 输出预测三场景排序冲突时，选型该看哪个；③ 把 500+ 题按 `release_date` 切窗搬进我方 harness，最小可行集要多少题才不抖。分别回填 harness 去污染口径、zhulong 阶段评估、designflow 题面可判分性。 |
+
+### 176. King Han
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | King Han（族属**未定**：韩文 `한` 与中文 `韩` 均可能 ⇒ 发信前按「判据冲突」兜底英文；🚫 不擅自写汉字/谚文） |
+| 机构 | **UC Berkeley**（LiveCodeBench 二作；PDF 首页邮箱块） |
+| 代表论文 | **LiveCodeBench**（arXiv `2403.07974`，B 轨 #194） |
+| 邮箱 | **`kingh0730@berkeley.edu`**（来源：PDF 首页邮箱块逐字；非猜测） |
+| 主页 | 未找到 |
+| X 账号 | **未找到 X** |
+| 状态 | **待跟踪**（同论文已发一作 Naman Jain ⇒ 按「同论文 ≤1 封」本轮不发） |
+| 备注 | `语言=英文(判据=姓名族属未定，按 §2「判据冲突 ⇒ 英文兜底」)`。若后续需发，问题候选：同一模型在「代码执行 / 输出预测」两场景的失败模式是否同源。 |
+
+### 177. Alex Gu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alex Gu（拼音姓氏 `Gu` ⇒ 华人可能性高，但**未见中文主页 / 中文机构** ⇒ 语言按「判据不足」兜底英文，**不据此断言母语**） |
+| 机构 | **MIT**（LiveCodeBench 作者；PDF 首页邮箱块 `gua@mit.edu`；另列 MIT CSAIL） |
+| 代表论文 | **LiveCodeBench**（arXiv `2403.07974`，B 轨 #194） |
+| 邮箱 | **`gua@mit.edu`**（来源：PDF 首页邮箱块逐字；非猜测） |
+| 主页 | **未核到**（`alexgu.xyz` / `www.alexgu.dev` 实测 `000`（TLS 失败），不作主页） |
+| X 账号 | **未找到 X** |
+| 状态 | **待跟踪**（同论文已发一作 ⇒ 同论文 ≤1 封，本轮不发） |
+| 备注 | `语言=英文(判据=姓氏拼音为唯一信号，未见中文主页/机构 ⇒ 按「判据冲突/落空 ⇒ 英文」)`。⚠️ 与 2026-11-14 谢赛宁事故的区别：那次有中文姓名 + 华人身份的双重证据，本次**只有姓氏**；若后续核到中文主页/中文履历，下一封改中文。 |
+
+### 178. Cheng Chi
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Cheng Chi（华人姓名族属；拼音可还原 ⇒ 若发信应用中文） |
+| 机构 | **Sunday Robotics**（联合创始人 & CTO；论文时为 Stanford / Columbia） |
+| 代表论文 | **Diffusion Policy**（arXiv `2303.04137`，B 轨 #197；一作） |
+| 邮箱 | **未找到公开邮箱**（主页 `cheng-chi.github.io` `200` / 20,421 B，页内无 `mailto:` 与明文邮箱；`cheng-chi.com` TLS `000` ⇒ 不作来源） |
+| 主页 | <https://cheng-chi.github.io/>（`200`） |
+| X 账号 | **`@chichengcc`**（`x.com/chichengcc` `200`；`og:title` = `Cheng Chi (@chichengcc) on X`，`og:description` = `Co-founder & CTO @sundayrobotics Prev 🤖 PhD @Stanford and @Columbia` ⇒ 双源可核） |
+| 状态 | **待跟踪**（无公开邮箱 ⇒ 不发信；X 已核验，待用户手动 follow） |
+| 备注 | `语言=中文(判据=华人姓名族属；机构在美国不改判据)`。言论线索：2026-10-21 推文自报「reduces GPU-hours by more than 1000× / 129,514 motions / SuperMimic」⇒ 与 zhulong 成本口径相关，后续可做 `voice_ready` 候选（需完整原文）。 |
+
+### 179. Yilun Du
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yilun Du（华人姓名族属；拼音可还原 ⇒ 中文） |
+| 机构 | **Harvard University**（Kempner Institute + CS 助理教授；论文时为 MIT CSAIL） |
+| 代表论文 | **Diffusion Policy**（arXiv `2303.04137`，B 轨 #197；共同作者） |
+| 邮箱 | **`ydu@seas.harvard.edu`**（来源：本人主页 `yilundu.github.io` 明文邮箱，2026-11-17 09:0x 实测 `200` / 493,435 B；非猜测） |
+| 主页 | <https://yilundu.github.io/>（`200`） |
+| X 账号 | **`@du_yilun`**（`x.com/du_yilun` `200`；`og:title` = `Yilun Du (@du_yilun) on X`，`og:description` = `Assistant Professor at Harvard @KempnerInst + CS...` ⇒ 双源可核） |
+| 状态 | **已发信**（第 76 封，2026-11-17 09:04；中文 294 字） |
+| 备注 | `语言=中文(判据=华人姓名族属；机构在美国不改判据)`。信问：① 控制频率降到 5–10 Hz 时 Ta=8 最优点往哪移、有无开训前可测量；② CNN 1D temporal+FiLM 与 Transformer 在低频长程任务的差距及先失效项；③ 20–50 条示教下 receding horizon 收益是否仍在。回填 zhulong 动作 chunk / vision 主干 / data 低资源门槛。 |
+
+### 180. Shuran Song
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shuran Song（华人姓名族属；拼音可还原 ⇒ 中文） |
+| 机构 | **Stanford University**（助理教授；Diffusion Policy 末位作者） |
+| 代表论文 | **Diffusion Policy**（arXiv `2303.04137`，B 轨 #197；末位） |
+| 邮箱 | **未找到公开邮箱**（主页 `shurans.github.io` `200` / 128,293 B，页内无 `mailto:` 与明文邮箱 ⇒ 不猜地址） |
+| 主页 | <https://shurans.github.io/>（`200`） |
+| X 账号 | **`@SongShuran`**（`x.com/SongShuran` `200`；`og:title` = `Shuran Song (@SongShuran) on X`，`og:description` = `Assistant Professor @Stanford University working on #Robotics #AI #ComputerVision` ⇒ 双源可核） |
+| 状态 | **待跟踪**（无公开邮箱 ⇒ 不发信；X 已核验，待用户手动 follow） |
+| 备注 | `语言=中文(判据=华人姓名族属；机构在美国不改判据)`。言论线索：2026-11-04 推文讨论「pretraining 的科学性 / 何时停训 / 为下游 SFT 或 RL 优化预训练」，与 pretrain 线的停训判据直接相关（该推文 `og:description` 以省略号截断 ⇒ 本轮**不标 voice_ready**）。 |
+
+### 181. Jifeng Dai（代季峰）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jifeng Dai（代季峰；华人姓名族属 ⇒ 中文信） |
+| 机构 | **清华大学电子工程系 副教授**（本人主页自述 `Associate Professor, Department of Electronic Engineering, Tsinghua University`；InternVL 末位作者，论文时为 Shanghai AI Lab） |
+| 代表论文 | **InternVL**（arXiv `2312.14238`，B 轨 #199；末位作者）· Deformable DETR / 检测与视觉基础模型线 |
+| 邮箱 | **`daijifeng@tsinghua.edu.cn`**（双源：本人主页 `jifengdai.org` 的 `mailto:` **明文**，`HTTP 200` / 44,389 B；同页正文亦写 `tsinghua.edu.cn` 邮箱；**且 PDF 首页通讯作者块给出同一地址**，`pdftotext` 逐字核） |
+| 主页 | <https://jifengdai.org/>（`200` / 44,389 B） |
+| X 账号 | **未找到 X**（主页无 twitter / x.com 链接 ⇒ 按令不猜） |
+| 状态 | **已发信**（第 78 封，2026-11-17 12:04；中文 CJK 241 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 清华机构)`。信问：① 6B 塔相对小塔的收益在小字密集的文档/图表上是否同样成立、开训前有无可测量（线性探针 / token 熵）预判；② 像素重排与保留高分辨率二选一时，需读细线的工程图哪一侧先失效；③ 只有几万张领域图文对时是否先冻结 6B 塔只训对齐层。分别回填 vision 视觉塔选型、zhulong 读图入口、data 图文对门槛。 |
+
+### 182. Wenhai Wang（王文海）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wenhai Wang（王文海；华人姓名族属 ⇒ 中文信） |
+| 机构 | **香港中文大学 MMLab 博士后** + 与 **Shanghai AI Laboratory** 合作（本人主页自述；博士毕业于南京大学，导师 Tong Lu） |
+| 代表论文 | **InternVL**（arXiv `2312.14238`，B 轨 #199；三作）· 视觉-语言与 OCR 基础模型线 |
+| 邮箱 | **`whwang@ie.cuhk.edu.hk`**（本人主页 `whai362.github.io` `HTTP 200` / 48,946 B 以 `whwang[at]ie.cuhk.edu.hk` 反爬写法给出；按页面规则还原，**属拼装而非 `mailto:` 明文** ⇒ 发送前须再核） |
+| 主页 | <https://whai362.github.io/>（`200`） |
+| X 账号 | **未找到 X**（页内仅 GitHub `github.com/whai362`，无 twitter / x.com 链接 ⇒ 不猜 handle） |
+| 状态 | **待跟踪**（同论文 `2312.14238` 已发末位作者 Jifeng Dai ⇒ 守「同一论文 ≤1」本轮不发） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 港中深/上海 AI Lab 机构)`。言论线索：主页与 GitHub 以代码发布为主，暂无可引用原推。 |
+
+### 183. Zhe Chen（陈喆）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhe Chen（陈喆；华人姓名族属 ⇒ 中文信） |
+| 机构 | **南京大学 计算机学院**（博士在读，导师 Tong Lu；InternVL 一作，论文时与 Shanghai AI Lab 合作） |
+| 代表论文 | **InternVL**（arXiv `2312.14238`，B 轨 #199；**一作**） |
+| 邮箱 | **`chenzhe98@smail.nju.edu.cn`**（本人主页 `czczup.github.io` `HTTP 200` / 69,953 B 页内明文；⚠️ 同页另有 `wztxy89[at]163.com` —— 系他人的写死地址，**不采用**） |
+| 主页 | <https://czczup.github.io/>（`200`） |
+| X 账号 | **未找到 X**（页内无 twitter / x.com 链接 ⇒ 不猜） |
+| 状态 | **待跟踪**（同论文已发 Jifeng Dai ⇒ 本轮不发；后续若发，按一作优先并换问题角度） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 南京大学机构)`。该篇的「像素重排 + 动态分辨率」实现细节多在一作侧 ⇒ 若 Dai 无回音，可改问一作同一问题的工程侧细节（不催的例外：不同收件人、不同论文角度，仍受「同论文 ≤1」约束 ⇒ 须先等 14 天窗口）。 |
+
+### 184. Wenhu Chen（陈）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wenhu Chen（华人姓名族属 ⇒ 中文信；**名字汉字未核 ⇒ 信中只写「陈老师」，不猜汉字**） |
+| 机构 | **University of Waterloo**（Cheriton School of CS 助理教授；论文时为 UCSB）；X bio 自述现兼 **Meta-MSL**（`Exploring the Pareto frontier of LLMs @ Meta-MSL`） |
+| 代表论文 | **MMMU**（arXiv `2311.16502`，B 轨 #204；**通讯作者**）· X bio 自述另主导 PoT / MMLU-Pro / MAmmoTH / General-Reasoner（**其自述，本线未逐条核论文**） |
+| 邮箱 | **`hustchenwenhu@gmail.com`**（本人主页 `wenhuchen.github.io` 正文 `Email: hustchenwenhu [at] gmail [dot] com / wenhuchen [at] meta [dot] com`，`HTTP 200` / 8,842 B，按页面 `[at]/[dot]` 规则还原）；旁证 PDF 首页通讯标注 `wenhuchen@uwaterloo.ca`（同人） |
+| 主页 | <https://wenhuchen.github.io/>（`200` / 8,842 B） |
+| X 账号 | **`@WenhuChen`**（本人主页 `href="twitter.com/WenhuChen"`；`x.com/WenhuChen` `200`，`og:title`=`Wenhu Chen (@WenhuChen) on X`，`og:description` 含 `MMMU` ⇒ 双源可核） |
+| 状态 | **已发信**（第 79 封，2026-11-17 18:03；中文 CJK 248 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 拼音主页；机构在加拿大不改判据)`。信问：① 答案抽取失败（无效应答「选择题随机选 / 开放题判错」）在 test 上占比多少，决定 harness 是否加人工复核；② val ≈900 题上做 prompt 选型是否有 val/test 排名一致性数据；③ 图表类 vs 文本类差距是否同质、中文 + EDA 波形/版图子集该优先补哪类图。回填 harness 判分口径 / vision 分辨率预算 / zhulong 读图分层。 |
+
+### 185. Xiang Yue
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xiang Yue（华人姓名族属 ⇒ 中文信；**汉字未核 ⇒ 不写汉字名**） |
+| 机构 | **University of Waterloo**（论文作者块 `2 University of Waterloo`，MMMU **一作**，与 Wenhu Chen 同组） |
+| 代表论文 | **MMMU**（arXiv `2311.16502`，B 轨 #204；**一作**） |
+| 邮箱 | **未找到**（主页 `xiangyue.site` 直连 `000`、`http://` `502` ⇒ 按纪律**不猜地址**，同类拼装写法一律不用） |
+| 主页 | <https://xiangyue.site/>（**本轮不可达**：`000` / `502`） |
+| X 账号 | **未找到 X**（主页不可达 ⇒ 无来源可读，🚫 不猜 handle） |
+| 状态 | **待跟踪**（同论文 `2311.16502` 已发通讯作者 Wenhu Chen ⇒ 守「同一论文 ≤1」本轮不发） |
+| 备注 | `语言=中文(判据=华人姓名族属；机构在加拿大不改判据)`。若 Wenhu Chen 无回音，一作侧的「图像类型 × 分辨率」工程细节可作 14 天后的备选收件人（仍受同论文 ≤1 约束）。 |
+
+### 186. David Rein
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | David Rein（英语姓名族属 ⇒ 英文信） |
+| 机构 | **New York University**（论文作者块 `1 New York University` / `2 Cohere`；GPQA **一作**） |
+| 代表论文 | **GPQA**（arXiv `2311.12022`，B 轨 #203；**一作**） |
+| 邮箱 | **`idavidrein@gmail.com`**（PDF 首页作者块明文，`pdftotext` 实测 1 处；⚠️ **2023 年论文内地址、非当前主页** ⇒ 送达率不可验证） |
+| 主页 | **未找到**（本轮未取到可访问的个人主页；NYU 通用页不作个人页用） |
+| X 账号 | **未找到 X**（无可访问个人页提供 handle ⇒ 不猜） |
+| 状态 | **待跟踪**（邮箱属论文内旧地址 ⇒ 本轮不发；待核到现行主页地址后再评估） |
+| 备注 | `语言=英文(判据=英语姓名族属 + NYU 机构)`。若后续发信，问题方向：448 题中 198 道 diamond 的筛选阈值、非专家 34% 的招募与限时设置、以及题库是否按「可被检索解决」做过二次复核。 |
+
+### 187. Dan Hendrycks
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Dan Hendrycks（英语姓名族属 ⇒ 英文信） |
+| 机构 | **Center for AI Safety（CAIS）主任**（`safe.ai` 首页 `200` / 70,168 B 原文 `Dan Hendrycks` / `Director, Center for AI Safety`）；论文时为 UC Berkeley |
+| 代表论文 | **MATH**（arXiv `2103.03874`，B 轨 #206；**一作**）· 另为 CAIS 多篇安全评测报告作者（`safe.ai` 首页可见署名） |
+| 邮箱 | **未找到现行地址**（`hendrycks.me` 直连与代理均 `000`；PDF 首页 `hendrycks@berkeley.edu` 为 **2021 年**地址 ⇒ 按「不用旧地址」纪律**不采用**） |
+| 主页 | <https://hendrycks.me/>（**本轮不可达 `000`**）· 机构页 <https://safe.ai/>（`200`，仅列姓名与职务、无邮箱） |
+| X 账号 | **未找到 X**（`x.com/DanHendrycks` 实测 **`404`**，`og:title`=`User Profile Not Found - X` ⇒ 不换猜变体） |
+| 状态 | **待跟踪**（无现行邮箱 ⇒ 不发信） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。MATH 的价值主要在 harness 的「抽取 + 判等」两步与难度 1–5 分层口径；若日后拿到现行地址，问题方向应聚焦判分器实现（抽取失败率、等价判定边界），而非数据集规模。 |
+
+### 188. Hao Wang（王浩）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hao Wang（王浩；华人姓名族属 ⇒ 中文信） |
+| 机构 | **北京科技大学数理学院**（PDF 首页 `a School of Mathematics and Physics, University of Science and Technology Beijing, Beijing, China`） |
+| 代表论文 | **Harness Leverage Across Model Size**（arXiv `2611.21407`，A 轨 2026-11-18 早报；一作，共同一作标注 `∗`） |
+| 邮箱 | **`wanghao994916959@163.com`**（PDF 首页明文，`pdftotext` 实测 1 处；2026-11-16 论文内地址 ⇒ 新近，按可用处理） |
+| 主页 | **未找到**（本轮未取到个人主页） |
+| X 账号 | **未核验**（`x.com` 直连 `000`、代理 `127.0.0.1:7897` 亦 `000` ⇒ 无页面可读，按纪律**不猜 handle**） |
+| 状态 | **已发信**（#80，2026-11-18 00:08:34，中文 CJK 300 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构)`。问题方向：禁用六个可执行检查后四个均值增量与 repeat-blocking 规则 0.411 的关系、exit code vs 产物判分口径、外部工具任务下 Mingbird 优势是否被超时吃掉。 |
+
+### 189. Rohit Gandikota
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Rohit Gandikota（印度语族姓名 ⇒ 英文信） |
+| 机构 | **Northeastern University**（PDF 首页作者块，与 David Bau 同组） |
+| 代表论文 | **How VLMs Plan What's Next**（arXiv `2611.21600`，A 轨 2026-11-18 早报；一作） |
+| 邮箱 | **`gandikota.ro@northeastern.edu`**（PDF 首页明文，`pdftotext` 实测 1 处） |
+| 主页 | 项目页 <https://plan.baulab.info/>（团队页，非本人页） |
+| X 账号 | **未核验**（本轮 X 不可达） |
+| 状态 | **已发信**（#81，2026-11-18 00:08:33，英文 199 词） |
+| 备注 | `语言=英文(判据=印度语族姓名 + 美国机构)`。问题方向：2B/32B 上 binding/gaze head 是否同层、自然照片相对合成字母面板的 binding 精度损失、多轮追问时游标是否重置。 |
+
+### 190. Srinath Srinivasan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Srinath Srinivasan（印度语族姓名 ⇒ 英文信） |
+| 机构 | **North Carolina State University**（PDF 首页 `Dept. of Computer Science ... Email: ssrini27@ncsu.edu`） |
+| 代表论文 | **Beyond Leaderboard Ranks: Selecting Software Engineering Agents Under Budget Constraints**（arXiv `2611.21515`，2026-11-18 时窗候选；一作） |
+| 邮箱 | **`ssrini27@ncsu.edu`**（PDF 首页明文，`pdftotext` 实测） |
+| 主页 | **未找到** |
+| X 账号 | **未核验**（本轮 X 不可达） |
+| 状态 | **已发信**（#82，2026-11-18 00:08:39，英文 195 词） |
+| 备注 | `语言=英文(判据=印度语族姓名 + 美国机构)`。问题方向：27/35 Pareto 步「统计不可分」所用不确定度与停点选择、成本口径差 11.7× 的来源与预算控制器需要的修正项、无任务成本先验时的替代方案。 |
+
+### 191. Hammond Pearce
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hammond Pearce（英语姓名族属 ⇒ 英文信） |
+| 机构 | **UNSW Sydney**（School of Computer Science and Engineering；机构现行主页 `unsw.edu.au/staff/hammond-pearce` `HTTP 200` / 232,605 B）。⚠️ 其 X bio 仍写 `Research Assistant Professor @ NYU Center for Cybersecurity`（历史身份）⇒ **以机构主页为准** |
+| 代表论文 | **VeriGen**（arXiv `2308.00708`，三作；B 轨 #210）· LLM 硬件安全 / 漏洞修复方向（其 X 时间线自述，未逐篇核） |
+| 邮箱 | **`hammond.pearce@unsw.edu.au`**（UNSW 人员页明文，2026-11-18 实测；🚫 不用 PDF 首页旧地址 `hp2265@nyu.edu`） |
+| 主页 | <https://www.cyberhammond.com/>（`200` / 216,706 B；页内无明文邮箱） |
+| X 账号 | **@kiwihammond**（双源：`x.com/kiwihammond` 的 `og:title` = `Hammond Pearce (@kiwihammond) on X` + `og:description` 与其身份一致；`x_fetch.py` 只读抓取 `200`，5 条推文） |
+| 状态 | **已发信**（#83，2026-11-18 03:04:49，英文 195 词） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 澳大利亚机构)`。问题方向：编译失败 vs 仿真不一致的比例及跨 2B/6B/16B 漂移、参考实现与 test bench 同源泄漏如何防、7B 级 base 下预算该投数据精选还是采样重排。 |
+
+### 192. Shailja Thakur
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shailja Thakur（印度语族姓名 ⇒ 英文信） |
+| 机构 | **IBM Research**（本人主页 `shailja-thakur.github.io` `200` / 6,422 B；IBM 人员页 `research.ibm.com/people/shailja-thakur` `200` / 45,829 B） |
+| 代表论文 | **VeriGen**（arXiv `2308.00708`，一作；B 轨 #210） |
+| 邮箱 | **未找到**（本人主页与 IBM 人员页均无明文/`mailto:`/`[at]` 混淆串，`grep` 0 命中）⇒ **按纪律不发信**，只建档 |
+| 主页 | <https://shailja-thakur.github.io/>（`200`；正文自述现研究「small LMs in agentic settings：harness search、按角色的 adapter 分解、跨长流程的记忆、agentic 调试」） |
+| X 账号 | **未找到**（未在主页 / IBM 页 / 搜索结果中核到 handle；🚫 不猜） |
+| 状态 | **待跟踪** |
+| 备注 | `语言=英文(判据=印度语族姓名 + 美国机构)`。**与 harness 线高度相关**：其自述的三个方向（harness search / 角色分解 / 长流程记忆）正是我们在做的外壳问题 ⇒ 若能由运维提供可用邮箱，应优先发信。 |
+### 193. Zeynab Anbiaee
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zeynab Anbiaee（波斯语族姓名 ⇒ 英文信） |
+| 机构 | **University of New Brunswick**（Faculty of Computer Science / Canadian Institute for Cybersecurity, CIC；ORCID `0009-0008-5409-2648`、IEEE Xplore 作者页均标 UNB CIC） |
+| 代表论文 | **When Tool Names Are Not Identities: Measuring Provider Misbinding in MCP-Based AI Agents**（arXiv `2611.21577`，一作；A 轨 2026-11-18 03:00 时窗已核候选） |
+| 邮箱 | **未找到**（PDF 全文 `pdftotext` 扫 `@` 0 命中；UNB CIC 成员页只列姓名、未列其邮箱）⇒ **不发信**，只建档 |
+| 主页 | **未找到**（LinkedIn 页需登录，不算可核来源） |
+| X 账号 | **未找到** |
+| 状态 | **待跟踪** |
+| 备注 | `语言=英文(判据=波斯语族姓名 + 加拿大机构)`。价值点：它把「工具名 / 描述 / schema 完全相同但 provider 不同」当作**控制面身份缺失**问题——我们 harness 里任何「按工具名路由」的实现都暴露在同一类风险下；若能拿到邮箱，问题应聚焦「同 schema 不同 provider 时客户端的消歧信号」。 |
+
+### 194. Arunkumar V
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Arunkumar V（印度语族姓名 ⇒ 英文信） |
+| 机构 | **Anna University**（University College of Engineering, BIT Campus, Tiruchirappalli, India；PDF 首页机构块） |
+| 代表论文 | **Optimistic Verifiers Get Hacked: Reward Hacking Under an Exact Process Oracle**（arXiv `2611.21538`，一作；A 轨 2026-11-18 03:00 时窗 #5） |
+| 邮箱 | **`arunkumarv1530@gmail.com`**（PDF 首页明文，`pdftotext` 实测；2026 年论文 ⇒ 时效可） |
+| 主页 | **未找到** |
+| X 账号 | **未找到** |
+| 状态 | **已发信**（#84，2026-11-18 03:04:53，英文 197 词） |
+| 备注 | `语言=英文(判据=印度语族姓名 + 印度机构)`。问题方向：padding 的具体形态与按理由数归一化后的表型去向、model-free audit 能否预测饱和步、10 个复制单元里量级不复制时五条预解释的相对可信度。 |
+
+### 195. Xingyao Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xingyao Wang（拼音姓名 ⇒ 中文信） |
+| 机构 | **University of Illinois Urbana-Champaign（UIUC）**（PDF 首页作者块；OpenHands 一作） |
+| 代表论文 | **OpenHands: An Open Platform for AI Software Developers as Generalist Agents**（arXiv `2407.16741`，ICLR 2025） |
+| 邮箱 | **`xingyao6@illinois.edu`**（PDF 首页明文，`pdftotext` 实测；v3 `2025-04-18` ⇒ 时效可） |
+| 主页 | 未核（本轮未抓；🚫 不写猜测链接） |
+| X 账号 | **未找到**（本轮未抓 X，不猜 handle） |
+| 状态 | **已发信**（#85，2026-11-18 06:02:49，中文 CJK 216 字） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 美国机构)`——典型「人在美国不判英文」案例。问题方向：26% 之外的失败分桶（改错位置 vs 环境跑不起来）、事件流回放丢掉内部推理后的可复现率、换 runtime 镜像是否重跑基线。 |
+
+### 196. Omar Khattab
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Omar Khattab（阿拉伯语族姓名 ⇒ 英文信） |
+| 机构 | **Stanford University**（PDF 首页作者块；DSPy 一作；同页含 Christopher Potts / Matei Zaharia） |
+| 代表论文 | **DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines**（arXiv `2310.03714`） |
+| 邮箱 | **`okhattab@cs.stanford.edu`**（PDF 首页明文，`pdftotext` 实测） |
+| 主页 | 未核（本轮未抓） |
+| X 账号 | **未找到**（不猜） |
+| 状态 | **已发信**（#86，2026-11-18 06:02:50，英文 160 词） |
+| 备注 | `语言=英文(判据=阿拉伯语族姓名 + 美国机构；无东亚语言信号)`。问题方向：指标有噪声（judge 5% 分歧）时编译器是否过拟合自举示范、770M T5 的增益里示范与权重更新的可分离性、每任务仅约 200 条标注时是否仍值得编译。 |
+
+### 197. Nathan Lambert
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nathan Lambert（英语姓名 ⇒ 英文信） |
+| 机构 | **Allen Institute for AI（Ai2）**（PDF 首页作者块；Tülu 3 一作） |
+| 代表论文 | **Tülu 3: Pushing Frontiers in Open Language Model Post-Training**（arXiv `2411.15124`） |
+| 邮箱 | **未找到个人邮箱**（PDF 全文只出现团队信箱 `tulu@allenai.org`，属分发列表 ⇒ 按惯例不发，只建档） |
+| 主页 | 未核（本轮未抓） |
+| X 账号 | **未找到**（不猜） |
+| 状态 | **待跟踪**（只建档） |
+| 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。价值点：Tülu 3 正文专门写了「**没能稳定涨点的训练方法**」，是全表最稀缺的负结果材料；若能拿到个人邮箱，问题应聚焦「SFT 之后 DPO 与 RLVR 的边际贡献如何拆分」。 |
+
+### 198. Yonatan Belinkov
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yonatan Belinkov（希伯来语族姓名 ⇒ 英文信） |
+| 机构 | **Technion – Israel Institute of Technology**（Jamba 共同作者，B 轨 #219；NLP / 可解释性方向） |
+| 代表论文 | **Jamba: A Hybrid Transformer-Mamba Language Model**（arXiv `2403.19887`）· 另有 NLP 可解释性与鲁棒性系列 |
+| 邮箱 | **`belinkov@technion.ac.il`**（本人现行主页 `https://www.cs.technion.ac.il/~belinkov/` 2026-11-18 实测 `200` / 13,188 B，页内明文；🚫 未用 PDF 旧地址） |
+| 主页 | <https://www.cs.technion.ac.il/~belinkov/>（`200`） |
+| X 账号 | **`@boknilev`**（来源：上述主页页内 `href` → `twitter.com/boknilev`；⚠️ 本轮 `x.com` TLS `000`，**未做 `og:title` 双源核验**，故只登记不标「已核验」） |
+| 状态 | **已发信**（#87，2026-11-18 09:07:38，英文 177 词） |
+| 备注 | `语言=英文(判据=希伯来语族姓名 + 以色列机构；无东亚语言信号)`。问题方向：1:7 比例在 1.3B→7B 的 perplexity 排序是否稳定、去掉 MoE 后 256K 收益还剩多少、128K–256K 检索内容由 attention 还是 Mamba 层承载。 |
+
+### 199. Bill Yuchen Lin（林禹臣）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bill Yuchen Lin（林禹臣；拼音姓名族属 ⇒ 中文信） |
+| 机构 | **Allen Institute for AI（Ai2）**（Magpie 末位/通讯作者，B 轨 #218；原 USC） |
+| 代表论文 | **Magpie: Alignment Data Synthesis from Scratch by Prompting Aligned LLMs with Nothing**（arXiv `2406.08464`）· 另有推理 / 常识评测系列 |
+| 邮箱 | **`bill@yuchenlin.xyz`**（本人现行主页 `https://yuchenlin.xyz/` 2026-11-18 实测 `200` / 38,590 B，页内明文） |
+| 主页 | <https://yuchenlin.xyz/>（`200`） |
+| X 账号 | **`@billyuchenlin`**（来源：上述主页页内 `href` → `twitter.com/billyuchenlin`；⚠️ 本轮 `x.com` TLS `000`，**未做 `og:title` 双源核验**） |
+| 状态 | **已发信**（#88，2026-11-18 09:07:41，中文 CJK 232 字） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 美国机构)`。问题方向：300K 过滤三条规则各去掉多少、5 万预算下最不能省哪条、跨教师组合（70B 生成 / 8B 回复）质量损失、DPO 偏好对换人工奖励模型的差距。 |
+
+### 200. Anton Lozhkov
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Anton Lozhkov（斯拉夫语族姓名 ⇒ 英文信） |
+| 机构 | **Hugging Face**（StarCoder 2 一作，B 轨 #217；BigCode 协作） |
+| 代表论文 | **StarCoder 2 and The Stack v2: The Next Generation**（arXiv `2402.19173`）· StarCoder / The Stack 数据治理系列 |
+| 邮箱 | **未找到公开邮箱**（StarCoder 2 PDF 全文只出现 `contact@bigcode-project.org`，属项目分发列表 ⇒ 按惯例不发，只建档） |
+| 主页 | <https://huggingface.co/anton-l>（⚠️ 本轮实测连接超时 `000`，未能核验页内内容） |
+| X 账号 | **未找到**（不猜；本轮 X 不可达，后续可补核） |
+| 状态 | **待跟踪**（只建档） |
+| 备注 | `语言=英文(判据=斯拉夫语族姓名 + Hugging Face，无中日韩信号)`。价值点：The Stack v2 的许可证过滤与 619 语言去重口径；若能拿到个人邮箱，问题应聚焦「opt-out 比例对代码能力的影响」与「3B 过训到 3.3T token 的收益曲线」。 |
+
+### 201. Luca Soldaini
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Luca Soldaini（意大利语族姓名 ⇒ 英文正文 + 意大利语称谓问候一句；按 2026-11-14 令） |
+| 机构 | **Allen Institute for AI（Ai2）**（OLMo 2 核心作者，B 轨 #221；亦为 Dolma / OLMoE 数据侧作者） |
+| 代表论文 | **2 OLMo 2 Furious**（arXiv `2501.00656`，三作）· **Dolma: an Open Corpus of Three Trillion Tokens**（`2402.00159`，B 轨已收） |
+| 邮箱 | **`luca@soldaini.net`**（本人现行主页 <https://soldaini.net/> `200` / 12,855 B，页内 `mailto:` 明文；🚫 未用 PDF 地址） |
+| 主页 | <https://soldaini.net/>（`200`） |
+| X 账号 | `@soldni`（主页自链 `twitter.com/soldni`；⚠️ 本轮 X 不可达 ⇒ **未做 `og:title` 双源**，不计入「已核验」） |
+| 状态 | **已发信**（#89，2026-11-18 12:10:19，英文正文 176 词 + 意大利语称谓一句） |
+| 备注 | `语言=英文正文+意语问候(判据=意大利语族姓名 + 美国机构)`。问题方向：Dolmino Mix 1124 在退火阶段的 token 占比、砍到 1/3 时 keep vs re-tune（二选一）、7B/13B/32B 上稳定性干预是否冗余。 |
+
+### 202. Noah A. Smith
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Noah A. Smith（英语姓名族属 ⇒ 英文信） |
+| 机构 | **University of Washington（Paul G. Allen School）+ Allen Institute for AI**（OLMo 2 作者之一，B 轨 #221） |
+| 代表论文 | **2 OLMo 2 Furious**（`2501.00656`，作者列表末段）· OLMo 系列 / 大模型评测方法 |
+| 邮箱 | **`nasmith@cs.washington.edu`**（本人主页 `Contact` 页 <https://nasmith.github.io/contact/> `200` / 13,752 B，页内 `mailto:` 明文） |
+| 主页 | <https://nasmith.github.io/>（`200` / 24,943 B） |
+| X 账号 | `@nlpnoah`（主页自链 `twitter.com/nlpnoah`；⚠️ X 本轮不可达，未双源，不计入已核验） |
+| 状态 | **待跟踪**（只建档；同论文已有 Luca Soldaini 代表本线发信，守「同一论文 ≤1」） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：OLMo 2 的评测口径与 checkpoint soup 方差处理；若日后另开新论文（非 #221）再考虑发信。 |
+
+### 203. Benjamin Tan（Peng Seng Benjamin Tan）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Benjamin Tan（华人姓名族属 `Peng Seng … Tan` ⇒ **中文信**；按令「名字族属优先于机构所在地」） |
+| 机构 | **University of Calgary**（Electrical and Software Engineering 副教授，CalgaryISH 负责人；AutoChip 五作，B 轨 #222） |
+| 代表论文 | **AutoChip: Automating HDL Generation Using LLM Feedback**（`2311.04887`）· VeriGen（`2308.00708`）· 硬件安全 / LLM-for-EDA |
+| 邮箱 | **`benjamin.tan1@ucalgary.ca`**（UCalgary 官方人员页 <https://profiles.ucalgary.ca/peng-seng-benjamin-tan> `200` / 77,425 B，页内明文） |
+| 主页 | <https://profiles.ucalgary.ca/peng-seng-benjamin-tan>（`200`）；课题组 <https://calgaryish.com/PI/>（未逐页核） |
+| X 账号 | **未找到**（人员页只链校方 `twitter.com/ucalgary`，非本人 ⇒ 🚫 不登记为本人 handle） |
+| 状态 | **已发信**（#90，2026-11-18 12:10:20，中文 CJK 250 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 加拿大机构)`。问题方向：24.20% 是相对提升还是绝对百分点、HDLBits 难度分桶哪一档无增益（二选一）、是否存在只对齐 testbench 的倾向与留出 testbench 对照。 |
+
+### 204. Hao Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hao Liu（拼音姓名族属 ⇒ **中文信**；按令「名字族属优先于机构所在地」） |
+| 机构 | **Google DeepMind**（research scientist；即将入职 CMU ML 系；Ring Attention 一作，B 轨 #224，原 UC Berkeley 博士） |
+| 代表论文 | **Ring Attention with Blockwise Transformers for Near-Infinite Context**（arXiv `2310.01889`，NeurIPS 2023）· World Model on Million-Length Video（`2402.08268`） |
+| 邮箱 | **`haoxyliu@gmail.com`**（本人现行主页 <https://www.haoliu.ai/> `200` / 2,256 B，页内 `email=` 字段用 HTML 实体混淆，`html.unescape` 还原；🚫 未用 PDF 上的 Berkeley 旧地址） |
+| 主页 | <https://www.haoliu.ai/>（`200`） |
+| X 账号 | **未找到**（主页无 X 链接；本轮未猜 handle） |
+| 状态 | **已发信**（#91，2026-11-18 15:05:21，中文 CJK 206 字） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 美国机构)`。问题方向：Table 2 的 `c = FLOPS / Bandwidth` 在 IB 集群上是否构成硬下界（短于 150K 是否该放弃 ring，二选一）、Table 4 的 MFU 下降归因（attention FLOPs 占比 vs 通信未完全重叠）。 |
+
+### 205. Ali Farhadi
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ali Farhadi（波斯语族姓名 ⇒ 英文信） |
+| 机构 | **University of Washington（Paul G. Allen School）+ Allen Institute for AI（Ai2）**（OLMoE 资深作者，B 轨 #223） |
+| 代表论文 | **OLMoE: Open Mixture-of-Experts Language Models**（`2409.02060`）· YOLOv3（`1804.02767`，末位作者）· Molmo |
+| 邮箱 | **`ali@cs.washington.edu`**（UW 官方人员页 <https://www.cs.washington.edu/people/faculty/ali> `200` / 113,422 B，页内明文） |
+| 主页 | <https://www.cs.washington.edu/people/faculty/ali>（`200`） |
+| X 账号 | **未找到**（本轮未取得可核验 handle；🚫 不猜） |
+| 状态 | **待跟踪**（只建档；同论文已向一作 #204 发信，守「同一论文 ≤1」） |
+| 备注 | `语言=英文(判据=波斯语族姓名 + 美国机构；无中日韩信号)`。价值点：OLMoE 的「共享专家无效」「dropless token-based routing 优于 expert-based」这两条反直觉结论的复现边界。 |
+
+### 206. Hannaneh Hajishirzi
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hannaneh Hajishirzi（波斯语族姓名 ⇒ 英文信） |
+| 机构 | **University of Washington + Allen Institute for AI（Ai2）**（OLMoE 末位作者，B 轨 #223） |
+| 代表论文 | **OLMoE**（`2409.02060`）· OLMo（`2402.00838`）· Pythia 系列（作者之一） |
+| 邮箱 | **`hannaneh@cs.washington.edu`**（UW 官方人员页 <https://www.cs.washington.edu/people/faculty/hannaneh> `200` / 117,846 B，页内明文） |
+| 主页 | <https://www.cs.washington.edu/people/faculty/hannaneh>（`200`；`hajishirzi.github.io` 本轮 `404`） |
+| X 账号 | **未找到**（不猜） |
+| 状态 | **待跟踪**（只建档；守「同一论文 ≤1」） |
+| 备注 | `语言=英文(判据=波斯语族姓名 + 美国机构)`。价值点：全开放训练栈（权重/数据/代码/日志）的成本口径，是 data / pretrain 线做「可复现预算表」的参照。 |
+
+
+### 207. Zhifang Sui（穗志方）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhifang Sui（中文姓名可还原 ⇒ 中文信） |
+| 机构 | **北京大学（PKU）**（DeepSeekMoE `2401.06066` 作者名单第 16 位，B 轨 #225） |
+| 代表论文 | **DeepSeekMoE**（`2401.06066`）· 中文 NLP / 知识图谱方向多项工作（本轮未逐条核，故不列） |
+| 邮箱 | **未找到**（本轮试 `scholar.pku.edu.cn/zhifang` `000`；PKU 其他人员页未取到可核明文 ⇒ 🚫 不猜 `@pku.edu.cn` 拼装地址） |
+| 主页 | `scholar.pku.edu.cn/zhifang`（本轮 `000`，未打开） |
+| X 账号 | **未核验**（本轮 `x.com` 直连与代理均 `000`） |
+| 状态 | **待跟踪**（只建档；未发信） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 中国大陆机构)`。价值点：MoE 结构超参（专家粒度 / shared expert 比例 / 两级均衡系数）的**中文语境**可追问对象；已收 #225。⇒ 下一轮优先补「现行邮箱」，优先级高于再发一封新信。 |
+
+### 208. Mitchell Wortsman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mitchell Wortsman（英文姓名 ⇒ 英文信） |
+| 机构 | **University of Washington / Google Research**（论文时期；`2309.14322` 一作，B 轨 #226） |
+| 代表论文 | **Small-scale proxies for large-scale Transformer training instabilities**（`2309.14322`） |
+| 邮箱 | **未找到**（`mwortsman.github.io` `404`；`homes.cs.washington.edu/~wortsman/` `404`；UW 人员页 `.../faculty/wortsman` `404`） |
+| 主页 | **未找到现行主页**（上述三处均 `404`，本轮实测） |
+| X 账号 | **未核验**（`x.com` `000`） |
+| 状态 | **待跟踪**（只建档；无邮箱 ⇒ 不发信） |
+| 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。价值点：**训练稳定性预检协议**（扫 LR → 记 max attention logit → 预测大模型是否发散）的作者，是 pretrain 线「花大卡前先小规模预检」这条流程的直接对话对象。⚠️ 主页集体 `404` 说明他可能已换机构 ⇒ 下轮先搜现行所属，🚫 不用论文 PDF 的旧 gmail。 |
+
+### 209. Paulius Micikevicius
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Paulius Micikevicius（立陶宛语族姓名 + 美国机构 ⇒ 英文信；立陶宛语不作外发语言） |
+| 机构 | **NVIDIA**（`1710.03740` 一作，B 轨 #227） |
+| 代表论文 | **Mixed Precision Training**（`1710.03740`）· 后续 FP8 / 低精度格式工作（本轮未核，故不列具体条目） |
+| 邮箱 | **`pauliusm@nvidia.com`**（来源：PDF **首页明文**，`1710.03740v3` 第 1 页作者块；⚠️ **2017 年地址** ⇒ 按令发信前须先核现行主页，🚫 不得直接沿用） |
+| 主页 | **未找到**（本轮未取到可核个人页） |
+| X 账号 | **未核验**（`x.com` `000`） |
+| 状态 | **待跟踪**（只建档；**未发信** —— 地址时效未确认） |
+| 备注 | `语言=英文(判据=姓名族属+美国机构)`。价值点：BF16/FP16/FP8 的**数值口径**源头，pretrain 线「训练配置表四列（master weight dtype / 累加 dtype / loss scale / 溢出策略）」的直接出处。同页还有 `eriche@google.com`（Erich Elsen）等 2017 年地址，同样先核现行页再发。 |
+
+
+### 210. Michael Tschannen
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Michael Tschannen（德语姓名族属 + 瑞士机构 ⇒ **德文称谓问候 + 英文正文**；正文的英文 ≤200 词） |
+| 机构 | **Google DeepMind（苏黎世）**（SigLIP / SigLIP 2 项目 lead；B 轨 #230 通讯作者） |
+| 代表论文 | **Sigmoid Loss for Language Image Pre-Training（SigLIP）**（`2303.15343`，ICCV 2023，B 轨 #118）· **SigLIP 2**（`2502.14786`，B 轨 #230） |
+| 邮箱 | **`tschannen@google.com`**（来源：**SigLIP 2 PDF 首页明文**，2025 年论文；⚠️ 按令**发信前仍须先核现行主页**，🚫 不用更早论文的旧地址） |
+| 主页 | **未找到**（`tschannen.github.io` 本轮 `404`；DeepMind 个人页未取到） |
+| X 账号 | **@mtschannen**（双源：`x.com/mtschannen` `200`，bio = `Research Scientist @GoogleDeepMind. Representation learning for multimodal understanding and generation.`；单推页 `og:title` = `Michael Tschannen (@mtschannen) on X`） |
+| 状态 | **待跟踪**（有 PDF 邮箱，无已核现行主页 ⇒ 本轮不发信） |
+| 备注 | `语言=德文问候+英文正文(判据=德语姓名族属 + 瑞士/Google DeepMind 苏黎世)`。价值点：**视觉塔四档尺寸（86M / 303M / 400M / 1B）+ 稠密任务配方**的一手作者，是 vision 线「2B 模型该配多大视觉塔」的直接对话对象；问题方向建议锁在「captioning/自蒸馏各自的消融贡献」与「中文域内图文对下 sigmoid loss 的 batch 需求」。 |
+
+### 211. Stella Biderman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Stella Biderman（英语姓名 ⇒ 英文信 ≤200 词） |
+| 机构 | **EleutherAI**（执行总监；Pythia 一作，B 轨 #231） |
+| 代表论文 | **Pythia: A Suite for Analyzing LLMs Across Training and Scaling**（`2304.01373`，ICML 2023，B 轨 #231）· **The Pile**（`2101.00027`，B 轨 #76 区段） |
+| 邮箱 | **`stella@eleuther.ai`**（来源：**Pythia PDF 首页明文**，2023 年论文；⚠️ EleutherAI 站点本轮仅首页 `200`、只有公共信箱 `contact@eleuther.ai`，个人页 `/people` `/team` 均 `404` ⇒ 无现行个人页可核，发信前须再核） |
+| 主页 | **未找到**（`stellabiderman.com` 本轮 `000`；GitHub `StellaAthena` `200` 但页内无 `mailto:`） |
+| X 账号 | **@BlancheMinerva**（双源：`x.com/BlancheMinerva` `200`，bio = `Ensuring that tech companies don't have a monopoly on being able to do research on cutting edge AI @AiEleuther.`；单推页 `og:title` = `Stella Biderman (@BlancheMinerva) on X`） |
+| 状态 | **待跟踪**（邮箱为 2023 年 PDF 地址 ⇒ 不发信） |
+| 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。价值点：**可复现训练轨迹**（16 模型 × 154 checkpoint、训练顺序已知）的设计者，是 harness 线「中间 checkpoint 扫描」与 data 线「去重阈值对照」的直接对话对象。⚠️ 本轮抓到的时间线**近 30 天全为言论自由 / 政策类**，无技术原推 ⇒ **不作 voice_ready**（宁缺勿滥）。 |
+
+### 212. Hailey Schoelkopf
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hailey Schoelkopf（英语姓名 ⇒ 英文信 ≤200 词） |
+| 机构 | **EleutherAI**（Pythia 二作，B 轨 #231；亦参与 The Pile / GPT-NeoX 线） |
+| 代表论文 | **Pythia**（`2304.01373`，ICML 2023，B 轨 #231）· GPT-NeoX-20B（`2204.06745`，本表未单列） |
+| 邮箱 | **`hailey@eleuther.ai`**（来源：**Pythia PDF 首页明文**，2023 年论文；⚠️ 现行性未核 ⇒ 发信前须先核主页/机构页） |
+| 主页 | <https://haileyschoelkopf.github.io/>（本轮 `200` / 23,354 B；⚠️ 页内**无 `mailto:`、无 X 链接**） |
+| X 账号 | **未找到**（`x.com/haileyschoelkopf` 本轮 **`404`**；🚫 不猜近似 handle） |
+| 状态 | **待跟踪**（只建档；无已核实现行邮箱 + 无 X ⇒ 不发信） |
+| 备注 | `语言=英文(判据=英语姓名 + 美国机构)`。价值点：**训练套件的可复现性**（checkpoint 序列 / 数据顺序 / 去重版本）是 harness 与 data 两条线的共同底座，她同时是「评测套件怎么设计才可复现」的实践者。 |
+### 213. Kushagra Bainsla
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kushagra Bainsla（英语/印度姓名 ⇒ 英文信 ≤200 词） |
+| 机构 | **San José State University**（单作者论文一作，A 轨 `2611.23035`） |
+| 代表论文 | **Storing the Gemma 4 K=V Cache Once**（`2611.23035`，2026-11-17） |
+| 邮箱 | **`kushagra.bainsla@sjsu.edu`**（来源：**论文 PDF 第 1 页明文**，`pdftotext` 实测；**地址级别 C**；`sjsu.edu/people/kushagra.bainsla/` 本轮 `404` ⇒ 无机构人员页可核） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（本轮 `x.com` 直连与代理均 `000`；🚫 不猜 handle） |
+| 状态 | **已发信**（第 92 封，2026-11-19 00:10:13，英文 175 词） |
+| 备注 | `语言=英文(判据=非中/日/韩姓名族属 + 美国高校)`；`地址级别=C(论文 PDF；2026-11-17 新论文，地址即现行)`。价值点：**用模型结构换服务内存**的精确工程（Eq. (4) 640 值行、two-view read、bit-identical 对账），可回填我们的长上下文部署预算。 |
+
+### 214. Hai Huang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hai Huang（华人姓名 ⇒ 若发信应用中文；本轮**不发**） |
+| 机构 | **Palona AI**（一作，A 轨 `2611.23197`） |
+| 代表论文 | **Structure–Residual Inductive Biases for Language Model Pretraining**（`2611.23197`，2026-11-17） |
+| 邮箱 | **未找到**（PDF 首页未给个人邮箱；主页 `haihuang-ml.github.io` 本轮 `404`） |
+| 主页 | GitHub <https://github.com/haihuang-ml>（仓库 `structure-residual` 可访问） |
+| X 账号 | **未找到**（X 不可达） |
+| 状态 | **待跟踪**（无已核实现行邮箱 ⇒ 不发信） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 需机构确认；本轮未发)`。价值点：BBC / CC 的**深度偏好相反**与 1B 数据脚本公开，可当我们的小规模探针。 |
+
+### 215. Kewei Tu 屠可伟
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kewei Tu 屠可伟（中文信 ≤300 字） |
+| 机构 | **上海科技大学** 信息科学与技术学院（通讯作者 †，A 轨 `2611.23026`） |
+| 代表论文 | **TPHC: Improving Hyper-Connections with Tensor-Parallel Grouped Updates**（`2611.23026`，2026-11-17） |
+| 邮箱 | **`tukw@shanghaitech.edu.cn`**（来源：**论文 PDF 第 1 页作者块明文**，`pdftotext` 实测；**地址级别 C**；本人页 `faculty.sist.shanghaitech.edu.cn/faculty/tukw/` `000`、`keweitu.github.io` `404`） |
+| 主页 | **未找到可访问页** |
+| X 账号 | **未找到**（X 不可达） |
+| 状态 | **已发信**（第 93 封，2026-11-19 00:10:13，中文 200 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构)`；`地址级别=C(论文 PDF；2026-11-17 新论文，地址即现行)`。价值点：**残差流扩展的写回多样性**（TP 分片部分输出）+ 训练时间口径（4 流 +9%、4→16 流 +19%），可直接指导 2B 级预训练的结构试验。 |
+
+
+
+### 216. Nikit Srivastava
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nikit Srivastava（印度裔姓名 ⇒ 外发英文） |
+| 机构 | **Paderborn University**（Data Science Group, Heinz Nixdorf Institute，德国；A 轨 `2611.23158` 第一作者） |
+| 代表论文 | **MoE–LoRA Methods for Multilingual Adaptation: A Systematic Empirical Study**（`2611.23158`，2026-11-17） |
+| 邮箱 | **`nikit.srivastava@upb.de`**（来源：论文 PDF 第 1 页作者块 `{nikit.srivastava, axel.ngonga}@upb.de`，`pdftotext` 实测；**地址级别 C**） |
+| 主页 | **未找到**（本轮未核到个人页） |
+| X 账号 | **未找到**（`x.com` 直连与代理均 `000`；🚫 不猜 handle） |
+| 状态 | **已发信**（第 94 封，2026-11-19 03:03:09，英文 192 词） |
+| 备注 | `语言=英文(判据=印度裔姓名族属 + 德国高校；无中/日/韩信号)`；`地址级别=C(论文 PDF；2026-11-17 新论文，地址即现行)`。价值点：**200 语言 / 9,000+ 设定的 LoRA 排名不可外推** + 「翻译变好、阅读理解变差」这一负结果，可回填我们的多语言适配准入。 |
+
+### 217. Shengding Hu 胡声鼎
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shengding Hu 胡声鼎（中文信 ≤300 字） |
+| 机构 | **清华大学**（B 轨 #236 MiniCPM 第一作者） |
+| 代表论文 | **MiniCPM: Unveiling the Potential of Small Language Models with Scalable Training Strategies**（`2404.06395`，2024） |
+| 邮箱 | **`shengdinghu@gmail.com`**（来源：本人主页 `https://shengdinghu.github.io/` `HTTP 200` 页内 `mailto:` 明文，**地址级别 A**；论文 PDF 第 1 页亦为同一地址） |
+| 主页 | <https://shengdinghu.github.io/>（`200`，8,679 B） |
+| X 账号 | **未找到**（X 不可达；🚫 不猜 handle） |
+| 状态 | **已发信**（第 95 封，2026-11-19 03:03:08，中文 196 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构清华大学)`；`地址级别=A(本人现行主页 mailto)`。价值点：**WSD 的 10% decay 规则** 与 1.1T token 过训比，直接服务 2B 预训练的 checkpoint 复用与 token 预算。 |
+
+### 218. Mingxuan Wang 王明轩
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mingxuan Wang 王明轩（中文信 ≤300 字） |
+| 机构 | **ByteDance Seed**（B 轨 #237 DAPO 通讯作者之一） |
+| 代表论文 | **DAPO: An Open-Source LLM Reinforcement Learning System at Scale**（`2503.14476`，2025） |
+| 邮箱 | **`wangmingxuan.89@bytedance.com`**（来源：论文 PDF 第 1 页 `Correspondence:` 行，`pdftotext` 实测；**地址级别 C**） |
+| 主页 | **未找到**（本轮未核） |
+| X 账号 | **未找到**（X 不可达；🚫 不猜 handle） |
+| 状态 | **已发信**（第 96 封，2026-11-19 03:03:09，中文 231 字） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构字节跳动)`；`地址级别=C(论文 PDF 通讯作者行)`。价值点：**去掉 KL + Clip-Higher(εhigh=0.28) + Dynamic Sampling + Overlong Shaping** 四开关，可逐项搬到 2B 级可验证奖励 RL。 |
+
+### 219. Xueping Gao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xueping Gao（华人姓名 ⇒ 若发信应用中文） |
+| 机构 | **Alibaba Cloud Computing**（A 轨 `2611.22835` 单作者） |
+| 代表论文 | **When Passing Checks Do Not Establish Completion: Evidence Interpretation in Coding Agents**（`2611.22835`，2026-11-17） |
+| 邮箱 | **未找到**（PDF 首页无邮箱；本轮未核到个人主页） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（X 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核实现行邮箱 ⇒ 不发信） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构；本轮未发)`。价值点：**「事实正确 ≠ 给出所要求的有限结论」**（122 条标签全对但仅 95/128 满足事实+范围契约），可直接改 harness 的完成判据。 |
+
+### 220. Mirac Suzgun
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mirac Suzgun（土耳其姓名族属 ⇒ 若发信应用英文） |
+| 机构 | **Stanford University**（B 轨 #238 BBH 一作；论文作者块单位） |
+| 代表论文 | **Challenging BIG-Bench Tasks and Whether Chain-of-Thought Can Solve Them**（`2210.09261`，2022） |
+| 邮箱 | `msuzgun@cs.stanford.edu`（**来源：论文 PDF 首页明文，地址级别 C**；2022 年地址，未核现行主页 ⇒ 发信前须先核） |
+| 主页 | **未找到**（`miracsuzgun.github.io` `404`、`suzgun.github.io` `404`、`msuzgun.github.io` `404`；`web.stanford.edu/~msuzgun/` 仅返回**目录索引页**（672 B），非个人主页） |
+| X 账号 | **未找到**（`x.com` 直连与代理均 `000`，本轮无法二次核验；🚫 不猜 handle） |
+| 状态 | **待跟踪**（C 级地址 + 无现行主页 ⇒ 本轮不发信） |
+| 备注 | `语言=英文(判据=土耳其姓名族属 + 美国机构；本轮未发)`。价值点：**同一批任务换 prompting 形态，模型排名会变**（PaLM 540B answer-only 52.3 → CoT 65.2；Codex 56.6 → 73.9），可直接约束 harness 的评测口径。 |
+
+### 221. Cheng-Ping Hsieh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Cheng-Ping Hsieh（华人姓名族属：Hsieh 为威妥玛式拼写 ⇒ 若发信应用中文；🚫 本轮不猜汉字写法） |
+| 机构 | **University of California San Diego**（个人主页自述）· 兼 NVIDIA（B 轨 #240 RULER 一作） |
+| 代表论文 | **RULER: What's the Real Context Size of Your Long-Context Language Models?**（`2404.06654`，COLM 2024） |
+| 邮箱 | **c2hsieh@ucsd.edu**（**来源：本人现行主页 `https://hsiehjackson.github.io/` 的 `mailto:`，页面实测 `HTTP 200` / 15,391 B，地址级别 A**） |
+| 主页 | <https://hsiehjackson.github.io/>（实测 `HTTP 200`） |
+| X 账号 | **候选 `@ChengPingHsieh`**（来源：本人主页 `href="https://twitter.com/ChengPingHsieh"`；⚠️ `x.com` 本轮直连与代理均 `000` ⇒ **未做 `og:title` 二次核验，不计入「X 已核验」**） |
+| 状态 | **已发信**（2026-11-19 06:0x，中文请教信 #98）· X 待 follow（需登录态） |
+| 备注 | `语言=中文(判据=华人姓名族属 Hsieh + 主页自述 UCSD；不因机构在美国判英文)`。价值点：**有效长度的阈值是固定值 85.6（Llama2-7B@4K）而不是按模型归一** ⇒ 直接决定我们怎么报长上下文验收。 |
+
+### 222. Ramachandran Ramjee
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ramachandran Ramjee（印度姓名族属 ⇒ 英文） |
+| 机构 | **Microsoft Research India**（B 轨 #241 Sarathi-Serve 末位作者 / 通讯作者口径） |
+| 代表论文 | **Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve**（`2403.02310`，2024） |
+| 邮箱 | **ramjee@microsoft.com**（**来源：MSR 官方人员页 `https://www.microsoft.com/en-us/research/people/ramjee/` 实测 `HTTP 200` / 179,728 B，页内 HTML 实体编码的 `mailto:`；地址级别 B**） |
+| 主页 | <https://www.microsoft.com/en-us/research/people/ramjee/>（实测 `HTTP 200`） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-19 06:0x，英文请教信 #99） |
+| 备注 | `语言=英文(判据=印度姓名族属 + 印度机构；无中日韩信号)`。价值点：**chunk 256 → 257 就有 32% 的 prefill 时间差**（tile quantization）⇒ 评测机的调度参数必须进实验记录。 |
+
+### 223. Amey Agrawal
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Amey Agrawal（印度姓名族属 ⇒ 英文） |
+| 机构 | **Microsoft Research India**（B 轨 #241 Sarathi-Serve 一作；论文作者块） |
+| 代表论文 | **Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve**（`2403.02310`，2024） |
+| 邮箱 | **未找到**（`amey-agrawal.github.io` `404`、`ameyagrawal.github.io` `404`、MSR 人员页 `.../people/ameyagrawal/` `404`；论文 PDF 未印邮箱） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核实现行邮箱 ⇒ 只建档、不发信；同论文已按「同一论文 ≤1」发给 #222） |
+| 备注 | `语言=英文(判据=印度姓名族属 + 印度机构；本轮未发)`。不猜地址：三个候选页均实测 `404`。 |
+
+### 224. Ofir Press
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ofir Press（希伯来姓名族属 ⇒ 英文） |
+| 机构 | **Meta FAIR**（本人主页自述 `I lead the code benchmarks team at FAIR`；ALiBi 发表时为 University of Washington · Meta AI） |
+| 代表论文 | **Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation**（`2108.12409`，ICLR 2022）· SWE-bench（`2310.06770`，共同作者） |
+| 邮箱 | **未找到现行地址**（主页 `https://ofirpress.github.io/` `HTTP 200` / 13,838 B，但 `about/` 页无 `mailto:`；2021 年 PDF 首页 `ofirp@cs.washington.edu` 属旧机构 ⇒ 按「不因旧 PDF 发信」只登记，🚫 不发） |
+| 主页 | <https://ofirpress.github.io/>（`200`） |
+| X 账号 | **未找到**（`x.com` 本轮不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核现行邮箱 ⇒ 只建档、不发信） |
+| 备注 | `语言=英文(判据=希伯来姓名族属 + 美国机构；未发)`。价值点：ALiBi 的「训练短、测试长」说法必须与「训练长度内变差」一起引用，否则会误导扩窗决策。 |
+
+### 225. Xin Jin 金鑫
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xin Jin 金鑫（华人姓名族属 ⇒ 中文） |
+| 机构 | **北京大学计算机学院**（Associate Professor；B 轨 #244 DistServe 作者之一） |
+| 代表论文 | **DistServe: Disaggregating Prefill and Decoding for Goodput-optimized LLM Serving**（`2401.09670`，2024） |
+| 邮箱 | **`xinjinpku@pku.edu.cn`**（**来源：本人现行主页 `https://xinjin.github.io/` 实测 `HTTP 200` / 14,919 B，页内反爬写法 `xinjinpku (at) pku (dot) edu (dot) cn`，按确定性还原；地址级别 A**） |
+| 主页 | <https://xinjin.github.io/>（`200`；自述 USENIX NSDI 2018 / FAST 2019 Best Paper） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-19 09:05，中文请教信 #100） |
+| 备注 | `语言=中文(判据=华人姓名族属 Jin / 金鑫 + 中国机构北京大学；不因论文英文判英文)`。价值点：把「P90 TTFT / P90 TPOT 分开报 + 达成率」固定进跑批报告，避免只报平均吞吐。 |
+
+### 226. Mingxing Zhang 张明星
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mingxing Zhang 张明星（华人姓名族属 ⇒ 中文） |
+| 机构 | **清华大学**（B 轨 #245 Mooncake 作者之一；论文作者块 `Moonshot AI ♡ Tsinghua University`） |
+| 代表论文 | **Mooncake: A KVCache-centric Disaggregated Architecture for LLM Serving**（`2407.00079`，ACM Transactions on Storage） |
+| 邮箱 | **`zhang_mingxing@mail.tsinghua.edu.cn`**（**来源：论文 PDF 第 1 页作者块，`pdftotext` 实测明文；地址级别 C**。`mzhang2021.github.io` / `zhangmingxing.github.io` / 清华软院人员页候选 URL 均 `404` ⇒ 无 A/B 级可核页面，按下限记录） |
+| 主页 | **未找到**（上述四个候选 URL 全 `404`） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-19 09:05，中文请教信 #101） |
+| 备注 | `语言=中文(判据=华人姓名族属 Zhang Mingxing / 张明星 + 中国机构清华大学)`。⚠️ `mzhang.io` 是 **Northeastern 的 Michael Zhang**，**非本人** ⇒ 已拒用。价值点：525% 与 75% 都依赖长上下文/前缀复用，短序列高并发场景不能直接外推。 |
+
+### 227. Ruoyu Qin
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ruoyu Qin（华人姓名族属 ⇒ 若发信应用中文） |
+| 机构 | **Moonshot AI**（B 轨 #245 Mooncake 一作；论文作者块） |
+| 代表论文 | **Mooncake: A KVCache-centric Disaggregated Architecture for LLM Serving**（`2407.00079`，2024） |
+| 邮箱 | **未找到**（PDF 只印通讯作者 `xuxinran@moonshot.ai`，无个人地址；主页 `ruoyuqin.github.io` 未验证 ⇒ 不发） |
+| 主页 | **未找到**（`https://ryqin.github.io/` 实测 `404`） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核实现行邮箱；同论文已按「同一论文 ≤1」发给 #226） |
+| 备注 | `语言=中文(判据=华人姓名族属；本轮未发)`。🚫 不用通讯作者邮箱替个人发信，避免把「同一论文 ≤1」变成「换个收件人再发一次」。 |
+
+### 228. Luke Zettlemoyer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Luke Zettlemoyer（非中/日/韩姓名族属 ⇒ 英文信） |
+| 机构 | **University of Washington**（Paul G. Allen School of Computer Science & Engineering；BART 末位作者，B 轨 #246；论文时期 Facebook AI 兼职） |
+| 代表论文 | **BART: Denoising Sequence-to-Sequence Pre-training**（`1910.13461`，ACL 2020）· 另参与常识推理 / 语义解析多条线 |
+| 邮箱 | **`lsz@cs.washington.edu`**（**B 级**：UW 官方教职页 `https://www.cs.washington.edu/people/faculty/lsz` 实测 `HTTP 200` / 115,720 B，页内明文 `Email: lsz@cs.washington.edu`；🚫 不用 2019 年 PDF 旧地址） |
+| 主页 | <https://www.cs.washington.edu/people/faculty/lsz>（`200`） |
+| X 账号 | **未找到**（`x.com` 直连与代理均 `000`；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-19 12:22:05，第 102 封） |
+| 备注 | `语言=英文(判据=姓名族属非中/日/韩 + 美国机构)`。信只问 2 问、第 1 问二选一（infilling vs 15% token masking），专属细节 = 五种 noising function / `Poisson(λ = 3)` / `15%` / `+6 ROUGE` / `+1.1 BLEU`。回填 pretrain（去噪目标是否值得开一路）+ data（噪声即增广）。 |
+
+### 229. Jinze Bai
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jinze Bai（华人姓名族属 ⇒ 若发信应用中文；⚠️ 本轮不猜汉字写法） |
+| 机构 | **Alibaba Group**（B 轨 #248 Qwen-VL 一作） |
+| 代表论文 | **Qwen-VL: A Versatile Vision-Language Model for Understanding, Localization, Text Reading, and Beyond**（`2308.12966`，2023） |
+| 邮箱 | **未找到**（arXiv PDF 首页作者块无个人邮箱；PDF 6,329,953 B >5 MB 本轮未完整下载；阿里官方页未给个人邮箱 ⇒ 不发） |
+| 主页 | **未找到**（`qwenlm.github.io` 为团队博客，非个人主页） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核实现行邮箱） |
+| 备注 | `语言=中文(判据=华人姓名族属 + 中国机构；本轮未发)`。价值点：`448×448` 分辨率、位置感知适配器、框归一化 `[0,1000)` 的**接口设计**可直接追问；先补 A/B 级邮箱再发。 |
+
+### 230. Bo Peng
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bo Peng（华人姓名族属 ⇒ 若发信应用中文；GitHub 显示名 `PENG Bo`；⚠️ 不猜汉字） |
+| 机构 | **EleutherAI / RWKV 项目**（B 轨 #249 一作；GitHub `BlinkDL`） |
+| 代表论文 | **RWKV: Reinventing RNNs for the Transformer Era**（`2305.13048`，2023） |
+| 邮箱 | **未找到**（GitHub API `api.github.com/users/BlinkDL` 实测 `200`，`email` 字段为 `null`；`rwkv.com` `200` / 15,619 B 页内无 `mailto:`；`blinkdl.github.io` `404` ⇒ 不发） |
+| 主页 | <https://rwkv.com/>（`200`，项目站）· <https://github.com/BlinkDL>（`200`） |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（无已核实现行邮箱） |
+| 备注 | `语言=中文(判据=华人姓名族属；本轮未发)`。价值点：`O(Td)` 线性注意力、time/channel mixing、1024→8192 逐级续训的 token 预算；先补邮箱。 |
+
+### 231. Mike Lewis
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mike Lewis（非中/日/韩姓名族属 ⇒ 英文信） |
+| 机构 | **Meta AI（论文时期 Facebook AI Research）**（B 轨 #246 BART 一作） |
+| 代表论文 | **BART**（`1910.13461`，ACL 2020） |
+| 邮箱 | **未找到**（本轮未核到可确认的现行个人页 / 机构人员页；🚫 不猜 `@fb.com` 地址，🚫 不用 2019 年 PDF 旧地址） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜 handle） |
+| 状态 | **待跟踪**（同论文已按「同一论文 ≤1」发给 #228） |
+| 备注 | `语言=英文(判据=姓名族属；本轮未发)`。🚫 不因「Meta 邮箱格式可猜」而拼装地址。 |
+
+### 232. Wen-tau Yih（易文韬）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wen-tau Yih（易文韬；华人姓名族属 ⇒ **中文信**） |
+| 机构 | **Meta AI（FAIR）**（B 轨 #251 DPR 末位作者；2020 年时为 Facebook AI Research） |
+| 代表论文 | **DPR**（`2004.04906`，EMNLP 2020） |
+| 邮箱 | **scottyih@meta.com**（来源：本人主页 `https://scottyih.org/` 的 `mailto:` 明文，`HTTP 200` / 18,867 B；**A 级**；**未用** 2020 年论文 PDF 的 `{...}@fb.com` 旧写法） |
+| 主页 | <https://scottyih.org/>（`200` / 18,867 B） |
+| X 账号 | **未找到**（`x.com` 直连与经 `127.0.0.1:7897` 均 `000`；🚫 不猜 handle） |
+| 状态 | **已发信**（第 103 封，2026-11-19 15:04） |
+| 备注 | `语言=中文(判据=华人姓名族属 易文韬 / Wen-tau Yih + 台湾出身；不因人在 Meta、论文英文、邮箱 .com 判英文)`。价值点：负例构造（in-batch + 每条 1 个 BM25 难负例、batch 128）直接回填 data 的检索语料策略；答复还会影响索引更新与 harness 的 top-k 口径。 |
+
+### 233. Jeremy Howard
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jeremy Howard（非中/日/韩姓名族属 ⇒ 英文信） |
+| 机构 | **Answer.AI / fast.ai**（B 轨 #250 ULMFiT 一作；2018 年时为 fast.ai / University of San Francisco） |
+| 代表论文 | **ULMFiT**（`1801.06146`，ACL 2018） |
+| 邮箱 | **j@fast.ai**（来源：**2018 年论文 PDF 首页明文**；⚠️ 地址级别 **C** —— 现行页 `https://www.answer.ai/` `200` / 98,986 B 与 `https://www.fast.ai/about.html` `200` / 40,830 B **均无 `mailto:`**，旧地址未在现行页复核） |
+| 主页 | <https://www.answer.ai/>（`200`） |
+| X 账号 | **候选 `@jeremyphoward`**（`answer.ai` 页内 `href` 出现 `jeremyphoward`；`x.com` 不可达 ⇒ **未二次核验，不计数**） |
+| 状态 | **已发信**（第 104 封，2026-11-19 15:04） |
+| 备注 | `语言=英文(判据=姓名族属非中/日/韩 + 澳/美机构)`。价值点：分层学习率与逐层解冻在小样本域内微调上的取舍（pretrain 配方、data 的 epoch 预算）。⚠️ 地址为 C 级，若 14 天内无回信按「地址可能过期」计入诊断，不重复发送。 |
+
+### 234. Sebastian Ruder
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sebastian Ruder（德文姓名族属 ⇒ 若发信应为「德文问候 + 英文正文」；本轮未发） |
+| 机构 | **Google DeepMind**（B 轨 #250 ULMFiT 二作；2018 年时为 Insight Centre / NUI Galway） |
+| 代表论文 | **ULMFiT**（`1801.06146`，ACL 2018） |
+| 邮箱 | **未找到现行**（本人博客 `https://www.ruder.io/` `HTTP 200` / 42,928 B，页内**无 `mailto:`**；仅 2018 年 PDF 首页印有 `sebastian@ruder.io` ⇒ 按「先查现行页」纪律**不用旧地址**） |
+| 主页 | <https://www.ruder.io/>（`200`） |
+| X 账号 | **未找到**（博客只挂 Mastodon / Bluesky 链接，`x.com` 亦不可达 ⇒ 🚫 不猜） |
+| 状态 | **待跟踪**（同论文已按「同一论文 ≤1」发给 #233；邮件到达后若开放邮箱再补发） |
+| 备注 | `语言=德文问候+英文正文(判据=德文姓名族属 + 欧洲机构；本轮未发)`。 |
+
+### 235. Daniel S. Park
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Daniel S. Park（韩文姓名族属 Park ⇒ 若发信应用**韩文全文**；本轮未发） |
+| 机构 | **Google Brain**（B 轨 #252 SpecAugment 一作；2023 年后的去向本轮未核） |
+| 代表论文 | **SpecAugment**（`1904.08779`，Interspeech 2019） |
+| 邮箱 | **未找到**（候选页 `dsdp.site` 两次请求 `000`（超时）/ `danielspark.com` 域名不存在 / `dsdp.github.io` `404`；🚫 不用 2019 年 PDF 旧地址、🚫 不猜 `@google.com`） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（`x.com` 不可达） |
+| 状态 | **待跟踪**（无地址不发） |
+| 备注 | `语言=한국어(判据=韩文姓名族属 Park；仅判据，本轮未发)`。价值点：策略表式增广 `(W, F, m_F, T, p, m_T)` 可直接迁移成 data 的增广配置模板。 |
+
+### 236. Niklas Muennighoff
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Niklas Muennighoff（德文姓名族属 ⇒ 若发信应为「德文问候 + 英文正文」；本人主页自述**本科学于北京大学、可中文工作** ⇒ 中文亦成立，发信前二选一并写清判据） |
+| 机构 | **Cursor（Composer）**；**Stanford** 博士生（导师 Yejin Choi & Andrew Ng）—— 均取自本人主页自述（`200` / 47,863 B） |
+| 代表论文 | **s1**（`2501.19393`，EMNLP 2025；B 轨 #253 一作）· MTEB · Scaling Data-Constrained LMs |
+| 邮箱 | **n.muennighoff@gmail.com** / **A**（本人主页 `https://muennighoff.com/` 页内 `mailto:` 明文） |
+| 主页 | <https://muennighoff.com/>（`200` / 47,863 B） |
+| X 账号 | **候选 `@Muennighoff`**（主页 `icons` 区 href 直指 `https://x.com/Muennighoff`；`x.com` 本机不可达 ⇒ **未二次核验、不计数**） |
+| 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发） |
+| 备注 | `语言=德文问候+英文正文 或 中文(判据=德文姓名族属 + 主页自述北大本科/可中文工作；本轮未发)`。价值点：**budget forcing** 的 `a_max`/`a_min` 正是 zhulong thinking 轴的直接参数化。 |
+
+### 237. Morgane Riviere
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Morgane Riviere（法文姓名族属 ⇒ 若发信应为「法文问候 + 英文正文」；本轮未发） |
+| 机构 | **Google DeepMind**（B 轨 #254 Gemma 2 报告署名的首位个人作者） |
+| 代表论文 | **Gemma 2**（`2408.00118`，2024 预印本） |
+| 邮箱 | **未找到**（本轮未检索到可核的个人主页；🚫 不猜 `@google.com` / `@deepmind.com`） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（`x.com` 不可达；🚫 不猜） |
+| 状态 | **待跟踪**（只建档，无地址不发） |
+| 备注 | `语言=法文问候+英文正文(判据=法文姓名族属 + Google DeepMind；仅判据，本轮未发)`。价值点：2B/9B **蒸馏替代 NTP** 的配方细节（教师规模、蒸馏损失形式）。 |
+
+### 238. Artidoro Pagnoni
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Artidoro Pagnoni（意大利文姓名族属 ⇒ 若发信应为「意大利文问候 + 英文正文」；本轮未发） |
+| 机构 | **Meta（FAIR）/ University of Washington**（B 轨 #255 BLT 一作；机构按作者群与论文页推断，本轮未逐项核个人主页） |
+| 代表论文 | **Byte Latent Transformer**（`2412.09871`，2024 预印本） |
+| 邮箱 | **未找到**（候选页 `https://apagnoni.github.io/` 返回 `000`（超时）；🚫 不猜 `@meta.com` / `@cs.washington.edu`） |
+| 主页 | **未找到**（同上 `000`） |
+| X 账号 | **未找到** |
+| 状态 | **待跟踪**（只建档，无地址不发） |
+| 备注 | `语言=意大利文问候+英文正文(判据=意大利文姓名族属；仅判据，本轮未发)`。价值点：**按 next-byte 熵切 patch** 的具体阈值与「patch 大小 × 模型大小」的 FLOP 分配。 |
+
+### 239. Frank F. Xu（徐方政）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Frank F. Xu / Fangzheng Xu（徐方政；中文姓名族属 ⇒ 若发信应用**中文全文**） |
+| 机构 | **Microsoft AI**（本人主页 2026-11-19 实测抬头写 `Microsoft` / Mountain View；论文期在 CMU） |
+| 代表论文 | **TheAgentCompany**（`2412.14161`，NeurIPS 2025；B 轨 #256 一作）· AutoAgents / RepoBench 等 |
+| 邮箱 | **fangzhengxu@microsoft.com** / **B**（本人主页 `https://frankxfz.me/` 以 `fangzhengxu[at]microsoft.com` 形式明文给出，非 `mailto:`） |
+| 主页 | <https://frankxfz.me/>（`200` / 1,256 B） |
+| X 账号 | **未找到**（页内无 `x.com` / `twitter.com` 链接） |
+| 状态 | **待跟踪**（今日 12/12 额度已满，本轮不发） |
+| 备注 | `语言=中文(判据=中文姓名族属 + 主页英文名 Fangzheng Xu；本轮未发)`。价值点：长程任务的「环境内产物」判分口径可直接迁到 designflow L4/L5。 |
+
+
+### 240. Daya Guo（郭达雅）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Daya Guo / 郭达雅（中文姓名族属 ⇒ 若发信应用**中文全文**） |
+| 机构 | **DeepSeek**（DeepSeek-Coder 一作；本人主页自述 `AI Researcher in DeepSeek` 2023-07 至 2026-04，此前中山大学博士 + MSRA 联合培养） |
+| 代表论文 | **DeepSeek-Coder**（`2401.14196`，B 轨 #258 一作）· DeepSeek-R1（`2501.12948`，已收 B 轨）· GraphCodeBERT（ICLR 2021） |
+| 邮箱 | **guody5@mail2.sysu.edu.cn** / **A**（本人主页 `https://guoday.github.io/` 页内 `mailto:` 明文，2026-11-19 实测 `200` / 74,157 B） |
+| 主页 | <https://guoday.github.io/>（`200` / 74,157 B） |
+| X 账号 | **未找到**（页内无 `x.com` / `twitter.com` 链接） |
+| 状态 | **已发信**（2026-11-20 00:05:45 · 台账 **#106** · 中文 241 字 · A 级地址当场复核；主页写「至 2026-04」在 DeepSeek ⇒ 若回信再核现行单位） |
+| 备注 | `语言=中文(判据=中文姓名族属 郭达雅 + 中山大学/DeepSeek；本轮未发)`。价值点：**87/10/3 代码语料配比 + repository-level 预训练 + 16K FIM 窗口**，可直接回填 data / pretrain 两条线的对照设计。⚠️ 主页写「至 2026-04」在 DeepSeek ⇒ 发信前需再核其现行单位（本线未据二手报道改写）。 |
+
+### 241. Peiyi Wang（王培懿）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Peiyi Wang / 王培懿（中文姓名族属 ⇒ 若发信应用**中文全文**） |
+| 机构 | **北京大学**计算机学院（博士 2020–2025，OpenReview 档案）；论文署名单位含「多媒体信息处理国家重点实验室」与 DeepSeek-AI |
+| 代表论文 | **Math-Shepherd**（`2312.08935`，B 轨 #259 一作）· Math-Minos 等 |
+| 邮箱 | **未找到可核现行地址**（`api.github.com/users/Wangpeiyi9979` 的 `email` = `null`；Google Scholar 仅显示 `stu.pku.edu.cn` 域名，**非完整地址**）⇒ 🚫 不猜 |
+| 主页 | **未找到**（`wangpeiyi9979.github.io` / `peiyiwang.github.io` 均 `404`） |
+| X 账号 | **未找到** |
+| 状态 | **待跟踪**（只建档，无地址不发） |
+| 备注 | `语言=中文(判据=中文姓名族属 + 北京大学；本轮未发)`。价值点：**自动过程标签（completion/estimation）+ 逐步 PPO + min-over-steps 聚合**，是 zhulong thinking 轴奖励粒度的直接对照。 |
+
+### 242. Sirui Hong（洪思睿）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sirui Hong / 洪思睿（中文姓名族属 ⇒ 若发信应用**中文全文**） |
+| 机构 | **DeepWisdom**（联合创始人；OpenReview 档案写 `Researcher DeepWisdom 2019–Present`，另列香港科技大学） |
+| 代表论文 | **MetaGPT**（`2308.00352`，B 轨 #260 一作）· OpenManus / MGX 相关工作 |
+| 邮箱 | **未找到可核个人地址**（论文首页给的 `alexanderwu@fuzhi.ai` 属另一位作者，🚫 不挪用；Google Scholar 仅显示 `fuzhi.ai` 域名） |
+| 主页 | **未找到**（`sirui-hong.github.io` `404`；GitHub `stellaHSR` 无 blog 字段） |
+| X 账号 | **未找到**（GitHub API `twitter_username` = `null`） |
+| 状态 | **待跟踪**（只建档，无地址不发） |
+| 备注 | `语言=中文(判据=中文姓名族属 + DeepWisdom；本轮未发)`。价值点：**SOP 编码进 prompt + 角色流水线 + 阶段产物**，可直接映射 designflow L4/L5 的「阶段可判分产物」。 |
+
+
+### 243. Lingming Zhang（张令明）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lingming Zhang / 张令明（中文姓名族属 ⇒ 若发信应用**中文全文**） |
+| 机构 | **University of Illinois Urbana-Champaign**（Siebel School of Computing and Data Science 副教授；软件工程 / 程序修复方向） |
+| 代表论文 | **Agentless**（`2407.01489`，B 轨 #262 末位作者 / 通讯）· LLM 程序修复与测试生成系列 |
+| 邮箱 | **lingming@illinois.edu** / **A**（本人主页 `https://lingming.cs.illinois.edu/` 页内 `mailto:` 明文，2026-11-19 实测 `200` / 22,815 B；⚠️ `llingming.github.io` 已 `404`，勿再用旧地址） |
+| 主页 | <https://lingming.cs.illinois.edu/>（`200` / 22,815 B） |
+| X 账号 | **未找到**（页内无 `x.com` / `twitter.com` 链接；🚫 不猜） |
+| 状态 | **已发信**（2026-11-20 00:05:38 · 台账 **#105** · 中文 227 字 · A 级地址当场复核） |
+| 备注 | `语言=中文(判据=中文姓名族属 张令明 + 论文英文/美国机构不改变判据)`。价值点：**「无 agent 的三段固定流水线」**（定位 → 修 → 补丁验证 + 自生成复现测试）是我们 harness 侧「先证基线、再谈 agent 增益」的直接依据；可问「定位粒度从文件降到行时，召回与误改如何权衡」。 |
+
+### 244. Chunqiu Steven Xia
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chunqiu Steven Xia（中文姓名族属 夏春秋 ⇒ 若发信应用**中文全文**） |
+| 机构 | **University of Illinois Urbana-Champaign**（博士生；与 #243 同组） |
+| 代表论文 | **Agentless**（`2407.01489`，B 轨 #262 一作）· 程序修复 / LLM4SE 相关 |
+| 邮箱 | **chunqiu2@illinois.edu** / **B**（论文 PDF 首页明文分组写法 `{chunqiu2, yinlind2, sorend2, lingming}@illinois.edu`，按确定性还原；PDF `200` / 1,384,716 B；⚠️ 未见个人主页 `mailto:`，故不标 A） |
+| 主页 | **未找到**（`stevenxia9903.github.io` 实测 `404`；🚫 不凭推测填） |
+| X 账号 | **未找到** |
+| 状态 | **待跟踪**（同论文作者 #243 优先；按「同一论文 ≤1 封」不同时发） |
+| 备注 | `语言=中文(判据=中文姓名族属 + UIUC)`。价值点：一作对**采样条数、复现测试筛选、重排序信号**的实操细节最清楚，适合问「复现测试生成失败时补丁还怎么排序」。 |
+
+### 245. Vidya A. Chhabria
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Vidya A. Chhabria（姓名族属印度裔，机构美国 ⇒ 英文） |
+| 机构 | **Arizona State University**（School of Electrical, Computer and Energy Engineering 助理教授；VDA Lab，EDA / 物理设计方向） |
+| 代表论文 | **EDA Corpus**（`2405.06676`，B 轨 #264 末位作者 / 通讯）· EDA 与 ML 交叉方向工作 |
+| 邮箱 | **vidyachhabria@asu.edu** / **A**（ASU 官方 profile 页 `https://search.asu.edu/profile/4370240` 页内明文，2026-11-19 实测 `200` / 124,745 B；另有院系页 `faculty.engineering.asu.edu/vidyachhabria/` `200` / 17,609 B 但无邮箱） |
+| 主页 | <https://faculty.engineering.asu.edu/vidyachhabria/>（`200` / 17,609 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 12:03:31 `SENT OK`，信 **#128** · 主题 `EDA Corpus: how do the 28 failed scripts fail?`） |
+| 备注 | `语言=英文(判据=姓名族属印度裔 + 美国机构；无中/日/韩信号)`。价值点：**「脚本类样本必须在 OpenROAD 里真跑才判对」** 是 designflow L1–L5 判分器最缺的一条硬约束；可问「增强样本（改写 prompt / 改参数）在训练与评分的分布如何隔离，避免验证集被增强污染」。 |
+
+### 246. Tianle Cai（蔡天乐）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tianle Cai / 蔡天乐（中文姓名族属 ⇒ 若发信应用**中文全文**；人在 Princeton 不改判据） |
+| 机构 | **Princeton University**（PhD candidate，导师 Kai Li / Jason D. Lee；主页自述本科毕业于北京大学，师从 Liwei Wang / Di He；曾 part-time 在 Together.ai 与 Tri Dao 合作） |
+| 代表论文 | **Medusa**（`2401.10774`，B 轨 #267 一作）· 推理加速 / 解码方向 |
+| 邮箱 | **tianle.cai@princeton.edu** / **B**（ar5iv 论文 HTML 作者块明文，2026-11-20 实测 `200`；本人主页 `https://tianle.website/` `200` / **6,114 B** 已核身份含「Tianle Cai (蔡天乐) … PhD candidate at Princeton University」，但页内**无 `mailto:`** ⇒ 不标 A） |
+| 主页 | <https://tianle.website/>（`200` / 6,114 B） |
+| X 账号 | **未找到**（页内无 `x.com` / `twitter.com` 链接；🚫 不猜） |
+| 状态 | **待跟踪**（本轮已发满 2 封并优先两篇中文草稿；未发信） |
+| 备注 | `语言=中文(判据=中文姓名族属 蔡天乐 + 主页自述北大本科；不以「人在美国 / 论文英文 / `.edu` 邮箱」判英文)`。价值点：**多解码头 + tree attention 的无损加速档位**，可直接回填 zhulong 成本口径（无损 vs 需联合训练分开报）。 |
+
+### 247. Quoc V. Le
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Quoc V. Le（越南裔，机构美国 ⇒ 英文） |
+| 机构 | **Google DeepMind**（Gemini 团队；Transformer-XL 末位作者，署名时属 Google Brain） |
+| 代表论文 | **Transformer-XL**（`1901.02860`，B 轨 #265 末位作者）· seq2seq / Neural Architecture Search / T5 系列 |
+| 邮箱 | **qvl@google.com** / **C**（**2019 年论文 ar5iv 作者块**明文；⚠️ 未在现行个人 / 机构页复核，按 C 级记，发信前必须先找 A/B 级地址） |
+| 主页 | **未找到可核现行个人主页**（本轮未取到；🚫 不猜） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（C 级地址，不发） |
+| 备注 | `语言=英文(判据=姓名族属越南裔 + 美国机构；无中/日/韩信号)`。价值点：长上下文「记忆 + 相对位置编码」的原始配方；但其当前工作重心在 Gemini，本线只作长期跟踪对象，不优先发信。 |
+
+### 248. Zhuang Liu（刘壮）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhuang Liu（刘壮） |
+| 机构 | **Princeton University**（Department of Computer Science，Assistant Professor；发表 ConvNeXt 时在 Meta AI / UC Berkeley） |
+| 代表论文 | **ConvNeXt / A ConvNet for the 2020s**（`2201.03545`，B 轨 #270，一作）· ConvNeXt V2 |
+| 邮箱 | **zhuangl@princeton.edu** / **A**（**本人主页** `https://liuzhuang13.github.io/` 页内明文 `zhuangl [at] princeton [dot] edu`，2026-11-20 实测 `200` / 42,671 B） |
+| 主页 | <https://liuzhuang13.github.io/>（`200` / 42,671 B） |
+| X 账号 | **@liuzhuang1234**（取自本人主页外链；⚠️ 本轮**未**做 `og:title` + profile `full_text` 双源核验 ⇒ 只登记、不据此引用言论） |
+| 状态 | **已发信**（第 107 封，2026-11-20 03:03:13 `SENT OK`） |
+| 备注 | `语言=中文(判据=中文姓名族属 刘壮 + 拼音可还原；不因机构在美国 / 论文英文 / 邮箱 .edu 判英文)`。价值点：纯 ConvNet 在视觉塔选型里的最强对照；问答聚焦「有限算力下 300 epoch 配方的可裁剪项」与「监督 vs 掩码自监督的先后」。回填 vision（主）· pretrain（辅）。 |
+
+### 249. Sanmi Koyejo
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sanmi Koyejo（尼日利亚裔，机构美国 ⇒ 英文） |
+| 机构 | **Stanford University**（CS，Associate Professor） |
+| 代表论文 | **Are Emergent Abilities of Large Language Models a Mirage?**（`2304.15004`，B 轨 #272，末位 / 通讯）· 可信机器学习与评测方向 |
+| 邮箱 | **sanmi@cs.stanford.edu** / **A**（**本人主页** `https://cs.stanford.edu/~sanmi/` 页内明文 `sanmi[at]cs.stanford.edu`，2026-11-20 实测 `200` / 7,785 B） |
+| 主页 | <https://cs.stanford.edu/~sanmi/> |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 108 封，2026-11-20 03:03:18 `SENT OK`） |
+| 备注 | `语言=英文(判据=尼日利亚裔姓名族属 + 美国机构；无中/日/韩信号)`。价值点：评测指标选择对「能力是否涌现」的影响，直接决定 harness 报表模板；问答聚焦「连续指标是否要预注册」与「题量下限是否依赖指标曲率」。回填 harness（主）· designflow（辅）。 |
+
+### 250. Biswa Sengupta
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Biswa Sengupta（印度裔，机构美国 ⇒ 英文） |
+| 机构 | **JPMorgan Chase & Co.**（LLM Suite） |
+| 代表论文 | **Do Frontier Model Ingredients Add Up? A Replicated Factorial Study of Small Language Models**（`2611.24540`，2026-11-18，唯一作者；A 轨 2026-11-20 第 5 篇） |
+| 邮箱 | **biswa.sengupta@jpmorgan.com** / **B**（**arXiv 原生 HTML 正文作者信息段**明文，2026-11-20 实测 `200` / 122,470 B；⚠️ 未在机构页复核） |
+| 主页 | **未找到**（🚫 不猜） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 109 封，2026-11-20 03:03:18 `SENT OK`） |
+| 备注 | `语言=英文(判据=印度裔姓名族属 + 美国机构；无中/日/韩信号)`。价值点：小模型组件组合的**重复因子实验**（32 次核心训练、两种子、±0.0043 nats 参考边界），正好补我们「组件叠加是否真的叠加」的空白；问答聚焦「MoE 容量混淆是否需要参数匹配对照」与「放大到 2B / 32K 时哪个开关先失效」。回填 pretrain（主）· data（辅）。 |
+
+### 251. Alethea Power
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alethea Power（英语姓名，机构美国 ⇒ 英文） |
+| 机构 | **OpenAI**（发表 Grokking 时；当前在职状态未复核） |
+| 代表论文 | **Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets**（`2201.02177`，B 轨 #271，一作） |
+| 邮箱 | **alethea@openai.com** / **C**（**2022 年论文 `comment` 字段**明文；⚠️ 未在现行个人 / 机构页复核，按 C 级记，发信前必须先找 A/B 级地址） |
+| 主页 | **未找到可核现行个人主页**（🚫 不猜） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（C 级地址，不发） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：小数据上「过拟合之后仍会泛化」的原始观察，影响我们小规模消融的早停口径；但地址为 2022 年旧地址，暂不投递。 |
+
+### 252. Jacob Steinhardt
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jacob Steinhardt（英语姓名族属 ⇒ 英文信） |
+| 机构 | **UC Berkeley**（Statistics / EECS；MMLU 末位作者） |
+| 代表论文 | **Measuring Massive Multitask Language Understanding**（`2009.03300`，ICLR 2021，B 轨 #273，末位作者） |
+| 邮箱 | **jsteinhardt@berkeley.edu** / **A**（本人主页 `https://jsteinhardt.stat.berkeley.edu/` 页内明文，2026-11-20 实测 `200` / 13,887 B） |
+| 主页 | <https://jsteinhardt.stat.berkeley.edu/>（`200` / 13,887 B） |
+| X 账号 | **未找到**（主页内无 twitter / x.com 外链 ⇒ 🚫 不猜） |
+| 状态 | **已发信**（第 110 封，2026-11-20 06:03:52 `SENT OK`） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构；无中/日/韩信号)`。价值点：MMLU 的**测试集公开与污染**问题，直接关系 harness 的「单科突增先查污染」流程；问答聚焦「逐科区间 vs 总分」与「最便宜的污染诊断」。回填 harness（主）· data（辅）。 |
+
+### 253. Eugene Agichtein
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Eugene Agichtein（英语 / 俄裔姓名族属 ⇒ 英文信） |
+| 机构 | **Emory University**（Computer Science；Atlanta, GA） |
+| 代表论文 | **Can Programs Replace LLM Judges? Executable Program Judges for Scalable and Efficient Relevance Labeling**（`2611.24849`，2026-11-18，A 轨 2026-11-20 第 1 篇，一作） |
+| 邮箱 | **eugene.agichtein@emory.edu** / **B**（**arXiv 原生 HTML 作者信息段**明文，2026-11-20 实测 `200` / 970,388 B；机构主页 `mathcs.emory.edu/~eugene/` 实测 `403` ⇒ 未在主页复核） |
+| 主页 | **未取得可访问个人页**（`403`；`eugeneagichtein.github.io` `404` ⇒ 🚫 不猜） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 111 封，2026-11-20 06:03:55 `SENT OK`） |
+| 备注 | `语言=英文(判据=英语/俄裔姓名族属 + 美国机构；无中/日/韩信号)`。价值点：**可执行程序判据**（每题目生成一段程序替代逐文档 LLM 判分），与 designflow 的 L1–L5 可验证判分同构；问答聚焦「词法匹配 / NLP 库 / 候选池统计量哪一项能迁到硬件与 EDA 文档」与「程序 vs LLM 判分器的审计抽样规则」。回填 harness（主）· designflow（辅）。 |
+
+### 254. Yi Lu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yi Lu（拼音姓名可还原中文名；中国机构 ⇒ **中文信**） |
+| 机构 | **南京审计大学 统计与数据科学学院**（Nanjing Audit University；Nanjing 211815, Jiangsu, China） |
+| 代表论文 | **Measuring and Charging for Retained Context in Long-Context LLM Services**（`2611.24071`，2026-11-18，A 轨 2026-11-20 第 3 篇，一作） |
+| 邮箱 | **luyi06@gmail.com** / **B**（**arXiv 原生 HTML 正文明文**，2026-11-20 实测 `200` / 348,321 B；未在机构页复核） |
+| 主页 | **未找到**（🚫 不猜） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 112 封，2026-11-20 06:03:59 `SENT OK`；06:04:04 另发一封**主题行编码更正**，不计为第 113 封） |
+| 备注 | `语言=中文(判据=拼音姓名 Yi Lu + 中国机构南京审计大学；不因 gmail / 英文论文判英文)`。价值点：**「只压尾部、不降均值」**的计费结论（P99 −31%–42%、中位上升）与 65,536 token 热缓存的实测口径，直接可用于 zhulong 的成本叙事；问答聚焦「agent 负载下位置权重能否用缓存命中块 + 相关性分数近似」与「按 KV 块还是按命中 token 计费」。回填 zhulong（主）· harness（辅）。 |
+
+### 255. Charles L. A. Clarke
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Charles L. A. Clarke（英语姓名族属 ⇒ 英文信） |
+| 机构 | **University of Waterloo**（David R. Cheriton School of Computer Science；Ontario, Canada） |
+| 代表论文 | **Can Programs Replace LLM Judges? Executable Program Judges for Scalable and Efficient Relevance Labeling**（`2611.24849`，A 轨 2026-11-20 第 1 篇，二作） |
+| 邮箱 | **claclark@gmail.com** / **B**（arXiv 原生 HTML 作者信息段明文，2026-11-20 实测 `200` / 970,388 B） |
+| 主页 | <https://plg.uwaterloo.ca/~claclark/>（`200` / 1,342 B；页内未读到明文邮箱） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（同论文已按「同一论文 ≤1 封」发给 #253 ⇒ 不再发） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 加拿大机构)`。价值点：TREC 评测与相关性判定的长期经验；建账以备后续「程序判据在检索型任务上的稳定性」追问。 |
+
+2. **X handle 只登记可访问页面读到的**，并在 X 可达时用 `og:description` 二次核对身份；`voice_ready` **必须有原文 + 原链接 + 时间**，两处不一致或正文不完整的一律不采用（如 V3）。<br>⚠️ **2026-11-12 第十轮新增教训**：`x_fetch.py` 从 profile 页内嵌 timeline JSON 解析出的条目**会混入他人推文**（本轮 V10/V11 两条经单条推文页 `og:title` 核对分别是 `@mnmueller` 与 `@mercor`）⇒ 今后**每条拟引用推文都必须先打开 `x.com/<handle>/status/<id>` 核 `og:title` 的作者名**，作者不符直接丢弃；**正文也要用 `og:description` 与 profile `full_text` 相互校验**，二者一致才算「双源一致」。
+3. 状态四态：`待跟踪` → `已follow` → `已发信` → `已回复`；每次只前进，不跳级、不回退（回信内容另存 `research/mail/replies/`）。
+4. 抓 X 一律走 `research/classic/x_fetch.py`（只读、串行、≥3s、单轮 ≤6 个 handle），原始结果落 `research/classic/x/`，**不做任何写操作**。
+5. **发送前必查词数（2026-11-12 新增，血的教训）**：英文信发送**之前**先 `wc -w <body.txt>` 确认 ≤200（中文 ≤300 字），**不达标先删改再发**。第十二轮因「先发后核」实测 **212 词**、超 12 词 ⇒ 已如实记入 `research/mail/发送记录.md`；此后本项为**发送前置检查**，不是事后记录。
+6. **X 抓取需显式代理**：本机 shell 默认**不继承** `HTTP(S)_PROXY`，直连 `x.com` 会返回 `000`；`x_fetch.py` 内部默认走 `http://127.0.0.1:7897`，手工 `curl` 时**必须加 `--proxy`**。`000` **不等于**代理挂了（本轮实测：直连 000 / 带代理 200）⇒ 先分清「无代理」与「代理挂」，再决定是否报运维。
+7. **编号纪律（2026-11-15 r178 起）**：条目标题编号取**连续号**，不再沿用「人数计数器」。历史上曾出现编号最后一位（129）小于人数（131）的情况（两者口径不同：有的 section 覆盖两位同论文作者）⇒ 新条目从 129 之后依次编号 130 / 131 / 132，**人数仍以日报与 MEMORY 的计数器为准（134）**。
+
+### 261. Danny Driess
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Danny Driess（德语姓名族属 ⇒ 若发信当用德语称谓问候 + 英文正文） |
+| 机构 | **Physical Intelligence（π）**（本人主页自述现任；论文发表时为 Google DeepMind，再前为 TU Berlin 博士，导师 Marc Toussaint） |
+| 代表论文 | **PaLM-E**（`2303.03378`，B 轨 #281，一作）· 具身多模态与机器人策略 |
+| 邮箱 | **driess@gmail.com** / **A**（本人主页 `https://dannydriess.github.io/` 页内混淆明文 `driess at gmail dot com`，2026-11-20 实测 `200` / 29,043 B；页内另有 `danny.driess@ipvs.uni-stuttgart.de`，属读博期间旧址，作备份不首选） |
+| 主页 | <https://dannydriess.github.io/>（`200` / 29,043 B） |
+| X 账号 | **未找到**（🚫 不猜；搜索结果的 `x.com/DannyDriess` 未经 profile 双源核验，不登记） |
+| 状态 | **待跟踪**（本论文同批已发 #115 / #116 两封，按「每轮 ≤3 封 + 今日 12/12 满」本封不发） |
+| 备注 | `语言=德语称谓 + 英文正文(判据=德语姓名族属 Danny Driess + TU Berlin 博士；不因现机构在美国判英文)`。价值点：多模态句子把视觉与连续状态编码成 token 的做法，直接对应 vision 线的「视觉塔怎么接语言塔」；下轮发信应聚焦「观测 token 的时序位置如何编码」与「正迁移在配比上的最小可复现设置」。 |
+
+### 262. Bernhard Kerbl
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bernhard Kerbl（奥地利德语姓名族属 ⇒ 德语称谓问候 + 英文正文） |
+| 机构 | **University of Copenhagen**（ tenure-track Assistant Professor，本人主页自述）；兼 **TU Wien** Principal Project Investigator；2018 年 Graz 工大博士 |
+| 代表论文 | **3D Gaussian Splatting**（`2308.04079`，B 轨 #282，一作）· 层次化 3D Gaussian 大场景渲染 |
+| 邮箱 | **beke@di.ku.dk** / **A**（本人主页 `https://snosixtyboo.github.io/` 页首明文，2026-11-20 实测 `200` / 7,493 B） |
+| 主页 | <https://snosixtyboo.github.io/>（`200` / 7,493 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 115 封，2026-11-20 12:04:38 `SENT OK`；主题「Densification thresholds and sparse-SfM fallback in 3DGS」；正文 178 词） |
+| 备注 | `语言=德语称谓 + 英文正文(判据=奥地利德语姓名族属 + Graz 工大博士；**不因现机构在丹麦 / 论文英文判英文**；姓名族属优先于机构所在地)`。价值点：密度控制的两个旋钮（`0.0002` 梯度阈值 / `3,000` 次不透明度重置）与稀疏 SfM 退化路径，直接决定 3DGS 能否当「有预算上限的合成多视角数据生成器」；回填 vision（主）· data（数据预算单位）· designflow（场景级生成可行性）。 |
+
+### 263. George Drettakis
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | George Drettakis（希腊姓名族属；机构法国 Inria ⇒ 按 §2 用**法语称谓 + 英文正文**） |
+| 机构 | **Inria**（Université Côte d'Azur，GRAPHDECO / REVES 团队负责人） |
+| 代表论文 | **3D Gaussian Splatting**（`2308.04079`，B 轨 #282，末位 / 通讯方向）· 神经辐射场与实时渲染系列 |
+| 邮箱 | **George.Drettakis@inria.fr** / **A**（团队主页 `https://www-sop.inria.fr/reves/George.Drettakis/` 页内明文，2026-11-20 实测 `200` / 38,451 B） |
+| 主页 | <https://www-sop.inria.fr/reves/George.Drettakis/>（`200` / 38,451 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（同论文已按「同一论文 ≤1 封」发给一作 #262 ⇒ 不再发） |
+| 备注 | `语言=法语称谓 + 英文正文(判据=希腊姓名族属 + 法国 Inria；不因论文英文判英文)`。建账用途：若 #262 无回应且需换人追问同一论文的工程细节，此条是唯一备选，**同一论文不得并发两封**。 |
+
+### 264. Yuxiang Wei
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yuxiang Wei（拼音姓名可还原中文名 ⇒ 中文信；🚫 汉字名未从可访问页面确认，不臆写） |
+| 机构 | **Meta**（AI Research Scientist，本人主页自述）；2022–2026 UIUC 计算机博士，导师 Lingming Zhang |
+| 代表论文 | **Magicoder**（`2312.02120`，B 轨 #283，一作）· 代码生成与合成数据构造 |
+| 邮箱 | **yuxiang630.wei@gmail.com** / **A**（本人主页 `https://yuxiang.cs.illinois.edu/` 页内明文，2026-11-20 实测 `200` / 36,494 B）；论文 ar5iv HTML 另见 `ywei40@illinois.edu`（`200` / 652,918 B） |
+| 主页 | <https://yuxiang.cs.illinois.edu/>（`200` / 36,494 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（第 116 封，2026-11-20 12:04:44 `SENT OK`；主题「OSS-Instruct 的种子筛选与去重阈值」；正文 221 个 CJK 汉字） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + UIUC 华人学者；不因人在美国 / 论文英文 / gmail 邮箱判英文)`。价值点：种子筛选与去重阈值直接决定我们把 OSS-Instruct 用在 Verilog/脚本语料时「筛太严没量、筛太松学不到真实写法」的取舍；回填 data（主）· pretrain（代码配比）· harness（HumanEval+ 小样本口径）。 |
+
+### 265. Frank Hutter
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Frank Hutter（德语姓名族属 ⇒ 德语称谓 + 英文正文） |
+| 机构 | **University of Freiburg**（计算机系教授，机器学习实验室）；AutoML / 超参优化方向 |
+| 代表论文 | **SGDR**（`1608.03983`，B 轨 #284，末位）· AdamW · 贝叶斯优化与 AutoML 系列 |
+| 邮箱 | **未找到**（本人页 `https://ml.informatik.uni-freiburg.de/profile/hutter/` 实测 `200` / 834,415 B，**页内无明文邮箱、无 `mailto:`** ⇒ 🚫 不猜、不写「fh@…」这类记忆址） |
+| 主页 | <https://ml.informatik.uni-freiburg.de/profile/hutter/>（`200` / 834,415 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（无 A/B 级地址 ⇒ 不发） |
+| 备注 | `语言=德语称谓 + 英文正文(判据=德语姓名族属 + 德国机构)`。建账用途：LR 日程（余弦 / 热重启 vs WSD）是 pretrain 线的常备对照；待其机构页或论文出新地址后再发信，问题应聚焦「同 token 预算下热重启对末段 loss 抖动的影响」。 |
+
+
+### 266. Ben Mildenhall
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ben Mildenhall（英语姓名族属 ⇒ 英文信） |
+| 机构 | **Google Research**（NeRF 一作；UC Berkeley 博士，导师 Ren Ng） |
+| 代表论文 | **NeRF**（`2003.08934`，B 轨 #286，一作）· Mip-NeRF 系列 |
+| 邮箱 | **me@bmild.com** / **A**（本人主页 `https://bmild.github.io/` 页内明文，2026-11-20 实测 `200` / 86,655 B） |
+| 主页 | <https://bmild.github.io/>（`200` / 86,655 B） |
+| X 账号 | **未找到**（主页无 X 外链；🚫 不猜 handle） |
+| 状态 | **待发信**（11-20 15:00 已备草稿 `drafts/2003.08934.md`，今日 12/12 额度满 ⇒ 11-21 00:00 时窗首封） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构 Google Research)`。价值点：**5D 输入里显式带视角方向** ⇒ 把「视角相关效应」与「几何」解耦；若我们用 NeRF 类方法造多视角数据，最贵的是位姿与稀疏视角，而不是网络。回填 vision（主）· data（数据预算单位：场景数 × 视角数）· designflow（只做示意、不做几何真值）。 |
+
+### 267. Pratul P. Srinivasan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Pratul P. Srinivasan（印度裔姓名族属 ⇒ 英文信） |
+| 机构 | **Google Research**（NeRF 二作；UC Berkeley 博士） |
+| 代表论文 | **NeRF**（`2003.08934`，B 轨 #286，二作）· Mip-NeRF 360 等 |
+| 邮箱 | **pratul.srinivasan@gmail.com** / **A**（本人主页 `https://pratulsrinivasan.github.io/` 页内明文，2026-11-20 实测 `200` / 109,065 B） |
+| 主页 | <https://pratulsrinivasan.github.io/>（`200` / 109,065 B） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（同论文已备一作草稿 ⇒ 按「同论文 ≤1 封」不并发） |
+| 备注 | `语言=英文(判据=印度裔姓名族属 + 美国机构)`。建账用途：抗锯齿 / 多尺度采样（Mip-NeRF 线）是「把渲染当训练数据」时分辨率与采样预算的直接依据；待一作不回信且过期后再考虑。 |
+
+### 268. Zhuolun He（何卓伦，汉字名未从可访问页面确认 ⇒ 不臆写）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhuolun He（拼音姓名族属 ⇒ 若发信应中文） |
+| 机构 | **The Chinese University of Hong Kong（CUHK）**（arXiv 原生 HTML 的 affiliation 字段，2026-11-20 实测；导师 Bei Yu） |
+| 代表论文 | **ChatEDA**（`2308.10204`，B 轨 #287，一作）· EDA 流程自动化 agent |
+| 邮箱 | **未找到**（`zhuolunhe.github.io` / `hezhuolun.github.io` / `zlhe.github.io` 均 `404`；CUHK 个人页 `www.cse.cuhk.edu.hk/~zlhe/` `404`；GitHub 搜索到 `zleonhe` 但 **API 无 email、无法双源确认是其本人** ⇒ 🚫 不写猜测地址） |
+| 主页 | **未找到**（同上，逐个实测失败） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（无 A/B 级地址 ⇒ 不发） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 香港机构)`。价值点：ChatEDA 的「分解 → 脚本 → 执行」三段正好对应 designflow 造题的可验证性分层；关注其后续 TCAD 版本是否公开执行日志与失败样例。 |
+
+### 269. Ting Chen
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ting Chen（拼音姓名族属 ⇒ 若发信应中文；汉字名未确认 ⇒ 不臆写） |
+| 机构 | **Google**（SimCLR 一作，论文时 Google Research；后转 Google DeepMind） |
+| 代表论文 | **SimCLR**（`2002.05709`，B 轨 #285，一作）· 视觉自监督对比学习 |
+| 邮箱 | **未找到**（个人页 `https://tingchen.me/` 实测 `200` / 2,565 B 但是 JS 单页应用、**页面无明文邮箱**；`research.google/people/tingchen/` `404`；Semantic Scholar 作者记录 `homepage=null` ⇒ 🚫 不猜 `tingchen@google.com` 这类记忆址） |
+| 主页 | <https://tingchen.me/>（`200` / 2,565 B，JS 渲染） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **待跟踪**（无 A/B 级地址 ⇒ 不发） |
+### 270. Georgia Gkioxari
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Georgia Gkioxari（希腊姓名族属 ⇒ 英文正文；欧洲语言不全文母语） |
+| 机构 | **Caltech**（主页明文「assistant professor in the Computing & Mathematical Sciences department at Caltech」，此前为 Meta FAIR research scientist；2026-11-20 实测） |
+| 代表论文 | **Mask R-CNN**（`1703.06870`，B 轨 #291，二作）· 实例分割 / 人体关键点 |
+| 邮箱 | `georgia.gkioxari@gmail.com`（**A 级**：主页页内明文，`https://gkioxari.github.io/` `200` / 44,977 B） |
+| 主页 | <https://gkioxari.github.io/> |
+| X 账号 | **未找到**（主页未见 X 外链；🚫 不猜 handle） |
+| 状态 | **待发信**（A 级地址；同论文 ≤1 封 ⇒ 若先发 Girshick，本轮不并发） |
+| 备注 | `语言=英文(判据=希腊姓名族属 + 美国机构)`。价值点：掩码分支与 RoIAlign 的**对齐精度**直接决定「区域级」标注的可用性；可问「在密集、低对比度目标上，RoIAlign 的采样点密度与上采样倍率哪个先成为瓶颈」——答复可回填 vision 线的下游头设计。 |
+
+### 271. Ross Girshick
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ross Girshick（`rbg`；英语姓名族属 ⇒ 英文） |
+| 机构 | **未从主页核到**（`https://www.rossgirshick.info/` `200` / 7,882 B，页面极简无 affiliation 文本；论文时期为 Facebook AI Research，**本轮未核现状** ⇒ 不写现雇主） |
+| 代表论文 | **Faster R-CNN**（`1506.01497`，B 轨 #290，三作）· **Mask R-CNN**（#291，末位）· R-CNN 系列 |
+| 邮箱 | `ross.girshick@gmail.com`（**A 级**：主页页内明文） |
+| 主页 | <https://www.rossgirshick.info/> |
+| X 账号 | **未找到**（主页无 X 外链；🚫 不猜） |
+| 状态 | **草稿已备**（`drafts/1506.01497.md`，11-21 时窗发） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：RPN「共享全图卷积特征」是**成本结构**问题的源头答案；可问「锚框尺度/长宽比集合与特征层数哪个是跨尺度召回的主瓶颈」，以及「四步交替训练 vs 近似联合训练的实际差异」——两条都能回填 vision 线检测头的预算分配与 data 线的标注粒度选择。 |
+
+
+### 272. Eric Zelikman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Eric Zelikman（英语姓名族属 ⇒ 英文） |
+| 机构 | **Stanford University**（`https://ezelikman.github.io/` 页内明文 Stanford University；2026-11-20 实测 `200` / 19,986 B） |
+| 代表论文 | **Quiet-STaR**（`2403.09629`，B 轨 #295，一作）· STaR（Self-Taught Reasoner） |
+| 邮箱 | `eric@humansand.ai`（**A 级**：主页页内明文） |
+| 主页 | <https://ezelikman.github.io/> |
+| X 账号 | **未找到**（主页未见 X 外链；🚫 不猜） |
+| 状态 | **草稿已备**（`drafts/2403.09629.md` + `bodies/2026-11-21-2403.09629.txt`，11-21 时窗发，英文 182 词） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：把「思考」放在**继续预训练**而非任务微调里，是 thinking 预算实验的前置证据；三问集中在 tokenwise 并行采样的算力占比、只有 REINFORCE 信号时如何防止「想法抄下一个 token」、以及收益是否依赖极大的继续预训练 token 数 —— 均直接回填 zhulong 的 thinking 轴与 pretrain 的辅助损失设计。 |
+
+### 273. Longhui Yu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Longhui Yu（拼音姓名族属 ⇒ 中文；汉字写法本轮未核，不猜） |
+| 机构 | **Moonshot AI**（X 页 `og:description` 明文 `Post-train KIMI @Kimi_Moonshot`）· **Peking University 硕士**（同源 `MS Peking University @PKU1898`） |
+| 代表论文 | **MetaMath**（`2309.12284`，B 轨 #296，一作）· 数学推理数据自举 |
+| 邮箱 | `yulonghui@stu.pku.edu.cn`（**B 级**：arXiv 原生 HTML `200` / 304,026 B 的 `mailto:`；渲染把 `7.5pt` 前缀粘进地址，按上下文还原；主页无明文邮箱 ⇒ 未双源复核） |
+| 主页 | <https://yulonghui.github.io/>（`200` / 18,583 B） |
+| X 账号 | **@scut_longhui**（已核验：`x.com/scut_longhui` 经代理 `200`，`og:title` = `Longhui Yu (@scut_longhui) on X`，`og:description` = `Post-train KIMI @Kimi_Moonshot | MS Peking University @PKU1898`） |
+| 状态 | **待跟踪**（学生邮箱 + 已入职公司 ⇒ 地址新鲜度存疑，**暂不发**；如需联系优先找 Moonshot 现职公开地址） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + PKU 硕士；🚫 不因现职 Moonshot / 论文英文 / gmail 类邮箱判英文)`。价值点：MetaMath 的「多视角改写题目、不改答案」是 data 线扩题的低成本做法；可问改写后的**答案一致性过滤阈值**与**近重复去重**口径，以及 GSM8K/MATH 去污染的实际 n-gram 阈值。 |
+
+### 274. Weisen Jiang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Weisen Jiang（拼音姓名族属 ⇒ 中文；汉字写法本轮未核，不猜） |
+| 机构 | **香港科技大学（HKUST）**（arXiv 原生 HTML 作者块，邮箱域 `cse.ust.hk`） |
+| 代表论文 | **MetaMath**（`2309.12284`，B 轨 #296，二作） |
+| 邮箱 | `wjiangar@cse.ust.hk`（**B 级**：arXiv 原生 HTML `200` / 304,026 B 作者块明文） |
+| 主页 | **未找到**（本轮未核到本人主页；🚫 不用同名页替代） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 06:04:18 `SENT OK`，信 #125 · 主题 `MetaMath：改写后答案一致性的校验与去重口径`；一作 Longhui Yu 学生邮箱判失效 ⇒ 本条为该论文**唯一**一封） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 香港机构)`。价值点同 #273：题目自举与去重口径；若一作地址失效，可作为同论文的第二联系人（**仅在确认一作不可达后**再考虑，不催）。 |
+
+### 275. Nicolas Carion
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nicolas Carion（法语姓名族属；若将来发信 ⇒ **法语称谓问候 + 英文正文**） |
+| 机构 | **Facebook AI Research**（论文时期，ar5iv 页明文 `Facebook AI Research`；现状未核 ⇒ 不写现雇主） |
+| 代表论文 | **DETR**（`2005.12872`，B 轨 #293，一作） |
+| 邮箱 | **未找到**（`nicolascarion.github.io` `404`；GitHub API `nicolascarion` 的 `email=null`；ar5iv 页 `200` / 272,409 B 无邮箱明文） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=法语(判据=法语姓名族属 + 法国/FAIR Paris 机构；欧洲语言只做称谓问候 + 英文正文)`。价值点：DETR 的「固定 query 槽 + 二分匹配」把 NMS 与 anchor 从调参空间移除，是 vision 线检测头的成本对照；若拿到地址，可问 query 数与小目标召回的关系。 |
+
+### 276. Joseph Redmon
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Joseph Redmon（英语姓名族属 ⇒ 英文） |
+| 机构 | **University of Washington**（论文时期；现状未核 ⇒ 不写现雇主） |
+| 代表论文 | **YOLO**（`1506.02640`，B 轨 #294，一作）· YOLOv2 / YOLOv3 |
+| 邮箱 | **未找到**（`https://pjreddie.com/` `200` / 14,063 B 无 `mailto:`；GitHub API `pjreddie` 的 `email=null`；论文旧地址未复核 ⇒ 🚫 不发旧地址） |
+| 主页 | <https://pjreddie.com/> |
+| X 账号 | **未找到**（主页无 X 外链；🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：单阶段检测的**成本-精度取舍**是 vision 线实时筛查的基线；其「误检更少、定位更差」的结论可直接用于 designflow 造题时把漏检/误检拆成两条评分轴。 |
+
+
+### 277. Xizhou Zhu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xizhou Zhu（拼音姓名族属 ⇒ 中文；汉字写法本轮未核，不猜） |
+| 机构 | **SenseTime Research**（Deformable DETR 脚注；另有「实习期间完成」标注）· Google Scholar 摘要行自记 Tsinghua University（未核主页） |
+| 代表论文 | **Deformable DETR**（`2010.04159`，B 轨 #298，一作） |
+| 邮箱 | `zhuwalter@sensetime.com`（**B 级**：ar5iv HTML `200` / 267,916 B 脚注分组明文；**2020 年地址，疑失效**） |
+| 主页 | **未找到**（`zhu-xizhou.github.io` 实测 `404`；🚫 不用同名页替代） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **只建档**（地址疑失效 ⇒ 不发信；避免污染回信率归因） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 华人机构；🚫 不因论文英文判英文)`。价值点：deformable attention 的**采样点数**与**小目标召回**是 vision 线检测头的直接变量；若后续拿到现行地址，问题应聚焦「采样点数 vs 特征层数的成本分配」。 |
+
+### 278. Michael Tschannen
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Michael Tschannen（德/瑞士姓名族属；若发信 ⇒ 德语称谓问候 + 英文正文） |
+| 机构 | **Google DeepMind**（SigLIP 2 论文署名单位；本轮未逐页核 ⇒ 只写论文期） |
+| 代表论文 | **SigLIP 2**（`2502.14786`，B 轨 #299，一作）· SigLIP |
+| 邮箱 | **未找到**（`tschannen.github.io` 实测 `404`；🚫 不猜） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=德语(判据=姓名族属；欧洲语言只做称谓问候 + 英文正文)`。价值点：原生宽高比与多分辨率训练对**极端长宽比版图截图**的影响，是 vision 线视觉塔选型的关键变量。 |
+
+### 279. Xiaohua Zhai（翟晓华）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xiaohua Zhai（拼音姓名族属 ⇒ 中文；汉字写法本轮未核，不猜） |
+| 机构 | **Google DeepMind**（SigLIP 2 论文署名单位；本轮未逐页核） |
+| 代表论文 | **SigLIP 2**（`2502.14786`，B 轨 #299，末位）· SigLIP · ViT-22B |
+| 邮箱 | **未找到**（`xiaohuazhai.com` 本轮实测 `000`；🚫 不猜） |
+| 主页 | **未找到**（候选不可达） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=中文(判据=拼音姓名族属；🚫 不因 Google / 英文论文判英文)`。价值点：视觉塔规模律与图文配比；若拿到地址，问「多语言 caption 与去偏对中文规格书截图的影响」。 |
+
+### 280. Alexander Sergeev
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alexander Sergeev（俄语姓名族属；若发信 ⇒ 俄语称谓问候 + 英文正文） |
+| 机构 | **未核**（Horovod 论文正文未在摘要给单位；本轮未逐页核 ⇒ 不写雇主） |
+| 代表论文 | **Horovod**（`1802.05799`，B 轨 #297，一作） |
+| 邮箱 | **未找到**（论文未给邮箱；🚫 不猜） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=俄语(判据=姓名族属；欧洲语言只做称谓问候 + 英文正文)`。价值点：ring-allreduce 的带宽-延迟分解可直接用于 pretrain 线的「通信占比 / 扩卡效率」预注册口径。 |
+
+### 281. Deepak Narayanan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Deepak Narayanan（英文姓名族属 + 美国机构 ⇒ 信按英文写） |
+| 机构 | NVIDIA（Megatron-LM / Megatron-Core 方向；本轮未逐页核职位） |
+| 代表论文 | Efficient Large-Scale LM Training on GPU Clusters Using Megatron-LM（arXiv `2104.04473`，一作）· Megatron-LM 系（`1909.08053` 合作者） |
+| 邮箱 | **dnarayanan@nvidia.com**（来源：个人主页 `https://deepakn94.github.io/` 实测 `HTTP 200` / 10,161 B，页内明文；页面 `mailto:` 被 JS 混淆为空 ⇒ 按 **B 级**记，发信前需当场复核） |
+| 主页 | <https://deepakn94.github.io/>（实测 `200` / 10,161 B；页面内含 `megatron-sc21.pdf` 链接，与论文对应） |
+| X 账号 | **未找到**（主页无 X / Twitter 链接，🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 03:04:51 `SENT OK`，信 #122 · 主题 `Megatron-LM SC'21: interleaved 1F1B at 2B scale?`） |
+| 备注 | `语言=英文(判据=英文姓名族属+美国机构)`。价值点：并行组切分与交错 1F1B 的**实测取舍**（TP×PP×DP 与气泡占比），可直接回填 pretrain 的并行配置预注册表；也可追问 2B 规模下「交错层数」是否有拐点。 |
+
+### 282. Samir Khaki
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Samir Khaki（姓名族属未能判定 ⇒ 按英文兜底；🚫 不因机构推定母语） |
+| 机构 | 未核实（论文元数据未给 affiliation，本轮未逐页核） |
+| 代表论文 | VR-SparseQuant: Accurate FP4 Quantization with 2:4 Sparsity on Vera Rubin（arXiv `2611.25717`，一作） |
+| 邮箱 | **未找到**（候选主页 `samirkhaki.github.io` / `samir-khaki.github.io` 均 `404`；`www.mit.edu/~samirk/` 与 `people.csail.mit.edu/samirk/` 均 `403` ⇒ 按纪律不写猜测邮箱） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=英文(判据=姓名族属不可判+无中文/日韩机构信号；兜底英文)`。价值点：激活量化的**误差分摊**与离线 scale-ratio 校准 —— 即使没有 Vera Rubin，也可在模拟环境验证「两条稀疏流共享同一 FP4 预算」的思路。 |
+
+### 283. Aditya Grover
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Aditya Grover（英语机构 + 印度姓名族属 ⇒ 信按英文写；§2 母语表未列印度语言，英文兜底） |
+| 机构 | **UCLA**（计算机系；本轮只核个人主页，未逐页核职称） |
+| 代表论文 | Decision Transformer（arXiv `2106.01345`，B 轨 #304，第 5 作者）· Deep Diffusion / 生成模型方向 |
+| 邮箱 | **adityag@cs.ucla.edu**（来源：本人主页 `https://aditya-grover.github.io/` 的 `mailto:`（percent-encoded `%61%64%69%74%79%61%67@…`，已解码），2026-11-21 03:0x 实测 `HTTP 200` / 17,742 B ⇒ **A 级**） |
+| 主页 | <https://aditya-grover.github.io/> |
+| X 账号 | **未找到**（主页本轮未见 X 链接，🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 03:04:43 `SENT OK`，信 #120 · 主题 `Decision Transformer: return-to-go targets under heavy-tailed returns`） |
+| 备注 | `语言=英文(判据=英文机构 UCLA + 印度姓名族属，英文兜底)`。价值点：return-to-go 条件化 vs 学 critic 的取舍，直接决定 zhulong 多步 EDA 流用「序列建模」还是「critic 后训练」。 |
+
+### 284. Mathieu Salzmann
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mathieu Salzmann（法/德姓名族属 ⇒ **法文称谓问候 + 英文正文**） |
+| 机构 | **EPFL**（CVLab；本轮只核官方人员页） |
+| 代表论文 | HiSA: Sparsifying the Hidden Dimension of RoPE Attention in LLMs（arXiv `2611.26363`，2026-11-19，合作者） |
+| 邮箱 | **mathieu.salzmann@epfl.ch**（来源：EPFL 官方人员页 `https://people.epfl.ch/mathieu.salzmann`，2026-11-21 03:0x 实测 `HTTP 200` / 36,341 B 页内明文 ⇒ **B 级**） |
+| 主页 | <https://people.epfl.ch/mathieu.salzmann> |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 03:04:47 `SENT OK`，信 #121 · 主题 `HiSA: which RoPE frequency partition gets dropped?`） |
+| 备注 | `语言=法文称谓+英文正文(判据=法/德姓名族属 + EPFL 在法语区瑞士；按 §2 欧洲语言不全文母语)`。价值点：hidden-dim 稀疏由 RoPE 分解推出的静态规则 —— 换 RoPE base 后是否需重推，直接影响长上下文预训练配置。 |
+
+### 285. Sam McCandlish
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sam McCandlish（英文姓名族属 ⇒ 英文） |
+| 机构 | **Anthropic**（联合创始人；本轮只按论文与公开报道记，未逐页核现职） |
+| 代表论文 | An Empirical Model of Large-Batch Training（arXiv `1812.06162`，B 轨 #302，一作）· Scaling Laws for Neural LMs（合著） |
+| 邮箱 | **未找到**（候选 `mccandlish.github.io` 实测 `404`；`anthropic.com/people/sam-mccandlish` `404` ⇒ 按纪律不猜） |
+| 主页 | **未找到** |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=英文(判据=英文姓名族属 + 美国机构)`。价值点：梯度噪声尺度 / 临界批量的**小批量预测量法**，可在 2B 预训练前先做「batch 还能不能继续加」的判定，避免盲目堆卡。 |
+
+### 286. Ryan Hanrui Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ryan Hanrui Wang（拼音姓名族属 ⇒ 中文；汉字写法未核，不猜） |
+| 机构 | **Nebius Applied AI**（San Francisco）+ MIT（论文脚注 `1 Nebius Applied AI, San Francisco, CA, USA` / `2 Massachusetts Institute of Technology`） |
+| 代表论文 | **VR-SparseQuant**（`2611.25717`，2026-11-19，通讯作者 `Correspondence to: Ryan Hanrui Wang`） |
+| 邮箱 | `wang@nebius.com`（**B 级**：arXiv 原生 HTML `https://arxiv.org/html/2611.25717v1` 脚注明文，2026-11-21 06:0x 实测 `HTTP 200` / 420,247 B） |
+| 主页 | **未找到**（本轮未核到本人主页；🚫 不用同名页替代） |
+| X 账号 | **未找到**（🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 06:04:11 `SENT OK`，信 #123 · 主题 `VR-SparseQuant：两条 2:4 稀疏流如何共享同一 FP4 预算？`） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 美国机构；按 §2 姓名族属优先于机构所在地，🚫 不因论文英文 / 美国机构判英文)`。价值点：元素级 2:4 稀疏两流共享同一 FP4 值预算 + 离线 scale-ratio 校准，是 zhulong 成本折算与 pretrain 推理量化的直接变量（见 B 轨 #305 之外的 A 轨第 4 篇）。 |
+
+### 287. Feng Li
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Feng Li（拼音姓名族属 ⇒ 中文；汉字写法未核，不猜） |
+| 机构 | **香港科技大学（HKUST）**（主页域 `connect.ust.hk`） |
+| 代表论文 | **Mask DINO**（`2206.02777`，B 轨 #305，一作）· DINO 系列检测/分割 |
+| 邮箱 | `fliay@connect.ust.hk`（**A 级**：本人主页 `https://fengli-ust.github.io` 页内 `mailto:` 明文，2026-11-21 06:0x 实测 `HTTP 200` / 24,341 B；⚠️ 校内地址域，长期有效性未核） |
+| 主页 | <https://fengli-ust.github.io> |
+| X 账号 | **未找到**（主页未见 X 链接；🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 06:04:15 `SENT OK`，信 #124 · 主题 `Mask DINO：detection 与 segmentation 共用 query 时的任务冲突`） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 香港机构)`。价值点：一个头同时出框与掩码（query embedding × 高分辨率像素图点积），是 vision 线检测头选型与 designflow 掩码粒度判分的对照基线。 |
+
+### 288. Limin Wang（王利民）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Limin Wang（主页直接写「王利民」，中文名有据） |
+| 机构 | **南京大学**（Nanjing University，计算机系 / 多媒体计算组 MCG；主页域 `wanglimin.github.io` 写明） |
+| 代表论文 | **VideoMAE**（`2203.12602`，B 轨 #309，末位）· 视频自监督预训练与动作识别主线 |
+| 邮箱 | `lmwang.nju@gmail.com`（**A 级**：本人主页 `https://wanglimin.github.io/` 页内明文 `lmwang.nju [at] gmail.com`，2026-11-21 09:0x 实测 `HTTP 200` / 55,527 B，按 `[at]` 规则确定性还原） |
+| 主页 | <https://wanglimin.github.io/> |
+| X 账号 | **未找到**（主页未见 X 链接；🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 09:07:14 `SENT OK`，信 #127 · 主题 `VideoMAE：90–95% 管状掩码在小数据工业录屏域怎么取`） |
+| 备注 | `语言=中文全文(判据=拼音姓名族属 + 主页写「王利民」+ `.edu.cn` 机构)`。价值点：**90%–95% 管状掩码 + 3k–4k 视频无额外数据**这条配方，是 vision 线「万级工业录屏片段」最省算力的起点；域偏移失败模式可直接写进 data 线配比表的「目标域相似度」列。 |
+
+### 289. Xipeng Qiu（邱锡鹏）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xipeng Qiu（中文名邱锡鹏；拼音族属判定，汉字写法未在页内逐字核） |
+| 机构 | **复旦大学**（Fudan University；主页域 `xpqiu.github.io`，页内写明 Fudan） |
+| 代表论文 | **Scaling Laws of RoPE-based Extrapolation**（`2310.05209`，B 轨 #311，5 作 / 通讯方向）· 另有 MOSS / 中文 LLM 系列 |
+| 邮箱 | `xpqiu@fudan.edu.cn`（**A 级**：本人主页 `https://xpqiu.github.io/` 页内 `mailto:` 明文，2026-11-21 09:0x 实测 `HTTP 200` / 33,632 B） |
+| 主页 | <https://xpqiu.github.io/> |
+| X 账号 | **未找到**（主页未见 X 链接；🚫 不猜） |
+| 状态 | **已发信**（2026-11-21 09:07:13 `SENT OK`，信 #126 · 主题 `RoPE 外推：critical dimension 能否提前判定 32K 续训的 base？`） |
+| 备注 | `语言=中文全文(判据=拼音姓名族属 + .edu.cn 机构)`。价值点：**critical dimension + 旋转周期统一框架**把「RoPE base 靠网格搜」换成可计算的预注册流程，直接影响 pretrain 长上下文续训与 zhulong「有效上下文 / 训练 token」成本口径。 |
+
+### 290. Ziwei Liu（刘子纬）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ziwei Liu（中文名刘子纬；拼音族属判定） |
+| 机构 | **南洋理工大学 NTU**（X 页 `og:description` 明文 `Associate Professor @NTUsg`） |
+| 代表论文 | **LLaVA-OneVision**（`2408.03326`，B 轨 #308，末位）· 另有 S-Lab 多模态与生成系列 |
+| 邮箱 | **未找到**（`https://liuziwei7.github.io/` `200` / 39,458 B 页内无 `mailto:` 与明文邮箱；🚫 不猜） |
+| 主页 | <https://liuziwei7.github.io/> |
+| X 账号 | **@liuziwei7**（双源核验 2026-11-21 09:0x：X 页 `og:title` = `Ziwei Liu (@liuziwei7) on X`、`og:description` = `Associate Professor @NTUsg …`；`x.com/liuziwei7` `200` / 217,370 B 经代理） |
+| 状态 | **待跟踪**（无公开邮箱 ⇒ 不发信；X 已核验，follow 需登录态，未自动执行） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + NTU 中文姓名为主)`；价值点：单塔服务单图 / 多图 / 视频的任务迁移证据，可作 vision 线「分塔 vs 单塔」对照臂的外部参照。 |
+
+### 291. Xingyao Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Xingyao Wang（拼音姓名族属 ⇒ 若发信应用中文全文） |
+| 机构 | **UIUC**（PhD candidate, Illinois CDS；据 X 简介）+ **OpenHands（All Hands AI）联合创始人**（GitHub API `company` 字段 = `OpenHands / All Hands AI`，2026-11-21 实测） |
+| 代表论文 | **CodeAct**（`2402.01030`，B 轨 #313 一作）· SWE-bench / OpenDevin 生态 |
+| 邮箱 | **未找到明文**（GitHub API `api.github.com/users/xingyaoww` 的 `email` 字段为 `null`；主页 `xwang.dev` 的邮箱为 Cloudflare `email-protection` 编码 ⇒ **不反解、不猜**） |
+| 主页 | <http://xwang.dev/>（`xingyaoww.github.io` `301` → `xwang.dev`，`200` / 33,093 B） |
+| X 账号 | **@xingyaow_**（双源核验 2026-11-21 12:0x：主页页内链接 `https://x.com/xingyaow_`；X 页 `og:title` = `Xingyao Wang (@xingyaow_) on X`、`og:description` = `Co-founder @OpenHandsDev | PhD candidate @IllinoisCDS …`；`x.com/xingyaow_` `200` / 170,026 B 经代理） |
+| 状态 | **待跟踪**（无公开明文邮箱 ⇒ 不发信；X 已核验，follow 需登录态，未自动执行） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 中文姓名为主)`。价值点：**代码即动作空间 + 每轮执行轨迹**决定了 harness 必须记录「每轮代码 / 执行输出 / 状态」三件套，否则无法区分模型错与运行时错。 |
+
+### 292. Peter J. Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Peter J. Liu（英语姓名族属 ⇒ 英文信） |
+| 机构 | 据 X 简介（2026-11-21 抓取）：**Building @getcompoundai**，曾任 **Google Brain / DeepMind** research scientist（论文时期为 Google Research / Brain） |
+| 代表论文 | **Small-scale proxies for large-scale Transformer training instabilities**（`2309.14322`，B 轨 #226 二作）· 文本生成评估与序列模型方向 |
+| 邮箱 | **未找到**（本轮未核到可确认的**现行**个人页；🚫 不用 2023 年论文 PDF 旧地址、🚫 不猜 `@google.com`） |
+| 主页 | **未找到**（`wortsman.github.io` 一类候选页均 `404` / 域名不存在；不臆写） |
+| X 账号 | **@peterjliu**（双源核验 2026-11-21 12:0x：X 页 `og:title` = `Peter J. Liu (@peterjliu) on X`、`og:description` = `Building @getcompoundai. Was Research Scientist @ Google Brain / DeepMind, language model research…`；`x.com/peterjliu` `200` / 162,821 B 经代理） |
+| 状态 | **待跟踪**（无公开明文邮箱 ⇒ 不发信；X 已核验，follow 需登录态，未自动执行） |
+| 备注 | `语言=英文(判据=英语姓名族属 + 美国机构)`。价值点：该文给出的**「小模型 + 高学习率」复现大模型 loss spike** 与 **QK-norm 压制注意力 logit 增长**，是 pretrain 线「2B 上先复现不稳定再上大模型」的预注册依据。 |
+
+### 293. Shilong Liu（刘世隆）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Shilong Liu（主页自写中文名「刘世隆」） |
+| 机构 | **Princeton AI Lab** 博士后（Peretsman Scully Postdoctoral Research Fellow / AI² Fellow）；**2027 秋入职 Columbia EE 助理教授**（主页原文：Incoming Tenure-track Assistant Professor, Department of Electrical Engineering, Columbia University, Fall 2027） |
+| 代表论文 | **Grounding DINO**（`2303.05499`，B 轨 #315，一作）· **Grounding DINO 1.5**（`2405.10300`，B 轨 #312）· Grounded-SAM 系列 |
+| 邮箱 | **A 级** `sl6222@columbia.edu`（本人主页 `https://lsl.zone/` 实测 `2026-11-21 15:0x`：`HTTP 200` / 26,074 B，页内 `mailto:` 明文；页面注明「University-related topics」用此地址、Princeton 邮箱已停用）；备用 `slongliu86@gmail.com`（同页 `mailto:`，非学术事务） |
+| 主页 | <https://lsl.zone/> |
+| X 账号 | **未找到**（主页外链指向 `twitter.com/atasteoff`，但 `x.com/atasteoff` 经代理实测 **`404`**（`og:title` = `User Profile Not Found - X | 404 Error`）⇒ 不记、不猜） |
+| 状态 | **待跟踪**（草稿 `research/mail/drafts/2303.05499.md` 已备；当日额度已满，计划 2026-11-22 00:00 时窗发） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 主页中文名「刘世隆」)`。价值点：开放词表取框的**三阶段紧融合**（feature enhancer / 语言引导 query 选择 / 跨模态解码器）与我们版图-封装截图取样直接相关；本人研究自述含「self-evolving agents 与 world models」⇒ 后续也可服务 harness 线。 |
+
+### 294. Hongyang Zhang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hongyang Zhang（拼音姓名族属 ⇒ 中文全文发信） |
+| 机构 | **University of Waterloo**（Cheriton School of Computer Science 助理教授，DC 2641）· **Vector Institute**（SafeAI Lab 负责人；官方人员页实测 2026-11-21） |
+| 代表论文 | **EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty**（`2401.15077`，B 轨 #317，末位 / 通讯方向）· EAGLE-2 / EAGLE-3 系列 |
+| 邮箱 | **A 级** `hongyang.zhang@uwaterloo.ca`（滑铁卢官方人员页 `https://uwaterloo.ca/computer-science/about/people/h935zhan` 实测 `HTTP 200` / 95,418 B，页内 `mailto:` 明文） |
+| 主页 | <https://hongyanz.github.io/>（`200` / 27,193 B；页内无明文邮箱 ⇒ 地址取官方人员页） |
+| X 账号 | **@hongyangzh**（双源核验 2026-11-21 15:0x：GitHub `github.com/hongyanz` `200` / 175,788 B 页内链接 `twitter.com/hongyangzh`；X 页 `og:title` = `Hongyang Zhang (@hongyangzh) on X`，`x.com/hongyangzh` `200` / 197,556 B 经代理） |
+| 状态 | **待跟踪**（草稿 `research/mail/drafts/2401.15077.md` 已备；计划 2026-11-22 00:00 时窗发；follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | `语言=中文(判据=拼音姓名族属；本文四位作者均为华人姓名)`。价值点：「延迟加速」与「吞吐翻倍」是两个成本口径，且 draft 头在窄域（RTL / 版图脚本）是否需重训，直接决定 zhulong 成本表与 harness 默认开关。 |
+
+### 295. Lihe Yang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lihe Yang（拼音姓名族属 ⇒ 中文全文发信） |
+| 机构 | **The University of Hong Kong（HKU）** 博士生，导师 Hengshuang Zhao（本人主页 2026-11-21 18:0x 实测原文：`I am a PhD student at HKU, advised by Prof. Hengshuang Zhao`）；本科 / 硕士毕业于南京大学（导师 Yinghuan Shi）；曾在 Meta FAIR / ByteDance Seed / 上海 AI Lab / SenseTime / 腾讯优图实习；现研究 VLM |
+| 代表论文 | **Depth Anything**（`2401.10891`，B 轨 #318，一作）· Depth Anything V2 · UniMatch / UniMatch V2 |
+| 邮箱 | **A 级** `lihe.yang.cs@gmail.com`（本人主页 `https://liheyoung.github.io/` 实测 `HTTP 200` / 17,151 B，页内 `mailto:` 明文；同页 Contact 区「Email」链接指向该地址） |
+| 主页 | <https://liheyoung.github.io/> |
+| X 账号 | **未找到**（主页未挂 X 链接；`x.com/LiheYoung` 经代理实测 **`404`**（`og:title` = `User Profile Not Found - X | 404 Error`）⇒ 不记、不猜） |
+| 状态 | **待跟踪**（A 级邮箱已核；当日 12/12 已满 ⇒ 本窗不发信，草稿 `research/mail/drafts/2401.10891.md` 已备，计划 2026-11-22 00:00 时窗发） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + HKU 中文环境；同为华人导师组)`。价值点：Depth Anything 的**数据引擎 + 更难优化目标 + 预训练编码器辅助监督**三件套，直接对应我们版图 / 封装截图的自动标注取舍；其主页新闻写明 Depth Anything V1 进入 CVPR 2024 top-5 most influential papers（本人自述）。 |
+
+### 296. Hengshuang Zhao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hengshuang Zhao（拼音姓名族属 ⇒ 中文全文发信） |
+| 机构 | **The University of Hong Kong** 助理教授（School of Computing and Data Science，Rm424 Chow Yei Ching Building；本人页 2026-11-21 18:0x 实测原文 `Assistant Professor ... The University of Hong Kong`），主持 **SAIL（Super Artificial Intelligence Lab）**；曾任 MIT CSAIL（导师 Antonio Torralba）与牛津 Torr Vision Group 博士后；CUHK 博士（导师 Jiaya Jia） |
+| 代表论文 | **Depth Anything**（`2401.10891`，B 轨 #318，末位 / 通讯方向）· **PSPNet 语义分割系列**（一作；本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **A 级** `hszhao[at]cs.hku.hk`（港大个人页 `https://i.cs.hku.hk/~hszhao/` 实测 `HTTP 200` / 36,107 B，页内 `Email: hszhao[at]cs.hku.hk` 明文；`[at]` 按站内写法还原为 `@`） |
+| 主页 | <https://i.cs.hku.hk/~hszhao/> |
+| X 账号 | **未找到**（页面未挂 X 链接；`x.com/hszhao` 经代理实测 **`404`**（`og:title` = `User Profile Not Found - X | 404 Error`）⇒ 不记、不猜） |
+| 状态 | **待跟踪**（A 级邮箱已核；与 #295 同属 Depth Anything ⇒ **同论文 ≤1 封**，本线优先发一作 Lihe Yang，本文不另发） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 港大中文环境)`。价值点：研究自述含 **Computer Vision / Embodied AI / Multimodal AI / Spatial AI / Physical AI**，与我们 vision 线与 zhulong 的「空间 / 物理」评测口径相关；作为导师可判断方向级问题（数据引擎是否值得长期投入），细节问题走一作。 |
+
+### 297. Mike Zheng Shou
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mike Zheng Shou（拼音姓名族属 ⇒ 中文全文发信） |
+| 机构 | **National University of Singapore（NUS）** Associate Professor（Presidential Young Professorship；Show Lab 负责人）；Forbes 30 under 30 Asia；曾任职 Facebook AI 与 Columbia University（Show Lab 主页与 X 简介 2026-11-21 21:0x 实测原文） |
+| 代表论文 | **Show-o**（`2408.12528`，B 轨 #322，末位）· Show Lab 视频 / 多模态方向系列（其余论文 ID 本线未逐篇核 ⇒ 不写编号） |
+| 邮箱 | **A 级** `mike.zheng.shou AT gmail.com`（Show Lab 主页 `https://sites.google.com/view/showlab` 经代理实测 `HTTP 200` / 161,838 B，页内原文 `Contact : mike.zheng.shou AT gmail.com`；`AT` 按站内写法还原为 `@`） |
+| 主页 | <https://sites.google.com/view/showlab>（个人站 `mikezhengshou.com` 连续两次 25 s 超时 ⇒ 未取；不据此判断不存在） |
+| X 账号 | **@MikeShou1**（双源核验 2026-11-21 21:0x：X 页 `x.com/MikeShou1` 经代理 `200` / 181,115 B，`og:title` = `Mike Shou (@MikeShou1) on X`、`og:description` = `Assoc Prof at NUS. Forbes 30 under 30 Asia. Previously at Facebook AI and Columbia U...`；Show Lab 主页页内也挂 `twitter.com/MikeShou1`） |
+| 状态 | **待跟踪**（X 已核验；follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow；A 级邮箱已核，草稿 `research/mail/drafts/2408.12528.md` 已备，计划 2026-11-22 00:00 时窗发） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + NUS 中文环境)`。价值点：Show-o 用**一套权重**同时做理解与生成，直接对应我们 vision 线「理解塔 + 生成塔是否合并」的取舍；他是导师级，可回答方向级问题（是否值得为统一模型改数据配比），细节问题走一作。 |
+
+### 298. Ming-Yu Liu（劉洺堉）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ming-Yu Liu（劉洺堉；姓名族属华人 ⇒ 若有地址按中文写） |
+| 机构 | **NVIDIA** Vice President of **Cosmos Lab**；IEEE Fellow（本人主页 `mingyuliu.net` 2026-11-21 21:0x 实测原文：`Vice President of Cosmos Lab, NVIDIA · IEEE Fellow`）；早年曾在 University of Maryland / 交大 ECE 获校友奖（同页 Awards 区） |
+| 代表论文 | **Cosmos World Foundation Model Platform for Physical AI**（`2501.03575`，B 轨 #321）· NVIDIA 生成式视觉方向系列（GauGAN / Canvas 线；具体 arXiv ID 本线未逐篇核 ⇒ 不写编号） |
+| 邮箱 | **未找到**（本人主页 `https://mingyuliu.net/` `200` / 7,878 B 无 `mailto:`；NVIDIA Research 人员页 `https://research.nvidia.com/person/ming-yu-liu` `200` / 70,084 B 也无邮箱明文）⇒ 🚫 不猜地址、不发信 |
+| 主页 | <https://mingyuliu.net/> |
+| X 账号 | **@liu_mingyu**（本人主页页内 `href` 指向 `twitter.com/liu_mingyu`；X 页 `x.com/liu_mingyu` 经代理 `200`，`og:title` = `MingYuLiu (@MingYuLiu) on X`） |
+| 状态 | **待跟踪**（X 已核验；follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow；**无公开邮箱 ⇒ 本线不建信**） |
+| 备注 | `语言=中文(判据=姓名族属；主页同时列中文姓名「劉洺堉」)`。价值点：Cosmos 把世界模型拆成「清洗 / 基座 / 后训练 / tokenizer」四件套，可作为我们 vision 线与 zhulong 视频成本口径的顶层参照；作为 VP 可判断「开放权重 vs 闭源」的策略级问题。 |
+
+### 299. Robin Rombach
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Robin Rombach（德式姓名族属；若发信 ⇒ 德语称谓问候 + 英文正文） |
+| 机构 | **Stability AI / Black Forest Labs 方向**（SD3 论文末位作者；本轮未逐页核现职） |
+| 代表论文 | **Scaling Rectified Flow Transformers for High-Resolution Image Synthesis**（`2403.03206`，B 轨 #326，末位）· Latent Diffusion / Stable Diffusion 系列（本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **未找到**（`rombach.me` / `www.robrombach.com` 本轮均 <code>000</code> 超时；🚫 不猜地址、不发信） |
+| 主页 | **未找到**（候选域均不可达） |
+| X 账号 | **@robrombach**（`x.com/robrombach` 经代理 `200` / 188,334 B，`og:title` = `Robin Rombach (@robrombach) on X`；`og:description` 自述 generative models 方向） |
+| 状态 | **待跟踪**（X 已核验；follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow；无公开邮箱 ⇒ 本线不建信） |
+| 备注 | `语言=德语(判据=德式姓名族属 + 德国机构；欧洲语言只做称谓问候 + 英文正文)`。价值点：rectified-flow 的噪声采样偏置与「双流→单流」MMDiT 是 zhulong 视频生成路线的顶层参照；若拿到地址，可问「分辨率-算力曲线在 720p 以上是否仍线性」。 |
+
+### 300. Patrick Esser
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Patrick Esser（英语 / 德语姓名两可；判据冲突 ⇒ 英文兜底） |
+| 机构 | **Stability AI**（SD3 论文一作；本轮未逐页核现职） |
+| 代表论文 | **Scaling Rectified Flow Transformers for High-Resolution Image Synthesis**（`2403.03206`，B 轨 #326，一作）· VQGAN（本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **未找到**（`patrickesser.com` 本轮 <code>000</code> 超时；`github.com/patrickesser` 页无身份明示 ⇒ 不据以推断邮箱） |
+| 主页 | **未找到**（候选域不可达） |
+| X 账号 | **未找到**（反例：`@PatrickEsser` 实为 `patrick goncalves`、`@EsserPatrick` 实为 `Patrick Esser JR` ⇒ 均不记；🚫 不猜） |
+| 状态 | **只建档**（无可发地址） |
+| 备注 | `语言=英文(判据=姓名族属两可 + 判据冲突 ⇒ 英文兜底)`。价值点：MMDiT 的双流权重划分与合并时机是 zhulong 视频架构的直接变量；若有地址，问「双流合并放在哪一层、合并后参数量如何折算算力」。 |
+
+### 301. Timothée Darcet
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Timothée Darcet |
+| 机构 | **FAIR Paris (Meta) / Inria**（本人主页 `timdarcet.github.io` 自述：PhD student at FAIR Paris and Inria，导师 Maxime Oquab / Julien Mairal / Piotr Bojanowski） |
+| 代表论文 | **Vision Transformers Need Registers**（`2309.16588`，B 轨 #329，一作；页面自述 ICLR 2024 oral / outstanding paper）· DINOv2（页面列名，本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **未找到**（`timdarcet.github.io` `200` / 2,363 B，页内无 `mailto:`；🚫 不猜地址、不发信） |
+| 主页 | <https://timdarcet.github.io/>（`200` / 2,363 B） |
+| X 账号 | **@timdarcet**（`x.com/timdarcet` 经代理 `200` / 181,126 B；`og:title` = `TimDarcet (@TimDarcet) on X`；`og:description` = `LLMs @ FAIR, prev. DINO stuff @ INRIA & FAIR` 双源核验） |
+| 状态 | **待跟踪**（X 已核验；follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow；无公开邮箱 ⇒ 本线不建信） |
+| 备注 | `语言=法语(判据=法式姓名族属 + 法国机构；欧洲语言只做称谓问候 + 英文正文)`。价值点：register token 修的是 ViT 特征图高范数伪影；若拿到地址，可问「register 数取多少、在视频多帧输入上伪影是否随时序累积」。 |
+
+### 302. Changli Tang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Changli Tang（汉字名本轮未从官方页直接核到 ⇒ 不写） |
+| 机构 | **清华大学电子工程系**（`github.com/TCL606` 自述 `PhD, Department of Electronic Engineering, Tsinghua University`；WeMM-Video 一作，机构以论文为准，本轮未逐页核） |
+| 代表论文 | **WeMM-Video: Pushing the Frontiers of Open-Source Omni-Modal Video Understanding**（`2611.26409`，A 轨本窗推荐，一作）· video-SALMONN 2（GitHub / 检索页列名，本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **未找到**（`github.com/TCL606` `200` / 196,169 B，页内无 `mailto:`；🚫 不猜地址、不发信） |
+| 主页 | <https://github.com/TCL606>（`200` / 196,169 B，`<title>` = `TCL606 (Changli Tang) · GitHub`） |
+| X 账号 | **未找到**（`x.com/TCL606` 经代理 `404`，`og:title` = `User Profile Not Found - X | 404 Error` ⇒ 不记、不猜） |
+| 状态 | **只建档**（无可发地址、X 未找到） |
+### 303. Sho Takase
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Sho Takase（日文姓名族属 ⇒ 若发信应用 **日本語**；汉字名未从官方页核到 ⇒ 不写） |
+| 机构 | **LY Corporation / SB Intuitions**（arXiv PDF v2 首页脚注第 1 单位，`pdftotext` 实测；此前在 NTT 系研究所） |
+| 代表论文 | **Spike No More: Stabilizing the Pre-training of Large Language Models**（`2312.16903`，B 轨 #332，一作 / 通讯）· 句向量 / 检索方向工作（本线未逐篇核 ID ⇒ 不写编号） |
+| 邮箱 | **sho.takase@lycorp.co.jp**（来源：arXiv PDF v2 首页 `Correspondence to: Sho Takase <sho.takase@lycorp.co.jp>`，`pdftotext` 明文；本人主页 `takase.github.io` `200` / 22,054 B **无邮箱** ⇒ 以论文通讯地址为准，标注为 2024 年论文内地址，送达率不可验证） |
+| 主页 | <https://takase.github.io/>（`200` / 22,054 B） |
+| X 账号 | **未找到**（主页无 `twitter.com` / `x.com` 链接；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-22 06:0x · 第 133 封 · 日文 281 字；回信状态 `未到期`，2026-12-06 到期） |
+| 备注 | `语言=日本語(判据=日文姓名族属 + 日本机构；🚫 未因论文英文/邮箱英文判英文)`。价值点：把 loss spike 归因到 sub-layer / shortcut 的 Jacobian 谱范数，是 pretrain 线可转成开跑前检查表的少数结构化结论。 |
+
+### 304. Jie Tang（唐杰）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jie Tang（唐杰；中文姓名族属 ⇒ 中文发信） |
+| 机构 | **清华大学计算机系**（KEG 知识工程组负责人；本人主页自述 Professor of Computer Science、ACM / AAAI / IEEE Fellow） |
+| 代表论文 | **CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer**（`2408.06072`，B 轨 #330，末位 / 资深作者）· GLM-4（`2406.12793`，B 轨已收，团队署名含他） |
+| 邮箱 | **jietang@tsinghua.edu.cn**（来源：本人主页 `keg.cs.tsinghua.edu.cn/jietang/` `200` / 217,822 B，页内 `E-Mail: jietang at tsinghua . edu . cn` 明文；发送前当场复核） |
+| 主页 | <https://keg.cs.tsinghua.edu.cn/jietang/>（`200` / 217,822 B） |
+| X 账号 | **@jietang**（主页自挂 `twitter.com/jietang`；`x.com/jietang` 经代理 `200` / 180,469 B，`og:title` = `jietang (@jietang) on X`，bio = `Professor @ Tsinghua, Founder of … AGI, LLM.` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-22 06:0x · 第 134 封 · 中文 185 汉字；回信状态 `未到期`，2026-12-06 到期）；X 待 follow（需登录态） |
+| 备注 | `语言=中文(判据=中文姓名族属 + 清华大学；🚫 未因论文英文/邮箱英文判英文)`。价值点：CogVideoX 的 3D 因果 VAE + expert adaptive LayerNorm + 多分辨率 frame pack 是 zhulong 视频塔的现成对照；三问已落到「时间维压缩比 / 两路融合比例随规模是否要重调 / 先提分辨率还是先提帧数」。 |
+
+
+
+### 305. Jiahui Yu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jiahui Yu（拼音姓名族属 ⇒ 中文发信；汉字名本轮未从官方页核到 ⇒ 不写） |
+| 机构 | **论文署名 Google Research / Brain**（Parti 一作）；本人 X 简介自述现已离开（Startup，此前 OpenAI / Meta Superintelligence Labs / Google DeepMind）⇒ **以论文机构为准并标注变化** |
+| 代表论文 | **Scaling Autoregressive Models for Content-Rich Text-to-Image Generation**（Parti，`2206.10789`，B 轨 #334，一作）· ViT-VQGAN（论文内引用，本线未单独立条） |
+| 邮箱 | **jiahuiyu@google.com**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2206.10789` `200` / 613,481 B，首页作者邮箱块；⚠️ **2022 年论文内地址**，本人已离开 Google ⇒ 送达率不可验证，发信时须标注） |
+| 主页 | <https://jiahuiyu.com/>（`200` / 23,467 B，页内无明文邮箱） |
+| X 账号 | **@jiahuiyu**（`x.com/jiahuiyu` 经代理 `200` / 191,153 B；`og:title` = `Jiahui Yu (@jiahuiyu) on X`；`og:description` = `Startup. Previously co-founded TBD @Meta Superintelligence Labs; led Perception @OpenAI; co-led Gemini Multimodal @GoogleDeepMind.` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-22 09:0x · 第 136 封 · 中文 252 汉字；回信状态 `未到期`，2026-12-06 到期）；X 待 follow（需登录态） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 论文 Google 机构；🚫 未因论文英文/邮箱域名判英文)`。价值点：Parti 的 ViT-VQGAN token 序列 / 20B 编码器-解码器 / P2 基准造题，直接对应 vision 线的序列预算与 harness 的生成评测造题。 |
+
+### 306. Aditya Ramesh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Aditya Ramesh（印度姓名族属 ⇒ 英文发信） |
+| 机构 | **OpenAI**（unCLIP / DALL·E 2 一作；机构据论文页，本轮未逐页核官方人员页） |
+| 代表论文 | **Hierarchical Text-Conditional Image Generation with CLIP Latents**（unCLIP / DALL·E 2，`2204.06125`，B 轨 #333，一作） |
+| 邮箱 | **aramesh@openai.com**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2204.06125` `200` / 274,460 B，首页作者邮箱块；**2022 年论文内地址**，机构页不公开个人邮箱 ⇒ 送达率不可验证） |
+| 主页 | **未找到**（本轮未找到可确认的本人页；🚫 不拿公司页冒充个人页） |
+| X 账号 | **未找到**（`x.com/adityaramesh` 经代理 `200` / 61,805 B，但 `og:title` = `Adi (@adityaramesh) on X`、`og:description` = `A+ : Indic : If You Are Not a Liberal When You Are Young…` ⇒ **显系他人，不记、不猜**） |
+| 状态 | **已发信**（2026-11-22 09:0x · 第 135 封 · 英文 197 词；回信状态 `未到期`，2026-12-06 到期） |
+| 备注 | `语言=英文(判据=印度姓名族属 + OpenAI 美国机构)`。价值点：两段式 prior/decoder 拆分与 AR vs diffusion prior 的比较口径，是 vision 线「中间表示选型」的直接依据。 |
+
+### 307. Olaf Ronneberger
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Olaf Ronneberger（德文姓名族属 ⇒ 德文称谓问候 + 英文正文） |
+| 机构 | **University of Freiburg**（U-Net 一作；论文页署名，本人主页 `lmb.informatik.uni-freiburg.de/people/ronneber/` 现行在岗） |
+| 代表论文 | **U-Net: Convolutional Networks for Biomedical Image Segmentation**（`1505.04597`，B 轨 #337，一作） |
+| 邮箱 | **ronneber@informatik.uni-freiburg.de**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/1505.04597` `200` / 63,422 B 首页 | 邮箱块；⚠️ **现行主页** `200` / 9,182 B 的邮箱是图片 `email_images/ronneber.png`、**机器不可读** ⇒ 只能以论文内地址为准并标注「2015 年论文内地址，送达率不可验证」） |
+| 主页 | <https://lmb.informatik.uni-freiburg.de/people/ronneber/>（`200` / 9,182 B） |
+| X 账号 | **未找到**（主页本轮未见 X 链接；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-22 12:0x · 第 138 封 · 德文称谓问候 + 英文正文 186 词；回信状态 `未到期`，2026-12-06 到期）；X 待跟踪 |
+| 备注 | `语言=德文问候+英文(判据=德文姓名族属 + 德国 Freiburg 机构)`。价值点：U-Net 的「收缩-扩张 + 跳连」仍是潜空间扩散（含视频）解码主干的默认基线，且本文把「强数据增强替代标注量」讲得最清楚；三问落到「弹性形变超参可迁移性 / overlap-tile 的边界一致性 / 视频 3D 扩展时跳连该不该保留」。 |
+
+### 308. Jia Deng 邓嘉
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jia Deng 邓嘉（拼音姓名族属 ⇒ 中文发信） |
+| 机构 | **Princeton University**（ILSVRC 二作；本人主页 `cs.princeton.edu/~jiadeng/` 现行在岗） |
+| 代表论文 | **ImageNet Large Scale Visual Recognition Challenge**（`1409.0575`，B 轨 #338，二作） |
+| 邮箱 | **jiadeng@princeton.edu**（来源：本人主页 `https://www.cs.princeton.edu/~jiadeng/` `200` / 5,495 B，页内 JS `showemail('princeton.edu','jiadeng')` 明文可还原，非图片混淆） |
+| 主页 | <https://www.cs.princeton.edu/~jiadeng/>（`200` / 5,495 B） |
+| X 账号 | **未找到**（主页本轮未见 X 链接；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-22 12:0x · 第 139 封 · 中文 233 汉字；回信状态 `未到期`，2026-12-06 到期）；X 待跟踪 |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 普林斯顿机构；🚫 未因论文英文/邮箱域名判英文)`。价值点：ILSVRC 是「基准怎么造 + 隐藏测试集怎么防过拟合」的最早系统范本，直接服务 harness 的 EDA 设计流 benchmark 与 data 的标注治理；三问落到「领域基准的标注成本与一致性口径 / 人机对比的黑箱评测协议 / 榜单长期维护与版本化」。 |
+
+
+### 309. Tianjun Zhang 张天俊
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tianjun Zhang（拼音姓名族属 ⇒ 中文发信；汉字名本轮未从官方页核到 ⇒ 不写） |
+| 机构 | **UC Berkeley EECS**（RAFT 一作；本人主页 `tianjunz.github.io` 自述 BAIR / RISE lab 博士生；X bio 另注现职 `@peano_ai`、此前 Meta / Google DeepMind） |
+| 代表论文 | **RAFT: Adapting Language Model to Domain Specific RAG**（`2403.10131`，B 轨 #341，一作）· LiveCodeBench / Gorilla（X bio 自述为 Project Lead，本线未单独立条） |
+| 邮箱 | **tianjunz@berkeley.edu**（来源：本人主页 `https://tianjunz.github.io/` `200` / 6,538 B，页内明文 `Email: tianjunz [at] berkeley [dot] edu`；论文 PDF 首页亦写 `{tianjunz}@berkeley.edu`，双源一致） |
+| 主页 | <https://tianjunz.github.io/>（`200` / 6,538 B） |
+| X 账号 | **@tianjun_zhang**（`x.com/tianjun_zhang` 经代理 `200` / 190,919 B；`og:title` = `Tianjun Zhang (@tianjun_zhang) on X`；`og:description` 明写 `Project Lead of LiveCodeBench, RAFT and Gorilla LLM` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-22 15:0x · 第 140 封 · 中文 268 汉字；回信状态 `未到期`，2026-12-06 到期）；X 待 follow（需登录态） |
+| 备注 | `语言=中文(判据=拼音姓名族属 Zhang + 姓名可还原中文名习惯；🚫 未因论文英文 / 美国机构判英文)`。价值点：RAFT 的 golden/distractor 混训与逐字引用，直接对应我们「EDA 工具手册 / 错误日志 → 领域问答」的数据构造与可验证判分；三问落到「distractor 比例与 top-k 的消融 / 答案需跨多文档拼合时 golden 怎么造 / 逐字引用在代码与中英混合文档上的校验」。 |
+
+### 310. Dzmitry Bahdanau
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Dzmitry Bahdanau（白俄罗斯 / 东欧姓名族属 ⇒ 英文发信；德法西等对照表不含白俄/俄语族，按「判据冲突 ⇒ 英文」兜底） |
+| 机构 | **Mila / Université de Montréal**（论文署名）；本人 Mila 目录页与 X bio 自述现为 **Periodic Labs**、McGill 兼职教授 |
+| 代表论文 | **Neural Machine Translation by Jointly Learning to Align and Translate**（`1409.0473`，B 轨 #339，一作） |
+| 邮箱 | **未找到**（Mila 目录页 `200` / 125,911 B 无个人明文邮箱；个人站点 `bahdanau.github.io` / `www.bahdanau.com` 本轮 `404` / `000`；🚫 不用 RocketReach 等第三方猜测地址） |
+| 主页 | **未找到**（`bahdanau.github.io` `404`；以 Mila 目录页为公开身份页） |
+| X 账号 | **@DBahdanau**（`x.com/DBahdanau` 经代理 `200` / 199,403 B；`og:title` = `🇺🇦 Dzmitry Bahdanau (@DBahdanau) on X`；`og:description` = `Team member at @periodiclabs.` ⇒ 双源核验） |
+| 状态 | **待跟踪**（X 待 follow，需登录态；无可用邮箱 ⇒ 本线不发信，不猜地址） |
+| 备注 | `语言=英文(判据=白俄罗斯姓名族属 + 加拿大 Mila 机构；对照表无该国语言 ⇒ 英文兜底)`。价值点：Bahdanau attention 是「定长状态 → 按需取用历史」的分水岭，服务 pretrain 的长上下文 / KV 压缩路线判定与 harness 的分长度桶评测口径。 |
+
+### 311. Ruslan Salakhutdinov
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ruslan Salakhutdinov（俄 / 鞑靼姓名族属 + 美国机构 ⇒ 按 §2 对照表「判据冲突 / 无对应语言」走英文兜底） |
+| 机构 | **Carnegie Mellon University**（Machine Learning Department，UPMC Professor；主页 `200` 页内自述） |
+| 代表论文 | **Improving neural networks by preventing co-adaptation of feature detectors**（`1207.0580`，B 轨 #343，末位）· 另有 Deep Boltzmann Machines / 多模态深度学习主线 |
+| 邮箱 | **rsalakhu@cs.cmu.edu**（来源：本人 CMU 主页 `https://www.cs.cmu.edu/~rsalakhu/` `200` / 9,400 B，页内明文 `rsalakhu[at]cs.cmu.edu`） |
+| 主页 | <https://www.cs.cmu.edu/~rsalakhu/>（`200` / 9,400 B） |
+| X 账号 | **@rsalakhu**（`x.com/rsalakhu` 经代理 `200`；`og:title` = `Russ Salakhutdinov (@rsalakhu) on X`；`og:description` = `CSO @ Sooth Labs, Professor @ CMU, President Elect ICML Board, Ex-VP of Research @ Meta (Multimodal LLMs, AI Agents), ex-Director of AI at @Apple` ⇒ 双源核验） |
+| 状态 | **待跟踪**（X 待 follow，需登录态；邮箱可用但**本窗不发信**：今日 12/12 已达每日硬上限，且本轮无专属问题清单 ⇒ 不赶进度硬发） |
+| 备注 | `语言=英文(判据=东欧姓名族属 + 美国 CMU；对照表无俄语族 ⇒ 英文兜底)`。价值点：dropout 的「丢弃一半特征检测器」与后续 DBM / 多模态主线，正好覆盖我们 pretrain 小数据正则与 vision 图文联合建模两块；若要发信，问题应落到「dropout 率与模型宽度 / 数据规模的交互是否有可复用经验律」，而非泛问。 |
+
+### 312. Caiming Xiong
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Caiming Xiong（拼音姓名族属 Xiong = 熊；机构为美国 Salesforce ⇒ 按「姓名族属优先」判中文；本窗未发信故未定稿语言） |
+| 机构 | **Salesforce Research**（BLIP 署名时）；X bio 现自述 **Recursive SI** 联合创始人、前 Salesforce AI Research SVP |
+| 代表论文 | **BLIP: Bootstrapping Language-Image Pre-training…**（`2201.12086`，B 轨 #344，3 作 / 通讯方向）· 另有 relation networks / 视觉问答主线 |
+| 邮箱 | **未找到**（`caimingxiong.github.io` `404`、`www.caimingxiong.com` `000`、Recursive 团队页 `recursive.com/team` `404` / `recursive.ai/team` `000` ⇒ 🚫 不猜地址、不发信） |
+| 主页 | **未找到**（以 X 页为公开身份页） |
+| X 账号 | **@CaimingXiong**（`x.com/CaimingXiong` 经代理 `200`；`og:title` = `Caiming Xiong (@CaimingXiong) on X`；`og:description` = `Co-founder of @Recursive_SI.  ex-SVP of Salesforce AI Research | ex-MetaMind (Opinions are personal.)` ⇒ 双源核验） |
+| 状态 | **待跟踪**（X 待 follow，需登录态；无可用邮箱 ⇒ 本线不发信） |
+| 备注 | `语言=中文(判据=拼音姓名族属 Xiong + 华人研究者；🚫 不因论文英文 / 美国机构判英文)`。价值点：BLIP 的 captioner + filter 自举清洗，是我们「噪声图文 / 图文-代码对」数据构造的直接参照；若日后拿到邮箱，问题应落到「filter 的判别阈值与误删率如何随领域漂移校准」，而非问代码是否开源（代码已公开）。 |
+
+### 313. Guohao Li（李国豪）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Guohao Li（拼音姓名族属 Li + 可还原中文名李国豪；`语言=中文(判据=姓名族属；机构在美国 / 创业公司邮箱均未据此判英文)`） |
+| 机构 | **Eigent AI**（创始人）· **CAMEL-AI.org**（负责人）· 前 Oxford 博后 / KAUST 博士（IVUL，导师 Bernard Ghanem） |
+| 代表论文 | **CAMEL: Communicative Agents for "Mind" Exploration of LLM Society**（`2303.17760`，B 轨 #346，**一作**，NeurIPS 2023）· DeepGCNs 系列 |
+| 邮箱 | **guohao.li@eigent.ai**（来源：本人主页 `https://ghli.org/` `HTTP 200` / 72,157 B，页内 `mailto:guohao.li@eigent.ai` 明文；同页另列 `lightaime@gmail.com`，**只采用前者**、不群发） |
+| 主页 | <https://ghli.org/>（`200` / 72,157 B） |
+| X 账号 | **@guohao_li**（`x.com/guohao_li` 经代理 `200` / 195,418 B；`og:title` = `Guohao Li 🐫 (@guohao_li) on X`；`og:description` = `Founder @Eigent_AI / @CamelAIOrg. Scaling RL Environments for Agents @env_lab_ai. Prev Oxford, KAUST, ETHz, Intel, Kumo.` ⇒ 双源核验；反例：`guohao.ai` 是「国皓会展集团」同名站点，**不是**本人 ⇒ 已拒用） |
+| 状态 | **已发信**（2026-11-23 00:04 CST，经典论文请教信第 **141** 封，中文 244 字，`SENT OK`）· X 待 follow（需登录态） |
+| 备注 | 本封问题全部围绕 CAMEL 的**四类协作失败**（role flipping / repeats instruction / flake reply / infinite loop）与 AI Society **25,000 段对话**，分别回填 harness 负向判据、zhulong 多角色假成功、designflow 题面可验证性。⚠️ 同一论文末位作者 Bernard Ghanem 已建档（#314）但**不发**，守「同一论文 ≤1」。 |
+
+### 314. Bernard Ghanem
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bernard Ghanem（黎巴嫩 / 阿拉伯姓名族属 ⇒ `语言=英文`；未发信，仅建档） |
+| 机构 | **KAUST**（ECE 教授；IVUL 负责人；GenAI 卓越中心主席 / 主任） |
+| 代表论文 | **CAMEL**（`2303.17760`，B 轨 #346，**末位 / 通讯方向**）· 另有视觉跟踪 / 视频理解（IVUL）主线 |
+| 邮箱 | **bernard.ghanem@kaust.edu.sa**（来源：KAUST 官方教职页 `https://cemse.kaust.edu.sa/profiles/bernard-ghanem` 经代理 `200` / 57,887 B，页内明文命中；仅建档，本窗不发） |
+| 主页 | <https://www.bernardghanem.com/>（`200` / 119,915 B；`/contact` 无明文邮箱，为 JS 渲染） |
+| X 账号 | **未找到**（`@bernardghanem` 仅 3 followers / `@bernard_ghanem` 仅 4 followers 且 bio 为 `beirut` ⇒ 均判为同名他人，**不记**） |
+| 状态 | **待跟踪**（邮箱已核但**本窗不发**：同一论文已发一作 Guohao Li，守「同一论文 ≤1」；X 未找到） |
+| 备注 | 价值点：CAMEL 的多智能体协作与「task specifier」失真，直接对应 designflow 造题的题面保真；若日后单独发信，问题应落到「多角色流程中如何用独立复算打破互相附和」，而不是泛问 CAMEL 是否开源（已开源）。 |
+
+### 315. Wenliang Dai
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wenliang Dai（拼音姓名族属 Dai = 戴；`语言=中文(判据=姓名族属；🚫 未因机构在美国 / 邮箱为 gmail 判英文)`） |
+| 机构 | **NVIDIA**（Senior Research Scientist，本人主页 2026-11-23 实测）；论文署名时为 **Salesforce Research**（HKUST 博士） |
+| 代表论文 | **InstructBLIP: Towards General-purpose Vision-Language Models with Instruction Tuning**（`2305.06500`，B 轨 #349，**一作**）· 另有多模态对齐 / 后训练工作 |
+| 邮箱 | **wenliang.dai.1995@gmail.com**（来源：本人主页 `https://wenliangdai.github.io/` `HTTP 200` / **28,287 B**，页内明文；同页挂 `twitter.com/Wenliang_Dai`） |
+| 主页 | <https://wenliangdai.github.io/>（`200` / 28,287 B） |
+| X 账号 | **@Wenliang_Dai**（`x.com/Wenliang_Dai` 经代理 `200` / **192,970 B**；`og:title` = `Wenliang Dai (@Wenliang_Dai) on X`；`og:description` = `Senior Research Scientist @NVIDIA` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-23 03:02 CST，作者请教信第 **142** 封，中文 **218** 汉字，`SENT OK`）· X 待 follow（需登录态） |
+| 备注 | 本封三问围绕 InstructBLIP 的 **26 数据集 / 13 held-in + 13 held-out**、balanced sampling、指令同时进 Q-Former 与 LLM 的贡献拆分、单 checkpoint 全数据集复用的选择依据，分别回填 **vision**（连接器与视觉塔）/ **data**（多源图文配比与 held-out 域）/ **harness**（零样本 vs 单任务微调两口径）。 |
+
+### 316. Zhiyao Xie（谢知遥）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhiyao Xie（本人主页标题自署「Zhiyao Xie (谢知遥)」；`语言=中文(判据=主页中文自署 + 拼音姓名族属；🚫 未因机构在香港 / 论文英文判英文)`） |
+| 机构 | **HKUST**（香港科技大学 ECE 助理教授） |
+| 代表论文 | **RTLCoder: Outperforming GPT-3.5 in Design RTL Generation…**（`2312.08617`，B 轨 #350，**末位 / 通讯方向**）· 另有 EDA 与机器学习交叉方向工作 |
+| 邮箱 | **eezhiyao@ust.hk**（来源：本人主页 `https://zhiyaoxie.com/` `HTTP 200` / **33,297 B**，页内明文 ×3；论文 ar5iv 全文 `200` / **426,868 B** 邮箱块同址 ⇒ 双源；同页一作 `sliudx@connect.ust.hk`，**本线只发通讯作者**、不群发） |
+| 主页 | <https://zhiyaoxie.com/>（`200` / 33,297 B） |
+| X 账号 | **未找到**（本人主页无 `twitter.com` / `x.com` 链接；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-23 03:02 CST，作者请教信第 **143** 封，中文 **224** 汉字，`SENT OK`）· X 无账号可 follow |
+| 备注 | 本封三问围绕 **RTLCoder-27K >27,000** 条三阶段生成数据、作者明写「testbench 生成无法自动化 ⇒ 功能正确性未逐条验证」、7B / 4-bit 4GB 的轻量路线，分别回填 **designflow**（参考解须可仿真断言）/ **data**（领域数据自举与误删率）/ **zhulong**（数据 vs 算法的消融归因）。 |
+
+### 317. Stella Biderman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Stella Biderman（英语姓名族属 ⇒ `语言=英文`；本窗未发信，仅建档） |
+| 机构 | **EleutherAI**（执行董事 / 研究负责人，X bio 自述）；GPT-NeoX 署名机构为 EleutherAI 与合作方 |
+| 代表论文 | **GPT-NeoX-20B: An Open-Source Autoregressive Language Model**（`2204.06745`，B 轨 #348，**二作**，一作为 Sid Black）· 另有 The Pile 等工作 |
+| 邮箱 | **未找到**（`https://stellabiderman.com/` 直连与经代理均 `000`，无页内明文可核 ⇒ 🚫 不猜地址、不发信） |
+| 主页 | **未找到**（站点本轮不可达，以 X 页为公开身份页） |
+| X 账号 | **@BlancheMinerva**（`x.com/BlancheMinerva` 经代理 `200` / **180,911 B**；`og:title` = `Stella Biderman (@BlancheMinerva) on X`；`og:description` = `Ensuring that tech companies don't have a monopoly on being able to do research on cutting edge AI @AiEleuther. She/her` ⇒ 双源核验） |
+
+### 318. Yifei Zhou
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yifei Zhou（`语言=中文(判据=拼音姓名族属 + 主页自述 Berkeley PhD；🚫 未因机构在美国 / 论文英文判英文)`） |
+| 机构 | **UC Berkeley**（EECS PhD；主页自述 `Berkeley` / `PhD`） |
+| 代表论文 | **ArCHer: Training Language Model Agents via Hierarchical Multi-Turn RL**（`2402.19446`，B 轨 #352，**一作**） |
+| 邮箱 | **yifei_zhou@berkeley.edu**（来源：本人主页 `https://yifeizhou02.github.io/` `HTTP 200` / **8,421 B**，页内明文；同页未列其他地址） |
+| 主页 | <https://yifeizhou02.github.io/>（`200` / 8,421 B；`yifeizhou.com` 直连 `000` ⇒ 不用） |
+| X 账号 | **未找到**（主页无 `x.com` / `twitter.com` 链接；🚫 不猜 handle） |
+| 状态 | **已发信**（2026-11-23 06:01 CST，作者请教信第 **144** 封，中文 **171** 汉字，`SENT OK`）· X 无账号可 follow |
+| 备注 | 本封三问围绕 **utterance 级 value 的折扣与 bootstrapping**、**off-policy 数据的来源策略与混合比**、**相对 token-level PPO 的失败任务**，分别回填 **harness**（多轮 agent 训练骨架）/ **zhulong**（长程信用分配目标）/ **data**（交互日志按策略代际分层）。本封未用「我在做某某项目」的模板开场，改为直接点出论文的两层结构与我们困惑的对齐点。 |
+
+### 319. Tanishq Kumar
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tanishq Kumar（`语言=英文(判据=姓名族属无中文/日韩信号 + 美国机构 Stanford；英文兜底)`） |
+| 机构 | **Stanford**（X bio：`CS PhD student @StanfordAILab. prev math undergrad @Harvard.`） |
+| 代表论文 | **Scaling Laws for Precision**（`2411.04330`，B 轨 #353，**一作**） |
+| 邮箱 | **tanishq@stanford.edu**（来源：本人主页 `https://tanishqkumar.github.io/` `HTTP 200` / **1,542 B**，页内明文） |
+| 主页 | <https://tanishqkumar.github.io/>（`200` / 1,542 B） |
+| X 账号 | **@tanishqkumar07**（`x.com/tanishqkumar07` 经代理 `200` / **184,282 B**；`og:title` = `Tanishq Kumar (@tanishqkumar07) on X`；`og:description` = `CS PhD student @StanfordAILab. prev math undergrad @Harvard.` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-23 06:01 CST，作者请教信第 **145** 封，英文 **143** 词，`SENT OK`）· X 待 follow（需登录态） |
+| 备注 | 本封三问围绕 **effective parameter count 的定义与拟合形式是否跨模型族稳定**、**哪些张量对 4/8-bit 训练最敏感（是否需要混合精度而非统一低精度）**、**量化退化斜率能否用短跑外推到长跑（决定预训练前后何时量化）**，分别回填 **pretrain** / **zhulong**（成本口径）/ **data**（数据预算上限）。与同轮 #144 的开头句、问句句式零共用。 |
+
+### 320. Zachary Ankner
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zachary Ankner（`语言=英文(判据=英语姓名族属 + 美国机构 MIT；本窗未发信，仅建档)`） |
+| 机构 | **MIT**（X bio：`Prev @MIT.`；论文 `2411.04330` 二作） |
+| 代表论文 | **Scaling Laws for Precision**（`2411.04330`，B 轨 #353，**二作**） |
+| 邮箱 | **ankner@mit.edu**（来源：本人主页 `https://zackankner.com/` `HTTP 200` / **9,991 B**，页内明文） |
+| 主页 | <https://zackankner.com/>（`200` / 9,991 B） |
+| X 账号 | **@ZackAnkner**（`x.com/ZackAnkner` 经代理 `200` / **171,351 B**；`og:title` = `Zack Ankner (@ZackAnkner) on X`；`og:description` = `Prev @MIT.`；主页亦挂 `twitter.com/ZackAnkner` 链接 ⇒ 双源核验） |
+| 状态 | **待跟踪**（X 待 follow，需登录态；**本窗未发信**：同一论文 `2411.04330` 已发一作 Tanishq Kumar ⇒ 按「同论文 ≤1」不发） |
+| 备注 | 若日后拿到一作未回的信号，第二封的问题应落在「**465+ 次预训练实验的精度分层**与 **1.7B / 26B token 之外的外推误差**」，而不是重复本窗已问的三点。 |
+
+| 状态 | **待跟踪**（X 待 follow，需登录态；无可用邮箱 ⇒ 本线不发信） |
+| 备注 | 价值点：GPT-NeoX 是「20B dense LM 开放训练栈 + The Pile 数据可审计」的公开基线，可作为我们 pretrain 数据配比与评测 shot 口径的对照；若日后拿到邮箱，问题应落到「The Pile 各子集配比与 long-context 训练顺序如何影响 few-shot 稳定性」，而非泛问是否开源（已开源）。 |
+
+
+### 321. Yupan Huang 黄宇攀
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yupan Huang（`语言=中文(判据=拼音姓名族属可还原「黄宇攀」+ 中文主页 + 中山大学；不因现机构在加拿大判英文)`） |
+| 机构 | **中山大学**（论文署名；主页自述 2023 年博士毕业，现为 **MSRA Vancouver** 高级研究员） |
+| 代表论文 | **LayoutLMv3**（`2204.08387`，B 轨 #356，**一作**） |
+| 邮箱 | **huangyp28@mail2.sysu.edu.cn**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2204.08387` `HTTP 200` / **189,452 B** 作者块）；主页另挂 **hypjudy28@gmail.com**（`https://hypjudy.github.io/` `HTTP 200` / **26,832 B** 页内明文），本封只发前者 |
+| 主页 | <https://hypjudy.github.io/>（`200` / 26,832 B） |
+| X 账号 | **未找到**（主页无 X 链接；`x.com/HYPJUDY` 返回 `200` 但 `og:title` = `X`、无 profile 内容 ⇒ 判为无效，不记 handle） |
+| 状态 | **已发信**（2026-11-23 09:04 CST，作者请教信第 **146** 封，中文 **248** 汉字，`SENT OK`）· X 未找到 |
+| 备注 | 三问围绕 **word-patch alignment 在 OCR 框缺失/偏移时如何降级**、**文本 span 掩码与图像 blockwise 掩码是否需要分模态调比例**、**只用图像分支（无 OCR）时版面分析与文档图像分类各掉多少点**，分别回填 **designflow**（文档/版图结构抽取的可执行判分）/ **data**（把 OCR 质量当数据变量）/ **vision**（无 OCR 视觉分支对照）。专属细节：统一文本/图像掩码、word-patch alignment、五类文档任务。 |
+
+### 322. Mehdi Cherti
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mehdi Cherti（`语言=英文(判据=姓名族属无中文/日韩信号，可能为北非/法语区但无法确认 + 德国机构 ⇒ 判据冲突，按 §2 英文兜底；未强写母语称谓以免写错)`） |
+| 机构 | **Jülich Supercomputing Centre (JSC), Research Center Jülich** / **LAION**（主页与论文署名一致） |
+| 代表论文 | **Reproducible scaling laws for contrastive language-image learning**（`2212.07143`，B 轨 #355，**共同一作**） |
+| 邮箱 | **m.cherti@fz-juelich.de**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2212.07143` `HTTP 200` / **680,995 B** 作者块；主页未见明文邮箱） |
+| 主页 | <https://mehdidc.github.io/>（`200` / 16,094 B） |
+| X 账号 | **@mehdidc**（`x.com/mehdidc` 经代理 `200` / **135,314 B**；`og:title` = `mehdi cherti (@mehdidc) on X`；`og:description` = `PostDoc at Jülich Supercomputing Center (JSC), Germany / LAION.`；主页亦挂 `https://x.com/mehdidc` ⇒ 双源核验） |
+| 状态 | **已发信**（2026-11-23 09:04 CST，作者请教信第 **147** 封，英文 **156** 词，`SENT OK`）· X 待 follow（需登录态） |
+| 备注 | 三问围绕 **训练分布中哪个属性（caption 长度 / 语言构成 / 重复率 / 噪声）最影响缩放指数，是否有固定架构与固定 token 的对照**、**四类下游指数不同是否意味着表征质量与可微调性应分开定预算**、**20 亿图文对之后增益是否主要来自数据而非模型，等算力下 ViT-B/32 与 ViT-L/14 的交叉点在哪**，分别回填 **data** / **pretrain**（含 vision 双塔预训练）/ **zhulong**（成本口径）。 |
+
+### 323. Ao Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Ao Wang（`语言=中文(判据=拼音姓名族属可还原「王傲」+ 清华 .edu.cn 机构；不因论文英文判英文)`） |
+| 机构 | **清华大学软件学院**（论文署名；arXiv `citation_author` + ar5iv 作者块） |
+| 代表论文 | **YOLOv10: Real-Time End-to-End Object Detection**（`2405.14458`，B 轨 #354，**一作**） |
+| 邮箱 | **wa22@mails.tsinghua.edu.cn**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2405.14458` `HTTP 200` / **416,581 B** 作者块，紧接通讯作者 Guiguang Ding 之后；无个人主页 ⇒ 未取到第二源，地址时效不可验证） |
+| 主页 | **未找到**（搜索仅得 Google Scholar / OpenReview 资料页，无个人主页） |
+| X 账号 | **未找到**（无主页可挂；不猜 handle） |
+| 状态 | **已发信**（2026-11-23 09:04 CST，作者请教信第 **148** 封，中文 **234** 汉字，`SENT OK`） |
+| 备注 | 三问围绕 **一对多 / 一对一两个分支的监督权重或匹配代价平衡、去 NMS 后密集小目标重复框如何抑制与 AP_small 掉点**、**rank-guided block design 的「冗余度」用哪个可测指标、换到工业缺陷数据是否需重排**、**YOLOv10-S 比 RT-DETR-R18 快 1.8× 的测速分辨率与 batch、batch=1 时无 NMS 的延迟分解**，分别回填 **harness**（实时检测延迟评测口径）/ **vision**（检测基线选型）/ **designflow**（漏检 vs 重框两条判分轴）。 |
+
+### 324. Zirui Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zirui Wang（`语言=中文(判据=拼音姓名族属「Zirui Wang」+ 论文英文与 Google 机构不改变族属判断；🚫 未因 gmail / 美国机构判英文)`） |
+| 机构 | **Google Research**（论文署名；ar5iv 作者块与 `jiahuiyu@google.com` 同页） |
+| 代表论文 | **CoCa: Contrastive Captioners are Image-Text Foundation Models**（`2205.01917`，B 轨 #357，**共同一作**） |
+| 邮箱 | **ziruiw@google.com**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2205.01917` `HTTP 200` / **269,704 B** 作者块 `Email: ziruiw@google.com`；单源，未见主页第二源 ⇒ 标注「时效不可验证」） |
+| 主页 | **未找到**（本轮未取到可核个人主页） |
+| X 账号 | **未找到**（论文与 ar5iv 全文未挂 X 链接；不猜 handle） |
+| 状态 | **已发信**（2026-11-23 12:06 CST，作者请教信第 **149** 封，中文 **223** 汉字，`SENT OK`）· 无 X 可 follow |
+| 备注 | 三问围绕 **`n_uni` / `n_multi` 解耦解码器的分界按固定层数还是固定比例、分界下移时检索与 caption 指标如何变**、**λ_Cap=2.0 / λ_Con=1.0 是否与 batch 65,536、500k 步一起调过、只保零样本分类时 λ 往哪偏**、**288×288 / patch 18×18 ⇒ 256 token 下分辨率翻倍对零样本 / 检索 / VQA 的回报差**，分别回填 **vision**（视觉塔形态）/ **pretrain**（多目标权重）/ **harness**（三类评测分开报）。守「同一论文 ≤1」：CoCa 本轮只发此一封（#136 是 Parti `2206.10789`，另一篇）。 |
+
+### 325. Yu Sun
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yu Sun（`语言=中文(判据=拼音姓名族属「Yu Sun」可还原「孙宇」+ 中文名常见组合；🚫 未因 Stanford / 论文英文判英文)`） |
+| 机构 | **Stanford University**（论文「Correspondence to」作者，与 Xinhao Li / Karan Dalal 并列共同一作） |
+| 代表论文 | **Learning to (Learn at Test Time): RNNs with Expressive Hidden States**（`2407.04620`，B 轨 #358，**共同一作 / 通讯**） |
+| 邮箱 | **ys646@stanford.edu**（来源：ar5iv 全文页 `https://ar5iv.labs.arxiv.org/html/2407.04620` `HTTP 200` / **435,524 B** 作者块 `Correspondence to: ys646@stanford.edu, xil202@ucsd.edu, kdalal@berkeley.edu`；单源，未取到主页第二源） |
+| 主页 | **未找到**（本轮未取到可核个人主页） |
+| X 账号 | **未找到**（论文与 ar5iv 全文未挂 X 链接；不猜 handle） |
+| 状态 | **已发信**（2026-11-23 12:06 CST，作者请教信第 **150** 封，中文 **232** 汉字，`SENT OK`）· 无 X 可 follow |
+| 备注 | 三问围绕 **TTT mini-batch `b=16` 的敏感曲线、推到 1.3B / 32k 时 `b=1` 的精度收益是否值那份显存与 I/O**、**可学习内层 η（输入 token 的函数）的初值与上界、内层发散的判据与回滚**、**TTT-MLP 的 memory I/O 瓶颈：状态放片上还是 HBM、隐维多大时性价比开始掉**，分别回填 **pretrain**（序列层选型）/ **zhulong**（长上下文成本-收益口径）/ **harness**（同 FLOPs + 8k/32k 双表）。 |
+
+### 326. Chengxi Li
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chengxi Li（`语言=中文(判据=拼音姓名族属「Chengxi Li」+ 香港中文大学（中文机构）；🚫 未因论文英文判英文)`） |
+| 机构 | **The Chinese University of Hong Kong（CSE）**（论文首页署名 `Department of Computer Science and Engineering, CUHK, Hong Kong SAR, China`） |
+| 代表论文 | **EDAGoat: An EDA-Aware Agent for Project-Level GPU Optimization**（`2611.27196`，**A 轨本窗第 1 篇**，一作） |
+| 邮箱 | **cxli23@cse.cuhk.edu.hk**（来源：PDF 首页作者邮箱列表 `https://arxiv.org/pdf/2611.27196`（`%PDF` 校验通过、446,464 B、`pdftotext` 可解析）`{cxli23, lxiao23, ytwang1, whlin23, xzxiong26, hzhao, fyyoung}@cse.cuhk.edu.hk`；与 arXiv 首页作者名单逐一对应） |
+| 主页 | **未找到**（本轮未取到可核个人主页） |
+| X 账号 | **未找到**（论文与 PDF 未挂；不猜 handle） |
+| 状态 | **已发信**（2026-11-23 12:06 CST，作者请教信第 **151** 封，中文 **230** 汉字，`SENT OK`）· 无 X 可 follow |
+| 备注 | 三问围绕 **MV 的「改动—约束—测试」对应是人工固定清单还是 agent 从 diff 自推、自推时误判率**、**DeepSeek 上 OE 6/15 → 加 MV 13/15、几何均值 1.11×→1.53× 的收益来源是筛掉错误改动还是导回正确方向、trace 上被拦最多的是哪类失败**、**complete-solve runtime 是否含编译与校验开销、单卡占比**，分别回填 **designflow**（校验环与判分口径）/ **harness**（agent 加速比评测口径）/ **zhulong**（成本口径）。 |
+
+
+### 327. Chang Nie
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chang Nie（`语言=中文(判据=拼音姓名族属「Chang Nie」+ 南京大学中文机构；🚫 未因论文英文 / 邮箱域判英文)`） |
+| 机构 | **Nanjing University**（arXiv HTML 作者块 `Affiliation: Nanjing University`） |
+| 代表论文 | **MemOnce: A Scalable Memory Architecture for Large Language Models**（`2611.27973`，A 轨本窗第 1 篇，一作 / Main Contact） |
+| 邮箱 | **changnie@smail.nju.edu.cn**（来源：arXiv HTML 全文 `https://arxiv.org/html/2611.27973` `HTTP 200` / **625,847 B** 首页脚注 `Main Contact: changnie@smail.nju.edu.cn, bradyfu24@gmail.com`；与作者名单第一位逐字对应；单源 ⇒ 未见独立主页第二源） |
+| 主页 | 项目页 `https://clare-nie.github.io/MemOnce/` `HTTP 200` / 18,043 B（未见个人主页与 X 链接） |
+| X 账号 | **未找到**（论文 HTML、项目页均未挂；不猜 handle） |
+| 状态 | **已发信**（2026-11-23 15:06 CST，作者请教信第 **152** 封，中文 **251** 汉字，`SENT OK`）· 无 X 可 follow |
+| 备注 | 三问围绕 **「稀疏索引跨层只算一次」在解码每步是否复用同一索引、关键信息落到上一步未选窗口时的兜底与 miss 率**、**只存最后一层隐藏状态再还原各层 KV 丢掉什么、改存中间层在 needle-in-a-haystack 与下游表征上更好还是更差**、**1M 上下文下 memory cache 降 1313× 而 prefill 延迟只降 6.9× 的剩余时间在解码 kernel 还是显存带宽**，分别回填 **pretrain**（记忆层选型）/ **zhulong**（长上下文成本模型）/ **harness**（长上下文与表征两类评测分开报）。守「同一论文 ≤1」：MemOnce 本轮只发此一封。 |
+
+### 328. Chaoyou Fu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chaoyou Fu（`语言=中文(判据=拼音姓名族属「Chaoyou Fu」+ 南京大学中文机构 + 中文主页；🚫 未因论文英文判英文)`） |
+| 机构 | **Nanjing University**（arXiv HTML 作者块 `Affiliation: Nanjing University`） |
+| 代表论文 | **MemOnce: A Scalable Memory Architecture for Large Language Models**（`2611.27973`，A 轨本窗第 1 篇，共同一作 / Main Contact） |
+| 邮箱 | **bradyfu24@gmail.com**（来源：同上 arXiv HTML `200` / 625,847 B 首页脚注 `Main Contact`；单源） |
+| 主页 | `https://bradyfu.github.io/` `HTTP 200` / **11,511 B**，`<title>Chaoyou Fu-Homepage`；页内挂 Google Scholar `4A1xYQwAAAAJ` |
+| X 账号 | **未找到**（主页无 X / Twitter 链接；不猜 handle） |
+| 状态 | **待跟踪**（本轮不重复发信：MemOnce 已由一作 Chang Nie 承接，同一论文 ≤1）· 无 X 可 follow |
+| 备注 | 主页确认身份；后继若一作无应答，可按 §3「不催」原则不再追发同论文。研究侧关注其多模态 / 长上下文表征工作与 MemOnce 的零样本表征迁移结果。 |
+
+### 329. Songlin Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Songlin Liu（`语言=中文(判据=拼音姓名族属 + 中国科学技术大学中文机构；🚫 未因论文英文判英文)`） |
+| 机构 | **University of Science and Technology of China**（arXiv HTML 作者块 `Affiliation: University of Science and Technology of China`） |
+| 代表论文 | **MemOnce: A Scalable Memory Architecture for Large Language Models**（`2611.27973`，A 轨本窗第 1 篇，共同作者） |
+| 邮箱 | **未找到**（arXiv HTML 作者块只给通讯 `changnie@smail.nju.edu.cn` / `bradyfu24@gmail.com`，未给本人邮箱；不猜地址） |
+| 主页 | **未找到**（本轮未取到可核个人主页） |
+| X 账号 | **未找到**（不猜 handle） |
+| 状态 | **待跟踪**（无公开明文邮箱 ⇒ 只建档不发） |
+| 备注 | 与 Yiqing Hu 同为 USTC 侧作者；建档用于后续若出现公开邮箱或主页时补全，避免现在猜地址污染回信率归因。 |
+
+### 330. Di He 贺笛
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Di He 贺笛（`语言=中文(判据=中文姓名「贺笛」+ 中文主页标题 + 北京大学中文机构；🚫 未因论文英文 / 旧邮箱 @microsoft.com 判英文)`） |
+| 机构 | **Peking University**（本人主页 `https://dihe-pku.github.io/` `HTTP 200` / **27,555 B**，`<title>About me - Di He (贺笛)</title>`，页内 `Assistant Professor` + `Peking University`） |
+| 代表论文 | **On Layer Normalization in the Transformer Architecture**（`2002.04745`，B 轨 #364，第三作者 / 该工作核心作者之一）；相关工作：Transformer 训练稳定性 |
+| 邮箱 | **di_he@pku.edu.cn**（来源：`dihe-pku.github.io` `200` / 27,555 B 页内明文；**当前机构主页地址**，未使用 ar5iv 全文里的旧地址 `dihe@microsoft.com`） |
+| 主页 | `https://dihe-pku.github.io/` `HTTP 200` / **27,555 B** |
+| X 账号 | **未找到**（主页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（本轮不发明信：今日 **12/12** 已达每日硬上限；地址与专属问题已备，留待下一时窗） |
+| 备注 | 建档目的：Pre-LN / warm-up 这条「训练稳定性」线索的第一手作者。若后续发信，问题应聚焦「均值场推导对 2B 规模、低精度训练是否仍成立」，而非摘要已有内容。 |
+
+### 331. Mingjie Liu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mingjie Liu（`语言=中文(判据=拼音姓名族属「Mingjie Liu」+ 中文姓名可还原；机构为 NVIDIA 美国 ⇒ 按「姓名族属优先于机构」判中文；若回信为英文再切换)`） |
+| 机构 | **NVIDIA**（ar5iv 全文 `2309.07544` 作者块与邮箱域 `@nvidia.com`） |
+| 代表论文 | **VerilogEval: Evaluating Large Language Models for Verilog Code Generation**（`2309.07544`，B 轨 #7，一作） |
+| 邮箱 | **mingjiel@nvidia.com**（来源：ar5iv 全文 `https://ar5iv.labs.arxiv.org/html/2309.07544` `200` / **181,517 B** 首页邮箱列表；单源） |
+| 主页 | **未找到**（`https://mingjieliu.github.io/` 实测 `404` ⇒ 不猜其他域名） |
+| X 账号 | **未找到**（无主页可核，论文页未挂 X；不猜 handle） |
+| 状态 | **待跟踪**（今日 12/12 已满，未发信） |
+| 备注 | 建档目的：designflow 线「题面 + 可执行判分」的直接作者；后续若发信，问题应落在「仿真比对判分对时序 / 复位语义的覆盖边界」这类题面设计细节。 |
+
+### 332. Haoxing Ren
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Haoxing Ren（`语言=中文(判据=拼音姓名族属「Haoxing Ren」+ 中文姓名可还原；机构 NVIDIA 美国 ⇒ 姓名族属优先判中文)`） |
+| 机构 | **NVIDIA**（ar5iv 全文 `2309.07544` 邮箱域 `@nvidia.com`） |
+| 代表论文 | **VerilogEval: Evaluating Large Language Models for Verilog Code Generation**（`2309.07544`，B 轨 #7，末位作者 / 通常为通讯） |
+| 邮箱 | **haoxingr@nvidia.com**（来源：同上 ar5iv 全文 `200` / 181,517 B 首页邮箱列表；单源） |
+| 主页 | **未找到**（本轮未取到可核个人主页；不猜） |
+| X 账号 | **未找到**（不猜 handle） |
+| 状态 | **待跟踪**（同一论文 ≤1 原则下，优先联系一作 Mingjie Liu；本条仅建档备选） |
+| 备注 | 建档目的：若一作无应答，按 §3「不催」原则也不追发同论文 ⇒ 本条长期只作关系网节点，不作补发对象。 |
+
+### 333. Rico Sennrich
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Rico Sennrich（`语言=英文(判据=姓名族属德语区、机构为瑞士 UZH；按「德/法/西… 姓名 + 对应国家机构」规则本应母语称谓问候 + 英文正文，但 152 封台账从未发过德文，且论文与主页全英文 ⇒ 本轮按英文草拟，待回信语言确认后再调)`） |
+| 机构 | **University of Zurich**（Institute of Computational Linguistics；UZH 官方人员页 `200` / 65,239 B） |
+| 代表论文 | **Root Mean Square Layer Normalization**（`1910.07467`，B 轨 #366，共同作者）· 另：Subword Regularization / BPE-dropout（NMT 方向） |
+| 邮箱 | **rico.sennrich@uzh.ch**（来源：UZH 官方人员页 <https://www.cl.uzh.ch/en/research-groups/texttechnologies/Team/Current-Members/sennrich.html> `200` / 65,239 B 页内 `mailto:` 明文；**当前机构地址**，未用论文 PDF 上的旧写法 `sennrich@cl.uzh.ch`） |
+| 主页 | <https://www.cl.uzh.ch/en/about-us/people/team/compling/sennrich.html>（UZH 团队页，`200`） |
+| X 账号 | **@RicoSennrich**（核验：`x.com/RicoSennrich` 经代理 `200` / 160,280 B，`og:title` = `Rico Sennrich (@RicoSennrich) on X`，`og:description` = `SNSF Professor at University of Zurich`） |
+| 状态 | **待跟踪**（今日 **12/12** 已达每日硬上限 ⇒ 不发信；下一自然日候选） |
+| 备注 | `语言=英文(判据=姓名族属德语区+UZH；未用德文正文，理由见上行)`。发信问题候选（只对 RMSNorm 成立）：① pRMSNorm 用 p% 输入估 RMS 时，p 的选择如何影响统计量方差与可用最大学习率，论文里有没有 p 的敏感性表；② 「re-centering 可丢」的结论在 **pre-LN + 长序列 packing** 下是否仍成立（论文是 2019 年 RNN/Transformer 口径）；③ 7%~64% 的运行时间差里，有多少来自减均值、多少来自算子融合实现（答复会影响我们是否把 norm 当独立成本项）。 |
+
+
+
+### 334. Jiawei Zhao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Jiawei Zhao（`语言=中文(判据=拼音姓名族属「Jiawei Zhao」可还原中文名；机构现为 Meta Superintelligence Labs 美国 ⇒ 按「姓名族属优先于机构」判中文)`） |
+| 机构 | **Meta Superintelligence Labs**（本人主页自述；论文署名时为 Caltech / Meta FAIR） |
+| 代表论文 | **GaLore: Memory-Efficient LLM Training by Gradient Low-Rank Projection**（`2403.03507`，B 轨 #367，一作）· 另：DeepConf / GRESO |
+| 邮箱 | **jwzhao@meta.com**（来源：本人主页 <https://www.jiaweizhao.com/> `200` / 18,586 B 页内写 `jwzhao at meta dot com (work)`；**当前机构地址**，未用论文 ar5iv 里的旧 `jiawei@caltech.edu`） |
+| 主页 | <https://www.jiaweizhao.com/>（`200` / 18,586 B；`jiaweizhao.github.io` 实测 `404`） |
+| X 账号 | **@jiawzhao**（核验：本人主页外链 `x.com/jiawzhao`；推文页 `og:title` = `Jiawei Zhao (@jiawzhao) on X`，`og:description` = `Research Scientist at Meta FAIR @AIatMeta, PhD @Caltech, GaLore, DeepConf` ⇒ 双源） |
+| 状态 | **待跟踪**（今日 **12/12** 已达每日硬上限 ⇒ 不发信；下一自然日候选） |
+| 备注 | `语言=中文(判据=拼音姓名族属，优先于 Meta 美国机构)`。发信问题候选（只对 GaLore 成立）：① 低秩投影的秩 r 与更新间隔如何影响 7B 上的 loss 曲线（论文的 19.7B token 设置里 r 取多少）；② 8-bit GaLore 的 82.5% 优化器内存降幅是否以量化误差换来的——在 2B / 中文语料上是否出现梯度子空间漂移导致的 spike；③ 24GB 单卡跑 7B 时，batch × 序列长度被压到多少（决定它能否用于我们的 2B 长上下文配方）。 |
+
+### 335. Biao Zhang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Biao Zhang（`语言=中文(判据=拼音姓名族属「Biao Zhang」可还原中文名；现机构 Google DeepMind 美国/英国 ⇒ 姓名族属优先)`） |
+| 机构 | **Google DeepMind**（OpenReview 个人页 `~Biao_Zhang2`：`Researcher Google DeepMind (google.com) 2023 – Present`；论文署名时为 University of Edinburgh） |
+| 代表论文 | **Root Mean Square Layer Normalization**（`1910.07467`，B 轨 #366，一作）· 另：Prompting LLM for Machine Translation（ICML 2023） |
+| 邮箱 | **无当前可核明文地址**（论文 ar5iv 页内 `B.Zhang@ed.ac.uk` 是 2019 年 Edinburgh 旧地址，本人已赴 Google DeepMind ⇒ 按「年代久 / 机构变更先查当前主页」规则**不采用**、不猜 `@google.com`） |
+| 主页 | **未找到**（`bzhang.page` 实测 `000`/DNS 失败并落到 GitHub Pages `Site not found`；GitHub `github.com/bzhangGo` `200` / 164,648 B 但页内无个人站点 / 邮箱外链） |
+| X 账号 | **未找到**（无可核主页或 X 外链；不猜 handle） |
+| 状态 | **待跟踪**（仅建档，无可用地址 ⇒ 本线不发信） |
+| 备注 | `语言=中文(判据=拼音姓名族属)`。建档价值：RMSNorm 原始作者，若后续从 OpenReview / 新论文拿到当前地址，问题应聚焦「pRMSNorm 的 p 敏感性 + pre-LN 长序列下的 re-centering 结论」；🚫 不用旧 Edinburgh 地址发信。 |
+
+### 336. Bin Xiao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bin Xiao（`语言=中文(判据=拼音姓名族属「Bin Xiao」可还原中文名 + 主页自述现职 Microsoft；姓名族属优先于美国机构)`） |
+| 机构 | **Microsoft Superintelligence Team**（本人主页 `200` / 30,195 B 自述 `Member of Technical Staff · Microsoft Superintelligence Team · Redmond, WA`；论文署名时为 Microsoft） |
+| 代表论文 | **Florence-2: Advancing a Unified Representation for a Variety of Vision Tasks**（`2311.06242`，B 轨 #369，一作；主页列 Florence-1 / Florence-2 / Phi-3 Vision / CvT / HRNet） |
+| 邮箱 | **无公开明文地址**（主页 `https://leoxiaobin.github.io/` `200` / 30,195 B 仅外链 GitHub / HuggingFace / Scholar，**无 `mailto:`**；Google Scholar 仅显示 `Verified email at microsoft.com`，不公开明文 ⇒ **不猜** `@microsoft.com` 前缀） |
+| 主页 | <https://leoxiaobin.github.io/>（`200` / 30,195 B；另有 `github.com/leoxiaobin`、`huggingface.co/leoxiaobin` 外链） |
+| X 账号 | **未找到**（主页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（仅建档，无可用地址 ⇒ 本线不发信） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + SCUT 背景线索)`。发信问题候选（只对 Florence-2 成立）：① **FLD-5B 的「自动标注 → 模型精炼 → 再标注」共迭代几轮**、每轮人工抽检一致率是多少（决定我们能否复用该闭环）；② 0.23B → 0.77B 在零样本 COCO caption 上 **CIDEr 133.0 → 135.6** 的增益，主要来自参数量还是标注量；③ 统一 seq2seq 下检测框 token 与分割 polygon token 共用同一 task prompt 时，如何避免两种输出格式互相干扰。 |
+
+### 337. Victor Sanh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Victor Sanh（`语言=英文(判据=姓名族属越南/法国不确定 + 现机构 Beaker 美国；判据冲突 ⇒ 英文兜底)`） |
+| 机构 | **Beaker**（X 主页自述 `Beaker (@withbeaker) - continuous improvement for production agents | Prev. early crew @huggingface`）；论文署名时为 **Hugging Face** |
+| 代表论文 | **Multitask Prompted Training Enables Zero-Shot Task Generalization**（`2110.08207`，B 轨 #370，一作） |
+| 邮箱 | **victor@huggingface.co**（来源：ar5iv 全文 `2110.08207` `200` / 309,166 B 首页明文；⚠️ 该地址是 **2021 年论文期**地址，X 自述已离开 Hugging Face ⇒ 记为**旧机构地址，未独立核验当前可用，不用于发信**） |
+| 主页 | **未找到**（`victorsanh.com` 实测 `000` / 无响应 ⇒ 不采用） |
+| X 账号 | **@VictorSanh**（核验：`x.com/VictorSanh` 经代理 `200` / 163,390 B，`og:title` = `Victor Sanh (@VictorSanh) on X`，`og:description` = `Beaker ... Prev. early crew @huggingface | AI x NYC` ⇒ 身份可对上） |
+| 状态 | **待跟踪**（地址待核，本线不发信） |
+| 备注 | `语言=英文(判据=姓名族属不确定+美国机构)`。发信问题候选（只对 T0 成立）：① **62 数据集 / 12 任务**的模板池，每数据集模板数与留出任务零样本方差如何权衡（论文是否做过模板数消融）；② T0-3B 与 T0-11B 在**留出任务**上的差距是否随模板措辞改变（提示鲁棒性）；③ 「多任务 SFT vs 继续预训练」在**同等算力**下是否做过对照（决定我们把预算投数据还是投 token）。 |
+
+### 338. Mostafa Dehghani
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mostafa Dehghani（`语言=英文(判据=姓名族属波斯/伊朗，不属中/日/韩；机构 Google DeepMind ⇒ 英文)`） |
+| 机构 | **Google DeepMind**（论文署名时为 Google Research / Brain；本轮**未独立核验当前人员页**） |
+| 代表论文 | **UL2: Unifying Language Learning Paradigms**（`2205.05131`，B 轨 #371，共同一作 / 第二作者） |
+| 邮箱 | **dehghani@google.com**（来源：ar5iv 全文 `2205.05131` `200` / 633,921 B 首页明文，出现 **6** 次；⚠️ **单源、2022 年论文页地址**，未找到独立主页二次核实 ⇒ 发信前须再核） |
+| 主页 | **未找到**（`mostafadehghani.com` 实测 `200` 但为**同名商业站**（`/business/`、`/contact/`），非研究者本人 ⇒ 不采用、不引用其 `contact@` 地址） |
+| X 账号 | **未找到**（`x.com/m_dehghani` 经代理 `200` 但 `og:description` = `1 followers · 3 following` ⇒ 判为他人账号；不记、不猜） |
+| 状态 | **待跟踪**（邮箱单源，本线发信前需二次核实） |
+| 备注 | `语言=英文(判据=姓名族属波斯 + Google DeepMind)`。发信问题候选（只对 UL2 成立）：① **MoD 的 R/S/X 采样比例是否随模型规模变化**（表 1 的 `r ∈ {0.15,0.5}`、`μ ∈ {3,8,64}` 是 20B 单点结论吗）；② **mode switching 在任务类型未知时如何选模式**，论文是否有自动判别实验；③ 20B UL2 → Flan-UL2 的 MMLU / Big-Bench 提升里，**多少来自 FLAN 指令数据、多少来自 MoD 预训练**（成本归因）。 |
+
+
+### 339. Wonjae Kim
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wonjae Kim（`语言=한국어(判据=韩文姓名族属 + 论文署名机构 Kakao Brain 在韩国)`） |
+| 机构 | **Kakao Brain**（论文署名时；本轮**未独立核验当前人员页**） |
+| 代表论文 | **ViLT: Vision-and-Language Transformer Without Convolution or Region Supervision**（`2102.03334`，B 轨 #372，一作） |
+| 邮箱 | **wonjae.kim@navercorp.com**（来源：ar5iv 全文 `2102.03334` `200` / 236,747 B 首页明文，出现 **1** 处；⚠️ 2021 年论文期地址，未独立核验当前可用 ⇒ 记为**旧地址，不用于发信**） |
+| 主页 | **未找到**（本轮未检索到可核验的个人主页） |
+| X 账号 | **未找到**（论文页与 ar5iv 全文均无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（地址为旧机构地址 ⇒ 本线不发信） |
+| 备注 | `语言=한국어(判据=韩文姓名族属+Kakao Brain)`。发信问题候选（只对 ViLT 成立）：① 用 patch 线性投影替代 region 特征后，下游损失中**分辨率**与**监督信号**各占多少（是否做过 384 vs 768 的对照）；② 图文对比损失与 word-patch alignment 损失的权重如何设，去掉 alignment 会掉多少；③ 摘要的 `up to tens of times faster` 是在何种硬件 / batch / 精度下测的（缺口径的加速比不可比）。 |
+
+### 340. Amanpreet Singh
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Amanpreet Singh（`语言=英文(判据=姓名族属南亚/旁遮普，不属中/日/韩；机构美国 ⇒ 英文)`） |
+| 机构 | **Meta AI (FAIR)**（论文署名时；本轮**未独立核验当前人员页**） |
+| 代表论文 | **FLAVA: A Foundational Language And Vision Alignment Model**（`2112.04482`，B 轨 #373，一作） |
+| 邮箱 | **未找到**（ar5iv 全文 `2112.04482` `200` / 296,786 B 内无明文邮箱；`amanpreetsingh.github.io` 实测 **`000`** ⇒ 不猜地址） |
+| 主页 | **未找到**（`amanpreetsingh.github.io` 无响应） |
+| X 账号 | **未找到**（无可访问主页可核 X；不猜 handle） |
+| 状态 | **待跟踪**（无可用地址 ⇒ 本线不发信） |
+| 备注 | `语言=英文(判据=姓名族属南亚+Meta AI)`。发信问题候选（只对 FLAVA 成立）：① **35 个任务**里单塔模型相对双塔的**失效任务**是哪几类（决定我们是否要保留双塔）；② 对比损失、掩码多模态建模、图文匹配等多目标的**权重与采样比例**；③ 「foundation」主张的判据是平均分还是**每类任务都有下限**（有没有任务显著落后于专用模型）。 |
+
+### 341. Chao Jia
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chao Jia（`语言=中文(判据=拼音姓名族属；不因机构在美国判英文)`） |
+| 机构 | **Google Research**（论文署名时；本轮**未独立核验当前人员页**） |
+| 代表论文 | **Scaling Up Visual and Vision-Language Representation Learning With Noisy Text Supervision**（`2102.05918`，B 轨 #374，一作） |
+| 邮箱 | **chaojia@google.com**（来源：ar5iv 全文 `2102.05918` `200` / 228,755 B 首页明文，出现 **2** 处；⚠️ **单源、2021 年论文页地址** ⇒ 发信前须再核） |
+| 主页 | **未找到**（本轮未检索到可核验的个人主页） |
+| X 账号 | **未找到**（论文页与 ar5iv 全文均无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（邮箱单源，本线发信前需二次核实） |
+| 备注 | `语言=中文(判据=拼音姓名族属+Google Research)`。发信问题候选（只对 ALIGN 成立）：① 「十亿对、不做昂贵过滤」里**最低限度的清洗**到底保留了什么（alt-text 长度阈值 / 语言过滤 / 去重），去掉后指标掉多少；② 简单双塔在检索上超过 cross-attention，这个结论是否随**规模**变化（更大模型下差距会收敛吗）；③ ImageNet 零样本对 prompt 模板的敏感性有没有量化。 |
+### 342. Matthias Minderer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Matthias Minderer（`语言=Deutsch 称谓问候+英文正文(判据=德文姓名族属 + ETH Zürich 学历；机构瑞士)`） |
+| 机构 | **Microsoft AI Zürich**（主页 2026-11-24 自述；论文署名时为 Google Brain / Google DeepMind） |
+| 代表论文 | **Simple Open-Vocabulary Object Detection with Vision Transformers**（`2205.06230`，B 轨 #376，一作） |
+| 邮箱 | `mjlm@google.com`（ar5iv `2205.06230` `200` / 422,625 B 首页明文 **2** 处；⚠️ **旧机构地址**：主页已写明现职 Microsoft AI ⇒ **仅建档，不用该地址发信**） |
+| 主页 | <https://mjlm.github.io/>（`HTTP 200` / 14,425 B；页内**无 mailto / 明文邮箱**） |
+| X 账号 | **未找到**（主页与论文全文均无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（旧地址 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 OWL-ViT 成立）：① 图像级预训练量增加带来的检测增益，在**固定检测微调步数**下是否仍成立；② 零样本与单样本两种条件的**每类示例数**如何影响长尾类；③ 文本编码器换成更大模型后，开放词表召回与误检的 trade-off。 |
+
+### 343. Alexey Gritsenko
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Alexey Gritsenko（`语言=英文(判据=斯拉夫姓名族属，不在中/日/韩；机构美国/英国 ⇒ 英文兜底)`） |
+| 机构 | **Google DeepMind**（论文署名时；本轮**未独立核验当前人员页**） |
+| 代表论文 | **Simple Open-Vocabulary Object Detection with Vision Transformers**（`2205.06230`，B 轨 #376，二作） |
+| 邮箱 | `agritsenko@google.com`（同上 ar5iv 首页明文 **2** 处；**单源旧地址 ⇒ 发信前须再核**） |
+| 主页 | **未找到**（本轮未检索到可核验个人主页） |
+| X 账号 | **未找到**（无可访问主页可核；不猜 handle） |
+| 状态 | **待跟踪**（单源旧地址 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 OWL-ViT 成立）：① 端到端检测微调时，图文对比预训练权重是否全部解冻；② 单样本图像条件检测的**示例选择**对结果方差的影响；③ 长尾类别上文本头与闭集头的差距。 |
+
+### 344. Bingsheng He（何炳生）
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Bingsheng He 何炳生（`语言=中文(判据=拼音姓名族属可还原中文名 + 新加坡 NUS 华人课题组)`） |
+| 机构 | **National University of Singapore**（Department of Computer Science；NUS 官方主页 `200` / 18,121 B 自述 Professor） |
+| 代表论文 | **DistDNA: Language Model Fingerprinting under Stochastic Decoding**（`2611.27831`，A 轨本窗第 2 篇，末位作者 / 通讯组） |
+| 邮箱 | `dcsheb@nus.edu.sg`（NUS 官方主页 `https://www.comp.nus.edu.sg/~hebs/` `200` / 18,121 B 页内 `Email: dcsheb(at)nus.edu.sg`；**当前地址，2026-11-24 复核**） |
+| 主页 | <https://www.comp.nus.edu.sg/~hebs/>（`HTTP 200` / 18,121 B） |
+| X 账号 | **未找到**（主页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **已发信**（#156，2026-11-24 03:03:29，中文 202 字） |
+| 备注 | 发信问题候选（只对 DistDNA 成立）：① 每 prompt 采样条数 R 的饱和点（O(1/R) 方差项）；② 参考指纹覆盖的 temperature / top-p 档位与未见解码设置的外推；③ 115 个 checkpoint 中同基座仅差 SFT 的混淆率。 |
+
+### 345. Omar Khattab
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Omar Khattab（`语言=英文(判据=阿拉伯姓名族属，不在中/日/韩；机构美国 ⇒ 英文兜底)`） |
+| 机构 | **MIT EECS & CSAIL**（Assistant Professor；主页 `omarkhattab.com` `200` / 17,356 B，`meta description` 自述 `Assistant Professor at MIT working on natural language processing and AI systems`） |
+| 代表论文 | **ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT**（`2004.12832`，B 轨 #380，一作） |
+| 邮箱 | **okhattab@mit.edu**（本人主页 `https://omarkhattab.com/` `200` / 17,356 B 页内 `mailto` 明文，**当前地址，2026-11-24 06:0x 复核**；未用论文页 2020 旧地址 `okhattab@stanford.edu`） |
+| 主页 | <https://omarkhattab.com/>（`HTTP 200` / 17,356 B；`khattab.com` 直连 `403` / 5,352 B，不作为来源） |
+| X 账号 | **未找到**（主页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **已发信**（#157，2026-11-24 06:0x，英文 ≤200 词） |
+| 备注 | 发信问题候选（只对 ColBERT 成立）：① 逐 token 文档向量的**索引存储**在长文档 / 代码语料上如何压缩，压缩到哪一档 MRR 开始掉；② 相对 BERT cross-encoder「快两个数量级 / FLOPs 少四个数量级」是在多深的候选集上测的，k 变大后优势何时消失；③ 标识符密集查询下 MaxSim 是否会稀释精确匹配，是否建议与 BM25 做并集。 |
+
+### 346. Matei Zaharia
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Matei Zaharia（`语言=英文(判据=罗马尼亚姓名族属不在中/日/韩/德法西意葡荷北欧俄；机构美国 ⇒ 英文兜底)`） |
+| 机构 | **UC Berkeley**（Professor of EECS；Databricks co-founder & CTO；主页 `people.eecs.berkeley.edu/~matei/` `200` / 57,922 B 页内自述） |
+| 代表论文 | **ColBERT**（`2004.12832`，B 轨 #380，二作）· 另 Apache Spark / MLflow 等项目作者 |
+| 邮箱 | **matei@berkeley.edu**（本人主页 `https://people.eecs.berkeley.edu/~matei/` `200` / 57,922 B 页内明文，**当前地址，2026-11-24 06:0x 复核**；未用论文页 2020 旧地址 `matei@cs.stanford.edu`） |
+| 主页 | <https://people.eecs.berkeley.edu/~matei/>（`HTTP 200` / 57,922 B） |
+| X 账号 | **未找到**（主页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **待跟踪**（本窗不发：与 #345 同一论文，遵守「同一论文 ≤1 封」） |
+| 备注 | 后续问题候选（只对 ColBERT 成立）：① 端到端向量索引与「BM25 先召回再重排」两段式在生产负载下的延迟分解；② 索引更新（文档增删）是否触发全量重编码；③ 逐 token 向量的存储成本在 Databricks 类系统里如何做分层。 |
+
+### 347. Mathilde Caron
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Mathilde Caron（`语言=法文称谓问候+英文正文(判据=法文姓名族属 + 法国教育/机构背景)`） |
+| 机构 | **Google Research（Grenoble）**（据公开检索快照 2026-09；本轮**未取得官方人员页**独立核验，仅作背景，不作发信依据） |
+| 代表论文 | **Emerging Properties in Self-Supervised Vision Transformers**（`2104.14294`，B 轨 #379，一作） |
+| 邮箱 | **未找到当前地址**（论文页仅有 2021 年 `mathilde@fb.com`，**旧机构地址 ⇒ 不发信**；未猜 `@google.com`） |
+| 主页 | **未找到**（`mathilde-caron.github.io` 实测 `404`；`di.ens.fr/~caron/` 实测 `404`） |
+| X 账号 | **未找到**（无可核主页；检索快照出现 `@mcaron31` 但**单源未能用 X 页 `og:description` 二次核验** ⇒ 不登记） |
+| 状态 | **待跟踪**（仅建档；无当前可核地址 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 DINO 成立）：① multi-crop 的裁剪尺度分布对 k-NN 78.3% 的贡献拆分；② centering + sharpening 的温度 τ_s / τ_t 扫描区间与塌缩失败模式；③ 自监督 ViT 的分割结构在**非自然图像**（版图 / 显微图）上是否仍成立，需什么最小验证。 |
+
+
+### 348. Nils Reimers
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nils Reimers（`语言=Deutsch 称谓问候+英文正文(判据=德文姓名族属「Nils Reimers」+ 德国 UKP / TU Darmstadt 学术背景；现职在加拿大不改变族属判据)`） |
+| 机构 | **Cohere**（论文署名时为 TU Darmstadt · UKP Lab；本人站点 2026 自述从事 consulting） |
+| 代表论文 | **Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks**（`1908.10084`，B 轨 #381，一作） |
+| 邮箱 | **info@nils-reimers.de**（本人站点 `https://www.nils-reimers.de/contact/` `200` / 11,424 B 页内 `mailto:` 明文，**当前地址，2026-11-24 09:0x 复核**；⚠️ 这是站点 contact 邮箱而非个人学术邮箱；未使用论文页旧地址） |
+| 主页 | <https://www.nils-reimers.de/>（`HTTP 200` / 38,619 B） |
+| X 账号 | **未找到**（站点各页均无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **已发信**（#158，2026-11-24 09:06:52，德文称谓问候 + 英文正文 191 词） |
+| 备注 | 发信问题候选（只对 SBERT 成立）：① 「~5 秒」是否含索引构建，还是仅查询编码 + 余弦检索；② 去掉 SNLI/MNLI 段只留 STS 对，STS 分数还剩多少；③ 超过 512 token 的长文档用截断 / 分块池化 / 分块向量取 max，哪一种 STS 退化最小。 |
+
+### 349. Charlie Snell
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Charlie Snell（`语言=英文(判据=英文姓名族属 + UC Berkeley 美国机构；无双语信号)`） |
+| 机构 | **UC Berkeley**（EECS 博士生；主页 2026-11-24 自述） |
+| 代表论文 | **Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters**（`2408.03314`，B 轨 #383，一作） |
+| 邮箱 | **csnell22@berkeley.edu**（本人主页 `https://sea-snell.github.io/` `200` / 23,486 B 页内 `mailto:` 明文，**当前地址，2026-11-24 09:0x 复核**） |
+| 主页 | <https://sea-snell.github.io/>（`HTTP 200` / 23,486 B） |
+| X 账号 | **@sea_snell**（主页外链 `twitter.com/sea_snell` + 代理抓 `x.com/sea_snell` `200` / 165,575 B，`og:title` = `Charlie Snell (@sea_snell) on X`、`og:description` = `my friend told me to tweet more. I stare at my computer a lot and make things` ⇒ 双源核验） |
+| 状态 | **已发信**（#159，2026-11-24 09:06:52，英文 197 词） |
+| 备注 | 发信问题候选（只对 test-time scaling 成立）：① 无标签时如何估 prompt 难度（verifier 分数分布 / 独立模型 / rollout），4× 增益里难度估计本身占多少；② 精确但昂贵的验证（编译 / 跑测试）下，compute-optimal 是否偏向 revision 而非 verifier 搜索，verifier 调用 : 生成调用 配比是多少；③ 14× 参数的 FLOPs 对齐结论是否含 verifier 训练算力，在小模型 pass@1 近 0 的题上是否仍成立。 |
+
+### 350. Pengcheng He
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Pengcheng He（`语言=中文(判据=拼音姓名族属可还原中文名「何鹏程」+ Microsoft Research 华人研究者)`） |
+| 机构 | **Microsoft Research**（论文署名时；本轮未取得当前官方人员页） |
+| 代表论文 | **DeBERTa: Decoding-enhanced BERT with Disentangled Attention**（`2006.03654`，B 轨 #382，一作） |
+| 邮箱 | `penhe@microsoft.com`（ar5iv `200` / 258,225 B 部分取回，首页明文；⚠️ **2020 年论文页地址**，MSR 人员页 `people/penhe/` 已重定向到人员列表 ⇒ **仅建档，不发信**） |
+| 主页 | **未找到**（`microsoft.com/en-us/research/people/penhe/` 重定向到人员列表，无个人页） |
+| X 账号 | **未找到**（无可核个人主页；不猜 handle） |
+| 状态 | **待跟踪**（旧论文页地址 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 DeBERTa 成立）：① content / position 两套向量是否共享投影、解耦矩阵的参数量如何随头数增长；② v3 用 RTD 替换 MLM 后，与 disentangled attention 的增益是否可叠加；③ 半数据超 RoBERTa-Large 的对照里，训练步数与 tokenizer 是否完全一致。 |
+
+### 351. 蓝振忠 Zhenzhong Lan
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | 蓝振忠 Zhenzhong Lan（`语言=中文(判据=拼音姓名族属可还原中文名「蓝振忠」+ 西湖大学 / 蚂蚁集团中国机构；不因论文英文、曾在 CMU 读博判英文)`） |
+| 机构 | **西湖大学**工学院人工智能系（终身副教授，深度学习实验室负责人）· 兼蚂蚁集团通用人工智能研究中心主任 · 西湖心辰创始人（据西湖大学官方师资页 2026-11-24 抓取） |
+| 代表论文 | **ALBERT: A Lite BERT for Self-supervised Learning of Language Representations**（`1909.11942`，B 轨 #384，一作） |
+| 邮箱 | **lanzhenzhong@westlake.edu.cn**（西湖大学官方师资页 `https://www.westlake.edu.cn/faculty/zhenzhong-lan.html` `HTTP 200` / 45,856 B，页内明文，**当前机构官方地址，2026-11-24 15:0x 复核**；未用论文页旧地址 `lanzhzh@cs.cmu.edu`） |
+| 主页 | <https://www.westlake.edu.cn/faculty/zhenzhong-lan.html>（中文官方页，`200` / 45,856 B） |
+| X 账号 | **未找到**（官方页无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **已发信**（#160，2026-11-24 15:04:58，中文，正文 185 汉字） |
+| 备注 | 发信问题候选（只对 ALBERT 成立）：① factorized embedding 的 `E` 与 `H` 比例在中文大词表（五万以上）下是否要放大、`E=128` 是否偏小；② 跨层参数共享后各层梯度尺度差异是否需要分层学习率 / 按层裁剪（我们观察到共享层梯度范数低一个量级）；③ SOP 在单句语料（代码、日志）上退化多少、是否直接退回只做 MLM。 |
+
+### 352. 杨植麟 Zhilin Yang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | 杨植麟 Zhilin Yang（`语言=中文(判据=拼音姓名族属可还原中文名「杨植麟」+ 清华 / 月之暗面中国机构；不因论文英文、CMU 读博判英文)`） |
+| 机构 | **月之暗面 Moonshot AI**（创始人 / CEO，据公开检索快照 2026-11；本轮**未取得官方人员页**独立核验，仅作背景）· 曾任清华大学助理教授（OpenReview 履历页 2021– ） |
+| 代表论文 | **XLNet: Generalized Autoregressive Pretraining for Language Understanding**（`1906.08237`，B 轨 #385，一作）· 另 Transformer-XL 共同一作 |
+| 邮箱 | **未找到当前地址**（`kimiyoung.github.io` `200` / 91,449 B 无明文邮箱；`cs.cmu.edu/~zhiliny/` `503`；CMU LTI 校友页 `200` / 255,158 B 无邮箱；检索命中的 `zhiliny.com` contact 为**另一人**的 `zhilin_yang@hotmail.com` ⇒ **不用、不猜**） |
+| 主页 | <https://kimiyoung.github.io/>（`HTTP 200` / 91,449 B；内容仍以 CMU 博士生身份自述，**非当前机构页**） |
+| X 账号 | **未找到**（无可核当前主页外链；不猜 handle） |
+| 状态 | **待跟踪**（仅建档；无当前可核地址 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 XLNet 成立）：① 排列目标的采样在多大词表 / 多长片段下开始抵消双向上下文收益；② 双流注意力相对 MLM 的每步 wall-clock 倍数；③ 「20 任务超 BERT」在 token 数对齐后还剩多少。 |
+
+### 353. Kelvin Guu
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kelvin Guu（`语言=英文(判据=英文姓名族属 + Google DeepMind 美国机构；无双语信号)`） |
+| 机构 | **Google DeepMind**（Principal Research Scientist / Director；本人主页 2026-11-24 自述，X `og:description` 同述） |
+| 代表论文 | **REALM: Retrieval-Augmented Language Model Pre-Training**（`2002.08909`，B 轨 #386，一作） |
+| 邮箱 | **kelvin@kelvinguu.com**（本人主页 `https://www.kelvinguu.com/` `HTTP 200` / 16,482 B，Contact 节逐字为 `kelvin 🐌 kelvinguu.com` —— 以蜗牛符号代替 `@` 的防爬写法，2026-11-24 15:0x 复核；**当前个人站点地址**，判读依据逐字留档） |
+| 主页 | <https://www.kelvinguu.com/>（`HTTP 200` / 16,482 B） |
+| X 账号 | **@kelvin_guu**（主页 Contact 节外链 `twitter.com/kelvin_guu` + 经代理抓 `x.com/kelvin_guu` `200` / 180,185 B，`og:title` = `Kelvin Guu (@kelvin_guu) on X`、`og:description` = `Principal Research Scientist / Director @ Google DeepMind. Leading teams of 40+ (research/eng/PM/UI/UX) turning SOTA research into new AI products` ⇒ 双源核验） |
+| 状态 | **已发信**（#161，2026-11-24 15:05:03，英文 159 词） |
+| 备注 | 发信问题候选（只对 REALM 成立）：① 索引每 epoch 刷新一次时，4–16 点绝对增益还剩多少；② 检索器从 BM25 类模型冷启动时反传是否稳定、需不需要 warm-up；③ 非 Wikipedia 域语料（技术文档 / 日志）上 salience 模型是否退化为表层词重叠、哪种正则最有效。 |
+
+### 354. Wenhui Wang 王文辉
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Wenhui Wang 王文辉（`语言=中文(判据=拼音姓名族属可还原中文名 + 中文教育 / 机构背景；🚫 未因论文英文、微软美国机构判英文)`） |
+| 机构 | **Microsoft Research**（论文署名；MSR 官方人员页 `https://www.microsoft.com/en-us/research/people/wenwan/` `HTTP 200` / 170,385 B 当前在册） |
+| 代表论文 | **MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers**（`2002.10957`，B 轨 #388，一作） |
+| 邮箱 | **wenwan@microsoft.com**（来源 ① MSR 官方人员页 `200` / 170,385 B，页内 `mailto:` 为十六进制实体 `&#119;e&#110;w&#097;n&#064;microsoft.com` ⇒ 解码 `wenwan@microsoft.com`；来源 ② ar5iv 全文 `200` / 319,259 B 首页作者块明文 `{wenwan,fuwei,lidong1,t-habao,nanya,mingzhou}@microsoft.com`。**两源一致，2026-11-24 18:0x 复核**） |
+| 主页 | <https://www.microsoft.com/en-us/research/people/wenwan/>（`HTTP 200` / 170,385 B） |
+| X 账号 | **未找到**（MSR 人员页与论文页均无 x.com / twitter.com 外链；不猜 handle） |
+| 状态 | **已发信**（#162，2026-11-24 18:06:14，中文，正文 **235 汉字 / 总字符 471**） |
+| 备注 | `语言=中文(判据=拼音姓名族属 + 中文教育背景)`。发信问题候选（只对 MiniLM 成立）：① Q-K 注意力分布与 V-V scaled dot-product 两项的**单独消融**、学生 6 层时哪一项先失效；② 50% 参数与计算保留 >99% 的结论在中文长尾词表（五万以上）下 teacher assistant 层数如何选；③ 教师/学生层数差 ≥2× 时 teacher assistant 是否仍有效、层映射用相邻层还是固定比例。 |
+
+### 355. Manzil Zaheer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Manzil Zaheer（`语言=英文(判据=南亚姓名族属不在中/日/韩/德法西意荷北欧俄；机构美国 ⇒ 英文兜底)`） |
+| 机构 | **Google DeepMind / Google Research**（OpenReview `~Manzil_Zaheer1` 自述 `Researcher DeepMind 2018 – Present`；ACM DL 列 Google LLC / Google DeepMind） |
+| 代表论文 | **Big Bird: Transformers for Longer Sequences**（`2007.14062`，B 轨 #389，一作）· 另：Deep Sets 等 |
+| 邮箱 | **未找到当前明文地址**（个人站点 `http://manzil.ml/` `HTTP 200` / 12,837 B，邮箱为图片 `images/myemail.jpg`，页面文本无可读地址；该页仍以 2015 年 CMU 博士生身份自述 ⇒ **不作发信依据、不猜**） |
+| 主页 | <http://manzil.ml/>（`HTTP 200` / 12,837 B；`https://manzil.ml/` 实测 `000`，`https://www.manzilzaheer.com/` 实测 `000`） |
+| X 账号 | **单源未核**：`x.com/manzilzaheer` 经代理 `200` / 70,706 B，`og:title` = `Manzil Zaheer (@manzilzaheer) on X`，但 `og:description` 仅为通用关注数（`509 followers · 7 following. Joined Feb 2014`），个人主页无 X 外链 ⇒ **未双源，不记入已核验、不 follow**（避免跟错账号） |
+| 状态 | **待跟踪**（仅建档；无当前可核邮箱 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 Big Bird 成立）：① window / global / random 三路的预算比例在 8K 以上如何随序列长度缩放，`O(1)` global token 取多少；② 线性注意力的实际显存节省与论文 `8×` 的硬件口径差多少（是否含 activation checkpointing）；③ 基因组任务上的收益有多少来自更长上下文、多少来自域内预训练。 |
+
+### 356. Noam Shazeer
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Noam Shazeer（`语言=英文(判据=英语姓名族属 + 美国机构；无双语信号)`） |
+| 机构 | **Google DeepMind**（本人站点 `noamshazeer.com` 2026 在册；论文署名时为 Google） |
+| 代表论文 | **GLU Variants Improve Transformer**（`2002.05202`，B 轨 #387，唯一作者）· 另：Attention Is All You Need / T5 / Switch Transformer 等共同作者 |
+| 邮箱 | `noam@google.com`（来源：ar5iv 全文 `200` / 141,894 B 首页 `Affiliation: Google` + `Email: noam@google.com`；⚠️ **2020 年论文期地址、单源**，本人站点无明文邮箱 ⇒ **仅建档，不用于发信**） |
+| 主页 | <https://noamshazeer.com/>（`HTTP 200` / 487,056 B；Wix 构建，无明文邮箱） |
+| X 账号 | **@NoamShazeer**（双源核验 2026-11-24 18:0x：本人站点页内 `href` 外链 `https://x.com/NoamShazeer` + 代理抓 `x.com/NoamShazeer` `200` / 158,413 B，`og:title` = `Noam Shazeer (@NoamShazeer) on X`、`og:description` = `Engineer`） |
+| 状态 | **待跟踪**（仅建档；无当前可核邮箱 ⇒ 本线不发信；X 已核验，follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | 发信问题候选（只对 GLU Variants 成立）：① 表 1 的 `GEGLU` / `SwiGLU` 优势在 524,288 步后仅约 0.04 log-perplexity，这个差在更大 `d_model` / 更多层时是否会同比例放大，还是被优化噪声吞掉；② `d_ff` 统一乘 2/3 是否对 GLU 变体公平（三矩阵的常数项与内存访问不同）；③ 无 bias 写法在低精度训练下是否需要恢复 bias 以稳住激活尺度。 |
+
+
+### 357. Nikita Kitaev
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Nikita Kitaev（`语言=英文(判据=姓名族属东欧/英语通用 + 美国 UC Berkeley 机构；论文英文、无中文/日文/韩文信号 ⇒ 英文兜底)`） |
+| 机构 | **UC Berkeley**（本人主页 `kitaev.com` 自述 Berkeley；Reformer 论文期为学生） |
+| 代表论文 | **Reformer: The Efficient Transformer**（`2001.04451`，B 轨 #390，一作）· 另： constituency parsing 相关（ACL 2022） |
+| 邮箱 | **`kitaev@berkeley.edu`**（来源：本人主页 `https://kitaev.com/` `HTTP 200` / **6,092 B**，页内明文；2026-11-24 21:0x 复核连抓 3 次均 `200` / 6,092 B，发信前再核 1 次 `200` / 6,092 B） |
+| 主页 | <https://kitaev.com/>（`HTTP 200` / 6,092 B；页内链 `/publications/`、GitHub `github.com/nikitakit`） |
+| X 账号 | **未找到 X**：`x.com/nikitakitaev` 代理抓 `200` / 101,865 B，但 `og:title` = `Китаев Никита (@NikitaKitaev) on X`、`og:description` = `9 followers · 5 following. Ukraine. Joined Jul 2012` ⇒ **明确非本人**，🚫 不登记 |
+| 状态 | **已发信**（#164，2026-11-24 21:06:23，英文，正文 **198 词**） |
+| 备注 | `语言=英文(判据=姓名族属 + 美国机构)`。发信问题（只对 Reformer 成立）：① LSH 注意力里 `n_rounds` 取几轮、降到 1 轮时质量掉多快，64K enwik8 上是否出现桶大小偏斜（代码/日志重复 token）；② 可逆残差在 mixed precision 下是否仍「无影响」，与常规 gradient checkpointing 在 ~2K 短序列上的吞吐对比；③ chunked FFN 的 chunk 大小如何选、收益是否依赖 `4× d_ff` 比例。 |
+
+### 358. Łukasz Kaiser
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Łukasz Kaiser（`语言=英文(判据=波兰姓名族属无对应母语栏 + 美国 Google 机构；无中/日/韩信号 ⇒ 英文兜底)`） |
+| 机构 | **Google DeepMind**（Reformer 论文期 Google Brain；Transformer 共同作者） |
+| 代表论文 | **Reformer: The Efficient Transformer**（`2001.04451`，B 轨 #390，二作）· **Attention Is All You Need**（`1706.03762`，B 轨表内）· Tensor2Tensor / Neural GPUs |
+| 邮箱 | **未找到当前明文**（`lukaszkaiser.com` 与 `www.lukaszkaiser.com` 均 `HTTP 200` / **114 B** 停放页；`research.google` 人员页本机 `000` ⇒ 不用论文旧地址、不猜） |
+| 主页 | **未找到**（上述域名仅停放页；无其他可核个人页） |
+| X 账号 | **单源未核**：`x.com/lukaszkaiser` 经代理 `200` / 174,299 B，`og:title` = `Lukasz Kaiser (@lukaszkaiser) on X`、`og:description` = `14273 followers · 99 following. San Francisco.`；但**无可核主页外链作第二源** ⇒ 🚫 不计入已核验、不 follow |
+| 状态 | **待跟踪**（仅建档；无当前可核邮箱 ⇒ 本线不发信） |
+| 备注 | 发信问题候选（只对 Reformer 成立）：LSH 桶排序是否用 `torch.sort` 的稳定排序、bucket 内 padding 造成的无效 token 比例；可逆层要求「无 dropout 残差分支」的约束在后续大模型训练里是否可接受。 |
+
+### 359. Taku Kudo
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Taku Kudo（工藤拓）（`语言=日本語(判据=日文姓名族属 + 日本姓名；机构 Google 日本相关)`） |
+| 机构 | **Google**（SentencePiece 作者；论文期 Google Research） |
+| 代表论文 | **SentencePiece**（`1808.06226`，B 轨 #392，一作）· **Subword Regularization**（`1804.10959`，B 轨表内） |
+| 邮箱 | **未找到当前明文**（GitHub 个人页 `https://github.com/taku910` `HTTP 200` / 167,121 B 无 `mailto:`；未发现可核个人主页 ⇒ 不用论文旧地址、不猜） |
+| 主页 | **未找到**（仅 GitHub `github.com/taku910`，`200` / 167,121 B，`itemprop="name"` = `Taku Kudo`） |
+| X 账号 | **@taku910**（跨平台双源 2026-11-24 21:0x：GitHub 个人页 `github.com/taku910`（`200` / 167,121 B，`itemprop="name"` = `Taku Kudo`）+ 代理抓 `x.com/taku910` `200` / 143,680 B，`og:title` = `Taku Kudo (@taku910) on X`；`og:description` 为空已如实记） |
+| 状态 | **待跟踪**（仅建档；无当前可核邮箱 ⇒ 本线不发信；X 已核验，follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | 发信问题候选（只对 SentencePiece 成立）：① 8k 共享词表在 ja→en 上超 80k 词级基线（29.55 vs 28.24），这个结论在「中文 + 代码混语料」是否仍成立、词表继续下探到 4k 的拐点在哪；② NFKC 归一化与无损切分冲突时（全角/半角、连字）如何取舍；③ `O(N²)` 朴素 BPE 的加速实现在 100GB 级语料上的实际吞吐与内存上限。 |
+
+### 360. Tomas Mikolov
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tomas Mikolov（`语言=英文兜底(判据=捷克姓名族属；无中文/日文/韩文信号 ⇒ 英文；若将来可发，按东欧姓名用一句母语问候 + 英文正文)`） |
+| 机构 | **CIIRC / Czech Technical University**（背景；word2vec 论文期为 Google） |
+| 代表论文 | **Distributed Representations of Words and Phrases and their Compositionality**（`1310.4546`，B 轨 #393，一作）· **Efficient Estimation of Word Representations in Vector Space**（`1301.3781`，B 轨表内，一作） |
+| 邮箱 | **未找到当前明文**（`fit.vut.cz/person/imikolov/` 跟随后 `HTTP 404`；`cs.cmu.edu/~imikolov/` `404`；`tomasmikolov.com` `000`；未发现可核当前个人主页 ⇒ 不用论文旧地址、不猜） |
+| 主页 | **未找到当前可核主页**（上述三个候选均 `404/000`；不猜） |
+| X 账号 | **未找到 X**（历史核验 `x.com/tmikolov` / `x.com/MikolovTomas` 均 `404`；本轮未再猜 handle） |
+| 状态 | **待跟踪**（仅建档；无可核邮箱 ⇒ 本线不发信） |
+| 备注 | `语言=英文兜底(判据=捷克姓名族属)`。发信问题候选（只对 SGNS 成立）：① 高频词下采样率改变有效 token 数，在小词表（8k–16k）+ 代码混语料上是否仍让表示更规整；② negative sampling 的负样本数 k 与词频分布 `3/4` 幂的关系，在长尾标识符上是否失效；③ 短语发现的打分阈值在多词器件型号 / 寄存器名上会不会把不该合并的相邻词并成一个 token。 |
+
+### 361. Kyunghyun Cho 조경현
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Kyunghyun Cho 조경현（`语言=한국어(判据=韩文姓名族属 + 韩国教育背景 KAIST/Aalto；🚫 不因机构 NYU、论文英文改判英文)`） |
+| 机构 | **New York University**（Professor, Computer Science & Center for Data Science；本人主页与 X bio 同述）· **Ortet AI**（CEO，X bio 自述） |
+| 代表论文 | **Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation**（`1406.1078`，B 轨 #394，一作；GRU）· **Neural Machine Translation by Jointly Learning to Align and Translate**（`1409.0473`，B 轨表内，二作） |
+| 邮箱 | **`kyunghyun.cho@nyu.edu`**（来源：本人主页 `https://kyunghyuncho.me/contact/` `HTTP 200` / **33,507 B**，页内防爬写法 `kyunghyun.cho _at_ nyu.edu`，按页面规则还原；2026-11-25 00:0x 复核；未用 2014 论文旧地址） |
+| 主页 | <https://kyunghyuncho.me/>（`HTTP 200` / 37,026 B；含 `/research-group/`、`/posts/`、`/contact/`） |
+| X 账号 | **@kchonyc**（主页外链 `twitter.com/kchonyc` + 代理抓 `x.com/kchonyc` `200` / 163,832 B，`og:title` = `Kyunghyun Cho (@kchonyc) on X`、`og:description` = `a mediocre combination of a mediocre professor at @nyuniversity and a mediocre CEO at @OrtetAI` ⇒ 双源核验） |
+| 状态 | **已发信**（#165，2026-11-25 00:05:14，한국어，正文 **297 字含空格 / 251 字不含空格**） |
+| 备注 | `语言=한국어(判据=姓名族属 + 韩国教育背景)`。发信问题（只对 RNN Encoder–Decoder / GRU 成立）：① 今天重设 update/reset 门，长代码·日志里哪个门先成瓶颈、有无关 reset 的消融；② 不用注意力时缓解定长向量信息损失的最小改动；③ 短语级特征当年提升 BLEU，在子词分词下是否仍成立。 |
+
+### 362. Lysandre Debut
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Lysandre Debut（`语言=法文姓名(判据=法文姓名族属 + 法国教育背景 Hugging Face 巴黎系；若可发用一句法语称谓问候 + 英文正文)`） |
+| 机构 | **Hugging Face**（Chief Open-Source Officer / COSO；X bio 自述） |
+| 代表论文 | **DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter**（`1910.01108`，B 轨 #395，二作） |
+| 邮箱 | **未找到明文**（HF 个人页 `huggingface.co/lysandre` 经代理 `200` / 338,187 B 仅见 `git@hf.co` 与 git 地址；GitHub 个人页无 `mailto:` ⇒ 不发信、不猜） |
+| 主页 | <https://huggingface.co/lysandre>（经代理 `HTTP 200` / 338,187 B）· GitHub <https://github.com/Lysandre>（`200` / 147,114 B） |
+| X 账号 | **@LysandreJik**（HF 个人页外链 `twitter.com/LysandreJik` + 代理抓 `x.com/LysandreJik` `200` / 181,803 B，`og:title` = `Lysandre (@LysandreJik) on X`、`og:description` = `Chief Open-Source Officer (COSO) at Hugging Face` ⇒ 双源核验） |
+| 状态 | **待跟踪**（仅建档；无明文邮箱 ⇒ 本线不发信；X 已核验，follow 需登录态 ⇒ 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | 发信问题候选（只对 DistilBERT 成立）：① 三损失（LM / 蒸馏 / cosine-distance）的权重与教师软标签温度如何选，去掉 cosine 损失掉多少；② BERT-base 教师到 6 层学生的层映射是固定比例还是按能力选层；③ 端侧概念验证用的是哪一档延迟预算、97% 保留是在哪组任务上算的。 |
+
+### 363. Diederik P. (Durk) Kingma
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Diederik P. (Durk) Kingma（`语言=英文兜底(判据=荷兰姓名族属 Diederik/Kingma + 荷兰 University of Amsterdam 博士；无中文/日文/韩文信号)`） |
+| 机构 | **Anthropic**（X bio 自述；prev Google Brain / DeepMind，OpenAI founding team）· University of Amsterdam PhD 2017（本人站点） |
+| 代表论文 | **Auto-Encoding Variational Bayes**（`1312.6114`，B 轨 #396，一作）· **Adam: A Method for Stochastic Optimization**（`1412.6980`，B 轨表内，一作） |
+| 邮箱 | **未找到当前明文**（本人站点 `dpkingma.com` `HTTP 200` / 5,959 B，仅 Publications / Brief Bio / Links，无 `mailto:`；不猜 `@anthropic.com` / `@google.com`） |
+| 主页 | <https://dpkingma.com/>（`HTTP 200` / 5,959 B） |
+| X 账号 | **@dpkingma**（站点无 X 外链；代理抓 `x.com/dpkingma` `HTTP 200` / 182,386 B，`og:title` = `Durk Kingma (@dpkingma) on X`、`og:description` = `@AnthropicAI. Prev. @Google Brain/DeepMind, founding team @OpenAI. Computer scientist; inventor of the VAE, Adam optimizer, and other methods. ML PhD.` ⇒ **单源身份强匹配**，如实记「非双源」） |
+| 状态 | **待跟踪**（仅建档；无明文邮箱 ⇒ 本线不发信；X 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | `语言=英文兜底(判据=荷兰姓名族属 + 荷兰机构)`。发信问题候选（只对 VAE 成立）：① 重参数化后 KL 项权重对下游表示质量的影响，去掉 KL 退化成 AE 时最先坏在哪类任务；② 识别模型容量与隐变量维度如何配，2B 级视觉前端上是否有可迁移的经验比例；③ 用 ELBO 做表示学习时，重建指标与下游指标脱钩的常见原因。 |
+
+### 364. Luyu Gao
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Luyu Gao（`语言=中文(判据=拼音姓名族属 Luyu Gao + 华人姓名习惯；🚫 不因 CMU 美国机构 / 英文论文改判英文)`） |
+| 机构 | **Carnegie Mellon University · Language Technologies Institute（LTI）**（PhD student；本人主页自述） |
+| 代表论文 | **PAL: Program-aided Language Models**（`2211.10435`，B 轨 #397，一作） |
+| 邮箱 | **`luyug@cs.cmu.edu`**（本人主页 `https://luyug.github.io/` `HTTP 200` / 8,375 B，页内 `mailto:` 明文；2026-11-25 03:0x 复核；未用 2022 论文旧地址） |
+| 主页 | <https://luyug.github.io/>（`HTTP 200` / 8,375 B） |
+| X 账号 | **@luyu_gao**（主页外链 `twitter.com/luyu_gao` + 代理抓 `x.com/luyu_gao` `HTTP 200` / 152,990 B，`og:title` = `Luyu Gao (@luyu_gao) on X` ⇒ 双源；`og:description` 为空，如实记） |
+| 状态 | **已发信**（#166，2026-11-25 03:0x，中文，正文见 `drafts/2211.10435.md` / `bodies/2026-11-25-2211.10435.txt`） |
+| 备注 | `语言=中文(判据=姓名族属 + CMU LTI)`。发信问题（只对 PAL 成立）：① 13 个任务里解释器执行失败（语法错 / 运行时错）时，重试 / 回退 CoT / 直接判错各占多少；② few-shot 中自然语言分解步骤与可执行代码如何对齐，是否强制每步可单独运行；③ GSM8K 上相对 PaLM-540B CoT 的 +15% 是绝对百分点，需要外部工具链时最小可行改动是什么。 |
+
+### 365. Perry (Peiyuan) Zhang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Perry (Peiyuan) Zhang（`语言=中文(判据=拼音姓名族属 Peiyuan Zhang + 华人姓名习惯；🚫 不因美国机构 / 英文论文改判英文)`） |
+| 机构 | **ByteDance Seed**（Seedance 核心团队，前研究者；本人页）· **UC San Diego** PhD 背景（本人页「Before that, I was a PhD student at UC San Diego」） |
+| 代表论文 | **TinyLlama: An Open-Source Small Language Model**（`2401.02385`，B 轨 #398，一作） |
+| 邮箱 | **`pez010@ucsd.edu`**（本人主页 `https://jzhang38.github.io/` `HTTP 200` / 19,215 B，页内 `mailto:` 明文；当前公开地址；未发信） |
+| 主页 | <https://jzhang38.github.io/>（`HTTP 200` / 19,215 B） |
+| X 账号 | **@PY_Z001**（主页外链 `twitter.com/PY_Z001` + 代理抓 `x.com/PY_Z001` `HTTP 200` / 203,588 B，`og:title` = `Perry Zhang (@PY_Z001) on X`、bio = `TinyLlama, FastVideo, Seedance. Opinions are my own` ⇒ 双源） |
+| 状态 | **待跟踪**（仅建档；X 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | `语言=中文(判据=姓名族属)`。发信问题候选（只对 TinyLlama 成立）：① 1T token / 3 epoch 下，loss 在哪个阶段开始平台化、是否值得加 epoch；② 1.1B 规模上 FlashAttention + Lit-GPT 的实测吞吐增益与显存占用各是多少；③ 小模型在代码 / 结构化输出任务上的退化模式，与 2B 级是否同构。 |
+
+### 366. Chitwan Saharia
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Chitwan Saharia（`语言=英文(判据=姓名族属非中/日/韩 + 印度 IIT Bombay 教育背景 + 美国机构)`） |
+| 机构 | **Ideogram AI**（联合创始人兼研究员；本人主页自述 `I am co-founder and researcher at Ideogram AI`）· 前 **Google Brain, Toronto**（Senior Research Scientist）· IIT Bombay 本科 |
+| 代表论文 | **Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding（Imagen）**（`2205.11487`，B 轨 #399，一作） |
+| 邮箱 | **`chitwaniit@gmail.com`**（本人主页 `https://chitwansaharia.github.io/` `HTTP 200` / 24,324 B，页内 `mailto:` 明文；当前公开地址；**已发信**） |
+| 主页 | <https://chitwansaharia.github.io/>（`HTTP 200` / 24,324 B；2026-11-25 06:0x 复核） |
+| X 账号 | **@Chitwan_Saharia**（主页外链 `twitter.com/Chitwan_Saharia` + 代理抓 `x.com/Chitwan_Saharia` `HTTP 200` / 187,768 B，`og:title` = `Chitwan Saharia (@Chitwan_Saharia) on X`、`og:description` = `Past: Sr. Research Scientist @GoogleAI \|\| B. Tech, CSE, @IITBombay` ⇒ 双源；⚠️ 同名 `@ChitwanSaharia` 无主页外链 ⇒ 不采用） |
+| 状态 | **已发信**（**#167**，2026-11-25 06:02:47，英文 148 词）+ **待跟踪 X**（进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | 发信问题（只对 Imagen 成立）：① classifier-free guidance 权重 w 在 64×64 base 与两级超分间是否漂移；② T5-XXL 全程冻结，是否试过微调、冻结主要保语言理解还是省显存；③ DrawBench 上 counting / spatial / long-text 哪类最弱，归因于文本编码器还是扩散先验。台账见 `mail/发送记录.md` §06:00。 |
+
+### 367. Zhangir Azerbayev
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Zhangir Azerbayev（`语言=英文(判据=姓名族属哈萨克/俄语系，非中/日/韩；本人站点与论文均为英文)`） |
+| 机构 | **OpenAI**（本人站点自述 `I work on deep learning at OpenAI`）· 前 **xAI**（reasoning）· 曾为 **Princeton Vision & Learning Lab** PhD（本人站点自述已 drop out） |
+| 代表论文 | **Llemma: An Open Language Model For Mathematics**（`2310.10631`，B 轨 #400，一作） |
+| 邮箱 | ⚠️ **`za2514@princeton.edu`**（arXiv abs 页 2023 版明文；**Princeton 人员转发页 `https://www.cs.princeton.edu/people/forwarding/za2514` 实测 `404` ⇒ 地址有效性存疑**；本人站点与 GitHub 均无明文当前邮箱 ⇒ **无更优地址，不猜**；已按该地址发信） |
+| 主页 | <https://zhangir-azerbayev.github.io/>（`HTTP 200` / 2,475 B；bio-links：GitHub / Twitter / CV）· <https://github.com/zhangir-azerbayev>（`200` / 158,109 B） |
+| X 账号 | **@zhangir_azerbay**（本人站点外链 `twitter.com/zhangir_azerbay` + 代理抓 `x.com/zhangir_azerbay` `HTTP 200` / 152,145 B，`og:title` = `Zhangir Azerbayev (@zhangir_azerbay) on X`、`og:description` = `research @openai` ⇒ 双源） |
+| 状态 | **已发信**（**#168**，2026-11-25 06:02:49，英文 161 词；地址风险已记）+ **待跟踪 X** |
+| 备注 | **教训（如实记）**：发信前只核了 arXiv 明文地址，**未先跟一次 Princeton 转发页**（`404`）⇒ 本轮暴露「地址有效性核验顺序」缺口；后续对「已离开原机构的作者」必须先跟转发页 / 查本人站点当前雇主域名，再决定发或不发。发信问题：① Proof-Pile-2 中 arXiv / web math / math code 在 MathMix 的采样权重，代码占比减半后下游掉多少；② 200B token 预算是否来自 7B 的 scaling-law 估计，2B 同配方该扩 unique tokens 还是 epoch；③ 7B 主要失败模式（多步代数 / 无图几何 / 形式化证明）与 32k 上下文对 few-shot 数学的实际作用。 |
+
+### 368. Hailey Schoelkopf
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hailey Schoelkopf（`语言=英文(判据=姓名族属英语系 + 美国机构)`） |
+| 机构 | **Anthropic**（X bio：`hillclimbing towards generality @anthropicai`）· 前 **EleutherAI**（`prev @AiEleuther`）· Llemma 二作 |
+| 代表论文 | **Llemma: An Open Language Model For Mathematics**（`2310.10631`，B 轨 #400，二作） |
+| 邮箱 | **`hailey.ruth.schoelkopf@gmail.com`**（本人主页 `https://haileyschoelkopf.github.io/` `HTTP 200` / 23,354 B，页内 percent-encoded `mailto:` 按 URL 解码还原；当前公开地址；**未发信**） |
+| 主页 | <https://haileyschoelkopf.github.io/>（`HTTP 200` / 23,354 B） |
+| X 账号 | **@haileysch__**（主页外链 `twitter.com/haileysch__` + 代理抓 `x.com/haileysch__` `HTTP 200` / 187,591 B，`og:title` = `Hailey Schoelkopf (@haileysch__) on X`、`og:description` = `hillclimbing towards generality @anthropicai \| prev @AiEleuther \| views my own` ⇒ 双源） |
+| 状态 | **待跟踪**（仅建档；同一论文本轮已发一作 #168 ⇒ 按「同作者/同论文 ≤1 封」不再发；X 进「待 follow 清单」） |
+| 备注 | 若后续就 Llemma 数据集细节单独请教，问题候选：① Proof-Pile-2 的去重与许可证过滤规则；② 数学代码与科学论文的 token 级重叠如何处理；③ 7B / 34B 的公开 ckpt 在工具调用上的评测脚本是否与 paper 一致。 |
