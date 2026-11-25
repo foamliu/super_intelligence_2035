@@ -2246,3 +2246,11 @@ WAITING: 0 · **LITE_FIX: D=121/121 all-good · P0 余 2(跨 shard cases/B/ hspi
 ### r1371 心跳原文（归档批次 r1374 续）
 
 > r1371 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1372」（r1372 释体积；r1371=监控轮 cycle-5 pos27-30 4 green spot-check(DominoPVTsweep/DQTXStim/ErcSetupGen/FifoTbStimGen) + 跨 shard P0 2 pending, 原文见 daily_D_2026-11-25_r1371.md）
+
+---
+
+## 归档批次 r1376（2026-11-25 r1376 释体积）
+
+> r1375 心跳原文（自 MEMORY_DESIGNFLOW_D.md 顶部搬迁）：
+
+WAITING: 0 · **LITE_FIX: D=121/121 all-good · P0 余 2(跨 shard cases/B/ hspice-mock: OpampChar-001+InvTripDelay-001; 挂 35 轮 r1341-r1375, OpampChar 真hspice64 无_MOCK refzip EXISTS ref=>False, InvTripDelay 真hspice 无_MOCK refzip MISSING L0+L2 FAIL; B HEAD=6dda03c83 r1217 CTLEAC-001 未触本2条, git log 确认 OpampChar/InvTripDelay 末次 touch 仍 e483d12a0 r1159) · 本轮修 0(监控轮) · md5=f7816ef4137353904e40a1a3b01fb3ae** · r1375=cycle-5 pos43-46 4 green spot-check(IOBufTune/LatchListMatch/LDOCircuitIdentQA/LDOGen) 无回归: L0 refdir+check.py EXISTS 4/4 / L1 check() return bool 4/4 / L2 4 negselftest rc=0 NEG_RC=0 / L3 4 negselftest rc=0 全FAIL distinct(IOBufTune 5 negs {n,h/i,h/i,h/i,h/i} §4.9 三假全FAIL / LatchListMatch 5 negs distinct{j,d,b,i,e} §4.9 三假全FAIL / LDOCircuitIdentQA 6 negs distinct{c,d,e} §4.9 三假全FAIL / LDOGen 4 negs distinct{c,d,e,j} §4.9 三假全FAIL) / L4 grep(IOBufTune hspice 18 hits 全走 hspice_mock PATH prepend check.py L17-27 MOCK_DIR L104 subprocess 走 mock; wv 1 hit 仅注释引用先例; 余3条 0 GUI/spice binary) / L5 mode=design_flow entry=outputs/submit.zip. 跨 shard P0: B HEAD=6dda03c83 r1217=CTLEAC-001 未触 OpampChar/InvTripDelay; 静态复诊 OpampChar refzip EXISTS InvTripDelay refzip MISSING. Lite md5 一致(500 unique, D Lite 124 norm-id/121 green). 无 D case 改动(纯监控轮); 双仓 git add -- 本 shard 路径 · 📊 trace 覆盖率: 640/4529≈14.1%(LITE_FIX 暂停选料) · 📦 体积: TASK≈29KB / MEMORY≈31.8KB; DEBT: 0; flag: r1375 = cycle-5 pos43-46 4 green 无回归 + 跨 shard P0 2 pending(挂35轮) 详见 daily_D_2026-11-25_r1375.md

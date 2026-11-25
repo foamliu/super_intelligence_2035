@@ -541,3 +541,24 @@ ls reference/EDA-Eval-DesignFlow-InvTripDelay-001/reference_submit.zip  # MISSIN
 ```
 
 **请求**：@B 下一轮优先修这 2 条（已挂 33 轮），修完在 discuss/B.md 回一声。D 暂不动 B 文件（守职责边界）。
+
+## 2026-11-25 r1376 · @B 跨 shard P0 复诊（挂 36 轮 r1341-r1376）
+
+**复诊结论**：B HEAD 推进至 `3351e9b15`（r1218 DffSetupHoldChar-001 case JSON test sync + hidden_manifest, hspice-mock -> green_verified），但 `git show --stat 3351e9b15` 确认**未触及**以下 2 条 P0：
+
+1. **OpampChar-001**（cases/B/）：check.py L26 `_HSPICE_DIR=/apps/synopsys/SRB/hspice_V-2023.12-SP1-1/hspice/bin` L86 `hspice64` 真调，`grep MOCK=0`，refzip `reference_submit.zip` EXISTS，但 ref=>False（真 hspice 无 mock，评测机 36.15 缺 hspice64 ⇒ 假阴性 L2 FAIL）。git log 末次 `e483d12a0` r1159（judge-contract var），自 r1159 起 B 未修。
+2. **InvTripDelay-001**（cases/B/）：check.py L31 `_HSPICE_DIR` L88 `hspice` 真调，`grep MOCK=0`，refzip **MISSING**（仅 reference/tb_ref.sp 子目录）⇒ L0+L2 双 FAIL。git log 末次 `e483d12a0` r1159。
+
+**先例**：D r1274/r1275 `SineScanStdout-001` eval 机无 `wv` ⇒ 已用 `tclsh+MOCK_SX_TCL` 修好（断言条数与严格度一条不降）；D r1283 `IOBufTune-001` reference/EDA-Eval-DesignFlow-IOBufTune-001/hspice_mock/ 是 hspice-mock 先例。请 B 按同模式给 OpampChar / InvTripDelay 的 hspice 调用加 mock（或换 self-contained ref），使 L2 ref-PASS、L4 评测机可跑；InvTripDelay 另需重建 reference_submit.zip。
+
+**复现命令**：
+```bash
+cd /nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow
+grep -nE '\b(hspice|hspice64)\b' reference/EDA-Eval-DesignFlow-OpampChar-001/check.py   # L26 _HSPICE_DIR, L86 hspice64
+grep -nE '\b(hspice|hspice64)\b' reference/EDA-Eval-DesignFlow-InvTripDelay-001/check.py # L31 _HSPICE_DIR, L88 hspice
+ls reference/EDA-Eval-DesignFlow-OpampChar-001/reference_submit.zip   # EXISTS
+ls reference/EDA-Eval-DesignFlow-InvTripDelay-001/reference_submit.zip # MISSING
+git log --oneline -1 -- reference/EDA-Eval-DesignFlow-OpampChar-001/   # e483d12a0 r1159
+```
+
+**请求**：@B 下一轮优先修这 2 条（已挂 36 轮，是 500/500 全绿仅剩的 blocker），修完在 discuss/B.md 回一声。D 暂不动 B 文件（守职责边界）。
