@@ -1,0 +1,229 @@
+path	category	apparent_bytes	real_bytes	inode_links	tokenized_ref	verdict	reason
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s19.bin	②孤儿.bin	38505026212	38505026212	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s13.bin	②孤儿.bin	38237595752	38237595752	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s11.bin	②孤儿.bin	38232058492	38232058492	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s8.bin	②孤儿.bin	38221743432	38221743432	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s6.bin	②孤儿.bin	38170637460	38170637460	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s7.bin	②孤儿.bin	38145104352	38145104352	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s2.bin	②孤儿.bin	38131540352	38131540352	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s4.bin	②孤儿.bin	38084719952	38084719952	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s24.bin	②孤儿.bin	38058986120	38058986120	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s26.bin	②孤儿.bin	38030263772	38030263772	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s25.bin	②孤儿.bin	38007891264	38007891264	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s31.bin	②孤儿.bin	38006698884	38006698884	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s21.bin	②孤儿.bin	38004571036	38004571036	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s23.bin	②孤儿.bin	38002733880	38002733880	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s14.bin	②孤儿.bin	37925257356	37925257356	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s20.bin	②孤儿.bin	37896944436	37896944436	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s15.bin	②孤儿.bin	37868165620	37868165620	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s5.bin	②孤儿.bin	37817599408	37817599408	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s29.bin	②孤儿.bin	37817141508	37817141508	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s3.bin	②孤儿.bin	37808317388	37808317388	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s17.bin	②孤儿.bin	37778825004	37778825004	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s12.bin	②孤儿.bin	37775350644	37775350644	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s1.bin	②孤儿.bin	37758733120	37758733120	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s27.bin	②孤儿.bin	37702273316	37702273316	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s10.bin	②孤儿.bin	37668169928	37668169928	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s0.bin	②孤儿.bin	37661784384	37661784384	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s18.bin	②孤儿.bin	37659304180	37659304180	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s28.bin	②孤儿.bin	37571278156	37571278156	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s16.bin	②孤儿.bin	37514727496	37514727496	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s9.bin	②孤儿.bin	37490524564	37490524564	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s22.bin	②孤儿.bin	37447429264	37447429264	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_en_train_s30.bin	②孤儿.bin	37321043252	37321043252	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_zh_train_s2.bin	②孤儿.bin	36778779812	36778779812	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_zh_train_s3.bin	②孤儿.bin	33262984920	33262984920	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_zh_train_s0.bin	②孤儿.bin	29402378300	29402378300	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ufw_zh_train_s1.bin	②孤儿.bin	24060084552	24060084552	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/ultrax_aicc_train_s0.bin	②孤儿.bin	21663894504	21663894504	1	N	保留	活跃分词写入中（preprocess_data --output-prefix 命中），.idx 待完成后写出
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s36	①staging_r3暂存	15954	15954	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s38	①staging_r3暂存	15722	15722	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s37	①staging_r3暂存	15470	15470	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s0	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s1	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s10	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s11	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s12	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s13	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s14	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s15	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s16	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s17	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s18	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s19	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s2	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s20	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s21	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s22	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s23	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s24	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s25	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s26	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s27	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s28	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s29	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s3	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s30	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s31	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s4	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s5	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s6	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s7	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s8	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s9	①staging_r3暂存	15368	15368	1	N	可删	纯输入符号链接暂存(46 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s13	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s14	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s15	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s16	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s17	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s18	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s19	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s20	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s21	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s22	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s23	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/l3_s24	①staging_r3暂存	15212	15212	1	N	可删	纯输入符号链接暂存(45 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s21	①staging_r3暂存	13436	13436	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s22	①staging_r3暂存	13436	13436	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s23	①staging_r3暂存	13436	13436	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s3	①staging_r3暂存	13436	13436	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s2	①staging_r3暂存	13392	13392	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s20	①staging_r3暂存	13368	13368	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s10	①staging_r3暂存	13360	13360	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s15	①staging_r3暂存	13360	13360	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s16	①staging_r3暂存	13360	13360	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s17	①staging_r3暂存	13360	13360	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s18	①staging_r3暂存	13360	13360	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s9	①staging_r3暂存	13360	13360	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s0	①staging_r3暂存	13346	13346	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s8	①staging_r3暂存	13346	13346	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s25	①staging_r3暂存	13318	13318	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s19	①staging_r3暂存	13314	13314	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s24	①staging_r3暂存	13306	13306	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s11	①staging_r3暂存	13290	13290	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s1	①staging_r3暂存	13284	13284	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s12	①staging_r3暂存	13284	13284	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s13	①staging_r3暂存	13284	13284	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s26	①staging_r3暂存	13284	13284	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s27	①staging_r3暂存	13284	13284	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s28	①staging_r3暂存	13284	13284	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s4	①staging_r3暂存	13284	13284	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s5	①staging_r3暂存	13284	13284	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s6	①staging_r3暂存	13284	13284	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s7	①staging_r3暂存	13284	13284	1	N	可删	纯输入符号链接暂存(38 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/math_s39	①staging_r3暂存	9316	9316	1	N	可删	纯输入符号链接暂存(29 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s14	①staging_r3暂存	8002	8002	1	N	可删	纯输入符号链接暂存(29 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/staging_r3/code_s29	①staging_r3暂存	7842	7842	1	N	可删	纯输入符号链接暂存(28 symlinks)，已被 full_*/env14 覆盖或不可映射
+/nas_train/app.e0031982/datasets/baize-data/text/env14_fullsource_manifest.tsv.bak	②partial/bak	4884	4884	1	N	可删	分词崩溃/备份残留
+/tmp/tokenize_untokenized_1792903834.log	④/tmp旧日志	509	509	1	N	可删	保留最新3份之外的旧分词日志
+/nas_train/app.e0031982/datasets/baize-data/text/staging_full	③空目录	0	0	1	N	可删	空目录
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2013-20.bin	⑤hardlink重复	59344274896	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2013-48.bin	⑤hardlink重复	61398473204	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2014-10.bin	⑤hardlink重复	63018431972	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2014-15.bin	⑤hardlink重复	57301493084	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2014-23.bin	⑤hardlink重复	67994304728	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2014-35.bin	⑤hardlink重复	62991853148	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2014-41.bin	⑤hardlink重复	64647899448	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2014-42.bin	⑤hardlink重复	59367675068	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2014-49.bin	⑤hardlink重复	50958304508	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2014-52.bin	⑤hardlink重复	62915408396	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2015-06.bin	⑤hardlink重复	56947845336	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2015-11.bin	⑤hardlink重复	58668027016	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2015-14.bin	⑤hardlink重复	54699421152	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2015-18.bin	⑤hardlink重复	63722369868	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2015-22.bin	⑤hardlink重复	62980562688	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2015-27.bin	⑤hardlink重复	56169964736	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2015-32.bin	⑤hardlink重复	58740515844	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2015-35.bin	⑤hardlink重复	65446264540	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2015-40.bin	⑤hardlink重复	52017559344	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2015-48.bin	⑤hardlink重复	63890521976	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2016-07.bin	⑤hardlink重复	63698508948	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2016-18.bin	⑤hardlink重复	54488498880	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2016-22.bin	⑤hardlink重复	59599631212	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2016-26.bin	⑤hardlink重复	50358778304	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2016-30.bin	⑤hardlink重复	67065326936	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2016-36.bin	⑤hardlink重复	67803273108	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2016-40.bin	⑤hardlink重复	72573057412	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2016-44.bin	⑤hardlink重复	86897615368	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2016-50.bin	⑤hardlink重复	86838632804	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-04.bin	⑤hardlink重复	86314402728	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-09.bin	⑤hardlink重复	86908983964	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-13.bin	⑤hardlink重复	97474984444	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-17.bin	⑤hardlink重复	99968072736	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-22.bin	⑤hardlink重复	71636274996	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-26.bin	⑤hardlink重复	77515730176	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-30.bin	⑤hardlink重复	71848290132	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-34.bin	⑤hardlink重复	73023810136	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-39.bin	⑤hardlink重复	70738902352	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-43.bin	⑤hardlink重复	79512527180	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-47.bin	⑤hardlink重复	75205077480	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2017-51.bin	⑤hardlink重复	66900337448	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-05.bin	⑤hardlink重复	80986260576	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-09.bin	⑤hardlink重复	71311116680	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-13.bin	⑤hardlink重复	67180295528	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-17.bin	⑤hardlink重复	63635715904	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-22.bin	⑤hardlink重复	57628899076	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-26.bin	⑤hardlink重复	73163663592	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-30.bin	⑤hardlink重复	73191548244	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-34.bin	⑤hardlink重复	63136824572	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-39.bin	⑤hardlink重复	65637879108	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-43.bin	⑤hardlink重复	72449432448	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-47.bin	⑤hardlink重复	67928321992	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2018-51.bin	⑤hardlink重复	75199815944	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-04.bin	⑤hardlink重复	65895333880	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-09.bin	⑤hardlink重复	74114078476	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-13.bin	⑤hardlink重复	66830455412	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-18.bin	⑤hardlink重复	67763237868	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-22.bin	⑤hardlink重复	66888643460	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-26.bin	⑤hardlink重复	65051084632	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-30.bin	⑤hardlink重复	63244372036	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-35.bin	⑤hardlink重复	73076045928	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-39.bin	⑤hardlink重复	63365164084	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-43.bin	⑤hardlink重复	70112152404	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-47.bin	⑤hardlink重复	65317870188	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2019-51.bin	⑤hardlink重复	60521226260	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2020-05.bin	⑤hardlink重复	81837789936	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2020-10.bin	⑤hardlink重复	62614842208	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2020-16.bin	⑤hardlink重复	76209678800	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2020-24.bin	⑤hardlink重复	65822435860	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2020-29.bin	⑤hardlink重复	83805417048	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2020-34.bin	⑤hardlink重复	65372197324	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2020-40.bin	⑤hardlink重复	89037133316	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2020-45.bin	⑤hardlink重复	71586482460	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2020-50.bin	⑤hardlink重复	71005517588	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2021-04.bin	⑤hardlink重复	92441786832	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2021-10.bin	⑤hardlink重复	77561757120	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2021-17.bin	⑤hardlink重复	95179365944	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2021-21.bin	⑤hardlink重复	77487347768	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2021-25.bin	⑤hardlink重复	70288740400	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2021-31.bin	⑤hardlink重复	97561234200	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2021-39.bin	⑤hardlink重复	89216354416	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2021-43.bin	⑤hardlink重复	101821012668	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2021-49.bin	⑤hardlink重复	70856873772	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2022-05.bin	⑤hardlink重复	89484395944	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2022-21.bin	⑤hardlink重复	109996082408	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2022-27.bin	⑤hardlink重复	101833802992	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2022-33.bin	⑤hardlink重复	75756597900	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2022-40.bin	⑤hardlink重复	104332606668	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2022-49.bin	⑤hardlink重复	111523045732	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2023-06.bin	⑤hardlink重复	112514644664	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2023-14.bin	⑤hardlink重复	113621851012	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2023-23.bin	⑤hardlink重复	49025167172	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2023-40.bin	⑤hardlink重复	141958129068	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2023-50.bin	⑤hardlink重复	147826046684	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2024-10.bin	⑤hardlink重复	130410690988	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2024-18.bin	⑤hardlink重复	117998983528	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2024-22.bin	⑤hardlink重复	113340145196	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2024-26.bin	⑤hardlink重复	113581031448	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2024-30.bin	⑤hardlink重复	107866503116	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2024-33.bin	⑤hardlink重复	94003227072	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2024-38.bin	⑤hardlink重复	119986375540	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2024-42.bin	⑤hardlink重复	103613193056	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2024-46.bin	⑤hardlink重复	117331872188	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2024-51.bin	⑤hardlink重复	89702986996	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2025-05.bin	⑤hardlink重复	143830332660	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2025-08.bin	⑤hardlink重复	121432944528	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2025-13.bin	⑤hardlink重复	129500437272	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2025-18.bin	⑤hardlink重复	135790943672	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2025-21.bin	⑤hardlink重复	123449367716	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）
+/nas_train/app.e0031982/datasets/baize-data/text/env14_CC-MAIN-2025-26.bin	⑤hardlink重复	116453210660	0	2	Y	可删	已 hardlink 进 tokenized/ 镜像，删此名释放0字节（tidy）

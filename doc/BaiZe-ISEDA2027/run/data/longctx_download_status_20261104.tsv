@@ -1,0 +1,11 @@
+repo_id	local_dir	host	note	status	files	bytes	incomplete	gated
+ysngkil/whole-books	/nas_inference/app.e0031982/datasets/ysngkil/whole-books	10.239.2.12	书籍长文（whole-books）	OK	147	27173873250	0	no
+princeton-nlp/prolong-data-512K	/nas_inference/app.e0031982/datasets/princeton-nlp/prolong-data-512K	10.239.2.12	prolong 512K 长上下文训练数据	OK	10062	122387428650	0	no
+openbmb/InfLLM-V2-data-5B	/nas_inference/app.e0031982/datasets/openbmb/InfLLM-V2-data-5B	10.239.2.12	InfLLM-V2 5B 长上下文训练数据	OK	66	16143986199	0	no
+self-long/RULER-llama3-1M	/nas_inference/app.e0031982/datasets/self-long/RULER-llama3-1M	10.239.2.12	RULER 1M 评测/合成 haystack	OK	360	5506516210	0	no
+caskcsg/NExtLong-128K-dataset	/nas_inference/app.e0031982/datasets/caskcsg/NExtLong-128K-dataset	10.239.2.12	NExtLong 128K（原 caskcsg/NExtLong 401 私有，改用公开 128K 变体）	OK	627	22010223770	0	no
+THUDM/LongAlign-10k	/nas_inference/app.e0031982/datasets/THUDM/LongAlign-10k	10.239.2.12	LongAlign 10k 长对齐	OK	9	655080842	0	no
+birgermoell/oellm-longctx-tokenized-natural-128k-256k-pilot-v1	/nas_inference/app.e0031982/datasets/birgermoell/oellm-longctx-tokenized-natural-128k-256k-pilot-v1	10.239.2.12	oellm 长上下文 pilot-v1（已分词 .bin/.idx）	OK	69	3059986934	0	no
+deepmind/pg19	/nas_inference/app.e0031982/datasets/deepmind/pg19	10.239.2.12	PG-19 古登堡长文（仅加载脚本+文件清单，无 parquet 数据体）	OK	18	494680	0	no
+ghostcc3/mix-context-post-training-128k	/nas_inference/app.e0031982/datasets/ghostcc3/mix-context-post-training-128k	10.239.2.12	mix-context 128k 后训练	OK	690	34848792554	0	no
+yuyijiong/LongData-Corpus	/nas_inference/app.e0031982/datasets/yuyijiong/LongData-Corpus	10.239.2.29	LongData-Corpus（gated，用户 token 授权，.29）	OK	235	36070795362	0	yes

@@ -1,0 +1,12 @@
+# Decay 配比（用户 2026-10-26 构想 §②）
+# 列：key <TAB> tokenized 子目录（相对 TOK_ROOT） <TAB> prop <TAB> 目标 epochs
+#
+# ⚠️ 阻塞项：sft_2605 / sft_agent_2609 在 DATA_MAPPING.md 中状态为「未分词」（0 shard），
+#    tokenized 镜像内没有对应 .bin/.idx ⇒ gen_blend.py 会报错退出（这是有意的硬门禁）。
+#    data 线完成分词并 rebuild 镜像后，本文件不需要改，直接可跑。
+ufw_en_l3_qa	Ultra-FineWeb-L3/ultrafineweb_en_l3/qa	0.18	-
+ufw_zh	Ultra-FineWeb/ultrafineweb_zh	0.04	-
+math_l3	UltraData-Math/UltraData-Math-L3	0.04	-
+code_l3	UltraData-Code/UltraData-Code-L3	0.02	-
+sft_2605	UltraData-SFT-2605	0.60	-
+sft_agent_2609	UltraData-SFT-Agent-2609	0.12	-

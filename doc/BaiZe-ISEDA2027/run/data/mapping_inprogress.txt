@@ -1,0 +1,2 @@
+# mapping_inprogress.txt — done=131/131 @ 2026-10-26 09:43, mirror rebuilt (815 shards). No dirs in progress.
+# 由 gen_data_mapping_md.py 读取：在此列表中的下载目录 ⇒ A 节状态 = 分词中。当前为空 ⇒ 全部镜像完整。

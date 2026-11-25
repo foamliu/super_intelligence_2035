@@ -1,0 +1,5 @@
+下载目录(绝对)	parquet 数	字节	目标前缀
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_en	2048	2661358397268	ufw_en_train_s
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_l1_en_hq	6000	477975290461	ufw_l1_en_hq_train_s
+/nas_train/app.e0031982/datasets/openbmb/Ultra-FineWeb/data/ultrafineweb_zh	256	324321522155	ufw_zh_train_s
+/nas_train/app.e0031982/datasets/openbmb/UltraX-Preview/data/UltraX-AICC	61	68553927738	ultrax_aicc_train_s

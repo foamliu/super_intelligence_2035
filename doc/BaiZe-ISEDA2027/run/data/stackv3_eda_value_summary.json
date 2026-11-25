@@ -1,0 +1,127 @@
+{
+  "phase_b": {
+    "n_sample_shards": 100,
+    "seed": 42,
+    "per_class_n": 400,
+    "scan_time_s": 1286.0,
+    "category_stats": {
+      "Tcl": {
+        "pool_size": 2000,
+        "sampled": 400,
+        "eda_hits": 157,
+        "eda_rate": 39.2,
+        "v1": 8,
+        "v2": 149,
+        "v3": 243,
+        "v1_bytes": 350067,
+        "v2_bytes": 2668197,
+        "script_rate": 100.0,
+        "ci95": 4.9
+      },
+      "SKILL": {
+        "pool_size": 0,
+        "sampled": 0,
+        "eda_hits": 0,
+        "v1": 0,
+        "v2": 0,
+        "v3": 0,
+        "v1_bytes": 0,
+        "v2_bytes": 0,
+        "script_rate": 0,
+        "ci95": 0
+      },
+      "Python-EDA": {
+        "pool_size": 2000,
+        "sampled": 400,
+        "eda_hits": 0,
+        "eda_rate": 0.0,
+        "v1": 0,
+        "v2": 0,
+        "v3": 400,
+        "v1_bytes": 0,
+        "v2_bytes": 0,
+        "script_rate": 100.0,
+        "ci95": 4.9
+      },
+      "Perl": {
+        "pool_size": 2000,
+        "sampled": 400,
+        "eda_hits": 8,
+        "eda_rate": 2.0,
+        "v1": 8,
+        "v2": 0,
+        "v3": 392,
+        "v1_bytes": 474536,
+        "v2_bytes": 0,
+        "script_rate": 91.8,
+        "ci95": 4.9
+      },
+      "SVRF": {
+        "pool_size": 2000,
+        "sampled": 400,
+        "eda_hits": 2,
+        "eda_rate": 0.5,
+        "v1": 2,
+        "v2": 0,
+        "v3": 398,
+        "v1_bytes": 6665,
+        "v2_bytes": 0,
+        "script_rate": 21.0,
+        "ci95": 4.9
+      },
+      "SPICE": {
+        "pool_size": 2000,
+        "sampled": 400,
+        "eda_hits": 0,
+        "eda_rate": 0.0,
+        "v1": 0,
+        "v2": 0,
+        "v3": 400,
+        "v1_bytes": 0,
+        "v2_bytes": 0,
+        "script_rate": 33.0,
+        "ci95": 4.9
+      },
+      "Makeflow": {
+        "pool_size": 2000,
+        "sampled": 400,
+        "eda_hits": 0,
+        "eda_rate": 0.0,
+        "v1": 0,
+        "v2": 0,
+        "v3": 400,
+        "v1_bytes": 0,
+        "v2_bytes": 0,
+        "script_rate": 98.8,
+        "ci95": 4.9
+      },
+      "Verilog-SV": {
+        "pool_size": 2000,
+        "sampled": 400,
+        "eda_hits": 0,
+        "eda_rate": 0.0,
+        "v1": 0,
+        "v2": 0,
+        "v3": 400,
+        "v1_bytes": 0,
+        "v2_bytes": 0,
+        "script_rate": 94.0,
+        "ci95": 4.9
+      },
+      "EDA-path-kw": {
+        "pool_size": 2000,
+        "sampled": 400,
+        "eda_hits": 0,
+        "eda_rate": 0.0,
+        "v1": 0,
+        "v2": 0,
+        "v3": 400,
+        "v1_bytes": 0,
+        "v2_bytes": 0,
+        "script_rate": 39.0,
+        "ci95": 4.9
+      }
+    }
+  },
+  "sample_tsv": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/data/stackv3_eda_sample.tsv"
+}

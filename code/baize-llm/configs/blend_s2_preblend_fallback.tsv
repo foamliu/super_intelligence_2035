@@ -1,0 +1,33 @@
+# S2 配比（2026-11-18 定稿 · 4:4:2 = web:code:math · fallback 版）
+# 列：key <TAB> tokenized 子目录（绝对路径） <TAB> prop <TAB> 预估 epoch（S1+S2 累计 / 可用量）
+# prop 之和 = 1.000；类别校验：web=0.40, code=0.40, math=0.20
+#
+# 说明：
+# - 这是 fallback 版本（MegaMath-web Batch2 尚在下载中，ETA ~19h；Nemotron-CC-Math 分词中 10/193）
+# - MegaMath Batch1 实测 64.97B tokens（4 子集：web-pro 12.8B + text-code-block 40.5B + qa 5.9B + translated-code 5.8B）
+# - megamath-code 因 schema 无 text 列无法分词，0 tokens，未纳入
+# - finemath-4plus 已分词完成（64 shard / 9.4B tok），prop=0.005（epoch=0.78，新源零重叠）
+# - Nemotron-CC-Math (243GB/193parquet) 后台分词中（ETA ~40h），完成后将更新为 main 方案
+# - stack-v3-train 使用全量 8192 shard (476B tokens)，L4 过滤为文档级（90.5% 保留），.bin 未裁剪
+# - math 类别 megamath 单源 epoch 1.69 >1.2：首训新数据，过拟合风险低于重复数据
+#   → Nemotron-CC-Math 分词完成后将下调 megamath prop，epoch 降至 <1.0
+#
+# ═══════════════════════════════════════════════════════════
+# Web (0.40)
+# ═══════════════════════════════════════════════════════════
+en_v1_4	/nas_user/app.e0031982/datasets/pre-blend/en_v1_4	0.35	0.66
+ufw_l1_en_hq	/nas_user/app.e0031982/datasets/pre-blend/ufw_l1_en_hq	0.03	0.78
+ufw_zh	/nas_train/app.e0031982/datasets/baize-data/tokenized/Ultra-FineWeb/ultrafineweb_zh	0.02	0.78
+# ═══════════════════════════════════════════════════════════
+# Code (0.40)
+# ═══════════════════════════════════════════════════════════
+code_l2	/nas_user/app.e0031982/datasets/pre-blend/code_l2	0.18	1.15
+code_l3	/nas_user/app.e0031982/datasets/pre-blend/code_l3	0.05	1.03
+stackv3_filt	/nas_user/app.e0031982/datasets/baize-data/tokenized/HuggingFaceCode/stack-v3-train	0.17	0.58
+# ═══════════════════════════════════════════════════════════
+# Math (0.20)
+# ═══════════════════════════════════════════════════════════
+math_l1	/nas_user/app.e0031982/datasets/pre-blend/math_l1	0.08	1.16
+math_l3	/nas_user/app.e0031982/datasets/pre-blend/math_l3	0.04	1.13
+megamath	/nas_user/app.e0031982/datasets/pre-blend/megamath	0.075	1.69
+finemath	/nas_user/app.e0031982/datasets/baize-data/tokenized/HuggingFaceTB/finemath-4plus	0.005	0.78
