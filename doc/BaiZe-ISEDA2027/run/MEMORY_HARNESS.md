@@ -104,16 +104,16 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·doubao-pro 7way predict 进行中(2760/3500=78.9%)·MM已停(令D)
-已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way LIVE✅**(7路全RUN)·**deepseek-harness SDK修复✅**·**MM已KILL✅**(令D·pkill run_mm_2x3.py+mm_proxy·MM数据保留不删)·**claude-code predict重启✅**(19:24 git-fetch blocked 158题→00:25重启resume pending=162)
-当前动作:     doubao-pro 7way predict 7/7路全RUN(cc342+rerun/cline393/opencode410/pi388/codex361/hermes395/dsh498=2787/3500=79.6%)·token 0.65B(39637 calls·in=633.7M+out=12.2M·from gw_proxy sidecar)·MM已停(令D)·claude-code rerun PID2440121 pending=162(00:34 setsid启动·log=claude-code_doubao_pro_rerun2.log·resume跳过338已完成·首题patch-produced✅)·guard PID931671 LIVE(465665s≈5.4d)
-下一步:     ①doubao-pro 7way predict完成(ETA~04:00 Nov26·dsh近完7remaining·codex最慢145remaining)→eval+报告 ②⚠️dsh垃圾patch需eval前过滤或标注(14个>1MB git diff venv) ③eval用incremental_eval_merge.py --route <h> · ④7way报告REGEN
-阻塞:         无（MM已停·dsh近完成·claude-code rerun已启动）
+PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·doubao-pro 7way predict 进行中(2854/3500=81.5%)·dsh COMPLETE·MM已停(令D)
+已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way LIVE✅**·**deepseek-harness SDK修复✅**·**MM已KILL✅**(令D)·**claude-code predict重启✅**·**dsh predict COMPLETE✅**(499/500)
+当前动作:     doubao-pro 7way predict 5路active+CC rerun(dsh COMPLETE)·cline404/codex374/opencode416/pi398/hermes408/cc355+reren/dsh499=2854/3500=81.5%·token 0.69B(41845 calls·in=676.6M+out=12.9M)·CC rerun PID2440121(00:34 setsid·log=rerun2.log·resume 162 pending·patch-producing正常)·guard PID931671 LIVE(466854s≈5.4d)·gw_proxy 3进程LIVE(9090/9091/9092)
+下一步:     ①等5路+CC rerun完成(ETA~05:00·codex最慢126remaining) ②⚠️dsh 29个垃圾patch(>1MB venv diff)eval前过滤→set model_patch=""  ③eval用incremental_eval_merge.py --route <h> --regen ④7way报告REGEN
+阻塞:         无（dsh已完成·CC rerun进行中·5路active全健康）
 ERROR_COUNT:  0
- 体积: TASK~31.7KB / MEMORY≈15.5KB
+ 体积: TASK~31.7KB / MEMORY≈16.0KB
 
   SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
-  SWE-bench Verified doubao-pro predict: 2787/3500=79.6% (cc342/cline393/opencode410/pi388/codex361/hermes395/dsh498)
+  SWE-bench Verified doubao-pro predict: 2854/3500=81.5% (cline404/codex374/opencode416/pi398/hermes408/cc355/dsh499)
   SWE-bench Multimodal: **已停(令D 2026-11-25)**·MM数据保留不删
  真实 Pass% (TB-2.1, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
 
@@ -134,6 +134,9 @@ ERROR_COUNT:  0
 > #H-007（2026-11-25 13:28, 监控巡检·doubao-pro 7way predict 7/7路全RUN健康·817/3500=23.3%·cc151/cline112/opencode120/pi105/codex103/hermes106/dsh120·所有7路newest file age<110s=全活跃·token 1.22B(76457 calls·in=1199.8M+out=24.3M·from prediction JSON usage field)·gw_proxy 3进程LIVE(9090/9091/9092)·429 counts: 9090=58/9091=1/9092=26(proxy handles with retries·0.75% rate)·⚠️ConnectionResetError on 9090/9091 tails(predictions still progressing)·guard PID931671 LIVE(425296s≈4.9d)·SDK持久化✅·⚠️dsh 14个>1MB垃圾patch(11MB each·all django·git diff venv目录)需eval前过滤·MM 2×3 LIVE(169/2880=5.9%·⚠️kimi-k2.6 routes very slow)·pretrain iter319060 step7.32s≤7.4s✅·资源OK(load31.65/224·mem676G/2015G)·下一步:继续monitor 7way+MM→7way完成→eval+报告)
 
 > #H-008（2026-11-26 00:37, **令D执行+claude-code重启**·**MM已KILL✅**(pkill run_mm_2x3.py+mm_proxy·令D执行·MM数据保留不删)·**claude-code predict重启✅**(19:24 git-fetch blocked 158题→00:34 setsid重启resume pending=162·PID2440121·log=claude-code_doubao_pro_rerun2.log·resume跳过338已完成题·首题patch-produced 534B✅·⚠️前两次nohup尝试被tool shell退出kill·setsid存活)·doubao-pro 7way predict 7/7路全RUN健康·2787/3500=79.6%·cc342/cline393/opencode410/pi388/codex361/hermes395/dsh498·dsh近完成(2remaining)·token 0.65B(39637 calls·in=633.7M+out=12.2M·from gw_proxy sidecar)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(465665s≈5.4d)·资源OK(load26/224·0 high-CPU)·pretrain step7.29s≤7.4s✅·下一步:继续monitor 7way predict→完成(ETA~04:00)→eval+报告→dsh垃圾patch过滤)
+
+> #H-009（2026-11-26 01:00, 监控巡检·**dsh predict COMPLETE✅**(499/500·299 legit+29 garbage+171 empty·无运行进程)·doubao-pro 7way predict 5路active+CC rerun·2854/3500=81.5%·cline404(93rem)/codex374(126rem·最慢)/opencode416(83rem)/pi398(100rem)/hermes408(91rem)·CC rerun PID2440121(355 files increasing·log=rerun2.log·patch-producing正常·~145 remaining of 162)·⚠️dsh 29个垃圾patch(>1MB=venv git diff·django×27+matplotlib×1+sphinx×1·最大21MB django-17087)需eval前过滤→set model_patch=""·token 0.69B(41845 calls·in=676.6M+out=12.9M)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(466854s≈5.4d)·资源OK(load24.45/224=10.9%·mem670G/2015G avail1114G·0 high-CPU)·pretrain step7.29-7.39s≤7.4s✅·所有5路active newest file age<120s=全活跃·MM已停(令D·数据保留)·下一步:①继续monitor 5路+CC rerun→完成(ETA~05:00 codex bottleneck) ②dsh垃圾patch过滤 ③eval incremental_eval_merge.py --route <h> ④7way报告REGEN)
+
 
 ## 启动说明（首次唤醒）
 
