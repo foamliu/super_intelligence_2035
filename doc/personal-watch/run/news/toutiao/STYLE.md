@@ -1,5 +1,11 @@
+> 📌 索引：**§A.50 = 2026-11-26 07:0x（第 354 轮 · **量子位全篇图右下角带「公众号·量子位」水印 / IT之家图带站标 ⇒ 发布前逐张目视右下角 / 他人帖逐字 `dispatchKeyEvent` 本轮成功落字并可提交**）**
 > 📌 索引：**§A.49 = 2026-11-24 15:5x（第 347 轮 · **`common.py` 带着上一轮 `IMG` 常量 ⇒ 两次传错图 / 删图正解 = 点图选中后点 `.ttcore-remove-blot` / `setFileInputFiles` 只对 `ids[0]` / 首勾会把默认「头条首发」点掉**）**
 > 📌 索引：**§A.48 = 2026-11-24 13:0x（第 346 轮 · 插图必须先点 `.syl-toolbar-tool.image` / `input[type=file]` 有 2 个会上传 2 份 / `ttcore-remove-blot` 删多余图 / `.pgc-img` 与 `.pgc-img-wrapper` 并存 / Python 里没有 `t.indexOf`）**
+## §A.50 第 354 轮实测（2026-11-26 07:0x · 2 条 · **配图水印逐张目视 / 他人帖逐字键入评论已可落地**）
+
+1. 🖼 **配图水印必须逐张目视「右下角」**：量子位（`i.qbitai.com`）整篇图右下角都压着「公众号·量子位」水印；IT之家部分现场图带「IT之家 www.ithome.com」站标。两类都触禁令 11（不搬带水印独家图）⇒ 本轮量子位 `512727` 三张候选、IT之家 `1/032/499` 均弃用，改用无站标的 IT之家 `1/032/466`（特斯拉车内 FSD 实景）。⚠️ `?x-bce-process=image/format,f_auto` 只是**格式参数**，不等于水印，可放心用；判据以「图内肉眼可见的标识」为准。下载后 `read` 图片目视再定稿。
+2. 💬 **他人帖逐字键入评论本轮成功**（破前几轮「他人帖 textarea 不落字」）：先真实点击 `.comment-textarea`（`contenteditable` DIV）给焦点 → 逐字 `Input.dispatchKeyEvent {type:keyDown,text:ch}` + `keyUp`（每字 ~0.03s）→ 回读 `ST1 {len:33, cls:'submit-btn'}`（`submit-btn` 无 `disable`）→ 真实点击提交 → `AFTER {cmt:'评论 11'→'评论 12', mine:true}`。判据仍以**评论计数 +1** 为准；`mine:true` 在他人帖成立即证明是本人发出的新评论。
+
 ## §A.49 第 347 轮实测（2026-11-24 15:5x · 5 条 · **传错图 / 删图 / 文件输入 / 声明回勾 / 发布后再验**）
 
 1. 🖼 **每轮先核对 `IMG`**：把上一轮 `/tmp/rNNN/common.py` 整份拷到新目录时，里面的 `IMG = …/imgs/<上一轮文件>` 会一起带过来 ⇒ 本轮连续两次把**上一轮的模型基准表**上传成本轮配图（`PANEL_IMGS` 回显 `nw:1080,nh:1059` 才发现）。规矩：**复制后立刻 `grep '^IMG' common.py` 并 `python3 -c "import common;print(common.IMG)"`**；上传后**先读面板回显的 `nw×nh`**，与本地图 `struct.unpack('>II')` 尺寸一致再点「确定」；发布前必看 `img_done` 截图。
