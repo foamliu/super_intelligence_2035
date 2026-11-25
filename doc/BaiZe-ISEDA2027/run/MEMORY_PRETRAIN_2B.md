@@ -1,3 +1,8 @@
+⚠️ 待运维处理：step time 持续 >7.4s（7.64→7.98→7.44s，3 连续步），根因=harness SWE-bench CPU 争抢（.29 上 5+ opencode/bun 进程 ~500% CPU + kcompactd 58%），NOT eval-caused（daemon idle）。320k eval DONE harness_avg=54.62%。详见 #3379。WAITING=1。
+
+> #3379（2026-11-25 16:40, ⚠️step time 异常+320k eval DONE·320k harness_avg=54.62%(arc_c31/arc_e64/boolq41/hella51/obqa33/piqa78/sciq80/wino59)·autoqueue令持续履行(52/52ckpt 10k-320k✅)·daemon idle等322k(lands~19:20)·报告40882B(52/52ckpt)·⚠️step time持续>7.4s:320680=7.64s→320690=7.98s→320700=7.44s(3连续步)·根因=harness SWE-bench CPU争抢(.29上5+opencode/bun进程~500%CPU:opencode PrismJS 143%+django test 93%+mocha 57%+opencode 38.6%+npm 37.7%+kcompactd0/1 58%)+NOT eval-caused(daemon idle无llama-server)·训练iter=320700/700000(45.81%) loss=1.988 0NaN/0skip✅·lr=1e-3·grad norm=0.105✅·train.sh PID2547367✅(5d2h+)·GPU 8×94-100%✅·load .29=24.20/26.57/28.09(1min<15min,趋势下降但step仍高)·per11-20令:step偏离~7s→⚠️待运维处理+WAITING=1·per11-21令:eval通道无异常(320k已DONE)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter=320700@16:39:48) daemon=/tmp/baize_l1_autoqueue_continuous.log(320000 DONE@16:35:24,idle@16:35:55) ckpt=.../checkpoints/iter_0320000 results=.../lm_eval_results/gguf_iter_320000_fixed_8set/results.json(25998B) report=.../reports/report_pretrain_llamacpp_scaling_zh.html(40882B,52/52ckpt)·复现=bash code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh·体积MEMORY≈31.5KB<32KB✅ TASK≈30.6KB<32KB✅）→ daily-memories/2026-11-25.md
+
+
 > #3378（2026-11-25 16:32, 监控巡检·320k eval RUNNING(~75min,daemon auto-pick lm_eval[5/6])·autoqueue令持续履行(51/51ckpt 10k-318k✅,320k IN PROGRESS)·训练iter=320630/700000(45.81%) step_avg(recent20)=7197ms(7.20s,0/20>7.4s✅)·pre-eval step_avg=7220ms·Δ=-0.02s NOT elevated✅·loss=1.986 0NaN/0skip✅·lr=1e-3·grad norm=0.087-0.116✅(单点spike 0.712@320470→0.113已恢复,非异常)·train.sh PID2547367✅(5d2h+)·daemon(PID1081392)active eval 320k·llama-server(PID1895549 -t4 nice19,~4500s)✅·lm_eval(PID1907861,~4500s)✅·GPU 8×95-100%✅·load .29=29.13/29.24/29.21·320k eval started 15:17:02(ETA~16:32)·318k harness_avg=56.25%·报告40400B(51/51ckpt,待320k完成后daemon自动刷新)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter=320630@16:31:04) daemon=/tmp/baize_l1_autoqueue_continuous.log([5/6]@15:17:02) ckpt=.../checkpoints/iter_0320000 results=.../lm_eval_results/gguf_iter_320000_fixed_8set(pending)·复现=bash code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh·per11-20令step正常✅ per11-21令WAITING=0·体积MEMORY≈30.5KB<32KB✅ TASK≈30.6KB<32KB✅）→ daily-memories/2026-11-25.md
 
 
@@ -159,7 +164,7 @@
 > 📦 §#2990–#3034（已归档，含 #3030 286k eval DONE·#3029-#2990 286k/284k/282k eval RUNNING监控轮）→ daily-memories/2026-11-22.md；需要时再读。
 > 📦 §#2900–#2989及更早（已归档，含 #2977-#2989 监控轮 + #2900–#2976 监控轮 + #2778–#2919 监控轮 + #1992及更早批次）→ daily-memories/2026-11-2{0,1,2}.md & ARCHIVE_OPERATOR_PRETRAIN.md；需要时再读。
 
-WAITING: 0
+WAITING: 1
 
 ---
 
