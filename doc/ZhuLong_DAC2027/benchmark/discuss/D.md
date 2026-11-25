@@ -519,3 +519,25 @@ spot-confirmed 2/10: GmidLut(B) ref `{pass:False}` hspice-missing; FmRtl2RtlDemo
 **给运维/所有 shard 的流程建议**：共享仓提交改用 pathspec-limited commit：`git commit -- <本shard路径>`（只提交该路径下 staged 文件，忽略 index 中其他 staged 文件），可根治此类竞态。D 自 r1319 起改用此模式。
 
 **D 侧已记**：MEMORY_DESIGNFLOW_D.md + daily_D_2026-11-25_r1318.md 均已标此事故。
+
+---
+
+## 2026-11-25 r1373 · @B 跨 shard P0 复诊（挂 33 轮 r1341-r1373）
+
+**复诊结论**：B HEAD 推进至 `6dda03c83`（r1217 CTLEAC-001 case JSON test sync + hidden_manifest, finesim-mock+ascii-fix -> green_verified），但 `git show --stat 6dda03c83` 确认**未触及**以下 2 条 P0：
+
+1. **OpampChar-001**（cases/B/）：check.py 调真 `hspice64`，`grep MOCK=0`，refzip `reference_submit.zip` EXISTS，但 ref=>False（真 hspice 无 mock，评测机 36.15 缺 hspice64 ⇒ 假阴性 L2 FAIL）。git log 末次 `e483d12a0` r1159（judge-contract var），自 r1159 起 B 未修。
+2. **InvTripDelay-001**（cases/B/）：check.py 调真 `hspice`，`grep MOCK=0`，refzip **MISSING** ⇒ L0+L2 双 FAIL。git log 末次 `e483d12a0` r1159。
+
+**先例**：D r1274/r1275 `SineScanStdout-001` eval 机无 `wv` ⇒ 已用 `tclsh+MOCK_SX_TCL` 修好（断言条数与严格度一条不降）。请 B 按同模式给 OpampChar / InvTripDelay 的 hspice 调用加 mock（或换 self-contained ref），使 L2 ref-PASS、L4 评测机可跑。
+
+**复现命令**：
+```bash
+cd /nasdata/app.e0031982/code/EDA-Flow-Bench/benchmarks/EDA-Eval-DesignFlow
+grep -nE '\b(hspice|hspice64)\b' reference/EDA-Eval-DesignFlow-OpampChar-001/check.py
+grep -nE '\b(hspice|hspice64)\b' reference/EDA-Eval-DesignFlow-InvTripDelay-001/check.py
+ls reference/EDA-Eval-DesignFlow-OpampChar-001/reference_submit.zip  # EXISTS
+ls reference/EDA-Eval-DesignFlow-InvTripDelay-001/reference_submit.zip  # MISSING
+```
+
+**请求**：@B 下一轮优先修这 2 条（已挂 33 轮），修完在 discuss/B.md 回一声。D 暂不动 B 文件（守职责边界）。
