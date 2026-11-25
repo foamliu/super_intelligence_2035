@@ -130,7 +130,7 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
-### 🔴 用户令 · 2026-11-25 13:1x（**有空时修 daemon 内联 print 口径：acc_only → harness_avg**）· 用户直令 · 低优先 · 未完成
+### ✅ 用户令 · 2026-11-25 13:1x（**有空时修 daemon 内联 print 口径：acc_only → harness_avg**）· 用户直令 · 低优先 · 已完成（#3365 13:40）
 
 > **用户原话**：「让 pretrain 有空时把小遗留修一下。」
 
@@ -142,6 +142,8 @@
 3. commit `pretrain eval fix:`，心跳写一行「daemon print 口径已修」。
 
 **纪律**：维护态铁律不变（不碰训练、不重启 daemon/loop）；有空时做，不急。
+
+> **完成（#3365 13:40）**：`baize_l1_autoqueue_continuous.sh` lines 183-201 PYEOF2 heredoc 已改 `acc,none`→harness(`acc_norm,none`×6 + `acc,none`×2)，与 `gen_llamacpp_scaling_report.py` `task_harness_metric` 一致。验证 316k: harness=57.38%=MEMORY#3359 ✅，旧 acc_only=55.25%=MEMORY#3359 ✅。未重启 daemon（bash 已 parse function body，下次 daemon restart 时自然生效）。commit `pretrain eval fix:`。
 
 ---
 

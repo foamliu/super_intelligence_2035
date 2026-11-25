@@ -182,11 +182,23 @@ PYEOF
       echo "$(ts) [done] results.json" | tee -a "$LOG"
       "$PY" - "$out/results.json" <<'PYEOF2' 2>&1 | tee -a "$LOG"
 import sys, json
-d = json.load(open(sys.argv[1])); r = d.get("results", {}); accs = []
+d = json.load(open(sys.argv[1])); r = d.get("results", {})
+NORM = {"arc_challenge","arc_easy","hellaswag","openbookqa","piqa","sciq"}
+harness_vals = []
 for k in ["arc_challenge","arc_easy","boolq","hellaswag","openbookqa","piqa","sciq","winogrande"]:
-    v = r.get(k, {}); a = v.get("acc,none")
-    if a is not None: accs.append(a); print(f"  {k}: acc={a:.4f}")
-if accs: print(f"  AVG acc={sum(accs)/len(accs):.4f}")
+    v = r.get(k, {})
+    if k in NORM:
+        a = v.get("acc_norm,none")
+        if a is None: a = v.get("acc,none")
+        metric = "acc_norm"
+    else:
+        a = v.get("acc,none")
+        metric = "acc"
+    if a is not None:
+        harness_vals.append(a)
+        print(f"  {k}: {metric}={a:.4f}")
+if harness_vals:
+    print(f"  AVG harness={sum(harness_vals)/len(harness_vals):.4f}")
 PYEOF2
     else
       echo "$(ts) [FAIL] no results.json" | tee -a "$LOG"; return 1
