@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文观察日报 · 2026-11-26（03:00 时窗 · A 轨 5/5 · B 轨第一百一十五轮 → 413 · 作者网 380） · research 线</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         color:var(--text); background:var(--bg); line-height:1.75; font-size:15px; }
+  .wrap { max-width:920px; margin:0 auto; padding:32px 20px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px;
+                padding:28px 30px; margin-bottom:20px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:23px; }
+  header.hero .sub { font-size:14px; opacity:.95; }
+  header.hero .meta { margin-top:12px; font-size:13px; opacity:.9; }
+  .note { background:#fff8ef; border:1px solid #f0d9b5; border-left:4px solid #9a6700; border-radius:8px;
+          padding:10px 16px; font-size:13px; color:#6a4a00; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 22px; margin-bottom:18px; }
+  .card h2 { margin:0 0 10px; font-size:18px; color:var(--primary); line-height:1.5; }
+  .kv { width:100%; border-collapse:collapse; font-size:14px; margin-top:8px; }
+  .kv th, .kv td { border-top:1px solid var(--border); padding:7px 8px; text-align:left; vertical-align:top; }
+  .kv th { width:110px; color:var(--muted); font-weight:600; background:#fafbfc; }
+  h3.sec { font-size:17px; color:var(--primary); margin:28px 0 10px; }
+  table.plain { width:100%; border-collapse:collapse; font-size:14px; background:var(--card); }
+  table.plain th, table.plain td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+  table.plain th { background:#eef3f8; color:var(--primary); }
+  a { color:var(--accent); word-break:break-all; }
+  code { background:#f2f4f7; border-radius:4px; padding:1px 5px; font-size:13px; }
+  footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  ul.tight li { margin:4px 0; }
+  details.news-ready { margin-top:10px; background:#eef8f0; border:1px solid #b7e0c0; border-radius:8px; padding:8px 14px; }
+  details.news-ready summary { cursor:pointer; font-weight:600; color:#116329; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>论文观察日报 · 2026-11-26</h1>
+  <div class="sub"><b>03:00 时窗 · A 轨 5/5（今日首窗收满）· B 轨第一百一十五轮 +3 → 413 · 作者网 380（X 151）· 发信累计 173 封 · 回信率 0/173</b></div>
+  <div class="sub" style="margin-top:6px;">生成时间：<b>2026-11-26 03:1x CST</b> ｜ 双轨制：A 轨（最新论文 50%）/ B 轨（经典论文 50%） ｜ 数据源 arXiv + OpenAlex</div>
+  <div class="meta">⚠️ 免责：<b>推荐 = 待读线索，非结论</b>。所有数字均为论文作者自报，本线未复现；引用请以原文为准。</div>
+</header>
+
+<div class="note">
+  <b>A 轨口径（03:00 时窗 · 今日首窗）</b>：<code>cat:cs.CL&amp;max_results=25&amp;sortBy=submittedDate</code>（<code>--noproxy '*'</code>）<b><code>HTTP 200</code> + <code>application/atom+xml</code></b>（<b>61,711 B / 25 entry</b>），<code>published</code> 上界 <b><code>2026-11-24T18:59:08Z</code></b>；距本窗（2026-11-25 19:00 UTC）约 <b>24.0h &lt; 72h</b> ⇒ 公告批在 §0.1 窗内。今日 0/5 ⇒ 本窗收 <b>5 篇</b> 收口 <b>5/5</b>。五篇在 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>PAPERS.md</code> 查重均 <b>0 命中</b>；abs 页 <b>5/5 <code>200</code></b>（41,573 / 43,958 / 42,138 / 41,949 / 43,136 B，<code>citation_title</code> 逐字）。
+</div>
+
+<h3 class="sec">A 轨 · 今日推荐（5 / 5）</h3>
+
+<div class="card">
+  <h2>1 · AIChipBench: Benchmarking LLM Agents for Automated AI Accelerator Design</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.33093">AIChipBench: Benchmarking LLM Agents for Automated AI Accelerator Design</a></td></tr>
+    <tr><th>中文一句话</th><td>让 LLM coding agent 写「带跨步状态」的量化解码器 RTL（Qwen3.5 / Gemma 3 / Gemma 4 / Llama 3.2），9,136 次尝试说明难点在<b>存储状态</b>：指向首个状态不一致的反馈比只看输出把接受率提高 25.0–46.9 个百分点、agent-hours 减半，而已通过公开测试的设计有 45/69 在新序列与新条件下 32 步内失败。</td></tr>
+    <tr><th>作者 / 机构</th><td>Guangyuan Wang · Chengran Li · Minchen Luo · Jichen Feng · Mengdi Wang · Yifan Zhang（摘要区未列机构；Mengdi Wang 为 Princeton 教授）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-24（arXiv v1；<code>published=2026-11-24T18:28:41Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.CL</code> ｜ 🏷 <b>借鉴</b>（harness 评测 / designflow 造题与判分 / data 代码语料）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.33093">arXiv:2611.33093</a></td></tr>
+    <tr><th>推荐理由</th><td>与我们「LLM 写 RTL / 设计流程」最贴近的一手基准。它把「输出对、状态错」说成硬件 agent 的核心失败模式：解码器在步与步之间携带状态，错误的状态更新可以不改当前 token、却污染几步后的输出，于是设计能过输出测试仍是错的。可落地两条：① <b>反馈粒度</b>——「先指出首个状态不一致」的反馈在所有 12 个 agent–task 组合里都优于只给输出，接受率 +25.0~46.9 pp、每接受设计 agent-hours 减半；② <b>评测口径</b>——必须用远超开发用例的最终测试（held-out token 序列、reset、memory stall、综合），否则 45/69 的「通过」是假通过。另设有「在近似固定面积下加速正确设计」第二赛道，>1/3 加速尝试无果。⚠️ 作者自报、本线未复现；两处 2026 年代的模型代号按其原文照抄。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>2 · ShellBench: What Matters More for AI Agents, Models, or Harness for Everyday Tasks</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.32946">ShellBench: What Matters More for AI Agents, Models, or Harness for Everyday Tasks</a></td></tr>
+    <tr><th>中文一句话</th><td>用 100 个来自 &gt;1,000 万真实请求的日常任务（杂乱工作区、竞争数据源、正确性 + 安全性双评分），跑 12 模型 × 5 harness × 3 推理档 = 53,100 次 rollout：模型选择的影响大于 harness，但前三名模型只差 1.1 个百分点；五个 harness 的 pass@1 仅在 42.9–45.2 之间。</td></tr>
+    <tr><th>作者 / 机构</th><td>Vincent Koc · Aditya Washikar · Rishab Naveen Venkataraman（等 22 位；摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-24（arXiv v1；<code>published=2026-11-24T16:48:06Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.AI</code> ｜ 🏷 <b>借鉴</b>（harness 选型与评测）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.32946">arXiv:2611.32946</a></td></tr>
+    <tr><th>推荐理由</th><td>直接回答我们 harness 线的核心问题——「换 harness 到底值不值」。结论对我们不利但重要：在本基准上 harness 对性能与安全都影响很小（pass@1 42.9 Claude Code → 45.2 OpenClaw），模型才是主要变量；而成本差异巨大，GPT-6.1 Sol 以约 1/6 的估计 token 成本拿到 61.4%，GPT-6 Astra 以 62.5% 领跑。可落地的验收规则：① 选 harness 先用固定模型做「harness-only」消融，别把模型升级的功劳记到 harness 上；② 报分必须同时报<b>每次尝试 token 成本</b>与安全分，否则 1.1 pp 的模型差距会被成本与安全淹没。⚠️ 100 题 / 53,100 次 rollout 为作者自报；公开释放仅占 20%。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>3 · CoT-Proxy: Cross-Format Transfer for Distilling Long-Horizon Policies</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.33148">CoT-Proxy: Cross-Format Transfer for Distilling Long-Horizon Policies</a></td></tr>
+    <tr><th>中文一句话</th><td>不依赖教师隐藏的思维链：只从教师的<b>动作轨迹</b>蒸馏长程策略（学生推理块留空 + 对自生成回放缓冲加 KL 防漂移），得到的策略在「开思考」推理时仍能用自己的风格产生教师式动作（cross-format transfer）；再加简短的 <code>CoT-proxy</code> 摘要可把 Qwen3-4B 在 AppWorld 上从 7% 提到 48%。</td></tr>
+    <tr><th>作者 / 机构</th><td>Dawid J. Kopiczko · Tijmen Blankevoort · Yuki M. Asano（摘要区未列机构）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-24（arXiv v1；<code>published=2026-11-24T18:58:53Z</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.CL</code> ｜ 🏷 <b>借鉴</b>（posttrain 蒸馏 / data 轨迹复用）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.33148">arXiv:2611.33148</a></td></tr>
+    <tr><th>推荐理由</th><td>解决我们「强教师是闭源、CoT 藏在 API 后面」的现实约束。核心发现反直觉且可复用：<b>只学动作也能迁移推理</b>——学生在空推理块上训练，却在推理开启时以自己风格思考、行为像教师。证据链清晰：Qwen3.6-27B 教师只给动作，Qwen3-4B AppWorld 7%→18%、Qwen3-32B 12%→25%；追加 CoT-proxy 摘要把 4B 推到 35%；用 GPT-5.6 Luna 的可见输出 + API 返回的 reasoning summary，4B 在 AppWorld 7%→48%、SWE-bench Verified 3%→28%。对我们 SFT/蒸馏配方有直接含义：<b>先做「动作-only + KL 回放」基线，再决定要不要花钱拿教师 CoT</b>；CoT-proxy 是中间档。⚠️ 全部为作者自报，本线未复现。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>4 · Latent Merger: Latent-Space Composition of Hypernetwork-Generated LoRAs</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.33048">Latent Merger: Latent-Space Composition of Hypernetwork-Generated LoRAs</a></td></tr>
+    <tr><th>中文一句话</th><td>超网络为每个文档一次性生成 LoRA，但逐文档存适配器在流式场景不可持续；作者发现这类 LoRA 的几何与直接微调的 LoRA 截然不同（谱更集中、跨文档更对齐、近正交），于是在<b>中间潜空间</b>合并再经冻结的 LoRA 生成头解码，在固定输出秩下稳定优于权重空间 / 因子空间合并。</td></tr>
+    <tr><th>作者 / 机构</th><td>Yanlai Yang · Minki Kang · Divyam Madaan · Sung Ju Hwang · Mengye Ren（摘要区未列机构；Sung Ju Hwang 为 KAIST）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-24（arXiv v1；<code>published=2026-11-24T17:54:58Z</code>；<code>comment=Accepted at NeurIPS 2026</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.LG</code> ｜ 🏷 <b>借鉴</b>（pretrain 适配 / posttrain 多知识注入）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.33048">arXiv:2611.33048</a></td></tr>
+    <tr><th>推荐理由</th><td>给我们「多份 LoRA / 适配器怎么合并」提供了可测的判据与更省的做法。值得照搬的是<b>先量几何再选合并空间</b>：直接微调（NTP / QA）的 LoRA 谱弥散、跨文档近正交；超网络生成的 LoRA 谱更集中、跨文档更对齐——正因为对齐，潜空间合并才可能有效。做法上不新增适配器：在中间潜变量层合并，再经冻结的生成头解码，保持单一固定秩。对我们多域数据注入的启示是：若我们用超网络/文档级适配器，应优先在潜空间合并并做「谱集中度 + 跨文档余弦」体检，而不是直接平均权重。⚠️ 具体增益幅度摘要未给数字，按作者结论转述；本线未复现。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>5 · BriConstrain: Geometrically Constrained Decoding for Autoregressive Brick Assembly Generation</h2>
+  <table class="kv">
+    <tr><th>原题</th><td><a href="https://arxiv.org/abs/2611.33135">BriConstrain: Geometrically Constrained Decoding for Autoregressive Brick Assembly Generation</a></td></tr>
+    <tr><th>中文一句话</th><td>自回归生成 LEGO 拼装常出现撞件或悬空，拒绝重采样既丢 token 又不保证合法；作者改为在采样前用几何预言机约束「<b>怎么接</b>」而不是「接哪块」，把碰撞自由率从 31%→91%（BrickNet）、15%→65%（ICLF），代价约为拒绝采样的 60%。</td></tr>
+    <tr><th>作者 / 机构</th><td>Nadav Magar · Amir Hertz · Ariel Shamir · Or Patashnik（摘要区未列机构；Or Patashnik 为 Tel Aviv University）</td></tr>
+    <tr><th>提交 / 更新</th><td>2026-11-24（arXiv v1；<code>published=2026-11-24T18:54:38Z</code>；<code>comment=Project Page: https://nadmag.github.io/BriConstrain/</code>）</td></tr>
+    <tr><th>分类 + 标签</th><td><code>cs.CV</code> ｜ 🏷 <b>科普（兼借鉴）</b>（designflow 结构化生成 / 约束解码）</td></tr>
+    <tr><th>链接</th><td><a href="https://arxiv.org/abs/2611.33135">arXiv:2611.33135</a></td></tr>
+    <tr><th>推荐理由</th><td>「让语言模型拼乐高还不撞件」这件事本身大众就能懂，而方法对我们的结构化设计生成也成立：合法性依赖非预先确定的拼装状态，无法编译成固定文法，必须动态检查；合法放置空间组合爆炸、无法穷举，所以作者把约束从「选哪块」下移到「<b>怎么接</b>」，用预计算几何预言机展开连接空间、过滤碰撞后再偏置 next-token 分布。结果：BrickNet 31%→91%、ICLF 15%→65%，并优于拒绝采样且只花约 60% 解码成本。对我们 designflow 的启发是：把「局部合法」提升到「装配级合法」，用可预计算的几何/规则预言机做动态掩码，而不是事后拒绝。⚠️ 两个格式上的比例与成本比例均为作者自报。
+      <details class="news-ready">
+      <summary>📰 news_ready · 可发头条</summary>
+      <ul class="tight">
+        <li><b>大众标题</b>：让 AI 拼乐高不撞件：约束解码把「拼得对」从 31% 提到 91%</li>
+        <li><b>一句话事实</b>：新方法在生成每一步前用几何检查限制「两块怎么接」，BrickNet 上无碰撞拼装从 31% 升到 91%，代价约为反复重试的 60%。</li>
+        <li><b>可用数字</b>：31%→91%（BrickNet）、15%→65%（ICLF）→ 原文摘要（arXiv 2611.33135，2026-11-24 v1）；约 60% 拒绝采样解码成本 → 同上摘要。</li>
+        <li><b>配图</b>：论文项目页 <a href="https://nadmag.github.io/BriConstrain/">nadmag.github.io/BriConstrain</a> 的拼装示例图（引用请标注：Magar et al., <i>BriConstrain</i>, arXiv 2611.33135）。</li>
+        <li><b>一手信源</b>：Tel Aviv University 等 · Nadav Magar / Amir Hertz / Ariel Shamir / Or Patashnik · <a href="https://arxiv.org/abs/2611.33135">arXiv abs</a></li>
+        <li><b>话题点</b>：乐高人人会拼，但「机器拼装合法性」直观解释了为什么约束生成比事后纠错更省。</li>
+        <li><b>风险</b>：数字为作者自报、未复现；仅两种 LEGO 数据格式，勿外推为「通用实体装配」。</li>
+      </ul>
+      </details>
+    </tr>
+  </table>
+</div>
+
+<h3 class="sec">🅱 B 轨 · 经典论文（第一百一十五轮 +3 → 413）</h3>
+<table class="plain">
+  <tr><th>#</th><th>论文</th><th>年份 / 会议</th><th>被引</th><th>一句话贡献</th><th>归属线</th></tr>
+  <tr><td>411</td><td><a href="https://arxiv.org/abs/1812.04948">A Style-Based Generator Architecture for Generative Adversarial Networks</a>（Tero Karras · Samuli Laine · Timo Aila，NVIDIA）</td><td>2019 · CVPR 2019</td><td><b>12,729</b></td><td><b>StyleGAN</b>：借风格迁移改造生成器，无监督分离高层属性（姿态/身份）与随机细节（雀斑/发丝），可做尺度特定控制；同时提出两个自动量化「插值质量 / 解耦」的指标与 FFHQ 人脸数据集。</td><td>vision（主）· pretrain（生成式表征）</td></tr>
+  <tr><td>412</td><td><a href="https://arxiv.org/abs/2105.05233">Diffusion Models Beat GANs on Image Synthesis</a>（Prafulla Dhariwal · Alex Nichol，OpenAI）</td><td>2021 · NeurIPS 2021</td><td><b>6,279</b></td><td>用架构消融把扩散模型做到超过当时 SOTA 生成模型；条件生成引入 <b>classifier guidance</b>（用分类器梯度以算力换保真度）；ImageNet FID 2.97（128²）/ 4.59（256²）/ 7.72（512²），与上采样结合进一步到 3.94 / 3.85。</td><td>vision（主）· pretrain（生成式建模）</td></tr>
+  <tr><td>413</td><td><a href="https://arxiv.org/abs/1511.05952">Prioritized Experience Replay</a>（Tom Schaul · John Quan · Ioannis Antonoglou · David Silver，DeepMind）</td><td>2016 · ICLR 2016</td><td><b>4,541</b></td><td>把「均匀回放」改为按重要性（TD 误差）优先回放，让 agent 更频繁地复用重要转移、学得更快；在 DQN 上于 <b>49 个 Atari 游戏中 41 个</b>优于均匀回放，达新 SOTA。</td><td>posttrain（主 · RL）· zhulong（奖励/采样）</td></tr>
+</table>
+
+<h3 class="sec">👥 作者关系网新增（377 → 380，X 149 → 151）</h3>
+<table class="plain">
+  <tr><th>#</th><th>姓名 / 机构</th><th>代表论文</th><th>邮箱 / 主页</th><th>X</th><th>状态</th></tr>
+  <tr><td>378</td><td>Tero Karras · NVIDIA Research（Senior Distinguished Research Scientist）</td><td>StyleGAN（<code>1812.04948</code>，B 轨 #411 一作）</td><td>邮箱<b>未找到</b>（NVIDIA 人员页无 mailto）；<a href="https://research.nvidia.com/person/tero-karras">research.nvidia.com/person/tero-karras</a>（200 / 65,666 B）</td><td><b>未找到 X</b>（<code>x.com/TeroKarras</code> → 404，不猜）</td><td>待跟踪（仅建档，无信箱 ⇒ 不发信）</td></tr>
+  <tr><td>379</td><td>Prafulla Dhariwal · OpenAI</td><td>Diffusion Models Beat GANs（<code>2105.05233</code>，B 轨 #412 一作）</td><td>邮箱<b>未找到</b>（本人站点无明文）；<a href="https://prafulladhariwal.com/">prafulladhariwal.com</a>（200 / 38,647 B）</td><td><b>@prafdhar</b>（页面 twitter 字段 + <code>x.com/prafdhar</code> og:title 双源）</td><td>待跟踪（无信箱 ⇒ 不发信）</td></tr>
+  <tr><td>380</td><td>Tom Schaul · Google DeepMind</td><td>Prioritized Experience Replay（<code>1511.05952</code>，B 轨 #413 一作）</td><td>邮箱<b>未找到</b>；主页<b>未找到</b>（<code>schaul.net</code> 实为德国酒庄、<code>tomschaul.com</code> 连不上）</td><td><b>@tom_schaul</b>（<code>x.com/tom_schaul</code> og:title 双源）</td><td>待跟踪（无信箱 ⇒ 不发信）</td></tr>
+</table>
+
+<h3 class="sec">✉ 作者请教信（本轮 1 封 · 累计 173 · 今日 1/12 · 回信率 0/173）</h3>
+<div class="card">
+  <table class="kv">
+    <tr><th>#173</th><td><b>Or Patashnik</b>（Tel Aviv University · BriConstrain 末位作者）· <code>orpatashnik@gmail.com</code> · 英文 175 词 · <code>SENT OK 03:08:57</code></td></tr>
+    <tr><th>主题</th><td>BriConstrain: geometric oracle scope and attachment-level constraints</td></tr>
+    <tr><th>专属细节</th><td>geometric oracle 预计算 / 「constrain how parts attach rather than which parts attach」/ BrickNet 31%→91% · ICLF 15%→65% / 约 60% 拒绝采样解码成本 / ICLF 隐式连接与数值化 placement</td></tr>
+    <tr><th>三个问题</th><td>① 预言机开销随零件目录与放置分辨率如何增长，per-token 检查在大目录下是否仍可忽略；② 偏置连接方向是否会因局部不可行而剪掉全局可行解，是否有回退；③ ICLF 数值坐标如何稳健反解连接（对齐容差），可否迁移到芯粒放置。</td></tr>
+    <tr><th>地址复核</th><td><a href="https://orpatashnik.github.io/">orpatashnik.github.io</a> 200 / 7,469 B 页内明文邮箱；<code>x.com/OPatashnik</code> 200 / og:title 双源。落款两行、其后无行；正文无项目名。</td></tr>
+  </table>
+</div>
+
+<h3 class="sec">🎯 对各线的可执行建议（6 线）</h3>
+<table class="plain">
+  <tr><th>线</th><th>可执行建议</th></tr>
+  <tr><td>pretrain</td><td>按 Attention Temperature（<code>2611.31113</code>）加两项控制：长上下文评测先<b>逐模型逐长度校准一个注意力温度</b>再报；同时打印 normalization gain 的位移，若用纯 bf16 无 master weights 且 lr &lt; 1.7e-3，先确认 gain 是否真的动了（否则「方法收益」可能是 gain 没更新造成的假象）。</td></tr>
+  <tr><td>vision</td><td>多域视觉适配器若走超网络/文档级 LoRA，先做 Latent Merger 式体检：报<b>谱集中度</b>与<b>跨文档余弦</b>；对齐强则优先在中间潜空间合并、经冻结生成头解码，保持单一固定秩，而不是平均权重。</td></tr>
+  <tr><td>harness</td><td>两件可直接落地：① 评测必须用<b>远超开发用例的 held-out 条件</b>（AIChipBench：45/69 通过公开测试者在 32 步内失败）；② 硬件/agent 反馈优先给「<b>首个状态不一致</b>」而非只给输出，AIChipBench 实测接受率 +25.0~46.9 pp；③ 选 harness 先做 harness-only 消融并同报 token 成本（ShellBench）。</td></tr>
+  <tr><td>data</td><td>按 CoT-Proxy 先建「<b>动作-only 轨迹 + 空推理块 + 回放缓冲 KL</b>」基线：无需教师隐藏 CoT 即可蒸馏长程策略；若确有预算，再加简短 CoT-proxy 摘要（4B AppWorld 7%→35%，作者自报）作中间档。</td></tr>
+  <tr><td>zhulong</td><td>预注册三臂消融：① 空推理块 vs 开推理；② 有/无 Replay-buffer KL；③ 动作-only vs CoT-proxy vs 教师 CoT。判据用「跨格式迁移后开思考的成功率」，而非只看空块训练损失。</td></tr>
+  <tr><td>designflow</td><td>把 BriConstrain 的「装配级动态约束」搬进结构化设计生成：用<b>可预计算的几何/规则预言机</b>在采样前掩码「怎么接」而非事后拒绝，并预注册「局部合法 vs 装配级合法」两组的碰撞/非法率与解码成本（参照 31%→91%、约 60% 成本）。</td></tr>
+</table>
+
+<h3 class="sec">附录 · 本轮检索式与核验</h3>
+<table class="plain">
+  <tr><th>项</th><th>结果</th></tr>
+  <tr><td>A 轨检索式</td><td><code>cat:cs.CL&amp;max_results=25&amp;sortBy=submittedDate&amp;sortOrder=descending</code>（<code>--noproxy '*'</code>）→ <code>200</code> / <code>application/atom+xml</code> / 61,711 B / 25 entry；<code>published</code> 上界 <code>2026-11-24T18:59:08Z</code>（24.0h &lt; 72h）。</td></tr>
+  <tr><td>A 轨 abs 核验</td><td>5/5 <code>200</code>：<code>2611.33093</code> 42,138 B · <code>2611.32946</code> 43,958 B · <code>2611.33148</code> 41,573 B · <code>2611.33048</code> 41,949 B · <code>2611.33135</code> 43,136 B；均含 <code>citation_title</code>。</td></tr>
+  <tr><td>B 轨核验</td><td>abs 3/3 <code>200</code>（StyleGAN 42,535 B / Diffusion-Beat-GANs 42,294 B / PER 41,400 B，<code>citation_title</code> + <code>citation_date</code> 逐字）；OpenAlex 3/3 <code>200</code>（12,729 / 6,279 / 4,541，查询日 2026-11-26）。</td></tr>
+  <tr><td>去重</td><td>5 个 A 轨 ID + 3 个 B 轨 ID 在 <code>SEEN.md</code> / <code>papers.jsonl</code> / <code>PAPERS.md</code> 均 0 命中；B 轨候选先由 <code>/tmp/covered_ids.txt</code>（376 个已收 ID）筛出未覆盖项。</td></tr>
+  <tr><td>X / 主页</td><td>代理 <code>http://127.0.0.1:7897</code>：<code>x.com</code> 200；<code>@OPatashnik</code> / <code>@prafdhar</code> / <code>@tom_schaul</code> 均 <code>og:title</code> 双源；<code>@TeroKarras</code> 404 不记。</td></tr>
+  <tr><td>voice_ready / news_ready</td><td>voice_ready <b>0</b>（本轮未做单条推文正文双源核验，不冒充）；news_ready <b>1</b>（BriConstrain，见第 5 卡）。</td></tr>
+</table>
+
+<footer>
+  <p>research 线 · 双轨制（A 最新 / B 经典）· 本页自包含、零外链（仅 arXiv abs 与作者主页链接）。数据源：arXiv API / abs 页 / OpenAlex。</p>
+  <p>⚠️ 所有论文数字均为作者自报，本线未复现；「推荐」= 待读线索，非结论。图片/内容如转载须标出处（引用 ≠ 盗用）。</p>
+  <p>上一期：<a href="2026-11-25.html">2026-11-25</a> ｜ 索引：<a href="index.html">index.html</a></p>
+</footer>
+
+</div>
+</body>
+</html>

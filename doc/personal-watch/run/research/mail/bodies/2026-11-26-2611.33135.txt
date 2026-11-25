@@ -1,0 +1,18 @@
+Dear Dr. Patashnik,
+
+I am Yang Liu, a researcher working on LLM agents for engineering design; you can find my work at https://foamliu.github.io/.
+
+I read BriConstrain with interest because we are exploring constrained decoding for structured physical design, where a locally valid token can still yield a globally infeasible layout. Constraining how parts attach rather than which parts attach, and the 31%→91% (BrickNet) / 15%→65% (ICLF) collision-free gains at about 60% of rejection-sampling cost, connect directly to that problem.
+
+Three questions:
+
+1. How is the geometric oracle precomputed, and how does its cost grow with the part catalog and placement resolution? Is the per-token check still negligible at larger catalogs?
+
+2. When you bias attachment directions, can a globally valid build be pruned because the required orientation is locally infeasible? Do you keep a fallback for that case?
+
+3. For ICLF numeric placements with implicit connectivity, how do you robustly recover connections from coordinates (alignment tolerance), and would the same strategy transfer to modular chiplet placement?
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

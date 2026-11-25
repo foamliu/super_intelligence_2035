@@ -7210,3 +7210,48 @@
 | 与我们工作的关系 | **vision（主 · 视觉生成与表征）**：这组约束至今是 GAN / 生成式视觉骨干的默认检查单；对视频线的生成器训练稳定性、以及「无限连接隐层」在小分辨率起的结构选择有直接参照。<br>**pretrain（主 · 无监督表征）**：判别器特征可作下游表征，是「生成式预训练 → 判别式下游」早期证据；可与 MAE / 对比学习对照。<br>**harness / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-25**（第一百一十四轮 · 23:xx 时窗） |
 | 核验状态 | abs 页 **`200` / 42,018 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（17,772 / 2015 / `preprint`，查询日 2026-11-25）。⚠️ 方法描述取自摘要（逐字核），**未做 PDF 表格复核**。条目级查重：`1511.06434` 在 `PAPERS.md` 中 **0 命中**，非重复；Alec Radford 已于 `AUTHORS.md` #33 建档，本轮不重复收录。 |
+
+## 411. A Style-Based Generator Architecture for Generative Adversarial Networks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | A Style-Based Generator Architecture for Generative Adversarial Networks |
+| 作者（前 3） | Tero Karras · Samuli Laine · Timo Aila（3 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2019**（v1 `2018/12/12`；abs 页 `citation_date` 逐字核；会议年 2019） |
+| 会议 / 期刊 | **CVPR 2019**（通行口径；OpenAlex `type=article` / `publication_year=2019`） |
+| 被引数 | **12,729**（OpenAlex `10.48550/arXiv.1812.04948`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1812.04948> ｜ `10.48550/arXiv.1812.04948` |
+| 一句话贡献 | 提出 **StyleGAN**：借风格迁移改造生成器，实现**无监督分离高层属性**（人脸训练时的姿态 / 身份）与**随机细节**（雀斑 / 发丝），并支持直观的**尺度特定**合成控制；改进分布质量指标、插值性质与隐因子解耦，另提出两个可适用于任意生成器的自动「插值质量 / 解耦」指标与 FFHQ 人脸数据集。 |
+| 与我们工作的关系 | **vision（主 · 生成与表征）**：style 注入 + 噪声注入 + 混合正则的架构范式，是视觉生成骨干的长期参照；对视频线的可控生成、分层控制有直接借鉴。<br>**pretrain（主 · 生成式表征）**：解耦良好的潜空间可服务下游表征与可控编辑；其「解耦指标」可用作我们适配器 / 多域注入的体检项。<br>**harness / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十五轮 · 03:xx 时窗） |
+| 核验状态 | abs 页 **`200` / 42,535 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（12,729 / 2019 / `article`，查询日 2026-11-26）。条目级查重：`1812.04948` 在 `PAPERS.md` 中 **0 命中**，非重复。被引为 OpenAlex 单源，未做 PDF 复核。 |
+
+## 412. Diffusion Models Beat GANs on Image Synthesis
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Diffusion Models Beat GANs on Image Synthesis |
+| 作者（前 3） | Prafulla Dhariwal · Alex Nichol（2 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2021**（v1 `2021/05/11`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **NeurIPS 2021**（通行口径；OpenAlex `type=conference-paper` / `publication_year=2021`） |
+| 被引数 | **6,279**（OpenAlex `10.48550/arXiv.2105.05233`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2105.05233> ｜ `10.48550/arXiv.2105.05233` |
+| 一句话贡献 | 用一系列**架构消融**把扩散模型的图像采样质量做到超过当时 SOTA 生成模型；条件生成引入 **classifier guidance**（用分类器梯度在算力与保真度间权衡）；ImageNet FID **2.97（128²）/ 4.59（256²）/ 7.72（512²）**，与上采样扩散模型结合进一步到 **3.94 / 3.85**，并保持更好的分布覆盖。 |
+| 与我们工作的关系 | **vision（主 · 生成）**：架构消融清单（注意力分辨率 / 上采样 / adaptive group norm 等）+ 引导强度，是扩散视觉骨干调参的基线参考。<br>**pretrain（主 · 生成式建模）**：把「架构选择 + 引导」作为可预注册的对照，避免把引导带来的保真度提升误记为架构收益。<br>**harness / data / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十五轮 · 03:xx 时窗） |
+| 核验状态 | abs 页 **`200` / 42,294 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（6,279 / 2021 / `conference-paper`，查询日 2026-11-26）。FID 数字取自摘要（逐字核），未做 PDF 表格复核。条目级查重：`2105.05233` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 413. Prioritized Experience Replay
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Prioritized Experience Replay |
+| 作者（前 3） | Tom Schaul · John Quan · Ioannis Antonoglou（另 David Silver；arXiv `citation_author` 逐字核前 4） |
+| 年份 | **2016**（v1 `2015/11/18`；abs 页 `citation_date` 逐字核；会议年 2016） |
+| 会议 / 期刊 | **ICLR 2016**（通行口径；⚠️ OpenAlex 记 `type=preprint` / `publication_year=2015`，会议版未在本次核验中出现 ⇒ 两口径并列、不合并） |
+| 被引数 | **4,541**（OpenAlex `10.48550/arXiv.1511.05952`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1511.05952> ｜ `10.48550/arXiv.1511.05952` |
+| 一句话贡献 | 把经验回放从**均匀采样**改为**按重要性（TD 误差）优先回放**，让 agent 更频繁复用重要转移、学得更快；在 **DQN** 上于 49 个 Atari 游戏中 **41 个**优于均匀回放，达到新 SOTA（并用重要性采样权重校正偏差）。 |
+| 与我们工作的关系 | **posttrain（主 · RL）**：优先回放是 RLVR / RLHF 采样器的经典基线；可对照「均匀 vs 按 TD/奖励误差优先」对样本效率的影响。<br>**zhulong（主 · 奖励与采样）**：与其扩大 rollout 数量，先做「优先级函数 + 偏差校正」消融，可能更省算力。<br>**pretrain / vision / harness / data / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十五轮 · 03:xx 时窗） |
+| 核验状态 | abs 页 **`200` / 41,400 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（4,541 / 2015 / `preprint`，查询日 2026-11-26）。41/49 数字取自摘要（逐字核）。条目级查重：`1511.05952` 在 `PAPERS.md` 中 **0 命中**，非重复（David Silver 已于 `AUTHORS.md` #35 建档，本轮不重复收录）。 |

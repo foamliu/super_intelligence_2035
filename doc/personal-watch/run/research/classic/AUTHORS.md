@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-26 03:xx）**：作者 **380** 人（编号最大 **380**）· X 已核验 **151**（本轮 **+2**：`@prafdhar` 由本人站点 <https://prafulladhariwal.com/>（`200` / 38,647 B）`twitter:creator` 字段外链 + 代理抓 `x.com/prafdhar` `200` / 182,967 B，`og:title` = `Prafulla Dhariwal (@prafdhar) on X` ⇒ 双源；`@tom_schaul` 由代理抓 `x.com/tom_schaul` `200` / 128,408 B，`og:title` = `Tom Schaul (@tom_schaul) on X` ⇒ 姓名双源（`x.com/schaul` 为 `404`）；Tero Karras `x.com/TeroKarras` 为 `404` ⇒ 记「未找到 X」，不猜）· 已发信 **173**（台账 #1–#173；今日 **1/12**）· 回信 **0**（0/173；已回复 0 / 无应答>14d 9 / 未到期 164）。本轮 **+3**：Tero Karras（StyleGAN 一作，英文，NVIDIA 人员页无邮箱 / 无 X ⇒ 仅建档）· Prafulla Dhariwal（Diffusion-Beat-GANs 一作，英文，无公开邮箱 + X 双源 ⇒ 仅建档）· Tom Schaul（PER 一作，英文，无公开邮箱 / 未找到主页 + X 双源 ⇒ 仅建档）。以下历史快照行保留原文（不追改），计数以本行为准。
+
 > **当前计数（2026-11-25 23:xx）**：作者 **377** 人（编号最大 **377**）· X 已核验 **149**（本轮 **+2**：`@Luke_Metz` 由本人主页 <https://lukemetz.github.io/>（经代理 `200` / 40,689 B）外链 `twitter.com/Luke_Metz` + 代理抓 `x.com/Luke_Metz` `200` / 178,100 B，`og:title` = `Luke Metz (@Luke_Metz) on X` ⇒ 双源；`@soumithchintala` 由本人站点 `soumith.ch` `200` / 9,532 B 外链 `twitter.com/soumithchintala` + 代理抓 `x.com/soumithchintala` `200` / 204,293 B，`og:title` + bio 双源；Rajarshi Roy 主页无 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **172**（台账 #1–#172；今日 **8/12**）· 回信 **0**（0/172；已回复 0 / 无应答>14d 9 / 未到期 163）。本轮 **+3**：Luke Metz（DCGAN 二作，英文，本人主页当前明文地址 + X 双源 ⇒ 已发信 #172）· Soumith Chintala（DCGAN 三作，英文，邮箱仅模板占位 ⇒ 仅建档，X 双源）· Rajarshi Roy（PrefixRL 一作，英文，主页无邮箱 / 无 X ⇒ 仅建档）。
 >
 > **当前计数（2026-11-25 22:xx · loop 重启补跑）**：作者 **374** 人（编号最大 **374**）· X 已核验 **147**（本轮 **+3**：`@baaadas` / `@hardmaru` / `@StefanoErmon`，均经代理抓 `x.com/<handle>` `HTTP 200`，`og:title` + `og:description` 双源核身份）· 已发信 **171**（台账 #1–#171；今日 **7/12**）· 回信 **0**（0/171；已回复 0 / 无应答>14d 9 / 未到期 162）。本轮 **+3**：Jiaming Song（DDIM 一作，中文，`tsong.me` 当前明文地址 ⇒ 已发信 #171）· David Ha（World Models 一作，英文，无公开邮箱 ⇒ 仅建档，X 双源）· Stefano Ermon（DDIM 资深作者，英文/意大利，Stanford 页当前地址 + X 双源 ⇒ 仅建档，同论文已发一作、守「同一论文 ≤1」）。
@@ -5343,3 +5345,42 @@
 | X 账号 | **未找到 X**（主页无 x.com / twitter.com 外链；未凭猜测登记 handle） |
 | 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信） |
 | 备注 | designflow 电路结构搜索的高价值联系人。若后续获当前公开邮箱，问题候选：① 网格状态–动作表示中「合法前缀图」的动作屏蔽如何实现；② synthesis-in-the-loop 的调用预算与奖励噪声；③ 从开源单元库迁移到工业单元库的分布差如何校准。 |
+
+### 378. Tero Karras
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tero Karras（`语言=英文(判据=芬兰姓名族属 + 美国机构 NVIDIA)`） |
+| 机构 | **NVIDIA Research**（Senior Distinguished Research Scientist；NVIDIA 人员页自述）· StyleGAN 一作 |
+| 代表论文 | **StyleGAN**（`1812.04948`，B 轨 #411，一作） |
+| 邮箱 | **未找到**（NVIDIA 人员页 <https://research.nvidia.com/person/tero-karras> 无 `mailto:` / 无明文地址 ⇒ 🚫 不猜、不发信） |
+| 主页 | <https://research.nvidia.com/person/tero-karras>（`HTTP 200` / 65,666 B；2026-11-26 复核） |
+| X 账号 | **未找到 X**（`x.com/TeroKarras` 实测 `404`；未凭猜测登记 handle） |
+| 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信） |
+| 备注 | vision 生成方向核心作者。若后续获当前公开邮箱，问题候选：① mapping network 与 AdaIN 的「解耦」在换成 ViT / 扩散骨干后是否仍成立；② noise injection 与 mixing regularization 各自对「属性 vs 细节」的贡献如何拆分；③ FFHQ 式解耦指标能否用作多域适配器的验收判据。 |
+
+### 379. Prafulla Dhariwal
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Prafulla Dhariwal（`语言=英文(判据=印度裔姓名族属 + 美国机构 OpenAI)`） |
+| 机构 | **OpenAI** · Diffusion Models Beat GANs 一作 |
+| 代表论文 | **Diffusion Models Beat GANs on Image Synthesis**（`2105.05233`，B 轨 #412，一作） |
+| 邮箱 | **未找到**（本人站点 <https://prafulladhariwal.com/> 无明文邮箱 ⇒ 🚫 不猜、不发信） |
+| 主页 | <https://prafulladhariwal.com/>（`HTTP 200` / 38,647 B；2026-11-26 复核） |
+| X 账号 | **@prafdhar**（本人站点 `twitter:creator` 字段 + 代理抓 `x.com/prafdhar` `200`，`og:title` = `Prafulla Dhariwal (@prafdhar) on X` ⇒ 双源） |
+| 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信） |
+| 备注 | vision 生成 / 引导方向关键作者。问题候选：① classifier guidance 的引导尺度与上采样模型的耦合边界；② 架构消融里哪些项在更大分辨率下仍承重；③ 能否用「引导强度 × 上采样」二维预注册表替代逐点调参。 |
+
+### 380. Tom Schaul
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Tom Schaul（`语言=英文(判据=德式姓名族属，但机构 Google DeepMind 在英美 ⇒ 判据冲突，英文兜底)`） |
+| 机构 | **Google DeepMind** · Prioritized Experience Replay 一作 |
+| 代表论文 | **Prioritized Experience Replay**（`1511.05952`，B 轨 #413，一作） |
+| 邮箱 | **未找到**（无当前可核个人主页 / 无明文地址 ⇒ 🚫 不猜、不发信） |
+| 主页 | **未找到**（`schaul.net` 经代理 `200` 但实为德国酒庄站点、非本人；`tomschaul.com` 连接失败；`people.csail.mit.edu/tomschaul/` `403`。均不采用） |
+| X 账号 | **@tom_schaul**（代理抓 `x.com/tom_schaul` `200`，`og:title` = `Tom Schaul (@tom_schaul) on X` ⇒ 姓名双源；`x.com/schaul` 为 `404`） |
+| 状态 | **待跟踪**（仅建档；无公开邮箱 ⇒ 不发信） |
+| 备注 | posttrain RL 采样方向作者。问题候选：① TD 误差优先级的偏差校正（IS 权重）在大模型 RLHF 下如何取舍；② 优先级函数用奖励误差 vs 价值误差的差异；③ 优先回放与「按难度课程采样」是否可叠加。 |

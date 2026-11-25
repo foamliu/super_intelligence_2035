@@ -5729,3 +5729,8 @@
 | 2026-11-25 | 2611.31198 | ToolSmith: An Automatic Tool-Generation Framework for Multimodal Search Agents | cs.CL | 收录 |
 | 2026-11-25 | 2611.31185 | CO-GRAFT: Attributing Reinforcement Learning Gains in Search Agents via Role-Level Policy Grafting | cs.IR |
 | 2026-11-25 | 2611.31113 | Attention Temperature Confounds Zero-Shot Context Extension | cs.LG |
+| 2026-11-26 | 2611.33093 | AIChipBench: Benchmarking LLM Agents for Automated AI Accelerator Design | cs.CL | 收录 |
+| 2026-11-26 | 2611.32946 | ShellBench: What Matters More for AI Agents, Models, or Harness for Everyday Tasks | cs.AI | 收录 |
+| 2026-11-26 | 2611.33148 | CoT-Proxy: Cross-Format Transfer for Distilling Long-Horizon Policies | cs.CL | 收录 |
+| 2026-11-26 | 2611.33048 | Latent Merger: Latent-Space Composition of Hypernetwork-Generated LoRAs | cs.LG | 收录 |
+| 2026-11-26 | 2611.33135 | BriConstrain: Geometrically Constrained Decoding for Autoregressive Brick Assembly Generation | cs.CV | 收录 |
