@@ -1,6 +1,41 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 1
+> 🆕 **用户令 · 2026-11-25 (C) — deepseek-harness SDK 已恢复，重新 predict deepseek-harness 路**
+>
+> **背景**：doubao-pro 7-way 启动后 deepseek-harness 跑完 500 题全 0 patch，根因 = `/tmp/dsh_sdk/` 被清空（机器重启或 /tmp 清理）→ `available()` 返回 False → 每题秒退 rc=2。
+>
+> **已修复**：运维已重新 `pip install --target /tmp/dsh_sdk deepseek-harness-sdk`，`available()` 已恢复 True。
+>
+> **你接手后**：
+> 1. 先验证：`python3 -c "import sys; sys.path.insert(0,'/tmp/dsh_sdk'); from run_harness import DRIVERS; print(DRIVERS['deepseek-harness'].available())"` 应输出 `True`
+> 2. **删除 deepseek-harness 的旧空 predictions**：`rm -f swebench_verified_full/predictions_doubao_pro/deepseek-harness__*.json`
+> 3. **删除旧 progress 文件**：`rm -f swebench_verified_full/reports/progress_doubao_pro_deepseek-harness.json`
+> 4. **重新 predict**（与其他 6 路并行，不影响它们）：
+>    ```bash
+>    cd swebench_verified_full
+>    HARNESS_MODEL=doubao-seed-2.0-pro-cloud \
+>    MODEL_SUFFIX=doubao-seed-2.0-pro-cloud \
+>    PRED_SUBDIR=predictions_doubao_pro \
+>    WORKDIR_TAG=_doubao_pro \
+>    EVAL_TAG=doubao_pro_ \
+>    GW_USAGE_LOG=/tmp/gw_proxy_usage.jsonl \
+>    no_proxy="127.0.0.1,localhost,agi-gateway.cxmt.com" \
+>    PATH="$HOME/.bun/bin:$PATH" \
+>    nice -n 10 nohup python3 run_verified_full.py predict \
+>      --harness deepseek-harness --workers 1 \
+>      > ../logs_doubao_pro/deepseek-harness_doubao_pro_rerun.log 2>&1 &
+>    ```
+> 5. 确保 gw_proxy_dsh（端口 9091）在运行（doubao key + /cloud upstream）；如果不在，用 `launch_doubao_7way.sh` 的逻辑重启它
+> 6. **持久化修复**：把 SDK 从 `/tmp/dsh_sdk` 搬到 NFS 持久路径：
+>    ```bash
+>    cp -a /tmp/dsh_sdk /nas_train/app.e0031982/harness_work/dsh_sdk
+>    ```
+>    然后在 `run_harness.py` 的 `DeepseekHarnessDriver._SDK_PATH` 改为 `/nas_train/app.e0031982/harness_work/dsh_sdk`（同步改 agent-arena 仓库的副本）。这样机器重启后不再丢失。
+> 7. predict 完成后跑 eval + 合并结果（与其他 6 路一起 eval 也可以）
+>
+> **纪律**：不碰其他 6 路正在运行的 predict 进程；不碰 MM。
+
 > 🆕 **用户令 · 2026-11-25 (B) — 评测脚本签入 agent-arena 仓库，交由 harness 维护**
 >
 > **用户原话**：「安排 harness 把它的评测脚本签入这个仓库：/nas_train/app.e0031982/code/agent-arena，写好 README，以后这个仓库交由 harness 维护」
