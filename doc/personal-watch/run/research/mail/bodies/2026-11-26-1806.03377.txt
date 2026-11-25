@@ -1,0 +1,18 @@
+Dear Dr. Harlap,
+
+I am Yang Liu, a researcher working on LLM agents and training systems; you can find my work at https://foamliu.github.io/.
+
+Your PipeDream paper is the reference I use when reasoning about pipeline parallelism for large models, especially the split between weight versioning for backward correctness and the round-robin schedule that targets time-to-accuracy rather than raw throughput.
+
+Three questions:
+
+1. Weight stashing keeps several parameter versions alive. How does that memory overhead scale with pipeline depth and the number of in-flight micro-batches, and at what depth does it stop being cheaper than data parallelism?
+
+2. The partition balances work across stages, but embedding and lm-head stages are structurally cheaper. How do you avoid stragglers there without breaking the activation layout?
+
+3. Your headline metric is time-to-accuracy on training loss. Does the advantage survive when the target is held-out evaluation loss — i.e., can the schedule change which checkpoint generalizes best?
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

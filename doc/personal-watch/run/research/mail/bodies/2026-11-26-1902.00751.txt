@@ -1,0 +1,18 @@
+Dear Dr. Houlsby,
+
+I am Yang Liu, a researcher working on LLM agents and parameter-efficient adaptation; you can find my work at https://foamliu.github.io/.
+
+I keep returning to your Adapter paper because we need one frozen backbone to serve many task variants, and your 3.6% per-task parameter budget with a 0.4% GLUE gap is still the cleanest reference point for that trade-off.
+
+Three questions:
+
+1. When adapters are added incrementally for new tasks, can they be composed at inference without revisiting earlier tasks, or does interference force joint retraining once the task set grows?
+
+2. How much of the result comes from adapter placement (after attention vs after FFN), bottleneck width, and the near-zero initialization? Which single factor would you fix first if compute allowed only one ablation?
+
+3. For sequence-level generation (code or RTL) rather than classification, does a shared adapter pool still preserve the parameter-sharing benefit, or do output-side heads dominate the per-task budget?
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

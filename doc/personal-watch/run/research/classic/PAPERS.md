@@ -9,6 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **419** 条（**第一百一十七轮 2026-11-26 06:0x +3 → 419**：Adapter `1902.00751`（**8,362**，ICML 2019；每个 Transformer 子层后插入瓶颈 adapter + 残差、冻结主干，BERT 迁 26 个文本分类任务含 GLUE，每任务仅加 3.6% 参数、GLUE 距全量微调 0.4% 以内）/ Flow Matching `2210.02747`（**8,925**，ICLR；simulation-free 回归固定条件概率路径的向量场，兼容一般高斯路径、diffusion 为其特例，OT 位移插值路径训练/采样更快，ImageNet 上 likelihood 与样本质量均更好）/ PipeDream `1806.03377`（**353**，**&lt;500 按「开创范式」收**：SOSP 2019；跨机流水线并行 + 权重版本化保证 backward 正确 + 不同输入前后向 round-robin 调度优化 time-to-accuracy，通信最多降 95%、最多快 5×）；核验：abs 3/3 `200`（43,934 / 43,140 / 41,697 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（8,362 / 8,925 / 353，查询日 2026-11-26）+ PipeDream 会议 Crossref DOI `10.1145/3341301.3359646` `200`（SOSP 2019）；三 ID 条目级查重 **0 命中**；覆盖轴 = 参数高效适配的源头 / simulation-free 生成建模 / 流水线并行的调度与记账；本轮归属：pretrain +3 · posttrain +1 · vision +1 · zhulong +2 · designflow +1 · data +0 · harness +0）
+
 **本轮快照**：累计 **416** 条（**第一百一十六轮 2026-11-26 03:2x 补轮 +3 → 416**：Prefix-Tuning `2101.00190`（**6,994**，ACL 2021；冻结 LM + 每层 KV 连续前缀，只学 0.1% 参数，GPT-2 表到文 / BART 摘要）/ Prompt Tuning `2104.08691`（**7,194**，EMNLP 2021；输入层 soft prompt，T5 规模消融：>十亿参数后与全量微调 "closes the gap"）/ ELMo `1802.05365`（**15,678**，NAACL 2018；深层 biLM 内部状态的可学习函数，6 个 NLP 任务提升 SOTA）；核验：abs 3/3 `200`（41,057 / 42,929 / 41,344 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（6,994 / 7,194 / 15,678，查询日 2026-11-26）；三 ID 条目级查重 **0 命中**；覆盖轴 = 参数高效适配的两条源头（prefix vs soft prompt）+ 上下文词表示；本轮归属：pretrain +3 · posttrain +2 · zhulong +2 · data +1 · vision +0 · harness +0 · designflow +0）
 
 **本轮快照**：累计 **410** 条（**第一百一十四轮 2026-11-25 23:xx +3 → 410**：BPE / subword `1508.07909`（**10,660**，ACL 2016；BPE 子词切分把生僻词编码成子词序列，开放词表 + 更小词表） / PrefixRL `2205.07000`（**89**，DAC 2021；**&lt;500 按「本领域权威 / 奠基」收**：tabula rasa + synthesis-in-the-loop 的并行前缀电路 RL，作者自报同延迟下面积 −16.0% / −30.2%） / DCGAN `1511.06434`（**17,772**，2015 预印本；步幅卷积替代池化 + G/D 双侧 BN + 去全连接隐层 + LeakyReLU 的稳定化约束）；核验：abs 3/3 `200`（42,500 / 44,319 / 42,018 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（10,660 / 89 / 17,772，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；⚠️ 记忆里误记 PrefixRL 为 `2111.05497`（实测 attosecond 物理论文）⇒ 经 arXiv 标题检索纠正为 `2205.07000`；本轮归属：data +1 · pretrain +2 · vision +1 · designflow +1 · zhulong +1 · harness +1 · posttrain +0）
@@ -7302,3 +7304,48 @@
 | 与我们工作的关系 | **pretrain（主 · 上下文表示）**：把「取哪几层、如何加权」作为特征工程化的历史基线，提醒我们在冻结特征 vs 端到端微调之间做对照。<br>**data（次 · 半监督信号）**：下游可混合不同层的半监督信号，对应我们多任务数据配比时的层级加权思路。<br>**vision / harness / zhulong / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-26**（第一百一十六轮 · 03:2x 补轮） |
 | 核验状态 | abs 页 **`200` / 41,344 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（15,678 / 2018 / `conference-paper`，查询日 2026-11-26）。6 任务与「深层内部状态关键」取自摘要（逐字核）。条目级查重：`1802.05365` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 417. Parameter-Efficient Transfer Learning for NLP
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Parameter-Efficient Transfer Learning for NLP |
+| 作者（前 3） | Neil Houlsby · Andrei Giurgiu · Stanisław Jastrzębski（另 Bruna Morrone / Quentin de Laroussilhe / Andrea Gesmundo / Mona Attariyan / Sylvain Gelly；arXiv `citation_author` 逐字核） |
+| 年份 | **2019**（v1 `2019/02/02`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICML 2019**（OpenAlex `type=conference-paper` / `publication_year=2019` / source = International Conference on Machine Learning） |
+| 被引数 | **8,362**（OpenAlex `10.48550/arXiv.1902.00751`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1902.00751> ｜ `10.48550/arXiv.1902.00751` |
+| 一句话贡献 | 在预训练 Transformer 的**每个子层后插入小的瓶颈 adapter**（降维投影 → 非线性 → 升维投影，外加残差连回原输出），**冻结原网络全部参数**；把 BERT 迁到 **26 个文本分类任务**（含 GLUE），每任务只加 **3.6%** 参数，GLUE 上距全量微调 **0.4% 以内**，而全量微调每任务要训 **100%** 参数。 |
+| 与我们工作的关系 | **pretrain（主 · 冻结主干的默认路线）**：Adapter 与 Prefix / LoRA / Prompt Tuning 并列为「一个主干服务多任务」的四条源头路线，选型时必须同参数量、同数据做等量对照。<br>**posttrain（主 · 任务适配）**：adapter 可增量叠加而不回访旧任务，是多任务后训练与客户定制版的最小改动方案。<br>**zhulong（主 · 消融设计）**：瓶颈维度、插入位置（attention 后 vs FFN 后）、是否零初始化是三个廉价开关，可直接进消融表。<br>**vision / data / harness / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十七轮 · 06:0x） |
+| 核验状态 | abs 页 **`200` / 43,934 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（8,362 / 2019 / `conference-paper`，查询日 2026-11-26）。26 任务、3.6% 参数、0.4% 差距取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`1902.00751` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 418. Flow Matching for Generative Modeling
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Flow Matching for Generative Modeling |
+| 作者（前 3） | Yaron Lipman · Ricky T. Q. Chen · Heli Ben-Hamu（另 Maximilian Nickel / Matthew Le；arXiv `citation_author` 逐字核） |
+| 年份 | **2022**（v1 `2022/10/06`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICLR**（OpenAlex `type=conference-paper` / `publication_year=2023` / source = International Conference on Learning Representations；**具体届次未逐字核**，故不写年份届次） |
+| 被引数 | **8,925**（OpenAlex `10.48550/arXiv.2210.02747`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2210.02747> ｜ `10.48550/arXiv.2210.02747` |
+| 一句话贡献 | 提出 **Flow Matching（FM）**：**simulation-free** 训练连续归一化流（CNF），做法是回归**固定条件概率路径**上的向量场，而不必模拟 ODE；该框架兼容**一整族高斯概率路径**（现有 diffusion 路径只是其中特例），并指出用 **Optimal Transport（OT）位移插值**定义的条件路径比 diffusion 路径更高效 —— 训练与采样更快、泛化更好；在 **ImageNet** 上用 FM 训练的 CNF 在 likelihood 与样本质量上稳定优于 diffusion 基线，且能用现成 ODE solver 快速采样。 |
+| 与我们工作的关系 | **vision（主 · 生成建模范式）**：图像/波形/版图这类连续信号的生成，FM 提供了与 DDPM 并列的第二种「从噪声到数据」的目标，选型时应做等步数、等算力对照。<br>**pretrain（次 · 训练目标）**：simulation-free 意味着训练不需要展开 ODE，可直接以向量场回归的稳定性作为长训练的一个预注册指标。<br>**zhulong（主 · 采样成本口径）**：OT 路径「更快训练/采样」是可量化的成本轴，消融表应同时记 NFE（函数评估次数）与质量分数，避免只比质量。<br>**designflow（次 · 造题）**：可控生成器可作为合成版图/波形测试题的候选来源，但须标注「合成」并给生成参数。<br>**data / harness**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十七轮 · 06:0x） |
+| 核验状态 | abs 页 **`200` / 43,140 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（8,925 / 2023 / `conference-paper`，查询日 2026-11-26）。OT / diffusion 特例 / ImageNet 比较均取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`2210.02747` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 419. PipeDream: Fast and Efficient Pipeline Parallel DNN Training
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | PipeDream: Fast and Efficient Pipeline Parallel DNN Training |
+| 作者（前 3） | Aaron Harlap · Deepak Narayanan · Amar Phanishayee（另 Vivek Seshadri / Nikhil Devanur / Greg Ganger / Phil Gibbons；arXiv `citation_author` 逐字核） |
+| 年份 | **2018**（v1 `2018/06/08`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **SOSP 2019**（Crossref DOI `10.1145/3341301.3359646` `200`，`Proceedings of the 27th ACM Symposium on Operating Systems Principles`，2019-10-27；OpenAlex 的 arXiv 记录记 `type=preprint`） |
+| 被引数 | **353**（OpenAlex `10.48550/arXiv.1806.03377`，查询日 **2026-11-26**；**&lt;500，按「开创范式」收**：跨机流水线并行的权重版本化与 round-robin 调度是后续 1F1B / 流水并行实现的直接源头） |
+| arXiv / DOI | <https://arxiv.org/abs/1806.03377> ｜ `10.48550/arXiv.1806.03377` ｜ 会议 DOI `10.1145/3341301.3359646` |
+| 一句话贡献 | 把 DNN 训练**按层切分到多台机器做流水线并行**：系统化地划分层以平衡负载并最小化通信、**为 backward 正确性做模型参数版本化（weight stashing）**、把不同输入的 forward/backward 以 **round-robin** 方式交错调度以优化 **time-to-accuracy**；大模型相对数据并行**通信最多降 95%** 且通信/计算可完全重叠；五个 DNN、两个集群上 **time-to-accuracy 最多快 5×**。 |
+| 与我们工作的关系 | **pretrain（主 · 训练系统基线）**：我们 2B 主干做多机并行时，PipeDream 的「按层切分 + 权重版本化」是最早把「正确性」与「吞吐」同时写清的基线，选 PP 方案时应先复现其调度语义。<br>**zhulong（主 · 成本口径）**：它优化的是 **time-to-accuracy** 而非单纯吞吐 —— 这正是我们比较「多机流水线 vs 单机大 batch」时该用的口径，消融表须写明按哪个指标记账。<br>**harness（次 · 长任务预算）**：调度导致不同 micro-batch 用不同权重版本，提醒我们长跑评测要固定 checkpoint 版本，否则指标不可比。<br>**vision / data / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十七轮 · 06:0x） |
+| 核验状态 | abs 页 **`200` / 41,697 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（353 / 2018 / `preprint`，查询日 2026-11-26）；会议经 Crossref DOI `10.1145/3341301.3359646` **`200`** 确认为 SOSP 2019。95% / 5× / 五个 DNN 取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`1806.03377` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
