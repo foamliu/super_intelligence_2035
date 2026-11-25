@@ -1,0 +1,20 @@
+# 📦 体积红线（2026-10-05 · 用户明令）：任何单个文件 ≥ 5 MB 一律不入 git
+#    出处：WATCH_NEWS_TASK.md §4-11 · news/policy/README.md §3
+#    → 大件（随语料扩大而膨胀的 EVENTS.csv 等）**改走网盘**，
+#      元数据（路径/行数/字节/sha256/存放位置）登记到 INDEX_FILES.md。
+#
+# ⚠️ 本文件只拦「尚未入库」的新文件；已被 git 跟踪的大件需 `git rm --cached` 才移出索引
+#    （见 ops 指令）。提交前自查：git check-ignore -v <file> 应命中。
+
+# 事件库（随语料扩大，现已 >5MB）
+EVENTS.csv
+
+# 其它大件（防御性）
+*.zip
+*.tar.gz
+*.7z
+*.gz
+
+# Python 缓存
+__pycache__/
+*.pyc
