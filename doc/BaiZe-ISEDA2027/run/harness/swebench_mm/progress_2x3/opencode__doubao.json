@@ -306,5 +306,19 @@
     "classification": "has_patch",
     "stdout_tail": "or: Average = 75% → marked as \"good\" (passing)\n- New behavior: One failed item → marked as \"poor\" (failing)\n\nThis ensures that aggregations correctly reflect failures in any of their component items.\n",
     "stderr_tail": "lighthouse-core/scripts/run-mocha.sh --default lighthouse-core/test/report/handlebar-helpers-test.js\n\nlighthouse-core tests\nlighthouse-core/scripts/run-mocha.sh: line 6: mocha: command not found\n\u001b[0m\n"
+  },
+  "GoogleChrome__lighthouse-1786": {
+    "instance_id": "GoogleChrome__lighthouse-1786",
+    "route": "opencode__doubao",
+    "harness": "opencode",
+    "model": "doubao-seed-2.0-pro-cloud",
+    "wall_s": 153.5,
+    "rc": 0,
+    "model_patch_len": 1593,
+    "n_images": 2,
+    "text_only": false,
+    "classification": "has_patch",
+    "stdout_tail": "n normally\n3. Replace placeholders back with original code wrapped in appropriate tags\n\nThis prevents markdown characters like `_` and `[]()` inside code snippets from being converted to HTML markup.\n",
+    "stderr_tail": "as HTML.\n   return new Handlebars.SafeString(str);\n },\n\n\u001b[0m\n\u001b[0m$ \u001b[0mrm /dev/shm/harness_mm_2x3/workdirs/opencode__doubao/GoogleChrome_lighthouse/test-marked.js /tmp/test-marked.js\n(no output)\n\u001b[0m\n"
   }
 }
