@@ -253,3 +253,5 @@ ts	case_id	shard	L0	L1	L2	L3	L4	L5	status	fix_note	wall_s
 2026-11-25T11:54:13	CombCellNetlistSyn-001	C	1	1	1	1	1	1	green	r1116 L3-distinct spot-check OK (negselftest all-FAIL + first-fail labels >=3 distinct)	-
 2026-11-25T11:54:13	DbusMetalFlowReport-001	C	1	1	1	1	1	1	green	r1116 L3-distinct spot-check OK (negselftest all-FAIL + first-fail labels >=3 distinct)	-
 2026-11-25T11:54:13	CmMaOpTableGen-001	C	1	1	1	1	1	1	p1_fixed	r1116 P1 print_expected padding <300B->537B clears [a] size gate; first-fail a->c; distinct {a,b,e}->{a,b,c,e}=4; ref PASS confirmed; all 6 neg FAIL	-
+2026-11-25T12:05	MaxAreaRatioSidewallSolver-001	C	1	1	1	1	?	?	green	r1117 spot-check: REF PASS + 4neg FAIL distinct {c,e,e,k}=3 (print_expected&hardcode_a share e, both deeper than empty_shell c; no trivial-gate collision)	-
+2026-11-25T12:05	PgLayoutMergeAudit-001	C	1	1	1	1	?	?	green	r1117 spot-check: REF PASS + 4neg FAIL distinct {c,e,g,i}=4 (negselftest NEGSELFTEST PASS)	-
