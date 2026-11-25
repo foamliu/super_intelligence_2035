@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R15: verl 多轮环境集成审计</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.6;color:#1a1a1a}
+h1{color:#c0392b;border-bottom:3px solid #c0392b;padding-bottom:8px}
+h2{color:#2c3e50;margin-top:28px;border-bottom:1px solid #ddd;padding-bottom:4px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 10px;text-align:left}
+th{background:#f8f9fa;font-weight:600}
+tr:nth-child(even){background:#fafafa}
+code{background:#f4f4f4;padding:2px 5px;border-radius:3px;font-size:13px}
+pre{background:#2d2d2d;color:#f8f8f2;padding:14px;border-radius:6px;overflow-x:auto;font-size:13px}
+.red{color:#c0392b;font-weight:bold}
+.green{color:#27ae60;font-weight:bold}
+.yellow{color:#e67e22;font-weight:bold}
+.critical{background:#ffebee;border-left:4px solid #c0392b;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.fixed{background:#e8f5e9;border-left:4px solid #27ae60;padding:10px 14px;margin:12px 0;border-radius:0 4px 4px 0}
+.summary-box{background:#eaf2f8;border:2px solid #2980b9;padding:16px;margin:16px 0;border-radius:8px}
+</style>
+</head>
+<body>
+<h1>R15: verl 多轮环境集成审计 — 7 项发现 + 4 文件修复</h1>
+<p><strong>日期</strong>：2026-11-07 · <strong>wake</strong>：63 · <strong>方法</strong>：verl v0.5.x 文档 + SGLang 文档 + 代码审计</p>
+<div class="summary-box">
+<strong>摘要</strong>：发现 <span class="red">5 个 critical bug</span>（SGLang parser 缺失 / 两套系统混用 / YAML 格式错 / 接口签名错 / config key 错位）+ 2 项注意事项。修复 4 文件，全量验证通过。残余风险 = SGLang minicpm5 parser 的 CUDA 12.4 兼容性。
+</div>
+
+<h2>1. 🔴 SGLang minicpm5 parser 不在 pip 发行版</h2>
+<div class="critical">
+<p>官方文档列 16 个 parser，<strong>minicpm5 不在其中</strong>。该 parser 在 PR #25600（2026-05-22 合入 main）但未进 pip。且 <code>sglang&gt;=0.5.16</code> 需 CUDA 13.x，.17 是 CUDA 12.4。</p>
+</div>
+<p><strong>修复</strong>：setup 脚本先从 main 安装（含 minicpm5），失败回退 pip 0.5.6.post3。verl config 移除 <code>tool_call_parser</code>（非 verl key，是 SGLang server 参数）。回退方案：BaseTool.execute() 中自行解析 XML。</p>
+
+<h2>2. ✅ multi_turn: True 正确</h2>
+<div class="fixed">verl v0.5.x 文档确认 <code>multi_turn: True</code> 是布尔值。无需修改。</div>
+
+<h2>3. 🔴 两套多轮系统混用</h2>
+<div class="critical">
+<p>Tool Agent Loop（<code>tool_kwargs</code>）vs Interaction System（<code>agent_name_key</code>）。我们同时有两者，不应混用。</p>
+</div>
+<p><strong>修复</strong>：移除 <code>agent_name_key</code>，仅保留 Tool Agent Loop。</p>
+
+<h2>4. 🔴 Tool YAML 格式错</h2>
+<div class="critical">
+<p><code>class_name</code> 缺模块路径 + <code>tool_schema</code> 缺 <code>type: function</code> 包装。</p>
+</div>
+<p><strong>修复</strong>：改为 <code>baize_posttrain_eda_tool.EDASandboxTool</code> + OpenAI Function 格式。</p>
+
+<h2>5. 🔴 BaseTool 接口签名错</h2>
+<div class="critical">
+<p>create() 缺 instance_id；execute() 应为 (instance_id, parameters) 而非 (code, host)。</p>
+</div>
+<p><strong>修复</strong>：create() 加 instance_id → execute() 改 (instance_id, parameters) dict 提取 → dry-run ✅</p>
+
+<h2>6-7. 📝 其他发现</h2>
+<p><strong>6</strong>：SandboxFusionTool 参考实现已从 verl 源码移除（commit f5e21df6），但 BaseTool 模式有效。我们的实现路径正确。</p>
+
+<h2>8. 修复验证</h2>
+<table>
+<tr><th>文件</th><th>修改</th><th>验证</th></tr>
+<tr><td><code>baize_posttrain_eda_tools.yaml</code></td><td>全限定 class_name + OpenAI Function schema</td><td class="green">YAML ✅</td></tr>
+<tr><td><code>baize_posttrain_eda_tool.py</code></td><td>create/execute 签名修正</td><td class="green">AST ✅ + dry-run ✅</td></tr>
+<tr><td><code>baize_posttrain_setup_cu124_venv.sh</code></td><td>SGLang main→pip 回退</td><td class="green">bash -n ✅</td></tr>
+<tr><td><code>baize_posttrain_rl_verl_config.yaml</code></td><td>移除 tool_call_parser + agent_name_key</td><td class="green">YAML ✅</td></tr>
+</table>
+<p><strong>全量</strong>：1 bash + 1 AST + 1 dry-run + 2 YAML = <span class="green">5/5 通过</span></p>
+
+<h2>9. 11/9 启动风险评估</h2>
+<table>
+<tr><th>风险项</th><th>修复前</th><th>修复后</th><th>残余</th></tr>
+<tr><td>SGLang minicpm5 parser</td><td class="red">确定失败</td><td class="yellow">main 可能成功</td><td>CUDA 12.4</td></tr>
+<tr><td>Tool YAML 格式</td><td class="red">无法加载</td><td class="green">符合 schema</td><td>无</td></tr>
+<tr><td>BaseTool 接口</td><td class="red">签名不匹配</td><td class="green">符合接口</td><td>无</td></tr>
+<tr><td>tool_call_parser 位置</td><td class="red">verl 不认</td><td class="green">移至 server</td><td>需 serve 传参</td></tr>
+<tr><td>agent_name_key 混用</td><td class="yellow">两系统混用</td><td class="green">仅 Tool Loop</td><td>无</td></tr>
+<tr><td>multi_turn: True</td><td class="green">正确</td><td class="green">确认正确</td><td>无</td></tr>
+</table>
+
+<div class="fixed">
+<strong>结论</strong>：残余风险 = SGLang minicpm5 parser 的 CUDA 12.4 兼容性。若 main 分支失败，在 BaseTool.execute() 中自行解析 XML 即可绕过。
+</div>
+
+<p style="margin-top:30px;color:#888;font-size:12px">BaiZe Post-Train · R15 · wake63 · 2026-11-07 · ⚠️ 替身 RL 结果不可迁移到白泽</p>
+</body>
+</html>

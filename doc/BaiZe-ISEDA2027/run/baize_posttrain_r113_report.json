@@ -1,0 +1,633 @@
+{
+  "r113": {
+    "timestamp": "2026-11-09 21:48:47",
+    "nas_root": "/nas_data",
+    "scan": {
+      "total": 83,
+      "hardcoded": 49,
+      "auto_detect": 20,
+      "comment": 14,
+      "details": [
+        {
+          "file": "baize_posttrain_anneal.sh",
+          "line": 10,
+          "category": "COMMENT",
+          "content": "#   - pretrain S1 收敛 ckpt（/nas_train/.../BaiZe-ISEDA2027/nemo_experiments/.../step_700000）"
+        },
+        {
+          "file": "baize_posttrain_anneal.sh",
+          "line": 27,
+          "category": "COMMENT",
+          "content": "# R12: Auto-detect paths (/nas_train empty on .17, use /nas_data)"
+        },
+        {
+          "file": "baize_posttrain_contamination_gate.sh",
+          "line": 28,
+          "category": "COMMENT",
+          "content": "# Auto-detect NFS root (.17 → /nas_data, .29/.12 → /nas_train)"
+        },
+        {
+          "file": "baize_posttrain_contamination_gate.sh",
+          "line": 29,
+          "category": "AUTO_DETECT",
+          "content": "if [ -d \"/nas_data/app.e0031982/code/super_intelligence_2035\" ] && [ ! -d \"/nas_train/app.e0031982/code/super_intelligen"
+        },
+        {
+          "file": "baize_posttrain_contamination_gate.sh",
+          "line": 31,
+          "category": "AUTO_DETECT",
+          "content": "elif [ -d \"/nas_train/app.e0031982/code/super_intelligence_2035\" ]; then"
+        },
+        {
+          "file": "baize_posttrain_contamination_gate.sh",
+          "line": 32,
+          "category": "AUTO_DETECT",
+          "content": "RUN_DIR=/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run"
+        },
+        {
+          "file": "baize_posttrain_loop.sh",
+          "line": 8,
+          "category": "COMMENT",
+          "content": "#   setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_loop.sh \\"
+        },
+        {
+          "file": "baize_posttrain_loop.sh",
+          "line": 25,
+          "category": "HARDCODED",
+          "content": "GIT_ROOT=\"$(git -C \"$SCRIPT_DIR\" rev-parse --show-toplevel 2>/dev/null || echo '/nas_train/app.e0031982/code/super_intel"
+        },
+        {
+          "file": "baize_posttrain_paths.sh",
+          "line": 8,
+          "category": "COMMENT",
+          "content": "#   .17 (posttrain): /nas_data is the NFS mount, /nas_train → /H100_train (empty)"
+        },
+        {
+          "file": "baize_posttrain_paths.sh",
+          "line": 9,
+          "category": "COMMENT",
+          "content": "#   .29/.12:         /nas_train is the NFS mount"
+        },
+        {
+          "file": "baize_posttrain_paths.sh",
+          "line": 12,
+          "category": "COMMENT",
+          "content": "#   NAS_ROOT          — /nas_data or /nas_train (whichever has data)"
+        },
+        {
+          "file": "baize_posttrain_paths.sh",
+          "line": 23,
+          "category": "AUTO_DETECT",
+          "content": "if [ -d \"/nas_data/app.e0031982/code/super_intelligence_2035\" ] && [ ! -d \"/nas_train/app.e0031982/code/super_intelligen"
+        },
+        {
+          "file": "baize_posttrain_paths.sh",
+          "line": 26,
+          "category": "AUTO_DETECT",
+          "content": "elif [ -d \"/nas_train/app.e0031982/code/super_intelligence_2035\" ]; then"
+        },
+        {
+          "file": "baize_posttrain_paths.sh",
+          "line": 27,
+          "category": "COMMENT",
+          "content": "# .29/.12 nodes: /nas_train is the NFS mount"
+        },
+        {
+          "file": "baize_posttrain_paths.sh",
+          "line": 28,
+          "category": "AUTO_DETECT",
+          "content": "export NAS_ROOT=/nas_train"
+        },
+        {
+          "file": "baize_posttrain_paths.sh",
+          "line": 30,
+          "category": "HARDCODED",
+          "content": "echo \"⚠️ Cannot detect NFS root — neither /nas_data nor /nas_train has expected structure\" >&2"
+        },
+        {
+          "file": "baize_posttrain_preflight_check.sh",
+          "line": 4,
+          "category": "COMMENT",
+          "content": "# === Auto-detect paths (R12: /nas_train empty on .17) ==="
+        },
+        {
+          "file": "baize_posttrain_rl_grpo.sh",
+          "line": 7,
+          "category": "COMMENT",
+          "content": "#   - Auto-detects /nas_data vs /nas_train (R12 path fix)"
+        },
+        {
+          "file": "baize_posttrain_rl_grpo.sh",
+          "line": 34,
+          "category": "COMMENT",
+          "content": "# === Auto-detect paths (R12: /nas_train empty on .17, use /nas_data) ==="
+        },
+        {
+          "file": "baize_posttrain_sft.sh",
+          "line": 25,
+          "category": "COMMENT",
+          "content": "# R12: Auto-detect paths (/nas_train empty on .17, use /nas_data)"
+        },
+        {
+          "file": "baize_posttrain_day0_readiness_audit.py",
+          "line": 9,
+          "category": "AUTO_DETECT",
+          "content": "NAS_ROOT = \"/nas_data\" if Path(\"/nas_data/app.e0031982/code/super_intelligence_2035\").exists() and not Path(\"/nas_train/"
+        },
+        {
+          "file": "baize_posttrain_r106_launch_day_plan.py",
+          "line": 28,
+          "category": "AUTO_DETECT",
+          "content": "and not Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists()):"
+        },
+        {
+          "file": "baize_posttrain_r106_launch_day_plan.py",
+          "line": 30,
+          "category": "AUTO_DETECT",
+          "content": "elif Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists():"
+        },
+        {
+          "file": "baize_posttrain_r106_launch_day_plan.py",
+          "line": 31,
+          "category": "AUTO_DETECT",
+          "content": "NAS_ROOT = \"/nas_train\""
+        },
+        {
+          "file": "baize_posttrain_r111_launch_consistency_audit.py",
+          "line": 20,
+          "category": "AUTO_DETECT",
+          "content": "if Path(\"/nas_data/app.e0031982/code/super_intelligence_2035\").exists() and not Path(\"/nas_train/app.e0031982/code/super"
+        },
+        {
+          "file": "baize_posttrain_r111_launch_consistency_audit.py",
+          "line": 22,
+          "category": "AUTO_DETECT",
+          "content": "elif Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists():"
+        },
+        {
+          "file": "baize_posttrain_r111_launch_consistency_audit.py",
+          "line": 23,
+          "category": "AUTO_DETECT",
+          "content": "NAS_ROOT = \"/nas_train\""
+        },
+        {
+          "file": "baize_posttrain_r111_launch_consistency_audit.py",
+          "line": 169,
+          "category": "HARDCODED",
+          "content": "paths = [(\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609\",\"agent_2609_nas_train\"),"
+        },
+        {
+          "file": "baize_posttrain_r111_launch_consistency_audit.py",
+          "line": 170,
+          "category": "HARDCODED",
+          "content": "(\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605\",\"general_2605_nas_train\"),"
+        },
+        {
+          "file": "baize_posttrain_r111_launch_consistency_audit.py",
+          "line": 196,
+          "category": "HARDCODED",
+          "content": "items.append({\"id\":\"DAT-03\",\"cat\":\"SFT通用数据\",\"check\":\"UltraData在.17可达\",\"status\":\"PASS\" if sg[\"any_available\"] else \"WARN\""
+        },
+        {
+          "file": "baize_posttrain_r111_launch_consistency_audit.py",
+          "line": 282,
+          "category": "HARDCODED",
+          "content": "<div class=\"warn\"><strong>⚠️ CFG-04</strong>：blend配置用<code>/nas_train/...</code>路径，.17上NFS为<code>/nas_data</code>。SFT通用数"
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 5,
+          "category": "HARDCODED",
+          "content": "1. Hardcoded /nas_train references (won't work on .17)"
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 59,
+          "category": "HARDCODED",
+          "content": "if '/nas_train' in line and 'PATHS' not in fname.upper():"
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 132,
+          "category": "HARDCODED",
+          "content": "for mp in ['/nas_data', '/nas_train', '/nas_inference', '/nas_env']:"
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 164,
+          "category": "HARDCODED",
+          "content": "\"description\": f\"{len(nas_train_hi)} HIGH /nas_train refs in configs\","
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 165,
+          "category": "HARDCODED",
+          "content": "\"mitigation\": \"Replace /nas_train with /nas_data in YAML configs; .sh files already use paths.sh auto-detection\"})"
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 177,
+          "category": "HARDCODED",
+          "content": "if \"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/\" in fixed:"
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 178,
+          "category": "HARDCODED",
+          "content": "fixed = fixed.replace(\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/\","
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 180,
+          "category": "HARDCODED",
+          "content": "fixes.append(\"CFG-04: Fixed /nas_train -> /nas_data in sft_blend_config.yaml data paths\")"
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 282,
+          "category": "HARDCODED",
+          "content": "<p><strong>关键发现</strong>：.17 的 <code>/nas_data</code> NFS（10.251.28.110:/train）与 .29/.12 的共享 NFS（<code>/nas_train</code>"
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 289,
+          "category": "HARDCODED",
+          "content": "<p>共 {len(path_issues)} 处（{len(nas_train_hi)} HIGH /nas_train）。</p>"
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 313,
+          "category": "HARDCODED",
+          "content": "<li><strong>CFG-04 已修复</strong>：sft_blend_config.yaml 中 /nas_train -> /nas_data。但数据目录在 .17 上不存在（仅有 nemo_experiments/），需在"
+        },
+        {
+          "file": "baize_posttrain_r112_path_audit.py",
+          "line": 330,
+          "category": "HARDCODED",
+          "content": "print(f\"Path issues:      {len(path_issues)} ({len(nas_train_hi)} HIGH /nas_train)\")"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 5,
+          "category": "HARDCODED",
+          "content": "R112 found 37 path issues (31 HIGH /nas_train). This script:"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 6,
+          "category": "HARDCODED",
+          "content": "1. SYSTEMATIC AUDIT of all /nas_train refs (COMMENT/AUTO_DETECT/HARDCODED)"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 18,
+          "category": "AUTO_DETECT",
+          "content": "not Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists():"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 20,
+          "category": "AUTO_DETECT",
+          "content": "elif Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists():"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 21,
+          "category": "AUTO_DETECT",
+          "content": "NAS_ROOT = \"/nas_train\""
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 29,
+          "category": "HARDCODED",
+          "content": "(\"SFT Agent (2609)\",\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609\",23.89,\"SFT\"),"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 30,
+          "category": "HARDCODED",
+          "content": "(\"SFT General (2605)\",\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605\",75.87,\"SFT\"),"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 31,
+          "category": "HARDCODED",
+          "content": "(\"Anneal Domain\",\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/pyAether_api_anneal\",None,\"Anneal\"),"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 32,
+          "category": "HARDCODED",
+          "content": "(\"Anneal Web\",\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/mix_base\",None,\"Anneal\"),"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 33,
+          "category": "HARDCODED",
+          "content": "(\"Anneal Code\",\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/full_ultradata_code_l3\",None,\"Anneal\"),"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 34,
+          "category": "HARDCODED",
+          "content": "(\"Anneal Math\",\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/full_ultradata_math_l3\",None,\"Anneal\"),"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 35,
+          "category": "HARDCODED",
+          "content": "(\"Tokenizer\",\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/tokenizer_eod\",None,\"All\"),"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 36,
+          "category": "HARDCODED",
+          "content": "(\"Pretrain ckpt\",\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/step_700000\",None,\"Anneal+SFT\"),"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 46,
+          "category": "HARDCODED",
+          "content": "r'if\\s+.*Path\\s*\\(\\s*[\"\\']/nas_train', r'elif\\s+.*Path\\s*\\(\\s*[\"\\']/nas_train',"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 47,
+          "category": "HARDCODED",
+          "content": "r'if\\s+.*\\[.*-d.*\"/nas_train', r'elif\\s+.*\\[.*-d.*\"/nas_train',"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 48,
+          "category": "AUTO_DETECT",
+          "content": "r'NAS_ROOT\\s*=\\s*\"/nas_train\"', r'export\\s+NAS_ROOT=/nas_train', r'RUN_DIR=/nas_train',"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 54,
+          "category": "HARDCODED",
+          "content": "r'\"nfs_path\"\\s*:\\s*\"/nas_train', r\"'nfs_path'\\s*:\\s*'/nas_train\","
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 55,
+          "category": "HARDCODED",
+          "content": "r'\"path\"\\s*:\\s*\"/nas_train', r\"'path'\\s*:\\s*'/nas_train\","
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 56,
+          "category": "HARDCODED",
+          "content": "r'path:\\s*\"/nas_train', r\"path:\\s*'/nas_train\","
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 61,
+          "category": "HARDCODED",
+          "content": "if '\"/nas_train/' in stripped or \"'/nas_train/\" in stripped:"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 65,
+          "category": "HARDCODED",
+          "content": "if '/nas_train' in stripped:"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 66,
+          "category": "COMMENT",
+          "content": "if '#' in line and line.index('#') < line.index('/nas_train'):"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 82,
+          "category": "HARDCODED",
+          "content": "if \"/nas_train\" in line:"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 91,
+          "category": "HARDCODED",
+          "content": "path_17 = path_29_12.replace(\"/nas_train/\", \"/nas_data/\", 1) if path_29_12.startswith(\"/nas_train/\") else path_29_12"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 113,
+          "category": "HARDCODED",
+          "content": "'\"nfs_path\": \"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605\"',"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 116,
+          "category": "HARDCODED",
+          "content": "'\"nfs_path\": \"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609\"',"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 124,
+          "category": "AUTO_DETECT",
+          "content": "not _Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists():"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 126,
+          "category": "AUTO_DETECT",
+          "content": "elif _Path(\"/nas_train/app.e0031982/code/super_intelligence_2035\").exists():"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 127,
+          "category": "AUTO_DETECT",
+          "content": "NAS_ROOT = \"/nas_train\""
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 134,
+          "category": "HARDCODED",
+          "content": "return {\"fixed\": True, \"changes\": 2, \"details\": \"Replaced 2 hardcoded /nas_train nfs_path with NAS_ROOT auto-detection\"}"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 151,
+          "category": "HARDCODED",
+          "content": "SRC_BASE=\"/nas_train/app.e0031982/code/BaiZe-ISEDA2027\""
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 277,
+          "category": "HARDCODED",
+          "content": "<div class=\"box box-info\">R112 发现 37 处路径问题。R113 系统化审计 /nas_train 引用，修复硬编码，生成 rsync 传输脚本。</div>"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 298,
+          "category": "HARDCODED",
+          "content": ".29:/nas_train → .17:/nas_data · ~100GB @ 1Gbps ≈ 15min</div>"
+        },
+        {
+          "file": "baize_posttrain_r113_data_transfer_plan.py",
+          "line": 328,
+          "category": "HARDCODED",
+          "content": "print(\"\\n[1/5] Scanning /nas_train references...\")"
+        },
+        {
+          "file": "baize_posttrain_r91_gpu_readiness_audit.py",
+          "line": 18,
+          "category": "HARDCODED",
+          "content": "NAS_ROOT = \"/nas_data\" if Path(\"/nas_data/app.e0031982/code/super_intelligence_2035\").exists() else \"/nas_train\""
+        },
+        {
+          "file": "baize_posttrain_r95_readiness_fix.py",
+          "line": 14,
+          "category": "HARDCODED",
+          "content": "NAS_ROOT = \"/nas_data\" if Path(\"/nas_data/app.e0031982/code/super_intelligence_2035\").exists() else \"/nas_train\""
+        },
+        {
+          "file": "baize_posttrain_r96_launch_validation.py",
+          "line": 24,
+          "category": "HARDCODED",
+          "content": "NAS_ROOT = \"/nas_data\" if Path(\"/nas_data/app.e0031982/code/super_intelligence_2035\").exists() else \"/nas_train\""
+        },
+        {
+          "file": "baize_posttrain_sft_data_mixer.py",
+          "line": 77,
+          "category": "HARDCODED",
+          "content": "\"nfs_path\": \"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605\","
+        },
+        {
+          "file": "baize_posttrain_sft_data_mixer.py",
+          "line": 85,
+          "category": "HARDCODED",
+          "content": "\"nfs_path\": \"/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609\","
+        },
+        {
+          "file": "baize_posttrain_rl_verl_config.yaml",
+          "line": 166,
+          "category": "COMMENT",
+          "content": "save_dir: /nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo  # R12: /nas_train empty "
+        }
+      ]
+    },
+    "data_availability": [
+      {
+        "label": "SFT Agent (2609)",
+        "path_29_12": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609",
+        "path_17": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/sft_agent_ultradata_2609",
+        "stage": "SFT",
+        "size_gb": 23.89,
+        "exists_on_17": false,
+        "bin_exists": false,
+        "idx_exists": false,
+        "needs_transfer": true
+      },
+      {
+        "label": "SFT General (2605)",
+        "path_29_12": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",
+        "path_17": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/sft_ultradata_2605",
+        "stage": "SFT",
+        "size_gb": 75.87,
+        "exists_on_17": false,
+        "bin_exists": false,
+        "idx_exists": false,
+        "needs_transfer": true
+      },
+      {
+        "label": "Anneal Domain",
+        "path_29_12": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/pyAether_api_anneal",
+        "path_17": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/pyAether_api_anneal",
+        "stage": "Anneal",
+        "size_gb": null,
+        "exists_on_17": false,
+        "bin_exists": false,
+        "idx_exists": false,
+        "needs_transfer": true
+      },
+      {
+        "label": "Anneal Web",
+        "path_29_12": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/mix_base",
+        "path_17": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/mix_base",
+        "stage": "Anneal",
+        "size_gb": null,
+        "exists_on_17": false,
+        "bin_exists": false,
+        "idx_exists": false,
+        "needs_transfer": true
+      },
+      {
+        "label": "Anneal Code",
+        "path_29_12": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/full_ultradata_code_l3",
+        "path_17": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/full_ultradata_code_l3",
+        "stage": "Anneal",
+        "size_gb": null,
+        "exists_on_17": false,
+        "bin_exists": false,
+        "idx_exists": false,
+        "needs_transfer": true
+      },
+      {
+        "label": "Anneal Math",
+        "path_29_12": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/full_ultradata_math_l3",
+        "path_17": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/full_ultradata_math_l3",
+        "stage": "Anneal",
+        "size_gb": null,
+        "exists_on_17": false,
+        "bin_exists": false,
+        "idx_exists": false,
+        "needs_transfer": true
+      },
+      {
+        "label": "Tokenizer",
+        "path_29_12": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/data/tokenizer_eod",
+        "path_17": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/data/tokenizer_eod",
+        "stage": "All",
+        "size_gb": null,
+        "exists_on_17": false,
+        "bin_exists": false,
+        "idx_exists": false,
+        "needs_transfer": true
+      },
+      {
+        "label": "Pretrain ckpt",
+        "path_29_12": "/nas_train/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/step_700000",
+        "path_17": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize2b/step_700000",
+        "stage": "Anneal+SFT",
+        "size_gb": null,
+        "exists_on_17": false,
+        "bin_exists": false,
+        "idx_exists": false,
+        "needs_transfer": false
+      },
+      {
+        "label": "MiniCPM5-2B",
+        "path_29_12": "/nas_data/app.e0031982/models/MiniCPM5-2B",
+        "path_17": "/nas_data/app.e0031982/models/MiniCPM5-2B",
+        "stage": "Eval",
+        "size_gb": 4.7,
+        "exists_on_17": true,
+        "bin_exists": false,
+        "idx_exists": false,
+        "needs_transfer": false
+      },
+      {
+        "label": "EDA-Eval 158-case",
+        "path_29_12": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl",
+        "path_17": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl",
+        "stage": "Eval",
+        "size_gb": null,
+        "exists_on_17": true,
+        "bin_exists": false,
+        "idx_exists": false,
+        "needs_transfer": false
+      }
+    ],
+    "fix_result": {
+      "fixed": true,
+      "changes": 2,
+      "details": "Replaced 2 hardcoded /nas_train nfs_path with NAS_ROOT auto-detection"
+    },
+    "transfer_script": {
+      "created": true,
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_data_transfer.sh"
+    }
+  }
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R94: SGLang Qwen3.8-27B 替身基线 + GPU Day 审计</title>
+<style>
+body { font-family: sans-serif; margin: 2rem; background: #f5f5f5; color: #333; max-width: 1200px; }
+h1 { color: #1a5276; border-bottom: 3px solid #2980b9; padding-bottom: .5rem; }
+h2 { color: #2c3e50; margin-top: 2rem; border-left: 4px solid #3498db; padding-left: .5rem; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0; background: white; }
+th, td { border: 1px solid #ddd; padding: .5rem; text-align: left; font-size: .9rem; }
+th { background: #2c3e50; color: white; }
+.ok { color: #27ae60; font-weight: bold; }
+.fail { color: #e74c3c; font-weight: bold; }
+.warn { color: #e67e22; font-weight: bold; }
+pre { background: #2c3e50; color: #ecf0f1; padding: 1rem; border-radius: 5px; overflow-x: auto; }
+.warning { background: #fdedec; border-left: 4px solid #e74c3c; padding: .5rem 1rem; margin: 1rem 0; }
+.note { background: #fef9e7; border-left: 4px solid #f39c12; padding: .5rem 1rem; margin: 1rem 0; }
+.box { display: flex; gap: 1rem; flex-wrap: wrap; }
+.card { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.1); min-width: 130px; }
+.card h3 { margin: 0 0 .5rem; font-size: .8rem; color: #7f8c8d; }
+.card .v { font-size: 1.5rem; font-weight: bold; }
+</style></head><body>
+<h1>R94: SGLang Qwen3.8-27B 替身基线 + GPU Day 审计</h1>
+<p>2026-11-09 | 10.252.32.17 | GPU Day (4xA40 未释放)</p>
+<div class="warning"><b>替身声明</b>: Qwen3.8-27B 结果<b>不可迁移到 BaiZe</b>。仅验证管线可用性。</div>
+<h2>1. 摘要</h2>
+<div class="box">
+<div class="card"><h3>GPU 空闲</h3><div class="v">0/8</div></div>
+<div class="card"><h3>SGLang</h3><div class="v">2/2</div></div>
+<div class="card"><h3>就绪</h3><div class="v">18/21</div></div>
+<div class="card"><h3>阻塞</h3><div class="v fail">3</div></div>
+<div class="card"><h3>可启动</h3><div class="v">NO</div></div>
+</div>
+<h2>2. GPU 现状</h2><table><tr><th>GPU</th><th>空闲</th><th>总</th><th>利用率</th><th>状态</th></tr>
+<tr><td>GPU 0</td><td>64MiB</td><td>46068MiB</td><td>0%</td><td class="fail">占用</td></tr>
+<tr><td>GPU 1</td><td>1085MiB</td><td>46068MiB</td><td>0%</td><td class="fail">占用</td></tr>
+<tr><td>GPU 2</td><td>1085MiB</td><td>46068MiB</td><td>0%</td><td class="fail">占用</td></tr>
+<tr><td>GPU 3</td><td>1085MiB</td><td>46068MiB</td><td>0%</td><td class="fail">占用</td></tr>
+<tr><td>GPU 4</td><td>474MiB</td><td>46068MiB</td><td>0%</td><td class="fail">占用</td></tr>
+<tr><td>GPU 5</td><td>989MiB</td><td>46068MiB</td><td>0%</td><td class="fail">占用</td></tr>
+<tr><td>GPU 6</td><td>985MiB</td><td>46068MiB</td><td>0%</td><td class="fail">占用</td></tr>
+<tr><td>GPU 7</td><td>987MiB</td><td>46068MiB</td><td>0%</td><td class="fail">占用</td></tr>
+</table>
+<h2>3. SGLang 端点</h2><table><tr><th>端口</th><th>状态</th><th>模型</th></tr>
+<tr><td>8098</td><td class="ok">alive</td><td>qwen3.8-27b</td></tr>
+<tr><td>8099</td><td class="ok">alive</td><td>qwen3.8-27b</td></tr>
+</table>
+<h2>4. 替身代码生成基线</h2>
+<div class="box">
+<div class="card"><h3>任务</h3><div class="v">3</div></div>
+<div class="card"><h3>API OK</h3><div class="v">3/3</div></div>
+<div class="card"><h3>语法率</h3><div class="v">100%</div></div>
+<div class="card"><h3>API 覆盖</h3><div class="v">0%</div></div>
+</div>
+<table><tr><th>Task</th><th>场景</th><th>语法</th><th>API覆盖</th><th>LOC</th><th>耗时</th><th>Tokens</th></tr>
+<tr><td>EDA-Eval-PyAether-001</td><td>Schematic</td><td class="ok">OK</td><td>0%</td><td>0/3</td><td>21.3s</td><td>2048</td></tr>
+<tr><td>EDA-Eval-PyAether-002</td><td>Others</td><td class="ok">OK</td><td>0%</td><td>10/2</td><td>10.9s</td><td>1128</td></tr>
+<tr><td>EDA-Eval-PyAether-003</td><td>Others</td><td class="ok">OK</td><td>0%</td><td>12/2</td><td>5.6s</td><td>640</td></tr>
+</table>
+<div class="note"><b>解读</b>: Qwen3.8-27B 纯代码生成语法率 100%, API覆盖 0%。
+非 full harness 口径。Full harness 需 MCP server。</div>
+<h2>5. GPU Day 就绪审计</h2><table><tr><th>检查项</th><th>路径</th><th>状态</th></tr>
+<tr><td>MiniCPM5-2B model (NAS)</td><td><code>/nas_data/app.e0031982/models/MiniCPM5-2B</code></td><td class="ok">[OK]</td></tr>
+<tr><td>MiniCPM5-2B model (/tmp)</td><td><code>/tmp/models/MiniCPM5-2B</code></td><td class="fail">[FAIL] missing</td></tr>
+<tr><td>venv (verl cu124)</td><td><code>/home/app.e0031982/code/verl_cu124_venv</code></td><td class="ok">[OK]</td></tr>
+<tr><td>venv (vllm)</td><td><code>/home/app.e0031982/code/vllm_venv</code></td><td class="ok">[OK]</td></tr>
+<tr><td>EDA-Eval dataset (158 tasks)</td><td><code>/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl</code></td><td class="ok">[OK]</td></tr>
+<tr><td>Eval: run_cline_script.sh</td><td><code>/home/app.e0031982/code/eda_fastmcp/pyAether-eval/run_cline_script.sh</code></td><td class="ok">[OK]</td></tr>
+<tr><td>Eval: run_cline_cli.sh</td><td><code>/home/app.e0031982/code/eda_fastmcp/pyAether-eval/run_cline_cli.sh</code></td><td class="ok">[OK]</td></tr>
+<tr><td>Eval: config.yaml</td><td><code>/home/app.e0031982/code/eda_fastmcp/pyAether-eval/config.yaml</code></td><td class="ok">[OK]</td></tr>
+<tr><td>Script: baize_posttrain_launch_11_9.sh</td><td><code>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_launch_11_9.sh</code></td><td class="ok">[OK]</td></tr>
+<tr><td>Script: baize_posttrain_gpu_watcher.sh</td><td><code>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_gpu_watcher.sh</code></td><td class="ok">[OK]</td></tr>
+<tr><td>Script: baize_posttrain_minicpm5_diag.sh</td><td><code>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_minicpm5_diag.sh</code></td><td class="ok">[OK]</td></tr>
+<tr><td>Script: baize_posttrain_rl_grpo.sh</td><td><code>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_rl_grpo.sh</code></td><td class="ok">[OK]</td></tr>
+<tr><td>Script: baize_posttrain_sft.sh</td><td><code>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_sft.sh</code></td><td class="ok">[OK]</td></tr>
+<tr><td>Script: baize_posttrain_eval.sh</td><td><code>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_eval.sh</code></td><td class="ok">[OK]</td></tr>
+<tr><td>Script: baize_posttrain_paths.sh</td><td><code>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_paths.sh</code></td><td class="ok">[OK]</td></tr>
+<tr><td>Script: baize_posttrain_contamination_gate.sh</td><td><code>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_contamination_gate.sh</code></td><td class="ok">[OK]</td></tr>
+<tr><td>DeepSeek traces</td><td><code>/home/app.e0031982/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/cline_trace</code></td><td class="ok">[OK] (103 traces)</td></tr>
+<tr><td>pyAether library</td><td><code></code></td><td class="fail">[FAIL] not installed</td></tr>
+<tr><td>pyAether MCP server (port 8090)</td><td><code></code></td><td class="fail">[FAIL] not running (port 8090=MRT tool)</td></tr>
+<tr><td>gpu_watcher</td><td><code></code></td><td class="ok">[OK] running</td></tr>
+<tr><td>Disk space (/nas_data)</td><td><code></code></td><td class="ok">[OK] 19557GB free</td></tr>
+</table>
+<h2>6. 阻塞项与修复</h2>
+<table><tr><th>阻塞</th><th>影响</th><th>修复</th></tr>
+<tr><td class="fail">GPU 0/8</td><td>无法服务 MiniCPM5-2B</td><td>需 root 释放>=4卡</td></tr>
+<tr><td class="fail">pyAether 未装</td><td>无法执行测试</td><td>启动 MCP server</td></tr>
+<tr><td class="fail">MCP 未运行</td><td>cline 无法用工具</td><td>端口8090被MRT占,换端口</td></tr>
+</table>
+<h2>7. GPU 释放后执行序列</h2>
+<pre>
+GPU释放 -> gpu_watcher检测 -> NFS warm-up
+Step0: 验证cu124 venv | Step1: Preflight
+Step2: SGLang serve MiniCPM5-2B -> 复测36%(5-run)
+Step3: 提取D1-D6(R93管线) | Step4: 污染隔离
+Step5: RL smoke(GRPO R0,10iters) | Step6: Full RL
+</pre>
+<h2>8. 结论</h2>
+<ol>
+<li>GPU 11/9既定到位但未释放, root SGLang占全8卡, gpu_watcher轮询中</li>
+<li>现有SGLang Qwen3.8-27B可作替身推理后端, 不能用于verl RL</li>
+<li>Qwen3.8-27B纯代码生成提供"强模型无工具"参考点</li>
+<li>三阻塞: GPU+pyAether+MCP. GPU需root, 其余可并行处理</li>
+<li>管线除3项外全部就绪, GPU释放后~30min可起Step2</li>
+</ol>
+<p style="color:#7f8c8d;font-size:.8rem;">R94 | 2026-11-09 | BaiZe Post-Train</p>
+</body></html>

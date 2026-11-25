@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R108: SFT/RL 数据管线审计</title>
+<style>
+body { font-family: sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
+h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 10px; }
+h2 { color: #16213e; margin-top: 30px; border-left: 4px solid #e94560; padding-left: 10px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #16213e; color: white; }
+tr:nth-child(even) { background: #f2f2f2; }
+.pass { color: #27ae60; font-weight: bold; }
+.fail { color: #e74c3c; font-weight: bold; }
+.warn { color: #f39c12; }
+pre { background: #1e1e2e; color: #cdd6f4; padding: 15px; border-radius: 8px; overflow-x: auto; }
+.verdict-box { padding: 20px; border-radius: 10px; margin: 20px 0; font-size: 1.2em; }
+.verdict-ready { background: #d4edda; border: 2px solid #27ae60; }
+.verdict-conditional { background: #fff3cd; border: 2px solid #f39c12; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 15px 0; }
+.stat-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+.stat-value { font-size: 2em; font-weight: bold; color: #e94560; }
+.stat-label { color: #666; font-size: 0.9em; }
+</style></head><body>
+<h1>R108: SFT/RL 数据管线端到端审计</h1>
+<p><strong>日期</strong>: 2026-11-09 | <strong>类型</strong>: 零 GPU 数据验证</p>
+<div class="verdict-box verdict-conditional"><strong>判定: CONDITIONAL (1 issues)</strong></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-value">3347</div><div class="stat-label">RL 任务</div></div>
+<div class="stat-card"><div class="stat-value">40327</div><div class="stat-label">SFT 行(全版本)</div></div>
+<div class="stat-card"><div class="stat-value">158</div><div class="stat-label">评测任务</div></div>
+</div>
+<h2>1. Parquet File Inventory</h2>
+<table>
+<tr><td><strong>path</strong></td><td>sft_pyaether_corpus.parquet</td></tr>
+<tr><td><strong>exists</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>size_mb</strong></td><td>2.74</td></tr>
+<tr><td><strong>rows</strong></td><td>19610</td></tr>
+<tr><td><strong>columns</strong></td><td><pre>[
+  "conversation",
+  "pair_id",
+  "type",
+  "api_used",
+  "contamination_check"
+]</pre></td></tr>
+<tr><td><strong>null_counts</strong></td><td><pre>{}</pre></td></tr>
+</table>
+<table>
+<tr><td><strong>path</strong></td><td>sft_pyaether_corpus_v2.parquet</td></tr>
+<tr><td><strong>exists</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>size_mb</strong></td><td>3.5</td></tr>
+<tr><td><strong>rows</strong></td><td>19524</td></tr>
+<tr><td><strong>columns</strong></td><td><pre>[
+  "conversation",
+  "pair_id",
+  "type",
+  "api_used",
+  "contamination_check"
+]</pre></td></tr>
+<tr><td><strong>null_counts</strong></td><td><pre>{}</pre></td></tr>
+</table>
+<table>
+<tr><td><strong>path</strong></td><td>sft_pyaether_corpus_v5_deep_enriched.parquet</td></tr>
+<tr><td><strong>exists</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>size_mb</strong></td><td>0.34</td></tr>
+<tr><td><strong>rows</strong></td><td>1193</td></tr>
+<tr><td><strong>columns</strong></td><td><pre>[
+  "conversation",
+  "pair_id",
+  "type",
+  "api_used",
+  "contamination_check"
+]</pre></td></tr>
+<tr><td><strong>null_counts</strong></td><td><pre>{}</pre></td></tr>
+</table>
+<table>
+<tr><td><strong>path</strong></td><td>rl_pyaether_synth_v2.parquet</td></tr>
+<tr><td><strong>exists</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>size_mb</strong></td><td>0.91</td></tr>
+<tr><td><strong>rows</strong></td><td>3347</td></tr>
+<tr><td><strong>columns</strong></td><td><pre>[
+  "prompt",
+  "reward_model",
+  "agent_name"
+]</pre></td></tr>
+<tr><td><strong>null_counts</strong></td><td><pre>{}</pre></td></tr>
+</table>
+<h2>2. RL Data Format Validation</h2>
+<table>
+<tr><td><strong>check</strong></td><td>Column "prompt"</td></tr>
+<tr><td><strong>pass</strong></td><td><span class="pass">✅ True</span></td></tr>
+</table>
+<table>
+<tr><td><strong>check</strong></td><td>Column "data_source"</td></tr>
+<tr><td><strong>pass</strong></td><td><span class="fail">❌ False</span></td></tr>
+</table>
+<table>
+<tr><td><strong>check</strong></td><td>prompt is list</td></tr>
+<tr><td><strong>pass</strong></td><td><span class="fail">❌ False</span></td></tr>
+</table>
+<table>
+<tr><td><strong>check</strong></td><td>Prompt token stats</td></tr>
+<tr><td><strong>pass</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>detail</strong></td><td><pre>{
+  "count": 3347,
+  "mean": 172.5,
+  "median": 149,
+  "max": 274,
+  "over_8192": 0
+}</pre></td></tr>
+</table>
+<table>
+<tr><td><strong>check</strong></td><td>Difficulty dist</td></tr>
+<tr><td><strong>pass</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>detail</strong></td><td><pre>{}</pre></td></tr>
+</table>
+<h2>3. SFT Data Format Validation</h2>
+<table>
+<tr><td><strong>file</strong></td><td>sft_pyaether_corpus.parquet</td></tr>
+<tr><td><strong>rows</strong></td><td>19610</td></tr>
+<tr><td><strong>columns</strong></td><td><pre>[
+  "conversation",
+  "pair_id",
+  "type",
+  "api_used",
+  "contamination_check"
+]</pre></td></tr>
+<tr><td><strong>msg_cols</strong></td><td><pre>[
+  "conversation"
+]</pre></td></tr>
+<tr><td><strong>format</strong></td><td>ndarray</td></tr>
+</table>
+<table>
+<tr><td><strong>file</strong></td><td>sft_pyaether_corpus_v2.parquet</td></tr>
+<tr><td><strong>rows</strong></td><td>19524</td></tr>
+<tr><td><strong>columns</strong></td><td><pre>[
+  "conversation",
+  "pair_id",
+  "type",
+  "api_used",
+  "contamination_check"
+]</pre></td></tr>
+<tr><td><strong>msg_cols</strong></td><td><pre>[
+  "conversation"
+]</pre></td></tr>
+<tr><td><strong>format</strong></td><td>ndarray</td></tr>
+</table>
+<table>
+<tr><td><strong>file</strong></td><td>sft_pyaether_corpus_v5_deep_enriched.parquet</td></tr>
+<tr><td><strong>rows</strong></td><td>1193</td></tr>
+<tr><td><strong>columns</strong></td><td><pre>[
+  "conversation",
+  "pair_id",
+  "type",
+  "api_used",
+  "contamination_check"
+]</pre></td></tr>
+<tr><td><strong>msg_cols</strong></td><td><pre>[
+  "conversation"
+]</pre></td></tr>
+<tr><td><strong>format</strong></td><td>ndarray</td></tr>
+</table>
+<h2>4. Contamination Isolation Check (RED LINE)</h2>
+<table>
+<tr><td><strong>eval_tasks</strong></td><td>158</td></tr>
+</table>
+<table>
+<tr><td><strong>eval_api_names</strong></td><td>13</td></tr>
+<tr><td><strong>sample</strong></td><td><pre>[
+  "pyAether.CStringList",
+  "pyAether.EmyNtlUtil",
+  "pyAether.MdeDcAnalysis",
+  "pyAether.MdeResult",
+  "pyAether.MdeSpeOutput",
+  "pyAether.dbRegTraverseTrigger",
+  "pyAether.dbResize",
+  "pyAether.dbTraverseDesignWithCB",
+  "pyAether.dbTraverseTriggerFunc",
+  "pyAether.emyDesign",
+  "pyAether.emyInitDb",
+  "pyAether.emyUnixNS",
+  "pyAether.mdeRegisterEventCallbacks"
+]</pre></td></tr>
+</table>
+<table>
+<tr><td><strong>rl_apis</strong></td><td>3670</td></tr>
+<tr><td><strong>api_overlap</strong></td><td>4</td></tr>
+<tr><td><strong>note</strong></td><td>API overlap expected (same library)</td></tr>
+</table>
+<table>
+<tr><td><strong>eval_fingerprints</strong></td><td>158</td></tr>
+<tr><td><strong>verbatim_contamination</strong></td><td><span class="fail">❌ 0</span></td></tr>
+<tr><td><strong>verdict</strong></td><td><span class="pass">✅ PASS</span></td></tr>
+</table>
+<h2>5. YAML Config Path Validation</h2>
+<table>
+<tr><td><strong>file</strong></td><td>baize_posttrain_rl_verl_config_v2.yaml</td></tr>
+<tr><td><strong>exists</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>referenced_paths</strong></td><td>7</td></tr>
+<tr><td><strong>path_checks</strong></td><td><pre>[
+  {
+    "path": "baize_posttrain_reward_functions.py",
+    "exists": true
+  },
+  {
+    "path": "~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json",
+    "exists": true
+  },
+  {
+    "path": "/nas_data/app.e0031982/models/MiniCPM5-2B",
+    "exists": true
+  },
+  {
+    "path": "rl_pyaether_synth_v2.parquet",
+    "exists": true
+  },
+  {
+    "path": "null",
+    "exists": false
+  },
+  {
+    "path": "/nas_data/app.e0031982/models/MiniCPM5-2B",
+    "exists": true
+  },
+  {
+    "path": "null     # R47 BUG5 FIX (was tool_kwargs.tools_config_file)",
+    "exists": false
+  }
+]</pre></td></tr>
+</table>
+<table>
+<tr><td><strong>file</strong></td><td>baize_posttrain_tool_config.yaml</td></tr>
+<tr><td><strong>exists</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>referenced_paths</strong></td><td><span class="pass">✅ 1</span></td></tr>
+<tr><td><strong>path_checks</strong></td><td><pre>[
+  {
+    "path": "~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json",
+    "exists": true
+  }
+]</pre></td></tr>
+</table>
+<table>
+<tr><td><strong>file</strong></td><td>baize_posttrain_eda_tools.yaml</td></tr>
+<tr><td><strong>exists</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>referenced_paths</strong></td><td><span class="fail">❌ 0</span></td></tr>
+<tr><td><strong>path_checks</strong></td><td><pre>[]</pre></td></tr>
+</table>
+<h2>6. Model & Tokenizer Check</h2>
+<table>
+<tr><td><strong>path</strong></td><td>/nas_data/app.e0031982/models/MiniCPM5-2B</td></tr>
+<tr><td><strong>exists</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>files</strong></td><td><pre>[
+  ".cache",
+  "model-00000-of-00001.safetensors",
+  "README-cn.md",
+  "chat_template.jinja",
+  "model.safetensors.index.json",
+  "generation_config.json",
+  ".gitattributes",
+  "special_tokens_map.json",
+  "config.json",
+  "README.md",
+  "tokenizer.json",
+  "tokenizer_config.json"
+]</pre></td></tr>
+<tr><td><strong>has_safetensors</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>has_config</strong></td><td><span class="pass">✅ True</span></td></tr>
+<tr><td><strong>has_tokenizer</strong></td><td><span class="pass">✅ True</span></td></tr>
+</table>
+<h2>7. Summary Statistics</h2>
+<table>
+<tr><td><strong>rl_total_tasks</strong></td><td>3347</td></tr>
+<tr><td><strong>sft_total_all_versions</strong></td><td>40327</td></tr>
+<tr><td><strong>eval_total_tasks</strong></td><td>158</td></tr>
+</table>
+<h2>8. Launch Readiness Verdict</h2>
+<table>
+<tr><td><strong>verdict</strong></td><td>CONDITIONAL (1 issues)</td></tr>
+<tr><td><strong>issues</strong></td><td><pre>[
+  "RL missing: data_source"
+]</pre></td></tr>
+</table>
+<h2>⚠️ 问题清单</h2><ul>
+<li class="warn">RL missing: data_source</li>
+</ul>
+<h2>结论</h2><p>R108 完成数据管线端到端审计。⚠️ 替身模型 RL 结果不可迁移到 BaiZe。</p></body></html>

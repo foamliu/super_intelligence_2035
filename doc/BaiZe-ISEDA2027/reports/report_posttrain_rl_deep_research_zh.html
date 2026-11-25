@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Post-Train · EDA 交互式 RL 深度调研报告</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.7;color:#333;background:#fafafa}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#2471a3;margin-top:2em;border-bottom:1px solid #d5dbdb;padding-bottom:5px}
+h3{color:#2e86c1;margin-top:1.5em}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:0.92em}
+th,td{border:1px solid #bdc3c7;padding:8px 12px;text-align:left}
+th{background:#ebf5fb;font-weight:600}
+tr:nth-child(even){background:#f8f9fa}
+code{background:#f4f6f7;padding:2px 6px;border-radius:3px;font-family:"Fira Code",Consolas,monospace;font-size:0.88em;color:#c0392b}
+pre{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:8px;overflow-x:auto;font-size:0.85em;line-height:1.5}
+pre code{background:none;color:inherit;padding:0}
+.note{background:#fef9e7;border-left:4px solid #f39c12;padding:12px 16px;margin:1em 0;border-radius:0 4px 4px 0}
+.warn{background:#fdedec;border-left:4px solid #e74c3c;padding:12px 16px;margin:1em 0;border-radius:0 4px 4px 0}
+.ok{background:#eafaf1;border-left:4px solid #27ae60;padding:12px 16px;margin:1em 0;border-radius:0 4px 4px 0}
+.meta{color:#7f8c8d;font-size:0.85em;margin-bottom:2em}
+.tag{display:inline-block;background:#d6eaf8;color:#2471a3;padding:2px 8px;border-radius:10px;font-size:0.8em;margin:2px}
+</style>
+</head>
+<body>
+<h1>BaiZe Stage(ii) Post-Train · EDA 交互式 RL 深度调研报告</h1>
+<p class="meta">
+<span class="tag">R1: 环境接口</span><span class="tag">R3: 奖励设计</span><span class="tag">GRPO 稳定性</span><span class="tag">零 GPU 调研</span><br>
+生成时间：2026-11-07 wake48 · 对应 §用户令·2026-11-07 10:10 R1+R3 方向<br>
+数据来源：eda_fastmcp 源码实测 + DeepSeek-R1/Dr.GRPO/DAPO 文献调研
+</p>
+
+<div class="note"><b>⚠️ 不可迁移性声明</b>：本次 RL 预演使用替身模型（MiniCPM5-2B），收益<b>不可迁移</b>到白泽。2B 通用模型 ≠ 白泽；A40 也训不动大模型。本次仅验证方法链路 + 沉淀可复用流程。</div>
+
+<h2>一、EDA 环境接口架构（R1）</h2>
+<h3>1.1 run_code 工具链路</h3>
+<pre><code>模型/Agent 生成 pyAether 代码
+  ↓ run_code(code, encoding, probe, endpoint, lang)  [tools/run_code.py:96]
+  ↓ validate_ascii_code → probe(可选) → run_code_http
+  ↓ HTTP POST → http://&lt;SANDBOX_HOST&gt;:&lt;PORT&gt;/v1/run_code
+  ↓ payload = {"code": code, "lang": "pyAether"|"skill"}
+沙箱服务端（36.15）→ 隔离 workdir 执行 → 返回 JSON:
+  {"response":"执行成功", "error_log":"", "print_log":"print()输出"}</code></pre>
+
+<h3>1.2 返回字段语义</h3>
+<table>
+<tr><th>字段</th><th>含义</th><th>判分用途</th></tr>
+<tr><td><code>response</code></td><td>执行状态/返回值摘要</td><td>辅助信号</td></tr>
+<tr><td><code>error_log</code></td><td>空字符串 ⇔ 执行无异常</td><td><b>主判分信号</b>（R1 二值）</td></tr>
+<tr><td><code>print_log</code></td><td>所有 print() 输出</td><td>断言通过/失败计数（R2 部分分）</td></tr>
+</table>
+
+<div class="ok"><b>关键发现</b>：<code>error_log == ""</code> 是最天然的执行成功信号；<code>print_log</code> 中的 AssertionError 计数提供断言通过率。两者组合即可实现 R2 部分分奖励，<b>无需额外标注</b>。</div>
+
+<h2>二、奖励自动可判定机制（R1 续）</h2>
+<table>
+<tr><th>信号</th><th>来源</th><th>判定</th><th>对应臂</th></tr>
+<tr><td>执行成功</td><td><code>error_log==""</code></td><td>二值</td><td>R1</td></tr>
+<tr><td>断言通过率</td><td><code>print_log</code> AssertionError 计数</td><td>连续[0,1]</td><td>R2</td></tr>
+<tr><td>代码可执行</td><td><code>response!="ERROR"</code> 且 <code>error_log==""</code></td><td>二值</td><td>R2基础分0.2</td></tr>
+<tr><td>静态验证</td><td><code>validate_code.py</code>（0误报,158GT全过）</td><td>附加</td><td>R4</td></tr>
+</table>
+<h3>2.1 R2 部分分公式（推荐起步）</h3>
+<pre><code>reward = 0.0
+if error_log == "":                          # 执行成功
+    reward += 0.2
+    assertions_passed = count_pass(print_log)
+    assertions_total = count_total(test_code)
+    if assertions_total > 0:
+        reward += 0.8 * (assertions_passed / assertions_total)
+elif "ImportError" in error_log:             # 导入失败
+    reward = 0.0  # 防虚构 API
+else:                                        # 运行时错误
+    reward = 0.0</code></pre>
+<div class="warn"><b>设计决策</b>：不给运行时错误部分分（防「能跑但不对」）；导入失败给0（防虚构API）；断言率0.8权重（缓解2B全0梯度）。</div>
+
+<h2>三、单题 rollout 预算估算</h2>
+<table>
+<tr><th>参数</th><th>值</th><th>依据</th></tr>
+<tr><td>单次沙箱执行</td><td>3-15s（超时60s）</td><td><code>SANDBOX_TIMEOUT=60</code></td></tr>
+<tr><td>模型生成（2B, A40）</td><td>5-20s/turn</td><td>vLLM 2B bf16 ~200 tok/s</td></tr>
+<tr><td>max_turns</td><td>3</td><td>D6 显示强模型中位 5 轮</td></tr>
+<tr><td><b>单题总预算</b></td><td><b>~30-90s</b></td><td>3 turns × (生成15s + 沙箱15s)</td></tr>
+</table>
+<p><b>2000 iters 全量</b>：32000 次沙箱调用 × 4路并发 × 15s → 沙箱33h + 推理33h = <b>~66h（2.75天）</b>，4×A40 可行。</p>
+
+<h2>四、超时与部分失败恢复</h2>
+<table>
+<tr><th>失败模式</th><th>检测</th><th>恢复策略</th></tr>
+<tr><td>沙箱超时</td><td><code>SANDBOX_TIMEOUT</code></td><td>reward=0，不重试</td></tr>
+<tr><td>空代码</td><td><code>code.strip()==""</code></td><td>reward=0，记<code>empty_generation</code></td></tr>
+<tr><td>连接失败</td><td><code>ConnectionRefusedError</code></td><td>重试1次(3s)；仍失败→reward=0</td></tr>
+<tr><td>probe IMPORT_ERROR</td><td><code>probe_ok=False</code></td><td>跳过全量，reward=0（省60s）</td></tr>
+</table>
+
+<h2>五、GRPO 核心公式与已知偏差（R3）</h2>
+<h3>5.1 原始 GRPO</h3>
+<pre><code>A_i = (r_i - mean(r)) / std(r)
+L = -1/G Σ 1/|o_i| Σ [min(ρA, clip(ρ,1-ε,1+ε)A) - β·KL]</code></pre>
+<h3>5.2 三个已知偏差（2025年研究揭示）</h3>
+<table>
+<tr><th>偏差</th><th>原因</th><th>对2B影响</th><th>修复</th></tr>
+<tr><td><b>长度偏差</b></td><td><code>1/|o_i|</code>使长回答每token权重低</td><td>2B易生成冗长无意义代码</td><td><b>Dr.GRPO</b>:用<code>1/Σ|o_i|</code>替代</td></tr>
+<tr><td><b>难度偏差</b></td><td><code>std</code>分母在接近全对/全错时爆炸</td><td>简单题大量全对→std≈0→无效</td><td><b>Dr.GRPO</b>:去掉std,只用<code>A_i=r_i-mean(r)</code></td></tr>
+<tr><td><b>熵坍缩</b></td><td>对称clip(1±0.2)限制低概率好token增长</td><td>2B探索弱,更易坍缩</td><td><b>DAPO</b>:clip-higher(ε_high=0.28,ε_low=0.2)</td></tr>
+</table>
+<div class="note"><b>来源</b>：Dr.GRPO (arXiv:2503.20783, 2025-03) · DAPO (arXiv:2503.14476, 2025-03) · DeepSeek-R1 (arXiv:2501.12948, 2025-01)</div>
+<h3>1.3 沙箱多端口并发模型</h3>
+<p>源码 <code>main.py:19-46</code> + <code>exec_code.py</code>：<code>SANDBOX_ENDPOINTS="8653:workdir_a,8654:workdir_b,..."</code> → 每端口独立 workdir → 物理隔离 lib.defs/TECHLIB → 无污染真并行。<code>asyncio.Queue</code> 端口池 → N 路并行。当前 36.15 配 4 个隔离端口，RL 起步用 2 路并发。</p>
+
+<h2>六、四臂奖励设计（R1–R4 具体公式）</h2>
+<table>
+<tr><th>臂</th><th>公式</th><th>场景</th><th>风险</th></tr>
+<tr><td><b>R1</b></td><td><code>1.0 if all_pass else 0.0</code></td><td>基线对照</td><td>2B大面积0→无梯度</td></tr>
+<tr><td><b>R2</b></td><td><code>0.2*(exec_ok)+0.8*(passed/total)</code></td><td><b>推荐起步</b></td><td>可能刷exec_ok但不通过断言</td></tr>
+<tr><td><b>R3</b></td><td><code>R2-0.05*(tool_calls/10)</code></td><td>成本敏感</td><td>α过大→不调用工具</td></tr>
+<tr><td><b>R4</b></td><td><code>R3+0.1*(api_legality)</code></td><td>防虚构API</td><td>β需调参</td></tr>
+</table>
+
+<h2>七、2B 模型专项调参建议</h2>
+<table>
+<tr><th>超参</th><th>推荐值</th><th>理由</th></tr>
+<tr><td>GROUP_SIZE</td><td><b>8</b>（smoke:4）</td><td>2B推理快,8组够估计优势</td></tr>
+<tr><td>KL_COEF</td><td><b>0.04</b></td><td>DeepSeek-R1默认;2B更易漂移</td></tr>
+<tr><td>clip ε</td><td><b>0.2/0.28</b>（DAPO不对称）</td><td>防熵坍缩</td></tr>
+<tr><td>LR</td><td><b>1e-6</b></td><td>2B比7B敏感</td></tr>
+<tr><td>token_level_loss</td><td><b>True</b></td><td>DAPO建议</td></tr>
+<tr><td>dynamic_sampling</td><td><b>True</b></td><td>跳过全对/全错组</td></tr>
+</table>
+
+<h2>八、Anti-Cheat 与 Reward Hacking 防护</h2>
+<table>
+<tr><th>攻击模式</th><th>检测方法</th><th>防护</th></tr>
+<tr><td>虚构API</td><td><code>validate_code.py</code> E001-E008（0误报）</td><td>R4扣分</td></tr>
+<tr><td>空函数</td><td><code>code.strip()</code>长度&lt;20</td><td>reward=0</td></tr>
+<tr><td>hardcode答案</td><td>检测<code>return &lt;literal&gt;</code></td><td>reward=0</td></tr>
+<tr><td>except吞异常</td><td>E008规则</td><td>print_log warning</td></tr>
+<tr><td>长度hacking</td><td>监控avg_response_length</td><td>Dr.GRPO长度归一化</td></tr>
+<tr><td>格式作弊</td><td>PreToolUse hook逐字节一致</td><td>全程启用+报告cheat_rate</td></tr>
+</table>
+
+<h2>九、冷启动策略</h2>
+<table>
+<tr><th>阶段</th><th>动作</th><th>预期</th></tr>
+<tr><td><b>S0: SFT冷启动</b></td><td>500题canonical_solution做SFT(3epoch,LR2e-5)</td><td>产出合法pyAether代码结构</td></tr>
+<tr><td><b>S1: RL热身</b></td><td>R2,GROUP_SIZE=4,ITERS=200,只用低难度题</td><td>reward~0.2→~0.4</td></tr>
+<tr><td><b>S2: RL正式</b></td><td>R2,GROUP_SIZE=8,ITERS=2000,全难度</td><td>reward目标~0.5-0.6</td></tr>
+<tr><td><b>S3: RL精炼</b></td><td>R4,GROUP_SIZE=8,ITERS=500</td><td>cheat_rate&lt;5%</td></tr>
+</table>
+
+<h2>十、与 vision 线离散奖励教训对照</h2>
+<table>
+<tr><th>vision线教训</th><th>本线对策</th></tr>
+<tr><td>离散二值奖励2B大面积0</td><td>R2部分分起步(0.2 exec_ok保底)</td></tr>
+<tr><td>无动态采样→有效batch萎缩</td><td>DAPO dynamic_sampling跳过std≈0组</td></tr>
+<tr><td>长度无控制→response膨胀</td><td>Dr.GRPO长度归一化+监控</td></tr>
+<tr><td>KL过松→模型漂移到乱码</td><td>KL_COEF=0.04+每200步评测</td></tr>
+</table>
+
+<h2>十一、与白泽的可迁移性分析</h2>
+<table>
+<tr><th>流程/资产</th><th>可直接复用</th><th>依赖模型规模</th></tr>
+<tr><td>run_code沙箱接口+隧道SOP</td><td>✅ 完全复用</td><td>否</td></tr>
+<tr><td>R2部分分奖励公式</td><td>✅ 完全复用</td><td>否</td></tr>
+<tr><td>500+合成题(已过污染闸门)</td><td>✅ 完全复用</td><td>否</td></tr>
+<tr><td>anti-cheat静态规则</td><td>✅ 完全复用</td><td>否</td></tr>
+<tr><td>GRPO超参</td><td>⚠️ 需按白泽规模调</td><td><b>是</b></td></tr>
+<tr><td>替身模型RL收益数值</td><td>🚫 不可迁移</td><td><b>是</b></td></tr>
+</table>
+<div class="note"><b>结论</b>：方法链路（环境接口→奖励设计→训练循环→anti-cheat）<b>完全可复用</b>；唯一不可迁移的是替身模型的绝对分数。</div>
+
+<h2>十二、来源与参考文献</h2>
+<ul>
+<li>DeepSeek-R1: <code>arXiv:2501.12948</code> (2025-01)</li>
+<li>Dr.GRPO: <code>arXiv:2503.20783</code> (2025-03)</li>
+<li>DAPO: <code>arXiv:2503.14476</code> (2025-03)</li>
+<li>GRPO完整解释: <code>compilenrun.com/docs/ai/llm/llm-post-training/llm-reasoning-rl/</code></li>
+<li>DAPO/Dr.GRPO代码对比: <code>github.com/Guo-astro/train-llm-from-scratch</code></li>
+<li>TRL GRPOTrainer: <code>huggingface.co/docs/trl/grpo_trainer</code></li>
+<li>eda_fastmcp源码: <code>~/code/eda_fastmcp/tools/run_code.py</code>, <code>server/sandbox_server/exec_code.py</code></li>
+</ul>
+<p class="meta">— 报告结束 —</p>
+</body>
+</html>
+<h3>1.4 probe 预过滤</h3>
+<div class="ok"><code>probe=True</code> 先跑轻量探测（catch IMPORT_ERROR/TYPE_ERROR），失败跳过全量执行 → 可直接用于 RL 快速过滤明显错误的 rollout，节省 60s 沙箱超时时间。</div>

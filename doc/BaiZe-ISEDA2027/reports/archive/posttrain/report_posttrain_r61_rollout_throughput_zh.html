@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>R61: RL Rollout 吞吐量投影 + 发射补丁</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.6;color:#222}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#2874a6;margin-top:30px;border-left:4px solid #3498db;padding-left:10px}
+h3{color:#2c3e50;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:14px}
+th,td{border:1px solid #bbb;padding:6px 10px;text-align:center}
+th{background:#e8f4fd;color:#1a5276}
+tr:nth-child(even){background:#f8f9fa}
+.best{background:#d5f5e3!important;font-weight:bold}
+.warn{background:#fcf3cf!important}
+.bad{background:#fadbd8!important}
+.good{background:#d5f5e3!important}
+code{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:13px}
+.note{background:#fef9e7;border-left:4px solid #f1c40f;padding:10px 15px;margin:15px 0}
+.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px 15px;margin:15px 0}
+.summary{background:#eafaf1;border:2px solid #27ae60;border-radius:8px;padding:15px 20px;margin:20px 0}
+</style></head><body>
+<h1>R61: RL Rollout 吞吐量投影 + 发射补丁实现</h1>
+<p><small>2026-11-08 wake109 · 零 GPU · Python 3.8+ · BaiZe Stage(ii) Post-Training</small></p>
+<div class="summary">
+<b>核心发现</b>：R60 推荐的 ctx=32768 在 non-hybrid 模式下<b>不可行</b>（KV cache 10.5GB/seq，每 GPU 仅放 1 序列，G=8 需 8 个）。
+经吞吐量投影，<b>ctx=16384 + hybrid engine</b> 是 72h 窗口内唯一可行方案（3.45 steps/hr → ~248 步/72h）。
+已应用 9 处补丁到 RL 配置和 SFT 脚本。
+</div>
+
+<h2>§1 背景</h2>
+<p>R60 分析了 103 条 DeepSeek 轨迹，发现平均 28,339 tokens/任务，推荐 ctx=32768。
+但 R60 未评估吞吐量可行性——在 4×A40 48GB 上，500 步 GRPO 训练需要多久？ctx=32768 是否可行？</p>
+
+<h2>§2 KV Cache 内存约束</h2>
+<p>MiniCPM5-2B: 42 层, 32 KV heads, head_dim=64, bf16（2 bytes）</p>
+<table>
+<tr><th>上下文长度</th><th>KV Cache/序列</th><th>A40 可放序列数*</th><th>G=8 需求</th><th>可行?</th></tr>
+<tr><td>4096</td><td>1.312 GB</td><td>~13</td><td>8</td><td class="good">✅</td></tr>
+<tr><td>8192</td><td>2.625 GB</td><td>~6</td><td>8</td><td class="good">✅</td></tr>
+<tr><td>16384</td><td>5.250 GB</td><td>~3</td><td>8</td><td class="warn">⚠️ 紧张</td></tr>
+<tr class="bad"><td>32768</td><td>10.500 GB</td><td>~1</td><td>8</td><td>❌ 不可行</td></tr>
+</table>
+<p><small>* SGLang budget = 48GB × 0.50 - 4GB model - 2GB overhead = 18GB (non-hybrid)</small></p>
+
+<h2>§3 吞吐量投影（8 配置对比）</h2>
+<table>
+<tr><th>配置</th><th>ctx</th><th>bs</th><th>G</th><th>模式</th><th>并发/GPU</th><th>s/step</th><th>st/hr</th><th>500步</th><th>72h?</th></tr>
+<tr><td>OLD 8K</td><td>8192</td><td>128</td><td>8</td><td>non-hybrid</td><td>4</td><td>1531</td><td>2.35</td><td>8.8天</td><td class="bad">❌</td></tr>
+<tr class="bad"><td>32K non-hybrid</td><td>32768</td><td>128</td><td>8</td><td>non-hybrid</td><td><b>1</b></td><td>N/A</td><td>0</td><td><b>不可行</b></td><td>❌</td></tr>
+<tr><td>32K hybrid</td><td>32768</td><td>128</td><td>8</td><td>hybrid</td><td>3</td><td>3017</td><td>1.19</td><td>17.5天</td><td class="bad">❌</td></tr>
+<tr class="best"><td>16K hybrid ★</td><td>16384</td><td>128</td><td>8</td><td>hybrid</td><td>6</td><td>1044</td><td>3.45</td><td>6天</td><td class="warn">⚠️</td></tr>
+<tr><td>16K non-hybrid</td><td>16384</td><td>128</td><td>8</td><td>non-hybrid</td><td>2</td><td>3017</td><td>1.19</td><td>17.5天</td><td class="bad">❌</td></tr>
+<tr><td>32K hybrid G=4</td><td>32768</td><td>128</td><td>4</td><td>hybrid</td><td>3</td><td>1343</td><td>2.68</td><td>7.8天</td><td class="bad">❌</td></tr>
+<tr class="good"><td>Smoke 32K</td><td>32768</td><td>16</td><td>4</td><td>hybrid</td><td>3</td><td>226</td><td>15.9</td><td>37min</td><td>✅</td></tr>
+</table>
+<div class="critical">
+<b>关键发现</b>：ctx=32768 non-hybrid 下，每 GPU 只放 1 个序列（KV cache 10.5GB > budget 18GB）。
+G=8 需 8 个并发序列 → <b>连一个 group 都放不下</b>，配置不可行。
+</div>
+
+<h2>§4 72h 窗口可行性</h2>
+<table>
+<tr><th>配置</th><th>steps/hr</th><th>72h 可完成</th><th>评估</th></tr>
+<tr class="best"><td>16K hybrid (最优)</td><td>3.45</td><td>~248 步</td><td>⚠️ 需将目标从 500 降至 200 步</td></tr>
+<tr><td>8K non-hybrid</td><td>2.35</td><td>~169 步</td><td>⚠️ 98% 截断</td></tr>
+<tr><td>32K hybrid</td><td>1.19</td><td>~86 步</td><td>❌ 太少</td></tr>
+<tr class="good"><td>Smoke 32K</td><td>15.9</td><td>~1146 步</td><td>✅ smoke</td></tr>
+</table>
+
+<h2>§5 已应用补丁</h2>
+<h3>§5.1 RL 配置 (baize_posttrain_rl_verl_config_v2.yaml)</h3>
+<table>
+<tr><th>参数</th><th>旧值</th><th>新值</th><th>依据</th></tr>
+<tr><td><code>max_prompt_length</code></td><td>4096</td><td><b>8192</b></td><td>R60</td></tr>
+<tr><td><code>max_response_length</code></td><td>4096</td><td><b>8192</b></td><td>R61</td></tr>
+<tr><td><code>prompt_length</code></td><td>4096</td><td><b>8192</b></td><td>同上</td></tr>
+<tr><td><code>response_length</code></td><td>4096</td><td><b>8192</b></td><td>同上</td></tr>
+<tr><td><code>gpu_memory_utilization</code></td><td>0.35</td><td><b>0.50</b></td><td>R11</td></tr>
+<tr><td><code>max_num_batched_tokens</code></td><td>8192</td><td><b>16384</b></td><td>匹配 ctx</td></tr>
+<tr><td><code>max_num_seqs</code></td><td>256</td><td><b>24</b></td><td>R11</td></tr>
+</table>
+<h3>§5.2 SFT 脚本 (baize_posttrain_sft.sh)</h3>
+<table>
+<tr><th>参数</th><th>旧值</th><th>新值</th><th>依据</th></tr>
+<tr><td><code>CONTEXT_LEN</code></td><td>8192</td><td><b>16384</b></td><td>R60: 16K captures 82%</td></tr>
+</table>
+
+<h2>§6 单次 Rollout 耗时分解 (ctx=16384, G=8)</h2>
+<table>
+<tr><th>阶段</th><th>耗时</th><th>说明</th></tr>
+<tr><td>Prefill</td><td>1.23s</td><td>17,202 tok, 3500 tok/s/GPU×4</td></tr>
+<tr><td>Decode</td><td>6.96s</td><td>11,137 gen tok, 1600 tok/s</td></tr>
+<tr><td>Tool exec</td><td>15.03s</td><td>5.01 turns × 2 calls × 1.5s</td></tr>
+<tr class="best"><td><b>总计</b></td><td><b>23.22s</b></td><td>per prompt (G=8 并行)</td></tr>
+</table>
+<div class="note"><b>注</b>：工具执行(15s)占总耗时 65%。EDA 沙盒延迟是主要瓶颈。</div>
+
+<h2>§7 11/9 发射建议更新</h2>
+<ol>
+<li><b>Smoke</b>：ctx=32768, bs=16, G=4, hybrid → 37min/10步 ✅</li>
+<li><b>主 RL</b>：ctx=16384, bs=128, G=8, hybrid → <b>200步/72h</b></li>
+<li><b>如需 500 步</b>：~6 天（延长或分 3 轮）</li>
+<li><b>Hybrid engine</b>：<code>hybrid_engine: True</code>；hybrid 模式 util=0.85</li>
+<li><b>工具结果摘要</b>（R60 策略B）：减 60-80% user token → 降 KV 压力</li>
+</ol>
+
+<h2>§8 交付物</h2>
+<table>
+<tr><th>产物</th><th>路径</th></tr>
+<tr><td>分析脚本</td><td><code>run/baize_posttrain_rollout_throughput.py</code></td></tr>
+<tr><td>JSON 结果</td><td><code>run/r61_rollout_throughput.json</code></td></tr>
+<tr><td>HTML 报告</td><td><code>reports/report_posttrain_r61_rollout_throughput_zh.html</code></td></tr>
+<tr><td>RL 配置补丁</td><td><code>run/baize_posttrain_rl_verl_config_v2.yaml</code></td></tr>
+<tr><td>SFT 配置补丁</td><td><code>run/baize_posttrain_sft.sh</code></td></tr>
+</table>
+<p><small><b>数据溯源</b>：R60 实测 103 DeepSeek 轨迹 · MiniCPM5-2B config.json · A40 48GB · SGLang 0.4.6 · verl 0.4.0 · R11 内存校准。无伪造。</small></p>
+</body></html>

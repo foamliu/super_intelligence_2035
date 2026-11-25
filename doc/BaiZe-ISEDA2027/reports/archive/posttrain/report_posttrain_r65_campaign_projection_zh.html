@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R65: 72h Surrogate RL Campaign Projection</title>
+<style>
+body{font-family:-apple-system,sans-serif;margin:2em;background:#f5f5f5;color:#333;line-height:1.6}
+h1{color:#1a237e;border-bottom:3px solid #1a237e;padding-bottom:.3em}
+h2{color:#283593;margin-top:1.5em;border-left:4px solid #283593;padding-left:.5em}
+table{border-collapse:collapse;width:100%;margin:1em 0;background:white;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+th,td{border:1px solid #ddd;padding:.5em .7em;text-align:left;font-size:.9em}
+th{background:#1a237e;color:white}
+tr:nth-child(even){background:#f9f9f9}
+.box{background:white;padding:1em 1.5em;border-radius:8px;margin:1em 0;box-shadow:0 2px 6px rgba(0,0,0,.1);border-left:5px solid #1a237e}
+.warn{background:#fff3e0;border-left:5px solid #ff6f00;padding:1em;border-radius:4px;margin:1em 0}
+.red{background:#ffebee;border-left:5px solid #c62828;padding:1em;border-radius:4px;margin:1em 0}
+code{background:#e8eaf6;padding:.1em .3em;border-radius:3px}
+.m{display:inline-block;background:#e3f2fd;padding:.2em .6em;border-radius:12px;margin:.2em;font-size:.85em}
+.foot{margin-top:2em;padding:1em;background:#eceff1;border-radius:4px;font-size:.85em;color:#555}
+</style></head><body>
+<h1>R65: 72h 替身 RL 活动投影与自适应停止边界</h1>
+<div class="box">
+<p><b>目标</b>：综合 R59/R61/R58/R64，为 11/9 GPU 到位后 72h 替身 RL 活动提供定量投影+自适应停止边界。</p>
+<p><b>最优臂</b>：<code>R3_tool_penalty</code>（R59: +0.0134/200步, std=0=0%）</p>
+<p><span class="m">步数: 205</span><span class="m">RL: 59.7h</span><span class="m">3.45 st/hr</span><span class="m">Pass@1 P50: 44.3%</span><span class="m">MC: 200</span></p>
+</div>
+<div class="warn"><b>替身预演不可迁移 BaiZe。</b>投影基于 R59 估计；11/9 实测替换假设。</div>
+<h2>1. 奖励臂对比 (R59)</h2>
+<table><tr><th>臂</th><th>初始</th><th>增益</th><th>std=0</th><th>作弊</th><th>判读</th></tr><tr><td>R0_skeleton</td><td>0.4500</td><td>+0.0050</td><td>0.5%</td><td>0.0%</td><td></td></tr><tr><td>R1_binary</td><td>0.4642</td><td>+0.0033</td><td>1.1%</td><td>0.0%</td><td></td></tr><tr><td>R2_partial</td><td>0.5274</td><td>-0.0038</td><td>0.6%</td><td>0.0%</td><td></td></tr><tr><td>R3_tool_penalty</td><td>0.4980</td><td>+0.0134</td><td>0.0%</td><td>0.0%</td><td>optimal</td></tr></table>
+<h2>2. 逐步奖励投影 (R3_tool_penalty, 200 MC)</h2>
+<table><tr><th>Step</th><th>P5</th><th>P25</th><th>P50</th><th>P75</th><th>P95</th><th>Eval</th></tr><tr><td>1</td><td>0.4858</td><td>0.4932</td><td><b>0.4982</b></td><td>0.5028</td><td>0.5122</td><td>0.3595</td></tr><tr><td>11</td><td>0.4871</td><td>0.4930</td><td><b>0.4984</b></td><td>0.5036</td><td>0.5121</td><td>0.3667</td></tr><tr><td>21</td><td>0.4877</td><td>0.4947</td><td><b>0.5015</b></td><td>0.5070</td><td>0.5156</td><td>0.3755</td></tr><tr><td>31</td><td>0.4887</td><td>0.4962</td><td><b>0.5027</b></td><td>0.5071</td><td>0.5143</td><td>0.3825</td></tr><tr><td>41</td><td>0.4909</td><td>0.4984</td><td><b>0.5034</b></td><td>0.5098</td><td>0.5171</td><td>0.3887</td></tr><tr><td>51</td><td>0.4904</td><td>0.4985</td><td><b>0.5046</b></td><td>0.5091</td><td>0.5170</td><td>0.3948</td></tr><tr><td>61</td><td>0.4921</td><td>0.4992</td><td><b>0.5060</b></td><td>0.5101</td><td>0.5173</td><td>0.4006</td></tr><tr><td>71</td><td>0.4919</td><td>0.5021</td><td><b>0.5067</b></td><td>0.5116</td><td>0.5197</td><td>0.4056</td></tr><tr><td>81</td><td>0.4918</td><td>0.5014</td><td><b>0.5071</b></td><td>0.5125</td><td>0.5201</td><td>0.4099</td></tr><tr><td>91</td><td>0.4946</td><td>0.5022</td><td><b>0.5070</b></td><td>0.5131</td><td>0.5205</td><td>0.4135</td></tr><tr><td>101</td><td>0.4958</td><td>0.5033</td><td><b>0.5083</b></td><td>0.5134</td><td>0.5206</td><td>0.4180</td></tr><tr><td>111</td><td>0.4973</td><td>0.5040</td><td><b>0.5093</b></td><td>0.5145</td><td>0.5220</td><td>0.4220</td></tr><tr><td>121</td><td>0.4958</td><td>0.5025</td><td><b>0.5085</b></td><td>0.5134</td><td>0.5203</td><td>0.4242</td></tr><tr><td>131</td><td>0.4975</td><td>0.5043</td><td><b>0.5090</b></td><td>0.5141</td><td>0.5216</td><td>0.4273</td></tr><tr><td>141</td><td>0.4961</td><td>0.5037</td><td><b>0.5086</b></td><td>0.5141</td><td>0.5239</td><td>0.4295</td></tr><tr><td>151</td><td>0.4974</td><td>0.5041</td><td><b>0.5106</b></td><td>0.5144</td><td>0.5216</td><td>0.4334</td></tr><tr><td>161</td><td>0.4972</td><td>0.5052</td><td><b>0.5102</b></td><td>0.5157</td><td>0.5236</td><td>0.4352</td></tr><tr><td>171</td><td>0.4953</td><td>0.5043</td><td><b>0.5104</b></td><td>0.5167</td><td>0.5248</td><td>0.4373</td></tr><tr><td>181</td><td>0.4976</td><td>0.5045</td><td><b>0.5102</b></td><td>0.5145</td><td>0.5243</td><td>0.4388</td></tr><tr><td>191</td><td>0.4981</td><td>0.5055</td><td><b>0.5106</b></td><td>0.5156</td><td>0.5234</td><td>0.4409</td></tr><tr><td>201</td><td>0.4973</td><td>0.5047</td><td><b>0.5093</b></td><td>0.5145</td><td>0.5234</td><td>0.4412</td></tr></table>
+<p>初始 0.4980 -> P50 0.5108 (+0.0128). Eval Pass@1 = 44.3%.</p>
+<h2>3. Transfer Function</h2>
+<div class="box"><p><code>eval = train * ratio(step)</code>, ratio: 0.72->0.90, tau=120. 200步 ratio=0.867.</p></div>
+<h2>4. 里程碑跨越概率</h2>
+<table><tr><th>里程碑</th><th>目标</th><th>含义</th><th>P>=50%</th><th>P>=90%</th><th>Step 205</th></tr><tr><td>baseline</td><td>36%</td><td>MiniCPM5-2B 零适配起点</td><td>2</td><td>10</td><td>100.0%</td></tr><tr><td>M1</td><td>50%</td><td>工具协议修好 (D1/D2/D6)</td><td>N/A</td><td>N/A</td><td>0.0%</td></tr><tr><td>M2</td><td>65%</td><td>+ 领域继续预训练 + SFT</td><td>N/A</td><td>N/A</td><td>0.0%</td></tr><tr><td>M3</td><td>75%</td><td>+ RL</td><td>N/A</td><td>N/A</td><td>0.0%</td></tr><tr><td>M4</td><td>85%</td><td>逼近 DeepSeek-V4-Pro</td><td>N/A</td><td>N/A</td><td>0.0%</td></tr></table>
+<p>200步内 M1(50%) 跨越概率取决于 transfer 乐观程度。与 R59 一致：200步不足以收敛。</p>
+<h2>5. 自适应停止边界</h2>
+<table><tr><th>Step</th><th>墙钟</th><th>P5</th><th>P50</th><th>P95</th><th>Eval</th><th>P(M1)</th><th>动作</th></tr><tr style='background:red15'><td>25</td><td>14.5h</td><td>0.4884</td><td>0.5008</td><td>0.5146</td><td>37.8%</td><td>0%</td><td style='font-size:0.85em'>FUTILE: P(reach M1 by end) < 5%. Stop RL, save ckpt, eval.</td></tr><tr style='background:red15'><td>50</td><td>21.8h</td><td>0.4927</td><td>0.5051</td><td>0.5168</td><td>39.5%</td><td>0%</td><td style='font-size:0.85em'>FUTILE: P(reach M1 by end) < 5%. Stop RL, save ckpt, eval.</td></tr><tr style='background:red15'><td>100</td><td>36.3h</td><td>0.4954</td><td>0.5081</td><td>0.5195</td><td>41.8%</td><td>0%</td><td style='font-size:0.85em'>FUTILE: P(reach M1 by end) < 5%. Stop RL, save ckpt, eval.</td></tr><tr style='background:red15'><td>150</td><td>50.8h</td><td>0.4971</td><td>0.5095</td><td>0.5230</td><td>43.2%</td><td>0%</td><td style='font-size:0.85em'>FUTILE: P(reach M1 by end) < 5%. Stop RL, save ckpt, eval.</td></tr><tr style='background:red15'><td>200</td><td>65.3h</td><td>0.4977</td><td>0.5098</td><td>0.5214</td><td>44.1%</td><td>0%</td><td style='font-size:0.85em'>FUTILE: P(reach M1 by end) < 5%. Stop RL, save ckpt, eval.</td></tr></table>
+<div class="box"><p><b>SUFFICIENT</b>: Eval>=50%->停. <b>ON TRACK</b>: P(M1)>=30%->继续. <b>FUTILE</b>: P(M1)<5%->停. <b>DECLINING</b>: P5低->查作弊.</p>
+<p>安全(R62): NaN->ABORT, OOM->ABORT, std=0>80%->DEBUG, cheat>15%->DEBUG.</p></div>
+<h2>6. 72h 时间预算</h2>
+<table><tr><th>Step</th><th>任务</th><th>起始</th><th>耗时</th><th>累计</th><th>阶段</th></tr><tr style='background:#e3f2fd'><td>0</td><td>Setup cu124 venv</td><td>0.0h</td><td>0.2h</td><td>0.2h</td><td>Pre-RL</td></tr><tr style='background:#e3f2fd'><td>1</td><td>Preflight check</td><td>0.2h</td><td>0.0h</td><td>0.2h</td><td>Pre-RL</td></tr><tr style='background:#e3f2fd'><td>2</td><td>SGLang serve + Baseline eval (36%, 5-run)</td><td>0.2h</td><td>5.0h</td><td>5.2h</td><td>Pre-RL</td></tr><tr style='background:#e3f2fd'><td>3</td><td>D1-D6 failure trajectory extraction</td><td>5.2h</td><td>0.3h</td><td>5.5h</td><td>Pre-RL</td></tr><tr style='background:#e3f2fd'><td>4</td><td>Contamination gate</td><td>5.5h</td><td>0.1h</td><td>5.6h</td><td>Pre-RL</td></tr><tr style='background:#e3f2fd'><td>5</td><td>RL smoke test (10 iters, R0)</td><td>5.6h</td><td>0.6h</td><td>6.2h</td><td>Pre-RL</td></tr><tr style='background:#e8f5e9'><td>6</td><td>Full RL training (205 steps)</td><td>6.2h</td><td>59.4h</td><td>65.6h</td><td>RL Training</td></tr><tr style='background:#fff3e0'><td>7a</td><td>Best checkpoint selection</td><td>65.6h</td><td>0.0h</td><td>65.7h</td><td>Post-RL</td></tr><tr style='background:#fff3e0'><td>7b</td><td>158-case 5-run evaluation</td><td>65.7h</td><td>4.5h</td><td>70.2h</td><td>Post-RL</td></tr><tr style='background:#fff3e0'><td>7c</td><td>McNemar + bootstrap analysis</td><td>70.2h</td><td>0.1h</td><td>70.2h</td><td>Post-RL</td></tr><tr style='background:#fff3e0'><td>7d</td><td>M1-M4 milestone gate</td><td>70.2h</td><td>0.0h</td><td>70.3h</td><td>Post-RL</td></tr></table>
+<p>总: 70.3h / 72h -> within budget.</p>
+<h2>7. 活动成功标准</h2>
+<table><tr><th>ID</th><th>标准</th><th>测量</th><th>阈值</th><th>重要性</th></tr><tr style='background:#ffebee'><td>S1</td><td>Baseline reproduced (36% +/- 3pp)</td><td>Step 2 eval Pass@1</td><td>33%-39%</td><td>critical</td></tr><tr style='background:#ffebee'><td>S2</td><td>Smoke test passes (>=8/10 steps, no NaN/OOM)</td><td>Step 5 day1_diag</td><td>verdict=GO or WARN</td><td>critical</td></tr><tr style='background:#ffebee'><td>S3</td><td>RL training completes without abort</td><td>Step 6 completion</td><td>>=150/200 steps</td><td>critical</td></tr><tr style='background:#fff8e1'><td>S4</td><td>RL shows learning signal</td><td>Reward trend</td><td>Final > initial + 0.005</td><td>high</td></tr><tr style='background:#fff8e1'><td>S5</td><td>std=0 rate controlled</td><td>Day1_diag classifier</td><td>std=0 < 30%</td><td>high</td></tr><tr style='background:#ffebee'><td>S6</td><td>No reward hacking</td><td>Cheat rate</td><td>cheat < 5% (red-line)</td><td>critical</td></tr><tr style='background:#e8f5e9'><td>S7</td><td>Post-RL eval improvement</td><td>Step 7b vs Step 2</td><td>Delta > 0</td><td>medium</td></tr><tr style='background:#fff8e1'><td>S8</td><td>Pipeline artifacts reusable</td><td>All scripts ran</td><td>Steps 0-7d executed</td><td>high</td></tr></table>
+<p><b>最低</b>: S1+S2+S3+S6+S8. <b>理想</b>: +S4+S5+S7.</p>
+<h2>8. 前序关联</h2>
+<table><tr><th>来源</th><th>贡献</th><th>用途</th></tr>
+<tr><td>R58</td><td>3347 prompt, 2037 SIGNAL</td><td>训练池</td></tr>
+<tr><td>R59</td><td>GRPO MC, R3最优</td><td>轨迹参数</td></tr>
+<tr><td>R60</td><td>ctx>=16384</td><td>配置</td></tr>
+<tr><td>R61</td><td>3.45 st/hr</td><td>步->时间</td></tr>
+<tr><td>R62</td><td>12-check诊断</td><td>安全</td></tr>
+<tr><td>R63</td><td>Post-RL+guardian</td><td>Step7</td></tr>
+<tr><td>R64</td><td>SFT->RL交接</td><td>热启动</td></tr>
+<tr><td>R57</td><td>Vision std=0 78.7%</td><td>监控</td></tr></table>
+<div class="red"><b>红线</b>: 158任务禁入训练集 | anti-cheat全程 | 5-run mean+-std | 评测冻结 | M1-M4先定后测.</div>
+<div class="foot"><p>溯源: R59/R61/R58/R64/R57/R62/R63 + §5.1/§5.2/§4. 无伪造. 2026-11-08 wake113 R65. 替身不可迁移BaiZe.</p></div>
+</body></html>

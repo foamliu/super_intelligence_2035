@@ -1,0 +1,333 @@
+{
+  "summary": {
+    "title": "R57: Vision GRPO Failure -> BaiZe RL Risk",
+    "timestamp": "2026-11-08 18:42:00",
+    "vision_all_failed": true,
+    "vision_root_cause": "std=0=78.7% (discretized reward + low base -> all-same-tier -> zero gradient)",
+    "signal": {
+      "baize_r1_p_mixed": 0.97157,
+      "baize_p_all0": 0.028147,
+      "baize_p_all1": 0.000282,
+      "vision_p_mixed": 0.320187,
+      "ratio": 3.03
+    },
+    "recommendation": "START with R2 (partial scores), NOT R1. Monitor std=0 per step. >60% for 3 steps -> Dr.GRPO. >70% -> increase G to 12. No signal by step 500 -> per-scenario analysis. DO NOT fallback to RFT. Fall back to SFT augmentation."
+  },
+  "timeline": [
+    {
+      "version": "v1",
+      "method": "GRPO discrete 5-tier",
+      "baseline": "post-SFT 9.2%",
+      "treatment": "post-GRPO 6.2%",
+      "delta": -3.0,
+      "verdict": "WORSE",
+      "loss": "~0",
+      "G": 4
+    },
+    {
+      "version": "v2",
+      "method": "GRPO continuous (flip)",
+      "baseline": "B=6.7%",
+      "treatment": "C=11.1%",
+      "delta": 4.4,
+      "verdict": "NOT SIGNIFICANT (p=0.625)",
+      "loss": "~0",
+      "G": 4
+    },
+    {
+      "version": "v3",
+      "method": "GRPO continuous (40 steps)",
+      "baseline": "B=34.0%",
+      "treatment": "C=25.0%",
+      "delta": -9.0,
+      "verdict": "WORSE (3rd negative)",
+      "loss": "~0.000038",
+      "G": 8
+    },
+    {
+      "version": "v4",
+      "method": "RFT/STaR",
+      "baseline": "B=34.0%",
+      "treatment": "C=34.0%",
+      "delta": 0.0,
+      "verdict": "NO CHANGE",
+      "loss": "CE stable",
+      "G": 4
+    }
+  ],
+  "diagnosis": {
+    "gs4_std0_pct": 78.7,
+    "gs4_total": 94,
+    "gs4_all0_pct": 0.0,
+    "gs4_allpos_pct": 20.2,
+    "gs4_stdpos_pct": 21.3,
+    "gs4_judgment": "PARTIAL",
+    "gs8_std0_pct": 73.0,
+    "gs8_total": 100,
+    "gs8_stdpos_pct": 27.0,
+    "gs8_judgment": "PARTIAL",
+    "gs4_to_gs8_delta": -5.7,
+    "key_finding": "all-zero impossible (fail=-0.5). Real problem: all-same-tier=78.7% -> advantage=0 -> zero gradient",
+    "per_target": {
+      "rise_time": {
+        "n": 26,
+        "std0": 100.0,
+        "mean": -0.5,
+        "dx": "CAPABILITY GAP (needs SFT)"
+      },
+      "duty_cycle": {
+        "n": 22,
+        "std0": 90.9,
+        "mean": -0.405,
+        "dx": "NEAR NO-SIGNAL"
+      },
+      "amplitude": {
+        "n": 24,
+        "std0": 87.5,
+        "mean": 0.429,
+        "dx": "NEAR SATURATION"
+      },
+      "period": {
+        "n": 22,
+        "std0": 31.8,
+        "mean": 0.457,
+        "dx": "GRPO-LEARNABLE (68% signal)"
+      }
+    }
+  },
+  "arms": {
+    "R0": {
+      "name": "Skeleton",
+      "risk": "LOW",
+      "score": 2,
+      "analog": "N/A",
+      "type": "binary",
+      "factors": [
+        "No sandbox -> not a training arm"
+      ],
+      "mit": [
+        "Smoke only"
+      ]
+    },
+    "R1": {
+      "name": "Binary pass/fail",
+      "risk": "CRITICAL",
+      "score": 9,
+      "analog": "v1 (EXACT match)",
+      "type": "binary",
+      "factors": [
+        "std=0 collapse expected",
+        "36% base G=8: P(mixed)=97.2% (vs vision 27.6%)",
+        "No partial credit"
+      ],
+      "mit": [
+        "DO NOT start with R1",
+        "Monitor std=0>50%->switch R2",
+        "Use Dr.GRPO",
+        "Filter 10-90% tasks"
+      ]
+    },
+    "R2": {
+      "name": "Partial scores",
+      "risk": "HIGH",
+      "score": 6,
+      "analog": "v3 continuous (partial match)",
+      "type": "partial",
+      "factors": [
+        "v3 continuous STILL failed (loss~0)",
+        "Partial reduces but doesn't eliminate all-same-tier",
+        "Assertion ratio still discretized",
+        "ImportError=0.0"
+      ],
+      "mit": [
+        "START with R2",
+        "Monitor std=0>60%->add noise",
+        "Use float ratio",
+        "Consider Dr.GRPO"
+      ]
+    },
+    "R3": {
+      "name": "R2+tool penalty",
+      "risk": "MEDIUM",
+      "score": 5,
+      "analog": "v3+cost (no direct)",
+      "type": "partial+penalty",
+      "factors": [
+        "Penalty adds variance but may cause tool avoidance"
+      ],
+      "mit": [
+        "Small penalty 0.01/call",
+        "Monitor tool freq"
+      ]
+    },
+    "R4": {
+      "name": "R3+API legality",
+      "risk": "MEDIUM",
+      "score": 5,
+      "analog": "v3+API (no direct)",
+      "type": "partial+penalty+legal",
+      "factors": [
+        "API penalty may penalize exploration",
+        "Risk: only safe APIs -> reduced capability"
+      ],
+      "mit": [
+        "Soft penalty",
+        "Monitor API diversity"
+      ]
+    }
+  },
+  "risk_mappings": [
+    {
+      "vf": "std=0=78.7% -> zero gradient",
+      "ve": "74/94 groups all-same-tier",
+      "br": "R1 binary high risk; R2 partial lower but significant",
+      "sev": "CRITICAL",
+      "thr": "std=0>60% for 3 steps -> switch arm or increase G"
+    },
+    {
+      "vf": "Continuous reward (v3) did NOT fix std=0",
+      "ve": "v3 C=25%<B=34%, loss~0",
+      "br": "R2 partial may not provide enough variance",
+      "sev": "HIGH",
+      "thr": "loss<1e-4 for 5 steps -> switch to Dr.GRPO"
+    },
+    {
+      "vf": "Capability gap (rise_time 100% all wrong)",
+      "ve": "26/26 groups all -0.5",
+      "br": "Some EDA tasks 100% failure -> wasted RL budget",
+      "sev": "HIGH",
+      "thr": "Exclude scenarios <5% or >95% pass after baseline"
+    },
+    {
+      "vf": "G 4->8 only -5.7pp std=0 (marginal)",
+      "ve": "78.7%->73.0%",
+      "br": "G=8 may not be enough; G=16 diminishing",
+      "sev": "MEDIUM",
+      "thr": "std=0>70% at G=8 -> try G=12"
+    },
+    {
+      "vf": "RFT (v4) = no improvement",
+      "ve": "C=34%=B=34%, 67% collect -> no new info",
+      "br": "Fallback to RFT may also fail",
+      "sev": "LOW",
+      "thr": "Do NOT auto-fallback to RFT; report and wait"
+    },
+    {
+      "vf": "avgR high variance but loss~0",
+      "ve": "-0.5->0.398->0.033",
+      "br": "Reward variance without gradient = not updating",
+      "sev": "HIGH",
+      "thr": "avgR std>0.3 AND loss<1e-4 -> diagnose std=0"
+    },
+    {
+      "vf": "15 steps insufficient",
+      "ve": "v2 p=0.50 at 15 steps",
+      "br": "Smoke 10 iters shows nothing; need 200+",
+      "sev": "MEDIUM",
+      "thr": "Evaluate at step 200; if no improvement by 500 -> diagnose"
+    },
+    {
+      "vf": "Per-target heterogeneity",
+      "ve": "period 68% signal vs rise_time 0%",
+      "br": "Some EDA scenarios learnable, others not",
+      "sev": "HIGH",
+      "thr": "Weight sampling: 2x learnable, 0.5x gap scenarios"
+    }
+  ],
+  "monitoring": [
+    {
+      "metric": "std=0 rate",
+      "vr": "78.7%",
+      "red": ">70% for 3 steps",
+      "act": "Switch arm or increase G",
+      "r36": "R36 P2"
+    },
+    {
+      "metric": "Loss value",
+      "vr": "~0.000038",
+      "red": "<1e-4 for 5 steps",
+      "act": "Dr.GRPO or reward noise",
+      "r36": "NEW"
+    },
+    {
+      "metric": "avgR variance",
+      "vr": "-0.5->0.398->0.033",
+      "red": "High var+no trend",
+      "act": "Reduce LR or increase KL",
+      "r36": "NEW"
+    },
+    {
+      "metric": "Per-scenario pass",
+      "vr": "rise_time 0%, period 68%",
+      "red": "0%/100% for 200 steps",
+      "act": "Exclude scenario",
+      "r36": "NEW"
+    },
+    {
+      "metric": "Cheat rate",
+      "vr": "N/A",
+      "red": ">5%",
+      "act": "STOP; investigate hacking",
+      "r36": "R36 P7"
+    },
+    {
+      "metric": "API diversity",
+      "vr": "N/A",
+      "red": "Decreasing for 200 steps",
+      "act": "Reduce tool/API penalty",
+      "r36": "NEW"
+    }
+  ],
+  "comparison": [
+    {
+      "a": "Base model",
+      "v": "Qwen3-VL-2B LoRA",
+      "b": "MiniCPM5-2B full"
+    },
+    {
+      "a": "Base success",
+      "v": "9.2% (post-SFT)",
+      "b": "36% (zero-shot)"
+    },
+    {
+      "a": "Task",
+      "v": "Waveform regression",
+      "b": "EDA code gen + tool-use"
+    },
+    {
+      "a": "Reward",
+      "v": "5-tier->continuous (both failed)",
+      "b": "Binary R1->Partial R2->Penalty R3/R4"
+    },
+    {
+      "a": "Group size",
+      "v": "4->8 (marginal)",
+      "b": "8 (config)->12-16 (fallback)"
+    },
+    {
+      "a": "Steps",
+      "v": "50->40->120",
+      "b": "2000 (planned), 10 (smoke)"
+    },
+    {
+      "a": "std=0 root",
+      "v": "Discrete+9.2%->all-same-tier",
+      "b": "Risk: R1+36%->all-0/all-1; R2 mitigates"
+    },
+    {
+      "a": "Fallback",
+      "v": "GRPO->RFT (also failed)",
+      "b": "R2->R3->R4->SFT aug (no RFT)"
+    },
+    {
+      "a": "Anti-cheat",
+      "v": "None",
+      "b": "PreToolUse+cheat rate (red line)"
+    },
+    {
+      "a": "Key advantage",
+      "v": "--",
+      "b": "36%>>9.2% + DAPO + Dr.GRPO option"
+    }
+  ]
+}

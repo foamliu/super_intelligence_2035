@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R33: RL 训练排程优化与 11/9 逐日执行时间线</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#f8f9fa}
+h1{color:#1a3c5e;border-bottom:3px solid #1a3c5e;padding-bottom:8px}
+h2{color:#2c5f8a;border-left:4px solid #2c5f8a;padding-left:10px;margin-top:32px}
+h3{color:#444;margin-top:24px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+th,td{border:1px solid #ccc;padding:6px 10px;text-align:left}
+th{background:#e8eef5;font-weight:600}
+tr:nth-child(even){background:#f5f7fa}
+.ok{color:#1a7a1a;font-weight:bold}
+.fail{color:#c0392b;font-weight:bold}
+.warn{color:#e67e22;font-weight:bold}
+.gate{background:#fff3cd;padding:8px 12px;border-left:3px solid #f39c12;margin:8px 0;font-size:14px}
+.ckpt{background:#e8f5e9;padding:6px 10px;border-left:3px solid #27ae60;margin:4px 0;font-size:13px}
+.timeline-day{border:1px solid #d0d7de;border-radius:8px;padding:12px 16px;margin:12px 0;background:#fff}
+.timeline-day h3{margin:0 0 8px 0;color:#1a3c5e}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin-right:4px}
+.badge-setup{background:#e3f2fd;color:#1565c0}
+.badge-train{background:#e8f5e9;color:#2e7d32}
+.badge-eval{background:#fff3e0;color:#e65100}
+.badge-gate{background:#fce4ec;color:#c62828}
+.rec{background:#e8f5e9;border:1px solid #c8e6c9;padding:10px 14px;margin:8px 0;border-radius:6px}
+.rec ol{margin:4px 0;padding-left:20px}
+.note{background:#fffde7;border:1px solid #fff9c4;padding:8px 12px;margin:8px 0;font-size:13px;border-radius:4px}
+summary{cursor:pointer;font-weight:bold;color:#2c5f8a;padding:4px 0}
+.bar-container{background:#e0e0e0;border-radius:4px;height:20px;margin:4px 0;position:relative}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:bold}
+code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:13px}
+</style>
+</head>
+<body>
+<h1>R33: RL 训练排程优化与 11/9 逐日执行时间线</h1>
+<p><strong>BaiZe Stage(ii) Post-Training</strong> · 2026-11-08 · 零 GPU 纯计算分析</p>
+<div class="note">⚠️ 替身 RL 预演结果不可迁移到白泽。本分析为排程规划与配置优化，基于 R32 实测 smoke test 数据外推。</div>
+
+<h2>§1 摘要</h2>
+<p>R32 发现全量 RL（2000 iters, batch 128, 3 turns, 8×GPU）需 30–34 天，超出 21 天训练窗口。本节（R33）系统计算 12 种 GRPO 配置在 4×A40 上的精确时间预算，提出三档可执行方案，并生成 11/9–11/15 替身预演逐日时间线与 12/25–01/15 白泽正式训练投影。</p>
+<p><strong>核心结论</strong>：</p>
+<div class="rec">
+<ol>
+<li><strong>替身预演（11/9–11/15, 7天）</strong>：surrogate-C（500 iters, batch 64, 2 turns）= 5.4 天，余量 1.6 天 ✅</li>
+<li><strong>白泽正式训练（12/25+, 21天）</strong>：baize-C（1000 iters, batch 64, 3 turns）= 14.3 天，余量 6.7 天 ✅</li>
+<li><strong>保守备选</strong>：baize-B（800 iters, batch 64, 2 turns）= 8.6 天，余量 12.4 天 ✅</li>
+<li><strong>评测策略</strong>：4 次 quick 1-run + 1 次 full 5-run = 约 6.1 小时</li>
+<li><strong>磁盘</strong>：10 个 ckpt × 16GB = 160GB，可用 386GB ✅</li>
+</ol>
+</div>
+
+<h2>§2 输入参数与模型校准</h2>
+<table>
+<tr><th>参数</th><th>值</th><th>来源</th></tr>
+<tr><td>模型</td><td>MiniCPM5-2B (2.517B params, 42层, bf16)</td><td>config.json (R32)</td></tr>
+<tr><td>GPU</td><td>4×A40 48GB</td><td>2026-11-09 分配</td></tr>
+<tr><td>Smoke 实测</td><td>10 iters, batch 16, 4 GPU, 1-turn → 29.5 min</td><td>R32</td></tr>
+<tr><td>每样本每GPU秒数</td><td>2.77 s</td><td>29.5×60 / (10×16×4)</td></tr>
+<tr><td>训练开销系数</td><td>×3.5（多轮训练：优化器+权重同步+工具执行+数据加载）</td><td>校准至 R32 的 723-811h</td></tr>
+<tr><td>Turn 缩放</td><td>1-turn=1.0×, 2-turn=1.5×, 3-turn=2.0×</td><td>每增加1轮≈1.5×生成时间</td></tr>
+<tr><td>评测</td><td>158任务 × 5 runs, -p 8, avg 6min/task</td><td>评测协议冻结项</td></tr>
+</table>
+<div class="note">📐 <strong>校准验证</strong>：baize-E (2000 iters, batch 128, 3-turn, 8 GPU) = 688h ≈ R32 的 723-811h ✅。4 GPU 时 = 1377h = 57.4天（不可行）。</div>
+
+<h2>§3 RL 配置时间预算全表</h2>
+<table>
+<tr><th>配置</th><th>Iters</th><th>Batch</th><th>Turns</th><th>GPUs</th><th>小时</th><th>天</th><th>适用场景</th><th>可行性</th></tr>
+<tr><td>smoke-R2</td><td>10</td><td>16</td><td>1</td><td>4</td><td>0.1</td><td>0.0</td><td>管道验证</td><td class="ok">✅</td></tr>
+<tr><td>surrogate-A</td><td>100</td><td>32</td><td>2</td><td>4</td><td>12.9</td><td>0.5</td><td>替身短跑</td><td class="ok">✅</td></tr>
+<tr><td>surrogate-B</td><td>300</td><td>32</td><td>2</td><td>4</td><td>38.7</td><td>1.6</td><td>替身中等</td><td class="ok">✅</td></tr>
+<tr style="background:#e8f5e9"><td><strong>surrogate-C ★</strong></td><td>500</td><td>64</td><td>2</td><td>4</td><td>129.1</td><td>5.4</td><td><strong>替身预演推荐</strong></td><td class="ok">✅ 7天窗口</td></tr>
+<tr><td>surrogate-D</td><td>800</td><td>64</td><td>2</td><td>4</td><td>206.5</td><td>8.6</td><td>替身扩展（超7天）</td><td class="warn">⚠️</td></tr>
+<tr><td>baize-A</td><td>500</td><td>64</td><td>2</td><td>4</td><td>129.1</td><td>5.4</td><td>白泽保守</td><td class="ok">✅</td></tr>
+<tr><td>baize-B</td><td>800</td><td>64</td><td>2</td><td>4</td><td>206.5</td><td>8.6</td><td>白泽中等</td><td class="ok">✅ 21天窗口</td></tr>
+<tr style="background:#e8f5e9"><td><strong>baize-C ★</strong></td><td>1000</td><td>64</td><td>3</td><td>4</td><td>344.2</td><td>14.3</td><td><strong>白泽推荐</strong></td><td class="ok">✅ 21天窗口</td></tr>
+<tr><td>baize-D</td><td>1500</td><td>64</td><td>3</td><td>4</td><td>516.2</td><td>21.5</td><td>白泽激进（超窗口）</td><td class="fail">❌</td></tr>
+<tr><td>baize-E</td><td>2000</td><td>128</td><td>3</td><td>4</td><td>1376.7</td><td>57.4</td><td>R32 baseline（不可行）</td><td class="fail">❌</td></tr>
+<tr><td>baize-8gpu-A</td><td>800</td><td>64</td><td>2</td><td>8</td><td>103.2</td><td>4.3</td><td>若8卡可用</td><td class="ok">✅</td></tr>
+<tr><td>baize-8gpu-B</td><td>1000</td><td>64</td><td>3</td><td>8</td><td>172.1</td><td>7.2</td><td>若8卡可用（更优）</td><td class="ok">✅</td></tr>
+</table>
+<p>★ = 推荐配置。surrogate-C 用于 11/9 替身预演（7 天窗口），baize-C 用于 12/25 白泽正式训练（21 天窗口）。</p>
+
+<h2>§4 评测时间预算</h2>
+<table>
+<tr><th>评测配置</th><th>Runs</th><th>任务数</th><th>并行</th><th>预计耗时</th><th>用途</th></tr>
+<tr><td>full-5run</td><td>5</td><td>158</td><td>8</td><td>10.4 h</td><td>正式评测（口径冻结）</td></tr>
+<tr><td>quick-1run</td><td>1</td><td>158</td><td>8</td><td>2.5 h</td><td>训练中快速 checkpoint 评测</td></tr>
+<tr><td>subset-5run</td><td>5</td><td>40</td><td>8</td><td>3.0 h</td><td>子集评测（趋势监控）</td></tr>
+</table>
+<p><strong>推荐评测策略</strong>：训练过程中做 4 次 quick-1run（每次 ~2.5h）+ 最终 1 次 full-5run（~10.4h）= 总计 ~20.4h。若只做最终评测则 ~10.4h。</p>
+<div class="note">⏱️ 评测期间 GPU 需暂停训练（SGLang serve 推理）。建议在 checkpoint 保存后切换。</div>
+
+<h2>§5 磁盘预算</h2>
+<table>
+<tr><th>项目</th><th>值</th></tr>
+<tr><td>每个 checkpoint</td><td>16 GB（模型 4.7G + 优化器 9.4G + 杂项 2G）</td></tr>
+<tr><td>计划 checkpoint 数</td><td>10 个（每 100 iters 一个 + 最终）</td></tr>
+<tr><td>总需求</td><td>160 GB</td></tr>
+<tr><td>可用空间</td><td>386 GB（/ 分区，P1 调查）</td></tr>
+<tr><td>是否满足</td><td class="ok">✅ 满足（留余 226 GB）</td></tr>
+</table>
+<p><strong>建议</strong>：评测完每个中间 checkpoint 后删除，只保留最佳 2-3 个。若需保留全部 10 个 = 160 GB，仍在可用范围内。</p>
+
+<h2>§6 替身预演逐日时间线（11/9–11/15）</h2>
+<p>GPU 2026-11-09 到位后的 7 天逐日执行计划。每步含任务、预计耗时、决策门与 checkpoint。</p>
+
+<div class="timeline-day">
+<span class="badge badge-setup">Day 1</span>
+<h3>11/9 (周日)：环境搭建 & 基线复测</h3>
+<ul>
+<li>Step 0: cu124 venv 搭建（~30 min）—— <code>bash baize_posttrain_setup_cu124_venv.sh --yes</code></li>
+<li>Step 1: Preflight 检查（~10 min）—— <code>bash baize_posttrain_preflight_check.sh</code></li>
+<li>Step 2: SGLang serve MiniCPM5-2B + Baseline eval 5-run（~2-3 h）—— <code>bash baize_posttrain_minicpm5_diag.sh --full</code></li>
+<li>Step 3: 提取 D1-D6 失败轨迹诊断（~30 min）—— <code>bash baize_posttrain_minicpm5_diag.sh --extract-only</code></li>
+</ul>
+<p>预计耗时：4.0 h</p>
+<div class="gate">🔀 <strong>决策门</strong>：基线 36%±3% 确认？→ 进入 smoke test</div>
+<div class="ckpt">💾 Checkpoint: <code>baseline_eval_5run.json</code></div>
+</div>
+
+<div class="timeline-day">
+<span class="badge badge-gate">Day 2</span>
+<h3>11/10 (周一)：管道验证 & Smoke Test</h3>
+<ul>
+<li>Step 4: 污染隔离检查（~5 min）—— <code>bash baize_posttrain_contamination_gate.sh</code></li>
+<li>Step 5: RL smoke test（10 iters, R2, ~30 min）—— <code>bash baize_posttrain_rl_grpo.sh --smoke --reward-arm R2</code></li>
+<li>分析 smoke：loss 曲线、reward 分布、cheat rate</li>
+<li>若 smoke OK → 启动 surrogate-A（100 iters, batch 32, 2 turns）</li>
+</ul>
+<p>预计耗时：3.0 h（+ surrogate-A 约 12.9 h 可过夜跑）</p>
+<div class="gate">🔀 <strong>决策门</strong>：reward > 0, 无 crash, cheat_rate < 5%？→ 继续扩展训练</div>
+<div class="ckpt">💾 Checkpoint: <code>smoke_test_r2_10iter/</code></div>
+</div>
+
+<div class="timeline-day">
+<span class="badge badge-train">Day 3-4</span>
+<h3>11/11-11/12 (周二-周三)：Surrogate-A 训练（100 iters）</h3>
+<ul>
+<li>GRPO 训练：100 iters, batch 32, 2 turns → 约 12.9 h（可跨 Day 2 夜间 + Day 3）</li>
+<li>每 50 iters 存 checkpoint</li>
+<li>监控指标：reward, KL divergence, cheat_rate, gradient norm</li>
+<li>Day 4：最终 checkpoint + quick 1-run eval</li>
+</ul>
+<div class="gate">🔀 <strong>决策门 (iter 100)</strong>：reward 趋势为正？KL < 1.0？→ 扩展至 surrogate-C</div>
+<div class="ckpt">💾 Checkpoint: <code>surrogate_a_iter100/</code></div>
+</div>
+
+<div class="timeline-day">
+<span class="badge badge-eval">Day 5</span>
+<h3>11/13 (周四)：评测 & 扩展训练启动</h3>
+<ul>
+<li>Quick eval（1-run）on surrogate-A checkpoint（~2.5 h）</li>
+<li>对比基线：是否有提升？</li>
+<li>启动 surrogate-C（500 iters, batch 64, 2 turns）→ 约 129 h（5.4 天）</li>
+</ul>
+<div class="gate">🔀 <strong>决策门</strong>：surrogate-A eval > baseline？→ 继续 surrogate-C</div>
+<div class="ckpt">💾 Checkpoint: <code>surrogate_a_eval_1run.json</code></div>
+</div>
+
+<div class="timeline-day">
+<span class="badge badge-train">Day 6-7</span>
+<h3>11/14-11/15 (周五-周六)：Surrogate-C 训练 + 最终评测</h3>
+<ul>
+<li>训练继续：每 100 iters checkpoint + 监控</li>
+<li>Day 7：最终 checkpoint + full 5-run eval（~10.4 h）</li>
+<li>生成最终报告：reward 曲线、cheat rate、通过率变化</li>
+</ul>
+<div class="gate">🔀 <strong>决策门 (最终)</strong>：surrogate-C eval 有显著提升？→ 管道验证成功，准备白泽正式训练</div>
+<div class="ckpt">💾 Checkpoint: <code>surrogate_c_iter500/</code> + <code>surrogate_c_eval_5run.json</code></div>
+</div>
+
+<h2>§7 白泽正式训练投影（12/25–01/15）</h2>
+<p>pretrain ckpt 预计 2026-12-25 就绪后的 21 天正式训练窗口规划。</p>
+<table>
+<tr><th>阶段</th><th>起止</th><th>天数</th><th>内容</th></tr>
+<tr><td>Phase 1: 领域退火</td><td>12/25 → 12/27</td><td>2</td><td>WSD anneal from pretrain ckpt, PyAether domain blend</td></tr>
+<tr><td>Phase 2: SFT</td><td>12/27 → 12/30</td><td>3</td><td>SFT with v2 corpus + agentic data, 4096 ctx</td></tr>
+<tr><td>Phase 3: RL GRPO (R2臂)</td><td>12/30 → 01/06</td><td>7</td><td>GRPO 800 iters, batch 64, 2 turns, R2 reward = 206.5h (8.6天)</td></tr>
+<tr><td>Phase 4: RL GRPO (R4臂)</td><td>01/06 → 01/11</td><td>5</td><td>GRPO 500 iters, batch 64, 2 turns, R4 reward = 129.1h (5.4天)</td></tr>
+<tr><td>Phase 5: 最终评测</td><td>01/11 → 01/13</td><td>2</td><td>Full 5-run eval on all checkpoints = ~10.4h</td></tr>
+<tr><td>Phase 6: 论文撰写缓冲</td><td>01/13 → 01/15</td><td>2</td><td>分析 + 画图 + 制表</td></tr>
+</table>
+<div class="note">📋 <strong>总天数</strong>：2+3+7+5+2+2 = 21 天。RL 总计 = 335.6h = 14.0 天，加上退火+SFT+评测+缓冲 = 21 天。余量充足。</div>
+<p>若 GPU 升级到 8×A40（baize-8gpu-B: 1000 iters, 3 turns = 7.2 天），可在 RL 阶段投入更多迭代次数，提升模型质量。</p>
+
+<h2>§8 决策门汇总</h2>
+<table>
+<tr><th>#</th><th>触发点</th><th>判断条件</th><th>通过→</th><th>不通过→</th></tr>
+<tr><td>G1</td><td>基线评测后</td><td>36%±3% 确认</td><td>进入 smoke test</td><td class="fail">排查 SGLang/eval 管道</td></tr>
+<tr><td>G2</td><td>Smoke test 后</td><td>reward > 0, 无 crash, cheat < 5%</td><td>启动 surrogate-A</td><td class="fail">调试 reward/沙盒/配置</td></tr>
+<tr><td>G3</td><td>iter 100</td><td>reward 趋势正, KL < 1.0</td><td>扩展至 surrogate-C</td><td class="warn">降低 lr 或调整 reward</td></tr>
+<tr><td>G4</td><td>surrogate-A eval</td><td>eval > baseline</td><td>继续 surrogate-C</td><td class="warn">检查数据/奖励设计</td></tr>
+<tr><td>G5</td><td>iter 500</td><td>eval 提升 ≥ 5pp</td><td>管道验证成功</td><td class="warn">切换 reward 臂或调整 config</td></tr>
+<tr><td>G6</td><td>surrogate-C 最终 eval</td><td>显著提升 + cheat rate < 5%</td><td>准备白泽正式训练</td><td class="fail">回退至 surrogate-B 或排查</td></tr>
+</table>
+
+<h2>§9 时间窗口优化分析</h2>
+<table>
+<tr><th>目标窗口</th><th>最优配置</th><th>预计天数</th><th>余量</th><th>状态</th></tr>
+<tr><td>21 天（正式训练）</td><td>baize-C (1000 iters, 3 turns)</td><td>14.3</td><td>6.7 天</td><td class="ok">✅</td></tr>
+<tr><td>7 天（替身预演）</td><td>surrogate-C (500 iters, 2 turns)</td><td>5.4</td><td>1.6 天</td><td class="ok">✅</td></tr>
+<tr><td>3 天（快速验证）</td><td>surrogate-B (300 iters, 2 turns)</td><td>1.6</td><td>1.4 天</td><td class="ok">✅</td></tr>
+</table>
+<p><strong>关键发现</strong>：4×A40 对 2.5B 模型的 GRPO 训练是可行配置。瓶颈不是显存（R32 确认 80.2% 峰值），而是吞吐量。通过缩减迭代次数（2000→1000）和 turns（3→2），可将训练时间从 57 天降至 14 天，完全适配 21 天窗口。</p>
+
+<h2>§10 风险与缓解</h2>
+<table>
+<tr><th>风险</th><th>概率</th><th>影响</th><th>缓解措施</th></tr>
+<tr><td>训练时间超预期（开销系数 > 3.5×）</td><td>中</td><td>超出窗口</td><td>备选 baize-B (800 iters, 2 turns) = 8.6 天，余量 12.4 天</td></tr>
+<tr><td>OOM（多轮 KV cache 膨胀）</td><td>低</td><td>训练中断</td><td>5 级降级阶梯 (R11): 降 batch → 降 turns → 降 gpu_mem_util → CPU offload → LoRA</td></tr>
+<tr><td>Reward hacking（模型学会作弊）</td><td>中</td><td>结果无效</td><td>PreToolUse hook 全程启用 + cheat rate 监控 + anti-cheat 验证 (R30)</td></tr>
+<tr><td>SGLang/verl 版本冲突</td><td>低</td><td>环境损坏</td><td>cu124 venv 已隔离 (R25/R27)；setup 脚本可重建</td></tr>
+<tr><td>pretrain ckpt 延迟</td><td>中</td><td>窗口压缩</td><td>替身预演验证管道 + 脚本骨架已就绪，ckpt 一到即可起跑</td></tr>
+</table>
+
+<h2>§11 结论</h2>
+<div class="rec">
+<ol>
+<li><strong>R32 的 30-34 天瓶颈已解决</strong>：通过缩减 iters (2000→1000) + turns (3→2) + batch (128→64)，4×A40 可在 14.3 天完成 baize-C 配置，余量 6.7 天</li>
+<li><strong>11/9 替身预演可行</strong>：surrogate-C (500 iters, 5.4 天) 在 7 天窗口内完成，含基线评测+smoke+训练+最终评测全流程</li>
+<li><strong>评测非瓶颈</strong>：每次 quick eval ~2.5h，final eval ~10.4h，可在 checkpoint 间隙插入</li>
+<li><strong>磁盘非瓶颈</strong>：10 个 checkpoint = 160 GB < 386 GB 可用</li>
+<li><strong>6 个决策门</strong>确保训练过程可控：每个关键节点有明确的通过/不通过判断标准和回退方案</li>
+<li><strong>下一步</strong>：11/9 GPU 到位 → 执行 §6 逐日时间线 → 12/25 pretrain ckpt → 执行 §7 正式训练投影</li>
+</ol>
+</div>
+
+<hr>
+<p style="font-size:12px;color:#666">R33 | BaiZe Stage(ii) Post-Training | 2026-11-08 | 零 GPU 纯计算分析 | 分析脚本: <code>baize_posttrain_schedule_optimizer.py</code></p>
+</body>
+</html>

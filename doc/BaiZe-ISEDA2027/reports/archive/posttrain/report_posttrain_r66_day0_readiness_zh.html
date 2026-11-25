@@ -1,0 +1,177 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>BaiZe Post-Train R66: Day-0 Readiness Audit</title><style>
+body{font-family:system-ui,sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f5f5f5;color:#333}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#2c3e50;margin-top:30px;border-left:5px solid #3498db;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:10px 0;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}th{background:#2980b9;color:#fff}
+tr:nth-child(even){background:#f9f9f9}
+.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c;font-weight:bold}.warn{color:#e67e22;font-weight:bold}
+.bp{background:#27ae60;color:#fff;padding:2px 8px;border-radius:3px;font-size:.85em}
+.bf{background:#e74c3c;color:#fff;padding:2px 8px;border-radius:3px;font-size:.85em}
+.bw{background:#e67e22;color:#fff;padding:2px 8px;border-radius:3px;font-size:.85em}
+.sb{padding:20px;border-radius:8px;margin:15px 0;text-align:center}
+.s-ready{background:#d5f5e3;border:2px solid #27ae60}.s-wait{background:#fef9e7;border:2px solid #e67e22}.s-block{background:#fadbd8;border:2px solid #e74c3c}
+.blk{background:#fadbd8;border:1px solid #e74c3c;padding:10px;border-radius:5px;margin:10px 0}
+.gg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:15px 0}
+.gc{background:#fff;padding:10px;border-radius:5px;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.1)}.gf{border:2px solid #27ae60}.gb{border:2px solid #e74c3c}
+.note{background:#d6eaf8;padding:10px;border-radius:5px;margin:10px 0;border-left:4px solid #3498db}
+code{background:#ecf0f1;padding:2px 6px;border-radius:3px}
+</style></head><body>
+<h1>BaiZe Post-Train R66: Day-0 Readiness Audit</h1>
+<p><strong>时间</strong>: 2026-11-09T00:19:15.133859 | <strong>节点</strong>: 10.252.32.17 | <strong>日期</strong>: 2026-11-09 (GPU分配日)</p>
+<div class='sb s-wait'><h2>⏳ 等待GPU — 所有关键依赖就绪，等待4张A40释放</h2>
+<p>通过:<span class='pass'>94</span> | 失败:<span class='fail'>0</span> | 警告:<span class='warn'>3</span> | 总计:97</p></div>
+<h2>🚫 阻塞项</h2><div class='blk'><ul>
+<li>GPU: 0/8 free, waiting for 4 A40 release</li>
+</ul></div>
+<h2>🎮 GPU状态</h2><p>空闲:<strong>0</strong>/8 (需≥4张≥40GB)</p><div class='gg'>
+<div class='gc gb'><strong>GPU 0</strong><br>64/46068 MiB<br>(0% util)</div>
+<div class='gc gb'><strong>GPU 1</strong><br>1085/46068 MiB<br>(0% util)</div>
+<div class='gc gb'><strong>GPU 2</strong><br>1085/46068 MiB<br>(0% util)</div>
+<div class='gc gb'><strong>GPU 3</strong><br>1085/46068 MiB<br>(0% util)</div>
+<div class='gc gb'><strong>GPU 4</strong><br>474/46068 MiB<br>(0% util)</div>
+<div class='gc gb'><strong>GPU 5</strong><br>989/46068 MiB<br>(0% util)</div>
+<div class='gc gb'><strong>GPU 6</strong><br>985/46068 MiB<br>(0% util)</div>
+<div class='gc gb'><strong>GPU 7</strong><br>987/46068 MiB<br>(0% util)</div>
+</div>
+<h2>⚙️ 进程状态</h2><table><tr><th>进程</th><th>状态</th><th>详情</th></tr>
+<tr><td>gpu_watcher.sh</td><td><span class="bp">RUNNING</span></td><td>自动检测GPU释放后触发启动序列(steps 1-5)</td></tr></table>
+<h2>📋 节点 (1项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>Node=.17</td><td><span class='bp'>PASS</span></td><td>IP=10.252.32.17</td></tr>
+</table>
+<h2>📋 Bash脚本语法 (14项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>baize_posttrain_gpu_watcher.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_launch_11_9.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_preflight_check.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_rl_grpo.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_sft.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_eval.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_anneal.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_minicpm5_diag.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_contamination_gate.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_post_rl_pipeline.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_72h_guardian.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_day1_runbook.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_paths.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_setup_cu124_venv.sh</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+</table>
+<h2>📋 Python脚本语法 (39项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>baize_posttrain_day1_diag.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_reward_functions.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_reward_validate.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_eda_tool.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_gen_sft_corpus_v2.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_gen_synth_v2.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_jsonl_to_parquet.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_ckpt_selector.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_eval_analysis.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_baseline_gate.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_smoke_calibrator.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_rl_monitor.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_rl_prompt_prescreen.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_campaign_projection.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_sft_dynamics.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_rollout_throughput.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_sglang_preflight.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_verl_wrapper.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_minicpm5_parser.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_api_profiler.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_day0_audit.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_e2e_audit.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_v2_consistency_audit.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_data_audit.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_contam_check_v2.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_ctx_budget_analyzer.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_gpu_budget_analysis.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_gpu_schedule_optimizer.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_grpo_dynamics_sim.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_power_analysis.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_power_analysis_fast.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_reward_adversarial_test.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_sft_data_mixer.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_sglang_patch.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_ray_patch_verify.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_mine_deepseek_traces.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_eda_sandbox_client.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_vision_lessons_analyzer.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+<tr><td>baize_posttrain_build_eval_ngrams.py</td><td><span class='bp'>PASS</span></td><td>OK</td></tr>
+</table>
+<h2>📋 数据文件 (11项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>rl_pyaether_synth_v2.parquet</td><td><span class='bp'>PASS</span></td><td>RL parquet 931KB</td></tr>
+<tr><td>rl_pyaether_synth_v2.jsonl</td><td><span class='bp'>PASS</span></td><td>RL JSONL 5440KB</td></tr>
+<tr><td>sft_pyaether_corpus_v2.jsonl</td><td><span class='bp'>PASS</span></td><td>SFT v2 JSONL 21271KB</td></tr>
+<tr><td>sft_pyaether_corpus_v2.parquet</td><td><span class='bp'>PASS</span></td><td>SFT v2 parquet 3582KB</td></tr>
+<tr><td>sft_pyaether_corpus.jsonl</td><td><span class='bp'>PASS</span></td><td>SFT v1 JSONL 18329KB</td></tr>
+<tr><td>sft_pyaether_corpus.parquet</td><td><span class='bp'>PASS</span></td><td>SFT v1 parquet 2808KB</td></tr>
+<tr><td>rl_pyaether_synth_tasks.jsonl</td><td><span class='bp'>PASS</span></td><td>RL tasks 533KB</td></tr>
+<tr><td>sft_deepseek_patterns.jsonl</td><td><span class='bp'>PASS</span></td><td>DeepSeek patterns 9KB</td></tr>
+<tr><td>sft_mixed_output.jsonl</td><td><span class='bp'>PASS</span></td><td>SFT mixed output 25466KB</td></tr>
+<tr><td>RL v2 records</td><td><span class='bp'>PASS</span></td><td>3347 records</td></tr>
+<tr><td>SFT v2 records</td><td><span class='bp'>PASS</span></td><td>19524 records</td></tr>
+</table>
+<h2>📋 虚拟环境(cu124) (11项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>cu124/torch</td><td><span class='bp'>PASS</span></td><td>/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/torch</td></tr>
+<tr><td>cu124/sglang</td><td><span class='bp'>PASS</span></td><td>/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/sglang</td></tr>
+<tr><td>cu124/verl</td><td><span class='bp'>PASS</span></td><td>/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/verl</td></tr>
+<tr><td>cu124/ray</td><td><span class='bp'>PASS</span></td><td>/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/ray</td></tr>
+<tr><td>cu124/flash_attn</td><td><span class='bp'>PASS</span></td><td>/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/flash_attn</td></tr>
+<tr><td>cu124/flashinfer</td><td><span class='bp'>PASS</span></td><td>/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/flashinfer</td></tr>
+<tr><td>cu124/transformers</td><td><span class='bp'>PASS</span></td><td>/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/transformers</td></tr>
+<tr><td>cu124/pyarrow</td><td><span class='bp'>PASS</span></td><td>/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/pyarrow</td></tr>
+<tr><td>cu124/yaml</td><td><span class='bp'>PASS</span></td><td>/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/yaml</td></tr>
+<tr><td>cu124/pandas</td><td><span class='bp'>PASS</span></td><td>/home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/pandas</td></tr>
+<tr><td>vllm_venv</td><td><span class='bp'>PASS</span></td><td>/home/app.e0031982/code/vllm_venv/bin/python</td></tr>
+</table>
+<h2>📋 模型文件 (6项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>MiniCPM5-2B/config.json</td><td><span class='bp'>PASS</span></td><td>0KB</td></tr>
+<tr><td>MiniCPM5-2B/model.safetensors</td><td><span class='bp'>PASS</span></td><td>split found</td></tr>
+<tr><td>MiniCPM5-2B/tokenizer.json</td><td><span class='bp'>PASS</span></td><td>9662KB</td></tr>
+<tr><td>MiniCPM5-2B/tokenizer_config.json</td><td><span class='bp'>PASS</span></td><td>92KB</td></tr>
+<tr><td>MiniCPM5-2B/special_tokens_map.json</td><td><span class='bp'>PASS</span></td><td>0KB</td></tr>
+<tr><td>total size</td><td><span class='bp'>PASS</span></td><td>5.04GB</td></tr>
+</table>
+<h2>📋 GPU (1项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>availability</td><td><span class='bw'>WARN</span></td><td>0/8 free — need 4</td></tr>
+</table>
+<h2>📋 SGLang端口 (3项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>port 8099</td><td><span class='bp'>PASS</span></td><td>HTTP 200 (existing)</td></tr>
+<tr><td>port 8098</td><td><span class='bp'>PASS</span></td><td>HTTP 200 (existing)</td></tr>
+<tr><td>port 30000</td><td><span class='bw'>WARN</span></td><td>HTTP N/A</td></tr>
+</table>
+<h2>📋 EDA工具包 (5项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>158-case dataset</td><td><span class='bp'>PASS</span></td><td>673KB</td></tr>
+<tr><td>eval script</td><td><span class='bp'>PASS</span></td><td>38KB</td></tr>
+<tr><td>code gen driver</td><td><span class='bp'>PASS</span></td><td>28KB</td></tr>
+<tr><td>API knowledge base</td><td><span class='bp'>PASS</span></td><td>17707KB</td></tr>
+<tr><td>API count</td><td><span class='bp'>PASS</span></td><td>8463 APIs</td></tr>
+</table>
+<h2>📋 RL配置 (1项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>RL YAML v2</td><td><span class='bw'>WARN</span></td><td>missing context</td></tr>
+</table>
+<h2>📋 进程 (1项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>gpu_watcher</td><td><span class='bp'>PASS</span></td><td>PID: 2022305 bash /nas_data/app.e0031982/code/super_intelligence_</td></tr>
+</table>
+<h2>📋 启动序列 (1项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>dry-run</td><td><span class='bp'>PASS</span></td><td>venv+model+eda exists</td></tr>
+</table>
+<h2>📋 磁盘空间 (3项)</h2><table><tr><th>检查项</th><th>状态</th><th>详情</th></tr>
+<tr><td>/dev/mapper/ubuntu--vg-ubuntu--lv</td><td><span class='bp'>PASS</span></td><td>avail=359G use=85%</td></tr>
+<tr><td>/dev/mapper/ubuntu--vg-ubuntu--lv</td><td><span class='bp'>PASS</span></td><td>avail=359G use=85%</td></tr>
+<tr><td>10.251.28.110:/train</td><td><span class='bp'>PASS</span></td><td>avail=20T use=85%</td></tr>
+</table>
+<h2>🚀 11/9启动序列概览</h2><div class='note'><p><strong>gpu_watcher.sh</strong> 后台轮询(每120秒)，≥4张A40空闲时自动触发:</p><ol>
+<li><strong>Step 1</strong>: Preflight check</li><li><strong>Step 2</strong>: SGLang serve + 36%基线复测(158-case×5-run)</li>
+<li><strong>Step 3</strong>: D1-D6诊断提取</li><li><strong>Step 4</strong>: 污染隔离门</li><li><strong>Step 5</strong>: RL冒烟测试(GRPO R0, 10 iters)</li></ol>
+<p>冒烟通过后手动触发<strong>Step 6</strong>: 全量RL训练(替身预演, ~72h)</p>
+<p>⚠️ 替身模型(MiniCPM5-2B)结果不可迁移到白泽正式训练</p></div>
+<h2>📌 关键事实</h2><table><tr><th>项</th><th>值</th></tr>
+<tr><td>基线锚点</td><td>MiniCPM5-2B 36% (vs DeepSeek 94%)</td></tr>
+<tr><td>评测集</td><td>EDA-Eval-PyAether 158任务, Pass@1, 5-run, 2500s</td></tr>
+<tr><td>成功阶梯</td><td>36%→50%(M1)→65%(M2)→75%(M3)→85%+(M4)</td></tr>
+<tr><td>RL配置</td><td>ctx=16384, hybrid, R0 arm (sandbox down→skeleton)</td></tr>
+<tr><td>RL步数</td><td>200步(~72h, 3.45 steps/hr)</td></tr>
+<tr><td>pretrain ckpt ETA</td><td>2026-12-25</td></tr></table><hr>
+<p style='text-align:center;color:#7f8c8d;font-size:.9em'>R66 Day-0 Readiness Audit | 2026-11-09T00:19:15.133859 | 零GPU纯文件系统检查</p>
+</body></html>
