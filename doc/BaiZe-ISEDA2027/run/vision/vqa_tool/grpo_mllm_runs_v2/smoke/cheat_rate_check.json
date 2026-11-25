@@ -1,0 +1,6 @@
+{
+  "cheat_rate": 0.0,
+  "overlap_count": 0,
+  "train_seed_isolated": true,
+  "note": "train seed (20261124-derivative) != eval seed (20261115); hard-case images live in a separate dir."
+}

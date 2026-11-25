@@ -1,0 +1,21 @@
+[
+  {
+    "model": "siglip2-so400m-384",
+    "resolution": 384,
+    "feature_dim": 1152,
+    "loader": "siglip2",
+    "protb_mean": 0.8746133049329122,
+    "protb_std": 9.97909017521574e-05,
+    "protb_runs": [
+      0.8746399879455566,
+      0.8747199773788452,
+      0.8744799494743347
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "paper_lp": "~83.1% (SigLIP2 so400m@384, hf lp)"
+  }
+]

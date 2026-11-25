@@ -1,0 +1,94 @@
+{
+ "arm": "V0",
+ "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+ "tag": "β9",
+ "tier": "C",
+ "verdict": "FAIL",
+ "k_pass": 0,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "max",
+   "pass": false,
+   "got": 2.5,
+   "gold": 1.0,
+   "tol": 0.02
+  },
+  {
+   "name": "t_at_max_ns",
+   "pass": false,
+   "got": 100.0,
+   "gold": 0.0,
+   "tol": 0.08
+  },
+  {
+   "name": "min",
+   "pass": false,
+   "got": -1.5,
+   "gold": 0.260933,
+   "tol": 0.02
+  },
+  {
+   "name": "t_at_min_ns",
+   "pass": false,
+   "got": 500.0,
+   "gold": 0.490982,
+   "tol": 0.08
+  },
+  {
+   "name": "peak_to_peak",
+   "pass": false,
+   "got": 4.0,
+   "gold": 0.739067,
+   "tol": 0.02
+  },
+  {
+   "name": "offset",
+   "pass": false,
+   "got": 0.0,
+   "gold": 0.6,
+   "tol": 0.02
+  },
+  {
+   "name": "period_ns",
+   "pass": false,
+   "got": 1000.0,
+   "gold": 1.0,
+   "tol": 0.08
+  },
+  {
+   "name": "p2p_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "max-min==p2p",
+   "tol": 0
+  },
+  {
+   "name": "offset_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "(max+min)/2==offset",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "max": 2.5,
+  "t_at_max_ns": 100,
+  "min": -1.5,
+  "t_at_min_ns": 500,
+  "peak_to_peak": 4.0,
+  "offset": 0.0,
+  "period_ns": 1000
+ },
+ "tool_calls": [
+  {
+   "tool": "text_only_model",
+   "prompt": "You are given a plot of signal v(vb) versus time (ns) with NO data labels. Read values from the axes and deliver: max (V), t_at_max (ns), min (V), t_at_min (ns), peak_to_peak (V), offset (V), period (ns). Return as JSON.\n\nReturn ONLY a JSON object with exactly these keys: [\"max\", \"t_at_max_ns\", \"min\", \"t_at_min_ns\", \"peak_to_peak\", \"offset\", \"period_ns\"]. Fill each from the waveform figure. No explanation.",
+   "ok": true,
+   "raw": "{\n  \"max\": 2.5,\n  \"t_at_max_ns\": 100,\n  \"min\": -1.5,\n  \"t_at_min_ns\": 500,\n  \"peak_to_peak\": 4.0,\n  \"offset\": 0.0,\n  \"period_ns\": 1000\n}"
+  }
+ ],
+ "n_tool_calls": 1,
+ "duration_s": 156.95,
+ "note": "text-only; image NOT read; VQA NOT called (no VQA MCP in V0)"
+}

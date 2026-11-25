@@ -1,0 +1,169 @@
+{
+ "arm": "V2",
+ "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+ "tag": "β10",
+ "tier": "C",
+ "adapter": "rft2_adapter_seed11",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+ "verdict": "FAIL",
+ "k_pass": 5,
+ "k_total": 10,
+ "conditions": [
+  {
+   "name": "vmax",
+   "pass": true,
+   "got": 1.2,
+   "gold": 1.1994,
+   "tol": 0.07
+  },
+  {
+   "name": "t_at_max",
+   "pass": true,
+   "got": 4.0,
+   "gold": 4.002,
+   "tol": 0.3
+  },
+  {
+   "name": "n_transitions",
+   "pass": true,
+   "got": 2.0,
+   "gold": 2,
+   "tol": 0
+  },
+  {
+   "name": "t_cross_up",
+   "pass": true,
+   "got": 3.0,
+   "gold": 2.83642,
+   "tol": 0.3
+  },
+  {
+   "name": "t_cross_down",
+   "pass": false,
+   "got": 6.0,
+   "gold": 6.50325,
+   "tol": 0.3
+  },
+  {
+   "name": "vth_high",
+   "pass": false,
+   "got": 1.0,
+   "gold": 0.85,
+   "tol": 0.07
+  },
+  {
+   "name": "vth_low",
+   "pass": false,
+   "got": 0.0,
+   "gold": 0.45,
+   "tol": 0.07
+  },
+  {
+   "name": "hysteresis",
+   "pass": false,
+   "got": 1.0,
+   "gold": 0.4,
+   "tol": 0.1
+  },
+  {
+   "name": "hyst_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "vth_high-vth_low==hyst",
+   "tol": 0
+  },
+  {
+   "name": "cross_order",
+   "pass": true,
+   "got": null,
+   "gold": "t_cross_up<t_cross_down",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "vmax": "1.2",
+  "t_at_max": "4",
+  "n_transitions": "2",
+  "t_cross_up": "3",
+  "t_cross_down": "6",
+  "vth_high": "1",
+  "vth_low": "0",
+  "hysteresis": "1"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "vmax",
+   "question": "Look at the TOP subplot (v(temp)). What is its peak/maximum voltage in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "raw": "1.2",
+   "ok": true,
+   "elapsed_s": 0.466
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "t_at_max",
+   "question": "Look at the TOP subplot (v(temp)). At what time (in us) does the peak occur? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "raw": "4",
+   "ok": true,
+   "elapsed_s": 0.39
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "n_transitions",
+   "question": "Look at the BOTTOM subplot (v(det)). How many rising/falling transitions does it have? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "raw": "Counting transitions in the bottom subplot (v(det)), I can see 2 rising/falling transitions: one at t=2.9 us and one at t=6.5 us. Final Answer: 2",
+   "ok": true,
+   "elapsed_s": 2.192
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "t_cross_up",
+   "question": "Look at the BOTTOM subplot (v(det)). At what time (in us) does it FIRST go high (rise to 1)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "raw": "3",
+   "ok": true,
+   "elapsed_s": 0.387
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "t_cross_down",
+   "question": "Look at the BOTTOM subplot (v(det)). At what time (in us) does it go back low (fall to 0)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "raw": "The bottom subplot shows v(det) going from 1.0 V back to 0.0 V at approximately 6.5 us. Final Answer: 6.5",
+   "ok": true,
+   "elapsed_s": 1.736
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "vth_high",
+   "question": "The bottom v(det) goes high when top v(temp) crosses an upper threshold. What is that upper threshold vth_high in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "raw": "The upper threshold vth_high is 1.0 V. Final Answer: 1.0",
+   "ok": true,
+   "elapsed_s": 1.153
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "vth_low",
+   "question": "The bottom v(det) goes low when top v(temp) crosses a lower threshold. What is that lower threshold vth_low in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "raw": "The lower threshold vth_low is 0.0 V. Final Answer: 0.0",
+   "ok": true,
+   "elapsed_s": 1.189
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "hysteresis",
+   "question": "What is the hysteresis (vth_high minus vth_low) in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/thresh_char_A.png",
+   "raw": "The hysteresis is the difference between the high and low voltage thresholds. Here the high threshold is 1.0 V and the low threshold is 0.0 V, so the hysteresis is 1.0 - 0.0 = 1.0 V. Final Answer: 1.0",
+   "ok": true,
+   "elapsed_s": 2.917
+  }
+ ],
+ "n_tool_calls": 8,
+ "duration_s": 10.73
+}

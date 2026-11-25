@@ -1,0 +1,152 @@
+{
+ "arm": "V2",
+ "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+ "tag": "β9",
+ "tier": "C",
+ "adapter": "rft2_adapter_seed11",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wave_vb_A.png",
+ "verdict": "FAIL",
+ "k_pass": 0,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "max",
+   "pass": false,
+   "got": 0.9,
+   "gold": 1.0,
+   "tol": 0.02
+  },
+  {
+   "name": "t_at_max_ns",
+   "pass": false,
+   "got": 1.0,
+   "gold": 0.0,
+   "tol": 0.08
+  },
+  {
+   "name": "min",
+   "pass": false,
+   "got": 0.0,
+   "gold": 0.260933,
+   "tol": 0.02
+  },
+  {
+   "name": "t_at_min_ns",
+   "pass": false,
+   "got": 0.0,
+   "gold": 0.490982,
+   "tol": 0.08
+  },
+  {
+   "name": "peak_to_peak",
+   "pass": false,
+   "got": 0.0,
+   "gold": 0.739067,
+   "tol": 0.02
+  },
+  {
+   "name": "offset",
+   "pass": false,
+   "got": 0.0,
+   "gold": 0.6,
+   "tol": 0.02
+  },
+  {
+   "name": "period_ns",
+   "pass": false,
+   "got": 0.0,
+   "gold": 1.0,
+   "tol": 0.08
+  },
+  {
+   "name": "p2p_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "max-min==p2p",
+   "tol": 0
+  },
+  {
+   "name": "offset_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "(max+min)/2==offset",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "max": "0.9",
+  "t_at_max_ns": "1",
+  "min": "0",
+  "t_at_min_ns": "0",
+  "peak_to_peak": "0",
+  "offset": "0",
+  "period_ns": "0"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "max",
+   "question": "What is the maximum voltage (peak) of this waveform in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wave_vb_A.png",
+   "raw": "0.9",
+   "ok": true,
+   "elapsed_s": 0.407
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "t_at_max_ns",
+   "question": "At what time (in ns) does the maximum/peak occur? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wave_vb_A.png",
+   "raw": "Counting the peaks from left to right across the plot, the maximum peak occurs at time 1 ns. Final Answer: 1",
+   "ok": true,
+   "elapsed_s": 1.353
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "min",
+   "question": "What is the minimum voltage (trough) of this waveform in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wave_vb_A.png",
+   "raw": "The minimum voltage (trough) of this waveform occurs at approximately t = 0.5 ns and is around 0.27 V. Final Answer: 0.27",
+   "ok": true,
+   "elapsed_s": 1.896
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "t_at_min_ns",
+   "question": "At what time (in ns) does the minimum/trough occur? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wave_vb_A.png",
+   "raw": "The minimum/trough occurs at approximately 0.5 ns. Final Answer: 0.5",
+   "ok": true,
+   "elapsed_s": 1.103
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "peak_to_peak",
+   "question": "What is the peak-to-peak voltage (max minus min) in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wave_vb_A.png",
+   "raw": "The peak of this plot is 1.0 V and the trough is approximately 0.27 V, so the peak-to-peak voltage is 1.0 - 0.27 = 0.73 V. Final Answer: 0.73",
+   "ok": true,
+   "elapsed_s": 2.641
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "offset",
+   "question": "What is the DC offset (midline voltage) of this waveform in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wave_vb_A.png",
+   "raw": "The DC offset is the midline voltage of the waveform, which appears to be centered around 0.65 V. Final Answer: 0.65",
+   "ok": true,
+   "elapsed_s": 1.664
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "period_ns",
+   "question": "What is the period of oscillation in ns? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wave_vb_A.png",
+   "raw": "The oscillation appears to have a period of approximately 0.5 ns, as the peak-to-peak distance between successive maxima decreases linearly with time, consistent with damped oscillations. Final Answer: 0.5",
+   "ok": true,
+   "elapsed_s": 2.139
+  }
+ ],
+ "n_tool_calls": 7,
+ "duration_s": 11.45
+}

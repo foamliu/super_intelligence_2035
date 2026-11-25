@@ -1,0 +1,151 @@
+{
+ "arm": "V1",
+ "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+ "tag": "α4",
+ "tier": "B",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+ "verdict": "FAIL",
+ "k_pass": 5,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "v_max",
+   "pass": true,
+   "got": 1.25,
+   "gold": 1.25,
+   "tol": 0.07
+  },
+  {
+   "name": "v_min",
+   "pass": false,
+   "got": 1.0,
+   "gold": 0.1,
+   "tol": 0.07
+  },
+  {
+   "name": "num_activations",
+   "pass": false,
+   "got": 54.0,
+   "gold": 5,
+   "tol": 0
+  },
+  {
+   "name": "first_activation_time",
+   "pass": true,
+   "got": 3.0,
+   "gold": 2.841895,
+   "tol": 0.5
+  },
+  {
+   "name": "last_activation_time",
+   "pass": false,
+   "got": 1.25,
+   "gold": 26.177452,
+   "tol": 0.5
+  },
+  {
+   "name": "duty_cycle",
+   "pass": false,
+   "got": 1.0,
+   "gold": 0.286858,
+   "tol": 0.12
+  },
+  {
+   "name": "activation_pattern",
+   "pass": true,
+   "got": "multi_pulse",
+   "gold": "multi_pulse",
+   "tol": 0
+  },
+  {
+   "name": "vmax_gt_vmin",
+   "pass": true,
+   "got": null,
+   "gold": "v_max>v_min",
+   "tol": 0
+  },
+  {
+   "name": "multi_pulse",
+   "pass": true,
+   "got": null,
+   "gold": "pattern==multi_pulse",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "v_max": "1.25",
+  "v_min": "1.0",
+  "num_activations": "Looking at the plot titled **v(sel54) vs time**, we can observe a square wave signal that alternates between low and high states.\n\nThe high (activation) pulses occur at approximately:\n\n- ~3.2 µs\n- ~8.2 µs\n- ~13.2",
+  "first_activation_time": "3",
+  "last_activation_time": "To determine the time at which the **last activation window ends**, we need to identify the end time of the final high (active) pulse in the waveform.\n\nLooking at the plot:\n\n- The signal is a square wave with high levels around 1.25 V and low levels near 0.1",
+  "duty_cycle": "To calculate the **duty cycle** (fraction of time high), we need to:\n\n1. Count the total duration where the signal is **high** (v(sel54) ≈ 1.25 V).\n2. Count the total duration where the signal is **low** (v(sel5",
+  "activation_pattern": "multi_pulse"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp",
+   "key": "v_max",
+   "question": "What is the maximum (high) voltage level of this pulse signal in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "answer": "1.25",
+   "ok": true,
+   "elapsed_s": 0.417
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "v_min",
+   "question": "What is the minimum (low/baseline) voltage level in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "answer": "1.0",
+   "ok": true,
+   "elapsed_s": 0.369
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "num_activations",
+   "question": "How many activation pulse windows are there in this signal? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "answer": "Looking at the plot titled **v(sel54) vs time**, we can observe a square wave signal that alternates between low and high states.\n\nThe high (activation) pulses occur at approximately:\n\n- ~3.2 µs\n- ~8.2 µs\n- ~13.2",
+   "ok": true,
+   "elapsed_s": 2.02
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "first_activation_time",
+   "question": "At what time (in us) does the FIRST activation window start? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "answer": "3",
+   "ok": true,
+   "elapsed_s": 0.336
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "last_activation_time",
+   "question": "At what time (in us) does the LAST activation window end? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "answer": "To determine the time at which the **last activation window ends**, we need to identify the end time of the final high (active) pulse in the waveform.\n\nLooking at the plot:\n\n- The signal is a square wave with high levels around 1.25 V and low levels near 0.1",
+   "ok": true,
+   "elapsed_s": 2.004
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "duty_cycle",
+   "question": "What is the duty cycle (fraction of time high/active, 0 to 1)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "answer": "To calculate the **duty cycle** (fraction of time high), we need to:\n\n1. Count the total duration where the signal is **high** (v(sel54) ≈ 1.25 V).\n2. Count the total duration where the signal is **low** (v(sel5",
+   "ok": true,
+   "elapsed_s": 2.03
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "activation_pattern",
+   "question": "Is the activation pattern 'single_pulse' or 'multi_pulse'? One word.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "answer": "multi_pulse",
+   "ok": true,
+   "elapsed_s": 0.356
+  }
+ ],
+ "n_tool_calls": 7,
+ "duration_s": 7.79
+}

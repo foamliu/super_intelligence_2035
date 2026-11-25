@@ -1,0 +1,116 @@
+{
+ "arm": "V0",
+ "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+ "tag": "β11",
+ "tier": "B",
+ "verdict": "FAIL",
+ "k_pass": 6,
+ "k_total": 12,
+ "conditions": [
+  {
+   "name": "fail_time",
+   "pass": false,
+   "got": 12.5,
+   "gold": 1363000.0,
+   "tol": 5000
+  },
+  {
+   "name": "root_cause",
+   "pass": true,
+   "got": "Q_force_x_stuck_high",
+   "gold": "Q_force_x_stuck_high",
+   "tol": 0
+  },
+  {
+   "name": "edge_signal",
+   "pass": false,
+   "got": "Q_valid",
+   "gold": "test_violation_clk",
+   "tol": 0
+  },
+  {
+   "name": "edge_count",
+   "pass": true,
+   "got": 4.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "window_start",
+   "pass": false,
+   "got": 10.0,
+   "gold": 1340000.0,
+   "tol": 10000
+  },
+  {
+   "name": "window_end",
+   "pass": false,
+   "got": 15.0,
+   "gold": 1370000.0,
+   "tol": 10000
+  },
+  {
+   "name": "q_valid_at_fail",
+   "pass": true,
+   "got": 0.0,
+   "gold": 0,
+   "tol": 0
+  },
+  {
+   "name": "test_mode_at_fail",
+   "pass": false,
+   "got": null,
+   "gold": 1,
+   "tol": 0
+  },
+  {
+   "name": "root_cause_ok",
+   "pass": true,
+   "got": null,
+   "gold": "root_cause==Q_force_x_stuck_high",
+   "tol": 0
+  },
+  {
+   "name": "edge_signal_ok",
+   "pass": false,
+   "got": null,
+   "gold": "edge_signal==test_violation_clk",
+   "tol": 0
+  },
+  {
+   "name": "window_order",
+   "pass": true,
+   "got": null,
+   "gold": "window_start<window_end",
+   "tol": 0
+  },
+  {
+   "name": "q_valid_drops",
+   "pass": true,
+   "got": null,
+   "gold": "Q_valid==0 at fail",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "fail_time": 12.5,
+  "root_cause": "Q_force_x_stuck_high",
+  "edge_signal": "Q_valid",
+  "edge_count": 4,
+  "window_start": 10.0,
+  "window_end": 15.0,
+  "q_valid_at_fail": 0,
+  "test_mode_at_fail": "normal"
+ },
+ "tool_calls": [
+  {
+   "tool": "text_only_model",
+   "prompt": "Seven stacked traces over a time (ps) axis, NO data labels: Q_valid, test_op_type, test_violation_pos, Q_force_x, test_violation_clk, BYP_eff, test_mode. A sim failure occurs when Q_force_x goes stuck high. Deliver: fail_time (ps), root_cause ('Q_force_x_stuck_high' or 'other'), edge_signal (name of the signal with the most edges near the fail), edge_count (int), window_start (ps), window_end (ps). Return as JSON.\n\nReturn ONLY a JSON object with exactly these keys: [\"fail_time\", \"root_cause\", \"edge_signal\", \"edge_count\", \"window_start\", \"window_end\", \"q_valid_at_fail\", \"test_mode_at_fail\"]. Fill each from the waveform figure. No explanation.",
+   "ok": true,
+   "raw": "{\n  \"fail_time\": 12.5,\n  \"root_cause\": \"Q_force_x_stuck_high\",\n  \"edge_signal\": \"Q_valid\",\n  \"edge_count\": 4,\n  \"window_start\": 10.0,\n  \"window_end\": 15.0,\n  \"q_valid_at_fail\": 0,\n  \"test_mode_at_fail\": \"normal\"\n}"
+  }
+ ],
+ "n_tool_calls": 1,
+ "duration_s": 2.89,
+ "note": "text-only; image NOT read; VQA NOT called (no VQA MCP in V0)"
+}

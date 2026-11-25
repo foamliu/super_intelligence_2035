@@ -1,0 +1,21 @@
+[
+  {
+    "model": "clip-vitl14-336",
+    "resolution": 336,
+    "feature_dim": 1024,
+    "loader": "clip",
+    "protb_mean": 0.826586643854777,
+    "protb_std": 0.00027438913612728554,
+    "protb_runs": [
+      0.8262199759483337,
+      0.8268799781799316,
+      0.8266599774360657
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "paper_lp": "~88.1% (CLIP ViT-L/14@336, OpenCLIP lp)"
+  }
+]

@@ -1,0 +1,110 @@
+{
+ "arm": "G0",
+ "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+ "tag": "α2",
+ "tier": "A",
+ "sut": "glm-5.2 agent (no VQA tool)",
+ "vqa_backend": "none",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/rise_margin_A.png",
+ "verdict": "FAIL",
+ "k_pass": 2,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "ref_signal",
+   "pass": true,
+   "got": "clk_a",
+   "gold": "clk_a",
+   "tol": 0
+  },
+  {
+   "name": "ref_edge_time",
+   "pass": false,
+   "got": null,
+   "gold": 5.1667,
+   "tol": 0.3
+  },
+  {
+   "name": "target_edge_time",
+   "pass": false,
+   "got": null,
+   "gold": 7.3667,
+   "tol": 0.3
+  },
+  {
+   "name": "margin_ns",
+   "pass": false,
+   "got": null,
+   "gold": 2.2,
+   "tol": 0.2
+  },
+  {
+   "name": "swing",
+   "pass": false,
+   "got": null,
+   "gold": 1.5,
+   "tol": 0.2
+  },
+  {
+   "name": "vref",
+   "pass": false,
+   "got": null,
+   "gold": 0.75,
+   "tol": 0.1
+  },
+  {
+   "name": "margin_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "target-ref==margin",
+   "tol": 0
+  },
+  {
+   "name": "vref_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "swing/2==vref",
+   "tol": 0
+  },
+  {
+   "name": "ref_first",
+   "pass": true,
+   "got": null,
+   "gold": "ref_signal==clk_a",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "ref_signal": "clk_a",
+  "ref_edge_time": null,
+  "target_edge_time": null,
+  "margin_ns": null,
+  "swing": null,
+  "vref": null
+ },
+ "final_answer_raw": {
+  "ref_signal": "clk_a",
+  "ref_edge_time": null,
+  "target_edge_time": null,
+  "margin_ns": null,
+  "swing": null,
+  "vref": null
+ },
+ "vqa_calls_per_task": 0,
+ "reask_count": 0,
+ "vqa_calls": [],
+ "agent_selfcheck": [],
+ "n_turns": 1,
+ "turn_capped": false,
+ "finalized_after_cap": false,
+ "duration_s": 11.78,
+ "turns": [
+  {
+   "role": "assistant",
+   "content": "FINAL ANSWERS:\n{\n  \"ref_signal\": \"clk_a\",\n  \"ref_edge_time\": null,\n  \"target_edge_time\": null,\n  \"margin_ns\": null,\n  \"swing\": null,\n  \"vref\": null\n}",
+   "reasoning": "The task asks for numeric values from a waveform image that I cannot see. The text provides no numeric values. I must not invent numbers. I can infer qualitative facts: clk_a rises first, data_a rises second. So ref_signal = 'clk_a'. All numeric quantities are null.",
+   "tool_calls": null,
+   "finish_reason": "stop"
+  }
+ ]
+}

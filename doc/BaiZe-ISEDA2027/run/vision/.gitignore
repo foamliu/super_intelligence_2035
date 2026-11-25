@@ -1,0 +1,12 @@
+# External encoder feature cache (5GB+ per model, not for git)
+external_features_cache/
+
+# 2026-11-20 wake#1702: vision 线可重生产物不入库
+# 防止 vision_line_commit.sh auto-detect 把这些 untracked 产物卷入提交污染 origin
+# （日志 / 数据快照 / 训练 pilot jsonl / safetensors 适配器均可由脚本重生成）
+*.log
+data_snapshot_*.txt
+wave_rl/sft_pilot_*.jsonl
+wave_rl/sft_holdout_*.jsonl
+**/adapter_model.safetensors
+

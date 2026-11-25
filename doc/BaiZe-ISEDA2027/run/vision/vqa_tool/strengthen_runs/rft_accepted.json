@@ -1,0 +1,167 @@
+{
+  "accepted": 148,
+  "k_samples": 4,
+  "thresh": 0.5,
+  "items": [
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q26.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "3",
+      "skill": "cycle_count",
+      "ans": "3",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q26.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "3",
+      "skill": "cycle_count",
+      "ans": "3",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q26.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "3",
+      "skill": "cycle_count",
+      "ans": "3",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q26.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "3",
+      "skill": "cycle_count",
+      "ans": "3",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q27.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q27.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q27.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q27.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q28.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q28.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q28.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q28.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q30.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q30.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q30.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q30.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "4",
+      "skill": "cycle_count",
+      "ans": "4",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q31.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "2",
+      "skill": "cycle_count",
+      "ans": "2",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q31.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "2",
+      "skill": "cycle_count",
+      "ans": "2",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q31.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "2",
+      "skill": "cycle_count",
+      "ans": "2",
+      "reward": 1.0
+    },
+    {
+      "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/sft_images/q31.png",
+      "question": "How many complete waveform cycles are shown? Answer with just a number.",
+      "gt": "2",
+      "skill": "cycle_count",
+      "ans": "2",
+      "reward": 1.0
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "server": "http://127.0.0.1:30001",
+  "model": "Qwen3.5-2B",
+  "n": 9,
+  "correct": 5,
+  "accuracy": 0.5556,
+  "skill_acc": {
+    "cycle_count": {
+      "n": 3,
+      "correct": 1,
+      "acc": 0.3333
+    },
+    "duty_cycle": {
+      "n": 2,
+      "correct": 1,
+      "acc": 0.5
+    },
+    "freq_compare": {
+      "n": 1,
+      "correct": 1,
+      "acc": 1.0
+    },
+    "amplitude": {
+      "n": 1,
+      "correct": 0,
+      "acc": 0.0
+    },
+    "rise_edge": {
+      "n": 2,
+      "correct": 2,
+      "acc": 1.0
+    }
+  },
+  "ts": "2026-11-14T10:27:59",
+  "results": [
+    {
+      "id": "sine_2cyc",
+      "skill": "cycle_count",
+      "question": "How many complete sine-wave cycles are shown? Answer with just a number.",
+      "ground_truth": "2",
+      "answer": "2",
+      "correct": true,
+      "latency_s": 0.25
+    },
+    {
+      "id": "sine_3cyc",
+      "skill": "cycle_count",
+      "question": "How many complete sine-wave cycles are shown? Answer with just a number.",
+      "ground_truth": "3",
+      "answer": "4",
+      "correct": false,
+      "latency_s": 0.18
+    },
+    {
+      "id": "sine_5cyc",
+      "skill": "cycle_count",
+      "question": "How many complete sine-wave cycles are shown? Answer with just a number.",
+      "ground_truth": "5",
+      "answer": "7",
+      "correct": false,
+      "latency_s": 0.21
+    },
+    {
+      "id": "sq_50",
+      "skill": "duty_cycle",
+      "question": "What is the duty cycle of this square wave (high-time / period)? Answer as a percentage.",
+      "ground_truth": "50%",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) is **2 units** (from t=0 to t=2).\n- The **period** (total duration of one full cycle) is **4 units** (from t=0 to t=4).\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "correct": true,
+      "latency_s": 4.2
+    },
+    {
+      "id": "sq_25",
+      "skill": "duty_cycle",
+      "question": "What is the duty cycle of this square wave (high-time / period)? Answer as a percentage.",
+      "ground_truth": "25%",
+      "answer": "To find the **duty cycle** of the square wave, we use the formula:\n\n> **Duty Cycle = (High Time / Period) × 100%**\n\nFrom the graph:\n\n- The **high time** (duration the signal is high) is **2 units** (from t=0 to t=2).\n- The **period** (total duration of one full cycle) is **4 units** (from t=0 to t=4).\n\nSo,\n\n> Duty Cycle = (2 / 4) × 100% = **50%**\n\n✅ Final Answer: **50**",
+      "correct": false,
+      "latency_s": 3.92
+    },
+    {
+      "id": "two_ab",
+      "skill": "freq_compare",
+      "question": "Signal A (blue, top) and signal B (red, bottom) are shown. Which signal has the HIGHER frequency? Answer A or B.",
+      "ground_truth": "B",
+      "answer": "Looking at the graph:\n\n- The **blue signal (A)** completes **one full cycle** over a larger horizontal distance.\n- The **red signal (B)** completes **many more cycles** in the same horizontal distance.\n\nFrequency is defined as the number of cycles per unit time (or space, in this case). Since signal B has more cycles than signal A in the same interval, **signal B has the higher frequency**.\n\n✅ **Answer: B**",
+      "correct": true,
+      "latency_s": 2.86
+    },
+    {
+      "id": "sine_amp3",
+      "skill": "amplitude",
+      "question": "What is the peak-to-peak amplitude of this sine wave, in vertical grid divisions (each grid square = 1 division)? Answer with a number.",
+      "ground_truth": "6",
+      "answer": "To find the **peak-to-peak amplitude** of the sine wave, we look at the vertical distance from the **lowest point** (trough) to the **highest point** (peak).\n\nFrom the graph:\n\n- The **peak** (maximum positive value) is at **2 grid divisions** above the center line.\n- The **trough** (minimum negative value) is at **2 grid divisions** below the center line.\n\nSo, peak-to-peak amplitude = peak - trough = 2 - (-2) = **4 divisions**.\n\nAlternatively, since peak-to-peak is the total vertical span from max to min, and each peak-to-peak cycle spans 4 grid units (2 up, 2 down), and we can see two full cycles, but the question only asks for the **amplitude**, not the period.\n\nWait — let’s clarify:  \n**Amplitude** is the **peak deviation from the center line** (i.e., from 0 to peak or trough).  \n**Peak-to-peak amplitude** is the **total vertical distance from peak to trough**.\n\nIn this graph:\n- From center line to peak: 2 divisions → amplitude = 2\n- From center line",
+      "correct": false,
+      "latency_s": 7.25
+    },
+    {
+      "id": "rise_sharp",
+      "skill": "rise_edge",
+      "question": "Is the rising edge of this signal sharp (near-vertical) or gradual (sloped)? Answer 'sharp' or 'gradual'.",
+      "ground_truth": "sharp",
+      "answer": "sharp",
+      "correct": true,
+      "latency_s": 0.22
+    },
+    {
+      "id": "rise_gradual",
+      "skill": "rise_edge",
+      "question": "Is the rising edge of this signal sharp (near-vertical) or gradual (sloped)? Answer 'sharp' or 'gradual'.",
+      "ground_truth": "gradual",
+      "answer": "gradual",
+      "correct": true,
+      "latency_s": 0.26
+    }
+  ],
+  "note": "pre-strengthening baseline; same images/questions reused for post-SFT/RL paired comparison (#4)",
+  "instrument_fix": "v1 had (a) freq_compare checker false-negative on verbose output, (b) no grid lines -> 'divisions' unanswerable; v2 adds grid + robust final-answer extraction. duty_cycle errors are genuine model gaps retained."
+}

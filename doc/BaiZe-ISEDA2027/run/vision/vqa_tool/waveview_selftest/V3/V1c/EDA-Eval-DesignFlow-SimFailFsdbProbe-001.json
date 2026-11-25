@@ -1,0 +1,191 @@
+{
+ "arm": "V1c",
+ "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+ "tag": "β11",
+ "tier": "B",
+ "adapter": "none(base)",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+ "verdict": "FAIL",
+ "k_pass": 7,
+ "k_total": 12,
+ "conditions": [
+  {
+   "name": "fail_time",
+   "pass": false,
+   "got": 1.363,
+   "gold": 1363000.0,
+   "tol": 5000
+  },
+  {
+   "name": "root_cause",
+   "pass": true,
+   "got": "Q_force_x_stuck_high",
+   "gold": "Q_force_x_stuck_high",
+   "tol": 0
+  },
+  {
+   "name": "edge_signal",
+   "pass": true,
+   "got": "test_violation_clk",
+   "gold": "test_violation_clk",
+   "tol": 0
+  },
+  {
+   "name": "edge_count",
+   "pass": true,
+   "got": 4.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "window_start",
+   "pass": false,
+   "got": 1.0,
+   "gold": 1340000.0,
+   "tol": 10000
+  },
+  {
+   "name": "window_end",
+   "pass": true,
+   "got": 1370000.0,
+   "gold": 1370000.0,
+   "tol": 10000
+  },
+  {
+   "name": "q_valid_at_fail",
+   "pass": false,
+   "got": 1.365,
+   "gold": 0,
+   "tol": 0
+  },
+  {
+   "name": "test_mode_at_fail",
+   "pass": false,
+   "got": 1.36,
+   "gold": 1,
+   "tol": 0
+  },
+  {
+   "name": "root_cause_ok",
+   "pass": true,
+   "got": null,
+   "gold": "root_cause==Q_force_x_stuck_high",
+   "tol": 0
+  },
+  {
+   "name": "edge_signal_ok",
+   "pass": true,
+   "got": null,
+   "gold": "edge_signal==test_violation_clk",
+   "tol": 0
+  },
+  {
+   "name": "window_order",
+   "pass": true,
+   "got": null,
+   "gold": "window_start<window_end",
+   "tol": 0
+  },
+  {
+   "name": "q_valid_drops",
+   "pass": false,
+   "got": null,
+   "gold": "Q_valid==0 at fail",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "fail_time": "1.363",
+  "root_cause": "Q_force_x_stuck_high",
+  "edge_signal": "test_violation_clk",
+  "edge_count": "4",
+  "window_start": "1",
+  "window_end": "1370000",
+  "q_valid_at_fail": "1.365",
+  "test_mode_at_fail": "1.36"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "fail_time",
+   "question": "At what time (in ps) does the Q_force_x trace FIRST go high (rise to 1)? Just the number. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "raw": "To determine when `Q_force_x` first goes high, we follow the steps:\n\n(1) The x-axis label is “time (ps)”, so the unit is **ps**.\n\n(2) There is no explicit scale factor like “x1e6” shown on the axis — the ticks are labeled directly as 1.340, 1.345, etc., and the final tick is 1.370. The “1e6” at the bottom right is likely a formatting artifact for the full value (i.e., 1.370 × 10⁶ ps = 1.370 μs), but since the question asks for time in ps and the ticks are already in ps, we use the tick values directly.\n\n(3) Looking at the `Q_force_x` trace (red line), it starts at 0 and rises to 1 at the tick labeled **1.363**.\n\n(4) So, the mantissa is 1.363, and since there’s no scale factor, full_value = 1.363.\n\n(5) The question asks for time in ps, which matches the unit of the tick.\n\nThus, the answer i",
+   "ok": true,
+   "elapsed_s": 8.395
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "root_cause",
+   "question": "Which trace goes STUCK HIGH at the failure time, indicating the root cause? Answer 'Q_force_x_stuck_high' or 'other'. One phrase.",
+   "cot_applied": false,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "raw": "Q_force_x_stuck_high",
+   "ok": true,
+   "elapsed_s": 0.688
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "edge_signal",
+   "question": "Which trace has the most rising/falling edges (pulses) in this window? Give the trace name. One word.",
+   "cot_applied": false,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "raw": "test_violation_clk",
+   "ok": true,
+   "elapsed_s": 0.648
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "edge_count",
+   "question": "How many rising edges (pulses) does that most-active edge trace have? Just the integer. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "raw": "To determine the number of rising edges (pulses) in the most-active edge trace, we need to carefully examine the plot and the x-axis.\n\n1.  **Identify the most-active edge trace**: The traces are labeled on the y-axis. The most active one is the one with the highest number of pulses. Looking at the traces:\n    - `Q_valid`: 1 pulse\n    - `test_op_type`: 1 pulse\n    - `test_violation_pos`: 0 pulses\n    - `Q_force_x`: 1 pulse\n    - `test_violation_clk`: This trace has multiple pulses.\n    - `BYP_eff`: 0 pulses\n    - `test_mode`: 1 pulse\n\n    The trace `test_violation_clk` has the most pulses.\n\n2.  **State the x-axis unit**: The x-axis label is \"time (ps)\". However, there is a small offset marker at the bottom right: \"1e6\". This indicates that the actual time values are scaled by a factor of 1,",
+   "ok": true,
+   "elapsed_s": 8.959
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "window_start",
+   "question": "What is the leftmost (start) time shown on the x-axis in ps? Just the number. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "raw": "The x-axis label is \"time (ps)\" with a small offset marker near the right end: \"1e6\". This indicates that the actual time values are scaled by a factor of 1,000,000 (i.e., 1 ps = 1e6 in the plotted units).\n\nLooking at the leftmost tick mark on the x-axis, it is labeled \"1.340\". Since this is the mantissa (the number before the decimal point in scientific notation or the first digit after the decimal in this case), and the scale factor is 1e6, we compute:\n\nfull_value = 1.340 × 1e6 = 1,340,000\n\nBut note: the question asks for the *leftmost (start) time shown on the x-axis in ps*. The tick is at 1.340, which represents 1.340 × 1e6 ps = 1,340,000 ps.\n\nHowever, let’s double-check: the x-axis goes from 1.340 to 1.370, and the unit is ps, but the axis has a multiplier of 1e6. So the actual time i",
+   "ok": true,
+   "elapsed_s": 8.786
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "window_end",
+   "question": "What is the rightmost (end) time shown on the x-axis in ps? Just the number. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "raw": "The x-axis label is \"time (ps)\" with a small offset marker near the right end: \"1e6\". This indicates the actual time values are scaled by a factor of 1,000,000 (i.e., 1 ps = 1e6 in the plotted units).\n\nLooking at the rightmost tick mark on the x-axis, it aligns with the value 1.370 on the labeled scale. Since the axis is scaled by 1e6, the actual time is:\n\n1.370 × 1e6 = 1,370,000 ps\n\nThis matches the unit requested (ps), so no further conversion is needed.\n\nFinal Answer: 1370000",
+   "ok": true,
+   "elapsed_s": 5.059
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "q_valid_at_fail",
+   "question": "At the failure time, what is the value of Q_valid (0 or 1)? Just the integer. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "raw": "To determine the value of `Q_valid` at the failure time, we follow the steps:\n\n1.  **State the x-axis unit**: The x-axis label is \"time (ps)\" and the tick marks are labeled with values like 1.340, 1.345, etc., up to 1.370. However, there is a small offset marker at the bottom right: \"1e6\". This indicates that the actual time values are in picoseconds (ps), but the axis is scaled by a factor of 1,000,000 (i.e., 1 ps = 1e6 units on the axis). So, the full time value is `tick_value * 1e6`.\n\n2.  **State the scale factor shown**: The scale factor is 1e6 (as indicated by the \"1e6\" marker).\n\n3.  **Read the tick mantissa closest to the requested point**: The failure time is when `Q_valid` drops to 0. Looking at the top plot (`Q_valid`), the blue line drops to 0 at approximately x = 1.363. The tick",
+   "ok": true,
+   "elapsed_s": 8.99
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "test_mode_at_fail",
+   "question": "At the failure time, what is the value of test_mode (0 or 1)? Just the integer. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sim_fail_A.png",
+   "raw": "To determine the value of `test_mode` at the failure time, we follow the steps:\n\n1.  **State the x-axis unit**: The x-axis label is \"time (ps)\" and the tick marks are labeled with values like 1.340, 1.345, etc., up to 1.370. However, there is a small offset marker at the bottom right: \"1e6\". This indicates that the actual time values are in picoseconds (ps), but the axis is scaled by a factor of 1,000,000 (i.e., 1 ps = 1e6 units on the axis). So, the full x-axis unit is **1e6 ps**.\n\n2.  **State the scale factor shown**: The scale factor is **1e6** (as indicated by the \"1e6\" marker).\n\n3.  **Read the tick mantissa closest to the requested point**: The failure time is indicated by the orange trace (`test_op_type`) dropping to 0. This happens at approximately **1.363e6** (since the tick is at ",
+   "ok": true,
+   "elapsed_s": 8.991
+  }
+ ],
+ "n_tool_calls": 8,
+ "duration_s": 51.78
+}

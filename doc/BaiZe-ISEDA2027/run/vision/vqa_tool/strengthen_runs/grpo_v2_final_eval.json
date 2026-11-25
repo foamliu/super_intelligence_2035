@@ -1,0 +1,348 @@
+{
+  "tag": "grpo_v2_final",
+  "n": 30,
+  "correct": 20,
+  "accuracy": 0.6667,
+  "mean_reward": 0.6897,
+  "skill_acc": {
+    "type_classification": {
+      "n": 5,
+      "correct": 5,
+      "acc": 1.0,
+      "mean_reward": 1.0
+    },
+    "cycle_count": {
+      "n": 5,
+      "correct": 3,
+      "acc": 0.6,
+      "mean_reward": 0.6595
+    },
+    "amplitude_read": {
+      "n": 5,
+      "correct": 0,
+      "acc": 0.0,
+      "mean_reward": 0.079
+    },
+    "freq_comparison": {
+      "n": 5,
+      "correct": 5,
+      "acc": 1.0,
+      "mean_reward": 1.0
+    },
+    "duty_cycle": {
+      "n": 5,
+      "correct": 2,
+      "acc": 0.4,
+      "mean_reward": 0.4
+    },
+    "rise_edge": {
+      "n": 5,
+      "correct": 5,
+      "acc": 1.0,
+      "mean_reward": 1.0
+    }
+  },
+  "results": [
+    {
+      "id": "q0",
+      "skill": "type_classification",
+      "gt": "square",
+      "answer": "square",
+      "pred": "square",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.25
+    },
+    {
+      "id": "q1",
+      "skill": "type_classification",
+      "gt": "sine",
+      "answer": "sine",
+      "pred": "sine",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.27
+    },
+    {
+      "id": "q2",
+      "skill": "type_classification",
+      "gt": "sawtooth",
+      "answer": "sawtooth",
+      "pred": "sawtooth",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.34
+    },
+    {
+      "id": "q3",
+      "skill": "type_classification",
+      "gt": "sawtooth",
+      "answer": "sawtooth",
+      "pred": "sawtooth",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.36
+    },
+    {
+      "id": "q4",
+      "skill": "type_classification",
+      "gt": "square",
+      "answer": "square",
+      "pred": "square",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.24
+    },
+    {
+      "id": "q5",
+      "skill": "cycle_count",
+      "gt": "3",
+      "answer": "Counting complete oscillations from left to right across the plot, I can see 4 full waveform cycles. Final Answer: 4",
+      "pred": "4",
+      "correct": false,
+      "reward": 0.1084,
+      "latency_s": 1.24
+    },
+    {
+      "id": "q6",
+      "skill": "cycle_count",
+      "gt": "3",
+      "answer": "Counting complete oscillations from left to right across the plot, I can see 3 full waveform cycles. Final Answer: 3",
+      "pred": "3",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 1.25
+    },
+    {
+      "id": "q7",
+      "skill": "cycle_count",
+      "gt": "4",
+      "answer": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "pred": "5",
+      "correct": false,
+      "reward": 0.1889,
+      "latency_s": 1.24
+    },
+    {
+      "id": "q8",
+      "skill": "cycle_count",
+      "gt": "5",
+      "answer": "Counting complete oscillations from left to right across the plot, I can see 5 full waveform cycles. Final Answer: 5",
+      "pred": "5",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 1.24
+    },
+    {
+      "id": "q9",
+      "skill": "cycle_count",
+      "gt": "3",
+      "answer": "Counting complete oscillations from left to right across the plot, I can see 3 full waveform cycles. Final Answer: 3",
+      "pred": "3",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 1.25
+    },
+    {
+      "id": "q10",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "The grid has 1 division per square. The peak of the waveform is 5.5 divisions above the center axis and the trough is 5.5 divisions below it, so the peak-to-peak amplitude is 2 x 5.5 = 11 divisions. Final Answer: 11",
+      "pred": "11",
+      "correct": false,
+      "reward": 0.0039,
+      "latency_s": 2.66
+    },
+    {
+      "id": "q11",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "The grid has 1 division per square. The peak of the waveform is 4.5 divisions above the center axis and the trough is 4.5 divisions below it, so the peak-to-peak amplitude is 2 x 4.5 = 9 divisions. Final Answer: 9",
+      "pred": "9",
+      "correct": false,
+      "reward": 0.0357,
+      "latency_s": 2.56
+    },
+    {
+      "id": "q12",
+      "skill": "amplitude_read",
+      "gt": "7",
+      "answer": "The grid has 1 division per square. The peak of the waveform is 5.5 divisions above the center axis and the trough is 5.5 divisions below it, so the peak-to-peak amplitude is 2 x 5.5 = 11 divisions. Final Answer: 11",
+      "pred": "11",
+      "correct": false,
+      "reward": 0.0222,
+      "latency_s": 2.62
+    },
+    {
+      "id": "q13",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "The grid has 1 division per square. The peak of the waveform is 5.5 divisions above the center axis and the trough is 5.5 divisions below it, so the peak-to-peak amplitude is 2 x 5.5 = 11 divisions. Final Answer: 11",
+      "pred": "11",
+      "correct": false,
+      "reward": 0.0039,
+      "latency_s": 2.62
+    },
+    {
+      "id": "q14",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "The grid has 1 division per square. The peak of the waveform is 3.5 divisions above the center axis and the trough is 3.5 divisions below it, so the peak-to-peak amplitude is 2 x 3.5 = 7 divisions. Final Answer: 7",
+      "pred": "7",
+      "correct": false,
+      "reward": 0.3292,
+      "latency_s": 2.53
+    },
+    {
+      "id": "q15",
+      "skill": "freq_comparison",
+      "gt": "B",
+      "answer": "B",
+      "pred": "B",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q16",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "A",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.24
+    },
+    {
+      "id": "q17",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "A",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.23
+    },
+    {
+      "id": "q18",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "A",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.24
+    },
+    {
+      "id": "q19",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "A",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.24
+    },
+    {
+      "id": "q20",
+      "skill": "duty_cycle",
+      "gt": "75",
+      "answer": "A square wave's duty cycle is the fraction of each period spent high. Here the high portion takes 75 percent of one period, so the duty cycle is 75%. Final Answer: 75",
+      "pred": "75",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 1.85
+    },
+    {
+      "id": "q21",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "answer": "A square wave's duty cycle is the fraction of each period spent high. Here the high portion takes 75 percent of one period, so the duty cycle is 75%. Final Answer: 75",
+      "pred": "75",
+      "correct": false,
+      "reward": 0.0,
+      "latency_s": 1.84
+    },
+    {
+      "id": "q22",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "answer": "A square wave's duty cycle is the fraction of each period spent high. Here the high portion takes 75 percent of one period, so the duty cycle is 75%. Final Answer: 75",
+      "pred": "75",
+      "correct": false,
+      "reward": 0.0,
+      "latency_s": 1.84
+    },
+    {
+      "id": "q23",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "answer": "A square wave's duty cycle is the fraction of each period spent high. Here the high portion takes 75 percent of one period, so the duty cycle is 75%. Final Answer: 75",
+      "pred": "75",
+      "correct": false,
+      "reward": 0.0,
+      "latency_s": 1.86
+    },
+    {
+      "id": "q24",
+      "skill": "duty_cycle",
+      "gt": "75",
+      "answer": "A square wave's duty cycle is the fraction of each period spent high. Here the high portion takes 75 percent of one period, so the duty cycle is 75%. Final Answer: 75",
+      "pred": "75",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 1.85
+    },
+    {
+      "id": "q25",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.24
+    },
+    {
+      "id": "q26",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.23
+    },
+    {
+      "id": "q27",
+      "skill": "rise_edge",
+      "gt": "gradual",
+      "answer": "gradual",
+      "pred": "gradual",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.25
+    },
+    {
+      "id": "q28",
+      "skill": "rise_edge",
+      "gt": "gradual",
+      "answer": "gradual",
+      "pred": "gradual",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.26
+    },
+    {
+      "id": "q29",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.24
+    }
+  ],
+  "ts": "2026-11-24T13:25:04"
+}

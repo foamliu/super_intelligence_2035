@@ -1,0 +1,1158 @@
+{
+  "config": {
+    "model_path": "/nas_data/app.e0031982/models/Qwen3.5-2B",
+    "sft_ckpt": null,
+    "out_dir": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/wave_rl/v10_results/cpu_rl_v10_smoke",
+    "mode": "smoke",
+    "seed": 20261112,
+    "n_sft": 24,
+    "sft_epochs": 5,
+    "n_grpo_steps": 2,
+    "n_train": 12,
+    "n_eval": 96,
+    "n_eval_per_cat": 4,
+    "group_size": 2,
+    "batch_prompts": 1,
+    "lr": 5e-06,
+    "grpo_lr": 1e-05,
+    "max_new_tokens": 8,
+    "temperature": 0.8,
+    "clip_eps": 0.2,
+    "lora_r": 16,
+    "skip_baseline_eval": false,
+    "skip_sft": false
+  },
+  "stats": {
+    "mode": "smoke",
+    "seed": 20261112,
+    "accuracy": {
+      "A_base": 0.5833333333333334,
+      "B_sft": 0.5833333333333334,
+      "C_grpo": 0.5833333333333334
+    },
+    "breakdown": {
+      "A": {
+        "difficulty": {
+          "medium": {
+            "n": 8,
+            "correct": 5,
+            "accuracy": 0.625
+          },
+          "easy": {
+            "n": 8,
+            "correct": 5,
+            "accuracy": 0.625
+          },
+          "hard": {
+            "n": 8,
+            "correct": 4,
+            "accuracy": 0.5
+          }
+        },
+        "same_type": {
+          "False": {
+            "n": 12,
+            "correct": 6,
+            "accuracy": 0.5
+          },
+          "True": {
+            "n": 12,
+            "correct": 8,
+            "accuracy": 0.6666666666666666
+          }
+        },
+        "answer": {
+          "A": {
+            "n": 10,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "B": {
+            "n": 14,
+            "correct": 14,
+            "accuracy": 1.0
+          }
+        }
+      },
+      "B": {
+        "difficulty": {
+          "medium": {
+            "n": 8,
+            "correct": 5,
+            "accuracy": 0.625
+          },
+          "easy": {
+            "n": 8,
+            "correct": 5,
+            "accuracy": 0.625
+          },
+          "hard": {
+            "n": 8,
+            "correct": 4,
+            "accuracy": 0.5
+          }
+        },
+        "same_type": {
+          "False": {
+            "n": 12,
+            "correct": 6,
+            "accuracy": 0.5
+          },
+          "True": {
+            "n": 12,
+            "correct": 8,
+            "accuracy": 0.6666666666666666
+          }
+        },
+        "answer": {
+          "A": {
+            "n": 10,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "B": {
+            "n": 14,
+            "correct": 14,
+            "accuracy": 1.0
+          }
+        }
+      },
+      "C": {
+        "difficulty": {
+          "medium": {
+            "n": 8,
+            "correct": 5,
+            "accuracy": 0.625
+          },
+          "easy": {
+            "n": 8,
+            "correct": 5,
+            "accuracy": 0.625
+          },
+          "hard": {
+            "n": 8,
+            "correct": 4,
+            "accuracy": 0.5
+          }
+        },
+        "same_type": {
+          "False": {
+            "n": 12,
+            "correct": 6,
+            "accuracy": 0.5
+          },
+          "True": {
+            "n": 12,
+            "correct": 8,
+            "accuracy": 0.6666666666666666
+          }
+        },
+        "answer": {
+          "A": {
+            "n": 10,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "B": {
+            "n": 14,
+            "correct": 14,
+            "accuracy": 1.0
+          }
+        }
+      }
+    },
+    "lora_config": {
+      "r": 16,
+      "alpha": 32
+    },
+    "grpo_stats": {
+      "C_avg_std": 0.25,
+      "C_nonzero_std_frac": 0.5,
+      "C_avg_reward_last5": 0.25
+    },
+    "mcnemar_C_vs_B": {
+      "stat": 0.0,
+      "p": 1.0,
+      "n_discordant": 0
+    },
+    "bootstrap_C_vs_B": {
+      "point_delta": 0.0,
+      "ci_lo": 0.0,
+      "ci_hi": 0.0
+    },
+    "mcnemar_B_vs_A": {
+      "stat": 0.0,
+      "p": 1.0,
+      "n_discordant": 0
+    },
+    "cheat_rate": {
+      "train_seed": "20261112+",
+      "eval_seed": "995200+",
+      "overlap": 0,
+      "note": "disjoint RNG seeds -> no leakage"
+    },
+    "verdict": "NO CHANGE"
+  },
+  "results": {
+    "A": [
+      {
+        "qid": 0,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "square",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 2.051587939829038,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 1,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 1.8901156218060382,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 2,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 3.65758756704233,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 3,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 2.513999090969094,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 4,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "triangle",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 3.2963801286131282,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 5,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "triangle",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 3.023052890203699,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 6,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "triangle",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 2.2961046211771086,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 7,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "sine",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 2.8218973788436537,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 8,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "square",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.7133000037646255,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 9,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "triangle",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.7730549713598935,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 10,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "triangle",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.7117935391955865,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 11,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.6078576056066474,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 12,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.9738235903065549,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 13,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "sine",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.8587645503702208,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 14,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.5714822656267067,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 15,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "sawtooth",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.5879872234902424,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 16,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "sawtooth",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.2401364322832296,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 17,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.2361521896680847,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 18,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "square",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.2563045085373512,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 19,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "sawtooth",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.3203535280602479,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 20,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.3114050918892186,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 21,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.4577910924135198,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 22,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.3108714877694023,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 23,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "sawtooth",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.3584406446357797,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      }
+    ],
+    "B": [
+      {
+        "qid": 0,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "square",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 2.051587939829038,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 1,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 1.8901156218060382,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 2,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 3.65758756704233,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 3,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 2.513999090969094,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 4,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "triangle",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 3.2963801286131282,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 5,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "triangle",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 3.023052890203699,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 6,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "triangle",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 2.2961046211771086,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 7,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "sine",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 2.8218973788436537,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 8,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "square",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.7133000037646255,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 9,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "triangle",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.7730549713598935,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 10,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "triangle",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.7117935391955865,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 11,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.6078576056066474,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 12,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.9738235903065549,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 13,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "sine",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.8587645503702208,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 14,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.5714822656267067,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 15,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "sawtooth",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.5879872234902424,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 16,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "sawtooth",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.2401364322832296,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 17,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.2361521896680847,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 18,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "square",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.2563045085373512,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 19,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "sawtooth",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.3203535280602479,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 20,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.3114050918892186,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 21,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.4577910924135198,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 22,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.3108714877694023,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 23,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "sawtooth",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.3584406446357797,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      }
+    ],
+    "C": [
+      {
+        "qid": 0,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "square",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 2.051587939829038,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 1,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 1.8901156218060382,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 2,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 3.65758756704233,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 3,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "easy",
+        "freq_ratio": 2.513999090969094,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 4,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "triangle",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 3.2963801286131282,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 5,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "triangle",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 3.023052890203699,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 6,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "triangle",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 2.2961046211771086,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 7,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "sine",
+        "same_type": false,
+        "difficulty": "easy",
+        "freq_ratio": 2.8218973788436537,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 8,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "square",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.7133000037646255,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 9,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "triangle",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.7730549713598935,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 10,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "triangle",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.7117935391955865,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 11,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "medium",
+        "freq_ratio": 1.6078576056066474,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 12,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.9738235903065549,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 13,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "sine",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.8587645503702208,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 14,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.5714822656267067,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 15,
+        "task": "frequency_comparison",
+        "waveform_type_a": "triangle",
+        "waveform_type_b": "sawtooth",
+        "same_type": false,
+        "difficulty": "medium",
+        "freq_ratio": 1.5879872234902424,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 16,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "sawtooth",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.2401364322832296,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 17,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "sine",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.2361521896680847,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 18,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "square",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.2563045085373512,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 19,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "sawtooth",
+        "same_type": true,
+        "difficulty": "hard",
+        "freq_ratio": 1.3203535280602479,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 20,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sine",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.3114050918892186,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 21,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.4577910924135198,
+        "correct": false,
+        "parsed": "B",
+        "gt": "A",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 22,
+        "task": "frequency_comparison",
+        "waveform_type_a": "sawtooth",
+        "waveform_type_b": "square",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.3108714877694023,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      },
+      {
+        "qid": 23,
+        "task": "frequency_comparison",
+        "waveform_type_a": "square",
+        "waveform_type_b": "sawtooth",
+        "same_type": false,
+        "difficulty": "hard",
+        "freq_ratio": 1.3584406446357797,
+        "correct": true,
+        "parsed": "B",
+        "gt": "B",
+        "raw_output": "<think>\n\n</think>\n\nB"
+      }
+    ]
+  },
+  "training": {
+    "C_losses": [
+      0.002186298370361328,
+      0.0
+    ],
+    "C_rewards": [
+      0.5,
+      0.0
+    ],
+    "C_stds": [
+      0.5,
+      0.0
+    ],
+    "C_nz_std": [
+      1.0,
+      0.0
+    ]
+  }
+}

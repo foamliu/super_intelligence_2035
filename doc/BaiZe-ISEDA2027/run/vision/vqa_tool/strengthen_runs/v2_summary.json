@@ -1,0 +1,163 @@
+{
+  "stage": "report_v2",
+  "pre_baseline": {
+    "n": 30,
+    "accuracy": 0.6
+  },
+  "v1_sft": {
+    "acc_mean": 0.6444,
+    "acc_std": 0.0157,
+    "n_seeds": 3
+  },
+  "v1_rft": {
+    "accuracy": 0.7333
+  },
+  "v2_sft": {
+    "acc_mean": 0.7444,
+    "acc_std": 0.0416,
+    "n_seeds": 3,
+    "per_seed": [
+      {
+        "seed": 11,
+        "acc": 0.7
+      },
+      {
+        "seed": 22,
+        "acc": 0.8
+      },
+      {
+        "seed": 33,
+        "acc": 0.7333
+      }
+    ]
+  },
+  "v2_rft": {
+    "accuracy": 0.9,
+    "accepted": 207
+  },
+  "mcnemar_v1best_sft_vs_v2_rft": {
+    "b_improved": 7,
+    "c_regressed": 0,
+    "p_value": 0.01562
+  },
+  "mcnemar_v1sft_vs_v2sft": [
+    {
+      "seed": 11,
+      "b_improved": 2,
+      "c_regressed": 1,
+      "p_value": 1.0
+    },
+    {
+      "seed": 22,
+      "b_improved": 5,
+      "c_regressed": 1,
+      "p_value": 0.21875
+    },
+    {
+      "seed": 33,
+      "b_improved": 5,
+      "c_regressed": 3,
+      "p_value": 0.72656
+    }
+  ],
+  "skill_agg": {
+    "type_classification": {
+      "pre_acc": 0.6,
+      "v1_sft_mean": 1.0,
+      "v1_rft": 1.0,
+      "v2_sft_mean": 0.8667,
+      "v2_rft": 1.0
+    },
+    "cycle_count": {
+      "pre_acc": 0.8,
+      "v1_sft_mean": 0.6667,
+      "v1_rft": 1.0,
+      "v2_sft_mean": 0.8667,
+      "v2_rft": 1.0
+    },
+    "amplitude_read": {
+      "pre_acc": 0.4,
+      "v1_sft_mean": 0.2,
+      "v1_rft": 0.4,
+      "v2_sft_mean": 0.2667,
+      "v2_rft": 0.6
+    },
+    "freq_comparison": {
+      "pre_acc": 0.8,
+      "v1_sft_mean": 1.0,
+      "v1_rft": 1.0,
+      "v2_sft_mean": 1.0,
+      "v2_rft": 1.0
+    },
+    "duty_cycle": {
+      "pre_acc": 0.0,
+      "v1_sft_mean": 0.0,
+      "v1_rft": 0.0,
+      "v2_sft_mean": 0.4667,
+      "v2_rft": 0.8
+    },
+    "rise_edge": {
+      "pre_acc": 1.0,
+      "v1_sft_mean": 1.0,
+      "v1_rft": 1.0,
+      "v2_sft_mean": 1.0,
+      "v2_rft": 1.0
+    }
+  },
+  "flipped_v1sft_to_v2rft": [
+    {
+      "id": "q5",
+      "skill": "cycle_count",
+      "gt": "3",
+      "v1_pred": "4",
+      "v2rft_pred": "3"
+    },
+    {
+      "id": "q11",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "v1_pred": "7",
+      "v2rft_pred": "6"
+    },
+    {
+      "id": "q13",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "v1_pred": "7",
+      "v2rft_pred": "6"
+    },
+    {
+      "id": "q20",
+      "skill": "duty_cycle",
+      "gt": "75",
+      "v1_pred": "",
+      "v2rft_pred": "75"
+    },
+    {
+      "id": "q21",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "v1_pred": "",
+      "v2rft_pred": "25"
+    },
+    {
+      "id": "q22",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "v1_pred": "",
+      "v2rft_pred": "25"
+    },
+    {
+      "id": "q23",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "v1_pred": "",
+      "v2rft_pred": "25"
+    }
+  ],
+  "verdict": "✅ v2 显著提升（post-RFT_v2 ≥ post-SFT_v1 +5pp 且 McNemar p<0.05）",
+  "single_variable": "CoT reasoning targets on cycle_count/amplitude_read/duty_cycle; same train cases (seed=20261114), same held-out (seed=20261115)",
+  "leakage_check": "eval seed=20261115 != train seed=20261114 -> cheat_rate=0 by construction",
+  "preregistered_criteria": "success v2: post-RFT_v2 >= post-SFT_v1 + 5pp, McNemar(best-SFT_v1 vs RFT_v2) p<0.05, >=3 seeds, cheat_rate=0",
+  "ts": "2026-11-14T16:54:34"
+}

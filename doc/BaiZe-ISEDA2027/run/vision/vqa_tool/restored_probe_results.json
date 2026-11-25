@@ -1,0 +1,360 @@
+{
+ "probe": "preliminary VQA capability on designflow-restored waveview cases",
+ "scope_note": "regenerated faithful PNGs from documented params; NOT the official #3 comparison",
+ "vqa_server": "http://127.0.0.1:30001",
+ "model": "Qwen3.5-2B (native VL)",
+ "baseline_textonly": "0/3 cases FAIL (designflow r650-r654: 2B text-only, no submit.zip)",
+ "cases": [
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "tag": "β9",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/restored_probe_images/wave_vb_A.png",
+   "oracle": {
+    "max": 1.0,
+    "t_at_max_ns": 0.0,
+    "min": 0.260933,
+    "t_at_min_ns": 0.490982,
+    "peak_to_peak": 0.739067,
+    "offset": 0.6,
+    "period_ns": 1.0
+   },
+   "tolerances": {
+    "max": 0.02,
+    "t_at_max_ns": 0.08,
+    "min": 0.02,
+    "t_at_min_ns": 0.08,
+    "peak_to_peak": 0.02,
+    "offset": 0.02,
+    "period_ns": 0.08
+   },
+   "baseline_textonly": "FAIL (designflow r651: 2B text-only, no submit.zip)",
+   "results": [
+    {
+     "key": "max",
+     "question": "What is the maximum voltage (peak) of this waveform in Volts? Just the number.",
+     "answer": "Looking at the waveform in the plot:\n\n- The y-axis is labeled **v(vb) (V)**, meaning voltage in Volts.\n- The maximum value shown on the y-axis is **1.0 V**, and the waveform starts at exactly **1.0 V** at time = 0 ns",
+     "elapsed_s": 1.946,
+     "ok": true,
+     "gold": 1.0,
+     "got": 1.0,
+     "tol": 0.02,
+     "pass": true
+    },
+    {
+     "key": "t_at_max_ns",
+     "question": "At what time (in ns) does the maximum/peak occur? Just the number.",
+     "answer": "Looking at the plot titled **v(vb) vs time**, we can observe a damped oscillation. The peaks (maximum values) occur at regular intervals.\n\nLet’s identify the peak times by visually inspecting the graph:\n\n- First peak: at **t = 1.0 ns** (y",
+     "elapsed_s": 1.979,
+     "ok": true,
+     "gold": 0.0,
+     "got": 1.0,
+     "tol": 0.08,
+     "pass": false
+    },
+    {
+     "key": "min",
+     "question": "What is the minimum voltage (trough) of this waveform in Volts? Just the number.",
+     "answer": "Looking at the waveform in the plot:\n\n- The y-axis is labeled **v(vb) (V)**, representing voltage in Volts.\n- The x-axis is **time (ns)**.\n- The waveform starts at 1.0 V and oscillates with decreasing amplitude over time — this is damped",
+     "elapsed_s": 1.998,
+     "ok": true,
+     "gold": 0.260933,
+     "got": 1.0,
+     "tol": 0.02,
+     "pass": false
+    },
+    {
+     "key": "t_at_min_ns",
+     "question": "At what time (in ns) does the minimum/trough occur? Just the number.",
+     "answer": "Looking at the graph of **v(vb) vs time**, we can observe a damped oscillation. The troughs (minimum points) occur at regular intervals.\n\nLet’s identify the time values where the curve reaches its lowest point (trough):\n\n- First trough: approximately at **t = 0",
+     "elapsed_s": 1.975,
+     "ok": true,
+     "gold": 0.490982,
+     "got": 0.0,
+     "tol": 0.08,
+     "pass": false
+    },
+    {
+     "key": "peak_to_peak",
+     "question": "What is the peak-to-peak voltage (max minus min) in Volts? Just the number.",
+     "answer": "To find the **peak-to-peak voltage**, we need to find the **maximum value** and the **minimum value** of the waveform over the given time range, then compute:\n\n> **Peak-to-peak = max(v) - min(v)**\n\nFrom the graph:\n\n- The **maximum voltage**",
+     "elapsed_s": 2.037,
+     "ok": true,
+     "gold": 0.739067,
+     "got": null,
+     "tol": 0.02,
+     "pass": false
+    },
+    {
+     "key": "offset",
+     "question": "What is the DC offset (midline voltage) of this waveform in Volts? Just the number.",
+     "answer": "Looking at the waveform, it oscillates around a central midline. The peaks and troughs are symmetric around a value between 0.5 and 0.6.\n\nVisually, the midline appears to be at **0.55 V**.\n\nLet’s verify:\n- At t=0",
+     "elapsed_s": 1.998,
+     "ok": true,
+     "gold": 0.6,
+     "got": 0.5,
+     "tol": 0.02,
+     "pass": false
+    },
+    {
+     "key": "period_ns",
+     "question": "What is the period of oscillation in ns? Just the number.",
+     "answer": "Looking at the graph, we can observe that the oscillation pattern repeats every **2 ns**.\n\nFor example:\n- The first peak is at t = 0 ns (or very close to it, since it starts at 1.0 V).\n- The next peak is at t = 2 ns",
+     "elapsed_s": 1.945,
+     "ok": true,
+     "gold": 1.0,
+     "got": 2.0,
+     "tol": 0.08,
+     "pass": false
+    }
+   ]
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "tag": "α4",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/restored_probe_images/sel_wave_A.png",
+   "oracle": {
+    "v_max": 1.25,
+    "v_min": 0.1,
+    "num_activations": 5,
+    "first_activation_time": 2.841895,
+    "last_activation_time": 26.177452,
+    "duty_cycle": 0.286858,
+    "activation_pattern": "multi_pulse"
+   },
+   "tolerances": {
+    "v_max": 0.07,
+    "v_min": 0.07,
+    "num_activations": 0,
+    "first_activation_time": 0.5,
+    "last_activation_time": 0.5,
+    "duty_cycle": 0.12
+   },
+   "baseline_textonly": "FAIL (designflow r652: 2B text-only, no submit.zip)",
+   "results": [
+    {
+     "key": "v_max",
+     "question": "What is the maximum (high) voltage level of this pulse signal in Volts? Just the number.",
+     "answer": "1.25",
+     "elapsed_s": 0.426,
+     "ok": true,
+     "gold": 1.25,
+     "got": 1.25,
+     "tol": 0.07,
+     "pass": true
+    },
+    {
+     "key": "v_min",
+     "question": "What is the minimum (low/baseline) voltage level in Volts? Just the number.",
+     "answer": "1.0",
+     "elapsed_s": 0.388,
+     "ok": true,
+     "gold": 0.1,
+     "got": 1.0,
+     "tol": 0.07,
+     "pass": false
+    },
+    {
+     "key": "num_activations",
+     "question": "How many activation pulse windows are there in this signal? Just the integer.",
+     "answer": "Looking at the plot titled **v(sel54) vs time**, we can observe a square wave signal that alternates between low and high states.\n\nThe high (activation) pulses occur at approximately:\n\n- ~3.2 µs\n- ~8.2 µs\n- ~13.2",
+     "elapsed_s": 2.059,
+     "ok": true,
+     "gold": 5,
+     "got": 54.0,
+     "tol": 0,
+     "pass": false
+    },
+    {
+     "key": "first_activation_time",
+     "question": "At what time (in us) does the FIRST activation window start? Just the number.",
+     "answer": "3",
+     "elapsed_s": 0.342,
+     "ok": true,
+     "gold": 2.841895,
+     "got": 3.0,
+     "tol": 0.5,
+     "pass": true
+    },
+    {
+     "key": "last_activation_time",
+     "question": "At what time (in us) does the LAST activation window end? Just the number.",
+     "answer": "To determine the time at which the **last activation window ends**, we need to identify the end time of the final high (active) pulse in the waveform.\n\nLooking at the plot:\n\n- The signal is a square wave with high levels around 1.25 V and low levels near 0.1",
+     "elapsed_s": 2.039,
+     "ok": true,
+     "gold": 26.177452,
+     "got": 1.25,
+     "tol": 0.5,
+     "pass": false
+    },
+    {
+     "key": "duty_cycle",
+     "question": "What is the duty cycle (fraction of time high/active, 0 to 1)? Just the number.",
+     "answer": "To calculate the **duty cycle** (fraction of time high), we need to:\n\n1. Count the total duration where the signal is **high** (v(sel54) ≈ 1.25 V).\n2. Count the total duration where the signal is **low** (v(sel5",
+     "elapsed_s": 2.037,
+     "ok": true,
+     "gold": 0.286858,
+     "got": 1.0,
+     "tol": 0.12,
+     "pass": false
+    },
+    {
+     "key": "activation_pattern",
+     "question": "Is the activation pattern 'single_pulse' or 'multi_pulse'? One word.",
+     "answer": "multi_pulse",
+     "elapsed_s": 0.37,
+     "ok": true,
+     "gold": "multi_pulse",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "tag": "β10",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/restored_probe_images/thresh_char_A.png",
+   "oracle": {
+    "vth_high": 0.85,
+    "vth_low": 0.45,
+    "hysteresis": 0.4,
+    "t_cross_up": 2.83642,
+    "t_cross_down": 6.50325,
+    "n_transitions": 2,
+    "vmax": 1.1994,
+    "t_at_max": 4.002
+   },
+   "tolerances": {
+    "vth_high": 0.07,
+    "vth_low": 0.07,
+    "hysteresis": 0.1,
+    "t_cross_up": 0.3,
+    "t_cross_down": 0.3,
+    "n_transitions": 0,
+    "vmax": 0.07,
+    "t_at_max": 0.3
+   },
+   "baseline_textonly": "FAIL (designflow r654: 2B text-only, no submit.zip)",
+   "results": [
+    {
+     "key": "vmax",
+     "question": "Look at the TOP subplot (v(temp)). What is its peak/maximum voltage in Volts? Just the number.",
+     "answer": "1.2",
+     "elapsed_s": 0.398,
+     "ok": true,
+     "gold": 1.1994,
+     "got": 1.2,
+     "tol": 0.07,
+     "pass": true
+    },
+    {
+     "key": "t_at_max",
+     "question": "Look at the TOP subplot (v(temp)). At what time (in us) does the peak occur? Just the number.",
+     "answer": "4",
+     "elapsed_s": 0.362,
+     "ok": true,
+     "gold": 4.002,
+     "got": 4.0,
+     "tol": 0.3,
+     "pass": true
+    },
+    {
+     "key": "n_transitions",
+     "question": "Look at the BOTTOM subplot (v(det)). How many rising/falling transitions does it have? Just the integer.",
+     "answer": "The bottom subplot (v(det)) shows a square wave:\n\n- From t = 0 to t = 3 μs: v(det) = 0 V (flat)\n- At t = 3 μs: **rising transition** (from 0 to 1 V)\n- From t",
+     "elapsed_s": 2.046,
+     "ok": true,
+     "gold": 2,
+     "got": 0.0,
+     "tol": 0,
+     "pass": false
+    },
+    {
+     "key": "t_cross_up",
+     "question": "Look at the BOTTOM subplot (v(det)). At what time (in us) does it FIRST go high (rise to 1)? Just the number.",
+     "answer": "1.3",
+     "elapsed_s": 0.396,
+     "ok": true,
+     "gold": 2.83642,
+     "got": 1.3,
+     "tol": 0.3,
+     "pass": false
+    },
+    {
+     "key": "t_cross_down",
+     "question": "Look at the BOTTOM subplot (v(det)). At what time (in us) does it go back low (fall to 0)? Just the number.",
+     "answer": "0.6",
+     "elapsed_s": 0.398,
+     "ok": true,
+     "gold": 6.50325,
+     "got": 0.6,
+     "tol": 0.3,
+     "pass": false
+    },
+    {
+     "key": "vth_high",
+     "question": "The bottom v(det) goes high when top v(temp) crosses an upper threshold. What is that upper threshold vth_high in Volts? Just the number.",
+     "answer": "To find the upper threshold voltage $ v_{th\\_high} $, we need to determine the value of $ v(\\text{det}) $ at which the top plot ($ v(\\text{temp}) $) crosses it — i.e., the point where $ v(\\text{det}) $ transitions from",
+     "elapsed_s": 2.009,
+     "ok": true,
+     "gold": 0.85,
+     "got": null,
+     "tol": 0.07,
+     "pass": false
+    },
+    {
+     "key": "vth_low",
+     "question": "The bottom v(det) goes low when top v(temp) crosses a lower threshold. What is that lower threshold vth_low in Volts? Just the number.",
+     "answer": "0.0",
+     "elapsed_s": 0.415,
+     "ok": true,
+     "gold": 0.45,
+     "got": 0.0,
+     "tol": 0.07,
+     "pass": false
+    },
+    {
+     "key": "hysteresis",
+     "question": "What is the hysteresis (vth_high minus vth_low) in Volts? Just the number.",
+     "answer": "To find the hysteresis, we need to determine the voltage thresholds:\n\n- **vth_high** = the voltage at which the system switches from low to high (detected)\n- **vth_low** = the voltage at which the system switches from high to low\n\nLooking at the bottom plot",
+     "elapsed_s": 2.042,
+     "ok": true,
+     "gold": 0.4,
+     "got": null,
+     "tol": 0.1,
+     "pass": false
+    }
+   ]
+  }
+ ],
+ "summary": [
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "tag": "β9",
+   "n_qty": 7,
+   "correct": 1,
+   "acc": 0.1429,
+   "baseline": "FAIL (0 deliverable)"
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "tag": "α4",
+   "n_qty": 7,
+   "correct": 3,
+   "acc": 0.4286,
+   "baseline": "FAIL (0 deliverable)"
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "tag": "β10",
+   "n_qty": 8,
+   "correct": 2,
+   "acc": 0.25,
+   "baseline": "FAIL (0 deliverable)"
+  }
+ ],
+ "overall": {
+  "n_cases": 3,
+  "n_qty": 22,
+  "correct": 6,
+  "acc": 0.2727
+ }
+}

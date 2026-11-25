@@ -1,0 +1,131 @@
+{
+ "arm": "V1",
+ "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+ "tag": "α1",
+ "tier": "A",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+ "verdict": "FAIL",
+ "k_pass": 2,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "optimal_vref",
+   "pass": false,
+   "got": 1.0,
+   "gold": 100.0,
+   "tol": 0.0
+  },
+  {
+   "name": "max_width_at_opt",
+   "pass": false,
+   "got": null,
+   "gold": 56.99,
+   "tol": 3.0
+  },
+  {
+   "name": "skew_at_opt",
+   "pass": false,
+   "got": 1.0,
+   "gold": 5.38,
+   "tol": 3.0
+  },
+  {
+   "name": "height_at_opt",
+   "pass": false,
+   "got": 100.0,
+   "gold": 180.0,
+   "tol": 10.0
+  },
+  {
+   "name": "vref60_valid",
+   "pass": false,
+   "got": "yes",
+   "gold": "no",
+   "tol": 0
+  },
+  {
+   "name": "validity_skew",
+   "pass": true,
+   "got": null,
+   "gold": "skew_at_opt<=15",
+   "tol": 0
+  },
+  {
+   "name": "validity_height",
+   "pass": true,
+   "got": null,
+   "gold": "height_at_opt>=100",
+   "tol": 0
+  },
+  {
+   "name": "reject_vref60",
+   "pass": false,
+   "got": null,
+   "gold": "VREF=60 invalid (false-peak rejected)",
+   "tol": 0
+  },
+  {
+   "name": "vref_in_range",
+   "pass": false,
+   "got": null,
+   "gold": "optimal_vref in [40,120]",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "optimal_vref": "We are given three plots:\n\n1. **max_width (ps)** vs VREF (mV) — blue line with circles\n2. **eye_height (mV)** vs VREF (mV) — green line with squares\n3. **skew (ps)** vs VREF (mV",
+  "max_width_at_opt": "Looking at the top plot titled “eye aperture vs VREF sweep”, the y-axis is “max_width (ps)” and the x-axis is “VREF (mV)”.\n\nThe blue line with circular markers shows the max_width values. We need to find the **optimal VREF** — which corresponds",
+  "skew_at_opt": "Looking at the bottom plot titled “skew (ps)” vs “VREF (mV)”, we need to find the value of **skew** at the **optimal VREF**.\n\nThe plot shows that the skew reaches its **minimum** (optimal point) at **VREF = 1",
+  "height_at_opt": "Looking at the middle plot titled “eye_height (mV)”, we can see that the green line with square markers represents the eye_height as a function of VREF (mV).\n\nThe optimal VREF is where eye_height is maximized — which occurs at **VREF = 100 mV",
+  "vref60_valid": "yes"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp",
+   "key": "optimal_vref",
+   "question": "A VREF is valid only if skew<=15 AND height>=100. Among valid VREF values, which VREF (in mV) has the LARGEST max_width? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+   "answer": "We are given three plots:\n\n1. **max_width (ps)** vs VREF (mV) — blue line with circles\n2. **eye_height (mV)** vs VREF (mV) — green line with squares\n3. **skew (ps)** vs VREF (mV",
+   "ok": true,
+   "elapsed_s": 2.076
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "max_width_at_opt",
+   "question": "At that optimal VREF, what is the max_width in ps? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+   "answer": "Looking at the top plot titled “eye aperture vs VREF sweep”, the y-axis is “max_width (ps)” and the x-axis is “VREF (mV)”.\n\nThe blue line with circular markers shows the max_width values. We need to find the **optimal VREF** — which corresponds",
+   "ok": true,
+   "elapsed_s": 2.096
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "skew_at_opt",
+   "question": "At that optimal VREF, what is the skew in ps? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+   "answer": "Looking at the bottom plot titled “skew (ps)” vs “VREF (mV)”, we need to find the value of **skew** at the **optimal VREF**.\n\nThe plot shows that the skew reaches its **minimum** (optimal point) at **VREF = 1",
+   "ok": true,
+   "elapsed_s": 2.103
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "height_at_opt",
+   "question": "At that optimal VREF, what is the eye_height in mV? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+   "answer": "Looking at the middle plot titled “eye_height (mV)”, we can see that the green line with square markers represents the eye_height as a function of VREF (mV).\n\nThe optimal VREF is where eye_height is maximized — which occurs at **VREF = 100 mV",
+   "ok": true,
+   "elapsed_s": 2.112
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "vref60_valid",
+   "question": "Is VREF=60 valid (skew<=15 AND height>=100)? Answer 'yes' or 'no'. One word.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+   "answer": "yes",
+   "ok": true,
+   "elapsed_s": 0.408
+  }
+ ],
+ "n_tool_calls": 5,
+ "duration_s": 9.02
+}

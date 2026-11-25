@@ -1,0 +1,17 @@
+{
+  "model_type": "baize_vision",
+  "architectures": ["BaizeVisionModel"],
+  "auto_map": {
+    "AutoConfig": "configuration_baize_vision.BaizeVisionConfig",
+    "AutoModel": "modeling_baize_vision.BaizeVisionModel"
+  },
+  "image_size": 224,
+  "patch_size": 16,
+  "width": 512,
+  "depth": 30,
+  "heads": 8,
+  "mlp_dim": 2048,
+  "embed_dim": 768,
+  "spatial_merge_size": 1,
+  "torch_dtype": "float32"
+}

@@ -1,0 +1,353 @@
+{
+  "tag": "rft_seed11",
+  "n": 30,
+  "correct": 22,
+  "accuracy": 0.7333,
+  "mean_reward": 0.7663,
+  "skill_acc": {
+    "type_classification": {
+      "n": 5,
+      "correct": 5,
+      "acc": 1.0,
+      "mean_reward": 1.0
+    },
+    "cycle_count": {
+      "n": 5,
+      "correct": 5,
+      "acc": 1.0,
+      "mean_reward": 1.0
+    },
+    "amplitude_read": {
+      "n": 5,
+      "correct": 2,
+      "acc": 0.4,
+      "mean_reward": 0.5975
+    },
+    "freq_comparison": {
+      "n": 5,
+      "correct": 5,
+      "acc": 1.0,
+      "mean_reward": 1.0
+    },
+    "duty_cycle": {
+      "n": 5,
+      "correct": 0,
+      "acc": 0.0,
+      "mean_reward": 0.0
+    },
+    "rise_edge": {
+      "n": 5,
+      "correct": 5,
+      "acc": 1.0,
+      "mean_reward": 1.0
+    }
+  },
+  "results": [
+    {
+      "id": "q0",
+      "skill": "type_classification",
+      "gt": "square",
+      "answer": "square",
+      "pred": "square",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q1",
+      "skill": "type_classification",
+      "gt": "sine",
+      "answer": "sine",
+      "pred": "sine",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.26
+    },
+    {
+      "id": "q2",
+      "skill": "type_classification",
+      "gt": "sawtooth",
+      "answer": "sawtooth",
+      "pred": "sawtooth",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.33
+    },
+    {
+      "id": "q3",
+      "skill": "type_classification",
+      "gt": "sawtooth",
+      "answer": "sawtooth",
+      "pred": "sawtooth",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.33
+    },
+    {
+      "id": "q4",
+      "skill": "type_classification",
+      "gt": "square",
+      "answer": "square",
+      "pred": "square",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q5",
+      "skill": "cycle_count",
+      "gt": "3",
+      "answer": "3",
+      "pred": "3",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q6",
+      "skill": "cycle_count",
+      "gt": "3",
+      "answer": "3",
+      "pred": "3",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q7",
+      "skill": "cycle_count",
+      "gt": "4",
+      "answer": "4",
+      "pred": "4",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q8",
+      "skill": "cycle_count",
+      "gt": "5",
+      "answer": "5",
+      "pred": "5",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q9",
+      "skill": "cycle_count",
+      "gt": "3",
+      "answer": "3",
+      "pred": "3",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q10",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "7",
+      "pred": "7",
+      "correct": false,
+      "reward": 0.3292,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q11",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "7",
+      "pred": "7",
+      "correct": false,
+      "reward": 0.3292,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q12",
+      "skill": "amplitude_read",
+      "gt": "7",
+      "answer": "7",
+      "pred": "7",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q13",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "6",
+      "pred": "6",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q14",
+      "skill": "amplitude_read",
+      "gt": "6",
+      "answer": "5",
+      "pred": "5",
+      "correct": false,
+      "reward": 0.3292,
+      "latency_s": 0.23
+    },
+    {
+      "id": "q15",
+      "skill": "freq_comparison",
+      "gt": "B",
+      "answer": "B",
+      "pred": "B",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q16",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "A",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q17",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "A",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q18",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "A",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q19",
+      "skill": "freq_comparison",
+      "gt": "A",
+      "answer": "A",
+      "pred": "A",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q20",
+      "skill": "duty_cycle",
+      "gt": "75",
+      "answer": "50",
+      "pred": "",
+      "correct": false,
+      "reward": 0.0,
+      "latency_s": 0.27
+    },
+    {
+      "id": "q21",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "answer": "50",
+      "pred": "",
+      "correct": false,
+      "reward": 0.0,
+      "latency_s": 0.26
+    },
+    {
+      "id": "q22",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "answer": "50",
+      "pred": "",
+      "correct": false,
+      "reward": 0.0,
+      "latency_s": 0.25
+    },
+    {
+      "id": "q23",
+      "skill": "duty_cycle",
+      "gt": "25",
+      "answer": "25",
+      "pred": "",
+      "correct": false,
+      "reward": 0.0,
+      "latency_s": 0.25
+    },
+    {
+      "id": "q24",
+      "skill": "duty_cycle",
+      "gt": "75",
+      "answer": "50",
+      "pred": "",
+      "correct": false,
+      "reward": 0.0,
+      "latency_s": 0.25
+    },
+    {
+      "id": "q25",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.21
+    },
+    {
+      "id": "q26",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    },
+    {
+      "id": "q27",
+      "skill": "rise_edge",
+      "gt": "gradual",
+      "answer": "gradual",
+      "pred": "gradual",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.25
+    },
+    {
+      "id": "q28",
+      "skill": "rise_edge",
+      "gt": "gradual",
+      "answer": "gradual",
+      "pred": "gradual",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.26
+    },
+    {
+      "id": "q29",
+      "skill": "rise_edge",
+      "gt": "sharp",
+      "answer": "sharp",
+      "pred": "sharp",
+      "correct": true,
+      "reward": 1.0,
+      "latency_s": 0.22
+    }
+  ],
+  "ts": "2026-11-14T12:14:56",
+  "seed": 11,
+  "accepted": 148,
+  "k_samples": 4,
+  "thresh": 0.5,
+  "adapter_dir": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/strengthen_runs/rft_adapter_seed11"
+}

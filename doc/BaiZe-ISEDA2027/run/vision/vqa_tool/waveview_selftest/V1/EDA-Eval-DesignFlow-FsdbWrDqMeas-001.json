@@ -1,0 +1,192 @@
+{
+ "arm": "V1",
+ "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+ "tag": "β7",
+ "tier": "C",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+ "verdict": "FAIL",
+ "k_pass": 2,
+ "k_total": 12,
+ "conditions": [
+  {
+   "name": "write_count",
+   "pass": false,
+   "got": 2.0,
+   "gold": 3,
+   "tol": 0
+  },
+  {
+   "name": "write_time_0",
+   "pass": false,
+   "got": 0.0,
+   "gold": 2.0,
+   "tol": 0.3
+  },
+  {
+   "name": "write_time_1",
+   "pass": false,
+   "got": 2.0,
+   "gold": 8.0,
+   "tol": 0.3
+  },
+  {
+   "name": "write_time_2",
+   "pass": true,
+   "got": 14.0,
+   "gold": 14.0,
+   "tol": 0.3
+  },
+  {
+   "name": "rising_interval_0",
+   "pass": false,
+   "got": 2.0,
+   "gold": 1.2,
+   "tol": 0.3
+  },
+  {
+   "name": "rising_interval_1",
+   "pass": false,
+   "got": 2.0,
+   "gold": 0.8,
+   "tol": 0.3
+  },
+  {
+   "name": "falling_interval_0",
+   "pass": false,
+   "got": 2.0,
+   "gold": 1.7,
+   "tol": 0.3
+  },
+  {
+   "name": "summary_rising_avg",
+   "pass": false,
+   "got": 0.0,
+   "gold": 1.1,
+   "tol": 0.2
+  },
+  {
+   "name": "summary_falling_avg",
+   "pass": false,
+   "got": 1.0,
+   "gold": 1.6667,
+   "tol": 0.2
+  },
+  {
+   "name": "write_count_3",
+   "pass": false,
+   "got": null,
+   "gold": "write_count==3",
+   "tol": 0
+  },
+  {
+   "name": "write_order",
+   "pass": true,
+   "got": null,
+   "gold": "write times increasing",
+   "tol": 0
+  },
+  {
+   "name": "rising_avg_range",
+   "pass": false,
+   "got": null,
+   "gold": "rising_avg in [0.5,2]",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "write_count": "Looking at the figure, we can see three red dashed vertical lines labeled with the letter “W” at approximately:\n\n- 2.0 ns\n- 8.0 ns\n- 14.0 ns\n\nEach of these corresponds to a WRITE command marker as indicated by the title and the context of",
+  "write_time_0": "Looking at the graph:\n\n- The x-axis is labeled “time (ns)” and ranges from 0.0 to 17.5.\n- There are three red dashed vertical lines marked with “W”, indicating WRITE edges.\n- The **first (leftmost)** “W” marker is located",
+  "write_time_1": "Looking at the graph:\n\n- The first 'W' marker is at approximately **2.0 ns**.\n- The second 'W' marker is at approximately **8.0 ns**.\n- The third 'W' marker is at approximately **14.0 ns**.\n\nThe question asks for the time",
+  "write_time_2": "14",
+  "rising_interval_0": "Looking at the graph:\n\n- The first 'W' marker is at **time = 2.0 ns**.\n- After that, the blue DQ signal rises (goes from 0.00 to 1.00) at approximately **time = 3.0 ns**.\n\nSo",
+  "rising_interval_1": "Looking at the graph:\n\n- The first 'W' is at approximately **2.0 ns**.\n- The second 'W' is at approximately **8.0 ns**.\n- After the second 'W' (at ~8.0 ns), the blue DQ signal rises to 1.0",
+  "falling_interval_0": "Looking at the graph:\n\n- The first 'W' marker is at **time = 2.0 ns**.\n- After that, the blue DQ signal rises to 1.00 ns at approximately **3.0 ns**.\n- It falls back to 0.00 ns at approximately",
+  "summary_rising_avg": "To calculate the **average rising interval** from the WRITE signal (W) to the DQ rising edge, we look at each “W” mark and measure the time until the DQ signal goes high (from 0.00 to 1.00).\n\nFrom the graph:\n\n- First W",
+  "summary_falling_avg": "To calculate the **average falling interval** in ns across all WRITE commands, we need to:\n\n1. Identify the time of each “W” (WRITE) edge.\n2. Identify the time of the corresponding DQ falling edge (i.e., when DQ goes from 1.00 to"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp",
+   "key": "write_count",
+   "question": "How many WRITE command markers (the red dashed vertical lines labeled 'W') are there in this figure? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "answer": "Looking at the figure, we can see three red dashed vertical lines labeled with the letter “W” at approximately:\n\n- 2.0 ns\n- 8.0 ns\n- 14.0 ns\n\nEach of these corresponds to a WRITE command marker as indicated by the title and the context of",
+   "ok": true,
+   "elapsed_s": 1.989
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "write_time_0",
+   "question": "What is the time in ns of the FIRST (leftmost) 'W' marker? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "answer": "Looking at the graph:\n\n- The x-axis is labeled “time (ns)” and ranges from 0.0 to 17.5.\n- There are three red dashed vertical lines marked with “W”, indicating WRITE edges.\n- The **first (leftmost)** “W” marker is located",
+   "ok": true,
+   "elapsed_s": 2.06
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "write_time_1",
+   "question": "What is the time in ns of the SECOND 'W' marker? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "answer": "Looking at the graph:\n\n- The first 'W' marker is at approximately **2.0 ns**.\n- The second 'W' marker is at approximately **8.0 ns**.\n- The third 'W' marker is at approximately **14.0 ns**.\n\nThe question asks for the time",
+   "ok": true,
+   "elapsed_s": 2.015
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "write_time_2",
+   "question": "What is the time in ns of the THIRD (rightmost) 'W' marker? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "answer": "14",
+   "ok": true,
+   "elapsed_s": 0.337
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "rising_interval_0",
+   "question": "After the FIRST 'W' marker, how long in ns until the blue DQ signal first rises (goes high)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "answer": "Looking at the graph:\n\n- The first 'W' marker is at **time = 2.0 ns**.\n- After that, the blue DQ signal rises (goes from 0.00 to 1.00) at approximately **time = 3.0 ns**.\n\nSo",
+   "ok": true,
+   "elapsed_s": 1.993
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "rising_interval_1",
+   "question": "After the SECOND 'W' marker, how long in ns until the blue DQ signal first rises (goes high)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "answer": "Looking at the graph:\n\n- The first 'W' is at approximately **2.0 ns**.\n- The second 'W' is at approximately **8.0 ns**.\n- After the second 'W' (at ~8.0 ns), the blue DQ signal rises to 1.0",
+   "ok": true,
+   "elapsed_s": 1.985
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "falling_interval_0",
+   "question": "After the FIRST 'W' marker, how long in ns until the blue DQ signal falls back low? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "answer": "Looking at the graph:\n\n- The first 'W' marker is at **time = 2.0 ns**.\n- After that, the blue DQ signal rises to 1.00 ns at approximately **3.0 ns**.\n- It falls back to 0.00 ns at approximately",
+   "ok": true,
+   "elapsed_s": 2.005
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "summary_rising_avg",
+   "question": "Across all WRITE commands, what is the average rising interval in ns (mean time from W to DQ rising)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "answer": "To calculate the **average rising interval** from the WRITE signal (W) to the DQ rising edge, we look at each “W” mark and measure the time until the DQ signal goes high (from 0.00 to 1.00).\n\nFrom the graph:\n\n- First W",
+   "ok": true,
+   "elapsed_s": 1.976
+  },
+  {
+   "tool": "vqa_mcp",
+   "key": "summary_falling_avg",
+   "question": "Across all WRITE commands, what is the average falling interval in ns (mean time from W to DQ falling)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "answer": "To calculate the **average falling interval** in ns across all WRITE commands, we need to:\n\n1. Identify the time of each “W” (WRITE) edge.\n2. Identify the time of the corresponding DQ falling edge (i.e., when DQ goes from 1.00 to",
+   "ok": true,
+   "elapsed_s": 2.034
+  }
+ ],
+ "n_tool_calls": 9,
+ "duration_s": 16.69
+}

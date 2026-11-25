@@ -1,0 +1,193 @@
+{
+ "arm": "V2",
+ "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+ "tag": "β7",
+ "tier": "C",
+ "adapter": "rft2_adapter_seed11",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+ "verdict": "FAIL",
+ "k_pass": 7,
+ "k_total": 12,
+ "conditions": [
+  {
+   "name": "write_count",
+   "pass": true,
+   "got": 3.0,
+   "gold": 3,
+   "tol": 0
+  },
+  {
+   "name": "write_time_0",
+   "pass": true,
+   "got": 2.0,
+   "gold": 2.0,
+   "tol": 0.3
+  },
+  {
+   "name": "write_time_1",
+   "pass": false,
+   "got": 7.0,
+   "gold": 8.0,
+   "tol": 0.3
+  },
+  {
+   "name": "write_time_2",
+   "pass": true,
+   "got": 14.0,
+   "gold": 14.0,
+   "tol": 0.3
+  },
+  {
+   "name": "rising_interval_0",
+   "pass": true,
+   "got": 1.0,
+   "gold": 1.2,
+   "tol": 0.3
+  },
+  {
+   "name": "rising_interval_1",
+   "pass": true,
+   "got": 1.0,
+   "gold": 0.8,
+   "tol": 0.3
+  },
+  {
+   "name": "falling_interval_0",
+   "pass": false,
+   "got": 0.0,
+   "gold": 1.7,
+   "tol": 0.3
+  },
+  {
+   "name": "summary_rising_avg",
+   "pass": false,
+   "got": 3.0,
+   "gold": 1.1,
+   "tol": 0.2
+  },
+  {
+   "name": "summary_falling_avg",
+   "pass": false,
+   "got": 3.0,
+   "gold": 1.6667,
+   "tol": 0.2
+  },
+  {
+   "name": "write_count_3",
+   "pass": true,
+   "got": null,
+   "gold": "write_count==3",
+   "tol": 0
+  },
+  {
+   "name": "write_order",
+   "pass": true,
+   "got": null,
+   "gold": "write times increasing",
+   "tol": 0
+  },
+  {
+   "name": "rising_avg_range",
+   "pass": false,
+   "got": null,
+   "gold": "rising_avg in [0.5,2]",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "write_count": "3",
+  "write_time_0": "2",
+  "write_time_1": "7",
+  "write_time_2": "14",
+  "rising_interval_0": "1",
+  "rising_interval_1": "1",
+  "falling_interval_0": "0",
+  "summary_rising_avg": "3",
+  "summary_falling_avg": "3"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "write_count",
+   "question": "How many WRITE command markers (the red dashed vertical lines labeled 'W') are there in this figure? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "raw": "Counting the red dashed vertical lines labeled 'W' in the plot, I can see 3 such markers. Final Answer: 3",
+   "ok": true,
+   "elapsed_s": 1.492
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "write_time_0",
+   "question": "What is the time in ns of the FIRST (leftmost) 'W' marker? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "raw": "The first 'W' marker is located at 2.0 ns on the x-axis. Final Answer: 2.0",
+   "ok": true,
+   "elapsed_s": 1.399
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "write_time_1",
+   "question": "What is the time in ns of the SECOND 'W' marker? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "raw": "The second 'W' marker is at 7.5 ns on the x-axis. Final Answer: 7.5",
+   "ok": true,
+   "elapsed_s": 1.368
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "write_time_2",
+   "question": "What is the time in ns of the THIRD (rightmost) 'W' marker? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "raw": "The third 'W' marker from the right is located at 14.0 ns on the x-axis. Final Answer: 14.0",
+   "ok": true,
+   "elapsed_s": 1.64
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "rising_interval_0",
+   "question": "After the FIRST 'W' marker, how long in ns until the blue DQ signal first rises (goes high)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "raw": "The first 'W' marker is at 2.0 ns. The blue DQ signal rises to 1.0 ns at 3.0 ns. So the time until it first rises is 3.0 - 2.0 = 1.0 ns. Final Answer: 1.0",
+   "ok": true,
+   "elapsed_s": 2.94
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "rising_interval_1",
+   "question": "After the SECOND 'W' marker, how long in ns until the blue DQ signal first rises (goes high)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "raw": "The second 'W' marker is at 8.0 ns. The blue DQ signal rises to 1.00 ns at 9.0 ns. So the time until it first rises is 9.0 - 8.0 = 1.0 ns. Final Answer: 1",
+   "ok": true,
+   "elapsed_s": 2.91
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "falling_interval_0",
+   "question": "After the FIRST 'W' marker, how long in ns until the blue DQ signal falls back low? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "raw": "The first 'W' marker is at 2.0 ns. The blue DQ signal rises to 1.0 ns at 3.5 ns and falls back low at 4.0 ns. So the duration until it falls back low is 4.0 - 3.5 = 0.5 ns. Final Answer: 0.5",
+   "ok": true,
+   "elapsed_s": 3.44
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "summary_rising_avg",
+   "question": "Across all WRITE commands, what is the average rising interval in ns (mean time from W to DQ rising)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "raw": "The rising interval from each WRITE edge (W) to the DQ pulse is approximately 3 ns, 3 ns, and 3 ns respectively. The average is (3 + 3 + 3) / 3 = 3 ns. Final Answer: 3",
+   "ok": true,
+   "elapsed_s": 2.633
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "summary_falling_avg",
+   "question": "Across all WRITE commands, what is the average falling interval in ns (mean time from W to DQ falling)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/wr_dq_A.png",
+   "raw": "The falling interval from each WRITE edge (W) to the DQ falling edge is approximately 3.0 ns, 3.0 ns, and 3.0 ns across the three commands. The average is (3.0 + 3.0 + 3.0) / 3 = 3.0 ns. Final Answer: 3.0",
+   "ok": true,
+   "elapsed_s": 3.293
+  }
+ ],
+ "n_tool_calls": 9,
+ "duration_s": 21.42
+}

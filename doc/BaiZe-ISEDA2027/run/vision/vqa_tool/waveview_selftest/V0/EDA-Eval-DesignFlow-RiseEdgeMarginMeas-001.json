@@ -1,0 +1,93 @@
+{
+ "arm": "V0",
+ "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+ "tag": "α2",
+ "tier": "A",
+ "verdict": "FAIL",
+ "k_pass": 2,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "ref_signal",
+   "pass": true,
+   "got": "clk_a",
+   "gold": "clk_a",
+   "tol": 0
+  },
+  {
+   "name": "ref_edge_time",
+   "pass": false,
+   "got": 50.0,
+   "gold": 5.1667,
+   "tol": 0.3
+  },
+  {
+   "name": "target_edge_time",
+   "pass": false,
+   "got": 100.0,
+   "gold": 7.3667,
+   "tol": 0.3
+  },
+  {
+   "name": "margin_ns",
+   "pass": false,
+   "got": 50.0,
+   "gold": 2.2,
+   "tol": 0.2
+  },
+  {
+   "name": "swing",
+   "pass": false,
+   "got": 100.0,
+   "gold": 1.5,
+   "tol": 0.2
+  },
+  {
+   "name": "vref",
+   "pass": false,
+   "got": 50.0,
+   "gold": 0.75,
+   "tol": 0.1
+  },
+  {
+   "name": "margin_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "target-ref==margin",
+   "tol": 0
+  },
+  {
+   "name": "vref_consistency",
+   "pass": false,
+   "got": null,
+   "gold": "swing/2==vref",
+   "tol": 0
+  },
+  {
+   "name": "ref_first",
+   "pass": true,
+   "got": null,
+   "gold": "ref_signal==clk_a",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "ref_signal": "clk_a",
+  "ref_edge_time": 50,
+  "target_edge_time": 100,
+  "margin_ns": 50,
+  "swing": 100,
+  "vref": 50
+ },
+ "tool_calls": [
+  {
+   "tool": "text_only_model",
+   "prompt": "Two stacked signals share a time (ns) axis, NO labels/markers. TOP: clk_a (V), BOTTOM: data_a (V). Both rise from 0 to a swing. Deliver: ref_edge_time (ns, clk_a 50% crossing), target_edge_time (ns, data_a 50% crossing), margin_ns (target - ref), vref (the 50% level), swing (peak-to-peak). Return as JSON.\n\nReturn ONLY a JSON object with exactly these keys: [\"ref_signal\", \"ref_edge_time\", \"target_edge_time\", \"margin_ns\", \"swing\", \"vref\"]. Fill each from the waveform figure. No explanation.",
+   "ok": true,
+   "raw": "{\n  \"ref_signal\": \"clk_a\",\n  \"ref_edge_time\": 50,\n  \"target_edge_time\": 100,\n  \"margin_ns\": 50,\n  \"swing\": 100,\n  \"vref\": 50\n}"
+  }
+ ],
+ "n_tool_calls": 1,
+ "duration_s": 1.98,
+ "note": "text-only; image NOT read; VQA NOT called (no VQA MCP in V0)"
+}

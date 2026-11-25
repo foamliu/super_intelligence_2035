@@ -1,0 +1,1524 @@
+{
+ "experiment": "vision waveview 10-question selftest V3 (unit/scale-aware CoT prompting ablation)",
+ "date": "2026-11-14T22:17:08",
+ "seed": 20261114,
+ "base_server": "http://127.0.0.1:30001",
+ "adapter_server": "http://127.0.0.1:30003",
+ "adapter": "rft2_adapter_seed11",
+ "model": "Qwen3.5-2B (V1c = base+CoT / V2c = base+rft2_adapter+CoT)",
+ "n_cases": 10,
+ "V0_pass": 0,
+ "V1_pass": 0,
+ "V2_pass": 0,
+ "V1c_pass": 0,
+ "V2c_pass": 1,
+ "flips_V1_to_V1c": 0,
+ "flips_V2_to_V2c": 1,
+ "flips_V0_to_V1c": 0,
+ "flips_V0_to_V2c": 1,
+ "mcnemar_V2_vs_V2c": {
+  "p_value": 1.0,
+  "b_improved": 1,
+  "c_regressed": 0
+ },
+ "mcnemar_V1_vs_V1c": {
+  "p_value": 1.0,
+  "b_improved": 0,
+  "c_regressed": 0
+ },
+ "mcnemar_V1c_vs_V2c": {
+  "p_value": 1.0,
+  "b_improved": 1,
+  "c_regressed": 0
+ },
+ "flip_table": [
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "tag": "β9",
+   "tier": "C",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "V1c": "FAIL",
+   "V2c": "FAIL",
+   "V1_k": "1/9",
+   "V2_k": "0/9",
+   "V1c_k": "5/9",
+   "V2c_k": "3/9",
+   "flip_V1_V1c": false,
+   "flip_V2_V2c": false,
+   "flip_V0_V1c": false,
+   "flip_V0_V2c": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "tag": "α4",
+   "tier": "B",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "V1c": "FAIL",
+   "V2c": "FAIL",
+   "V1_k": "5/9",
+   "V2_k": "6/9",
+   "V1c_k": "5/9",
+   "V2c_k": "7/9",
+   "flip_V1_V1c": false,
+   "flip_V2_V2c": false,
+   "flip_V0_V1c": false,
+   "flip_V0_V2c": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "tag": "β10",
+   "tier": "C",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "V1c": "FAIL",
+   "V2c": "FAIL",
+   "V1_k": "2/10",
+   "V2_k": "5/10",
+   "V1c_k": "4/10",
+   "V2c_k": "6/10",
+   "flip_V1_V1c": false,
+   "flip_V2_V2c": false,
+   "flip_V0_V1c": false,
+   "flip_V0_V2c": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "tag": "α1",
+   "tier": "A",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "V1c": "FAIL",
+   "V2c": "FAIL",
+   "V1_k": "2/9",
+   "V2_k": "6/9",
+   "V1c_k": "4/9",
+   "V2c_k": "6/9",
+   "flip_V1_V1c": false,
+   "flip_V2_V2c": false,
+   "flip_V0_V1c": false,
+   "flip_V0_V2c": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "tag": "β8",
+   "tier": "C",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "V1c": "FAIL",
+   "V2c": "FAIL",
+   "V1_k": "10/13",
+   "V2_k": "7/13",
+   "V1c_k": "8/13",
+   "V2c_k": "9/13",
+   "flip_V1_V1c": false,
+   "flip_V2_V2c": false,
+   "flip_V0_V1c": false,
+   "flip_V0_V2c": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "tag": "β11",
+   "tier": "B",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "V1c": "FAIL",
+   "V2c": "PASS",
+   "V1_k": "6/12",
+   "V2_k": "10/12",
+   "V1c_k": "7/12",
+   "V2c_k": "12/12",
+   "flip_V1_V1c": false,
+   "flip_V2_V2c": true,
+   "flip_V0_V1c": false,
+   "flip_V0_V2c": true
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "tag": "α2",
+   "tier": "A",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "V1c": "FAIL",
+   "V2c": "FAIL",
+   "V1_k": "5/9",
+   "V2_k": "4/9",
+   "V1c_k": "5/9",
+   "V2c_k": "6/9",
+   "flip_V1_V1c": false,
+   "flip_V2_V2c": false,
+   "flip_V0_V1c": false,
+   "flip_V0_V2c": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "tag": "β7",
+   "tier": "C",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "V1c": "FAIL",
+   "V2c": "FAIL",
+   "V1_k": "2/12",
+   "V2_k": "7/12",
+   "V1c_k": "3/12",
+   "V2c_k": "3/12",
+   "flip_V1_V1c": false,
+   "flip_V2_V2c": false,
+   "flip_V0_V1c": false,
+   "flip_V0_V2c": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "tag": "α3",
+   "tier": "A",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "V1c": "FAIL",
+   "V2c": "FAIL",
+   "V1_k": "5/13",
+   "V2_k": "7/13",
+   "V1c_k": "6/13",
+   "V2c_k": "7/13",
+   "flip_V1_V1c": false,
+   "flip_V2_V2c": false,
+   "flip_V0_V1c": false,
+   "flip_V0_V2c": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "tag": "β6",
+   "tier": "A",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "V1c": "FAIL",
+   "V2c": "FAIL",
+   "V1_k": "4/14",
+   "V2_k": "9/14",
+   "V1c_k": "4/14",
+   "V2c_k": "6/14",
+   "flip_V1_V1c": false,
+   "flip_V2_V2c": false,
+   "flip_V0_V1c": false,
+   "flip_V0_V2c": false
+  }
+ ],
+ "audit": {
+  "cheat": false,
+  "cheat_count": 0,
+  "findings": [],
+  "v3_vqa_calls": 162,
+  "v3_image_reads": 0,
+  "time_questions_with_cot": 75
+ },
+ "design_note": "Single changed variable vs delivered V1/V2 = VQA extraction-question text for TIME quantities (unit/scale-aware CoT suffix). PNGs, check_case, oracle, tols, backends UNCHANGED.",
+ "caveat": "Cases+check are vision-reconstructed FAITHFUL REPLICAS from designflow-published params/oracle (designflow's original check.py+assets live on .15, unreachable = infra-blocker). NOT byte-identical. V3 measures a PROMPT lever (CoT) on real WaveView-replica cases; does not change check/oracle/assets.",
+ "trace": [
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "max",
+   "ok": true,
+   "t": 1794664991.318
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "t_at_max_ns",
+   "ok": true,
+   "t": 1794664999.939
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "min",
+   "ok": true,
+   "t": 1794665006.709
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "t_at_min_ns",
+   "ok": true,
+   "t": 1794665011.837
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "peak_to_peak",
+   "ok": true,
+   "t": 1794665020.493
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "offset",
+   "ok": true,
+   "t": 1794665026.022
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "period_ns",
+   "ok": true,
+   "t": 1794665034.768
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "v_max",
+   "ok": true,
+   "t": 1794665043.473
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "v_min",
+   "ok": true,
+   "t": 1794665049.237
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "num_activations",
+   "ok": true,
+   "t": 1794665057.83
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "first_activation_time",
+   "ok": true,
+   "t": 1794665062.309
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "last_activation_time",
+   "ok": true,
+   "t": 1794665066.72
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "duty_cycle",
+   "ok": true,
+   "t": 1794665075.43
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "activation_pattern",
+   "ok": true,
+   "t": 1794665075.842
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "vmax",
+   "ok": true,
+   "t": 1794665081.091
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "t_at_max",
+   "ok": true,
+   "t": 1794665089.82
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "n_transitions",
+   "ok": true,
+   "t": 1794665098.691
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "t_cross_up",
+   "ok": true,
+   "t": 1794665104.443
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "t_cross_down",
+   "ok": true,
+   "t": 1794665111.266
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "vth_high",
+   "ok": true,
+   "t": 1794665117.935
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "vth_low",
+   "ok": true,
+   "t": 1794665126.711
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "hysteresis",
+   "ok": true,
+   "t": 1794665135.489
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "op": "vqa_call",
+   "key": "optimal_vref",
+   "ok": true,
+   "t": 1794665144.436
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "op": "vqa_call",
+   "key": "max_width_at_opt",
+   "ok": true,
+   "t": 1794665153.417
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "op": "vqa_call",
+   "key": "skew_at_opt",
+   "ok": true,
+   "t": 1794665161.77
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "op": "vqa_call",
+   "key": "height_at_opt",
+   "ok": true,
+   "t": 1794665170.752
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "op": "vqa_call",
+   "key": "vref60_valid",
+   "ok": true,
+   "t": 1794665171.318
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "clk_type",
+   "ok": true,
+   "t": 1794665171.983
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "clk_period",
+   "ok": true,
+   "t": 1794665180.826
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "clk_duty",
+   "ok": true,
+   "t": 1794665189.756
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "rst_n_type",
+   "ok": true,
+   "t": 1794665190.377
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "data_type",
+   "ok": true,
+   "t": 1794665190.981
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "data_n_levels",
+   "ok": true,
+   "t": 1794665199.964
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "vref_type",
+   "ok": true,
+   "t": 1794665200.602
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "vref_vmin",
+   "ok": true,
+   "t": 1794665207.045
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "vref_vmax",
+   "ok": true,
+   "t": 1794665213.583
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "sel_type",
+   "ok": true,
+   "t": 1794665214.119
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "sel_n_pulses",
+   "ok": true,
+   "t": 1794665223.548
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "fail_time",
+   "ok": true,
+   "t": 1794665232.151
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "root_cause",
+   "ok": true,
+   "t": 1794665232.972
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "edge_signal",
+   "ok": true,
+   "t": 1794665233.755
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "edge_count",
+   "ok": true,
+   "t": 1794665242.851
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "window_start",
+   "ok": true,
+   "t": 1794665251.763
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "window_end",
+   "ok": true,
+   "t": 1794665257.175
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "q_valid_at_fail",
+   "ok": true,
+   "t": 1794665266.265
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "test_mode_at_fail",
+   "ok": true,
+   "t": 1794665275.392
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "ref_signal",
+   "ok": true,
+   "t": 1794665275.911
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "ref_edge_time",
+   "ok": true,
+   "t": 1794665284.68
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "target_edge_time",
+   "ok": true,
+   "t": 1794665292.092
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "margin_ns",
+   "ok": true,
+   "t": 1794665300.864
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "swing",
+   "ok": true,
+   "t": 1794665306.575
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "vref",
+   "ok": true,
+   "t": 1794665315.311
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "write_count",
+   "ok": true,
+   "t": 1794665324.009
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "write_time_0",
+   "ok": true,
+   "t": 1794665332.815
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "write_time_1",
+   "ok": true,
+   "t": 1794665341.623
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "write_time_2",
+   "ok": true,
+   "t": 1794665350.316
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "rising_interval_0",
+   "ok": true,
+   "t": 1794665359.134
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "rising_interval_1",
+   "ok": true,
+   "t": 1794665367.765
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "falling_interval_0",
+   "ok": true,
+   "t": 1794665375.247
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "summary_rising_avg",
+   "ok": true,
+   "t": 1794665383.982
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "summary_falling_avg",
+   "ok": true,
+   "t": 1794665392.849
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "first_diverge_stage",
+   "ok": true,
+   "t": 1794665395.688
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "failing_stage",
+   "ok": true,
+   "t": 1794665396.358
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "root_cause_kind",
+   "ok": true,
+   "t": 1794665396.996
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "golden_at_div",
+   "ok": true,
+   "t": 1794665405.899
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "actual_at_div",
+   "ok": true,
+   "t": 1794665414.181
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "mismatch_first_cycle",
+   "ok": true,
+   "t": 1794665423.07
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "mismatch_last_cycle",
+   "ok": true,
+   "t": 1794665432.099
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "num_diverge_stages",
+   "ok": true,
+   "t": 1794665441.079
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "data_intact",
+   "ok": true,
+   "t": 1794665441.66
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "pass_vdd",
+   "ok": true,
+   "t": 1794665450.382
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "pass_n_pulses",
+   "ok": true,
+   "t": 1794665459.115
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "pass_n_edges",
+   "ok": true,
+   "t": 1794665466.299
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "pass_period",
+   "ok": true,
+   "t": 1794665474.941
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "pass_first_rise",
+   "ok": true,
+   "t": 1794665483.645
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "fail_vdd",
+   "ok": true,
+   "t": 1794665492.376
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "fail_n_pulses",
+   "ok": true,
+   "t": 1794665501.029
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "fail_n_edges",
+   "ok": true,
+   "t": 1794665509.649
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "fail_period",
+   "ok": true,
+   "t": 1794665518.208
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "fail_first_rise",
+   "ok": true,
+   "t": 1794665527.217
+  },
+  {
+   "arm": "V1c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "verdict",
+   "ok": true,
+   "t": 1794665527.601
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "max",
+   "ok": true,
+   "t": 1794665530.366
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "t_at_max_ns",
+   "ok": true,
+   "t": 1794665534.385
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "min",
+   "ok": true,
+   "t": 1794665537.914
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "t_at_min_ns",
+   "ok": true,
+   "t": 1794665540.988
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "peak_to_peak",
+   "ok": true,
+   "t": 1794665547.22
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "offset",
+   "ok": true,
+   "t": 1794665551.512
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "op": "vqa_call",
+   "key": "period_ns",
+   "ok": true,
+   "t": 1794665555.606
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "v_max",
+   "ok": true,
+   "t": 1794665560.6
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "v_min",
+   "ok": true,
+   "t": 1794665565.215
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "num_activations",
+   "ok": true,
+   "t": 1794665568.943
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "first_activation_time",
+   "ok": true,
+   "t": 1794665572.551
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "last_activation_time",
+   "ok": true,
+   "t": 1794665575.71
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "duty_cycle",
+   "ok": true,
+   "t": 1794665580.734
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "op": "vqa_call",
+   "key": "activation_pattern",
+   "ok": true,
+   "t": 1794665581.192
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "vmax",
+   "ok": true,
+   "t": 1794665585.65
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "t_at_max",
+   "ok": true,
+   "t": 1794665587.701
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "n_transitions",
+   "ok": true,
+   "t": 1794665591.803
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "t_cross_up",
+   "ok": true,
+   "t": 1794665594.861
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "t_cross_down",
+   "ok": true,
+   "t": 1794665599.116
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "vth_high",
+   "ok": true,
+   "t": 1794665602.492
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "vth_low",
+   "ok": true,
+   "t": 1794665607.765
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "op": "vqa_call",
+   "key": "hysteresis",
+   "ok": true,
+   "t": 1794665612.6
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "op": "vqa_call",
+   "key": "optimal_vref",
+   "ok": true,
+   "t": 1794665616.835
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "op": "vqa_call",
+   "key": "max_width_at_opt",
+   "ok": true,
+   "t": 1794665621.296
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "op": "vqa_call",
+   "key": "skew_at_opt",
+   "ok": true,
+   "t": 1794665626.635
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "op": "vqa_call",
+   "key": "height_at_opt",
+   "ok": true,
+   "t": 1794665630.799
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "op": "vqa_call",
+   "key": "vref60_valid",
+   "ok": true,
+   "t": 1794665631.313
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "clk_type",
+   "ok": true,
+   "t": 1794665631.898
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "clk_period",
+   "ok": true,
+   "t": 1794665636.011
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "clk_duty",
+   "ok": true,
+   "t": 1794665640.447
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "rst_n_type",
+   "ok": true,
+   "t": 1794665641.027
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "data_type",
+   "ok": true,
+   "t": 1794665641.608
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "data_n_levels",
+   "ok": true,
+   "t": 1794665645.553
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "vref_type",
+   "ok": true,
+   "t": 1794665646.215
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "vref_vmin",
+   "ok": true,
+   "t": 1794665652.244
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "vref_vmax",
+   "ok": true,
+   "t": 1794665659.889
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "sel_type",
+   "ok": true,
+   "t": 1794665660.467
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "op": "vqa_call",
+   "key": "sel_n_pulses",
+   "ok": true,
+   "t": 1794665665.157
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "fail_time",
+   "ok": true,
+   "t": 1794665669.713
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "root_cause",
+   "ok": true,
+   "t": 1794665670.557
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "edge_signal",
+   "ok": true,
+   "t": 1794665671.361
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "edge_count",
+   "ok": true,
+   "t": 1794665675.28
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "window_start",
+   "ok": true,
+   "t": 1794665679.029
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "window_end",
+   "ok": true,
+   "t": 1794665683.041
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "q_valid_at_fail",
+   "ok": true,
+   "t": 1794665689.393
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "op": "vqa_call",
+   "key": "test_mode_at_fail",
+   "ok": true,
+   "t": 1794665694.891
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "ref_signal",
+   "ok": true,
+   "t": 1794665695.323
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "ref_edge_time",
+   "ok": true,
+   "t": 1794665698.739
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "target_edge_time",
+   "ok": true,
+   "t": 1794665701.79
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "margin_ns",
+   "ok": true,
+   "t": 1794665705.665
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "swing",
+   "ok": true,
+   "t": 1794665711.053
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "op": "vqa_call",
+   "key": "vref",
+   "ok": true,
+   "t": 1794665714.77
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "write_count",
+   "ok": true,
+   "t": 1794665722.421
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "write_time_0",
+   "ok": true,
+   "t": 1794665726.048
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "write_time_1",
+   "ok": true,
+   "t": 1794665728.951
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "write_time_2",
+   "ok": true,
+   "t": 1794665732.619
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "rising_interval_0",
+   "ok": true,
+   "t": 1794665735.607
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "rising_interval_1",
+   "ok": true,
+   "t": 1794665739.052
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "falling_interval_0",
+   "ok": true,
+   "t": 1794665742.545
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "summary_rising_avg",
+   "ok": true,
+   "t": 1794665746.734
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "op": "vqa_call",
+   "key": "summary_falling_avg",
+   "ok": true,
+   "t": 1794665752.08
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "first_diverge_stage",
+   "ok": true,
+   "t": 1794665752.74
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "failing_stage",
+   "ok": true,
+   "t": 1794665753.385
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "root_cause_kind",
+   "ok": true,
+   "t": 1794665754.041
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "golden_at_div",
+   "ok": true,
+   "t": 1794665758.601
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "actual_at_div",
+   "ok": true,
+   "t": 1794665763.525
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "mismatch_first_cycle",
+   "ok": true,
+   "t": 1794665768.488
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "mismatch_last_cycle",
+   "ok": true,
+   "t": 1794665773.298
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "num_diverge_stages",
+   "ok": true,
+   "t": 1794665780.407
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "op": "vqa_call",
+   "key": "data_intact",
+   "ok": true,
+   "t": 1794665781.023
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "pass_vdd",
+   "ok": true,
+   "t": 1794665786.629
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "pass_n_pulses",
+   "ok": true,
+   "t": 1794665790.63
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "pass_n_edges",
+   "ok": true,
+   "t": 1794665793.942
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "pass_period",
+   "ok": true,
+   "t": 1794665798.814
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "pass_first_rise",
+   "ok": true,
+   "t": 1794665802.414
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "fail_vdd",
+   "ok": true,
+   "t": 1794665808.326
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "fail_n_pulses",
+   "ok": true,
+   "t": 1794665814.094
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "fail_n_edges",
+   "ok": true,
+   "t": 1794665819.676
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "fail_period",
+   "ok": true,
+   "t": 1794665824.507
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "fail_first_rise",
+   "ok": true,
+   "t": 1794665827.989
+  },
+  {
+   "arm": "V2c",
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "op": "vqa_call",
+   "key": "verdict",
+   "ok": true,
+   "t": 1794665828.399
+  }
+ ]
+}

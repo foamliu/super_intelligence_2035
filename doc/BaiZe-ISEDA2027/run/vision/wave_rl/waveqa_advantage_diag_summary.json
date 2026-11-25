@@ -1,0 +1,149 @@
+{
+  "config": {
+    "n_prompts": 100,
+    "group_size": 8,
+    "temperature": 0.8,
+    "max_turns": 8,
+    "max_new_tokens": 48,
+    "seed": 20261112,
+    "model_path": "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/qwen3vl_2b_text_extracted",
+    "sft_ckpt": "/nas_train/app.e0031982/datasets/baize-vision/out/wave_sft_stage1w/step3000",
+    "device": "cpu",
+    "dtype": "float32",
+    "actual_n_prompts": 100
+  },
+  "overall_reward": {
+    "mean": -0.008424999999999995,
+    "std": 0.6421787285289041,
+    "min": -0.5,
+    "max": 1.36,
+    "pct_zero": "0.0%",
+    "pct_positive": "42.0%",
+    "pct_ge1": "12.4%"
+  },
+  "key_stats": {
+    "n_total": 100,
+    "n_std0": 73,
+    "pct_std0": "73.0%",
+    "n_all_zero": 0,
+    "pct_all_zero": "0.0%",
+    "n_all_same_pos": 15,
+    "pct_all_same_pos": "15.0%",
+    "n_all_same_high": 6,
+    "pct_all_same_high": "6.0%",
+    "n_std_pos": 27,
+    "pct_std_pos": "27.0%",
+    "n_partial_signal": 23,
+    "pct_partial_signal": "23.0%",
+    "overall_submit_rate": "100.0%"
+  },
+  "std_histogram": {
+    "labels": [
+      "=0",
+      "0~.001",
+      ".001~.01",
+      ".01~.05",
+      ".05~.1",
+      ".1~.2",
+      ".2~.5",
+      ".5+"
+    ],
+    "counts": [
+      73,
+      0,
+      6,
+      1,
+      6,
+      14,
+      0,
+      0
+    ]
+  },
+  "mean_histogram": {
+    "labels": [
+      "<0",
+      "=0",
+      "0~.5",
+      ".5~1",
+      "1~1.5",
+      "1.5+"
+    ],
+    "counts": [
+      58,
+      0,
+      22,
+      10,
+      10,
+      0
+    ]
+  },
+  "by_question_type": {
+    "numerical": {
+      "n": 36,
+      "n_std0": 26,
+      "pct_std0": "72.2%",
+      "n_all_zero": 0,
+      "n_all_same_high": 1,
+      "mean_of_means": -0.05347222222222222,
+      "mean_of_stds": 0.06722468451327408,
+      "submit_rate": "100.0%"
+    },
+    "open_ended": {
+      "n": 36,
+      "n_std0": 26,
+      "pct_std0": "72.2%",
+      "n_all_zero": 0,
+      "n_all_same_high": 3,
+      "mean_of_means": -0.00923611111111108,
+      "mean_of_stds": 0.06643466288891248,
+      "submit_rate": "100.0%"
+    },
+    "multi_choice": {
+      "n": 28,
+      "n_std0": 21,
+      "pct_std0": "75.0%",
+      "n_all_zero": 0,
+      "n_all_same_high": 2,
+      "mean_of_means": 0.05053571428571429,
+      "mean_of_stds": 0.04880313713773242,
+      "submit_rate": "100.0%"
+    }
+  },
+  "by_measure_target": {
+    "amplitude": {
+      "n": 27,
+      "pct_std0": "74.1%",
+      "n_all_zero": 0,
+      "mean_reward": 0.43453703703703705,
+      "mean_std": 0.023832392236339844,
+      "submit_rate": "100.0%"
+    },
+    "duty_cycle": {
+      "n": 24,
+      "pct_std0": "91.7%",
+      "n_all_zero": 0,
+      "mean_reward": -0.42468749999999994,
+      "mean_std": 0.007291539254161716,
+      "submit_rate": "100.0%"
+    },
+    "period": {
+      "n": 23,
+      "pct_std0": "21.7%",
+      "n_all_zero": 0,
+      "mean_reward": 0.4616304347826087,
+      "mean_std": 0.2330327310371377,
+      "submit_rate": "100.0%"
+    },
+    "rise_time": {
+      "n": 26,
+      "pct_std0": "100.0%",
+      "n_all_zero": 0,
+      "mean_reward": -0.5,
+      "mean_std": 0.0,
+      "submit_rate": "100.0%"
+    }
+  },
+  "verdict": "PARTIAL",
+  "verdict_logic": "std=0 groups = 73.0% (threshold 80%); std>0 groups = 27.0% (threshold 30%); all-zero majority among std=0 = False",
+  "wall_seconds": 4443.4930901527405
+}

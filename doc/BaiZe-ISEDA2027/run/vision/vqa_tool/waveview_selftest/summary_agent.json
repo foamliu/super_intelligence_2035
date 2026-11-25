@@ -1,0 +1,611 @@
+{
+ "experiment": "vision waveview 10-question selftest AGENT arms (G0/G1/G2) -- MLLM as part of agent system",
+ "user_order": "2026-11-14 21:5x: vision 补 agent 臂 (MLLM 作为 agent 系统一部分带来的增益)",
+ "date": "2026-11-15T00:23:05",
+ "seed": 20261114,
+ "glm_endpoint": "http://agi-gateway.cxmt.com/cloud/v1/chat/completions",
+ "glm_model": "glm-5.2",
+ "base_vqa": "http://127.0.0.1:30001",
+ "adapter_vqa": "http://127.0.0.1:30003",
+ "sut": "glm-5.2 (vision cline backbone) driven via OpenAI-compatible function-calling API",
+ "n_cases": 10,
+ "whole_question_pass": {
+  "V0_singlemodel": 0,
+  "V1_singlemodel": 0,
+  "V2_singlemodel": 0,
+  "G0_agent_notool": 0,
+  "G1_agent_baseVQA": 5,
+  "G2_agent_adapterVQA": 4
+ },
+ "flips": {
+  "G0->G1 (VQA channel in agent)": 5,
+  "G0->G2 (VQA+rft2 in agent)": 4,
+  "V1->G1 (agent orchestration on base)": 5,
+  "V2->G2 (agent orchestration on rft2)": 4
+ },
+ "mcnemar": {
+  "G0_vs_G1": {
+   "p_value": 0.0625,
+   "b_improved": 5,
+   "c_regressed": 0,
+   "n_discordant": 5
+  },
+  "G0_vs_G2": {
+   "p_value": 0.125,
+   "b_improved": 4,
+   "c_regressed": 0,
+   "n_discordant": 4
+  },
+  "G1_vs_G2": {
+   "p_value": 1.0,
+   "b_improved": 2,
+   "c_regressed": 3,
+   "n_discordant": 5
+  },
+  "V1_vs_G1": {
+   "p_value": 0.0625,
+   "b_improved": 5,
+   "c_regressed": 0,
+   "n_discordant": 5
+  },
+  "V2_vs_G2": {
+   "p_value": 0.125,
+   "b_improved": 4,
+   "c_regressed": 0,
+   "n_discordant": 4
+  }
+ },
+ "per_quantity_rate": {
+  "V0": {
+   "ok": 34,
+   "total": 110,
+   "rate": 0.3091,
+   "by_tag": {
+    "β9": {
+     "ok": 0,
+     "total": 9
+    },
+    "α4": {
+     "ok": 4,
+     "total": 9
+    },
+    "β10": {
+     "ok": 4,
+     "total": 10
+    },
+    "α1": {
+     "ok": 3,
+     "total": 9
+    },
+    "β8": {
+     "ok": 6,
+     "total": 13
+    },
+    "β11": {
+     "ok": 6,
+     "total": 12
+    },
+    "α2": {
+     "ok": 2,
+     "total": 9
+    },
+    "β7": {
+     "ok": 3,
+     "total": 12
+    },
+    "α3": {
+     "ok": 4,
+     "total": 13
+    },
+    "β6": {
+     "ok": 2,
+     "total": 14
+    }
+   }
+  },
+  "V1": {
+   "ok": 42,
+   "total": 110,
+   "rate": 0.3818,
+   "by_tag": {
+    "β9": {
+     "ok": 1,
+     "total": 9
+    },
+    "α4": {
+     "ok": 5,
+     "total": 9
+    },
+    "β10": {
+     "ok": 2,
+     "total": 10
+    },
+    "α1": {
+     "ok": 2,
+     "total": 9
+    },
+    "β8": {
+     "ok": 10,
+     "total": 13
+    },
+    "β11": {
+     "ok": 6,
+     "total": 12
+    },
+    "α2": {
+     "ok": 5,
+     "total": 9
+    },
+    "β7": {
+     "ok": 2,
+     "total": 12
+    },
+    "α3": {
+     "ok": 5,
+     "total": 13
+    },
+    "β6": {
+     "ok": 4,
+     "total": 14
+    }
+   }
+  },
+  "V2": {
+   "ok": 61,
+   "total": 110,
+   "rate": 0.5545,
+   "by_tag": {
+    "β9": {
+     "ok": 0,
+     "total": 9
+    },
+    "α4": {
+     "ok": 6,
+     "total": 9
+    },
+    "β10": {
+     "ok": 5,
+     "total": 10
+    },
+    "α1": {
+     "ok": 6,
+     "total": 9
+    },
+    "β8": {
+     "ok": 7,
+     "total": 13
+    },
+    "β11": {
+     "ok": 10,
+     "total": 12
+    },
+    "α2": {
+     "ok": 4,
+     "total": 9
+    },
+    "β7": {
+     "ok": 7,
+     "total": 12
+    },
+    "α3": {
+     "ok": 7,
+     "total": 13
+    },
+    "β6": {
+     "ok": 9,
+     "total": 14
+    }
+   }
+  },
+  "G0": {
+   "ok": 20,
+   "total": 110,
+   "rate": 0.1818,
+   "by_tag": {
+    "β9": {
+     "ok": 0,
+     "total": 9
+    },
+    "α4": {
+     "ok": 0,
+     "total": 9
+    },
+    "β10": {
+     "ok": 1,
+     "total": 10
+    },
+    "α1": {
+     "ok": 0,
+     "total": 9
+    },
+    "β8": {
+     "ok": 6,
+     "total": 13
+    },
+    "β11": {
+     "ok": 3,
+     "total": 12
+    },
+    "α2": {
+     "ok": 2,
+     "total": 9
+    },
+    "β7": {
+     "ok": 2,
+     "total": 12
+    },
+    "α3": {
+     "ok": 4,
+     "total": 13
+    },
+    "β6": {
+     "ok": 2,
+     "total": 14
+    }
+   }
+  },
+  "G1": {
+   "ok": 91,
+   "total": 110,
+   "rate": 0.8273,
+   "by_tag": {
+    "β9": {
+     "ok": 9,
+     "total": 9
+    },
+    "α4": {
+     "ok": 9,
+     "total": 9
+    },
+    "β10": {
+     "ok": 10,
+     "total": 10
+    },
+    "α1": {
+     "ok": 9,
+     "total": 9
+    },
+    "β8": {
+     "ok": 11,
+     "total": 13
+    },
+    "β11": {
+     "ok": 11,
+     "total": 12
+    },
+    "α2": {
+     "ok": 7,
+     "total": 9
+    },
+    "β7": {
+     "ok": 10,
+     "total": 12
+    },
+    "α3": {
+     "ok": 1,
+     "total": 13
+    },
+    "β6": {
+     "ok": 14,
+     "total": 14
+    }
+   }
+  },
+  "G2": {
+   "ok": 91,
+   "total": 110,
+   "rate": 0.8273,
+   "by_tag": {
+    "β9": {
+     "ok": 8,
+     "total": 9
+    },
+    "α4": {
+     "ok": 8,
+     "total": 9
+    },
+    "β10": {
+     "ok": 10,
+     "total": 10
+    },
+    "α1": {
+     "ok": 9,
+     "total": 9
+    },
+    "β8": {
+     "ok": 1,
+     "total": 13
+    },
+    "β11": {
+     "ok": 12,
+     "total": 12
+    },
+    "α2": {
+     "ok": 7,
+     "total": 9
+    },
+    "β7": {
+     "ok": 10,
+     "total": 12
+    },
+    "α3": {
+     "ok": 13,
+     "total": 13
+    },
+    "β6": {
+     "ok": 13,
+     "total": 14
+    }
+   }
+  }
+ },
+ "agent_metrics": {
+  "G1_total_vqa_calls": 202,
+  "G1_total_reask": 124,
+  "G1_cases_with_selfcheck": 9,
+  "G2_total_vqa_calls": 182,
+  "G2_total_reask": 102,
+  "G2_cases_with_selfcheck": 9
+ },
+ "flip_table": [
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveMaxFind-001",
+   "tag": "β9",
+   "tier": "C",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "G0": "FAIL",
+   "G1": "PASS",
+   "G2": "FAIL",
+   "V1_k": "1/9",
+   "V2_k": "0/9",
+   "G0_k": "0/9",
+   "G1_k": "9/9",
+   "G2_k": "8/9",
+   "G1_vqa": 19,
+   "G1_reask": 12,
+   "G2_vqa": 17,
+   "G2_reask": 10,
+   "flip_G0_G1": true,
+   "flip_G0_G2": false,
+   "flip_V1_G1": true,
+   "flip_V2_G2": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+   "tag": "α4",
+   "tier": "B",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "G0": "FAIL",
+   "G1": "PASS",
+   "G2": "FAIL",
+   "V1_k": "5/9",
+   "V2_k": "6/9",
+   "G0_k": "0/9",
+   "G1_k": "9/9",
+   "G2_k": "8/9",
+   "G1_vqa": 28,
+   "G1_reask": 21,
+   "G2_vqa": 10,
+   "G2_reask": 3,
+   "flip_G0_G1": true,
+   "flip_G0_G2": false,
+   "flip_V1_G1": true,
+   "flip_V2_G2": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+   "tag": "β10",
+   "tier": "C",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "G0": "FAIL",
+   "G1": "PASS",
+   "G2": "PASS",
+   "V1_k": "2/10",
+   "V2_k": "5/10",
+   "G0_k": "1/10",
+   "G1_k": "10/10",
+   "G2_k": "10/10",
+   "G1_vqa": 21,
+   "G1_reask": 13,
+   "G2_vqa": 14,
+   "G2_reask": 6,
+   "flip_G0_G1": true,
+   "flip_G0_G2": true,
+   "flip_V1_G1": true,
+   "flip_V2_G2": true
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+   "tag": "α1",
+   "tier": "A",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "G0": "FAIL",
+   "G1": "PASS",
+   "G2": "PASS",
+   "V1_k": "2/9",
+   "V2_k": "6/9",
+   "G0_k": "0/9",
+   "G1_k": "9/9",
+   "G2_k": "9/9",
+   "G1_vqa": 19,
+   "G1_reask": 14,
+   "G2_vqa": 25,
+   "G2_reask": 20,
+   "flip_G0_G1": true,
+   "flip_G0_G2": true,
+   "flip_V1_G1": true,
+   "flip_V2_G2": true
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveView-002",
+   "tag": "β8",
+   "tier": "C",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "G0": "FAIL",
+   "G1": "FAIL",
+   "G2": "FAIL",
+   "V1_k": "10/13",
+   "V2_k": "7/13",
+   "G0_k": "6/13",
+   "G1_k": "11/13",
+   "G2_k": "1/13",
+   "G1_vqa": 34,
+   "G1_reask": 23,
+   "G2_vqa": 32,
+   "G2_reask": 21,
+   "flip_G0_G1": false,
+   "flip_G0_G2": false,
+   "flip_V1_G1": false,
+   "flip_V2_G2": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-SimFailFsdbProbe-001",
+   "tag": "β11",
+   "tier": "B",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "G0": "FAIL",
+   "G1": "FAIL",
+   "G2": "PASS",
+   "V1_k": "6/12",
+   "V2_k": "10/12",
+   "G0_k": "3/12",
+   "G1_k": "11/12",
+   "G2_k": "12/12",
+   "G1_vqa": 20,
+   "G1_reask": 12,
+   "G2_vqa": 14,
+   "G2_reask": 6,
+   "flip_G0_G1": false,
+   "flip_G0_G2": true,
+   "flip_V1_G1": false,
+   "flip_V2_G2": true
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-RiseEdgeMarginMeas-001",
+   "tag": "α2",
+   "tier": "A",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "G0": "FAIL",
+   "G1": "FAIL",
+   "G2": "FAIL",
+   "V1_k": "5/9",
+   "V2_k": "4/9",
+   "G0_k": "2/9",
+   "G1_k": "7/9",
+   "G2_k": "7/9",
+   "G1_vqa": 18,
+   "G1_reask": 12,
+   "G2_vqa": 9,
+   "G2_reask": 3,
+   "flip_G0_G1": false,
+   "flip_G0_G2": false,
+   "flip_V1_G1": false,
+   "flip_V2_G2": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-FsdbWrDqMeas-001",
+   "tag": "β7",
+   "tier": "C",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "G0": "FAIL",
+   "G1": "FAIL",
+   "G2": "FAIL",
+   "V1_k": "2/12",
+   "V2_k": "7/12",
+   "G0_k": "2/12",
+   "G1_k": "10/12",
+   "G2_k": "10/12",
+   "G1_vqa": 19,
+   "G1_reask": 10,
+   "G2_vqa": 21,
+   "G2_reask": 12,
+   "flip_G0_G1": false,
+   "flip_G0_G2": false,
+   "flip_V1_G1": false,
+   "flip_V2_G2": false
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+   "tag": "α3",
+   "tier": "A",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "G0": "FAIL",
+   "G1": "FAIL",
+   "G2": "PASS",
+   "V1_k": "5/13",
+   "V2_k": "7/13",
+   "G0_k": "4/13",
+   "G1_k": "1/13",
+   "G2_k": "13/13",
+   "G1_vqa": 6,
+   "G1_reask": 0,
+   "G2_vqa": 8,
+   "G2_reask": 0,
+   "flip_G0_G1": false,
+   "flip_G0_G2": true,
+   "flip_V1_G1": false,
+   "flip_V2_G2": true
+  },
+  {
+   "case_id": "EDA-Eval-DesignFlow-WaveCmpWrap-001",
+   "tag": "β6",
+   "tier": "A",
+   "V0": "FAIL",
+   "V1": "FAIL",
+   "V2": "FAIL",
+   "G0": "FAIL",
+   "G1": "PASS",
+   "G2": "FAIL",
+   "V1_k": "4/14",
+   "V2_k": "9/14",
+   "G0_k": "2/14",
+   "G1_k": "14/14",
+   "G2_k": "13/14",
+   "G1_vqa": 18,
+   "G1_reask": 7,
+   "G2_vqa": 32,
+   "G2_reask": 21,
+   "flip_G0_G1": true,
+   "flip_G0_G2": false,
+   "flip_V1_G1": true,
+   "flip_V2_G2": false
+  }
+ ],
+ "audit": {
+  "cheat": false,
+  "cheat_count": 0,
+  "findings": [
+   {
+    "severity": "review",
+    "pattern": "\\bPIL\\b",
+    "why": "forbidden image-bypass token present in runner source"
+   }
+  ],
+  "agent_vqa_calls": 284,
+  "agent_image_reads": 0,
+  "note": "agent (glm-5.2) only talks to the HTTP VQA tool + the glm-5.2 text API; no image is decoded in this process."
+ },
+ "design_note": "Single changed variable across G0/G1/G2 = the agent's VQA tool backend (none / base / base+rft2). Same 10 cases, same gen() PNGs, same check_case/oracle/tols, same glm-5.2 backbone @ temperature=0, randomized order. Agent gets task_brief + required key descriptions (no oracle values) and chooses its own queries / re-asks.",
+ "caveat": "Cases+check are vision-reconstructed FAITHFUL REPLICAS from designflow-published params/oracle (designflow's original check.py+assets live on .15, unreachable = infra-blocker). NOT byte-identical. G-arms measure the AGENT-SYSTEM gain (glm-5.2 orchestrating the VQA tool, with re-ask/cross-validate) over the single-model tool ceiling (V0/V1/V2).",
+ "trace_summary": {
+  "n_trace_ops": 284
+ }
+}

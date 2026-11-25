@@ -1,0 +1,209 @@
+{
+ "arm": "V1c",
+ "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+ "tag": "α3",
+ "tier": "A",
+ "adapter": "none(base)",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+ "verdict": "FAIL",
+ "k_pass": 6,
+ "k_total": 13,
+ "conditions": [
+  {
+   "name": "first_diverge_stage",
+   "pass": false,
+   "got": "50",
+   "gold": "rd_gate",
+   "tol": 0
+  },
+  {
+   "name": "failing_stage",
+   "pass": false,
+   "got": "read_mux",
+   "gold": "rd_gate",
+   "tol": 0
+  },
+  {
+   "name": "root_cause_kind",
+   "pass": true,
+   "got": "gate_disable",
+   "gold": "gate_disable",
+   "tol": 0
+  },
+  {
+   "name": "golden_at_div",
+   "pass": true,
+   "got": 75.0,
+   "gold": 80.0,
+   "tol": 8.0
+  },
+  {
+   "name": "actual_at_div",
+   "pass": true,
+   "got": 0.0,
+   "gold": 0.0,
+   "tol": 8.0
+  },
+  {
+   "name": "mismatch_first_cycle",
+   "pass": true,
+   "got": 4.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "mismatch_last_cycle",
+   "pass": false,
+   "got": 5.0,
+   "gold": 7,
+   "tol": 0
+  },
+  {
+   "name": "num_diverge_stages",
+   "pass": false,
+   "got": 2.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "data_intact",
+   "pass": false,
+   "got": "no",
+   "gold": "yes",
+   "tol": 0
+  },
+  {
+   "name": "first_eq_failing",
+   "pass": false,
+   "got": null,
+   "gold": "first_diverge==failing",
+   "tol": 0
+  },
+  {
+   "name": "root_cause_ok",
+   "pass": true,
+   "got": null,
+   "gold": "root_cause_kind==gate_disable",
+   "tol": 0
+  },
+  {
+   "name": "diverge_range",
+   "pass": true,
+   "got": null,
+   "gold": "last>=first cycle",
+   "tol": 0
+  },
+  {
+   "name": "data_intact_yes",
+   "pass": false,
+   "got": null,
+   "gold": "data_intact==yes",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "first_diverge_stage": "50",
+  "failing_stage": "read_mux",
+  "root_cause_kind": "gate_disable",
+  "golden_at_div": "75",
+  "actual_at_div": "0",
+  "mismatch_first_cycle": "4",
+  "mismatch_last_cycle": "5",
+  "num_diverge_stages": "2",
+  "data_intact": "no"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "first_diverge_stage",
+   "question": "There are 5 stacked panels top-to-bottom: 'pattern_buf', 'rd_gate', 'slice_mux', 'read_mux', 'pad_driver'. Each shows a blue (golden) and a red (actual) step line over 16 cycles. Which panel is the FIRST (topmost) one where the blue and red lines DIFFER (diverge)? One word.",
+   "cot_applied": false,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "Looking at the topmost panel: **pattern_buf**\n\n- At cycle 0–3: both blue and red are at 50 → same\n- At cycle 4: blue jumps to 75, red jumps to 50 → **DIFFER**\n\nSo the first (topmost) panel where blue and red diverge is:\n\n**pattern_buf**",
+   "ok": true,
+   "elapsed_s": 2.654
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "failing_stage",
+   "question": "Which stage is the failing (root-cause) stage, i.e. the first one where golden and actual diverge? One word.",
+   "cot_applied": false,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "read_mux",
+   "ok": true,
+   "elapsed_s": 0.531
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "root_cause_kind",
+   "question": "In the panel where the lines first diverge, the red (actual) line DROPS TO ZERO during the divergent cycles while the blue (golden) stays at a positive value. What kind of fault is this? 'gate_disable' or 'bit_swap'? One word.",
+   "cot_applied": false,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "gate_disable",
+   "ok": true,
+   "elapsed_s": 0.514
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "golden_at_div",
+   "question": "At the first divergent cycles, what value does the blue (golden) line hold? Just the number. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "To determine the value of the blue (golden) line at the first divergent cycle, we follow the steps:\n\n1. **State the x-axis unit**: The x-axis is labeled \"cycle\" and has tick marks at 0, 2, 4, 6, 8, 10, 12, 14, 16. There is no explicit unit like \"x1e6\" or \"+1e6\" near the axis label. Therefore, the scale factor is 1.\n\n2. **State the scale factor shown**: Since there is no offset marker, the scale factor is 1.\n\n3. **Read the tick mantissa closest to the requested point**: The first divergent cycle occurs at cycle 4, as seen in all plots where the blue line rises from 0 to 75. The tick mark at this point is labeled \"4\".\n\n4. **Full value = mantissa x scale factor**:  \n   Mantissa = 4  \n   Scale factor = 1  \n   Full value = 4 × 1 = 4\n\n5. **Convert if needed**: The question asks for the value at ",
+   "ok": true,
+   "elapsed_s": 8.8
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "actual_at_div",
+   "question": "At the first divergent cycles, what value does the red (actual) line drop to? Just the number. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "To determine the value the red (actual) line drops to at the first divergent cycle, we follow the steps:\n\n1.  **State the x-axis unit**: The x-axis label is \"cycle\", and there are no scientific notation markers like 'x1e6' or '1e6' visible near the axis label. Therefore, the unit is simply \"cycle\" and the scale factor is 1.\n2.  **State the scale factor shown**: As noted above, the scale factor is 1.\n3.  **Read the tick mantissa closest to the requested point**: The question asks for the value at the \"first divergent cycles\". Looking at the plots, the first divergent point occurs at cycle 4. The tick mark for cycle 4 is clearly labeled.\n4.  **Full value = mantissa x scale factor**: The mantissa for cycle 4 is 4. With a scale factor of 1, the full value is 4 * 1 = 4.\n5.  **Convert if the que",
+   "ok": true,
+   "elapsed_s": 8.175
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "mismatch_first_cycle",
+   "question": "At which cycle number (0-indexed, from 0 to 15) does the divergence FIRST start? Just the integer. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "To determine the cycle number where divergence first starts, we need to carefully examine the x-axis of the plots.\n\n1.  **State the x-axis unit**: The x-axis label is \"cycle\", and there are no scientific notation markers like 'x1e6' or '1e6' near the axis label. This means the x-axis is in standard units of cycles, and the scale factor is 1.\n\n2.  **State the scale factor shown**: As noted above, the scale factor is 1.\n\n3.  **Read the tick mantissa closest to the requested point**: The x-axis has major tick marks at 0, 2, 4, 6, 8, 10, 12, 14, 16. The question asks for the cycle number where divergence first starts. Looking at the plots, the \"golden\" (blue) and \"actual\" (red) lines diverge at the first cycle where they are not equal.\n\n4.  **Full_value = mantissa x scale_factor**: The first c",
+   "ok": true,
+   "elapsed_s": 8.798
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "mismatch_last_cycle",
+   "question": "At which cycle number does the divergence END (the last divergent cycle)? Just the integer. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "To determine the cycle number where the divergence ends, we need to carefully examine the x-axis of the plots.\n\n1.  **State the x-axis unit**: The x-axis label is \"cycle\", and there are no scientific notation markers like 'x1e6' or '1e6' near the axis label. This indicates the unit is simply \"cycle\" with a scale factor of 1.\n\n2.  **State the scale factor shown**: As noted above, there is no scale factor shown. Therefore, the scale factor is 1.\n\n3.  **Read the tick mantissa closest to the requested point**: The question asks for the cycle number where the divergence ends. Looking at the x-axis, the tick marks are at 0, 2, 4, 6, 8, 10, 12, 14, 16. The divergence (where the blue \"golden\" line and red \"actual\" line differ) occurs from cycle 4 to cycle 8. The last cycle where they are different",
+   "ok": true,
+   "elapsed_s": 8.942
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "num_diverge_stages",
+   "question": "How many panels (stages) show a divergence between the blue and red lines, counting from the first one? Just the integer. Look very carefully at the x-axis: near the axis label there is often a SMALL scale or offset marker such as 'x1e6', '1e6', 'x10^6', or '+1e6'. Reason step by step: (1) state the x-axis unit; (2) state the scale factor shown (if there is none, the scale is 1); (3) read the tick mantissa closest to the requested point; (4) full_value = mantissa x scale_factor; (5) if the question asks a different unit, convert full_value. End your reply with exactly one line 'Final Answer: <number>' where <number> is in the unit the question asked.",
+   "cot_applied": true,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "To determine how many panels show a divergence between the blue and red lines, we examine each panel’s plot area for any small tick marks near the x-axis label (e.g., “cycle”) that indicate a scale offset like “x1e6”, “1e6”, etc.\n\nLooking at the image:\n\n- The x-axis label is “cycle” and there are no visible small scale markers (like “x1e6” or similar) near the axis label.\n- All panels share the same x-axis scale: from cycle 0 to 16, with major ticks at 0, 2, 4, 6, 8, 10, 12, 14, 16.\n- There is no indication of a non-linear or offset x-axis scale in any panel.\n- Therefore, the scale factor is 1, and the full_value for any point is just the tick value.\n\nNow, checking each panel for divergence (i.e., where blue ≠ red):\n\n1. **pattern_buf**: Diverges at cycle 4 (blue=75, red=50), cycle 8 (blue=",
+   "ok": true,
+   "elapsed_s": 8.891
+  },
+  {
+   "tool": "vqa_mcp_v3",
+   "key": "data_intact",
+   "question": "Is there a panel where the blue and red lines are IDENTICAL throughout all 16 cycles (data intact at that stage)? Answer 'yes' or 'no'. One word.",
+   "cot_applied": false,
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/dq_readpath_A.png",
+   "raw": "no",
+   "ok": true,
+   "elapsed_s": 0.53
+  }
+ ],
+ "n_tool_calls": 9,
+ "duration_s": 48.75
+}

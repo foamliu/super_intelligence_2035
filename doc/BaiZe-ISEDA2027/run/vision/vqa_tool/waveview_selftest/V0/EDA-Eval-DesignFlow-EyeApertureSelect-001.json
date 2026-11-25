@@ -1,0 +1,92 @@
+{
+ "arm": "V0",
+ "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+ "tag": "α1",
+ "tier": "A",
+ "verdict": "FAIL",
+ "k_pass": 3,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "optimal_vref",
+   "pass": false,
+   "got": 60.0,
+   "gold": 100.0,
+   "tol": 0.0
+  },
+  {
+   "name": "max_width_at_opt",
+   "pass": false,
+   "got": 120.0,
+   "gold": 56.99,
+   "tol": 3.0
+  },
+  {
+   "name": "skew_at_opt",
+   "pass": false,
+   "got": 12.0,
+   "gold": 5.38,
+   "tol": 3.0
+  },
+  {
+   "name": "height_at_opt",
+   "pass": false,
+   "got": 105.0,
+   "gold": 180.0,
+   "tol": 10.0
+  },
+  {
+   "name": "vref60_valid",
+   "pass": false,
+   "got": true,
+   "gold": "no",
+   "tol": 0
+  },
+  {
+   "name": "validity_skew",
+   "pass": true,
+   "got": null,
+   "gold": "skew_at_opt<=15",
+   "tol": 0
+  },
+  {
+   "name": "validity_height",
+   "pass": true,
+   "got": null,
+   "gold": "height_at_opt>=100",
+   "tol": 0
+  },
+  {
+   "name": "reject_vref60",
+   "pass": false,
+   "got": null,
+   "gold": "VREF=60 invalid (false-peak rejected)",
+   "tol": 0
+  },
+  {
+   "name": "vref_in_range",
+   "pass": true,
+   "got": null,
+   "gold": "optimal_vref in [40,120]",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "optimal_vref": "vref60",
+  "max_width_at_opt": 120,
+  "skew_at_opt": 12,
+  "height_at_opt": 105,
+  "vref60_valid": true
+ },
+ "tool_calls": [
+  {
+   "tool": "text_only_model",
+   "prompt": "Three stacked panels versus VREF (mV), NO data labels. TOP: max_width (ps). MIDDLE: eye_height (mV) with a red dashed threshold at 100. BOTTOM: skew (ps) with a red dashed threshold at 15. A VREF is VALID only if skew<=15 AND height>=100. Among VALID VREFs pick the one with the LARGEST max_width. Deliver: optimal_vref, max_width_at_opt, skew_at_opt, height_at_opt. Return as JSON.\n\nReturn ONLY a JSON object with exactly these keys: [\"optimal_vref\", \"max_width_at_opt\", \"skew_at_opt\", \"height_at_opt\", \"vref60_valid\"]. Fill each from the waveform figure. No explanation.",
+   "ok": true,
+   "raw": "{\n  \"optimal_vref\": \"vref60\",\n  \"max_width_at_opt\": 120,\n  \"skew_at_opt\": 12,\n  \"height_at_opt\": 105,\n  \"vref60_valid\": true\n}"
+  }
+ ],
+ "n_tool_calls": 1,
+ "duration_s": 2.0,
+ "note": "text-only; image NOT read; VQA NOT called (no VQA MCP in V0)"
+}

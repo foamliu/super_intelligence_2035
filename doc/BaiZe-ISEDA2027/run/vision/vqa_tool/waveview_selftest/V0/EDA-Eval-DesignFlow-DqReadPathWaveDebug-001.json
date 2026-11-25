@@ -1,0 +1,124 @@
+{
+ "arm": "V0",
+ "case_id": "EDA-Eval-DesignFlow-DqReadPathWaveDebug-001",
+ "tag": "α3",
+ "tier": "A",
+ "verdict": "FAIL",
+ "k_pass": 4,
+ "k_total": 13,
+ "conditions": [
+  {
+   "name": "first_diverge_stage",
+   "pass": false,
+   "got": "pattern_buf",
+   "gold": "rd_gate",
+   "tol": 0
+  },
+  {
+   "name": "failing_stage",
+   "pass": false,
+   "got": "pattern_buf",
+   "gold": "rd_gate",
+   "tol": 0
+  },
+  {
+   "name": "root_cause_kind",
+   "pass": true,
+   "got": "gate_disable",
+   "gold": "gate_disable",
+   "tol": 0
+  },
+  {
+   "name": "golden_at_div",
+   "pass": false,
+   "got": null,
+   "gold": 80.0,
+   "tol": 8.0
+  },
+  {
+   "name": "actual_at_div",
+   "pass": false,
+   "got": null,
+   "gold": 0.0,
+   "tol": 8.0
+  },
+  {
+   "name": "mismatch_first_cycle",
+   "pass": false,
+   "got": 1.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "mismatch_last_cycle",
+   "pass": false,
+   "got": 16.0,
+   "gold": 7,
+   "tol": 0
+  },
+  {
+   "name": "num_diverge_stages",
+   "pass": false,
+   "got": 5.0,
+   "gold": 4,
+   "tol": 0
+  },
+  {
+   "name": "data_intact",
+   "pass": false,
+   "got": "no",
+   "gold": "yes",
+   "tol": 0
+  },
+  {
+   "name": "first_eq_failing",
+   "pass": true,
+   "got": null,
+   "gold": "first_diverge==failing",
+   "tol": 0
+  },
+  {
+   "name": "root_cause_ok",
+   "pass": true,
+   "got": null,
+   "gold": "root_cause_kind==gate_disable",
+   "tol": 0
+  },
+  {
+   "name": "diverge_range",
+   "pass": true,
+   "got": null,
+   "gold": "last>=first cycle",
+   "tol": 0
+  },
+  {
+   "name": "data_intact_yes",
+   "pass": false,
+   "got": null,
+   "gold": "data_intact==yes",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "first_diverge_stage": "pattern_buf",
+  "failing_stage": "pattern_buf",
+  "root_cause_kind": "gate_disable",
+  "golden_at_div": "yes",
+  "actual_at_div": "no",
+  "mismatch_first_cycle": 1,
+  "mismatch_last_cycle": 16,
+  "num_diverge_stages": 5,
+  "data_intact": "no"
+ },
+ "tool_calls": [
+  {
+   "tool": "text_only_model",
+   "prompt": "Five stacked pipeline-stage panels share a 16-cycle time axis, NO data labels. Top-to-bottom: pattern_buf, rd_gate, slice_mux, read_mux, pad_driver. Each shows a blue (golden) and red (actual) step line. Deliver: first_diverge_stage (name of the topmost panel where blue/red differ), root_cause_kind ('gate_disable' or 'bit_swap'), golden_at_div, actual_at_div, mismatch_first_cycle, mismatch_last_cycle, num_diverge_stages, data_intact ('yes'/'no'). Return as JSON.\n\nReturn ONLY a JSON object with exactly these keys: [\"first_diverge_stage\", \"failing_stage\", \"root_cause_kind\", \"golden_at_div\", \"actual_at_div\", \"mismatch_first_cycle\", \"mismatch_last_cycle\", \"num_diverge_stages\", \"data_intact\"]. Fill each from the waveform figure. No explanation.",
+   "ok": true,
+   "raw": "{\n  \"first_diverge_stage\": \"pattern_buf\",\n  \"failing_stage\": \"pattern_buf\",\n  \"root_cause_kind\": \"gate_disable\",\n  \"golden_at_div\": \"yes\",\n  \"actual_at_div\": \"no\",\n  \"mismatch_first_cycle\": 1,\n  \"mismatch_last_cycle\": 16,\n  \"num_diverge_stages\": 5,\n  \"data_intact\": \"no\"\n}"
+  }
+ ],
+ "n_tool_calls": 1,
+ "duration_s": 3.02,
+ "note": "text-only; image NOT read; VQA NOT called (no VQA MCP in V0)"
+}

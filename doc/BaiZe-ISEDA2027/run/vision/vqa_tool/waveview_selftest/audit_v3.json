@@ -1,0 +1,8 @@
+{
+ "cheat": false,
+ "cheat_count": 0,
+ "findings": [],
+ "v3_vqa_calls": 162,
+ "v3_image_reads": 0,
+ "time_questions_with_cot": 75
+}

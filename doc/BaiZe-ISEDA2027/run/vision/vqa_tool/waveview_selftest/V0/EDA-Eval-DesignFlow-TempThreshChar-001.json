@@ -1,0 +1,102 @@
+{
+ "arm": "V0",
+ "case_id": "EDA-Eval-DesignFlow-TempThreshChar-001",
+ "tag": "β10",
+ "tier": "C",
+ "verdict": "FAIL",
+ "k_pass": 4,
+ "k_total": 10,
+ "conditions": [
+  {
+   "name": "vmax",
+   "pass": false,
+   "got": 1.85,
+   "gold": 1.1994,
+   "tol": 0.07
+  },
+  {
+   "name": "t_at_max",
+   "pass": false,
+   "got": 12000000.0,
+   "gold": 4.002,
+   "tol": 0.3
+  },
+  {
+   "name": "n_transitions",
+   "pass": false,
+   "got": 14.0,
+   "gold": 2,
+   "tol": 0
+  },
+  {
+   "name": "t_cross_up",
+   "pass": false,
+   "got": 11800000.0,
+   "gold": 2.83642,
+   "tol": 0.3
+  },
+  {
+   "name": "t_cross_down",
+   "pass": false,
+   "got": 12100000.0,
+   "gold": 6.50325,
+   "tol": 0.3
+  },
+  {
+   "name": "vth_high",
+   "pass": false,
+   "got": 0.92,
+   "gold": 0.85,
+   "tol": 0.07
+  },
+  {
+   "name": "vth_low",
+   "pass": true,
+   "got": 0.48,
+   "gold": 0.45,
+   "tol": 0.07
+  },
+  {
+   "name": "hysteresis",
+   "pass": true,
+   "got": 0.44,
+   "gold": 0.4,
+   "tol": 0.1
+  },
+  {
+   "name": "hyst_consistency",
+   "pass": true,
+   "got": null,
+   "gold": "vth_high-vth_low==hyst",
+   "tol": 0
+  },
+  {
+   "name": "cross_order",
+   "pass": true,
+   "got": null,
+   "gold": "t_cross_up<t_cross_down",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "vmax": 1.85,
+  "t_at_max": 12000000,
+  "n_transitions": 14,
+  "t_cross_up": 11800000,
+  "t_cross_down": 12100000,
+  "vth_high": 0.92,
+  "vth_low": 0.48,
+  "hysteresis": 0.44
+ },
+ "tool_calls": [
+  {
+   "tool": "text_only_model",
+   "prompt": "Two stacked subplots share a time (us) axis, NO data labels. TOP: v(temp) (V). BOTTOM: v(det) (V) comparator output. Deliver: vmax, t_at_max, n_transitions, t_cross_up, t_cross_down, vth_high, vth_low, hysteresis. Return as JSON.\n\nReturn ONLY a JSON object with exactly these keys: [\"vmax\", \"t_at_max\", \"n_transitions\", \"t_cross_up\", \"t_cross_down\", \"vth_high\", \"vth_low\", \"hysteresis\"]. Fill each from the waveform figure. No explanation.",
+   "ok": true,
+   "raw": "{\n  \"vmax\": 1.85,\n  \"t_at_max\": 12000000,\n  \"n_transitions\": 14,\n  \"t_cross_up\": 11800000,\n  \"t_cross_down\": 12100000,\n  \"vth_high\": 0.92,\n  \"vth_low\": 0.48,\n  \"hysteresis\": 0.44\n}"
+  }
+ ],
+ "n_tool_calls": 1,
+ "duration_s": 3.61,
+ "note": "text-only; image NOT read; VQA NOT called (no VQA MCP in V0)"
+}

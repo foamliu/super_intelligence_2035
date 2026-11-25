@@ -1,0 +1,112 @@
+{
+ "arm": "G0",
+ "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+ "tag": "α4",
+ "tier": "B",
+ "sut": "glm-5.2 agent (no VQA tool)",
+ "vqa_backend": "none",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+ "verdict": "FAIL",
+ "k_pass": 0,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "v_max",
+   "pass": false,
+   "got": null,
+   "gold": 1.25,
+   "tol": 0.07
+  },
+  {
+   "name": "v_min",
+   "pass": false,
+   "got": null,
+   "gold": 0.1,
+   "tol": 0.07
+  },
+  {
+   "name": "num_activations",
+   "pass": false,
+   "got": null,
+   "gold": 5,
+   "tol": 0
+  },
+  {
+   "name": "first_activation_time",
+   "pass": false,
+   "got": null,
+   "gold": 2.841895,
+   "tol": 0.5
+  },
+  {
+   "name": "last_activation_time",
+   "pass": false,
+   "got": null,
+   "gold": 26.177452,
+   "tol": 0.5
+  },
+  {
+   "name": "duty_cycle",
+   "pass": false,
+   "got": null,
+   "gold": 0.286858,
+   "tol": 0.12
+  },
+  {
+   "name": "activation_pattern",
+   "pass": false,
+   "got": null,
+   "gold": "multi_pulse",
+   "tol": 0
+  },
+  {
+   "name": "vmax_gt_vmin",
+   "pass": false,
+   "got": null,
+   "gold": "v_max>v_min",
+   "tol": 0
+  },
+  {
+   "name": "multi_pulse",
+   "pass": false,
+   "got": null,
+   "gold": "pattern==multi_pulse",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "v_max": null,
+  "v_min": null,
+  "num_activations": null,
+  "first_activation_time": null,
+  "last_activation_time": null,
+  "duty_cycle": null,
+  "activation_pattern": null
+ },
+ "final_answer_raw": {
+  "v_max": null,
+  "v_min": null,
+  "num_activations": null,
+  "first_activation_time": null,
+  "last_activation_time": null,
+  "duty_cycle": null,
+  "activation_pattern": null
+ },
+ "vqa_calls_per_task": 0,
+ "reask_count": 0,
+ "vqa_calls": [],
+ "agent_selfcheck": [],
+ "n_turns": 1,
+ "turn_capped": false,
+ "finalized_after_cap": false,
+ "duration_s": 4.21,
+ "turns": [
+  {
+   "role": "assistant",
+   "content": "FINAL ANSWERS:\n{\n  \"v_max\": null,\n  \"v_min\": null,\n  \"num_activations\": null,\n  \"first_activation_time\": null,\n  \"last_activation_time\": null,\n  \"duty_cycle\": null,\n  \"activation_pattern\": null\n}",
+   "reasoning": "No image, no numeric data in text. Must output null for all numeric values. Pattern can be inferred? Not from text. But maybe activation_pattern could be guessed? No, cannot determine. But required str. Could output null? It says str. But we cannot determine. I'll output null for all.",
+   "tool_calls": null,
+   "finish_reason": "stop"
+  }
+ ]
+}

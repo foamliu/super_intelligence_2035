@@ -1,0 +1,152 @@
+{
+ "arm": "V2",
+ "case_id": "EDA-Eval-DesignFlow-TempSelWaveform-001",
+ "tag": "α4",
+ "tier": "B",
+ "adapter": "rft2_adapter_seed11",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+ "verdict": "FAIL",
+ "k_pass": 6,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "v_max",
+   "pass": true,
+   "got": 1.25,
+   "gold": 1.25,
+   "tol": 0.07
+  },
+  {
+   "name": "v_min",
+   "pass": false,
+   "got": 0.0,
+   "gold": 0.1,
+   "tol": 0.07
+  },
+  {
+   "name": "num_activations",
+   "pass": true,
+   "got": 5.0,
+   "gold": 5,
+   "tol": 0
+  },
+  {
+   "name": "first_activation_time",
+   "pass": true,
+   "got": 3.0,
+   "gold": 2.841895,
+   "tol": 0.5
+  },
+  {
+   "name": "last_activation_time",
+   "pass": true,
+   "got": 26.0,
+   "gold": 26.177452,
+   "tol": 0.5
+  },
+  {
+   "name": "duty_cycle",
+   "pass": false,
+   "got": 0.0,
+   "gold": 0.286858,
+   "tol": 0.12
+  },
+  {
+   "name": "activation_pattern",
+   "pass": true,
+   "got": "multi_pulse",
+   "gold": "multi_pulse",
+   "tol": 0
+  },
+  {
+   "name": "vmax_gt_vmin",
+   "pass": false,
+   "got": null,
+   "gold": "v_max>v_min",
+   "tol": 0
+  },
+  {
+   "name": "multi_pulse",
+   "pass": true,
+   "got": null,
+   "gold": "pattern==multi_pulse",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "v_max": "1.25",
+  "v_min": "0",
+  "num_activations": "5",
+  "first_activation_time": "3",
+  "last_activation_time": "26",
+  "duty_cycle": "0",
+  "activation_pattern": "multi_pulse"
+ },
+ "tool_calls": [
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "v_max",
+   "question": "What is the maximum (high) voltage level of this pulse signal in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "raw": "1.25",
+   "ok": true,
+   "elapsed_s": 0.482
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "v_min",
+   "question": "What is the minimum (low/baseline) voltage level in Volts? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "raw": "The baseline voltage level of the plot is 0.1 V. Final Answer: 0.1",
+   "ok": true,
+   "elapsed_s": 1.149
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "num_activations",
+   "question": "How many activation pulse windows are there in this signal? Just the integer.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "raw": "Counting the activation pulse windows from left to right in the plot, I can see 5 distinct pulse regions where the signal rises above the baseline. Final Answer: 5",
+   "ok": true,
+   "elapsed_s": 1.765
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "first_activation_time",
+   "question": "At what time (in us) does the FIRST activation window start? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "raw": "3",
+   "ok": true,
+   "elapsed_s": 0.375
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "last_activation_time",
+   "question": "At what time (in us) does the LAST activation window end? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "raw": "The last activation window ends at 26 us. Final Answer: 26",
+   "ok": true,
+   "elapsed_s": 1.01
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "duty_cycle",
+   "question": "What is the duty cycle (fraction of time high/active, 0 to 1)? Just the number.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "raw": "The high portion of this waveform takes 25 percent of the total time, so the duty cycle is 0.25. Final Answer: 0.25",
+   "ok": true,
+   "elapsed_s": 1.716
+  },
+  {
+   "tool": "vqa_mcp_v2",
+   "key": "activation_pattern",
+   "question": "Is the activation pattern 'single_pulse' or 'multi_pulse'? One word.",
+   "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/sel_wave_A.png",
+   "raw": "multi_pulse",
+   "ok": true,
+   "elapsed_s": 0.433
+  }
+ ],
+ "n_tool_calls": 7,
+ "duration_s": 7.17
+}

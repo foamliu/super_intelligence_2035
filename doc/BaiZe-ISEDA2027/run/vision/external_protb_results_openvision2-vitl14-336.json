@@ -1,0 +1,21 @@
+[
+  {
+    "model": "openvision2-vitl14-336",
+    "resolution": 336,
+    "feature_dim": 1024,
+    "loader": "openclip",
+    "protb_mean": 0.8497466444969177,
+    "protb_std": 0.0001225857300551863,
+    "protb_runs": [
+      0.8497399687767029,
+      0.8495999574661255,
+      0.8499000072479248
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "paper_lp": "79.81% (OV2 L/14@336, BaiZe ProtA R13)"
+  }
+]

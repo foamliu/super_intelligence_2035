@@ -1,0 +1,34 @@
+### LLaMA-Factory S2 smoke: single-step CPU LoRA SFT on Qwen3.5-2B
+### Goal: verify CPU training loop runs & loss is finite (wake#853, 2026-11-07).
+### model_path is filled by the runner script (resolves HF cache snapshot).
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_target: all
+lora_rank: 8
+lora_alpha: 16
+
+model_name_or_path: PLACEHOLDER_MODEL_PATH
+template: qwen
+cutoff_len: 256
+
+dataset: tiny_wave_sft
+dataset_dir: PLACEHOLDER_DATA_DIR
+
+output_dir: PLACEHOLDER_OUT_DIR
+overwrite_output_dir: true
+
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 1
+learning_rate: 5.0e-5
+num_train_epochs: 1
+max_steps: 3
+logging_steps: 1
+save_steps: 0
+warmup_steps: 0
+
+bf16: false
+fp16: false
+pure_bf16: false
+plot_loss: false
+report_to: none

@@ -1,0 +1,17 @@
+{
+  "tokenizer": "OK",
+  "dataset": "3 samples",
+  "model_load": "0.2s",
+  "lora_trainable_params": "69.7M",
+  "train_losses": [
+    1.4649330377578735,
+    1.0356512069702148,
+    0.905120849609375
+  ],
+  "train_time": "12.1s",
+  "train_pass": true,
+  "checkpoint_save": "OK",
+  "checkpoint_reload": "OK",
+  "generation": "open(rcp.raw)",
+  "gen_time": "1.5s"
+}

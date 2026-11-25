@@ -1,0 +1,108 @@
+{
+ "arm": "G0",
+ "case_id": "EDA-Eval-DesignFlow-EyeApertureSelect-001",
+ "tag": "α1",
+ "tier": "A",
+ "sut": "glm-5.2 agent (no VQA tool)",
+ "vqa_backend": "none",
+ "image": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision/vqa_tool/waveview_selftest/restored_probe_images/eye_sweep_A.png",
+ "verdict": "FAIL",
+ "k_pass": 0,
+ "k_total": 9,
+ "conditions": [
+  {
+   "name": "optimal_vref",
+   "pass": false,
+   "got": null,
+   "gold": 100.0,
+   "tol": 0.0
+  },
+  {
+   "name": "max_width_at_opt",
+   "pass": false,
+   "got": null,
+   "gold": 56.99,
+   "tol": 3.0
+  },
+  {
+   "name": "skew_at_opt",
+   "pass": false,
+   "got": null,
+   "gold": 5.38,
+   "tol": 3.0
+  },
+  {
+   "name": "height_at_opt",
+   "pass": false,
+   "got": null,
+   "gold": 180.0,
+   "tol": 10.0
+  },
+  {
+   "name": "vref60_valid",
+   "pass": false,
+   "got": null,
+   "gold": "no",
+   "tol": 0
+  },
+  {
+   "name": "validity_skew",
+   "pass": false,
+   "got": null,
+   "gold": "skew_at_opt<=15",
+   "tol": 0
+  },
+  {
+   "name": "validity_height",
+   "pass": false,
+   "got": null,
+   "gold": "height_at_opt>=100",
+   "tol": 0
+  },
+  {
+   "name": "reject_vref60",
+   "pass": false,
+   "got": null,
+   "gold": "VREF=60 invalid (false-peak rejected)",
+   "tol": 0
+  },
+  {
+   "name": "vref_in_range",
+   "pass": false,
+   "got": null,
+   "gold": "optimal_vref in [40,120]",
+   "tol": 0
+  }
+ ],
+ "answer": {
+  "optimal_vref": null,
+  "max_width_at_opt": null,
+  "skew_at_opt": null,
+  "height_at_opt": null,
+  "vref60_valid": null
+ },
+ "final_answer_raw": {
+  "optimal_vref": null,
+  "max_width_at_opt": null,
+  "skew_at_opt": null,
+  "height_at_opt": null,
+  "vref60_valid": null
+ },
+ "vqa_calls_per_task": 0,
+ "reask_count": 0,
+ "vqa_calls": [],
+ "agent_selfcheck": [],
+ "n_turns": 1,
+ "turn_capped": false,
+ "finalized_after_cap": false,
+ "duration_s": 11.88,
+ "turns": [
+  {
+   "role": "assistant",
+   "content": "FINAL ANSWERS:\n{\n  \"optimal_vref\": null,\n  \"max_width_at_opt\": null,\n  \"skew_at_opt\": null,\n  \"height_at_opt\": null,\n  \"vref60_valid\": null\n}",
+   "reasoning": "The task describes a waveform plot that I cannot see. The text contains no numeric answer values. I must not invent numeric values. I can infer qualitative/structural facts explicit in the text, but for any numeric quantity I cannot determine, output null.\n\nThe required keys:\n- optimal_vref (num)\n- max_width_at_opt (num)\n- skew_at_opt (num)\n- height_at_opt (num)\n- vref60_valid (str): Is VREF=60 valid? I cannot determine this without seeing the image. But the instruction says answer 'yes' or 'no'. However, I cannot determine it from text alone. Hmm, but it's a str key, not num. The instruction says \"null for any numeric value you cannot determine from the text alone.\" For string, maybe I should still answer? But I have no data. I cannot invent. Maybe output null for it too? But it says answ …[truncated]",
+   "tool_calls": null,
+   "finish_reason": "stop"
+  }
+ ]
+}

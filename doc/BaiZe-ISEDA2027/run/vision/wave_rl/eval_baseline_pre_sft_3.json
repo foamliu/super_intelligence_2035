@@ -1,0 +1,47 @@
+{
+  "total_evaluated": 3,
+  "format_correctness": 1.0,
+  "submit_success_rate": 0.0,
+  "numerical_accuracy_lt1pct": 0.0,
+  "numerical_accuracy_lt5pct": 0.0,
+  "mean_rel_err": null,
+  "median_rel_err": null,
+  "target_format": 0.9,
+  "target_submit": 0.7,
+  "pass": false,
+  "per_sample": [
+    {
+      "id": "traj_000000",
+      "circuit_type": "inverter",
+      "measure_target": "period",
+      "format_ok": true,
+      "submit_ok": false,
+      "submit_value": null,
+      "gt_value": 3.348e-06,
+      "rel_err": null,
+      "response_preview": "```python\nopen(\"inv.raw\")\n```"
+    },
+    {
+      "id": "traj_000001",
+      "circuit_type": "lc_tank",
+      "measure_target": "amplitude",
+      "format_ok": true,
+      "submit_ok": false,
+      "submit_value": null,
+      "gt_value": 13.059703077398117,
+      "rel_err": null,
+      "response_preview": "```python\nopen(\"lctank.raw\")\n```"
+    },
+    {
+      "id": "traj_000002",
+      "circuit_type": "ring_osc",
+      "measure_target": "duty_cycle",
+      "format_ok": true,
+      "submit_ok": false,
+      "submit_value": null,
+      "gt_value": 0.5176073926073926,
+      "rel_err": null,
+      "response_preview": "```python\nopen(\"ringosc.raw\")\n```"
+    }
+  ]
+}
