@@ -2,9 +2,10 @@
 
 WAITING: 0
 
-> 🎯 **现行路线 = F 自定义改造（权重热更新 + per-source 游标映射）** · patch/验证状态 = 7/7 standalone PASS + 5/5 Megatron-integration PASS（2026-11-23）· 零重叠实测 = 0（standalone overlap_docs=0 + integration total_overlap=0，第385次 fresh 复验）· 350k 倒计时 ≈ 2.7d → ~11-28（patch + 零重叠验证已完成，早于 11-27 截止）· **Megatron-LM 源码集成已完成**：dev copy `code/Megatron-LM-blendswitch` branch `blend-hot-switch` commit `011a05b`，5 文件 patch + 2 新文件，base `14c215d`，未 merge 主线
+> 🎯 **现行路线 = F 自定义改造（权重热更新 + per-source 游标映射）** · patch/验证状态 = 7/7 standalone PASS + 5/5 Megatron-integration PASS（2026-11-23）· 零重叠实测 = 0（standalone overlap_docs=0 + integration total_overlap=0，第386次 fresh 复验）· 350k 倒计时 ≈ 2.7d → ~11-28（patch + 零重叠验证已完成，早于 11-27 截止）· **Megatron-LM 源码集成已完成**：dev copy `code/Megatron-LM-blendswitch` branch `blend-hot-switch` commit `011a05b`，5 文件 patch + 2 新文件，base `14c215d`，未 merge 主线
 
-> 🟢 **心跳 · 2026-11-25 11:26 (R593) — 例行巡检 + blendswitch 第385次 fresh 复验 7/7 PASS zero_overlap=0**：①✅git synced(HEAD=8047de6dd9=origin/main·0新data令·所有用户令已交付)；②✅blendswitch 7/7 PASS(第385次 fresh 复验 python3 test_blend_switch.py)·零重叠=0·ratio dev 0.0087%·flag-off byte-identical·7文件全tracked；③✅integration 5/5 PASS total_overlap=0(commit 011a05b base 14c215d·本轮未复跑)；④✅3关键报告 size 合规(v5=13.8KB≤20KB / v4=14.6KB≤15KB / F-explainer=40.7KB≤80KB)·0 script·0外链；⑤✅pretrain iter≈318,170/700k(45.4%) step7.27s 训练健康·314k eval DONE harness_avg=56.25%·316k eval RUNNING·350k倒计时≈2.7d→~11-28；⑥✅.12 load29.15/28.40/27.91·0实质下载进程·/nas_user 42T余(63%)；⑦✅所有用户令已交付·research 日报(11-25)data线建议已知晓(TinyLlama 1T token配方对照/PAL程序化轨迹配比/Llemma数学代码独立源)·不阻塞。WAITING=0。
+> 🟢 **心跳 · 2026-11-25 11:37 (R594) — 例行巡检 + blendswitch 第386次 fresh 复验 7/7 PASS zero_overlap=0**：①✅git synced(HEAD=6b86d62b06=origin/main·0新data令·所有用户令已交付)；②✅blendswitch 7/7 PASS(第386次 fresh 复验 python3 test_blend_switch.py)·零重叠=0·ratio dev 0.0087%·flag-off byte-identical·7文件全tracked；③✅integration 5/5 PASS total_overlap=0(commit 011a05b base 14c215d·本轮未复跑)；④✅3关键报告 size 合规(v5=13,813B≤20KB / v4=14,625B≤15KB / F-explainer=40,743B≤80KB)·0 script·0外链；⑤✅pretrain iter≈318,110/700k(45.4%) step7.27s 训练健康·314k eval DONE harness_avg=56.25%·316k eval RUNNING·350k倒计时≈2.68d→~11-28；⑥✅.12 load29.69/28.86/28.07·0实质下载进程·/nas_user 42T余(63%)；⑦✅所有用户令已交付·research 日报(11-25)data线建议已知晓(TinyLlama 1T token配方对照/PAL程序化轨迹配比/Llemma数学代码独立源)·不阻塞。WAITING=0。
+> 📦 R593 心跳（例行巡检+blendswitch第385次复验7/7 PASS·iter≈318,170 step7.27s·.12 load29.15/28.40/27.91·0下载进程）已归档 → daily-memories-data/2026-11-25.md
 > 📦 R592 心跳（例行巡检+blendswitch第384次复验7/7 PASS·iter≈318,020 step7.32s·.12 load28.77/27.62/27.59·0下载进程）已归档 → daily-memories-data/2026-11-25.md
 > 📦 R591 心跳（例行巡检+blendswitch第383次复验7/7 PASS·iter≈318,020 step7.32s·.12 load28.87/27.68/27.70·0下载进程）已归档 → daily-memories-data/2026-11-25.md
 > 📦 R589 心跳（例行巡检+blendswitch第381次复验7/7 PASS·iter≈317,940 step7.29s·.12 load26.53/27.28/27.83·0下载进程）已归档 → daily-memories-data/2026-11-25.md
@@ -26,8 +27,7 @@ WAITING: 0
 > 📦 R565 心跳（例行巡检+blendswitch第358次复验7/7 PASS·iter≈310,270 step7.02s·.12 load29.61/27.39/26.55·0下载进程）已归档 → daily-memories-data/2026-11-24.md
 > 📦 R564 心跳（例行巡检+blendswitch第357次复验7/7 PASS·iter≈310,160 step7.02s·.12 load28.43/26.65/26.18·0下载进程）已归档 → daily-memories-data/2026-11-24.md
 > 📦 R563 心跳（例行巡检+blendswitch第356次复验7/7 PASS·iter≈310,040 step7.29s·.12 load25.90/25.10/25.28·0下载进程）已归档 → daily-memories-data/2026-11-24.md
-> 📦 R561 心跳（例行巡检+blendswitch第354次复验7/7 PASS·iter≈309,860 step7.32s·.12 load26.83/25.91/25.65·0下载进程）已归档 → daily-memories-data/2026-11-24.md
-> 📦 R560 心跳（例行巡检+blendswitch第353次复验7/7 PASS·iter≈309,810 step7.34s·.12 load26.16/25.15/25.41·0下载进程）已归档 → daily-memories-data/2026-11-24.md
+
 > 📦 R546~R557 心跳（例行巡检+blendswitch第338~350次复验7/7 PASS·iter≈308,940~309,620·step7.14~8.06s·308k eval DONE Avg58.38%·.12 load 25~28·0下载进程·R548 numpy修复后340th fresh复验·R549~R557 341st~350th fresh复验）已归档 → daily-memories-data/2026-11-24.md
 > 📦 R531 心跳（例行巡检+blendswitch第323次复验7/7 PASS·iter≈308,160 step7.11s·308k eval RUNNING·.12 load27.31/26.44/26.51·0下载进程）已归档 → daily-memories-data/2026-11-24.md
 > 📦 R505~R528 心跳（例行巡检+blendswitch第297~320次复验全7/7 PASS·iter306910~307920·step7.12~7.22s·306k eval DONE·.12 load均<30·0下载进程）已批量归档 → daily-memories-data/2026-11-24.md
