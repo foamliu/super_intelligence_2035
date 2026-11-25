@@ -2072,3 +2072,7 @@ WAITING: 0 · **LITE_FIX: D=124/124 green · P0 余 3(跨 shard cases/B/ hspice-
 
 ## 归档批次 r1334（r1333 心跳原文）
 - r1333 = 监控轮 cycle-3 pos119-122: 4 green spot-check(WvEdgeTiming/WvSigListGen/WvStimExtract/GrDecPwrSwitchTbGen) 无回归; L1 audit_check_returns 4 条全 OK(shapes True x4) + L2 ref-PASS 独立临时目录真跑全 PASS; L3 全 4 条 negselftest negs FAIL distinct; L4 静态 4 条 check.py 0 unmocked GUI/spice binary; L5 carry-over. 跨 shard P0 re-verify: B HEAD 推进 295589ca9(r1197)→6ac1a5e64(r1199 DelayChainEdgeMeas hspice-mock), 但未及 OpampChar/SpiceSim-001/InvTripDelay 3 条仍 P0. 原文见 daily_D_2026-11-25_r1333.md.
+
+## 归档批次 r1337（r1336 心跳原文）
+
+r1336 = 监控轮 cycle-4 续 pos5-8: 4 green spot-check(Backannot-001/BitcellMcSpGen-001/BufPFFlatGen-001/CTLEAcMetric-001) 无回归; L1 audit_check_returns 4 条全 OK(shapes=[True] x4) + L2 ref-PASS 独立临时目录真跑全 PASS; L3 negselftest 跑通 negs FAIL distinct; L4 静态 4 条 check.py 0 unmocked GUI/spice binary; L5 carry-over. 跨 shard P0 re-verify: B HEAD r1200(e06bfd894) 仍未变, 仅修 DelayChainEdgeMeas-001 portability, 未及 OpampChar/SpiceSim-001/InvTripDelay 3 条仍 P0. Lite 清单 md5 复核一致(500 unique, D Lite 124). 原文见 daily_D_2026-11-25_r1336.md。
