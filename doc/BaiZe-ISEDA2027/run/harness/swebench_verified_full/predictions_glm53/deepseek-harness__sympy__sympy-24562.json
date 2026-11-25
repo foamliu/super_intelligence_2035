@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-24562",
+    "model_name_or_path": "deepseek-harness-glm-5.3-flash",
+    "model_patch": "diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py\nindex 52f7ea45..aa1146c6 100644\n--- a/sympy/core/numbers.py\n+++ b/sympy/core/numbers.py\n@@ -1587,6 +1587,13 @@ class Rational(Number):\n \n     @cacheit\n     def __new__(cls, p, q=None, gcd=None):\n+        if q is not None and isinstance(q, str):\n+            # Convert q to a Rational before p is converted, otherwise\n+            # \"q *= p.q\" below can multiply a raw string q by an integer,\n+            # e.g. Rational('0.5', '100') would give q = '100' * 2 -> '100100'\n+            q = Rational(q)\n+            gcd = gcd or 1\n+\n         if q is None:\n             if isinstance(p, Rational):\n                 return p\n"
+  }
+]

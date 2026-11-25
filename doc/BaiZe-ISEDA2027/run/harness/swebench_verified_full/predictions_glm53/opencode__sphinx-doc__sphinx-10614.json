@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sphinx-doc__sphinx-10614",
+    "model_name_or_path": "opencode-glm-5.3-flash",
+    "model_patch": "diff --git a/index.rst b/index.rst\nnew file mode 100644\nindex 000000000..12f1007a3\n--- /dev/null\n+++ b/index.rst\n@@ -0,0 +1,4 @@\n+Demo\n+====\n+\n+.. inheritance-diagram:: my_package.my_class_1 my_package.my_class_2\n"
+  }
+]

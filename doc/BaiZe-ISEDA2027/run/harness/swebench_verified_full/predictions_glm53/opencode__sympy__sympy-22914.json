@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-22914",
+    "model_name_or_path": "opencode-glm-5.3-flash",
+    "model_patch": "diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py\nindex 3a72ab60..72f969cf 100644\n--- a/sympy/printing/pycode.py\n+++ b/sympy/printing/pycode.py\n@@ -450,6 +450,12 @@ def _print_frac(self, expr):\n         from sympy.core.mod import Mod\n         return self._print_Mod(Mod(expr.args[0], 1))\n \n+    def _print_Min(self, expr):\n+        return \"min({})\".format(\", \".join(self._print(arg) for arg in expr.args))\n+\n+    def _print_Max(self, expr):\n+        return \"max({})\".format(\", \".join(self._print(arg) for arg in expr.args))\n+\n     def _print_Symbol(self, expr):\n \n         name = super()._print_Symbol(expr)\n"
+  }
+]

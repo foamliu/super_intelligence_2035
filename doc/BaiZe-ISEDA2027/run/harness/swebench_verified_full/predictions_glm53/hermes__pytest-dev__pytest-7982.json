@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pytest-dev__pytest-7982",
+    "model_name_or_path": "hermes-glm-5.3-flash",
+    "model_patch": "diff --git a/repro_issue.py b/repro_issue.py\nnew file mode 100644\nindex 000000000..09d65d771\n--- /dev/null\n+++ b/repro_issue.py\n@@ -0,0 +1,18 @@\n+\"\"\"Repro for pytest-dev/pytest#7942: symlinked directories not collected since 6.1.0.\"\"\"\n+from _pytest.pathlib import symlink_or_skip\n+\n+\n+def test_symlinked_dir_collected(testdir):\n+    \"\"\"A symlink to a directory inside a test dir should be followed/collected.\"\"\"\n+    sub = testdir.mkdir(\"sub\")\n+    sub.join(\"test_file.py\").write(\"def test_file(): pass\")\n+\n+    symlink_or_skip(sub, testdir.tmpdir.join(\"symlink_to_sub\"))\n+\n+    result = testdir.runpytest(\"-v\", testdir.tmpdir)\n+    result.stdout.fnmatch_lines(\n+        [\n+            \"symlink_to_sub/test_file.py::test_file PASSED*\",\n+            \"*1 passed in*\",\n+        ]\n+    )\ndiff --git a/src/_pytest/pathlib.py b/src/_pytest/pathlib.py\nindex f0bdb1481..b96cba069 100644\n--- a/src/_pytest/pathlib.py\n+++ b/src/_pytest/pathlib.py\n@@ -558,7 +558,7 @@ def visit(\n     entries = sorted(os.scandir(path), key=lambda entry: entry.name)\n     yield from entries\n     for entry in entries:\n-        if entry.is_dir(follow_symlinks=False) and recurse(entry):\n+        if entry.is_dir() and recurse(entry):\n             yield from visit(entry.path, recurse)\n \n \n"
+  }
+]

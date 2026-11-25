@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-14711",
+    "model_name_or_path": "pi-glm-5.3-flash",
+    "model_patch": "diff --git a/sympy/physics/vector/tests/test_vector.py b/sympy/physics/vector/tests/test_vector.py\nindex 828a25f3..4675c92a 100644\n--- a/sympy/physics/vector/tests/test_vector.py\n+++ b/sympy/physics/vector/tests/test_vector.py\n@@ -145,6 +145,17 @@ def test_vector_var_in_dcm():\n     raises(ValueError, lambda: v.diff(u1, N))\n \n \n+def test_vector_add_0():\n+    # sum() starts with the integer 0, so Vector.__add__ must handle\n+    # addition with 0.\n+    assert sum([A.x, 0 * A.x]) == A.x\n+    assert sum([A.x, A.y, 0 * A.z]) == A.x + A.y\n+    assert A.x + 0 == A.x\n+    assert 0 + A.x == A.x\n+    assert A.x - 0 == A.x\n+    assert 0 - A.x == -A.x\n+\n+\n def test_vector_simplify():\n     x, y, z, k, n, m, w, f, s, A = symbols('x, y, z, k, n, m, w, f, s, A')\n     N = ReferenceFrame('N')\ndiff --git a/sympy/physics/vector/vector.py b/sympy/physics/vector/vector.py\nindex a048ee57..c145423b 100644\n--- a/sympy/physics/vector/vector.py\n+++ b/sympy/physics/vector/vector.py\n@@ -57,9 +57,10 @@ def __hash__(self):\n \n     def __add__(self, other):\n         \"\"\"The add operator for Vector. \"\"\"\n-        other = _check_vector(other)\n-        return Vector(self.args + other.args)\n-\n+        if other == 0:\n+            return self\n+        else:\n+            return Vector(self.args + _check_vector(other).args)\n     def __and__(self, other):\n         \"\"\"Dot product of two vectors.\n \n"
+  }
+]

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sphinx-doc__sphinx-9367",
+    "model_name_or_path": "deepseek-harness-glm-5.3-flash",
+    "model_patch": "diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py\nindex f541ec0a9..ced0419c6 100644\n--- a/sphinx/pycode/ast.py\n+++ b/sphinx/pycode/ast.py\n@@ -213,8 +213,10 @@ class _UnparseVisitor(ast.NodeVisitor):\n         return \"%s %s\" % (self.visit(node.op), self.visit(node.operand))\n \n     def visit_Tuple(self, node: ast.Tuple) -> str:\n-        if node.elts:\n+        if len(node.elts) > 1:\n             return \"(\" + \", \".join(self.visit(e) for e in node.elts) + \")\"\n+        elif node.elts:\n+            return \"(%s,)\" % self.visit(node.elts[0])\n         else:\n             return \"()\"\n \ndiff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py\nindex e80062351..70fa7f686 100644\n--- a/tests/test_pycode_ast.py\n+++ b/tests/test_pycode_ast.py\n@@ -54,6 +54,7 @@ from sphinx.pycode import ast\n     (\"- 1\", \"- 1\"),                             # UnaryOp\n     (\"- a\", \"- a\"),                             # USub\n     (\"(1, 2, 3)\", \"(1, 2, 3)\"),                   # Tuple\n+    (\"(1,)\", \"(1,)\"),                             # Tuple (single element)\n     (\"()\", \"()\"),                               # Tuple (empty)\n ])\n def test_unparse(source, expected):\n"
+  }
+]

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pydata__xarray-6599",
+    "model_name_or_path": "opencode-glm-5.3-flash",
+    "model_patch": "diff --git a/repro_issue.py b/repro_issue.py\nnew file mode 100644\nindex 0000000..da402ad\n--- /dev/null\n+++ b/repro_issue.py\n@@ -0,0 +1,31 @@\n+import xarray as xr\n+import numpy as np\n+\n+values = np.array(\n+    [\n+        \"2021-04-01T05:25:19.000000000\",\n+        \"2021-04-01T05:25:29.000000000\",\n+        \"2021-04-01T05:25:39.000000000\",\n+        \"2021-04-01T05:25:49.000000000\",\n+        \"2021-04-01T05:25:59.000000000\",\n+        \"2021-04-01T05:26:09.000000000\",\n+    ],\n+    dtype=\"datetime64[ns]\",\n+)\n+azimuth_time = xr.DataArray(\n+    values, name=\"azimuth_time\", coords={\"azimuth_time\": values - values[0]}\n+)\n+\n+polyfit_coefficients = xr.DataArray(\n+    [\n+        [2.33333335e-43, 1.62499999e-43, 2.79166678e-43],\n+        [-1.15316667e-30, 1.49518518e-31, 9.08833333e-31],\n+        [-2.50272583e-18, -1.23851062e-18, -2.99098229e-18],\n+        [5.83965193e-06, -1.53321770e-07, -4.84640242e-06],\n+        [4.44739216e06, 1.45053974e06, 5.29960857e06],\n+    ],\n+    dims=(\"degree\", \"axis\"),\n+    coords={\"axis\": [0, 1, 2], \"degree\": [4, 3, 2, 1, 0]},\n+)\n+\n+print(xr.polyval(azimuth_time, polyfit_coefficients))\n"
+  }
+]

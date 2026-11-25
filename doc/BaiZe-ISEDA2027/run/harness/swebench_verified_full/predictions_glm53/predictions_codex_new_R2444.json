@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-13449",
+    "model_name_or_path": "codex-glm-5.3-flash",
+    "model_patch": "diff --git a/django/db/models/expressions.py b/django/db/models/expressions.py\nindex 90d90119d0..e015037ae7 100644\n--- a/django/db/models/expressions.py\n+++ b/django/db/models/expressions.py\n@@ -1302,6 +1302,21 @@ class Window(Expression):\n         connection.ops.check_expression_support(self)\n         if not connection.features.supports_over_clause:\n             raise NotSupportedError('This backend does not support window expressions.')\n+        if compiler.connection.vendor == 'sqlite':\n+            # SQLite doesn't allow a cast around the whole window expression,\n+            # so cast the source expression instead.\n+            source_expression = self.source_expression\n+            try:\n+                if source_expression.output_field.get_internal_type() == 'DecimalField':\n+                    source_expression = Cast(\n+                        source_expression,\n+                        output_field=source_expression.output_field,\n+                    )\n+            except FieldError:\n+                pass\n+        else:\n+            source_expression = self.source_expression\n+        expr_sql, params = compiler.compile(source_expression)\n         expr_sql, params = compiler.compile(self.source_expression)\n         window_sql, window_params = [], []\n \n"
+  }
+]

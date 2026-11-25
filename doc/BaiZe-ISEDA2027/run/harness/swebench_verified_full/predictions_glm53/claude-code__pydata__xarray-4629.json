@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "pydata__xarray-4629",
+    "model_name_or_path": "claude-code-glm-5.3-flash",
+    "model_patch": "diff --git a/xarray/core/merge.py b/xarray/core/merge.py\nindex ca4e29b..dff0080 100644\n--- a/xarray/core/merge.py\n+++ b/xarray/core/merge.py\n@@ -501,7 +501,7 @@ def merge_attrs(variable_attrs, combine_attrs):\n     if combine_attrs == \"drop\":\n         return {}\n     elif combine_attrs == \"override\":\n-        return variable_attrs[0]\n+        return dict(variable_attrs[0])\n     elif combine_attrs == \"no_conflicts\":\n         result = dict(variable_attrs[0])\n         for attrs in variable_attrs[1:]:\ndiff --git a/xarray/tests/test_merge.py b/xarray/tests/test_merge.py\nindex 0994ed9..388126e 100644\n--- a/xarray/tests/test_merge.py\n+++ b/xarray/tests/test_merge.py\n@@ -109,6 +109,15 @@ class TestMergeFunction:\n             expected.attrs = expected_attrs\n             assert actual.identical(expected)\n \n+    def test_merge_arrays_attrs_no_copy(self):\n+        # https://github.com/pydata/xarray/issues/4603\n+        data = create_test_data()\n+        data.var1.attrs = {\"a\": 1, \"b\": 2}\n+\n+        actual = xr.merge([data.var1, data.var2], combine_attrs=\"override\")\n+        actual.attrs[\"a\"] = 3\n+        assert data.var1.attrs[\"a\"] == 1\n+\n     def test_merge_dicts_simple(self):\n         actual = xr.merge([{\"foo\": 0}, {\"bar\": \"one\"}, {\"baz\": 3.5}])\n         expected = xr.Dataset({\"foo\": 0, \"bar\": \"one\", \"baz\": 3.5})\n"
+  }
+]

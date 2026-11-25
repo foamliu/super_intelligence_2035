@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-15987",
+    "model_name_or_path": "cline-glm-5.3-flash",
+    "model_patch": "diff --git a/django/core/management/commands/loaddata.py b/django/core/management/commands/loaddata.py\nindex ac97f13161..04cff27cf0 100644\n--- a/django/core/management/commands/loaddata.py\n+++ b/django/core/management/commands/loaddata.py\n@@ -361,7 +361,7 @@ class Command(BaseCommand):\n         current directory.\n         \"\"\"\n         dirs = []\n-        fixture_dirs = settings.FIXTURE_DIRS\n+        fixture_dirs = [str(d) for d in settings.FIXTURE_DIRS]\n         if len(fixture_dirs) != len(set(fixture_dirs)):\n             raise ImproperlyConfigured(\"settings.FIXTURE_DIRS contains duplicates.\")\n         for app_config in apps.get_app_configs():\ndiff --git a/tests/fixtures_regress/tests.py b/tests/fixtures_regress/tests.py\nindex 8c9228f675..53e456268a 100644\n--- a/tests/fixtures_regress/tests.py\n+++ b/tests/fixtures_regress/tests.py\n@@ -542,7 +542,7 @@ class TestFixtures(TestCase):\n     @override_settings(\n         FIXTURE_DIRS=[\n             os.path.join(_cur_dir, \"fixtures_1\"),\n-            os.path.join(_cur_dir, \"fixtures_1\"),\n+            Path(_cur_dir) / \"fixtures_1\",\n         ]\n     )\n     def test_fixture_dirs_with_duplicates(self):\n"
+  }
+]

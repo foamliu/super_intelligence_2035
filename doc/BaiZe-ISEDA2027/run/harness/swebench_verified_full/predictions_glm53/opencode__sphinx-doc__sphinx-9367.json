@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sphinx-doc__sphinx-9367",
+    "model_name_or_path": "opencode-glm-5.3-flash",
+    "model_patch": "diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py\nindex f541ec0a9..9840c39ee 100644\n--- a/sphinx/pycode/ast.py\n+++ b/sphinx/pycode/ast.py\n@@ -213,7 +213,9 @@ class _UnparseVisitor(ast.NodeVisitor):\n         return \"%s %s\" % (self.visit(node.op), self.visit(node.operand))\n \n     def visit_Tuple(self, node: ast.Tuple) -> str:\n-        if node.elts:\n+        if len(node.elts) == 1:\n+            return \"(%s,)\" % self.visit(node.elts[0])\n+        elif node.elts:\n             return \"(\" + \", \".join(self.visit(e) for e in node.elts) + \")\"\n         else:\n             return \"()\"\ndiff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py\nindex e80062351..81f8f66a2 100644\n--- a/tests/test_pycode_ast.py\n+++ b/tests/test_pycode_ast.py\n@@ -55,6 +55,7 @@ from sphinx.pycode import ast\n     (\"- a\", \"- a\"),                             # USub\n     (\"(1, 2, 3)\", \"(1, 2, 3)\"),                   # Tuple\n     (\"()\", \"()\"),                               # Tuple (empty)\n+    (\"(1,)\", \"(1,)\"),                           # Tuple (single element)\n ])\n def test_unparse(source, expected):\n     module = ast.parse(source)\n"
+  }
+]

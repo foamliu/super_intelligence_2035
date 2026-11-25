@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-18189",
+    "model_name_or_path": "claude-code-glm-5.3-flash",
+    "model_patch": "diff --git a/sympy/solvers/diophantine.py b/sympy/solvers/diophantine.py\nindex 6092e35d..b43f5c1d 100644\n--- a/sympy/solvers/diophantine.py\n+++ b/sympy/solvers/diophantine.py\n@@ -182,7 +182,7 @@ def diophantine(eq, param=symbols(\"t\", integer=True), syms=None,\n             if syms != var:\n                 dict_sym_index = dict(zip(syms, range(len(syms))))\n                 return {tuple([t[dict_sym_index[i]] for i in var])\n-                            for t in diophantine(eq, param)}\n+                            for t in diophantine(eq, param, permute=permute)}\n         n, d = eq.as_numer_denom()\n         if n.is_number:\n             return set()\ndiff --git a/sympy/solvers/tests/test_diophantine.py b/sympy/solvers/tests/test_diophantine.py\nindex e4e8972a..a82a3bf3 100644\n--- a/sympy/solvers/tests/test_diophantine.py\n+++ b/sympy/solvers/tests/test_diophantine.py\n@@ -501,6 +501,10 @@ def test_diophantine():\n     assert diophantine(eq, permute=True) == complete_soln\n \n     assert diophantine(x**2 + x*Rational(15, 14) - 3) == set()\n+    # test issue 18186\n+    eq = x**4 + y**4 - 2**4 - 3**4\n+    assert diophantine(eq, syms=(x, y), permute=True) == \\\n+        diophantine(eq, syms=(y, x), permute=True)\n     # test issue 11049\n     eq = 92*x**2 - 99*y**2 - z**2\n     coeff = eq.as_coefficients_dict()\n"
+  }
+]

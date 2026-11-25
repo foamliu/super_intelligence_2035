@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-12663",
+    "model_name_or_path": "opencode-glm-5.3-flash",
+    "model_patch": "diff --git a/django/db/models/fields/related.py b/django/db/models/fields/related.py\nindex 5ce7fac420..8094b2f480 100644\n--- a/django/db/models/fields/related.py\n+++ b/django/db/models/fields/related.py\n@@ -1012,11 +1012,7 @@ class ForeignKey(ForeignObject):\n \n     def get_col(self, alias, output_field=None):\n         if output_field is None:\n-            output_field = self.target_field\n-            while isinstance(output_field, ForeignKey):\n-                output_field = output_field.target_field\n-                if output_field is self:\n-                    raise ValueError('Cannot resolve output_field.')\n+            output_field = self\n         return super().get_col(alias, output_field)\n \n \n"
+  }
+]

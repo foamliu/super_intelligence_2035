@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-20801",
+    "model_name_or_path": "codex-glm-5.3-flash",
+    "model_patch": "diff --git a/sympy/core/numbers.py b/sympy/core/numbers.py\nindex 79f6a7d1..ef5a157a 100644\n--- a/sympy/core/numbers.py\n+++ b/sympy/core/numbers.py\n@@ -1386,8 +1386,6 @@ def __eq__(self, other):\n             other = _sympify(other)\n         except SympifyError:\n             return NotImplemented\n-        if not self:\n-            return not other\n         if isinstance(other, Boolean):\n             return False\n         if other.is_NumberSymbol:\ndiff --git a/sympy/core/tests/test_numbers.py b/sympy/core/tests/test_numbers.py\nindex 8b3e9912..9d9392cb 100644\n--- a/sympy/core/tests/test_numbers.py\n+++ b/sympy/core/tests/test_numbers.py\n@@ -1670,6 +1670,8 @@ def test_bool_eq():\n     assert 0 == False\n     assert S(0) == False\n     assert S(0) != S.false\n+    assert S(0.0) != S.false\n+    assert S.false != S(0.0)\n     assert 1 == True\n     assert S.One == True\n     assert S.One != S.true\n"
+  }
+]

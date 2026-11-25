@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-17318",
+    "model_name_or_path": "cline-glm-5.3-flash",
+    "model_patch": "diff --git a/repro_12420.py b/repro_12420.py\nnew file mode 100644\nindex 00000000..3d86aac3\n--- /dev/null\n+++ b/repro_12420.py\n@@ -0,0 +1,38 @@\n+import sys\n+from sympy import sqrt, I, sqrtdenest\n+import sympy\n+import sympy.simplify.sqrtdenest as sd\n+\n+print(\"sympy.__file__        :\", sympy.__file__)\n+print(\"sd.__file__           :\", sd.__file__)\n+print(\"sd.__name__           :\", sd.__name__)\n+print(\"sd is sys.modules entry:\", sd is sys.modules.get('sympy.simplify.sqrtdenest'))\n+\n+orig = sd._sqrt_match\n+calls = []\n+def traced(p):\n+    calls.append(repr(p))\n+    return orig(p)\n+sd._sqrt_match = traced\n+\n+print(\"--- _sqrtdenest1(sqrt(4+3*I)) with line tracing ---\")\n+def tracer(frame, event, arg):\n+    if frame.f_code.co_filename == sd.__file__ and frame.f_code.co_name in ('_sqrtdenest1', '_sqrt_match'):\n+        if event == 'call':\n+            print(\"CALL\", frame.f_code.co_name, \"args:\", {k: repr(v) for k, v in frame.f_locals.items()})\n+        elif event == 'return':\n+            print(\"RETURN\", frame.f_code.co_name, \"->\", repr(arg))\n+    return tracer\n+\n+sys.settrace(tracer)\n+try:\n+    res = sd._sqrtdenest1(sqrt(4 + 3*I))\n+    print(\"result:\", repr(res))\n+except Exception:\n+    import traceback\n+    traceback.print_exc()\n+sys.settrace(None)\n+\n+print(\"_sqrt_match calls:\", calls)\n+\n+\n"
+  }
+]
