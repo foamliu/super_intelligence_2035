@@ -104,18 +104,17 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·5路predict active+opencode COMPLETE+eval LIVE+dsh COMPLETE+eval✅·MM已停(令D)
-已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way LIVE✅**·**dsh SDK修复✅**·**MM已KILL✅**(令D)·**dsh predict COMPLETE✅**(499/500)·**dsh eval✅**(130/299=43.5%·reclassify_eval.py)·**full_eval_doubao_pro.py 修复✅**·**opencode predict COMPLETE✅**(498/500)
-当前动作:     doubao-pro 7way predict 5路active(cline494/codex455/cc479/pi480/hermes498)+opencode COMPLETE(498/500)·**opencode eval LIVE**(PID2481370·495 non-empty·4 Docker containers·setsid启动避免tool超时kill)+dsh COMPLETE(499/500)+dsh eval✅·3403/3500=97.2%·guard PID931671 LIVE(478626s≈5.5d)·gw_proxy 3进程LIVE(9090/9091/9092)·token 0.86B(51147 calls)·所有5路newest file age<60s=全活跃
-下一步:     ①opencode eval完成(ETA~30-60min)→检查eval JSON ②hermes即将完成(498/500·2rem)→完成后setsid启动eval ③等其余4路predict完成(ETA~05:00-06:30 codex 45rem最慢) ④7way报告REGEN
-阻塞:         无（5路全活跃·opencode eval LIVE·资源OK·load21.5/224=9.6%·mem675G/2015G avail1105G·pretrain step7.39s≤7.4s✅）
+PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·3路predict active+4路predict COMPLETE(3 eval LIVE+1 eval✅)·MM已停(令D)
+已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way LIVE✅**·**dsh SDK修复✅**·**MM已KILL✅**(令D)·**dsh predict COMPLETE✅**(499/500)·**dsh eval✅**(130/299=43.5%·reclassify_eval.py)·**full_eval_doubao_pro.py 修复✅**·**opencode predict COMPLETE✅**(498/500)·**hermes predict COMPLETE✅**(498/500)·**cline-patched predict COMPLETE✅**(494/500)
+当前动作:     doubao-pro 7way predict 3路active(codex458/pi482/cc481)+4路COMPLETE(cline-patched494/opencode498/hermes498/dsh499)·**3 eval LIVE**(opencode PID2481370 495 patches·hermes PID2857902 489 patches·cline-patched PID2990710 491 patches·各4 Docker containers=12 total·setsid+nice19·mem128g/cpu16)+dsh eval✅(130/299=43.5%)·3411/3500=97.5%·guard PID931671 LIVE(478800s≈5.5d)·gw_proxy 3进程LIVE(9090/9091/9092)·token 0.86B(51147 calls)
+下一步:     ①3 eval完成(ETA~30-60min)→检查eval JSON ②等3路predict完成(codex 42rem最慢·ETA~06:00-06:30)→每路完成后setsid启动eval ③7way报告REGEN(gen_report_doubao_pro_7way.py)
+阻塞:         无（3路predict active+3 eval LIVE·资源OK·load41.9/224=18.7%·mem679G/2015G avail1102G·pretrain step7.39s≤7.4s✅）
 ERROR_COUNT:  0
- 体积: TASK~31.7KB / MEMORY≈19KB
+ 体积: TASK~31.7KB / MEMORY≈20KB
 
   SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
-  SWE-bench Verified doubao-pro predict: cline494/codex455/opencode498(COMPLETE)/pi480/hermes498/cc479/dsh499(COMPLETE) (5路active+2路COMPLETE·3403/3500=97.2%)
-  SWE-bench Verified doubao-pro dsh eval✅: 130/299=43.5% (of non-empty) · 130/500=26.0% (of total) · 168 failed · 1 infra(scikit-learn-14710 timeout)
-  SWE-bench Verified doubao-pro opencode eval: LIVE (PID2481370·495 non-empty patches·4 Docker containers·mem128g/cpu16)
+  SWE-bench Verified doubao-pro predict: cline494(COMPLETE)/codex458/opencode498(COMPLETE)/pi482/hermes498(COMPLETE)/cc481/dsh499(COMPLETE) (3路active+4路COMPLETE·3411/3500=97.5%)
+  SWE-bench Verified doubao-pro eval: dsh✅(130/299=43.5%)·opencode LIVE(PID2481370)·hermes LIVE(PID2857902)·cline-patched LIVE(PID2990710)·codex/pi/cc待predict完成
   SWE-bench Multimodal: **已停(令D 2026-11-25)**·MM数据保留不删
  真实 Pass% (TB-2.1, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
 
@@ -150,6 +149,9 @@ ERROR_COUNT:  0
 > #H-014（2026-11-26 03:55, 监控巡检+**dsh eval修复验证✅**·doubao-pro 7way predict 6路active(cline479/codex443/opencode490/pi468/hermes483/cc465)+dsh COMPLETE(499/500)·3318/3500=94.8%·**dsh eval JSON正确生成✅**(reclassify_eval.py从298个report.json重分类·resolved=130/failed=168/infra=1(scikit-learn-14710 timeout)·Pass%=130/299=43.5%=130/500=26.0%·与上次结果完全一致✅)·**前次full_eval_doubao_pro.py进程被tool超时kill**(03:39启动→进程退出·docker容器orphaned·已kill)·改用reclassify_eval.py直接从已有report.json生成eval JSON(无需重跑Docker·298/299 report.json已存在·1个missing=scikit-learn-14710=前次也是infra timeout)·CC rerun PID2440121 ALIVE(11000s+)·所有6路newest file age<120s=全活跃·token 0.85B(49732 calls)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(476349s≈5.5d)·资源OK(load42/224=18.9%·mem677G/2015G avail1103G·0 high-CPU)·pretrain step7.39s≤7.4s✅·disk 184T/207T=89%·MM已停(令D)·下一步:①等6路predict完成(ETA~04:30-06:30 codex 57rem最慢) ②每路完成后用setsid启动full_eval_doubao_pro.py --route <h>(避免tool超时kill) ③7way报告REGEN)
 
 > #H-015（2026-11-26 04:17, 监控巡检+**opencode predict COMPLETE✅+opencode eval LIVE**·doubao-pro 7way predict 5路active(cline494/codex455/cc479/pi480/hermes498)+opencode COMPLETE(498/500·progress=500/500)+dsh COMPLETE(499/500)·3403/3500=97.2%·**opencode eval LIVE**(PID2481370·setsid+nice19启动避免tool超时kill·495 non-empty patches·4 Docker containers·mem128g/cpu16·log=logs/full_eval_doubao_pro_opencode.log)·hermes即将完成(498/500·2rem)·CC rerun PID2440121 ALIVE(13100s+)·token 0.86B(51147 sidecar lines)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(478626s≈5.5d)·资源OK(load21.5/224=9.6%·mem675G/2015G avail1105G·0 high-CPU·max cline=151% single-core)·pretrain step7.39s≤7.4s✅·MM已停(令D)·下一步:①opencode eval完成(ETA~30-60min)→检查eval JSON ②hermes完成后setsid启动eval ③等其余4路predict完成(ETA~05:00-06:30 codex 45rem最慢) ④7way报告REGEN）
+
+> #H-016（2026-11-26 04:24, 监控巡检+**hermes+cline-patched predict COMPLETE✅→3 eval LIVE**·doubao-pro 7way predict 3路active(codex458/pi482/cc481)+4路COMPLETE(cline-patched494/opencode498/hermes498/dsh499)·3411/3500=97.5%·**3 eval LIVE**(opencode PID2481370 495 patches 7min elapsed·hermes PID2857902 489 patches 2min·cline-patched PID2990710 491 patches 1min·各4 Docker containers=12 total·setsid+nice19·mem128g/cpu16)+dsh eval✅(130/299=43.5%)·3路predict active(codex PID820223 67733s·pi PID820587 67729s·cc PID2440121 13813s rerun)·token 0.86B(51147 sidecar lines)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(478800s≈5.5d)·资源OK(load41.9/224=18.7%·mem679G/2015G avail1102G·Docker 12 containers max 97MiB each)·pretrain step7.39s≤7.4s✅·MM已停(令D)·下一步:①3 eval完成(ETA~30-60min)→检查eval JSON ②等3路predict完成(codex 42rem最慢·ETA~06:00-06:30)→setsid启动eval ③7way报告REGEN）
+
 
 
 
