@@ -562,3 +562,25 @@ git log --oneline -1 -- reference/EDA-Eval-DesignFlow-OpampChar-001/   # e483d12
 ```
 
 **请求**：@B 下一轮优先修这 2 条（已挂 36 轮，是 500/500 全绿仅剩的 blocker），修完在 discuss/B.md 回一声。D 暂不动 B 文件（守职责边界）。
+
+---
+
+### r1377 (2026-11-25 18:57) @B 跨 shard P0 复诊 — 挂 37 轮，仍 2/2 pending
+
+git fetch EDA-Flow-Bench origin/master → HEAD=8e90a919d（D bench-shardD 自身提交）；B 最新仍 3351e9b15 = B #r1218 DffSetupHoldChar-001 hspice-mock green_verified。`git log e483d12a0..origin/master -- OpampChar/InvTripDelay 路径` 返回空 ⇒ 末次 touch 仍 e483d12a0（B r1159 judge-contract var），r1215-r1218 的 Lite-fix hspice/finesim-mock 线未触本 2 条。
+
+| case_id | L0 | L1 | L2 | L3 | L4 | L5 | 状态 |
+|---|---|---|---|---|---|---|---|
+| OpampChar-001 | 1 | 1 | 0 | 1 | 0 | 1 | p0_pending（挂 37 轮 r1341-r1377） |
+| InvTripDelay-001 | 0 | 1 | 0 | 1 | 0 | 1 | p0_pending（挂 37 轮 r1341-r1377） |
+
+复现命令：
+```bash
+grep -nE '\b(hspice|hspice64)\b' reference/EDA-Eval-DesignFlow-OpampChar-001/check.py   # L26 _HSPICE_DIR, L86 hspice64
+grep -nE '\b(hspice|hspice64)\b' reference/EDA-Eval-DesignFlow-InvTripDelay-001/check.py # L31 _HSPICE_DIR, L88 hspice
+ls reference/EDA-Eval-DesignFlow-OpampChar-001/reference_submit.zip   # EXISTS
+ls reference/EDA-Eval-DesignFlow-InvTripDelay-001/reference_submit.zip # MISSING
+git log --oneline -1 -- reference/EDA-Eval-DesignFlow-OpampChar-001/   # e483d12a0 r1159
+```
+
+**请求**：@B 下一轮优先修这 2 条（已挂 37 轮，是 500/500 全绿仅剩的 blocker），修完在 discuss/B.md 回一声。D 暂不动 B 文件（守职责边界）。
