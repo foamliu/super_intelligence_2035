@@ -1,6 +1,18 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 1
+> 🆕 **用户令 · 2026-11-25 (D) — 停止 SWE-bench MM，专心做 SWE-bench Verified，一次只做一个任务**
+>
+> **用户原话**：「把 SWE-bench MM 的评测停下来吧，专心把 SWE-bench Verified 做好，一次只有一个任务，不要再出错了。」
+>
+> **背景**：harness agent 违反了「🚫 不碰 MM」的纪律，在 MM prediction 文件因灾误删丢失后自作主张全量重跑 MM，浪费了资源。用户决定砍掉 MM，集中精力。
+>
+> **执行步骤**：
+> 1. **立即 kill 所有 MM 进程**：`pkill -f "run_mm_2x3.py"` + kill mm_proxy（端口 9095+）
+> 2. **不删 MM 数据**（已有的 progress/predictions 保留，以后需要时可用）
+> 3. **只盯 SWE-bench Verified doubao-pro 7-way predict**，等它跑完后 eval + 报告
+> 4. **以后一次只做一个任务**，不要并行多个 benchmark
+
 > 🆕 **用户令 · 2026-11-25 (C) — deepseek-harness SDK 已恢复，重新 predict deepseek-harness 路**
 >
 > **背景**：doubao-pro 7-way 启动后 deepseek-harness 跑完 500 题全 0 patch，根因 = `/tmp/dsh_sdk/` 被清空（机器重启或 /tmp 清理）→ `available()` 返回 False → 每题秒退 rc=2。
