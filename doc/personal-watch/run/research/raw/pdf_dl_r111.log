@@ -1,0 +1,42 @@
+== 2610.31098 == total=466531 n_chunks=12
+  chunk 11 attempt=1 1s have=38873/38873
+  chunk 02 attempt=1 1s have=38878/38878
+  chunk 06 attempt=1 1s have=38878/38878
+  chunk 01 attempt=1 1s have=38878/38878
+  chunk 08 attempt=1 1s have=38878/38878
+  chunk 05 attempt=1 1s have=38878/38878
+  chunk 09 attempt=1 1s have=38878/38878
+  chunk 04 attempt=1 1s have=38878/38878
+  chunk 07 attempt=1 1s have=38878/38878
+  chunk 10 attempt=1 1s have=38878/38878
+  chunk 03 attempt=1 1s have=38878/38878
+  chunk 00 attempt=1 2s have=38878/38878
+bytes=466531/466531 head=True eof=True => OK
+== 2610.30231 == total=1877199 n_chunks=12
+  chunk 07 attempt=1 1s have=156434/156434
+  chunk 05 attempt=1 2s have=156434/156434
+  chunk 10 attempt=1 2s have=156434/156434
+  chunk 03 attempt=1 2s have=156434/156434
+  chunk 11 attempt=1 2s have=156425/156425
+  chunk 09 attempt=1 2s have=156434/156434
+  chunk 08 attempt=1 2s have=156434/156434
+  chunk 01 attempt=1 2s have=156434/156434
+  chunk 02 attempt=1 2s have=156434/156434
+  chunk 04 attempt=1 2s have=156434/156434
+  chunk 06 attempt=1 2s have=156434/156434
+  chunk 00 attempt=1 2s have=156434/156434
+bytes=1877199/1877199 head=True eof=True => OK
+== 2610.28815 == total=605702 n_chunks=12
+  chunk 01 attempt=1 1s have=50476/50476
+  chunk 04 attempt=1 1s have=50476/50476
+  chunk 03 attempt=1 1s have=50476/50476
+  chunk 06 attempt=1 1s have=50476/50476
+  chunk 05 attempt=1 1s have=50476/50476
+  chunk 11 attempt=1 1s have=50466/50466
+  chunk 09 attempt=1 1s have=50476/50476
+  chunk 00 attempt=1 1s have=50476/50476
+  chunk 07 attempt=1 1s have=50476/50476
+  chunk 08 attempt=1 1s have=50476/50476
+  chunk 02 attempt=1 1s have=50476/50476
+  chunk 10 attempt=1 1s have=50476/50476
+bytes=605702/605702 head=True eof=True => OK

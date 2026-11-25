@@ -1,0 +1,1155 @@
+[arxiv_fetch] 2026-10-20T10:02:54.343693+00:00 | endpoint=https://export.arxiv.org/api/query | 窗口<=72h | 查询 15 次 | 保留 219 篇（丢弃 347）
+  ⏱ 口径: 日报口径：首次提交 <= 72h（window_mode=daily）
+
+- [cs.LG] Text-to-Image Generative Modeling Without Language Pretraining
+  arXiv:2610.26863v1 | 领域: 多模态/广度扫描 | published=2026-10-19T17:59:59Z updated=2026-10-19T17:59:59Z
+  作者: Keshigeyan Chandrasegaran, Yue Zhao, Armin W. Thomas et al
+  abs: https://arxiv.org/abs/2610.26863v1
+
+- [cs.CL] OpenVLHarness: Real World Visual Agentic Tool-Use with Multimodal Memory
+  arXiv:2610.26860v1 | 领域: LLM/agent harness/多模态/广度扫描 | published=2026-10-19T17:59:58Z updated=2026-10-19T17:59:58Z
+  作者: Yu Zhou, Cheng-Fu Yang, Rui Sun et al
+  abs: https://arxiv.org/abs/2610.26860v1
+
+- [cs.CV] Can It Actually Work? Synthesizing Functional CAD Mechanisms
+  arXiv:2610.26861v1 | 领域: 广度扫描 | published=2026-10-19T17:59:58Z updated=2026-10-19T17:59:58Z
+  作者: Wenqian Zhang, Yangyi Huang, Zigeng Xu et al
+  abs: https://arxiv.org/abs/2610.26861v1
+
+- [cs.CV] Reinforcement Learning with Visually Attributable On-Policy Self-Distillation
+  arXiv:2610.26856v1 | 领域: 多模态/广度扫描 | published=2026-10-19T17:59:56Z updated=2026-10-19T17:59:56Z
+  作者: Shiao Xie, Siyu Chen, Jianwei Lv et al
+  abs: https://arxiv.org/abs/2610.26856v1
+
+- [cs.CV] VideoMaMa++: Temporally Consistent Video Matting via Preserve-and-Refine Token
+  arXiv:2610.26857v1 | 领域: 广度扫描 | published=2026-10-19T17:59:56Z updated=2026-10-19T17:59:56Z
+  作者: Sangbeom Lim, Seoung Wug Oh, Heeji Yoon et al
+  abs: https://arxiv.org/abs/2610.26857v1
+
+- [cs.CV] Ropedia W0: Scaling Loco-Manipulation World Models across Embodiments with Human Experience
+  arXiv:2610.26855v1 | 领域: 多模态/广度扫描 | published=2026-10-19T17:59:55Z updated=2026-10-19T17:59:55Z
+  作者: Tianqi Liu, Hanfei Zhao, Qifeng Liang et al
+  abs: https://arxiv.org/abs/2610.26855v1
+
+- [cs.CV] InfiniDream: Open-Ended Photorealistic 3D Worlds Through Procedural Generation
+  arXiv:2610.26853v1 | 领域: 广度扫描 | published=2026-10-19T17:59:51Z updated=2026-10-19T17:59:51Z
+  作者: Yi-Chuan Huang, Hao-Jen Chien, Zheng-Hui Huang et al
+  abs: https://arxiv.org/abs/2610.26853v1
+
+- [cs.RO] CoopUQ: Robust Multi-Robot Social Navigation via Uncertainty-Aware Cooperative Forecasting
+  arXiv:2610.26852v1 | 领域: 广度扫描 | published=2026-10-19T17:59:49Z updated=2026-10-19T17:59:49Z
+  作者: Zehao Wang, Jianpeng Yao, Yuping Wang et al
+  abs: https://arxiv.org/abs/2610.26852v1
+
+- [cs.CV] Manga2Animate: An Agentic Framework for Faithful Manga Animation with Script and Storyboard Planning
+  arXiv:2610.26851v1 | 领域: 广度扫描 | published=2026-10-19T17:59:46Z updated=2026-10-19T17:59:46Z
+  作者: Sheng-Wei Zhang, Hsi-An Chen, Yan-Ting Liou et al
+  abs: https://arxiv.org/abs/2610.26851v1
+
+- [cs.CV] GenOlympiad: Benchmarking Frontier Image Models at Their Capability Boundaries
+  arXiv:2610.26850v1 | 领域: 广度扫描 | published=2026-10-19T17:59:41Z updated=2026-10-19T17:59:41Z
+  作者: Xi Hu, Martin Bell, Liang Zheng
+  abs: https://arxiv.org/abs/2610.26850v1
+
+- [cs.RO] Where is Physical RSI capability from? An Observational Scaling Law of LLM-as-policy
+  arXiv:2610.26848v1 | 领域: 广度扫描 | published=2026-10-19T17:59:30Z updated=2026-10-19T17:59:30Z
+  作者: Zekai Li, Jiayi Yu, Jinlu Zhang et al
+  abs: https://arxiv.org/abs/2610.26848v1
+
+- [cs.LG] WeAct: Dynamic Weight Switching as Agent Actions
+  arXiv:2610.26847v1 | 领域: 广度扫描 | published=2026-10-19T17:59:19Z updated=2026-10-19T17:59:19Z
+  作者: Rui Shi, Xunjian Yin, Jiacheng Sang et al
+  abs: https://arxiv.org/abs/2610.26847v1
+
+- [cs.AI] Train An Imaginative Agent
+  arXiv:2610.26845v1 | 领域: 广度扫描 | published=2026-10-19T17:59:12Z updated=2026-10-19T17:59:12Z
+  作者: Jiaxin Ge, Junyi Zhang, Tianning Chai et al
+  abs: https://arxiv.org/abs/2610.26845v1
+
+- [cs.AI] AnyGoal: On World Model Generalization Beyond Expert Rollouts
+  arXiv:2610.26844v1 | 领域: 广度扫描 | published=2026-10-19T17:59:05Z updated=2026-10-19T17:59:05Z
+  作者: Heejeong Nam, Divyat Mahajan, Quentin Le Lidec et al
+  abs: https://arxiv.org/abs/2610.26844v1
+
+- [cs.CL] LatComm: Reusable Context Compression for Latent Communication between Large Language Models
+  arXiv:2610.26840v1 | 领域: LLM/广度扫描 | published=2026-10-19T17:58:41Z updated=2026-10-19T17:58:41Z
+  作者: Huawei Lin, Jinting Liu, Tan Yu et al
+  abs: https://arxiv.org/abs/2610.26840v1
+
+- [math.OC] Newton-Based Methods for Bilevel Optimization Beyond Lower-Level Strong Convexity
+  arXiv:2610.26839v1 | 领域: 广度扫描 | published=2026-10-19T17:58:34Z updated=2026-10-19T17:58:34Z
+  作者: Youran Dong, Junfeng Yang, Wei Yao et al
+  abs: https://arxiv.org/abs/2610.26839v1
+
+- [cs.CV] SpecKCast: Spectral Kalman Forecasting for Diffusion Acceleration
+  arXiv:2610.26837v1 | 领域: 广度扫描 | published=2026-10-19T17:58:04Z updated=2026-10-19T17:58:04Z
+  作者: Javad Rajabi, Hakki Can Karaimer, David B. Lindell et al
+  abs: https://arxiv.org/abs/2610.26837v1
+
+- [cs.AI] Same Simulation, Different Evidence: Where Retrieved Tool Output Costs LLM Agents Accuracy
+  arXiv:2610.26836v1 | 领域: 广度扫描 | published=2026-10-19T17:57:41Z updated=2026-10-19T17:57:41Z
+  作者: Ke Zhang, Sahchit Chundur, Jerry Peprah Owusu et al
+  abs: https://arxiv.org/abs/2610.26836v1
+
+- [cs.LG] Kronecker Delta Rule for Long Context Linear Attention
+  arXiv:2610.26834v1 | 领域: 广度扫描 | published=2026-10-19T17:56:52Z updated=2026-10-19T17:56:52Z
+  作者: Anamaria-Roberta Hartl, Levente Zólyomi, Michael List et al
+  abs: https://arxiv.org/abs/2610.26834v1
+
+- [quant-ph] Supervised Learning with Quantum Hamiltonian Embeddings
+  arXiv:2610.26833v1 | 领域: 广度扫描 | published=2026-10-19T17:56:44Z updated=2026-10-19T17:56:44Z
+  作者: Riccardo Molteni, Minjun Jeon, Paolo Braccia et al
+  abs: https://arxiv.org/abs/2610.26833v1
+
+- [cs.CL] Competing Learning in Hybrid Architectures
+  arXiv:2610.26830v1 | 领域: 广度扫描 | published=2026-10-19T17:55:55Z updated=2026-10-19T17:55:55Z
+  作者: Xingyu Shen, Yingfa Chen, Ziqing Qiao et al
+  abs: https://arxiv.org/abs/2610.26830v1
+
+- [cs.AI] ProteinGeoBench: Frontier Structural-Biology Agents Are Fluent at Lookup but Lost in Geometry
+  arXiv:2610.26829v1 | 领域: 广度扫描 | published=2026-10-19T17:55:38Z updated=2026-10-19T17:55:38Z
+  作者: Matt Turk, Brandon L. Neel, Diana M. Lopez et al
+  abs: https://arxiv.org/abs/2610.26829v1
+
+- [cs.AI] Agent World Model in the Wild: Computer-Use Agent Environment Synthesis
+  arXiv:2610.26828v1 | 领域: agent harness/广度扫描 | published=2026-10-19T17:55:35Z updated=2026-10-19T17:55:35Z
+  作者: Zhaoyang Wang, Qianhui Wu, Haorui Wang et al
+  abs: https://arxiv.org/abs/2610.26828v1
+
+- [cs.CL] KEEP-Bench: Evaluating Evidence Preservation in Context Compression
+  arXiv:2610.26827v1 | 领域: LLM/广度扫描 | published=2026-10-19T17:55:18Z updated=2026-10-19T17:55:18Z
+  作者: Ziqing Man, Di Wu, Jia-Chen Gu et al
+  abs: https://arxiv.org/abs/2610.26827v1
+
+- [cs.CL] RefCraft: Benchmarking Visual-Reference-Conditioned Agentic Generation through Web Development
+  arXiv:2610.26826v1 | 领域: agent harness/多模态/广度扫描 | published=2026-10-19T17:55:06Z updated=2026-10-19T17:55:06Z
+  作者: Yuchi Wang, Rongyao Fang, Weihao Yu et al
+  abs: https://arxiv.org/abs/2610.26826v1
+
+- [cs.CL] MemT-1.0: Towards Memory-Native Evolution
+  arXiv:2610.26825v1 | 领域: 广度扫描/邻域 | published=2026-10-19T17:54:35Z updated=2026-10-19T17:54:35Z
+  作者: Zhiyu Li, Zeyu Zhang, Linyun Liu et al
+  abs: https://arxiv.org/abs/2610.26825v1
+
+- [cs.CL] SpecMRL: Redesign Matryoshka Representation Learning within Parametric Spectrum
+  arXiv:2610.26824v1 | 领域: 广度扫描 | published=2026-10-19T17:54:20Z updated=2026-10-19T17:54:20Z
+  作者: Zhongxin Chen, Songhao Wu, Heng Cui et al
+  abs: https://arxiv.org/abs/2610.26824v1
+
+- [cs.CL] AfriBED: a Speech Recognition Bias Evaluation Dataset for Low Resource African Languages
+  arXiv:2610.26821v1 | 领域: 广度扫描 | published=2026-10-19T17:53:32Z updated=2026-10-19T17:53:32Z
+  作者: Claytone Sikasote, Hussein Suleman, Jan Buys
+  abs: https://arxiv.org/abs/2610.26821v1
+
+- [cs.CV] Open-Form Geometric Style Transfer
+  arXiv:2610.26820v1 | 领域: 广度扫描 | published=2026-10-19T17:52:37Z updated=2026-10-19T17:52:37Z
+  作者: Adar Elad, Gal Metzer, Omer Dahari et al
+  abs: https://arxiv.org/abs/2610.26820v1
+
+- [cs.CL] ASTOR: Benchmarking and Improving Autoformulation for Soft-Constraint Optimization with a Formal Grammar
+  arXiv:2610.26819v1 | 领域: LLM/广度扫描 | published=2026-10-19T17:52:35Z updated=2026-10-19T17:52:35Z
+  作者: Amer Goel, Yeganeh Alimohammadi, Andrew Daw
+  abs: https://arxiv.org/abs/2610.26819v1
+
+- [cs.LG] Next Best Action: Causal Constrained Offline RL for Business Action Targeting
+  arXiv:2610.26817v1 | 领域: 广度扫描 | published=2026-10-19T17:51:53Z updated=2026-10-19T17:51:53Z
+  作者: Surya Ramachandiran, Yiming Li, Juan Mancilla-Caceres et al
+  abs: https://arxiv.org/abs/2610.26817v1
+
+- [cs.CV] Real-Time Radar Semantic and Panoptic Scene Understanding
+  arXiv:2610.26816v1 | 领域: 广度扫描 | published=2026-10-19T17:51:49Z updated=2026-10-19T17:51:49Z
+  作者: Santosh Parit, Julia Hindel, Rohit Mohan et al
+  abs: https://arxiv.org/abs/2610.26816v1
+
+- [cs.CV] PICA-WAM: Visual Perturbation Invariance via Cross-Appearance Self-Alignment in World Action Models
+  arXiv:2610.26813v1 | 领域: 广度扫描 | published=2026-10-19T17:50:59Z updated=2026-10-19T17:50:59Z
+  作者: Yude Zou, Yifei Yao, Guanbo Jiao et al
+  abs: https://arxiv.org/abs/2610.26813v1
+
+- [cs.CV] State World Models: Execute the Rules, Generate the Pixels
+  arXiv:2610.26811v1 | 领域: 广度扫描 | published=2026-10-19T17:50:32Z updated=2026-10-19T17:50:32Z
+  作者: Chan Yan Ki, Yanran Zhang, Wenzhao Zheng et al
+  abs: https://arxiv.org/abs/2610.26811v1
+
+- [cs.CL] Safety Mid-Training: Internalizing LLM Safety as a Foundational Capability
+  arXiv:2610.26809v1 | 领域: LLM/广度扫描 | published=2026-10-19T17:49:49Z updated=2026-10-19T17:49:49Z
+  作者: Zhengyue Zhao, Liwei Jiang, Yejin Choi et al
+  abs: https://arxiv.org/abs/2610.26809v1
+
+- [cs.CV] What Language Adds, and at What Cost: Four Controlled Probes of Pathology Vision-Language Models
+  arXiv:2610.26805v1 | 领域: 多模态/广度扫描 | published=2026-10-19T17:48:31Z updated=2026-10-19T17:48:31Z
+  作者: Wenhao Zhang, Zhongliang Zhou, Yi Ping et al
+  abs: https://arxiv.org/abs/2610.26805v1
+
+- [cs.LG] Scaling Parameter-Efficient Fine-Tuning for Brain Encoding
+  arXiv:2610.26802v1 | 领域: 广度扫描 | published=2026-10-19T17:46:08Z updated=2026-10-19T17:46:08Z
+  作者: Zhuofan Josh Ying, Guanglong Sun, Nolan Ho et al
+  abs: https://arxiv.org/abs/2610.26802v1
+
+- [cs.CV] Mise-en-Video: Fine-Grained 3D Control for Multi-Shot Video Generation
+  arXiv:2610.26801v1 | 领域: 广度扫描 | published=2026-10-19T17:45:43Z updated=2026-10-19T17:45:43Z
+  作者: Yingshuang Zou, Xiaoyu Shi, Yawen Luo et al
+  abs: https://arxiv.org/abs/2610.26801v1
+
+- [cs.LG] Learning to Refer: Inference-Time Collaboration in Decentralized Federated Learning
+  arXiv:2610.26800v1 | 领域: 广度扫描 | published=2026-10-19T17:44:55Z updated=2026-10-19T17:44:55Z
+  作者: Yuheng Ma, Chendi Wang, Qiong Zhang
+  abs: https://arxiv.org/abs/2610.26800v1
+
+- [stat.ML] Teacher Supervision, Fixed Representations and Calibration: Exact Risk Calculations for Candidate-Scoring Decision Models
+  arXiv:2610.26797v1 | 领域: 广度扫描 | published=2026-10-19T17:42:24Z updated=2026-10-19T17:42:24Z
+  作者: Agus Sudjianto, Denis Burakov
+  abs: https://arxiv.org/abs/2610.26797v1
+
+- [stat.ML] Cooperative Multi-Agent Reinforcement Learning for Market Making on Prediction-Market Order Books
+  arXiv:2610.26789v1 | 领域: agent harness | published=2026-10-19T17:38:36Z updated=2026-10-19T17:38:36Z
+  作者: Skander Lejmi
+  abs: https://arxiv.org/abs/2610.26789v1
+
+- [cs.CR] Game of Phones: Harnessing Game Theory and LLMs in 'Bot Wars' to Counteract Phone Scams
+  arXiv:2610.26781v1 | 领域: 邻域 | published=2026-10-19T17:35:02Z updated=2026-10-19T17:35:02Z
+  作者: Nardine Basta, Robin Carpentier, Benjamin Zi Hao Zhao et al
+  abs: https://arxiv.org/abs/2610.26781v1
+
+- [cs.LG] Topological Sheaves of Irreducibility: A Theoretical Framework for Multi-Agent Task Obstructions
+  arXiv:2610.26777v1 | 领域: agent harness | published=2026-10-19T17:30:40Z updated=2026-10-19T17:30:40Z
+  作者: Steven Motta, Davide Mambelli, Alessandro Rozza
+  abs: https://arxiv.org/abs/2610.26777v1
+
+- [cs.RO] HandsOn: A Large-Scale Simulation Benchmark for Generalizable Dexterous Manipulation
+  arXiv:2610.26765v1 | 领域: 多模态 | published=2026-10-19T17:22:48Z updated=2026-10-19T17:22:48Z
+  作者: Tianwei Luo, Yiming He, Hongjin Wu et al
+  abs: https://arxiv.org/abs/2610.26765v1
+
+- [cs.CL] TokenGate: Adapting LLMs for Fast and Memory-Efficient Prefill with Learned Token Pruning
+  arXiv:2610.26754v1 | 领域: LLM | published=2026-10-19T17:15:53Z updated=2026-10-19T17:15:53Z
+  作者: Liana Patel, Rishabh Ranjan, Ion Stoica et al
+  abs: https://arxiv.org/abs/2610.26754v1
+
+- [cs.CV] Beyond Omni: A Unified MLLM for Embodied Sensory Understanding
+  arXiv:2610.26751v1 | 领域: 多模态 | published=2026-10-19T17:14:37Z updated=2026-10-19T17:14:37Z
+  作者: Shiyun Xiong, Dongming Wu, Peiwen Sun et al
+  abs: https://arxiv.org/abs/2610.26751v1
+
+- [cs.LG] recAMPLIFY: Large-Scale Pretraining of Recursive Protein Language Models
+  arXiv:2610.26747v1 | 领域: 邻域 | published=2026-10-19T17:12:55Z updated=2026-10-19T17:12:55Z
+  作者: Saurav Jha, Qianli Liao, Robert Vernon et al
+  abs: https://arxiv.org/abs/2610.26747v1
+
+- [cs.LG] CAVA: Complementary-Label-Aware Data Valuation
+  arXiv:2610.26734v1 | 领域: 多模态 | published=2026-10-19T17:00:37Z updated=2026-10-19T17:00:37Z
+  作者: Tan-Ha Mai, Hsuan-Tien Lin, Vu Nguyen
+  abs: https://arxiv.org/abs/2610.26734v1
+
+- [cs.CL] EpiLens: Lightweight RAG for Epidemiological Knowledge Acquisition
+  arXiv:2610.26730v1 | 领域: LLM/邻域 | published=2026-10-19T16:58:53Z updated=2026-10-19T16:58:53Z
+  作者: Vincenzo Perri, Ciro Cattuto, Daniela Paolotti
+  abs: https://arxiv.org/abs/2610.26730v1
+
+- [cs.AR] Injection of Space Radiation Errors on Low-power NVM using Generative Deep Learning
+  arXiv:2610.26724v1 | 领域: SLM | published=2026-10-19T16:52:00Z updated=2026-10-19T16:52:00Z
+  作者: Eleonora Giudici, Antonio Miele, Luca Mottola
+  abs: https://arxiv.org/abs/2610.26724v1
+
+- [cs.RO] Robot Learning with Vision-Language-Action Models for Agricultural Manipulation
+  arXiv:2610.26717v1 | 领域: 多模态 | published=2026-10-19T16:49:17Z updated=2026-10-19T16:49:17Z
+  作者: Hamid Hafezi, Javad Mohammadpour Velni, Mohammadreza Davoodi
+  abs: https://arxiv.org/abs/2610.26717v1
+
+- [cs.CV] CaptionFuse: Training-Free Composed Product Retrieval Via VLM Intent Captioning and Weighted Embedding Fusion
+  arXiv:2610.26661v1 | 领域: 多模态 | published=2026-10-19T16:18:52Z updated=2026-10-19T16:18:52Z
+  作者: Zhao Gao, Mina Metias, Mohamed Noordeen Alaudeen et al
+  abs: https://arxiv.org/abs/2610.26661v1
+
+- [cs.CV] SpatialScout: Can VLM Agents Actively Explore and Map 3D Scenes?
+  arXiv:2610.26659v1 | 领域: 多模态 | published=2026-10-19T16:17:48Z updated=2026-10-19T16:17:48Z
+  作者: Zhaoxi Zhang, Hao Liang, Linxuan Wu et al
+  abs: https://arxiv.org/abs/2610.26659v1
+
+- [cs.CR] Beyond Attack Success Rate: Cost-Aware Metric for Evaluating Iterative LLM Jailbreaks
+  arXiv:2610.26589v1 | 领域: LLM | published=2026-10-19T15:36:41Z updated=2026-10-19T15:36:41Z
+  作者: Rohan Menon, Chih-Hong Cheng
+  abs: https://arxiv.org/abs/2610.26589v1
+
+- [cs.CV] Drive2Gauss: FeedForward 4D Gaussian Reconstruction from Multimodal Generative Driving Videos
+  arXiv:2610.26585v1 | 领域: 多模态 | published=2026-10-19T15:34:28Z updated=2026-10-19T15:34:28Z
+  作者: Tong Zhao, Zhiyuan Han, Lin Chen et al
+  abs: https://arxiv.org/abs/2610.26585v1
+
+- [cs.RO] HAF-VLA: Hierarchical Action Flow Framework for Humanoid Vision-Language-Action Control
+  arXiv:2610.26584v1 | 领域: 多模态 | published=2026-10-19T15:33:34Z updated=2026-10-19T15:33:34Z
+  作者: Langzhe Gu, Chengkai Hou, Meng Li et al
+  abs: https://arxiv.org/abs/2610.26584v1
+
+- [cs.AI] Training Natural Schemers: RL Can Amplify Oversight-Conditional Behavior
+  arXiv:2610.26551v1 | 领域: 邻域 | published=2026-10-19T15:12:41Z updated=2026-10-19T15:12:41Z
+  作者: Bart Jaworski, Nathaniel Mitrani, Fred Bruford et al
+  abs: https://arxiv.org/abs/2610.26551v1
+
+- [cs.HC] Small Average Error, Wide Individual Error: General-Purpose LLMs Estimating Energy Intake from Meal Photos in a Feeding Trial
+  arXiv:2610.26538v1 | 领域: 多模态 | published=2026-10-19T15:00:20Z updated=2026-10-19T15:00:20Z
+  作者: Xiaomeng Li
+  abs: https://arxiv.org/abs/2610.26538v1
+
+- [cs.AI] Beyond Behavioral Accuracy: Evaluating Individual-Level Fidelity in LLM Investor Simulation
+  arXiv:2610.26524v1 | 领域: 邻域 | published=2026-10-19T14:54:08Z updated=2026-10-19T14:54:08Z
+  作者: Jiajie He, Yuanhong Jiang, Xintong Chen et al
+  abs: https://arxiv.org/abs/2610.26524v1
+
+- [cs.AI] RouterWorld: Scaling Conversational AI with Latency-Aware LLM Routing
+  arXiv:2610.26511v1 | 领域: LLM | published=2026-10-19T14:45:25Z updated=2026-10-19T14:45:25Z
+  作者: Jinyang Li, Denis Emelin, Simone Tedeschi et al
+  abs: https://arxiv.org/abs/2610.26511v1
+
+- [cs.AI] ScopeMem: Latent Memory That Learns Where to Revise Frozen GUI Agents
+  arXiv:2610.26503v1 | 领域: 多模态 | published=2026-10-19T14:38:41Z updated=2026-10-19T14:38:41Z
+  作者: Zhicheng Zheng, Cheng Zhang, Shengping Yu et al
+  abs: https://arxiv.org/abs/2610.26503v1
+
+- [cs.RO] SPAR: Structural Pruning and Action Recovery for Vision-Language-Action Models
+  arXiv:2610.26487v1 | 领域: 多模态 | published=2026-10-19T14:28:51Z updated=2026-10-19T14:28:51Z
+  作者: Shenli Zheng, Zhou Fang, Yuan Du et al
+  abs: https://arxiv.org/abs/2610.26487v1
+
+- [cs.CL] AfriGuard: Safety and Robust Refusal For African Languages
+  arXiv:2610.26474v1 | 领域: LLM | published=2026-10-19T14:21:55Z updated=2026-10-19T14:21:55Z
+  作者: Israel Abebe Azime, Jesujoba O. Alabi, Iffat Maab et al
+  abs: https://arxiv.org/abs/2610.26474v1
+
+- [eess.IV] Progressive multi-scale tumor-state memory for incomplete multimodal brain tumor segmentation
+  arXiv:2610.26457v1 | 领域: 多模态 | published=2026-10-19T14:11:09Z updated=2026-10-19T14:11:09Z
+  作者: Milad Rostamian, Mohammadreza Mohammadi, Mohsen Soryani
+  abs: https://arxiv.org/abs/2610.26457v1
+
+- [cs.RO] ALIGN: Aligning Condition Estimation and Expression in Advantage-Conditioned Behavior Cloning
+  arXiv:2610.26455v1 | 领域: 多模态/邻域 | published=2026-10-19T14:10:26Z updated=2026-10-19T14:10:26Z
+  作者: Zechen Wang, Zhenqi Qiu, Houlong Xiong et al
+  abs: https://arxiv.org/abs/2610.26455v1
+
+- [cs.LG] Rethinking LLM Fine-Tuning via Weight Space Reparameterization: Preserving Safety during Downstream Adaptation
+  arXiv:2610.26443v1 | 领域: 邻域 | published=2026-10-19T14:02:31Z updated=2026-10-19T14:02:31Z
+  作者: Minseong Kim, Jongbok Won, Jeesup Park et al
+  abs: https://arxiv.org/abs/2610.26443v1
+
+- [cs.CV] Long-form Video-to-Text Summarization using Recursive Language Models
+  arXiv:2610.26431v1 | 领域: 多模态 | published=2026-10-19T13:56:33Z updated=2026-10-19T13:56:33Z
+  作者: Alessia Intini, Lorenzo Vaiani, Enrico Chen et al
+  abs: https://arxiv.org/abs/2610.26431v1
+
+- [cs.CR] Temporal Dynamics and Security Assessment of SRT Protocol: A 96-Day Longitudinal Analysis of Production Streaming Infrastructure
+  arXiv:2610.26402v1 | 领域: 多模态 | published=2026-10-19T13:43:41Z updated=2026-10-19T13:43:41Z
+  作者: Ahmed F. K. Koysha, Ferdi Sönmez
+  abs: https://arxiv.org/abs/2610.26402v1
+
+- [cs.CL] How Benchmark Graph Construction Shapes Multi-Hop KG Navigation: A Controlled Audit of PathQuestion and PathQuestion-Large
+  arXiv:2610.26399v1 | 领域: SLM | published=2026-10-19T13:41:58Z updated=2026-10-19T13:41:58Z
+  作者: Eduin E. Hernandez, Sergio A. Diaz, Luis F. Garcia et al
+  abs: https://arxiv.org/abs/2610.26399v1
+
+- [cs.RO] Cartender: Verifiable Language-Conditioned Driving by Learning the Drives Not Taken
+  arXiv:2610.26390v1 | 领域: 多模态 | published=2026-10-19T13:38:00Z updated=2026-10-19T13:38:00Z
+  作者: Zhiwen Chen, Benjin Zhu, Yan Xie et al
+  abs: https://arxiv.org/abs/2610.26390v1
+
+- [cs.AI] Autonomous intelligence for mining productivity: a multi-agent AI approach to operational value creation
+  arXiv:2610.26369v1 | 领域: agent harness | published=2026-10-19T13:24:44Z updated=2026-10-19T13:24:44Z
+  作者: N Guerin, A Dehoux, M Nakhla
+  abs: https://arxiv.org/abs/2610.26369v1
+
+- [cs.CV] HGASurv: Hierarchical Granularity-Aware Integration for Multimodal Survival Prediction
+  arXiv:2610.26357v1 | 领域: 多模态 | published=2026-10-19T13:19:03Z updated=2026-10-19T13:19:03Z
+  作者: Peike Yu, Wuchao Liu, Jihong Guan et al
+  abs: https://arxiv.org/abs/2610.26357v1
+
+- [eess.SY] PhyPro-FM: A Physics and Prompt-Guided Graph Foundation Model for Contingency Analysis
+  arXiv:2610.26351v1 | 领域: 邻域 | published=2026-10-19T13:16:43Z updated=2026-10-19T13:16:43Z
+  作者: Xu Yang, Zhanyuan Sheng, Chenhui Lin et al
+  abs: https://arxiv.org/abs/2610.26351v1
+
+- [cs.AI] VibeTraining-Bench: Data-Trainer-Harness Co-Design for Iterative System Improvement
+  arXiv:2610.26342v1 | 领域: agent harness | published=2026-10-19T13:10:54Z updated=2026-10-19T13:10:54Z
+  作者: Ruotian Peng, Yuanyi Ren, Shuaiqi Liu et al
+  abs: https://arxiv.org/abs/2610.26342v1
+
+- [cs.CL] Large-Scale Biomedical RAG: Corpus Scaling, Document Representation, and Efficiency Trade-offs
+  arXiv:2610.26339v1 | 领域: 邻域 | published=2026-10-19T13:08:38Z updated=2026-10-19T13:08:38Z
+  作者: Adrián Sánchez-Freire, Gonzalo Pérez-Gómez, Aitziber Atutxa et al
+  abs: https://arxiv.org/abs/2610.26339v1
+
+- [cs.AI] StrucChunk: Structure-Aware Retrieval for Legal Document RAG
+  arXiv:2610.26313v1 | 领域: 邻域 | published=2026-10-19T12:56:58Z updated=2026-10-19T12:56:58Z
+  作者: Surya Deep Singh, Ashutosh Tripathi, Gaurav Deep Singh
+  abs: https://arxiv.org/abs/2610.26313v1
+
+- [cs.CL] Answering While You Type: Optimizing Time-to-Answer with Streaming Generation
+  arXiv:2610.26296v1 | 领域: LLM | published=2026-10-19T12:46:05Z updated=2026-10-19T12:46:05Z
+  作者: Nikita Dragunov, Matvey Mikhalchuk, Anton Razzhigaev
+  abs: https://arxiv.org/abs/2610.26296v1
+
+- [cs.RO] Robotic Photography System based on Vision-Language-Action Model
+  arXiv:2610.26287v1 | 领域: 多模态/邻域 | published=2026-10-19T12:38:13Z updated=2026-10-19T12:38:13Z
+  作者: Song-Li Wu, Chubin Zhang, Wenbo Ding et al
+  abs: https://arxiv.org/abs/2610.26287v1
+
+- [cs.ET] Bidirectionality is Necessary in Cellular Machines for Exact-Arrival Multi-Agent Path Finding
+  arXiv:2610.26272v1 | 领域: agent harness | published=2026-10-19T12:28:00Z updated=2026-10-19T12:28:00Z
+  作者: Masashi Aono
+  abs: https://arxiv.org/abs/2610.26272v1
+
+- [cs.CV] XGLASS: X-Ray, Gaze and Language Assisted Slice Sequencing for CT Volumes
+  arXiv:2610.26255v1 | 领域: 多模态 | published=2026-10-19T12:13:30Z updated=2026-10-19T12:13:30Z
+  作者: Michael Glöckler, Timo Ropinski
+  abs: https://arxiv.org/abs/2610.26255v1
+
+- [cs.AI] Machina Pauliana: A neuro-symbolic approach to the actio pauliana in Dutch insolvency law
+  arXiv:2610.26241v1 | 领域: 邻域 | published=2026-10-19T12:02:03Z updated=2026-10-19T12:02:03Z
+  作者: Daan Boven, Gregor Behnke, David Graus
+  abs: https://arxiv.org/abs/2610.26241v1
+
+- [cs.CV] Focused Omni-Modal GUI Agents
+  arXiv:2610.26203v1 | 领域: 多模态 | published=2026-10-19T11:30:48Z updated=2026-10-19T11:30:48Z
+  作者: Fuyao Zhang, Wenwen He, Jiaming Zhang et al
+  abs: https://arxiv.org/abs/2610.26203v1
+
+- [cs.CV] GeoEdit: Adversarial De-Evidencing for Silent Geoprivacy Protection via Image Editing
+  arXiv:2610.26194v1 | 领域: 多模态 | published=2026-10-19T11:23:14Z updated=2026-10-19T11:23:14Z
+  作者: Yu Yan, Shengjia Cheng, Fei Ma et al
+  abs: https://arxiv.org/abs/2610.26194v1
+
+- [cs.CL] VEILED-SH: Vulnerability Expression through Indirect Language Evaluation Dataset (Self-Harm)
+  arXiv:2610.26190v1 | 领域: 邻域 | published=2026-10-19T11:18:19Z updated=2026-10-19T11:18:19Z
+  作者: Leanne Tan, Keith Chua, Shaun Khoo et al
+  abs: https://arxiv.org/abs/2610.26190v1
+
+- [cs.SD] Applicability and Generalization of Audio Fingerprinting Methods to Speech
+  arXiv:2610.26112v1 | 领域: 多模态 | published=2026-10-19T10:08:38Z updated=2026-10-19T10:08:38Z
+  作者: Kemal Altwlkany, Elmedin Selmanovic, Sead Delalić et al
+  abs: https://arxiv.org/abs/2610.26112v1
+
+- [cs.RO] A GPU-Resident Pipeline for Multi-Robot 3D Inspection with Limited Perception
+  arXiv:2610.26106v1 | 领域: agent harness | published=2026-10-19T10:02:12Z updated=2026-10-19T10:02:12Z
+  作者: Kryštof Pšenička, Stefan Edelkamp
+  abs: https://arxiv.org/abs/2610.26106v1
+
+- [cs.LG] Provable Adversarial Detection: Prime Quantization meets Gromov--Wasserstein
+  arXiv:2610.26102v1 | 领域: 多模态 | published=2026-10-19T10:00:07Z updated=2026-10-19T10:00:07Z
+  作者: Manohar Kaul, Sadbhavana Babar, Aditya Ramesh et al
+  abs: https://arxiv.org/abs/2610.26102v1
+
+- [cs.CV] Context-Aware Topological Distillation Graph Network for Asymmetric EEG-Eye Movement Emotion Recognition
+  arXiv:2610.26084v1 | 领域: 多模态 | published=2026-10-19T09:43:01Z updated=2026-10-19T09:43:01Z
+  作者: Peijun Shi, Xiujin Zhu, Zhenguo Lao et al
+  abs: https://arxiv.org/abs/2610.26084v1
+
+- [cs.CV] DCR-TSF: Dual-Level Compositional Reasoning with Triadic Spherical Fusion for Training-Free Zero-Shot Composed Image Retrieval
+  arXiv:2610.26078v1 | 领域: 多模态 | published=2026-10-19T09:34:58Z updated=2026-10-19T09:34:58Z
+  作者: Gwang-Ho Na, Ho-Joong Kim, Seong-Whan Lee
+  abs: https://arxiv.org/abs/2610.26078v1
+
+- [cs.CV] AVTime: Reinforcing Dense Audio-Visual Captions with Bidirectional Alignment
+  arXiv:2610.26046v1 | 领域: 多模态 | published=2026-10-19T09:05:39Z updated=2026-10-19T09:05:39Z
+  作者: Mingyang Wu, Kaituo Feng, Bohao Li et al
+  abs: https://arxiv.org/abs/2610.26046v1
+
+- [cs.LG] Truncate or Not? A Scaling Study of Looped Transformers with Truncated Backpropagation
+  arXiv:2610.26030v1 | 领域: LLM | published=2026-10-19T08:52:29Z updated=2026-10-19T08:52:29Z
+  作者: Xuyuan Xiong, Siyu Chen, Zihan Shao et al
+  abs: https://arxiv.org/abs/2610.26030v1
+
+- [cs.CV] TamedFlow: Trajectory-Aware Distillation\\for Teacher-Assisted Diffusion Sampling
+  arXiv:2610.26025v1 | 领域: 邻域 | published=2026-10-19T08:48:14Z updated=2026-10-19T08:48:14Z
+  作者: Shuaiqi Cheng, Jiahao Zhang, Boyuan Gu et al
+  abs: https://arxiv.org/abs/2610.26025v1
+
+- [cs.CV] FrameGRPO: Incentivizing Video Reasoning via Multi-Frame Rollouts and Temporal Credit
+  arXiv:2610.26022v1 | 领域: 多模态/邻域 | published=2026-10-19T08:45:21Z updated=2026-10-19T08:45:21Z
+  作者: Jiaxuan Sun, Biao Wang, Shuai Li
+  abs: https://arxiv.org/abs/2610.26022v1
+
+- [cs.AI] Understanding When Reflective Prompt and Skill Optimization Helps on Locally Served Reasoning Models: A Two-Model Study of GEPA and SkillOpt
+  arXiv:2610.26020v1 | 领域: 邻域 | published=2026-10-19T08:45:07Z updated=2026-10-19T08:45:07Z
+  作者: Andrea Giummarra, Carmelo Baglieri, Antonio Di Maria et al
+  abs: https://arxiv.org/abs/2610.26020v1
+
+- [cs.CR] SpanGuard: Decoupling Instruction Localization from Authorization for Lightweight IPI Defense
+  arXiv:2610.26013v1 | 领域: SLM | published=2026-10-19T08:36:20Z updated=2026-10-19T08:36:20Z
+  作者: Yinxiang Wang, Zehua Ma, Kejiang Chen et al
+  abs: https://arxiv.org/abs/2610.26013v1
+
+- [cs.AI] TimesJev: Thinking Fast on Time Series with System 1 Sufficiency
+  arXiv:2610.26002v1 | 领域: 邻域 | published=2026-10-19T08:26:07Z updated=2026-10-19T08:26:07Z
+  作者: Chenghao Liu, Wei Fan, Jindong Han et al
+  abs: https://arxiv.org/abs/2610.26002v1
+
+- [cs.CL] TempoMoE: Identifying and Steering Fast-Slow Thinking Experts for Efficient Multimodal Reasoning
+  arXiv:2610.25999v1 | 领域: 多模态 | published=2026-10-19T08:22:28Z updated=2026-10-19T08:22:28Z
+  作者: Xiyue Zhang, Keru Zhou, Ziyi Wang et al
+  abs: https://arxiv.org/abs/2610.25999v1
+
+- [cs.CR] NIOCIS: Typed-Decision Next-Hop Routing with Node-Conditioned Option Spaces for Tool-Use Agents
+  arXiv:2610.25985v1 | 领域: agent harness | published=2026-10-19T08:10:26Z updated=2026-10-19T08:10:26Z
+  作者: Jin Han, Mingfeng Xin, Feng Liang et al
+  abs: https://arxiv.org/abs/2610.25985v1
+
+- [cs.RO] FR-VLA: Implicit Force Reasoning VLA for Contact-Rich Manipulation
+  arXiv:2610.25981v1 | 领域: 多模态 | published=2026-10-19T08:08:41Z updated=2026-10-19T08:08:41Z
+  作者: Jiaju He, Zhiyuan Yang, Ruyang Han et al
+  abs: https://arxiv.org/abs/2610.25981v1
+
+- [cs.RO] PaceVLA: Adaptive Temporal Action Quantization in Vision-Language-Action Models
+  arXiv:2610.25961v1 | 领域: 多模态 | published=2026-10-19T07:54:13Z updated=2026-10-19T07:54:13Z
+  作者: Hojin Jeon, Jimin Lee, Taekwan Kim et al
+  abs: https://arxiv.org/abs/2610.25961v1
+
+- [cs.AI] Productive State-Space Exploration for Multi-turn RL in LLM Agents
+  arXiv:2610.25957v1 | 领域: 邻域 | published=2026-10-19T07:49:35Z updated=2026-10-19T07:49:35Z
+  作者: Mohammed Haroon Dupty, Yong Liang Goh, Song Guo et al
+  abs: https://arxiv.org/abs/2610.25957v1
+
+- [cs.AI] CXBench: A Benchmark for Process-Compliant LLM Agents in Regulated Customer-Experience Workflows
+  arXiv:2610.25954v1 | 领域: agent harness | published=2026-10-19T07:46:04Z updated=2026-10-19T07:46:04Z
+  作者: Boxi Yu, Yuzhong Zhang, Zhenfeng Su et al
+  abs: https://arxiv.org/abs/2610.25954v1
+
+- [cs.CL] AdaExploreBench: Benchmarking LLM Agents for Proactive Exploration and Test-time Adaptation in Evolving Environments
+  arXiv:2610.25950v1 | 领域: LLM | published=2026-10-19T07:41:50Z updated=2026-10-19T07:41:50Z
+  作者: Rui Wang, Zishen Lai, Jiayu Liu et al
+  abs: https://arxiv.org/abs/2610.25950v1
+
+- [cs.CL] MITRA-lexicon: Lexica of attested translations from Sanskrit into English, Tibetan and Chinese
+  arXiv:2610.25934v1 | 领域: LLM | published=2026-10-19T07:31:42Z updated=2026-10-19T07:31:42Z
+  作者: Sebastian Nehrdich, Kengo Harimoto, Sven Sellmer et al
+  abs: https://arxiv.org/abs/2610.25934v1
+
+- [cs.CV] MIRA: A Multimodal Illustrated Deep Research Agent for Controllable Reports
+  arXiv:2610.25926v1 | 领域: 多模态 | published=2026-10-19T07:24:44Z updated=2026-10-19T07:24:44Z
+  作者: Hongrui Wu, Kaiwen Tuo, Congcong Wang et al
+  abs: https://arxiv.org/abs/2610.25926v1
+
+- [cs.LG] UtilityBench: Measuring Language Model Utility When Errors Have Different Costs
+  arXiv:2610.25924v1 | 领域: 邻域 | published=2026-10-19T07:23:43Z updated=2026-10-19T07:23:43Z
+  作者: Qifeng Lei, Zhiyong Yang, Zitai Wang et al
+  abs: https://arxiv.org/abs/2610.25924v1
+
+- [cs.CV] SAPO: Self-Supervised Attention Policy Optimization for Improving Temporal Video Grounding in Vision-Language Models
+  arXiv:2610.25923v1 | 领域: 多模态 | published=2026-10-19T07:23:25Z updated=2026-10-19T07:23:25Z
+  作者: Zixuan Chen, Depeng Wang, Wei Chen et al
+  abs: https://arxiv.org/abs/2610.25923v1
+
+- [cs.CL] LEAPS: Long-context Evaluation of Adaptive Pattern Learning and State Tracking
+  arXiv:2610.25919v1 | 领域: LLM | published=2026-10-19T07:19:45Z updated=2026-10-19T07:19:45Z
+  作者: Howard Yen, Nitya Mani, Alex Renda et al
+  abs: https://arxiv.org/abs/2610.25919v1
+
+- [cs.CR] Secure Agentic Coding through Counterexample-Grounded Feedback
+  arXiv:2610.25916v1 | 领域: 邻域 | published=2026-10-19T07:18:34Z updated=2026-10-19T07:18:34Z
+  作者: Tue Le, Anh Nguyen Hoang, Gabriel Sasseville et al
+  abs: https://arxiv.org/abs/2610.25916v1
+
+- [cs.CL] FisherEdit: Fisher Information Guided Knowledge Editing for Large Language Models
+  arXiv:2610.25914v1 | 领域: LLM | published=2026-10-19T07:17:16Z updated=2026-10-19T07:17:16Z
+  作者: Yizhou Yang, Jiahong Fu, Zhiwu Wang et al
+  abs: https://arxiv.org/abs/2610.25914v1
+
+- [cs.CR] Budgeted Attack Scheduling for LLM Red-Teaming: The Roles of Static Priors, Semantic Guidance, and Online Feedback
+  arXiv:2610.25897v1 | 领域: LLM | published=2026-10-19T06:54:41Z updated=2026-10-19T06:54:41Z
+  作者: Zhicheng Fang, Han Sun, Jiachen Lei et al
+  abs: https://arxiv.org/abs/2610.25897v1
+
+- [cs.RO] Vision-Language-Delta-Action: Learning Compact Deltas as Actionable Transition Interfaces for Robotic Manipulation
+  arXiv:2610.25874v1 | 领域: 多模态 | published=2026-10-19T06:35:26Z updated=2026-10-19T06:35:26Z
+  作者: Lingsen Zhang, Wei Li, Jie He et al
+  abs: https://arxiv.org/abs/2610.25874v1
+
+- [cs.MA] Learning Who Talks to Whom: Role-Aware Communication Topology Scheduling for Efficient LLM Multi-Agent Collaboration
+  arXiv:2610.25851v1 | 领域: agent harness | published=2026-10-19T06:07:25Z updated=2026-10-19T06:07:25Z
+  作者: Haibin Li, Wenya Yu, Xuefeng Jiang et al
+  abs: https://arxiv.org/abs/2610.25851v1
+
+- [cs.CL] Measurement Validity and Representation Dynamics of Confidence Signals in Large Language Models
+  arXiv:2610.25846v1 | 领域: LLM | published=2026-10-19T06:04:38Z updated=2026-10-19T06:04:38Z
+  作者: Debojeet Ghosh, Shreyansh Kumar, Ayushman Garg
+  abs: https://arxiv.org/abs/2610.25846v1
+
+- [cs.AI] Not Every Rollout Needs Distillation: Correctness-Filtered On-Policy Self-Distillation
+  arXiv:2610.25842v1 | 领域: 邻域 | published=2026-10-19T05:55:07Z updated=2026-10-19T05:55:07Z
+  作者: Harrison Zhao, Lei Huang, Fei Liu et al
+  abs: https://arxiv.org/abs/2610.25842v1
+
+- [cs.SE] From Finding to Fixing: How Useful is Fault Localization for Agentic Program Repair?
+  arXiv:2610.25826v1 | 领域: agent harness | published=2026-10-19T05:43:24Z updated=2026-10-19T05:43:24Z
+  作者: Xinyu Shi, Zhou Yang, An Ran Chen
+  abs: https://arxiv.org/abs/2610.25826v1
+
+- [cs.LG] Communication-Efficient Federated Domain Generalization in Edge Networks via Dynamic Prototype Regulation
+  arXiv:2610.25810v1 | 领域: 多模态 | published=2026-10-19T05:19:48Z updated=2026-10-19T05:19:48Z
+  作者: Yuankun Xia, Hui Wang, Ling Yuan et al
+  abs: https://arxiv.org/abs/2610.25810v1
+
+- [cs.AI] Standing on the Shoulders of Giants: Enhancing LLM Agents for Automated Fact-Checking with Human Expert Skills
+  arXiv:2610.25777v1 | 领域: LLM | published=2026-10-19T04:44:26Z updated=2026-10-19T04:44:26Z
+  作者: Xinwen Chen, Haorui He, Yupeng Li
+  abs: https://arxiv.org/abs/2610.25777v1
+
+- [cs.CV] VHA: VQA-based Hallucination Assessment for Generative Image Super-Resolution
+  arXiv:2610.25770v1 | 领域: 多模态 | published=2026-10-19T04:34:57Z updated=2026-10-19T04:34:57Z
+  作者: Donghun Ryou, Inju Ha, Jaeyoo Park et al
+  abs: https://arxiv.org/abs/2610.25770v1
+
+- [cs.CL] Truncated Reasoning Under a Budget: Evaluating System-1 Models as Decision-makers
+  arXiv:2610.25768v1 | 领域: LLM | published=2026-10-19T04:29:19Z updated=2026-10-19T04:29:19Z
+  作者: Zhongyin Wang, Zhaoqian Xue, Junting Mu et al
+  abs: https://arxiv.org/abs/2610.25768v1
+
+- [cs.AI] EvalRx: Agentic Diagnosis and Verified Repair of Foundation Models
+  arXiv:2610.25767v1 | 领域: 多模态 | published=2026-10-19T04:28:22Z updated=2026-10-19T04:28:22Z
+  作者: Jiaqi Liu, Ruinan Jin, Yitong Tang et al
+  abs: https://arxiv.org/abs/2610.25767v1
+
+- [cs.IR] MAPS: A Multi-Agent Personalized Script-Driven Video Advertising System Enhanced by Reinforcement Learning
+  arXiv:2610.25748v1 | 领域: agent harness | published=2026-10-19T04:00:27Z updated=2026-10-19T04:00:27Z
+  作者: Zhongyu Wang, Chen Zuo, Qingxuan Sun et al
+  abs: https://arxiv.org/abs/2610.25748v1
+
+- [cs.CV] Think Densely, Act Sparsely: Latent Expert Cognitive Chains for Vision-Language-Action Autonomous Driving
+  arXiv:2610.25734v1 | 领域: 多模态 | published=2026-10-19T03:37:38Z updated=2026-10-19T03:37:38Z
+  作者: Jie Wang, Guang Li, Zhijian Huang et al
+  abs: https://arxiv.org/abs/2610.25734v1
+
+- [cs.CL] No Matter Who You Are: Addressivity and Sycophancy in Large Language Models
+  arXiv:2610.25728v1 | 领域: LLM/邻域 | published=2026-10-19T03:31:43Z updated=2026-10-19T03:31:43Z
+  作者: Seungjong Sun, Hyunmin Jun, Minsik Yoon et al
+  abs: https://arxiv.org/abs/2610.25728v1
+
+- [cs.CL] Inside the Scorer: Mechanistic Evidence on Rubric Control in LLM-Based Automated Essay Scoring from 25 Base Models
+  arXiv:2610.25724v1 | 领域: LLM | published=2026-10-19T03:26:30Z updated=2026-10-19T03:26:30Z
+  作者: Chungche Huang, Po-Ya Angela Wang, Shu-Kai Hsieh
+  abs: https://arxiv.org/abs/2610.25724v1
+
+- [cs.CV] Multi-View Structural Representations for Physically-Consistent TeX Generation
+  arXiv:2610.25695v1 | 领域: 多模态 | published=2026-10-19T02:42:01Z updated=2026-10-19T02:42:01Z
+  作者: Daoheng Li, Jianjun Qian*, Mengkai Yan et al
+  abs: https://arxiv.org/abs/2610.25695v1
+
+- [cs.AI] ToolOPD: Credit-Aware On-Policy Distillation for Tool-Use Agents
+  arXiv:2610.25693v1 | 领域: agent harness | published=2026-10-19T02:41:31Z updated=2026-10-19T02:41:31Z
+  作者: Chu Zhao, Lei Tang, Yanming Wang et al
+  abs: https://arxiv.org/abs/2610.25693v1
+
+- [cs.LG] Progress-Guided Preference Generation for Aligning Generative Control Policies
+  arXiv:2610.25692v1 | 领域: 邻域 | published=2026-10-19T02:38:31Z updated=2026-10-19T02:38:31Z
+  作者: Tung M. Luu, Tri Ton, Duc M. Nguyen et al
+  abs: https://arxiv.org/abs/2610.25692v1
+
+- [cs.LG] MT-CC: Multi-Group Temperature Scaling for Asymmetric Calibration Behavior in Class-Incremental Learning
+  arXiv:2610.25689v1 | 领域: 邻域 | published=2026-10-19T02:37:09Z updated=2026-10-19T02:37:09Z
+  作者: Sungjun Yun, Yonghee Choi, Dong-Jun Han
+  abs: https://arxiv.org/abs/2610.25689v1
+
+- [cs.RO] Revealing and Bridging the Physical Executability Gap in Vision-Language Navigation
+  arXiv:2610.25687v1 | 领域: 多模态 | published=2026-10-19T02:36:31Z updated=2026-10-19T02:36:31Z
+  作者: Gang He, Zhile Cheng, Kepeng Xu et al
+  abs: https://arxiv.org/abs/2610.25687v1
+
+- [cs.AI] When Safety Fails Collectively: Robust Alignment Against Harmful Fine-Tuning via Joint Weight Perturbations
+  arXiv:2610.25683v1 | 领域: 邻域 | published=2026-10-19T02:32:48Z updated=2026-10-19T02:32:48Z
+  作者: Zhiyuan Wang, Yuezhi Zhou, Zhu Zhang et al
+  abs: https://arxiv.org/abs/2610.25683v1
+
+- [cs.AI] BitFlat: Error-Localized Bitstream Design for Robust Diffusion Image Compression
+  arXiv:2610.25682v1 | 领域: 邻域 | published=2026-10-19T02:32:22Z updated=2026-10-19T02:32:22Z
+  作者: Xinfeng Deng, Li Zhou, Haitao Chen et al
+  abs: https://arxiv.org/abs/2610.25682v1
+
+- [cs.AI] HyperTaxa: Multiscale Genome Representations for Generalized Microbial Taxonomic Inference
+  arXiv:2610.25673v1 | 领域: 邻域 | published=2026-10-19T02:23:42Z updated=2026-10-19T02:23:42Z
+  作者: Akash Rao, Sushim Gupta, Vishalini Ramnath et al
+  abs: https://arxiv.org/abs/2610.25673v1
+
+- [cs.IR] Knowledge Manifold Optimization for Scientific Discovery
+  arXiv:2610.25662v1 | 领域: SLM | published=2026-10-19T02:08:41Z updated=2026-10-19T02:08:41Z
+  作者: Shigeru Obayashi, Yoshiaki Kawagoe, Kazuhiko Komatsu et al
+  abs: https://arxiv.org/abs/2610.25662v1
+
+- [cs.RO] InteractAgent: Agentic Human Motion Interaction with Memory-Augmented Reflection
+  arXiv:2610.25649v1 | 领域: 多模态 | published=2026-10-19T01:51:14Z updated=2026-10-19T01:51:14Z
+  作者: Tao Zhang, Senhe Zhang, Zeyu Zhang et al
+  abs: https://arxiv.org/abs/2610.25649v1
+
+- [cs.CV] ACorD: Adaptive Correspondence Discovery for Medical Image Registration
+  arXiv:2610.25638v1 | 领域: 邻域 | published=2026-10-19T01:31:04Z updated=2026-10-19T01:31:04Z
+  作者: Arghavan Rezvani, Kun Han, Xiaohui Xie
+  abs: https://arxiv.org/abs/2610.25638v1
+
+- [cs.CL] MapSteal: Map-based Autonomous Knowledge Stealing Attack Against Large Language Models
+  arXiv:2610.25626v1 | 领域: LLM | published=2026-10-19T01:07:51Z updated=2026-10-19T01:07:51Z
+  作者: Zhengao Li, Chuxu Zhang, Yushun Dong
+  abs: https://arxiv.org/abs/2610.25626v1
+
+- [cs.LG] Zephyrus-R1: Agentic Reinforcement Learning for Weather Reporting
+  arXiv:2610.25625v1 | 领域: 多模态 | published=2026-10-19T01:05:16Z updated=2026-10-19T01:05:16Z
+  作者: Fengfei Yu, Marshall Fisher, Isadora White et al
+  abs: https://arxiv.org/abs/2610.25625v1
+
+- [cs.LG] Weighted State Souping for Efficient Long-Context Retrieval
+  arXiv:2610.25621v1 | 领域: agent harness | published=2026-10-19T00:49:08Z updated=2026-10-19T00:49:08Z
+  作者: William L. Tong, Aryo Lotfi, Emmanuel Abbe et al
+  abs: https://arxiv.org/abs/2610.25621v1
+
+- [cs.CV] CheXFuse: Guided Differential Joint Attention Fusion for Robust Multimodal Chest X-Ray Classification in Data-Scarce Medical Settings
+  arXiv:2610.25617v1 | 领域: 多模态 | published=2026-10-19T00:45:16Z updated=2026-10-19T00:45:16Z
+  作者: Muntaqim Ahmed Raju, Priyanka Siddappa, Md Shifat Haider Al Amin et al
+  abs: https://arxiv.org/abs/2610.25617v1
+
+- [cs.LG] Safety Offset Learning: When Benign Fine-Tuning Misaligns LLMs
+  arXiv:2610.25611v1 | 领域: 邻域 | published=2026-10-19T00:31:17Z updated=2026-10-19T00:31:17Z
+  作者: Jesson Wang, Zhanhao Hu, Minghao Lin et al
+  abs: https://arxiv.org/abs/2610.25611v1
+
+- [cs.CL] Cognitive Map in Large Language Models
+  arXiv:2610.25596v1 | 领域: LLM | published=2026-10-19T00:02:30Z updated=2026-10-19T00:02:30Z
+  作者: Albert Qin, Jonathan Cohen, Gautam Reddy
+  abs: https://arxiv.org/abs/2610.25596v1
+
+- [cs.LG] Finite Interaction Lens: Structured Precision Sharing for Vision-Language Models
+  arXiv:2610.25577v1 | 领域: 多模态 | published=2026-10-18T22:44:12Z updated=2026-10-18T22:44:12Z
+  作者: Nozomu Fujisawa
+  abs: https://arxiv.org/abs/2610.25577v1
+
+- [cs.LG] Benchmark for Structured Retrieval-Augmented Generation in Perovskite Photovoltaics
+  arXiv:2610.25575v1 | 领域: SLM | published=2026-10-18T22:37:23Z updated=2026-10-18T22:37:23Z
+  作者: Qiwei Han, Chi Zhou, Gaoxiang Yuan
+  abs: https://arxiv.org/abs/2610.25575v1
+
+- [cs.CV] DiffGround: Semantic Difference-Guided Zero-Shot Video Question Grounding
+  arXiv:2610.25570v1 | 领域: 多模态 | published=2026-10-18T22:17:03Z updated=2026-10-18T22:17:03Z
+  作者: Cheng-Han Lee, Amir Salimi, Hsiang-Wei Huang et al
+  abs: https://arxiv.org/abs/2610.25570v1
+
+- [cs.DC] StreamAhead: Real-Time Streaming Video Question Answering via Adaptive Precomputation
+  arXiv:2610.25551v1 | 领域: 多模态 | published=2026-10-18T21:48:59Z updated=2026-10-18T21:48:59Z
+  作者: Haoyang Fan, Dhruv Parikh, Rajgopal Kannan et al
+  abs: https://arxiv.org/abs/2610.25551v1
+
+- [cs.AI] Editing as Language: Teaching LLM Agents a Grammar for Native Context Editing
+  arXiv:2610.25550v1 | 领域: agent harness | published=2026-10-18T21:48:56Z updated=2026-10-18T21:48:56Z
+  作者: Yunlong Deng, Yan Li, Xing Hu et al
+  abs: https://arxiv.org/abs/2610.25550v1
+
+- [cs.CV] Residential Construction Image Dataset Using CSI Divisions for Deep Learning-based Object Detection
+  arXiv:2610.25535v1 | 领域: 邻域 | published=2026-10-18T21:12:17Z updated=2026-10-18T21:12:17Z
+  作者: Fahad Iqbal, Shayan Mirzabeigi
+  abs: https://arxiv.org/abs/2610.25535v1
+
+- [cs.RO] AQUAACT: A Joystick-Level Underwater Teleoperation Dataset and Closed-Loop Benchmark
+  arXiv:2610.25534v1 | 领域: 多模态 | published=2026-10-18T21:07:34Z updated=2026-10-18T21:07:34Z
+  作者: Zhenqi Wu, Trung Tien Dong, Aditya Penumarti et al
+  abs: https://arxiv.org/abs/2610.25534v1
+
+- [cs.CV] Modaliff: A Unified Token Diffusion Model for Any-to-Any Generation
+  arXiv:2610.25533v1 | 领域: 多模态/邻域 | published=2026-10-18T21:07:26Z updated=2026-10-18T21:07:26Z
+  作者: Duc Kieu, Kien Do, Minh Khoa Le et al
+  abs: https://arxiv.org/abs/2610.25533v1
+
+- [cs.LG] ATEST: Adaptive Resource-Aware Test-Time Scaling for LLM Inference
+  arXiv:2610.25519v1 | 领域: LLM | published=2026-10-18T20:23:11Z updated=2026-10-18T20:23:11Z
+  作者: Mobina Kashaniyan, Ali Jannesari
+  abs: https://arxiv.org/abs/2610.25519v1
+
+- [cs.AI] Bud ContextCompact 2.0: Context Compaction for Agent Success and Accuracy with Small Language Models and Constrained Context Windows
+  arXiv:2610.25516v1 | 领域: SLM | published=2026-10-18T20:15:30Z updated=2026-10-18T20:15:30Z
+  作者: Jithin VG, Ditto PS
+  abs: https://arxiv.org/abs/2610.25516v1
+
+- [cs.LG] Dynamics-Aligned Representation Learning under Induced Partial Observability
+  arXiv:2610.25511v1 | 领域: 邻域 | published=2026-10-18T19:59:40Z updated=2026-10-18T19:59:40Z
+  作者: SM Mazharul Islam, Manfred Huber
+  abs: https://arxiv.org/abs/2610.25511v1
+
+- [cs.CV] From Seeing to Reporting: A Theory of Reliable Visual Set Generation in Vision-Language Models
+  arXiv:2610.25503v1 | 领域: 多模态 | published=2026-10-18T19:43:28Z updated=2026-10-18T19:43:28Z
+  作者: Junzhe Shi, Yuan Gan, Shida Jiang
+  abs: https://arxiv.org/abs/2610.25503v1
+
+- [cs.AI] Formal Raising: Embedding Verifiable Ethical Properties into the Development of AI
+  arXiv:2610.25501v1 | 领域: 邻域 | published=2026-10-18T19:41:46Z updated=2026-10-18T19:41:46Z
+  作者: Rolf Drechsler, Christina Plump
+  abs: https://arxiv.org/abs/2610.25501v1
+
+- [cs.CV] GroundedVDR: Grounding Video-to-Web Evidence Dependencies in Video Deep Research
+  arXiv:2610.25493v1 | 领域: 多模态 | published=2026-10-18T19:26:54Z updated=2026-10-18T19:26:54Z
+  作者: Xiyuan Liang, Yu Wang, Zuhao Yang et al
+  abs: https://arxiv.org/abs/2610.25493v1
+
+- [cs.CV] PRIMA: Pose Refined Inductive Motion Adapter for Zero Shot Social Bodily Behavior Recognition
+  arXiv:2610.25482v1 | 领域: 多模态 | published=2026-10-18T19:10:49Z updated=2026-10-18T19:10:49Z
+  作者: Mingcong Ding, Babette Bühler, Tim Fütterer et al
+  abs: https://arxiv.org/abs/2610.25482v1
+
+- [cs.CV] Multimodal-Conditioned Latent Diffusion Models for Spatiotemporal Brain MRI Forecasting
+  arXiv:2610.25481v1 | 领域: 多模态 | published=2026-10-18T19:09:40Z updated=2026-10-18T19:09:40Z
+  作者: Antonio Scardace, Silvia Ingala, Sebastiano Battiato et al
+  abs: https://arxiv.org/abs/2610.25481v1
+
+- [cs.AI] A failure of Imagination: VLMs fail to use visual representations for text, but self-distillation can help
+  arXiv:2610.25470v1 | 领域: 多模态/邻域 | published=2026-10-18T18:53:18Z updated=2026-10-18T18:53:18Z
+  作者: Shashwat Singh, He He, Tal Linzen
+  abs: https://arxiv.org/abs/2610.25470v1
+
+- [cs.CL] DiaLong: Benchmarking Reminiscence in Long-Context Dialogues
+  arXiv:2610.25463v1 | 领域: LLM | published=2026-10-18T18:47:42Z updated=2026-10-18T18:47:42Z
+  作者: Owen Bianchi, Samer Aslan, Ryunosuke Saito
+  abs: https://arxiv.org/abs/2610.25463v1
+
+- [cs.RO] BiDex-100: A Comprehensive Benchmark for Bimanual Dexterous Manipulation Across 100+ Simulation Tasks
+  arXiv:2610.25459v1 | 领域: 多模态 | published=2026-10-18T18:44:05Z updated=2026-10-18T18:44:05Z
+  作者: Yong Wang, Kecheng Zheng, Xing Zhu et al
+  abs: https://arxiv.org/abs/2610.25459v1
+
+- [cs.CL] Quality-Controlled Reply and Summary Data for Post-Training Small Language Models in AI Call-Screening Agents
+  arXiv:2610.25458v1 | 领域: SLM | published=2026-10-18T18:42:26Z updated=2026-10-18T18:42:26Z
+  作者: Jiaqi Gan, Tsang Ng, Ankit Raj et al
+  abs: https://arxiv.org/abs/2610.25458v1
+
+- [cs.AI] System X: An LLM Decision Model That Replies from Its Own KV Cache
+  arXiv:2610.25456v1 | 领域: LLM | published=2026-10-18T18:40:50Z updated=2026-10-18T18:40:50Z
+  作者: Syed Usama Khalid Bukhari, Syed Safwan Khalid, Muhammad Aamir
+  abs: https://arxiv.org/abs/2610.25456v1
+
+- [cs.CV] UBD-Bench: Benchmarking and Analyzing Unimodal Branch Degradation in Multimodal Perception for Autonomous Driving
+  arXiv:2610.25448v1 | 领域: 多模态 | published=2026-10-18T18:11:32Z updated=2026-10-18T18:11:32Z
+  作者: Ang Liu, Xiang Gu, Ruikai Li et al
+  abs: https://arxiv.org/abs/2610.25448v1
+
+- [cs.CL] Design Considerations in Low-Resource Archival OCR: A Case Study in Lakota
+  arXiv:2610.25440v1 | 领域: 多模态 | published=2026-10-18T18:02:32Z updated=2026-10-18T18:02:32Z
+  作者: Téa Wright, Laura X. Ma, Claudia Iron Hawk et al
+  abs: https://arxiv.org/abs/2610.25440v1
+
+- [cs.CL] Mixture-of-Memories: Low-Overhead Language Modeling with Modular Knowledge Injection
+  arXiv:2610.25425v1 | 领域: LLM | published=2026-10-18T17:32:26Z updated=2026-10-18T17:32:26Z
+  作者: Yifan Lu, Rubin Wei, Ziyun Zou et al
+  abs: https://arxiv.org/abs/2610.25425v1
+
+- [cs.CV] From Label Priors to Task Evidence: Efficient Long-Video Frame Selection via Bayesian GRPO
+  arXiv:2610.25418v1 | 领域: 多模态 | published=2026-10-18T17:17:59Z updated=2026-10-18T17:17:59Z
+  作者: Shuochen Chang, Bingjie Gao, Qingyang Liu et al
+  abs: https://arxiv.org/abs/2610.25418v1
+
+- [cs.CL] Towards Figurative Language Understanding in Moroccan Darija: An Evaluation of Large Language Models
+  arXiv:2610.25406v1 | 领域: LLM | published=2026-10-18T17:05:56Z updated=2026-10-18T17:05:56Z
+  作者: Jihad R'baiti, Youssef Hmamouche, Emmanuele Chersoni et al
+  abs: https://arxiv.org/abs/2610.25406v1
+
+- [cs.RO] AeroDASH: Asynchronous Vision-Language-Action Control for Continuous UAV Flight
+  arXiv:2610.25407v1 | 领域: 多模态 | published=2026-10-18T17:05:56Z updated=2026-10-18T17:05:56Z
+  作者: Zhe Liu, Yuxuan Zheng, Jinzhe Qin et al
+  abs: https://arxiv.org/abs/2610.25407v1
+
+- [cs.CV] MT Forcing: Towards Stable and Consistent Multi-Turn Image Editing with Autoregressive Diffusion
+  arXiv:2610.25404v1 | 领域: 多模态 | published=2026-10-18T17:01:40Z updated=2026-10-18T17:01:40Z
+  作者: Houyuan Chen, Fanzhou Wang, Xiangyu Fan et al
+  abs: https://arxiv.org/abs/2610.25404v1
+
+- [cs.CL] From Unverifiable Domain Text to Cross-Lingual RLVR via Code-Switched Task Synthesis
+  arXiv:2610.25399v1 | 领域: LLM | published=2026-10-18T16:54:12Z updated=2026-10-18T16:54:12Z
+  作者: Cheonbok Park, Jihwan Kim, Shinyoung Joo et al
+  abs: https://arxiv.org/abs/2610.25399v1
+
+- [cs.SD] MixiSpeech: Progressive State Distillation for One-Step Vietnamese TTS
+  arXiv:2610.25394v1 | 领域: 多模态 | published=2026-10-18T16:46:10Z updated=2026-10-18T16:46:10Z
+  作者: Tran Quoc Bao Le, Binh Mai, Hung Dinh et al
+  abs: https://arxiv.org/abs/2610.25394v1
+
+- [cs.AI] Outcome-Anchored Credit Reallocation for Agentic Knowledge Graph Question Answering
+  arXiv:2610.25384v1 | 领域: LLM | published=2026-10-18T16:36:50Z updated=2026-10-18T16:36:50Z
+  作者: Mingyuan Li, Yucheng Li, Xiaxia Wang et al
+  abs: https://arxiv.org/abs/2610.25384v1
+
+- [cs.CL] Aligning Cultural Behaviors in Arabic Language Models via Preferences
+  arXiv:2610.25362v1 | 领域: 邻域 | published=2026-10-18T16:06:41Z updated=2026-10-18T16:06:41Z
+  作者: Junhong Liang, Daniil Orel, Saeed Almheiri et al
+  abs: https://arxiv.org/abs/2610.25362v1
+
+- [cs.CV] Local Evidence, Global Failure: Diagnosing Speech-Vision Temporal Composition in Audio-Visual Language Models
+  arXiv:2610.25352v1 | 领域: 多模态/邻域 | published=2026-10-18T15:49:52Z updated=2026-10-18T15:49:52Z
+  作者: Jaehong Myung, Seunghun Oh, Unsang Park
+  abs: https://arxiv.org/abs/2610.25352v1
+
+- [eess.AS] Probing and Mitigating Hallucinations in Speech-augmented Language Models for Automatic Speech Recognition via Small Language Models
+  arXiv:2610.25351v1 | 领域: SLM | published=2026-10-18T15:48:34Z updated=2026-10-18T15:48:34Z
+  作者: Bi-Cheng Yan, Jhih-Rong Guo, Fu-An Chao et al
+  abs: https://arxiv.org/abs/2610.25351v1
+
+- [cs.CL] Where and Why Search-Augmented LLMs Fail When Reasoning over Rapidly Evolving Knowledge
+  arXiv:2610.25323v1 | 领域: LLM | published=2026-10-18T15:09:08Z updated=2026-10-18T15:09:08Z
+  作者: Tianyi Hu, Bhavyajeet Singh, Niket Tandon et al
+  abs: https://arxiv.org/abs/2610.25323v1
+
+- [cs.AI] Aligning Language Models with Indigenous Community Cosmovision through Constitutional AI
+  arXiv:2610.25298v1 | 领域: LLM/邻域 | published=2026-10-18T14:31:59Z updated=2026-10-18T14:31:59Z
+  作者: Silvia Fernández-Sabido, Jorge Reyes-Magaña, Jesús Adrián Chay Tun et al
+  abs: https://arxiv.org/abs/2610.25298v1
+
+- [cs.CV] MotionShift: Environment-Compatible Motion Transfer via Planner-Evaluator Synergistic Adaptation
+  arXiv:2610.25290v1 | 领域: 多模态 | published=2026-10-18T14:11:39Z updated=2026-10-18T14:11:39Z
+  作者: Yanchen Liu, Junyao Gao, Yanan Sun et al
+  abs: https://arxiv.org/abs/2610.25290v1
+
+- [cs.CV] Persistent Representational Misalignment Induces Vision-Language Model Failures
+  arXiv:2610.25252v1 | 领域: 多模态 | published=2026-10-18T13:11:58Z updated=2026-10-18T13:11:58Z
+  作者: Yonatan Gideoni, Yoav Gelberg, Tim G. J. Rudner et al
+  abs: https://arxiv.org/abs/2610.25252v1
+
+- [cs.CV] Visual Scaffolding: Toward Native Multimodal Reasoning
+  arXiv:2610.25247v1 | 领域: 多模态 | published=2026-10-18T13:06:46Z updated=2026-10-18T13:06:46Z
+  作者: Run Shao, Zhaoyang Zhang, Ziyu Li et al
+  abs: https://arxiv.org/abs/2610.25247v1
+
+- [cs.LG] DROD: Dual-Ratio Ordered Dropout for Federated Continual Learning on Heterogeneous Devices
+  arXiv:2610.25220v1 | 领域: SLM | published=2026-10-18T12:27:34Z updated=2026-10-18T12:27:34Z
+  作者: Berk Sezer, Özgür Soysal
+  abs: https://arxiv.org/abs/2610.25220v1
+
+- [cs.CL] Calibration-Free Early Stopping for Chain-of-Thought Reasoning via E-processes
+  arXiv:2610.25212v1 | 领域: LLM | published=2026-10-18T12:10:19Z updated=2026-10-18T12:10:19Z
+  作者: Dong-Jae Lee, Gyojin Han, Junmo Kim
+  abs: https://arxiv.org/abs/2610.25212v1
+
+- [cs.AI] BrandEval: A Two-Track Multi-Agent Benchmark for Risk-Sensitive LLM Crisis Communication
+  arXiv:2610.25208v1 | 领域: 邻域 | published=2026-10-18T12:05:40Z updated=2026-10-18T12:05:40Z
+  作者: Haotian Gan, Weidong Tang, Hanbin Sun et al
+  abs: https://arxiv.org/abs/2610.25208v1
+
+- [cs.LG] ViCoR: Estimating Visual Necessity via Counterfactual Residuals for Multimodal Medical Data Selection
+  arXiv:2610.25202v1 | 领域: 多模态 | published=2026-10-18T11:46:49Z updated=2026-10-18T11:46:49Z
+  作者: Haotian Gan, Yudong Li, Xintian Li et al
+  abs: https://arxiv.org/abs/2610.25202v1
+
+- [cs.CL] Acharya 2.0: An AI Tutor for Self-Learning Subjects in Hindi
+  arXiv:2610.25192v1 | 领域: LLM/邻域 | published=2026-10-18T11:24:39Z updated=2026-10-18T11:24:39Z
+  作者: Shantipriya Parida, Debasish Dhal, Sonal Khosla et al
+  abs: https://arxiv.org/abs/2610.25192v1
+
+- [cs.CL] Reranking Answers of Large Language Models with Knowledge Graphs
+  arXiv:2610.25185v1 | 领域: LLM | published=2026-10-18T11:12:42Z updated=2026-10-18T11:12:42Z
+  作者: Mikhail Salnikov, Hai Le, Olga Tsymboi et al
+  abs: https://arxiv.org/abs/2610.25185v1
+
+- [cs.CL] Do LLMs Reproduce the Age Gap in Loneliness? Evaluating Survey Simulation against European Survey Data
+  arXiv:2610.25158v1 | 领域: LLM | published=2026-10-18T10:31:08Z updated=2026-10-18T10:31:08Z
+  作者: Yuliya Li, Achim Rettinger, Dominik Beyer
+  abs: https://arxiv.org/abs/2610.25158v1
+
+- [cs.CL] Morpheus: a fully local, defense-in-depth de-identification engine for Greek clinical text - a benchmark evaluation
+  arXiv:2610.25155v1 | 领域: LLM | published=2026-10-18T10:26:14Z updated=2026-10-18T10:26:14Z
+  作者: Filippos-Paschalis Rorris, Nikoleta Stanitsa, Tatiana Rorri et al
+  abs: https://arxiv.org/abs/2610.25155v1
+
+- [cs.CV] PLANE: Plug-and-Play Fine-Grained Visual Experts for Hallucination Mitigation in Large Vision-Language Models
+  arXiv:2610.25146v1 | 领域: 多模态 | published=2026-10-18T10:03:20Z updated=2026-10-18T10:03:20Z
+  作者: Jianghao Yin, Lang Yu, Qianxi Yu et al
+  abs: https://arxiv.org/abs/2610.25146v1
+
+- [cs.OS] Visual Cache Reuse for Efficient Multimodal Inference
+  arXiv:2610.25136v1 | 领域: 多模态 | published=2026-10-18T09:41:29Z updated=2026-10-18T09:41:29Z
+  作者: Shuheng Gao, Yuankai Fan, Jiaqiang Ma et al
+  abs: https://arxiv.org/abs/2610.25136v1
+
+- [cs.CL] TIRE: Top-Down Formula Instantiation with Reliable Execution for Physics Problem Synthesis
+  arXiv:2610.25134v1 | 领域: LLM | published=2026-10-18T09:38:24Z updated=2026-10-18T09:38:24Z
+  作者: Xiaoyu Wu, Zhaoxin Yu, Xinglin Xiao et al
+  abs: https://arxiv.org/abs/2610.25134v1
+
+- [cs.RO] Structure over Reasoning: Unified Zero-Shot Navigation with a Small Vision-Language Model
+  arXiv:2610.25130v1 | 领域: 多模态 | published=2026-10-18T09:26:40Z updated=2026-10-18T09:26:40Z
+  作者: Zeqi Li, Xunyi Zhao, Zerui Li et al
+  abs: https://arxiv.org/abs/2610.25130v1
+
+- [cs.CL] Deep Fusion Memory: A Chunk-Level Parametric Memory for Large Language Models
+  arXiv:2610.25100v1 | 领域: LLM | published=2026-10-18T08:24:53Z updated=2026-10-18T08:24:53Z
+  作者: Rubin Wei, Siyuan Sun, Hao Sun et al
+  abs: https://arxiv.org/abs/2610.25100v1
+
+- [cs.AI] DAGLoop: Aligning Method Design with Experimental Feedback in Automated AI Research
+  arXiv:2610.25089v1 | 领域: 邻域 | published=2026-10-18T07:53:55Z updated=2026-10-18T07:53:55Z
+  作者: Dengyuxing Wang, Yonggang Zhang, Qianshu Cai et al
+  abs: https://arxiv.org/abs/2610.25089v1
+
+- [cs.CL] Beyond Factual Accuracy: A Benchmark for Evaluating Perspective Alignment in LLMs
+  arXiv:2610.25087v1 | 领域: LLM | published=2026-10-18T07:49:41Z updated=2026-10-18T07:49:41Z
+  作者: Sunghoon Kim, Sangyeop Kim
+  abs: https://arxiv.org/abs/2610.25087v1
+
+- [cs.CL] One Head Away from Language Confusion: Single Attention Heads Across Model Families
+  arXiv:2610.25026v1 | 领域: LLM | published=2026-10-18T05:21:12Z updated=2026-10-18T05:21:12Z
+  作者: Jiwon Jeong, Anjelo Jann Laroza, Chaewoon Yoon et al
+  abs: https://arxiv.org/abs/2610.25026v1
+
+- [cs.LG] Synergy-Aware Residual Flow Matching for Single-Cell Perturbation Prediction
+  arXiv:2610.25021v1 | 领域: 邻域 | published=2026-10-18T05:02:00Z updated=2026-10-18T05:02:00Z
+  作者: Jingrui Wu, Wangyun Dan
+  abs: https://arxiv.org/abs/2610.25021v1
+
+- [cs.LG] LLM Agents as Suppliers of Physical System Models: Calibration and Acceptance in Modelica
+  arXiv:2610.25019v1 | 领域: SLM | published=2026-10-18T05:00:13Z updated=2026-10-18T05:00:13Z
+  作者: Jörg Frochte, Herbert Schmidt
+  abs: https://arxiv.org/abs/2610.25019v1
+
+- [cs.CV] ReTrace: Visual Backtracking for Efficient Multimodal Large Language Models
+  arXiv:2610.25005v1 | 领域: 多模态 | published=2026-10-18T04:19:13Z updated=2026-10-18T04:19:13Z
+  作者: Guangzong Si, Dong Wang, Yifan Yu et al
+  abs: https://arxiv.org/abs/2610.25005v1
+
+- [cs.LG] UtoMe: Observation-Uncertainty-Guided Token Merging for Weather Foundation Models
+  arXiv:2610.25001v1 | 领域: 邻域 | published=2026-10-18T04:12:26Z updated=2026-10-18T04:12:26Z
+  作者: Yunbei Zhang, Janet Wang, Xi Xiao et al
+  abs: https://arxiv.org/abs/2610.25001v1
+
+- [cs.CR] SoK: PIAtlas: Decomposing the Unbounded Prompt Injection Attack Space
+  arXiv:2610.24999v1 | 领域: LLM | published=2026-10-18T04:07:48Z updated=2026-10-18T04:07:48Z
+  作者: Stavros Damianakis, Konstantinos Psounis
+  abs: https://arxiv.org/abs/2610.24999v1
+
+- [cs.LG] Certified Sparse Attention via Perturbed Retrieval
+  arXiv:2610.24991v1 | 领域: LLM | published=2026-10-18T03:50:13Z updated=2026-10-18T03:50:13Z
+  作者: Runguo Li
+  abs: https://arxiv.org/abs/2610.24991v1
+
+- [cs.CL] The World as Viewed by 136 Countries: An Open, Curated, Annotated, and Multilingual Dataset of 118 Million State Media Articles
+  arXiv:2610.24990v1 | 领域: LLM/邻域 | published=2026-10-18T03:49:47Z updated=2026-10-18T03:49:47Z
+  作者: Bryan Li, Samar Haider, Grace Kim et al
+  abs: https://arxiv.org/abs/2610.24990v1
+
+- [cs.AI] LowNet: Looped Wavelet Neural Networks with 24 Learnable Parameters for Solving Poisson Equations
+  arXiv:2610.24941v1 | 领域: SLM | published=2026-10-18T01:26:28Z updated=2026-10-18T01:26:28Z
+  作者: Yuanhao Gong
+  abs: https://arxiv.org/abs/2610.24941v1
+
+- [cs.LG] TrustAgent-RFF: Agentic Diagnostic Planning for Reliable RF Fingerprinting under Domain Shift
+  arXiv:2610.24930v1 | 领域: SLM | published=2026-10-18T00:56:39Z updated=2026-10-18T00:56:39Z
+  作者: Chuan Liu, Tianya Zhao, Xuyu Wang
+  abs: https://arxiv.org/abs/2610.24930v1
+
+- [cs.AI] A Cross-Domain Evaluation of Prompting Techniques for Large Language Models
+  arXiv:2610.24913v1 | 领域: 邻域 | published=2026-10-17T23:18:46Z updated=2026-10-17T23:18:46Z
+  作者: Kevin Krazius, Tim Schlippe, Paul Libbrecht
+  abs: https://arxiv.org/abs/2610.24913v1
+
+- [cs.AI] The One-Pixel of Reasoning: One Truthful Relation Is Enough to Mislead LLM Agents
+  arXiv:2610.24873v1 | 领域: agent harness | published=2026-10-17T21:21:36Z updated=2026-10-17T21:21:36Z
+  作者: Jinwei Hu, Youcheng Sun, Yi Dong et al
+  abs: https://arxiv.org/abs/2610.24873v1
+
+- [cs.CL] Learning to Program Retrievals: Composing Search Primitives via Reinforcement Learning
+  arXiv:2610.24854v1 | 领域: 邻域 | published=2026-10-17T20:03:09Z updated=2026-10-17T20:03:09Z
+  作者: Kyuyoung Kim, Zilin Xiao, Zhiyuan Wang et al
+  abs: https://arxiv.org/abs/2610.24854v1
+
+- [cs.MA] AgentSoV: Virtual Sensing for LLM Multi-Agent Systems via Stream of Variation
+  arXiv:2610.24845v1 | 领域: agent harness | published=2026-10-17T19:48:14Z updated=2026-10-17T19:48:14Z
+  作者: Congjing Zhang, Siyuan Xu, Yunfei Bai et al
+  abs: https://arxiv.org/abs/2610.24845v1
+
+- [cs.CL] Efficiency Measured in English: Tokeniser Coverage Bounds Small Language Models on Indic Scripts
+  arXiv:2610.24818v1 | 领域: SLM | published=2026-10-17T18:59:40Z updated=2026-10-17T18:59:40Z
+  作者: Anna Pramod
+  abs: https://arxiv.org/abs/2610.24818v1
+
+- [cs.LG] First-Order LoRA Training with Phone NPUs
+  arXiv:2610.24816v1 | 领域: SLM | published=2026-10-17T18:49:37Z updated=2026-10-17T18:49:37Z
+  作者: Xu Zheng, Wei Cheng, Zhuomin Chen et al
+  abs: https://arxiv.org/abs/2610.24816v1
+
+- [cs.CV] UniAVC: Unified Audio-Video Creation via Progressive Training and Asymmetric Scheduling
+  arXiv:2610.24791v1 | 领域: 多模态 | published=2026-10-17T17:46:17Z updated=2026-10-17T17:46:17Z
+  作者: Kien T. Pham, Yuhao Liu, Chong Hou Choi et al
+  abs: https://arxiv.org/abs/2610.24791v1
+
+- [cs.CV] Video-Language Entailment for Video Similarity Estimation
+  arXiv:2610.24786v1 | 领域: 多模态 | published=2026-10-17T17:24:59Z updated=2026-10-17T17:24:59Z
+  作者: Benedetta Liberatori, Lorenzo Vaquero, Elisa Ricci et al
+  abs: https://arxiv.org/abs/2610.24786v1
+
+- [cs.CV] Design Anything, Design at Scale
+  arXiv:2610.24771v1 | 领域: 多模态 | published=2026-10-17T16:29:33Z updated=2026-10-17T16:29:33Z
+  作者: Xuchao Ren, Siyuan Feng, Jing Huang et al
+  abs: https://arxiv.org/abs/2610.24771v1
+
+- [eess.AS] Finite-Calendar Admission and Deadline-Aware Pruning for UWB Audio
+  arXiv:2610.24762v1 | 领域: 多模态 | published=2026-10-17T16:08:47Z updated=2026-10-17T16:08:47Z
+  作者:  Fengyun~Zhang
+  abs: https://arxiv.org/abs/2610.24762v1
+
+- [cs.AI] Neuro-Inspired Inhibitory Message Passing for Accurate and Token-Efficient Multi-Agent Reasoning
+  arXiv:2610.24718v1 | 领域: agent harness | published=2026-10-17T14:30:37Z updated=2026-10-17T14:30:37Z
+  作者: Nima H. Siboni, Magdalena Springer, Vahid Rostami
+  abs: https://arxiv.org/abs/2610.24718v1
+
+- [cs.CL] Muse Glimmer 30B: An On-Device Agentic Model
+  arXiv:2610.24628v1 | 领域: agent harness | published=2026-10-17T11:05:21Z updated=2026-10-17T11:05:21Z
+  作者: Arash Ebrahim Abtahizadeh, Muna Aghamelu, Adil Ahmed et al
+  abs: https://arxiv.org/abs/2610.24628v1
+
+- [eess.IV] Severity-Channel Conditioning: An Injection-Level Study for Consumer-Device Deblurring
+  arXiv:2610.24599v1 | 领域: SLM/多模态 | published=2026-10-17T10:05:03Z updated=2026-10-17T10:05:03Z
+  作者: Abdullah Al Shafi, Kazi Saeed Alam, Sumaiya Rahim Suma et al
+  abs: https://arxiv.org/abs/2610.24599v1
+
+—— 各查询状态 ——
+• [OK ] sweep-cs-5cats               status=200 ct='application/atom+xml; charset=utf-8' kept=40 total=635673
+• [OK ] llm-large-language-model     status=200 ct='application/atom+xml; charset=utf-8' kept=36 total=39272
+• [OK ] llm-long-context             status=200 ct='application/atom+xml; charset=utf-8' kept=3 total=1854
+• [OK ] llm-scaling-law              status=200 ct='application/atom+xml; charset=utf-8' kept=1 total=1015
+• [OK ] slm-small-language-model     status=200 ct='application/atom+xml; charset=utf-8' kept=6 total=1103
+• [OK ] slm-on-device                status=200 ct='application/atom+xml; charset=utf-8' kept=9 total=11025
+• [OK ] mm-vision-language           status=200 ct='application/atom+xml; charset=utf-8' kept=39 total=17813
+• [OK ] mm-multimodal                status=200 ct='application/atom+xml; charset=utf-8' kept=26 total=16595
+• [OK ] mm-csmm                      status=200 ct='application/atom+xml; charset=utf-8' kept=7 total=10250
+• [OK ] agent-harness-title          status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=140
+• [OK ] agent-swe-bench              status=200 ct='application/atom+xml; charset=utf-8' kept=1 total=399
+• [OK ] agent-tool-use               status=200 ct='application/atom+xml; charset=utf-8' kept=8 total=1693
+• [OK ] agent-csma-multiagent        status=200 ct='application/atom+xml; charset=utf-8' kept=9 total=6011
+• [OK ] nb-retrieval-augmented       status=200 ct='application/atom+xml; charset=utf-8' kept=3 total=3951
+• [OK ] nb-alignment                 status=200 ct='application/atom+xml; charset=utf-8' kept=31 total=21990
+—— 丢弃（前 40）——
+  - 2610.23787 [llm-long-context] already in SEEN
+  - 2610.22985 [llm-long-context] already in SEEN
+  - 2610.22273 [llm-long-context] already in SEEN
+  - 2610.22067 [llm-long-context] already in SEEN
+  - 2610.21165 [llm-long-context] already in SEEN
+  - 2610.21126 [llm-long-context] already in SEEN
+  - 2610.20582 [llm-long-context] already in SEEN
+  - 2610.20392 [llm-long-context] already in SEEN
+  - 2610.19928 [llm-long-context] already in SEEN
+  - 2610.19247 [llm-long-context] already in SEEN
+  - 2610.19210 [llm-long-context] already in SEEN
+  - 2610.19026 [llm-long-context] already in SEEN
+  - 2610.17959 [llm-long-context] already in SEEN
+  - 2610.17868 [llm-long-context] already in SEEN
+  - 2610.17202 [llm-long-context] already in SEEN
+  - 2610.15542 [llm-long-context] stale 214.5h > 72h (since first submit)
+  - 2610.15373 [llm-long-context] stale 220.2h > 72h (since first submit)
+  - 2610.15371 [llm-long-context] stale 220.2h > 72h (since first submit)
+  - 2610.14475 [llm-long-context] stale 247.9h > 72h (since first submit)
+  - 2610.14219 [llm-long-context] stale 255.5h > 72h (since first submit)
+  - 2610.13708 [llm-long-context] already in SEEN
+  - 2610.13325 [llm-long-context] already in SEEN
+  - 2610.13202 [llm-long-context] already in SEEN
+  - 2610.13060 [llm-long-context] already in SEEN
+  - 2610.13041 [llm-long-context] already in SEEN
+  - 2610.12338 [llm-long-context] already in SEEN
+  - 2610.11592 [llm-long-context] already in SEEN
+  - 2610.11430 [llm-long-context] already in SEEN
+  - 2610.11245 [llm-long-context] already in SEEN
+  - 2610.10918 [llm-long-context] already in SEEN
+  - 2610.10845 [llm-long-context] already in SEEN
+  - 2610.10114 [llm-long-context] already in SEEN
+  - 2610.09193 [llm-long-context] already in SEEN
+  - 2610.08463 [llm-long-context] already in SEEN
+  - 2610.07940 [llm-long-context] already in SEEN
+  - 2610.23453 [llm-scaling-law] already in SEEN
+  - 2610.23337 [llm-scaling-law] already in SEEN
+  - 2610.22976 [llm-scaling-law] already in SEEN
+  - 2610.22157 [llm-scaling-law] already in SEEN
+  - 2610.21820 [llm-scaling-law] already in SEEN

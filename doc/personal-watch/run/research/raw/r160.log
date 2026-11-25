@@ -1,0 +1,7 @@
+  cs.CL  status=200 ct=application/atom+xml; charset=utf-8 total=125187 n=100 17.13s
+  cs.CV  status=200 ct=application/atom+xml; charset=utf-8 total=213062 n=100 14.73s
+  cs.LG  status=200 ct=application/atom+xml; charset=utf-8 total=298685 n=100 5.17s
+  cs.AI  status=200 ct=application/atom+xml; charset=utf-8 total=212409 n=100 22.77s
+  cs.SE  status=200 ct=application/atom+xml; charset=utf-8 total=30986 n=100 38.38s
+MERGED=303 SEEN=9 FRESH=294
+SAVED=/home/liuyang/super_intelligence_2035/doc/personal-watch/run/research/raw/2026-11-13-00h-candidates-r160.json

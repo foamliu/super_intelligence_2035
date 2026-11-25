@@ -1,0 +1,14 @@
+== 2610.30740 == total=15056978 n_chunks=12
+  chunk 04 attempt=1 15s have=1254749/1254749
+  chunk 11 attempt=1 29s have=1254739/1254739
+  chunk 01 attempt=1 36s have=1254749/1254749
+  chunk 00 attempt=1 43s have=1254749/1254749
+  chunk 08 attempt=1 43s have=1254749/1254749
+  chunk 07 attempt=1 58s have=1254749/1254749
+  chunk 10 attempt=1 65s have=1254749/1254749
+  chunk 05 attempt=1 67s have=1254749/1254749
+  chunk 06 attempt=1 70s have=1254749/1254749
+  chunk 02 attempt=1 76s have=1254749/1254749
+  chunk 03 attempt=1 84s have=1254749/1254749
+  chunk 09 attempt=1 109s have=1254749/1254749
+bytes=15056978/15056978 head=True eof=True => OK

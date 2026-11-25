@@ -1,0 +1,60 @@
+[arxiv_fetch] 2026-10-19T22:02:28.168146+00:00 | endpoint=https://export.arxiv.org/api/query | 窗口<=72h | 查询 15 次 | 保留 0 篇（丢弃 600）
+  ⏱ 口径: 日报口径：首次提交 <= 72h（window_mode=daily）
+
+—— 各查询状态 ——
+• [OK ] sweep-cs-5cats               status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=634451 attempts=2 err=request failed: HTTPSConnectionPool(host='export.arxiv.org', port=443): Read timed out. (read timeout=30)
+• [OK ] llm-large-language-model     status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=39200
+• [OK ] llm-long-context             status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=1849
+• [OK ] llm-scaling-law              status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=1013
+• [OK ] slm-small-language-model     status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=1095
+• [OK ] slm-on-device                status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=11010
+• [OK ] mm-vision-language           status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=17738
+• [OK ] mm-multimodal                status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=16533
+• [OK ] mm-csmm                      status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=10237
+• [OK ] agent-harness-title          status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=140
+• [OK ] agent-swe-bench              status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=396
+• [OK ] agent-tool-use               status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=1677
+• [OK ] agent-csma-multiagent        status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=5995
+• [OK ] nb-retrieval-augmented       status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=3942
+• [OK ] nb-alignment                 status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=21927
+—— 丢弃（前 40）——
+  - 2610.23856 [sweep-cs-5cats] stale 76.0h > 72h (since first submit)
+  - 2610.23854 [sweep-cs-5cats] stale 76.0h > 72h (since first submit)
+  - 2610.23847 [sweep-cs-5cats] stale 76.1h > 72h (since first submit)
+  - 2610.23845 [sweep-cs-5cats] stale 76.1h > 72h (since first submit)
+  - 2610.23841 [sweep-cs-5cats] stale 76.1h > 72h (since first submit)
+  - 2610.23839 [sweep-cs-5cats] stale 76.1h > 72h (since first submit)
+  - 2610.23834 [sweep-cs-5cats] stale 76.2h > 72h (since first submit)
+  - 2610.23831 [sweep-cs-5cats] stale 76.2h > 72h (since first submit)
+  - 2610.23830 [sweep-cs-5cats] stale 76.2h > 72h (since first submit)
+  - 2610.23827 [sweep-cs-5cats] stale 76.2h > 72h (since first submit)
+  - 2610.23826 [sweep-cs-5cats] stale 76.2h > 72h (since first submit)
+  - 2610.23825 [sweep-cs-5cats] stale 76.2h > 72h (since first submit)
+  - 2610.23821 [sweep-cs-5cats] stale 76.3h > 72h (since first submit)
+  - 2610.23820 [sweep-cs-5cats] stale 76.3h > 72h (since first submit)
+  - 2610.23818 [sweep-cs-5cats] stale 76.4h > 72h (since first submit)
+  - 2610.23812 [sweep-cs-5cats] stale 76.5h > 72h (since first submit)
+  - 2610.23811 [sweep-cs-5cats] stale 76.5h > 72h (since first submit)
+  - 2610.23807 [sweep-cs-5cats] stale 76.5h > 72h (since first submit)
+  - 2610.23801 [sweep-cs-5cats] stale 76.6h > 72h (since first submit)
+  - 2610.23798 [sweep-cs-5cats] stale 76.6h > 72h (since first submit)
+  - 2610.23796 [sweep-cs-5cats] stale 76.7h > 72h (since first submit)
+  - 2610.23795 [sweep-cs-5cats] stale 76.7h > 72h (since first submit)
+  - 2610.23791 [sweep-cs-5cats] stale 76.7h > 72h (since first submit)
+  - 2610.23789 [sweep-cs-5cats] stale 76.7h > 72h (since first submit)
+  - 2610.23788 [sweep-cs-5cats] stale 76.7h > 72h (since first submit)
+  - 2610.23787 [sweep-cs-5cats] stale 76.7h > 72h (since first submit)
+  - 2610.23783 [sweep-cs-5cats] stale 76.8h > 72h (since first submit)
+  - 2610.23782 [sweep-cs-5cats] stale 76.8h > 72h (since first submit)
+  - 2610.23779 [sweep-cs-5cats] stale 76.8h > 72h (since first submit)
+  - 2610.23772 [sweep-cs-5cats] stale 76.9h > 72h (since first submit)
+  - 2610.23766 [sweep-cs-5cats] stale 76.9h > 72h (since first submit)
+  - 2610.23765 [sweep-cs-5cats] stale 76.9h > 72h (since first submit)
+  - 2610.23760 [sweep-cs-5cats] stale 77.0h > 72h (since first submit)
+  - 2610.23759 [sweep-cs-5cats] stale 77.0h > 72h (since first submit)
+  - 2610.23751 [sweep-cs-5cats] stale 77.1h > 72h (since first submit)
+  - 2610.23747 [sweep-cs-5cats] stale 77.1h > 72h (since first submit)
+  - 2610.23745 [sweep-cs-5cats] stale 77.1h > 72h (since first submit)
+  - 2610.23741 [sweep-cs-5cats] stale 77.2h > 72h (since first submit)
+  - 2610.23735 [sweep-cs-5cats] stale 77.3h > 72h (since first submit)
+  - 2610.23734 [sweep-cs-5cats] stale 77.3h > 72h (since first submit)

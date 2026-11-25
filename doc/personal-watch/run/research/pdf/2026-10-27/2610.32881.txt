@@ -1,0 +1,533 @@
+                                                NgramRL: Accelerating RL Post-Training for Structured
+                                              Generation via Rollout-Aware N-gram Speculative Decoding
+                                                     Nilesh Prasad Pandey∗                               Jangseon Park∗                                  Jason Kong
+                                                     nppandey@ucsd.edu                                   jap036@ucsd.edu                             jckong@ucsd.edu
+                                               University of California San Diego                University of California San Diego          University of California San Diego
+                                                       La Jolla, CA, USA                                 La Jolla, CA, USA                           La Jolla, CA, USA
+
+                                                                                          Onat Gungor                          Tajana Rosing
+                                                                                  onat.gungor@mail.wvu.edu                   tajana@ucsd.edu
+                                                                                   West Virginia University          University of California San Diego
+arXiv:2610.32881v1 [cs.AI] 23 Oct 2026
+
+
+
+
+                                                                                    Morgantown, WV, USA                      La Jolla, CA, USA
+
+                                         Abstract                                                                    computed, and this phase alone can exceed 70% of step time [8]. Ac-
+                                         Reinforcement learning (RL) post-training improves the reasoning            celerating rollout is therefore the most direct route to reducing the
+                                         capabilities of large language models, but its cost is dominated by         RL post-training cost. Speculative decoding [3, 10] offers a natural
+                                         autoregressive rollout generation, which can exceed 70% of training         solution for improving the efficiency of RL using a small drafter that
+                                         time. Existing speculative-decoding methods are poorly suited to            proposes tokens which the target model verifies in parallel, preserv-
+                                         this setting: model-based drafters consume scarce GPU memory                ing the target’s exact output distribution. However, this mechanism
+                                         and may become misaligned as the policy evolves, while existing             does not transfer cleanly to the RL rollout setting, for two reasons.
+                                         model-free methods do not explicitly exploit repetition across train-       First, a separate draft model or a set of trained draft heads [2, 12]
+                                         ing epochs. We observe that recent rollouts of the same prompt              consumes GPU memory alongside the policy, optimizer states, and
+                                         provide a high-quality, self-updating draft source. Based on this           KV cache, and must itself be trained and maintained, an added cost
+                                         insight, we propose NgramRL, a per-prompt 𝑛-gram drafter con-               precisely where memory and compute are already scarce. Second,
+                                         structed from bounded recent rollout history. NgramRL requires              such drafters degrade over training. As the policy drifts, a fixed
+                                         no auxiliary model, drafter training, or persistent GPU-resident            drafter’s proposals are increasingly rejected [13], so acceptance
+                                         drafter state, while target-model verification preserves the rollout        falls over exactly the long horizons on which RL runs. To over-
+                                         distribution. To hide CPU cache lookup and scheduling, we further           come these issues, model-free drafters [7, 18] remove the additional
+                                         introduce an adaptive fan-out prefetcher that predicts likely veri-         memory cost by reusing tokens from the prompt or a datastore
+                                         fication outcomes ( 𝑗, 𝑏), consisting of the accepted draft length 𝑗        rather than predicting them, but their draft candidates are confined
+                                         and target-emitted continuation token 𝑏. A causal budget allocator          to a single generation, due to which acceptance stays low on the
+                                         concentrates prefetches on high-probability outcomes, while un-             adapting traces that RL post-training produces.
+                                         covered outcomes fall back to sequential lookup without changing                Our key insight is that during RL training, the rollout already
+                                         committed tokens. Across two model families and three reasoning             contains its own drafter, for free. Because GRPO revisits the same
+                                         and structured-generation workloads, NgramRL commits 3.60–7.77              prompts across steps and epochs, and the policy changes only
+                                         tokens per target-model forward in the warm-cache regime, up to             incrementally between steps, a prompt’s completions are highly
+                                         1.99× more than SuffixDecoding and 7.0× more than prompt-lookup             repetitive with those generated for it earlier in training. Prior roll-
+                                         decoding. On Spider, the prefetcher covers 96.6% of Qwen3-8B out-           outs are thus a self-updating source of draft tokens requiring no
+                                         comes at a candidate budget of 16 and improves measured rollout             extra parameters, no training, and automatically tracking the policy
+                                         throughput by 1.38× over synchronous NgramRL, approaching its               since they are produced by it. This repetition is especially strong
+                                         1.40× overlap ceiling.                                                      for structured tasks, whose outputs are regular by construction,
+                                                                                                                     and it arises across rollouts of the same prompt over training, a
+                                         Keywords                                                                    signal that previous model-free drafters, which draw only on a
+                                                                                                                     single generation, cannot exploit [7, 18].
+                                         reinforcement learning, large language models, speculative decod-
+                                                                                                                         Exploiting this signal, however, raises a systems problem. A
+                                         ing, n-gram caching, CPU–GPU co-design
+                                                                                                                     model-free cache carries no GPU memory cost precisely because
+                                                                                                                     it lives on the CPU, but a naive integration then serializes the
+                                         1    Introduction                                                           CPU lookup with the GPU forward: the GPU stalls on the host
+                                         Reinforcement learning post-training [17, 19], and Group Relative           every decode step while the next draft is looked up and the step
+                                         Policy Optimization (GRPO) in particular [20], has become central           is scheduled. In our measurements this host round trip idles the
+                                         to improving LLM reasoning [6]. But it is expensive, and the cost is        GPU for nearly a third of each iteration, and the cache lookup is a
+                                         dominated by the rollout generation. Each GRPO step autoregres-             negligible part of it; the synchronization and scheduling dominate.
+                                         sively samples many completions per prompt before any gradient is           Realizing the cache’s benefit therefore requires co-designing the
+                                                                                                                     drafter with the rollout engine so that the host work is hidden
+                                         ∗ Both authors contributed equally to this research.
+                                                                                                                     behind the GPU, not merely making the lookup fast.
+                                                                                                                 1
+                                                                                                                                Pandey and Park et al.
+
+
+   To this end, we propose NgramRL, a rollout-aware per-prompt              or trained draft heads adds a persistent claim on the limited GPU
+n-gram cache that acts as a model-free drafter for speculative decod-       resource, and can incur additional GPU-side speculation cost [4].
+ing during RL post-training. For each prompt, NgramRL maintains             (C2) Second, the target is non-stationary. Existing speculative de-
+an n-gram table built from that prompt’s prior rollouts and pro-            coding assumes a fixed target, whereas RL updates the policy at
+poses continuations by lookup, which the policy verifies. The cache         every step. A drafter trained against one snapshot is therefore stale
+lives in host memory and is queried on the CPU, overlapping GPU             at the next, and its acceptance declines as the policy drifts [13]. (C3)
+computation so that drafting adds no persistent GPU memory and              Third, rollouts are free-form yet repetitive across steps. Reasoning
+negligible GPU time, and because it is populated by the policy’s            traces rarely have much overlap with the prompt, so drafters that
+own outputs it stays aligned with the policy rather than going stale        copy from the current context find few matches. The repetition
+like a fixed drafter. To keep this CPU work off the critical path,          instead lies across training steps, where the same prompts recur,
+NgramRL pairs the cache with an asynchronous multipath prefetch             and hence single-generation drafters fail to use this characteristic.
+runtime that prefetches the next step’s drafts during verification,         NgramRL is designed to satisfy C1–C3 at once.
+so the decode iteration collapses to GPU busy time.
+   We make the following contributions:                                     2.2    Related Work
+     • We identify and characterize prompt-conditioned temporal             Model-based speculative decoding. Speculative decoding [3, 10]
+       locality in RL rollouts. GRPO repeatedly samples the same            pairs a fast drafter with the target, which verifies drafted tokens in
+       prompts while updating the policy incrementally, previ-              parallel while preserving the target’s output distribution. Strong
+       ous rollouts provide high-quality drafts for future epochs.          methods train the drafter as a separate draft model, additional
+       Across consecutive epochs, a prior rollout covers 48-96% of          decoding heads such as Medusa [2], or feature-level draft models
+       a later rollout, with recurring spans of 7-23 tokens.                such as EAGLE [12]. The crucial difference between this literature
+     • We propose NgramRL, a self-updating, per-prompt 𝑛-gram               and our work is that these drafters add trainable parameters and
+       drafter constructed entirely from recent policy rollouts. Its        assume a fixed target. In RL post-training both assumptions fail,
+       bounded-history design limits host-memory growth and                 since the parameters consume scarce GPU memory and a fixed
+       reduces mismatch with the evolving policy, while requiring           drafter cannot track a policy that changes every step.
+       no auxiliary model, drafter training, or persistent GPU-                Model-free drafters. A separate line copies previously seen
+       resident drafter state.                                              tokens rather than predicting them. Prompt-lookup decoding [18]
+     • We design an adaptive fan-out prefetcher, guided by a                matches 𝑛-grams against the current prompt, REST [7] retrieves
+       causal budget allocator, that speculatively prepares next-           continuations from a fixed datastore, and Token Recycling [14]
+       step drafts for likely verification outcomes ( 𝑗, 𝑏) during          reuses candidates discarded during a single decode. These add no
+       the forward. Covered outcomes bypass the verification-               parameters, but their evidence is limited to a single generation or a
+       dependent host round trip; uncovered requests fall back              static corpus, so acceptance is low on the free-form traces that RL
+       to sequential lookup without altering the target-emitted             produces. The closest work is SuffixDecoding [16], which caches
+       token or rollout distribution.                                       token sequences from prior outputs in CPU-side suffix trees and
+     • Across two model families and three workloads, NgramRL               performs best on structured tasks such as text-to-SQL. The crucial
+       commits 3.60–7.77 tokens per target-model forward in the             difference is the setting. SuffixDecoding serves a fixed model, and its
+       warm-cache regime, up to 1.99× more than SuffixDecoding              repetition arises from agentic inference pipelines. We operate inside
+       and 7.0× more than prompt-lookup decoding. At 𝑁 = 16,                RL training, where the policy is non-stationary and the repetition
+       the prefetcher covers up to 99.5% of Spider outcomes and             arises from GRPO revisiting the same prompts. Our per-prompt
+       delivers up to 1.38× measured rollout speedup over syn-              cache consequently co-evolves with the policy, and acceptance
+       chronous NgramRL.                                                    strengthens as training proceeds, a behavior the fixed-target setting
+                                                                            does not exhibit.
+2 Background and Related Work                                                  Structured generation. The highest-value targets for RL post-
+                                                                            training, including text-to-SQL, code generation, and tool and API
+2.1 Background: The Rollout Bottleneck                                      calls, produce outputs with strong syntactic regularity. Completions
+A GRPO [20] training step consists of three stages. The policy              of the same prompt share schema tokens, keywords, and boilerplate,
+samples a group of completions (rollouts) for each prompt, a re-            so identical tokens recur, and copy-based drafting is known to
+ward model scores them, and the policy is updated from the group-           favor such low-entropy outputs [16]. We show that this regularity
+relative advantages. The first stage, rollout, dominates the wall-          is amplified in RL training, where the same prompts are sampled
+clock cost. Completions are produced autoregressively, one token            repeatedly, so structured tasks benefit most from rollout-derived
+at a time, and this stage alone can exceed 70% of step time [8].            𝑛-gram caching.
+Production frameworks such as verl [21] therefore delegate rollout
+to a dedicated inference engine [9, 24]. Speculative decoding is the        3  NgramRL: Rollout-Aware N-gram Speculative
+natural way to accelerate it, but three properties of the RL setting           Decoding
+make existing variants not well-suited for this problem.
+   (C1) First, GPU memory is already saturated. The policy, opti-           3.1 Overview
+mizer states, gradients, and KV cache contend for device memory             As shown in Figure 1, NgramRL is a co-design of a model-free
+during training. A speculative scheme that introduces a draft model         drafter with the RL rollout engine. It accelerates rollout without
+                                                                        2
+NgramRL: Rollout-Aware N-gram Speculative Decoding
+
+
+                                                                               Algorithm 1 Incremental per-prompt cache update at step 𝑡
+                                                                               Require: prompt 𝑝, cache C𝑝 , order range [𝑛 min, 𝑛 max ], window
+                                                                                   𝑊
+                                                                                    (𝑡 )
+                                                                                1: 𝑅𝑝 ← rollouts sampled for 𝑝 at step 𝑡
+                                                                                                                               (𝑡 )
+                                                                                2: for all 𝑛-grams (𝑥𝑖 −𝑛+1 , . . . , 𝑥𝑖 ) in 𝑅𝑝, 𝑛 ∈ [𝑛 min, 𝑛 max ] do
+                                                                                3:   𝑐𝑡𝑥 ← (𝑥𝑖 −𝑛+1, . . . , 𝑥𝑖 −1 ) {construction: insert / count}
+                                                                                4:    C𝑝 [𝑐𝑡𝑥] [𝑥𝑖 ].𝑐𝑜𝑢𝑛𝑡 + =1; C𝑝 [𝑐𝑡𝑥] [𝑥𝑖 ].𝑠𝑡𝑒𝑝 ← 𝑡
+                                                                                5: end for
+                                                                                6: Self-update: evict (𝑐𝑡𝑥, 𝑥) with 𝑠𝑡𝑒𝑝 < 𝑡−𝑊 +1
+
+
+
+                                                                               than rollouts of different prompts. The cache is built and maintained
+Figure 1: Overview of NgramRL’s CPU-GPU model-free spec-
+                                                                               in two steps as summarized in Algorithm 1:
+ulative decoding across training epochs.
+                                                                                  Cache Construction: For a prompt 𝑝, let 𝑅𝑝(𝑡 ) be the rollouts
+                                                                               sampled for 𝑝 at training step 𝑡. After each step, we extract 𝑛-grams
+Early (step 10 → 115, 50% shared):                                             of order 𝑛 min to 𝑛 max from these rollouts and insert them into the
+R1: SELECT COUNT(*) FROM Companies WHERE Industry IN (’Banking’,
+’Conglomerate’);
+                                                                               table C𝑝 , which maps each context of 𝑛−1 tokens to its observed
+R2: SELECT COUNT(*) FROM Companies WHERE Industry = ’Banking’ OR               continuation and frequency. The orders 𝑛 min and 𝑛 max are a design
+Industry = ’Conglomerate’;                                                     choice, trading memory vs drafting quality.
+Mid (step 300 → 407, 81% shared):                                                 Self-Updating Behavior: C𝑝 is rebuilt continually from the
+R1: SELECT billing_country, COUNT(*) as count FROM invoices GROUP BY
+billing_country ORDER BY count DESC LIMIT 5;
+                                                                               policy’s own recent rollouts, so as the policy updates its continua-
+R2: SELECT billing_country, COUNT(*) AS num_invoices FROM invoices             tions converge toward the policy’s current preferences. The drafter
+GROUP BY billing_country ORDER BY num_invoices DESC LIMIT 5;                   thus tracks the policy without retraining. To bound table size and
+Late (step 1200 → 1305, 100% shared):                                          stay aligned with the latest policy, we retain rollouts from a recent
+R1: SELECT b.bname FROM bank b WHERE b.state = ’New York’;                     window of 𝑊 steps and evict older entries.
+R2: SELECT b.bname FROM bank b WHERE b.state = ’New York’;
+
+                                                                               3.3    Draft-and-Verify
+Figure 2: Same-prompt Spider rollouts one epoch apart (R1:
+earlier; R2: later). Shared spans are highlighted; overlap in-                 Once the table is constructed, at every training step 𝑡 during the
+creases as training progresses.                                                rollout of prompt 𝑝, NgramRL proposes draft tokens from C𝑝 and
+                                                                               the policy 𝜋𝜃 verifies them in one forward pass.
+                                                                                  Draft Proposal: We query C𝑝 for the longest matching n-gram
+                                                                               of the current context and propose its saved continuation as the
+adding parameters, training a draft model, or claiming persistent              draft token. If no match exists, the position falls back to standard
+GPU memory.                                                                    decoding.
+   The design rests on one property of RL post-training. GRPO [20]                Verification Preserves the Policy: Let 𝑥 be the drafted token
+revisits the same prompts across steps and epochs, and the policy              at a position with context 𝑐. NgramRL accepts 𝑥 with probability
+changes only incrementally between them, so a prompt’s comple-                                                                 
+tions repeat those it produced earlier in training. Figure 2 illustrates                                             𝜋𝜃 (𝑥 | 𝑐)
+                                                                                                  𝑝 acc (𝑥) = min 1,              ,               (1)
+this phenomenon: rollouts of the same Spider [23] (text-to-SQL)                                                      𝑞(𝑥 | 𝑐)
+prompt one epoch apart share only the query skeleton early on                  where 𝑞 is the cache’s proposal distribution; on rejection, it resam-
+and become verbatim identical by late training. NgramRL turns                  ples from the normalized positive residual (𝜋𝜃 (· | 𝑐) − 𝑞(· | 𝑐))+ .
+this redundancy into accepted drafts, a signal a single-generation             This is the standard speculative-sampling correction [3, 10], and
+drafter cannot utilize.                                                        it guarantees that the accepted token is distributed exactly as
+   Each prompt owns an 𝑛-gram cache built from its prior rollouts.             𝑥 ∼ 𝜋𝜃 (· | 𝑐), independent of the drafter 𝑞. Consequently the
+During rollout the cache proposes continuations by lookup and                  rollouts, rewards, advantages, and gradients are identical in distri-
+the policy verifies them exactly, preserving the output distribution.          bution to non-speculative training, so NgramRL leaves accuracy
+The cache lives in host memory and is queried on the CPU, so draft-            and convergence unchanged.
+ing adds no persistent GPU memory and overlaps GPU compute.
+The remaining subsections detail the cache, the draft-and-verify               3.4    N-Gram Prefetcher
+procedure, and the CPU-GPU co-design.                                          Placing the cache on the CPU keeps it out of GPU memory but
+                                                                               serializes the two processors. As Figure 3(a) shows, each decode
+3.2    Per-Prompt N-gram Cache                                                 iteration is a host–device round trip: the GPU verifies the draft, and
+Based on this insight, we design our proposed drafter as a set of              only once the result is synchronized to the host can the CPU look
+per-prompt 𝑛-gram look-up tables (LUTs), denoted C𝑝 . We keep                  up the next draft, schedule the step, and launch its kernels, leaving
+one table per prompt rather than a single shared table, because                the GPU idle for ∼29% of every iteration. The lookup is a negligible
+rollouts of the same prompt are more repetitive with each other                part of this gap; the synchronization and scheduling dominate, so
+                                                                           3
+                                                                                                                                                                                                               Pandey and Park et al.
+
+
+                            GPU forward + verify                draft-table select        kernel launch        rejection post-proc         n-gram cache lookup(s)           schedule next step          idle / blocked
+      iteration = 26.1 ms (GPU busy 18.6 + GPU idle 7.5)                                                                              iteration = GPU busy (19.2 ms)        table select (j, b)
+
+GPU        GPU forward + verify (iter 1)           GPU idle GPU forward + verify (iter 2)           GPU idle                GPU       GPU forward + verify (iter 1)     GPU forward + verify (iter 2)     GPU forward + verify (iter 3)
+                                          schedule launchblocked on sync (waits for GPU) schedule launch
+CPU launchblocked on sync (waits for GPU) next                                                                              CPU draft(j, btable schedule           draft table schedule          draft table schedule
+                                               step                                      next step                                         ) next step launch slack (j, b) next step launch slack (j, b) next step launch slack
+                 reject + draft lookup (needs sampled tokens)
+       0                  10                  20                   30                40               50                          0                 10                 20                  30             40               50
+
+                                        (a) Synchronous baseline.                                                                          (b) Asynchronous fan-out prefetching (NgramRL).
+
+Figure 3: Decode-iteration timelines illustrating the mechanism. Prefetching overlaps host work with GPU verification, reducing
+the iteration from 26.1 to 19.2 ms
+
+
+hiding the lookup alone is not enough. NgramRL therefore removes                                                                 Cost. Let 𝑇gpu be the device-busy time per iteration and 𝑇cpu the
+the whole round trip with a fan-out prefetcher that prepares the                                                              serial host time it must hide. A covered iteration hides the host
+next step’s drafts during the current forward.                                                                                chain and a missed one pays it, giving
+
+3.4.1 Adaptive Bonus-Token Fan-out Prefetcher. Overlapping the                                                                                                            𝑇gpu + 𝑇cpu      𝑐→1      𝑇cpu
+lookup with the forward is hard because the lookup context for                                                                               speedup(𝑐) =                                 −−−−→ 1 +      .                            (3)
+                                                                                                                                                                      𝑇gpu + (1 − 𝑐) 𝑇cpu           𝑇gpu
+step 𝑡+1 is fixed only by the verification outcome of step 𝑡, a pair
+( 𝑗, 𝑏): the accept length 𝑗 ∈ {0, . . . , 𝑘 } and the bonus token 𝑏 the                                                      The prefetch chain itself costs ≈𝑁 lookups per drafted request and
+target emits at position 𝑗+1 (resampled on a rejection, or the free                                                           must fit under 𝑇gpu ; beyond 𝑁 ≈64 it approaches the host time 𝑇cpu
+token after a full accept). The accept length takes 𝑘+1 values and                                                            it hides, so the budget sweet spot is small (Section 4.1.5). Both
+is known to the CPU, but 𝑏 is sampled on the GPU from the full                                                                the attainable speedup and the sweet spot are governed by the
+vocabulary and ends the next context, so it is unknown until verifi-                                                          ratio 𝑇cpu /𝑇gpu : larger models or larger batches raise 𝑇gpu relative to
+cation finishes. Rather than discard 𝑏, NgramRL predicts it, which                                                            the host chain, so the hidden overlap is a smaller fraction of each
+keeps every committed token target-distributed and preserves the                                                              iteration, whereas CPU-heavier regimes benefit more.
+lossless guarantee of Section 3.3.
+     During step 𝑡’s forward, the prefetcher builds a draft table for                                                         3.5          Integration and Generality
+step 𝑡+1 keyed by the outcome ( 𝑗, 𝑏). For each funded accept-
+                                                                                                                              We integrate NgramRL into verl’s [21] vLLM rollout worker. The
+length branch 𝑗, it draws the top-𝑓 𝑗 bonus candidates from C𝑝 ,
+                                                                                                                              cache attaches to the rollout engine and needs no change to the
+the frequency-ranked successors of the context extended by the
+                                                                                                                              reward model, optimizer, or policy architecture, so it is a drop-in
+𝑗 accepted tokens, and issues one lookup per candidate to build
+                                                                                                                              optimization. Adding no parameters and no training, it composes
+the corresponding 𝑘-token draft; the finished table is transferred
+                                                                                                                              with existing rollout-efficiency methods and applies to any RL-style
+to the GPU before the forward returns. Verification then yields the
+                                                                                                                              setup where prompts recur.
+realized pair ( 𝑗 ∗, 𝑏 ∗ ), which the GPU resolves by an 𝑂 (1) key probe
+with no content search. On a hit, with probability 𝑐 (the coverage),
+the selected draft is identical to the one the sequential design would                                                        4 Results
+have built, and decoding proceeds with no exposed host time; on a                                                             4.1 Experimental Setup
+miss, the entry is discarded and only that request issues the ordinary                                                        4.1.1 RL Training Setup. For all our experiments, we use verl [21]
+sequential lookup, so misses never stall the batch. In either case the                                                        for GRPO training [20], running on 2× NVIDIA A100 80GB GPUs.
+accepted prefix and the bonus token are committed unchanged, so                                                               The rollouts are served by the vLLM inference engine [9], sampling
+NgramRL stays lossless (Eq. (1) holds) and degrades at worst to the                                                           5 completions for each of 64 prompts per step over 15 epochs. We
+synchronous baseline.                                                                                                         adopt verl’s default GRPO hyperparameters for each model and use
+                                                                 Í
+     Adaptive budget allocation. The candidate budget 𝑁 = 𝑗 𝑓 𝑗 is                                                            the same settings across all baselines. Speculative decoding is exact,
+split across branches from trailing statistics over a causal window                                                           so no drafter alters the training dynamics, the sampled rollouts,
+of 𝑊 steps: the accept-length histogram 𝑃ˆ ( 𝑗) and each branch’s                                                             or the resulting policy. The comparison therefore isolates drafting
+coverage profile 𝑐ˆ𝑗 (𝑓 ), the probability that the true bonus ranks                                                          efficiency alone, and we evaluate all drafters on identical training
+within the top 𝑓 candidates. We maximize expected coverage,                                                                   runs.
+                        ∑︁                           ∑︁                                                                          Models: We evaluate on Qwen3-8B [22] and DeepSeek-LLM-
+                max          𝑃ˆ ( 𝑗) 𝑐ˆ𝑗 (𝑓 𝑗 ) s.t.    𝑓𝑗 = 𝑁 ,      (2)
+                          { 𝑓𝑗 }                                                                                              7B [1], two popular open-weight models from different families, to
+                                    𝑗                                        𝑗
+                                                                                                                              demonstrate generalization.
+solved greedily by marginal gain. In effect the fan-out concentrates                                                             Datasets: For our evaluation, we use GSM8K [5], Spider 1.0 [23],
+around the recent mode of the accept-length distribution, and full-                                                           and CodeContests [11], chosen to span free-form and structured
+accept branches, whose bonus is the next token of an already-cached                                                           generation. GSM8K is free-form mathematical reasoning. Spider
+trajectory and is the top candidate ∼90% of the time, need only one                                                           (text-to-SQL) and CodeContests (code) produce syntactically regu-
+candidate (𝑓 𝑗 =1), so a small budget covers high-acceptance tasks.                                                           lar outputs, where cross-rollout repetition is strongest. This spread
+                                                                                                                        4
+NgramRL: Rollout-Aware N-gram Speculative Decoding
+
+
+Table 1: Tokens committed per decoding step (TPS; 𝑘=16), as                     Heavy-tailed acceptance: A key benefit of our cache is that it
+overall training mean / mean over the final 30% (the stable                  captures long verbatim replays that other drafters miss. The mean
+regime; see Metrics). Best per task in bold.                                 accepted length hides a skewed distribution. Figure 5 shows the
+                                                                             accepted length is heavy-tailed. On many steps the policy accepts
+          Method             GSM8K          Spider      CodeCont.            most or all of the 16 draft tokens. On Spider, 12 or more are ac-
+                                                                             cepted on 14.1% of steps and all 16 on up to 10.1% (13.0%, 6.4%,
+           Qwen3-8B
+          PLD [18]          1.31 / 1.31   1.10 / 1.11   1.28 / 1.30          and 3.7% of long-accept steps on DeepSeek GSM8K, Qwen GSM8K,
+          REST [7]          1.32 / 1.31   1.02 / 1.02   1.07 / 1.07          and CodeContests). These are verbatim replays of a prior epoch’s
+          SuffixDec. [16]   2.42 / 2.32   4.01 / 4.15   2.50 / 2.96          solution, verified in one pass. A small draft budget would forfeit
+          NgramRL           4.00 / 4.36   5.94 / 7.77   2.70 / 3.60          them, so our large budget of 𝑘=16 is what turns this tail into rollout
+           DeepSeek-7B
+                                                                             speedup.
+          PLD [18]          1.47 / 1.49   1.24 / 1.24   1.19 / 1.15             Next, we examine how acceptance evolves as training proceeds.
+          REST [7]          1.69 / 1.69   1.02 / 1.02   1.02 / 1.02          Figure 4 shows the central dynamic on all three tasks. Acceptance
+          SuffixDec. [16]   3.37 / 3.64   3.71 / 3.88   3.11 / 3.99          is zero until prompts recur, then increases as history accumulates.
+          NgramRL           5.83 / 6.81   6.37 / 7.71   3.92 / 6.19          On GSM8K and CodeContests acceptance strengthens throughout
+                                                                             training. On Spider it peaks mid-run and then declines, as the pol-
+                                                                             icy’s SQL outputs diversify and older rollouts go stale, an effect we
+lets us characterize how acceptance scales with the regularity of            quantify in the window ablation below. On CodeContests the global
+the output.                                                                  cache leads in early training, while per-prompt history is least effec-
+   Baselines: We compare against three model-free drafters under             tive, and our cache overtakes both the baselines once that history
+a matched draft budget of 𝑘=16. Prompt-lookup decoding (PLD) [18]            accumulates. The redundancy is direct to measure. Consecutive-
+drafts 𝑛-gram continuations from the current context only. REST [7]          epoch rollouts of the same Spider prompt share substrings of 7 to
+retrieves continuations from a fixed datastore. SuffixDecoding [16]          23 tokens, and a cache of only the earlier rollout already covers 48
+retrieves from a global suffix tree over the most recent 10k re-             to 96% of the later one.
+sponses.
+   Metrics: We report tokens per decoding step (TPS): the tokens             4.1.4 N-gram Cache Design Ablations. Four design choices govern
+committed per target forward pass, i.e. one plus the mean accepted           the cache: two drafting hyperparameters, the maximum 𝑛-gram
+draft length. It is the standard lossless-speedup proxy in speculative       order 𝑛 max and the speculation length 𝑘, and two structural choices,
+decoding and is hardware-agnostic, so the comparison does not                per-prompt keying and a bounded history window. The hyper-
+depend on a specific GPU or kernel. We report two aggregates:                parameters trade draft quality against cache memory, while the
+the mean over the full training run, and the mean over the final             structural choices determine what the cache indexes and retains,
+30% of steps. We use the final 30% because training has largely              and therefore where its gains come from. We ablate each in turn.
+saturated by this point and the cache is fully populated, which is               Maximum 𝑛-gram order: As shown in Figure 6 for Qwen3-8B
+where speculative decoding helps the most. We also plot TPS across           on GSM8K, a higher 𝑛 max raises acceptance but grows the cache
+the entire run, showing how it evolves as the policy trains.                 super-linearly, and acceptance saturates beyond order 6, so we set
+                                                                             𝑛 max =6.
+4.1.2 Profiling Setup. Runtime measurements use a dedicated rig:
+                                                                                 Speculation length: A longer 𝑘 likewise raises acceptance until
+Qwen3-8B (bf16, batch 64, 𝑘=16) on one NVIDIA RTX PRO 6000
+                                                                             it saturates near 16, and leaves the cache unchanged, so we set 𝑘=16.
+(96 GB), with a 32-core AMD Ryzen Threadripper 9970X host hold-
+                                                                             Both values sit at the knee of their speedup curves, and although
+ing the 𝑛-gram cache and running the lookup/scheduling chain.
+                                                                             Figure 6 shows one model and dataset, we find they transfer well
+The throughput results (Figure 7b) are measured on this 8B rig.
+                                                                             to the others, so we use the same configuration for all experiments
+Per task, a timing pass records iteration wall-clock and hit/accept
+                                                                             in the paper.
+statistics, and an NVIDIA Nsight Systems [15] pass decomposes
+                                                                                 Per-prompt keying: With the drafting budget fixed, we turn to
+each iteration period into device-busy time (the union of kernel,
+                                                                             the cache’s structure. Table 2 shows the gain comes from prompt
+memory-copy, and CUDA-graph intervals) and exposed host time;
+                                                                             keying, not the data structure. Replacing our per-prompt keys with
+serial host work (launch, rejection handling, cache lookup, sched-
+                                                                             a single global bucket drops acceptance to 2.41, close to SuffixDe-
+uling) that are not overlapped with device execution and therefore
+                                                                             coding at 2.43, while per-prompt keying reaches 3.05 over the same
+stall the GPU.
+                                                                             steps. This gap is not caused by a small baseline cache. Increasing
+4.1.3 Accepted-Length Comparison and Dynamics. Table 1 reports               SuffixDecoding’s cache fourfold, to 40k responses, raises it only to
+acceptance as the full-run mean and the final-30% mean. In the               2.65. The limit is the lack of prompt-conditioned lookup, not cache
+stable regime our cache reaches 3.6 to 7.8 tokens per step. This is          size.
+a 1.2 to 1.99× improvement over SuffixDecoding [16] and up to                    History window: Table 3 sweeps the per-prompt window 𝑤,
+7.0× over PLD [18]. The overall means include our cold first epoch           the number of recent appearances the cache retains. A window
+and still lead on every task. The advantage tracks output regularity.        of 4 captures 79 to 91% of the full acceptance at a fraction of the
+It is largest where completions are prompt-specific, as on Spider            memory. Beyond 𝑤=16, more history does not help and slightly
+and DeepSeek’s GSM8K derivations. It is smallest on CodeContests,            lowers acceptance on GSM8K, as older rollouts go stale. This is
+where cross-prompt boilerplate favors a global cache.                        the same drift behind Spider’s mid-run decline in Figure 4. A small
+                                                                         5
+                                                                                                                                                                                                                                                                                                 Pandey and Park et al.
+
+
+                                                                                                                                                        PLD              REST               SuffixDecoding                                NgramRL (Ours)
+                                                                                                          GSM8K                                                                               Spider 1.0                                                           CodeContests
+                                                                                                                                                                        10
+                                                       Accepted tokens per step
+
+                                                                                  5        Epoch 1 end                                                                                Epoch 1 end                                                             Epoch 1 end
+                                                                                                                                                                                                                                                     4
+                                                                                                                                                                            8
+                                                                                  4
+                                                                                                                                                                                                                                                     3
+                                                                                                                                                                            6
+                                                                                  3
+                                                                                                                                                                            4
+                                                                                  2                                                                                                                                                                  2
+
+                                                                                                                                                                            2
+                                                                                  1
+                                                                                                                                                                                                                                                     1
+                                                                                                                                                                            0
+                                                                                       0           500                      1000                        1500                     0         500          1000                          1500               0          100                200               300
+                                                                                                    Training step                                                                            Training step                                                           Training step
+
+
+     Figure 4: Tokens per decoding step over GRPO training with Qwen3-8B on GSM8K, Spider 1.0, and CodeContests. The dashed
+     line marks the end of the first epoch.
+
+                                                                                                                                                                                                        Table 3: History-window ablation: accepted tokens per de-
+                                                                                                                                                    long-accept tail (accept 12)                        code step (cache MB) as the per-prompt window 𝑤 grows.
+                      fraction of decode steps (log)
+
+
+
+
+                                                       10 1                                                                                                                                                                                                   Accepted / step (cache MB)
+                                                                                                                                                                                                                                 Task             𝑤=1              𝑤=4                𝑤=16               𝑤=∞
+                                                                                                                                                                                                                                  Qwen3-8B
+                                                       10 2                                Spider (Qwen3-8B)
+                                                                                           GSM8K (Qwen3-8B)                                                                                                                      GSM8K     1.87 (841) 2.81 (1878) 3.38 (3181) 3.34 (3634)
+                                                                                           GSM8K (DeepSeek-7B)                                                                                                                   Spider    3.39 (236) 5.13 (255) 5.82 (309) 5.82 (309)
+                                                                                           CodeContests (Qwen3-8B)                                                                                                               CodeCont. 1.72 (249) 2.64 (591) 2.89 (1742) 2.91 (1744)
+                                                                                       0       2      4           6                 8              10     12     14         16
+                                                                                      accepted draft tokens per decode step (spec_len = 16)                                                                                       DeepSeek-7B
+                                                                                                                                                                                                                                 GSM8K      3.69 (177) 5.08 (293)              5.74 (662)           5.74 (662)
+                                                                                                                                                                                                                                 Spider     3.00 (230) 4.63 (251)              5.83 (335)           5.83 (335)
+     Figure 5: Accepted-length distribution using 𝑘=16, aggregated                                                                                                                                                               CodeCont. 3.73 (67) 5.12 (89)                 5.78 (290)           5.78 (293)
+     over each run.
+                                                                                                                                                                                                                               1.00                                                   1.5
+                                                                                                                                                                                                         prefetch coverage c
+
+
+
+
+                4.0                                            tokens / step                                                                                                                                                                                                          1.4    ×1.38
+                                                                                                                                             4.0                                                                               0.75
+                                                               cache size                                 6
+                                                                                                          cache size (GB)
+
+
+
+
+                                                                                                                                                                                                                                                                                             c = 0.966
+tokens / step
+
+
+
+
+                                                                                                                             tokens / step
+
+
+
+
+                                                                                                                                                                                                                                                                                      1.3
+                                                                                                                                                                                                                                                                            speedup
+                3.5                                                                                                                          3.5                                                                               0.50                                                                              ×1.21
+                                                                                                          4                                                                                                                                              Spider                       1.2
+                                                                                                                                             3.0                                                                               0.25                      GSM8K                                                   c = 0.995
+                3.0                                                                                       2                                                                                                                                              CodeContests                 1.1
+                                                                                                                                             2.5                                                                               0.00
+                                                                                                                                                                                                                                      4     8   16       32    64 128                 1.0
+                2.5                                                                                       0                                                                                                                                candidate budget N                               Qwen3-8B           DeepSeek-7B
+                      2                                                           4        6          8                                             2     4     8      16        32   64
+                      max n-gram order nmax                                                                                                             speculation length k                                                   (a) Coverage 𝑐 vs. budget 𝑁 .                           (b) Speedup at 𝑁 =16.
+            (a) TPS and memory vs. 𝑛 max .                                                                                       (b) TPS vs. speculation length 𝑘.
+                                                                                                                                                                                                        Figure 7: Fan-out prefetcher: (a) prefetch coverage 𝑐 vs. can-
+     Figure 6: Hyperparameter ablations (GSM8K, Qwen3-8B). We                                                                                                                                           didate budget 𝑁 ; (b) Spider speedup over the sequential syn-
+     fix 𝑛 max =6 and 𝑘=16, each at the knee of its speedup curve.                                                                                                                                      chronous baseline at 𝑁 =16.
+
+                  Table 2: Global vs per-prompt cache design ablation.
+                                                                                                                                                                                                        4.1.5 N-gram Prefetcher. Prefetch coverage: Figure 7a reports
+                                                                                                                                                                                                        the prefetch coverage 𝑐, the probability that the realized outcome
+                                                                                      Configuration                                  Cold epoch                Plateau                                  ( 𝑗 ∗, 𝑏 ∗ ) is among the prefetched candidates, as a function of the
+                                                                                      Ours, global bucket                                     1.55              2.41                                    candidate budget 𝑁 , measured by exact replay of the saturated
+                                                                                      Ours, per-prompt keys                                   1.00              3.05
+                                                                                      SuffixDecoding [16]                                     1.90              2.43
+                                                                                                                                                                                                        Qwen3-8B cache with the causal trailing-window allocator. A small
+                                                                                                                                                                                                        budget suffices: Spider reaches 𝑐=0.95 at 𝑁 =8 and saturates at 0.97
+                                                                                                                                                                                                        by 𝑁 =16, while GSM8K and CodeContests climb to 0.65 and 0.49
+    window therefore saves memory and keeps the cache aligned with                                                                                                                                      at 𝑁 =32 with only logarithmic gains beyond. Coverage follows the
+    the current policy.                                                                                                                                                                                 same agreement-length law as acceptance: after a full accept the
+                                                                                                                                                                                                        bonus token is the next token of an already-cached trajectory, so
+                                                                                                                                                                                                    6
+NgramRL: Rollout-Aware N-gram Speculative Decoding
+
+
+high-acceptance tasks are also high-coverage tasks. The residual                           [4] Zhuoming Chen, Avner May, Ruslan Svirschevski, Yuhsun Huang, Max Ryabinin,
+miss mass is entropy-limited rather than data-limited: per-step                                Zhihao Jia, and Beidi Chen. 2024. Sequoia: Scalable, robust, and hardware-aware
+                                                                                               speculative decoding. arXiv preprint arXiv:2402.12374 (2024).
+coverage plateaus within a few training steps and accumulating                             [5] Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, Mark Chen, Heewoo Jun,
+more rollout history does not raise it. Pushing 𝑁 past the knee                                Lukasz Kaiser, Matthias Plappert, Jerry Tworek, Jacob Hilton, Reiichiro Nakano,
+                                                                                               et al. 2021. Training verifiers to solve math word problems. arXiv preprint
+therefore buys little while the prefetch-chain cost grows linearly,                            arXiv:2110.14168 (2021).
+so we operate at 𝑁 =8–32.                                                                  [6] Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Peiyi Wang, Qihao Zhu,
+                                                                                               Runxin Xu, Ruoyu Zhang, Shirong Ma, Xiao Bi, et al. 2025. Deepseek-r1: Incen-
+   End-to-end speedup: Figure 7b translates coverage into wall-                                tivizing reasoning capability in llms via reinforcement learning. arXiv preprint
+clock gain over the sequential synchronous baseline via Eq. (3),                               arXiv:2501.12948 (2025).
+with 𝑇gpu and 𝑇cpu the CUPTI-measured device-busy and exposed-                             [7] Zhenyu He, Zexuan Zhong, Tianle Cai, Jason Lee, and Di He. 2024. Rest: Retrieval-
+                                                                                               based speculative decoding. In Proceedings of the 2024 Conference of the North
+host times per decode iteration. On Spider at 𝑁 =16, Qwen3-8B                                  American Chapter of the Association for Computational Linguistics: Human Lan-
+achieves 1.38× of its 1.40× overlap ceiling (𝑐=0.966), and DeepSeek-                           guage Technologies (Volume 1: Long Papers). 1582–1595.
+7B, whose ceiling we measure directly at 1.21×, achieves it outright                       [8] Yunjie Ji, Xiaoyu Tian, Sitong Zhao, Haotian Wang, Shuaiting Chen, Yiping Peng,
+                                                                                               Han Zhao, and Xiangang Li. 2025. Am-thinking-v1: Advancing the frontier of
+(𝑐=0.995): near-perfect coverage makes the prefetcher equivalent                               reasoning at 32b scale. arXiv preprint arXiv:2505.08311 (2025).
+to removing the host chain from the critical path, with no accepted                        [9] Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng,
+                                                                                               Cody Hao Yu, Joseph Gonzalez, Hao Zhang, and Ion Stoica. 2023. Efficient
+token lost and every committed token still drawn from the target                               memory management for large language model serving with pagedattention. In
+distribution. On the higher-entropy tasks the same mechanism                                   Proceedings of the 29th symposium on operating systems principles. 611–626.
+yields 1.05–1.06× against ceilings of 1.10× (GSM8K) and 1.14×                             [10] Yaniv Leviathan, Matan Kalman, and Yossi Matias. 2023. Fast inference from
+                                                                                               transformers via speculative decoding. In International conference on machine
+(CodeContests); because misses fall back to the sequential lookup                              learning. PMLR, 19274–19286.
+per request, the worst case is the baseline itself.                                       [11] Yujia Li, David Choi, Junyoung Chung, Nate Kushman, Julian Schrittwieser, Rémi
+                                                                                               Leblond, Tom Eccles, James Keeling, Felix Gimeno, Agustin Dal Lago, et al. 2022.
+                                                                                               Competition-level code generation with alphacode. Science 378, 6624 (2022),
+5    Conclusion                                                                                1092–1097.
+We presented NgramRL, a rollout-aware speculative-decoding sys-                           [12] Yuhui Li, Fangyun Wei, Chao Zhang, and Hongyang Zhang. 2024. Eagle:
+                                                                                               Speculative sampling requires rethinking feature uncertainty. arXiv preprint
+tem that exploits prompt-conditioned temporal locality in RL post-                             arXiv:2401.15077 (2024).
+training. NgramRL builds bounded per-prompt 𝑛-gram caches from                            [13] Xiaoxuan Liu, Lanxiang Hu, Peter Bailis, Alvin Cheung, Zhijie Deng, Ion
+recent policy rollouts, yielding self-updating drafts without an aux-                          Stoica, and Hao Zhang. 2023. Online speculative decoding. arXiv preprint
+                                                                                               arXiv:2310.07177 (2023).
+iliary model, drafter training, or GPU-resident drafter state. An                         [14] Xianzhen Luo, Yixuan Wang, Qingfu Zhu, Zhiming Zhang, Xuanyu Zhang,
+adaptive fan-out prefetcher with a causal budget allocator keeps the                           Qing Yang, and Dongliang Xu. 2025. Turning trash into treasure: Accelerating
+                                                                                               inference of large language models with token recycling. In Proceedings of the
+host-resident cache off the decode critical path by preparing drafts                           63rd Annual Meeting of the Association for Computational Linguistics (Volume 1:
+for likely verification outcomes ( 𝑗, 𝑏), while uncovered requests                             Long Papers). 6816–6831.
+fall back to sequential lookup without altering the rollout distribu-                     [15] NVIDIA Corporation. 2025. NVIDIA Nsight Systems. https://developer.nvidia.
+                                                                                               com/nsight-systems. Version 2025.5.
+tion. Across two model families and three workloads, NgramRL                              [16] Gabriele Oliaro, Zhihao Jia, Daniel Campos, and Aurick Qiao. 2026. Suffixde-
+commits 3.60–7.77 tokens per target-model forward, up to 1.99×                                 coding: Extreme speculative decoding for emerging ai applications. Advances in
+more than SuffixDecoding and 7.0× more than prompt-lookup de-                                  Neural Information Processing Systems 38 (2026), 126326–126354.
+                                                                                          [17] Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela
+coding, and the prefetcher delivers up to 1.38× measured rollout                               Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, et al. 2022.
+speedup over synchronous execution. These results show that re-                                Training language models to follow instructions with human feedback. Advances
+                                                                                               in neural information processing systems 35 (2022), 27730–27744.
+cent same-prompt rollouts are an effective draft source and that                          [18] Apoorv Saxena. 2023. Prompt Lookup Decoding.                  https://github.com/
+outcome-aware CPU–GPU prefetching converts this temporal lo-                                   apoorvumang/prompt-lookup-decoding/
+cality into measured acceleration while preserving exact target                           [19] John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov.
+                                                                                               2017. Proximal policy optimization algorithms. arXiv preprint arXiv:1707.06347
+sampling.                                                                                      (2017).
+                                                                                          [20] Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei
+Acknowledgments                                                                                Zhang, Mingchuan Zhang, YK Li, Yang Wu, et al. 2024. Deepseekmath: Pushing
+                                                                                               the limits of mathematical reasoning in open language models. arXiv preprint
+This work was funded in part by NSF (awards #1826967, #1911095,                                arXiv:2402.03300 (2024).
+#2003279, #2052809, #2100237, #2112167, and #2112665), and by                             [21] Guangming Sheng, Chi Zhang, Zilingfeng Ye, Xibin Wu, Wang Zhang, Ru Zhang,
+                                                                                               Yanghua Peng, Haibin Lin, and Chuan Wu. 2025. Hybridflow: A flexible and
+PRISM and CoCoSys, centers in JUMP 2.0, an SRC program spon-                                   efficient rlhf framework. In Proceedings of the Twentieth European Conference on
+sored by DARPA.                                                                                Computer Systems. 1279–1297.
+                                                                                          [22] An Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng,
+                                                                                               Bowen Yu, Chang Gao, Chengen Huang, Chenxu Lv, et al. 2025. Qwen3 technical
+References                                                                                     report. arXiv preprint arXiv:2505.09388 (2025).
+ [1] Xiao Bi, Deli Chen, Guanting Chen, Shanhuang Chen, Damai Dai, Chengqi Deng,          [23] Tao Yu, Rui Zhang, Kai Yang, Michihiro Yasunaga, Dongxu Wang, Zifan Li, James
+     Honghui Ding, Kai Dong, Qiushi Du, Zhe Fu, et al. 2024. Deepseek llm: Scaling             Ma, Irene Li, Qingning Yao, Shanelle Roman, et al. 2018. Spider: A large-scale
+     open-source language models with longtermism. arXiv preprint arXiv:2401.02954             human-labeled dataset for complex and cross-domain semantic parsing and
+     (2024).                                                                                   text-to-sql task. In Proceedings of the 2018 conference on empirical methods in
+ [2] Tianle Cai, Yuhong Li, Zhengyang Geng, Hongwu Peng, Jason D Lee, Deming                   natural language processing. 3911–3921.
+     Chen, and Tri Dao. 2024. Medusa: Simple llm inference acceleration framework         [24] Lianmin Zheng, Liangsheng Yin, Zhiqiang Xie, Chuyue Sun, Jeff Huang, Cody H
+     with multiple decoding heads. arXiv preprint arXiv:2401.10774 (2024).                     Yu, Shiyi Cao, Christos Kozyrakis, Ion Stoica, Joseph E Gonzalez, et al. 2024.
+ [3] Charlie Chen, Sebastian Borgeaud, Geoffrey Irving, Jean-Baptiste Lespiau, Lau-            Sglang: Efficient execution of structured language model programs. Advances in
+     rent Sifre, and John Jumper. 2023. Accelerating large language model decoding             neural information processing systems 37 (2024), 62557–62583.
+     with speculative sampling. arXiv preprint arXiv:2302.01318 (2023).
+
+
+
+
+                                                                                      7
+

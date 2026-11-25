@@ -1,0 +1,11 @@
+2610.36195 | total=6027201 | etag=e59d0101934f0793a44f4230dcb79f5cea329f80dd2391b7917a97550328cf96
+seg 3 OK 753401
+seg 1 OK 753401
+seg 4 OK 753401
+seg 2 OK 753401
+seg 7 OK 753394
+curl: (28) Operation timed out after 300002 milliseconds with 2771 out of 753401 bytes received
+curl: (28) Operation timed out after 300002 milliseconds with 486436 out of 753401 bytes received
+curl: (28) Operation timed out after 300001 milliseconds with 180769 out of 753401 bytes received
+seg 0 OK 753401
+seg 6 OK 753401

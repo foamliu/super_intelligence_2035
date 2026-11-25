@@ -1,0 +1,27 @@
+2610.37619 | total=1823189 | etag="sha256:d4828a92dfdd814b0969a446235f5d9bde7524b30d72cb09a29e1cc46e19de8d"
+seg 0 [0,227898] OK 227899
+seg 1 [227899,455797] OK 227899
+seg 2 [455798,683696] OK 227899
+seg 3 [683697,911595] OK 227899
+seg 4 [911596,1139494] OK 227899
+seg 5 [1139495,1367393] OK 227899
+seg 7 [1595293,1823188] OK 227896
+  seg [1367394,1595292] try 1: TimeoutError('The read operation timed out')
+  seg [1367394,1595292] try 2: TimeoutError('The read operation timed out')
+seg 6 [1367394,1595292] OK 227899
+bytes=1823189/1823189 pages=8 chars=39759 sha256=758200c7c9e95d5d4aab3fbdf68c0f1ca397bb6e4f7a2d1e9eedbf8d93fae0d6 tail_ok=True
+OK /home/liuyang/super_intelligence_2035/doc/personal-watch/run/research/pdf/2026-10-29/2610.37619.pdf bytes=1823189 pages=8 chars=39759 sha256=758200c7c9e95d5d4aab3fbdf68c0f1ca397bb6e4f7a2d1e9eedbf8d93fae0d6 etag_match=False
+2610.36195 | total=6027201 | etag="sha256:e59d0101934f0793a44f4230dcb79f5cea329f80dd2391b7917a97550328cf96"
+seg 5 [3767005,4520405] OK 753401
+seg 3 [2260203,3013603] OK 753401
+seg 1 [753401,1506801] OK 753401
+  seg [4520406,5273806] try 1: TimeoutError('The read operation timed out')
+seg 7 [5273807,6027200] OK 753394
+  seg [1506802,2260202] try 1: TimeoutError('The read operation timed out')
+seg 4 [3013604,3767004] OK 753401
+seg 6 [4520406,5273806] OK 753401
+seg 2 [1506802,2260202] OK 753401
+  seg [0,753400] try 1: TimeoutError('The read operation timed out')
+seg 0 [0,753400] OK 753401
+bytes=6027201/6027201 pages=22 chars=65886 sha256=3f5a3612d318b29d2856f678f62c2b3460d342871e0510fb3b4e7a90bbe5a56c tail_ok=True
+OK /home/liuyang/super_intelligence_2035/doc/personal-watch/run/research/pdf/2026-10-29/2610.36195.pdf bytes=6027201 pages=22 chars=65886 sha256=3f5a3612d318b29d2856f678f62c2b3460d342871e0510fb3b4e7a90bbe5a56c etag_match=False

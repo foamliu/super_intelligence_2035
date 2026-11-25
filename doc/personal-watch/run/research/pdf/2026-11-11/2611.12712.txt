@@ -1,0 +1,490 @@
+                                            Will AI mess my RTL? A snapshot-based approach to verifying
+                                                                  AI-written RTL
+                                                  Bernat Homs1,2                              Oscar Palomar2                       Miquel Moreto1,2                                        Marcelo Orenes-Vera3
+                                            bernat.homsgisbert@bsc.es                       oscar.palomar@bsc.es                  miquel.moreto@bsc.es                                     morenesvera@nvidia.com
+                                                                                             1 Universitat Politècnica de Catalunya, Barcelona, Spain
+                                                                                              2 Barcelona Supercomputing Center, Barcelona, Spain
+                                                                                                               3 NVIDIA, Santa Clara, USA
+
+
+                                        Abstract
+                                        With the growing interest in using AI (Artificial Intelligence) for                                 (1) Testbench
+                                                                                                                                             Generation
+
+                                        RTL (Register-Transfer Level) hardware development, robust and                                                                                              (5) Iterative Repair of
+arXiv:2611.12712v1 [cs.SE] 9 Nov 2026
+
+
+
+
+                                                                                                                                                                                                      Failing Assertions
+                                        comprehensive verification has become more important than ever.                                  (2) Initial Assertion
+                                        As Large Language Models (LLMs) increasingly assist in creating                                    Set Generation                                              No new assertions
+
+                                        and modifying RTL designs, ensuring that these changes preserve
+                                                                                                                                                                                                         in generation
+
+
+                                        existing functionality is paramount for building trust in AI-driven                          (3) Initial Syntax Correction                                  (4) Assertion Set Extension
+
+                                        workflows. We present SVApshot, a fully automated framework that                                                                                         A. New Assertions Generation
+                                                                                                                                         A. Module Prefixing
+                                        leverages LLMs to generate and systematically attempt to correct
+                                        SystemVerilog Assertions (SVA) for RTL modules, completely re-                                B. Assertion Name Check           No syntax errors
+                                                                                                                                                                                                 B. Initial Duplicate Assertion
+                                                                                                                                                                                                             Check
+                                        moving the human from the generation loop. SVApshot introduces
+                                                                                                                                                                                                             C. (3)
+                                        a novel snapshot methodology that captures the current functional-
+                                                                                                                                      C. Correction with FPV App
+                                        ity of a design as a comprehensive set of formal assertions, creating                                 Syntax Log                                          D. Final Duplicate Assertion
+                                                                                                                                                                                                             Check
+                                        a regression suite for validating future changes—whether made
+                                        by humans or AI. The framework features automated duplicate
+                                        detection, assertion set expansion, and iterative repair of failing                                                      Uses LLM          Python Code
+
+                                        assertions using LLM-guided debugging with formal verification
+                                        feedback. Our experimental evaluation across diverse RTL modules                        Figure 1: SVApshot toolflow diagram showing the complete
+                                        demonstrates high coverage for complex modules, with success-                           process from RTL input to final snapshot generation. Green
+                                        ful detection of both manually-injected and AI-introduced bugs.                         boxes represent automated processes scripted in Python, blue
+                                        Additionally, this framework opens the door for automatic gen-                          boxes represent processes involving LLMs.
+                                        eration of formal testbenches to benchmark LLMs for hardware
+                                        design, moving beyond binary pass/fail metrics towards nuanced                          formal testbench generation. However, these conventional meth-
+                                        assertion-based scoring.                                                                ods are constrained by their dependence on simulation coverage,
+                                                                                                                                predefined templates, models, or manual annotations. The emer-
+                                        1    Introduction and Background                                                        gence of LLM-based assertion generation has shown promise in
+                                        The rapid advancement of LLMs has opened a new era of AI-driven                         addressing some of these limitations [21, 23]. Recent works like As-
+                                        RTL design, where automated tools increasingly handle the creation                      sertLLM [23] process complete specification documents to generate
+                                        and modification of hardware descriptions [1, 11, 13], introducing                      assertions, while AssertionForge [2] constructs knowledge graphs
+                                        unprecedented verification challenges. As LLMs automate complex                         from both specifications and RTL code to discover complex signal
+                                        design tasks, ensuring that AI modifications to RTL preserve ex-                        interactions. Spec2Assertion [16] focuses on pre-RTL assertion gen-
+                                        isting functionality while introducing new features has become                          eration from architectural specifications. Despite these advances,
+                                        paramount for building trust in AI-driven workflows. Traditional                        current LLM-based approaches suffer from critical gaps: they lack
+                                        approaches to automated assertion generation have made signif-                          mechanisms for iterative refinement of failing assertions and do not
+                                        icant strides but fall short of addressing the unique demands of                        provide systematic approaches for maintaining assertions across
+                                        AI-assisted hardware design. Early methods like GoldMine [12] pi-                       design evolution. Our tool, SVApshot, is designed to be used in
+                                        oneered dynamic assertion mining through simulation-based data                          the rapid, iterative nature of AI-driven design. It addresses these
+                                        mining, while template-based approaches such as HARM [8] and                            limitations by introducing a framework focused on creating a
+                                        A-TEAM [6] leveraged predefined patterns to generate assertions                         snapshot that captures the functionality of an RTL module
+                                        from execution traces. ILA [9] generates a model of the design                          as a comprehensive set of SystemVerilog Assertions (SVA) that
+                                        from a functional specification and compares it against its RTL                         serves as a regression suite for future modifications. Unlike
+                                        implementation, and AutoSVA [20] introduced annotation-driven                           existing approaches that generate assertions from specifications,
+                                                                                                                                SVApshot leverages the goal of treating the current RTL as a golden
+                                        Paper presented at the DAC 2026 Work in Progress (WIP) Poster Session.                  reference to iteratively refine LLM-generated assertions and ob-
+                                                                                                                                tain a set of proven assertions with respect to the reference RTL.
+                                                                                                                                Specifications are often incomplete and expressed in diverse, non-
+                                        This work is licensed under a Creative Commons Attribution 4.0 International License.   textual forms such as waveforms or tables, which standard LLMs
+                                                                                                                                       Homs et al.
+
+
+struggle to interpret unless these artifacts are transformed into
+text or handled by specialized models. Because natural language is        Algorithm 1 SVApshot Toolflow
+inherently ambiguous, converting specs into a formal representa-          Require: RTL module 𝑀
+tion is critical to avoid misinterpretation. Meanwhile, RTL provides       1: Stage 1: Generate formal testbench environment for 𝑀
+full visibility into the design’s microarchitecture, enabling LLMs to      2: Stage 2: 𝐴𝑖𝑛𝑖𝑡𝑖𝑎𝑙 ← LLM.generateAssertions(𝑀, rules)
+generate internal assertions that remain reusable as long as those         3: Stage 3: 𝐴𝑐𝑜𝑟𝑟𝑒𝑐𝑡𝑒𝑑 ← correctSyntax(𝐴𝑖𝑛𝑖𝑡𝑖𝑎𝑙 )
+parts of the design remain stable. This snapshot methodology is            4: Stage 4: Initialize property database with 𝐴𝑐𝑜𝑟𝑟𝑒𝑐𝑡𝑒𝑑
+particularly valuable for AI-driven design, where rapid changes are        5: repeat
+difficult to manually audit. SVApshot’s golden reference toolflow is       6:   𝐴𝑝𝑜𝑡 _𝑢𝑛𝑖𝑞𝑢𝑒 ← removeDupl(𝐴𝑛𝑒𝑤 , prop_db)
+orthogonal to prior works and could even adopt different assertion         7:   𝐴𝑝𝑜𝑡 _𝑢𝑛𝑖𝑞𝑢𝑒_𝑐𝑜𝑟𝑟 ← correctSyntax(𝐴𝑝𝑜𝑡 _𝑢𝑛𝑖𝑞𝑢𝑒 )
+generation rules. The current version of SVApshot uses the rules           8:   𝐴𝑢𝑛𝑖𝑞𝑢𝑒 ← removeDupl(𝐴𝑝𝑜𝑡 _𝑢𝑛𝑖𝑞𝑢𝑒_𝑐𝑜𝑟𝑟 , prop_db)
+from AutoSVA2 [21]. SVApshot’s generation based on reference               9:   𝐴𝑐𝑜𝑟𝑟𝑒𝑐𝑡𝑒𝑑 ← 𝐴𝑐𝑜𝑟𝑟𝑒𝑐𝑡𝑒𝑑 ∪ 𝐴𝑢𝑛𝑖𝑞𝑢𝑒
+RTL implementations is also applicable to automatically creat-            10:   Update property database (prop_db)
+ing formal testbenches for benchmarking of LLMs at hardware               11: until 𝐴𝑢𝑛𝑖𝑞𝑢𝑒 = ∅          ⊲ All new assertions are duplicates
+design, which is more exhaustive than simple functional equiv-            12: Stage 5: 𝑟𝑒𝑠𝑢𝑙𝑡𝑠 ← formalVerify(𝐴𝑐𝑜𝑟𝑟𝑒𝑐𝑡𝑒𝑑 , 𝑀)
+alence comparison and provides more verification visibility than          13: 𝐴𝑝𝑟𝑜𝑣𝑒𝑛 ← ∅, 𝐴𝑐𝑒𝑥 ← ∅
+LEC (Logical Equivalence Checking), i.e. offers a direct view of the      14: for each assertion 𝑎 ∈ 𝐴𝑐𝑜𝑟𝑟𝑒𝑐𝑡𝑒𝑑 do
+mismatching logic, with a concrete failing assertion, rather than a       15:   if 𝑟𝑒𝑠𝑢𝑙𝑡𝑠 [𝑎] = PROVEN then
+general output mismatch that requires debugging. Several bench-           16:      𝐴𝑝𝑟𝑜𝑣𝑒𝑛 ← 𝐴𝑝𝑟𝑜𝑣𝑒𝑛 ∪ {𝑎}
+marks have emerged to evaluate LLMs for RTL generation using              17:   else if 𝑟𝑒𝑠𝑢𝑙𝑡𝑠 [𝑎] = CEX then
+coarser-grained metrics like functional equivalence or simulation-        18:      𝑟𝑒𝑝𝑎𝑖𝑟𝑒𝑑 ← false, 𝑎𝑡𝑡𝑒𝑚𝑝𝑡𝑠 ← 0
+based testbenches. These approaches would benefit from using              19:      while ¬𝑟𝑒𝑝𝑎𝑖𝑟𝑒𝑑 and 𝑎𝑡𝑡𝑒𝑚𝑝𝑡𝑠 < 5 do
+SVApshot to curate assertion suites as property checklists for ex-        20:         𝑎 𝑓 𝑖𝑥𝑒𝑑 ← LLM.fixSVA(𝑎, 𝑟𝑒𝑠𝑢𝑙𝑡𝑠 [𝑎].𝑐𝑒𝑥, 𝑀)
+haustively evaluating LLM-generated RTL. RTLLM [14] provides              21:         𝑟𝑒𝑠𝑢𝑙𝑡 ← formalVerify(𝑎 𝑓 𝑖𝑥𝑒𝑑 , 𝑀)
+an open benchmark suite comprising design descriptions, test cases,       22:         if 𝑟𝑒𝑠𝑢𝑙𝑡 = PROVEN then
+and golden RTL implementations to assess LLM capabilities in RTL          23:             𝐴𝑝𝑟𝑜𝑣𝑒𝑛 ← 𝐴𝑝𝑟𝑜𝑣𝑒𝑛 ∪ {𝑎 𝑓 𝑖𝑥𝑒𝑑 }
+generation. VerilogEval [15] focuses on specific tasks like code com-     24:             𝑟𝑒𝑝𝑎𝑖𝑟𝑒𝑑 ← true
+pletion and spec-to-RTL translation. TuRTLe [7] offers a unified          25:         end if
+evaluation framework, integrating multiple existing benchmarks            26:         𝑎𝑡𝑡𝑒𝑚𝑝𝑡𝑠 ← 𝑎𝑡𝑡𝑒𝑚𝑝𝑡𝑠 + 1
+(including VerilogEval and RTLLM) to assess LLM performance               27:      end while
+across a spectrum of RTL generation tasks. SVApshot is uniquely           28:      if ¬𝑟𝑒𝑝𝑎𝑖𝑟𝑒𝑑 then
+positioned to facilitate the benchmarking of LLM-generated RTL.           29:         𝐴𝑐𝑒𝑥 ← 𝐴𝑐𝑒𝑥 ∪ {𝑎}
+Instead of relying solely on simulation-based testbenches for bench-      30:      end if
+marking, which may miss corner-case bugs, prior work can lever-           31:   end if
+age SVApshot to create comprehensive, high-quality, and formally          32: end for
+verifiable assertion suites. SVApshot introduces several key inno-        33: return snapshot(𝐴𝑝𝑟𝑜𝑣𝑒𝑛 , 𝐴𝑐𝑒𝑥 )
+vations that enable this snapshot methodology:
+
+
+     • ○1 Implements an automated iterative repair loop that at-          benchmarking instruments for evaluating AI-generated RTL. Fig-
+       tempts to fix failing assertions using LLM-guided debug-           ure 1 illustrates the complete toolflow through a detailed diagram,
+       ging, addressing a critical gap in existing tools that typically   which Algorithm 1 further details with pseudocode.
+       treat generated assertions as final outputs.
+     • ○2 Provides sophisticated duplicate detection and asser-           2     The SVApshot Toolflow
+       tion set extension capabilities that ensure comprehensive          SVApshot is a modular framework that integrates LLM-based as-
+       coverage while avoiding redundancy through conjunctive             sertion generation with formal verification techniques. It removes
+       normal form (CNF) analysis.                                        humans from the generation loop by treating the input RTL module
+     • ○3 Integrates these features through an automatic and mod-         as a golden reference. By establishing trust in the RTL, we assume
+       ular pipeline that begins with automated formal testbench          all proof results are correct, eliminating the notion of false positives
+       generation, proceeds through LLM-based assertion genera-           (assertions that are passing but the RTL is wrong). This assumption
+       tion with systematic syntax correction, expands assertion          constitutes the cornerstone of SVApshot, which enables the seman-
+       sets through targeted prompting, and concludes with itera-         tic repair capability (Stage 5 of Algorithm 1). Section 2.1 details
+       tive semantic repair using formal verification feedback.           each toolflow stage, and Sections 2.2 and 2.3 present the use cases
+                                                                          for which SVApshot’s methodology introduces a novel solution.
+This end-to-end LLM-assisted automation, combined with robust
+error handling and systematic refinement, enables SVApshot to             2.1    Toolflow Overview
+generate testbenches that serve both as verification artifacts and as     The SVApshot toolflow comprises five sequential stages:
+(1) Testbench Generation: Automated scripts generate the                     repair attempts to 5 iterations per assertion to ensure ter-
+    necessary formal testbench environment for the target RTL                mination. The toolflow concludes after attempting repairs
+    module. This includes directory structure, assertion files,              for all failing assertions.
+    binding files, and compilation scripts required for the For-
+    mal Property Verification (FPV) tool.
+(2) Initial Assertion Generation: The LLM generates an ini-          2.2    Use case: Snapshot-Based Verification of
+    tial assertion set using the RTL module and curated SVA                 AI-Driven Design
+    generation rules as input. The prompt combines the golden        The primary use case for SVApshot is verifying the preservation of
+    RTL with established SVA writing guidelines to enhance           functionality in RTL designs undergoing AI-assisted modifications.
+    semantic relevance.                                              This application leverages formal assertions as regression tests to
+(3) Syntax Correction: The framework corrects syntactic er-          detect unintended behavioral changes.
+    rors in the initial assertion set through a three-phase ap-
+    proach. Automated methods first address common errors:
+                                                                           • Establishing a Baseline: SVApshot generates a compre-
+    prefixing internal signals, enum values, parameters, and
+                                                                             hensive set of SVA properties for an existing RTL module
+    localparams with module names (3.A in Figure 1).
+                                                                             through the five-stage toolflow. After formal verification
+    The system then resolves assertion name collisions (3.B
+                                                                             and iterative repair, these properties constitute an initial
+    in Figure 1). These seldom happen, but we have observed
+                                                                             behavioral snapshot. This snapshot serves as a trusted base-
+    instances of initial assertion sets with duplicated assertion
+                                                                             line for subsequent design modifications.
+    names. Following compilation attempts with the FPV tool,
+                                                                           • Verifying AI-Generated Changes: Modified RTL under-
+    remaining syntax errors trigger an LLM-based correction
+                                                                             goes verification against the established snapshot to detect
+    process that prompts the LLM with the RTL code, current
+                                                                             behavioral regressions. End-to-end assertions involving
+    assertions, and specific error messages (3.C in Figure 1).
+                                                                             only inputs and outputs remain applicable when the mod-
+    This iterative process continues until compilation succeeds.
+                                                                             ule interface is preserved. Internal assertions may require
+    In the rare case that assertions prove very difficult to fix,
+                                                                             selective reuse based on the specific signals and implemen-
+    a protection mechanism stops the LLM-based syntax cor-
+                                                                             tation details affected by modifications. The key principle of
+    rection after 10 attempts. When this limit is reached, the
+                                                                             SVApshot is that failing assertions identify potential issues
+    tool progressively removes assertions from the set until a
+                                                                             introduced by changes, providing automated regression
+    subset of syntactically correct assertions remains.
+                                                                             detection.
+(4) Assertion Set extension: Syntactically correct assertions
+                                                                           • Incremental Snapshots: The snapshot methodology sup-
+    are parsed and stored in a property database in conjunctive
+                                                                             ports incremental updates as designs evolve and new func-
+    normal form (CNF) for reliable duplicate detection; CNF
+                                                                             tionalities undergo validation. Updated snapshots reflect
+    processing prevents wrongly considering assertions as dif-
+                                                                             the current trusted design state while maintaining historical
+    ferent when they differ only in signal ordering (e.g., 𝑎 ∧ 𝑏
+                                                                             verification artifacts.
+    and 𝑏 ∧ 𝑎), or are logically equivalent (e.g., 𝑎 =⇒ 𝑏 and
+    ¬𝑎 ∨ 𝑏). The delay of every concurrent assertion is also
+    stored for comparison. We remove the delay from the ex-          This methodology enhances confidence in AI-assisted RTL devel-
+    pression so that the parser only processes the implication,      opment by providing automated formal verification of functional
+    AND, OR, and NOT operands to do the CNF conversion.              preservation across design iterations. This approach aligns well
+    We define assertions as duplicated when they are logically       with test-driven development (TDD) [4].
+    equivalent and have the same delay. If two assertions are
+    different but have the same name, the tool adjusts the names
+    automatically to prevent syntax errors. The LLM generates
+                                                                     2.3    Use case: Benchmarking LLMs for RTL
+    additional assertions using the RTL and existing properties             Generation
+    as context. Automated duplicate detection precedes syn-          SVApshot enables fine-grained benchmarking of LLM capabilities
+    tax correction to optimize computational efficiency, i.e., we    in hardware design tasks beyond simple functional equivalence.
+    avoid running the FPV tool on duplicate assertions. New as-      Functional equivalence (determined by tools like logic equivalence
+    sertions undergo syntax correction via Stage 3, followed by      checkers [10]) between reference and candidate designs provides
+    a final duplicate detection step. This assertion set extension   only binary pass/fail metrics, which are insufficient to assess the
+    process continues until the LLM produces only duplicate          quality and nuanced aspects of LLM output. Although comprehen-
+    assertions. Thus, our de-duplication step serves as both a       sive benchmarking of LLM-generated RTL is beyond the scope
+    computationally-efficient filter and a reliable termination      of this paper, it provides a framework to enable such evaluation.
+    condition for the set extension process.                         Assertion-Based Scoring: LLM-generated RTL can undergo evalu-
+(5) Iterative Semantic Repair: The semantic correction loop          ation against reference modules’ snapshots to assess design quality.
+    addresses failing assertions through LLM-based repair. Each      The number of passing properties directly serves as a quality met-
+    iteration prompts the LLM with RTL code, one failing asser-      ric for RTL generation. More sophisticated metrics could include
+    tion, and previously attempted fixes. The framework limits       weighted scoring based on assertion complexity (number of CNF
+                                                                     clauses, number of signals, etc.).
+                                                                                                                                             Homs et al.
+
+
+3   Experimental Methodology                                                    space. Secondary metrics include initial assertion pass rates and
+Module Selection: Table 1 lists the 14 RTL modules evaluated                    semantic correction success rates. These and other metrics enable
+and provides a brief description for each of them. We evaluate                  analysis of both coverage progression and assertion set evolution
+SVApshot’s capabilities using a diverse set of RTL modules span-                throughout the flow, as well as assessment of the quality of gen-
+ning different complexity levels and design domains. The mod-                   erated assertions and the effectiveness of the repair process. The
+ule selection includes components from both internal company                    reported checker coverage results are calculated using only the
+projects and open-source components from the Sargantana proces-                 proven assertions to establish the coverage baseline achieved by
+sor core [3], chosen to represent realistic hardware design scenarios.          the snapshot. Any remaining failing assertions, if corrected, would
+Experimental Configuration: To sense what the impact of LLM                     potentially contribute additional coverage to the design, especially
+                                                                                since our methodology already detects and removes equivalent as-
+          Table 1: RTL Modules Used for Evaluation.                             sertions. Measuring the coverage of the generated SVA evaluates
+                                                                                the goodness of SVApshot at both use cases defined in Sections 2.2
+                                                                                and 2.3, since the more thorough the formal testbench it creates,
+ Module                               Description
+                                                                                the more exhaustive is the snapshot at capturing future RTL devia-
+ popcount                             Parameterizable pop-count/reduction       tions and the testbench at benchmarking nuanced RTL-generation
+ skipper_counter                      Configurable state counter                capabilities.
+ edge_detector                        Signal edge detector
+ alu (Arithmetic Logic Unit)          Asynchronous ALU
+ dynamic_target_event_counter         Parallel event counter
+                                                                                4     Experimental Results
+ score_board_scalar                   Scalar datapath scoreboard                Section 4.1 presents comprehensive experimental results of apply-
+ branch_unit                          Branch execution control unit             ing SVApshot to a diverse set of RTL modules, ranging from 100
+ tlb (Transaction Lookaside Buffer)   Memory Management Unit TLB                to 400 lines of code (LOC), including complex hierarchical designs
+ ptw (Page Table Walker)              Memory Management Unit PTW                with submodules. Section 4.2 presents the CEX correction analysis.
+ ptw_arb                              PTW request arbiter                       Section 4.3 presents an analysis of the runtime and cost of SVApshot,
+ pseudoLRU                            Pseudo-LRU controller                     and lastly, a validation example is presented in Section 4.4. Table 3
+ div_unit                             Pipelined 32/64-bit division unit
+                                                                                results demonstrate SVApshot’s effectiveness across different mod-
+ div_unit_4bits                       4-bit division unit
+ mul_unit                             Pipelined 32/64-bit multiplication unit
+                                                                                ule complexities and sources. For the tlb, ptw and div_unit mod-
+                                                                                ules, we generated assertions for their submodules as well, given
+                                                                                their significantly larger size and complexity, providing a more com-
+sizes is on the SVApshot toolflow, we used the models in Table                  prehensive evaluation of SVApshot’s capabilities on hierarchical
+2. The temperature value was chosen to balance assertion diver-                 designs. Table 3 shows results for these modules with assertions for
+sity with generation consistency and reproducibility, while the                 submodules, whereas for other modules without submodules (e.g.,
+max token count was set based on the observation that each LLM                  skipper_counter and dynamic_target_event_counter) we in-
+task required around 4000 tokens. We ran the models using the                   clude only assertions for the top-level module. Thus, further cov-
+NVIDIA NIM API [18]. For formal property verification and cov-                  erage could be achieved for these top-level modules by adding
+erage analysis, we utilized Cadence JasperGold v2021.12 [5]. The                assertions for submodules, since the coverage tool reports coverage
+repository dac-2026-artifacts contains the final assertion test-                for the entire hierarchy.
+benches for div_unit, div_unit_4bits, mul_unit, ptw, ptw_arb,
+and pseudoLRU, and the script that re-proves one experiment or                  4.1    Snapshot Coverage Across Modules
+the full set with JasperGold and with VC Formal.                                The experimental results demonstrate several key findings across
+                                                                                multiple dimensions of analysis. Effect of LLM choice: The first
+           Table 2: LLMs used for experimentation.                              section of Table 3 shows modules evaluated only with GPT 4.1
+                                                                                mini, while the latter three sections show modules evaluated with
+Model             Modules Evaluated               Configuration                 several LLMs (and bold the highest coverage for each module). We
+GPT-4.1-mini [19]        14         temp = 0.2, max_token = 8192                notice that while GPT 4.1 mini performs well overall, for some
+Llama3.1 405B[17]         6         temp = 0.2, max_token = 8192                modules, the Llama models surpass the achieved coverage. The
+Llama3.3 70B [17]         6         temp = 0.2, max_token = 8192                405-billion parameter Llama version is better than or equal to the
+                                                                                70-billion one, and results are vastly better for mul_unit. We an-
+Evaluation Metrics: Given that formal verification tools have                   ticipate that future, more capable AI models (especially those fine-
+been around for decades and have proved their usefulness at catch-              tuned on SystemVerilog) would yield even higher coverage, with
+ing bugs [22], it would not add much value to the reader for us to              the same tooflow. Coverage Improvement Analysis: SVApshot
+prove that a formal testbench with full coverage would catch any                achieved significant coverage improvement from initial SVA gener-
+bug that a code refactor may introduce. Thus, we evaluate SVAp-                 ation (Stage 2 in Figure 1) to the end of set extension (Stage 4) across
+shot effectiveness using checker coverage as the primary metric.                the majority of evaluated modules. The alu module achieves 100%
+Checker coverage quantifies the portion of the design state space               initial coverage, an exceptional result, due to its simple functional
+explored by the assertion set, providing a reliable indicator of asser-         specifications, which are easily translated into SVA properties. The
+tion quality and completeness. Higher checker coverage indicates                most substantial improvement occurred in the popcount module,
+more comprehensive verification of the RTL module’s behavioral                  where coverage increased from up to 93.9%. This module only has
+Table 3: Experiment results. First section groups RTL modules evaluated with GPT4.1-mini; the rest cover the ones evaluated
+with 3 LLMs. Topology is either Sequential (S) or Combinational (C). Number of unique submodules (Sub). Initial (Init) results
+represent the results obtained after finishing Stage 3.
+
+    RTL Module                     LLM              Topology Source            LOC Sub Init Assrt Init Cov   Pass Before     Final Pass Final Cov
+                                                                                   (#)     (#)       (%)   Stage 5 (#/Total) (#/Total)     (%)
+    popcount                       GPT 4.1 mini        S     Internal          139   2        5        0           0/59        3/59        93.9
+    skipper_counter                GPT 4.1 mini        S     Internal          165   2       22       34.1         4/22        4/22        53.5
+    edge_detector                  GPT 4.1 mini        S     Internal          24    0        5       73.3        19/19        19/19       73.3
+    alu                            GPT 4.1 mini        C     Internal          173   0       28       100         18/46        35/46       100
+    dynamic_target_event_counter   GPT 4.1 mini        S     Internal          230   1       14       62.8         6/14        6/14        62.8
+    score_board_scalar             GPT 4.1 mini        S     Sargantana Core   96    0       22       55.7        11/22        12/22       86.0
+    branch_unit                    GPT 4.1 mini        C     Sargantana Core   140   0       14       14.4         1/14        12/14       42.0
+    tlb (with submodules)          GPT 4.1 mini        S     Sargantana Core   372   1        8       23.7        33/43        37/43       39.3
+       pseudoLRU                   GPT 4.1 mini        S     Sargantana Core   137   0        8       68.7        22/35        29/35       70.7
+    ptw (with submodules)          GPT 4.1 mini        S     Sargantana Core   419   2       40       47.9        75/107      96/107      52.8
+      ptw_arb                      GPT 4.1 mini        S     Sargantana Core   115   0       17       95.5        28/37        33/37      95.7
+      pseudoLRU                    GPT 4.1 mini        S     Sargantana Core   137   0        8       68.7        22/35        29/35      70.7
+    ptw (with submodules)          Llama 3.3 70b       S     Sargantana Core   419   2       54       43.3       137/221      162/221     44.6
+      ptw_arb                      Llama 3.3 70b       S     Sargantana Core   115   0       28       88.7        24/49        32/49      89.0
+      pseudoLRU                    Llama 3.3 70b       S     Sargantana Core   137   0       12       71.7        87/106      95/106      71.7
+    ptw (with submodules)          Llama 3.1 405b      S     Sargantana Core   419   2        5       28.8        68/116      86/116      43.4
+      ptw_arb                      Llama 3.1 405b      S     Sargantana Core   115   0        8       69.4        14/29        19/29      88.7
+      pseudoLRU                    Llama 3.1 405b      S     Sargantana Core   137   0       11       68.7        21/45        32/45      71.7
+    div_unit (with submodules)     GPT 4.1 mini        S     Internal          241   1       17       84.2        74/128      96/128      85.6
+      div_unit_4bits               GPT 4.1 mini        C     Internal          100   0        9       91.5         3/10        8/10       96.6
+    div_unit (with submodules)     Llama 3.3 70b       S     Internal          241   1       60       76.0       129/170      132/170     83.9
+      div_unit_4bits               Llama 3.3 70b       C     Internal          100   0       17       99.7        34/37        35/37      99.7
+    div_unit (with submodules)     Llama 3.1 405b      S     Internal          241   1       36       74.5        31/65        51/65      89.5
+      div_unit_4bits               Llama 3.1 405b      C     Internal          100   0       16       91.6        20/23        21/23      99.7
+    mul_unit                       GPT 4.1 mini        S     Internal          294   0       40       92.6       51/115        81/115     98.9
+    mul_unit                       Llama 3.3 70b       S     Internal          294   0       29       0.7         4/45          10/45     1.76
+    mul_unit                       Llama 3.1 405b      S     Internal          294   0       10       1.5        24/67          37/67     70.3
+
+
+one output signal, and the three correct assertions targeted it, thus             complex designs when applied holistically. Moreover, since tradi-
+increasing the coverage significantly. Modules that exhibited mod-                tional FPV approaches for modules of this size may already employ
+est coverage increases typically experienced limited assertion set                divide-and-conquer strategies due to state space explosion con-
+extension during the extension phase, rather than extension with-                 cerns, further modularization of the design could enable SVApshot
+out corresponding coverage gains, as occurred, for example, in                    to achieve better results as observed with smaller modules.
+the div_unit_4bits module. The edge_detector module main-
+tained its initial 73.3% coverage, as the generated assertions were
+already comprehensive and no additional meaningful assertions                     4.2    Counterexample (CEX) Correction
+were discovered during extension. RTL Topology Impact: The re-                   Converting CEXs into passing assertions boosts the coverage of the
+sults reveal distinct patterns based on RTL topology and functional              SVA testbench created by SVApshot. Our methodology performs
+domain. Units alu and div_unit exhibited high initial coverage                   several LLM-driven attempts to fix failing (CEX) assertions (Stage 5
+and strong assertion correction rates, though not necessarily the                in Algorithm 1). However, this process may not address all assertion
+highest coverage increases due to already comprehensive initial                  CEXs, since assertions may have semantic errors, or assumptions
+coverage. Control modules like ptw demonstrated greater resistance               could be missing for semantically correct assertions. Thus, after us-
+to semantic correction, likely due to their complex behavioral spec-             ing SVApshot, an engineer could carefully review whether assump-
+ifications. Assertion Generation Quality: The initial pass rates                 tions are missing for module inputs that would lead to spurious
+of generated assertions were generally high across most modules,                 CEXs, as well as revise failing assertions for semantic errors. Next,
+indicating that LLMs can produce syntactically and semantically                  we analyze whether there are trivial assumption-fixable CEXs and
+reasonable assertions with minimal repair. Modules with lower                    the effectiveness of LLM-driven corrections. Assumptions can fix
+initial pass rates typically involve complex control logic or timing-            CEXs and increase coverage: The FPV tool revealed that some
+sensitive behaviors that are inherently more difficult to specify                assertions are semantically correct but fail (i.e., lead to CEX) due
+correctly. The semantic correction phase successfully improved                   to underconstrained inputs. In the scoreboard module, the failing
+assertion pass rates in most cases, with notable exceptions in mod-              assertion as__OcupDivUnitQ1ShiftRightNoSet was corrected by
+ules requiring domain-specific assumptions about input constraints.              adding an assumption constraining the flush signal to zero, confirm-
+Scalability Considerations: The analysis of the tlb and ptw mod-                 ing the hypothesis that input assumptions can resolve some CEXs
+ules reveals the challenges associated with scaling to larger module             reported by the FPV tool. This finding suggests that SVApshot’s
+sizes. SVApshot addresses entire modules without partitioning, thus              current limitation in generating input assumptions leads to false
+demonstrating its ability to achieve meaningful coverage even on                 negative results that could be addressed through assumption syn-
+                                                                                 thesis. However, as the literature [22] tells us, prematurely adding
+                                                                                                                                                   Homs et al.
+
+
+    assumptions may lead to false positives, so we decided not to au-        the snapshot from the original module through the FPV tool, we
+    tomatically add assumptions in our methodology and leave that            saw a CEX for an assertion that passed originally (Listing 2).
+    to the engineer.Semantic Correction Attempt Analysis: After              1   as__IdleStateOnlyDtlbReqOutput : assert property (
+    extracting execution data for the final phase of the flow, we mea-       2       ( ptw_arb . current_state_q == ptw_arb . IDLE &&
+                                                                             3         dtlb_ptw_i . req . valid && ! itlb_ptw_i . req . valid &&
+    sured the effectiveness of attempting to correct failing assertions      4         ! ptw_arb . itlb_req_pending_q ) |->
+                                                                                     ( tlb_ptw_o == dtlb_ptw_i ));
+    (CEX). The majority of the assertions that the LLM corrected (went       5
+
+    from CEX to Proof) were done so on the first attempt. For modules            Listing 2: Failing snapshot assertion after LLM refactor of
+    evaluated on all LLMs, GPT 4.1 mini corrected 27% of the assertions          RTL.
+    on the first attempt, and the total percentage of corrected assertions
+                                                                                This assertion captures the behavior that when the PTW ar-
+    in 5 attempts was 43.3%; for Llama 3.3 70b 17.3% and 25.8%; and for
+                                                                             biter is in IDLE state and only the DTLB has a valid request (no
+    Llama 3.1 405b 15.6% and 43.8%. We could potentially reduce the
+                                                                             ITLB request), the output should directly connect the DTLB com-
+    attempt count significantly from five attempts (and expect most of
+                                                                             munication interface. This behavior breaks in the version edited
+    the LLM-fixable properties to be corrected) to reduce the LLM cost
+                                                                             by AI since the refactored version splits the next_state signals
+    (albeit low as shown in Section 4.3), LLM latency, and FPV runtime,
+                                                                             from the output signals into two blocks and then confuses the state
+    since this phase takes the longest, and is entirely dependent on the
+                                                                             for which tlb_ptw_comm_o was supposed to change, from IDLE to
+    LLM and the FPV tool.
+                                                                             SERVING_DTLB. This example demonstrates the value of having the
+    4.3    SVApshot Runtime and Cost                                         snapshot before refactoring or modifications, as well as the ability
+    Dissecting the time that each of the stages in the SVApshot toolflow     for the snapshot to detect bugs in the refactored version.
+    takes (detailed in Algorithm 1), we found that generating the initial
+    testbench (Stage 1 and 2) takes the order of a few seconds, being        5    Discussion and Conclusion
+    the most residual execution time. Initial syntax correction of the       This paper introduces SVApshot, a systematic framework for auto-
+    initial assertion set (Stage 3) required on average 2 minutes (3.3%      mated SVA generation that addresses critical verification challenges
+    of the total time) The set extension (Stage 4) consumed 9 minutes        in AI-driven RTL design workflows. The increasing reliance on
+    on average (19.3% of the total). Lastly, Semantic correction (Stage 5)   LLMs for RTL code generation and modification necessitates robust
+    with 5 attempts required 55 minutes (77.4% of the total), due to the     mechanisms for ensuring functional correctness and regression
+    LLM call latency and FPV tool runtime. This is why the reduction         testing. Although SVA generation has been explored previously,
+    of the attempt limit we give the LLM in Stage 5 would be a way           our snapshot-based approach enables a systematic refinement of as-
+    to reduce the execution time and obtain faster snapshots. Further        sertions to conform to an RTL implementation. SVApshot provides
+    dissection of Stages 3-5 showed that the FPV tool usage represented      a framework for capturing design functionality of an RTL module
+    69.4% of the total execution time on average. Despite these high         as formal assertions, enabling two use cases: (1) establishing an
+    execution times, we evaluated the cost of each experiment based          implementation baseline for regression testing of subsequent modi-
+    on the input and output tokens used and prices from inference            fications, and (2) generating testbenches for modules used to bench-
+    providers for each of the models, and obtained that the average          mark LLM-aided RTL design. Our methodology accomplishes this
+    cost for a snapshot was 0.5€, which again could be reduced if the        by implementing an iterative repair approach that systematically
+    attempt limit in Stage 5 were tuned down.                                addresses both syntactic and semantic errors in LLM-generated as-
+                                                                             sertions through automated correction loops, significantly improv-
+    4.4    Validating The Snapshot Methodology                               ing assertion quality over single-pass generation methods. Overall,
+    Validation Through Bug Injection: To evaluate the practical              SVApshot’s toolflow combines assertion generation, duplicate de-
+    utility of generated assertions, we manually introduced a represen-      tection, assertion set extension, and formal verification in a cohesive
+    tative bug in the scoreboard module. The bug involved incorrectly        framework, reducing manual intervention. Our experimental eval-
+    setting inst_d[2] instead of inst_d[1] when a 64-bit multiply            uation across diverse RTL modules demonstrates the framework’s
+    instruction is issued, creating an off-by-one timing error. The as-      effectiveness in achieving high coverage across a set of 14 diverse,
+    sertion as__SetMul64SetsInstD1 (Listing 1) successfully detected         complex modules with up to 400 lines of SystemVerilog. The se-
+    this bug, demonstrating that SVApshot generates assertions capa-         mantic correction phase successfully improved assertion pass rates
+    ble of capturing meaningful design intent and detecting realistic        in most evaluated designs, while the assertion set extension mecha-
+    implementation errors.                                                   nism generated comprehensive property sets without logical redun-
+                                                                             dancy. The validation through deliberate bug injection confirms
+    as__SetMul64SetsInstD1 : assert property (( set_mul_64_i ) |-> (
+1
+          scoreboard_sargantana . inst_d [1] == 1' b1 ));
+                                                                             that SVApshot generates assertions capable of detecting realistic im-
+                                                                             plementation errors, both human- and LLM-generated. Moreover,
+     Listing 1: Snapshot assertion for the scoreboard module.                the experiments reveal interesting aspects of LLM-based assertion
+                                                                             generation. Arithmetic and datapath modules consistently achieved
+    Validation Through LLM-based Refactoring: We performed an                higher initial coverage and correction rates compared to complex
+    experiment of LLM-based refactor of the ptw_arb module using             control logic implementations. When comparing the testbenches
+    Cursor. We asked the code agent (claude-4-sonnet) to refactor the        generated by various LLMs, we observed higher coverage with
+    original ptw_arb module, keeping the module interface signals            newer (GPT 4.1 mini) or larger (Llama 405b) LLMs, which suggests
+    intact. After refactoring its finite-state machine (FSM) and running     that future improvements in LLM capabilities could further enhance
+coverage results of the SVApshot methodology. However, we ac-            References
+knowledge some limitations of our methodology: (1) SVApshot               [1] Mohammad Akyash, Kimia Azar, and Hadi Kamali. 2025. RTL++: Graph-
+does not verify the correctness of the input RTL, but rather aims to          enhanced LLM for RTL Code Generation. arXiv preprint arXiv:2505.13479 (2025).
+                                                                          [2] Yunsheng Bai, Ghaith Bany Hamad, Syed Suhaib, and Haoxing Ren. 2025. Asser-
+verify that future modifications do not break the current function-           tionForge: Enhancing Formal Verification Assertion Generation with Structured
+ality. (2) The semantic repair process, while effective in most cases,        Representation of Specifications and RTL. arXiv preprint arXiv:2503.19174 (2025).
+                                                                          [3] Barcelona Supercomputing Center. 2025. Sargantana. https://github.com/bsc-
+does not address CEXs requiring domain-specific input assump-                 loca/sargantana.
+tions. Future research directions include extending the framework         [4] Jon Buckingham. 2016. Formal for Designers. In Agile Test Driven Dev. for
+to generate adequate assumptions on RTL module inputs (to avoid               ASIC. https://doi.org/wp-content/uploads/2016/VerificationFutures/9_HPE_
+                                                                              JohnBuckingham_(ASICPresentation).pdf
+spurious CEXs), as well as developing more sophisticated metrics          [5] Cadence Design Systems Inc. 2015. JasperGold Apps User’s Guide.
+for assertion relevance when using assertions as weighted scores          [6] Alessandro Danese, Nicol‘o Dalla Riva, and Graziano Pravadelli. 2017. A-TEAM:
+for LLM benchmarking. The application of SVApshot to comprehen-               Automatic template-based assertion miner. In Proc. DAC. 37:1–37:6. https:
+                                                                              //doi.org/10.1145/3061639.3062206
+sive LLM benchmarking could be a paper on its own, to standardize         [7] Dario Garcia-Gasulla, Gokcen Kestor, Emanuele Parisi, Miquel Albertí-Binimelis,
+evaluation methodologies for AI-generated RTL designs. While                  Cristian Gutierrez, Razine Moundir Ghorab, Orlando Montenegro, Bernat Homs,
+                                                                              and Miquel Moretó. 2025. TuRTLe: A Unified Evaluation of LLMs for RTL Gen-
+challenges remain in handling complex control logic and assump-               eration. arXiv preprint arXiv:2504.01986v1 (Mar 2025). arXiv:2504.01986 [cs.AR]
+tion generation, the demonstrated effectiveness and inexpensive               [https://arxiv.org/abs/2504.01986](https://arxiv.org/abs/2504.01986)
+execution across a diverse set of RTL modules suggest that this           [8] Samuele Germiniani and Graziano Pravadelli. 2022. HARM: A Hint-Based Asser-
+                                                                              tion Miner. IEEE Transactions on Computer-Aided Design of Integrated Circuits
+work represents a significant step toward trustworthy AI-assisted             and Systems 41, 11 (2022), 4277–4288.
+hardware verification, providing both the theoretical framework           [9] Bo-Yuan Huang, Hongce Zhang, Pramod Subramanyan, Yakir Vizel, Aarti Gupta,
+and practical tools necessary to maintain design integrity in an era          and Sharad Malik. 2018. Instruction-Level Abstraction (ILA): A Uniform Specifi-
+                                                                              cation for System-on-Chip Verification. ACM Transactions on Design Automation
+of increasingly automated hardware development.                               of Electronic Systems (TODAES) 24, 1 (2018), 1–24.
+                                                                         [10] Shi-Yu Huang and Kwang-Ting Tim Cheng. 2012. Formal equivalence checking
+                                                                              and design debugging. Vol. 12. Springer Science & Business Media.
+                                                                         [11] Mubashir ul Islam, Humza Sami, Pierre-Emmanuel Gaillardon, and Valerio
+                                                                              Tenace. 2024. AIvril: AI-Driven RTL Generation with Verification In-The-Loop.
+                                                                              arXiv preprint arXiv:2409.11411 (2024).
+                                                                         [12] Wenchao Li, Lee Dworkin, and Sanjit A. Seshia. 2013. Mining hardware assertions
+                                                                              with guidance from static analysis. IEEE Transactions on Computer-Aided Design
+                                                                              of Integrated Circuits and Systems 32, 6 (2013), 952–965.
+                                                                         [13] Shang Liu, Wenji Fang, Yao Lu, Jing Wang, Qijun Zhang, Hongce Zhang, and
+                                                                              Zhiyao Xie. 2024. RTLCoder: Fully Open-Source and Efficient LLM-Assisted RTL
+                                                                              Code Generation. arXiv preprint arXiv:2312.08617 (2024).
+                                                                         [14] Shang Liu, Yao Lu, Wenji Fang, Mengming Li, and Zhiyao Xie. 2024. OpenLLM-
+                                                                              RTL: Open Dataset and Benchmark for LLM-Aided Design RTL Generation
+                                                                              and Verification. In Proceedings of the ACM/IEEE International Conference on
+                                                                              Computer-Aided Design (ICCAD ’24). [https://arxiv.org/abs/2503.15112](https:
+                                                                              //arxiv.org/abs/2503.15112) Preprint arXiv:2503.15112.
+                                                                         [15] Shang Liu, Zhiyuan Yan, Wenji Fang, Yao Lu, Mengming Li, Hongce Zhang,
+                                                                              and Zhiyao Xie. 2023. VerilogEval: A Large-Scale Dataset for Verilog Code
+                                                                              Generation and Understanding. arXiv preprint arXiv:2310.09231 (Oct 2023).
+                                                                              arXiv:2310.09231 [cs.SE] [https://arxiv.org/abs/2310.09231](https://arxiv.org/
+                                                                              abs/2310.09231)
+                                                                         [16] Anand Menon, Debjit Pal, Deeksha Nandal, Vaishnavi Pulavarthi, Soham
+                                                                              Dan, Shamik Kundu, and Amisha Srivastava. 2025. Spec2Assertion: Gener-
+                                                                              ating SystemVerilog Assertions from Design Specifications using Large Lan-
+                                                                              guage Models with Chain-of-Thought Prompting and Progressive Regulariza-
+                                                                              tion. arXiv preprint arXiv:2505.07995v2 (May 2025). arXiv:2505.07995 [cs.AI]
+                                                                              [https://arxiv.org/abs/2505.07995](https://arxiv.org/abs/2505.07995)
+                                                                         [17] Meta. 2025. Llama 3.1. https://ai.meta.com/blog/meta-llama-3-1/.
+                                                                         [18] NVIDIA. 2025. NVIDIA NIM. https://build.nvidia.com/explore/discover.
+                                                                         [19] OpenAI. 2025. GPT-4.1-mini. https://platform.openai.com/docs/models/gpt-4.1-
+                                                                              mini.
+                                                                         [20] Marcelo Orenes-Vera, Aninda Manocha, David Wentzlaff, and Margaret
+                                                                              Martonosi. 2021. AutoSVA: Democratizing Formal Verification of RTL Mod-
+                                                                              ule Interactions. In ACM/IEEE Design Automation Conference (DAC). 535–540.
+                                                                              https://doi.org/10.1109/DAC18074.2021.9586118
+                                                                         [21] Marcelo Orenes-Vera, Margaret Martonosi, and David Wentzlaff. 2023. Using
+                                                                              LLMs to Facilitate Formal Verification of RTL. arXiv:2309.09437 [cs.AR] https:
+                                                                              //arxiv.org/abs/2309.09437
+                                                                         [22] Erik Seligman, Tom Schubert, and MV Achutha Kiran Kumar. 2015. Formal
+                                                                              verification: an essential toolkit for modern VLSI design. Morgan Kaufmann.
+                                                                         [23] Zhiyuan Yan, Wenji Fang, Mengming Li, Min Li, Shang Liu, Zhiyao Xie, and
+                                                                              Hongce Zhang. 2025. AssertLLM: Generating Hardware Verification Assertions
+                                                                              from Design Specifications via Multi-LLMs. In 30th Asia and South Pacific Design
+                                                                              Automation Conference (ASPDAC ’25).
+

@@ -1,0 +1,30 @@
+== 2610.30499 ==
+== 2610.30499 == total=571302 n_chunks=12
+  chunk 09 attempt=1 1s have=47609/47609
+  chunk 11 attempt=1 1s have=47603/47603
+  chunk 02 attempt=1 1s have=47609/47609
+  chunk 08 attempt=1 1s have=47609/47609
+  chunk 03 attempt=1 1s have=47609/47609
+  chunk 10 attempt=1 1s have=47609/47609
+  chunk 04 attempt=1 2s have=47609/47609
+  chunk 05 attempt=1 2s have=47609/47609
+  chunk 07 attempt=1 3s have=47609/47609
+  chunk 01 attempt=1 4s have=47609/47609
+  chunk 00 attempt=1 8s have=47609/47609
+  chunk 06 attempt=1 21s have=47609/47609
+bytes=571302/571302 head=True eof=True => OK
+== 2610.31633 ==
+== 2610.31633 == total=3593462 n_chunks=12
+  chunk 02 attempt=1 2s have=299456/299456
+  chunk 08 attempt=1 2s have=299456/299456
+  chunk 05 attempt=1 3s have=299456/299456
+  chunk 10 attempt=1 3s have=299456/299456
+  chunk 00 attempt=1 4s have=299456/299456
+  chunk 04 attempt=1 5s have=299456/299456
+  chunk 06 attempt=1 5s have=299456/299456
+  chunk 07 attempt=1 5s have=299456/299456
+  chunk 03 attempt=1 9s have=299456/299456
+  chunk 11 attempt=1 13s have=299446/299446
+  chunk 09 attempt=1 19s have=299456/299456
+  chunk 01 attempt=1 28s have=299456/299456
+bytes=3593462/3593462 head=True eof=True => OK

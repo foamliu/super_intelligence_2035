@@ -1,0 +1,9 @@
+[probe] 2026-10-20T22:01:35.494744+00:00
+• arXiv API（主力）: status=200 ok=True ct='application/atom+xml; charset=utf-8' entries=3 total=635673 err=request failed: HTTPSConnectionPool(host='export.arxiv.org', port=443): Max retries exceeded with url: /api/query?search_query=cat%3Acs.CL+OR+cat%3Acs.CV+OR+cat%3Acs.SE+OR+cat%3Acs.AI+OR+cat%3Acs.LG&start=0&max_results=3&sortBy=submittedDate&sortOrder=descending (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x717463cfe9c0>, 'Connection to export.arxiv.org timed out. (connect timeout=30)'))
+    - arXiv:2610.26863 | cs.LG | published=2026-10-19T17:59:59Z
+    - arXiv:2610.26860 | cs.CL | published=2026-10-19T17:59:58Z
+    - arXiv:2610.26861 | cs.CV | published=2026-10-19T17:59:58Z
+• HF Daily Papers（副源/社区加权）: ok=False n_ids=0 ⚠ request failed: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/daily_papers (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x717463cff9b0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+• RSS cs.CL: status=200 ct='application/rss+xml' items=435
+• RSS cs.CV: status=200 ct='application/rss+xml' items=505
+• RSS cs.LG: status=200 ct='application/rss+xml' items=817

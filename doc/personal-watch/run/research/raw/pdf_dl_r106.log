@@ -1,0 +1,10 @@
+== 2610.29025 == content-type='application/pdf' content-length=709350
+  attempt=1 bytes=709350/709350
+  bytes=709350/709350 head=True eof=True pages=19 chars=76329 => OK
+== 2610.30035 == content-type='application/pdf' content-length=921114
+  attempt=1 bytes=921114/921114
+  bytes=921114/921114 head=True eof=True pages=11 chars=30601 => OK
+
+== SUMMARY ==
+2610.29025 bytes=709350 pages=19 chars=76329 OK
+2610.30035 bytes=921114 pages=11 chars=30601 OK

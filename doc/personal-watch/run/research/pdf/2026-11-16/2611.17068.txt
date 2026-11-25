@@ -1,0 +1,3386 @@
+Discovering Effective Agent Memory Designs through Program Evolution
+Xinheng Ding1 , Seyyed Saeid Cheshmi1 , Ziyang Zhang1 , Tairan Chen2
+Wenya Xie1 , Yu Hou1 , Rui Zhang1 , Zirui Liu1
+1
+University of Minnesota
+2
+Stevens Institute of Technology
+
+arXiv:2611.17068v1 [cs.CL] 12 Nov 2026
+
+Abstract
+
+retrieving relevant information to support subsequent responses. Prior work has advanced memory
+representation, organization, maintenance, and retrieval (Zhang et al., 2024), yet these components
+are often designed and refined through human expertise.
+Meanwhile, LLM-driven evolutionary search has
+emerged as a tool for automated scientific discovery and algorithm design (Romera-Paredes et al.,
+2024; Liu et al., 2024; Ma et al., 2024). Systems
+such as AlphaEvolve (Novikov et al., 2025) employ an LLM to propose program modifications
+and automated evaluation to guide subsequent proposals, yielding mathematical constructions and
+algorithms that outperform established designs. Recent work extends this paradigm to agent memory,
+evolving prompts, configurations, or executable
+pipelines to improve memory performance (Deng
+et al., 2026; Liu et al., 2026b; Liu et al., 2026c).
+These approaches often constrain the search
+space to selected components or start from established memory architectures, and primarily emphasize accuracy. We explore a complementary direction: evolving entire memory programs from minimal seeds to study the designs that emerge under
+different optimization objectives. Beyond finding
+better programs, we seek to understand how evolution implements effective memory design choices,
+whether their benefits extend to other memory systems, and how different optimization objectives
+shape those choices. Explicitly considering serving
+cost also allows us to study how evolution allocates
+computation across the memory lifecycle. Specifically, we ask: ❶ What effective memory system designs can whole-program evolution discover from
+minimal seeds? ❷ How do different optimization
+objectives shape the evolutionary process and the
+resulting designs?
+To investigate these questions, we develop MAPE,
+a framework that evolves agent memory systems
+through whole-program evolution, as illustrated in
+
+Program evolution provides a promising approach to discover agent memory designs and
+study the choices underlying their effectiveness. We introduce MAPE, a framework that
+evolves whole memory programs from minimal seeds through a standardized lifecycle interface and an iterative diagnosis–proposal loop.
+Experiments on LoCoMo and LongMemEval
+yield an absolute accuracy gain of up to 12%
+over manually designed baselines at 35% of
+the serving cost, with further evaluations supporting transfer across serving backbones and
+benchmarks. Empirical analyses and ablations
+identify and validate two recurring design patterns: retaining raw conversations as retrievable evidence preserves details omitted from
+extracted memories, while composing retrieved
+evidence according to query intent helps the
+answering model use it effectively. Transplanting the composition module into five existing
+memory systems improves accuracy across all
+five. Beyond these patterns, the search objective shapes where computation goes: optimizing serving cost alongside accuracy shifts
+computation from LLM-based memory construction to selective processing at query time
+while retaining competitive accuracy. Together,
+these findings offer empirical lessons for agent
+memory design. Code is available at https:
+//github.com/ash-ding/MAPE.
+
+1
+
+Introduction
+
+Agents powered by large language models, such
+as personal assistants and conversational companions (Wang et al., 2024; Xi et al., 2023), increasingly depend on persistent memory of user information to maintain continuity across conversations. Agent memory systems (Packer et al., 2023;
+Chhikara et al., 2025; Xu et al., 2025; Rasmussen
+et al., 2025; Liu et al., 2026a) address this need
+by transforming interaction history into memory
+units, organizing them in a persistent store, and
+1
+
+Figure 1. A standardized lifecycle interface exposes memory construction, retrieval, and composition (Xu et al., 2026) as programmable stages,
+so that the entire pipeline is open to revision under a common evaluation protocol. An iterative
+diagnosis–proposal loop uses execution traces to
+identify failure patterns and guide subsequent revisions (Madaan et al., 2023; Shinn et al., 2023).
+Search starts from minimal seeds, such as a program that stores no memory. The framework tracks
+serving cost across the memory lifecycle and supports both accuracy-only and joint accuracy–cost
+search.
+We run MAPE on LoCoMo (Maharana et al.,
+2024) and LongMemEval (Wu et al., 2025) under
+both objectives, yielding four experimental settings.
+For each, we analyze the evolutionary trajectory
+and the resulting memory system. All selected
+systems outperform the evaluated human-designed
+baselines on their respective benchmarks. On LoCoMo, we observe an absolute accuracy gain of
+up to 12% at 35% of the serving cost. Further
+evaluations include cross-backbone validation using GPT-4.1 mini and Qwen3-30B-A3B-Instruct2507 (Yang et al., 2025), as well as bidirectional
+cross-benchmark transfer between LoCoMo and
+LongMemEval, all without additional evolution.
+These results support the transferability of the discovered memory designs across serving backbones
+and benchmarks.
+Across the discovered systems, we identify two
+recurring design patterns: retaining raw conversations as retrievable evidence and processing retrieved evidence through intent-specific scaffolds
+before answering. A case study and component
+ablations examine the contribution of each pattern in a representative system. Retaining raw
+evidence helps preserve details omitted from extracted memories, while error attribution across
+human-designed systems identifies incomplete retrieved information as a major bottleneck. The composition module routes queries to intent-specific
+scaffolds that combine targeted extraction, deterministic computation, and deliberation to support
+the answering model. Transplantation experiments
+test this composition strategy across five humandesigned memory systems, improving accuracy in
+every case and demonstrating its utility beyond the
+evolved program.
+Comparing the two objective settings reveals differences in both search behavior and computation
+allocation. In the observed runs, accuracy-only
+
+search progressively adds operations, accepting
+substantial cost increases for marginal accuracy
+gains. The illustrated joint accuracy–cost trajectory maintains lower serving costs and explores
+more branched candidate lineages, retaining inexpensive alternatives as starting points for further
+evolution. The resulting designs differ in where
+they spend computation. The selected accuracyonly programs invest in LLM-based memory construction, whereas the selected accuracy–cost programs reduce reliance on it in favor of selective
+computation at query time, using 90% and 40%
+fewer serving calls on LongMemEval and LoCoMo
+while retaining strong evaluation-set accuracy.
+Our contributions are threefold:
+• We introduce MAPE, a framework for discovering and studying agent memory designs
+through whole-program evolution from minimal seeds under a standardized lifecycle interface.
+• We identify raw-conversation retention and
+query-dependent composition as recurring
+design patterns, validate their contributions
+through ablations, and demonstrate the transferability of composition by transplanting it
+into five human-designed systems.
+• We show how optimization objectives shape
+evolutionary trajectories and computation allocation, with joint accuracy–cost search shifting computation from LLM-based memory
+construction to selective processing at query
+time.
+
+2
+
+The MAPE Framework
+
+MAPE provides a framework for studying agent
+memory design through whole-program evolution.
+This section defines the memory task, program
+search space, and optimization objectives, then describes the evolutionary process and final program
+selection.
+2.1
+
+Problem Formulation
+
+We consider a conversation history Hi and its associated query set QHi = {qi,1 , . . . , qi,ni }. A
+memory system m organizes information from Hi
+to support history-grounded question answering
+through four stages: build (Bm ), retrieve (Rm ),
+compose (Km ), and answer (Gθ ). Memory construction is performed once for each history, fol2
+
+Search set 20% split
+
+1
+
+Program archive
+
+Objective
+
+parents Π
+
+acc A
+
+cost C
+
+hypothesis h · parents #7 + #12 · reuses lesson rerank > top-k
+
+seeds
+
+finding d
+
+proposer — candidate_13.py
+1
+2
+
+time-aware rerank?
+
+3
+
+resolve rel. dates?
+
+4−
+5+
+
+new ·from diagnose
+#7
+
+.74
+
+#9
+
+6+
+
+.62
+
+meta-experience
+#12
+
+.86
+
+.91
+#13
+
+7
+8−
+
+rerank > top-k
+
+9+
+
+summary-only fails
+
+10 +
+
+event > summaries
+
+11
+
+hybrid search helps
+
+Evaluate
+
+Mel: We went camping last week!
+
+time Jun 27
+
+Q: When did Mel go camping?
+
+gold Jun 20
+
+#13
+
+hypotheses
+
+lineage
+
+3
+
+Event memory + hybrid search
+
+hypothesis h
+traces τ
+
+Held-out test 80% (after search)
+
+or Accuracy + Cost
+
+Propose
+
+2
+
+each candidate is stored with
+code m
+
+Accuracy
+
+12 +
+
+Whole pipeline can be evolved
+
++5 −2
+
+# candidate #13: one joint edit across 3 stages
+# from #7 (event chunks) + #12 (BM25 + dense)
+Build
+def build(M, ΔH):
+M.add(summarize(ΔH))
+for e in extract_events(ΔH): # who, what, when
+M.add(e, index=["bm25", "dense"])
+Retrieve
+def retrieve(M, q):
+return M.dense(q)[:20]
+hits = M.bm25(q) | M.dense(q)
+return rerank(q, hits)[:8]
+Compose
+def compose(q, E):
+return render(sorted(E, key=time))
+
+Build Mt = B(Mt−1, ΔHt)
+validate
+
+Mt
+Retrieve Eq = R(Mt, q)
+
+Eq
+
+Compose opt. cq = K(q, Eq)
+
+Accuracy + Cost
+
+acc
+
+acc
+
+Answer fixed ŷ = G(q, cq)
+
+Diagnose
+
+Failing Query temporal
+
+Agent found finding d
+
+Q: When did Mel go camping?
+
+cause: Build stored “last week”
+pattern: Same miss recurs across
+
+pred “last week” gold “June 20”
+
+temporal questions
+
+walk the trace τ
+build
+candidates
+
+cost →
+
+pick max accuracy
+
+keep the Pareto front
+
+ΓMΓAΓPΓEΓ-ΓA
+
+ΓMΓAΓPΓEΓ-ΓP
+
+$0.12
+
+sorted by time: Jun 09 → Jun 27
+
+cq
+$0.21
+
+“last week” gold “June 20” judge 0
+
+4
+
+Accuracy only
+
+$0.08
+
+BM25 + dense → e1 0.86 e2 0.41
+
+new ·from diagnose
+
+choose candidates by
+
+$0.76
+
+e1 Mel ·went camping ·“last week”
+
+e1.when = “last week”
+
+retrieve e1 ranked 1st (.86)
+compose
+e1 kept, sorted by time
+
++
++
+
+hypotheses: We can resolve dates
+at build
+fix in build
+
+meta-experience
+
+hybrid search helps verified
+
+hypotheses
+
+resolve rel. dates at build?
+
+retrieve
+
+91.0%
+
+$1.17
+
+accuracy ▲ 5.0
+
+per 1k queries
+
+accuracy by question type
+
+traces τ
++ scores
+
+single-hop
+
+.95
+
+multi-hop
+
+.90
+
+open-domain
+
+.93
+
+temporal
+
+.78
+
+compose
+
+trace τ
+input dialog + Q
+
+compose context 𝑐𝑞
+
+build ops M.add(e1, …)
+
+output ŷ vs gold
+
+retrieve ops top-k + scores usage tokens + $ cost
+
+Figure 1: Overview of MAPE’s program evolution framework. Candidate programs are proposed using archived
+designs and diagnostic feedback, checked for execution errors, and evaluated on the search set. Their implementations, results, and diagnoses are retained to guide subsequent proposals. Evolution follows either an accuracy-only
+objective (MAPE-A) or joint accuracy–cost objectives (MAPE-P). Shortlisted programs undergo held-out evaluation
+for final selection.
+
+lowed by retrieval, composition, and answering for
+each associated query.
+
+composed into the answer context. Evolution can
+modify these stage implementations and their supporting code. This allows evolution to explore alternative representations, retrieval mechanisms, and
+evidence-processing procedures, including coordinated changes across stages. Appendix A provides
+a simplified Python class interface.
+The resulting search space MI is bounded by
+interface compatibility and a fixed answering procedure. Within each evaluation setting, the answering
+model, prompt, and evaluation protocol are held
+constant, enabling comparisons among the discovered memory designs under shared evaluation conditions.
+
+Build. Bm maps the conversation history Hi to a
+persistent memory state Mi = Bm (Hi ). This state
+comprises retained content and the data structures
+used to organize and index it.
+Retrieve. Rm selects evidence from Mi for query
+qi,j , yielding Ei,j = Rm (Mi , qi,j ). The retrieved
+evidence provides query-relevant information.
+Compose. Km transforms query qi,j and retrieved evidence Ei,j into answer context ci,j =
+Km (qi,j , Ei,j ). Inspired by CoM (Xu et al., 2026),
+we introduce this additional stage to explicitly separate post-retrieval evidence processing from retrieval itself.
+
+2.3
+
+Throughout an evolutionary run, each candidate
+program m is evaluated on a fixed search set D.
+Serving LLM and embedding calls use the same
+designated LLM and embedding model, respectively, across all lifecycle stages. This shared configuration enables controlled comparisons of candidate programs in terms of answer accuracy and
+lifecycle serving cost.
+
+Answer. Gθ maps query qi,j and composed context ci,j to a predicted answer ŷi,j = Gθ (qi,j , ci,j ).
+Here, θ specifies the answering model and prompt.
+2.2
+
+Search Objectives
+
+Program Search Space
+
+We construct a program search space for exploring diverse memory system designs under a common lifecycle interface I. Candidate programs
+implement memory construction and retrieval and
+can additionally define how retrieved evidence is
+
+Accuracy. For each query qi,j , we use an LLM
+judge (Zheng et al., 2023) to evaluate answer cor3
+
+rectness:
+zi,j = JLLM (r, qi,j , ŷi,j , yi,j ) ∈ {0, 1},
+
+change and its expected benefit, providing a basis
+for subsequent diagnosis.
+The candidate first undergoes a small sanity evaluation to identify execution errors. The proposer
+can repair these errors within a fixed budget, and
+candidates that pass are evaluated on the full fixed
+search set to obtain accuracy and lifecycle serving
+cost. A separate diagnosis agent then examines
+the implementation, design hypothesis, evaluation
+results, and available execution traces to assess the
+observed outcome and identify potential causes of
+failure. The diagnosis informs subsequent proposals without modifying the evaluated candidate.
+After evaluation and diagnosis, the candidate implementation, parent references, hypothesis, results,
+traces, and diagnosis are added to the archive. All
+evaluated candidates are retained, including dominated designs, allowing later proposals to revisit
+earlier implementations rather than extend only the
+current best program. Search continues until the
+proposal budget is exhausted. The evaluation set
+remains unavailable throughout evolution and is
+used only afterward in the program-selection procedure described below. Figure 1 illustrates the
+loop, and Appendix B.1 provides the initialization,
+search budgets, and execution settings.
+
+(1)
+
+where r is the benchmark-specific rubric prompt,
+ŷi,j the predicted answer, and yi,j the ground truth.
+For the search objective, we first average correctness judgments within each history and then take an
+unweighted mean across histories to obtain AD (m).
+Reported benchmark accuracies instead pool correctness judgments across all evaluated queries, as
+described in Appendix C.3.
+Lifecycle serving cost. We measure the tokenbased cost of constructing memory for each history
+and serving its associated queries through retrieval,
+composition, and answering. For each history Hi
+and lifecycle stage s, we record the total LLM
+input, LLM output, and embedding tokens, denoted
+in , T out , and T emb . We compute the stage cost
+by Ti,s
+i,s
+i,s
+using the corresponding per-token prices:
+in
+out
+emb
+Ci,s (m) = pin Ti,s
++ pout Ti,s
++ pemb Ti,s
+, (2)
+
+We sum the costs across all four stages and divide
+by the number of answered queries for each history,
+amortizing memory construction over the queries
+it serves. We then take an unweighted mean across
+histories and scale the result to dollars per 1,000
+queries, yielding CD (m). This metric includes
+LLM and embedding calls but excludes judge and
+search-agent calls, local computation, and storage.
+It does not measure latency. Pricing details are
+provided in Appendix C.
+With both metrics recorded, we run the evolutionary search in two modes: MAPE-A optimizes
+accuracy alone, whereas MAPE-P treats accuracy
+and lifecycle serving cost as separate objectives.
+Its Pareto frontier contains programs for which no
+other evaluated candidate achieves at least equal
+accuracy and no greater cost, with a strict improvement in at least one objective (Deb et al., 2002).
+The proposer uses this frontier to guide subsequent
+proposals, while the archive retains all evaluated
+candidates.
+2.4
+
+2.5
+
+Program Selection
+
+After evolution, we shortlist candidates using
+search-set accuracy for MAPE-A and the searchset accuracy–cost Pareto frontier for MAPE-P,
+with additional inclusion criteria described in Appendix B.2. The shortlisted programs are frozen
+and evaluated on a larger evaluation set that remains inaccessible during evolution. We then
+inspect their implementations and exclude programs with impractical scaling behavior, such as
+exhaustive LLM processing of the history during
+retrieval. For each setting, we report the remaining
+program with the highest evaluation-set accuracy.
+The selected programs are denoted MAPE-ALCM ,
+MAPE-PLCM , MAPE-ALME , and MAPE-PLME , where A
+and P indicate the accuracy-only and joint accuracy–
+cost search objectives, and LCM and LME denote
+evolution on LoCoMo and LongMemEval, respectively.
+
+Evolutionary Search Loop
+
+MAPE begins by evaluating the seed programs and
+placing them in an archive. At each iteration, the
+proposer consults archived implementations, evaluation results, and diagnoses, selects parent programs, and produces a new candidate with a design hypothesis. The hypothesis states the intended
+
+3
+
+Experimental Setup
+
+Benchmarks and protocol. We evaluate on LoCoMo (Maharana et al., 2024) and LongMemEvalS (Wu et al., 2025), using fixed 20% search and
+4
+
+Method
+
+Multi
+
+Open
+
+Single
+
+Temp
+
+Avg
+
+Cost ($/1k)↓
+
+Full Context
+RAG
+
+71.55
+33.47
+
+62.65
+39.76
+
+91.06
+59.70
+
+66.67
+47.29
+
+80.87
+51.19
+
+12.54
+0.25
+
+Mem0
+A-Mem
+LightMem
+SimpleMem
+Zep
+
+62.34
+50.63
+59.00
+69.46
+54.81
+
+51.81
+54.22
+42.17
+57.83
+43.37
+
+85.01
+75.38
+68.09
+90.37
+63.41
+
+70.93
+63.95
+52.71
+71.71
+50.39
+
+75.98
+67.25
+61.74
+80.80
+58.00
+
+1.10
+8.60
+0.56
+5.46
+11.76
+
+MAPE-ALCM
+MAPE-PLCM
+
+83.68
+79.49
+
+65.06
+59.03
+
+94.91
+91.47
+
+79.84
+79.84
+
+87.94
+85.18
+
+7.21
+2.03
+
+GPT-4.1 mini
+
+Qwen3-30B-A3B-Instruct-2507
+Full Context
+RAG
+
+58.16
+27.62
+
+53.01
+38.55
+
+89.41
+58.05
+
+31.78
+16.67
+
+70.01
+43.08
+
+7.07
+0.14
+
+Mem0
+A-Mem
+LightMem
+SimpleMem
+Zep
+
+60.25
+44.77
+54.81
+61.09
+50.21
+
+56.63
+37.35
+45.78
+46.99
+44.58
+
+77.44
+67.95
+76.20
+86.52
+57.22
+
+41.86
+24.42
+28.68
+35.66
+30.62
+
+65.95
+53.18
+60.98
+69.32
+49.89
+
+0.61
+5.71
+0.48
+3.24
+6.31
+
+MAPE-ALCM
+MAPE-PLCM
+
+78.66
+72.80
+
+68.67
+65.06
+
+92.02
+89.68
+
+43.80
+70.93
+
+78.58
+81.33
+
+3.47
+1.14
+
+Table 1: Accuracy and lifecycle serving cost on the LoCoMo evaluation set with two serving backbones. Multi,
+Open, Single, and Temp denote multi-hop, open-domain, single-hop, and temporal questions, respectively; Avg
+denotes accuracy over all questions. Accuracy is reported in % and cost in dollars per 1,000 queries. Within each
+backbone, the highest and second-highest accuracies per column are bold and underlined, respectively.
+Method
+
+Temp
+
+Multi
+
+Know
+
+User
+
+Asst
+
+Pref
+
+Avg
+
+Cost ($/1k)↓
+
+Qwen3-30B-A3B-Instruct-2507
+Full Context
+RAG
+
+43.40
+43.40
+
+41.51
+53.77
+
+74.60
+85.71
+
+91.07
+94.64
+
+93.33
+97.78
+
+37.50
+41.67
+
+59.75
+66.00
+
+22.27
+2.62
+
+Mem0
+A-Mem
+LightMem
+SimpleMem
+Zep
+
+31.13
+42.45
+49.06
+40.57
+37.74
+
+38.68
+45.28
+57.55
+34.91
+30.19
+
+60.32
+60.32
+79.37
+55.56
+58.73
+
+80.36
+82.14
+96.43
+73.21
+80.36
+
+48.89
+100.00
+26.67
+82.22
+60.00
+
+41.67
+41.67
+37.50
+33.33
+33.33
+
+47.25
+58.00
+59.50
+50.25
+47.25
+
+93.55
+661.97
+26.59
+144.74
+2367.28
+
+MAPE-ALME
+MAPE-PLME
+
+80.19
+70.75
+
+58.49
+57.55
+
+88.89
+84.13
+
+89.29
+85.71
+
+93.33
+91.11
+
+54.17
+45.83
+
+77.00
+72.25
+
+52.84
+5.76
+
+Table 2: Accuracy and lifecycle serving cost on the LongMemEval evaluation set with Qwen3-30B-A3B-Instruct2507 as the serving backbone. Temp, Multi, Know, User, Asst, and Pref denote temporal reasoning, multisession, knowledge-update, single-session-user, single-session-assistant, and single-session-preference questions,
+respectively; Avg denotes accuracy over all questions. Accuracy is reported in % and cost in dollars per 1,000
+queries. The highest and second-highest accuracies in each column are bold and underlined, respectively.
+
+80% evaluation partitions. LoCoMo is split by
+conversation, while LongMemEval-S is split by
+question instance together with its associated history. During evolution, candidates are evaluated
+exclusively on the search partition. The evaluation
+partition is used afterward for program selection
+and performance reporting. Appendix C.1 provides
+the split construction details.
+
+QA model, and RAG (Lewis et al., 2020), which
+retrieves messages by embedding similarity. We
+also evaluate five human-designed memory systems: Mem0 (Chhikara et al., 2025), A-Mem (Xu
+et al., 2025), LightMem (Fang et al., 2025), SimpleMem (Liu et al., 2026a), and Zep (Rasmussen
+et al., 2025). Lightweight adapters connect their
+implementations to the shared evaluation interface
+without redesigning their memory methods. Appendix C.2 describes the configurations and inte-
+
+Baselines. We compare against Full Context,
+which supplies conversation history directly to the
+5
+
+gration adjustments.
+
+using the fixed input adapters described in Appendix D.1. As shown in Table 6, MAPE-ALCM and
+MAPE-PLCM achieve 65.50% and 64.25% accuracy
+on LongMemEval, respectively. Both transferred
+programs outperform the five evaluated memory
+systems, while RAG achieves 66.00% accuracy.
+In the other direction, MAPE-ALME and MAPE-PLME
+achieve 75.90% and 74.67% accuracy on LoCoMo,
+respectively, exceeding all baselines in Table 7.
+These results support the transferability of the
+discovered memory designs beyond their search
+benchmarks, suggesting that their gains are not
+solely attributable to benchmark-specific adaptation.
+
+Models and metrics. We report LoCoMo results with GPT-4.1 mini (OpenAI, 2025) and
+Qwen3-30B-A3B-Instruct-2507 (Yang et al., 2025),
+and LongMemEval results with Qwen. Crossbenchmark transfer is also evaluated with Qwen.
+Within each comparison, the serving LLM and
+QA settings are shared across systems, with textembedding-3-small as the designated embedding
+model. GPT-5 mini evaluates answer correctness
+using benchmark-specific rubrics (Zheng et al.,
+2023). We report accuracy pooled across evaluated queries and lifecycle serving cost in dollars
+per 1,000 queries. Section 2.3 defines the cost aggregation, and Appendix C.3 provides the reporting
+protocol and model, generation, and pricing details.
+
+4
+
+Results and Analysis
+
+4.1
+
+Performance Evaluation
+
+4.2
+
+Comparing Evolution under Different
+Objectives
+
+Search trajectories. The observed runs exhibit
+different patterns of refinement and exploration. In
+the illustrated accuracy-only trajectories, search
+progresses from simple strategies toward increasingly elaborate designs, adding operations to address remaining errors. As accuracy approaches
+a plateau, further gains come with substantial increases in serving cost. As shown in Figure 5, introducing per-session note extraction at build time
+from step 13 increases cost approximately sixfold
+for additional search accuracy. Figure 6a illustrates
+the predominantly additive nature of this process,
+with successive revisions extending a dominant
+chain. The illustrated joint accuracy–cost trajectory
+maintains lower serving costs and exhibits a more
+branched lineage, as shown in Figure 6b, exploring
+alternative designs and removing costly operations.
+Lower-accuracy candidates can remain nondominated and serve as starting points for subsequent
+revisions.
+
+On the LoCoMo evaluation set with GPT-4.1 mini,
+MAPE-ALCM and MAPE-PLCM achieve overall accuracies of 87.94% and 85.18%, respectively, as
+shown in Table 1. MAPE-ALCM outperforms all
+baselines across every question category, while
+MAPE-PLCM retains competitive accuracy at approximately 28% of its counterpart’s lifecycle serving
+cost. On LongMemEval with Qwen3-30B-A3BInstruct-2507, MAPE-ALME and MAPE-PLME achieve
+77.00% and 72.25% accuracy, respectively, both
+exceeding RAG, the strongest baseline at 66.00%.
+MAPE-ALME achieves an absolute accuracy gain of
+11.00% over RAG, as shown in Table 2.
+Replacing the serving backbone of the LoCoMoevolved programs, including the QA model, with
+Qwen3-30B-A3B-Instruct-2507 preserves strong
+performance without further evolution. Under this
+backbone, MAPE-PLCM achieves 81.33% accuracy,
+an absolute gain of 12.01% over SimpleMem at
+35% of its serving cost. The ranking between the
+two evolved programs reverses, with MAPE-ALCM
+achieving 78.58%. This reversal is driven by temporal questions: MAPE-ALCM drops from 79.84%
+to 43.80%, whereas MAPE-PLCM retains 70.93%.
+MAPE-ALCM leaves the final date-resolution step to
+the QA model, while MAPE-PLCM explicitly converts
+relative time expressions into absolute dates before
+answering, which may help preserve temporal accuracy across backbones. A concrete example is
+illustrated in Figure 4.
+We further evaluate the selected programs on
+the other benchmark without additional evolution,
+
+Resulting memory designs. The selected programs allocate LLM computation differently across
+the memory lifecycle. MAPE-ALME extracts atomic
+notes from each session at build time, which
+accounts for about 92% of its serving cost.
+MAPE-ALCM distills facts into speaker profiles and
+runs a heavier reader over them at query time. Both
+accuracy–cost designs instead retrieve raw conversation text and compute selectively at query
+time: MAPE-PLME uses BM25 (Robertson and
+Zaragoza, 2009) without build-time model calls,
+and MAPE-PLCM retrieves raw turns and consults extracted facts only for aggregation questions. These
+designs use 90% and 40% fewer serving calls
+6
+
+Question
+
+Conversations
+Build
+
+Retrieve
+
+once per history
+
+Split sessions into rounds
+May 20
+
+U A
+
+U A A
+
+round
+
+round
+
+QA model
+Compose
+
+Rank all items with RRF
+dense
+a
+b
+c
+
+BM25
+c
+a
+fuse
+d
+
+Atomic notes per session
+
+Joint index (hybrid)
+
+rounds
+
+count
+time
+update
+advice
+
+q
+evidence
+
+Session score
+
+Map–reduce scaffolds
+
+S4
+S1
+S7
+
+LLM
+
+notes
+
+Route by question type
+
+RRF
+a
+c
+b
+
+index
+
+LLM extracts information
+
+2
+1
+3
+
+best item + 0.15 × other hits
+
+All notes of top sessions
+
++
+
+dense
+BM25
+
+per QA
+
+S4
+
+S1
+
+map
+
+Python
+
+Deliberation (1 LLM call)
+LLM
+
+top-5 rounds
+
+sum = 6
+
+draft answer
+evidence
+
+Figure 2: Pipeline of MAPE-ALME , evolved under the accuracy-only objective on LongMemEval. Build retains both
+extracted atomic notes and raw conversations. Retrieve combines dense and sparse rankings through reciprocal
+rank fusion (RRF) and returns relevant notes and raw conversational evidence. Compose implements Query-Routed
+Scaffolding (RQS), which routes queries to type-specific scaffolds according to query intent, preparing context for
+the answering model.
+
+than their counterparts on LongMemEval and LoCoMo, respectively. The larger reduction on LongMemEval is consistent with its workload: each
+history serves a single query, so memory construction costs cannot be shared across multiple queries.
+MAPE-PLME avoids build-time model calls entirely.
+These programs retain competitive accuracy with
+fewer serving calls. Despite their differences in
+computation allocation, the selected designs share
+the use of raw evidence and query-dependent composition, motivating the component analysis below.
+4.3
+
+an LLM extracts atomic notes (Chen et al., 2024)
+from each session, while the original conversation
+is preserved as individual rounds; both are jointly
+indexed using dense and lexical retrieval. At retrieval time, item-level scores are aggregated to
+rank sessions, and the system returns session-level
+note bundles alongside up to five highest-ranked
+raw conversation rounds. (2) Query-Routed Scaffolding (RQS) conditions composition on query
+type. RQS routes each query by intent and runs
+an intent-specific scaffold that pairs LLM extraction with deterministic computation, for instance
+date arithmetic for temporal queries and per-session
+item extraction followed by programmatic counting
+for aggregation queries. A final deliberation call applies intent-specific instructions to produce a draft
+answer, which is passed alongside the evidence to
+the fixed QA model for final answer generation.
+Appendix D.5 details the routing and scaffolds.
+
+Emergent Memory Designs and
+Component Analysis
+
+Across the two benchmarks and optimization objectives, the discovered memory systems exhibit
+two recurring design patterns: retaining raw conversational content and retrieving it as evidence,
+and routing queries to different composition strategies according to question type. To examine these
+patterns in detail, we conduct a case study and
+component analysis of MAPE-ALME , a representative
+design that incorporates both.
+Figure 2 illustrates the workflow of MAPE-ALME ,
+highlighting two core designs. (1) It organizes
+memory hierarchically while retaining both extracted and raw evidence. During construction,
+
+First, we examine how retaining and retrieving raw conversations affects overall performance. We remove the retrieved raw rounds
+from the answer context while retaining them in
+the index and leaving the remaining pipeline unchanged. This reduces accuracy by an absolute
+12.17% on LoCoMo and 6.50% on LongMemEval,
+as shown in Table 3. The largest decline on Long7
+
+ferability of RQS. We compare RQS with default
+evidence rendering using the same recorded retrieval and fixed QA settings. Removing RQS from
+MAPE-ALME reduces accuracy by an absolute 4.44%
+on LoCoMo and 6.25% on LongMemEval, with the
+largest declines on temporal questions, as shown
+in Tables 8 and 9. This finding is consistent with
+the difficulties in temporal reasoning and counting
+identified by the proposer and diagnosis agents during evolution with both GPT-4.1 mini and Qwen
+backbones. RQS addresses these failure modes by
+combining LLM-based extraction with deterministic computation (Gao et al., 2023; Chen et al.,
+2023). The separation of composition from memory construction and retrieval further allows us to
+transplant RQS into five human-designed memory
+systems through a fixed input adapter. Across the
+five systems, RQS yields absolute accuracy gains
+of 2.75–9.25% on LongMemEval under the paired
+evaluation protocol, as shown in Figure 3. Mem0
+shows the smallest improvement, at 2.75%. Our error analysis suggests that its failures are dominated
+by missing retrieved information, whereas RQS primarily addresses cases in which sufficient evidence
+is available but the QA model fails to identify or
+use it effectively.
+
+Overall Accuracy
+
+Method
+
+LoCoMo LongMemEval
+MAPE-ALME
+w/o raw rounds
+w/o RQS
+w/o both
+
+75.90
+63.73
+71.46
+63.12
+
+77.00
+70.50
+70.75
+63.00
+
+Table 3: Ablation of MAPE-ALME on the LoCoMo and
+LongMemEval evaluation sets using the Qwen3-30BA3B-Instruct-2507 serving backbone. W/o raw rounds
+retains only retrieved notes; w/o RQS bypasses QueryRouted Scaffolding (RQS); w/o both applies both ablations. Accuracy is reported in %.
+RQS Transplant
+
+Accuracy (%)
+
++9.3
+
++9.0
+
+75
+
++7.3
+
+68.3
+59.3
+
+58.5
+49.3
+
+50
+
+55.8
+
++5.5
+
++2.8
+
+63.0
+52.3
+
+46.8
+
+47.5 50.3
+
+25
+
+0
+
+em
+
+em
+
+leM
+
+mp
+Si
+
+Lig
+
+htM
+
+Without RQS
+
+m
+
+Me
+
+A-
+
+p
+
+Ze
+
+m0
+
+Me
+
+With RQS
+
+Figure 3: RQS transplanted from MAPE-ALME into five
+human-designed memory systems, evaluated on the
+LongMemEval evaluation set with Qwen3-30B-A3BInstruct-2507 as the serving backbone. Bold values
+indicate absolute accuracy gains in %.
+
+5
+
+Related Work
+
+Agent memory design and empirical analysis.
+Agent memory systems organize interaction histories through reflection, selective updates, and
+hierarchical storage, as exemplified by Generative Agents, MemoryBank, and MemGPT (Park
+et al., 2023; Zhong et al., 2024; Packer et al.,
+2023). Mem0 extracts and consolidates memories
+(Chhikara et al., 2025), while Zep and A-Mem organize them through temporal knowledge graphs and
+linked networks, respectively (Rasmussen et al.,
+2025; Xu et al., 2025). LightMem combines topicbased organization with offline consolidation (Fang
+et al., 2025). SimpleMem combines semantic compression with intent-aware retrieval (Liu et al.,
+2026a). Mem0, Zep, A-Mem, LightMem, and
+SimpleMem serve as baselines in our empirical
+analysis.
+Prior work has explored preserving conversational histories and processing evidence after retrieval. CoM combines lightweight memory construction with query-oriented organization of retrieved fragments into inference chains (Xu et al.,
+2026). CoM also informs our inclusion of a pro-
+
+MemEval occurs for single-session-assistant questions, where accuracy drops by an absolute 20.00%.
+Category-level results are provided in Table 8 in
+Appendix D.3. These results highlight the importance of raw conversations for recovering details
+omitted from extracted memories. In contrast, all
+five evaluated human-designed memory systems
+discard the original conversations after extracting
+facts during construction or omit them from the
+evidence provided to the QA model. This can leave
+the QA model without fine-grained semantic information needed for subsequent questions. Our error
+attribution analysis identifies incomplete retrieved
+evidence as a major source of errors in these systems. Estimated evidence completeness is strongly
+positively associated with overall accuracy. Appendix D.4 details the estimation procedure and
+an additional analysis of incorrect answers, with
+results shown in Figures 7 and 8.
+We next evaluate the effectiveness and trans8
+
+grammable composition stage. DeferMem and
+LazyMem shift evidence processing to query time,
+using learned models to produce relevant evidence
+from retrieved histories (Yin et al., 2026; Yu et al.,
+2026). ReFind instead enables an agent to search
+raw conversation logs directly (Li et al., 2026).
+These approaches differ in whether they primarily
+improve access to evidence or transform retrieved
+evidence for answering.
+Recent empirical studies further examine the
+value of memory construction relative to rawhistory retrieval. Raw-RAG demonstrates the competitiveness of dense retrieval and reranking over
+raw histories (Bao et al., 2026). Memory Tax distinguishes the benefits of memory transformation
+from losses caused by removing or obscuring useful evidence (He et al., 2026). These findings provide complementary evidence for the importance
+of preserving and accessing source information.
+MAPE examines memory design choices through
+program evolution and evaluates the resulting components through ablation and transplantation. Its
+query-routed scaffolding combines intent-specific
+evidence processing with deterministic computation and deliberation.
+
+tion of computation across stages. Beyond evaluating the resulting programs, we use component
+ablations and transplantation across existing memory systems to assess which design choices contribute to their effectiveness and transfer beyond
+the evolved implementation.
+
+6
+
+Conclusion
+
+We introduced MAPE to study agent memory design
+through whole-program evolution from minimal
+seeds. Across two benchmarks, the evolved programs instantiate two recurring design patterns: retaining raw conversations as retrievable evidence
+and processing retrieved evidence through intentspecific scaffolds before answering. Ablations
+highlight the value of preserving raw evidence,
+while transplanting the evolved composition module improves all five evaluated human-designed
+systems. Under the evaluated workloads, incorporating serving cost into the search objective favors selective query-time processing over LLMbased memory construction, while retaining competitive accuracy. Together, these findings illustrate
+how program evolution, combined with component
+analysis and transplantation, can produce effective
+memory systems and empirically grounded design
+lessons.
+
+Evolution of agent memory systems. MetaMem
+evolves knowledge-utilization guidance (Xin et al.,
+2026). MemTrace uses attribution of failures across
+memory operations to guide prompt optimization
+(Deng et al., 2026), while EvolveMem adapts retrieval and answer-generation configurations (Liu
+et al., 2026b). MemEvolve jointly evolves experiential knowledge and memory architectures within
+a modular design space (Zhang et al., 2026). At the
+level of agent capabilities, Mem2 Evolve couples
+experience distillation with the creation of reusable
+tools and expert agents (Cheng et al., 2026). MemPro extends this direction to system-level evolution,
+treating memory construction–retrieval pipelines
+as executable programs subject to failure-guided
+revision (Liu et al., 2026c). MemScope uses execution traces and runtime memory state to guide
+localized code repairs to an existing memory architecture (Su et al., 2026). These studies span the
+evolution of stored experience, reusable capabilities, and memory system code. MAPE starts from
+minimal seeds and permits coordinated changes
+across memory construction, retrieval, and composition. By comparing accuracy-only and joint
+accuracy–cost objectives, we examine how search
+objectives shape memory designs and the alloca-
+
+Limitations
+Our findings concern conversational memory on
+two QA benchmarks, with detailed component analysis centered on one representative program. Transfer and transplantation experiments extend the evaluation across models, benchmarks, and memory
+systems, while applicability to experiential memory
+and open-ended agents remains to be established.
+Evolutionary trajectories and resulting programs
+can vary across runs, and program selection and
+design interpretation involve empirical judgment.
+Our cost comparisons cover serving token charges
+for LLM and embedding calls, excluding search
+expenses, local computation, and latency. Their
+implications depend on workload, particularly how
+memory construction costs are amortized across
+queries.
+
+AI Assistance Statement
+AI assistants were used to help revise manuscript
+text and edit figures. The authors made the final
+decisions on the content and presentation and take
+responsibility for the submitted work.
+9
+
+References
+
+Memory tax: Dissecting the net value of agent memory. arXiv preprint arXiv:2610.34073.
+
+Zhengye Bao, Shengtao Zhang, Haokai Zhang, Shiqi
+Lou, Muning Wen, and Minnan Luo. 2026. Is
+complex agentic memory always needed? naive
+RAG is stronger than we thought. arXiv preprint
+arXiv:2610.30755.
+
+Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio
+Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich Küttler, Mike Lewis, Wen-tau Yih, Tim Rocktäschel, Sebastian Riedel, and Douwe Kiela. 2020.
+Retrieval-augmented generation for knowledgeintensive NLP tasks. In Advances in Neural Information Processing Systems, volume 33, pages 9459–
+9474.
+
+Tong Chen, Hongwei Wang, Sihao Chen, Wenhao Yu,
+Kaixin Ma, Xinran Zhao, Hongming Zhang, and
+Dong Yu. 2024. Dense X retrieval: What retrieval
+granularity should we use? In Proceedings of the
+2024 Conference on Empirical Methods in Natural
+Language Processing, pages 15159–15177.
+
+Ruizhe Li, Licheng Zhang, Benfeng Xu, Mingxuan Du,
+Zheren Fu, and Weidong Chen. 2026. When your
+agent opens the chat app: Agent-controlled search
+over raw chat logs rivals structured memory. arXiv
+preprint arXiv:2608.12888.
+
+Wenhu Chen, Xueguang Ma, Xinyi Wang, and
+William W. Cohen. 2023. Program of thoughts
+prompting: Disentangling computation from reasoning for numerical reasoning tasks. Transactions on
+Machine Learning Research.
+
+Fei Liu, Xialiang Tong, Mingxuan Yuan, Xi Lin, Fu Luo,
+Zhenkun Wang, Zhichao Lu, and Qingfu Zhang.
+2024. Evolution of heuristics: Towards efficient automatic algorithm design using large language model.
+In International Conference on Machine Learning.
+
+Zihao Cheng, Zeming Liu, Yingyu Shan, Xinyi
+Wang, Xiangrong Zhu, Yunpu Ma, Hongru Wang,
+Yuhang Guo, Wei Lin, and Yunhong Wang. 2026.
+Mem2 Evolve: Towards self-evolving agents via coevolutionary capability expansion and experience distillation. In Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics
+(Volume 1: Long Papers), pages 20784–20831. Association for Computational Linguistics.
+
+Jiaqi Liu, Yaofeng Su, Peng Xia, Siwei Han, Zeyu
+Zheng, Cihang Xie, Mingyu Ding, and Huaxiu Yao.
+2026a. SimpleMem: Efficient lifelong memory for
+LLM agents. arXiv preprint arXiv:2601.02553.
+Jiaqi Liu, Xinyu Ye, Peng Xia, Zeyu Zheng, Cihang Xie,
+Mingyu Ding, and Huaxiu Yao. 2026b. EvolveMem:
+Self-evolving memory architecture via AutoResearch
+for LLM agents. arXiv preprint arXiv:2605.13941.
+
+Prateek Chhikara, Dev Khant, Saket Aryan, Taranjeet
+Singh, and Deshraj Yadav. 2025. Mem0: Building
+production-ready AI agents with scalable long-term
+memory. arXiv preprint arXiv:2504.19413.
+
+Qingshan Liu, Guoqing Wang, Wen Wu, Jingqi Huang,
+Xinqi Tao, Dejia Song, Jie Zhou, and Liang He.
+2026c. MemPro: Agentic memory systems as evolvable programs. arXiv preprint arXiv:2606.00619.
+
+Kalyanmoy Deb, Amrit Pratap, Sameer Agarwal, and
+T. Meyarivan. 2002. A fast and elitist multiobjective
+genetic algorithm: NSGA-II. IEEE Transactions on
+Evolutionary Computation, 6(2):182–197.
+
+Yecheng Jason Ma, William Liang, Guanzhi Wang, DeAn Huang, Osbert Bastani, Dinesh Jayaraman, Yuke
+Zhu, Linxi Fan, and Anima Anandkumar. 2024. Eureka: Human-level reward design via coding large
+language models. In International Conference on
+Learning Representations.
+
+Xinle Deng, Ruobin Zhong, Hujin Peng, Xiaoben
+Lu, Yanzhe Wu, Guang Li, Buqiang Xu, Yunzhi
+Yao, Jizhan Fang, Haoliang Cao, Junjie Guo, Yuan
+Yuan, Ziqing Ma, Yuanqiang Yu, Rui Hu, Baohua
+Dong, Hangcheng Zhu, and Ningyu Zhang. 2026.
+MemTrace: Tracing and attributing errors in large
+language model memory systems. arXiv preprint
+arXiv:2605.28732.
+
+Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler
+Hallinan, Luyu Gao, Sarah Wiegreffe, Uri Alon,
+Nouha Dziri, Shrimai Prabhumoye, Yiming Yang,
+Shashank Gupta, Bodhisattwa Prasad Majumder,
+Katherine Hermann, Sean Welleck, Amir Yazdanbakhsh, and Peter Clark. 2023. Self-refine: Iterative
+refinement with self-feedback. In Advances in Neural Information Processing Systems, volume 36.
+
+Jizhan Fang, Xinle Deng, Haoming Xu, Ziyan Jiang,
+Yuqi Tang, Ziwen Xu, Shumin Deng, Yunzhi Yao,
+Mengru Wang, Shuofei Qiao, Huajun Chen, and
+Ningyu Zhang. 2025. LightMem: Lightweight
+and efficient memory-augmented generation. arXiv
+preprint arXiv:2510.18866.
+Luyu Gao, Aman Madaan, Shuyan Zhou, Uri Alon,
+Pengfei Liu, Yiming Yang, Jamie Callan, and Graham Neubig. 2023. PAL: Program-aided language
+models. In International Conference on Machine
+Learning, pages 10764–10799.
+
+Adyasha Maharana, Dong-Ho Lee, Sergey Tulyakov,
+Mohit Bansal, Francesco Barbieri, and Yuwei Fang.
+2024. Evaluating very long-term conversational
+memory of LLM agents. In Proceedings of the 62nd
+Annual Meeting of the Association for Computational
+Linguistics (Volume 1: Long Papers), Bangkok, Thailand. Association for Computational Linguistics.
+
+Xuan He, Sining Zhoubian, Ruozhen Yang, Yuhao Wen,
+Zhineng Wang, Yuyang Hu, Ke Yang, Yuyu Zhang,
+Ping Nie, Jiawei Han, and ChengXiang Zhai. 2026.
+
+Alexander Novikov, Ngân Vũ, Marvin Eisenberger, Emilien Dupont, Po-Sen Huang, Adam Zsolt Wagner,
+Sergey Shirobokov, Borislav Kozlovskii, Francisco
+
+10
+
+J. R. Ruiz, Abbas Mehrabian, et al. 2025. AlphaEvolve: A coding agent for scientific and algorithmic
+discovery. arXiv preprint arXiv:2506.13131.
+
+Haidong Xin, Xinze Li, Zhenghao Liu, Yukun Yan,
+Shuo Wang, Cheng Yang, Yu Gu, Ge Yu, and
+Maosong Sun. 2026. MetaMem: Evolving metamemory for knowledge utilization through selfreflective symbolic optimization. In Findings of
+the Association for Computational Linguistics: ACL
+2026, pages 5473–5492. Association for Computational Linguistics.
+
+OpenAI. 2025. Introducing GPT-4.1 in the API.
+Charles Packer, Sarah Wooders, Kevin Lin, Vivian Fang,
+Shishir G. Patil, Ion Stoica, and Joseph E. Gonzalez.
+2023. MemGPT: Towards LLMs as operating systems. arXiv preprint arXiv:2310.08560.
+
+Wujiang Xu, Zujie Liang, Kai Mei, Hang Gao, Juntao Tan, and Yongfeng Zhang. 2025. A-mem:
+Agentic memory for LLM agents. arXiv preprint
+arXiv:2502.12110.
+
+Joon Sung Park, Joseph C. O’Brien, Carrie Jun Cai,
+Meredith Ringel Morris, Percy Liang, and Michael S.
+Bernstein. 2023. Generative agents: Interactive simulacra of human behavior. In Proceedings of the 36th
+Annual ACM Symposium on User Interface Software
+and Technology (UIST).
+
+Xiucheng Xu, Bingbing Xu, Xueyun Tian, Zihe Huang,
+Rongxin Chen, Yunfan Li, and Huawei Shen. 2026.
+Chain-of-Memory: Lightweight memory construction with dynamic evolution for LLM agents. In
+Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1:
+Long Papers), pages 11618–11631. Association for
+Computational Linguistics.
+
+Preston Rasmussen, Pavlo Paliychuk, Travis Beauvais,
+Jack Ryan, and Daniel Chalef. 2025. Zep: A temporal knowledge graph architecture for agent memory.
+arXiv preprint arXiv:2501.13956.
+Stephen Robertson and Hugo Zaragoza. 2009. The
+probabilistic relevance framework: BM25 and beyond. Foundations and Trends in Information Retrieval, 3(4):333–389.
+
+An Yang, Anfeng Li, et al. 2025. Qwen3 technical
+report. arXiv preprint arXiv:2505.09388.
+Jianing Yin, Tan Tang, and Yingcai Wu. 2026. DeferMem: Query-time evidence distillation via reinforcement learning for long-term agent memory. arXiv
+preprint arXiv:2605.22411.
+
+Bernardino
+Romera-Paredes,
+Mohammadamin
+Barekatain, Alexander Novikov, Matej Balog,
+M. Pawan Kumar, Emilien Dupont, Francisco J. R.
+Ruiz, Jordan S. Ellenberg, Pengming Wang, Omar
+Fawzi, Pushmeet Kohli, and Alhussein Fawzi. 2024.
+Mathematical discoveries from program search with
+large language models. Nature, 625:468–475.
+
+Jing Yu, Yibo Zhao, Jiaming Zhang, and Xiang Li. 2026.
+LazyMem: Retrieve broadly, construct selectively for
+efficient long-term agent memory. arXiv preprint
+arXiv:2607.22690.
+
+Noah Shinn, Federico Cassano, Ashwin Gopinath,
+Karthik Narasimhan, and Shunyu Yao. 2023. Reflexion: Language agents with verbal reinforcement
+learning. In Advances in Neural Information Processing Systems, volume 36.
+
+Guibin Zhang, Haotian Ren, Chong Zhan, Zhenhong Zhou, Junhao Wang, He Zhu, Wangchunshu
+Zhou, and Shuicheng Yan. 2026. MemEvolve:
+Meta-evolution of agent memory systems. In
+International Conference on Machine Learning.
+ArXiv:2512.18746.
+
+Miao Su, Yucan Guo, Zixuan Li, Long Bai, Zhongni
+Hou, Xiaolong Jin, and Jiafeng Guo. 2026. MemScope: Evolving agent memory architectures
+through localized code repair. arXiv preprint
+arXiv:2610.21170.
+
+Zeyu Zhang, Xiaohe Bo, Chen Ma, Rui Li, Xu Chen,
+Quanyu Dai, Jieming Zhu, Zhenhua Dong, and JiRong Wen. 2024. A survey on the memory mechanism of large language model based agents. arXiv
+preprint arXiv:2404.13501.
+
+Lei Wang, Chen Ma, Xueyang Feng, Zeyu Zhang, Hao
+Yang, Jingsen Zhang, Zhiyuan Chen, Jiakai Tang,
+Xu Chen, Yankai Lin, Wayne Xin Zhao, Zhewei Wei,
+and Jirong Wen. 2024. A survey on large language
+model based autonomous agents. Frontiers of Computer Science, 18(6):186345.
+
+Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan
+Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin,
+Zhuohan Li, Dacheng Li, Eric P. Xing, Hao Zhang,
+Joseph E. Gonzalez, and Ion Stoica. 2023. Judging
+LLM-as-a-judge with MT-Bench and chatbot arena.
+In Advances in Neural Information Processing Systems (Datasets and Benchmarks Track), volume 36.
+
+Di Wu, Hongwei Wang, Wenhao Yu, Yuwei Zhang, KaiWei Chang, and Dong Yu. 2025. LongMemEval:
+Benchmarking chat assistants on long-term interactive memory. In International Conference on Learning Representations.
+
+Wanjun Zhong, Lianghong Guo, Qiqi Gao, He Ye, and
+Yanlin Wang. 2024. MemoryBank: Enhancing large
+language models with long-term memory. In Proceedings of the AAAI Conference on Artificial Intelligence, volume 38, pages 19724–19731.
+
+Zhiheng Xi, Wenxiang Chen, Xin Guo, Wei He, Yiwen
+Ding, Boyang Hong, Ming Zhang, Junzhe Wang,
+Senjie Jin, Enyu Zhou, et al. 2023. The rise and
+potential of large language model based agents: A
+survey. arXiv preprint arXiv:2309.07864.
+
+11
+
+A
+
+Memory Program Interface
+
+using three questions from one search conversation on LoCoMo or two search instances on LongMemEval. If the check fails, the proposer receives
+the error trace and can repair the program up to
+twice, with a new check after each repair. Candidates that still fail are not evaluated on the full
+search set. Candidates that pass are evaluated on
+the entire search partition without progressive filtering or resampling between steps. Each proposer
+invocation allows up to 80 agent turns and 45 minutes, while each diagnosis invocation allows up to
+40 turns and 30 minutes.
+
+The MemoClass interface provides a unified framework for implementing and evaluating memory systems. It defines two required methods for memory
+construction and retrieval, along with an optional
+method for composing retrieved memories into context. Baseline implementations are connected to
+this interface through adapters, enabling consistent evaluation alongside evolved memory systems.
+Integration details are provided in Appendix C.2.
+Memory System Interface
+from abc import ABC, abstractmethod
+from typing import Dict, List, Union
+from common.recorder import Basic_Recorder
+
+Search objective. MAPE-P jointly optimizes QA
+accuracy and lifecycle serving cost as two separate objectives. The proposer uses the accuracy–
+cost Pareto frontier to guide candidate generation.
+MAPE-A optimizes QA accuracy alone.
+
+class MemoClass(ABC):
+@abstractmethod
+async def build_memory_from_data(
+self, recorder: Basic_Recorder
+) -> None:
+...
+
+Search models. Both the proposer and diagnosis
+agents use Claude Opus 4.8 with reasoning effort
+set to xhigh throughout the evolutionary loop. During search, GPT-4.1 mini serves as the backbone
+for both LLM-based memory operations and QA
+generation on LoCoMo, while Qwen3-30B-A3BInstruct-2507 serves these roles on LongMemEval.
+We use text-embedding-3-small for all embedding
+calls across both benchmarks.
+
+@abstractmethod
+async def retrieve_memory_for_query(
+self, recorder: Basic_Recorder
+) -> Dict:
+...
+async def compose_memory_context(
+self,
+recorder: Basic_Recorder,
+retrieved: Dict,
+) -> Union[str, List[str], None]:
+return None
+
+B
+
+Evolutionary Search Details
+
+B.1
+
+Search Configuration
+
+B.2
+
+Program Selection
+
+Shortlisting. For MAPE-A, we shortlist the top
+20% of candidates ranked by search-set accuracy.
+For MAPE-P, we shortlist all candidates on the
+search-set accuracy–cost Pareto frontier. Each
+shortlist additionally includes the program with
+the most direct children in that run’s lineage, if it
+is not already included. On LoCoMo, we pool the
+shortlists from the three runs within each setting
+before final selection. Shortlisted programs are
+frozen and evaluated on the larger evaluation set,
+which remains unavailable throughout evolution.
+
+Initialization. MAPE-P is initialized with nomemory and full-context seeds, representing minimal memory overhead and unrestricted access to
+conversation history, respectively. These seeds provide contrasting starting points for exploring the
+trade-off between accuracy and cost. MAPE-A starts
+only from the no-memory seed to reduce architectural anchoring on full-context inference and encourage exploration beyond incremental revisions
+to that design.
+
+Implementation screening and final selection.
+After evaluation, we manually inspect the shortlisted implementations and exclude programs with
+impractical scaling behavior, such as reliance on
+full-history inference or exhaustive LLM-based
+processing of the history during retrieval. For each
+setting, we report the remaining program with the
+highest evaluation-set accuracy. The evaluation
+set is thus used for final selection, but provides no
+feedback for program evolution.
+
+Search budget. We perform three evolutionary
+runs per setting on LoCoMo and one per setting on
+LongMemEval. Each run consists of 20 steps, with
+one candidate program proposed at each step.
+Execution and repair. Before full evaluation,
+each proposed candidate undergoes a sanity check
+12
+
+Category
+
+Search Evaluation Total
+
+Multi-hop
+Temporal
+Open-domain
+Single-hop
+
+43
+63
+13
+114
+
+239
+258
+83
+727
+
+Evaluated questions
+Adversarial (excluded)
+
+233
+71
+
+1,307 1,540
+375
+446
+
+All questions
+Conversations
+
+304
+2
+
+1,682 1,986
+8
+10
+
+Question type
+
+282
+321
+96
+841
+
+Experimental Setup Details
+
+C.1
+
+Data Splits
+
+27
+27
+15
+14
+11
+6
+
+106
+106
+63
+56
+45
+24
+
+133
+133
+78
+70
+56
+30
+
+Total
+
+100
+
+400
+
+500
+
+standardized evaluation interface. The adapters
+map benchmark histories to each method’s expected input format and return retrieved evidence to
+the shared QA model. Answer generation and judging follow the common benchmark protocol, with
+isolated memory state for each evaluation instance.
+Key configurations and integration adjustments are
+summarized below.
+
+We use fixed, disjoint search and evaluation partitions. The evaluation partition remains unavailable
+during evolution and is subsequently used for final program selection and performance reporting.
+The 20/80 allocation applies to conversations in
+LoCoMo and question instances in LongMemEval.
+
+Full Context and RAG. Full Context supplies
+the conversation history within a 128,000-token
+budget, retaining the most recent messages in
+chronological order when truncation is needed.
+RAG retrieves the top-10 messages by embedding cosine similarity, preserving timestamps and
+speaker information, without query rewriting or
+reranking.
+
+LoCoMo. The dataset contains ten conversations.
+Following the implementation’s fixed file order, we
+use the first two, conv-26 and conv-30, for search
+and the remaining eight for evaluation. Adversarial questions are excluded before evaluation. This
+yields 233 search questions and 1,307 evaluation
+questions. Table 4 reports the resulting counts, including the excluded questions for completeness.
+
+Memory system configurations. Mem0 uses
+batches of 20 messages for fact extraction and
+retrieves the top-10 facts with a threshold of
+0.0. A-Mem retrieves the top-10 notes with
+linked-memory expansion. LightMem enables
+LLMlingua-2 compression and segmentation, uses
+user_only messages and flat extraction, performs offline updates, and retrieves the top-20
+memories. Its compression rate, extraction threshold, and update similarity threshold are 0.6, 0.1,
+and 0.9, respectively. SimpleMem uses 20-message
+windows with a two-message overlap, retrieval limits of 25, 5, and 5 for semantic, keyword, and structured search, and query planning with up to two
+reflection rounds. Zep uses Graphiti with retrieval
+limits of 20 for facts and entity summaries and
+bge-reranker-v2-m3 reranking.
+
+LongMemEval. We use LongMemEval-S,
+which contains 500 question instances with
+associated conversation histories. We allocate
+100 instances for search and 400 for evaluation,
+using stratified sampling across the six question
+types to maintain an approximately 20/80 split
+within each type. Within each question type, we
+sort question IDs and shuffle them with a shared
+Python random generator initialized with the
+fixed seed longmemeval.search.v1, processing
+types in sorted order. Search counts are allocated
+proportionally, with remaining slots assigned to
+the largest fractional remainders and ties resolved
+by type name. The remaining instances form the
+evaluation partition. Table 5 reports the resulting
+distribution.
+C.2
+
+Temporal reasoning
+Multi-session
+Knowledge update
+Single-session user
+Single-session assistant
+Single-session preference
+
+Table 5: LongMemEval-S question counts under the
+fixed stratified partition. Each question and its associated history are assigned together.
+
+Table 4: LoCoMo partition sizes. Questions inherit the
+partition of their conversation; adversarial questions are
+excluded from evaluation.
+
+C
+
+Search Evaluation Total
+
+Integration adjustments. The integration layer
+handles model compatibility, usage accounting,
+and runtime error handling. Mem0 embedding inputs are truncated to 7,800 tokens when necessary;
+fact extraction still receives the full message batch.
+
+Baselines and Implementations
+
+Shared evaluation interface. We reuse the baseline memory implementations through adapters that
+connect their construction and retrieval APIs to our
+13
+
+on OpenAI1 and Alibaba Cloud Model Studio2 list
+prices. The rates below are in USD per million
+tokens.
+
+Mem0 and SimpleMem use minimal package initializers. Zep uses FalkorDB Lite instead of Neo4j,
+changing the storage and full-text search backend.
+These adjustments do not constitute a redesign of
+the baseline memory methods.
+C.3
+
+Models and Evaluation Details
+
+Model
+
+Input Output
+
+GPT-4.1 mini
+Qwen3-30B-A3B-Instruct-2507
+text-embedding-3-small
+
+0.40
+0.20
+0.02
+
+1.60
+0.80
+—
+
+For each call, we multiply input and output token counts by their respective rates and divide by
+one million. Embedding calls incur only the input charge. We apply no cached input discounts.
+Although Qwen runs locally, we value its token
+usage at the corresponding API rates. Reported
+costs therefore estimate serving cost at these fixed
+rates rather than actual infrastructure expenditure.
+
+Serving models. We use GPT-4.1 mini and
+Qwen3-30B-A3B-Instruct-2507 as serving backbones for evaluation-set comparisons. Within
+each setting, the designated backbone handles both
+LLM-based memory operations and answer generation, and text-embedding-3-small provides embeddings. Qwen is served locally on eight NVIDIA
+H100 GPUs. Selected programs and baselines
+share the same designated models and benchmarkspecific answering procedure. The QA prompt templates are provided in Appendix E.1.
+
+D
+
+Supplementary Results and Analysis
+
+D.1
+
+Cross-Benchmark Transfer
+
+We evaluate the selected programs on the other
+benchmark without further evolution, using Qwen330B-A3B-Instruct-2507 as the serving backbone.
+Tables 6 and 7 report transfer from LoCoMo to
+LongMemEval and vice versa. Fixed input adapters
+reconcile the conversation formats before memory
+construction and retrieval, leaving the evolved code
+unchanged. QA, judging, embeddings, and cost accounting follow the target benchmark’s evaluation
+protocol.
+
+Accuracy. GPT-5 mini judges each predicted answer against the ground-truth answer using the
+benchmark-specific rubric. For reported benchmark results, we pool the resulting binary correctness judgments across all evaluated queries to obtain overall accuracy. The judge prompt templates
+are provided in Appendix E.2. Reported accuracy
+gains and drops are absolute differences.
+Generation settings. The shared QA wrapper
+sets a completion limit of 16,384 tokens and leaves
+temperature, top-p, and the generation seed unspecified, using API or serving defaults. Calls within
+memory programs can override wrapper defaults.
+The GPT-5 mini judge uses low reasoning effort
+and a 16,384-token completion limit. If a lengthlimit error occurs without visible output, the judge
+retries once with a 32,768-token limit.
+
+LoCoMo programs on LongMemEval. The
+adapter converts each dated user–assistant session
+into the two-speaker format expected by the LoCoMo programs. It preserves session and message
+order, reformats dates, and maps message roles to
+the speakers User and Assistant.
+LongMemEval programs on LoCoMo. The reverse adapter converts each LoCoMo session into
+a dated message list, preserving order, speaker
+names, and image captions. For MAPE-ALME ,
+the first and second speakers map to user and
+assistant, respectively, to support its round
+grouping. MAPE-PLME does not use these roles and
+retains speaker names as role labels. No question
+date is supplied because LoCoMo does not provide
+one.
+
+Lifecycle serving cost. We record LLM input,
+LLM output, and embedding token usage across
+build, retrieve, compose, and answer, and apply the
+corresponding per-token prices of the designated
+models. Following §2.3, we amortize the total
+cost over the answered queries for each history and
+take an unweighted mean across histories, reporting
+dollars per 1,000 queries. Judge and search-agent
+calls, general-purpose computation, and storage are
+excluded.
+
+Serving-backbone transfer on LoCoMo. The
+temporal errors under backbone transfer help explain the ranking reversal reported in Section 4.1.
+https://openai.com/api/pricing/
+https://www.alibabacloud.com/help/en/
+model-studio/model-pricing
+1
+
+Token prices. We use fixed rates from our pricing configuration dated 21 September 2026, based
+
+2
+
+14
+
+Method
+
+Temp
+
+Multi
+
+Know
+
+User
+
+Asst
+
+Pref
+
+Avg
+
+Cost ($/1k)↓
+
+Qwen3-30B-A3B-Instruct-2507
+Full Context
+RAG
+
+43.40
+43.40
+
+41.51
+53.77
+
+74.60
+85.71
+
+91.07
+94.64
+
+93.33
+97.78
+
+37.50
+41.67
+
+59.75
+66.00
+
+22.27
+2.62
+
+Mem0
+A-Mem
+LightMem
+SimpleMem
+Zep
+
+31.13
+42.45
+49.06
+40.57
+37.74
+
+38.68
+45.28
+57.55
+34.91
+30.19
+
+60.32
+60.32
+79.37
+55.56
+58.73
+
+80.36
+82.14
+96.43
+73.21
+80.36
+
+48.89
+100.00
+26.67
+82.22
+60.00
+
+41.67
+41.67
+37.50
+33.33
+33.33
+
+47.25
+58.00
+59.50
+50.25
+47.25
+
+93.55
+661.97
+26.59
+144.74
+2367.28
+
+MAPE-ALCM
+MAPE-PLCM
+
+54.72
+45.28
+
+47.17
+49.06
+
+84.13
+84.13
+
+92.86
+91.07
+
+95.56
+95.56
+
+25.00
+41.67
+
+65.50
+64.25
+
+85.76
+69.17
+
+Table 6: Cross-benchmark transfer from LoCoMo to LongMemEval without further evolution, using a fixed input
+adapter and the Qwen3-30B-A3B-Instruct-2507 serving backbone. Baseline results are reproduced from Table 2.
+Accuracy is reported in %; Avg denotes overall accuracy across 400 questions, and cost is measured in dollars per
+1,000 queries. Column abbreviations follow Table 2. The highest and second-highest accuracies in each column are
+bold and underlined, respectively. Transfer details are provided in Appendix D.1.
+Method
+
+Multi
+
+Open
+
+Single
+
+Temp
+
+Avg
+
+Cost ($/1k)↓
+
+Qwen3-30B-A3B-Instruct-2507
+Full Context
+RAG
+
+58.16
+27.62
+
+53.01
+38.55
+
+89.41
+58.05
+
+31.78
+16.67
+
+70.01
+43.08
+
+7.07
+0.14
+
+Mem0
+A-Mem
+LightMem
+SimpleMem
+Zep
+
+60.25
+44.77
+54.81
+61.09
+50.21
+
+56.63
+37.35
+45.78
+46.99
+44.58
+
+77.44
+67.95
+76.20
+86.52
+57.22
+
+41.86
+24.42
+28.68
+35.66
+30.62
+
+65.95
+53.18
+60.98
+69.32
+49.89
+
+0.61
+5.71
+0.48
+3.24
+6.31
+
+MAPE-ALME
+MAPE-PLME
+
+60.67
+55.23
+
+62.65
+67.47
+
+86.24
+85.56
+
+65.12
+64.34
+
+75.90
+74.67
+
+1.94
+3.05
+
+Table 7: Cross-benchmark transfer from LongMemEval to LoCoMo without further evolution, using a fixed input
+adapter and the Qwen3-30B-A3B-Instruct-2507 serving backbone. Baseline results are reproduced from Table 1.
+Accuracy is reported in %; Avg denotes overall accuracy across 1,307 questions, and cost is measured in dollars
+per 1,000 queries. Column abbreviations follow Table 1. One context-overflow case for MAPE-ALME is counted as
+incorrect. The highest and second-highest accuracies in each column are bold and underlined, respectively. Transfer
+details are provided in Appendix D.1.
+
+MAPE-ALCM annotates relative time expressions with
+the conversation date, whereas MAPE-PLCM resolves
+them to absolute dates. Under Qwen, 134 of the
+former’s 145 temporal errors return a conversation
+date rather than the event date. A concrete example
+is illustrated in Figure 4.
+
+the proposer are omitted. The orange paths trace
+the candidates with the highest search accuracy,
+whereas final programs are selected through the
+procedure described in Appendix B.2. The selected
+MAPE-ALCM and MAPE-PLCM programs occur at steps
+7 and 11, respectively.
+
+D.2
+
+D.3
+
+Search Trajectories and Lineage
+
+Figure 5 shows how memory designs change during
+the two LongMemEval searches. Accuracy-only
+search introduces per-session note extraction at
+step 13 and retains it thereafter, increasing serving
+cost approximately sixfold. Accuracy–cost search
+switches to BM25-only retrieval from step 9 onward.
+Figure 6 shows the candidate lineages on LoCoMo. Each edge connects a candidate to its first
+recorded parent. Additional parents consulted by
+
+Raw Conversation Rounds in MAPE-ALME
+
+MAPE-ALME returns extracted atomic notes alongside five retrieved raw conversation rounds, each
+consisting of a user message and the replies that
+follow it. To assess the contribution of raw evidence, we remove these rounds from the returned
+evidence while retaining them in the index and
+session scoring. All other components are kept unchanged. LoCoMo evaluation uses the fixed input
+adapter described in Appendix D.1.
+Removing raw rounds reduces overall accuracy
+15
+
+Q: When did John join the online support group?
+Evidence
+
+1 January 2023
+
+gold the week before 1 January 2023
+
+John: “… I joined a service-focused online group last week …”
+
+MAPE-ALCM
+
+MAPE-PLCM
+
+Annotate
+relative time
+
+25
+
+“last week (the week before 1 January 2023)”
+
+Resolve
+the date
+
+Resolved date: 25 December 2022
+
+GPT-4.1 mini
+
+the week before 1 January 2023
+
+GPT-4.1 mini
+
+25 December 2022
+
+Qwen
+
+1 January 2023
+
+Qwen
+
+25 December 2022
+
+Figure 4: A LoCoMo temporal example comparing MAPE-ALCM and MAPE-PLCM across serving backbones. The
+programs differ in the date representation and answer context passed to the QA model. Qwen answers are taken
+from held-out traces; GPT-4.1 mini answers are illustrative. Evidence and context excerpts are abbreviated.
+Method
+
+Temp
+
+Multi
+
+Know
+
+User
+
+Asst
+
+Pref
+
+Avg
+
+MAPE-ALME
+w/o raw rounds
+w/o RQS
+w/o both
+
+80.19
+70.75
+60.38
+54.72
+
+58.49
+53.77
+56.60
+52.83
+
+88.89
+84.13
+80.95
+74.60
+
+89.29
+92.86
+94.64
+92.86
+
+93.33
+73.33
+95.56
+66.67
+
+54.17
+50.00
+50.00
+37.50
+
+77.00
+70.50
+70.75
+63.00
+
+Table 8: Component ablation of MAPE-ALME on LongMemEval with the Qwen3-30B-A3B-Instruct-2507 serving
+backbone, providing the question-type breakdown of Table 3. The bold row denotes the full system. W/o raw rounds
+omits the five retrieved conversation rounds from the returned evidence while retaining them in the index; w/o
+RQS bypasses composition and uses the default evidence rendering; w/o both applies both ablations. Values are
+accuracies in %, with Avg computed over all questions. Column abbreviations follow Table 2.
+Method
+
+Multi
+
+Open
+
+Single
+
+Temp
+
+Avg
+
+MAPE-ALME
+w/o raw rounds
+w/o RQS
+w/o both
+
+60.67
+49.37
+58.16
+52.30
+
+62.65
+56.63
+50.60
+49.40
+
+86.24
+74.00
+90.51
+77.03
+
+65.12
+50.39
+36.82
+38.37
+
+75.90
+63.73
+71.46
+63.12
+
+Table 9: Component ablation of MAPE-ALME transferred to LoCoMo using the fixed input adapter described in
+Appendix D.1 and the Qwen3-30B-A3B-Instruct-2507 serving backbone. Results provide the question-type
+breakdown of Table 3. The bold row denotes the full system; ablation definitions follow Table 8. Values are
+accuracies in %, with Avg computed over all questions. Column abbreviations follow Table 1.
+
+D.4
+
+by 6.50% on LongMemEval and 12.17% on LoCoMo, as shown in Tables 8 and 9. The largest decline on LongMemEval occurs for single-sessionassistant questions. On LoCoMo, accuracy decreases across all categories, with the largest declines on temporal and single-hop questions. These
+results support providing raw conversational evidence alongside extracted notes.
+
+Retrieval Completeness and Error
+Attribution
+
+We use GPT-5 mini to assess evidence completeness in the analysed incorrect answers. The classifier receives the question, reference answer and
+evidence, model answer, and full retrieved context.
+It labels the retrieved evidence as complete, partial,
+or absent according to whether the context contains the information needed to derive the reference
+answer.
+Figure 7 combines partial and absent evidence
+16
+
+candidate
+
+best so far
+
+selected program
+
+Pareto frontier
+
+cost per candidate
+
+$ / 1k
+
+search acc. (%)
+
+(a) MAPE ¡ ALME accuracy-only search
+Step 8 · Deliberation
+before answering
+
+Step 5 · Query-routed
+arithmetic scaffolds
+
+Step 13 · Build-time
+atomic notes
+
+80
+70
+
+50
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9
+
+10
+
+11
+
+12
+
+13
+
+14
+
+15
+
+16
+
+17
+
+18
+
+19
+
+20
+
+search acc. (%)
+
+(b) MAPE ¡ PLME accuracy–cost search
+Step 19 · Enumeration
+for counting queries
+
+Step 13 · Relevance-based
+evidence trimming
+
+Step 9 · BM25
+retrieval
+
+80
+60
+
+$ / 1k
+
+40
+10
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9
+
+10
+
+11
+
+12
+
+13
+
+14
+
+15
+
+16
+
+17
+
+18
+
+19
+
+20
+
+search step
+
+Figure 5: LongMemEval search trajectories using Qwen3-30B-A3B-Instruct-2507 on the 100-question search set.
+Panels a and b show accuracy-only and accuracy–cost search, respectively. Blue lines show candidate accuracy,
+dashed lines show the best accuracy so far, and bars show lifecycle serving cost per 1,000 queries. Stars mark
+selected programs; orange circles mark the final Pareto frontier. Callouts identify representative design changes.
+
+D.5
+
+into the incomplete category. This distinguishes errors accompanied by missing evidence from those
+that occur despite sufficient evidence. Separately,
+the classifier assesses whether further reasoning
+over the same context could plausibly recover
+the correct answer. The RQS transplantation described in Appendix D.5 corrects 42–60% of errors
+judged recoverable, compared with 3–13% of errors judged unrecoverable.
+
+Query-Routed Scaffolding: Design,
+Ablation, and Transplant
+
+Design. Query-Routed Scaffolding (RQS) implements the compose stage of MAPE-ALME , as shown
+in Figure 2. It processes retrieved evidence through
+three steps: routing, scaffolding, and deliberation.
+Route. Rules based on the query wording assign
+each question to one of six intents: temporal, aggregation, difference, current-value, preference, or
+direct lookup. The assigned intent determines the
+subsequent processing strategy.
+Scaffold. For temporal questions, the scaffold extracts event dates and explicitly stated durations. It
+anchors relative expressions such as “last week” to
+the relevant session date and resolves them through
+date arithmetic. For aggregation questions, it extracts matching items from each session, removes
+duplicates, and counts or sums the items in code.
+Two independent extraction passes are compared.
+If they disagree, both item lists are retained for
+
+Figure 8 compares accuracy with estimated overall evidence completeness. Let a denote answer
+accuracy and r the proportion of incorrect answers
+with complete evidence. We estimate overall completeness as ĉ = a + (1 − a)r, assuming complete
+evidence for every correct answer. This assumption
+can overestimate completeness. Because the estimate incorporates accuracy, we additionally examine the association between r and accuracy across
+the six systems. Spearman’s ρ is 0.94 on LongMemEval and 0.77 on LoCoMo.
+17
+
+Best-candidate lineage
+
+Search accuracy (%)
+
+100
+
+Highest search accuracy
+
+Pareto frontier
+
+(a) Accuracy-only search on LoCoMo
+
+95
+90
+85
+80
+75
+
+No memory: 1% (off scale)
+
+Seed
+
+100
+
+Search accuracy (%)
+
+Primary parent
+
+2
+
+4
+
+6
+
+8
+
+10
+
+12
+
+14
+
+16
+
+18
+
+20
+
+10
+
+12
+
+14
+
+16
+
+18
+
+20
+
+(b) Accuracy–cost search on LoCoMo
+
+95
+90
+85
+80
+75
+
+Full context
+No memory: 1% (off scale)
+
+Seed
+
+2
+
+4
+
+6
+
+8
+
+Search step
+
+0.2
+
+0.5
+
+1
+
+2
+
+5
+
+10
+
+20
+
+Serving cost ($ / 1,000 queries; log scale)
+
+Figure 6: LoCoMo search lineages using GPT-4.1 mini on the 233-question search set. Panels a and b show
+accuracy-only and accuracy–cost search, respectively. Nodes represent candidates; colour encodes serving cost on a
+logarithmic scale. Grey edges indicate primary parents, and orange paths trace the lineages of the highest-accuracy
+candidates. Dashed lines mark maximum search accuracy; dark rings mark the final Pareto frontier. The no-memory
+seed is displayed off-scale at the bottom.
+
+deliberation. Difference questions use extracted
+values for programmatic subtraction, while currentvalue questions select the most recently dated value.
+Preference questions use relevant user details to
+guide personalised responses. Direct lookups proceed to deliberation without a specialised computational scaffold.
+
+compared systems.
+Evaluation protocol. We isolate the contribution
+of RQS by replaying the same recorded retrieval
+for each paired comparison. Memory construction,
+retrieved evidence, and QA settings are held fixed.
+The ablation compares the full system with a variant that replaces RQS with the benchmark’s default
+evidence rendering. We evaluate MAPE-ALME on
+LongMemEval and on LoCoMo through the fixed
+input adapter described in Appendix D.1.
+
+Deliberate. A single LLM call applies intentspecific instructions to the scaffold outputs and
+retrieved evidence, with session notes ordered
+chronologically. The resulting reasoning and supporting quote are combined with the evidence in
+the composed context and passed to the shared QA
+model for final answer generation. Deliberation
+can revise scaffold outputs against the evidence.
+All LLM calls within RQS use the designated serving backbone, which also performs QA. The QA
+model and answering prompt are held fixed across
+
+Transplantation. We apply the same RQS module to SimpleMem, LightMem, A-Mem, Zep, and
+Mem0 while retaining each system’s memory construction and retrieval. A fixed adapter maps
+retrieved memory units to notes, groups them
+by available dates, and removes exact duplicates
+within each group. Method-specific fields are nor18
+
+Evidence complete
+
+Evidence incomplete
+
+(a) LongMemEval
+MAPE-ALME
+
+(b) LoCoMo
+
+82.6%
+
+A-Mem
+
+68.8%
+
+LightMem
+
+56.3%
+
+42.5%
+
+A-Mem
+
+43.8%
+
+LightMem
+
+Zep
+
+33.8%
+
+66.3%
+
+Mem0
+
+31.3%
+
+68.8%
+
+0%
+
+25%
+
+50%
+
+71.7%
+
+SimpleMem
+
+31.3%
+
+57.5%
+
+SimpleMem
+
+MAPE-ALCM
+
+17.4%
+
+46.3%
+
+63.8%
+
+32.5%
+
+67.5%
+
+22.5%
+
+77.5%
+
+Zep 15.0%
+100%
+
+53.8%
+
+36.3%
+
+Mem0
+
+75%
+
+28.3%
+
+0%
+
+85.0%
+
+25%
+
+50%
+
+75%
+
+100%
+
+Figure 7: Evidence completeness among incorrect answers with the Qwen3-30B-A3B-Instruct-2507 serving
+backbone. Panels a and b show LongMemEval and LoCoMo, respectively. Each bar sums to 100% of the analysed
+errors for one system. Blue denotes complete retrieved evidence despite an incorrect answer; orange denotes
+incomplete evidence. Classification details are provided in Appendix D.4.
+Overall evidence completeness (est., %)
+
+Accuracy (%)
+
+(a) LongMemEval
+
+(b) LoCoMo
+
+MAPE-ALME
+
+96.0
+
+77.0
+
+A-Mem
+
+58.0
+
+LightMem
+
+59.5
+
+SimpleMem
+
+86.9
+
+47.3
+
+Mem0
+
+47.3
+
+0
+
+25
+
+50
+
+69.3
+
+LightMem
+
+78.2
+
+61.0
+
+A-Mem
+
+63.7
+
+Zep
+100
+
+93.9
+
+83.5
+
+73.7
+
+73.6
+66.0
+
+Mem0
+
+65.1
+
+75
+
+78.6
+
+SimpleMem
+
+82.8
+
+50.3
+
+Zep
+
+MAPE-ALCM
+
+53.2
+
+70.1
+
+57.4
+49.9
+
+0
+
+25
+
+50
+
+75
+
+100
+
+Figure 8: Estimated overall evidence completeness and answer accuracy on LongMemEval in panel a and LoCoMo
+in panel b. Systems are ordered by estimated completeness. The estimate combines accuracy with the error labels
+shown in Figure 7, assuming complete evidence for every correct answer. The calculation and correlation analysis
+are detailed in Appendix D.4.
+
+E
+
+malized to this common representation; units without temporal metadata are placed in an undated
+session. Each system is compared with default evidence rendering under the same QA configuration.
+
+Prompt Templates
+
+We present the QA and LLM-as-a-judge prompts
+used to generate and score answers on LoCoMo
+and LongMemEval. Placeholders are filled with
+the corresponding context, question, and evaluation
+fields at runtime.
+E.1
+
+Results. Removing RQS reduces overall accuracy by 6.25% on LongMemEval and 4.44% on LoCoMo, with the largest declines on temporal questions, as shown in Tables 8 and 9. Transplantation
+improves all five memory systems by 2.75–9.25%
+on LongMemEval, as shown in Figure 3. Table 10
+provides the question-type breakdown. Gains vary
+across categories; on LoCoMo, removing RQS improves single-hop accuracy despite reducing overall performance.
+
+QA Prompt Templates
+
+We use consistent QA prompt templates across
+all evaluated memory systems. For LoCoMo,
+Prompt 1 is used for multi-hop, open-domain, and
+single-hop questions, while Prompt 2 is used for
+temporal questions.
+For LongMemEval, we use Prompt 3 for all questions, supplying the question date alongside the
+context. Across systems, the context is produced
+by the memory pipeline, while the answering in19
+
+Method
+
+RQS
+
+Temp
+
+Multi
+
+Know
+
+User
+
+Asst
+
+Pref
+
+Avg
+
+SimpleMem
+
+without
+with
+∆
+
+39.62
+56.60
++16.98
+
+34.91
+38.68
++3.77
+
+52.38
+60.32
++7.94
+
+67.86
+76.79
++8.93
+
+82.22
+84.44
++2.22
+
+41.67
+58.33
++16.67
+
+49.25
+58.50
++9.25
+
+LightMem
+
+without
+with
+∆
+
+50.00
+73.58
++23.58
+
+58.49
+57.55
+−0.94
+
+79.37
+90.48
++11.11
+
+94.64
+91.07
+−3.57
+
+26.67
+26.67
+0.00
+
+29.17
+58.33
++29.17
+
+59.25
+68.25
++9.00
+
+A-Mem
+
+without
+with
+∆
+
+36.79
+54.72
++17.92
+
+44.34
+50.00
++5.66
+
+61.90
+66.67
++4.76
+
+80.36
+82.14
++1.79
+
+97.78
+95.56
+−2.22
+
+37.50
+41.67
++4.17
+
+55.75
+63.00
++7.25
+
+Zep
+
+without
+with
+∆
+
+35.85
+52.83
++16.98
+
+31.13
+37.74
++6.60
+
+58.73
+52.38
+−6.35
+
+76.79
+80.36
++3.57
+
+62.22
+60.00
+−2.22
+
+33.33
+33.33
+0.00
+
+46.75
+52.25
++5.50
+
+Mem0
+
+without
+with
+∆
+
+28.30
+33.96
++5.66
+
+41.51
+49.06
++7.55
+
+60.32
+57.14
+−3.17
+
+80.36
+78.57
+−1.79
+
+48.89
+46.67
+−2.22
+
+45.83
+50.00
++4.17
+
+47.50
+50.25
++2.75
+
+Table 10: RQS transplantation into five human-designed memory systems on the LongMemEval evaluation set with
+the Qwen3-30B-A3B-Instruct-2507 serving backbone. Results provide the question-type breakdown of the overall
+gains shown in Figure 3. For each system, without uses the default evidence rendering, while with applies RQS to
+the same retrieved evidence. Values are accuracies in %; ∆ denotes the absolute accuracy change from adding RQS
+in %. Deltas are computed before rounding. Avg is computed over all questions, and column abbreviations follow
+Table 2.
+
+structions remain fixed within each benchmark and
+question type.
+E.2
+
+LLM-as-a-Judge Prompt Templates
+
+The judge receives the question, reference answer,
+and model prediction, and returns a binary correctness score with a brief explanation. Scores are
+aggregated into accuracy using the evaluation protocol described in Appendix C.3.
+Prompt 4 evaluates all LoCoMo questions and
+accepts equivalent temporal expressions. LongMemEval uses separate rubrics for temporal reasoning, knowledge updates, and user preferences,
+as shown in Prompts 5, 6, and 7. Prompt 8 covers the remaining question types. These rubrics
+account for differences in valid answers, including
+updated information and personalised responses.
+
+20
+
+Prompt 1: LoCoMo QA
+Based on the context: {context}, write an answer in the form of a short phrase for the following
+question. Answer with exact words from the context whenever possible.
+Question: {query}
+Short answer:
+
+Prompt 2: LoCoMo QA: Temporal Questions
+Based on the context: {context}, answer the following question. Use DATE of CONVERSATION to answer
+with an approximate date. Please generate the shortest possible answer, using words from the
+conversation where possible, and avoid using any subjects.
+Question: {query}
+Short answer:
+
+Prompt 3: LongMemEval QA
+I will give you several history chats between you and a user. Please answer the question based on
+the relevant chat history. Answer concisely (a short phrase or 1 sentence) using exact wording from
+the chats when possible.
+History Chats:
+{history}
+Current Date: {question_date}
+Question: {query}
+Answer:
+
+Prompt 4: LoCoMo Judge
+Your task is to label an answer to a question as CORRECT (1) or WRONG (0). You will be given the
+following data:
+(1) a question (posed by one user to another user),
+(2) a 'gold' (ground truth) answer,
+(3) a generated answer
+which you will score as CORRECT (1) or WRONG (0).
+The point of the question is to ask about something one user should know about the other user based
+on their prior conversations.
+The gold answer will usually be a concise and short answer that includes the referenced topic, for
+example:
+Question: Do you remember what I got the last time I went to Hawaii?
+Gold answer: A shell necklace
+The generated answer might be much longer, but you should be generous with your grading - as long
+as it touches on the same topic as the gold answer, it should be counted as CORRECT (1).
+For time related questions, the gold answer will be a specific date, month, year, etc. The
+generated answer might be much longer or use relative time references (like "last Tuesday" or "next
+month"), but you should be generous with your grading - as long as it refers to the same date or
+time period as the gold answer, it should be counted as CORRECT (1). Even if the format differs (e.
+g., "May 7th" vs "7 May"), consider it CORRECT if it's the same date.
+Now it's time for the real question:
+Question: {query}
+Gold answer: {reference}
+Generated answer: {prediction}
+First decide CORRECT or WRONG. Output ONLY a JSON object:
+{"reason": "<one sentence explanation>", "score": <1 if CORRECT else 0>}
+
+21
+
+Prompt 5: LongMemEval Judge: Temporal Reasoning
+I will give you a question, a correct answer, and a response from a model. Please answer yes if the
+response contains the correct answer. Otherwise, answer no. If the response is equivalent to the
+correct answer or contains all the intermediate steps to get the correct answer, you should also
+answer yes. If the response only contains a subset of the information required by the answer,
+answer no. In addition, do not penalize off-by-one errors for the number of days. If the question
+asks for the number of days/weeks/months, etc., and the model makes off-by-one errors (e.g.,
+predicting 19 days when the answer is 18), the model's response is still correct.
+Question: {query}
+Correct answer: {reference}
+Model response: {prediction}
+Decide yes or no. Output ONLY a JSON object:
+{"reason": "<one sentence explanation>", "score": <1 if yes else 0>}
+
+Prompt 6: LongMemEval Judge: Knowledge Update
+I will give you a question, a correct answer, and a response from a model. Please answer yes if the
+response contains the correct answer. Otherwise, answer no. If the response contains some previous
+information along with an updated answer, the response should be considered as correct as long as
+the updated answer is the required answer.
+Question: {query}
+Correct answer: {reference}
+Model response: {prediction}
+Decide yes or no. Output ONLY a JSON object:
+{"reason": "<one sentence explanation>", "score": <1 if yes else 0>}
+
+Prompt 7: LongMemEval Judge: Single-Session Preference
+I will give you a question, a rubric for desired personalized response, and a response from a model.
+Please answer yes if the response satisfies the desired response. Otherwise, answer no. The model
+does not need to reflect all the points in the rubric. The response is correct as long as it recalls
+and utilizes the user's personal information correctly.
+Question: {query}
+Correct answer: {reference}
+Model response: {prediction}
+Decide yes or no. Output ONLY a JSON object:
+{"reason": "<one sentence explanation>", "score": <1 if yes else 0>}
+
+Prompt 8: LongMemEval Judge: Other Questions
+I will give you a question, a correct answer, and a response from a model. Please answer yes if the
+response contains the correct answer. Otherwise, answer no. If the response is equivalent to the
+correct answer or contains all the intermediate steps to get the correct answer, you should also
+answer yes. If the response only contains a subset of the information required by the answer,
+answer no.
+Question: {query}
+Correct answer: {reference}
+Model response: {prediction}
+Decide yes or no. Output ONLY a JSON object:
+{"reason": "<one sentence explanation>", "score": <1 if yes else 0>}
+
+22
+
+E.3
+
+Evolutionary Search Prompts
+
+We present selected excerpts from the proposer and diagnosis prompt templates used in the evolutionary
+search. Wording is preserved, with line wrapping adjusted and omissions marked by [...]. The proposer
+excerpts are grouped by role and objective, interface and constraints, proposal strategy, and output
+requirements. Group headings are editorial. The two objective blocks are alternatives selected by the
+search setting. Template placeholders and escaped braces are retained. The diagnosis output instructions
+are placed last for readability.
+Prompt 9: Proposer: Selected Excerpts
+ROLE AND SEARCH OBJECTIVE
+You are a researcher designing memory systems for AI agents.
+[...]
+How it does that — what it stores, in what structure, and how it finds things again — is yours to
+decide.
+Accuracy-only:
+WHAT COUNTS AS A BETTER DESIGN, on this run: a higher `accuracy_<dataset>` than the best harness
+already has, compared at the same `stage_<dataset>`. That is the entire criterion.
+Accuracy--cost:
+WHAT COUNTS AS A BETTER DESIGN, on this run: a candidate that NO existing harness beats on BOTH
+axes at once — one that would join the Pareto frontier. Pushing EITHER edge outward counts, and
+they count equally: more accurate at the same cost, the same accuracy for fewer tokens, or a tradeoff nobody occupies yet.
+[...]
+INTERFACE AND CONSTRAINTS
+Class inheriting from `forge.memo_class.MemoClass`, implementing the two required hooks, and
+optionally the third:
+async def build_memory_from_data(self, recorder) -> None
+async def retrieve_memory_for_query(self, recorder) -> Dict
+async def compose_memory_context(self, recorder, query, retrieved, qa_metadata) # optional
+[...]
+Every LLM or embedding call inside your harness goes through `common.llm.Agent` / `common.llm.
+Embedding` with `model` LEFT UNSET, so it uses the run's unified models.
+[...]
+DO NOT hardcode shortcuts that game search-set scores.
+[...]
+PRIOR EXPERIENCE AND PROPOSAL STRATEGY
+You decide which priors to study and how deeply.
+[...]
+• INCREMENTAL — find specific weakness in prior candidates (failure patterns in traces, weak QA
+category, brittle retrieval, missing dispatch, etc.) and target it with a focused change.
+• EXPLORATORY — try a fundamentally different design philosophy, possibly one inspired by a
+research line you investigated via WebSearch/WebFetch. The structure can share little with prior
+best candidates.
+[...]
+Substantive over cosmetic. Whichever stance you take, the change should be real — not a prompt
+rewording, constant tweak, or rename.
+[...]
+REQUIRED OUTPUT
+Write to `{new_dir_rel}/`:
+1. memo.py
+new MemoClass subclass (+ src/ if it needs one).
+2. meta.json
+{{"parent_ids":
+[...],
+"description":
+"...",
+"design_choices": [{{"choice": "...",
+"how":
+"..."}}, ...]}}
+[...]
+Each entry's `how` covers BOTH mapping (code mechanism) AND rationale (why this choice over
+alternatives + what failure mode it targets).
+
+23
+
+The diagnosis agent attributes findings to build, retrieve, compose, answer, judge, or data, and uses
+unattributed when the evidence is insufficient. Its core analysis and reporting instructions are shown
+below.
+Prompt 10: Diagnosis: Selected Excerpts
+You are handed ONE harness that has finished evaluation. Say what happened and why, from the
+evidence, and leave the next proposer something it could not have worked out on its own.
+You do not propose a design. You do not write harness code.
+[...]
+## Method
+1. **Read the hypothesis, then the diff.** What did this candidate change relative to its parent,
+mechanically — not what its docstring claims.
+2. **Read the numbers on every axis this run records**, against the parent. `metrics.json` splits
+the dollars by phase, so a cost change can be placed in build, retrieve or answer.
+3. **Attribute the failures.** Go through the wrong answers. Group them, then for each group follow
+the evidence to the earliest operation that made the outcome inevitable. Cite what you read: a `qa
+` record, a `call` record, a line of the harness's code.
+4. **Write the leads.** What the evidence says is worth trying next, each one attached to the
+finding that motivates it.
+[...]
+If the evidence does not settle it, use **unattributed** and say what would settle it (a level the
+run did not record, a call that was truncated).
+[...]
+Exactly two files, both under `diagnostics/`, and nothing else anywhere:
+diagnostics/<<ANALYST_ID>>.md
+diagnostics/<<ANALYST_ID>>.json
+
+prose, for the next proposer to read
+the same findings, structured
+
+24
+
+

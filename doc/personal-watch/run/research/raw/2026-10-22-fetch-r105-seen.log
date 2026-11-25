@@ -1,0 +1,60 @@
+[arxiv_fetch] 2026-10-21T22:01:05.576621+00:00 | endpoint=https://export.arxiv.org/api/query | 窗口<=72h | 查询 15 次 | 保留 0 篇（丢弃 600）
+  ⏱ 口径: 日报口径：首次提交 <= 72h（window_mode=daily）
+
+—— 各查询状态 ——
+• [OK ] sweep-cs-5cats               status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=636364
+• [OK ] llm-large-language-model     status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=39320
+• [OK ] llm-long-context             status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=1856
+• [OK ] llm-scaling-law              status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=1016
+• [OK ] slm-small-language-model     status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=1105
+• [OK ] slm-on-device                status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=11029
+• [OK ] mm-vision-language           status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=17865
+• [OK ] mm-multimodal                status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=16619
+• [OK ] mm-csmm                      status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=10255
+• [OK ] agent-harness-title          status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=144
+• [OK ] agent-swe-bench              status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=401
+• [OK ] agent-tool-use               status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=1702
+• [OK ] agent-csma-multiagent        status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=6015
+• [OK ] nb-retrieval-augmented       status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=3956
+• [OK ] nb-alignment                 status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=22033
+—— 丢弃（前 40）——
+  - 2610.28632 [sweep-cs-5cats] already in SEEN
+  - 2610.28631 [sweep-cs-5cats] already in SEEN
+  - 2610.28630 [sweep-cs-5cats] already in SEEN
+  - 2610.28629 [sweep-cs-5cats] already in SEEN
+  - 2610.28628 [sweep-cs-5cats] already in SEEN
+  - 2610.28626 [sweep-cs-5cats] already in SEEN
+  - 2610.28625 [sweep-cs-5cats] already in SEEN
+  - 2610.28624 [sweep-cs-5cats] already in SEEN
+  - 2610.28623 [sweep-cs-5cats] already in SEEN
+  - 2610.28622 [sweep-cs-5cats] already in SEEN
+  - 2610.28619 [sweep-cs-5cats] already in SEEN
+  - 2610.28618 [sweep-cs-5cats] already in SEEN
+  - 2610.28616 [sweep-cs-5cats] already in SEEN
+  - 2610.28615 [sweep-cs-5cats] already in SEEN
+  - 2610.28612 [sweep-cs-5cats] already in SEEN
+  - 2610.28611 [sweep-cs-5cats] already in SEEN
+  - 2610.28610 [sweep-cs-5cats] already in SEEN
+  - 2610.28607 [sweep-cs-5cats] already in SEEN
+  - 2610.28604 [sweep-cs-5cats] already in SEEN
+  - 2610.28602 [sweep-cs-5cats] already in SEEN
+  - 2610.28601 [sweep-cs-5cats] already in SEEN
+  - 2610.28598 [sweep-cs-5cats] already in SEEN
+  - 2610.28595 [sweep-cs-5cats] already in SEEN
+  - 2610.28594 [sweep-cs-5cats] already in SEEN
+  - 2610.28591 [sweep-cs-5cats] already in SEEN
+  - 2610.28590 [sweep-cs-5cats] already in SEEN
+  - 2610.28587 [sweep-cs-5cats] already in SEEN
+  - 2610.28586 [sweep-cs-5cats] already in SEEN
+  - 2610.28585 [sweep-cs-5cats] already in SEEN
+  - 2610.28584 [sweep-cs-5cats] already in SEEN
+  - 2610.28580 [sweep-cs-5cats] already in SEEN
+  - 2610.28579 [sweep-cs-5cats] already in SEEN
+  - 2610.28578 [sweep-cs-5cats] already in SEEN
+  - 2610.28577 [sweep-cs-5cats] already in SEEN
+  - 2610.28576 [sweep-cs-5cats] already in SEEN
+  - 2610.28571 [sweep-cs-5cats] already in SEEN
+  - 2610.28568 [sweep-cs-5cats] already in SEEN
+  - 2610.28567 [sweep-cs-5cats] already in SEEN
+  - 2610.28565 [sweep-cs-5cats] already in SEEN
+  - 2610.28563 [sweep-cs-5cats] already in SEEN

@@ -1,0 +1,5 @@
+[probe] 2026-10-15T11:59Z (R92 · 分源实测)
+arxiv_api : HTTP 200 application/atom+xml; charset=utf-8 totalResults=633207 latest=2026-10-14T17:59:58Z  -> OK
+hf_daily  : FAIL Network is unreachable (Errno 101) host=huggingface.co:443 -> 不可达（不伪造 hf_daily）
+arxiv_rss : cs.CL=301 / cs.CV=234 / cs.LG=486 items (HTTP 200 application/rss+xml) -> OK
+note      : 官方一体式 --probe 在 HF 处挂起(>600s)，故分源执行；详见同目录 .json

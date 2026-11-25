@@ -1,0 +1,14 @@
+== 2610.30042 == content-type='application/pdf' content-length=511421
+  attempt=1 bytes=511421/511421
+  bytes=511421/511421 head=True eof=True pages=16 chars=55774 => OK
+== 2610.30132 == content-type='application/pdf' content-length=574366
+  attempt=1 bytes=574366/574366
+  bytes=574366/574366 head=True eof=True pages=17 chars=71727 => OK
+== 2610.29013 == content-type='application/pdf' content-length=543617
+  attempt=1 bytes=543617/543617
+  bytes=543617/543617 head=True eof=True pages=19 chars=82637 => OK
+
+== SUMMARY ==
+2610.30042 bytes=511421 pages=16 chars=55774 OK
+2610.30132 bytes=574366 pages=17 chars=71727 OK
+2610.29013 bytes=543617 pages=19 chars=82637 OK

@@ -1,0 +1,60 @@
+[arxiv_fetch] 2026-10-20T22:02:02.646949+00:00 | endpoint=https://export.arxiv.org/api/query | 窗口<=72h | 查询 15 次 | 保留 0 篇（丢弃 560）
+  ⏱ 口径: 日报口径：首次提交 <= 72h（window_mode=daily）
+
+—— 各查询状态 ——
+• [OK ] sweep-cs-5cats               status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=635673
+• [OK ] llm-large-language-model     status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=39272
+• [OK ] llm-long-context             status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=1854
+• [OK ] llm-scaling-law              status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=1015
+• [OK ] slm-small-language-model     status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=1103
+• [OK ] slm-on-device                status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=11025
+• [OK ] mm-vision-language           status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=17813
+• [OK ] mm-multimodal                status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=16595
+• [OK ] mm-csmm                      status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=10250
+• [OK ] agent-harness-title          status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=140
+• [OK ] agent-swe-bench              status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=399
+• [FAIL] agent-tool-use               status=None ct='' kept=0 total=None attempts=3 err=request failed: HTTPSConnectionPool(host='export.arxiv.org', port=443): Read timed out. (read timeout=30)
+• [OK ] agent-csma-multiagent        status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=6011 attempts=2 err=request failed: HTTPSConnectionPool(host='export.arxiv.org', port=443): Max retries exceeded with url: /api/query?search_query=cat%3Acs.MA+AND+all%3A%22multi-agent%22&start=0&max_results=40&sortBy=submittedDate&sortOrder=descending (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x776d9b54eb70>, 'Connection to export.arxiv.org timed out. (connect timeout=30)'))
+• [OK ] nb-retrieval-augmented       status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=3951
+• [OK ] nb-alignment                 status=200 ct='application/atom+xml; charset=utf-8' kept=0 total=21990
+—— 丢弃（前 40）——
+  - 2610.26863 [sweep-cs-5cats] already in SEEN
+  - 2610.26860 [sweep-cs-5cats] already in SEEN
+  - 2610.26861 [sweep-cs-5cats] already in SEEN
+  - 2610.26856 [sweep-cs-5cats] already in SEEN
+  - 2610.26857 [sweep-cs-5cats] already in SEEN
+  - 2610.26855 [sweep-cs-5cats] already in SEEN
+  - 2610.26853 [sweep-cs-5cats] already in SEEN
+  - 2610.26852 [sweep-cs-5cats] already in SEEN
+  - 2610.26851 [sweep-cs-5cats] already in SEEN
+  - 2610.26850 [sweep-cs-5cats] already in SEEN
+  - 2610.26848 [sweep-cs-5cats] already in SEEN
+  - 2610.26847 [sweep-cs-5cats] already in SEEN
+  - 2610.26845 [sweep-cs-5cats] already in SEEN
+  - 2610.26844 [sweep-cs-5cats] already in SEEN
+  - 2610.26840 [sweep-cs-5cats] already in SEEN
+  - 2610.26839 [sweep-cs-5cats] already in SEEN
+  - 2610.26837 [sweep-cs-5cats] already in SEEN
+  - 2610.26836 [sweep-cs-5cats] already in SEEN
+  - 2610.26834 [sweep-cs-5cats] already in SEEN
+  - 2610.26833 [sweep-cs-5cats] already in SEEN
+  - 2610.26830 [sweep-cs-5cats] already in SEEN
+  - 2610.26829 [sweep-cs-5cats] already in SEEN
+  - 2610.26828 [sweep-cs-5cats] already in SEEN
+  - 2610.26827 [sweep-cs-5cats] already in SEEN
+  - 2610.26826 [sweep-cs-5cats] already in SEEN
+  - 2610.26825 [sweep-cs-5cats] already in SEEN
+  - 2610.26824 [sweep-cs-5cats] already in SEEN
+  - 2610.26821 [sweep-cs-5cats] already in SEEN
+  - 2610.26820 [sweep-cs-5cats] already in SEEN
+  - 2610.26819 [sweep-cs-5cats] already in SEEN
+  - 2610.26817 [sweep-cs-5cats] already in SEEN
+  - 2610.26816 [sweep-cs-5cats] already in SEEN
+  - 2610.26813 [sweep-cs-5cats] already in SEEN
+  - 2610.26811 [sweep-cs-5cats] already in SEEN
+  - 2610.26809 [sweep-cs-5cats] already in SEEN
+  - 2610.26805 [sweep-cs-5cats] already in SEEN
+  - 2610.26802 [sweep-cs-5cats] already in SEEN
+  - 2610.26801 [sweep-cs-5cats] already in SEEN
+  - 2610.26800 [sweep-cs-5cats] already in SEEN
+  - 2610.26797 [sweep-cs-5cats] already in SEEN

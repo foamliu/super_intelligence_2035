@@ -1,0 +1,898 @@
+                                         From Speech Tokens to Stolen Voices: Attacker-Chosen-Text Speaker Impersonation
+                                                                   via Representation Inversion
+
+                                           Ye Lu, Shen Wang, Runze Liu, Zhitao Ou, Haonan Huang, Yihan Yan, Fanghui Sun, and Zhaoyang Zhang
+                                                                        School of Cyberspace Science, Harbin Institute of Technology
+                                                                    Corresponding author: Zhaoyang Zhang (zhaoyang zhang@hit.edu.cn)
+
+
+                                         Abstract—Speech interaction systems have gradually evolved         [2], [3]. In a split deployment, user audio can be converted
+arXiv:2610.34688v1 [cs.SD] 26 Oct 2026
+
+
+
+
+                                         from traditional cascaded systems that use text as interme-        locally into these representations, which are then sent to a
+                                         diate information to end-to-end speech language models that        remote server for processing, while raw waveforms remain
+                                         directly process speech representations. In some applications,     on the user’s device. This deployment may create the mis-
+                                         the speech frontend runs on the user’s device and sends speech     leading impression that transmitting frontend representations
+                                         representations to a remote server for inference, while the        rather than raw waveforms is sufficient to protect speaker
+                                         original audio remains local. However, these representations       privacy.
+                                         may still contain speaker identity information. If an attacker         However, prior work has shown that frontend encoding
+                                         obtains them, it may use this information to imitate the           does not remove all speaker information. SpInv recovers
+                                         user’s voice, threatening their voice privacy. To investigate      speaker embeddings, which are vector representations used
+                                         this risk, we propose STIA, a Speech Token Inversion Attack        to compare speaker identities, from speech-language-model
+                                         that generates speech with attacker-specified text in a victim’s   frontend representations [4]. Its results establish that identity
+                                         voice using a single short leaked representation, without access   information can remain exposed through frontend represen-
+                                         to the original audio or its transcript. Specifically, STIA        tations even when the original waveform is unavailable.
+                                         converts discrete, continuous, or mixed speech representations     Keeping raw audio local is therefore insufficient, by itself,
+                                         into conditioning sequences and trains a conditional flow-         to protect speaker privacy.
+                                         matching speech generation model using pairs of different
+                                                                                                                Speaker-embedding recovery leaves an unresolved secu-
+                                                                                                            rity question: can an attacker reuse the identity information
+                                         utterances from the same speaker in public speech datasets.
+                                                                                                            retained in frontend representations to generate new content
+                                         The model combines speaker characteristics contained in the
+                                                                                                            in the victim’s voice? Embedding recovery alone does not
+                                         leaked representation with the specified text to generate speech
+                                                                                                            establish whether a leaked representation supports speech
+                                         in the victim’s voice. Experiments show that, with a Moshi rep-
+                                                                                                            generation that both preserves the speaker’s vocal charac-
+                                         resentation leak corresponding to 3 seconds of speech, STIA
+                                                                                                            teristics and accurately conveys chosen text. Existing voice-
+                                         achieves an average CAM++ speaker cosine similarity of 0.78
+                                                                                                            cloning methods can synthesize speech for new text from
+                                         and a target-text word error rate of 3.80%. These results show     short reference recordings, but typically rely on access to
+                                         that speech frontend representations reveal reusable speaker       the speaker’s audio [5], [6], [7]. We therefore investigate
+                                         identity information and highlight the need to consider privacy    whether an attacker with only fragmented frontend repre-
+                                         risks when designing speech frontend representation methods.       sentations of the victim’s speech, and no original audio, can
+                                                                                                            generate speech that preserves the victim’s vocal charac-
+                                         Index Terms—speech privacy, model inversion attacks, speaker       teristics and conveys attacker-chosen text unrelated to the
+                                         impersonation, privacy and security of speech language models      source utterance.
+                                                                                                                To investigate speaker impersonation from frontend rep-
+                                                                                                            resentations, we propose STIA, a Speech Token Inversion
+                                                                                                            Attack. Figure 1 places the attack in the split deployment we
+                                         1. Introduction                                                    consider: the victim’s device converts speech into frontend
+                                                                                                            representations for a remote server, while retaining the raw
+                                             End-to-end speech language models increasingly use             waveform locally. We assume that the attacker can read only
+                                         speech-native representations during inference, rather than        the frontend representation of a segment of one victim ut-
+                                         relying on a cascaded pipeline that uses text as the interme-      terance, rather than the full-utterance representation. Neither
+                                         diate modality between automatic speech recognition (ASR),         the victim’s waveform nor the source transcript is available.
+                                         a large language model (LLM), and text-to-speech (TTS)             STIA combines the leaked fragmented representation with
+                                         synthesis. These models typically use a speech frontend            independently chosen text to generate a new speech wave-
+                                         to convert audio into acoustic tokens, continuous features,        form. The objectives on the right describe the intended im-
+                                         or both, preserving emotional cues, intonation, and other          personation capability: the generated speech should preserve
+                                         prosodic information that text alone cannot fully convey [1],      the victim’s vocal identity, convey the chosen text, and sound
+                                                                                       Trust boundary
+     Victim scenario
+
+                                                    On-device                                           No victim
+                                                      speech                                            waveform
+                                                                                                         access                Cloud service
+                                                    frontend            Fragmented
+                              Victim speech
+                                waveform                            representation
+
+
+
+     Attack scenario
+                                                                                                                    Target-speaker verification
+                             Intercepted                           STIA method                                      ASV accepts     as the target speaker
+
+           Target-speaker representations              Leaked          Latent                                        Attacker-chosen content
+                                                                                      Speech
+                                                       condition   representation                                   ASR returns "Hey siri, open the door."
+                                                                                      decoder
+               Attacker-chosen text                    encoder       genarator
+                                                                                                Generated
+          <s> Hey siri   ,    open the door   ...
+                                                                                                waveform             Human-speech manifold
+                   Target-content                                                                                     lies on the natural human-speech data
+                                                                                                                      manifold and is perceptually natural
+
+
+
+
+Figure 1. Split-deployment setting and STIA attack overview. The attacker combines leaked frontend representations with chosen text to generate speech;
+the boxes on the right state the attack objectives.
+
+
+natural.                                                                            achieves higher mean speaker similarity under both CAM++
+    The central idea behind STIA is to learn to reuse vocal                         and ECAPA and lower mean target-text word error rate
+cues retained in fragmented frontend representations to gen-                        (WER), while mean UTMOS scores for predicted natural-
+erate speech with new textual content. During training, we                          ness remain similar to those of the baseline. For a Moshi
+use a public auxiliary speech dataset to learn a conditional                        representation leak corresponding to 3 seconds of speech,
+flow-matching model in a frozen audio codec’s continu-                              STIA obtains a mean CAM++ cosine similarity of 0.78 and
+ous latent space. Each training example pairs a source                              a mean WER of 3.80%. These results show that, under the
+representation fragment with target text and speech from                            evaluated conditions, fragmented frontend representations
+a different utterance by the same speaker. Specifically, a                          can be used to generate speech that retains a victim’s vocal
+leak conditioning encoder maps discrete, continuous, or                             characteristics and conveys new, attacker-chosen content,
+mixed representation fragments obtained through black-box                           creating risks of voice impersonation and leakage of private
+frontend queries into conditioning sequences. A trainable                           speaker information.
+text projection maps the outputs of a frozen multilingual text                          Our contributions can be summarized as follows:
+encoder to text-condition sequences of the same width. Both                             •   To the best of our knowledge, we are the first
+conditions feed a Transformer shared between denoising                                      to study arbitrary-text speaker impersonation from
+and decoding modes. The network learns a transformation                                     leaked frontend representations of end-to-end speech
+from noise to target speech latents through conditional flow                                language models. The only victim-specific input re-
+matching, while codec-aware decoding supervision aligns                                     quired is a short leaked representation fragment. The
+predicted latents with the target speech’s discrete codes [8],                              attacker can choose arbitrary target text indepen-
+[9]. At attack time, the trained model conditions on the                                    dently of the source utterance, without access to the
+victim’s leaked representation fragment and attacker-chosen                                 victim’s waveform or source transcript.
+text to iteratively generate speech latents from Gaussian                               •   We propose STIA, which generates speech directly
+noise. A final latent decoding step is followed by quanti-                                  from leaked frontend representation fragments and
+zation and waveform synthesis through the frozen codec to                                   attacker-chosen text. It accommodates discrete, con-
+produce the generated audio. No victim-specific training or                                 tinuous, and mixed representations, learns reusable
+adaptation is required.                                                                     vocal cues through same-speaker, cross-utterance
+    For evaluation, we select the frontends of three rep-                                   training on public auxiliary speech, and combines
+resentative speech language models (Moshi, Kimi-Audio,                                      conditional flow matching with codec-aware decod-
+and Qwen3-Omni) covering discrete, mixed, and continu-                                      ing supervision for synthesis, without victim-specific
+ous representations, respectively. We use speakers unseen                                   training data or a separate speaker-embedding recov-
+during attack training and assess vocal similarity against                                  ery stage.
+genuine recordings distinct from the leakage source. We                                 •   We conduct extensive and detailed experimental
+construct SpInv+TTS as a two-stage baseline that recovers                                   evaluations on the frontends of three representa-
+speaker embeddings before synthesizing the chosen text                                      tive target models. The results show that STIA
+with SpeechT5 [10]. Across all three frontends, STIA                                        effectively exploits representation fragments to gen-
+        erate speech that preserves victims’ vocal charac-          2.3. Speaker Recognition and Voice Anonymization
+        teristics and conveys chosen text, outperforming
+        the SpInv+TTS baseline method on both speaker-                  Speaker recognition evolved from generative identity
+        similarity metrics and mean target-text WER. We             models to compact embeddings and deep discrimina-
+        further examine the effects of leakage duration,            tive frontends. Classic GMM–UBM systems used adapted
+        auxiliary-data volume, model scale, and leakage and         speaker models, i-vectors compressed speaker and channel
+        text conditioning, and test McAdams anonymization           variability into a low-dimensional total-variability space,
+        against a fixed attacker.                                   and x-vectors subsequently learned utterance-level embed-
+                                                                    dings with deep networks [22], [23], [24]. Recent archi-
+2. Related Work                                                     tectures such as ECAPA-TDNN and CAM++ strengthen
+                                                                    temporal aggregation and channel or context modeling for
+2.1. Speech Representations and Speech–Language                     speaker verification [25], [26]. In parallel, voice anonymiza-
+                                                                    tion seeks to suppress identity while retaining linguistic
+Interfaces                                                          content: VoicePrivacy established common threat models
+                                                                    and evaluation protocols, with approaches including learned
+    Speech interfaces have progressed from task-specific            pseudo-speaker mappings and signal transformations based
+acoustic features to self-supervised representations and, sub-      on the McAdams coefficient [27], [28]. These defenses
+sequently, to discrete or continuous interfaces consumed            primarily target identification or linkability; we test whether
+by speech language models. The wav2vec 2.0 contrastive              representations exposed after attacker-unknown McAdams
+objective uses quantized latent targets, whereas HuBERT             anonymization still condition cross-content synthesis by the
+learns by masked prediction of clustered hidden units; both         fixed STIA model.
+provide reusable frontends [11], [12]. Recent systems con-
+nect such representations to generative language models:
+SpeechGPT uses discrete speech units for cross-modal con-           2.4. Zero-Shot Voice Cloning and Audio Deepfakes
+versation, Spectron directly models spectrograms for spoken
+question answering and continuation, and Moshi supports                  Few-shot multispeaker synthesis moved voice cloning
+streaming full-duplex speech–text interaction [1], [13], [14].      from per-speaker training to inferring a speaker condition
+Such systems may expose token sequences or hidden states            from a short reference recording. Classic work by Arik et
+at module boundaries, caches, or logs. We study the security        al. compared few-shot speaker adaptation and speaker en-
+consequence of this exposure: whether a finite representation       coding, while Jia et al. transferred speaker-verification em-
+fragment retains speaker information reusable for generation        beddings to multispeaker text-to-speech synthesis [5], [29].
+without access to the source waveform.                              More recently, YourTTS enabled zero-shot multispeaker and
+                                                                    cross-lingual synthesis, and VALL-E cast zero-shot TTS as
+2.2. Model Inversion and Privacy of Intermediate                    neural audio-codec language modeling [6], [7].
+                                                                         Recent flow-matching methods further advance zero-
+Representations                                                     shot speech generation. Voicebox supports multilingual gen-
+                                                                    eration through text-guided speech infilling; E2 TTS sim-
+    Early model inversion examined how an adversary could           plifies non-autoregressive synthesis, and F5-TTS improves
+recover training inputs or sensitive features through a model       flow-matching TTS robustness through refined text model-
+interface. Work by Fredrikson et al. exploited confidence           ing and sampling [30], [31], [32]. These methods typically
+outputs, while Zhang et al. later introduced generative priors      derive voice conditions from reference audio and do not
+for inversion of deep networks [15], [16]. Recent studies           natively accept arbitrary leaked representations from dif-
+show that intermediate representations are also at risk: text       ferent black-box frontends. STIA studies how to use such
+embeddings can be inverted to recover source text, including        representations directly, without the victim’s waveform or
+in multilingual settings [17], [18], while VoxGuard and             source transcript. ASVspoof addresses the complementary
+HearSay broaden systematic privacy evaluation for speech            detection problem of distinguishing genuine speech from
+and audio language models [19], [20].                               synthetic, converted, or replayed speech [33].
+    For vocal identity, Pizzi et al. reconstruct audio and inter-
+mediate voice features from automatic speaker-recognition
+models and investigate impersonation [21]. SpInv targets            3. Threat Model and Motivation
+speech-language-model frontend representations, inverting
+them into embeddings in an attacker-specified speaker-              3.1. Threat Model
+encoder space [4]. This objective recovers identity encodings
+rather than a generative representation that retains all tim-       3.1.1. Target model. We consider a hypothetical split de-
+bral and prosodic detail, potentially limiting voice fidelity       ployment of an open-source speech language model: the
+when combined with TTS. We adapt SpInv to this task by              user device runs the speech frontend T , and the remote
+retraining it in the embedding space required by SpeechT5           service runs the speech backend G. This setting keeps
+to construct a two-stage baseline; STIA instead generates           raw waveforms local instead of uploading audio directly,
+speech directly from leaked representations and target text.        allowing us to study the privacy risk of exposing frontend
+representations. Given user speech x, the frontend produces         3.1.3. Adversary objective. An attack trial for victim v
+R = T (x). The backend combines this representation with            additionally contains an enrollment utterance xev disjoint
+textual, system, or session context p available to the service.     from xrv and available only to the experimenter, where
+Denoting the complete model by M , we have                          superscript e denotes enrollment, and attacker-chosen target
+                                                                    text y independent of the source content. Given the frag-
+            M (x, p) = G(R, p),         R = T (x).           (1)
+                                                                    mented representation and target text, an attack algorithm A
+Thus, the client must make R available to the service, while        generates x̂ = A(RIfrag (xrv ), y). The attack aims to preserve
+the source waveform x need not leave the device.                    the victim’s vocal identity, convey the chosen text, and
+    We write the frontend representation as R =                     produce natural speech. We describe these goals through
+(Rtok , Rfeat ). The component Rtok contains one or more            real-valued scores.
+ordered token streams whose elements index tokenizer vo-                Let S be an independent speaker-similarity scorer, C a
+cabularies or codebooks, while Rfeat contains one or more           fixed ASR transcription map, d the normalized edit distance
+ordered streams of feature frames. Either component may             relative to the target text, and Q a quality scorer that pre-
+be empty, but not both, and each stream retains its own             dicts speech naturalness. For the same generated waveform,
+temporal order and native frame rate. Besides linguistic            we define identity similarity sid , content error etext , and
+content needed by the backend, these representations may            predicted naturalness squal :
+retain prosody, speaker characteristics, and channel con-
+                                                                       sid = S(x̂, xev ), etext = d(C(x̂), y), squal = Q(x̂).   (3)
+ditions. The input segment xI spans a finite source-time
+interval I = [t0 , t0 + ∆), where t0 is the start time and              Subject to the stated knowledge, capability, and resource
+∆ is the segment duration. The adversary intercepts only            constraints, the adversary seeks higher identity similarity
+the token and feature streams produced when the frontend            and predicted naturalness together with lower content error.
+processes this segment. We denote this fragmented frontend          The corresponding multi-objective formulation is given be-
+representation by                                                   low, with expectations over the prespecified trial distribution
+                                                                    of victims, source and enrollment utterances, interception
+         RIfrag (x) = T (xI ) = RItok (x), RIfeat (x) .
+                                                     
+                                                         (2)        intervals, target texts, and attack randomness. The three
+Here, RItok (x) and RIfeat (x) are the token and feature            components specify preferred directions and allow tradeoffs
+streams produced from xI , respectively. The fragment re-           rather than being combined into a weighted aggregate:
+tains the visible streams and their temporal order but is not                 maximize E[sid ], −E[etext ], E[squal ] .
+                                                                                                                       
+                                                                                                                                (4)
+the full-utterance representation R.                                             A
+                                                                        Equation (4) characterizes three system-level attack
+3.1.2. Adversary knowledge and capabilities. During one             goals rather than prescribing a direct training loss. The
+victim interaction, the adversary can read the fragmented           formulation emphasizes that impersonation involves preserv-
+representation sent by the frontend, but cannot obtain its          ing vocal identity together with conveying attacker-chosen
+source waveform or transcript, arbitrary user-device mem-           content and retaining natural-speech quality, with possible
+ory, or service-side backend states. Read access may arise          tradeoffs among these goals.
+from interception of readable representations at the client–
+service interface, a compromised endpoint, an honest-but-           3.2. Motivation
+curious service that legitimately receives the same repre-
+sentation, or a third-party large-model gateway or relay that            Direct voice cloning from reference audio is well stud-
+terminates the user connection and forwards requests to a           ied. Few- and zero-shot systems can extract a speaker
+model provider. The adversary also has black-box access to          condition from a short reference recording and synthesize
+the same frontend T : it may submit chosen audio and ob-            new textual content [5], [6], [7], [29]. Consistently, speaker-
+serve the corresponding frontend representation, but cannot         verification research shows that learned speech represen-
+read or modify the parameters of T . It additionally possesses      tations encode identity information sufficient for speaker
+a public auxiliary speech corpus with transcripts and may           matching [24], [25], [26]. More recent evidence extends this
+use its speaker metadata to train an attack model offline on        privacy concern to general-purpose speech representations
+different utterances from the same auxiliary speaker. Victim        and speech language models: self-supervised representations
+speech, identity labels, and victim-specific training data are      support age estimation [34]; HearSay demonstrates private-
+unavailable.                                                        attribute inference from acoustic voiceprints by audio lan-
+    Formally, let v denote the victim and let xrv denote the        guage models [20]; and SpInv reveals recoverable voiceprint
+victim utterance that produced the observed representation,         information in end-to-end speech-language-model frontend
+where superscript r marks the representation source. The            outputs [4]. These studies indicate that speech represen-
+adversary observes RIfrag (xrv ) during that interaction, but not   tations may retain acoustic cues associated with speaker
+xrv itself or its transcript. It has no victim-specific training    timbre and identity in addition to linguistic content.
+data or parameters of G and does not use the evaluation                  Together, this evidence motivates an unresolved secu-
+models for training or output selection. Its resources com-         rity question: without access to a victim reference wave-
+prise frontend queries, public auxiliary data, a finite leakage     form, can an adversary turn a single intercepted short fron-
+duration, and attack-model capacity and training compute.           tend representation into reusable speaker conditioning for
+attacker-chosen speech independent of the source content?        the aligned branches are concatenated along the feature di-
+Reference-audio cloning establishes that speaker condition-      mension and projected to the shared width. A validity mask
+ing can support synthesis of new content, while embedding        preserves the temporal extent of the observed sequence:
+recovery establishes that identity information persists in
+frontend representations; neither determines whether leaked                          HR = ER (RIfrag (xr )).                  (5)
+representations retain the acoustic detail required for direct       The frozen multilingual mT5 encoder MT5 encodes the
+speech generation. This motivates learning to reuse such         target transcript, and trainable projection EY maps it to a
+information across utterances and testing whether short leaks    text-condition sequence HY of the same width. This permits
+support impersonation of unseen speakers.                        a leaked condition to be combined with different target
+                                                                 texts, without requiring the target text to match the source
+4. Speech Token Inversion Attack                                 transcript:
+                                                                                     HY = EY (MT5 (yx )).                 (6)
+4.1. Overview                                                        The shared Transformer assembles HR , HY , speech
+                                                                 latents, and time and mode embeddings into one sequence.
+    STIA converts fragmented frontend representations into       Condition positions cannot attend to speech positions,
+generation conditions for attacker-chosen-text speech. As        whereas speech positions can attend to all valid condition
+shown in Fig. 2, a leak encoder maps the representation to       and speech positions. This noncausal speech attention com-
+a speaker-related condition sequence, while a frozen mT5         bines identity cues, target text, and full latent context. Cross-
+encoder [35] and trainable text projection supply the target-    utterance supervision encourages speaker information that
+content condition. The two sequences are concatenated as         can be reused in generating the target content, but does not
+inputs to a Transformer whose parameters are shared be-          enforce complete disentanglement of identity and content.
+tween denoise and decode modes. It learns conditional flow       Latent flow matching. We use conditional flow match-
+matching [8] in the continuous latent space of the Higgs         ing [8], adapting ELF’s scheme of denoising in a continuous
+encoder [36]. Its denoise mode learns to move from noise         embedding space followed by decoding [9] to speech-latent
+toward speech latents, its decode mode provides codec-           generation. The frozen Higgs encoder EZ extracts the pre-
+aware endpoint supervision, and a stop head predicts the         quantization target latent z1 = EZ (x) ∈ RL×dZ , where L
+valid output boundary.                                           and dZ are the valid frame count and channel dimension.
+    Figure 2(a) shows training on same-speaker, cross-           We standardize it using auxiliary-training-set channelwise
+utterance pairs from public auxiliary speech: constructing       mean µZ and standard deviation σZ . The continuous pre-
+leakage and text conditions and supervising the generator        quantization space admits interpolation paths between noise
+with target speech latents. The target frontend only sup-        and the target:
+plies black-box query outputs and is excluded from gra-                                         z1 − µZ
+dient computation; mT5 and the Higgs codec components                                    z̄1 =           .                     (7)
+                                                                                                   σZ
+remain frozen. The leak encoder, text projection, shared
+Transformer, and its output heads are trained. Figure 2(b)           Conditioned on HR and HY , the flow model learns the
+shows the fixed-model attack: encoding the intercepted rep-      distribution of standardized target latents. Denoise training
+resentation and new text, sampling a latent from Gaus-           samples noise z0 from N (0, 4I), where I is the identity
+sian noise, applying final decode, and synthesizing speech       matrix, and a time t from a time distribution pt on (0, 1).
+through frozen RVQ and the Higgs waveform decoder. For           The state zt on the linear path is
+readability, the figure omits latent-standardization bars and                        zt = (1 − t)z0 + tz̄1 .                  (8)
+abbreviates frame- and channel-averaged losses.
+                                                                     As in ELF [9], we use an x-prediction, v-loss strategy:
+                                                                 the network predicts the clean endpoint rather than velocity
+4.2. STIA Training
+                                                                 directly. Let Fθ denote the shared Transformer mapping
+                                                                 with its latent and stop heads, where θ collects trainable
+Training pairs and conditioning. Each training example
+                                                                 parameters, u is the noisy latent input, τ is the network’s
+pairs target utterance x with a distinct source utterance xr
+                                                                 time input, and b selects denoise or decode mode. The
+from the same speaker, where superscript r denotes the rep-
+                                                                 auxiliary self-conditioning endpoint q is zero when unused.
+resentation source. A source crop xrI over interval I passes
+                                                                 Its outputs are clean-endpoint estimate z̄ˆ1 and framewise
+through frozen frontend T to produce RIfrag (xr ); the target    stop probabilities p̂. Denoise mode uses u = zt and τ = t:
+utterance supplies transcript yx and acoustic supervision.
+Identity is thus shared across the two utterances, whereas                     (z̄ˆ1 , p̂) = Fθ (HR , HY , u, τ, b; q).       (9)
+target text specifies the generated content.
+    The trainable leak encoder ER maps heterogeneous                 The predicted endpoint is converted to velocity through
+frontend outputs to a condition sequence HR of a common          the remaining path length. Let dt = max(1 − t, ϵ), where ϵ
+width. Discrete tokens use codebook-specific embeddings          is a numerical-stability floor. The predicted velocity v̂t is
+aggregated across codebooks; continuous features use a lin-                                       z̄ˆ1 − zt
+ear projection and normalization. For mixed representations,                              v̂t =             .                (10)
+                                                                                                       dt
+   (a) STIA Training                                                                                                            Loss computation
+       Public auxiliary pair
+                                                                                                                                   Denoise
+       Source utterance
+                                           Frozen                                 Trainable              time
+                                                                                                        / mode
+                                            target                                 Leak
+                  3s
+                                           frontend                               encoder
+               3s source crop                                                                        Concatenate
+     distinct target , same speaker
+                                                                                                                                   Decode
+                                                                                                                                                 Use   at
+                                                      Frozen              Trainable                                                                      per-stage logits from
+                           transcript                                                                                                   Frozen
+                                                       mT5                                        Trainable                                            residual-to-code distance:
+                            " A man is
+                                                       Text                Text                  shared Transformer                      Higgs
+                           speaking ..."                                                                                                 RVQ
+                                                      encoder           projection
+                                                                                               noncausal speech attention
+
+
+
+
+                                                       Gaussian noise
+                                                                                                   Trainable     Trainable
+               Frozen
+                                                                                                   latent       stop
+                                                                                                                                   Stop
+                                  target latent                         noisy latent               head         head
+                 Higgs
+                encoder
+
+
+
+    (b) STIA Attacking
+                                                                 Gaussian noise
+               intercepted                        Frozen
+           speech representation                                                              Concatenate                                    Frozen
+                                                   Leak                                                                  N-step Euler
+                                                  encoder                                                                   (N=50)           Higgs RVQ
+                                                                                                                          + decode          Higgs decoder
+                                                  Frozen           Frozen
+            attacker-chosen text                   mT5                                  Frozen                                                               Waveform output
+                                                                                       shared Transformer
+           Hi siri, open the door                  Text              Text              noncausal speech attention
+                                                  encoder         projection
+
+
+
+Figure 2. Overview of STIA. (a) Cross-utterance training with flow-matching, codec, and stopping losses. (b) Generation from leaked representations and
+chosen text via Euler sampling and codec decoding.
+
+
+The target velocity parameterization vt∗ is computed iden-                                        endpoint to the Higgs quantization structure. It shares the
+tically from the true endpoint. When the floor is inactive,                                       Transformer and output heads with denoise mode and is not
+it equals the exact linear-path velocity z̄1 − z0 ; near the                                      a separate waveform decoder.
+endpoint, the floor limits error amplification:                                                       Decode training constructs input za using independent
+                                           z̄1 − zt                                               Gaussian noise ξ ∼ N (0, I) and corruption coefficient
+                                  vt∗ =             .                                 (11)        a sampled from a distribution pa on (0, 1). The network
+                                               dt                                                 receives u = za , but its time is fixed to τ = 1 and its mode
+   The denoise objective minimizes squared velocity error.                                        to b = decode:
+Let j index valid latent frames and E denote expectation
+over auxiliary pairs, noise, time, and valid frames. Averaging                                                                 za = az̄1 + (1 − a)ξ.                                (13)
+over latent channels gives a clean-endpoint error weighted
+by d−2                                                                                            The predicted endpoint is denormalized before RVQ super-
+     t . Thus, endpoint prediction is linked to iterative
+denoising along the path through velocity supervision:                                            vision:
+                            "                   #                                                                    ẑ1 = σZ · z̄ˆ1 + µZ .           (14)
+                                         ∗ 2
+                               ∥v̂t,j − vt,j ∥2
+                LFM = E                           .       (12)
+                                      dZ                                                              Let k ∈ {1, . . . , 8} index RVQ stages, ek,c denote
+                                                                                                  codeword c at stage k , and Pk its frozen input projection.
+Codec-aware decoding. Flow matching supervises denois-                                            Target indices c∗k,j are obtained by quantizing z1 . The pre-
+ing in continuous space, whereas the resulting speech also                                        dicted residual r̂k,j is initialized with ẑ1,j and updated by
+depends on discrete code selection by the frozen RVQ. Fol-                                        subtracting the output projections of preceding ground-truth
+lowing ELF’s shared denoising/decoding design [9], decode                                         codewords. This teacher forcing supervises each stage under
+mode adds target-code supervision to connect the predicted                                        the same target-code prefix. Classification logits ℓk,j,c use
+projected residual-to-codeword distances, with temperature        Algorithm 1 Training the STIA attack model
+τQ :                                                                  Input: Same-speaker triples (x, xr , yx ) with x ̸= xr ;
+                          ∥Pk (r̂k,j ) − ek,c ∥22                           black-box T ; frozen MT5 , EZ , RVQ; pt , pa
+               ℓk,j,c = −                         .   (15)            Output: Trained θ and statistics (µZ , σZ )
+                                   τQ                              1: Initialize θ ; estimate µZ , σZ from EZ (x)
+                                                                   2: for each minibatch B do
+    Let ℓk,j collect the logits over all codewords at a frame,     3:     Initialize an empty frame-loss list S
+CE denote cross-entropy between predicted probabilities            4:     Enable self-conditioning with probability 0.5
+and the target code index, and wk be normalized stage              5:     for all (x, xr , yx ) ∈ B do
+                                                                               ▶ 1. Conditions and targets
+weights. The RVQ loss weights stages and averages over             6:          Crop xrI ; encode leakage as HR ← ER (T (xrI ))
+decode examples and their valid frames. Codebooks and              7:          Encode target text as HY ← EY (MT5 (yx ))
+projections remain frozen, but the distance logits propagate       8:          z1 ← EZ (x); z̄1 ← (z1 − µZ )/σZ
+gradients to the predicted latent:                                 9:          Set sL = 1; all other stop labels sj = 0
+                                                                  10:          Jointly drop HR , HY with probability 0.1
+                                                                               ▶ 2. Add noise: mode-specific inputs
+                 " 8                                #
+                  X
+    LRVQ = E           wk CE(softmax(ℓk,j ), c∗k,j ) .     (16)   11:          Sample b ∈ {denoise, decode} with 0.8/0.2
+                                                                  12:          if b = denoise then
+                  k=1                                             13:                Sample z0 , t; form u ← zt , τ ← t via Eq. (8)
+Stopping and joint training. The stop head predicts stop-         14:          else
+                                                                  15:                Sample ξ, a; form u ← za , τ ← 1 via Eq. (13)
+ping probability p̂j at each frame. Let sj be a binary label      16:          end if
+equal to 1 only at the final valid frame, and βstop a positive-                ▶ 3. Denoise / decode: shared prediction
+class balancing weight. Both modes use weighted binary            17:          q←0
+cross-entropy to learn output boundaries alongside acoustic       18:          if self-conditioning is enabled then
+                                                                  19:                (q, ) ← Fθ (HR , HY , u, τ, b; 0); detach q
+generation:                                                       20:          end if
+                                                                21:          (z̄ˆ1 , p̂) ← Fθ (HR , HY , u, τ, b; q)
+  Lstop = −E βstop sj log p̂j + (1 − sj ) log(1 − p̂j ) . (17)                 ▶ 4. Losses: flow, codec, and stopping
+                                                                  22:          ℓFM,j , ℓRVQ,j ← 0, 0 for valid frames j
+    Each example selects denoise mode with probability            23:          if b = denoise then
+0.8 and decode mode with probability 0.2. The former              24:                Compute per-frame ℓFM,j via Eq. (12)
+learns continuous denoising, the latter learns target-code        25:          else
+                                                                  26:                Denormalize z̄ˆ1 ; quantize z1 to target codes
+consistency, and stopping supervision applies to both. The        27:                Compute per-frame ℓRVQ,j via Eqs. (15)–(16)
+expected training objective is therefore given below, with        28:          end if
+the stopping loss also averaged over mode sampling:               29:          Compute weighted stop BCE ℓstop,j via Eq. (17)
+                                                                  30:          Append per-frame ℓFM,j + ℓRVQ,j + 0.1ℓstop,j to S
+           L = 0.8LFM + 0.2LRVQ + 0.1Lstop .              (18)    31:      end for
+                                                                          ▶ 5. Joint loss and parameter update
+    As in ELF [9], self-conditioning supplies a preliminary       32:      Average frame losses: LB ← Mean(S)
+                                                                  33:      Update only θ with AdamW using ∇θ LB
+endpoint prediction as q without gradient propagation, pro-       34: end for
+viding an existing clean-latent estimate for iterative predic-
+tion. It is enabled for a minibatch with probability 0.5.
+Each example jointly drops leakage and text conditions
+with probability 0.1, denoting empty conditions by ∅, to          enrollment speech is required. Let Lmax be the latent-
+learn unconditional predictions for classifier-free guidance      length limit determined from the chosen text. Initial state
+at attack time [37].                                              z (0) ∈ RLmax ×dZ is sampled from the same Gaussian base
+                                                                  distribution as denoise training:
+    Algorithm 1 summarizes five training stages: construct-
+ing cross-utterance conditions and targets, sampling denoise
+or decode mode and forming noisy inputs, predicting with                                    z (0) ∼ N (0, 4I).                        (19)
+the shared network, computing the mode-specific primary
+loss and stopping loss, and aggregating losses to update              At sampling step n, the model predicts clean endpoints
+                                                                                                                           c
+attack parameters. Here, B denotes a minibatch, and ℓFM,j ,       with (HR , HY ) and with empty conditions, denoted z̄ˆ1,n
+                                                                       ˆu
+ℓRVQ,j , and ℓstop,j denote per-frame loss terms, with the        and z̄1,n ; superscripts c and u mean conditional and uncon-
+inactive mode’s loss set to zero. LB averages the sum of          ditional. Classifier-free guidance (CFG) [37] combines the
+primary losses plus 0.1 times the stopping loss over all valid    predictions with scale s to strengthen adherence to leakage
+frames in the minibatch; mode probabilities are realized          and text conditions. Each path uses its own preceding end-
+through sampling rather than applied again as weights.            point as self-conditioning, initialized to zero:
+                                                                                       cfg      u          c        u
+                                                                                                                        
+4.3. STIA Attacking                                                                 z̄ˆ1,n = z̄ˆ1,n + s z̄ˆ1,n − z̄ˆ1,n   .           (20)
+
+    At attack time, fixed encoders transform RIfrag (xrv ) in-        The guided endpoint defines a velocity from the current
+tercepted from victim v and chosen text y into condi-             noisy state toward conditional speech. Let tn denote the
+tions HR , HY . No victim waveform, source transcript, or         current time, ϵsam the sampling denominator floor, and vn
+the velocity evaluated at the current state with its self-        Algorithm 2 Attacking with STIA: from leaked conditions
+conditioning:                                                     to speech
+                            cfg                                       Input: Intercepted RIfrag (xrv ), chosen text y ;
+                         z̄ˆ1,n − z (n)                                     fixed models, (µZ , σZ ); N = 50, s = 2,
+                  vn =                     .              (21)              ϵsam = 0.01, τstop = 0.5
+                       max(1 − tn , ϵsam )
+                                                                      Output: Attack waveform x̂
+    We integrate the learned flow with an explicit Euler              ▶ 1. Conditions and noise initialization
+ordinary differential equation (ODE) sampler, as in ELF’s          1: Encode leakage as HR ← ER (RIfrag (xrv ))
+                                                                   2: Encode text as HY ← EY (MT5 (y)); estimate Lmax
+ODE sampling scheme [9]. We use N = 50 steps in all                3: Sample Lmax noise frames z (0) using Eq. (19)
+experiments. Integration ends at t⋆ = 0.99 on the uniform          4: Set tn ← 0.99n/N and ∆t ← 0.99/N
+grid tn = nt⋆ /N , where n = 0, . . . , N , with step size         5: Initialize separate self-conditions q c , q u ← 0, 0
+∆t = t⋆ /N . Each update advances the latent along the                ▶ 2. Denoise: guided Euler sampling
+                                                                   6: for n = 0, . . . , N − 1 do
+predicted velocity:                                                7:     Set (u, τ, b) ← (z (n) , tn , denoise)
+                                                                   8:                 c
+                                                                          Predict z̄ˆ1,n   with (HR , HY , q c ) via Eq. (9)
+                   z (n+1) = z (n) + ∆t vn .              (22)                        u
+                                                                   9:     Predict z̄ˆ1,n   with (∅, ∅, q u ) via Eq. (9)
+     After sampling, the model performs one conditional           10:      Combine endpoints with CFG using Eq. (20)
+                                                                  11:      Compute velocity vn using Eq. (21)
+decode at time 1 on z (N ) , without CFG and retaining the last   12:      Update z (n+1) with the Euler step in Eq. (22)
+conditional endpoint as self-conditioning. This step produces     13:      q c ← z̄ˆ1,n
+                                                                                    c ; q u ← z̄   u
+                                                                                                 ˆ1,n
+the final latent and stop probabilities. Valid length L is        14: end for
+the first frame after Lmax /2 whose stop probability reaches          ▶ 3. Decode: final latent and stopping
+                                                                  15: Set (u, τ, b) ← (z (N ) , 1, decode)
+threshold τstop , or Lmax if none does. The prediction is then    16: Predict (z̄ˆ1 , p̂) via Eq. (9) with (HR , HY , q c )
+truncated to L frames and denormalized.                                   using only the conditional prediction, without CFG
+     Frozen RVQ converts the final continuous latent into         17: L ← min{j : j > Lmax /2, p̂j ≥ τstop }
+discrete codes. Let rk,j denote the inference residual, ini-                Use Lmax if no such frame exists
+                                                                  18: ẑ1 ← (σZ · z̄ˆ1 + µZ )1:L
+tialized with r1,j = ẑ1,j , ĉk,j the selected code index,           ▶ 4. RVQ and waveform synthesis
+and Ok the frozen output projection at stage k . Each stage       19: Quantize ẑ1 to Ĉ with 8-stage RVQ, Eq. (23)
+selects the nearest codeword to its projected residual, then              updating residuals using predicted codes only
+updates the residual by subtracting that codeword’s output        20: Synthesize x̂ with the frozen Higgs decoder, Eq. (24)
+                                                                  21: return x̂
+projection. Unlike training teacher forcing, these updates use
+only predicted codewords:
+             ĉk,j = arg min ∥Pk (rk,j ) − ek,c ∥22 .     (23)    from one specific language within Emilia for both training
+                           c
+                                                                  and validation. Main experiments use Emilia-English, while
+     Let Ĉ ∈ N8×L be the array of predicted code indices         separate Chinese experiments use Emilia-Chinese. We train
+ĉk,j ordered by stage and frame, QZ denote frozen RVQ            an attack model separately for each language and evaluate
+reconstruction from indices to quantized latents, and DZ be       it on the validation subset of the same language; we do not
+the Higgs waveform decoder. Decoding the reconstructed            perform cross-language validation.
+latent yields the attack waveform:                                Target models. We select Moshi, Kimi-Audio, and Qwen3-
+                      x̂ = DZ (QZ (Ĉ)).                  (24)    Omni as three representative target models and use only their
+                                                                  input-side audio frontends [1], [2], [3]. Access to all three
+     Algorithm 2 summarizes the complete attack in four           targets follows a black-box input–output interface: submit-
+stages. First, it encodes the leaked representation and target    ting audio and receiving frontend representations, without
+text and initializes latents with Gaussian noise. Second,         access to model parameters or gradients. Representations of
+it iteratively performs Euler ODE sampling using CFG to           auxiliary speech are obtained through frontend queries. The
+combine conditional and unconditional predictions. Third, a       target models remain fixed and are excluded from attack-
+final decode determines the valid output length and denor-        model parameter optimization and backpropagation; their
+malizes the latent. Fourth, frozen RVQ and the waveform           backends are not involved in attack training.
+decoder synthesize speech. These stages convert a single              Table 1 summarizes the audio frontend architectures,
+short representation leak into speech conveying attacker-         processing pipelines, and output formats of the three tar-
+chosen text.                                                      get models. The selected representations are taken after
+                                                                  Mimi RVQ, at Kimi-Audio’s two branch outputs, and at
+5. Experiments                                                    the AuT output, respectively, to instantiate the assumed
+                                                                  split-deployment interfaces. The attacker receives only vic-
+5.1. Experimental Setup                                           tim representations at these interfaces, not raw waveforms.
+                                                                  Qwen3-Omni’s Talker output codec is not part of the se-
+Datasets. Our training and validation sets are two disjoint       lected input-side audio frontend.
+subsets of the public Emilia dataset partitioned by speaker       Comparison baseline. We combine SpInv [4], the closest
+ID, with no shared speakers [38]. Each experiment uses data       representation-inversion method, with the SpeechT5 syn-
+   TABLE 1. AUDIO FRONTEND ARCHITECTURES , PROCESSING PIPELINES , OUTPUT FORMATS , AND REPRESENTATION DIMENSIONS OF M OSHI ,
+        K IMI -AUDIO , AND Q WEN 3-O MNI AT THE INPUT- SIDE INTERFACES EVALUATED IN THE SPLIT- DEPLOYMENT ATTACK SETTING .
+
+  Target model   Frontend model           Frontend processing pipeline                          Frontend output format     Output
+                                                                                                                           dimension
+  Moshi          Mimi neural audio codec 24-kHz mono waveform → causal SEANet encoder            Frame-synchronous         8 scalar
+                                         (strides 4, 5, 6, 8, 2) → 8-layer, 8-head Transformer → discrete RVQ code-index   IDs/frame; 2,048
+                                         8-stage split RVQ                                       streams at 12.50 Hz       entries per stage
+  Kimi-Audio     GLM-4-Voice semantic     16-kHz mono waveform → 128-bin log-Mel features       Aligned semantic ID and    1 scalar ID +
+                 tokenizer and adapted    → parallel semantic and acoustic branches: 32-layer   continuous acoustic        3,584-D
+                 Whisper encoder          tokenizer with single-codebook VQ; four 1,280-D       feature at 12.50 Hz        vector/frame
+                                          Whisper frames with a 2-layer adaptor
+  Qwen3-Omni     Audio Transformer        16-kHz mono waveform → 128-bin log-Mel features       Frame-synchronous          2,048-D
+                 (AuT) encoder            (25-ms window, 10-ms hop) → three stride-2 Conv2D     continuous AuT hidden      vector/frame
+                                          blocks → 32-layer, 650M-parameter AuT (width          sequence at 12.50 Hz
+                                          1,280)
+
+
+
+thesizer [10] to construct a SpInv+TTS baseline for this                 without reference audio [39]. It estimates the perceptual
+task. SpInv supports attacker-specified embedding spaces;                naturalness of generated speech; higher is better.
+we retrain it specifically in the 512-dimensional x-vector               Implementation details. M, L, and XL use 8, 12, and 16
+space used by SpeechT5 so that the recovered vectors                     layers, respectively; the default is XL (0.60B). The main
+are compatible with the synthesizer. SpeechT5 then gen-                  Moshi setting uses 3-second leaks and the largest Emilia-
+erates speech conditioned on the predicted embedding and                 English budget. Tables without a target-model column use
+attacker-chosen text; neither stage receives genuine victim              Moshi and reuse its main-configuration results. Training
+audio. Both attacks use the same leakage segments, target                settings and cost appear in Sec. 5.9.
+texts, victim trials, and evaluators. The comparison eval-                   Leakage and enrollment utterances are disjoint; frozen
+uates two-stage embedding recovery and synthesis against                 target prompts are independent of leaked content. Each
+STIA’s direct representation-conditioned generation. Eval-               configuration generates four samples per recording for 1,000
+uation models participate in neither training nor output                 recordings using 50-step Euler sampling and CFG scale 2.
+selection.                                                               All 4,000 utterance-level scores are aggregated separately
+Metrics. CAM++ similarity (CAM in tables) is computed                    by language. Table 2 reports mean ± standard deviation;
+by extracting speaker embeddings from generated speech                   Tables 3–8 report means. Reported statistics are rounded to
+and the victim’s separate genuine enrollment speech using                two decimals.
+CAM++, then taking their cosine similarity: the embed-                   Result presentation. Subscripts indicate the direction and
+ding dot product divided by the product of their Euclidean               magnitude of absolute mean changes, computed before
+norms [26]. It measures preservation of the victim’s vocal               rounding. The reference is SpInv+TTS on the same frontend
+identity; higher is better.                                              in Table 2 and the first row of each table in Tables 3–8.
+    ECAPA-TDNN similarity (ECAPA in tables) is computed                  Error-rate differences are expressed in percentage points.
+from ECAPA-TDNN embeddings of generated speech and                       Bold marks the numerically best reported mean, determined
+the same genuine enrollment speech, taking their cosine                  before rounding, within each frontend in Table 2 and within
+similarity as the dot product divided by the product of their            each column in Tables 3–8. Underlined changes in Table 2
+norms [25]. It measures identity preservation with a second              identify the largest improvement across frontends for each
+speaker encoder; higher is better.                                       metric.
+    Word error rate (WER) aligns the ASR transcript of gen-                  Evaluators use 3D-Speaker’s CAM++ and ECAPA-
+erated English speech with the attacker-chosen text, divides             TDNN checkpoints [40], OpenAI’s Whisper-large-v3-turbo,
+the minimum total number of word substitutions, deletions,               and UTMOS22-strong [39]. All methods share fixed check-
+and insertions by the target word count, and reports the result          points and identical ASR decoding and text-normalization
+as a percentage. It measures how accurately the generated                settings; evaluators participate in neither training nor output
+English content matches the chosen text; lower is better.                selection.
+    Character error rate (CER) aligns the ASR transcript
+of generated Chinese speech with the attacker-chosen text,               5.2. Comparison with SpInv+TTS
+divides the minimum total number of character substitutions,
+deletions, and insertions by the target character count, and                  For each frontend, STIA and SpInv+TTS receive the
+reports the result as a percentage. It measures how accurately           same 3-second victim representation fragment and attacker-
+the generated Chinese content matches the chosen text;                   chosen English text and are evaluated against the same
+lower is better.                                                         genuine enrollment utterance. Table 2 shows higher simi-
+    UTMOS passes each generated waveform through a                       larity under both speaker encoders and lower mean WER
+pretrained scoring model to predict its mean opinion score               for STIA on all three frontends. Kimi-Audio yields the
+    TABLE 2. C OMPARISON OF STIA AND S P I NV +TTS ON UNSEEN E MILIA SPEAKERS ACROSS THREE SPEECH FRONTENDS , USING IDENTICAL
+                            3- SECOND REPRESENTATION LEAKS AND ATTACKER - CHOSEN E NGLISH PROMPTS .
+
+Target model           Attack             CAM ↑                        ECAPA ↑                       WER (%) ↓                        UTMOS ↑
+                       SpInv+TTS          0.22 ± 0.11                  0.26 ± 0.10                   13.37 ± 44.99                    2.91 ± 0.65
+Moshi
+                       STIA (ours)        0.78 ± 0.03(↑ 0.56)          0.79 ± 0.05(↑ 0.53)           3.80 ± 12.60(↓ 9.57)             2.92 ± 0.17(↑ 0.01)
+                       SpInv+TTS          0.13 ± 0.12                  0.20 ± 0.12                   12.40 ± 32.40                    2.87 ± 0.52
+Kimi-Audio
+                       STIA (ours)        0.82 ± 0.03(↑ 0.69)          0.85 ± 0.05(↑ 0.65)           3.84 ± 11.25(↓ 8.55)             2.97 ± 0.22(↑ 0.10)
+                       SpInv+TTS          0.35 ± 0.09                  0.33 ± 0.10                   10.56 ± 26.27                    2.91 ± 0.37
+Qwen3-Omni
+                       STIA (ours)        0.75 ± 0.04(↑ 0.40)          0.78 ± 0.06(↑ 0.45)           4.61 ± 13.70(↓ 5.95)             2.91 ± 0.21(↑ <0.01)
+
+
+
+TABLE 3. S EPARATE E NGLISH AND C HINESE EVALUATIONS OF STIA                 TABLE 4. E FFECT OF AUXILIARY E MILIA -E NGLISH DATA BUDGETS ON
+        WITH LANGUAGE - SPECIFIC TRAINING ON M OSHI .                            STIA SPEECH GENERATION USING THE M OSHI FRONTEND .
+
+Language       CAM ↑        ECAPA ↑       WER/CER(%) ↓     UTMOS ↑           Clips(M) Dura.(h)       CAM ↑         ECAPA ↑       WER (%) ↓     UTMOS ↑
+English         0.78            0.79          3.80              2.92           0.80     2.9k          0.70              0.76         8.98         2.93
+Chinese    0.82(↑ 0.04)    0.84(↑ 0.05)    4.05(↑ 0.25)    2.62(↓ 0.30)        1.60     5.9k     0.76(↑ 0.06) 0.78(↑ 0.03) 5.19(↓ 3.78) 2.92(↓ <0.01)
+                                                                               2.40     8.9k     0.78(↑ 0.08) 0.79(↑ 0.03) 3.80(↓ 5.17) 2.92(↓ <0.01)
+
+highest identity similarity with mean WER of 3.84%, close
+to Moshi’s 3.80%. UTMOS means remain similar between
+                                                                              TABLE 5. E FFECT OF LEAKED REPRESENTATION DURATION ON STIA
+the two attacks; the principal observed gains are in identity                       SPEECH GENERATION USING THE M OSHI FRONTEND .
+similarity and text accuracy.
+                                                                             Leakage         CAM ↑            ECAPA ↑          WER (%) ↓       UTMOS ↑
+5.3. Language Experiments
+                                                                              2.00 s          0.76               0.79              6.24           2.91
+    We conduct separate experiments on Emilia-English                         3.00 s    0.78(↑ 0.03)      0.79(↑ <0.01)        3.80(↓ 2.44)   2.92(↑ 0.01)
+and Emilia-Chinese, training architecturally identical STIA                   5.00 s    0.79(↑ 0.03)         0.81(↑ 0.03)      3.85(↓ 2.38)   2.90(↓ <0.01)
+models and evaluating each language with its own speakers                     8.00 s    0.80(↑ 0.04)         0.82(↑ 0.03)      3.95(↓ 2.29)   2.90(↓ <0.01)
+and frozen prompt set. The experiments do not share victim
+speakers but use the same Moshi frontend, model size,
+training steps, and optimization settings. Table 3 shows that
+the attack retains speaker similarity in both languages. The                 utterance. Only utterances long enough for the largest crop
+Chinese group has higher identity scores but lower UTMOS;                    are eligible; victims, English prompts, enrollment utterances,
+with different speaker populations, these differences cannot                 and attack checkpoints are fixed across durations. Table 5
+be attributed to language alone. English WER and Chinese                     shows substantial identity similarity even with the shortest
+CER also use different counting units.                                       leak, with both identity means increasing with duration.
+                                                                             Mean WER decreases from 2 to 3 seconds and then remains
+5.4. Auxiliary-Data Ablation                                                 approximately stable; UTMOS has no monotonic trend. The
+                                                                             3-second configuration therefore captures most of the text-
+    The auxiliary-data ablation compares three nested                        accuracy benefit in this comparison, while longer leaks
+Emilia-English budgets, selected with a fixed random seed                    primarily yield additional identity similarity.
+and retaining valid same-speaker, cross-utterance pairs. Fil-
+tering, frontend, English prompts, leakage duration, and
+model size remain unchanged, and all configurations are
+trained for 150,000 steps. In Table 4, M denotes million                     5.6. Model-Scale Ablation
+clips and k denotes thousand hours. The table shows that
+additional auxiliary data improves both identity scores and
+lowers mean WER at a fixed update count, while UTMOS                             The model-scale ablation compares M, L, and XL con-
+remains largely unchanged. Identity gains from the middle                    figurations with approximately 0.35B, 0.50B, and 0.60B
+to the largest budget are smaller than those from the smallest               parameters, respectively. Training data, leakage fragments,
+to the middle budget.                                                        the Moshi frontend, English trial lists, and other training
+                                                                             settings are fixed. Table 6 shows improvements in measured
+5.5. Leakage-Duration Ablation                                               identity similarity, text accuracy, and predicted naturalness
+                                                                             as model size increases. XL has the best mean on all four
+    We extract frontend representations from nested 2-, 3-,                  metrics within the tested range and is used as the main
+5-, and 8-second speech crops of the same victim source                      configuration.
+    TABLE 6. E FFECT OF STIA MODEL SIZE ON SPEECH GENERATION                   TABLE 8. L EAKAGE - CONDITIONING AND TARGET- TEXT CONTROLS
+          FROM 3- SECOND M OSHI REPRESENTATION LEAKS .                           FOR STIA SPEECH GENERATION USING THE M OSHI FRONTEND .
+
+
+Size    Params      CAM ↑         ECAPA ↑       WER (%) ↓      UTMOS ↑        Control            CAM ↑       ECAPA ↑       WER (%) ↓       UTMOS ↑
+XL      0.60B         0.78           0.79           3.80          2.92        Standard            0.78          0.79           3.80           2.92
+L       0.50B     0.75(↓ 0.03)   0.77(↓ 0.02)   4.71(↑ 0.91)   2.82(↓ 0.10)     - No-leak      0.25(↓ 0.54) 0.25(↓ 0.54)   12.94(↑ 9.14)   2.47(↓ 0.44)
+M       0.35B     0.70(↓ 0.08)   0.72(↓ 0.07)   7.72(↑ 3.92)   2.59(↓ 0.33)     - No-text      0.57(↓ 0.21) 0.48(↓ 0.31)        —          2.49(↓ 0.43)
+                                                                                - Neither      0.22(↓ 0.57) 0.26(↓ 0.53)        —          2.49(↓ 0.43)
+TABLE 7. E FFECT OF M C A DAMS INPUT ANONYMIZATION ON A FIXED                   - Wrong text 0.75(↓ 0.04) 0.71(↓ 0.08) 99.17(↑ 95.37) 3.08(↑ 0.16)
+         STIA ATTACKER USING THE M OSHI FRONTEND .
+
+Input              CAM ↑          ECAPA ↑       WER (%) ↓      UTMOS ↑         TABLE 9. T RAINING AND SAMPLING CONFIGURATION OF STIA AND
+                                                                                   MAIN - MODEL TRAINING COST ON THE M OSHI FRONTEND .
+Original            0.78            0.79           3.80           2.92
+Anonymized       0.44(↓ 0.35)    0.43(↓ 0.36)   4.51(↑ 0.71)   2.43(↓ 0.49)    Setting                          Value
+                                                                               Optimizer / precision            AdamW / BF16
+                                                                               Effective batch size             64
+5.7. Speaker Anonymization                                                     Training steps                   150,000
+                                                                               Peak / final learning rate       2.00 × 10−4 / 2.00 × 10−5
+                                                                               Warmup / schedule                1,000 steps / cosine decay
+    We use the VoicePrivacy 2022 B2 McAdams anonymiza-                         Main leak / model                3.00 s / XL (0.60B)
+tion method and default parameter settings as an input-side                    Euler sampling steps             50
+defense [28]. Each 3-second source crop is converted to 16-                    Guidance scale                   2.00
+kHz mono audio and processed using 20-ms windows, a                            Training GPUs                    2 × A100-40GB
+10-ms hop, and order-20 linear predictive coding (LPC).                        Training time                    110 h
+The coefficient α ∼ U(0.5, 0.9) is drawn once per speaker
+and held fixed across that speaker’s crops and repeated
+generation trials. Boundary zero-padding covers the full                      decode also receives no leakage. Training jointly drops text
+crop; frontend representations are then re-extracted from the                 and leakage, so the text-only no-leak condition may be
+anonymized waveform to condition STIA.                                        out of distribution; degradation alone cannot establish the
+    The attacker is trained on unanonymized auxiliary                         necessity of leakage conditioning.
+speech without retraining or tuning; its checkpoint, sam-                         No-text retains leakage conditioning but supplies no
+pling settings, and output selection rule remain fixed. The                   target text, whereas No-leak-and-text (Neither in Table 8)
+anonymization transform and coefficients are unknown to                       supplies neither leakage conditioning nor target text. WER
+the attacker. Both input conditions use the same Moshi                        is not reported for these two conditions because no target
+frontend, victims, and English prompts; identity evaluation                   text is supplied.
+uses disjoint, genuine enrollment speech of the victim’s                          Mismatched text (Wrong text in Table 8) is a separate
+original identity.                                                            scoring negative control: the fixed model generates speech
+    Table 7 shows lower mean similarity under both speaker                    conditioned on attacker-chosen text yA , but the ASR tran-
+encoders and lower UTMOS after anonymization, with a                          script is scored against a different, unpaired text yB , with
+small increase in mean WER. These results support attenu-                     yA ̸= yB . This row uses a newly generated set of utterances
+ation of this attacker, but distribution shift and reduced natu-              rather than directly rescoring the Standard audio; the model
+ralness preclude interpreting them as evidence that identity                  is not retrained. Its identity and naturalness scores describe
+information has been removed; adaptive attackers remain                       that output set, not an effect of changing the scoring refer-
+unevaluated.                                                                  ence. Its WER measures mismatch with yB , not adherence
+                                                                              error relative to the generation condition yA .
+5.8. Conditioning and Text Controls                                               Removing leakage reduces CAM similarity from 0.78
+                                                                              to 0.25, whereas retaining leakage without text yields 0.57.
+    We examine leakage and text conditioning through three                    Mismatched text yields CAM and ECAPA similarities of
+input interventions: No-leak removes leakage, No-text re-                     0.75 and 0.71 and UTMOS of 3.08, but WER against the
+moves text, and No-leak-and-text removes both. These in-                      unpaired text is 99.17%, compared with 3.80% under the
+terventions use the fixed main-configuration model with-                      standard protocol. This high error rate reflects mismatch
+out retraining. Let v denote the victim speaker and define                    with the scoring text and cannot be interpreted as failure
+Rv = RIfrag (xrv ). Generation seeds and other settings are                   to follow the generation condition.
+fixed for these three interventions; Standard in Table 8 reuses
+the main-experiment results.                                                  5.9. Training Settings and Cost
+    No-leak removes all leakage-conditioning streams, re-
+taining text in the conditional branch while preserving nor-                      Table 9 summarizes the main training and sampling
+mal behavior of the CFG unconditional branch; the final                       settings and the training cost of STIA against Moshi. The
+main configuration uses a 3-second leak and the XL model         Because the attacker was trained only on unanonymized
+with approximately 0.60B parameters. All STIA training           speech, the decrease may also partly reflect differences be-
+configurations use 150,000 steps. The main model targeting       tween its inputs and training data. Further defense evaluation
+Moshi was trained for 110 hours in BF16 on two NVIDIA            should therefore include attackers retrained on anonymized
+A100 GPUs, each with 40 GB of memory. This time ex-              inputs and measure the impact on legitimate backend tasks;
+cludes preprocessing of the cached mT5 text representations      neither aspect is evaluated here.
+and Higgs speech latents.                                            In applications that use voice for authentication, an addi-
+                                                                 tional authentication factor or independent confirmation tied
+6. Discussion                                                    to a specific transaction could help limit the consequences of
+                                                                 forged speech. Such measures address the application-level
+                                                                 impact of voice impersonation and complement protection
+6.1. Security Implications                                       of the frontend representations themselves.
+    SpInv established that speaker identity information can
+                                                                 6.3. Limitations
+be recovered from speech-language-model frontend repre-
+sentations [4]. Our results show a further consequence: vocal    Evaluation coverage. The experiments use speaker-disjoint
+cues retained in fragmented representations can be reused to     subsets of Emilia and attack models trained for each target
+generate new, attacker-chosen content. Evaluation on three       frontend. Three representative frontends are evaluated in
+representative frontends shows that a representation leak can    English, with a separate Chinese evaluation on Moshi. The
+expose identity information and also provide a condition for     results therefore establish generalization to unseen speakers
+generating speech with the victim’s vocal characteristics. A     within the tested settings; generalization across datasets or
+speaker may therefore face voice impersonation risks even        languages, and transfer across frontends without retraining,
+when the attacker cannot obtain the original recording.          remain untested.
+    Assessing voice impersonation risks requires examin-         Output-codec dependence. Although STIA accommodates
+ing both whose voice the generated speech resembles and          multiple frontend representation formats, speech generation
+what it says. Table 2 shows higher mean speaker similarity       uses the frozen Higgs codec’s continuous pre-quantization
+and lower mean target-text WER for STIA than for the             latent space. The vocal characteristics and quality of the gen-
+SpInv+TTS baseline method, while mean UTMOS scores               erated speech therefore also depend on what the Higgs codec
+remain similar. The principal observed gains are therefore       can represent and reconstruct. Alternative output codecs
+in vocal-identity preservation and content accuracy, with no     have not been evaluated.
+large improvement in predicted naturalness. Privacy evalua-      Measurement limitations. Speaker similarity, ASR error
+tion should consider all three aspects together: high identity   rates, and UTMOS provide automatic measurements of vo-
+similarity alone does not establish accurate delivery of the     cal identity, text accuracy, and naturalness, but may not
+chosen text, and accurate text does not establish resemblance    fully agree with listener judgments. The reported similarities
+to the victim’s voice.                                           are not authentication success rates, and UTMOS predicts
+                                                                 naturalness rather than collecting listener ratings. Listener
+6.2. Defensive Directions                                        studies and evaluation against operational authentication
+                                                                 systems are needed to determine practical impersonation
+    Because the attack assumes read access to frontend           effectiveness.
+representations, limiting that access is a direct defensive
+measure. Authenticated encryption can protect represen-          7. Ethics Considerations
+tations in transit, while process isolation, restricted read
+permissions, and short retention can reduce exposure at end-         This study uses public Emilia data for offline privacy
+points. Protection must also account for services or relays      measurement; the dataset is distributed under CC BY-NC
+that legitimately receive the representations, since transport   4.0. We synthesize speech resembling dataset speakers with-
+encryption alone cannot prevent their reuse by a recipient.      out recruiting participants, collecting private recordings, or
+Systems should therefore identify which components can           constructing real-world identity profiles. Institutional con-
+read or store representations and restrict access accordingly.   sultation confirmed that formal ethics approval was not re-
+Shorter exposure can reduce the information available, but       quired for this study. Experiments remain within controlled,
+Sec. 5.5 shows that even the shortest tested fragments retain    dataset-based settings and do not deploy attacks against
+useful speaker cues.                                             external services.
+    A complementary direction is to alter speaker iden-              Public availability does not imply speaker consent to
+tity cues before frontend encoding. In the Moshi experi-         voice cloning. Representation inversion could enable unau-
+ment, McAdams anonymization lowers both mean speaker-            thorized impersonation or fraud. To limit individual expo-
+similarity scores for the fixed attacker, along with the UT-     sure through experimental results, this paper reports aggre-
+MOS of the generated speech (Table 7). This shows that the       gate metrics rather than identifiable voice demonstrations.
+transformation can weaken the evaluated attacker, but does       Future releases should respect dataset licenses and restrict
+not establish that identity information has been removed.        distribution of identifiable audio and reusable attack models.
+The study aims to expose these risks and inform more                                [12] W.-N. Hsu, B. Bolte, Y.-H. H. Tsai, K. Lakhotia, R. Salakhutdinov,
+privacy-preserving speech interfaces.                                                    and A. Mohamed, “HuBERT: Self-supervised speech representation
+                                                                                         learning by masked prediction of hidden units,” IEEE/ACM Trans.
+                                                                                         Audio Speech Lang. Process. (TASLP), vol. 29, pp. 3451–3460, 2021.
+8. Conclusion                                                                       [13] D. Zhang, S. Li, X. Zhang, J. Zhan, P. Wang, Y. Zhou et al.,
+                                                                                         “SpeechGPT: Empowering large language models with intrinsic
+    We introduced STIA for arbitrary-text speaker imper-                                 cross-modal conversational abilities,” in Findings Assoc. Comput.
+sonation from leaked frontend representation fragments of                                Linguist. (EMNLP), 2023, pp. 15 757–15 773.
+end-to-end speech language models. The method combines                              [14] E. Nachmani, A. Levkovitch, R. Hirsch, J. Salazar, C. Asawaro-
+cross-utterance training with conditional flow matching to                               engchai, S. Mariooryad et al., “Spoken question answering and speech
+                                                                                         continuation using spectrogram-powered LLM,” in Proc. Int. Conf.
+reuse vocal cues in representations without the victim’s                                 Learn. Represent. (ICLR), 2024.
+waveform or source transcript. Experiments on three repre-
+                                                                                    [15] M. Fredrikson, S. Jha, and T. Ristenpart, “Model inversion attacks
+sentative frontends show higher mean speaker similarity and                              that exploit confidence information and basic countermeasures,” in
+lower mean target-text WER than the SpInv+TTS baseline                                   Proc. ACM SIGSAC Conf. Comput. Commun. Security (CCS), 2015,
+method, exposing voice impersonation risks from represen-                                pp. 1322–1333.
+tation leakage.                                                                     [16] Y. Zhang, R. Jia, H. Pei, W. Wang, B. Li, and D. Song, “The se-
+    Future work should pursue three directions. First, ex-                               cret revealer: Generative model-inversion attacks against deep neural
+tend evaluation to additional datasets, languages, and re-                               networks,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit.
+                                                                                         (CVPR), 2020, pp. 253–261.
+alistic deployment conditions. Second, assess practical im-
+                                                                                    [17] J. X. Morris, V. Kuleshov, V. Shmatikov, and A. M. Rush, “Text
+personation effectiveness through listener studies and tests                             embeddings reveal (almost) as much as text,” in Proc. Conf. Empir.
+against operational authentication systems. Third, investi-                              Methods Nat. Lang. Process. (EMNLP), 2023, pp. 12 448–12 460.
+gate stronger voice anonymization and frontend privacy                              [18] Y. Chen, H. Lent, and J. Bjerva, “Text embedding inversion security
+protections, jointly evaluating their resistance to adaptive                             for multilingual language models,” in Proc. Annu. Meeting Assoc.
+attackers and their impact on legitimate speech tasks.                                   Comput. Linguist. (ACL), 2024, pp. 7808–7827.
+                                                                                    [19] E. Tsaprazlis, T. Lertpetchpun, T. Feng, S. P. Karimireddy, and
+References                                                                               S. Narayanan, “VoxGuard: Evaluating user and attribute privacy in
+                                                                                         speech via membership inference attacks,” in Proc. IEEE Int. Conf.
+                                                                                         Acoust. Speech Signal Process. (ICASSP), 2026, pp. 19 042–19 046.
+[1]   A. Défossez, L. Mazaré, M. Orsini, A. Royer, P. Pérez, H. Jégou et al.,
+      “Moshi: A speech-text foundation model for real-time dialogue,”               [20] J. Wang, K. Luo, L. Lin, W. Wang, Y. Chen, M. Aloqaily et al.,
+      arXiv preprint arXiv:2410.00037, 2024.                                             “HearSay benchmark: Do audio LLMs leak what they hear?” in
+                                                                                         Findings Assoc. Comput. Linguist. (ACL), 2026, pp. 19 312–19 331.
+[2]   KimiTeam, D. Ding, Z. Ju, Y. Leng, S. Liu, T. Liu et al., “Kimi-Audio
+      technical report,” arXiv preprint arXiv:2504.18425, 2025.                     [21] K. Pizzi, F. Boenisch, U. Sahin, and K. Böttinger, “Introducing model
+                                                                                         inversion attacks on automatic speaker recognition,” in Proc. Symp.
+[3]   J. Xu, Z. Guo, H. Hu, Y. Chu, X. Wang, J. He et al., “Qwen3-Omni                   Secur. Privacy Speech Commun. (SPSC), 2022, pp. 11–16.
+      technical report,” arXiv preprint arXiv:2509.17765, 2025.
+                                                                                    [22] D. A. Reynolds, T. F. Quatieri, and R. B. Dunn, “Speaker verifica-
+[4]   Y. Lu, Y. Yan, Z. Zhang, Z. Ou, R. Liu, L. Liu et al., “Do speech                  tion using adapted Gaussian mixture models,” Digit. Signal Process.
+      tokens leak voiceprints? speaker inversion attacks against end-to-end              (DSP), vol. 10, no. 1–3, pp. 19–41, 2000.
+      speech language models,” arXiv preprint arXiv:2607.16870, 2026.
+                                                                                    [23] N. Dehak, P. J. Kenny, R. Dehak, P. Dumouchel, and P. Ouellet,
+[5]   Y. Jia, Y. Zhang, R. J. Weiss, Q. Wang, J. Shen, F. Ren et al.,                    “Front-end factor analysis for speaker verification,” IEEE Trans.
+      “Transfer learning from speaker verification to multispeaker text-                 Audio Speech Lang. Process. (TASLP), vol. 19, no. 4, pp. 788–798,
+      to-speech synthesis,” in Adv. Neural Inf. Process. Syst. (NeurIPS),                2011.
+      vol. 31, 2018.
+                                                                                    [24] D. Snyder, D. Garcia-Romero, G. Sell, D. Povey, and S. Khudanpur,
+[6]   E. Casanova, J. Weber, C. D. Shulby, A. C. Junior, E. Gölge, and                  “X-Vectors: Robust DNN embeddings for speaker recognition,” in
+      M. A. Ponti, “YourTTS: Towards zero-shot multi-speaker TTS and                     Proc. IEEE Int. Conf. Acoust. Speech Signal Process. (ICASSP), 2018,
+      zero-shot voice conversion for everyone,” in Proc. Int. Conf. Mach.                pp. 5329–5333.
+      Learn. (ICML), 2022, pp. 2709–2720.
+                                                                                    [25] B. Desplanques, J. Thienpondt, and K. Demuynck, “ECAPA-TDNN:
+[7]   S. Chen, C. Wang, Y. Wu, Z. Zhang, L. Zhou, S. Liu et al., “Neural                 Emphasized channel attention, propagation and aggregation in TDNN
+      codec language models are zero-shot text to speech synthesizers,”                  based speaker verification,” in Proc. Annu. Conf. Int. Speech Commun.
+      IEEE Trans. Audio Speech Lang. Process. (TASLP), vol. 33, pp. 705–                 Assoc. (Interspeech), 2020, pp. 3830–3834.
+      718, 2025.
+                                                                                    [26] H. Wang, S. Zheng, Y. Chen, L. Cheng, and Q. Chen, “CAM++:
+[8]   Y. Lipman, R. T. Q. Chen, H. Ben-Hamu, M. Nickel, and M. Le,                       A fast and efficient network for speaker verification using context-
+      “Flow matching for generative modeling,” in Proc. Int. Conf. Learn.                aware masking,” in Proc. Annu. Conf. Int. Speech Commun. Assoc.
+      Represent. (ICLR), 2023.                                                           (Interspeech), 2023, pp. 5301–5305.
+[9]   K. Hu, L. Qiu, Y. Lu, H. Zhao, T. Li, Y. Kim et al., “ELF: Embedded           [27] N. Tomashenko, X. Wang, E. Vincent, J. Patino, B. M. L. Srivastava,
+      language flows,” arXiv preprint arXiv:2605.10938, 2026.                            P.-G. Noé et al., “The VoicePrivacy 2020 challenge: Results and
+[10] J. Ao, R. Wang, L. Zhou, C. Wang, S. Ren, Y. Wu et al., “SpeechT5:                  findings,” Comput. Speech Lang. (CSL), vol. 74, p. 101362, 2022.
+     Unified-modal encoder-decoder pre-training for spoken language pro-            [28] J. Patino, N. Tomashenko, M. Todisco, A. Nautsch, and N. Evans,
+     cessing,” in Proc. Annu. Meeting Assoc. Comput. Linguist. (ACL),                    “Speaker anonymisation using the McAdams coefficient,” in Proc.
+     2022, pp. 5723–5738.                                                                Annu. Conf. Int. Speech Commun. Assoc. (Interspeech), 2021, pp.
+[11] A. Baevski, Y. Zhou, A. Mohamed, and M. Auli, “wav2vec 2.0: A                       1099–1103.
+     framework for self-supervised learning of speech representations,” in          [29] S. Arik, J. Chen, K. Peng, W. Ping, and Y. Zhou, “Neural voice
+     Adv. Neural Inf. Process. Syst. (NeurIPS), vol. 33, 2020, pp. 12 449–               cloning with a few samples,” in Adv. Neural Inf. Process. Syst.
+     12 460.                                                                             (NeurIPS), vol. 31, 2018.
+[30] M. Le, A. Vyas, B. Shi, B. Karrer, L. Sari, R. Moritz et al., “Voicebox:
+     Text-guided multilingual universal speech generation at scale,” in Adv.
+     Neural Inf. Process. Syst. (NeurIPS), vol. 36, 2023.
+[31] S. E. Eskimez, X. Wang, M. Thakker, C. Li, C.-H. Tsai, Z. Xiao
+     et al., “E2 TTS: Embarrassingly easy fully non-autoregressive zero-
+     shot TTS,” in Proc. IEEE Spoken Lang. Technol. Workshop (SLT),
+     2024, pp. 682–689.
+[32] Y. Chen, Z. Niu, Z. Ma, K. Deng, C. Wang, J. Zhao et al., “F5-TTS:
+     A fairytaler that fakes fluent and faithful speech with flow matching,”
+     arXiv preprint arXiv:2410.06885, 2024.
+[33] M. Todisco, X. Wang, V. Vestman, M. Sahidullah, H. Delgado,
+     A. Nautsch et al., “ASVspoof 2019: Future horizons in spoofed and
+     fake audio detection,” in Proc. Annu. Conf. Int. Speech Commun.
+     Assoc. (Interspeech), 2019, pp. 1008–1012.
+[34] D.-T. Truong, T. T. Anh, and C. E. Siong, “Exploring speaker age
+     estimation on different self-supervised learning models,” in Proc.
+     Asia-Pacific Signal Inf. Process. Assoc. Annu. Summit Conf. (APSIPA
+     ASC), 2022, pp. 1950–1955.
+[35] L. Xue, N. Constant, A. Roberts, M. Kale, R. Al-Rfou, A. Sid-
+     dhant et al., “mT5: A massively multilingual pre-trained text-to-text
+     transformer,” in Proc. North Amer. Chapter Assoc. Comput. Linguist.
+     (NAACL-HLT), 2021, pp. 483–498.
+[36] Boson AI, “Higgs TTS 2 (Higgs Audio V2): Model card,” 2025,
+     accessed: 2026-09-22. [Online]. Available: https://huggingface.co/
+     bosonai/higgs-audio-v2-generation-3B-base
+[37] J. Ho and T. Salimans, “Classifier-free diffusion guidance,” arXiv
+     preprint arXiv:2207.12598, 2022.
+[38] H. He, Z. Shang, C. Wang, X. Li, Y. Gu, H. Hua et al., “Emilia:
+     An extensive, multilingual, and diverse speech dataset for large-scale
+     speech generation,” in Proc. IEEE Spoken Lang. Technol. Workshop
+     (SLT), 2024, pp. 885–890.
+[39] T. Saeki, D. Xin, W. Nakata, T. Koriyama, S. Takamichi, and
+     H. Saruwatari, “UTMOS: UTokyo-SaruLab system for VoiceMOS
+     challenge 2022,” in Proc. Annu. Conf. Int. Speech Commun. Assoc.
+     (Interspeech), 2022, pp. 4521–4525.
+[40] Y. Chen, S. Zheng, H. Wang, L. Cheng, T. Zhu, R. Huang et al.,
+     “3D-Speaker-Toolkit: An open-source toolkit for multimodal speaker
+     verification and diarization,” in Proc. IEEE Int. Conf. Acoust. Speech
+     Signal Process. (ICASSP), 2025, pp. 1–5.
+

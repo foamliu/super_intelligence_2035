@@ -1,0 +1,9 @@
+[probe] 2026-10-19T22:00:48.590458+00:00
+• arXiv API（主力）: status=200 ok=True ct='application/atom+xml; charset=utf-8' entries=3 total=634451
+    - arXiv:2610.23856 | cs.CV | published=2026-10-16T17:59:55Z
+    - arXiv:2610.23854 | cs.CV | published=2026-10-16T17:59:30Z
+    - arXiv:2610.23847 | cs.CL | published=2026-10-16T17:58:08Z
+• HF Daily Papers（副源/社区加权）: ok=False n_ids=0 ⚠ request failed: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/daily_papers (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x72f18489bb60>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+• RSS cs.CL: status=200 ct='application/rss+xml' items=226
+• RSS cs.CV: status=None ct='' items=0
+• RSS cs.LG: status=None ct='' items=0
