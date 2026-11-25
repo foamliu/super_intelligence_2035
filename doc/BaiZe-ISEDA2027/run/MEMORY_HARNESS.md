@@ -94,7 +94,7 @@ WAITING: 1
 
 PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·doubao-pro 7way LIVE + deepseek-harness SDK修复 + cline-patched eval完成
 已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·灾难恢复✅·**doubao-pro 7way LIVE✅**(7路全RUN PID 820186~833471·已产出predictions)·**deepseek-harness SDK修复✅**(_SDK_PATH从/tmp/dsh_sdk改为/nas_train/app.e0031982/harness_work/dsh_sdk·0/500→3/5 patch produced·rerun PID570709)·**cline-patched incr eval✅**(335/500=67.0%·6 re-eval·7way REGEN OK)·**MM config重建✅**(mm_2x3_config.json)
-当前动作:     doubao-pro 7way predict 运行中(7路×500题·workers=1·白天无429·cline34/codex29/opencode31/pi30/cc39/hermes24/dsh5 of 500)·deepseek-harness rerun PID570709(5/500·3 patch)·MM 2×3 predictions全部丢失(predictions_2x3/空·需全量重跑·待7way完成后或夜间启动)
+当前动作:     doubao-pro 7way predict 运行中(7路×500题·workers=1·白天无429·cline45/codex39/opencode43/pi42/cc54/hermes37/dsh17 of 500)·deepseek-harness rerun PID570709(17/500·14 patch produced)·SDK路径已持久化(run_harness.py:377=/nas_train/app.e0031982/harness_work/dsh_sdk✅)·MM 2×3 predictions全部丢失(predictions_2x3/空·需全量重跑·待7way完成后或夜间启动)
 下一步:     ①doubao-pro 7way predict完成→eval+报告 ②deepseek-harness rerun继续(500题 serial·~3h/100题) ③MM 2×3全量重跑(480×6=2880 predict·待gateway负载降低后启动) ④下轮唤醒查doubao-pro progress+deepseek-harness progress
 阻塞:         MM 2×3 predictions被/tmp清理 wipe(0 files)·progress_2x3/有元数据但无patch·需全量重跑
 ERROR_COUNT:  0
@@ -103,6 +103,10 @@ ERROR_COUNT:  0
   SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
   SWE-bench Multimodal 2×3 predict: predictions_2x3/全丢(/tmp清理)·progress_2x3/元数据存活(480/480 done·has_patch 393-466/路)·需全量重跑
  真实 Pass% (TB-2.1, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
+
+## 流水
+
+> #H-001（2026-11-25 11:05, 监控巡检·doubao-pro 7way predict 7/7路全RUN·cline45/codex39/opencode43/pi42/cc54/hermes37/dsh17 of 500·deepseek-harness rerun PID570709 17/500 14 patches produced·SDK路径持久化✅(run_harness.py:377=/nas_train/app.e0031982/harness_work/dsh_sdk)·token sidecar 3769 lines·资源OK(load25/224 cores·mem 670G/2015G·pretrain step7.29s≤7.4s✅·guard PID931671 LIVE·0 high-CPU)·agent-arena repo✅(33 scripts committed)·MM 2×3 predictions全丢待重跑·下一步:继续monitor 7way predict→完成后eval+报告
 
 ## 启动说明（首次唤醒）
 
