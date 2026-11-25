@@ -1,5 +1,35 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> 🔴 **2026-11-25 用户令（最新）— 重跑 doubao-pro r1（hub 修复后）· 最高优先 · 覆盖 standby**
+
+> **用户原话**：「安排 zhulong agent 重跑 r1」
+
+**一、背景**：doubao-pro 3-run 已跑完，但 r1 受 cline hub daemon bloat 影响（RSS 3.8GB · session.create ~10min 超时）得到异常低值 5.44%（r2=10.79% / r3=12.01% 均正常，与历史 10.18±1.18% 一致）。r1 的 5.44% 是 hub 过载导致的 infra 异常值，不是模型能力真实值。
+
+**二、动作**
+1. **作废旧 r1**：`status_doubao_pro_r1.jsonl` 移存 `status_doubao_pro_r1.VOID_hub_overload.bak`（与 r2 VOID 同名规则）。
+2. **重跑 r1**：与 r2/r3 逐字同口径（doubao-seed-2.0-pro-cloud @ cloud/v1 / 500 题 / Pass@1 / thinking low / timeout 2400 / workers 16 / cline 3.0.51 + PreToolUse hook / 登录 shell + PATH + https_proxy）。
+3. **跑前必须 restart_hub**（清 bloat）+ **strict canary 两证**（curl /v1/models + 单题真跑且 verdict 非 no-output）。身份四证写进报告与 MEMORY。
+4. **新 status 文件**：`status_doubao_pro_r1.jsonl`（覆盖旧文件，旧文件已备份）。
+5. **cp providers.json providers.json.doubao_pro.bak**，跑完立即还原 pro 默认态。
+
+**三、r1 完成后**
+1. 重算 3-run mean±std（new r1 + r2 + r3），与历史 doubao-pro 3-run（10.18±1.18%）对比，写进报告。
+2. 报告 `reports/report_edafb_lite500_doubao_pro_eval_zh.html` 更新（3 轮并入一份 + 逐轮表 + `infra_clean` + r1 VOID 说明）。
+3. `MEMORY_ZHULONG.md` 首行更新：「doubao-pro 3-run（框架回归·r1 重跑）= x.xx±y.yy%」。
+4. 跑完 standby 等用户新令。
+
+**四、约束**
+- 🚫 不动 r2/r3 的 status 文件与数字。
+- 🚫 不改题/图/check.py/判分口径；🚫 --skip-done；🚫 复用上轮 status。
+- 🚫 不动 v3+强模型 4 组已收口数字（doubao pro/lite/mini + deepseek-v4-pro 3-run）。
+- 🚫 不改论文宏与已回填的 §6 数字。
+- 若 r1 重跑仍异常（<8% 或 ERROR>15），**不要自行决定作废**，记一行 + standby 等用户裁定。
+
+---
+
+> ✅ **2026-11-24 令 — doubao-pro 3-run 已跑完**（r1=5.44% VOID hub过载 / r2=10.79% / r3=12.01%·r1 待重跑）。下方为归档令。
+
 > 🔴 **2026-11-24 用户令 — 扩大模型范围：3 个新模型各跑 Lite 500 × 3-run · 最高优先 · 覆盖 standby**
 
 > **用户原话**：「安排 zhulong agent 扩大模型范围继续跑 lite 3-run，下面三个模型：glm-5.2 / deepseek-v4-flash / kimi-k2.6-cloud」
