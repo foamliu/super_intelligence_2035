@@ -82,11 +82,11 @@ fi
 if [ ! -x "${OPENCODE_BIN:-}" ]; then
     echo "[loop] ❌ 找不到 opencode（PATH=$PATH）→ 本线无法工作"
     if [ "${WATCH_NO_AGENT_SELFHEAL:-0}" != "1" ]; then
-        echo "[loop] 🩹 尝试自动重装 opencode（npm i -g opencode-ai@latest，最多 240s；日志 → $CLINE_LOG）"
+        echo "[loop] 🩹 尝试自动重装 opencode（npm i -g opencode-ai@1.19.6，最多 240s；日志 → $CLINE_LOG）"
         (
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" >/dev/null 2>&1
-            timeout 240 npm i -g opencode-ai@latest --no-fund --no-audit
+            timeout 240 npm i -g opencode-ai@1.19.6 --no-fund --no-audit
         ) >> "$CLINE_LOG" 2>&1 || true
         OPENCODE_BIN="$(command -v opencode 2>/dev/null || true)"
     fi
@@ -97,6 +97,11 @@ if [ ! -x "${OPENCODE_BIN:-}" ]; then
     fi
 else
     echo "[loop] ✅ opencode=$OPENCODE_BIN · $(timeout 15 "$OPENCODE_BIN" --version 2>/dev/null | head -1)"
+    if "$OPENCODE_BIN" run --help 2>&1 | grep -q -- '--dir'; then
+        echo "[loop] ✅ CLI 自检：支持 --dir（v1），与 loop 脚本匹配"
+    else
+        echo "[loop] 🚨 CLI 自检失败：当前 opencode 不支持 --dir（疑似 v2）→ 每轮都会失败！请 npm i -g opencode-ai@1.19.6"
+    fi
 fi
 
 
@@ -132,7 +137,7 @@ git_sync_and_push() {
     fi
 
     # 2) 只提交本线自己的文件（避免卷入其他线/兄弟项目的在途文件）
-    git add -- "$REL/MEMORY_NEWS.md" "$REL/news" "$REL/daily-memories-news" 2>/dev/null
+    git add -- "$REL/MEMORY_NEWS.md" "$REL/news" "$REL/daily-memories-news" "$REL/WATCH_NEWS_TASK.md" 2>/dev/null
     if git diff --cached --quiet; then
         echo "[push] nothing of ours to commit."
     else
@@ -159,7 +164,7 @@ waiting_is_1() {
 }
 
 # cline 级致命错误特征（**不要**用裸 `error:` —— agent 干活时会把 API 报错当证据贴出来，会误判）
-FATAL_RE='(supported API model names|额度已用完|hook dispatch failed|[Uu]nauthoriz|[Aa]uthentication (failed|error)|请等待[0-9]+分钟|cline: command not found|cline: not found|opencode: command not found|opencode: not found|AI_APICallError|ProviderModelNotFoundError)'
+FATAL_RE='(supported API model names|额度已用完|hook dispatch failed|[Uu]nauthoriz|[Aa]uthentication (failed|error)|请等待[0-9]+分钟|cline: command not found|cline: not found|opencode: command not found|opencode: not found|AI_APICallError|ProviderModelNotFoundError|unexpected argument|USAGE:|Model unavailable)'
 
 # ── ⏰ 定时唤醒：下一个时窗的 epoch 秒（SCHEDULE_HOURS=6,18 ⇒ 06:00 / 18:00）──
 next_slot_epoch() {
@@ -260,7 +265,11 @@ while true; do
             echo "[loop] $(date '+%F %T') ⚠️ 检测到 opencode 失败/报错 → 本轮强制短睡重试（不睡长觉）"
         fi
     else
-        echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD"
+        if [ -f "$TASK_MD.bak" ]; then
+            cp -f "$TASK_MD.bak" "$TASK_MD" && echo "[loop] $(date '+%F %T') 🩹 TASK_MD 缺失 → 已从 ${TASK_MD}.bak 自动恢复（说明有人删过任务书）"
+        else
+            echo "[loop] $(date '+%F %T') TASK_MD missing at $TASK_MD（且无 .bak 可恢复）"
+        fi
         FORCE_SHORT=1
     fi
     git_sync_and_push
