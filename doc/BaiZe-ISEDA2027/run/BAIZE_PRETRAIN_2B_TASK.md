@@ -130,6 +130,21 @@
 
 ## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
 
+### 🔴 用户令 · 2026-11-25 13:1x（**有空时修 daemon 内联 print 口径：acc_only → harness_avg**）· 用户直令 · 低优先 · 未完成
+
+> **用户原话**：「让 pretrain 有空时把小遗留修一下。」
+
+**背景**：L1 排查（#3349）发现 daemon 的内联 print 脚本（`gguf_lmeval_run.py` lines 183-190 附近）用 `acc_only` 打印日志数字，而非 `harness_avg`（acc_norm×6 + acc×2）。这不影响 `results.json` 和报告（两者都正确），但导致 daemon 日志里的 Avg 比实际低 ~2.9pp，之前造成了「L1 下降」的误判。
+
+**任务（低优先，不抢训练、不抢 eval）**：
+1. 找到 daemon 内联 print 的代码位置（`run/pretrain_cpu_eval_gguf/gguf_lmeval_run.py` 或 `code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh` 里内联的 print 逻辑），把日志输出的 Avg 从 `acc_only` 改为 `harness_avg`（acc_norm×6 + acc×2），与报告口径一致。
+2. 改完后不影响正在运行的 daemon（下一次 eval pick 时自然用新代码），**不要重启 daemon**。
+3. commit `pretrain eval fix:`，心跳写一行「daemon print 口径已修」。
+
+**纪律**：维护态铁律不变（不碰训练、不重启 daemon/loop）；有空时做，不急。
+
+---
+
 ### ✅ 用户令 · 2026-11-25 10:2x（**排查 L1 评测持续下降：270k 后从 ~58% 降到 ~53%**）· 用户直令 · 最高优先 · 已完成（#3349 10:42）
 
 > **排查结论**：**NOT 真下降**。根因=口径混淆(acc_only vs harness_avg)+limit=100统计噪声。5项排查全通过：①口径全一致(48/48ckpt)✅ ②报告HTML 312k=55.62%(harness) vs daemon log 52.75%(acc_only)→非矛盾,是两种指标 ③GGUF脚本git diff空=未改✅ ④llama.cpp二进制md5全程一致✅ ⑤训练loss平坦无异常✅。统计判定：pre-270k均值56.72% vs post-270k均值58.30%=+1.57pp(更高)。详见 MEMORY #3349。
