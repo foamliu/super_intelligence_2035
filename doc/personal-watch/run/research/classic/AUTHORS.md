@@ -6,6 +6,7 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-26 06:1x 补轮 · r265）**：作者 **389** 人（编号最大 **389**）· X 已核验 **153**（本轮 **+1**：`@DrYangSong` 由本人主页 <https://yang-song.net/>（`200` / 48,966 B）外链 `twitter.com/DrYangSong` + 代理抓 `x.com/DrYangSong` `200` / 181,855 B，`og:title` = `Yang Song (@DrYangSong) on X`、`description` = `Research Principal of MSL` ⇒ 双源；Gao Huang 主页无本人 X 外链、`x.com/gaohuang` 404；John Schulman `x.com/Joschu` 实测 `og:title` = `Joann Schuster (@Joschu) on X` ⇒ 为另一人 ⇒ 均记「未找到 X」，不猜）· 已发信 **177**（台账 #1–#177；今日 **5/12**）· 回信 **0**（0/177；已回复 0 / 无应答>14d 21 / 未到期 156）。本轮 **+3**：Gao Huang（DenseNet 一作，中文，本人主页明文 `gaohuang AT tsinghua.edu.cn` ⇒ 已发信 #176）· Yang Song（Score-SDE 一作，中文，本人主页明文 `thusongyang@gmail.com` + X 双源 ⇒ 已发信 #177）· John Schulman（TRPO 一作，英文，`joschu.net` 页内无明文邮箱 + `https` 多次 `000` ⇒ 仅建档、不发信）。
 > **当前计数（2026-11-26 06:0x）**：作者 **386** 人（编号最大 **386**）· X 已核验 **152**（本轮 **+1**：`@neilhoulsby` 由本人主页 <https://neilhoulsby.github.io/>（`200` / 115,917 B）外链 `twitter.com/neilhoulsby` + 代理抓 `x.com/neilhoulsby` `200` / 187,162 B，`og:title` = `Neil Houlsby (@neilhoulsby) on X` ⇒ 双源；Yaron Lipman 本人站点直连与代理均 `000`、Aaron Harlap 主页无 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **175**（台账 #1–#175；今日 **3/12**）· 回信 **0**（0/175；已回复 0 / 无应答>14d 9 / 未到期 166）。本轮 **+3**：Neil Houlsby（Adapter 一作，英文，主页明文 `neil@anthropic.com` ⇒ 已发信 #174）· Yaron Lipman（Flow Matching 一作，希伯来/英文姓名，主页两路 `000`、无明文邮箱 ⇒ 仅建档）· Aaron Harlap（PipeDream 一作，英文，主页明文 `aaron dot harlap at gmail dot com` ⇒ 已发信 #175，站点较旧已标注风险）。
 
 > **当前计数（2026-11-26 03:2x 补轮）**：作者 **383** 人（编号最大 **383**）· X 已核验 **151**（本轮 **+0**：三位一作均无可核本人 X 外链；`@mattthemathman` 属同名他人博客 ⇒ 不登记）· 已发信 **173**（台账 #1–#173；今日 **1/12**）· 回信 **0**（0/173；已回复 0 / 无应答>14d 9 / 未到期 164）。本轮 **+3**：Xiang Lisa Li（Prefix-Tuning 一作，中文，未定位本人当前主页 ⇒ 仅建档）· Brian Lester（Prompt Tuning 一作，英文，Google Research 页无个人邮箱 / 无本人 X ⇒ 仅建档）· Matthew E. Peters（ELMo 一作，英文，本人当前主页未定位 / 同名站点冲突 ⇒ 仅建档）。
@@ -5466,3 +5467,42 @@
 | X 账号 | **未找到 X**（主页无 x.com / twitter.com 外链） |
 | 状态 | **已发信**（#175，2026-11-26 06:0x） |
 | 备注 | 分布式训练系统方向作者。问题候选见 `mail/drafts/1806.03377.md`：① 权重版本化的显存开销随流水线深度/在飞 micro-batch 数如何增长；② 异构阶段（embedding / lm-head）下的负载均衡；③ time-to-accuracy 优势在 held-out 评测损失上是否仍成立。 |
+
+### 387. Gao Huang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Gao Huang（`语言=中文(判据=拼音姓名可还原「黄高」+ 清华大学机构)`） |
+| 机构 | **清华大学**（DenseNet 发表时为 Cornell；本人主页明文 `gaohuang AT tsinghua.edu.cn`） |
+| 代表论文 | **Densely Connected Convolutional Networks**（`1608.06993`，B 轨 #421，一作；CVPR 2017） |
+| 邮箱 | **`gaohuang@tsinghua.edu.cn`**（本人主页 `HTTP 200` / 84,746 B 明文 `gaohuang AT tsinghua.edu.cn`，2026-11-26 复核） |
+| 主页 | <https://gaohuang-net.github.io/>（`200` / 84,746 B；`gaohuang.github.io` 亦 301 到此处） |
+| X 账号 | **未找到 X**（主页无本人 X 外链；页内 `twitter.com/EU_RESEARCH` 为无关嵌入；`x.com/gaohuang` 404 ⇒ 不登记） |
+| 状态 | **已发信**（#176，2026-11-26 06:1x） |
+| 备注 | 视觉骨干方向作者。问题候选见 `mail/drafts/1608.06993.md`：① 增长率 k / bottleneck 宽度 / transition 压缩率 θ 在固定激活显存预算下如何分配；② 12 层 0.8M DenseNet 胜 1001 层 ResNet 对强增广的依赖；③ 部署时用 checkpointing 还是限制 k 压显存。 |
+
+### 388. Yang Song
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yang Song（`语言=中文(判据=华人姓名族属 + 中文个人主页/华人作者圈)`） |
+| 机构 | 论文发表时 **Stanford**；现 X 自述 **Research Principal of MSL** |
+| 代表论文 | **Score-Based Generative Modeling through Stochastic Differential Equations**（`2011.13456`，B 轨 #422，一作；ICLR 2021 Oral） |
+| 邮箱 | **`thusongyang@gmail.com`**（本人主页 `HTTP 200` / 48,966 B 明文 `mailto:thusongyang@gmail.com`，2026-11-26 复核） |
+| 主页 | <https://yang-song.net/>（`200` / 48,966 B） |
+| X 账号 | **`@DrYangSong`**（主页外链 `twitter.com/DrYangSong` + 代理抓 `x.com/DrYangSong` `HTTP 200` / 181,855 B，`og:title` = `Yang Song (@DrYangSong) on X`、`description` = `Research Principal of MSL` ⇒ 双源；本轮 X +1 → 153） |
+| 状态 | **已发信**（#177，2026-11-26 06:1x） |
+| 备注 | 生成建模方向作者。问题候选见 `mail/drafts/2011.13456.md`：① predictor-corrector 在固定 NFE 下步数分配；② 概率流 ODE 在硬约束样本上的数值误差；③ 小数据 regime 下 VE-SDE vs VP-SDE 选型。 |
+
+### 389. John Schulman
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | John Schulman（`语言=英文(判据=英语姓名族属 + 美国机构)`） |
+| 机构 | **OpenAI**（TRPO 发表时为 UC Berkeley；现 OpenAI） |
+| 代表论文 | **Trust Region Policy Optimization**（`1502.05477`，B 轨 #420，一作；ICML 2015） |
+| 邮箱 | **未找到**（`http://joschu.net/` 可 `200` / 5,889 B 但页内无明文邮箱；`https://` 多次 `000`、代理亦 `000`，2026-11-26 ⇒ 🚫 不猜、不发信） |
+| 主页 | <http://joschu.net/>（`200` / 5,889 B，内容较简） |
+| X 账号 | **未找到 X**（主页无 X 外链；`x.com/Joschu` 实测 `og:title` = `Joann Schuster (@Joschu) on X` ⇒ 为另一人，**不登记**） |
+| 状态 | **待跟踪**（仅建档；当前无可核公开邮箱 ⇒ 不发信） |
+| 备注 | RL / RLHF 方向作者。问题候选（待有邮箱时再发）：① 信任域半径如何随 reward 尺度与 batch 规模设定；② TRPO 相对 PPO 在长序列 agent 任务上的稳定性差；③ Fisher-vector product / 共轭梯度的成本控制与近似误差。 |

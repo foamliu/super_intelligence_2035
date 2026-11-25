@@ -1,0 +1,16 @@
+Yang Song 老师您好，
+
+我是刘杨，做 LLM agent 与生成建模方向的研究，主页 https://foamliu.github.io/ 。您的 Score-SDE 把 SMLD 与 DDPM 统一到前向/逆向随机微分方程，是我理解扩散模型的主线。
+
+想请教三个细节：
+
+1. 预测-校正（predictor-corrector）采样里，在固定 NFE 预算下，corrector 步数与 predictor（Euler / Heun）如何分配最稳？我们在版图与波形生成上需要可复现的采样成本口径。
+
+2. 用概率流 ODE 做条件生成时，逆向求解的数值误差如何影响带硬约束（几何 / 连通性）的样本？是否需要额外的投影或校正？
+
+3. 在图文对有限的小数据 regime，VE-SDE 与 VP-SDE 哪个更稳？选型时该固定哪些 drift / diffusion 系数？
+
+感谢您的时间。
+
+祝好，
+Yang Liu

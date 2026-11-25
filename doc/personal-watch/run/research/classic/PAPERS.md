@@ -7349,3 +7349,48 @@
 | 与我们工作的关系 | **pretrain（主 · 训练系统基线）**：我们 2B 主干做多机并行时，PipeDream 的「按层切分 + 权重版本化」是最早把「正确性」与「吞吐」同时写清的基线，选 PP 方案时应先复现其调度语义。<br>**zhulong（主 · 成本口径）**：它优化的是 **time-to-accuracy** 而非单纯吞吐 —— 这正是我们比较「多机流水线 vs 单机大 batch」时该用的口径，消融表须写明按哪个指标记账。<br>**harness（次 · 长任务预算）**：调度导致不同 micro-batch 用不同权重版本，提醒我们长跑评测要固定 checkpoint 版本，否则指标不可比。<br>**vision / data / designflow**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-26**（第一百一十七轮 · 06:0x） |
 | 核验状态 | abs 页 **`200` / 41,697 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（353 / 2018 / `preprint`，查询日 2026-11-26）；会议经 Crossref DOI `10.1145/3341301.3359646` **`200`** 确认为 SOSP 2019。95% / 5× / 五个 DNN 取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`1806.03377` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 420. Trust Region Policy Optimization
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Trust Region Policy Optimization |
+| 作者（前 3） | John Schulman · Sergey Levine · Philipp Moritz（另 Michael I. Jordan / Pieter Abbeel；arXiv `citation_author` 逐字核） |
+| 年份 | **2015**（v1 `2015/02/19`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **ICML 2015**（abs 页 `comments` 逐字 = `16 pages, ICML 2015`） |
+| 被引数 | **8,172**（OpenAlex `10.48550/arXiv.1502.05477`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1502.05477> ｜ `10.48550/arXiv.1502.05477` |
+| 一句话贡献 | 给出**带单调改进保证**的策略迭代近似：把策略更新写成**优势函数加权的替代目标（surrogate objective）**，用**新旧策略的 KL 散度信任域**约束步长，从而把每一步的策略改进下界化；提出 **single path / vine** 两种采样估计，得到可在无模型 RL 上稳定跑通的 **TRPO**，后续 PPO 即其「一阶无约束惩罚」简化版。 |
+| 与我们工作的关系 | **posttrain（主 · RL/RLHF 基线）**：做 RLHF / 偏好优化时，TRPO 的「KL 信任域 + 单调改进下界」是理解「为何要 clip / 惩罚新旧策略偏离」的源头，预注册时应写明信任域半径如何随 reward 尺度调整。<br>**harness（次 · agent 训练）**：我们的 agent 策略优化若要稳定，信任域约束比纯策略梯度更抗崩塌。<br>**zhulong（次 · 成本口径）**：TRPO 每步要估 Fisher-vector product / 共轭梯度，成本高于 PPO —— 消融表须同时记「样本效率」与「每步开销」。<br>**pretrain / vision / data / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十八轮 · 06:1x 补轮） |
+| 核验状态 | abs 页 **`200` / 42,347 B**，`citation_title` + `citation_date` + `comments`（ICML 2015）逐字；OpenAlex **`200`**（8,172 / 2015 / `preprint`，查询日 2026-11-26）。KL 信任域 / surrogate / single-path / vine 取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`1502.05477` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 421. Densely Connected Convolutional Networks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Densely Connected Convolutional Networks |
+| 作者（前 3） | Gao Huang · Zhuang Liu · Laurens van der Maaten（另 Kilian Q. Weinberger；arXiv `citation_author` 逐字核） |
+| 年份 | **2016**（v1 `2016/08/25`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **CVPR 2017**（abs 页 `comments` 逐字 = `CVPR 2017`；OpenAlex `type=conference-paper`，source = IEEE CVPR） |
+| 被引数 | **58,905**（OpenAlex `10.48550/arXiv.1608.06993`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1608.06993> ｜ `10.48550/arXiv.1608.06993` |
+| 一句话贡献 | 提出 **DenseNet**：每个 layer 以前馈方式**连到其后所有 layer**（第 ℓ 层有 ℓ 个输入），用**特征复用（feature reuse）**替代「加深 / 加宽」；配合 **growth rate k**、**bottleneck（1×1 降维 + 3×3）**与 **transition layer 压缩率 θ** 控制参数与显存；缓解梯度消失、参数更少 —— **12 层 / 0.8M 参数**的 DenseNet 在 CIFAR-10/100 上超过 **1001 层 ResNet**，并在 ImageNet 上取得同期 SOTA。 |
+| 与我们工作的关系 | **vision（主 · 视觉骨干）**：为 BaiZe 视觉塔选型时，DenseNet 的「特征复用换参数」是与 ResNet/ViT 并列的第三种取舍；k / θ / bottleneck 的显存—精度曲线可直接做对照实验。<br>**pretrain（次 · 架构取舍）**：与我们 2B 主干「深 vs 宽 vs 复用」的对照同源。<br>**data（次 · 小数据）**：小规模图文对下参数效率高的骨干更不易过拟合，可作为数据量受限时的候选。<br>**zhulong / harness / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十八轮 · 06:1x 补轮） |
+| 核验状态 | abs 页 **`200` / 43,764 B**，`citation_title` + `citation_date` + `comments`（CVPR 2017）逐字；OpenAlex **`200`**（58,905 / 2017 / `conference-paper`，查询日 2026-11-26）。k / bottleneck / θ / 12 层 0.8M / 1001 层 ResNet / ImageNet 均取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`1608.06993` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 422. Score-Based Generative Modeling through Stochastic Differential Equations
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Score-Based Generative Modeling through Stochastic Differential Equations |
+| 作者（前 3） | Yang Song · Jascha Sohl-Dickstein · Diederik P. Kingma（另 Abhishek Kumar / Stefano Ermon；arXiv `citation_author` 逐字核） |
+| 年份 | **2020**（v1 `2020/11/26`；abs 页 `citation_date` 逐字核；`citation_online_date` 2021/02/10） |
+| 会议 / 期刊 | **ICLR 2021 (Oral)**（abs 页 `comments` 逐字 = `ICLR 2021 (Oral)`） |
+| 被引数 | **8,298**（OpenAlex `10.48550/arXiv.2011.13456`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2011.13456> ｜ `10.48550/arXiv.2011.13456` |
+| 一句话贡献 | 用**随机微分方程（SDE）**统一 **SMLD（score matching with Langevin dynamics）**与 **DDPM（denoising diffusion）**：前向 SDE 把数据扰动成噪声，逆向 SDE 由**分数函数**驱动生成；由此得到 **probability flow ODE**（等价确定性采样、可精确算 likelihood）、**predictor-corrector** 采样器，并支持**可控生成**（条件逆向 SDE 做 inpainting / 逆问题）；在 CIFAR-10 上给出当时 SOTA 的样本质量与 likelihood。 |
+| 与我们工作的关系 | **vision（主 · 生成建模范式）**：图像/波形/版图生成中，SDE 视角把 DDPM 与 SMLD 统一，选型应按「NFE × 质量 × likelihood」三轴对照 VE / VP-SDE。<br>**pretrain（次 · 训练目标）**：probability flow ODE 的精确 likelihood 可作为预注册的密度指标。<br>**zhulong（次 · 采样成本）**：predictor-corrector 的 NFE 分配是可量化的成本轴，消融表须显式记账。<br>**designflow（次 · 合成题）**：可控生成（条件逆向 SDE）可作版图/波形合成测试题的来源，但须标注「合成」并给生成参数。<br>**data / harness**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十八轮 · 06:1x 补轮） |
+| 核验状态 | abs 页 **`200` / 46,428 B**，`citation_title` + `citation_date` + `comments`（ICLR 2021 Oral）逐字；OpenAlex **`200`**（8,298 / 2020 / `preprint`，查询日 2026-11-26）。SDE 统一 / probability flow ODE / predictor-corrector / 可控生成均取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`2011.13456` 在 `PAPERS.md` 中 **0 命中**，非重复。 |

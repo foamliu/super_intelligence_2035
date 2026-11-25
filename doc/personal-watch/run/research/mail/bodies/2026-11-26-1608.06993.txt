@@ -1,0 +1,16 @@
+黄老师您好，
+
+我是刘杨，做 LLM agent 与多模态方向的研究，主页 https://foamliu.github.io/ 。我们在为视觉编码器选型时反复回到您的 DenseNet，因为它用特征复用而不是单纯加深网络来提升效果。
+
+有三点想请教：
+
+1. 在每个 dense block 里，增长率 k、bottleneck（1×1 降维 + 3×3）宽度、以及 transition layer 的压缩率 θ 之间，若给定固定的激活显存预算，您会怎么分配？我们想在 2B 主干旁挂一个轻量视觉塔。
+
+2. 12 层、0.8M 参数的 DenseNet 在 CIFAR 上超过 1001 层 ResNet，这个结论有多依赖强数据增广？在小规模、图文对有限时是否仍成立？
+
+3. dense 拼接使激活显存随层数增长，实际部署时您用 gradient checkpointing，还是限制 k 来压？哪一项代价更小？
+
+感谢您的时间。
+
+祝好，
+Yang Liu
