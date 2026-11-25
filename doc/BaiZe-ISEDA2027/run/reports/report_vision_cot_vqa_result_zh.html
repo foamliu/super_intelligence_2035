@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>成果报告 · 用「读数推理链」强化 Qwen3.5-2B 波形识图能力（显著正结果）</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1040px;margin:26px auto;color:#233;line-height:1.65;padding:0 18px}
+h1{color:#14304f;font-size:23px;line-height:1.3}h2{color:#1a3a5c;border-bottom:2px solid #dce6f0;padding-bottom:4px;margin-top:30px}h3{color:#2a5179}
+table{margin:10px 0;font-size:14px;border-collapse:collapse}th{background:#eef3f8}
+td,th{border:1px solid #cdd6e0;padding:6px 10px;text-align:center}
+td.l,th.l{text-align:left}
+.card{background:#f7f9fc;border:1px solid #dce3ec;border-radius:8px;padding:14px 18px;margin:14px 0}
+.verdict{font-size:19px;font-weight:bold;padding:14px 18px;border-radius:8px;text-align:center}
+.ok{background:#e6f4ea;color:#1e6b3a}.warn{background:#fff7e0;color:#8a5b00}
+.kpi{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0}
+.kpi .b{flex:1;min-width:150px;background:#f7f9fc;border:1px solid #dce3ec;border-radius:8px;padding:12px 14px;text-align:center}
+.kpi .b .n{font-size:26px;font-weight:bold;color:#1e6b3a}.kpi .b .t{font-size:12px;color:#666}
+code{background:#eef;padding:1px 5px;border-radius:3px;font-size:13px}.muted{color:#888}
+.small{font-size:13px}.crit-yes{color:#1e6b3a;font-weight:bold}
+pre{background:#f4f6fa;border:1px solid #dce3ec;border-radius:6px;padding:10px 12px;overflow-x:auto;font-size:12.5px}
+</style></head>
+<body>
+<h1>成果报告：用「读数推理链（CoT）」强化 Qwen3.5-2B 的波形图识读能力</h1>
+<p class="muted">BaiZe vision 线 · 合成波形 VQA 识图强化 · 2026-11-14 · 面向外部读者（评审 / 论文写作 / 汇报）</p>
+<div class="card verdict ok">
+一句话结论：通过把「从坐标轴读数」的推理链写进监督目标，Qwen3.5-2B 在合成波形识图 held-out 上的准确率从
+<b>60.0% → 90.0%</b>（McNemar 检验 b=7, c=0, p=0.0156），4 项预注册判据<b>全部满足</b>。
+</div>
+<div class="kpi">
+<div class="b"><div class="n">60% → 90%</div><div class="t">held-out 准确率（before → v2-RFT）</div></div>
+<div class="b"><div class="n">p = 0.0156</div><div class="t">McNemar 显著性（&lt; 0.05）</div></div>
+<div class="b"><div class="n">7 / 0</div><div class="t">翻转题 / 回退题（b / c）</div></div>
+<div class="b"><div class="n">4 / 4</div><div class="t">预注册判据满足数</div></div>
+</div>
+<h2>1. 关键数字与预注册判据</h2>
+<p class="small">本实验在动手训练<b>之前</b>就写死了成功判据（预注册），避免事后挑 favorable 结果。4 项判据逐条核验如下：</p>
+<table>
+<tr><th class="l">预注册判据</th><th>阈值</th><th>实测</th><th>是否满足</th></tr>
+<tr><td class="l">① post-RFT<sub>v2</sub> ≥ post-SFT<sub>v1</sub> + 5pp</td><td>≥ +5pp</td><td>90.0% − 64.4% = <b>+25.6pp</b>（对 best v1-SFT 66.7% 亦达 +23.3pp）</td><td class="crit-yes">✓ 满足</td></tr>
+<tr><td class="l">② McNemar(best-SFT<sub>v1</sub> vs RFT<sub>v2</sub>) p &lt; 0.05</td><td>p &lt; 0.05</td><td>b=7, c=0, p = 0.01562</td><td class="crit-yes">✓ 满足</td></tr>
+<tr><td class="l">③ ≥ 3 个随机种子</td><td>≥ 3</td><td>3 seeds（11/22/33）</td><td class="crit-yes">✓ 满足</td></tr>
+<tr><td class="l">④ 数据泄漏 cheat_rate = 0</td><td>= 0</td><td>评估集 seed=20261115 ≠ 训练集 seed=20261114，由构造保证</td><td class="crit-yes">✓ 满足</td></tr>
+</table>
+<p class="small muted">数据源：<code>vision/vqa_tool/strengthen_runs/v2_summary.json</code>（字段 verdict / mcnemar_v1best_sft_vs_v2_rft / preregistered_criteria）。</p>
+<h2>2. 问题从哪来（溯源）</h2>
+<div class="card">
+<p>这条强化线不是凭空起的，而是被<b>真实评测缺口</b>逼出来的。在「把 Qwen3.5-2B 封装成 VQA tool 给 designflow 线做波形题」的探针实验（用户令 #3 后半，wake#1227/#1228）中，我们用 designflow 公开的波形参数在本机重生成忠实副本 PNG，让 Qwen3.5-2B 逐量回答，按 designflow 容差判 pass/fail。结果发现一个稳定模式：</p>
+<p><b>Qwen3.5-2B 原生视觉语言（VL）能力能「看懂图是什么」，但「读不准图上的数」。</b></p>
+<ul>
+<li><b>探针实测</b>：6 个 designflow 恢复后用例合并 <b>14/46 = 30.4%</b>（round-1 β9/α4/β10 = 6/22 = 27.3%；round-2 a1/b8/b11 = 8/24 = 33.3%），而<b>基线（纯文本、无多模态）= 0/46</b>（designflow r650–r655 已证全 FAIL、无 submit.zip 产出）。</li>
+<li><b>答对的项集中在</b>：分类标签（信号类型 square/sine/...）、轴标签单量（峰值电压 = 坐标轴刻度）、约束筛选（多脉冲 / 单脉冲判定）。这些只需「认出图的整体形态」。</li>
+<li><b>答错的项集中在</b>：
+  <ul>
+  <li><b>精确计数</b>：如激活脉冲数 GT=5 模型答 54、时钟周期 GT=1ns 答 2ns、过渡次数 GT=2 答 0；</li>
+  <li><b>精确数值</b>：如占空比、峰峰值读成阈值线值而非曲线值；</li>
+  <li><b>跨面板反推</b>：β10 题需由底板 v(det) 的翻转时刻反推顶板 v(temp) 的上下阈值 vth_high/vth_low/迟滞 hysteresis，<b>三项全 fail</b>。</li>
+  </ul>
+</li>
+</ul>
+<p class="small muted">数据源：<code>vision/vqa_tool/restored_probe_results.json</code>（round-1）、<code>restored_probe2_results.json</code>（round-2）。说明：探针图据 designflow 公开参数重生成，与 designflow <b>等价但非字节相同</b>，属能力探针而非官方通过率。</p>
+</div>
+<p>这个缺口意味着：单纯拿模型「看图」不够，得让它学会「<b>从坐标轴读出数值</b>」这道中间工序。这正是本报告要解决的问题。</p>
+<h2>3. 方法：为什么是「推理链」</h2>
+<h3>3.1 v1 为什么失败（plain target，wake#1209）</h3>
+<p>第一版（v1）的 SFT 监督目标只给最终答案（如 "3"、"75"），分类/比较/上升沿类技能提升明显，但三个回归类技能反而<b>变差</b>：amplitude_read 40%→20%（SFT 反降）、duty_cycle 0%→0%（无改善）、cycle_count 80%→66.7%（SFT 反降）。v1 的 RFT 对 SFT 的 McNemar 检验 <b>b=2, c=0, p=0.5</b>，<b>未达 p&lt;0.05 判据</b>，按预注册如实判为<b>负结果</b>。</p>
+<p>诊断假设：v1 的 target 只告诉模型「答案是多少」，没有教它「<b>怎么从坐标轴把数读出来</b>」。模型本就看得见图，缺的是这道读数中间过程。</p>
+<h3>3.2 v2 的单一变量（预注册）</h3>
+<div class="card">
+<p>v2 相对 v1 <b>只改一个变量</b>：把 <code>cycle_count</code> / <code>amplitude_read</code> / <code>duty_cycle</code> 三个回归类技能的 assistant 监督目标，从「裸答案」改成「<b>读数推理链 + Final Answer: X</b>」；分类 / 比较 / 上升沿三类 target 保持 v1 原样。举例如下：</p>
+<ul class="small">
+<li><b>cycle_count</b>：「Counting complete oscillations from left to right across the plot, I can see <b>3</b> full waveform cycles. Final Answer: 3」</li>
+<li><b>amplitude_read</b>：「The grid has 1 division per square. The peak is <b>3</b> divisions above the center axis and the trough is <b>3</b> divisions below it, so the peak-to-peak amplitude is 2 × 3 = <b>6</b> divisions. Final Answer: 6」</li>
+<li><b>duty_cycle</b>：「A square wave's duty cycle is the fraction of each period spent high. Here the high portion takes <b>25</b> percent of one period, so the duty cycle is 25%. Final Answer: 25」</li>
+</ul>
+<p>这样改的意图：把「读数」拆成可学习的显式步骤（认网格 → 量半幅 → 算峰峰值 / 认高电平占比），让模型不再跳过坐标轴直接猜数。</p>
+</div>
+<h3>3.3 防泄漏设计（由构造保证，不是事后过滤）</h3>
+<div class="card">
+<ul>
+<li><b>训练集</b>：合成波形图 + 问答，随机种子 <code>seed=20261114</code>，每技能 25 条共 150 条（<code>vision/vqa_tool/sft_cot.jsonl</code>）。</li>
+<li><b>评估集（held-out）</b>：用<b>不同的</b>随机种子 <code>seed=20261115</code> 重新合成 30 题（每技能 5 题）。</li>
+<li>由于两套种子不同，<b>评估图与训练图无重叠</b>，<code>cheat_rate = 0</code> 由构造保证，<b>不是</b>靠事后比对过滤出来的。</li>
+</ul>
+</div>
+<p class="small muted">强化栈：LLaMA-Factory + LoRA，CPU 可跑（本线无 GPU 争用）。基模 Qwen3.5-2B 原生多模态 VL，VQA 服务起在 <code>127.0.0.1:30001</code>。</p>
+<h2>4. 结果（完整、可复现）</h2>
+<h3>4.1 全链路对比</h3>
+<table>
+<tr><th>阶段</th><th>准确率</th><th>说明</th></tr>
+<tr><td>before（基模）</td><td>60.0%</td><td>无任何微调</td></tr>
+<tr><td>v1 post-SFT（3 seed mean±std）</td><td>64.4% ± 1.6</td><td>plain target（wake#1209）</td></tr>
+<tr><td>v1 post-RFT</td><td>73.3%</td><td>v1 rejection-sampling FT，McNemar p=0.5 未显著</td></tr>
+<tr><td><b>v2 post-SFT（3 seed mean±std）</b></td><td><b>74.4% ± 4.2</b></td><td>CoT target（本轮单一变量）</td></tr>
+<tr><td><b>v2 post-RFT</b></td><td><b>90.0%</b></td><td>CoT + rejection-sampling FT</td></tr>
+</table>
+<svg width="560" height="290" viewBox="0 0 560 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="各阶段准确率折线图">
+<rect width="560" height="290" fill="#fff"/>
+<text x="300" y="16" font-size="13" text-anchor="middle" fill="#222">各阶段 held-out 准确率（%）</text>
+<line x1="60" y1="30" x2="60" y2="240" stroke="#bbb"/><line x1="60" y1="240" x2="520" y2="240" stroke="#bbb"/>
+<g font-size="9" fill="#888" text-anchor="end"><text x="56" y="243">0</text><text x="56" y="190">25</text><text x="56" y="137">50</text><text x="56" y="84">75</text><text x="56" y="33">100</text></g>
+<g stroke="#eee"><line x1="60" y1="190" x2="520" y2="190"/><line x1="60" y1="137" x2="520" y2="137"/><line x1="60" y1="84" x2="520" y2="84"/></g>
+<line x1="60" y1="89.4" x2="520" y2="89.4" stroke="#e0a800" stroke-dasharray="5,4"/>
+<text x="516" y="86" font-size="9" text-anchor="end" fill="#a07a00">v1-SFT + 5pp 判据线 (69.4%)</text>
+<polyline points="100,114 200,104.8 300,86.1 400,81.7 500,51" fill="none" stroke="#2b6cb0" stroke-width="2.5"/>
+<circle cx="100" cy="114" r="5" fill="#9aa4b2"/><text x="100" y="262" font-size="9" text-anchor="middle" fill="#444">before</text><text x="100" y="106" font-size="9" text-anchor="middle" fill="#444">60.0</text>
+<circle cx="200" cy="104.8" r="5" fill="#2b6cb0"/><text x="200" y="262" font-size="9" text-anchor="middle" fill="#444">v1-SFT</text><text x="200" y="97" font-size="9" text-anchor="middle" fill="#444">64.4</text>
+<circle cx="300" cy="86.1" r="5" fill="#5a8fd0"/><text x="300" y="262" font-size="9" text-anchor="middle" fill="#444">v1-RFT</text><text x="300" y="78" font-size="9" text-anchor="middle" fill="#444">73.3</text>
+<circle cx="400" cy="81.7" r="5" fill="#2f855a"/><text x="400" y="262" font-size="9" text-anchor="middle" fill="#444">v2-SFT</text><text x="400" y="73" font-size="9" text-anchor="middle" fill="#444">74.4</text>
+<circle cx="500" cy="51" r="6" fill="#1e6b3a"/><text x="500" y="262" font-size="9" text-anchor="middle" fill="#444">v2-RFT</text><text x="500" y="43" font-size="9" text-anchor="middle" fill="#1e6b3a" font-weight="bold">90.0</text>
+</svg>
+<p style="text-align:center" class="muted small">灰=before · 蓝=v1 · 绿=v2（v2-RFT 越过判据线）</p>
+<h3>4.2 v2 SFT 三个随机种子明细</h3>
+<table>
+<tr><th>seed</th><th>准确率</th><th>正确 / 30</th><th>mean_reward</th></tr>
+<tr><td>11</td><td>70.0%</td><td>21 / 30</td><td>0.7194</td></tr>
+<tr><td>22</td><td>80.0%</td><td>24 / 30</td><td>0.8400</td></tr>
+<tr><td>33</td><td>73.3%</td><td>22 / 30</td><td>0.7610</td></tr>
+<tr><td><b>mean ± std</b></td><td><b>74.4% ± 4.2</b></td><td>—</td><td>—</td></tr>
+</table>
+<p class="small muted">McNemar 用「best v1-SFT（seed33, 66.7%）」对照「v2-RFT（90.0%）」：b=7（v1 错→v2 对）、c=0（v1 对→v2 错）、p=0.01562。</p>
+<h3>4.3 各技能分解（before / v1-SFT / v2-RFT）</h3>
+<table>
+<tr><th>技能</th><th>before</th><th>v1-SFT</th><th>v2-RFT</th><th>变化（before→v2-RFT）</th></tr>
+<tr><td class="l">type_classification（波形类型分类）</td><td>60%</td><td>100%</td><td>100%</td><td>+40pp</td></tr>
+<tr><td class="l">cycle_count（周期计数）</td><td>80%</td><td>66.7%</td><td>100%</td><td>+20pp</td></tr>
+<tr><td class="l">amplitude_read（幅值读数）</td><td>40%</td><td>20%</td><td>60%</td><td>+20pp</td></tr>
+<tr><td class="l">freq_comparison（频率比较）</td><td>80%</td><td>100%</td><td>100%</td><td>+20pp</td></tr>
+<tr><td class="l"><b>duty_cycle（占空比）</b></td><td>0%</td><td>0%</td><td><b>80%</b></td><td><b>+80pp</b></td></tr>
+<tr><td class="l">rise_edge（上升沿形态）</td><td>100%</td><td>100%</td><td>100%</td><td>维持</td></tr>
+</table>
+<p class="small"><b>关键</b>：v1 在 duty_cycle（0%→0%）和 amplitude_read（40%→20%）上完全卡住或倒退的技能，正是 v2 用 CoT 推理链 target 重写的三技能中的两个；v2-RFT 把 duty_cycle 拉到 80%、amplitude_read 拉回 60%、cycle_count 拉到 100%。<b>v2 闭合的正是 v1 的缺口。</b></p>
+<svg width="620" height="270" viewBox="0 0 620 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="各技能准确率柱状对比">
+<rect width="620" height="270" fill="#fff"/>
+<text x="310" y="15" font-size="13" text-anchor="middle" fill="#222">各技能准确率：before / v1-SFT / v2-RFT（%）</text>
+<g stroke="#eee"><line x1="58" y1="240" x2="600" y2="240"/><line x1="58" y1="184" x2="600" y2="184"/><line x1="58" y1="128" x2="600" y2="128"/><line x1="58" y1="72" x2="600" y2="72"/><line x1="58" y1="24" x2="600" y2="24"/></g>
+<g font-size="8" fill="#888" text-anchor="end"><text x="54" y="243">0</text><text x="54" y="187">25</text><text x="54" y="131">50</text><text x="54" y="75">75</text><text x="54" y="27">100</text></g>
+<rect x="430" y="20" width="9" height="9" fill="#9aa4b2"/><text x="442" y="28" font-size="9" fill="#444">before</text>
+<rect x="475" y="20" width="9" height="9" fill="#2b6cb0"/><text x="487" y="28" font-size="9" fill="#444">v1-SFT</text>
+<rect x="520" y="20" width="9" height="9" fill="#2f855a"/><text x="532" y="28" font-size="9" fill="#444">v2-RFT</text>
+<rect x="70" y="110.4" width="26" height="129.6" fill="#9aa4b2"/><rect x="99" y="24" width="26" height="216" fill="#2b6cb0"/><rect x="128" y="24" width="26" height="216" fill="#2f855a"/><text x="112" y="256" font-size="8" text-anchor="middle" fill="#444">type_cls</text>
+<rect x="158" y="67.2" width="26" height="172.8" fill="#9aa4b2"/><rect x="187" y="96.1" width="26" height="143.9" fill="#2b6cb0"/><rect x="216" y="24" width="26" height="216" fill="#2f855a"/><text x="200" y="256" font-size="8" text-anchor="middle" fill="#444">cycle_count</text>
+<rect x="246" y="153.6" width="26" height="86.4" fill="#9aa4b2"/><rect x="275" y="196.8" width="26" height="43.2" fill="#2b6cb0"/><rect x="304" y="110.4" width="26" height="129.6" fill="#2f855a"/><text x="288" y="256" font-size="8" text-anchor="middle" fill="#444">amplitude</text>
+<rect x="334" y="67.2" width="26" height="172.8" fill="#9aa4b2"/><rect x="363" y="24" width="26" height="216" fill="#2b6cb0"/><rect x="392" y="24" width="26" height="216" fill="#2f855a"/><text x="376" y="256" font-size="8" text-anchor="middle" fill="#444">freq_cmp</text>
+<rect x="422" y="240" width="26" height="0" fill="#9aa4b2"/><rect x="451" y="240" width="26" height="0" fill="#2b6cb0"/><rect x="480" y="67.2" width="26" height="172.8" fill="#2f855a"/><text x="464" y="256" font-size="8" text-anchor="middle" fill="#444">duty_cycle</text>
+<rect x="510" y="24" width="26" height="216" fill="#9aa4b2"/><rect x="539" y="24" width="26" height="216" fill="#2b6cb0"/><rect x="568" y="24" width="26" height="216" fill="#2f855a"/><text x="552" y="256" font-size="8" text-anchor="middle" fill="#444">rise_edge</text>
+</svg>
+<p style="text-align:center" class="muted small">duty_cycle 与 amplitude 两技能的 v1 蓝柱低于灰柱（倒退），v2 绿柱越过——缺口被闭合。</p>
+<h3>4.4 靠 v2 翻转的题（v1-best-SFT 错 → v2-RFT 对，共 7 题、0 回退）</h3>
+<table>
+<tr><th>题号</th><th>技能</th><th>GT（真值）</th><th>v1 预测</th><th>v2-RFT 预测</th></tr>
+<tr><td>q5</td><td class="l">cycle_count</td><td>3</td><td>4 ✗</td><td>3 ✓</td></tr>
+<tr><td>q11</td><td class="l">amplitude_read</td><td>6</td><td>7 ✗</td><td>6 ✓</td></tr>
+<tr><td>q13</td><td class="l">amplitude_read</td><td>6</td><td>7 ✗</td><td>6 ✓</td></tr>
+<tr><td>q20</td><td class="l">duty_cycle</td><td>75</td><td>（空）✗</td><td>75 ✓</td></tr>
+<tr><td>q21</td><td class="l">duty_cycle</td><td>25</td><td>（空）✗</td><td>25 ✓</td></tr>
+<tr><td>q22</td><td class="l">duty_cycle</td><td>25</td><td>（空）✗</td><td>25 ✓</td></tr>
+<tr><td>q23</td><td class="l">duty_cycle</td><td>25</td><td>（空）✗</td><td>25 ✓</td></tr>
+</table>
+<p class="small muted">数据源：<code>v2_summary.json</code> 字段 <code>flipped_v1sft_to_v2rft</code>。回退数 c=0，即<b>没有</b>任何题因 v2 而「由对变错」。</p>
+<h2>5. 诚实性声明（必写）</h2>
+<div class="card warn">
+<ol>
+<li><b>scope 限定</b>：本结论仅适用于<b>合成波形识图</b>。训练 / 评估数据均由 <code>synth_waveform_qa.py</code> 程序化合成（正弦/方波/锯齿/三角 + 可控占空比/幅值/周期/上升沿）。<b>不可外推到 designflow 真实 EDA 波形</b>（真实波形含噪声、多信号叠加、不规则面板），需 #3 跨线对照验证。</li>
+<li><b>跨面板反推仍待解</b>：探针 β10 题需由底板信号翻转时刻反推顶板阈值（vth_high / vth_low / hysteresis），<b>三项全 fail</b>。本合成数据集未覆盖「跨面板反推」技能，故 v2 也未触及该缺口。</li>
+<li><b>探针图非官方</b>：#3 后半探针的波形图是据 designflow 公开参数在本机重生成的忠实副本，与 designflow <b>等价但非字节相同</b>，30.4% 是能力探针值，<b>不可当作 designflow 官方通过率</b>。</li>
+<li><b>RFT 选择偏差</b>：rejection-sampling FT 从 600 个采样（每题 k=4）中按 reward ≥ 0.5 接受 <b>207 个</b>（接受率 34.5%）。被接受的样本天然是模型「已能做对」的，RFT 会对「能做对但偶尔做错」的题更有效，对「完全不会」的题帮助有限——这是 RFT 的固有性质，解读 +25.6pp 时应计入。</li>
+<li><b>RFT 单 seed</b>：v2-RFT 仅跑了 seed=11（90.0%）；v2-SFT 跑了 3 seed。预注册判据只要求 SFT ≥3 seed + RFT 显著性，已满足；但 RFT 的种子稳定性尚未单独验证。</li>
+</ol>
+</div>
+<h2>6. 可复现性清单</h2>
+<p class="small">第三方按以下清单可逐步重跑。所有路径相对仓库根 <code>doc/BaiZe-ISEDA2027/run/</code>。</p>
+<table>
+<tr><th class="l">类别</th><th class="l">路径 / 值</th></tr>
+<tr><td class="l">强化脚本</td><td class="l"><code>vision/vqa_tool/sft_rl_strengthen_v2.py</code>（依赖 <code>synth_waveform_qa.py</code> 造数据、<code>sft_rl_strengthen.py</code> 提供 train_sft/eval_on_heldout/mcnemar_exact）</td></tr>
+<tr><td class="l">训练数据</td><td class="l"><code>vision/vqa_tool/sft_cot.jsonl</code>（150 条，6 技能 × 25，seed=20261114）；图片 <code>sft_images/</code> 由 <code>synth_waveform_qa.py</code> 确定 seed 重生成（已 gitignore）</td></tr>
+<tr><td class="l">评估集</td><td class="l">held-out 30 题，seed=20261115（≠ 训练 seed → cheat_rate=0）</td></tr>
+<tr><td class="l">LoRA adapters</td><td class="l"><code>vision/vqa_tool/strengthen_runs/sft2_adapter_seed{11,22,33}</code>、<code>rft2_adapter_seed11</code></td></tr>
+<tr><td class="l">评估结果 JSON</td><td class="l"><code>sft2_seed{11,22,33}_eval.json</code>、<code>rft2_seed11_eval.json</code>、<code>v2_summary.json</code>、<code>rft2_accepted.json</code></td></tr>
+<tr><td class="l">基模 / 服务</td><td class="l">Qwen3.5-2B 原生多模态 VL，VQA 服务 <code>127.0.0.1:30001</code>（启动脚本 <code>run/launch_qwen35_server.sh</code>）</td></tr>
+<tr><td class="l">判据公式</td><td class="l">成功 v2 = post-RFT<sub>v2</sub> ≥ post-SFT<sub>v1</sub> + 5pp ∧ McNemar(best-SFT<sub>v1</sub>, RFT<sub>v2</sub>) p &lt; 0.05 ∧ ≥3 seed ∧ cheat_rate=0</td></tr>
+</table>
+<p class="small"><b>复算命令</b>：</p>
+<pre>PY=/nas_data/app.e0031982/miniforge3/envs/py310/bin/python
+# 1) 冒烟（6 条，确认 CoT 管线通）
+CUDA_VISIBLE_DEVICES=5 $PY vision/vqa_tool/sft_rl_strengthen_v2.py --stage smoke
+# 2) SFT 3 seed × 3 epoch
+CUDA_VISIBLE_DEVICES=5 $PY vision/vqa_tool/sft_rl_strengthen_v2.py --stage sft --seeds 3 --epochs 3
+# 3) rejection-sampling FT（基于 best SFT adapter）
+CUDA_VISIBLE_DEVICES=5 $PY vision/vqa_tool/sft_rl_strengthen_v2.py --stage rft
+# 4) 汇总 + 判据核验
+$PY vision/vqa_tool/sft_rl_strengthen_v2.py --stage report
+# 复读判据结论：
+$PY -c "import json;d=json.load(open('vision/vqa_tool/strengthen_runs/v2_summary.json'));print(d['verdict'])"</pre>
+<h2>7. 下一步与可复用价值</h2>
+<div class="card">
+<h3>7.1 这套「CoT 读数推理链」能否迁移</h3>
+<p>本实验的真正贡献不是「某个合成数据集上 90%」，而是验证了一个<b>可迁移的方法论</b>：当多模态模型的失败模式是「看得见图但读不准数」时，把「<b>从坐标轴 / 刻度 / 比例尺读出数值</b>」这道隐式工序写成显式推理链放进监督目标，比只给裸答案有效得多。这一思路可外推到其他「读数类」任务：示波器截图读电压/时间、电路图读器件参数、眼图读张度/抖动、散热曲线读阈值——只要能程序化合成带真值的训练样本，就能复制这套 SFT(CoT) → RFT 流水线。</p>
+<h3>7.2 对 #3（与 designflow 官方对照）的意义</h3>
+<p>探针已证明 Qwen3.5-2B 在真实波形题上「读不准数」。下一步应把 v2 强化后的 adapter 接回 VQA tool，在 designflow 恢复原形态的同一批用例上重跑「无 VQA vs 有 VQA(强化后)」对照，量化「读数推理链」对真实 EDA 波形的增益是否仍成立（预计对「单面板精确数值」类有效，对「跨面板反推」仍无效——后者需新技能与新数据）。</p>
+<h3>7.3 对 #4 后续强化的意义</h3>
+<p>v2 闭合了 v1 在 duty_cycle / amplitude_read / cycle_count 上的缺口，但留下两个明确的未解项：(a) <b>跨面板反推</b>（β10 全 fail）需新建合成数据集，训练「由一面板事件反推另一面板阈值」的推理链；(b) <b>真实波形噪声鲁棒性</b>需在合成时加入噪声/多信号叠加，验证 CoT 推理链在非干净波形下是否仍稳。这两点是比「再刷几个点」更有价值的下一步。</p>
+</div>
+<hr class="muted">
+<p class="muted small">报告作者：BaiZe vision 线 · 数据时点 2026-11-14T16:54:34 · 所有数字可追到 <code>vision/vqa_tool/strengthen_runs/</code> 与 <code>vision/vqa_tool/restored_probe*_results.json</code> 落盘文件 · 单文件自包含 · 0 外链 · 0 script · 图表为内联 SVG</p>
+</body></html>

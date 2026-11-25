@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数学与代码数据集调研报告</title>
+<style>
+body{font-family:-apple-system,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333;line-height:1.6}
+h1{color:#1a237e;border-bottom:3px solid #1a237e;padding-bottom:10px}
+h2{color:#283593;margin-top:30px;border-bottom:1px solid #ccc;padding-bottom:5px}
+h3{color:#1565c0}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}
+th{background:#e3f2fd;font-weight:600}
+tr:nth-child(even){background:#f5f5f5}
+.card{background:white;border:1px solid #e0e0e0;border-radius:8px;padding:15px 20px;margin:15px 0;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.card .meta{color:#666;font-size:13px;margin:5px 0}
+.summary{background:#e8f5e9;border-left:4px solid #4caf50;padding:15px 20px;margin:15px 0;border-radius:0 8px 8px 0}
+.footer{margin-top:40px;padding-top:15px;border-top:1px solid #ccc;color:#888;font-size:12px}
+code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:12px}
+</style>
+</head>
+<body>
+<h1>数学与代码数据集调研报告</h1>
+<p style="color:#666;font-size:13px;">生成时间:2026-11-15 · 数据来源:HuggingFace API实测(files_metadata=True) · 口径:只调研不下载</p>
+<div class="summary">
+<h2 style="border:none;margin-top:0;">一、结论</h2>
+<p><strong>一句话结论</strong>:数学预训练语料是当前最大缺口(我们目前为零),优先级排序为<strong>Nemotron-CC-Math-v1 &gt; IFM/MegaMath第一批 &gt; OpenMathInstruct-2(SFT) &gt; OpenCodeReasoning(代码SFT) &gt; code_contests(RL可验证)</strong>。RL可验证数据(数学答案+代码单测)是另一个关键空白,posttrain的GRPO/RLVR阶段急需。</p>
+</div>
+<h2>二、Top-5推荐(按ROI×缺口匹配度排序)</h2>
+<div class="card"><h3>Top 1: nvidia/Nemotron-CC-Math-v1</h3><p class="meta">数学预训练 · 259.94 GB / 133B tokens · ★★★★★</p><p>NVIDIA在8B模型上实测+4.8~12.6 MATH/+4.6~14.3 MBPP+,已超越MegaMath/FineMath/OpenWebMath。我们当前数学预训练语料不足,这是最高ROI补充。⚠️License为NVIDIA License(需核实商用训练)。</p></div>
+<div class="card"><h3>Top 2: IFM/MegaMath第一批(web-pro+code+qa+text-code-block+translated-code)</h3><p class="meta">数学预训练 · ~232 GB / ~48B tokens · ★★★★★</p><p>用户令已指定下载。web-pro是15B高质量tokens,是MegaMath全量中ROI最高子集。code(1.85GB)含数学相关代码,qa(19.8GB)含问答数学。≡LLM360/MegaMath(sha 3cbc64616594完全一致)。</p></div>
+<div class="card"><h3>Top 3: nvidia/OpenMathInstruct-2</h3><p class="meta">数学SFT · 12.63 GB / 14M条 · ★★★★★</p><p>14M问题-解答对,Llama-3.1-405B生成,cc-by-4.0。实测GSM8K+8.6/MATH+6.2。体积适中、许可开放、效果验证——数学SFT阶段最佳选择之一。我们当前缺数学SFT数据。</p></div>
+<div class="card"><h3>Top 4: nvidia/OpenCodeReasoning</h3><p class="meta">代码SFT · 9.73 GB · ★★★★</p><p>NVIDIA出品,代码推理数据,含解题过程推理链。与IFM/Code-Reasoning(3.28TB)互补——IFM体量巨大但需筛选,OpenCodeReasoning是精选小量高质量补充。cc-by-4.0。</p></div>
+<div class="card"><h3>Top 5: deepmind/code_contests</h3><p class="meta">代码RL · 7.62 GB · ★★★★</p><p>竞赛题+测试用例,cc-by-4.0。✅自带可执行验证器——posttrain RL(GRPO/RLVR)急需的可验证奖励数据。我们当前完全没有代码RL数据。⚠️需检查test split与评测集重叠。</p></div>
+<h2>三、总表:所有调研数据集</h2>
+<table><tr><th>数据集</th><th>领域</th><th>用途</th><th>规模</th><th>语言</th><th>license</th><th>是否需申请</th><th>自带验证器</th><th>推荐度</th><th>备注</th></tr>
+<tr><td>nvidia/Nemotron-CC-Math-v1</td><td>数学</td><td>预训练</td><td>259.94 GB / 133B tok</td><td>英文</td><td>NVIDIA License</td><td>✅开放</td><td>—</td><td>⭐⭐⭐⭐⭐</td><td>ICLR2026;+4.8~12.6 MATH / +4.6~14.3 MBPP+</td></tr>
+<tr><td>IFM/MegaMath</td><td>数学</td><td>预训练</td><td>1118.16 GB / 371B tok</td><td>英文</td><td>odc-by</td><td>✅开放</td><td>—</td><td>⭐⭐⭐⭐⭐</td><td>≡ LLM360/MegaMath (sha一致);子集:web(886GB)/web-pro(56GB)/code(1.85GB)/qa(19.8GB)等</td></tr>
+<tr><td>HuggingFaceTB/finemath</td><td>数学</td><td>预训练</td><td>149.45 GB / 34B+9.6B tok</td><td>英文</td><td>odc-by</td><td>✅开放</td><td>—</td><td>⭐⭐⭐⭐</td><td>FineMath-3+(34B)/FineMath-4+(9.6B);arXiv:2502.02737</td></tr>
+<tr><td>open-web-math/open-web-math</td><td>数学</td><td>预训练</td><td>27.43 GB</td><td>英文</td><td>未标注</td><td>✅开放</td><td>—</td><td>⭐⭐⭐</td><td>arXiv:2310.06786;早期数学网页语料</td></tr>
+<tr><td>GAIR/MathPile</td><td>数学</td><td>预训练</td><td>7.44 GB</td><td>英文</td><td>cc-by-nc-sa-4.0</td><td>🔒需申请</td><td>—</td><td>⭐⭐</td><td>gated;非商用;arXiv:2312.17120</td></tr>
+<tr><td>IFM/Math-Reasoning</td><td>数学</td><td>SFT</td><td>4462.53 GB</td><td>英文</td><td>apache-2.0</td><td>✅开放</td><td>—</td><td>⭐⭐⭐⭐</td><td>K2 Horizon;5子集:math-dialogue(2.37TB)/math-rewrite(810GB)/math-thinking-oss(466GB)等</td></tr>
+<tr><td>nvidia/OpenMathInstruct-2</td><td>数学</td><td>SFT</td><td>12.63 GB / 14M条</td><td>英文</td><td>cc-by-4.0</td><td>✅开放</td><td>—</td><td>⭐⭐⭐⭐⭐</td><td>14M问题-解答对;Llama-3.1-405B生成;GSM8K+8.6/MATH+6.2</td></tr>
+<tr><td>project-numina/NuminaMath-1.5</td><td>数学</td><td>SFT</td><td>0.53 GB / ~460K条</td><td>英文</td><td>apache-2.0</td><td>✅开放</td><td>—</td><td>⭐⭐⭐⭐</td><td>竞赛级数学;含CoT解题过程</td></tr>
+<tr><td>meta-math/MetaMathQA</td><td>数学</td><td>SFT</td><td>0.40 GB / 395K条</td><td>英文</td><td>mit</td><td>✅开放</td><td>—</td><td>⭐⭐⭐</td><td>GSM8K+MATH改写增强;arXiv:2309.12284</td></tr>
+<tr><td>microsoft/orca-math-word-problems-200k</td><td>数学</td><td>SFT</td><td>0.08 GB / 200K条</td><td>英文</td><td>mit</td><td>✅开放</td><td>—</td><td>⭐⭐</td><td>GPT-4生成200K小学数学应用题</td></tr>
+<tr><td>bigcode/the-stack-v2</td><td>代码</td><td>预训练</td><td>426.98 GB</td><td>多语言</td><td>多样化</td><td>✅开放</td><td>—</td><td>⭐⭐⭐</td><td>600+语言;已有stack-v3-train替代;当前禁下</td></tr>
+<tr><td>bigcode/starcoderdata</td><td>代码</td><td>预训练</td><td>310.80 GB</td><td>多语言</td><td>多样化</td><td>✅开放</td><td>—</td><td>⭐⭐</td><td>StarCoder训练数据;较旧被Stack v2/v3替代</td></tr>
+<tr><td>HuggingFaceTB/smollm-corpus</td><td>代码+文本</td><td>预训练</td><td>673.07 GB</td><td>多语言</td><td>odc-by</td><td>✅开放</td><td>—</td><td>⭐⭐⭐</td><td>Cosmopedia v2+FineWeb-Edu+Python-Edu</td></tr>
+<tr><td>HuggingFaceFW/fineweb-edu</td><td>通用</td><td>预训练</td><td>5835.74 GB</td><td>英文</td><td>odc-by</td><td>✅开放</td><td>—</td><td>⭐⭐⭐</td><td>教育内容;含STEM子集</td></tr>
+<tr><td>IFM/Code-Reasoning</td><td>代码</td><td>SFT</td><td>3277.04 GB</td><td>英文</td><td>apache-2.0</td><td>✅开放</td><td>—</td><td>⭐⭐⭐⭐</td><td>K2 Horizon;7子集:code-thinking-v0(708GB)/v1(661GB)/no-thinking(619GB)等</td></tr>
+<tr><td>nvidia/OpenCodeReasoning</td><td>代码</td><td>SFT</td><td>9.73 GB</td><td>英文</td><td>cc-by-4.0</td><td>✅开放</td><td>—</td><td>⭐⭐⭐⭐⭐</td><td>代码推理数据;含解题过程推理链</td></tr>
+<tr><td>nvidia/OpenCodeInstruct</td><td>代码</td><td>SFT</td><td>6.86 GB</td><td>英文</td><td>cc-by-4.0</td><td>✅开放</td><td>—</td><td>⭐⭐⭐⭐</td><td>代码指令数据;Llama-3.1-405B生成</td></tr>
+<tr><td>ise-uiuc/Magicoder_oss_instruct_75k</td><td>代码</td><td>SFT</td><td>0.20 GB / 75K条</td><td>英文</td><td>mit</td><td>✅开放</td><td>—</td><td>⭐⭐⭐</td><td>OSS-Instruct生成;arXiv:2312.02120</td></tr>
+<tr><td>ise-uiuc/Magicoder_evol_instruct_110k</td><td>代码</td><td>SFT</td><td>0.26 GB / 110K条</td><td>英文</td><td>apache-2.0</td><td>✅开放</td><td>—</td><td>⭐⭐⭐</td><td>Evol-Instruct改写</td></tr>
+<tr><td>deepmind/code_contests</td><td>代码</td><td>RL</td><td>7.62 GB</td><td>英文</td><td>cc-by-4.0</td><td>✅开放</td><td>✅是</td><td>⭐⭐⭐⭐</td><td>竞赛题+测试用例;✅自带验证器</td></tr>
+<tr><td>codeparrot/apps</td><td>代码</td><td>RL</td><td>1.40 GB</td><td>英文</td><td>mit</td><td>✅开放</td><td>✅是</td><td>⭐⭐⭐</td><td>APPS基准10K题;✅自带验证器(需隔离train/test)</td></tr>
+<tr><td>AI-MO/aimo-validation-aime</td><td>数学</td><td>RL验证</td><td>~340题</td><td>英文</td><td>apache-2.0</td><td>✅开放</td><td>✅是</td><td>⭐⭐⭐⭐</td><td>AIME验证集;⚠️评测用不可入训练</td></tr>
+<tr><td>HuggingFaceH4/MATH-500</td><td>数学</td><td>RL验证</td><td>500题</td><td>英文</td><td>未标注</td><td>✅开放</td><td>✅是</td><td>⭐⭐⭐</td><td>MATH测试集500题;⚠️评测用</td></tr>
+<tr><td>openai/gsm8k</td><td>数学</td><td>RL验证</td><td>0.01 GB / 8.5K题</td><td>英文</td><td>mit</td><td>✅开放</td><td>✅是</td><td>⭐⭐⭐</td><td>GSM8K;train split可SFT,test不可入训练</td></tr>
+</table>
+<h2>三、与我们现状的匹配分析</h2>
+<table>
+<tr><th>能力维度</th><th>我们已有</th><th>本令新增</th><th>仍缺</th><th>建议补充</th></tr>
+<tr><td>代码预训练</td><td>stack-v3-train(3.3TB/~250B tok已分词)</td><td>IFM/Code-Reasoning(3.28TB SFT,非预训练)</td><td>多语言代码多样性</td><td>SmolLM-Corpus代码部分(如有余力)</td></tr>
+<tr><td>数学预训练</td><td>—(当前为零)</td><td>IFM/MegaMath第一批(~232GB/~48B tok)</td><td>更大规模数学语料</td><td>Nemotron-CC-Math-v1(133B tok,实测最优)</td></tr>
+<tr><td>数学SFT</td><td>—</td><td>IFM/Math-Reasoning(4.46TB)</td><td>精选小量高质量数学SFT</td><td>OpenMathInstruct-2(14M条,12.6GB)</td></tr>
+<tr><td>代码SFT</td><td>—</td><td>IFM/Code-Reasoning(3.28TB)</td><td>精选代码推理SFT</td><td>OpenCodeReasoning(9.73GB)+Magicoder(0.46GB)</td></tr>
+<tr><td>RL可验证(数学)</td><td>—</td><td>—</td><td>数学答案可验证集</td><td>GSM8K train split+MATH train split(非test!)</td></tr>
+<tr><td>RL可验证(代码)</td><td>—</td><td>—</td><td>代码单测可跑集</td><td>code_contests(7.62GB,✅自带验证器)</td></tr>
+<tr><td>中文数学/代码</td><td>—</td><td>IFM全英文</td><td>中文数学语料</td><td>暂无好的开源中文数学预训练语料;可考虑合成</td></tr>
+</table>
+<p><strong>关键缺口</strong>:RL可验证数据(数学+代码)是当前最大空白——posttrain的GRPO/RLVR阶段需要答案可验证的题目集,而我们完全没有。建议优先获取code_contests(自带测试用例)和GSM8K/MATH的train split。</p>
+<h2>四、数据集规模可视化</h2>
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="352" viewBox="0 0 600 352">
+<rect width="600" height="352" fill="#fafafa"/>
+<text x="10" y="18" font-size="12" fill="#333" font-weight="bold">数学/代码数据集规模对比(GB)</text>
+<text x="180" y="48" font-size="10" fill="#555" text-anchor="end">Nemotron-CC-Math</text>
+<rect x="185" y="30" width="23" height="22" fill="#4CAF50" rx="2"/>
+<text x="213" y="48" font-size="9" fill="#333">260 GB</text>
+<text x="180" y="74" font-size="10" fill="#555" text-anchor="end">MegaMath全量</text>
+<rect x="185" y="56" width="100" height="22" fill="#2196F3" rx="2"/>
+<text x="290" y="74" font-size="9" fill="#333">1118 GB</text>
+<text x="180" y="100" font-size="10" fill="#555" text-anchor="end">FineMath</text>
+<rect x="185" y="82" width="13" height="22" fill="#FF9800" rx="2"/>
+<text x="203" y="100" font-size="9" fill="#333">149 GB</text>
+<text x="180" y="126" font-size="10" fill="#555" text-anchor="end">OpenWebMath</text>
+<rect x="185" y="108" width="2" height="22" fill="#9C27B0" rx="2"/>
+<text x="192" y="126" font-size="9" fill="#333">27 GB</text>
+<text x="180" y="152" font-size="10" fill="#555" text-anchor="end">OpenMathInstruct-2</text>
+<rect x="185" y="134" width="2" height="22" fill="#F44336" rx="2"/>
+<text x="192" y="152" font-size="9" fill="#333">13 GB</text>
+<text x="180" y="178" font-size="10" fill="#555" text-anchor="end">NuminaMath-1.5</text>
+<rect x="185" y="160" width="2" height="22" fill="#795548" rx="2"/>
+<text x="192" y="178" font-size="9" fill="#333">1 GB</text>
+<text x="180" y="204" font-size="10" fill="#555" text-anchor="end">Code-Reasoning</text>
+<rect x="185" y="186" width="293" height="22" fill="#00BCD4" rx="2"/>
+<text x="483" y="204" font-size="9" fill="#333">3277 GB</text>
+<text x="180" y="230" font-size="10" fill="#555" text-anchor="end">Math-Reasoning</text>
+<rect x="185" y="212" width="400" height="22" fill="#E91E63" rx="2"/>
+<text x="590" y="230" font-size="9" fill="#333">4463 GB</text>
+<text x="180" y="256" font-size="10" fill="#555" text-anchor="end">OpenCodeReasoning</text>
+<rect x="185" y="238" width="2" height="22" fill="#8BC34A" rx="2"/>
+<text x="192" y="256" font-size="9" fill="#333">10 GB</text>
+<text x="180" y="282" font-size="10" fill="#555" text-anchor="end">code_contests</text>
+<rect x="185" y="264" width="2" height="22" fill="#FFC107" rx="2"/>
+<text x="192" y="282" font-size="9" fill="#333">8 GB</text>
+<text x="180" y="308" font-size="10" fill="#555" text-anchor="end">Stack-v2</text>
+<rect x="185" y="290" width="38" height="22" fill="#607D8B" rx="2"/>
+<text x="228" y="308" font-size="9" fill="#333">427 GB</text>
+<text x="180" y="334" font-size="10" fill="#555" text-anchor="end">StarCoder</text>
+<rect x="185" y="316" width="27" height="22" fill="#7C4DFF" rx="2"/>
+<text x="217" y="334" font-size="9" fill="#333">311 GB</text>
+</svg>
+<h2>五、污染检查与风险</h2>
+<table>
+<tr><th>数据集</th><th>污染风险</th><th>检查结论</th></tr>
+<tr><td>IFM/MegaMath</td><td>可能含GSM8K/MATH题目(从CommonCrawl抓取)</td><td>⚠️需在下游使用前做n-gram比对GSM8K test+MATH-500</td></tr>
+<tr><td>IFM/Math-Reasoning</td><td>SFT数据可能含MATH/GSM8K原题</td><td>⚠️需检查math-thinking-*子集是否含评测题</td></tr>
+<tr><td>IFM/Code-Reasoning</td><td>可能含HumanEval/MBPP题目</td><td>⚠️需检查code-thinking-*子集是否含评测题</td></tr>
+<tr><td>Nemotron-CC-Math-v1</td><td>CommonCrawl来源,可能含评测题</td><td>⚠️NVIDIA论文称已做decontamination,但需独立验证</td></tr>
+<tr><td>OpenMathInstruct-2</td><td>基于GSM8K+MATH train split生成</td><td>✅NVIDIA明确使用train split,非test;但仍需验证</td></tr>
+<tr><td>deepmind/code_contests</td><td>含train/valid/test split</td><td>⚠️需确保只用train split,test split与评测隔离</td></tr>
+<tr><td>codeparrot/apps</td><td>APPS基准本身是评测集</td><td>🚫APPS全量是评测集——只能用train split,且需隔离</td></tr>
+<tr><td>openai/gsm8k</td><td>同时含train和test</td><td>⚠️只能用train(7.5K题),test(1.3K题)禁止入训练</td></tr>
+<tr><td>HuggingFaceH4/MATH-500</td><td>MATH测试集子集</td><td>🚫纯评测集,绝对不可入训练</td></tr>
+</table>
+<p><strong>结论</strong>:所有数学/代码数据集在入训练前都必须经过污染检查——用我们的phase5污染隔离闸门(NFKC归一化+8-gram指纹比对)扫描GSM8K test/MATH-500/HumanEval/MBPP test。尤其MegaMath和IFM Reasoning系列从CommonCrawl抓取,污染风险最高。</p>
+<h2>六、已有数据与新数据的重叠分析</h2>
+<table>
+<tr><th>新数据</th><th>我们已有</th><th>重叠情况</th><th>结论</th></tr>
+<tr><td>IFM/MegaMath</td><td>stack-v3-train(代码预训练)</td><td>MegaMath含megamath-code子集(1.85GB),与stack-v3少量代码重叠</td><td>✅不冲突,MegaMath以数学为主</td></tr>
+<tr><td>IFM/Math-Reasoning</td><td>无</td><td>全新数据,无重叠</td><td>✅直接可用</td></tr>
+<tr><td>IFM/Code-Reasoning</td><td>stack-v3-train(代码预训练)</td><td>Code-Reasoning是SFT格式(含推理链),stack-v3是原始代码——格式不同</td><td>⚠️需做n-gram去重</td></tr>
+<tr><td>Nemotron-CC-Math-v1</td><td>无</td><td>全新数据</td><td>✅直接可用</td></tr>
+<tr><td>OpenMathInstruct-2</td><td>无</td><td>全新数据</td><td>✅直接可用</td></tr>
+<tr><td>OpenCodeReasoning</td><td>无</td><td>全新数据</td><td>✅直接可用</td></tr>
+<tr><td>code_contests</td><td>无</td><td>全新数据</td><td>✅直接可用</td></tr>
+</table>
+<div class="footer">
+<p>本报告所有数据均通过HuggingFace API(<code>HfApi().dataset_info(repo_id,files_metadata=True)</code>)实测获取,非二手描述。生成脚本:<code>gen_math_code_survey_report.py</code></p>
+<p>数据采集时间:2026-11-15 10:19~10:25 CST · 代理:http://172.19.92.25:13128</p>
+</div>
+</body>
+</html>

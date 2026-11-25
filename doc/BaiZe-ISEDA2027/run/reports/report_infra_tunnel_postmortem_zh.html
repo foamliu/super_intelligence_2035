@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>隧道事故复盘报告 · infra tunnel postmortem · 2026-11-14</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--card2:#1c2330;--border:#30363d;--txt:#c9d1d9;--mut:#8b949e;--acc:#58a6ff;--ok:#3fb950;--bad:#f85149;--warn:#d29922;--okbg:rgba(63,185,80,.12);--badbg:rgba(248,81,73,.12);--warnbg:rgba(210,153,34,.12)}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65;font-size:15px}
+h1{font-size:1.5rem;margin:0 0 4px;color:#fff;letter-spacing:.5px}
+h2{font-size:1.18rem;margin:28px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);color:#fff}
+h3{font-size:1.02rem;margin:18px 0 6px;color:var(--acc)}
+.sub{color:var(--mut);font-size:.82rem;margin-bottom:18px}
+.verdict{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:14px 0 22px}
+.verdict .l{display:flex;gap:10px;align-items:flex-start;margin:8px 0}
+.verdict .tag{flex:0 0 96px;font-weight:700;font-size:.82rem;padding:2px 0}
+.verdict .txt{flex:1}
+.bad{color:var(--bad)}.ok{color:var(--ok)}.warn{color:var(--warn)}
+.badbg{background:var(--badbg)}.okbg{background:var(--okbg)}.warnbg{background:var(--warnbg)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:12px 0}
+.card2{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin:10px 0}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.86rem}
+th,td{border:1px solid var(--border);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#21262d;color:#fff;font-weight:600}
+tr:nth-child(even) td{background:#0d1117}
+code,kbd,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.82rem;background:#21262d;padding:1px 5px;border-radius:4px;color:#e6edf3}
+pre{background:#010409;border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.8rem;color:#e6edf3;line-height:1.5;margin:8px 0}
+pre .c{color:var(--mut)}
+.muted{color:var(--mut)}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.74rem;font-weight:600}
+.pill.bad{background:var(--badbg);color:var(--bad);border:1px solid rgba(248,81,73,.4)}
+.pill.ok{background:var(--okbg);color:var(--ok);border:1px solid rgba(63,185,80,.4)}
+.pill.warn{background:var(--warnbg);color:var(--warn);border:1px solid rgba(210,153,34,.4)}
+.pill.mut{background:#21262d;color:var(--mut);border:1px solid var(--border)}
+ul{margin:6px 0 6px 22px;padding:0}li{margin:3px 0}
+.footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--border);color:var(--mut);font-size:.78rem}
+.summary-row{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.chip{background:#21262d;border:1px solid var(--border);border-radius:8px;padding:8px 12px;flex:1;min-width:150px}
+.chip .k{font-size:.72rem;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+.chip .v{font-size:1.05rem;font-weight:700;color:#fff;margin-top:2px}
+</style>
+</head>
+<body>
+
+<h1>隧道事故复盘报告 · infra tunnel postmortem</h1>
+<div class="sub">生成时间：2026-11-14 23:5x CST · 取证侧：posttrain agent @ <code>10.252.32.17</code>（.17 / s0pgpuap12）· 中继：Windows <code>172.19.195.133</code>（<code>tunnel.ps1</code>）· 目标机：36.15（hfeg0tedaap02）</div>
+
+<!-- ============ 首屏三句话结论 ============ -->
+<div class="verdict">
+<div class="l"><span class="tag bad">坏没坏</span><span class="txt"><strong class="bad">坏过，现已恢复。</strong>20:41:50 隧道最后一次确认在用（36.15 run1 完整跑完 158 题 = 18.99%）；22:4x（wake505）发现隧道 DOWN（.17:3333 未监听 / 无 ssh -p3333 进程 / 直连 36.15:22 超时）；23:26 起（wake506）隧道已恢复并恢复作业（归因链 A1 起跑）。</span></div>
+<div class="l"><span class="tag warn">怎么坏</span><span class="txt"><strong class="warn">故障域 = 中继侧（Windows 172.19.195.133 的 tunnel.ps1 短时掉线）。</strong>排除 SSH 认证失败、36.15 sshd 拒连、.17 本侧端口/重启；.17 在窗口内未重启（uptime 123 天）、无 SSH/网络日志事件。中继恢复后 .17:3333 自行复听、隧道自愈，无需 .17 侧任何动作。中继机内部确切触发（机器休眠 / ps1 崩溃 / 网络抖动）<strong>无记录</strong>——无法从 .17 侧探测 Windows 桌面机。</span></div>
+<div class="l"><span class="tag ok">谁修</span><span class="txt"><strong class="ok">中继侧（运维 / 用户）已自行恢复，当前隧道健康。</strong>posttrain 在 20:41–23:30 期间未触碰中继与隧道；wake505 为纯 CPU 分析，wake506 的 kill 仅作用于 36.15 上的评测进程（恢复后）。即「非本线造成，也非本线修复」。三条验证命令已实测全 PASS（见 §6）。</span></div>
+</div>
+
+<div class="summary-row">
+<div class="chip"><div class="k">最后通点</div><div class="v">20:41:50</div></div>
+<div class="chip"><div class="k">首断点</div><div class="v">22:4x (wake505)</div></div>
+<div class="chip"><div class="k">恢复确认</div><div class="v">23:26 (wake506)</div></div>
+<div class="chip"><div class="k">故障域</div><div class="v">中继侧 ①+②</div></div>
+<div class="chip"><div class="k">是否本线造成</div><div class="v">否</div></div>
+</div>
+<!-- ============ §0 架构与已知事实 ============ -->
+<h2>§0 架构与已知事实</h2>
+<div class="card">
+<p><strong>dual-nix-tunnel 架构</strong>：Windows 桌面机 <code>172.19.195.133</code> 运行 <code>tunnel.ps1</code> 作为中继跳板，使 .17 的 <code>127.0.0.1:3333</code> 经中继转发到 36.15:22。.17 侧再以 <code>ssh -p 3333 ... localhost</code> 建立两条隧道：</p>
+<ul>
+<li><strong>正向（沙盒端口转发）</strong> PID 618469（起于 2026-11-12 16:05）：<code>ssh -p 3333 -N -L 8664..8668:10.129.32.75:... app.e0031982@localhost</code> —— 把 36.15 沙盒后端 8653/8664-8669 暴露到 .17 本地。</li>
+<li><strong>反向（模型服务转发）</strong> PID 1008898（起于 2026-11-13 03:14）：<code>ssh -p 3333 -fN -R 18096:localhost:8096 ...</code> —— 把 .17 GPU6:8096 的模型 serve 反向暴露到 36.15 的 <code>localhost:18096</code>。</li>
+<li><strong>反向（备用 serve）</strong> PID 1278889（起于 2026-11-13 11:39）：<code>ssh -p 3333 -fN -R 18098:localhost:8098 ...</code>。</li>
+</ul>
+<p class="muted">关键约束：<code>10.251.36.15:22</code> 对 .17 <strong>始终被防火墙拦截</strong>（仅 ICMP 互通）——中继隧道是 .17↔36.15 的<strong>唯一通路</strong>。中继一断，.17 对 36.15 的所有 SSH/转发即时失效。本报告 23:49 实测：<code>nc -vz -w8 10.251.36.15 22</code> → <span class="bad">timed out</span>；<code>ping 36.15</code> → <span class="ok">0% loss, rtt 0.28ms</span>（主机在线，仅端口被墙）。</p>
+</div>
+
+<!-- ============ §1 六问 ============ -->
+<h2>§1 六问逐一回答（每条带证据）</h2>
+
+<h3>① 最后一次确认「通」</h3>
+<div class="card">
+<p><span class="pill ok">时间点</span> <strong>2026-11-14 20:41:50 CST</strong></p>
+<p><strong>证据</strong>：36.15 上 <code>/tmp/posttrain_baseline_3615/run1/final_report.json</code> 的 mtime（经隧道 <code>ssh -p3333 ... 'stat'</code> 取得）：</p>
+<pre>/tmp/posttrain_baseline_3615/run1/final_report.json  2026-11-14 20:41:50.902112208 +0800
+-rw-r----- 1 app.e0031982 app.adm 73344 2026-11-14 20:41:50 ... final_report.json</pre>
+<p>该 run1 于 16:12:25 启动、20:41:50 完成，<strong>全程经隧道调用 36.15 的 RAG(:8090) + 沙盒 MCP(:18891) + 经反向隧道 18096 调 .17 模型</strong>，158 题跑完得 <strong>18.99%（30/158）</strong>。能完整产出 <code>final_report.json</code> 即证明 16:12–20:41 隧道全程可用。<span class="muted">（wake500 订正：此为完整 run1 权威口径；wake499 在 20:03 scp 的是未完成的部分副本。）</span></p>
+</div>
+
+<h3>② 第一次发现「不通」</h3>
+<div class="card">
+<p><span class="pill bad">时间点</span> <strong>2026-11-14 22:4x（wake505）</strong></p>
+<p><strong>原样记录</strong>（来自 wake505 MEMORY/EXPERIMENTS 原文，非改写）：</p>
+<pre class="badbg">36.15 隧道 DOWN —— dual-nix-tunnel 需 Windows 中继 172.19.195.133 运行 tunnel.ps1;
+.17 端口 3333 未监听 / 无 ssh -p3333 进程;
+直连 36.15:22 被防火墙阻 (仅 ICMP 互通);
+无法从 .17 单侧修复 (Windows 桌面机, .17 不可触达; ping/ssh 均无响应).</pre>
+<p>对应的报错形态：.17:3333 <strong>端口未监听</strong>（非 Connection refused，而是监听消失——中继的 remote-forward 会话结束）；直连 36.15:22 <strong>timeout（Operation now in progress）</strong>，非 Permission denied / 非 No route to host ⇒ 排除 SSH 认证层、排除路由层，落在「TCP 被防火墙静默丢弃」（36.15:22 对 .17 本就如此，属基线，但叠加中继缺失即完全断路）。</p>
+<p class="muted">wake505 估算「run1 21:15 完成时隧道尚通，~1.5h 前中继掉线」⇒ 中继约 <strong>21:0x–21:1x</strong> 掉线（相对 22:4x 倒推）。该时间为估算，标注为「估」。</p>
+</div>
+
+<h3>③ 中间发生了什么（时间线 20:00 → 23:30）</h3>
+<div class="card">
+<table>
+<tr><th>时刻</th><th>事件</th><th>证据来源</th></tr>
+<tr><td>16:12:25</td><td>36.15 run1 启动（隧道在用）</td><td>wake500 MEMORY「run1 实际 16:12 起」</td></tr>
+<tr><td><strong>20:41:50</strong></td><td><strong>run1 final_report.json 落盘 = 最后通点</strong></td><td>36.15 stat mtime（本报告实测）</td></tr>
+<tr><td>~21:0x–21:1x</td><td>中继 tunnel.ps1 掉线（估算）</td><td>wake505「~1.5h 前中继掉线」倒推（估）</td></tr>
+<tr><td><strong>22:4x</strong></td><td><strong>wake505 发现隧道 DOWN</strong>（.17:3333 未监听 / 无 ssh -p3333 进程 / 直连 36.15:22 超时）</td><td>wake505 MEMORY + EXPERIMENTS §R-Attribution-T6</td></tr>
+<tr><td>22:4x–23:2x</td><td>posttrain 仅做 CPU 工作（T6 归因表 / 计划填妥 / 报告生成）；未触碰中继与隧道；标 HARD BLOCKED</td><td>wake505 EXPERIMENTS §R-Attribution-T6</td></tr>
+<tr><td><strong>23:26:06</strong></td><td><strong>隧道已恢复</strong>——归因链脚本启动，wait-gate 实测反向隧道 18096 返回 <code>minicpm5-2b-sft-v39-final</code></td><td>36.15 <code>/tmp/posttrain_attribution_overnight_chain.log</code> 首行（本报告实测）</td></tr>
+<tr><td>23:30:06</td><td>wake506 确认隧道 UP，A1 40 题起跑</td><td>wake506 MEMORY + chain.log「&gt;&gt;&gt; [A1_40q] 23:30:06」</td></tr>
+<tr><td>23:46–23:50</td><td>本报告取证：ssh -p3333 → hfeg0tedaap02 ✅；18096 → 模型 ✅；A1 已跑 ~19min ✅</td><td>本报告实测（见 §6）</td></tr>
+</table>
+<p><strong>.17 侧系统事件排查</strong>：</p>
+<ul>
+<li><code>last reboot</code> → 最近一次启动 <strong>2026-07-14 19:05</strong>，<code>uptime</code> = <strong>123 天</strong> ⇒ 窗口内 <strong>未重启</strong>。</li>
+<li><code>journalctl -S 20:00 -U 23:45 | grep network|ssh|tunnel|3333|...</code> → <strong>无匹配</strong>（无记录）。</li>
+<li><code>dmesg -T</code> → 当前存在 <code>ice ens11f0 tx_timeout ... unrecoverable state</code>（一块<strong>次要 NIC</strong> 持续报错，23:49 仍在）；该 NIC 非隧道主路径（隧道走 localhost 中继转发，.17 对 36.15 经 bond0），且隧道在 ens11f0 仍报错期间<strong>已自愈</strong> ⇒ <strong>非本断网主因</strong>，仅作并发现象记录。</li>
+</ul>
+</div>
+
+<h3>④ 故障域判断（五选一，逐项给依据）</h3>
+<div class="card">
+<table>
+<tr><th style="width:30%">候选</th><th>判定</th><th>依据</th></tr>
+<tr><td><strong>① 中继 Windows 机 172.19.195.133 不在线</strong></td><td><span class="pill warn">可能（主因之一）</span></td><td>wake505「.17 不可触达，ping/ssh 均无响应」；中继机为 Windows 桌面机，可能休眠/掉网。无法从 .17 侧直接探测，<strong>内部确切状态无记录</strong>。</td></tr>
+<tr><td><strong>② 中继 tunnel.ps1 进程死</strong></td><td><span class="pill warn">可能（主因之一）</span></td><td>wake506 恢复描述为「Windows 中继 tunnel.ps1 重新在线」，即 ps1 进程曾不在线。①/② 二选一或叠加，从 .17 侧无法区分。</td></tr>
+<tr><td><strong>③ 中继→36.15 SSH 认证失败</strong></td><td><span class="pill ok">排除</span></td><td>恢复后无任何 known_hosts/key 报错，<code>ssh -p3333 ... 'hostname'</code> 干净落地 hfeg0tedaap02；若是认证失败应持续报 Permission denied，与「自愈」模式不符。</td></tr>
+<tr><td><strong>④ 36.15 sshd 拒连</strong></td><td><span class="pill ok">排除</span></td><td>36.15 主机在线（ping 0% loss）；中继一恢复，36.15:22 经隧道立即可达并正常 shell ⇒ sshd 未拒连/未重启。<code>10.251.36.15:22</code> 对 .17 直连超时是<strong>基线防火墙策略</strong>（一直如此），非本次故障。</td></tr>
+<tr><td><strong>⑤ .17 本侧端口被占/被清</strong></td><td><span class="pill ok">排除</span></td><td>.17 在窗口内未重启（uptime 123 天）；端口 3333 在中继恢复后<strong>自行复听</strong>，无 .17 侧人工重建隧道的动作记录 ⇒ 3333 监听随中继 remote-forward 会话起灭，非本侧被抢/被清。</td></tr>
+</table>
+<p><strong>结论</strong>：故障域 = <span class="pill warn">① + ②（中继侧）</span>。确切内部触发（机器休眠 / ps1 崩溃 / 网络抖动）<strong>无记录</strong>，因 .17 无法触达 Windows 桌面机做进程/事件取证。</p>
+<p class="warn"><strong>进程状态诚实说明</strong>：本报告 23:46 实测，.17 侧三条 ssh -p3333 客户端进程（PID 618469 / 1008898 / 1278889）<code>lstart</code> 分别显示 2026-11-12 / 11-13，<code>etime</code> 1.5–2.4 天，当前存活。这与 wake505「无 ssh -p3333 进程」记录存在张力，可能解释为：中继的 .17:3333 remote-forward 监听随中继掉线消失、随恢复复现，而 .17 侧客户端进程对短暂断连的容忍/重连行为从 .17 侧无法完全还原。<strong>功能性事实</strong>（22:4x 不可用、23:26 起可用）由 wake505/wake506/本报告三次独立实测一致确认，为可信结论；进程级微观不在 .17 可取证范围内，标注「无记录」。</p>
+</div>
+
+<h3>⑤ 是不是我们这边造成的</h3>
+<div class="card">
+<p><span class="pill ok">否</span> <strong>非本线造成，也非本线修复。</strong></p>
+<ul>
+<li><strong>20:41–23:30 期间 posttrain 未对中继或隧道做任何动作</strong>：wake505（22:4x）全程为纯 CPU 工作（T6 归因表 / 计划填妥 / HTML 报告生成），仅<strong>读取</strong>已落盘的 run1 数据，未碰网络/进程。</li>
+<li>wake506（23:30，<strong>恢复之后</strong>）的 <code>kill</code> 仅作用于 36.15 上的本线评测进程（baseline 5-run chainer PID 1229657 + run2 进程树），释放 GPU6:8096 serve 给归因链；<strong>未碰中继、未碰 .17 隧道进程、未碰别线</strong>（ZhuLong subagent A2 走云网关未动）。</li>
+<li>中继机 <code>172.19.195.133</code> 是<strong>运维 / 用户侧 Windows 桌面机</strong>，.17 无任何可达路径（wake505 实测 ping/ssh 无响应），物理上 .17 不可能造成其掉线。</li>
+<li>恢复发生在 wake506 介入<strong>之前</strong>（23:26 chain.log 已能经隧道取模型）⇒ 恢复由中继侧自行完成，与 posttrain 动作时序无因果。</li>
+</ul>
+</div>
+
+<h3>⑥ 修复路径 + 三条验证命令</h3>
+<div class="card">
+<p><strong>谁能修</strong>：需<strong>运维 / 用户</strong>在 Windows 中继机 <code>172.19.195.133</code> 上重跑 <code>tunnel.ps1</code>（确认该机未休眠、ps1 进程在、网络可达 36.15 与 .17）。<span class="ok"><strong>当前已完成</strong>——隧道 23:26 起已恢复，本报告 23:46 实测健康。</span></p>
+<p><strong>.17 侧无法单侧修复</strong>：.17 对中继机无可达路径，对 36.15:22 被防火墙阻，唯一通路就是中继隧道本身。</p>
+<p><strong>三条可复制的验证命令</strong>（均在 .17 上执行，本报告 23:46–23:50 实测全部 PASS）：</p>
+<pre><span class="c"># (1) .17 本侧中继转发端口在监听</span>
+ss -ltn | grep 3333
+<span class="ok"># 期望: LISTEN 0 128 127.0.0.1:3333 0.0.0.0:*</span>
+<span class="ok"># 实测: LISTEN 0 128 127.0.0.1:3333 0.0.0.0:*  ✅</span>
+
+<span class="c"># (2) 经隧道落到 36.15（hostname 应为 hfeg0tedaap02 = 10.251.36.15）</span>
+ssh -p 3333 -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o BatchMode=yes \
+    app.e0031982@localhost 'hostname; echo TUNNEL_SSH_OK; date'
+<span class="ok"># 期望: hfeg0tedaap02 / TUNNEL_SSH_OK / 当前时间</span>
+<span class="ok"># 实测: hfeg0tedaap02 / TUNNEL_SSH_OK / Sat Nov 14 11:47:08 PM CST 2026  ✅</span>
+
+<span class="c"># (3) 反向隧道 18096 把 .17 模型 serve 暴露到 36.15，模型可取</span>
+ssh -p 3333 -o ConnectTimeout=10 -o BatchMode=yes app.e0031982@localhost \
+    'curl -s --connect-timeout 8 http://127.0.0.1:18096/v1/models | head -c 120'
+<span class="ok"># 期望: {"object":"list","data":[{"id":"minicpm5-2b-sft-v39-final",...}]}</span>
+<span class="ok"># 实测: minicpm5-2b-sft-v39-final / root=...global_step_105  ✅</span></pre>
+<p class="muted">附加功能验证：归因链 A1（40 题）已于 23:30:06 在 36.15 起跑，23:46 时已跑 ~19min，<code>codegen.log</code> 实见 task005 生成 <code>is_polygon_convex</code> 真实代码，GPU6=98%——隧道恢复后实际作业已在流通。</p>
+</div>
+
+<!-- ============ §2 处置与衔接 ============ -->
+<h2>§2 处置与后续衔接</h2>
+<div class="card">
+<ul>
+<li><strong>本次未对基础设施做任何改动</strong>（无重启、无 kill 隧道进程、无改防火墙）——遵循 spec §3「只读诊断优先」。</li>
+<li><strong>当前隧道健康</strong>，立即接回 <code>POSTTRAIN_PLAN_NEXT.md</code> 的 A1/A3 与 P0 dev 前后对比（已由 wake506 起跑的 <code>bpt_attribution_overnight_chain.sh</code> 自治执行，ETA 全链 ~05:00，远早于 09:00 及格线）。</li>
+<li><strong>复发风险</strong>：中继为单点 Windows 桌面机，无冗余；建议运维侧为 <code>tunnel.ps1</code> 加进程守护（计划任务自动拉起）+ 防休眠，并将「中继不可达」纳入巡检。该建议<strong>不属本线可执行范围</strong>，仅记录于本报告供运维参考。</li>
+</ul>
+</div>
+
+<!-- ============ §3 证据索引 ============ -->
+<h2>§3 证据索引（可追溯）</h2>
+<div class="card2">
+<table>
+<tr><th>证据</th><th>位置 / 命令</th></tr>
+<tr><td>最后通点</td><td>36.15 <code>stat /tmp/posttrain_baseline_3615/run1/final_report.json</code> → 20:41:50；pass_rate 0.1899</td></tr>
+<tr><td>首断点</td><td><code>run/MEMORY_POSTTRAIN.md</code> wake505 行；<code>run/EXPERIMENTS_POSTTRAIN.md</code> §R-Attribution-T6</td></tr>
+<tr><td>恢复点</td><td>36.15 <code>/tmp/posttrain_attribution_overnight_chain.log</code> 首行 23:26:06 + <code>[A1_40q] 23:30:06</code>；<code>MEMORY_POSTTRAIN.md</code> wake506 行；<code>EXPERIMENTS_POSTTRAIN.md</code> §R-Attribution-overnight</td></tr>
+<tr><td>.17 未重启</td><td><code>last reboot</code>（2026-07-14）/ <code>uptime</code>（123 天）</td></tr>
+<tr><td>36.15 在线但 :22 被墙</td><td><code>nc -vz -w8 10.251.36.15 22</code> timeout；<code>ping 36.15</code> 0% loss</td></tr>
+<tr><td>当前隧道健康</td><td>本报告 §6 三命令 23:46–23:50 实测 PASS</td></tr>
+<tr><td>并发 NIC 异常（非主因）</td><td><code>dmesg -T | tail</code> → ice ens11f0 tx_timeout unrecoverable</td></tr>
+</table>
+</div>
+
+<div class="footer">
+posttrain infra tunnel postmortem · 2026-11-14 · 单文件自包含 · 0 外链 · 0 script · 取证仅读 · 未改动任何基础设施。<br>
+commit 前缀：<code>posttrain infra:</code>
+</div>
+
+</body>
+</html>
+
