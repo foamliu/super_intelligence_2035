@@ -608,6 +608,5 @@
   ],
   "merged_R2784_sympy-24066": "RESOLVED",
   "rerun_merged": "2026-11-23 21:33:02",
-  "incr_merged": "2026-11-25 09:11:09",
-  "merge_note": "2026-11-25 09:05: Added 27 recovered empty patches to failed for incremental_eval_merge re-eval. Original empty_patch=93, recovered=33, still_empty=62."
+  "incr_merged": "2026-11-25 09:11:09"
 }
