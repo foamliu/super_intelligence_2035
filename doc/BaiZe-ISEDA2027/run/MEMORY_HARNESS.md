@@ -106,14 +106,14 @@ WAITING: 1
 
 PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·doubao-pro 7way predict 进行中(2930/3500=83.7%)·dsh COMPLETE+垃圾patch过滤✅·MM已停(令D)
 已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way LIVE✅**·**dsh SDK修复✅**·**MM已KILL✅**(令D)·**CC predict重启✅**·**dsh predict COMPLETE✅**(499/500)·**dsh 29垃圾patch过滤✅**(model_patch="")
-当前动作:     doubao-pro 7way predict 6路active(cline414/codex385/opencode428/pi409/hermes419/cc375)+dsh COMPLETE(499/500)·2930/3500=83.7%·dsh垃圾patch过滤✅(29个>1MB venv diff→model_patch=""·299 non-empty/200 empty)·token~0.70B(43194 sidecar lines)·CC rerun PID2440121 ALIVE(rerun2.log·34 patch-produced+2 transient quota-blocked recovered)·guard PID931671 LIVE(468410s≈5.4d)·gw_proxy 3进程LIVE(9090/9091/9092)·所有6路newest file age<130s=全活跃
+当前动作:     doubao-pro 7way predict 6路active(cline420/codex391/opencode435/pi416/hermes427/cc386)+dsh COMPLETE(499/500)·2974/3500=85.0%·dsh垃圾patch过滤✅·**dsh eval LIVE**(PID3366607·guarded mem128g/cpu16·299 non-empty patches·4 workers)·CC rerun PID2440121 ALIVE(4102s·rerun2.log·patch-producing正常)·guard PID931671 LIVE(469459s≈5.4d)·gw_proxy 3进程LIVE(9090/9091/9092)·所有6路newest file age<130s=全活跃
 下一步:     ①等6路完成(ETA~05:00-06:00·codex 115rem 最慢) ②eval用incremental_eval_merge.py --route <h> --regen ③7way报告REGEN
 阻塞:         无（6路全活跃·dsh完成+垃圾过滤✅·资源OK）
 ERROR_COUNT:  0
  体积: TASK~31.7KB / MEMORY≈16.5KB
 
   SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
-  SWE-bench Verified doubao-pro predict: 2930/3500=83.7% (cline414/codex385/opencode428/pi409/hermes419/cc375/dsh499)
+  SWE-bench Verified doubao-pro predict: 2974/3500=85.0% (cline420/codex391/opencode435/pi416/hermes427/cc386/dsh499)
   SWE-bench Multimodal: **已停(令D 2026-11-25)**·MM数据保留不删
  真实 Pass% (TB-2.1, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
 
