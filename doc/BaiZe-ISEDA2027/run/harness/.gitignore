@@ -1,0 +1,36 @@
+kimi_pilot_results*.json.bak*
+
+# ── 硬约束③: 结果 JSON 不入库（2026-10-28 立，2026-11-07 补全）──────────────
+# 预测输出、评测结果、进度文件一律不入 git（它们是可复现的运行时产物）。
+swebench_verified_full/predictions_*/
+swebench_verified_full/reports/eval_*.json
+swebench_verified_full/reports/predict_*.json
+swebench_verified_full/reports/progress_*.json
+swebench_verified_full/logs/evaluation/
+# ── infra rerun 运行时产物（可复现，不入库）──────────────────────────────
+swebench_verified_full/rerun_infra_state.json
+swebench_verified_full/rerun_ids/
+swebench_verified_full/logs/rerun_predict_*.log
+swebench_verified_full/logs/rerun_eval_*.log
+**/baseline_rewards*.json
+*.nfs*
+
+# ── adaptive_concurrency 运行时状态（非配置，不应入库）─────────────────
+manifests/adaptive_concurrency_state.json
+manifests/adaptive_concurrency_events.jsonl
+manifests/adaptive_state_test.json
+
+# ── SWE-bench Multimodal 下载中间产物（可复现，不入库）──────────────────
+swebench_mm/*.parquet
+swebench_mm/pull_progress.log
+swebench_mm/pull_state.txt
+# ── SWE-bench Multimodal 2×3 评测运行时产物（可复现，不入库）────────────
+swebench_mm/images/
+swebench_mm/instances/
+swebench_mm/mm_test.json
+swebench_mm/mm_test_ids.txt
+swebench_mm/progress_2x3/
+swebench_mm/predictions_2x3/
+swebench_mm/logs_2x3/
+swebench_mm/reports_2x3/
+swebench_mm/logs/run_evaluation/

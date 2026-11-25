@@ -1,0 +1,139 @@
+# R1 SWE-bench-Lite eval results — django__django-10914
+# Single instance smoke (step 2 validation, R1 unshare sandbox, no Docker)
+# Model: deepseek-v4-flash (via internal gateway proxy @ 127.0.0.1:9090)
+# Date: 2026-10-04
+# Eval: r1_eval.py --sandbox unshare --rootfs /nas_train/app.e0031982/harness_work/rootfs/django__django-10914
+# Scoring: official swebench harness (FAIL_TO_PASS / PASS_TO_PASS) by import
+
+instance_id: django__django-10914
+dataset: SWE-bench/SWE-bench_Lite
+split: test
+base_commit: e7fd69d
+model: deepseek-v4-flash
+gateway: http://127.0.0.1:9090  # gw_proxy.py (OpenAI chat <-> Anthropic messages translation)
+eval_sandbox: unshare  # user+mount namespace, rootfs on /nas_train (no Docker)
+eval_date: 2026-10-04
+
+harnesses:
+  cline:
+    version: "3.0.61"
+    binary: /home/app.e0031982/.local/bin/cline
+    run_wall_seconds: 131.2
+    run_rc: 0
+    timed_out: false
+    patch_bytes: 2576
+    patch_path: /nas_train/app.e0031982/harness_work/workdirs/model_patch_django10914.diff
+    resolved: true
+    patch_successfully_applied: true
+    infra_failure: false
+    fail_to_pass_success: 1
+    fail_to_pass_failure: 0
+    pass_to_pass_success: 98
+    pass_to_pass_failure: 0
+    eval_run_id: R1_CLINE
+    eval_report: /nas_train/app.e0031982/harness_work/logs_eval/R1_CLINE/cline-deepseek-v4-flash/django__django-10914/report.json
+    run_command: |
+      python3 run/harness/run_harness.py --harness cline \
+        --instance django__django-10914 \
+        --workdir /nas_train/app.e0031982/harness_work/workdirs/django__django-10914 \
+        --out model_patch_django10914.diff
+
+  codex:
+    version: "codex-cli 0.94.0"
+    binary: codex
+    run_wall_seconds: 182.6
+    run_rc: 0
+    timed_out: false
+    patch_bytes: 2903
+    patch_path: /nas_train/app.e0031982/harness_work/workdirs/model_patch_codex_django10914.diff
+    resolved: true
+    patch_successfully_applied: true
+    infra_failure: false
+    fail_to_pass_success: 1
+    fail_to_pass_failure: 0
+    pass_to_pass_success: 98
+    pass_to_pass_failure: 0
+    eval_run_id: R1_CODEX
+    eval_report: /nas_train/app.e0031982/harness_work/logs_eval/R1_CODEX/codex-deepseek-v4-flash/django__django-10914/report.json
+    run_command: |
+      python3 run/harness/run_harness.py --harness codex \
+        --instance django__django-10914 \
+        --workdir /nas_train/app.e0031982/harness_work/workdirs/django__django-10914 \
+        --out model_patch_codex_django10914.diff
+
+  opencode:
+    version: "1.18.27"
+    binary: /home/app.e0031982/.local/bin/opencode
+    run_wall_seconds: 231.2
+    run_rc: 0
+    timed_out: false
+    patch_bytes: 4848
+    patch_path: /nas_train/app.e0031982/harness_work/workdirs/model_patch_opencode_django10914.diff
+    resolved: true
+    patch_successfully_applied: true
+    infra_failure: false
+    fail_to_pass_success: 1
+    fail_to_pass_failure: 0
+    pass_to_pass_success: 98
+    pass_to_pass_failure: 0
+    eval_run_id: R1_OPENCODE
+    eval_report: /nas_train/app.e0031982/harness_work/logs_eval/R1_OPENCODE/opencode-deepseek-v4-flash/django__django-10914/report.json
+    run_command: |
+      python3 run/harness/run_harness.py --harness opencode \
+        --instance django__django-10914 \
+        --workdir /nas_train/app.e0031982/harness_work/workdirs/django__django-10914 \
+        --out model_patch_opencode_django10914.diff
+
+  claude-code:
+    version: "1.0.0"
+    runtime: bun
+    binary: /nas_train/app.e0031982/harness_work/builds/claude-code/src/entrypoints/cli.tsx
+    run_wall_seconds: 685.8
+    run_rc: 0
+    timed_out: false
+    patch_bytes: 5640
+    patch_path: /nas_train/app.e0031982/harness_work/workdirs/model_patch_claude_code_django10914.diff
+    resolved: true
+    patch_successfully_applied: true
+    infra_failure: false
+    fail_to_pass_success: 1
+    fail_to_pass_failure: 0
+    pass_to_pass_success: 98
+    pass_to_pass_failure: 0
+    eval_run_id: R1_CLAUDE_CODE
+    eval_report: /nas_train/app.e0031982/harness_work/logs_eval/R1_CLAUDE_CODE/claude-code-deepseek-v4-flash/django__django-10914/report.json
+    notes: |
+      Required bun --preload + --define MACRO.* workaround (bunfig.toml [define]
+      not loaded when cwd is outside source dir). See MEMORY_HARNESS.md R41.
+    run_command: |
+      python3 run/harness/run_harness.py --harness claude-code \
+        --instance django__django-10914 \
+        --workdir /nas_train/app.e0031982/harness_work/workdirs/django__django-10914 \
+        --timeout 1500 \
+        --out model_patch_claude_code_django10914.diff
+
+  deepseek-harness:
+    status: blocked
+    blocker: "node22 + rust toolchain unavailable (all mirrors unreachable: 000/301/404)"
+    resolved: null
+    notes: |
+      Requires pnpm@11 + node>=22.13 (needs node:sqlite builtin) + rust for
+      landlock-run native runtime. All binary mirrors unreachable from .29.
+      Needs operator to install node22 + rust toolchain or provide internal mirror.
+
+summary:
+  total_harnesses: 5
+  available: 4
+  blocked: 1
+  resolved_count: 4
+  resolved_harnesses: [cline, codex, opencode, claude-code]
+  all_same_model: true
+  all_same_instance: true
+  all_same_sandbox: true
+  caveat: |
+    Single-instance smoke (django__django-10914 only). NOT a standard SWE-bench
+    score — cannot be compared to leaderboard. This is an internal cross-harness
+    comparison on one instance with identical model/sandbox/eval-script.
+  next_step: |
+    Scale to more instances (django + sympy, 20-30) once deepseek-harness is
+    unblocked or operator approves running 4/5. Then produce SWEBENCH_COMPARE.html.

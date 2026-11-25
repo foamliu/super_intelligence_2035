@@ -1,0 +1,9 @@
+sympy__sympy-11618
+sphinx-doc__sphinx-10323
+matplotlib__matplotlib-13989
+scikit-learn__scikit-learn-10297
+astropy__astropy-12907
+pydata__xarray-2905
+pytest-dev__pytest-10051
+pylint-dev__pylint-4970
+psf__requests-1142

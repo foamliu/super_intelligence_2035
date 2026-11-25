@@ -1,0 +1,159 @@
+{
+  "report": "deepseek-harness glm53 refined silent-exit attribution (§10:10 item 4 · 归因红线)",
+  "round": "R2234-manual",
+  "generated": "2026-11-12",
+  "source": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/progress_glm53_deepseek-harness.json",
+  "proxy_log": "/tmp/dsh_proxy_requests.log (37MB·last real request 12:31·gw_proxy_dsh)",
+  "driver_code": "run_harness.py:365-456 DeepseekHarnessDriver",
+  "retry_logic": "run_verified_full.py:193-203 Fix#3 (retry on rc=0,patch=0,wall<10)",
+  "totals": {
+    "instances": 500,
+    "real_patches": 166,
+    "no_patch": 334
+  },
+  "runner_classification": {
+    "patch-produced": 164,
+    "no-patch": 277,
+    "timeout": 51,
+    "quota-blocked": 6,
+    "blocked": 2
+  },
+  "refined_attribution": {
+    "patch_produced": {
+      "count": 166,
+      "pct": 33.2,
+      "label": "dsh solved+edited (works when it works)"
+    },
+    "fast_silent_exit": {
+      "count": 54,
+      "pct": 10.8,
+      "label": "rc=0,wall<10,no patch = TRUE silent exit (candidate dsh-binary/startup issue)",
+      "retried_still_nopatch": 54
+    },
+    "long_no_patch": {
+      "count": 226,
+      "pct": 45.2,
+      "label": "rc=0,wall>=10,no patch = ran minutes but no edit = CAPABILITY (NOT silent-exit·NOT binary-bug) per 归因红线"
+    },
+    "timeout": {
+      "count": 51,
+      "pct": 10.2,
+      "label": "rc=-1, ran to timeout = hard problem (capability) or 429-stall"
+    },
+    "quota_blocked": {
+      "count": 4,
+      "pct": 0.8,
+      "label": "429 quota = INFRA per 归因红线 (NOT capability·NOT binary-bug)"
+    },
+    "rc1_startup_error": {
+      "count": 1,
+      "pct": 0.2,
+      "label": "rc=1,wall~1.1s = §10:10 hard fault (dsh startup error, isolated to astropy-13453)"
+    }
+  },
+  "proxy_log_evidence": {
+    "messages_requests": 4604,
+    "http_429_responses": 208,
+    "pct_429": 4.5,
+    "note": "429 is a MINORITY factor (4.5% of requests); runner flagged only 6 instances quota-blocked"
+  },
+  "retried_still_nopatch": 63,
+  "vs_R2171": {
+    "R2171_claim": "325 silent-exit = dsh binary rc=0~3s 确定性bug · re-run won't help · 不重启",
+    "refinement": "Only 54 are truly fast (wall<10). 226 long-no-patch ran for minutes = capability, NOT ~3s silent-exit. R2171 conflated fast-SE + long-no-patch + timeout into 325. 归因红线: 429(6)+long-no-patch(226 capability) must NOT be labeled binary-bug.",
+    "re_run_wont_help": "HOLDS for fast-SE subset (63 retried still no-patch). But reason is mixed: fast-SE=dsh-binary candidate, long-no-patch=capability (like other harnesses fail on hard problems).",
+    "attribution_redline_flag": "Current MEMORY/report label \"dsh binary确定性bug\" for ALL no-patch is too coarse; 226 long-no-patch=capability + 6 quota=infra per 归因红线"
+  },
+  "samples": {
+    "fast_silent_exit": [
+      {
+        "instance_id": "django__django-15503",
+        "wall_s": 5.0,
+        "returncode": 0,
+        "retried": true,
+        "quota_blocked": false,
+        "stdout_tail": "35/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/deepseek-harness__django__django-15503.json\n[run_single] cleanup: git reset --hard 859a87d873ce7152af73ab851653b4e1c3ffea4c\n",
+        "stderr_tail": ""
+      },
+      {
+        "instance_id": "django__django-15554",
+        "wall_s": 4.8,
+        "returncode": 0,
+        "retried": true,
+        "quota_blocked": false,
+        "stdout_tail": "35/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/deepseek-harness__django__django-15554.json\n[run_single] cleanup: git reset --hard 59ab3fd0e9e606d7f0f7ca26609c06ee679ece97\n",
+        "stderr_tail": ""
+      },
+      {
+        "instance_id": "django__django-15563",
+        "wall_s": 4.8,
+        "returncode": 0,
+        "retried": true,
+        "quota_blocked": false,
+        "stdout_tail": "35/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/deepseek-harness__django__django-15563.json\n[run_single] cleanup: git reset --hard 9ffd4eae2ce7a7100c98f681e2b6ab818df384a4\n",
+        "stderr_tail": ""
+      }
+    ],
+    "long_no_patch": [
+      {
+        "instance_id": "astropy__astropy-13398",
+        "wall_s": 138.4,
+        "returncode": 0,
+        "retried": false,
+        "quota_blocked": false,
+        "stdout_tail": "/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/deepseek-harness__astropy__astropy-13398.json\n[run_single] cleanup: git reset --hard 6500928dc0e57be8f06d1162eacc3ba5e2eff692\n",
+        "stderr_tail": ""
+      },
+      {
+        "instance_id": "astropy__astropy-14369",
+        "wall_s": 107.3,
+        "returncode": 0,
+        "retried": false,
+        "quota_blocked": false,
+        "stdout_tail": "/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/deepseek-harness__astropy__astropy-14369.json\n[run_single] cleanup: git reset --hard fa4e8d1cd279acf9b24560813c8652494ccd5922\n",
+        "stderr_tail": ""
+      },
+      {
+        "instance_id": "astropy__astropy-14598",
+        "wall_s": 659.7,
+        "returncode": 0,
+        "retried": false,
+        "quota_blocked": false,
+        "stdout_tail": "/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/deepseek-harness__astropy__astropy-14598.json\n[run_single] cleanup: git reset --hard 80c3854a5f4f4a6ab86c03d9db7854767fcd83c1\n",
+        "stderr_tail": ""
+      }
+    ],
+    "rc1_startup_error": [
+      {
+        "instance_id": "astropy__astropy-13453",
+        "wall_s": 1.1,
+        "returncode": 1,
+        "retried": false,
+        "quota_blocked": false,
+        "stdout_tail": "/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/deepseek-harness__astropy__astropy-13453.json\n[run_single] cleanup: git reset --hard 19cc80471739bcb67b7e8099246b391c355023ee\n",
+        "stderr_tail": ""
+      }
+    ],
+    "quota_blocked": [
+      {
+        "instance_id": "django__django-13810",
+        "wall_s": 333.1,
+        "returncode": 0,
+        "retried": false,
+        "quota_blocked": true,
+        "stdout_tail": "35/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/deepseek-harness__django__django-13810.json\n[run_single] cleanup: git reset --hard 429d089d0a8fbd400e0c010708df4f0d16218970\n",
+        "stderr_tail": ""
+      },
+      {
+        "instance_id": "django__django-16263",
+        "wall_s": 645.9,
+        "returncode": 0,
+        "retried": false,
+        "quota_blocked": true,
+        "stdout_tail": "35/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/deepseek-harness__django__django-16263.json\n[run_single] cleanup: git reset --hard 321ecb40f4da842926e1bc07e11df4aabe53ca4b\n",
+        "stderr_tail": ""
+      }
+    ]
+  },
+  "recommendation": "(a) Label 54 fast-SE as dsh-binary candidate (isolated). (b) Label 226 long-no-patch as capability (ran,no edit) — NOT binary-bug. (c) Label 6 quota-blocked as infra/429 per 归因红线. (d) The 1 rc1 (astropy-13453) is the original §10:10 hard fault — dsh startup error, 1 instance. (e) re-run won't help confirmed for fast-SE (63 retried); long-no-patch is capability so re-run also won't help (dsh genuinely can't solve). Net: deepseek 33% real / ~45% capability / ~11% fast-SE / ~10% timeout / ~1.6% infra. Loop decision 不重启 is reasonable BUT attribution label should be refined to respect 归因红线."
+}

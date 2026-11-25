@@ -1,0 +1,52 @@
+{
+  "report": "cline C2 failure classification (10:10)",
+  "round": "R2233-manual",
+  "generated": "2026-11-12",
+  "source_eval": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_cline-patched.json",
+  "source_progress": "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/progress_glm53_cline-patched.json",
+  "totals": {
+    "attempted": 268,
+    "real_patches": 268,
+    "empty_patches": 0,
+    "evaluated": 274,
+    "resolved": 201,
+    "failed_real_patch": 66,
+    "infra_or_quota_eval": 1,
+    "total_failures": 66
+  },
+  "category_counts": {
+    "能力": 66
+  },
+  "category_pct": {
+    "能力": 100.0
+  },
+  "top3_samples": {
+    "能力": [
+      {
+        "instance_id": "django__django-10554",
+        "wall_s": 1801.2,
+        "returncode": 0,
+        "stdout_tail": "dules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\\n\\n'\n[run_single] model_patch: 2560 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__django__django-10554.json\n[run_single] cleanup: git reset --hard 14d026cccb144c6877294ba4cd4e03ebf0842498\n",
+        "stderr_tail": "",
+        "reason": "real patch produced, eval tests FAILED (capability)"
+      },
+      {
+        "instance_id": "sympy__sympy-11618",
+        "wall_s": 1800.9,
+        "returncode": 0,
+        "stdout_tail": "modules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\\n\\n'\n[run_single] model_patch: 2190 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__sympy__sympy-11618.json\n[run_single] cleanup: git reset --hard 360290c4c401e386db60723ddb0109ed499c9f6e\n",
+        "stderr_tail": "",
+        "reason": "real patch produced, eval tests FAILED (capability)"
+      },
+      {
+        "instance_id": "pydata__xarray-6461",
+        "wall_s": 1800.8,
+        "returncode": 0,
+        "stdout_tail": "odules/.bun/ai@7.0.49+68a1e3a0c4588df3/node_modules/ai/dist/index.js:9202:11)\\n\\n'\n[run_single] model_patch: 4038 bytes\n[run_single] wrote predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions_glm53/cline-patched__pydata__xarray-6461.json\n[run_single] cleanup: git reset --hard 851dadeb0338403e5021c3fbe80cbc9127ee672d\n",
+        "stderr_tail": "",
+        "reason": "real patch produced, eval tests FAILED (capability)"
+      }
+    ]
+  },
+  "redline_note": "429/5xx/timeout/adapter=infra(NOT capability). real-patch-tests-fail=capability. empty+额度=网关429 infra."
+}
