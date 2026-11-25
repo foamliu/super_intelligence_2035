@@ -104,16 +104,16 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·doubao-pro 7way predict 进行中(2930/3500=83.7%)·dsh COMPLETE+垃圾patch过滤✅·MM已停(令D)
-已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way LIVE✅**·**dsh SDK修复✅**·**MM已KILL✅**(令D)·**CC predict重启✅**·**dsh predict COMPLETE✅**(499/500)·**dsh 29垃圾patch过滤✅**(model_patch="")
-当前动作:     doubao-pro 7way predict 6路active(cline420/codex391/opencode435/pi416/hermes427/cc386)+dsh COMPLETE(499/500)·2974/3500=85.0%·dsh垃圾patch过滤✅·**dsh eval LIVE**(PID3366607·guarded mem128g/cpu16·299 non-empty patches·4 workers)·CC rerun PID2440121 ALIVE(4102s·rerun2.log·patch-producing正常)·guard PID931671 LIVE(469459s≈5.4d)·gw_proxy 3进程LIVE(9090/9091/9092)·所有6路newest file age<130s=全活跃
-下一步:     ①等6路完成(ETA~05:00-06:00·codex 115rem 最慢) ②eval用incremental_eval_merge.py --route <h> --regen ③7way报告REGEN
-阻塞:         无（6路全活跃·dsh完成+垃圾过滤✅·资源OK）
+PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·doubao-pro 7way predict 进行中(3041/3500=86.9%)·dsh COMPLETE+垃圾patch过滤✅·dsh eval LIVE·MM已停(令D)
+已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way LIVE✅**·**dsh SDK修复✅**·**MM已KILL✅**(令D)·**CC predict重启✅**·**dsh predict COMPLETE✅**(499/500)·**dsh 29垃圾patch过滤✅**(model_patch="")·**dsh eval LIVE✅**(PID3366607)
+当前动作:     doubao-pro 7way predict 6路active(cline431/codex401/opencode441/pi427/hermes439/cc403)+dsh COMPLETE(499/500)·3041/3500=86.9%·**dsh eval LIVE**(PID3366607·4 docker containers·299 non-empty patches·4 workers·guarded mem128g/cpu16)·CC rerun PID2440121 ALIVE(5266s·rerun2.log·patch-producing正常)·guard PID931671 LIVE(470729s≈5.4d)·gw_proxy 3进程LIVE(9090/9091/9092)·所有6路newest file age<300s=全活跃·清理4个旧cline-patched rerun docker容器(idle 0%CPU)
+下一步:     ①等6路完成(ETA~04:30-05:30·codex/CC 97-99rem 最慢) ②dsh eval完成后检查结果 ③eval用incremental_eval_merge.py --route <h> --regen ④7way报告REGEN
+阻塞:         无（6路全活跃·dsh eval LIVE·资源OK）
 ERROR_COUNT:  0
- 体积: TASK~31.7KB / MEMORY≈16.5KB
+ 体积: TASK~31.7KB / MEMORY≈17.0KB
 
   SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
-  SWE-bench Verified doubao-pro predict: 2974/3500=85.0% (cline420/codex391/opencode435/pi416/hermes427/cc386/dsh499)
+  SWE-bench Verified doubao-pro predict: 3041/3500=86.9% (cline431/codex401/opencode441/pi427/hermes439/cc403/dsh499)
   SWE-bench Multimodal: **已停(令D 2026-11-25)**·MM数据保留不删
  真实 Pass% (TB-2.1, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
 
@@ -138,6 +138,8 @@ ERROR_COUNT:  0
 > #H-009（2026-11-26 01:00, 监控巡检·**dsh predict COMPLETE✅**(499/500·299 legit+29 garbage+171 empty·无运行进程)·doubao-pro 7way predict 5路active+CC rerun·2854/3500=81.5%·cline404(93rem)/codex374(126rem·最慢)/opencode416(83rem)/pi398(100rem)/hermes408(91rem)·CC rerun PID2440121(355 files increasing·log=rerun2.log·patch-producing正常·~145 remaining of 162)·⚠️dsh 29个垃圾patch(>1MB=venv git diff·django×27+matplotlib×1+sphinx×1·最大21MB django-17087)需eval前过滤→set model_patch=""·token 0.69B(41845 calls·in=676.6M+out=12.9M)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(466854s≈5.4d)·资源OK(load24.45/224=10.9%·mem670G/2015G avail1114G·0 high-CPU)·pretrain step7.29-7.39s≤7.4s✅·所有5路active newest file age<120s=全活跃·MM已停(令D·数据保留)·下一步:①继续monitor 5路+CC rerun→完成(ETA~05:00 codex bottleneck) ②dsh垃圾patch过滤 ③eval incremental_eval_merge.py --route <h> ④7way报告REGEN)
 
 > #H-010（2026-11-26 01:30, 监控巡检+dsh垃圾patch过滤✅·**dsh 29/29垃圾patch过滤COMPLETE✅**(26 venv diff + 3 test-project/framework-delete → model_patch=""·verified all dsh files <1MB·299 non-empty/200 empty/499 total)·doubao-pro 7way predict 6路全活跃·2930/3500=83.7%·cline414(86rem)/codex385(115rem·最慢)/opencode428(72rem)/pi409(91rem)/hermes419(81rem)/cc375(125rem)+dsh499 COMPLETE·CC rerun PID2440121 ALIVE(3172s·rerun2.log·34 patch-produced+2 transient quota-blocked→recovered at 01:27:55)·pi有1 quota-blocked+1 no-patch→recovered at 01:28:44·hermes有1个612KB patch(sphinx-9602·含docs/_build/构建产物·29 diff·非venv垃圾·eval会处理不预过滤)·token~0.70B(43194 sidecar lines)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(468410s≈5.4d)·资源OK(load24.83/224=11%·mem671G/2015G avail1112G·0 high-CPU harness进程)·所有6路newest file age<130s=全活跃·MM已停(令D)·下一步:①继续monitor 6路→完成(ETA~05:00-06:00 codex bottleneck) ②eval incremental_eval_merge.py --route <h> --regen ③7way报告REGEN)
+
+> #H-011（2026-11-26 02:05, 监控巡检+旧容器清理·doubao-pro 7way predict 6路全活跃·3041/3500=86.9%·cline431(69rem)/codex401(99rem·bottleneck)/opencode441(59rem)/pi427(73rem)/hermes439(61rem)/cc403(97rem)+dsh499 COMPLETE·**dsh eval LIVE**(PID3366607·4 docker containers active·299 non-empty patches·4 workers·guarded mem128g/cpu16·~22min elapsed·eval log=full_eval_doubao_pro_deepseek-harness.log)·CC rerun PID2440121 ALIVE(5266s·rerun2.log·patch-producing正常·last entry 02:02:35)·所有6路newest file age<300s=全活跃·quota transient: codex 5/pi 5(全recovered·doubao网关偶发·proxy自动重试)·**清理4个旧cline-patched rerun docker容器**(rerun_incr_cline-patched_11241548·idle 0%CPU·34h stuck·orphaned from superseded 11-24 glm53 rerun)·token~0.73B(44845 sidecar lines)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(470729s≈5.4d)·资源OK(load30.63/224=13.7%·mem674G/2015G avail1108G·0 high-CPU harness进程·max docker=100% single-core)·pretrain step~7.0-7.5s≤7.4s✅(from MEMORY_PRETRAIN last 7.39s)·MM已停(令D)·下一步:①继续monitor 6路→完成(ETA~04:30-05:30 codex/CC bottleneck) ②dsh eval完成后检查eval JSON结果 ③eval incremental_eval_merge.py --route <h> --regen ④7way报告REGEN)
 
 
 ## 启动说明（首次唤醒）
