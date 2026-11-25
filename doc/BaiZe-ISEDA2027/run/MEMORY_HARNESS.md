@@ -92,16 +92,17 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·doubao-pro 7way predict 进行中(618/3500=17.7%)
+PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·doubao-pro 7way predict 进行中(817/3500=23.3%)
 已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·灾难恢复✅·**doubao-pro 7way LIVE✅**(7路全RUN PID 820186~831792+dsh 570709)·**deepseek-harness SDK修复✅**(_SDK_PATH持久化=/nas_train/app.e0031982/harness_work/dsh_sdk·run_harness.py:377)·**cline-patched incr eval✅**(335/500=67.0%·glm53口径)·**MM config重建✅**
-当前动作:     doubao-pro 7way predict 运行中(7路×500·workers=1·707/3500=20.2%·cc129/cline99/opencode104/pi92/codex93/hermes93/dsh97·patch_rate=652/707=92.2%·⚠️dsh有9个>1MB垃圾patch+38空patch·dsh patch_rate=50/97=51.5%)·token ~1.01B(63610 calls)·SDK路径持久化✅·**MM 2×3全量重跑LIVE✅**(6/6路RUN·fixed opencode KeyError r['llm']→r['model']·agent-arena commit a1fc485·⚠️deepseek-v4-flash not multimodal=2路空patch)
-下一步:     ①doubao-pro 7way predict完成(ETA~midnight)→eval+报告 ②MM 2×3 predict完成(ETA~数小时)→eval ③⚠️dsh垃圾patch需eval前过滤或标注 ④⚠️deepseek-v4-flash非多模态·需告知用户(2×3实际=2×2+2空)
-阻塞:         deepseek-v4-flash不支持多模态(cline+opencode×deepseek-v4-flash 2路将产空patch·非bug是模型限制)
+当前动作:     doubao-pro 7way predict 运行中(817/3500=23.3%·cc151/cline112/opencode120/pi105/codex103/hermes106/dsh120)·token 1.22B(76457 calls·in=1199.8M+out=24.3M·from prediction JSON usage field)·SDK路径持久化✅·**MM 2×3 LIVE✅**(169/2880=5.9%·cline__dsv4-flash132/cline__doubao14/cline__kimi-k2.6-2/opencode__dsv4-flash2/opencode__doubao17/opencode__kimi-k2.6-2·⚠️kimi-k2.6 routes very slow~14min/task)
+下一步:     ①doubao-pro 7way predict完成(ETA~02:00 Nov26)→eval+报告 ②MM 2×3 predict(⚠️kimi-k2.6 routes ETA~days·需告知用户) ③⚠️dsh垃圾patch需eval前过滤或标注 ④⚠️deepseek-v4-flash非多模态·需告知用户(2×3实际=2×2+2空)
+阻塞:         deepseek-v4-flash不支持多模态(cline+opencode×deepseek-v4-flash 2路将产空patch·非bug是模型限制)·MM kimi-k2.6 routes very slow(~14min/task·480题ETA~days)
 ERROR_COUNT:  0
- 体积: TASK~31.7KB / MEMORY≈9.0KB
+ 体积: TASK~31.7KB / MEMORY≈14.1KB
 
   SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
-  SWE-bench Multimodal 2×3 predict: **全量重跑LIVE✅**(6/6路RUN·fixed opencode KeyError·agent-arena a1fc485·⚠️deepseek-v4-flash非多模态=2路空patch)
+  SWE-bench Verified doubao-pro predict: 817/3500=23.3% (cc151/cline112/opencode120/pi105/codex103/hermes106/dsh120)
+  SWE-bench Multimodal 2×3 predict: **全量重跑LIVE✅**(169/2880=5.9%·⚠️deepseek-v4-flash非多模态=2路空patch·⚠️kimi-k2.6 routes very slow)
  真实 Pass% (TB-2.1, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
 
 ## 流水
@@ -117,6 +118,8 @@ ERROR_COUNT:  0
 > #H-005（2026-11-25 12:34, 监控巡检·doubao-pro 7way predict 7/7路全RUN健康·618/3500=17.7%·cc111/cline89/opencode94/pi82/codex81/hermes82/dsh79·non-empty patches=580/618=93.9%(excl dsh: 529/539=98.1%)·⚠️dsh有6个10.5MB垃圾patch(=git diff整个venv目录·django-11211/11555/11149/11815/11734/11999)·dsh patch_rate=51/79=64.6%远低于其他路96-100%·dsh 28 empty patches(35.4%)·0 errors·16 quota transient全恢复(codex5/opencode1/pi3/cc2/hermes4/dsh1)·429在gw_proxy日志(9090=56/9091=0/9092=26)有retry处理·token 134.5M(8518 calls·in=131.8M+out=2.7M)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(422112s≈4.9d)·SDK持久化✅·资源OK(load28/224·mem672G/2015G·0 high-CPU harness进程)·所有7路newest file age<170s=全活跃·pretrain step7.39s≤7.4s✅·下一步:继续monitor→7way predict完成(ETA~midnight)→eval+报告→MM全量重跑·⚠️eval前需处理dsh垃圾patch(过滤或标注)
 
 > #H-006（2026-11-25 13:04, 监控巡检+MM修复·doubao-pro 7way predict 7/7路全RUN健康·707/3500=20.2%·cc129/cline99/opencode104/pi92/codex93/hermes93/dsh97·patch_rate=652/707=92.2%(excl dsh: 602/649=92.8%)·⚠️dsh 9个>1MB垃圾patch(git diff venv)+38空patch·dsh patch_rate=50/97=51.5%·token ~1.01B(63610 calls)·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE(423386s≈4.9d)·SDK持久化✅·**MM 2×3全量重跑启动✅**(6/6路RUN·clear stale progress→launch_mm_2x3_full.sh·**fixed opencode KeyError**: run_mm_2x3.py lines 150/154/411 r['llm']→r['model'](config用model不用lll)·agent-arena commit a1fc485 pushed✅·synced to super_intelligence_2035)·⚠️**deepseek-v4-flash不支持多模态**(cline+opencode 2路每题rc=1 "not a multimodal model"·产空patch·非bug是模型限制·2×3实际有效=2×2+2空)·cline__doubao 3/480 has_patch✅·cline__kimi 1/480 running·opencode 3路刚启动·资源OK(load30/224·mem675/2015G·0 high-CPU harness进程·max=cline_mm_doubao 240%=2.4核)·pretrain step7.39s≤7.4s✅·所有7路SWE-bench newest file age<160s=全活跃·下一步:继续monitor 7way+MM→7way完成→eval+报告→MM完成→eval→dsh垃圾patch过滤
+
+> #H-007（2026-11-25 13:28, 监控巡检·doubao-pro 7way predict 7/7路全RUN健康·817/3500=23.3%·cc151/cline112/opencode120/pi105/codex103/hermes106/dsh120·所有7路newest file age<110s=全活跃·token 1.22B(76457 calls·in=1199.8M+out=24.3M·from prediction JSON usage field)·gw_proxy 3进程LIVE(9090/9091/9092)·429 counts: 9090=58/9091=1/9092=26(proxy handles with retries·0.75% rate)·⚠️ConnectionResetError on 9090/9091 tails(predictions still progressing)·guard PID931671 LIVE(425296s≈4.9d)·SDK持久化✅·⚠️dsh 14个>1MB垃圾patch(11MB each·all django·git diff venv目录·11149/11211/11555/11734/11815/11999/12406/12663/13012/13158/13297/13315/13344/13406)需eval前过滤·MM 2×3 LIVE(169/2880=5.9%·cline__dsv4-flash132/cline__doubao14/cline__kimi-k2.6-2/opencode__dsv4-flash2/opencode__doubao17/opencode__kimi-k2.6-2·⚠️kimi-k2.6 routes very slow~14-19min/task·480题ETA~days)·pretrain iter319060 step7.32s(recent5)≤7.4s✅ Δ+0.15s NOT elevated✅·资源OK(load31.65/224·mem676G/2015G·0 high-CPU harness进程)·research日报2026-11-25已查(无直接可执行建议for current predict)·下一步:继续monitor 7way+MM→7way完成(ETA~02:00 Nov26)→eval+报告→MM完成→eval→dsh垃圾patch过滤
 
 ## 启动说明（首次唤醒）
 
