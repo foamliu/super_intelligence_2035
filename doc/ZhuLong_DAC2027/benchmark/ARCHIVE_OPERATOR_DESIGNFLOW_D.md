@@ -2084,3 +2084,11 @@ r1337 = 监控轮 cycle-4 pos9-12: 4 green spot-check 无回归 + 跨 shard P0 3
 ## 归档批次 r1339（r1338 心跳原文）
 
 r1338 = 监控轮 cycle-4 pos13-16: 4 green spot-check(ClampLeakPwrAnalyze-001/ClosureDeckBuilder-001/CmlMp5SweepCurrentAnalysisQA-001/ConnFileNetChk-001) 无回归; L1 audit 4 条全 OK + L2 ref-PASS 真跑全 PASS + L3 negs FAIL distinct + L4 静态 0 unmocked GUI/spice binary + L5 carry-over. 跨 shard P0 re-verify: B HEAD r1200(e06bfd894 DelayChainEdgeMeas-001 portability) 仍未触碰 3 P0(OpampChar/SpiceSim-001/InvTripDelay). 原文见 daily_D_2026-11-25_r1338.md.
+
+## 归档批次 r1340（r1339 心跳原文）
+
+r1339 = 监控轮 cycle-4 pos17-20: 4 green spot-check(CpmNetlistToSymbol-001/CTLEAcMetric-001/DDR5CmdSeqFind-001/DecoderNetlistGen-001) 无回归; L1 audit 4 条全 OK + L2 ref-PASS 真跑全 PASS + L3 negs FAIL distinct + L4 静态 0 unmocked GUI/spice binary + L5 carry-over. 跨 shard P0 re-verify: B HEAD 0f198fc90(r1202 PostsimToggleDiag+Coord3DProj) 未触碰 3 P0(OpampChar/SpiceSim-001/InvTripDelay). 原文见 daily_D_2026-11-25_r1339.md.
+
+## 归档批次 r1340 补录（r1233-r1234 心跳原文合并）
+
+r1233-r1234 心跳原文已并入上方「归档批次 r1234-r1255」范围，原文见 daily_D_2026-11-24_r12{33,34}.md（r1340 释体积合并）。
