@@ -1,0 +1,38 @@
+{
+  "coyo": {
+    "files": 1940,
+    "bytes": 6384334664251
+  },
+  "datacomp1b": {
+    "files": 575,
+    "bytes": 1893495923849
+  },
+  "imagenet": {
+    "files": 82,
+    "bytes": 233947207103
+  },
+  "laioncn": {
+    "files": 562,
+    "bytes": 1742192101834
+  },
+  "mint": {
+    "files": 705,
+    "bytes": 2200901272316
+  },
+  "obelics": {
+    "files": 5803,
+    "bytes": 24349017778319
+  },
+  "sa1b": {
+    "files": 1147,
+    "bytes": 5094154966969
+  },
+  "zero250m": {
+    "files": 1310,
+    "bytes": 4764938869291
+  },
+  "_total": {
+    "files": 12124,
+    "bytes": 46662982783932
+  }
+}
