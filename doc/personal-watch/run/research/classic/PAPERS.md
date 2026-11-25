@@ -9,6 +9,8 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
+**本轮快照**：累计 **404** 条（**第一百一十二轮 2026-11-25 09:0x 补 3 条 → 404**：FLAN-T5 `2210.11416`（**5,968**，2022 预印本；任务数规模化 + 模型规模 + CoT 微调三轴，1.8K 任务，Flan-PaLM 540B 平均比 PaLM 540B **+9.4%**、5-shot MMLU **75.2%**，开源 Flan-T5）/ Textbooks II phi-1.5 `2309.05463`（**878**，2023 技术报告；LLM 合成「教科书质量」数据，1.3B 模型自然语言可比 **5×** 大模型，小学算术/基础编程超多数非前沿 LLM，兼有大模型式好/坏特质）/ BIG-bench `2206.04615`（**2,190**，2022 预印本；**204** 任务 / **450** 作者 / **132** 机构，性能与校准随规模改善但绝对仍差、低于人类基线）；核验：abs 页 **3/3 `200`**（47,877 / 42,368 / 121,674 B，`citation_title` + `citation_date` 逐字）+ ar5iv **3/3 `200`**（1,361,779 / 235,713 / 1,479,357 B）+ OpenAlex **3/3 `200`**（5,968 / 878 / 2,190，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；另 **纠错弃用** `2308.03296`（实测为 *Studying LLM Generalization with Influence Functions*，非 phi/Textbooks）⇒ 未收录；本轮归属：pretrain **+2** · posttrain **+2** · data **+2** · harness **+3** · zhulong **+2** · designflow **+1** · vision **+0**（一篇可多线））
+
 **本轮快照**：累计 **401** 条（**第一百一十一轮 2026-11-25 06:0x 补 3 条 → 401**：Imagen `2205.11487`（**4,540**，2022 预印本；文本扩散级联 + 冻结 T5-XXL 文本编码器，摘要报告 COCO 零样本 **FID 7.27**，并发现「增大语言模型比增大图像扩散模型」更能提升保真度与图文对齐）/ Llemma `2310.10631`（**509**，ICLR 2024；在 Code Llama 上以 Proof-Pile-2（科学论文 + 含数学的网页 + 数学代码）继续预训练，7B/34B 全量开源，MATH 上超过已知开源 base 模型并等参超 Minerva，未再微调即可工具调用与形式化定理证明）/ MMLU-Pro `2406.01574`（**3,057**，NeurIPS 2024 D&B Spotlight；选项 4→10、增推理题、剔除 trivial/noisy，相对 MMLU 准确率降 **16%–33%**）；核验：abs 页 **3/3 `200`**（43,825 / 40,457 / 45,161 B，`citation_title` + `citation_date` 逐字）+ OpenAlex **3/3 `200`**（4,540 / 509 / 3,057，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；另 **纠错并弃用**两个记忆中的 ID：`2309.15698` 实测为 *Deep Model Fusion: A Survey*、`2108.00644` 实测为 *Jointly Optimizing Query Encoder and Product Quantization* ⇒ 均非目标论文，未收录；本轮归属：vision **+1** · pretrain **+1** · data **+2** · posttrain **+1** · harness **+2** · zhulong **+1** · designflow **+1**（一篇可多线））
 
 **本轮快照**：累计 **398** 条（**第一百一十轮 2026-11-25 03:0x 补 3 条 → 398**：VAE `1312.6114`（**45,270**，2013 v1 / ICLR 2014 会议版；重参数化 ELBO + 识别模型做 amortized 推断，连续隐变量有向概率模型可在大数据上训练；摘要无实验分数 ⇒ 不写未核数字）/ PAL `2211.10435`（**859**，ICML 2023；LLM 只生成程序作中间推理、求解交给 Python 解释器；13 个数学/符号/算法任务，GSM8K 上 Codex + PAL 比 PaLM-540B CoT 绝对 +15% top-1）/ TinyLlama `2401.02385`（**1,248**，2024 技术报告；1.1B 模型 / 约 **1T** token / 约 **3 epoch**，沿用 Llama 2 架构与 tokenizer）；核验：abs 页 **3/3 `200`**（41,755 / 44,028 / 39,154 B，`citation_title` + `citation_date` 逐字）+ OpenAlex **3/3 `200`**（45,270 / 859 / 1,248，查询日 2026-11-25）；三 ID 条目级查重 **0 命中**；本轮归属：pretrain **+2** · posttrain **+2** · vision **+1** · data **+2** · harness **+1** · designflow **+1** · zhulong **+1**（一篇可多线））
@@ -7068,3 +7070,48 @@
 | 与我们工作的关系 | **harness（主 · 评测基准设计）**：我们自己的 EDA 判分也面临「题太易、区分度饱和」——可借其「扩选项 + 去噪声 + 只留推理题」三板斧，并把「相对旧基准降多少」作为难度校准指标。<br>**zhulong（主 · 评测口径）**：报告模型分数时必须写清选项数、题量、是否 few-shot；🚫 不可与 4 选项 MMLU 混表。<br>**posttrain**：可作「后训练是否真提升推理」的更难区分度基准之一（仍须同 harness 复测）。<br>**designflow**：造题时可参考「干扰项要真的像、且数量足够」以防猜对，但 🚫 不得为降分而降级题型。<br>**pretrain / vision / data**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-25**（第一百一十一轮 · 06:00 时窗） |
 | 核验状态 | abs 页 **`200` / 45,161 B**，`citation_title` + `citation_date` 逐字；OpenAlex **`200`**（3,057 / 2024 / `conference-paper`，查询日 2026-11-25）；ar5iv **`200` / 486,105 B**（未检出明文邮箱 ⇒ 本轮不对该文作者发信）。⚠️ 16%–33% 取自摘要（逐字核），**未做 PDF 表格复核**。条目级查重：`2406.01574` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 402. Scaling Instruction-Finetuned Language Models（FLAN / Flan-T5）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Scaling Instruction-Finetuned Language Models |
+| 作者（前 3） | Hyung Won Chung · Le Hou · Shayne Longpre（共 **35** 位；arXiv `citation_author` 逐字核） |
+| 年份 | **2022**（v1 `2022-10-20`；abs 页 `citation_date` = `2022/10/20`） |
+| 会议 / 期刊 | **arXiv 预印本**（OpenAlex `type=preprint`、`primary_location.source` = arXiv；后续会议/期刊版未在本次核验中出现 ⇒ 不臆断） |
+| 被引数 | **5,968**（OpenAlex `10.48550/arXiv.2210.11416`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2210.11416> ｜ `10.48550/arXiv.2210.11416` |
+| 一句话贡献 | 系统研究指令微调的三轴——**任务数规模化**、**模型规模**、**CoT 数据微调**：在 1.8K 带指令任务上微调，Flan-PaLM 540B 平均比 PaLM 540B **+9.4%**，5-shot MMLU 达 **75.2%**；开源 Flan-T5 ckpt 的 few-shot 表现可胜过更大的 PaLM 62B。 |
+| 与我们工作的关系 | **posttrain（主 · SFT / 指令微调配方）**：我们 2B 模型的后训练 SFT 正需要「任务数 vs 模型规模 vs CoT 数据」三轴的对照——本文给出「任务数规模化收益显著、CoT 数据对推理任务关键」的公开证据，可直接转成消融设计。<br>**harness（主 · 评测口径）**：MMLU / BBH / TyDiQA / MGSM 多基准同时报，且区分 zero-shot / few-shot / CoT；我们复测须逐项标注提示设置。<br>**pretrain**：Flan-T5 作为强 few-shot 基线，可作我们 base 的对照（须同 tokenizer / 同评测）。<br>**data**：1.8K 任务集合可参考其任务来源与去重，但 🚫 不得直接混入评测任务。<br>**zhulong**：多基准 + 多提示设置的报告口径可借。<br>**vision / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十二轮 · 09:00 时窗） |
+| 核验状态 | abs 页 **`200` / 47,877 B**，`citation_title` + `citation_date` 逐字；ar5iv **`200` / 1,361,779 B**（摘要逐字核）；OpenAlex **`200`**（5,968 / 2022 / `preprint`，查询日 2026-11-25）。⚠️ +9.4% / 75.2% 取自摘要（逐字核），**未做 PDF 表格复核**。条目级查重：`2210.11416` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 403. Textbooks Are All You Need II: phi-1.5 technical report
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Textbooks Are All You Need II: phi-1.5 technical report |
+| 作者（前 3） | Yuanzhi Li · Sébastien Bubeck · Ronen Eldan（共 **6** 位；另 Allie Del Giorno · Suriya Gunasekar · Yin Tat Lee；arXiv `citation_author` 逐字核） |
+| 年份 | **2023**（v1 `2023-09-11`；abs 页 `citation_date` = `2023/09/11`） |
+| 会议 / 期刊 | **arXiv 技术报告**（OpenAlex `type=preprint`、arXiv；无会议） |
+| 被引数 | **878**（OpenAlex `10.48550/arXiv.2309.05463`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2309.05463> ｜ `10.48550/arXiv.2309.05463` |
+| 一句话贡献 | 沿「Textbooks Are All You Need」路线做自然语言常识推理：用 LLM 生成「教科书质量」数据，训出 **1.3B** 的 phi-1.5，在自然语言任务上可比 **5×** 大的模型，并在小学算术 / 基础编程等复杂推理上超过多数非前沿 LLM；同时表现出与大模型类似的好（逐步思考、少量 in-context 学习）与坏（幻觉、有毒/有偏生成）特质。 |
+| 与我们工作的关系 | **data（主 · 合成教科书数据）**：「用 LLM 合成的高质量数据替代/补充网络数据」是我们 2B 训练语料的关键假设之一；本文给出 1.3B 规模上的正证据，但须与我们自己的去污、去重口径合并。<br>**pretrain（主 · 小模型配方）**：与 MiniCPM5-2B 同量级，可作「数据质量 vs 参数量」trade-off 的公开对照；复测须报 unique tokens 与 synthetic 占比。<br>**posttrain**：其 phi 系列是「先配方后 RL」的干净起点基线之一。<br>**harness**：须把常识 / 算术 / 编程分开报，且注意幻觉与毒性单列。<br>**vision / zhulong / designflow**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十二轮 · 09:00 时窗） |
+| 核验状态 | abs 页 **`200` / 42,368 B**，`citation_title` + `citation_date` 逐字；摘要逐字核（abs 页 `<blockquote class="abstract">`）；OpenAlex **`200`**（878 / 2023 / `preprint`，查询日 2026-11-25）。⚠️「5×」「1.3B」取自摘要（逐字核），**未做 PDF 表格复核**；摘要未给 token 总量 ⇒ 不写未核数字。条目级查重：`2309.05463` 在 `PAPERS.md` 中 **0 命中**，非重复（`2308.03296` 实测为无关论文 *Influence Functions*，已弃）。 |
+
+## 404. Beyond the Imitation Game: Quantifying and extrapolating the capabilities of language models（BIG-bench）
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Beyond the Imitation Game: Quantifying and extrapolating the capabilities of language models |
+| 作者（前 3） | Aarohi Srivastava · Abhinav Rastogi · Abhishek Rao（共 **451** 位；论文自述 450 作者 / 132 机构；arXiv `citation_author` 逐字核 451 条） |
+| 年份 | **2022**（v1 `2022-06-09`；abs 页 `citation_date` = `2022/06/09`） |
+| 会议 / 期刊 | **arXiv 预印本**（OpenAlex `type=preprint`；后续正式版未在本次核验中出现 ⇒ 不臆断） |
+| 被引数 | **2,190**（OpenAlex `10.48550/arXiv.2206.04615`，查询日 **2026-11-25**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/2206.04615> ｜ `10.48550/arXiv.2206.04615` |
+| 一句话贡献 | 提出 **BIG-bench**：**204** 个任务、**450** 位作者来自 **132** 个机构，专挑「被认为超出当前模型能力」的题（语言学、儿童发展、数学、常识、生物、物理、社会偏见、软件等），系统评测 GPT / 稠密 Transformer / Switch 稀疏 Transformer（百万到千亿参数）并设人类专家基线；核心发现：性能与校准都随规模改善，但**绝对水平仍差**（且低于人类评分者）。 |
+| 与我们工作的关系 | **harness（主 · 基准设计）**：204 任务的「分层 + 专挑超能力题 + 人类基线 + 校准」四件套，正好对应我们 EDA 判分「题太易 / 只有准确率没有校准」的问题——可借其校准指标与人类基线做法。<br>**zhulong（主 · 评测口径）**：跨规模、跨架构（dense vs MoE）同表对比，须写清模型规模、是否稀疏、是否 few-shot；🚫 不可把不同架构的绝对分数直接横比。<br>**designflow**：任务多样性组织（按领域/难度分层）可参考，但 🚫 不得为降分而降级题型。<br>**pretrain / posttrain**：校准随规模改善但绝对仍差 ⇒ 评测应同时报 calibration，而非只看 acc。<br>**vision / data**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-25**（第一百一十二轮 · 09:00 时窗） |
+| 核验状态 | abs 页 **`200` / 121,674 B**，`citation_title` + `citation_date` 逐字；ar5iv **`200` / 1,479,357 B**（摘要逐字核）；OpenAlex **`200`**（2,190 / 2023 / `preprint`，查询日 2026-11-25；`primary_location.source` 记为 Macquarie University，属大型协作的元数据异常，如实记录、不作会议结论）。⚠️ 204 / 450 / 132 取自摘要（逐字核；`citation_author` 实际 451 条，如实分列），**未做 PDF 逐页复核**。条目级查重：`2206.04615` 在 `PAPERS.md` 中 **0 命中**，非重复。 |

@@ -1,0 +1,12 @@
+Dear Dr. Gunasekar,
+
+I am Yang Liu, a researcher working on LLM agents; my page is https://foamliu.github.io/. phi-1.5 is the reference I reach for whenever we argue about whether data quality can substitute for parameters, and we are now a 2B-scale effort trying to size that trade-off for a small domain model.
+
+Three questions specific to the report. First, is there an ablation that holds total tokens fixed while swapping the synthetic textbook corpus against filtered web text, so the gain can be attributed to data quality rather than to extra tokens? Second, roughly what fraction of phi-1.5's training tokens is synthetic, and how did you decontaminate that synthetic text against evaluation sets such as GSM8K and MMLU? Third, the report flags hallucinations and toxic generations as costs of scale-like behavior; at 1.3B, did a larger synthetic share help or hurt factuality, and which knob in the data mix would you change first?
+
+Your answers would directly shape how we budget synthetic data for a 2B model.
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

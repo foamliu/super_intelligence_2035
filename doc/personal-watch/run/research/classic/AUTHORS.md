@@ -6,6 +6,8 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
+> **当前计数（2026-11-25 09:0x）**：作者 **371** 人（编号最大 **371**）· X 已核验 **144**（本轮 **+1**：`@hwchung27` 由 GitHub 个人页 <https://github.com/hwchung27>（`HTTP 200` / 152,262 B）bio-links 外链 `twitter.com/hwchung27` + 代理抓 `x.com/hwchung27` `HTTP 200` / 207,174 B，`og:title` = `Hyung Won Chung (@hwchung27) on X`、`og:description` = `AI Research Scientist @Meta Superintelligence Labs. Past: @OpenAI / @Google Brain / PhD @MIT` ⇒ 双源；Yubo Wang / Suriya Gunasekar 无可核 X 外链、同名账号判他人 ⇒ 记「未找到 X」，不猜）· 已发信 **170**（台账 #1–#170；今日 **6/12**）· 回信 **0**（0/170；#1–#9 已转 `无应答(>14d)`）。本轮 **+3**：Yubo Wang（MMLU-Pro 一作，中文，UWaterloo 官方仓作者列表当前地址 ⇒ 已发信 #169）· Suriya Gunasekar（Textbooks II / phi 系列，英文，MSR 主页当前地址 ⇒ 已发信 #170）· Hyung Won Chung（Flan-T5 一作，英文，无当前可信邮箱 ⇒ 仅建档，X 双源）。
+
 > **当前计数（2026-11-25 06:0x）**：作者 **368** 人（编号最大 **368**）· X 已核验 **143**（本轮 **+3**：`@Chitwan_Saharia` 由本人主页 `https://chitwansaharia.github.io/`（`200` / 24,324 B）页内 `href="https://twitter.com/Chitwan_Saharia"` + 代理抓 `x.com/Chitwan_Saharia` `200` / 187,768 B，`og:title` = `Chitwan Saharia (@Chitwan_Saharia) on X`、`og:description` = `Past: Sr. Research Scientist @GoogleAI || B. Tech, CSE, @IITBombay` ⇒ 双源；⚠️ 另有一同名账号 `@ChitwanSaharia`（`200` / 74,201 B）**无本人主页外链**、粉丝量与简介均弱 ⇒ **不采用、不登记**；`@zhangir_azerbay` 由本人站点 `https://zhangir-azerbayev.github.io/`（`200` / 2,475 B）bio-links 外链 `twitter.com/zhangir_azerbay` + 代理抓 `x.com/zhangir_azerbay` `200` / 152,145 B，`og:title` = `Zhangir Azerbayev (@zhangir_azerbay) on X`、`og:description` = `research @openai` ⇒ 双源；`@haileysch__` 由本人主页 `https://haileyschoelkopf.github.io/`（`200` / 23,354 B）外链 `twitter.com/haileysch__` + 代理抓 `x.com/haileysch__` `200` / 187,591 B，`og:title` = `Hailey Schoelkopf (@haileysch__) on X`、`og:description` = `hillclimbing towards generality @anthropicai | prev @AiEleuther` ⇒ 双源）· 已发信 **168**（台账 #1–#168；今日 **4/12**）· 回信 **0**（0/168；#1–#9 已转 `无应答(>14d)`）。本轮 **+3**：Chitwan Saharia（Imagen 一作，英文，本人主页当前 `mailto:` ⇒ 已发信 #167）· Zhangir Azerbayev（Llemma 一作，英文，**仅 2023 论文地址可用、Princeton 转发页 `404` ⇒ 地址有效性存疑**，已发信 #168 并如实记风险）· Hailey Schoelkopf（Llemma 二作，英文，本人主页 percent-encoded `mailto:` ⇒ 仅建档，同论文已发一作、不重复打扰）。
 
 > **当前计数（2026-11-25 03:0x）**：作者 **365** 人（编号最大 **365**）· X 已核验 **140**（本轮 **+3**：`@dpkingma` 由代理抓 `x.com/dpkingma` `200` / 182,386 B，`og:title` = `Durk Kingma (@dpkingma) on X`、bio 自述 Anthropic / 前 Google Brain·DeepMind / OpenAI founding team / VAE 与 Adam 作者 ⇒ 姓名与成果强匹配但为**单源**，如实记；`@luyu_gao` 由 Luyu Gao 本人主页 `https://luyug.github.io/`（`200` / 8,375 B）外链 `twitter.com/luyu_gao` + 代理抓 `x.com/luyu_gao` `200` / 152,990 B，`og:title` = `Luyu Gao (@luyu_gao) on X` ⇒ 双源；`@PY_Z001` 由 Perry Zhang 本人主页 `https://jzhang38.github.io/`（`200` / 19,215 B）外链 `twitter.com/PY_Z001` + 代理抓 `x.com/PY_Z001` `200` / 203,588 B，`og:title` = `Perry Zhang (@PY_Z001) on X`、bio `TinyLlama, FastVideo, Seedance` ⇒ 双源）· 已发信 **166**（台账 #1–#166；今日 **2/12**）· 回信 **0**（0/166；#1–#9 已转 `无应答(>14d)`）。本轮 **+3**：Diederik P. (Durk) Kingma（VAE 一作，荷兰姓名，本人站点无 mailto ⇒ 仅建档）· Luyu Gao（PAL 一作，中文，CMU 主页当前地址 ⇒ 已发信 #166）· Perry (Peiyuan) Zhang（TinyLlama 一作，中文，主页当前地址 ⇒ 仅建档）。
@@ -5219,3 +5221,42 @@
 | X 账号 | **@haileysch__**（主页外链 `twitter.com/haileysch__` + 代理抓 `x.com/haileysch__` `HTTP 200` / 187,591 B，`og:title` = `Hailey Schoelkopf (@haileysch__) on X`、`og:description` = `hillclimbing towards generality @anthropicai \| prev @AiEleuther \| views my own` ⇒ 双源） |
 | 状态 | **待跟踪**（仅建档；同一论文本轮已发一作 #168 ⇒ 按「同作者/同论文 ≤1 封」不再发；X 进「待 follow 清单」） |
 | 备注 | 若后续就 Llemma 数据集细节单独请教，问题候选：① Proof-Pile-2 的去重与许可证过滤规则；② 数学代码与科学论文的 token 级重叠如何处理；③ 7B / 34B 的公开 ckpt 在工具调用上的评测脚本是否与 paper 一致。 |
+
+### 369. Yubo Wang
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Yubo Wang（`语言=中文(判据=拼音姓名族属 Yubo Wang + 华人姓名习惯；🚫 不因加拿大机构 / 英文论文改判英文)`） |
+| 机构 | **University of Waterloo**（TIGER Lab，Wenhu Chen 组；MMLU-Pro 一作，来自该论文官方仓作者列表） |
+| 代表论文 | **MMLU-Pro: A More Robust and Challenging Multi-Task Language Understanding Benchmark**（`2406.01574`，B 轨 #401，一作） |
+| 邮箱 | **`y726wang@uwaterloo.ca`**（MMLU-Pro 官方仓 `TIGER-AI-Lab/MMLU-Pro` 的 `README.md` 作者列表，`raw.githubusercontent.com` `HTTP 200` / 5,993 B；当前公开地址；**已发信**） |
+| 主页 | 未找到（`yubowang.github.io` / `yubo-wang.github.io` / `yubowang1999.github.io` 实测均 `404`；无本人主页） |
+| X 账号 | **未找到 X**（`x.com/yubowang` `200` 但 `og:description` 仅为通用格言、无可核 Waterloo/TIGER 证据 ⇒ 判非本人，🚫 不采用、不猜） |
+| 状态 | **已发信**（**#169**，2026-11-25 09:05:26，中文 283 汉字）+ 待跟踪（X 未找到） |
+| 备注 | `语言=中文(判据=姓名族属 + Waterloo 华人课题组)`。发信问题（只对 MMLU-Pro 成立）：① 4→10 选项 + 剔除 trivial/noisy 的 16%–33% 降幅，多少来自选项增多、多少来自换题；只扩选项不换题还剩多少；② 5-shot/CoT 下 extraction failure 与「抽出了但答错」是否分开报；③ 新题防污染 n-gram 阈值与 10 选项干扰项构造。台账见 `mail/发送记录.md` §09:00。 |
+
+### 370. Suriya Gunasekar
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Suriya Gunasekar（`语言=英文(判据=姓名族属印度/南亚 + 美国机构 MSR)`） |
+| 机构 | **Microsoft Research, Redmond**（Principal Research Manager，Physics of AGI group；phi 系列作者）· 前 **TTIC**（Research Assistant Professor）· UT Austin PhD |
+| 代表论文 | **Textbooks Are All You Need II: phi-1.5 technical report**（`2309.05463`，B 轨 #403，作者之一） |
+| 邮箱 | **`suriyag@microsoft.com`**（本人主页 `https://sgunasekar.github.io/` `HTTP 200` / 58,733 B，页内明文；当前单位 MSR；**已发信**。备用 `suriya@ttic.edu` 为前 TTIC 地址，不优先） |
+| 主页 | <https://sgunasekar.github.io/>（`HTTP 200` / 58,733 B；2026-11-25 09:0x 复核） |
+| X 账号 | **未找到 X**（主页无 x/twitter 外链；`x.com/suriyag` `og:title` = `Surya capassitore (@Suriyag)`、3 followers ⇒ 判他人，🚫 不采用） |
+| 状态 | **已发信**（**#170**，2026-11-25 09:05:29，英文 182 词）+ 待跟踪（X 未找到） |
+| 备注 | `语言=英文(判据=姓名族属 + 美国机构)`。发信问题（只对 phi-1.5 成立）：① 固定 token 总量、synthetic vs web 互换的消融是否存在；② synthetic 训练 token 占比、对 GSM8K/MMLU 的去污口径；③ 1.3B 上更大 synthetic 占比对事实性/毒性是帮还是伤、data mix 先改哪个旋钮。台账见 `mail/发送记录.md` §09:00。 |
+
+### 371. Hyung Won Chung
+
+| 字段 | 内容 |
+|:--|:--|
+| 姓名 | Hyung Won Chung（`语言=英文(判据=韩文姓名族属但长期美国机构 + 本信未发；若发信按姓名族属可改한국어，待核)`） |
+| 机构 | **Meta Superintelligence Labs**（X bio 自述 `AI Research Scientist @Meta Superintelligence Labs`）· 前 **OpenAI** / **Google Brain** · MIT PhD |
+| 代表论文 | **Scaling Instruction-Finetuned Language Models（Flan-T5）**（`2210.11416`，B 轨 #402，一作） |
+| 邮箱 | **未找到可信当前地址**（ar5iv 仅见团队信箱 `flan-core@google.com` 与 `lehou@google.com`，均为 2022 Google 旧地址且非其个人信箱 ⇒ 🚫 不猜、不发信） |
+| 主页 | GitHub <https://github.com/hwchung27>（`HTTP 200` / 152,262 B，bio = `OpenAI` 旧签名；`hwchung.github.io` 实为另一人 `Hwan Won Chung`，🚫 不采用） |
+| X 账号 | **@hwchung27**（GitHub 个人页外链 `twitter.com/hwchung27` + 代理抓 `x.com/hwchung27` `HTTP 200` / 207,174 B，`og:title` = `Hyung Won Chung (@hwchung27) on X`、`og:description` = `AI Research Scientist @Meta Superintelligence Labs. Past: @OpenAI / @Google Brain / PhD @MIT` ⇒ 双源） |
+| 状态 | **待跟踪**（仅建档；无当前可信邮箱 ⇒ 不发信；X 进「待 follow 清单」，🚫 不假装已 follow） |
+| 备注 | 高价值 posttrain 联系人（Flan-T5 一作，指令微调规模化）。若后续获得当前公开邮箱，问题候选：① 1.8K 任务里任务数增益 vs 模型规模增益如何权衡、2B 是否值得堆到 1.8K 任务；② CoT 微调数据占比与对非推理任务的副作用；③ Flan-T5 与 Flan-PaLM 同配方跨架构差异。 |
