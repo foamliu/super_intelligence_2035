@@ -57,16 +57,16 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·doubao-pro 7way LIVE + 灾难恢复完成
-已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**灾难恢复✅**(2be0088aff删57448文件→从da51ea66fe恢复reports/eval_glm53_*.json+predictions_glm53/+swebench_mm/+verified_500_ids.txt+harness_resource_guard.sh+rerun_ids/+rerun_infra_state.json)·**doubao-pro 7way LIVE✅**(7路全启动 PID 820186/820223/820278/820587/822120/831792/833471·已产出predictions)·**cline-patched eval修复✅**(93 empty→33 recovered→添加27到failed→dry-run确认33待re-eval)·**nightly_rerun_watcher armed✅**(PID2791637 sleeping until 21:00)
-当前动作:     doubao-pro 7way predict 运行中(7路×500题·workers=1·白天无429)·nightly_rerun_watcher PID2791637 armed for 21:00·判据全绿(guard~114h·mem1143G·load29.10·pretrain无train.py)
-下一步:     ①doubao-pro 7way predict完成→eval+报告 ②21:00窗口→nightly_rerun_watcher→orchestrator从codex起(glm53 infra重跑) ③MM kimi retry需重启 ④下轮唤醒查doubao-pro progress
-阻塞:         无
+PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·doubao-pro 7way LIVE + deepseek-harness SDK修复 + cline-patched eval完成
+已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·灾难恢复✅·**doubao-pro 7way LIVE✅**(7路全RUN PID 820186~833471·已产出predictions)·**deepseek-harness SDK修复✅**(_SDK_PATH从/tmp/dsh_sdk改为/nas_train/app.e0031982/harness_work/dsh_sdk·0/500→3/5 patch produced·rerun PID570709)·**cline-patched incr eval✅**(335/500=67.0%·6 re-eval·7way REGEN OK)·**MM config重建✅**(mm_2x3_config.json)
+当前动作:     doubao-pro 7way predict 运行中(7路×500题·workers=1·白天无429·cline34/codex29/opencode31/pi30/cc39/hermes24/dsh5 of 500)·deepseek-harness rerun PID570709(5/500·3 patch)·MM 2×3 predictions全部丢失(predictions_2x3/空·需全量重跑·待7way完成后或夜间启动)
+下一步:     ①doubao-pro 7way predict完成→eval+报告 ②deepseek-harness rerun继续(500题 serial·~3h/100题) ③MM 2×3全量重跑(480×6=2880 predict·待gateway负载降低后启动) ④下轮唤醒查doubao-pro progress+deepseek-harness progress
+阻塞:         MM 2×3 predictions被/tmp清理 wipe(0 files)·progress_2x3/有元数据但无patch·需全量重跑
 ERROR_COUNT:  0
- 体积: TASK~31.7KB / MEMORY≈7KB
+ 体积: TASK~31.7KB / MEMORY≈7.5KB
 
- SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
- SWE-bench Multimodal 2×3 predict: 4路DONE·2路kimi retry需重启·has_patch=2615/2880(90.8%)
+  SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
+  SWE-bench Multimodal 2×3 predict: predictions_2x3/全丢(/tmp清理)·progress_2x3/元数据存活(480/480 done·has_patch 393-466/路)·需全量重跑
  真实 Pass% (TB-2.1, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
 
 ## 启动说明（首次唤醒）

@@ -374,7 +374,7 @@ class DeepseekHarnessDriver:
     """
 
     name = "deepseek-harness"
-    _SDK_PATH = "/tmp/dsh_sdk"
+    _SDK_PATH = "/nas_train/app.e0031982/harness_work/dsh_sdk"
     _DSH_HOME = "/tmp/dsh_home"
 
     def available(self) -> bool:
