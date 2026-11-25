@@ -1,4 +1,4 @@
-监控巡检·daemon idle等322k(lands~19:17,~120步×7.21s≈14min)·autoqueue 52/52ckpt(10k-320k)✅·训练健康iter=321880/700000(45.98%) step~7.21s(1/10>7.4s non-sustained✅)·GPU 8×97-100%✅·load=23.22·报告40882B·WAITING=0。
+监控巡检·322k eval RUNNING(daemon auto-pick@19:22,llama-server PID3743525 -t4 nice19)·autoqueue 52/52ckpt(10k-320k)✅+322k in-progress·报告修复regen 40882B(vision auto-commit f8e5e73 reverted→28986B,本轮regen恢复)·训练健康iter=322070/700000(46.0%) step_avg(recent8)=7217ms(7.22s,all<7.4s✅)·loss=1.998 0NaN/0skip✅·lr=1e-3·grad norm=0.104✅·GPU 8×96-100%✅·load .29=27.46(eval中) .12=28.58·train.sh PID2547367✅(5d4h+)·eval未拖训练(pre-eval 7.21s→during 7.22s Δ+0.01s✅)·WAITING=0。
 
 > 📦 #3379-#3380（2026-11-25 16:40-17:08, 监控巡检·320k eval DONE harness_avg=54.62%·⚠️step time spike(320680-320750,7.64-8.14s,harness CPU争抢NOT eval-caused)→17:08已恢复avg=7.22s·报告修复regen→40882B(52/52ckpt)）→ daily-memories/2026-11-25.md；需要时再读。
 
@@ -9,7 +9,7 @@
 > 📦 #3385（2026-11-25 18:26, 监控巡检·daemon idle·autoqueue令持续履行·训练健康iter321580 step7.22s·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
 > 📦 #3386（2026-11-25 18:35, 监控巡检·daemon idle·autoqueue令持续履行(52/52ckpt)·322k NOT on disk·训练iter=321640 step7.29s·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
 > 📦 #3387（2026-11-25 18:52, 监控巡检·daemon idle·autoqueue令持续履行(52/52ckpt)·322k NOT on disk·训练iter=321790 step7.28s·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
-> #3388（2026-11-25 19:03, 监控巡检·daemon idle·autoqueue令持续履行(52/52ckpt 10k-320k✅)·322k NOT on disk(latest=320k,lands~19:17,~120步×7.21s≈14min)·训练iter=321880/700000(45.98%) step_avg(recent10)=7215ms(7.21s,1/10>7.4s non-sustained✅,max=7486ms=7.49s)·loss=1.9896 0NaN/0skip✅·lr=1e-3·grad norm=0.091✅·train.sh PID2547367✅(5d3h+,etimes≈447750s)·daemon(PID1081392)idle sleep300s waiting 322k·step-time normal NOT eval-caused(daemon idle无llama-server)·GPU 8×97-100%✅·load .29=23.22/25.68/26.53·报告=40882B(52/52ckpt)✅·research日报11-25已noted(#3381),无新内容·per11-20令:step正常avg<7.4s→WAITING=0·per11-21令:eval通道无异常(daemon idle)·evidence:worker=/tmp/baize_s1_baize2b_worker.log(iter=321880@19:02:39) daemon=/tmp/baize_l1_autoqueue_continuous.log(idle@19:01:11) report=.../reports/report_pretrain_llamacpp_scaling_zh.html(40882B,52/52ckpt)·复现=bash code/baize-llm/scripts/eval/baize_l1_autoqueue_continuous.sh·体积MEMORY≈31KB<32KB✅ TASK≈30.6KB<32KB✅）→ daily-memories/2026-11-25.md
+> 📦 #3388（2026-11-25 19:03, 监控巡检·daemon idle·autoqueue 52/52ckpt(10k-320k)✅·322k NOT on disk·训练iter=321880 step7.21s·报告40882B·WAITING=0）→ daily-memories/2026-11-25.md；需要时再读。
 
 > 📦 #3376-#3378（2026-11-25 16:02-16:32, 监控巡检3轮·320k eval RUNNING→DONE·step正常(7.20-7.26s,0>7.4s✅)·eval未拖训练✅·报告修复(regen→40400B 51/51ckpt)）→ daily-memories/2026-11-25.md；需要时再读。
 
