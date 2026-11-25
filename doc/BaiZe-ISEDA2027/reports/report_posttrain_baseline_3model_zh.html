@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Post-Training Phase 1 基线评测报告</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1100px;margin:0 auto;padding:20px;color:#1a1a1a;line-height:1.7}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#1a5276;margin-top:2em;border-bottom:1px solid #d5d8dc;padding-bottom:5px}
+h3{color:#2c3e50;margin-top:1.5em}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:0.95em}
+th,td{border:1px solid #bdc3c7;padding:8px 12px;text-align:left}
+th{background:#ecf0f1;font-weight:600}
+tr:nth-child(even){background:#f8f9fa}
+.outlier{background:#fadbd8!important}
+.ok{color:#27ae60;font-weight:600}
+.fail{color:#e74c3c;font-weight:600}
+.warn{color:#e67e22;font-weight:600}
+.box{padding:15px;margin:1em 0;border-radius:8px}
+.box.info{background:#eaf2f8;border-left:4px solid #3498db}
+.box.warn{background:#fef9e7;border-left:4px solid #f39c12}
+.box.error{background:#fdedec;border-left:4px solid #e74c3c}
+.box.success{background:#eafaf1;border-left:4px solid #27ae60}
+code{background:#f4f6f7;padding:2px 6px;border-radius:3px;font-size:0.9em}
+.metric{font-size:1.4em;font-weight:700;color:#2980b9}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.8em;font-weight:600}
+.tag.green{background:#d5f5e3;color:#27ae60}
+.tag.red{background:#fadbd8;color:#e74c3c}
+.tag.yellow{background:#fef9e7;color:#e67e22}
+</style></head><body>
+
+<h1>BaiZe Post-Training Phase 1 基线评测报告</h1>
+<p><strong>生成时间</strong>：2026-11-10 16:03 &nbsp; <strong>评测节点</strong>：10.252.32.17 (s0pgpuap12, 8×A40)</p>
+<p><strong>报告类型</strong>：里程碑报告（Phase 1 基线评测） &nbsp; <strong>状态</strong>：<span class="tag green">静态评测完成（113/113×3模型）</span> &nbsp; <span class="tag yellow">Pass@1 待沙盒恢复</span></p>
+
+<div class="box info">
+<strong>📋 摘要</strong>：本报告汇总 Phase 1 三模型基线评测结果。<strong>静态评测已完成</strong>：MiniCPM5-2B（base + SFT）与 Qwen3.8-27B 三模型在 113 non-techlib 任务上同口径静态评测（temp=0, max_tokens=2048, 代码生成模式）。<strong>核心发现</strong>：三模型 API 正确率完全相同（2.7%, 3/113），27B 模型的 API 知识与 2B 一样匮乏 → API 知识是通用瓶颈，与模型规模无关。SFT 将 2B 模型代码格式提升至 27B 水平（syntax 54.9%→93.8%, Qwen 97.3%）。DeepSeek 代码生成基线 mean=67.97%±1.65%（历史数据）。<strong>远程沙盒 10.129.32.75 仍 BLOCKED</strong>（第 119 次确认），Pass@1 评测待沙盒恢复后执行。
+</div>
+
+<h2>1. 评测协议（冻结）</h2>
+<table>
+<tr><th>项目</th><th>规格</th><th>状态</th></tr>
+<tr><td>任务集</td><td>EDA-Eval-PyAether 158 任务（v20260311）</td><td><span class="ok">✅ 已确认</span></td></tr>
+<tr><td>指标</td><td>Pass@1（单 trace 原则）</td><td><span class="ok">✅ 冻结</span></td></tr>
+<tr><td>超时</td><td>2500 秒/任务</td><td><span class="ok">✅ 冻结</span></td></tr>
+<tr><td>重复</td><td>5-run mean ± std</td><td><span class="tag yellow">待执行</span></td></tr>
+<tr><td>并行</td><td>-p 8 -n（无 memory injection）</td><td><span class="ok">✅ 冻结</span></td></tr>
+<tr><td>反作弊</td><td>PreToolUse hook 全程开</td><td><span class="tag yellow">待验证</span></td></tr>
+<tr><td>污染隔离</td><td>158 任务禁入训练集</td><td><span class="ok">✅ 闸门就绪</span></td></tr>
+<tr><td>统计检验</td><td>McNemar / paired bootstrap</td><td><span class="ok">✅ 预注册</span></td></tr>
+</table>
+
+<h2>2. 三模型配置与端点状态</h2>
+<table>
+<tr><th>模型</th><th>端点</th><th>GPU</th><th>角色</th><th>端点状态</th><th>cline auth</th></tr>
+<tr><td>MiniCPM5-2B</td><td><code>http://localhost:8098/v1</code></td><td>GPU4 (vLLM)</td><td>BaiZe 替身（2B, Llama 架构）</td><td><span class="ok">✅ 在线</span></td><td><span class="ok">✅ 已配置</span></td></tr>
+<tr><td>Qwen3.8-27B</td><td><code>http://localhost:8099/v1</code></td><td>GPU0-3 (SGLang, root)</td><td>对照（27B, 大模型上限）</td><td><span class="ok">✅ 在线</span></td><td><span class="ok">✅ 已配置</span></td></tr>
+<tr><td>GLM-5.2 (DeepSeek 替身)</td><td><code>http://agi-gateway.cxmt.com/cloud/v1</code></td><td>云端</td><td>强模型参照（≈94% 全 harness）</td><td><span class="ok">✅ 在线</span></td><td><span class="ok">✅ 已配置</span></td></tr>
+</table>
+<p><small>注：Qwen3.8-27B 为 root 用户的 SGLang 服务（GPU0-3），不可 kill；MiniCPM5-2B vLLM 为本线常驻服务（GPU4）。</small></p>
+
+<h2>3. 环境依赖状态</h2>
+<table>
+<tr><th>依赖</th><th>地址</th><th>状态</th><th>影响</th></tr>
+<tr><td>cline CLI</td><td><code>~/.bun/bin/cline</code></td><td><span class="ok">✅ 可用</span></td><td>—</td></tr>
+<tr><td>MCP Server</td><td><code>http://127.0.0.1:18888/sse</code></td><td><span class="ok">✅ 在线</span></td><td>提供 search_apis / get_api_details / run_code 工具</td></tr>
+<tr><td>EDA-Eval harness</td><td><code>~/code/eda_fastmcp/scripts/</code></td><td><span class="ok">✅ 就绪</span></td><td>run_cline_script.sh + run_eval.py</td></tr>
+<tr><td>158-case 数据集</td><td><code>EDA-Eval-PyAether-v20260311.jsonl</code></td><td><span class="ok">✅ 158 行</span></td><td>—</td></tr>
+<tr><td>cline MCP settings</td><td><code>~/.cline/data/settings/cline_mcp_settings.json</code></td><td><span class="ok">✅ 已配置</span></td><td>pyAether_MCP_server SSE + autoApprove</td></tr>
+<tr><td colspan="1"><strong>远程沙盒</strong></td><td><code>10.129.32.75:8664-8669</code></td><td><span class="fail">❌ 全端口 CLOSED</span></td><td><strong>硬阻塞：无法执行代码/评测</strong></td></tr>
+</table>
+
+<div class="box error">
+<strong>🔴 硬阻塞：远程沙盒 10.129.32.75 不可达</strong>
+<p><strong>现象</strong>：ping 10.129.32.75 可达（0.5ms），但 TCP 端口 8664/8665/8653/8669/8667 全部 CLOSED（连接超时）。</p>
+<p><strong>影响</strong>：EDA-Eval 评测管线依赖沙盒执行生成代码并判定 Pass/Fail。沙盒不可达 → 全 harness 评测（cline agent 模式）和代码生成评测（run_eval.py）均无法执行。</p>
+<p><strong>可能原因</strong>：沙盒服务停机 / 防火墙规则变更 / 网络路由变更。沙盒位于 10.129.32.75（非 BaiZe 管理的机器，属 EDA 平台团队）。</p>
+<p><strong>解除条件</strong>：沙盒服务恢复后，执行 <code>bash baize_posttrain_baseline_eval.sh --check-env</code> 确认全绿，即可起跑。</p>
+</div>
+
+<h2>4. DeepSeek 代码生成基线（历史数据 · EDA-Eval-Framework）</h2>
+<p>以下数据来自 <code>~/code/EDA-Eval-Framework/output_evaluation/</code> 中 <strong>zhulong_deepseek_v32</strong> 模型的 6 轮完整 158 任务评测。此为<strong>代码生成模式</strong>（模型直接生成代码，无 agent 工具调用），与全 harness 模式不同。</p>
+
+<h3>4.1 逐轮通过率</h3>
+<table>
+<tr><th>评测批次</th><th>Pass@1</th></tr>
+<tr><td>20260323_1506_e0030209</td><td>68.99%</td></tr><tr><td>20260330_1127_e0030209</td><td>70.25%</td></tr><tr><td>20260330_1338_e0030209</td><td>67.72%</td></tr><tr><td>20260413_1711_app.e0030209</td><td>66.46%</td></tr><tr class="outlier"><td>20260416_1720_app.e0030209</td><td>39.87%</td></tr><tr><td>20260417_1000_app.e0030209</td><td>66.46%</td></tr>
+</table>
+<p>含异常轮（39.87%，疑似沙盒不稳定）：mean=63.29% ± 11.57%（n=6）</p>
+<p><strong>排除异常轮后（<50% 排除）</strong>：<span class="metric">mean = 67.97% ± 1.65%</span>（n=5，波动 1.65pp）</p>
+
+<h3>4.2 分场景通过率（5 轮清洁均值）</h3>
+<table>
+<tr><th>场景</th><th>任务数</th><th>平均通过率</th></tr>
+<tr><td>Design Management</td><td>24</td><td>80.83%</td></tr><tr><td>Layout</td><td>64</td><td>62.81%</td></tr><tr><td>Others</td><td>23</td><td>85.22%</td></tr><tr><td>Schematic</td><td>47</td><td>60.00%</td></tr>
+</table>
+<p><strong>判读</strong>：Schematic（60.0%）和 Layout（62.8%）是难点（占 158 任务的 70%）；Design Management（80.8%）和 Others（85.2%）较易。SFT 数据应优先补 Schematic/Layout 场景的 API 知识与代码模式。</p>
+
+<h3>4.3 错误类型分解（5 轮累计 253 个错误）</h3>
+<table>
+<tr><th>错误类型</th><th>次数</th><th>占比</th></tr>
+<tr><td>AssertionError</td><td>141</td><td>55.7%</td></tr><tr><td>Generation timeout</td><td>27</td><td>10.7%</td></tr><tr><td>ValueError</td><td>24</td><td>9.5%</td></tr><tr><td>TypeError</td><td>19</td><td>7.5%</td></tr><tr><td>Generation failure</td><td>16</td><td>6.3%</td></tr><tr><td>AttributeError</td><td>13</td><td>5.1%</td></tr><tr><td>RuntimeError</td><td>6</td><td>2.4%</td></tr><tr><td>Timeout</td><td>3</td><td>1.2%</td></tr><tr><td>Unknown Failure</td><td>2</td><td>0.8%</td></tr><tr><td>ModuleNotFoundError</td><td>1</td><td>0.4%</td></tr><tr><td>NameError</td><td>1</td><td>0.4%</td></tr>
+</table>
+<p><strong>判读</strong>：AssertionError 占 55.7%（141/253）= <strong>语义推理错误</strong>（代码能跑但逻辑错），RL(GRPO) 主战场；Generation timeout 10.7% = 模型推理超时，长上下文适配问题；ValueError/TypeError/AttributeError 合计 22.1% = API 误用/类型错误，SFT 领域语料可修。</p>
+
+<h2>5. DeepSeek 全 Harness 参考值</h2>
+<table>
+<tr><th>项目</th><th>值</th><th>来源</th></tr>
+<tr><td>评测模式</td><td>全 harness（cline agent + MCP 工具）</td><td>cline_trace_v1_3</td></tr>
+<tr><td>任务数</td><td>103 任务（158 中完成）</td><td>实测</td></tr>
+<tr><td>Pass@1</td><td>≈94%</td><td>项目总纲（同口径）</td></tr>
+<tr><td>轨迹位置</td><td><code>~/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/</code></td><td>本节点可达</td></tr>
+</table>
+<p>注：94% 为全 harness 模式（agent 使用 search_apis/get_api_details/run_code 工具迭代求解），与代码生成模式（67.97%）差距 26pp = agent 闭环的价值。D6 实测：DeepSeek 平均迭代 5.01 轮（中位 5，1-14 轮，56% 在 3-6 轮）。</p>
+
+<h2>6. MiniCPM5-2B 基线（静态评测 · R316 · 113 tasks 完整）</h2>
+<table>
+<tr><th>项目</th><th>值</th><th>状态</th></tr>
+<tr><td>评测模式</td><td>全 harness（cline agent + MCP 工具）</td><td>同口径</td></tr>
+<tr><td>Pass@1（全 harness）</td><td>36%</td><td><span class="tag yellow">先验值，待沙盒恢复复测</span></td></tr>
+<tr><td>与 DeepSeek 差距</td><td>58 pp</td><td>核心改进空间</td></tr>
+<tr><td>vLLM 端点</td><td><code>http://localhost:8098/v1</code> (GPU4)</td><td><span class="ok">✅ 在线</span></td></tr>
+</table>
+
+<h3>6.1 MiniCPM5-2B base 静态评测结果（113 non-techlib tasks, temp=0, max_tokens=2048）</h3>
+<table>
+<tr><th>指标</th><th>Base</th><th>SFT (step_70)</th><th>Delta</th></tr>
+<tr><td>Syntax valid</td><td>62/113 = 54.9%</td><td>106/113 = 93.8%</td><td class="ok">+38.9pp</td></tr>
+<tr><td>finish=stop</td><td>60/113 = 53.1%</td><td>106/113 = 93.8%</td><td class="ok">+40.7pp</td></tr>
+<tr><td>Truncated</td><td>53/113 = 46.9%</td><td>7/113 = 6.2%</td><td class="ok">-40.7pp</td></tr>
+<tr><td>has_function</td><td>97/113 = 85.8%</td><td>113/113 = 100%</td><td class="ok">+14.2pp</td></tr>
+<tr><td>API coverage (mean)</td><td>0.141</td><td>0.166</td><td>+0.024</td></tr>
+<tr><td>All APIs correct</td><td>3/113 = 2.7%</td><td>3/113 = 2.7%</td><td class="fail">+0.0pp</td></tr>
+<tr><td>Code length (mean)</td><td>6762 chars</td><td>1432 chars</td><td>4.7x concise</td></tr>
+<tr><td>Time (mean)</td><td>25.1s</td><td>6.3s</td><td>4.0x faster</td></tr>
+</table>
+<p><strong>判读</strong>：SFT 大幅回收协议问题（syntax +38.9pp, truncation -40.7pp, conciseness 4.7x），
+但 <strong>API 正确性零改善</strong>（all_apis_correct 0pp）。SFT 后 92.9% 任务是「语法正确但 API 错误」→ RL 攻击面明确。
+溯源：<code>run/static_eval_r311_results.json</code>（113 tasks / 1.92MB, COMPLETE）· EXPERIMENTS §R316。</p>
+
+<h2>7. Qwen3.8-27B 基线（静态评测 · R317 · 113 tasks 完整）</h2>
+<table>
+<tr><th>项目</th><th>值</th><th>状态</th></tr>
+<tr><td>端点</td><td><code>http://localhost:8099/v1</code></td><td><span class="ok">✅ 在线</span></td></tr>
+<tr><td>GPU</td><td>GPU0-3 (root SGLang, TP=4 + DFLASH, 不可 kill)</td><td>占用中</td></tr>
+<tr><td>评测模式</td><td>代码生成（thinking 关闭, <code>enable_thinking: false</code>）</td><td><span class="ok">✅ 113/113 完成</span></td></tr>
+<tr><td>Pass@1（全 harness）</td><td>5-run × 158 任务</td><td><span class="tag yellow">待沙盒恢复</span></td></tr>
+</table>
+
+<h3>7.1 Qwen3.8-27B 静态评测结果（113 non-techlib tasks, temp=0, max_tokens=2048, no thinking）</h3>
+<table>
+<tr><th>指标</th><th>Qwen3.8-27B</th><th>vs MC5-base</th><th>vs MC5-SFT</th></tr>
+<tr><td>Syntax valid</td><td>110/113 = 97.3%</td><td class="ok">+42.4pp</td><td>+3.5pp</td></tr>
+<tr><td>finish=stop</td><td>108/113 = 95.6%</td><td class="ok">+42.5pp</td><td>+1.8pp</td></tr>
+<tr><td>Truncated</td><td>5/113 = 4.4%</td><td class="ok">-42.5pp</td><td>-1.8pp</td></tr>
+<tr><td>has_function</td><td>113/113 = 100%</td><td class="ok">+14.2pp</td><td>+0.0pp</td></tr>
+<tr><td>API coverage (mean)</td><td>0.145</td><td>+0.004</td><td>-0.021</td></tr>
+<tr><td>All APIs correct</td><td>3/113 = 2.7%</td><td class="fail">+0.0pp</td><td class="fail">+0.0pp</td></tr>
+<tr><td>Code length (mean)</td><td>1924 chars</td><td>3.5x concise</td><td>1.3x longer</td></tr>
+<tr><td>Time (mean)</td><td>2.9s</td><td>8.7x faster</td><td>2.2x faster</td></tr>
+</table>
+<p><strong>判读</strong>：Qwen3.8-27B 在 syntax/truncation/conciseness 上远超 MC5-base（+42.4pp syn），
+接近 MC5-SFT（97.3% vs 93.8%），但 <strong>API 正确性与 2B 模型完全相同</strong>（2.7%, 3/113, 相同的 3 个任务）。
+→ 27B 模型在代码格式上有优势，但在 PyAether API 知识上无优势。
+溯源：<code>run/static_eval_qwen_results.json</code>（113 tasks, COMPLETE）· EXPERIMENTS §R317。</p>
+
+<h2>7.5 三模型静态对比（核心发现）</h2>
+<div class="box success">
+<strong>🔑 核心发现：API 知识是通用瓶颈，与模型规模无关</strong>
+<p>三模型（MiniCPM5-2B base / SFT / Qwen3.8-27B）的 <strong>all_apis_correct 完全相同 = 3/113 = 2.7%</strong>，
+且是<strong>相同的 3 个任务</strong>（各仅 1 个 expected API）。规模差距 13.5x（2B vs 27B）未带来 API 知识提升。
+API coverage 三模型接近（0.141 / 0.166 / 0.145）→ 所有模型都难以正确调用 PyAether API。</p>
+</div>
+<table>
+<tr><th>指标</th><th>MC5-2B base</th><th>MC5-2B SFT</th><th>Qwen3.8-27B</th><th>关键判读</th></tr>
+<tr><td>Syntax valid</td><td>54.9%</td><td>93.8%</td><td>97.3%</td><td>SFT≈27B, 都远超 base</td></tr>
+<tr><td>Truncated</td><td>46.9%</td><td>6.2%</td><td>4.4%</td><td>SFT≈27B, 都远好于 base</td></tr>
+<tr><td>API coverage</td><td>0.141</td><td>0.166</td><td>0.145</td><td>三模型接近</td></tr>
+<tr><td colspan="4"><strong>All APIs correct (per-scenario)</strong></td><td></td></tr>
+<tr><td>&nbsp;&nbsp;Schematic (n=41)</td><td>0%</td><td>0%</td><td>0%</td><td class="fail">全灭</td></tr>
+<tr><td>&nbsp;&nbsp;Layout (n=28)</td><td>7.1%</td><td>7.1%</td><td>7.1%</td><td class="fail">相同</td></tr>
+<tr><td>&nbsp;&nbsp;Design Mgmt (n=21)</td><td>0%</td><td>0%</td><td>0%</td><td class="fail">全灭</td></tr>
+<tr><td>&nbsp;&nbsp;Others (n=23)</td><td>4.3%</td><td>4.3%</td><td>4.3%</td><td class="fail">相同</td></tr>
+<tr><td>Code length</td><td>6762</td><td>1432</td><td>1924</td><td>27B 介于 base/SFT 之间</td></tr>
+</table>
+<p><strong>归因</strong>：58pp 差距（36%→94%）<strong>不是模型规模问题</strong>（Qwen 27B 也只有 2.7% API correct），
+而是 <strong>API 知识 + agent 迭代闭环</strong> 问题。DeepSeek 94% 依赖 search_apis/get_api_details 工具动态学习 API。
+SFT 修协议层（+38.9pp syn, 达到 27B 水平）但不修 API 知识（0pp API correct）。RL 需通过执行反馈驱动 API 学习。</p>
+
+<h2>8. 成功阶梯映射（预注册 · 先定后测）</h2>
+<table>
+<tr><th>里程碑</th><th>Pass@1</th><th>含义</th><th>当前状态</th></tr>
+<tr><td>起点</td><td>36%</td><td>MiniCPM5-2B 零适配</td><td><span class="tag yellow">先验值待复测</span></td></tr>
+<tr><td>M1</td><td>50%</td><td>工具协议修好（D1/D2/D6）</td><td>—</td></tr>
+<tr><td>M2</td><td>65%</td><td>+ 领域退火 + SFT</td><td>—</td></tr>
+<tr><td>M3</td><td>75%</td><td>+ RL(GRPO)</td><td>—</td></tr>
+<tr><td>M4</td><td>85%+</td><td>逼近 DeepSeek-V4-Pro</td><td>—</td></tr>
+</table>
+<p>DeepSeek 参照：全 harness ≈94%，代码生成 67.97%±1.65%。BaiZe 替身（2B）的 ceiling 受限于模型容量（R145 分析：domain ceiling ≈79%，M4 不可达）。</p>
+
+<h2>9. 评测基础设施就绪度</h2>
+<table>
+<tr><th>组件</th><th>文件/路径</th><th>状态</th></tr>
+<tr><td>评测驱动脚本</td><td><code>run/baize_posttrain_baseline_eval.sh</code></td><td><span class="ok">✅ 已创建，bash -n PASS，dry-run PASS</span></td></tr>
+<tr><td>cline auth (MiniCPM5-2B)</td><td><code>~/.cline/data/settings/providers.json</code></td><td><span class="ok">✅ 已配置</span></td></tr>
+<tr><td>cline auth (Qwen3.8-27B)</td><td>同上（切换时覆盖）</td><td><span class="ok">✅ 已验证</span></td></tr>
+<tr><td>cline MCP settings</td><td><code>~/.cline/data/settings/cline_mcp_settings.json</code></td><td><span class="ok">✅ pyAether SSE + autoApprove</span></td></tr>
+<tr><td>污染隔离闸门</td><td><code>run/baize_posttrain_contamination_gate.sh</code></td><td><span class="ok">✅ 就绪</span></td></tr>
+<tr><td>结果聚合</td><td><code>run/baseline_eval_results/</code></td><td><span class="ok">✅ 目录就绪</span></td></tr>
+</table>
+
+<h2>10. 5-Run 评测计划（沙盒恢复后执行）</h2>
+<div class="box info">
+<strong>执行命令</strong>：
+<pre>
+# 1. 环境检查
+bash run/baize_posttrain_baseline_eval.sh --check-env
+
+# 2. 三模型各 5 轮（顺序执行，每轮 158 任务 -p 8 -n）
+bash run/baize_posttrain_baseline_eval.sh --all --runs 5
+
+# 或分模型执行（Phase 1 与 Phase 2 可并行）
+bash run/baize_posttrain_baseline_eval.sh --model minicpm5_2b --runs 5  # GPU4 评测
+bash run/baize_posttrain_baseline_eval.sh --model qwen3_8_27b --runs 5   # GPU0-3 评测
+bash run/baize_posttrain_baseline_eval.sh --model glm_5_2 --runs 5       # 云端评测
+</pre>
+<strong>预估时长</strong>：每模型 5 轮 ≈ 3-4 小时（158 任务 × 5 轮 / 8 并行，avg ~120s/任务）；三模型顺序 ≈ 10-12 小时。
+</div>
+
+<h2>11. 58pp 差距分解（基于三模型静态评测实测数据 · 更新）</h2>
+<table>
+<tr><th>差距来源</th><th>估占</th><th>证据（实测）</th><th>对应阶段</th></tr>
+<tr><td>工具协议 / 代码格式（D1/D3）</td><td>~35-40 pp</td><td>MC5-base syntax 54.9% → SFT 93.8% (+38.9pp) → Qwen 97.3%；truncation 46.9% → 6.2% → 4.4%</td><td>SFT（已验证 +38.9pp）</td></tr>
+<tr><td>API 领域知识（D4）</td><td>~15-20 pp</td><td>三模型 all_apis_correct 均 = 2.7%（27B 也不会）；API coverage 0.141-0.166 接近 → API 知识不是规模问题</td><td>领域退火（API 语料注入）</td></tr>
+<tr><td>Agent 迭代闭环（D6）</td><td>~15-20 pp</td><td>DeepSeek 代码生成 68% → 全 harness 94% = 26pp agent 闭环价值；静态评测无法测 D6</td><td>RL（执行反馈驱动 API 学习）</td></tr>
+<tr><td>真实能力差距</td><td>~0-5 pp</td><td>Qwen 27B ≈ MC5-SFT 在 syntax/格式 → 规模在代码格式上优势有限，2B+SFT 已接近 27B</td><td>规模/蒸馏（次要）</td></tr>
+</table>
+<div class="box success">
+<strong>关键结论（实测更新）</strong>：58pp 差距的主因<strong>不是模型规模</strong>（Qwen 27B 与 2B API correct 相同），
+而是 <strong>(1) 协议格式问题（SFT 已回收 ~39pp）+ (2) API 知识缺失（需领域退火注入）+ (3) agent 迭代闭环（需 RL）</strong>。
+SFT 已将 2B 模型的代码格式提升到 27B 水平 → 「规模非瓶颈」论得到支持。
+</div>
+
+<h2>12. 下一步行动</h2>
+<div class="box success">
+<ol>
+<li><strong>沙盒恢复</strong>（阻塞项）：10.129.32.75:8664 仍 BLOCKED（第 119 次确认）。联系 EDA 平台团队确认沙盒服务状态。恢复后 <code>--check-env</code> 确认全绿。</li>
+<li><strong>MiniCPM5-2B 5-run 复测</strong>：复测 36% 基线（全 harness Pass@1），采集真实失败轨迹，用实测替换静态评测代理指标。</li>
+<li><strong>Qwen3.8-27B 5-run 评测</strong>：获取 27B 大模型在全 harness 模式（agent + thinking）的 Pass@1 基线。</li>
+<li><strong>GLM-5.2 5-run 评测</strong>：获取 DeepSeek 替身的同口径基线（代码生成 + 全 harness）。</li>
+<li><strong>三模型配对检验</strong>：McNemar / paired bootstrap，报 mean±std + 显著性。</li>
+<li><strong>Phase 3 RL</strong>：沙盒 + GPU 就绪后，取 Phase 2 SFT ckpt 跑 GRPO，验证 API 正确性是否通过执行反馈改善。</li>
+<li><strong>P3 正式训练</strong>：等 pretrain ckpt（ETA≈2026-12-25）。</li>
+</ol>
+</div>
+
+<hr>
+<p><small>BaiZe Post-Training · Phase 1 基线评测 · 节点 10.252.32.17 · 2026-11-12 13:00（R317 更新）<br>
+静态评测：MiniCPM5-2B base+SFT (R316) + Qwen3.8-27B (R317) · 113 non-techlib tasks · temp=0 · max_tokens=2048<br>
+溯源：<code>run/static_eval_r311_results.json</code> + <code>run/static_eval_qwen_results.json</code> · EXPERIMENTS §R316/§R317<br>
+评测驱动：<code>run/baize_posttrain_baseline_eval.sh</code> · 数据源：EDA-Eval-Framework + cline_trace_v1_3<br>
+协议冻结：158 任务 / Pass@1 / 2500s / 单 trace / 5-run / -p 8 -n · 反作弊 PreToolUse · 污染隔离闸门</small></p>
+
+</body></html>

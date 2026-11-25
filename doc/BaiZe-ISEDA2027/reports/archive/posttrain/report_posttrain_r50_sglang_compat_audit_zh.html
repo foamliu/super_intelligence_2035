@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>R50 SGLang + MiniCPM5-2B 服务兼容性审计</title>
+</head>
+<body style="font-family:sans-serif;max-width:960px;margin:2rem auto;padding:1rem;line-height:1.6">
+<h1>R50 SGLang + MiniCPM5-2B 服务兼容性源码级审计</h1>
+<p><b>日期</b>: 2026-11-08 wake98 · T-1 · 零 GPU · 纯静态分析</p>
+<p><b>结论</b>: <span style="color:#28a745;font-weight:bold;font-size:1.2rem">✅ GO</span> — 30/30 检查通过，Phase 1 可直接启动；Phase 2 修复 BUG-W1 后可用</p>
+
+<h2>1. 背景与触发</h2>
+<p>R47 发现 verl 0.4.0 与 SGLang 集成的 5 个 CRITICAL bug，创建了 v2 config 和 monkey-patch wrapper（<code>baize_posttrain_verl_wrapper.py</code>）。但 wrapper 中的 monkey-patch 代码<b>从未被验证</b>。11/9 GPU 到位后若 SGLang 无法正确服务 MiniCPM5-2B 或工具调用解析失败，整个 RL 管线阻塞。本轮对 SGLang 源码、MiniCPM5-2B 模型文件、tokenizer 词汇表进行源码级审计。</p>
+
+<h2>2. 模型架构 ✅</h2>
+<p>MiniCPM5-2B <code>config.json</code>: <code>architectures: ["LlamaForCausalLM"]</code>, <code>model_type: "llama"</code>。<br>
+SGLang 有原生 <code>llama.py</code> 模型实现 → <b>无需 minicpm5.py</b>，模型可直接作为 Llama 加载。模型参数：42 层、hidden_size=2048、vocab_size=130560、bfloat16。</p>
+
+<h2>3. Chat 模板 ✅</h2>
+<p>模型自带 <code>chat_template.jinja</code>（ChatML 格式 + thinking 标记 + XML 工具调用格式）。SGLang 从模型目录加载 chat_template，无需注册 minicpm5 conversation template。SGLang conversation.py 仅有 minicpmv/minicpmo，但 MiniCPM5 使用 Llama 架构 + 自带模板，不依赖 conversation.py。</p>
+
+<h2>4. 词汇表验证 ✅</h2>
+<p>使用 transformers.AutoTokenizer 验证 MiniCPM5-2B 词汇表（vocab_size=130560）：</p>
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>Token</th><th>在 vocab 中？</th><th>用途</th></tr>
+<tr><td>&lt;function</td><td style="color:#28a745">True</td><td>MiniCPM5XMLDetector.bot_token</td></tr>
+<tr><td>&lt;/function&gt;</td><td style="color:#28a745">True</td><td>MiniCPM5XMLDetector.eot_token</td></tr>
+<tr><td>&lt;|im_start|&gt;</td><td style="color:#28a745">True</td><td>ChatML 消息起始</td></tr>
+<tr><td>&lt;|im_end|&gt;</td><td style="color:#28a745">True</td><td>ChatML 消息结束</td></tr>
+<tr><td>&lt;|python_tag|&gt;</td><td style="color:#28a745">False</td><td>llama3 bot_token（不匹配）</td></tr>
+<tr><td>[TOOL_CALLS]</td><td style="color:#28a745">False</td><td>mistral bot_token（不匹配）</td></tr>
+</table>
+<p>结论: get_tool_call_parser_type() 遍历内置 4 个解析器均不匹配，到达 minicpm5，&lt;function 命中，返回 "minicpm5"。</p>
+
+<h2>5. BUG-W1（CRITICAL · 已修复）</h2>
+<p>问题: SGLang ToolCallItem（Pydantic BaseModel）字段是 parameters（function_call_parser.py line 32），但 wrapper line 72 使用 arguments=json.dumps(params)，导致 Pydantic ValidationError。</p>
+<p>修复: arguments= 改为 parameters=（已修改 baize_posttrain_verl_wrapper.py line 75）。影响: 仅 Phase 2（多轮工具调用）。Phase 1 不受影响。</p>
+
+<h2>6. 抽象方法合规性 ✅</h2>
+<p>BaseFormatDetector 要求 3 个抽象方法: detect_and_parse, has_tool_call, structure_info。wrapper 全部实现。structure_info 返回 lambda name: StructureInfo(...)，与 Qwen25Detector 等内置实现模式一致。</p>
+
+<h2>7. ToolCallParserEnum 注册 ✅</h2>
+<p>FunctionCallParser.ToolCallParserEnum 是类级 dict。wrapper 注册 minicpm5 合法。验证后 enum_keys = ['llama3', 'qwen25', 'mistral', 'deepseekv3', 'minicpm5']。</p>
+
+<h2>8. Phase 1 安全性 ✅</h2>
+<p>v2 config multi_turn.enable=False → get_tool_call_parser_type() 不被调用 → Phase 1 R0 skeleton（单轮、无工具）完全不受 monkey-patch 影响，可安全启动。</p>
+
+<h2>9. Phase 2 注意事项</h2>
+<ul>
+<li>BUG-W4（低风险）: parse_streaming_increment 未覆盖，基类用 JSON 解析。verl 批量生成用 detect_and_parse（非流式），影响低。</li>
+<li>Ray 分布式: monkey-patch 在驱动进程执行，需确保 Ray worker 进程也应用补丁。</li>
+</ul>
+
+<h2>10. 交付物</h2>
+<ul>
+<li>baize_posttrain_sglang_preflight.py（~157 行，30 项零 GPU 静态检查，30/30 PASS）</li>
+<li>baize_posttrain_verl_wrapper.py BUG-W1 修复（arguments → parameters）</li>
+<li>本 HTML 报告（自包含、0 script、0 外链）</li>
+<li>EXPERIMENTS_POSTTRAIN.md §R50（10 小节）</li>
+</ul>
+
+<h2>11. 11/9 启动前检查清单</h2>
+<ol>
+<li>运行 python3 baize_posttrain_sglang_preflight.py → 确认 OVERALL=GO</li>
+<li>NFS warm-up: 预加载 torch/verl/sglang 模块</li>
+<li>启动 GPU watcher → 等待 GPU 释放</li>
+<li>启动 SGLang server → 验证 /v1/models 返回 MiniCPM5-2B</li>
+<li>发送测试请求 → 验证 chat template 正确渲染</li>
+<li>运行 baseline gate → 复现 36%</li>
+<li>运行 smoke calibrator → 单轮 R0 smoke test</li>
+<li>Phase 1 正式 GRPO 训练（v2 config, R0 臂）</li>
+</ol>
+</body></html>

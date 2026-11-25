@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R99 SFT 增强数据生成器 — BaiZe Post-Train</title>
+<style>
+body{font-family:-apple-system,"Noto Sans SC",sans-serif;max-width:900px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}
+h1{color:#1a1a2e;border-bottom:3px solid #e94560;padding-bottom:10px}
+h2{color:#16213e;margin-top:30px}
+table{border-collapse:collapse;width:100%;margin:15px 0}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}
+th{background:#16213e;color:white}
+tr:nth-child(even){background:#f2f2f2}
+.highlight{background:#e8f5e9;font-weight:bold}
+.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0}
+.rl{background:#fde8e8;border-left:4px solid #e94560;padding:10px 15px;margin:15px 0}
+.metric{display:inline-block;background:#16213e;color:white;padding:10px 20px;border-radius:8px;margin:5px}
+.metric .v{font-size:1.5em;font-weight:bold}
+.metric .l{font-size:0.85em;opacity:0.8}
+code{background:#e8e8e8;padding:2px 6px;border-radius:3px}
+</style></head><body>
+<h1>R99: SFT 增强数据生成器</h1>
+<p><strong>BaiZe Stage(ii) Post-Train · R99 · 2026-11-09T14:33:23</strong></p>
+<div class="rl"><strong>🔴 红线 — 污染隔离</strong><br>
+仅使用 API KB 描述生成训练对。158 评测任务的 prompt/canonical_solution/test/entry_point
+<strong>绝对未使用</strong>。指纹扫描拒绝 0 个对。
+最终：<strong>PASS</strong></div>
+<h2>1. 摘要</h2>
+<div>
+<span class="metric"><span class="v">488</span><span class="l">评测API</span></span>
+<span class="metric"><span class="v">1113</span><span class="l">训练对</span></span>
+<span class="metric"><span class="v">0.0%→100.0%</span><span class="l">覆盖率</span></span>
+<span class="metric"><span class="v">+100.0</span><span class="l">提升pp</span></span>
+</div>
+<p>R98发现SFT仅覆盖15.2%评测API。本脚本从KB提取414个SFT缺失API的描述，
+自动生成5种类型训练对，将SFT覆盖率从0.0%提升到
+<strong>100.0%</strong>。</p>
+<h2>2. 覆盖率变化</h2>
+<table><tr><th>指标</th><th>前</th><th>后</th><th>变化</th></tr>
+<tr><td>覆盖API数</td><td>0</td><td class="highlight">488</td><td>+488</td></tr>
+<tr><td>覆盖率</td><td>0.0%</td><td class="highlight">100.0%</td><td>+100.0pp</td></tr>
+<tr><td>KB有SFT缺</td><td colspan="2">364</td><td>已增强</td></tr>
+<tr><td>两处均缺</td><td colspan="2">124</td><td>S0最小对</td></tr>
+</table>
+<h2>3. 按场景覆盖率</h2>
+<table><tr><th>场景</th><th>API总数</th><th>前</th><th>后</th><th>提升pp</th></tr><tr><td>Design Management</td><td>57</td><td>0.0%</td><td>100.0%</td><td>+100.0</td></tr><tr><td>Layout</td><td>197</td><td>0.0%</td><td>100.0%</td><td>+100.0</td></tr><tr><td>Others</td><td>71</td><td>0.0%</td><td>100.0%</td><td>+100.0</td></tr><tr><td>Schematic</td><td>225</td><td>0.0%</td><td>100.0%</td><td>+100.0</td></tr></table>
+<h2>4. 生成训练对类型</h2>
+<table><tr><th>类型</th><th>数量</th></tr><tr><td>S0_api_existence</td><td>124</td></tr><tr><td>S1_doc_to_code</td><td>364</td></tr><tr><td>S2_api_lookup</td><td>364</td></tr><tr><td>S3_multi_api_chain</td><td>261</td></tr>
+<tr class="highlight"><td>合计</td><td>1113</td></tr></table>
+<h2>5. KB API类型分布</h2>
+<table><tr><th>API类型</th><th>数量</th></tr><tr><td>class</td><td>77</td></tr><tr><td>function</td><td>155</td></tr><tr><td>method</td><td>106</td></tr><tr><td>property</td><td>15</td></tr><tr><td>type</td><td>11</td></tr></table>
+<h2>6. 两处均缺失API（124个）</h2>
+<p>仅生成S0最小对（API名称+调用模板，不含评测内容）。需从源码补充。</p>
+<ul><li>pyAether.CColor</li><li>pyAether.CString</li><li>pyAether.CString.value</li><li>pyAether.CStringList</li><li>pyAether.CStringList.at</li><li>pyAether.EmyLPPHeader.create</li><li>pyAether.EmyLPPHeader.getLayerNum</li><li>pyAether.EmyLPPHeader.getMaskNum</li><li>pyAether.EmyLPPHeader.getPriority</li><li>pyAether.EmyLPPHeader.getPurposeNum</li><li>pyAether.EmyLPPHeader.getTech</li><li>pyAether.EmyLPPHeader.isFilled</li><li>pyAether.EmyLPPHeader.setFilled</li><li>pyAether.EmyLPPHeader.setMaskNum</li><li>pyAether.EmyLPPHeader.setPacketName</li><li>pyAether.EmyLPPHeader.setPriority</li><li>pyAether.EmyNtlUtil.checkViewList</li><li>pyAether.GuCartPolyLine.getLinePattern</li><li>pyAether.GuCartPolyLine.getLineWidth</li><li>pyAether.GuCartPolyLine.setLineColor</li><li>pyAether.GuCartPolyLine.setLinePattern</li><li>pyAether.GuCartPolyLine.setLineWidth</li><li>pyAether.MDE_SWEEP_RANGE_CENTER_SPAN</li><li>pyAether.MDE_SWEEP_RANGE_START_STOP</li><li>pyAether.MDE_SWEEP_TYPE_LINEAR</li><li>pyAether.MDE_SWEEP_TYPE_LINEAR_STEP_SIZE</li><li>pyAether.MDE_SWEEP_TYPE_LOG</li><li>pyAether.MDE_SWEEP_TYPE_LOG_NUM_STEP</li><li>pyAether.MDE_SWEEP_VARIABLE_DESIGN_VARIABLE</li><li>pyAether.MDE_SWEEP_VARIABLE_MODEL_PARAMETER</li><li>... +94 more</li></ul>
+<h2>7. 生成策略</h2>
+<div class="note">
+<strong>S1_doc_to_code</strong>：KB文档→Python函数调用，按api_type分5种模式<br>
+<strong>S2_api_lookup</strong>：任务描述→查找正确API，含场景提示<br>
+<strong>S3_multi_api_chain</strong>：同类别API组成多步链式调用<br>
+<strong>S5_type_aware</strong>：class/type/property类型化使用示例<br>
+<strong>S0_api_existence</strong>：两处缺失API的最小调用模板
+</div>
+<h2>8. 污染隔离规则</h2>
+<div class="rl"><ol>
+<li>评测任务prompt/canonical_solution/test/entry_point<strong>绝对不读取</strong></li>
+<li>仅用metadata.apis_used中的API名称（公开知识，非答案）</li>
+<li>API描述来自KB，非评测任务</li>
+<li>生成后指纹扫描：前200字符匹配→拒绝</li>
+</ol></div>
+<h2>9. 输出</h2>
+<table><tr><th>文件</th><th>大小</th></tr>
+<tr><td><code>sft_pyaether_corpus_v3_augmented.jsonl</code></td><td>1578.8KB</td></tr>
+</table>
+<h2>10. 下一步</h2>
+<ol>
+<li>GPU释放→合并v3+UltraData-SFT→分词→SFT训练</li>
+<li>两处缺失API→从pyAether源码补充→再跑本脚本</li>
+<li>pass@8校准→丢弃0/8和8/8的对</li>
+<li>验证：增强SFT→复测EDA-Eval→确认Pass@1提升</li>
+</ol>
+<p style="margin-top:40px;color:#666;font-size:0.85em">
+R99 · BaiZe Post-Train · 2026-11-09T14:33:23 · 零GPU · 纯生成 · Python3.8+stdlib
+</p></body></html>

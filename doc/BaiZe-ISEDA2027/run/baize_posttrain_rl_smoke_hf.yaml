@@ -1,0 +1,149 @@
+# baize_posttrain_rl_smoke_hf.yaml — HF-rollout GRPO smoke (wake409, 2026-11-13)
+#
+# WHY: SGLang rollout deadlocks on init in 1-GPU hybrid colocated mode (7 smoke
+# attempts gpu7..gpu7g all hung at verl register-center / actor-unavailable, no
+# error). vLLM rollout needs vllm+msgspec NOT installed in verl_cu124_venv (and
+# vllm 0.7.3 needs torch 2.5.1, clashing with the venv's torch 2.6.0+cu124).
+# HF/NaiveRollout uses the actor's own FSDP module via transformers generate — no
+# external inference engine, no deadlock, no extra install. Only rollout runnable
+# in the current venv.
+#
+# CAVEAT: NaiveRollout = one forward pass per output token => NOT throughput-viable
+# for the full 200-step run. This is a PIPELINE smoke (rollout->reward->GRPO
+# advantage->update->ckpt) with REDUCED prompt/response lengths + small batch so it
+# finishes in minutes. Full run BLOCKED on a throughput rollout engine (fix sglang
+# 1-GPU init deadlock, or install torch-2.6-compatible vllm). See EXPERIMENTS R409.
+#
+# Inherits verl ppo_trainer default (via searchpath) so all struct keys are present
+# (loss_agg_mode etc.). ⚠️ Surrogate RL (MiniCPM5-2B), NOT BaiZe.
+
+defaults:
+  - ppo_trainer
+  - _self_
+
+hydra:
+  searchpath:
+    - file:///home/app.e0031982/code/verl_cu124_venv/lib/python3.10/site-packages/verl/trainer/config
+
+# === TOP-LEVEL custom_reward_function ===
+custom_reward_function:
+  path: baize_posttrain_reward_functions.py
+  name: compute_score
+  reward_kwargs:
+    arm: R0                    # START with R0 (skeleton, no sandbox)
+    api_database: ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json
+    auto_fallback: true
+    enable_scene_weighting: false
+    scene_weight_config: rl_scene_weight_config_r300.json
+
+data:
+  tokenizer: /nas_data/app.e0031982/models/MiniCPM5-2B
+  train_files: rl_pyaether_synth_v2.parquet
+  val_files: rl_pyaether_synth_v2.parquet
+  train_batch_size: 8           # smoke: small batch so token-by-token HF gen is fast
+  prompt_key: prompt
+  reward_fn_key: reward_model
+  max_prompt_length: 512        # smoke: short prompts only (filter_overlong drops the rest)
+  max_response_length: 256      # smoke: short responses
+  return_raw_chat: True
+  need_tools_kwargs: True
+  shuffle: True
+  seed: 42
+  filter_overlong_prompts: True
+  truncation: error
+  trust_remote_code: True
+
+actor_rollout_ref:
+  hybrid_engine: True
+  model:
+    path: /nas_data/app.e0031982/models/MiniCPM5-2B
+    override_config:
+      attn_implementation: sdpa      # flash_attention_2 crashes on CPU meta tensor during FSDP init
+    enable_gradient_checkpointing: True
+    trust_remote_code: True
+    use_remove_padding: True
+  actor:
+    strategy: fsdp
+    ppo_mini_batch_size: 8
+    ppo_micro_batch_size_per_gpu: 4
+    use_dynamic_bsz: True
+    ppo_max_token_len_per_gpu: 16384
+    grad_clip: 1.0
+    clip_ratio: 0.2
+    entropy_coeff: 0.001
+    use_kl_loss: False           # wake410: TESTED no-KL to drop the ref-policy 2nd GPU bundle (main_ppo.py:131 creates Role.RefPolicy when use_kl_loss OR use_kl_in_reward). RESULT: stall REPRODUCES identically without KL (WorkerDict RSS flat 681MB 215s, wchan hrtimer_nanosleep, GPU never allocates, TaskRunner stuck on register-center wait) => KL ref policy is NOT the cause. raylet state-dump shows Ray resources ARE allocated to the WorkerDict (available GPU=0) so it is NOT a scheduling deadlock; the stall is INSIDE WorkerDict.__init__ after resource grant, before model load (likely a process-group / register-center handshake that deadlocks on a single colocated 1-GPU process). verl 0.4.0 1-GPU hybrid GRPO is NOT viable; use >=2 GPUs. No-KL GRPO kept here as a valid simpler variant; full run should re-enable KL on 2 GPUs.
+    kl_loss_coef: 0.02
+    kl_loss_type: low_var_kl
+    ppo_epochs: 2
+    use_torch_compile: False
+    optim:
+      lr: 3.0e-6
+      lr_warmup_steps: -1
+      lr_warmup_steps_ratio: 0.0
+      min_lr_ratio: 0.0
+      warmup_style: constant
+      total_training_steps: -1
+      weight_decay: 0.01
+  ref:
+    strategy: fsdp
+    log_prob_use_dynamic_bsz: True
+    log_prob_max_token_len_per_gpu: 16384
+  rollout:
+    name: hf                     # wake409: HF/NaiveRollout (sglang deadlocks, vllm not installed)
+    mode: sync
+    temperature: 0.7
+    top_p: 0.95
+    top_k: -1
+    do_sample: True
+    prompt_length: 512           # smoke
+    response_length: 256         # smoke
+    n: 4                         # G=4 (smoke); overridden via CLI by surrogate script
+    multi_turn:
+      enable: False
+      max_turns: 3
+      tool_config_path: null
+      format: chatml
+
+reward_model:
+  enable: False
+  reward_manager: naive
+
+algorithm:
+  adv_estimator: grpo
+  gamma: 1.0
+  lam: 1.0
+  norm_adv_by_std_in_grpo: True
+  use_kl_in_reward: False
+  kl_penalty: kl
+  kl_ctrl:
+    type: fixed
+    kl_coef: 0.001
+    horizon: 10000
+    target_kl: 0.1
+
+critic:
+  strategy: fsdp
+  rollout_n: 4
+
+trainer:
+  total_epochs: 1
+  total_training_steps: 10       # smoke (overridden via CLI)
+  save_freq: 5
+  project_name: baize_posttrain_rl_surrogate
+  experiment_name: minicpm5_grpo_v1_smoke_hf
+  logger: ['console']
+  log_val_generations: 0
+  nnodes: 1
+  n_gpus_per_node: 1
+  ray_wait_register_center_timeout: 1800   # wake410: was 300 (inherited default). wake409 killed every run BEFORE 300s elapsed (gpu7b ran 15:25:42->15:28 ~2.5min) so the timeout NEVER fired and the "BLOCKED" verdict was premature. Workers ARE observed importing torch (pynvml warnings flood raylet.err, GPU stays 3MiB = init hasn't reached CUDA alloc) => likely SLOW init over NFS, not a true deadlock. Raise to 1800s and LET IT RUN to distinguish slow-init (H1) from true-deadlock (H2). Resource math: max_colocate_count=1 -> 1 bundle {CPU:1,GPU:1}, one colocated WorkerDict actor requesting 1.0 GPU = schedulable on 1 GPU (no scheduling deadlock).
+  resume_mode: auto
+  val_before_train: False
+  test_freq: -1
+  default_local_dir: /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/rl_surrogate_runs/minicpm5_grpo_v1_smoke_hf
+  max_actor_ckpt_to_keep: 3
+  device: cuda
+
+ray_init:
+  num_cpus: null
+  timeline_json_file: null
+

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R55: Post-Baseline D1-D6 自动分析报告</title>
+<style>
+body { font-family: -apple-system, "Noto Sans SC", sans-serif; max-width: 960px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333; }
+h1 { color: #1a5276; border-bottom: 3px solid #2980b9; padding-bottom: 10px; }
+h2 { color: #2874a6; margin-top: 30px; }
+table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #f2f6fa; font-weight: 600; }
+tr:nth-child(even) { background: #fafafa; }
+.summary-box { background: #eaf2f8; border-left: 4px solid #2980b9; padding: 15px; margin: 20px 0; border-radius: 0 4px 4px 0; }
+.metric { display: inline-block; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 6px 14px; margin: 4px; font-size: 0.9em; }
+.metric strong { color: #2980b9; }
+code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+section { margin-bottom: 30px; }
+</style>
+</head>
+<body>
+<h1>R55: Post-Baseline D1-D6 自动分析报告</h1>
+<p><small>生成时间：2026-11-08T17:32:14.683968 | 脚本：baize_posttrain_baseline_d1d6_analyzer.py | R55 / wake103</small></p>
+<div class="summary-box">
+<p><strong>目的</strong>：从 11/9 MiniCPM5-2B 基线运行的 fresh traces + final_report.json 自动提取 D1-D6，填补此前 MiniCPM5-2B 侧数据 "not on this node" 的空白。并与 DeepSeek 94% 侧对照，量化 58 pp 差距中「协议可回收」vs「真实能力差距」的占比。</p>
+</div>
+<section>
+    <h2>MiniCPM5-2B 基线侧 (36%)</h2>
+    <table class="data">
+        <tr><th>指标</th><th>值</th></tr>
+        <tr><td>模型</td><td>zhulong</td></tr>
+        <tr><td>评测模式</td><td>pass_rate</td></tr>
+        <tr><td>总任务数</td><td>158</td></tr>
+        <tr><td>总通过率</td><td>64.6%</td></tr>
+    </table>
+    <p>
+        <span class="metric">D1 合法率: <strong>0.0</strong></span>
+        <span class="metric">D2 调用/任务: <strong>14.32</strong></span>
+        <span class="metric">D3 超时: <strong>17.7%</strong></span>
+        <span class="metric">D6 迭代: <strong>1</strong></span>
+    </p>
+</section>
+<section>
+    <h2>D1: 工具调用合法率</h2>
+    <table class="data">
+        <tr><th>指标</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
+        <tr><td>合法率</td><td>0.0</td><td>0.0</td></tr>
+        <tr><td>总调用数</td><td>1475</td><td>1475</td></tr>
+        <tr><td>有轨迹任务数</td><td>103</td><td>103</td></tr>
+    </table>
+    <p><small>判读：&lt;90% → 协议问题，SFT 可大幅回收</small></p>
+</section>
+<section>
+    <h2>D2: 工具调用频次</h2>
+    <table class="data">
+        <tr><th>指标</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
+        <tr><td>平均调用/任务</td><td>14.32</td><td>14.32</td></tr>
+        <tr><td>中位调用/任务</td><td>13</td><td>13</td></tr>
+    </table>
+</section>
+<section>
+    <h2>D3: 超时/截断比例</h2>
+    <table class="data">
+        <tr><th>指标</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
+        <tr><td>超时比例</td><td>17.7%</td><td>8.6%</td></tr>
+        <tr><td>超时数</td><td>28</td><td>6</td></tr>
+    </table>
+</section>
+<section>
+    <h2>D4: 失败类型分解</h2>
+    <table class="data">
+        <tr><th>指标</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
+        <tr><td>执行报错数</td><td>36</td><td>15</td></tr>
+        <tr><td>断言失败数</td><td>20</td><td>20</td></tr>
+        <tr><td>执行报错占比</td><td>64.3%</td><td>42.9%</td></tr>
+    </table>
+    <table class='data'><tr><th>错误类型</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr><tr><td>AssertionError</td><td>20</td><td>20</td></tr><tr><td>Generation failure</td><td>2</td><td>2</td></tr><tr><td>Generation timeout</td><td>28</td><td>6</td></tr><tr><td>NameError</td><td>1</td><td>1</td></tr><tr><td>RuntimeError</td><td>1</td><td>0</td></tr><tr><td>SyntaxError</td><td>1</td><td>0</td></tr><tr><td>Timeout</td><td>0</td><td>1</td></tr><tr><td>TypeError</td><td>2</td><td>3</td></tr><tr><td>Unknown Failure</td><td>0</td><td>1</td></tr><tr><td>ValueError</td><td>1</td><td>1</td></tr></table>
+</section>
+<section>
+    <h2>D5: Per-Scenario 通过率</h2>
+    <table class="data">
+        <tr><th>Scenario</th><th>MiniCPM5 通过</th><th>MiniCPM5 率</th><th>DeepSeek 通过</th><th>DeepSeek 率</th></tr>
+        <tr><td>Design Management</td><td>18/24</td><td>75.0%</td><td>4/6</td><td>66.7%</td></tr><tr><td>Layout</td><td>38/64</td><td>59.4%</td><td>19/39</td><td>48.7%</td></tr><tr><td>Others</td><td>20/23</td><td>87.0%</td><td>4/4</td><td>100.0%</td></tr><tr><td>Schematic</td><td>26/47</td><td>55.3%</td><td>8/21</td><td>38.1%</td></tr>
+    </table>
+</section>
+<section>
+    <h2>D6: 平均迭代轮数 (Φ) 分布</h2>
+    <table class="data">
+        <tr><th>指标</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr>
+        <tr><td>平均迭代</td><td>1</td><td>1</td></tr>
+        <tr><td>中位迭代</td><td>1</td><td>1</td></tr>
+    </table>
+    <table class='data'><tr><th>轮数区间</th><th>MiniCPM5-2B</th><th>DeepSeek</th></tr><tr><td>1-2</td><td>103</td><td>103</td></tr></table>
+</section>
+
+        <section>
+            <h2>DeepSeek 对照侧 (94%)</h2>
+            <table class="data">
+                <tr><th>指标</th><th>值</th></tr>
+                <tr><td>模型</td><td>zhulong_deepseek_v32</td></tr>
+                <tr><td>总通过率</td><td>50.0%</td></tr>
+                <tr><td>D1 工具调用合法率</td><td>0.0</td></tr>
+                <tr><td>D2 平均调用频次</td><td>14.32</td></tr>
+                <tr><td>D3 超时比例</td><td>8.6%</td></tr>
+                <tr><td>D6 平均迭代轮数</td><td>1</td></tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>Gap 分析：58 pp 差距分解</h2>
+            <table class="data">
+                <tr><th>指标</th><th>值</th></tr>
+                <tr><td>总差距</td><td>-14.6 pp</td></tr>
+                <tr><td>协议可回收（估计）</td><td>-11.7 pp (0%)</td></tr>
+                <tr><td>真实能力差距（估计）</td><td>-2.9 pp</td></tr>
+                <tr><td>D1 合法率差异</td><td>None</td></tr>
+                <tr><td>D2 调用频次差异</td><td>0.0</td></tr>
+                <tr><td>D6 迭代轮数差异</td><td>0</td></tr>
+            </table>
+            <p><strong>对 post-train 三步的侧重建议</strong>：</p>
+            <ul>
+                <li>协议可回收占比高 → SFT 注入工具轨迹+API 语料优先</li>
+                <li>真实能力差距占比高 → RL(GRPO) 打磨闭环推理是主战场</li>
+                <li>D4 执行报错多 → 领域退火补 API 知识</li>
+                <li>D4 断言失败多 → 语义推理问题，RL 价值更大</li>
+            </ul>
+        </section>
+<section>
+    <h2>技术说明</h2>
+    <ul>
+        <li>trace_parser 可用：✅</li>
+        <li>final_report.json: <code>/home/app.e0031982/code/EDA-Eval-Framework/output_evaluation/20260320_1616_app.e0030209/final_report.json</code></li>
+        <li>trace_dir: <code>/home/app.e0031982/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/cline_trace</code></li>
+    </ul>
+    <p><small>⚠️ 首次使用 MiniCPM5-2B 侧真实轨迹数据替代之前的假设外推。gap 分析为启发式估计，非精确分解。</small></p>
+</section>
+</body>
+</html>

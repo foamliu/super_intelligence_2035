@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Post-Train R28: 11/9 GPU 前夜全链路 Dry-Run 验证报告</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333;line-height:1.6}
+h1{color:#1a1a2e;border-bottom:3px solid #e94560;padding-bottom:10px}
+h2{color:#16213e;margin-top:30px;border-bottom:1px solid #ddd;padding-bottom:5px}
+h3{color:#0f3460;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}
+th{background:#16213e;color:#fff;font-weight:600}
+tr:nth-child(even){background:#f2f2f2}
+.pass{color:#27ae60;font-weight:bold}
+.fail{color:#e74c3c;font-weight:bold}
+.warn{color:#f39c12;font-weight:bold}
+.critical{background:#fff3cd;border-left:4px solid #f39c12;padding:10px 15px;margin:10px 0;border-radius:4px}
+.discovery{background:#d4edda;border-left:4px solid #27ae60;padding:10px 15px;margin:10px 0;border-radius:4px}
+code{background:#e8e8e8;padding:2px 6px;border-radius:3px;font-family:"Fira Code",Consolas,monospace;font-size:13px}
+pre{background:#1a1a2e;color:#a8e6cf;padding:12px;border-radius:6px;overflow-x:auto;font-size:13px}
+.summary-box{background:#e3f2fd;border:1px solid #bbdefb;border-radius:8px;padding:15px 20px;margin:15px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:bold;margin:0 2px}
+.tag-ok{background:#d4edda;color:#155724}
+.tag-warn{background:#fff3cd;color:#856404}
+.tag-fail{background:#f8d7da;color:#721c24}
+.tag-pending{background:#e2e3e5;color:#383d41}
+</style>
+</head>
+<body>
+<h1>BaiZe Post-Train R28: 11/9 GPU 前夜全链路 Dry-Run 验证报告</h1>
+<p><strong>日期</strong>: 2026-11-08 (wake76) | <strong>类型</strong>: 零 GPU 预研 | <strong>结论</strong>: <span class="pass">✅ 全链路通过</span> — 发现并修复 2 个 verl 关键路径缺失依赖</p>
+
+<div class="summary-box">
+<strong>核心发现</strong>: R27 验证了 <code>import verl</code> 成功，但 R28 逐模块深入验证发现 <code>cachetools</code> 和 <code>openai</code> 两个缺失依赖 —— 它们不在 verl 0.4.0 的 <code>install_requires</code> 中，却是 SGLang rollout + PPO trainer 关键路径的传递依赖。<strong>若无 R28 dry-run，这两个缺失依赖将在 11/9 GPU 到位后首次启动 RL 训练时才被发现，浪费宝贵 GPU 时间。</strong>
+</div>
+
+<h2>1. 验证方法论</h2>
+<table>
+<tr><th>验证维度</th><th>方法</th><th>覆盖范围</th></tr>
+<tr><td>启动脚本 dry-run</td><td><code>bash baize_posttrain_launch_11_9.sh --dry-run</code></td><td>Step 0-6 全路径</td></tr>
+<tr><td>脚本语法</td><td><code>bash -n baize_posttrain_*.sh</code></td><td>全部 11 个 shell 脚本</td></tr>
+<tr><td>venv 全栈</td><td>venv python import 各包</td><td>torch/SGLang/verl/ray/transformers</td></tr>
+<tr><td><strong>verl 关键路径</strong></td><td><strong>逐模块 import</strong></td><td><strong>PPO trainer / SGLang rollout / async server</strong></td></tr>
+<tr><td>数据资产</td><td><code>ls -lh</code> 逐文件</td><td>模型/158-case/RL parquet/SFT JSONL</td></tr>
+<tr><td>YAML 配置</td><td><code>yaml.safe_load</code></td><td>verl RL 配置文件</td></tr>
+<tr><td>GPU 状态</td><td><code>nvidia-smi</code></td><td>8×A40 占用情况</td></tr>
+</table>
+
+<h2>2. 启动脚本 Dry-Run 结果</h2>
+<table>
+<tr><th>检查项</th><th>结果</th></tr>
+<tr><td>NAS_ROOT</td><td>/nas_data <span class="pass">✅</span></td></tr>
+<tr><td>Venv</td><td>~/code/verl_cu124_venv (exists) <span class="pass">✅</span></td></tr>
+<tr><td>Model</td><td>/tmp/models/MiniCPM5-2B (exists) <span class="pass">✅</span></td></tr>
+<tr><td>EDA Base</td><td>~/code/eda_fastmcp (exists) <span class="pass">✅</span></td></tr>
+<tr><td>Step 0-6 dry-run</td><td>全部打印配方 <span class="pass">✅</span></td></tr>
+</table>
+
+<h2>3. 脚本语法验证（11 个全 PASS）</h2>
+<table>
+<tr><th>脚本</th><th>bash -n</th></tr>
+<tr><td>baize_posttrain_anneal.sh</td><td><span class="pass">✅</span></td></tr>
+<tr><td>baize_posttrain_contamination_gate.sh</td><td><span class="pass">✅</span></td></tr>
+<tr><td>baize_posttrain_eval.sh</td><td><span class="pass">✅</span></td></tr>
+<tr><td>baize_posttrain_launch_11_9.sh</td><td><span class="pass">✅</span></td></tr>
+<tr><td>baize_posttrain_loop.sh</td><td><span class="pass">✅</span></td></tr>
+<tr><td>baize_posttrain_minicpm5_diag.sh</td><td><span class="pass">✅</span></td></tr>
+<tr><td>baize_posttrain_paths.sh</td><td><span class="pass">✅</span></td></tr>
+<tr><td>baize_posttrain_preflight_check.sh</td><td><span class="pass">✅</span></td></tr>
+<tr><td>baize_posttrain_rl_grpo.sh</td><td><span class="pass">✅</span></td></tr>
+<tr><td>baize_posttrain_setup_cu124_venv.sh</td><td><span class="pass">✅</span></td></tr>
+<tr><td>baize_posttrain_sft.sh</td><td><span class="pass">✅</span></td></tr>
+</table>
+
+<h2>4. Venv 全栈验证</h2>
+<table>
+<tr><th>组件</th><th>版本</th><th>状态</th></tr>
+<tr><td>torch</td><td>2.6.0+cu124</td><td><span class="pass">✅ CUDA True</span></td></tr>
+
+<h2>5. 🔴 verl 关键路径缺失依赖发现与修复（R28 核心发现）</h2>
+<div class="discovery">
+<strong>R28 最重要的发现</strong>：R27 验证了 <code>import verl</code> 成功，但未验证 verl 的<strong>关键训练路径</strong>模块导入。R28 逐模块验证发现 2 个缺失依赖。
+</div>
+
+<h3>发现过程</h3>
+<ol>
+<li><code>from verl.workers.rollout.sglang_rollout.async_sglang_server import ...</code> → <code>ModuleNotFoundError: No module named 'cachetools'</code></li>
+<li>安装 cachetools → <code>from verl.workers.rollout.async_server import ...</code> → <code>ModuleNotFoundError: No module named 'openai'</code></li>
+<li>安装 openai → <code>from verl.trainer.ppo.ray_trainer import RayPPOTrainer</code> → <span class="pass">✅ OK</span></li>
+</ol>
+
+<h3>根因分析</h3>
+<table>
+<tr><th>缺失包</th><th>被谁引用</th><th>用途</th><th>为何 R27 未发现</th></tr>
+<tr><td><strong>cachetools</strong></td><td>verl SGLang async server</td><td>SGLang 异步服务器缓存</td><td>R27 只验证了 <code>import verl</code>（顶层包）</td></tr>
+<tr><td><strong>openai</strong></td><td>verl async_server</td><td>异步 LLM 服务器管理器</td><td>openai 不在 verl 0.4.0 的 install_requires 中</td></tr>
+</table>
+
+<h3>修复后验证</h3>
+<table>
+<tr><th>关键模块</th><th>import 结果</th></tr>
+<tr><td>RayPPOTrainer</td><td><span class="pass">✅ OK</span></td></tr>
+<tr><td>SGLangRollout</td><td><span class="pass">✅ OK</span></td></tr>
+<tr><td>AsyncLLMServerManager</td><td><span class="pass">✅ OK</span></td></tr>
+<tr><td>AsyncSglangServer</td><td><span class="pass">✅ OK</span> (类名小写 g)</td></tr>
+</table>
+
+<h2>6. 数据资产验证</h2>
+<table>
+<tr><th>资产</th><th>大小</th><th>状态</th></tr>
+<tr><td>MiniCPM5-2B config</td><td>704B</td><td><span class="pass">✅</span></td></tr>
+<tr><td>API 知识库</td><td>18M</td><td><span class="pass">✅</span></td></tr>
+<tr><td>158-case 数据集</td><td>674K</td><td><span class="pass">✅</span></td></tr>
+<tr><td>RL JSONL</td><td>5.4M</td><td><span class="pass">✅</span></td></tr>
+<tr><td>RL Parquet</td><td>932K</td><td><span class="pass">✅</span></td></tr>
+<tr><td>SFT JSONL v2</td><td>21M</td><td><span class="pass">✅</span></td></tr>
+</table>
+
+<h2>7. GPU 状态</h2>
+<p>8×A40 全被 SGLang Qwen3.8-27B 占用（44-45GB/46GB，util 0%）。<strong>11/9 释放 4 张</strong>。</p>
+
+<h2>8. 11/9 执行计划</h2>
+<table>
+<tr><th>步骤</th><th>命令</th><th>耗时</th></tr>
+<tr><td>0</td><td><code>setup_cu124_venv.sh --yes</code></td><td>~15min</td></tr>
+<tr><td>1</td><td><code>preflight_check.sh</code></td><td>~2min</td></tr>
+<tr><td>2</td><td><code>launch_11_9.sh --step 2 --gpu-ids 0,1,2,3</code></td><td>~4h</td></tr>
+<tr><td>3</td><td><code>launch_11_9.sh --step 3</code></td><td>~10min</td></tr>
+<tr><td>4</td><td><code>launch_11_9.sh --step 4</code></td><td>~1min</td></tr>
+<tr><td>5</td><td><code>launch_11_9.sh --step 5</code></td><td>~30min</td></tr>
+</table>
+<p><strong>快捷启动</strong>: <code>bash baize_posttrain_launch_11_9.sh --step 2-5 --gpu-ids 0,1,2,3</code></p>
+
+<h2>9. 11/9 就绪度最终评估</h2>
+<table>
+<tr><th>检查项</th><th>R27 后</th><th>R28 后</th></tr>
+<tr><td>verl PPO trainer import</td><td><span class="tag tag-pending">⬜ 未验证</span></td><td><span class="tag tag-ok">✅</span></td></tr>
+<tr><td>verl SGLang rollout import</td><td><span class="tag tag-pending">⬜ 未验证</span></td><td><span class="tag tag-ok">✅</span></td></tr>
+<tr><td>cachetools</td><td><span class="tag tag-fail">❌ 缺失</span></td><td><span class="tag tag-ok">✅ 已安装</span></td></tr>
+<tr><td>openai</td><td><span class="tag tag-fail">❌ 缺失</span></td><td><span class="tag tag-ok">✅ 已安装</span></td></tr>
+<tr><td>setup 脚本</td><td><span class="tag tag-ok">R27</span></td><td><span class="tag tag-ok">R28</span></td></tr>
+</table>
+
+<div class="critical">
+<strong>结论</strong>: R28 发现并修复了 verl 关键路径的 2 个缺失依赖，使 verl PPO trainer + SGLang rollout + async server 全部可导入。<strong>若无 R28 dry-run，这两个缺失依赖将在 11/9 GPU 到位后首次启动 RL 训练时才被发现。</strong><br><br>
+11/9 就绪度：<span class="pass">全栈 ✅</span> + <span class="pass">关键路径 ✅</span> + <span class="pass">数据 ✅</span> + <span class="pass">脚本 ✅</span> + <span class="warn">GPU ⬜（明天）</span>
+</div>
+
+<hr>
+<p style="font-size:12px;color:#666">BaiZe Stage(ii) Post-Train | wake76 R28 | 2026-11-08 | 替身 RL 结果不可迁移到白泽 | 0 script, 0 外链, 自包含</p>
+</body>
+</html>
+<tr><td>SGLang</td><td>0.4.6.post1</td><td><span class="pass">✅ launch_server --help OK</span></td></tr>
+<tr><td>verl</td><td>0.4.0</td><td><span class="pass">✅ import OK</span></td></tr>
+<tr><td>ray</td><td>2.60.0</td><td><span class="pass">✅</span></td></tr>
+<tr><td>YAML config</td><td>8 keys</td><td><span class="pass">✅ safe_load OK</span></td></tr>
+</table>

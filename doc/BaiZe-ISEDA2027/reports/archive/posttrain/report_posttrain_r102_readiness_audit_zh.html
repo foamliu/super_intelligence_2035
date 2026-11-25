@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Post-Train R102: Launch Readiness Audit</title>
+<style>
+body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; color: #333; max-width: 1200px; margin: 0 auto; }
+h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 10px; }
+h2 { color: #16213e; margin-top: 30px; border-left: 4px solid #e94560; padding-left: 12px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0; background: white; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; font-size: 0.9em; }
+th { background: #16213e; color: white; }
+tr:nth-child(even) { background: #f9f9f9; }
+.summary-box { display: flex; gap: 15px; margin: 20px 0; }
+.summary-card { flex: 1; padding: 15px; border-radius: 8px; text-align: center; }
+.pass-card { background: #d4edda; border: 1px solid #c3e6cb; }
+.warn-card { background: #fff3cd; border: 1px solid #ffeaa7; }
+.fail-card { background: #f8d7da; border: 1px solid #f5c6cb; }
+.summary-card h3 { margin: 0 0 5px 0; font-size: 2em; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.85em; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.8em; margin: 2px; }
+.tag-pass { background: #d4edda; color: #155724; }
+.footer { margin-top: 40px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 0.8em; color: #888; }
+</style></head><body>
+<h1>BaiZe Post-Train R102: 11/9 GPU Launch Readiness Audit</h1>
+<p>Generated: 2026-11-09 15:58:33 | Node: 10.252.32.17 | R102 (wake150)</p>
+<div class="summary-box">
+<div class="summary-card pass-card"><h3>5</h3><p>PASS</p></div>
+<div class="summary-card warn-card"><h3>0</h3><p>WARN</p></div>
+<div class="summary-card fail-card"><h3>1</h3><p>BLOCKED/FAIL</p></div>
+</div>
+<h2>1. SFT v5 -> Parquet</h2><p><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></p><table>
+<tr><th>input</th><td>sft_pyaether_corpus_v5_deep_enriched.jsonl</td></tr>
+<tr><th>output</th><td>sft_pyaether_corpus_v5_deep_enriched.parquet</td></tr>
+<tr><th>rows</th><td>1193</td></tr>
+<tr><th>parquet_rows</th><td>1193</td></tr>
+<tr><th>size_mb</th><td>0.34</td></tr>
+<tr><th>errors</th><td>0</td></tr>
+<tr><th>schema_cols</th><td>conversation, pair_id, type, api_used, contamination_check</td></tr>
+<tr><th>types</th><td>S0_api_existence, S1_doc_to_code, S2_api_lookup, S3_multi_api_chain, S5_source_api_lookup, S5_source_doc_to_code, S6_api_lookup, S6_doc_to_code, S6_type_mapping</td></tr>
+</table>
+<h2>2. RL Parquet</h2><p><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></p><table>
+<tr><th>path</th><td>rl_pyaether_synth_v2.parquet</td></tr>
+<tr><th>rows</th><td>3347</td></tr>
+<tr><th>size_mb</th><td>0.91</td></tr>
+<tr><th>columns</th><td>prompt, reward_model, agent_name</td></tr>
+<tr><th>issues</th><td></td></tr>
+</table>
+<h2>3. Scripts (bash -n)</h2><p><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></p><table><tr><th>Script</th><th>Status</th><th>Lines</th></tr>
+<tr><td><code>baize_posttrain_setup_cu124_venv.sh</code></td><td><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></td><td>246</td></tr>
+<tr><td><code>baize_posttrain_preflight_check.sh</code></td><td><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></td><td>123</td></tr>
+<tr><td><code>baize_posttrain_minicpm5_diag.sh</code></td><td><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></td><td>195</td></tr>
+<tr><td><code>baize_posttrain_contamination_gate.sh</code></td><td><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></td><td>137</td></tr>
+<tr><td><code>baize_posttrain_rl_grpo.sh</code></td><td><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></td><td>210</td></tr>
+<tr><td><code>baize_posttrain_sft.sh</code></td><td><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></td><td>120</td></tr>
+<tr><td><code>baize_posttrain_anneal.sh</code></td><td><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></td><td>125</td></tr>
+<tr><td><code>baize_posttrain_eval.sh</code></td><td><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></td><td>130</td></tr>
+<tr><td><code>baize_posttrain_paths.sh</code></td><td><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></td><td>68</td></tr>
+<tr><td><code>baize_posttrain_gpu_watcher.sh</code></td><td><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></td><td>265</td></tr>
+<tr><td><code>baize_posttrain_launch_11_9.sh</code></td><td><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></td><td>148</td></tr>
+</table>
+<h2>4. verl Config v2</h2><p><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></p><table>
+<tr><th>algorithm</th><td><code>grpo</code></td></tr>
+<tr><th>rollout_engine</th><td><code>sglang</code></td></tr>
+<tr><th>group_size_n</th><td><code>8</code></td></tr>
+<tr><th>max_prompt_len</th><td><code>8192</code></td></tr>
+<tr><th>max_response_len</th><td><code>8192</code></td></tr>
+<tr><th>multi_turn</th><td><code>False</code></td></tr>
+<tr><th>total_steps</th><td><code>2000</code></td></tr>
+<tr><th>n_gpus</th><td><code>4</code></td></tr>
+<tr><th>reward_arm</th><td><code>R0</code></td></tr>
+<tr><th>lr</th><td><code>3e-06</code></td></tr>
+<tr><th>kl_coef</th><td><code>0.02</code></td></tr>
+<tr><th>clip_ratio</th><td><code>0.2</code></td></tr>
+<tr><th>gpu_mem_util</th><td><code>0.5</code></td></tr>
+</table><h3>Path Checks</h3><table><tr><th>Key</th><th>Path</th><th>OK</th></tr>
+<tr><td>model.path</td><td><code>/nas_data/app.e0031982/models/MiniCPM5-2B</code></td><td>Y</td></tr>
+<tr><td>data.tokenizer</td><td><code>/nas_data/app.e0031982/models/MiniCPM5-2B</code></td><td>Y</td></tr>
+<tr><td>data.train_files</td><td><code>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/rl_pyaether_synth_v2.parquet</code></td><td>Y</td></tr>
+<tr><td>reward.path</td><td><code>/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_reward_functions.py</code></td><td>Y</td></tr>
+<tr><td>reward.api_database</td><td><code>/home/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json</code></td><td>Y</td></tr>
+<tr><td>trainer.output_dir</td><td><code>/nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo</code></td><td>Y</td></tr>
+</table>
+<h2>5. Model</h2><p><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></p><p>Size: 4.7GB</p><table><tr><th>File</th><th>OK</th><th>MB</th></tr>
+<tr><td><code>config.json</code></td><td>Y</td><td>0.0</td></tr>
+<tr><td><code>model-00000-of-00001.safetensors</code></td><td>Y</td><td>4800.37</td></tr>
+<tr><td><code>model.safetensors.index.json</code></td><td>Y</td><td>0.03</td></tr>
+<tr><td><code>tokenizer.json</code></td><td>Y</td><td>9.44</td></tr>
+<tr><td><code>tokenizer_config.json</code></td><td>Y</td><td>0.09</td></tr>
+<tr><td><code>special_tokens_map.json</code></td><td>Y</td><td>0.0</td></tr>
+<tr><td><code>chat_template.jinja</code></td><td>Y</td><td>0.01</td></tr>
+</table>
+<h2>6. Venv</h2><p><span style="background:#6c757d;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">SKIPPED</span></p><p>CUDA: <code></code></p><table><tr><th>Pkg</th><th>Status</th><th>Ver</th></tr>
+</table>
+<h2>7. Eval Dataset</h2><p><span style="background:#28a745;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">PASS</span></p><p>Tasks: 158</p>
+<h2>8. Data Files</h2><p>11/11</p><table><tr><th>Label</th><th>File</th><th>OK</th></tr>
+<tr><td>SFT v5 JSONL</td><td><code>sft_pyaether_corpus_v5_deep_enriched.jsonl</code></td><td>Y</td></tr>
+<tr><td>SFT v5 Parquet</td><td><code>sft_pyaether_corpus_v5_deep_enriched.parquet</code></td><td>Y</td></tr>
+<tr><td>SFT v2 Parquet</td><td><code>sft_pyaether_corpus_v2.parquet</code></td><td>Y</td></tr>
+<tr><td>RL v2 JSONL</td><td><code>rl_pyaether_synth_v2.jsonl</code></td><td>Y</td></tr>
+<tr><td>RL v2 Parquet</td><td><code>rl_pyaether_synth_v2.parquet</code></td><td>Y</td></tr>
+<tr><td>Contamination gate</td><td><code>baize_posttrain_contamination_gate.sh</code></td><td>Y</td></tr>
+<tr><td>Reward functions</td><td><code>baize_posttrain_reward_functions.py</code></td><td>Y</td></tr>
+<tr><td>EDA tool v2</td><td><code>baize_posttrain_eda_tool_v2.py</code></td><td>Y</td></tr>
+<tr><td>Tool config</td><td><code>baize_posttrain_tool_config.yaml</code></td><td>Y</td></tr>
+<tr><td>Verl config v2</td><td><code>baize_posttrain_rl_verl_config_v2.yaml</code></td><td>Y</td></tr>
+<tr><td>MiniCPM5 parser</td><td><code>baize_posttrain_minicpm5_parser.py</code></td><td>Y</td></tr>
+</table>
+<h2>9. GPU</h2><p><span style="background:#dc3545;color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">BLOCKED</span></p><table><tr><th>GPU</th><th>Used</th><th>Total</th><th>Util</th></tr>
+<tr><td>GPU0</td><td>45554</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU1</td><td>44533</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU2</td><td>44533</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU3</td><td>44533</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU4</td><td>45144</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU5</td><td>44629</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU6</td><td>44633</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU7</td><td>44631</td><td>46068</td><td>0%</td></tr>
+</table><p>Free: 0/8</p>
+<h2>10. Verdict</h2>
+<div class="summary-card warn-card" style="padding:20px"><h3>ISSUES</h3><ul>
+<li>GPU blocked: 0/8 free</li>
+</ul></div>
+<div class="footer"><p>R102 | 2026-11-09 15:58:33</p></div></body></html>

@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-11-16T05:36:48",
+  "purpose": "RCA 丢码回补后干净重评测",
+  "method": "gated run_eval.py -g <recovered jsonl> --benchmark EDA-Eval-pyAether-158.jsonl",
+  "runs": {
+    "run2": {
+      "pass_rate": 0.04430379746835443,
+      "execution_results_lines": 43,
+      "correct": 7,
+      "recovered_real_code_lines": 42
+    },
+    "run3": {
+      "pass_rate": 0.02531645569620253,
+      "execution_results_lines": 28,
+      "correct": 4,
+      "recovered_real_code_lines": 27
+    },
+    "run4": {
+      "pass_rate": 0.0379746835443038,
+      "execution_results_lines": 35,
+      "correct": 6,
+      "recovered_real_code_lines": 32
+    }
+  },
+  "root_cause_corrected": "PRIMARY=ws/no-ws path mismatch(format_cline_cli_output.py L163 only reads code/<task>/ws/pyAether_code, no fallback; run2/3/4 model wrote to no-ws pyAether_code 52/55/53 -> skipped -> 1/1/0 entries -> 0.0%). SECONDARY=shared temp race(L156-157). run1=18.99%(36 ws entries).",
+  "note": "run1=18.99%(30/158); recovered run2/3/4 = 4.43%/2.53%/3.80%. 原 0.0% 系管线 path bug 非模型 collapse."
+}

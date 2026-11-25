@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BaiZe Post-Train 替身模型 EDA 交互式 RL 预演方案</title>
+<style>body{font-family:-apple-system,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.7;color:#333;background:#fafafa}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px;font-size:1.6em}h2{color:#2874a6;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:2em;font-size:1.3em}h3{color:#2e86c1;font-size:1.1em;margin-top:1.5em}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:0.9em}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#e8f4f8;font-weight:600;color:#1a5276}tr:nth-child(even){background:#f9f9f9}pre{background:#f4f4f4;border:1px solid #ddd;border-radius:4px;padding:12px;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word;font-size:0.88em}code{background:#f0f0f0;padding:2px 5px;border-radius:3px}.ok{color:#27ae60;font-weight:bold}.warn{color:#e67e22;font-weight:bold}.no{color:#e74c3c;font-weight:bold}.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:1em 0}.danger{background:#fdedec;border-left:4px solid #e74c3c;padding:10px 15px;margin:1em 0}.info{background:#eaf2f8;border-left:4px solid #3498db;padding:10px 15px;margin:1em 0}.stat{display:inline-block;background:#e8f4f8;border:1px solid #bdc3c7;border-radius:5px;padding:8px 15px;margin:5px;text-align:center}.statn{font-size:1.5em;font-weight:bold;color:#2980b9}.statl{font-size:0.8em;color:#666}</style></head><body>
+<h1>BaiZe Stage(ii) Post-Train 替身模型 EDA 交互式 RL 预演方案</h1>
+<div class="info"><p><b>文档编号</b>: posttrain-synth-rl-plan-v1 | <b>生成时间</b>: 2026-11-07</p>
+<p><b>对应指令</b>: §用户令 2026-11-07 | <b>替身模型</b>: MiniCPM5-2B(优先)/Qwen3.5-2B(备选)</p>
+<p><b>目标定位</b>: 验证方法链路 + 沉淀可复用流程</p></div>
+<div class="danger"><p><b>不可迁移性声明</b>: 本次RL收益<b>不可迁移</b>到白泽。2B通用模型不等于白泽EDA专用模型。不得把替身分数写成白泽预期成绩。</p></div>
+<h2>(1) 8463 API 可出题性分级统计</h2>
+<p>基于 <code>API_INFO_MERGED_V3.json</code> 的 8,463 项API分类:</p>
+<div>
+<span class="stat"><span class="statn">8,463</span><br><span class="statl">API总数</span></span>
+<span class="stat"><span class="statn">3276</span><br><span class="statl">纯函数型</span></span>
+<span class="stat"><span class="statn">1652</span><br><span class="statl">副作用型</span></span>
+<span class="stat"><span class="statn">3535</span><br><span class="statl">不适用</span></span>
+</div>
+<table><tr><th>分类</th><th>数量</th><th>占比</th><th>判读</th></tr>
+<tr><td><span class="ok">纯函数型</span></td><td>3276</td><td>38.7%</td><td>输入输出可断言,可出题</td></tr>
+<tr><td><span class="warn">副作用型</span></td><td>1652</td><td>19.5%</td><td>需快照对比,可出题但需额外验证</td></tr>
+<tr><td><span class="no">不适用</span></td><td>3535</td><td>41.8%</td><td>GUI/属性/类定义,不适用</td></tr>
+</table>
+<h3>API类型分布</h3><table><tr><th>类型</th><th>数量</th><th>出题可行性</th></tr>
+<tr><td>function</td><td>3566</td><td>高</td></tr>
+<tr><td>class</td><td>469</td><td>不适用</td></tr>
+<tr><td>type</td><td>50</td><td>不适用</td></tr>
+<tr><td>method</td><td>3476</td><td>中</td></tr>
+<tr><td>property</td><td>889</td><td>低</td></tr>
+<tr><td>api pattern</td><td>13</td><td>不适用</td></tr>
+</table>
+<h3>纯函数型API按域分布(Top15)</h3><table><tr><th>域</th><th>数量</th></tr>
+<tr><td>unknown</td><td>1933</td></tr>
+<tr><td>Extension / Database Extension</td><td>526</td></tr>
+<tr><td>Misc Commands</td><td>163</td></tr>
+<tr><td>Db Commands / Edit Database Commands</td><td>81</td></tr>
+<tr><td>Db Commands / Technology Database Commands</td><td>58</td></tr>
+<tr><td>Extension / SimInfo Extension</td><td>54</td></tr>
+<tr><td>Db Commands / Other Commands</td><td>39</td></tr>
+<tr><td>Extension / GOA Extension</td><td>37</td></tr>
+<tr><td>Db Commands / Point/BBox Database Commands</td><td>36</td></tr>
+<tr><td>Appendix / DM File Commands</td><td>23</td></tr>
+<tr><td>Callback / Netlist functions</td><td>23</td></tr>
+<tr><td>Extension / Query Extension</td><td>18</td></tr>
+<tr><td>Extension / Base Extension</td><td>18</td></tr>
+<tr><td>Db Commands / Cell Database Commands</td><td>16</td></tr>
+<tr><td>Ae Commands / DM File Ae Commands</td><td>14</td></tr>
+</table>
+<h2>(2) 白名单构造方法与结果</h2>
+<ol><li><b>筛选</b>: api_type in {function,method} 且描述含返回值声明</li>
+<li><b>排除评测污染</b>: 移除158题使用的488个API</li>
+<li><b>GUI排除</b>: 移除含gui/dialog/menu/button等关键词的API</li>
+<li><b>结果</b>: <span class="statn">3,182</span> 条API进入白名单,覆盖43个域分类</li></ol>
+<div class="note"><p>白名单3182条API与评测488条API<b>零交集</b>,从源头避免污染。最终产物仍过contamination gate(13-gram),双保险。</p></div>
+<h2>(3) 三档难度模板设计</h2>
+<table><tr><th>难度</th><th>模板</th><th>API数</th><th>题量</th><th>验证条件</th></tr>
+<tr><td><b>低</b></td><td>单API调用</td><td>1</td><td>280</td><td>API被调用且返回结果</td></tr>
+<tr><td><b>中</b></td><td>双API串联</td><td>2</td><td>150</td><td>两步链式调用完成</td></tr>
+<tr><td><b>高</b></td><td>三API约束分析</td><td>3</td><td>70</td><td>多步分析+边界处理</td></tr>
+<tr><td><b>合计</b></td><td></td><td></td><td><b>500</b></td><td></td></tr></table>
+<h3>样例1: 低难度</h3><pre>import pyAether as pyScript
+
+def call_emytech_isgategrounded():
+    &quot;&quot;&quot;
+    Write a function that calls the PyAether API `pyAether.emyTech.isGateGrounded` to accomplish:
+    **`isGateGrounded() -\&gt; emyBoolean`**
+    The function should use the pyAether API and return the result.
+    &quot;&quot;&quot;</pre>
+<p><b>参考解:</b></p><pre>    return pyScript.emyTech.isGateGrounded()</pre>
+<p><b>验收条件</b>: 调用 <code>pyAether.emyTech.isGateGrounded</code> 返回 <code>unknown</code></p>
+<h3>样例2: 中难度</h3><pre>import pyAether as pyScript
+from typing import Any
+
+def chain_etcss_aeaddselectbox(design: 'pyScript.emyDesign') -&gt; Any:
+    &quot;&quot;&quot;
+    Chain two PyAether APIs:
+    1. Use `pyAether.etCss` to Use etCss
+    2. Use result with `pyAether.aeAddSelectBox` to Use aeAddSelectBox
+    Return the final result.
+    &quot;&quot;&quot;</pre>
+<p><b>参考解:</b></p><pre>    r1 = pyScript.etCss(design)
+    r2 = pyScript.aeAddSelectBox(r1)
+    return r2</pre>
+<h3>样例3: 高难度</h3><pre>import pyAether as pyScript
+from typing import List, Any
+
+def analyze_0430(design: 'pyScript.emyDesign', layer_name: str) -&gt; List[Any]:
+    &quot;&quot;&quot;
+    Complex EDA analysis using multiple APIs:
+    - `etCss`: Use etCss
+    - `aeAddSelectBox`: Use aeAddSelectBox
+    - `aeIncreaseSel`: Use aeIncreaseSel
+    Steps: 1) Query objects on layer 2) Process results 3) Collect analysis.
+    Handle edge cases: empty design, missing layer, no matches.
+    &quot;&quot;&quot;</pre>
+<p><b>参考解:</b></p><pre>    objs = pyScript.etCss(design, layer_name)
+    if not objs: return []
+    processed = []
+    for obj in objs:
+        r = pyScript.aeAddSelectBox(obj)
+        processed.append(r)
+    analysis = pyScript.aeIncreaseSel(processed)
+    return list(analysis) if analysis else []</pre>
+<h2>(4) 可解性预判</h2>
+<table><tr><th>类别</th><th>好判分</th><th>问题</th><th>建议</th></tr>
+<tr><td>低难度</td><td><span class="ok">高</span></td><td>部分API需初始化环境</td><td>沙盒预初始化</td></tr>
+<tr><td>中难度</td><td><span class="ok">中高</span></td><td>返回值类型可能不匹配</td><td>L3剔除不匹配组合</td></tr>
+<tr><td>高难度</td><td><span class="warn">中</span></td><td>API语义关联可能不自然</td><td>优先同域组合;R2部分分</td></tr>
+</table>
+<div class="note"><p>造题容易,造可解的题难。L3环境自验证(等隧道)会剔除不可解题。当前500题预计存活率60-80%。</p></div>
+<h2>(5) 奖励设计对比(R1-R4)</h2>
+<table><tr><th>奖励臂</th><th>定义</th><th>2B适用性</th><th>优缺点</th></tr>
+<tr><td><b>R1</b></td><td>二值pass/fail</td><td><span class="no">不推荐</span></td><td>2B大面积0,advantage全0无梯度。GRPO冷启动要求10-20%成功率</td></tr>
+<tr><td><b>R2</b></td><td>分层部分分(0.2/0.2-0.8/1.0)</td><td><span class="ok">推荐起步</span></td><td>保证非零梯度;与sGPO pass@8互补</td></tr>
+<tr><td><b>R3</b></td><td>R2+工具调用惩罚</td><td><span class="warn">第二阶段</span></td><td>防刷调用次数;需R2收敛后再加</td></tr>
+<tr><td><b>R4</b></td><td>R3+API合法性检查</td><td><span class="warn">最终阶段</span></td><td>防幻觉API调用;需白名单匹配器</td></tr>
+</table>
+<div class="info"><p><b>推荐</b>: 起步用R2,稳定后加R3/R4。同时报告cheat rate。预算按沙盒并发数x墙钟,不沿用GPU-hour。</p></div>
+<h2>(6) 已知失败模式调研</h2>
+<table><tr><th>失败模式</th><th>描述</th><th>来源</th><th>日期</th><th>对策</th></tr>
+<tr><td><b>GRPO Reward Hacking</b></td><td>Qwen2.5-1.5B为满足长度奖励填充随机数字,reward z-score全0,训练0.01 epoch后停滞</td><td>ishanjmukherjee.github.io/reward-hacking-grpo</td><td>2025-06-05</td><td>奖励不与单一维度挂钩;R2多维部分分;监控reward_std趋平</td></tr>
+<tr><td><b>GRPO冷启动失败</b></td><td>GRPO要求10-20%成功率,否则advantage全0。2B在难题上大面积0是主要风险</td><td>blog.csdn.net/AggressiveYu/article/details/155858182</td><td>2025-12-12</td><td>R2部分分保证非零梯度;先SFT注入API知识;pass@8过滤全对/全错</td></tr>
+<tr><td><b>Model Collapse</b></td><td>模型在自身生成数据上递归训练,丢失分布尾部,性能退化。牛津/剑桥发表于Nature</td><td>kepuchina.cn/article/articleinfo?ar_id=511812 / Nature</td><td>2024-07-26</td><td>模板化确定性生成(非自举);验收条件由模板产生;保留API文档作为真实数据锚点</td></tr>
+<tr><td><b>难度非单调</b></td><td>arXiv 2605.28388: RL中难度与收益非单调,中等难度最优</td><td>arXiv 2605.28388</td><td>2025</td><td>三档配比280:150:70;pass@8取1/8~7/8区间</td></tr>
+</table>
+<h2>(7) 与白泽的可迁移性分析</h2>
+<table><tr><th>维度</th><th>替身(MiniCPM5-2B)</th><th>白泽(EDA专用)</th><th>可迁移性</th></tr>
+<tr><td>模型架构</td><td>通用LLM</td><td>EDA领域预训练</td><td><span class="no">不可迁移</span></td></tr>
+<tr><td>RL方法链路</td><td>GRPO+R2+沙盒</td><td>同</td><td><span class="ok">可直接复用</span></td></tr>
+<tr><td>题目生成流程</td><td>模板+白名单+闸门</td><td>同</td><td><span class="ok">可直接复用</span></td></tr>
+<tr><td>奖励设计</td><td>R1-R4+cheat rate</td><td>同</td><td><span class="ok">可直接复用</span></td></tr>
+<tr><td>沙盒接入</td><td>双向隧道36.15</td><td>同</td><td><span class="ok">可直接复用</span></td></tr>
+<tr><td>超参配方</td><td>group/KL/lr</td><td>需按白泽规模调</td><td><span class="warn">需微调</span></td></tr>
+</table>
+<div class="info"><p><b>结论</b>: 方法链路/数据流程/奖励设计/沙盒接入均可直接复用。仅模型规模相关超参需重新调参。替身分数本身不可迁移,但走通了这件事可以迁移。</p></div>
+<h2>附录: 交付物清单</h2>
+<table><tr><th>#</th><th>交付物</th><th>状态</th><th>路径</th></tr>
+<tr><td>0</td><td>eda_fastmcp本地克隆</td><td><span class="ok">OK</span></td><td>~/code/eda_fastmcp/(docs 73MB+kb 908MB)</td></tr>
+<tr><td>1</td><td>本报告</td><td><span class="ok">OK</span></td><td>reports/report_posttrain_synth_rl_plan_zh.html</td></tr>
+<tr><td>2</td><td>500合成RL任务</td><td><span class="ok">OK</span></td><td>run/rl_pyaether_synth_tasks.jsonl(500题,gate 0命中)</td></tr>
+<tr><td>3</td><td>隧道SOP</td><td><span class="ok">OK</span></td><td>EXPERIMENTS_POSTTRAIN.md §Tunnel-SOP</td></tr>
+<tr><td>4</td><td>SFT数据可达性核实</td><td><span class="ok">OK</span></td><td>EXPERIMENTS_POSTTRAIN.md §SFT-Verify</td></tr>
+</table>
+<h2>附录: 污染隔离闸门通过日志</h2>
+<pre>===== 污染隔离闸门 @ 2026-11-07 09:20 =====
+黑名单: 6评测快照并集/536任务/含v20260311的158
+判定: 13-gram重合率>=0.8 或 8-gram兜底>=1
+扫描文档数: 500
+命中文档数: 0
+结论: 闸门通过(exit 0)</pre>
+</body></html>

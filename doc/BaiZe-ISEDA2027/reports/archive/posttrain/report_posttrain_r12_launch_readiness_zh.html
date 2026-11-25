@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>R12 启动就绪审计 + GRPO 超参对账</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:20px;line-height:1.6;color:#333}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#2874a6;margin-top:30px;border-left:4px solid #2980b9;padding-left:10px}
+h3{color:#2c3e50;margin-top:20px}
+table{border-collapse:collapse;width:100%;margin:10px 0}
+th,td{border:1px solid #ddd;padding:8px;text-align:left}
+th{background:#2980b9;color:white}
+tr:nth-child(even){background:#f8f9fa}
+.critical{background:#fdf2f2;border-left:4px solid #e74c3c;padding:10px;margin:10px 0}
+.fixed{background:#eafaf1;border-left:4px solid #27ae60;padding:10px;margin:10px 0}
+.ok{color:#27ae60;font-weight:bold}
+.fail{color:#e74c3c;font-weight:bold}
+.warn{color:#f39c12;font-weight:bold}
+code{background:#f4f4f4;padding:2px 6px;border-radius:3px;font-family:monospace}
+.checklist li{margin:5px 0}
+</style></head><body>
+<h1>R12：11/9 启动就绪审计 + GRPO 超参深度对账</h1>
+<p><strong>日期</strong>：2026-11-07 | <strong>唤醒</strong>：wake60 | <strong>目标</strong>：GPU 到位前 2 天全面审计</p>
+
+<h2>1. 摘要</h2>
+<p>在 11/9 GPU 到位前 2 天，对全部 posttrain 脚本进行端到端审计，发现并修复 <strong>6 类 critical 缺陷</strong>（路径不存在、占位入口、推理后端不匹配、预检过时），创建 master 编排脚本，并与 DeepSeek-R1 (Nature) 论文进行 GRPO 超参对账。全部 14 个文件通过语法检查，dry-run 验证通过。</p>
+
+<h2>2. 🔴 Critical 路径发现：/nas_train 空目录</h2>
+<div class="critical">
+<strong>问题</strong>：<code>.17</code> 上 <code>/nas_train</code> → <code>/H100_train</code>（空目录），实际 NFS 数据在 <code>/nas_data</code>（127T）。5 个脚本 + 1 个 YAML 硬编码 <code>/nas_train</code>，全部会失败。
+</div>
+<div class="fixed">
+<strong>修复</strong>：创建 <code>baize_posttrain_paths.sh</code> 自动检测模块。所有脚本 <code>source</code> 此文件，用 <code>$NAS_ROOT</code> 替代硬编码路径。6 个文件已修复，<code>bash -n</code> 全部通过。
+</div>
+
+<h2>3. 🔴 RL 入口：占位 → verl</h2>
+<div class="critical">
+<strong>问题</strong>：<code>baize_posttrain_rl_grpo.sh</code> 使用不存在的 <code>grpo_train.py</code> 占位入口。
+</div>
+<div class="fixed">
+<strong>修复</strong>：重写为 <code>python -m verl.trainer.main_ppo --config baize_posttrain_rl_verl_config.yaml --reward.arm R2</code>。默认替身 MiniCPM5-2B，R2 部分分奖励，4×A40。dry-run 验证通过。
+</div>
+
+<h2>4. 🔴 诊断脚本：vLLM → SGLang</h2>
+<div class="critical">
+<strong>问题</strong>：R8 发现 MiniCPM5-2B 使用 XML 格式工具调用，vLLM 无法解析 → <code>tool_calls</code> 为空 → 36% 基线不可比。
+</div>
+<div class="fixed">
+<strong>修复</strong>：<code>vllm serve</code> → <code>python -m sglang.launch_server --tool-call-parser minicpm5</code>。venv 切换到 cu124 兼容环境。
+</div>
+
+<h2>5. GRPO 超参对账：vs DeepSeek-R1 (Nature 2025)</h2>
+<table>
+<tr><th>参数</th><th>DeepSeek-R1</th><th>我们</th><th>评估</th></tr>
+<tr><td>Learning rate</td><td>3e-6</td><td>1e-6</td><td class="ok">✅ 2B 模型宜低</td></tr>
+<tr><td>KL coefficient</td><td>0.001</td><td>0.04</td><td class="ok">✅ 范围 0.01-0.05</td></tr>
+<tr><td>Clip ratio</td><td>ε=10</td><td>0.2</td><td class="warn">⚠️ 不同参数语义</td></tr>
+<tr><td>Temperature</td><td>1.0</td><td>1.0</td><td class="ok">✅ 一致</td></tr>
+<tr><td>Group size</td><td>16</td><td>8</td><td class="ok">✅ ≥4 最低要求</td></tr>
+<tr><td>PPO epochs</td><td>1</td><td>1</td><td class="ok">✅ 一致</td></tr>
+</table>
+<p><strong>结论</strong>：当前超参与论文对齐，差异有合理解释（模型规模 2B vs 671B、硬件 4×A40 vs 2048×H800），无需修改核心超参。</p>
+
+<h2>6. Master 编排脚本</h2>
+<p>创建 <code>baize_posttrain_launch_11_9.sh</code>，支持 <code>--step</code> 选择性执行：</p>
+<table>
+<tr><th>Step</th><th>名称</th><th>预计时间</th></tr>
+<tr><td>0</td><td>cu124 venv 安装</td><td>~30 min</td></tr>
+<tr><td>1</td><td>预飞行检查</td><td>~1 min</td></tr>
+<tr><td>2</td><td>SGLang serve + 36% 基线复测 (5-run)</td><td>~4-6 h</td></tr>
+<tr><td>3</td><td>D1-D6 轨迹提取</td><td>~10 min</td></tr>
+<tr><td>4</td><td>污染闸门</td><td>~5 min</td></tr>
+<tr><td>5</td><td>RL smoke test (R2, 10 iters)</td><td>~30 min</td></tr>
+<tr><td>6</td><td>Full RL training (R2, surrogate)</td><td>~8-12 h</td></tr>
+</table>
+
+<h2>7. 语法验证结果</h2>
+<table>
+<tr><th>文件</th><th>类型</th><th>结果</th></tr>
+<tr><td>baize_posttrain_paths.sh</td><td>新建</td><td class="ok">✅ OK</td></tr>
+<tr><td>baize_posttrain_rl_grpo.sh</td><td>重写</td><td class="ok">✅ OK</td></tr>
+<tr><td>baize_posttrain_sft.sh</td><td>修复</td><td class="ok">✅ OK</td></tr>
+<tr><td>baize_posttrain_anneal.sh</td><td>修复</td><td class="ok">✅ OK</td></tr>
+<tr><td>baize_posttrain_eval.sh</td><td>修复</td><td class="ok">✅ OK</td></tr>
+<tr><td>baize_posttrain_preflight_check.sh</td><td>重写</td><td class="ok">✅ OK</td></tr>
+<tr><td>baize_posttrain_minicpm5_diag.sh</td><td>修复</td><td class="ok">✅ OK</td></tr>
+<tr><td>baize_posttrain_launch_11_9.sh</td><td>新建</td><td class="ok">✅ OK</td></tr>
+<tr><td>baize_posttrain_rl_verl_config.yaml</td><td>修复</td><td class="ok">✅ OK</td></tr>
+<tr><td>4 个 .py 脚本</td><td>未改</td><td class="ok">✅ OK</td></tr>
+</table>
+
+<h2>8. 11/9 启动检查清单</h2>
+<ul class="checklist">
+<li class="ok">✅ 路径自动检测（6 脚本已修复）</li>
+<li class="ok">✅ RL 入口已切 verl</li>
+<li class="ok">✅ 诊断脚本已切 SGLang（minicpm5 parser）</li>
+<li class="ok">✅ 预飞行检查已更新</li>
+<li class="ok">✅ Master 编排脚本已创建</li>
+<li class="ok">✅ GRPO 超参已对账 DeepSeek-R1 论文</li>
+<li class="warn">⬜ cu124 venv 待 11/9 创建</li>
+<li class="warn">⬜ GPU 4×A40 待 11/9 释放</li>
+<li class="warn">⬜ SSH 隧道到 .15 待配置</li>
+</ul>
+
+<h2>9. 数据来源</h2>
+<ul>
+<li>DeepSeek-R1 Nature 论文: doi:10.1038/s41586-025-09422-z</li>
+<li>verl 官方文档: verl.readthedocs.io</li>
+<li>CSDN verl GRPO 最佳实践: blog.csdn.net/weixin_42355400/article/details/157451594</li>
+</ul>
+</body></html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>R85 Reward Arm Comparative Dynamics</title>
+<style>body{font-family:system-ui,sans-serif;max-width:1200px;margin:0 auto;padding:20px;line-height:1.6;color:#222;background:#f8f9fa}
+h1{color:#1a3a5c;border-bottom:3px solid #1a3a5c;padding-bottom:10px}
+h2{color:#2c5f8a;border-bottom:1px solid #ccc;padding-bottom:5px;margin-top:2em}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:0.9em}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}
+th{background:#e8f0f8;font-weight:bold}tr:nth-child(even){background:#f5f5f5}
+.m{font-weight:bold;color:#1a3a5c}.w{color:#c0392b;font-weight:bold}
+.o{color:#27ae60;font-weight:bold}.n{background:#fffde7;border-left:4px solid #fbc02d;padding:10px;margin:1em 0}
+.r{background:#ffebee;border-left:4px solid #c0392b;padding:10px;margin:1em 0}
+.g{background:#e8f5e9;border-left:4px solid #27ae60;padding:10px;margin:1em 0}
+code{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:0.9em}
+.b{background:#e3f2fd;border:1px solid #90caf9;border-radius:8px;padding:15px;margin:1em 0}
+</style></head><body>
+<h1>R85: Reward Arm Comparative Dynamics</h1>
+<p><strong>BaiZe Stage(ii) Post-Training</strong> | 2026-11-09 | Zero GPU simulation</p>
+<div class="b"><p>4奖励臂系统比较。MC:3347xG8×500步×5seeds。<b>R2最大改进</b>(std0:26.9%→16.2%)。</p></div>
+<h2>1.信号密度</h2><table><tr><th>臂</th><th>层</th><th>P</th><th>信号组</th><th>密度</th><th>std0</th><th>奖励</th><th>作弊</th></tr>
+<tr><td><b>R1</b></td><td>L1</td><td>1500</td><td>1408</td><td class="m">93.9%</td><td>6.1%</td><td>0.6953</td><td>5.1%</td></tr>
+<tr><td><b>R1</b></td><td>L2</td><td>347</td><td>341</td><td class="m">98.3%</td><td>1.7%</td><td>0.4449</td><td>5.1%</td></tr>
+<tr><td><b>R1</b></td><td>L3</td><td>800</td><td>763</td><td class="m">95.4%</td><td>4.6%</td><td>0.3063</td><td>5.2%</td></tr>
+<tr><td><b>R1</b></td><td>L4</td><td>500</td><td>424</td><td class="m">84.8%</td><td>15.2%</td><td>0.2110</td><td>4.8%</td></tr>
+<tr><td><b>R1</b></td><td>L5</td><td>200</td><td>108</td><td class="m">54.0%</td><td>⚠️46.0%</td><td>0.0994</td><td>4.9%</td></tr>
+<tr><td><b>R2</b></td><td>L1</td><td>1500</td><td>1018</td><td class="m">67.9%</td><td>32.1%</td><td>0.9138</td><td>4.9%</td></tr>
+<tr><td><b>R2</b></td><td>L2</td><td>347</td><td>334</td><td class="m">96.3%</td><td>3.7%</td><td>0.7548</td><td>5.5%</td></tr>
+<tr><td><b>R2</b></td><td>L3</td><td>800</td><td>796</td><td class="m">99.5%</td><td>0.5%</td><td>0.5965</td><td>5.6%</td></tr>
+<tr><td><b>R2</b></td><td>L4</td><td>500</td><td>499</td><td class="m">99.8%</td><td>0.2%</td><td>0.4552</td><td>5.1%</td></tr>
+<tr><td><b>R2</b></td><td>L5</td><td>200</td><td>195</td><td class="m">97.5%</td><td>2.5%</td><td>0.2649</td><td>5.2%</td></tr>
+<tr><td><b>R3</b></td><td>L1</td><td>1500</td><td>1500</td><td class="m">100.0%</td><td>0.0%</td><td>0.8907</td><td>4.7%</td></tr>
+<tr><td><b>R3</b></td><td>L2</td><td>347</td><td>347</td><td class="m">100.0%</td><td>0.0%</td><td>0.7343</td><td>4.5%</td></tr>
+<tr><td><b>R3</b></td><td>L3</td><td>800</td><td>800</td><td class="m">100.0%</td><td>0.0%</td><td>0.5870</td><td>4.9%</td></tr>
+<tr><td><b>R3</b></td><td>L4</td><td>500</td><td>500</td><td class="m">100.0%</td><td>0.0%</td><td>0.4444</td><td>4.8%</td></tr>
+<tr><td><b>R3</b></td><td>L5</td><td>200</td><td>192</td><td class="m">96.0%</td><td>4.0%</td><td>0.2525</td><td>5.2%</td></tr>
+<tr><td><b>R4</b></td><td>L1</td><td>1500</td><td>1427</td><td class="m">95.1%</td><td>4.9%</td><td>0.9109</td><td>4.5%</td></tr>
+<tr><td><b>R4</b></td><td>L2</td><td>347</td><td>346</td><td class="m">99.7%</td><td>0.3%</td><td>0.7546</td><td>5.1%</td></tr>
+<tr><td><b>R4</b></td><td>L3</td><td>800</td><td>800</td><td class="m">100.0%</td><td>0.0%</td><td>0.5990</td><td>5.5%</td></tr>
+<tr><td><b>R4</b></td><td>L4</td><td>500</td><td>500</td><td class="m">100.0%</td><td>0.0%</td><td>0.4504</td><td>4.5%</td></tr>
+<tr><td><b>R4</b></td><td>L5</td><td>200</td><td>200</td><td class="m">100.0%</td><td>0.0%</td><td>0.2801</td><td>5.1%</td></tr>
+</table>
+<h3>全局</h3><table><tr><th>臂</th><th>加权密度</th><th>加权std0</th><th>vs R1</th></tr>
+<tr><td><b>R1</b></td><td class="m">90.9%</td><td>9.1%</td><td>baseline</td></tr>
+<tr><td><b>R2</b></td><td class="m">84.9%</td><td>15.1%</td><td>+-6.6%</td></tr>
+<tr><td><b>R3</b></td><td class="m">99.8%</td><td>0.2%</td><td>+9.7%</td></tr>
+<tr><td><b>R4</b></td><td class="m">97.8%</td><td>2.2%</td><td>+7.5%</td></tr>
+</table>
+<h2>2.学习动力学(500步)</h2><table><tr><th>臂</th><th>层</th><th>初始</th><th>最终</th><th>改善</th><th>崩溃</th><th>早信号</th><th>晚信号</th></tr>
+<tr><td><b>R1</b></td><td>L1</td><td>71.0%</td><td>90.5%±0.0%</td><td class="o">+19.48pp</td><td class="o">3.3%</td><td>92.8%</td><td>64.5%</td></tr>
+<tr><td><b>R1</b></td><td>L2</td><td>46.0%</td><td>73.4%±0.0%</td><td class="o">+27.35pp</td><td class="o">0.0%</td><td>98.9%</td><td>93.4%</td></tr>
+<tr><td><b>R1</b></td><td>L3</td><td>31.0%</td><td>60.8%±0.0%</td><td class="o">+29.76pp</td><td class="o">0.0%</td><td>96.1%</td><td>98.5%</td></tr>
+<tr><td><b>R2</b></td><td>L1</td><td>71.0%</td><td>93.0%±0.0%</td><td class="o">+22.02pp</td><td class="w">34.4%</td><td>64.2%</td><td>43.2%</td></tr>
+<tr><td><b>R2</b></td><td>L2</td><td>46.0%</td><td>80.6%±0.0%</td><td class="o">+34.62pp</td><td class="o">0.8%</td><td>95.5%</td><td>73.8%</td></tr>
+<tr><td><b>R2</b></td><td>L3</td><td>31.0%</td><td>70.0%±0.0%</td><td class="o">+38.96pp</td><td class="o">0.0%</td><td>99.8%</td><td>90.2%</td></tr>
+<tr><td><b>R3</b></td><td>L1</td><td>71.0%</td><td>92.6%±0.0%</td><td class="o">+21.59pp</td><td class="o">0.0%</td><td>100.0%</td><td>100.0%</td></tr>
+<tr><td><b>R3</b></td><td>L2</td><td>46.0%</td><td>79.1%±0.0%</td><td class="o">+33.07pp</td><td class="o">0.0%</td><td>100.0%</td><td>100.0%</td></tr>
+<tr><td><b>R3</b></td><td>L3</td><td>31.0%</td><td>67.9%±0.0%</td><td class="o">+36.92pp</td><td class="o">0.0%</td><td>100.0%</td><td>100.0%</td></tr>
+<tr><td><b>R4</b></td><td>L1</td><td>71.0%</td><td>93.4%±0.0%</td><td class="o">+22.41pp</td><td class="o">0.0%</td><td>96.0%</td><td>93.5%</td></tr>
+<tr><td><b>R4</b></td><td>L2</td><td>46.0%</td><td>82.0%±0.0%</td><td class="o">+36.02pp</td><td class="o">0.0%</td><td>99.8%</td><td>99.1%</td></tr>
+<tr><td><b>R4</b></td><td>L3</td><td>31.0%</td><td>71.8%±0.0%</td><td class="o">+40.84pp</td><td class="o">0.0%</td><td>100.0%</td><td>99.8%</td></tr>
+</table>
+<h2>3.自适应臂选择策略</h2>
+<h3>Phase1 Smoke(0-10)</h3><p><b>主臂:</b><code>R1</code>|<b>层:</b>L1 only(50 easiest)</p><p>Binary for pipeline validation. Unambiguous signal.</p><p><b>Go:</b>avg_r>0,no crash,cheat<5%</p>
+<h3>Phase2 Foundation(10-200)</h3><p><b>主臂:</b><code>R3</code>|<b>层:</b>L1+L2(1847)</p><p>R3 tool penalty has highest signal density(99.8%), almost eliminates std=0</p><p><b>Go:</b>held-out Pass@1>=+3pp</p>
+<h3>Phase3 Refinement(200-500)</h3><p><b>主臂:</b><code>R4</code>|<b>层:</b>L1+L2+L3(187 signal)</p><p>API legality bonus shapes tool quality after base competence.</p><p><b>Go:</b>held-out>=M1 or plateau>50</p>
+<h3>Phase4 Expansion(500+)</h3><p><b>主臂:</b><code>R2</code>|<b>层:</b>Re-screened L3+L4</p><p>Return to R2 for expansion. R4 bonus may hack at scale.</p><p><b>Go:</b>per-tier,stop if cheat>5%</p>
+<h3>切换规则</h3><table><tr><th>触发</th><th>动作</th></tr>
+<tr><td>std=0>60% for 3 steps</td><td>R1->R2</td></tr>
+<tr><td>cheat>5%</td><td>R4->R3</td></tr>
+<tr><td>cheat>10%</td><td>R3->R2</td></tr>
+<tr><td>entropy<0.3</td><td>G=8->12</td></tr>
+<tr><td>plateau>50 steps</td><td>advance phase or re-screen</td></tr>
+</table><h3>每层推荐</h3><table><tr><th>层</th><th>臂</th><th>理由</th></tr>
+<tr><td><b>L1</b></td><td><code>R1</code></td><td>High pass(71%),binary sufficient</td></tr>
+<tr><td><b>L2</b></td><td><code>R2</code></td><td>Moderate(46%),partial fills gap</td></tr>
+<tr><td><b>L3</b></td><td><code>R2</code></td><td>Low(31%),partial essential</td></tr>
+<tr><td><b>L4</b></td><td><code>R4</code></td><td>Very low(21%),need richest signal</td></tr>
+<tr><td><b>L5</b></td><td><code>R2</code></td><td>Extreme(11%),R4 may hack</td></tr>
+</table>
+<h2>4.Vision线对照</h2><table><tr><th>配置</th><th>基线</th><th>std0</th><th>信号</th><th>结果</th></tr>
+<tr><td><b>vision</b></td><td>9.2%</td><td>78.7%</td><td>21.3%</td><td>GRPO collapsed, no learning</td></tr>
+<tr><td><b>baize_r1</b></td><td>36.0%</td><td>26.9%</td><td>73.1%</td><td>3.4x signal improvement</td></tr>
+<tr><td><b>baize_r2</b></td><td>36.0%</td><td>16.2%</td><td>83.8%</td><td>39.8% reduction in zero-gradient</td></tr>
+<tr><td><b>baize_r4</b></td><td>36.0%</td><td>15.0%</td><td>85.0%</td><td>Marginal gain, new hack risk</td></tr>
+</table><div class="n"><b>洞察:</b>Vision failure(78.7% std=0) was base rate problem(9.2%), not reward design. BaiZe 36% base changes signal landscape. R2 is biggest improvement over R1. R3/R4 marginal gain but new hacking risks.</div>
+<h2>5.结论</h2><div class="g"><h3>核心发现</h3><ol>
+<li><b>R3工具惩罚信号密度最高</b>(99.8%):tool call变化创造组内方差,几乎消除std=0</li>
+<li><b>R2部分分档在难题上有用但简单题上反而降低信号</b>:L5 std0=2.5%(R2)vs46%%(R1),但L1 std0=32.1%%(R2)vs6.1%%(R1)</li>
+<li><b>R4 API bonus学习改善最大</b>(+40.84pp/500步@L3):最丰富信号</li>
+<li><b>R1二值在简单题(L1)上足够</b>(sig=93.9%%),难题(L5)严重不足(sig=54%%)</li>
+<li><b>最优策略</b>:Phase1 R1(smoke)→Phase2 R3(主力,最高信号)→Phase3 R4(精调)</li>
+</ol></div>
+<div class="r"><h3>风险</h3><ul>
+<li>R4 hacking→PTU-07/08</li><li>R3过强→模型停用工具→上限30%%</li>
+<li>R2简单题信号降低→L1层不用R2</li><li>所有臂std=0→Dr.GRPO或G=12</li>
+</ul></div>
+<h3>论文建议(§5.3)</h3><p>主臂R2;R1消融;R3/R4进阶。报告cheat+std0+信号密度。Vision对照。</p>
+<hr><p style="color:#666;font-size:0.85em">R85|2026-11-09|Zero GPU|No fabrication.</p>
+</body></html>

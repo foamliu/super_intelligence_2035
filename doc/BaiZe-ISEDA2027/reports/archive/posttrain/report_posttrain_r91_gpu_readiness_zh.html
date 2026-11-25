@@ -1,0 +1,144 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>R91 GPU Day 就绪审计</title><style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}
+h1{color:#2c3e50;border-bottom:3px solid #e74c3c;padding-bottom:10px}
+h2{color:#2c3e50;margin-top:30px;border-left:4px solid #e74c3c;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:10px 0;background:white}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}
+th{background:#2c3e50;color:white}
+tr:nth-child(even){background:#f2f2f2}
+.ok{color:#27ae60;font-weight:bold}.fail{color:#e74c3c;font-weight:bold}.warn{color:#e67e22;font-weight:bold}
+.box{background:white;border-radius:8px;padding:20px;margin:15px 0;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.blk{background:#fdf2f2;border-left:4px solid #e74c3c;padding:10px;margin:5px 0}
+.rdy{background:#f0faf0;border-left:4px solid #27ae60;padding:10px;margin:5px 0}
+code{background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:0.9em}
+.ts{color:#999;font-size:0.9em}
+</style></head><body>
+<h1>R91 GPU Day 就绪审计</h1>
+<p class="ts">审计时间：2026-11-09T10:56:44.977341 | 节点：s0pgpuap12</p>
+<div class="box"><h2>总览</h2>
+<p><strong>阻塞项：2</strong> | <strong>就绪项：19</strong> | <strong>总体就绪：<span class="fail">NO</span></strong></p>
+<p>修复后可启动：<span class="ok">是（修复模型路径+GPU释放后即可起跑）</span></p>
+<h3>阻塞项</h3>
+<div class="blk">16 files reference deleted /tmp model path</div>
+<div class="blk">GPU not ready: 0/8 free (need >=4)</div>
+<h3>就绪项</h3>
+<div class="rdy">Model on NAS: 4809.9MB</div>
+<div class="rdy">verl_cu124_venv exists</div>
+<div class="rdy">vllm_venv exists</div>
+<div class="rdy">Script OK: baize_posttrain_anneal.sh</div>
+<div class="rdy">Script OK: baize_posttrain_sft.sh</div>
+<div class="rdy">Script OK: baize_posttrain_rl_grpo.sh</div>
+<div class="rdy">Script OK: baize_posttrain_eval.sh</div>
+<div class="rdy">Script OK: baize_posttrain_launch_11_9.sh</div>
+<div class="rdy">Script OK: baize_posttrain_gpu_watcher.sh</div>
+<div class="rdy">Script OK: baize_posttrain_preflight_check.sh</div>
+<div class="rdy">Script OK: baize_posttrain_contamination_gate.sh</div>
+<div class="rdy">Script OK: baize_posttrain_minicpm5_diag.sh</div>
+<div class="rdy">Script OK: baize_posttrain_post_rl_pipeline.sh</div>
+<div class="rdy">Script OK: baize_posttrain_paths.sh</div>
+<div class="rdy">Script OK: baize_posttrain_day1_runbook.sh</div>
+</div>
+<h2>1. 模型文件（关键发现）</h2>
+<table><tr><th>路径</th><th>存在</th><th>大小</th><th>状态</th></tr>
+<tr><td><code>/tmp/models/MiniCPM5-2B</code></td><td class="fail">DELETED</td><td>-</td><td class="fail">/tmp 被清理，路径失效</td></tr>
+<tr><td><code>/nas_data/app.e0031982/models/MiniCPM5-2B</code></td><td class="ok">YES</td><td>4809.9MB</td><td class="ok">NAS 持久存储，可用</td></tr>
+</table>
+<p><strong>修复</strong>：将 paths.sh 的 <code>BAIZE_MODEL_PATH</code> 从 <code>/tmp/models/MiniCPM5-2B</code> 改为 <code>/nas_data/app.e0031982/models/MiniCPM5-2B</code>，同时更新 RL YAML 和 Python 脚本。</p>
+<p>16 个文件引用了已删除的 /tmp 模型路径：</p><table><tr><th>文件</th><th>引用次数</th></tr>
+<tr><td><code>baize_posttrain_day0_audit.py</code></td><td>1</td></tr>
+<tr><td><code>baize_posttrain_gpu_watcher.sh</code></td><td>1</td></tr>
+<tr><td><code>baize_posttrain_sglang_preflight.py</code></td><td>1</td></tr>
+<tr><td><code>baize_posttrain_day0_readiness_audit.py</code></td><td>1</td></tr>
+<tr><td><code>baize_posttrain_rl_verl_config_v2.yaml</code></td><td>2</td></tr>
+<tr><td><code>baize_posttrain_rl_verl_config.yaml</code></td><td>2</td></tr>
+<tr><td><code>baize_posttrain_minicpm5_diag.sh</code></td><td>1</td></tr>
+<tr><td><code>baize_posttrain_day1_diag.py</code></td><td>3</td></tr>
+<tr><td><code>baize_posttrain_rl_grpo.sh</code></td><td>1</td></tr>
+<tr><td><code>baize_posttrain_paths.sh</code></td><td>1</td></tr>
+<tr><td><code>baize_posttrain_multiturn_e2e_sim.py</code></td><td>1</td></tr>
+<tr><td><code>baize_posttrain_f14_parser_resolution.py</code></td><td>3</td></tr>
+<tr><td><code>baize_posttrain_e2e_audit.py</code></td><td>1</td></tr>
+<tr><td><code>baize_posttrain_tokenizer_coverage.py</code></td><td>2</td></tr>
+<tr><td><code>baize_posttrain_gpu_day_audit.py</code></td><td>1</td></tr>
+<tr><td><code>baize_posttrain_r91_gpu_readiness_audit.py</code></td><td>1</td></tr>
+</table>
+<h2>2. Python 虚拟环境</h2>
+<table><tr><th>环境</th><th>路径</th><th>存在</th><th>版本</th></tr>
+<tr><td>verl_cu124_venv</td><td><code>/home/app.e0031982/code/verl_cu124_venv/bin/python</code></td><td class="ok">YES</td><td>Python 3.10.22</td></tr>
+<tr><td>vllm_venv</td><td><code>/home/app.e0031982/code/vllm_venv/bin/python</code></td><td class="ok">YES</td><td>Python 3.13.14</td></tr>
+</table>
+<p><strong>verl_cu124 torch+CUDA</strong>: <span class="ok">OK</span><br><code>torch=2.6.0+cu124
+cuda_available=True
+cuda_version=12.4</code></p>
+<h2>3. GPU 状态</h2><p>空闲 GPU：<strong>0/8</strong> (需>=4) -> <span class="fail">NOT READY</span></p>
+<table><tr><th>GPU</th><th>空闲(MiB)</th><th>总容量(MiB)</th><th>利用率</th></tr>
+<tr><td>GPU0</td><td class="fail">64</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU1</td><td class="fail">1085</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU2</td><td class="fail">1085</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU3</td><td class="fail">1085</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU4</td><td class="fail">474</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU5</td><td class="fail">989</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU6</td><td class="fail">985</td><td>46068</td><td>0%</td></tr>
+<tr><td>GPU7</td><td class="fail">987</td><td>46068</td><td>0%</td></tr>
+</table>
+<p>GPU Watcher: RUNNING (1 procs)</p>
+<h2>4. 评测资产</h2><table><tr><th>资产</th><th>路径</th><th>存在</th></tr>
+<tr><td>Eval driver</td><td><code>/home/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh</code></td><td class="ok">YES</td></tr>
+<tr><td>Eval scorer</td><td><code>/home/app.e0031982/code/eda_fastmcp/scripts/run_eval.py</code></td><td class="ok">YES</td></tr>
+<tr><td>158-case dataset</td><td><code>/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl</code></td><td class="ok">YES</td></tr>
+<tr><td>API database</td><td><code>/home/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json</code></td><td class="ok">YES</td></tr>
+<tr><td>Dataset task count</td><td>-</td><td class="ok">158</td></tr>
+<tr><td>DeepSeek traces</td><td>-</td><td class="fail">0</td></tr>
+</table>
+<h2>5. SFT/RL 数据</h2><table><tr><th>数据集</th><th>存在</th><th>行数/大小</th></tr>
+<tr><td>SFT v1</td><td class="ok">YES</td><td>19610</td></tr>
+<tr><td>SFT v2</td><td class="ok">YES</td><td>19524</td></tr>
+<tr><td>RL parquet</td><td class="ok">YES</td><td>953467</td></tr>
+</table>
+<h2>6. 脚本语法检查</h2><table><tr><th>脚本</th><th>存在</th><th>bash -n</th></tr>
+<tr><td><code>baize_posttrain_anneal.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+<tr><td><code>baize_posttrain_sft.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+<tr><td><code>baize_posttrain_rl_grpo.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+<tr><td><code>baize_posttrain_eval.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+<tr><td><code>baize_posttrain_launch_11_9.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+<tr><td><code>baize_posttrain_gpu_watcher.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+<tr><td><code>baize_posttrain_preflight_check.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+<tr><td><code>baize_posttrain_contamination_gate.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+<tr><td><code>baize_posttrain_minicpm5_diag.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+<tr><td><code>baize_posttrain_post_rl_pipeline.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+<tr><td><code>baize_posttrain_paths.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+<tr><td><code>baize_posttrain_day1_runbook.sh</code></td><td class="ok">YES</td><td class="ok">PASS</td></tr>
+</table>
+<h2>7. 配置文件</h2><table><tr><th>配置</th><th>存在</th><th>引用旧模型路径</th></tr>
+<tr><td><code>baize_posttrain_rl_verl_config_v2.yaml</code></td><td class="ok">YES</td><td class="warn">YES</td></tr>
+<tr><td><code>baize_posttrain_rl_verl_config.yaml</code></td><td class="ok">YES</td><td class="warn">YES</td></tr>
+<tr><td><code>baize_posttrain_tool_config.yaml</code></td><td class="ok">YES</td><td class="ok">NO</td></tr>
+<tr><td><code>sft_blend_config.yaml</code></td><td class="ok">YES</td><td class="ok">NO</td></tr>
+</table>
+<h2>8. 磁盘空间</h2><table><tr><th>挂载点</th><th>总容量</th><th>已用</th><th>可用</th><th>使用率</th></tr>
+<tr><td>/</td><td>2.4T</td><td>1.9T</td><td>367G</td><td>85%</td></tr>
+<tr><td>/nas_data</td><td>127T</td><td>108T</td><td>20T</td><td>85%</td></tr>
+<tr><td>~/code</td><td>2.4T</td><td>1.9T</td><td>367G</td><td>85%</td></tr>
+</table>
+<h2>9. GPU 释放后行动计划</h2><div class="box"><ol>
+<li><strong>修复模型路径</strong>：更新 paths.sh -> BAIZE_MODEL_PATH=/nas_data/app.e0031982/models/MiniCPM5-2B；更新 RL YAML tokenizer/model path；更新 Python 脚本硬编码</li>
+<li><strong>GPU 释放</strong>：gpu_watcher 自动检测 -> NFS warm-up -> 启动 launch_11_9.sh</li>
+<li><strong>SGLang serve MiniCPM5-2B</strong>：用 verl_cu124_venv SGLang 0.4.6（非 vLLM，CUDA 兼容），4xA40 TP=4</li>
+<li><strong>复测 36% 基线</strong>：158任务x5-run Pass@1 2500s -p 8 -n</li>
+<li><strong>采集真实失败轨迹</strong>：替换 R4/D1-D6 假设，校准 R88/R89</li>
+<li><strong>RL 替身预演</strong>：按 R1/R2/R3 结论起 EDA 交互式 RL（标注不可迁移）</li>
+</ol></div>
+<h2>10. 关键结论</h2><div class="box"><ol>
+<li><strong>模型路径是唯一硬阻塞（可修复）</strong>：/tmp 被清理 -> NAS 有完整副本 4.7GB -> 改 paths.sh 即可</li>
+<li><strong>GPU 未释放是外部依赖</strong>：SGLang Qwen3.8-27B 占全 8 卡 0% util，gpu_watcher 轮询中</li>
+<li><strong>所有脚本/配置/数据已就绪</strong>：12 bash 脚本 PASS，SFT 19524 对，RL parquet，eval 全套</li>
+<li><strong>venv 已就绪</strong>：verl_cu124_venv (7.5G torch2.6.0+cu124 sglang0.4.6) 首选</li>
+<li><strong>评测资产完整</strong>：eda_fastmcp 含 driver/scorer/158-case/API DB/traces</li>
+</ol></div>
+<h2>11. 溯源</h2><ul>
+<li>审计脚本：baize_posttrain_r91_gpu_readiness_audit.py</li>
+<li>模型：HuggingFace MiniCPM5-2B -> /tmp(11-06) -> /tmp清理 -> NAS副本(11-09 08:55)</li>
+<li>venv：R25(verl_cu124) / wake13(vllm)</li>
+<li>eda_fastmcp：L1.0 本地克隆(wake3)</li>
+<li>SFT语料：v1(wake56)/v2(wake60)</li>
+</ul></body></html>

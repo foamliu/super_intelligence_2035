@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R100: Source API Extraction</title>
+<style>
+body { font-family: -apple-system, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
+h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 10px; }
+h2 { color: #16213e; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 30px; }
+table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #16213e; color: white; }
+tr:nth-child(even) { background: #f2f2f2; }
+.stat-card { display: inline-block; background: white; border-radius: 8px; padding: 15px 25px; margin: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+.stat-card .num { font-size: 2em; font-weight: bold; color: #e94560; }
+.stat-card .label { color: #666; font-size: 0.9em; }
+.found { color: #27ae60; } .not-found { color: #e74c3c; }
+code { background: #e8e8e8; padding: 2px 6px; border-radius: 3px; }
+</style></head><body>
+<h1>R100: Source API Extraction — Enriching 124 Doubly-Missing APIs</h1>
+<p><strong>BaiZe Post-Train</strong> · Wake 148 · 2026-11-09 · Zero GPU</p>
+<h2>📊 Summary</h2>
+<div class="stat-card"><div class="num">124</div><div class="label">Missing APIs</div></div>
+<div class="stat-card"><div class="num found">64</div><div class="label">Found</div></div>
+<div class="stat-card"><div class="num not-found">60</div><div class="label">Still Missing</div></div>
+<div class="stat-card"><div class="num">128</div><div class="label">S5 Pairs</div></div>
+<div class="stat-card"><div class="num">1177</div><div class="label">V4 Total</div></div>
+<div class="stat-card"><div class="num">0</div><div class="label">Rejected</div></div>
+<h2>📋 Background</h2>
+<p>R98: SFT 15.2% / KB 74.6% API coverage. R99: 124 APIs missing from both, minimal S0 pairs.
+R100 searches alt sources: api_methods.jsonl (4043), api_classes.jsonl (486), func_all_v3.json (6734), pyAether_API_Docstring.md (143KB).</p>
+<h2>🔍 Type Distribution</h2>
+<table><tr><th>Type</th><th>Total</th><th>Found</th><th>Not Found</th></tr><tr><td>class</td><td>25</td><td class='found'>0</td><td class='not-found'>25</td></tr>
+<tr><td>enum_constant</td><td>21</td><td class='found'>21</td><td class='not-found'>0</td></tr>
+<tr><td>factory_method</td><td>7</td><td class='found'>7</td><td class='not-found'>0</td></tr>
+<tr><td>method</td><td>48</td><td class='found'>28</td><td class='not-found'>20</td></tr>
+<tr><td>other</td><td>23</td><td class='found'>8</td><td class='not-found'>15</td></tr>
+</table>
+<h2>📂 Source Hits</h2>
+<table><tr><th>Source</th><th>Found</th><th>%</th></tr><tr><td><code>api_classes.jsonl</code></td><td>56</td><td>87.5%</td></tr>
+<tr><td><code>pyAether_API_Docstring.md</code></td><td>8</td><td>12.5%</td></tr>
+</table>
+<h2>✅ Found APIs (first 50)</h2>
+<table><tr><th>API</th><th>Type</th><th>Source</th></tr><tr><td><code>EmyLPPHeader.create</code></td><td>factory_method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>EmyLPPHeader.getLayerNum</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>EmyLPPHeader.getMaskNum</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>EmyLPPHeader.getPriority</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>EmyLPPHeader.getPurposeNum</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>EmyLPPHeader.getTech</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>EmyLPPHeader.isFilled</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>EmyLPPHeader.setFilled</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>EmyLPPHeader.setMaskNum</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>EmyLPPHeader.setPacketName</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>EmyLPPHeader.setPriority</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>EmyNtlUtil.checkViewList</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>MdePlatDonauJobPolicy.setMaxJobNum</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>MdePlatLSFJobPolicy.setMaxJobNum</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>MdePlatOGEJobPolicy.setMaxJobNum</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>MdePlatParamSweepAddSpecificPoints.getExclusionList</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>MdePlatParamSweepCenterSpan.getCenterValue</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>MdeSpeOutput.exprType</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>MdeSpeOutput.plot</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>MdeSpeOutput.save</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>MdeTranAnalysis.setAccuracyLevel</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>aeIpcProcess.readline</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>aeIpcProcess.wait</code></td><td>method</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>aeMenuItemCallBack</code></td><td>other</td><td><code>pyAether_API_Docstring.md</code></td></tr>
+<tr><td><code>aeToggleCallBack</code></td><td>other</td><td><code>pyAether_API_Docstring.md</code></td></tr>
+<tr><td><code>dbCV</code></td><td>other</td><td><code>pyAether_API_Docstring.md</code></td></tr>
+<tr><td><code>dbInst</code></td><td>other</td><td><code>pyAether_API_Docstring.md</code></td></tr>
+<tr><td><code>dbTraverseTriggerFunc</code></td><td>other</td><td><code>pyAether_API_Docstring.md</code></td></tr>
+<tr><td><code>emcCenterCenterTextAlign</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcCenterLeftTextAlign</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcCenterRightTextAlign</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcGroundSigType</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcInheritFromTopBlock</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcInputOutputTermType</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcInputTermType</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcLowerLeftTextAlign</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcMY</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcNonePlacementStatus</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcOutputTermType</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcPowerSigType</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcR0</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcR180</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcR270</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcR90</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcSchematicSymbol</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcSignalSigType</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcStickFont</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcUpperLeftTextAlign</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emcValueTextDisplayFormat</code></td><td>enum_constant</td><td><code>api_classes.jsonl</code></td></tr>
+<tr><td><code>emyArray_emyUInt4</code></td><td>other</td><td><code>pyAether_API_Docstring.md</code></td></tr>
+<tr><td colspan='3' style='text-align:center;color:#666;'>... and 14 more</td></tr>
+</table>
+<h2>❌ Still Missing</h2>
+<table><tr><th>API</th><th>Type</th></tr><tr><td><code>CColor</code></td><td>class</td></tr>
+<tr><td><code>CString</code></td><td>class</td></tr>
+<tr><td><code>CString.value</code></td><td>method</td></tr>
+<tr><td><code>CStringList</code></td><td>class</td></tr>
+<tr><td><code>CStringList.at</code></td><td>method</td></tr>
+<tr><td><code>GuCartPolyLine.getLinePattern</code></td><td>method</td></tr>
+<tr><td><code>GuCartPolyLine.getLineWidth</code></td><td>method</td></tr>
+<tr><td><code>GuCartPolyLine.setLineColor</code></td><td>method</td></tr>
+<tr><td><code>GuCartPolyLine.setLinePattern</code></td><td>method</td></tr>
+<tr><td><code>GuCartPolyLine.setLineWidth</code></td><td>method</td></tr>
+<tr><td><code>MDE_SWEEP_RANGE_CENTER_SPAN</code></td><td>class</td></tr>
+<tr><td><code>MDE_SWEEP_RANGE_START_STOP</code></td><td>class</td></tr>
+<tr><td><code>MDE_SWEEP_TYPE_LINEAR</code></td><td>class</td></tr>
+<tr><td><code>MDE_SWEEP_TYPE_LINEAR_STEP_SIZE</code></td><td>class</td></tr>
+<tr><td><code>MDE_SWEEP_TYPE_LOG</code></td><td>class</td></tr>
+<tr><td><code>MDE_SWEEP_TYPE_LOG_NUM_STEP</code></td><td>class</td></tr>
+<tr><td><code>MDE_SWEEP_VARIABLE_DESIGN_VARIABLE</code></td><td>class</td></tr>
+<tr><td><code>MDE_SWEEP_VARIABLE_MODEL_PARAMETER</code></td><td>class</td></tr>
+<tr><td><code>MDE_TRAN_ACC_LEVEL_CONSERVATIVE</code></td><td>class</td></tr>
+<tr><td><code>MDE_TRAN_ACC_LEVEL_LIBERAL</code></td><td>class</td></tr>
+<tr><td><code>MdeSweepRange</code></td><td>class</td></tr>
+<tr><td><code>MdeSweepType</code></td><td>class</td></tr>
+<tr><td><code>MdeSweepType.stepMode</code></td><td>method</td></tr>
+<tr><td><code>MdeSweepVariable</code></td><td>class</td></tr>
+<tr><td><code>NTL_INDEX_FORMAT_ORIGIN</code></td><td>class</td></tr>
+<tr><td><code>NTL_INDEX_FORMAT_USE_BRACKET</code></td><td>class</td></tr>
+<tr><td><code>NTL_INDEX_FORMAT_USE_UNDERLINE</code></td><td>class</td></tr>
+<tr><td><code>PVM_EXPAND_ALL</code></td><td>class</td></tr>
+<tr><td><code>PVM_UPDATE_DESTLIB_MODE</code></td><td>class</td></tr>
+<tr><td><code>SLE_GOA_AND</code></td><td>class</td></tr>
+<tr><td><code>SLE_LE_WIRE_EXTEND</code></td><td>class</td></tr>
+<tr><td><code>SLE_LE_WIRE_VARIABLE</code></td><td>class</td></tr>
+<tr><td><code>SleLeWireTypeEnum</code></td><td>class</td></tr>
+<tr><td><code>aeBaseAppFormCallBack</code></td><td>other</td></tr>
+<tr><td><code>aeCrtHBoxLayout</code></td><td>other</td></tr>
+<tr><td><code>dbObject</code></td><td>other</td></tr>
+<tr><td><code>dbTraverseTriggerFunc.__init__</code></td><td>method</td></tr>
+<tr><td><code>dbTraverseTriggerFunc.funcCb</code></td><td>method</td></tr>
+<tr><td><code>dmGetObj.files</code></td><td>method</td></tr>
+<tr><td><code>emvPurposeNumberDrawing</code></td><td>other</td></tr>
+<tr><td><code>emyArray_p_emyVia</code></td><td>other</td></tr>
+<tr><td><code>emyGetLayerNumByName</code></td><td>other</td></tr>
+<tr><td><code>emyGetPurposeNumByName</code></td><td>other</td></tr>
+<tr><td><code>emyInitDb</code></td><td>other</td></tr>
+<tr><td><code>emyInitQuery</code></td><td>other</td></tr>
+<tr><td><code>emyInitTcl</code></td><td>other</td></tr>
+<tr><td><code>emyLine.addToNet</code></td><td>method</td></tr>
+<tr><td><code>emyLine.addToPin</code></td><td>method</td></tr>
+<tr><td><code>emyPin.addToPin</code></td><td>method</td></tr>
+<tr><td><code>emyPointArray.append</code></td><td>method</td></tr>
+<tr><td><code>emyRect.addToPin</code></td><td>method</td></tr>
+<tr><td><code>emyScalarInst.addToPin</code></td><td>method</td></tr>
+<tr><td><code>emyStringArray.append</code></td><td>method</td></tr>
+<tr><td><code>smash_option</code></td><td>other</td></tr>
+<tr><td><code>smash_option.m_smashPyCell</code></td><td>method</td></tr>
+<tr><td><code>smash_option.m_smashVia</code></td><td>method</td></tr>
+<tr><td><code>tm_mday</code></td><td>other</td></tr>
+<tr><td><code>tm_mon</code></td><td>other</td></tr>
+<tr><td><code>tm_year</code></td><td>other</td></tr>
+<tr><td><code>vector2D_emyPointF</code></td><td>other</td></tr>
+</table>
+<h2>📝 SFT Corpus Impact</h2>
+<table><tr><th>Version</th><th>Pairs</th><th>Coverage</th><th>Notes</th></tr>
+<tr><td>v1/v2</td><td>~39K</td><td>74/488 (15.2%)</td><td>Structured 0% overlap</td></tr>
+<tr><td>v3 (R99)</td><td>1,113</td><td>488/488 (100%)</td><td>364 KB-doc + 124 S0</td></tr>
+<tr><td><strong>v4 (R100)</strong></td><td>1177</td><td>488/488 (100%)</td><td>64 S5 + 60 S0</td></tr>
+</table>
+<h2>⚠️ Limitations</h2>
+<ul><li>60 APIs remain as minimal S0 pairs</li>
+<li>Enum constants extracted with context window</li>
+<li>v4 is supplementary — merge with UltraData-SFT</li></ul>
+<p style="margin-top:40px;color:#999;font-size:0.85em;">Generated 2026-11-09 15:05:17</p>
+</body></html>

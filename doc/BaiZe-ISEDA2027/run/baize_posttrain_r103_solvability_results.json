@@ -1,0 +1,1899 @@
+{
+  "analysis": {
+    "total": 50,
+    "solvability_rate": 0.78,
+    "match_distribution": {
+      "api_match": 24,
+      "partial": 6,
+      "no_match": 1,
+      "exact": 15,
+      "syntax_error": 4
+    },
+    "by_difficulty": {
+      "low": {
+        "total": 20,
+        "solvable": 13,
+        "rate": 0.65,
+        "exact": 4,
+        "api_match": 9,
+        "partial": 6,
+        "no_match": 1,
+        "syntax_error": 0,
+        "empty": 0,
+        "error": 0
+      },
+      "medium": {
+        "total": 15,
+        "solvable": 13,
+        "rate": 0.8666666666666667,
+        "exact": 6,
+        "api_match": 7,
+        "partial": 0,
+        "no_match": 0,
+        "syntax_error": 2,
+        "empty": 0,
+        "error": 0
+      },
+      "high": {
+        "total": 15,
+        "solvable": 13,
+        "rate": 0.8666666666666667,
+        "exact": 5,
+        "api_match": 8,
+        "partial": 0,
+        "no_match": 0,
+        "syntax_error": 2,
+        "empty": 0,
+        "error": 0
+      }
+    },
+    "avg_api_coverage": 0.7666666666666667,
+    "full_coverage_count": 37,
+    "zero_coverage_count": 11,
+    "docs_availability": 1.0,
+    "docs_found_total": 95,
+    "docs_total_total": 95,
+    "timing": {
+      "avg": 1.2470842456817628,
+      "min": 0.2232213020324707,
+      "max": 5.33448600769043
+    },
+    "failure_modes": [
+      {
+        "task_id": "synth-rl-0015",
+        "difficulty": "low",
+        "match_level": "partial",
+        "reason": "",
+        "expected_apis": [
+          "pyAether.emyString.startswith"
+        ],
+        "generated_code": "s = pyScript.emyString(\"Hello, World!\")\n    result = s.startswith(\"Hello\")\n    return result"
+      },
+      {
+        "task_id": "synth-rl-0029",
+        "difficulty": "low",
+        "match_level": "no_match",
+        "reason": "no API calls",
+        "expected_apis": [
+          "pyAether.emyOccInst.getInstTerms"
+        ],
+        "generated_code": "# Create a dummy emyOccInst object to call getInstTerms on\n    # Since we don't have a real instance, we'll use the API as documented\n    # The function should call getInstTerms with default filterFla"
+      },
+      {
+        "task_id": "synth-rl-0155",
+        "difficulty": "low",
+        "match_level": "partial",
+        "reason": "",
+        "expected_apis": [
+          "pyAether.emyDesign.hasDefaultConstraintGroup"
+        ],
+        "generated_code": "design = pyScript.emyDesign()\n    result = design.hasDefaultConstraintGroup()\n    return result"
+      },
+      {
+        "task_id": "synth-rl-0169",
+        "difficulty": "low",
+        "match_level": "partial",
+        "reason": "",
+        "expected_apis": [
+          "pyAether.emyNet.isImplicit"
+        ],
+        "generated_code": "# Create a sample emyNet object to demonstrate the isImplicit method\n    # In a real scenario, this would be an existing network object\n    # For demonstration purposes, we'll create a simple network\n"
+      },
+      {
+        "task_id": "synth-rl-0197",
+        "difficulty": "low",
+        "match_level": "partial",
+        "reason": "",
+        "expected_apis": [
+          "pyAether.emyBitNet.getRoutePattern"
+        ],
+        "generated_code": "# Create a dummy emyBitNet object to call getRoutePattern on\n    # Since we don't have a specific net, we'll create a placeholder\n    # In practice, this would be an actual emyBitNet instance\n    bitN"
+      },
+      {
+        "task_id": "synth-rl-0225",
+        "difficulty": "low",
+        "match_level": "partial",
+        "reason": "",
+        "expected_apis": [
+          "pyAether.emyBlock.getBusTermDefs"
+        ],
+        "generated_code": "block = pyScript.emyBlock()\n    return block.getBusTermDefs()"
+      },
+      {
+        "task_id": "synth-rl-0253",
+        "difficulty": "low",
+        "match_level": "partial",
+        "reason": "",
+        "expected_apis": [
+          "pyAether.emyDesign.getParams"
+        ],
+        "generated_code": "# Create a parameter array to hold the design parameters\n    params = pyScript.emyParamArray()\n    \n    # Get the current design (assuming it's a superMaster or subMaster)\n    design = pyScript.emyDes"
+      },
+      {
+        "task_id": "synth-rl-0331",
+        "difficulty": "medium",
+        "match_level": "syntax_error",
+        "reason": "expected an indented block (<unknown>, line 4)",
+        "expected_apis": [
+          "pyAether.dbGetPurposeNumByLayerId",
+          "pyAether.dbGetLayerIdsByCV"
+        ],
+        "generated_code": "layer_ids = pyScript.dbGetLayerIdsByCV(cv=design)\n    if not layer_ids:\n        return None\n    layer_id = layer_ids[0]\n    purpose_num = pyScript.dbGetPurposeNumByLayerId(layer=layer_id)\n    return p"
+      },
+      {
+        "task_id": "synth-rl-0371",
+        "difficulty": "medium",
+        "match_level": "syntax_error",
+        "reason": "expected an indented block (<unknown>, line 4)",
+        "expected_apis": [
+          "pyAether.dmMapGetViewTypeList",
+          "pyAether.dmMapGetFileViewType"
+        ],
+        "generated_code": "view_type_list = pyScript.dmMapGetViewTypeList()\n    if view_type_list:\n        view_file_obj = pyScript.dmGetObjF(\n            pyScript.emyString(\"test_ppar\"),\n            pyScript.emyString(\"sub\"),\n"
+      },
+      {
+        "task_id": "synth-rl-0435",
+        "difficulty": "high",
+        "match_level": "syntax_error",
+        "reason": "expected an indented block (<unknown>, line 8)",
+        "expected_apis": [
+          "pyAether.aeHasLibPathEditor",
+          "pyAether.aeMoveCursor",
+          "pyAether.aeAttachFig"
+        ],
+        "generated_code": "results = []\n    \n    # Step 1: Check if LibPathEditor exists\n    lib_path_editor_exists = pyScript.aeHasLibPathEditor()\n    results.append((\"lib_path_editor_exists\", lib_path_editor_exists))\n    \n   "
+      },
+      {
+        "task_id": "synth-rl-0468",
+        "difficulty": "high",
+        "match_level": "syntax_error",
+        "reason": "expected an indented block (<unknown>, line 4)",
+        "expected_apis": [
+          "pyAether.aelEnvGetErrString",
+          "pyAether.aelEnvComp",
+          "pyAether.aelEnvFreeCompiledExpr"
+        ],
+        "generated_code": "results = []\n    try:\n        if design is None:\n            return results\n        \n        # Step 1: Query objects on layer\n        # We'll use aelEnvCrt to create an environment and aelEnvComp to c"
+      }
+    ]
+  },
+  "results": [
+    {
+      "task_id": "synth-rl-0001",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyTech.isGateGrounded"
+      ],
+      "canonical": "    return pyScript.emyTech.isGateGrounded()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    return pyScript.emyTech.isGateGrounded()\n```",
+      "generated_code": "return pyScript.emyTech.isGateGrounded()",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyTech",
+          "pyAether.emyTech.isGateGrounded"
+        ],
+        "overlap": [
+          "pyAether.emyTech.isGateGrounded"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyTech"
+        ]
+      },
+      "elapsed": 0.2232213020324707,
+      "usage": {
+        "prompt_tokens": 393,
+        "total_tokens": 411,
+        "completion_tokens": 18,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0015",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyString.startswith"
+      ],
+      "canonical": "    return pyScript.emyString.startswith()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    s = pyScript.emyString(\"Hello, World!\")\n    result = s.startswith(\"Hello\")\n    return result\n```",
+      "generated_code": "s = pyScript.emyString(\"Hello, World!\")\n    result = s.startswith(\"Hello\")\n    return result",
+      "match_level": "partial",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyString"
+        ],
+        "coverage": 0.0,
+        "missing": [
+          "pyAether.emyString.startswith"
+        ]
+      },
+      "elapsed": 0.32236337661743164,
+      "usage": {
+        "prompt_tokens": 359,
+        "total_tokens": 391,
+        "completion_tokens": 32,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0029",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyOccInst.getInstTerms"
+      ],
+      "canonical": "    return pyScript.emyOccInst.getInstTerms()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    # Create a dummy emyOccInst object to call getInstTerms on\n    # Since we don't have a real instance, we'll use the API as documented\n    # The function should call getInstTerms with default filterFlags\n    # We need to obtain an emyOccInst instance first\n    # For demonstration, we'll assume we have access to an emyOccInst object\n    # In practice, this would be obtained from the design database\n    \n    # Since the task is to call the API, we'll create a minimal example\n    # tha",
+      "generated_code": "# Create a dummy emyOccInst object to call getInstTerms on\n    # Since we don't have a real instance, we'll use the API as documented\n    # The function should call getInstTerms with default filterFlags\n    # We need to obtain an emyOccInst instance first\n    # For demonstration, we'll assume we have access to an emyOccInst object\n    # In practice, this would be obtained from the design database\n    \n    # Since the task is to call the API, we'll create a minimal example\n    # that demonstrates",
+      "match_level": "no_match",
+      "match_details": {
+        "gen_apis": [],
+        "coverage": 0.0,
+        "reason": "no API calls"
+      },
+      "elapsed": 1.6656785011291504,
+      "usage": {
+        "prompt_tokens": 342,
+        "total_tokens": 474,
+        "completion_tokens": 132,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0043",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyEngNumber.strToDouble"
+      ],
+      "canonical": "    return pyScript.emyEngNumber.strToDouble()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    val = 0.0\n    strIn = \"123.45\"\n    result = pyScript.emyEngNumber.strToDouble(val, strIn)\n    return result\n```",
+      "generated_code": "val = 0.0\n    strIn = \"123.45\"\n    result = pyScript.emyEngNumber.strToDouble(val, strIn)\n    return result",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyEngNumber",
+          "pyAether.emyEngNumber.strToDouble"
+        ],
+        "overlap": [
+          "pyAether.emyEngNumber.strToDouble"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyEngNumber"
+        ]
+      },
+      "elapsed": 0.39475107192993164,
+      "usage": {
+        "prompt_tokens": 283,
+        "total_tokens": 331,
+        "completion_tokens": 48,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0057",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.aelNumber"
+      ],
+      "canonical": "    return pyScript.aelNumber()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    expr = pyScript.emyString(\"expr\")\n    result = pyScript.aelNumber(expr=expr)\n    return result\n```",
+      "generated_code": "expr = pyScript.emyString(\"expr\")\n    result = pyScript.aelNumber(expr=expr)\n    return result",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.aelNumber",
+          "pyAether.emyString"
+        ],
+        "overlap": [
+          "pyAether.aelNumber"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyString"
+        ]
+      },
+      "elapsed": 0.2960634231567383,
+      "usage": {
+        "prompt_tokens": 494,
+        "total_tokens": 528,
+        "completion_tokens": 34,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0071",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emySegmentAddCoLinearPoint"
+      ],
+      "canonical": "    return pyScript.emySegmentAddCoLinearPoint()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    seg = pyScript.emySegment()\n    pt = pyScript.emyPoint()\n    result = pyScript.emySegment()\n    return pyScript.emySegmentAddCoLinearPoint(seg, pt, result)\n```",
+      "generated_code": "seg = pyScript.emySegment()\n    pt = pyScript.emyPoint()\n    result = pyScript.emySegment()\n    return pyScript.emySegmentAddCoLinearPoint(seg, pt, result)",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyPoint",
+          "pyAether.emySegment",
+          "pyAether.emySegmentAddCoLinearPoint"
+        ],
+        "overlap": [
+          "pyAether.emySegmentAddCoLinearPoint"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyPoint",
+          "pyAether.emySegment"
+        ]
+      },
+      "elapsed": 0.363422155380249,
+      "usage": {
+        "prompt_tokens": 324,
+        "total_tokens": 377,
+        "completion_tokens": 53,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0085",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyObjectIsInFigGroup"
+      ],
+      "canonical": "    return pyScript.emyObjectIsInFigGroup()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    # Create a sample emyObject (using a placeholder path)\n    path = \"sample_object\"\n    \n    # Call the API function\n    result = pyScript.emyObjectIsInFigGroup(path)\n    \n    return result\n```",
+      "generated_code": "# Create a sample emyObject (using a placeholder path)\n    path = \"sample_object\"\n    \n    # Call the API function\n    result = pyScript.emyObjectIsInFigGroup(path)\n    \n    return result",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyObjectIsInFigGroup"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 0.6175777912139893,
+      "usage": {
+        "prompt_tokens": 299,
+        "total_tokens": 355,
+        "completion_tokens": 56,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0099",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.chopLineCalIntersect"
+      ],
+      "canonical": "    return pyScript.chopLineCalIntersect()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    # Create a sample segment\n    seg = pyScript.emySegment()\n    \n    # Create a sample chopper point array\n    chopper = pyScript.emyPointArray()\n    \n    # Set isClosed to False\n    isClosed = pyScript.emyBoolean(False)\n    \n    # Create a sample crossLine point array\n    crossLine = pyScript.emyPointArray()\n    \n    # Call chopLineCalIntersect\n    result = pyScript.chopLineCalIntersect(seg, chopper, isClosed, crossLine)\n    \n    return result\n```",
+      "generated_code": "# Create a sample segment\n    seg = pyScript.emySegment()\n    \n    # Create a sample chopper point array\n    chopper = pyScript.emyPointArray()\n    \n    # Set isClosed to False\n    isClosed = pyScript.emyBoolean(False)\n    \n    # Create a sample crossLine point array\n    crossLine = pyScript.emyPointArray()\n    \n    # Call chopLineCalIntersect\n    result = pyScript.chopLineCalIntersect(seg, chopper, isClosed, crossLine)\n    \n    return result",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.chopLineCalIntersect",
+          "pyAether.emyBoolean",
+          "pyAether.emyPointArray",
+          "pyAether.emySegment"
+        ],
+        "overlap": [
+          "pyAether.chopLineCalIntersect"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyBoolean",
+          "pyAether.emyPointArray",
+          "pyAether.emySegment"
+        ]
+      },
+      "elapsed": 0.9080331325531006,
+      "usage": {
+        "prompt_tokens": 349,
+        "total_tokens": 476,
+        "completion_tokens": 127,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0113",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyConstraintParamGetDualIntValue"
+      ],
+      "canonical": "    return pyScript.emyConstraintParamGetDualIntValue()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    constraintParam = pyScript.emyConstraintParam.create()\n    value1 = pyScript.emyInt4.create(0)\n    value2 = pyScript.emyInt4.create(0)\n    result = pyScript.emyConstraintParamGetDualIntValue(constraintParam, value1, value2)\n    return result\n```",
+      "generated_code": "constraintParam = pyScript.emyConstraintParam.create()\n    value1 = pyScript.emyInt4.create(0)\n    value2 = pyScript.emyInt4.create(0)\n    result = pyScript.emyConstraintParamGetDualIntValue(constraintParam, value1, value2)\n    return result",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyConstraintParam",
+          "pyAether.emyConstraintParam.create",
+          "pyAether.emyConstraintParamGetDualIntValue",
+          "pyAether.emyInt4",
+          "pyAether.emyInt4.create"
+        ],
+        "overlap": [
+          "pyAether.emyConstraintParamGetDualIntValue"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyConstraintParam",
+          "pyAether.emyConstraintParam.create",
+          "pyAether.emyInt4",
+          "pyAether.emyInt4.create"
+        ]
+      },
+      "elapsed": 0.5081517696380615,
+      "usage": {
+        "prompt_tokens": 404,
+        "total_tokens": 480,
+        "completion_tokens": 76,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0127",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.etGetFileName"
+      ],
+      "canonical": "    return pyScript.etGetFileName()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    p = pyScript.etOutFile(\"~/test/output.py\")\n    result = pyScript.etGetFileName(p)\n    pyScript.etClose(p)\n    return result\n```",
+      "generated_code": "p = pyScript.etOutFile(\"~/test/output.py\")\n    result = pyScript.etGetFileName(p)\n    pyScript.etClose(p)\n    return result",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.etClose",
+          "pyAether.etGetFileName",
+          "pyAether.etOutFile"
+        ],
+        "overlap": [
+          "pyAether.etGetFileName"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.etClose",
+          "pyAether.etOutFile"
+        ]
+      },
+      "elapsed": 0.32571959495544434,
+      "usage": {
+        "prompt_tokens": 269,
+        "total_tokens": 311,
+        "completion_tokens": 42,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0141",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyGroupGetLeader"
+      ],
+      "canonical": "    return pyScript.emyGroupGetLeader()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    group = pyScript.emyGroup()\n    result = pyScript.emyGroupGetLeader(group)\n    return result\n```",
+      "generated_code": "group = pyScript.emyGroup()\n    result = pyScript.emyGroupGetLeader(group)\n    return result",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyGroup",
+          "pyAether.emyGroupGetLeader"
+        ],
+        "overlap": [
+          "pyAether.emyGroupGetLeader"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyGroup"
+        ]
+      },
+      "elapsed": 0.2894630432128906,
+      "usage": {
+        "prompt_tokens": 282,
+        "total_tokens": 314,
+        "completion_tokens": 32,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0155",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyDesign.hasDefaultConstraintGroup"
+      ],
+      "canonical": "    return pyScript.emyDesign.hasDefaultConstraintGroup()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    design = pyScript.emyDesign()\n    result = design.hasDefaultConstraintGroup()\n    return result\n```",
+      "generated_code": "design = pyScript.emyDesign()\n    result = design.hasDefaultConstraintGroup()\n    return result",
+      "match_level": "partial",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyDesign"
+        ],
+        "coverage": 0.0,
+        "missing": [
+          "pyAether.emyDesign.hasDefaultConstraintGroup"
+        ]
+      },
+      "elapsed": 0.29079747200012207,
+      "usage": {
+        "prompt_tokens": 225,
+        "total_tokens": 254,
+        "completion_tokens": 29,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0169",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyNet.isImplicit"
+      ],
+      "canonical": "    return pyScript.emyNet.isImplicit()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    # Create a sample emyNet object to demonstrate the isImplicit method\n    # In a real scenario, this would be an existing network object\n    # For demonstration purposes, we'll create a simple network\n    net = pyScript.emyNet(\"testNet\")\n    \n    # Call the isImplicit method on the network\n    result = net.isImplicit()\n    \n    return result\n```",
+      "generated_code": "# Create a sample emyNet object to demonstrate the isImplicit method\n    # In a real scenario, this would be an existing network object\n    # For demonstration purposes, we'll create a simple network\n    net = pyScript.emyNet(\"testNet\")\n    \n    # Call the isImplicit method on the network\n    result = net.isImplicit()\n    \n    return result",
+      "match_level": "partial",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyNet"
+        ],
+        "coverage": 0.0,
+        "missing": [
+          "pyAether.emyNet.isImplicit"
+        ]
+      },
+      "elapsed": 0.8321390151977539,
+      "usage": {
+        "prompt_tokens": 232,
+        "total_tokens": 319,
+        "completion_tokens": 87,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0183",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.aeGetViewTypeString"
+      ],
+      "canonical": "    return pyScript.aeGetViewTypeString()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    return pyScript.aeGetViewTypeString(\"lib\", \"cell\", \"view\")\n```",
+      "generated_code": "return pyScript.aeGetViewTypeString(\"lib\", \"cell\", \"view\")",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.aeGetViewTypeString"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 0.25299811363220215,
+      "usage": {
+        "prompt_tokens": 404,
+        "total_tokens": 429,
+        "completion_tokens": 25,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0197",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyBitNet.getRoutePattern"
+      ],
+      "canonical": "    return pyScript.emyBitNet.getRoutePattern()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    # Create a dummy emyBitNet object to call getRoutePattern on\n    # Since we don't have a specific net, we'll create a placeholder\n    # In practice, this would be an actual emyBitNet instance\n    bitNet = pyScript.emyBitNet()\n    routePattern = bitNet.getRoutePattern()\n    return routePattern\n```",
+      "generated_code": "# Create a dummy emyBitNet object to call getRoutePattern on\n    # Since we don't have a specific net, we'll create a placeholder\n    # In practice, this would be an actual emyBitNet instance\n    bitNet = pyScript.emyBitNet()\n    routePattern = bitNet.getRoutePattern()\n    return routePattern",
+      "match_level": "partial",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyBitNet"
+        ],
+        "coverage": 0.0,
+        "missing": [
+          "pyAether.emyBitNet.getRoutePattern"
+        ]
+      },
+      "elapsed": 0.8695738315582275,
+      "usage": {
+        "prompt_tokens": 224,
+        "total_tokens": 307,
+        "completion_tokens": 83,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0211",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.aeScheViewToView"
+      ],
+      "canonical": "    return pyScript.aeScheViewToView()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    result = pyScript.aeScheViewToView(\"libName\", \"cellName\", \"viewName\", \"viewType\", \"toViewName\", \"toViewType\")\n    return result\n```",
+      "generated_code": "result = pyScript.aeScheViewToView(\"libName\", \"cellName\", \"viewName\", \"viewType\", \"toViewName\", \"toViewType\")\n    return result",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.aeScheViewToView"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 0.40024542808532715,
+      "usage": {
+        "prompt_tokens": 403,
+        "total_tokens": 451,
+        "completion_tokens": 48,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0225",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyBlock.getBusTermDefs"
+      ],
+      "canonical": "    return pyScript.emyBlock.getBusTermDefs()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    block = pyScript.emyBlock()\n    return block.getBusTermDefs()\n```",
+      "generated_code": "block = pyScript.emyBlock()\n    return block.getBusTermDefs()",
+      "match_level": "partial",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyBlock"
+        ],
+        "coverage": 0.0,
+        "missing": [
+          "pyAether.emyBlock.getBusTermDefs"
+        ]
+      },
+      "elapsed": 0.25381016731262207,
+      "usage": {
+        "prompt_tokens": 238,
+        "total_tokens": 262,
+        "completion_tokens": 24,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0239",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyPointArraySortByLeftmostLowest"
+      ],
+      "canonical": "    return pyScript.emyPointArraySortByLeftmostLowest()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    # Create a sample emyPointArray\n    pa = pyScript.emyPointArray()\n    \n    # Call the API function\n    result = pyScript.emyPointArraySortByLeftmostLowest(pa)\n    \n    return result\n```",
+      "generated_code": "# Create a sample emyPointArray\n    pa = pyScript.emyPointArray()\n    \n    # Call the API function\n    result = pyScript.emyPointArraySortByLeftmostLowest(pa)\n    \n    return result",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyPointArray",
+          "pyAether.emyPointArraySortByLeftmostLowest"
+        ],
+        "overlap": [
+          "pyAether.emyPointArraySortByLeftmostLowest"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyPointArray"
+        ]
+      },
+      "elapsed": 0.47292637825012207,
+      "usage": {
+        "prompt_tokens": 295,
+        "total_tokens": 352,
+        "completion_tokens": 57,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0253",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.emyDesign.getParams"
+      ],
+      "canonical": "    return pyScript.emyDesign.getParams()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    # Create a parameter array to hold the design parameters\n    params = pyScript.emyParamArray()\n    \n    # Get the current design (assuming it's a superMaster or subMaster)\n    design = pyScript.emyDesign()\n    \n    # Call getParams to fill the parameter array\n    design.getParams(params)\n    \n    return params\n```",
+      "generated_code": "# Create a parameter array to hold the design parameters\n    params = pyScript.emyParamArray()\n    \n    # Get the current design (assuming it's a superMaster or subMaster)\n    design = pyScript.emyDesign()\n    \n    # Call getParams to fill the parameter array\n    design.getParams(params)\n    \n    return params",
+      "match_level": "partial",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyDesign",
+          "pyAether.emyParamArray"
+        ],
+        "coverage": 0.0,
+        "missing": [
+          "pyAether.emyDesign.getParams"
+        ]
+      },
+      "elapsed": 0.7254855632781982,
+      "usage": {
+        "prompt_tokens": 400,
+        "total_tokens": 481,
+        "completion_tokens": 81,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0267",
+      "difficulty": "low",
+      "expected_apis": [
+        "pyAether.rplaca"
+      ],
+      "canonical": "    return pyScript.rplaca()",
+      "docs_found": 1,
+      "docs_total": 1,
+      "response": "```python\n    result = pyScript.rplaca([1, 2, 3], 4)\n    return result\n```",
+      "generated_code": "result = pyScript.rplaca([1, 2, 3], 4)\n    return result",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.rplaca"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 0.29361438751220703,
+      "usage": {
+        "prompt_tokens": 293,
+        "total_tokens": 323,
+        "completion_tokens": 30,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0281",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.etCss",
+        "pyAether.aeAddSelectBox"
+      ],
+      "canonical": "    r1 = pyScript.etCss(design)\n    r2 = pyScript.aeAddSelectBox(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    # Step 1: Use etCss to get the first element of selected objects\n    first_selected = pyScript.etCss()\n    \n    # Step 2: Use aeAddSelectBox with a box derived from the result\n    # Since etCss returns an emyObject or None, we need to create a box\n    # If first_selected is None, we can't create a meaningful box, so return None\n    if first_selected is None:\n        return None\n    \n    # Create a box around the first selected object\n    # We need to get the bounding box of the obj",
+      "generated_code": "# Step 1: Use etCss to get the first element of selected objects\n    first_selected = pyScript.etCss()\n    \n    # Step 2: Use aeAddSelectBox with a box derived from the result\n    # Since etCss returns an emyObject or None, we need to create a box\n    # If first_selected is None, we can't create a meaningful box, so return None\n    if first_selected is None:\n        return None\n    \n    # Create a box around the first selected object\n    # We need to get the bounding box of the object to create ",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.aeAddSelectBox",
+          "pyAether.emyBoxF",
+          "pyAether.etCss"
+        ],
+        "overlap": [
+          "pyAether.aeAddSelectBox",
+          "pyAether.etCss"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyBoxF"
+        ]
+      },
+      "elapsed": 1.854703664779663,
+      "usage": {
+        "prompt_tokens": 837,
+        "total_tokens": 1101,
+        "completion_tokens": 264,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0291",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.aeSynchronize",
+        "pyAether.aeDiscardDesign"
+      ],
+      "canonical": "    r1 = pyScript.aeSynchronize(design)\n    r2 = pyScript.aeDiscardDesign(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    # Step 1: Use aeSynchronize to synchronize the opened and modified design\n    sync_result = pyScript.aeSynchronize()\n    \n    # Step 2: Use aeDiscardDesign to discard the modified design\n    discard_result = pyScript.aeDiscardDesign()\n    \n    # Return the final result\n    return discard_result\n```",
+      "generated_code": "# Step 1: Use aeSynchronize to synchronize the opened and modified design\n    sync_result = pyScript.aeSynchronize()\n    \n    # Step 2: Use aeDiscardDesign to discard the modified design\n    discard_result = pyScript.aeDiscardDesign()\n    \n    # Return the final result\n    return discard_result",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.aeDiscardDesign",
+          "pyAether.aeSynchronize"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 0.5117132663726807,
+      "usage": {
+        "prompt_tokens": 776,
+        "total_tokens": 855,
+        "completion_tokens": 79,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0301",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.aeUnsetBindKeys",
+        "pyAether.aeGetTextWidth"
+      ],
+      "canonical": "    r1 = pyScript.aeUnsetBindKeys(design)\n    r2 = pyScript.aeGetTextWidth(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    # Step 1: Use aeUnsetBindKeys to unset bind keys\n    appType = \"dm\"\n    keyList = [[\"key1\", \"key2\"], [\"key3\", \"key4\"]]\n    unset_result = pyScript.aeUnsetBindKeys(appType, keyList)\n    \n    # Step 2: Use aeGetTextWidth to get text width\n    text = \"sss\"\n    text_width = pyScript.aeGetTextWidth(text)\n    \n    # Return the final result\n    return text_width\n```",
+      "generated_code": "# Step 1: Use aeUnsetBindKeys to unset bind keys\n    appType = \"dm\"\n    keyList = [[\"key1\", \"key2\"], [\"key3\", \"key4\"]]\n    unset_result = pyScript.aeUnsetBindKeys(appType, keyList)\n    \n    # Step 2: Use aeGetTextWidth to get text width\n    text = \"sss\"\n    text_width = pyScript.aeGetTextWidth(text)\n    \n    # Return the final result\n    return text_width",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.aeGetTextWidth",
+          "pyAether.aeUnsetBindKeys"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 0.8699007034301758,
+      "usage": {
+        "prompt_tokens": 738,
+        "total_tokens": 859,
+        "completion_tokens": 121,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0311",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.dbGetDrdMinSpacing",
+        "pyAether.techGetLabelLayers"
+      ],
+      "canonical": "    r1 = pyScript.dbGetDrdMinSpacing(design)\n    r2 = pyScript.techGetLabelLayers(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    tech = design.tech\n    min_spacing = pyScript.dbGetDrdMinSpacing(tech, \"M1\")\n    label_layers = pyScript.techGetLabelLayers(tech)\n    return label_layers\n```",
+      "generated_code": "tech = design.tech\n    min_spacing = pyScript.dbGetDrdMinSpacing(tech, \"M1\")\n    label_layers = pyScript.techGetLabelLayers(tech)\n    return label_layers",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.dbGetDrdMinSpacing",
+          "pyAether.techGetLabelLayers"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 0.3964085578918457,
+      "usage": {
+        "prompt_tokens": 560,
+        "total_tokens": 610,
+        "completion_tokens": 50,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0321",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.dbSplitArray",
+        "pyAether.emyInstBitGetInst"
+      ],
+      "canonical": "    r1 = pyScript.dbSplitArray(design)\n    r2 = pyScript.emyInstBitGetInst(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    # Step 1: Use dbSplitArray to split an array instance\n    # We need to find an array instance in the design to split\n    # Let's find an array instance in the design\n    array_inst = pyScript.dbFindInst(design, \"array_inst\")\n    if array_inst is None:\n        return None\n    \n    # Split the array with rows [1, 1] and cols [1, 1] as a simple example\n    split_result = pyScript.dbSplitArray(array_inst, [1, 1], [1, 1])\n    if split_result is None:\n        return None\n    \n    # Step ",
+      "generated_code": "# Step 1: Use dbSplitArray to split an array instance\n    # We need to find an array instance in the design to split\n    # Let's find an array instance in the design\n    array_inst = pyScript.dbFindInst(design, \"array_inst\")\n    if array_inst is None:\n        return None\n    \n    # Split the array with rows [1, 1] and cols [1, 1] as a simple example\n    split_result = pyScript.dbSplitArray(array_inst, [1, 1], [1, 1])\n    if split_result is None:\n        return None\n    \n    # Step 2: Use emyInst",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.dbFindInst",
+          "pyAether.dbSplitArray",
+          "pyAether.emyInstBitGetInst"
+        ],
+        "overlap": [
+          "pyAether.dbSplitArray",
+          "pyAether.emyInstBitGetInst"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.dbFindInst"
+        ]
+      },
+      "elapsed": 2.5344507694244385,
+      "usage": {
+        "prompt_tokens": 659,
+        "total_tokens": 981,
+        "completion_tokens": 322,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0331",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.dbGetPurposeNumByLayerId",
+        "pyAether.dbGetLayerIdsByCV"
+      ],
+      "canonical": "    r1 = pyScript.dbGetPurposeNumByLayerId(design)\n    r2 = pyScript.dbGetLayerIdsByCV(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    layer_ids = pyScript.dbGetLayerIdsByCV(cv=design)\n    if not layer_ids:\n        return None\n    layer_id = layer_ids[0]\n    purpose_num = pyScript.dbGetPurposeNumByLayerId(layer=layer_id)\n    return purpose_num\n```",
+      "generated_code": "layer_ids = pyScript.dbGetLayerIdsByCV(cv=design)\n    if not layer_ids:\n        return None\n    layer_id = layer_ids[0]\n    purpose_num = pyScript.dbGetPurposeNumByLayerId(layer=layer_id)\n    return purpose_num",
+      "match_level": "syntax_error",
+      "match_details": {
+        "reason": "expected an indented block (<unknown>, line 4)",
+        "gen_apis": [
+          "pyAether.dbGetLayerIdsByCV",
+          "pyAether.dbGetPurposeNumByLayerId"
+        ]
+      },
+      "elapsed": 0.46735572814941406,
+      "usage": {
+        "prompt_tokens": 561,
+        "total_tokens": 628,
+        "completion_tokens": 67,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0341",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.sdlPrintTechDiagnostics",
+        "pyAether.dbWrappDesign"
+      ],
+      "canonical": "    r1 = pyScript.sdlPrintTechDiagnostics(design)\n    r2 = pyScript.dbWrappDesign(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    result1 = pyScript.sdlPrintTechDiagnostics(design)\n    result2 = pyScript.dbWrappDesign(design)\n    return result2\n```",
+      "generated_code": "result1 = pyScript.sdlPrintTechDiagnostics(design)\n    result2 = pyScript.dbWrappDesign(design)\n    return result2",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.dbWrappDesign",
+          "pyAether.sdlPrintTechDiagnostics"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 0.3243577480316162,
+      "usage": {
+        "prompt_tokens": 497,
+        "total_tokens": 537,
+        "completion_tokens": 40,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0351",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.dbShapeQueryByCb",
+        "pyAether.dbBoundaryQuery"
+      ],
+      "canonical": "    r1 = pyScript.dbShapeQueryByCb(design)\n    r2 = pyScript.dbBoundaryQuery(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    # Step 1: Use dbShapeQueryByCb\n    # dbShapeQueryByCb requires a data parameter (emyArray_sp_SleHierData) and a query callback\n    # Since we don't have a specific callback, we'll use the default None for queryCb\n    # We need to create an emyArray_sp_SleHierData object for the data parameter\n    data = pyScript.emyArray_sp_SleHierData()\n    pyScript.dbShapeQueryByCb(\n        cv=design,\n        data=data,\n        bbox=pyScript.emyBoxF(0, 0, 0, 0),\n        trans=pyScript.emyTransfor",
+      "generated_code": "# Step 1: Use dbShapeQueryByCb\n    # dbShapeQueryByCb requires a data parameter (emyArray_sp_SleHierData) and a query callback\n    # Since we don't have a specific callback, we'll use the default None for queryCb\n    # We need to create an emyArray_sp_SleHierData object for the data parameter\n    data = pyScript.emyArray_sp_SleHierData()\n    pyScript.dbShapeQueryByCb(\n        cv=design,\n        data=data,\n        bbox=pyScript.emyBoxF(0, 0, 0, 0),\n        trans=pyScript.emyTransformF(0, 0),\n    ",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.dbBoundaryQuery",
+          "pyAether.dbShapeQueryByCb",
+          "pyAether.emyArray_sp_SleHierData",
+          "pyAether.emyBoxF",
+          "pyAether.emyTransformF"
+        ],
+        "overlap": [
+          "pyAether.dbBoundaryQuery",
+          "pyAether.dbShapeQueryByCb"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyArray_sp_SleHierData",
+          "pyAether.emyBoxF",
+          "pyAether.emyTransformF"
+        ]
+      },
+      "elapsed": 1.9564292430877686,
+      "usage": {
+        "prompt_tokens": 734,
+        "total_tokens": 1036,
+        "completion_tokens": 302,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0361",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.aelEnvInterp",
+        "pyAether.aelEnvExe"
+      ],
+      "canonical": "    r1 = pyScript.aelEnvInterp(design)\n    r2 = pyScript.aelEnvExe(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    env = pyScript.aelEnvCrt(\"f\")\n    res1 = pyScript.aelEnvInterp(env, \"1+2-3*4/5\")\n    expr = pyScript.aelEnvComp(env, res1)\n    res2 = pyScript.aelEnvExe(expr)\n    return res2\n```",
+      "generated_code": "env = pyScript.aelEnvCrt(\"f\")\n    res1 = pyScript.aelEnvInterp(env, \"1+2-3*4/5\")\n    expr = pyScript.aelEnvComp(env, res1)\n    res2 = pyScript.aelEnvExe(expr)\n    return res2",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.aelEnvComp",
+          "pyAether.aelEnvCrt",
+          "pyAether.aelEnvExe",
+          "pyAether.aelEnvInterp"
+        ],
+        "overlap": [
+          "pyAether.aelEnvExe",
+          "pyAether.aelEnvInterp"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.aelEnvComp",
+          "pyAether.aelEnvCrt"
+        ]
+      },
+      "elapsed": 0.5043528079986572,
+      "usage": {
+        "prompt_tokens": 587,
+        "total_tokens": 665,
+        "completion_tokens": 78,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0371",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.dmMapGetViewTypeList",
+        "pyAether.dmMapGetFileViewType"
+      ],
+      "canonical": "    r1 = pyScript.dmMapGetViewTypeList(design)\n    r2 = pyScript.dmMapGetFileViewType(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    view_type_list = pyScript.dmMapGetViewTypeList()\n    if view_type_list:\n        view_file_obj = pyScript.dmGetObjF(\n            pyScript.emyString(\"test_ppar\"),\n            pyScript.emyString(\"sub\"),\n            pyScript.emyString(view_type_list[0]),\n            pyScript.emyString(\"sch.oa\")\n        )\n        result = pyScript.dmMapGetFileViewType(view_file_obj)\n    else:\n        result = None\n    return result\n```",
+      "generated_code": "view_type_list = pyScript.dmMapGetViewTypeList()\n    if view_type_list:\n        view_file_obj = pyScript.dmGetObjF(\n            pyScript.emyString(\"test_ppar\"),\n            pyScript.emyString(\"sub\"),\n            pyScript.emyString(view_type_list[0]),\n            pyScript.emyString(\"sch.oa\")\n        )\n        result = pyScript.dmMapGetFileViewType(view_file_obj)\n    else:\n        result = None\n    return result",
+      "match_level": "syntax_error",
+      "match_details": {
+        "reason": "expected an indented block (<unknown>, line 4)",
+        "gen_apis": [
+          "pyAether.emyString",
+          "pyAether.dmGetObjF",
+          "pyAether.dmMapGetViewTypeList",
+          "pyAether.dmMapGetFileViewType"
+        ]
+      },
+      "elapsed": 0.7926187515258789,
+      "usage": {
+        "prompt_tokens": 650,
+        "total_tokens": 769,
+        "completion_tokens": 119,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0381",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.guFormOverWriteAll",
+        "pyAether.sleOutputFormInfo"
+      ],
+      "canonical": "    r1 = pyScript.guFormOverWriteAll(design)\n    r2 = pyScript.sleOutputFormInfo(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    form = pyScript.emyString(\"form\")\n    result1 = pyScript.guFormOverWriteAll(form=form)\n    content = pyScript.emyString(\"0\")\n    result2 = pyScript.sleOutputFormInfo(form=form, content=content)\n    return result2\n```",
+      "generated_code": "form = pyScript.emyString(\"form\")\n    result1 = pyScript.guFormOverWriteAll(form=form)\n    content = pyScript.emyString(\"0\")\n    result2 = pyScript.sleOutputFormInfo(form=form, content=content)\n    return result2",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyString",
+          "pyAether.guFormOverWriteAll",
+          "pyAether.sleOutputFormInfo"
+        ],
+        "overlap": [
+          "pyAether.guFormOverWriteAll",
+          "pyAether.sleOutputFormInfo"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyString"
+        ]
+      },
+      "elapsed": 0.4678776264190674,
+      "usage": {
+        "prompt_tokens": 506,
+        "total_tokens": 575,
+        "completion_tokens": 69,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0391",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.dmEmap",
+        "pyAether.dmSizeLibrary"
+      ],
+      "canonical": "    r1 = pyScript.dmEmap(design)\n    r2 = pyScript.dmSizeLibrary(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    result1 = pyScript.dmEmap()\n    result2 = pyScript.dmSizeLibrary()\n    return result2\n```",
+      "generated_code": "result1 = pyScript.dmEmap()\n    result2 = pyScript.dmSizeLibrary()\n    return result2",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.dmEmap",
+          "pyAether.dmSizeLibrary"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 0.3213660717010498,
+      "usage": {
+        "prompt_tokens": 341,
+        "total_tokens": 373,
+        "completion_tokens": 32,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0401",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.tmSelectLibrary",
+        "pyAether.setTmValue"
+      ],
+      "canonical": "    r1 = pyScript.tmSelectLibrary(design)\n    r2 = pyScript.setTmValue(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    # Step 1: Use tmSelectLibrary\n    lib_name = pyScript.emyString(\"Lib1\")\n    result1 = pyScript.tmSelectLibrary(name=lib_name)\n    \n    # Step 2: Use setTmValue\n    tm_name = pyScript.emyString(\"widthLineEdit\")\n    tm_value = pyScript.emyString(\"0.35\")\n    result2 = pyScript.setTmValue(name=tm_name, value=tm_value)\n    \n    return result2\n```",
+      "generated_code": "# Step 1: Use tmSelectLibrary\n    lib_name = pyScript.emyString(\"Lib1\")\n    result1 = pyScript.tmSelectLibrary(name=lib_name)\n    \n    # Step 2: Use setTmValue\n    tm_name = pyScript.emyString(\"widthLineEdit\")\n    tm_value = pyScript.emyString(\"0.35\")\n    result2 = pyScript.setTmValue(name=tm_name, value=tm_value)\n    \n    return result2",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyString",
+          "pyAether.setTmValue",
+          "pyAether.tmSelectLibrary"
+        ],
+        "overlap": [
+          "pyAether.setTmValue",
+          "pyAether.tmSelectLibrary"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyString"
+        ]
+      },
+      "elapsed": 0.7574763298034668,
+      "usage": {
+        "prompt_tokens": 472,
+        "total_tokens": 587,
+        "completion_tokens": 115,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0411",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.etAlpaNumCmp",
+        "pyAether.etForall"
+      ],
+      "canonical": "    r1 = pyScript.etAlpaNumCmp(design)\n    r2 = pyScript.etForall(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    # Step 1: Use etAlpaNumCmp to compare two strings\n    cmp_result = pyScript.etAlpaNumCmp(\"abc\", \"abd\")\n    \n    # Step 2: Use the result with etForall\n    # Create a list containing the comparison result and check if all elements are not zero\n    # (i.e., all comparisons indicate inequality)\n    result = pyScript.etForall(\"x\", [cmp_result], \"x != 0\")\n    \n    return result\n```",
+      "generated_code": "# Step 1: Use etAlpaNumCmp to compare two strings\n    cmp_result = pyScript.etAlpaNumCmp(\"abc\", \"abd\")\n    \n    # Step 2: Use the result with etForall\n    # Create a list containing the comparison result and check if all elements are not zero\n    # (i.e., all comparisons indicate inequality)\n    result = pyScript.etForall(\"x\", [cmp_result], \"x != 0\")\n    \n    return result",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.etAlpaNumCmp",
+          "pyAether.etForall"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 1.1245908737182617,
+      "usage": {
+        "prompt_tokens": 703,
+        "total_tokens": 817,
+        "completion_tokens": 114,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0421",
+      "difficulty": "medium",
+      "expected_apis": [
+        "pyAether.aeGetFormLocation",
+        "pyAether.aeDeleteForm"
+      ],
+      "canonical": "    r1 = pyScript.aeGetFormLocation(design)\n    r2 = pyScript.aeDeleteForm(r1)\n    return r2",
+      "docs_found": 2,
+      "docs_total": 2,
+      "response": "```python\n    form = pyScript.aeCreateAppForm('test', [])\n    location = pyScript.aeGetFormLocation(form)\n    result = pyScript.aeDeleteForm(form)\n    return result\n```",
+      "generated_code": "form = pyScript.aeCreateAppForm('test', [])\n    location = pyScript.aeGetFormLocation(form)\n    result = pyScript.aeDeleteForm(form)\n    return result",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.aeCreateAppForm",
+          "pyAether.aeDeleteForm",
+          "pyAether.aeGetFormLocation"
+        ],
+        "overlap": [
+          "pyAether.aeDeleteForm",
+          "pyAether.aeGetFormLocation"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.aeCreateAppForm"
+        ]
+      },
+      "elapsed": 0.3992805480957031,
+      "usage": {
+        "prompt_tokens": 672,
+        "total_tokens": 721,
+        "completion_tokens": 49,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0431",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.etCss",
+        "pyAether.aeAddSelectBox",
+        "pyAether.aeIncreaseSel"
+      ],
+      "canonical": "    objs = pyScript.etCss(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.aeAddSelectBox(obj)\n        processed.append(r)\n    analysis = pyScript.aeIncreaseSel(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Step 1: Query objects on the specified layer\n    # First, try to select objects using a box selection\n    # Create a box that covers the entire design area (or a reasonable area)\n    try:\n        # Get design bounds or use a default large box\n        # Since we don't have direct access to design bounds, use a reasonable default\n        box = pyScript.emyBoxF(-10000, -10000, 10000, 10000)\n        # Select objects in the box\n        pyScript.aeAddSelectBox(box)\n    except Exception",
+      "generated_code": "# Step 1: Query objects on the specified layer\n    # First, try to select objects using a box selection\n    # Create a box that covers the entire design area (or a reasonable area)\n    try:\n        # Get design bounds or use a default large box\n        # Since we don't have direct access to design bounds, use a reasonable default\n        box = pyScript.emyBoxF(-10000, -10000, 10000, 10000)\n        # Select objects in the box\n        pyScript.aeAddSelectBox(box)\n    except Exception:\n        # If",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.aeAddSelectBox",
+          "pyAether.aeIncreaseSel",
+          "pyAether.emyBoxF",
+          "pyAether.etCss"
+        ],
+        "overlap": [
+          "pyAether.aeAddSelectBox",
+          "pyAether.aeIncreaseSel",
+          "pyAether.etCss"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyBoxF"
+        ]
+      },
+      "elapsed": 3.120922327041626,
+      "usage": {
+        "prompt_tokens": 1108,
+        "total_tokens": 1470,
+        "completion_tokens": 362,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0435",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.aeHasLibPathEditor",
+        "pyAether.aeMoveCursor",
+        "pyAether.aeAttachFig"
+      ],
+      "canonical": "    objs = pyScript.aeHasLibPathEditor(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.aeMoveCursor(obj)\n        processed.append(r)\n    analysis = pyScript.aeAttachFig(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    results = []\n    \n    # Step 1: Check if LibPathEditor exists\n    lib_path_editor_exists = pyScript.aeHasLibPathEditor()\n    results.append((\"lib_path_editor_exists\", lib_path_editor_exists))\n    \n    # Step 2: Handle edge case - empty design\n    if design is None:\n        results.append((\"error\", \"Design is None\"))\n        return results\n    \n    # Step 3: Query objects on the specified layer\n    try:\n        # Get all figures in the design\n        figs = design.getFigs()\n    exce",
+      "generated_code": "results = []\n    \n    # Step 1: Check if LibPathEditor exists\n    lib_path_editor_exists = pyScript.aeHasLibPathEditor()\n    results.append((\"lib_path_editor_exists\", lib_path_editor_exists))\n    \n    # Step 2: Handle edge case - empty design\n    if design is None:\n        results.append((\"error\", \"Design is None\"))\n        return results\n    \n    # Step 3: Query objects on the specified layer\n    try:\n        # Get all figures in the design\n        figs = design.getFigs()\n    except Exception a",
+      "match_level": "syntax_error",
+      "match_details": {
+        "reason": "expected an indented block (<unknown>, line 8)",
+        "gen_apis": [
+          "pyAether.aeAttachFig",
+          "pyAether.aeMoveCursor",
+          "pyAether.aeHasLibPathEditor"
+        ]
+      },
+      "elapsed": 4.067298650741577,
+      "usage": {
+        "prompt_tokens": 1085,
+        "total_tokens": 1693,
+        "completion_tokens": 608,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0440",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.aeCrtGuardringAuto",
+        "pyAether.aeCreatePin",
+        "pyAether.aeGenerateViasFromShapes"
+      ],
+      "canonical": "    objs = pyScript.aeCrtGuardringAuto(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.aeCreatePin(obj)\n        processed.append(r)\n    analysis = pyScript.aeGenerateViasFromShapes(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Handle edge cases\n    if design is None:\n        return []\n    \n    # Step 1: Query objects on the specified layer\n    try:\n        layer = pyScript.aeGetLayer(design, layer_name)\n    except Exception:\n        return []\n    \n    if layer is None:\n        return []\n    \n    # Get objects on the layer\n    try:\n        objects = pyScript.aeGetObjects(design, layer)\n    except Exception:\n        return []\n    \n    if not objects:\n        return []\n    \n    # Step 2: Process results -",
+      "generated_code": "# Handle edge cases\n    if design is None:\n        return []\n    \n    # Step 1: Query objects on the specified layer\n    try:\n        layer = pyScript.aeGetLayer(design, layer_name)\n    except Exception:\n        return []\n    \n    if layer is None:\n        return []\n    \n    # Get objects on the layer\n    try:\n        objects = pyScript.aeGetObjects(design, layer)\n    except Exception:\n        return []\n    \n    if not objects:\n        return []\n    \n    # Step 2: Process results - create guard ",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.PyGuardRingData",
+          "pyAether.aeCreatePin",
+          "pyAether.aeCrtGuardringAuto",
+          "pyAether.aeGenerateViasFromShapes",
+          "pyAether.aeGetLayer",
+          "pyAether.aeGetObjects",
+          "pyAether.emyPointF",
+          "pyAether.emyShape",
+          "pyAether.viaBaseOptions"
+        ],
+        "overlap": [
+          "pyAether.aeCreatePin",
+          "pyAether.aeCrtGuardringAuto",
+          "pyAether.aeGenerateViasFromShapes"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.PyGuardRingData",
+          "pyAether.aeGetLayer",
+          "pyAether.aeGetObjects",
+          "pyAether.emyPointF",
+          "pyAether.emyShape",
+          "pyAether.viaBaseOptions"
+        ]
+      },
+      "elapsed": 2.9056127071380615,
+      "usage": {
+        "prompt_tokens": 947,
+        "total_tokens": 1432,
+        "completion_tokens": 485,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0445",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.techGetLayerFunctions",
+        "pyAether.techSetNoOverlapLayer",
+        "pyAether.techGetAllViaNames"
+      ],
+      "canonical": "    objs = pyScript.techGetLayerFunctions(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.techSetNoOverlapLayer(obj)\n        processed.append(r)\n    analysis = pyScript.techGetAllViaNames(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Step 1: Get the technology database from the design\n    try:\n        tech = design.getTech()\n    except Exception:\n        return []\n\n    if tech is None:\n        return []\n\n    # Step 2: Query layer functions\n    try:\n        layer_functions = pyScript.techGetLayerFunctions(tech)\n    except Exception:\n        layer_functions = []\n\n    # Step 3: Get all via names\n    try:\n        via_names = pyScript.techGetAllViaNames(tech=tech)\n    except Exception:\n        via_names = []\n\n    ",
+      "generated_code": "# Step 1: Get the technology database from the design\n    try:\n        tech = design.getTech()\n    except Exception:\n        return []\n\n    if tech is None:\n        return []\n\n    # Step 2: Query layer functions\n    try:\n        layer_functions = pyScript.techGetLayerFunctions(tech)\n    except Exception:\n        layer_functions = []\n\n    # Step 3: Get all via names\n    try:\n        via_names = pyScript.techGetAllViaNames(tech=tech)\n    except Exception:\n        via_names = []\n\n    # Step 4: Proc",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.techGetAllViaNames",
+          "pyAether.techGetLayerFunctions"
+        ],
+        "overlap": [
+          "pyAether.techGetAllViaNames",
+          "pyAether.techGetLayerFunctions"
+        ],
+        "coverage": 0.6666666666666666,
+        "missing": [
+          "pyAether.techSetNoOverlapLayer"
+        ],
+        "extra": []
+      },
+      "elapsed": 2.6839823722839355,
+      "usage": {
+        "prompt_tokens": 835,
+        "total_tokens": 1158,
+        "completion_tokens": 323,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0449",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.dbOpenRecoveryCV",
+        "pyAether.dbIsCellViewModified",
+        "pyAether.etGetViewTypes"
+      ],
+      "canonical": "    objs = pyScript.dbOpenRecoveryCV(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.dbIsCellViewModified(obj)\n        processed.append(r)\n    analysis = pyScript.etGetViewTypes(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Step 1: Handle edge cases\n    if design is None:\n        return []\n    \n    # Step 2: Get view types\n    view_types = pyScript.etGetViewTypes()\n    \n    # Step 3: Check if the design is modified\n    is_modified = pyScript.dbIsCellViewModified(design)\n    \n    # Step 4: Try to open recovery cell view for the design\n    # We need to extract lib and cell from the design if possible\n    # Since we don't have direct access to lib/cell from design, we'll use a placeholder approach\n    ",
+      "generated_code": "# Step 1: Handle edge cases\n    if design is None:\n        return []\n    \n    # Step 2: Get view types\n    view_types = pyScript.etGetViewTypes()\n    \n    # Step 3: Check if the design is modified\n    is_modified = pyScript.dbIsCellViewModified(design)\n    \n    # Step 4: Try to open recovery cell view for the design\n    # We need to extract lib and cell from the design if possible\n    # Since we don't have direct access to lib/cell from design, we'll use a placeholder approach\n    # Actually, le",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.dbIsCellViewModified",
+          "pyAether.etGetViewTypes"
+        ],
+        "overlap": [
+          "pyAether.dbIsCellViewModified",
+          "pyAether.etGetViewTypes"
+        ],
+        "coverage": 0.6666666666666666,
+        "missing": [
+          "pyAether.dbOpenRecoveryCV"
+        ],
+        "extra": []
+      },
+      "elapsed": 2.2848711013793945,
+      "usage": {
+        "prompt_tokens": 711,
+        "total_tokens": 983,
+        "completion_tokens": 272,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0454",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.dbGetMptColoredPurposes",
+        "pyAether.dbGetLayerIdsByCV",
+        "pyAether.dbGetPurposeNumByLayerId"
+      ],
+      "canonical": "    objs = pyScript.dbGetMptColoredPurposes(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.dbGetLayerIdsByCV(obj)\n        processed.append(r)\n    analysis = pyScript.dbGetPurposeNumByLayerId(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Step 1: Get colored purposes for the design\n    colored_purposes = pyScript.dbGetMptColoredPurposes(design)\n    \n    # Step 2: Get all layer IDs used in the current design\n    layer_ids = pyScript.dbGetLayerIdsByCV(cv=design)\n    \n    # Step 3: Process results - collect purpose numbers for each layer\n    analysis_results = []\n    \n    if not layer_ids:\n        return analysis_results\n    \n    for layer_id in layer_ids:\n        try:\n            purpose_num = pyScript.dbGetPurposeN",
+      "generated_code": "# Step 1: Get colored purposes for the design\n    colored_purposes = pyScript.dbGetMptColoredPurposes(design)\n    \n    # Step 2: Get all layer IDs used in the current design\n    layer_ids = pyScript.dbGetLayerIdsByCV(cv=design)\n    \n    # Step 3: Process results - collect purpose numbers for each layer\n    analysis_results = []\n    \n    if not layer_ids:\n        return analysis_results\n    \n    for layer_id in layer_ids:\n        try:\n            purpose_num = pyScript.dbGetPurposeNumByLayerId(la",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.dbGetLayerIdsByCV",
+          "pyAether.dbGetMptColoredPurposes",
+          "pyAether.dbGetPurposeNumByLayerId"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 1.4182097911834717,
+      "usage": {
+        "prompt_tokens": 759,
+        "total_tokens": 951,
+        "completion_tokens": 192,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0459",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.sdlPrintExtractLayers",
+        "pyAether.sdlPrintTechDiagnostics",
+        "pyAether.sdlIsExtractLayer"
+      ],
+      "canonical": "    objs = pyScript.sdlPrintExtractLayers(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.sdlPrintTechDiagnostics(obj)\n        processed.append(r)\n    analysis = pyScript.sdlIsExtractLayer(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Handle edge case: empty design\n    if design is None:\n        return []\n\n    # Step 1: Check if the layer is extractable\n    is_extractable = pyScript.sdlIsExtractLayer(design, layer_name)\n\n    # Step 2: Print extract layers report\n    try:\n        pyScript.sdlPrintExtractLayers(design)\n    except Exception:\n        pass\n\n    # Step 3: Print tech diagnostics report\n    try:\n        pyScript.sdlPrintTechDiagnostics(design)\n    except Exception:\n        pass\n\n    # Step 4: Collect ",
+      "generated_code": "# Handle edge case: empty design\n    if design is None:\n        return []\n\n    # Step 1: Check if the layer is extractable\n    is_extractable = pyScript.sdlIsExtractLayer(design, layer_name)\n\n    # Step 2: Print extract layers report\n    try:\n        pyScript.sdlPrintExtractLayers(design)\n    except Exception:\n        pass\n\n    # Step 3: Print tech diagnostics report\n    try:\n        pyScript.sdlPrintTechDiagnostics(design)\n    except Exception:\n        pass\n\n    # Step 4: Collect analysis resul",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.sdlIsExtractLayer",
+          "pyAether.sdlPrintExtractLayers",
+          "pyAether.sdlPrintTechDiagnostics"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 1.088212490081787,
+      "usage": {
+        "prompt_tokens": 903,
+        "total_tokens": 1078,
+        "completion_tokens": 175,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0463",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.functionStringToEnum",
+        "pyAether.EmyTechGetLayerName",
+        "pyAether.emyEvalTextFindParam"
+      ],
+      "canonical": "    objs = pyScript.functionStringToEnum(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.EmyTechGetLayerName(obj)\n        processed.append(r)\n    analysis = pyScript.emyEvalTextFindParam(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Handle edge case: empty design\n    if design is None:\n        return []\n    \n    # Get the technology from the design\n    tech = pyScript.emyDesignGetTech(design)\n    if tech is None:\n        return []\n    \n    # Step 1: Query objects on layer\n    # First, try to get the layer number from the layer name\n    # We need to find the layer number corresponding to layer_name\n    # Use EmyTechGetLayerName to verify the layer exists by checking layer names\n    # Since we don't have a dir",
+      "generated_code": "# Handle edge case: empty design\n    if design is None:\n        return []\n    \n    # Get the technology from the design\n    tech = pyScript.emyDesignGetTech(design)\n    if tech is None:\n        return []\n    \n    # Step 1: Query objects on layer\n    # First, try to get the layer number from the layer name\n    # We need to find the layer number corresponding to layer_name\n    # Use EmyTechGetLayerName to verify the layer exists by checking layer names\n    # Since we don't have a direct name-to-nu",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.EmyTechGetLayerName",
+          "pyAether.aeEvaluedData",
+          "pyAether.emyDesignGetObjects",
+          "pyAether.emyDesignGetTech",
+          "pyAether.emyEvalTextFindParam",
+          "pyAether.emyInstGetHierPath",
+          "pyAether.emyObjectGetInst",
+          "pyAether.emyObjectGetLayer",
+          "pyAether.emyString",
+          "pyAether.functionStringToEnum"
+        ],
+        "overlap": [
+          "pyAether.EmyTechGetLayerName",
+          "pyAether.emyEvalTextFindParam",
+          "pyAether.functionStringToEnum"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.aeEvaluedData",
+          "pyAether.emyDesignGetObjects",
+          "pyAether.emyDesignGetTech",
+          "pyAether.emyInstGetHierPath",
+          "pyAether.emyObjectGetInst",
+          "pyAether.emyObjectGetLayer",
+          "pyAether.emyString"
+        ]
+      },
+      "elapsed": 4.317540168762207,
+      "usage": {
+        "prompt_tokens": 822,
+        "total_tokens": 1480,
+        "completion_tokens": 658,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0468",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.aelEnvGetErrString",
+        "pyAether.aelEnvComp",
+        "pyAether.aelEnvFreeCompiledExpr"
+      ],
+      "canonical": "    objs = pyScript.aelEnvGetErrString(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.aelEnvComp(obj)\n        processed.append(r)\n    analysis = pyScript.aelEnvFreeCompiledExpr(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    results = []\n    try:\n        if design is None:\n            return results\n        \n        # Step 1: Query objects on layer\n        # We'll use aelEnvCrt to create an environment and aelEnvComp to compile an expression\n        # that represents querying objects on the given layer\n        env = pyScript.aelEnvCrt(\"f\")\n        \n        # Create an expression to query objects on the layer\n        # The expression format depends on the AEL language, but we'll use a simple one\n       ",
+      "generated_code": "results = []\n    try:\n        if design is None:\n            return results\n        \n        # Step 1: Query objects on layer\n        # We'll use aelEnvCrt to create an environment and aelEnvComp to compile an expression\n        # that represents querying objects on the given layer\n        env = pyScript.aelEnvCrt(\"f\")\n        \n        # Create an expression to query objects on the layer\n        # The expression format depends on the AEL language, but we'll use a simple one\n        query_expr = ",
+      "match_level": "syntax_error",
+      "match_details": {
+        "reason": "expected an indented block (<unknown>, line 4)",
+        "gen_apis": [
+          "pyAether.aelEnvExe",
+          "pyAether.aelEnvCrt",
+          "pyAether.aelEnvGetErrString",
+          "pyAether.aelEnvFreeCompiledExpr",
+          "pyAether.aelEnvComp"
+        ]
+      },
+      "elapsed": 2.8291001319885254,
+      "usage": {
+        "prompt_tokens": 811,
+        "total_tokens": 1176,
+        "completion_tokens": 365,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0473",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.aeSelectedLock",
+        "pyAether.aeSelectSynchronousFamily",
+        "pyAether.aeGetSyncClone"
+      ],
+      "canonical": "    objs = pyScript.aeSelectedLock(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.aeSelectSynchronousFamily(obj)\n        processed.append(r)\n    analysis = pyScript.aeGetSyncClone(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Step 1: Query objects on the specified layer\n    try:\n        # Attempt to select all objects on the given layer\n        # We use aeSelectAll as a starting point, then filter by layer if needed\n        # However, the task says \"Query objects on layer\", so we need to select objects on that layer\n        # Since there's no direct \"select by layer\" API in the provided docs, we'll use aeSelectAll\n        # and then filter, or we can try to use area select if we know the bounds\n      ",
+      "generated_code": "# Step 1: Query objects on the specified layer\n    try:\n        # Attempt to select all objects on the given layer\n        # We use aeSelectAll as a starting point, then filter by layer if needed\n        # However, the task says \"Query objects on layer\", so we need to select objects on that layer\n        # Since there's no direct \"select by layer\" API in the provided docs, we'll use aeSelectAll\n        # and then filter, or we can try to use area select if we know the bounds\n        # For simpli",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.aeGetSelSet",
+          "pyAether.aeGetSyncClone",
+          "pyAether.aeSelectAll",
+          "pyAether.aeSelectSynchronousFamily",
+          "pyAether.aeSelectedLock"
+        ],
+        "overlap": [
+          "pyAether.aeGetSyncClone",
+          "pyAether.aeSelectSynchronousFamily",
+          "pyAether.aeSelectedLock"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.aeGetSelSet",
+          "pyAether.aeSelectAll"
+        ]
+      },
+      "elapsed": 5.33448600769043,
+      "usage": {
+        "prompt_tokens": 860,
+        "total_tokens": 1579,
+        "completion_tokens": 719,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0477",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.aeMptUnLockAll",
+        "pyAether.aeMptReColor",
+        "pyAether.aeMptActivate"
+      ],
+      "canonical": "    objs = pyScript.aeMptUnLockAll(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.aeMptReColor(obj)\n        processed.append(r)\n    analysis = pyScript.aeMptActivate(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Step 1: Handle edge cases\n    if design is None:\n        return []\n    \n    # Step 2: Activate MPT engine\n    pyScript.aeMptActivate(True)\n    \n    # Step 3: Unlock all MPT objects on the specified layer\n    if layer_name:\n        pyScript.aeMptUnLockAll(design, [layer_name])\n    else:\n        pyScript.aeMptUnLockAll(design)\n    \n    # Step 4: Recolor MPT objects on the specified layer\n    if layer_name:\n        pyScript.aeMptReColor(design, [layer_name])\n    else:\n        pyScri",
+      "generated_code": "# Step 1: Handle edge cases\n    if design is None:\n        return []\n    \n    # Step 2: Activate MPT engine\n    pyScript.aeMptActivate(True)\n    \n    # Step 3: Unlock all MPT objects on the specified layer\n    if layer_name:\n        pyScript.aeMptUnLockAll(design, [layer_name])\n    else:\n        pyScript.aeMptUnLockAll(design)\n    \n    # Step 4: Recolor MPT objects on the specified layer\n    if layer_name:\n        pyScript.aeMptReColor(design, [layer_name])\n    else:\n        pyScript.aeMptReColo",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.aeMptActivate",
+          "pyAether.aeMptReColor",
+          "pyAether.aeMptUnLockAll"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 1.5295650959014893,
+      "usage": {
+        "prompt_tokens": 876,
+        "total_tokens": 1126,
+        "completion_tokens": 250,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0482",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.guStartMdeL2",
+        "pyAether.getVoltageTransferData",
+        "pyAether.guStartMde"
+      ],
+      "canonical": "    objs = pyScript.guStartMdeL2(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.getVoltageTransferData(obj)\n        processed.append(r)\n    analysis = pyScript.guStartMde(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Handle edge cases\n    if design is None:\n        return []\n    \n    # Step 1: Query objects on layer\n    try:\n        layer = design.getLayer(layer_name)\n    except Exception:\n        return []\n    \n    if layer is None:\n        return []\n    \n    # Step 2: Process results - start MDE Level 2 command\n    mde_l2_result = pyScript.guStartMdeL2()\n    \n    # Step 3: Collect analysis\n    results = []\n    \n    if mde_l2_result:\n        # Get voltage transfer data\n        infile = pyScr",
+      "generated_code": "# Handle edge cases\n    if design is None:\n        return []\n    \n    # Step 1: Query objects on layer\n    try:\n        layer = design.getLayer(layer_name)\n    except Exception:\n        return []\n    \n    if layer is None:\n        return []\n    \n    # Step 2: Process results - start MDE Level 2 command\n    mde_l2_result = pyScript.guStartMdeL2()\n    \n    # Step 3: Collect analysis\n    results = []\n    \n    if mde_l2_result:\n        # Get voltage transfer data\n        infile = pyScript.emyString(",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyString",
+          "pyAether.getVoltageTransferData",
+          "pyAether.guStartMde",
+          "pyAether.guStartMdeL2"
+        ],
+        "overlap": [
+          "pyAether.getVoltageTransferData",
+          "pyAether.guStartMde",
+          "pyAether.guStartMdeL2"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyString"
+        ]
+      },
+      "elapsed": 1.99580717086792,
+      "usage": {
+        "prompt_tokens": 574,
+        "total_tokens": 862,
+        "completion_tokens": 288,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0487",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.setTmValue",
+        "pyAether.tmDumpTechFile",
+        "pyAether.tmSaveTech"
+      ],
+      "canonical": "    objs = pyScript.setTmValue(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.tmDumpTechFile(obj)\n        processed.append(r)\n    analysis = pyScript.tmSaveTech(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Handle edge cases\n    if design is None:\n        return []\n    \n    # Step 1: Query objects on layer\n    try:\n        layer = pyScript.emyString(layer_name)\n        objects = pyScript.emyGetObjects(design, layer)\n    except Exception:\n        return []\n    \n    if objects is None or len(objects) == 0:\n        return []\n    \n    # Step 2: Process results\n    results = []\n    for obj in objects:\n        try:\n            # Set a tm value for processing\n            name = pyScript.em",
+      "generated_code": "# Handle edge cases\n    if design is None:\n        return []\n    \n    # Step 1: Query objects on layer\n    try:\n        layer = pyScript.emyString(layer_name)\n        objects = pyScript.emyGetObjects(design, layer)\n    except Exception:\n        return []\n    \n    if objects is None or len(objects) == 0:\n        return []\n    \n    # Step 2: Process results\n    results = []\n    for obj in objects:\n        try:\n            # Set a tm value for processing\n            name = pyScript.emyString(\"width",
+      "match_level": "api_match",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.emyGetObjects",
+          "pyAether.emyString",
+          "pyAether.setTmValue",
+          "pyAether.tmDumpTechFile",
+          "pyAether.tmSaveTech"
+        ],
+        "overlap": [
+          "pyAether.setTmValue",
+          "pyAether.tmDumpTechFile",
+          "pyAether.tmSaveTech"
+        ],
+        "coverage": 1.0,
+        "missing": [],
+        "extra": [
+          "pyAether.emyGetObjects",
+          "pyAether.emyString"
+        ]
+      },
+      "elapsed": 1.4172816276550293,
+      "usage": {
+        "prompt_tokens": 552,
+        "total_tokens": 780,
+        "completion_tokens": 228,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0491",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.pyaecb.anpGetPWD",
+        "pyAether.pyaecb.anpGetParamType",
+        "pyAether.pyaecb.anpIsSubTerm"
+      ],
+      "canonical": "    objs = pyScript.pyaecb.anpGetPWD(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.pyaecb.anpGetParamType(obj)\n        processed.append(r)\n    analysis = pyScript.pyaecb.anpIsSubTerm(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Step 1: Get current path in netlist flow\n    current_path = pyScript.pyaecb.anpGetPWD()\n    \n    # Step 2: Check if the design is valid\n    if design is None:\n        return []\n    \n    # Step 3: Get the type of the layer_name parameter\n    param_type = pyScript.pyaecb.anpGetParamType(layer_name)\n    \n    # Step 4: Check if layer_name is a sub term\n    is_sub_term = pyScript.pyaecb.anpIsSubTerm(layer_name)\n    \n    # Step 5: Collect analysis results\n    results = []\n    \n    # Ha",
+      "generated_code": "# Step 1: Get current path in netlist flow\n    current_path = pyScript.pyaecb.anpGetPWD()\n    \n    # Step 2: Check if the design is valid\n    if design is None:\n        return []\n    \n    # Step 3: Get the type of the layer_name parameter\n    param_type = pyScript.pyaecb.anpGetParamType(layer_name)\n    \n    # Step 4: Check if layer_name is a sub term\n    is_sub_term = pyScript.pyaecb.anpIsSubTerm(layer_name)\n    \n    # Step 5: Collect analysis results\n    results = []\n    \n    # Handle edge case",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.pyaecb.anpGetPWD",
+          "pyAether.pyaecb.anpGetParamType",
+          "pyAether.pyaecb.anpIsSubTerm"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 1.6675400733947754,
+      "usage": {
+        "prompt_tokens": 578,
+        "total_tokens": 830,
+        "completion_tokens": 252,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "task_id": "synth-rl-0496",
+      "difficulty": "high",
+      "expected_apis": [
+        "pyAether.geResetDesignDataBrowser",
+        "pyAether.geGetDBoxDefaultLocation",
+        "pyAether.geSchRegisterCheckGroup"
+      ],
+      "canonical": "    objs = pyScript.geResetDesignDataBrowser(design, layer_name)\n    if not objs: return []\n    processed = []\n    for obj in objs:\n        r = pyScript.geGetDBoxDefaultLocation(obj)\n        processed.append(r)\n    analysis = pyScript.geSchRegisterCheckGroup(processed)\n    return list(analysis) if analysis else []",
+      "docs_found": 3,
+      "docs_total": 3,
+      "response": "```python\n    # Step 1: Handle edge cases\n    if design is None:\n        return []\n    \n    # Reset the design data browser to clear previous selections\n    pyScript.geResetDesignDataBrowser(flag=True, isMultiSel=False, isLibOnly=False)\n    \n    # Get the default location of dialog boxes\n    default_location = pyScript.geGetDBoxDefaultLocation()\n    \n    # Register a custom schematic checker group for this analysis\n    check_group_name = f\"analysis_{layer_name}\"\n    check_group_title = f\"Analysi",
+      "generated_code": "# Step 1: Handle edge cases\n    if design is None:\n        return []\n    \n    # Reset the design data browser to clear previous selections\n    pyScript.geResetDesignDataBrowser(flag=True, isMultiSel=False, isLibOnly=False)\n    \n    # Get the default location of dialog boxes\n    default_location = pyScript.geGetDBoxDefaultLocation()\n    \n    # Register a custom schematic checker group for this analysis\n    check_group_name = f\"analysis_{layer_name}\"\n    check_group_title = f\"Analysis Check Group ",
+      "match_level": "exact",
+      "match_details": {
+        "gen_apis": [
+          "pyAether.geGetDBoxDefaultLocation",
+          "pyAether.geResetDesignDataBrowser",
+          "pyAether.geSchRegisterCheckGroup"
+        ],
+        "coverage": 1.0
+      },
+      "elapsed": 2.1048643589019775,
+      "usage": {
+        "prompt_tokens": 811,
+        "total_tokens": 1127,
+        "completion_tokens": 316,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 0
+      }
+    }
+  ]
+}

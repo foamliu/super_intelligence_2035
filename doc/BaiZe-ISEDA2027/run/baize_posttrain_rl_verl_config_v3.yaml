@@ -1,0 +1,150 @@
+# baize_posttrain_rl_verl_config_v3.yaml — verl 0.4.0 GRPO config for MiniCPM5-2B on 4×A40
+#
+# R124 (2026-11-10): Complete integration of EDA Tool V3 (4-tool suite) +
+#   R0++ reward with dotted-path API verification fix.
+#
+# Key changes from v2 → v3:
+#   1. multi_turn.enable: True (was False in v2) — enables 4-tool interaction
+#   2. tool_config_path → baize_posttrain_tool_config_v3.yaml (4 tools)
+#   3. custom_reward_function reward_kwargs.arm: R0 (R0++ with dotted-path fix)
+#   4. max_turns: 6 (search → get_details → search_keyword → run_code → fix → run_code)
+#   5. format: chatml (MiniCPM5 uses ChatML)
+#
+# v2 config (baize_posttrain_rl_verl_config_v2.yaml) is retained for
+# single-turn R0 baseline comparison.
+#
+# ⚠️ Surrogate RL results are NOT transferable to BaiZe.
+
+# === TOP-LEVEL custom_reward_function (R47 BUG1 FIX) ===
+custom_reward_function:
+  path: baize_posttrain_reward_functions.py
+  name: compute_score
+  reward_kwargs:
+    arm: R0                    # R0++ with dotted-path fix (R124)
+    api_database: ~/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json
+    auto_fallback: true        # R22: auto-switch to R0 when sandbox unavailable
+
+data:
+  tokenizer: /nas_data/app.e0031982/models/MiniCPM5-2B
+  train_files: rl_pyaether_synth_v2.parquet
+  val_files: null
+  train_batch_size: 128
+  prompt_key: prompt
+  reward_fn_key: reward_model      # R108 FIX: RL parquet column name
+  max_prompt_length: 8192           # R61: prompts avg 17K tok, 8K captures most
+  max_response_length: 8192         # R61: total ctx=16384
+  return_raw_chat: True
+  need_tools_kwargs: True
+  shuffle: True
+  seed: 42
+  filter_overlong_prompts: True
+  truncation: error
+  trust_remote_code: True
+
+actor_rollout_ref:
+  hybrid_engine: True
+  model:
+    path: /nas_data/app.e0031982/models/MiniCPM5-2B
+    override_config:
+      attn_implementation: flash_attention_2
+    enable_gradient_checkpointing: True
+    trust_remote_code: True
+    use_remove_padding: True
+  actor:
+    strategy: fsdp
+    ppo_mini_batch_size: 32
+    ppo_micro_batch_size_per_gpu: 4
+    use_dynamic_bsz: True
+    ppo_max_token_len_per_gpu: 16384
+    grad_clip: 1.0
+    clip_ratio: 0.2
+    entropy_coeff: 0.001
+    use_kl_loss: True
+    kl_loss_coef: 0.02
+    kl_loss_type: low_var_kl
+    ppo_epochs: 2
+    use_torch_compile: False
+    entropy_checkpointing: True
+    optim:
+      lr: 3.0e-6
+      lr_warmup_steps: -1
+      lr_warmup_steps_ratio: 0.0
+      min_lr_ratio: 0.0
+      warmup_style: constant
+      total_training_steps: -1
+      weight_decay: 0.01
+  ref:
+    strategy: fsdp
+    log_prob_use_dynamic_bsz: True
+    log_prob_max_token_len_per_gpu: 16384
+  rollout:
+    name: sglang                 # R9: SGLang for MiniCPM5 multi-turn
+    mode: async
+    temperature: 0.7
+    top_p: 0.95
+    prompt_length: 8192
+    response_length: 8192
+    gpu_memory_utilization: 0.50
+    enforce_eager: True
+    load_format: dummy_dtensor
+    tensor_model_parallel_size: 1
+    max_num_batched_tokens: 16384
+    max_num_seqs: 24
+    n: 8                         # R47 BUG3 FIX: G=8
+    multi_turn:
+      enable: True               # R124: ENABLE multi-turn with 4 EDA tools
+      max_turns: 6               # search → details → keyword → code → fix → code
+      tool_config_path: baize_posttrain_tool_config_v3.yaml  # R124: v3 4-tool config
+      format: chatml             # MiniCPM5 uses ChatML
+    engine_kwargs:
+      sglang:
+        attention_backend: flashinfer
+
+reward_model:
+  enable: False                  # No external RM; using custom_reward_function
+  reward_manager: naive
+
+algorithm:
+  adv_estimator: grpo            # R47 BUG2 FIX
+  gamma: 1.0
+  lam: 1.0
+  norm_adv_by_std_in_grpo: True
+  use_kl_in_reward: False
+  kl_penalty: kl
+  kl_ctrl:
+    type: fixed
+    kl_coef: 0.001
+    horizon: 10000
+    target_kl: 0.1
+
+critic:
+  strategy: fsdp
+  rollout_n: 8
+
+trainer:
+  total_epochs: 1
+  total_training_steps: 2000
+  save_freq: 200
+  project_name: baize_posttrain
+  experiment_name: rl_grpo_v3_multiturn
+  logger: ['console']
+  log_val_generations: 0
+  nnodes: 1
+  n_gpus_per_node: 4
+  resume_mode: auto
+  val_before_train: False
+  test_freq: -1
+  default-local_dir: /nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/baize_posttrain_rl_grpo_v3
+  max_actor_ckpt_to_keep: 3
+  device: cuda
+
+ray_init:
+  num_cpus: null
+  timeline_json_file: null
+
+smoke:
+  iters: 10
+  save_interval: 5
+  rollout_n: 4
+  train_batch_size: 16
+  output_suffix: _smoke_v3

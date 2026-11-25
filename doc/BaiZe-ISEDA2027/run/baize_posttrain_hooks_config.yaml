@@ -1,0 +1,24 @@
+# baize_posttrain_hooks_config.yaml — Hook configuration for verl GRPO training
+# R144 (2026-11-10): Production hook system config
+
+hooks:
+  resilience:
+    enabled: true
+  curriculum:
+    enabled: true
+  rollout_scheduler:
+    enabled: true
+    max_sc: 8
+    strategy: both
+    max_turns: 6
+  kl_scheduler:
+    enabled: true
+  anti_cheat:
+    enabled: true
+  early_stop:
+    enabled: true
+    max_steps: 750
+
+logging:
+  level: INFO
+  log_file: baize_posttrain_hooks.log
