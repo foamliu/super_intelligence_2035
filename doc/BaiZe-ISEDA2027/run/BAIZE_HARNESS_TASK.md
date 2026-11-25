@@ -1,60 +1,16 @@
 # BAIZE_HARNESS_TASK.md
 
-### 🔴 用户令 · 2026-11-24（**cline 重跑 PREDICT 并行化：8 workers + 429 退回 4/2**）· 已实现 commit `e4d0718d70` · ⬜ 待你收尾
+### 🆕 用户令 · 2026-11-25（A/B/C/D · doubao-pro 7way 重测 + agent-arena 签入 + dsh SDK 修复 + MM 停止）· ✅ 全部闭环
 
-> **用户原话（助手转达）**：「昨晚推进慢，cline 才冲跑 30 条。今天加并行，比如加到 8，遇到 429 再回退到 4 或 2。」
+> **A**：停止 glm53 评测，改用 doubao-pro 重测全量 500×7 + 记录 token → **✅ 7/7 predict + eval COMPLETE**·Pass%(denominator=500): opencode64.6%·cline64.2%·hermes60.4%·cc59.4%·pi54.0%·codex43.6%·dsh26.0%·token sidecar ~53k lines
+> **B**：评测脚本签入 agent-arena 仓库 → **✅ 33 scripts committed** (commit a431e3c)·以后脚本权威源=agent-arena
+> **C**：deepseek-harness SDK 恢复 + 重新 predict → **✅ SDK 持久化到 /nas_train/app.e0031982/harness_work/dsh_sdk**·dsh 130/500=26.0%
+> **D**：停止 SWE-bench MM，专心 SWE-bench Verified → **✅ MM 已停**·MM数据保留不删
+> **详见 MEMORY_HARNESS.md 顶部**
 
-> **已实现（直接复用，勿重做/勿 revert）**：
-> 1. `swebench_verified_full/run_verified_full.py`：`predict` 新增 `--workers N`（默认 8 · env `PREDICT_WORKERS`）；`ThreadPoolExecutor` 并行 + **按 repo 串行锁**（同 repo 共享 git workdir，防 checkout 竞态）；`AdaptiveConcurrency` 429 自动 **8→4→2**（floor 2，干净 15min 后 +1 爬回）。eval 仍 docker mem128g/cpu16 不变。
-> 2. `run_single.py`：并行 worker 用独立 cline `--data-dir`（`$CLINE_DATA_DIR`），并 `_seed_cline_data_dir()` 从共享 `cline_harness_data` copy `globalState.json`/`secrets.json`/`settings`——否则全新 data-dir 回落 platform.openai.com 报 "Incorrect API key" 空 patch（已踩坑）。
-> 3. `rerun_infra_verified.py`：`run_predict` 传 `--workers`（env `RERUN_PREDICT_WORKERS` 默认 8）。
+> 📦 §用户令·2026-11-24（cline 重跑 PREDICT 并行化：8 workers + 429 退回 4/2）**✅ 已闭环（被11-25令A取代）** → ARCHIVE_OPERATOR_HARNESS.md「归档 2026-11-26」节；**结论**：--workers 8 + AdaptiveConcurrency 429退回已实现(commit e4d0718d70)·被11-25令(A)取代(glm53→doubao-pro重测)·护栏定义沿用。需要时再读。
 
-> **当前 LIVE**（助手已启动，**勿重复启动 / 勿 kill**，只盯）：`run_verified_full.py predict --harness cline-patched --ids-file rerun_ids/cline-patched_rerun_ids.txt --workers 8`（log=`harness/swebench_verified_full/logs/parallel_cline_predict.log`）。96 条已补 34，剩 62 空 patch 在补。429 回退已触发（日志 `[adaptive] 429 -> 8 -> 4 -> 2`）；白天网关限流，回落 2 后单条恢复正常时长。
-
-> **你接手后**：
-> 1. 等 LIVE predict 自然结束（log 尾部见 `merged N/96`）；
-> 2. `python3 swebench_verified_full/incremental_eval_merge.py --route cline-patched --regen`（eval 新补 patch + 合并进 `eval_glm53_cline-patched.json` + REGEN 7way 报告）；
-> 3. 后续各路 predict 一律加 `--workers 8`（夜间可跑满 8，429 自动退回），仍守 11-23 令的 21:00–09:00 窗口 + 护栏；「≤2 路」指 route 级，与单路 predict 的 `--workers` 不冲突。
-> 4. ⚠️ predict 必须带 4 个环境变量，否则写错目录到 `predictions/`（漏 `predictions_glm53`）：`PRED_SUBDIR=predictions_glm53 WORKDIR_TAG=_glm53 EVAL_TAG=glm53_ MODEL_SUFFIX=glm-5.3-flash`。
-
-### 🔴 用户令 · 2026-11-23（**全量 infra 排查 + 夜间重跑（21:00–09:00）· 从 cline 起**）
-
-> **背景（已核实）**：7-way 里 cline 的 Pass% 被 93 个空 patch 拖低（opencode 仅 1 / hermes 仅 4）。运维已初查：cline 这 93 个空 patch 中 **58 个是 infra**（38 Token 额度 429 + 13 超时 + 5 上游 5xx + 2 鉴权），但最终 eval 的 `infra_or_quota` 却记为 0 —— infra 失败被并进「能力失败」桶，夸大了能力差距。详见 `reports/report_harness_cline_lag_analysis_zh.html`。
-
-#### 第一步 — 深入排查各线真实 infra failed case 数量（7 路全查）
-
-1. 对**每一路**（cline-patched / codex / opencode / claude-code / pi / hermes / deepseek-harness），把 eval 里所有未 resolved 的 case，按 `progress_glm53_*.json` 的 `stdout_tail`/`stderr_tail`/`quota_blocked`/`timeout` 逐题分类（复用并推广 `swebench_verified_full/c2_cline_R2233.py` 的框架）：
-   - **infra**：Token 额度/429/rate-limit、超时、上游 500/502/503/504、鉴权 401/403/forbidden/适配器、`quota_blocked`/`timeout` 标志位。
-   - **ability**：确实产出了 real patch、但 apply+test 失败（这是能力，不重跑）。
-   - **待定**：空 patch 且 rc=0 无报错（无法从 tail 判定，如实标注、不强挤进任一桶）。
-2. 产出**每路一张表**：`infra_failed（需重跑）/ ability_failed（不重跑）/ 待定（需 transcript）` 三列 + 逐题清单，落一份中文 HTML（复用报告纪律：0 script/0 外链）。
-
-#### 第二步 — 重跑 infra failed（从 cline 起，按 infra 数量降序）
-
-1. **只重跑 infra 类**（含「待定」里的空 patch —— 空 patch 重跑成本低、大概率能出分），🚫 不重跑 ability 类（那是能力，重跑无意义、属造假风险）。
-2. **顺序**：cline → 其余按 infra 数量降序。
-3. 重跑 = 重新 predict（对 infra 空 patch 题再跑一次 cline 出 patch）→ 复核 → eval → 把 resolved/failed/infra 结果**合并回** `eval_glm53_*.json`，并 REGEN 7way 报告。
-
-#### 第三步 — 重跑时间窗：每晚 21:00 – 次日 09:00（12 小时，避高峰）
-
-1. **只在窗口内启动/继续重跑**；判断 = 本地时间小时数：
-   ```bash
-   H=$(date +%H); [ "$H" -ge 21 ] || [ "$H" -lt 9 ] && echo 窗口内 && run_rerun || echo 窗口外 && park
-   ```
-2. 窗口外（09:00–21:00）：**只 park**——不启动新 predict/eval，把重跑队列存着，等下一个 21:00 窗口。
-3. 原因：避开 glm-5.3-flash 网关白天使用高峰（额度 429 正是高峰产物）+ 白天 CPU 争抢。
-
-#### 纪律（沿用既有护栏，不得因"夜间"放松）
-
-- 重跑过程**必须继续守硬护栏**：docker eval `--memory 128g --cpus 16`、宿主 predict `ulimit -v 209715200` + nice19 + OMP≤8、`harness_resource_guard.sh`（PID931671）常开、pretrain step ≤7.4s 越界即降载、load 闸。
-- 并发克制：夜间重跑也**限并发 ≤2 路**，别再触发额度。
-- 只动本线文件；不碰 pretrain/data/vision/zhulong。额度 429 重试要带**退避**（如指数退避 + 重试上限），不要裸刷网关。
-- 诚实：重跑结果标注「夜间重跑」口径；`WAITING` 按窗口与在途任务管理。
-
-#### 交付
-
-- ① 中文 HTML：`reports/report_harness_infra_rerun_plan_zh.html`（各线 infra/ability/待定 三列清单 + 重跑顺序 + 窗口策略 + 每晚进度）。
-- ② 每晚窗口结束后，7way 报告 REGEN（resolved 更新后按 resign 序重排）；`MEMORY` 心跳记「infra 重跑：已回收 X 题」。
+> 📦 §用户令·2026-11-23（全量 infra 排查 + 夜间重跑 21:00–09:00）**✅ 已闭环（被11-25令A取代）** → ARCHIVE_OPERATOR_HARNESS.md「归档 2026-11-26」节；**结论**：被11-25令(A)取代(glm53→doubao-pro重测)·硬护栏定义(docker mem128g/cpu16·predict ulimit+nice19+OMP≤8·guard PID931671常开·pretrain step≤7.4s)沿用。需要时再读。
 
 ### 🔴 用户令 · 2026-11-20 16:3x（**harness 解冻 · 恢复评测 · 覆盖 14:5x 冻结令**）· ✅ 已闭环 → ARCHIVE_OPERATOR_HARNESS.md「归档 2026-11-20」节；**结论**：Step 1 硬护栏已落地（docker eval mem128g/cpu16 · predict ulimit+nice19+OMP≤8 · guard PID931671 常开）· Step 2 分批恢复已执行。护栏定义已由 11-23 令纪律节沿用。需要时再读。
 
@@ -64,22 +20,7 @@
 
 > 📦 §用户令·2026-11-19（SWE-bench Verified 报告重写）**✅ 已交付（R2758）** → ARCHIVE_OPERATOR_HARNESS.md「归档 2026-11-24」节；**结论**：报告重写4840B·主表7路置顶·生成器162行·0script/0外链✅。需要时再读。
 
-> 🔴 **用户令 · 2026-11-19 — SWE-bench Multimodal 2×3 评测（排队，MM 容器下载完后启动）**
-
-> **用户原话**：「SWE-bench Multimodal 下载完后，起如下的 2x3 评测。2 个 harness：cline+opencode。3 个 LLM：DeepSeek-V4-flash、Kimi-K2.6 和 Doubao」
-
-> **评测矩阵（2 harness × 3 LLM = 6 路）**：
-
-> | Harness | LLM | API key | Base URL | Model |
-> |:--|:--|:--|:--|:--|
-> | cline | DeepSeek-V4-flash | `02_088EE9051AAE4BF0ABFC7130331BF697_c43c1f4a-03c6-4148-b722-f4c8604c78d3` | `http://agi-gateway.cxmt.com/v1` | `deepseek-v4-flash` |
-> | cline | Kimi-K2.6 | `02_088EE9051AAE4BF0ABFC7130331BF697_80a707b0-4402-4c19-88d1-a3d4ebbf9a9f` | `http://agi-gateway.cxmt.com/cloud/v1` | `kimi-k2.6-cloud` |
-> | cline | Doubao | `02_088EE9051AAE4BF0ABFC7130331BF697_3dd97aea-258e-4a53-a290-4f1425cdc15f` | `http://agi-gateway.cxmt.com/cloud/v1` | `doubao-seed-2.0-pro-cloud` |
-> | opencode | DeepSeek-V4-flash | 同上 | 同上 | 同上 |
-> | opencode | Kimi-K2.6 | 同上 | 同上 | 同上 |
-> | opencode | Doubao | 同上 | 同上 | 同上 |
-
-> **排队条件**：SWE-bench Multimodal 容器下载完成（✅ 580/580=100% · 2026-11-19 12:14 · 0 FAILED）后启动。不抢 pretrain CPU。**→ 2×3 predict 已于 R2763 14:56 启动（6 路全 RUN，nice19/ionice3）。**
+> 📦 §用户令·2026-11-19（SWE-bench Multimodal 2×3 评测）**✅ 已停（令D 2026-11-25）** → ARCHIVE_OPERATOR_HARNESS.md「归档 2026-11-26」节；**结论**：MM已停·专心SWE-bench Verified·MM数据保留不删。需要时再读。
 
 > 📦 §用户令·2026-11-18（下载 SWE-bench Multimodal 评测容器）**✅ 已交付（R2763）** → ARCHIVE_OPERATOR_HARNESS.md「归档 2026-11-24」节；**结论**：MM容器580/580 COMPLETE·nice19/ionice=idle不抢.29 CPU✅。需要时再读。
 
