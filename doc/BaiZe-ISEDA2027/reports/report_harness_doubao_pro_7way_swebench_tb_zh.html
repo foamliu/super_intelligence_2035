@@ -6,7 +6,7 @@
 <h1>SWE-bench Verified · doubao-pro 7 路横评报告</h1>
 <div class="info">
 <p><strong>模型</strong>：doubao-seed-2.0-pro-cloud　|　<strong>7 路</strong>：cline / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>题集</strong>：SWE-bench Verified 500 题　|　<strong>分母</strong>：恒 500　|　<strong>生成时间</strong>：2026-11-26 06:02（R3000）</p>
+<p><strong>题集</strong>：SWE-bench Verified 500 题　|　<strong>分母</strong>：恒 500　|　<strong>生成时间</strong>：2026-11-26 07:17（R3000）</p>
 </div>
 
 <h2 style="font-size:1.5em;border-left:8px solid #e74c3c">★ 主表 · SWE-bench Verified（500 题 × 7 路 · Pass% = resolved/500 · 按 Pass% 降序）</h2>
@@ -14,10 +14,10 @@
 <tr><td>1</td><td><strong>opencode</strong></td><td class='pass' style='font-weight:bold'>323/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>64.6%</td></tr>
 <tr><td>2</td><td><strong>cline</strong></td><td class='pass' style='font-weight:bold'>321/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>64.2%</td></tr>
 <tr><td>3</td><td><strong>hermes</strong></td><td class='pass' style='font-weight:bold'>302/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>60.4%</td></tr>
-<tr><td>4</td><td><strong>deepseek</strong></td><td class='pass' style='font-weight:bold'>130/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>26.0%</td></tr>
-<tr><td>5</td><td><strong>codex</strong></td><td class='pass' style='font-weight:bold'>0/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>0.0%</td></tr>
-<tr><td>6</td><td><strong>claude-code</strong></td><td class='pass' style='font-weight:bold'>0/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>0.0%</td></tr>
-<tr><td>7</td><td><strong>pi</strong></td><td class='pass' style='font-weight:bold'>0/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>0.0%</td></tr>
+<tr><td>4</td><td><strong>claude-code</strong></td><td class='pass' style='font-weight:bold'>297/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>59.4%</td></tr>
+<tr><td>5</td><td><strong>pi</strong></td><td class='pass' style='font-weight:bold'>270/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>54.0%</td></tr>
+<tr><td>6</td><td><strong>codex</strong></td><td class='pass' style='font-weight:bold'>218/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>43.6%</td></tr>
+<tr><td>7</td><td><strong>deepseek</strong></td><td class='pass' style='font-weight:bold'>130/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>26.0%</td></tr>
 </tbody></table>
 <div class="note"><p>分母恒 500。Pass% = resolved/500。未跑完的路按已 resolved 数 / 500 计算。</p></div>
 
@@ -26,18 +26,18 @@
 <tr><td><strong>opencode</strong></td><td>498/500</td><td>2</td><td class='fail'>3</td><td>48615</td><td>818.9M / 14986K</td><td>⏳ 进行中</td></tr>
 <tr><td><strong>cline</strong></td><td>494/500</td><td>6</td><td class='fail'>3</td><td>48356</td><td>813.8M / 14871K</td><td>⏳ 进行中</td></tr>
 <tr><td><strong>hermes</strong></td><td>498/500</td><td>2</td><td class='fail'>9</td><td>49259</td><td>829.3M / 15144K</td><td>⏳ 进行中</td></tr>
-<tr><td><strong>deepseek</strong></td><td>499/500</td><td>1</td><td class='fail'>200</td><td>38575</td><td>618.6M / 11862K</td><td>⏳ 进行中</td></tr>
-<tr><td><strong>codex</strong></td><td>489/500</td><td>11</td><td class='fail'>31</td><td>50422</td><td>843.2M / 15477K</td><td>⏳ 进行中</td></tr>
 <tr><td><strong>claude-code</strong></td><td>499/500</td><td>1</td><td class='fail'>6</td><td>36869</td><td>617.8M / 11557K</td><td>⏳ 进行中</td></tr>
 <tr><td><strong>pi</strong></td><td>496/500</td><td>4</td><td class='fail'>13</td><td>49546</td><td>828.2M / 15212K</td><td>⏳ 进行中</td></tr>
+<tr><td><strong>codex</strong></td><td>496/500</td><td>4</td><td class='fail'>32</td><td>50543</td><td>845.0M / 15513K</td><td>⏳ 进行中</td></tr>
+<tr><td><strong>deepseek</strong></td><td>499/500</td><td>1</td><td class='fail'>200</td><td>38575</td><td>618.6M / 11862K</td><td>⏳ 进行中</td></tr>
 </tbody></table>
 <div class="note"><p>Token 数据来自 prediction JSON 的 usage 字段（input_tokens / output_tokens / n_api_calls）。</p></div>
 
 <h2>2. 待跑 / 待重跑清单</h2>
 <h3>待跑（backlog · predict &lt; 500）</h3>
 <table><tr><th>Harness</th><th>剩余题数</th></tr>
-<tr><td><strong>codex</strong></td><td>11</td></tr>
 <tr><td><strong>cline</strong></td><td>6</td></tr>
+<tr><td><strong>codex</strong></td><td>4</td></tr>
 <tr><td><strong>pi</strong></td><td>4</td></tr>
 <tr><td><strong>opencode</strong></td><td>2</td></tr>
 <tr><td><strong>hermes</strong></td><td>2</td></tr>
@@ -51,7 +51,21 @@
 <tr><td><strong>cline</strong></td><td>scikit-learn__scikit-learn-14629</td></tr>
 <tr><td><strong>cline</strong></td><td>scikit-learn__scikit-learn-14710</td></tr>
 <tr><td><strong>cline</strong></td><td>sphinx-doc__sphinx-7590</td></tr>
+<tr><td><strong>codex</strong></td><td>django__django-14349</td></tr>
+<tr><td><strong>codex</strong></td><td>scikit-learn__scikit-learn-14710</td></tr>
 <tr><td><strong>opencode</strong></td><td>scikit-learn__scikit-learn-14710</td></tr>
+<tr><td><strong>claude-code</strong></td><td>django__django-10097</td></tr>
+<tr><td><strong>claude-code</strong></td><td>matplotlib__matplotlib-26113</td></tr>
+<tr><td><strong>claude-code</strong></td><td>matplotlib__matplotlib-26208</td></tr>
+<tr><td><strong>claude-code</strong></td><td>matplotlib__matplotlib-26466</td></tr>
+<tr><td><strong>claude-code</strong></td><td>scikit-learn__scikit-learn-14629</td></tr>
+<tr><td><strong>claude-code</strong></td><td>scikit-learn__scikit-learn-14710</td></tr>
+<tr><td><strong>claude-code</strong></td><td>scikit-learn__scikit-learn-25232</td></tr>
+<tr><td><strong>claude-code</strong></td><td>sphinx-doc__sphinx-7985</td></tr>
+<tr><td><strong>pi</strong></td><td>django__django-10097</td></tr>
+<tr><td><strong>pi</strong></td><td>django__django-13569</td></tr>
+<tr><td><strong>pi</strong></td><td>psf__requests-1921</td></tr>
+<tr><td><strong>pi</strong></td><td>scikit-learn__scikit-learn-14710</td></tr>
 <tr><td><strong>hermes</strong></td><td>pytest-dev__pytest-8399</td></tr>
 <tr><td><strong>hermes</strong></td><td>scikit-learn__scikit-learn-14710</td></tr>
 <tr><td><strong>hermes</strong></td><td>sphinx-doc__sphinx-7590</td></tr>
@@ -60,5 +74,5 @@
 
 
 <hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R3000 · 2026-11-26 06:02<br>SWE-bench Verified 500 · doubao-pro 7-way
+BaiZe Harness · R3000 · 2026-11-26 07:17<br>SWE-bench Verified 500 · doubao-pro 7-way
 </p></body></html>

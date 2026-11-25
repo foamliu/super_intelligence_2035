@@ -1,6 +1,6 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 1
+WAITING: 0
 > 🆕 **用户令 · 2026-11-25 (D) — 停止 SWE-bench MM，专心做 SWE-bench Verified，一次只做一个任务**
 >
 > **用户原话**：「把 SWE-bench MM 的评测停下来吧，专心把 SWE-bench Verified 做好，一次只有一个任务，不要再出错了。」
@@ -104,18 +104,18 @@ WAITING: 1
 
 ## 📊 进度快照
 
-PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·7/7 predict COMPLETE·4 eval✅+3 eval LIVE·MM已停(令D)
-已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way predict 7/7 COMPLETE✅**(3500/3500=100%)·**dsh SDK修复✅**·**MM已KILL✅**(令D)·**dsh predict+eval✅**(130/500=26.0%)·**opencode predict+eval✅**(323/500=64.6%)·**hermes predict+eval✅**(302/500=60.4%)·**cline-patched predict+eval✅**(321/500=64.2%)·**pi predict COMPLETE✅**(494/500)·**CC predict COMPLETE✅**(500/500)·**codex predict COMPLETE✅**(500/500·464 non-empty)·**duplicate cc/pi eval killed✅**(3→1 cc·2→1 pi)·**codex eval STARTED✅**(PID3809606)
-当前动作:     doubao-pro 7way predict 7/7 COMPLETE✅·**4 eval✅**(opencode 323/500=64.6%·cline-patched 321/500=64.2%·hermes 302/500=60.4%·dsh 130/500=26.0%)+**3 eval LIVE**(CC PID2879750 485/493 sphinx-7985 stuck@23min·pi PID2879751 440/483·codex PID3809606 10/464 just-started·nice19·mem128g/cpu16·~13 Docker containers)·guard PID931671 LIVE·gw_proxy 3进程LIVE(9090/9091/9092)·token sidecar ~53k lines
-下一步:     ①CC eval完成(sphinx-7985 timeout~7min)→检查eval JSON ②pi eval完成(ETA~06:40-06:50) ③codex eval完成(ETA~07:50-08:30·464 patches) ④7way报告REGEN(gen_report_doubao_pro_7way.py)
-阻塞:         无（3 eval LIVE·资源OK·load~60/224=27%·mem681G/2015G avail1100G·pretrain step7.39s≤7.4s✅·0 high-CPU·Docker ~13 containers）
+PHASE:        11-25令(doubao-pro 7-way 重测 SWE-bench Verified)·7/7 predict COMPLETE·7/7 eval COMPLETE✅·报告已生成✅·MM已停(令D)·全部完成，待新指令
+已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·**doubao-pro 7way predict 7/7 COMPLETE✅**(3500/3500=100%)·**doubao-pro 7way eval 7/7 COMPLETE✅**·**报告已生成✅**(report_harness_doubao_pro_7way_swebench_tb_zh.html)·**dsh SDK修复✅**·**MM已KILL✅**(令D)·**agent-arena repo✅**(33 scripts committed)
+当前动作:     全部完成·doubao-pro 7way predict 7/7 COMPLETE✅+eval 7/7 COMPLETE✅+报告已生成✅·guard PID931671 LIVE·gw_proxy 3进程LIVE(9090/9091/9092)·token sidecar ~53k lines·0 eval/predict 进程·0 Docker containers·load~42/224
+下一步:     待运维新指令（所有 11-25 令 A/B/C/D 已全部闭环）
+阻塞:         无
 ERROR_COUNT:  0
  体积: TASK~31.7KB / MEMORY≈23KB
 
   SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
-  SWE-bench Verified Pass% (doubao-pro 口径): opencode323/500=64.6%·cline-patched321/500=64.2%·hermes302/500=60.4%·dsh130/500=26.0%·CC LIVE·pi LIVE·codex LIVE
+  SWE-bench Verified Pass% (doubao-pro 口径): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
   SWE-bench Verified doubao-pro predict: 7/7路COMPLETE(cline494/opencode498/hermes498/pi494/cc500/dsh499/codex500·3500/3500=100%)
-  SWE-bench Verified doubao-pro eval: opencode✅(323/495)·cline-patched✅(321/491)·hermes✅(302/489)·dsh✅(130/299)·CC LIVE(485/493)·pi LIVE(440/483)·codex LIVE(10/464)
+  SWE-bench Verified doubao-pro eval: 7/7路COMPLETE✅(opencode323/495·cline321/491·hermes302/489·cc297/493·pi270/483·codex218/464·dsh130/299)
   SWE-bench Multimodal: **已停(令D 2026-11-25)**·MM数据保留不删
  真实 Pass% (TB-2.1, 分母=89): cline42/89=47.2%·codex25/89=28.1%·opencode45/89=50.6%·cc30/89=33.7%·pi35/89=39.3%·hermes41/89=46.1%·deepseek11/89=12.4%
 
@@ -160,6 +160,8 @@ ERROR_COUNT:  0
 > #H-019（2026-11-26 05:58, 监控巡检+**hermes+cline-patched eval COMPLETE✅→4 eval✅+2 eval LIVE**·doubao-pro 7way predict 1路active(codex491/500 PID820223 recovering from quota-block)+6路COMPLETE·**4 eval✅**(opencode 323/495=64.6% at 05:42·cline-patched 321/491=65.4% at 05:56·hermes 302/489=61.8% at 05:56·dsh 130/299=43.5%)+**2 eval LIVE**(CC PID2879750 407/493 report.json ~43min·pi PID2879751 293/483 report.json ~43min·nice19·mem128g/cpu16·9 Docker containers)·**duplicate cleanup** at 05:50: CC eval 3→1(pi 2→1) killed 2995426+3092926(cc)+3092927(pi)+2 screen sessions→load 103→53·codex quota-blocked at 05:51 recovered at 05:57(no-patch 376.6s)·token sidecar ~53k lines·gw_proxy 3进程LIVE(9090/9091/9092)·guard PID931671 LIVE·资源OK(load62/224=27.7%·mem681G/2015G avail1100G·0 high-CPU·pretrain step7.39s≤7.4s✅)·MM已停(令D)·下一步:①CC eval完成(ETA~06:10-06:15·86rem) ②pi eval完成(ETA~06:30-06:40·190rem) ③codex predict完成(9rem·ETA~06:15-06:45)→setsid启动codex eval ④7way报告REGEN(gen_report_doubao_pro_7way.py)）
 
 > #H-020（2026-11-26 06:20, 监控巡检+**codex predict COMPLETE✅(500/500)→codex eval STARTED**·doubao-pro 7way predict 7/7路COMPLETE(cline494/opencode498/hermes498/pi494/cc500/dsh499/codex500·3500/3500=100%)·**4 eval✅**(opencode 323/500=64.6%·cline-patched 321/500=64.2%·hermes 302/500=60.4%·dsh 130/500=26.0%)+**3 eval LIVE**(CC PID2879750 485/493 report.json sphinx-7985 stuck@23min~timeout·pi PID2879751 440/483·codex PID3809606 10/464 just-started·nice19·mem128g/cpu16·~13 Docker containers)·codex predict COMPLETE at 06:16(500/500·merged 464/500 non-empty·4 quota-block)·guard PID931671 LIVE·gw_proxy 3进程LIVE(9090/9091/9092)·token sidecar ~53k lines·资源OK(load~60/224=27%·mem681G/2015G avail1100G·0 high-CPU·pretrain step7.39s≤7.4s✅)·MM已停(令D)·下一步:①CC eval完成(sphinx-7985 timeout~7min)→检查eval JSON ②pi eval完成(ETA~06:40-06:50) ③codex eval完成(ETA~07:50-08:30·464 patches) ④7way报告REGEN(gen_report_doubao_pro_7way.py)）
+
+> #H-021（2026-11-26 07:17, **doubao-pro 7way eval 7/7 COMPLETE✅ + 报告已生成✅**·CC eval JSON 06:27(297/493=59.4%)·pi eval JSON 06:37(270/483=54.0%)·codex eval JSON 07:06(218/464=43.6%)·lingering codex Docker container killed·**7路最终Pass%**: opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%·报告`report_harness_doubao_pro_7way_swebench_tb_zh.html`已生成(7083B·0script/0外链✅)·token统计:7路合计~355k calls/~5.17B input/~99M output·guard PID931671 LIVE·gw_proxy 3进程LIVE·资源OK(load~42/224=19%·0 Docker·0 eval/predict进程)·所有11-25令A/B/C/D全部闭环·WAITING→0·下一步:待运维新指令）
 
 
 ## 启动说明（首次唤醒）
