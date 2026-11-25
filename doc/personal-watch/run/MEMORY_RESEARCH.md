@@ -12,28 +12,29 @@ WAITING: 1
 
 ```
 PHASE:        双轨（A 最新论文 50% / B 经典论文 50% + 作者关系网 + 研究者言论投料）；loop 按 0,3,6,9,12,15,18,21 八时窗唤醒
-已完成:       [r260 · 本地 2026-11-25 22:4x · loop 重启补跑（21:00 后额外唤醒）：A 0 收（今日 5/5）＋ B +3 → 407（GAE 1506.02438 6,111 / DDIM 2010.02502 11,254 / World Models 1803.10122 2,470）＋ 作者网 +3 → 374（X 147）＋ 发信 1 → 171（今日 7/12）＋ 回信率 0/171]
-  前一（r259）: [r259 · 本地 2026-11-25 09:0x · 09:00 时窗：A 轨额度满 0 收（今日 5/5）＋ B 轨 +3 → 404（FLAN-T5 2210.11416 5,968 / Textbooks II 2309.05463 878 / BIG-bench 2206.04615 2,190）＋ 作者网 +3 → 371（X 144）＋ 发信 2 封 → 170（今日 6/12）＋ 回信率 0/170]
-  前二（r258）: [r258 · 本地 2026-11-25 06:0x · 06:00 时窗：A 轨额度满 0 收（今日 5/5）＋ B 轨 +3 → 401（Imagen 2205.11487 4,540 / Llemma 2310.10631 509 / MMLU-Pro 2406.01574 3,057）＋ 作者网 +3 → 368（X 143）＋ 发信 2 封 → 168（今日 4/12）＋ 回信率 0/168]
-  ① 网络：arXiv `cat:cs.CL&max_results=25&sortBy=submittedDate`（`--noproxy '*'`）**`200` + `application/atom+xml`**（62,971 B / 25 entry，`published` 上界 `2026-11-23T18:48:02Z`，距本窗 27.2h < 72h）；X `200`；OpenAlex 3/3 `200`；B 轨 abs 3/3 `200`（43,825 / 40,457 / 45,161 B）+ ar5iv 3/3 `200`（888,797 / 499,261 / 486,105 B）。
+已完成:       [r261 · 本地 2026-11-25 23:2x · 23:xx 时窗：A 0 收（今日 5/5）＋ B +3 → 410（BPE 1508.07909 10,660 / PrefixRL 2205.07000 89 / DCGAN 1511.06434 17,772）＋ 作者网 +3 → 377（X 149）＋ 发信 1 → 172（今日 8/12）＋ 回信率 0/172]
+  前一（r260）: [r260 · 2026-11-25 22:4x · loop 重启补跑：A 0 收（今日 5/5）＋ B +3 → 407（GAE 1506.02438 6,111 / DDIM 2010.02502 11,254 / World Models 1803.10122 2,470）＋ 作者网 +3 → 374（X 147）＋ 发信 1 → 171（今日 7/12）＋ 回信率 0/171]
+  前二（r259）: [r259 · 2026-11-25 09:0x · 09:00 时窗：A 0 收（今日 5/5）＋ B +3 → 404（FLAN-T5 2210.11416 5,968 / Textbooks II 2309.05463 878 / BIG-bench 2206.04615 2,190）＋ 作者网 +3 → 371（X 144）＋ 发信 2 封 → 170（今日 6/12）＋ 回信率 0/170]
+  ① 网络：arXiv `cat:cs.CL&max_results=5&sortBy=submittedDate`（`--noproxy '*'`）**`200` + `application/atom+xml`**（13,227 B / 5 entry，`published` 上界 `2026-11-24T18:59:08Z`，距本窗 44.5h < 72h）；X 经代理 `200`；OpenAlex 3/3 `200`；B 轨 abs 3/3 `200`（42,500 / 44,319 / 42,018 B）。
   ② A 轨 **0 新收**：今日 5/5 已满，不凑第 6 篇；公告批仍在 72h 窗内。
-  ③ B 轨 **+3 → 401**：Imagen `2205.11487`（2022 预印本，**4,540**；冻结 T5-XXL + 扩散级联，COCO 零样本 **FID 7.27**，DrawBench）/ Llemma `2310.10631`（**ICLR 2024**，**509**；Code Llama + Proof-Pile-2 继续预训练，7B/34B 开源，未微调即可工具调用/形式化证明）/ MMLU-Pro `2406.01574`（**NeurIPS 2024 D&B Spotlight**，**3,057**；4→10 选项，相对 MMLU 降 **16%–33%**）；三 ID 条目级查重 0 命中。
-  ④ **如实纠错（未收录）**：`2309.15698` 实测为 *Deep Model Fusion: A Survey*、`2108.00644` 实测为 *Jointly Optimizing Query Encoder and Product Quantization* ⇒ 非目标论文；VerilogEval 已于 11-17 按 `2309.07544` 收录。
-  ⑤ 作者网 **+3 → 368**：#366 Chitwan Saharia（Ideogram AI；主页当前 `mailto:chitwaniit@gmail.com`，X `@Chitwan_Saharia` 双源 ⇒ 已发信）/ #367 Zhangir Azerbayev（OpenAI 前 xAI；仅 2023 论文地址，**Princeton 转发页 404 ⇒ 地址存疑**，X `@zhangir_azerbay` 双源 ⇒ 已发信并记风险）/ #368 Hailey Schoelkopf（Anthropic 前 EleutherAI；主页 percent-encoded mailto 解码；X `@haileysch__` 双源 ⇒ 仅建档）；X +3 → **143**。
-  ⑥ 发信 **2 封 → 168**：#167 Saharia 英文 148 词 `SENT OK 06:02:47` / #168 Azerbayev 英文 161 词 `SENT OK 06:02:49`；落款两行、其后无行；正文无项目名；与今日 #165–#166 开头句/问句零共用；今日 **4/12**。
-  ⑦ 回信率 **0 / 168**（已回复 0 / 无应答>14d 9 / 未到期 159）；`replies/` 仍只有 `README.md`；通道只发不收。
-  ⑧ **新流程教训**：作者已离开原机构时，先跟人员转发页 / 查本人站点当前雇主，再决定发信（#168 转发页 404）。
-  ⑨ voice_ready **0** / news_ready **0**（经典论文无本窗事件点）。
-  ⑩ 交付：`daily/2026-11-25.html`（06:00 节：A 复核 + B 3 条 + 作者 3 行 + 信 2 卡 + 回信诊断 + 6 线建议 + 附录 + 09:00 待办）+ `daily/index.html` 当日行（5/5 · 401 · 368 · 143 · 168 · 0/168）+ `research/2026-11-25.md` §06:00 + `PAPERS.md` #399–#401（+ 快照 401）+ `AUTHORS.md` #366–#368（+ 计数行 368）+ `发送记录.md` §06:00 + draft/body 各 2。
+  ③ B 轨 **+3 → 410**：BPE `1508.07909`（ACL 2016，**10,660**；BPE 子词切分，开放词表 + 更小词表）/ PrefixRL `2205.07000`（DAC 2021，**89**，**&lt;500 按「本领域权威/奠基」收**；tabula rasa + synthesis-in-the-loop，同延迟下面积 −16.0%/−30.2%）/ DCGAN `1511.06434`（2015 预印本，**17,772**；步幅卷积替代池化 + G/D 双侧 BN + 去全连接隐层 + LeakyReLU）；三 ID 条目级查重 0 命中。
+  ④ **如实纠错**：记忆里 PrefixRL 记为 `2111.05497`（实测 attosecond 物理论文）、`2010.08065` 记为 Chip Placement（实测 FPRaker）⇒ 经 arXiv 标题检索纠正真 ID `2205.07000`；Chip Placement 真 ID `2004.10746` 已于 #187（11-13）收录，不重复。PrefixRL PDF 多次下载截断（本地 194,877 B &lt; 远程 851,300 B）⇒ 数字仅取摘要、未做 PDF 表格复核。
+  ⑤ 作者网 **+3 → 377**：#375 Luke Metz（DCGAN 二作，Thinking Machines/前 OpenAI；主页 `lukemetz.github.io` 明文 `luke.s.metz@gmail.com`，X `@Luke_Metz` 双源 ⇒ 已发信）/ #376 Soumith Chintala（DCGAN 三作，Meta/PyTorch；站点仅模板占位邮箱 ⇒ 仅建档，X `@soumithchintala` 双源）/ #377 Rajarshi Roy（PrefixRL 一作，NVIDIA；主页无邮箱、无 X ⇒ 仅建档）；X +2 → **149**。
+  ⑥ 发信 **1 封 → 172**：#172 Luke Metz 英文 181 词 `SENT OK 23:26:38`；落款两行、其后无行；正文无项目名；与今日 #165–#171 开头句/问句零共用；今日 **8/12**。
+  ⑦ 回信率 **0 / 172**（已回复 0 / 无应答>14d 9 / 未到期 163）；`replies/` 仍只有 `README.md`；通道只发不收；0 回信仍当待诊断信号。
+  ⑧ voice_ready **0** / news_ready **0**（经典论文无本窗事件点）。
+  ⑨ 交付：`daily/2026-11-25.html`（23:xx 节）+ `daily/index.html` 当日行（410 · 377 · 149 · 172 · 0/172）+ `research/2026-11-25.md` §23:xx + `PAPERS.md` #408–#410（快照 410）+ `AUTHORS.md` #375–#377（计数行 377）+ `发送记录.md` §23:xx + draft/body 各 1。
+  ⑩ **git 状态如实记（🔴 推送未完成）**：`fetch + rebase origin/main` 成功（工作区干净、无冲突）；随后 `git push` **连续 3 次未完成**：本地待推 **9 提交 / 2,778 新 blob / 373.1 MB**（`run/news/` **308.1 MB**、`run/research/` **63.7 MB**），本机为 **partial + shallow clone**（`promisor=true`、`filter=blob:none`、`is-shallow=true`），实测上传约 **0.6 MB/s**（5 分钟仅 ~187 MB），期间 origin/main 又被别线推进 3 次 ⇒ **推送活锁**（传完即被 non-fast-forward 拒）。本轮未推送成功；详见 阻塞 ⑦。
 
   前一: [r257 · 2026-11-25 03:00 时窗 · A +2 → 5/5 · B +3 → 398 · 作者网 +3 → 365（X 140）· 信 1 → 166 · 回信率 0/166] 详情见 `daily-memories-research/2026-11-25.md`。
 
 当前动作:     ✅ 23:xx 时窗闭环：A 0 收（额度满）；B +3 → 410；作者网 +3 → 377（X 149）；发信 1 → 172（今日 8/12）；回信率 0/172。
 下一步:       ① 下个时窗（0:00）：A 额度跨日重置，按 72h 窗补收；② B 轨 +3（第 115 轮）；③ 作者网 +3；④ 发信：今日 8/12，已收手；明日先做地址有效性检查再发；⑤ 回信诊断延续（0/172，0 回信仍当待诊断信号）。
-补推记录:     （本轮无回滚；commit 前 `git fetch`，push 被拒按 `fetch + rebase origin/main` 重试 ≤5 次，不 `add -A`）
+补推记录:     🔴 未推送：`rebase origin/main` 3 次成功；`git push` 3 次失败（373.1 MB 待推 + partial/shallow + origin 持续前进）⇒ 下轮第一件事补推，详见 阻塞 ⑦。
 本轮新增:     A 轨 0（今日 5/5）· B 轨 +3（410）· 作者网 +3（377）· X +2（149）· 作者信 +1（172，今日 8/12）· voice_ready 0 · news_ready 0 · 回信率 0/172
 阻塞:         ① 🔴 发件显示名 `AI+EDA 招聘 · 自动`（最可能的 0 回信原因），需运维改配置；② 发件通道只发不收（无 IMAP/POP3）；③ `WATCH_RESEARCH_TASK.md` 44 KB 超红线且 agent 只读 ⇒ 需授权；④ #168 地址有效性存疑（Princeton 转发页 404）；⑤ BIG-bench 一作 Aarohi Srivastava 主页 JS 渲染、CV PDF 404 ⇒ 当前邮箱未核，不猜；⑥ 09:10 自动提交曾误入约 1GB 二进制（PDF/gz），已在未推送状态本地清理（备份分支 `backup/pre-clean-r260-*` 保留），loop 兜底 `git add` 范围仍需核查。
-ERROR_COUNT:  119（本轮 +1：arXiv `http://` 端点现 301 已改 `https://`；09:10 提交误入 ~1GB 二进制已本地清理）
+             ⑦ 🔴 **推送未完成**：本地待推 **9 提交 / 2,778 新 blob / 373.1 MB**（news 308.1 MB + research 63.7 MB）；partial+shallow clone + 上传 ~0.6 MB/s + origin 持续前进 ⇒ **推送活锁**。需运维在安静窗口执行 push，或瘦身生成物（news 图片 / research pdf 文本）。
+ERROR_COUNT:  120（本轮 +1：推送活锁 — 373.1 MB 待推 / partial+shallow / origin 持续前进；上轮 http 301 已改 https 已记）
 ```
 
 ## 🗣 运维问答（supervisor 提问 → 本线回答）
