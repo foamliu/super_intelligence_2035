@@ -2208,3 +2208,25 @@ WAITING: 0 · **LITE_FIX: D=121/121 all-good(116 green+3 p0_fixed+3 p1_fixed) ·
 ## 归档批次 r1370（r1370 释体积；r1369 心跳原文）
 
 WAITING: 0 · **LITE_FIX: D=121/121 all-good(116 green+3 p0_fixed+3 p1_fixed) · P0 余 2(跨 shard cases/B/ hspice-mock: OpampChar-001+InvTripDelay-001; 挂 29 轮 r1341-r1369, OpampChar 真hspice64 无_MOCK refzip EXISTS ref check=>False, InvTripDelay 真hspice 无_MOCK refzip MISSING L0+L2 FAIL, B 末次 case-fix CTLESpec-001 @894f26021 r1215 未触本2条) · L1 跨 shard 0 · 本轮修 0 条(监控轮) · 清单 md5=f7816ef4137353904e40a1a3b01fb3ae** · r1369(本轮)=监控轮 cycle-5 pos19-22: 4 green spot-check(DDR5CmdSeqFind/DecoderNetlistGen/DelayChainCmp/DevUsageExtract) 无回归; L1 audit 4 条 OK(shapes=['True'] x4); L0 refdir+check.py EXISTS(4/4, DDR5 refzip EXISTS 其余3条 by-design runtime 无refzip); L4 0 真实 GUI/spice binary(grep 全空); L3: 4 条 neg_selftest 全 FAIL distinct(DDR5 4 fakes §4.9 empty=c/print_only=i/core_deleted=h / DecoderNetlistGen 6 negs §4.9三假全FAIL / DelayChainCmp 6 negs distinct{b,c,d,g,j} §4.9 empty=b/print=c/ref_core_deleted=g / DevUsageExtract 5 negs distinct{c,g,i,k} §4.9 empty=c/print=c/core=g); L2 DDR5 selftest REF PASS-OK 其余3条 by-design runtime ref(前轮 PASS); L5 无泄漏(4/4 mode=design_flow entry=outputs/submit.zip). 跨 shard P0: EDA-Flow-Bench HEAD f0f3dfb87 自 r1368 未变, 无新提交触及 OpampChar/InvTripDelay; 静态复诊 OpampChar check.py L26 _HSPICE_DIR 真hspice64 grep MOCK=0 refzip EXISTS, InvTripDelay check.py L31 真hspice grep MOCK=0 refzip MISSING. Lite md5 复核一致(500 unique, D Lite 124 norm-id/121 green). EDA-Flow-Bench 无 D case 改动(纯监控轮); 双仓 git add -- 本 shard 路径, 未 git add -A · 📊 trace 覆盖率: 640/4529≈14.1%(LITE_FIX 暂停选料); 📦 体积: TASK≈29KB / MEMORY≈33.6KB; DEBT: 0; flag: r1369 = cycle-5 pos19-22 4 green spot-check 无回归 + 跨 shard P0 2 pending(挂29轮, B sim-mock线未触本2条) 详见 daily_D_2026-11-25_r1369.md
+
+## 归档批次 r1371（r1371 释体积；r1370 心跳原文）
+
+WAITING: 0 · **LITE_FIX: D=121/121 all-good · P0 余 2(跨 shard cases/B/ hspice-mock: OpampChar-001+InvTripDelay-001; 挂 30 轮 r1341-r1370, OpampChar 真hspice64 无_MOCK refzip EXISTS ref=>False, InvTripDelay 真hspice 无_MOCK refzip MISSING L0+L2 FAIL; B 末次 case-fix InvPVTchar-001 @d78c57305 r1216 未触本2条) · 本轮修 0(监控轮) · md5=f7816ef4137353904e40a1a3b01fb3ae** · r1370=cycle-5 pos23-26 4 green spot-check(DLLCtrlParse/DLLFuncExplainQA-v2/DlyChainTrace/DlySigmaSweep) 无回归: L0 refdir+check.py+refzip 4/4 / L1 audit OK shapes=['True']×4 / L2 4 REF PASS-OK / L3 4 neg_selftest rc=0 全FAIL distinct §4.9三假全FAIL / L4 grep GUI/spice 全空 / L5 mode=design_flow entry=outputs/submit.zip. 跨 shard P0: HEAD d78c57305(B r1216 InvPVTchar hspice-mock, NOT 本2条; +C 2 stray) — B sim-mock 线未排上; 静态复诊维持 P0. Lite md5 一致(500 unique, D Lite 124 norm-id/121 green). 无 D case 改动(纯监控轮); 双仓 git add -- 本 shard 路径 · 📊 trace 覆盖率: 640/4529≈14.1% · 📦 体积: TASK≈29KB / MEMORY≈33.1KB; DEBT: 0; flag: r1370 = cycle-5 pos23-26 4 green 无回归 + 跨 shard P0 2 pending(挂30轮) 详见 daily_D_2026-11-25_r1370.md
+
+## 归档批次 r1371 续（MEMORY 释体积：r894-r1259 旧指针 stub 下沉）
+
+> r1040→r1016 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1047」（r1047 释体积，保留 r1046/r1045/r1044/r1043/r1041 最近 5 指针；r1040/r1039/r1038/r1037/r1036/r1035/r1034/r1033/r1031/r1030/r1029/r1028/r1027/r1026/r1025/r1024/r1022/r1021/r1020/r1017/r1016 共 21 指针移入归档）
+
+> r1011→r997 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1016」（r1016 释体积，保留 r1015/r1014/r1013 最近 3 指针；r1011/r1010/r1009/r1008/r1007/r1006/r1005/r1001/r1000/r999/r998/r997 共 12 指针移入归档）
+
+> r996→r984 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1001」（r1001 释体积，保留 r1000/r999/r998/r997 最近 4 指针）
+
+> r983→r894 指针原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r987」（r987 释体积，保留 r987-r984 最近 4 指针）
+
+- r1162 流水原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md（MCP 第58次复测 + ukkn7 选料撤回防串台 + ErcSectionFilterProduce-001 建成待 re-source）
+
+> r1184 流水原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1193」（r1193 释体积；infra 修复 trace_ledger next ERE 超限 + §4.9 审计 15 case 0 违规）
+
+- r1223(dqrb6) 流水原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1252」（MCP 第121次确认 + dqrb6 深读合成 EDA-Eval-DesignFlow-AnalogDlyCellLogicDeriveProduce-001 L1 analog_context k=12 交付；A/B 结构不相交 + 三假+hardcode_a 全 FAIL + gold 12/12；详见 daily_D_2026-11-24_r1223_dqrb6.md）
+
+> r1259 探针（无新 case）：r1258 WvTblAnalogPlotProduce-001 已双仓提交（EDA-Flow-Bench f96792a11 / super_intelligence_2035 e081920a85）。本轮 r1259 候选搜索：2026-11-24 scan summary.tsv 全量扫描 D 域（waveview/cosmos/skill/netlist/spiros/spectrum/analog/schematic，排除 B 域 sim），mc≥30 候选≈80 条全部跨 shard 已 claimed（A/B/C/D 任一）或 parked-for-cause（Q&A/file-org/false-positive-kw）；mc 30-39 band 仅 dxcca(truly-free) 但 SSH hfeg0pkn001 两次超时 + .spi 嫌 B 域；hfhds201(.75 本地) D 候选全部已 case（j26fe/9dytw/1nsgi 等 e0039602 系列被 D 深耕）。结论：当前 scan 的 mc≥30 D 候选池已采尽。下一轮策略：等 2026-11-25 新 scan / 或放宽 mc≥15(A-style) / 或跨 shard reclaim parked。MCP 第156次 open_session+declare_done+close OK。
