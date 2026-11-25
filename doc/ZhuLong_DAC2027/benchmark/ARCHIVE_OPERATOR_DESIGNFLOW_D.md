@@ -2230,3 +2230,19 @@ WAITING: 0 · **LITE_FIX: D=121/121 all-good · P0 余 2(跨 shard cases/B/ hspi
 - r1223(dqrb6) 流水原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1252」（MCP 第121次确认 + dqrb6 深读合成 EDA-Eval-DesignFlow-AnalogDlyCellLogicDeriveProduce-001 L1 analog_context k=12 交付；A/B 结构不相交 + 三假+hardcode_a 全 FAIL + gold 12/12；详见 daily_D_2026-11-24_r1223_dqrb6.md）
 
 > r1259 探针（无新 case）：r1258 WvTblAnalogPlotProduce-001 已双仓提交（EDA-Flow-Bench f96792a11 / super_intelligence_2035 e081920a85）。本轮 r1259 候选搜索：2026-11-24 scan summary.tsv 全量扫描 D 域（waveview/cosmos/skill/netlist/spiros/spectrum/analog/schematic，排除 B 域 sim），mc≥30 候选≈80 条全部跨 shard 已 claimed（A/B/C/D 任一）或 parked-for-cause（Q&A/file-org/false-positive-kw）；mc 30-39 band 仅 dxcca(truly-free) 但 SSH hfeg0pkn001 两次超时 + .spi 嫌 B 域；hfhds201(.75 本地) D 候选全部已 case（j26fe/9dytw/1nsgi 等 e0039602 系列被 D 深耕）。结论：当前 scan 的 mc≥30 D 候选池已采尽。下一轮策略：等 2026-11-25 新 scan / 或放宽 mc≥15(A-style) / 或跨 shard reclaim parked。MCP 第156次 open_session+declare_done+close OK。
+
+---
+
+## 归档批次 r1374（r1374 释体积）
+
+### r1373 心跳原文
+
+WAITING: 0 · **LITE_FIX: D=121/121 all-good · P0 余 2(跨 shard cases/B/ hspice-mock: OpampChar-001+InvTripDelay-001; 挂 33 轮 r1341-r1373, OpampChar 真hspice64 无_MOCK refzip EXISTS ref=>False, InvTripDelay 真hspice 无_MOCK refzip MISSING L0+L2 FAIL; B HEAD 推进 6dda03c83 r1217 CTLEAC-001 未触本2条, git show --stat 确认 OpampChar/InvTripDelay NOT TOUCHED) · 本轮修 0(监控轮) · md5=f7816ef4137353904e40a1a3b01fb3ae** · r1373=cycle-5 pos35-38 4 green spot-check(FsdbMeasRunGen/GenSPv2/GrDecPwrMeasure/GrDecPwrSwitchTbGen) 无回归: L0 refdir+check.py EXISTS 4/4 / L1 audit OK (4 case check() 返回 True/False/True/True; tuple/None 返回在 helper 非 check 主体) / L2 4 negselftest rc=0 内 REF PASS(GrDecPwrMeasure SELFTEST PASS ('reference',0,'PASS',True); GenSPv2/GrDecPwrSwitchTbGen ref-PASS carry-over r1343/r1326; FsdbMeasRunGen ref runner=>True) / L3 4 negselftest rc=0 全FAIL distinct(FsdbMeasRunGen 4 negs{empty/naive_hardcode_4/print_only/skip_none} distinct{b,f,c,d}=4 / GenSPv2 all fakes FAIL 3 distinct primary / GrDecPwrMeasure 4 negs distinct{d,m,c,h}=4 / GrDecPwrSwitchTbGen 3 negs distinct{b,c,j}=3 §4.9三假全FAIL) / L4 grep 无真实 GUI/spice binary subprocess(全 sys.executable; FsdbMeasRunGen finesim 仅作 fsdb 路径串非 binary) / L5 mode=design_flow entry=outputs/submit.zip. 跨 shard P0: B HEAD 6dda03c83 r1217=CTLEAC-001(finesim-mock+ascii-fix green_verified), git show --stat 未触 OpampChar/InvTripDelay(git log 末次 e483d12a0 r1159 judge-contract var); 静态复诊 OpampChar check.py 真hspice64 grep MOCK=0 refzip EXISTS, InvTripDelay check.py 真hspice grep MOCK=0 refzip MISSING. Lite md5 一致(500 unique, D Lite 124 norm-id/121 green). 无 D case 改动(纯监控轮); 双仓 git add -- 本 shard 路径 · 📊 trace 覆盖率: 640/4529≈14.1%(LITE_FIX 暂停选料) · 📦 体积: TASK≈29KB / MEMORY≈32.2KB; DEBT: 0; flag: r1373 = cycle-5 pos35-38 4 green 无回归 + 跨 shard P0 2 pending(挂33轮) 详见 daily_D_2026-11-25_r1373.md
+
+### r1372 心跳原文（归档批次 r1374 续）
+
+> r1372 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1373」（r1373 释体积；r1372=监控轮 cycle-5 pos31-34 4 green spot-check(FineSimJobMonitorImproveQA/FineSimTskew/FinesimIgnoreGen/FinesimMcConvert) + 跨 shard P0 2 pending, 原文见 daily_D_2026-11-25_r1372.md）
+
+### r1371 心跳原文（归档批次 r1374 续）
+
+> r1371 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1372」（r1372 释体积；r1371=监控轮 cycle-5 pos27-30 4 green spot-check(DominoPVTsweep/DQTXStim/ErcSetupGen/FifoTbStimGen) + 跨 shard P0 2 pending, 原文见 daily_D_2026-11-25_r1371.md）
