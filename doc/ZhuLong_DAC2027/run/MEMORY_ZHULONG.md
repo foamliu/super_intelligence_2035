@@ -36,22 +36,7 @@ WAITING: 1（2026-11-26 wake#2051·**doubao-pro rerun#2 r2' 健康推进·108/50
 
 - [wake#2010-#2013 原文滚出·2026-11-25 wake#2027 维护] 4 条详条见 `daily-memories/2026-11-24.md`§[wake#2010 原文]+§[wake#2011 原文]+§[wake#2012 原文] + `daily-memories/2026-11-25.md`§[wake#2013 原文]（r1 mid-run 心跳 333/500=66% Pass@1=7.90%·r1 最终收口 5.44%(first-98=10.42%→rest-402=4.25%)·2026-11-25 08:34 用户令「重跑 r1」·TASK 版本核对·r1=5.44% VOID/r2=10.79%/r3=12.01%·r1 重跑脚本 PID 1546884·两修复 restart_hub+strict canary·身份四证·canary 两证过·自检六项全过）。原文不改。
 
-- [wake#2009 原文滚出·2026-11-24 wake#2010 维护] glm-5.2 评测已停·回归 standby 详条见 `daily-memories/2026-11-24.md`§[wake#2008-#2009 原文滚出]（用户令：立即停止 glm-5.2 评测·评测框架重构需回归·ops 已杀 resume 脚本 PID 3343833 + run_batch PID 3344428·agent 验证无残留 glm-5.2/dsv4-flash/kimi-k2.6 进程·providers.json 已还原 pro 默认·status_glm52_r1.jsonl 保留不删不分析不报告·🚫 不重新拉起 3 新模型·v3+强模型 4 组数字不动）。原文不改。
-
-- [wake#2008 原文滚出·2026-11-24 wake#2010 维护] glm-5.2 r1 w=8 FUSE VOID 诊断 + RESUME 重启详条见 `daily-memories/2026-11-24.md`§[wake#2008-#2009 原文滚出]（旧串行脚本 PID 189513 死·run_batch PID 537722 w=8 FUSE 死亡 144/500·providers.json 卡 glm-5.2→已修·resume 脚本 PID 3343833 启动 w=8·⚠️ wake#2009 用户令已停·resume+run_batch 均已死·本条 RESUME 已中止）。原文不改。
-
-- [wake#2005-#2007 原文滚出·2026-11-24 wake#2008 维护] 3 条 glm-5.2 r1 w=8 健康推进/不干预决策详条（wake#2005 elapsed 3h48m·87 unique·Pass@1=20.00%；wake#2006 elapsed 5.0h·99 unique·Pass@1=21.35%；wake#2007 elapsed 5.6h·110 unique·Pass@1=22.00%·0 FUSE·6 项自检全过·r1 status 含 16 dup 待分析期 de-dup·不干预）见 `daily-memories/2026-11-24.md`§[wake#2005-#2007 原文滚出]。**注：w=8 run 随后于 15:26-15:33 FUSE 死亡（wake#2008 诊断）·r1 w=8 VOID 不计入 3-run·旧"不干预"决策基于当时 0 FUSE 健康态·FUSE 后已 RESUME 重启（wake#2009 又令停）**。原文不改。
-
-
-- [wake#2005 原文滚出·2026-11-24 wake#2006 维护] glm-5.2 r1 w=8 健康推进/不干预决策详条（elapsed 3h48m·87 unique·Pass@1=20.00%·0 FUSE·6 项自检全过·/home 6.6G free·r1 status 含 16 dup 待分析期 de-dup）见 `daily-memories/2026-11-24.md`§[wake#2005 原文滚出]。原文不改。
-
-- [wake#2002-#2004 原文滚出·2026-11-24 wake#2005 维护] 3 条 glm-5.2 r1 w=8 健康推进/不干预决策详条（wake#2002 elapsed 2h02m·49 unique·Pass@1=14.58%；wake#2003 elapsed 2h37m·66 unique·Pass@1=18.46%；wake#2004 elapsed 3h12m·78 unique·Pass@1=19.74%）见 `daily-memories/2026-11-24.md`§[wake#2002-#2004 原文滚出]（6 项自检全过·r1 status 含 16 dup 待分析期 de-dup·0 FUSE·不干预）。原文不改。
-
-- [wake#2000-#2001 原文滚出·2026-11-24 wake#2003 维护] 2 条 glm-5.2 r1 w=8 健康推进/不干预决策详条见 `daily-memories/2026-11-24.md`§[wake#2000-#2001 原文滚出]（脚本 PID 189513·run_batch PID 537722 w=8·34-49 unique judged·Pass@1≈15.15%-14.58%·0 FUSE·r1 status 含 16 dup 待分析期 de-dup·r2/r3 新文件不受影响·6 项自检全过·不干预）。原文不改。
-
-- [wake#1999 原文滚出·2026-11-24 wake#2002 维护] glm-5.2 FUSE 诊断 + wake#1998 勘误详条见 `daily-memories/2026-11-24.md`§[wake#1999 原文滚出]。原文不改。
-
-- [wake#1998 原文滚出·2026-11-24 wake#2001 维护] 启动详情（infra 预处理 db→/nasdata + canary 两证 + 身份四证 + 串行脚本 PID 189513）见 `daily-memories/2026-11-24.md`§[wake#1998 原文滚出]。r1 w=16 exit 137 VOID 已被 wake#1999/2001 勘误（实际 16 case judged 非 3）。原文不改。
+- [wake#1998-#2009 原文滚出·2026-11-26 wake#2051 合并维护] glm-5.2 评测全周期（启动→w=8 健康推进→FUSE VOID 诊断→RESUME→用户令停→回归 standby）详条见 `daily-memories/2026-11-24.md`§[wake#1998 原文]/§[wake#1999 原文]/§[wake#2000-#2001 原文滚出]/§[wake#2002-#2004 原文滚出]/§[wake#2005 原文]/§[wake#2005-#2007 原文滚出]/§[wake#2008-#2009 原文滚出]（串行脚本 PID 189513·run_batch PID 537722 w=8·w=8 run 15:26-15:33 FUSE 死亡 144/500→VOID·resume PID 3343833 后被 wake#2009 用户令停·providers.json 已还原 pro 默认·status_glm52_r1.jsonl 保留不分析·🚫 不重新拉起 3 新模型·v3+强模型 4 组数字不动）。原文不改。
 
 
 
