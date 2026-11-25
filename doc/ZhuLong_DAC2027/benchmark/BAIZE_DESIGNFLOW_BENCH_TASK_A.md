@@ -298,8 +298,24 @@ session | user | host | mc | domain | 旧判定 | 新判定(可造/不可造) | 
 | 评测框架 | `./RUN_EVAL.sh --design-flow` / `--design-flow-agent`；`scripts/run_design_flow_batch.py`；`config.yaml`；`docs/design_flow_session_backend.md`（§3 接口 / §9 判分两步）；`docs/设计流Benchmark-{测试用例编写指南,框架改进设计文档}.html` |
 | pi（被测） | `pi` 1.4.0，provider `cxmt` / `deepseek-v4-pro-cloud`，已配 `eda_flow` MCP。调用：`pi --print --no-approve --model deepseek-v4-pro-cloud --thinking medium "<prompt>"`（Node 22 需在 PATH：`export PATH=/nasdata/app.e0031982/.local/node-22/bin:$PATH`） |
 
-**命令模板（只读抓 trace）**
+**`.75` 可达性判据（最高优先 · 凌驾于本节一切 ssh 提法之上）**
+
+- **`.75` 可达 = `eda_flow` MCP 工具能正常调用并返回**（`open_session` / `run_commands` / `run_code`）。**不是** `ssh 10.129.32.75` / `ping` / DNS。
+- `ssh 10.129.32.75` 超时**只代表「本机直连 .75 的 22 端口不通」**，**不得**据此判「`.75` 不可达」，🚫 更不得据此把整轮转成「止损轮」或跳过 sim 真跑。
+- **实测（2026-11-25）**：`eda_flow` MCP `open_session` 秒级、`run_commands` 秒级、`run_code pyAether` ~30s 全部正常；`.75`（`hfhds201`）上 `hspice` / `hspice64` / `finesim` 均在 PATH（`/apps/synopsys/...`），sim 类 case 可直接走真模拟器抓真值，无需 self-contained mock。
+- **连通性自测命令**（写到 MEMORY 顶部一行作证据）：
+  ```python
+  import sys; sys.path.insert(0, '/nasdata/app.e0031982/code/EDA-Flow-Bench/scripts')
+  from eda_flow_judge import EDASession
+  with EDASession(task_id='reach', eval_id='reach', timeout=60) as sess:
+      print(sess.run_commands(["hostname; which hspice finesim; echo OK"]))
+  ```
+- 失败时**逐层区分**：MCP server 未启动 / 隧道断 / 认证失败 / 超时 / 工具缺失，🚫 不得只写「不可达」了事。
+
+**命令模板（扫描 698 台机 cline trace · 经 eda_flow run_commands 在 .75 上跑 · 不是 .75 连通判据）**
 ```bash
+# 以下 ssh 是在 .75 上经 eda_flow run_commands 执行，去扫 698 台内网的 cline session，
+# 不是从本机直连 .75。.75 本身的可达性看上面的「.75 可达性判据」。
 ssh -o BatchMode=yes -o ConnectTimeout=8 <ip> "head -c 4000 /home/<user>/.cline/data/sessions/<session_file>"
 ssh -o BatchMode=yes -o ConnectTimeout=8 <ip> "ls /home/*/.cline/data/sessions/*.messages.json | head -20"
 ```
@@ -308,7 +324,7 @@ ssh -o BatchMode=yes -o ConnectTimeout=8 <ip> "ls /home/*/.cline/data/sessions/*
 **三个已知坑（别再踩）**
 1. **GitHub 假阴性**：`curl https://github.com` 在剥掉 proxy 的环境里返回 `000`，但 `git push` 走 `git config --global http.proxy` 仍可通。**判据用 `git ls-remote origin HEAD`，不要用 curl**。（确需代理：`git config --global http.proxy http://172.19.92.23:13128`）
 2. **`write_file(content_base64=...)` 会腐蚀内容**（`$dA` → `$d\x01`）：一律用 plain `content` 字符串，或 `run_commands` 里 `base64 -d` 在本机解码。
-3. **`ssh` 在 eda_flow 里会 hang**：命令前加 `</dev/null`（`-n` 反而会断 stdin pipe）。
+3. **`ssh` 经 eda_flow `run_commands` 跑时会 hang**：命令前加 `</dev/null`（`-n` 反而会断 stdin pipe）。**注意：ssh 到某台机超时只代表「那台机 ssh 不通」，不代表 `.75` 不可达——`.75` 可达性只看 eda_flow MCP（见上方「`.75` 可达性判据」）。**
 
 ## 3. 用例契约（proper `design_flow`）
 
