@@ -17,7 +17,7 @@ HARNESS_DIR = HERE.parent
 GUARDED_EVAL = HARNESS_DIR / "swebench_guarded_eval.py"
 PRED_DIR = HERE / os.environ.get("PRED_SUBDIR", "predictions_doubao_pro")
 REPORT_DIR = HERE / "reports"
-EVAL_LOG_ROOT = HERE / "logs" / "run_evaluation"
+EVAL_LOG_ROOT = HERE / "logs" / "evaluation"
 ENRICHED = HERE / "enriched_500.json"
 MODEL_SUFFIX = os.environ.get("MODEL_SUFFIX", "doubao-seed-2.0-pro-cloud")
 EVAL_TAG = os.environ.get("EVAL_TAG", "doubao_pro_")
@@ -71,7 +71,7 @@ def rebuild_merged(route: str) -> Path:
 
 def run_eval(route: str, merged_path: Path, eval_ids: list[str], dry_run: bool = False) -> dict:
     run_id = f"{RUN_ID_PREFIX}_{route}"
-    model = f"{disp(route)}-{MODEL_SUFFIX}"
+    model = f"{route}-{MODEL_SUFFIX}"
     summary = {"harness": disp(route), "harness_code": route, "run_id": run_id,
                "n": len(eval_ids), "resolved": [], "failed": [], "infra_or_quota": []}
     if dry_run:
