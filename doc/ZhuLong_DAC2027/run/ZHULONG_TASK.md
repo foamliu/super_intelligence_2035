@@ -1,5 +1,35 @@
 # ZHULONG_TASK.md — ZhuLong（DAC2027）EDA 消融评测 · 合并任务书
 
+> ## 🌡️ 2026-11-26 21:0x 用户令 · **本线转为 designflow 的「体温计」：lite-500 × doubao-pro 连续循环评测 · 只有用户令才停**
+>
+> **用户原话**：「安排 zhulong 不断起 lite-500+doubao-pro 评测，做 designflow 的『体温计』，需要停止时我会下用户令」
+>
+> **一、含义**
+> - 固定被测模型 **`doubao-seed-2.0-pro-cloud`**（thinking low / `reasoning.enabled=false` / `maxTokens=16384`），固定 **`workers=4`**、固定 **500 cases**、固定 harness ⇒ **唯一自变量 = EDA-Flow-Bench 的 repo state（designflow 的修复）**。曲线变化即 designflow 改动的净效果（含假阳/假阴修正）——这就是「体温」。
+> - **连续循环**：一轮收口**立刻起下一轮**（r1→r2→r3→…）。🚫 不等 designflow、🚫 不等 3-run 凑齐、🚫 自行停止、🚫 自行降频/减题。**只有用户令「停体温计」才停**。
+>
+> **二、每轮必做（缺一不进统计）**
+> 1. **起跑前**：`restart_hub`（清 bloat）+ **strict canary 两证**（chat `http=200` 回 `PONG` + 单 case 真输出 `verdict=PASS`）+ 身份四证。
+> 2. **记 `repo_commit`**：`git -C /nasdata/app.e0031982/code/EDA-Flow-Bench rev-parse HEAD`，写进 `status_thermo_r<N>.repo_commit` 与 MEMORY 心跳。
+> 3. **每轮新 status**：`status_thermo_r<N>.jsonl`。🚫 `--skip-done`、🚫 复用上轮 status、🚫 拼接。
+> 4. **跑完标轮级状态**（Pass@1 分母 = judged，ERROR 单列）：
+>    - `CLEAN`：全程 0 FUSE / 0 额度耗尽 / 0 熔断，且本轮期间 `designflow/live_eval_changes.tsv` **无新增行**、`repo_commit` 未变；
+>    - `MIXED`：本轮期间 designflow 改过判分 ⇒ 保留但**单列**，🚫 不入 3-run mean±std；
+>    - `VOID`：FUSE / 额度耗尽 / 熔断 ⇒ 按 FUSE 专规作废 + 等 ≥30 min + 起下一轮，🚫 拼接、🚫 计入。
+> 5. **刷新** `run/reports/report_edafb_lite500_thermometer_zh.html`：滚动曲线（每轮 Pass@1 + `repo_commit` + CLEAN/MIXED/VOID 着色）+ 最近 3 个 `CLEAN` 轮的 mean±std + `live_eval_changes.tsv` 改动时间线叠加。
+>
+> **三、与论文的关系（重要）**
+> - **体温计轮一律不入论文 3-run**。论文里的 doubao-pro 数字仍取「**同一 `repo_commit` 下 3 个 CLEAN 轮**」的 mean±std。
+> - 体温计回答的是「designflow 这批修复把通过率推高还是打低」，**不是**「模型多强」。跨 `repo_commit` 的差异**只能归因于判分/题面变化**（模型是固定的）。
+>
+> **四、对 designflow 的反馈（体温计的实际用途）**
+> 每轮收口后产出 `run/reports/thermo_feedback_r<N>.md`：**① 本轮 Pass@1 + 轮级状态 ② 新增 ERROR / 新增 FAIL 的 `case_id` 清单 ③ 13 个 domain 的分域通过率**。A 负责读取并分派给对应 shard（谁的槽位谁修）。🚫 本线不改题、不改判分——**只报现象**。
+>
+> **五、infra 例外**：hub 起不来 / 额度连续耗尽（≥3 轮 VOID）/ `/home` ≥99% 满 / 隧道断 ⇒ 记 `infra`（铁律 2），报运维并**保持循环**（能起就起）；🚫 把 infra 失败写成模型或题的结论。
+>
+> **六、停止**：仅在用户下「停体温计」令时停。停止时保留全部 `status_thermo_r*.jsonl` 与报告，MEMORY 首行改 `THERMO: stopped by user <ts>`。
+>
+
 > ## 🔴 2026-11-26 20:5x 用户裁定 · **designflow 为主、本线评测为辅 · 不设等待** · 覆盖前令中一切「等 designflow 收敛再跑」的表述
 >
 > **用户原话**：「designflow 等待 zhulong 评测是不对的，我的本意就是以 designflow 为主，zhulong 评测为辅，目标是随着 designflow 对于 lite-500 的修复逐渐收敛，评测结果会稳定下来。从来没说过要等。」

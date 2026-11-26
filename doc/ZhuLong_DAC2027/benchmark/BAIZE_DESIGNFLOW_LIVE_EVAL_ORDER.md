@@ -37,7 +37,7 @@
 | 角色 | 责任（就这一件事） |
 |:--|:--|
 | **designflow（主）** | 改判分时往 `designflow/live_eval_changes.tsv` **追加一行**：`ts / shard / case_id / judge_layers 变更 / repo_commit / 一句话原因`。其余照常：改造 → 自验 → commit。 |
-| **zhulong（辅）** | 每轮 run **起跑时记 `repo_commit`**（EDA-Flow-Bench HEAD）。若该轮期间 `live_eval_changes.tsv` 有新行落入 ⇒ 该 run 标 **`MIXED`**，**不进 3-run 统计**，下一轮自然重跑。 |
+| **zhulong（辅）** | 本线已转 **designflow 体温计**（2026-11-26 21:0x 用户令：连续循环 lite-500 × doubao-pro，只有用户令才停，见 `run/ZHULONG_TASK.md`）。每轮 run **起跑时记 `repo_commit`**（EDA-Flow-Bench HEAD）。若该轮期间 `live_eval_changes.tsv` 有新行落入 ⇒ 该 run 标 **`MIXED`**，**不进 3-run 统计**，下一轮自然重跑。 |
 | **A（汇总人）** | 每完成一批改造，把累计变更的 commit 范围**报** zhulong。🚫 不替 zhulong 决定重跑与否。 |
 
 - **为什么这样够**：判分器是**逐 case 在判分时刻加载**的 ⇒ 改动不会让 run 崩，只是让**那一轮**变成混合口径。用 `repo_commit` + `MIXED` 就能事后识别并剔除，比让主线程停 4 小时便宜得多。
@@ -126,6 +126,7 @@
 4. 日报：`daily_<shard>_<date>.md` 照旧。
 5. **A 汇总**：全 shard review 填满后，A 出 `designflow/live_eval_summary.md`（三分类合计 + REQ 改造进度 + 缺口台账）。B/C/D 把汇总数字**报** A，🚫 不写 A 的文件。
 6. **报 zhulong（辅线跟随，不是请示）**：A 每批改造收口后通报「变更 commit 范围 + `live_eval_changes.tsv` 新增行数」；zhulong 自行决定下一轮何时起跑，并把跨改动的 run 标 `MIXED` 剔除。🚫 shard 自行宣布「新基线」；🚫 **也不需要等 zhulong 才能改判分**（§1.1）。
+   另：zhulong 体温计每轮产出 `run/reports/thermo_feedback_r<N>.md`（Pass@1 / 新增 ERROR·FAIL 的 `case_id` / 13 域通过率）⇒ **A 读取并按 `owner_shard` 分派**，各 shard **优先修体温计暴露的回退**（新增 FAIL 高于新增 OPT）。
 
 ---
 

@@ -259,6 +259,21 @@
    判据 = round 3 的 `grep -ci 'undefined' main.log` = **0**、`grep -c '^!'` = **0**。
    🚫 不许只跑 1 轮 pdflatex 就报"编译通过"，🚫 不许靠旧 `.aux` 报"0 undefined"。
 
+### 6.5 「体温计」连续循环（2026-11-26 用户令）
+
+> 用户令：「安排 zhulong **不断起 lite-500+doubao-pro 评测**，做 designflow 的『体温计』，需要停止时我会下用户令」。
+> 完整规格见 `run/ZHULONG_TASK.md` 顶部「🌡️ 体温计」节。
+
+| 项 | 约定 |
+|:--|:--|
+| **固定量** | model=`doubao-seed-2.0-pro-cloud`（thinking low / `reasoning.enabled=false` / maxTokens=16384）、`workers=4`、500 cases、同一 harness ⇒ **唯一自变量 = EDA-Flow-Bench 的 repo state** |
+| **轮级状态** | `CLEAN`（0 FUSE 且本轮期间无判分改动）/ `MIXED`（期间 designflow 改了判分 ⇒ 单列、**不入 3-run**）/ `VOID`（FUSE·额度·熔断 ⇒ 作废重跑，🚫 拼接） |
+| **每轮必记** | `repo_commit`（EDA-Flow-Bench HEAD）+ 起跑前 `restart_hub` + strict canary 两证 + 身份四证 |
+| **报告** | `run/reports/report_edafb_lite500_thermometer_zh.html`：滚动曲线（Pass@1 + repo_commit + 状态着色）+ 最近 3 个 `CLEAN` 轮 mean±std + `designflow/live_eval_changes.tsv` 时间线叠加 |
+| **反馈 designflow** | 每轮 `run/reports/thermo_feedback_r<N>.md`（Pass@1 / 新增 ERROR·FAIL 的 `case_id` / 13 域通过率）→ A 分派到对应 shard |
+| 🚫 **入论文** | 体温计轮**一律不入论文 3-run**；论文数字取「**同一 `repo_commit` 下 3 个 `CLEAN` 轮**」 |
+| **停止** | **仅用户令**；🚫 agent 自行停 / 降频 / 减题；hub·额度·磁盘故障记 `infra`（铁律 2）并**保持循环** |
+
 ---
 
 ## 7. designflow
