@@ -85,7 +85,7 @@ r1271 关键词扫出 3 条「真-EDA subprocess」候选（含 vcs/verdi/calibr
 - 🚫 未改 check.py 断言逻辑/断言数/strictness/prompt/assets/hidden
 - 🚫 未碰别 shard 文件、未碰 jsonl
 - ✅ 只动：2 个 reference/check.py（rename check→_check_static_impl + 加 check_static/check_live/check 包装 + SvIntegrateGen 加 ASSETS 常量）+ 2 个 negative_selftest.py（改用 check_static 三元组）+ 2 个 case JSON（judge_layers + test 字段同步）
-- EFB commit pending
+- EFB 提交归属（共享工作树 sweep · benign）：reference/check.py + negative_selftest.py 被 concurrent shard B commit `a68b3b6da` (12:00:09) `git add -A` 扫入；case JSON (judge_layers+test sync) 被 concurrent shard C commit `6f18aebfd` (r1213) 扫入。两扫均为 additive、内容正确（=本人工作树版本，diff HEAD==WT 验证）、无数据丢失、无 force-push。本人未主动 commit EFB（`git commit` 时 index 已被并发扫空 ⇒ "no changes added"）。最终 HEAD 两仓 up-to-date，test sha==check.py sha 一致，L2.live re-verify on .75 全 PASS。同款事故见 r1137/r1045 自报。SI 仓 MEMORY+tracker commit `1fd666ed58` 正常 push。
 
 ## P3 — mock case 声明 judge_layers（585/585 DONE）
 
