@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDA 脚本能力线上使用与价值分析报告</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:#f5f7fa;color:#222;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+h1{font-size:1.4rem;border-bottom:3px solid #2c7be5;padding-bottom:8px}
+h2{font-size:1.1rem;margin-top:28px;color:#2c7be5;border-left:4px solid #2c7be5;padding-left:10px}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+.kpi{flex:1;min-width:120px;background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.kpi .n{font-size:1.5rem;font-weight:700;color:#2c7be5}
+.kpi .l{font-size:.76rem;color:#666}
+.kpi.green .n{color:#27ab83}
+.kpi.red .n{color:#e85a4f}
+.kpi.purple .n{color:#6f42c1}
+.kpi.orange .n{color:#f0ad4e}
+table{border-collapse:collapse;width:100%;background:#fff;margin:8px 0;font-size:.83rem}
+th,td{border:1px solid #e3e8ef;padding:6px 10px;text-align:left}
+th{background:#f0f4f8;white-space:nowrap}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.note{background:#fffbe6;border-left:3px solid #f0ad4e;padding:10px 14px;margin:12px 0;border-radius:4px;font-size:.85rem}
+.insight{background:#e8f4fd;border-left:3px solid #2c7be5;padding:10px 14px;margin:12px 0;border-radius:4px;font-size:.85rem}
+.gap{background:#fef0f0;border-left:3px solid #e85a4f;padding:10px 14px;margin:12px 0;border-radius:4px;font-size:.85rem}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0;font-size:.8rem}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px}
+footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
+</style></head><body><div class="wrap">
+
+<h1>EDA 脚本能力线上使用与价值分析报告</h1>
+<p style="color:#999">数据来源：698 台工程工作站全量深度扫描 · 生成时间 2026-11-16 · 分析维度：使用规模 + 执行成功率 + 用户满意度 + 链路完整性 + 差距诊断</p>
+
+<h2>一、总体概览</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">65,481</div><div class="l">工具调用总数</div></div>
+<div class="kpi green"><div class="n">323</div><div class="l">使用用户数</div></div>
+<div class="kpi purple"><div class="n">5,981</div><div class="l">涉及会话数</div></div>
+<div class="kpi"><div class="n">696</div><div class="l">覆盖机器数</div></div>
+<div class="kpi green"><div class="n">62.3%</div><div class="l">代码执行成功率</div></div>
+<div class="kpi green"><div class="n">75.1%</div><div class="l">用户正面情绪比</div></div>
+</div>
+
+<h2>二、使用规模</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">pyAether</div><div class="l">37,740 次 · 285 人 · 57.6%</div></div>
+<div class="kpi green"><div class="n">SKILL</div><div class="l">21,687 次 · 175 人 · 33.1%</div></div>
+<div class="kpi red"><div class="n">Tcl</div><div class="l">5,905 次 · 41 人 · 9.0%（11月新增）</div></div>
+</div>
+
+<h3>月度增长趋势</h3>
+<div style="margin:12px 0"><svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;display:block"><line x1="50" y1="20" x2="50" y2="250" stroke="#ccc"/><line x1="50" y1="250" x2="470" y2="250" stroke="#ccc"/><rect x="60" y="249.9" width="50" height="0.1" fill="#2c7be5" rx="2"/><rect x="60" y="248.8" width="50" height="1.1" fill="#27ab83" rx="2"/><text x="85.0" y="243.8" text-anchor="middle" font-size="10" font-weight="600" fill="#444">0.2K</text><text x="85.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-06</text><text x="85.0" y="282" text-anchor="middle" font-size="9" fill="#999">3人</text><rect x="130" y="245.9" width="50" height="4.1" fill="#2c7be5" rx="2"/><rect x="130" y="205.8" width="50" height="40.1" fill="#27ab83" rx="2"/><text x="155.0" y="200.5" text-anchor="middle" font-size="10" font-weight="600" fill="#444">5.8K</text><text x="155.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-07</text><text x="155.0" y="282" text-anchor="middle" font-size="9" fill="#999">6人</text><rect x="200" y="237.2" width="50" height="12.8" fill="#2c7be5" rx="2"/><rect x="200" y="197.9" width="50" height="39.3" fill="#27ab83" rx="2"/><text x="225.0" y="192.8" text-anchor="middle" font-size="10" font-weight="600" fill="#444">6.8K</text><text x="225.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-08</text><text x="225.0" y="282" text-anchor="middle" font-size="9" fill="#999">9人</text><rect x="270" y="209.5" width="50" height="40.5" fill="#2c7be5" rx="2"/><rect x="270" y="186.7" width="50" height="22.8" fill="#27ab83" rx="2"/><text x="295.0" y="181.3" text-anchor="middle" font-size="10" font-weight="600" fill="#444">8.2K</text><text x="295.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-09</text><text x="295.0" y="282" text-anchor="middle" font-size="9" fill="#999">70人</text><rect x="340" y="161.8" width="50" height="88.2" fill="#2c7be5" rx="2"/><rect x="340" y="116.0" width="50" height="45.8" fill="#27ab83" rx="2"/><rect x="340" y="116.0" width="50" height="0.0" fill="#e85a4f" rx="2"/><text x="365.0" y="110.7" text-anchor="middle" font-size="10" font-weight="600" fill="#444">17.4K</text><text x="365.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-10</text><text x="365.0" y="282" text-anchor="middle" font-size="9" fill="#999">167人</text><rect x="410" y="104.1" width="50" height="145.9" fill="#2c7be5" rx="2"/><rect x="410" y="85.7" width="50" height="18.4" fill="#27ab83" rx="2"/><rect x="410" y="40.1" width="50" height="45.6" fill="#e85a4f" rx="2"/><text x="435.0" y="35.0" text-anchor="middle" font-size="10" font-weight="600" fill="#444">27.2K</text><text x="435.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-11</text><text x="435.0" y="282" text-anchor="middle" font-size="9" fill="#999">182人</text></svg></div>
+<div class="legend">
+<span><i style="background:#2c7be5"></i>pyAether</span>
+<span><i style="background:#27ab83"></i>SKILL</span>
+<span><i style="background:#e85a4f"></i>Tcl</span>
+</div>
+<div class="insight">
+<b>增长态势</b>：6 月试点 → 11 月（16天）27,181 次，已超 10 月全月 +56%。用户数 3→182 人，9 月为扩散拐点（+678%）。pyAether 9 月起成为主力语言，Tcl 11 月新增即放量 5,904 次。
+</div>
+
+<h2>三、问题解决能力（执行成功率）</h2>
+<div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin:12px 0">
+<div style="flex:0 0 360px"><svg viewBox="0 0 460 340" xmlns="http://www.w3.org/2000/svg" style="max-width:460px;display:block">
+<path d="M 170 155 L 170.00 55.00 A 100 100 0 1 1 100.09 226.50 Z" fill="#27ab83" stroke="#fff" stroke-width="1.5"/>
+<path d="M 170 155 L 100.09 226.50 A 100 100 0 0 1 170.00 55.00 Z" fill="#e85a4f" stroke="#fff" stroke-width="1.5"/>
+<text x="288.5" y="203.3" text-anchor="start" font-size="11" fill="#444">成功 62.3%</text>
+<text x="51.5" y="106.7" text-anchor="end" font-size="11" fill="#444">失败 37.7%</text>
+<text x="170" y="149" text-anchor="middle" font-size="22" font-weight="700" fill="#222">62.3%</text>
+<text x="170" y="169" text-anchor="middle" font-size="10" fill="#666">success rate</text>
+</svg></div>
+<div style="flex:1;min-width:280px">
+<table>
+<thead><tr><th>指标</th><th class="num">数值</th><th>占比</th></tr></thead>
+<tbody>
+<tr><td>run_code 总调用</td><td class="num">32,778</td><td>100%</td></tr>
+<tr><td><span style="color:#27ab83">●</span> 成功执行</td><td class="num">20,419</td><td>62.3%</td></tr>
+<tr><td><span style="color:#e85a4f">●</span> 执行失败</td><td class="num">12,345</td><td>37.7%</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<h3>各语言执行成功率对比</h3>
+<div style="margin:12px 0"><svg viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg" style="max-width:500px;display:block"><rect x="100" y="30" width="207" height="28" fill="#2c7be5" rx="4"/><text x="95" y="50" text-anchor="end" font-size="12" font-weight="600" fill="#444">pyAether</text><text x="312" y="50" font-size="12" font-weight="600" fill="#2c7be5">59.1%</text><text x="100" y="72" font-size="9" fill="#999">21,440 次执行 · 12,672 成功 · 8,759 失败</text><rect x="100" y="75" width="197" height="28" fill="#27ab83" rx="4"/><text x="95" y="95" text-anchor="end" font-size="12" font-weight="600" fill="#444">SKILL</text><text x="302" y="95" font-size="12" font-weight="600" fill="#27ab83">56.2%</text><text x="100" y="117" font-size="9" fill="#999">17,886 次执行 · 10,057 成功 · 7,829 失败</text><rect x="100" y="120" width="273" height="28" fill="#e85a4f" rx="4"/><text x="95" y="140" text-anchor="end" font-size="12" font-weight="600" fill="#444">Tcl</text><text x="378" y="140" font-size="12" font-weight="600" fill="#e85a4f">78.1%</text><text x="100" y="162" font-size="9" fill="#999">4,557 次执行 · 3,554 成功 · 998 失败</text></svg></div>
+<div class="insight">
+<b>语言差异</b>：
+<ul style="margin:6px 0 0 0">
+<li><b>Tcl 成功率最高（78.1%）</b>——WaveView Tcl 命令集简单明确，API 检索后直接执行成功率高</li>
+<li><b>pyAether（59.1%）和 SKILL（56.2%）</b>成功率接近——这两种语言 API 库庞大、场景复杂，部分调用涉及 EDA 工具环境状态（如未打开 cellview），失败率较高</li>
+<li>失败主因：<b>error_log 非空（10,738 次）</b>占错误总量的 87%，主要为 EDA 工具运行时错误（如对象不存在、权限不足、环境未初始化）</li>
+</ul>
+</div>
+
+<h3>错误类型分布</h3>
+<table>
+<thead><tr><th>错误类型</th><th class="num">次数</th><th>占错误比</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>EDA 工具运行时错误</td><td class="num">10,738</td><td>87.0%</td><td>error_log 非空（工具执行报错）</td></tr>
+<tr><td>MCP 调用异常</td><td class="num">1,082</td><td>8.8%</td><td>is_error 标记（连接/超时等）</td></tr>
+<tr><td>Python Traceback</td><td class="num">1,068</td><td>8.7%</td><td>代码语法/运行时异常</td></tr>
+<tr><td>Python 异常类型</td><td class="num">59</td><td>0.5%</td><td>NameError/TypeError 等</td></tr>
+</tbody>
+</table>
+
+<h3>月度成功率演变</h3>
+<div style="margin:12px 0"><svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;display:block"><line x1="60" y1="20" x2="60" y2="200" stroke="#ccc"/><line x1="60" y1="200" x2="680" y2="200" stroke="#ccc"/><line x1="55" y1="200.0" x2="60" y2="200.0" stroke="#ccc"/><text x="50" y="204.0" text-anchor="end" font-size="9" fill="#999">0%</text><line x1="55" y1="155.0" x2="60" y2="155.0" stroke="#ccc"/><text x="50" y="159.0" text-anchor="end" font-size="9" fill="#999">25%</text><line x1="55" y1="110.0" x2="60" y2="110.0" stroke="#ccc"/><text x="50" y="114.0" text-anchor="end" font-size="9" fill="#999">50%</text><line x1="55" y1="65.0" x2="60" y2="65.0" stroke="#ccc"/><text x="50" y="69.0" text-anchor="end" font-size="9" fill="#999">75%</text><line x1="55" y1="20.0" x2="60" y2="20.0" stroke="#ccc"/><text x="50" y="24.0" text-anchor="end" font-size="9" fill="#999">100%</text><circle cx="80" cy="128.72" r="6" fill="#e85a4f"/><text x="80" y="116.72" text-anchor="middle" font-size="11" font-weight="600" fill="#444">40%</text><text x="80" y="220" text-anchor="middle" font-size="10" fill="#666">2026-06</text><text x="80" y="235" text-anchor="middle" font-size="8" fill="#999">26会话</text><rect x="72" y="240" width="6" height="0.0" fill="#27ab83" rx="1"/><rect x="82" y="240" width="6" height="0.0" fill="#e85a4f" rx="1"/><circle cx="180" cy="102.26000000000002" r="6" fill="#f0ad4e"/><text x="180" y="90.26000000000002" text-anchor="middle" font-size="11" font-weight="600" fill="#444">54%</text><text x="180" y="220" text-anchor="middle" font-size="10" fill="#666">2026-07</text><text x="180" y="235" text-anchor="middle" font-size="8" fill="#999">403会话</text><rect x="172" y="240" width="6" height="0.9" fill="#27ab83" rx="1"/><rect x="182" y="240" width="6" height="1.1" fill="#e85a4f" rx="1"/><circle cx="280" cy="71.30000000000001" r="6" fill="#27ab83"/><text x="280" y="59.30000000000001" text-anchor="middle" font-size="11" font-weight="600" fill="#444">72%</text><text x="280" y="220" text-anchor="middle" font-size="10" fill="#666">2026-08</text><text x="280" y="235" text-anchor="middle" font-size="8" fill="#999">319会话</text><rect x="272" y="240" width="6" height="2.0" fill="#27ab83" rx="1"/><rect x="282" y="240" width="6" height="2.1" fill="#e85a4f" rx="1"/><circle cx="380" cy="132.86" r="6" fill="#e85a4f"/><text x="380" y="120.86000000000001" text-anchor="middle" font-size="11" font-weight="600" fill="#444">37%</text><text x="380" y="220" text-anchor="middle" font-size="10" fill="#666">2026-09</text><text x="380" y="235" text-anchor="middle" font-size="8" fill="#999">955会话</text><rect x="372" y="240" width="6" height="6.2" fill="#27ab83" rx="1"/><rect x="382" y="240" width="6" height="9.6" fill="#e85a4f" rx="1"/><circle cx="480" cy="119.0" r="6" fill="#f0ad4e"/><text x="480" y="107.0" text-anchor="middle" font-size="11" font-weight="600" fill="#444">45%</text><text x="480" y="220" text-anchor="middle" font-size="10" fill="#666">2026-10</text><text x="480" y="235" text-anchor="middle" font-size="8" fill="#999">1720会话</text><rect x="472" y="240" width="6" height="17.8" fill="#27ab83" rx="1"/><rect x="482" y="240" width="6" height="30.0" fill="#e85a4f" rx="1"/><circle cx="580" cy="71.83999999999997" r="6" fill="#27ab83"/><text x="580" y="59.839999999999975" text-anchor="middle" font-size="11" font-weight="600" fill="#444">71%</text><text x="580" y="220" text-anchor="middle" font-size="10" fill="#666">2026-11</text><text x="580" y="235" text-anchor="middle" font-size="8" fill="#999">2558会话</text><rect x="572" y="240" width="6" height="30.0" fill="#27ab83" rx="1"/><rect x="582" y="240" width="6" height="28.0" fill="#e85a4f" rx="1"/><text x="30" y="245" font-size="8" fill="#999">👍/👎</text></svg></div>
+<div class="legend">
+<span><i style="background:#27ab83"></i>成功率高（>60%）</span>
+<span><i style="background:#f0ad4e"></i>中等（45-60%）</span>
+<span><i style="background:#e85a4f"></i>偏低（<45%）</span>
+<span><i style="background:#27ab83"></i>👍正面</span>
+<span><i style="background:#e85a4f"></i>👎负面</span>
+</div>
+<div class="note">
+<b>成功率演变</b>：6 月 39.6%（试点期，调试多）→ 8 月 71.5%（早期用户熟练）→ 9 月 37.3%（大量新用户涌入，学习曲线效应）→ 11 月回升至 71.2%（API 库优化 + 新用户度过学习期）。
+<b>正面情绪同步增长</b>：9 月 329 → 11 月 1,582，与成功率回升正相关。
+</div>
+
+<h2>四、用户满意度分析</h2>
+<div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin:12px 0">
+<div style="flex:0 0 360px"><svg viewBox="0 0 460 340" xmlns="http://www.w3.org/2000/svg" style="max-width:460px;display:block">
+<path d="M 170 155 L 170.00 55.00 A 100 100 0 1 1 70.00 154.41 Z" fill="#27ab83" stroke="#fff" stroke-width="1.5"/>
+<path d="M 170 155 L 70.00 154.41 A 100 100 0 0 1 170.00 55.00 Z" fill="#e85a4f" stroke="#fff" stroke-width="1.5"/>
+<text x="260.2" y="245.8" text-anchor="start" font-size="11" fill="#444">正面 75.1%</text>
+<text x="79.8" y="64.2" text-anchor="end" font-size="11" fill="#444">负面 24.9%</text>
+<text x="170" y="149" text-anchor="middle" font-size="22" font-weight="700" fill="#222">75.1%</text>
+<text x="170" y="169" text-anchor="middle" font-size="10" fill="#666">positive</text>
+</svg></div>
+<div style="flex:1;min-width:280px">
+<table>
+<thead><tr><th>情绪信号</th><th class="num">次数</th><th class="num">会话数</th><th>会话占比</th></tr></thead>
+<tbody>
+<tr><td><span style="color:#27ab83">●</span> 正面（谢谢/好的/解决了/完美等）</td><td class="num">3009</td><td class="num">1295</td><td>21.7%</td></tr>
+<tr><td><span style="color:#e85a4f">●</span> 负面（不对/错了/不行/没解决等）</td><td class="num">998</td><td class="num">652</td><td>10.9%</td></tr>
+<tr><td>中性（无明确情绪信号）</td><td class="num">—</td><td class="num">4370</td><td>73.1%</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="insight">
+<b>满意度画像</b>：
+<ul style="margin:6px 0 0 0">
+<li><b>正面:负面 = 3:1</b>（3,009 vs 998），在能给出明确情绪反馈的 1,947 个会话中，75.1% 为正面</li>
+<li><b>21.7% 会话有正面信号</b>（1,295/5,981），说明约 1/5 的会话用户明确表达了满意</li>
+<li><b>10.9% 会话有负面信号</b>（652/5,981），这些是需要改进的重点</li>
+<li><b>73.1% 会话中性</b>——多数工程师不会在技术对话中表达情绪，但正面信号远超负面说明整体体验向好</li>
+</ul>
+</div>
+
+<h3>会话结局分布</h3>
+<div class="kpis">
+<div class="kpi green"><div class="n">412</div><div class="l">明确解决（结尾正面）</div></div>
+<div class="kpi red"><div class="n">169</div><div class="l">明确放弃（结尾负面）</div></div>
+<div class="kpi"><div class="n">5400</div><div class="l">中性结束</div></div>
+</div>
+<div class="note">
+<b>解决:放弃 = 2.4:1</b>（412 vs 169）。明确放弃率仅 2.8%，绝大多数会话以中性方式结束（用户继续在 EDA 工具中操作，无需在对话中确认结果）。
+</div>
+
+<h2>五、链路完整性（检索→执行闭环）</h2>
+<div class="kpis">
+<div class="kpi green"><div class="n">98.1%</div><div class="l">API 检索有效率</div></div>
+<div class="kpi"><div class="n">55.8%</div><div class="l">检索→执行闭环率</div></div>
+<div class="kpi orange"><div class="n">1798</div><div class="l">仅检索未执行会话</div></div>
+<div class="kpi"><div class="n">320</div><div class="l">重复检索会话（5.4%）</div></div>
+</div>
+<table>
+<thead><tr><th>链路模式</th><th class="num">会话数</th><th>占比</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>检索 + 执行（完整闭环）</td><td class="num">2270</td><td>38.0%</td><td>先查 API → 再跑代码，典型使用流程</td></tr>
+<tr><td>仅检索未执行</td><td class="num">1798</td><td>30.1%</td><td>查了 API 但没跑代码</td></tr>
+<tr><td>仅执行未检索</td><td class="num">1913</td><td>32.0%</td><td>直接跑代码（已熟悉 API）</td></tr>
+</tbody>
+</table>
+<div class="insight">
+<b>检索→执行闭环</b>：
+<ul style="margin:6px 0 0 0">
+<li><b>API 检索有效率 98.1%</b>——search_apis 几乎总能返回结果，API 知识库覆盖度优秀</li>
+<li><b>闭环率 55.8%</b>——在执行过检索的会话中，55.8% 后续执行了代码；44.2% 仅检索未执行</li>
+<li><b>30.1% 会话"仅检索未执行"</b>——这部分用户查了 API 但没有跑代码，可能原因：API 信息已够用（复制到其他工具执行）、检索结果不满足需求、或用户转向其他方案</li>
+<li><b>5.4% 会话有重复检索</b>——同一 query 查 2+ 次，说明首次检索结果可能不够精准</li>
+</ul>
+</div>
+
+<h2>六、会话强度分布</h2>
+<table>
+<thead><tr><th>工具调用次数</th><th class="num">会话数</th><th>占比</th><th>典型场景</th></tr></thead>
+<tbody>
+<tr><td>1 次</td><td class="num">1,141</td><td>19.1%</td><td>单次查询/执行</td></tr>
+<tr><td>2-3 次</td><td class="num">1,760</td><td>29.4%</td><td>简单任务（查+跑）</td></tr>
+<tr><td>4-10 次</td><td class="num">1,540</td><td>25.7%</td><td>中等任务（多轮交互）</td></tr>
+<tr><td>11-30 次</td><td class="num">974</td><td>16.3%</td><td>复杂任务（反复调试）</td></tr>
+<tr><td>31-100 次</td><td class="num">508</td><td>8.5%</td><td>重度开发会话</td></tr>
+<tr><td>100+ 次</td><td class="num">58</td><td>1.0%</td><td>超长会话（系统级开发）</td></tr>
+</tbody>
+</table>
+<div class="note">
+<b>强度分布</b>：48.5% 会话在 1-3 次调用内完成（轻量查询/执行），25.7% 在 4-10 次（中等任务），16.3% 在 11-30 次（复杂调试），8.5% 在 31-100 次（重度开发），1% 超 100 次（系统级开发会话）。
+</div>
+
+<h2>七、差距诊断</h2>
+
+<div class="gap">
+<b>差距 1：30.1% 会话"仅检索未执行"（1,798 个会话）</b><br>
+这些会话调用了 search_apis 但从未执行 run_code。<b>可能原因</b>：
+<ul style="margin:6px 0 0 0">
+<li>检索结果已满足——用户只需查看 API 文档，复制到自己的脚本中使用（非负面）</li>
+<li>检索结果不匹配——API 库中缺少用户需要的功能（需补充 API 覆盖）</li>
+<li>用户放弃——检索后发现任务过于复杂，转向其他方式</li>
+</ul>
+<b>建议</b>：对这 1,798 个会话做抽样深读，区分"已满足"和"未满足"的比例，定位 API 库覆盖盲区。
+</div>
+
+<div class="gap">
+<b>差距 2：37.7% 代码执行失败率（12,345 次 run_code 失败）</b><br>
+失败主因 87% 为 EDA 工具运行时错误（error_log 非空）。<b>典型失败场景</b>：
+<ul style="margin:6px 0 0 0">
+<li>未打开 cellview/design 就执行布局操作（pyAether/SKILL 最常见）</li>
+<li>对象不存在（如引用未加载的 lib/cell/view）</li>
+<li>权限不足或文件路径错误</li>
+<li>EDA 工具环境未正确初始化</li>
+</ul>
+<b>建议</b>：①在 API 文档中增加"前置条件"说明（如"需先调用 open_cellview"）；②在 run_code 沙盒中增加环境预检查；③对高频失败场景生成示例代码模板。
+</div>
+
+<div class="gap">
+<b>差距 3：pyAether/SKILL 成功率（59%/56%）显著低于 Tcl（78%）</b><br>
+Tcl（WaveView）API 集合简单、场景单一（波形分析），而 pyAether/SKILL 面向 Aether/Virtuoso 全流程，API 库庞大、场景复杂。<b>建议</b>：针对 pyAether/SKILL 的高频错误场景，提供"场景向导"——用户描述目标后，智能体自动补全前置步骤。
+</div>
+
+<div class="gap">
+<b>差距 4：7.9% 会话为"高错误零成功"（471 个会话，2,604 次失败）</b><br>
+这些会话执行了 3+ 次 run_code 全部失败，0 次成功。<b>这类会话是体验最差的用户</b>，平均每个会话失败 5.5 次。<b>建议</b>：对这 471 个会话逐一分析失败根因，识别共性问题和 API 库缺陷，作为优先改进项。
+</div>
+
+<div class="gap">
+<b>差距 5：9 月成功率骤降（71.5% → 37.3%）</b><br>
+9 月用户数从 9 人暴增到 70 人（+678%），新用户大量涌入导致成功率骤降。11 月回升至 71.2%，说明用户度过了学习曲线。<b>建议</b>：建立新用户 onboarding 引导（示例会话、常见错误 FAQ、推荐使用流程），缩短学习曲线。
+</div>
+
+<h2>八、核心结论</h2>
+<div class="insight">
+<ol style="margin:6px 0 0 0; padding-left:16px">
+<li><b>已形成生产级使用规模</b>：323 人、696 台、65,481 次调用，月增速 ~56%</li>
+<li><b>代码执行成功率 62.3%</b>：约 2/3 的代码执行成功，Tcl（78%）> pyAether（59%）> SKILL（56%）</li>
+<li><b>用户满意度正面</b>：正面:负面 = 3:1（75.1% 正面），明确放弃率仅 2.8%</li>
+<li><b>API 检索覆盖优秀</b>：98.1% 检索有效率，但 30.1% 会话仅检索未执行（链路断裂点）</li>
+<li><b>主要差距</b>：EDA 工具环境前置条件缺失（87% 错误主因）、pyAether/SKILL 场景复杂度、新用户学习曲线</li>
+<li><b>改进方向</b>：API 文档增加前置条件、环境预检查、场景向导、新用户 onboarding、高频错误案例库</li>
+</ol>
+</div>
+
+<footer>
+<p>EDA 脚本能力线上使用与价值分析报告 · 数据源：698 台工作站 Cline trace 深度扫描（2026-11-16）</p>
+<p>分析维度：使用规模 · 执行成功率 · 用户满意度 · 链路完整性 · 差距诊断</p>
+</footer>
+
+</div></body></html>

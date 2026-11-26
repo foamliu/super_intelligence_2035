@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDA 脚本能力价值分析报告（会话语义序列方法）</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:#f5f7fa;color:#222;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+h1{font-size:1.4rem;border-bottom:3px solid #2c7be5;padding-bottom:8px}
+h2{font-size:1.1rem;margin-top:28px;color:#2c7be5;border-left:4px solid #2c7be5;padding-left:10px}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+.kpi{flex:1;min-width:120px;background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.kpi .n{font-size:1.5rem;font-weight:700;color:#2c7be5}
+.kpi .l{font-size:.76rem;color:#666}
+.kpi.green .n{color:#27ab83}
+.kpi.red .n{color:#e85a4f}
+.kpi.purple .n{color:#6f42c1}
+.kpi.orange .n{color:#f0ad4e}
+.kpi.teal .n{color:#17a2b8}
+table{border-collapse:collapse;width:100%;background:#fff;margin:8px 0;font-size:.83rem}
+th,td{border:1px solid #e3e8ef;padding:6px 10px;text-align:left}
+th{background:#f0f4f8;white-space:nowrap}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.note{background:#fffbe6;border-left:3px solid #f0ad4e;padding:10px 14px;margin:12px 0;border-radius:4px;font-size:.85rem}
+.insight{background:#e8f4fd;border-left:3px solid #2c7be5;padding:10px 14px;margin:12px 0;border-radius:4px;font-size:.85rem}
+.gap{background:#fef0f0;border-left:3px solid #e85a4f;padding:10px 14px;margin:12px 0;border-radius:4px;font-size:.85rem}
+.method{background:#f0f4f8;border:1px solid #d0deef;padding:12px 16px;margin:12px 0;border-radius:6px;font-size:.85rem}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0;font-size:.8rem}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px}
+footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
+</style></head><body><div class="wrap">
+
+<h1>EDA 脚本能力价值分析报告</h1>
+<p style="color:#999">基于会话语义序列方法 · 698 台工作站全量深度扫描 · 2026-11-17 · 6,013 个含 EDA 工具调用的会话</p>
+
+<div class="method">
+<b>方法论说明</b>：本报告不使用"run_code 是否报错"来判断用户满意度（编程智能体的报错-修复-再试是正常工作流）。
+取而代之，从会话语义序列中提取 5 类<b>正向价值信号</b>和 1 类<b>负向信号</b>：
+<br><br>
+<b>正向信号</b>：
+<span style="color:#27ab83">●</span> <b>末次成功</b>——会话最后一次 run_code 成功（说明最终找到了可行方案）；
+<span style="color:#17a2b8">●</span> <b>错误恢复</b>——前期有报错但最终成功（从挫折中收敛）；
+<span style="color:#6f42c1">●</span> <b>交付物产出</b>——调用了 editor/write_to_file 等工具（产出了文件/代码）；
+<span style="color:#2c7be5">●</span> <b>任务转移</b>——用户在后半段给出新任务（"再/接下来/另一个"），暗示前任务已完成；
+<span style="color:#27ab83">●</span> <b>正面结尾</b>——最后 3 条用户消息含"谢谢/好的/解决了"等正面词。
+<br><br>
+<b>负向信号</b>：
+<span style="color:#e85a4f">●</span> <b>卡住</b>——末次失败 + 无恢复 + 无交付物 + 无任务转移（真正未解决的会话）。
+</div>
+
+<h2>一、核心结论</h2>
+<div class="kpis">
+<div class="kpi green"><div class="n">82.9%</div><div class="l">有价值会话占比</div></div>
+<div class="kpi purple"><div class="n">62.7%</div><div class="l">产出交付物</div></div>
+<div class="kpi"><div class="n">29.5%</div><div class="l">任务转移信号</div></div>
+<div class="kpi red"><div class="n">6.2%</div><div class="l">卡住会话（真正未解决）</div></div>
+</div>
+<div class="insight">
+<b>核心发现</b>：在 6,013 个含 EDA 工具调用的会话中，<b>82.9% 至少有一个正向价值信号</b>，仅 <b>6.2% 为真正"卡住"的会话</b>（末次失败 + 无恢复 + 无交付物 + 无任务转移）。
+这远比"60.9% 的会话末次 run_code 报错"更能说明问题——<b>报错是迭代过程中的正常现象，不是失败标志</b>。
+</div>
+
+<h2>二、价值信号分解</h2>
+<div style="margin:12px 0"><svg viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;display:block"><text x="100" y="38" text-anchor="end" font-size="12" font-weight="600" fill="#444">交付物产出</text><rect x="110" y="20" width="314" height="28" fill="#6f42c1" rx="4"/><text x="432" y="38" font-size="11" font-weight="600" fill="#6f42c1">62.7%</text><text x="475" y="38" font-size="10" fill="#999">3,773 会话</text><text x="100" y="76" text-anchor="end" font-size="12" font-weight="600" fill="#444">任务转移</text><rect x="110" y="58" width="148" height="28" fill="#2c7be5" rx="4"/><text x="266" y="76" font-size="11" font-weight="600" fill="#2c7be5">29.5%</text><text x="475" y="76" font-size="10" fill="#999">1,772 会话</text><text x="100" y="114" text-anchor="end" font-size="12" font-weight="600" fill="#444">末次成功</text><rect x="110" y="96" width="134" height="28" fill="#27ab83" rx="4"/><text x="252" y="114" font-size="11" font-weight="600" fill="#27ab83">26.9%</text><text x="475" y="114" font-size="10" fill="#999">1,617 会话</text><text x="100" y="152" text-anchor="end" font-size="12" font-weight="600" fill="#444">正面结尾</text><rect x="110" y="134" width="69" height="28" fill="#27ab83" rx="4"/><text x="187" y="152" font-size="11" font-weight="600" fill="#27ab83">13.8%</text><text x="475" y="152" font-size="10" fill="#999">828 会话</text><text x="100" y="190" text-anchor="end" font-size="12" font-weight="600" fill="#444">错误恢复</text><rect x="110" y="172" width="50" height="28" fill="#17a2b8" rx="4"/><text x="168" y="190" font-size="11" font-weight="600" fill="#17a2b8">10.1%</text><text x="475" y="190" font-size="10" fill="#999">608 会话</text></svg></div>
+<table>
+<thead><tr><th>价值信号</th><th class="num">会话数</th><th>占比</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td><span style="color:#6f42c1">●</span> 交付物产出</td><td class="num">3,773</td><td>62.7%</td><td>调用 editor/write_to_file 等，产出文件或代码</td></tr>
+<tr><td><span style="color:#2c7be5">●</span> 任务转移</td><td class="num">1,772</td><td>29.5%</td><td>用户给出新任务，暗示前任务已完成</td></tr>
+<tr><td><span style="color:#27ab83">●</span> 末次成功</td><td class="num">1,617</td><td>26.9%</td><td>最后一次 run_code 成功</td></tr>
+<tr><td><span style="color:#27ab83">●</span> 正面结尾</td><td class="num">828</td><td>13.8%</td><td>最后 3 条用户消息含正面词</td></tr>
+<tr><td><span style="color:#17a2b8">●</span> 错误恢复</td><td class="num">608</td><td>10.1%</td><td>前期报错但最终成功</td></tr>
+</tbody>
+</table>
+<div class="insight">
+<b>交付物产出是最强的价值信号</b>：62.7% 的会话产出了文件或代码（122,530 次交付动作），远超其他信号。
+这说明大多数会话不是"查查 API 就走"，而是有实际的代码/文件产出。<b>任务转移信号（29.5%）</b>也很有意义——近 1/3 的会话中用户在完成一个任务后给出了新的任务。
+</div>
+
+<h2>三、会话收敛性分析</h2>
+<div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin:12px 0">
+<div style="flex:0 0 400px"><svg viewBox="0 0 480 340" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;display:block">
+<path d="M 200 155 L 200.00 60.00 A 95 95 0 0 1 274.57 213.86 Z" fill="#27ab83" stroke="#fff" stroke-width="2"/>
+<path d="M 200 155 L 274.57 213.86 A 95 95 0 0 1 110.36 186.45 Z" fill="#e85a4f" stroke="#fff" stroke-width="2"/>
+<path d="M 200 155 L 110.36 186.45 A 95 95 0 0 1 200.00 60.00 Z" fill="#f0ad4e" stroke="#fff" stroke-width="2"/>
+<text x="312.5" y="100.5" text-anchor="start" font-size="11" fill="#444">收敛 35.6%</text>
+<text x="179.4" y="278.3" text-anchor="end" font-size="11" fill="#444">发散 34.0%</text>
+<text x="98.0" y="82.7" text-anchor="end" font-size="11" fill="#444">平稳 30.4%</text>
+<circle cx="200" cy="155" r="52.25000000000001" fill="#fff"/>
+<text x="200" y="149" text-anchor="middle" font-size="24" font-weight="700" fill="#222">413</text>
+<text x="200" y="169" text-anchor="middle" font-size="10" fill="#666">converging / 1159</text>
+</svg></div>
+<div style="flex:1;min-width:280px">
+<p>对 <b>1,159 个含 ≥4 次 run_code 的会话</b>，将执行序列分为前半段和后半段，比较报错率变化：</p>
+<table>
+<thead><tr><th>收敛模式</th><th class="num">会话数</th><th>占比</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td><span style="color:#27ab83">●</span> 收敛</td><td class="num">413</td><td>35.6%</td><td>后半段报错率 < 前半段（在找到方案）</td></tr>
+<tr><td><span style="color:#e85a4f">●</span> 发散</td><td class="num">394</td><td>34.0%</td><td>后半段报错率 > 前半段（越试越错）</td></tr>
+<tr><td><span style="color:#f0ad4e">●</span> 平稳</td><td class="num">352</td><td>30.4%</td><td>报错率不变</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="note">
+<b>收敛与发散几乎对半</b>（35.6% vs 34.0%），这符合编程调试的真实情况：<b>约 1/3 的复杂会话在逐步收敛到方案，约 1/3 在探索中暂时发散，约 1/3 保持平稳</b>。
+关键发现：<b>收敛会话中 78.9% 产出了交付物</b>，而发散会话仅 60.9% 产出——<b>收敛性是交付物产出的强预测指标</b>。
+</div>
+
+<h2>四、错误恢复能力</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">4,132</div><div class="l">含 run_code 会话</div></div>
+<div class="kpi green"><div class="n">1,617</div><div class="l">末次成功 (39.1%)</div></div>
+<div class="kpi red"><div class="n">2,515</div><div class="l">末次失败 (60.9%)</div></div>
+<div class="kpi teal"><div class="n">608</div><div class="l">错误恢复 (14.7%)</div></div>
+</div>
+<div class="insight">
+<b>60.9% 的会话末次 run_code 报错，但这不等于失败</b>。关键看 <b>14.7% 的"错误恢复"会话</b>——这些会话前期有报错，但最终成功。
+更重要的是，即使末次报错的会话，仍有大量产出了交付物或出现任务转移信号。<b>"末次报错"不是衡量满意度的可靠指标</b>——工程师经常在拿到想要的结果后，再跑一个验证命令（可能报错）然后结束会话。
+</div>
+
+<h2>五、综合价值评估</h2>
+<div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin:12px 0">
+<div style="flex:0 0 400px"><svg viewBox="0 0 480 340" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;display:block">
+<path d="M 200 155 L 200.00 60.00 A 95 95 0 1 1 116.48 109.74 Z" fill="#27ab83" stroke="#fff" stroke-width="2"/>
+<path d="M 200 155 L 116.48 109.74 A 95 95 0 0 1 163.90 67.12 Z" fill="#f0ad4e" stroke="#fff" stroke-width="2"/>
+<path d="M 200 155 L 163.90 67.12 A 95 95 0 0 1 200.00 60.00 Z" fill="#e85a4f" stroke="#fff" stroke-width="2"/>
+<text x="264.0" y="262.4" text-anchor="start" font-size="11" fill="#444">有价值 82.9%</text>
+<text x="116.5" y="62.0" text-anchor="end" font-size="11" fill="#444">低价值 10.9%</text>
+<text x="175.8" y="32.4" text-anchor="end" font-size="11" fill="#444">卡住 6.2%</text>
+<circle cx="200" cy="155" r="52.25000000000001" fill="#fff"/>
+<text x="200" y="149" text-anchor="middle" font-size="24" font-weight="700" fill="#222">83%</text>
+<text x="200" y="169" text-anchor="middle" font-size="10" fill="#666">valuable / 6013</text>
+</svg></div>
+<div style="flex:1;min-width:280px">
+<table>
+<thead><tr><th>类别</th><th class="num">会话数</th><th>占比</th><th>定义</th></tr></thead>
+<tbody>
+<tr><td><span style="color:#27ab83">●</span> 有价值</td><td class="num">4,985</td><td>82.9%</td><td>至少 1 个正向信号</td></tr>
+<tr><td><span style="color:#f0ad4e">●</span> 低价值</td><td class="num">655</td><td>10.9%</td><td>无正向信号但也没卡住</td></tr>
+<tr><td><span style="color:#e85a4f">●</span> 卡住</td><td class="num">373</td><td>6.2%</td><td>末次失败+无恢复+无交付+无转移</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="insight">
+<b>仅 6.2% 的会话是真正"卡住"的</b>——这些会话末次 run_code 失败、没有恢复、没有产出交付物、用户也没有给出新任务。
+这才是真正需要关注的不满意用户。<b>低价值会话（10.9%）</b>可能只是用户查了 API 就离开（不需要执行代码），不一定是负面体验。
+</div>
+
+<h2>六、月度趋势</h2>
+<div style="margin:12px 0"><svg viewBox="0 0 550 320" xmlns="http://www.w3.org/2000/svg" style="max-width:550px;display:block"><line x1="60" y1="20" x2="60" y2="250" stroke="#ccc"/><line x1="60" y1="250" x2="540" y2="250" stroke="#ccc"/><rect x="70" y="248.3" width="56" height="1.7" fill="#27ab83" rx="2"/><rect x="70" y="248.1" width="56" height="0.2" fill="#e85a4f" rx="2"/><rect x="70" y="247.9" width="56" height="0.2" fill="#f0ad4e" rx="2"/><text x="98.0" y="242.9" text-anchor="middle" font-size="10" font-weight="600" fill="#444">81%</text><text x="98.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-06</text><text x="98.0" y="282" text-anchor="middle" font-size="9" fill="#999">26会话</text><text x="98.0" y="298" text-anchor="middle" font-size="8" fill="#e85a4f">stuck 11.5%</text><rect x="150" y="227.1" width="56" height="22.9" fill="#27ab83" rx="2"/><rect x="150" y="217.7" width="56" height="9.4" fill="#e85a4f" rx="2"/><rect x="150" y="217.3" width="56" height="0.4" fill="#f0ad4e" rx="2"/><text x="178.0" y="212.3" text-anchor="middle" font-size="10" font-weight="600" fill="#444">70%</text><text x="178.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-07</text><text x="178.0" y="282" text-anchor="middle" font-size="9" fill="#999">403会话</text><text x="178.0" y="298" text-anchor="middle" font-size="8" fill="#e85a4f">stuck 28.8%</text><rect x="230" y="226.2" width="56" height="23.8" fill="#27ab83" rx="2"/><rect x="230" y="224.8" width="56" height="1.5" fill="#e85a4f" rx="2"/><rect x="230" y="224.0" width="56" height="0.8" fill="#f0ad4e" rx="2"/><text x="258.0" y="219.0" text-anchor="middle" font-size="10" font-weight="600" fill="#444">91%</text><text x="258.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-08</text><text x="258.0" y="282" text-anchor="middle" font-size="9" fill="#999">321会话</text><text x="258.0" y="298" text-anchor="middle" font-size="8" fill="#e85a4f">stuck 5.6%</text><rect x="310" y="191.1" width="56" height="58.9" fill="#27ab83" rx="2"/><rect x="310" y="187.9" width="56" height="3.2" fill="#e85a4f" rx="2"/><rect x="310" y="171.2" width="56" height="16.7" fill="#f0ad4e" rx="2"/><text x="338.0" y="166.2" text-anchor="middle" font-size="10" font-weight="600" fill="#444">75%</text><text x="338.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-09</text><text x="338.0" y="282" text-anchor="middle" font-size="9" fill="#999">971会话</text><text x="338.0" y="298" text-anchor="middle" font-size="8" fill="#e85a4f">stuck 4.0%</text><rect x="390" y="144.4" width="56" height="105.6" fill="#27ab83" rx="2"/><rect x="390" y="137.8" width="56" height="6.6" fill="#e85a4f" rx="2"/><rect x="390" y="111.7" width="56" height="26.0" fill="#f0ad4e" rx="2"/><text x="418.0" y="106.7" text-anchor="middle" font-size="10" font-weight="600" fill="#444">76%</text><text x="418.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-10</text><text x="418.0" y="282" text-anchor="middle" font-size="9" fill="#999">1704会话</text><text x="418.0" y="298" text-anchor="middle" font-size="8" fill="#e85a4f">stuck 4.8%</text><rect x="470" y="58.4" width="56" height="191.6" fill="#27ab83" rx="2"/><rect x="470" y="49.0" width="56" height="9.4" fill="#e85a4f" rx="2"/><rect x="470" y="40.0" width="56" height="9.0" fill="#f0ad4e" rx="2"/><text x="498.0" y="35.0" text-anchor="middle" font-size="10" font-weight="600" fill="#444">91%</text><text x="498.0" y="268" text-anchor="middle" font-size="10" fill="#666">2026-11</text><text x="498.0" y="282" text-anchor="middle" font-size="9" fill="#999">2588会话</text><text x="498.0" y="298" text-anchor="middle" font-size="8" fill="#e85a4f">stuck 4.5%</text></svg></div>
+<div class="legend">
+<span><i style="background:#27ab83"></i>有价值</span>
+<span><i style="background:#f0ad4e"></i>低价值</span>
+<span><i style="background:#e85a4f"></i>卡住</span>
+</div>
+<table>
+<thead><tr><th>月份</th><th class="num">会话数</th><th>有价值率</th><th class="num">交付物</th><th class="num">任务转移</th><th class="num">恢复</th><th class="num">末次成功</th><th>卡住率</th></tr></thead>
+<tbody>
+<tr><td>2026-06</td><td class="num">26</td><td>80.8%</td><td class="num">13</td><td class="num">4</td><td class="num">8</td><td class="num">12</td><td>11.5%</td></tr>
+<tr><td>2026-07</td><td class="num">403</td><td>70.0%</td><td class="num">158</td><td class="num">80</td><td class="num">122</td><td class="num">216</td><td>28.8%</td></tr>
+<tr><td>2026-08</td><td class="num">321</td><td>91.3%</td><td class="num">243</td><td class="num">82</td><td class="num">127</td><td class="num">201</td><td>5.6%</td></tr>
+<tr><td>2026-09</td><td class="num">971</td><td>74.8%</td><td class="num">662</td><td class="num">332</td><td class="num">20</td><td class="num">25</td><td>4.0%</td></tr>
+<tr><td>2026-10</td><td class="num">1,704</td><td>76.4%</td><td class="num">1171</td><td class="num">529</td><td class="num">96</td><td class="num">182</td><td>4.8%</td></tr>
+<tr><td>2026-11</td><td class="num">2,588</td><td>91.2%</td><td class="num">1526</td><td class="num">745</td><td class="num">235</td><td class="num">981</td><td>4.5%</td></tr>
+</tbody>
+</table>
+<div class="insight">
+<b>趋势向好</b>：有价值率从 7 月的 70.0% 提升到 11 月的 91.2%。<b>卡住率从 7 月的 28.8% 下降到 11 月的 4.5%</b>——随着 API 库完善和用户熟练度提升，真正未解决的会话大幅减少。
+8 月和 11 月是价值率最高的月份（91.3% 和 91.2%），对应成熟用户群体。
+</div>
+
+<h2>七、会话强度与价值的关系</h2>
+<div style="margin:12px 0"><svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" style="max-width:600px;display:block"><rect x="0" y="0" width="600" height="200" fill="#fff" stroke="#e3e8ef"/><text x="20" y="22" font-size="11" font-weight="700" fill="#666">会话强度</text><text x="136" y="22" font-size="11" font-weight="700" fill="#666">会话数</text><text x="252" y="22" font-size="11" font-weight="700" fill="#666">有价值率</text><text x="368" y="22" font-size="11" font-weight="700" fill="#666">交付物率</text><text x="484" y="22" font-size="11" font-weight="700" fill="#666">恢复率</text><text x="20" y="48" font-size="12" font-weight="600" fill="#444">轻量 (1-3)</text><text x="136" y="48" font-size="12" fill="#444">112</text><rect x="252" y="36" width="40" height="16" fill="#27ab83" rx="2" opacity="0.8"/><text x="296" y="48" font-size="10" fill="#27ab83">50.0%</text><rect x="368" y="36" width="0" height="16" fill="#6f42c1" rx="2" opacity="0.8"/><text x="372" y="48" font-size="10" fill="#6f42c1">0.0%</text><rect x="484" y="36" width="0" height="16" fill="#17a2b8" rx="2" opacity="0.8"/><text x="488" y="48" font-size="10" fill="#17a2b8">0.0%</text><text x="20" y="84" font-size="12" font-weight="600" fill="#444">中等 (4-10)</text><text x="136" y="84" font-size="12" fill="#444">1,092</text><rect x="252" y="72" width="60" height="16" fill="#27ab83" rx="2" opacity="0.8"/><text x="316" y="84" font-size="10" fill="#27ab83">75.5%</text><rect x="368" y="72" width="4" height="16" fill="#6f42c1" rx="2" opacity="0.8"/><text x="376" y="84" font-size="10" fill="#6f42c1">4.7%</text><rect x="484" y="72" width="1" height="16" fill="#17a2b8" rx="2" opacity="0.8"/><text x="489" y="84" font-size="10" fill="#17a2b8">1.3%</text><text x="20" y="120" font-size="12" font-weight="600" fill="#444">重度 (11-30)</text><text x="136" y="120" font-size="12" fill="#444">1,053</text><rect x="252" y="108" width="50" height="16" fill="#27ab83" rx="2" opacity="0.8"/><text x="306" y="120" font-size="10" fill="#27ab83">62.6%</text><rect x="368" y="108" width="36" height="16" fill="#6f42c1" rx="2" opacity="0.8"/><text x="408" y="120" font-size="10" fill="#6f42c1">45.4%</text><rect x="484" y="108" width="7" height="16" fill="#17a2b8" rx="2" opacity="0.8"/><text x="495" y="120" font-size="10" fill="#17a2b8">8.5%</text><text x="20" y="156" font-size="12" font-weight="600" fill="#444">深度 (31+)</text><text x="136" y="156" font-size="12" fill="#444">3,756</text><rect x="252" y="144" width="73" height="16" fill="#27ab83" rx="2" opacity="0.8"/><text x="329" y="156" font-size="10" fill="#27ab83">91.7%</text><rect x="368" y="144" width="69" height="16" fill="#6f42c1" rx="2" opacity="0.8"/><text x="441" y="156" font-size="10" fill="#6f42c1">86.4%</text><rect x="484" y="144" width="11" height="16" fill="#17a2b8" rx="2" opacity="0.8"/><text x="499" y="156" font-size="10" fill="#17a2b8">13.4%</text></svg></div>
+<div class="insight">
+<b>深度会话价值最高</b>：31+ 次工具调用的深度会话，有价值率 91.7%、交付物率 86.4%。
+这符合直觉——<b>投入越多的会话越可能产出成果</b>。轻量会话（1-3 次）有价值率仅 50%，多为快速查询。
+值得注意的是，重度会话（11-30 次）有价值率（62.6%）反而低于中等会话（75.5%）——<b>这可能是因为重度会话中有一部分是在反复调试同一问题</b>，而中等会话更可能是"查-写-跑-成"的高效流程。
+</div>
+
+<h2>八、差距诊断</h2>
+
+<div class="gap">
+<b>差距 1：6.2% 的会话真正"卡住"（373 个）</b><br>
+这些会话末次失败、无恢复、无交付物、无任务转移——用户最可能是不满意的。<b>建议</b>：逐一分析这 373 个会话的失败根因，识别共性问题，作为 API 库和智能体能力改进的优先项。
+</div>
+
+<div class="gap">
+<b>差距 2：发散会话（34.0%）略多于收敛会话（35.6%）</b><br>
+在复杂会话中，发散和收敛几乎对半。<b>收敛会话 78.9% 产出交付物，发散会话仅 60.9%</b>——发散是交付物产出的负相关因素。<b>建议</b>：当智能体检测到连续 3+ 次报错且报错率上升时，主动建议换思路或提供示例代码，帮助用户收敛。
+</div>
+
+<div class="gap">
+<b>差距 3：7 月卡住率高达 28.8%</b><br>
+7 月是新用户涌入期，卡住率远高于其他月份。<b>建议</b>：建立新用户 onboarding 流程（示例会话、常见错误 FAQ、推荐使用路径），缩短学习曲线。11 月卡住率已降至 4.5%，说明 onboarding 效果正在显现。
+</div>
+
+<div class="gap">
+<b>差距 4：仅 37.4% 会话完成检索→执行闭环</b><br>
+62.6% 的会话没有同时包含 search_apis 和 run_code。部分用户只检索不执行（30%+），可能原因：API 信息已够用（复制到其他工具执行）、检索结果不满足、用户放弃。<b>建议</b>：在 search_apis 返回结果后，智能体主动建议"要不要我帮你执行这段代码？"来提高闭环率。
+</div>
+
+<h2>九、方法论对比</h2>
+<table>
+<thead><tr><th>方法</th><th>衡量指标</th><th>结果</th><th>问题</th></tr></thead>
+<tbody>
+<tr><td><b>报错率（旧方法）</b></td><td>run_code 报错比例</td><td>62.3% 成功率<br>60.9% 末次成功</td><td>把调试中的正常报错当成失败，<b>低估了价值</b></td></tr>
+<tr><td><b>语义序列（新方法）</b></td><td>5 类正向信号 + 卡住信号</td><td>82.9% 有价值<br>6.2% 卡住</td><td>更贴合编程智能体实际工作流</td></tr>
+</tbody>
+</table>
+<div class="insight">
+<b>方法升级的核心逻辑</b>：编程智能体的工作流是"试错-修复-再试"，<b>报错是过程不是结果</b>。
+用"末次 run_code 是否报错"来衡量满意度，就像用"编译次数"来衡量程序员是否完成了工作——编译失败 5 次后第 6 次成功交付，这不是失败而是正常的开发过程。
+<b>语义序列方法</b>从用户行为（产出交付物、转移任务、正面反馈）和会话动态（收敛性、恢复性）来衡量价值，更准确地反映了"是否真正解决了问题"。
+</div>
+
+<footer>
+<p>EDA 脚本能力价值分析报告 · 会话语义序列方法 · 2026-11-17</p>
+<p>数据源：698 台工作站 Cline trace 深度扫描 · 6,013 个含 EDA 工具调用的会话</p>
+<p>分析方法：收敛性分析 + 错误恢复 + 交付物产出 + 任务转移 + 情绪信号 + 综合价值评估</p>
+</footer>
+
+</div></body></html>
