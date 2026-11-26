@@ -673,8 +673,9 @@ r1302 把桩体分两类（GT-replay vs syntax-validator）。本轮发现**第�
 | r1305 | VcoKvcoChar-001 | hspice-mock GT-replay | DONE |
 | r1306 | PVTalterChar-001 | hspice-mock GT-replay | DONE |
 | r1308 | SramSNM-001 | hspice-mock GT-replay | DONE |
+| r1310 | InvPVTchar-001 | hspice-mock GT-replay | DONE |
 
-L2.live done 11→12；REQ 未改造 33-12=21 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
+L2.live done 12→13；REQ 未改造 33-13=20 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
 
 ### r1305：VcoKvcoChar-001（hspice-mock GT-replay-by-signature · 第9条）
 
@@ -724,9 +725,27 @@ L2.live done 11→12；REQ 未改造 33-12=21 条（hspice-mock/finesim-mock GT-
 **注**：本轮 check.py/negative/selftest 被 concurrent shardA sweep（commit `1d0ddf89c` 04:40:24）提前 commit 入 git（working-tree 广 `git add` 拾取 in-progress 改动），case JSON `judge_layers`+`test` sync 本轮补 commit（`aeee2aa4f`）。sha 校验 HEAD check.py == 本轮工作树 == JSON test = `3d799f7efb4d`，无 corruption。
 
 
-## R2 前置 #2: InvPVTchar-001 设计稿（2026-11-27 r1309 · 只读, 未落盘）
+## r1310：InvPVTchar-001（hspice-mock GT-replay-by-signature · 第13条 · 落盘 r1309 设计稿）
 
-**为何单独成节**：本轮原计划落盘 R2 第 13 条 InvPVTchar-001，因 .75 self-verify 通道排障未在本轮预算内完成，check.py **零改动**。设计稿落此供下轮直接执行。
+**Q2 实证（r1310）**：cheat `negative/cheat_dead_wl.py`（自包含复制 ref `gen_pvt_char_ref.py`，把 `build_deck` 的 `.param wn=%s wp=%s`（来自 `d["sizing"]`）改为 `.param wn=1e-21u wp=1e-21u` 电死反相器，**保持 `.lib '<model>' <corner>` + `.param vdd_val` + `.param cload` + `.alter` 全交叉签名行**）→ `_check_static_impl` **14/14 PASS 假阳**（桩 `_HSPICE_MOCK_SRC.parse_deck` 按 `corner|vdd|cload` 签名查 `GT_JSON` 回放 real-HSPICE 45 B combos 的 tpdf/tpdr/tpd/voh/vol，**不解析 `.param wn/wp` 或网表拓扑**）。真 hspice V-2023.12-SP1-1 @ hfhds201：wn=wp=1e-21u 死管 → out 永不翻转 → `.measure tran tpdf/tpdr` 全 `failed` → tpd 全 None → 候选 `run()` raise `RuntimeError("no valid tpd measurements parsed")` → 无 `char_results.json` → check_live 返回 FAIL（B run failed: no char_results.json）。
+
+**Q1 保真**：.75 真跑 ref（honest deck）→ B worst_corner=(ss,1.0,1p) worst_tpd=2.6087ns —— **== mock `GT_JSON["ss|1.0|1p"]` 逐位一致**（live verify REF check_live PASS，argmax corner == REF_B_WORST_CORNER）。
+
+**改造**：非侵入包装（`_check_static_impl` 14 conds C1-C14 一字不动 + `check_static` try/except 3-tuple + `check` 兼容包装 + `check_live(deliverable, workdir, sess)` .75 真跑 hspice rerun candidate `gen_pvt_char.py` on hidden B，`sess.upload_text` 上传 candidate + spec_B.json + pvt_model_B.sp，`sess.run_commands` 跑 `python3 gen_pvt_char.py spec_B.json pvt_model_B.sp out`，`sess.read_file` 读 real `out/inv_tb.lis` + `out/char_results.json`，复用模块级 `parse_lis` 复断 C6-C14 同阈值 n_concl==45/parsed==45/tpdf-numeric-all-alters/tpdr-numeric-all-alters/worst_tpd<=tpd_max(3.0)/voh>=voh_min(0.9)/vol<=vol_max(0.01)/reported-worst_corner==argmax+live-argmax==(ss,1.0,1p)Q1-guard/reported-worst_tpd==independent-parse-tol1pct/determinism-2x-rerun，only-add never relax）+ `__main__` 块（STATIC_VERDICT + first_fail 供 selftest）+ live-neg（`negative/cheat_dead_wl.py`：wn=wp=1e-21u，static-pass mock-replays-GT / live-fail no char_results.json）+ `negative_selftest.py` 重写（STATIC 6 negs distinct{C5,C7,C2,C12,C12,C6}=5-distinct + §4.9 trio distinct{empty:C5, print:C7, core:C2} + LIVE_NEG via EDASession）+ `judge_layers=[L0,L1,L2.live]` + JSON `test` 字段 sha `b91837c2fd05` 3-way sync。
+
+**§5 全绿**：① REF check_live PASS（real hspice B worst=(ss,1.0,1p) tpd=2.6087==mock GT Q1 fidelity）；② 6 static neg FAIL 5-distinct{C5,C7,C2,C12,C6} + §4.9 trio distinct + live-neg static-pass(14/14)/live-fail(no char_results.json)；③ 确定性（C14 2x rerun real hspice worst_tpd 一致，level-1 确定性）；④ SKIP_RUN deploy workdir clean（无 check.py/reference/hidden 泄漏，§5 ⑦）；⑤ sha `b91837c2fd05` 3-way sync（JSON test / 磁盘 check.py / HEAD）；⑥ 断言条数只增不减（`_check_static_impl` 原文未改一字；`check_live` 新增 9 条同阈值实跑断言 C6-C14）；⑦ L5 hidden-B uploaded to sess not in SUT sandbox，`check_live` 不读 `reference/`。
+
+**登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`，commit `5d9521079` check.py+negative via shardD sweep + `35ef3835f` case-JSON judge_layers+test sync via shardC sweep）。
+
+**.75 通路 OK**（r1310 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session verify_REF/verify_CHEAT 用后 close）。
+
+**自验通道纠正（r1309 lesson 兑现）**：r1309 因 execute `code` 字符串通道腐蚀大 base64 串致 self-verify 未达成；本轮改用本地 Python 脚本 `from eda_flow_judge import EDASession` → `sess.upload_text(name, content)`（base64 通道，不经 execute `code`）上传 candidate + B 资产，REF check_live PASS + CHEAT check_live FAIL **一次过**，零腐蚀。设计稿（r1309 落此节）已兑现，保留下方原设计稿作历史追溯。
+
+---
+
+## R2 前置 #2: InvPVTchar-001 设计稿（2026-11-27 r1309 · 只读, 未落盘 · 已由 r1310 兑现）
+
+**为何单独成节**：本轮原计划落盘 R2 第 13 条 InvPVTchar-001，因 .75 self-verify 通道排障未在本轮预算内完成，check.py **零改动**。设计稿落此供下轮直接执行。（✅ r1310 已兑现，见上节。）
 
 ### 桩体检结论（读桩定论, Type A 稳固）
 - check.py(415L) 单 `check()` 14 conds C1-C14；GT_JSON 45 B combos keyed `corner|vdd|cload`；`_HSPICE_MOCK_SRC` 桩 `parse_deck` 仅解 `.lib <corner>` + `.param vdd_val` + `.param cload`，**不解 wn/wp/网表拓扑/measure 语义**。
