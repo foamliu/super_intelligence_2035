@@ -54,11 +54,37 @@ VISION_WHITELIST=(
   doc/BaiZe-ISEDA2027/run/GPU29_ALLOC.md
 )
 
+# Paths WITHIN the whitelist that belong to OTHER lines — vision must never stage these.
+# 2026-11-26 fix: vision auto-commit was overwriting pretrain's L1 report
+# (report_pretrain_llamacpp_scaling_zh.html) because run/reports is in the whitelist
+# for vision's own reports. Exclude pretrain/harness/data/posttrain reports explicitly.
+EXCLUDE_PATHS=(
+  doc/BaiZe-ISEDA2027/run/reports/report_pretrain_llamacpp_scaling_zh.html
+  doc/BaiZe-ISEDA2027/run/reports/report_pretrain_eval_4tier_zh.html
+  doc/BaiZe-ISEDA2027/run/reports/report_harness_glm53_7way_swebench_tb_zh.html
+  doc/BaiZe-ISEDA2027/run/reports/report_harness_tb21_7way_zh.html
+  doc/BaiZe-ISEDA2027/run/reports/report_harness_cline_special_zh.html
+  doc/BaiZe-ISEDA2027/run/reports/report_harness_cc_tb21_attribution_zh.html
+  doc/BaiZe-ISEDA2027/run/reports/report_s1s2_split_data_v
+  doc/BaiZe-ISEDA2027/run/reports/report_s1s2_blendswitch
+  doc/BaiZe-ISEDA2027/run/reports/report_s2_data_overlap
+  doc/BaiZe-ISEDA2027/run/reports/report_data_
+  doc/BaiZe-ISEDA2027/run/reports/report_posttrain
+  doc/BaiZe-ISEDA2027/run/reports/report_paper_improvement_zh.html
+)
+
 in_whitelist() {
   local p="$1" w
   for w in "${VISION_WHITELIST[@]}"; do
   case "$p" in
-    "$w"|"$w"/*) return 0;;
+    "$w"|"$w"/*) 
+      # Check exclusion list — other lines' reports inside run/reports/
+      for ex in "${EXCLUDE_PATHS[@]}"; do
+        case "$p" in
+          "$ex"|"$ex"/*) return 1;;
+        esac
+      done
+      return 0;;
   esac
   done
   return 1
