@@ -35,7 +35,7 @@ SelFigReport-001	TRUE	aeGetCurDesign		D-OWNED (cases/D/, domain=analog_context) 
 StdCellFromNetlistProduce-001	FALSE	dbCreatePin	dbCreatePin	ref uses mock-only API
 TopCellNameProduce-001	TRUE	aeGetCurDesign;emyInitAether		retDict=True (check returns dict passed/total; wrap needs passed==total handling)
 ViaOptimGds-001	TRUE	aeCreateRect;dbCreateLib;dbCrtRect;dbDetachFig;dbGdsIn;dbGdsOut;dbOpenCV;emyInitAether;getBBox		retDict=True
-WheelZoom-001	TRUE	aeZoomInAtMouse;aeZoomOutAtMouse;guScroll		
+WheelZoom-001	TRUE	aeZoomInAtMouse;aeZoomOutAtMouse;guScroll		CONVERTED r1212 (check_live strategy-1 + judge_layers=[L0,L1,L2.live]; ref check_static+check_live .75 PASS; teeth-verified fails nonexistent aeSetBindKeyFake; 7 mandated APIs incl aeSetBindKey/aeGetBindKey/aeGetwtWndId all callable; negative_selftest leak fix: check compat bool->use _check_static_impl)
 # SUMMARY: 19 TRUE, 3 C-converted (AdjViaSelect r1208 + ListInstCV r1209 + SchematicPinAdd r1211), 3 D-owned skipped (SelFigReport/CstViewPrecheck/DecqaRwaBusCount), 7 FALSE, 3 PURE. 29 total no-live pyAether-mention.
 # 4 TRUE cases retDict=True need special wrap (passed==total -> pass) before conversion.
 # Next P2 round: remaining C-owned TRUE w/ case file: AetherHiliteCmd-001 / RnodeScatterScript-001 / WheelZoom-001. (SelFigReport/CstViewPrecheck/DecqaRwaBusCount are D-owned; AeDelCellCurCellProduce/AetherStandaloneInstList/NicapBlockCreatePlanner/SchPinAddProduce/TopCellNameProduce/ViaOptimGds have NO case JSON -- orphan reference dirs, skip.)
