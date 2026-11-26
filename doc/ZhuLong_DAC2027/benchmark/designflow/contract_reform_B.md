@@ -672,8 +672,9 @@ r1302 把桩体分两类（GT-replay vs syntax-validator）。本轮发现**第�
 | r1304 | GmidLut-001 | hspice-mock GT-replay | DONE |
 | r1305 | VcoKvcoChar-001 | hspice-mock GT-replay | DONE |
 | r1306 | PVTalterChar-001 | hspice-mock GT-replay | DONE |
+| r1308 | SramSNM-001 | hspice-mock GT-replay | DONE |
 
-L2.live done 9→10；REQ 未改造 33-10=23 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
+L2.live done 11→12；REQ 未改造 33-12=21 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
 
 ### r1305：VcoKvcoChar-001（hspice-mock GT-replay-by-signature · 第9条）
 
@@ -704,3 +705,20 @@ L2.live done 9→10；REQ 未改造 33-10=23 条（hspice-mock/finesim-mock GT-r
 **.75 通路 OK**（r1306 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session r1306-REF/r1306-CHEAT/liveneg 用后 close）。
 
 **注**：本轮 check.py/negative/selftest 被 concurrent shardC loop sweep（commit `ff9ef6e6d` 03:27:22）提前 commit 入 git（working-tree 广 `git add` 拾取 in-progress 改动），case JSON `judge_layers`+`test` sync 本轮补 commit（`6ba40d41f`）。md5 校验 HEAD check.py == 本轮工作树，无 corruption。跨 shard `git add` 拾取是已知 loop 风险，建议各 shard loop 改 `git add -- benchmarks/EDA-Eval-DesignFlow/cases/<本shard>` + `reference/EDA-Eval-DesignFlow-<本shard-case>` 精确路径。
+
+
+### r1308：SramSNM-001（hspice-mock GT-replay-by-signature · 第12条）
+
+**Q2 实证（r1308）**：cheat `negative/cheat_garbage_x1/sram_snm.py`（复制 ref `sram_snm_ref.py`，把 `build_deck` 的 `X1 qout qin wl bl vdd 0 SRAM_INV` 替换为 `Rdumb qout vss 1e12` 开路，**保持 `.param vpwr` + `.inc 'cell_b.sp'` + `vwl wl 0 <wl>` + `vbl bl 0 <bl>` + `.dc vq 0 vpwr <step>` 签名行**）→ `_check_static_impl` **14/14 PASS 假阳**（桩 `_HSPICE_MOCK_SRC._parse_deck` 按 `cell|vpwr|wl|bl` 签名查 `_MOCK_LIS` 回放 real-HSPICE DC transfer table，**不解析 X1 例化/网表拓扑**）。真 hspice V-2023.12-SP1-1 @ hfhds201：无 X1 例化 → qout 仅经 Rdumb(1e12) 接 vss ≈ 浮空 → DC transfer table v(qout)≈0 全程 → butterfly eye 塌缩 → 所有 margin=0 → cond (f)(g)(h)(k)(n) FAIL。
+
+**Q1 保真**：.75 真跑 ref（honest deck，ABSOLUTE cell path）→ B rnm=[0.2871087,0.2127529,0.1357232] / wnm=[0.2341916,0.1740176,0.1137965] / hold_snm=[0.3320633,0.2407419,0.1543816] —— **== mock `GT_B` 逐位一致**；A rnm=[0.2729,0.1997,0.1274]（cross-input ≠B）。
+
+**改造**：非侵入包装（`_check_static_impl` 14 conds a-n 一字不动 + `check_static` try/except 3-tuple + `check_live(sess)` .75 真跑 hspice rerun candidate `sram_snm.py` on hidden B AND visible A，**传 ABSOLUTE cell path**（候选把 cell path 原样写进 `.inc '<path>'`，在自己 tempdir 跑 hspice，相对路径会找不到；静态 mock 只 regex 抽 basename 不开文件故无此问题），读 real `report_b.json`/`report_a.json`，复断 conds (d)-(n) 同阈值 method==hspice_run/points len==3+numeric/rnm match GT_B tol 5e-3/wnm match/hold_snm match/monotonic/rnm<hold/cross-input A≠B+A-mono/n_runs>=18/verdict-pass+nonzero，only-add never relax）+ `__main__` 块（STATIC_VERDICT+first_fail 供 selftest）+ live-neg（`cheat_garbage_x1/sram_snm.py`：X1→Rdumb，static-pass mock-replays-GT / live-fail cond f/g/h/k/n）+ `negative_selftest.py` 重写（STATIC 4 negs distinct{c,d,k,f} + §4.9 trio distinct{empty:c, print:k, core:f} + LIVE_NEG via EDASession）+ `judge_layers=[L0,L1,L2.live]` + JSON `test` 字段 sha `3d799f7efb4d` 3-way sync。
+
+**§5 全绿**：① REF check_live PASS（real hspice B rnm/wnm/hold==mock GT_B Q1 fidelity，A cross-input ≠B）；② 4 static neg FAIL distinct{c,d,k,f} + 1 live-neg（cheat_garbage_x1：static PASS 14/14 / live FAIL cond f/g/h/k/n margins=0）；③ 3-seed 确定性（real hspice 对同 deck 确定性，ref B margins byte-exact == mock GT，Q1 run 复现）；④ SKIP_RUN deploy workdir clean（无 check.py/reference/hidden 泄漏，§5 ⑦）；⑤ sha `3d799f7efb4d` 3-way sync（JSON test / 磁盘 check.py / HEAD）；⑥ 断言条数只增不减（`_check_static_impl` 原文未改一字；`check_live` 新增 11 条同阈值实跑断言 d-n）；⑦ L5 hidden-B uploaded to sess not in SUT sandbox，`check_live` 不读 `reference/`。
+
+**登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`，commit `aeee2aa4f` case-JSON sync + `1d0ddf89c` check.py via shardA sweep）。
+
+**.75 通路 OK**（r1308 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session r1308live 用后 close）。
+
+**注**：本轮 check.py/negative/selftest 被 concurrent shardA sweep（commit `1d0ddf89c` 04:40:24）提前 commit 入 git（working-tree 广 `git add` 拾取 in-progress 改动），case JSON `judge_layers`+`test` sync 本轮补 commit（`aeee2aa4f`）。sha 校验 HEAD check.py == 本轮工作树 == JSON test = `3d799f7efb4d`，无 corruption。
