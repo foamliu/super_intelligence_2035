@@ -334,10 +334,12 @@ T3 的 124 条保持 mock 判分，P3 批量声明 `judge_layers=["L0","L1"]` �
 
 | verdict | 数 | 说明 |
 |:--|--:|:--|
-| LIVE-REQ | 5 | 3 已 L2.live（IOBufTune/SelFigReport/SkillToAether，r1442-1448 改造完成）+ **2 新判 REQ**（IOBufParamTune-001 / InvCSOpt-001，冻结窗口未落盘，TODO R2）|
+| LIVE-REQ | 4 | 3 已 L2.live（IOBufTune/SelFigReport/SkillToAether，r1442-1448 改造完成）+ **1 新判 REQ**（InvCSOpt-001，冻结窗口未落盘，TODO R2）|
 | LIVE-OPT | 8 | mock-pyAether 编排族 5（AutoCellRmAvPf/HierDescend/RsCalcFlow/RsCalcRnodePlace/PyaetherScreenshotVerifyQA）+ 优化/ sweep 族 3（DlySigmaSweep/LDOGen/DominoPVTsweep）|
-| LIVE-NA | 108 | deliverable=文本/脚本/日志分析/网表变换/诊断报告/问答；check 跑候选 python 脚本校验输出结构，EDA 工具名仅作断言 token |
+| LIVE-NA | 109 | deliverable=文本/脚本/日志分析/网表变换/诊断报告/问答 + python模型独立复算族（IOBufParamTune-001）；check 跑候选 python 脚本校验输出结构，EDA 工具名仅作断言 token |
 | **合计** | **121** | |
+
+> **R1.5 深读复验（2026-11-26 19:3x，冻结窗口只读）**：对 R1 判的 2 新 REQ + DominoPVTsweep Vm 来源做深读 check.py 复验。**IOBufParamTune-001 改判 REQ→NA**（R1 误判「无独立复算」，实为条件 (f)(g) 经 `evaluate()`=Shichman-Hodges RC 模型独立复算 dataH/dataL，(h)(i) 验目标，Q2 不会判过；prompt 显式 level-1 模型 + deck level=1，真 HSPICE 无增量；与 IOBufTune-001 不同族——后者 hspice_mock 假仿真输出，本例纯 python 模型独立复算）。**InvCSOpt-001 维持 REQ**（gap 在条件 (p)：best_design.json 的 delay/idd/duty 为候选自报无独立复算/真跑，(m)(n) parse_meas 仅验 parser 于 pre-baked mt0 不连 best_design；Q2 会判过=候选写 fake feasible 通过）。**DominoPVTsweep-001 维持 OPT**（Vm 来源已确认=hidden B mt0 CSV 经 `_recompute()` 独立复算，非候选自报；条件 (o) 公式 guard 防 VMLH-only；Q2 不会判过，不升 REQ）。
 
 ### REQ 清单（须改造为 L2.live）
 
@@ -346,9 +348,11 @@ T3 的 124 条保持 mock 判分，P3 批量声明 `judge_layers=["L0","L1"]` �
 - `SelFigReport-001` — stub→real pyAether aeGetCurDesign（r1446）
 - `SkillToAether-001` — SKILL stub→real pyAether（r1442）
 
-**新判 REQ（2，冻结窗口 TODO R2）**：
-- `IOBufParamTune-001` — 候选 `tune.py` **自报** measure dataH/dataL，check 仅断言自报值 ≥ target，无独立复算/真跑。**Q2 会判过**：自报 fake measure 通过。判分实质依赖真实 HSPICE measure 产物（与 IOBufTune-001 同族，r1448 已证 hspice_mock 须真跑）。改造路径同 IOBufTune：拆 check_static/check_live，check_live 经 .75 真 HSPICE 跑候选 tuned params 验 dataH/dataL 达标。
-- `InvCSOpt-001` — 用户意图=优化 delay<20ps / power<100uA / duty~50%，check 仅校验 deck 文本（`.measure`/`.tran` 正则），**未验 spec 达标**。Q2 会判过：正确 deck 文本但 delay=200ps 通过。判分实质依赖真实 FineSim measure 产物。改造：check_live 经 .75 真 FineSim 跑候选 deck 验 delay/idd/duty 达标。
+**新判 REQ（1，冻结窗口 TODO R2）**：
+- `InvCSOpt-001` — 用户意图=优化 delay<20ps / power<100uA / duty~50%，check 条件 (p) 读 `best_design.json` 自报 delay/idd/duty **无独立复算/真跑**，(m)(n) parse_meas 仅验 parser 于 pre-baked mt0 不连 best_design。**Q2 会判过**：候选写 `fake feasible{delay:15,idd:80,duty:50}` 通过 (p)。判分实质依赖真实 FineSim measure 产物。改造：check_live 经 .75 真 FineSim 跑候选 deck 验 delay/idd/duty 达标。
+
+**R1.5 改判 REQ→NA（1）**：
+- `IOBufParamTune-001` — R1 误判 REQ（理由「无独立复算」事实错误）。深读 check.py 条件 (f)(g) 经 `evaluate()`=Shichman-Hodges RC 模型**独立复算** dataH/dataL，(h)(i) 验目标；prompt 显式 level-1 模型 + deck level=1，真 HSPICE 会得同结果无增量；Q2 不会判过（独立复算 + 目标 check）。与 IOBufTune-001 **不同族**（后者 hspice_mock 假仿真输出 + GT 常量，本例纯 python 模型独立复算）。改判 **LIVE-NA**。
 
 ### OPT 清单（静态足够，真跑可加硬断言）
 
@@ -380,15 +384,16 @@ deliverable = 文本/脚本/日志分析/网表变换/诊断报告/问答。chec
 | 项 | 旧 P4（r1447） | 本轮 R1 | 说明 |
 |:--|:--|:--|:--|
 | 口径 | lite-128 关键词扫 | lite-500 逐条静态重判 + Q1/Q2 桩体检 | 口径统一，关键词扫法已证伪 |
-| IOBufParamTune-001 | mock（T3） | **REQ** | 旧 P4 按关键字扫归 mock；本轮读 check 发现**自报 measure 无独立校验**=Q2 会判过→升 REQ |
-| InvCSOpt-001 | mock（T3） | **REQ** | 旧 P4 按关键字扫归 mock；本轮读 check 发现**spec 未验**（仅 deck 文本）=Q2 会判过→升 REQ |
-| DominoPVTsweep-001 | mock（T3） | **OPT**（待 R2 确认 Vm 来源） | 旧 P4 归 mock；本轮见 check 独立 recompute pass-counts，但 Vm 来源待确认 |
+| IOBufParamTune-001 | mock（T3） | **NA**（R1.5 改判） | R1 误判 REQ「无独立复算」；R1.5 深读：条件 (f)(g) 经 `evaluate()` 独立复算，Q2 不会判过；prompt 显式 level-1 模型，真 HSPICE 无增量→改判 NA |
+| InvCSOpt-001 | mock（T3） | **REQ** | 旧 P4 按关键字扫归 mock；本轮读 check 发现条件 (p) best_design.json 自报值无独立校验=Q2 会判过→REQ |
+| DominoPVTsweep-001 | mock（T3） | **OPT**（Vm 来源已确认） | 旧 P4 归 mock；R1.5 深读：Vm 来源=hidden B mt0 CSV 经 `_recompute()` 独立复算（非自报），条件 (o) 公式 guard；Q2 不会判过，不升 REQ |
 | mock-pyAether 编排族 5 | 关键字误命中=mock | **OPT** | 旧 P4 已判 mock 正确；本轮 R1 复验 Q2 低风险，但真 pyAether 可加硬断言→标 OPT（非 REQ，因 mock 非假物理输出） |
 | hspice_mock 族 | 仅 IOBufTune=REQ | 一致 | 本轮复验确认 D lite-121 内 hspice_mock 族仅 IOBufTune-001（已 L2.live），无遗漏 |
 
 ### 缺口台账 / 下一步
 
 - 🔴 **冻结窗口**：zhulong r3' 进行中（ETA ~00:08 Nov-27），**R2 改造必须等 `run/MEMORY_ZHULONG.md` 首行 r3' 收口**。
-- R2 优先级：2 新 REQ（IOBufParamTune-001 / InvCSOpt-001）≤3 条/轮，先做桩体检判 REQ 的家族。
-- OPT 中 DominoPVTsweep-001 需 R2 读 check 确认 Vm 来源（候选自报 vs 独立模型），自报无独立校验则升 REQ。
-- NA 108 条不占轮次（R1 写完理由即结束）。
+- R1.5 深读复验完成：REQ 5→4（IOBufParamTune-001 改判 NA），NA 108→109，OPT 8 不变（DominoPVTsweep Vm 来源已确认不升 REQ）。
+- R2 优先级：1 新 REQ（InvCSOpt-001）≤3 条/轮，check_live 经 .75 真 FineSim 跑候选 deck 验 delay<20/idd<100/duty[45,55]。
+- OPT 8 条：mock-pyAether 编排族 5（Q2 低风险，真 pyAether 可加 geometry 硬断言）+ 优化 sweep 族 3（DominoPVTsweep Vm 来源已确认=独立复算；DlySigmaSweep/LDOGen 静态独立复算/设计方程已足够）。
+- NA 109 条不占轮次（R1/R1.5 写完理由即结束）。
