@@ -8,7 +8,8 @@ WAITING: 1
 > **执行步骤**：
 > 1. 停止 cline-patched predict 进程（`pkill -f "run_verified_full.py predict --harness cline-patched"`）
 > 2. 启动 TerminalBench-2.1 7-way 评测，模型 = doubao-seed-2.0-pro-cloud，7 个 harness 并行，89 题
-> 3. 复用现有 `run_serial_kimi.py` + `launch_glm53_7x300.sh` 架构，改模型为 doubao-pro，gw_proxy 用 doubao key + /cloud upstream（已在运行 9090/9091/9092）
+> 3. cline 必须使用降本组合：`--compaction basic --thinking low`，checkpoint 已在源码中关闭（`defaults.ts:25` enabled=false）
+> 4. 复用现有 `run_serial_kimi.py` + `launch_glm53_7x300.sh` 架构，改模型为 doubao-pro，gw_proxy 用 doubao key + /cloud upstream（已在运行 9090/9091/9092）
 > 4. predict 完成后 eval + 报告
 
 > 🆕 **用户令 · 2026-11-26 — cline 配置修正 + 重新 predict cline 路 + 报告已更新**
