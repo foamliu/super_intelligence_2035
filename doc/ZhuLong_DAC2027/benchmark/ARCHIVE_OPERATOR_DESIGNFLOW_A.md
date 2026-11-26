@@ -1,3 +1,15 @@
+## 归档块 · 2026-11-27 r1335 瘦身 · A2（r1334 teeth-guard 监控轮，原文照搬）
+
+→ r1334 详块见本行（r1334: teeth-guard 监控轮(只读·0 改动). 状态不变 A 三线全收口(live-eval REQ7/7+OPT3 BLOCKED有结论+NA106 / contract P1-P4 全 done / lite 116/116 green), A-pure 池枯竭(r1304 4-shard union top-150 mc>=5 全 touched, covered=543/target=4529 mc10). 本轮 teeth-guard: ① .75 可达 eda_flow open_session(task_id=A-monitor-r1334) → hostname hfhds201 RC0, hspice V-2023.12-SP1-1/finesim V-2023.12-1/vcs+vlogan R-2020.12 全 @ /apps/synopsys/SRB/. ② 3 最新 L2.live case(VpsRegrErrorEngineer-001/TotemSC-001/AsyncFifoSim-001) negative_selftest 全 NEG_SELFTEST_OK 无回归: VpsRegr 4 fakes全FAIL / TotemSC 6 negs FAIL 4-distinct{c,d,f,h} / AsyncFifoSim 3 static-neg FAIL 3-distinct{c,d,o}+§4.9 trio{c,o,d}+live-neg PASS-static. ③ cases/A 585 全 judge_layers 齐全(574 [L0,L1] + 11 [L0,L1,L2.live], 0 missing) 程序化扫描确认. ④ 台账 stats: covered=543/target=4529 mc10(快照 2026-11-26 17:25 sessions=9245), A-pure 池枯竭不变. ⑤ 两仓 0/0 sync(SI rev-list 0/0, A 自有文件本轮仅 MEMORY_A+daily_A 更新; EFB rev-list 0/0, A 自有 cases/A 全 clean). 工作树仅别线 in-flight 未碰. ⑥ 无新 zhulong thermo_feedback(reports/ 无 thermo_*). ⑦ 无 board.md/无 OPEN @A 议题/discuss 不存在⇒发言配额未欠(0-case 监控轮非造题轮). session close_session cleaned. 🚫 未改 case/check.py/判分/别 shard/jsonl/论文宏/别线 in-flight 文件/stash. A 116/116 green 不变, 585 cases/A judge_layers 齐全. 无新 case 可造(A-pure 枯竭), B 阻塞非 A 可动, 本轮=合规 teeth-guard 监控. 详 daily_A_2026-11-27.md §r1334）
+
+---
+
+## 归档块 · 2026-11-27 r1335 瘦身 · A1（r1333 teeth-guard 监控轮，原文照搬）
+
+→ r1333 详块见本行（r1333: teeth-guard 监控轮(只读·0 改动). 状态不变 A 三线全收口(live-eval REQ7/7+OPT3 BLOCKED有结论+NA106 / contract P1-P4 全 done / lite 116/116 green), A-pure 池枯竭(r1304 4-shard union top-150 mc>=5 全 touched, covered=543/target=4529 mc10). 本轮 teeth-guard: ① .75 可达 eda_flow open_session(task_id=A-monitor-r1333) → hostname hfhds201 RC0, hspice V-2023.12-SP1-1/finesim V-2023.12-1/vcs+vlogan R-2020.12 全 @ /apps/synopsys/SRB/. ② 3 最新 L2.live case(VpsRegrErrorEngineer-001/TotemSC-001/AsyncFifoSim-001) negative_selftest 全 NEG_SELFTEST_OK 无回归: VpsRegr 5 negs FAIL 4-distinct{a,d,g,h} / TotemSC 6 negs FAIL 4-distinct{c,d,f,h} / AsyncFifoSim 3 static-neg FAIL 3-distinct{c,d,o}+§4.9 trio{c,o,d}+live-neg PASS-static. ③ cases/A 585 全 judge_layers 齐全(574 [L0,L1] + 11 [L0,L1,L2.live], 0 missing). ④ 台账 stats: covered=543/target=4529 mc10(12.0%, 快照 2026-11-26 17:25 sessions=9245), A-pure 池枯竭不变. ⑤ 两仓 0/0 sync(SI rev-list 0/0, A 自有文件全 clean; EFB rev-list 0/0, A 自有 cases/A 全 clean). 工作树仅别线 in-flight 未碰. ⑥ 无新 zhulong thermo_feedback(reports/ 无 thermo_*). ⑦ 无 board.md/无 OPEN @A 议题/discuss 仅 D.md 无 A.md⇒发言配额未欠(0-case 监控轮非造题轮). session close_session cleaned. 🚫 未改 case/check.py/判分/别 shard/jsonl/论文宏/别线 in-flight 文件/stash. A 116/116 green 不变, 585 cases/A judge_layers 齐全. 无新 case 可造(A-pure 枯竭), B 阻塞非 A 可动, 本轮=合规 teeth-guard 监控. 详 daily_A_2026-11-27.md §r1333）
+
+---
+
 # ARCHIVE_OPERATOR_DESIGNFLOW_A.md — shard A 历史归档（r1028 及更早）
 
 > 2026-11-23 r1059 瘦身：从 MEMORY_DESIGNFLOW_A.md 移出 r1028 heartbeat + r1027-r8xx 旧轮次指针。原文照搬，未改写。
