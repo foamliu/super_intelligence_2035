@@ -1354,3 +1354,4 @@ qzgr0	xinqiaoz	10.129.2.11	642	physical_verify	case	EDA-Eval-DesignFlow-DrcRuleC
 1795422908984_dsaf9.messages.json	legendd	hfeg0pkn002	628	layout_aether	case	EDA-Eval-DesignFlow-DrcSpacerFixPlanner-001	2026-11-26 17:27	
 1795245585227_iwrr4	xydou	hfeg0plg69	483	physical_verify	case	EDA-Eval-DesignFlow-CalDrcDeckLint-001	2026-11-26 18:16	
 1795329849230_2slkf	e0039786	hfhds201	200	layout_virtuoso	case	EDA-Eval-DesignFlow-ParaCellLayoutAssembler-001	2026-11-26 18:56	
+1795589069443_4bz6d	xxchen	hfeg0pkn003	781	physical_verify	case	EDA-Eval-DesignFlow-RectSizeSchematicFix-001	2026-11-26 23:26	
