@@ -447,3 +447,24 @@ def check_live(sess):
   - ⑦ L5 不退化：hidden-B 由 check_live 从本地 workdir/hidden 读取并 upload_text 到 sess.workdir（不进 SUT 沙箱）；`check_live` 不读 `reference/`；SKIP_RUN deploy 自检 workdir clean（无 check.py/reference/hidden 泄漏）。
 - **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
 - **心跳**：`LIVE: B review=126/126 · REQ=40(done 6) · OPT=8(done 0) · NA=76 · L2.live 5→6`。
+
+### R2 改造 #7: GrDecPwrVerifTb-001 (2026-11-27 r1300)
+- **家族**：hspice-mock (deck-driven)，Type A Q2-cheatable（候选自建 verification testbench deck，可注入「DUT Mpup 拉死」物理破坏）。
+- **Q2 实证（r1300）**：cheat `gen_grdecpwr_verif.py` 生成的 testbench 带正确签名（`vvwlp vwlp! 0 <vwlp>` / `cgr GrDecPwr 0 <cgr>` / `.temp <temp>` / `vsec secHV 0 PULSE` / `.tran` / `.measure v(GrDecPwr)`）但 DUT 子电路 `Mpup` W 篡改为 `1e-21u` l=`1e3u`（电死上拉管）⇒ `_check_static_impl` **13/13 PASS 假阳**（mock 仅按 `vwlp|cgr|temp` 签名查表回放 `_MOCK_VALUES` GT，**不校验 DUT 网表内容/管子尺寸/电路拓扑**）。真 hspice V-2023.12-SP1-1 @ hfhds201：Mpup 无法在 ACT 期间给 GrDecPwr 充电 → v_act 缺失 / `hspice_ran=False` → cond (h)(i)(j)(k)(l)(m) FAIL。
+- **Q1 保真实证**：真 hspice ref B v_act=2.6 / v_init=0.8075329 / v_pre=0.8545628；A v_act=3.4 / v_init=0.7003245 / v_pre=0.7996354 —— **== mock `_MOCK_VALUES` 逐位一致**（`3.4|20f|25` / `2.6|50f|-40` 两键）。
+- **改造手法（非侵入包装，照 §3）**：
+  1. 原 `check` → `_check_static_impl`（一字不动，13 断言 a-m + mock + `_summarize` raise/return True）。
+  2. `check_static` try/except 收口三元组（兼容旧式 dict `{'pass':bool,'conds':...}` 返回）。
+  3. 新增 `check_live(deliverable, workdir, sess)`：上传 submit.zip 解出 `gen_grdecpwr_verif.py` + hidden B（dut_B.sp/params_B.json）+ visible A（dut_A.sp/params_A.json）+ model.lib 到 sess.workdir → .75 跑候选 `python3 gen_grdecpwr_verif.py dut_B.sp params_B.json model.lib out`（真 hspice 在 PATH，候选 `_ensure_hspice` 检测到真 hspice 不装 mock）+ 同样跑 A → 读真实 `out/grdecpwr_verif_result.json` → 复用 `json.loads` → 断**同物理量同阈值**（cond h hspice_ran / i v_act+v_pre keys / j v_act>v_init / k v_act within 20% of REF_B_VWLP=2.6 / l v_pre<v_act / m cross-input |B_v_act - A_v_act|>0.5，阈值全同静态，只增不减）。不读 `reference/`、不读隐藏 GT 文件（用嵌入 `REF_B_VWLP`/`REF_A_V_ACT` grader 常量，同 `_check_static_impl`）。
+  4. `check()` 兼容包装 + `__main__` 块（供 negative_selftest subprocess 调用取 STATIC_VERDICT/first-fail）；`judge_layers=["L0","L1","L2.live"]`；JSON `test` 与磁盘 `check.py` sha 三方同步（`5606b2607278`）。
+  5. **live-neg** = `negative/cheat_dead_mpup/gen_grdecpwr_verif.py`：`gen_testbench` 将 DUT Mpup W 篡改 `1e-21u`（电死上拉）但保留所有签名行 ⇒ 静态全过（mock 回放 GT）/ 实跑 cond (h)(i)(j)(k)(l)(m) FAIL（`hspice_ran=False`，无 measures）。`negative_selftest.py` 重写（SpiceSim/DffSetupHold 模式：STATIC_NEGATIVES 5 条 subprocess check.py 取 first-fail distinct + LIVE_NEG cheat_dead_mpup static-pass/live-fail via EDASession + S4.9 trio distinct + packaged A GT 在 result.json 以过 cond m）。
+- **§5 七项自验（全勾）**：
+  - ① `.75` 真跑 ref（L2.live）PASS：`hostname=hfhds201`，hspice V-2023.12-SP1-1，B v_act=2.6/v_init=0.8075/v_pre=0.8546（==mock `_MOCK_VALUES`，Q1 保真），A v_act=3.4，cross-input |2.6-3.4|=0.8>0.5。
+  - ② 5 static neg FAIL distinct（{c,d,h,k}=4-distinct）+ 1 live-neg（cheat_dead_mpup：static PASS 13/13 / live FAIL cond h hspice_ran=False + i/j/k/l/m）。
+  - ③ 3-seed 确定性：ref `result.json` md5=`f7d73ccda85553947b197b6f386a6c90` 三次连跑一致。
+  - ④ 静态判分仍 PASS：`check_static(ref)` → PASS 13/13（实跑层独立，不拖垮静态）。
+  - ⑤ `judge_layers`/JSON `test`/磁盘 `check.py` sha 三方同步（`5606b2607278`）。
+  - ⑥ 断言只增不减：`_check_static_impl` 原文未改一字；`check_live` 新增 6 条同阈值实跑断言（h-m）。
+  - ⑦ L5 不退化：hidden-B 由 check_live 从本地 workdir/hidden 读取并 upload_text 到 sess.workdir（不进 SUT 沙箱）；`check_live` 不读 `reference/`；SKIP_RUN deploy 自检 workdir clean（无 check.py/reference/hidden 泄漏）。
+- **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
+- **心跳**：`LIVE: B review=126/126 · REQ=40(done 7) · OPT=8(done 0) · NA=76 · L2.live 6→7`。
