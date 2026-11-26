@@ -1,0 +1,16 @@
+Beste Sander,
+
+I am Yang Liu, a researcher working on LLM agents and generative modeling; you can find my work at https://foamliu.github.io/. WaveNet's dilated causal convolution stack was my first clear reference for autoregressive modeling of long raw signals, and we now face a similar choice for waveform-like data.
+
+Three specific questions:
+
+1. The 2016 release uses a categorical head over 256 mu-law levels. When moving to higher-fidelity audio, how much of the quality gain comes from the output distribution (e.g., 16-bit categorical or mixture of logistics) versus from the dilated stack itself, at a matched compute budget?
+
+2. The receptive field is set by the dilation cycle (1, 2, 4, ...) times the number of stacks. Under a fixed parameter and compute budget, is it better to add stacks (longer receptive field) or widen the residual/gate channels? Do you have a rule of thumb that survived later ablations?
+
+3. For fast generation you cache the convolution queues. In practice, what dominates the per-sample cost: the gated activation unit or the memory traffic of the skip-connection sum? We need reproducible cost accounting for our ablation tables.
+
+Thank you for your time.
+
+Best regards,
+Yang Liu

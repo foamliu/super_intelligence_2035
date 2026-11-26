@@ -9,7 +9,9 @@
 > ⚠️ 首轮（11:3x）`api.semanticscholar.org` 连续返回 `HTTP 429 Too Many Requests`（两次实测）⇒ **S2 未查**，不写估算值；第二轮**未再请求 S2**（仍记为「未查」）。Google Scholar 本机不可达。**不同来源被引数口径不同，禁止跨源比较**。
 >
 > **元数据核验**：标题 / 首次提交日 均取自 arXiv 官方 API（`export.arxiv.org/api/query?id_list=...`，2026-11-11 两轮实测 `HTTP 200` + `application/atom+xml; charset=utf-8`，首轮 4/4、第二轮 4/4 = 累计 8/8）。
-**本轮快照**：累计 **419** 条（**第一百一十七轮 2026-11-26 06:0x +3 → 419**：Adapter `1902.00751`（**8,362**，ICML 2019；每个 Transformer 子层后插入瓶颈 adapter + 残差、冻结主干，BERT 迁 26 个文本分类任务含 GLUE，每任务仅加 3.6% 参数、GLUE 距全量微调 0.4% 以内）/ Flow Matching `2210.02747`（**8,925**，ICLR；simulation-free 回归固定条件概率路径的向量场，兼容一般高斯路径、diffusion 为其特例，OT 位移插值路径训练/采样更快，ImageNet 上 likelihood 与样本质量均更好）/ PipeDream `1806.03377`（**353**，**&lt;500 按「开创范式」收**：SOSP 2019；跨机流水线并行 + 权重版本化保证 backward 正确 + 不同输入前后向 round-robin 调度优化 time-to-accuracy，通信最多降 95%、最多快 5×）；核验：abs 3/3 `200`（43,934 / 43,140 / 41,697 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（8,362 / 8,925 / 353，查询日 2026-11-26）+ PipeDream 会议 Crossref DOI `10.1145/3341301.3359646` `200`（SOSP 2019）；三 ID 条目级查重 **0 命中**；覆盖轴 = 参数高效适配的源头 / simulation-free 生成建模 / 流水线并行的调度与记账；本轮归属：pretrain +3 · posttrain +1 · vision +1 · zhulong +2 · designflow +1 · data +0 · harness +0）
+**本轮快照**：累计 **425** 条（**第一百一十九轮 2026-11-26 09:0x +3 → 425**：GCN `1609.02907`（**45,348**，ICLR 2017；谱图卷积的局部一阶近似 ⇒ 边线性扩展的半监督节点分类，表示同时编码局部结构与节点特征）/ WaveNet `1609.03499`（**9,779**，2016 预印本；全概率自回归原始波形，每秒数万点可训，TTS 听众评价超参数式/拼接式，单模型多说话人，兼作音素识别判别模型）/ PixelRNN `1601.06759`（**2,470**，ICML 2016；逐像素二维顺序预测 + 原始像素离散概率 + 快速二维循环层 + 残差，log-likelihood 显著超此前 SOTA，ImageNet 基准）；核验：abs 3/3 `200`（42,227 / 43,245 / 41,831 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（45,348 / 9,779 / 2,470，查询日 2026-11-26）+ PixelRNN 会议归属 OpenAlex source = ICML / PMLR v48；三 ID 条目级查重 **0 命中**；覆盖轴 = 图结构半监督学习 / 原始波形自回归生成 / 像素自回归似然建模；本轮归属：vision +2 · pretrain +3 · data +1 · zhulong +3 · designflow +2 · harness +0）
+
+**本轮快照（前一）**：累计 **419** 条（**第一百一十七轮 2026-11-26 06:0x +3 → 419**：Adapter `1902.00751`（**8,362**，ICML 2019；每个 Transformer 子层后插入瓶颈 adapter + 残差、冻结主干，BERT 迁 26 个文本分类任务含 GLUE，每任务仅加 3.6% 参数、GLUE 距全量微调 0.4% 以内）/ Flow Matching `2210.02747`（**8,925**，ICLR；simulation-free 回归固定条件概率路径的向量场，兼容一般高斯路径、diffusion 为其特例，OT 位移插值路径训练/采样更快，ImageNet 上 likelihood 与样本质量均更好）/ PipeDream `1806.03377`（**353**，**&lt;500 按「开创范式」收**：SOSP 2019；跨机流水线并行 + 权重版本化保证 backward 正确 + 不同输入前后向 round-robin 调度优化 time-to-accuracy，通信最多降 95%、最多快 5×）；核验：abs 3/3 `200`（43,934 / 43,140 / 41,697 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（8,362 / 8,925 / 353，查询日 2026-11-26）+ PipeDream 会议 Crossref DOI `10.1145/3341301.3359646` `200`（SOSP 2019）；三 ID 条目级查重 **0 命中**；覆盖轴 = 参数高效适配的源头 / simulation-free 生成建模 / 流水线并行的调度与记账；本轮归属：pretrain +3 · posttrain +1 · vision +1 · zhulong +2 · designflow +1 · data +0 · harness +0）
 
 **本轮快照**：累计 **416** 条（**第一百一十六轮 2026-11-26 03:2x 补轮 +3 → 416**：Prefix-Tuning `2101.00190`（**6,994**，ACL 2021；冻结 LM + 每层 KV 连续前缀，只学 0.1% 参数，GPT-2 表到文 / BART 摘要）/ Prompt Tuning `2104.08691`（**7,194**，EMNLP 2021；输入层 soft prompt，T5 规模消融：>十亿参数后与全量微调 "closes the gap"）/ ELMo `1802.05365`（**15,678**，NAACL 2018；深层 biLM 内部状态的可学习函数，6 个 NLP 任务提升 SOTA）；核验：abs 3/3 `200`（41,057 / 42,929 / 41,344 B，`citation_title` + `citation_date` 逐字）+ OpenAlex 3/3 `200`（6,994 / 7,194 / 15,678，查询日 2026-11-26）；三 ID 条目级查重 **0 命中**；覆盖轴 = 参数高效适配的两条源头（prefix vs soft prompt）+ 上下文词表示；本轮归属：pretrain +3 · posttrain +2 · zhulong +2 · data +1 · vision +0 · harness +0 · designflow +0）
 
@@ -7394,3 +7396,48 @@
 | 与我们工作的关系 | **vision（主 · 生成建模范式）**：图像/波形/版图生成中，SDE 视角把 DDPM 与 SMLD 统一，选型应按「NFE × 质量 × likelihood」三轴对照 VE / VP-SDE。<br>**pretrain（次 · 训练目标）**：probability flow ODE 的精确 likelihood 可作为预注册的密度指标。<br>**zhulong（次 · 采样成本）**：predictor-corrector 的 NFE 分配是可量化的成本轴，消融表须显式记账。<br>**designflow（次 · 合成题）**：可控生成（条件逆向 SDE）可作版图/波形合成测试题的来源，但须标注「合成」并给生成参数。<br>**data / harness**：无直接建议（显式写「无」）。 |
 | 首次收录 | **2026-11-26**（第一百一十八轮 · 06:1x 补轮） |
 | 核验状态 | abs 页 **`200` / 46,428 B**，`citation_title` + `citation_date` + `comments`（ICLR 2021 Oral）逐字；OpenAlex **`200`**（8,298 / 2020 / `preprint`，查询日 2026-11-26）。SDE 统一 / probability flow ODE / predictor-corrector / 可控生成均取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`2011.13456` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 423. Semi-Supervised Classification with Graph Convolutional Networks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Semi-Supervised Classification with Graph Convolutional Networks |
+| 作者（前 3） | Thomas N. Kipf · Max Welling（仅两位作者；arXiv `citation_author` 逐字核） |
+| 年份 | **2016**（v1 `2016/09/09`；abs 页 `citation_date` 逐字核；`citation_online_date` 2017/02/22） |
+| 会议 / 期刊 | **ICLR 2017**（abs 页 `comments` 逐字 = `Published as a conference paper at ICLR 2017`） |
+| 被引数 | **45,348**（OpenAlex `10.48550/arXiv.1609.02907`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1609.02907> ｜ `10.48550/arXiv.1609.02907` |
+| 一句话贡献 | 提出 **GCN**：一种直接在图上运算的卷积网络变体，做**半监督**节点分类；其卷积架构由**谱图卷积的局部一阶近似**导出，**随边数线性扩展**，学到的隐层表示同时编码**局部图结构**与**节点特征**，在引文网络与一个知识图谱数据集上显著优于同类方法。 |
+| 与我们工作的关系 | **data（主 · 图结构数据）**：语料/依赖若本身是图（引文、成分树、依赖图），GCN 的「局部邻域聚合」是比展平成序列更省参数的表征方式，可作为数据表示选型的对照。<br>**pretrain（次 · 关系归纳偏置）**：图上的消息传递与 2B 主干的拓扑先验是两条不同的结构化建模路线，预注册时应写清是否引入邻接约束。<br>**zhulong（次 · 设计图）**：网表 / 版图天然是图，GCN 的边线性复杂度适合做成本可控的图编码基线。<br>**designflow（次 · 电路图题）**：图节点分类可直接作为「电路图节点角色判定」类造题的参考方法。<br>**vision / harness**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十九轮 · 09:0x） |
+| 核验状态 | abs 页 **`200` / 42,227 B**，`citation_title` + `citation_date` + `comments`（ICLR 2017）逐字；OpenAlex **`200`**（45,348 / 2016 / `preprint`，查询日 2026-11-26）。局部一阶谱近似 / 边线性扩展 / 引文网络与知识图谱实验均取自 arXiv 官方摘要（逐字核），未做 PDF 公式复核。条目级查重：`1609.02907` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 424. WaveNet: A Generative Model for Raw Audio
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | WaveNet: A Generative Model for Raw Audio |
+| 作者（前 3） | Aäron van den Oord · Sander Dieleman · Heiga Zen（另 Karen Simonyan / Oriol Vinyals / Alex Graves；arXiv `citation_author` 逐字核） |
+| 年份 | **2016**（v1 `2016/09/12`；abs 页 `citation_date` 逐字核） |
+| 会议 / 期刊 | **arXiv 预印本（2016）**（abs 页无 `comments` 会议字段；OpenAlex `type=preprint`，source = arXiv） |
+| 被引数 | **9,779**（OpenAlex `10.48550/arXiv.1609.03499`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1609.03499> ｜ `10.48550/arXiv.1609.03499` |
+| 一句话贡献 | 提出 **WaveNet**：**全概率自回归**的原始音频波形生成网络，每个采样点的预测分布以**此前所有采样点**为条件，却能在**每秒数万采样点**的数据上高效训练；用于 TTS 时达到当时 SOTA，英语与普通话听众评价显著比最好的参数式/拼接式系统更自然；单个模型可高质量刻画多位说话人并按说话人身份切换；训练于音乐数据可生成新颖且常相当真实的小片段，亦可用于音素识别的判别任务。 |
+| 与我们工作的关系 | **vision（主 · 波形/音频生成）**：音频、波形、时序信号的自回归生成与图像生成同源，WaveNet 的「逐点条件分布在原始信号上」是波形合成主线的经典基线。<br>**pretrain（次 · 长序列建模）**：在数万点/秒的超长序列上稳定训练，是长上下文序列建模的早期实证（我们预训练若涉长序列，可对照其感受野/并行化取舍）。<br>**designflow（次 · 波形合成题）**：波形/激励合成可作为造题来源，但须标注「合成」并给条件参数。<br>**zhulong（次 · 采样成本口径）**：自回归逐点采样是成本上限，消融表须与并行/扩散方案对照记账。<br>**data / harness**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十九轮 · 09:0x） |
+| 核验状态 | abs 页 **`200` / 43,245 B**，`citation_title` + `citation_date` 逐字（**无 `comments` 字段** ⇒ 不写会议）；OpenAlex **`200`**（9,779 / 2016 / `preprint`，查询日 2026-11-26）。自回归/每秒数万采样点/TTS 评价/多说话人/音乐/音素识别均取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`1609.03499` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
+
+## 425. Pixel Recurrent Neural Networks
+
+| 字段 | 内容 |
+|:--|:--|
+| 标题 | Pixel Recurrent Neural Networks |
+| 作者（前 3） | Aäron van den Oord · Nal Kalchbrenner · Koray Kavukcuoglu（仅三位作者；arXiv `citation_author` 逐字核） |
+| 年份 | **2016**（v1 `2016/01/25`；abs 页 `citation_date` 逐字核；`citation_online_date` 2016/08/19） |
+| 会议 / 期刊 | **ICML 2016**（OpenAlex `type=conference-paper`，source = *International Conference on Machine Learning*，landing `proceedings.mlr.press/v48/oord16.html`；abs 页无 `comments` 字段） |
+| 被引数 | **2,470**（OpenAlex `10.48550/arXiv.1601.06759`，查询日 **2026-11-26**；**≥500 满足判据**） |
+| arXiv / DOI | <https://arxiv.org/abs/1601.06759> ｜ `10.48550/arXiv.1601.06759` |
+| 一句话贡献 | 提出 **PixelRNN / PixelCNN** 一系：沿图像两个空间维度**逐像素顺序预测**的深度网络，直接对**原始像素值的离散概率**建模并刻画像素间的**完整依赖**；架构上引入**快速二维循环层**与深层循环网络中的**残差连接**，在自然图像上取得显著优于此前 SOTA 的 log-likelihood，并在 ImageNet 上给出基准，生成样本清晰、多样且全局连贯。 |
+| 与我们工作的关系 | **vision（主 · 自回归图像生成）**：把图像建模成像素的离散联合分布，是扩散/自回归两类视觉生成范式的源头之一，做视觉塔或生成侧选型时应作为 likelihood 基线。<br>**pretrain（次 · 密度估计）**：显式似然（bits/dim）可作为预注册的密度指标，与扩散的 ELBO/似然对照。<br>**designflow（次 · 版图/图像合成题）**：逐像素生成可作图像类造题参考，须标注「合成」。<br>**zhulong（次 · 采样成本）**：逐像素自回归的采样成本是上限，须与并行解码对照记账。<br>**data / harness**：无直接建议（显式写「无」）。 |
+| 首次收录 | **2026-11-26**（第一百一十九轮 · 09:0x） |
+| 核验状态 | abs 页 **`200` / 41,831 B**，`citation_title` + `citation_date` 逐字（**无 `comments` 字段**）；会议归属取 OpenAlex `primary_location.source` = ICML / PMLR v48（`200`，查询日 2026-11-26），未逐字核 PMLR 页。二维循环层 / 残差连接 / 离散像素概率 / ImageNet 基准均取自 arXiv 官方摘要（逐字核），未做 PDF 表格复核。条目级查重：`1601.06759` 在 `PAPERS.md` 中 **0 命中**，非重复。 |
