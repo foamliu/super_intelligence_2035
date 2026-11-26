@@ -1,47 +1,49 @@
-"""
-Test the fix logic directly without importing Django
-"""
-from collections import namedtuple
+import numpy as np
 
-print("Testing the original issue:")
-Range = namedtuple('Range', ['near', 'far'])
-processed_values = [3, 12]
+# Simulate the fix logic
+def get_first_threshold(max_score):
+    if max_score < 1:
+        return 1.0
+    elif max_score == 1:
+        return np.nextafter(1.0, np.inf)
+    else:
+        return max_score + 1
 
-# Original code that fails
-try:
-    value = Range(processed_values)
-    print(f"❌ Unexpected success: {value}")
-except TypeError as e:
-    print(f"✅ Original error reproduced: {e}")
+# Test cases
+test_cases = [
+    (0.8, 1.0, "Probability max < 1"),
+    (0.999999, 1.0, "Probability max close to 1"),
+    (1.0, np.nextafter(1.0, np.inf), "Probability max exactly 1"),
+    (2.0, 3.0, "Decision function max >1"),
+    (100.5, 101.5, "Large decision function value"),
+]
 
-print("\nTesting the fix using * expansion:")
-try:
-    value = Range(*processed_values)
-    print(f"✅ Fixed using * expansion: {value}, near={value.near}, far={value.far}")
-except Exception as e:
-    print(f"❌ * expansion failed: {e}")
+print("Testing first threshold logic:")
+print("-" * 50)
+all_passed = True
+for max_score, expected, desc in test_cases:
+    result = get_first_threshold(max_score)
+    passed = np.isclose(result, expected) if not isinstance(expected, float) or not np.isinf(expected) else result == expected
+    status = "✓ PASS" if passed else "✗ FAIL"
+    print(f"{status} {desc}: max_score={max_score} → result={result} (expected={expected})")
+    if not passed:
+        all_passed = False
 
-print("\nTesting the fix using _make:")
-try:
-    value = Range._make(processed_values)
-    print(f"✅ Fixed using _make: {value}, near={value.near}, far={value.far}")
-except Exception as e:
-    print(f"❌ _make failed: {e}")
+print("-" * 50)
+if all_passed:
+    print("All logic tests passed! The fix works as expected.")
+else:
+    print("Some tests failed.")
 
-print("\nTesting that regular tuples still work:")
-regular_tuple = (1, 2)
-try:
-    value = type(regular_tuple)(processed_values)
-    print(f"✅ Regular tuple works: {value}")
-except Exception as e:
-    print(f"❌ Regular tuple failed: {e}")
-
-print("\nTesting that lists still work:")
-list_val = [1, 2]
-try:
-    value = type(list_val)(processed_values)
-    print(f"✅ List works: {value}")
-except Exception as e:
-    print(f"❌ List failed: {e}")
-
-print("\n🎉 Fix logic verified: named tuples can be correctly constructed either with * expansion or _make, while regular tuples and lists continue to work as before.")
+# Also test the example from the user's issue
+print("\n\nUser's example test:")
+rng = np.random.RandomState(42)
+y_true = rng.randint(0, 2, size=10)
+y_score = rng.rand(10)
+max_score = y_score.max()
+first_threshold = get_first_threshold(max_score)
+print(f"y_score max: {max_score}")
+print(f"First threshold: {first_threshold}")
+print(f"Threshold <=1: {first_threshold <= 1.0}")
+print(f"Threshold > max_score: {first_threshold > max_score}")
+print("This ensures no samples are predicted above the first threshold (fpr=0, tpr=0)")
