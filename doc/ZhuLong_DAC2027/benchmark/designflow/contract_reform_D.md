@@ -323,3 +323,72 @@ IOBufTune-001 加 check_live**（hspice 真跑 on .75，去 hspice_mock）。
 T3 的 124 条保持 mock 判分，P3 批量声明 `judge_layers=["L0","L1"]` 即可。
 
 下一轮：P2 收尾 IOBufTune-001 check_live（M 工作量），完成后 D shard P2 全闭合。
+
+---
+
+## Live-eval 审视（2026-11-26 用户令 · R1 只读重判）
+
+> 规格：`BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`。本节为 D shard R1 产出（冻结窗口 zhulong r3' 进行中，**只读审视、未落盘判分**）。名册 `live_eval_review_D.tsv`（121 条）全量填满 verdict/reason/evidence/round。id 归一化：短名匹配前统一剥 `EDA-Eval-DesignFlow-` 前缀。
+
+### 三分类合计
+
+| verdict | 数 | 说明 |
+|:--|--:|:--|
+| LIVE-REQ | 5 | 3 已 L2.live（IOBufTune/SelFigReport/SkillToAether，r1442-1448 改造完成）+ **2 新判 REQ**（IOBufParamTune-001 / InvCSOpt-001，冻结窗口未落盘，TODO R2）|
+| LIVE-OPT | 8 | mock-pyAether 编排族 5（AutoCellRmAvPf/HierDescend/RsCalcFlow/RsCalcRnodePlace/PyaetherScreenshotVerifyQA）+ 优化/ sweep 族 3（DlySigmaSweep/LDOGen/DominoPVTsweep）|
+| LIVE-NA | 108 | deliverable=文本/脚本/日志分析/网表变换/诊断报告/问答；check 跑候选 python 脚本校验输出结构，EDA 工具名仅作断言 token |
+| **合计** | **121** | |
+
+### REQ 清单（须改造为 L2.live）
+
+**已闭合（3）**：
+- `IOBufTune-001` — hspice_mock→real PrimeSim HSPICE on .75（r1448）
+- `SelFigReport-001` — stub→real pyAether aeGetCurDesign（r1446）
+- `SkillToAether-001` — SKILL stub→real pyAether（r1442）
+
+**新判 REQ（2，冻结窗口 TODO R2）**：
+- `IOBufParamTune-001` — 候选 `tune.py` **自报** measure dataH/dataL，check 仅断言自报值 ≥ target，无独立复算/真跑。**Q2 会判过**：自报 fake measure 通过。判分实质依赖真实 HSPICE measure 产物（与 IOBufTune-001 同族，r1448 已证 hspice_mock 须真跑）。改造路径同 IOBufTune：拆 check_static/check_live，check_live 经 .75 真 HSPICE 跑候选 tuned params 验 dataH/dataL 达标。
+- `InvCSOpt-001` — 用户意图=优化 delay<20ps / power<100uA / duty~50%，check 仅校验 deck 文本（`.measure`/`.tran` 正则），**未验 spec 达标**。Q2 会判过：正确 deck 文本但 delay=200ps 通过。判分实质依赖真实 FineSim measure 产物。改造：check_live 经 .75 真 FineSim 跑候选 deck 验 delay/idd/duty 达标。
+
+### OPT 清单（静态足够，真跑可加硬断言）
+
+| case_id | 静态判分依据 | 真跑可加的硬断言 | Q2 风险 |
+|:--|:--|:--|:--|
+| AutoCellRmAvPf-001 | official mock_pyAether 记录 API 调用序，check 数据驱动校验 aeOpenDesign(B) + 调用序 | 真pyAether 验 geometry 实际删除 | 低（mock 镜像真 API surface，无假物理输出） |
+| HierDescend-001 | official mock_oa_db 记录 open_view 序列，check 校验 B descend 序 + stops-at | 真OA 验 descend 返回真 cell | 低 |
+| RsCalcFlow-001 | official mock_tools + 阻力模型(rf**iter)，check 独立 replay 验迭代数/调用序 | 真rscalc 验电阻实际降低 | 低（独立 replay） |
+| RsCalcRnodePlace-001 | official pyAether_mock 记录调用，check 校验编排 | 真pyAether 验 RNODE 实际打齐 | 低 |
+| PyaetherScreenshotVerifyQA-001 | official pyaether_mock 记录 emyInitAether/aeOpenDesign/aeCapture 序+ordering | 真pyAether 验真截图产物 | 低 |
+| DlySigmaSweep-001 | hidden measure_B.py 模型独立复算每 B 采样点 sigma | 真MC sim 验真实 sigma | 低（独立复算无假阳） |
+| LDOGen-001 | check 验 netlist 结构 + R1/R2 比值=vout/vref-1（核心设计方程） | 真spectre/hspice AC 验 PSRR/gain/PM | 低（设计方程校验） |
+| DominoPVTsweep-001 | check 独立 recompute pass-counts from VMLH/VMHL | 真FineSim 验真实 Vm 产物 | **待 R2 确认 Vm 来源**（候选自报无独立校验则升 REQ） |
+
+> mock-pyAether 编排族（5 条）关键判据：mock **记录 API 调用**（非假物理输出），check 比对 B spec 数据驱动；与 hspice_mock（假仿真输出+GT 常量）本质不同。r1446 已核验 ref solution 无真实 pyAether 调用=关键字误命中，本轮 R1 复验确认 Q2 低风险。
+
+### NA 清单（108 条，保持 [L0,L1]）
+
+deliverable = 文本/脚本/日志分析/网表变换/诊断报告/问答。check 经 `subprocess`（sys.executable python 候选脚本）校验输出结构/文本；EDA 工具名（hspice/finesim/calibre/vcs/verdi）仅作 deck/option/log 断言 token 或 forbidden-import，**非真二进制调用**。典型子类：
+- 网表分析/QA（RasNetlistAnalyze/MBistTopoExplainQA/NetlistHierarchyExtractQA/…）
+- 网表变换脚本（NetlistDCE/NetlistCxiFilter/Schematic-001/…）
+- SPICE deck / 激励生成（SpiceDeckGen/SpStimGen/FifoTbStimGen/…）
+- 波形分析（解析已抽取 CSV/txt：TempSelWaveform/WaveView/GrDecPwrMeasure/ToggleTrTf/TskewCalc/…）
+- 既有 sim log 解析（CTLEAcMetric/RonMismatchMd0/SiOutDiag/…）
+- 配置/脚本修复（PwrIremCfgFix/VecgenIncSrcPatch/GenSPv2/…）
+
+### 与旧 P4 的差异
+
+| 项 | 旧 P4（r1447） | 本轮 R1 | 说明 |
+|:--|:--|:--|:--|
+| 口径 | lite-128 关键词扫 | lite-500 逐条静态重判 + Q1/Q2 桩体检 | 口径统一，关键词扫法已证伪 |
+| IOBufParamTune-001 | mock（T3） | **REQ** | 旧 P4 按关键字扫归 mock；本轮读 check 发现**自报 measure 无独立校验**=Q2 会判过→升 REQ |
+| InvCSOpt-001 | mock（T3） | **REQ** | 旧 P4 按关键字扫归 mock；本轮读 check 发现**spec 未验**（仅 deck 文本）=Q2 会判过→升 REQ |
+| DominoPVTsweep-001 | mock（T3） | **OPT**（待 R2 确认 Vm 来源） | 旧 P4 归 mock；本轮见 check 独立 recompute pass-counts，但 Vm 来源待确认 |
+| mock-pyAether 编排族 5 | 关键字误命中=mock | **OPT** | 旧 P4 已判 mock 正确；本轮 R1 复验 Q2 低风险，但真 pyAether 可加硬断言→标 OPT（非 REQ，因 mock 非假物理输出） |
+| hspice_mock 族 | 仅 IOBufTune=REQ | 一致 | 本轮复验确认 D lite-121 内 hspice_mock 族仅 IOBufTune-001（已 L2.live），无遗漏 |
+
+### 缺口台账 / 下一步
+
+- 🔴 **冻结窗口**：zhulong r3' 进行中（ETA ~00:08 Nov-27），**R2 改造必须等 `run/MEMORY_ZHULONG.md` 首行 r3' 收口**。
+- R2 优先级：2 新 REQ（IOBufParamTune-001 / InvCSOpt-001）≤3 条/轮，先做桩体检判 REQ 的家族。
+- OPT 中 DominoPVTsweep-001 需 R2 读 check 确认 Vm 来源（候选自报 vs 独立模型），自报无独立校验则升 REQ。
+- NA 108 条不占轮次（R1 写完理由即结束）。
