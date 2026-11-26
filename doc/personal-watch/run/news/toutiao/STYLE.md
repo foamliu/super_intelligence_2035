@@ -1,6 +1,11 @@
 > 📌 索引：**§A.50 = 2026-11-26 07:0x（第 354 轮 · **量子位全篇图右下角带「公众号·量子位」水印 / IT之家图带站标 ⇒ 发布前逐张目视右下角 / 他人帖逐字 `dispatchKeyEvent` 本轮成功落字并可提交**）**
 > 📌 索引：**§A.49 = 2026-11-24 15:5x（第 347 轮 · **`common.py` 带着上一轮 `IMG` 常量 ⇒ 两次传错图 / 删图正解 = 点图选中后点 `.ttcore-remove-blot` / `setFileInputFiles` 只对 `ids[0]` / 首勾会把默认「头条首发」点掉**）**
 > 📌 索引：**§A.48 = 2026-11-24 13:0x（第 346 轮 · 插图必须先点 `.syl-toolbar-tool.image` / `input[type=file]` 有 2 个会上传 2 份 / `ttcore-remove-blot` 删多余图 / `.pgc-img` 与 `.pgc-img-wrapper` 并存 / Python 里没有 `t.indexOf`）**
+## §A.51 第 355 轮实测（2026-11-26 09:3x · 2 条 · **四硬标准③以 `<article>` 内为准 / PUBTID 传参用 env**）
+
+1. 🔎 **第 ③ 条「无版权/低质警告」必须限定在 `<article>` 内**：本轮 `chkpub` 全文 `document.body.innerText` 命中「版权」，回溯上下文发现来自**推荐流里一篇讲二创作者版权警告的别人文章**；`document.querySelector('article').innerText` 内 `hits:[]` 才是真判据（承 §A.3 第 3 条）。
+2. 🐚 **`VAR=$(cat f) timeout … env VAR="$VAR" …` 拿不到值**：`VAR=x cmd` 里的 `$VAR` 在**当前 shell** 展开（此时为空）⇒ 传 targetId 一律用 `env PUBTID="$(cat /tmp/rNNN/pubtid.txt)" python3 chkpub.py`。
+
 ## §A.50 第 354 轮实测（2026-11-26 07:0x · 2 条 · **配图水印逐张目视 / 他人帖逐字键入评论已可落地**）
 
 1. 🖼 **配图水印必须逐张目视「右下角」**：量子位（`i.qbitai.com`）整篇图右下角都压着「公众号·量子位」水印；IT之家部分现场图带「IT之家 www.ithome.com」站标。两类都触禁令 11（不搬带水印独家图）⇒ 本轮量子位 `512727` 三张候选、IT之家 `1/032/499` 均弃用，改用无站标的 IT之家 `1/032/466`（特斯拉车内 FSD 实景）。⚠️ `?x-bce-process=image/format,f_auto` 只是**格式参数**，不等于水印，可放心用；判据以「图内肉眼可见的标识」为准。下载后 `read` 图片目视再定稿。
