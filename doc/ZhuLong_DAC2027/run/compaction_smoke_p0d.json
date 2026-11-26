@@ -1,0 +1,59 @@
+{
+  "smoke_id": "P0d_compaction_smoke",
+  "date": "2026-11-12",
+  "task_id": "EDA-Eval-PyAether-105",
+  "task_profile": {
+  "tool_calls_in_original_trace": 954,
+  "content_kb": 54,
+  "note": "highest-density task in compaction_subset_40; guaranteed long trajectory"
+  },
+  "basic_arm": {
+  "batch_dir": "/nasdata/app.e0031982/code/eda_code_eval/2026_1112_221520",
+  "log": "/tmp/COMP_smoke_basic3.log",
+  "compaction_json": "/nasdata/app.e0031982/code/eda_code_eval/2026_1112_221520/cli_data/worker_1/data/sessions/1794492937275_3a0d1/1794492937275_3a0d1.compaction.json",
+  "compaction_triggered": true,
+  "trigger_time": "2026-11-12T14:22:28Z (≈7min after 22:15 launch)",
+  "source_message_count": 81,
+  "retained_message_count": 7,
+  "source_tokens": "229.9k",
+  "compacted_tokens": "29.4k",
+  "token_compression_ratio": 0.872,
+  "message_compression_ratio": 0.914,
+  "strategy_signature": {
+    "msg0_is_verbatim_user_prompt": true,
+    "has_context_summary_header": false,
+    "has_goal_state_headers": false,
+    "markers_found": "none (Context summary / ## Goal / ## State / ## Summary all absent)",
+    "verdict": "basic (rule-folded: retains original messages verbatim, no LLM-generated summary header)"
+  },
+  "trigger_threshold_observed": "229.9k tokens (≈256k contextWindow default; models.json contextWindow=32000 was IGNORED by cline 3.0.51)",
+  "p0d_pass": true
+  },
+  "agentic_arm": {
+  "batch_dir": "/nasdata/app.e0031982/code/eda_code_eval/2026_1112_222702",
+  "log": "/tmp/COMP_smoke_agentic.log",
+  "compaction_json": "/nasdata/app.e0031982/code/eda_code_eval/2026_1112_222702/cli_data/worker_1/data/sessions/1794493639595_eoss0/1794493639595_eoss0.compaction.json",
+  "compaction_triggered": true,
+  "trigger_time": "2026-11-12T14:38:00Z (≈10min after 22:27 launch)",
+  "source_message_count": 57,
+  "retained_message_count": 7,
+  "source_tokens": "120.2k",
+  "compacted_tokens": "34.9k",
+  "token_compression_ratio": 0.710,
+  "message_compression_ratio": 0.877,
+  "strategy_signature": {
+    "msg0_is_verbatim_user_prompt": false,
+    "msg0_is_llm_generated_summary": true,
+    "msg0_content_prefix": "Context summary:\\n\\n## Goal\\n...",
+    "has_context_summary_header": true,
+    "has_goal_state_headers": true,
+    "markers_found": "Context summary ✓, ## Goal ✓, ## State ✓",
+    "verdict": "agentic (LLM-generated structured summary with Goal/State/Done headers; not verbatim retention)"
+  },
+  "trigger_threshold_observed": "120.2k tokens (≈half of basic's 230k; agentic proactively compacts earlier)",
+  "p0d_pass": true
+  },
+  "key_finding_3_0_51": "cline 3.0.51 compaction trigger thresholds are STRATEGY-DEPENDENT, not config-driven: basic triggers at ~230k tokens (≈model default context limit), agentic triggers at ~120k tokens (≈50% of basic, LLM-decided proactive compaction). The models.json contextWindow=32000 field is IGNORED by both strategies. Plan §11's '32K tight-context regime' is NOT implementable on 3.0.51 — the trigger is hardcoded/strategy-internal, not configurable.",
+  "p0d_verdict": "PASS — both arms produce compaction.json with distinct, strategy-specific signatures (basic=verbatim retention, agentic=LLM summary with Goal/State headers). Strategies clearly distinguished.",
+  "implication_for_p2": "The 40-task subset (median 153 tool calls) will have DIFFERENT compaction trigger rates per arm: agentic triggers earlier (~120k) so more tasks will compact; basic triggers later (~230k) so fewer tasks will compact. This is itself a finding (agentic is more proactive). P1 pilot (8 tasks) should measure: (1) what fraction of tasks trigger compaction per arm, (2) compression rate per trigger (≥70% gate), (3) Pass@1 per arm. If agentic triggers on most tasks but basic triggers on few, the ablation effectively compares 'compaction happened' vs 'compaction did not happen' — still scientifically valid but different from the plan's intent of 'same trigger point, different strategy'."
+}

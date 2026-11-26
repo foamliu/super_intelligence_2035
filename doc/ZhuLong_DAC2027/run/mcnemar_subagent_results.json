@@ -1,0 +1,32 @@
+{
+  "analysis": "ZhuLong subagent ablation McNemar paired tests",
+  "date": "2026-11-15",
+  "subset": 40,
+  "itt_3round_mean_std": {
+    "A0_no_spawn": {"itt_mean": 69.2, "itt_std": 1.4, "rounds": [67.5, 70.0, 70.0]},
+    "A1_research_spawn": {"itt_mean": 66.7, "itt_std": 7.2, "rounds": [62.5, 62.5, 75.0]},
+    "A2_verifier_spawn": {"itt_mean": 53.3, "itt_std": 3.8, "rounds": [50.0, 57.5, 52.5]}
+  },
+  "majority_vote": {
+    "A0": {"pass": 29, "total": 40, "rate_pct": 72.5},
+    "A1": {"pass": 26, "total": 40, "rate_pct": 65.0},
+    "A2": {"pass": 20, "total": 40, "rate_pct": 50.0}
+  },
+  "mcnemar_majority_vote": {
+    "A0_vs_A1": {"b": 4, "c": 1, "n": 5, "chi2_cc": 0.8, "p_approx": 0.371, "direction": "A0>A1", "significant": false},
+    "A0_vs_A2": {"b": 9, "c": 0, "n": 9, "chi2_cc": 7.11, "p_approx": 0.008, "direction": "A0>A2", "significant": true},
+    "A1_vs_A2": {"b": 8, "c": 2, "n": 10, "chi2_cc": 2.5, "p_approx": 0.114, "direction": "A1>A2", "significant": false}
+  },
+  "mcnemar_per_round_120obs": {
+    "A0_vs_A1": {"b": 13, "c": 10, "n": 23, "chi2_cc": 0.174, "p_approx": 0.677, "direction": "A0>A1", "significant": false, "meets_6_6": false},
+    "A0_vs_A2": {"b": 24, "c": 5, "n": 29, "chi2_cc": 11.17, "p_approx": 0.0008, "direction": "A0>A2", "significant": true, "meets_6_6": false},
+    "A1_vs_A2": {"b": 23, "c": 7, "n": 30, "chi2_cc": 7.5, "p_approx": 0.006, "direction": "A1>A2", "significant": true, "meets_6_6": true}
+  },
+  "H1_verdict": {
+    "A0_vs_A1": "evidence_insufficient (p=0.68 per-round, discordants too few, Delta=-2.5pp)",
+    "A0_vs_A2": "A2_significantly_worse (p=0.0008 per-round, Delta=-15.9pp, one-sided b=24,c=5)",
+    "A1_vs_A2": "A2_significantly_worse (p=0.006 per-round, Delta=-13.4pp, meets >=6:6 with b=23,c=7)"
+  },
+  "key_finding": "Verifier spawn (A2) significantly degrades ITT vs both A0 and A1, primarily through reduced generation throughput (cline_ok 60% vs A1 72-90%), not code quality (gen-rate ~87% maintained across all arms). Per-round A1vsA2 meets pre-registered >=6:6 criterion.",
+  "deferred": "Adoption rate analysis (A2 verifier adoption vs non-adoption pass rate) requires trace inspection - deferred to report phase"
+}

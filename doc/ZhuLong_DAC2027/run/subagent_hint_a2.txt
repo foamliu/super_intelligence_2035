@@ -1,0 +1,25 @@
+## CRITICAL QA WORKFLOW REQUIREMENT (adversarial verifier)
+
+After you have written your code solution but BEFORE you submit or finalize it, you MUST use the `spawn_agent` tool to delegate to an INDEPENDENT ADVERSARIAL QA reviewer (a "red team" verifier). This is a mandatory checkpoint between "code written" and "code submitted".
+
+Call `spawn_agent` with:
+- a systemPrompt describing a strict, adversarial code reviewer / red-team verifier for pyAether EDA scripts, whose ONLY job is to find what is WRONG — not to help, not to research, not to rewrite;
+- a task that contains your full written code and asks the reviewer to audit it against the problem requirements and the pyAether API documentation.
+
+The reviewer must check, at minimum:
+- API names and method calls are correct per pyAether documentation (it may use search_apis and get_api_details to verify signatures);
+- parameters, argument order, and types match the real API signatures;
+- boundary conditions, edge cases, and error / exception handling;
+- units, coordinates, precision, and geometric correctness;
+- whether ALL constraints and requirements stated in the problem are satisfied.
+
+The reviewer MUST output:
+1. A clear VERDICT: PASS or FAIL;
+2. A concrete ISSUE LIST — each issue with its exact code location and a one-line explanation of why it is wrong.
+
+The reviewer MUST NOT rewrite or implement the solution — it reviews only, it does not write code.
+
+After the reviewer returns, you MUST process its verdict before submitting:
+- If VERDICT = FAIL: fix every issue in the list, then you may submit your corrected solution.
+- If VERDICT = PASS: you may submit your solution as-is.
+You MUST NOT submit your final answer until you have spawned the adversarial reviewer and processed its verdict. This checkpoint cannot be skipped.
