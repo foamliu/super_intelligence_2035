@@ -9,11 +9,11 @@
 | 优先级 | 状态 | 数量 | 说明 |
 |:--|:--|:--|:--|
 | P1 — pilot 12 case | ✅ DONE | 5/5 pilot + 2 cleanup = 7/7 | r1204 修 5 pilot + r1207 修 PowerFillMergeGen/RsCalcChkPtGen |
-| P2 — 真-EDA L2.live 扩展 | 🔄 进行中 | 5 L2.live done（Lite 内 0 余 / Lite 外 3 C-owned 候选待转） | 见 §P2 |
+| P2 — 真-EDA L2.live 扩展 | 🔄 进行中 | 7 L2.live done（Lite 内 0 余 / Lite 外 1 C-owned 候选待转） | 见 §P2 |
 | P3 — mock case 声明 judge_layers | ✅ DONE | 620/620 | r1208 收口；C 全量 629/629 = 618 [L0,L1] + 11 [L0,L1,L2.live] |
 | P4 — Lite 实跑适合性分析 | ✅ DONE (r1210) | 137/137 | 见 §P4，Lite-137 内 T1 已全部闭合 |
 
-**CONTRACT 心跳**：`P1=7/7 done · P2=6 L2.live (Lite 内 6 T1 全闭合, Lite 外 4 C-owned TRUE 候选已转 1: WheelZoom r1212; 余 AetherHiliteCmd/RnodeScatterScript) · P3=620/620 judge_layers · P4=137/137 (T1=6 done / T2=16 / T3=115)`
+**CONTRACT 心跳**：`P1=7/7 done · P2=7 L2.live (Lite 内 6 T1 全闭合, Lite 外 5 C-owned TRUE 候选已转 2: WheelZoom r1212 + RnodeScatterScript r1213; 余 AetherHiliteCmd) · P3=620/620 judge_layers · P4=137/137 (T1=6 done / T2=16 / T3=115)`
 
 ---
 
@@ -64,6 +64,7 @@ r1207 cleanup（指南表标 shard=A 系误标，物理在 `cases/C/` domain=lay
 | ListInstCV-001 | layout_aether | r1209 | [L0,L1,L2.live] ✅ | PASS |
 | SchematicPinAdd-001 | layout_aether | r1211 | [L0,L1,L2.live] ✅ | PASS（ref check_static+check_live .75 实跑 PASS；teeth-verified：candidate 调 nonexistent api `dbCreateSchPinExFake` 被 check_live FAIL；negative_selftest 5 neg ALL-FAIL；附修 ListInstCV negative_selftest leak r1209 遗留） |
 | WheelZoom-001 | layout_aether | r1212 | [L0,L1,L2.live] ✅ | PASS（ref check_static 15 conds PASS + check_live .75 实跑 PASS；7 mandated APIs aeSetBindKey/aeGetBindKey/aeZoomInAtMouse/aeZoomOutAtMouse/aeZoomWindowAtMouse/guScroll/aeGetwtWndId 全 callable 已预探；teeth-verified：candidate 调 nonexistent `aeSetBindKeyFake` 被 check_live FAIL missing=[aeSetBindKeyFake]；negative_selftest 6 neg ALL-FAIL distinct d/f/g/m/i/h，§4.9 trio {empty→d,print→f,core→g}=3-distinct；附修 negative_selftest leak：check compat 返回 bool 不 raise → 改调 _check_static_impl） |
+| RnodeScatterScript-001 | layout_aether | r1213 | [L0,L1,L2.live] ✅ | PASS（ref check_static 14 conds PASS + check_live .75 实跑 PASS；20 mandated APIs aeGetCurDesign/dmGetObj/dbCVExist/dbNewCellView/dbGetTrueOverlapsEx/dbCrtLabel/dbCrtRect3X/dbCrtInst/dbSaveCV/dbCloseCV/emyPointF/emyInitAether/aeMessage/aeCreateAppForm/aeCreateStringField/aeCreateFormButton/aeDisplayForm/aeSetCallbackStatus/aeToggleCallBack/aeBaseAppFormCallBack 全 callable 已预探；teeth-verified：candidate 调 nonexistent `dbCrtLabelFake` 被 check_live FAIL missing=[dbCrtLabelFake]；negative_selftest 4 neg ALL-FAIL distinct cond1/cond3/cond14/cond5，§4.9 trio {empty→cond1,print→cond3,core→cond5}=3-distinct；附修 negative_selftest leak：原 check __main__ 无条件 print PASS → 改 check_static 三元组 + sys.exit(1) on FAIL；附修 assets dir 命名不一致：stale short-name `RnodeScatterScript-001` 清理对齐 HEAD full-prefix `EDA-Eval-DesignFlow-RnodeScatterScript-001` + case JSON attachments 路径同步；check_live 收 candidate `ae.<attr>` Call ∪ Attribute(类子类化 ae.aeToggleCallBack) ∪ MANDATED_LIVE_APIS → .75 hasattr+callable 探针） |
 
 注：ListInstCV-001 / RedundantPinRemoval / SchematicPinAdd / WheelZoom 不在 Lite-137（Lite 外的 P2 推进）。
 
@@ -74,14 +75,13 @@ r1207 cleanup（指南表标 shard=A 系误标，物理在 `cases/C/` domain=lay
 - **6 条 orphan reference**（有 reference/check.py 但无 case JSON）：AeDelCellCurCellProduce / AetherStandaloneInstList / NicapBlockCreatePlanner / SchPinAddProduce / TopCellNameProduce / ViaOptimGds —— 无 case JSON 即不在评测集，转了也无意义，skip。
 - **AutoCellRmAvPf / AnalogCmpSchemBuild / PyaetherScreenshotVerifyQA** 在 `cases/D/`（D-owned），DecoderSchemGen 在 `cases/A/`（A-owned）。
 
-剩余 **C-owned 且有 case JSON 的 TRUE 候选**（2 条，下一轮 P2 优先）：
+剩余 **C-owned 且有 case JSON 的 TRUE 候选**（1 条，下一轮 P2 优先）：
 
 | case_id | domain | judge_layers | ref_ae_attrs | 备注 |
 |:--|:--|:--|:--|:--|
 | AetherHiliteCmd-001 | layout_aether | [L0,L1] | aeGetCurDesign/aeGetInstHier/aeAddHighLightObj/...（13 attrs） | 双文件交付(server_start+aether_client)+socket 协议，工作量 M |
-| RnodeScatterScript-001 | layout_aether | [L0,L1] | dbCVExist/dbGetTrueOverlapsEx/dbNewCellView/dbCrtRect3X/dbCrtLabel/emyPointF/dbSaveCV/dbCloseCV/dbCrtInst/dmGetObj/aeToggleCallBack | 单文件，14 条件，工作量 S-M |
 
-（WheelZoom-001 已于 r1212 转换，见上「已转换」表。）
+（WheelZoom-001 已于 r1212 转换；RnodeScatterScript-001 已于 r1213 转换，见上「已转换」表。）
 
 FALSE 候选（7 条，mock-only attrs）改造工作量 L（需 strategy-2 强一致或重写 ref），暂缓。
 
@@ -91,8 +91,8 @@ FALSE 候选（7 条，mock-only attrs）改造工作量 L（需 strategy-2 强�
 
 - r1208-r1209: 全量 C mock case 声明 `judge_layers=["L0","L1"]`
 - C 全量 coverage：629/629
-  - `judge_layers=["L0","L1","L2.live"]`：12 条（P1 pilot 5 + cleanup 2 + P2 已转 5）
-  - `judge_layers=["L0","L1"]`：617 条（mock，框架回退旧式 check()）
+  - `judge_layers=["L0","L1","L2.live"]`：14 条（P1 pilot 5 + cleanup 2 + P2 已转 7）
+  - `judge_layers=["L0","L1"]`：615 条（mock，框架回退旧式 check()）
   - 无 judge_layers：0 条
 
 **行为保持**：框架对 `[L0,L1]` + 旧式 `check()` 走 fallback，L2.live 不触发 ⇒ 与改造前完全一致。已抽样跑 reference solution `check()` 均 PASS。
