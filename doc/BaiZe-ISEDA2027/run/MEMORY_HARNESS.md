@@ -1,6 +1,17 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
-WAITING: 0
+WAITING: 1
+> 🆕 **用户令 · 2026-11-26 (H) — 立即停止修 opencode v2.4，降级到 v1.19.6**
+>
+> **用户原话**：「把它停下 不修2.4了 降级到 1.19.6」
+>
+> **执行**：
+> 1. 立即停止所有 opencode v2.4 debug 工作（删掉 test_*.py 测试文件）
+> 2. opencode 源码 `git checkout` 到 v1.19.6（不是 v1.18.27），重新 build
+> 3. 删除 opencode 旧 predictions + progress
+> 4. 用 v1.19.6 重新启动 opencode predict
+> 5. 不要再花时间修 v2.4 的 bug
+
 > 🆕 **用户令 · 2026-11-26 (G) — opencode v2.4 搞不定就降级到 v1.19.6**
 >
 > **用户原话**：「opencode 如果 2.4 搞不定就就降级，但不是降级到 v1.18.27 而是到 v1.19.6」
