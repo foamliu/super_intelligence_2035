@@ -404,3 +404,25 @@ def check_live(sess):
   - ⑥ 断言只增不减：`_check_static_impl` 原文未改一字；`check_live` 新增逐角 5-measure 等价断言（同 `REL_TOL=1e-3`）。
   - ⑦ L5 不退化：hidden-B 不外泄；`check_live` 不读 `reference/`；沙箱不含 `.jsonl`/`test`。
 - **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
+
+### R2 改造 #5: SpiceSim-001 (2026-11-26 r1298)
+- **家族**：hspice-mock (deck-driven)，Type A Q2-cheatable（候选自建 .measure deck，可注入跨节点 trig/targ）。
+- **Q2 实证（r1298）**：cheat 候选产出 shape-right deck（正确 .measure 名 tr_q1/q2/q3 + val=10%/90%/50% levels + TR/TF/DUTY 分组 + 正确节点引用 v(q1)/v(q2)/v(q3)）但 tr_/tf_ 用 **CROSS-NODE trig/targ**（`trig v(din) val=0.12 rise=1 targ v(<node>) val=1.08 rise=1`）→ `_check_static_impl` **10/10 PASS 假阳**（mock 按 measure NAME + val= levels 查表回放 GT，**不校验 trig/targ 节点身份**）。真 hspice V-2023.12-SP1-1 @ hfhds201：tr_q1=227.29p / tr_q2=381.50p / tr_q3=445.12p（din→node 传播延迟）>> spec_trtf=140p → cond (h) FAIL。
+- **Q1 保真实证**：真 hspice ref tr=[130.522p, 125.4771p, 42.3032p] / tf=[102.6924p, 93.5357p, 42.0338p] / duty=[0.5104399, 0.5099491, 0.5108075] == mock `_MOCK_VALUES` 逐位一致。
+- **改造手法（非侵入包装，照 §3）**：
+  1. 原 `check` → `_check_static_impl`（一字不动，10 断言 a-j + mock + return True）。
+  2. `check_static` try/except 收口三元组。
+  3. 新增 `check_live(deliverable, workdir, sess)`：经 eda_flow 在 .75 跑真 hspice（`/apps/synopsys/SRB/hspice_V-2023.12-SP1-1/hspice/bin/hspice`），上传 submit.zip + hidden netlist/nodes/spec → 跑候选 `gen_meas_deck.py` 产 deck → cat netlist_b + deck → 真跑 hspice → 读真实 `.lis` → 复用同款 `parse_measures` → 断**同物理量同阈值**（cond (g) measures not failed / cond (h) tr·tf < spec_trtf / cond (i) duty ∈ [duty_lo,duty_hi] / cond (j) 3-seed 一致性，阈值全同静态，只增不减）。不读 `reference/`、不读隐藏 GT。
+  4. `check()` 兼容包装 + `__main__` 块（供 negative_selftest subprocess 调用取 first-fail tag）；`judge_layers=["L0","L1","L2.live"]`；JSON `test` 与磁盘 `check.py` sha 三方同步（`8170cc02353e`，36071B）。
+  5. **live-neg** = `negative/cheat_cross_node/gen_meas_deck.py`：正确签名 + 跨节点 trig/targ ⇒ 静态全过（mock 回放 GT）/ 实跑 cond (h) FAIL（tr_q1=227.29p≥140p）。`negative_selftest.py` 重写（CdlBulkSanitize 模式：subprocess 调 check.py 取 first-fail distinct + live-neg static-pass/live-fail）。
+- **§4.9-trio 修复（latent）**：原 trio（empty/print/core）全 FAIL cond (c) 不 distinct → 重设计：empty→(c) no output / print→(d) interleaved 分组 / core→(e) DUTY 块仅首节点（tr/tf 全节点过 (d)）。trio 现 distinct {c,d,e}。
+- **§5 七项自验（全勾）**：
+  - ① `.75` 真跑 ref（L2.live）PASS：`hostname=hfhds201`，hspice V-2023.12-SP1-1，tr=[130.522p,125.4771p,42.3032p]==mock GT（Q1 保真）。
+  - ② 6 static neg FAIL distinct {c,d,e,f}=4-distinct + 1 live-neg（cheat_cross_node：static PASS 10/10 / live FAIL cond (h) tr_q1=227.29p≥140p）。
+  - ③ 3-seed 确定性：ref check_live 连跑 3 次 errs 字串逐位一致（tr/tf/duty 值相同）。
+  - ④ 静态判分仍 PASS：`check_static(ref)` → PASS 10/10（实跑层独立，不拖垮静态）。
+  - ⑤ `judge_layers`/JSON `test`/磁盘 `check.py` sha 三方同步（`8170cc02353e`）。
+  - ⑥ 断言只增不减：`_check_static_impl` 原文未改一字；`check_live` 新增 (g)(h)(i)(j) 4 条同阈值实跑断言；trio 重设计 only-add teeth。
+  - ⑦ L5 不退化：hidden-B 由 check_live 从 workdir/hidden 上传 sess.workdir（不进 SUT 沙箱）；`check_live` 不读 `reference/`；forbidden-list 阻 reference/negative/hidden 入 SUT。
+- **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`，commit `553134735`）。
+- **心跳**：`LIVE: B review=126/126 · REQ=40(done 5) · OPT=8(done 0) · NA=76 · L2.live 4→5`。
