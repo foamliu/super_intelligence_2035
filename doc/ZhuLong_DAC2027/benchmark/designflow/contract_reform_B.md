@@ -678,8 +678,21 @@ r1302 把桩体分两类（GT-replay vs syntax-validator）。本轮发现**第�
 | r1312 | CtleAcChar-001 | hspice-mock GT-replay | DONE |
 | r1313 | DelayChainEdgeMeas-001 | hspice-mock GT-replay | DONE |
 | r1314 | OpampACSpec-001 | hspice-mock GT-replay | DONE |
+| r1316 | VwlpRefDeckSet-001 | hspice-mock GT-replay | DONE |
 
-L2.live done 16→17；REQ 未改造 33-17=16 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
+L2.live done 17→18；REQ 未改造 31-18=13 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
+
+### r1316：VwlpRefDeckSet-001（hspice-mock GT-replay-by-signature · 第18条）
+
+**Q2 实证（r1316）**：cheat `cheat_dead_dut.py` 复制 ref `vwlpref_deckset_gen.py`，在 `common_header` 把 `.inc 'dut.sp'` 替换为内联 dead `VwlpRefReg` subckt（所有 MOS `W=1e-21u` 电死），保留 `X1` 实例化 + `vGlbRef085` + analysis 语句签名（桩 `_HSPICE_MOCK_SRC` 的 `detect()` 按 `analysis-type + vGlbRef085-ref + has-X1` 签名查 `_GT` 回放 .75-captured .meas，**不开 dut.sp**）→ `_check_static_impl` **14/14 PASS 假阳**（mock 按签名回放 GT unload/IVwlpRef/PSRR/f_3db，**不校验 DUT 晶体管 W/L 物理**）。真 hspice V-2023.12-SP1-1 @ hfhds201：w=1e-21u 晶体管电死 → VwlpRef 无驱动 → `.measure` 0/越界 → unload=-142.9 / IVwlpRef=7e-13 / psrr 1MHz=-189.9 not >100Hz=-109.9 / f_3db=14.12 not in [1MHz,1GHz] / B unload=-285.8 → conds h/i/j/k/l FAIL。
+
+**Q1 保真**：.75 真跑 ref（honest deck）→ A unload=0.8500 / load1mA=0.7749 / undershot=0.6202 / Rspon=5.331e-09 / ac gain=-3.2363p / f_3db=37.5923x / Peak=8.0472 / dc IVwlpRef=634.7405u / psrr 100Hz/1kHz/1MHz=-113.8590/-93.8590/-33.8460；B unload=1.0000 / load1mA=0.9196 —— **== mock `_GT` 逐位一致**（byte-exact，tran 经 .mt0 表解析、ac/dc/psrr 经 .lis `name= value` 行解析，r1316 REF check_live 3-seed PASS 复验）。
+
+**改造**：非侵入包装（`_check_static_impl` 14 conds a-n 一字不动 + `check_static` try/except 3-tuple + `check_live(sess)` .75 真跑 hspice rerun candidate `vwlpref_deckset_gen.py` on visible A (tran/ac/dc/psrr) AND hidden B (tran) AND determinism re-run，read real `.lis`/`.mt0`，复断 conds h/i/j/k/l + m-live 同阈值 tran-unload∈[0.80,0.90]/load1mA<unload/undershot<unload/Rspon>0/dc-IVwlpRef∈[100uA,2mA]/psrr-3freq<0+1MHz>100Hz/ac-f_3db∈[1MHz,1GHz]+Peak<15/B-vGlbRef085==1.0+B-unload∈[0.95,1.05]/det-tranA-unload±1e-9，only-add never relax）+ `check` 兼容包装 + live-neg（`cheat_dead_dut.py`：inline dead subckt，static-pass mock-replays-GT / live-fail cond h/i/j/k/l）+ `negative_selftest.py` 重写（STATIC 5 negs distinct{a,b,c,e,h} + §4.9 trio distinct{empty:a,print:b,core:h} + LIVE_NEG via EDASession）+ `judge_layers=[L0,L1,L2.live]` + JSON `test` 字段 sha `d878ee0e8458` 3-way sync（disk==JSON）。
+
+**§5 全绿**：① REF check_live PASS（real hspice A unload=0.8500 == mock GT Q1 fidelity，3-seed identical）；② 5 static neg FAIL distinct{a,b,c,e,h} + §4.9 trio distinct + live-neg FAIL cond h/i/j/k/l；③ 确定性（REF live 3-seed message 字节一致）；④ SKIP_RUN deploy workdir clean（无 check.py/reference/hidden 泄漏）；⑤ sha `d878ee0e8458` 3-way sync；⑥ 断言条数只增不减（check_live +h/i/j/k/l+m-live 同阈值，不放宽）；⑦ L5 hidden-B uploaded to sess not in SUT sandbox，check_live 不读 reference/。
+
+**登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`，repo_commit `e69cd3cde`）。
 
 ### r1305：VcoKvcoChar-001（hspice-mock GT-replay-by-signature · 第9条）
 
