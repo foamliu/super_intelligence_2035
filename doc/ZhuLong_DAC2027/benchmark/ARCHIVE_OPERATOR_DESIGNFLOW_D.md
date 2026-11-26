@@ -2609,3 +2609,16 @@ r1436=cycle-7 pos41-44 4 spot-check(InstCdlConsist/InvCSOpt/IOBufTune/LatchListM
 
 心跳原文：
 WAITING: 0 · **LITE_FIX: D=124/124 all-green · P0 余 1 true-P0(OpampChar-001=B-shard, 挂96轮 r1341-r1436: refzip 1903B Oct31 stale 唯一28f7524f5从未重生成; origin/master=f0ed63289 +1 new(A #r1264 AsyncFifoSim P1 fix, 0触2 P0 refdir); direct-import check()=False L2 FAIL 13/18; L3 5neg ALL_FAIL distinct {c,q,e,f,g} PASS) · InvTripDelay-001(B) RESOLVED✅(refzip 957B Nov26 03:09 present; hspice-mock via D r1417 b20665c33越界 B adopt) · cross_shard P0 stays 1 · ⚠ BOUNDARY-VIOLATION carry-over: OpampChar check.py仍带D3cca9412a+A59326627e越界B未接管. 本轮r1436=cycle-7 pos41-44 4 spot-check(InstCdlConsist/InvCSOpt/IOBufTune/LatchListMatch) 全green无回归, L0-L4全PASS(L5 carry-over); 0 真bug; 1 P4 obs(IOBufTune trio-within distinct=2 print/core共享h/i, overall≥3 floor满足维持prior口径); 0越界, 0 EDA-Flow-Bench净变更(4 spot-check全green无编辑) + 跨shard P0 re-verify(InvTripDelay RESOLVED 维持 P0 stays 1; OpampChar unchanged L2 FAIL挂96轮; origin/master=f0ed63289 +1 new(A #r1264)0触2 P0 refdir, git log OpampChar/InvTripDelay refdirs EMPTY) + .75 REACH_OK(hfhds201 hspice+finesim+hspice64 PATH exit=0 19ms close cleaned) · md5=f7816ef4137353904e40a1a3b01fb3ae** · 详见 daily_D_2026-11-26_r1436.md
+
+## 归档批次 r1439-pointer-collapse（r1438 释体积）
+
+> r1343→r1336 心跳指针原文（共 8 条旧指针，cycle-4 监控轮）已合并归档。原文见各 daily_D_2026-11-25_r*.md。
+
+> r1343 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1344」（r1344 释体积；r1343=监控轮 cycle-4 pos33-36 4 green spot-check(FinesimMcConvert/FsdbMeasRunGen/GrDecPwrMeasure/HierDescend) + 跨 shard P0 3 pending(B r1204 未触), 原文见 daily_D_2026-11-25_r1343.md）
+> r1342 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1343」（r1343 释体积；r1342=监控轮 cycle-4 pos29-32 4 green spot-check + 跨 shard P0 3 pending(B r1203 未触), 原文见 daily_D_2026-11-25_r1342.md）
+> r1341 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1342」（r1342 释体积；r1341=监控轮 cycle-4 pos25-28 4 green spot-check + DominoPVTsweep-001 P0 L2 FIX + 跨 shard P0 3 pending(B r1203 未触), 原文见 daily_D_2026-11-25_r1341.md）
+> r1340 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1341」（r1341 释体积；r1340=监控轮 cycle-4 pos21-24 4 green spot-check 无回归 + 跨 shard P0 3 pending(B 仍未触), 原文见 daily_D_2026-11-25_r1340.md）
+> r1339 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1340」（r1340 释体积；r1339=监控轮 cycle-4 pos17-20 4 green spot-check 无回归 + 跨 shard P0 3 pending(B HEAD 0f198fc90 r1202 未触 3 P0), 原文见 daily_D_2026-11-25_r1339.md）
+> r1338 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1339」（r1339 释体积；r1338=监控轮 cycle-4 pos13-16 4 green spot-check 无回归 + 跨 shard P0 3 pending(B HEAD r1200 未变), 原文见 daily_D_2026-11-25_r1338.md；同轮补录 r1337→「归档批次 r1338」修复 dangling 引用）
+> r1337 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1338」（r1338 释体积；r1337=监控轮 cycle-4 pos9-12 4 green spot-check + 跨 shard P0 3 pending, 原文见 daily_D_2026-11-25_r1337.md）
+> r1336 心跳原文归档 → ARCHIVE_OPERATOR_DESIGNFLOW_D.md「归档批次 r1337」（r1337 释体积；r1336=监控轮 cycle-4 pos5-8 4 green spot-check + 跨 shard P0 3 pending, 原文见 daily_D_2026-11-25_r1336.md）
