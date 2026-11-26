@@ -3,15 +3,16 @@
 > 判分契约改造（check_static/check_live 拆分）shard A 跟踪文档。
 > 指南：`/nasdata/app.e0031982/code/EDA-Flow-Bench/reports/CONTRACT_REFORM_GUIDE.md`
 
-## 状态总览（2026-11-26 r1272）
+## 状态总览（2026-11-26 r1273）
 
 | 优先级 | 状态 | 计数 | 说明 |
 |:--|:--|:--|:--|
 | P1 pilot 12 (A 份额) | ✅ DONE | 4/4 | r1270 已修+验 |
-| P2 真-EDA L2.live | ✅ CLOSED (空) | 0 | r1272 复核: 3 候选均为 mock 误判, 归 P3 |
+| P2 真-EDA L2.live | 🔄 重开 | 2 T1 | r1273 P4 复核新发现 2 真-T1（NetCellMap-001/SvIntegrateGen-001，check.py 已直调 vcs 但 r1272 漏扫），待改 L2.live |
 | P3 mock 声明 judge_layers | ✅ DONE | 585/585 | r1272 收口最后 3 条 |
+| P4 实跑适合性分析 | ✅ DONE | 122 A-owned | r1273: T1=2 / T2=2 / T3=117（+1 已 L2.live） |
 
-**CONTRACT 心跳**：`P1=4/4 done · P2=0 L2.live(无真-EDA 候选) · P3=585/585 judge_layers declared`
+**CONTRACT 心跳**：`P1=4/4 done · P2=2 T1 待改(NetCellMap/SvIntegrateGen, check.py 已本地跑 vcs green, 改造=契约对齐) · P3=585/585 · P4=122 分析完(T1=2/T2=2/T3=117)`
 
 ## P1 — pilot 12 case（A 份额 4/4 DONE）
 
@@ -30,7 +31,7 @@ r1270 修 check_live upload-robustness bug（FindPcells + PyAetherCurDesignApi�
 
 **DEBT**（非 P1 范畴，另行跟踪）：PyAetherCurDesignApi-001 `negative_selftest` PRE-EXISTING FAIL — 5 negs UNEXPECTED-PASS，根因是 selftest-harness 调 `check(path,REF_DIR)` 传 REF_DIR 作 workdir 致 `_check_static_impl` 读到 reference 文件误判（HEAD 同样失败，非本批引入）。
 
-## P2 — 真-EDA L2.live 扩展（CLOSED · 空）
+## P2 — 真-EDA L2.live 扩展（🔄 r1273 P4 重开 · 2 T1 待改）
 
 r1271 关键词扫出 3 条「真-EDA subprocess」候选（含 vcs/verdi/calibre/innovus 关键字）：
 - Digital-023
@@ -47,7 +48,15 @@ r1271 关键词扫出 3 条「真-EDA subprocess」候选（含 vcs/verdi/calibr
 
 误判根因：r1271 用关键字扫描（vcs/verdi/calibre/innovus 出现 ⇒ 标真-EDA），但关键字实为 `make -n` 干跑输出串 / evidence 文本，非 `subprocess` 调真二进制。
 
-**结论**：shard A（digital/verification/pnr_signoff/eda_other）的 case 以 Makefile/脚本/文本分析为主，候选脚本不需要真跑 EDA 工具即可正确判分 ⇒ **无 P2 真-EDA 候选**。P2 闭合（空）。若后续造新题触及真 pyAether API 调用（如 pilot 4 条），再回 P2 流程加 check_live。
+**结论**：shard A（digital/verification/pnr_signoff/eda_other）的 case 以 Makefile/脚本/文本分析为主，候选脚本不需要真跑 EDA 工具即可正确判分 ⇒ r1272 判 P2 闭合（空）。
+
+**r1273 P4 本质问复核重开 P2**：r1272 漏扫根因 = P2 关键字扫 cases/A/ JSON test 字段路径，而 2 条真-T1（NetCellMap-001/SvIntegrateGen-001）的 check.py 在 `reference/<id>/check.py`（路径解析不一致漏扫）。P4 全量复核 122 A-owned 发现这 2 条 check.py **已直调 vcs/vlogan 真二进制且为 required 条件**（非 optional），当前 judge_layers=[L0,L1] 误标 mock。详见 §P4 T1 清单。
+
+**P2 待办（按 P4 T1 清单推进）**：
+1. NetCellMap-001：拆 check_static(text conds) + check_live(cond j vcs route .75) + 声明 judge_layers=[L0,L1,L2.live]
+2. SvIntegrateGen-001：拆 check_static + check_live(cond h,i vlogan+vcs route .75) + 声明 judge_layers=[L0,L1,L2.live]
+
+注：2 条 check.py 当前已在本地 judge 环境直调 vcs 且 Lite green，改造核心 = 契约对齐 + vcs route .75 增鲁棒性，非修判分缺陷。T2（FloatPinToTop/FmRtl2RtlDemo）自决，T3 不碰。
 
 ## P3 — mock case 声明 judge_layers（585/585 DONE）
 
@@ -62,9 +71,61 @@ r1271 关键词扫出 3 条「真-EDA subprocess」候选（含 vcs/verdi/calibr
 
 **行为保持验证**（r1271 建立，r1272 沿用）：框架对 `[L0,L1]` + 旧式 `check()` 走 fallback，L2.live 不触发 ⇒ 与改造前（空 judge_layers）完全一致。r1272 对 3 条新声明 case 跑 reference solution `check()` 均 PASS（Digital-023=True / InnovusLaunchDiag-001=PASS / VcsMkfileSimDiagnoseProduce-001=PASS），case 本身 sound，metadata-only 声明无回归。
 
+## P4 实跑适合性分析 (r1273 · 2026-11-26)
+
+> 指南 §P4：对本 shard Lite-500 case 逐个判定「是否适合改 L2.live 实跑」。只读分析，不改 case JSON / check.py。
+
+### 总览
+
+本 shard Lite-500 case 数: **122 A-owned**（lite_health_A.tsv 中 shard=A 且 cases/A/ 有文件的 deduped 唯一 case；另有 39 条 cross-shard，check.py 在 B/C 的 reference/，不计入本 shard P4）。
+
+| 档位 | 数量 | 说明 |
+|------|------|------|
+| T1 适合实跑 | 2 | NetCellMap-001, SvIntegrateGen-001（check.py 已直调 vcs/vlogan 真二进制，必依赖真实编译产物判分，当前 judge_layers=[L0,L1] 系误标 mock，应改 L2.live） |
+| T2 可选增强 | 2 | FloatPinToTop-001（pyAether 脚本，ae.* API 仅 AST 代理校验，可加 .75 sandbox load 辅助断言）, FmRtl2RtlDemo-001（vcs 为 optional cond o，shutil.which 守卫，可在 .75 提升为 required） |
+| T3 不适合 | 117 | 文本/脚本/日志分析/Q&A 判分，无真实执行产物可验（含 IrunSimDiagnose-001/-v2、RunRegrSubmit-001-v2 等 sub_eda 误判：EDA 工具名出现在内嵌日志/perl 文本/evidence 串里，非 subprocess 调真二进制） |
+
+另：**ViewCopyInstCount-001** 已是 L2.live（check_static+check_live 齐全，judge_layers=[L0,L1,L2.live]），不在 P4 待改清单（已闭合）。
+
+### 判定方法
+
+1. 程序化扫描 122 A-owned case 的 check.py（reference/<id>/check.py 或 cases/A/<id>.json 的 test 字段），检测信号：`subprocess` 调真 EDA 二进制（vcs/vlogan/irun/hspice/calibre/innovus/...）/ `import pyAether`·`ae.*` API / `run_code`·`check_live`·`EDASession`。
+2. 对命中信号的 6 条 sub_eda + 1 条 pyaether 候选，逐行读 check.py 的 subprocess 上下文，区分「真调二进制」vs「内嵌文本/日志/perl 串里的工具名」（后者为误判）。
+3. 对未命中信号但 prompt 提及「运行/跑 EDA 工具」的 33 条，逐条审 prompt 本质：用户原始意图是「分析日志/写脚本/改 makefile/诊断失败」(deliverable=报告/脚本，文本判分够用 ⇒ T3) 还是「跑工具得结果再判」(T1)。结论：33 条全部 T3（prompt 里的「跑」是用户原始场景背景，candidate 任务实为分析/写脚本/改文件）。
+4. 本质问复核：「若 candidate 输出能让 check.py 文本断言全过，但 EDA 工具实际跑不起来/结果全错，pass 算不算数？」T1=不算数（判分必依赖真编译产物），T3=算数（deliverable 即文本/脚本本身）。
+
+### T1 清单（优先改造顺序）
+
+| case_id | domain | 当前判分方式 | 实跑要调什么 | assets 齐备? | .75 可复跑? | 改造工作量 |
+|---------|--------|-------------|-------------|-------------|------------|------------------|
+| NetCellMap-001 | digital | check.py cond(j) 已直调 `vcs -full64 -sverilog -top <mod> simlib_base.sv netlist_converted.v` 真编译（required，非 optional）；text conds c-i,k,l 为辅助。当前 judge_layers=[L0,L1] 误标 mock | 拆 check_static(text conds a-i,k,l) + check_live(cond j vcs，route .75 via sess.run_commands)；声明 judge_layers=[L0,L1,L2.live] | Y（simlib_base.sv + hidden/netlist_B.v 在 assets） | Y（.75 /apps/synopsys 有 vcs） | M（check 已本地跑通且 green，拆分+route .75 为主，机械工作） |
+| SvIntegrateGen-001 | verification | check.py cond(h) `vlogan` 编译 + cond(i) `vcs` elaborate 产 simv（required）；当前 judge_layers=[L0,L1] 误标 mock | 拆 check_static(text conds) + check_live(cond h,i vlogan+vcs，route .75)；声明 judge_layers=[L0,L1,L2.live] | Y（sp_sram.v + hidden B spec 在 assets） | Y（.75 VCS_BIN=/apps/synopsys/SRB/vcs/R-2020.12/bin） | M（同上，check 已本地跑通） |
+
+**注**：两条 T1 case 的 check.py **当前已在本地 judge 环境直调 vcs 且 Lite green**（非 mock 桩过题）。即判分实质已是真-EDA，仅 judge_layers 声明为 mock（P3 批量声明时按「无 check_live」归 [L0,L1]）。改造核心 = 契约对齐（声明 L2.live + 拆 check_static/check_live + vcs route .75 增鲁棒性），非修判分缺陷。优先级低于「真 mock 桩让瞎写过题」类（本 shard 无此类）。
+
+### T2 清单
+
+| case_id | domain | 可加什么 L2.live 辅助断言 | 工作量 |
+|---------|--------|--------------------------|--------|
+| FloatPinToTop-001 | eda_other | check.py cond(d) 现用 AST 代理校验脚本引用 ae.dbGetMemName/ae.dbCreateLabel/aeOpenDesign/ae.dbGetInstByName（注释明言「judge env 无 ae module 且不可达 .75」）。.75 可达后，加 check_live：sess.run_code(pyAether) load 候选脚本，断言 ae.* API 真存在/可解析（catch 死代码 ae.* 引用）。pin 几何正确性仍由 JSON mock B oracle 验（sound，不需改） | M |
+| FmRtl2RtlDemo-001 | verification | cond(o) 现 `shutil.which("vcs")` 守卫，vcs 可用则真跑 vcs+simv 验 formal pass/fail，不可用则 skip。.75 有 vcs，可在 check_live 提升为 required（route .75），强化等价性验证（当前 arm-matching 文本代理为 fallback） | S |
+
+### T3 说明（不逐条列出，117 条）
+
+shard A（digital/verification/pnr_signoff/eda_other）case 以 **Makefile 语法/脚本生成/日志分析/失败诊断/Q&A** 为主，deliverable = 报告 JSON / 脚本 / 改后的 makefile / netlist 文本，判分对象即文本本身。典型 sub_eda 误判已逐一排除：
+- IrunSimDiagnose-001 / -v2：irun/ncsim 出现在**内嵌 sim.log / perl 脚本文本**（evidence），非 subprocess 调二进制；deliverable=diagnosis_report.json（Q&A）。
+- RunRegrSubmit-001-v2：bsub/vps 出现在**内嵌 setup_vps.sh / vps_log bundle 文本**，非 subprocess；deliverable=run_regr_analysis_report.json（Q&A）。
+- FsdbVerdiInteg-001 / RegrunMakefileGen-001：`make -n` 干跑 / `make preview` 结构校验（非真编译 simv）；deliverable=改后 makefile/TB。
+- 其余 33 条「prompt 提及跑 EDA」case：用户原始场景在跑 vcs/irun/innovus，但 candidate 任务是**分析其日志/改其脚本/写生成器**，deliverable 为文本，文本判分够用。
+
+### 与 P2 的关系
+
+P4 是 P2 的前置复核。r1272 P2 关键字扫出 3 候选（Digital-023/InnovusLaunchDiag-001/VcsMkfileSimDiagnoseProduce-001）复核为 mock 误判；P4 本质问复核**全量 122 A-owned**，新发现 2 条真-T1（NetCellMap-001/SvIntegrateGen-001，check.py 已直调 vcs 但 P2 关键字扫漏了——因其 check.py 在 reference/ 而 P2 扫的是 cases/A/ JSON test 字段路径不一致漏扫）。P2 现应按 T1 清单推进这 2 条（声明 L2.live + 拆 check_live），T2 自决，T3 不碰。
+
 ## 纪律
 
 - 🚫 未改 check.py / 断言逻辑 / prompt / assets / hidden
 - 🚫 未碰别 shard 文件（PowerFillMergeGen-001 / RsCalcChkPtGen-001 归 C，A 未碰）
 - 🚫 未碰 jsonl
 - ✅ P1/P2/P3 三优先级依序：P1 > P2 > P3
+- ✅ P4 只读分析，未改任何 case JSON / check.py
