@@ -25,44 +25,35 @@
 2. **id 归一化**：清单里短名（`DesignListGen-001`）与全名（`EDA-Eval-DesignFlow-OtaAcReport-001`）混排 ⇒ 匹配前统一剥 `EDA-Eval-DesignFlow-` 前缀，规则写进 MEMORY 一行。
 3. **B 的 2 条 `cross_shard`**（`OtaAcReport-001` / `PUvddSweep-001`）走 cross_shard 流程，**不进**本轮三分类；`OpampChar-001` 跨 shard P0 遗留照旧挂账。
 4. **500 恒定**：本轮**不增题、不删题**。审视出「题本身坏了」⇒ 记 `TODO(BLOCKED)` + 报 A，🚫 不许借实跑改造之名退题。
-5. **口径变更必须报**：实跑改造会改 `judge_layers`（`[L0,L1]` → `[L0,L1,L2.live]`）⇒ 属**口径变更**，收口后必须通报 zhulong（§6）。
+5. **口径变更必须登记**：实跑改造会改 `judge_layers`（`[L0,L1]` → `[L0,L1,L2.live]`）⇒ 属**口径变更**，改的时候按 §1.2 往 `live_eval_changes.tsv` 写一行即可，**不需要等任何人的许可**。
 
-### 1.1 🔴 冻结窗口（先看这条再动手）
+### 1.1 主辅关系：**designflow 是主线，zhulong 评测是辅线 —— 不设等待**
 
-**zhulong 正在跑 doubao-pro rerun#2 r3'（PID 1498010，w=4，ETA ≈ 2026-11-27 00:08；见 `run/MEMORY_ZHULONG.md` 首行）**，它读的就是同一个 EDA-Flow-Bench 工作树的 `reference/<id>/check.py`。
+> **2026-11-26 20:5x 用户裁定**：「designflow 等待 zhulong 评测是不对的……我的本意就是以 **designflow 为主，zhulong 评测为辅**，目标是随着 designflow 对于 lite-500 的修复逐渐收敛，评测结果会稳定下来。**从来没说过要等**。」
 
-| 阶段 | 允许 | 🚫 禁止 |
-|:--|:--|:--|
-| **现在 → zhulong r3' 收口 + 3-run 数字冻结** | **只读审视**：读 check.py / negative / trace，填 `live_eval_review_<shard>.tsv` 的 verdict 列，产出 REQ 清单 | 🚫 落盘改 `reference/*/check.py`、🚫 改 `cases/*.json`、🚫 提交判分文件 |
-| **zhulong 报「r3' 收口 + 3-run=x.xx±y.yy%」之后** | 按 §3 改造 + 自验 + commit | 🚫 仍不许在 zhulong 起新 run 的窗口内改判分 |
+- **🚫 没有冻结窗口。** 任何 shard 任何时刻都可以改 `reference/*/check.py` / `cases/*.json` / `negative/`。「等 zhulong 跑完再改」= **错误行为**，本条覆盖本文件历史上的任何冻结表述。
+- 要治的不是「改动」，而是「**一堆 run 数字说不清口径**」。解法是**登记 + 跟随**，不是停手：
 
-> 理由：判分器**逐 case 在判分时刻加载**。跑到 41% 时换 check.py = 半程换尺 ⇒ 整轮 Pass@1 不可用（白跑约 6 小时且污染 3-run 统计）。
-> 「解冻」的唯一凭据 = `run/MEMORY_ZHULONG.md` 首行已写 r3' 收口，**不靠猜时间**。
+| 角色 | 责任（就这一件事） |
+|:--|:--|
+| **designflow（主）** | 改判分时往 `designflow/live_eval_changes.tsv` **追加一行**：`ts / shard / case_id / judge_layers 变更 / repo_commit / 一句话原因`。其余照常：改造 → 自验 → commit。 |
+| **zhulong（辅）** | 每轮 run **起跑时记 `repo_commit`**（EDA-Flow-Bench HEAD）。若该轮期间 `live_eval_changes.tsv` 有新行落入 ⇒ 该 run 标 **`MIXED`**，**不进 3-run 统计**，下一轮自然重跑。 |
+| **A（汇总人）** | 每完成一批改造，把累计变更的 commit 范围**报** zhulong。🚫 不替 zhulong 决定重跑与否。 |
+
+- **为什么这样够**：判分器是**逐 case 在判分时刻加载**的 ⇒ 改动不会让 run 崩，只是让**那一轮**变成混合口径。用 `repo_commit` + `MIXED` 就能事后识别并剔除，比让主线程停 4 小时便宜得多。
+- **收敛目标照旧**：lite-500 修复越收敛 ⇒ 判分口径变动越少 ⇒ zhulong 的 run 越稳定。**这是目标，不是对 designflow 的约束。**
+
+> 📌 **两个资源别混**（这一点保持不变）：`.75`（hfhds201）+ `eda_flow` MCP = **实跑**，与 zhulong 无关，随时可用；`36.15` 的 `/nasdata/.../EDA-Flow-Bench/` = 同一棵工作树（designflow 的 cwd 也是 zhulong 的判分源）⇒ **改动照做，只需登记**。
 
 ---
 
-### 1.2 ✅ 隔离工作树通道（解冻前即可「改造 + 自验」，只是不许「合入」）
+### 1.2 改动登记（唯一额外动作，约 10 秒）
 
-**冻结的是主工作树，不是实跑能力。** 两个资源必须分清：
-
-| 资源 | 是谁的 | 与 zhulong 关系 |
-|:--|:--|:--|
-| `.75`（`hfhds201`）+ `eda_flow` MCP（hspice/finesim/vcs/vlogan/calibre） | **designflow 自己的 EDA 沙盒** | **无关**，随时可用（A r1314 / C r1229 / D r1478 已在用） |
-| `36.15`（`hfeg0tedaap02`）的 `/nasdata/app.e0031982/code/EDA-Flow-Bench/` | designflow agent 的 **cwd**，也是 zhulong `eval/run_batch.sh` 的 **cwd** | **同一棵工作树** ⇒ 改 `check.py`/`cases` = 半程换尺 |
-
-| 允许（现在就能做） | 🚫 禁止（等 r3' 收口） |
-|:--|:--|
-| ① `/tmp` 下 `git worktree add --detach` 一份**隔离树**，在隔离树里改 `reference/<id>/check.py` / `cases/*.json` / `negative/` | ① 改**主树**任何 `benchmarks/` `reference/` `cases/` 文件 |
-| ② 在隔离树内跑 `SKIP_RUN=1 eval/run_one.sh ...` 静态自验 + `.75` L2.live ref 自验 | ② 在主树 `git pull` / `checkout` / `rebase`（会掀掉 zhulong 正在读的文件） |
-| ③ 改动 commit 到**隔离树的本地分支**（不 push） | ③ `git push origin master`（master = zhulong 工作树分支） |
-| ④ 收口后：`git fetch` → cherry-pick 到主树/origin → 再 push | ④ 收口前 merge 进 master |
-
-**fail-closed 前置（每 shard 第一次走通道必须先过）**：在隔离树跑一次 `run_one.sh`，前后各取一次**主树指纹**——
-`git -C /nasdata/app.e0031982/code/EDA-Flow-Bench status --porcelain`（前后必须逐字节一致）+
-`ls -l --time-style=full-iso eval/status*.jsonl`（mtime 不得变）。
-**任何一项变了 ⇒ 该 shard 立即退回严格等待**（说明 `run_one.sh` 会写主树共享路径，会污染 zhulong 的 status 台账），并在 MEMORY 记 `隔离通道不可用: <证据>`。
-
-**命名/清理**：隔离树固定 `/tmp/live_eval_<shard>`，收口后 `git worktree remove`，🚫 常驻、🚫 在里面放 assets 大文件。
+- 文件：`designflow/live_eval_changes.tsv`（表头已建好）。
+- 列：`ts / shard / case_id / change / jl_before / jl_after / repo_commit / reason`。
+- **何时写**：**commit 之前**写，并与该 commit 一起提交（保证 `ts` 与 `repo_commit` 同源、可对账）。
+- **回退要留证**：若某条改造**回退**了已发布口径（例：`L2.live` → `L0,L1`），`reason` 必须写清证据（哪条断言不成立 / 哪个工具不可达），并在 MEMORY 心跳单列 `ROLLBACK=<n>`。🚫 静默回退。
+- 这个文件是 zhulong 判 `MIXED` 的**唯一依据** ⇒ **宁多写不少写**。
 
 ---
 
@@ -130,7 +121,7 @@
    `LIVE: <shard> review=<n>/<n> · REQ=<a>(done <b>) · OPT=<c>(done <d>) · NA=<e> · L2.live <f>→<g>`
 4. 日报：`daily_<shard>_<date>.md` 照旧。
 5. **A 汇总**：全 shard review 填满后，A 出 `designflow/live_eval_summary.md`（三分类合计 + REQ 改造进度 + 缺口台账）。B/C/D 把汇总数字**报** A，🚫 不写 A 的文件。
-6. **报 zhulong**：落盘改造完成后由 A 统一通报「Lite-500 判分层变更（X 条升 L2.live）」；**是否重跑由 zhulong 定**。🚫 任何 shard 自行宣布「新基线」。
+6. **报 zhulong（辅线跟随，不是请示）**：A 每批改造收口后通报「变更 commit 范围 + `live_eval_changes.tsv` 新增行数」；zhulong 自行决定下一轮何时起跑，并把跨改动的 run 标 `MIXED` 剔除。🚫 shard 自行宣布「新基线」；🚫 **也不需要等 zhulong 才能改判分**（§1.1）。
 
 ---
 

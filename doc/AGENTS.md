@@ -323,8 +323,8 @@
 | **新增判据** | **mock 桩体检**：自写假工具（`hspice_mock`/`finesim_mock`/伪 tcl 桩）若「按模板造对形状、物理量全错」也能判过 ⇒ 记 `LIVE-REQ`。旧 P4 关键词结论**不作数**，一律复验 |
 | **改造手法** | 非侵入包装：原 `check`→`_check_static_impl` 一字不动 + `check_static` 收口 + 新增 `check_live` + `check()` 兼容 + `judge_layers` 加 `L2.live` + test sha 同步 |
 | **只增不减** | 断言条数只增不减、阈值不放宽、条件不删；🚫 为「好跑」把 required 降 optional、🚫 把实跑断言包 `try/except: pass` |
-| **🔴 冻结窗口** | zhulong 正在跑 Lite-500 3-run（`run/MEMORY_ZHULONG.md` 首行）⇒ 期间**只读审视可做，🚫 落盘改 `check.py`/`cases`**；解冻唯一凭据 = 该文件首行出现 r3' 收口 |
-| **口径变更** | 任何 `judge_layers` 变更 = **口径变更**，收口后由 A 汇总报 zhulong，**重跑与否由 zhulong 定**；🚫 shard 自行宣布新基线 |
+| **主辅关系** | **designflow 为主、zhulong 评测为辅**（2026-11-26 用户裁定）⇒ **不设等待**，随时可改判分；唯一额外动作 = 往 `designflow/live_eval_changes.tsv` 登记一行（`ts/shard/case_id/变更/jl_before/jl_after/commit/reason`） |
+| **口径变更** | 任何 `judge_layers` 变更 = **口径变更**（改时登记即可，🚫 不需请示）；zhulong 每轮 run 记 `repo_commit`，跨改动的 run 标 `MIXED` **不入 3-run 统计**；🚫 shard 自行宣布新基线 |
 | **infra 纪律** | `.75` 缺工具/许可/超时 ⇒ 记 `infra`（铁律 2），`LIVE-REQ` 降级 `LIVE-OPT` + 写 `BLOCKED: 缺 <具体项>`；🚫 写成能力结论、🚫 伪装 `LIVE-NA` |
 
 
@@ -350,6 +350,7 @@ Qwen3.5-2B  ─(替身多模态基模，不等 MLLM)────────→ 
 1. 下游**只读引用**上游产物，🚫 不改上游的题 / `check.py` / 判分口径。
 2. 下游发现题目缺陷 ⇒ 记一行 + 交回 designflow；**不得自行改题后继续出分**。
 3. 上游产物变更（换题、改断言）⇒ **必须通知下游重跑**，并在下游 `MEMORY` 记「口径变更」一行。
+   **主辅关系（2026-11-26 用户裁定）**：designflow 是主线、zhulong 评测是辅线 ⇒ **上游改判分不等下游**；zhulong 每轮 run 记 `repo_commit`（EDA-Flow-Bench HEAD），跨改动的 run 标 `MIXED` 剔除出 3-run 统计，下一轮自然收敛。
 4. 跨口径数字**永不混表**：`.17` vs `36.15`、CPU pilot vs GPU、546 行 vs `n=30`、Lite 500 vs Full 快照。
 
 ---

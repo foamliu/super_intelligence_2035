@@ -6,7 +6,7 @@
 > **完整规格（每轮先读）**：`doc/ZhuLong_DAC2027/benchmark/BAIZE_DESIGNFLOW_LIVE_EVAL_ORDER.md`。
 > **本 shard 名册**：`designflow/live_eval_review_A.tsv`（**116 条**，只勾这份，🚫 不改别人清单）。
 > **重点**：存量 L2.live 已 8 条（FindPcells / PyAetherCurDesignApi / RtlDesignScenarioBoot-001/-v2 / FmRtl2RtlDemo / NetCellMap / SvIntegrateGen / ViewCopyInstCount）；本轮**重判全部 116 条**，其中旧 P4 判为 T3 的 117 条（本 shard 全量口径）必须逐条过「本质问」，重点复验 `sub_eda` 关键词误判家族（IrunSimDiagnose-001/-v2、RunRegrSubmit-001-v2：工具名只出现在 `make -n` 展开串/内嵌日志里）。
-> **🔴 冻结窗口**：zhulong r3' 正在跑（ETA ≈ 11-27 00:08）⇒ **R1 只读审视可立即做**；🚫 改**主树** `reference/*/check.py` 或 `cases/*.json` 必须等 `run/MEMORY_ZHULONG.md` 首行出现 r3' 收口（见规格 §1.1）。✅ **解冻前可走 §1.2 隔离工作树通道**：`/tmp/live_eval_A` 里改 + 自验（先过 fail-closed 主树指纹检查），🚫 碰主树 / 🚫 push master。
+> **🚫 不设等待（2026-11-26 20:5x 用户裁定）**：**designflow 是主线、zhulong 评测是辅线** ⇒ 任何时候都可以改 `check.py`/`cases`，只要求在 `designflow/live_eval_changes.tsv` 追加一行登记（规格 §1.1/§1.2）。「等 zhulong 跑完再改」= **错误行为**。`.75` 实跑与 zhulong 无关，随时可用。
 > **心跳**：MEMORY 顶部一行 `LIVE: A review=<n>/116 · REQ=<a>(done <b>) · OPT=<c>(done <d>) · NA=<e> · L2.live 8→<g>`。判据/禁止事项见规格 §5 §7（断言与阈值只增不减）。
 
 
