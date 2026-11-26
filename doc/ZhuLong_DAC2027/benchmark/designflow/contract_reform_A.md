@@ -3,16 +3,16 @@
 > 判分契约改造（check_static/check_live 拆分）shard A 跟踪文档。
 > 指南：`/nasdata/app.e0031982/code/EDA-Flow-Bench/reports/CONTRACT_REFORM_GUIDE.md`
 
-## 状态总览（2026-11-26 r1273）
+## 状态总览（2026-11-26 r1274）
 
 | 优先级 | 状态 | 计数 | 说明 |
 |:--|:--|:--|:--|
-| P1 pilot 12 (A 份额) | ✅ DONE | 4/4 | r1270 已修+验 |
+| P1 pilot 12 (A 份额) | ✅ DONE | 4/4 L2.live PASS | r1270 基础 + r1274 re-verify（FindPcells ref-fix + 3 stale selftest fix） |
 | P2 真-EDA L2.live | 🔄 重开 | 2 T1 | r1273 P4 复核新发现 2 真-T1（NetCellMap-001/SvIntegrateGen-001，check.py 已直调 vcs 但 r1272 漏扫），待改 L2.live |
 | P3 mock 声明 judge_layers | ✅ DONE | 585/585 | r1272 收口最后 3 条 |
 | P4 实跑适合性分析 | ✅ DONE | 122 A-owned | r1273: T1=2 / T2=2 / T3=117（+1 已 L2.live） |
 
-**CONTRACT 心跳**：`P1=4/4 done · P2=2 T1 待改(NetCellMap/SvIntegrateGen, check.py 已本地跑 vcs green, 改造=契约对齐) · P3=585/585 · P4=122 分析完(T1=2/T2=2/T3=117)`
+**CONTRACT 心跳**：`P1=4/4 L2.live PASS ✅r1274 · P2=2 T1 待改(NetCellMap/SvIntegrateGen, check.py 已本地跑 vcs green, 改造=契约对齐) · P3=585/585 · P4=122 分析完(T1=2/T2=2/T3=117)`
 
 ## P1 — pilot 12 case（A 份额 4/4 DONE）
 
@@ -129,3 +129,53 @@ P4 是 P2 的前置复核。r1272 P2 关键字扫出 3 候选（Digital-023/Inno
 - 🚫 未碰 jsonl
 - ✅ P1/P2/P3 三优先级依序：P1 > P2 > P3
 - ✅ P4 只读分析，未改任何 case JSON / check.py
+
+---
+
+## r1274 — P1 收口（re-verify 4 A pilot L2.live 实跑 on .75）
+
+**起因**：r1270 报 P1=4/4 L2.live PASS，但本轮逐 case re-verify 实跑发现 FindPcells-001 实际 FAIL；同时复核 negative_selftest 发现 3 case 的 DEBT 根因被 r1273 误判。
+
+### 1. FindPcells-001 L2.live 修复（reference robustness）
+
+- **现象**：check_live 在 .75 实跑 reference find_pcells.py `main()` → `AttributeError: 'emyLiveProbe' object has no attribute 'block'`。
+- **根因**：.75 sandbox 会话默认打开 `AeDelLiveLib/AeDelProbeCell/abstract`（probe/abstract view），`aeGetCurDesign()` 返回 `emyLiveProbe` 对象（truthy，非 None），`main()` 越过 `if not design: raise RuntimeError` 守卫，到 `block = design.block` 崩溃。check_live strategy-2（run main() 期望 graceful RuntimeError）对「沙盒开了一个非 layout view」状态不鲁棒。
+- **修法**（reference gold solution 最小鲁棒性补丁，非 check.py 断言逻辑改动）：
+  ```python
+  try:
+      block = design.block
+  except AttributeError:
+      raise RuntimeError("aeGetCurDesign() returned non-layout design (no .block)")
+  ```
+  非 layout view（无 `.block`）视为「无可扫设计」走 graceful RuntimeError，check_live 已将 `LIVE_RUNTIME_ERROR` 判为 PASS。
+- **mock 判分不变**：mock design 对象有 `.block`（原 reference 在 mock 下即走该分支），`try` 不触发。
+- **自验**：check_static(ref) `(True,'','')` ✅ · check_live(ref) `(True,'','')` ✅ · negative_selftest 4 negs 全 FAIL NEG_RC=0 ✅。
+- reference_submit.zip 已重建（仅 find_pcells.py 一文件，结构不变），原 zip 备份于本地 scratch（未入库）。
+
+### 2. 三 case negative_selftest stale 修复（纠正 r1273 DEBT 误判根因）
+
+r1273 MEMORY 记「PyAetherCurDesignApi-001 negative_selftest PRE-EXISTING FAIL，根因=selftest-harness 传 REF_DIR 作 workdir 致 _check_static_impl 读 reference 误判」。**本轮复核证伪**：直接 `check_static(negative, REF_DIR)` 返回 `(False, ...)` 正确 FAIL —— 判分无误判。真根因：
+
+- 3 个 `negative_selftest.py`（PyAetherCurDesignApi-001 / RtlDesignScenarioBoot-001 / -v2）写法 stale：`try: chk.check(...) except AssertionError`，期望旧 `check()` raise。契约改造后 `check()` 兼容包装返回 `bool`（不 raise）⇒ 无异常 ⇒ 全报 UNEXPECTED-PASS。
+- **修法**：改用 `check_static` 三元组，`r[0] is False` = FAIL-OK，`r[0] is True` = PASS-BAD；从 `r[1]` 抽 fail-label 验 distinct。
+- **自验**（全 green）：
+  - PyAetherCurDesignApi-001：5 negs 全 FAIL，distinct labels {c,h,i,j,l}
+  - RtlDesignScenarioBoot-001：5 negs 全 FAIL，distinct {a,c,f,k,p}，ref PASS
+  - RtlDesignScenarioBoot-001-v2：6 negs 全 FAIL，distinct {b,c,f,l,m,n}（≥6）
+
+FindPcells-001 的 selftest 本就用 bool-aware 写法（`if ok: passed`），无需改。
+
+### 3. 4 A pilot L2.live 实跑 ground truth（r1274）
+
+| case_id | check_static(ref) | check_live(ref) | negative_selftest |
+|:--|:--|:--|:--|
+| FindPcells-001 | PASS ✅ | PASS ✅ (ref-fix 后) | green ✅ |
+| PyAetherCurDesignApi-001 | PASS ✅ | PASS ✅ | green ✅ (selftest-fix 后) |
+| RtlDesignScenarioBoot-001 | PASS ✅ | PASS ✅ | green ✅ (selftest-fix 后) |
+| RtlDesignScenarioBoot-001-v2 | PASS ✅ | PASS ✅ | green ✅ (selftest-fix 后) |
+
+### 纪律
+- 🚫 未改 check.py 断言逻辑/断言数/strictness/prompt/assets/hidden/case JSON/test 字段
+- 🚫 未碰别 shard 文件、未碰 jsonl
+- ✅ 只动：FindPcells reference_submit.zip（gold find_pcells.py 鲁棒性补丁）+ 3 个 negative_selftest.py（test 基础设施对齐新契约）
+- EFB commit `fb2fa69bd`
