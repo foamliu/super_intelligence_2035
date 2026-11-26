@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage(iii) 视觉编码器 · Round 4 坍缩修复报告（R4）</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1a7f37 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.94; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.85; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--ok); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--ok); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#e9f5ec; color:#0b3d6e; font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  td.ok { background:#dafbe1; font-weight:700; }
+  td.bad { background:#ffebe9; font-weight:700; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .warncard { background:#fff; border:1px solid var(--border); border-left:5px solid var(--warn); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe Stage(iii) 视觉编码器 · Round 4 坍缩修复报告（R4）</h1>
+  <div class="sub">定位从零对比训练<b>表征坍缩</b>的根因，并给出让 <b>C1–C4 全部通过</b>的最小修复</div>
+  <div class="meta">
+    <span>📅 完成：2026-10-01</span>
+    <span>🖥️ 诊断/实验跑在 10.239.2.12（单卡 GPU0）</span>
+    <span>🧪 判定标准 C1–C4（沿用 R4.1）</span>
+    <span>📦 数据：en500k（训练）/ eval5k（检索）/ Stanford GPIC（对比）</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <h3 style="margin-top:0;">🎯 R4 一句话结论</h3>
+  <p><b>坍缩的根因是「随机初始化的 text 塔」与「SigLIP 目标的可坍缩均衡」这两个独立的风险源叠加；修复 = 把 text 塔换成冻结的预训练 CLIP 文本编码器 + 目标从 SigLIP 换成 CLIP InfoNCE（去掉可学习 logit_bias）。</b></p>
+  <ul>
+    <li>🔑 <b>300 步即复现坍缩</b>：现状配置（随机 text + SigLIP）C1 = <code>1.0000</code>（精确坍缩，负对照成立）。</li>
+    <li>🔑 <b>两个坍缩源</b>：① 随机 text 塔（off-diag 0.726，正负样本文本侧不可分）；② SigLIP 逐对 sigmoid + 可学习 bias（提供「常数坍缩」与「反平均坍缩」两个吸引子）。</li>
+    <li>🔑 <b>修复验证</b>：冻结 CLIP 文本塔 + InfoNCE，300 步 <code>C1=0.1909</code>、cross gap <code>+0.085</code>；2000 步 <code>C1=0.2819</code>、<b>eval5k R@1 = 0.0064（32× chance）</b> → C1–C4 全过。</li>
+    <li>📌 <b>对论文</b>：R1/R2 的 loss 与 R@K 仍作废为坍缩读数；新增可报告的发现「SigLIP 在小 batch 从零对比下有两类坍缩吸引子，InfoNCE 无」。计算侧结论（OpenVision2 双最优）不受影响。</li>
+  </ul>
+</div>
+
+<h2 class="sec"><span class="no">1</span>可判定标准与最终状态（R4.1 沿用）</h2>
+<table>
+  <thead><tr><th>#</th><th>判据</th><th>阈值</th><th>现状配置实测</th><th>修复后（sem_clip）</th></tr></thead>
+  <tbody>
+    <tr><td><b>C1</b></td><td>不坍缩（same-tower off-diag 余弦）</td><td>&lt; 0.9</td><td class="bad">1.0000 ❌</td><td class="ok">0.2819 ✅</td></tr>
+    <tr><td><b>C2</b></td><td>cross diag−offdiag 有正间隙</td><td>明确正</td><td class="bad">+0.0000 ❌</td><td class="ok">+0.0820 ✅</td></tr>
+    <tr><td><b>C3</b></td><td>eval5k R@1 显著高于 chance</td><td>≫ 1/5000</td><td class="bad">1/5000 ❌</td><td class="ok">0.0064（32×）✅</td></tr>
+    <tr><td><b>C4</b></td><td>loss 持续下降</td><td>不钉平台</td><td class="bad">钉 4.45 ❌</td><td class="ok">4.25→3.01 ✅</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec"><span class="no">2</span>步骤 A：六条怀疑逐一结论（CPU 级）</h2>
+<table>
+  <thead><tr><th>怀疑</th><th>结论</th><th>关键证据</th></tr></thead>
+  <tbody>
+    <tr><td><b>S1</b> 77-token 截断 ⭐</td><td>证实「截断发生」（100%），但<b>非坍缩主因</b></td><td>LLaVA caption mean 219 BPE、100% 截断只留 34%、<code>the image</code> 开头占 30.3%；决定性 head vs tail：丢弃尾部 off-diag 0.372 反比保留头部 0.295 更集中</td></tr>
+    <tr><td><b>S2</b> 空/极短 caption</td><td><b>排除</b></td><td>empty 0.000%、&lt;3 词 0.010%</td></tr>
+    <tr><td><b>S3</b> ImageNet 类内负样本</td><td>影响小</td><td>batch64 同类负样本 ≈6%（1000 类 × 500/类）</td></tr>
+    <tr><td><b>S4</b> text 塔未冻结</td><td><b>证实</b>（bug 属实），单独修不够</td><td><code>train.py</code> 把 text 塔进了 optimizer；R3 已证冻结随机 text 塔 vision 仍坍缩 0.9965</td></tr>
+    <tr><td><b>S5</b> 随机 text 塔无语义 ⭐</td><td><b>证实，#1 主因</b></td><td>随机 text off-diag <b>0.726</b> vs 语义 CLIP <b>0.24–0.31</b></td></tr>
+    <tr><td><b>S6</b> 数据规模 500K/bs64</td><td>足以「不坍缩」，不足以「strong 下游」</td><td>语义 text + InfoNCE 下单卡 300 步即 C1=0.19；400M 是精度需求</td></tr>
+  </tbody>
+</table>
+<h2 class="sec"><span class="no">3</span>步骤 B：LLaVA vs Stanford GPIC 数据集对比</h2>
+<table>
+  <thead><tr><th>caption 档位</th><th>BPE token (mean/med/p90)</th><th>词数 mean</th><th>77 截断率</th><th>off-diag 余弦 mean</th><th>判定</th></tr></thead>
+  <tbody>
+    <tr><td>GPIC <code>tag</code></td><td>11.2 / 11 / 14</td><td>7.0</td><td>0.00%</td><td>0.2813</td><td>短词组，类内相近</td></tr>
+    <tr><td>GPIC <code>short</code></td><td>20.2 / 19 / 27</td><td>17.5</td><td>0.01%</td><td class="ok"><b>0.2447</b></td><td><b>最分散，最优</b></td></tr>
+    <tr><td>GPIC <code>medium</code></td><td>45.9 / 46 / 56</td><td>39.3</td><td>0.15%</td><td>0.2770</td><td>次选</td></tr>
+    <tr><td>GPIC <code>long</code></td><td>157.9 / 156 / 180</td><td>132.3</td><td class="bad">100.00%</td><td>0.3068</td><td>与 LLaVA 同病</td></tr>
+    <tr><td>LLaVA (trunc77)</td><td>219.1 / 216 / 272</td><td>174.8</td><td class="bad">100.00%</td><td>0.2937</td><td>长 recaption 通篇公式化</td></tr>
+    <tr><td>RANDOM text (512w)</td><td>—</td><td>—</td><td>—</td><td class="bad">0.7258</td><td>无语义，退化</td></tr>
+  </tbody>
+</table>
+<ul>
+  <li>GPIC 全量 <b>8000 tar</b>（盘上可读 395）；四档 caption 覆盖 tag/short/medium/long。</li>
+  <li>许可全 permissive：CC BY 2.0 72.1% / PD Mark 13.9% / CC BY 4.0 5.6% / CC0 4.3% / CC BY 3.0 2.9% …（可入库/可发布）。</li>
+  <li><b>推荐：GPIC <code>short</code></b>（20 token、0% 截断、off-diag 0.245 最分散）。⚠️ 但换数据是「锦上添花」，非解药（见 §4）。</li>
+</ul>
+
+<h2 class="sec"><span class="no">4</span>步骤 C：最小修复实验（单卡 300 步，单变量）</h2>
+<table>
+  <thead><tr><th>配置</th><th>改动</th><th>C1（&lt;0.9）</th><th>C2 gap（&gt;0）</th><th>C4 loss</th><th>判定</th></tr></thead>
+  <tbody>
+    <tr><td><b>A baseline</b>（负对照）</td><td>随机 text + SigLIP + scale/bias</td><td class="bad">1.0000</td><td class="bad">+0.0000</td><td>10.02→6.11</td><td>精确坍缩（复现）</td></tr>
+    <tr><td><b>B sem_siglip</b></td><td>只换冻结语义 CLIP text（保留 SigLIP）</td><td class="bad">0.8982</td><td>+0.0345</td><td>9.97→7.31</td><td>仍近坍缩</td></tr>
+    <tr><td><b>C sem_bias0</b></td><td>B + bias 冻结为 0</td><td class="bad">1.0000</td><td class="bad">−0.436（反平均）</td><td>45.2→13.1</td><td>反平均坍缩</td></tr>
+    <tr><td><b>D sem_clip</b></td><td>B + SigLIP→InfoNCE（无 bias）</td><td class="ok">0.1909</td><td class="ok">+0.0850</td><td class="ok">3.36→3.22</td><td><b>通过 C1/C2/C4</b></td></tr>
+  </tbody>
+</table>
+<ul>
+  <li><b>B</b>：换语义 text 缓解但不根治（C1 1.00→0.90），SigLIP 的可学习 bias 仍允许「平均文本方向」常量解。</li>
+  <li><b>C</b>：固定 bias=0 反而翻出「<b>反平均坍缩</b>」——vision 全映射到平均文本的负方向，cross 分数一致 ≈ −0.436，SigLIP 逐对 sigmoid 仍能以「全判负」拿低 loss（n 个正样本 ≪ n²−n 个负样本）。</li>
+  <li><b>D</b>：InfoNCE 的 softmax 强制「正样本打败所有负样本」，常量特征无法降 loss → 被迫学区分性特征。</li>
+</ul>
+
+<h2 class="sec"><span class="no">5</span>步骤 D：C3 下游验证 + 路线裁定</h2>
+<div class="card">
+  <h3 style="margin-top:0;">胜出配置 sem_clip（2000 步）</h3>
+  <p>C1 = <b>0.2819</b>、cross gap = <b>+0.0820</b>、训练 loss <b>4.25 → 3.01</b>（低于 InfoNCE 随机基线 ln(64)=4.16）。eval5k（5000 对）检索：</p>
+  <table>
+    <thead><tr><th>方向</th><th>R@1</th><th>R@5</th><th>R@10</th></tr></thead>
+    <tbody>
+      <tr><td>text → image</td><td>0.0064</td><td>0.0280</td><td>0.0540</td></tr>
+      <tr><td>image → text</td><td>0.0056</td><td>0.0210</td><td>0.0394</td></tr>
+      <tr><td>chance</td><td>0.00020</td><td>0.001</td><td>0.002</td></tr>
+    </tbody>
+  </table>
+  <p>R@1 = 0.0064 = <b>32× chance</b>（R@10 = 27×）→ <b>通过 C3</b>。绝对 R@1 仅 0.6% 是因为「from-scratch 只看 ~128k 对 × 2000 步」，足以证明<b>目标/塔修复后模型能学出语义对齐（不再坍缩）</b>；精度需放大到全量数据 + 数千步再提升。</p>
+</div>
+<div class="verdict">
+  <h3 style="margin-top:0;">🧭 路线裁定（C1–C4 已全过）</h3>
+  <p><b>固定 recipe = 冻结预训练 CLIP 文本塔 + CLIP InfoNCE（学温度、无 logit_bias）+（推荐）GPIC-short caption。</b></p>
+  <ul>
+    <li>冻结文本塔：<code>openai/clip-vit-large-patch14-336</code> text tower（768 维）。</li>
+    <li>目标：<code>open_clip.loss.ClipLoss</code>（InfoNCE，无 logit_bias），学 logit_scale（温度）。</li>
+    <li>vision：OpenVision2 保持原架构，仅 readout head 改 <code>embed_dim=768</code>。</li>
+    <li>数据：优先 GPIC <code>short</code>，<code>medium</code> 次选，LLaVA 长 recaption 不推荐。</li>
+    <li>放大：4 架构 × 3000–10000 步、batch 64–128（跨卡 gather 到 512–1024 负样本），预算 ~6–12 GPU·h，作为 R5 输入。</li>
+  </ul>
+</div>
+
+<h2 class="sec"><span class="no">6</span>论文回填建议（§6 怎么写）</h2>
+<ul>
+  <li>「loss 4.45 架构不可区分」应如实改写为「从零 + SigLIP 配方下的<b>坍缩均衡 loss</b>」，不能当成「架构对 loss 无影响」的有效结论；R1/R2 的 loss 排名与 eval5k R@K 作废标注。</li>
+  <li>可新增一条<b>发现</b>：小 batch 从零对比学习中，SigLIP（sigmoid 逐对）存在两类坍缩吸引子（常数坍缩 + 反平均坍缩），CLIP InfoNCE（softmax 批量归一化）无此问题。</li>
+  <li>计算侧结论（OpenVision2 训练/推理吞吐、延迟双最优）不受坍缩影响，保留。</li>
+  <li>修复 recipe 写进方法，作为后续 Stage(iii)/(iv) 的可复现配置。</li>
+  <li>数据段注明：LLaVA recaption 100% 截断、通篇公式化；GPIC-short 是更适合对比学习的 caption 档位。</li>
+</ul>
+
+<footer>
+  <p>BaiZe Stage(iii) 视觉编码器 · Round 4 修复报告 · 2026-10-01 · 复现命令见 <code>run/EXPERIMENTS_VISION_ROUND4.md</code> · 脚本 <code>run/vision/r4_*.py</code>。</p>
+</footer>
+
+</div>
+</body>
+</html>

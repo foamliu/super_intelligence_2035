@@ -1,0 +1,73 @@
+\section{Theoretical Grounding: The Grounding Gap}
+\label{sec:grounding-theory}
+
+This section states the \emph{grounding gap} framework before Section~\ref{sec:experiments}'s measurements, as refutable predictions rather than fitted explanations: EDA correctness is a \emph{situated} property offline knowledge cannot guarantee, execution is the only channel observing the current design state, and on the L4 failures beyond offline reach the gap is bounded by observation fidelity---while model scale still sets the L1--L3 ceiling.
+% 本节提出"落地鸿沟"框架，表述先于 §6 测量，作为可反驳预测而非事后拟合：EDA 正确性是情境化属性，离线知识无法保证；执行是观测当前设计状态的唯一通道；在离线触达之外的 L4 失败上，该鸿沟受观测保真度约束——而模型规模仍决定 L1–L3 上限。
+
+\subsection{A Four-Level Hierarchy of Information}
+\label{sec:four-levels}
+
+To separate what can be learned offline from what must be observed online, Table~\ref{tab:four-levels} distinguishes four levels: L1 \emph{syntactic correctness}, L2 \emph{physical plausibility}, and L3 \emph{historical factuality} (documented, past-oriented, frozen at the training cutoff) are learnable offline, whereas L4 \emph{situated truthfulness}---what is true \emph{right now} in a specific environment---is not, defined by indexicality (truth depends on context and changes over time), non-guaranteeability from offline data, and real-time commitment. L4 must be \emph{read} from the environment, not \emph{recalled} from memory.
+% 四级信息层次（表~\ref{tab:four-levels}）：L1 语法正确性、L2 物理合理性、L3 历史事实性可离线获取；L4 情境真实性（此刻为真）不可，由指示性、无法由离线数据保证、实时承诺三特征定义。非知识分类法，而是"可预先知道"与"必须此刻观测"的分离：L4 是必须从环境读取而非从记忆回忆的东西。
+
+\begin{table*}[htbp]
+\centering
+\caption{The four levels of information}
+\label{tab:four-levels}
+\begin{tabular}{clp{5.2cm}c}
+\toprule
+\textbf{Level} & \textbf{Name} & \textbf{Core Question} & \textbf{Learnable Offline?} \\
+\midrule
+L1 & Syntactic Correctness & Is this string well-formed? & Yes \\
+L2 & Physical Plausibility & Could this event happen? & Yes \\
+L3 & Historical Factuality & Did this event happen? & Yes \\
+L4 & Situated Truthfulness & Is this true \emph{right now}? & \textbf{No} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+% 表：四个信息层次。"能否离线学习"一列是操作性判据：L1–L3 可以，L4 不可以。
+
+For EDA scripting, the situated state is the live design database---which cell/view is selected and what the layout or schematic contains now---plus the user's current intent (a user clarification is also an L4 observation). Our correctness criterion---code runs without error and all assertions over the mutated design pass---is L4: a well-formed (L1), plausible (L2) script invoking documented functions (L3) can still violate an undocumented binding contract, depend on internal selection state, or target the wrong cell. Such failures cannot be resolved offline; they must be \emph{observed} by acting on the live design and reading back the result. This paper's $\Omega$---retrieval plus execution read-back---selects one channel of L4, not its entirety: organizational, tacit, and modal situated information (waveform imagery, team conventions, un-digitized training knowledge) also falls under L4 but outside this $\Omega$.
+% 对 EDA 脚本，情境状态是实时设计数据库（当前选中 cell/view、此刻版图/原理图内容）及用户当前意图（故用户澄清亦为 L4 观测）。正确性判据——代码无错执行且对被修改设计的所有断言通过——是 L4 属性：语法正确、合理、调用已文档化函数的脚本仍可能违反未文档化绑定契约、依赖内部选中状态或定位错误 cell。离线知识无法解决，必须作用于实时设计并读回结果来观测。本文的 Ω——检索加执行回读——选择 L4 的一个通道而非其全部：组织性、默会、模态性的情境信息（波形图像、团队约定、未数字化培训知识）亦属 L4，但不在本文 Ω 之内。
+
+Intuitively, L4 is what one can only know by being there: execution is the means of being there, but being there is not the same as seeing clearly---how clearly $\Omega$ sees is exactly $\epsilon$.\footnote{The L3/L4 boundary is a task-relative time window, not an absolute clock. ``Is this true right now?'' admits hours for a question like whether one is hungry, but quarters for whether a PyAether API's documentation is current and sufficient; L3 is frozen at the training cutoff, while L4 is whatever falls inside the task's window and must be read from the environment.}
+% L4 直觉：只有到场才知道的事；执行是到场的手段，但到场不等于看清，看清程度恰为 ε。脚注：L3/L4 边界是任务相对时间窗而非绝对时钟——"此刻为真"对"饿不饿"允许小时级窗口，对"PyAether API 文档是否现行且充分"只允许季度级；L3 冻结在训练截止日，L4 是落在任务窗口内、必须从环境读取的部分。
+
+\subsection{A Bayesian Formalization of the Grounding Gap}
+\label{sec:bayesian}
+
+We cast grounding as decision-making under partial observability \cite{kaelbling1998planning, thrun2005probabilistic}; the formulation is diagnostic rather than algorithmic---it makes precise what is missing (the observation likelihood $\Omega$ and the recursive update $\Phi$) without prescribing tractable inference.
+% 把落地建模为部分可观测下决策；形式化是诊断性而非算法性——精确指出缺失什么（观测似然 Ω 与递归更新 Φ）。
+
+Let $\Theta$ denote the space of L4 states (the live EDA design database), $o_t$ a runtime observation, $a_t$ a generated code action, and $\mathcal{K}$ the offline knowledge (L1--L3) in the LLM's frozen parameters. The agent maintains a belief $b_t(\theta)\triangleq p(\theta_t\mid o_{1:t},\,a_{1:t-1},\,\mathcal{K})$ over the current L4 state, updated recursively by Bayes' rule:
+\begin{equation}
+b_t(\theta) \propto p(o_t \mid \theta_t)\, \int_{\Theta} p(\theta_t \mid \theta_{t-1}, a_{t-1})\, b_{t-1}(\theta_{t-1})\, d\theta_{t-1},
+\end{equation}
+where $p(o_t \mid \theta_t)$ is the \emph{observation likelihood} $\Omega$ and $p(\theta_t \mid \theta_{t-1}, a_{t-1})$ is the \emph{transition model} $\mathcal{T}$ supplied by the LLM's prior; actions are chosen by an approximate policy $\Pi$ that minimizes expected cost under $b_t$, with $\mathcal{C}$ encoding the task assertions. Eq.~(1) is the standard POMDP filter \cite{kaelbling1998planning}; the novelty is the \emph{implementation} of $\Omega$ as retrieval plus execution read-back.
+% 令 Θ 为 L4 状态空间，o_t 观测，a_t 代码动作，K 为 LLM 冻结参数中的离线知识。信念 b_t 经贝叶斯递归更新（Eq.1）。Ω=观测似然，T=LLM 先验给的转移模型，Π=最小化期望代价的近似策略，C=任务断言。Eq.1 是标准 POMDP 滤波；本文新意在于把 Ω 实现为"检索+执行回读"。
+
+The \emph{grounding gap} is the divergence between the posterior achievable with runtime observations and the posterior from the offline prior alone:
+\begin{equation}
+D_{\text{grounding}}(t) \triangleq D_{\mathrm{KL}}\!\left(p(\cdot \mid o_{1:t},\, \mathcal{K},\, \text{env}) \;\middle\|\; p_{\mathcal{K}}(\cdot)\right),
+\end{equation}
+where the right-hand side is the \emph{pure prior} unconditioned on any observation. We now bound this gap.
+% 落地鸿沟 = 有运行时观测的后验与仅靠离线先验的后验之间的散度（Eq.2）。右边是\emph{纯先验}，不条件于任何观测。下面给出该鸿沟的上界。
+
+\textbf{Scenario: the transition is deterministic.} In EDA, \texttt{run\_code} executes a script whose effect on the design database is deterministic: the same action in the same state yields the same result, so $\mathcal{T}$ is exact---a property of the domain, not a simplifying assumption. The only mismatch is in the observation likelihood $\Omega$: retrieval may return incomplete documentation, and execution read-back may truncate---precisely what $\epsilon$ captures. Model mismatch under estimated parameters is a recognized obstacle \cite{delage2010percentile}; our setting is milder, with only $\Omega$, not $\mathcal{T}$, possibly mismatched.
+% 场景论证：EDA 中 run_code 执行脚本对设计库的改动是确定性的——同动作在同状态产生同结果，无动作随机性——故 T 精确。这是领域真实属性而非简化假设。唯一失配在观测似然 Ω：检索可能返回不完整文档、执行回读可能截断。这正是 ε 要刻画的。模型失配是参数估计下序贯决策的公认障碍 \cite{delage2010percentile}；我们的设定是更温和的情形：只有 Ω 可能失配，T 不会。
+
+\textbf{Claim (observation-fidelity bound).} Let $\epsilon \triangleq \sup_{\theta}\, \| p(\cdot\mid\theta) - \hat{p}(\cdot\mid\theta) \|_{\mathrm{TV}}$, the total-variation distance between the true and the agent-used observation likelihoods. We posit that $D_{\text{grounding}} \le g(\epsilon)$, with $g(\epsilon)\to 0$ as $\epsilon\to 0$. The bound is claimed on task distributions where L4 failures dominate: there, the grounding gap is bounded by observation fidelity; on L1--L3 failures, the prior $\mathcal{K}$ remains the relevant lever. We state this as a testable \emph{prediction}; the next paragraph tests it from both sides.
+% 命题（观测保真度上界）：ε ≜ sup_θ ‖p(·|θ) − p̂(·|θ)‖_TV（真实与 agent 所用观测似然的全变差）。我们提出 D_grounding ≤ g(ε)，g(ε)→0 (ε→0)。该上界声明于 L4 失败主导的任务分布上：在那里，落地鸿沟受观测保真度约束；在 L1–L3 失败上，先验 K 仍是相关杠杆。作为"实验可检验的预测"而非此处推导的定理提出，下一段从两侧检验。
+
+\textbf{Experimental correspondence (developed in Section~\ref{sec:experiments}).} Here $\epsilon$ is exactly the fidelity of this paper's $\Omega$ implementation---retrieval quality plus execution read-back. The read-back ladder (N$'$ $\to$ B $\to$ F, Table~\ref{tab:omega}) varies $\epsilon$ with retrieval and the effector fixed; the backbone axis (Table~\ref{tab:llm-comparison}) varies $\mathcal{K}$ with $\epsilon$ fixed. The two axes answer different questions---observation's return at a fixed model versus the prior's return under full observation---so we report both rather than as competing explanations. The read-back ladder isolates $\epsilon$ and is monotone on every slice; the system axis spans 56.8~pp while the backbone axis spans 23.3~pp; observation is the under-invested axis whose returns are measurable and graded. The bound is a limit statement; in deployment, however, $\epsilon \ge \epsilon_0 > 0$: by Section~\ref{sec:four-levels}, $\Omega$ covers one channel of L4, not its entirety, so the grounding gap keeps a positive lower bound in practice, and the 56.8-pp system span is correspondingly a lower bound on what the full grounded system buys---measured through the $\Omega$ this paper implements.
+% 实验对应：ε 恰是本文 Ω 实现的保真度（检索质量+执行回读）。回读阶梯 N′→B→F（表~\ref{tab:omega}）固定检索+执行器只改 ε；backbone 轴（表~\ref{tab:llm-comparison}）固定 ε 只改 K。两轴回答不同问题——固定模型下观测能买多少 vs 全观测下更强先验能买多少——故两者都报告，而非当作竞争性解释。回读阶梯以单变量隔离 ε 轴，在每个切片上单调；系统轴（整 harness）跨 56.8pp、backbone 轴跨 23.3pp，观测是被低估的、回报可测的轴。（该界为极限表述；然而部署中）ε ≥ ε₀ > 0：依 §4.1，Ω 只覆盖 L4 的一个通道而非全部，故落地鸿沟在实践中保有正下界；56.8pp 系统跨度即"完整接地系统能买多少"的下界——以本文实现的 Ω 度量。
+
+\subsection{Design Principles}
+\label{sec:prediction}
+
+Every execution-grounded harness already has a generate--execute--refine loop; a loop is necessary but not sufficient. What the loop alone leaves missing, and what this paper supplies, is a theory of what it cannot see: the L4 space no offline prior reaches, and the observation fidelity $\epsilon$ bounding how much of it a given $\Omega$ recovers. The formalization yields three architectural principles.
+\textbf{Decouple knowledge from belief:} adapt in the dynamic posterior $b_t$ the Harness maintains, not by updating the frozen prior $\mathcal{K}$.
+\textbf{Optimize observation, and recognize the prior's bounded reach on L4:} on L4 failures the gap is bounded by $\Omega$'s fidelity ($g(\epsilon)$ on the distributions where L4 dominates), so observation investment pays directly there---full observation beats binary feedback on both accuracy and operating cost (Section~\ref{sec:exp-results})---while a richer prior raises the L1--L3 ceiling but does not by itself close the L4 gap.
+\textbf{Design for continuous belief updating:} $\Phi$ runs online ($b_t\mapsto b_{t+1}$); in the ICL-type agent (Section~\ref{sec:system}) what is bounded is not a round count but how much evidence belief can accumulate---a graded execution budget or a lagging read-back.
+% 每个执行接地 harness 都有"生成–执行–修正"环；环是必要非充分条件。仅有环仍缺失、而本文补上的，是关于"环看不到什么"的理论：离线先验无法触及的 L4 空间，以及给定 Ω 能恢复其中多少的观测保真度 ε。
+% 三条架构原则。（一）解耦知识与信念：K=静态先验，b_t=动态后验，适应吸收在 b_t 而非部署期更新 K。（二）优化观测，并识别先验对 L4 的触及有界：在 L4 失败上鸿沟受 Ω 保真度约束（在 L4 主导的分布上 g(ε)），观测投入在此直接有效——全观测在准确率与运行成本上均胜过二值反馈（§6.2）——而更丰富先验抬高 L1–L3 上限，但本身并不闭合 L4 鸿沟。（三）为持续信念更新而设计：Φ 在线运行；§3 的 ICL 型智能体无轮数，需约束的是信念能积累多少证据——执行的分级预算，或滞后于其报告动作的回读。

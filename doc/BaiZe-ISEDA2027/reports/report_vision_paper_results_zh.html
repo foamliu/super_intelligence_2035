@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 视觉线论文结果更新报告 2026-10-31</title>
+<style>
+body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;max-width:960px;margin:0 auto;padding:20px;line-height:1.7;color:#222;background:#fafafa}
+h1{color:#1a3a5c;border-bottom:3px solid #2196F3;padding-bottom:10px;font-size:1.5em}
+h2{color:#1565C0;border-left:5px solid #2196F3;padding-left:12px;margin-top:32px;font-size:1.25em}
+h3{color:#37474F;margin-top:24px;font-size:1.1em}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.9em}
+th,td{border:1px solid #ccc;padding:6px 10px;text-align:center}
+th{background:#e3f2fd;font-weight:bold}
+tr:nth-child(even){background:#f5f5f5}
+.note{background:#fff3e0;border-left:4px solid #FF9800;padding:10px 14px;margin:12px 0;font-size:0.92em}
+.red{background:#ffebee;border-left:4px solid #f44336;padding:10px 14px;margin:12px 0;font-size:0.92em}
+.green{background:#e8f5e9;border-left:4px solid #4CAF50;padding:10px 14px;margin:12px 0;font-size:0.92em}
+code{background:#eceff1;padding:2px 6px;border-radius:3px;font-size:0.88em}
+.small{font-size:0.85em;color:#666}
+.hero{background:linear-gradient(135deg,#1a3a5c,#1565C0);color:#fff;padding:20px 24px;border-radius:8px;margin-bottom:24px}
+.hero h1{color:#fff;border:none;padding:0}
+.hero .meta{opacity:0.85;font-size:0.88em;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>BaiZe 视觉线 论文结果更新报告</h1>
+<div class="meta">
+运维令 2026-10-31 16:0x 把 ViT-L 68.236% + MLLM 11 集 26.10% 写进论文<br>
+改动文件 6_vision_encoder.tex / 7_mllm.tex / 0_abstract.tex / 1_intro.tex<br>
+编译结果 6 页 ERR=0 UNDEF=0 Overfull=0
+</div>
+</div>
+<h2>1 任务概述</h2>
+<p>本报告记录视觉线按运维令将两组实测结果编码器 ProtB 线性探测 ViT-L/14 68.236% 与 MLLM 下游 12 集 lmms-eval 11 集平均 26.10% 写入 ISEDA 2027 论文的第 6 章第 7 章摘要与 intro 的全过程。</p>
+<div class="note">
+<strong>改动范围</strong>仅以下 4 个 tex 文件红线不动 4_llm_pretrain.tex / 3_architecture.tex
+<ul>
+<li><code>6_vision_encoder.tex</code> 新增 Encoder upgrade 段 ViT-L/14 结果 + 三变量混杂声明</li>
+<li><code>7_mllm.tex</code> 重写任务课程段为精简版 + 新增 Downstream results 段 + 12 集结果表含 MME 单列</li>
+<li><code>0_abstract.tex</code> 在 encoder 句末追加一句 ViT-L 68.2% + MLLM 26.1% 下游持平</li>
+<li><code>1_intro.tex</code> 在 multimodal grounding bullet 末追加一句实测结果</li>
+</ul>
+</div>
+<h2>2 编码器实测 A 组</h2>
+<p><strong>数据来源</strong><code>run/vision/armE_r2_20261022_protb_vitl14_224_results.json</code></p>
+<table>
+<tr><th>指标</th><th>ArmE-R2 ViT-L/14 304M</th><th>ArmD-R2 ViT-B/16 86M</th><th>Delta</th></tr>
+<tr><td>lp top-1 3 seeds</td><td><strong>68.236 +/− 0.018</strong></td><td>64.337</td><td><strong>+3.90</strong></td></tr>
+<tr><td>5-NN</td><td><strong>58.904</strong></td><td>55.956</td><td>+2.95</td></tr>
+</table>
+<p class="small">另 ckpt60000 = 68.3067 +/− 0.0155 / 5-NN 59.002 ArmC lp=62.332 ArmB lp=62.093 不在正文仅记录</p>
+<div class="red">
+<strong>红线 2 不得把 68.236% 和 19.76% 混为一谈</strong><br>
+19.76% = OpenVision2 w512 126.8M AIMv2-style 单 epoch 子集 68.236% = ViT-L/14 304M + open_clip 不同塔不同规模不同训练配方 论文 ch6 已明确区分 w512 在 Final result 段 ViT-L 在新 Encoder upgrade 段
+</div>
+<div class="red">
+<strong>红线 3 三变量+容量混杂禁止单变量归因</strong><br>
+ArmE-R2 vs ArmD-R2 的 Delta-lp=+3.90pp 是塔容量 B 到 L 86 到 304M + peak LR 1e-3 到 5e-4 + warmup 2000 到 3000 三项共同作用 论文原文 the +3.9 pp gap is a joint effect of tower size LR and warm-up not a capacity-only attribution
+</div>
+<h2>3 MLLM 下游实测 B 组</h2>
+<p><strong>数据来源</strong><code>datasets/baize-vision/out/mllm_eval_results_armE_r2_20261022/consolidated_12benchmarks.json</code> ArmE-R2 与 <code>.../mllm_eval_results_armD_r2_20261020/consolidated_12benchmarks.json</code> ArmD-R2 交叉核对 <code>EXPERIMENTS_VISION.md 15.5</code></p>
+<table>
+<tr><th>基准</th><th>ArmE-R2 ViT-L</th><th>ArmD-R2 ViT-B</th><th>基准</th><th>ArmE-R2 ViT-L</th><th>ArmD-R2 ViT-B</th></tr>
+<tr><td>AI2D</td><td>60.65</td><td>60.49</td><td>CountBench</td><td>10.59</td><td>9.98</td></tr>
+<tr><td>RealWorldQA</td><td>45.36</td><td>46.41</td><td>DocVQA</td><td>7.35</td><td>7.44</td></tr>
+<tr><td>MMMU_val</td><td>44.00</td><td>42.67</td><td>OCRBench</td><td>1.60</td><td>1.60</td></tr>
+<tr><td>BLINK</td><td>38.88</td><td>39.59</td><td>InfoVQA</td><td>16.18</td><td>16.59</td></tr>
+<tr><td>MMStar</td><td>27.17</td><td>27.07</td><td>ChartQA</td><td>12.16</td><td>12.92</td></tr>
+<tr><td>MMMU_Pro</td><td>23.12</td><td>22.60</td><td><strong>11 集平均</strong></td><td><strong>26.10</strong></td><td><strong>26.12</strong></td></tr>
+<tr><td colspan="6" style="background:#fff8e1"><strong>MME 仅呈现不计入均值</strong> ViT-L perception 513.75 cognition 204.29 total 718.04 | ViT-B perception 559.67 cognition 246.79 total 806.45</td></tr>
+</table>
+<div class="red">
+<strong>红线 1 MME 不进平均</strong><br>
+均值只对 11 集取算术平均 26.10% MME 单列呈现原始分 perception cognition total 论文表格中 MME 行标注 MME dagger is excluded from the 11-set mean 不得写 12 集平均
+</div>
+<div class="note">
+<strong>MME 数值说明</strong>运维令中给出的 MME 值 596.75/250.71/847.46 与实际 consolidated JSON 中的 ArmE-R2 值 513.75/204.29/718.04 不一致 本报告及论文均使用可溯源的 consolidated_12benchmarks.json 实际值 该值可在 datasets/baize-vision/out/mllm_eval_results_armE_r2_20261022/consolidated_12benchmarks.json 中直接验证 ArmD-R2 MME 值 559.67/246.79/806.45 同样来自对应 JSON
+</div>
+<h2>4 论文中如何写 逐段对照</h2>
+<h3>4.1 第 6 章 6_vision_encoder.tex</h3>
+<p><strong>新增段落</strong>paragraph Encoder upgrade 第 20-22 行</p>
+<div class="green">
+<strong>写入内容</strong>ViT-L/14 304M 在 open_clip + 相同目标函数 + 更低峰值 LR 5e-4 + 更长预热 3000 步下训练 ImageNet-1k 线性探测 Protocol B 3 seeds 达 68.236 0.018% top-1 5-NN 58.904% 对比 ViT-B/16 86M 的 64.337% / 55.956% +3.9pp 差距为塔规模学习率与预热的联合效应
+</div>
+<p>原有 paragraph Selected encoder 和 paragraph Final result w512 19.76% 20.27% 保持不变与 ViT-L 段并列明确区分两档</p>
+<h3>4.2 第 7 章 7_mllm.tex</h3>
+<p><strong>改动</strong></p>
+<ul>
+<li>开头两段合并为一段精简版省篇幅</li>
+<li>paragraph Task construction + paragraph Curriculum and ablations 合并为 paragraph Tasks and curriculum 精简约 40%</li>
+<li>删除 textbf TBD 替换为 paragraph Downstream results + Table 1 12 集结果表 MME 单列在 midrule 下方</li>
+<li>新增论点句 despite the +3.9 pp encoder advantage downstream metrics are flat suggesting the bottleneck lies not in tower capacity but in the 224-px single-tile setting the MLLM architecture or weak proxy-to-downstream transfer</li>
+</ul>
+<h3>4.3 摘要 0_abstract.tex</h3>
+<p>在 encoder 句末追加一句不新增句号不膨胀段落数</p>
+<div class="green">
+a larger ViT-L/14 tower reaches 68.2% on an internal protocol yet the MLLM stage averages 26.1% over 11 multimodal benchmarks showing that encoder gains do not transfer downstream at the 224-px single-tile setting
+</div>
+<p class="small">摘要里同时提及 68.2% 与下游持平 26.1% 不误导 红线 6</p>
+<h3>4.4 Intro 1_intro.tex</h3>
+<p>在 multimodal grounding bullet 末追加一句</p>
+<div class="green">
+Measured results the encoder reaches 68.2% linear-probe on an internal protocol yet the MLLM stage averages 26.1% over 11 benchmarks indicating that encoder-quality gains do not transfer downstream at the 224-px single-tile setting
+</div>
+<p class="small">只加一句不膨胀 红线 6</p>
+<h2>5 三变量混杂说明 红线 3 详解</h2>
+<p>ArmE-R2 与 ArmD-R2 的配置差异</p>
+<table>
+<tr><th>变量</th><th>ArmE-R2</th><th>ArmD-R2</th><th>变化方向</th></tr>
+<tr><td>视觉塔</td><td>ViT-L/14 304M</td><td>ViT-B/16 86M</td><td>容量 3.5x</td></tr>
+<tr><td>峰值学习率</td><td>5e-4</td><td>1e-3</td><td>LR 2x</td></tr>
+<tr><td>预热步数</td><td>3000</td><td>2000</td><td>warmup 1.5x</td></tr>
+</table>
+<p>三个变量同时变化 +3.9pp 是联合效应 论文中措辞为 a joint effect of tower size LR and warm-up not a capacity-only attribution 未写成 ViT-L 比 ViT-B 好 3.9pp</p>
+<h2>6 诚实性条款 已进正文</h2>
+<p>第 7 章表格 caption 及正文中已包含</p>
+<ul>
+<li>internal lmms-eval single seed 224-px single-tile 表格 caption</li>
+<li>MME dagger is excluded from the 11-set mean 表格 caption</li>
+<li>正文未单独展开诚实性段落篇幅约束但 caption 已覆盖核心披露项</li>
+</ul>
+<p class="small">运维令要求可压成一句已在表格 caption 中以元数据形式呈现</p>
+<h2>7 篇幅账与页数实测</h2>
+<table>
+<tr><th>项目</th><th>预算</th><th>实际</th><th>状态</th></tr>
+<tr><td>全文正文</td><td>6 页</td><td>6 页</td><td>达标</td></tr>
+<tr><td>第 6 章</td><td>0.6 页</td><td>约 0.5 页 22 行含中文注释</td><td>达标</td></tr>
+<tr><td>第 7 章</td><td>0.8 页</td><td>约 0.7 页含表格</td><td>达标</td></tr>
+<tr><td>摘要新增</td><td>1 句</td><td>1 句追加在已有句末</td><td>达标</td></tr>
+<tr><td>Intro 新增</td><td>1 句</td><td>1 句</td><td>达标</td></tr>
+</table>
+<div class="green">
+<strong>编译验证</strong>pdflatex bibtex pdflatex x 2<br>
+Output written on main.pdf 6 pages 267015 bytes<br>
+ERR=0 UNDEF=0 Overfull=0
+</div>
+<div class="note">
+<strong>篇幅压缩过程</strong>首次编译为 7 页超限通过以下压缩回到 6 页<br>
+1 ch6 ViT-L 段从 3 行合并为 1 行保留所有数字与三变量声明<br>
+2 ch7 开头两段合并为一段省约 4 行<br>
+3 ch7 下游结果段合并 MME 描述与论点句省约 3 行<br>
+4 MME 从独立行移入表格 midrule 下方单行省空间<br>
+5 表格字号从 footnotesize 改为 scriptsize<br>
+未删任何实测数字
+</div>
+<h2>8 数字溯源清单</h2>
+<table>
+<tr><th>论文中的数字</th><th>来源文件</th><th>可验证</th></tr>
+<tr><td>68.236 0.018% lp top-1</td><td>armE_r2_20261022_protb_vitl14_224_results.json</td><td>是</td></tr>
+<tr><td>58.904% 5-NN</td><td>同上</td><td>是</td></tr>
+<tr><td>64.337% / 55.956% ArmD-R2</td><td>EXPERIMENTS_VISION.md 14.5</td><td>是</td></tr>
+<tr><td>304M / 86M 参数量</td><td>ViT-L/14 / ViT-B/16 标准规格</td><td>是</td></tr>
+<tr><td>26.10% 11 集平均 ViT-L</td><td>consolidated_12benchmarks.json armE_r2</td><td>是</td></tr>
+<tr><td>26.12% 11 集平均 ViT-B</td><td>consolidated_12benchmarks.json armD_r2</td><td>是</td></tr>
+<tr><td>513.75/204.29/718.04 MME ViT-L</td><td>consolidated_12benchmarks.json armE_r2</td><td>是</td></tr>
+<tr><td>559.67/246.79/806.45 MME ViT-B</td><td>consolidated_12benchmarks.json armD_r2</td><td>是</td></tr>
+<tr><td>各基准单项分</td><td>同上两个 JSON + EXPERIMENTS_VISION.md 15.5</td><td>是</td></tr>
+<tr><td>5e-4 / 3000 步 LR warmup</td><td>EXPERIMENTS_VISION.md 15.1 15.3</td><td>是</td></tr>
+</table>
+<h2>9 红线遵守确认</h2>
+<div class="green">
+<ul>
+<li>只改 4 个 tex 文件 6_vision_encoder 7_mllm 0_abstract 1_intro</li>
+<li>未动 4_llm_pretrain.tex / 3_architecture.tex</li>
+<li>每个数字可在 JSON 或 EXPERIMENTS_VISION.md 中找到</li>
+<li>MME 未当百分比混入均值表格标注 excluded from mean</li>
+<li>未恢复六架构对比 SSM 崩溃 AR 范式 Muon 等已删内容</li>
+<li>未 commit main.pdf</li>
+<li>中文双语注释行全部保留并同步更新</li>
+<li>19.76% 与 68.236% 明确区分不同段落不同塔不同规模</li>
+<li>三变量混杂声明已写入正文</li>
+<li>摘要同时提及 68.2% 与 26.1% 不误导</li>
+</ul>
+</div>
+<h2>10 已删中间过程清单</h2>
+<p>运维令要求已删清单证明没把用户删掉的内容塞回论文 以下内容未出现在本轮改动的任何文件中</p>
+<ul>
+<li>六架构对比 R2-R8 架构搜索</li>
+<li>SSM 崩塌分析</li>
+<li>AR 范式探索 causal attention 坍缩</li>
+<li>Muon 消融</li>
+<li>ProtB-epoch 缩放曲线</li>
+<li>AIMv2 消融细节</li>
+<li>ArmA ArmB ArmC ArmD 中间臂的详细配置</li>
+<li>OCR 合成数据 Stage-2 数据版本对比</li>
+</ul>
+<p class="small">这些内容仅在 EXPERIMENTS_VISION.md 和归档文件中保留为实验记录不进论文正文</p>
+<h2>11 交付清单</h2>
+<table>
+<tr><th>交付物</th><th>路径</th><th>状态</th></tr>
+<tr><td>4 个 tex 改稿</td><td>ISEDA2027/6_vision_encoder 7_mllm 0_abstract 1_intro .tex</td><td>完成</td></tr>
+<tr><td>编译验证</td><td>main.pdf 6 pages ERR=0 UNDEF=0</td><td>完成不 commit</td></tr>
+<tr><td>HTML 报告</td><td>reports/report_vision_paper_results_zh.html</td><td>完成本文件</td></tr>
+<tr><td>MEMORY 登记</td><td>run/MEMORY_VISION.md 顶部</td><td>完成</td></tr>
+<tr><td>git commit + push</td><td>vision paper 前缀</td><td>完成</td></tr>
+</table>
+<hr>
+<p class="small">报告生成 2026-10-31 vision 线 单文件自包含 0 script 0 外链 标签配平</p>
+</body>
+</html>
+<h2>附录 A 论文改动前后的核心论点变化</h2>
+<p>本轮改动的核心不仅是填入数字而是将论文的视觉部分从纯设计叙述升级为有实测支撑的发现</p>
+<h3>A.1 改动前的论文状态</h3>
+<ul>
+<li>第 6 章只报 OpenVision2 w512 的 19.76% / 20.27% 没有 ViT-L 这一档</li>
+<li>第 7 章以 textbf TBD 表示结果未填 任务和课程段占大量篇幅但无实测数据</li>
+<li>摘要和 intro 的视觉部分只有设计描述无实测结果</li>
+<li>论文的核心论点缺失编码器指标上升但下游不上升这一发现</li>
+</ul>
+<h3>A.2 改动后的论文状态</h3>
+<ul>
+<li>第 6 章报两档编码器 w512 19.76% 和 ViT-L 68.236% 含三变量混杂声明</li>
+<li>第 7 章报 11 集平均 26.10% vs 26.12% 含 MME 单列 含论点句</li>
+<li>摘要加一句同时提 68.2% 和 26.1% 表明下游持平</li>
+<li>intro 加一句把设计叙述升级为实测</li>
+<li>两章共同支撑判断编码器 ProtB 领先 3.9-5.9pp 但 MLLM 下游持平 瓶颈不在视觉塔容量而在 224px 单块 MLLM 架构或代理任务与下游的传递性</li>
+</ul>
+<h3>A.3 论点的实验依据</h3>
+<p>这一判断来自实验记录 EXPERIMENTS_VISION.md 15.6 第 3 条的结论 即 ProtB 到 MLLM 的传递性多次证伪 ArmB ArmC ArmD-R2 ArmE-R2 四个臂均显示编码器 ProtB 有 2-6pp 优势但 MLLM 12 集平均在 25.78% 到 26.12% 之间几乎持平 论文引用的是 ArmE-R2 vs ArmD-R2 这一最新最干净的对比</p>
+<h2>附录 B 编译日志关键行</h2>
+<pre style="background:#eceff1;padding:12px;font-size:0.85em;overflow-x:auto">
+$ pdflatex -interaction=nonstopmode main.tex (x3 after bibtex)
+Output written on main.pdf (6 pages, 267015 bytes)
+
+$ grep -c Overfull main.log  -> 0
+$ grep -c Undefined main.log  -> 0
+$ grep -c Error main.log      -> 0
+$ grep -c '^!' main.log       -> 0
+</pre>
+<h2>附录 C 各基准单项分完整溯源</h2>
+<p>以下为 12 个基准的完整单项分及其在 JSON 中的精确值 以供核验</p>
+<table>
+<tr><th>基准</th><th>ArmE-R2 JSON 原始值</th><th>论文取值</th><th>ArmD-R2 JSON 原始值</th><th>论文取值</th></tr>
+<tr><td>ai2d</td><td>0.6065414507772021</td><td>60.65</td><td>0.6049222797927462</td><td>60.49</td></tr>
+<tr><td>realworldqa</td><td>0.45359477124183006</td><td>45.36</td><td>0.46405228758169936</td><td>46.41</td></tr>
+<tr><td>mmmu_val</td><td>0.44</td><td>44.00</td><td>0.42667</td><td>42.67</td></tr>
+<tr><td>blink</td><td>0.3887783037393024</td><td>38.88</td><td>0.3959193594049482</td><td>39.59</td></tr>
+<tr><td>mmstar</td><td>0.2716912720123533</td><td>27.17</td><td>0.2706762508080907</td><td>27.07</td></tr>
+<tr><td>mmmu_pro_standard</td><td>0.23121</td><td>23.12</td><td>0.22601</td><td>22.60</td></tr>
+<tr><td>countbench</td><td>0.10590631364562118</td><td>10.59</td><td>0.09979633401221996</td><td>9.98</td></tr>
+<tr><td>docvqa_val</td><td>0.07346718470464406</td><td>7.35</td><td>0.0744305931656727</td><td>7.44</td></tr>
+<tr><td>ocrbench</td><td>0.016</td><td>1.60</td><td>0.016</td><td>1.60</td></tr>
+<tr><td>infovqa_val</td><td>0.16182162126984476</td><td>16.18</td><td>0.16587798729890857</td><td>16.59</td></tr>
+<tr><td>chartqa</td><td>0.1216</td><td>12.16</td><td>0.1292</td><td>12.92</td></tr>
+<tr><td>mme perception</td><td>513.75</td><td>513.75</td><td>559.6667</td><td>559.67</td></tr>
+<tr><td>mme cognition</td><td>204.2857</td><td>204.29</td><td>246.7857</td><td>246.79</td></tr>
+<tr><td>mme total</td><td>718.0357</td><td>718.04</td><td>806.4524</td><td>806.45</td></tr>
+</table>
+<p class="small">11 集平均计算 取 ai2d realworldqa mmmu_val blink mmstar mmmu_pro_standard countbench docvqa_val ocrbench infovqa_val chartqa 的算术平均 ArmE-R2 = (60.65+45.36+44.00+38.88+27.17+23.12+10.59+7.35+1.60+16.18+12.16)/11 = 26.10 ArmD-R2 = (60.49+46.41+42.67+39.59+27.07+22.60+9.98+7.44+1.60+16.59+12.92)/11 = 26.12</p>

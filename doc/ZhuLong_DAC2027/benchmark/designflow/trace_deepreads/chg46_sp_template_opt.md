@@ -1,0 +1,22 @@
+# 深读笔记 · chg46 · SPICE 控制模板优化
+
+- **session**: 1791945700744_chg46
+- **user/host**: reedchen @ hfeg0pkn002
+- **spice/total**: 71/134 = 0.53（directive ②3 strict 命中）
+- **来源**: 11-05 summary.tsv（前轮 04:3x 误判「archived 不可达」，本轮 05:1x 复测 5 主机全可达 → 复活）
+- ** msgs**: 35（4 user_input turns + 31 assistant/tool）
+- **A-档选轮**: U#3（msg#12）逐字「请你帮我分析一下这个...control_template.sp这个模板，看看有没有优化空间，如果有请你给一个优化的版本在你的工作目录下」—— 提出需求 / 表达目标，未指出根因或修复方案 ✓
+  - U#0「你可以切换工作目录吗」/ U#1 权限问 / U#2 写权限问 → 铺垫轮，不入 prompt
+- **金标准** = assistant msg#17 editor 写 `/home/reedchen/control_template_optimized.sp` + `verify_template.py`（14 项校验全 PASS）：
+  - **OPT-1**: 加 `.option probe`（原模板有 `.probe v(*)` 但无 `.option probe` → 全节点 dump FSDB；加后仅 probed 节点写入，.meas 直读解不读波形 → 测量结果不变）
+  - **OPT-1**: 收窄 `.probe v(*)` → `.probe v(Dbus) v(qo) v(DbusLatR) v(vDbusLatRA) v(Rst)`（.meas 引用信号 v(Dbus)/v(qo) + 调试用激励）
+  - **OPT-2**: 补 `.end`（目录所有模板都缺，finesim 容忍 EOF 但 .end 更安全）
+  - 电气内容逐行不变：V 源 / .param / .lib / .inc / .meas / .tran / .temp（GenSP.py 锚 ptemp/pvcc/pvdbias + .lib 段保留）
+  - verify_template.py 14 项：anchor .param ptemp/pvcc/pvdbias ✓ / .lib unchanged ✓ / V 源 unchanged ✓ / .param/.inc/.meas/.tran/.temp unchanged ✓ / .option probe added ✓ / .probe v(*) commented ✓ / targeted .probe active ✓ / .end last ✓
+- **case 设计**: `EDA-Eval-DesignFlow-SpTemplateOpt-001`（spice_sim A-faithful L1, k=16）
+  - A = 忠实复刻原 control_template.sp（Dbus 接收器灵敏度，.meas v(Dbus)/v(qo)，.probe v(*)，无 .end，无 .option probe）
+  - hidden B = 时钟接收器模板（不同信号 v(clk_in)/v(q_clk)，不同 .param/.lib/.tran 200p 10u，同结构）
+  - reference = 通用化 optimize_sp_ref.py（读任意模板 → 加 .option probe + 收窄 .probe 到 .meas 信号 + 补 .end，电气内容逐行保留）
+  - check.py 16 断言(a-p)：zip含1.py / py_compile / B exit0+非空 / .param ptemp 保留 / .param pvcc 保留 / .lib 不变 / V源不变 / .param不变 / .meas不变 / .tran不变 / .option probe active / .probe v(*) 不再 active / targeted .probe 含 B .meas 信号 / .end 末 / A 泛化(.option probe+.end+A .meas 信号+A标记不泄漏B) / 3x 幂等
+  - negatives: naive_copy(无优化) / naive_add_end_only(只补.end) / naive_probe_no_preserve(丢V源) / hardcoded_a(硬编码A) 全 FAIL
+  - §4.9 三假: empty/print-expected/del-core 全 FAIL

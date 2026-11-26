@@ -1,0 +1,52 @@
+=== pi-SUT Aether-008 (re-run) start 2026-10-30 09:08:47 ===
+=== pi-SUT Aether-008 start 2026-10-30 09:08:47 ===
+=== pi exit=0 end 2026-10-30 09:14:40 ===
+=== tail pi_run.log ===
+Implemented and verified `layout_via_enclosure_audit` in Tcl on the Empyrean WaveView sandbox.
+
+**Implementation highlights** (`solution.tcl`):
+- Parses `VIA` / `SUMMARY` lines; ignores comments and blank lines.
+- Dedups by `(name, cut)` with **last-wins**; distinct names counted separately.
+- Effective status: explicit status uppercased (case-insensitive) or inferred `FAIL` iff `enc_bot < req || enc_top < req` (strict; `== req` → PASS).
+- Defaults: missing `req`/`enc_bot`/`enc_top` → `0.0`.
+- `min_enclosure`/`worst_via` computed only over non-SKIP lines using `min(enc_bot, enc_top)`; `-1.0`/`""` when no non-SKIP lines; dict-order tie-break via `lsort -dictionary`.
+- `mismatched_summary` via integer/numeric/string equality (numeric `expr ==` so `0.080 == 0.08`), absent fields not reported, lex-sorted.
+- Verdict priority: `fail_count>0 → FAIL` > (`mismatches` or no SUMMARY → INCOMPLETE) > PASS.
+
+**Sandbox verification:** all 13 cases (A–M) passed.
+
+```
+print_log:
+RESULT:ALL_ASSERTS_PASS
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+
+error_log: empty. Session closed with `keep=false` (cleaned).
+
+DESIGN_FLOW_VERDICT=PASS
+=== run.sh exit=0 end 2026-10-30 09:14:40 ===
+=== pi.log tail ===
+Implemented and verified `layout_via_enclosure_audit` in Tcl on the Empyrean WaveView sandbox.
+
+**Implementation highlights** (`solution.tcl`):
+- Parses `VIA` / `SUMMARY` lines; ignores comments and blank lines.
+- Dedups by `(name, cut)` with **last-wins**; distinct names counted separately.
+- Effective status: explicit status uppercased (case-insensitive) or inferred `FAIL` iff `enc_bot < req || enc_top < req` (strict; `== req` → PASS).
+- Defaults: missing `req`/`enc_bot`/`enc_top` → `0.0`.
+- `min_enclosure`/`worst_via` computed only over non-SKIP lines using `min(enc_bot, enc_top)`; `-1.0`/`""` when no non-SKIP lines; dict-order tie-break via `lsort -dictionary`.
+- `mismatched_summary` via integer/numeric/string equality (numeric `expr ==` so `0.080 == 0.08`), absent fields not reported, lex-sorted.
+- Verdict priority: `fail_count>0 → FAIL` > (`mismatches` or no SUMMARY → INCOMPLETE) > PASS.
+
+**Sandbox verification:** all 13 cases (A–M) passed.
+
+```
+print_log:
+RESULT:ALL_ASSERTS_PASS
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+
+error_log: empty. Session closed with `keep=false` (cleaned).
+
+DESIGN_FLOW_VERDICT=PASS

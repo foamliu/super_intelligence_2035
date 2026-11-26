@@ -1,0 +1,19 @@
+# .bashrc - Innotron Design Department user environment
+# Source common module/env setup
+source /apps/cad/Modules/init/bash
+export MODULEPATH=/apps/cad/modulefiles/tools
+export PATH=/apps/bin:/apps/cad/bin:/apps/local/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/lib:/lib:/usr/lib:/apps/local/lib64
+
+# Tool modules
+module load empyrean/skipper
+module load empyrean/argus
+
+# Python: switch to 3.11.9 (sets PYTHONHOME / PYTHONPATH / LD_LIBRARY_PATH)
+module switch python/3.11.9
+
+# Calibre / DRC env
+export MGC_HOME=/apps/imctf/calibre
+export LM_LICENSE_FILE=59001@hfds2:1881@hfds1
+
+alias python="python3"

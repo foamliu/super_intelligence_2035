@@ -1,0 +1,175 @@
+{
+  "model": {
+    "name": "MiniCPM5-2B",
+    "type": "LlamaForCausalLM",
+    "num_layers": 42,
+    "hidden_size": 2048,
+    "num_heads": 16,
+    "num_kv_heads": 2,
+    "head_dim": 128,
+    "vocab_size": 130560,
+    "dtype_bytes": 2,
+    "max_pos_emb": 131072,
+    "param_count_b": 2.0,
+    "weight_size_gb": 4.7
+  },
+  "gpu": {
+    "name": "NVIDIA A40",
+    "memory_gb": 46.068,
+    "bandwidth_gbs": 696,
+    "bf16_tflops": 150,
+    "effective_tflops": 75,
+    "num_gpus": 4
+  },
+  "rl_config": {
+    "tp_size": 1,
+    "gpu_mem_util": 0.5,
+    "max_num_seqs": 24,
+    "max_num_batched_tokens": 16384,
+    "batch_size": 128,
+    "group_size_n": 8,
+    "prompt_length": 8192,
+    "response_length": 8192,
+    "context_length": 16384,
+    "hybrid_engine": true,
+    "ppo_epochs": 2,
+    "ppo_mini_batch_size": 32,
+    "ppo_micro_batch_per_gpu": 4,
+    "n_gpus": 4,
+    "total_steps": 2000,
+    "save_freq": 200,
+    "smoke_iters": 10
+  },
+  "eval_config": {
+    "n_tasks": 158,
+    "n_runs": 5,
+    "timeout_per_task_s": 2500,
+    "parallel": 8,
+    "sglang_port": 8866,
+    "sglang_ctx": 32768,
+    "sglang_mem_frac": 0.85,
+    "sglang_tp": 1
+  },
+  "kv_cmp": {
+    "gqa_kb": 42.0,
+    "mha_kb": 336.0,
+    "ratio": 8.0,
+    "gqa_gqa_ratio": 8.0
+  },
+  "mem": {
+    "total_gb": 46.068,
+    "sl_gb": 23.034,
+    "act_gb": 23.034,
+    "model_gb": 4.7,
+    "kv_avail_gb": 18.334,
+    "kv_seq_gb": 0.704643072,
+    "max_kv": 26,
+    "max_cfg": 24,
+    "eff": 24,
+    "sharded_gb": 1.175,
+    "opt_gb": 2.35,
+    "grad_gb": 1.175,
+    "activ_gb": 0.4349151461487181,
+    "act_tot_gb": 5.134915146148718,
+    "act_headroom_gb": 17.89908485385128,
+    "act_ok": true
+  },
+  "dec": {
+    "w_gb": 4.7,
+    "kv_seq_gb": 0.704643072,
+    "kv_tot_gb": 16.911433728,
+    "mem_step_gb": 21.611433727999998,
+    "t_step_ms": 31.050910528735628,
+    "tps_gpu": 772.9241942129051,
+    "tps_total": 3091.6967768516206,
+    "max_seqs": 24,
+    "bw": 696
+  },
+  "prefill": {
+    "batch_tok": 16384,
+    "time_s": 0.8738133333333333,
+    "tps": 18750.0,
+    "tflops": 75
+  },
+  "rl": {
+    "total_seqs": 1024,
+    "total_resp": 8388608,
+    "total_prompt": 8388608,
+    "gen_t": 2713.269963214958,
+    "pre_t": 111.84810666666667,
+    "act_t": 167.77216,
+    "ref_t": 223.69621333333333,
+    "oh": 482.4879664822437,
+    "tot_t": 3699.0744096972016,
+    "sph": 0.973216432349272,
+    "s72h": 70.07158312914758,
+    "s24h": 23.35719437638253,
+    "dec_tps": 3091.6967768516206,
+    "pre_tps": 75000.0,
+    "act_steps": 8
+  },
+  "eval": {
+    "nt": 790,
+    "par": 8,
+    "avg_tok": 10000,
+    "tps": 348.5601110020523,
+    "avg_gen": 28.689456091954025,
+    "tf": 0.2,
+    "avg_task": 552.9515648735633,
+    "tot_s": 54603.96703126437,
+    "tot_hr": 15.167768619795659,
+    "quick_s": 691.1894560919541,
+    "quick_min": 11.519824268199235
+  },
+  "scenarios": [
+    {
+      "name": "Baseline (v2 config)",
+      "chg": "As-is",
+      "sph": 0.973216432349272,
+      "s72h": 70.07158312914758,
+      "bn": "A40 bandwidth 696 GB/s"
+    },
+    {
+      "name": "S1: mem_util=0.65",
+      "chg": "max_seqs=24",
+      "sph": 0.973216432349272,
+      "s72h": 70.07158312914758,
+      "bn": "Marginal gain"
+    },
+    {
+      "name": "S2: batch=64",
+      "chg": "Half rollouts",
+      "sph": 1.946432864698544,
+      "s72h": 140.14316625829517,
+      "bn": "Same total compute"
+    },
+    {
+      "name": "S3: resp=4096",
+      "chg": "ctx=12288",
+      "sph": 2.0915788973739615,
+      "s72h": 150.59368061092522,
+      "bn": "Truncation risk"
+    },
+    {
+      "name": "S4: G=4",
+      "chg": "Smaller group",
+      "sph": 1.8499427215750435,
+      "s72h": 133.19587595340312,
+      "bn": "Higher variance"
+    },
+    {
+      "name": "S5: Combined",
+      "chg": "b64,G4,r6144",
+      "sph": 5.1379953038615405,
+      "s72h": 369.93566187803094,
+      "bn": "Best throughput"
+    }
+  ],
+  "crit": {
+    "smoke_h": 10.275206693603339,
+    "rl200_h": 205.50413387206677,
+    "eval_h": 15.167768619795659,
+    "total_h": 231.44710918546576,
+    "fits_72h": false
+  }
+}

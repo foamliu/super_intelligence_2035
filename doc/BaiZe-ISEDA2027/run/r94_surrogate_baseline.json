@@ -1,0 +1,300 @@
+{
+  "r94": "sglang_surrogate",
+  "timestamp": "2026-11-09 12:14:32",
+  "summary": {
+    "codegen": {
+      "total": 3,
+      "success": 3,
+      "syntax_valid": 3,
+      "syntax_rate": 1.0,
+      "avg_api_coverage": 0.0,
+      "avg_elapsed_s": 12.6
+    },
+    "audit": {
+      "total": 21,
+      "ok": 18,
+      "warn": 0,
+      "fail": 3,
+      "blocking": [
+        "MiniCPM5-2B model (/tmp)",
+        "pyAether library",
+        "pyAether MCP server (port 8090)"
+      ]
+    },
+    "gpu": {
+      "status": "ok",
+      "total_gpus": 8,
+      "free_gpus": 0,
+      "gpus": [
+        {
+          "id": 0,
+          "free_mib": 64,
+          "total_mib": 46068,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "id": 1,
+          "free_mib": 1085,
+          "total_mib": 46068,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "id": 2,
+          "free_mib": 1085,
+          "total_mib": 46068,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "id": 3,
+          "free_mib": 1085,
+          "total_mib": 46068,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "id": 4,
+          "free_mib": 474,
+          "total_mib": 46068,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "id": 5,
+          "free_mib": 989,
+          "total_mib": 46068,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "id": 6,
+          "free_mib": 985,
+          "total_mib": 46068,
+          "util_pct": 0,
+          "is_free": false
+        },
+        {
+          "id": 7,
+          "free_mib": 987,
+          "total_mib": 46068,
+          "util_pct": 0,
+          "is_free": false
+        }
+      ],
+      "sglang_occupying": 8
+    },
+    "sglang": [
+      {
+        "port": 8098,
+        "status": "alive",
+        "model": "qwen3.8-27b",
+        "max_model_len": 262144,
+        "url": "http://127.0.0.1:8098/v1"
+      },
+      {
+        "port": 8099,
+        "status": "alive",
+        "model": "qwen3.8-27b",
+        "max_model_len": 262144,
+        "url": "http://127.0.0.1:8099/v1"
+      }
+    ],
+    "gpu_day_ready": false,
+    "gpu_blocked_by": "GPU not free"
+  },
+  "codegen": [
+    {
+      "task_id": "EDA-Eval-PyAether-001",
+      "scenario": "Schematic",
+      "category": "Utilities",
+      "success": true,
+      "elapsed_s": 21.3,
+      "finish_reason": "length",
+      "prompt_tokens": 261,
+      "completion_tokens": 2048,
+      "reasoning_tokens": 2049,
+      "generated_code": "",
+      "raw_content_length": 0,
+      "analysis": {
+        "syntax_ok": true,
+        "syntax_error": null,
+        "generated_apis": [],
+        "prompt_apis": [
+          "emyNameSpace"
+        ],
+        "apis_matched": [],
+        "apis_missing": [
+          "emyNameSpace"
+        ],
+        "apis_extra": [],
+        "api_coverage": 0.0,
+        "has_entry_point": false,
+        "has_return": false,
+        "generated_loc": 0,
+        "canonical_loc": 3,
+        "loc_ratio": 0.0
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-002",
+      "scenario": "Others",
+      "category": "Utilities",
+      "success": true,
+      "elapsed_s": 10.9,
+      "finish_reason": "stop",
+      "prompt_tokens": 274,
+      "completion_tokens": 1128,
+      "reasoning_tokens": 1005,
+      "generated_code": "def get_date_from_timestamp(timestamp: int) -> tuple[int, int, int]:\n    \"\"\"\n    Converts an integer Unix timestamp into a tuple containing the year, month, and day.\n\n    Args:\n        timestamp (int): A Unix timestamp integer, for example, 1682560771.\n\n    Returns:\n        tuple[int, int, int]: A tuple containing (year, month, day).\n    \"\"\"\n    t = time.gmtime(timestamp)\n    return (t.tm_year, t.tm_mon, t.tm_mday)",
+      "raw_content_length": 420,
+      "analysis": {
+        "syntax_ok": true,
+        "syntax_error": null,
+        "generated_apis": [],
+        "prompt_apis": [],
+        "apis_matched": [],
+        "apis_missing": [],
+        "apis_extra": [],
+        "api_coverage": 0.0,
+        "has_entry_point": true,
+        "has_return": true,
+        "generated_loc": 10,
+        "canonical_loc": 2,
+        "loc_ratio": 5.0
+      }
+    },
+    {
+      "task_id": "EDA-Eval-PyAether-003",
+      "scenario": "Others",
+      "category": "Utilities",
+      "success": true,
+      "elapsed_s": 5.6,
+      "finish_reason": "stop",
+      "prompt_tokens": 240,
+      "completion_tokens": 640,
+      "reasoning_tokens": 477,
+      "generated_code": "def find_invalid_paths(paths: List[str]) -> List[str]:\n    \"\"\"\n    Validates a list of directory paths and returns those that are invalid.\n\n    During project initialization, it is necessary to add multiple module directories to the Python search path\n    and identify which configured paths are invalid. This function receives a list of directory paths,\n    and returns the list of paths from the input that do not actually exist on the file system.\n\n    Args:\n        paths (List[str]): A list of strings containing the directory paths to be validated.\n\n    Returns:\n        List[str]: A list containing only those paths from the input list that do not actually exist on the file system.\n    \"\"\"\n    return [path for path in paths if not os.path.isdir(path)]",
+      "raw_content_length": 762,
+      "analysis": {
+        "syntax_ok": true,
+        "syntax_error": null,
+        "generated_apis": [],
+        "prompt_apis": [],
+        "apis_matched": [],
+        "apis_missing": [],
+        "apis_extra": [],
+        "api_coverage": 0.0,
+        "has_entry_point": true,
+        "has_return": true,
+        "generated_loc": 12,
+        "canonical_loc": 2,
+        "loc_ratio": 6.0
+      }
+    }
+  ],
+  "audit": [
+    {
+      "item": "MiniCPM5-2B model (NAS)",
+      "path": "/nas_data/app.e0031982/models/MiniCPM5-2B",
+      "status": "[OK]"
+    },
+    {
+      "item": "MiniCPM5-2B model (/tmp)",
+      "path": "/tmp/models/MiniCPM5-2B",
+      "status": "[FAIL] missing"
+    },
+    {
+      "item": "venv (verl cu124)",
+      "path": "/home/app.e0031982/code/verl_cu124_venv",
+      "status": "[OK]"
+    },
+    {
+      "item": "venv (vllm)",
+      "path": "/home/app.e0031982/code/vllm_venv",
+      "status": "[OK]"
+    },
+    {
+      "item": "EDA-Eval dataset (158 tasks)",
+      "path": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl",
+      "status": "[OK]"
+    },
+    {
+      "item": "Eval: run_cline_script.sh",
+      "path": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/run_cline_script.sh",
+      "status": "[OK]"
+    },
+    {
+      "item": "Eval: run_cline_cli.sh",
+      "path": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/run_cline_cli.sh",
+      "status": "[OK]"
+    },
+    {
+      "item": "Eval: config.yaml",
+      "path": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/config.yaml",
+      "status": "[OK]"
+    },
+    {
+      "item": "Script: baize_posttrain_launch_11_9.sh",
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_launch_11_9.sh",
+      "status": "[OK]"
+    },
+    {
+      "item": "Script: baize_posttrain_gpu_watcher.sh",
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_gpu_watcher.sh",
+      "status": "[OK]"
+    },
+    {
+      "item": "Script: baize_posttrain_minicpm5_diag.sh",
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_minicpm5_diag.sh",
+      "status": "[OK]"
+    },
+    {
+      "item": "Script: baize_posttrain_rl_grpo.sh",
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_rl_grpo.sh",
+      "status": "[OK]"
+    },
+    {
+      "item": "Script: baize_posttrain_sft.sh",
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_sft.sh",
+      "status": "[OK]"
+    },
+    {
+      "item": "Script: baize_posttrain_eval.sh",
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_eval.sh",
+      "status": "[OK]"
+    },
+    {
+      "item": "Script: baize_posttrain_paths.sh",
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_paths.sh",
+      "status": "[OK]"
+    },
+    {
+      "item": "Script: baize_posttrain_contamination_gate.sh",
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_contamination_gate.sh",
+      "status": "[OK]"
+    },
+    {
+      "item": "DeepSeek traces",
+      "path": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3/cline_trace",
+      "status": "[OK] (103 traces)"
+    },
+    {
+      "item": "pyAether library",
+      "status": "[FAIL] not installed"
+    },
+    {
+      "item": "pyAether MCP server (port 8090)",
+      "status": "[FAIL] not running (port 8090=MRT tool)"
+    },
+    {
+      "item": "gpu_watcher",
+      "status": "[OK] running"
+    },
+    {
+      "item": "Disk space (/nas_data)",
+      "status": "[OK] 19557GB free"
+    }
+  ]
+}

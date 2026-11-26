@@ -1,0 +1,21 @@
+The implementation passed all sandbox checks.
+
+## Summary
+
+I implemented `vsim_pattern_coverage_audit` in Tcl and verified it on the Synopsys Custom WaveView (`.75`) Tcl sandbox via the eda_flow MCP (open_session → run_code → close_session).
+
+Key implementation points handled:
+- **Colon-spacing asymmetry**: trims each report line, then matches `Total Pattern` and `Failed Pattern` with `[[:space:]]*:[[:space:]]*`, so both `Total Pattern : N` and `Failed Pattern: N` (leading space, no pre-colon space) parse correctly.
+- **Section parse**: counts `=== <simdir> ===` headers; sums header values; counts only actual post-`---` pattern lines as `pattern_list_entries` (raw, incl. duplicates); header lines and the separator are never treated as names.
+- **Bytemode/regression**: uses `^(.*)\.x([0-9]+)` so `basic.x4.rerun` → `x4` / `basic`, `nosuffix` → `unknown` / `nosuffix`.
+- **Reference hygiene**: trims `\r`/whitespace, skips blanks and `#` comments, dedups via `lsort -unique`.
+- **Coverage diff**: `missing` = expected-but-not-ran, `extra` = ran-but-not-expected, with correct direction and verdict logic.
+- **Flat output**: minimal keys joined by single spaces; empty name lists emit the key with no names.
+
+Final sandbox output:
+
+```
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+=== pi exit=0 end Fri Oct 30 02:26:25 AM CST 2026 ===

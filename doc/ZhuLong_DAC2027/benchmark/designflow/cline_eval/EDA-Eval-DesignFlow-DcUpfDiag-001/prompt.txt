@@ -1,0 +1,17 @@
+DC synthesis UPF / save_upf 诊断 (HL22 porting, test_chip workspace)。
+
+用户原话（逐字，A 档 faithful）：
+「检查synth/scripts中的dc.tcl和upf/test_chip_power.upf定义，推测dc结果save_upf输出的upf文件为空的问题，而且dc产生的netlist无VDD/VSS」
+
+附件 bundle 是该 DC synthesis 运行的真实产物（dc.tcl 驱动 + test_chip_power.upf 电源意图 + dc_setup_filenames.tcl + sim.upf + dc.log 运行日志 + snps_upf.log UPF 加载回显 + dc.upf save_upf 输出 + postsyn_head.v 网表头 + rtl_top.v 顶层端口段）。
+
+交付接口（仅说明交付形态与文件位置，不补充任务意图）：
+- mode: design_flow
+- entry_point: outputs/submit.zip
+- test: check(deliverable, workdir)
+
+请实现一个**通用 DC UPF / save_upf 诊断器** `diagnose_upf.py`，CLI `diagnose_upf.py <bundle_root> [-o out.json]`，纯 stdlib 解析 bundle 内的 dc.tcl + UPF + dc.log + dc.upf + postsyn_head.v + rtl_top.v，对两个症状（save_upf 输出为空、netlist 无 VDD/VSS）推断根因，输出结构化 `diagnosis.json`（schema：`save_upf_empty{root_cause, mechanism, evidence, fix, is_defect}` + `netlist_no_pg{root_cause, mechanism, evidence, is_defect}` + `latent_issues[{id, severity, desc, fix}]`）。
+
+诊断器必须**通用自适应**：从 bundle 文件动态推断根因，不硬编任何 design 名或特定答案；同一诊断器能对结构不同的 bundle 给出不同根因。
+
+交付：把 `diagnose_upf.py` + `diagnosis_A.json`（用该诊断器对可见 A bundle 跑出的结果）打包为 `outputs/submit.zip`。

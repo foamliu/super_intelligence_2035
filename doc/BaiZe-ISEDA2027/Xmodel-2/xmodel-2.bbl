@@ -1,0 +1,249 @@
+\begin{thebibliography}{49}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[AI4Science and Quantum(2023)]{ai4science2023}
+M.~R. AI4Science and M.~A. Quantum.
+\newblock The impact of large language models on scientific discovery: a preliminary study using gpt-4, 2023.
+\newblock URL \url{https://arxiv.org/abs/2311.07361}.
+
+\bibitem[Ainslie et~al.(2023)Ainslie, Lee-Thorp, de~Jong, Zemlyanskiy, Lebrón, and Sanghai]{ainslie2023gqa}
+J.~Ainslie, J.~Lee-Thorp, M.~de~Jong, Y.~Zemlyanskiy, F.~Lebrón, and S.~Sanghai.
+\newblock Gqa: Training generalized multi-query transformer models from multi-head checkpoints, 2023.
+
+\bibitem[Allal et~al.(2024)Allal, Lozhkov, Bakouch, von Werra, and Wolf]{allal2024SmolLM}
+L.~B. Allal, A.~Lozhkov, E.~Bakouch, L.~von Werra, and T.~Wolf.
+\newblock Smollm - blazingly fast and remarkably powerful, 2024.
+
+\bibitem[Austin et~al.(2021)Austin, Odena, Nye, Bosma, Michalewski, Dohan, Jiang, Cai, Terry, Le, and Sutton]{austin2021mbpp}
+J.~Austin, A.~Odena, M.~Nye, M.~Bosma, H.~Michalewski, D.~Dohan, E.~Jiang, C.~Cai, M.~Terry, Q.~Le, and C.~Sutton.
+\newblock Program synthesis with large language models, 2021.
+\newblock URL \url{https://arxiv.org/abs/2108.07732}.
+
+\bibitem[Bellagente et~al.(2024)Bellagente, Tow, Mahan, Phung, Zhuravinskyi, Adithyan, Baicoianu, Brooks, Cooper, Datta, Lee, Mostaque, Pieler, Pinnaparju, Rocha, Saini, Teufel, Zanichelli, and Riquelme]{bellagente2024stable}
+M.~Bellagente, J.~Tow, D.~Mahan, D.~Phung, M.~Zhuravinskyi, R.~Adithyan, J.~Baicoianu, B.~Brooks, N.~Cooper, A.~Datta, M.~Lee, E.~Mostaque, M.~Pieler, N.~Pinnaparju, P.~Rocha, H.~Saini, H.~Teufel, N.~Zanichelli, and C.~Riquelme.
+\newblock Stable lm 2 1.6b technical report, 2024.
+
+\bibitem[Ben~Allal et~al.(2022)Ben~Allal, Muennighoff, Kumar~Umapathi, Lipkin, and von Werra]{bigcode-evaluation-harness}
+L.~Ben~Allal, N.~Muennighoff, L.~Kumar~Umapathi, B.~Lipkin, and L.~von Werra.
+\newblock A framework for the evaluation of code generation models.
+\newblock \url{https://github.com/bigcode-project/bigcode-evaluation-harness}, 2022.
+
+\bibitem[Bisk et~al.(2019)Bisk, Zellers, Bras, Gao, and Choi]{Bisk2019PIQARA}
+Y.~Bisk, R.~Zellers, R.~L. Bras, J.~Gao, and Y.~Choi.
+\newblock Piqa: Reasoning about physical commonsense in natural language.
+\newblock In \emph{AAAI Conference on Artificial Intelligence}, 2019.
+\newblock URL \url{https://api.semanticscholar.org/CorpusID:208290939}.
+
+\bibitem[Cai et~al.(2024)Cai, Cao, Chen, Chen, Chen, Chen, Chen, Chen, Chen, Chu, Dong, Duan, Fan, Fei, Gao, Ge, Gu, Gu, Gui, Guo, Guo, He, Hu, Huang, Jiang, Jiao, Jin, Lei, Li, Li, Li, Li, Li, Li, Liu, Liu, Hong, Liu, Liu, Liu, Lv, Lv, Lv, Ma, Ma, Ma, Ning, Ouyang, Qiu, Qu, Shang, Shao, Song, Song, Sui, Sun, Sun, Tang, Wang, Wang, Wang, Wang, Wang, Wang, Wang, Wei, Weng, Wu, Xiong, Xu, Xu, Yan, Yan, Yang, Ye, Ying, Yu, Yu, Zang, Zhang, Zhang, Zhang, Zhang, Zhang, Zhang, Zhang, Zhang, Zhang, Zhang, Zhang, Zhao, Zhao, Zhao, Zhou, Zhou, Zhuo, Zou, Qiu, Qiao, and Lin]{cai2024internlm2}
+Z.~Cai, M.~Cao, H.~Chen, K.~Chen, K.~Chen, X.~Chen, X.~Chen, Z.~Chen, Z.~Chen, P.~Chu, X.~Dong, H.~Duan, Q.~Fan, Z.~Fei, Y.~Gao, J.~Ge, C.~Gu, Y.~Gu, T.~Gui, A.~Guo, Q.~Guo, C.~He, Y.~Hu, T.~Huang, T.~Jiang, P.~Jiao, Z.~Jin, Z.~Lei, J.~Li, J.~Li, L.~Li, S.~Li, W.~Li, Y.~Li, H.~Liu, J.~Liu, J.~Hong, K.~Liu, K.~Liu, X.~Liu, C.~Lv, H.~Lv, K.~Lv, L.~Ma, R.~Ma, Z.~Ma, W.~Ning, L.~Ouyang, J.~Qiu, Y.~Qu, F.~Shang, Y.~Shao, D.~Song, Z.~Song, Z.~Sui, P.~Sun, Y.~Sun, H.~Tang, B.~Wang, G.~Wang, J.~Wang, J.~Wang, R.~Wang, Y.~Wang, Z.~Wang, X.~Wei, Q.~Weng, F.~Wu, Y.~Xiong, C.~Xu, R.~Xu, H.~Yan, Y.~Yan, X.~Yang, H.~Ye, H.~Ying, J.~Yu, J.~Yu, Y.~Zang, C.~Zhang, L.~Zhang, P.~Zhang, P.~Zhang, R.~Zhang, S.~Zhang, S.~Zhang, W.~Zhang, W.~Zhang, X.~Zhang, X.~Zhang, H.~Zhao, Q.~Zhao, X.~Zhao, F.~Zhou, Z.~Zhou, J.~Zhuo, Y.~Zou, X.~Qiu, Y.~Qiao, and D.~Lin.
+\newblock Internlm2 technical report, 2024.
+
+\bibitem[Chen et~al.(2021)Chen, Tworek, Jun, Yuan, de~Oliveira~Pinto, Kaplan, Edwards, Burda, Joseph, Brockman, Ray, Puri, Krueger, Petrov, Khlaaf, Sastry, Mishkin, Chan, Gray, Ryder, Pavlov, Power, Kaiser, Bavarian, Winter, Tillet, Such, Cummings, Plappert, Chantzis, Barnes, Herbert-Voss, Guss, Nichol, Paino, Tezak, Tang, Babuschkin, Balaji, Jain, Saunders, Hesse, Carr, Leike, Achiam, Misra, Morikawa, Radford, Knight, Brundage, Murati, Mayer, Welinder, McGrew, Amodei, McCandlish, Sutskever, and Zaremba]{chen2021humaneval}
+M.~Chen, J.~Tworek, H.~Jun, Q.~Yuan, H.~P. de~Oliveira~Pinto, J.~Kaplan, H.~Edwards, Y.~Burda, N.~Joseph, G.~Brockman, A.~Ray, R.~Puri, G.~Krueger, M.~Petrov, H.~Khlaaf, G.~Sastry, P.~Mishkin, B.~Chan, S.~Gray, N.~Ryder, M.~Pavlov, A.~Power, L.~Kaiser, M.~Bavarian, C.~Winter, P.~Tillet, F.~P. Such, D.~Cummings, M.~Plappert, F.~Chantzis, E.~Barnes, A.~Herbert-Voss, W.~H. Guss, A.~Nichol, A.~Paino, N.~Tezak, J.~Tang, I.~Babuschkin, S.~Balaji, S.~Jain, W.~Saunders, C.~Hesse, A.~N. Carr, J.~Leike, J.~Achiam, V.~Misra, E.~Morikawa, A.~Radford, M.~Knight, M.~Brundage, M.~Murati, K.~Mayer, P.~Welinder, B.~McGrew, D.~Amodei, S.~McCandlish, I.~Sutskever, and W.~Zaremba.
+\newblock Evaluating large language models trained on code, 2021.
+\newblock URL \url{https://arxiv.org/abs/2107.03374}.
+
+\bibitem[Clark et~al.(2019)Clark, Lee, Chang, Kwiatkowski, Collins, and Toutanova]{clark2019boolq}
+C.~Clark, K.~Lee, M.-W. Chang, T.~Kwiatkowski, M.~Collins, and K.~Toutanova.
+\newblock Boolq: Exploring the surprising difficulty of natural yes/no questions, 2019.
+
+\bibitem[Clark et~al.(2018)Clark, Cowhey, Etzioni, Khot, Sabharwal, Schoenick, and Tafjord]{clark2018think}
+P.~Clark, I.~Cowhey, O.~Etzioni, T.~Khot, A.~Sabharwal, C.~Schoenick, and O.~Tafjord.
+\newblock Think you have solved question answering? try arc, the ai2 reasoning challenge, 2018.
+
+\bibitem[Cobbe et~al.(2021)Cobbe, Kosaraju, Bavarian, Chen, Jun, Kaiser, Plappert, Tworek, Hilton, Nakano, Hesse, and Schulman]{cobbe2021gsm8k}
+K.~Cobbe, V.~Kosaraju, M.~Bavarian, M.~Chen, H.~Jun, L.~Kaiser, M.~Plappert, J.~Tworek, J.~Hilton, R.~Nakano, C.~Hesse, and J.~Schulman.
+\newblock Training verifiers to solve math word problems.
+\newblock \emph{arXiv preprint arXiv:2110.14168}, 2021.
+
+\bibitem[Ding et~al.(2023)Ding, Chen, Xu, Qin, Zheng, Hu, Liu, Sun, and Zhou]{ding2023UltraChat}
+N.~Ding, Y.~Chen, B.~Xu, Y.~Qin, Z.~Zheng, S.~Hu, Z.~Liu, M.~Sun, and B.~Zhou.
+\newblock Enhancing chat language models by scaling high-quality instructional conversations, 2023.
+\newblock URL \url{https://arxiv.org/abs/2305.14233}.
+
+\bibitem[Gao et~al.(2021)Gao, Tow, Biderman, Black, DiPofi, Foster, Golding, Hsu, McDonell, Muennighoff, Phang, Reynolds, Tang, Thite, Wang, Wang, and Zou]{eval-harness}
+L.~Gao, J.~Tow, S.~Biderman, S.~Black, A.~DiPofi, C.~Foster, L.~Golding, J.~Hsu, K.~McDonell, N.~Muennighoff, J.~Phang, L.~Reynolds, E.~Tang, A.~Thite, B.~Wang, K.~Wang, and A.~Zou.
+\newblock A framework for few-shot language model evaluation, Sept. 2021.
+\newblock URL \url{https://doi.org/10.5281/zenodo.5371628}.
+
+\bibitem[Grattafiori et~al.(2024)Grattafiori, Dubey, Jauhri, Pandey, Kadian, Al-Dahle, Letman, Mathur, Schelten, Vaughan, Yang, Fan, Goyal, Hartshorn, Yang, Mitra, Sravankumar, Korenev, Hinsvark, Rao, Zhang, Rodriguez, Gregerson, Spataru, Roziere, Biron, Tang, Chern, Caucheteux, Nayak, Bi, Marra, McConnell, Keller, Touret, Wu, Wong, Ferrer, Nikolaidis, Allonsius, Song, Pintz, Livshits, Wyatt, Esiobu, Choudhary, Mahajan, Garcia-Olano, Perino, Hupkes, Lakomkin, AlBadawy, Lobanova, Dinan, Smith, Radenovic, Guzmán, Zhang, Synnaeve, Lee, Anderson, Thattai, Nail, Mialon, Pang, Cucurell, Nguyen, Korevaar, Xu, Touvron, Zarov, Ibarra, Kloumann, Misra, Evtimov, Zhang, Copet, Lee, Geffert, Vranes, Park, Mahadeokar, Shah, van~der Linde, Billock, Hong, Lee, Fu, Chi, Huang, Liu, Wang, Yu, Bitton, Spisak, Park, Rocca, Johnstun, Saxe, Jia, Alwala, Prasad, Upasani, Plawiak, Li, Heafield, Stone, El-Arini, Iyer, Malik, Chiu, Bhalla, Lakhotia, Rantala-Yeary, van~der Maaten, Chen, Tan, Jenkins, Martin, Madaan, Malo, Blecher,
+  Landzaat, de~Oliveira, Muzzi, Pasupuleti, Singh, Paluri, Kardas, Tsimpoukelli, Oldham, Rita, Pavlova, Kambadur, Lewis, Si, Singh, Hassan, Goyal, Torabi, Bashlykov, Bogoychev, Chatterji, Zhang, Duchenne, Çelebi, Alrassy, Zhang, Li, Vasic, Weng, Bhargava, Dubal, Krishnan, Koura, Xu, He, Dong, Srinivasan, Ganapathy, Calderer, Cabral, Stojnic, Raileanu, Maheswari, Girdhar, Patel, Sauvestre, Polidoro, Sumbaly, Taylor, Silva, Hou, Wang, Hosseini, Chennabasappa, Singh, Bell, Kim, Edunov, Nie, Narang, Raparthy, Shen, Wan, Bhosale, Zhang, Vandenhende, Batra, Whitman, Sootla, Collot, Gururangan, Borodinsky, Herman, Fowler, Sheasha, Georgiou, Scialom, Speckbacher, Mihaylov, Xiao, Karn, Goswami, Gupta, Ramanathan, Kerkez, Gonguet, Do, Vogeti, Albiero, Petrovic, Chu, Xiong, Fu, Meers, Martinet, Wang, Wang, Tan, Xia, Xie, Jia, Wang, Goldschlag, Gaur, Babaei, Wen, Song, Zhang, Li, Mao, Coudert, Yan, Chen, Papakipos, Singh, Srivastava, Jain, Kelsey, Shajnfeld, Gangidi, Victoria, Goldstand, Menon, Sharma, Boesenberg,
+  Baevski, Feinstein, Kallet, Sangani, Teo, Yunus, Lupu, Alvarado, Caples, Gu, Ho, Poulton, Ryan, Ramchandani, Dong, Franco, Goyal, Saraf, Chowdhury, Gabriel, Bharambe, Eisenman, Yazdan, James, Maurer, Leonhardi, Huang, Loyd, Paola, Paranjape, Liu, Wu, Ni, Hancock, Wasti, Spence, Stojkovic, Gamido, Montalvo, Parker, Burton, Mejia, Liu, Wang, Kim, Zhou, Hu, Chu, Cai, Tindal, Feichtenhofer, Gao, Civin, Beaty, Kreymer, Li, Adkins, Xu, Testuggine, David, Parikh, Liskovich, Foss, Wang, Le, Holland, Dowling, Jamil, Montgomery, Presani, Hahn, Wood, Le, Brinkman, Arcaute, Dunbar, Smothers, Sun, Kreuk, Tian, Kokkinos, Ozgenel, Caggioni, Kanayet, Seide, Florez, Schwarz, Badeer, Swee, Halpern, Herman, Sizov, Guangyi, Zhang, Lakshminarayanan, Inan, Shojanazeri, Zou, Wang, Zha, Habeeb, Rudolph, Suk, Aspegren, Goldman, Zhan, Damlaj, Molybog, Tufanov, Leontiadis, Veliche, Gat, Weissman, Geboski, Kohli, Lam, Asher, Gaya, Marcus, Tang, Chan, Zhen, Reizenstein, Teboul, Zhong, Jin, Yang, Cummings, Carvill, Shepard, McPhie,
+  Torres, Ginsburg, Wang, Wu, U, Saxena, Khandelwal, Zand, Matosich, Veeraraghavan, Michelena, Li, Jagadeesh, Huang, Chawla, Huang, Chen, Garg, A, Silva, Bell, Zhang, Guo, Yu, Moshkovich, Wehrstedt, Khabsa, Avalani, Bhatt, Mankus, Hasson, Lennie, Reso, Groshev, Naumov, Lathi, Keneally, Liu, Seltzer, Valko, Restrepo, Patel, Vyatskov, Samvelyan, Clark, Macey, Wang, Hermoso, Metanat, Rastegari, Bansal, Santhanam, Parks, White, Bawa, Singhal, Egebo, Usunier, Mehta, Laptev, Dong, Cheng, Chernoguz, Hart, Salpekar, Kalinli, Kent, Parekh, Saab, Balaji, Rittner, Bontrager, Roux, Dollar, Zvyagina, Ratanchandani, Yuvraj, Liang, Alao, Rodriguez, Ayub, Murthy, Nayani, Mitra, Parthasarathy, Li, Hogan, Battey, Wang, Howes, Rinott, Mehta, Siby, Bondu, Datta, Chugh, Hunt, Dhillon, Sidorov, Pan, Mahajan, Verma, Yamamoto, Ramaswamy, Lindsay, Lindsay, Feng, Lin, Zha, Patil, Shankar, Zhang, Zhang, Wang, Agarwal, Sajuyigbe, Chintala, Max, Chen, Kehoe, Satterfield, Govindaprasad, Gupta, Deng, Cho, Virk, Subramanian, Choudhury,
+  Goldman, Remez, Glaser, Best, Koehler, Robinson, Li, Zhang, Matthews, Chou, Shaked, Vontimitta, Ajayi, Montanez, Mohan, Kumar, Mangla, Ionescu, Poenaru, Mihailescu, Ivanov, Li, Wang, Jiang, Bouaziz, Constable, Tang, Wu, Wang, Wu, Gao, Kleinman, Chen, Hu, Jia, Qi, Li, Zhang, Zhang, Adi, Nam, Yu, Wang, Zhao, Hao, Qian, Li, He, Rait, DeVito, Rosnbrick, Wen, Yang, Zhao, and Ma]{grattafiori2024llama3}
+A.~Grattafiori, A.~Dubey, A.~Jauhri, A.~Pandey, A.~Kadian, A.~Al-Dahle, A.~Letman, A.~Mathur, A.~Schelten, A.~Vaughan, A.~Yang, A.~Fan, A.~Goyal, A.~Hartshorn, A.~Yang, A.~Mitra, A.~Sravankumar, A.~Korenev, A.~Hinsvark, A.~Rao, A.~Zhang, A.~Rodriguez, A.~Gregerson, A.~Spataru, B.~Roziere, B.~Biron, B.~Tang, B.~Chern, C.~Caucheteux, C.~Nayak, C.~Bi, C.~Marra, C.~McConnell, C.~Keller, C.~Touret, C.~Wu, C.~Wong, C.~C. Ferrer, C.~Nikolaidis, D.~Allonsius, D.~Song, D.~Pintz, D.~Livshits, D.~Wyatt, D.~Esiobu, D.~Choudhary, D.~Mahajan, D.~Garcia-Olano, D.~Perino, D.~Hupkes, E.~Lakomkin, E.~AlBadawy, E.~Lobanova, E.~Dinan, E.~M. Smith, F.~Radenovic, F.~Guzmán, F.~Zhang, G.~Synnaeve, G.~Lee, G.~L. Anderson, G.~Thattai, G.~Nail, G.~Mialon, G.~Pang, G.~Cucurell, H.~Nguyen, H.~Korevaar, H.~Xu, H.~Touvron, I.~Zarov, I.~A. Ibarra, I.~Kloumann, I.~Misra, I.~Evtimov, J.~Zhang, J.~Copet, J.~Lee, J.~Geffert, J.~Vranes, J.~Park, J.~Mahadeokar, J.~Shah, J.~van~der Linde, J.~Billock, J.~Hong, J.~Lee, J.~Fu, J.~Chi, J.~Huang,
+  J.~Liu, J.~Wang, J.~Yu, J.~Bitton, J.~Spisak, J.~Park, J.~Rocca, J.~Johnstun, J.~Saxe, J.~Jia, K.~V. Alwala, K.~Prasad, K.~Upasani, K.~Plawiak, K.~Li, K.~Heafield, K.~Stone, K.~El-Arini, K.~Iyer, K.~Malik, K.~Chiu, K.~Bhalla, K.~Lakhotia, L.~Rantala-Yeary, L.~van~der Maaten, L.~Chen, L.~Tan, L.~Jenkins, L.~Martin, L.~Madaan, L.~Malo, L.~Blecher, L.~Landzaat, L.~de~Oliveira, M.~Muzzi, M.~Pasupuleti, M.~Singh, M.~Paluri, M.~Kardas, M.~Tsimpoukelli, M.~Oldham, M.~Rita, M.~Pavlova, M.~Kambadur, M.~Lewis, M.~Si, M.~K. Singh, M.~Hassan, N.~Goyal, N.~Torabi, N.~Bashlykov, N.~Bogoychev, N.~Chatterji, N.~Zhang, O.~Duchenne, O.~Çelebi, P.~Alrassy, P.~Zhang, P.~Li, P.~Vasic, P.~Weng, P.~Bhargava, P.~Dubal, P.~Krishnan, P.~S. Koura, P.~Xu, Q.~He, Q.~Dong, R.~Srinivasan, R.~Ganapathy, R.~Calderer, R.~S. Cabral, R.~Stojnic, R.~Raileanu, R.~Maheswari, R.~Girdhar, R.~Patel, R.~Sauvestre, R.~Polidoro, R.~Sumbaly, R.~Taylor, R.~Silva, R.~Hou, R.~Wang, S.~Hosseini, S.~Chennabasappa, S.~Singh, S.~Bell, S.~S. Kim, S.~Edunov,
+  S.~Nie, S.~Narang, S.~Raparthy, S.~Shen, S.~Wan, S.~Bhosale, S.~Zhang, S.~Vandenhende, S.~Batra, S.~Whitman, S.~Sootla, S.~Collot, S.~Gururangan, S.~Borodinsky, T.~Herman, T.~Fowler, T.~Sheasha, T.~Georgiou, T.~Scialom, T.~Speckbacher, T.~Mihaylov, T.~Xiao, U.~Karn, V.~Goswami, V.~Gupta, V.~Ramanathan, V.~Kerkez, V.~Gonguet, V.~Do, V.~Vogeti, V.~Albiero, V.~Petrovic, W.~Chu, W.~Xiong, W.~Fu, W.~Meers, X.~Martinet, X.~Wang, X.~Wang, X.~E. Tan, X.~Xia, X.~Xie, X.~Jia, X.~Wang, Y.~Goldschlag, Y.~Gaur, Y.~Babaei, Y.~Wen, Y.~Song, Y.~Zhang, Y.~Li, Y.~Mao, Z.~D. Coudert, Z.~Yan, Z.~Chen, Z.~Papakipos, A.~Singh, A.~Srivastava, A.~Jain, A.~Kelsey, A.~Shajnfeld, A.~Gangidi, A.~Victoria, A.~Goldstand, A.~Menon, A.~Sharma, A.~Boesenberg, A.~Baevski, A.~Feinstein, A.~Kallet, A.~Sangani, A.~Teo, A.~Yunus, A.~Lupu, A.~Alvarado, A.~Caples, A.~Gu, A.~Ho, A.~Poulton, A.~Ryan, A.~Ramchandani, A.~Dong, A.~Franco, A.~Goyal, A.~Saraf, A.~Chowdhury, A.~Gabriel, A.~Bharambe, A.~Eisenman, A.~Yazdan, B.~James, B.~Maurer,
+  B.~Leonhardi, B.~Huang, B.~Loyd, B.~D. Paola, B.~Paranjape, B.~Liu, B.~Wu, B.~Ni, B.~Hancock, B.~Wasti, B.~Spence, B.~Stojkovic, B.~Gamido, B.~Montalvo, C.~Parker, C.~Burton, C.~Mejia, C.~Liu, C.~Wang, C.~Kim, C.~Zhou, C.~Hu, C.-H. Chu, C.~Cai, C.~Tindal, C.~Feichtenhofer, C.~Gao, D.~Civin, D.~Beaty, D.~Kreymer, D.~Li, D.~Adkins, D.~Xu, D.~Testuggine, D.~David, D.~Parikh, D.~Liskovich, D.~Foss, D.~Wang, D.~Le, D.~Holland, E.~Dowling, E.~Jamil, E.~Montgomery, E.~Presani, E.~Hahn, E.~Wood, E.-T. Le, E.~Brinkman, E.~Arcaute, E.~Dunbar, E.~Smothers, F.~Sun, F.~Kreuk, F.~Tian, F.~Kokkinos, F.~Ozgenel, F.~Caggioni, F.~Kanayet, F.~Seide, G.~M. Florez, G.~Schwarz, G.~Badeer, G.~Swee, G.~Halpern, G.~Herman, G.~Sizov, Guangyi, Zhang, G.~Lakshminarayanan, H.~Inan, H.~Shojanazeri, H.~Zou, H.~Wang, H.~Zha, H.~Habeeb, H.~Rudolph, H.~Suk, H.~Aspegren, H.~Goldman, H.~Zhan, I.~Damlaj, I.~Molybog, I.~Tufanov, I.~Leontiadis, I.-E. Veliche, I.~Gat, J.~Weissman, J.~Geboski, J.~Kohli, J.~Lam, J.~Asher, J.-B. Gaya, J.~Marcus,
+  J.~Tang, J.~Chan, J.~Zhen, J.~Reizenstein, J.~Teboul, J.~Zhong, J.~Jin, J.~Yang, J.~Cummings, J.~Carvill, J.~Shepard, J.~McPhie, J.~Torres, J.~Ginsburg, J.~Wang, K.~Wu, K.~H. U, K.~Saxena, K.~Khandelwal, K.~Zand, K.~Matosich, K.~Veeraraghavan, K.~Michelena, K.~Li, K.~Jagadeesh, K.~Huang, K.~Chawla, K.~Huang, L.~Chen, L.~Garg, L.~A, L.~Silva, L.~Bell, L.~Zhang, L.~Guo, L.~Yu, L.~Moshkovich, L.~Wehrstedt, M.~Khabsa, M.~Avalani, M.~Bhatt, M.~Mankus, M.~Hasson, M.~Lennie, M.~Reso, M.~Groshev, M.~Naumov, M.~Lathi, M.~Keneally, M.~Liu, M.~L. Seltzer, M.~Valko, M.~Restrepo, M.~Patel, M.~Vyatskov, M.~Samvelyan, M.~Clark, M.~Macey, M.~Wang, M.~J. Hermoso, M.~Metanat, M.~Rastegari, M.~Bansal, N.~Santhanam, N.~Parks, N.~White, N.~Bawa, N.~Singhal, N.~Egebo, N.~Usunier, N.~Mehta, N.~P. Laptev, N.~Dong, N.~Cheng, O.~Chernoguz, O.~Hart, O.~Salpekar, O.~Kalinli, P.~Kent, P.~Parekh, P.~Saab, P.~Balaji, P.~Rittner, P.~Bontrager, P.~Roux, P.~Dollar, P.~Zvyagina, P.~Ratanchandani, P.~Yuvraj, Q.~Liang, R.~Alao, R.~Rodriguez,
+  R.~Ayub, R.~Murthy, R.~Nayani, R.~Mitra, R.~Parthasarathy, R.~Li, R.~Hogan, R.~Battey, R.~Wang, R.~Howes, R.~Rinott, S.~Mehta, S.~Siby, S.~J. Bondu, S.~Datta, S.~Chugh, S.~Hunt, S.~Dhillon, S.~Sidorov, S.~Pan, S.~Mahajan, S.~Verma, S.~Yamamoto, S.~Ramaswamy, S.~Lindsay, S.~Lindsay, S.~Feng, S.~Lin, S.~C. Zha, S.~Patil, S.~Shankar, S.~Zhang, S.~Zhang, S.~Wang, S.~Agarwal, S.~Sajuyigbe, S.~Chintala, S.~Max, S.~Chen, S.~Kehoe, S.~Satterfield, S.~Govindaprasad, S.~Gupta, S.~Deng, S.~Cho, S.~Virk, S.~Subramanian, S.~Choudhury, S.~Goldman, T.~Remez, T.~Glaser, T.~Best, T.~Koehler, T.~Robinson, T.~Li, T.~Zhang, T.~Matthews, T.~Chou, T.~Shaked, V.~Vontimitta, V.~Ajayi, V.~Montanez, V.~Mohan, V.~S. Kumar, V.~Mangla, V.~Ionescu, V.~Poenaru, V.~T. Mihailescu, V.~Ivanov, W.~Li, W.~Wang, W.~Jiang, W.~Bouaziz, W.~Constable, X.~Tang, X.~Wu, X.~Wang, X.~Wu, X.~Gao, Y.~Kleinman, Y.~Chen, Y.~Hu, Y.~Jia, Y.~Qi, Y.~Li, Y.~Zhang, Y.~Zhang, Y.~Adi, Y.~Nam, Yu, Wang, Y.~Zhao, Y.~Hao, Y.~Qian, Y.~Li, Y.~He, Z.~Rait, Z.~DeVito,
+  Z.~Rosnbrick, Z.~Wen, Z.~Yang, Z.~Zhao, and Z.~Ma.
+\newblock The llama 3 herd of models, 2024.
+\newblock URL \url{https://arxiv.org/abs/2407.21783}.
+
+\bibitem[Groeneveld et~al.(2024)Groeneveld, Beltagy, Walsh, Bhagia, Kinney, Tafjord, Jha, Ivison, Magnusson, Wang, Arora, Atkinson, Authur, Chandu, Cohan, Dumas, Elazar, Gu, Hessel, Khot, Merrill, Morrison, Muennighoff, Naik, Nam, Peters, Pyatkin, Ravichander, Schwenk, Shah, Smith, Strubell, Subramani, Wortsman, Dasigi, Lambert, Richardson, Zettlemoyer, Dodge, Lo, Soldaini, Smith, and Hajishirzi]{groeneveld2024olmo}
+D.~Groeneveld, I.~Beltagy, P.~Walsh, A.~Bhagia, R.~Kinney, O.~Tafjord, A.~H. Jha, H.~Ivison, I.~Magnusson, Y.~Wang, S.~Arora, D.~Atkinson, R.~Authur, K.~R. Chandu, A.~Cohan, J.~Dumas, Y.~Elazar, Y.~Gu, J.~Hessel, T.~Khot, W.~Merrill, J.~Morrison, N.~Muennighoff, A.~Naik, C.~Nam, M.~E. Peters, V.~Pyatkin, A.~Ravichander, D.~Schwenk, S.~Shah, W.~Smith, E.~Strubell, N.~Subramani, M.~Wortsman, P.~Dasigi, N.~Lambert, K.~Richardson, L.~Zettlemoyer, J.~Dodge, K.~Lo, L.~Soldaini, N.~A. Smith, and H.~Hajishirzi.
+\newblock Olmo: Accelerating the science of language models, 2024.
+\newblock URL \url{https://arxiv.org/abs/2402.00838}.
+
+\bibitem[Hendrycks et~al.(2021{\natexlab{a}})Hendrycks, Burns, Basart, Zou, Mazeika, Song, and Steinhardt]{hendryckstest2021}
+D.~Hendrycks, C.~Burns, S.~Basart, A.~Zou, M.~Mazeika, D.~Song, and J.~Steinhardt.
+\newblock Measuring massive multitask language understanding.
+\newblock \emph{Proceedings of the International Conference on Learning Representations (ICLR)}, 2021{\natexlab{a}}.
+
+\bibitem[Hendrycks et~al.(2021{\natexlab{b}})Hendrycks, Burns, Kadavath, Arora, Basart, Tang, Song, and Steinhardt]{hendrycks2021math}
+D.~Hendrycks, C.~Burns, S.~Kadavath, A.~Arora, S.~Basart, E.~Tang, D.~Song, and J.~Steinhardt.
+\newblock Measuring mathematical problem solving with the math dataset, 2021{\natexlab{b}}.
+\newblock URL \url{https://arxiv.org/abs/2103.03874}.
+
+\bibitem[Hu et~al.(2024)Hu, Tu, Han, He, Cui, Long, Zheng, Fang, Huang, Zhao, Zhang, Thai, Zhang, Wang, Yao, Zhao, Zhou, Cai, Zhai, Ding, Jia, Zeng, Li, Liu, and Sun]{hu2024minicpm}
+S.~Hu, Y.~Tu, X.~Han, C.~He, G.~Cui, X.~Long, Z.~Zheng, Y.~Fang, Y.~Huang, W.~Zhao, X.~Zhang, Z.~L. Thai, K.~Zhang, C.~Wang, Y.~Yao, C.~Zhao, J.~Zhou, J.~Cai, Z.~Zhai, N.~Ding, C.~Jia, G.~Zeng, D.~Li, Z.~Liu, and M.~Sun.
+\newblock Minicpm: Unveiling the potential of small language models with scalable training strategies, 2024.
+\newblock URL \url{https://arxiv.org/abs/2404.06395}.
+
+\bibitem[Joshi et~al.(2017)Joshi, Choi, Weld, and Zettlemoyer]{joshi2017triviaqa}
+M.~Joshi, E.~Choi, D.~S. Weld, and L.~Zettlemoyer.
+\newblock Triviaqa: A large scale distantly supervised challenge dataset for reading comprehension, 2017.
+
+\bibitem[Kocetkov et~al.(2022)Kocetkov, Li, Allal, Li, Mou, Ferrandis, Jernite, Mitchell, Hughes, Wolf, Bahdanau, von Werra, and de~Vries]{kocetkov2022stack}
+D.~Kocetkov, R.~Li, L.~B. Allal, J.~Li, C.~Mou, C.~M. Ferrandis, Y.~Jernite, M.~Mitchell, S.~Hughes, T.~Wolf, D.~Bahdanau, L.~von Werra, and H.~de~Vries.
+\newblock The stack: 3 tb of permissively licensed source code, 2022.
+\newblock URL \url{https://arxiv.org/abs/2211.15533}.
+
+\bibitem[Kudo(2018)]{kudo2018unigram}
+T.~Kudo.
+\newblock Subword regularization: Improving neural network translation models with multiple subword candidates, 2018.
+\newblock URL \url{https://arxiv.org/abs/1804.10959}.
+
+\bibitem[Li et~al.(2023{\natexlab{a}})Li, Allal, Zi, Muennighoff, Kocetkov, Mou, Marone, Akiki, Li, Chim, Liu, Zheltonozhskii, Zhuo, Wang, Dehaene, Davaadorj, Lamy-Poirier, Monteiro, Shliazhko, Gontier, Meade, Zebaze, Yee, Umapathi, Zhu, Lipkin, Oblokulov, Wang, Murthy, Stillerman, Patel, Abulkhanov, Zocca, Dey, Zhang, Fahmy, Bhattacharyya, Yu, Singh, Luccioni, Villegas, Kunakov, Zhdanov, Romero, Lee, Timor, Ding, Schlesinger, Schoelkopf, Ebert, Dao, Mishra, Gu, Robinson, Anderson, Dolan-Gavitt, Contractor, Reddy, Fried, Bahdanau, Jernite, Ferrandis, Hughes, Wolf, Guha, von Werra, and de~Vries]{li2023starcoder}
+R.~Li, L.~B. Allal, Y.~Zi, N.~Muennighoff, D.~Kocetkov, C.~Mou, M.~Marone, C.~Akiki, J.~Li, J.~Chim, Q.~Liu, E.~Zheltonozhskii, T.~Y. Zhuo, T.~Wang, O.~Dehaene, M.~Davaadorj, J.~Lamy-Poirier, J.~Monteiro, O.~Shliazhko, N.~Gontier, N.~Meade, A.~Zebaze, M.-H. Yee, L.~K. Umapathi, J.~Zhu, B.~Lipkin, M.~Oblokulov, Z.~Wang, R.~Murthy, J.~Stillerman, S.~S. Patel, D.~Abulkhanov, M.~Zocca, M.~Dey, Z.~Zhang, N.~Fahmy, U.~Bhattacharyya, W.~Yu, S.~Singh, S.~Luccioni, P.~Villegas, M.~Kunakov, F.~Zhdanov, M.~Romero, T.~Lee, N.~Timor, J.~Ding, C.~Schlesinger, H.~Schoelkopf, J.~Ebert, T.~Dao, M.~Mishra, A.~Gu, J.~Robinson, C.~J. Anderson, B.~Dolan-Gavitt, D.~Contractor, S.~Reddy, D.~Fried, D.~Bahdanau, Y.~Jernite, C.~M. Ferrandis, S.~Hughes, T.~Wolf, A.~Guha, L.~von Werra, and H.~de~Vries.
+\newblock Starcoder: may the source be with you!, 2023{\natexlab{a}}.
+
+\bibitem[Li et~al.(2023{\natexlab{b}})Li, Bubeck, Eldan, Giorno, Gunasekar, and Lee]{li2023textbooks}
+Y.~Li, S.~Bubeck, R.~Eldan, A.~D. Giorno, S.~Gunasekar, and Y.~T. Lee.
+\newblock Textbooks are all you need ii: phi-1.5 technical report, 2023{\natexlab{b}}.
+
+\bibitem[Liu et~al.(2024)Liu, Zhao, Iandola, Lai, Tian, Fedorov, Xiong, Chang, Shi, Krishnamoorthi, Lai, and Chandra]{liu2024mobilellm}
+Z.~Liu, C.~Zhao, F.~Iandola, C.~Lai, Y.~Tian, I.~Fedorov, Y.~Xiong, E.~Chang, Y.~Shi, R.~Krishnamoorthi, L.~Lai, and V.~Chandra.
+\newblock Mobilellm: Optimizing sub-billion parameter language models for on-device use cases, 2024.
+\newblock URL \url{https://arxiv.org/abs/2402.14905}.
+
+\bibitem[Lu et~al.(2024)Lu, Li, Cai, Yi, Liu, Zhang, Lane, and Xu]{lu2024slm_survey}
+Z.~Lu, X.~Li, D.~Cai, R.~Yi, F.~Liu, X.~Zhang, N.~D. Lane, and M.~Xu.
+\newblock Small language models: Survey, measurements, and insights, 2024.
+\newblock URL \url{https://arxiv.org/abs/2409.15790}.
+
+\bibitem[Mihaylov et~al.(2018)Mihaylov, Clark, Khot, and Sabharwal]{mihaylov2018suit}
+T.~Mihaylov, P.~Clark, T.~Khot, and A.~Sabharwal.
+\newblock Can a suit of armor conduct electricity? a new dataset for open book question answering, 2018.
+
+\bibitem[Penedo et~al.(2024)Penedo, Kydlíček, allal, Lozhkov, Mitchell, Raffel, Werra, and Wolf]{penedo2024fineweb}
+G.~Penedo, H.~Kydlíček, L.~B. allal, A.~Lozhkov, M.~Mitchell, C.~Raffel, L.~V. Werra, and T.~Wolf.
+\newblock The fineweb datasets: Decanting the web for the finest text data at scale, 2024.
+\newblock URL \url{https://arxiv.org/abs/2406.17557}.
+
+\bibitem[Sakaguchi et~al.(2021)Sakaguchi, Bras, Bhagavatula, and Choi]{Sakaguchi2021WinoGrande}
+K.~Sakaguchi, R.~L. Bras, C.~Bhagavatula, and Y.~Choi.
+\newblock Winogrande: An adversarial winograd schema challenge at scale.
+\newblock \emph{Communications of the ACM}, 64\penalty0 (9):\penalty0 99--106, 2021.
+
+\bibitem[Shridhar et~al.(2021)Shridhar, Yuan, Côté, Bisk, Trischler, and Hausknecht]{shridhar2021alfworld}
+M.~Shridhar, X.~Yuan, M.-A. Côté, Y.~Bisk, A.~Trischler, and M.~Hausknecht.
+\newblock Alfworld: Aligning text and embodied environments for interactive learning, 2021.
+\newblock URL \url{https://arxiv.org/abs/2010.03768}.
+
+\bibitem[Smith et~al.(2018)Smith, Kindermans, Ying, and Le]{smith2018batchsize}
+S.~L. Smith, P.-J. Kindermans, C.~Ying, and Q.~V. Le.
+\newblock Don't decay the learning rate, increase the batch size, 2018.
+\newblock URL \url{https://arxiv.org/abs/1711.00489}.
+
+\bibitem[Soldaini et~al.(2024)Soldaini, Kinney, Bhagia, Schwenk, Atkinson, Authur, Bogin, Chandu, Dumas, Elazar, Hofmann, Jha, Kumar, Lucy, Lyu, Lambert, Magnusson, Morrison, Muennighoff, Naik, Nam, Peters, Ravichander, Richardson, Shen, Strubell, Subramani, Tafjord, Walsh, Zettlemoyer, Smith, Hajishirzi, Beltagy, Groeneveld, Dodge, and Lo]{soldaini2024dolma}
+L.~Soldaini, R.~Kinney, A.~Bhagia, D.~Schwenk, D.~Atkinson, R.~Authur, B.~Bogin, K.~Chandu, J.~Dumas, Y.~Elazar, V.~Hofmann, A.~H. Jha, S.~Kumar, L.~Lucy, X.~Lyu, N.~Lambert, I.~Magnusson, J.~Morrison, N.~Muennighoff, A.~Naik, C.~Nam, M.~E. Peters, A.~Ravichander, K.~Richardson, Z.~Shen, E.~Strubell, N.~Subramani, O.~Tafjord, P.~Walsh, L.~Zettlemoyer, N.~A. Smith, H.~Hajishirzi, I.~Beltagy, D.~Groeneveld, J.~Dodge, and K.~Lo.
+\newblock Dolma: an open corpus of three trillion tokens for language model pretraining research, 2024.
+\newblock URL \url{https://arxiv.org/abs/2402.00159}.
+
+\bibitem[Suzgun et~al.(2022{\natexlab{a}})Suzgun, Scales, Scharli, Gehrmann, Tay, Chung, Chowdhery, Le, hsin Chi, Zhou, and Wei]{Suzgun2022ChallengingBT}
+M.~Suzgun, N.~Scales, N.~Scharli, S.~Gehrmann, Y.~Tay, H.~W. Chung, A.~Chowdhery, Q.~V. Le, E.~H. hsin Chi, D.~Zhou, and J.~Wei.
+\newblock Challenging big-bench tasks and whether chain-of-thought can solve them.
+\newblock In \emph{Annual Meeting of the Association for Computational Linguistics}, 2022{\natexlab{a}}.
+\newblock URL \url{https://api.semanticscholar.org/CorpusID:252917648}.
+
+\bibitem[Suzgun et~al.(2022{\natexlab{b}})Suzgun, Scales, Schärli, Gehrmann, Tay, Chung, Chowdhery, Le, Chi, Zhou, and Wei]{suzgun2022challengingbigbenchtaskschainofthought}
+M.~Suzgun, N.~Scales, N.~Schärli, S.~Gehrmann, Y.~Tay, H.~W. Chung, A.~Chowdhery, Q.~V. Le, E.~H. Chi, D.~Zhou, and J.~Wei.
+\newblock Challenging big-bench tasks and whether chain-of-thought can solve them, 2022{\natexlab{b}}.
+
+\bibitem[Thawakar et~al.(2024)Thawakar, Vayani, Khan, Cholakal, Anwer, Felsberg, Baldwin, Xing, and Khan]{thawakar2024mobillama}
+O.~Thawakar, A.~Vayani, S.~Khan, H.~Cholakal, R.~M. Anwer, M.~Felsberg, T.~Baldwin, E.~P. Xing, and F.~S. Khan.
+\newblock Mobillama: Towards accurate and lightweight fully transparent gpt, 2024.
+
+\bibitem[Thorne et~al.(2018)Thorne, Vlachos, Christodoulopoulos, and Mittal]{thorne2018fever}
+J.~Thorne, A.~Vlachos, C.~Christodoulopoulos, and A.~Mittal.
+\newblock Fever: a large-scale dataset for fact extraction and verification, 2018.
+\newblock URL \url{https://arxiv.org/abs/1803.05355}.
+
+\bibitem[Touvron et~al.(2023)Touvron, Martin, Stone, Albert, Almahairi, Babaei, Bashlykov, Batra, Bhargava, Bhosale, Bikel, Blecher, Ferrer, Chen, Cucurull, Esiobu, Fernandes, Fu, Fu, Fuller, Gao, Goswami, Goyal, Hartshorn, Hosseini, Hou, Inan, Kardas, Kerkez, Khabsa, Kloumann, Korenev, Koura, Lachaux, Lavril, Lee, Liskovich, Lu, Mao, Martinet, Mihaylov, Mishra, Molybog, Nie, Poulton, Reizenstein, Rungta, Saladi, Schelten, Silva, Smith, Subramanian, Tan, Tang, Taylor, Williams, Kuan, Xu, Yan, Zarov, Zhang, Fan, Kambadur, Narang, Rodriguez, Stojnic, Edunov, and Scialom]{touvron2023llama}
+H.~Touvron, L.~Martin, K.~Stone, P.~Albert, A.~Almahairi, Y.~Babaei, N.~Bashlykov, S.~Batra, P.~Bhargava, S.~Bhosale, D.~Bikel, L.~Blecher, C.~C. Ferrer, M.~Chen, G.~Cucurull, D.~Esiobu, J.~Fernandes, J.~Fu, W.~Fu, B.~Fuller, C.~Gao, V.~Goswami, N.~Goyal, A.~Hartshorn, S.~Hosseini, R.~Hou, H.~Inan, M.~Kardas, V.~Kerkez, M.~Khabsa, I.~Kloumann, A.~Korenev, P.~S. Koura, M.-A. Lachaux, T.~Lavril, J.~Lee, D.~Liskovich, Y.~Lu, Y.~Mao, X.~Martinet, T.~Mihaylov, P.~Mishra, I.~Molybog, Y.~Nie, A.~Poulton, J.~Reizenstein, R.~Rungta, K.~Saladi, A.~Schelten, R.~Silva, E.~M. Smith, R.~Subramanian, X.~E. Tan, B.~Tang, R.~Taylor, A.~Williams, J.~X. Kuan, P.~Xu, Z.~Yan, I.~Zarov, Y.~Zhang, A.~Fan, M.~Kambadur, S.~Narang, A.~Rodriguez, R.~Stojnic, S.~Edunov, and T.~Scialom.
+\newblock Llama 2: Open foundation and fine-tuned chat models, 2023.
+
+\bibitem[Wei et~al.(2024)Wei, Wang, Liu, Ding, and Zhang]{wei2024OssInstruct}
+Y.~Wei, Z.~Wang, J.~Liu, Y.~Ding, and L.~Zhang.
+\newblock Magicoder: Empowering code generation with oss-instruct, 2024.
+\newblock URL \url{https://arxiv.org/abs/2312.02120}.
+
+\bibitem[Welbl et~al.(2017)Welbl, Liu, and Gardner]{welbl2017crowdsourcing}
+J.~Welbl, N.~F. Liu, and M.~Gardner.
+\newblock Crowdsourcing multiple choice science questions, 2017.
+
+\bibitem[Xu et~al.(2023)Xu, Sun, Zheng, Geng, Zhao, Feng, Tao, and Jiang]{xu2023EvolInstruct}
+C.~Xu, Q.~Sun, K.~Zheng, X.~Geng, P.~Zhao, J.~Feng, C.~Tao, and D.~Jiang.
+\newblock Wizardlm: Empowering large language models to follow complex instructions, 2023.
+\newblock URL \url{https://arxiv.org/abs/2304.12244}.
+
+\bibitem[Yang et~al.(2024)Yang, Yang, Hui, Zheng, Yu, Zhou, Li, Li, Liu, Huang, Dong, Wei, Lin, Tang, Wang, Yang, Tu, Zhang, Ma, Yang, Xu, Zhou, Bai, He, Lin, Dang, Lu, Chen, Yang, Li, Xue, Ni, Zhang, Wang, Peng, Men, Gao, Lin, Wang, Bai, Tan, Zhu, Li, Liu, Ge, Deng, Zhou, Ren, Zhang, Wei, Ren, Liu, Fan, Yao, Zhang, Wan, Chu, Liu, Cui, Zhang, Guo, and Fan]{yang2024qwen2}
+A.~Yang, B.~Yang, B.~Hui, B.~Zheng, B.~Yu, C.~Zhou, C.~Li, C.~Li, D.~Liu, F.~Huang, G.~Dong, H.~Wei, H.~Lin, J.~Tang, J.~Wang, J.~Yang, J.~Tu, J.~Zhang, J.~Ma, J.~Yang, J.~Xu, J.~Zhou, J.~Bai, J.~He, J.~Lin, K.~Dang, K.~Lu, K.~Chen, K.~Yang, M.~Li, M.~Xue, N.~Ni, P.~Zhang, P.~Wang, R.~Peng, R.~Men, R.~Gao, R.~Lin, S.~Wang, S.~Bai, S.~Tan, T.~Zhu, T.~Li, T.~Liu, W.~Ge, X.~Deng, X.~Zhou, X.~Ren, X.~Zhang, X.~Wei, X.~Ren, X.~Liu, Y.~Fan, Y.~Yao, Y.~Zhang, Y.~Wan, Y.~Chu, Y.~Liu, Z.~Cui, Z.~Zhang, Z.~Guo, and Z.~Fan.
+\newblock Qwen2 technical report, 2024.
+\newblock URL \url{https://arxiv.org/abs/2407.10671}.
+
+\bibitem[Yang et~al.(2022)Yang, Hu, Babuschkin, Sidor, Liu, Farhi, Ryder, Pachocki, Chen, and Gao]{yang2022tpv}
+G.~Yang, E.~J. Hu, I.~Babuschkin, S.~Sidor, X.~Liu, D.~Farhi, N.~Ryder, J.~Pachocki, W.~Chen, and J.~Gao.
+\newblock Tensor programs v: Tuning large neural networks via zero-shot hyperparameter transfer, 2022.
+\newblock URL \url{https://arxiv.org/abs/2203.03466}.
+
+\bibitem[Yang et~al.(2023)Yang, Yu, Zhu, and Hayou]{yang2023tpvi}
+G.~Yang, D.~Yu, C.~Zhu, and S.~Hayou.
+\newblock Tensor programs vi: Feature learning in infinite-depth neural networks, 2023.
+\newblock URL \url{https://arxiv.org/abs/2310.02244}.
+
+\bibitem[Yang et~al.(2018)Yang, Qi, Zhang, Bengio, Cohen, Salakhutdinov, and Manning]{yang2018hotpotqa}
+Z.~Yang, P.~Qi, S.~Zhang, Y.~Bengio, W.~W. Cohen, R.~Salakhutdinov, and C.~D. Manning.
+\newblock Hotpotqa: A dataset for diverse, explainable multi-hop question answering, 2018.
+\newblock URL \url{https://arxiv.org/abs/1809.09600}.
+
+\bibitem[Yao et~al.(2023{\natexlab{a}})Yao, Chen, Yang, and Narasimhan]{yao2023webshop}
+S.~Yao, H.~Chen, J.~Yang, and K.~Narasimhan.
+\newblock Webshop: Towards scalable real-world web interaction with grounded language agents, 2023{\natexlab{a}}.
+\newblock URL \url{https://arxiv.org/abs/2207.01206}.
+
+\bibitem[Yao et~al.(2023{\natexlab{b}})Yao, Zhao, Yu, Du, Shafran, Narasimhan, and Cao]{yao2023react}
+S.~Yao, J.~Zhao, D.~Yu, N.~Du, I.~Shafran, K.~Narasimhan, and Y.~Cao.
+\newblock React: Synergizing reasoning and acting in language models, 2023{\natexlab{b}}.
+\newblock URL \url{https://arxiv.org/abs/2210.03629}.
+
+\bibitem[Ye et~al.(2024)Ye, Liu, Sun, Zhou, Zhan, and Qiu]{ye2024datamixinglawsoptimizing}
+J.~Ye, P.~Liu, T.~Sun, Y.~Zhou, J.~Zhan, and X.~Qiu.
+\newblock Data mixing laws: Optimizing data mixtures by predicting language modeling performance, 2024.
+\newblock URL \url{https://arxiv.org/abs/2403.16952}.
+
+\bibitem[Zellers et~al.(2019)Zellers, Holtzman, Bisk, Farhadi, and Choi]{zellers2019hellaswag}
+R.~Zellers, A.~Holtzman, Y.~Bisk, A.~Farhadi, and Y.~Choi.
+\newblock Hellaswag: Can a machine really finish your sentence?, 2019.
+
+\bibitem[Zhang et~al.(2024)Zhang, Zeng, Wang, and Lu]{zhang2024tinyllama}
+P.~Zhang, G.~Zeng, T.~Wang, and W.~Lu.
+\newblock Tinyllama: An open-source small language model, 2024.
+
+\end{thebibliography}

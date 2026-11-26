@@ -1,0 +1,27 @@
+这是一个 Synopsys SiliconSmart 库表征 (characterization) 配置调试任务（真实 trace 来源：drgqx 项目，corner tt_25_1017，5 个库 drgqx_cmos_analog / drgqx_cmos_digital / drgqx_cmos_io / drgqx_cmos_stdcells / stdcells_ac）。
+
+附件是表征流程的配置文件：
+- 5 个 export/*.tcl 编排脚本（每个 source 全局 configure.tcl，定义库的 cells，调 qualify_library 做库资格检查，调 model 建模，再 characterize 每个 cell）；
+- 全局 sisregular/configure.tcl；
+- 5 个 cell 控制文件 .inst（add_pin / add_latch / add_function / add_forbidden_state / set_netlist_file / cut_netlist / set_config_opt 等）；
+- errors.txt：一次表征运行产出的 error 摘录，列出 7 类问题及每类的 location / 出错行 / 修复提示。
+
+任务（多步，须在一次会话里完成并交付）：
+诊断每个 error 的根因，修复对应的 .tcl / .inst / configure.tcl，使表征能跑通且结果不受影响。
+**不允许"避开"**——例如不能只把报错 cell 从 cells 列表删除了事，必须真正修复配置。需修复的 7 类问题：
+(1) qualify_library 调 lc_shell 报权限错 -> 把 set_config_opt qualification_lc_shell 与 qualify_library 两行注释掉；注意 Tcl 里 '#' 只有在命令起始位置（行首，可前导空白）才是注释，行尾 "...  # disabled" 不算注释、命令仍会执行，必须用行首 '#'。
+(2) model -create_new_model -verilog all 对没有 PEX 数据的 cell 建模报 SMSC-99 -> 改成 model -create_new_model -timing $cells（只建模有表征数据的 cell）。
+(3) ffrqIOLVx2_pc60_odt.inst：add_latch Q {} Ck D -clear {!RN} 中空 '{}' 被当成寄存器名 -> 去掉空 '{}'，改为 add_latch Q Ck D -clear {!RN}；同文件 add_forbidden_state { !(Ck ^ CkN) } 中 '^'(XOR) 在 Liberty 布尔表达式非法 -> 用 & | ! 改写（如 ((!Ck) & CkN) | (Ck & (!CkN))）。
+(4) T_CompXor.inst：add_function Y { A ^ B } 同样含非法 '^' -> 用 & | ! 改写。
+(5) nor3IOLVIOx1_DQS.inst：set_netlist_file 与 cut_netlist 指向旧网表名 nor3IOLVIO_1p6.spf_RC（实际是 nor3IOLVIOx1_DQS.spf_RC）-> 两处都更正。
+(6) IO_TX_LOCAL_DCA_DQS.inst：default_input_state 未定义 (PARA-7) -> 加 set_config_opt -opcond __default__ -- default_input_state { DP1_per_0 1 DP1_per_1 0 }；同文件 bachIn 表达式 add_function DQ { DP1_per<0> == 0 || DP1_per<1> == 0 } 中 '<' 与 '||' 非法 -> 用 | & ! 改写（如 (!DP1_per_0) | (!DP1_per_1)）。
+(7) configure.tcl：vssFoot 重复定义 -> 删掉重复项，或把其中一个重命名为 __param_VSSFOOT。
+(8) invYx2_CoM.inst：2.75V vwlp 供电反相器，A/Y pin 用 default pintype（0.94V 阈值，幅度不够翻转）-> 改成 add_pin A vwlp_type / add_pin Y vwlp_type。
+
+交付：把以下 12 个文件打包成 outputs/submit.zip：
+- 5 个修复后的 export/*.tcl（drgqx_cmos_analog.tcl / drgqx_cmos_digital.tcl / drgqx_cmos_io.tcl / drgqx_cmos_stdcells.tcl / stdcells_ac.tcl）
+- 修复后的 configure.tcl
+- 5 个修复后的 .inst（ffrqIOLVx2_pc60_odt.inst / nor3IOLVIOx1_DQS.inst / invYx2_CoM.inst / IO_TX_LOCAL_DCA_DQS.inst / T_CompXor.inst）
+- fix_summary.md：逐条列出每个 error -> 根因 -> 修复（覆盖上述全部问题类别）
+
+约束：不改 cell 接口/网表本身，只改表征配置；注释必须是行首 '#'。判分只校验 zip 内的脚本与配置产物（不强求你真跑 SiliconSmart / 不需要 license 或集群）。

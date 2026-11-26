@@ -1,0 +1,24 @@
+# Scenario: a MOSFET I-V characterization regression (building a Gm/Id lookup
+# table from batch-simulated .fsdb dumps) must count how many signals match a
+# hierarchical family pattern, e.g. "*.isub(d*)" for all substrate currents
+# across the hierarchy. The idiomatic WaveView batch-selection API is
+# sx_signal <glob>, which selects signals by hierarchical wildcard.
+#
+# Environment: Synopsys Custom WaveView ACE Tcl. Useful API entry points:
+#   sx_open_sim_file_read <path>   -> returns a file object handle
+#   sx_signal <glob_pattern>       -> returns a LIST of wave handles matching the
+#                                     hierarchical glob (NOT signal names; the
+#                                     list length is the match count)
+#   sx_close_sim_file <file_obj>   -> release the file
+#
+# Task: implement wv_count_by_pattern, which opens the FSDB at fsdb_path,
+# selects all signals whose hierarchical name matches the glob pattern using
+# the sx_signal wildcard-selection API, and returns the count as an integer.
+# Must return 0 when no signal matches.
+#
+# NOTE: the count must come from sx_signal (the batch-selection API), NOT from
+# iterating sx_first_wave/sx_next_wave and applying string match on names --
+# those two approaches give DIFFERENT counts on the same FSDB.
+proc wv_count_by_pattern {fsdb_path pattern} {
+    # your code here
+}

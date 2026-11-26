@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe ④-4ep Epoch 缩放实验报告（中文版 · 2026-10-13）</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--orange:#e8873c;--cyan:#39d2c5}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei','Segoe UI',Helvetica,Arial,sans-serif;line-height:1.7;max-width:1200px;margin:0 auto;padding:20px}
+h1{font-size:1.8em;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:.3em;margin:1.5em 0 .5em}
+h2{font-size:1.4em;color:var(--purple);margin:1.2em 0 .5em;border-bottom:1px solid var(--border);padding-bottom:.2em}
+h3{font-size:1.15em;color:var(--green);margin:1em 0 .4em}
+p{margin:.5em 0}
+table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.9em}
+th,td{border:1px solid var(--border);padding:.4em .6em;text-align:center}
+th{background:var(--card);color:var(--accent);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.best{color:var(--green);font-weight:700}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;margin:.8em 0}
+.tldr{background:linear-gradient(135deg,#161b22,#1a2332);border-left:4px solid var(--accent)}
+.tldr ul{margin:.3em 0 .3em 1.2em}
+.tldr li{margin:.3em 0}
+code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF Mono',Consolas,monospace;font-size:.85em;color:var(--orange)}
+.svg-container{margin:1em 0;text-align:center}
+.svg-container svg{max-width:100%;height:auto}
+.note{color:var(--muted);font-size:.85em;font-style:italic}
+.tag{display:inline-block;padding:.1em .5em;border-radius:10px;font-size:.75em;font-weight:600}
+.tag-done{background:rgba(63,185,80,.2);color:var(--green)}
+.tag-fail{background:rgba(248,81,73,.2);color:var(--red)}
+.tag-warn{background:rgba(210,153,34,.2);color:var(--yellow)}
+.tag-moderate{background:rgba(210,153,34,.2);color:var(--yellow)}
+.refs{font-size:.85em;color:var(--muted);margin-top:2em;border-top:1px solid var(--border);padding-top:.5em}
+.moderate-box{background:linear-gradient(135deg,#1f1a0d,#1a160a);border:2px solid var(--yellow);border-radius:8px;padding:1em 1.2em;margin:1em 0}
+.moderate-box h3{color:var(--yellow);margin-top:0}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8em;margin:.8em 0}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.8em 1em}
+.metric-card .label{color:var(--muted);font-size:.8em}
+.metric-card .value{font-size:1.6em;font-weight:700;margin:.2em 0}
+.metric-card .delta{font-size:.85em}
+</style>
+</head>
+<body>
+
+<h1>BaiZe ④-4ep Epoch 缩放实验报告</h1>
+<p class="note">生成时间：2026-10-13 · 线：vision · 语言：中文 · 性质：纯写作（零 GPU）· 数据来源：<code>MEMORY_VISION.md</code> / <code>EXPERIMENTS_VISION.md §9.4–§9.7</code> / <code>daily-memories-vision/2026-10-13.md</code></p>
+
+<h2>1. TL;DR — 一句话结论</h2>
+<div class="card tldr">
+<p><strong>④-4ep（4 epoch 训练）ProtB linear-probe = 67.05±0.02%</strong>，较 2ep（65.37%）提升 <strong>+1.68pp</strong>，较 1ep（62.34%）提升 <strong>+4.71pp</strong>。</p>
+<p><span class="tag tag-moderate"> verdict: MODERATE, DIMINISHING </span> &nbsp; 67.05% &lt; 70% 胜利阈值；增益递减比 ≈ 0.55（1→2ep +3.03pp，2→4ep +1.68pp），轨迹仍向上但接近天花板。</p>
+</div>
+
+<div class="metric-grid">
+<div class="metric-card"><div class="label">ProtB (3-seed mean±std)</div><div class="value best">67.05<span style="font-size:.6em">±0.02%</span></div><div class="delta warn">Δ+1.68pp vs 2ep · Δ+4.71pp vs 1ep</div></div>
+<div class="metric-card"><div class="label">ProtA (single eval)</div><div class="value">56.70%</div><div class="delta warn">Δ+2.88pp vs 2ep · Δ+7.00pp vs 1ep</div></div>
+<div class="metric-card"><div class="label">Zero-shot top-1 / top-5</div><div class="value">40.64<span style="font-size:.6em">%</span></div><div class="delta">top5=72.64% · Δ+2.12pp vs 2ep</div></div>
+<div class="metric-card"><div class="label">k-NN k=20</div><div class="value">42.35%</div><div class="delta warn">Δ+1.68pp vs 2ep · Δ+4.67pp vs 1ep</div></div>
+</div>
+
+<table>
+<tr><th>指标</th><th>1ep (E1fair)</th><th>2ep (④-2ep)</th><th class="best">4ep (④-4ep)</th><th>Δ(2→4)</th><th>Δ(1→4)</th></tr>
+<tr><td>ProtB (3 seeds)</td><td>62.34±0.01%</td><td>65.37±0.01%</td><td class="best">67.05±0.02%</td><td class="warn">+1.68pp</td><td>+4.71pp</td></tr>
+<tr><td>ProtA</td><td>49.70%</td><td>53.82%</td><td class="best">56.70%</td><td class="warn">+2.88pp</td><td>+7.00pp</td></tr>
+<tr><td>Zero-shot top-1</td><td>34.10%</td><td>38.52%</td><td class="best">40.64%</td><td class="warn">+2.12pp</td><td>+6.54pp</td></tr>
+<tr><td>Zero-shot top-5</td><td>—</td><td>70.81%</td><td class="best">72.64%</td><td class="warn">+1.83pp</td><td>—</td></tr>
+<tr><td>k-NN k=5</td><td>35.63%</td><td>37.85%</td><td class="best">39.77%</td><td class="warn">+1.92pp</td><td>+4.14pp</td></tr>
+<tr><td>k-NN k=10</td><td>37.97%</td><td>40.10%</td><td class="best">41.94%</td><td class="warn">+1.84pp</td><td>+3.97pp</td></tr>
+<tr><td>k-NN k=20</td><td>37.68%</td><td>40.67%</td><td class="best">42.35%</td><td class="warn">+1.68pp</td><td>+4.67pp</td></tr>
+</table>
+<p class="note">四指标（ProtB / ProtA / zero-shot / k-NN）一致 +1.7~2.9pp 提升 → 增益真实（非噪声），但递减确认。</p>
+
+<h2>2. 动机与预注册</h2>
+<div class="card">
+<p><strong>背景</strong>：BaiZe 视觉编码器基线 E1fair（1 epoch）ProtB = 62.34%，外部评审质疑偏低。④-2ep（2 epoch）提升至 65.37%（+3.03pp）。运维侧预注册了 4ep 实验以判断 62.34% 是"预算不足"还是"特征质量天花板"。</p>
+<h3>预注册判据（2026-10-12 定稿，见 <code>EXPERIMENTS_VISION.md §9.4</code>）</h3>
+<table>
+<tr><th>ProtB 4ep 结果</th><th>判据</th><th>含义</th></tr>
+<tr><td>&gt; 70%</td><td class="best">VICTORY</td><td>epoch 不足是主因，继续加 epoch</td></tr>
+<tr><td>65~70%</td><td class="warn">MODERATE / DIMINISHING</td><td>增益递减，接近天花板，性价比下降</td></tr>
+<tr><td>&lt; 65%</td><td class="bad">CEILING CONFIRMED</td><td>特征质量天花板确认，停止加 epoch</td></tr>
+</table>
+<p class="note">预注册原文：「2ep first, 4ep if 2ep≥70%」——2ep=65.37% 未达 70% 胜利线，但运维侧仍批准 4ep 以获得完整递减曲线。④-4ep ProtB=67.05% 落入 <strong>65~70% MODERATE</strong> 区间。</p>
+</div>
+
+<h2>3. 方法与配置</h2>
+<div class="card">
+<h3>3.1 训练配置</h3>
+<table>
+<tr><th>参数</th><th>值</th><th>备注</th></tr>
+<tr><td>架构</td><td>OpenVision2 ViT-L w512/d30</td><td>patch=224/16，~126.8M 参数</td></tr>
+<tr><td>训练目标</td><td>AIMv2-style (contrast + reconstruction)</td><td><code>--loss aimv2 --mask-ratio 0.6</code></td></tr>
+<tr><td>微批 (MBS)</td><td>64/卡</td><td><code>--batch-size 64</code></td></tr>
+<tr><td>全局批 (GBS)</td><td>512 (= 64 × 8 卡 DP)</td><td>8 × H100 80GB</td></tr>
+<tr><td>学习率</td><td>5e-4 → cosine → min 5e-5</td><td>warmup 2000 步</td></tr>
+<tr><td>优化器</td><td>AdamW</td><td>—</td></tr>
+<tr><td>数据</td><td>部分 GPIC 冻结快照（94.9M 对）</td><td>total_shards=10,787</td></tr>
+<tr><td>续训</td><td>resume from ④-2ep <code>vision.pt</code></td><td>step 374,202 → 748,404</td></tr>
+<tr><td>精度</td><td>bfloat16</td><td>—</td></tr>
+</table>
+
+<h3>3.2 评测配置（Protocol B，严格冻结）</h3>
+<table>
+<tr><th>参数</th><th>值</th></tr>
+<tr><td>评测集</td><td>ImageNet-1K 官方 val（50,000 张，14 parquet）</td></tr>
+<tr><td>训练集</td><td>ImageNet-1K train（~1.28M 张，294 parquet）</td></tr>
+<tr><td>Probe</td><td>SGD + momentum 0.9, cosine 90ep, warmup 5ep, bs 1024, lr 0.1, wd 0.0</td></tr>
+<tr><td>Seeds</td><td>0 / 1 / 2（报 mean±std）</td></tr>
+<tr><td>特征</td><td>pooled / CLS token output（冻结 trunk）</td></tr>
+<tr><td>预处理</td><td>224×224, CLIP mean/std</td></tr>
+</table>
+<p class="note">ProtB = BaiZe internal protocol linear probe。绝对数字不可与外部方法直接比较，原因见 <code>EXPERIMENTS_VISION.md §8.3</code>。</p>
+</div>
+
+<h2>4. 训练过程</h2>
+<div class="card">
+<table>
+<tr><th>指标</th><th>1ep (E1fair)</th><th>2ep (④-2ep)</th><th class="best">4ep (④-4ep)</th></tr>
+<tr><td>总步数</td><td>187,101</td><td>374,202</td><td class="best">748,404</td></tr>
+<tr><td>新增步数（本轮）</td><td>187,101</td><td>187,101</td><td class="best">374,202</td></tr>
+<tr><td>总训练时间</td><td>~5.7h</td><td>~16.6h</td><td class="best">~16.8h (新增部分)</td></tr>
+<tr><td>稳定吞吐 (img/s)</td><td>~2,706</td><td>~2,416</td><td class="best">2,818</td></tr>
+<tr><td>final_loss</td><td>~0.25</td><td>0.1856</td><td class="best">0.0805</td></tr>
+<tr><td>C1 (last PROBE)</td><td>0.5086</td><td>0.5804</td><td class="best">0.5932</td></tr>
+<tr><td>C2_gap</td><td>+0.19</td><td>+0.1844</td><td class="best">+0.1791</td></tr>
+<tr><td>C4 (坍缩检测)</td><td>OK</td><td>OK</td><td class="best">OK</td></tr>
+<tr><td>累计 GPU·h</td><td>~622</td><td>~780</td><td class="best">~999</td></tr>
+</table>
+
+<h3>4.1 训练健康度</h3>
+<p>全程无坍缩：C4 守卫在全部 PROBE 点均 OK。C1（对比对齐）从 2ep 的 0.5804 提升至 4ep 的 0.5932（+0.0128），C2_gap 从 +0.1844 微降至 +0.1791（稳定，无退化）。final_loss 从 0.1856 大幅降至 0.0805（−56.6%），表明重建分支持续收敛。</p>
+
+<h3>4.2 吞吐与 I/O</h3>
+<p>④-4ep 新增 374,202 步耗时 ~16.8h，steady_img/s ≈ 2,818。单步延迟 128–286ms（随 NFS 争用抖动），NFS 清闲时 ~95–105ms（≈5,100 img/s）。瓶颈为 NFS I/O 而非 GPU 算力——data 线并发下载拉低了有效吞吐。显存使用 ~16.5GB/卡 / 81.5GB（仅 20%）。</p>
+
+<h3>4.3 C1 轨迹</h3>
+<div class="svg-container">
+<svg viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="500" height="180" fill="#161b22" rx="8"/>
+<line x1="60" y1="150" x2="460" y2="150" stroke="#30363d" stroke-width="1"/>
+<line x1="60" y1="30" x2="60" y2="150" stroke="#30363d" stroke-width="1"/>
+<text x="50" y="153" fill="#8b949e" font-size="9" text-anchor="end">0.48</text>
+<text x="50" y="115" fill="#8b949e" font-size="9" text-anchor="end">0.54</text>
+<text x="50" y="80" fill="#8b949e" font-size="9" text-anchor="end">0.58</text>
+<text x="50" y="45" fill="#8b949e" font-size="9" text-anchor="end">0.62</text>
+<text x="20" y="90" fill="#8b949e" font-size="10" transform="rotate(-90,20,90)">C1 (contrast alignment)</text>
+<text x="110" y="165" fill="#8b949e" font-size="9">1ep</text>
+<text x="260" y="165" fill="#8b949e" font-size="9">2ep</text>
+<text x="410" y="165" fill="#8b949e" font-size="9">4ep</text>
+<text x="260" y="178" fill="#8b949e" font-size="10" text-anchor="middle">训练 epoch</text>
+<polyline points="110,125.5 260,63.9 410,53.0" fill="none" stroke="#58a6ff" stroke-width="2.5"/>
+<circle cx="110" cy="125.5" r="5" fill="#58a6ff"/>
+<circle cx="260" cy="63.9" r="5" fill="#58a6ff"/>
+<circle cx="410" cy="53.0" r="5" fill="#3fb950"/>
+<text x="110" y="118" fill="#e6edf3" font-size="9" text-anchor="middle">0.5086</text>
+<text x="260" y="56" fill="#e6edf3" font-size="9" text-anchor="middle">0.5804</text>
+<text x="410" y="46" fill="#3fb950" font-size="9" text-anchor="middle">0.5932</text>
+<text x="185" y="85" fill="#d29922" font-size="8">+0.072</text>
+<text x="335" y="48" fill="#d29922" font-size="8">+0.013</text>
+</svg>
+</div>
+<p class="note">C1 增益递减：1→2ep +0.072，2→4ep +0.013（递减比 ≈ 0.18），与 ProtB 递减比 0.55 一致方向。</p>
+</div>
+
+<h2>5. 评测结果</h2>
+<div class="card">
+<h3>5.1 ProtB Linear Probe（主指标）</h3>
+<p>3 seeds 独立训练线性分类器（SGD 90ep cosine），报 mean±std：</p>
+<table>
+<tr><th>Seed</th><th>1ep (E1fair)</th><th>2ep (④-2ep)</th><th class="best">4ep (④-4ep)</th></tr>
+<tr><td>0</td><td>62.33%</td><td>65.37%</td><td class="best">67.03%</td></tr>
+<tr><td>1</td><td>62.34%</td><td>65.36%</td><td class="best">67.08%</td></tr>
+<tr><td>2</td><td>62.35%</td><td>65.37%</td><td class="best">67.04%</td></tr>
+<tr><td><strong>mean±std</strong></td><td><strong>62.34±0.01%</strong></td><td><strong>65.37±0.01%</strong></td><td class="best"><strong>67.05±0.02%</strong></td></tr>
+</table>
+<p class="note">seed 间 std ≤0.02pp → 结果稳定，非随机波动。</p>
+
+<h3>5.2 四指标交叉验证</h3>
+<table>
+<tr><th>指标</th><th>1ep</th><th>2ep</th><th>4ep</th><th>Δ(1→4)</th><th>方向一致？</th></tr>
+<tr><td>ProtB</td><td>62.34%</td><td>65.37%</td><td class="best">67.05%</td><td>+4.71pp</td><td class="best">✓</td></tr>
+<tr><td>ProtA</td><td>49.70%</td><td>53.82%</td><td class="best">56.70%</td><td>+7.00pp</td><td class="best">✓</td></tr>
+<tr><td>Zero-shot top-1</td><td>34.10%</td><td>38.52%</td><td class="best">40.64%</td><td>+6.54pp</td><td class="best">✓</td></tr>
+<tr><td>Zero-shot top-5</td><td>—</td><td>70.81%</td><td class="best">72.64%</td><td>—</td><td class="best">✓</td></tr>
+<tr><td>k-NN k=20</td><td>37.68%</td><td>40.67%</td><td class="best">42.35%</td><td>+4.67pp</td><td class="best">✓</td></tr>
+</table>
+<p>四指标一致提升 +4.7~7.0pp（1→4ep），且各指标 2→4ep 增益均为 +1.7~2.9pp → <strong>增益真实且方向一致</strong>，非单一指标噪声。</p>
+
+<h3>5.3 lp–epoch 曲线</h3>
+<div class="svg-container">
+<svg viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="560" height="220" fill="#161b22" rx="8"/>
+<line x1="60" y1="180" x2="520" y2="180" stroke="#30363d" stroke-width="1"/>
+<line x1="60" y1="20" x2="60" y2="180" stroke="#30363d" stroke-width="1"/>
+<text x="52" y="183" fill="#8b949e" font-size="9" text-anchor="end">60%</text>
+<text x="52" y="143" fill="#8b949e" font-size="9" text-anchor="end">64%</text>
+<text x="52" y="103" fill="#8b949e" font-size="9" text-anchor="end">68%</text>
+<text x="52" y="63" fill="#8b949e" font-size="9" text-anchor="end">72%</text>
+<text x="15" y="100" fill="#8b949e" font-size="10" transform="rotate(-90,15,100)">ProtB top-1 (%)</text>
+<text x="130" y="195" fill="#8b949e" font-size="10">1</text>
+<text x="280" y="195" fill="#8b949e" font-size="10">2</text>
+<text x="430" y="195" fill="#8b949e" font-size="10">4</text>
+<text x="290" y="212" fill="#8b949e" font-size="10" text-anchor="middle">epoch</text>
+<line x1="60" y1="46.7" x2="520" y2="46.7" stroke="#3fb950" stroke-width="1" stroke-dasharray="5,3" opacity="0.5"/>
+<text x="515" y="42" fill="#3fb950" font-size="9" text-anchor="end">70% 胜利阈值</text>
+<line x1="60" y1="113.3" x2="520" y2="113.3" stroke="#d29922" stroke-width="1" stroke-dasharray="5,3" opacity="0.4"/>
+<text x="515" y="109" fill="#d29922" font-size="9" text-anchor="end">65% 递减区下界</text>
+<polyline points="130,148.8 280,108.4 430,86.0" fill="none" stroke="#58a6ff" stroke-width="2.5"/>
+<circle cx="130" cy="148.8" r="6" fill="#58a6ff"/>
+<circle cx="280" cy="108.4" r="6" fill="#58a6ff"/>
+<circle cx="430" cy="86.0" r="7" fill="#3fb950"/>
+<line x1="130" y1="147.5" x2="130" y2="150.1" stroke="#58a6ff" stroke-width="1.5"/>
+<line x1="128" y1="147.5" x2="132" y2="147.5" stroke="#58a6ff" stroke-width="1.5"/>
+<line x1="128" y1="150.1" x2="132" y2="150.1" stroke="#58a6ff" stroke-width="1.5"/>
+<line x1="280" y1="107.1" x2="280" y2="109.7" stroke="#58a6ff" stroke-width="1.5"/>
+<line x1="278" y1="107.1" x2="282" y2="107.1" stroke="#58a6ff" stroke-width="1.5"/>
+<line x1="278" y1="109.7" x2="282" y2="109.7" stroke="#58a6ff" stroke-width="1.5"/>
+<line x1="430" y1="83.4" x2="430" y2="88.6" stroke="#3fb950" stroke-width="1.5"/>
+<line x1="428" y1="83.4" x2="432" y2="83.4" stroke="#3fb950" stroke-width="1.5"/>
+<line x1="428" y1="88.6" x2="432" y2="88.6" stroke="#3fb950" stroke-width="1.5"/>
+<text x="130" y="142" fill="#e6edf3" font-size="10" text-anchor="middle">62.34%</text>
+<text x="280" y="100" fill="#e6edf3" font-size="10" text-anchor="middle">65.37%</text>
+<text x="430" y="78" fill="#3fb950" font-size="11" text-anchor="middle" font-weight="bold">67.05%</text>
+<text x="205" y="120" fill="#d29922" font-size="9">+3.03pp</text>
+<text x="355" y="92" fill="#d29922" font-size="9">+1.68pp</text>
+</svg>
+</div>
+<p class="note">lp–epoch 曲线：1→2ep +3.03pp，2→4ep +1.68pp（递减比 ≈ 0.55）。67.05% 位于 65% 递减区与 70% 胜利线之间。</p>
+</div>
+
+<h2>6. 结论</h2>
+<div class="moderate-box">
+<h3>VERDICT: MODERATE, DIMINISHING</h3>
+<p><strong>67.05% &lt; 70% 胜利阈值</strong>。增益递减明确：1→2ep +3.03pp，2→4ep +1.68pp，递减比 ≈ 0.55。轨迹仍向上但接近天花板。</p>
+<ul>
+<li><strong>增益真实</strong>：四指标一致 +1.7~2.9pp（2→4ep），seed 间 std ≤0.02pp</li>
+<li><strong>递减确认</strong>：ProtB 增量从 +3.03pp 降至 +1.68pp（−44.6%）；C1 增量从 +0.072 降至 +0.013（−81.9%）</li>
+<li><strong>未达胜利线</strong>：67.05% 落在预注册 MODERATE 区间（65~70%），不满足 &gt;70% 继续加 epoch 的判据</li>
+<li><strong>累计投入</strong>：~999 GPU·h（4ep 含前序），每 pp 增益的边际成本递增</li>
+</ul>
+<p><strong>决策建议</strong>：停止继续加 epoch（8ep/16ep 预期增益 ≤+1pp，ROI 极低）。转向其他方向（见 §8）。</p>
+</div>
+
+<h2>7. 局限与诚实条款</h2>
+<div class="card">
+<ol>
+<li><strong>单架构单数据</strong>：仅 OpenVision2 w512 + 部分 GPIC（94.9M）。结论不可外推至其他架构/数据组合。</li>
+<li><strong>NFS I/O 瓶颈未隔离</strong>：④-4ep 训练期间 data 线并发下载，有效吞吐 2,818 img/s vs NFS 清闲时 5,100 img/s。若 I/O 充足，同样步数可能收敛更快（但 final loss 和 C1 不会因此改变）。</li>
+<li><strong>Probe 可能未充分拟合</strong>：② probe sweep 已排除 90ep 欠拟合（×5ep 450ep = 62.15%，−0.18pp），但仅验证了 1ep 模型。4ep 模型特征维/分布不同，理论上可能存在不同的 probe 最优点。</li>
+<li><strong>eval 数据量</strong>：ProtB 用全量 1.28M train + 50K val；ProtA / zero-shot / k-NN 仅 50K val 单次评测（无 seed 重复），std 不可计算。</li>
+<li><strong>ProtB = BaiZe internal protocol</strong>：与外部 lp 数字不可直接比较。原因：(a) 预处理不同；(b) probe 超参不同；(c) 数据划分不同。</li>
+<li><strong>绝对数字口径</strong>：本报告所有数字与 <code>MEMORY_VISION.md</code> + <code>EXPERIMENTS_VISION.md §9.5/§9.7</code> 一字不差。吞吐/显存/iter 来自 <code>daily-memories-vision/2026-10-13.md</code> 实测。</li>
+</ol>
+</div>
+
+<h2>8. 建议后续工作</h2>
+
+<h3>8-a · MBS×4 / GBS×4 / LR×2 加速可行性分析</h3>
+<div class="card">
+<h4>现状口径纠正</h4>
+<p>当前训练配置：<strong>MBS=64/卡 × 8 卡 = GBS=512</strong>（<code>--batch-size 64</code> 是<strong>每卡微批</strong>，非全局批）。显存使用 ~16.5GB/卡 / 81.5GB（<strong>仅 20%</strong>）。</p>
+
+<h4>三步分析</h4>
+<table>
+<tr><th>杠杆</th><th>方案</th><th>可行性</th><th>风险/前提</th></tr>
+<tr><td>MBS×4</td><td>256/卡 → GBS=2048</td><td class="best">✅ 显存 ~60–80GB/卡，仍 fit H100 80GB</td><td>需 100 步 smoke 验证不 OOM</td></tr>
+<tr><td>LR×2</td><td>5e-4 → 1e-3</td><td class="warn">⚠️ 方向正确（sqrt 缩放法则）</td><td>本线稳定点 lr5e-4；lr3e-3 曾是 schedule 伪影。必须 smoke + C1/C2/C4 守卫</td></tr>
+<tr><td>I/O 优化</td><td>--num-workers 6→12–16 + tar 预铺本地 SSD</td><td class="best">✅ 真正瓶颈在 NFS I/O 而非算力</td><td>需与 data 线下载错峰</td></tr>
+</table>
+
+<h4>关键发现：瓶颈是 I/O 不是显存</h4>
+<p>④-4ep 实测 iter 延迟 128–286ms（随 NFS 争用抖动），NFS 清时 ~95–105ms（≈5,100 img/s）。<strong>只加 batch 不加 dataloader 优化则加速有限</strong>——GPU 空等 NFS。杠杆优先级：</p>
+<ol>
+<li><code>--num-workers</code> 6 → 12–16（脚本现传 6）</li>
+<li>tar 预铺本地 SSD/NVMe（消除 NFS 读取延迟）</li>
+<li>与 data 线下载错峰（夜间跑 / 暂停下载）</li>
+<li>然后才考虑 MBS×4 + LR×2</li>
+</ol>
+<p><strong>验证步骤</strong>：<code>--batch-size 256</code> 跑 100 步 smoke，测 img/s vs 现状（64/卡）。若 img/s 提升 ≥×3 → I/O 已修好，可推进 GBS=2048。若 img/s 不变 → 确认 NFS 瓶颈，先优化 I/O。</p>
+</div>
+
+<h3>8-b · 合并三数据集 N-epoch 训练时间表</h3>
+<div class="card">
+<h4>三数据集体量</h4>
+<table>
+<tr><th>数据集</th><th>tar 数</th><th>每 tar 对数</th><th>总对数</th><th>备注</th></tr>
+<tr><td>GPIC</td><td>~8,000</td><td>~12,639</td><td>~101M</td><td>⚠️ 待核实（上机 <code>ls $GPIC | wc -l</code>）</td></tr>
+<tr><td>CC12M</td><td>~1,100</td><td>~10,000</td><td>~11M</td><td>⚠️ 待核实</td></tr>
+<tr><td>Amshaker</td><td>~2,250</td><td>~2,646</td><td>~6M</td><td>⚠️ 待核实</td></tr>
+<tr><td><strong>合计</strong></td><td>~11,350</td><td>—</td><td class="best">~118.1M</td><td>V3 total_shards=11,350 一致</td></tr>
+</table>
+<p class="note">公式见 <code>run_scaling_experiment.sh:41-48</code>。以上机 <code>ls</code> 逐个核实为准；未核实标「待核」。</p>
+
+<h4>GBS=512 时间表</h4>
+<p>118.1M 对 / GBS=512 = <strong>230,598 步/epoch</strong>。有效吞吐 6.19 step/s（NFS 争用）~ 10 step/s（NFS 清）：</p>
+<table>
+<tr><th>N (epoch)</th><th>步数</th><th>保守 (6.2 step/s)</th><th>乐观 (10 step/s)</th><th>8 卡 GPU·h (保守)</th></tr>
+<tr><td>1</td><td>230,598</td><td>~10.3h</td><td>~6.4h</td><td>~83</td></tr>
+<tr><td>2</td><td>461,196</td><td>~20.7h</td><td>~12.8h</td><td>~165</td></tr>
+<tr><td>4</td><td>922,392</td><td>~41.3h (1.7d)</td><td>~25.6h (1.1d)</td><td>~330</td></tr>
+<tr><td>8</td><td>1,844,784</td><td>~82.7h (3.4d)</td><td>~51.3h (2.1d)</td><td>~662</td></tr>
+<tr><td>16</td><td>3,689,568</td><td>~165h (6.9d)</td><td>~102h (4.3d)</td><td>~1323</td></tr>
+</table>
+
+<h4>GBS=2048（MBS×4）版本</h4>
+<p>步数 ÷4（57,650 步/epoch）。若 I/O 修好吞吐同步 ×3–4：</p>
+<table>
+<tr><th>N</th><th>步数</th><th>乐观 (30 step/s)</th><th>8 卡 GPU·h</th></tr>
+<tr><td>4</td><td>230,600</td><td>~2.1h</td><td>~17</td></tr>
+<tr><td>8</td><td>461,200</td><td>~4.3h</td><td>~34</td></tr>
+<tr><td>16</td><td>922,400</td><td>~8.5h</td><td>~68</td></tr>
+</table>
+<p class="warn">⚠️ <strong>warmup/cosine 须按总步数重设</strong>（warmup ≈ 1–2% 总步，不可沿用 2000 步）。例如 N=4 GBS=2048 总步 230,600 → warmup ≈ 2,306–4,612 步。</p>
+</div>
+
+<h3>8-c · 三方向排序与 ISEDA 投稿建议</h3>
+<div class="card">
+<p>ISEDA 投稿截止 ~2027-02-01（剩余 ~3.5 个月）。按 ROI / 风险 / 投稿价值排序：</p>
+<table>
+<tr><th>优先级</th><th>方向</th><th>预期收益</th><th>GPU 成本</th><th>风险</th><th>投稿价值</th></tr>
+<tr><td class="best">1 (最高)</td><td>Stage(iv) MLLM 对齐</td><td>高（完整 story：编码器→MLLM）</td><td>~50–100 GPU·h (SFT)</td><td>中（框架复杂度）</td><td>⭐⭐⭐ 核心 demo</td></tr>
+<tr><td class="warn">2</td><td>w384 更小塔</td><td>中（R10-③ 暗示 w384 可能更优）</td><td>~16 GPU·h (30k 步 smoke)</td><td>低</td><td>⭐⭐ scaling story 补全</td></tr>
+<tr><td>3</td><td>更多数据 N-epoch</td><td>低（V3 full 118.1M @1ep=63.52% Null；④ 部分 94.9M @4ep=67.05%）</td><td>~83–330 GPU·h/epoch</td><td>高（NFS I/O 瓶颈未解决）</td><td>⭐ 递减已确认</td></tr>
+</table>
+
+<h4>N-epoch 全量 vs V3 vs ④-4ep 关系</h4>
+<ul>
+<li><strong>V3</strong>（full 118.1M @1ep）= 63.52% → Null verdict（vs E1fair 部分 94.9M @1ep = 62.34%，Δ=+1.18pp &lt; 1.5pp 阈值）→ <strong>更多 unique 数据 ≈ 更多 epoch 重复</strong></li>
+<li><strong>④-4ep</strong>（部分 94.9M @4ep）= 67.05% → epoch 重复有效（+4.71pp vs 1ep）</li>
+<li><strong>N-epoch 全量</strong>（full 118.1M @N-ep）= 未知，但 V3 Null + ④ 递减 → 预期 ≤ ④-4ep + V3 差值 ≈ 67.05 + 1.18 ≈ 68.2% @4ep → <strong>仍不达 70%</strong></li>
+</ul>
+<p class="note"><strong>结论</strong>：N-epoch 全量 ROI 极低——即使全量×4ep，预期 ~68%，仍在 MODERATE 区间，且需 ~330 GPU·h（保守）。优先将 GPU 预算投入 Stage(iv) MLLM 对齐。</p>
+</div>
+
+<div class="refs">
+<p><strong>数据来源</strong>：</p>
+<ul>
+<li><code>MEMORY_VISION.md</code> 状态头 + 流水条目（wake #43–#48, 2026-10-13）</li>
+<li><code>EXPERIMENTS_VISION.md §9.4</code>（④ epoch 缩放预注册）· <code>§9.5</code>（结果表）· <code>§9.7</code>（结论）</li>
+<li><code>daily-memories-vision/2026-10-13.md</code>（训练/评测实测数据）</li>
+<li><code>lp_protocol_bridge.py</code>（Protocol B 定义）· <code>r9_train.py</code>（训练配置）</li>
+<li><code>run_scaling_experiment.sh:41-48</code>（三数据集体量公式）</li>
+</ul>
+<p>commit 前缀：<code>vision report:</code> · 生成方式：纯写作（零 GPU）</p>
+</div>
+
+</body>
+</html>

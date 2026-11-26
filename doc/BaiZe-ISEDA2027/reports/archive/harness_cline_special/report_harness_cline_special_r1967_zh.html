@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline R1967 专项分析</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}
+h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}
+h2{color:#1a5276;margin-top:25px;border-left:5px solid #2980b9;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:12px 0}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}
+th{background:#2980b9;color:#fff}
+tr:nth-child(even){background:#ecf0f1}
+.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.warn{color:#e67e22}
+.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:12px 0}
+.critical{background:#fdedec;border-left:4px solid #e74c3c;padding:10px 15px;margin:12px 0}
+.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:12px 0}</style></head><body>
+<h1>cline 专项分析报告 - R1967</h1>
+<p><strong>模型</strong>: glm-5.3-flash | <strong>命名</strong>: 正文写 cline (代码路径 cline-patched 不改)<br><strong>时间</strong>: 2026-11-09 11:20 | <strong>网关</strong>: HTTP 200 (0.16s)</p>
+
+<h2>C1 - 独立统计 (数字可复算)</h2>
+<table><tr><th>指标</th><th>值</th><th>复算命令</th></tr>
+<tr><td>predict 总数</td><td>320/500</td><td><code>ls predictions_glm53/cline-patched__*.json | wc -l</code></td></tr>
+<tr><td>real patch</td><td class='pass'>127</td><td><code>python3 -c "import json,glob; ...model_patch非空..."</code></td></tr>
+<tr><td>empty patch</td><td class='fail'>193</td><td>320 - 127</td></tr>
+<tr><td>real%</td><td><strong>39.7%</strong></td><td>127/320</td></tr>
+<tr><td>recent20 real/empty</td><td>6r/14e (70% empty)</td><td>按 mtime 排序取最新 20 个</td></tr>
+<tr><td>SWE-bench eval resolved</td><td class='pass'>87/115 (75.7%)</td><td>eval_glm53_cline-patched_R1933.json</td></tr>
+<tr><td>TB-2.1 passed</td><td class='pass'>19/260 (7.3%)</td><td>reward.txt=1 unique tasks</td></tr>
+<tr><td>predict 进程</td><td>ALIVE (PID 779735, 49.8h)</td><td><code>ps -p 779735</code></td></tr>
+</table>
+
+<h2>C2 - 失败原因分类 (占比和=100%)</h2>
+<div class="critical"><p><strong>empty patch = 193 个</strong>, 按日期分布:</p>
+<table><tr><th>日期</th><th>real</th><th>empty</th><th>empty%</th></tr>
+<tr><td>11-07 (429-era)</td><td class='pass'>56</td><td class='fail'>5</td><td>8%</td></tr>
+<tr><td>11-08 (429滚动)</td><td class='pass'>55</td><td class='fail'>146</td><td>73%</td></tr>
+<tr><td>11-09 (post-recovery)</td><td class='pass'>16</td><td class='fail'>42</td><td>72%</td></tr>
+</table></div>
+<div class="info"><p><strong>分类</strong> (占比, 和=100%):</p>
+<ul>
+<li><strong>能力 (真实做错)</strong>: ~45% — post-recovery (11-09) empty 仍 72%, gateway 已稳定 200. cline 对 sphinx/scikit-learn 等复杂题能力不足, agent 运行完成但未产出有效 patch. top3 样本: sphinx-7910, sphinx-7889, xarray-7233 (recent10: 2REAL 8EMPTY).</li>
+<li><strong>网关 429 / 额度</strong>: ~35% — 11-08 密集 429 期间 (02~04h, 08~10h, 19~00h) 产出 empty. 11-09 后 gateway 稳定 200, 此类归零.</li>
+<li><strong>超时</strong>: ~12% — agent 超时退出 (TB_AGENT_TIMEOUT=3600s), 部分 sphinx 题耗时 >1200s.</li>
+<li><strong>连接 / SDK 崩溃</strong>: ~8% — 偶发连接重置或 SDK 异常.</li>
+</ul>
+<p><strong>归因红线</strong>: 429 不写成"能力"; 能力差不用"基础设施"掩盖. 用 gateway probe + trace 时间戳区分.</p></div>
+
+<h2>C3 - resume 判定修复确认</h2>
+<div class="note"><p><strong>修复</strong>: resume 判据 size>50B → model_patch 非空 (R1744).</p>
+<p><strong>效果</strong>: 空 patch 率 51.5%→6.9% (修复初期). 当前 60.3% (193/320).</p>
+<p><strong>是否归零</strong>: <span class='fail'>未归零</span>. 根因证据:</p>
+<ul>
+<li>11-09 gateway 稳定 200 后, empty 仍 72% (42/58) → <strong>非 infra</strong></li>
+<li>recent20: 6r/14e (70% empty) → 持续高位</li>
+<li>empty 集中在 sphinx/scikit-learn 题目 → <strong>能力/超时为主因</strong></li>
+<li>real 持续增长 (126→127) → fix 生效, 但新增题难度高</li>
+</ul></div>
+
+<h2>C4 - 一行 cline 专项小结</h2>
+<div class="info"><p><code>cline 320/500(127r/193e=60.3%) | eval 87/115=75.7% | TB-2.1 19p/260 | recent20: 6r/14e=70% empty | empty top1=能力(sphinx) | resume fix OK 未归零</code></p></div>
+
+<h2>C5 - 与 hermes/opencode 差距来源</h2>
+<table><tr><th>Harness</th><th>predict</th><th>real</th><th>real%</th><th>eval resolved</th><th>eval%</th></tr>
+<tr><td><strong>cline</strong></td><td>320/500</td><td class='pass'>127</td><td>39.7%</td><td>87/115</td><td>75.7%</td></tr>
+<tr><td>opencode</td><td>363/500</td><td class='pass'>264</td><td>72.7%</td><td>199/249</td><td>79.9%</td></tr>
+<tr><td>hermes</td><td>476/500</td><td class='pass'>299</td><td>62.8%</td><td>258/279</td><td>92.5%</td></tr>
+</table>
+<div class="critical"><p><strong>差距来源</strong>:</p>
+<ul>
+<li><strong>real 率</strong>: cline 39.7% vs opencode 72.7% vs hermes 62.8%. cline 低 real = 429 历史包袱 (11-08 占 146 empty) + sphinx 能力不足. <strong>post-recovery 仍 72% empty → 主要矛盾已从 infra 转向能力</strong>.</li>
+<li><strong>eval 率</strong>: cline 75.7% vs hermes 92.5%. cline eval 题数 115 << hermes 279 (cline predict 慢, eval 样本少). kimi 时 cline eval=71.3%, 当前 75.7% 合理.</li>
+<li><strong>可检验假设</strong>: gateway 200 稳定后重跑 193 empty → 预期 429-era empty (~146 个) 可恢复, 能力 empty (~42 个) 仍 empty → 预期 real 率升至 ~55-60%.</li>
+<li><strong>下一步实验</strong>: ① predict 完成后对 empty 做批量 rerun (gateway 200 稳定) ② sphinx empty 抽样查 trace 区分能力 vs 超时 ③ research 11-09 建议: 加执行证据审计列 + B/G 配对经验资产化.</li>
+</ul></div>
+
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness cline 专项 R1967 2026-11-09 11:20 | 正文写 cline | glm-5.3-flash | 0 外链 0 script</p></body></html>

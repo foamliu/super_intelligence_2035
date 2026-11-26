@@ -1,0 +1,36 @@
+# CFREQ_CTRL VCS 代码覆盖率检查流程
+
+对 cfreq_ctrl 做代码覆盖率检查（VCS + URG）。
+
+## 目录结构
+```
+cov/
+├── Makefile                  # 流程入口 (make cov)
+├── SourceMe                  # 环境加载 (module)
+├── scripts/
+│   └── cov.tcl               # Tcl 驱动脚本 (vcs 编译 + simv 仿真 + urg 报告)
+├── setup/
+│   └── common_setup.tcl      # 设计/输入变量
+└── data/
+    ├── syn_filelist.f        # RTL 源文件列表
+    ├── cfreq_ctrl.v          # RTL (DUT)
+    └── tb_cfreq_ctrl.sv      # 定向测试台 (SystemVerilog)
+```
+
+## 用法
+```bash
+cd cov/
+source SourceMe               # 可选, 加载 VCS 环境
+make cov                      # 编译+仿真+URG 覆盖率 (默认 metrics)
+make cov METRICS="line+cond+tgl+fsm+branch"
+make cov USE_LSF=0            # 本地直跑 (默认)
+make report                   # 查看 URG 报告目录
+```
+
+## 变量接口 (Makefile argv 透传到 cov.tcl)
+`DESIGN / RTL_FILELIST / TB / COV_METRICS / WORK_DIR / TAG`
+
+流程步骤:
+1. VCS: `-f <filelist> + <tb>.sv -cm <metrics>` 覆盖率编译
+2. simv: `-cm <metrics>` 生成 `vdb/simv.vdb`
+3. URG: `-dir simv.vdb -report reports/<design>.urgReport -format both`

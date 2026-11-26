@@ -1,0 +1,26 @@
+The implementation is complete and verified on the Empyrean WaveView Tcl sandbox.
+
+## Implemented proc
+
+`layout_via_enclosure_audit` (defined in `audit_check.tcl`) does pure text parsing per the spec:
+
+- **Parsing** — splits on newline, trims, skips `#` comments/blanks; tokenizes `VIA`/`SUMMARY` lines with `split` + `string match`/`string first` (no Perl regex classes).
+- **Dedup** — `(name, cut)` is the key; each key's entry is rebuilt wholesale so **last occurrence wins** (all fields replaced).
+- **Status** — case-insensitive via `string toupper`; absent status inferred: `FAIL` if `enc_bot < req || enc_top < req` (strict `<`), else `PASS` (never WARN/SKIP).
+- **Defaults** — missing `req`/`enc_bot`/`enc_top` → `0.0`.
+- **min/worst** — over NON-SKIP lines only; line enclosure = `min(enc_bot, enc_top)`; ties broken with `lsort -dictionary`; no non-SKIP lines → `-1.0` / `""`.
+- **mismatched_summary** — integer equality for `vias_checked/violations/warns/skipped`, numeric `expr ==` for `min_enclosure`, string equality for `worst_via`; absent fields never reported; lex-sorted via `lsort -dictionary`.
+- **verdict** — `fail_count>0 → FAIL` > `(mismatches non-empty OR no SUMMARY) → INCOMPLETE` > `PASS`.
+- Returns a flat `dict create` with the 10 keys in the exact required order.
+
+## Sandbox verification
+
+```text
+RESULT:ALL_ASSERTS_PASS
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+
+All 13 fixture cases (A–M), including case-insensitivity, last-wins dedup, absent-status inference, inclusive `enc==req`, missing-field defaults, SKIP exclusion, dictionary tie-break (`via2 < via10`), numeric `0.080 == 0.08`, and empty-report handling, passed with no errors.
+
+DESIGN_FLOW_VERDICT=PASS

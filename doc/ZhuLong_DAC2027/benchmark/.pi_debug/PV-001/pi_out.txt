@@ -1,0 +1,65 @@
+The implementation is complete and tested. The report file `drc_summary.rpt` was not actually present in the workspace, so I verified the proc against representative inputs.
+
+**File created:** `/nasdata/app.e0031982/code/EDA-Flow-Bench/agent_workspace/.pi_debug/PV-001/pv_summarize_drc_report.tcl`
+
+```tcl
+proc pv_summarize_drc_report {path} {
+    set total_rule_checks 0
+    set total_violations 0
+    set num_failing 0
+    set num_passing 0
+    set worst_rule ""
+    set worst_count -1
+
+    set fh [open $path r]
+    while {[gets $fh line] >= 0} {
+        set line [string trim $line]
+        if {$line eq ""} {
+            continue
+        }
+        if {[string index $line 0] eq "#"} {
+            continue
+        }
+
+        # Only accept fully-qualified data lines of the form:
+        #   RULECHECK <name> <non-negative-integer>
+        if {![regexp {^RULECHECK\s+(\S+)\s+([0-9]+)\s*$} $line -> name count]} {
+            continue
+        }
+
+        incr total_rule_checks
+        incr total_violations $count
+
+        if {$count > 0} {
+            incr num_failing
+        } else {
+            incr num_passing
+        }
+
+        # Ties are broken by the first-encountered rule.
+        if {$count > $worst_count} {
+            set worst_count $count
+            set worst_rule $name
+        }
+    }
+    close $fh
+
+    if {$total_rule_checks == 0} {
+        set pass_rate 0.000
+        set worst_count 0
+    } else {
+        set pass_rate [format "%.3f" [expr {double($num_passing) / $total_rule_checks}]]
+    }
+
+    return "total_rule_checks $total_rule_checks total_violations $total_violations num_failing $num_failing num_passing $num_passing worst_rule $worst_rule worst_count $worst_count pass_rate $pass_rate"
+}
+```
+
+**Key design points:**
+- Skips blank lines and `#` comment lines.
+- Uses a strict regex (`^RULECHECK\s+(\S+)\s+([0-9]+)\s*$`) so only valid `RULECHECK <name> <non-negative-int>` lines are counted.
+- Ties for worst rule are broken by first-encountered (using `>` instead of `>=`).
+- `double(...)` avoids Tcl's integer-division pitfall in the pass-rate calculation.
+- `format "%.3f"` rounds to 3 decimals (verified `5/12 → 0.417`).
+
+**Test results matched expectations** (ties, all-pass edge, and rounding all correct).

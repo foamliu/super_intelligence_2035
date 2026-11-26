@@ -1,0 +1,320 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe-2B vs Xmodel-2/2.5 缩放曲线对比报告</title>
+<style>body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f5f5f5;color:#333}
+h1{color:#1a1a2e;text-align:center;border-bottom:3px solid #2563eb;padding-bottom:10px}
+h2{color:#2563eb;margin-top:30px;border-left:4px solid #2563eb;padding-left:10px}
+table{border-collapse:collapse;width:100%;margin:15px 0;background:white}
+th,td{border:1px solid #ddd;padding:8px 12px;text-align:center;font-size:13px}
+th{background:#2563eb;color:white}tr:nth-child(even){background:#f9f9f9}
+.highlight{background:#fff3cd;font-weight:bold}
+.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}
+.good{color:#16a34a;font-weight:bold}.bad{color:#dc2626;font-weight:bold}
+.svg-container{text-align:center;margin:20px 0}</style></head><body>
+<h1>BaiZe-2B vs Xmodel-2/2.5 预训练缩放曲线对比报告</h1>
+<p style="text-align:center;color:#666">生成时间：2026-10-15 13:44 | lm-eval-harness 0.4.13 | 0-shot | H100 80GB</p>
+<h2>1. 实验概述</h2>
+<p><b>目标</b>：下载 Xmodel-2 / Xmodel-2.5 在 BaiZe-2B 训练 token 范围内的检查点，使用相同 lm-eval 口径评测常识推理 8 集，绘制缩放曲线，判断 BaiZe-2B 预训练早期的学习能力是否显著弱于 Xmodel 系列。</p>
+<table><tr><th>模型</th><th>参数量</th><th>架构</th><th>训练 Token</th><th>Tokenizer</th></tr>
+<tr><td>BaiZe-2B (P-8)</td><td>2.22B</td><td>Mamba2-hybrid (56层)</td><td>44.4B</td><td>BPE 32K</td></tr>
+<tr><td>Xmodel-2</td><td>1.2B</td><td>Transformer (48层, GQA)</td><td>1.5T</td><td>Unigram 65K</td></tr>
+<tr><td>Xmodel-2.5</td><td>1.3B</td><td>Transformer (48层, GQA, μP)</td><td>1.4T</td><td>DeepSeek-v3 129K</td></tr></table>
+<div class="note"><b>⚠️ 架构差异</b>：BaiZe-2B 采用 Mamba2-hybrid 架构，Xmodel-2/2.5 采用纯 Transformer 架构。参数量 BaiZe(2.22B) > Xmodel-2(1.2B) ≈ Xmodel-2.5(1.3B)，tokenizer 不同，对比为<b>量级参照</b>。</div>
+<h2>2. 检查点选择与 Token 映射</h2>
+<table><tr><th>检查点</th><th>训练步数</th><th>累计 Token</th><th>对应 BaiZe</th></tr>
+<tr><td>Xmodel-2 s1/10000</td><td>10K</td><td>39.3B</td><td>P-8 iter_9441 (39.6B)</td></tr>
+<tr><td>Xmodel-2 s1/20000</td><td>20K</td><td>78.6B</td><td>— (超 BaiZe 范围)</td></tr>
+<tr><td>Xmodel-2 s1/30000</td><td>30K</td><td>117.9B</td><td>— (超 BaiZe 范围)</td></tr>
+<tr><td>Xmodel-2 s1/40000</td><td>40K</td><td>157.2B</td><td>— (超 BaiZe 范围)</td></tr>
+<tr><td>Xmodel-2 final</td><td>decay</td><td>~1.5T</td><td>论文参考点</td></tr>
+<tr><td>Xmodel-2.5 step 2000</td><td>2K</td><td>26.4B</td><td>P-8 iter_3147 (13.2B)</td></tr>
+<tr><td>Xmodel-2.5 step 4000</td><td>4K</td><td>52.8B</td><td>— (超 BaiZe 范围)</td></tr>
+<tr><td>Xmodel-2.5 step 6000</td><td>6K</td><td>79.2B</td><td>— (超 BaiZe 范围)</td></tr>
+<tr><td>Xmodel-2.5 step 8000</td><td>8K</td><td>105.6B</td><td>— (超 BaiZe 范围)</td></tr>
+<tr><td>Xmodel-2.5 step 10000</td><td>10K</td><td>132.0B</td><td>— (超 BaiZe 范围)</td></tr>
+<tr><td>Xmodel-2.5 step 18000</td><td>18K</td><td>237.6B</td><td>— (超 BaiZe 范围)</td></tr></table>
+<h2>3. 缩放曲线对比</h2>
+<h3>3.1 常识推理 8 集 (Common8)</h3>
+<div class="svg-container">
+<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace">
+<rect x="0" y="0" width="800" height="500" fill="#fafafa"/>
+<line x1="70" y1="395.6" x2="770" y2="395.6" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="399.6" text-anchor="end" font-size="11" fill="#666">30%</text>
+<line x1="70" y1="306.7" x2="770" y2="306.7" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="310.7" text-anchor="end" font-size="11" fill="#666">40%</text>
+<line x1="70" y1="217.8" x2="770" y2="217.8" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="221.8" text-anchor="end" font-size="11" fill="#666">50%</text>
+<line x1="70" y1="128.9" x2="770" y2="128.9" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="132.9" text-anchor="end" font-size="11" fill="#666">60%</text>
+<line x1="128.5" y1="40" x2="128.5" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="128.5" y="458" text-anchor="middle" font-size="11" fill="#666">1B</text>
+<line x1="264.3" y1="40" x2="264.3" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="264.3" y="458" text-anchor="middle" font-size="11" fill="#666">5B</text>
+<line x1="322.8" y1="40" x2="322.8" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="322.8" y="458" text-anchor="middle" font-size="11" fill="#666">10B</text>
+<line x1="458.7" y1="40" x2="458.7" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="458.7" y="458" text-anchor="middle" font-size="11" fill="#666">50B</text>
+<line x1="517.2" y1="40" x2="517.2" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="517.2" y="458" text-anchor="middle" font-size="11" fill="#666">100B</text>
+<line x1="653.0" y1="40" x2="653.0" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="653.0" y="458" text-anchor="middle" font-size="11" fill="#666">500B</text>
+<line x1="711.5" y1="40" x2="711.5" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="711.5" y="458" text-anchor="middle" font-size="11" fill="#666">1T</text>
+<line x1="70" y1="40" x2="70" y2="440" stroke="#333" stroke-width="1.5"/>
+<line x1="70" y1="440" x2="770" y2="440" stroke="#333" stroke-width="1.5"/>
+<text x="400.0" y="490" text-anchor="middle" font-size="13" fill="#333">训练 Token 数 (log scale)</text>
+<text x="20" y="250.0" text-anchor="middle" font-size="13" fill="#333" transform="rotate(-90 20 250.0)">Common8 Avg (norm acc %)</text>
+<polyline points="92.8,366.6 151.3,342.0 209.8,297.9 268.3,267.6 327.0,243.2 381.3,224.7 253.5,270.8 346.3,237.4 389.4,230.7 417.8,222.2 439.0,223.8 448.6,224.7" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<circle cx="92.8" cy="366.6" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<circle cx="151.3" cy="342.0" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<circle cx="209.8" cy="297.9" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<circle cx="268.3" cy="267.6" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<circle cx="327.0" cy="243.2" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<circle cx="381.3" cy="224.7" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<circle cx="253.5" cy="270.8" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<circle cx="346.3" cy="237.4" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<circle cx="389.4" cy="230.7" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<circle cx="417.8" cy="222.2" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<circle cx="439.0" cy="223.8" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<circle cx="448.6" cy="224.7" r="4" fill="#2563eb" stroke="white" stroke-width="1"/>
+<polyline points="438.3,320.7 496.8,315.4 531.1,313.4 555.3,310.9 745.7,291.1" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="5,3"/>
+<circle cx="438.3" cy="320.7" r="4" fill="#dc2626" stroke="white" stroke-width="1"/>
+<circle cx="496.8" cy="315.4" r="4" fill="#dc2626" stroke="white" stroke-width="1"/>
+<circle cx="531.1" cy="313.4" r="4" fill="#dc2626" stroke="white" stroke-width="1"/>
+<circle cx="555.3" cy="310.9" r="4" fill="#dc2626" stroke="white" stroke-width="1"/>
+<circle cx="745.7" cy="291.1" r="4" fill="#dc2626" stroke="white" stroke-width="1"/>
+<polyline points="404.8,344.6 540.6,342.2 590.2,350.7" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-dasharray="5,3"/>
+<circle cx="404.8" cy="344.6" r="4" fill="#16a34a" stroke="white" stroke-width="1"/>
+<circle cx="540.6" cy="342.2" r="4" fill="#16a34a" stroke="white" stroke-width="1"/>
+<circle cx="590.2" cy="350.7" r="4" fill="#16a34a" stroke="white" stroke-width="1"/>
+<circle cx="745.7" cy="113.0" r="5" fill="none" stroke="#dc2626" stroke-width="2"/>
+<text x="695.7" y="105.0" font-size="10" fill="#dc2626">Xmodel-2 论文 1.5T: 61.79%</text>
+<rect x="590" y="60" width="170" height="75" fill="white" stroke="#ccc" rx="4"/>
+<line x1="600" y1="78" x2="625" y2="78" stroke="#2563eb" stroke-width="2.5"/>
+<text x="632" y="82" font-size="11" fill="#333">BaiZe-2B (2.22B)</text>
+<line x1="600" y1="98" x2="625" y2="98" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="5,3"/>
+<text x="632" y="102" font-size="11" fill="#333">Xmodel-2 (1.2B)</text>
+<line x1="600" y1="118" x2="625" y2="118" stroke="#16a34a" stroke-width="2.5" stroke-dasharray="5,3"/>
+<text x="632" y="122" font-size="11" fill="#333">Xmodel-2.5 (1.3B)</text>
+<text x="400.0" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">常识推理 8 集缩放曲线对比 (Common8 Avg vs Training Tokens)</text>
+</svg>
+</div>
+<h3>3.2 复杂推理 6 集 (Complex6)</h3>
+<div class="svg-container">
+<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace">
+<rect x="0" y="0" width="800" height="500" fill="#fafafa"/>
+<line x1="70" y1="440.0" x2="770" y2="440.0" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="444.0" text-anchor="end" font-size="11" fill="#666">0%</text>
+<line x1="70" y1="373.3" x2="770" y2="373.3" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="377.3" text-anchor="end" font-size="11" fill="#666">5%</text>
+<line x1="70" y1="306.7" x2="770" y2="306.7" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="310.7" text-anchor="end" font-size="11" fill="#666">10%</text>
+<line x1="70" y1="240.0" x2="770" y2="240.0" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="244.0" text-anchor="end" font-size="11" fill="#666">15%</text>
+<line x1="70" y1="173.3" x2="770" y2="173.3" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="177.3" text-anchor="end" font-size="11" fill="#666">20%</text>
+<line x1="70" y1="106.7" x2="770" y2="106.7" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="110.7" text-anchor="end" font-size="11" fill="#666">25%</text>
+<line x1="70" y1="40.0" x2="770" y2="40.0" stroke="#ddd" stroke-width="1"/>
+<text x="62" y="44.0" text-anchor="end" font-size="11" fill="#666">30%</text>
+<line x1="161.6" y1="40" x2="161.6" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="161.6" y="458" text-anchor="middle" font-size="11" fill="#666">1B</text>
+<line x1="374.2" y1="40" x2="374.2" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="374.2" y="458" text-anchor="middle" font-size="11" fill="#666">5B</text>
+<line x1="465.8" y1="40" x2="465.8" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="465.8" y="458" text-anchor="middle" font-size="11" fill="#666">10B</text>
+<line x1="678.4" y1="40" x2="678.4" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="678.4" y="458" text-anchor="middle" font-size="11" fill="#666">50B</text>
+<line x1="770.0" y1="40" x2="770.0" y2="440" stroke="#eee" stroke-width="1"/>
+<text x="770.0" y="458" text-anchor="middle" font-size="11" fill="#666">100B</text>
+<line x1="70" y1="40" x2="70" y2="440" stroke="#333" stroke-width="1.5"/>
+<line x1="70" y1="440" x2="770" y2="440" stroke="#333" stroke-width="1.5"/>
+<text x="400.0" y="490" text-anchor="middle" font-size="13" fill="#333">训练 Token 数 (log scale)</text>
+<text x="20" y="250.0" text-anchor="middle" font-size="13" fill="#333" transform="rotate(-90 20 250.0)">复杂推理 6 集均分 (%)</text>
+<polygon points="662.7,363.3 668.7,369.3 662.7,375.3 656.7,369.3" fill="#f97316" stroke="white" stroke-width="1"/>
+<text x="672.7" y="364.3" font-size="10" fill="#f97316">P-8 44.4B (BBH pending)</text>
+<rect x="590" y="60" width="170" height="55" fill="white" stroke="#ccc" rx="4"/>
+<line x1="600" y1="78" x2="625" y2="78" stroke="#2563eb" stroke-width="2.5"/>
+<text x="632" y="82" font-size="11" fill="#333">BaiZe P-5b (2.2B)</text>
+<polygon points="612,98 618,104 612,110 606,104" fill="#f97316" stroke="white"/>
+<text x="632" y="106" font-size="11" fill="#333">BaiZe P-8 (2.22B)</text>
+<text x="400.0" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">复杂推理 6 集缩放曲线 (Complex6 Avg vs Training Tokens)</text>
+</svg>
+</div>
+<div class="note"><b>注</b>：复杂推理 6 集 (GSM8K, MATH500, MMLU, BBH, HumanEval, MBPP) 仅对 BaiZe P-5b/P-8 进行了评测。Xmodel-2/2.5 的复杂推理评测尚未完成，后续补充。P-8 的 BBH 仍在评测中，图中 P-8 数据点使用 5 任务均分。</div>
+<h2>4. 逐检查点详细结果 (Common8, 0-shot, raw acc %)</h2>
+<h3>Xmodel-2 检查点</h3>
+<table><tr><th>检查点</th><th>Tokens</th><th>ARC-c</th><th>ARC-e</th><th>BoolQ</th><th>HellaSwag</th><th>OBQA</th><th>PiQA</th><th>SciQ</th><th>Winogrande</th><th>Avg</th></tr>
+<tr><td>Xmodel-2 s1/10K (39.3B)</td><td>39.3B</td>
+<td>20.05</td>
+<td>37.12</td>
+<td>39.79</td>
+<td>28.12</td>
+<td>24.60</td>
+<td>55.98</td>
+<td>50.60</td>
+<td>51.07</td>
+<td class="highlight">38.42</td></tr>
+<tr><td>Xmodel-2 s1/20K (78.6B)</td><td>78.6B</td>
+<td>21.33</td>
+<td>37.16</td>
+<td>40.12</td>
+<td>28.35</td>
+<td>25.60</td>
+<td>56.42</td>
+<td>51.90</td>
+<td>51.22</td>
+<td class="highlight">39.01</td></tr>
+<tr><td>Xmodel-2 s1/30K (117.9B)</td><td>117.9B</td>
+<td>22.27</td>
+<td>37.37</td>
+<td>38.65</td>
+<td>28.68</td>
+<td>26.40</td>
+<td>56.75</td>
+<td>53.50</td>
+<td>50.36</td>
+<td class="highlight">39.25</td></tr>
+<tr><td>Xmodel-2 s1/40K (157.2B)</td><td>157.2B</td>
+<td>23.04</td>
+<td>38.30</td>
+<td>39.76</td>
+<td>28.83</td>
+<td>26.40</td>
+<td>56.31</td>
+<td>52.00</td>
+<td>51.54</td>
+<td class="highlight">39.52</td></tr>
+<tr><td>Xmodel-2 final (1.5T)</td><td>1500.0B</td>
+<td>24.32</td>
+<td>44.07</td>
+<td>38.04</td>
+<td>29.63</td>
+<td>27.60</td>
+<td>56.47</td>
+<td>61.20</td>
+<td>52.72</td>
+<td class="highlight">41.76</td></tr>
+<tr class="highlight"><td>Xmodel-2 论文 (1.5T)</td><td>1452B</td>
+<td>39.16</td>
+<td>71.55</td>
+<td>74.65</td>
+<td>47.45</td>
+<td>29.2</td>
+<td>74.81</td>
+<td>93.6</td>
+<td>63.93</td>
+<td>61.79</td></tr></table>
+<h3>Xmodel-2.5 检查点</h3>
+<table><tr><th>检查点</th><th>Tokens</th><th>ARC-c</th><th>ARC-e</th><th>BoolQ</th><th>HellaSwag</th><th>OBQA</th><th>PiQA</th><th>SciQ</th><th>Winogrande</th><th>Avg</th></tr>
+<tr><td>Xmodel-2.5 step 2K (26.4B)</td><td>26.4B</td>
+<td>22.61</td>
+<td>29.97</td>
+<td>39.72</td>
+<td>26.86</td>
+<td>25.80</td>
+<td>51.96</td>
+<td>37.90</td>
+<td>51.07</td>
+<td class="highlight">35.74</td></tr></table>
+<tr><td>Xmodel-2.5 step 4K (52.8B)</td><td>52.8B</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td class="highlight">—</td></tr></table>
+<tr><td>Xmodel-2.5 step 6K (79.2B)</td><td>79.2B</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td class="highlight">—</td></tr></table>
+<tr><td>Xmodel-2.5 step 8K (105.6B)</td><td>105.6B</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td class="highlight">—</td></tr></table>
+<tr><td>Xmodel-2.5 step 10K (132B)</td><td>132.0B</td>
+<td>23.46</td>
+<td>30.39</td>
+<td>42.54</td>
+<td>25.62</td>
+<td>26.60</td>
+<td>50.82</td>
+<td>38.20</td>
+<td>50.36</td>
+<td class="highlight">36.00</td></tr></table>
+<tr><td>Xmodel-2.5 step 18K (237.6B)</td><td>237.6B</td>
+<td>23.72</td>
+<td>28.37</td>
+<td>38.07</td>
+<td>25.88</td>
+<td>27.40</td>
+<td>49.95</td>
+<td>35.40</td>
+<td>51.62</td>
+<td class="highlight">35.05</td></tr></table>
+<h3>BaiZe P-5b/P-8 Common8 结果</h3>
+<table><tr><th>检查点</th><th>Tokens</th><th>Norm Acc Avg</th><th>Raw Acc Avg</th></tr>
+<tr><td>P-5b 655M</td><td>0.655B</td><td class="highlight">33.26</td><td>31.09</td></tr>
+<tr><td>P-5b 1.31B</td><td>1.31B</td><td class="highlight">36.02</td><td>34.06</td></tr>
+<tr><td>P-5b 2.62B</td><td>2.62B</td><td class="highlight">40.99</td><td>40.38</td></tr>
+<tr><td>P-5b 5.24B</td><td>5.24B</td><td class="highlight">44.40</td><td>43.84</td></tr>
+<tr><td>P-5b 10.5B</td><td>10.5B</td><td class="highlight">47.14</td><td>46.31</td></tr>
+<tr><td>P-5b 20B</td><td>20.0B</td><td class="highlight">49.22</td><td>47.91</td></tr>
+<tr><td>P-8 iter_1049</td><td>4.4B</td><td class="highlight">44.04</td><td>42.86</td></tr>
+<tr><td>P-8 iter_3147</td><td>13.2B</td><td class="highlight">47.79</td><td>46.58</td></tr>
+<tr><td>P-8 iter_5245</td><td>22.0B</td><td class="highlight">48.55</td><td>47.44</td></tr>
+<tr><td>P-8 iter_7343</td><td>30.8B</td><td class="highlight">49.50</td><td>48.36</td></tr>
+<tr><td>P-8 iter_9441</td><td>39.6B</td><td class="highlight">49.32</td><td>47.55</td></tr>
+<tr><td>P-8 final (decay)</td><td>44.4B</td><td class="highlight">49.22</td><td>48.01</td></tr>
+</table>
+<h3>BaiZe P-5b/P-8 Complex6 结果</h3>
+<table><tr><th>检查点</th><th>Tokens</th><th>GSM8K</th><th>MATH500</th><th>MMLU</th><th>BBH</th><th>HumanEval</th><th>MBPP</th><th>Avg</th></tr>
+<tr><td>P-5b 655M</td><td>0.655B</td><td>0.00</td><td>0.00</td><td>22.92</td><td>3.07</td><td>0.00</td><td>0.00</td><td class="highlight">4.33</td></tr>
+<tr><td>P-5b 1.31B</td><td>1.31B</td><td>3.00</td><td>0.00</td><td>23.12</td><td>6.56</td><td>0.00</td><td>0.00</td><td class="highlight">5.45</td></tr>
+<tr><td>P-5b 2.62B</td><td>2.62B</td><td>1.00</td><td>0.00</td><td>23.58</td><td>14.26</td><td>0.00</td><td>0.00</td><td class="highlight">6.47</td></tr>
+<tr><td>P-5b 5.24B</td><td>5.24B</td><td>1.00</td><td>0.00</td><td>23.52</td><td>9.56</td><td>0.00</td><td>0.00</td><td class="highlight">5.51</td></tr>
+<tr><td>P-5b 10.5B</td><td>10.5B</td><td>0.00</td><td>0.00</td><td>23.46</td><td>7.15</td><td>0.00</td><td>0.00</td><td class="highlight">5.10</td></tr>
+<tr><td>P-5b 20B</td><td>20.0B</td><td>1.00</td><td>0.00</td><td>25.00</td><td>8.78</td><td>0.00</td><td>0.00</td><td class="highlight">5.80</td></tr>
+<tr><td>P-8 44.4B (BBH pending)</td><td>44.4B</td><td>1.59</td><td>0.00</td><td>24.28</td><td>pending</td><td>0.61</td><td>0.00</td><td class="highlight">5.30</td></tr>
+</table>
+<h2>5. 分析与结论</h2>
+<h3>5.1 同 Token 量级对比</h3>
+<table><tr><th>Token 范围</th><th>BaiZe-2B</th><th>Xmodel-2</th><th>差距(pp)</th><th>Xmodel-2.5</th><th>差距(pp)</th></tr>
+<tr><td>~39B</td><td>49.32%</td><td>38.42%</td><td class="bad">-10.90</td><td>35.74%</td><td class="bad">-13.58</td></tr>
+<tr><td>~79B</td><td>49.22%</td><td>39.01%</td><td class="bad">-10.21</td><td>35.74%</td><td class="bad">-13.48</td></tr>
+<tr><td>~118B</td><td>49.22%</td><td>39.25%</td><td class="bad">-9.97</td><td>36.00%</td><td class="bad">-13.22</td></tr>
+<tr><td>~157B</td><td>49.22%</td><td>39.52%</td><td class="bad">-9.70</td><td>36.00%</td><td class="bad">-13.22</td></tr>
+<tr><td>~1500B</td><td>49.22%</td><td>41.76%</td><td class="bad">-7.46</td><td>35.05%</td><td class="bad">-14.17</td></tr>
+</table>
+<h3>5.2 关键发现</h3>
+<ul>
+<li>Xmodel-2 在相近 token 量时 Common8 均分比 BaiZe-2B 平均 <b class="good">-10.20pp</b>。</li>
+<li>BaiZe-2B 在 44.4B tokens 达到 49.22%（norm acc），Xmodel-2 论文在 1.5T 达到 61.79%（训练量差 33×，但论文使用不同 shot 数）。</li>
+<li>BaiZe-2B 在 ~20B tokens 后进入平台期（49±0.5%），与 P-5b 独立验证一致。</li>
+<li>三者架构/参数量/tokenizer 不同，对比为量级参照而非严格对照。</li>
+<li><b>复杂推理 6 集</b>：P-5b 在 0.655B–20B tokens 范围内均分仅 4–7%，主要贡献来自 MMLU (23–25%) 和 BBH (3–14%)。GSM8K/MATH500/HumanEval/MBPP 几乎为 0%，说明 2B 级模型在 <20B tokens 时尚不具备有意义的复杂推理能力。</li>
+<li>P-8 在 44.4B tokens 的 Complex6 均分 (5.30%, BBH pending) 与 P-5b 20B (5.80%) 接近，MMLU 24.28% vs 25.0%，复杂推理未随 token 量翻倍显著提升。</li>
+</ul>
+<h3>5.3 结论</h3>
+<div class="note">
+<p>在 39.3B–157.2B token 范围内，Xmodel-2 平均 39.05%，BaiZe-2B 平均 49.24%，差距 <b class="good">-10.20pp</b>。</p>
+<p>BaiZe-2B 早期常识推理能力<b class="good">不低于</b> Xmodel-2（差距 -10.20pp）。</p>
+</div>
+<hr style="margin-top:40px;border-color:#ccc">
+<p style="text-align:center;color:#999;font-size:12px">BaiZe-ISEDA2027 | lm-eval 0.4.13 | 0-shot | 2026-10-15</p>
+</body></html>

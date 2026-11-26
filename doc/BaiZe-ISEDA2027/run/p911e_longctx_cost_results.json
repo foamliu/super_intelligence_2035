@@ -1,0 +1,524 @@
+{
+  "experiment": "P-9.11-E",
+  "description": "sglang long-ctx inference cost: BaiZe(Mamba2-hybrid 2.220B) vs Dense(Llama 2.512B)",
+  "timestamp": "2026-10-07T09:49:56.446989",
+  "sglang_version": "0.5.9",
+  "gen_len": 64,
+  "mem_fraction_static": 0.3,
+  "attention_backend": "flashinfer",
+  "env_overwrite": "SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1",
+  "config_notes": {
+    "hybrid": "HF config: NemotronHForCausalLM, max_position_embeddings=4096, rope_theta=None(default). Served via SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1 (no ABF/YaRN applied). RoPE extrapolating beyond 4096 (affects only 4/56 attn layers). sglang flags: --mem-fraction-static 0.3 --attention-backend flashinfer --mamba-ssm-dtype float32. Cost metrics are architecture-level, independent of RoPE config.",
+    "dense": "HF config: LlamaForCausalLM, max_position_embeddings=4096, rope_theta=10000, rope_scaling=None, 42 layers. Served via SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1 (no YaRN applied). RoPE extrapolating beyond 4096 (affects all 42 layers). sglang flags: --mem-fraction-static 0.3 --attention-backend flashinfer. NOTE: instruction assumed max_pos=131072/rope_theta=5e6 but actual ckpt config is 4096/10000."
+  },
+  "models": {
+    "hybrid": {
+      "path": "p3_hybrid/hf_iter_5000",
+      "hf_arch": "NemotronHForCausalLM",
+      "params_B": 2.22,
+      "total_layers": 56,
+      "attn_layers": 4,
+      "extra_flags": "--mamba-ssm-dtype float32"
+    },
+    "dense": {
+      "path": "p3_dense/hf_iter_5000",
+      "hf_arch": "LlamaForCausalLM",
+      "params_B": 2.512,
+      "total_layers": 42,
+      "attn_layers": 42,
+      "extra_flags": "(none)"
+    }
+  },
+  "cells": {
+    "hybrid_131072": {
+      "model": "hybrid",
+      "ctx": 131072,
+      "ctx_label": "128K",
+      "gpu": 1,
+      "file": "p911e_hybrid_ctx131072_gpu1.json",
+      "bs1": {
+        "model": "default",
+        "ctx": 131072,
+        "batch": 1,
+        "gen_len": 64,
+        "prompt_tokens_actual": 125908,
+        "ttft_s": 79.1394,
+        "prefill_tok_s": 1591.0,
+        "decode_tok_s": 71.5,
+        "e2e_latency_s": 80.035,
+        "peak_vram_gb": 25.92,
+        "total_completion_tokens": 64,
+        "vram_samples": 330
+      },
+      "error": null,
+      "all_results": [
+        {
+          "model": "default",
+          "ctx": 131072,
+          "batch": 1,
+          "gen_len": 64,
+          "prompt_tokens_actual": 125908,
+          "ttft_s": 79.1394,
+          "prefill_tok_s": 1591.0,
+          "decode_tok_s": 71.5,
+          "e2e_latency_s": 80.035,
+          "peak_vram_gb": 25.92,
+          "total_completion_tokens": 64,
+          "vram_samples": 330
+        },
+        {
+          "model": "default",
+          "ctx": 131072,
+          "batch": 8,
+          "gen_len": 64,
+          "prompt_tokens_actual": 125908,
+          "ttft_s": 2.2494,
+          "prefill_tok_s": 447796.9,
+          "decode_tok_s": 941.7,
+          "e2e_latency_s": 2.793,
+          "peak_vram_gb": 25.93,
+          "total_completion_tokens": 512,
+          "vram_samples": 14
+        }
+      ]
+    },
+    "hybrid_262144": {
+      "model": "hybrid",
+      "ctx": 262144,
+      "ctx_label": "256K",
+      "gpu": 2,
+      "file": "p911e_hybrid_ctx262144_gpu2.json",
+      "bs1": {
+        "model": "default",
+        "ctx": 262144,
+        "batch": 1,
+        "gen_len": 64,
+        "prompt_tokens_actual": 251939,
+        "ttft_s": 81.4385,
+        "prefill_tok_s": 3093.6,
+        "decode_tok_s": 63.0,
+        "e2e_latency_s": 82.4536,
+        "peak_vram_gb": 26.11,
+        "total_completion_tokens": 64,
+        "vram_samples": 340
+      },
+      "error": null,
+      "all_results": [
+        {
+          "model": "default",
+          "ctx": 262144,
+          "batch": 1,
+          "gen_len": 64,
+          "prompt_tokens_actual": 251939,
+          "ttft_s": 81.4385,
+          "prefill_tok_s": 3093.6,
+          "decode_tok_s": 63.0,
+          "e2e_latency_s": 82.4536,
+          "peak_vram_gb": 26.11,
+          "total_completion_tokens": 64,
+          "vram_samples": 340
+        },
+        {
+          "model": "default",
+          "ctx": 262144,
+          "batch": 8,
+          "gen_len": 64,
+          "prompt_tokens_actual": 251939,
+          "ttft_s": 5.8351,
+          "prefill_tok_s": 345412.6,
+          "decode_tok_s": 793.1,
+          "e2e_latency_s": 6.4807,
+          "peak_vram_gb": 26.11,
+          "total_completion_tokens": 512,
+          "vram_samples": 25
+        }
+      ]
+    },
+    "hybrid_524288": {
+      "model": "hybrid",
+      "ctx": 524288,
+      "ctx_label": "512K",
+      "gpu": 3,
+      "file": "p911e_hybrid_ctx524288_gpu3.json",
+      "bs1": {
+        "model": "default",
+        "ctx": 524288,
+        "batch": 1,
+        "gen_len": 64,
+        "prompt_tokens_actual": 504001,
+        "ttft_s": 96.5118,
+        "prefill_tok_s": 5222.2,
+        "decode_tok_s": 53.3,
+        "e2e_latency_s": 97.713,
+        "peak_vram_gb": 26.25,
+        "total_completion_tokens": 64,
+        "vram_samples": 399
+      },
+      "error": null,
+      "all_results": [
+        {
+          "model": "default",
+          "ctx": 524288,
+          "batch": 1,
+          "gen_len": 64,
+          "prompt_tokens_actual": 504001,
+          "ttft_s": 96.5118,
+          "prefill_tok_s": 5222.2,
+          "decode_tok_s": 53.3,
+          "e2e_latency_s": 97.713,
+          "peak_vram_gb": 26.25,
+          "total_completion_tokens": 64,
+          "vram_samples": 399
+        },
+        {
+          "model": "default",
+          "ctx": 524288,
+          "batch": 8,
+          "gen_len": 64,
+          "prompt_tokens_actual": 504001,
+          "ttft_s": 10.3715,
+          "prefill_tok_s": 388756.6,
+          "decode_tok_s": 503.6,
+          "e2e_latency_s": 11.3882,
+          "peak_vram_gb": 26.25,
+          "total_completion_tokens": 512,
+          "vram_samples": 53
+        }
+      ]
+    },
+    "hybrid_1048576": {
+      "model": "hybrid",
+      "ctx": 1048576,
+      "ctx_label": "1M",
+      "gpu": 4,
+      "file": "p911e_hybrid_ctx1048576_gpu4.json",
+      "bs1": {
+        "model": "default",
+        "ctx": 1048576,
+        "batch": 1,
+        "gen_len": 64,
+        "prompt_tokens_actual": 1008124,
+        "ttft_s": 155.4722,
+        "prefill_tok_s": 6484.3,
+        "decode_tok_s": 34.4,
+        "e2e_latency_s": 157.3307,
+        "peak_vram_gb": 26.53,
+        "total_completion_tokens": 64,
+        "vram_samples": 688
+      },
+      "error": null,
+      "all_results": [
+        {
+          "model": "default",
+          "ctx": 1048576,
+          "batch": 1,
+          "gen_len": 64,
+          "prompt_tokens_actual": 1008124,
+          "ttft_s": 155.4722,
+          "prefill_tok_s": 6484.3,
+          "decode_tok_s": 34.4,
+          "e2e_latency_s": 157.3307,
+          "peak_vram_gb": 26.53,
+          "total_completion_tokens": 64,
+          "vram_samples": 688
+        },
+        {
+          "model": "default",
+          "ctx": 1048576,
+          "batch": 8,
+          "gen_len": 64,
+          "prompt_tokens_actual": 1008124,
+          "ttft_s": 19.9912,
+          "prefill_tok_s": 403427.9,
+          "decode_tok_s": 336.4,
+          "e2e_latency_s": 21.5131,
+          "peak_vram_gb": 26.53,
+          "total_completion_tokens": 512,
+          "vram_samples": 106
+        }
+      ]
+    },
+    "dense_131072": {
+      "model": "dense",
+      "ctx": 131072,
+      "ctx_label": "128K",
+      "gpu": 5,
+      "file": "p911e_dense_ctx131072_gpu5.json",
+      "bs1": {
+        "model": "default",
+        "ctx": 131072,
+        "batch": 1,
+        "gen_len": 64,
+        "prompt_tokens_actual": 125908,
+        "ttft_s": 23.9694,
+        "prefill_tok_s": 5252.9,
+        "decode_tok_s": 189.0,
+        "e2e_latency_s": 24.3079,
+        "peak_vram_gb": 27.29,
+        "total_completion_tokens": 64,
+        "vram_samples": 80
+      },
+      "error": null,
+      "all_results": [
+        {
+          "model": "default",
+          "ctx": 131072,
+          "batch": 1,
+          "gen_len": 64,
+          "prompt_tokens_actual": 125908,
+          "ttft_s": 23.9694,
+          "prefill_tok_s": 5252.9,
+          "decode_tok_s": 189.0,
+          "e2e_latency_s": 24.3079,
+          "peak_vram_gb": 27.29,
+          "total_completion_tokens": 64,
+          "vram_samples": 80
+        },
+        {
+          "model": "default",
+          "ctx": 131072,
+          "batch": 8,
+          "gen_len": 64,
+          "prompt_tokens_actual": 125908,
+          "ttft_s": 2.2333,
+          "prefill_tok_s": 451010.7,
+          "decode_tok_s": 1213.5,
+          "e2e_latency_s": 2.6553,
+          "peak_vram_gb": 27.3,
+          "total_completion_tokens": 512,
+          "vram_samples": 9
+        }
+      ]
+    },
+    "dense_262144": {
+      "model": "dense",
+      "ctx": 262144,
+      "ctx_label": "256K",
+      "gpu": 6,
+      "file": "p911e_dense_ctx262144_gpu6.json",
+      "bs1": {
+        "model": "default",
+        "ctx": 262144,
+        "batch": 1,
+        "gen_len": 64,
+        "prompt_tokens_actual": 251939,
+        "ttft_s": 47.6386,
+        "prefill_tok_s": 5288.6,
+        "decode_tok_s": 137.3,
+        "e2e_latency_s": 48.1046,
+        "peak_vram_gb": 28.51,
+        "total_completion_tokens": 64,
+        "vram_samples": 174
+      },
+      "error": null,
+      "all_results": [
+        {
+          "model": "default",
+          "ctx": 262144,
+          "batch": 1,
+          "gen_len": 64,
+          "prompt_tokens_actual": 251939,
+          "ttft_s": 47.6386,
+          "prefill_tok_s": 5288.6,
+          "decode_tok_s": 137.3,
+          "e2e_latency_s": 48.1046,
+          "peak_vram_gb": 28.51,
+          "total_completion_tokens": 64,
+          "vram_samples": 174
+        },
+        {
+          "model": "default",
+          "ctx": 262144,
+          "batch": 8,
+          "gen_len": 64,
+          "prompt_tokens_actual": 251939,
+          "ttft_s": 5.2455,
+          "prefill_tok_s": 384239.2,
+          "decode_tok_s": 856.1,
+          "e2e_latency_s": 5.8435,
+          "peak_vram_gb": 28.51,
+          "total_completion_tokens": 512,
+          "vram_samples": 26
+        }
+      ]
+    },
+    "dense_524288": {
+      "model": "dense",
+      "ctx": 524288,
+      "ctx_label": "512K",
+      "gpu": 7,
+      "file": "p911e_dense_ctx524288_gpu7.json",
+      "bs1": {
+        "model": "default",
+        "ctx": 524288,
+        "batch": 1,
+        "gen_len": 64,
+        "prompt_tokens_actual": 504001,
+        "ttft_s": 3.5404,
+        "prefill_tok_s": 142355.3,
+        "decode_tok_s": 158651.3,
+        "e2e_latency_s": 3.5408,
+        "peak_vram_gb": 30.22,
+        "total_completion_tokens": 1,
+        "vram_samples": 13
+      },
+      "error": "effective_failure_completion_tokens=1",
+      "all_results": [
+        {
+          "model": "default",
+          "ctx": 524288,
+          "batch": 1,
+          "gen_len": 64,
+          "prompt_tokens_actual": 504001,
+          "ttft_s": 3.5404,
+          "prefill_tok_s": 142355.3,
+          "decode_tok_s": 158651.3,
+          "e2e_latency_s": 3.5408,
+          "peak_vram_gb": 30.22,
+          "total_completion_tokens": 1,
+          "vram_samples": 13
+        },
+        {
+          "model": "default",
+          "ctx": 524288,
+          "batch": 8,
+          "gen_len": 64,
+          "prompt_tokens_actual": 504001,
+          "ttft_s": 9.2928,
+          "prefill_tok_s": 433882.9,
+          "decode_tok_s": 17810.2,
+          "e2e_latency_s": 9.3216,
+          "peak_vram_gb": 30.22,
+          "total_completion_tokens": 8,
+          "vram_samples": 35
+        }
+      ]
+    },
+    "dense_1048576": {
+      "model": "dense",
+      "ctx": 1048576,
+      "ctx_label": "1M",
+      "gpu": 1,
+      "file": "p911e_dense_ctx1048576_gpu1.json",
+      "bs1": {
+        "model": "default",
+        "ctx": 1048576,
+        "batch": 1,
+        "gen_len": 64,
+        "prompt_tokens_actual": 1008124,
+        "ttft_s": 67.6021,
+        "prefill_tok_s": 14912.6,
+        "decode_tok_s": 40548.9,
+        "e2e_latency_s": 67.6037,
+        "peak_vram_gb": 34.93,
+        "total_completion_tokens": 1,
+        "vram_samples": 330
+      },
+      "error": "effective_failure_completion_tokens=1",
+      "all_results": [
+        {
+          "model": "default",
+          "ctx": 1048576,
+          "batch": 1,
+          "gen_len": 64,
+          "prompt_tokens_actual": 1008124,
+          "ttft_s": 67.6021,
+          "prefill_tok_s": 14912.6,
+          "decode_tok_s": 40548.9,
+          "e2e_latency_s": 67.6037,
+          "peak_vram_gb": 34.93,
+          "total_completion_tokens": 1,
+          "vram_samples": 330
+        },
+        {
+          "model": "default",
+          "ctx": 1048576,
+          "batch": 8,
+          "gen_len": 64,
+          "prompt_tokens_actual": 1008124,
+          "ttft_s": 20.5565,
+          "prefill_tok_s": 392333.3,
+          "decode_tok_s": 9502.2,
+          "e2e_latency_s": 20.6104,
+          "peak_vram_gb": 34.93,
+          "total_completion_tokens": 8,
+          "vram_samples": 102
+        }
+      ]
+    }
+  },
+  "ratio_table": [
+    {
+      "ctx": 131072,
+      "ctx_label": "128K",
+      "hybrid_ttft_s": 79.1394,
+      "dense_ttft_s": 23.9694,
+      "ratio_ttft_s": 3.302,
+      "hybrid_prefill_tok_s": 1591.0,
+      "dense_prefill_tok_s": 5252.9,
+      "ratio_prefill_tok_s": 0.303,
+      "hybrid_decode_tok_s": 71.5,
+      "dense_decode_tok_s": 189.0,
+      "ratio_decode_tok_s": 0.378,
+      "hybrid_peak_vram_gb": 25.92,
+      "dense_peak_vram_gb": 27.29,
+      "ratio_peak_vram_gb": 0.95
+    },
+    {
+      "ctx": 262144,
+      "ctx_label": "256K",
+      "hybrid_ttft_s": 81.4385,
+      "dense_ttft_s": 47.6386,
+      "ratio_ttft_s": 1.71,
+      "hybrid_prefill_tok_s": 3093.6,
+      "dense_prefill_tok_s": 5288.6,
+      "ratio_prefill_tok_s": 0.585,
+      "hybrid_decode_tok_s": 63.0,
+      "dense_decode_tok_s": 137.3,
+      "ratio_decode_tok_s": 0.459,
+      "hybrid_peak_vram_gb": 26.11,
+      "dense_peak_vram_gb": 28.51,
+      "ratio_peak_vram_gb": 0.916
+    },
+    {
+      "ctx": 524288,
+      "ctx_label": "512K",
+      "hybrid_error": null,
+      "dense_error": "effective_failure_completion_tokens=1",
+      "hybrid_ttft_s": 96.5118,
+      "dense_ttft_s": null,
+      "ratio_ttft_s": null,
+      "hybrid_prefill_tok_s": 5222.2,
+      "dense_prefill_tok_s": null,
+      "ratio_prefill_tok_s": null,
+      "hybrid_decode_tok_s": 53.3,
+      "dense_decode_tok_s": null,
+      "ratio_decode_tok_s": null,
+      "hybrid_peak_vram_gb": 26.25,
+      "dense_peak_vram_gb": null,
+      "ratio_peak_vram_gb": null
+    },
+    {
+      "ctx": 1048576,
+      "ctx_label": "1M",
+      "hybrid_error": null,
+      "dense_error": "effective_failure_completion_tokens=1",
+      "hybrid_ttft_s": 155.4722,
+      "dense_ttft_s": null,
+      "ratio_ttft_s": null,
+      "hybrid_prefill_tok_s": 6484.3,
+      "dense_prefill_tok_s": null,
+      "ratio_prefill_tok_s": null,
+      "hybrid_decode_tok_s": 34.4,
+      "dense_decode_tok_s": null,
+      "ratio_decode_tok_s": null,
+      "hybrid_peak_vram_gb": 26.53,
+      "dense_peak_vram_gb": null,
+      "ratio_peak_vram_gb": null
+    }
+  ],
+  "crossover": {
+    "prefill_tok_s": "no_crossover_or_insufficient_data",
+    "decode_tok_s": "no_crossover_or_insufficient_data"
+  }
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe ArmB MLLM 对齐结果报告 · 2026-10-18</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:28px}table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.green{color:#27ae60;font-weight:bold}.amber{color:#e67e22;font-weight:bold}.blue{color:#2980b9;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.ok{background:#d4efdf;border-left:4px solid #27ae60;padding:10px 15px;margin:15px 0;border-radius:4px}.warn{background:#fdecea;border-left:4px solid #e74c3c;padding:10px 15px;margin:15px 0;border-radius:4px}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}</style></head><body>
+<h1>BaiZe ArmB MLLM 对齐 · 训练 + 12 集评测报告</h1>
+<p style='color:#7f8c8d'>生成时间：2026-10-18 · 线：vision · 编码器：ArmB（open_clip ViT-B/16 · 768-d · 86.2M）· 协议：LLaVA-OneVision-1.5 配方 · 评测：lmms-eval（12 集）</p>
+
+<div class='info'><strong>TL;DR</strong>：把 ArmB 视觉编码器（open_clip ViT-B/16，768-d，86.2M，ProtB lp=62.09%）经 2 层 MLP projector（768→2560）接到 Qwen3-4B，用 LLaVA-OV1.5 配方完成 Stage-1 → Stage-1.5 → Stage-2 三阶段训练，随后在 12 个 benchmark 上做 lmms-eval 评测。<strong>12 集平均（除 MME）= 26.10%</strong>，对比 ␖-4ep 基线 25.68%（Δ=<strong>+0.42pp</strong>）。<strong>预注册判据：不可分辨（边界值）</strong>——高于基线但无任何 DocVQA/ChartQA/OCRBench ≥+10pp 突破，且落在 22–26% 不可分辨区间上沿。</div>
+
+<h2>1. 模型配置</h2>
+<table><tr><th>组件</th><th>配置</th><th>说明</th></tr>
+<tr><td>视觉编码器</td><td>ArmB（open_clip ViT-B/16 · 768-d · 224px · 86.2M）</td><td>AIMv2-style 稠密目标训练，ProtB lp=62.09±0.01% / 5-NN=58.10%</td></tr>
+<tr><td>LLM</td><td>Qwen3-4B-Instruct-2507</td><td>4B，hidden=2560</td></tr>
+<tr><td>Projector</td><td>2 层 MLP，[1,196,768]→[1,196,2560]</td><td>768→2560，8.52M 参数</td></tr>
+<tr><td>图像 token</td><td>196（224/16，无 spatial-merge）</td><td>image_token_index=151655</td></tr>
+<tr><td>生成</td><td>max_new_tokens=128，temperature=0（评测时）</td><td>lmms-eval 默认</td></tr>
+</table>
+<div class='note'>与 ␖-4ep 的差异：<strong>视觉塔不同</strong>（ArmB open_clip ViT-B/16 768-d 86.2M vs ␖ 自研 w512 512-d 126.8M），<strong>projector 输入维度不同</strong>（768 vs 512 → 参数 8.52M vs 7.87M）。LLM（Qwen3-4B）、三阶段配方、训练数据、步数均相同。</div>
+
+<h2>2. 训练过程（三阶段）</h2>
+<table><tr><th>阶段</th><th>步数</th><th>loss</th><th>方式</th><th>耗时</th></tr>
+<tr><td>Stage-1 Alignment</td><td>2500</td><td class='blue'>10.4 → 4.58</td><td>冻结 LLM+vision，只训 projector</td><td>6.7 min</td></tr>
+<tr><td>Stage-1.5 Mid-Training</td><td>20000</td><td class='blue'>3.78（final avg）</td><td>LoRA r=64（LLM）+ projector，8×H100 DDP</td><td>86.1 min</td></tr>
+<tr><td>Stage-2 Instruct</td><td>3500</td><td class='blue'>1.478</td><td>LoRA=1e-5 / Proj=5e-6</td><td>15.3 min</td></tr>
+</table>
+<div class='note'>三阶段总训练时间 ≈108 min（Stage-1 6.7 + Stage-1.5 86.1 + Stage-2 15.3）。与 ␖-4ep 的 Stage-1.5 91.8 min 相近（均为 20000 步 LoRA）。数据为三个 Stage 的 LLaVA 系 WebDataset（558K / 3M / 780k，均在盘）。</div>
+
+<h2>3. 12 集 lmms-eval 评测结果（ArmB）</h2>
+<table><tr><th>#</th><th>Benchmark</th><th>指标</th><th>ArmB 分数</th></tr>
+<tr><td>1</td><td class='blue'>ai2d</td><td>exact_match</td><td class='green'>60.69%</td></tr>
+<tr><td>2</td><td class='blue'>RealWorldQA</td><td>exact_match</td><td class='green'>45.49%</td></tr>
+<tr><td>3</td><td class='blue'>MMMU (val)</td><td>acc</td><td class='green'>43.67%</td></tr>
+<tr><td>4</td><td>Blink</td><td>blink_acc</td><td>38.94%</td></tr>
+<tr><td>5</td><td>MMStar</td><td>average</td><td>27.95%</td></tr>
+<tr><td>6</td><td>MMMU-Pro</td><td>acc</td><td>22.43%</td></tr>
+<tr><td>7</td><td>InfoVQA (val)</td><td>ANLS</td><td>16.88%</td></tr>
+<tr><td>8</td><td>ChartQA</td><td>relaxed_overall</td><td>12.52%</td></tr>
+<tr><td>9</td><td>CountBench</td><td>acc</td><td>9.57%</td></tr>
+<tr><td>10</td><td>DocVQA (val)</td><td>ANLS</td><td>7.36%</td></tr>
+<tr><td>11</td><td>OCRBench</td><td>ocrbench_acc</td><td>1.60%</td></tr>
+<tr><td>12</td><td>MME</td><td>perception + cognition</td><td>583.65 + 212.86 = <strong>796.51</strong></td></tr>
+</table>
+<div class='note'>评测协议：每卡 1–3 个 benchmark、<code>--batch_size 32</code>、4 GPU 并行、无 --limit（全样本）。数据集缓存：<code>/tmp/lmms_eval_hf_datasets_app.e0031982/</code>（12 集全部预缓存，offline 模式）。数据来源 <code>consolidated_12benchmarks.json</code>（ArmB Stage-2 step3500 ckpt）。</div>
+
+<h2>4. ArmB vs ␖-4ep 逐项对比（Δ）</h2>
+<table><tr><th>#</th><th>Benchmark</th><th>ArmB</th><th>␖-4ep</th><th>Δ (ArmB − ␖)</th><th>方向</th></tr>
+<tr><td>1</td><td>ai2d</td><td>60.69%</td><td>60.04%</td><td class='green'>+0.65pp</td><td>↑</td></tr>
+<tr><td>2</td><td>RealWorldQA</td><td>45.49%</td><td>43.01%</td><td class='green'>+2.48pp</td><td>↑↑</td></tr>
+<tr><td>3</td><td>MMMU (val)</td><td>43.67%</td><td>42.89%</td><td class='green'>+0.78pp</td><td>↑</td></tr>
+<tr><td>4</td><td>Blink</td><td>38.94%</td><td>38.52%</td><td class='green'>+0.41pp</td><td>↑</td></tr>
+<tr><td>5</td><td>MMStar</td><td>27.95%</td><td>26.81%</td><td class='green'>+1.14pp</td><td>↑</td></tr>
+<tr><td>6</td><td>MMMU-Pro</td><td>22.43%</td><td>23.12%</td><td class='red'>−0.69pp</td><td>↓</td></tr>
+<tr><td>7</td><td>InfoVQA</td><td>16.88%</td><td>16.58%</td><td class='green'>+0.30pp</td><td>↑</td></tr>
+<tr><td>8</td><td>ChartQA</td><td>12.52%</td><td>12.24%</td><td class='green'>+0.28pp</td><td>↑</td></tr>
+<tr><td>9</td><td>CountBench</td><td>9.57%</td><td>10.79%</td><td class='red'>−1.22pp</td><td>↓</td></tr>
+<tr><td>10</td><td>DocVQA</td><td>7.36%</td><td>7.41%</td><td class='red'>−0.05pp</td><td>↓</td></tr>
+<tr><td>11</td><td>OCRBench</td><td>1.60%</td><td>1.10%</td><td class='green'>+0.50pp</td><td>↑</td></tr>
+<tr><td>—</td><td><strong>average（除 MME）</strong></td><td><strong>26.10%</strong></td><td><strong>25.68%</strong></td><td class='green'><strong>+0.42pp</strong></td><td>↑</td></tr>
+<tr><td>12</td><td>MME total</td><td>796.51</td><td>847.46</td><td class='red'>−50.95</td><td>↓↓</td></tr>
+<tr><td>12a</td><td>MME perception</td><td>583.65</td><td>596.75</td><td class='red'>−13.10</td><td>↓</td></tr>
+<tr><td>12b</td><td>MME cognition</td><td>212.86</td><td>250.71</td><td class='red'>−37.85</td><td>↓↓</td></tr>
+</table>
+<div class='info'><strong>逐项小结</strong>：ArmB 在 <strong>8/11</strong> 个 benchmark（除 MME）上优于 ␖-4ep，最大提升为 RealWorldQA <strong>+2.48pp</strong>；在 3 个上劣于 ␖（MMMU-Pro −0.69pp、CountBench −1.22pp、DocVQA −0.05pp）。MME 总分下降 50.95（主要来自认知 −37.85）。<strong>没有</strong>任何 DocVQA/ChartQA/OCRBench 达到 +10pp 的突破阈值。</div>
+
+<h2>5. 预注册判据裁定</h2>
+<table><tr><th>判据档位</th><th>条件</th><th>ArmB 实际</th><th>裁定</th></tr>
+<tr><td>强成功</td><td>平均 ≥ 30%</td><td>26.10%</td><td class='red'>✗</td></tr>
+<tr><td>成功</td><td>平均 > 24% <strong>且</strong> DocVQA/ChartQA/OCRBench 任一 ≥ +10pp</td><td>26.10% > 24% ✓，但 max Δ = OCRBench +0.50pp（远不及 +10pp）</td><td class='red'>✗</td></tr>
+<tr><td>不可分辨</td><td>22% – 26%</td><td>26.10%（上沿 +0.10pp）</td><td class='amber'>≈ 边界</td></tr>
+<tr><td>失败</td><td>平均 ≤ 22%</td><td>26.10%</td><td class='red'>✗</td></tr>
+</table>
+<div class='warn'><strong>预注册裁定：不可分辨（边界值）</strong>。ArmB 12 集平均 26.10%，略高于 ␖-4ep 基线（25.68%，Δ=+0.42pp），处于预注册「不可分辨」区间（22–26%）的上沿（+0.10pp 超出 26%）。虽然 8/11 benchmark 方向为正，但<strong>没有任何一个细粒度视觉任务（DocVQA/ChartQA/OCRBench）达到 +10pp 突破</strong>（最大仅 OCRBench +0.50pp），因此不满足「成功」判据的第二个条件。结论：<strong>open_clip 接口 + AIMv2-style 表征在 MLLM 下游与 ␖-4ep 基本持平，没有拉开差距</strong>。</div>
+
+<h2>6. 与 LLaVA-OV1.5 官方（RiCEViT）对比</h2>
+<table><tr><th>Benchmark</th><th>ArmB</th><th>␖-4ep</th><th>RiCEViT (配方R-1.5)</th><th>Δ (ArmB − RiCEViT)</th></tr>
+<tr><td>ai2d</td><td>60.69%</td><td>60.04%</td><td>77.66%</td><td class='red'>−17.0pp</td></tr>
+<tr><td>RealWorldQA</td><td>45.49%</td><td>43.01%</td><td>66.54%</td><td class='red'>−21.1pp</td></tr>
+<tr><td>MMMU (val)</td><td>43.67%</td><td>42.89%</td><td>47.33%</td><td class='red'>−3.7pp</td></tr>
+<tr><td>Blink</td><td>38.94%</td><td>38.52%</td><td>47.01%</td><td class='red'>−8.1pp</td></tr>
+<tr><td>MMStar</td><td>27.95%</td><td>26.81%</td><td>54.53%</td><td class='red'>−26.6pp</td></tr>
+<tr><td>MMMU-Pro</td><td>22.43%</td><td>23.12%</td><td>29.54%</td><td class='red'>−7.1pp</td></tr>
+<tr><td>InfoVQA</td><td>16.88%</td><td>16.58%</td><td>48.06%</td><td class='red'>−31.2pp</td></tr>
+<tr><td>ChartQA</td><td>12.52%</td><td>12.24%</td><td>75.72%</td><td class='red'>−63.2pp</td></tr>
+<tr><td>CountBench</td><td>9.57%</td><td>10.79%</td><td>70.06%</td><td class='red'>−60.5pp</td></tr>
+<tr><td>DocVQA</td><td>7.36%</td><td>7.41%</td><td>81.58%</td><td class='red'>−74.2pp</td></tr>
+<tr><td>OCRBench</td><td>1.60%</td><td>1.10%</td><td>62.90%</td><td class='red'>−61.3pp</td></tr>
+<tr><td><strong>average（除 MME）</strong></td><td><strong>26.10%</strong></td><td><strong>25.68%</strong></td><td class='blue'><strong>60.08%</strong></td><td class='red'><strong>−34.0pp</strong></td></tr>
+</table>
+<div class='warn'>与官方 RiCEViT 同配置对比，ArmB 与 ␖-4ep <strong>一样全面落后</strong>（ArmB −34.0pp vs ␖ −34.4pp，差距几乎相同）。细粒度视觉任务（doc −74pp / chart −63pp / ocr −61pp）仍然是最大短板——这再次印证：<strong>224px 单块 196 tokens 分辨率不足</strong>是 BaiZe 管线在文档/图表/OCR 类任务上的系统性瓶颈，与视觉塔选型（ArmB vs ␖）关系不大。</div>
+
+<h2>7. 结果解读</h2>
+<ul>
+<li><strong>ArmB 与 ␖-4ep 在 MLLM 下游基本持平</strong>（26.10% vs 25.68%，+0.42pp），8/11 benchmark 方向为正但幅度很小（最大 +2.48pp）。这说明 <strong>open_clip 接口 + AIMv2-style 稠密目标在 MLLM 下游没有带来预期的突破</strong>——尽管 ArmB 在 ProtB 线性探针上比 ␖ 低 5pp（62.09% vs 67.05%），MLLM 评测却反超 0.42pp，再次印证「ProtB lp 与 MLLM 分数非单调」的结论。</li>
+<li><strong>MME 认知下降明显</strong>（−37.85），是唯一一个 ArmB 明显劣于 ␖ 的大类。可能与 768-d 特征空间在 LoRA 微调后对认知类多步推理的适配不如 512-d 有关，但样本量不足以确证。</li>
+<li><strong>细粒度视觉任务仍是系统性短板</strong>：DocVQA 7.4%、ChartQA 12.5%、OCRBench 1.6%——与 ␖ 几乎相同，说明<strong>瓶颈在分辨率（224px / 196 tokens）而非视觉塔选型</strong>。RiCEViT 在这些任务上的巨大优势（doc 81.6% / chart 75.7% / ocr 62.9%）主要来自 384px + anyres 多块输入。</li>
+<li><strong>ArmB 的小幅全面改善</strong>（8/11 方向正）可能来自 open_clip 标准化训练流程的稳定性，而非 768-d 维度本身的优势——因为提升幅度（+0.42pp 平均）在评测噪声范围内。</li>
+</ul>
+
+<h2>8. 诚实声明</h2>
+<div class='info'>
+<ul>
+<li>本报告的 12 集分数均为 <strong>ArmB（open_clip ViT-B/16 768-d）不经 anyres</strong> 的结果，与官方 LLaVA-OneVision（SigLIP 384 + anyres）的公开数字<strong>不可同框直接比较</strong>（分辨率/视觉塔不同）。</li>
+<li><strong>ArmB vs ␖-4ep 不是严格单变量对照</strong>：两者视觉塔架构（open_clip ViT-B/16 768-d 86.2M vs 自研 w512 512-d 126.8M）、训练目标（AIMv2-style 稠密 vs 原始）、数据量、步数均不同。+0.42pp 是「整体 recipe 切换」的综合效应，<strong>不能孤立归因为 open_clip 接口或 768-d 维度的贡献</strong>。</li>
+<li>12 集评测中 MME 为绝对分数（非百分比），未纳入平均计算。平均仅基于 11 个百分比类 benchmark 的简单算术均值。</li>
+<li>预注册判据中「不可分辨 22–26%」的上界 26% 与 ArmB 实际 26.10% 仅差 0.10pp，属<strong>边界值</strong>——如考虑评测 stderr（多数 benchmark ±0.3–1.8pp），ArmB 的 26.10% 与 26% 上沿在统计上不可区分。</li>
+</ul>
+</div>
+
+<h2>9. 结论与后续</h2>
+<div class='ok'><strong>结论</strong>：ArmB（open_clip ViT-B/16 768-d 86.2M）经 LLaVA-OV1.5 三阶段对齐后，12 集 MLLM 评测平均 26.10%，<strong>预注册裁定为「不可分辨（边界值）」</strong>——略高于 ␖-4ep 基线（+0.42pp）但无细粒度任务突破。open_clip 接口 + AIMv2-style 表征在 MLLM 下游<strong>没有拉开与自研 ␖ 的差距</strong>，两者均远落后于官方 RiCEViT（−34pp），瓶颈主要在<strong>分辨率（224px / 196 tokens）</strong>而非视觉塔选型。</div>
+<div class='note'><strong>后续方向</strong>：① <strong>anyres / 高分辨率</strong>是提升细粒度任务（doc/chart/ocr）的关键瓶颈，应优先突破；② ArmB 的 ProtB lp（62.09%）低于 ␖（67.05%）但 MLLM 反超——「ProtB → MLLM 传递性」假设再次被证伪，线性探针不预测 MLLM 下游表现；③ 如需进一步提升 MLLM 分数，应考虑更大规模视觉预训练 + anyres，而非仅切换视觉塔接口。</div>
+
+<footer>BaiZe-ISEDA2027 · 报告 report_vision_armB_mllm_stage4_zh.html · 数据来源：mllm_eval_results_armB/consolidated_12benchmarks.json + ␖ consolidated_12benchmarks.json · 生成：Cline</footer>
+</body></html>

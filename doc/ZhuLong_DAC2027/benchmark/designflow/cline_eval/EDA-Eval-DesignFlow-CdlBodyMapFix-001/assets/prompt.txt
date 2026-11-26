@@ -1,0 +1,36 @@
+Calibre PEX 的 RCC 抽取被中止，需要修复 CDL 源网表里 buffer 的体端（body）映射，让 CCI-LVS 变干净。
+
+工程 /proj/drcoa/V0/ver/pex/johnl/T_IsmTop 的 RCC（电阻电容耦合）抽取失败，lpe.log 报
+"Terminate LPE running due to CCI-LVS result is NOT Clean !!"，layout_top.lvs.rep 报 INCORRECT。
+
+根因：版图里 NMOS 体接 vss!、PMOS 体接 vcc!；但源网表 T_IsmTop.cdl 里某个 buffer 实例的
+体端引脚（vbn/vbp）接到了 T_IsmTop 顶层"悬空"的 vbn!/vbp! 端口上，没有 map 到 vss!/vcc!。
+全 CDL 里只有顶层这一处 buffer 的体端接到了悬空端口；其余 buffer（包括子模块内部那些
+局部 vbn/vbp 端口被父层 fed 成 vss!/vcc! 的）都是对的，不能动。
+
+请写一个 Python 脚本 fix_cdl.py，自动定位并修复这种"体端接到顶层悬空 vbn!/vbp! 端口"的
+buffer 实例：把该实例对应的体端网从 vbn! 改成 vss!、vbp! 改成 vcc!，其余行一律保持原样；
+保留原文件备份；输出修改前后的 diff 报告；并校验修改后 CDL 的 .SUBCKT 与 .ENDS 数量配对、
+且总行数与原文件一致（即只做单行内参数改写，不增删行、不破坏网表结构）。
+
+调用接口（命令行）：
+    python3 fix_cdl.py <input_cdl> <output_cdl> <diff_report_json>
+- 读 <input_cdl>，写修复后的网表到 <output_cdl>，写 diff 报告到 <diff_report_json>。
+- 同时在 <input_cdl> 同目录下生成 <input_cdl>.bak 备份（与原文件完全一致）。
+- 退出码 0 表示成功；非 0 表示出错。
+
+验收点（脚本必须做到，且对结构不同的另一份 CDL 也要通用，不能硬编码本题专属名字）：
+1. 只改"顶层根 subckt（不被任何其它 subckt 实例化的那个）体内"的 buffer 实例；
+   子模块内部的实例即便用了同名局部端口也不能动。
+2. 通过解析 buffer 子电路的端口表，定位"体端引脚"在实例行的参数位置（不能假定固定位置），
+   只在体端引脚确实接到顶层悬空 vbn!/vbp! 端口时才改写，并改写到对应的电源/地（vbn->vss,
+   vbp->vcc）。
+3. 已经接 vss!/vcc! 的正确 buffer 实例保持不动。
+4. 修改前后 .SUBCKT/.ENDS 数量配对一致，总行数不变。
+5. diff_report_json 为合法 JSON，至少含 changed_lines（每条含 line_no/old/new）、
+   wellformed（bool）、line_count_unchanged（bool）三个字段。
+6. 生成与原文件字节一致的 .bak 备份。
+
+附带的 T_IsmTop_A.cdl 是该工程 CDL 结构的合成复刻 fixture（与真实 trace 同构，可读可改）。
+请先用 fix_cdl.py 处理 T_IsmTop_A.cdl 得到 T_IsmTop_fixed.cdl 与 diff_report.json，连同
+fix_cdl.py 一起打包成 submit.zip 提交。

@@ -1,0 +1,150 @@
+You are the SYSTEM-UNDER-TEST for an EDA design-flow benchmark. Solve the task below, then SELF-VERIFY your solution on the Empyrean Skipper Tcl sandbox via the `eda_flow` MCP, and print a final verdict.
+
+=== TASK ===
+# Scenario: a digital verification team runs UniVista Skipper (UVS) Verilog
+# regressions on an LSF farm. After submitting `bsub -Is run_regr`, the team
+# monitors the run by tailing `vps.log` in the tag's `vps_log/` directory.
+# You are writing a log-monitoring helper that, given a `vps.log` snippet,
+# classifies the regression's state so the dashboard knows whether to keep
+# polling, flag a STUCK job, or report a final verdict.
+#
+# The log snippet may contain any of these line forms:
+#   - Live progress line (during the run):
+#       `Total: <T> Queued: <Q> Running: <R> - Pass: <P> Fail: <F>`
+#   - Terminal summary line (when the regression finishes):
+#       `Total: <T>, Pass: <P>, Fail: <F>`
+#   - A final status marker: a line containing `Status: PASS` or
+#     `Status: FAIL` (optionally followed by ` (Pass Rate: <x>%)`).
+#   - VPS worker / LSF error lines, e.g. `<queue>: No such queue` when VPS
+#     tries to launch worker tasks to a queue that does not exist.
+#
+# Parsing & classification rules (apply in priority order):
+# 1. Extract the MOST RECENT progress numbers. Prefer a live progress line
+#    (`Total ... Queued ... Running ... - Pass ... Fail ...`). If only a
+#    terminal summary line (`Total: <T>, Pass: <P>, Fail: <F>`) is present,
+#    treat Queued = 0 and Running = 0.
+# 2. queue_error: scan for a line matching `<name>: No such queue`. If found,
+#    set queue_error to that `<name>` (the queue the workers tried to use);
+#    otherwise the string `none`.
+# 3. stuck_reason: set to `worker_queue_missing` when queue_error != none AND
+#    Queued > 0 (workers cannot launch, so the queued backlog will never
+#    drain). Otherwise `none`. NOTE: a job that is simply PENDING with
+#    Running: 0 but NO `No such queue` error is NOT stuck -- it is still
+#    `running` (waiting for LSF resources).
+# 4. state (priority: stuck > done > running):
+#    - `stuck`  when stuck_reason != none;
+#    - `done`   when (Queued == 0 AND Running == 0) OR a `Status: PASS|FAIL`
+#               marker line is present;
+#    - `running` otherwise.
+# 5. verdict (only meaningful when state == done):
+#    - `PASS` when state is done AND pass == total (and total > 0);
+#    - `FAIL` when state is done AND fail > 0;
+#    - `none` otherwise (not done, or done but ambiguous).
+# 6. Return a FLAT Tcl dict with EXACTLY these keys:
+#       total queued running pass fail state verdict queue_error stuck_reason
+#    Missing/absent numbers default to 0. queue_error/stuck_reason default to
+#    the string `none`. state defaults to `running`; verdict to `none`.
+#
+# Implement `proc vps_regr_progress_classify {log} { ... }` in Tcl. The input
+# `log` is a single string that may contain newlines. Use only Tcl builtins
+# (no external packages). The runtime is Empyrean Skipper Tcl (skipper host),
+# which supports `dict`, `regexp`, `split`, `lassign`, POSIX character classes
+# `[[:space:]]` / `[[:digit:]]` in regexps -- do NOT rely on `\s` / `\d`.
+
+=== CHECKER (proc check {candidate} -> "CHECK_PASS" on success) ===
+# assert shim: the runtime Tcl has no native 'assert' command.
+proc assert {cond msg} {
+    set ok [uplevel 1 [list expr $cond]]
+    if {!$ok} { error "ASSERT FAIL: $cond -- $msg" }
+}
+proc contains {haystack needle} {
+    return [expr {[string first $needle $haystack] >= 0}]
+}
+proc dget {d k} { return [dict get $d $k] }
+
+proc check {candidate} {
+    # ---- Case A: normal running (live progress, no error) ----
+    set logA "Starting regression run_step2_2 with uvs\nTotal: 3 Queued: 0 Running: 2 - Pass: 1 Fail: 0\n"
+    set dA [$candidate $logA]
+    assert {[dget $dA total]   == 3} "A total"
+    assert {[dget $dA queued]  == 0} "A queued"
+    assert {[dget $dA running] == 2} "A running"
+    assert {[dget $dA pass]    == 1} "A pass"
+    assert {[dget $dA fail]    == 0} "A fail"
+    assert {[string equal [dget $dA state]        "running"]} "A state"
+    assert {[string equal [dget $dA verdict]      "none"]}    "A verdict"
+    assert {[string equal [dget $dA queue_error]  "none"]}    "A queue_error"
+    assert {[string equal [dget $dA stuck_reason] "none"]}    "A stuck_reason"
+
+    # ---- Case B: queue-stuck (TEETH: workers cannot launch) ----
+    # Real teeth: uvs_test default queue does not exist; main bsub job is on
+    # bcp_LP1 but VPS worker tasks use the VPC grid queue -> No such queue.
+    # Naive "not done -> running" mis-classifies this as running.
+    set logB "Total: 3 Queued: 2 Running: 0 - Pass: 1 Fail: 0\nuvs_test: No such queue\nbsub: Job <379274> is submitted to queue <bcp_LP1>.\n"
+    set dB [$candidate $logB]
+    assert {[dget $dB queued]  == 2} "B queued"
+    assert {[dget $dB running] == 0} "B running"
+    assert {[string equal [dget $dB queue_error]  "uvs_test"]}               "B queue_error"
+    assert {[string equal [dget $dB stuck_reason] "worker_queue_missing"]}   "B stuck_reason"
+    assert {[string equal [dget $dB state]        "stuck"]}                  "B state stuck (TEETH: not running)"
+    assert {[string equal [dget $dB verdict]      "none"]}                   "B verdict"
+
+    # ---- Case C: done all-pass ----
+    set logC "Total: 2 Queued: 0 Running: 0 - Pass: 2 Fail: 0\nRegression DONE\nStatus: PASS\n"
+    set dC [$candidate $logC]
+    assert {[string equal [dget $dC state]   "done"]} "C state done"
+    assert {[string equal [dget $dC verdict] "PASS"]} "C verdict PASS"
+    assert {[dget $dC pass] == 2 && [dget $dC fail] == 0} "C counts"
+
+    # ---- Case D: done with fail (TEETH: pass>0 must NOT mean PASS) ----
+    # Real run: avl_no_act_wr passed, dqs_osc_manual failed -> 50% pass rate.
+    set logD "Total: 2 Queued: 0 Running: 0 - Pass: 1 Fail: 1\nStatus: FAIL (Pass Rate: 50.0%)\n"
+    set dD [$candidate $logD]
+    assert {[string equal [dget $dD state]   "done"]} "D state done"
+    assert {[string equal [dget $dD verdict] "FAIL"]} "D verdict FAIL (TEETH: pass>0 != PASS)"
+    assert {[dget $dD pass] == 1 && [dget $dD fail] == 1} "D counts"
+
+    # ---- Case E: terminal-summary-only format (TEETH: comma variant) ----
+    # Only a `Total: <T>, Pass: <P>, Fail: <F>` summary (no Queued/Running
+    # fields) + a Status marker. Naive regex expecting the live `Queued:`/
+    # `Running:` fields fails to parse this and leaves everything at 0.
+    set logE "Regression run_step2_2 finished.\nTotal: 2, Pass: 2, Fail: 0\nStatus: PASS\n"
+    set dE [$candidate $logE]
+    assert {[dget $dE total]   == 2} "E total"
+    assert {[dget $dE pass]    == 2} "E pass"
+    assert {[dget $dE fail]    == 0} "E fail"
+    assert {[dget $dE queued]  == 0} "E queued default"
+    assert {[dget $dE running] == 0} "E running default"
+    assert {[string equal [dget $dE state]   "done"]} "E state done"
+    assert {[string equal [dget $dE verdict] "PASS"]} "E verdict PASS"
+
+    # ---- Case F: pending-not-stuck (TEETH: Running:0 + no error != stuck) ----
+    # All tasks queued, none running yet, but NO No-such-queue error -> the
+    # job is simply waiting for LSF resources, NOT stuck. Naive "Running:0
+    # -> stuck" mis-classifies this.
+    set logF "Total: 3 Queued: 3 Running: 0 - Pass: 0 Fail: 0\nbsub: Job <379499> is submitted to queue <bcp_LP1>.\n"
+    set dF [$candidate $logF]
+    assert {[dget $dF queued]  == 3} "F queued"
+    assert {[dget $dF running] == 0} "F running"
+    assert {[string equal [dget $dF queue_error]  "none"]}    "F queue_error"
+    assert {[string equal [dget $dF stuck_reason] "none"]}    "F stuck_reason (TEETH: pending != stuck)"
+    assert {[string equal [dget $dF state]        "running"]} "F state running (TEETH: not stuck)"
+    assert {[string equal [dget $dF verdict]      "none"]}    "F verdict"
+
+    return "CHECK_PASS"
+}
+
+
+=== YOUR JOB ===
+1. Implement `proc vps_regr_progress_classify {log} { ... }` in Tcl. Constraints: runtime = Empyrean Skipper Tcl (skipper host); use POSIX regex classes `[[:space:]]` / `[[:digit:]]` / `[[:alnum:]_]` -- do NOT use `\s`, `\d`, or `\b` (they are NOT supported); use only Tcl builtins (dict, regexp, split, lassign, llength, string). Return a flat dict with keys: total queued running pass fail state verdict queue_error stuck_reason.
+2. SELF-VERIFY using the `eda_flow` MCP (already configured, 8 tools):
+   a. call `open_session` with task_id="SUT-SKIP2", eval_id="20261029-skip2", user="pi_sut", sample="0" -> get workdir.
+   b. call `write_file` to write your impl as `<workdir>/ref.tcl` (just the proc, no extra commands).
+   c. call `write_file` to write the checker above as `<workdir>/checker.tcl`.
+   d. call `run_code` with lang="tcl", host="skipper", workdir=<workdir>, and code that does: `cd <workdir>` then `source ref.tcl` then `source checker.tcl` then `set rc [catch {check vps_regr_progress_classify} res]` then `puts "RC=$rc"` then `puts "RESULT=$res"`.
+   e. call `close_session` with workdir=<workdir> to clean up.
+3. From the run_code print_log, parse RESULT. If RESULT==CHECK_PASS and RC==0, your final line MUST be exactly:
+   DESIGN_FLOW_VERDICT=PASS
+   otherwise:
+   DESIGN_FLOW_VERDICT=FAIL
+Print only the verdict line at the very end.

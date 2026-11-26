@@ -1,0 +1,9 @@
+背景：在 `/home/johnl/.cline/scripts/data/primelib_char_T_IsmTop/dc_addr_to_region/` 目录下有一套用 Synopsys Design Compiler 对纯组合逻辑模块 `addr_to_rowcol_region`（9-bit 地址译码：RA[8:0] → row[3:0] / col[4:0] / region[1:0] / valid，模块内不含任何寄存器/触发器，无 posedge/negedge）做综合的脚本。原脚本是为时序逻辑流程写的：约束文件 `addr_to_rowcol_region.sdc` 用虚拟时钟 `vclk`（period 5ns）挂在 RA 端口上，并带 `set_clock_latency` / `set_clock_uncertainty` / `set_clock_transition` / `set_input_delay` / `set_output_delay` 等一整套时钟相关约束；`synth.tcl` 跑完后 `write_sdc` 会把这些时钟约束原样写进 `out/addr_to_rowcol_region_mapped.sdc`。`out/addr_to_rowcol_region_mapped.sdc.orig` 是上一次综合后 DC 实际写出的 mapped SDC（含 vclk 及 56 行时钟相关约束）。
+
+任务：该模块是纯组合逻辑，时钟相关约束毫无意义且会误导下游 STA。请：
+
+1. 修改 `synth.tcl`：在 `write_sdc` 之后新增一个后处理步骤，逐行扫描 DC 刚写出的 `${TOP_DESIGN}_mapped.sdc`，**跳过（删除）所有时钟相关 SDC 命令** —— 至少包括 `create_clock`、`set_clock_latency`、`set_clock_uncertainty`、`set_clock_transition`、`set_input_delay`、`set_output_delay` 六类 —— 再追加一条**组合逻辑延迟约束** `set_max_delay`（默认 3.0ns，可由环境变量 `COMB_MAX_DELAY_NS` 覆盖）替代被删除的时钟约束。该后处理步骤必须**泛型**：`set_max_delay` 的作用对象不要硬编码本模块的端口名（row/col/region/valid），而要用面向全部输出的通用写法，使其对任意纯组合模块都成立。不要破坏 `synth.tcl` 里原有的 analyze / elaborate / link / compile / write 步骤。
+
+2. 清理 `out/addr_to_rowcol_region_mapped.sdc`：按与后处理步骤相同的规则，把已存在的 mapped SDC 里的全部时钟相关约束删掉，替换为一条组合逻辑 `set_max_delay` 约束，保留其中非时钟的设计约束（如 `set_load`、`set_input_transition`）。
+
+交付：把修改后的 `synth.tcl` 和清理后的 `addr_to_rowcol_region_mapped.sdc` 两个文件打进 `outputs/submit.zip`。RTL、库、原始 SDC、run_dc.sh 不要改，也不要放进 submit.zip。

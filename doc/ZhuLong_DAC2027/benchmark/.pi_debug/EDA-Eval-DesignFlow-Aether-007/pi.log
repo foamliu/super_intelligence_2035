@@ -1,0 +1,33 @@
+=== pi-SUT Aether-007 start 2026-10-30 08:44:56 ===
+=== pi exit=0 end 2026-10-30 08:49:42 ===
+=== tail pi_run.log ===
+```
+RESULT:ALL_ASSERTS_PASS
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+
+**Sandbox RESULT: ALL_ASSERTS_PASS**
+
+DESIGN_FLOW_VERDICT=PASS
+hed_summary $mismatch verdict $verdict]
+}
+```
+
+Key behaviors handled:
+- Comment/blank/header lines ignored; `gate_area`/`diode_area` ignored.
+- Duplicate `(net, layer)` pairs deduped with **last-wins** replacement of all fields.
+- Case-insensitive `status`; absent status inferred as `FAIL` only if `ratio > limit` (strict), never `WARN`/`SKIP`.
+- Defaults: `limit=400.0`, `ratio=0.0`.
+- `max_ratio`/`worst_net` computed over **non-SKIP** lines only, with `-1.0`/`""` when none exist; ties break lexicographically via `lsort -dictionary`.
+- `mismatched_summary` compares ints, numeric `max_ratio` (`expr ==`), and string `worst_net`, omitting absent fields, lex-sorted.
+- Verdict priority: `FAIL` > `INCOMPLETE` > `PASS`.
+
+## Sandbox verification result
+
+```
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+
+DESIGN_FLOW_VERDICT=PASS

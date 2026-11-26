@@ -1,0 +1,100 @@
+Implemented and verified. The final Tcl proc:
+
+```tcl
+proc spice_netlist_parametrize {path} {
+    set fh [open $path r]
+    set raw [read $fh]
+    close $fh
+    set lines [split $raw "\n"]
+
+    set inMC 0
+    set subcktIdx -1
+    set outLines {}
+    foreach p {MP0 MN0 MP10 MN15} {
+        set wval($p) ""
+        set lval($p) ""
+        set have($p) 0
+    }
+    array set prefixFor {XMMP0 MP0 XMMN0 MN0 XMMP10 MP10 XMMN15 MN15}
+
+    foreach line $lines {
+        set trimmed [string trim $line]
+        set toks [split $trimmed]
+        set ntok [llength $toks]
+        set t0 ""
+        set t1 ""
+        if {$ntok > 0} { set t0 [lindex $toks 0] }
+        if {$ntok > 1} { set t1 [lindex $toks 1] }
+
+        if {!$inMC && $t0 eq ".SUBCKT" && $t1 eq "R_RasVdbiasDlyStd_gut_MC"} {
+            set inMC 1
+            set subcktIdx [llength $outLines]
+        } elseif {$inMC && $t0 eq ".ENDS" && $t1 eq "R_RasVdbiasDlyStd_gut_MC"} {
+            set inMC 0
+        } elseif {$inMC && $t0 ne "" && [info exists prefixFor($t0)]} {
+            set prefix $prefixFor($t0)
+            set wn ""
+            set ln ""
+            if {[regexp {w=([0-9.eE+-]+)} $line -> wn]} {
+                set wval($prefix) $wn
+                set have($prefix) 1
+            }
+            if {[regexp {l=([0-9.eE+-]+)} $line -> ln]} {
+                set lval($prefix) $ln
+                set have($prefix) 1
+            }
+            if {$wn ne ""} {
+                set wref "w='"
+                append wref $prefix "_w'"
+                regsub {w=[0-9.eE+-]+} $line $wref line
+            }
+            if {$ln ne ""} {
+                set lref "l='"
+                append lref $prefix "_l'"
+                regsub {l=[0-9.eE+-]+} $line $lref line
+            }
+        }
+        lappend outLines $line
+    }
+
+    set pblock {}
+    foreach p {MP0 MN0 MP10 MN15} {
+        if {$have($p)} {
+            set pline ".PARAM "
+            append pline $p "_w="
+            append pline $wval($p) " "
+            append pline $p "_l="
+            append pline $lval($p)
+            lappend pblock $pline
+        }
+    }
+    if {[llength $pblock] > 0 && $subcktIdx >= 0} {
+        set newOut {}
+        set i 0
+        foreach ln $outLines {
+            if {$i == $subcktIdx} {
+                foreach pb $pblock { lappend newOut $pb }
+            }
+            lappend newOut $ln
+            incr i
+        }
+        set outLines $newOut
+    }
+
+    return [join $outLines "\n"]
+}
+```
+
+Key points of the implementation:
+- Scopes targeting strictly to `.SUBCKT R_RasVdbiasDlyStd_gut_MC` → matching `.ENDS` (exact token 2 comparison, so the non-`_MC` variant is ignored).
+- Matches target instances only by leading token (`lindex [string trim $line] 0`), and only rewrites numeric `w=<num>`/`l=<num>` via POSIX regex `[0-9.eE+-]+`.
+- Quoted refs like `w='MP0_w'` fail the numeric regex, so idempotency holds (no double-parameterize, no second `.PARAM` block).
+- Injects one `.PARAM` line per target instance (MP0, MN0, MP10, MN15 order) immediately before the `_MC` `.SUBCKT`, using the extracted original numeric defaults.
+- Preserves all other lines/tokens/line-order and trailing newline via `split`/`join`.
+
+Sandbox verification on the .75 Synopsys WaveView Tcl runtime (`open_session` → `run_code` → `close_session`) succeeded with empty `error_log`.
+
+CHECK_RESULT/DETAIL: `CHECK_OK: PASS 5 / FAIL 0 (5 cases: A basic, B subckt-scope-teeth, C idempotency-teeth, D surgical-params-teeth, E decoys+extraction-teeth)`
+
+DESIGN_FLOW_VERDICT=PASS
+=== pi exit=0 end Thu Oct 29 10:41:01 PM CST 2026 ===

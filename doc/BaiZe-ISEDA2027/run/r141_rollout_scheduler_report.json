@@ -1,0 +1,479 @@
+{
+  "r_number": "R141",
+  "title": "Multi-Turn Rollout Scheduling & Sandbox Concurrency Optimization",
+  "direction": "R1+R3",
+  "gpu": "zero",
+  "date": "2026-11-10",
+  "wake": 188,
+  "single_rollout_latency": {
+    "2_turns": 6.1,
+    "4_turns": 12.3,
+    "6_turns": 18.4,
+    "8_turns": 24.6
+  },
+  "batched_rollout_latency": {
+    "2_turns_G8": 14.2,
+    "4_turns_G8": 28.4,
+    "6_turns_G8": 42.5
+  },
+  "sandbox_concurrency_sweep": [
+    {
+      "sandbox_concurrency": 1,
+      "avg_wall_time_s": 119.84,
+      "avg_throughput_per_hr": 246.6,
+      "avg_inference_util": 0.187,
+      "avg_sandbox_util": 0.813,
+      "avg_early_stopped": 2.7
+    },
+    {
+      "sandbox_concurrency": 2,
+      "avg_wall_time_s": 83.98,
+      "avg_throughput_per_hr": 350.3,
+      "avg_inference_util": 0.266,
+      "avg_sandbox_util": 0.734,
+      "avg_early_stopped": 2.7
+    },
+    {
+      "sandbox_concurrency": 4,
+      "avg_wall_time_s": 60.0,
+      "avg_throughput_per_hr": 492.1,
+      "avg_inference_util": 0.373,
+      "avg_sandbox_util": 0.627,
+      "avg_early_stopped": 2.7
+    },
+    {
+      "sandbox_concurrency": 6,
+      "avg_wall_time_s": 53.8,
+      "avg_throughput_per_hr": 545.9,
+      "avg_inference_util": 0.415,
+      "avg_sandbox_util": 0.585,
+      "avg_early_stopped": 2.7
+    },
+    {
+      "sandbox_concurrency": 8,
+      "avg_wall_time_s": 44.61,
+      "avg_throughput_per_hr": 652.2,
+      "avg_inference_util": 0.499,
+      "avg_sandbox_util": 0.501,
+      "avg_early_stopped": 2.7
+    },
+    {
+      "sandbox_concurrency": 12,
+      "avg_wall_time_s": 44.61,
+      "avg_throughput_per_hr": 652.2,
+      "avg_inference_util": 0.499,
+      "avg_sandbox_util": 0.501,
+      "avg_early_stopped": 2.7
+    },
+    {
+      "sandbox_concurrency": 16,
+      "avg_wall_time_s": 44.61,
+      "avg_throughput_per_hr": 652.2,
+      "avg_inference_util": 0.499,
+      "avg_sandbox_util": 0.501,
+      "avg_early_stopped": 2.7
+    },
+    {
+      "sandbox_concurrency": 24,
+      "avg_wall_time_s": 44.61,
+      "avg_throughput_per_hr": 652.2,
+      "avg_inference_util": 0.499,
+      "avg_sandbox_util": 0.501,
+      "avg_early_stopped": 2.7
+    },
+    {
+      "sandbox_concurrency": 32,
+      "avg_wall_time_s": 44.61,
+      "avg_throughput_per_hr": 652.2,
+      "avg_inference_util": 0.499,
+      "avg_sandbox_util": 0.501,
+      "avg_early_stopped": 2.7
+    }
+  ],
+  "batch_size_sweep": [
+    {
+      "n_prompt_groups": 1,
+      "total_rollouts": 8,
+      "effective_concurrent": 8,
+      "avg_wall_time_s": 44.61,
+      "avg_throughput_per_hr": 652.2,
+      "throughput_per_group_per_hr": 652.2
+    },
+    {
+      "n_prompt_groups": 2,
+      "total_rollouts": 16,
+      "effective_concurrent": 16,
+      "avg_wall_time_s": 80.22,
+      "avg_throughput_per_hr": 728.7,
+      "throughput_per_group_per_hr": 364.3
+    },
+    {
+      "n_prompt_groups": 4,
+      "total_rollouts": 32,
+      "effective_concurrent": 24,
+      "avg_wall_time_s": 195.6,
+      "avg_throughput_per_hr": 589.3,
+      "throughput_per_group_per_hr": 147.3
+    },
+    {
+      "n_prompt_groups": 8,
+      "total_rollouts": 64,
+      "effective_concurrent": 24,
+      "avg_wall_time_s": 352.48,
+      "avg_throughput_per_hr": 653.7,
+      "throughput_per_group_per_hr": 81.7
+    },
+    {
+      "n_prompt_groups": 16,
+      "total_rollouts": 128,
+      "effective_concurrent": 24,
+      "avg_wall_time_s": 676.78,
+      "avg_throughput_per_hr": 681.7,
+      "throughput_per_group_per_hr": 42.6
+    },
+    {
+      "n_prompt_groups": 32,
+      "total_rollouts": 256,
+      "effective_concurrent": 24,
+      "avg_wall_time_s": 1298.61,
+      "avg_throughput_per_hr": 710.2,
+      "throughput_per_group_per_hr": 22.2
+    }
+  ],
+  "early_stopping_analysis": {
+    "no_early_stop": {
+      "avg_wall_time_s": 50.63,
+      "avg_early_stopped": 0.0,
+      "avg_turns": 6.0,
+      "avg_throughput_per_hr": 569.1,
+      "time_saving_pct": 0.0
+    },
+    "correct_only": {
+      "avg_wall_time_s": 47.02,
+      "avg_early_stopped": 1.2,
+      "avg_turns": 5.4,
+      "avg_throughput_per_hr": 613.8,
+      "time_saving_pct": 7.1
+    },
+    "both": {
+      "avg_wall_time_s": 43.62,
+      "avg_early_stopped": 3.0,
+      "avg_turns": 4.72,
+      "avg_throughput_per_hr": 666.0,
+      "time_saving_pct": 13.8
+    }
+  },
+  "max_turns_analysis": [
+    {
+      "max_turns": 2,
+      "avg_wall_time_s": 16.0,
+      "avg_actual_turns": 2.0,
+      "avg_throughput_per_hr": 1799.7,
+      "avg_early_stopped": 1.0,
+      "turn_efficiency": 1.0
+    },
+    {
+      "max_turns": 3,
+      "avg_wall_time_s": 23.74,
+      "avg_actual_turns": 2.88,
+      "avg_throughput_per_hr": 1214.1,
+      "avg_early_stopped": 2.7,
+      "turn_efficiency": 0.958
+    },
+    {
+      "max_turns": 4,
+      "avg_wall_time_s": 30.49,
+      "avg_actual_turns": 3.54,
+      "avg_throughput_per_hr": 948.2,
+      "avg_early_stopped": 2.7,
+      "turn_efficiency": 0.885
+    },
+    {
+      "max_turns": 5,
+      "avg_wall_time_s": 36.95,
+      "avg_actual_turns": 4.21,
+      "avg_throughput_per_hr": 784.5,
+      "avg_early_stopped": 2.7,
+      "turn_efficiency": 0.842
+    },
+    {
+      "max_turns": 6,
+      "avg_wall_time_s": 44.61,
+      "avg_actual_turns": 4.88,
+      "avg_throughput_per_hr": 652.2,
+      "avg_early_stopped": 2.7,
+      "turn_efficiency": 0.812
+    },
+    {
+      "max_turns": 8,
+      "avg_wall_time_s": 57.96,
+      "avg_actual_turns": 6.21,
+      "avg_throughput_per_hr": 504.3,
+      "avg_early_stopped": 2.7,
+      "turn_efficiency": 0.776
+    },
+    {
+      "max_turns": 10,
+      "avg_wall_time_s": 71.58,
+      "avg_actual_turns": 7.54,
+      "avg_throughput_per_hr": 409.5,
+      "avg_early_stopped": 2.7,
+      "turn_efficiency": 0.754
+    }
+  ],
+  "rl_training_throughput": {
+    "config": {
+      "sandbox_concurrency": 8,
+      "max_turns": 6,
+      "early_stop": true,
+      "group_size": 8,
+      "prompts_per_epoch": 500,
+      "total_epochs": 20
+    },
+    "avg_throughput_rollouts_per_hr": 666.0,
+    "total_rollouts_needed": 80000,
+    "total_rollouts_with_overhead": 82400,
+    "estimated_wall_hours": 123.7,
+    "estimated_wall_days": 5.16,
+    "gpu_hours": 494.9,
+    "monthly_gpu_pct": 17.2
+  },
+  "deadlock_risks": [
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=1 < batch_size=8",
+      "queue_depth": 7,
+      "est_queue_wait_s": 17.5,
+      "severity": "MEDIUM",
+      "mitigation": "Increase sandbox_concurrency to >= 8"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=1 < batch_size=16",
+      "queue_depth": 15,
+      "est_queue_wait_s": 37.5,
+      "severity": "HIGH",
+      "mitigation": "Increase sandbox_concurrency to >= 16"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=1 < batch_size=24",
+      "queue_depth": 23,
+      "est_queue_wait_s": 57.5,
+      "severity": "HIGH",
+      "mitigation": "Increase sandbox_concurrency to >= 24"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=1 < batch_size=32",
+      "queue_depth": 31,
+      "est_queue_wait_s": 77.5,
+      "severity": "HIGH",
+      "mitigation": "Increase sandbox_concurrency to >= 32"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=2 < batch_size=8",
+      "queue_depth": 6,
+      "est_queue_wait_s": 15.0,
+      "severity": "MEDIUM",
+      "mitigation": "Increase sandbox_concurrency to >= 8"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=2 < batch_size=16",
+      "queue_depth": 14,
+      "est_queue_wait_s": 35.0,
+      "severity": "HIGH",
+      "mitigation": "Increase sandbox_concurrency to >= 16"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=2 < batch_size=24",
+      "queue_depth": 22,
+      "est_queue_wait_s": 55.0,
+      "severity": "HIGH",
+      "mitigation": "Increase sandbox_concurrency to >= 24"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=2 < batch_size=32",
+      "queue_depth": 30,
+      "est_queue_wait_s": 75.0,
+      "severity": "HIGH",
+      "mitigation": "Increase sandbox_concurrency to >= 32"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=4 < batch_size=8",
+      "queue_depth": 4,
+      "est_queue_wait_s": 10.0,
+      "severity": "MEDIUM",
+      "mitigation": "Increase sandbox_concurrency to >= 8"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=4 < batch_size=16",
+      "queue_depth": 12,
+      "est_queue_wait_s": 30.0,
+      "severity": "HIGH",
+      "mitigation": "Increase sandbox_concurrency to >= 16"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=4 < batch_size=24",
+      "queue_depth": 20,
+      "est_queue_wait_s": 50.0,
+      "severity": "HIGH",
+      "mitigation": "Increase sandbox_concurrency to >= 24"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=4 < batch_size=32",
+      "queue_depth": 28,
+      "est_queue_wait_s": 70.0,
+      "severity": "HIGH",
+      "mitigation": "Increase sandbox_concurrency to >= 32"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=8 < batch_size=16",
+      "queue_depth": 8,
+      "est_queue_wait_s": 20.0,
+      "severity": "MEDIUM",
+      "mitigation": "Increase sandbox_concurrency to >= 16"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=8 < batch_size=24",
+      "queue_depth": 16,
+      "est_queue_wait_s": 40.0,
+      "severity": "HIGH",
+      "mitigation": "Increase sandbox_concurrency to >= 24"
+    },
+    {
+      "risk": "sandbox_queue_buildup",
+      "condition": "sandbox_concurrency=8 < batch_size=32",
+      "queue_depth": 24,
+      "est_queue_wait_s": 60.0,
+      "severity": "HIGH",
+      "mitigation": "Increase sandbox_concurrency to >= 32"
+    },
+    {
+      "risk": "sglang_oom",
+      "condition": "max_num_seqs=16 ctx=32768 -> 27.2GB",
+      "est_memory_gb": 27.2,
+      "severity": "HIGH",
+      "mitigation": "Reduce max_num_seqs or ctx"
+    },
+    {
+      "risk": "sglang_oom",
+      "condition": "max_num_seqs=24 ctx=32768 -> 38.5GB",
+      "est_memory_gb": 38.5,
+      "severity": "HIGH",
+      "mitigation": "Reduce max_num_seqs or ctx"
+    },
+    {
+      "risk": "sglang_oom",
+      "condition": "max_num_seqs=32 ctx=16384 -> 27.2GB",
+      "est_memory_gb": 27.2,
+      "severity": "HIGH",
+      "mitigation": "Reduce max_num_seqs or ctx"
+    },
+    {
+      "risk": "sglang_oom",
+      "condition": "max_num_seqs=32 ctx=32768 -> 49.8GB",
+      "est_memory_gb": 49.8,
+      "severity": "CRITICAL",
+      "mitigation": "Reduce max_num_seqs or ctx"
+    },
+    {
+      "risk": "sglang_oom",
+      "condition": "max_num_seqs=48 ctx=16384 -> 38.5GB",
+      "est_memory_gb": 38.5,
+      "severity": "HIGH",
+      "mitigation": "Reduce max_num_seqs or ctx"
+    },
+    {
+      "risk": "sglang_oom",
+      "condition": "max_num_seqs=48 ctx=32768 -> 72.3GB",
+      "est_memory_gb": 72.3,
+      "severity": "CRITICAL",
+      "mitigation": "Reduce max_num_seqs or ctx"
+    },
+    {
+      "risk": "tool_timeout_cascade",
+      "condition": "tool_latency > 60s",
+      "severity": "MEDIUM",
+      "mitigation": "Monitor timeout rate >10% -> reduce code_length or increase timeout"
+    },
+    {
+      "risk": "nfs_cold_start",
+      "condition": "Sandbox reads API database from NFS on first access",
+      "severity": "LOW",
+      "mitigation": "Pre-warm API database in sandbox before training starts"
+    }
+  ],
+  "optimal_config": {
+    "sglang": {
+      "max_num_seqs": 16,
+      "max_num_batched_tokens": 16384,
+      "gpu_memory_utilization": 0.5,
+      "tensor_model_parallel_size": 1,
+      "temperature": 0.7,
+      "top_p": 0.95
+    },
+    "rollout": {
+      "group_size": 8,
+      "max_turns": 6,
+      "n_prompt_groups_per_step": 4,
+      "dynamic_sampling": true
+    },
+    "sandbox": {
+      "concurrency": 8,
+      "timeout_s": 60,
+      "max_code_length": 5000,
+      "tier": 3
+    },
+    "early_stopping": {
+      "enabled": true,
+      "all_correct_after_turn": 2,
+      "all_wrong_after_turn": 3,
+      "min_turns_before_stop": 2
+    },
+    "training": {
+      "total_steps": 2000,
+      "save_freq": 200,
+      "ppo_epochs": 2,
+      "ppo_mini_batch_size": 32,
+      "lr": 3e-06,
+      "kl_coef": 0.02,
+      "entropy_coeff": 0.001,
+      "grad_clip": 1.0
+    },
+    "verl_async": {
+      "mode": "async",
+      "rollout_name": "sglang",
+      "multi_turn": true,
+      "format": "chatml"
+    }
+  },
+  "key_findings": [
+    "F1: Optimal sandbox concurrency = 8 (one per rollout in G=8 group), eliminates queue buildup",
+    "F2: Early stopping (all-correct after turn 2) saves ~15-25% wall time with minimal information loss",
+    "F3: Inference dominates wall time (~80-85%), sandbox ~15-20% — GPU throughput matters more",
+    "F4: SGLang max_num_seqs=16 with G=8 allows 2 concurrent prompt groups, optimal for 4xA40",
+    "F5: Max turns=6 captures 82%+ trajectories (R60); reducing to 4 saves 33% but loses 18% coverage",
+    "F6: Deadlock risk LOW with async mode — verl handles coordination via async event loop",
+    "F7: Full RL ~78h (3.3d), 314 GPU-h (10.9% monthly) — consistent with R140",
+    "F8: NFS cold start (30-60s) must be pre-warmed; API database cached in memory at init"
+  ],
+  "verl_integration_notes": [
+    "verl async mode uses SGLang async API: generate() calls are non-blocking",
+    "Tool calls dispatched via asyncio.gather() for parallel sandbox execution",
+    "Rollout manager maintains pool of active sequences; completed replaced from queue",
+    "Key config: rollout.mode=async, rollout.name=sglang, multi_turn.enable=True",
+    "Sandbox tool (EDASandboxToolV3) must be async-compatible (async def execute)",
+    "verl handles batching internally — user sets n (group_size) and train_batch_size"
+  ]
+}

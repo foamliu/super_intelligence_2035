@@ -1,0 +1,73 @@
+# Scenario: a digital design team runs a Synopsys PrimeTime "Top Timing ECO"
+# loop on top of an existing STA_flow signoff environment. The loop is launched by
+# a cshell script (run/run_eco.csh) that does `module load ds/pt/<ver>` then
+# `pt_shell -f scr/main_eco.tcl -x "set ECO_STAGE <stage>; ..."`. The main control
+# script sources setup/common_setup.tcl first, then ten numbered tcl step scripts
+# in scr/ with stage-gated execution. ECO_STAGE selects one of three stages:
+#   signoff    -- STA signoff on the ORIGINAL netlist; reports setup/hold violations.
+#   eco        -- build the ECO patch with fix_eco_timing / fix_eco_drc; write the
+#                 ECO'd netlist into patch/ for hand-off to the P&R team.
+#   resignoff  -- STA signoff on the ECO'd netlist (re-read from patch/); expect
+#                 clean -> PASS. It does NOT re-apply ECO.
+#
+# The ten numbered steps are:
+#   1_setup 2_read_lib 3_read_design 4_read_constraint 5_read_parasitics
+#   6_check_design 7_signoff 8_eco 9_re_signoff 10_rpt
+# Step 7 (STA signoff) ALWAYS runs. Step 8 (apply ECO) runs ONLY for ECO_STAGE=eco.
+# Step 9 (post-ECO re-signoff) runs for eco AND resignoff. Step 10 (final outputs
+# + done marker) always runs. Steps 1..6 (env/lib/design/constraint/parasitics/
+# check) always run.
+#
+# THE REAL-WORLD TRAP (a junior engineer's common mistake): thinking the
+# 'resignoff' stage re-applies ECO. It does NOT -- it re-reads the ECO'd netlist
+# that the 'eco' stage already wrote into patch/, so step 8 must be SKIPPED during
+# resignoff while step 9 still runs.
+#
+# You are given a flow_spec as a Tcl dict string with these keys:
+#   num_steps           (int)   total number of numbered step scripts
+#   steps               (list)  ordered step base names, e.g. {1_setup ... 10_rpt}
+#   stages              (list)  stage names this flow supports, e.g. {signoff eco resignoff}
+#   signoff_step_idx    (int)   step number of the STA signoff step
+#   eco_step_idx        (int|"") step number of the apply-ECO step ("" if none)
+#   resignoff_step_idx  (int|"") step number of the re-signoff step ("" if none)
+#   rpt_step_idx        (int|"") step number of the final-report step
+#
+# Implement pnr_signoff_timing_eco_stage_plan(flow_spec) that returns a Tcl dict
+# with these keys:
+#   num_steps                 (int)  -- echo of num_steps
+#   step_names                (list) -- echo of steps
+#   stage_runs                (dict) -- maps each stage name to the SORTED list of
+#                                       step NUMBERS that run for that stage, per
+#                                       the gating rules above. For example, with
+#                                       signoff_step_idx=7, eco_step_idx=8,
+#                                       resignoff_step_idx=9, rpt_step_idx=10:
+#                                         signoff   -> {1 2 3 4 5 6 7 10}
+#                                         eco       -> {1 2 3 4 5 6 7 8 9 10}
+#                                         resignoff -> {1 2 3 4 5 6 7 9 10}
+#                                       (resignoff SKIPS step 8 but runs step 9)
+#   resignoff_runs_eco        (0|1)  -- 0 always (resignoff never re-applies ECO)
+#   resignoff_netlist_source  (str)  -- "patch" (the ECO'd netlist written by the
+#                                       eco stage into patch/)
+#   eco_patch_strategy        (list) -- the ECO patch generation strategy elements,
+#                                       in any order, must include these three:
+#                                         buffer_whitelist    (only whitelisted
+#                                           buffer/delay cells may be inserted)
+#                                         fixing_margin       (extra hold/setup
+#                                           margin so the fix survives
+#                                           cross-corner re-analysis)
+#                                         eco_netlist_handoff (ECO'd netlist
+#                                           written to patch/ for P&R handoff)
+#   sta_eco_handoff           (list) -- how the ECO flow reuses the Top STA flow,
+#                                       must include these three:
+#                                         shared_library shared_corner shared_sdc
+#   output_dirs               (list) -- output directories, must include
+#                                       {log rpt sdc session patch}
+#   run_script_lang           (str)  -- "cshell" (the launcher is a cshell script)
+#
+# The flow_spec may describe a variant flow (e.g. only {signoff eco} stages with no
+# resignoff, or a pure STA flow with no eco step). Your stage_runs must reflect the
+# stages actually present and apply the gating rules to whatever eco/resignoff
+# step indices are given (empty index => that step does not exist).
+#
+# Return the dict using `dict create`. The stage_runs inner dict should map each
+# stage to a list of integer step numbers.

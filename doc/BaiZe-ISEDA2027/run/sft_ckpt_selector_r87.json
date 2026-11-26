@@ -1,0 +1,221 @@
+{
+  "n_trials": 2000,
+  "strategy_summary": {
+    "latest": {
+      "mean_improvement": 0.006,
+      "std_improvement": 0.0286,
+      "collapse_rate": 0.2295,
+      "mean_final": 0.5461,
+      "p50_final": 0.5447,
+      "p10_final": 0.476,
+      "p90_final": 0.6181,
+      "n_trials": 32000
+    },
+    "best_eval": {
+      "mean_improvement": 0.0288,
+      "std_improvement": 0.031,
+      "collapse_rate": 0.1092,
+      "mean_final": 0.5868,
+      "p50_final": 0.5872,
+      "p10_final": 0.5185,
+      "p90_final": 0.6541,
+      "n_trials": 32000
+    },
+    "lowest_loss": {
+      "mean_improvement": 0.0104,
+      "std_improvement": 0.0298,
+      "collapse_rate": 0.2003,
+      "mean_final": 0.5526,
+      "p50_final": 0.5518,
+      "p10_final": 0.4807,
+      "p90_final": 0.6257,
+      "n_trials": 32000
+    },
+    "best_tool": {
+      "mean_improvement": 0.0212,
+      "std_improvement": 0.0319,
+      "collapse_rate": 0.1401,
+      "mean_final": 0.5638,
+      "p50_final": 0.5639,
+      "p10_final": 0.4928,
+      "p90_final": 0.6352,
+      "n_trials": 32000
+    },
+    "balanced": {
+      "mean_improvement": 0.0801,
+      "std_improvement": 0.0329,
+      "collapse_rate": 0.013,
+      "mean_final": 0.5782,
+      "p50_final": 0.5777,
+      "p10_final": 0.5068,
+      "p90_final": 0.6502,
+      "n_trials": 32000
+    },
+    "early_stop": {
+      "mean_improvement": 0.1388,
+      "std_improvement": 0.0649,
+      "collapse_rate": 0.0259,
+      "mean_final": 0.5584,
+      "p50_final": 0.5538,
+      "p10_final": 0.5017,
+      "p90_final": 0.6258,
+      "n_trials": 32000
+    },
+    "anti_overfit": {
+      "mean_improvement": 0.1292,
+      "std_improvement": 0.0358,
+      "collapse_rate": 0.0077,
+      "mean_final": 0.5436,
+      "p50_final": 0.5401,
+      "p10_final": 0.4926,
+      "p90_final": 0.6,
+      "n_trials": 32000
+    }
+  },
+  "correlations": {
+    "sft_eval_vs_rl_final": 0.5735,
+    "sft_eval_vs_rl_improve": -0.7208,
+    "sft_loss_vs_rl_final": -0.1256,
+    "sft_loss_vs_rl_improve": 0.7909,
+    "sft_tool_vs_rl_final": 0.1741,
+    "sft_tool_vs_rl_improve": -0.8422,
+    "sft_api_vs_rl_final": 0.1838,
+    "sft_api_vs_rl_improve": -0.7566,
+    "sft_kl_vs_rl_final": 0.0675,
+    "sft_kl_vs_rl_improve": -0.8079,
+    "sft_overfit_vs_rl_final": -0.1885,
+    "sft_overfit_vs_rl_improve": -0.8316,
+    "sft_cheat_vs_rl_final": -0.146,
+    "sft_cheat_vs_rl_improve": -0.1394,
+    "sft_loss_slope_vs_rl_final": 0.0283,
+    "sft_loss_slope_vs_rl_improve": -0.3109
+  },
+  "collapse_by_metric": {
+    "sft_overfit": {
+      "median_split": 0.094,
+      "low_collapse": 0.0147,
+      "high_collapse": 0.1867,
+      "ratio": 12.69
+    },
+    "sft_kl": {
+      "median_split": 0.3001,
+      "low_collapse": 0.0268,
+      "high_collapse": 0.1745,
+      "ratio": 6.5
+    },
+    "sft_cheat": {
+      "median_split": 0.0099,
+      "low_collapse": 0.0851,
+      "high_collapse": 0.1163,
+      "ratio": 1.37
+    },
+    "sft_tool": {
+      "median_split": 0.8358,
+      "low_collapse": 0.0506,
+      "high_collapse": 0.1508,
+      "ratio": 2.98
+    },
+    "sft_api": {
+      "median_split": 0.6665,
+      "low_collapse": 0.0689,
+      "high_collapse": 0.1324,
+      "ratio": 1.92
+    }
+  },
+  "gate_summary": {
+    "STRONG_GO": {
+      "count": 262,
+      "collapse_rate": 0.0038,
+      "mean_improve": 0.0722,
+      "mean_final": 0.6115,
+      "p_m1": 0.9809,
+      "p_m2": 0.2099
+    },
+    "GO": {
+      "count": 415,
+      "collapse_rate": 0.0169,
+      "mean_improve": 0.0595,
+      "mean_final": 0.5849,
+      "p_m1": 0.9639,
+      "p_m2": 0.1108
+    },
+    "WEAK_GO": {
+      "count": 9,
+      "collapse_rate": 0.0,
+      "mean_improve": 0.0662,
+      "mean_final": 0.5337,
+      "p_m1": 0.8889,
+      "p_m2": 0.0
+    },
+    "NO_GO": {
+      "count": 1314,
+      "collapse_rate": 0.0129,
+      "mean_improve": 0.088,
+      "mean_final": 0.5695,
+      "p_m1": 0.8896,
+      "p_m2": 0.0814
+    }
+  },
+  "arm_summary": {
+    "R1": {
+      "mean_improve": 0.0805,
+      "collapse_rate": 0.0125,
+      "n": 2000
+    },
+    "R2": {
+      "mean_improve": 0.0801,
+      "collapse_rate": 0.015,
+      "n": 2000
+    },
+    "R3": {
+      "mean_improve": 0.0799,
+      "collapse_rate": 0.0125,
+      "n": 2000
+    },
+    "R4": {
+      "mean_improve": 0.08,
+      "collapse_rate": 0.01,
+      "n": 2000
+    }
+  },
+  "mix_summary": {
+    "optimal": {
+      "mean_improve": 0.0799,
+      "collapse_rate": 0.0125,
+      "n": 2000
+    },
+    "agent_heavy": {
+      "mean_improve": 0.0794,
+      "collapse_rate": 0.014,
+      "n": 2000
+    },
+    "domain_heavy": {
+      "mean_improve": 0.0795,
+      "collapse_rate": 0.017,
+      "n": 2000
+    },
+    "balanced": {
+      "mean_improve": 0.0803,
+      "collapse_rate": 0.0105,
+      "n": 2000
+    }
+  },
+  "optimal_step_distribution": {
+    "1400": 464,
+    "1600": 440,
+    "1800": 217,
+    "1000": 224,
+    "1200": 337,
+    "800": 102,
+    "2000": 88,
+    "600": 52,
+    "2800": 5,
+    "2200": 31,
+    "2400": 15,
+    "200": 5,
+    "400": 12,
+    "3000": 2,
+    "2600": 6
+  },
+  "all_ckpts_rl_count": 14000
+}

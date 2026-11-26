@@ -1,0 +1,97 @@
+library (CXN4HC1PS1024X144M2B2C1R1W1BW1RE1_FS) {
+    technology (cmos);
+    delay_model : table_lookup;
+    time_unit : 1ps;
+    voltage_unit : 1V;
+    current_unit : 1mA;
+    pulling_resistance_unit : 1kohm;
+    capacitive_load_unit (1, ff);
+    leakage_power_unit : 1mW;
+    operating_conditions (WCCOM) {
+        process : 1;
+        temperature : 25;
+        voltage : 0.75;
+    }
+    default_operating_conditions : WCCOM;
+    nom_process : 1;
+    nom_temperature : 25;
+    nom_voltage : 0.75;
+    voltage_map (VDD, 0.75);
+    voltage_map (VSS, 0);
+    lu_table_template (delay_template_7x7) {
+        variable_1 : input_net_transition;
+        variable_2 : total_output_net_capacitance;
+        index_1 ("0.01, 0.05, 0.1, 0.2, 0.4, 0.8, 1.6");
+        index_2 ("0.0005, 0.005, 0.05, 0.1, 0.2, 0.4, 0.8");
+    }
+    type (bus_0_3) {
+        base_type : array;
+        data_type : bit;
+        bit_from : 3;
+        bit_to : 0;
+        bit_width : 4;
+        downto : true;
+    }
+    cell (CXN4HC1PS1024X144M2B2C1R1W1BW1RE1_FS) {
+        area : 1.234;
+        bus_naming_style : "%s[%d]";
+        cell_leakage_power : 0.00680816;
+        dont_touch : true;
+        dont_use : true;
+        interface_timing : true;
+        is_macro_cell : true;
+        map_only : true;
+        pg_pin (VDD) {
+            pg_type : primary_power;
+            voltage_name : VDD;
+        }
+        pg_pin (VSS) {
+            pg_type : primary_ground;
+            voltage_name : VSS;
+        }
+        pin (BYP) {
+            direction : "input";
+            capacitance : 0.257899;
+            rise_capacitance : 0.25337;
+            fall_capacitance : 0.257899;
+            max_transition : 2.5;
+            related_ground_pin : VSS;
+            related_power_pin : VDD;
+            timing () {
+                related_pin : "CLK";
+                timing_sense : non_unate;
+                timing_type : setup_rising;
+                cell_rise (delay_template_7x7) {
+                    index_1 ("0.01, 0.05, 0.1, 0.2, 0.4, 0.8, 1.6");
+                    index_2 ("0.0005, 0.005, 0.05, 0.1, 0.2, 0.4, 0.8");
+                    values ( \
+                        "0.10, 0.12, 0.15, 0.20, 0.28, 0.40, 0.60" \
+                    );
+                }
+            }
+            internal_power () {
+                related_pin : "CLK";
+                related_pg_pin : VDD;
+                rise_power (power_template_7x0) {
+                    index_1 ("1, 5, 15, 40, 100, 250, 500");
+                    values ( \
+                        "1.21413, 1.21424, 1.21464, 1.2331, 1.29896, 1.48204, 1.79887" \
+                    );
+                }
+            }
+        }
+        pin (CLK) {
+            direction : "input";
+            capacitance : 0.10;
+            clock : true;
+            related_ground_pin : VSS;
+            related_power_pin : VDD;
+        }
+        pin (Q[3:0]) {
+            direction : "output";
+            capacitance : 0.0;
+            related_ground_pin : VSS;
+            related_power_pin : VDD;
+        }
+    }
+}

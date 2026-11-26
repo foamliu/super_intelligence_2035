@@ -1,0 +1,23 @@
+# Innovus 22.10 FP run log
+# host: hfeg0plg49  user: alan3zh  design: test_chip_v1
+# DC_RESULT_DIR: /home/alan3zh/test_chip_v1/dc/dc_2026-11-02-20.29.45
+# start: 2026-11-03 14:04:00
+restoreDesign test_chip_v1.enc.dat test_chip_v1
+...
+# Power intent: UPF loaded (test_chip_v1.upf)
+# DC netlist dc_2026-11-02-20.29.45 (new, power-intent included, 2007 explicit .VDD()/.VSS())
+Begin power routing ...
+**WARN: (IMPSR-1253): Unable to find any standard cell pin connected to the VDD_PM net.
+   VERIFY (net=VDD_PM): 1 instTerm, 0 leaf std-cell pin(s), hierarchical port pin(s) only.
+   PM_VDDI_Inst subtree:
+     PMArrayPart(TOPPMBLK) -> PMVDDIMatrixPart(PM_VDDI_Inst) -> 21xPMVDDIRowPart(PMColBLK_Blk40xx) -> 21xINVD8(PMRowBLK_Blk40xx)
+     = 441 leaf INVD8 cells, each .VDD connects to module-local VDD_PM net (NOT top-level VDD).
+     Hierarchy port on PM_VDDI_Inst: .VDD_PM(VDD_PM)  (maps module-local VDD_PM to top-level VDD_PM).
+   Top-level power pins: ..., VDD, VSS, VDD_PM
+   GNC searched for pin named "VDD" on PMRowBLK_* -> 0 leaf std-cell pin connected.
+   Verdict: IMPSR-1253 EXPECTED at floorplan (VDD_PM is netlist-level pd_pm isolation;
+            leaf hookup occurs in subsequent power routing stage).
+...
+addStripe VDD_PM (PM band) M4: 5 special wire(s) built.
+sroute VDD_PM: band rails connected.
+INNOVUS FP DONE. 441 protection instances. saveDesign 0 error.

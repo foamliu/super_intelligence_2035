@@ -1,0 +1,24 @@
+## Done — implementation passes all reference checks
+
+I implemented `argus_lvs_log_triage` in Tcl and verified it on the Synopsys WaveView Tcl sandbox via the `eda_flow` MCP.
+
+### Verification result
+```
+REF_CHECK_RC=0
+REF_CHECK_MSG=
+```
+`REF_CHECK_RC=0` means no assertion failed — all cases (A–E) passed. (With the verbatim driver given in the task, `REF_CHECK_MSG` is empty on success; the `"CHECK_PASS"` string in the guidance comes from a different driver, so the authoritative signal is `REF_CHECK_RC == 0`.)
+
+### Key implementation points (matching the real-world traps)
+- **Completion**: final summary `LVS TOTAL TIME/MEM:` or `LVS.*Done\.` → `lvs_completed=1`. The `LVS PASS/FAIL` verdict is intentionally ignored.
+- **Real time**: final-summary `REAL TIME` wins; otherwise the max of `CUMULATIVE REAL TIME` / `CUMULATIVE CPU/REAL TIME`; else 0.
+- **PENDING**: tracked only as `max_pending_operations`; never used for stuck (trap #1).
+- **Power/ground short**: `power_ground_short=1` only when **both** nets are PG (`!` suffix or case-insensitive name from the list). Signal-only shorts are excluded (trap #3), and PG shorts are caught even when the verdict is `LVS PASS` (trap #2).
+- **`============end============`**: parsing stops there, so the PVE viewer log is ignored (trap #4).
+- **stuck vs interrupted**: distinguished purely by `REAL TIME` (`>120` vs `<=30`) plus NE progress threshold `[0,15)` / completion status (trap #5).
+- **Primary category priority**: `interrupted > power_ground_short > pin_error_storm > stuck_long_running > completed_clean`.
+
+I also fixed one bug found on the first sandbox run: `pin_error_count` needed explicit initialization to `0` (it was only set on `TOTAL PIN ERRORS:` lines, causing an undefined-variable error on Case B/E).
+
+The artifact and sandbox session are cleaned up.
+=== pi exit=0 end Thu Oct 29 05:45:55 PM CST 2026 ===

@@ -1,0 +1,105 @@
+# Scenario: a layout QA engineer receives a textual placement report dumped by a
+# pyAether (Aether layout) session -- a list of INST (placed instances), RECT
+# (metal/layer rectangles), PIN (terminal pins), and REQUIRE (declared required
+# layers) lines. Before sign-off they must audit placement integrity: count
+# instances/rects/pins, flag duplicate instance names, flag malformed bboxes
+# (zero-area or inverted), detect OVERLAPPING instances (strict interior bbox
+# intersection only), report missing required layers (only RECT layers count as
+# present), report unconnected pins (pin layer not present in any RECT), and
+# emit a single highest-priority verdict.
+#
+# You are given ONE multi-line string `placement_text`.
+#
+# LINE FORMAT (strict):
+#   - A line whose first non-space char is `#` is a COMMENT: ignored.
+#   - A blank line is ignored.
+#   - INST <name> lib=<lib> cell=<cell> origin=(<ox>,<oy>) orient=<orient> bbox=(<llx>,<lly>,<urx>,<ury>)
+#       One placed instance. Fields are whitespace-separated; origin= and bbox=
+#       values are parenthesized comma-separated coordinate lists.
+#   - RECT layer=<L> bbox=(<llx>,<lly>,<urx>,<ury>)
+#       One layer rectangle.
+#   - PIN <name> layer=<L> bbox=(<llx>,<lly>,<urx>,<ury>) dir=<input|output|inout>
+#       One terminal pin.
+#   - REQUIRE <L1> <L2> ... <Lk>
+#       Declares the set of required layers (space-separated after REQUIRE).
+#   - Any other line is ignored.
+#
+# OUTPUT: return a flat Tcl dict with EXACTLY these 10 keys in this order:
+#   total_instances total_rects pin_count duplicate_inst_names
+#   malformed_entries overlapping_pairs missing_layers unconnected_pins
+#   layers_used verdict
+#
+# SEMANTICS (strict -- a naive impl fails these):
+#   total_instances      = number of INST lines (count every line, incl. malformed/dup).
+#   total_rects          = number of RECT lines.
+#   pin_count            = number of PIN lines.
+#   duplicate_inst_names = lexicographically sorted (lsort -dictionary) list of
+#                          instance NAMES that appear on more than one INST line.
+#   malformed_entries    = lexicographically sorted list of "INST:<name>",
+#                          "RECT:<n>" (1-based RECT order in file), "PIN:<name>"
+#                          for every INST/RECT/PIN whose bbox is zero-area OR
+#                          inverted, i.e. urx<=llx OR ury<=lly. (A zero-area
+#                          bbox with urx==llx IS malformed -- not just inverted.)
+#   overlapping_pairs    = lexicographically sorted, de-duplicated list of
+#                          "nameA<->nameB" (with nameA <= nameB lexicographically)
+#                          for every PAIR of INSTANCES whose bboxes have a
+#                          STRICT INTERIOR intersection:
+#                              A.llx < B.urx AND A.urx > B.llx
+#                              AND A.lly < B.ury AND A.ury > B.lly
+#                          (strict < / >: instances that merely TOUCH along an
+#                          edge, e.g. A.urx == B.llx, do NOT overlap.)
+#                          ONLY instance-vs-instance pairs count (RECTs and PINs
+#                          are EXCLUDED from overlap -- overlapping rects are
+#                          normal wiring). MALFORMED instances (zero-area or
+#                          inverted bbox) are EXCLUDED from overlap detection.
+#                          Each unordered pair appears once; a pair is reported
+#                          with the lexicographically smaller name first.
+#   missing_layers       = lexicographically sorted list of REQUIRE-declared
+#                          layers that do NOT appear as the layer of any RECT.
+#                          (A layer appearing only in an INST bbox or a PIN does
+#                          NOT satisfy the requirement -- only RECT layers count
+#                          as "present".) If there is no REQUIRE line, this list
+#                          is empty.
+#   unconnected_pins     = lexicographically sorted list of PIN names whose
+#                          layer is NOT the layer of any RECT. (Pin layer
+#                          present in an INST bbox but not in any RECT still
+#                          counts as unconnected.)
+#   layers_used          = lexicographically sorted list of DISTINCT layers
+#                          appearing in RECT lines (RECT layers only, not INST
+#                          or PIN layers).
+#   verdict              = the SINGLE highest-priority non-empty defect category,
+#                          with priority: malformed > overlap > missing_layer >
+#                          unconnected_pin. If all four lists are empty,
+#                          verdict = "clean". (A report with BOTH a malformed
+#                          bbox AND a missing layer yields verdict="malformed",
+#                          NOT "missing_layer".)
+#
+# Real traps a naive implementation gets wrong (the checker asserts the correct
+# behavior):
+#   (1) STRICT INTERIOR overlap: touching edges (urx==other.llx) are NOT overlap.
+#       Naive <= / >= includes touching -> false overlap.
+#   (2) MALFORMED includes ZERO-AREA (urx==llx) not just inverted (urx<llx).
+#       Naive `urx < llx` misses zero-area.
+#   (3) layers_used / missing_layers / unconnected_pins key off RECT layers
+#       ONLY. A layer in an INST bbox or PIN does not make it "present" for
+#       REQUIRE, and does not make a pin "connected". Naive that counts any
+#       layer anywhere -> wrong.
+#   (4) OVERLAP is INST vs INST only; RECTs/PINs excluded. Naive that checks all
+#       bbox pairs -> false overlaps from overlapping rects.
+#   (5) MALFORMED instances are EXCLUDED from overlap (a zero-area inst sitting
+#       "inside" another is NOT reported as an overlap pair). Naive that runs
+#       overlap over all insts -> false pair.
+#   (6) VERDICT is the single highest-priority category (malformed>overlap>
+#       missing_layer>unconnected_pin), NOT "whichever detected first" and NOT
+#       a concatenation.
+#   (7) overlapping_pairs: each unordered pair ONCE, smaller name first, whole
+#       list lexicographically sorted, de-duplicated. Naive may emit both
+#       "A<->B" and "B<->A" or duplicates.
+#   (8) All output lists are lexicographically sorted (lsort -dictionary).
+#
+# Implement the Tcl proc `layout_placement_audit` taking ONE string argument
+# (placement_text) and returning the dict. Use only POSIX character classes in
+# regexps ([[:space:]], [^[:space:]], etc.) -- do NOT rely on Perl \s / \S / \b.
+# Use `format %c 10` for newline and `format %c 13` for CR if needed, or split
+# on the newline character. Use `dict create` for the returned dict in the
+# exact key order above.

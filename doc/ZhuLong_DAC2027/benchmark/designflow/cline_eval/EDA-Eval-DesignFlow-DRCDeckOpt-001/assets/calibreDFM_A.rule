@@ -1,0 +1,900 @@
+
+
+//============================V0.0.9==============================
+//20251024 add DFM_P_M1_S_003_test for reduce M1 peeling risk;
+//         add DFM_P_V1_S_001_test for V1 FEM window enlarge;   mengchen
+//20251024 rls
+//============================V0.1.0==============================
+//2020106 add DFM_P_M5_F_001 for M5 Big Space
+//        Change  description for All Rule
+//        Add DFM_P_V?_F_001_H for Via open issue
+//        Remove DFM_P_M1_S_002/DFM_P_M1_S_003 for LDR 
+//============================V0.1.1==============================
+//20260204 
+//1. Update DFM_C_M0U_S_001 end to line space 0.179 um¿0.22um
+//2. Update DFM_C_M0U_S_002 end to end space 0.204um¿ 0.234um
+//3. Update DFM_C_M0U_W_001 U shape width 0.23um¿0.273um
+//4. Add DFM_C_M0C_F_001 ; DFM_C_M0C_F_002
+//5. Debug R_C_M0U_W_06_L; DFM_P_MT2_S_001
+//6. For G4B Via Open add: R_P_V1_F_02_H; DFM_P_V2_F_002_H; DFM_P_V3_F_002_H; DFM_P_V4_F_002_H
+//7. Update DFM_P_PGDUMMY_F_001_H value for false error¿?change  DFM_P_PGDUMMY_S_002_H to DFM_P_PGDUMMY_S_002
+//8. Delete DFM_P_M1_S_002_H for change to LDR          
+//============================V0.1.3=================================
+//20260509
+//1. Optimize DFM_P_V1_ENC_001_L;DFM_P_V1_ENC_002_L;DFM_P_V1_ENC_003_L;DFM_P_V1_ENC_004_L;DFM_P_V1_ENC_005_L;DFM_P_V1_ENC_006_L deck to reduce false error
+//20260609
+//2. Optimize DFM_P_V1_F_001;DFM_P_V2_F_001;DFM_P_V3_F_001;DFM_P_V4_F_001 deck to reduce extra parallel false error and T/L type metal partially enclose via error, select series connection condition
+
+DRC CHECK TEXT ALL
+DRC MAXIMUM RESULTS ALL
+DRC MAXIMUM VERTEX 4096
+LAYOUT PRIMARY "*"
+
+DRC RESULTS DATABASE "./ddcpb.results1" ASCII
+DRC SUMMARY REPORT   "./ddcpb.summary1" HIER
+PRECISION 10000
+
+LAYOUT SYSTEM GDSII
+DRC CELL NAME YES CELL SPACE XFORM ALL
+//LAYOUT PATH "/home/gds/ddcpb/to_td/20250610_DFM/LP5TOP.gds"
+LAYOUT PATH "/home/gds/ddcpb/ta8/LP5TOP.gds"
+
+
+////////////////////////////////////////////////////////
+//              define variable                       //
+////////////////////////////////////////////////////////
+
+//grid
+VARIABLE GRID 0.0001
+
+////////////////////////////////////////////////////////
+//                                                    //
+//                      Part of Core                  //
+//                                                    //
+////////////////////////////////////////////////////////
+
+BORD_CORE = OR RLDEV_mark1 RLDEV_mark2 RLDEV_mark3 RLDEV_mark4 
+//AAcmos = OR AT4_PCH AT4_NCH  AAMain == AAcmos
+AA_All = OR AT4_PCH AT4_NCH AT4_Dummy2
+PG_All = OR PG_drawing PG_NCH PG_PCH PG_DUMMY PG_NTAP PG_PTAP
+PG_Main = OR PG_drawing PG_NCH PG_PCH PG_NTAP PG_PTAP
+
+//===============================================
+//  NW - Nwell DRC   
+//===============================================
+
+NW_CORE = NW_drawing NOT BORD_PERI
+R_C_NW_L_02_L{
+    @ Min - Length of NW [zigzag shape, edge length <0.390um] [in core : 0.175]  
+    CONVEX EDGE NW_CORE ANGLE1>180 LENGTH1<0.390 ANGLE2<180 WITH LENGTH <0.175
+}
+
+R_C_NW_S_01_L{
+    @ Min - Space of NW [in core:2.434]
+    A1 = EXT NW_CORE < 2.434 SINGULAR OPPOSITE REGION
+	A1 NOT INTERACT (AAcmos OR PG_Main)
+	
+}
+//===============================================
+//  NCH - NCH1/NCH2/NCH3 DRC   
+//===============================================
+
+NCH1_CORE = NCH1_drawing NOT BORD_PERI
+NCH2_CORE = NCH2_drawing NOT BORD_PERI
+NCH3_CORE = NCH3_drawing NOT BORD_PERI
+
+
+R_C_NCH_L_02_L{
+    @ Min - Length of NCH [zigzag shape, edge length <0.390um] [in core : 0.175] 
+    CONVEX EDGE NCH1_CORE  ANGLE1 > 180 LENGTH1 < 0.390 ANGLE2 < 180 WITH LENGTH <0.175
+	CONVEX EDGE NCH2_CORE ANGLE1 > 180 LENGTH1 < 0.390 ANGLE2 < 180 WITH LENGTH <0.175
+	CONVEX EDGE NCH3_CORE ANGLE1 > 180 LENGTH1 < 0.390 ANGLE2 < 180 WITH LENGTH <0.175
+
+}
+R_C_NCH_S_01_M{
+    @Min - Space of NCH [U shape] [in core:1.49]
+    A1 = EXT NCH1_CORE < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE NCH1_CORE == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INTERACT A1 A3
+    
+	B1 = EXT NCH2_CORE < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	B2 = CONVEX EDGE NCH2_CORE == 0 
+	B3 = EXPAND EDGE B2 OUTSIDE BY 0.001
+	INTERACT B1 B3
+
+	C1 = EXT NCH3_CORE < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	C2 = CONVEX EDGE NCH3_CORE == 0 
+	C3 = EXPAND EDGE C2 OUTSIDE BY 0.001
+	INTERACT C1 C3
+}
+
+//===============================================
+//  PCH - PCH1 DRC   
+//===============================================
+
+PCH1_CORE = PCH1_drawing NOT BORD_PERI
+PCH2_CORE = PCH2_drawing NOT BORD_PERI 
+PCH3_CORE = PCH3_drawing NOT BORD_PERI  
+
+R_C_PCH_L_02_L{
+    @ Min - Length of PCH [zigzag shape, edge length <0.390um] [in core : 0.175] 
+    CONVEX EDGE PCH1_CORE ANGLE1 > 180 LENGTH1 < 0.39 ANGLE2 < 180 WITH LENGTH <0.175
+	CONVEX EDGE PCH2_CORE ANGLE1 > 180 LENGTH1 < 0.39 ANGLE2 < 180 WITH LENGTH <0.175
+	CONVEX EDGE PCH3_CORE ANGLE1 > 180 LENGTH1 < 0.39 ANGLE2 < 180 WITH LENGTH <0.175
+}
+
+
+R_C_PCH_S_01_M{
+    @ Min - Space of PCH [U shape] [in core:1.49]
+
+	A1 = EXT PCH1_CORE < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE PCH1_CORE == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INTERACT A1 A3
+
+	B1 = EXT PCH2_CORE < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	B2 = CONVEX EDGE PCH2_CORE == 0 
+	B3 = EXPAND EDGE B2 OUTSIDE BY 0.001
+	INTERACT B1 B3
+
+
+	C1 = EXT PCH3_CORE < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	C2 = CONVEX EDGE PCH3_CORE == 0 
+	C3 = EXPAND EDGE C2 OUTSIDE BY 0.001
+	INTERACT C1 C3    
+}
+
+
+R_C_PCH_S_02 {
+	@ Min - Space between PCH [width>5.216 um] and PCH, PRL > 31.5um	[in core: 1.416] 
+	WIDE_PCH1 = PCH1_CORE  WITH WIDTH > 5.216
+	poss_err1 = EXT WIDE_PCH1 PCH1_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err1 ENCLOSE RECTANGLE 31.5 GRID
+
+
+	WIDE_PCH2 = PCH2_CORE  WITH WIDTH > 5.216
+	poss_err2 = EXT WIDE_PCH2 PCH2_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err2 ENCLOSE RECTANGLE 31.5 GRID
+
+
+	WIDE_PCH3 = PCH3_CORE  WITH WIDTH > 5.216
+	poss_err3 = EXT WIDE_PCH3 PCH3_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err3 ENCLOSE RECTANGLE 31.5 GRID
+
+}
+
+
+
+//===============================================
+//  SGD - SGD DRC   
+//===============================================
+
+SGD_CORE = SGD_drawing NOT BORD_PERI
+
+R_C_SGD_L_02_L{
+    @ Min -Length of SGD [zigzag shape, edge length <0.390um]  [in core : 0.175] 
+    CONVEX EDGE SGD_CORE ANGLE1 >180 LENGTH1 <0.390 ANGLE2 < 180 WITH LENGTH <0.175
+}
+
+R_C_SGD_S_01_M{
+    @ Min - Space of SGD [U shape] [in core:1.49]
+    A1 = EXT SGD_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE SGD_CORE  == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INTERACT A1 A3
+}
+R_C_SGD_S_02_M{
+    @ Min - Space [PRL > 31.5um] between SGD [width>5.216 um] and SGD.	[in core: 1.416] 
+	WIDE_SGD = SGD_CORE  WITH WIDTH > 5.216
+	poss_err1 = EXT WIDE_SGD SGD_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err1 ENCLOSE RECTANGLE 31.5 GRID
+}
+//===============================================
+//  KGX - KGX DRC   
+//===============================================
+
+KGX_CORE = KGX_drawing NOT BORD_PERI
+
+//===============================================
+//  DGX - DGX DRC   
+//===============================================
+
+DGX_CORE = DGX_drawing NOT BORD_PERI
+
+
+R_C_DGX_L_02_L{
+    @ Min - Length of DGX [zigzag shape, edge length <0.390um] [in Core:0.175]
+    CONVEX EDGE DGX_CORE ANGLE1 >180 LENGTH1 <0.390 ANGLE2 < 180 WITH LENGTH <0.175
+}
+
+R_C_DGX_S_01_M{
+    @ Min - Space of DGX [U shape] [in core:1.49]    
+    A1 = EXT DGX_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE DGX_CORE  == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	(INTERACT A1 A3)NOT BORD_PERI
+}
+R_C_DGX_S_02_M{
+    @ Min - Space [PRL > 31.5um] between DGX [width>5.216 um] and DGX	[in core : 1.416] 
+	WIDE_DGX = DGX_CORE  WITH WIDTH > 5.216
+	poss_err1 = EXT WIDE_DGX DGX_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err1 ENCLOSE RECTANGLE 31.5 GRID
+}
+//===============================================
+//  NMR - NMR DRC   
+//===============================================
+
+NMR_CORE = NMR_drawing NOT BORD_PERI
+
+//===============================================
+//  PMR - PMR DRC   
+//===============================================
+
+PMR_CORE = PMR_drawing NOT BORD_PERI
+
+
+R_C_PMR_L_02_L{
+    @ Min - Length of PMR [zigzag shape, edge length <0.390um] [in Core:0.175]
+    CONVEX EDGE PMR_CORE ANGLE1 >180 LENGTH1 <0.390 ANGLE2 < 180 WITH LENGTH <0.175
+}
+
+R_C_PMR_S_01_M{
+    @ Min - Space of PMR [U shape] [in core:1.49]
+    A1 = EXT PMR_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE PMR_CORE  == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INTERACT A1 A3
+}
+R_C_PMR_S_02_M{
+    @ Min - Space [PRL > 31.5um] between PMR [width>5.216 um] and PMR.	[in core: 1.416] 
+	WIDE_PMR = PMR_CORE  WITH WIDTH > 5.216
+	poss_err1 = EXT WIDE_PMR PMR_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err1 ENCLOSE RECTANGLE 31.5 GRID
+}
+//===============================================
+//  NL - NLDD(NL1/NL2/NL3/NL4) DRC
+//===============================================
+
+NL1_CORE = NL1_drawing NOT BORD_PERI
+NL2_CORE = NL2_drawing NOT BORD_PERI
+NL3_CORE = NL3_drawing NOT BORD_PERI
+NL4_CORE = NL4_drawing NOT BORD_PERI
+
+R_C_NL_L_02_L{
+    @ Min - Length of NLDD [zigzag shape, edge length <0.390um] [in Core:0.175]
+    CONVEX EDGE NL1_CORE ANGLE1 > 180  LENGTH1 < 0.390 ANGLE2 < 180 WITH LENGTH < 0.175
+	CONVEX EDGE NL2_CORE ANGLE1 > 180  LENGTH1 < 0.390 ANGLE2 < 180 WITH LENGTH < 0.175
+	CONVEX EDGE NL3_CORE ANGLE1 > 180  LENGTH1 < 0.390 ANGLE2 < 180 WITH LENGTH < 0.175
+	CONVEX EDGE NL4_CORE ANGLE1 > 180  LENGTH1 < 0.390 ANGLE2 < 180 WITH LENGTH < 0.175
+
+}
+R_C_NL_S_01_M{
+    @ Min - Space of NLDD [U shape] [in core:1.49]
+    A1 = EXT NL1_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE NL1_CORE  == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INTERACT A1 A3 
+
+	B1 = EXT NL2_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	B2 = CONVEX EDGE NL2_CORE  == 0 
+	B3 = EXPAND EDGE B2 OUTSIDE BY 0.001
+	INTERACT B1 B3
+
+	C1 = EXT NL3_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	C2 = CONVEX EDGE NL3_CORE  == 0 
+	C3 = EXPAND EDGE C2 OUTSIDE BY 0.001
+	INTERACT C1 C3
+
+	D1 = EXT NL4_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	D2 = CONVEX EDGE NL4_CORE  == 0 
+	D3 = EXPAND EDGE D2 OUTSIDE BY 0.001
+	INTERACT D1 D3
+
+    
+}
+R_C_NL_S_02_M {
+	@ Min - Space [PRL > 31.5um] between NLDD [width>5.216 um] and NLDD	[in core: 1.416] 
+	WIDE_NL1 = NL1_CORE  WITH WIDTH > 5.216
+	poss_err1 = EXT WIDE_NL1 NL1_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err1 ENCLOSE RECTANGLE 31.5 GRID
+
+	WIDE_NL2 = NL2_CORE  WITH WIDTH > 5.216
+	poss_err2 = EXT WIDE_NL2 NL2_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err2 ENCLOSE RECTANGLE 31.5 GRID
+
+	WIDE_NL3 = NL3_CORE  WITH WIDTH > 5.216
+	poss_err3 = EXT WIDE_NL3 NL3_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err3 ENCLOSE RECTANGLE 31.5 GRID
+
+	WIDE_NL4 = NL4_CORE  WITH WIDTH > 5.216
+	poss_err4 = EXT WIDE_NL4 NL4_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err4 ENCLOSE RECTANGLE 31.5 GRID
+
+
+}
+
+//===============================================
+//  PL - PLDD(PL1/PL2/PL3/PL4) DRC
+//===============================================   
+
+PL1_CORE = PL1_drawing NOT BORD_PERI
+PL2_CORE = PL2_drawing NOT BORD_PERI
+PL3_CORE = PL3_drawing NOT BORD_PERI
+PL4_CORE = PL4_drawing NOT BORD_PERI
+
+
+R_C_PL_L_02_L{
+    @ Min - Length of PLDD [zigzag shape, edge length <0.390um] [in Core:0.175]
+    CONVEX EDGE PL1_CORE ANGLE1 > 180  LENGTH1 < 0.390 ANGLE2 < 180 WITH LENGTH < 0.175
+	CONVEX EDGE PL2_CORE ANGLE1 > 180  LENGTH1 < 0.390 ANGLE2 < 180 WITH LENGTH < 0.175
+	CONVEX EDGE PL3_CORE ANGLE1 > 180  LENGTH1 < 0.390 ANGLE2 < 180 WITH LENGTH < 0.175
+	CONVEX EDGE PL4_CORE ANGLE1 > 180  LENGTH1 < 0.390 ANGLE2 < 180 WITH LENGTH < 0.175
+
+}
+
+R_C_PL_S_01_M{
+    @ Min - Space of PLDD [U shape] [in core:1.49]
+    
+    A1 = EXT PL1_CORE < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE PL1_CORE == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INTERACT A1 A3
+
+	B1 = EXT PL2_CORE < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	B2 = CONVEX EDGE PL2_CORE == 0 
+	B3 = EXPAND EDGE B2 OUTSIDE BY 0.001
+	INTERACT B1 B3
+
+	C1 = EXT PL3_CORE < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	C2 = CONVEX EDGE PL3_CORE == 0 
+	C3 = EXPAND EDGE C2 OUTSIDE BY 0.001
+	INTERACT C1 C3
+
+	D1 = EXT PL4_CORE < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	D2 = CONVEX EDGE PL4_CORE == 0 
+	D3 = EXPAND EDGE D2 OUTSIDE BY 0.001
+	INTERACT D1 D3
+
+  	  
+}
+R_C_PL_S_02_M {
+	@ Min - Space [PRL > 31.5um] between PLDD [width>5.216 um] and PLDD	[in core: 1.416] 
+	WIDE_PL1 = PL1_CORE  WITH WIDTH > 5.216
+	poss_err1 = EXT WIDE_PL1 PL1_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err1 ENCLOSE RECTANGLE 31.5 GRID
+
+	WIDE_PL2 = PL2_CORE  WITH WIDTH > 5.216
+	poss_err2 = EXT WIDE_PL2 PL2_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err2 ENCLOSE RECTANGLE 31.5 GRID
+
+	WIDE_PL3 = PL3_CORE  WITH WIDTH > 5.216
+	poss_err3 = EXT WIDE_PL3 PL3_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err3 ENCLOSE RECTANGLE 31.5 GRID
+
+	WIDE_PL4 = PL4_CORE  WITH WIDTH > 5.216
+	poss_err4 = EXT WIDE_PL4 PL4_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err4 ENCLOSE RECTANGLE 31.5 GRID
+}
+
+//===============================================
+//  CPH - CPH DRC   
+//===============================================
+CPH_CORE = CPH_drawing NOT BORD_PERI
+
+
+R_C_CPH_L_02_L{
+    @ Min - Length of CPH [zigzag shape, width edge <0.390um] [in Core:0.175]
+       CONVEX EDGE CPH_CORE ANGLE1 >180 LENGTH1 <0.390 ANGLE2 < 180 WITH LENGTH <0.175
+}
+
+R_C_CPH_S_01_M{
+    @ Min - Space of CPH [U shape] [in core:1.49]
+    A1 = EXT CPH_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE CPH_CORE  == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INTERACT A1 A3
+}
+
+R_C_CPH_S_02_M{
+    @ Min - Space [PRL > 31.5um] between CPH [width>5.216 um] and CPH	[in core: 1.416] 
+	WIDE_CPH = CPH_CORE  WITH WIDTH > 5.216
+	poss_err1 = EXT WIDE_CPH CPH_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err1 ENCLOSE RECTANGLE 31.5 GRID
+}
+
+
+//===============================================
+//  NSD - NSD DRC   
+//===============================================
+
+NSD_CORE = NSD_drawing NOT BORD_PERI
+
+R_C_NSD_L_02_L{
+    @ Min - Length of NSD [zigzag shape, edge length <0.390um] [in Core:0.175]
+       CONVEX EDGE NSD_CORE ANGLE1 >180 LENGTH1 <0.390 ANGLE2 < 180 WITH LENGTH <0.175
+}
+
+R_C_NSD_S_01_M{
+    @ Min - Space of NSD [U shape] [in core:1.49]
+    A1 = EXT NSD_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE NSD_CORE  == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INTERACT A1 A3
+
+}
+R_C_NSD_W_01_M{
+    @ Min - Width of NSD [U shape] [in core:1.49]
+	A0 = BORD_CORE NOT NSD_CORE
+   	A1 = EXT A0 < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE A0 == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INSIDE A3 A1
+}
+R_C_NSD_S_02_M{
+    @ Min - Space [PRL > 31.5um] between CPH [width>5.216 um] and CPH	[in core: 1.416] 
+	WIDE_NSD = NSD_CORE  WITH WIDTH > 5.216
+	poss_err1 = EXT WIDE_NSD NSD_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err1 ENCLOSE RECTANGLE 31.5 GRID
+}
+
+//===============================================
+//  PSD - PSD DRC   
+//===============================================
+
+PSD_CORE = PSD_drawing NOT BORD_PERI
+
+R_C_PSD_L_02_L{
+    @Min - Length of PSD [zigzag shape, edge length <0.390um] [in Core:0.175]
+    CONVEX EDGE PSD_CORE ANGLE1 >180 LENGTH1 <0.390 ANGLE2 < 180 WITH LENGTH <0.175
+}
+R_C_PSD_S_01_M{
+    @ Min - Space of PSD [U shape] [in core:1.49]
+    A1 = EXT PSD_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE PSD_CORE  == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INTERACT A1 A3
+}
+R_C_PSD_W_01_M{
+    @ Min - Width of PSD [U shape] [in core:1.49]
+	A0 = BORD_CORE NOT PSD_CORE 
+   	A1 = EXT A0 < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE A0 == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+    INSIDE A3 A1
+}
+R_C_PSD_S_02_M{
+    @ Min - Space [PRL > 31.5um] between PSD [width>5.216 um] and PSD	[in core: 1.416] 
+	WIDE_PSD = PSD_CORE  WITH WIDTH > 5.216
+	poss_err1 = EXT WIDE_PSD PSD_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err1 ENCLOSE RECTANGLE 31.5 GRID
+}
+//===============================================
+//  PCN - PCN DRC   
+//===============================================
+
+PCN_CORE = PCN_drawing NOT BORD_PERI
+
+R_C_PCN_L_02_L{
+    @ Min - Length of PCN [zigzag shape, edge length <0.390um] [in Core:0.175]
+       CONVEX EDGE PCN_CORE ANGLE1 >180 LENGTH1 <0.390 ANGLE2 < 180 WITH LENGTH <0.175
+}
+R_C_PCN_S_01_M{
+    @ Min - Space of PCN [U shape] [in core:1.49]
+    A1 = EXT PCN_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION 
+	A2 = CONVEX EDGE PCN_CORE  == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INTERACT A1 A3
+}
+R_C_PCN_W_01_M{
+    @ Min - Width of PCN [U shape] [in core:1.49]
+	A0 = BORD_CORE NOT PCN_CORE 
+   	A1 = EXT A0 < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE A0 == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INSIDE A3 A1
+}
+R_C_PCN_S_02_M{
+    @ Min - Space [PRL > 31.5um] between PCN [width>5.216 um] and PCN	[in core: 1.416] 
+	WIDE_PCN = PCN_CORE  WITH WIDTH > 5.216
+	poss_err1 = EXT WIDE_PCN PCN_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err1 ENCLOSE RECTANGLE 31.5 GRID
+}
+
+//===============================================
+//  PCP - PCP DRC   
+//===============================================
+
+PCP_CORE = PCP_drawing NOT BORD_PERI
+
+
+R_C_PCP_L_02_L{
+    @Min - Length of PCP [zigzag shape, edge length <0.390um] [in Core:0.175]
+    CONVEX EDGE PCP_CORE ANGLE1 >180 LENGTH1 <0.390 ANGLE2 < 180 WITH LENGTH <0.175
+}
+
+R_C_PCP_S_01_M{
+    @ Min - Space of PCP [U shape]  [in core:1.49]
+   	A1 = EXT PCP_CORE  < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE PCP_CORE  == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INTERACT A1 A3
+}
+
+R_C_PCP_W_01_M{
+    @ Min - Width of PCP [U shape] [in core:1.49]
+	A0 = BORD_CORE NOT PCP_CORE 
+   	A1 = EXT A0 < 1.49 SINGULAR OPPOSITE NOTCH REGION
+	A2 = CONVEX EDGE A0 == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INSIDE A3 A1
+}
+
+R_C_PCP_S_02_M{
+    @ Min - Space [PRL > 31.5um] between PCP [width>5.216 um] and PCP  [in core: 1.416] 
+	WIDE_PCP = PCP_CORE  WITH WIDTH > 5.216
+	poss_err1 = EXT WIDE_PCP PCP_CORE  < 1.416 ABUT<90 SINGULAR OPPOSITE REGION MEASURE ALL
+	poss_err1 ENCLOSE RECTANGLE 31.5 GRID
+}
+
+//===============================================
+//  AT4 - AT4 DRC   
+//===============================================
+
+//===============================================
+//  PG - PG DRC   
+//===============================================
+
+PC_Total = PCall AND BORD_CORE
+LSA = OR DEVTR_mark25 DEVTR_mark76
+
+VARIABLE	_PG_3D_DEF_				0.38
+VARIABLE	_PG_LINE_END_			0.38
+
+R_C_PG_F_01_L{
+	@Forbidden - AA&PG Space Region >1.86um*1.86um is not allowed  
+	A1 = BORD_CORE NOT (OR PG_ARRAY PG_All  AT4_ARRAY AA_All)
+	SIZE A1 BY 1.86/2 UNDEROVER
+}
+
+R_C_PG_ENC_01_M{
+	@Min LSA Wiring PG Convex Corner ENC PC Corner of Landing PG [in Core:0.117]	
+        A1 = PG_All AND LSA
+        B1 = LENGTH A1 <0.086 
+        B2 = A1 NOT COIN EDGE B1
+        A2 = PC_Total  AND LSA
+        A3 = INT B2 < 0.001 ABUT==90 REGION
+        A4 = A1  COIN EDGE A3
+        A5 = EXPAND EDGE A4 OUTSIDE BY 0.001
+        A6 = (A5 OR A1) NOT COIN EDGE A1
+        ENC A2 A6 < 0.117 CORNER TO CORNER REGION
+        }
+
+
+//===============================================
+//  PC -  DRC   
+//===============================================
+
+
+
+R_C_PC_S_01_H{
+@Min -Space between square PC corner to rectangle PC corner [in core 0.371]
+Square_PC1 = RECTANGLE PC1_drawing >0 BY >0 ASPECT==1
+Rectangle_PC1 = PC1_drawing NOT Square_PC1
+EXT Square_PC1 Rectangle_PC1 < 0.379 CORNER TO CORNER REGION
+
+Square_PC2 = RECTANGLE PC2_drawing >0 BY >0 ASPECT==1
+Rectangle_PC2 = PC2_drawing NOT Square_PC2
+EXT Square_PC2 Rectangle_PC2 < 0.379 CORNER TO CORNER REGION
+}
+
+//===============================================
+//  M0C - M0C DRC   
+//===============================================
+
+M0C_First = OR M0C_CORE M0C_ADDM0C M0C_ARRAY
+//BORD_MAT = NOT BORD_drawing BORD_PERI          BORD_MAT = BORD_CORE
+M0C_Second = NOT BORD_CORE (SIZE M0C_First BY 0.090)
+M0C_Total = OR M0C_First M0C_Second
+M0_Final = NOT M0C_Total MT2_Core
+PCU_CORE = AND PCU_drawing BORD_CORE
+PC_PCU = OR PC_Total PCU_CORE
+
+
+
+R_C_M0C_F_01_L{
+@Forbidden-M0C_Total [PRL>= 0.8] line end [width < 0.1035] is not allowed
+	A1 =  INT M0C_Total < 0.1035 OPPOSITE PARALLEL REGION
+	A2 = A1 ENCLOSE RECTANGLE 0.8 0.001 
+	A3 = COIN EDGE A2 M0C_Total
+	A4 = EXPAND EDGE (LENGTH A3 < 0.105) INSIDE BY 0.001
+	A5 = A2 INTERACT A4
+	COPY A5
+}
+
+R_C_M0C_F_02_L{
+@Forbidden-[PRL>= 0.8] M0C_markcore [width < 0.11, near M0C line end] 
+	B1 =  INT M0C_Second < 0.11 OPPOSITE PARALLEL REGION
+	B2 = B1 ENCLOSE RECTANGLE 0.8 0.001 
+	B3 = COIN EDGE B1 M0C_Second
+	B4 = EXPAND EDGE B3 OUTSIDE BY 0.090
+	C1 = CONVEX EDGE M0C_First ANGLE1==90 ANGLE2==90  WITH LENGTH < 0.178
+	C2 = EXPAND EDGE C1 OUTSIDE BY 0.001
+	B4 INTERACT C2
+}
+
+
+
+//===============================================
+//  MT2 - MT2 DRC   
+//===============================================
+VARIABLE	_MT2_LINE_END_			0.178
+VARIABLE        _M0C_NOTCH_                    0.45
+VARIABLE        _M0C_LINE_END_                    0.178
+VARIABLE        _M0C_REMAIN_LINE_END_                    0.363
+NOTMT2_CORE = NOT BORD_CORE MT2_CORE 
+
+R_C_MT2_S_01_M {
+	@Min - Space of MT2_Core edge [between 90°-90°, length < =0.178 um]  [In Core:   0.245  ] 
+	A1 = CONVEX EDGE MT2_CORE ==2 WITH LENGTH < _MT2_LINE_END_	
+	EXT A1 <0.245 ABUT<90 OPPOSITE REGION
+}
+
+R_C_MT2_S_02_M {
+    @ Min - Space between MT2_Core edge [between 90°-90°, length < 0.19 um] and MT2_Core [in core: 0.2675]
+    A1 = CONVEX EDGE MT2_CORE >1 WITH LENGTH <= _MT2_LINE_END_
+    A2 = INT MT2_CORE  >= _MT2_LINE_END_ <=0.273 OPPOSITE REGION
+    A3 = (A2 COIN EDGE MT2_CORE) NOT COIN EDGE A1
+    A4 = EXT A1 A3 < 0.2675 ABUT<90 OPPOSITE REGION
+    AREA A4 >= 0.02 //Skip partial line end to corner case
+//  LENGTH (MT2_CORE COIN EDGE A1) >= 0.122
+}
+
+R_C_M0C_ENC_01_H {
+	@Min - Enclosure of PC [convex corner] by M0C_remain [convex corner] [In Core: 0.027] 
+	A1 = COPY M0_Final
+	A2 = INT (A1 INTERACT PC_Total) < GRID ABUT==90 REGION
+	A3 = (A1 INTERACT PC_Total) COIN EDGE A2
+	A4 = EXPAND EDGE A3 OUTSIDE BY GRID
+	A5 = (A4 OR (A1 INTERACT PC_Total)) NOT COIN EDGE (A1 INTERACT PC_Total)
+	ENC PC_Total A5 < 0.027 CORNER TO CORNER REGION
+}
+
+R_C_M0C_ENC_02_H {
+	@ Min - Enclosure of PC [convex corner] by M0C_Final [convex corner] [In Core:   0.035  ] 
+	A1 = COPY M0C_Total 
+	A2 = INT (A1 INTERACT PC_Total) < 0.001 ABUT==90 REGION
+	A3 = (A1 INTERACT PC_Total) COIN EDGE A2
+	A4 = EXPAND EDGE A3 OUTSIDE BY 0.001
+	A5 = (A4 OR (A1 INTERACT PC_Total)) NOT COIN EDGE (A1 INTERACT PC_Total)
+	ENC PC_Total A5 < 0.035 CORNER TO CORNER REGION
+}
+R_C_MT2_S_06_H{
+     @Min - Space of PC&PCU MT2_Core [U shape edge, U shape space < 0.363] [In Core:   0.084  ] 
+     A1 = COPY NOTMT2_CORE 
+     A2 = INT A1 < _M0C_REMAIN_LINE_END_ OPPOSITE REGION ABUT < 90
+     A3 = INSIDE PC_PCU  A2
+     A4 = CONVEX EDGE A1  ANGLE1==90 ANGLE2==90 WITH LENGTH < 0.363
+     //A5 = EXPAND EDGE A4 OUTSIDE BY 0.001
+     EXT A4 A3 < 0.084 OPPOSITE REGION 
+}
+
+R_C_MT2_S_07_M {
+     @Min - Space of MT2_Core [U shape] [In Core:   0.28  ] 
+     	A1 = EXT MT2_CORE < 0.28 ABUT<90 SINGULAR OPPOSITE PARALLEL REGION NOTCH
+	A2 = CONVEX EDGE MT2_CORE == 0 
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.001
+	INSIDE A3 A1
+}
+R_C_MT2_W_01_M {
+	@Min - Width of MT2_Core [H shape, space < 0.363um][In Core:   0.2  ] 
+	A1 =COPY NOTMT2_CORE
+	A2 = CONVEX EDGE A1 WITH LENGTH < _M0C_REMAIN_LINE_END_ ANGLE1==90 ANGLE2==90
+	A3 = EXT A2 < 0.2 ABUT<90  REGION OPPOSITE
+	A3 ENCLOSE RECTANGLE 0.05 0.05
+}
+R_C_MT2_W_02_M{
+	@Min - Width of MT2_Core [angle = 45] [in core: 0.159 ]
+	A1 = INT MT2_CORE < 0.159 ANGLED == 2 REGION
+	A1 ENCLOSE RECTANGLE 0.44 0.130
+}
+
+R_C_MT2_ENC_01_H{
+    @ Min - Enclosure of M0C_Final [concave angle==90] by MT2_Core  [in core: 0.0195 ]
+	A00 = INT MT2_CORE < 0.001 ABUT==90 REGION
+	A1 = BORD_CORE NOT M0C_First
+	A2 = INT A1 < 0.001 ABUT==90 REGION
+	A3 = MT2_CORE NOT M0C_First
+	A4 = A3 INTERACT A2
+	AREA (A4 INTERACT A00) < 0.0195
+	A4 NOT ENCLOSE RECTANGLE 0.06 0.06
+
+	B1 = BORD_CORE NOT M0C_Second
+	B2 = INT B1 < 0.001 ABUT==90 REGION
+	B3 = MT2_CORE NOT M0C_Second
+	B4 = B3 INTERACT B2
+	AREA (B4 INTERACT A00) < 0.0195
+	B4 NOT ENCLOSE RECTANGLE 0.06 0.06
+}
+R_C_MT2_ENC_02_H{
+    @ Min - Enclosure of M0C_Final [concave angle==135] by MT2_Core  [in core: 0.0131 ]
+	A00 = INT MT2_CORE < 0.001 ABUT==90 REGION
+	A1 = BORD_CORE NOT M0C_Total
+	A2 = INT A1 < 0.001 ABUT==135 REGION
+	A3 = MT2_CORE NOT M0C_Total
+	A4 = A3 INTERACT A2
+	AREA (A4 INTERACT A00)< 0.0131
+}
+ 
+R_C_MT2_ENC_03_H{
+    @ Min - Enclosure of M0C_Final [concave edge] by MT2_Core   [in core: 0.090 ]
+	A1 = CONVEX EDGE M0C_First ANGLE1>=225 ANGLE2>=225 WITH LENGTH < _M0C_NOTCH_  >=0.090
+	A2 = ENC A1 MT2_CORE < 0.090 OPPOSITE PARALLEL REGION
+     A2 ENCLOSE RECTANGLE 0.09 GRID
+	B1 = CONVEX EDGE M0C_Second ANGLE1>=225 ANGLE2>=225 WITH LENGTH < _M0C_NOTCH_  >=0.090
+	B2 = ENC B1 MT2_CORE < 0.090  OPPOSITE PARALLEL REGION
+    B2 ENCLOSE RECTANGLE 0.09 GRID
+
+
+
+}
+R_C_MT2_ENC_04_H{
+    @ Min - Enclosure of M0C_Final [concave edge] by MT2_Core [inside bank edge]  [in core: 0.358 ]
+	A0 = SIZE M0C_Second BY 0.5 UNDEROVER
+    A1 = (M0C_Second AND A0) TOUCH BORD_PERI
+	A2 = CONVEX EDGE M0C_Second ANGLE1>=225 ANGLE2>=225 WITH LENGTH < _M0C_NOTCH_  >=0.090
+	A3 = COIN EDGE A2 A1
+	ENC A3 MT2_CORE < 0.358
+}
+
+R_C_MT2_ENC_05_H{
+    @ Min - Enclosure of M0C_Final by MT2_Core [area < 0.8um7*0.87um, inside bank edge]  [in core: 0.090 ]
+	A1 = SIZE MT2_CORE BY 0.87/2 UNDEROVER
+	A2 = ENC M0C_Total A1< 0.090 REGION
+//Skip some false error
+	A3 = LENGTH(COIN EDGE A2 A1) >= 0.090
+	A4 = EXPAND EDGE A3 OUTSIDE BY 0.001
+	A5 = A4 NOT (MT2_CORE NOT A2)
+    B1 = EXT MT2_CORE < 0.090 ABUT==90 REGION
+    A5 NOT INTERACT B1
+     
+
+}
+R_C_MT2_ENC_06_H{
+    @ Min - Enclosure of M0C_markcore by MT2_Core [abut with BORD_PERI] [in core: 0.215]
+    A0 = SIZE MT2_CORE BY 0.4 UNDEROVER
+    A1 = A0 TOUCH BORD_PERI
+    A2 = ENC M0C_Total A1 < 0.215 ABUT<90 OPPOSITE REGION
+    A3 = (A2 NOT TOUCH BORD_PERI) ENCLOSE RECTANGLE 0.270 0.001
+    B1 = EXT MT2_CORE < 0.1 ABUT ==90 REGION
+    A3 NOT INTERACT B1
+//  BORD_CORE NOT INTERACT A0   // if any errors, it means that A0 filter needs updation;
+
+
+}
+R_C_MT2_F_01_M{
+	@Forbidden - MT2 Coin edge or Cut M0C_Final [width < 0.102um] is not allowed
+	A0 = M0C_Total WITH WIDTH < 0.102
+	A1 = A0 ENCLOSE RECTANGLE 0.30  0.09 //Skip corner false error	
+	A2 = TOUCH EDGE (COIN EDGE A1 M0C_Total) MT2_CORE
+	LENGTH A2 >= 0.362 //Skip corner false error for corner 
+	B1 = EXPAND EDGE MT2_CORE INSIDE BY 0.001
+	B1 INSIDE A1
+}
+
+
+
+//===============================================
+//  PCU - PCU DRC   
+//===============================================
+R_C_PCU_ENC_01_H {
+	@Min - Enclosure of PCU [convex corner] by M0C_Remain [convex corner] [0.071]
+	A1 = COPY M0_Final
+	A2 = INT (A1 INTERACT PCU_CORE) < 0.0001 ABUT==90 REGION
+	A3 = (A1 INTERACT PCU_CORE) COIN EDGE A2
+	A4 = EXPAND EDGE A3 OUTSIDE BY 0.0001
+	A5 = (A4 OR (A1 INTERACT PCU_CORE)) NOT COIN EDGE (A1 INTERACT PCU_CORE)
+	ENC PCU_CORE A5 < 0.071 CORNER TO CORNER REGION
+}
+
+R_C_PCU_S_02_H {
+	@ Min - Space of MT2_Core [concave corner] and PCU [convex corner] [ in core: 0.076]
+	A1 =COPY NOTMT2_CORE  
+	A2 = INT (A1 INTERACT PCU_CORE) < 0.0001 ABUT==90 REGION
+	A3 = (A1  INTERACT PCU_CORE) COIN EDGE A2
+	A4 = EXPAND EDGE A3 OUTSIDE BY 0.0001
+	A5 = (A4 OR (A1 INTERACT PCU_CORE)) NOT COIN EDGE (A1 INTERACT PCU_CORE)
+	ENC PCU_CORE A5 < 0.076 CORNER TO CORNER REGION
+}
+R_C_PCU_S_03_H {
+	@Min - Space of PCU [size=0.1*0.1um] and MT2_Core 	
+	PCU_Square = RECTANGLE PCU_CORE == 0.1 BY == 0.1
+//	PCU_Normal = NOT PCU_CORE PCU_Square
+	A0 =COPY NOTMT2_CORE  
+	A1 = CONVEX EDGE A0 ANGLE1==90 ANGLE2==90 WITH LENGTH < 0.43
+	A3 = EXPAND EDGE A1 INSIDE BY 0.044
+	A4 = PCU_Square INTERACT (A0  INTERACT (WITH WIDTH A0  < 0.43))
+	A3 AND A4
+}
+
+
+R_C_PCU_S_04_H {
+	@Min - Space of {PCU NOT PCU [size=0.1*0.1um ]} and MT2_Core 	
+	PCU_Square = RECTANGLE PCU_CORE == 0.1 BY == 0.1
+	PCU_Normal = NOT PCU_CORE PCU_Square
+	A0 =COPY NOTMT2_CORE  
+	A1 = CONVEX EDGE A0 ANGLE1==90 ANGLE2==90 WITH LENGTH < 0.39
+	A3 = EXPAND EDGE A1 INSIDE BY 0.034
+	A4 = PCU_Normal INTERACT (A0  INTERACT (WITH WIDTH A0  < 0.39))
+	A3 AND A4
+}
+R_C_PCU_S_05_H{
+        @Min - Space of PCU {post_opc,convex corner}
+        A1 = EXPAND EDGE PCU_CORE OUTSIDE BY 0.040 CORNER FILL
+        (EXT A1 < 0.234 CORNER TO CORNER SPACE REGION) NOT BORD_PERI       
+}
+
+R_C_PCU_S_06_H{
+    @Min - M0C_Total concave to PCU convex corner space 0.086
+    A0 = CONVEX EDGE M0C_Total ANGLE1==90 ANGLE2==270 WITH LENGTH < 0.045
+    A1 = EXPAND EDGE A0 OUTSIDE BY 0.001
+	A2 = INT (M0C_Total INTERACT PCU_CORE) < 0.0001 ABUT==90 REGION
+    B1 = A2 NOT INTERACT A1 
+	A3 = (M0C_Total INTERACT PCU_CORE) COIN EDGE B1
+	A4 = EXPAND EDGE A3 OUTSIDE BY 0.0001
+	A5 = (A4 OR (M0C_Total INTERACT PCU_CORE)) NOT COIN EDGE (M0C_Total INTERACT PCU_CORE)
+	ENC PCU_CORE A5 < 0.086 CORNER TO CORNER REGION
+
+}
+R_C_PCU_ENC_02_H{
+    @Min - Enclosure of PCU [convex corner] by M0C_Final [convex corner]
+    A1 = OR M0C_First M0C_Second 
+	A2 = INT (A1 INTERACT PCU_CORE) < 0.0001 ABUT==90 REGION
+	A3 = (A1 INTERACT PCU_CORE) COIN EDGE A2
+	A4 = EXPAND EDGE A3 OUTSIDE BY 0.0001
+	A5 = (A4 OR (A1 INTERACT PCU_CORE)) NOT COIN EDGE (A1 INTERACT PCU_CORE)
+	ENC PCU_CORE A5 < 0.086 CORNER TO CORNER REGION
+
+}
+
+//===============================================
+//  M0U - M0U DRC   
+//===============================================
+M0U_CORE = M0U_drawing AND BORD_CORE
+
+R_C_M0U_ENC_01_H {
+	@ Min - Enclosure of PCU [convex corner] by M0U [convex corner] [in core: >= 0.0735]
+    A0 = M0U_CORE INTERACT PCU_CORE
+	A1 = INT A0 < 0.01 ABUT==90 REGION
+	A2 = A0 COIN EDGE A1
+	A3 = EXPAND EDGE A2 OUTSIDE BY 0.01
+	A4 = (A3 OR A0) NOT COIN EDGE A0
+	ENC PCU_CORE A4 < 0.0735 CORNER TO CORNER REGION
+}
+
+
+R_C_M0U_W_01_M{
+	@ Min - Width of M0U [U shape,space < 0.4um]
+    A1 = NOT BORD_CORE M0U_CORE 
+	A2 = CONVEX EDGE A1 ANGLE1==90 ANGLE2==90 WITH LENGTH <= 0.4
+	EXT A2 A1 < 0.273 ABUT<90 OPPOSITE
+}
+
+R_C_M0U_W_02_M{
+	@ Min - Width of M0U [H shape,space < 0.4um]
+    A1 = NOT BORD_CORE M0U_CORE
+	A2 = CONVEX EDGE A1 ANGLE1==90 ANGLE2==90 WITH LENGTH <= 0.4
+	EXT A2< 0.274 ABUT<90 
+}
+R_C_M0U_W_03_M{
+	@Min - Width of M0U [adjacent to empty area < 1.25*1.25um]
+	A1 = M0U_CORE WITH WIDTH < 0.316
+	A2 = A1 LENGTH > 0.316
+	B1 =  NOT RLDEV_mark3 M0U_drawing
+	B2 = SIZE B1 BY 1.5/2 UNDEROVER
+	COIN EDGE A2 B2
+}
+R_C_M0U_W_04_M{
+	@ Min - Width of M0U[concave edge angle1==135 angle2==135] [in core:0.197] 
+    A1 = CONVEX EDGE M0U_CORE ANGLE1==225 ANGLE2==225 
+    A2 = INT M0U_CORE <0.197 OPPOSITE REGION

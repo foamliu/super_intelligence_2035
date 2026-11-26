@@ -1,0 +1,61 @@
+/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Waiting for server...
+  Ready!
+Loading HF float32 on CPU...
+Loading weights:   0%|          | 0/323 [00:00<?, ?it/s]Loading weights:   0%|          | 1/323 [00:00<00:49,  6.50it/s]Loading weights:  46%|████▌     | 147/323 [00:00<00:00, 688.74it/s]Loading weights:  71%|███████   | 229/323 [00:00<00:00, 684.71it/s]Loading weights:  94%|█████████▍| 305/323 [00:00<00:00, 636.44it/s]Loading weights: 100%|██████████| 323/323 [00:00<00:00, 512.63it/s]
+  Loaded. params=2.22B
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `mamba_chunk_scan_combined` is falling back to its reference PyTorch implementation because `mamba_ssm` is not installed. This is correct but much slower; install `mamba_ssm` for the optimized kernel.
+
+============================================================
+Prompt 0: "The capital of France is"
+============================================================
+  Tokens(5): [671, 6102, 294, 8760, 344]
+  Querying llama-server...
+  LC returned 0 prompt_logprob entries
+
+   pos     tok    HF_am        HF_lp        LC_lp       d_lp  mtch
+  ---- ------- -------- ------------ ------------ ---------- -----
+
+  Argmax match: 0/0
+
+  HF next-token: 11111 (=' Paris')
+  HF top5: [(11111, ' Paris', '-0.7393'), (270, ' the', '-2.2458'), (260, ' a', '-3.4412'), (3252, ' called', '-3.8545'), (3459, ' known', '-4.2331')]
+  LC generated: ' the' (tokens: [])
+
+============================================================
+Prompt 1: "The capital of France is Paris"
+============================================================
+  Tokens(6): [671, 6102, 294, 8760, 344, 11111]
+  Querying llama-server...
+  LC returned 0 prompt_logprob entries
+
+   pos     tok    HF_am        HF_lp        LC_lp       d_lp  mtch
+  ---- ------- -------- ------------ ------------ ---------- -----
+
+  Argmax match: 0/0
+
+  HF next-token: 14 (=',')
+  HF top5: [(14, ',', '-0.6661'), (16, '.', '-1.2723'), (603, '.\n', '-2.4158'), (305, ' and', '-3.1341'), (29, ';', '-4.4612')]
+  LC generated: ',' (tokens: [])
+
+============================================================
+Prompt 2: "Machine learning is a subset of artificial intelligence that"
+============================================================
+  Tokens(9): [56891, 3607, 344, 260, 25309, 294, 16500, 12967, 396]
+  Querying llama-server...
+  LC returned 0 prompt_logprob entries
+
+   pos     tok    HF_am        HF_lp        LC_lp       d_lp  mtch
+  ---- ------- -------- ------------ ------------ ---------- -----
+
+  Argmax match: 0/0
+
+  HF next-token: 17474 (=' focuses')
+  HF top5: [(17474, ' focuses', '-1.7973'), (6623, ' uses', '-2.3032'), (6382, ' allows', '-2.5105'), (17689, ' enables', '-2.5366'), (344, ' is', '-2.5612')]
+  LC generated: ' is' (tokens: [])
+
+============================================================
+FINAL VERDICT
+============================================================

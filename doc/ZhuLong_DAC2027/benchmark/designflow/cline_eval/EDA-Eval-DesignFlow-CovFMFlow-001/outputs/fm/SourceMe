@@ -1,0 +1,13 @@
+#!/bin/bash
+#==============================================================
+# CFREQ_CTRL Formality 形式验证流程环境
+# 用法: source SourceMe
+#==============================================================
+module purge
+module load ds/fm/2023.12-SP5
+
+export DESIGN=cfreq_ctrl
+export LSF_QUEUE=${LSF_QUEUE:-fqueue2h}
+export USE_LSF=${USE_LSF:-1}
+
+echo "[SourceMe] Formality env loaded: fm_shell -> $(command -v fm_shell 2>/dev/null || echo 'use module lsf')"

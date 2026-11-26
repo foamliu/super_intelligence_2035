@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDA 脚本能力线上使用分析报告</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:#f5f7fa;color:#222;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+h1{font-size:1.4rem;border-bottom:3px solid #2c7be5;padding-bottom:8px}
+h2{font-size:1.1rem;margin-top:28px;color:#2c7be5;border-left:4px solid #2c7be5;padding-left:10px}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+.kpi{flex:1;min-width:130px;background:#fff;border:1px solid #e3e8ef;border-radius:8px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.kpi .n{font-size:1.6rem;font-weight:700;color:#2c7be5}
+.kpi .l{font-size:.78rem;color:#666}
+.kpi.green .n{color:#27ab83}
+.kpi.red .n{color:#e85a4f}
+.kpi.purple .n{color:#6f42c1}
+table{border-collapse:collapse;width:100%;background:#fff;margin:8px 0;font-size:.83rem}
+th,td{border:1px solid #e3e8ef;padding:6px 10px;text-align:left}
+th{background:#f0f4f8;white-space:nowrap}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.note{background:#fffbe6;border-left:3px solid #f0ad4e;padding:10px 14px;margin:12px 0;border-radius:4px;font-size:.85rem}
+.insight{background:#e8f4fd;border-left:3px solid #2c7be5;padding:10px 14px;margin:12px 0;border-radius:4px;font-size:.85rem}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0;font-size:.8rem}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px}
+footer{margin-top:30px;color:#999;font-size:.75rem;text-align:center}
+</style></head><body><div class="wrap">
+
+<h1>EDA 脚本能力线上使用分析报告</h1>
+<p style="color:#999">数据来源：698 台工程工作站全量扫描 · 生成时间 2026-11-16 · 扫描 Cline 编程智能体 trace 中的 MCP 工具调用记录</p>
+
+<h2>一、总体概览</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">65,481</div><div class="l">工具调用总数</div></div>
+<div class="kpi green"><div class="n">323</div><div class="l">使用用户数</div></div>
+<div class="kpi purple"><div class="n">5,814</div><div class="l">涉及会话数</div></div>
+<div class="kpi"><div class="n">696</div><div class="l">覆盖机器数</div></div>
+</div>
+<div class="insight">
+<b>核心发现</b>：2026 年 6 月上线以来，EDA 脚本能力（PyAether / SKILL / Tcl）已累计被 <b>323 位工程师</b>在 <b>696 台工作站</b>上使用，
+产生 <b>65,481 次</b>工具调用，覆盖 <b>5,814 个独立会话</b>。11 月仅过 16 天，调用量已超 10 月全月 <b>+56%</b>，呈加速增长态势。
+</div>
+
+<h2>二、语言分布（pyAether / SKILL / Tcl）</h2>
+<div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin:12px 0">
+<div style="flex:0 0 460px"><svg viewBox="0 0 460 340" xmlns="http://www.w3.org/2000/svg" style="max-width:460px;display:block">
+<path d="M 200 165 L 200.00 45.00 A 120 120 0 1 1 144.62 271.45 Z" fill="#2c7be5" stroke="#fff" stroke-width="1.5"/>
+<path d="M 200 165 L 144.62 271.45 A 120 120 0 0 1 134.15 64.68 Z" fill="#27ab83" stroke="#fff" stroke-width="1.5"/>
+<path d="M 200 165 L 134.15 64.68 A 120 120 0 0 1 198.28 45.01 Z" fill="#e85a4f" stroke="#fff" stroke-width="1.5"/>
+<path d="M 200 165 L 198.28 45.01 A 120 120 0 0 1 200.00 45.00 Z" fill="#adb5bd" stroke="#fff" stroke-width="1.5"/>
+<text x="343.8" y="200.2" text-anchor="start" font-size="11" fill="#444">pyAether 57.6%</text>
+<text x="52.2" y="172.5" text-anchor="end" font-size="11" fill="#444">SKILL 33.1%</text>
+<text x="156.6" y="23.5" text-anchor="end" font-size="11" fill="#444">Tcl 9.0%</text>
+<text x="198.9" y="17.0" text-anchor="middle" font-size="11" fill="#444">other 0.2%</text>
+<text x="200" y="159" text-anchor="middle" font-size="22" font-weight="700" fill="#222">65K</text>
+<text x="200" y="179" text-anchor="middle" font-size="10" fill="#666">tool calls</text>
+</svg></div>
+<div style="flex:1;min-width:300px">
+<table>
+<thead><tr><th>语言</th><th>调用次数</th><th>占比</th><th>使用人数</th><th>对应工具</th></tr></thead>
+<tbody>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#2c7be5;border-radius:2px;vertical-align:middle;margin-right:6px"></span>pyAether</td><td class="num">37,740</td><td>57.6%</td><td class="num">285</td><td>华大九天 Aether</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#27ab83;border-radius:2px;vertical-align:middle;margin-right:6px"></span>SKILL</td><td class="num">21,687</td><td>33.1%</td><td class="num">175</td><td>Cadence Virtuoso</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#e85a4f;border-radius:2px;vertical-align:middle;margin-right:6px"></span>Tcl</td><td class="num">5,905</td><td>9.0%</td><td class="num">41</td><td>Synopsys WaveView 等</td></tr>
+<tr style="font-weight:700;background:#f0f4f8"><td>合计</td><td class="num">65,331</td><td>99.7%</td><td class="num">323</td><td>—</td></tr>
+</tbody>
+</table>
+<div class="legend">
+<span><i style="background:#2c7be5"></i>pyAether (Aether)</span>
+<span><i style="background:#27ab83"></i>SKILL (Virtuoso)</span>
+<span><i style="background:#e85a4f"></i>Tcl (WaveView)</span>
+</div>
+</div>
+</div>
+<div class="note">
+<b>语言格局</b>：pyAether 占主导（57.6%），是使用人数最多（285 人）的 EDA 脚本语言；SKILL 紧随其后（33.1%，175 人）；
+Tcl 为 11 月新增能力，仅 16 天已有 41 人使用、5,905 次调用，增长势头强劲。
+</div>
+
+<h2>三、月度增长趋势</h2>
+<div style="margin:12px 0"><svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;display:block"><line x1="50" y1="20" x2="50" y2="240" stroke="#ccc"/><line x1="50" y1="240" x2="470" y2="240" stroke="#ccc"/><rect x="60" y="239.9" width="50" height="0.1" fill="#2c7be5" rx="2"/><rect x="60" y="238.9" width="50" height="1.0" fill="#27ab83" rx="2"/><rect x="60" y="238.9" width="50" height="0.0" fill="#adb5bd" rx="2"/><text x="85.0" y="233.9" text-anchor="middle" font-size="10" font-weight="600" fill="#444">0.2K</text><text x="85.0" y="258" text-anchor="middle" font-size="10" fill="#666">2026-06</text><text x="85.0" y="272" text-anchor="middle" font-size="9" fill="#999">3人</text><rect x="130" y="236.1" width="50" height="3.9" fill="#2c7be5" rx="2"/><rect x="130" y="197.9" width="50" height="38.2" fill="#27ab83" rx="2"/><rect x="130" y="197.6" width="50" height="0.3" fill="#adb5bd" rx="2"/><text x="155.0" y="192.6" text-anchor="middle" font-size="10" font-weight="600" fill="#444">5.8K</text><text x="155.0" y="258" text-anchor="middle" font-size="10" fill="#666">2026-07</text><text x="155.0" y="272" text-anchor="middle" font-size="9" fill="#999">6人</text><rect x="200" y="227.8" width="50" height="12.2" fill="#2c7be5" rx="2"/><rect x="200" y="190.4" width="50" height="37.5" fill="#27ab83" rx="2"/><rect x="200" y="190.3" width="50" height="0.1" fill="#adb5bd" rx="2"/><text x="225.0" y="185.3" text-anchor="middle" font-size="10" font-weight="600" fill="#444">6.8K</text><text x="225.0" y="258" text-anchor="middle" font-size="10" fill="#666">2026-08</text><text x="225.0" y="272" text-anchor="middle" font-size="9" fill="#999">9人</text><rect x="270" y="201.4" width="50" height="38.6" fill="#2c7be5" rx="2"/><rect x="270" y="179.7" width="50" height="21.7" fill="#27ab83" rx="2"/><rect x="270" y="179.3" width="50" height="0.4" fill="#adb5bd" rx="2"/><text x="295.0" y="174.3" text-anchor="middle" font-size="10" font-weight="600" fill="#444">8.2K</text><text x="295.0" y="258" text-anchor="middle" font-size="10" fill="#666">2026-09</text><text x="295.0" y="272" text-anchor="middle" font-size="9" fill="#999">70人</text><rect x="340" y="156.0" width="50" height="84.0" fill="#2c7be5" rx="2"/><rect x="340" y="112.3" width="50" height="43.6" fill="#27ab83" rx="2"/><rect x="340" y="112.3" width="50" height="0.0" fill="#e85a4f" rx="2"/><rect x="340" y="112.1" width="50" height="0.2" fill="#adb5bd" rx="2"/><text x="365.0" y="107.1" text-anchor="middle" font-size="10" font-weight="600" fill="#444">17.4K</text><text x="365.0" y="258" text-anchor="middle" font-size="10" fill="#666">2026-10</text><text x="365.0" y="272" text-anchor="middle" font-size="9" fill="#999">167人</text><rect x="410" y="101.1" width="50" height="138.9" fill="#2c7be5" rx="2"/><rect x="410" y="83.6" width="50" height="17.5" fill="#27ab83" rx="2"/><rect x="410" y="40.1" width="50" height="43.4" fill="#e85a4f" rx="2"/><rect x="410" y="40.0" width="50" height="0.1" fill="#adb5bd" rx="2"/><text x="435.0" y="35.0" text-anchor="middle" font-size="10" font-weight="600" fill="#444">27.2K</text><text x="435.0" y="258" text-anchor="middle" font-size="10" fill="#666">2026-11</text><text x="435.0" y="272" text-anchor="middle" font-size="9" fill="#999">182人</text></svg></div>
+<div class="legend">
+<span><i style="background:#2c7be5"></i>pyAether</span>
+<span><i style="background:#27ab83"></i>SKILL</span>
+<span><i style="background:#e85a4f"></i>Tcl</span>
+<span><i style="background:#adb5bd"></i>其他</span>
+</div>
+<table style="margin-top:12px">
+<thead><tr><th>月份</th><th class="num">pyAether</th><th class="num">SKILL</th><th class="num">Tcl</th><th class="num">总调用</th><th class="num">活跃用户</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>2026-06</td><td class="num">9</td><td class="num">141</td><td class="num">0</td><td class="num">151</td><td class="num">3</td><td>试点阶段</td></tr>
+<tr><td>2026-07</td><td class="num">534</td><td class="num">5,193</td><td class="num">0</td><td class="num">5,762</td><td class="num">6</td><td>SKILL 为主</td></tr>
+<tr><td>2026-08</td><td class="num">1,655</td><td class="num">5,091</td><td class="num">0</td><td class="num">6,756</td><td class="num">9</td><td>SKILL 稳定，pyAether 起量</td></tr>
+<tr><td>2026-09</td><td class="num">5,241</td><td class="num">2,954</td><td class="num">0</td><td class="num">8,244</td><td class="num">70</td><td>pyAether 超越 SKILL，用户扩展</td></tr>
+<tr><td>2026-10</td><td class="num">11,420</td><td class="num">5,929</td><td class="num">1</td><td class="num">17,382</td><td class="num">167</td><td>全面铺开</td></tr>
+<tr style="font-weight:700;background:#e8f4fd"><td>2026-11（16天）</td><td class="num">18,881</td><td class="num">2,379</td><td class="num">5,904</td><td class="num">27,181</td><td class="num">182</td><td>已超 10 月全月 +56%</td></tr>
+</tbody>
+</table>
+<div class="insight">
+<b>关键趋势</b>：
+<ul style="margin:6px 0 0 0">
+<li><b>pyAether</b>：6 月 9 次 → 11 月 18,881 次，增长 <b>2,098 倍</b>，9 月起成为主力语言</li>
+<li><b>SKILL</b>：7 月领先（5,193），9 月后被 pyAether 超越，11 月回落至 2,379（部分用户转 pyAether）</li>
+<li><b>Tcl</b>：11 月新增，16 天 5,904 次（主要为 WaveView 波形分析），放量速度超当年 pyAether 起点</li>
+<li><b>用户数</b>：3 → 6 → 9 → 70 → 167 → 182，9 月为扩散拐点（9→70，+678%）</li>
+</ul>
+</div>
+
+<h2>四、工具调用分布</h2>
+<div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin:12px 0">
+<div style="flex:0 0 420px"><svg viewBox="0 0 460 340" xmlns="http://www.w3.org/2000/svg" style="max-width:460px;display:block">
+<path d="M 180 160 L 180.00 50.00 A 110 110 0 0 1 192.02 269.34 Z" fill="#6f42c1" stroke="#fff" stroke-width="1.5"/>
+<path d="M 180 160 L 192.02 269.34 A 110 110 0 0 1 110.84 74.46 Z" fill="#f0ad4e" stroke="#fff" stroke-width="1.5"/>
+<path d="M 180 160 L 110.84 74.46 A 110 110 0 0 1 179.91 50.00 Z" fill="#17a2b8" stroke="#fff" stroke-width="1.5"/>
+<path d="M 180 160 L 179.91 50.00 A 110 110 0 0 1 180.00 50.00 Z" fill="#adb5bd" stroke="#fff" stroke-width="1.5"/>
+<text x="317.8" y="152.4" text-anchor="start" font-size="11" fill="#444">run_code 48.3%</text>
+<text x="52.6" y="213.1" text-anchor="end" font-size="11" fill="#444">search_apis 40.9%</text>
+<text x="133.9" y="29.9" text-anchor="end" font-size="11" fill="#444">get_api_details 10.8%</text>
+<text x="179.9" y="22.0" text-anchor="middle" font-size="11" fill="#444">other 0.0%</text>
+<text x="180" y="154" text-anchor="middle" font-size="22" font-weight="700" fill="#222">65K</text>
+<text x="180" y="174" text-anchor="middle" font-size="10" fill="#666">calls</text>
+</svg></div>
+<div style="flex:1;min-width:300px">
+<table>
+<thead><tr><th>工具</th><th class="num">调用次数</th><th>占比</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#6f42c1;border-radius:2px;vertical-align:middle;margin-right:6px"></span>run_code</td><td class="num">31,599</td><td>48.2%</td><td>执行 EDA 脚本代码</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#f0ad4e;border-radius:2px;vertical-align:middle;margin-right:6px"></span>search_apis</td><td class="num">26,796</td><td>40.9%</td><td>语义搜索 EDA API</td></tr>
+<tr><td><span style="display:inline-block;width:12px;height:12px;background:#17a2b8;border-radius:2px;vertical-align:middle;margin-right:6px"></span>get_api_details</td><td class="num">7,077</td><td>10.8%</td><td>查看 API 详情</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="note">
+<b>调用模式</b>：search_apis + get_api_details（API 检索）与 run_code（代码执行）比例约 <b>52:48</b>，说明工程师约一半操作在"查 API"、一半在"跑代码"。
+典型的使用流程是：先 search_apis 搜索相关 API → get_api_details 查看参数 → run_code 执行脚本。
+</div>
+
+<h2>五、语言 × 工具交叉分析</h2>
+<table>
+<thead><tr><th>语言</th><th class="num">search_apis</th><th class="num">get_api_details</th><th class="num">run_code</th><th class="num">合计</th><th>查/跑比</th></tr></thead>
+<tbody>
+<tr><td>pyAether</td><td class="num">18,093</td><td class="num">5,083</td><td class="num">14,564</td><td class="num">37,740</td><td>62:38</td></tr>
+<tr><td>SKILL</td><td class="num">6,252</td><td class="num">1,405</td><td class="num">14,030</td><td class="num">21,687</td><td>35:65</td></tr>
+<tr><td>Tcl</td><td class="num">2,442</td><td class="num">589</td><td class="num">2,874</td><td class="num">5,905</td><td>51:49</td></tr>
+<tr style="font-weight:700;background:#f0f4f8"><td>合计</td><td class="num">26,787</td><td class="num">7,077</td><td class="num">31,468</td><td class="num">65,332</td><td>52:48</td></tr>
+</tbody>
+</table>
+<div class="note">
+<b>查/跑比差异</b>：pyAether 用户查 API 占比最高（62%），说明 pyAether API 库丰富但用户不熟悉，需频繁检索；
+SKILL 用户跑代码占比最高（65%），说明 SKILL 用户更熟悉 API，直接执行更多；Tcl 居中（51:49）。
+</div>
+
+<h2>六、11 月日均趋势</h2>
+<div style="margin:12px 0"><svg viewBox="0 0 594 200" xmlns="http://www.w3.org/2000/svg" style="max-width:594px;display:block"><line x1="30" y1="10" x2="30" y2="170" stroke="#ccc"/><line x1="30" y1="170" x2="589" y2="170" stroke="#ccc"/><rect x="35" y="158.5" width="28" height="11.5" fill="#2c7be5" rx="2"/><text x="49.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 49.0 185)">11-01</text><rect x="69" y="72.8" width="28" height="97.2" fill="#2c7be5" rx="2"/><text x="83.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 83.0 185)">11-02</text><rect x="103" y="148.6" width="28" height="21.4" fill="#2c7be5" rx="2"/><text x="117.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 117.0 185)">11-03</text><rect x="137" y="48.8" width="28" height="121.2" fill="#2c7be5" rx="2"/><text x="151.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 151.0 185)">11-04</text><rect x="171" y="66.5" width="28" height="103.5" fill="#2c7be5" rx="2"/><text x="185.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 185.0 185)">11-05</text><rect x="205" y="119.5" width="28" height="50.5" fill="#2c7be5" rx="2"/><text x="219.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 219.0 185)">11-06</text><rect x="239" y="151.7" width="28" height="18.3" fill="#2c7be5" rx="2"/><text x="253.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 253.0 185)">11-07</text><rect x="273" y="163.1" width="28" height="6.9" fill="#2c7be5" rx="2"/><text x="287.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 287.0 185)">11-08</text><rect x="307" y="106.6" width="28" height="63.4" fill="#2c7be5" rx="2"/><text x="321.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 321.0 185)">11-09</text><rect x="341" y="129.9" width="28" height="40.1" fill="#2c7be5" rx="2"/><text x="355.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 355.0 185)">11-10</text><rect x="375" y="20.0" width="28" height="150.0" fill="#2c7be5" rx="2"/><text x="389.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 389.0 185)">11-11</text><rect x="409" y="29.2" width="28" height="140.8" fill="#2c7be5" rx="2"/><text x="423.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 423.0 185)">11-12</text><rect x="443" y="74.1" width="28" height="95.9" fill="#2c7be5" rx="2"/><text x="457.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 457.0 185)">11-13</text><rect x="477" y="149.6" width="28" height="20.4" fill="#2c7be5" rx="2"/><text x="491.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 491.0 185)">11-14</text><rect x="511" y="165.1" width="28" height="4.9" fill="#2c7be5" rx="2"/><text x="525.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 525.0 185)">11-15</text><rect x="545" y="139.9" width="28" height="30.1" fill="#2c7be5" rx="2"/><text x="559.0" y="185" text-anchor="middle" font-size="8" fill="#666" transform="rotate(-30 559.0 185)">11-16</text></svg></div>
+<div class="note">
+<b>11 月日均 ~1,700 次</b>，峰值日 11-11 达 4,177 次（光棍节？），11-04 和 11-12 也超 3,000 次。
+工作日/周末效应明显（11-07 周五 509 → 11-08 周六 192 → 11-09 周日 1,766 回升）。
+</div>
+
+<h2>七、活跃用户 Top 15</h2>
+<table>
+<thead><tr><th>排名</th><th>用户</th><th class="num">调用次数</th><th class="num">会话数</th><th class="num">平均/会话</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>e0014566</td><td class="num">13,060</td><td class="num">147</td><td class="num">88</td></tr>
+<tr><td>2</td><td>colinxu</td><td class="num">4,878</td><td class="num">30</td><td class="num">162</td></tr>
+<tr><td>3</td><td>sinanz</td><td class="num">2,520</td><td class="num">11</td><td class="num">229</td></tr>
+<tr><td>4</td><td>e0031982</td><td class="num">2,082</td><td class="num">8</td><td class="num">260</td></tr>
+<tr><td>5</td><td>chapinc</td><td class="num">1,824</td><td class="num">8</td><td class="num">228</td></tr>
+<tr><td>6</td><td>zjqiao</td><td class="num">1,694</td><td class="num">6</td><td class="num">282</td></tr>
+<tr><td>7</td><td>jcgu</td><td class="num">1,572</td><td class="num">15</td><td class="num">104</td></tr>
+<tr><td>8</td><td>shaoyou</td><td class="num">1,452</td><td class="num">12</td><td class="num">121</td></tr>
+<tr><td>9</td><td>e0047722</td><td class="num">1,415</td><td class="num">11</td><td class="num">128</td></tr>
+<tr><td>10</td><td>e0017841</td><td class="num">1,295</td><td class="num">7</td><td class="num">185</td></tr>
+<tr><td>11</td><td>jackjia</td><td class="num">1,254</td><td class="num">5</td><td class="num">250</td></tr>
+<tr><td>12</td><td>lizwen</td><td class="num">1,232</td><td class="num">30</td><td class="num">41</td></tr>
+<tr><td>13</td><td>xdwang</td><td class="num">1,188</td><td class="num">6</td><td class="num">198</td></tr>
+<tr><td>14</td><td>rongjiez</td><td class="num">873</td><td class="num">12</td><td class="num">72</td></tr>
+<tr><td>15</td><td>ziyuny</td><td class="num">810</td><td class="num">19</td><td class="num">42</td></tr>
+</tbody>
+</table>
+<div class="note">
+<b>用户分布</b>：Top 1 用户 e0014566 贡献 13,060 次调用（占总量 20%），147 个会话，是绝对重度用户。
+Top 15 用户贡献 38,139 次调用（占 58%），呈典型长尾分布。323 位用户中位调用约 100 次/人。
+</div>
+
+<h2>八、热门检索意图 Top 10</h2>
+<table>
+<thead><tr><th>#</th><th>检索 query</th><th class="num">次数</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>WaveView open fsdb file tcl command</td><td class="num">694</td></tr>
+<tr><td>2</td><td>DRC design rule check run</td><td class="num">49</td></tr>
+<tr><td>3</td><td>ldo circuit design voltage regulator</td><td class="num">48</td></tr>
+<tr><td>4</td><td>LVS layout versus schematic check run</td><td class="num">46</td></tr>
+<tr><td>5</td><td>get current design</td><td class="num">42</td></tr>
+<tr><td>6</td><td>get all instances in current schematic cellview</td><td class="num">40</td></tr>
+<tr><td>7</td><td>finesim simulation run simulate</td><td class="num">44</td></tr>
+<tr><td>8</td><td>file copy directory operations</td><td class="num">44</td></tr>
+<tr><td>9</td><td>string replace substitute in file</td><td class="num">44</td></tr>
+<tr><td>10</td><td>system shell command execute</td><td class="num">44</td></tr>
+</tbody>
+</table>
+<div class="note">
+<b>检索热点</b>：排名第一的 "WaveView open fsdb file tcl command"（694 次）远超其他 query，反映 11 月 Tcl/WaveView 上线后大量用户在查波形文件操作。
+其余热点分布在 DRC/LVS 验证、电路设计（LDO）、文件操作、仿真控制等场景。
+</div>
+
+<h2>九、MCP 服务架构</h2>
+<div class="kpis">
+<div class="kpi"><div class="n">RAG_MCP_Server</div><div class="l">API 检索服务 · 33,686 次</div></div>
+<div class="kpi purple"><div class="n">SandBox_MCP_Server</div><div class="l">代码执行沙盒 · 31,598 次</div></div>
+</div>
+<div class="note">
+<b>架构说明</b>：EDA 脚本能力通过两个 MCP 服务暴露给 Cline 编程智能体：
+<b>RAG_MCP_Server</b> 提供 search_apis / get_api_details / search_apis_by_keyword 三个 API 检索工具（基于向量嵌入 + BM25），
+<b>SandBox_MCP_Server</b> 提供 run_code 代码执行工具（支持 pyAether / SKILL / Tcl 三种语言，对应 Aether / Virtuoso / WaveView 等宿主工具）。
+用户在 Cline 中自然语言描述需求 → 智能体自动检索 API → 生成代码 → 沙盒执行 → 返回结果。
+</div>
+
+<h2>十、核心结论</h2>
+<div class="insight">
+<ol style="margin:6px 0 0 0; padding-left:16px">
+<li><b>已形成生产级使用规模</b>：323 位工程师、696 台工作站、65,481 次调用，月环比增速 ~56%</li>
+<li><b>pyAether 是主力语言</b>（57.6%），覆盖 285 人，9 月起成为调用量第一的 EDA 脚本语言</li>
+<li><b>SKILL 是成熟稳定的基础</b>（33.1%），175 人使用，Virtuoso 版图操作场景刚需</li>
+<li><b>Tcl 是 11 月新增增长极</b>，16 天 41 人 5,904 次，WaveView 波形分析需求旺盛</li>
+<li><b>用户加速扩散</b>：6 月 3 人 → 11 月 182 人，9 月为扩散拐点（+678%），尚未触顶</li>
+<li><b>查/跑比 52:48</b>，API 检索与代码执行并重，检索能力是降低使用门槛的关键</li>
+<li><b>重度用户驱动</b>：Top 15 用户贡献 58% 调用量，长尾用户仍处于早期探索阶段</li>
+</ol>
+</div>
+
+<footer>
+<p>EDA 脚本能力线上使用分析报告 · 数据源：698 台工作站 Cline trace 全量扫描（2026-11-16）</p>
+<p>扫描工具调用：search_apis / get_api_details / search_apis_by_keyword / run_code · 参数提取：lang + host</p>
+</footer>
+
+</div></body></html>

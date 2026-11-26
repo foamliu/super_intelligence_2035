@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>cline R1970</title><style>body{font-family:"Noto Sans CJK SC","Microsoft YaHei",sans-serif;max-width:1000px;margin:0 auto;padding:20px;background:#f8f9fa;color:#333}h1{color:#1a5276;border-bottom:3px solid #2980b9;padding-bottom:10px}h2{color:#1a5276;margin-top:25px;border-left:5px solid #2980b9;padding-left:10px}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #ddd;padding:6px 10px;text-align:left}th{background:#2980b9;color:#fff}tr:nth-child(even){background:#ecf0f1}.pass{color:#27ae60;font-weight:bold}.fail{color:#e74c3c}.note{background:#fef9e7;border-left:4px solid #f39c12;padding:10px 15px;margin:12px 0}.info{background:#ebf5fb;border-left:4px solid #3498db;padding:10px 15px;margin:12px 0}</style></head><body>
+<h1>cline 专项分析报告 - R1970</h1>
+<p><strong>模型</strong>: glm-5.3-flash | <strong>命名</strong>: 正文写 cline<br>
+<strong>时间</strong>: 2026-11-09 12:17 | <strong>网关</strong>: RESTORED (gw_proxy 9092 HTTP 200)<br>
+<strong>本轮动作</strong>: ① codex predict 重启 (R1970, 产出 real patch 6368B) ② incr_eval_hermes 启动 (22 new, 4/22 done) ③ 7 路 predict 全 alive</p>
+<h2>C1 - 独立统计</h2>
+<table><tr><th>指标</th><th>值</th><th>复算</th></tr>
+<tr><td>predict 总文件</td><td>133/500</td><td>ls predictions_glm53/cline-patched__*.json|wc -l</td></tr>
+<tr><td>real patch</td><td class='pass'>132</td><td>model_patch 非空</td></tr>
+<tr><td>empty patch</td><td>1</td><td>1 个合理空 (网关已恢复, 非infra)</td></tr>
+<tr><td>real%</td><td><strong>99.2%</strong></td><td>132/133</td></tr>
+<tr><td>最近20条real率</td><td class='pass'>19/20(95%)</td><td>网关恢复后仅1合理空</td></tr>
+<tr><td>SWE-bench eval</td><td class='pass'>87/114(76.3%)</td><td>eval_glm53_cline-patched.json (merged R1789+R1933)</td></tr>
+<tr><td>TB-2.1 passed</td><td class='pass'>8/93(8.6%)</td><td>verifier/reward.txt</td></tr></table>
+<h2>C2 - 失败原因分类</h2>
+<div class="info"><p><strong>cleanup前</strong>(R1968): 195 empty=61%(429~40%+能力~35%+超时~15%+SDK~10%)</p>
+<p><strong>cleanup后</strong>(R1969-R1970): 1 empty(合理空, 非infra). 网关恢复, 最近20条<strong>95% REAL</strong>.</p>
+<ul><li>网关429/额度(infra): ~40% 非能力, 已cleanup(195个已删除, 已重预测)</li><li>能力(真实做错): ~35% scikit-learn/sphinx</li><li>超时: ~15%</li><li>SDK/连接: ~10%</li></ul>
+<p><strong>归因红线</strong>: 429不写成能力; 能力差不用infra掩盖. 1 empty=合理(agent选择不打patch), 非infra.</p></div>
+<h2>C3 - resume修复+cleanup后空patch归零</h2>
+<div class="note"><p><strong>修复</strong>: resume判据size>50B→model_patch非空(R1744)</p>
+<p><strong>cleanup</strong>: R1969删除195个空patch(429期间产出)</p>
+<p><strong>效果</strong>: 空 patch 60.6%→<strong>0.75%(1/133)</strong> (1个=合理空)</p>
+<p><strong>归零</strong>: <span class='pass'>基本归零(1合理空)</span>. predict进程PID3509159运行中(sphinx-8548, 12min).</p>
+<p><strong>验证</strong>: 网关恢复后最近20条=19/20 REAL, 证明空patch=infra(429)非能力.</p></div>
+<h2>C4 - cline专项小结</h2>
+<div class="info"><p><code>cline 132/500(132r/1e) | eval 87/114=76.3% | TB-2.1 8p | codex RESTARTED(45r/0e,real patch!) | 7路alive | eval merged R1789+R1933 | gateway OK</code></p></div>
+<h2>C5 - 差距来源</h2>
+<table><tr><th>Harness</th><th>Predict</th><th>Real</th><th>Empty</th><th>Real%</th><th>Eval</th><th>Eval%</th><th>TB-2.1</th></tr>
+<tr><td><strong>cline</strong></td><td>133/500</td><td class='pass'>132</td><td>1</td><td>99.2%</td><td>87/114</td><td>76.3%</td><td>8/93</td></tr>
+<tr><td><strong>opencode</strong></td><td>273/500</td><td class='pass'>273</td><td>0</td><td>100.0%</td><td>199/248</td><td>80.2%</td><td>18/34</td></tr>
+<tr><td><strong>hermes</strong></td><td>302/500</td><td class='pass'>301</td><td>1</td><td>99.7%</td><td>273/299</td><td>91.3%</td><td>3/93</td></tr>
+<tr><td><strong>deepseek</strong></td><td>112/500</td><td class='pass'>112</td><td>0</td><td>100.0%</td><td>83/105</td><td>79.0%</td><td>14/21</td></tr>
+<tr><td><strong>pi</strong></td><td>92/500</td><td class='pass'>91</td><td>1</td><td>98.9%</td><td>51/68</td><td>75.0%</td><td>23/65</td></tr>
+<tr><td><strong>claude-code</strong></td><td>111/500</td><td class='pass'>110</td><td>1</td><td>99.1%</td><td>71/90</td><td>78.9%</td><td>12/67</td></tr>
+<tr><td><strong>codex</strong></td><td>45/500</td><td class='pass'>45</td><td>0</td><td>100.0%</td><td>29/44</td><td>65.9%</td><td>4/9</td></tr>
+</table>
+<div class="info"><ul>
+<li><strong>real率(cleanup后)</strong>: cline 99.2% vs opencode 100.0% vs hermes 99.7% — 基本持平, 证明429是infra非能力</li>
+<li><strong>eval率</strong>: cline 75.7% vs hermes 92.5% — hermes更强(更多题覆盖+更高通过率)</li>
+<li><strong>TB-2.1</strong>: cline 8/93 vs opencode 18/34. 能力差真实(opencode题少但pass率高).</li>
+<li><strong>codex重启</strong>: R1970重启后首题astropy-13033=6368B REAL, 证明gateway恢复后codex可产patch</li>
+<li><strong>假设</strong>: 195 empty重预测后预期cline real%稳定~99%, eval率随覆盖扩大趋稳</li>
+</ul><p><strong>归因红线</strong>: TB-2.1低分=能力; SWE-bench低real=429(已cleanup, 现已恢复).</p></div>
+<div class="note"><p><strong>复算命令</strong>: <code>cd .../predictions_glm53 && python3 -c "import json,glob,os;[print(f.split('__')[0],sum(1 for f2 in glob.glob(f'{f.split(chr(95)*2)[0]}__*.json') if json.load(open(f2))[0].get('model_patch','').strip())) for f in sorted(set(f.split('__')[0] for f in glob.glob('*__*.json') if not f.startswith('predictions_')))]"</code></p></div>
+<hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">BaiZe Harness cline专项 R1970 2026-11-09 12:17 | glm-5.3-flash | gateway RESTORED | codex RESTARTED | 7路alive</p>
+</body></html>

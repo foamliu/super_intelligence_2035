@@ -1,0 +1,135 @@
+{
+  "r95": {
+    "ts": "2026-11-09T12:42:09.326283",
+    "audit": [
+      {
+        "name": "MiniCPM5-2B on NAS (persistent)",
+        "status": "OK",
+        "detail": "Path: /nas_data/app.e0031982/models/MiniCPM5-2B, 1 safetensors, 4810MB"
+      },
+      {
+        "name": "MiniCPM5-2B on /tmp (ephemeral)",
+        "status": "FAIL",
+        "detail": "Cleaned (expected)"
+      },
+      {
+        "name": "Background download",
+        "status": "OK",
+        "detail": "Completed"
+      },
+      {
+        "name": "eda_fastmcp source",
+        "status": "OK",
+        "detail": "/home/app.e0031982/code/eda_fastmcp"
+      },
+      {
+        "name": "pyAether venv (Python 3.13)",
+        "status": "OK",
+        "detail": "Python 3.13.14"
+      },
+      {
+        "name": "eda_fastmcp importable",
+        "status": "WARN",
+        "detail": "Install in progress"
+      },
+      {
+        "name": "Port 8090 (original)",
+        "status": "FAIL",
+        "detail": "Occupied by MRT"
+      },
+      {
+        "name": "Port 8091 (new)",
+        "status": "OK",
+        "detail": "Free"
+      },
+      {
+        "name": "MCP launch script",
+        "status": "OK",
+        "detail": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_mcp_server.sh"
+      },
+      {
+        "name": "EDA-Eval-PyAether dataset",
+        "status": "OK",
+        "detail": "158 tasks"
+      },
+      {
+        "name": "verl cu124 venv",
+        "status": "OK",
+        "detail": "/home/app.e0031982/code/verl_cu124_venv/bin/python"
+      },
+      {
+        "name": "vLLM venv",
+        "status": "OK",
+        "detail": "/home/app.e0031982/code/vllm_venv/bin/python"
+      },
+      {
+        "name": "Script: baize_posttrain_launch_11_9.sh",
+        "status": "OK",
+        "detail": ""
+      },
+      {
+        "name": "Script: baize_posttrain_gpu_watcher.sh",
+        "status": "OK",
+        "detail": ""
+      },
+      {
+        "name": "Script: baize_posttrain_minicpm5_diag.sh",
+        "status": "OK",
+        "detail": ""
+      },
+      {
+        "name": "Script: baize_posttrain_eval.sh",
+        "status": "OK",
+        "detail": ""
+      },
+      {
+        "name": "Script: baize_posttrain_sft.sh",
+        "status": "OK",
+        "detail": ""
+      },
+      {
+        "name": "Script: baize_posttrain_rl_grpo.sh",
+        "status": "OK",
+        "detail": ""
+      },
+      {
+        "name": "GPU watcher",
+        "status": "OK",
+        "detail": "Running"
+      },
+      {
+        "name": "NAS disk",
+        "status": "OK",
+        "detail": "10.251.28.110:/train  127T  108T   20T  85% /nas_data"
+      }
+    ],
+    "fixes": [
+      {
+        "name": "Fix-1: MiniCPM5-2B -> NAS",
+        "success": true,
+        "detail": "Exists at /nas_data/app.e0031982/models/MiniCPM5-2B"
+      },
+      {
+        "name": "Fix-2: pyAether venv",
+        "success": false,
+        "detail": "Venv OK, install in progress"
+      },
+      {
+        "name": "Fix-3: MCP launch script",
+        "success": true,
+        "detail": "Created /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_mcp_server.sh (port 8091)"
+      },
+      {
+        "name": "Fix-4: paths.sh NAS primary",
+        "success": false,
+        "detail": "Block not found (may already be updated)"
+      }
+    ],
+    "summary": {
+      "ok": 17,
+      "warn": 1,
+      "fail": 2,
+      "total": 20
+    }
+  }
+}

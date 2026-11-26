@@ -1,0 +1,78 @@
+# Scenario: a Cadence Virtuoso resistance-reduction flow (cf. Virtuoso-Flow-001,
+# the config-consolidation task) is driven by a single consolidated `flow.config`
+# that registers the batch SKILL steps and their dependencies. Before the runner
+# launches, the team runs a static validator that catches the mistakes that
+# actually break flows in production: a required global key left out, a step
+# declared in the registry but with no `[step:<name>]` block (so its `cmd` is
+# unknown), a `[step:<name>]` block for a step that was never declared in the
+# registry (orphaned), a `depends` pointing at a step name that does not exist,
+# a dependency cycle that deadlocks the scheduler, and the correct topological
+# execution order the runner should follow.
+#
+# Input:
+#   `config_text` -- the flow.config, INI-like. Lines are `key = value`,
+#       grouped under bracketed section headers:
+#       * `[global]`            -- global keys. The REQUIRED global keys are
+#                                  `process`, `libName`, `cellName`, `viewName`.
+#       * `[steps]`             -- a single value line: the declared step
+#                                  registry, comma- and/or whitespace-separated
+#                                  step names (duplicates are de-duplicated).
+#       * `[step:<name>]`       -- per-step block. Keys: `cmd` (required, the
+#                                  SKILL command string) and `depends`
+#                                  (optional, comma-separated step names this
+#                                  step depends on; default empty). If a step
+#                                  name has MORE THAN ONE `[step:<name>]` block,
+#                                  the LAST block fully overwrites the earlier
+#                                  one (last-wins: the earlier cmd/deps are
+#                                  discarded, NOT merged).
+#       * any other section     -- ignored (not an error).
+#       Blank lines and lines whose first non-space char is `;` or `#` are
+#       skipped. A value may be empty (`key =`).
+#
+# Audit rules:
+# 1. missing_global_keys: which of the four required global keys are ABSENT from
+#    the `[global]` section (a key present with an empty value still counts as
+#    present). SORTED (lsort) list.
+# 2. undeclared_steps: step names X for which a `[step:X]` block exists but X is
+#    NOT in the `[steps]` registry. SORTED list.
+# 3. missing_step_blocks: step names in the `[steps]` registry but with NO
+#    `[step:X]` block. SORTED list.
+# 4. steps_no_cmd: step names that HAVE a `[step:X]` block but whose `cmd` is
+#    empty (the `cmd` key is absent OR `cmd = ` empty). Considers ALL blocks
+#    (including undeclared ones). SORTED list.
+# 5. undefined_deps: for every step block with a `depends` list, each dep that is
+#    NOT in the `[steps]` registry is reported as the string `<step>:<dep>`.
+#    SORTED list. (A self-dependency `depends = X` inside step X where X IS in
+#    the registry is NOT an undefined dep -- it is a cycle, see rule 6.)
+# 6. cycle_members: step names that are ON a directed dependency cycle within the
+#    registry subgraph. Build the graph over registry steps only: for a registry
+#    step S that has a block, each registry member of `depends` is an edge
+#    S -> D (D must run before S); deps to non-registry names create NO edge
+#    (they are reported in undefined_deps, not here). A registry step with no
+#    block has no known deps -> no outgoing edges. A node is on a cycle iff it
+#    can reach ITSELF by following edges (path length >= 1; a self-loop
+#    `depends = X` in step X counts). SORTED list. Empty if the graph is acyclic.
+# 7. exec_order: the topological execution order of the registry steps using the
+#    same graph as rule 6 (edges = registry depends; non-registry deps are
+#    ignored for ordering -- a step with an undefined dep is still emitted once
+#    its REGISTRY deps are satisfied). Use Kahn's algorithm with LEXICOGRAPHIC
+#    tie-break: among the currently-ready steps (all registry deps already
+#    emitted), always emit the lexicographically SMALLEST name (lsort order).
+#    A step in the registry with no block, or a block with no depends, has no
+#    deps and is ready immediately. If cycle_members is non-empty, exec_order is
+#    the EMPTY list (the runner cannot order a cyclic graph).
+# 8. verdict: `valid` iff ALL of missing_global_keys, undeclared_steps,
+#    missing_step_blocks, steps_no_cmd, undefined_deps and cycle_members are
+#    empty; otherwise `invalid`.
+#
+# Return a FLAT Tcl dict with EXACTLY these keys in this order:
+#       missing_global_keys undeclared_steps missing_step_blocks steps_no_cmd
+#       undefined_deps cycle_members exec_order verdict
+#    The first six are Tcl lists (sorted), exec_order is a Tcl list, verdict is
+#    a string (`valid` or `invalid`).
+#
+# Implement `proc vflow_config_validate {config_text} { ... }` in Tcl. Use only
+# Tcl builtins (no external packages). The runtime is Empyrean WaveView Tcl
+# (waveview host), which supports `dict`, `regexp`, `split`, `lassign`, POSIX
+# character classes `[[:space:]]` / `[[:alnum:]_]` in regexps -- do NOT rely on
+# `\s` / `\d` / `\b`.

@@ -1,0 +1,8 @@
+Implement exactly one Tcl proc as described. Return ONLY the proc definition inside a single ```tcl code block, no prose. The runtime is Tcl on Synopsys WaveView (no native assert/eq; use string equal). Implement proc logicsynth_wlm_multibit_plan {log_summary} that takes a Tcl dict string and returns a dict (via dict create) with keys root_cause, wlm_can_merge, enable_script, expected_mb_widths, needs_topo_for_wide_bus. Follow the diagnosis rules precisely:
+
+- mb_lib_loaded==0 -> root_cause mentions "library not loaded"; wlm_can_merge=0
+- has_spg==1 -> topographical mode; root_cause mentions topographical; wlm_can_merge=0
+- mb_lib_loaded==1 AND has_spg==0 AND banking_gated_behind_topo==1 AND num_mb_ff==0 -> root_cause must mention BOTH "topographical" AND "identify_register_banks" (placement-aware banking skipped because gated behind topo mode in WLM run); must NOT say library not loaded/missing; wlm_can_merge=1; enable_script must contain hdlin_infer_multibit, set_multibit_options, compile_ultra, report_multibit_banking; must NOT contain identify_register_banks or -spg
+- expected_mb_widths="2 4"; needs_topo_for_wide_bus="1"
+
+log_summary keys: mb_lib_loaded, has_spg, banking_gated_behind_topo, num_candidate_banks, num_single_bit_ff, num_mb_ff, banking_pct, compile_cmd. Parse with [dict create {*}$log_summary]. Real scenario: DC NXT WLM synthesis, MB lib loaded, 1128 candidate banks, 15307 single-bit FF, 0 MB FF, banking 0% because flow guards identify_register_banks with shell_is_in_topographical_mode and WLM never enters topo.

@@ -1,0 +1,13 @@
+\begin{abstract}
+The growing complexity of electronic systems demands efficient design flows, yet EDA scripting remains a bottleneck: proprietary APIs are sparsely documented, and errors often appear as silent failures or cryptic exceptions. Hand-crafted knowledge helps but is difficult to maintain as toolchains evolve. We present \textbf{ZhuLong-SE (Self-Evolution)}, an execution-grounded LLM agent that learns reusable knowledge from prior task traces. Building on ZhuLong~\cite{liu2026zhulong}, it enhances the task-level harness with API retrieval, documentation responses, isolated sandbox execution, and static checking, then adds governed cross-task self-evolution.
+% The checker raises no flags on the 158 benchmark ground-truth solutions, providing a sanity check on this reference-code set.
+Beyond solving individual tasks, ZhuLong-SE distills past execution traces into a three-tier memory store governed by ground-truth anchoring, disconfirmation filtering, held-out rollback, and anti-leakage retrieval. On the 158-task EDA-Eval-PyAether benchmark, the full task-level harness, with self-evolution disabled, achieves 92.4\% pass@1 and outperforms ZhuLong on all five tested LLM backbones. On a harder instance-disjoint test set, self-evolution from the bare configuration surpasses a human-crafted-experience baseline by 2.5 percentage points (80.0\% vs.\ 77.5\% pass@1).
+% Controlled ablations characterize the observed effects of key harness components and the write- and read-side mechanisms identifiable under their respective experimental settings. These results provide evidence that governed experience reuse can modestly surpass human-crafted experience in EDA scripting.
+% 电子系统复杂性的日益增长要求高效的系统级设计流程，然而EDA工具的脚本编写仍然是一个关键瓶颈：专有API文档稀疏，错误仅表现为静默失败或晦涩的运行时异常，使得试错效率低下且难以扩展。手工领域知识虽有帮助，但无法跟上快速演进的工具链。我们提出了\textbf{ZhuLong-SE（Self-Evolution）}——一个能够从历史任务执行轨迹中学习的基于执行反馈的LLM智能体。ZhuLong-SE在ZhuLong~\cite{liu2026zhulong}任务级框架之上增强了API检索与文档响应、改进了隔离沙箱执行和静态检查，随后增加了受治理的跨任务自进化。检查器未标记158个基准ground-truth解的任何问题，对该参考代码集进行了健全性检查。
+% 在解决单个任务之外，ZhuLong-SE将过往执行轨迹蒸馏到三层记忆存储中，由真值锚定、证伪过滤、留出回滚和反泄漏检索加以治理。在包含158个任务的EDA-Eval-PyAether基准上，禁用自进化的完整任务级框架达到92.4\%的pass@1，并在五个受测LLM基座上均优于ZhuLong。在更难的实例不相交测试集上，从Bare配置开始的自进化超越了人工经验基线2.5个百分点（80.0\%对比77.5\%的pass@1）。受控消融刻画了关键框架组件以及写侧和读侧机制在各自实验设置下可识别的作用。这些结果提供了证据表明，受治理的经验复用能够适度超越EDA脚本编写中的人工经验。
+\end{abstract}
+
+\begin{IEEEkeywords}
+System-level design methodologies, design knowledge reuse, LLM agents, EDA scripting, continual learning, self-evolution, memory reliability, PyAether.
+% 系统级设计方法论，设计知识复用，LLM智能体，EDA脚本编写，持续学习，自进化，记忆可靠性，PyAether
+\end{IEEEkeywords}

@@ -1,0 +1,115 @@
+Implemented and verified `layout_drc_audit` on the Empyrean WaveView Tcl sandbox.
+
+## Implementation
+
+```tcl
+proc layout_drc_audit {drc_text} {
+    set has_summary 0
+    set summary_total "" ; set summary_errors ""
+    set summary_warnings "" ; set summary_checked ""
+
+    array set R_layer {} ; array set R_count {}
+    array set R_sev {}   ; array set R_times {}
+
+    foreach line [split $drc_text [format %c 10]] {
+        set line [string trim $line]
+        if {$line eq ""} { continue }
+        if {[string index $line 0] eq "#"} { continue }
+
+        set toks [regexp -all -inline {[^[:space:]]+} $line]
+        if {[llength $toks] == 0} { continue }
+        set head [lindex $toks 0]
+
+        if {$head eq "RULE"} {
+            set name [lindex $toks 1]
+            set layer "" ; set count 0 ; set sev ""
+            foreach t [lrange $toks 2 end] {
+                if      {[string match "layer=*"    $t]} {set layer [string range $t 6 end]}
+                elseif  {[string match "count=*"    $t]} {set count [string range $t 6 end]}
+                elseif  {[string match "severity=*" $t]} {set sev   [string range $t 9 end]}
+            }
+            # last occurrence wins (overwrite); track how many times seen
+            set R_layer($name) $layer
+            set R_count($name) $count
+            set R_sev($name)   [string tolower $sev]
+            if {[info exists R_times($name)]} {incr R_times($name)} else {set R_times($name) 1}
+
+        } elseif {$head eq "SUMMARY"} {
+            set has_summary 1
+            foreach t [lrange $toks 1 end] {
+                if      {[string match "total=*"    $t]} {set summary_total    [string range $t 6 end]}
+                elseif  {[string match "errors=*"   $t]} {set summary_errors   [string range $t 7 end]}
+                elseif  {[string match "warnings=*" $t]} {set summary_warnings [string range $t 9 end]}
+                elseif  {[string match "checked=*"  $t]} {set summary_checked  [string range $t 8 end]}
+            }
+        }
+    }
+
+    set total_violations 0 ; set error_count 0 ; set warning_count 0
+    set all_layers {} ; array set layer_err {}
+
+    foreach name [array names R_times] {
+        set c $R_count($name)
+        set total_violations [expr {$total_violations + $c}]
+        if {$R_sev($name) eq "err"} {
+            set error_count [expr {$error_count + $c}]
+            set l $R_layer($name)
+            if {[info exists layer_err($l)]} {
+                set layer_err($l) [expr {$layer_err($l) + $c}]
+            } else { set layer_err($l) $c }
+        } elseif {$R_sev($name) eq "warn"} {
+            set warning_count [expr {$warning_count + $c}]
+        }
+        lappend all_layers $R_layer($name)
+    }
+
+    set total_rules   [array size R_times]
+    set checked_rules $total_rules
+
+    set dupnames {}
+    foreach name [array names R_times] {
+        if {$R_times($name) > 1} { lappend dupnames $name }
+    }
+    set dup_sorted [lsort -dictionary $dupnames]
+
+    set per_layer_errors {}
+    foreach l [lsort -dictionary [array names layer_err]] {
+        if {$layer_err($l) > 0} { lappend per_layer_errors $l $layer_err($l) }
+    }
+
+    set layers_used [lsort -dictionary -unique $all_layers]
+
+    set mm {}
+    if {$has_summary} {
+        if {$summary_total    ne "" && $summary_total    ne $total_violations} {lappend mm "total"}
+        if {$summary_errors   ne "" && $summary_errors   ne $error_count}      {lappend mm "errors"}
+        if {$summary_warnings ne "" && $summary_warnings ne $warning_count}    {lappend mm "warnings"}
+        if {$summary_checked  ne "" && $summary_checked  ne $checked_rules}   {lappend mm "checked"}
+    }
+    set mm_sorted [lsort -dictionary $mm]
+
+    if      {$error_count > 0}   { set verdict "FAIL" }
+    elseif  {$warning_count > 0} { set verdict "WARN" }
+    elseif  {!$has_summary}      { set verdict "INCOMPLETE" }
+    else                          { set verdict "PASS" }
+
+    return [dict create \
+        total_rules $total_rules total_violations $total_violations \
+        error_count $error_count warning_count $warning_count \
+        checked_rules $checked_rules duplicate_rule_names $dup_sorted \
+        per_layer_errors $per_layer_errors mismatched_summary $mm_sorted \
+        layers_used $layers_used verdict $verdict]
+}
+```
+
+## Verification results
+
+- All 13 checker cases (A–M) passed: severity case-insensitivity, last-wins dedup, duplicate-name reporting, zero-count checked rules, missing-SUMMARY → INCOMPLETE, per-layer error dict (err-only, sorted), mismatched-summary field detection (absent fields ignored), verdict priority, and sorted `layers_used`.
+- Sandbox output: `RESULT:ALL_ASSERTS_PASS`
+- `DESIGN_FLOW_VERDICT=PASS`
+- Session workdir cleaned up (`cleaned: true`, `keep=false`).
+
+DESIGN_FLOW_VERDICT=PASS
+RESULT:ALL_ASSERTS_PASS
+
+PASS (the implementation passed the sandbox verification).

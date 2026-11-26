@@ -1,0 +1,21 @@
+{
+  "best": {
+    "W": 12.0,
+    "L": 0.2,
+    "vgs": 0.7,
+    "Iq_uA": 32.92644,
+    "GBW_MHz": 64.45762,
+    "vds_sat_mV": 150.0,
+    "feasible": 1
+  },
+  "feasible_count": 4,
+  "all_count": 48,
+  "spec_echo": {
+    "device": "pmos",
+    "target_gbw_MHz": 40,
+    "load_cap_pF": 1.0,
+    "iq_budget_uA": 150,
+    "vds_sat_max_mV": 300,
+    "vdd": 1.5
+  }
+}

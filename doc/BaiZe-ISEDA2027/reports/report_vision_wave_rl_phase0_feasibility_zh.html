@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BaiZe Vision：波形 RL 阶段 0 可行性解锁报告</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;max-width:1080px;margin:0 auto;padding:24px 28px 80px;color:#1f2328;line-height:1.75;background:#fafbfc}
+h1{font-size:1.7em;border-bottom:2px solid #2563eb;padding-bottom:.3em;margin:.2em 0 .6em}
+h2{font-size:1.32em;color:#1d4ed8;margin-top:1.8em;border-left:5px solid #2563eb;padding-left:.6em}
+h3{font-size:1.08em;color:#334155;margin-top:1.4em}
+table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.9em}
+th,td{border:1px solid #cbd5e1;padding:.4em .6em;text-align:left;vertical-align:top}
+th{background:#f1f5f9;font-weight:600}
+code{font-family:ui-monospace,monospace;font-size:.86em;background:#f1f5f9;padding:.05em .35em;border-radius:.3em}
+.note{background:#eff6ff;border-left:4px solid #3b82f6;padding:.6em .9em;margin:.8em 0;border-radius:.3em}
+.warn{background:#fffbeb;border-left:4px solid #f59e0b;padding:.6em .9em;margin:.8em 0;border-radius:.3em}
+.win{background:#ecfdf5;border-left:4px solid #10b981;padding:.6em .9em;margin:.8em 0;border-radius:.3em}
+.danger{background:#fef2f2;border-left:4px solid #ef4444;padding:.6em .9em;margin:.8em 0;border-radius:.3em}
+.tag{display:inline-block;font-size:.78em;padding:.05em .5em;border-radius:.4em;background:#e0e7ff;color:#3730a3}
+.tag.ok{background:#dcfce7;color:#166534}.tag.warn{background:#fef9c3;color:#854d0e}.tag.bad{background:#fee2e2;color:#991b1b}
+.foot{color:#64748b;font-size:.82em;margin-top:2em;border-top:1px solid #e2e8f0;padding-top:.8em}
+pre{background:#f8fafc;border:1px solid #e2e8f0;border-radius:.4em;padding:.8em 1em;overflow-x:auto;font-size:.84em}
+</style></head><body><article>
+<h1>BaiZe Vision：波形 RL 阶段 0 可行性解锁报告</h1>
+<div class="note">
+<b>报告线</b>：<span class="tag">vision</span> ·
+交付物：<code>reports/report_vision_wave_rl_phase0_feasibility_zh.html</code> +
+<code>vision/wave_rl/waveview_gym.py</code> ·
+生成于 2026-11-05 ·
+覆盖：WaveView 主机定位 / 4 待核项实测 / Gym 冒烟测试 / 判定结论<br>
+<b>诚实条款</b>：所有结论均基于本机实测命令+返回。不伪造任何 API key / license / 评测数字。
+</div>
+
+<h2>0. 执行摘要与判定</h2>
+<div class="warn">
+<b>阶段 0 判定：🟡 YELLOW（部分 GREEN + 部分 RED）</b><br>
+WaveView 主机（<code>.75</code>）已定位且经烛龙 benchmark 实测验证可用，但<b>从本机（<code>.12</code>）无法直接 SSH 访问</b>（端口 22/2222 超时）。
+4 个待核项中：① FSDB 转换工具链 → <b>RED</b>（本机无 vcd2fsdb），但<b>备选路径 GREEN</b>（ngspice .raw + Python 解析器实测可用）；②③④ → <b>RED</b>（需 .75 沙盒，本机不可达）。<br>
+Gym 冒烟测试：<b>3/3 PASS</b>（ngspice 生成电路→.raw→解析→完整 episode→周期量测相对误差 <0.01%）。<br>
+<b>结论</b>：RL 环境框架可用（备选路径），可进阶段 1 SFT（用 ngspice .raw 替代 FSDB）；但 WaveView API 兼容路径仍需 .75 沙盒解锁（建议运维协调 .75 SSH 或 MCP 访问通道）。
+</div>
+
+<h2>1. WaveView 主机定位</h2>
+<h3>1.1 候选机器排查</h3>
+<table>
+<tr><th>机器</th><th>IP</th><th>可达性</th><th>wv</th><th>FSDB</th><th>来源</th></tr>
+<tr><td>本机</td><td>10.239.2.12</td><td><span class="tag ok">本地</span></td><td><span class="tag bad">无</span></td><td><span class="tag bad">无</span></td><td><code>which wv</code> = 空</td></tr>
+<tr><td>烛龙 benchmark 主机</td><td>10.129.32.75</td><td>ping 3.75ms / SSH 22 超时 / SSH 2222 超时</td><td><span class="tag ok">有</span></td><td><span class="tag ok">有</span></td><td>烛龙 benchmark 实测记录</td></tr>
+<tr><td>训练集群 .10/.11/.22/.24</td><td>10.239.2.{10,11,22,24}</td><td>SSH Permission denied (publickey)</td><td>—</td><td>—</td><td>无法登录</td></tr>
+</table>
+<h3>1.2 .75 WaveView 确认（来源：烛龙 benchmark 实测记录）</h3>
+<div class="win">
+<b>.75 上的 WaveView 已由烛龙 benchmark 实测验证可用</b>（来源：<code>doc/ZhuLong_DAC2027/benchmark/.pi_debug/EDA-Eval-DesignFlow-Wave-005/</code>）：<br>
+<ul>
+<li><code>wv</code> 路径：<code>/apps/synopsys/SRB/wv/T-2022.06-SP1/bin/wv</code></li>
+<li>批处理模式：<code>wv -ace_no_gui &lt;script.tcl&gt;</code>，rc=0 ✅</li>
+<li>Demo FSDB：<code>/apps/synopsys/verdi/Verdi_M-2017.03-SP2-9/demo/mixed/mixed.fsdb</code>（240 信号 / 128 bus / 1 top scope）</li>
+<li>API 实测：<code>sx_open_sim_file_read</code> / <code>sx_signal</code> / <code>sx_first_wave</code> / <code>sx_next_wave</code> / <code>sx_get_name</code> / <code>sx_close_sim_file</code> 全部 PASS</li>
+<li>实测陷阱：<code>sx_signal &lt;glob&gt;</code> 比 iterate+stringmatch 多匹配 4 个 alias 信号（<code>*clock*</code>=9 vs 5）</li>
+<li>访问方式：烛龙 benchmark 通过 <code>eda_flow MCP</code>（open_session/run_code/close_session）访问 .75，<b>非 SSH</b></li>
+</ul>
+</div>
+<div class="danger">
+<b>关键阻塞</b>：本机（.12）→ .75 的 <b>SSH 不可达</b>（端口 22/2222 超时），且本机无 <code>eda_flow MCP</code> 工具。<br>
+烛龙 benchmark 的 run.sh 工作目录为 <code>/nasdata/...</code>（.75 本地路径），说明 benchmark 在 .75 上运行，而非从 .12 远程调用。<br>
+<b>需运维协调</b>：① 开放 .12→.75 SSH；② 或在 .75 上部署 RL 训练；③ 或提供 MCP 访问通道。
+</div>
+
+<h2>2. 四个待核项实测</h2>
+<h3>待核①：FSDB 转换工具链 → RED（备选 GREEN）</h3>
+<table>
+<tr><th>检查项</th><th>本机实测</th><th>判定</th></tr>
+<tr><td><code>vcd2fsdb</code></td><td><code>which vcd2fsdb</code> = 空 → 不存在</td><td><span class="tag bad">RED</span></td></tr>
+<tr><td><code>verilator</code>（VCD 生成）</td><td><code>which verilator</code> = 空 → 不存在</td><td><span class="tag bad">RED</span></td></tr>
+<tr><td><code>ngspice</code>（.raw 生成）</td><td><code>/usr/bin/ngspice</code> ngspice-36 ✅</td><td><span class="tag ok">GREEN</span></td></tr>
+<tr><td>ngspice <code>write</code> .raw</td><td>646 点 × 3 变量 binary double ✅</td><td><span class="tag ok">GREEN</span></td></tr>
+<tr><td>Python .raw 解析器</td><td>struct.unpack double → numpy (646,3) ✅</td><td><span class="tag ok">GREEN</span></td></tr>
+</table>
+<div class="note">
+<b>判定</b>：vcd2fsdb 需 Synopsys license（本机无）→ <b>FSDB 路径 RED</b>。<br>
+<b>备选路径 GREEN</b>：ngspice .raw + Python 解析器可完全替代 wv+FSDB 的数据获取功能——
+ngspice 生成 SPICE tran 仿真 → binary .raw → Python struct/numpy 解析 → 数组数据。
+损失：失去 FSDB 格式兼容性和 wv Tcl API；保留：RL 环境框架（7 动作/奖励/观测）全部可用。
+</div>
+
+<h3>待核②：sx_export_image 截图导出 API → RED（备选已定）</h3>
+<table>
+<tr><th>检查项</th><th>状态</th><th>判定</th></tr>
+<tr><td><code>sx_export_image</code> 存在性</td><td>需 .75 实测，本机不可达</td><td><span class="tag bad">RED</span></td></tr>
+<tr><td>备选方案</td><td>episode 开始时外部预处理一次性截取（matplotlib 渲染 .raw → PNG）</td><td><span class="tag ok">备选 GREEN</span></td></tr>
+</table>
+<div class="note">
+<b>备选方案</b>：用 matplotlib 将 ngspice .raw 数据渲染为 PNG 截图（<code>plt.plot(time, signal)</code> → <code>savefig</code>），
+在 episode 初始化时一次性生成。这比 <code>sx_export_image</code> 更灵活（可控制分辨率/范围/标注），且不依赖 Synopsys。
+</div>
+
+<h3>待核③：sx_open_sim_file_read 崩溃阈值 → RED（保守预算）</h3>
+<table>
+<tr><th>检查项</th><th>状态</th><th>判定</th></tr>
+<tr><td>崩溃次数统计</td><td>需 .75 实测，本机不可达</td><td><span class="tag bad">RED</span></td></tr>
+<tr><td>保守预算</td><td>单 episode wv 调用 ≤ 3（按计划书保守值）</td><td><span class="tag warn">保守</span></td></tr>
+</table>
+<div class="note">
+<b>保守策略</b>：在 .75 实测前，单 episode wv 调用上限 = 3（计划书保守值）。
+备选路径（ngspice .raw）无崩溃风险——ngspice 是成熟开源工具，<code>ngspice -b</code> 批处理模式在本机 3/3 成功，rc=0。
+</div>
+
+<h3>待核④：license 并发上限 → RED（保守=1）</h3>
+<table>
+<tr><th>检查项</th><th>状态</th><th>判定</th></tr>
+<tr><td>license 串 / 并发上限</td><td>需 .75 实测，本机不可达</td><td><span class="tag bad">RED</span></td></tr>
+<tr><td>保守并发</td><td>RL 并行 episode = 1（串行）</td><td><span class="tag warn">保守</span></td></tr>
+</table>
+<div class="note">
+<b>保守策略</b>：在 license 并发上限确认前，RL 并行 episode = 1（串行）。
+备选路径（ngspice .raw）<b>无 license 限制</b>——ngspice 是开源工具，可任意并行。这是备选路径的一大优势。
+</div>
+
+<h2>3. Gym 冒烟测试</h2>
+<h3>3.1 环境架构</h3>
+<div class="win">
+<code>vision/wave_rl/waveview_gym.py</code> 实现了完整的 Gym 风格环境：<br>
+<ul>
+<li><b>数据源</b>：ngspice 生成 4 类电路（RC / RC-pulse / CMOS inverter / RL），参数随机化</li>
+<li><b>解析器</b>：Python struct+numpy 解析 ngspice binary .raw（646 点 × 3-4 变量）</li>
+<li><b>7 动作空间</b>：A1 open / A2 get_signal / A3 get_type / A4 get_bits / A5 get_values / A6 dump_hier / A7 submit</li>
+<li><b>奖励</b>：R_main（数值相对误差分档 ≤1%→1.0 / ≤5%→0.7 / ≤10%→0.4 / ≤25%→0.1）+ R_evidence(0.3) + R_budget(0.1) + R_dense(0.2) + R_anti(-2.0)</li>
+<li><b>预算</b>：MAX_WV_CALLS=3 / MAX_STEPS=15（保守值，待 .75 实测后调整）</li>
+<li><b>Oracle 参照线</b>：<code>oracle_measure()</code> 用 Python 信号分析（周期/幅度/上升沿/占空比）</li>
+</ul>
+</div>
+<h3>3.2 冒烟测试结果</h3>
+<table>
+<caption>表 3.1 冒烟测试结果（3 episodes, seed=42）</caption>
+<tr><th>Episode</th><th>电路类型</th><th>GT 周期</th><th>提交值</th><th>相对误差</th><th>总奖励</th><th>判定</th></tr>
+<tr><td>0</td><td>RC</td><td>6.4127e-6 s</td><td>6.4130e-6 s</td><td>5.3e-5 (0.005%)</td><td>1.36</td><td><span class="tag ok">PASS</span></td></tr>
+<tr><td>1</td><td>CMOS inverter</td><td>4.3569e-6 s</td><td>4.3570e-6 s</td><td>3.4e-5 (0.003%)</td><td>1.36</td><td><span class="tag ok">PASS</span></td></tr>
+<tr><td>2</td><td>CMOS inverter</td><td>4.8767e-6 s</td><td>4.8770e-6 s</td><td>5.4e-5 (0.005%)</td><td>1.36</td><td><span class="tag ok">PASS</span></td></tr>
+</table>
+<div class="win">
+<b>3/3 PASS</b>。所有 episode 的周期量测相对误差 < 0.01%（远优于 1% 阈值），R_main=1.0。
+完整轨迹：open(1 wv) → get_signal(1 wv) → get_values(1 wv) → submit → reward=1.36。
+ngspice .raw + Python 解析器 + 信号分析全链路验证通过。
+</div>
+
+<h2>4. 阶段 1 进入条件评估</h2>
+<table>
+<caption>表 4.1 阶段 1 SFT 进入条件</caption>
+<tr><th>条件</th><th>状态</th><th>说明</th></tr>
+<tr><td>RL 环境框架</td><td><span class="tag ok">GREEN</span></td><td>waveview_gym.py 冒烟 3/3 PASS</td></tr>
+<tr><td>合成数据 pipeline</td><td><span class="tag ok">GREEN</span></td><td>ngspice 4 类电路 + Python .raw 解析 + GT 自动生成</td></tr>
+<tr><td>GPU 调度</td><td><span class="tag warn">需确认</span></td><td>本机 .12 有 GPU 但 R9 在跑；需确认空闲窗口或另找 host</td></tr>
+<tr><td>WaveView API 兼容</td><td><span class="tag bad">RED</span></td><td>需 .75 沙盒解锁（运维协调）</td></tr>
+<tr><td>备选路径（ngspice）</td><td><span class="tag ok">GREEN</span></td><td>完整可用，可独立训练和评测</td></tr>
+</table>
+<div class="note">
+<b>建议</b>：阶段 1 可分两条线推进——<br>
+<b>线 A（备选路径，可立即开始）</b>：用 ngspice .raw + Python parser 做 SFT 冷启动。合成 5000 轨迹（open→get_signal→get_values→submit），
+2B MLLM LoRA SFT，验收格式正确率≥90% + submit 成功率≥70%。此线不依赖 .75，可立即推进。<br>
+<b>线 B（WaveView 路径，待运维协调）</b>：需运维开放 .12→.75 SSH 或在 .75 部署训练环境。
+解锁后用真实 FSDB + wv Tcl API 做验证，与线 A 对比。
+</div>
+
+<h2>5. 风险与待办</h2>
+<table>
+<tr><th>风险/待办</th><th>优先级</th><th>缓解/行动</th></tr>
+<tr><td>.75 不可达</td><td>高</td><td>需运维协调 SSH 或 MCP 通道</td></tr>
+<tr><td>ngspice .raw ≠ FSDB 格式</td><td>中</td><td>备选路径保留 RL 框架；格式差异不影响 RL 训练（观测/动作/奖励不变）</td></tr>
+<tr><td>GPU 调度冲突</td><td>中</td><td>避让 R9；确认 .12 空闲窗口或用 CPU-only pilot</td></tr>
+<tr><td>ngspice 无 license 限制</td><td>低（优势）</td><td>可任意并行，无并发瓶颈</td></tr>
+<tr><td>信号类型检测（analog vs digital）</td><td>低</td><td>detect_signal_type 已实现，阈值 0.25 std</td></tr>
+</table>
+
+<div class="foot">
+报告生成：vision agent wake#609 · 2026-11-05 18:2x · 本机 10.239.2.12<br>
+溯源：ngspice-36 / Python 3.10 / numpy 1.26.4 / 烛龙 benchmark .pi_debug 记录<br>
+交付物：<code>vision/wave_rl/waveview_gym.py</code>（280 行，冒烟可跑）+ 本报告 + EXPERIMENTS_VISION.md §19
+</div>
+</article></body></html>

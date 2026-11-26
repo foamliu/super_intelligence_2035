@@ -1,0 +1,553 @@
+{
+  "round": "R134",
+  "date": "2026-11-10",
+  "model": {
+    "name": "MiniCPM5-2B / BaiZe-2B (surrogate)",
+    "params_B": 2.0,
+    "hidden_dim": 2048,
+    "num_layers": 42,
+    "num_heads": 16,
+    "num_kv_heads": 2,
+    "head_dim": 128,
+    "intermediate_size": 6144,
+    "vocab_size": 130560,
+    "dtype_bytes": 2,
+    "note": "surrogate analysis, not transferable to BaiZe production"
+  },
+  "gpu": {
+    "name": "NVIDIA A40",
+    "total_memory_GiB": 44.93,
+    "usable_memory_GiB": 42.0,
+    "bandwidth_Gbps": 696.0,
+    "bf16_tflops": 37.4,
+    "num_gpus": 4
+  },
+  "lora_configs": [
+    {
+      "rank": 8,
+      "alpha": 16,
+      "target_strategy": "attn_only",
+      "modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj"
+      ],
+      "lora_params_M": 4.3,
+      "param_pct": 0.215,
+      "quality_estimate": "format/style learning; may miss deep knowledge",
+      "recommended": false
+    },
+    {
+      "rank": 8,
+      "alpha": 16,
+      "target_strategy": "attn_mlp",
+      "modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "lora_params_M": 12.6,
+      "param_pct": 0.628,
+      "quality_estimate": "format/style learning; may miss deep knowledge",
+      "recommended": false
+    },
+    {
+      "rank": 8,
+      "alpha": 16,
+      "target_strategy": "mlp_only",
+      "modules": [
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "lora_params_M": 8.3,
+      "param_pct": 0.413,
+      "quality_estimate": "format/style learning; may miss deep knowledge",
+      "recommended": false
+    },
+    {
+      "rank": 16,
+      "alpha": 32,
+      "target_strategy": "attn_only",
+      "modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj"
+      ],
+      "lora_params_M": 8.6,
+      "param_pct": 0.43,
+      "quality_estimate": "format/style learning; may miss deep knowledge",
+      "recommended": false
+    },
+    {
+      "rank": 16,
+      "alpha": 32,
+      "target_strategy": "attn_mlp",
+      "modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "lora_params_M": 25.1,
+      "param_pct": 1.256,
+      "quality_estimate": "format/style learning; may miss deep knowledge",
+      "recommended": false
+    },
+    {
+      "rank": 16,
+      "alpha": 32,
+      "target_strategy": "mlp_only",
+      "modules": [
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "lora_params_M": 16.5,
+      "param_pct": 0.826,
+      "quality_estimate": "format/style learning; may miss deep knowledge",
+      "recommended": false
+    },
+    {
+      "rank": 32,
+      "alpha": 64,
+      "target_strategy": "attn_only",
+      "modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj"
+      ],
+      "lora_params_M": 17.2,
+      "param_pct": 0.86,
+      "quality_estimate": "balanced; good for domain knowledge + tool format",
+      "recommended": false
+    },
+    {
+      "rank": 32,
+      "alpha": 64,
+      "target_strategy": "attn_mlp",
+      "modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "lora_params_M": 50.2,
+      "param_pct": 2.512,
+      "quality_estimate": "balanced; good for domain knowledge + tool format",
+      "recommended": false
+    },
+    {
+      "rank": 32,
+      "alpha": 64,
+      "target_strategy": "mlp_only",
+      "modules": [
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "lora_params_M": 33.0,
+      "param_pct": 1.652,
+      "quality_estimate": "balanced; good for domain knowledge + tool format",
+      "recommended": false
+    },
+    {
+      "rank": 64,
+      "alpha": 128,
+      "target_strategy": "attn_only",
+      "modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj"
+      ],
+      "lora_params_M": 34.4,
+      "param_pct": 1.72,
+      "quality_estimate": "balanced; good for domain knowledge + tool format",
+      "recommended": false
+    },
+    {
+      "rank": 64,
+      "alpha": 128,
+      "target_strategy": "attn_mlp",
+      "modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "lora_params_M": 100.5,
+      "param_pct": 5.023,
+      "quality_estimate": "balanced; good for domain knowledge + tool format",
+      "recommended": true
+    },
+    {
+      "rank": 64,
+      "alpha": 128,
+      "target_strategy": "mlp_only",
+      "modules": [
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "lora_params_M": 66.1,
+      "param_pct": 3.303,
+      "quality_estimate": "balanced; good for domain knowledge + tool format",
+      "recommended": false
+    },
+    {
+      "rank": 128,
+      "alpha": 256,
+      "target_strategy": "attn_only",
+      "modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj"
+      ],
+      "lora_params_M": 68.8,
+      "param_pct": 3.441,
+      "quality_estimate": "approaching full FT; diminishing returns",
+      "recommended": false
+    },
+    {
+      "rank": 128,
+      "alpha": 256,
+      "target_strategy": "attn_mlp",
+      "modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "lora_params_M": 200.9,
+      "param_pct": 10.047,
+      "quality_estimate": "approaching full FT; diminishing returns",
+      "recommended": false
+    },
+    {
+      "rank": 128,
+      "alpha": 256,
+      "target_strategy": "mlp_only",
+      "modules": [
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "lora_params_M": 132.1,
+      "param_pct": 6.606,
+      "quality_estimate": "approaching full FT; diminishing returns",
+      "recommended": false
+    }
+  ],
+  "ctx_length_tradeoffs": [
+    {
+      "ctx_len": 4096,
+      "sft_pair_coverage": 0.8,
+      "truncation_note": "20% of multi-turn trajectories truncated; loses error-recovery tails",
+      "full_ft_max_mbs": 64,
+      "full_ft_total_GiB": 33.27,
+      "full_ft_fits": true,
+      "lora_max_mbs": 64,
+      "lora_total_GiB": 30.79,
+      "lora_fits": true,
+      "throughput_tokens_per_sec": 2078.0,
+      "seconds_per_step": 63.1,
+      "steps_per_hour": 57.1,
+      "gbs": 32,
+      "tokens_per_step": 131072
+    },
+    {
+      "ctx_len": 8192,
+      "sft_pair_coverage": 0.95,
+      "truncation_note": "5% truncated; acceptable for most agentic trajectories",
+      "full_ft_max_mbs": 42,
+      "full_ft_total_GiB": 41.32,
+      "full_ft_fits": true,
+      "lora_max_mbs": 45,
+      "lora_total_GiB": 41.26,
+      "lora_fits": true,
+      "throughput_tokens_per_sec": 2078.0,
+      "seconds_per_step": 126.2,
+      "steps_per_hour": 28.5,
+      "gbs": 32,
+      "tokens_per_step": 262144
+    },
+    {
+      "ctx_len": 16384,
+      "sft_pair_coverage": 0.99,
+      "truncation_note": "1% truncated; near-complete coverage but 4× memory vs 4K",
+      "full_ft_max_mbs": 21,
+      "full_ft_total_GiB": 41.32,
+      "full_ft_fits": true,
+      "lora_max_mbs": 22,
+      "lora_total_GiB": 40.46,
+      "lora_fits": true,
+      "throughput_tokens_per_sec": 2078.0,
+      "seconds_per_step": 252.3,
+      "steps_per_hour": 14.3,
+      "gbs": 32,
+      "tokens_per_step": 524288
+    }
+  ],
+  "ablation_design": {
+    "factors": {
+      "data_mix": {
+        "levels": [
+          "agent_heavy",
+          "balanced",
+          "domain_heavy"
+        ],
+        "description": "R64 defined 5 mixes; select 3 most promising",
+        "main_effect_hypothesis": "agent_heavy→M1 faster; domain_heavy→M2 better"
+      },
+      "ft_method": {
+        "levels": [
+          "lora_r64",
+          "full_ft"
+        ],
+        "description": "LoRA r=64 attn+mlp vs full fine-tuning",
+        "main_effect_hypothesis": "full FT ≥ LoRA by 2-5pp; LoRA 2× faster"
+      },
+      "ctx_len": {
+        "levels": [
+          4096,
+          8192,
+          16384
+        ],
+        "description": "Context window for SFT training",
+        "main_effect_hypothesis": "8K optimal; 4K loses recovery; 16K wastes memory"
+      }
+    },
+    "full_factorial_runs": 18,
+    "fractional_runs": 8,
+    "reduction_pct": 55.6,
+    "runs": [
+      {
+        "run_id": "A1",
+        "data_mix": "agent_heavy",
+        "ft_method": "lora_r64",
+        "ctx_len": 4096,
+        "sft_hours": 1.5,
+        "eval_hours": 0.7,
+        "total_hours": 2.2,
+        "rationale": "Cheapest run: LoRA+short ctx+agent focus→M1 quick check",
+        "gpu_hours": 8.8
+      },
+      {
+        "run_id": "A2",
+        "data_mix": "agent_heavy",
+        "ft_method": "full_ft",
+        "ctx_len": 8192,
+        "sft_hours": 4.0,
+        "eval_hours": 0.7,
+        "total_hours": 4.7,
+        "rationale": "Main candidate for M1: full FT+8K+agent heavy",
+        "gpu_hours": 18.8
+      },
+      {
+        "run_id": "A3",
+        "data_mix": "balanced",
+        "ft_method": "lora_r64",
+        "ctx_len": 8192,
+        "sft_hours": 2.0,
+        "eval_hours": 0.7,
+        "total_hours": 2.7,
+        "rationale": "LoRA+8K+balanced→LoRA quality ceiling",
+        "gpu_hours": 10.8
+      },
+      {
+        "run_id": "A4",
+        "data_mix": "balanced",
+        "ft_method": "full_ft",
+        "ctx_len": 8192,
+        "sft_hours": 4.0,
+        "eval_hours": 0.7,
+        "total_hours": 4.7,
+        "rationale": "Full FT+8K+balanced→main SFT candidate for M1→M2",
+        "gpu_hours": 18.8
+      },
+      {
+        "run_id": "A5",
+        "data_mix": "domain_heavy",
+        "ft_method": "full_ft",
+        "ctx_len": 8192,
+        "sft_hours": 4.0,
+        "eval_hours": 0.7,
+        "total_hours": 4.7,
+        "rationale": "Full FT+8K+domain heavy→M2 optimization",
+        "gpu_hours": 18.8
+      },
+      {
+        "run_id": "A6",
+        "data_mix": "domain_heavy",
+        "ft_method": "lora_r64",
+        "ctx_len": 16384,
+        "sft_hours": 3.0,
+        "eval_hours": 0.7,
+        "total_hours": 3.7,
+        "rationale": "LoRA+16K+domain heavy→long trajectory domain test",
+        "gpu_hours": 14.8
+      },
+      {
+        "run_id": "A7",
+        "data_mix": "balanced",
+        "ft_method": "full_ft",
+        "ctx_len": 4096,
+        "sft_hours": 3.0,
+        "eval_hours": 0.7,
+        "total_hours": 3.7,
+        "rationale": "Full FT+4K+balanced→ctx length ablation anchor",
+        "gpu_hours": 14.8
+      },
+      {
+        "run_id": "A8",
+        "data_mix": "domain_heavy",
+        "ft_method": "full_ft",
+        "ctx_len": 16384,
+        "sft_hours": 6.0,
+        "eval_hours": 0.7,
+        "total_hours": 6.7,
+        "rationale": "Full FT+16K+domain heavy→max quality ceiling test",
+        "gpu_hours": 26.8
+      }
+    ],
+    "total_wallclock_hours": 33.1,
+    "total_gpu_hours": 132.4,
+    "design_type": "Strategic fractional (main effects + key interactions)",
+    "statistical_note": "Main effects estimable; 2-factor interactions aliased. Use R133 McNemar paired test between run pairs."
+  },
+  "gpu_budget": {
+    "available_gpu_hours": 2688,
+    "allocation": {
+      "main_training": {
+        "gpu_hours": 194,
+        "pct": 7.2,
+        "description": "Annealing(32)+SFT(48)+RL(96)+eval(3)+baseline(3)+reward_abl(12)"
+      },
+      "sft_ablation": {
+        "gpu_hours": 132.4,
+        "pct": 4.9,
+        "description": "8 fractional factorial SFT runs",
+        "wallclock_hours": 33.1
+      },
+      "contingency": {
+        "gpu_hours": 65.0,
+        "pct": 2.4,
+        "description": "20% buffer for re-runs, debugging, failed runs"
+      }
+    },
+    "total_planned_gpu_hours": 404.0,
+    "remaining_gpu_hours": 2284.0,
+    "utilization_pct": 15.0,
+    "verdict": "budget ample"
+  },
+  "decision_rules": [
+    {
+      "rule_id": "AB-1",
+      "question": "LoRA vs Full FT: Is full FT significantly better?",
+      "comparison": "A2/A4 (full FT) vs A1/A3 (LoRA), same data_mix & ctx_len",
+      "metric": "158-task Pass@1 (5-run mean)",
+      "threshold": "Full FT - LoRA >= 3pp AND McNemar p < 0.05",
+      "if_met": "Use full FT for main training",
+      "if_not_met": "Use LoRA (saves ~50% GPU time for additional RL)",
+      "preregistered_date": "2026-11-10"
+    },
+    {
+      "rule_id": "AB-2",
+      "question": "Context length: Is 8K significantly better than 4K?",
+      "comparison": "A4 (8K) vs A7 (4K), same data_mix & ft_method",
+      "metric": "158-task Pass@1 (5-run mean)",
+      "threshold": "8K - 4K >= 2pp AND McNemar p < 0.05",
+      "if_met": "Use 8K for main SFT",
+      "if_not_met": "Use 4K (faster, more steps in same time)",
+      "preregistered_date": "2026-11-10"
+    },
+    {
+      "rule_id": "AB-3",
+      "question": "Context length: Is 16K significantly better than 8K?",
+      "comparison": "A8 (16K) vs A5 (8K), same data_mix & ft_method",
+      "metric": "158-task Pass@1 (5-run mean)",
+      "threshold": "16K - 8K >= 2pp AND McNemar p < 0.05",
+      "if_met": "Consider 16K if memory allows for RL phase",
+      "if_not_met": "Use 8K (16K not worth 4× memory cost)",
+      "preregistered_date": "2026-11-10"
+    },
+    {
+      "rule_id": "AB-4",
+      "question": "Data mix: agent_heavy vs balanced for M1 (50%)?",
+      "comparison": "A2 (agent_heavy,full FT,8K) vs A4 (balanced,full FT,8K)",
+      "metric": "158-task Pass@1 (5-run mean)",
+      "threshold": "agent_heavy - balanced >= 2pp for M1 target",
+      "if_met": "Use agent_heavy for M1; switch to balanced/domain for M2",
+      "if_not_met": "Use balanced (more general, better for M1→M2 path)",
+      "preregistered_date": "2026-11-10"
+    },
+    {
+      "rule_id": "AB-5",
+      "question": "Data mix: domain_heavy vs balanced for M2 (65%)?",
+      "comparison": "A5 (domain_heavy,full FT,8K) vs A4 (balanced,full FT,8K)",
+      "metric": "158-task Pass@1 (5-run mean)",
+      "threshold": "domain_heavy - balanced >= 3pp AND McNemar p < 0.05",
+      "if_met": "Use domain_heavy for M2",
+      "if_not_met": "Use balanced (domain_heavy may cause forgetting)",
+      "preregistered_date": "2026-11-10"
+    },
+    {
+      "rule_id": "AB-6",
+      "question": "Interaction: Does LoRA benefit more from longer context?",
+      "comparison": "A6-A3 (LoRA 16K-8K) vs A8-A5 (full 16K-8K)",
+      "metric": "dd Pass@1 (interaction effect)",
+      "threshold": "|interaction| >= 2pp",
+      "if_met": "Report interaction; adjust LoRA ctx recommendation",
+      "if_not_met": "No significant interaction; treat factors independently",
+      "preregistered_date": "2026-11-10"
+    }
+  ],
+  "verl_integration": {
+    "sft_lora": {
+      "framework": "transformers + peft",
+      "config": "LoraConfig(r=64, lora_alpha=128, target_modules=[...], lora_dropout=0.05)",
+      "training": "Standard HF Trainer with peft adapter",
+      "merge": "merge_and_unload() before RL; or keep adapter for RL",
+      "advantage": "Fast, low memory, easy to iterate on data mixes",
+      "risk": "May underperform full FT for deep knowledge injection (D4)"
+    },
+    "sft_full_ft": {
+      "framework": "transformers + FSDP",
+      "config": "FSDP(sharding_strategy=FULL_SHARD, mixed_precision=bf16)",
+      "training": "HF Trainer with FSDP config",
+      "advantage": "Full capacity for domain knowledge; best quality ceiling",
+      "risk": "Slower, more memory, harder to iterate"
+    },
+    "rl_from_lora": {
+      "approach": "Merge LoRA→full model→verl SGLang serve for rollout",
+      "note": "verl does not natively support LoRA during RL rollout. Must merge first.",
+      "merge_cost": "~2min for 2B model (in-memory merge)"
+    },
+    "rl_from_full_ft": {
+      "approach": "Direct ckpt→verl SGLang serve",
+      "note": "Native path; no merge needed"
+    },
+    "recommendation": "Run ablation first (AB-1 rule). If LoRA within 3pp of full FT, use LoRA for rapid data mix iteration, then full FT on best mix. Saves ~50% SFT GPU time for additional RL steps."
+  }
+}

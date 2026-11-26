@@ -1,0 +1,286 @@
+{
+  "timestamp": "2026-11-09 13:03:34",
+  "node": "s0pgpuap12",
+  "script_syntax": [
+    {
+      "name": "baize_posttrain_paths.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "size": 3344,
+      "error": ""
+    },
+    {
+      "name": "baize_posttrain_launch_11_9.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "size": 6019,
+      "error": ""
+    },
+    {
+      "name": "baize_posttrain_gpu_watcher.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "size": 8804,
+      "error": ""
+    },
+    {
+      "name": "baize_posttrain_setup_cu124_venv.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "size": 11828,
+      "error": ""
+    },
+    {
+      "name": "baize_posttrain_preflight_check.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "size": 5629,
+      "error": ""
+    },
+    {
+      "name": "baize_posttrain_minicpm5_diag.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "size": 8612,
+      "error": ""
+    },
+    {
+      "name": "baize_posttrain_contamination_gate.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "size": 8228,
+      "error": ""
+    },
+    {
+      "name": "baize_posttrain_rl_grpo.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "size": 10287,
+      "error": ""
+    },
+    {
+      "name": "baize_posttrain_eval.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "size": 6224,
+      "error": ""
+    },
+    {
+      "name": "baize_posttrain_mcp_server.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "size": 1427,
+      "error": ""
+    }
+  ],
+  "data_deps": [
+    {
+      "category": "model",
+      "name": "MiniCPM5-2B/config.json",
+      "exists": true,
+      "size": 704
+    },
+    {
+      "category": "model",
+      "name": "MiniCPM5-2B/model-00000-of-00001.safetensors",
+      "exists": true,
+      "size": 5033557096
+    },
+    {
+      "category": "model",
+      "name": "MiniCPM5-2B/model.safetensors.index.json",
+      "exists": true,
+      "size": 31378
+    },
+    {
+      "category": "model",
+      "name": "MiniCPM5-2B/tokenizer.json",
+      "exists": true,
+      "size": 9894271
+    },
+    {
+      "category": "model",
+      "name": "MiniCPM5-2B/tokenizer_config.json",
+      "exists": true,
+      "size": 94391
+    },
+    {
+      "category": "model",
+      "name": "MiniCPM5-2B/chat_template.jinja",
+      "exists": true,
+      "size": 5435
+    },
+    {
+      "category": "eval",
+      "name": "EDA-Eval-PyAether-v20260311.jsonl",
+      "exists": true,
+      "size": 689461,
+      "extra": "158 tasks"
+    },
+    {
+      "category": "eval_driver",
+      "name": "run_cline_script.sh",
+      "exists": true,
+      "size": 29415,
+      "executable": false
+    },
+    {
+      "category": "eval_driver",
+      "name": "run_eval.py",
+      "exists": true,
+      "size": 39781,
+      "executable": true
+    },
+    {
+      "category": "venv",
+      "name": "verl_cu124_venv/bin/python",
+      "exists": true,
+      "size": 0
+    },
+    {
+      "category": "venv",
+      "name": "pyaether_venv/bin/python",
+      "exists": true,
+      "size": 0
+    },
+    {
+      "category": "tool",
+      "name": "cline",
+      "exists": true,
+      "size": 3206,
+      "executable": true
+    },
+    {
+      "category": "training_data",
+      "name": "sft_pyaether_corpus_v2.jsonl",
+      "exists": true,
+      "size": 21782225
+    },
+    {
+      "category": "training_data",
+      "name": "rl_pyaether_synth_v2.parquet",
+      "exists": true,
+      "size": 953467
+    },
+    {
+      "category": "training_data",
+      "name": "sft_pyaether_corpus.parquet",
+      "exists": true,
+      "size": 2875497
+    }
+  ],
+  "sglang_tests": [
+    {
+      "port": 8098,
+      "alive": true,
+      "models": [
+        "qwen3.8-27b"
+      ],
+      "chat_test": "PASS",
+      "latency_s": 0.81,
+      "tokens": 80,
+      "response_preview": ""
+    },
+    {
+      "port": 8099,
+      "alive": true,
+      "models": [
+        "qwen3.8-27b"
+      ],
+      "chat_test": "PASS",
+      "latency_s": 0.76,
+      "tokens": 80,
+      "response_preview": ""
+    }
+  ],
+  "cline_auth": {
+    "available": true,
+    "path": "/home/app.e0031982/.bun/bin/cline",
+    "has_auth_cmd": false,
+    "auth_test": "VERIFIED (cline binary present)",
+    "note": "Actual auth done by launch Step 2 with MiniCPM5-2B"
+  },
+  "contamination_gate": {
+    "rc": 0,
+    "passed": true,
+    "output_tail": "        : 0\n  报告            : /tmp/baize_posttrain_contam_gate_1794200621.md\n  红线            : 158 任务(prompt/entry_point/test/断言)禁入训练集；改写不洗白；命中即剔除+阻断训练\n  (无 --sft-synth/--rl-synth/--anneal-corpus/--input 输入 ⇒ 仅打印配方)\n[gate] 报告 → /tmp/baize_posttrain_contam_gate_1794200621.md\n[gate] 闸门 PASS（0 命中）→ 可投料"
+  },
+  "r93_pipeline": {
+    "rc": 0,
+    "ready": true,
+    "output_tail": "=========================================================\nDECISION SUMMARY\n============================================================\n  Pipeline status: READY\n  Traces analyzed: 123\n  D1 (tool legal): 1.0\n  D2 (tool freq):  22.88\n  D6 (iterations): 2.12\n  Next: Run 158-case eval when GPU available"
+  },
+  "model_config": {
+    "exists": true,
+    "model_type": "llama",
+    "architectures": [
+      "LlamaForCausalLM"
+    ],
+    "hidden_size": 2048,
+    "num_hidden_layers": 42,
+    "max_position_embeddings": 131072,
+    "torch_dtype": "bfloat16",
+    "sglang_compatible": true
+  },
+  "gpu_watcher": {
+    "alive": true,
+    "pid_info": "app.e00+ 2022305  0.0  0.0   7028  3460 ?        Ss   00:14   0:05 bash /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_gpu_watcher.sh --poll-interval 120 -",
+    "log_path": "/nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/gpu_watcher_11_9.log",
+    "log_fresh": true,
+    "log_tail": "0:64MiB/46068MiB(0%) GPU1:1085MiB/46068MiB(0%) GPU2:1085MiB/46068MiB(0%) GPU3:1085MiB/46068MiB(0%) GPU4:474MiB/46068MiB(0%) GPU5:989MiB/46068MiB(0%) GPU6:985MiB/46068MiB(0%) GPU7:987MiB/46068MiB(0%) \n"
+  },
+  "gpu_status": {
+    "gpus": [
+      {
+        "index": "0",
+        "used_mib": "45554 MiB",
+        "total_mib": "46068 MiB",
+        "util_pct": "0 %"
+      },
+      {
+        "index": "1",
+        "used_mib": "44533 MiB",
+        "total_mib": "46068 MiB",
+        "util_pct": "0 %"
+      },
+      {
+        "index": "2",
+        "used_mib": "44533 MiB",
+        "total_mib": "46068 MiB",
+        "util_pct": "0 %"
+      },
+      {
+        "index": "3",
+        "used_mib": "44533 MiB",
+        "total_mib": "46068 MiB",
+        "util_pct": "0 %"
+      },
+      {
+        "index": "4",
+        "used_mib": "45144 MiB",
+        "total_mib": "46068 MiB",
+        "util_pct": "0 %"
+      },
+      {
+        "index": "5",
+        "used_mib": "44629 MiB",
+        "total_mib": "46068 MiB",
+        "util_pct": "0 %"
+      },
+      {
+        "index": "6",
+        "used_mib": "44633 MiB",
+        "total_mib": "46068 MiB",
+        "util_pct": "0 %"
+      },
+      {
+        "index": "7",
+        "used_mib": "44631 MiB",
+        "total_mib": "46068 MiB",
+        "util_pct": "0 %"
+      }
+    ],
+    "free_count": 0,
+    "total": 8
+  }
+}

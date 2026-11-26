@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe 视觉编码器预训练（Stage iii）· 执行计划</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1000px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1f6feb 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:25px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.92; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.82; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--accent); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; color:var(--primary); font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .b-ok { background:#dafbe1; color:var(--ok); } .b-no { background:#ffebe9; color:var(--bad); }
+  .b-warn { background:#fff8c5; color:var(--warn); } .b-info { background:#ddf4ff; color:var(--accent); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:760px){ .grid2{grid-template-columns:1fr;} }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:16px 0; }
+  .kpi { background:#f0f6ff; border:1px solid #cfe0f5; border-radius:10px; padding:14px 16px; text-align:center; }
+  .kpi .v { font-size:20px; font-weight:700; color:var(--primary); }
+  .kpi .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+  .toc { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:14px 22px; }
+  .toc a { color:var(--accent); text-decoration:none; }
+  .flow { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; align-items:center; }
+  .flow .step { background:#fff; border:1px solid var(--border); border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; }
+  .flow .arrow { color:var(--muted); font-weight:700; }
+  .note { font-size:12.5px; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe 视觉编码器预训练（Stage iii）· 执行计划</h1>
+  <div class="sub">四个候选视觉编码器架构 <b>（OpenVision 2 / MambaEye / MoE-ViE / DeepEncoder V2）</b> 从零对比训练 —— loss / 训练速度 / 推理速度，24 小时预算覆盖 S0–S9 十阶段</div>
+  <div class="meta">
+    <span>📅 计划窗口 2026-09-30 起（十一假期持续推进）</span>
+    <span>🖥️ GPU：10.239.2.12 前 6 卡（卡 0–5 空闲；卡 6–7 可杀）</span>
+    <span>📦 规模：500–600M × 4 架构</span>
+    <span>🔁 S0–S9 十阶段 · 预算 24h</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <p>本计划是论文 <code>6_vision_encoder.tex</code>（Stage iii，当前为 <code>[TBD]</code>）的落地执行说明。对四个 <b>500–600M</b> 候选视觉编码器执行<b>从零预训练</b>的公平对比，产出三层次结论：<b>P0 三项硬指标（loss / 训练吞吐 image/s / 推理吞吐 token/s）</b> → <b>P1 稳健性（长地平线 / 多种子 / 下游代理）</b> → <b>P2 核心自由度消融（分辨率·patch·目标函数·数据）</b> → P3 超参/推理深挖。<b>24 小时墙钟预算</b>按优先级裁剪。</p>
+  <p class="note">与已完成的 Stage(i) LLM 预训练（<code>BAIZE_LLM_PRETRAIN_PLAN.html</code>）和 2B 架构搜索（<code>BAIZE_2B_ARCH_SEARCH_PLAN.html</code>）采用同一套「短地平线 + 三项指标」方法论，并扩展稳健性与消融维度。</p>
+</div>
+
+<div class="toc">
+  <strong>目录</strong>
+  <ol>
+    <li><a href="#s1">任务目标与三层次结论（P0–P3）</a></li>
+    <li><a href="#s2">四个候选架构（500–600M）</a></li>
+    <li><a href="#s3">预训练数据（两个图像-文本数据集）</a></li>
+    <li><a href="#s4">四个必须遵守的关键决策（公平口径）</a></li>
+    <li><a href="#s5">试验矩阵 S0–S9、GPU 资源与时长估算</a></li>
+    <li><a href="#s6">执行状态机与预算守卫</a></li>
+    <li><a href="#s7">方法口径详述（训练栈 / 目标函数 / 文本塔）</a></li>
+    <li><a href="#s8">git 提交与成果保存</a></li>
+    <li><a href="#s9">风险清单与待确认项</a></li>
+    <li><a href="#s10">附录 · 命令 / 监测 / 文件清单</a></li>
+  </ol>
+</div>
+<h2 class="sec" id="s1"><span class="no">1</span>任务目标与三层次结论（P0–P3）</h2>
+<p>在 <b>24 小时墙钟预算</b>内，对四个 <b>~500–600M</b> 视觉编码器做<b>从零预训练</b>（随机初始化，不加载任何上游权重）的公平对比，产出三层次结论：</p>
+<div class="kpi-row">
+  <div class="kpi"><div class="v">loss 曲线</div><div class="l">同一对比目标下的收敛（1000 步 + 长地平线 5–10k 步）</div></div>
+  <div class="kpi"><div class="v">训练速度</div><div class="l">image/s（或 pair/s）</div></div>
+  <div class="kpi"><div class="v">推理速度</div><div class="l">图像→token/s（统一前向 bench / SGLang）</div></div>
+</div>
+<table>
+  <thead><tr><th>层级</th><th>性质</th><th>内容</th></tr></thead>
+  <tbody>
+    <tr><td><b>P0 基础</b></td><td><span class="badge b-ok">必做</span></td><td>三项硬指标（loss / 训练 / 推理），锁定「默认配置 + 胜出架构」</td></tr>
+    <tr><td><b>P1 稳健</b></td><td><span class="badge b-info">优先</span></td><td>长地平线 + 多种子复现 + 下游代理评估，让排名可信</td></tr>
+    <tr><td><b>P2 核心自由度</b></td><td><span class="badge b-info">论文重点</span></td><td>分辨率 / patch / 目标函数 / 数据侧消融</td></tr>
+    <tr><td><b>P3 超参/推理</b></td><td><span class="badge b-warn">有余量</span></td><td>LR/warmup 扫描 + 推理深挖 + SGLang</td></tr>
+  </tbody>
+</table>
+<p>最终交付：<b>1 份胜出架构 + 可复现训练命令 + 多阶段对比报告</b>（写入 <code>run/EXPERIMENTS_VISION.md</code> 顶部）+ 自包含 HTML 结果报告 <code>BAIZE_VISION_ENCODER_RESULT.html</code>，并把胜出架构 config/results 回填 <code>ISEDA2027/6_vision_encoder.tex</code>。</p>
+
+<h2 class="sec" id="s2"><span class="no">2</span>四个候选架构（500–600M）</h2>
+<p>四个架构均在「图像→视觉 token 序列 →（下游 MLLM Stage iv 对齐）」职责下对比，差异点为核心 token 混合算子：</p>
+<table>
+  <thead><tr><th>架构</th><th>核心算子</th><th>设计假设（待验证）</th><th>参数量目标</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><b>OpenVision 2</b><br><span class="badge b-info">纯 Attention（ViT 式基线）</span></td>
+      <td>多头自注意力 + MLP（SigLIP/LlamaVision 风格）</td>
+      <td>成熟稳定、易对齐 MLLM，但随分辨率升高复杂度 O(n²)</td>
+      <td>~550M</td>
+    </tr>
+    <tr>
+      <td><b>MambaEye</b><br><span class="badge b-info">SSM（视觉 Mamba）</span></td>
+      <td>双向视觉 Mamba（SSM 扫描 + 少量 attention 混合）</td>
+      <td>线性复杂度，高分辨率更友好，与语言骨干 Mamba2-hybrid 同源</td>
+      <td>~550M</td>
+    </tr>
+    <tr>
+      <td><b>MoE-ViE</b><br><span class="badge b-info">稀疏 MoE</span></td>
+      <td>FFN 替换为稀疏专家（top-k 专家路由）</td>
+      <td>同算力下总参数更大、每 token 激活更少；需区分总/激活参数</td>
+      <td>~550M（激活）</td>
+    </tr>
+    <tr>
+      <td><b>DeepEncoder V2</b><br><span class="badge b-info">Attention+SSM 混合</span></td>
+      <td>顺序混合（Mamba2 + GQA + MLP，Nemotron-H 式，与语言骨干同构）</td>
+      <td>对齐语言骨干架构哲学，便于视觉/语言统一推理栈</td>
+      <td>~550M</td>
+    </tr>
+  </tbody>
+</table>
+<p class="note">具体 config（patch / hidden / layers / heads）由 agent 在 arch_prepare 落地，把每个架构<b>实测参数量压到 500–600M（±10%）</b>；MoE 额外记录「总参数 vs 激活参数」并在报告注明「非等参对比」影响。</p>
+
+<h2 class="sec" id="s3"><span class="no">3</span>预训练数据（两个图像-文本数据集）</h2>
+<p>两个数据集均为<b>图像 + 文本 caption 对</b>，可用于对比学习（CLIP/SigLIP）预训练：</p>
+<table>
+  <thead><tr><th>数据集</th><th>路径</th><th>格式</th><th>规模/子集</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><b>LLaVA-OneVision-1.5<br>Mid-Training-85M</b></td>
+      <td><code>/nas_train/.../LLaVA-OneVision-1.5-Mid-Training-85M/</code></td>
+      <td>Parquet（图像 + caption）</td>
+      <td>子集：imagenet(218G) / laioncn(1.6T) / datacomp1b(1.8T) / coyo(5.9T) / mint(2.1T) / obelics(14T)，各分 EN/CN</td>
+      <td>多模态训练专用，含中英文 caption，质量高</td>
+    </tr>
+    <tr>
+      <td><b>GPIC</b></td>
+      <td><code>/nas_inference/.../stanford-vision-lab/gpic/</code></td>
+      <td>Tar（<code>{key}.json</code> + <code>{key}.jpg/png</code> 交替）</td>
+      <td>100M 训练 / 200K 验证 / 1M 测试；caption 分 tag/short/medium/long</td>
+      <td>permissive license；caption 4 档粒度；含 <code>reference_stats</code></td>
+    </tr>
+  </tbody>
+</table>
+<p><b>子集选择策略（agent 在 <code>data_check</code> 落地）</b>：1000 步短地平线下切一个<b>统一固定子集</b>（如 LLaVA-OneVision imagenet-EN 前 100–200 万对 或 GPIC 1–2 tar + medium caption）供四架构复用；S7 数据侧消融时再对比 caption 粒度 / 规模 / 中英比例。</p>
+<h2 class="sec" id="s4"><span class="no">4</span>四个必须遵守的关键决策（公平口径）</h2>
+
+<h3>决策 1：统一「从零」——四架构均随机初始化</h3>
+<p>沿用 2B 架构搜索方法论：<b>四架构均随机初始化，不加载任何官方/上游预训练权重</b>（禁用 timm/open_clip 的 pretrained 入口）。仅对比架构本体带来的收敛/速度差异。任何架构若确需用上游权重「冒充从零」，必须在 <code>EXPERIMENTS_VISION.md</code> 记录并说明。</p>
+
+<h3>决策 2：统一训练栈与目标函数</h3>
+<p>统一到 <b>OpenCLIP（open_clip 3.2.0）</b> 训练栈（自定义 vision tower + 固定 text tower），Mamba/MoE 层需手写模型（mamba_ssm 2.2.6 已装可直接用）。四架构必须：</p>
+<ul>
+  <li>同一对比目标：默认 <b>SigLIP</b>（sigmoid 对比），S7 做 SigLIP vs CLIP InfoNCE A/B；</li>
+  <li>同一 <b>text tower</b>（固定同一 small transformer + 同一 BPE，四架构共用，<b>只动 vision tower</b>）；</li>
+  <li>同一分辨率 / patch / 增强（除 S6 显式消融外）。</li>
+</ul>
+
+<h3>决策 3：参数量对齐 500–600M</h3>
+<p>四架构实测参数量（<code>sum(numel())</code>）须落 <b>500–600M</b>，偏差 &gt;10% 注明「非等参对比」。MoE 同时报告「总参数」与「每 token 激活参数」，训练速度按激活参数算力归一说明。</p>
+
+<h3>决策 4：推理基准——SGLang 未装，退化到统一前向 bench</h3>
+<p>⚠️ 已实测 <code>import sglang</code> 报 ModuleNotFoundError。<b>P0 主口径退化为统一前向 benchmark 脚本</b>（<code>torch.cuda.Event</code> / <code>torch.benchmark</code>），四架构同一代码路径、batch=1 / 固定分辨率 / bf16 测量图像→token/s；S9 可选择性安装 SGLang（MLLM Stage iv 反正要用）补生产级吞吐，并在报告注明测量栈。</p>
+
+<h2 class="sec" id="s5"><span class="no">5</span>试验矩阵 S0–S9、GPU 资源与时长估算</h2>
+<p><b>锚点原则</b>：先跑完 S0–S2 锁定「默认配置 + 胜出架构」，再以该配置为锚点做单变量扫描（S3+），避免过早并行烧预算。</p>
+<table>
+  <thead><tr><th>优先级</th><th>阶段</th><th>变量/内容</th><th>取值 / 规模</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="3"><b>P0 基础</b></td><td>S0 冒烟</td><td>4 架构 × 10–20 步</td><td>可跑性 + 参数量 + 吞吐基线</td></tr>
+    <tr><td>S1 主训练</td><td>4 架构 × 1000 步（默认配置）</td><td>loss + image/s</td></tr>
+    <tr><td>S2 推理基准</td><td>4 架构，batch=1 前向</td><td>图像→token/s</td></tr>
+    <tr><td rowspan="3"><b>P1 稳健</b></td><td>S3 长地平线</td><td>胜出架构延长训练</td><td>5000–10000 步</td></tr>
+    <tr><td>S4 多种子</td><td>决胜局（前 2 架构）</td><td>3 seed × 1000 步</td></tr>
+    <tr><td>S5 下游代理</td><td>zero-shot / retrieval / linear-probe</td><td>各架构 1 次</td></tr>
+    <tr><td rowspan="2"><b>P2 核心自由度</b></td><td>S6 分辨率+patch</td><td>cls / patch</td><td>cls ∈ {224,336,448}；patch ∈ {14,16}</td></tr>
+    <tr><td>S7 目标函数+数据</td><td>目标 / caption 粒度 / 规模 / 语言</td><td>SigLIP vs CLIP；tag/short/medium/long；千/百万级；中英</td></tr>
+    <tr><td rowspan="2"><b>P3 超参/推理</b></td><td>S8 训练超参</td><td>LR / warmup</td><td>lr ∈ {1e-3,3e-3,5e-3}；warmup 档位</td></tr>
+    <tr><td>S9 推理深挖</td><td>batch / 量化 / 分辨率 / SGLang</td><td>batch ∈ {1,8,32}；bf16 vs fp8；多分辨率</td></tr>
+  </tbody>
+</table>
+<p><b>默认配置（S1 锚点）</b>：cls=224、patch=16、SigLIP、统一子集、text tower=同一 small transformer、lr=1e-3、warmup+cosine、seed=1234、bf16。</p>
+
+<div class="card" style="border-left:5px solid var(--ok); background:#f0fdf4;">
+  <h3 style="margin-top:0;">🖥️ 资源现状（已实测 2026-09-30）</h3>
+  <p><code>10.239.2.12</code> = 8× NVIDIA H100 80GB。<b>前 6 卡（GPU 0–5）当前空闲（0 MiB）</b>；GPU 6–7 已被占（~72.7GB / ~72.2GB）。用<b>前 6 卡</b>（TP=1 / DP=6）；若显存不够需扩到 8 卡，后两卡进程可杀（先确认占用者）。环境：<code>py310</code>（open_clip 3.2.0 / timm 1.0.3 / mamba_ssm 2.2.6 / flash_attn 2.8.4 / torch 2.8.0+cu128）。</p>
+</div>
+<h3>⏱ 时长估算（24 小时墙钟预算分配，量级 + 以冒烟实测反推）</h3>
+<table>
+  <thead><tr><th>优先级</th><th>阶段</th><th>内容</th><th>估时（串行 6 卡）</th></tr></thead>
+  <tbody>
+    <tr><td><b>P0</b></td><td>S0–S2</td><td>冒烟 + 主训练 + 推理基准（4 架构）</td><td>2–4 h</td></tr>
+    <tr><td><b>P1</b></td><td>S3–S5</td><td>长地平线 + 多种子 + 下游代理</td><td>3–6 h</td></tr>
+    <tr><td><b>P2</b></td><td>S6–S7</td><td>分辨率/patch + 目标函数/数据</td><td>4–8 h</td></tr>
+    <tr><td><b>P3</b></td><td>S8–S9</td><td>LR/warmup + 推理深挖 + SGLang</td><td>2–6 h</td></tr>
+    <tr><td>—</td><td>余量/重试</td><td>OOM / 报错重跑 / 抖动</td><td>2–4 h</td></tr>
+    <tr><td><b>合计</b></td><td>S0–S9</td><td>—</td><td><b>约 13–28 h，上限 24 h</b></td></tr>
+  </tbody>
+</table>
+<p class="note">反推口径：S0 冒烟读 steady-state <code>ms/iter → image/s → N 步 ETA = N × ms/iter / 1000</code>。每阶段启动前用实测吞吐校准；逼近 24h 上限时按 P3 → P2 → P1 逆序裁剪（P0/P1 必保）。</p>
+<div class="flow">
+  <span class="step">S0 冒烟</span><span class="arrow">→</span>
+  <span class="step">S1 主训练 ×4</span><span class="arrow">→</span>
+  <span class="step">S2 推理基准</span><span class="arrow">→</span>
+  <span class="step">S3 长地平线</span><span class="arrow">→</span>
+  <span class="step">S4 多种子</span><span class="arrow">→</span>
+  <span class="step">S5 下游</span><span class="arrow">→</span>
+  <span class="step">S6 分辨率/patch</span><span class="arrow">→</span>
+  <span class="step">S7 目标/数据</span><span class="arrow">→</span>
+  <span class="step">S8 超参</span><span class="arrow">→</span>
+  <span class="step">S9 推理深挖</span><span class="arrow">→</span>
+  <span class="step">🏆 胜出</span>
+</div>
+
+<h2 class="sec" id="s6"><span class="no">6</span>执行状态机与预算守卫</h2>
+<p>沿用「连续推进 + 异步等待」约定（<code>WAITING</code> 标志，后台训练时回写记忆后退出，下次唤醒先检查）。状态机按 S0→S9 顺序推进：</p>
+<table>
+  <thead><tr><th>PHASE</th><th>动作</th><th>出口</th></tr></thead>
+  <tbody>
+    <tr><td><code>S0 data_check+smoke</code></td><td>确认数据子集 + caption 可读；<code>conda activate py310</code> 后 open_clip/mamba_ssm/flash_attn/webdataset 可 import、GPU 0–5 可见；落地 4 个 vision tower（open_clip 注册），跑 10–20 步冒烟，实测参数量 + 吞吐，调平到 500–600M</td><td>→ S1（连续 3 次失败标记 <code>❌ NOT_RUNNABLE</code> 跳过）</td></tr>
+    <tr><td><code>S1 main</code></td><td>4 架构 × 1000 步（默认配置），记录 loss + image/s</td><td>→ S2</td></tr>
+    <tr><td><code>S2 infer</code></td><td>统一前向 bench 测图像→token/s（batch=1、固定分辨率），确定胜出架构 + 默认锚点</td><td>→ S3</td></tr>
+    <tr><td><code>S3 long_horizon</code></td><td>胜出架构（+并列次优）延长 5000–10000 步，看排名是否翻转</td><td>→ S4</td></tr>
+    <tr><td><code>S4 multi_seed</code></td><td>决胜局（前 2 架构）3 seed × 1000 步</td><td>→ S5</td></tr>
+    <tr><td><code>S5 downstream</code></td><td>zero-shot top-1 / retrieval R@K / linear-probe</td><td>→ S6</td></tr>
+    <tr><td><code>S6 scale_ablation</code></td><td>cls ∈ {224,336,448}、patch ∈ {14,16}（锚点单变量，各 1000 步）</td><td>→ S7</td></tr>
+    <tr><td><code>S7 objective_data</code></td><td>SigLIP vs CLIP；GPIC caption 粒度；子集规模；中英比例</td><td>→ S8</td></tr>
+    <tr><td><code>S8 hparam</code></td><td>lr ∈ {1e-3,3e-3,5e-3}、warmup 档位</td><td>→ S9</td></tr>
+    <tr><td><code>S9 infer_deep</code></td><td>batch ∈ {1,8,32}、bf16 vs fp8、多分辨率；（可选）装 SGLang 补生产级吞吐</td><td>→ converged</td></tr>
+    <tr><td><code>converged</code></td><td>汇总各阶段对比表 + 胜出架构 + 可复现命令到 EXPERIMENTS_VISION.md 顶部；生成 HTML 结果报告；回填 6_vision_encoder.tex；git push</td><td>停止新实验</td></tr>
+  </tbody>
+</table>
+<p><b>预算守卫</b>：每阶段启动前核对 <code>BUDGET_USED</code>（≤ 24h）；逼近上限按 P3 → P2 → P1 逆序裁剪（P0/P1 必保），并在 EXPERIMENTS_VISION.md 注明裁剪决策。</p>
+<h2 class="sec" id="s7"><span class="no">7</span>方法口径详述</h2>
+<table>
+  <thead><tr><th>项</th><th>取值</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>目标函数</td><td>SigLIP（默认）/ CLIP InfoNCE（S7 A/B）</td><td>图像-文本对比；四架构共用</td></tr>
+    <tr><td>text tower</td><td>固定同一 small transformer + 同一 BPE</td><td><b>只动 vision tower</b>，隔离变量</td></tr>
+    <tr><td>分辨率</td><td>默认 224×224（S6 扫 336/448）</td><td>四架构一致；不同分辨率对比需另行说明</td></tr>
+    <tr><td>patch</td><td>默认 16（S6 扫 14）</td><td>影响 token 数与吞吐，须一致</td></tr>
+    <tr><td>optimizer / LR / schedule</td><td>AdamW / lr=1e-3（S8 扫）/ warmup+cosine / 统一 wd / 统一 seed=1234</td><td>沿用「除架构外全一致」原则</td></tr>
+    <tr><td>global batch</td><td>按 pairs 对齐（对比学习需较大 batch，如 16k–64k pairs，可 GradCache 补偿）</td><td>batch 受限时用 gradient cache 对齐有效 batch</td></tr>
+    <tr><td>precision</td><td>BF16（混合精度）</td><td>统一</td></tr>
+    <tr><td>train_iters</td><td>S1=1000 / S3=5000–10000</td><td>统一数据子集</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="s8"><span class="no">8</span>git 提交与成果保存</h2>
+<ul>
+  <li>运行时状态写入本任务专属文件：<code>run/EXPERIMENTS_VISION.md</code>、<code>run/MEMORY_VISION.md</code>、<code>run/daily-memories-vision/&lt;date&gt;.md</code>。不写入 1B/2B 任务的 <code>EXPERIMENTS.md</code>/<code>EXPERIMENTS_2B.md</code>。</li>
+  <li>训练代码/脚本放 <code>code/BaiZe-ISEDA2027/</code> 下 vision 目录；启动脚本放 <code>run/train_vis_*.sh</code>。</li>
+  <li>最终产物：<code>BAIZE_VISION_ENCODER_RESULT.html</code>（自包含结果报告）+ 更新 <code>6_vision_encoder.tex</code> 的 config/results。</li>
+</ul>
+
+<h2 class="sec" id="s9"><span class="no">9</span>风险清单与待确认项</h2>
+<ol>
+  <li><b>open_clip 自定义 Mamba / MoE vision tower</b>：open_clip 对标准 ViT 友好，SSM/MoE 层需手写模型注册；mamba_ssm 2.2.6 已装，代价可控；必要时退回统一手写对比训练循环。</li>
+  <li><b>GPU 后两卡占用</b>：卡 6–7 被占 ~72GB，他人进程默认不动；扩展前先确认 pid；优先 6 卡内完成。</li>
+  <li><b>SGLang 未装</b>（已实测）：推理按决策 4 退化为统一前向 bench（batch=1、固定分辨率、bf16），相对结论可信；S9 可选装 SGLang（MLLM Stage iv 需要）复测生产级吞吐。</li>
+  <li><b>ckpt → HF 转换</b>：无现成 bridge 时手工权重映射（记录脚本）。</li>
+  <li><b>参数量调平 &amp; MoE 口径</b>：MoE 区分总/激活参数，避免「参数更多但算力更少」的伪优势。</li>
+  <li><b>短地平线局限</b>：1000 步只能看早期趋势，故 S3 延长 5–10k 步 + S5 下游代理评估交叉验证；最终性能仍以 Stage(iv) MLLM 对齐为准。</li>
+  <li><b>预算超支</b>：S9 阶段多，24h 上限可能触顶；按预算守卫裁剪，P0/P1 必保。</li>
+</ol>
+<h2 class="sec" id="s10"><span class="no">10</span>附录 · 命令 / 监测 / 文件清单</h2>
+<h3>任务推进（loop.sh 无人值守自动循环）</h3>
+<pre><code># 十一假期由 loop.sh 驱动 cline 连续推进：读任务书 → 推进一步 → 回写记忆 → 自适应睡眠（WAITING 决定长短）
+setsid bash /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_vision_loop.sh \
+  &gt; /tmp/baize_vision_loop.log 2&gt;&amp;1 &lt; /dev/null &amp;</code></pre>
+
+<h3>启动模板（open_clip 直驱，TP1/DP6）</h3>
+<pre><code># 环境 + 6 卡 TP=1 / DP=6，1000 步，统一 image-text 对子集；vision tower 可换
+source /nas_train/app.e0031982/miniforge3/etc/profile.d/conda.sh
+conda activate py310
+cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 \
+torchrun --nproc_per_node=6 --master_addr=10.239.2.12 --master_port=&lt;PORT&gt; \
+  -m open_clip_train.main \
+  --model &lt;vision_arch&gt; --siglip --pretrained '' \
+  --train-data &lt;统一子集路径&gt; --batch-size &lt;N&gt; --lr 1e-3 --warmup &lt;W&gt; --epochs 1 \
+  --force-image-size 224 --logs /tmp/BAIZE_vis_logs --name &lt;arch&gt;_sN \
+  &gt; /tmp/BAIZE_vis_&lt;arch&gt;.log 2&gt;&amp;1 &amp;
+# ⚠️ 自定义 vision tower（MambaEye / MoE-ViE / DeepEncoder V2）需先注册进 open_clip.factory；
+#    入口与参数以 open_clip 3.2.0 实际 CLI 为准，agent 在 arch_prepare 落地并回写。</code></pre>
+
+<h3>监测 / 提取 / 进程管理</h3>
+<pre><code># GPU 占用（先看后杀；GPU 6–7 他人进程默认不动）
+ssh 10.239.2.12 'nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv'
+ssh 10.239.2.12 'nvidia-smi --query-gpu=index,memory.used --format=csv'
+# 本项目进程（只杀残留，杀前记 PID 到 MEMORY_VISION.md）
+pgrep -af 'torchrun|open_clip_train|open_clip|pretrain'
+tail -f /tmp/BAIZE_vis_&lt;arch&gt;.log
+# loss：从 /tmp/BAIZE_vis_logs（tensorboard）读；吞吐：日志 iter 耗时 → image/s</code></pre>
+
+<h3>文件清单</h3>
+<table>
+  <thead><tr><th>文件</th><th>作用</th></tr></thead>
+  <tbody>
+    <tr><td><code>run/BAIZE_VISION_TASK.md</code></td><td>任务书（只读指令，agent 不修改）</td></tr>
+    <tr><td><code>run/baize_vision_loop.sh</code></td><td>无人值守自动推进循环（驱动 cline）</td></tr>
+    <tr><td><code>run/EXPERIMENTS_VISION.md</code></td><td>四架构对比实验记录（待建立）</td></tr>
+    <tr><td><code>run/MEMORY_VISION.md</code> / <code>daily-memories-vision/</code></td><td>运行时状态 / 每日记忆（待建立）</td></tr>
+    <tr><td><code>run/train_vis_*.sh</code></td><td>各阶段启动脚本（待建立）</td></tr>
+    <tr><td><code>ISEDA2027/6_vision_encoder.tex</code></td><td>论文 Stage(iii) 章节（待回填 config/results）</td></tr>
+    <tr><td><code>BAIZE_VISION_ENCODER_PRETRAIN_PLAN.html</code></td><td>本执行计划（自包含）</td></tr>
+    <tr><td><code>BAIZE_VISION_ENCODER_RESULT.html</code></td><td>结果报告（完成后生成）</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  BaiZe 视觉编码器预训练（Stage iii）· 执行计划 · 生成于 2026-09-30 · 四架构（OpenVision 2 / MambaEye / MoE-ViE / DeepEncoder V2，500–600M）· S0–S9 十阶段 · 24h 预算 · GPU 10.239.2.12 前 6 卡 · 对应论文 <code>6_vision_encoder.tex</code>
+</footer>
+</div>
+</body>
+</html>

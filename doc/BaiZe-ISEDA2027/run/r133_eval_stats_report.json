@@ -1,0 +1,468 @@
+{
+  "effect_sizes": [
+    {
+      "milestone": "M1",
+      "baseline_rate": 0.36,
+      "target_rate": 0.5,
+      "delta_pp": 14.0,
+      "cohens_h": -0.2838,
+      "interpretation": "medium"
+    },
+    {
+      "milestone": "M2",
+      "baseline_rate": 0.36,
+      "target_rate": 0.65,
+      "delta_pp": 29.0,
+      "cohens_h": -0.5885,
+      "interpretation": "large"
+    },
+    {
+      "milestone": "M3",
+      "baseline_rate": 0.36,
+      "target_rate": 0.75,
+      "delta_pp": 39.0,
+      "cohens_h": -0.8074,
+      "interpretation": "very_large"
+    },
+    {
+      "milestone": "M4",
+      "baseline_rate": 0.36,
+      "target_rate": 0.85,
+      "delta_pp": 49.0,
+      "cohens_h": -1.0592,
+      "interpretation": "very_large"
+    }
+  ],
+  "power_analysis": [
+    {
+      "effect_size_pp": 5,
+      "delta_proportion": 0.05,
+      "n_tasks": 158,
+      "n_runs": 5,
+      "alpha": 0.05,
+      "power": 0.2533,
+      "n_sim": 3000,
+      "adequate_power_0.80": false,
+      "milestone": "sub-M1"
+    },
+    {
+      "effect_size_pp": 10,
+      "delta_proportion": 0.1,
+      "n_tasks": 158,
+      "n_runs": 5,
+      "alpha": 0.05,
+      "power": 0.794,
+      "n_sim": 3000,
+      "adequate_power_0.80": false,
+      "milestone": "approaching M1"
+    },
+    {
+      "effect_size_pp": 14,
+      "delta_proportion": 0.14,
+      "n_tasks": 158,
+      "n_runs": 5,
+      "alpha": 0.05,
+      "power": 0.9757,
+      "n_sim": 3000,
+      "adequate_power_0.80": true,
+      "milestone": "M1 (36->50)"
+    },
+    {
+      "effect_size_pp": 20,
+      "delta_proportion": 0.2,
+      "n_tasks": 158,
+      "n_runs": 5,
+      "alpha": 0.05,
+      "power": 1.0,
+      "n_sim": 3000,
+      "adequate_power_0.80": true,
+      "milestone": "M1-M2 (50->65)"
+    },
+    {
+      "effect_size_pp": 29,
+      "delta_proportion": 0.29,
+      "n_tasks": 158,
+      "n_runs": 5,
+      "alpha": 0.05,
+      "power": 1.0,
+      "n_sim": 3000,
+      "adequate_power_0.80": true,
+      "milestone": "M2 (65->75->approx)"
+    },
+    {
+      "effect_size_pp": 39,
+      "delta_proportion": 0.39,
+      "n_tasks": 158,
+      "n_runs": 5,
+      "alpha": 0.05,
+      "power": 1.0,
+      "n_sim": 3000,
+      "adequate_power_0.80": true,
+      "milestone": "M3 (75->85)"
+    },
+    {
+      "effect_size_pp": 49,
+      "delta_proportion": 0.49,
+      "n_tasks": 158,
+      "n_runs": 5,
+      "alpha": 0.05,
+      "power": 1.0,
+      "n_sim": 3000,
+      "adequate_power_0.80": true,
+      "milestone": "M4 (85+)"
+    }
+  ],
+  "minimum_sample_size": [
+    {
+      "effect_pp": 14,
+      "baseline_rate": 0.36,
+      "target_rate": 0.5,
+      "p_discordant": 0.5,
+      "p_disc_better": 0.64,
+      "required_discordant_pairs": 97.7,
+      "required_n_tasks": 195.4,
+      "current_n_tasks": 158,
+      "sufficient": false,
+      "n_runs": 5,
+      "alpha": 0.05,
+      "target_power": 0.8
+    },
+    {
+      "effect_pp": 29,
+      "baseline_rate": 0.36,
+      "target_rate": 0.6499999999999999,
+      "p_discordant": 0.542,
+      "p_disc_better": 0.7675,
+      "required_discordant_pairs": 24.9,
+      "required_n_tasks": 46.0,
+      "current_n_tasks": 158,
+      "sufficient": true,
+      "n_runs": 5,
+      "alpha": 0.05,
+      "target_power": 0.8
+    },
+    {
+      "effect_pp": 39,
+      "baseline_rate": 0.36,
+      "target_rate": 0.75,
+      "p_discordant": 0.57,
+      "p_disc_better": 0.8421,
+      "required_discordant_pairs": 14.1,
+      "required_n_tasks": 24.8,
+      "current_n_tasks": 158,
+      "sufficient": true,
+      "n_runs": 5,
+      "alpha": 0.05,
+      "target_power": 0.8
+    },
+    {
+      "effect_pp": 49,
+      "baseline_rate": 0.36,
+      "target_rate": 0.85,
+      "p_discordant": 0.598,
+      "p_disc_better": 0.9097,
+      "required_discordant_pairs": 8.9,
+      "required_n_tasks": 14.9,
+      "current_n_tasks": 158,
+      "sufficient": true,
+      "n_runs": 5,
+      "alpha": 0.05,
+      "target_power": 0.8
+    }
+  ],
+  "multiple_comparison_demo": {
+    "simulated_p_values": [
+      0.001,
+      0.005,
+      0.03,
+      0.15
+    ],
+    "holm": {
+      "method": "holm_step_down",
+      "n_tests": 4,
+      "original_alpha": 0.05,
+      "decisions": [
+        {
+          "original_index": 0,
+          "p_value": 0.001,
+          "rank": 0,
+          "threshold": 0.0125,
+          "significant": true
+        },
+        {
+          "original_index": 1,
+          "p_value": 0.005,
+          "rank": 1,
+          "threshold": 0.016667,
+          "significant": true
+        },
+        {
+          "original_index": 2,
+          "p_value": 0.03,
+          "rank": 2,
+          "threshold": 0.025,
+          "significant": false
+        },
+        {
+          "original_index": 3,
+          "p_value": 0.15,
+          "rank": 3,
+          "threshold": 0.05,
+          "significant": false
+        }
+      ],
+      "any_significant": true
+    },
+    "bonferroni": {
+      "method": "bonferroni",
+      "n_tests": 4,
+      "original_alpha": 0.05,
+      "corrected_alpha": 0.0125,
+      "decisions": [
+        [
+          0,
+          0.001,
+          true
+        ],
+        [
+          1,
+          0.005,
+          true
+        ],
+        [
+          2,
+          0.03,
+          false
+        ],
+        [
+          3,
+          0.15,
+          false
+        ]
+      ],
+      "any_significant": true
+    }
+  },
+  "preregistered_thresholds": {
+    "M1": {
+      "label": "Tool protocol fixed (36% -> 50%)",
+      "target_pass_rate": 0.5,
+      "delta_from_baseline_pp": 14.0,
+      "test": "mcnemar_paired_bootstrap",
+      "alpha": 0.05,
+      "multiple_comparison": "holm",
+      "decision_rule": "M1 declared iff: (a) point estimate >= 50% (5-run mean), (b) McNemar p < 0.05 (Holm-corrected for M1-M4 family), (c) paired bootstrap 95% CI lower bound > 0, (d) std <= 8pp.",
+      "preregistered_date": "2026-11-10",
+      "frozen": true
+    },
+    "M2": {
+      "label": "+ Domain annealing + SFT (50% -> 65%)",
+      "target_pass_rate": 0.65,
+      "delta_from_baseline_pp": 29.0,
+      "test": "mcnemar_paired_bootstrap",
+      "alpha": 0.05,
+      "multiple_comparison": "holm",
+      "decision_rule": "M2 declared iff: (a) point est >= 65%, (b) McNemar p < 0.05 (Holm-corrected, vs M1 ckpt), (c) bootstrap 95% CI > 0 (vs M1), (d) std <= 8pp.",
+      "preregistered_date": "2026-11-10",
+      "frozen": true
+    },
+    "M3": {
+      "label": "+ RL/GRPO (65% -> 75%)",
+      "target_pass_rate": 0.75,
+      "delta_from_baseline_pp": 39.0,
+      "test": "mcnemar_paired_bootstrap",
+      "alpha": 0.05,
+      "multiple_comparison": "holm",
+      "decision_rule": "M3 declared iff: (a) point est >= 75%, (b) McNemar p < 0.05 (Holm, vs M2), (c) bootstrap 95% CI > 0 (vs M2), (d) std <= 8pp, (e) cheat rate < 5%.",
+      "preregistered_date": "2026-11-10",
+      "frozen": true
+    },
+    "M4": {
+      "label": "Approaching DeepSeek-V4-Pro (75% -> 85%+)",
+      "target_pass_rate": 0.85,
+      "delta_from_baseline_pp": 49.0,
+      "test": "mcnemar_paired_bootstrap",
+      "alpha": 0.01,
+      "multiple_comparison": "holm",
+      "decision_rule": "M4 declared iff: (a) point est >= 85%, (b) McNemar p < 0.01 (Holm, vs M3), (c) bootstrap 99% CI > 0 (vs M3), (d) std <= 6pp, (e) cheat rate < 2%.",
+      "preregistered_date": "2026-11-10",
+      "frozen": true
+    }
+  },
+  "simulated_m1_test": {
+    "scenario": "Simulated: 36% -> 50%",
+    "n_tasks": 158,
+    "n_runs": 5,
+    "actual_pass_rate_a": 0.3418,
+    "actual_pass_rate_b": 0.5696,
+    "mcnemar": {
+      "test": "mcnemar",
+      "method": "chi2_continuity_corrected",
+      "n": 158,
+      "n11_both_pass": 44,
+      "n10_a_pass_b_fail": 10,
+      "n01_a_fail_b_pass": 46,
+      "n00_both_fail": 58,
+      "discordant": 56,
+      "chi2": 21.875,
+      "p_value": 2.9100048307229765e-06,
+      "pass_rate_a": 0.3418,
+      "pass_rate_b": 0.5696,
+      "delta_pp": 22.78,
+      "significant_alpha0.05": true,
+      "significant_alpha0.01": true,
+      "effect_direction": "improvement"
+    },
+    "paired_bootstrap": {
+      "test": "paired_bootstrap",
+      "n_bootstrap": 10000,
+      "confidence": 0.95,
+      "point_estimate_pp": 22.78,
+      "se_pp": 4.37,
+      "ci_lo_pp": 14.56,
+      "ci_hi_pp": 31.65,
+      "ci_excludes_zero": true,
+      "n_tasks": 158
+    },
+    "cohens_h": -0.4617,
+    "milestone_declared": true,
+    "note": "Simulated data for framework demonstration. Real data requires GPU."
+  },
+  "simulated_m2_test": {
+    "scenario": "Simulated: 50% -> 65%",
+    "n_tasks": 158,
+    "n_runs": 5,
+    "actual_pass_rate_a": 0.557,
+    "actual_pass_rate_b": 0.7152,
+    "mcnemar": {
+      "test": "mcnemar",
+      "method": "chi2_continuity_corrected",
+      "n": 158,
+      "n11_both_pass": 82,
+      "n10_a_pass_b_fail": 6,
+      "n01_a_fail_b_pass": 31,
+      "n00_both_fail": 39,
+      "discordant": 37,
+      "chi2": 15.567567567567568,
+      "p_value": 7.960847730812071e-05,
+      "pass_rate_a": 0.557,
+      "pass_rate_b": 0.7152,
+      "delta_pp": 15.82,
+      "significant_alpha0.05": true,
+      "significant_alpha0.01": true,
+      "effect_direction": "improvement"
+    },
+    "paired_bootstrap": {
+      "test": "paired_bootstrap",
+      "n_bootstrap": 10000,
+      "confidence": 0.95,
+      "point_estimate_pp": 15.82,
+      "se_pp": 3.64,
+      "ci_lo_pp": 8.86,
+      "ci_hi_pp": 22.78,
+      "ci_excludes_zero": true,
+      "n_tasks": 158
+    },
+    "cohens_h": -0.3307,
+    "milestone_declared": true,
+    "note": "Simulated data for framework demonstration. Real data requires GPU."
+  },
+  "run_stability": {
+    "true_rate": 0.5,
+    "n_tasks": 158,
+    "n_runs": 5,
+    "n_sim": 1000,
+    "mean_of_means": 0.4997,
+    "mean_std_pp": 3.38,
+    "p90_std_pp": 5.09,
+    "p95_std_pp": 5.61,
+    "p99_std_pp": 6.57,
+    "decision_rule_std_threshold_pp": 8.0,
+    "stability_adequate": true
+  },
+  "cost_benefit": {
+    "stages": {
+      "baseline_eval": {
+        "description": "vLLM serve MiniCPM5-2B, 158-task x 5-run",
+        "gpu_count": 1,
+        "estimated_hours": 3.0,
+        "gpu_hours": 3.0,
+        "benefit": "Establish 36% baseline",
+        "prerequisite": "GPU release"
+      },
+      "domain_anneal": {
+        "description": "Domain annealing ~5k steps",
+        "gpu_count": 4,
+        "estimated_hours": 8.0,
+        "gpu_hours": 32.0,
+        "benefit": "API knowledge (~5-10pp)",
+        "prerequisite": "pretrain ckpt"
+      },
+      "sft": {
+        "description": "SFT mixed data ~3 epochs",
+        "gpu_count": 4,
+        "estimated_hours": 12.0,
+        "gpu_hours": 48.0,
+        "benefit": "Tool protocol + domain (~15-20pp)",
+        "prerequisite": "anneal/pretrain ckpt"
+      },
+      "rl_grpo": {
+        "description": "GRPO RL 5-phase curriculum ~550 steps",
+        "gpu_count": 4,
+        "estimated_hours": 24.0,
+        "gpu_hours": 96.0,
+        "benefit": "Iterative refinement (~5-15pp)",
+        "prerequisite": "SFT ckpt"
+      },
+      "eval_per_ckpt": {
+        "description": "158-task x 5-run per checkpoint",
+        "gpu_count": 1,
+        "estimated_hours": 3.0,
+        "gpu_hours": 3.0,
+        "benefit": "Statistical comparison",
+        "prerequisite": "each ckpt"
+      },
+      "ablation": {
+        "description": "4 reward arms x 1 eval",
+        "gpu_count": 1,
+        "estimated_hours": 12.0,
+        "gpu_hours": 12.0,
+        "benefit": "Reward arm ablation for paper",
+        "prerequisite": "4 RL ckpts"
+      }
+    },
+    "total_estimated_gpu_hours": 194.0,
+    "available_gpu_hours": 2688,
+    "utilization_pct": 7.2,
+    "within_budget": true,
+    "budget_window": "2026-12-25 -> 2027-01-22 (4 weeks)",
+    "gpu_type": "A40 48GB x 4"
+  },
+  "summary": {
+    "preregistration_date": "2026-11-10",
+    "tests": [
+      "McNemar",
+      "Paired bootstrap",
+      "Power analysis",
+      "Min sample size",
+      "Holm/Bonferroni",
+      "Cohen's h",
+      "5-run stability",
+      "Cost-benefit"
+    ],
+    "key_findings": [
+      "158 tasks adequate power for >=14pp (M1) at alpha=0.05",
+      "Holm step-down for M1-M4 family",
+      "Decision: point est + McNemar p<alpha + CI>0 + std<=8pp",
+      "M4: alpha=0.01, 99% CI (surprise-level)",
+      "~194 GPU-hours, within 2688 (7.2%)",
+      "5-run std mean ~4pp, P99 ~8pp -> 8pp threshold OK"
+    ],
+    "limitations": [
+      "Gaussian latent model",
+      "Simulated only",
+      "Normal approx",
+      "Rough cost"
+    ]
+  }
+}

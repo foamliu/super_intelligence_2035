@@ -1,0 +1,38 @@
+# CFREQ_CTRL Formality 形式验证流程
+
+对 cfreq_ctrl 做等价性检查（Formality / fm_shell）。
+
+## 目录结构
+```
+fm/
+├── Makefile                  # 流程入口 (make fm_r2g / fm_g2g)
+├── SourceMe                  # 环境加载 (module)
+├── scripts/
+│   └── fm.tcl                # Formality 主脚本 (match/verify)
+├── setup/
+│   └── common_setup.tcl      # 设计/库/输入变量
+└── data/
+    ├── syn_filelist.f        # RTL 源文件列表 (参考设计)
+    ├── cfreq_ctrl.v          # RTL (参考设计)
+    └── netlist/
+        └── cfreq_ctrl.mapped.v  # 综合网表占位 (请用 syn 流程产物覆盖)
+```
+
+## 用法
+```bash
+cd fm/
+source SourceMe              # 可选, 加载 fm_shell 环境
+make fm_r2g                  # RTL vs 综合网表 (默认, Synopsys auto setup)
+make fm_g2g                  # 参考网表 vs 实现网表 (gate-to-gate)
+make fm_r2g USE_LSF=0        # 本地直跑 (不走 LSF)
+make report                  # 查看 verification 汇总
+```
+
+## 变量接口 (Makefile -x 透传到 fm.tcl)
+`DESIGN / RTL_FILELIST / ROOT_DIR / FM_MODE / FM_REF_NETLIST / FM_IMPL_NETLIST / SVF_FILE / PROJECT_HOME`
+
+FM_MODE 取值为 `rtl2gate`（综合网表 vs RTL）或 `gate2gate`（两版网表互比）。
+
+## 前置条件
+综合网表 `cfreq_ctrl.mapped.v` 与 SVF 引导文件由 `syn/` 流程产出：
+复制到 `data/netlist/` 或直接修改变量 `FM_IMPL_NETLIST` / `SVF_FILE` 指向其绝对路径。

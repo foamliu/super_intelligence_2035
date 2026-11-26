@@ -1,0 +1,138 @@
+# Scenario: you are on a DRAM analog characterization team. After every
+# Finesim/HSPICE transient run the simulator writes an FSDB waveform, and a
+# separate HSPICE-style measure script (`.sp`) declares the timing/equality
+# `.measure` statements that must be evaluated against that waveform. To drive
+# a downstream "re-measure on an existing FSDB without re-running simulation"
+# flow, you first need a STRUCTURAL parse of the measure script: every
+# `.meas` statement classified by its measurement MODE, with its signal
+# references, edge qualifiers, delay windows, and level expressions captured.
+#
+# The measure script grammar (HSPICE `.meas tran`) you must parse:
+#
+#   * Lines beginning with `*` (first non-blank char) are HSPICE comments --
+#     ignore them entirely. Blank lines are ignored.
+#   * `.param <name> = <value>` lines declare simulation parameters
+#     (e.g. `.param pvdleq = 1.17v`). Count them; you do NOT need their values.
+#   * A `.meas` statement SPANS MULTIPLE physical lines:
+#       line 1:  `.meas tran <NAME>`        (the header; `tran` may be `ac`/`dc`)
+#                 -- OR a 2-token form `.meas <NAME>` (no analysis keyword)
+#       line 2+: `+trig  v(<signal>) = '<level_expr>'  td=<td>  <edge>=<n>`
+#                 `+targ  v(<signal>) = '<level_expr>'  td=<td>  <edge>=<n>`
+#                 `+when  v(<signal>) = '<level_expr>'  td=<td>  <edge>=<n>`
+#                 `+find  (<sig1>,<sig2>)`   followed by a `+when ...` line
+#                 `param='<arith_expr>'`     (a DERIVED measure, no signals)
+#     The leading `+` on a continuation line is the HSPICE continuation char;
+#     it APPENDS to the most recent non-comment statement. A `*` comment or a
+#     blank line BETWEEN the header and a `+` line does NOT break the
+#     continuation. Fields may be separated by SPACES OR TABS, and there may be
+#     arbitrary runs of whitespace (e.g. `=  '0.5*pvcc'`).
+#   * `<level_expr>` is a SINGLE-QUOTED expression. It is EITHER a numeric
+#     voltage literal (e.g. `'0.625'`, `'1.25'`) OR a parameter expression
+#     referencing a `.param` name (e.g. `'0.5*pvdleq'`, `'0.05*0.5*pvblh'`).
+#     A numeric literal matches `^[0-9.]+([pnumkKMgGxXuU]?|[Mm][Ee][Gg])?$`;
+#     anything else (contains `*`, letters beyond a bare SI suffix, etc.) is a
+#     PARAM-EXPRESSION level.
+#   * `td=<td>` is the measurement delay window. `<td>` is EITHER an SI-suffixed
+#     numeric (e.g. `800n`, `1u`, `5m`) OR a REFERENCE to another measure's
+#     captured time (e.g. `td=t_RdEnF_Sec28Mat0` -- a bare identifier starting
+#     with a letter, no SI suffix).
+#   * `<edge>=<n>` is `rise=<int>` or `fall=<int>` -- the edge qualifier.
+#   * A DIFFERENTIAL voltage uses two comma-separated signals in one `v()`:
+#     `v(<sig1>,<sig2>)`. A `find (<sig1>,<sig2>)` capture is also a
+#     differential/paired measurement.
+#   * A `.meas` statement with NO measurement clause at all (no `trig`/`targ`/
+#     `when`/`find`/`param`) is BODILESS (a stray/malformed header) and is
+#     classified mode `unknown`. A single-line measure that carries its clause
+#     on the header line (e.g. `.meas tran NAME param='...'`) is NOT bodiless.
+#
+# Measurement MODE classification (per `.meas` statement):
+#     param       -- has a `param=` arithmetic-expr clause (derived measure).
+#     find_when   -- has a `find` clause (value-capture at a condition).
+#     when        -- has a `when` clause, NO `trig`/`targ`, NO `find`
+#                    (single-edge time capture).
+#     trig_targ   -- has `trig` and/or `targ` clauses (propagation delay /
+#                    pulse width).
+#     unknown     -- none of the above, OR a bodiless header.
+#     (precedence: param > find_when > when > trig_targ > unknown; a bodiless
+#      header is always `unknown` regardless of other tokens.)
+#
+# Task: implement `hspice_meas_script_parse {script}`, which takes the measure
+# script TEXT (a single string containing the whole `.sp`) and RETURNS a flat
+# Tcl dict string (space-separated `key value` pairs) with EXACTLY these keys,
+# computed over ALL `.meas` statements and `.param` lines in the script:
+#
+#     param_count                     = number of `.param` definitions (int)
+#     measure_count                   = number of `.meas` statements (int)
+#     bodiless_count                  = number of `.meas` statements with NO
+#                                       measurement clause at all (no trig/targ/
+#                                       when/find/param) -- a stray header (int).
+#                                       A single-line measure carrying its clause
+#                                       on the header line is NOT bodiless.
+#     mode_trig_targ                  = count of measures classified trig_targ
+#     mode_when                       = count classified when
+#     mode_find_when                  = count classified find_when
+#     mode_param                      = count classified param
+#     mode_unknown                    = count classified unknown
+#     has_differential                = 1 if ANY measure uses a differential
+#                                       comma-separated signal pair inside
+#                                       `v(<sig1>,<sig2>)` OR `find (<sig1>,<sig2>)`,
+#                                       else 0
+#     has_td_reference                = 1 if ANY measure has a `td=` value that
+#                                       is a measure-name reference (NOT an
+#                                       SI-suffixed numeric), else 0
+#     measures_with_quoted_param_level = number of measures whose `v(...) =
+#                                       '<expr>'` level expression is a
+#                                       PARAM-EXPRESSION (non-numeric). Count
+#                                       measures, not occurrences. A `param=`
+#                                       arithmetic-expr clause does NOT count
+#                                       (it is not a voltage level).
+#     dual_trig_no_targ               = number of measures with >=2 `trig`
+#                                       clauses and 0 `targ` clauses (int)
+#     td_references                   = the td values that are measure-name
+#                                       references, comma-joined into ONE token
+#                                       with NO spaces (e.g.
+#                                       `t_RdEnF_Sec28Mat0,t_YioEqNF_Sec28Mat0`),
+#                                       or `none` if there are none
+#     measure_names                   = the names of all `.meas` statements, in
+#                                       file order, space-separated (a single
+#                                       list value that is the LAST value in
+#                                       the returned string)
+#
+# Rules:
+#   * Merge `+` continuation lines into the owning `.meas` statement BEFORE
+#     classifying. A line whose first non-blank char is `+` continues the most
+#     recent non-comment statement. Comments (`*`) and blank lines never break
+#     continuation and never own a continuation.
+#   * A `*` comment line is never a measure and never a `.param`.
+#   * Tokenize on runs of whitespace (spaces OR tabs) -- do NOT split on a
+#     single space char only, because real scripts use tabs (`.meas\ttran\t...`,
+#     `+when\tv(...)`).
+#   * Count `trig`/`targ`/`when`/`find` by WHOLE-TOKEN equality (a token equal
+#     to the literal `trig`), not by substring -- `trig` must not match inside
+#     a signal name. `param` mode is detected by a `param` clause followed by
+#     `=` and a single-quoted arithmetic expression (NOT by a `param` token
+#     alone, which never appears as a bare token here).
+#   * A level expression counts as a PARAM-EXPRESSION only if it is attached
+#     to a `v(...) = '...'` voltage level (trig/targ/when), and the quoted
+#     content is NOT a numeric literal. The `param='<arith>'` clause of a
+#     derived measure is NOT a voltage level and does NOT contribute to
+#     measures_with_quoted_param_level.
+#   * `td_references` is a single comma-joined token (no spaces). `measure_names`
+#     is the final value and may contain spaces.
+#   * Do NOT write any file -- just return the dict string.
+#   * Emit ints as ints and the booleans as `0`/`1`.
+#
+# Runtime note: the runtime is Synopsys WaveView ACE Tcl. It supports POSIX
+# regex classes ([[:space:]], [[:graph:]], [^)] etc.) but does NOT support
+# \s, \d, \b, \w, or Perl classes. Use `regexp -all -inline -- {PATTERN} $str`
+# with POSIX classes; use `string match` / `string first` for literals.
+#
+# Args:
+#   script - the measure script text (one string, the whole `.sp` content)
+# Returns:
+#   A flat space-separated dict string with the keys above, in the order
+#   listed, ending with `measure_names <name1> <name2> ...`.
+#
+# proc hspice_meas_script_parse {script} {
+#     # your code here
+# }

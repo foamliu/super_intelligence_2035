@@ -1,0 +1,33 @@
+# 真实 trace 上下文（user: johnl, host: hfeg0plg99, session 1792552971568_dnkz8, 2026-10-21）
+# 工程: /proj/drcoa/V0/ver/pex/johnl/T_IsmTop
+# 工具链: Calibre LVS + StarRCXT (StarXtract) RCC 抽取, lpe.config mode=RCC
+# CDL: T_IsmTop.cdl (emy2netlist 2025.09.sp1.hf6 输出, 3575 行)
+# 顶层 .SUBCKT T_IsmTop ... vbn! vbp! vcc! vdbias! vss!  (vbn!/vbp! 是体偏置 body-bias 端口)
+# buf 族子电路: bufLx4 / bufLx16, 签名均为 `A Y vbn! vbp! vcc! vss!`
+#   .SUBCKT bufLx4  A Y vbn! vbp! vcc! vss!   (line 543)
+#   .SUBCKT bufLx16 A Y vbn! vbp! vcc! vss!   (line 2444)
+#
+# 用户原话 (trace msg #0):
+#   "/proj/drcoa/V0/ver/pex/johnl/T_IsmTop 这个文件夹抽IsmRCC失败了 说是I37底层
+#    没map vbn 到vss vbp 到vcc 要改cdl你改下记得 对所有目录下到文件的修改都要
+#    比较修改前后确保合适修改没问题 修改并完成RCC抽取 你别想太多 就这一个cell
+#    连线可能需要修改一下 最后完成RCC"
+#
+# 根因 (assistant 深读 CDL 后定位):
+#   顶层单元 T_IsmTop 里, 实例 XI37 (bufLx4) 的体偏置 bulk 端仍接在顶层 vbn!/vbp!
+#   网上, 没有映射到真实电源/地 vss!/vcc!:
+#       XI37 JudgeN<8> JudgeN_buff vbn! vbp! vcc! vss! / bufLx4   <- 错
+#   其他 buf 族实例已正确接到 vss!/vcc!:
+#       XI378 JudgeN<6> JudgeN_buff6 vss! vcc! vcc! vss! / bufLx4 <- 对
+#   StarRCXT RCC 抽取因 body-bias 网悬空而失败 ("I37 底层没map vbn 到vss vbp 到vcc").
+#
+# 修复 (trace 中已应用, 存在备份 T_IsmTop.cdl.bak_vbnfix):
+#   把 XI37 的 vbn!->vss! , vbp!->vcc! (仅此一行), 其余 CDL 原样不动.
+#   vbn! 计数 681->680, vbp! 计数 515->514 (各减 1, 仅 XI37 一行).
+#
+# 现场工具日志关键串:
+#   cci_lvs.log 含 vbn:116 vbp:92 ; star_cmd_RCC: BLOCK T_IsmTop, CALIBRE_RUNSET lpe_RCC.rule
+#   RCC 产物: T_IsmTop.spf.TYP_98_RCC (修复前为 8/25 旧版, 需用修好的 CDL 重抽)
+#
+# 本资产 T_IsmTop.cdl 是按真实结构裁剪的可见 A 版本 (含 XI37 错接).
+# 判分只用隐藏 B (T_DacTop, 不同的顶层/实例/网名), 跨输入守卫防硬编 XI37.

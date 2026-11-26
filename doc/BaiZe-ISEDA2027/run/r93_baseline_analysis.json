@@ -1,0 +1,102 @@
+{
+  "r93": {
+    "model": "DeepSeek (SMOKE stand-in)",
+    "is_smoke": true,
+    "timestamp": "2026-11-09 11:48:04",
+    "stats": {
+      "model": "DeepSeek (SMOKE stand-in)",
+      "n_traces": 123,
+      "n_success": 103,
+      "n_error": 20,
+      "success_rate": 0.8373983739837398,
+      "d1_tool_call_legal_rate": 1.0,
+      "d2_tool_call_freq": 22.88,
+      "d2_tool_breakdown": {
+        "search_apis": 764,
+        "run_pyAether_code_tool": 622,
+        "get_api_details": 507,
+        "execute_command": 261,
+        "write_to_file": 251,
+        "list_files": 215,
+        "read_file": 104,
+        "attempt_completion": 84,
+        "search_files": 6
+      },
+      "d3_timeout_ratio": 0.0407,
+      "d4_failure_breakdown": {
+        "logic_error": {
+          "count": 495,
+          "ratio": 0.7477341389728097
+        },
+        "import_error": {
+          "count": 62,
+          "ratio": 0.09365558912386707
+        },
+        "type_error": {
+          "count": 49,
+          "ratio": 0.07401812688821752
+        },
+        "missing_dependency": {
+          "count": 31,
+          "ratio": 0.04682779456193353
+        },
+        "timeout": {
+          "count": 18,
+          "ratio": 0.027190332326283987
+        },
+        "syntax_error": {
+          "count": 6,
+          "ratio": 0.00906344410876133
+        },
+        "incomplete": {
+          "count": 1,
+          "ratio": 0.0015105740181268882
+        }
+      },
+      "d5_per_scenario_pass": {
+        "Design Management": {
+          "pass": 21,
+          "fail": 3,
+          "total": 24,
+          "pass_rate": 0.875
+        },
+        "Schematic": {
+          "pass": 27,
+          "fail": 4,
+          "total": 31,
+          "pass_rate": 0.8709677419354839
+        },
+        "Others": {
+          "pass": 21,
+          "fail": 5,
+          "total": 26,
+          "pass_rate": 0.8076923076923077
+        },
+        "Layout": {
+          "pass": 34,
+          "fail": 8,
+          "total": 42,
+          "pass_rate": 0.8095238095238095
+        }
+      },
+      "d6_avg_iterations": 2.12,
+      "d6_median_iterations": 2,
+      "d6_iteration_distribution": {
+        "mean": 2.12,
+        "median": 2,
+        "p25": 1,
+        "p75": 2,
+        "p90": 4,
+        "max": 14
+      },
+      "additional_stats": {
+        "avg_turns": 48.0,
+        "p90_turns": 92,
+        "avg_unique_tools": 7.3,
+        "p90_max_msg_len": 9733,
+        "avg_total_text_len": 41132
+      }
+    },
+    "comparison": null
+  }
+}

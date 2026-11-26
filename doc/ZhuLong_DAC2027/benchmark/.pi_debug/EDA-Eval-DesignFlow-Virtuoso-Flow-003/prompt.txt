@@ -1,0 +1,100 @@
+# Scenario: a Cadence Virtuoso resistance-reduction flow (cf. Virtuoso-Flow-001
+# config-consolidation and Virtuoso-Flow-002 static-config-DAG-validation) is
+# driven by an orchestrator that runs the batch SKILL steps (rscalc / pe /
+# autovia / ...) sequentially and writes a single run log. After a run the
+# designer must audit that log to answer the questions that actually matter in
+# production: which steps ran, what was each step's FINAL status, how many
+# attempts did each step take (a step can fail and be RETRIED then succeed),
+# which steps were SKIPPED (and why), which finally FAILED, what was the true
+# wall-clock duration of the whole flow, and what is the overall verdict. That
+# audit is the deliverable here.
+#
+# You are given ONE multi-line string `runlog_text` -- the orchestrator run log.
+# Implement the proc `vflow_runlog_audit(runlog_text)` that returns a flat Tcl
+# dict with EXACTLY these 10 keys in this order:
+#     steps_seen step_status step_attempts step_duration_sec skip_reasons
+#     total_wall_sec retried_steps skipped_steps failed_steps overall_verdict
+#
+# ---- LOG LINE GRAMMAR ----
+# Each physical line is one record. Drop CR (`\r`); trim leading/trailing
+# whitespace; blank lines are ignored. Line types:
+#   - `[flow] start HH:MM:SS`   flow begins (exactly one).
+#   - `[flow] end HH:MM:SS`     flow ends (exactly one).
+#   - `[step:<name>] start HH:MM:SS`   opens a new ATTEMPT BLOCK for <name>.
+#   - `[step:<name>] retry`            retry marker (NO timestamp); the NEXT
+#                                      `start` for this step opens a new block.
+#   - `[step:<name>] PASS HH:MM:SS`    terminal success for the current block.
+#   - `[step:<name>] FAIL HH:MM:SS`    terminal failure.
+#   - `[step:<name>] ERROR <msg> HH:MM:SS`  terminal error; <msg> is free text
+#                                      and the timestamp is the LAST token.
+#   - `[step:<name>] SKIP reason=<tok> HH:MM:SS`  terminal skip; <tok> is a
+#                                      single non-space reason token.
+#   - `[step:<name>] WARN <msg>`       non-terminal warning: IGNORE for status
+#                                      and attempts (informational only).
+# Timestamps are `HH:MM:SS` (zero-padded, 24-hour).
+#
+# ---- BLOCK / ATTEMPT SEMANTICS ----
+# A "block" for a step spans from one `start` line up to (not including) the
+# next `start` line of ANY step, the next `retry` line of the SAME step, or the
+# `[flow] end` line. A block contains at most one terminal line (PASS/FAIL/
+# ERROR/SKIP); if a block contains several terminal lines, the LAST one wins
+# (LAST-WINS trap).
+#   - `step_attempts[<name>]` = the number of `start` lines (blocks) for that
+#     step -- NOT the number of `retry` lines. A step that fails with no retry
+#     still has attempts = 1.
+#   - final status of a step = the terminal of its LAST block that has a
+#     terminal. If a step has a `start` but no terminal ever, status =
+#     "INTERRUPTED".
+#   - `step_duration_sec[<name>]` = duration of the FINAL block only =
+#     (final_block_end_ts - final_block_start_ts), midnight-aware. For a
+#     retried step this is the LAST attempt's duration, NOT the sum of all
+#     attempts.
+#
+# ---- TOTAL WALL ----
+# `total_wall_sec` = (flow_end_ts - flow_start_ts), midnight-aware. This is the
+# true wall clock of the whole flow, NOT the sum of per-step durations (there
+# may be a setup gap between `[flow] start` and the first step, and failed-
+# then-discarded attempt time is not part of any final-block duration).
+#
+# ---- OUTPUT LISTS (all pair-lists are sorted LEXICOGRAPHICALLY by step name;
+#      bare name-lists below are also lex-sorted) ----
+#   steps_seen        : list of step names encountered, in FIRST-APPEARANCE
+#                       order, DE-DUPLICATED (a retried step appears ONCE).
+#   step_status       : list of "name:STATUS" (STATUS in
+#                       {PASS,FAIL,ERROR,SKIP,INTERRUPTED}), lex sorted by name.
+#   step_attempts     : list of "name:N" (N = block count), lex sorted.
+#   step_duration_sec : list of "name:S" (S = final-block seconds, integer),
+#                       lex sorted.
+#   skip_reasons      : list of "name:reason" for every SKIP-status step
+#                       (BOTH `upstream-failed:*` AND `user` reasons, and any
+#                       other reason), lex sorted.
+#   total_wall_sec    : integer seconds (midnight-aware).
+#   retried_steps     : list of names with attempts > 1, lex sorted.
+#   skipped_steps     : list of names with final status SKIP, lex sorted
+#                       (ALL skip reasons, not only upstream-failed).
+#   failed_steps      : list of names with final status FAIL or ERROR, lex
+#                       sorted.
+#   overall_verdict   : one of "ERROR", "SKIPPED", "PASS" with priority
+#                       ERROR > SKIPPED > PASS: if any step finally FAILed or
+#                       ERRORed -> "ERROR"; else if any step SKIPped ->
+#                       "SKIPPED"; else "PASS". (A flow that has both a final
+#                       FAIL and a SKIP is "ERROR", not "SKIPPED".)
+#
+# ---- REAL TRAPS (a naive parser gets these wrong) ----
+#   1. RETRY attempts counted as `retry` lines instead of `start` lines
+#      (block count) -> wrong attempts.
+#   2. LAST-WINS: a block with PASS then later ERROR -> final ERROR, not PASS.
+#   3. skipped_steps must include ALL skip reasons (upstream-failed AND user,
+#      and any other) -> filtering only `upstream-failed` misses user-skips.
+#   4. total_wall_sec = wall clock (flow_end - flow_start), NOT the sum of
+#      per-step final-block durations (setup gap + discarded retry time).
+#   5. MIDNIGHT rollover: end_ts < start_ts means +86400 (e.g. 23:59:55 ->
+#      00:00:05 = 10s, not negative).
+#   6. overall_verdict priority ERROR > SKIPPED (NOT SKIPPED > ERROR).
+#   7. steps_seen de-duplicated in first-appearance order (a retried step
+#      appears once, not once per start).
+#
+# The Empyrean WaveView Tcl regexp supports POSIX classes like [[:space:]],
+# [[:alnum:]_], [[:digit:]]; do NOT rely on \b / \s / \d / \w Perl classes.
+# Use Tcl `split` on newline, `string map` to drop \r, `string trim`, and
+# `regexp --` with POSIX classes. The runtime Tcl has no native `assert`.

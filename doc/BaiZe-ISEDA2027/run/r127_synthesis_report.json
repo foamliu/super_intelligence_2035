@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "round": "R127",
+    "wake": 174,
+    "date": "2026-11-10",
+    "elapsed_sec": 0.58
+  },
+  "pattern_extraction": {
+    "total_traces": 103,
+    "total_tool_calls": 1475,
+    "total_errors": 927,
+    "total_recoveries": 544,
+    "api_usage_examples": 40,
+    "search_queries": 573,
+    "conversation_templates": 103,
+    "top_2gram": [
+      {
+        "seq": [
+          "search_apis",
+          "get_api_details"
+        ],
+        "count": 348
+      },
+      {
+        "seq": [
+          "run_code",
+          "run_code"
+        ],
+        "count": 346
+      },
+      {
+        "seq": [
+          "get_api_details",
+          "search_apis"
+        ],
+        "count": 235
+      },
+      {
+        "seq": [
+          "search_apis",
+          "search_apis"
+        ],
+        "count": 175
+      },
+      {
+        "seq": [
+          "get_api_details",
+          "run_code"
+        ],
+        "count": 121
+      },
+      {
+        "seq": [
+          "run_code",
+          "search_apis"
+        ],
+        "count": 60
+      },
+      {
+        "seq": [
+          "search_apis",
+          "run_code"
+        ],
+        "count": 49
+      },
+      {
+        "seq": [
+          "get_api_details",
+          "get_api_details"
+        ],
+        "count": 30
+      }
+    ]
+  },
+  "api_kb": {
+    "total": 8463,
+    "safe": 8347
+  },
+  "generation": {
+    "target": 200,
+    "generated": 200,
+    "types": {
+      "A_api_usage": 100,
+      "B_error_recovery": 50,
+      "C_multi_api": 50
+    },
+    "apis_covered": 269,
+    "contamination_failures": 0
+  },
+  "key_findings": {
+    "golden_pattern": "search->detail->run dominant (19.4% in R126)",
+    "error_recovery": "99% golden traces have errors with recovery",
+    "safe_api_pool": "8347 non-eval APIs",
+    "sft_format": "OpenAI chat format, multi-turn, 3 types",
+    "contamination": "ALL PASSED"
+  }
+}

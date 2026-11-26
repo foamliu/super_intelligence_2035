@@ -1,0 +1,1050 @@
+{
+  "r130_metadata": {
+    "wake": "wake177",
+    "date": "2026-11-10",
+    "description": "GRPO Curriculum Integration with R5 Process Reward",
+    "integrates": [
+      "R74",
+      "R128",
+      "R129"
+    ],
+    "disclaimer": "Surrogate simulation, NOT transferable to BaiZe"
+  },
+  "phases": [
+    {
+      "phase_id": 0,
+      "phase_name": "Warmup",
+      "steps": 50,
+      "levels": [
+        "L1"
+      ],
+      "reward_arm": "R0",
+      "r5_enabled": false,
+      "per_step": [
+        {
+          "step": 0,
+          "level": "L1",
+          "pass_rate": 0.75,
+          "mean_reward": 0.75,
+          "adv_std": 0.433,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 10,
+          "level": "L1",
+          "pass_rate": 0.5,
+          "mean_reward": 0.5,
+          "adv_std": 0.5,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 20,
+          "level": "L1",
+          "pass_rate": 0.875,
+          "mean_reward": 0.875,
+          "adv_std": 0.3307,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 30,
+          "level": "L1",
+          "pass_rate": 1.0,
+          "mean_reward": 1.0,
+          "adv_std": 0.0,
+          "signal_rate": 0.0,
+          "learnable": false
+        },
+        {
+          "step": 40,
+          "level": "L1",
+          "pass_rate": 0.75,
+          "mean_reward": 0.75,
+          "adv_std": 0.433,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 49,
+          "level": "L1",
+          "pass_rate": 0.75,
+          "mean_reward": 0.75,
+          "adv_std": 0.433,
+          "signal_rate": 1.0,
+          "learnable": true
+        }
+      ],
+      "per_level_summary": {
+        "L1": {
+          "n_groups": 50,
+          "initial_pass_rate": 0.65,
+          "final_pass_rate": 0.808,
+          "improvement": 0.158,
+          "avg_reward": 0.72,
+          "avg_adv_std": 0.3972,
+          "avg_signal_rate": 0.92,
+          "learnable_pct": 0.92,
+          "avg_errors": 1.93,
+          "avg_recoveries": 1.27
+        }
+      },
+      "phase_summary": {
+        "total_groups": 50,
+        "avg_reward": 0.72,
+        "avg_adv_std": 0.3972,
+        "avg_signal_rate": 0.92,
+        "learnable_pct": 0.92,
+        "pass_rates_after": {
+          "L1": 0.808
+        }
+      }
+    },
+    {
+      "phase_id": 1,
+      "phase_name": "Foundation",
+      "steps": 100,
+      "levels": [
+        "L1",
+        "L2"
+      ],
+      "reward_arm": "R2",
+      "r5_enabled": true,
+      "per_step": [
+        {
+          "step": 0,
+          "level": "L2",
+          "pass_rate": 0.625,
+          "mean_reward": 0.4352,
+          "adv_std": 0.3142,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 10,
+          "level": "L1",
+          "pass_rate": 1.0,
+          "mean_reward": 0.6708,
+          "adv_std": 0.0153,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 20,
+          "level": "L2",
+          "pass_rate": 0.375,
+          "mean_reward": 0.2639,
+          "adv_std": 0.3266,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 30,
+          "level": "L1",
+          "pass_rate": 0.875,
+          "mean_reward": 0.5839,
+          "adv_std": 0.221,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 40,
+          "level": "L2",
+          "pass_rate": 0.625,
+          "mean_reward": 0.429,
+          "adv_std": 0.3272,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 50,
+          "level": "L1",
+          "pass_rate": 0.875,
+          "mean_reward": 0.5908,
+          "adv_std": 0.2199,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 60,
+          "level": "L1",
+          "pass_rate": 1.0,
+          "mean_reward": 0.674,
+          "adv_std": 0.0143,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 70,
+          "level": "L2",
+          "pass_rate": 0.875,
+          "mean_reward": 0.5927,
+          "adv_std": 0.2091,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 80,
+          "level": "L2",
+          "pass_rate": 0.625,
+          "mean_reward": 0.4289,
+          "adv_std": 0.3106,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 90,
+          "level": "L5",
+          "pass_rate": 0.0,
+          "mean_reward": 0.0265,
+          "adv_std": 0.0254,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 99,
+          "level": "L2",
+          "pass_rate": 0.5,
+          "mean_reward": 0.3488,
+          "adv_std": 0.3179,
+          "signal_rate": 1.0,
+          "learnable": true
+        }
+      ],
+      "per_level_summary": {
+        "L1": {
+          "n_groups": 29,
+          "initial_pass_rate": 0.8080301397071394,
+          "final_pass_rate": 0.8876,
+          "improvement": 0.0795,
+          "avg_reward": 0.5715,
+          "avg_adv_std": 0.1928,
+          "avg_signal_rate": 1.0,
+          "learnable_pct": 0.931,
+          "avg_errors": 1.69,
+          "avg_recoveries": 1.32
+        },
+        "L2": {
+          "n_groups": 59,
+          "initial_pass_rate": 0.45,
+          "final_pass_rate": 0.7526,
+          "improvement": 0.3026,
+          "avg_reward": 0.4565,
+          "avg_adv_std": 0.2673,
+          "avg_signal_rate": 1.0,
+          "learnable_pct": 0.9831,
+          "avg_errors": 2.02,
+          "avg_recoveries": 1.22
+        }
+      },
+      "phase_summary": {
+        "total_groups": 100,
+        "avg_reward": 0.4483,
+        "avg_adv_std": 0.2323,
+        "avg_signal_rate": 1.0,
+        "learnable_pct": 0.97,
+        "pass_rates_after": {
+          "L1": 0.8876,
+          "L2": 0.7526
+        }
+      }
+    },
+    {
+      "phase_id": 2,
+      "phase_name": "Development",
+      "steps": 150,
+      "levels": [
+        "L2",
+        "L3"
+      ],
+      "reward_arm": "R2",
+      "r5_enabled": true,
+      "per_step": [
+        {
+          "step": 0,
+          "level": "L3",
+          "pass_rate": 0.125,
+          "mean_reward": 0.1039,
+          "adv_std": 0.2226,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 10,
+          "level": "L3",
+          "pass_rate": 0.5,
+          "mean_reward": 0.3412,
+          "adv_std": 0.3202,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 20,
+          "level": "L1",
+          "pass_rate": 0.875,
+          "mean_reward": 0.5959,
+          "adv_std": 0.2218,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 30,
+          "level": "L3",
+          "pass_rate": 0.375,
+          "mean_reward": 0.2601,
+          "adv_std": 0.318,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 40,
+          "level": "L3",
+          "pass_rate": 0.5,
+          "mean_reward": 0.352,
+          "adv_std": 0.3197,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 50,
+          "level": "L3",
+          "pass_rate": 0.25,
+          "mean_reward": 0.1845,
+          "adv_std": 0.2781,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 60,
+          "level": "L2",
+          "pass_rate": 0.375,
+          "mean_reward": 0.2701,
+          "adv_std": 0.3089,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 70,
+          "level": "L3",
+          "pass_rate": 0.25,
+          "mean_reward": 0.1757,
+          "adv_std": 0.2871,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 80,
+          "level": "L2",
+          "pass_rate": 0.625,
+          "mean_reward": 0.4283,
+          "adv_std": 0.3229,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 90,
+          "level": "L4",
+          "pass_rate": 0.0,
+          "mean_reward": 0.0156,
+          "adv_std": 0.0157,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 100,
+          "level": "L2",
+          "pass_rate": 0.75,
+          "mean_reward": 0.5152,
+          "adv_std": 0.276,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 110,
+          "level": "L3",
+          "pass_rate": 0.5,
+          "mean_reward": 0.352,
+          "adv_std": 0.3223,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 120,
+          "level": "L3",
+          "pass_rate": 0.5,
+          "mean_reward": 0.3538,
+          "adv_std": 0.3127,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 130,
+          "level": "L3",
+          "pass_rate": 0.375,
+          "mean_reward": 0.2739,
+          "adv_std": 0.3139,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 140,
+          "level": "L3",
+          "pass_rate": 0.5,
+          "mean_reward": 0.3521,
+          "adv_std": 0.3312,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 149,
+          "level": "L2",
+          "pass_rate": 1.0,
+          "mean_reward": 0.6746,
+          "adv_std": 0.0149,
+          "signal_rate": 1.0,
+          "learnable": true
+        }
+      ],
+      "per_level_summary": {
+        "L2": {
+          "n_groups": 56,
+          "initial_pass_rate": 0.7526326508671861,
+          "final_pass_rate": 0.7957,
+          "improvement": 0.0431,
+          "avg_reward": 0.5168,
+          "avg_adv_std": 0.2388,
+          "avg_signal_rate": 1.0,
+          "learnable_pct": 1.0,
+          "avg_errors": 1.83,
+          "avg_recoveries": 1.27
+        },
+        "L3": {
+          "n_groups": 70,
+          "initial_pass_rate": 0.25,
+          "final_pass_rate": 0.6137,
+          "improvement": 0.3637,
+          "avg_reward": 0.3501,
+          "avg_adv_std": 0.2967,
+          "avg_signal_rate": 1.0,
+          "learnable_pct": 1.0,
+          "avg_errors": 2.29,
+          "avg_recoveries": 1.13
+        }
+      },
+      "phase_summary": {
+        "total_groups": 150,
+        "avg_reward": 0.3938,
+        "avg_adv_std": 0.2515,
+        "avg_signal_rate": 1.0,
+        "learnable_pct": 1.0,
+        "pass_rates_after": {
+          "L2": 0.7957,
+          "L3": 0.6137
+        }
+      }
+    },
+    {
+      "phase_id": 3,
+      "phase_name": "Refinement",
+      "steps": 150,
+      "levels": [
+        "L3",
+        "L4"
+      ],
+      "reward_arm": "R3",
+      "r5_enabled": true,
+      "per_step": [
+        {
+          "step": 0,
+          "level": "L5",
+          "pass_rate": 0.0,
+          "mean_reward": 0.0326,
+          "adv_std": 0.0198,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 10,
+          "level": "L3",
+          "pass_rate": 0.625,
+          "mean_reward": 0.4396,
+          "adv_std": 0.3072,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 20,
+          "level": "L4",
+          "pass_rate": 0.125,
+          "mean_reward": 0.1129,
+          "adv_std": 0.2199,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 30,
+          "level": "L3",
+          "pass_rate": 0.75,
+          "mean_reward": 0.5102,
+          "adv_std": 0.2933,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 40,
+          "level": "L3",
+          "pass_rate": 0.375,
+          "mean_reward": 0.2695,
+          "adv_std": 0.3109,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 50,
+          "level": "L3",
+          "pass_rate": 0.5,
+          "mean_reward": 0.3483,
+          "adv_std": 0.3236,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 60,
+          "level": "L3",
+          "pass_rate": 0.625,
+          "mean_reward": 0.4377,
+          "adv_std": 0.303,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 70,
+          "level": "L4",
+          "pass_rate": 0.25,
+          "mean_reward": 0.1901,
+          "adv_std": 0.2793,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 80,
+          "level": "L3",
+          "pass_rate": 0.375,
+          "mean_reward": 0.2562,
+          "adv_std": 0.3142,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 90,
+          "level": "L3",
+          "pass_rate": 0.5,
+          "mean_reward": 0.3451,
+          "adv_std": 0.3254,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 100,
+          "level": "L4",
+          "pass_rate": 0.25,
+          "mean_reward": 0.1878,
+          "adv_std": 0.2885,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 110,
+          "level": "L3",
+          "pass_rate": 0.5,
+          "mean_reward": 0.3451,
+          "adv_std": 0.3304,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 120,
+          "level": "L3",
+          "pass_rate": 0.625,
+          "mean_reward": 0.4308,
+          "adv_std": 0.3173,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 130,
+          "level": "L3",
+          "pass_rate": 0.625,
+          "mean_reward": 0.4176,
+          "adv_std": 0.3223,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 140,
+          "level": "L5",
+          "pass_rate": 0.0,
+          "mean_reward": 0.0438,
+          "adv_std": 0.0374,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 149,
+          "level": "L4",
+          "pass_rate": 0.25,
+          "mean_reward": 0.1994,
+          "adv_std": 0.2791,
+          "signal_rate": 1.0,
+          "learnable": true
+        }
+      ],
+      "per_level_summary": {
+        "L3": {
+          "n_groups": 58,
+          "initial_pass_rate": 0.613712818684235,
+          "final_pass_rate": 0.6419,
+          "improvement": 0.0282,
+          "avg_reward": 0.4024,
+          "avg_adv_std": 0.2966,
+          "avg_signal_rate": 1.0,
+          "learnable_pct": 1.0,
+          "avg_errors": 2.13,
+          "avg_recoveries": 1.14
+        },
+        "L4": {
+          "n_groups": 56,
+          "initial_pass_rate": 0.12,
+          "final_pass_rate": 0.3764,
+          "improvement": 0.2564,
+          "avg_reward": 0.2331,
+          "avg_adv_std": 0.2674,
+          "avg_signal_rate": 0.9933,
+          "learnable_pct": 1.0,
+          "avg_errors": 2.99,
+          "avg_recoveries": 1.22
+        }
+      },
+      "phase_summary": {
+        "total_groups": 150,
+        "avg_reward": 0.3621,
+        "avg_adv_std": 0.2535,
+        "avg_signal_rate": 0.9975,
+        "learnable_pct": 0.9933,
+        "pass_rates_after": {
+          "L3": 0.6419,
+          "L4": 0.3764
+        }
+      }
+    },
+    {
+      "phase_id": 4,
+      "phase_name": "Mastery",
+      "steps": 100,
+      "levels": [
+        "L4",
+        "L5"
+      ],
+      "reward_arm": "R3",
+      "r5_enabled": true,
+      "per_step": [
+        {
+          "step": 0,
+          "level": "L3",
+          "pass_rate": 0.75,
+          "mean_reward": 0.5076,
+          "adv_std": 0.2715,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 10,
+          "level": "L3",
+          "pass_rate": 0.75,
+          "mean_reward": 0.5134,
+          "adv_std": 0.2751,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 20,
+          "level": "L5",
+          "pass_rate": 0.125,
+          "mean_reward": 0.1046,
+          "adv_std": 0.2302,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 30,
+          "level": "L4",
+          "pass_rate": 0.375,
+          "mean_reward": 0.2635,
+          "adv_std": 0.3276,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 40,
+          "level": "L3",
+          "pass_rate": 0.875,
+          "mean_reward": 0.5864,
+          "adv_std": 0.2219,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 50,
+          "level": "L4",
+          "pass_rate": 0.375,
+          "mean_reward": 0.2842,
+          "adv_std": 0.318,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 60,
+          "level": "L5",
+          "pass_rate": 0.0,
+          "mean_reward": 0.0328,
+          "adv_std": 0.0336,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 70,
+          "level": "L5",
+          "pass_rate": 0.125,
+          "mean_reward": 0.1299,
+          "adv_std": 0.227,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 80,
+          "level": "L5",
+          "pass_rate": 0.5,
+          "mean_reward": 0.3644,
+          "adv_std": 0.3323,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 90,
+          "level": "L4",
+          "pass_rate": 0.625,
+          "mean_reward": 0.4226,
+          "adv_std": 0.3147,
+          "signal_rate": 1.0,
+          "learnable": true
+        },
+        {
+          "step": 99,
+          "level": "L4",
+          "pass_rate": 0.375,
+          "mean_reward": 0.2858,
+          "adv_std": 0.3175,
+          "signal_rate": 1.0,
+          "learnable": true
+        }
+      ],
+      "per_level_summary": {
+        "L4": {
+          "n_groups": 49,
+          "initial_pass_rate": 0.3763670471510175,
+          "final_pass_rate": 0.4096,
+          "improvement": 0.0332,
+          "avg_reward": 0.293,
+          "avg_adv_std": 0.3118,
+          "avg_signal_rate": 1.0,
+          "learnable_pct": 1.0,
+          "avg_errors": 2.93,
+          "avg_recoveries": 1.34
+        },
+        "L5": {
+          "n_groups": 20,
+          "initial_pass_rate": 0.05,
+          "final_pass_rate": 0.1402,
+          "improvement": 0.0902,
+          "avg_reward": 0.1126,
+          "avg_adv_std": 0.1735,
+          "avg_signal_rate": 1.0,
+          "learnable_pct": 1.0,
+          "avg_errors": 4.07,
+          "avg_recoveries": 1.39
+        }
+      },
+      "phase_summary": {
+        "total_groups": 100,
+        "avg_reward": 0.328,
+        "avg_adv_std": 0.2593,
+        "avg_signal_rate": 1.0,
+        "learnable_pct": 0.98,
+        "pass_rates_after": {
+          "L4": 0.4096,
+          "L5": 0.1402
+        }
+      }
+    }
+  ],
+  "wall_clock_budget": [
+    {
+      "phase_id": 0,
+      "phase_name": "Warmup",
+      "n_groups": 50,
+      "avg_turns_per_rollout": 4.0,
+      "avg_rollout_time_ms": 1028.0,
+      "group_time_ms": 2056.0,
+      "sandbox_parallelism": 4,
+      "total_hours": 0.03,
+      "total_minutes": 1.7
+    },
+    {
+      "phase_id": 1,
+      "phase_name": "Foundation",
+      "n_groups": 100,
+      "avg_turns_per_rollout": 5.0,
+      "avg_rollout_time_ms": 1285.0,
+      "group_time_ms": 2570.0,
+      "sandbox_parallelism": 4,
+      "total_hours": 0.07,
+      "total_minutes": 4.3
+    },
+    {
+      "phase_id": 2,
+      "phase_name": "Development",
+      "n_groups": 150,
+      "avg_turns_per_rollout": 7.0,
+      "avg_rollout_time_ms": 1799.0,
+      "group_time_ms": 3598.0,
+      "sandbox_parallelism": 4,
+      "total_hours": 0.15,
+      "total_minutes": 9.0
+    },
+    {
+      "phase_id": 3,
+      "phase_name": "Refinement",
+      "n_groups": 150,
+      "avg_turns_per_rollout": 9.0,
+      "avg_rollout_time_ms": 2313.0,
+      "group_time_ms": 4626.0,
+      "sandbox_parallelism": 4,
+      "total_hours": 0.19,
+      "total_minutes": 11.6
+    },
+    {
+      "phase_id": 4,
+      "phase_name": "Mastery",
+      "n_groups": 100,
+      "avg_turns_per_rollout": 11.0,
+      "avg_rollout_time_ms": 2827.0,
+      "group_time_ms": 5654.0,
+      "sandbox_parallelism": 4,
+      "total_hours": 0.16,
+      "total_minutes": 9.4
+    }
+  ],
+  "total_wall_clock_hours": 0.6,
+  "replay_buffer": [
+    {
+      "phase_id": 0,
+      "phase_name": "Warmup",
+      "current_levels": [
+        "L1"
+      ],
+      "replay_ratio": 0.0,
+      "replay_sources": [],
+      "replay_distribution": {},
+      "n_replay_tasks_available": 0,
+      "rationale": "No prior levels"
+    },
+    {
+      "phase_id": 1,
+      "phase_name": "Foundation",
+      "current_levels": [
+        "L1",
+        "L2"
+      ],
+      "replay_ratio": 0.0,
+      "replay_sources": [],
+      "replay_distribution": {},
+      "n_replay_tasks_available": 0,
+      "rationale": "No prior levels"
+    },
+    {
+      "phase_id": 2,
+      "phase_name": "Development",
+      "current_levels": [
+        "L2",
+        "L3"
+      ],
+      "replay_ratio": 0.2,
+      "replay_sources": [
+        "L1"
+      ],
+      "replay_distribution": {
+        "L1": 0.2
+      },
+      "n_replay_tasks_available": 1500,
+      "rationale": "Prevent forgetting of L1 while training on L2+L3"
+    },
+    {
+      "phase_id": 3,
+      "phase_name": "Refinement",
+      "current_levels": [
+        "L3",
+        "L4"
+      ],
+      "replay_ratio": 0.25,
+      "replay_sources": [
+        "L1",
+        "L2"
+      ],
+      "replay_distribution": {
+        "L1": 0.203,
+        "L2": 0.047
+      },
+      "n_replay_tasks_available": 1847,
+      "rationale": "Prevent forgetting of L1+L2 while training on L3+L4"
+    },
+    {
+      "phase_id": 4,
+      "phase_name": "Mastery",
+      "current_levels": [
+        "L4",
+        "L5"
+      ],
+      "replay_ratio": 0.3,
+      "replay_sources": [
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "replay_distribution": {
+        "L1": 0.17,
+        "L2": 0.0393,
+        "L3": 0.0907
+      },
+      "n_replay_tasks_available": 2647,
+      "rationale": "Prevent forgetting of L1+L2+L3 while training on L4+L5"
+    }
+  ],
+  "transition_criteria": [
+    {
+      "from_phase": 0,
+      "from_name": "Warmup",
+      "to_phase": 1,
+      "to_name": "Foundation",
+      "criteria": {
+        "min_pass_rate": 0.7,
+        "min_steps": 30,
+        "min_adv_std": 0.05
+      },
+      "safety_checks": {
+        "collapse": "entropy < 0.01 -> STOP",
+        "divergence": "KL > 5.0 -> lower lr",
+        "stagnation": "30 steps <2.0% improvement -> fallback",
+        "cheat": "cheat_rate > 5% -> ALERT; CRITICAL hack -> ABORT"
+      },
+      "fallback": "Revert to previous phase for 20 steps, then retry",
+      "go_no_go": "Pipeline smoke test. GO if advantage std > 0.05 for >= 20 consecutive steps AND sandbox < 2s/call."
+    },
+    {
+      "from_phase": 1,
+      "from_name": "Foundation",
+      "to_phase": 2,
+      "to_name": "Development",
+      "criteria": {
+        "min_pass_rate": 0.6,
+        "min_steps": 60,
+        "min_adv_std": 0.05
+      },
+      "safety_checks": {
+        "collapse": "entropy < 0.01 -> STOP",
+        "divergence": "KL > 5.0 -> lower lr",
+        "stagnation": "30 steps <2.0% improvement -> fallback",
+        "cheat": "cheat_rate > 5% -> ALERT; CRITICAL hack -> ABORT"
+      },
+      "fallback": "Revert to previous phase for 20 steps, then retry",
+      "go_no_go": "L2 pass rate > 50% AND R5 recovery signal contributes to >= 30% of non-zero advantages."
+    },
+    {
+      "from_phase": 2,
+      "from_name": "Development",
+      "to_phase": 3,
+      "to_name": "Refinement",
+      "criteria": {
+        "min_pass_rate": 0.5,
+        "min_steps": 80,
+        "min_adv_std": 0.05
+      },
+      "safety_checks": {
+        "collapse": "entropy < 0.01 -> STOP",
+        "divergence": "KL > 5.0 -> lower lr",
+        "stagnation": "30 steps <2.0% improvement -> fallback",
+        "cheat": "cheat_rate > 5% -> ALERT; CRITICAL hack -> ABORT"
+      },
+      "fallback": "Revert to previous phase for 20 steps, then retry",
+      "go_no_go": "L3 pass rate > 35% AND efficiency penalty triggers on < 10% of rollouts."
+    },
+    {
+      "from_phase": 3,
+      "from_name": "Refinement",
+      "to_phase": 4,
+      "to_name": "Mastery",
+      "criteria": {
+        "min_pass_rate": 0.4,
+        "min_steps": 80,
+        "min_adv_std": 0.05
+      },
+      "safety_checks": {
+        "collapse": "entropy < 0.01 -> STOP",
+        "divergence": "KL > 5.0 -> lower lr",
+        "stagnation": "30 steps <2.0% improvement -> fallback",
+        "cheat": "cheat_rate > 5% -> ALERT; CRITICAL hack -> ABORT"
+      },
+      "fallback": "Revert to previous phase for 20 steps, then retry",
+      "go_no_go": "L4 pass rate > 20% AND cheat rate < 5% AND no CRITICAL hack (H2/H3/H4)."
+    },
+    {
+      "from_phase": 4,
+      "to_phase": null,
+      "criteria": "FINAL PHASE",
+      "action": "Run full 158-task eval (5-run) and check M1-M4 milestones"
+    }
+  ],
+  "verl_config": "# BaiZe Post-Train GRPO Curriculum Configuration (R130)\n# Integrates R74 (Adaptive) + R128 (3347 tasks) + R129 (R5 reward)\n# Generated: 2026-11-10 | Surrogate design, not validated on BaiZe\n\ntrainer:\n  total_epochs: 1\n  save_freq: 50\n  project_name: baize_posttrain_rl\n\nactor:\n  learning_rate: 1e-05\n  kl_coeff: 0.04\n  clip_range: 0.2\n  entropy_coeff: 0.001\n  context_length: 16384\n\nrollout:\n  name: sglang\n  multi_turn: true\n  mode: async\n  group_size: 8\n  max_turns: 10\n\nreward:\n  function: compute_score_with_process  # R129 R5\n  outcome_arm: R2\n  process_layer: R5\n  antigame_enabled: true\n  efficiency_penalty: true\n  recovery_diminishing: 0.85\n\ndata:\n  train_files: rl_pyaether_synth_v2_verified.jsonl  # R128\n  contamination_check: true\n\ncurriculum:\n  - phase: 0\n    name: Warmup\n    levels: ['L1']\n    steps: 50\n    reward_arm: R0\n    r5_enabled: False\n    replay_ratio: 0.0\n    sampling: uniform_within_level\n    lr: 1e-05\n    kl: 0.04\n    advance_criteria:\n      min_pass_rate: 0.7\n      min_steps: 30\n      min_adv_std: 0.05\n\n  - phase: 1\n    name: Foundation\n    levels: ['L1', 'L2']\n    steps: 100\n    reward_arm: R2\n    r5_enabled: True\n    replay_ratio: 0.15\n    sampling: adaptive\n    lr: 1e-05\n    kl: 0.04\n    advance_criteria:\n      min_pass_rate: 0.6\n      min_steps: 60\n      min_adv_std: 0.05\n\n  - phase: 2\n    name: Development\n    levels: ['L2', 'L3']\n    steps: 150\n    reward_arm: R2\n    r5_enabled: True\n    replay_ratio: 0.2\n    sampling: adaptive\n    lr: 8e-06\n    kl: 0.04\n    advance_criteria:\n      min_pass_rate: 0.5\n      min_steps: 80\n      min_adv_std: 0.05\n\n  - phase: 3\n    name: Refinement\n    levels: ['L3', 'L4']\n    steps: 150\n    reward_arm: R3\n    r5_enabled: True\n    replay_ratio: 0.25\n    sampling: adaptive\n    lr: 5e-06\n    kl: 0.04\n    advance_criteria:\n      min_pass_rate: 0.4\n      min_steps: 80\n      min_adv_std: 0.05\n\n  - phase: 4\n    name: Mastery\n    levels: ['L4', 'L5']\n    steps: 100\n    reward_arm: R3\n    r5_enabled: True\n    replay_ratio: 0.3\n    sampling: adaptive\n    lr: 3e-06\n    kl: 0.04\n\nanti_cheat:\n  ptu_hook: true  # PreToolUse (R69, R75)\n  cheat_rate_report: true\n  critical_hack_abort: true  # H2/H3/H4 -> stop\n  max_cheat_rate: 0.05\n\nsandbox:\n  type: local  # or ssh_tunnel (R1 Tunnel-SOP)\n  parallel: 4\n  timeout_per_call: 30\n  api_whitelist: true  # PTU-04\n  call_ordering: true  # PTU-05\n\neval:\n  dataset: EDA-Eval-PyAether-v20260311.jsonl  # 158 tasks\n  n_runs: 5  # 5-run mean+std\n  timeout: 2500\n  parallel: 8\n  fresh_context: true",
+  "summary": {
+    "total_steps": 550,
+    "total_groups_simulated": 550,
+    "overall_learnable_rate": 0.9818,
+    "overall_signal_rate": 0.992,
+    "initial_pass_rates": {
+      "L1": 0.65,
+      "L2": 0.45,
+      "L3": 0.25,
+      "L4": 0.12,
+      "L5": 0.05
+    },
+    "final_pass_rates": {
+      "L1": 0.8875532329080342,
+      "L2": 0.7957029310339261,
+      "L3": 0.6419032354216785,
+      "L4": 0.4095893786765156,
+      "L5": 0.14023767278119456
+    }
+  },
+  "key_conclusions": [
+    "5-phase curriculum (550 steps) covers L1->L5 progression",
+    "R5 process reward enabled from Phase 1 (Foundation)",
+    "Adaptive sampling (R74) from Phase 1 onwards",
+    "Anti-forgetting replay: 0%->15%->20%->25%->30%",
+    "Wall-clock: ~0.6h with 4 parallel sandboxes",
+    "Transition: pass rate + advantage std + step count",
+    "Safety: collapse/divergence/stagnation/cheat detection",
+    "Full anti-gaming from Phase 3 (Refinement)",
+    "3347 R128-verified tasks across 5 difficulty levels",
+    "verl config with SGLang multi-turn + R5 reward"
+  ]
+}

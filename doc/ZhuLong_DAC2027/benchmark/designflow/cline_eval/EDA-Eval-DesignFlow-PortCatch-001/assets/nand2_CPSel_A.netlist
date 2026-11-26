@@ -1,0 +1,52 @@
+* nand2_CPSel
+****************************************
+* Type     : cdl
+* Tool     : AETHER-SE
+* Date     : Fri Oct 16 15:33:19 2026
+* User     : chengk
+* Top Design : CADTest/nand2_CPSel/schematic
+****************************************
+
+
+.include /apps/imctf/runset/calibre/cxmtG5_CIP/current/common/empty_device.spi
+*.BIPOLAR
+.subckt switch_close POS NEG
+
+.ends switch_close
+** End of subcircuit definition.
+
+.subckt switch_open POS NEG
+.ends switch_open
+** End of subcircuit definition.
+*.RESI = 2000
+*.RESVAL
+*.CAPVAL
+*.DIOPERI
+*.DIOAREA
+
+
+****************************************
+* Library : TECHLIB
+* Cell    : nand2LV
+* View    : schematic
+****************************************
+
+.SUBCKT nand2LV A B Y vbulkn! vbulkp! vcc! vss!
+*.PININFO A:I B:I Y:O vbulkn!:B vbulkp!:B vcc!:B vss!:B
+MM4 Y B vcc! vbulkp! ptn_lv W=WP1 L=LP1 nf=nfP1
+MM0 Y A vcc! vbulkp! ptn_lv W=WP1 L=LP1 nf=nfP1
+MM5 zn1 B vss! vbulkn! ntn_lv W=WN1 L=LN1 nf=nfN1
+MM2 Y A zn1 vbulkn! ntn_lv W=WN1 L=LN1 nf=nfN1
+.ENDS nand2LV
+
+****************************************
+* Library : CADTest
+* Cell    : nand2_CPSel
+* View    : schematic
+****************************************
+
+.SUBCKT nand2_CPSel A B Y vbn! vbp! vcc! vss!
+*.PININFO A:I B:I Y:O vbn!:B vbp!:B vcc!:B vss!:B
+XI1 A B Y vbn! vbp! vcc! vss! / nand2LV LP1=219n WP1=2.951u nfP1=1 LN1=219n WN1=3.279u nfN1=1
+XI0 B A Y vbn! vbp! vcc! vss! / nand2LV LP1=219n WP1=2.951u nfP1=1 LN1=219n WN1=3.279u nfN1=1
+.ENDS nand2_CPSel

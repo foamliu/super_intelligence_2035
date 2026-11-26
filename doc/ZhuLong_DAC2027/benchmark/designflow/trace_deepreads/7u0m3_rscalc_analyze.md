@@ -1,0 +1,22 @@
+# 深读 7u0m3 — e0014566 @ hfeg0pkn005 (mc=183)
+
+- session: `1785488442211_7u0m3.messages.json`（hfeg0pkn005 上单文件式）
+- 规模: 80 msgs / 40 user turns / 40 assistant turns
+- 项目: RsCalc（寄生电阻计算）流程, `austin_rscalc2/testa` 版图
+- 工具关键词: rscalc / calcr / rsb / .rvn / calcr.log / rsb.log / Virtuoso batch / pyAether / cellview / SKILL
+- 模型: glm-5.1-cloud; 状态: failed（外部进程退出）
+- 用户首轮上下文: 在 `austin_rscalc2/testa` 版图上跑 RsCalc,要求生成 calcr 脚本、启动 Virtuoso 批处理、检查结果文件、解释电阻值(中文问答)、做版图优化
+- 性质: **RsCalc 流程编排 + 结果解读**(非 clean produce;含脚本生成→批处理启动→结果检查→中文解释→优化建议的完整工作流,属 schematic_netlist/waveform 边界的寄生参数提取域)
+- 真实资产可读性:
+  - 会话 trace 本体可读(332KB),含完整 80 条消息
+  - 真实 .rvn 片段可读: vdd 网络 `LV+RSView:NodeList,4` + 4 行节点记录,电阻值(第 12 列) `16.7159996 / 14.028... / 11.592... / 7.224...`
+  - 真实 calcr.log 可读: `net name : vdd`、`node count : 103`、末行 `Succeeded (Warning count:0)`
+  - 真实 rsb.log 可读: `Node Result NetStatus Time` 表,3-net 汇总 M1/vbb/vdd 均 Succeeded
+  - **RsCalc 结果目录** `/rundata/train/AI_Virtuoso/ver/rscalc/e0030265/testa` 下 `RSDB_<net>/` 为 e0030265 所属,从 .75(e0031982)不可读 → B-grade synthesized
+- 取用: **B-grade synthesized** — 取其「.rvn 第 12 列电阻解析 + calcr.log 状态/节点数提取 + rsb.log 汇总」技术,合成 spec-driven **RsCalc 结果报告生成** case（EDA-Eval-DesignFlow-RsCalcReport-001，schematic_netlist）:
+  - 输入 A: 3 个 Succeeded 网络(M1/vbb/vdd,各含 .rvn + calcr.log)+ rsb.log
+  - 隐藏 B: 4 个网络(vcc/gnd/io Succeeded,clk Failed 无 .rvn —— 边界情况,NA 处理)+ rsb.log
+  - 候选脚本 `rscalc_result_report.py` 须通用扫描 RSDB_* 子目录,产出结构化报告(Total_Nets / [NetResults] per-net Status/Nodes/MaxR/MinR/AvgR / [SummaryStats] Total_Succeeded/Failed/Max_Resistance/Min_Resistance)
+- 判分器 12 条独立断言(a-l): zip 合法/CLI 跑通/结构可解析/Total_Nets/net 字典序/clk Failed+Nodes/clk NA 边界/vcc/gnd/io per-net 全字段/SummaryStats 全局统计/确定性+反硬编码(A 名 vdd/vbb/M1 不泄露)
+- 选取原因: fresh mc>=30 D-domain 候选池(clean schematic_netlist/waveform produce)稀缺,7u0m3 为 fresh(台账未动过)且含 RsCalc 寄生电阻提取技术(domain=schematic_netlist);top 42 候选均已 exclusion,4 fresh 候选(cpnbc/o0dm6/bkeur/7u0m3)中 7u0m3 domain 匹配最丰富(schematic+netlist+pyAether+calibre+cellview+skill)
+- grade: B synthesized(结果目录不可读,依据 trace 中真实 .rvn/calcr.log/rsb.log 格式与真实 vdd 电阻值合成)

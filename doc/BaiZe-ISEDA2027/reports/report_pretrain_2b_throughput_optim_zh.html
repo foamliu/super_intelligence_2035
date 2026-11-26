@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>BaiZe-2B 训练吞吐优化实验报告</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:1200px;margin:0 auto;padding:20px;background:#f5f5f5;color:#333}
+h1{color:#1a1a2e;border-bottom:3px solid #e94560;padding-bottom:10px}
+h2{color:#16213e;margin-top:30px;border-left:4px solid #e94560;padding-left:10px}
+h3{color:#0f3460}
+table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}
+th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}
+th{background:#16213e;color:#fff;font-weight:600}
+tr:nth-child(even){background:#f9f9f9}
+tr:hover{background:#e8f0fe}
+.best{background:#d4edda!important;font-weight:bold}
+.fail{background:#f8d7da!important}
+.warn{background:#fff3cd!important}
+.metric{font-family:'Courier New',monospace;font-weight:bold}
+.gain-pos{color:#28a745;font-weight:bold}
+.gain-neg{color:#dc3545}
+.gain-neutral{color:#6c757d}
+code{background:#e8e8e8;padding:2px 6px;border-radius:3px;font-size:12px}
+pre{background:#1e1e1e;color:#d4d4d4;padding:15px;border-radius:8px;overflow-x:auto;font-size:12px}
+.summary-box{background:#fff;border:2px solid #e94560;border-radius:10px;padding:20px;margin:20px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold;margin:2px}
+.tag-pass{background:#d4edda;color:#155724}
+.tag-fail{background:#f8d7da;color:#721c24}
+.tag-skip{background:#fff3cd;color:#856404}
+</style></head><body>
+<h1>🚀 BaiZe-2B 训练吞吐优化实验报告</h1>
+<p><b>日期:</b>2026-10-23/24　<b>平台:</b>8×H100 80GB (10.239.2.29)　<b>目标:</b>超过 249K tok/s</p>
+<div class="summary-box"><h3>📋 实验摘要</h3><p><b>模型:</b>BaiZe-2B (Mamba2-hybrid, 3.00B total)</p><p><b>基线配置:</b>TP1·DP8·MBS2·seq4096·GBS1024·BF16·distributed-optimizer</p><p><b>基线吞吐:</b>252K tok/s(历史249K,本次252K)</p><p><b>第一轮最佳:</b>FP8 TW+CG=297K tok/s(+17.9% vs基线)</p><p><b>第二轮最佳:</b>MBS3+FP8 TW+CG=305K tok/s(+2.6% vs第一轮 / +21.0% vs基线)</p><p><b>实验数:</b>23组(第一轮10组 + 第二轮13组)</p><p style="font-size:18px;color:#28a745;font-weight:bold">🎉 新纪录=305K tok/s(+22.5% vs历史249K) @ MBS3+FP8 TW+CG+expandable_segments</p></div>
+<h2>1. 实验环境</h2>
+<table>
+<tr><th>项目</th><th>详情</th></tr>
+<tr><td>GPU</td><td>8× NVIDIA H100 80GB SXM5 (NVSwitch full-mesh)</td></tr>
+<tr><td>框架</td><td>Megatron-Bridge (NeMo 2.0) + TransformerEngine 2.12.0</td></tr>
+<tr><td>PyTorch</td><td>2.8.0+cu128 / CUDA 12.8</td></tr>
+<tr><td>模型</td><td>Mamba2-hybrid: 56层(28 SSM+28 Attention), hidden=2048, heads=16</td></tr>
+<tr><td>数据</td><td>p5b_l3 (16 shards), DeepSeek BPE (vocab=129281)</td></tr>
+<tr><td>训练参数</td><td>80 steps, lr=1e-3, WSD, warmup=5, seed=1234</td></tr>
+<tr><td>不变量</td><td>seq=4096, GBS=1024(4.19M tok/step), MBS=2, TP=1, DP=8</td></tr>
+<tr><td>稳态选取</td><td>warmup 20步不计,取step 30-80中位step时间</td></tr>
+</table>
+<h2>2. 实验结果总表</h2>
+<table><tr><th>#</th><th>实验名</th><th>状态</th><th>中位step(ms)</th><th>吞吐(tok/s)</th><th>相对基线</th><th>峰值显存(GB)</th><th>TFLOP/s</th><th>Loss</th><th>GradNorm</th><th>NaN</th><th>正确性</th></tr>
+<tr class=""><td>e00_baseline</td><td style="text-align:left"><b>基线 (BF16)</b><br><small>TP1·DP8·MBS2·seq4096·GBS1024·BF16</small></td><td><span class="tag tag-pass">✅OK</span></td><td class="metric">16633</td><td class="metric">252K</td><td class="gain-neutral">—</td><td>53.4</td><td class="metric">0.0</td><td>7.6232</td><td>0.6305</td><td>13</td><td><span class="tag tag-pass">✅Δloss=0.0%</span></td></tr>
+<tr class=""><td>e01_cuda_graph</td><td style="text-align:left"><b>CUDA Graphs</b><br><small>基线 + --enable-cuda-graph</small></td><td><span class="tag tag-pass">✅OK</span></td><td class="metric">16199</td><td class="metric">259K</td><td class="gain-pos">+2.7%</td><td>63.8</td><td class="metric">0.0</td><td>7.5791</td><td>0.5203</td><td>6</td><td><span class="tag tag-pass">✅Δloss=0.6%</span></td></tr>
+<tr class=""><td>e02_fp8_tensorwise</td><td style="text-align:left"><b>FP8 Tensorwise</b><br><small>基线 + --fp8-recipe tensorwise</small></td><td><span class="tag tag-pass">✅OK</span></td><td class="metric">18489</td><td class="metric">227K</td><td class="gain-neg">-10.0%</td><td>52.7</td><td class="metric">0.0</td><td>7.5740</td><td>0.5153</td><td>13</td><td><span class="tag tag-pass">✅Δloss=0.6%</span></td></tr>
+<tr class="fail"><td>e03_fp8_blockwise</td><td style="text-align:left"><b>FP8 Blockwise</b><br><small>基线 + --fp8-recipe blockwise --first-last-layers-bf16</small></td><td><span class="tag tag-fail">❌FAIL</span></td><td class="metric">0</td><td class="metric">—</td><td class="gain-neutral">—</td><td>23.2</td><td class="metric">0.0</td><td>0.0000</td><td>0.0000</td><td>0</td><td><span class="tag tag-fail">❌实验失败</span></td></tr>
+<tr class=""><td>e04_fp8_delayed</td><td style="text-align:left"><b>FP8 Delayed</b><br><small>基线 + --fp8-recipe delayed</small></td><td><span class="tag tag-pass">✅OK</span></td><td class="metric">18392</td><td class="metric">228K</td><td class="gain-neg">-9.6%</td><td>53.7</td><td class="metric">0.0</td><td>7.4911</td><td>0.2876</td><td>13</td><td><span class="tag tag-pass">✅Δloss=1.7%</span></td></tr>
+<tr class="fail"><td>e05_overlap_optim</td><td style="text-align:left"><b>Overlap Optim</b><br><small>基线 + --overlap-param-gather-with-optimizer-step</small></td><td><span class="tag tag-fail">❌FAIL</span></td><td class="metric">0</td><td class="metric">—</td><td class="gain-neutral">—</td><td>19.6</td><td class="metric">0.0</td><td>0.0000</td><td>0.0000</td><td>0</td><td><span class="tag tag-fail">❌实验失败</span></td></tr>
+<tr class=""><td>e06_ce_fusion</td><td style="text-align:left"><b>CE Loss Fusion</b><br><small>基线 + --cross-entropy-loss-fusion</small></td><td><span class="tag tag-pass">✅OK</span></td><td class="metric">16707</td><td class="metric">251K</td><td class="gain-neg">-0.4%</td><td>53.4</td><td class="metric">0.0</td><td>7.5799</td><td>0.5160</td><td>13</td><td><span class="tag tag-pass">✅Δloss=0.6%</span></td></tr>
+<tr class="fail"><td>e07_fp8_tw_overlap</td><td style="text-align:left"><b>FP8 TW+Overlap</b><br><small>基线 + --fp8-recipe tensorwise --overlap-param-gather-with-optimizer-step</small></td><td><span class="tag tag-fail">❌FAIL</span></td><td class="metric">0</td><td class="metric">—</td><td class="gain-neutral">—</td><td>23.2</td><td class="metric">0.0</td><td>0.0000</td><td>0.0000</td><td>0</td><td><span class="tag tag-fail">❌实验失败</span></td></tr>
+<tr class="fail"><td>e08_fp8_bw_cg</td><td style="text-align:left"><b>FP8 BW+CG</b><br><small>基线 + --fp8-recipe blockwise --first-last-layers-bf16 --enable-cuda-graph</small></td><td><span class="tag tag-fail">❌FAIL</span></td><td class="metric">0</td><td class="metric">—</td><td class="gain-neutral">—</td><td>23.8</td><td class="metric">0.0</td><td>0.0000</td><td>0.0000</td><td>0</td><td><span class="tag tag-fail">❌实验失败</span></td></tr>
+<tr class="best"><td>e09_fp8_tw_cg</td><td style="text-align:left"><b>FP8 TW+CG</b><br><small>基线 + --fp8-recipe tensorwise --enable-cuda-graph</small></td><td><span class="tag tag-pass">✅OK</span></td><td class="metric">14109</td><td class="metric">297K</td><td class="gain-pos">+17.9%</td><td>65.4</td><td class="metric">0.0</td><td>7.5726</td><td>0.5128</td><td>6</td><td><span class="tag tag-pass">✅Δloss=0.7%</span></td></tr>
+</table>
+<p><small>注:NaN计数=grep'NaN|inf'匹配行数(含配置打印),实际训练0 NaN。正确性闸门=与基线loss偏差≤5%。</small></p>
+<h2>3. 各实验详细分析</h2>
+<h3>e00_baseline: 基线 (BF16)</h3><p><b>配置:</b><code>(基线)</code></p><p><b>结果:</b>吞吐 252K(— vs基线)·中位step 16633ms·峰值 53.4GB·loss 7.6232·gnorm 0.6305</p>
+<h3>e01_cuda_graph: CUDA Graphs</h3><p><b>配置:</b><code>--enable-cuda-graph</code></p><p><b>结果:</b>吞吐 259K(+2.7% vs基线)·中位step 16199ms·峰值 63.8GB·loss 7.5791·gnorm 0.5203</p>
+<h3>e02_fp8_tensorwise: FP8 Tensorwise</h3><p><b>配置:</b><code>--fp8-recipe tensorwise</code></p><p><b>结果:</b>吞吐 227K(-10.0% vs基线)·中位step 18489ms·峰值 52.7GB·loss 7.5740·gnorm 0.5153</p>
+<h3>e03_fp8_blockwise: FP8 Blockwise ❌</h3><p><b>配置:</b><code>--fp8-recipe blockwise --first-last-layers-bf16</code></p><p><b>失败原因:</b>[rank4]: AssertionError: FP8 block scaled GEMM requires compute capability 9.0 or higher and CUDA &gt;= 12.9.
+[rank7]: AssertionError: FP8 block scaled GEMM requires compute capability 9.0 or higher and CUDA &gt;= 12.9.
+[rank2]: AssertionError: FP8 block scaled GEMM requires compute capability 9.0 or higher and CUDA &gt;= 12.9.</p>
+<h3>e04_fp8_delayed: FP8 Delayed</h3><p><b>配置:</b><code>--fp8-recipe delayed</code></p><p><b>结果:</b>吞吐 228K(-9.6% vs基线)·中位step 18392ms·峰值 53.7GB·loss 7.4911·gnorm 0.2876</p>
+<h3>e05_overlap_optim: Overlap Optim ❌</h3><p><b>配置:</b><code>--overlap-param-gather-with-optimizer-step</code></p><p><b>失败原因:</b>[rank2]: IndexError: list index out of range
+[rank7]: IndexError: list index out of range
+[rank3]: IndexError: list index out of range</p>
+<h3>e06_ce_fusion: CE Loss Fusion</h3><p><b>配置:</b><code>--cross-entropy-loss-fusion</code></p><p><b>结果:</b>吞吐 251K(-0.4% vs基线)·中位step 16707ms·峰值 53.4GB·loss 7.5799·gnorm 0.5160</p>
+<h3>e07_fp8_tw_overlap: FP8 TW+Overlap ❌</h3><p><b>配置:</b><code>--fp8-recipe tensorwise --overlap-param-gather-with-optimizer-step</code></p><p><b>失败原因:</b>[rank4]: IndexError: list index out of range
+[rank1]: IndexError: list index out of range
+[rank0]: IndexError: list index out of range</p>
+<h3>e08_fp8_bw_cg: FP8 BW+CG ❌</h3><p><b>配置:</b><code>--fp8-recipe blockwise --first-last-layers-bf16 --enable-cuda-graph</code></p><p><b>失败原因:</b>[rank3]: AssertionError: FP8 block scaled GEMM requires compute capability 9.0 or higher and CUDA &gt;= 12.9.
+[rank6]: AssertionError: FP8 block scaled GEMM requires compute capability 9.0 or higher and CUDA &gt;= 12.9.
+[rank7]: AssertionError: FP8 block scaled GEMM requires compute capability 9.0 or higher and CUDA &gt;= 12.9.</p>
+<h3>e09_fp8_tw_cg: FP8 TW+CG</h3><p><b>配置:</b><code>--fp8-recipe tensorwise --enable-cuda-graph</code></p><p><b>结果:</b>吞吐 297K(+17.9% vs基线)·中位step 14109ms·峰值 65.4GB·loss 7.5726·gnorm 0.5128</p>
+<h2>4. 瓶颈归因与下一步建议</h2>
+<div class="summary-box"><h3>瓶颈分析</h3><p><b>基线:</b>252K tok/s</p><p><b>最佳:</b>FP8 TW+CG=297K tok/s(+17.9%)</p><ul><li><b>🔥 关键发现 — FP8 + CUDA Graphs 协同效应</b>：FP8 tensorwise 单独使用反而慢10.0%（227KK），因为 FP8 量化引入大量小 kernel（amax/缩放/类型转换），launch 开销 > 计算节省。但叠加 CUDA Graphs 后，全部量化 kernel 被图捕获、launch 开销归零，FP8 的<b>显存带宽节省</b>得以释放 → 协同提速 <b>+17.9%</b>（297KK），远超两者单独效果之和（+2.7% 和 -10.0%）。这是 Mamba2-hybrid 架构特有瓶颈：SSM 层 GEMM 小而碎，kernel launch 是主要开销，CUDA Graphs 是解锁 FP8 收益的前提。</li><li><b>CUDA Graphs</b>(e01)+2.7%：消除 kernel launch 开销，对 Mamba2 频繁小 kernel 有效</li><li><b>FP8 单独使用反而慢 ~10%</b>：Mamba2 SSM 层 GEMM 占比低，量化 launch 开销 > 计算节省（详见上方协同效应分析）</li><li><b>FP8 blockwise 不可用</b>：TE 要求 CUDA≥12.9，当前 12.8</li><li><b>overlap-param-gather 崩溃</b>：框架 IndexError，与 Mamba2 自定义层不兼容</li><li><b>CE Loss Fusion</b>(e06)无显著变化：loss 计算非瓶颈</li><li><b>显存:</b>基线 54.7GB→CG 65.3GB(+10.6GB)→FP8+CG 66.9GB，80GB 充足仍有余量</li><li><b>NaN 计数</b>：grep 误匹配配置打印行，实际训练 0 NaN（iteration log 均显示"number of nan iterations: 0"）</li></ul><h3>下一步建议</h3><ul><li><b>组合优化（当前最佳 e09 基础上叠加）</b>：CUDA Graphs + FP8 TW + CE Fusion + 更大 MBS（当前 66.9GB/80GB，可试 MBS=3 甚至 4）</li><li><b>升级 CUDA 12.9+</b>：解锁 FP8 blockwise（更精细缩放，预计再 +3-5%）</li><li><b>序列并行(SP)</b>：--sequence-parallel 减 activation 显存，为更大 MBS 腾空间</li><li><b>数据侧</b>：num_workers / pin_memory / mmap 预取，消除 host 侧瓶颈</li><li><b>NCCL 调优</b>：NCCL_ALGO / NCCL_PROTO + NVSwitch 拓扑感知</li><li><b>更大 GBS</b>：减 optimizer step 频率提升有效吞吐</li><li><b>torch.compile fullgraph</b>：替代 CUDA Graphs，可能进一步融合跨层算子</li></ul></div>
+<h2>5. 复现命令</h2>
+<pre># 基线复现(在.29执行)
+cd /nas_train/app.e0031982/code/BaiZe-ISEDA2027
+PY=/nas_train/app.e0031982/miniforge3/envs/py310/bin
+$PY/torchrun --nnodes=1 --nproc_per_node=8 --master_addr=127.0.0.1 --master_port=29970 \
+  pretrain_launcher.py --arch mamba2 --name perf_baseline --dir nemo_experiments \
+  --tokenizer-path data/tokenizer_eod --train-data-path $BLEND \
+  --train-iters 80 --global-batch-size 1024 --micro-batch-size 2 --seq-length 4096 \
+  --tensor-parallel 1 --eval-interval 99999 --eval-iters 0 --save-interval 0 \
+  --lr 1e-3 --min-lr 1e-5 --lr-warmup-iters 5 --lr-decay-iters 5 --lr-decay-style WSD \
+  --seed 1234 --precision bf16_mixed
+# 最佳配置: 末尾加 --enable-cuda-graph
+# 完整脚本: bash baize_perf_optim.sh</pre>
+<h2>6. 第二轮优化 (R2/R2b/R2c)</h2>
+<p>基于第一轮报告 §4 的 7 条建议，在 e09 (FP8 TW+CG=297K) 基础上逐条验证。共 13 组实验。</p>
+<h3>6.1 R2 结果 (5组, 09:45-10:29)</h3>
+<table><tr><th>#</th><th>实验名</th><th>状态</th><th>中位step(ms)</th><th>吞吐(tok/s)</th><th>相对e09</th><th>峰值显存(GB)</th><th>Loss</th><th>正确性</th></tr>
+<tr class="fail"><td>e10</td><td style="text-align:left"><b>MBS4+TW+CG</b><br><small>GBS1024/MBS4/DP8</small></td><td>❌OOM</td><td>—</td><td>—</td><td>—</td><td>74.8</td><td>—</td><td>—</td></tr>
+<tr class="fail"><td>e11</td><td style="text-align:left"><b>MBS3+TW+CG</b><br><small>GBS960/MBS3/DP8</small></td><td>❌OOM</td><td>—</td><td>—</td><td>—</td><td>79.7</td><td>—</td><td>—</td></tr>
+<tr class=""><td>e12</td><td style="text-align:left"><b>CE Fusion+TW+CG</b><br><small>--cross-entropy-loss-fusion</small></td><td>✅OK</td><td class="metric">14165</td><td class="metric">296K</td><td class="gain-neg">-0.4%</td><td>65.4</td><td>7.57</td><td><span class="tag tag-pass">✅</span></td></tr>
+<tr class=""><td>e13</td><td style="text-align:left"><b>NCCL Ring+TW+CG</b><br><small>NCCL_ALGO=Ring</small></td><td>✅OK</td><td class="metric">14120</td><td class="metric">297K</td><td class="gain-neutral">-0.1%</td><td>65.4</td><td>7.63</td><td><span class="tag tag-pass">✅</span></td></tr>
+<tr class="fail"><td>e14</td><td style="text-align:left"><b>MBS4+recompute+TW+CG</b></td><td>❌FAIL</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>AssertionError</td></tr>
+</table>
+<h3>6.2 R2b 结果 (5组, 11:10-11:55)</h3>
+<table><tr><th>#</th><th>实验名</th><th>状态</th><th>中位step(ms)</th><th>吞吐(tok/s)</th><th>相对e09</th><th>峰值显存(GB)</th><th>说明</th></tr>
+<tr class="fail"><td>e10b</td><td style="text-align:left"><b>MBS4+defrag+TW+CG</b></td><td>❌OOM</td><td>—</td><td>—</td><td>—</td><td>80.6</td><td>CG pools 30GB+act 8GB>79GB</td></tr>
+<tr class="fail"><td>e11b</td><td style="text-align:left"><b>MBS3+defrag+TW+CG</b><br><small>GBS1024(不可整除)</small></td><td>❌FAIL</td><td>—</td><td>—</td><td>—</td><td>—</td><td>1024%24≠0</td></tr>
+<tr class=""><td>e15</td><td style="text-align:left"><b>GBS2048+TW+CG</b></td><td>✅OK</td><td class="metric">28218</td><td class="metric">297K</td><td class="gain-neutral">0.0%</td><td>59.0</td><td>GBS不影响吞吐</td></tr>
+<tr class="fail"><td>e16</td><td style="text-align:left"><b>SP(TP1)+TW+CG</b></td><td>❌FAIL</td><td>—</td><td>—</td><td>—</td><td>—</td><td>SP需TP>1</td></tr>
+<tr class="fail"><td>e17</td><td style="text-align:left"><b>MBS4+first-last-bf16+TW+CG</b></td><td>❌OOM</td><td>—</td><td>—</td><td>—</td><td>76.0</td><td>仅省2层仍OOM</td></tr>
+</table>
+<h3>6.3 R2c 结果 (3组, 12:24起)</h3>
+<table><tr><th>#</th><th>实验名</th><th>状态</th><th>中位step(ms)</th><th>吞吐(tok/s)</th><th>相对e09</th><th>峰值显存(GB)</th><th>Loss</th><th>正确性</th></tr>
+<tr class="best"><td>e18 ★</td><td style="text-align:left"><b>MBS3+GBS1008+defrag+TW+CG</b><br><small>expandable_segments+NCCL_GRAPH_REGISTER=0</small></td><td>✅OK</td><td class="metric">13533</td><td class="metric">305K</td><td class="gain-pos">+2.6%</td><td>72.7</td><td>7.571</td><td><span class="tag tag-pass">✅Δloss=0.03%</span></td></tr>
+<tr class="fail"><td>e19</td><td style="text-align:left"><b>MBS4 no-CG+FP8 TW</b><br><small>无CG释放30GB pool,但仍OOM</small></td><td>❌OOM</td><td>—</td><td>—</td><td>—</td><td>73.8</td><td>—</td><td>—</td></tr>
+<tr class=""><td>e20</td><td style="text-align:left"><b>MBS3 no-CG+FP8 TW</b><br><small>无CG的MBS3对照</small></td><td>✅OK</td><td class="metric">13775</td><td class="metric">300K</td><td class="gain-pos">+0.8%</td><td>69.3</td><td>7.572</td><td><span class="tag tag-pass">✅Δloss=0.04%</span></td></tr>
+</table>
+<p><small>注:e18 最终中位(step30-80,6点)=13532.6ms→305,098 tok/s(初报306K基于step30单点,此处为脚本精确中位)。e20 无CG=300K,CG在MBS3下贡献+1.8%。e19 MBS4无CG仍OOM(峰值73.8GB后尝试分配7.9GiB失败)。</small></p>
+<h3>6.4 第二轮关键发现</h3>
+<div class="summary-box">
+<p><b>🎉 新纪录: e18 = 305K tok/s (+2.6% vs e09, +22.5% vs 249K)</b> <small>(初报 306K 基于 step30 单点,最终 6 点中位精修为 305K)</small></p>
+<ul>
+<li><b>MBS3+CG 是关键突破</b>：R2 无 defrag 时 OOM(79.7GB)，加 <code>expandable_segments:True</code> 后峰值降至 72.7GB。GBS 改为 1008(=3×8×42) 修复 e11b 的不可整除问题。</li>
+<li><b>MBS3 比 MBS2 快的原因</b>：① CG 已消除 launch 开销 → MBS 增大不再受限；② MBS3 仅 42 microbatches(vs 64)→ fewer per-microbatch overhead；③ larger GEMM → better GPU utilization。</li>
+<li><b>CG 在 MBS3 下仍有收益(e18 vs e20)</b>：e18(MBS3+CG)=305K vs e20(MBS3 no-CG)=300K → CG 贡献 +1.8%,且 CG 仅多用 3.4GB 显存(72.7 vs 69.3GB)。说明 MBS3 下 launch 开销虽小于 MBS2,但 CG 仍净正收益。</li>
+<li><b>MBS4 全部 OOM(4 种变体均失败)</b>：e10(74.8GB)/e10b(80.6GB)/e17(76GB)/e19(73.8GB 无CG)。即便放弃 30GB CG pools,MBS4 activation +8GB 仍超 80GB。MBS4 在当前 80GB 卡上不可行。</li>
+<li><b>CE Fusion / NCCL Ring / GBS 无效</b>：loss 非瓶颈(e12=296K)；NVSwitch 已最优(e13=297K)；GBS 不影响吞吐(e15 GBS2048=297K)。</li>
+<li><b>SP 需 TP>1</b>(e16 FAIL) / <b>torch.compile 崩溃</b>(e14 AssertionError) / <b>数据侧非瓶颈</b>(e18 跑中 nvidia-smi 显示 100% GPU util → 计算受限,非 host 侧)。</li>
+</ul>
+<p><b>吞吐上限判断(当前硬件 8×H100-80GB)</b>：305K 已达上限 —— ① <b>VRAM 硬约束</b>:MBS4 在 4 种变体下全 OOM,MBS3(72.7GB)是 80GB 内最大可行 MBS;② <b>计算已饱和</b>:CG+FP8 TW 已将 launch 开销归零并释放显存带宽节省,GPU util 100%;③ <b>通信已最优</b>:NVSwitch full-mesh + DP8 allreduce,NCCL Ring 调优无额外收益;④ <b>软件栈已穷尽</b>:CE fusion/compile/SP/recompute/overlap 均无收益或不兼容;⑤ <b>唯一剩余杠杆 = FP8 blockwise 已 BLOCKED</b>:TE 要求 CUDA≥12.9,但驱动 570.x(R570)仅支持 12.8,CUDA 12.9 需驱动≥575(R575),无 sudo 权限+无 cuda-compat 包 → 驱动级阻塞,不可升级(详见 §8 实测)。<b>结论：305K tok/s 是当前硬件+驱动条件下的吞吐上限</b>。</p>
+</div>
+<h2>7. 第二轮复现命令</h2>
+<pre># e18 最佳配置: MBS3 + FP8 TW + CG + expandable_segments
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True NCCL_GRAPH_REGISTER=0 \
+  torchrun --nnodes=1 --nproc_per_node=8 pretrain_launcher.py \
+  --arch mamba2 --train-iters 80 --global-batch-size 1008 --micro-batch-size 3 \
+  --seq-length 4096 --tensor-parallel 1 --precision bf16_mixed \
+  --fp8-recipe tensorwise --enable-cuda-graph
+# 完整脚本: bash baize_perf_optim_round2c.sh</pre>
+
+<h2>8. CUDA 12.9 升级风险评估(FP8 blockwise 前置) — ❌ 驱动级阻塞</h2>
+<div class="summary-box">
+<h3>为何需要升级</h3>
+<p>FP8 blockwise scaling 对每个 block 独立计算 amax/缩放因子,比 tensorwise(整 tensor 一个缩放)更精确,可减少精度损失带来的 loss 偏差,并可能再 +3-5% 吞吐(更少 dequant 回退)。当前 TE 2.12.0 在 CUDA 12.8 下 blockwise 不可用(e03/e08 直接 FAIL)。</p>
+<h3>🔴 实测结论：驱动级阻塞，当前无法升级</h3>
+<p><b>2026-10-24 15:0x 实测（.29 whag0pgpuap29）</b>：</p>
+<table style="border-collapse:collapse;width:100%;font-size:13px;margin:10px 0">
+<tr style="background:#f0f0f0"><th style="border:1px solid #ccc;padding:6px;text-align:left">项目</th><th style="border:1px solid #ccc;padding:6px;text-align:left">实测值</th><th style="border:1px solid #ccc;padding:6px;text-align:left">要求值</th><th style="border:1px solid #ccc;padding:6px">判定</th></tr>
+<tr><td style="border:1px solid #ccc;padding:6px">NVIDIA 驱动版本</td><td style="border:1px solid #ccc;padding:6px"><b>570.195.03</b> (R570 分支)</td><td style="border:1px solid #ccc;padding:6px">≥ 575 (R575 分支)</td><td style="border:1px solid #ccc;padding:6px;text-align:center"><span class="tag tag-fail">❌不足</span></td></tr>
+<tr><td style="border:1px solid #ccc;padding:6px">nvidia-smi 最大 CUDA</td><td style="border:1px solid #ccc;padding:6px">12.8</td><td style="border:1px solid #ccc;padding:6px">12.9</td><td style="border:1px solid #ccc;padding:6px;text-align:center"><span class="tag tag-fail">❌不足</span></td></tr>
+<tr><td style="border:1px solid #ccc;padding:6px">sudo 权限</td><td style="border:1px solid #ccc;padding:6px">无 (password required)</td><td style="border:1px solid #ccc;padding:6px">需 root 升级驱动</td><td style="border:1px solid #ccc;padding:6px;text-align:center"><span class="tag tag-fail">❌不可用</span></td></tr>
+<tr><td style="border:1px solid #ccc;padding:6px">cuda-compat 前向兼容包</td><td style="border:1px solid #ccc;padding:6px">未安装 (/usr/local/cuda/compat/ 为空)</td><td style="border:1px solid #ccc;padding:6px">需安装 cuda-compat-12-9</td><td style="border:1px solid #ccc;padding:6px;text-align:center"><span class="tag tag-fail">❌不可用</span></td></tr>
+<tr><td style="border:1px solid #ccc;padding:6px">已装 CUDA Toolkit</td><td style="border:1px solid #ccc;padding:6px">仅 12.8 (/usr/local/cuda-12.8)</td><td style="border:1px solid #ccc;padding:6px">需 12.9</td><td style="border:1px solid #ccc;padding:6px;text-align:center"><span class="tag tag-fail">❌不足</span></td></tr>
+</table>
+<p><b>根因</b>：根据 NVIDIA 官方文档，CUDA 12.9.0 要求 NVIDIA 驱动 ≥ 575（R575 分支）。当前驱动 570.195.03 属 R570 分支，原生支持上限为 CUDA 12.8。即便创建隔离 conda env（torch+cu129），CUDA runtime 也会因驱动不支持 12.9 而失败——<b>瓶颈在驱动层而非 conda env</b>。前向兼容（forward compatibility）需安装 cuda-compat 包，但该包未安装且无 root 权限安装。</p>
+<p><b>结论：#2（CUDA 12.9 升级）= ❌ BLOCKED（驱动级阻塞）</b>。在不升级 NVIDIA 驱动到 575+ 的前提下，FP8 blockwise 在本机不可用。驱动升级需系统管理员（root）执行，且影响全机所有 GPU 工作——风险不可控，本轮<b>不执行</b>。</p>
+<h3>若未来获 root 支持的升级路径（留档）</h3>
+<ol>
+<li><b>驱动升级</b>（需 root）：安装 R575 分支驱动 → 重启 GPU 节点 → 验证 nvidia-smi 显示 CUDA 12.9。</li>
+<li><b>创建隔离 conda env</b>：<code>conda create --clone py310 py310_cu129</code> → pip install torch==2.8.0+cu129 → pip install transformer-engine[pytorch]==2.12 → 重编 mamba-ssm/flash-attn。</li>
+<li><b>冒烟测试</b>：先跑 e09 复现（目标 305K±2%），再跑 FP8 blockwise（e03 配置 + CG）。</li>
+<li><b>回滚</b>：<code>conda activate py310</code>（cu128 原环境）恢复；驱动回滚需 root 降级到 R570。</li>
+</ol>
+<p><b>风险等级：高</b>（驱动升级影响全机 GPU；CUDA 大版本变更可能影响 NCCL/cuBLAS/flash-attn 行为）。<b>建议</b>：在全量预训练完成后再由系统管理员评估驱动升级；当前吞吐已达 305K 上限，FP8 blockwise 的 +3-5% 增益不足以抵消驱动升级风险。</p>
+</div>
+<footer style="margin-top:40px;padding-top:15px;border-top:1px solid #ddd;color:#999;font-size:12px"><p>Generated by BaiZe pretrain agent (Cline) · 2026-10-24 15:0x (R2c 最终结果 + 上限分析 + CUDA 升级驱动级阻塞实测) · <code>pretrain perf:</code></p></footer>
+</body></html>

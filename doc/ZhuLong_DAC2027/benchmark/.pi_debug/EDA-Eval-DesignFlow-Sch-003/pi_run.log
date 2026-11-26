@@ -1,0 +1,17 @@
+Implemented and verified.
+
+**Implementation summary** — `spice_subckt_pin_arity_audit`:
+1. Normalize text (drop `\r`) and build logical lines: trim each physical line, flush/terminate pending continuation on `*`-comments and blank lines, join `+`-continuations with a single space, and flush at EOF.
+2. Parse `.subckt` headers (case-insensitive), counting non-`=` tokens after the name as ports — **last-wins** via `dict set`.
+3. Scan `X`/`x` instantiations: exclude `=`-params, take the last node token as the referenced subckt and all remaining node tokens as pins. Zero node tokens → malformed. Known subckt → compare arity; unknown → `unknown_subckt_instances` (not mismatch).
+4. Return the 8-key flat dict in exact order, with all list values `lsort`-ed and `verdict` = `pass` only when mismatches, unknowns, and malformed are all empty/zero.
+
+**Sandbox run (WaveView Tcl, .75):**
+- `RESULT:ALL_ASSERTS_PASS`
+- `DESIGN_FLOW_VERDICT=PASS`
+
+All six checker cases (baseline, param-exclusion, last-wins redefinition, continuation join, unknown-subckt, malformed + lexicographic sort) passed; `error_log` was empty. Session closed with `keep=false`.
+
+DESIGN_FLOW_VERDICT=PASS
+
+RESULT:ALL_ASSERTS_PASS

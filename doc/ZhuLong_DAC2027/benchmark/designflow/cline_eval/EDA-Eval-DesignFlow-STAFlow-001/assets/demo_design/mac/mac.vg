@@ -1,0 +1,21 @@
+// mac.vg — gate-level netlist for the demo design "mac" (tutorial stub).
+// Real PT flow reads a mapped gate-level netlist; this is a small but
+// syntactically valid Verilog netlist so the read_verilog step resolves.
+module mac (clk, rst_n, a, b, acc);
+  input  clk, rst_n;
+  input  [15:0] a, b;
+  output [31:0] acc;
+
+  wire [31:0] sum_nxt;
+  reg  [31:0] acc_reg;
+
+  // combinational multiply-accumulate tree (gate stub)
+  wire [31:0] prod = a * b;
+  assign sum_nxt = acc_reg + prod;
+  assign acc     = acc_reg;
+
+  always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) acc_reg <= 32'b0;
+    else        acc_reg <= sum_nxt;
+  end
+endmodule

@@ -1,0 +1,11 @@
+--- T_IsmTop.cdl
++++ T_IsmTop_fixed.cdl
+@@ -55,7 +55,7 @@
+ XI340 fnIsmSel543N<5> fnIsmSel210N<2> fnIsmDlySel42 vss! vcc! vcc! vss! / nor2Lx1
+ XI378 JudgeN<6> JudgeN_buff6 vss! vcc! vcc! vss! / bufLx4
+ XI39 JudgeN<1> JudgeN_buff1 vss! vcc! vcc! vss! / bufLx4
+-XI37 JudgeN<8> JudgeN_buff vbn! vbp! vcc! vss! / bufLx4
++XI37 JudgeN<8> JudgeN_buff vss! vcc! vcc! vss! / bufLx4
+ XI40 DlySel<0> DlySel_b vss! vcc! vcc! vss! / bufLx4
+ XI51 DlySel<3> DlySel_b3 vss! vcc! vcc! vss! / bufLx16
+ XI376 fnIsmCntClkGen net_clk vss! vcc! vcc! vss! / invLx1

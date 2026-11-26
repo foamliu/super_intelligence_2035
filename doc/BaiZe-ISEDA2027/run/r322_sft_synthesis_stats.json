@@ -1,0 +1,20 @@
+{
+  "R322": "Data Gap SFT Synthesis Pipeline",
+  "date": "2026-11-12",
+  "n_input_apis": 8,
+  "n_pairs_generated": 14,
+  "n_doc_pairs": 8,
+  "n_code_pairs": 6,
+  "n_blocked_precheck": 0,
+  "modules_covered": {
+    "EmyLPPHeader": 3,
+    "GuCartPolyLine": 1,
+    "MdeDcAnalysis": 1,
+    "MdeSweepRange": 1,
+    "emyTransformF": 2
+  },
+  "output_file": "r322_datagap_sft_pairs.jsonl",
+  "output_size_kb": 7.5,
+  "contamination_note": "Name-level pre-check only; full 13-gram gate via baize_posttrain_contamination_gate.sh required before training",
+  "blocked_apis": []
+}

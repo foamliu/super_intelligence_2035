@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>十一假期试验 · 进展报告 2026-10-04</title>
+<style>
+  :root { --fg:#1a1a1a; --muted:#5a6270; --line:#e3e6eb; --accent:#0b57d0; --soft:#f6f8fa; --warn:#b23b07; --ok:#1a7f37; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,sans-serif; color:var(--fg); line-height:1.62; }
+  .wrap { max-width: 1010px; margin:0 auto; padding:40px 28px 80px; }
+  h1 { font-size:1.5rem; line-height:1.35; margin:0 0 6px; }
+  .meta { color:var(--muted); font-size:.85rem; margin-bottom:26px; }
+  h2 { font-size:1.16rem; margin:32px 0 12px; padding-bottom:6px; border-bottom:2px solid var(--line); }
+  h3 { font-size:.98rem; margin:18px 0 8px; }
+  p, li { font-size:.94rem; }
+  code { font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace; font-size:.85rem; background:var(--soft); padding:1px 5px; border-radius:4px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:.88rem; }
+  th, td { border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top; }
+  th { background:var(--soft); font-weight:600; white-space:nowrap; }
+  .k { font-variant-numeric: tabular-nums; white-space:nowrap; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .tag { display:inline-block; font-size:.72rem; font-weight:600; padding:1px 8px; border-radius:999px; margin-right:4px; white-space:nowrap; }
+  .tag.ok { background:#e7f5ec; color:var(--ok); }
+  .tag.run { background:#fff4e5; color:#9a6700; }
+  .tag.pend { background:#eef0f3; color:#5a6270; }
+  .tag.warn { background:#fdeceb; color:var(--warn); }
+  .tag.accent { background:#e8f0fe; color:var(--accent); }
+  .callout { border-left:4px solid var(--accent); background:var(--soft); padding:10px 14px; border-radius:0 6px 6px 0; margin:14px 0; }
+  .callout.warn { border-left-color:var(--warn); background:#fdf3ee; }
+  .callout.ok { border-left-color:var(--ok); background:#eef7f1; }
+  .up { color:var(--ok); font-weight:600; }
+  .mut { color:var(--muted); }
+  .bar-row { display:grid; grid-template-columns:170px 1fr 110px; align-items:center; gap:10px; margin:8px 0; }
+  .bar-label { font-size:.86rem; color:#22304d; font-weight:500; }
+  .bar-track { background:#eef1f5; border-radius:6px; height:20px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:6px; background:linear-gradient(90deg,#1a7f37,#57b97a); display:flex; align-items:center; justify-content:flex-end; color:#fff; font-size:.72rem; font-weight:600; padding-right:6px; min-width:42px; }
+  .bar-fill.part { background:linear-gradient(90deg,#c98a00,#e6b84d); }
+  .bar-val { font-size:.86rem; font-weight:600; font-variant-numeric:tabular-nums; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin:12px 0; }
+  .kv { border:1px solid var(--line); border-radius:10px; padding:12px 14px; background:#fff; }
+  .kv b { display:block; font-size:.78rem; color:var(--muted); font-weight:600; margin-bottom:4px; }
+  .kv span { font-size:.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>十一假期试验 · 进展报告</h1>
+<div class="meta">
+  更新时刻: 2026-10-04（周日）13:24 CST &nbsp;|&nbsp; 当前阶段: 组件消融（Phase 2/4，流 C）<br>
+  状态源: <code>run/MEMORY_s1_full.md</code>（S1 已 done_all）+ <code>run/MEMORY_component_full.md</code>（组件进行中）+ <code>daily-memories/2026-10-04.md</code><br>
+  基座: <code>deepseek-v4-pro-fp4</code> &nbsp;|&nbsp; 协议: Pass@1 &nbsp;|&nbsp; 每臂 N=5 → <code>mean ± std</code>
+</div>
+<div class="grid">
+  <div class="kv"><b>总体进度（轮）</b><span>25 / 75 完成（33%）· <span class="up">wo_retrieval r1 运行中</span></span></div>
+  <div class="kv"><b>已收口配置</b><span>5 / 15（S1 三臂 + pure_llm + rag）</span></div>
+  <div class="kv"><b>当前配置</b><span><code>wo_retrieval</code>（检索 OFF + run_code ON）</span></div>
+  <div class="kv"><b>反作弊 hook</b><span>全程启用、冻结（非消融对象）</span></div>
+</div>
+
+<h2>1. 总体进度（4 阶段 / 15 配置 / 75 轮）</h2>
+<table>
+  <tr><th>阶段</th><th>内容</th><th class="num">配置数</th><th class="num">轮次</th><th>状态</th></tr>
+  <tr><td class="k">Phase 1</td><td>S1 保真度（Ω 观测 / readback）</td><td class="num">3</td><td class="num">15 / 15</td><td><span class="tag ok">✅ 完成</span></td></tr>
+  <tr><td class="k">Phase 2</td><td>组件消融（含 full 锚点）</td><td class="num">4</td><td class="num">10 / 20 + 1 运行</td><td><span class="tag run">🔵 进行中</span></td></tr>
+  <tr><td class="k">Phase 3</td><td>S2 Φ 轴（k10/k3/k1/lagged）</td><td class="num">4</td><td class="num">0 / 20</td><td><span class="tag pend">⬜ 待跑</span></td></tr>
+  <tr><td class="k">Phase 4</td><td>模型消融（4 基座）</td><td class="num">4</td><td class="num">0 / 20</td><td><span class="tag pend">⬜ 待跑</span></td></tr>
+</table>
+
+<div class="bar-row"><span class="bar-label">总进度</span><span class="bar-track"><span class="bar-fill part" style="width:33%">25/75</span></span><span class="bar-val">33%</span></div>
+<div class="bar-row"><span class="bar-label">Phase 1</span><span class="bar-track"><span class="bar-fill" style="width:100%">15/15</span></span><span class="bar-val">100%</span></div>
+<div class="bar-row"><span class="bar-label">Phase 2</span><span class="bar-track"><span class="bar-fill part" style="width:50%">10/20</span></span><span class="bar-val">50%（+1 运行）</span></div>
+<div class="bar-row"><span class="bar-label">Phase 3 / 4</span><span class="bar-track"><span class="bar-fill" style="width:0%"></span></span><span class="bar-val">0%</span></div>
+
+<h2>2. Phase 1 · S1 保真度消融 — ✅ 完成（15/15 轮）</h2>
+<div class="callout ok">
+  S1 三臂全部 5/5 收口，<code>PHASE = done_all</code>（<code>ERROR_COUNT=3</code>，全程 infra 作废不计入、打分协议失败均已复用产物重评/推进消化）。
+</div>
+<table>
+  <tr><th>臂</th><th class="num">N=5 mean±std</th><th>各轮原始值（Pass@1 %）</th></tr>
+  <tr><td><code>omega_low</code> (Ω L)</td><td class="num"><b>82.8 ± 1.0%</b></td><td>[81.6, 82.3, 84.2, 82.9, 82.9]</td></tr>
+  <tr><td><code>readback_binary</code> (B)</td><td class="num"><b>66.2 ± 16.1%</b></td><td>[56.3, 74.1, 75.3, 43.0, 82.3]</td></tr>
+  <tr><td><code>readback_none</code> (N)</td><td class="num"><b>73.3 ± 2.2%</b></td><td>[72.2, 70.3, 73.4, 75.9, 74.7]</td></tr>
+</table>
+<p class="mut">观察：Ω=low 反而高于 full（82.8%）；readback 轴 none（73.3%）&gt; binary（66.2%）；binary 方差偏大（r4=43.0% 异常低），论文成表时需标出该臂不稳定性。</p>
+<h2>3. Phase 2 · 组件消融 — 🔵 进行中（10/20 轮完成）</h2>
+<table>
+  <tr><th>配置</th><th class="num">轮次</th><th>状态</th><th class="num">1-shot 探路</th><th class="num">当前 N=5 mean±std</th></tr>
+  <tr><td><code>pure_llm</code></td><td class="num">5 / 5</td><td><span class="tag ok">✅ 完成</span></td><td class="num">11.4%</td><td class="num"><b>10.5 ± 1.9%</b> <span class="mut">[8.2,9.5,10.1,11.4,13.3]</span></td></tr>
+  <tr><td><code>rag</code></td><td class="num">5 / 5</td><td><span class="tag ok">✅ 完成</span></td><td class="num">70.3%</td><td class="num"><b>68.2 ± 7.4%</b> <span class="mut">[71.5,70.3,75.3,68.4,55.7]</span></td></tr>
+  <tr><td><code>wo_retrieval</code></td><td class="num">1 / 5</td><td><span class="tag run">🔵 r1 运行中</span></td><td class="num">81.6%</td><td class="num">—</td></tr>
+  <tr><td><code>full</code>（锚点）</td><td class="num">0 / 5</td><td><span class="tag pend">⬜ 待跑</span></td><td class="num">—</td><td class="num">—</td></tr>
+</table>
+<p class="mut">当前轮：<code>wo_retrieval</code> r1，batch <code>2026_1004_122050</code>，编排 PID <code>692552</code>（8 worker / 全量 158 题 / <code>-p 8 -n</code> 禁 Memory Bank 注入），log=<code>/tmp/ABL_wo_retrieval_r1.log</code>（生成进行中）。</p>
+
+<h2>4. Phase 3 / 4 · 待跑</h2>
+<table>
+  <tr><th>阶段</th><th>配置序列</th><th>状态</th></tr>
+  <tr><td class="k">Phase 3 · S2 Φ 轴</td><td><code>phi_k10 → phi_k3 → phi_k1 → phi_lagged(fixed)</code></td><td><span class="tag pend">⬜ 待跑</span></td></tr>
+  <tr><td class="k">Phase 4 · 模型消融</td><td><code>glm-5.2 → ds-v4-flash → kimi → doubao</code></td><td><span class="tag pend">⬜ 待跑</span></td></tr>
+</table>
+<p class="mut">探路对标（1-shot）：S2 Φ k10=75.3% / k3=69.0% / k1=60.8% / lagged=84.2%（trace_key 已修复）。切模型前需 <code>cline auth</code> 切 API key/base_url/model。</p>
+<h2>5. 今日流水（2026-10-04）</h2>
+<table>
+  <tr><th>时刻</th><th>事件</th></tr>
+  <tr><td class="k">01:07</td><td><span class="tag ok">✅</span> pure_llm r5 = 13.3% → <b>pure_llm 收口 10.5 ± 1.9%</b>，切 <code>rag</code> 启动 r1。</td></tr>
+  <tr><td class="k">01:07–03:14</td><td>rag r1 = 71.5%（113/158），启动 r2。</td></tr>
+  <tr><td class="k">03:14–09:06</td><td>rag r2=70.3%、r3=75.3%，启动 r4。</td></tr>
+  <tr><td class="k">11:16</td><td>rag r4 = 68.4%，启动 r5。</td></tr>
+  <tr><td class="k">12:20</td><td><span class="tag ok">✅</span> rag r5 = 55.7% → <b>rag 收口 68.2 ± 7.4%</b>，切 <code>wo_retrieval</code> 启动 r1（batch 2026_1004_122050）。</td></tr>
+  <tr><td class="k">13:24</td><td><span class="tag run">🔵</span> wo_retrieval r1 生成进行中（编排 PID 692552 存活）。</td></tr>
+</table>
+
+<h2>6. 风险与待办</h2>
+<table>
+  <tr><th>项</th><th>详情 / 应对</th></tr>
+  <tr><td class="k"><span class="tag warn">⚠️ /home 满载</span></td><td><code>/home</code> 现 99%（仅 6.0G 可用，394G 卷）——逼近历史红线（09-30 曾因 /home 满致 r3 大面积 150s 超时作废）。<code>/nasdata</code> 379G 充足（评测产物已迁此）。建议人工监控、必要时再清一波 /home。</td></tr>
+  <tr><td class="k"><span class="tag warn">⚠️ RAG recall 端口错配</span></td><td><code>.env</code> L117 <code>RAG_RECALL_URL=:9012</code> 无监听，健康 recall 服务在 <b>9006</b> → rag 语义检索降级为 BM25-only，r1–r5 均在此降级态测得（68.2±7.4%）。切 <code>full</code> 前需人工裁决：修复则 rag 全 5 轮需重跑对齐条件。</td></tr>
+  <tr><td class="k">沙箱阻断</td><td>eval cline 活跃期 <code>run_commands</code> 周期性被拦（ACCESS RESTRICTED）= 预期行为；loop 30min 轮询自动消化，无需人工介入，勿重复启动同一轮。</td></tr>
+  <tr><td class="k">进度</td><td>25/75 已收口 + 1 运行中。剩余：Phase 2 剩余 15 轮 + Phase 3 20 轮 + Phase 4 20 轮。按 ~3h/轮、30min 轮询粒度，假期内可完成，Phase 4 可视时间节后补跑。</td></tr>
+</table>
+
+</div>
+</body>
+</html>

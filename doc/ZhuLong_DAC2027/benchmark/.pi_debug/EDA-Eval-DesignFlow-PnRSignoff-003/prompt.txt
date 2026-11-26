@@ -1,0 +1,87 @@
+# Scenario: a P&R signoff team built a PrimeTime STA flow whose entry point is a
+# cshell launcher `run_sta.csh`. The launcher selects the PrimeTime tool via the
+# environment-modules system (`module purge` / `module load ds/pt/<ver>`), then
+# invokes `pt_shell -f <main.tcl> -x "<preset>"` where the `-x` preset pre-sets
+# the flow variables DESIGN / PT_CORNER / MODE (the sourced common_setup.tcl
+# respects them via `if {![info exists ...]}`). Outputs are suffixed with a
+# RUN_TAG `<design>_<corner>_<mode>` so parallel corners/modes never clash.
+#
+# The team's real launchers start with `#!/bin/csh -f` (non-interactive csh,
+# which skips .cshrc). THE KEY TRAP they hit and corrected on the fly: under
+# `csh -f`, tcsh does NOT inherit bash's exported `module` function/alias (that
+# function is defined in the shell init, which `-f` skips). So a `csh -f`
+# launcher that calls `module purge` / `module load` directly FAILS at runtime
+# with "module: Command not found". The fix is to make the `module` command
+# available for non-interactive csh BEFORE the first `module` call -- either by
+# defining the alias `alias module 'eval `.../modulecmd csh \!*`'` or by
+# `source .../modules.csh`. A `#!/bin/bash` launcher does NOT need this (bash
+# inherits the `module` function from .bashrc).
+#
+# You are given ONE launcher script as a multi-line string -- `launcher`.
+# Implement
+#     pnr_signoff_audit_pt_launcher {launcher}
+# which RETURNS a Tcl dict (via `dict create`) with EXACTLY these keys, all as
+# string values (use "0"/"1" for booleans, "ok"/"broken" for the verdict, and a
+# semicolon-joined list or "none" for fail_reasons):
+#
+#   shebang_csh_f                  -- "1" if the first non-empty line matches a
+#                                     csh/tcsh shebang carrying `-f`
+#                                     (e.g. `#!/bin/csh -f`, `#!/bin/tcsh -f`),
+#                                     else "0".
+#   has_module_bootstrap           -- "1" if a module-bootstrap construct is
+#                                     present anywhere: a line defining the
+#                                     module alias (`alias module ...`) OR a
+#                                     line sourcing a modules.csh init
+#                                     (`source <path>modules.csh`); else "0".
+#   bootstrap_before_first_module_call
+#                                  -- "1" if the bootstrap is correctly placed
+#                                     before the first `module` command call
+#                                     (`module purge|load|unload|avail|list`).
+#                                     Rules: if there are NO module-call lines
+#                                     -> "1" (vacuous); if the shebang is NOT
+#                                     csh-f -> "1" (bootstrap not required);
+#                                     else "1" only if a bootstrap line exists
+#                                     at a line index STRICTLY LESS than the
+#                                     first module-call line index; otherwise
+#                                     "0".
+#   has_module_load_pt             -- "1" if a line loads the PrimeTime module
+#                                     (`module load ds/pt/...`); else "0".
+#   has_pt_shell_x_preset          -- "1" if a line invokes `pt_shell` with BOTH
+#                                     `-f` and `-x`; else "0".
+#   x_preset_has_design_corner_mode
+#                                  -- "1" if (has_pt_shell_x_preset is "1") AND
+#                                     the `-x` preset carries all three flow
+#                                     variables as pre-set values -- i.e. on the
+#                                     lines that build/pass the preset (lines
+#                                     containing the token `XVAR` or a `-x`
+#                                     option) the text contains `set DESIGN $`,
+#                                     `set PT_CORNER $`, and `set MODE $`
+#                                     (the `$` marks a preset pass-by-value, NOT
+#                                     a cshell default `set <var> = <val>`).
+#                                     Else "0".
+#   has_run_tag_suffix             -- "1" if the launcher builds a tag joining
+#                                     DESIGN/CORNER/MODE by `_` (e.g.
+#                                     `${DESIGN}_${CORNER}_${MODE}` or
+#                                     `${DESIGN}_${PT_CORNER}_${MODE}`); else
+#                                     "0".
+#   verdict                        -- "ok" if no critical rule below is
+#                                     violated, else "broken".
+#   fail_reasons                   -- semicolon-joined ids of the violated
+#                                     critical rules (e.g. "R1"), or "none".
+#
+# Critical rules (drive verdict):
+#   R1 (module_bootstrap): violated when shebang_csh_f AND there is at least one
+#       module-call line AND NOT (has_module_bootstrap AND
+#       bootstrap_before_first_module_call). (A csh -f launcher that calls
+#       `module` but never bootstraps module before the first call.)
+#   R2 (module_load_pt):  violated when has_module_load_pt is "0".
+#   R3 (pt_shell_x_preset): violated when has_pt_shell_x_preset is "0".
+#   R4 (x_preset_vars):   violated when has_pt_shell_x_preset is "1" AND
+#       x_preset_has_design_corner_mode is "0".
+#
+# NOTE on the runtime Tcl: the waveview Tcl `regexp` does NOT support `\b` word
+# boundaries -- use `[[:space:]]` / explicit boundaries instead. Use POSIX
+# classes (`[[:space:]]`, `\S`) which are supported. `dict create` makes the
+# keys enumerable with `dict get`.
+#
+# proc pnr_signoff_audit_pt_launcher {launcher} -> dict

@@ -1,0 +1,29 @@
+\section{Background: From Script to Flow}
+\label{sec:background}
+% 【中文】\section{背景：从脚本到流程}
+
+\textbf{The grounding gap.} EDA scripting benchmarks (VerilogEval, RTLLM) evaluate isolated code generation: given a spec, produce Verilog. The agent makes 1--3 tool calls, never inspects a live tool's output, and never recovers from an error. \bench{} introduces \emph{design-flow orchestration}: the agent must produce a deliverable (\texttt{submit.zip}) by orchestrating remote commercial EDA tools through an MCP bridge, scored against $\geq 8$ executable assertions. The median run issues 26.5 tool calls (IQR 13.8--38.0) across 20.5 iterations, with 41.2\% of calls going through the MCP bridge to live EDA tools (47 instrumented pilot traces; \S\ref{sec:analysis}). This is qualitatively harder: the agent must ground its actions in tool outputs it has never seen during training, chain dependent steps, and recover from failures mid-flow.
+% 【中文】
+% \textbf{接地差距。} EDA 脚本基准（VerilogEval、RTLLM）评测孤立的代码生成：给定规格，产出 Verilog。
+% 智能体发起 1--3 次工具调用，从不检视真实工具的输出，也从不从错误中恢复。\bench{} 引入\emph{设计流
+% 编排}：智能体必须通过 MCP 网桥编排远程商用 EDA 工具产出交付物（\texttt{submit.zip}），按 $\geq 8$
+% 条可执行断言评分。中位 run 发起 26.5 次工具调用（IQR 13.8--38.0），跨 20.5 轮迭代，其中 41.2\% 的
+% 调用经 MCP 网桥走向真实 EDA 工具（47 条插桩试点轨迹；\S\ref{sec:analysis}）。这在质性上更难：智能体
+% 必须将其行动建立在训练中从未见过的工具输出上，链接依赖步骤，并在流程中途从失败中恢复。
+
+\textbf{Why memory and RSI may matter more in flow.} On single-script tasks, in-context learning within one trace often suffices---the entire problem fits in the window. On long-chain flow, the relevant knowledge (tool quirks, project conventions, failure patterns) accumulates \emph{across} sessions and exceeds any window. This makes persistent memory a potential binding constraint: an agent that can consolidate ``which tool sequences work'' and ``which errors recur'' into a cross-session memory may close the grounding gap, while one that re-derives everything from scratch each run is bounded. Recursive self-improvement (RSI)---expanding a skill library and refining the harness from experience---is only meaningful if memory persists to accumulate that experience. Prior work on script-layer EDA (DATE27, \cite{PLACEHOLDER_DATE27_ZHULONG}; ZhuLong-DAC, \cite{liu2026runreadbackrefine}) showed memory + RSI gains on short-chain tasks; whether these \emph{transfer} to long-chain flow is the central question of this paper.
+% 【中文】
+% \textbf{为何记忆与 RSI 在流程中可能更重要。} 在单脚本任务上，单条轨迹内的上下文学习通常足够——整个
+% 问题装得进窗口。在长链流程上，相关知识（工具癖性、项目约定、失败模式）\emph{跨}会话累积并超出任何
+% 窗口。这使持久记忆成为潜在的绑定约束：一个能将"哪些工具序列奏效"与"哪些错误反复出现"巩固进跨会话
+% 记忆的智能体可能弥合接地差距，而每次运行都从头重新推导的智能体则有上限。递归自我改进（RSI）——扩展
+% 技能库并从经验中改进执行框架——只有在记忆持久以累积经验时才有意义。先前的脚本层 EDA 工作
+%（DATE27，\cite{PLACEHOLDER_DATE27_ZHULONG}；ZhuLong-DAC，\cite{liu2026runreadbackrefine}）在短链
+% 任务上展示了记忆 + RSI 增益；这些增益能否\emph{迁移}到长链流程是本文的中心问题。
+
+\textbf{From biological affect to computational mapping.} Cognitive neuroscience establishes that emotional arousal modulates memory consolidation (amygdala--hippocampus interaction; \cite{mcgaugh2004}), that high arousal triggers a central/peripheral encoding trade-off (weapon-focus; \cite{loftus1987}), and that retrieval is mood-congruent and state-dependent \cite{bower1981}. We map these three principles to computable mechanisms for an EDA agent's memory architecture (\S\ref{sec:harness}), turning ``does memory help?'' into ``\emph{which} mechanism brings the gain, and under what conditions does it vanish?''
+% 【中文】
+% \textbf{从生物情绪到可计算映射。} 认知神经科学确立：情绪觉醒调控记忆巩固（杏仁核-海马交互；
+% \cite{mcgaugh2004}），高觉醒触发中心/外围编码权衡（武器焦点；\cite{loftus1987}），检索具有情绪一致
+% 性与状态依赖性 \cite{bower1981}。我们将这三条原理映射为 EDA 智能体记忆架构的可计算机制
+%（\S\ref{sec:harness}），把"记忆是否有用？"转化为"\emph{哪个}机制带来增益，且在何种条件下它会消失？"

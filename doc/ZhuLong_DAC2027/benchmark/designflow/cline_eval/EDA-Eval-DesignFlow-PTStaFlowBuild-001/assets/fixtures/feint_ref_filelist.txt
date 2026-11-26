@@ -1,0 +1,9 @@
+# Reference flow structure: /apps/imctf/cad/script/digital_flow/feint
+feint/Makefile
+feint/gui/feint_gui.py
+feint/scripts/pt.tcl
+feint/scripts/dc.tcl
+feint/setup/common_setup.tcl
+feint/setup/common_setup.csh
+# pt.tcl convention: sourced by Makefile target 'pt'; reads setup/common_setup.tcl for env+search_path;
+# numbered sub-scripts under scripts/ sourced in order: 1_setup 2_read_sdc 3_read_lib 4_read_netlist 5_link 6_clock 7_check 8_rpt_setup 9_rpt_hold 10_summary

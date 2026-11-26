@@ -1,0 +1,9 @@
+# 8 FSDB files (single sweep, no #N corner replicas) for this fixture
+IsmOscTestSweep_s0.fsdb
+IsmOscTestSweep_s1.fsdb
+IsmOscTestSweep_s2.fsdb
+IsmOscTestSweep_s3.fsdb
+IsmOscTestSweep_s4.fsdb
+IsmOscTestSweep_s5.fsdb
+IsmOscTestSweep_s6.fsdb
+IsmOscTestSweep_s7.fsdb

@@ -1,0 +1,75 @@
+\begin{thebibliography}{9}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Anonymous(2026)]{PLACEHOLDER_DATE27_ZHULONG}
+Anonymous.
+\newblock [date27 zhulong preprint title -- to appear 2026-12].
+\newblock PLACEHOLDER: DATE27 preprint, to appear 2026-12. Cited as prior
+  script-layer EDA self-evolution work., 2026.
+
+\bibitem[Bower(1981)]{bower1981}
+Bower, G.~H.
+\newblock \emph{Mood and Memory}, volume~36.
+\newblock American Psychologist, 1981.
+\newblock Network Theory of Affect: mood-congruent recall + state-dependent
+  retrieval.
+
+\bibitem[{Cline Team}(2026)]{cline2026}
+{Cline Team}.
+\newblock Cline: An open-source ai coding agent.
+\newblock \emph{Open-source software}, 2026.
+\newblock \url{https://github.com/cline/cline}, v3.0.51.
+
+\bibitem[Dong et~al.(2026)Dong, Wang, Yuan, An, and Zhang]{dong2026flowfixer}
+Dong, K., Wang, R., Yuan, F., An, B., and Zhang, X.
+\newblock Flowfixer-eda: A tool-feedback-augmented large language model agent
+  for automated diagnosis and repair of open-source rtl-to-gds design flow
+  failures.
+\newblock \emph{IEEE Xplore}, 2026.
+
+\bibitem[Itti \& Baldi(2009)Itti and Baldi]{ittibaldi2009}
+Itti, L. and Baldi, P.
+\newblock Bayesian surprise attracts human attention.
+\newblock \emph{Vision Research}, 49\penalty0 (10):\penalty0 1295--1306, 2009.
+\newblock Bayesian surprise = KL(posterior || prior) as a prediction-error
+  signal for attention.
+
+\bibitem[Liu et~al.(2026)]{liu2026runreadbackrefine}
+Liu, Y. et~al.
+\newblock Run, read-back, refine: Closing the generate--execute--refine loop
+  for eda scripting agents.
+\newblock \emph{arXiv preprint arXiv:2611.19056}, 2026.
+\newblock ZhuLong-DAC preprint: three-layer memory (L0/L1/L2) + recursive
+  self-improvement on EDA scripting; script-layer precursor of this paper.
+
+\bibitem[Loftus et~al.(1987)Loftus, Loftus, and Messo]{loftus1987}
+Loftus, E.~F., Loftus, G.~R., and Messo, J.
+\newblock Some facts about ``weapon focus''.
+\newblock \emph{Journal of Applied Psychology}, 72\penalty0 (4):\penalty0
+  648--651, 1987.
+\newblock High arousal consolidates central details at the expense of
+  peripheral details.
+
+\bibitem[McGaugh(2004)]{mcgaugh2004}
+McGaugh, J.~L.
+\newblock The amygdala modulates the consolidation of memories of emotionally
+  arousing experiences.
+\newblock \emph{Annual Review of Neuroscience}, 27:\penalty0 1--28, 2004.
+\newblock Amygdala--hippocampus interaction: emotional arousal enhances memory
+  consolidation via NE modulation of LTP.
+
+\bibitem[Park et~al.(2023)Park, O'Brien, Cai, Morris, Liang, and
+  Bernstein]{park2023}
+Park, J.~S., O'Brien, J.~C., Cai, C.~J., Morris, M.~R., Liang, P., and
+  Bernstein, M.~S.
+\newblock Generative agents: Interactive simulacra of human behavior.
+\newblock In \emph{Proceedings of the 36th Annual ACM Symposium on User
+  Interface Software and Technology (UIST)}, 2023.
+\newblock Importance-score-filtered memory writes; functional precursor to
+  surprise-gated writing.
+
+\end{thebibliography}

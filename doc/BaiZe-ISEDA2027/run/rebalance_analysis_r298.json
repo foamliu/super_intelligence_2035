@@ -1,0 +1,126 @@
+{
+  "meta": {
+    "round": "R298",
+    "date": "2026-11-12",
+    "purpose": "SFT data rebalancing remediation for catastrophic forgetting (R297 finding)",
+    "surrogate_disclaimer": "MiniCPM5-2B is BaiZe surrogate; gains not transferable to BaiZe"
+  },
+  "current_v11_v36": {
+    "total_pairs": 1029,
+    "family_distribution": {
+      "db*": 243,
+      "emy*": 394,
+      "ae*": 153,
+      "Mde*": 218,
+      "other": 489
+    },
+    "target_api_coverage": {
+      "dbCreateLib": 6,
+      "dbGetAllLibs": 6,
+      "dbDelLib": 5,
+      "dbNewCV": 5,
+      "dbCloseCV": 8,
+      "dbOpenCVByType": 5,
+      "dbCloseLib": 0,
+      "dbOpenCV": 8,
+      "dbSaveCV": 5,
+      "dbCrtInst": 13
+    }
+  },
+  "gap_analysis_r297": {
+    "scenario_bias": {
+      "Schematic": "+16.6pp (SFT improved)",
+      "Layout": "-18.7pp (catastrophic forgetting)",
+      "DesignMgmt": "-15.5pp (catastrophic forgetting)",
+      "Others": "-6.8pp (mild forgetting)"
+    },
+    "both_missed_apis_top": {
+      "dbCreateLib": 20,
+      "dbGetAllLibs": 19,
+      "dbDelLib": 18,
+      "dbNewCV": 16,
+      "dbCloseCV": 15,
+      "emyScalarName": 13,
+      "emyBlock.create": 12,
+      "emyPin.create": 12,
+      "emyScalarNet.create": 12,
+      "emyTerm.create": 12,
+      "emcR0": 11,
+      "emyLine.create": 11,
+      "emyTermType": 11,
+      "dbOpenCVByType": 10,
+      "emcInputTermType": 10,
+      "emyOrient": 9,
+      "emcStickFont": 8,
+      "emyFont": 8,
+      "emyTextAlign": 8,
+      "dbCrtInst": 7,
+      "dmGetObj": 7,
+      "emcInputOutputTermType": 7,
+      "emcSignalSigType": 7,
+      "emyBlock": 7,
+      "emyDesign.getTopBlock": 7,
+      "emyReservedViewType": 7,
+      "emySigType": 7,
+      "emcCenterLeftTextAlign": 6,
+      "emcCenterRightTextAlign": 6,
+      "emcInheritFromTopBlock": 6
+    }
+  },
+  "remedial_supplement": {
+    "s1_single_api_pairs": 50,
+    "s2_workflow_pairs": 7,
+    "total_pairs": 57,
+    "target_apis": [
+      "dbCreateLib",
+      "dbGetAllLibs",
+      "dbDelLib",
+      "dbNewCV",
+      "dbCloseCV",
+      "dbOpenCVByType",
+      "dbCloseLib",
+      "dbOpenCV",
+      "dbSaveCV",
+      "dbCrtInst"
+    ],
+    "workflows": [
+      "create_lib_newcv_inst_save_close",
+      "list_libs_open_cv_modify_close",
+      "create_and_delete_library_lifecycle",
+      "open_existing_cv_place_instance_close",
+      "full_lib_cv_lifecycle_with_error_handling",
+      "deprecated_dbopencv_migration_example",
+      "traverse_libs_open_multiple_cvs"
+    ],
+    "contamination_gate": "PASS"
+  },
+  "rebalanced_projection": {
+    "total_pairs": 1086,
+    "family_distribution": {
+      "db*": 335,
+      "emy*": 394,
+      "ae*": 153,
+      "Mde*": 218,
+      "other": 489
+    },
+    "target_api_coverage_after": {
+      "dbCreateLib": 14,
+      "dbGetAllLibs": 16,
+      "dbDelLib": 12,
+      "dbNewCV": 13,
+      "dbCloseCV": 21,
+      "dbOpenCVByType": 14,
+      "dbCloseLib": 10,
+      "dbOpenCV": 14,
+      "dbSaveCV": 16,
+      "dbCrtInst": 23
+    }
+  },
+  "recommendations": [
+    "Re-run surrogate SFT with v11-v36 + v37 remedial to test if forgetting is resolved",
+    "For formal BaiZe SFT: ensure db* lifecycle APIs have >=15 pairs each",
+    "RL R4 reward arm should weight Layout/DesignMgmt db* API correct usage higher",
+    "Monitor scenario-level Pass@1 after re-SFT: target Layout/DesignMgmt recovery",
+    "v37 addresses the data problem; SFT recipe was not the issue"
+  ]
+}

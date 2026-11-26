@@ -1,0 +1,203 @@
+You are solving an EDA design-flow benchmark task. Implement a Tcl proc.
+
+TASK PROMPT:
+# Scenario: a real Cadence Virtuoso resistance-reduction flow chains two
+# batch SKILL tools -- virtuoso-rscalc-runner (measures parasitic resistance /
+# IR drop of a power-net layout) and virtuoso-autovia-runner (inserts vias and
+# writes a merged, lower-resistance layout). Today the two tools are driven by
+# two separate config files, and the parameters that mean the SAME thing to
+# both tools are duplicated in each file under slightly different names. That
+# duplication is a real source of error (a designer edits one copy and forgets
+# the other, so RsCalc and AutoVia analyze different designs).
+#
+# Your job: write a single shared `common.config` that holds -- ONCE -- the
+# parameters shared by both tools, so each tool's own config file can later be
+# reduced to its tool-specific tuning only.
+#
+# You are given the two UN-consolidated config files (attached):
+#   * rscalc_config_before.config  -- RsCalc naming:
+#       process, project, libName, cellName, viewName   (shared)
+#       pwrNets, version, runDir, metalOption, ...      (RsCalc-only)
+#   * autovia_config_before.il     -- AutoVia naming (note the aliases):
+#       process, projName, libName, cellName, viewType  (shared;
+#       AutoVia spells `project` as `projName` and `viewName` as `viewType`)
+#       pwrnets, strminLib, viaCT, coreNum, outLibName, ...  (AutoVia-only)
+#
+# Task: implement vflow_extract_common_config, which reads the two config
+# files, extracts the 5 shared design parameters, reconciles AutoVia's aliases
+# to the CANONICAL RsCalc naming (project / viewName), and RETURNS the body of
+# `common.config` as a string. The returned string MUST contain exactly these
+# seven assignments (key = value), in RsCalc canonical naming:
+#
+#     process     = "cxmt10G4plus"
+#     project     = "train"
+#     libName     = "austin_rscalc2"
+#     cellName    = "testa_opt2"
+#     viewName    = "layout"
+#     targetReduction = 0.5
+#     maxIterations   = 5
+#
+# The last two (targetReduction, maxIterations) are flow-control keys for the
+# orchestrator: targetReduction is the required fractional drop of the
+# worst-case resistance vs the baseline (0.5 = at least a 50% drop), and
+# maxIterations is the cap on the AutoVia->RsCalc optimization loops. They are
+# NOT read from either input file -- you must emit them with the fixed values
+# above.
+#
+# Rules:
+#   * Skip comment lines (those whose first non-space char is ';') and blank
+#     lines. Only `key = "value"` string assignments are relevant for the
+#     shared params.
+#   * Tool-specific keys (pwrNets, pwrnets, metalOption, via*, coreNum, ...)
+#     MUST NOT appear in the returned common.config body.
+#   * The two sources should agree on the shared values; if a canonical key is
+#     missing from one source, fall back to the other source (or its alias).
+#
+# Args:
+#   rscalc_path  - path to the RsCalc config file (rscalc_config_before.config)
+#   autovia_path - path to the AutoVia config file (autovia_config_before.il)
+# Returns:
+#   A string containing the common.config body (the 7 assignments above, one
+#   per line). Do NOT write any file -- just return the string.
+#
+# proc vflow_extract_common_config {rscalc_path autovia_path} {
+#     # your code here
+# }
+
+INPUT FILE 1 (rscalc_config_before.config):
+-----
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; rscalc.config  (BEFORE consolidation — shared params still inline)
+;; Configuration file for RsCalc Flow (virtuoso-rscalc-runner).
+;; NOTE: This is the UN-consolidated form. process/project/libName/
+;;       cellName/viewName are duplicated in run_autovia_config.il under
+;;       AutoVia naming (project->projName, viewName->viewType).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; === Shared design parameters (duplicated with AutoVia — to be extracted) ===
+process     = "cxmt10G4plus"
+project     = "train"
+libName     = "austin_rscalc2"
+cellName    = "testa_opt2"
+viewName    = "layout"
+
+;; === RsCalc-only parameters ===
+
+;; Power/Ground net names, space-separated (e.g. "vdd vss").
+;; RsCalc reads RTEXT labels in the layout, which use the net name WITHOUT the
+;; global-net "!" suffix (e.g. "vdd"). Leave empty ("") to auto-detect ALL
+;; nets from RTEXT labels in the layout.
+pwrNets     = ""
+
+;; Version identifier (used to build the default run directory)
+version     = "AI_Virtuoso"
+
+;; Run directory (leave empty "" to use default /proj/<project>/<version>/ver/rscalc/<USER>)
+runDir      = ""
+
+;; Metal option (auto-detected if empty). Supported: 1p3m1x2y1z, 1p5m1x3y1z, ...
+metalOption = "1p5m1x3y1z"
+
+;; Use existing GDS file? "Yes" or "No" (default: "No")
+useExistGds = "No"
+
+;; Check nets short? "Yes" or "No" (default: "Yes")
+checkShort  = "Yes"
+
+;; Divide metal ratio (default: "5.0"). Options: "1.0", "2.0", "5.0"
+divMetRatio = "5.0"
+
+;; Parallel job count (default: "12"). Options: "12", "32", "64"
+parallel    = "12"
+
+;; Via group? "Yes" or "No" (default: "No")
+viaGroup    = "No"
+viaGroupRatio = ""
+
+;; Reduce short? "Yes" or "No" (default: "No")
+reduceShort = "No"
+reduceShortRatio = ""
+
+;; Check points for resistance measurement: list of (x y layer) tuples, or nil
+checkPoints = nil
+
+-----
+
+INPUT FILE 2 (autovia_config_before.il):
+-----
+;; =============================================================
+;; run_autovia_config.il  (BEFORE consolidation — shared params still inline)
+;; Configuration file for AutoVia (virtuoso-autovia-runner).
+;; NOTE: This is the UN-consolidated form. The 5 shared params below are
+;;       duplicated in rscalc.config under RsCalc naming. AutoVia uses the
+;;       aliases: project->projName, viewName->viewType.
+;; =============================================================
+
+;; === Shared design parameters (duplicated with RsCalc — to be extracted) ===
+process     = "cxmt10G4plus"
+projName    = "train"
+libName     = "austin_rscalc2"
+cellName    = "testa_opt2"
+viewType    = "layout"
+
+;; === AutoVia-only parameters ===
+
+;; Power net list (space-separated). AutoVia matches GDS TEXT labels that use
+;; the global-net "!" convention (e.g. "vdd!", "vss!"). Leave empty ("") to
+;; auto-detect ALL power nets from layout text labels ending with "!".
+;; (RsCalc uses RTEXT labels WITHOUT "!" — so pwrNets is NOT shared.)
+pwrnets     = ""
+
+;; Optional: Stream in library name
+strminLib   = "austin_rscalc2"
+
+;; Optional: Run directory. Leave empty ("") to auto-default to
+;;   /proj/<projName>/autovia/<libName>/<cellName>
+runDir      = ""
+
+;; Optional: GDS file for existing reference. Leave empty ("") to auto-default
+;;   to <runDir>/<cellName>.gds
+gdsFile     = ""
+
+;; Optional: Top cell name (defaults to cellName)
+topCellName = ""
+
+;; Add date suffix to via cell name? "Yes" or "No"
+suffixValue = "No"
+
+;; Generate autovia top cell? "Yes" or "No"
+genTopCellValue = "No"
+
+;; Debug mode for fastxor? "Yes" or "No"
+debugMode   = "Yes"
+
+;; Number of cores for DRC run
+coreNum     = 4
+
+;; Output merged layout library name (original layout + via cell instances)
+outLibName  = "austin_rscalc2"
+
+;; Output merged layout cell name (the new optimized layout)
+outCellName = "testa_opt3"
+
+;; =============================================================
+;; Via selection - one for each via type (t = enable, nil = disable)
+;; =============================================================
+viaCT   = t
+viaV1   = t
+viaV2   = t
+viaV3   = t
+viaV4   = t
+viaV5   = nil
+viaRDV  = nil
+viaV1A  = nil
+viaV2A  = nil
+
+-----
+
+INSTRUCTIONS:
+- Implement the proc `vflow_extract_common_config {rscalc_path autovia_path}` in Tcl.
+- The runtime is the waveview Tcl shell. You MAY use the eda_flow MCP (tool: run_code with lang="tcl", host="waveview") to write the two input files to the sandbox and test your proc. The input file contents are exactly the two files shown above (write them with `puts` line-by-line so newlines are real).
+- Your proc must read the two files, skip ';' comment lines and blanks, parse `key = "value"` string assignments, extract the 5 shared params (process, project, libName, cellName, viewName), reconciling AutoVia aliases (projName->project, viewType->viewName) to canonical RsCalc naming, and append targetReduction = 0.5 and maxIterations = 5. Return the common.config body as a string. Do NOT write any file from the proc.
+- IMPORTANT Tcl note: use POSIX character classes `[[:space:]]` in regexp (this Tcl does NOT support backslash-s).
+- Output ONLY the final Tcl proc definition in a ```tcl fenced code block, plus a one-line note whether you validated it via run_code.

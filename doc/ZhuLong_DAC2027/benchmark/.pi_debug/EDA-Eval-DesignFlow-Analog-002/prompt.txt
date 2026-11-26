@@ -1,0 +1,51 @@
+# Scenario: you are on an analog IC characterization team building Synopsys
+# SiliconSmart Liberty (.lib) timing/power models for the `drgqx_cmos_analog`
+# standard-cell library. The characterization flow is laid out as:
+#
+#   sisregular/control/<cell>.inst   -- one control file per declared cell
+#   netlists/<cell>.cdl.spf | <cell>.spf_RC   -- PEX extraction netlist symlinks
+#
+# Each netlists/ symlink is one of two StarRC PEX output formats:
+#   <cell>.cdl.spf  -- CDL topology-only SPF (patched, NO parasitic RC)
+#   <cell>.spf_RC   -- SPF WITH parasitic RC extraction
+#
+# A cell declared by a `<cell>.inst` file is characterizable ONLY IF the
+# netlists/ directory holds a PEX symlink for it. A declared cell with NO
+# netlists symlink has no PEX data, and SiliconSmart `model` will abort it
+# with the real error:
+#     Error: Unable to read the template index for cell '<cell>'. (SMSC-99)
+#
+# You are given two text files:
+#   inst_cells.txt        -- the declared `<cell>.inst` cell names, one per line
+#   netlists_listing.txt  -- the netlists/ symlink names, one per line
+#                            (each name is `<cell>.cdl.spf` or `<cell>.spf_RC`)
+#
+# Classification TRAP (observed in real characterization runs): the suffix
+# `.cdl.spf` ENDS in `.spf`, but `.spf_RC` does NOT end in `.spf` (it ends in
+# `_RC`); however the SUBSTRING `.spf` appears inside BOTH suffixes. A
+# classifier built on a loose substring/contains test (e.g. unanchored
+# `\.spf`, or `string first ".spf"`) lumps every entry into one bucket and
+# corrupts the per-cell base-name extraction. Distinguish the two suffixes by
+# EXACT suffix match, and strip the correct number of characters per suffix
+# (`.cdl.spf` is 8 chars, `.spf_RC` is 7 chars) to recover the cell base name.
+#
+# Task: implement `analog_pex_netlist_audit`, which reads the two files and
+# RETURNS a flat Tcl dict string (key value pairs, space-separated) with:
+#
+#     num_inst_cells   = number of distinct declared .inst cell names
+#     num_with_pex     = number of distinct cells that HAVE a netlists symlink
+#     num_no_pex       = num_inst_cells - num_with_pex  (cells that will SMSC-99 fail)
+#     num_cdl_spf      = number of distinct cells referenced via `.cdl.spf`
+#     num_spf_rc       = number of distinct cells referenced via `.spf_RC`
+#     no_pex_cells     = the no-PEX cell names, sorted alphabetically,
+#                        space-separated (a single list value at the end)
+#
+# A cell that appears in inst_cells but has no netlists symlink is `no_pex`.
+# A cell with a symlink is `with_pex` (and counted once in cdl_spf OR spf_rc).
+# `num_with_pex` must equal `num_cdl_spf + num_spf_rc`.
+#
+# Attachments: assets/EDA-Eval-DesignFlow-Analog-002/inst_cells.txt
+#              assets/EDA-Eval-DesignFlow-Analog-002/netlists_listing.txt
+#
+# Signature:  analog_pex_netlist_audit {inst_path net_path}   -> dict string
+# Runtime:    Tcl (WaveView ACE).  Pure text/file parsing; no EDA API calls.

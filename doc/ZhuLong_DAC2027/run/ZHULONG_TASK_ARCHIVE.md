@@ -1,0 +1,3925 @@
+# ZHULONG_TASK_ARCHIVE.md — ZhuLong（DAC2027）任务书归档（已闭合运维指令块）
+
+> 本文件由 agent 维护（2026-10-06 用户裁定：任务书归档由 agent 自滚）。
+> 归档原则：只「搬迁」已闭合内容，【原文】不动，不新增/不改写任何指令。
+> 归档时间：2026-10-08 12:27 CST（任务书 39.6KB→超 32KB 阈值，搬出 8 个已闭合运维块至本文件）。
+
+---
+
+### 📦 已归档块 · 2026-11-18 20:5x zh-cn（论文全文加中文对照·注释态）· ✅ 已交付
+
+> 交付：round1 commit `abf24281f`（main.tex+12 sections，+249/−0 纯新增）+ round2 commit `28e77662f`（appendix A/B 标记头 + C 乱码修正 51+/33- + D 新增 51+/0-）；编译 11p/0err/0undef/230611B 同字节；报告 `reports/report_edafb_zh_translation_zh.html`；MEMORY 一行 `[zh-cn] 覆盖 17 文件·编译 11p 0err·commit abf24281f+28e77662f`。原文（待执行→已交付）如下：
+
+> 🔴 **2026-11-18 20:5x 用户令 — 论文《EDA-Flow-Bench_ICML2027》全文加中文对照（注释态）· 待执行**
+>
+> **用户原话**：「安排 zhulong agent 修改论文 EDA-Flow-Bench_ICML2027：1. 每段英文接中文翻译（注释状态）」。
+> **目标**：把中英对照做成**源文件内的 LaTeX 注释**——不新建旁路文件、**不改变任何编译输出**。
+>
+> **范围**：`EDA-Flow-Bench_ICML2027/` 下全部英文正文源文件 —— `sections/0_abstract … 11_reproducibility`（12 个）、`appendix/A_benchmark_details … D_affective_mechanism`（4 个）、`main.tex`（仅正文段落；标题/作者/宏定义旁注不必译）。
+>
+> **格式（硬性）**：
+> 1. 每段英文**紧接其后**插入中文：首行标记统一为 `% 【中文】`，多行时**每行都以 `%` 开头**；英文段落与中文块之间空一行。
+> 2. 覆盖粒度：正文段落（含 abstract）· `\section`/`\subsection` 标题 · 每个 `\item` · 图/表 `\caption` · 附录 `\paragraph`。**表格不逐格译**：在 `\begin{table}` 之前（或 `\caption` 之后）加一条 `% 【中文】表 X：…（列名依次：…）` 说明即可。
+> 3. **禁止**在这些位置插注释：`verbatim`/`lstlisting`/`\verb`/`\url` 环境体、数学环境体（`equation`/`align`）、`tabular` 行内、`\cite{}`/`\ref{}` 内部 —— 这些位置 `%` 会改变语义或破坏排版。
+> 4. LaTeX 宏**原样照抄**（`\bench{}` / `\MzeroPass{}` / `\PreregDate` / `\Ntasks` / `\Neval` …），不翻译宏名；数学符号、变量、文件名、命令、代码标识保留英文。
+> 5. ⚠️ **漏写 `%` = 把中文注入 PDF**（PDF 无 CJK 字体 ⇒ 编译报错或乱码），一律判不合格。
+>
+> **翻译质量**：忠实原句，**不改数字/断言/引用**、不新增主张、不删减；术语统一（benchmark=基准 · harness=执行框架 · pre-registration=预注册 · affective memory=情绪记忆 · grounding=接地 · ablation=消融 · assertion=断言 · trace=轨迹 · desensitized=脱敏 · commercial EDA tools=商用 EDA 工具 · design_flow=设计流）。
+>
+> **验收判据（先定后做，全部通过才交付）**：
+> ① **编译**：`pdflatex → bibtex → pdflatex ×2`，用 `-outdir` 输出到临时目录（勿污染仓库）⇒ **仍为 11 页**、0 error、0 undefined；因全是注释，**PDF 内容应与改动前一致**（记录页数 + `pdftotext` 字数；本机若无 `pdftotext` 则比对页数与各节起始页号）。
+> ② **覆盖**：16 个源文件**每个都有**中文；逐文件统计「英文段数 / 中文块数」，差值必须逐条给出原因（表格说明合并、公式行不计等）并写入报告。
+> ③ **diff 纯净**：`git diff --numstat` 中改动文件**只有 `.tex`**，且**删除列全为 0**（纯新增注释）；若有个别行内断行调整，须在报告列出并说明未改语义。
+> ④ **不改口径**：不新建 `.md`/`.zh.tex`/`_zh` 旁路文件；不改 `\Ntasks`/`\Neval`/`\MzeroPass`/`\ScriptPass`/`\PreregDate` 等宏值；不改章节文件名（`10_ethics`/`11_reproducibility` 保持）；不改任何数字与断言。
+> ⑤ **提交**：信息前缀 `zhulong paper zh:`，只 `git add -- EDA-Flow-Bench_ICML2027/**`；`main.pdf` 内容未变则**不必重新提交**（若提交须说明字节差异原因）。
+>
+> **交付物**：① 改好的 `.tex`；② 中文 HTML 报告 `reports/report_edafb_zh_translation_zh.html`（**单文件自包含、无外链**，按常驻报告规程：覆盖统计表 + 术语表 + 编译证据 + diff 统计）；③ MEMORY/daily 一行：`[zh-cn] 覆盖 16 文件 N 段 · 编译 11p 0err · commit <sha>`。
+>
+> **节奏**：本轮唤醒**优先做本令**（高于 standby 心跳与 reframe_note 等非阻塞维护）；体量大允许分 2 轮（先 sections、后 appendix），但每轮都要在 MEMORY 记录已完成文件清单，**不允许停在半途无标记状态**。
+> **防伪底线不变**：不改题/图/check、不编造数字、不动他线文件。
+
+### 🆕 运维指令 · 2026-10-08（一）— 📝 写一份「国庆假期试验进展」HTML 报告【本次唤醒优先动作】
+
+> **来源**：用户 2026-10-08 下达。国庆假期（约 10/01–10/08）期间本线持续推进，现需汇总成一份**可读的 HTML 报告**向用户汇报。**本动作优先于新一轮评测推进**（但**不打断正在跑的 `C1.wo_retrieval r5`**——若 r5 仍在跑，先正常巡检/收割，再写报告；报告里把 r5 标为「运行中/收割值待补」即可）。
+
+**目标产物**：一份**自包含**（内联 CSS、无外部依赖、UTF-8）的 HTML 报告，路径 = `run/reports/report_2026-10-08_holiday.html`（`reports/` 目录不存在则自建）。中文撰写。
+
+**数据来源（必须只读引用，不得臆造）**：
+1. `run/MEMORY_ZHULONG.md` —— 状态头 / 执行看板 / 成绩记录表 / 操作流水。
+2. `run/daily-memories/2026-10-0[1-8].md` —— 假期每日流水（关键事件、转折点）。
+3. `run/ops/outbox.md` —— 中继回收的环境/进程诊断（infra 状态佐证）。
+4. 本任务书 §0 速览 + 各运维块 —— 试验次序调换、legacy 接管等决策来源。
+
+**报告必须包含的小节**：
+1. **概览**：合并消融线设计（15 臂 × 5 轮 = 75 轮，串行 B→C1→C2→S1，回填 6 表 56 个 `[TBD]`）；冻结设置（EDA-Eval-PyAether 158 任务、Pass@1、单 trace、5 次独立运行 mean±std、主 backbone deepseek-v4-pro-fp4）。
+2. **假期进度总览表**：15 臂逐行列出 `阶段/臂/轮次进度/N=5 mean±std/各轮原始值/状态`，**数字一字不改地抄成绩表**（已完成的填实数；`full`/C2/S1 未启动的标 ⬜ 待跑；`wo_retrieval` r5 若未收割标「运行中」）。
+3. **Phase B（大模型消融）专题**：4 个 backbone（glm-5.2 / deepseek-v4-flash / kimi-k2.6-cloud / doubao-seed-2.0-pro-cloud）的结果与简评（含 flash 异常低分、std 偏大的说明）。
+4. **C1（组件消融）专题**：pure_llm / rag / wo_retrieval / full 的进度与含义（pure_llm 复用 legacy、rag 本线重跑、wo_retrieval r5 进行中）。
+5. **假期关键事件时间线**：按日期列出转折点（例如：pro-fp4 额度 403 阻塞 → 试验次序调换为先跑 Phase B；ops 中继抢救/重启；legacy 组件 loop 保活；`/home` 磁盘 99% 硬阻塞处置；编排模型切 glm-5.2；pro-fp4 恢复 HTTP 200 等）。**只写有 daily-memory / outbox 证据的事件**。
+6. **基础设施状态**：磁盘（/nasdata 充裕、/home 99% 非阻断）、端口（8653/8664/8665/8669）、反作弊 hook（0 Forbidden）、ops 中继与 loop 存活情况。
+7. **下一步**：C1.wo_retrieval r5 收割 → 算 mean±std → 切 C1.full 锚点 → C2(S2Φ) → S1(保真度)；以及尚待运维拍板的开放项（若有）。
+8. **页脚**：生成时间（用你唤醒时的系统时间）、数据截止点（MEMORY 最后一次提交）、「数字来源：run/MEMORY_ZHULONG.md 成绩记录表」。
+
+**样式要求**：表格有边框、斑马纹、表头深色底；Pass@1 数值右对齐；状态列用 emoji（✅/⬜/▶/⏸）；标题层级清晰；整体宽度 ≤ 1100px、居中。
+
+**红线**：
+- 🚫 **不得臆造任何数字**——所有 Pass@1 / std / 轮次值必须能在 `MEMORY_ZHULONG.md` 成绩记录表回溯；未测的显式标「待跑/运行中」。
+- 🚫 **不得改动** `ops/` 下任何文件、不得动论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`（报告不是回填 `[TBD]`）。
+- 🚫 **不得**因写报告而 `git add -A`；只 add 报告文件本身。
+- ✅ 报告写完**仍要遵守常驻规程**：更新心跳（`MEMORY_ZHULONG.md` 顶部 + 流水追加 1 行）+ 当日 `daily-memories/2026-10-08.md` + **自己 commit+push**（`git pull --rebase --autostash` → `git add -- doc/ZhuLong_DAC2027/run/reports/report_2026-10-08_holiday.html doc/ZhuLong_DAC2027/run/MEMORY_ZHULONG.md doc/ZhuLong_DAC2027/run/daily-memories/2026-10-08.md` → `git commit -m "zhulong 报告: 国庆假期试验进展 HTML"` → `git push origin main`）。push 失败重试 1 次，仍失败把报错写进心跳、下轮首件事补推。
+- ✅ 若 `C1.wo_retrieval r5` 在你唤醒时已可收割，**先收割记成绩再写报告**（让报告里的 wo_retrieval 行尽可能完整）；若仍在跑则按上文标「运行中」。
+
+### 🆕 运维指令 · 2026-10-05（八）— 🚑【优先】请你排查并恢复 ops 中继
+
+**背景**：36.15 的 `zhulong_ops_relay.sh` **自 11:04（RUN_ID 20）后不再响应**（`inbox.md` 已置 `RUN_ID 21`，1 小时+ 未执行）；而 **GitHub 通道本身是通的**（运维与本机都能 `git fetch`）。→ 大概率**中继进程已死/卡住**（很可能是启动时没带 `setsid`，随 ssh 会话断开被带走）。**运维无法登录 36.15，故请你（agent）代为排查并恢复——这是本轮优先动作（先于 Phase B 推进）。**
+
+**步骤**：
+1. 查活：`pgrep -af zhulong_ops_relay.sh | cut -c1-140`；记下 `/tmp/zhulong_ops_relay.log` 尾 20 行、`run/ops/.last_run_id`。
+2. 测网：`cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run && git pull --rebase --autostash; timeout 60 git fetch origin && echo FETCH_OK || echo FETCH_FAIL`。
+3. 若中继**不在**（或 `FETCH_OK` 但中继不动），**用带 `setsid` 的姿势重启**：
+   ```bash
+   cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+   pkill -f zhulong_ops_relay.sh; sleep 2
+   setsid bash zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+   sleep 3
+   pgrep -af zhulong_ops_relay.sh | cut -c1-140
+   tail -n 8 /tmp/zhulong_ops_relay.log
+   ```
+4. 复核：`ops/.last_run_id` 应在 1–2 分钟内**变为 21**（中继补跑 `RUN_ID 21`）。
+5. **回报**：把以上输出写进 `MEMORY_ZHULONG.md` 操作流水（含新 PID / 时间戳）。
+
+**红线**：① 不改 `ops/` 里的文件内容；② 不动 legacy（`/nasdata/app.e0031982/code/ZhuLong_DAC2027/`）；③ 重启中继**必须带 `setsid` + stdio 重定向**，否则会再随会话断开而死。
+
+### 🆕 运维指令 · 2026-10-05（七）— 🧩 评测侧也隔离 config dir（合并线 ↔ legacy 各干各的）
+
+> **目标**：合并线跑 eval 时，防作弊 hook 只影响**它自己的评测对象**，**不再落进共享的 `~/.cline/hooks`** → legacy 的编排 agent 不被误伤 → **两条线可真正并跑**。
+
+**运维正在落地**：给 `run_cli.sh` 增加 `CLINE_CONFIG_DIR` 支持（hook 装到 `$CLINE_CONFIG_DIR/hooks/`，默认仍 `$HOME/.cline` → legacy 行为不变）；并建 `/nasdata/app.e0031982/.cline_eval_zhulong`。
+
+**落地后，你（agent）的动作**：**起 eval 前** `export CLINE_CONFIG_DIR=/nasdata/app.e0031982/.cline_eval_zhulong`；**合并线评测模型的 `cline auth` 也要写这个目录**（即 `cline --config "$CLINE_CONFIG_DIR" auth …`）。
+
+**红线**：① **不要**给**编排 agent 自己**设 `CLINE_CONFIG_DIR`（编排仍用 `--config /nasdata/app.e0031982/.cline_zhulong`）；② **不要**碰 `~/.cline`（legacy 仍用它）。
+
+**落地前**：（五）·5 仍然有效 —— **起 eval 前先确认 legacy 不在 mid-eval**。
+
+### 🆕 运维指令 · 2026-10-05（六）— 🔄 试验次序调换：先跑 Phase B（大模型消融）【运维追认】
+
+> **来源**：**用户在 36.15 现场下发的安排**（2026-10-05）。此前该条由 agent 代记于本区，现由**运维正式追认并接管署名**——**本区今后只由运维修改，agent 不得再改本节**。
+>
+> **生效范围**：**取代（四）的「从 `C1.wo_retrieval R2` 起跑」**（见下第 3 点）；与（五）「legacy 保活」不冲突。
+
+**背景**：`deepseek-v4-pro-fp4` 额度 HTTP 403 阻塞 C1/wo_retrieval 无法推进，而 Phase B 的 4 个模型（glm-5.2 / deepseek-v4-flash / kimi-k2.6-cloud / doubao-seed-2.0-pro-cloud）均使用独立 key/endpoint，完全不受 pro-fp4 限制。→ **将 Phase B 提到最前**。
+
+**新顺序**：**B（大模型消融）→ C1（组件）→ C2（S2 Φ）→ S1（保真度）**。
+
+**注意**：
+1. Phase B 使用 **full 配置**（检索开 + sandbox 开），不切 `set_ablation`。每个模型仅需 `cline auth` 切换 key/model。
+2. 从 Phase B 切到 C1.pure_llm 时，必须先执行 `scripts/set_ablation.py pure_llm` + `stop.sh && start.sh`。
+3. **（四）中 `C1.wo_retrieval R2` 起始点暂缓**，标记为 ⏸（暂停），待 Phase B 完成 + pro-fp4 恢复后重试。
+4. legacy 组件 loop（PID 2455466）保持运行，不干扰。**并跑前提**：见（七）——**合并线的 eval 与 legacy 的 eval 需各自独立 cline 配置目录**，隔离落地前，起 eval 前先确认 legacy 不在 mid-eval。
+5. Phase B 推进逻辑按 `ablation_run_task_model_full.md` §推进逻辑：每个模型跑 5 轮 → 从 glm-5.2 开始，依次 deepseek-v4-flash → kimi-k2.6-cloud → doubao-seed-2.0-pro-cloud → 完成后切 C1。
+
+
+
+### 🆕 运维指令 · 2026-10-04（五）— 🚑【优先·补救】若 legacy 组件 loop 没在跑，请把它拉起来
+
+> ⚠️ **本节优先于一切评测推进**；并**部分取代（四）**——（四）里「运维停 legacy」的动作**作废**。
+
+**背景**：运维今晚误把 legacy 组件 loop 的**启停**与**中继操作**耦合在同一块里，**可能已把它停掉**；而运维在家、3 天后才能登机。请你（agent）**在本轮唤醒时代为检查并恢复它**：
+
+1. 检查：`pgrep -af 'ablation_run_loop_component_s2_full.sh'`
+2. **若没有在跑**，拉起：
+   ```bash
+   cd /nasdata/app.e0031982/code/ZhuLong_DAC2027/run
+   setsid bash ablation_run_loop_component_s2_full.sh > /tmp/ablation_loop_component_s2_full.log 2>&1 < /dev/null &
+   ```
+3. 复核进程（`pgrep -af ...` 有输出即成功），并在 `MEMORY_ZHULONG.md` 操作流水追加一条（写 PID + 时间）。
+4. **红线**：不要碰 `ablation_run_conductor_serial.sh`、不要动任何**正在跑的 eval**、**不要改** `/nasdata/app.e0031982/code/ZhuLong_DAC2027/`（只读 legacy 副本）里的任何文件。
+5. **在你确认 legacy 已恢复后，本轮不要启动合并线自己的 eval**（避免与 legacy 抢同一套 infra：eda_fastmcp / MCP / `.env` / 端口）；**先把 legacy 保住**，它空转或跑完再说。
+
+> ⏸ **接管暂缓**：在运维重新拍板前，**以"保住 legacy 产出"为先**（它没跑就拉起来）。合并线自身若 infra 就绪，照（四）的起始点 `C1.wo_retrieval R2` 正常推进即可。
+
+### 🆕 运维指令 · 2026-10-04（四）— 🎯 正式起始点 = `C1.wo_retrieval R2`（接管 legacy + 复用其数据）
+
+**背景**：用户拍板 → **由本合并线接管** legacy 组件线（`/nasdata/app.e0031982/code/ZhuLong_DAC2027`，**非 git**）。运维动作：① 停其两进程（`ablation_run_loop_component_s2_full.sh` + `ablation_run_conductor_serial.sh`）；② 收割其有效数据；③ 本线从下述起始点续跑。
+
+**✅ 起始点（运维已填实，你按此推进）**：
+- `STAGE=C1` · `CONFIG=wo_retrieval` · `ROUND=2` · `PHASE=running`。
+- **S1 段跳过**（无 S1 臂要跑/已有旧值）。
+- **C1 组件**：`pure_llm ×5 = 10.5±1.9%` **复用 legacy**（已入成绩表）；`rag ×5` legacy 值（68.2±7.4%）**作废**（系 BM25 降级态）→ **须在本线重跑**；`wo_retrieval` **r1=74.1% 复用 legacy，从 r2 续跑到 r5**；`full` 照原计划。
+- **C2 S2Φ** 与 **B 模型** 照原计划。
+
+**🔓 `/home` 门槛放宽**：RUN_ID 4 已证我方产物/缓存（`~/eda_code_eval`、`~/.cache` 等）实为 **symlink → `/nasdata`**，`/home` 满主因是别的用户。→ **不再以 `/home ≥8G` 作硬阻断**；改为校验「`/nasdata` 可写 + 四端口 8664/8665/8653/8669 OPEN + `run_code` 可用（license）。
+
+**🔒 本线 cline 配置已隔离**：`zhulong_loop.sh` 已加 `--config /nasdata/app.e0031982/.cline_zhulong`（RUN_ID 17 实测：评测期防作弊 hook 不再拦编排 agent）。**你无需处理。**
+
+**⚠️ 仍须遵守**：反作弊 hook 是冻结变量、每批开跑前 canary；`.env` 切臂串行 `&&`；评测仍走 `run_cli.sh` 原样流程（其 hook 装到 `~/.cline/hooks` 只作用于评测对象，勿改）。
+
+### 🆕 运维指令 · 2026-10-04（三）— ✅ 中继已恢复（**勿再抢救**）；loop 由运维经 RUN_ID 6 重启
+
+> **运维实测（RUN_ID 5，2026-10-04 21:43:20，exit=0，见 `run/ops/outbox.md`）**：
+> - ✅ **ops 中继活着且健康**：RUN_ID 1–5 全部 `executed, exit=0`。**下方「（二）抢救中继」<u>已作废、勿再执行</u>**（当时系误判：heavy 版其实已于 17:05:57 跑完，只是 `push` 反复失败在重试）。
+> - 🔴 **loop 仍是旧版、静默失效**：`/tmp/zhulong_loop.log` 每次唤醒都 `error: unknown option '-b'`（累计 **352** 次），cline **从未真正运行 → agent 从未被唤醒**。磁盘脚本已是新版（无 `-b`），须**重启 loop 进程**才生效 —— 运维将经 **RUN_ID 6** 直接重启，**你无需操作**。
+> - `/home` 仍 **99% / 6G**；但 RUN_ID 4 已证：我方输出/缓存（`~/eda_code_eval`、`~/.cache` 等）实为 **symlink → `/nasdata`**（真实 5.7G 在 `/nasdata`），`/home` 满的主因是**别的用户**。
+
+**你（agent）被唤醒后：直接跳到 §7 常规流程。** infra 校验遇 `/home` 满时，请**如实记录「我方产物实际落 `/nasdata`」**并**保持 `WAITING=1` 原地等**；是否放宽 `/home ≥8G` 硬门槛**待运维拍板**。**不要改 `ops/` 文件。**
+
+### 🚨 运维指令 · 2026-10-04（二）—【已解决 · 勿再执行】抢救 ops 中继
+
+> **背景**：运维侧下发 `RUN_ID 4` 时用了会卡死的命令（`du -sh -L` 跟随 symlink 进 `/nasdata` 大树 + **未加 `timeout`** 的 `df`）→ `zhulong_ops_relay.sh` **卡死**（`timeout` 只杀 leader、子进程占住管道 → 中继读不到 EOF，`.last_run_id` 停摆）。
+> **运维人员当前不在公司、无法登录服务器**，因此**请你（agent）代为把中继救回来**。
+
+**⏱ 请把本动作放在<u>一切评测推进之前</u>：先做下面 3 步，做完再回到 §7 的常规流程。**
+（本节**明确授权**你重启中继进程 —— 尽管既有指令说"agent 不要碰 ops/"，**本次是唯一例外**；但仍**不要修改 `ops/` 里的文件内容**，那是运维的通道。）
+
+**步骤 1｜杀掉卡死的中继及其残留子进程**
+```bash
+pkill -f zhulong_ops_relay.sh
+pkill -f 'du -sh -L' 2>/dev/null || true
+sleep 3
+ps -eo pid=,ppid=,etimes=,args= | grep -E 'zhulong_ops_relay|du -sh' | grep -v grep | cut -c1-140
+```
+> 判据：**最后一条无输出** = 已清干净（若仍有 `bash zhulong_ops_relay.sh`，再 `pkill -f` 一次）。
+
+**步骤 2｜按 `run/ops/README.md §2` 重启中继（36.15 用 `/nasdata/` 前缀）**
+```bash
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+git pull --rebase --autostash
+setsid bash zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &
+sleep 3
+pgrep -af zhulong_ops_relay.sh | cut -c1-140
+tail -n 6 /tmp/zhulong_ops_relay.log
+```
+> 判据：出现**新的** `bash zhulong_ops_relay.sh` 进程（`ppid=1`），且日志有 `[zhulong-relay] ... started.`。
+
+**步骤 3｜回报（在 `MEMORY_ZHULONG.md` 的「操作流水」追加一条）**
+- 写明：**中继已重启** · 新 PID · `/tmp/zhulong_ops_relay.log` 尾行 · 时间。
+- **做完这 3 步即算完成本动作**，之后继续你原本的流程。
+
+> ✅ 中继一重启，它会**自动**发现 `run/ops/inbox.md` 里的 `RUN_ID: 4`（**轻量版**，已由运维改成全 `timeout`）并执行 —— **你无需手动触发，也不要改 inbox**。
+
+**（可选，仅在你确有把握时做）修 `-b` 的 loop**
+- 已知：**运行中的 `zhulong_loop.sh` 进程是旧版**，cline 调用带**非法 `-b`** → `error: unknown option '-b'`；而**磁盘上的脚本已是新版（无 `-b`）**。bash 已把旧脚本整段读进内存，**改文件对它无效 → 只有重启 loop 进程才生效**。
+- 你若判断"自己当前之所以能跑，说明 loop 已正常"，**就不要动它**；若确认日志仍在刷 `unknown option '-b'`，可（在**中继救活之后**）执行：
+```bash
+pkill -f zhulong_loop.sh; sleep 2
+setsid bash /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run/zhulong_loop.sh > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+```
+- ⚠️ 重启 loop 会**中断你自己的当前会话**（你正是被它唤醒的）——**拿不准就留给运维，只做中继那 3 步**。
+
+
+---
+
+## 2026-10-10 归档：从 ZHULONG_TASK.md 搬入 4 个已闭合运维块（原文不改）
+
+### 🆕 运维指令 · 2026-10-09（四）— 🛑 沙盒坏了，r4 已被运维 kill，待命不要重跑【已被(五)取代·历史】
+
+> **来源**：用户 2026-10-09 17:00 通知「沙盒坏了，把 r4 停下来，待命」。
+> **已执行**：运维已通过 ops 中继 RUN_ID 25 kill 了 r4 进程树（PID 3302534 + run_eval.py 子进程）。
+
+**本次唤醒的动作（按顺序）**：
+
+1. **确认 r4 已被 kill**：`pgrep '^bash scripts/run_cline_script'` → 期望**无输出**（r4 已被运维 kill）。若有残留 → `kill -KILL` 清理，记 MEMORY。
+
+2. **🚫 不要重跑 r4**：沙盒坏了（r4 grading 异常慢 13×+，log 沉默 2h+），用户要求**待命**。**不启动任何 eval、不 run `scripts/run_cline_script`**。
+
+3. **更新 MEMORY 状态头**：
+   - `PHASE` → **`standby`**（沙盒坏了，r4 已 kill，待命等运维通知）
+   - `WAITING` → **1**
+   - 成绩表 `C1.full` 行：r4 状态改为 **「❌作废（沙盒坏了，运维已 kill，待命）」**
+   - **下轮第一件事**改为：检查运维指令区是否有「沙盒已修复·可重跑 r4」通知 → 有则重跑 r4（四 override + 新 key），无则继续 `WAITING=1` 待命。
+
+4. **commit + push**（按常驻规程）。
+
+**红线**：
+- 🚫 **不要重跑 r4/r5**（沙盒坏了，等运维修复通知）。
+- 🚫 **不要启动任何 eval**。
+- ✅ r1=88.0% **保留**；r2/r3 仍 **作废待复测**（等沙盒修复后一起跑）。
+- ✅ 保持新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `/cloud/v1`。
+
+
+### 🆕 运维指令 · 2026-10-09（三）— 🔄 C1.full r2/r3 复测（模型服务不稳定致大量 timeout）【已归档·被(四)取代】
+
+> **来源**：用户 2026-10-09 观察。C1.full 锚点 r1=88.0%（0 timeout）vs r2=59.5%（**39 timeouts**）vs r3=63.3%，成绩剧烈波动 = **模型服务不稳定**（大量 timeout 拉低通过率），**非 full 臂真实能力**。用户要求复测 r2/r3。
+> **当前状态**：r4 正在跑（batch `b2026_1009_094504`，PID `3302534`，09:45 启动），**不要打断**。
+
+**判定**：
+- ✅ r1=88.0%（139/158, 0 timeout）= **有效，保留**（服务正常期跑的）
+- ❌ r2=59.5%（94/158, **39 timeouts**）= **作废，需复测**（服务不稳定）
+- ❌ r3=63.3%（100/158, 成绩异常低）= **作废，需复测**（疑似服务不稳定，收割时确认 timeout 数量）
+- ⏳ r4 = 正在跑，收割后按下方判据判定
+
+**复测流程（r4 跑完后按顺序执行）**：
+
+1. **收割 r4**（`pgrep` 无输出后 `grep -E 'pass \(|PASS_RATE|timeout' /tmp/ABL_full_r4.log | tail -10`）：
+   - 记录 r4 成绩 + **timeout 数量**。
+   - **判据**：timeout ≤10 **且** 成绩 ≥75% → r4 有效，说明服务已稳定 → 进入步骤 2。
+   - 若 r4 timeout >10 或成绩 <75% → **服务仍不稳定** → r4 也作废 → 在 MEMORY 记「r4 仍有 X timeouts，服务不稳定」→ `WAITING=1`，等下轮复检服务稳定性（`curl` 新 key 直连测延迟 + 连续 3 次确认无 timeout）→ 服务稳定后从 r4 重跑。
+
+2. **重跑 r2**（r4 判定有效后）：
+   - 同臂 `full`，四 override 齐全（`EVAL_FW_DIR` + `CLI_DATA_DIR=.cline_prof4_eval/data` + `PYTHON` + `https_proxy`），新 key `e13f4f37` + `/cloud/v1` + `deepseek-v4-pro-fp4`。
+   - batch ID 记为 `r2-retest`，log 记为 `/tmp/ABL_full_r2_retest.log`。
+   - 收割后检查 timeout：**timeout ≤10 且成绩 ≥75%** → r2' 有效，替换 r2=59.5%。若 timeout >10 或成绩 <75% → 重跑（最多 3 次），3 次仍不达标 → 在 MEMORY 记「r2 复测 3 次仍未达标（X timeouts, Y%）」→ 暂停，等运维指示。
+
+3. **重跑 r3**（r2' 有效后）：
+   - 同上配置，batch ID 记为 `r3-retest`，log `/tmp/ABL_full_r3_retest.log`。
+   - 同样判据：timeout ≤10 且成绩 ≥75% → r3' 有效，替换 r3=63.3%。否则重跑（最多 3 次）。
+
+4. **跑 r5**（r3' 有效后）：
+   - 同上配置，batch ID 记为 `r5`。
+   - 同样判据：timeout ≤10 且成绩 ≥75% → r5 有效。
+
+5. **5/5 完成 → 算 mean±std**：
+   - 最终 5 个有效 run = [r1=88.0%, r2', r3', r4, r5]（r2' r3' 为复测值，替换原 r2/r3）。
+   - `PHASE=just_finished` → 回填 5 张表锚点行 → 进入 C2。
+
+**更新 MEMORY（每次收割后）**：
+- 成绩表 `C1.full` 行：r2 标注「❌作废(39 timeouts)→复测中」→ 复测后替换为 r2'=X%（Y timeouts）；r3 同理。
+- **下轮第一件事**：`pgrep '^bash scripts/run_cline_script'` → 有输出 = 巡检退出；无输出 = 按上方流程收割当前轮次 → 检查 timeout → 按判据决定下一步。
+- 每轮收割**必须记录 timeout 数量**（grep `timeout` 或 `timed?out` 或 log 里的 timeout 统计行）。
+
+**红线**：
+- ✅ r4 正在跑，**不打断**。
+- 🚫 r2=59.5% / r3=63.3% **作废**，不参与最终 mean±std（服务不稳定）。
+- ✅ r1=88.0% **保留**（0 timeout，服务正常）。
+- ✅ 每轮判据 = timeout ≤10 **且** 成绩 ≥75%（两个条件都满足才算有效）。
+- 🚫 若复测 3 次仍不达标 → **不要继续盲跑**，暂停记 MEMORY 等运维指示。
+- 🚫 仍保持新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `/cloud/v1`（不要回退）。
+
+
+### 🆕 运维指令 · 2026-10-09（二）— ✅ 沙盒已就绪，可开跑 C1.full r4【已完成·已归档】
+
+> **来源**：用户 2026-10-09 通知「沙盒重启完成，可以继续」。
+> **前提**：上一条指令（pro-fp4 key 已恢复）应已被 agent 执行完毕——eval backbone 已用新 key `e13f4f37` auth、`PHASE=ready`、`WAITING=1`。
+
+**本次唤醒的动作（按顺序）**：
+
+1. **前置复检（3 项，全过才开跑）**：
+   - (a) `curl --noproxy '*'` 新 key 直连 pro-fp4 `chat/completions` → 确认 **HTTP 200 + 真 JSON**（`model: deepseek-v4-pro-260813`）。若仍 403 → 不开跑，回 `WAITING=1`，在 MEMORY 记「pro-fp4 又 403」。
+   - (b) 沙盒端口可达：`curl -s -o /dev/null -w '%{http_code}' http://10.129.32.75:8650`（及 8651/8652/8654）→ 期望 **404**（可达）。若全 timeout/拒绝 → 沙盒未就绪，不开跑，回 `WAITING=1`。
+   - (c) eval IDLE：`pgrep '^bash scripts/run_cline_script'` → 期望**无输出**（无残留 eval）。若有残留 → 先等其结束，不开跑。
+
+2. **启动 C1.full r4**（三项复检全过后）：
+   - 切臂配置（若尚未切到 `full`）：`set_ablation` → `full`（run_code ON + 检索 ON + self-expl ON = 全开）。
+   - 启动 eval，**四 override 必须齐全**（r2 曾因缺这些而全 Forbidden）：
+     ```
+     EVAL_FW_DIR=<eda_fastmcp 路径>
+     CLI_DATA_DIR=.cline_prof4_eval/data   # eval 隔离 config dir（新 key auth 写入处）
+     PYTHON=<正确 python 路径>
+     https_proxy=http://172.19.92.23:13128  # git push 需要
+     ```
+   - 命令格式同前序轮次（`scripts/run_cline_script.sh` + `-p 8 -n` + 全量 158 题）。
+   - 记录 batch ID + PID 到 MEMORY。
+
+3. **更新 MEMORY**：
+   - `PHASE` → `running`
+   - `WAITING` → `1`（eval 运行中，等下轮收割）
+   - `ROUND` → `4`（已是 4，确认不变）
+   - 成绩表 `C1.full` 行：r4 状态 → **「运行中（batch XXX, PID XXX）」**
+   - **下轮第一件事**：`pgrep '^bash scripts/run_cline_script'` → 有输出则巡检（不动作退出）；无输出则 `grep PASS_RATE` 收割 r4 → 记成绩 → 启 r5 → 5/5 后算 mean±std → `PHASE=just_finished` → 回填 5 张表锚点行 → 进入 C2。
+
+4. **commit + push**（按常驻规程）。
+
+**红线**：
+- ✅ 沙盒**已就绪**，可以开跑（用户已确认）。
+- 🚫 仍保持 `deepseek-v4-pro-fp4` + `/cloud/v1` + 新 key `e13f4f37`（不要回退旧 key、不要换模型名）。
+- ✅ r1/r2/r3 全部有效，只跑 r4 → r5。
+- 🚫 三项前置复检任一不过 → **不开跑**，回 `WAITING=1` 并在 MEMORY 记原因。
+
+
+### 🆕 运维指令 · 2026-10-09 — ✅ pro-fp4 403 已解决（换 key）+ 🚫 暂不启动 r4（沙盒重启中）【已完成·已归档】
+
+> **来源**：用户 2026-10-09。经 ops 中继 RUN_ID 23 在 36.15 实测（6 组合 curl `--noproxy '*'` 直连），已确认 403 根因 = **旧 key 额度耗尽**（非模型级、非 endpoint 级）。新 key 可恢复 pro-fp4。
+
+**实测证据**（`run/ops/outbox.md` RUN_ID 23，2026-10-09 09:06:53）：
+
+| # | key | model | endpoint | HTTP | 网关返回 model |
+|:--|:--|:--|:--|:--|:--|
+| ① | 新 `e13f4f37` | pro-cloud | /cloud/v1 | **200** ✅ | `deepseek-v4-pro-260813` |
+| ② | 新 `e13f4f37` | **pro-fp4** | /cloud/v1 | **200** ✅ | `deepseek-v4-pro-260813` |
+| ③ | 新 `e13f4f37` | pro-fp4 | /v1 | 403 ❌ | — |
+| ④ | 旧 `c2759d74` | pro-fp4 | /cloud/v1 | 403 ❌ | — |
+| ⑤ | 旧 `c2759d74` | pro-fp4 | /v1 | 403 ❌ | — |
+
+**关键结论**：
+1. **组合 ② = 200** → 新 key + **原模型名 `deepseek-v4-pro-fp4`** + **原 endpoint `/cloud/v1`** 即可恢复。**模型名和 endpoint 都不用改**，只换 key。
+2. 网关对 pro-cloud 和 pro-fp4 返回的 `model` 字段**都是 `deepseek-v4-pro-260813`** → **同一个后端模型**，r1/r2/r3（均用 pro-fp4）**全部保持有效**，无需重跑。
+3. `/v1` 端点对两个 key 都 403 → **必须用 `/cloud/v1`**。
+
+**本次唤醒的动作（按顺序）**：
+
+1. **用新 key 重新 `cline auth` eval backbone**（写入 eval 隔离 config dir，与 Phase B 同机制）：
+   ```bash
+   cline auth -p openai \
+     -k 02_088EE9051AAE4BF0ABFC7130331BF697_e13f4f37-836a-48a5-b149-044c8aa0785e \
+     -b http://agi-gateway.cxmt.com/cloud/v1 \
+     -m deepseek-v4-pro-fp4
+   ```
+   - ⚠️ 与 Phase B 同理：auth 写入 eval 侧隔离 config dir（`CLI_DATA_DIR=.cline_prof4_eval/data` 或你实际用的隔离目录），**不要污染编排 agent 的 `~/.cline`**。
+   - auth 完成后，用新 key `curl --noproxy '*'` 直连复检 pro-fp4 `chat/completions` → 确认 **HTTP 200 + 真 JSON**（应看到 `model: deepseek-v4-pro-260813`）。
+
+2. **🚫 暂不启动 r4**：用户告知**沙盒（sandbox）正在重启**，此刻启动评测会失败。**只做 auth + 复检 + 更新 MEMORY，不启动 eval、不 run `scripts/run_cline_script`。**
+
+3. **更新 MEMORY 状态头**：
+   - `基座` 行：eval backbone `deepseek-v4-pro-fp4` → **已恢复 HTTP 200（新 key `e13f4f37`）✅**
+   - `PHASE`：从 `blocked` 改为 **`ready`（pro-fp4 已恢复，但沙盒重启中，等运维通知开跑）**
+   - `WAITING`：保持 **1**（等运维通知沙盒就绪后再启动 r4）
+   - `ERROR_COUNT`：不变
+   - 成绩表 `C1.full` 行：r4 状态改为 **「待启动（key 已恢复，沙盒重启中，等运维通知）」**
+   - **下轮第一件事**改为：`curl --noproxy '*'` 新 key 直连 pro-fp4 → 确认仍 200 → **检查运维指令区是否有「沙盒就绪·可开跑」通知** → 有则重跑 r4（四 override：`EVAL_FW_DIR` + `CLI_DATA_DIR=.cline_prof4_eval/data` + `PYTHON` + `https_proxy`），无则继续 WAITING=1。
+
+4. **commit + push**（按常驻规程）：`git pull --rebase --autostash` → `git add -- doc/ZhuLong_DAC2027/run doc/ZhuLong_DAC2027/ZhuLong_DAC2027` → `git commit -m "zhulong C1.full: pro-fp4 key 已恢复(HTTP 200)→PHASE=ready, 沙盒重启中暂不启动r4"` → `git push origin main`。
+
+**红线**：
+- 🚫 **不要启动 r4/r5**（沙盒重启中，会失败作废）。
+- 🚫 **不要改模型名**（保持 `deepseek-v4-pro-fp4`，网关已证实 200）。
+- 🚫 **不要用 `/v1` 端点**（403）。
+- ✅ r1/r2/r3 **全部有效**（同一后端模型 `deepseek-v4-pro-260813`），无需重跑。
+- ✅ 等运维在指令区发「沙盒就绪·可开跑」通知后再启动 r4。
+
+
+
+
+---
+
+## 运维指令 · 2026-10-10（二）— 🔄 专属沙盒就绪：先测试新端口 → 保留 r1 锚点 → 重跑 r2→r3→r4→r5【已被(三)/(四)取代·归档 2026-10-10 20:49】
+
+> **来源**：用户 2026-10-10 通知「4 个端口都配置好了，现在重启 full 的 r2-r5 以及后续试验，可以先测试一下」。
+> **核心决策**：**r1=88.0% 保留作锚点**（0 timeout、沙盒正常时跑的，不受旧沙盒间歇故障影响）。**只重跑 r2/r3/r4/r5**（均在旧不稳定沙盒上跑过，全部作废）。先做**沙盒端口实测**（非 curl 端口可达，而是**实跑一次 run_code** 确认沙盒能执行代码），全过才启动 r2。
+> **已执行**：运维已改 `.env`（`PROXY_PORTS=8663,8666,8667,8670` + `SANDBOX_ENDPOINTS=8663:e0031982_1,8666:e0031982_2,8667:e0031982_3,8670:e0031982_4`）；ops RUN_ID 27/28 已 kill r2-retest#4/#5 + .env 已验证为新端口。
+> **取代**：2026-10-10(一)「全部作废从 r1 开始」**作废**——改为本条「保留 r1，重跑 r2-r5」。所有 2026-10-09 指令降级历史。
+
+**本次唤醒的动作（按顺序）**：
+
+1. **确认 eval IDLE**：`pgrep '^bash scripts/run_cline_script'` → 期望**无输出**。若有残留 → `kill -KILL` 清理。
+
+2. **三项前置复检（全过才开跑）**：
+   - ① **pro-fp4 直连 200**：新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `/cloud/v1` → HTTP 200 ✅（ops RUN_ID 28 已验证 HTTP=200）
+   - ② **新专属沙盒端口实测**（**重点**——不是 curl 端口可达，而是**实跑一次 run_code**）：
+     - `.env` 已改为 `8663/8666/8667/8670` @ `10.129.32.75`（workdir `e0031982_1~4`）。
+     - **实测方法**：用 `run_code` MCP 工具向**每个端口**发一个最简 pyAether 请求（如 `print("hello from port 8663")`），确认**返回非空 response 且 error_log 为空**。4 端口逐一测。
+     - **判据**：4/4 端口均能执行代码并返回正常 response → ✅ 通过；任一端口返回空/超时/error → ❌ 不通过 → `WAITING=1` 报告哪个端口挂了，等运维。
+   - ③ **eval IDLE**：`pgrep '^bash scripts/run_cline_script'` 无输出 ✅
+
+3. **沙盒实测全过 → 更新 MEMORY 状态头**：
+   - `ROUND` → **2**（从 r2 开始重跑，r1 保留）
+   - `PHASE` → **`running`**
+   - `WAITING` → **1**
+   - 成绩表 `C1.full` 行：
+     - **r1=88.0% ✅ 保留**（锚点，不动）
+     - **r2=59.5% / r2-retest#1~#5 / r3=63.3% / r4=81.0% → 全部标 ❌作废·换专属沙盒重测**
+   - 注明：旧沙盒 8650-8654 已弃用，新沙盒 8663/8666/8667/8670 workdir e0031982_1~4
+
+4. **启动 C1.full r2 重测**（r2-retest on new sandbox，四 override 必带）：
+   ```bash
+   cd /nasdata/app.e0031982/code/eda_fastmcp
+   export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+   export CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data
+   export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+   export https_proxy=http://172.19.92.23:13128
+   setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_full_r2_new.log 2>&1 < /dev/null &
+   ```
+   - 启动后立刻核验：① 四 override 在 `/proc/<pid>/environ` 生效；② `.env` 读到新端口 8663/8666/8667/8670（不是旧 8650-8654）；③ 0 Forbidden。
+
+5. **canary**：本批开跑前确认反作弊 hook live（一次应被拒的调用确实被拒；未被拒 → 立即停、本批作废）。
+
+6. **commit + push**。
+
+**r2 收割后 → 依次推进 r3→r4→r5**：
+- 收割：`grep -E 'pass \\(|PASS_RATE|评估结果汇总|timeout' /tmp/ABL_full_r2_new.log | tail -10` → 记 Pass@1 + timeout。
+- **判据**：`timeout ≤ 10 且 Pass@1 ≥ 75%` → 有效 → 启下一轮（log `/tmp/ABL_full_r3_new.log` → `r4_new` → `r5_new`）。
+- 每轮同判据，**最多重跑 3 次**不达标 → 暂停 `WAITING=1` 等运维。
+- **4 轮全部有效** → 5-run = `[r1=88.0(保留), r2_new, r3_new, r4_new, r5_new]` → 算 mean±std → 回填 5 张表锚点 → `PHASE=just_finished` → 进 C2。
+
+**红线**：
+- ✅ **r1=88.0% 保留**（0 timeout，沙盒正常时跑的，不重跑）。
+- 🚫 r2/r3/r4/r5 **全部旧成绩作废**（旧不稳定沙盒上跑的，全部重测）。
+- 🚫 **不回退旧沙盒**（8650-8654 已弃用）。
+- ✅ 保持新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `/cloud/v1`。
+- ✅ **沙盒实测必须 4/4 全过才开跑**（任一端口挂 → WAITING 报告，不将就）。
+- ✅ B 阶段 + C1 其他 3 臂（pure_llm/rag/wo_retrieval）**不受影响**（已 5/5 ✅ 完成，不在沙盒切换范围）。
+
+
+---
+
+## 运维指令 · 2026-10-09（五）— ✅ 沙盒已修复，可重跑 C1.full r4【已被 2026-10-10(一) 取代·归档 2026-10-10 20:49】
+
+> **来源**：用户 2026-10-09 晚通知「沙盒已修复·可重跑 r4」。**取代（四）的待命状态**（(四) 降级为历史）。
+> **背景**：r4（batch `b2026_1009_094504`）因沙盒故障 grading 异常慢（`run_eval.py` 跑满 2h35m+ 未出结果）被运维 kill（ops RUN_ID 25/26），判 **❌作废**；**r1=88.0% 保留**，**r2=59.5% / r3=63.3% 作废待复测**。
+
+**本次唤醒的动作（按顺序）**：
+
+1. **三项前置复检（全过才开跑；任一不过 → 不启动，`WAITING=1` 原地等，并把不过项写进 MEMORY）**：
+   - ① **pro-fp4 直连 200**：新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `http://agi-gateway.cxmt.com/cloud/v1`，`curl --noproxy '*'` 实测 HTTP=200（网关应回 `model: deepseek-v4-pro-260813`）。
+   - ② **沙盒端口可达**（以 `.env` 实际为准：`PROXY_PORTS=8650,8651,8652,8654` @ `SANDBOX_HOST=10.129.32.75`；旧 `8664/8665/8653/8669@127.0.0.1` 已作废）：逐端口探测**非超时/可连**。
+   - ③ **eval IDLE**：`pgrep -f '^bash scripts/run_cline_script'` **无输出** 且 `pgrep -f run_eval.py` **无输出**（确认 r4 已彻底 kill、无残留）。
+
+2. **启动 C1.full r4**（同臂 `full`，**不切 `set_ablation`**）—— **四 override 必带**：
+   ```bash
+   cd /nasdata/app.e0031982/code/eda_fastmcp
+   export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+   export CLI_DATA_DIR=/nasdata/app.e0031982/.cline_prof4_eval/data
+   export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+   export https_proxy=http://172.19.92.23:13128
+   setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_full_r4.log 2>&1 < /dev/null &
+   ```
+   - 启动后**立刻核验四 override 已在 `/proc/<pid>/environ` 生效**（缺 override 会导致 158 Forbidden + grading crash，见 r2 首启教训）。
+
+3. **canary**：本批开跑前确认反作弊 hook live（一次应被拒的调用**确实被拒**；未被拒 → 立即停、本批作废）。
+
+4. **更新 MEMORY 状态头**：`PHASE=running`、`WAITING=1`、`CONFIG=full`、`ROUND=4`；成绩表 `C1.full` 的 r4 行恢复为「运行中」。
+
+5. **commit + push**（按常驻规程）。
+
+**r4 收割后 → 回到（三）的复测流程**：
+- 收割：`grep -E 'pass \\(|PASS_RATE|评估结果汇总|timeout' /tmp/ABL_full_r4.log | tail -10` → 记录 **Pass@1 + timeout 数**。
+- **判据**：`timeout ≤ 10 且 Pass@1 ≥ 75%` → r4 **有效** → 依序重跑 **`r2-retest` → `r3-retest` → `r5`**（同臂同 override，log `/tmp/ABL_full_r2_retest.log` / `r3_retest` / `r5`）；每轮同判据，**最多重跑 3 次**，3 次仍不达标 → 暂停 `WAITING=1` 等运维。
+- 全部有效后：5-run = `[r1=88.0, r2', r3', r4, r5]` → 算 mean±std → 回填 5 张表锚点 → `PHASE=just_finished`。
+
+**红线**：
+- ✅ **r1=88.0% 保留**；r2/r3 **作废待复测**（不写进最终 mean±std）。
+- ✅ 保持新 key `e13f4f37` + `deepseek-v4-pro-fp4` + `/cloud/v1`（**不回退旧 key / 不改模型名 / 不用 `/v1`**）。
+- 🚫 **三项前置复检任一不过 → 不得开跑**。
+- 🚫 不新启别的臂 / 不改 `.env` 臂 / 不碰 `ops/`。
+
+
+---
+
+## 2026-10-11 归档批次（运维指令 (七)/(六)/(四)/(三) — 均已被 (八) 取代或完成）
+
+### 🆕 运维指令 · 2026-10-10（七）— ✅ 按 A 执行：剔除 8667 + 补入 8650–8654（→8 健康端口）+ 调高 MCP timeout → 重跑 r2–r5【已被 (八) 取代】
+
+> 用户令（2026-10-10 晚）：「按 A 下发指令」= 依据 (四) 结论：剔除坏端口 8667 + 补入实测健康的 8650–8654 + 调高 MCP 客户端 timeout → 重跑 r2→r5。
+
+**① 确认停**：pgrep '^bash scripts/run_cline_script' / pgrep run_eval.py 均无输出（r2_new2 已作废）。
+
+**② 改 .env**（/nasdata/app.e0031982/code/eda_fastmcp/.env）
+- PROXY_PORTS=8663,8666,8670,8650,8651,8652,8653,8654（剔除 8667 → 共 8 个）。
+- SANDBOX_ENDPOINTS 补全 8 条映射：新 3 = 8663/8666/8670（逐个按原 .env 核对各自 workdir，勿臆测）；旧 5 = 8650/8651/8652/8653/8654 → 核对官方 host↔workdir 后填。
+- ⚠️ 如实记录：8650–8654 借用 t0002997 workdir（非本账号）的风险。
+
+**③ 改 MCP 客户端超时（第 2 条根因）**
+- ~/.cline/data/settings/cline_mcp_settings.json 的 pyAether_MCP_server 项：加/改 timeout → 150000（ms，对齐服务端 SANDBOX_TIMEOUT=150s）。
+- ⚠️ 先核对字段名与单位（timeout / requestTimeout；秒 vs 毫秒）再改，贴改动前后原文（脱敏 token）。
+- ⚠️ 这是评测环境改动（影响评测对象的 cline）⇒ 须在结果报告「披露」节写明。
+
+**④ 重启 + 核验**：按既定流程重启 eda_fastmcp；核验 ss -lntp | grep 8090 + grep -E 'PROXY_PORTS|SANDBOX_ENDPOINTS' .env（贴行）。
+
+**⑤ 开跑前自检（硬闸）**：对新 8 端口各 run_code 1 次 → 8/8 健康才开跑；任一不健康 → 停、回报（不得带病开跑）。
+
+**⑥ 重跑 r2→r5（本块授权起动）**
+- 依次 r2_new → r3_new → r4_new → r5_new；判据 timeout ≤ 10 且 Pass@1 ≥ 75%（每轮最多重跑 3 次）。
+- 必带 instrumentation：每次 run_code 记 port + latency(ms) + timeout?(Y/N) → 各轮产出「timeout × 端口」分布表。
+- 5/5 完成 → [r1=88.0(保留), r2..r5] 算 mean±std → 回填 5 张表锚点 → 进 C2。
+
+**⑦ 产出**：本块下贴 —— ④ 核验行 + ⑤ 的 8 端口自检表 + ⑥ 各轮 Pass@1 / timeout +「timeout × 端口」表。
+**⑧ 归因要求**：本轮同时改 2 个变量（端口池 + 客户端 timeout）—— 若 r2_new 即达标（timeout≤10）则续跑；若仍不达标，须在报告中把两变量分别归因（可补做单变量对照）。
+
+### 🆕 运维指令 · 2026-10-10（六）— ⚖️ 若 9 端口均健康 → 先判别「端口数是否真因」→ 再配全 9 端口重跑 r2–r5【已被 (七) 取代】
+
+> 用户令（2026-10-10 晚）：「如果 9 个端口都没问题，那就把它们都配上，然后重跑 full 的 run2–run5 和后续评测。请评估这个方法能否有效降低 timeout 概率。」
+> 运维评估（先读，避免白跑不可归因）：
+> - 机制：报错是 cline 的 MCP 客户端 60s 超时（MCP error -32001 ... timed out after 60s，客户端措辞），不是任务级 2500s 超时。
+> - 加端口只在「端口级排队/争用」时有效：当前评测并发 -p 8 vs 仅 4 个端口 = 2:1 争用 —— 这是"加端口能救"的唯一机制。
+> - 反证：r1=88% 就是在 4 个端口上跑出 0 timeout ⇒ 端口数不是充分解释；更像端点健康度/单次调用本身耗时问题；且 MCP 服务端可能是单进程（EDA_MCP_PORT=8090，0.0.0.0:8090），若是瓶颈则加端口无用。
+> - 环境注（2026-10-10 用户提示 · 澄清）：EDA_MCP_PORT=8090 由用户在 36.15 ~/.bashrc 设置。⚠️ ~/.bashrc 只对「交互式非登录 shell」自动生效 —— ops 中继是「非交互 bash」，不读 ~/.bashrc（RUN_ID 29 重启 loop 时 cline 找不到，就是这一条）；凡由中继/loop 启动的进程，须在启动处显式 export（或 source ~/.bashrc / bash -l），不能假设自动继承。（RUN_ID 31 实测：中继 env EDA_MCP_PORT=<UNSET>；但 .env 有 ${EDA_MCP_PORT:=8090} 兜底 + cline 的 cline_mcp_settings.json 硬编码 http://10.251.36.15:8090/sse ⇒ 本例无害。）
+> - 混淆：本轮同时删了 PreToolUse hook ⇒ 变量不止一个，直接全量换 9 端口无法归因。
+> - 风险：8650–8654 是别的账号 t0002997 的 workdir（非我们 e0031982），且正是此前"坏掉"的那批。
+> ⇒ 结论：不保证有效；必须先做判别实验，否则 r2–r5 白跑。
+
+**① 前置**：以 (四) 的 9 端口 run_code 健康结论为准 —— 未得结论前不进入本块。
+
+**② ⭐ 先验判别实验（必做，~30min，便宜）**
+- 配置 A = 4 端口（现状 8663/8666/8667/8670）；配置 B = 9 端口（+ 8650/8651/8652/8653/8654）。
+- 每种配置做 8 并发 × 30 次最简 run_code（print("ping")）压测，记录每次耗时。
+- 报每配置 P50 / P95 延迟 + 超时率（>60s 次数）。
+- 判据：B 相对 A，P95 或超时率显著改善（建议阈值：超时率 ↓ ≥50%）→ 端口争用成立 → 进 ③；无显著差异 → 停，回报运维（说明瓶颈在 MCP 服务端/端点慢/调用本身，加端口无用）。
+
+**③ 若判别通过 → 配置 9 端口 + 重启 MCP**
+- .env：PROXY_PORTS=8663,8666,8667,8670,8650,8651,8652,8653,8654；SANDBOX_ENDPOINTS 补全 9 条映射（新 4 = e0031982_1~4；旧 5 = 按 host 映射核对后填）。
+- 按既定流程重启 eda_fastmcp；核验 .env 生效（贴行）。
+- ⚠️ 如实记录：8650–8654 = t0002997 workdir 的借用风险；若判定不宜借用 → 只用 e0031982 系端口（此时"加端口"退化为"无新增"，亦须如实报）。
+
+**④ 重跑 r2→r5（本块授权起动；覆盖 (三)「不启新 run」与「不改 .env」）**
+- 依次 r2_new → r3_new → r4_new → r5_new；判据不变：timeout ≤ 10 且 Pass@1 ≥ 75%（每轮最多重跑 3 次）。
+- 必带 instrumentation：每次 run_code 记录 port + latency(ms) + timeout?(Y/N)；各轮跑完产出「timeout × 端口」分布表 —— 否则无法验证本改动。
+- 5/5 完成 → [r1=88.0(保留), r2..r5] 算 mean±std → 回填 5 张表锚点 → 进 C2。
+
+**⑤ 产出**：本块下贴 —— ② 的判别表（A vs B：P50/P95/超时率）+（若进 ③）④ 的「timeout × 端口」表 + 各轮 Pass@1 / timeout。
+
+### 🆕 运维指令 · 2026-10-10（四）— 🔬 根因排查：连续多日评测 timeout（是否 run_code？哪些端口 run_code 健康？）【最高优先·已完成】
+
+> 用户令（2026-10-10 晚）：「需要 zhulong loop 排查一下重复出现几天的评测的问题，超时是什么原因导致的，是 run_code 吗，是所有端口都有问题吗，上述给到的端口 run_code 有健康的吗。」
+> 运维已通过 ops relay（RUN_ID 29）先行处置（agent 侧只需确认，勿重复）：① 删除 ~/.cline/hooks/PreToolUse；② 停 r2_new2；③ 重启 zhulong loop（SLEEP_WAIT 保持 1800s=30min）。
+
+**① 确认停（relay 已做）**：pgrep '^bash scripts/run_cline_script' 与 pgrep run_eval.py 均无输出；~/.cline/hooks/ 下无 PreToolUse。
+
+**② ⭐ 逐端口 run_code 健康测试（核心 —— 直接回答"哪些端口健康 / 是否全坏"）**
+- 候选 9 端口：新 8663/8666/8667/8670（workdir e0031982_1~4）+ 旧 8650/8651/8652/8653/8654（t0002997_1~4）；SANDBOX_HOST=10.129.32.75。
+- 每端口各发最简 pyAether run_code（print("hello from <port>")，带正确 host/lang，按 15:35 的 patch 口径）：
+  - ✅ 健康 = response 非空 且 error_log 空；
+  - ❌ 不健康 = 超时 / response 空 / error_log 非空。
+- 每端口重复 3 次（探间歇性故障）；记录每次耗时（区分「秒级返回」vs「踩满 60s」）。
+- ⚠️ 旧 8650–8654 若需测：先核对 .env/exec_code.py 的 host↔workdir 映射（不改 .env，只读）。
+
+**③ ⭐ 超时根因（给路径:行号级证据 + 命令 + 原始输出）**
+1. 量化：从 /tmp/ABL_full_*.log 统计 timeout（总/MCP 32001/ACCESS RESTRICTED/Forbidden/host-error）；按端口分组（若日志带端口）。
+2. 是否 run_code：超时是否都发生在 run_code（MCP pyAether）调用？有无非 run_code 的超时（模型服务/网关/grading）？各占多少 —— 给样例 log 行。
+3. 是否所有端口都有问题：把超时关联到端口 → 「端口 X 贡献了 N 个 timeout」；指出是否单端口故障（对应 r2_new 的 23 个 gen-fail）。
+4. 60s 从哪来：MCP pyAether 的 60s 超时是客户端（哪个文件/哪个常量）还是服务端？为什么慢到 >60s（端口排队/沙盒冷启/workdir 锁/反作弊 hook 延迟）？
+5. hook 影响：对比删 PreToolUse 前后的 ACCESS RESTRICTED / timeout 计数；说明反作弊 hook 与 timeout 的因果关系（是真因还是无关）。
+6. 历史对照：r1=88.0%(0 timeout) vs r2=59.5%(39) vs r3=63.3% vs r2_new=73.4%(timeout=4 / 23 gen-fail) —— 变化点是什么（沙盒/端口/模型服务/hook/负载）？
+
+**④ 产出**：本块下贴两张表 —— ①【端口 × run_code 健康度（3 次）】；②【timeout 计数 × 阶段 × 端口】+ 根因结论（命令 + 原始输出 + 路径:行号）。
+**⑤ 边界**：只排查，🚫 排查完成前不得重启任何评测 run；🚫 不改 .env。
+
+### 🆕 运维指令 · 2026-10-10（三）— 🛑 先停 zhulong + 🔬 逐一实测沙盒端口（新 4 个 8663/8666/8667/8670 + 探旧 8650–8654）【本次唤醒优先动作 · 覆盖(二)·已完成】
+
+> 用户令（2026-10-10 晚）：
+> 1. zhulong 先停下来；
+> 2. 测试一下沙盒端口 —— 看 4 个新端口（8663/8666/8667/8670）里是否某个有问题（r2_new 73.4% 的 23 个 MCP timeout 疑似单端口故障）；
+> 3. 另外测试 8650–8654 之间是否有可用的沙盒端口。
+> 本条 (三) 覆盖 (二) 的「开跑」动作：先停再测，测完取证回来等运维裁定，不自动重启 r2。
+
+**① 立即停（本指令第一动作）**
+- kill -TERM 当前 r2_new2（retry#1）（/tmp/ABL_full_r2_new2.log 对应的 scripts/run_cline_script.sh 进程组 + 其 child run_eval.py）；10s 未退 → kill -KILL。
+- 确认 pgrep '^bash scripts/run_cline_script' 与 pgrep run_eval.py 均无输出（贴原始输出）。
+- r2_new2 判 ❌ 作废（人为中止，非有效成绩）；r1=88.0% 仍保留。🚫 停后不自动重启 r2/后续。
+
+**② 逐端口实测（核心：不是 curl 端口可达，而是用 run_code MCP 真跑一次）**
+- 候选 = 9 个端口：新 4 = 8663/8666/8667/8670（workdir e0031982_1~4）+ 旧 5 = 8650/8651/8652/8653/8654（旧 range，workdir t0002997_1~4）。
+- SANDBOX_HOST = 10.129.32.75。对每个端口单独发一个最简 pyAether 请求（如 print("hello from port <P>")）：
+  - ✅ 通过判据：返回非空 response 且 error_log 为空。
+  - ❌ 不通过判据：超时 / response 空 / error_log 非空 / 连接被拒。
+- （可选交叉印证）nc -zv 10.129.32.75 <port> 或 curl --noproxy '*' 探连通性；但以 run_code 实跑为准（端口 OPEN ≠ 沙盒能跑代码）。
+- ⚠️ 探旧 8650–8654 仅作可用性测试（(二) 曾写「8650-8654 已弃用」——本次是测试，是否启用由运维裁定，不改 .env）。
+
+**③ 产出（本指令块下贴表）**
+
+| 端口 | 组 | workdir | 连通(nc/curl) | run_code 实测 | error_log | 结论 |
+|:--|:--|:--|:--|:--|:--|:--|
+| 8663 | 新 | e0031982_1 | | | | ✅/❌ |
+| 8666 | 新 | e0031982_2 | | | | ✅/❌ |
+| 8667 | 新 | e0031982_3 | | | | ✅/❌ |
+| 8670 | 新 | e0031982_4 | | | | ✅/❌ |
+| 8650–8654 | 旧 | t0002997_1~4 | | | | 逐个 ✅/❌ |
+
+- 必须明确：① 4 个新端口里哪个（哪些）有问题；② 8650–8654 里哪些可用。
+
+**④ 停后一并做**
+- 更新 run/MEMORY_ZHULONG.md：PHASE=blocked（或 standby）、r2_new2 = ❌作废(人为中止)、附上端口实测结论、WAITING=1。
+- commit + push（按常驻规程 zhulong <阶段/轮次>: <一句话>）。
+
+**⑤ 边界**
+- 🚫 不启动任何新评测 run（r2 及以后都不启）—— 端口结论回来、运维看过再定。
+- 🚫 不改 .env（哪个端口先用由运维裁定）。
+- ✅ 本指令只做三件事：停 + 测 + 报。
+
+---
+
+> **归档时间**：2026-10-11（**原文搬迁**，只搬不改；该块已由 2026-10-11 `(九)` 取代 —— 其 4 端口 `8663/8666/8667/8670` 在 10-11 早间再次全部挂死，r2_new 因此无 official Pass@1）。
+
+### 🆕 运维指令 · 2026-10-10（八）— ✅ **按 B′ 执行**：保留 4 端口 + `cline_mcp_settings.json` `"timeout": 180` + 重跑 r2–r5【最高优先 · 覆盖 (七)/(六)】
+
+> **用户令（2026-10-10 晚）**：「zhulong：**用当前 4 端口重跑 r2–r5**；**`cline_mcp_settings.json` 加 `"timeout": 180`（防再挂时 60s 太短）**；**不必配 9 端口**。」
+> **依据（`(四)`+`(六)` 实测）**：timeout 根因 = **`8667` 瞬态挂死**（**现已恢复**：9 端口复测 3/3@0.01s ✅）+ **客户端默认 60s 太短**；`(六)` **4-vs-9 判别未见加端口收益**。
+
+**① 确认停**：`pgrep '^bash scripts/run_cline_script'` / `pgrep run_eval.py` **均无输出**。
+
+**② `.env` 不动（覆盖 `(七)②`）**
+- 保持 **`PROXY_PORTS=8663,8666,8667,8670`**（**当前 4 端口**，含已恢复的 `8667`）。
+- 🚫 **不补 `8650–8654`**（判别未见收益 + 借用 `t0002997` workdir 风险）。
+
+**③ 加 MCP 客户端超时（唯一环境改动）**
+- `~/.cline/data/settings/cline_mcp_settings.json` 的 `pyAether_MCP_server` 项：加 **`"timeout": 180`**（**180 秒**）= 服务端 `SANDBOX_TIMEOUT=150s` 之上留余量。
+- ⚠️ **先核对字段名/单位与现有 schema** 再改；**贴改动前后原文**（脱敏 token）。
+- ⚠️ 属**评测环境改动**（影响评测对象的 cline）⇒ **须在结果报告「披露」节写明**。
+
+**④ 重启（如生效需重启）+ 核验**：按既定流程重启 `eda_fastmcp`；核验 `ss -lntp | grep 8090` + `grep -E 'PROXY_PORTS' .env`（**贴行确认仍是 4 端口**）。
+
+**⑤ 开跑前硬闸（每轮都做）**：对 **4 端口**各 `run_code` 1 次 → **4/4 健康才开跑**；任一不健康 → **停、回报**（防 `8667` 再挂）。
+
+**⑥ 重跑 r2→r5（本块授权起动）**
+- 依次 `r2_new → r3_new → r4_new → r5_new`；判据 **`timeout ≤ 10` 且 `Pass@1 ≥ 75%`**（每轮最多重跑 3 次）。
+- **必带 instrumentation**：每次 `run_code` 记 **`port` + `latency(ms)` + `timeout?(Y/N)`** → 各轮产出 **「timeout × 端口」分布表**。
+- 5/5 完成 → `[r1=88.0(保留), r2..r5]` 算 mean±std → 回填 5 张表锚点 → 进 C2。
+
+**⑦ 产出**：本块下贴 —— ③ 改动前后原文 + ④ 核验行 + ⑤ 的 **4 端口自检表（每轮）** + ⑥ 各轮 `Pass@1 / timeout` + **「timeout × 端口」表**。
+**⑧ 备注**：若 `r2_new` 仍出现**大量 task-level timeout** → 回报（届时再议重负载 4-vs-9 判别 / 端口剔除）。
+
+---
+
+> 归档时间：2026-10-12 09:31 CST（任务书 ~38.7KB > 32KB 阈值，搬出 (十一)(十) 两个已闭合运维块至本文件。报告均已提交：(十一) R1_ANOMALY @commit 25b27adb；(十) RAG_AUDIT @commit 84e66335）。
+
+### 🆕 运维指令 · 2026-10-11（十一）— 📊 **Deep dive：为什么 `full` r1=88.0%** + 中文 HTML 报告 + 「轨迹问题·按修复收益降序」表 · 用户直令 · 高优先
+
+> **用户令**：「那**为什么 r1 得 88.0%**？请 ZhuLong agent **深入分析**，写一个 **html 调研报告（中文）**，把这个事情**落实**。对于**检查交互轨迹过程中发现的问题**，最后**按照修复收益从大到小列出表格**。」
+> **数据**：`full` = r1 **88.0** / r2 79.1 / r3 77.2 / r4 80.4（r5 running）⇒ **r1 比 r2 高 8.9pp、比 r2–r4 均值(78.9) 高 9.1pp**。
+> **性质**：分析 + 写作（**只读**）；🚫 **不重启 / 不改 `.env` / 不碰 r5**。**运维已下发 `RUN_ID 46` 取证块**（batch 清单 / r1×r2 工具集 diff / 配置指纹 / 逐题翻转 / 仓库变更史）⇒ **先读 `run/ops/outbox.md` 的 46 段再动手，别重复劳动**。
+
+**(A) 候选原因逐条裁决（每条给证据 + 成立? + 置信度）**
+1. **是否 legacy/复用**：r1 是否为某旧 batch 结果被复用（`wo_retrieval` 的 r1 就标注「复用 legacy 74.1%」）⇒ 给 r1 的**原始 batch id + 生成时间**；
+2. **工具集 diff**：r1 vs r2 的 `Available tools` 全表逐项（检索 3 件套 / `probe_pyAether_code` / `query_memory_bank` / `text_to_image` …）；
+3. **配置指纹 diff**：`PROXY_PORTS` · `SANDBOX_ENDPOINTS` · `RAG_RECALL_URL` · `API_INFO_MERGED_FILE`(V2/V3) · `EDA_EVOLVE_ENABLED` · `EDA_MEMORY_INJECT_ENABLED` · `PreToolUse` hook · MCP 协议(`/sse` vs `/mcp`)；
+4. **逐题翻转**：r1 过而 r2 不过（及反向）的 task 集合 —— **集中在少数题（→ 噪声）还是广布（→ 配置效应）**？给翻转题数 + 前 20 清单；
+5. **显著性**：158 题二项分布下，r1 与 r2–r4 均值之差是否显著（给 p / 置信区间估算）；
+6. **评分口径**：r1 是否经 re-grade？timeout / exec_err 统计。
+
+**(B) 交付（中文 HTML · 自包含 · 内联 CSS/SVG · 零外链 · ≤200KB）**：`doc/ZhuLong_DAC2027/run/reports/R1_ANOMALY_ANALYSIS_2026-10-11.html`
+节：HERO 一句话结论 · 5 轮数据(表+SVG) · **候选原因裁决表**(原因｜证据｜成立?｜置信度) · 逐题 diff · 显著性 · **对 N=5 锚点的影响与建议**(是否剔除 r1 / 标注 / 重跑) · 证据索引(`path:line`) · 诚实条款。
+
+**(C) 报告最后一节 = 「轨迹问题清单」表（**按修复收益从大到小排序**）**：每行 `# | 问题 | 证据 | 影响面 | 修复动作 | 工作量 | 风险 | 预期收益`；至少覆盖：① 检索 3 件套边际≈0（`run_code` 冗余）② 模型漏 MCP 前缀 `search_apis`（~1%/轮）③ **`tcl` 两 collection 召回 0 条** ④ `rag` 臂非单变量（同时动了检索 + 沙盒）⑤ 9001–9011 端口乱象（7+ 实例 · 9002 http=500）⑥ r1 异常（本报告定论）⑦ 你在轨迹里**新发现**的问题。
+
+**(D) 收尾**：更新 `MEMORY_ZHULONG.md` + `daily-memories/<date>.md` + commit+push（前缀 `zhulong r1-anomaly:`）。
+
+---
+
+### 🆕 运维指令 · 2026-10-11（十）— 🔎 RAG(9006) 排查【🏁 **已收口**】· 报告已交：`run/reports/RAG_AUDIT_2026-10-11.md`
+> **结论（RUN_ID 41/43/44/45 实测）**：① **9006 正常且能召回**（`pyAether+aether` → `dbCreateRect` 5 条 / `hiGetCurrentWindow` 9 条；`skill+virtuoso` → 3/6 条，⚠️ 仅 `tcl+waveview`/`tcl+innovus` 两对 **0 条**）；② 评测**大量在用检索**（`search_apis` **~1800 次/轮成功调用**；漏 MCP 前缀失败仅 ~1%；轨迹空结果仅 2/0/1）；③ 臂定义：`full` = 检索 ON + `run_code` ON + **V3 文档**；`wo_retrieval` = 检索 OFF；`rag` = 检索 ON + **`run_code` OFF**。
+> ⇒ **`full`≈`wo_retrieval` 是真实弱结果**（机制：`run_code` 沙盒使显式检索冗余），**不是 bug**；但 ⚠️ **`rag` vs `full` 非单变量**（同时动了检索+沙盒）⇒ 表格注须说明，🚫 **不得**宣称「检索带来提升」。本块全程只读。
+
+---
+
+
+## 📦 归档批次 · 2026-10-13 22:2x（phi_k3 r3 regrade 跑中·任务书超 40KB 红线·agent 自滚归档）
+
+> 以下 4 个已闭合运维块原文搬入：**(十四)** 暂停令（已被(十五)撤销）· **本轮 2026-10-11 执行顺序**（r2-r5 已完成）· **(十二)** full_v3 补跑（5/5✅ 82.1±3.0% 已交付）· **(九)** 换回旧 4 端口（已完成）。原块在任务书留 1 行指针。
+
+### 🆕 运维指令 · 2026-10-13（十四）— 🛑 立即暂停所有试验（沙盒重启中）【已被(十五)撤销·2026-10-13 归档】
+
+> **用户令（2026-10-13）**：「需要重启沙盒，让烛龙 agent 暂停试验。」
+
+**立即执行**：
+1. **杀掉当前评测进程**：`pkill -f 'run_cline_script'`（如有残留）。
+2. **不启动任何新轮次**。`PHASE=standby` · `WAITING=1` · `ERROR_COUNT=0`。
+3. **在 `MEMORY_ZHULONG.md` 顶部状态头记**：`PHASE=standby（运维令(十四)：沙盒重启中，暂停试验）`。
+4. **等运维下达「沙盒已就绪，可恢复试验」指令后再继续**。恢复时从 `phi_k3 r1`（att2 成绩或 72.8%）继续推进，不回退已完成的轮次。
+5. **⚠️ 不要动 `.env` / 端口 / MCP / hook**——沙盒重启由运维/用户操作，agent 只需等待。
+
+**红线**：
+- 🚫 不得启动任何新轮次。
+- 🚫 不得修改任何配置文件。
+- ✅ 只做：杀残留进程 + 记状态 + commit/push + 退出等待。
+
+### 🧭 本轮（2026-10-11 上午）执行顺序 —— 换回旧 4 端口 + 修 RAG + 删 hook → 推进 r2–r5【已完成·2026-10-13 归档】
+
+> ➡️ **按 `(九)` 执行**（`.env` 端口集换回 `8650/8651/8652/8654` + `RAG_RECALL_URL`→`9006` + 删 `~/.cline/hooks/PreToolUse` + `.env` stash 回退 + **回退 `timeout:180`** → 重跑 r2–r5）。
+> ⚠️ **`(九)`⓪ 先自查「中继执行了没有」**（`outbox.md` 有无 RUN_ID 32）——**中继近 11h 无活动、已判「疑似失联」**；若确实失联，`(九)`⓪ 授权你**自己照 `run/ops/inbox.md` 的 RUN_ID 32 块执行**（含重启中继），别干等。
+> ❌ `(八)` 已被 `(九)` 取代；`(七)/(六)/(四)/(三)` 已完成或作废 —— **勿重复**。
+
+### 🆕 运维指令 · 2026-10-11（十二）— r5 收割后补跑 5 轮「真正的 full」（自探索开启）【full_v3 5/5✅ 82.1±3.0% 已交付·2026-10-13 归档】
+
+> **用户令（2026-10-11）**：「**在当前 full 的 r5 跑完后，在后续任务开始前，先跑 5 轮「真实」full（自探索开启）配置。**」
+> **为什么（已取证 RUN_ID 46/47/48）**：**r1 = `/tmp/ABL_full_r1.log`（10-10 15:32，旧配置）**；而 `e51372ff`（**10-10 16:33** t0002997「**使用未增强文档，无自探索**」）改了 `.env` → `API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V2.json`；**r2–r5 全在该改动之后** ⇒ 实跑的是 **V2 未增强 + 无自探索**，而 `set_ablation.py` 里 **`full` 的定义 = V3 增强文档**（= 自探索开）⇒ **C1 锚点混了两种配置**（这也解释 r1 88.0 vs r2–r5 ≈79）。
+
+**① 顺序（硬）**：`r5 收割 + 判定` → **【本批】`full_v3` 5 轮** → 之后才进 `C2.phi_k10`（不另等指令）。
+**② 配置切到「真 full（自探索开）」**：`python scripts/set_ablation.py full`（托管：检索 3 件套 ON + `run_code` ON + 完整回读 + `API_INFO_MERGED_FILE`）；**并手工恢复"自探索"的两项** —— RUN_ID 48 已拿到 `e51372ff` 的完整 diff，**自探索 = 这两个变量**：`API_INFO_MERGED_FILE=./docs/API_INFO_MERGED_V3.json` ＋ **`SKILL_DATA_DIR=./docs/skill_data_selfexpl`**（⚠️ **`SKILL_DATA_DIR` 不由 `set_ablation.py` 托管，必须手改**）。改前先 `cp .env .env.bak_$(date +%s)`；⇒ **必须 `bash scripts/stop.sh && bash scripts/start.sh` 重启 MCP 才生效**。
+**③ 开跑前 5 项自检（缺一不可，**原文贴进心跳**）**：① `.env` 的 `API_INFO_MERGED_FILE` = **V3** **且 `SKILL_DATA_DIR` = `./docs/skill_data_selfexpl`**（并 `ls -l docs/API_INFO_MERGED_V3.json docs/skill_data_selfexpl` 均存在）；② 4 端口 `8650/8651/8652/8654` **4/4 健康**；③ MCP 8090 在听 + 工具含 `search_apis`；④ **反作弊 hook 在位**（`~/.cline/hooks/PreToolUse` + 新 log「已部署沙盒 hook」+ `ACCESS RESTRICTED` >0）—— 🚫 **未部署不得开跑**；⑤ `df -BG /home` ≥8G。
+**④ 跑法与判据**：与 r2–r5 **逐字同口径**（`bash scripts/run_cline_script.sh -p 8 -n` · 端口 8650-8654 · log **`/tmp/ABL_full_v3_r{1..5}_8650set.log`**）· 每轮 code-gen 后 **re-grade 同口径**（`--benchmark benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl --lang pyAether`；auto-grade 有 benchmark bug）· 判据 **timeout ≤10 且 Pass@1 ≥75%** ⇒ 该轮有效。
+**⑤ 交付**：`full_v3` 的 **N=5 mean±std** + **三组对照表**（`r1` 旧时代 V3 / `full` 现配 V2 = r2–r5 / **`full_v3` 新 5 轮**）+ **是否复现 r1 的 ~88%** 的结论。🚫 **不删**旧 batch/log（证据）；提交前缀 `zhulong full_v3:`。
+
+### 🆕 运维指令 · 2026-10-11（九）— 换回旧 4 端口 + RAG→9006 + 删 hook + .env 回退 + 重跑 r2–r5【已完成·2026-10-13 归档】
+
+> **用户令（2026-10-11 上午）**：「停掉当前评测；删 `~/.cline/hooks/PreToolUse`；`eda_fastmcp/.env` 本地改动 stash（回退昨晚改动）；**测试/应用端口 `8650`、`8651`、`8652`、`8654`**；改 `.env`；**ragrecall 端口重新设为 9006**；**重启 full r2-r5 及后续评测**。」
+> **本块应交由 ops 中继 `RUN_ID 32` 代做**（停评测/删 hook/`.env` 备份+stash/写新 `.env`/重启 `eda_fastmcp`/4 端口实测/**4/4 健康才起 r2**/**回退两处 `cline_mcp_settings.json` 的 `timeout:180`**）。⚠️ **用户二段令（10-11）：「昨晚的改动都是垃圾，全部回退，没有任何亮点」** ⇒ 32 块的 timeout:180 回退即按此令执行（**已推翻「保留」判断**）。
+
+**⓪ 先自查「中继执行了没有」（30 秒，每次唤醒必做）**
+- `grep -c '^## RUN_ID 32' run/ops/outbox.md` **≥1** ⇒ 已执行 → 走 ①（并按 ① 复核 r2 是否已起）。
+- **= 0** ⇒ **判中继失联**（**判据**：中继**最后一次成功执行是 10-10 20:59 的 RUN_ID 31**，此后无回写；⚠️ **不要**拿 `inbox.md` 的 mtime 计时 —— 运维会**原地修订** RUN_ID 32 块，修订**不算**重新计时）⇒ **你自己照 `run/ops/inbox.md` 里 RUN_ID 32 那个 bash 块执行**（244 行/幂等；原文即完整食谱：① 停评测——**只杀评测侧**，`pkill -f run_cline_script` 会误杀编排侧 cline；② 删 `~/.cline/hooks/PreToolUse`；③ `.env` 备份 + `git stash push -- .env`；④ 写 `PROXY_PORTS=8650,8651,8652,8654` + `SANDBOX_ENDPOINTS`（按 `.env`/HEAD 既有映射逐条核对，勿臆测 workdir）+ `RAG_RECALL_URL=http://localhost:9006/recall`；⑤ 重启 `eda_fastmcp`；⑥ 4 端口 `run_code` 实跑；⑦ **仅 4/4 健康才** 起 r2；⑧ **回退两处 `cline_mcp_settings.json` 的 `timeout:180`**）。**执行完**：把 `inbox.md` 的 `<!-- RUN_ID: 32 -->` 置 **33**、并把该 bash 块降级为 text 围栏（占位，防中继复活后重复执行）；并顺手重启中继：`pgrep -af zhulong_ops_relay.sh`（无 → `env PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" https_proxy=http://172.19.92.23:13128 setsid bash doc/ZhuLong_DAC2027/run/zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 < /dev/null &`）。结论写进 `MEMORY_ZHULONG.md`。
+
+**🔧 infra 速记（10-11 实战；详见 `MEMORY.md` §7-18/19）**
+- **中继/loop「失联」≠ 进程死**：远端 `.last_run_id`/`outbox` 长期不动，多因 **GitHub/proxy 断 → `push FAILED (will retry next cycle)`**（看 `/tmp/zhulong_ops_relay.log` 尾）。**修法**：`pkill -f 'zhulong_ops_relay[.]sh'` → `setsid bash <脚本>`，**显式注入 `PATH=$HOME/.local/node-20/bin:$HOME/.bun/bin:$PATH` + `https_proxy=http://172.19.92.23:13128`** ⇒ 30–60s 内自 fetch 并补跑积压 RUN_ID（10-11 **08:07:34 重启 → 08:07:38 跑完 RUN_ID 32**）；**loop 同法**（RUN_ID 33 已重拉）。
+- **跨机救援桥 = BaiZe 中继（跑在 2.29）**：其块内 `timeout 240 ssh -p 3333 -o BatchMode=yes app.e0031982@localhost 'bash -s' <<'EOS' … EOS 2>&1 | cut -c1-190` 即**在 36.15 执行**（**36.15 ✗ 2.12 不可直连**；桥先例 RUN_ID 83/84/85/86）；**跨通道下发要错开 ≥30s**（push 撞车 → 记录只留本地，要下一次 run 才补推）。
+
+**📌 2026-10-11 08:2x 实况**：中继已救活并跑完 **RUN_ID 32/33**（exit=0）；`bash scripts/start.sh` **仍 exit=1**（`:8090` 未监听，但 `python main.py` 有 3 个进程在），4 端口在 08:14 实测 `run_code` 0 字节、**08:2x 已恢复 4/4 健康**；**loop 已于 08:13:55 重启**（`cline OK`）。⇒ **唯一硬阻塞 = `/home` 100%（4G < 8G 门槛）** ⇒ 未起 r2、`WAITING=1` 回报；**在运维裁定「可否带 4G 起跑」前不要开跑。** **✅ 用户 10-11 已裁定：授权带 4G 起跑 r2**（`/home` ≥8G 门槛放宽，其余硬闸不变）—— **RUN_ID 34 已按此下发**（MCP/RAG → 4 端口 → 起 r2）；另查明 **36.15 的 MCP 实际监听 `:18890`（不是 8090）**，`start.sh exit=1` 只因「18890 已被占用」= 已在跑。
+
+**① 若中继已执行 → 读 `outbox.md` 末尾 RUN_ID 32 的三件事**：(a) 4 端口实测结果；(b) `.env` 最终关键行（应 `PROXY_PORTS=8650,8651,8652,8654` + `RAG_RECALL_URL=http://localhost:9006/recall`）；(c) r2 是否已起（eval PID / log `/tmp/ABL_full_r2_8650set.log` / 四 override / **hook 是否被重新部署**）。
+
+**② 状态记账（先改状态头再干活）**：`CONFIG=full`(锚点) · `ROUND=2` · `.env` 臂配置不动；**`r2_new`（batch `2026_1010_234408`）判 ❌作废**（code-gen 146/158 但 **eval Steps 5–7.1 未跑 = 无 official Pass@1**；log/batch 留证，不并入成绩）；**`r1=88.0%` 保留**；**端口口径 = `8650/8651/8652/8654` @ `10.129.32.75`**。
+⚠️ **披露清单**（写进结果报告「披露」节）：`.env` 端口集回退 + `RAG_RECALL_URL`→`9006`（原 `9012` 死）+ 删 `~/.cline/hooks/PreToolUse` + `cline_mcp_settings.json` 的 `"timeout": 180`（`(八)`③）—— **本轮已随 RUN_ID 32「3.6 步」一并回退**（用户 10-11 二段令：「昨晚的改动都是垃圾，全部回退，没有任何亮点」）。
+
+**③ 分支**：已起 → **先核反作弊**（`ls -l ~/.cline/hooks/PreToolUse` + 新 log 出现「已部署沙盒 hook」+ `ACCESS RESTRICTED` >0；**未部署 ⇒ 立即停本批、判作废、回报**）；随后 `pgrep -f '^bash scripts/run_cline_script'` **有输出=巡检退出**、**无输出=收割**。未起 → `WAITING=1` + 回报不健康端口原文，**不得带病开跑**。
+
+**④ 收割/推进（判据不变）**：`grep -E 'pass \(|PASS_RATE|评估结果汇总|timeout' /tmp/ABL_full_r2_8650set.log | tail -10` → **`timeout ≤ 10` 且 `Pass@1 ≥ 75%`** ⇒ r2 有效 ⇒ r3→r4→r5（同臂 `full` + **四 override**（见 §6 与旧 `(八)`⑥）+ log `/tmp/ABL_full_r3_8650set.log`…；**每轮开跑前 4 端口复检 + `df -BG /home` ≥8G**；不达标最多重跑 3 次 → 仍不达标 `WAITING=1` 回报）→ 5/5 `[88.0, r2–r5]` 算 mean±std → 回填 5 表锚点 → `PHASE=just_finished` → 进 `C2.phi_k10`。产出：各轮 `Pass@1 / timeout` + **「timeout × 端口」表** + hook/canary 复核结论。
+
+
+---
+## [⏩ 从 ZHULONG_TASK.md 滚出 · 2026-10-14 21:46 归档] 运维指令（十六）+（十五）原文
+
+### 🆕 运维指令 · 2026-10-14（十六）— 📝 实验空窗期审视论文，出改进意见 HTML（中文）【用户直令 · 与评测并行不互斥】
+
+> **用户令（2026-10-14）**：「安排 zhulong agent 在实验进行期间，审视论文（ZhuLong_DAC2027），将改进意见写成 html 报告（中文版）。」
+
+**性质**：零 GPU 的纯「读 + 写」任务。**主线仍是评测**（当前 `phi_k1 r2` 跑中）——本任务只占用**等待评测结果的空窗期**：评测一有结果，立即回归评测（收割/打分/切下一臂）**优先于**论文审视，两者交替推进，🚫 绝不为论文审视而延迟/打断评测。
+
+**① 审视对象**：论文树 `doc/ZhuLong_DAC2027/ZhuLong_DAC2027/`（`main.tex` + `DAC2027/0_abstract.tex`…`8_conclusion.tex` + `reference.bib`/`software.bib` + 已编译 `main.pdf`）。
+
+**② 审视维度（每条意见必须具体，🚫 空泛）**：
+1. **论点-证据一致性**：每句核心 claim 是否有实测数字支撑；对照当前评测实况（B 4 臂、C1 4 臂、C2 `phi_k10` 5/5、`phi_k3` 5/5、`phi_k1` r1/r2 进行中）——哪些表/数字还是 `[TBD]`、哪些与实测不符、哪些结论尚缺轮次支撑。
+2. **评测口径**：Pass@1 分母（158 全量 vs 生成成功子集）、5-run `mean±std` 是否齐、配对检验（McNemar / paired bootstrap）是否声明、`timeout ≤10` 与 `gen-fail`（生成失败）的处理口径是否在论文里交代清楚。
+3. **消融结论一致性**：Φ 预算单调趋势（`k10=77.7% > k3=69.1% > k1≈65%`）、gen-fail 随 k↓ 递增、`full_v3` 锚点 82.1±3.0%——论文的结论句是否与这些实测方向一致，有无过度声称。
+4. **贡献边界 / 与 BaiZe 关系**：harness 属 ZhuLong、backbone 属 BaiZe 的边界是否写清；是否按 DAC/ISEDA 双会「互相引用、不重报」的约定表述。
+5. **结构与表述**：Abstract/Intro/Conclusion 一致性、Limitations 段是否缺失、图表/交叉引用是否齐全、overfull hbox / 页数是否超限。
+6. **可回填项**：列出「**已有实测、可直接回填**」的 `[TBD]` 清单（附目标值），与「**仍缺数据、暂不能填**」的清单（附还缺哪几轮）。
+
+**③ 交付**：中文、自包含 HTML 报告 `doc/ZhuLong_DAC2027/reports/report_zhulong_paper_review_zh.html`（若 `reports/` 不存在则建）；每条意见贴 **`文件:行号`** 或**具体数据**，分「🔴 硬伤 / 🟠 建议 / 🟢 可回填」三级标注；文末附「已回填建议清单」。
+
+**④ 红线**：
+- 🚫 **不直接改论文 `.tex`**（只出意见报告；改稿须运维/用户另行批准）。
+- 🚫 不得为论文审视而 kill/延迟评测进程；评测优先级更高。
+- 🚫 不得空泛（「建议加强实验」这种无效）；每条必须可落到具体位置或数字。
+- ✅ 意见里引用实测数据时，须与 `MEMORY_ZHULONG.md` 执行看板/成绩一致，不许凭印象。
+
+**⑤ 纪律**：commit 前缀 `zhulong paper-review:`；产出后 `git add` 报告 + 回写 `MEMORY_ZHULONG.md` 心跳；任务书 >32KB 自滚归档。
+
+### 🆕 运维指令 · 2026-10-13（十五）— ✅ 沙盒已重启完成，恢复试验（撤销 (十四) 暂停令）【最高优先 · 用户直令】
+
+> **用户令（2026-10-13）**：「zhulong 沙盒已重启，让它继续试验。」
+
+**立即执行**：
+1. **撤销 (十四) 的暂停令**：`PHASE` 从 `standby` 切回运行态。
+2. **恢复点（不回退）**：从 `phi_k3 r2` 继续。`r1 = 72.8%`（115/158 · timeout=0）已按 (十三) 判有效；att2 被 (十四) kill 的 114/158 **不重跑、不作为 r1**。
+3. **开跑前 5 项自检（沙盒重启可能还原状态，必须重核，缺一不可）**：
+   ① `.env` 配置为 `phi_k3`（S2 Φ 预算 k=3 · base=full(V3+selfexpl) 保留，`set_s2_phi.py` 只改预算、不动 V3/SKILL_DATA_DIR）；
+   ② 4 端口 `8650/8651/8652/8654` 全健康；
+   ③ MCP `8090` 在听且工具含 `search_apis`；
+   ④ 反作弊 hook 在位（`~/.cline/hooks/PreToolUse` + 新 log「已部署沙盒 hook」+ `ACCESS RESTRICTED` >0）；
+   ⑤ `df -BG /home` ≥8G。
+   若任一项缺失，先按 (十二) 口径补齐（`bash scripts/stop.sh && bash scripts/start.sh` 重启 MCP 使生效），再开跑。
+4. **跑法与判据（沿用 phi_k3 既有口径）**：`bash scripts/run_cline_script.sh -p 8 -n`；**判据 = `timeout ≤ 10` 且无 infra 故障**（license / 端口 / 磁盘 / auto-grade bug）；`Pass@1` 任何值均有效（低分 = 真实消融效应）→ **不得因 <75% 重跑**。
+5. **交付**：phi_k3 `N=5 mean±std` → 继续 C2 其余臂（phi_k1 / phi_lagged）→ 之后 S1。
+
+**红线**：
+- 🚫 不得重跑 att2 / 不得回退 r1（72.8% 已定）。
+- 🚫 不得以 `Pass@1 < 75%` 作废或重跑任何消融臂。
+- ✅ 沙盒重启若致 `.env` / 端口 / MCP / hook 异常，先修复（不动业务逻辑）再开跑，修复过程记进心跳。
+
+
+
+---
+## [归档 2026-10-15 09:34] 运维指令 (十八)(十九)(二十) — 已闭合，从 ZHULONG_TASK.md 原文搬入
+
+### 🆕 运维指令 · 2026-10-15（二十）— 📝 把最新评测结果填入 zhulong_results.md【用户直令 · 最高优先】
+
+> **用户令（2026-10-15）**：「让 zhulong 把最新评测结果填入 zhulong_results.md。」
+
+**① 填写对象**（`doc/ZhuLong_DAC2027/zhulong_results.md`，以下均为**已 5/5 收口的实测**，与 `MEMORY_ZHULONG.md` 执行看板逐字一致）：
+1. **S2.phi_k1**：5/5 = **63.8 ± 3.2%**（r1 65.2 · r2 66.5 · r3 58.2 · r4 64.6 · r5 =? 从台账/日报取准确值），并补各轮 gen-fail（k=1 预算效应：35/30/39/34/?）。
+2. **S2.phi_lagged**：5/5 = **73.0 ± 3.2%** [74.7, 76.6, 69.6, 69.6, 74.7]。
+3. **更正 B.deepseek-v4-flash**：当前标 `⬜ 0/5` 系漏填 → 应 **✅ 5/5 = 16.7 ± 12.3%** [9.5, 10.1, 19.0, 7.6, 37.3]。
+
+**② 填写规范**：
+- 每个臂填 **mean ± std + 5 轮明细 + gen-fail 数**（与论文 `tab:phi-bound` 口径一致）。
+- 把「S2 各臂仅有 1-shot 探路值」的旧注**删除/更新**（现在 k10/k3/k1/lagged 均已 5/5）。
+- 同步把 `[ ]`（未完成复选框）改成 `[x]`（已完成）。
+
+**③ 纪律**：数字从 `MEMORY_ZHULONG.md` 执行看板 / 当日 daily-memories 抄，🚫 凭印象；S1.omega_low 本论仍在跑、**不填**（只填已 5/5 的）；commit 前缀 `zhulong results:` · 任务书 >32KB 自滚归档。
+
+### 🆕 运维指令 · 2026-10-14（十九）— 🖨️ pdflatex 已装好，编译验证论文【用户直令 · 最高优先】
+
+> **用户令（2026-10-14）**：「zhulong 环境刚刚装好 pdflatex 了。」
+
+**① 现在编译验证论文**（衔接十七的 P0+P1+P2 改稿）：进论文树 → `pdflatex` + `bibtex` + `pdflatex×2`，验证改稿后 `main.pdf` 编译成功。
+
+**② 检查项（逐项报）**：
+- **0 error** · **0 undefined reference / citation**；有 warning 也要记录（尤其 bib 缺 page/volume 类）。
+- **页数变化**：改稿前 10 页 → 改稿后 ? 页。
+- **overfull hbox**：新增与否；>20pt 的必须是 0（README 自检阈值）。
+
+**③ 若编译报错**：先判断是**改稿引入**（如 label/引用、表格语法、`\cite` 错名）还是**环境**（缺 `.sty`/`.cls`/字体/`bibtex` 命令）。改稿引入的能修就修；环境缺件如实报并给等价替代（如缺 `texlive-latex-extra` 包名）。
+
+**④ 纪律**：纯 CPU 编译，不占 GPU；`main.pdf` 编译产物按仓库惯例提交（`.tex`+`.bib` 必交，`.aux/.log` 不入库）；commit 前缀 `zhulong compile:`；任务书 >32KB 自滚归档。主线 `phi_k1 r3 regrade` 照常推进，编译在空窗期做。
+
+### 🆕 运维指令 · 2026-10-14（十八）— 🧩 评测集全貌 + SKILL/Tcl 结果并入论文【用户直令 · 最高优先】
+
+> **用户令（2026-10-14）**：「告知 zhulong agent：它自己在测 PyAether，其它 agent 在同时测 SKILL 和 TCL，结果汇总到 `doc/ZhuLong_DAC2027/zhulong_results.md`。请 zhulong agent 在回填结果、刷新论文时，把 zhulong_results.md 中 SKILL/TCL 的结果带上。补充信息：EDA-Scripting-Bench 评测集中各语言 case 数，pyaether=158，skill=158，tcl=133，共计 449。」
+
+**① 评测集全貌（EDA-Scripting-Bench，三语言）**：
+| 语言 | case 数 |
+|:--|:--|
+| PyAether | 158 |
+| SKILL | 158 |
+| Tcl | 133 |
+| **合计** | **449** |
+
+**② 分工**：你（zhulong）测 **PyAether（158）**；**其它 agent 并行测 SKILL（158）+ Tcl（133）**。三路结果统一汇总到 `doc/ZhuLong_DAC2027/zhulong_results.md`。
+
+**③ 要求（衔接指令十七「放行刷新论文」）**：
+- 回填论文结果时，**以 `doc/ZhuLong_DAC2027/zhulong_results.md` 为汇总源**，把 **SKILL/Tcl 的结果一并带上**——论文评测口径从「PyAether 158」扩展为「**EDA-Scripting-Bench 449（PyAether 158 + SKILL 158 + Tcl 133）**」。
+- 具体落地：
+  - 回填 **RQ3「SKILL/Tcl 切片」**（此前标 pending）——`zhulong_results.md` 中 SKILL/Tcl 已有结果即填，未齐则如实标 `partial`/`pending`。
+  - 回填 intro/abstract 的 **「unified benchmark [X%]」**——按三语言 449 合并 Pass@1 重算（或显式标注口径）。
+  - 全文凡涉及「PyAether-only」的主表/轴向，须改口径说明，🚫 避免「158」与「449」混用、避免读者误以为全榜只有 PyAether。
+- 🚫 不得只报 PyAether 而继续忽略 SKILL/Tcl；🚫 不得凭印象编 SKILL/Tcl 数字——**只认 `zhulong_results.md` 现存数字**，未齐标 pending。
+
+**④ 纪律**：每次唤醒刷新论文前先 `git pull` 读 `doc/ZhuLong_DAC2027/zhulong_results.md`；数字与之逐字一致；缺数据标 pending 不编造；commit 前缀沿用 `zhulong paper-fix:`；评测主线不变（finish phi_k1 → phi_lagged → S1，改稿仍在空窗期做）。
+
+
+---
+## [归档 2026-10-15 09:35] 运维指令 (十七) — P0-P3 论文改稿已执行+编译验证通过，从 ZHULONG_TASK.md 原文搬入
+
+### 🆕 运维指令 · 2026-10-14（十七）— ✍️ 放行改进论文（执行审视报告修改）【用户直令 · 最高优先】
+
+> **用户令（2026-10-14）**：「zhulong agent 论文改进报告已审视/批准，请 zhulong agent 按此改进论文。」
+
+**性质**：纯写作、零 GPU。**主线仍是评测**（当前 `phi_k1 r3` 跑中）——改稿只在空窗期做，🚫 绝不为改稿延迟/打断评测收割与切臂。
+
+**① 撤销「只报不改」红线**：放行你修改论文 `.tex`，执行审视报告 `reports/report_zhulong_paper_review_zh.html` 的修改（按 §8 优先级 P0→P1→P2→P3）。
+
+**② 🔴 P0 硬伤必须修（先改锚点、再批量同步，避免表文矛盾）**：
+- **锚点全局替换** `84.8% → 82.1±3.0%`（`0_abstract` / `1_intro` / `8_conclusion` + 4 表锚点行：main-ablation Full、ablation-harness F、phi-bound unbounded、llm-comparison DeepSeek-V4-Pro）。
+- **重算所有 Δ**：main-ablation（Full **+10.3pp**、wo_retrieval **−1.1pp**）· llm-comparison 4 个 Δ（**+1.2 / −65.4 / −5.1 / −18.3**）· §S2 正文（**+10.3pp**）。
+- **Error Analysis 重做/重声明**：改用 5-run 代表性 run（建议 full_v3 r3=81.6%、129/158）重计失败数；或显式标注「基于单次代表性 trace」。🚫 不得仍绑 84.8% 那次 134/158。
+- **硬伤#3**：`tab:omega` (L)=82.8、`tab:ablation-harness` (N)=73.3、(B)=66.2 无 5-run 支撑 → 一律标 `[provisional, n=1]` 或回退 `[TBD]`，🚫 不得再以 `±` 呈现（尤其 (B) ±16.1 的 std 无 n≥2 支撑）。
+- **硬伤#5**：`tab:phi-bound` 增加「Mean gen-fail」列（k10/k3/k1），§S2 正文补「k↓ → gen-fail↑ → Pass@1↓」1–2 句。
+- **硬伤#6**：§2（Background/Prior work）或 §3 加 1–2 句 BaiZe 边界，措辞中性如「本工作的 harness（三 MCP 工具 + 评测协议）属 ZhuLong；agent backbone 的底层能力另由互补工作 BaiZe[ref] 详述，二者互引不重报」。
+
+**③ 🟠/🟢 按 §8 清单继续**：
+- **P1**：补配对检验（paired bootstrap/McNemar）或在 Limitations 明示「未做配对检验」；§5.3/§6 补 gen-fail 计入分母 + infra 故障 run 剔除规则 + 75% 锚点健康下限；§6.1.4 声明 backbone 量化 `deepseek-v4-pro-fp4`；消歧 (N)→(N′)。
+- **P2**：删 ICML 中文注释（`6_exp.tex:132-133`）；加结果可视化图至少 2 张（消融条形 + Φ 折线）；Limitations 独立成节并补「未配对检验」「量化未消融」两条；附录加 75 轮原始值表。
+- **P3**：回填后重编译处理 overfull hbox（13.6pt/13.1pt 两处）；核对 DAC 2027 页数上限。
+
+**④ 🟢 可回填（§7.1 第 1–10 项）**：能填即填（k10→`77.7±2.2`、k3→`69.1±2.5`、锚点 `82.1±3.0` 等）。🚫 **仍缺数据项一律保留 `[TBD]`/provisional，不得编造**：phi_k1 r3–r5、phi_lagged、S1 三臂（omega_low/readback_binary/_none）、wo_sandbox、SKILL/Tcl、全部 Converged(%)。
+
+**⑤ 改稿纪律**：改后编译 `main.pdf` 验证 **0 error** + 报页数变化；每个数字与 `MEMORY_ZHULONG.md` 执行看板/成绩一致、🚫 凭印象；完成把「改了哪几处 + 编译结果」写进心跳；commit 前缀 `zhulong paper-fix:`（区别于 paper-review）· 任务书 >32KB 自滚归档。
+
+**红线**：🚫 评测优先于改稿，不得为此 kill/延迟评测；🚫 数字编造；✅ 锚点与全部 Δ 必须同步改，避免表文矛盾。
+
+
+
+## [2026-10-15 17:35 归档] 运维令(二十五/二十四/二十一)已闭合·原文搬入
+
+> 归档原因：(二十五)催办=报告已交付 commit c1a3d177；(二十四)echo数据已并入论文✅15:30 commit zhulong S1-echo:；(二十一)15天建议书已交付 commit c1a3d177。保留(二十三)(二十二)为顶部活跃块（readback_binary 5/5 收口后执行）。
+
+### 🆕 运维指令 · 2026-10-15（二十五）— ⏰ 催办：消融试验中文建议书（指令二十一）尚未交付 · 现在就要【用户直令 · 最高优先】
+
+> **用户令（2026-10-15）**：「zhulong：消融实验中文建议书还是没给我。」
+
+**① 现状**：指令(二十一)「15 天窗口消融建议」纯写作、不占评测，但你连续排了(二十二)(二十三)(二十四)后一直没产出，`doc/ZhuLong_DAC2027/reports/report_zhulong_next_ablation_plan_zh.html` 仍未生成。
+
+**② 立即产出**（占 readback_binary r2 code-gen 的空窗期，🚫 不占 GPU、不打断主线评测）：
+- 按指令(二十一)要求：结合当前进展（B/C1/C2 12 臂 5/5 + S1 readback_binary 重测中）+ **15 天 deadline**，提出「进一步消融试验」建议。
+- 每条四要素：动机 · 做法+成本（GPU/沙盒/墙钟）· 优先级（必做/建议/可选）· 与 S1/B 臂编排。
+- 文末附「**15 天排期表**」（S1 收尾 + readback echo + B.glm-5.3-flash/deepseek-v4-flash + 其它候选）。
+
+**③ 交付**：`doc/ZhuLong_DAC2027/reports/report_zhulong_next_ablation_plan_zh.html`（中文自包含）。
+
+**④ 纪律**：纯 CPU 写作、现在就写；数字与 `MEMORY_ZHULONG.md` 看板一致；commit 前缀 `zhulong plan:` · 任务书 >32KB 自滚归档。
+
+### 🆕 运维指令 · 2026-10-15（二十四）— 📊 收集 readback 轴 echo 数据强化论文论证【用户直令 · 最高优先】
+
+> **用户令（2026-10-15）**：「好的，如果确认有价值，既然我们花了这么多时间，那应该收集更多信息，加入论文，强化论证依据。」
+
+**① 背景**：readback 消融（full/binary/none）有价值，且 binary 档 code-gen 显著变慢（~3×）本身即「保真度↓ → 收敛成本↑」的证据。现收集更多 echo 数据强化论证。
+
+**② 收集（从既有 trace / 日志 / daily-memories 聚合，🚫 不额外起评测）**：
+1. 每档 **run_code 平均调用次数**（Φ 执行次数）：full vs binary vs none。
+2. **code-gen 墙钟 / 迭代轮次**：full ~1.5h vs binary ~4-5h vs none（待量）。
+3. **gen-fail / timeout 率**随保真度下降的变化。
+4. **Pass@1**（已有）+ 提交前收敛轨迹（若有）。
+5. 代表性 trace 证据：binary 档 agent「盲试 / 反复迭代」的 1–2 条原文片段（截 log）。
+
+**③ 补进论文**（`tab:ablation-harness` 附近 + §S1 正文）：
+- **语义注记**：binary PASS = **1-bit exception signal（no exception raised）**，非 assertion-level correctness；none = 仅 `"executed"`。
+- **echo 表**：保真度（full/binary/none）× {Pass@1, 平均 run_code 次数, code-gen 墙钟, gen-fail} —— 展示「保真度↓ → 收敛成本↑」的单调证据。
+
+**④ 交付**：echo 数据表 + 论文改动（编译 0 error）+ 简述「强化了什么论证」。
+
+**⑤ 纪律**：🚫 不额外起评测（readback_binary 5-run 按指令二十三继续）；数据从既有 trace 聚合、贴 `文件:行`；commit 前缀 `zhulong S1-echo:` · 任务书 >32KB 自滚归档。
+
+### 🆕 运维指令 · 2026-10-15（二十一）— 🧪 结合进展提「15 天窗口消融建议」· 中文 HTML· 用户直令 · 最高优先
+
+> **用户令（2026-10-15）**：「安排 zhulong 结合试验进展，提出进一步消融试验的建议，写成 html 中文报告。现在到论文提交 deadline 还有 15 天。」
+
+**① 背景**：距投稿 deadline **15 天**。当前进展：B 4/4、C1 4/4、C2 4/4 已 5/5 收口（12 臂），**S1 三臂为剩余主线**（`omega_low` r1 跑中，`readback_binary` / `readback_none` 未跑）。
+
+**② 任务**：结合**当前试验进展 + 15 天时间约束**，提出「进一步消融试验」建议，写成中文 HTML 报告。每条建议给四要素：
+- **动机**：回答论文哪个开放问题 / 审稿人或读者最可能质疑什么
+- **做法 + 成本**：GPU/沙盒时延 + 墙钟估算
+- **优先级**：15 天窗口内「必做 / 建议 / 可选」三档
+- **编排**：与 S1 主线三臂的时间线如何错开（🚫 不与 S1 冲突）
+
+**③ 候选方向（自己 judge、不限于此，结合论文审视报告 §8「仍缺数据」清单）**：
+- 可回填但未做的消融（如 `wo_selfexpl` 自探索增益 82.1 vs 79.8、配对显著性检验 McNemar/paired bootstrap、gen-fail 机制深挖、错误分析基于 5-run 代表性 run 重做）
+- 其它你认为 15 天内价值最大的补充实验
+
+**④ 交付**：`doc/ZhuLong_DAC2027/reports/report_zhulong_next_ablation_plan_zh.html`（中文自包含），文末附「**15 天排期表**」（按天列出 S1 收尾 + 各项消融）。
+
+**⑤ 纪律**：纯写作零 GPU，在 S1 评测空窗期做，🚫 不打断 S1 主线；数字与 `MEMORY_ZHULONG.md` 执行看板一致；commit 前缀 `zhulong plan:` · 任务书 >32KB 自滚归档。
+
+---
+
+### 🆕 运维指令 · 2026-10-15（二十二）— 🔁 S1 重测调整：跳过 omega_low，改重测 readback_binary【用户直令 · 最高优先】【已完成·2026-10-16 归档】
+
+> ⏩ 归档于 2026-10-16 09:01。执行结果：omega_low 跳过采信 legacy 82.8±1.0%；readback_binary fresh 5/5=78.1±1.3% [75.9,79.1,77.8,78.5,79.1] 替换 legacy 66.2±16.1%（std 16.1→1.3 大幅改善，43.0% 离群消除）；readback_none 跳过采信 legacy 73.3±2.2%。S1 done_all。下方为指令原文。
+
+> **用户令（2026-10-15）**：「为什么要跑 S1.omega_low，这个试验在 zhulong_results 不是已经测好填好了吗？反倒是 S1.readback_binary 标准差过大，需要重测。」
+
+**① 停止 omega_low 重跑（跳过）**：
+- omega_low legacy **82.8±1.0%（std=1.0，5-run 高度一致）** 已可信，**不必 fresh 重跑**。
+- 当前 omega_low r1（PID 2616015）若已跑完则收该结果即可；若仍在跑则 kill，**取消后续 r2–r5 计划**。
+- 采用 legacy **82.8±1.0%** 作为 omega_low 最终值（`zhulong_results.md` 标注来源＝legacy、std 可信）。
+
+**② 重测 readback_binary**：
+- legacy **66.2±16.1%** 的 std 过大（含 43.0% 离群 run），**需 fresh 5-run 重测**得到可靠 std。
+- 切配置 `readback_binary`（READBACK=binary + 核心 4 工具 + full 锚点 phi=BUDGET0/LAGGED0），`stop.sh && start.sh` 重启后跑满 5 轮。
+
+**③ readback_none**：legacy 73.3±2.2%（std=2.2）同样可信，**暂不重跑**（与 omega_low 同理）。
+
+**④ 纪律**：判据(十三)不变（消融臂 Pass@1 任何值有效、timeout≤10 且无 infra 故障）；重测 binary 后把 fresh 结果替换 `zhulong_results.md` 旧 legacy 值并注明；commit 前缀 `zhulong S1:` · 任务书 >32KB 自滚归档。
+
+---
+
+## [归档 2026-10-18 02:57] 运维令二十六 & 二十三（被运维令二十七取代）
+
+> 搬出原因：运维令二十七（2026-10-17）对 B.glm-5.3-flash 和 B.deepseek-v4-flash 复测做了全新规格（trace 诊断 + maxTokens 16384 + -p 调整），并明确 wo_selfexpl r2-r5 不再跑（r1=83.5% 收口）。运维令二十三（原编排）与二十六（wo_selfexpl 排队）均被取代/闭合，原文搬入此处，TASK 留 1 行指针。
+
+### 运维指令 · 2026-10-16（二十六）— 🔜 排队：B.deepseek-v4-flash 之后接 wo_selfexpl 干净 5-run【用户直令·已被二十七取代·2026-10-18 归档】
+
+> **用户令（2026-10-16）**：「B.deepseek-v4-flash 之后跑 wo_selfexpl，记录排队。」
+
+**① 排队顺序**（如无新指示，**自动接续**）：
+1. **B.glm-5.3-flash**（在跑，运维令二十三，r1✅80.4% / r2 跑中）→ 5/5 收口
+2. **B.deepseek-v4-flash** fresh 5-run（运维令二十三，替换 legacy 16.7±12.3% std 过大）
+3. **🆕 C1.wo_selfexpl 干净 5-run**（本指令新增）→ 替换当前带 † 脚注的 81.4±4.1%
+
+**② wo_selfexpl 干净 5-run 规格**：
+- 配置：V2 文档（**自探索 OFF**）+ 检索 ON + 沙盒 ON + 主基座 `deepseek-v4-pro-fp4`
+- ⚠️ **关键**：r1 必须**严格 V2**（不得误用 V3 自探索文档——旧 r1=88.0% 即此污染，已在论文 `tab:main-ablation` 标 † 脚注）
+- 判据(十三)：timeout≤10 且无 infra 故障，Pass@1 任何值有效
+- 5-run 收口后：算 mean±std → 回填 `tab:main-ablation` 的 `ZhuLong w/o Self-Expl.` 行（移除 † 脚注）+ 同步 `zhulong_results.md` C1.wo_selfexpl 节 + 正文 Δ
+
+**③ 纪律**：切配置后 canary 自检；commit 前缀 `zhulong C1:`；/home<8G 暂停清理。
+
+**闭环状态（2026-10-18）**：被运维令二十七①取代——wo_selfexpl r1 regrade 已由运维侧手动启动（batch 2026_1017_055109），r1=83.5%(132/158) 收口，**r2-r5 不再跑**（陈熙元已测 wo_selfexpl = 77.3±2.9% 作为对照）。
+
+### 运维指令 · 2026-10-15（二十三）— 🔜 S1.readback_binary 后编排：B.glm-5.3-flash → B.deepseek-v4-flash【用户直令·已被二十七取代·2026-10-18 归档】
+
+> **用户令（2026-10-15）**：「告诉 zhulong，S1.readback_binary 测完后，如无其它指示，则按次序测 B.glm-5.3-flash（GLM-5.3 Flash）→ B.deepseek-v4-flash（DeepSeek-V4 Flash）。」
+
+**① 编排**（`readback_binary` 5-run 重测完成后，如无新指示，**自动接续**）：
+1. **B.glm-5.3-flash**（新加 B 模型消融臂，跑 5-run）：
+   - model：`glm-5.3-flash`
+   - API Key：`02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f`
+   - Base URL：`http://agi-gateway.cxmt.com/v1`（⚠️ `/v1`，非 `/cloud/v1`）
+2. **B.deepseek-v4-flash**（重测 5-run）：legacy `16.7±12.3%` 有 r5=37.3 离群、std 过大 → fresh 5-run 修正 std。
+
+**② 做法**：与 B 臂既有口径一致（full harness + V3 自探索，主基座 deepseek-v4-pro-fp4 不变，**仅替换被评测 backbone** key/endpoint）；判据(十三)（消融臂 Pass@1 任何值有效、timeout≤10 且无 infra 故障）。
+
+**③ 完成**：填 `zhulong_results.md` B 臂表（新增 glm-5.3-flash 行 + 替换 deepseek-v4-flash 为 fresh 值）。
+
+**④ 纪律**：每臂切配置后 canary 自检；commit 前缀 `zhulong B:` · 任务书 >32KB 自滚归档。
+
+**闭环状态（2026-10-18）**：被运维令二十七取代——fresh 5-run 已出（glm-5.3-flash 66.8±10.5% std=10.5 偏大 / deepseek-v4-flash 11.9±2.7% 但 73% 失败为 infra 问题）。运维令二十七对两臂分别启动复测（deepseek-v4-flash 复测 5/5✅=60.1±5.5% 已收口；glm-5.3-flash 复测 r1 两次作废·infra 阻塞·等运维决策）。fresh 值保留为历史对照。
+
+---
+
+## [归档 2026-10-18 02:57] 运维指令 · 2026-10-04：环境迁移 + 合并执行方式 + ops 中继独立
+
+> 搬出原因：合并执行已完成（单任务书 + 单 loop 运行中），起始状态已远过 init，ops 中继已稳定 6d+。infra 端口列表（8664/8665/8653/8669）已过时（实际为 8650/8651/8652/8654）。路径信息在 §6 + MEMORY 状态头已存。原文搬入此处，TASK 留 1 行指针。
+
+### 🆕 运维指令 · 2026-10-04：环境迁移 + 合并执行方式 + ops 中继独立
+
+> 本次把 4 个 phase（S1 保真度 / 组件 / S2 Φ / 模型）**合并进本单一任务书 + 单一 loop**，不再按 `ablation_run_conductor_serial.sh` 拆 3 个 task book + 4 个 loop。**执行顺序不变**（README §8）：S1 → 组件 → S2 Φ → 模型。
+
+1. **环境（agent 最终跑在 36.15 服务器，必须用下表 `/nasdata/` 路径）**：
+   - `BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`
+   - `PAPER=/nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/ZhuLong_DAC2027`（唯一可改 LaTeX 树）
+   - `GIT_ROOT=/nasdata/app.e0031982/code/super_intelligence_2035`
+   - **注意**：当前 2.12 开发机路径前缀为 `/nas_train/`（与 36.15 的 `/nasdata/` 独立挂载，互不关联）。旧 task book 中的 `/nasdata/` 路径在 36.15 上仍然有效，并非迁移关系。
+2. **infra 前置校验（PHASE=init 首次启动前必做，不满足则 `WAITING=1` 原地等）**：
+   - `df -h /home` 可用 **≥ ~8G**；四 shard 端口 **8664/8665/8653/8669 全 OPEN**；`run_code` 可正常执行（license 可用）。
+   - 旧停摆根因即此三项，**没恢复就别开跑，跑出来也作废**。
+3. **起始状态（运维在此填实）**：默认 `PHASE=init`，从 `STAGE=S1, CONFIG=omega_low, ROUND=1` 开始；若要延续旧 S1 进度，改填 `CONFIG=omega_low, ROUND=3`，并把 r1=81.6 / r2=82.3 写进 MEMORY 成绩表，r1/r2 不重跑。
+4. **ops 中继通道已就绪**：`run/zhulong_ops_relay.sh` + `run/ops/{inbox,outbox,README}.md`。运维通过 git 下发 shell 命令（~20s 轮询），与 BaiZe ops 相互独立。启动命令见 `run/ops/README.md` 或本报告 §6。
+   - ⚠️ 只有本区（运维指令区）的 ops 提及是写给人看的。**agent 不要碰 ops/ 目录**（中继专供运维下发命令，agent 写 MEMORY 和日常记录即可）。
+
+**闭环状态（2026-10-18）**：合并执行已落地（单任务书 + zhulong_loop.sh 运行中·PID81827）；起始点已远过 init（当前 B.glm-5.3-flash 复测）；ops 中继稳定（PID1023764）；infra 端口已更新为 8650/8651/8652/8654@10.129.32.75（原 8664/8665/8653/8669 过时）。
+
+---
+
+## [归档 2026-10-18 02:57] proxy 重启脚本（运维指令 · 2026-10-09 子节·已执行）
+
+> 搬出原因：该 restart 脚本已于 2026-10-08 执行完毕，loop 持续带代理运行（每次巡检确认）。常驻 self-check 规则保留在 TASK，仅 verbose 脚本搬入此处。
+
+```bash
+cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+git pull --rebase --autostash origin main          # 先同步（这次用你当前 shell 的代理）
+pkill -f zhulong_loop.sh; sleep 3
+export https_proxy=http://172.19.92.23:13128
+export http_proxy=http://172.19.92.23:13128
+setsid bash zhulong_loop.sh > /tmp/zhulong_loop.log 2>&1 < /dev/null &
+sleep 4
+# 复核：新 loop 进程应带代理
+_NPID="$(pgrep -f 'zhulong_loop.sh' | head -1)"
+tr '\0' '\n' < /proc/$_NPID/environ | grep -iE 'https_proxy'
+```
+
+---
+
+## [归档 2026-10-18 02:57] 运维令十三 items 3-4（phi_k3/phi_k10 历史事件处理·已闭合）
+
+> 搬出原因：phi_k3 与 phi_k10 均已 5/5 收口（见 MEMORY 成绩表）。items 3-4 是当时的事件处理指令，已执行完毕。常驻规则（items 1,2,5 + 红线 + 背景 + 用户令）保留在 TASK。
+
+**原 item 3**：phi_k3 r1 att1 = 72.8%（115/158, timeout=0）应判为有效。立即：
+   - 如果 att2 仍在跑 → 等 att2 跑完后取 att2 的成绩（不浪费已投入的算力），记 r1 = att2 成绩；
+   - 如果 att2 已跑完 → 取 att2 成绩记 r1；
+   - 如果 att2 尚未开始 → 取消 att2，直接记 r1 = 72.8%，推进 r2。
+   - 无论哪种情况，ERROR_COUNT 重置为 0，不因 72.8% 计错误。
+
+**原 item 4**：phi_k10 已完成的 5/5 = [78.5, 76.6, 77.2, 81.0, 75.3] → 77.7±2.2% 保留不变（已跑完，不追溯重跑）。但须在成绩记录中标注：r3/r4/r5 经历了不必要的重试（att1 低分被误判为无效），最终取的是重试后的值；原始 att1 值（r3=74.1%, r4=63.3%/74.1%）应保留在 daily-memories 中作为证据，不删除。
+
+**闭环状态（2026-10-18）**：phi_k3 5/5=69.1±2.5% ✅；phi_k10 5/5=77.7±2.2% ✅。两臂均收口，事件处理指令已执行。
+
+## 归档 batch 10 · 2026-10-23（agent 自滚·09:4x 活跃块之下的已闭合运维块·原文搬迁·未改写指令）
+
+> 搬迁自 ZHULONG_TASK.md 运维指令区 lines 38-416（09:1x → 10-19 23:2x + 已归档 batch 5~9 指针）。活跃块 09:4x 保留在任务书。
+
+### 🟡 运维指令 · 2026-10-23 09:1x（**r4 起跑：尝试 8663 组，不可用则回退 8650 组**）· 用户直令 ·【已被 09:4x 取代·历史·r1-r3 作废·配置从 N′ 改 full】
+
+> 用户原话：「新线不纳入论文。启动 r4 时尝试使用端口 8663/8666/8667/8670。」
+> **背景**：r1-r3 已用 8650 组跑完（r1=67.1%/r2=68.4%/r3 收口待 regrade）。r3 收口于 08:52（158 dirs/136 .py/task_queue 空）。8663 组 09:07 实测：8663/8666/8667 run_code 14-18s 超时（breaker 仍 cooling）、8670 服务未起 → **4/4 不可用**。8650 组 4/4 健康（14ms 秒回）。
+
+**① 立即执行（按序）**
+1. **先 regrade r3**（batch `2026_1023_072528`·端口 8650 组·照 r1/r2 regrade 模板·`/tmp/run_glm-5.3-flash_zl_r3_regrade.sh`）。记 r3 Pass@1 + literal-pass 数。
+2. **复探 8663 组**（4 端口 × run_code 真实调用，timeout 15s/端口）。判定标准：返回含 `"response"` 且 <5s = 可用；空响应/超时/breaker = 不可用。
+3. **根据探活结果起 r4**：
+   - **8663 组 4/4 可用** → 改 `.env` 的 `PROXY_PORTS` + `SANDBOX_ENDPOINTS` 为 8663 组（保留 workdir 映射，只换端口号）→ 重启 8090 MCP 服务 → 冒烟 run_code 4/4 OK → 起 r4（`-p 4`/`CLI_AGENT=zhulong`/`glm-5.3-flash`/端口 8663 组）。
+   - **8663 组任意端口不可用** → **不换端口**，保持 8650 组起 r4（与 r1-r3 同口径）→ 报告哪些端口不可用。
+4. r4 跑完 → regrade → 记 r4 → 续 r5 → 5/5 mean±std。
+
+**② 判据不变（05:0x 令）**：`literal-pass >10 → 只记录+标退化+继续跑`；停手仅 = MCP 率 ≥5/min **且** 4 端口全不可用。
+
+**③ 口径备注**：新线（glm-5.3-flash × zhulong）**不纳入论文**，是独立探索线。论文锚点仍用旧线 (N′) fp4×cline 的 4 轮 mean=76.7% provisional。
+
+**④ 回报**：r3 Pass@1 + literal-pass / 8663 组探活结果（4 端口逐个） / r4 用哪组端口起跑 / r4 batch 号 + 4 端口状态。
+
+
+### 🟡 运维指令 · 2026-10-23 05:0x（**用户决策 B：放弃 8663 组，用 8650 组继续跑满 5 轮**）· 用户直令 ·【已被 09:1x 取代·历史·r1-r3 已执行完毕】
+
+> 用户原话：「zhulong：B. 用 8650 组继续」（三选中 B，不修 8663、不查根因，先用可用端口拿结果）。
+> **背景**：8663/8666/8667/8670 licence breaker 持续 OPEN（548→553 连失恶化），需 ops 在沙盒侧修，**本轮不等**。8650/8651/8652/8654 已 4/4 OPEN（run_code 10-12ms OK）。
+
+**① 判据变更（重要，先读这条）**
+- ❌ 旧：`literal-pass >10 → 停手报运维`
+- ✅ **新：`literal-pass >10 → 只记录 + 在结果中标注退化，继续跑、继续 regrade`**（用户已决策不中止）
+- 仍保留停手条件：MCP 率 ≥5/min **且** 4 端口全不可用（基础设施真故障）
+
+**② 立即执行**
+1. **确认 .env 是 8650 组**：`PROXY_PORTS=8650,8651,8652,8654` + `SANDBOX_ENDPOINTS` 对应 `8650:...t0002997_1,...`；4 端口复探 **4/4 OPEN**。
+2. **解除 BLOCKER**：r1=67.1%（16 条 literal-pass）按新判据**记为有效轮次并标注退化**，不中止。
+3. **继续 r2 → r5**（`-p 4`、`CLI_AGENT=zhulong`、模型 `glm-5.3-flash`、端口 8650 组）：每轮跑完 → regrade → 记录。
+4. **5/5 出 mean±std**；r1 的 16 条 literal-pass 需**单列标注**，并说明「若剔除退化题的真实通过率」（另算，供论文引用）。
+
+**③ 每轮回报**：`batch / pass 率(N/158) / literal-pass 数 / 耗时 / 端口状态 / 5-run 累计`。
+
+
+### 🔴 运维指令 · 2026-10-23 00:3x（**停 r5e3 → agent 换 zl/zhulong → glm-5.3-flash 重跑 → 端口 8663/8666/8667/8670**）· 用户直令 · 最高优先
+
+> 用户原话：「1.zhulong 评测停下 2.重启一轮评测。使用模型 glm-5.3-flash 3.修改 eda_fastmcp/.env，将 cli agent 改成 zl 或 zhulong；重启8090端口的mcp服务.确保评测通过 zl 调用智能体 4.沙盒端口使用 8663/8666/8667/8670」
+> **停跑理由**：r5e3 跑 T+12h 仅 77.8%（9.7 tasks/h，r4 是 ~32/h），效率只有 1/3。
+
+**① 已由运维 RUN_ID 110 完成（勿重复）**：停 r5e3、备份 `.env`、探 4 端口、列出 agent 相关键名与 8090 启动脚本。
+
+**② 你要做的（按序）**
+1. **改 `.env` 的 cli agent 键** → 值改成 **`zl`** 或 **`zhulong`**（以 `eda_fastmcp` 实际注册名为准；不确定就查 tools 注册表/`sandbox_server` 源码，把键名+候选值写进 MEMORY）。
+2. **端口改 8663/8666/8667/8670**：`PROXY_PORTS=8663,8666,8667,8670`；**`SANDBOX_ENDPOINTS` 必须按 `port:workdir` 格式重写**（保留原 workdir 映射，只换端口号）。4 端口必须 **4/4 OPEN**。
+3. **重启 8090 MCP 服务**：用 RUN 110 [7] 找到的启动脚本；重启后 `ss -ltnp | grep 8090` 有监听 + `run_code` 冒烟通过。
+4. **切换模型为 `glm-5.3-flash`**：参考 2026-10-19「运维令三十一 B.glm-5.3-flash 复测」跑法（providers.json / `cline auth -m`），**MEMORY 写明改了哪个文件**。
+5. **起新一轮评测**：`-p 4`（🚫 不要 -p 8，历史证明退化）；启动前 `export PYTHON=$PWD/venv/bin/python`；`unset http_proxy https_proxy` + `NO_PROXY=10.129.32.75,localhost,127.0.0.1`。
+6. **关键验证：确认评测确实经 zl 调用** —— 检查 8090 日志出现 zl/zhulong 的 tool 调用记录（不是 cline 直连）。**这条必须贴证据。**
+
+**③ 监控口径（不变）**
+- 健康 = **task 完成数单调增长**（从 codegen jsonl / task dir 数），不是 log 行数。
+- 每轮 grep codegen jsonl 里字面量 `"pass"` 数（退化早期信号）。
+- 停手阈值：literal-pass >10 或 MCP 率 ≥5/min。
+
+**④ 回报**：新 batch 号 / agent 实际值 / 8090 PID / 4 端口状态 / 头 10 分钟进度 / **zl 调用证据**。
+
+
+
+### 🔴 运维指令 · 2026-10-20 21:4x（**用户直令：杀 r4/r5/regrade → 端口换 8650/8651/8652/8654 → 重启 r4⁗**）· 最高优先【已归档·历史·r4⁗ 已收口 INVALID·已被 10:4x 取代】→ 原文移至 `run/ARCHIVE_ZHULONG_TASK.md` §归档 batch 9。
+
+### 🔴 运维指令 · 2026-10-20 21:2x（r4 疑似停滞·只读取证）·【已归档·历史·已被 21:4x 取代】→ 原文移至 `run/ARCHIVE_ZHULONG_TASK.md` §归档 batch 8。
+
+### 🧹 运维总则 · 2026-10-18（禁令作用域清理）
+- **保留（全局有效）**：不伪造、不泄密、不杀健康训练、不覆盖他线产物、不绕过验证/实名/风控。
+- **降级为局部**：旧块里的“等运维许可 / 不重启 / 暂停 / 不开跑 / 不碰 X”只在**该块任务**内有效；与最新用户令或最新任务块冲突时，**以最新块为准**。
+- **已闭合旧块**不再作为禁令来源；唤醒时按各线体积规程归档到 `ARCHIVE_*`，不要让它继续占用 prompt。
+
+
+> 本节由**外部运维**通过 git 修改。**agent 禁止修改本节**（只写 `MEMORY_ZHULONG.md` / `daily-memories/` / `run/` 下自建脚本 / 论文树 `ZhuLong_DAC2027/ZhuLong_DAC2027/`）。
+
+### 🔄 运维指令 · 2026-10-22 10:2x（**r5e3 回到 -p 4 + 端口 8650/8651/8652/8654**）· 用户直令 · 最高优先 · 取代 09:0x
+
+> 用户令（原文）：「好的 r5e3 回到端口 8650/8651/8652/8654 和 p=4」
+> **背景**：r5e2（-p8 + 8650-8654）收口 **INVALID** —— agent 09:25 核验：**21 .py（vs r4e 156 .py）+ 593 sandbox "operation timed out" + stats success=149/timeout=9/failure=0** → **-p8 是退化根因**（8 cline 共享 4 sandbox，2×/port 争用打穿服务端 SANDBOX_TIMEOUT=150s；模型反复收 tool-error "The operation timed out" → 无法完成 code-gen → 不写 .py）。
+> ⚠️ **数据完整性纠正**：08:43 心跳称"136 literal-pass"是**捏造**（codegen jsonl 从未生成）—— r5e2 退化**真实**但签名是 **.py 缺失**（21/158）非 literal-pass。STOP 阈值以 **.py 落盘率 13.3% << r4e 98.7%** 判 INVALID。
+> **对照 r4e（-p4 + 8650-8654 + timeout=600）**：156 .py / 0 sandbox-timeout / **75.9%** → **-p4 是已验证的健康口径**。
+> **本令核心**：r5e3 **回到 `-p 4`**（与 r1/r2/r3/r4e 完全一致口径），端口 **8650/8651/8652/8654**。
+>
+> ⚠️ **agent 注意：这是任务书 ZHULONG_TASK.md 运维指令区，不是 ops inbox。请立即执行本令，不要再等 ops inbox 的 ACTION 令。ops inbox RUN_ID 107 是只读探针（已执行完），与本令无关。**
+
+#### 执行前清理（必做）
+1. **清磁盘**：⚠️ /home 仅 4.5G（<8G infra 前置阈值）。r5e3 起跑前**先清磁盘**：
+   - 清 r5e2 batch 残留（`/home/app.e0031982/eda_code_eval/2026_1022_001122/` 可删——r5e2 已判 INVALID 留证，但 .py 仅 21 个无 regrade 价值；**先 tar 压缩备份到 /nasdata/ 再删原目录**，或直接删——由你判断）
+   - 清 r5e batch 残留（`/home/app.e0031982/eda_code_eval/2026_1021_173249/` 同理，r5e 被杀 47% 无价值）
+   - 清 /tmp 旧 log（`/tmp/ABL_readback_none_retest_r5e.log`、`/tmp/ABL_readback_none_retest_r5e2.log` 可删——r5e/r5e2 已作废）
+   - 清其它可回收空间（旧 batch、worker ws 临时文件等）
+   - **目标**：/home free ≥ 8G（r5e3 起跑前置条件）
+2. **清 r5e2 残留进程**：pgrep 确认无 r5e2/r5e 孤儿 worker（r5e2 PID 4026302 GONE·9 孤儿已清过；再核一遍）
+3. **重启 4 端口沙盒 worker**：r5e2 收口后 8650/8651/8652/8654 仅 1 LISTEN → 需重启 4 端口确保全 OPEN（run_code 端到端探活 4/4 OK）
+4. **8090 健康**：PID 1504991 若活则不重启；若 GONE 则重启
+
+#### r5e3 起跑参数
+- **`-p 4`**（4 并发，回到 r1-r4 口径，**关键改动**）
+- 端口 `8650,8651,8652,8654`（.env 已是这组）
+- 其余配置同 r4e：`READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / V3自探索ON / full harness / 模型 `deepseek-v4-pro-fp4` / `export PYTHON=$PWD/venv/bin/python` / cline settings timeout=600（10:4x 已改，保持）
+- 日志 `/tmp/ABL_readback_none_retest_r5e3.log`；batch 新建（r5e3 编号）
+- **r5e3 30min 健康报告**：
+  - **.py 落盘率**（r5e2 盲点纠正——用 .py 落盘数/task_dirs，非 log grep，非 codegen jsonl）
+  - **sandbox-timeout 计数**（grep log "operation timed out"）
+  - **-32001 计数**（grep log "MCP error -32001"）
+  - 4 端口可达性
+  - **判据**：-32001=0 + sandbox-timeout≈0 + .py 落盘率 ≥80% → -p4 口径健康（与 r4e 一致）
+  - **若 30min 内 sandbox-timeout 抬头（率 ≥5/min）或 .py 落盘率 <50% → 停手报运维**（-p4 也退化则需换端口 8663/8666/8667/8670 或换沙盒机/错峰）
+- r5e3 收口 → regrade（端口 8650/8651/8652/8654·unset proxy + NO_PROXY=10.129.32.75 + EVAL_FW_DIR）→ 判据十三 → **5/5 mean±std（r1=78.5, r2=70.9, r3=81.5, r4e=75.9, r5e3）** → 更新 zhulong_results.md / 6_exp.tex → full@pro-cloud 5 轮
+
+#### 纪律
+- 🚫 不动 r1/r2/r3 产物与 r3 backup；🚫 不动 r4 家族 + r5e/r5e2 原始产物日志（留证——r5e2 batch 目录若删前必须 tar 备份到 /nasdata/）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不动 cline settings timeout=600。
+- 🚫 **不再用 -p 8**（实测打穿服务端 sandbox timeout·21/158 .py·15:3x 令作废）。
+- **若 r5e3 -p4 仍退化 → 停手报运维**（-p4 也退化说明 8650-8654 端口/沙盒机有问题，需换端口 8663/8666/8667/8670 或换沙盒机/错峰）。
+- commit：`zhulong S1: r5e3 回到 -p4 + 8650/8651/8652/8654 起 (用户直令·r5e2 -p8 退化作废)`。
+
+### 🔄 运维指令 · 2026-10-22 09:0x（**r5e3 回到 -p 4 + 端口 8650/8651/8652/8654**）· 用户直令 · 最高优先【被 10:2x 取代·历史·08:43 "136 literal-pass" 捏造已纠正】
+
+> 用户令（原文）：「好的 r5e3 回到端口 8650/8651/8652/8654 和 p=4」
+> **背景**：r5e2（-p8 + 8650-8654）收口 INVALID —— 136 literal-pass / 593 sandbox "operation timed out" / gen-success 仅 8.2% → **-p8 是退化根因**（8 cline 共享 4 sandbox，2×/port 争用打穿服务端 SANDBOX_TIMEOUT=150s）。15:3x 令预警的 -p8 离群风险实测命中。
+> **对照 r4e（-p4 + 8650-8654 + timeout=600）**：151 success / 0 literal-pass / 0 sandbox-timeout / **75.9%** → **-p4 是已验证的健康口径**。
+> **本令核心**：r5e3 **回到 `-p 4`**（与 r1/r2/r3/r4e 完全一致口径），端口 **8650/8651/8652/8654**（r4e 同端口，已验证 -p4 健康；r5e2 退化是 -p8 导致，非端口问题，残留风险低）。
+
+#### r5e3 起跑参数
+- **`-p 4`**（4 并发，回到 r1-r4 口径，**关键改动**）
+- 端口 `8650,8651,8652,8654`（.env 已是这组，r5e2 用过但 -p8 退化非端口问题；若需可重启 4 端口沙盒 worker 确保干净）
+- 其余配置同 r4e：`READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / V3自探索ON / full harness / 模型 `deepseek-v4-pro-fp4` / `export PYTHON=$PWD/venv/bin/python` / cline settings timeout=600（10:4x 已改，保持）
+- 日志 `/tmp/ABL_readback_none_retest_r5e3.log`；batch 新建（r5e3 编号）
+- **r5e3 30min 健康报告**：real_MCP_32001 + literal-pass（**查 codegen jsonl 非 log**，r4⁗/r5e2 盲点纠正）+ 4 端口可达性 + sandbox-timeout 计数
+  - **判据**：-32001=0 + literal-pass≈0 + sandbox-timeout≈0 → -p4 口径健康（与 r4e 一致）
+  - **若 30min 内 sandbox-timeout 抬头（率 ≥5/min）或 literal-pass >10 → 停手报运维**（-p4 也退化则需换沙盒机/错峰）
+- r5e3 收口 → regrade（端口 8650/8651/8652/8654·unset proxy + NO_PROXY=10.129.32.75 + EVAL_FW_DIR）→ 判据十三 → **5/5 mean±std（r1=78.5, r2=70.9, r3=81.5, r4e=75.9, r5e3）** → 更新 zhulong_results.md / 6_exp.tex → full@pro-cloud 5 轮
+
+#### 执行前清理
+- 确认 r5e2 残留进程已清（PID 4026302 GONE·9 孤儿 worker r5e2 起跑时已清过；再核一遍 pgrep 无 r5e2 残留）
+- 4 端口 8650/8651/8652/8654 探活（若不全 OPEN 则重启沙盒 worker；r5e2 收口后仅 1 LISTEN，需重启 4 端口）
+- 8090 健康确认（PID 1504991 仍活则不重启；若 GONE 则重启）
+
+#### 纪律
+- 🚫 不动 r1/r2/r3 产物与 r3 backup；🚫 不动 r4 家族 + r5e/r5e2 原始产物日志（留证）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不动 cline settings timeout=600。
+- 🚫 **不再用 -p 8**（实测打穿服务端 sandbox timeout·136 literal-pass·15:3x 令作废）。
+- **若 r5e3 -p4 仍退化 → 停手报运维**（-p4 也退化说明 8650-8654 端口/沙盒机有问题，需换端口 8663/8666/8667/8670 或换沙盒机/错峰）。
+- commit：`zhulong S1: r5e3 回到 -p4 + 8650/8651/8652/8654 起 (用户直令·r5e2 -p8 退化作废)`。
+
+### 🔄 运维指令 · 2026-10-21 15:3x（**r5e 改 8 并发**）· 用户直令【r5e2 -p8 实测退化·作废】
+
+> 用户令（原文）：「r4e 是4并发对吧，r5e除了换端口外，改成8并发」
+> **本令核心**：r5e **`-p 4` → `-p 8`**（8 cline 并发），端口仍按 14:0x 令换到 **8663/8666/8667/8670**（4 端口，8 cline 共享 4 sandbox，每端口 2 cline 排队，timeout=600 下应扛得住）。
+> ⚠️ **口径备注**：r1/r2/r3/r4e 都是 `-p 4`，r5e 改 `-p 8` 会与 r1-r4 口径不完全一致 → 5-run mean±std 时**单独标注 r5e=-p 8**，若 r5e 分数与 r1-r4 离群过大需在论文里说明或考虑剔除。
+> ⚠️ **风险监控**：8 cline 共享 4 sandbox + 同一台 10.129.32.75 + 同一 FlexLM → 若 r5e 30min 内出现 -32001 抬头（率 ≥5/min）或 literal-pass >10 → **停手报运维**（可能需降到 -p 6 或加端口）。
+
+#### r5e 起跑参数（取代 14:0x 令第 5 步的 -p 4）
+- **`-p 8`**（8 并发，关键改动）
+- 端口 `8663,8666,8667,8670`（14:0x 令已指定，RUN_ID 102 验证全 OK 12-16ms）
+- 其余配置同 r4e：`READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / V3自探索ON / full harness / 模型 `deepseek-v4-pro-fp4` / `export PYTHON=$PWD/venv/bin/python` / cline settings timeout=600（10:4x 已改，保持）
+- 日志 `/tmp/ABL_readback_none_retest_r5e.log`；batch 新建（r5e = r5 的第 5 次尝试编号）
+- r5e 30min 健康报告：real_MCP_32001 + literal-pass + 4 端口可达性 + **8 cline 调度情况**（是否所有 8 worker 都拿到 task）
+- r5e 收口 → regrade（用 r5e 端口 8663/8666/8667/8670）→ 5/5 mean±std（r1,r2,r3,r4e,r5e，**r5e=-p 8 单独标注**）→ 更新 zhulong_results.md / 6_exp.tex → full@pro-cloud 5 轮
+
+#### 纪律
+- 🚫 不动 r1/r2/r3 产物；🚫 不动 r4 家族原始产物日志（留证）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不动 cline settings timeout=600。
+- **若 r5e 30min 内 MCP timeout 风暴（率 ≥5/min）或 literal-pass >10 → 停手报运维**（降并发或加端口）。
+- commit：`zhulong S1: r4e 收口 regrade -> r5e -p 8 + 换端口 8663/8666/8667/8670 起 (用户直令)`。
+
+### 🔄 运维指令 · 2026-10-21 14:0x（**r5e 换端口 8663/8666/8667/8670**）· 用户直令 · 最高优先【r5e -p 4 部分被 15:3x 取代】
+
+> 用户令（原文）：「现在使用的是哪些端口，r5 使用 8663,8666,8667,8670 吧」
+> **背景**：r4e 当前用 8650/8651/8652/8654（健康跑中，76% 进度，-32001=0，fix 根治）。用户要求 **r5e 换到 8663/8666/8667/8670**（r4‴ 曾用这组，换走后应空出）。ops RUN_ID 101 已下发验证这 4 端口可达性。
+> **本令核心**：r4e 收口 regrade 判有效后，起 r5e 时**端口从 8650/8651/8652/8654 换到 8663/8666/8667/8670**，其余配置不变。
+
+#### r4e 收口后执行路径
+1. **r4e 收口**（pgrep 无）→ 手动 regrade（照 r4 模板改 GEN_FILE=batch `2026_1021_104432` + 端口 **8650/8651/8652/8654**·unset proxy + NO_PROXY=10.129.32.75 + EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework）
+2. 判 r4e 有效（判据十三：task timeout≤10·0 infra·0 exec_err·literal-pass≈0）
+3. **改 .env 端口**：`PROXY_PORTS=8650,8651,8652,8654` → `PROXY_PORTS=8663,8666,8667,8670`；`SANDBOX_ENDPOINTS` 对应改为 `8663:...,8666:...,8667:...,8670:...`（workdir 仍用 t0002997_1..4 或按现有绑定）
+4. **重启 8090**（pick up 新端口）+ MCP 冒烟 5/5 + 4 端口健康探针（8663/8666/8667/8670 × 2，确认全 OK）
+5. **起 r5e**：配置同 r4e **仅换端口** —— `READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / V3自探索ON / full harness / `-p 4` / 模型 `deepseek-v4-pro-fp4` / **端口 `8663,8666,8667,8670`** / `export PYTHON=$PWD/venv/bin/python` / cline settings timeout=600（10:4x 已改，保持）
+6. r5e 30min 健康报告（real_MCP_32001 + literal-pass + 4 端口可达性）
+7. r5e 收口 → regrade → 5/5 mean±std（r1,r2,r3,r4e,r5e）→ 更新 zhulong_results.md / 6_exp.tex → full@pro-cloud 5 轮
+
+#### 纪律
+- 🚫 不动 r1/r2/r3 产物与 r3 backup；🚫 不动 r4 家族原始产物日志（留证）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不动 cline settings 的 timeout=600（10:4x 修复保持）。
+- **若 8663/8666/8667/8670 验证不健康（breaker/空响应）→ 停手报运维**，不强行起 r5e（继续用 8650/8651/8652/8654 或等运维另指定）。
+- **若 r5e 30min 内再现 MCP timeout 风暴（率 ≥5/min）或 literal-pass >10 → 停手报运维**。
+- commit：`zhulong S1: r4e 收口 regrade -> r5e 换端口 8663/8666/8667/8670 起 (用户直令)`。
+
+### 🔄 运维指令 · 2026-10-21 10:4x（**参考 t0002147 配置修复 cline settings + .env → 重跑 r4⁗**）· 用户直令 · 最高优先【r4e 跑中·r5e 部分被 14:0x 取代】
+
+> 用户令（原文）：「请你分析一下代码，看看问题能否修复」+「好的 按照 t0002147（陈熙元）的做法改 cline settings 好了。其它的配置也可以参考他们」
+> **根因分析结论**（代码层面，带行号证据）：r4 家族 5/5 全 INVALID 的根因 = **cline 客户端 MCP 60s 缺省超时**（`~/.cline/data/settings/cline_mcp_settings.json` 无 `timeout` 字段 → 回退 60s）× **t0002147 的 64 worker 在同一台 10.129.32.75 + 同一 FlexLM 并发争用** → run_code P95 从 <60s 抬到 >60s → cline 单方面 abort 产生 -32001 风暴 → 模型在持续 tool-call 失败后退化为输出 literal "pass"。
+> - **对照 t0002147**：他们的 `cline_mcp_settings.json` 有 `"timeout": 600`（10min）→ 所以他们的 64 worker 不中招。**这就是现成的成功案例。**
+> - **服务端无 60s 超时**：eda_fastmcp `SANDBOX_TIMEOUT=150s` + eda_sandbox_lite `EXEC_TIMEOUT` 都 >60s → 客户端先放弃。
+> - **换端口无效**：8650/8651/8652/8654 都在同一台 10.129.32.75 + 同一 FlexLM → 端口隔离不了 CPU/licence。
+> - **licence fix（15:4x）已压住 breaker**：r4‴/r4⁗ 的 circuit_breaker=0 → 剩下的纯粹是 client-side 60s timeout。
+> - **退化签名**：literal "pass" 不是 eda_fastmcp 返回的（`tools/run_code.py:62` 成功路径只回 `{"response":"executed"}`），是 cline 在 60s abort 后把 -32001 喂回模型 → 模型退化为输出文本 "pass" 结束 turn。
+
+#### ① 参考 t0002147 改 cline_mcp_settings.json（核心修复）
+
+t0002147 的配置（`/home/app.t0002147/.cline/data/settings/cline_mcp_settings.json`，已实测读取）：
+```json
+{
+  "mcpServers": {
+    "EDA_MCP_server": {
+      "url": "http://10.251.36.15:18889/mcp",
+      "type": "streamableHttp",
+      "timeout": 600,
+      "disabled": false,
+      "autoApprove": [
+        "search_apis",
+        "get_api_details",
+        "search_apis_by_keyword",
+        "run_code"
+      ]
+    }
+  }
+}
+```
+
+**ZhuLong 当前配置**（`/home/app.e0031982/.cline/data/settings/cline_mcp_settings.json`）缺 `timeout` 字段 + autoApprove 用旧工具名 `run_pyAether_code_tool`（0731 已改名 `run_code`）。
+
+**改成**（对齐 t0002147，但 url 指向 ZhuLong 自己的 8090）：
+```json
+{
+  "mcpServers": {
+    "pyAether_MCP_server": {
+      "url": "http://10.251.36.15:8090/mcp",
+      "type": "streamableHttp",
+      "timeout": 600,
+      "disabled": false,
+      "autoApprove": [
+        "search_apis",
+        "get_api_details",
+        "search_apis_by_keyword",
+        "run_code"
+      ]
+    }
+  }
+}
+```
+
+**改动点**：
+1. **加 `"timeout": 600`**（对齐 t0002147，10min，>服务端 150s HTTP timeout，让服务端先返回真实结果）
+2. **autoApprove 改 `run_pyAether_code_tool` → `run_code`**（0731 改名后的正确工具名，t0002147 用的是 `run_code`）
+3. **autoApprove 加 `search_apis_by_keyword`**（t0002147 有，ZhuLong 缺）
+
+**备份**：改前 `cp ~/.cline/data/settings/cline_mcp_settings.json ~/.cline/data/settings/cline_mcp_settings.json.bak.20261021_104x`。
+
+#### ② 参考 t0002147 改 .env（辅助配置对齐）
+
+t0002147 的 `.env`（`/home/app.t0002147/mcp_0917/eda_fastmcp/.env`，已实测）与 ZhuLong 对比，**以下对齐**（仅加缺失项，不动已有值）：
+
+| 配置项 | t0002147 | ZhuLong 当前 | 操作 |
+|:--|:--|:--|:--|
+| `RAG_RECALL_TIMEOUT` | `25` | **未设** | 加 `RAG_RECALL_TIMEOUT=25` |
+| `EDA_RUNCODE_GUARDRAILS` | `false` | **未设** | 加 `EDA_RUNCODE_GUARDRAILS=false` |
+| `EDA_RUNCODE_READBACK` | **未设**（t0002147 不做 readback 消融）| `none` | **不动**（ZhuLong (N′) 唯一变量，保留）|
+| `PROXY_PORTS` | `8656,8658,8661,8662`（他们的）| `8650,8651,8652,8654` | **不动**（ZhuLong 自己的端口，与 t0002147 不冲突）|
+| `SANDBOX_ENDPOINTS` | `8656:t0002441_9,...`（他们的）| `8650:t0002997_1,...` | **不动**（同上）|
+| `EDA_OMEGA_FIDELITY` | `high` | `high` | 已一致 ✅ |
+| `EDA_PHI_BUDGET` | `0` | `0` | 已一致 ✅ |
+| `EDA_PHI_LAGGED` | `0` | `0` | 已一致 ✅ |
+| `SKILL_DATA_DIR` | `./docs/skill_data_selfexpl` | `./docs/skill_data_selfexpl` | 已一致 ✅ |
+| `SANDBOX_TIMEOUT` | `150` | `150` | 已一致 ✅ |
+| `EVAL_SANDBOX_WORKERS` | `4` | `4` | 已一致 ✅ |
+
+**注意**：
+- t0002147 用 cline 3.0.66，ZhuLong 用 cline 3.0.51。**不升级 cline 版本**（3.0.51 是 ZhuLong 锚点臂的复用基线，升级会破坏与 r1/r2/r3 的口径一致性）。
+- t0002147 用自己的端口 8656/8658/8661/8662（workdir t0002441_9..12），ZhuLong 用 8650/8651/8652/8654（workdir t0002997_1..4）→ **端口不冲突，各用各的**。
+
+#### ③ 重启 8090 + 验证 4 端口健康
+- 改完 .env 后重启 8090（pick up 新配置）。
+- 4 端口 run_code 健康探针（8650/8651/8652/8654 × 2 次，确认返回 `{"response":...}` 且无 breaker/空响应）。
+- MCP 冒烟 5/5。
+
+#### ④ 重跑 r4⁗（第 6 次，配置同 r1-r3 + 新 cline settings）
+- **先标 r4 家族 5/5 全 INVALID**（r4/r4′/r4″/r4‴/r4⁗ 均作废不进 5-run，产物日志留证）。
+- **r4⁗ 起跑**：配置与 r1-r3 完全一致 + 新 cline settings（timeout=600）—— `READBACK=none` / OMEGA=high / BUDGET=0 / LAGGED=0 / V3自探索ON / full harness / `-p 4` / 模型 `deepseek-v4-pro-fp4` / 端口 `8650,8651,8652,8654` / `export PYTHON=$PWD/venv/bin/python`。
+- 日志 `/tmp/ABL_readback_none_retest_r4e.log`（r4⁗ 已用 r4d4，本次用 r4e）；batch 新建。
+- **r4⁗ 30min 内必报**：real_MCP_32001 计数 + literal "pass" 计数 + 4 端口可达性。
+  - **判据**：超时率 ≤ ~0.001/行 + literal-pass ≈ 0 → fix 根治。
+  - **若 30min 内仍 MCP timeout 风暴（率 ≥5/min）或 literal-pass >10 → 停手报运维**（client timeout 修复无效，需考虑换沙盒机）。
+- r4⁗ 收口 → r5⁗（同配置同端口）→ 5/5 mean±std（r1,r2,r3,r4⁗,r5⁗）→ 更新 zhulong_results.md / 6_exp.tex → full@pro-cloud 5 轮。
+
+#### ⑤ 纪律
+- 🚫 不覆盖 r1/r2/r3 产物与 r3 backup；🚫 不动 r4/r4′/r4″/r4‴/r4⁗ 原始产物与日志（留证）；🚫 不动 t0002147；🚫 不改 `.env` 的 READBACK/OMEGA/BUDGET/LAGGED；🚫 不升级 cline 版本（保持 3.0.51）。
+- 改 cline settings + .env 前**先备份**。
+- **若 r4⁗ 30min 仍退化 → 停手报运维**，不盲目第 7 次重跑（考虑换沙盒机/错峰）。
+- commit：`zhulong S1: 参考 t0002147 修复 cline settings(timeout=600) + .env 对齐 -> 重跑 r4''''`。
+
+### 🔄 运维指令 · 2026-10-20 15:4x（**licence fix 已部署 → 验证 4 端口 → 重启 8090 → 重跑 r4‴**）· 用户直令 · 最高优先【已归档·历史·已被 10:4x 取代·未根治】→ 原文移至 `run/ARCHIVE_ZHULONG_TASK.md` §归档 batch 9。
+
+### 🔄 运维指令 · 2026-10-20 10:1x（09:0x 令作废·继续按 08:2x 跑 r4″→r5″）·【已归档·历史·已被 15:4x 取代】→ 原文移至 `run/ARCHIVE_ZHULONG_TASK.md` §归档 batch 8。
+
+
+### 🔄 运维指令 · 2026-10-20 09:0x（先 regrade r4′ 看成绩）·【已归档·历史·作废·基于误判·已被 10:1x 取代】→ 原文移至 `run/ARCHIVE_ZHULONG_TASK.md` §归档 batch 8。
+
+
+### 🔄 运维指令 · 2026-10-20 08:2x（停 r4′→重启 8090→换端口 8663/8666/8667/8670 重跑 r4″）·【已归档·历史·已被 09:0x 取代】→ 原文移至 `run/ARCHIVE_ZHULONG_TASK.md` §归档 batch 8。
+
+
+### 🔄 运维指令 · 2026-10-20 06:3x（停 r5→重启 8090→重跑 r4/r5）·【已归档·历史·已被 08:2x 取代】→ 原文移至 `run/ARCHIVE_ZHULONG_TASK.md` §归档 batch 8。
+
+
+
+### 🔬 运维指令 · 2026-10-20 06:0x（P0：r4=31% 根因排查·680 timeout 归因）·【已归档·历史·已闭合】→ 原文移至 `run/ARCHIVE_ZHULONG_TASK.md` §归档 batch 8。
+
+
+
+### 🔒 运维指令 · 2026-10-19 23:2x（**模型口径锁定：r4/r5 用 fp4；full 用 pro-cloud**）· 用户直令 · 与 23:0x 块同等最高优先
+
+> 用户确认（原文）：「**r4/r5 继续用 fp4，但跑 full 的时候，切换到 deepseek-v4-pro-cloud。**」
+> 这是对 23:0x 块的**最终口径裁定**，覆盖任何歧义。
+
+**① 臂 × 模型对照（严格照此执行，不得自行调换）**
+
+| 阶段 | readback 档 | **模型 / endpoint / key** | 轮数 |
+|:--|:--|:--|:--:|
+| r4, r5 | (N′) `READBACK=none` | **`deepseek-v4-pro-fp4`** @ `/cloud/v1`，key 末 8 = **`8aa0785e`** | 各 1 轮 → 凑满 5/5 |
+| full 复测 | (F) `READBACK=full` | **`deepseek-v4-pro-cloud`** @ `/cloud/v1`，key 末 8 = **`8aa0785e`** | 5 轮 |
+
+> ⚠️ **两臂用的可能是同一个 key `...8aa0785e`**（03:50 探针显示该 key 对 fp4 与 cloud 都返回 200）。**“用 deepseek-v4-pro-cloud 的 apikey” = 换模型名 + 用能访问 pro 族的那个 key**；`88ea2f23`（glm 的）对 pro 族**必 403**，禁用。
+
+**② 起跑前必做「模型落点自检」（防止模板复制带错模型）**
+> 背景：源码注释显示 worker 的 `settings/providers.json` 由 `prepare_cli_env` 从 `$CLI_DATA_DIR(~/.zhulong)` 复制而来，而 `~/.zhulong/settings/providers.json` 当前是 **`glm-5.2`**（那是**编排模型**，给 opencode 用）。RUN_ID 89 实测该字段确实是 `glm-5.2` —— 所以**不能只看它**，必须看 **worker 实际生效的那份**。
+- **r4/r5 起跑前**：`ls -dt ${CLI_ISOLATION_DIR}/worker_*/data/settings/providers.json | head -1 | xargs grep -o '"model"[^,]*'`
+  → **必须是 `deepseek-v4-pro-fp4`**；若是 `glm-5.2` / `pro-cloud` / 其它 → **先修正模板再起跑**，并把 before/after 原文贴进回报。
+- **full 臂起跑前**：同一检查点 → **必须是 `deepseek-v4-pro-cloud`**。
+- 同时贴 `/proc/<cline worker pid>/environ` 里与模型相关的键（若有），双证。
+
+**③ 口令（两臂都要在日志首行写明）**
+- r4/r5：`ARM=(N') MODEL=deepseek-v4-pro-fp4 KEY=...8aa0785e READBACK=none`
+- full：`ARM=(F) MODEL=deepseek-v4-pro-cloud KEY=...8aa0785e READBACK=full`
+
+**④ 报告口径**
+- `(N′) 5/5` 与 `(F)@pro-cloud 5/5` **分表列示**，不得合并计算。
+- full 臂须注明：「**与既有 (F)（fp4）相比，模型部署不同（cloud vs fp4），不可直接混算**」。
+- n<5 不写 ±。
+
+**⑤ 端口（两臂统一·用户 23:3x 直令）**
+- **`8666 / 8667 / 8669 / 8670` @ 10.129.32.75** —— RUN_ID 90 普查（23:21，21 端口 × TCP+真实执行）：这 4 个 `TCP_OPEN` 且 **14/15/15/14 ms**，全部 USABLE；**远离 t0002147 长期占用的 8650/8652/8654**，撞车概率最低。
+- 起跑前逐端口 10s 内 POST 探活；BUSY 按序降级：`8665 → 8664 → 8663 → 8662 → 8661 → 8660 → 8658 → 8657`。
+- 🚫 禁用 `8650/8652/8654`（占）、`8659/8668`（7.1–7.3s 慢，会拖慢整轮）。
+- 报告里列出**实际使用的 4 个端口 + 每次探活结果**。
+
+
+
+> 用户令（原文）：「zhulong 启动 r4/r5。跑完 (N′) 5-run后，再测一次 full，这次用 deepseek-v4-pro-cloud 的apikey」
+> 前置已达成：**r3 ✅ 81.5% (123/151)**（Path A 修复，4 shard 31/30/31/31 极一致）；当前 3/5，mean 76.97% provisional。
+
+**① r4 + r5（串行，先把 (N′) 5-run 补齐）**
+- 配置**完全不变**：(N′) 唯一变量 `EDA_RUNCODE_READBACK=none`、OMEGA=high、BUDGET=0、LAGGED=0、V3 自探索 ON、full harness、`-p 4`、模型 **`deepseek-v4-pro-fp4`**（**不要换**）、cline 3.0.51 不动。
+- **端口**：**统一用 `8666 / 8667 / 8669 / 8670`**（用户 23:3x 直令；RUN_ID 90 实测 14–19ms 全可用，且远离 t0002147 占用的 8650/8652/8654 段）⇒ **起跑前对每个端口做 1 次 10s 内 POST 探活，BUSY 的按序换下一组：`8665 → 8664 → 8663 → 8662 → 8661 → 8660 → 8658 → 8657`**（🚫 **禁用** 8650/8652/8654 被占、8659/8668 慢 7s）。
+- 每轮结束：`ps -p <PID>` 判 GONE → 若 Step 7.1 auto-grade 报 FileNotFoundError，**沿用 r1/r2 的手动 regrade 模板**（`unset proxy` + `NO_PROXY=10.129.32.75` + `EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework`）。
+- **若 regrade 再次出现 shard 全 timeout**：直接复用 r3 成功的 Path A 手法 —— `run_on_sandbox.py` 按 shard 直跑、绕开 `run_eval.py` 分片，写**独立输出文件**（`execution_results_shard_N_retest.jsonl`），不覆盖原产物。
+- 判据（十三）：`timeout ≤ 10`、0 infra、0 exec_err。Pass@1 任何值有效，**不因低分重跑**。
+- 收口后：**5/5 mean ± std** 写入 `zhulong_results.md` S1.readback_none 节 + `6_exp.tex` `tab:readback-cost` (N′) 行 + `tab:ablation-harness` (N) Mean read-backs；**n<5 不得写 ±**。
+
+**② 5-run 收口后 → 再测一次 full（用 `deepseek-v4-pro-cloud` 的 key）**
+> ⚠️ 用户指定「用 deepseek-v4-pro-cloud 的 apikey」。**执行前必须先做 canary**，不许直接开 5-run：
+> 1. **canary**（本机 `.29` 直连、剥 proxy、**不打印 key**）：`deepseek-v4-pro-cloud` @ `/cloud/v1`，用**现有 key 逐个试**，记录 `HTTP` + `model` 字段 + `content` 是否非空。
+>    - 已知可用：key 末 8 位 **`8aa0785e`**（`02_088EE9...e13f4f37-...-044c8aa0785e`）→ 10-19 03:50 探针 `deepseek-v4-pro-cloud` **HTTP 200** ✅。
+>    - 已知不可用：`88ea2f23`（glm 的 key）访问 pro 族 **必 403**（该 key 无 pro 家族权限）。
+> 2. **只有 canary 200 且 content 非空**才开跑；403/429/空内容 → **报 blocker，贴 HTTP 原文，不自行改用其他 key 硬跑**。
+> 3. **「full」= readback 的 F 档（`EDA_RUNCODE_READBACK=full`）**，不是 (N′)。这是**新的对照臂**：`(F) 档 × deepseek-v4-pro-cloud`。
+>    - 其余配置对齐现有 (F) fresh 5-run（OMEGA=high / BUDGET=0 / LAGGED=0 / V3 自探索 ON / full harness / `-p 4`）。
+>    - 跑 **5 轮**，每轮同 ① 的 regrade 与 Path A 兜底手法。
+> 4. **口径披露（必须写进报告）**：这一臂与既有 (F) 的差别是 **模型部署不同（cloud vs fp4）**，须在 `zhulong_results.md` 与论文表**显式注明**「cloud vs fp4 部署不同，不可与既有 (F) 行直接混算」；n<5 不写 ±。
+> 5. 5 轮收口后：mean±std → 新表行 `(F) @ pro-cloud` → 更新 MEMORY + `zhulong_results.md`，commit `zhulong B: full × pro-cloud 5/5`。
+
+**③ 纪律**
+- 串行：先 r4→r5 收口，**再**做 ②，不得交叉并行抢端口。
+- 🚫 不改 `run_cli.sh` / `run_cline_script.sh` / cline 版本；🚫 不动 t0002147；🚫 不杀 loop/relay。
+- 端口探活与 kill 一律**显式 PID**（🚫 `pkill -f` 带自身子串）；长输出必须 `cut`。
+- MEMORY 心跳 **≤6 行**（文件已 33KB，每次唤醒先滚 1-2 条旧 📦 块到 daily）。
+
+
+### 📦 已归档（06:3x，batch 5）：三十（P1 排队 N′/B 成本）
+
+> **已闭合**：(B) 成本 5-run 零 GPU 完成（22.3±3.3 / 3.73±0.72h / 7.6±3.4）；(N′) 5-run 进行中（本文件 06:3x 块承接）。原文移至 `run/ARCHIVE_ZHULONG_TASK.md`。
+
+
+
+---
+
+## 归档 batch 11 · 2026-10-24（10:3x 活跃块之下的已闭合论文块·原文搬入）
+
+> 以下 7 个论文运维块均已闭合（6p 精简 + §4.2 A 路线重写 + 价值主张重定位 + 长鑫落地口径 + 否决保 6 backbone → 全部执行于 commit `d2d9bb7a`「zhulong paper: 按精简报告改 6 页版 (12p->6p)」）。原文搬入此处，留 1 行指针在 ZHULONG_TASK.md。
+
+### ✅ 最终裁定 · 2026-10-24 10:2x（**走 A 路线最终写法：3-4 行引理 + 场景论证 + 实验对应，不推导**）· 用户直令 · 覆盖前一块的(a)(b)待确认
+
+> 用户原话：「我建议**走 A 路线，但把 A 写成一个"有引用支撑的命题"，而不是"直接抄一个已知界"**……**你确认"转移确定性"这个论证可以写，我就把 4.2 按 A 重写成 3-4 行的引理 + 场景论证 + 实验对应**」
+> **裁定：走 A。用户已认可"转移确定性"论证可写。按下面三句话落地，🚫 不要自行推导。**
+
+**① 为什么是 A（写进 MEMORY 备查，不进论文）**
+1. **A 的风险不在严谨性，而在"审稿人是否接受简化"** —— 而 EDA 场景下这个简化**是真实属性，不是妥协**（见 ②-a）。
+2. **B 的代价是"自己推的界会被逐行审"** —— 6 页论文里为 3-4 行引理承担"推导被挑错"的风险性价比低；自己推最好的结果≈文献、最坏是常数错。
+3. **A 的独特优势：ε 同时成为理论与实验的变量** —— 回读三档就是在操纵 ε，backbone 轴改变 K，**理论与实验共用同一个变量**。B 路线若 ε 定义（KL vs TV / 不同范数）与实验对不上，会导致理论与实验脱节。
+
+**② §4.2 的最终写法（3-4 行，严格按此，不要展开推导）**
+
+**a) 场景论证（替代"简化假设"的辩护，这是关键）**
+> EDA 设计数据库的转移是**确定性的**：`run_code` 执行一段脚本，对设计库的改动是确定的 —— **同一动作在同一状态下产生同一结果，不存在动作随机性**。故 **T 精确不是简化，而是场景的真实属性**。唯一失配在观测似然 Ω：检索返回的文档可能不完整、执行回读可能截断 —— **这正是 ε 要刻画的**。
+
+**b) 引理（引用支撑，不推导）**
+> 设观测保真度 `ε ≜ sup_θ ‖p(·|θ) − p̂(·|θ)‖_TV`（真实与 agent 所用观测似然的全变差）。由标准 POMDP 鲁棒性结果 [引用]，`D_grounding ≤ g(ε)`，其中 **g 只依赖 ε、不依赖先验 K 的复杂度**，且**当 ε→0 时 g(ε)→0**。
+> - 引用要求：**引 1-2 篇支撑"ε 形式界"的文献**（POMDP 模型失配鲁棒性 / 近似 POMDP 误差传播 / Bayesian robustness）。**必须核对文献真实存在且结论对口，不许硬凑。**
+
+**c) 实验对应（把理论和实验缝起来）**
+> 回读三档（**N′ / B / F**）操纵 ε **由大到小**，**Table 5 的单调增益即 g(ε) 的单调性**；**backbone 轴（Table 8）改变 K 而 ε 固定**，其 **22.0 pp 跨度远小于 ε 轴的 57.4 pp**，与"**g 不依赖 K**"一致。
+
+**③ 必须修的符号错误（上一块已提，此处强调）**
+- Eq.2 右边改 **纯先验 `p_K(·)`**，**去掉 `|o_{1:t}`**（当前写法"仅先验却条件在观测上"自相矛盾，是硬伤）。
+
+**④ 必须保留的**
+- **Eq.1 保留**，但要在公式旁点一句：**"Ω 的具体实现 = 检索 + 执行回读"这个映射才是本工作对 POMDP 栈的贡献**（否则审稿人会问"这不就是 Kaelbling 1998"）。
+- **§4.3 映射压成 3 句但保留** —— **ε 的定义需要 Ω 的实现作落点**，不能全删。
+- **四处措辞统一**：Abstract / Intro / §4.2 / Conclusion 统一说 **"Bayesian argument"** 或 **"formal bound"**，不许一处 Bayesian 一处只说 argue。
+
+**⑤ 篇幅**
+理论章 0.45p → **约 0.8p（+0.35p）**，从实验章省（`tab:cost` 移附录 −0.45p + Table 9 改文字 −0.25p），**净余 0.35p 给 deployment**；总体仍 **≤6.0 页**。
+🚫 backbone 6 个模型不许删（见否决令）。
+
+**⑥ 交付**：改完编译 → 贴页数 → 贴 §4.2 全文（含引理与引用）→ commit+push。
+
+
+### 📐 理论章重写令 · 2026-10-24 10:0x（**保留公式 + 修 Eq.2 符号 + 补 ε-bound 引理 + 4.3 映射压缩保留**）· 用户直令 + 同行意见 · 最高优先
+
+> 用户原话：「我赞同保留公式。在 agent 落地这个方向，理论严谨性确实是稀缺品……但是朋友对于理论如何跟实验结果形成合力，有一些意见，供 zhulong agent 参考」
+> **结论：公式保留，但当前 Eq.1/Eq.2 是"定义"不是"论证"，直接留会被审稿人挑符号错误和"bound 没证"。必须重写 §4.2。**
+
+**① 先看三个弱点（同行指出，已核实成立）**
+
+| # | 问题 | 严重度 |
+|:--:|---|---|
+| 1 | **Eq.1 是标准 POMDP 滤波，没有 EDA 特化**。审稿人会问"这不就是 Kaelbling 1998？"。**新的是 "Ω 的实现 = 检索+执行回读" 这个映射，但公式里没体现**（只在 §4.3 文字说） | 🟠 中 |
+| 2 | **Eq.2 符号错误（硬伤）**：`D_KL(p(·\|o_{1:t},K,env) \|\| p_K(·\|o_{1:t}))` —— **右边"仅先验"却条件在 `o_{1:t}` 上，定义自相矛盾**。严格应为 `D_KL(p(·\|o_{1:t},K,env) \|\| p_K(·))`，**右边纯先验，不条件任何观测** | 🔴 **高（一眼可见）** |
+| 3 | **"bounded by observation fidelity" 在公式里没有证明**：Eq.2 只**定义** gap，没**证明**它被 Ω 保真度约束。**这是理论与实证之间最大的裂缝** | 🔴 **高** |
+
+**② 必须补的引理（把"定义"变"论证"，这是核心）**
+
+设观测通道保真度
+```
+ε ≜ sup_θ ‖ p(·|θ) − p̂(·|θ) ‖_TV
+```
+（真实观测似然 vs agent 使用的似然之间的全变差距离），则对任意先验：
+```
+D_grounding ≤ 2ε / (1 − ε)    （量级界）
+```
+**关键性质必须写明**：**该上界只依赖 ε（观测保真度），不依赖先验 K 的复杂度**。
+- 先验再强，ε≠0 时 gap 下不去；
+- ε→0 时 gap→0，与 K 无关。
+
+**这就是核心 claim 的形式化**：`bounded by observation fidelity, not model scale`。
+
+**③ 理论与实验的闭环（必须写进 §4.2 或 §4.4，这是加分项）**
+> **理论预测 = gap 随 ε 减而减、与 K 无关**
+> **实验验证 = 两侧同时验证**
+> - **Table 5 的 N′→B→F 轴 = 在减小 ε**（回读保真度：无→二值→全观测）
+> - **Table 8 的 backbone 轴 = 在改变 K**
+> → 实验正好从 ε 和 K 两个方向验证同一命题。**这个闭环比"公式定义 gap + 实验报数字"强得多。**
+
+**④ 具体三处改动**
+1. **修 Eq.2 符号**：右边改纯先验 `p_K(·)`，去掉 `|o_{1:t}`。
+2. **补 bound 引理（3–4 行）**：引入 ε，给 `D_grounding ≤ g(ε)`，明确写"g 不依赖 K 的复杂度"。**可引用 POMDP 鲁棒性/模型失配的标准结果**（省事、审稿人接受）或自行推导。
+3. **§4.3 映射压缩但保留**：Ω/Φ/T/Π → 四工具映射压成 **3 句**，**不能全删** —— 因为 **ε 的定义需要 Ω 的具体实现作落点**（ε 就是"检索+执行回读"的保真度）。
+
+**⑤ ⚠️ 需要用户确认的两个技术选择（**先提出问题，未确认前按默认执行并标注**）**
+- **(a) 是否接受简化假设**：`转移模型 T 精确、只有观测似然失配`（这是 `2ε/(1−ε)` 成立的前提之一）。
+- **(b) 引用现成的界 vs 自己推**：
+  - **省事路线（默认）**：引用已知 POMDP 鲁棒性/模型失配结果 → 3–4 行引理 + cite
+  - **硬路线**：自己推 → 工作量大，"稀缺品"更纯
+- **默认先走 (a) 接受 + (b) 引用现成界**，并在 MEMORY 里写「待用户确认；若选硬路线再改」。
+
+**⑥ 篇幅与账怎么算**
+- 理论章 **0.45p → ~0.8p（+0.35p）**
+- **这 0.35p 从实验章省**：`tab:cost` 移附录（−0.45p）+ Table 9 改文字（−0.25p）= **−0.7p**，**净余 0.35p 给 deployment**，**总账是平的**。
+- ⚠️ 仍然不能删 backbone（见上一块否决令），仍要 **≤6.0 页**。
+
+**⑦ 摘要/Intro/Conclusion 措辞必须统一（重点）**
+- 既然保留公式，**"Bayesian argument" 必须保留**（先前那版删了，**要改回来**）：
+  > `...and a Bayesian argument bounds the resulting "grounding gap" by observation fidelity, not model scale.`
+- Intro 同理。
+- **四处（Abstract / Intro / §4.2 / Conclusion）措辞必须一致**：统一说 **"Bayesian argument"** 或 **"formal bound"**，**不许一处说 Bayesian、一处只说 argue**（这正是之前"摘要说 Bayesian、正文没公式"的反向矛盾）。
+
+
+### ⛔ 用户否决 · 2026-10-24 09:5x（**报告 §② #3 与"清中文注释"两条作废，改稿时不得执行**）· 用户直令 · 最高优先
+
+> 用户原话：「1. 它的 **#3（删 2 个弱 backbone，Table 8 只留 4 模型）我不认同**。它说"保留 4 模型仍呈 22pp 跨度"——但**如果删掉 DeepSeek-V4-Flash 和 Doubao，跨度就从 22.0 缩到 8.4**，这会让"backbone 跨度 22.0 pp"这个数字在正文里**失去表格支撑**。2. 它说"**清掉所有中文翻译注释**"：**这个没必要，中文注释不占篇幅**。」
+
+**① 否决项 A：`tab:llm-comparison` 必须保留 6 个 backbone，禁止删减**
+- 报告 §② #3（第 117 行）与 §③（第 143 行）关于「删 2 弱模型（DeepSeek-V4-Flash / Doubao-Seed-2.0-Pro 移附录）」的建议 **🚫 作废**。
+- **理由（用户指出，报告自相矛盾）**：删掉这两个后，backbone 跨度会从 **22.0pp 缩到 8.4pp**，而摘要/引言里 **"backbone axis spans only 22.0 pp"** 这句核心证据就**没有表格支撑**了 —— 审稿人一查表就会发现数字对不上。
+- **必须做**：**Table（llm-comparison）保留全部 6 个 backbone**。若为省版面，**改为紧凑排版**（如 6 行、精简列名、去掉多余指标列），**但一个模型都不能删**。省版面请从别处找（见 ②）。
+
+**② 否决项 B：中文翻译注释不要删**
+- 报告 §② 末尾（第 107 行）「建议改稿时一并清掉中文注释」**🚫 作废**。
+- **理由**：中文注释是 `%` 开头的 LaTeX 注释，**不参与渲染、不占页数**，删了纯粹白费功夫且有丢信息风险。
+- **必须做**：改稿时**保留中文翻译注释**；但**可以**（可选）把它们统一压成同样缩进以保持源码整洁，**不必删除**。
+
+**③ 替代方案：这 0.3p 从哪里补回来（按优先级）**
+既然不能删 backbone，请从报告 §② 里**性价比更高且无副作用**的条目补：
+1. **`tab:cost` 移附录**（报告 #?，省 ~0.3p，且不影响任何正文数字）
+2. **`tab:error-categories` 改文字一句**（省 ~0.2p）
+3. **`tab:phi-bound` 删 [TBD] 空列**（省 ~0.1p，不影响有效数据）
+4. **Error Analysis 4 case → 1 段**（省 ~0.25p）
+5. 实验章 S1–S4 正文各压到 1 段（这是原计划的主体，省 ~2p+）
+
+**④ 复核要求（改稿后必须做）**
+- ✅ 编译后**逐个核对正文里出现的所有关键数字**都能在表格里找到出处：
+  `75.7%` / `18.3%` / `62.5%` / **`57.4pp`** / **`22.0pp`** / `449 tasks` / `four commercial runtimes`
+- ✅ 特别确认：**`22.0pp` 必须能由保留下来的表逐行算出**（最强 - 最弱 = 22.0），**贴出这 6 个模型的完整数值 + 极差计算**。
+- ✅ 页数仍需 **≤6.0**；若保留 6 模型后超页，**按 ③ 的顺序继续砍**，不许回头删模型。
+
+
+### 🔨 执行令 · 2026-10-24 09:3x（**按精简报告改一版论文 → 编译 → 提交并推送，供用户审阅**）· 用户直令 · 最高优先
+
+> 用户原话：「zhulong 精简论文的报告我看了，**安排他按此改一版，提交 & 推送我看看**。」
+
+**① 依据**：`run/reports/report_zhulong_paper_trim_advice_zh.html`（28,389B，commit `c32342e4`）
+按它的 **① 逐章诊断表 + ② 可删清单（16 条）+ ④ 6 页预算 + ⑤ 摘要/引言草稿** 执行。
+
+**② 硬指标**
+| 项 | 目标 |
+|---|---|
+| **正文页数** | **≤ 6.0 页**（当前 12.0 页）——编译后必须实测页数并贴出 |
+| 行预算 | 按报告 §④：Abstract ~16 / Intro ~30 / Bg ~10 / Design ~26 / Grounding ~34 / Bench ~22 / **Exp ~95** / Disc ~5 / Concl ~6 ≈ **244 行** |
+| 表/图 | 正文 **1 图 + 3 主表**（main-ablation + phi-bound 精简 + llm 4 模型）；其余移附录或合并 |
+
+**③ 关键改动（按报告执行，不得走样）**
+1. **实验章 6_exp.tex 从 248 非注释行 → ~95 行**（最硬一刀）：
+   - `tab:cost` → 移附录；`tab:configurations` → 并入正文文字；`tab:error-categories` → 改一句文字
+   - `tab:phi-bound` → 删 [TBD] 空列；`tab:llm-comparison` → 6 模型留 4
+   - S1–S4 各压到 ~1 段；Error Analysis 4 case → 1 段
+2. **摘要用 §⑤-A 草稿**（含末句落地佐证"hundreds of design engineers"）
+3. **引言用 §⑤-B 草稿**（3 条 contribution 各一行）
+4. **理论章 4_grounding 81 → ~34 行**：砍 "Two clarifications" 整段 + L99–105 设计原则展开
+5. **discussion 6 条 limitations → 3 条**
+
+**④ ⚠️ 必须同时并入 09:2x 令的价值主张（这条比报告更新）**
+摘要与引言要体现：
+> **coding agent 天生会做 design flow 编排**（写 Makefile/tcl 驱动/调度，串起现有 EDA 工具）
+> **+ EDA scripting 能力补全工具断链**（现成工具覆盖不到、要手写胶水处，现场生成代码接上）
+> **= 真实 DE 价值：flow 能完整跑通**
+
+即：在报告的 "execution grounding" 主线之外，**把"编排 + 补断链"作为更高层的价值表现写进去**，形成「scripting → flow 编排」的递进。报告是 09:2x 之前生成的，摘要/引言草稿需按此再调整一遍。
+
+**⑤ 交付与验证**
+1. **改完后编译**（`pdflatex`/`latexmk`，与现有构建方式一致），**必须贴最终页数**（`pdfinfo` 或 pdf 页数）。
+2. **若仍 > 6.0 页**：继续按报告 §② 清单再砍（每轮只砍最长的 2 条），**直到 ≤6.0 页**；每轮贴页数变化。
+3. **不要破坏参考文献/图表编号**（`\ref`/`\cite` 编译无 undefined）。
+4. **commit + push**：
+   ```
+   zhulong paper: 按精简报告改 6 页版（12p→6p）· Exp 248→95 行 / 摘要+引言重写(含编排+补断链 与 落地"数百") / 3 主表
+   ```
+5. **推送后回报**：页数 / 各章实际行数 / 砍掉的 16 条中执行了哪些 / 编译告警（undefined ref 等）
+
+**⑥ 纪律**
+- ✅ 原 12 页版本**先备份**（`git tag paper_12p_backup` 或复制到 `paper_12p_backup/`），不要覆盖丢失
+- 🚫 不打断正在跑的评测（`dsv4pro-cline-full r1` 若仍在跑，评测不受影响，改稿是纯文件操作）
+- 🚫 不改实验数据与结论数字（只精简表述，不删关键数字：75.7% / 18.3% / 62.5% / 57.4pp / 22.0pp 必须保留）
+
+
+### 🎯 补正 · 2026-10-24 09:2x（**论文核心价值主张重定位：从 "EDA scripting" 升维到 "design flow 编排"**）· 用户直令 · 最高优先
+
+> 用户原话：「zhulong 设计初衷是 EDA scripting，但 DE 用户使用最多的场景还是 **design flow 的编排**。这是 coding agent **天生具备的能力**，而 EDA scripting 能力可以支持 design flow 编排是**补全断链**（有些现成工具无法覆盖的断链，可以被 EDA scripting 轻易接上）。」
+> **⚠️ 这是论文的叙事主干，必须体现在摘要/引言/结论**，不只是"落地一句话"。
+
+**① 重新定义的价值链条（写入报告，作为论文立论）**
+
+```
+coding agent 的通用能力  →  直接可做 design flow 编排（写 Makefile/tcl 驱动/调度脚本，
+                             串起现有 EDA 工具）—— 这是"天生具备"，不需要特殊训练
+        +
+EDA scripting 专业能力  →  补全断链（现有工具覆盖不到、或需要手写胶水的地方，
+                             agent 用 pyAether/SKILL/Tcl 现场写代码接上）
+        ↓
+    真正的用户价值 = design flow 能被完整跑通
+    （断链是 flow 跑不通的头号原因，而接断链正是 LLM 最擅长的事：写一小段新代码）
+```
+
+**② 为什么这个论点对 DAC 有说服力（报告里要论证清楚）**
+- **DE 的真实工作分布**：不是天天写全新脚本，而是**编排 + 补洞**（flow 串不起来时现场补一段）。这一点决定"通用 coding 能力 > 纯 EDA 专用模型"。
+- **"补全断链"是本工作的独特切入点**：现成商用工具是**闭合的**（不给你改），断链只能靠**现场生成胶水代码**；而 LLM 恰好能把"自然语言意图 → 可执行脚本"这段补上。
+- **解释了为什么 benchmark 要这样设计**：我们的 benchmark 不只是"写脚本题"，而是**模拟真实 flow 中的断链场景**（如果现有 benchmark 是这样设计的，请明确指出并引用 RQ；如果不是，在报告里建议补一节说明）。
+- **与落地规模自洽**：数百名工程师的价值不在于"人人写脚本"，而在于**每个人的 flow 都有跑不通的时刻**，agent 在那里补位。
+
+**③ 报告里必须给出（中英各一）**
+1. **一句话价值主张（paper pitch，≤30 词）**：
+   - 中文草稿方向："ZhuLong 让通用 coding agent 直接承担 design flow 编排，并用 EDA scripting 能力补全工具间的断链——这正是 DE 日常工作中最耗时、最被忽视的一环。"
+   - 英文草稿方向："ZhuLong lets a general coding agent orchestrate design flows and, where existing tools leave gaps, synthesizes the missing glue in domain scripts — precisely where DEs lose the most time."
+2. **摘要重写草稿（6 页版，150-180 词）**：按「问题（flow 编排 + 断链）→ 洞察（coding agent 天生会编排，EDA 能力补断链）→ 方法 → 结果（benchmark + 落地）→ 意义」组织。
+3. **引言动机段（3-4 句）**：把"DE 天天补断链"的痛点写实，再引出"为什么通用 coding agent 是正确选择"。
+4. **结论段**：回扣"编排 + 补断链"这个定位，而不是只谈脚本准确率。
+
+**④ 与既有内容的衔接（不要冲突）**
+- 现有论文若以 "EDA scripting" 为标题/主线，**不必改标题**（`ZhuLong: An Execution-Grounded LLM Agent for EDA Scripting` 可保留），但在摘要与引言里**把"编排 + 补断链"作为 scripting 的更高价值表现**写出来，形成"从 scripting 到 flow"的递进。
+- 6 页预算紧张，**优先保摘要 + 引言的这个叙事**，实验章可以更精简。
+
+
+### 🟢 补正 · 2026-10-24 09:0x（**"长鑫落地"融入口径修正：轻描淡写提分量、留余地，不写具体 500**）· 用户直令
+
+> 用户原话：「领导已经在跟外部厂商沟通时介绍了 ZhuLong 落地的情况，但在论文需要轻描淡写留有余地，比如不说 500（因为一直变化），而写成**数百**（就算全量 2000 人都使用数百也说得过去）」。
+> **⚠️ 修正 08:3x 令 §③ 的方向**：不是去评估"能不能用/有什么风险"，而是——**这个信息有价值，要自然地融进论文，提高成果分量与录用概率，同时措辞留有余地**。
+
+**① 写法口径（硬约束）**
+- ✅ 用 **"数百"（hundreds of）** 表述用户规模，**🚫 不写具体数字 500**（用户数持续变化，写死会被质疑）。
+- ✅ 用 **"已在量产级 EDA 设计流程中部署"（deployed in production EDA flows）** 这类表述，强调**工业环境 + 真实设计流**，不强调人数。
+- ✅ 强调**质量维度**而非数量：覆盖 Tcl / waveview / SKILL 等多种脚本接口、真实设计数据流、长时间稳定运行。
+- ✅ **轻描淡写、克制**：一句话带过即可，不单开小节炫耀；放在摘要末句 / 引言动机段 / 结论任一处（择一，不必都写）。
+- 🚫 不吹"领先""首个""大规模"这类易被审稿人挑战的绝对化表述。
+- 🚫 不写具体公司名吗？——**按投稿匿名要求处理**（DAC 双盲则写 "a leading memory-chip manufacturer / a production memory design house"；非双盲可直接写 CXMT）。
+
+**② 报告里给 3 版可直接插入的句子（中英各一）**
+- **版本 A（摘要末句，最克制）**：一句话点出"已在工业 EDA 流程部署，服务数百名设计工程师"。
+- **版本 B（引言动机，强调痛点真实）**：从"真实设计流中的脚本编写痛点"引出，落地作为佐证。
+- **版本 C（结论/实验章，强调可信度）**：作为"结果不仅在 benchmark 上成立，也在生产环境中被使用"的背书。
+每版给出中英文，并标注字数占用（6 页预算下建议 **≤ 25 词**）。
+
+**③ 一句话回答（不要再展开风险论述）**：这个信息对录用有帮助，理由 1-2 条即可（工业落地 = DAC 重视的实用性；真实部署 = 方法可信度背书）。
+
+
+### 📄 运维指令 · 2026-10-24 08:3x（**审视 ZhuLong 论文 → 出中文 HTML 精简意见（DAC 正文 6 页）+ "长鑫落地"如何轻描淡写融入**）· 用户直令 · 最高优先
+
+> 用户原话：「zhulong：安排它审视 zhulong 论文，提出精简意见（DAC 要求正文 6 页）。另外 ZhuLong 已经在长鑫落地，当前用户 500 左右。这个信息对论文是否有价值，如何融入，也写在精简意见中文 HTML 报告中。」
+
+**① 背景**
+- 论文当前 **12 页**（`cccc49c2` 从 13p 压到 12p），**DAC 正文限 6 页** → **还需砍掉约 50%**。
+- 现状：`6_exp.tex` 319 行（占全文 53%）、`4_grounding.tex` 105 行，其余章节合计 ~184 行。
+
+**② 交付物（一份中文 HTML，自包含单文件）**
+`reports/report_zhulong_paper_trim_advice_zh.html`，必须包含：
+1. **逐章诊断表**：`文件 | 当前行数/占比 | 建议目标 | 拟删/合并的具体段落（标行号或小节名）| 理由`
+2. **可直接砍的清单**（按"性价比"排序：先砍低信息密度的过程性描述、重复叙述、legacy 对比；保留主表 + 核心结论）
+3. **挪到附录/补充材料的建议**（若 DAC 允许）
+4. **6 页预算分配建议**（摘要/引言/方法/实验/结论各占多少行）
+5. **⚠️ 重写的摘要与引言草稿**（6 页版本，需体现"执行落地"卖点而不是压缩后的残篇）
+
+**③ 关于「长鑫已落地」—— 按 09:0x 补正令执行（见上方最新一块）**
+> ⚠️ **本节已被 09:0x 补正令取代**，请以补正令的写法口径为准：**轻描淡写融入论文、提高分量与录用概率、措辞留有余地**（用"数百"而非 500），**不要**写成"风险评估 / 审稿人会不会质疑"的论述。
+
+**④ 纪律**
+- 🚫 不改论文 .tex 源文件（本轮**只出建议报告**，改稿等用户确认）。
+- ✅ 报告里的"建议删除"必须能对上具体小节名/行号，不许泛泛说"精简实验部分"。
+- ⏭ 不打断正在跑的评测（`dsv4pro-cline-full r1` 仍在收尾，别 kill）。
+
+
+
+---
+## 归档 batch 12 · 2026-10-24（13:0x 执行令执行时归档）
+
+> 11:3x 商榷令（用户读 6p 稿后 4 问·已闭合于 13:0x 执行令：②A+③删附录B+④TikZ 重画）+ 10:3x 定稿令（6p 精简基线=陈熙元版本 47519292·闭合于 commit d2d9bb7a）。原文搬迁，未改写。
+
+### 🗣 商榷令 · 2026-10-24 11:3x（**用户读 6p 稿后 4 问 → 本轮只出意见，不动 `.tex`**）· 用户直令 · 最高优先
+
+> 用户原话：「我看了下 zhulong 精简后的论文，整体不错，几个问题想商榷一下…… 把讨论发给 zhulong agent，看看它的想法。」
+> ⚠️ **本轮不提交任何论文改动**（唯一例外：你判断是"一眼可见的硬伤"且改动 ≤3 行，可在回复里标「建议立即修」，但**先不要 commit**，等用户点头）。
+> ⚠️ **不打断在跑的 r1**（PID 1800419，判据十三）。
+
+**① 标题（Q1）**
+- 用户记忆中的旧标题：`ZhuLong: Execution Grounding versus Prior Enrichment in EDA Scripting`；现标题：`ZhuLong: An Execution-Grounded LLM Agent for EDA Scripting`（`main.tex:27`）。
+- 运维侧已核实：现标题自 **`431b4918`（09-27 首次入库）** 起 27 天未改；**`d2d9bb7a` 未触碰 `main.tex`**；全仓 2941 文件搜 `Prior Enrichment` **0 命中**。
+- **请回答**：你是否有意改过标题？若没有，就说明用户看到的是更早的草稿。另外：现标题 vs 旧标题，哪个更贴 6p 版「编排 design flow + 补 EDA scripting 断链」的定位？**给 1 句理由**。
+
+**② 贡献句 "we release the harness, schema, and protocol"（Q2）**
+- 位置：`1_intro.tex:46-47`（全文唯一一处 release 承诺）。
+- 背景：**暂不能开源**；论文是 `anonymous` 模式。
+- 运维给的候选：**A** `; we specify the harness, schema, and assertion protocol in full (Section~\ref{sec:benchmark}) so that the benchmark can be re-instantiated on other toolchains.` / **B** `; we will release ... with the camera-ready version ...` / **C** `; ... are described ... at a level sufficient for reproduction.`
+- **请回答**：哪个最稳？有没有更好的写法（≤1 句）？若选 A，是否需要在 §5 补一句「同一 schema 可在其他工具链上实例化」？
+
+**③ 附录顺序 + 页数（Q3，最关键）**
+- 现状：`main.tex` 里 `\input{DAC2027/9_appendix}` **在** `\bibliography{reference}` **之前** ⇒ 附录排在参考文献前；ACM 默认是 **refs → appendix**。
+- **DAC 2027 官方**：*six-page limit, with one additional page for references only*（`dac.com/2027/program/research-manuscript-submissions`）。现在是 **8 页 = 正文 6 + 附录 1 + refs 1** ⇒ **附录那 1 页没有配额**。
+- **请回答**：① 排序是否改为 refs → appendix？（注意：只改顺序可能让"第 7 页正文内容"更显眼，请判断利弊）② 页数走哪条：**A** 把 `tab:cost` / `tab:phi-bound` 回填正文并再压 1 页；**B** 删附录、正文留 1–2 句「见补充材料」；**C** 你的第三方案。每条给 **成本（砍多少行 / 省多少 p）+ 推荐**。
+
+**④ Figure-1（Q4）**
+- 运维解 `figures/zhulong_arch_2.pdf` 文本层实测：只有 **3 个工具**（`search_apis` / `run_code` / `get_api_details`），**缺 `search_apis_by_keyword`**；平台写 **`PyAether / SKILL`**，**缺 Tcl**。
+- 这与 `3_design.tex:13` caption「**four** unified MCP tools」和 `:15` `\Description` 逐列的四个工具 **自相矛盾**。
+- **请回答**：① 这是不是当前使用的图？有没有**已更新的源文件**（`.drawio` / `.pptx` / `.svg`）？② 若确需重画，你倾向 **TikZ**（运维推荐：纯 LaTeX、字体与 acmart 一致、可写数学符号）还是 mermaid-cli / matplotlib？给理由 + 预计工时 + 对 6 页预算的影响（建议 `figure*` 用 `\textwidth`）。
+
+**⑤ 回复格式（本轮不提交代码）**
+- 逐条 ①②③④ 给「**结论 + 理由 + 建议动作 + 成本估计**（分钟 / 行数 / 页数）」。
+- 明确标注：哪几条是 **硬伤必须改**、哪几条可 **留到终稿**。
+- 若不同意运维判断，**直接指出并给 file:line 证据**。
+- commit 前缀 `zhulong discuss:`。
+
+### ✅ 定稿令 · 2026-10-24 10:3x（**6p 精简基线 = 陈熙元版本 `47519292`，不另做备份**）· 用户直令 · 最高优先
+
+> 用户原话：「ZhuLong：在陈熙元版本上做 6p 精简，在 git 历史中已经有备份，不需要额外备份。」
+
+**① 基线（唯一，不再讨论）**
+- 以 **commit `47519292`（「陈熙元改进论文，填充实验数据」，2026-10-24 08:29，9 个 `.tex`，+563/−191）** 为**唯一基线**做 6p 精简。
+- 🚫 **不要**退回 `e7de188d`（10-23 的 6 页版）或更早版本重写；🚫 **不要**在 `e7de188d` 与 `47519292` 之间"择优混编"（两版实验章结构不同，混编会出现数字与表格对不上）。
+- 🚫 **不做任何额外备份**：不建 `*.bak` / `*_v2*` / `backup/` / `old/` 等副本。基线已在 git 历史里，回滚直接用 `git checkout 47519292 -- doc/ZhuLong_DAC2027/ZhuLong_DAC2027/DAC2027/<file>.tex`。**提交前 `git status` 里不得出现备份文件。**
+
+**② 与既有令的叠加关系（全部有效，按此顺序执行）**
+1. **结构精简**（09:35 令）：以当前编译页数为起点收敛到 **正文 ≤6.0p**；Exp `6_exp.tex` 压到 ≈95 行、正文只留 **3 张主表**（其余移附录）。
+2. **🚫 不许删 backbone**（09:38 否决令）：`tab:llm-comparison` 保留 **6 个模型**；省版面走紧凑排版，并从 `tab:cost` / error-categories / phi-bound 处补。
+3. **价值主张重定位**（08:43 / 09:2x 令）：摘要 / 引言 / 结论统一为「**编排 design flow + 补 EDA scripting 断链**」；长鑫句按 09:0x 口径（**数百** / 匿名版 `a leading memory design house` / 中英各 ≤25 词）。
+4. **理论章走 A 路线**（10:2x 最终裁定，见下方块）：§4.2 = 场景论证 + 引用支撑引理 + 实验对应，**3–4 行**；**修 Eq.2 右边为纯先验 `p_K(·)`**；🚫 不自行推导。
+5. **数字口径不许变**：**75.7 / 18.3 / 62.5 / 57.4 pp / 22.0 pp** 必须能由正文保留的表格直接算出（改完自行复核一遍）。
+
+**③ 交付与自检**
+- 编译后贴：**正文页数（≤6.0p，不含 refs）** + 总页数 + `main.pdf` 字节数；并**贴出 §4.2 全文**（含引理与引用文献）。
+- **本轮先归档任务书**：本文件现 **47KB > 40KB 红线** ⇒ 按「🧭 运维规程 · 2026-10-06（agent 归档 MEMORY + 任务书）」先把**活跃块之下**的已闭合块原文搬入 `run/ZHULONG_TASK_ARCHIVE.md`（留 1 行指针），降到 **≤32KB** 再提交。
+- commit 前缀 `zhulong paper:`；push 后 `git status -sb` **无 ahead / 无 behind**。
+
+**④ 纪律**
+- 🚫 **不打断在跑的 r1 评测**（`cline × deepseek-v4-pro × full`，PID 1800419，判据十三健康）。
+- 论文改动只落 `doc/ZhuLong_DAC2027/ZhuLong_DAC2027/DAC2027/*.tex` + `main.pdf`；🚫 不改 `ZhuLong_DAC2027/zhulong_results.md` 的历史数字。
+
+- 📦 **已归档 batch 11（2026-10-24）**：10:2x A 路线最终裁定 / 10:0x 理论章重写令 / 09:5x 用户否决(保 6 backbone) / 09:3x 执行令 / 09:2x 价值主张重定位 / 09:0x 长鑫落地口径 / 08:3x 论文审视报告 —— **7 块均闭合于 commit `d2d9bb7a`（6p 精简 + §4.2 重写 + 编排/补断链叙事 + 数百名工程师）**。原文移至 `ZHULONG_TASK_ARCHIVE.md` §归档 batch 11。
+
+---
+## 归档 batch 13 · 2026-10-27（10-26 5-run 封盘后·把 10-24 全批 + 10-23 22:1x + 10-23 09:4x 等已闭合块原文搬入；保留 1 行指针于 ZHULONG_TASK.md）
+
+> 搬入时间：2026-10-27 03:30（5-run 5/5=70.8±7.7% 封盘后例行归档·TASK 58KB→目标<32KB）。
+> 含：🩺 ops 中继修复 / 🔧 cimi 挂载 / 📝 10-24 23:0x DAC readiness review（已交付）/ 📐 10-24 19:0x 排版 / ✅ 10-24 22:23 配置对齐 / 🔬 10-24 22:15 已核实事实 / 🔴 10-24 22:1x 停 cline+对齐+重跑 / 📊 10-24 20:2x 差异归因报告 / 📐 10-24 15:4x 引用修正 / 📄 10-24 16:1x refs 单页 / ✅ 10-24 13:0x 执行令 / 🆕 10-23 22:1x cline×dsv4-pro 5-run（部分活跃·pending 决策 (b) 引用）/ 🟢 10-23 09:4x 作废 r1-r3 改 full / 📦 batch 12 指针 / 📦 batch 10 指针。
+
+### 🩺 顺手修：你自己的 ops 中继已停摆（`.last_run_id` 卡在 126 ≥15 分钟）
+> 现象：`run/ops/.last_run_id` = **126**，而 inbox 已推到 **128**；中继本应 20–60s 内消费。
+> 最可能：共享工作副本里 **`.git/index.lock` 残留**（你/评测进程并发写 git）或中继进程已死。
+> 要做：`ps -eo pid,args | grep zhulong_ops_relay` 看是否活着 → 若有 `.git/index.lock` 且无 git 进程占用则删除 → **用脚本方式**重启（`setsid bash run/zhulong_ops_relay.sh > /tmp/zhulong_ops_relay.log 2>&1 &`，🚫 不要用 `pkill -f` 通配）→ 确认 `.last_run_id` 涨到 128 并把 outbox 结果读回来。
+> 这条修好后 **RUN_ID 128 会自动执行**（它已经写好：把 `mcp.pyAether={type:"remote",url:"http://10.251.36.15:8090/mcp",enabled:true}` 合并进 opencode 配置并校验），你的 cimi 工具就通了。
+
+
+### 🔧 步骤 0（先做这个）：把 **cimi_search / cimi_fetch** 挂到你自己的 opencode 上
+> 已知（仓库 `daily-memories/2026-10-05.md` 实测过）：`eda_fastmcp` 的 **8090 MCP 服务里除了 4 个 EDA 工具，还注册了 `cimi_search` / `cimi_fetch`**（`tools/web_search/cimi_search.py`），cline 侧早就 autoApprove 过；**但 opencode 是另一套客户端配置**，你当前用 `opencode run` 调度，所以要在 opencode 侧单独挂。
+> **要做**：
+> 1. `opencode --help` / 查 `~/.config/opencode/`（或项目 `opencode.json`）确认 MCP 配置文件的真实位置与 schema；
+> 2. 加入与 cline 相同的 server 条目：`url=http://10.251.36.15:8090/mcp`、`type=streamableHttp`、`timeout=600`，并把 `cimi_search` / `cimi_fetch` 放进 autoApprove（**保留原有 4 个 EDA 工具**，不要覆盖）；
+> 3. **验证**：`opencode mcp list`（或等价命令）能看到该 server 且工具含 `cimi_search`；再实跑一次 `cimi_search`（例如查 "LLM agent for EDA scripting benchmark"）→ 拿到真实结果即算通；
+> 4. 若服务端根本没暴露 `cimi_search`（工具清单里没有）：查 `eda_fastmcp/.env` 里 web 工具的启用开关（README 记为"默认关闭"），启用后重启 8090 服务，再验一次；
+> 5. 把「配置文件路径 + 改了哪几行（脱敏）+ 验证输出」写进 MEMORY。**不要修改 pyAether 的 4 个 EDA 工具配置**（会污染正在跑的 5-run）。
+
+
+### 📝 任务令 · 2026-10-24 23:0x（**以 DAC 标准审稿 + 出改稿方案（中文 HTML）**）· 用户直令 · 与 5-run 并行
+> 用户原话：「仔细审视当前论文，距离 DAC 这种顶会的要求还有差距。提出改进意见，写成报告……内容要详实有物，以提升论文质量为目标。」
+> **执行方式（重要）**：
+> 1. **与 5-run 并行**：实验照跑、每轮照常 regrade 记录；本任务在**等待实验的空档**推进，不要为了写报告停实验。
+> 2. **可用 cimi search 调研**：它已作为 MCP 工具挂到你的 opencode 上（见 `RUN_ID 128` 的配置说明）；用它查 DAC/ICCAD 同类论文的写作范式、相关工作、benchmark 现状、统计检验惯例等。**引用要给出处（标题/年份/链接）**。
+> 3. **若某个改进点值得立刻验证**（例如补一个关键对照），**可以打断正在跑的 rN**，但必须：先落盘已完成产物 → 在 MEMORY 记「为验证 X 主动中断 rN」→ 记录被中断轮的 pass/gen-fail（可 regrade）→ 再补跑。
+> **交付物**：`reports/report_zhulong_dac_readiness_review_zh.html`（单文件自包含中文 HTML，无外链 CDN、无 `<script>`）。
+> **报告必须覆盖（逐节，缺一不可）**：
+> - ① **总体判断**：当前稿在 DAC 主会处于什么档位（弱/边缘/可接受/强），依据是"审稿人最可能给的 3 条主要意见"；
+> - ② **创新性与定位**：与 3–5 篇最接近的工作（EDA agent / code agent / agent harness）逐项对比，回答"为什么必须发在 DAC 而不是软件工程会议"；
+> - ③ **证据强度**：现有 5-run 消融（Phase B 5 臂 / C1 5 臂 / S1 3 臂 / S2 4 臂）× 449 题，**逐臂核对论文表 3/表 4 是否与 `zhulong_results.md` 一致**；缺 **置信区间/McNemar/多重比较校正** 的地方要指出并给公式与做法；
+> - ④ **实验缺口清单**（最重要）：按"补了能提升多少可信度"排序，每条给：缺什么 → 为什么审稿人会问 → **最小可行实验设计**（臂数/轮数/题量/指标/预计 GPU·h）→ 若已跑过则给数据位置；
+> - ⑤ **写作与呈现**：逐节挑刺（摘要是否给出可复现数字、Related Work 是否只有 6 条、图 1 是否自解释、表 3/4 是否过密、术语是否统一、`claim` vs `theorem` 的措辞是否站得住）；
+> - ⑥ **可复现与伦理**：artifact/代码/数据可得性、anonymity、LLM 使用声明、benchmark 泄漏风险；
+> - ⑦ **改稿路线图**：P0（投稿前必须做）/P1（能显著加分）/P2（有时间再做），每条给预计工作量与依赖。
+> **纪律**：每个批评都要**锚定证据**（论文节号/表号/页码 或 实验数据文件名+行号）；**推测必须标"推测"**；不得编造文献与数字；中文 HTML，页内可有表格但不是 md。
+> **已知事实（可直接引用，不用重新调研）**：论文现状 7 页（正文 6 + refs 1）、0 LaTeX 告警；cline vs zhulong-CLI 同模型 full 对比 = **86.8±1.6% vs 75.6±4.4%**，其中 **≈80% 差距来自"未生成代码(literal-pass)"**（见 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`）；配置混杂已于 22:23 对齐（`maxTokens 16384→8192`，MCP 两侧逐字节相同）。
+
+
+### 📐 运维直改 · 2026-10-24 19:0x（**论文排版已由运维修正并重编译** · commit `3651b322`）· 用户直令 ·【历史·已被 10-26 令覆盖】
+### ✅ 配置已对齐（22:23 运维执行，**不要再改**）· 直接起 5-run ·【历史·已被 10-26 令覆盖】
+> 实测三方对照（RUN_ID 119）：`cline 10-17 备份(glm 时代)=maxTokens 8192 / baseUrl /v1 / reasoning false`；`zhulong 原值=16384 / /v1 / false` ⇒ **唯一差异 = maxTokens**。
+> 已执行（RUN_ID 120）：`~/.zhulong/settings/providers.json` 的 **`maxTokens: 16384 → 8192`**，备份 `providers.json.bak.20261024_2223`；`model=glm-5.3-flash`、`baseUrl=http://agi-gateway.cxmt.com/v1`、`reasoning.enabled=false` **保持不变**；MCP settings 与 cline **逐字节相同**（`identical: True`）。
+> **你（agent）本轮只做一件事：用 zhulong 起 5-run**，不要再动 providers.json / MCP settings。
+> - 启动（与 r2 同法，只是 `CLI_AGENT=zhulong`）：`cd /nasdata/app.e0031982/code/eda_fastmcp && CLI_AGENT=zhulong EDA_RUNCODE_READBACK=full setsid -f nohup bash scripts/run_zhulong_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_zl_realign_r1.log 2>&1 < /dev/null`
+> - 每轮收口后**手动 regrade**（Step7.1 auto-grade 有已知 bug），记录 `pass/158`、**gen-fail**、耗时、-32001、sandbox-timeout；
+> - r1→r5 串行，最后算 **5/5 mean±std**，与 cline 基线 **86.8±1.6%** 对比，并更新 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`（新增"配置对齐后重测"一节）。
+> **判据**：单轮 gen-fail ≤5/158（对齐前 12–27）；5 轮判据十三有效；配置 diff 除 CLI 名/路径外为空。
+
+
+### 🔬 已核实事实 · 2026-10-24 22:15（RUN_ID 115/117 实测，用于配置对齐）
+> **cline-full r2 已停止**：PID 497054 `TERM`→5s 退出（22:10:57）；停前 `code dirs 158 / .py 153 / task_queue 0`；日志 `/tmp/ABL_dsv4pro_cline_full_r2.log` 29.2 MB **保留**，batch `2026_1024_141148` 产物**未删**。⇒ 需要时仍可对该批做 regrade 留档。
+> **MCP settings 两侧已完全一致**（同一份内容）：`url=http://10.251.36.15:8090/mcp`、`type=streamableHttp`、`timeout=600`、`autoApprove=[search_apis, get_api_details, search_apis_by_keyword, run_code]` —— **这条不是差异来源了**。
+> **ZL 跑确实用的是 glm-5.3-flash**：`~/.zhulong/settings/providers.json` 为 `model=glm-5.3-flash / maxTokens=16384 / baseUrl=http://agi-gateway.cxmt.com/v1 / reasoning.enabled=false`；r1/r5 日志里 `glm-5.3-flash` 出现 3413/2922 次。
+> **仍需对齐的项（待查 cline 侧 glm-5.3-flash 那批的真实值）**：
+> 1. `maxTokens`：zhulong=**16384**；cline 侧 10-20 曾为修 null-content 降到 **8192** ⇒ **按 cline 那批的实际值统一**；
+> 2. `baseUrl`：zhulong=`http://agi-gateway.cxmt.com/v1`，而 cline 的 deepseek 批用 `http://agi-gateway.cxmt.com/cloud/v1` ⇒ **路由不同，必须统一**；
+> 3. `reasoning.enabled` / temperature / top_p / max-turns / 系统提示：逐字段抄 cline；
+> 4. `CLI_AGENT`、`EDA_RUNCODE_READBACK=full`、`-p 4`、worker data-dir 结构：保持现状。
+> **做法**：先从 cline 的 glm-5.3-flash 批次（10-18，`/tmp/ABL_glm-5.3-flash_retest_r*.log`、`/nasdata/app.e0031982/.cline*`）确认上面 1–3 的真实值 → 写入 `~/.zhulong/settings/providers.json` → **打印 diff 作为证据** → 再起 5-run。
+
+
+### 🔴 运维令 · 2026-10-24 22:1x（**停 cline-full 评测 → zhulong 配置对齐 cline → 用 zhulong 重跑 5-run**）· 用户直令 · 覆盖一切
+> 依据：`reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html` —— 已证明两轮差异 **≈80% 来自"未生成代码(literal-pass)"**，且 zhulong 侧存在 **`maxTokens=16384`（cline 是 8192）** 等配置混杂，必须去掉才能做"只差 CLI"的干净对比。
+
+**① 立即停掉现有 cline-full 评测（batch `2026_1024_141148`，PID 497054）**
+- `kill -TERM 497054`，60s 不退再 `kill -9`；**保留** log 与 batch 目录（`/tmp/ABL_dsv4pro_cline_full_r2.log`、`/nasdata/.../2026_1024_141148`），**不得删产物**。
+- 若停前发现 `code dirs == 158/158` 且 `.task_queue` 为空 ⇒ 先花 ≤5 min 手动 regrade 留档（r2 结果别浪费），再停。
+
+**② 把 zhulong 侧配置对齐到 cline（只保留"CLI 二进制"为唯一变量）**
+必须**先把两侧真实配置并排 dump 出来**（作为证据提交），再逐项对齐：
+| 项 | cline（基准） | zhulong（改前） | 目标 |
+|---|---|---|---|
+| `providers.json` `maxTokens` | **8192** | 16384 | **8192** |
+| temperature / top_p / reasoning | 以 cline 实际值为准 | `reasoning=false` 等 | **逐字段抄 cline** |
+| MCP settings | `~/.cline/.../cline_mcp_settings.json`：url=8090/mcp、`timeout=600`、`autoApprove` 含 `run_code`+`search_apis` | `~/.zhulong/settings/...`（曾缺 timeout、autoApprove 旧名） | **与 cline 完全一致**（timeout/autoApprove/url 三项核对） |
+| turn/step 上限、系统提示、工具白名单 | cline 实际值 | 以 zhulong 现行 | **抄 cline** |
+| 启动环境 | `unset http_proxy https_proxy`、`NO_PROXY=10.129.32.75`、`PYTHON=$PWD/venv/bin/python` | 同 | 保持一致 |
+| 其它 | READBACK=full、benchmark、`-p 4`、模型 glm-5.3-flash | 同 | 保持不变 |
+> 交付物：`reports/report_zhulong_config_align_cline_zh.html` 或 MEMORY 内 **`diff` 表**（改前/改后/依据），证明除 CLI 外无差异。
+
+**③ 用 zhulong 重跑 5-run（full，PyAether 158）**
+- r1→r5 串行，每轮：起 batch → 收口 → **手动 regrade**（Step7.1 auto-grade 有已知 bug）→ 记 pass/158 与 **gen-fail**。
+- 每轮落盘：pass、gen-fail（literal-pass 数）、耗时、-32001、sandbox-timeout。
+- 收口后算 **5/5 mean±std**，并与 **cline 基线 86.8±1.6%** 对比（Δ）。
+
+**④ 验收判据（不达标要如实报，不得粉饰）**
+1. `maxTokens` 等配置 **diff 为空**（除 CLI 名/路径）；
+2. 单轮 **gen-fail ≤ 5/158**（此前 12–27）—— 这是本次对齐最该改善的指标；
+3. 5 轮判据十三有效（timeout≤10、exec_err=0、infra 0）；
+4. 若对齐后 zhulong 仍显著低于 cline，**必须**在报告里给出"已排除配置混杂"的结论。
+
+
+> ① 删 `7_discussion.tex` 的 `\enlargethispage{8\baselineskip}`（原把 p6 正文**压出下边距 8 行**）；② `main.tex` 增 `\Bbbk`/`\hslash`/`\varkappa`/`\digamma` 冲突护栏 —— **TL2026 + newtxmath 下 `\usepackage{amssymb}` 会报 `Command \Bbbk already defined`**（本机已复现并修好）；③ `\newpage`→`\clearpage`，refs 独占 p7。**正文措辞未做任何删改。**
+> **验收（本机 TeX Live 2026 + newtxmath，三遍编译实测）**：**7 页 / 正文收于 p6（text_y 85–725，无越界）/ refs 独占 p7（16 条）/ 0 undefined**；无 `Overfull \vbox`。
+> 🚫 不要恢复 `\enlargethispage`、不要删 `\Bbbk` 护栏；若重编译，必须复核以上 4 条，不达标就回退。
+> ④ **构建告警已清零**（`main.log` 无 Overfull/Underfull/Font shape；`bibtex` 仅剩 `pu2024rag` 缺页码——数据缺失，**不可编造**）：arXiv 条目改 `@misc{}+eprint/archivePrefix`（bst 原生支持，渲染为 `arXiv:XXXX`），`thrun2005probabilistic` 补 `address={Cambridge, MA, USA}`，并加 `\emergencystretch=1.5em` / `\raggedbottom` / 姓名断字。🚫 **不要把这些条目改回 `@article`**（会重新产生 12 条 bibtex 告警）。
+
+### 📊 报告 · 2026-10-24 20:2x（**cline vs zhulong CLI 在 full 配置下的差异归因**）· 用户直令
+> 交付物：`reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`（16KB，7 节，自包含无外链）。
+> 核心：**86.8±1.6%（cline）vs 75.6±4.4%（zhulong CLI）= −11.2pp**，其中 **≈8.9pp（80%）来自"未生成代码（literal-pass）"**、**≈2.2pp（20%）来自条件通过率**；r3–r5 条件通过率 89.6/87.7/89.3% 已与 cline ≈88% 持平。
+> **下一步（优先）**：修 literal-pass —— ① 提交前硬校验（非空 `.py`；**禁止以字符串 `pass` 作为最终答案**）；② 跑前自检 MCP `timeout=600` 与 `autoApprove` 工具名（不一致直接拒跑）。**验收判据：单轮 gen-fail ≤5/158**（当前 12–27）。
+
+
+
+## 🔧 运维指令区（OPERATOR NOTES）— 每次唤醒必须先读本区
+### 📐 引用修正令 · 2026-10-24 15:4x（**Lemma→Claim + 新增 Delage&Mannor 2010 用在"模型失配是真实问题"**）· 用户确认 · 最高优先
+### 📄 排版指令 · 2026-10-24 16:1x（**参考文献单独起页（第7页），不要接在第6页后面**）· 用户直令 · 最高优先
+
+> 用户原话：「zhulong：现在 reference 的排版难看，让它**单开一页（第7页，不要放在第6页后边）**。」
+
+**① 改法**：`ZhuLong_DAC2027/main.tex` 第 84 行 `\bibliographystyle{ACM-Reference-Format}` **之前**插入强制分页：
+
+```latex
+\clearpage          % ← 新增：参考文献强制另起一页（第7页）
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{reference}
+```
+
+- 用 **`\clearpage`**（而不是 `\newpage`）：`\clearpage` 会把浮动体（表/图）全部冲刷完再分页，避免最后一张表被挤到参考文献页。
+- 若 ACM 模板下 `\clearpage` 产生**空白页**，改用 `\newpage`；**两种情况都要实测页数**后择优。
+
+**② 验收标准**
+1. **正文仍为 6 页**（不要因为分页把正文挤成 7 页）
+2. **参考文献整体落在第 7 页**，且**第 6 页底部不残留任何参考文献条目**
+3. 全文档 **共 7 页**（正文 6 + refs 1）
+4. **`0 undefined`**（ref/citation）
+5. 检查**第 6 页最后一页的排版**：不能有大片空白或被强行拉开的段落（若出现，说明 `\clearpage` 太早，需微调正文）
+
+**③ 顺带把理论章的两处未落地项补上（15:4x 引用修正令，尚未执行）**
+当前 `4_grounding.tex` 仍是旧写法：
+- L56 `\textbf{Lemma (observation-fidelity bound).}` → **改 `\textbf{Claim (observation-fidelity bound).}`**
+- L58 `By standard POMDP model-approximation results \cite{kaelbling1998planning, thrun2005probabilistic}` → **删除此归因**，改为 `we posit that ...`（**不声称文献已证该界**）
+- **在场景论证段新增**（支撑"模型失配是公认问题"）：
+  ```latex
+  Model mismatch is a recognized obstacle in sequential decision making under
+  estimated parameters, where realized performance can diverge substantially
+  from the designer's expectation \cite{delage2010percentile}; our setting is
+  the milder case in which only $\Omega$, not $\mathcal{T}$, may be mismatched.
+  ```
+- **`reference.bib` 新增**（已核实，JSTOR 40605970）：
+  ```bibtex
+  @article{delage2010percentile,
+    title   = {Percentile Optimization for Markov Decision Processes with Parameter Uncertainty},
+    author  = {Delage, Erick and Mannor, Shie},
+    journal = {Operations Research},
+    volume  = {58}, number = {1}, pages = {203--213}, year = {2010},
+    doi     = {10.1287/opre.1090.0711}
+  }
+  ```
+- ⚠️ Kaelbling/Thrun **可保留**，但只用于 POMDP 框架/信念更新（Eq.1 附近），**不得**用于支撑 `D ≤ g(ε)`。
+
+**④ 交付**：重新编译 → 贴**实际页数**（正文/refs/总计）+ 第6页与第7页的截图或文字说明 → commit+push（信息写 `refs to page 7 + Lemma→Claim + delage2010percentile`）。
+
+
+
+> 背景：运营方核实发现 **`D_grounding ≤ g(ε)` 现有引用不成立** —— `kaelbling1998planning`（POMDP 规划奠基）与 `thrun2005probabilistic`（教科书）**都没有给出"模型失配→后验偏差"的界**，审稿人追问"哪一页"会站不住。
+> 用户已核实一篇真实文献（JSTOR 40605970），但**内容不匹配**：Delage & Mannor 讲的是 **percentile 鲁棒 MDP 优化**，不是后验 TV 界。
+> ✅ **结论：按"双轨"改 —— 引用改用在准确位置 + 把界降级为本文 Claim（可检验命题）。**
+
+**① bib 新增（**已核实，可直接用**，信息来自 JSTOR 原文）**
+```bibtex
+@article{delage2010percentile,
+  title   = {Percentile Optimization for Markov Decision Processes with Parameter Uncertainty},
+  author  = {Delage, Erick and Mannor, Shie},
+  journal = {Operations Research},
+  volume  = {58},
+  number  = {1},
+  pages   = {203--213},
+  year    = {2010},
+  doi     = {10.1287/opre.1090.0711}
+}
+```
+
+**② 场景论证处：用它支撑"模型失配是公认问题"（引用位置要准）**
+在 `\textbf{Scenario: the transition is deterministic.}` 段末补一句（或改写现有句）：
+```latex
+Model mismatch is a recognized obstacle in sequential decision making under
+estimated parameters, where realized performance can diverge substantially
+from the designer's expectation \cite{delage2010percentile}; our setting is the
+milder case in which only $\Omega$, not $\mathcal{T}$, may be mismatched.
+```
+> 要点：**只声称它支撑"模型失配是公认问题"**，不声称它给了我们的界。
+
+**③ 核心修正：`Lemma` → `Claim`，去掉"by standard results"**
+把当前 L57-59 的 Lemma 段改写为（**措辞必须体现"提出"而非"已证"**）：
+```latex
+\textbf{Claim (observation-fidelity bound).} With $\epsilon$ defined as above, we
+posit that the grounding gap is governed by a function $g(\epsilon)$ of
+observation fidelity alone: $D_{\text{grounding}} \le g(\epsilon)$, with
+$g(\epsilon)\to 0$ as $\epsilon\to 0$, and $g$ \emph{independent of the
+complexity of the prior} $\mathcal{K}$. This is the formal content of our
+central claim: \emph{the grounding gap is bounded by observation fidelity,
+not model scale}. We state it as a \emph{prediction the experiments can test}
+rather than a theorem derived here, and the next paragraph tests it from
+both sides.
+```
+
+**④ Kaelbling / Thrun 的保留用法（改窄）**
+- 仍可引用，但**只用于 POMDP 框架与信念更新本身**（Eq.1 附近），**不得**用于支撑 `D ≤ g(ε)`。
+- 检查 Eq.1 附近是否已有它们；若无，在 Eq.1 后加一句 `POMDP belief update follows \cite{kaelbling1998planning,thrun2005probabilistic}.`
+
+**⑤ 必须同步检查（防正文其它位置仍有旧措辞）**
+全文 grep 以下字样，**凡是暗示"已证定理"的都要改**：
+- `bounded by the fidelity` / `is bounded by`（在 Ω 语境）
+- `model-approximation results` / `standard results` / `we prove` / `Theorem`
+- 摘要与 Intro 里的 `bounds the resulting "grounding gap" by observation fidelity`
+  → 保持 `bounds` 可以（作为 claim 的陈述），但**不得**写成 "we prove/theorem"。
+
+**⑥ 交付**：改完重新编译 → **确认页数仍 ≤6 页正文**、`0 undefined` → 贴**改后的整段 §4.2 全文** → commit+push（信息写明 `Lemma→Claim + delage2010percentile`）。
+
+
+
+> 📄 **报告格式常驻规程（2026-10-24 用户令）**：**所有报告一律用中文 HTML**（单文件自包含、无外链/CDN），除非用户另行指定；🚫 不用 `.md` / `.pdf` / 纯文本顶替。
+### ✅ 执行令 · 2026-10-24 13:0x（**用户已批准 12:20 讨论结论：②A + ③删附录 B + ④TikZ 重画 → 立即执行并 push**）· 用户直令 · 最高优先
+
+> 用户原话：「ZhuLong 论文：按约定执行。」
+> 即按你 12:20 的意见矩阵落地：**① 标题不动；②③④ 全部执行**。本轮**允许改 `.tex` 并提交**。
+
+**② release 句（`1_intro.tex:46-47`）—— 按 A 改写**
+- 改为：`; we specify the harness, schema, and assertion protocol in full (Section~\ref{sec:benchmark}) so that the benchmark can be re-instantiated on other toolchains.`
+- 改完 grep 全文 `release|we will make|publicly available`，确保**再无任何开源/交付承诺**。
+
+**③ 删附录（方案 B）—— 目标 total = 7 页（body 6 + refs 1）**
+- 删除 `9_appendix.tex` 的两节（`app:cost` / `app:phi-bound` 两张表 + 正文），并从 `main.tex` 移除 `\input{DAC2027/9_appendix}`（`\bibliography` 保持在最后）。
+- `6_exp.tex:61` 与 `:67` 中「(Appendix)」类引用 → 改成**内联陈述 + see supplementary material**；确认这些数字在正文仍完整：**27.0% / 2.3× / 99.1→76.3 / k=10 单调**。
+- 校验：`pdflatex×3 + bibtex` → **总页数必须 = 7（正文 6p，refs 1p）**，0 undefined ref/citation；贴 `main.pdf` 字节数。
+
+**④ Figure-1 用 TikZ 重画 —— 除图文矛盾**
+- 新文件 `figures/zhulong_arch_3.pdf`（**不覆盖 `zhulong_arch_2.pdf`**）。
+- 内容必须与正文一致：**4 个 MCP 工具**（`search_apis` / `search_apis_by_keyword` / `get_api_details` / `run_code`）+ **3 个平台/语言（PyAether / SKILL / Tcl）** + 3 组件（LLM agent runtime / API knowledge base / EDA execution sandbox）+ Offline API Self-Exploration（虚线回边）+ Execution Feedback 回环。
+- 版式：`figure*`，`width=\textwidth`，字号 ≥ `\scriptsize`，字体随 acmart（不要另引字体包）；可写 `$\Omega$ / $\Phi$`。
+- 同步更新 `3_design.tex`：`\includegraphics` 路径 → `figures/zhulong_arch_3.pdf`；caption 与 `\Description` 保持「four MCP tools + three platforms」；🚫 **不得把 caption 改成 three**。
+- 重编译后确认**页数不回涨（仍 7 页）**。
+
+**⏱ r1（重要：**运维中继已停摆，需你自己动手**）**
+- ⚠️ 运维侧的 ZhuLong 中继自 **2026-10-23 09:36（RUN_ID 112）起已停摆**（`.last_run_id` 仍 112，RUN_ID 113 未执行）⇒ **kill 没有发生，r1 仍在你那边跑着**。
+- 按用户令「r1 硬切，手动 regrade」，**请你自己执行**：
+  1. `ps -o pid,stat,etime,cmd -p 1800419` 确认仍是 r1 主进程 → 先 `kill` 其子进程，再 `kill 1800419`；10s 后若仍在则 `kill -9`（**只动该进程树**，不碰 8090 / 8650-8654）；
+  2. 用已组装的 **155 个 `.py`** 手动 regrade（模板同 r5：`unset proxy` + `NO_PROXY` + `EVAL_FW_DIR` + 8650 组；GEN_FILE = `completed_code_generation_2026_1023_231253.jsonl`）；
+  3. 按判据十三记账（timeout 7 ≤10 ⇒ 有效，标退化）；
+  4. 记 r1 成绩 → 继续 r2…r5。
+- 附带：顺手确认你的中继为何停（`pgrep -af zhulong_ops_relay` / 日志），恢复不了就在 MEMORY 里登记，**以后别依赖它**。
+
+**交付**：贴 ①7 页/字节 ②`git diff --stat` ③编译 exit 0/0 undefined ④r1 regrade 结果；commit 前缀 `zhulong paper:` / `zhulong r1:`；push 后 `git status -sb` 无 ahead/behind。
+📦 任务书现有 31.3KB，加本块会越 32KB ⇒ **先按体积规程归档已闭合块**（10:3x 定稿令、10:2x/10:0x/09:5x 讨论块）到 `ZHULONG_TASK_ARCHIVE.md` 再提交。
+
+- 📦 **已归档 batch 12（2026-10-24）**：🗣 11:3x 商榷令（用户读 6p 稿后 4 问·已闭合于 13:0x 执行令 ②A+③删附录B+④TikZ 重画）+ ✅ 10:3x 定稿令（6p 精简基线=陈熙元版本 `47519292`·闭合于 commit `d2d9bb7a`）—— 原文移至 `ZHULONG_TASK_ARCHIVE.md` §归档 batch 12。
+
+
+### 🆕 运维指令 · 2026-10-23 22:1x（**本 5-run 收口后 → 起 `cline × deepseek-v4-pro × full` 5-run**）· 用户直令 · 最高优先
+
+> 用户原话：「Zhulong：zl+glm-5.3-flash+full 5-run结束后，跑cline+deepseek-v4-pro 5-run+full」
+
+**① 前置（顺序不可跳）**
+1. 先把在跑的 `zl × glm-5.3-flash × full` **r5** 收口：手动 regrade → 记 `full-r5 = x/158` → 出 **5/5 mean±std**（现有 r1=69.0 / r2=77.2 / r3=76.6 / r4=81.0）→ 更新 `zhulong_results.md` 本轮实验块。
+2. 收口后 **确认 4 端口与 8090 都空**（上一轮 worker 全退、`pgrep -af run_zhulong_script` 为空），再起新线；🚫 两条线并行（会互相抢端口/污染 batch）。
+
+**② 新线配置（与上一条线只换 agent + 模型，其余保持 full 口径）**
+- `CLI_AGENT = cline`、**模型 = `deepseek-v4-pro`**、**`READBACK=full`** / `OMEGA=high` / `BUDGET=0` / `LAGGED=0`。
+- 端口 = **8650/8651/8652/8654**（沿用，保持口径一致）；`-p 4`；`unset http_proxy https_proxy`；`NO_PROXY=10.129.32.75,localhost,127.0.0.1`；`PYTHON=$PWD/venv/bin/python`。
+- 数据目录用 cline 线自己的 `CLI_DATA_DIR`（`~/.cline`；**🚫 不要复用 `~/.zhulong`**，否则等于换汤不换药）。
+- **起跑前先做 1 次「模型可用性冒烟」**：单次 `run_code` 走通（拿到四字段 readback）+ 记录模型 id / base / key 来源；**403 / 404 / 额度不足 ⇒ 立即停手报 blocker（附原文）**，🚫 不静默换模型、不换 provider 凑数。
+- batch 命名沿用 `2026_MMDD_HHMMSS`；每轮 **r1→regrade→r2→…→r5**，每轮都跑判据十三（`timeout ≤10` / `0 infra` / `0 exec_err`）。
+
+**③ 回报（每轮 + 收口各一次）**
+- 每轮：batch / Pass@1(N/158) / literal-pass 数 / 耗时 / 端口状态 / 5-run 累计。
+- 收口：`5/5 mean±std` + 与两条对照线的对比（`zl × glm-5.3-flash × full` 本轮 5/5、`zl × glm-5.3-flash` 旧 N′ 线 86.8±1.6%）。
+- 口径：**新线不纳入论文**（独立探索），论文锚点不动；commit 前缀 `zhulong`。
+
+### 🟢 运维指令 · 2026-10-23 09:4x（**作废 r1-r3 → 改 full 配置 → 重跑 5 轮**）· 用户直令 · 最高优先
+
+> 用户原话：「作废 r1-r3，改 full 重跑 5 轮」+ 之前「新线不纳入论文。启动 r4 时尝试使用端口 8663/8666/8667/8670」
+> **背景**：r1-r3 跑的是 **N′ 配置**（READBACK=none），用户要的是 **full 配置**（READBACK=full）。这是运维疏忽——00:3x 令只写了换模型/agent/端口，没写改配置，agent 沿用了 .env 当时的 N′ 值。现纠正。
+
+**① 已由运维完成（勿重复）**
+1. **停 r3 regrade**（已 kill）。
+2. **改 .env**：`EDA_RUNCODE_READBACK` 从 `none` → **`full`**（其余不变：OMEGA=high/BUDGET=0/LAGGED=0/CLI_AGENT=zhulong/PROXY_PORTS=8650,8651,8652,8654）。
+3. **重启 8090 MCP 服务**（PID 2535923，已 pick up full readback）。
+4. **冒烟验证**：8650 run_code 返回四字段（response/error_log/print_log/result）→ **full readback 生效 ✅**。
+
+**② 你要做的（按序）**
+1. **确认 .env 是 full 配置**：grep `EDA_RUNCODE_READBACK` 应为 `full`；8090 `/health` OK。
+2. **确认 8663 组状态**：RUN_ID 111 已探 = 4/4 不可用（breaker cooling）→ **用 8650 组**（4/4 OK·12-14ms）。
+3. **起 r1**（full 配置 × glm-5.3-flash × zhulong × 8650 组 × `-p 4`）：
+   - `run_zhulong_script.sh -p 4 -n`（CLI_AGENT=zhulong 自动·CLI_DATA_DIR=~/.zhulong 自动）
+   - `export PYTHON=$PWD/venv/bin/python`；`unset http_proxy https_proxy`；`NO_PROXY=10.129.32.75,localhost,127.0.0.1`
+   - 模型 = glm-5.3-flash（~/.zhulong/settings/providers.json 不变）
+4. **r1 → regrade → r2 → ... → r5 → 5/5 mean±std**。
+5. **每轮回报**：batch / Pass@1(N/158) / literal-pass 数 / 耗时 / 端口状态 / 5-run 累计。
+
+**③ 判据（05:0x 令不变）**：`literal-pass >10 → 只记录+标退化+继续跑`；停手仅 = MCP 率 ≥5/min **且** 4 端口全不可用。
+
+**④ 口径备注**：
+- **本轮配置 = full**（READBACK=full/OMEGA=high/BUDGET=0/LAGGED=0），即 C1.full 档。
+- 新线（glm-5.3-flash × zhulong）**不纳入论文**，是独立探索线。论文锚点仍用旧线 (N′) fp4×cline 4 轮 mean=76.7% provisional。
+- r1-r3 的 N′ 数据**作废**，不进 5-run。
+
+**⑤ r1-r3 作废标记**（留证不删）：
+- r1: batch `2026_1023_002456`·N′·67.1%(106/158)·16 literal-pass → ❌ 作废（配置错误）
+- r2: batch `2026_1023_052506`·N′·68.4%(108/158)·17 literal-pass → ❌ 作废（配置错误）
+- r3: batch `2026_1023_072528`·N′·regrade 未完成 → ❌ 作废（配置错误）
+
+
+### 📦 已归档 batch 10 · 2026-10-23（09:4x 活跃块之下的已闭合运维块·原文搬入 `run/ZHULONG_TASK_ARCHIVE.md` §归档 batch 10）
+
+> 以下均为已闭合/已被取代的历史运维块，1-line 指针，需要时读 archive。**当前唯一活跃块 = 上方 🟢 2026-10-23 09:4x**。
+
+- 🟡 2026-10-23 09:1x（r4 起跑·尝试 8663 组）·【已被 09:4x 取代·历史·r1-r3 作废·配置从 N′ 改 full】→ archive §归档 batch 10
+- 🟡 2026-10-23 05:0x（用户决策 B·放弃 8663 组·用 8650 组跑满 5 轮）·【已被 09:1x 取代·历史】→ archive §归档 batch 10
+- 🔴 2026-10-23 00:3x（停 r5e3 → agent 换 zl/zhulong → glm-5.3-flash 重跑 → 端口 8663/8666/8667/8670）·【① 已由运维完成·② 已被 09:4x 配置纠正取代】→ archive §归档 batch 10
+- 🔴 2026-10-20 21:4x（杀 r4/r5/regrade → 端口换 8650-8654 → 重启 r4⁗）·【已归档·r4⁗ 收口 INVALID·被 10:4x 取代】→ archive §归档 batch 9
+- 🔴 2026-10-20 21:2x（r4 疑似停滞·只读取证）·【已归档·被 21:4x 取代】→ archive §归档 batch 8
+- 🔄 2026-10-22 10:2x（r5e3 回到 -p 4 + 8650-8654）·【被 00:3x 取代·历史·r5e3 已停】→ archive §归档 batch 10
+- 🔄 2026-10-22 09:0x（r5e3 回到 -p 4 + 8650-8654）·【被 10:2x 取代·历史】→ archive §归档 batch 10
+- 🔄 2026-10-21 15:3x（r5e 改 8 并发）·【r5e2 -p8 实测退化·作废】→ archive §归档 batch 10
+- 🔄 2026-10-21 14:0x（r5e 换端口 8663/8666/8667/8670）·【r5e -p 4 部分被 15:3x 取代】→ archive §归档 batch 10
+- 🔄 2026-10-21 10:4x（参考 t0002147 修复 cline settings timeout=600 + .env 对齐 → 重跑 r4⁗）·【r4e 已收口·历史·timeout=600 修复保持】→ archive §归档 batch 10
+- 🔄 2026-10-20 15:4x（licence fix → 重跑 r4‴）·【已归档·被 10:4x 取代·未根治】→ archive §归档 batch 9
+- 🔄 2026-10-20 10:1x / 09:0x / 08:2x / 06:3x / 06:0x（r4 家族排查系列）·【已归档·历史·已闭合】→ archive §归档 batch 8
+- 🔒 2026-10-19 23:2x（模型口径锁定：r4/r5 用 fp4；full 用 pro-cloud）·【full 臂已被 09:4x 改为 glm-5.3-flash×zhulong×full·历史口径参考】→ archive §归档 batch 10
+
+
+## §归档 batch 14 · 2026-10-29（运维 21:3x 派令时归档的已闭合块：14:4x / 11:0x / 10:3x / 10-27 09:0x）
+
+### 🟢 运维指令 · 2026-10-28 14:4x（**r2 收口 67.1% · 端口改回自有池 8664/8665/8653/8669 · 继续 r3-r5**）· 运维直令 · 最高优先 · 覆盖 11:0x / 10:3x 令的端口决议
+
+> 用户原话（10-28 14:4x）：「8650-8654 端口已重启，安排 zhulong agent 继续评测 r3-r5」。
+> **运维端口裁决（最终·如实写）**：用户重启的 **8650-8654 是 app.t0002997 的第三方池**（workdir t0002997_1..4），且 t0002997 已在该池重起 ~10 cline worker（14:17 起·实测 81 进程 active）→ **仍是跨用户争用区，🚫 不可用**。自有端口池（`.env` L107 `SANDBOX_ENDPOINTS` 唯一生效值）= **`8664/8665/8653/8669`**（workdir t0002596_*，4/4 实测绿 + r2 regrade 全程 0 exec_err）→ **为 r3-r5 唯一指定池**。8663/8666/8667 作废（listen 无 backend，勿用）。
+
+**① 已由运维完成（勿重复）**
+1. r2 regrade = **有效**，14:03 收口：**67.1%（106/158 pass** · 118 ok / 35 fail / **0 exec_err** / 0 infra-void），batch `2026_1027_123502`，用自有池 8664/8665/8653/8669。
+2. 根因已排除：旧 regrade 脚本硬编码 t0002997 池 8650/8651/8652/8654 → 跨用户争用 + licence/infra-void；stale-shard 已清。
+
+**② 你（agent）要做的（按序）**
+1. 读 MEMORY 顶部状态头 → 确认 STAGE=zhulong×glm-5.3-flash×full×maxTokens=16384 cline-aligned、PHASE=running、WAITING=0（本令已置 0）。
+2. 记成绩：r1=71.5%(113/158)、r2=67.1%(106/158) → 写入 MEMORY 成绩表 + 报告。
+3. **起 r3 generation**（`.env` 已是 8664 池·无需改脚本）：
+   `cd /nasdata/app.e0031982/code/eda_fastmcp && export PYTHON=$PWD/venv/bin/python && unset http_proxy https_proxy ALL_PROXY && export NO_PROXY="10.129.32.75,localhost,127.0.0.1" && export https_proxy="http://172.19.92.23:13128" && unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR && CLI_AGENT=zhulong EDA_RUNCODE_READBACK=full setsid bash scripts/run_zhulong_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r3.log 2>&1 < /dev/null &`
+4. generation 收口拿新 batch（`completed_code_generation_*.jsonl`）→ **起 r3 regrade**：复制 `/tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade_ownpool.sh` 为 `..._r3_regrade_ownpool.sh`，仅改 `GEN_FILE=<r3 batch>` + 标题 R3；**`SANDBOX_ENDPOINTS`/`PROXY_PORTS` 保持 8664,8665,8653,8669 不动**；起前清 `output_evaluation/tmp/execution_results_shard_*.jsonl`。
+5. 判据十三判定 r3 有效（timeout≤10、exec_err=0、infra=0、PASS_RATE 合理）→ 记 r3 → 同法 r4 → r5。
+6. 5/5 收口后算 mean±std（样本 std·1 位小数）→ 对比 cline 基线 86.8±1.6% → 更新报告 §8（结论注明「已排除 maxTokens 混杂 + 已排除跨用户争用」，唯一变量=CLI 二进制）。
+
+**③ 验收判据**
+- r3/r4/r5 每轮 regrade 的 `SANDBOX_ENDPOINTS`/`PROXY_PORTS` 必须 = **8664,8665,8653,8669**（🚫 不用 8650-8654；🚫 不用 8663,8666,8667）。
+- 每轮 exec_err=0、infra=0、timeout≤10。
+- 5/5 mean±std 落报告 + 每步 git commit+push（前缀 `zhulong 16384-aligned r3-r5:`）。
+
+**④ 红线**
+- 🚫 不用 8650-8654（t0002997 的池·已被其 81 进程抢占）；🚫 不用 8663/8666/8667（死端口）。
+- 不覆盖 r1/r2 产物；不 kill t0002997 进程；不改 providers.json/.env。
+- 起 regrade 前 `unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR`（防 futex 死锁）+ 清 stale shard（防 resume 误判）。
+
+---
+
+### 🟢 运维指令 · 2026-10-28 11:0x（**换端口 8663/8666/8667 重跑 r2 regrade**）· 用户直令 · 最高优先 · 覆盖一切
+
+> 用户原话（10-28 11:0x）：「让 zhulong agent 用 8663/8666/8667 端口 regrade 试试」。
+> **背景**：10-28 10:3x 令让 agent 重跑 r2 regrade，但 ops 中继先执行了原版 RUN_ID 129 直接起跑 regrade PID 3608951 @10:44:26。agent 10:56 唤醒诊断出**两个致命问题**：
+> 1. **stale-shard bug**：`output_evaluation/tmp/execution_results_shard_3.jsonl` 残留 prior 20:07 run 的 29 行 → `run_eval.py` resume 逻辑判定 shard_3"已完成" → **跳过唯一可用端口 8654**，只在 3 个死端口（8650/8651/8652）空转 → 100% timeout → 注定 INVALID。
+> 2. **跨用户争用**：`app.t0002997` 用户的 65 个 cline worker（10:29:44 起）抢占共享 sandbox `10.129.32.75:8650-8654` → license pool 实为 0/4（非之前误判的 1/4）。agent 无权 kill 别用户进程。
+> 当前 regrade PID 3608951 在 8650-8654 上注定跑 ~5h 出 INVALID，浪费资源且阻塞新 regrade。**必须先停它**，再用 8663/8666/8667（避开 t0002997 抢占组）重起。
+
+**① 你（agent）要做的（按序）**
+1. **读 MEMORY 顶部状态头** → 确认 `STAGE`、`PHASE = running`、`WAITING` 当前为 1（本令要求改 0）。
+2. **改 `WAITING = 0`** + commit + push（让 loop 进入 ~1min 续跑模式接手后续）。
+3. **停当前注定 INVALID 的 regrade**（精确 PID，**🚫 禁止 `pkill -f zhulong`**，会匹配 loop 自身）：
+   - 先 `ps -p 3608951 -o pid,cmd` + `ps -p 3608954 -o pid,cmd` 确认是 regrade + run_eval.py（不是别的进程）
+   - 确认后 `kill 3608951 3608954`（若 PID 已 GONE 说明自己收口了，跳过）
+   - 再 `pgrep -af 'run_eval.py|run_glm-5.3-flash_zl_clinealigned16384_r2_regrade'` 确认无残留（cut -c1-140）
+   - **不要 kill t0002997 的 worker**（无权动别用户进程）
+4. **清 stale-shard 文件**（修 stale-shard bug，关键）：
+   - `rm -f /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/tmp/execution_results_shard_*.jsonl`
+   - 清后 `ls -la /nasdata/app.e0031982/code/EDA-Eval-Framework/output_evaluation/tmp/` 确认无 shard_*.jsonl 残留
+5. **验证 8663/8666/8667 3 端口健康**（真实 run_code 调用，每端口 2 次）：
+   - `for p in 8663 8666 8667; do for i in 1 2; do echo "port $p try $i:"; timeout 15 curl -s -m 12 -X POST "http://10.129.32.75:$p/v1/run_code" -H 'Content-Type: application/json' -d '{"host":"aether","lang":"pyAether","code":"print(\"probe ok\")"}' | head -c 180; echo; done; done`
+   - **判据**：3 端口 × 2 次 = 6 次全返回 `{"response":"The code execution was successful..."}` 才过。**任一端口失败 → 停手报运维**（不要用坏端口起 regrade）
+   - 同时探测 workdir 映射：`curl -s -m 5 http://10.129.32.75:$p/` 看返回（404 = 端口活）；查 `.env` 或上次 r4″（10-20）的 SANDBOX_ENDPOINTS 记录里 8663/8666/8667 对应的 workdir（参考 `MEMORY.md` §3 / `daily-memories/2026-10-20.md`）
+6. **改 regrade 脚本的端口**（用 8663/8666/8667）：
+   - 复制脚本：`cp /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade_8663.sh`
+   - 用 sed 改新脚本的 `SANDBOX_ENDPOINTS` + `PROXY_PORTS`：
+     - `SANDBOX_ENDPOINTS=8663:/proj/train/AI/workdir/t0002997_1,8666:/proj/train/AI/workdir/t0002997_2,8667:/proj/train/AI/workdir/t0002997_3`（workdir 若与 8663/8666/8667 实际映射不符，按第 5 步探测结果改；若 t0002997_1/2/3 被 t0002997 占用，尝试用 t0002997_5/6/7 或自方分配的 workdir——**核实后如实写**）
+     - `PROXY_PORTS=8663,8666,8667`
+   - **改后 `head -25` 贴证据**（确认 sed 生效）
+7. **重起 regrade**（用新脚本 + 新 log 时间戳）：
+   - `cd /nasdata/app.e0031982/code/eda_fastmcp && export PYTHON=$PWD/venv/bin/python && unset http_proxy https_proxy ALL_PROXY && export NO_PROXY="10.129.32.75,localhost,127.0.0.1" && export https_proxy="http://172.19.92.23:13128" && unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR && setsid bash /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade_8663.sh > /tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r2_regrade_8663_$(date +%H%M).log 2>&1 < /dev/null &`
+   - 8s 后 `kill -0 $PID` 确认存活 + `head -20` log
+8. **30min 内报健康**（real_MCP_32001 + sandbox-timeout + licence-unavailable 计数 + 3 端口可达性 + 进度 X/158）。
+9. **regrade 收口后判定 r2 有效性**（按判据十三 + infra 作废规则）：
+   - **有效**（PASS_RATE 合理 + licence-unavailable ≈ 0 + timeout ≤ 10 + exec_err = 0 + infra 0）→ **记 r2 = pass/158** → 起 r3（用同 8663/8666/8667 端口，generation + regrade）→ r4 → r5 → 5/5 mean±std → 更新报告 §8
+   - **无效** → 如实贴 log 末尾 30 行 + 计数 → `WAITING=1` 报 blocker
+10. **若 r2 有效，r3-r5 同用 8663/8666/8667 端口**（避开 t0002997 抢占组，直到 t0002997 收口或运维另令）。
+11. **每一步 commit + push**（带 `zhulong 8663-port:` 前缀）。
+
+**② 验收判据（不达标要如实报，不得粉饰）**
+1. 当前 regrade PID 3608951/3608954 **必须停**（不能让它跑 5h 出 INVALID 浪费资源）；
+2. stale-shard 文件**必须清**（否则新 regrade 也会被 resume 逻辑坑）；
+3. 8663/8666/8667 3 端口 **6 次 run_code 探针全过**才起 regrade；
+4. r2 regrade log 末尾必须贴证据（PASS_RATE + licence-unavailable 计数）；
+5. 5/5 mean±std 与 cline 86.8±1.6% 对比，**必须在报告里给出"已排除配置混杂 + 排除跨用户争用"的结论**。
+
+**③ 红线**
+- 🚫 **禁止 `pkill -f zhulong`**（会匹配 loop 自身）—— 用精确 PID；
+- 🚫 **不 kill t0002997 的 worker**（无权动别用户进程）；
+- 不覆盖 r1 产物（r1 ✅ = 71.5% 已收口）；
+- 不动 8192 的 5 个 VOIDED batch；
+- 不改 providers.json / .env / cline settings（配置已对齐，本令只换 regrade 端口）；
+- regrade log 不覆盖 10:44 那次（带时间戳 + 8663 命名）；
+- 8663/8666/8667 探针任一失败 → 停手报运维，不强行起 regrade。
+
+**④ 与 10-28 10:3x 令的关系**
+- 10:3x 令的"重跑 r2 regrade"由本令接手并**细化**：增加"停旧 regrade + 清 stale shard + 换端口 8663/8666/8667"三步。10:3x 令的 r3-r5 推进 + 报告更新部分继续适用（端口改用 8663/8666/8667）。
+
+**⑤ 8663/8666/8667 端口背景**
+- 10-20 r4″ 曾用 8663/8666/8667/8670（用户令复活，原 §6 标记"作废"已过时）→ 8663 当时验证可用；
+- 这次用户指定 3 个（无 8670），-p 参数用 3（不是 4）；
+- workdir 映射需 agent 实测确认（8663/8666/8667 → t0002997_X 的 X 是什么，或是否需用别的 workdir）。
+
+---
+
+
+### 🟢 运维指令 · 2026-10-28 10:3x（**重新 regrade r2 + 推进 r3-r5**）· 用户直令 · 已由 11:0x 令接手细化
+
+> 用户原话（10-28 10:3x）：「重新 regrade」（针对 r2 regrade 自 10-27 20:07 INVALID 后已 14h+ 未重试、agent 仅做 21 次单次 curl 探针推理"必然失败"而未实测的情况）。
+> **背景**：r2 generation 已于 10-27 19:09 收口（batch `2026_1027_123502`·158 行 jsonl·132 success/21 fail/5 timeout·worker providers.json 实测 = `glm-5.3-flash + 16384 + /v1 + reasoning=false` 与 cline 基线逐字节对齐 ✅）。r2 regrade 20:07 跑过一次但 **INVALID**（93/118 licence unavailable，仅 shard3=8654 那批 25 条能跑 → PASS_RATE=0.1582）。此后 14h+ agent 仅做单次 curl 探针（每次都是 pool 1/4：8654 ✅ / 8650·8651·8652 ❌ hang 或 circuit-breaker OPEN），按 §7 infra 作废规则判定"重跑仍会 ~75% fail"而**未再实测 regrade**。用户判定此推理不充分，要求**直接重跑 regrade 拿真实数据**。
+
+**① 你（agent）要做的（按序）**
+1. **读 MEMORY 顶部状态头** → 确认 `STAGE = zhulong×glm-5.3-flash×full×maxTokens=16384 cline-aligned 5-run`、`PHASE = running`、`WAITING` 当前为 1（本令要求改 0）。
+2. **改 `WAITING = 0`**（本令解除等待）+ commit + push（让 loop 进入 ~1min 续跑模式接手后续 r3-r5）。
+3. **先做一次 4 端口 license 探针**（`curl -m 12 -X POST http://10.129.32.75:$p/v1/run_code -d '{"host":"aether","lang":"pyAether","code":"print(\"probe ok\")"}'`，p = 8650/8651/8652/8654），记录结果。**但无论探针结果如何，都必须继续执行第 4 步重跑 regrade**（探针只留对比数据，不作为是否重跑的判据——这是本令的核心）。
+4. **重跑 r2 regrade**：
+   - regrade 脚本：`/tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh`（就位·07:34 已校正无路径 bug·直接用）
+   - **启动前必须 `unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR`**（防 futex 死锁，与 r1 regrade 同口径；20:07 第 1/2 次失败就是 stale SANDBOX_PORT_HTTP env 导致）
+   - 启动命令（参考 r1 regrade）：`cd /nasdata/app.e0031982/code/eda_fastmcp && export PYTHON=$PWD/venv/bin/python && unset http_proxy https_proxy ALL_PROXY && export NO_PROXY="10.129.32.75,localhost,127.0.0.1" && export https_proxy="http://172.19.92.23:13128" && unset SANDBOX_PORT_HTTP SANDBOX_PORT_TCP SANDBOX_WORKDIR && setsid bash /tmp/run_glm-5.3-flash_zl_clinealigned16384_r2_regrade.sh > /tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r2_regrade_$(date +%H%M).log 2>&1 < /dev/null &`
+   - **regrade log 命名带时间戳**（避免覆盖 20:07 那次的 log）
+   - regrade 跑完（~10-30min）后**读 log 末尾**拿 `PASS_RATE` + licence-unavailable 计数 + timeout 计数
+5. **判定 r2 有效性**（按判据十三 + infra 作废规则）：
+   - **有效**（PASS_RATE 合理 + licence-unavailable ≈ 0 + timeout ≤ 10 + exec_err = 0 + infra 0）→ **记 r2 = pass/158** → 起 r3（同 batch 流程：generation → regrade）→ r4 → r5 → 5/5 mean±std → 更新报告 §8
+   - **无效**（仍大面积 licence-unavailable，与 20:07 同型）→ **如实报**：贴 regrade log 末尾 30 行 + licence-unavailable 计数 + 4 端口探针结果 → `WAITING=1` 等 license 恢复（但至少有了一份新鲜实测数据，而非 14h 前的旧推理）
+   - **futex 死锁**（regrade 起不来）→ 检查 stale env → 修正后重试（最多 2 次）→ 仍不行则报 blocker
+6. **若 r2 有效，推进 r3-r5**（每轮同判据十三：timeout ≤ 10、exec_err = 0、infra 0）→ 5/5 mean±std → **与 cline 基线 86.8±1.6% 对比** → 更新 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`（新增"maxTokens=16384 cline-aligned 重测"一节，纠正上轮报告"cline 线 8192"的错误说法——cline 基线实测 = 16384，batch `2026_1019_005714` 为证）。
+7. **每一步都 commit + push**（带 `zhulong 16384-aligned:` 前缀）。
+
+**② 验收判据（不达标要如实报，不得粉饰）**
+1. r2 regrade **必须实测**（不得以"探针推断必然失败"为由跳过）；
+2. r2 regrade log 末尾必须贴证据（PASS_RATE + licence-unavailable 计数）；
+3. 若 r2 有效，r3-r5 各轮判据十三全过才进 5-run；
+4. 5/5 mean±std 与 cline 86.8±1.6% 对比，**必须在报告里给出"已排除配置混杂"的结论**（maxTokens 已逐字节对齐，唯一变量 = CLI 二进制）。
+
+**③ 红线**
+- 不覆盖 r1 产物（r1 ✅ = 71.5% 已收口）；
+- 不动 8192 的 5 个 VOIDED batch（留证）；
+- 不动 `2026_1026_154647`（16384 候补，已恢复）；
+- 不改 providers.json / .env / cline settings（配置已对齐，本令只重跑 regrade）；
+- 不启 full@pro-cloud（那是另一条线）；
+- regrade log 不覆盖 20:07 那次（带时间戳命名）。
+
+**④ 与 10-27 令的关系**
+- 10-27 令的 ①②③④ 已全部闭环（8192 VOIDED / 154647 恢复 / r1 收口 / r2 generation 完成）。本令只接手 **r2 regrade + r3-r5**，不重复 10-27 令的已闭环部分。
+- 10-27 令的验收判据（maxTokens diff 为空 / gen-fail ≤ 5/158 / 5 轮判据十三有效）继续适用。
+
+**⑤ ops 通道**
+- RUN_ID 129（只读探针·不跑 regrade）已下发，结果会落 `run/ops/outbox.md` 末尾。**agent 不要参考 ops 探针结果来决定是否跑 regrade**——无论 ops 探针结果如何，agent 都必须按本令第 4 步重跑 regrade。ops 探针仅用于运维侧体检。
+
+---
+
+
+### 🟢 运维指令 · 2026-10-27 09:0x（**修正 maxTokens 错配：8192→16384（与 cline 基线对齐）→ 作废 8192 的 5-run → 重起 16384 的 5-run**）· 用户直令 · 已大部分闭环·r2 regrade 由 10-28 令接手
+
+> 用户原话（10-27）：「让 ZL 试验完全使用 cline 相同的配置：glm-5.3-flash+full 配置。把现有评测停下。确保配置完全一致的情况下，启动 ZL 5-run 评测。」
+> **背景**：10-24 22:1x 令错误把 cline 基线 maxTokens 归因为 8192（实际 cline 基线 10-18/19 retest r1-r5，batch `2026_1019_005714` 留存 worker config = **16384**，已逐项核对验证）。10-26 15:46 运维已把 providers.json 改 16384 起的 r1 batch `2026_1026_154647`，但**任务书旧块仍写"maxTokens 必须 = 8192"**，agent 按任务书优先原则把 16384 batch 作废、改回 8192 重起 5-run（r1 `2026_1026_160802` / r2-r5 同），封盘 70.8±7.7%。**该 5-run maxTokens 与 cline 基线不一致（8192 vs 16384），不能作为 CLI 回归结论**。
+
+**① 已由运维完成（勿重复）**
+1. **修正任务书**：本块置顶，旧块（10-26 08:1x）降级为 `text`；旧块里所有"maxTokens=8192"的硬约束**作废**，以本块为准。
+2. **修正配置源**：已把 `~/.zhulong/settings/providers.json` 与 `~/.zhulong/data/settings/providers.json` 的 `maxTokens` 改为 **16384**（两处都已改，已验证）。
+3. **停当前 eval + loop**：8192 的 5-run 已封盘不再跑，loop 已停（PID 3659222 由运维停）。
+
+**② 你（agent）要做的（按序）**
+1. **读 MEMORY 顶部状态头** → 确认 `STAGE = zhulong×glm-5.3-flash×full 5-run（maxTokens=16384 cline-aligned 重跑）`、`PHASE = running`、`WAITING = 0`。
+2. **作废 8192 的 5 个 batch**（写 VOID_REASON.txt，留证不删）：
+   - `2026_1026_160802` / `2026_1026_190240`（已确认 8192）+ 其余 3 个 8192 batch（从 `2026_1026_16*` ~ `2026_1026_2*` 范围内 worker config = 8192 的全部作废）
+   - VOID_REASON 写明："maxTokens=8192 与 cline 基线 16384 不一致，10-27 令作废，数据留证不进 5-run"
+   - **不要作废 `2026_1026_154647`**（它是 16384 的，已被前轮误作废，需<b>恢复</b>：删其 VOID_REASON.txt，它可进 16384 5-run 作为 r1）
+3. **起 r1**（zhulong × glm-5.3-flash × full × maxTokens=**16384** × 8650 组 × `-p 4`）：
+   - `cd /nasdata/app.e0031982/code/eda_fastmcp && export PYTHON=$PWD/venv/bin/python && unset http_proxy https_proxy ALL_PROXY && export NO_PROXY="10.129.32.75,localhost,127.0.0.1" && export https_proxy="http://172.19.92.23:13128" && CLI_AGENT=zhulong EDA_RUNCODE_READBACK=full setsid bash scripts/run_zhulong_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_zl_clinealigned16384_r1.log 2>&1 < /dev/null &`
+   - **关键**：worker 会复制 `~/.zhulong/settings/providers.json`（= `glm-5.3-flash + 16384` ✅）。
+4. **起跑后验证 worker 用的模型**：从 `<batch>/cli_data/worker_1/data/settings/providers.json` grep `maxTokens` 应为 **16384**。**若仍是 8192 立即停跑报错**（这是本线的硬约束）。
+5. **r1 → 手动 regrade → 记 `pass/158` + `gen-fail` + 耗时 → r2 → ... → r5 → 5/5 mean±std**。
+6. **与 cline 基线 86.8±1.6% 对比**，更新 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`（新增"maxTokens=16384 cline-aligned 重测"一节，<b>纠正</b>上轮报告"cline 线 8192"的错误说法——cline 基线实测 = 16384，已留存 batch `2026_1019_005714` 为证）。
+
+**③ 验收判据（不达标要如实报，不得粉饰）**
+1. `maxTokens` 等配置 **diff 为空**（除 CLI 名/路径）—— **worker providers.json 必须 = glm-5.3-flash + 16384 + /v1 + reasoning=false**；
+2. 单轮 **gen-fail ≤ 5/158**；
+3. 5 轮判据十三有效（timeout≤10、exec_err=0、infra 0）；
+4. **若 16384 5-run 仍显著低于 cline 86.8±1.6%，必须在报告里给出"已排除配置混杂"的结论**（maxTokens 已逐字节对齐，唯一变量 = CLI 二进制）。
+
+**④ 关键判据：cline 基线真实配置（不可篡改，已留证）**
+- cline 基线 = 10-18/19 retest r1-r5，batch `2026_1019_005714` 留存
+- worker config 实测：`model=glm-5.3-flash / maxTokens=16384 / baseUrl=http://agi-gateway.cxmt.com/v1 / reasoning.enabled=false / apiKey=02_088EE...BF697`
+- regrade 脚本注释（`/tmp/run_glm-5.3-flash_retest_r1_regrade.sh`）：`运维令三十一·2026-10-18·-p 4 起步`
+- **结论**：cline 基线 maxTokens = **16384**（不是 8192），-p = **4**，benchmark = PyAether 158
+- ZL 5-run 必须与此逐字节对齐，唯一变量 = CLI 二进制（cline vs zhulong）
+
+**⑤ ⚠️ loop 自杀防护（不变）**
+- 禁止 `pkill -f 'zhulong'`（会匹配 loop 自身）。用精确 PID 或 `pkill -f 'run_zhulong_script.sh'`。
+
+**⑥ 口径备注**
+- 本线 = **zhulong×glm-5.3-flash×full×maxTokens=16384**（与 cline 基线逐字节对齐），目的是与 **cline×glm-5.3-flash×full×maxTokens=16384**（基线 86.8±1.6%）做"只差 CLI 二进制"的干净对比。
+- 8192 的 5-run（70.8±7.7%）<b>作废</b>，不进对比；数据留证。
+- 上轮 `2026_1026_154647`（16384，被前轮误作废）<b>恢复</b>，可作为 16384 5-run 的 r1。
+
+**⑦ 与 10-25 论文改稿令的关系**
+- 10-25 改稿令**并行**，不冲突。5-run 照跑，论文改稿在等待空档推进。
+
+---
+
+
+
+## 归档 batch 15 · 2026-11-02（Tab-3 + kimi-k2.6 5-run + 10-29 论文审阅 + 10-26 legacy 原文搬入）
+
+> 以下 4 块均已于 2026-11-02 前闭合，原文从 ZHULONG_TASK.md 顶部搬入此处（只搬不改·留指针）。当前活跃块见 ZHULONG_TASK.md 顶部。
+
+### 🚨 2026-11-02 21:3x 运维直令：Tab-3 美观改进中文 HTML —— 找到→入库→按此执行 · 最高优先
+
+> 用户原话：「看看 ZhuLong_DAC2027 目录下是否有个 Tab-3 美观改进中文 HTML，有的话提交入库，并按此执行。」
+
+1. **找（≤3min）**：`ls doc/ZhuLong_DAC2027/*.html`；`find doc/ZhuLong_DAC2027 -maxdepth 3 -iname '*tab*' \( -name '*.html' -o -name '*.htm' \)`；`git status --porcelain -- doc/ZhuLong_DAC2027 | grep -i tab`。判据：名/标题含 Tab-3|Tab3|表三 + 美观|改进|优化，中文、指向 `DAC2027/6_exp.tex` 表 3。
+2. **入库**：找到且未跟踪 ⇒ `git add -- <路径>`（🚫`-A`）→ commit `zhulong paper: 入库 Tab-3 美观改进建议 HTML（用户令 11-02）` → push → MEMORY 记路径+字节。已在库则跳过。
+3. **执行（本令临时解除"只审不改"，仅限 Tab-3）**：只改 `DAC2027/6_exp.tex` **表 3**（表体/表注/中文注释），其余 `.tex/.bib/main.tex` 仍只审不改。**数字/口径/CI/样本量一律不动**（57.2/23.7/7.1/71.0±0.8/74.6±1.6/253·1.1·278/634·22.8·887/449/158），只做排版（列宽、booktabs 线、对齐、`\cmidrule`、表头单位、字号、表注）；逐条标 `DONE`/`SKIP(原因)`，要改数字或结论的一律 SKIP。
+4. **验证**：`pdflatex×2+bibtex` ⇒ ERR=0/UNDEF=0；`grep 'Output written' main.log` 记页数（DAC ≤7，🚫不许删数字压页）。提交 `git add -- DAC2027/6_exp.tex main.pdf` → `zhulong paper: tab3 beautify` → push → MEMORY 记「页数 前→后 + DONE/SKIP」。
+5. **找不到** ⇒ MEMORY 写「未找到」并列出 `doc/ZhuLong_DAC2027` 全部 .html（名+字节），**不许臆造建议**；P0 双盲/页数/P1×3 不在本令内。
+6. **体积**：本令后 TASK≈39.9KB，下一轮先归档已闭合块到 ≤32KB。
+
+
+
+### 🚨 2026-10-30 22:2x 运维直令：`zhulong-full` 配置 `kimi-k2.6` 模型跑 5-run · 最高优先
+
+> **用户令**：「zhulong：zhulong-full 配置 kimi-k2.6 模型跑 5-run」
+
+1. **先确认模型可用**：查 gateway `GET /v1/models` 确认真实 model 名（大小写/前缀），写进 4 个 worker 的 `providers.json`；**不存在 → 记原文 + WAITING=1，不臆造名字**。
+2. **配置**：`C1.full`（READBACK=full）/ OMEGA=high / BUDGET=0 / LAGGED=0 / CLI_AGENT=zhulong / PROXY_PORTS=8650,8651,8652,8654 / **maxTokens=16384**（与 cline 基线对齐）/ **model=kimi-k2.6**。
+3. **跑 5-run**：r1..r5 各自独立 batch 目录；每 run 记 batch id、PID、起止时间、耗时、pass/158、regrade 结果（区分 exec_err / infra-void）。
+4. **判据**：5/5 完成且 regrade 有效（非 infra-void）→ 报 `mean ± std` + 5 个单值；任一 run infra-void 即作废重跑并写原因。
+5. **交付**：§8 表格加 kimi-k2.6 行 + 与 glm-5.3-flash / glm-5.2 / cline 基线对比；MEMORY 状态头更新。
+6. 红线：只用被裁决可用的端口池（8664/8665/8653/8669 或自有池），🚫 抢他人 license。
+
+
+
+### 🔴 运维指令 · 2026-10-29 21:5x（**论文审阅：参考文献 + 逻辑链 + 数字↔措辞一致性**）· 用户直令 · 最高优先 · 覆盖一切
+
+> 用户原话：「数字是没错的，主要核对参考文献，和论文逻辑。以及数字和措辞是否一致。」
+> 对象 = **DAC2027 论文权威树** `doc/ZhuLong_DAC2027/ZhuLong_DAC2027/`（`main.tex` + `DAC2027/0~9_*.tex` + `reference.bib` + `software.bib` + `figures/*.pdf`）。**只审不改**。
+> ⚠️ **口径（覆盖上一条 21:3x 令）**：**数值正确性已由用户确认 ⇒ 不需要回溯 batch / regrade log 去验数**。只查三件事：**① 参考文献 ② 论文逻辑 ③ 数字与措辞是否一致**。仅当同一数字在文中互相矛盾时，才允许去产物里查一次定位。
+
+**① 重点一：参考文献（权重最高——逐条 + 逐引用上下文）**
+1. **逐条核元数据**：`reference.bib` + `software.bib` 每一条 → 标题 / 全部作者 / 年份 / venue（会议或期刊全称）/ volume / pages / DOI / arXiv id；与 Crossref / DBLP / arXiv / Semantic Scholar / doi.org **原始记录**比对。
+2. **查幻觉**：条目是否真实存在（非"标题相似的另一篇"）；作者顺序是否被改；年份是否错位（arXiv v1 vs 正式发表年）；venue 是否把 workshop 写成主会、把 arXiv 预印本写成已发表。
+3. **逐引用上下文核验（最关键）**：正文每一处 `\cite{...}` 都打开该文献，判断**被引结论是否真由该文支持** ⇒ 标 `✅支持` / `⚠️部分支持` / `❌不支持`（张冠李戴、夸大、方法名错配、把他人不同设置下的数字拿来用）。
+4. **覆盖度**：同方向关键基线/近两年工作是否漏引（EDA LLM agent、scripting benchmark、execution feedback / self-debug、RAG for code、EDA benchmark）；是否存在**自引堆砌**或**凑数引用**。
+5. **格式**：字段缺失（doi / pages / publisher）、重复条目、key 命名不一致、`\cite` 未定义、孤儿条目（bib 有但正文从未引用）。
+
+**② 重点二：论文逻辑（贯穿全篇的论证链）**
+1. 建一张 **claim → 证据 → 结论** 映射表：摘要 / intro 的每条主张，在 §3–§6 是否有对应实验或论证；反之每个实验是否回扣某条主张。
+2. **定义—方法—实验闭环**：§4 的理论（如 L4 不可见性、observation fidelity）是否真的被 §6 的 ablation 检验；该检验能否区分它与替代解释。
+3. **因果 vs 相关**：凡 `because / therefore / thus / due to / attribute to` 的句子，检查有无对照实验，还是只凭相关性下结论。
+4. **ablation 归因**：组件贡献是否单变量、差值是否可加自洽、**改数后归因叙述是否仍成立**（例：回读阶梯跨度 13.5pp→7.1pp 后，围绕 13.5pp 的 "substantial/large" 措辞是否还站得住）。
+5. **前后自洽**：§1 承诺 → §6 兑现；§6 结果 → §7/§8 不引入新主张；limitation / threat-to-validity 是否覆盖真实弱点（而非安全项）。
+6. **逻辑断点单列**：跳跃（缺中间步）、循环论证、以个例代证明、把 harness 现象当模型能力。
+
+**③ 重点三：数字 ↔ 措辞一致性**
+1. **同一数字的多处出现**：摘要 / intro / 正文 / 表 / 图注 / 结论逐处比对（含四舍五入后是否仍相等，如 76.9 vs 76.86）。
+2. **措辞强度 vs 数值**：`significant / substantial / large / marginal / comparable / consistent / robust / up to / nearly / over / outperforms` 是否与差值、方差匹配；**差值 ≤ 1 倍 sd 时不得写 "substantially"**。
+3. **百分比口径**：pp 与 % 混用、相对提升（+x%）与绝对提升（+x pp）是否写错；"from A to B" 方向是否正确。
+4. **表格 ↔ 正文**：正文引用值与表中是否一致；表格加粗（最优）是否与正文 "best/outperforms" 一致；`mean ± sd` 与逐轮数据是否自洽（只查表内自洽，不回溯 batch）。
+5. **限定条件**：结论句是否带实验条件（slice / runs / toolchain），有没有把单切片结论写成全称判断。
+6. 每条给「原文摘录 → 数值 → 判定 → 建议改法」。
+
+**④ 结构与元数据（轻量，勿喧宾夺主）**
+`main.tex`（anonymous·sigconf·作者/邮箱/单位·CCS·keywords）+ **DAC 2027 规则 web 核实**（页数上限、模板版本、双盲、图表与引用格式）+ **页数实测**（`pdfinfo main.pdf`；无则 `pdftotext main.pdf - | grep -c $'\f'`；都没有写「未实测」）。
+
+**⑤ 次要项（有则记，不占主篇幅）**：术语首现定义（Pass@1、Ω、L1–L4）、caption↔正文、单位、`\label`/`\ref` 缺失、语法拼写、`.tex` 残留中文注释、商业工具许可与数据可得性表述。
+
+**⑥ web 核验手段（每条结论留 URL + 抓取时间）**
+`https://api.crossref.org/works/<DOI>` · `https://doi.org/<DOI>` · `https://dblp.org/search/publ/api?q=<title>&format=json` · `http://export.arxiv.org/api/query?id_list=<id>` · `https://api.semanticscholar.org/graph/v1/paper/search?query=...` · GitHub API（软件条目）· DAC 官网 / ACM 作者指南 · `cn.bing.com` RSS / DuckDuckGo html。
+**必须打开原始页面**，🚫 不得把搜索摘要当证据。
+网络：`export https_proxy=http://172.19.92.23:13128; export http_proxy=$https_proxy`；不可达如实写「未核实 + 命令 + 报错」。
+
+**⑦ 交付物**
+1. `doc/BaiZe-ISEDA2027/reports/report_zhulong_paper_detail_audit_zh.html` — 中文、单文件自包含、**0 `<script>` / 0 外链资源**、**≥25KB**、标题注明「基于 main.tex@`<HEAD>`」。必含：
+   - **TL;DR**（可投 / 需修 / 需重做）+ 问题分级 **P0/P1/P2**
+   - **参考文献核对表**：`key | 文献 | 核对源 URL | 元数据 ✅/❌ | 引用上下文 ✅支持/⚠️部分/❌不支持 | 建议`
+   - **逻辑链审查表**：`claim | 出处 | 支撑证据 | 强度 | 判定 | 建议` + 逻辑断点清单
+   - **数字↔措辞一致性表**：`数值 | 出现位置 | 原文措辞 | 是否匹配 | 建议`
+   - **未核实清单**（含已尝试命令与报错）
+2. `doc/ZhuLong_DAC2027/run/paper_audit_progress.md`：逐项进度 + 计数（bib 已核/总数、`\cite` 已核/总数、claim 已核/总数）
+3. `MEMORY_ZHULONG.md` 顶部：一句话结论 + 报告路径 + P0/P1 计数
+
+**⑧ 判据（缺一不算完成）**
+- bib 条目 **100%** 外部核验；正文**每一处 `\cite`** 的上下文都判过（✅/⚠️/❌）
+- 摘要 + intro 每条 claim 都进映射表；章级逻辑断点有清单
+- **所有出现过的数字**都做过多处一致性比对，且**措辞强度逐句判过**
+- 报告 ≥25KB、0 script、0 外链、标签配平；每个 ❌/⚠️ 可复现（URL 或 `文件:行`）
+
+**⑨ 红线**
+- 🚫 不改 `.tex` / `.bib` / `figures/`（改法只写进报告）
+- 🚫 不编造 DOI / 页码 / 文献；查不到写「查无 / 未核实」
+- 🚫 **不得因"数字已确认"就跳过数字↔措辞比对**（这是三大重点之一）
+- 🚫 不覆盖旧报告；不碰评测进程 / 端口 / batch；纯离线审阅
+- 🚫 不把「未核实」写成「已核实」
+
+**⑩ 节奏**
+- `WAITING=0` 立即执行；顺序：通读全文 → 建 claim 表 → bib 逐条 + cite 上下文 → 数字↔措辞 → 写 HTML
+- 允许 2–3 轮，每轮必须更新进度文件并 commit（前缀 `zhulong paper-audit:`）+ push
+- 完成后置 `WAITING=1`，MEMORY 顶部写「✅ 完成 + 报告路径 + P0/P1 计数」
+
+> 📦 §运维令·2026-10-28 14:4x（r2 收口 67.1% · 端口回自有池 8664/8665/8653/8669 · 继续 r3-r5）**✅ 已完成** → `ARCHIVE_ZHULONG_TASK.md §归档 batch 14`；结论：r3–r5 全部收口，**5/5 = 69.0±2.3%**（r1 71.5 / r2 67.1 / r3 67.1 / r4 71.5 / r5 67.7），vs cline 86.8±1.6% ⇒ **−17.8pp**；全程 0 exec_err / 0 infra / timeout≤6；报告 §9 已更新。
+
+> 📦 §运维令·2026-10-28 11:0x（换端口 8663/8666/8667 重跑 r2）→ 已被 14:4x 端口裁决取代 → `ARCHIVE §归档 batch 14`。
+
+> 📦 §运维令·2026-10-28 10:3x（重跑 r2 regrade + 推进 r3-r5）→ 已由 14:4x 及后续完成 → `ARCHIVE §归档 batch 14`。
+
+> 📦 §运维令·2026-10-27 09:0x（maxTokens 8192→16384 修正 · 作废 8192 5-run）**✅ 已执行** → `ARCHIVE §归档 batch 14`；**关键事实**：cline 基线 = maxTokens **16384** / `-p 4` / batch `2026_1019_005714`；8192 5-run（70.8±7.7%）作废不进对比。
+
+### 🟠 历史指令 · 2026-10-26 08:1x（**作废 224219（配置错误）→ 已修复 worker 配置源 → 重启 loop → 用正确配置重跑 zhulong×glm-5.3-flash×full 5-run**）· 已被 10-27 令覆盖
+
+> ⚠️ **本块已被 10-27 令覆盖**：本块里所有"maxTokens=8192"的硬约束**作废**，cline 基线实测 maxTokens = 16384（见 10-27 令 ④）。本块保留仅供历史追溯。
+
+```text
+
+> 用户原话（10-26）：「作废224219，重启 agent loop。你现在 36.15机器上，可以直接操作。」
+> **背景**：10-24 22:1x 令要求「停 cline-full → zhulong 配置对齐 cline（maxTokens 8192）→ zhulong 重跑 5-run」。但 224219 起跑时 **worker 复制了 stale providers.json**（`~/.cline/data/settings/providers.json` = `deepseek-v4-pro + maxTokens=16384`），而非令要求的 `glm-5.3-flash + maxTokens=8192`。根因：`run_cli.sh` 默认 `CLI_DATA_DIR=~/.cline/data`，而 `run_zhulong_script.sh` 的 `export CLI_DATA_DIR=~/.zhulong` 在某些启动路径下未生效。此外 agent loop 在 10-24 22:46 执行 `pkill -f 'zhulong'` 杀 cline-full r1 时**误杀了自己**（zhulong_loop.sh 匹配了 `zhulong`），导致 loop 死亡 ~34h。
+
+**① 已由运维完成（勿重复）**
+1. **作废 224219**：已写 `VOID_REASON.txt` 到 `2026_1024_224219/`；数据留证不删；不进 5-run。
+2. **修复 worker 配置源**：已把 `~/.zhulong/settings/providers.json`（正确值 `glm-5.3-flash + maxTokens=8192 + baseUrl /v1`）复制到 `~/.zhulong/data/settings/providers.json`（run_cli.sh 复制源）。验证：模拟 worker 复制 → 得 `glm-5.3-flash + 8192` ✅。
+3. **确认当前配置全对**：`.env` `CLI_AGENT=zhulong / READBACK=full / PROXY_PORTS=8650,8651,8652,8654`；`~/.zhulong/settings/providers.json` `model=glm-5.3-flash / maxTokens=8192 / baseUrl=http://agi-gateway.cxmt.com/v1 / reasoning.enabled=false`；8090 PID 2778637 活 + full readback 四字段 ✅；4 端口 8650/8651/8652/8654 全 OK。
+4. **重启 agent loop**：用**登录 shell** 启动（`setsid bash -lc "exec bash <...>/zhulong_loop.sh" > /tmp/zhulong_loop.log 2>&1 < /dev/null &`），确保 PATH 有 `zhulong`。启动后自检 `command -v zhulong` 有输出 + log 无 `No such file`。
+
+**② 你（agent）要做的（按序）**
+1. **读 MEMORY 顶部状态头** → 确认 `STAGE = zhulong×glm-5.3-flash×full 5-run（配置对齐后重跑）`、`PHASE = running`、`WAITING = 0`（loop 刚重启，需起 r1）。
+2. **起 r1**（zhulong × glm-5.3-flash × full × maxTokens=8192 × 8650 组 × `-p 4`）：
+   - `cd /nasdata/app.e0031982/code/eda_fastmcp && export PYTHON=$PWD/venv/bin/python && unset http_proxy https_proxy ALL_PROXY && export NO_PROXY="10.129.32.75,localhost,127.0.0.1" && export https_proxy="http://172.19.92.23:13128" && CLI_AGENT=zhulong EDA_RUNCODE_READBACK=full setsid bash scripts/run_zhulong_script.sh -p 4 -n > /tmp/ABL_glm-5.3-flash_zl_aligned_r1.log 2>&1 < /dev/null &`
+   - **关键**：`run_zhulong_script.sh` 会 `export CLI_DATA_DIR=~/.zhulong`（已确认 line 28），worker 会复制 `~/.zhulong/settings/providers.json`（= `glm-5.3-flash + 8192` ✅）。
+3. **起跑后验证 worker 用的模型**：从 `<batch>/cli_data/worker_1/data/settings/providers.json` grep `model` 应为 `glm-5.3-flash`、`maxTokens` 应为 `8192`。**这条必须贴证据**（若仍是 `deepseek-v4-pro` 或 `16384` 立即停跑报错）。
+4. **r1 → 手动 regrade（Step7.1 auto-grade 有已知 bug）→ 记 `pass/158` + `gen-fail` + 耗时 + `-32001` + `sandbox-timeout` → r2 → ... → r5 → 5/5 mean±std**。
+5. **与 cline 基线 86.8±1.6% 对比**，更新 `reports/report_zhulong_agent_compare_cline_vs_zhulongcli_full_zh.html`（新增"配置对齐后重测"一节）。
+
+**③ 验收判据（不达标要如实报，不得粉饰）**
+1. `maxTokens` 等配置 **diff 为空**（除 CLI 名/路径）—— **worker providers.json 必须 = glm-5.3-flash + 8192**；
+2. 单轮 **gen-fail ≤ 5/158**（对齐前 12–27）—— 这是本次对齐最该改善的指标；
+3. 5 轮判据十三有效（timeout≤10、exec_err=0、infra 0）；
+4. 若对齐后 zhulong 仍显著低于 cline，**必须**在报告里给出"已排除配置混杂"的结论。
+
+**④ ⚠️ loop 自杀防护（血泪教训）**
+- **禁止用 `pkill -f 'zhulong'`**（会匹配 `zhulong_loop.sh` 自己 → loop 自杀）。如需停 eval，用**精确 PID**：`kill <launcher_PID>`，或 `pkill -f 'run_zhulong_script.sh'`（不含 `zhulong` 字样）。
+- **禁止用 `pkill -f 'cline'`**（同理会匹配 cline 相关非目标进程）。停 cline eval 用 `pkill -f 'run_cline_script.sh'`。
+
+**⑤ 作废明细（留证不删）**
+- `2026_1024_224219`：worker stale providers.json = `deepseek-v4-pro + maxTokens=16384`（应为 `glm-5.3-flash + 8192`）→ ❌ 作废（已写 `VOID_REASON.txt`）。
+- 上一线 ZL-flash full 5/5（10-23，原始配置 maxTokens=16384）= **75.6±4.4%** ✅ 已收口（但 maxTokens 未对齐，不作为 CLI 对比锚点）。
+- cline-full r1 `2026_1023_231253` / r2 `2026_1024_141148`：被 22:1x 令停，r2 未 regrade（可补 regrade 留档，但不进 5-run）。
+
+**⑥ 口径备注**
+- 本线 = **zhulong×glm-5.3-flash×full×maxTokens=8192**（配置对齐 cline 后），目的是与 **cline×glm-5.3-flash×full×maxTokens=8192**（基线 86.8±1.6%）做"只差 CLI 二进制"的干净对比。
+- 新线（glm-5.3-flash × zhulong）**不纳入论文**（用户 10-23 直令）。论文锚点仍用旧线 (N′) fp4×cline 4 轮 mean=76.7% provisional。
+- 论文已砍到正文 6 页（DAC 限制达成，commit `e7de188d` + `3651b322`）。
+
+**⑦ 与 10-25 论文改稿令的关系**
+- 10-25 00:0x 令（按外部评审意见改论文）**与 5-run 并行**，不冲突。5-run 照跑，论文改稿在等待空档推进。
+- 若论文改稿需打断 5-run 验证关键点，按 10-25 令「先落盘 + 记 MEMORY + 事后 regrade 补记」执行。
+```
+
+---
+
+
+---
+
+## §归档 batch 16 · 2026-11-04（10-11-03 21:0x env-prep 令闭合·原文搬入）
+
+> 搬入时间 2026-11-04。本块为「🚨 2026-11-03 21:0x 本机装 llama.cpp + 下载 Qwen3.5-0.8B」令的**原文**，已闭合（✅ 完成），从 `ZHULONG_TASK.md` 顶部滚出。**只搬不改**。
+
+### 🚨 用户令 · 2026-11-03 21:0x（**本机安装 llama.cpp + 下载 Qwen/Qwen3.5-0.8B（hf-mirror）· 供后续数据分析**）· 用户直令 ·【新·待执行】
+
+> 目标：在 zhulong 本机（36.15 work copy 所在机器）装好 CPU 版 llama.cpp，并把 `Qwen/Qwen3.5-0.8B` 完整拉到本地，作为后续数据分析（trace / 日报摘要、标签、预筛）的离线小模型。
+> 本令**不改论文、不改评测口径、不碰其它线**；只做环境与模型准备。
+> 本令已配**一键脚本**：`doc/ZhuLong_DAC2027/run/setup_llamacpp_qwen35.sh`（全流程 `bash run/setup_llamacpp_qwen35.sh`；分步 `STEP=probe|build|download|convert|smoke`；日志 `/tmp/setup_llamacpp_qwen35_*.log`）。可用它减少试错，仍以本令 §5 的交付物为准。
+> ⚠️ 重要事实（已核实模型卡）：**Qwen3.5-0.8B 是 Image-Text-to-Text 多模态模型**（`qwen3_5`，`AutoProcessor` + `AutoModelForMultimodalLM`，Apache-2.0），**不是纯文本 LLM**。下载必须包含 processor / vision 权重；llama.cpp 若尚不支持该架构，GGUF 转换失败属预期，按下面 §3 回退，不要卡住。
+
+**0. 先探测（只读，先报再动）**
+```bash
+hostname; uname -a; nproc; free -g; df -h .
+command -v git cmake g++ python3 curl || true
+nvidia-smi 2>/dev/null | head -12 || echo "no nvidia-smi"
+nvcc --version 2>/dev/null || echo "no nvcc"
+```
+
+**1. 安装 llama.cpp（CPU 必装；有 CUDA 再加编 GPU 版）**
+- 目录：`TOOLS=${TOOLS:-$HOME/tools}`，源码 `$TOOLS/llama.cpp`；**不要放进 git 仓库**。
+- 网络：`export https_proxy=http://172.19.92.23:13128 http_proxy=$https_proxy`（与本 loop 同代理）；先 `curl -I -m 10 https://github.com` 验证，失败如实报 http_code。
+```bash
+git clone --depth=1 https://github.com/ggml-org/llama.cpp "$TOOLS/llama.cpp"
+cd "$TOOLS/llama.cpp"
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DGGML_NATIVE=ON -DGGML_OPENMP=ON
+cmake --build build -j "$(nproc)" --target llama-cli llama-server llama-quantize
+./build/bin/llama-cli --version
+```
+- 若 `nvidia-smi` 正常且 `nvcc` 可用，再编 `build-cuda`（`-DGGML_CUDA=ON`）；失败**不阻塞**，CPU 版可用即可。
+
+**2. 下载模型（必须走镜像）**
+- 选盘：`df -h` 选剩余 ≥10GB 的路径（建议 `/data/models` 或 `$HOME/models`），**不要放进 git 仓库**。
+```bash
+export HF_ENDPOINT=https://hf-mirror.com
+export HF_HUB_ENABLE_HF_TRANSFER=0
+MODEL_DIR=${MODEL_DIR:-$HOME/models/Qwen3.5-0.8B}
+mkdir -p "$MODEL_DIR"
+hf download Qwen/Qwen3.5-0.8B --local-dir "$MODEL_DIR"
+# 若无 hf 命令：huggingface-cli download Qwen/Qwen3.5-0.8B --local-dir "$MODEL_DIR"
+```
+- 校验：`config.json` / `preprocessor_config.json` / tokenizer 文件 / `*.safetensors` 齐全；无 `*.incomplete`；`du -sh` 与文件数写进报告。
+
+**3. 转 GGUF（能转就转；不支持就记录并回退）**
+```bash
+python3 "$TOOLS/llama.cpp/convert_hf_to_gguf.py" "$MODEL_DIR" \
+  --outtype f16 --outfile "$MODEL_DIR/Qwen3.5-0.8B-f16.gguf"
+# 若成功再量化：
+"$TOOLS/llama.cpp/build/bin/llama-quantize" \
+  "$MODEL_DIR/Qwen3.5-0.8B-f16.gguf" "$MODEL_DIR/Qwen3.5-0.8B-Q8_0.gguf" Q8_0
+```
+- 若报 “unsupported architecture / qwen3_5 / 缺 mmproj”：**不要停**。保留 HF 权重，改用 transformers 冒烟：
+```bash
+python3 -c "import transformers; print(transformers.__version__)"
+# 需要较新版本才认 qwen3_5；不足则建独立 venv（勿污染共享环境）：
+# python3 -m venv ~/.venvs/qwen35 && ~/.venvs/qwen35/bin/pip install -U \
+#   -i https://pypi.tuna.tsinghua.edu.cn/simple transformers accelerate safetensors pillow
+```
+- 文本冒烟（多模态模型也可纯文本输入）：
+```python
+from transformers import AutoProcessor, AutoModelForMultimodalLM
+p = "…/Qwen3.5-0.8B"
+proc = AutoProcessor.from_pretrained(p); m = AutoModelForMultimodalLM.from_pretrained(p)
+msgs=[{"role":"user","content":[{"type":"text","text":"用一句话解释什么是 EDA 设计流程。"}]}]
+inputs=proc.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True, return_dict=True, return_tensors="pt")
+print(proc.decode(m.generate(**inputs, max_new_tokens=64)[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True))
+```
+- 记录：是否加载成功、耗时、峰值内存、输出是否连贯。
+
+**4. llama.cpp 冒烟（仅当 §3 转 GGUF 成功）**
+```bash
+cd "$TOOLS/llama.cpp"
+./build/bin/llama-cli -m "$MODEL_DIR/Qwen3.5-0.8B-Q8_0.gguf" \
+  -p "用一句话解释什么是 EDA 设计流程。" -n 48 -t 8 --no-warmup
+```
+- 记录 `tok/s`、加载耗时、峰值内存；`/usr/bin/time -v` 或 `ps` 均可。
+- 如需 HTTP：`llama-server` 用 **18080**（禁止占用 8090），测完 `/health` 立即关闭，不留常驻。
+
+**5. 交付**
+1. 中文 HTML 报告：`doc/ZhuLong_DAC2027/reports/report_zhulong_llamacpp_qwen08b_zh.html`（单文件自包含，0 script / 0 CDN / 0 外链）。必含：主机与硬件、llama.cpp commit/版本、代理与镜像、模型路径/文件数/总大小、GGUF 是否成功及大小、冒烟输出片段与 tok/s、失败项与原因、后续数据分析建议（能做什么 / 不能做什么）。
+2. `run/MEMORY_ZHULONG.md` 顶部加 1 条状态（含路径与结论），并写当日 daily。
+3. commit 前缀 `zhulong env:`，push。
+
+**硬约束**
+- 不碰仓库内其它线文件；不 `pkill` 其它进程；不改论文与评测数字。
+- 模型/工具放仓库外；若被迫放仓库内，先加 `.gitignore` 并说明。
+- 下载/编译/转换失败**如实报**，禁止编造 tok/s 或大小。
+- 完成判据：模型完整 + 至少一条冒烟成功（llama.cpp 或 transformers）+ 报告/MEMORY/commit 三件齐。
+
+---
+
+## 📦 归档块 · 2026-11-11（2026-10-25「按外部评审意见改论文」令原文 · 压体积搬出）
+
+> 状态：已于 10-26 令并行执行完毕；论文相关改动见 reports/ 与 EDA-LiveFlow-Bench 仓。原文一字未改。
+
+### 📕 改稿任务令 · 2026-10-25 00:0x（**按外部评审意见改论文（含 57.4pp 归因硬伤）**）· 用户直令 · 与 5-run 并行 ·【保留·与 10-26 令并行】
+> **评审原文（必读，逐条对照）**：`doc/ZhuLong_DAC2027/reviews/REVIEW_DAC2027_external_2026-10-24.md`
+> 评审结论：**Borderline / major revision**。核心建议 = 「把论文做成**实证 EDA 自动化论文**，grounding-gap 只作**有边界的框架/假设**，不要当成已证明的定理」。
+
+**对：逐条核对（必须先做，别急着改）**
+1. 对每条意见给出判定：**成立 / 部分成立 / 不成立**，并**锚定证据**（论文节号/表号/页码，或 `zhulong_results.md` 的行）；
+2. **重点核对第 2 条（57.4pp）**：Table 3 里 `no read-back 62.2 → binary 65.5 → full 75.7`，**受控 read-back 轴只有 13.5pp**；57.4pp = 75.7−18.3（含检索+沙盒+自探索的系统级增益）。若核对成立 ⇒ **这是必须改的硬伤**（abstract / 贡献条 / §4.2 / §6.2.1 四处都要改）；
+3. 核对第 5 条（SKILL 60.3 vs w/o Self-Expl. 61.5；PyAether 去检索后 81.0 vs 77.3）是否与 `zhulong_results.md` 的 C1/S1 表一致。
+
+**改（P0，必须落地）**
+- **A. 57.4pp 归因**：按上面口径拆成三个数并分别表述（受控 read-back 13.5pp / binary 3.3pp / 系统级 57.4pp）；
+- **B. 理论降级或补证**：二选一 ——（i）给出显式假设下的 Proposition + 证明；或（ii）把 `D_grounding ≤ g(ε)` 明确写成 **hypothesis/framework**，并把 §4.2 的措辞改到与证据相称（评审给了可直接用的替代句式，见评审 §5）；
+- **C. benchmark 可复现性**：补一小节写明「可公开什么 / 受许可限制不能公开什么 / 独立研究者能复现到哪一步 / assertion 如何设计与防假阳性」；
+- **D. related work 加强**：对 ChatEDA / AutoEDA / MCP4EDA / LayoutCopilot / ChaTCL / RAG-EDA 逐条写**三句差异**（目标环境 / 统一接口 / 实证贡献），别再只说"我们不同"；
+- **E. 参考文献占位符**：修掉 `In Proceedings of . ACM` 这类空字段（ACM-Reference-Format + 缺字段导致）。
+
+**补（强烈建议，能做就做）**
+- **F. 成本/延迟/token**：⚠️ **用户提示：陈熙元的版本里已有 cost 数字，可在 git 历史里查到**。请先在 git 里检索（如 `git log --all -S 'cost' -- doc/ZhuLong_DAC2027`、`git log --all --author=Chen`、grep `cost|token|latency|耗时|成本` 于历史版本/`daily-memories`），**找到就直接复用并注明出处 commit**；确实找不到再从 eval log 统计（每任务 token / 墙钟 / tool calls / 约当成本）并标"需补测"。
+- **G. SKILL 回归**：回答"为什么离线自探索在 SKILL 上反而 −1.2pp"（给假设 + 可从日志验证的判据）；
+- **H. Tcl 拆开报**：WaveView(77) 与 Innovus(57) 分别给数，不要只给 pooled 87.2%；
+- **I. 统计**：给 5-run 的 **Wilson CI + 配对 McNemar**（数据已有，不用重跑）；
+- **J. 部署声明**：把"服务数百名工程师"改成可核验的表述，或标为"内部部署（细节受限）"。
+
+**交付**
+1. `reports/report_zhulong_review_response_zh.html`（中文 HTML，**response-letter 风格**：意见 → 判定 → 证据位置 → 具体改动（原文/新文对照）→ 若未改要写理由）；用 cimi search 时可引用外部资料（给出处）。
+2. 论文修订：改完必须 `pdflatex×1 + bibtex + pdflatex×2` 通过，且保持 **7 页（正文 6 + refs 1）**、`0 undefined`、无 Overfull/Underfull 告警（`main.log` 自查）。
+3. 更新 `zhulong_results.md` / `MEMORY_ZHULONG.md` 的对应行；commit 前缀 `zhulong paper-review:`。
+> 允许为验证关键点打断正在跑的 5-run（先落盘 + 记 MEMORY + 事后 regrade 补记）。**不得编造任何数字或文献**；凡"待补"必须写明怎么补。
+
+
+
+--- 归档块 · 2026-11-14 05:04（体积维护·从 ZHULONG_TASK.md 原文搬入·不改写）---
+
+### 📦 归档 · 2026-11-12 21:2x 压缩机制消融（basic vs agentic）·✅ 已交付 commit e09c7e238
+
+[用户令 · 2026-11-12 21:2x · 最高优先 · 新实验（压缩机制消融）]
+用户原话："我想用 PyAether 158 评测 对比一下 cline 两个 压缩机制：basic vs. agentic 的效果。用中文HTML写个计划书。"
+**排期/状态（2026-11-12 21:3x 更新）**：`[队列→执行] 压缩机制消融` —— **前置门禁已满足**（轴 B 15/15 收口，B_en_r1 重跑 78.5% 已落盘 idx31，报告/audit/独立报告已刷新，commit `a909fe482` 已推送）。**本轮唤醒直接进入 P0，不再等待、不再写 QUEUED**。若发现前置有缺项（例如 audit 标注未落盘），先补齐再起跑并如实写心跳。
+
+
+
+执行口径（严格按序）：
+1) **计划书已交付（只读，按它执行）**：`doc/ZhuLong_DAC2027/reports/plan_zhulong_compaction_basic_vs_agentic_zh.html`（v2，10 节 + §11 效率修订 + 3 附录，0 外链）。**规模以 §11 为准**（不要按 §3/§5/§9 的旧 158 题 × 6 轮执行）；先通读 §1 机制 / §11 v2 / §4 指标 / §6 分析 / §10 决策规则，再起跑。
+2) **实验本质（v2）**：同一基座、同一 cline 版本、同一协议（`-p 8 -n`、`CLINE_THINKING=medium`、`LANG_HINT` 空），只切换 `cline --compaction basic` vs `--compaction agentic`；**强制压缩 regime**（`maxInputTokens` 128K→32K，pilot 校准到压缩率 ≥70%）+ **40 题长轨迹子集**（`run/compaction_subset_40.txt`，从 158 题历史 trace 按上下文峰值/工具调用数取 Top-40，两臂同一清单）；每臂 3 轮（ABBA：B→A→A→B→B→A），共 6 轮。
+3) **P0 预检（必须先做，未过不许起跑）**：
+   a. `cline --version` + `cline --help | grep -- --compaction` —— 现网 3.0.51 若**不支持该 flag**，升级到支持版本（4.x，记录版本号），两臂同版本，并加做 10 题校准；
+   b. 检查 `EDA-Eval-Framework/scripts/run_cline_script.sh` 是否把 `CLINE_COMPACTION` 透传成 `--compaction`；无则按计划书附录 A 打 **3 行补丁**（无 flag 时保持原行为）；
+   c. 两臂各 1 题 smoke：确认 `*.compaction.json` 出现且 `metadata.kind` 分别为 `compaction`（basic）/ `compaction_summary`（agentic）；
+   d. 沙盒端口 8664/8665/8653/8669 全空闲 + quota probe 通过 + `pgrep -f '^bash scripts/run_cline_script'` 无输出。
+   e. **调压缩事件率（v2 关键，最易漏）**：在该 `--data-dir` 的 `settings/models.json` 里把本 provider/model 的 `maxInputTokens` 从 `128000` 改为 **`32000`**（`contextWindow` 可保留 1M；生效预算 = min(两者) ⇒ 触发点 ≈ 0.9×32K ≈ 28.8K）。两臂用**各自独立** `--data-dir`，除 `compactionStrategy`/`--compaction` 外配置逐字节一致；改档后必须先用 pilot 确认压缩率 ≥70%，并把最终值写进每轮元数据。
+
+4) **排期门禁（已满足，记录在案）**：门禁原文 = 轴 B 15/15 全部收口（含 B_en_r1 基座对齐重跑落盘 idx31 + trace 归档）+ 主报告/轴 B 独立报告/audit §5.3 刷新 + commit/push。**现状（2026-11-12 21:0x）**：B_en_r1 = 124/158 = **78.5%**（batch 2026_1112_161042，trace 332M/158 子目录），B_en 三轮均值 81.0±2.9%，轴 B 15/15 = dsv4-pro-cloud 恒定；报告/audit/独立报告已刷新并提交（`a909fe482`）。⇒ **门禁判定 PASS，本实验即刻可起跑**。仍不允许与 designflow 或其他评测并发（额度/沙盒互斥）。
+5) **P1 试点（v2）**：固定 8 题（seed=42，取 Top-40 清单前 8）× 两臂各 1 轮；量三个数：压缩率、Pass@1、单题耗时。**调档规则**：压缩率 <60% → `maxInputTokens` 32K→24K→16K（每次只动这一个数）；压缩率 >95% 且 Pass@1 <20% → 回调 48K；两臂压缩率差 >15pp → 先查 strategy 是否真生效（basic`kind=compaction` / agentic`kind=compaction_summary`）。锁定最终档位后再开全量。
+6) **P2 主实验（默认方案，可按 item 14 的自行判断替换）**：新建 `run/run_compaction_ablation.sh`（复制 `run_think_lang_ablation.sh`，去轴 A/B，改 6 轮 ABBA + `CLINE_COMPACTION` + 独立 `--data-dir`），**默认 40 题 × 2 臂 × 3 轮**（若你按 item 14 选了别的设计，以你的 decision 为准；约 0.94h/轮，纯跑 ~5.6h），每轮落 `run/ablation_compaction_results.json` 条目 + `run/cost_C_{basic,agentic}_r{1..3}.json` + trace 归档 `/nasdata/.../trace_compaction_ablation/<arm>/<batch>/`。每轮起跑前 quota probe；429 等待不降并发。可选：自然 128K regime 用同清单前 20 题 × 2 臂 × 1 轮做描述性验证（+~0.9h，不设判据）。
+7) **P3 报告（用户点名要中文 HTML）**：`reports/report_zhulong_compaction_basic_vs_agentic_zh.html`——单文件自包含、内联 CSS、**0 外链**；8 节：摘要（三问结论）/机制口径/主结果（40 题 × 6 轮表 + 逐题配对 + regime 声明 tight-context）/亚组（是否触发压缩×轨迹长度×domain）/失败分类/成本-收益/摘要质量/结论与默认策略建议 + 附录。**主终点唯一 = 3 轮 Pass@1 均值（ITT）**；亚组只作次要终点，须报效应量+CI+n。
+8) **预注册纪律**：跑前不改判据；所有轮次全入表、不剔除；单轮不下结论；差异 <3pp 就写「证据不足」，不许包装成增益。
+9) **红线**：不 kill 编排器/loop；不与 designflow 并发抢沙盒；不改 benchmark/评分器；不删旧结果与 trace；不改别线文件。
+10) **心跳**：每轮写清 臂/轮次/PID/etime/log 大小/batch/已评题数；实验跑中 WAITING=1；6 轮完成 + 报告刷新 + commit/push 后写 done_all + WAITING=1。
+11) **P0 可复制清单（按顺序执行，逐条留证到 /tmp/COMP_p0_*.log）**：
+
+```bash
+# (1) 版本与 flag（无输出 ⇒ 升级 4.x，记录版本）
+cline --version | tee /tmp/COMP_p0_version.log
+cline --help | grep -n -- '--compaction' | tee -a /tmp/COMP_p0_version.log
+
+# (2) 两臂独立 data-dir + maxInputTokens=32000（除策略外逐字节一致）
+BASE=~/.cline/data
+for arm in basic agentic; do
+  D=/nasdata/app.e0031982/compaction_ablation/$arm
+  rm -rf "$D"; mkdir -p "$D"; cp -a "$BASE/settings" "$D/settings"
+  python3 - "$D/settings/models.json" <<'PY'
+import json,sys
+p=sys.argv[1]; d=json.load(open(p))
+for prov in d.get('providers',{}).values():
+    for m in prov.get('models',{}).values():
+        m['maxInputTokens']=32000
+json.dump(d,open(p,'w'),ensure_ascii=False,indent=2)
+PY
+  python3 - "$D/settings/global-settings.json" "$arm" <<'PY'
+import json,sys
+p,arm=sys.argv[1],sys.argv[2]; d=json.load(open(p))
+d['compactionEnabled']=True; d['compactionStrategy']=arm
+json.dump(d,open(p,'w'),ensure_ascii=False,indent=2)
+PY
+  sha256sum "$D/settings/models.json" "$D/settings/global-settings.json" | tee -a /tmp/COMP_p0_cfg.log
+done
+
+# (3) 40 题子集（固定清单入库，两臂同一清单；脚本不存在则本轮先写，约 60 行：读 trace 排名 + 输出清单）
+python3 run/build_compaction_subset.py \
+  --traces /nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang \
+  --tasks  benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl \
+  --top 40 --seed 42 --out run/compaction_subset_40.txt
+wc -l run/compaction_subset_40.txt   # 必须 40
+
+# (4) 两臂各 1 题 smoke（用现有 harness 单题入口；或把子集截 1 题）
+#     判据：session 目录出现 *.compaction.json，且 metadata.kind
+#     basic ⇒ "compaction"；agentic ⇒ "compaction_summary"
+```
+> 若升级后 `--compaction` 仍不可用：改用 data-dir 内 `global-settings.json.compactionStrategy` 控制，并**必须**用 `compaction.json.metadata.kind` 验证生效；不得因此跳过验证。
+> 若 1 题 smoke 未触发压缩（正常）：以 pilot 8 题为准判断触发率，不要因单题未触发就改档。
+
+12) **P1 只做两件事**：8 题 × 2 臂，①确认触发（32K 路径：每臂 ≥70%；fallback 路径：15 题全部触发）②确认 `metadata.kind` 正确。结果落 `run/compaction_pilot.json`；**不再做 32K→24K→16K 的多档调档**（那个数不生效就没档可调，生效就不用调）。
+
+13) **收尾**：`run/compaction_p0_decision.md`（你的调查结论）+ `run/compaction_pilot.json` + `run/run_compaction_ablation.sh` + `run/ablation_compaction_results.json` + `run/cost_C_*_r*.json` + 报告，一并 `git add`（只加本线文件）→ commit → push；MEMORY 写一行总结（选定设计 / Δ / p / 一句话结论）。
+
+14) **实现路径由你决定（用户令 2026-11-12：不要替 agent 做主）**
+   目标只有一个：在**两臂相同预算**下让压缩真实发生（或证明做不到），从而回答 basic vs agentic 哪个好。
+   **你要自己查、自己定**：
+   a. 读 `EDA-Eval-Framework/scripts/run_cline_script.sh`：它怎么起 cline、有没有把 data-dir/env 传下去；
+   b. 读/实测 cline（现网 3.0.51）如何解析 `maxInputTokens` / `contextWindow`（`<data-dir>/settings/models.json`、`global-settings.json`）；P0d 的「不生效」到底是因为版本不读，还是因为配置没送到——**用 1 题最小实验给出证据**（`compaction.json.source_tokens` 与 `maxInputTokens` 的关系）；
+   c. 据此**自己选最简可行设计**并执行（能控预算 → 固定预算 + 两臂；控不了 → 换成超长任务做部署对比，**不要为了配置去升级/改源码**）；
+   d. 先写 `run/compaction_p0_decision.md`（结论 + 证据 + 选定设计 + 预计时长），再开跑；若判断另一条路更快，直接走另一条，不必等确认。
+15) **只约束这些，不约束实现细节**：同基座/同 cline 版本/同协议（`-p 8 -n`、thinking=medium、同一任务清单）；两臂**只差 compaction**；每臂 ≥3 轮；报告必须给 Pass@1（±std + 配对检验）+ tok/题 + 墙钟 + **每臂触发率与触发 token 中位数** + 失败分类；结论明确写「选 basic / 选 agentic / 证据不足」。**计划书里的 32K、补丁位置、fallback 阶梯都只是参考，不是命令。**
+
+
+
+
+
+### 📦 归档 · 2026-11-12 15:4x B_en_r1 基座对齐重跑·✅ done_all commit a909fe482
+
+[用户令 · 2026-11-12 15:4x · 最高优先 · 覆盖 done_all 等待状态 · 基座对齐补救]
+用户原话："既然你确定仅 B_en_r1 = glm-5.2，其余 14 轮（含 B_zh_r3 重跑）= deepseek-v4-pro-cloud，那就安排 zhulong agent 重新测试 B_en_r1；测完后刷新中文 HTML 报告，表格中加上 token 列。"
+
+执行口径（严格按序，不许改序）：
+1) **重跑 B_en_r1**：用与 B_en_r2/r3 完全相同的配置起新 batch 重跑 —— `thinking=medium`、`LANG_HINT="Think in English."`、**默认基座（deepseek-v4-pro-fp4/cloud，不强制 glm-5.2）**、`-p 8 -n`、158 题。目的：让轴 B 全部 15 轮基座一致（消除 wake#865 发现的基座违规），使 B 轴从「降级描述性」升级为「同基座可横比」。
+2) **启动方式**（参考 B_zh_r3 重跑 PID 4037472 的成功模式）：
+   ```bash
+   cd /nasdata/app.e0031982/code/eda_fastmcp
+   export CLI_AGENT=cline PARALLEL=8 CLINE_THINKING=medium LANG_HINT="Think in English."
+   export EVAL_FW_DIR=/nasdata/app.e0031982/code/EDA-Eval-Framework
+   export EVAL_ROOT_DIR_OVERRIDE=/nasdata/app.e0031982/code/eda_code_eval
+   export EVAL_BENCHMARK="benchmarks/EDA-Eval-pyAether/EDA-Eval-pyAether-158.jsonl"
+   export PYTHON=/nasdata/app.e0031982/code/eda_fastmcp/venv/bin/python
+   export NO_PROXY="agi-gateway.cxmt.com,10.129.32.75,localhost,127.0.0.1"
+   unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
+   export PATH="/home/app.e0031982/.local/node-20/bin:$PATH"
+   setsid bash -c 'timeout --signal=TERM --kill-after=120 43200 bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_B_en_r1_rerun.log 2>&1' < /dev/null &
+   ```
+   ⚠️ 先 `pgrep -f '^bash scripts/run_cline_script'` 确认无其他评测在跑再起；沙盒端口 8664/8665/8653/8669 须全空闲（designflow 线不抢沙盒）。
+3) **旧 B_en_r1 留档**（idx 15, pass=75.3%, batch 2026_1109_084446, glm-5.2）：
+   - 在 `run/ablation_think_lang_results.json` 的 idx 15 summary 里加 `superseded_note` 字段，内容：`"2026-11-12 15:4x 令·基座对齐重跑·旧值 75.3% (glm-5.2) 留档不删·新 r1 完成后追加"`（参考 B_zh_r3 旧版 idx 20 的处理）。
+   - `run/cost_B_en_r1.json` 改名 `run/cost_B_en_r1_old_glm52.json` 留档；新 r1 的 cost 写进新的 `run/cost_B_en_r1.json`。
+4) **新 r1 落盘**（gen + score + cost 全完成后）：
+   - 新 summary 追加到 `ablation_think_lang_results.json` 末尾（新 entry，tag 仍 `B_en_r1`，batch 为新 batch id，含完整 pass_rate_pct/passed/total/tokens/converged/timeout/gen_fail/success 字段）。
+   - trace 存档到 `/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/B_en_r1/<new_batch>/`（旧 batch 目录保留不删）。
+5) **刷新报告**（新 r1 落盘后必做）：
+   ```bash
+   cd /nasdata/app.e0031982/code/super_intelligence_2035/doc/ZhuLong_DAC2027/run
+   python3 gen_report_zhulong_ablation_think_lang_zh.py
+   ```
+   - 主报告 `reports/report_zhulong_ablation_thinking_language_zh.html` 已含 token 列（prompt/completion/reasoning/total tok + tok/题），刷新后 B_en 行自动用新 r1 数据。
+   - **基座违规 banner 需改写**：B_en_r1 重跑后轴 B 全 15 轮基座一致（dsv4-pro-fp4），原 banner「仅 B_en_r1=glm-5.2，其余 14 轮=dsv4-pro」不再成立 → 改为「轴 B 15/15 轮 = dsv4-pro-fp4 ✅ 恒定合规（B_en_r1 已于 11-12 重跑对齐基座，旧 75.3% glm-5.2 版标 SUPERSEDED 留档）」；§⑦ 降级结论同步升级（B 轴可作同基座横比，但与基线 glm-5.2 的 Δpp 仍不可直接归因为语言效应，因基座不同）。
+   - audit 报告 `reports/report_zhulong_lang_switch_audit_zh.html` §5.3 的「修正建议」同步标注「B_en_r1 已重跑对齐，剩余 14 轮本就同基座 → 基座恒定条件已满足；基础 prompt 中性化 + 语言切换验证仍需做」。
+6) **B 轴独立报告** `reports/report_zhulong_ablation_axisB_language_zh.html`（11-12 15:34 生成）：
+   - 由编排 agent 重新生成（用与主报告相同的 results JSON 数据源）；如无现成生成器，手动更新该 HTML 的 §2.1/§2.2 表格：① B_en r1 行替换为新 pass 率 + 新 batch + 新 tokens；② §2.1/§2.2 主表**每行加 token 列**（prompt/completion/reasoning/total tok，与主报告口径一致）；③ 顶部红色「基座违规」banner 改写为「基座已对齐」绿色 banner；④ §七 降级结论同步升级。
+7) **心跳**：每轮写明 B_en_r1 重跑状态（PID / etime / log 大小 / batch / step）；WAITING=1（重跑跑中）；新 r1 落盘 + 报告刷新 + commit/push 完成后写 done_all + WAITING=1 等下一条指令。
+8) **红线**：不 kill 编排器/loop；不碰 trace 原文（旧 B_en_r1 batch 目录保留）；不占沙盒（designflow 线不抢）；不改别线；不 clean/reset/stash 别线未提交改动（designflow 线 dirty tree 非本线）。
+
+
+### 📦 归档 · 2026-11-11 22:4x RU+regrade+r3重跑 + 11-11 lang-audit·✅ 已交付
+
+[用户令 · 2026-11-11 22:4x · 已交付 · 降级为历史参照]
+用户原话："抽样的结果只做参考，跑完再说。不许因为抽检思维链漂回英文而停止评测。坚决把评测执行到底。RU之后，regrade zh r2.再之后重跑 zh r3"
+
+执行口径（严格按顺序，不许改序）：
+1) 评测不许停：B_ru_r1/r2/r3 必须全部跑完（30/30）。抽检报告只是参考；不得因 en/es/fr/ru 思维链漂回英文而 kill 编排器、暂停轮次、提前收口或改编排器；WAITING 不得因此置 1。
+2) 现有编排器 PID 3675162 继续跑；B_ru 三轮完成前不做任何会打断评测的动作（不抢沙盒、不改 trace、不重跑其他臂）。
+3) RU 三轮全部结束后，按此顺序执行：
+   - 先 regrade B_zh_r2：用已存 completed_code_generation_2026_1110_073833.jsonl 原地补分；补分后原位替换 run/ablation_think_lang_results.json 的 B_zh_r2（旧 pass=null）；原 batch/trace/日志保留不删。
+   - 再重跑 B_zh_r3：起新 batch；旧 r3（78.5%）标 SUPERSEDED 留档，不删；新 r3 完成后更新 results JSON 与 cost 字段。
+4) 重跑 r3 的配置：先按与 B_zh_r1/r3 相同的现有配置跑（不改 prompt、不改基座），保证可比；"基础 prompt 强制中文 / 基座不恒定"的修法另开令，不许在本次重跑里顺手改口径。
+5) 报告：30 轮 + regrade + 新 r3 全部落盘后，才按 report_zhulong_lang_switch_audit_zh.html §5.3 做降级改写；当前不动报告、不新增 divergent 产物。
+6) 每轮心跳必须写明：当前轮次/30、编排器 PID、B_ru 进度、B_zh_r2 regrade 状态、B_zh_r3 重跑状态；WAITING 不得因抽检结论置 1。
+7) 红线：不 kill 编排器/worker/gap-grabber（除明确的 regrade/重启流程）；不碰 trace 原文；不占沙盒；不改别线。
+
+
+> 🔍 **用户令 · 2026-11-11（最高优先 · 评测期间做）：抽查 B 轴 trace，验证思维链真的换了语言**
+>
+> **用户原话**：「让zhulong agent在评测过程中看看 思维链语言消融（B）的现有trace，抽查一下，看看思维链是否遵循prompt改成了指定语言。」
+>
+> ### 0. 为什么现在必须做（现有证据链是弱的）
+>
+> 本任务书本来就写着两条要求，但**从未真正执行**：
+> - §轴 B L98：「**抽 3~5 条 trace 核对思维链真的换了语言**。未生效 ⇒ 停下修注入」
+> - §4 P3 L115：「**每语言先抽 3 条 trace 核对语言真切换**」
+>
+> 而 MEMORY 里一路写的「lang hint 生效 ✅」，证据只有：
+> - ❌ 「log 里看到一句 `Piensa en español`」——**这只能证明 prompt 注入了，不能证明思维链是法语**
+> - ❌ 「1791 行重音字符」——**数量不能证明是法语思考，可能是复述 prompt**
+>
+> ⇒ **B 轴（en/zh/es/fr/ru 五语言）的全部结论目前建立在这个弱证据上。若思维链其实没换语言，B 轴 15 轮的结论全部作废。**
+>
+> ### 1. 抽查对象：直接读已存档的 trace
+>
+> 路径（已由 §3 Trace 保留机制落盘）：
+> ```
+> /nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/<TAG>/<batch>/
+> ```
+> 已有 TAG（截至 11-11 10:35）：`B_es_r1` `B_es_r2` `B_es_r3` `B_fr_r1`（跑中）· `B_zh_r1` `B_zh_r3`（`B_zh_r2` 待 regrade）· `A_*` 系列
+> 每轮 trace 应 ≥158 个（与题一一对应）；cline session 在 `~/.cline/data/**`
+>
+> 读之前先在 .75 上 `ls -dt .../trace_ablation_think_lang/*/` 确认真实目录名与体量。
+>
+> ### 2. 抽查方法（**每语言至少 5 条**，不足则如实记）
+>
+> 对 **es / fr / zh / en** 四个已完成的语言（ru 若已跑也加上）：
+>
+> 1. **从 trace 里抽出模型的 reasoning / thinking 段**（不是 prompt、不是最终答案）。
+>    - 若 trace 是 JSON：找 `reasoning_content` / `thinking` / `thought` 字段
+>    - 若是纯文本：定位 thinking 块的起止标记
+> 2. **逐条判定「思维链主体语言」**，四分类（不许只写"是/否"）：
+>    - `TARGET`：**主体**是目标语言（如 es 轮的思维链主体为西班牙语）
+>    - `ENGLISH`：主体是英语（**未遵循**，即使个别词是目标语言）
+>    - `MIXED`：两种语言实质混用（记大致比例，如「70% es / 30% en」）
+>    - `COPIED_PROMPT`：只是在复述/翻译 prompt 那句语言指令，其余思维链仍是英语
+> 3. **同时核一件事**：答案/代码部分是否仍是英语（预期：**是**，因为只要求思维链换语言；若答案也变成目标语言，说明注入影响了输出，需单独记）。
+>
+> ### 3. 判定阈值（写进报告）
+>
+> - **语言真切换**：≥5 条里 **≥4 条**为 `TARGET` 或 `MIXED`（且 MIXED 必须目标语言占多数）
+> - **部分生效**：≥5 条里 2–3 条 `TARGET`/`MIXED`
+> - **未生效**：≥5 条里 ≥4 条为 `ENGLISH` 或 `COPIED_PROMPT`
+> - ≥5 条里出现 `COPIED_PROMPT` ⇒ **必须在报告里点名**（这正是"以为生效其实没生效"的典型）
+>
+> ### 4. 交付
+>
+> **产出**：`reports/report_zhulong_lang_switch_audit_zh.html`（中文 · 单文件自包含 · 内联 CSS · 零外链）
+>
+> 必含 5 节：
+> ① **结论一句话**（每个语言：真切换 / 部分生效 / 未生效）
+> ② **抽查表**：`语言 | TAG | 样本数 | TARGET | MIXED | ENGLISH | COPIED_PROMPT | 判定 | trace 文件路径`
+> ③ **原文片段**：每语言贴 **≥2 段思维链原文**（截 80–150 字，标注来自哪个 trace 文件），让人能自己判断
+> ④ **答案部分核查**：答案/代码是否仍英语（避免把"输出变外语"误当"思维链变外语"）
+> ⑤ **影响评估**：若某语言判为「未生效」或「部分生效」，**明确写出 B 轴对应轮次的结论是否要作废**
+>
+> ### 5. 边界
+>
+> - 🚫 **不打断在跑的评测**（`B_fr_r1` 跑中）：只读已存档 trace，**不许 kill / 不许改编排器 / 不许抢沙盒**
+> - 🚫 **不改 trace 原文**，只读
+> - 🚫 不改论文、不改其他线产物
+> - 抽查用只读命令（`ls` / `cat` / `head` / `grep` / `python3` 读文件），**不许写 /nasdata 下的 trace 目录**
+> - 若某语言 trace 已不存在（被清）⇒ 记 `BLOCKED(trace_missing)`，**不许凭 MEMORY 里的旧描述当作已验证**
+>
+> ### 6. 与现有最高优先令的关系
+>
+> 本条**不取代**「轮间空档补 `B_zh_r2` regrade」令；两者并行：
+> - **regrade 优先**（有空档就跑）
+> - **本文抽查**在等空档的间隙做（只读，不占沙盒，可与 eval 并发）
+
+### 🧭 工作约定（常驻 · 中性表述，替代旧「收尾铁律／体积规程／归档纪律／报告纪律」四段）
+
+1. **每轮收尾**：体积自检 → `MEMORY` 写一行心跳 → 当日日报一行 →
+   `git add <本线文件>`（**不用 `-A`**，共享副本上别把别线在途改动卷进提交）→ `commit + push` →
+   `git status -sb` 应干净、`git log -1` 时间戳 = 本轮。
+2. **体积**：本任务书与 `MEMORY` 各自 **≤32KB**（40KB 为硬上限）；超了就把**已闭合**的段落原文搬进本线
+   `ARCHIVE_*.md`、留 1 行指针。**尚未交付的运维令留在正文**，搬完当轮继续把它做完。
+3. **报告**：默认维护既有报告（原地覆盖）；用户点名或里程碑才新增，产物落 `reports/`。
+4. **边界**：只写本线文件与目录；跨线需要改动时先在自己的 MEMORY 里记一行，再交给对应线。
+5. **数字与证据**：结论要能追到落盘文件（路径/行号/命令输出）；取不到就标 `TODO/BLOCKED`，不要估。
+
+> 🚨 **本轮最高优先（2026-11-10 21:3x 用户令，方式 A）：在「轮间空档」把 `B_zh_r2` regrade 跑掉。**
+> 取代 20:46 那版"趁 r3 跑中"的令（r3 已于 20:35:26 DONE=78.5%，编排器自动起了 `B_es_r1`）。
+> **不再等编排器整体退出**（那要 ~2 天），但也**不许**在轮内硬闯。
+>
+> **零、先算清楚可用窗口（这决定 A 成不成）**
+> 编排器 `run_think_lang_ablation.sh` 每轮 = `timeout 43200 bash scripts/run_cline_script.sh -p 8 -n`
+> **前台串行**；轮结束到下一轮开始之间只有：评分 grep + trace 拷贝（~430MB）+ `probe_quota`，
+> **通常几十秒**（quota 耗尽时 `probe_quota` 会 `sleep 300`，那是唯一的大窗口）。
+> ⇒ 所以 A 的实现必须是「**抢空档 + 一发现新轮起来就自动让路**」，不能是"排队等整轮跑完"。
+>
+> **一、改写手（唯一允许的改法；已有一版等编排器退出的，作废）**
+> 把 `run_B_zh_r2_regrade_wait.sh` 改成 `run_B_zh_r2_regrade_gap.sh`，逻辑：
+> 1. `while :; do`
+> 2. **空档判定**：`! pgrep -f '^bash scripts/run_cline_script'` 且 `! pgrep -f 'run_eval.py'`
+>    → 再 `sleep 20` 复验一次（20s 内没新轮才算真空档；**最多重试 3 次机会**）。
+> 3. **独占启动**：`bash run_B_zh_r2_regrade.sh`（`-p 2`，别用 -p 8）后台跑，记 PID。
+> 4. **避让守护**（关键）：每 60s 检查
+>    `pgrep -f '^bash scripts/run_cline_script'`。一旦出现（编排器起了下一轮）
+>    → **立刻 `kill -TERM <regrade_pid>`**，日志写 `ABORT: new round appeared at <ts>, gap too short`
+>    → 回到步骤 1 等下一个空档（计入已用机会数）。
+> 5. 3 次机会都没跑完 → **降级为 B**：改等编排器 PID 退出再跑（原 waiter 逻辑），
+>    并在 MEMORY 明确写 `upgraded-to-B: 3 gaps too short`。
+> 🚫 不许 `pkill -f run_cline_script`、不许 kill 编排器/worker、不许用 `exec -a` 之类
+>    伪装进程名去骗编排器的互斥检查（会被它自己的兜底 `pkill` 误杀，反而更乱）。
+>
+> **二、跑法与闸门（沿用 20:46 那版，不变）**
+> - regrade 脚本 = `run_B_zh_r2_regrade.sh`（复用 `run_A_none_r2_regrade.sh`，`GEN_FILE=completed_code_generation_2026_1110_073833.jsonl`）。
+> - 三个老坑：benchmark 文件名**小写 p**（`EDA-Eval-pyAether-158.jsonl`）、`run_eval.py` 读
+>   `EVAL_ROOT_DIR`（非 `_OVERRIDE`）、必须 `unset http_proxy` + 设 `NO_PROXY`。
+> - **闸门**：`n_tasks` 必须 == **158**；否则 BLOCKED，不许填数。
+> - 回填：`ablation_think_lang_results.json` 里 `tag=B_zh_r2` 的 null **原位替换**（`len(rounds)` 仍 20）；
+>   `extract_cost.py --batch <regrade batch> --log <log> --out cost_B_zh_r2.json`。
+> - 合理性：r2 应与 **r1=84.2% / r3=78.5%** 同量级；差 >15pp 先查 benchmark 选错。
+>   ⚠️ 现在有了 r3=78.5%，**r1/r3 已经差 5.7pp**，报告里必须按三轮均值±std 讲，别只报 r1。
+>
+> **三、收尾**
+> - MEMORY 进度 `21/30（r2=null 待 regrade）` → `22/30（r2 ✅ pass=X%）`，并记：用了几次空档、
+>   是否降级 B、regrade 实际耗时、n_tasks。
+> - commit 只含 `doc/ZhuLong_DAC2027/run`（脚本 + MEMORY + daily）；results json 被 gitignore。
+> - `WAITING` 保持 `1`（es_r1 仍在跑）。
+> - **本轮只做这一件**：不起新轮、不动报告生成器、不碰其他线。
+
+
+### 📦 归档 · 2026-11-07 08:3x 两轴消融 thinking×lang·✅ 30/30 已交付
+
+### 🔴 用户令 · 2026-11-07 08:3x（**两轴消融：cline `--thinking` 档位 × 思维链语言** · 测试集 **EDA-Eval-PyAether 158** · 中文 HTML 报告须含**分数 + 成本**（墙钟/token））· 用户直令 · 最高优先 · ⚠️ 未完成
+
+> **用户原话**：「安排 zhulong agent 做如下消融实验：测试集 EDA-Eval-PyAether（158）。1. 变化 cline 的 thinking 参数：None、Low、Medium等。2. 变化 cline 思维链使用的语言：中文、英文、西班牙文、法文、俄文等，可以通过修改任务提示实现，比如：'请使用XX语言思考'。实验后生成中文 HTML 报告。包含对比表格，不光含不同变体的分数，还应包含成本，比如墙钟、token 等。」
+
+**基座（用户 2026-11-07 明确：GLM-5.3-Flash 或 GLM-5.2，二选一）** —— ⚠️ **两轴实验内必须恒定**（否则 thinking/语言效应被基座差异污染），报告首行写明实际用的哪个。
+
+| 选项 | `-m` | `cline auth`（key 可能过期，**开跑前先 `curl` 探针确认 HTTP 200**）| 既有同臂基线（PyAether 158） |
+|:--|:--|:--|:--|
+| **① GLM-5.3-Flash**（**首选**：额度新、速度稳、与 harness 线现行一致） | `glm-5.3-flash` | `cline auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_6903b05e-6f2d-4a69-93be-96e2b790053f -b http://agi-gateway.cxmt.com/v1 -m glm-5.3-flash` | `B.glm-5.3-flash` = **86.8 ± 1.6%**（5/5，cline CLI）← **本实验的天然对照锚点** |
+| **② GLM-5.2**（备选：①额度耗尽/不可用时改这个） | `glm-5.2` | `cline auth -p openai -k 02_088EE9051AAE4BF0ABFC7130331BF697_c2759d74-49f1-410a-89ea-2cf188ea2f23 -b http://agi-gateway.cxmt.com/cloud/v1 -m glm-5.2` | `B.glm-5.2` = **83.3 ± 3.1%**（5/5，cline CLI） |
+
+> 🚫 **不用 `deepseek-v4-pro-fp4`**（额度已耗尽）。🚫 两轴之间不得换基座。🚫 若两个 GLM 都探针失败 ⇒ **报 blocker 停工**，不许擅自换第三个模型。
+> 💡 **优先选 ①**：`B.glm-5.3-flash = 86.8±1.6%` 是既有 cline×PyAether 的正式基线，跑出来的 thinking/语言变体能直接与它做 **Δpp + McNemar** 对照；选 ② 也有一致的基线可用。**选哪个都要在报告里把对应基线拉出来做差**，不能只报绝对值。
+
+**其余口径（不可改）**：测试集 = **EDA-Eval-PyAether 158 题**（`EDA-Scripting-Bench 449` 的 PyAether 子集；🚫 不跑 SKILL/Tcl）· harness = `cline` 3.0.51（🚫 不改版本）· 协议 = Pass@1 单次无 retry `-p 8 -n`（与既有消融同口径）· 环境 = `BASE_DIR=/nasdata/app.e0031982/code/eda_fastmcp`，启动 `setsid bash scripts/run_cline_script.sh -p 8 -n > /tmp/ABL_<TAG>_r<N>.log 2>&1 < /dev/null &`，结束判据 `pgrep -f '^bash scripts/run_cline_script'` 无输出，打分 `$BASE_DIR/venv/bin/python scripts/run_eval.py --latest 1` · 每变体 **3 轮**（成本允许则 5 轮与既有臂对齐，报告写实际 n）。
+
+
+#### 1. 两轴设计 —— ⚠️ **一次只变一个轴，不做笛卡尔积**
+
+> 5 档 × 5 语言 × 3 轮 × 158 题 ≈ 上万次推理，成本不可控。设计 = **基线 + 单轴扫描**：先固定语言=英，扫完 thinking；再固定 thinking=medium，扫语言。若要交互项只补 2~3 个关键格（如 low×中文、high×中文）。
+
+**轴 A · thinking 档位**（`--thinking <level>`）：`A0 none`（若 cline 不接受 `none` 则**不传该 flag**）→ `A1 low` → `A2 medium`（=既有基线）→ `A3 high`（+ 若 `cline --help` 有第 4 档一并测）。
+> **P0（≤15min，先做）**：`cline --help | grep -i thinking` 查**真实枚举**，🚫 不许臆造档位名。`none` 若不被接受，用「不传 flag」代表并在报告**明确标注口径差异**。
+
+**轴 B · 思维链语言**（改 prompt 末尾追加一行，不动 harness）：基线 thinking 固定 `medium`。
+| 变体 | 注入后缀 |
+|:--|:--|
+| `B1 en` | `Think in English.` |
+| `B2 zh` | `请使用中文思考。` |
+| `B3 es` | `Piensa en español.` |
+| `B4 fr` | `Réfléchis en français.` |
+| `B5 ru` | `Думай по-русски.` |
+| （可选）`B6` 对照 | 不加任何语言指令（原样 prompt）= 真实基线 |
+
+> **注入实现**：在送进 cline 的 prompt **末尾追加**语言指令（不删改原题）。建议给 `run_cline_script.sh` 加 `LANG_HINT` 环境变量透传。
+> **⚠️ 必须核验**：①日志可见后缀确实进了 prompt ②**抽 3~5 条 trace 核对思维链真的换了语言**。未生效 ⇒ 停下修注入，🚫 别把无效变体跑满 3 轮；确属未生效则标注「该变体未生效」而非当有效数据。
+
+#### 2. 成本指标（用户明确要求，缺一不可 · 口径照抄 `PLAN_RETEST_READBACK_COST.md` §4）
+
+每变体每轮必报，最终给 `mean ± std`：**Pass@1(%)**（通过/158）· **墙钟·单题均值(s)**（逐题 Step3→Step6，**非** batch 总时长）· **Batch 墙钟(h)**（真实 elapsed）· **Token prompt/completion/reasoning/total**（从 cline session `~/.cline/data/**` 或 trace 聚合，给逐题均值 + 总消耗）· **Token/题**（total/158，横向比贵贱）· **¥（可选）**（有公开单价才换算，🚫 不许编造价）· **Timeout 数**（命中 2500s）· **Converged(%)** · **Gen-fail 数**。
+> 判据沿用既有十三：`timeout ≤10`、`0 infra`、`0 exec_err`；Pass@1 任何值有效，**不因低分重跑**。
+> **reasoning token 必须单独抽**（thinking 档位直接决定它，是解释「高分是否靠堆思考」的关键）。
+
+#### 3. Trace 保留（硬前置 —— 上次 `(N')` 成本就因 trace 被清而丢失）
+
+每轮结束、清理前：`DEST=/nasdata/app.e0031982/code/ZhuLong_DAC2027/trace_ablation_think_lang/<TAG>/<batch>`；`cp -a "$OUT/<batch>" "$DEST"/`（`OUT=.../EDA-Eval-Framework/output_evaluation`），cline session 一并复制。验收：trace 文件数 ≥158（与题一一对应），`du -sh` 记进报告；**不删、不 `git add`**。
+
+#### 4. 执行顺序
+
+1. **P0**：查 thinking 枚举 + 记录基线档；`pgrep` 确认无在跑评测（有则等，🚫 不打断）。
+2. **P1 冒烟**：`A0/A2` 各跑 8 题子集（不支持子集则跳过）→ 确认 `--thinking` 真生效（trace 里 reasoning 长度差异）+ 成本抽取脚本跑通。
+3. **P2 轴 A 全量**：`A0→A1→A2→A3` 逐档 3 轮，**串行**，每轮即打分 + 落 trace。
+4. **P3 轴 B 全量**：固定 `medium`，`B1→B2→B3→B4→B5` 逐语言 3 轮，**每语言先抽 3 条 trace 核对语言真切换**。
+5. **P4 报告**。
+
+#### 5. 交付物
+
+- `doc/ZhuLong_DAC2027/reports/report_zhulong_ablation_thinking_language_zh.html` —— **中文单文件自包含，0 script 0 外链**（本线 10-24 常驻规程），必含：①**轴 A 对比表** 变体×{Pass@1, 墙钟/题, Batch 墙钟, prompt/completion/reasoning/total tok, ¥, timeout, converged, gen-fail}，全 `mean±std` ②**轴 B 对比表**（同结构）③**成本-分数象限图**（找性价比最优 / 堆 token 无收益者）④**口径校验节**（thinking 是否真生效 trace 证据 + 各语言是否真切换 trace 原文片段 + `none` 实际实现）⑤**失败归因**（infra/timeout/gen-fail/能力，**infra 单列**）⑥**与既有基线对照**：拉出所选基座的 `B.glm-5.3-flash 86.8±1.6%` 或 `B.glm-5.2 83.3±3.1%`（cline CLI / PyAether 158 / 5-run）做 **Δpp + 配对 McNemar**，逐变体一张小表 ⑦**结论**（边际收益、是否值得改生产配置）。
+- 生成器 `run/gen_report_zhulong_ablation_think_lang_zh.py` + 原始数据 `run/ablation_think_lang_results.json`（逐题分数+成本）+ `MEMORY_ZHULONG.md` 心跳 + `daily-memories/` 流水；完成后本行改 `✅ 已交付`。
+
+#### 6. 护栏
+
+🚫 一次只变一轴（两轴同变 ⇒ 效应不可归因）· 🚫 不改 cline 版本/主基座/题面语义（语言指令只追加末尾）· 🚫 不因低分重跑、不用 legacy 数字冒充、不插补缺失轮次 · 🚫 不删 trace，结果 JSON/trace 不入 git · 🚫 不打断其他线（pretrain S1 / vision / data / harness）与在跑评测 · 报告 infra 与能力**分栏**，无效变体必须标注而非丢弃。
+
+> **完成标记**：中文 HTML 报告交付（两表 + 成本列 + 口径校验）⇒ 改 `✅ 已交付`；任一轴未跑完 ⇒ `WAITING: 0`。
+
+---
+
+
+### 📦 归档 · 2026-11-05 19:2x P0 双盲裁定·✅ CLOSED
+
+### 🚨 用户裁定 · 2026-11-05 19:2x（**P0「双盲违规」不成立 —— 论文早已是匿名状态 · 立即闭合**）· 用户直令 · 最高优先
+
+> 用户原话（2026-11-05 19:1x）：「zhulong P0：早已是匿名状态了」
+
+**① 裁定**：撤销长期挂起的「P0 双盲违规仍 OPEN」，**不再等 RUN_ID 143**。运维本地核验（2026-11-05 19:1x，`doc/ZhuLong_DAC2027/ZhuLong_DAC2027/`）：
+- `main.tex:1` = `\documentclass[anonymous, sigconf]{acmart}` → anonymous 模式生效（acmart 打印 “Anonymous Author(s)”，且第 54 行注释明确「双盲投稿跳过作者网格改造」）；
+- `reference.bib` / `software.bib` 无 `CXMT` / `ChangXin` / `长鑫` 等机构串；无本团队自引（无 `zhulong`/`ZhuLong` 条目）；`liu2025layoutcopilot` / `liu2026agentic` 系**第三方** Liu 姓作者，不构成身份泄露；
+- 全部 `.tex` 无 `acknowledg` / `\thanks{}` / `funded` / `grant` 字串。
+
+**② 本轮必做（15 分钟内，写成 1 条心跳）**
+1. 把 `MEMORY_ZHULONG.md` 里的 P0 条目改写为 **`CLOSED（2026-11-05 19:2x 用户裁定：早已匿名）`**，并删掉「待运维 RUN_ID 143」表述；§⑧ 跟踪同步改为已闭合。
+2. 复核上面 3 条证据仍成立（若 bib 近期有新条目，再扫一次 `CXMT|ChangXin|长鑫|zhulong`），结论 1 行写进心跳。
+3. ops inbox 若再出现关于 P0 / RUN_ID 143 的只读回执，只记「已知，已闭合」，不据此恢复阻塞。
+4. 若**确实**发现新的可识别信息（作者 / 单位 / 致谢 / 第一人称自引）→ 只做匿名化修正并重编译（`pdflatex×1 + bibtex + pdflatex×2`，ERR=0 / UNDEF=0，页数不变），**不重跑评测**。
+
+**③ 完成标记**：P0 标 CLOSED 且心跳含证据 ⇒ `WAITING: 1`（恢复空巡检）；若发现需改动且未改完 ⇒ `WAITING: 0`。
+
+
+
+
+---
+
+## 归档块 · 2026-11-15（subagent 消融四令闭合：A0/A1/A2 全完 + H2 停止 + trace 报告交付）
+
+> 以下四令均已完成（详见 MEMORY_ZHULONG.md wake#928~#957）：
+> - 2026-11-13 21:2x「启动 subagent 消融」→ ✅ A0/A1/A2 三轮全完 + P4 报告交付（commit 9b0737fe4 + a6f78b8bc）
+> - 2026-11-14 17:0x「H2 恢复」→ ✅ cline 源码改 + wrapper v3.0.74 build（commit 39ccd44cc）+ 三 smoke 全过 + B1-B5 起跑（后被 11-15 07:2x 叫停）
+> - 2026-11-14 18:3x「A1 提示改验证 agent」→ ✅ A2 作为新臂完整跑 3 轮（53.3±3.8### 🔴 运维令 · 2026-11-14 23:4x（**① 立即清盘 ② 隧道事故复盘自检**）· 最高优先
+
+> **用户原话**：「zhulong：清理磁盘」「原来隧道好的，现在坏了么？怎么坏的？什么情况？让它自己报告」。
+
+**① 清盘（本轮必做，A2 还在跑，先保命）**
+- 现状：`/home` 余 **2.7 G**、`/nasdata` 余 **2.7 G**（wake#942 实测），A2 r1 仍在跑且 log 在长。
+- 目标：`/home` 与 `/nasdata` 各释放到 **≥10 G** 可用（够 A2 r2/r3 + 判分）。
+- 做法：`du -sh /home/* /nasdata/* 2>/dev/null | sort -h | tail -20` 定位大户 → 逐项决策 → 清理后 `df -h` 复核并把前后数字写进 MEMORY。
+- ✅ 可删：已归档/已交付轮次的临时 trace、`/tmp` 下 **>24h** 的中间产物、重复备份 `*.bak.*`、可重建 cache、旧 run 的 `*.log`（保留最近 2 个）。
+- 🚫 **禁删**：`/tmp/subagent_A2_r1.log` 与 A2 结果、`subagent_ablation/` 下 data-dir（A2 会用）、`run/` 下脚本与 findings、任何 `.json/.jsonl` 评测结果、`~/.cline` 配置与 `providers.json`。
+- 清理过程中若发现 A2 因空间不足已失败 ⇒ 立即在 MEMORY 标红并在报告写清。
+
+**② 隧道复盘（与 posttrain 同规格）**
+- 规格：`../../BaiZe-ISEDA2027/run/INFRA_TUNNEL_POSTMORTEM_SPEC.md`（在 `doc/BaiZe-ISEDA2027/run/` 下）。
+- 你侧要回答同样的六问（最后通点 / 首断点 / 时间线 / 故障域 / 是否我们造成 / 修复路径+验证命令），证据来自 `.75` 沙盒与本地 `run_code` 通道。
+- 交付 `reports/report_infra_tunnel_postmortem_zh.html`（中文单文件·首屏三句结论）+ MEMORY 一行。
+- 🚫 不猜不编；查不到写「无记录」；🚫 不动 benchmark 与他人机器。
+
+### 🔴 用户令 · 2026-11-14 18:3x（**A1 的强提示方向错了 → 改为 spawn「验证 agent」+ 对抗视角**）· 未完成 · 最高优先
+
+> **用户原话**：「这个强提示理解，但感觉方向不对。任务开始，第一项工作就是调研背景，主 agent 上下文还空，自然没必要 spawn，真 spawn 后，这个 agent 做了调研，有了成果，又无法传给主 agent 的上下文，造成很多浪费。因此我建议通过提示让主 agent spawn 验证 agent，带有一些对抗视角，用于测试主 agent 写的代码。」
+
+**一、为什么现在的提示是错的（用户的分析）**
+
+现有 `SUBAGENT_HINT`（`run_subagent_ablation.sh` L47-52）要求：
+
+> 「Before writing any code, you MUST use the `spawn_agent` tool to delegate to a **researcher** sub-agent…
+> Do NOT answer directly or write code until the sub-agent returns its findings.」
+
+**两个结构性错误**：
+
+1. **调研阶段 spawn 是浪费**：任务刚开始时主 agent 上下文还空，没有"上下文压力"，**本就没必要外包**；
+2. **子 agent 成果传不回来**：子 agent 做完调研，产出**无法注入主 agent 的上下文**（你自己 wake#926 也实测过：子 agent 只有 `systemPrompt` + `task` 两个输入、输出回传受限），
+   ⇒ 主 agent 拿不到调研成果，**等于白跑一轮**，还平白多了一次往返开销。
+
+**二、改成什么：验证 agent + 对抗视角**
+
+**新的 spawn 触发点 = 主 agent 写完代码之后**，让它 spawn 一个**独立的验证/审查 agent**，带**对抗视角**去测主 agent 写的代码。
+
+**为什么这样合理**：
+- 主 agent 此时**已经有上下文**（自己刚写的代码、自己的推理），**正需要外部独立视角**；
+- 验证 agent 的产出是**判定结论**（通过/不通过 + 问题清单），**短小、可直接被主 agent 采用**，不存在"成果传不回来"的浪费；
+- **对抗性**（刻意找错）比"协助调研"更符合独立 agent 的价值。
+
+**三、要改的具体内容**
+
+1. **重写 `SUBAGENT_HINT`**（`run_subagent_ablation.sh` L47-52）：
+   - **触发时机（用户 18:4x 明确指定）**：**代码已写好、但还没有提交之前** —— 即「**写完 → spawn 验证 agent 做 QA → 按 QA 意见修正 → 再提交**」。
+     - 不是"写代码之前"；也不是"执行完就结束"，而是**卡在"写完"与"提交"之间**这个检查点。
+     - 主 agent 应在 QA 返回后**依据问题清单修正**，然后再提交最终产物。
+   - 子 agent 角色：**adversarial QA / verifier**，任务是**挑错**——检查 API 用法是否正确、参数是否符合文档、边界条件、异常处理、单位/坐标/精度、是否满足题目全部约束；
+   - 要求子 agent **给出明确的通过/不通过判定（verdict）+ 具体问题清单（含代码位置）**；
+   - **禁止**子 agent 写完整实现（只审不写），避免它变成第二个主 agent。
+
+2. **提示措辞要点**（你自行定稿，务必体现）：
+   - 「写完之后」而非「写之前」；
+   - 「independent reviewer / red team」而非「researcher」；
+   - 「find what is wrong」而非「look up APIs」；
+   - 输出要求：**verdict + issue list**，简洁、可执行。
+
+3. 🔴 **A1 与 A2 的划分（用户 2026-11-14 18:5x 裁决 · 覆盖上面的含糊处理）**
+
+   > **用户原话**：「可以让 zhulong 按原配置把 A1 的三轮跑完，新配置作为 A2。」
+
+   - **A1 = 原配置**（调研型 spawn + 现有强提示）—— **保持原样把 3 轮跑完**，不要中途换提示、不要混算。
+   - **A2 = 新配置**（验证型 QA agent + 对抗提示，触发点 = 代码写好但未提交之前）—— **作为独立的新臂**，完整跑 3 轮。
+   - **🚫 不要动正在跑的 A1**：不打断、不改提示、不重跑已有的 r1。
+   - **A2 先改脚本再做 smoke**：改完 `SUBAGENT_HINT` 后，先 smoke 1 题确认「写完 → spawn QA → 按意见修正 → 提交」四段齐全，再起 A2 的 r1/r2/r3。
+   - **A2 的臂配置**：与 A1 **完全一致**，唯一差异 = spawn 提示（触发点 + 角色 + 任务）。compaction=basic、thinking=medium、同 40 题子集、`-p 8 -n`、同主基座，一律不动。
+   - **实验臂清单更新为**：**A0（无 spawn，复用 compaction basic r1–r3）/ A1（调研型 spawn，3 轮）/ A2（验证型 QA spawn，3 轮）**。
+
+**四、与 H1 结论的关系（重要）**
+
+- 这一改动使 A1 从「**spawn 调研 agent + 强提示**」变为「**spawn 验证 agent + 对抗提示**」，
+  与 A0 的差异**仍然是"是否 spawn"**，但**提示内容变了** ⇒ **新旧 A1 结果不可混算**，必须分组统计。
+- 最终报告需**分别报告**：
+  - A1-旧提示（调研型 spawn）的 Pass@1；
+  - A1-新提示（验证型 spawn）的 Pass@1；
+  - 与 A0 的配对比较（McNemar）。
+- **额外分析（很有价值）**：统计「**主 agent 采纳了验证 agent 意见的题** vs **未采纳的题**」的通过率差异，看对抗审查是否真的有用。
+
+**五、纪律**
+
+- 🚫 不要为了"提高 spawn 率"而把提示写得更强硬重；用户要的是**有意义**的 spawn，不是**多**的 spawn。
+- ✅ 改动后先 **smoke 1 题**，确认：主 agent 先写代码 → 再 spawn → 子 agent 给出 verdict —— trace 里要有这三段。
+- ✅ 记 MEMORY：新旧提示的差异、r1/r2/r3 各用什么提示。
+
+---
+
+### 🔴 用户令 · 2026-11-14 17:0x（**H3 不做；H2 恢复 —— 允许改 cline 源码重编译，让自主 spawn 的子 agent 用弱模型**）· 未完成 · 最高优先
+
+> **用户原话**：
+> 「H3 不做
+> H2 可以做，需要改 cline 代码重新编译安装也没问题，只要向后兼容即可。
+> H2 只做自主 spawnagent 这条线，不做 custom。要求修改代码，在 spawnagent 时，通过配置让 agent 用弱模型。」
+
+**一、裁决变更（覆盖 wake#926 的 H1-only 决定）**
+
+| 假设 | 原裁决 | **新裁决** |
+|:--|:--|:--|
+| **H3**（maxIterations 5/15/30） | ❌ 不可行 | **❌ 不做**（用户明确：H3 不做） |
+| **H2**（子 agent 弱基座梯度） | ❌ 不可行 | **✅ 要做** —— 允许改 cline 源码、重新编译安装，**只要向后兼容** |
+| **H1**（spawn on/off） | ✅ 可检验 | ✅ 继续（A1 的 P2 继续跑完） |
+
+**二、H2 的实现路线（用户已指定，不要跑偏）**
+
+- **只做「自主 spawn_agent」这条线**：主 agent 调用 `spawn_agent` 工具时，**通过配置**让被 spawn 的子 agent 使用**弱模型**。
+- **🚫 不做 configured agent（custom）路线** —— 不要再走 `researcher.yaml` / `subagent_researcher` 那条路，那条已证实 3.0.51 不通。
+
+**三、技术任务（改源码）**
+
+你 wake#926 已经用 `strings` 反查出关键代码：
+
+```js
+eu({kind:"subagent", prompt: i.systemPrompt,
+    configProvider: e.configProvider,     // ← 子模型 = 父的
+    tools: e.subAgentTools,               // ← 子工具 = 父的
+    maxIterations: e.defaultMaxIterations})
+```
+
+**要做的事**：
+1. 在源码仓库 `/nasdata/app.e0031982/code/cline/sdk/packages/core/src/extensions/tools/team/` 里，
+   给 **`spawn_agent`**（`spawn-agent-tool.ts`）**增加一个可选配置项**，让子 agent 的 `configProvider`（模型）可被覆盖；
+2. **配置来源**：环境变量、cline settings、或 spawn_agent 的 input schema 新增可选字段——**方式你定**，但必须：
+   - **向后兼容**：默认行为**完全不变**（不配置时子 agent 仍继承父模型），保证 A0/A1 现有结果与 compaction 等历史实验不受影响；
+   - 不破坏 `tools` / `maxIterations` 的现有继承逻辑（H3 不做，别动）。
+3. 🔴 **必须一并修复：子 agent 的工具限制（用户 2026-11-14 18:0x 明确要求）**
+
+   > **用户原话**：「search_apis 报 NoSuchToolError 说明原来的实现有问题，限制了子 agent 使用的工具。这个问题这次要一起修复。」
+   > **用户给定的目标行为**：「**子 agent 默认继承所有工具，唯二的差别在于 LLM + 上下文。**」
+
+   - **正确设计 = 子 agent 继承主 agent 的完整工具集**，与主 agent 的差别**只有两个**：① 用哪个 LLM ② 上下文（systemPrompt / task）。
+   - 你在 wake#926/#927 记录到「子 agent 调用 `search_apis` → `AI_NoSuchToolError`，回退 `search_codebase`」——
+     **这说明当前实现在 `tools: e.subAgentTools` 处对子 agent 做了工具限制，是 bug，本次一并修掉。**
+   - 修法：让 `spawn_agent` 派生子 agent 时传**父 agent 的完整工具集**（含 MCP 工具），而不是受限子集。
+   - ⚠️ 顺带核实 `NoSuchToolError` 的**直接成因**：是工具名不匹配（子 agent 用了裸名 `search_apis`，而 MCP 工具在父侧的完整名是 `pyAether_MCP_server__search_apis`），还是工具确实没注入。**两种情况都要修到"子 agent 能正常调用 MCP 工具"为止**，并在 smoke 里给证据（子 agent 成功调用一次 MCP 工具的 trace 原文）。
+   - **向后兼容**：此项修复同样不得改变主 agent 的工具集与默认行为。
+
+**四、验证与执行顺序**
+
+1. **编译安装**：在 36.15 完成 build，`cline --version` 可用。
+2. **向后兼容自检**（必做）：
+   - 不配置任何新选项时，跑 1 题，确认子 agent 仍继承父模型、行为与改动前一致；
+   - 现有 A1 P2 若在跑，**不要打断**（另装一份或用独立 data-dir 做 smoke，避免影响在跑实验）。
+3. **确认性 smoke**：配一个弱模型，跑 1 题，确认**子 session 的 messages.json 里模型名 = 弱模型**（用你 wake#926 那套 `n_msgs` + 模型核验方法，给证据）。
+4. **H2 实验**：确认 smoke 通过后，按计划书恢复 **B2（dsv4-flash）/ B3（doubao-pro）/ B4（doubao-mini）/ B5（doubao-lite）** 四臂（B1 same 作为梯度最强端，若已有数据可复用）。
+   - 更新 `providerId` 修正（你 wake#922 已查明应为 `openai-compatible` + doubao model/key）。
+
+**五、纪律**
+
+- 🚫 **向后兼容是硬要求**：默认行为不得改变；改完要给「改动前后默认路径行为一致」的证据。
+- 🚫 不改评测题集/判据/超时。
+- ✅ 源码改动要有 commit 记录与 diff 摘要，写进 MEMORY。
+- 若某步确实做不成，写 `BLOCKED + 具体卡点 + 需要什么`，🚫 不许又一次直接裁掉。
+
+---
+
+### 🔴 用户令 · 2026-11-13 21:2x（**启动 subagent 消融**）· 用户直令 · 最高优先 · 未完成
+
+> **用户原话**：「启动 subagent 消融」
+
+**执行口径**：严格按已交付计划书 `reports/plan_zhulong_subagent_ablation_zh.html`（P0 已于 2026-11-13 17:20 PASS）。全臂恒定：`--compaction basic`、`CLINE_THINKING=medium`、`LANG_HINT` 空、`-p 8 -n`、主基座 `deepseek-v4-pro-cloud`；**A0 直接复用 compaction basic r1–r3**（不重跑），A0 的 158 题复用轴 A medium。
+
+**① 起跑前复核（10 分钟，任一不过先修再跑）**
+- `researcher.yaml`（**必须 .yaml，不是 .md**）在 `.cline/agents/`；tools 用完整 MCP 名 `pyAether_MCP_server__search_apis / __get_api_details`；工具列表里能看到 `subagent_researcher`（P0 时为第 19 号工具）
+- doubao pro/mini/lite 三 key 连通（P0 已 curl OK，重测 1 次）
+- 沙盒 8664/8665/8653/8669 全 FREE + `pgrep -f '^bash scripts/run_cline_script'` 无输出；harness TB-2.1 rerun 在跑（Docker/gateway），若争用则排队并写心跳
+- **磁盘**：/home 99%（6.6G）先 `df`；`EVAL_ROOT_DIR=/tmp/zhulong_subagent_eval` 每轮清理；trace 落 `/nasdata/.../trace_ablation_subagent/`，`/nasdata` 若满改落 /tmp 并按轮归档；可用 <5G 先清再跑
+
+**② P1 pilot（现在起跑：8 臂 × 8 题 × 1 轮，~1.5h）**
+
+```bash
+head -8 run/compaction_subset_40.txt > run/subagent_pilot8.txt
+SUBSET_FILE=$PWD/run/subagent_pilot8.txt ROUNDS=1 nohup setsid bash run/run_subagent_ablation.sh > /tmp/subagent_pilot_master.log 2>&1 &
+```
+
+- 产出：每臂 subagent 调用率 / doubao 三臂连通 / 每臂 Pass@1 / 墙钟
+- **go/no-go（预注册）**：调用率 `<20%` 且强提示后仍 `<30%` ⇒ **判无效**，停 P2，直接出负结果报告；否则进 P2。单轮不得解释为结论。
+
+**③ P2 主实验（P1 go 后自动进：9 臂 × 40 题 × 3 轮 ≈16h）**
+- 串行；每轮前 quota probe；429 等待不降并发；每轮落 `cost_S_<arm>_r<n>.json` + `ablation_subagent_results.json` 条目 + trace 归档
+- **起跑前必须补的工程缺口**：现 `run_subagent_ablation.sh` 的 cost 收集是 TODO 空壳（只写 arm/round/batch）⇒ 必须先实现：从 trace/session 采 `SpawnAgentOutput.usage.{inputTokens,outputTokens}`、spawn 次数与完成率（`finishReason=completed`）、主/子消息数、wall_sec；否则 H2/H3 无法判
+
+**④ P3 全量（P2 完成后：4 臂 A0/B1/B3/B5 × 158 题 × 1 轮 ≈10h）+ P4 报告（2h）**
+- 报告：`reports/report_zhulong_subagent_ablation_zh.html`（新文件=里程碑，中文/自包含/**0 外链**）：摘要 / 机制与 P0 修正 / 主结果表+逐题配对 / 调用率 / 基座梯度曲线 / 成本-性能（主 vs 子 token 分拆）/ 亚组 / 失败分类 / 结论与默认策略
+
+**判据（预注册，不许事后改）**：主终点 = 3 轮 Pass@1 均值（ITT）；**H1** A0 vs A1/B1 McNemar discordant ≥6:6 且方向一致；**H2** B1 vs B2–B5 Δ≥3pp 且 bootstrap CI 不跨 0、梯度回归 R²>0.7、B5 per-pass token 降 ≥20%；**H3** 完成率差 ≥10pp ⇒ maxIter=5 过紧。差异 <3pp 一律写「证据不足」。
+**纪律**：🚫 不改 benchmark/评分器；🚫 不删旧结果与 trace；🚫 不 kill 编排器/loop；🚫 不把 proxy/reward 当能力（真实裁判=Pass@1）。zhulong 与 designflow 使用**互不相干的沙盒**（本线 = `run_code` 端口 8664/8665/8653/8669；designflow = `eda_flow` MCP → `.75` 远端 `run_commands`），**不存在资源争用**，无需互斥。
+**心跳**：每轮写 臂/轮/PID/etime/log 大小/batch/已评题数/调用率；跑中 WAITING=1；P2+P3 完 + 报告 + commit（`zhulong subagent:`）后 done_all。
+**体积**：本任务书 52.7KB（>40KB 硬上限）⇒ 本轮**同时**把已闭合旧令原文搬去 `run/ARCHIVE_ZHULONG_TASK.md` 留 1 行指针，归档后 ≤32KB。
+
+---
+
+---
+
+### 📦 归档块 · 2026-11-15 15:0x — 运维令「A3–A6 是什么」中文 HTML 报告（✅ 已闭合 · commit `afc4c83a9`）
+
+> 归档时间：2026-11-15（wake#974）。归档原因：报告已交付（`reports/report_zhulong_a3a6_arms_zh.html`，42.5KB，8 节齐全 + 互链✅·wake#972 核验），commit `afc4c83a9` 前缀 `zhulong arms:`。本块原文搬迁，未改写任何指令。
+
+```markdown
+> 🔴 **运维令 · 2026-11-15 15:0x（用户令：出「A3–A6 是什么」中文 HTML 报告 · 最高优先 · 纯文档不跑实验）· 未完成**
+>
+> **用户原话**：「关于什么是 A3–A6，命令zhulong agent出中文HTML报告。」
+>
+> **背景（先纠正一个说法）**：A3 **从未起跑**，仓库里不存在 A3 实验报告；目前只有 `run/reports/report_zhulong_subagent_a0a1a2_trace_zh.html` §2 的 idea 与 §5/§6 的 A3 可行性预检。**本报告不得暗示「A3 已有结果」或「A3 在等裁决」**；必须白纸黑字写清：**A0/A1/A2 已跑完，A3–A6 均未起跑**。
+>
+> **交付**：新建 `reports/report_zhulong_a3a6_arms_zh.html`（中文、单文件自包含、**0 外链 / 0 script**；图用内联 SVG）。**不改** A0/A1/A2 的任何数字、判据与 trace；**不新增、不重跑任何实验**；旧报告保留并加互链（本报告顶部指向旧报告，旧报告加 STATUS 指针，不删不改数字）。
+>
+> **必须逐条回答（每条给可核验证据：`文件:行号` / JSON 键 / commit 号）**：
+> 1. **总表**：`臂号 | 一句话定义 | 唯一变量 | 机制（谁 spawn、何时 spawn、子 agent 看到什么、结果如何回传） | 预注册判据 | 为什么可能超过 A0 | 风险/失效模式 | 预估成本（任务数×轮数×时长） | 当前状态`。A3/A4/A5/A6 四行齐全，缺一不可。
+> 2. **与已完成三臂的差别**：A0=无 spawn（ITT 69.2±1.4%）、A1=调研型 spawn（66.7±7.2%）、A2=验证型 spawn（53.3±3.8%）；说明 A3–A6 各自**只改哪一个变量**，以及是否会污染「多 agent vs 单 agent」的可归因性。
+> 3. **A3 专项（用户思路，重点写）**：H_ctx 形式化；§5 的 40 题峰值 max 112K；§6 的 158 题峰值 max **100,115**、**0/1116 超 110K**、compaction **57 events / 28 tasks**；结论「**自然超窗路径是死路 ⇒ 唯一可行=强制小预算**」；预注册判据 `A3 ITT ≥ A0' ITT + 3pp`；**必须先测 A0' 预算基线**（主+子 agent 分别设 in/out 上限，32K/16K 等）；30 题 H_ctx 候选子集的构造口径（compacted ∪ top-25 = 30 题，集中在 076–158）。
+> 4. **A4/A5/A6 专项**：各自机制、适用任务、为什么可能赢、依赖关系（A5 依赖 A2 结论；A6 依赖 A3 的上下文测量；A4 需 H2 wrapper `INHERIT_MCP=1`）、以及「在什么条件下应当不跑」。
+> 5. **可行性 / 注入强度**：cline v3.0.74 wrapper 下，各臂靠「提示注入 / hook / wrapper 级」哪一级实现；三条硬约束（子 agent **继承父模型**、**无 MCP 工具**、`maxIterations` 继承父值）对每臂的影响；`-p 8` 必须 **per-task data-dir 隔离**（否则 `messages must not be empty` 竞态）。
+> 6. **起跑前置（gate）**：GPU/沙盒空闲、不与他线冲突、`/nasdata ≥25G`；每臂起跑前必须在 `MEMORY_ZHULONG.md` 写「臂号 + 唯一变量 + 判据」。
+> 7. **推荐顺序 + 论证**：可推翻旧建议，但必须给理由（如先 A6 还是先测 A0'）；明确写出「A3 自然超窗不可行，只能强制小预算」。
+> 8. **首屏一句话结论**：A3–A6 各是什么、当前都未起跑、A3 唯一可行路径是强制小预算且需先测 A0'。
+>
+> **纪律**：负结果照写；不编造数字；不改题/图/check；引用必须可核验（文件+行/JSON 键/commit）；若某信息没采集到，写「未采集 + 补法」，不要猜。
+>
+> **交付后**：`MEMORY_ZHULONG.md` 顶部一行结论 + `daily-memories/2026-11-15.md` 流水 + commit 前缀 `zhulong arms:`；报告路径写进 MEMORY 交付指针。
+>
+> **优先级**：本令是纯文档，**不占 GPU/沙盒，应在下一次唤醒第一件事完成**；下面 12:5x 清盘令**仍然有效**，做完本令后继续清盘（两者不冲突）。
+
+```
+
+---
+
+### 📦 归档块 · 2026-11-15 12:5x — 运维令「清盘」（✅ 已闭合 · wake#975 第三轮双达标 · commit 见 `zhulong disk:`）
+
+> 归档时间：2026-11-15（wake#976）。归档原因：清盘已完成。三轮清盘（wake#967 ~6G / wake#968 4.93G / wake#975 第三轮）后双目标达标。wake#975 根因 = 前两轮没往 `ZhuLong_DAC2027/` 论文树里看，漏掉 `trace_ablation_think_lang/` 11G 已归档 trace（think×lang 消融·11-07 交付 30/30·结果已入论文）→ 压缩为 `trace_ablation_think_lang.tar.zst` 1004M（zstd·~10.8:1·`tar -t` VERIFY_OK·82695 条目/30 run 核验）→ 删原件净释放 ~10G。**验收实测（wake#976 复核）**：`df -h` `/home` 5.8G✅（≥5G）、`/nasdata` 33G✅（≥25G）；baseline eval PID1910477/1910486 存活✅；loop PID243810 + https_proxy✅；HEAD==origin✅。报告 `reports/report_zhulong_disk_cleanup_zh.html`（19:12 更新·三轮合并首屏 before/after·中文·单文件·0 外链 0 script）+ TSV `zhulong_disk_cleanup_20261115_1902.tsv`（含三轮 `*_1330`/`*_1400`/`*_1902`）。本块原文搬迁，未改写任何指令。
+
+```markdown
+> 🔴 **运维令 · 2026-11-15 12:5x（清盘 · 最高优先 · 本轮第一件事）· 未完成**
+>
+> **用户原话**：「安排 zhulong 清理硬盘啊」
+>
+> **现状（你 wake#966 自报）**：`/home` 仅 **267M（100% 满）**、`/nasdata` **9.8G**。已卡住 loop/git 余量，也让 A3–A6 的（a）项磁盘前置无法满足。11-14 23:4x 已清过一次（done_all），本次属**复发**。
+>
+> **目标**：`/home` 可用 **≥5G**、`/nasdata` 可用 **≥25G**（回到 11-14 清盘后的口径）。达不到就把能清的全清掉，并在报告首屏写清还差多少。
+>
+> **硬护栏（违反则本轮作废，宁可少清）**：
+> 1. **禁删在跑评测的产物**：posttrain 的 baseline batch `2026_1115_110506`（`run_cline_script -p 8`，PID3506378/3506387）的 jobs/工作目录、`/tmp` 下其 code/log/data-dir、任何 cline session 目录。
+> 2. **禁 kill 任何进程**（含他线 loop）；禁改他人文件；遇到 `Permission denied` 记下来，不 sudo 硬来。
+> 3. **禁删**：git 仓库、`eda_fastmcp` / `EDA-Eval-PyAether` / `EDA-Flow-Bench` 源码与题面、模型权重/serve、`~/.ssh`、token、正在用的 conda/venv、`/nasdata` 上 designflow 的 ledger/trace。
+> 4. **先列后删**：每次删除前 `du -sh <path>` + `ls -lt` 留证；只对**明确路径**执行 `rm -rf`，**禁止** `rm -rf /home/*`、`rm -rf ~/*` 这类通配；删除清单落 `run/zhulong_disk_cleanup_<YYYYMMDD_HHMM>.tsv`（路径 / 字节 / 理由），随 commit 入库。
+>
+> **执行顺序（先安全后激进）**：
+> - **a) 缓存**：`~/.cache/pip`、`~/.npm/_cacache`、`~/.cache/uv`、`~/.cache/huggingface`（**仅当无下载在跑**）、`__pycache__`、`*.pyc`
+> - **b) 日志/临时**：自己产生的 `*.log`（>3 天）、旧 screen/nohup 日志、core dump、`/tmp` 下自己建的临时目录（**避开** posttrain 正在写的）
+> - **c) 备份/中间物**：`*.bak*`、`*.old`、`*.tmp`、`*~`、失败的 run 目录（**无 `result.json` 且 mtime>3 天**）
+> - **d) 旧产物**：只删**本线**已被取代/已归档的；**最新一版与正在用的绝不删**；不确定的先列清单不删
+> - **e) `/nasdata`**：旧 scan 快照（`_hist` 留最新一版）、旧 jobs-dir、有 `.txt` 可复原的重复 `.b64`（先删重复编码件，保留文本）
+>
+> **验收（缺一不可）**：
+> - `df -h /home /nasdata` **before/after 对比**；达标或写清差额
+> - `ps -ef | grep run_cline_script` 仍能看到 baseline eval 存活（或已正常结束）
+> - `git status -sb` 正常、loop 进程未挂
+> - 报告 `reports/report_zhulong_disk_cleanup_zh.html`（中文、单文件、0 外链 / 0 script）：首屏两行给 before/after，随后「删除清单 top20（路径/大小/理由）」「未删项及原因」「若仍不足，下一步需要谁做什么」
+> - `MEMORY_ZHULONG.md` 顶部一行结论（before/after + 是否达标）+ `daily-memories/2026-11-15.md` 流水 + commit 前缀 `zhulong disk:`
+>
+> **自主性**：清哪些由你判断，只要不碰上面四类禁区。若判断某目录可能是他线正在写的（mtime 很新），**先列不删**，在报告里点名让运维确认。
+```
+
+---
+
+### 📦 归档块 · 2026-11-18 v1.5 — §6 论文大纲与图表同步至 v1.4 口径（用户令 · 第三批意见 · 2026-11-18 wake#1284 搬入）
+
+> 🔴🔴🔴 **用户令 · 2026-11-18（交互式会话下发 · 第三批意见）— v1.5 增量：同步 §6 论文大纲与图表至 v1.4 口径（标题/贡献/章节大纲/图表清单 4 处全改 · 纯文档增量 · 不改 §0–§5/§7–§9 本体 · 最高优先 · 覆盖 standby）**
+>
+> 本条是 v1.4 交付（commit `2c4ed787d`）后的**§6 同步补丁**。用户检查发现：v1.4 在 §4/§5/§2.3/§8 都做了升级，但 **§6 论文大纲与图表基本停留在 v1.2/v1.3 口径**，多处不同步。subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**。
+>
+> **用户原话**：「§6 论文大纲与图表 是否需要相应调整？」→ 经核对，**需要**。具体 4 处：
+>
+> ### ① §6.1 标题候选（3 个）— 加"情绪 × 记忆"方向
+> - 现 3 个标题全是 "Long-Term Memory + RSI" / "From Script to Flow" / "EDA-Flow-Bench carrier" 叙事，**没有体现 v1.4 的情绪机制核心认知升级**。
+> - **要求**：至少加 1-2 个候选标题体现"情绪机制 × 长期记忆 × EDA agent"主线，例如（agent 可自主拟）："Affective Gating of Long-Term Memory in Long-Chain EDA Agents: A Pre-Registered Falsifiable Study" / "Surprise, State, and Weapon-Focus: Biologically-Inspired Memory for EDA Flow Agents" / "From Arousal to Retrieval: Testing Affective-Memory Mechanisms in EDA Design-Flow Agents"。保留原 3 个作备选，重新给推荐（推荐应转向情绪机制方向，因 v1.4 核心认知已升级）。
+>
+> ### ② §6.2 贡献列表（4 条）— 全部同步 v1.4 + 加第 5 条
+> - **第 1 条** "Formulate 4 条假设 H1-H4" → **Formulate 7 条预注册、可证伪假设（H1-H4 功能级 + v1.4 H5/H6/H7 机制级：惊奇度门控 / 状态感知检索 / 武器聚焦压缩），each with falsification conditions**。
+> - **第 2 条** "Design an 8-arm ablation" → **Design a 13-arm ablation（v1.2 的 8 臂 + v1.4 新增 M4 跨域迁移 / M5 惊奇度门控 / M6 状态感知检索 / M7 武器聚焦压缩 / M8 负效价偏倚负对照），含等 token 预算杀手级对照 N1 + 错误记忆对照 N2 + 答案泄露率审计**。
+> - **第 3 条** "Introduce ... mock-EDA mode + 500-task sanitized Lite set" → **删 mock-EDA + Lite 500**（§2.3 已收缩），改 **Introduce long-chain flow orchestration as a new task modality（design_flow 契约：submit.zip + ≥8 断言 + 不指定 lang/host）with a released evaluation protocol white paper（harness 协议 + 判据 + 脱敏任务规格开源；不开 Lite 集可执行资产、不开 mock-EDA 模式，见 §2.3 v1.4 收缩）**。
+> - **第 4 条** "Report ... boundary conditions on RSI" → **Report falsifiable results on 13 EDA domains（1684 flow tasks, Full 集子集评测）, including negative results as publishable boundary conditions on RSI AND affective-memory mechanisms in long-chain orchestration（§4 §8）**。
+> - **新增第 5 条**：**Formalize** three cognitive-neuroscience mechanisms（emotional arousal → surprise/penalty gating / weapon-focus → central-peripheral compression / mood-congruence → state-aware retrieval）as computable mappings（`w = α·surprise + β·penalty` · `central_vs_peripheral_ratio` · `score = sim + γ·state_match`）, grounded in research.cimi_search literature（附录 G）—— v1.4 核心方法贡献。
+>
+> ### ③ §6.3 章节大纲 — 多处同步
+> - **§1 Introduction** 内容描述："4 条预注册假设预告" → **7 条假设预告（H1-H4 功能级 + H5-H7 情绪机制级）**；动机段加"从生物认知的情绪-记忆机制到 LLM agent 的可计算映射"。
+> - **§3 Task Modality & Benchmark** 内容描述："Lite 集 500 题" → **Full 集子集（top-120 by grounding depth / top-200 by chain length，不开源，仅内部评测）**；开源边界改"协议白皮书级（§2.3 v1.4 收缩）"。
+> - **§4 Harness with Memory & Self-Improvement** 内容描述："8 臂实现细节" → **13 臂实现细节 + v1.4 三条情绪机制计算映射（写入门控 / 压缩 / 状态感知检索）**。
+> - **§5 Pre-Registered Hypotheses & Ablation Design** 内容描述："4 假设 + 8 臂表" → **7 假设（H1-H7）+ 13 臂表 + M4 迁移污染检验 + 答案泄露率审计**。
+> - **§6 Experiments** 内容描述："H1-H4 判据核验" → **H1-H7 判据核验 + 情绪机制三机制的消融对比（M5/M6/M7 vs M2/M3）**。
+> - **§7 Analysis: Why Memory Helps/Hurts** 内容描述：加 **surprise 分布 / state_match 命中分布 / central-peripheral 压缩比 vs Pass@1 / M4 迁移答案泄露率审计 / 情绪机制在不同链长子集的异质性**。
+> - **§9 Conclusion: Boundary Conditions of RSI in Flow** 标题与内容：改 **"Boundary Conditions of RSI and Affective-Memory Mechanisms in Long-Chain EDA Flow"**；内容含"哪些假设被支持/证伪（H1-H7 分别）；情绪机制在符号工具编排上的适用边界；future work（多模态 grounding / 更长链 / 效价维度细化）"。
+> - **Ethics + Reproducibility** 内容描述："mock-EDA 复现" → 删 mock-EDA，改 **"协议白皮书级开源 + NDA 受控评审包（§2.3 v1.4 收缩）"**。
+> - **Related Work 行**：v1.4 已有 callout 扩展 affective neuroscience ✅；本次把 callout 内容**合入章节大纲本行**（行内描述加"affective neuroscience × agent memory（McGaugh / Bower / Loftus / Friston / Itti & Baldi / Park / EM-LLM / PsychoAgent，见附录 G）"）。
+> - **章节大纲新增候选**（agent 自主判断是否加独立章节）：是否在 §4 与 §5 之间加独立 **§4.5 Affective-Memory Mechanisms: From Biology to Computation** 章节承载 v1.4 §4.5 内容？或维持 §4.5 作为 §4 子节？agent 自主决定，但**章节大纲必须显式反映该内容存在**（不能只藏在 §4 子节里让人看不见主线）。
+>
+> ### ④ §6.4 图表清单 — 臂数/假设数同步 + 新增情绪机制图表
+> - **Figure 2** "8 臂消融 Pass@1" → **13 臂消融 Pass@1 + 95% CI（M0/M1/M2/M3/S1/M3+S1/N1/N2/M4/M5/M6/M7/M8）**。
+> - **Table 2** "8 臂消融表" → **13 臂消融表（臂号 / 唯一变量 / 判据 / 结果）**。
+> - **Table 3** "H1-H4 判据核验" → **H1-H7 判据核验（point estimate + CI + McNemar p + 证伪/支持）**。
+> - **Table 4** "13 域逐域 Pass@1（M0 vs M3）" → 保留，并可考虑加 **M0 vs M5/M6/M7** 列（情绪机制臂的逐域表现）——agent 自主决定。
+> - **新增 Figure**（v1.4 必须有，agent 自主编号 Fig 5/6/7）：
+>   - **情绪机制三机制消融对比图**：M5 vs M2（惊奇度门控）/ M6 vs M3（状态感知检索）/ M7 vs M2（武器聚焦压缩）的 Pass@1 对比；
+>   - **写入权重 α/β 标定曲线**：surprise 与 penalty 不同权重下的 Pass@1 等高线 / 折线（M5 标定）；
+>   - **central/peripheral 压缩比 vs Pass@1 散点**（M7 vs M2，验证"压缩更小且 Pass@1 不降"的 H7 判据）；
+>   - **M4 迁移污染检验的答案泄露率审计图/表**：迁移命中记忆逐条审计（抽象认知 vs 题面答案片段）的分布 + 答案泄露率指标；
+>   - **state_match 命中分布**：M6 在"连续失败子集"vs"正常推进子集"的 state_match 命中分布对比（验证 H6 状态感知在挫败时调高避坑权重）。
+> - **新增 Table**（可选）：**H5-H7 机制级判据核验表**（与 Table 3 H1-H4 并列，单独给情绪机制的证伪/支持结论）。
+>
+> ### ⑤ 硬约束（继承 v1.4，全部继续生效）
+>
+> - **唯一改动文件**：`doc/ZhuLong_DAC2027/reports/report_edafb_icml2027_plan_zh.html`（在 v1.4 的 111269B 基础上做 §6 增量修订）。
+> - 🚫 **不改 §0/§1/§2/§3/§4/§5/§7/§8/§9 本体**（本轮只改 §6 + 必要的图表交叉引用）；§6.3 Related Work 行可合入 v1.4 callout 内容（callout 可保留或合并，agent 自决）。
+> - 🚫 **不改 `main.tex` / `sections/*.tex` / `appendix/*.tex`**。
+> - 🚫 **不覆盖已有报告**（增量 edit，不重写）。
+> - 🚫 **不动 designflow 造题线的 cases/jsonl/ledger**。
+> - 🚫 **不起训练或评测进程**；subagent 消融线仍 `done_all`，新臂 M4-M8 是设计文档不是起跑。
+> - ✅ **0 外链 0 CDN 0 `<script>`** 纪律继续生效。
+> - ✅ **可追溯**：新增图表标注数据来源（"§5 实验新跑" / "M4 迁移审计日志" 等），不确定写 `UNKNOWN`。
+> - ✅ **防伪底线**：不编造数字 / 不编造文献 / 不改判据 / 不挑样本（不变）。
+> - ✅ **体量**：HTML 仍 > 25KB（v1.5 增量只会更大）；`MEMORY_ZHULONG.md` 只加一行心跳（保持 ≤40 KB，超了滚动归档）。
+> - **提交**：commit 前缀 `zhulong plan: EDA-Flow-Bench ICML2027 计划书 v1.5 — §6 论文大纲与图表同步至 v1.4 口径（标题/贡献/章节/图表 4 处）`；**只 add 本线文件**（`reports/report_edafb_icml2027_plan_zh.html` + `run/MEMORY_ZHULONG.md` + `run/daily-memories/*` + `run/ZHULONG_TASK.md`），勿 `-A`。
+> - **判据（自检后再提交）**：
+>   ① §6.1 至少 4 个候选标题（含 ≥1 个情绪机制方向），推荐转向情绪机制 ✅；
+>   ② §6.2 贡献列表 5 条（H1-H7 / 13 臂 / 删 mock-EDA+Lite 500 / 含情绪边界 / 第5条 Formalize 三机制）✅；
+>   ③ §6.3 章节大纲 9+ 行全部同步 v1.4（7 假设 / 13 臂 / Full 子集 / 情绪机制 / RSI+情绪边界 / 协议白皮书）✅；
+>   ④ §6.4 Figure 2/Table 2/Table 3 臂数与假设数同步（13 臂 / H1-H7）+ 新增 ≥4 个情绪机制图表（三机制消融 / α·β 标定 / 压缩比散点 / M4 泄露率审计 / state_match 分布）✅；
+>   ⑤ 0 真实外链（grep `href="https?://"`=0）+ 0 `<script>` ✅；
+>   ⑥ §0–§5/§7–§9 本体未改（diff 只在 §6 + 必要交叉引用）✅；
+>   ⑦ v1.4 的所有判据继续过（size>25KB / 11+ h2 / 13 臂 / H1-H7 证伪 / delta 表 / 时间线 / 附录 F/G / Plan B / UNKNOWN）✅。
+> - 完成后 `WAITING=0` standby，记一行心跳（wake# 续编），等待用户下一步放行（§7.2 预注册日 2026-11-22 临近）。
+>
+> **agent 自主空间**：具体标题措辞 / 第 5 条贡献的精炼句式 / §4.5 是否升格为独立章节 / 新增图表的编号与具体形式 / Table 4 是否加 M5/M6/M7 列 由 agent 自主决定——用户给的是同步要求，不是逐字模板。
+
+
+---
+
+### 📦 归档块 · 2026-11-18 v1.4 — 核心认知升级（情绪×长期记忆）+ Full→Lite 迁移污染检验 + 开源边界收缩 + research.cimi_search 调研（用户令 · 第二批意见 · 2026-11-18 wake#1284 搬入）
+
+> 🔴🔴 **用户令 · 2026-11-18（交互式会话下发 · 第二批意见）— 升级 v1.4 计划书：删费力不讨好的 Lite/mock-EDA 开源、改跨题污染检验为 Full→Lite 迁移、核心认知升级为「情绪在长期记忆巩固与提取中的作用」+ 必须用 `research.cimi_search` 做调研（最高优先 · 覆盖 standby · 合并预印本引用令为子任务）** ⚠️ **已交付（commit `2c4ed787d`·v1.4·111269B）**
+>
+> 本条**覆盖 standby 状态**，是 v1.2 计划书交付后的**第二批意见 + 核心认知升级**，要求产出 **v1.4 计划书**。subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**。**前一条 2026-11-18 预印本引用令合并为本令的子任务 ④**（同次交付，不单独出 v1.3）。
+>
+> **用户原话（逐条对齐，不得自行改题）**：
+> 1. 「"计划书提出开源 Lite 500 题 + mock-EDA 模式" 费力不讨好，不建议。」
+> 2. 「记忆与自改进的"数据泄露/跨题污染"风险。可以考虑在 Full-Lite 的用例跑 agent 积累记忆，看能否迁移到 Lite。」
+> 3. 「核心认知不够性感，建议考虑情绪在长期记忆巩固和提取中的作用。」
+> 4. 「下面是 Gemini 的一些评论供参考，请 zhulong agent 通过 `research.cimi_search` 发挥主动性和创造性，多做调研。」
+>
+> ### ① 三条意见的具体落地要求
+>
+> **意见 1（删费力不讨好的开源承诺）**：
+> - 在 §2.3 开源边界表 / §6.4 图表清单 / §9 现有资产映射 / §8 Plan B 等所有提到「Lite 500 题 + mock-EDA 模式开源」的位置，**降级或删除**这一承诺。理由（用户原话）：「费力不讨好，不建议」。
+> - **替代性开源边界**（agent 自主判断，给更轻、更可信的方案）：例如只开 harness 协议 + 判据 + 脱敏任务规格（不开 Lite 集、不开 mock-EDA）；或开「评测协议白皮书」而非可执行资产。明确写出「为什么 Lite 500 + mock-EDA 不做」（成本/维护/收益不匹配）。
+> - **连锁修订**：§5 消融矩阵中所有以「Lite 500 题」为任务子集的臂，改用 **Full 集子集**（如 top-120 by grounding depth / top-200 by chain length，从 1684 题中选，不造新题、不开源）；§7.2 时间线删除「Lite 集构造」节点；§9.2 缺口章节同步更新。
+> - **诚实披露**：在 §8 风险表加一行 R-new「开源承诺收缩可能被审稿人质疑复现性」+ Plan B（NDA 受控评审包 / 协议级开源）。
+>
+> **意见 2（跨题污染检验改为 Full→Lite 迁移）**：
+> - 现稿 §5.2 污染防护的口径是「held-out 任务从不参与 distillation」（继承 DATE27 instance-disjoint split）。用户指出**真正的风险是「记忆跨题污染」**——agent 在一个题上写的记忆可能直接泄露另一题的答案。
+> - **新设计要求**：在 **Full-Lite 用例上跑 agent 积累记忆，看能否迁移到 Lite**。具体：
+>   - 选一个 **「训练域」**（Full 集的某个子集，如某几个 EDA 域 / 某个链长区间），让 agent 在上面跑、写记忆（distillation + reflection）；
+>   - 选一个 **「迁移目标域」**（Lite 集或与训练域 instance-disjoint 的另一子集），**不写记忆、只读记忆**，看训练域积累的记忆能否迁移提升目标域 Pass@1；
+>   - 这是对「记忆内容是否为可迁移认知而非题目特定答案」的**直接检验**——若迁移有效，证明记忆是抽象知识；若迁移无效或负向，证明记忆只是题面特定的答案缓存（即污染）。
+>   - 把这一设计升格为**新的核心实验臂 M4（跨域迁移臂）** 或 **新的假设 H5（记忆的可迁移性）**，agent 自主决定是新增臂还是扩展现有 M3/S1。
+> - **污染检测指标**（必须设计）：记忆条目审计——对迁移到目标域后被检索命中的每条记忆，人工/自动判定「是抽象认知 vs 是题面特定答案片段」；统计「答案泄露率」（若 >0 则记忆机制有泄露，需 anti-leakage 强化）。
+> - **与 N2 负对照的关系**：N2 注入错误记忆是「内容正确性」负对照；M4 迁移臂是「可迁移性」正检验——两者互补，agent 在 §5.1 臂表中明确二者关系。
+>
+> **意见 3（核心认知升级：情绪在长期记忆巩固与提取中的作用）**：
+> - 这是本令的**核心**，也是用户说「核心认知不够性感」的直接回应。现稿 §4 假设 H1-H4 是「长期记忆 + 递归自改进」的纯功能主义命题——**缺乏机制层面的可证伪性**。用户建议引入**情绪唤醒度 / 心境一致性 / 武器聚焦**等认知神经科学机制，作为记忆写入门控与检索打分的**计算原理**。
+> - **必须做调研**：用 `research.cimi_search` 搜索（关键词建议：「emotional arousal memory consolidation amygdala hippocampus」「mood-congruent recall state-dependent memory」「weapon focus effect memory bias」「prediction error surprise memory gating」「affective tagging episodic memory」「emotion-modulated memory in LLM agents」「affective computing agent memory」等，agent 自主扩展查询词），把找到的**关键文献 + 机制模型**引用进报告 §4 / §5 / §8 Related Work。
+> - **形式化要求**（agent 必须给出可计算映射，不能停留在比喻）：
+>   - **情绪唤醒度 → 惊奇度 / 高惩罚信号门控**（Surprise / High-Penalty Gating）：预测误差（prediction error）或高代价失败（如长链中途崩盘）触发高权重写入；正常 pass 不写或低权重写。给出**写入权重公式**（如 `w = α·surprise + β·penalty`，α/β 由消融标定）。
+>   - **武器聚焦效应 → 根因抽象与噪声剥离**：高唤醒时只固化核心报错栈 + 根因因果链进 L1/L2，剥离冗余中间日志。给出**压缩比指标**（如 central vs peripheral tokens ratio）。
+>   - **心境一致性 / 状态依赖提取 → 状态感知检索**（State-Aware Retrieval）：agent 在连续失败状态时调高防御性避坑规则与负面教训权重；在正常推进时优先检索成功范式。给出**检索打分函数**（如 `score(query, mem) = sim + γ·state_match(query_state, mem_encode_state)`）。
+> - **新假设**（agent 自主决定编号 H5/H6 或重写 H1）：把上述三条机制各写成一条**可证伪假设**，每条含自变量/因变量/判据阈值/统计检验/证伪条件。例：H5「惊奇度门控 vs 均匀采样写入：高唤醒门控的记忆在迁移臂 M4 上 Pass@1 ≥ 均匀采样 +3pp，证伪条件：M4 迁移收益 ≤0 或显著低于均匀采样」。
+> - **新消融臂**（在 v1.2 的 8 臂基础上扩展，agent 自主编号）：
+>   - **M5 情绪唤醒度门控臂**：写入权重 = `α·surprise + β·penalty`（vs M2 均匀采样）；
+>   - **M6 状态感知检索臂**：检索打分含 `state_match` 项（vs M3 状态无关检索）；
+>   - **M7 武器聚焦压缩臂**：高唤醒时触发 central-only 抽象写入（vs M2 全量写入）；
+>   - 可选 **M8 负效价偏倚负对照**：故意让检索偏向负效价记忆，看是否过度防御导致效率下降（证伪「情绪机制总是正向」）。
+> - **诚实路线**（继承 v1.2）：若情绪机制在 EDA flow 层无收益，写成「情绪启发式在长链工具编排上的边界条件」——这本身是可发表认知。在 §8 Plan B 明确写出。
+> - **Related Work 扩展**（§6.3 §8）：把 §8 Related Work 从「EDA benchmark / agent memory / RSI / self-evolution」扩展到加一行「affective neuroscience × agent memory（情绪唤醒度巩固 / 心境一致提取 / 武器聚焦）」，引用调研到的文献。
+>
+> ### ② 调研硬要求（必须用 `research.cimi_search`）
+>
+> - **工具**：优先用 MCP 工具 `research.cimi_search`（语义检索）；若该工具在 agent 运行时不可用，回退到 `webfetch` 已知 URL（如 arXiv、Google Scholar 页面）或 `research.cimi_fetch`，**并在报告里诚实标注「用了哪个工具 + 查询词 + 命中数」**。
+> - **最少查询次数**：≥6 次 `research.cimi_search` 调用（覆盖：情绪巩固 / 心境一致提取 / 武器聚焦 / 预测误差门控 / LLM agent 情绪记忆 / affective computing agent）。
+> - **引用纪律**：每条引用必须给**来源标识**（论文标题 + 作者 + 年份 + DOI/arXiv/URL 文本，**不渲染成可点击外链**）；调研报告作为**附录 G**（新增）或合并进附录 F。
+> - **创造性**：用户原话「发挥主动性和创造性，多做调研」——agent 不仅要搜上述关键词，还要**主动扩展**到相邻领域（如睡眠巩固 / 创伤记忆 / 正负效价差异 / dopamine RPE / Bayesian surprise / 信息论惊奇度），把最相关的 3-5 个机制映射到 EDA agent 记忆架构。
+> - **防伪**：调研到的文献**不得编造**——`research.cimi_search` 返回什么就引什么；若返回结果与 EDA agent 场景距离远，诚实标注「该机制在生物认知中成立，是否迁移到 LLM agent 是本论文要检验的假设」。
+>
+> ### ③ Gemini 评论原文（用户给定 · 供参考 · 不必逐字采纳 · 可引用作 motivation）
+>
+> > 情绪在长期记忆的巩固与提取中扮演着"智能筛选器"与"状态锚点"的核心角色——它通过调动生理唤醒系统，帮助大脑在海量日常信息中优先锁定关乎生存与价值的关键经验，但也可能因此引发记忆偏倚。
+> > 结合认知神经科学（如杏仁核-海马体交互模型）及你此前关注的 Agent 记忆架构上下文，这一机制可以从以下三个核心维度理解：
+> >
+> > **1. 记忆巩固阶段：高唤醒触发"神经标签与捕获"**
+> > 并非所有经历都能进入长期记忆，情绪的生理唤醒度（Arousal）决定了记忆写入的优先级。
+> > - 生理机制：当事件引发强烈情绪（无论正负）时，交感神经系统释放肾上腺素和皮质醇，直接激活大脑的杏仁核（Amygdala）。杏仁核向负责陈述性记忆编码的海马体（Hippocampus）发送调制信号，增强突触可塑性（长时程增强，LTP），从而加速记忆巩固。
+> > - "武器聚焦效应"（记忆权衡）：情绪对记忆的增强具有非对称性。高唤醒会极度强化核心刺激（Central details）的巩固（例如"发生了什么致命错误"），但同时会抑制边缘背景信息（Peripheral details）的编码（例如"当时周围的无关环境细节"）。
+> >
+> > **2. 记忆提取阶段：情绪一致性与状态依赖**
+> > 情绪不仅是写入时的"加权系数"，也是检索时的"索引标签"。
+> > - 心境一致性提取（Mood-Congruent Recall）：人在特定情绪状态下，更容易提取与当前情绪效价（Valence，正性或负性）相匹配的记忆。例如，人在焦虑或受挫时，大脑会自动检索过往的失败与风险案例；在愉悦时，则更容易想起成功经验。
+> > - 状态依赖性提取（State-Dependent Recall）：当提取时的情绪生理状态与编码时的状态高度一致时，记忆提取的准确率显著提升（即"情绪本身成为了检索线索"）。
+> >
+> > **3. 对 AI Agent 长期记忆架构的启发（延伸视角）**
+> > 如果将人类的情绪机制映射到你正在设计的 Agent 长期记忆（L0/L1/L2）与自改进系统中，情绪本质上是一种轻量级元信号（Meta-signal）与非均匀采样机制：
+> > - 对标"情绪唤醒度" → 惊奇度与高惩罚信号（Surprise / High-Penalty Gating）：人类不会平均记录所有流水账，而是对"强烈挫败（报错/崩盘）"或"意外突破（一次性通过）"赋予极高的写入权重。Agent 记忆写入不应采用均匀采样，而应由预测误差（Prediction Error）或高代价失败触发优先级巩固。
+> > - 对标"武器聚焦效应" → 根因抽象与噪声剥离：高唤醒时大脑只记核心冲突、丢弃无关背景；同理，Agent 在遇到长链工具报错时，应触发高强度的上下文压缩，只将核心报错栈与根因因果链固化进 L1/L2，剥离冗余的中间日志。
+> > - 对标"心境一致性" → 状态感知检索（State-Aware Retrieval）：当 Agent 陷入连续工具调用失败（高"挫败/风险"状态）时，检索系统应自动调高防御性避坑规则与负面教训的权重；而在正常推进阶段，则优先检索效率优化与成功范式。
+>
+> ### ④ 子任务：预印本引用（合并自前一条 2026-11-18 用户令，不再单独出 v1.3）
+>
+> - 在 v1.4 计划书附录新增 `<h3>F. 参考文献（Bibliography · 预印本引用 + 调研文献）</h3>`，放：
+>   - **ZhuLong-DAC 预印本**（已上线）`@misc{liu2026runreadbackrefine,...eprint={2611.19056},archivePrefix={arXiv},primaryClass={cs.AR},url={https://arxiv.org/abs/2611.19056}}`（作者列表：Yang Liu, Shiwei Hou, Xiyuan Chen, Sen Yuan, Shao You, Feifan Chen, Wencheng Li, Shuyang Hu, Emma Xia, Xiaojing Lu, Wenchuan Zhang, Hao Wang, Fan Xu, Yanfeng Li, Hongwen Li, Yiming Zhu, year={2026}）
+>   - **DATE27_Zhulong 预印本**（12 月初上线）`@misc{PLACEHOLDER_DATE27_ZHULONG,...note={预印版 2026-12 上线后回填 eprint/...；当前 PLACEHOLDER，引用键用 \cite{PLACEHOLDER_DATE27_ZHULONG} 占位}}`
+>   - **调研文献**（来自 ② 的 `research.cimi_search` 结果）
+> - **0 外链纪律**：BibTeX 的 `url={...}` 与调研文献 URL **必须以纯文本呈现**（`&lt;` 转义或放 `<code>`/`<pre>`），**不得**渲染成可点击 `<a href="https://...">`。
+>
+> ### ⑤ 交付物与硬约束
+>
+> - **唯一交付**：v1.4 增量版 `doc/ZhuLong_DAC2027/reports/report_edafb_icml2027_plan_zh.html`（在 v1.2 的 74356B 基础上做增量补充；新增 §4 情绪机制假设 + §5 新臂 M5/M6/M7(±M8) + §2.3 开源边界收缩 + §5.2 跨题污染检验 M4 迁移臂 + 附录 F BibTeX + 附录 G 调研文献）。
+> - 🚫 **不改 `main.tex` / `sections/*.tex` / `appendix/*.tex`**（本轮只升级计划书，不改稿）。
+> - 🚫 **不覆盖已有报告**（增量 edit，不重写；v1.2 的 §0–§9 结构保留，§4/§5/§2.3/§8/§9 做增量修订）。
+> - 🚫 **不动 designflow 造题线的 cases/jsonl/ledger**。
+> - 🚫 **不起训练或评测进程**；subagent 消融线仍 `done_all`，不起任何旧臂（A3/A4/A5/A6/A0′′′ 全部取消）；**新臂 M4/M5/M6/M7/M8 是计划书设计，不是现在起跑**——本轮只出设计文档。
+> - ✅ **0 外链 0 CDN 0 `<script>`** 纪律继续生效（grep `href="https?://"`=0、`<script`=0）。
+> - ✅ **可追溯**：调研文献标来源；BibTeX 标「用户令 2026-11-18（交互式会话）」；计划书数字仍带 `路径:行号`，不确定写 `UNKNOWN`。
+> - ✅ **防伪底线**：不编造数字 / 不编造文献 / 不改判据 / 不挑样本（不变）。
+> - ✅ **体量**：HTML 仍 > 25KB（v1.4 增量只会更大）；`MEMORY_ZHULONG.md` 只加一行心跳（保持 ≤40 KB，超了滚动归档）。
+> - **提交**：commit 前缀 `zhulong plan: EDA-Flow-Bench ICML2027 计划书 v1.4 — 核心认知升级（情绪 × 长期记忆）+ Full→Lite 迁移污染检验 + 开源边界收缩 + 预印本 BibTeX`；**只 add 本线文件**（`reports/report_edafb_icml2027_plan_zh.html` + `run/MEMORY_ZHULONG.md` + `run/daily-memories/*` + `run/ZHULONG_TASK.md`），勿 `-A`。
+> - **判据（自检后再提交）**：
+>   ① §4 含情绪机制 3 条可证伪假设（唤醒度门控 / 武器聚焦压缩 / 状态感知检索），每条含证伪条件 ✅；
+>   ② §5 含新臂 M5/M6/M7（±M8）+ M4 跨域迁移臂，臂表更新 ✅；
+>   ③ §2.3 开源边界表删除或降级「Lite 500 + mock-EDA 开源」承诺，写出收缩理由 ✅；
+>   ④ §5.2 含跨题污染检验设计（Full 训练域 → Lite/instance-disjoint 迁移目标域 + 答案泄露率指标）✅；
+>   ⑤ 附录 F 含 ZhuLong-DAC + DATE27 PLACEHOLDER 两条 BibTeX + 调研文献（≥6 次 `research.cimi_search` 调用记录）✅；
+>   ⑥ 0 真实 `<a href="https://...">` 外链（grep=0）+ 0 `<script>` ✅；
+>   ⑦ v1.2 的所有判据继续过（size>25KB / 11+ h2 / 臂≥6 / H1-H4 证伪 / delta 表 / 时间线 / Plan B / UNKNOWN）✅；
+>   ⑧ 调研工具与查询词诚实标注（用了 `research.cimi_search` / `webfetch` / 其他 + 查询词 + 命中数）✅。
+> - 完成后 `WAITING=0` standby，记一行心跳（wake# 续编），等待用户下一步放行（§7.2 预注册日 2026-11-22 临近）。
+>
+> **agent 自主空间（鼓励发挥）**：本令明确要求「情绪机制形式化为可计算映射」+「调研」，但**具体映射公式 / 假设编号 / 新臂编号 / 调研查询词扩展 / Related Work 重写细节**由 agent 自主决定——用户给的是方向，不是逐字模板。若调研发现更有潜力的机制（如 dopamine RPE / Bayesian surprise 比情绪唤醒度更可计算），agent 可自主替换或并列，但要在报告里说明取舍理由。
+
+
+---
+
+### 📦 归档块 · 2026-11-18 v1.3 — 补两篇 zhulong 预印本 BibTeX 引用（用户令 · 2026-11-18 wake#1284 搬入）
+
+> 🔴 **用户令 · 2026-11-18（交互式会话下发）— 补充：在计划书 `reports/report_edafb_icml2027_plan_zh.html` 适当位置补充两条预印本引用信息（最高优先 · 纯文档增量 · 不改其他内容）** ⚠️ **已被上方 v1.4 令合并为子任务 ④，不再单独出 v1.3**
+>
+> 本条**覆盖 standby 状态**，是 v1.2 计划书交付后的**增量补丁任务**，不是重做计划书。subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**。
+>
+> **用户原话（逐条对齐，不得自行改题）**：
+> 1. 「安排 zhulong agent 在适当位置补充信息：1.ZhuLong-DAC 已经发预印版，可以引用。2.DATE27_Zhulong 在 12 月初会发预印版，可以暂时通过 PLACEHOLDER 引用。」
+>
+> **ZhuLong-DAC 预印本 BibTeX（已上线，可直接引用）**：
+>
+> ```bibtex
+> @misc{liu2026runreadbackrefine,
+>       title={Run, Read Back, Refine: Observation Fidelity in Execution-Grounded EDA Agents}, 
+>       author={Yang Liu and Shiwei Hou and Xiyuan Chen and Sen Yuan and Shao You and Feifan Chen and Wencheng Li and Shuyang Hu and Emma Xia and Xiaojing Lu and Wenchuan Zhang and Hao Wang and Fan Xu and Yanfeng Li and Hongwen Li and Yiming Zhu},
+>       year={2026},
+>       eprint={2611.19056},
+>       archivePrefix={arXiv},
+>       primaryClass={cs.AR},
+>       url={https://arxiv.org/abs/2611.19056}, 
+> }
+> ```
+>
+> **DATE27_Zhulong 预印本 BibTeX（12 月初上线，当前用 PLACEHOLDER）**：
+>
+> ```bibtex
+> @misc{PLACEHOLDER_DATE27_ZHULONG,
+>       title={[PLACEHOLDER] ZhuLong-SE: Execution-Grounded Self-Evolving LLM Agent for EDA Scripting (DATE27 preprint, to appear early December 2026)},
+>       author={[PLACEHOLDER — DATE27_Zhulong 作者列表]},
+>       year={2026},
+>       note={预印版 2026-12 上线后回填 eprint/archivePrefix/primaryClass/url；当前 PLACEHOLDER，论文写作时引用键用 \cite{PLACEHOLDER_DATE27_ZHULONG} 占位，arXiv 编号待定},
+> }
+> ```
+>
+> ### ① 适当位置（建议，agent 可自主判断更优位置）
+>
+> - **首选**：在附录新增 `<h3>F. 参考文献（Bibliography · 预印本引用）</h3>` 小节（位于现有 E. ZHULONG_TASK.md / MEMORY_ZHULONG.md 之后、`<hr>` 自检块之前），放两条 BibTeX。
+> - **次选**：在现有附录 B（DATE27_Zhulong）开头加一行「预印本引用：见下方 BibTeX F」+ 在附录 C（ZhuLong_DAC2027）开头加同样指针；统一在 F 节给全文 BibTeX。
+> - **正文呼应**（可选，非必需）：§6.3 章节大纲的 §8 Related Work 行（"DATE27 + DAC + ExpeL + Reflexion + SkillOpt + MUSE"）和 §1/§3 多处提到「两篇 zhulong / 前作 / DAC」的地方，可在合适处加一句脚注式标注「（预印本 [F] / [F-DATE27 PLACEHOLDER]）」——但**不得改动现有结论、假设、臂表、判据、数字**。
+>
+> ### ② 硬约束（继承 v1.2，全部继续生效）
+>
+> - **唯一改动文件**：`doc/ZhuLong_DAC2027/reports/report_edafb_icml2027_plan_zh.html`（在 v1.2 基础上做增量补充）。
+> - 🚫 **不改 `main.tex` / `sections/*.tex` / `appendix/*.tex`**（本轮只补计划书，不改稿）。
+> - 🚫 **不覆盖已有报告**（增量 edit，不重写）。
+> - 🚫 **不动 designflow 造题线的 cases/jsonl/ledger**。
+> - 🚫 **不起训练或评测进程**；subagent 消融线仍 `done_all`。
+> - ✅ **0 外链 0 CDN 0 `<script>`** 纪律继续生效——BibTeX 中的 `url={https://arxiv.org/abs/...}` 字段**必须以纯文本呈现**（`&lt;` 转义或放在 `<code>` / `<pre>` 块内），**不得**渲染成可点击的 `<a href="https://...">` 超链接；arXiv 编号以文本形式给出即可。
+> - ✅ **可追溯**：BibTeX 条目本身是用户给定的事实，标注「来源：用户令 2026-11-18（交互式会话）」即可，不需要 path:行号。
+> - ✅ **防伪底线**：不编造数字 / 不改判据 / 不挑样本（不变）。
+> - ✅ **体量**：HTML 仍 > 25KB（增量只会更大）；`MEMORY_ZHULONG.md` 只加一行心跳（保持 ≤40 KB，超了滚动归档）。
+>
+> ### ③ 交付与提交
+>
+> - 交付物：v1.3 增量版 `reports/report_edafb_icml2027_plan_zh.html`（在 v1.2 的 74356B 基础上追加附录 F + 可选正文呼应）。
+> - 自检后 commit，前缀：`zhulong plan: EDA-Flow-Bench ICML2027 计划书 v1.3 — 补两篇 zhulong 预印本 BibTeX 引用`；**只 add 本线文件**（`reports/report_edafb_icml2027_plan_zh.html` + `run/MEMORY_ZHULONG.md` + `run/daily-memories/*` + `run/ZHULONG_TASK.md`），勿 `-A`。
+> - **判据（自检后再提交）**：① 附录 F（或等价位）含两条 BibTeX，ZhuLong-DAC 完整 + DATE27 PLACEHOLDER；② 0 真实 `<a href="https://...">` 外链（grep `href="https?://`=0）；③ 0 `<script>`；④ 现有 §0–§9 结论/假设/臂表/判据/数字**未改**（diff 只在附录 + 可选正文脚注式标注）；⑤ v1.2 的所有判据（size>25KB / 11+ h2 / 8 臂 / H1-H4 证伪 / delta 表 / 时间线 / 开源边界表 / Plan B / UNKNOWN）继续过。
+> - 完成后 `WAITING=0` standby，记一行心跳（wake# 续编），等待用户下一步放行（§7.2 预注册日 2026-11-22 临近）。
+
+
+---
+
+### 📦 归档块 · 2026-11-17 22:5x v1 — 新任务：EDA-Flow-Bench 论文重定位 + 消融实验设计 + 计划书（用户令 · 2026-11-18 wake#1284 搬入）
+
+> 🔴 **用户令 · 2026-11-17 22:5x — 新任务：EDA-Flow-Bench 论文重定位 + 消融实验设计 + 计划书（最高优先）**
+>
+> 本条**覆盖 standby 状态**（subagent 消融线仍保持 `done_all` 结案，**不再起 A3/A4/A5/A6/A0′′′ 等旧臂**；这是**一个新任务**，不是恢复旧实验）。
+>
+> **用户原话（逐条对齐，不得自行改题）**：
+> 1. 「这篇论文贡献光是 评测集 EDA-Flow-Bench 恐怕立不住，因为基于真实 Trace 构建，公司资产，不能开源。」
+> 2. 「论文结构恐怕还是会遵循两篇 zhulong 论文的叙事架构，也就是主线是新的认知，副线是新的评测集。」
+> 3. 「zhulong DAC 论文的结论节提到：Future work: domain-specializing the harness, long-term memory and recursive self-improvement, multimodal grounding, and long-chain flow-orchestration benchmarking.」
+> 4. 「这个新认知，目前的想法是围绕 long-term memory and recursive self-improvement 在 EDA agent（EDA 脚本 + designflow）领域的应用。」
+> 5. 「DATE27_Zhulong 是我们早先的工作：EDA 脚本 + 自进化。」
+> 6. 「EDA-Flow-Bench_ICML2027 这篇论文的大体思路，是将 #5 向 designflow 领域拓展，向落地拓展，更进一步，通过实验检验新的认知。」
+> 7. 「请 zhulong agent 认真阅读和思考，如何设计有创造力的消融实验，如何规划这篇论文，写出计划书（中文 HTML）。」
+
+### ① 必读（读原文，禁止凭印象/二手摘要）
+
+| # | 路径 | 读什么 |
+|:--|:--|:--|
+| 1 | `doc/ZhuLong_DAC2027/EDA-Flow-Bench_ICML2027/main.tex` | 宏定义与章节装配（注意 `\Ntasks` 与 `\Neval` 是**两个不同的数**，别混用） |
+| 2 | 同上 `sections/0_abstract.tex` `1_intro.tex` `2_benchmark.tex` `3_harness.tex` `4_experiments.tex` `5_analysis.tex` `6_related.tex` `7_conclusion.tex` | 现稿的**主张 / 证据 / 缺口**，逐节标注「benchmark 叙事」与「可升格为认知叙事」的位置 |
+| 3 | 同上 `appendix/A_benchmark_details.tex` `B_additional_results.tex` `C_experimental_details.tex` `README.md` `results.txt` | 可复现性资产、696-run 冻结快照口径、7 路横评口径 |
+| 4 | `doc/ZhuLong_DAC2027/DATE27_Zhulong/DATE2027/{0_abstract,1_intro,3_method,4_self_evolve,5_exp,6_conclusion}.tex` + `技术报告.md` + `Comment.md` + `zhulong_review.txt` | 前作（EDA 脚本 + 自进化）的**叙事骨架、方法命名、实验套路、审稿人意见** —— 新论文要显式继承这套架构 |
+| 5 | `doc/ZhuLong_DAC2027/ZhuLong_DAC2027/`（DAC 版正文）| 两篇 zhulong 叙事的另一半；重点读 **Conclusion / Future work** 原文（long-term memory、recursive self-improvement、long-chain flow-orchestration 的原句） |
+| 6 | `doc/ZhuLong_DAC2027/benchmark/EXPERIMENTS_DESIGNFLOW.md`、`MEMORY_DESIGNFLOW_{A,B,C,D}.md`（只读头部状态行）、`reports/report_designflow_paper_next_steps_zh.html` | **现有可用资产**：cases 规模（A/B/C/D 四库）、B 线 audit 93%+、7 路 harness 横评、696-run 结果 —— 哪些数据现在就能当"认知检验"的证据，哪些必须新跑 |
+
+### ② 计划书必须回答的六个问题（这就是验收标准）
+
+1. **贡献重定位（为什么"只卖评测集"立不住，以及怎么修）**
+   - 从审稿人视角写清三条硬伤：① trace 源自公司生产资产、**不可开源** ⇒ 外部不可复现；② 数据一旦不可发布，"benchmark 论文"的社区价值被大幅削弱；③ 10.0% Pass@1 这类单点数字会随基座更新迅速过期。
+   - 给出**替代性贡献结构**：主线=新认知（long-term memory + recursive self-improvement 在 EDA agent 的可检验命题）；副线=新任务形态（long-chain flow orchestration）+ 评测协议/harness；bench 作为**载体与外部接口**（Lite 集 / 脱敏 mock sandbox / 协议与判据开源、原始 trace 不发布）。
+   - 明确**开源边界表**：能开（协议、判据、harness、脱敏 mock 资产、Lite 集构造方法）/ 不能开（原始 trace、真实 PDK/网表/公司脚本、隐藏答案）/ 可申请（受限评审复现包）。
+2. **与 DATE27 的继承与差异（一张 delta 表）**
+   - 维度至少：任务粒度（单脚本 → 多步 flow）、自进化的载体（脚本层 → 记忆/技能库/harness）、失败信号（编译/运行 → 工具链 grounding + 长链状态）、评测单位（单函数 → 交付件 submit.zip）、可迁移性主张。
+   - 说明"**认知的可迁移性**"是本篇的新意（把 DATE27 在脚本层的结论搬到 flow 层，看是否仍成立）。
+3. **可证伪命题（pre-registered hypotheses，必须有对照与失败条件）**
+   - 至少给 **4 条**，例如：H1 长期记忆（跨 session 的工具知识/项目约定/失败模式）提升长链任务 Pass@1；H2 递归自我改进（技能库自扩 / harness 自改）收益**随链长单调增长**；H3 记忆是自改进的前提（无记忆时自改进收益消失/转负）；H4 与已结案结论的一致性（单 agent ≥ 多 agent、自主 spawn ≥ 用户定制）在 flow 场景是否复现。
+   - 每条写：自变量、因变量、判据阈值、样本量、统计检验（McNemar / paired bootstrap CI / 预注册 α）、**证伪条件**（什么结果算"认知不成立"）。
+4. **消融实验设计（本令的核心，要求"有创造力"）**
+   - **≥6 个臂**（含对照组），例如：M0 无记忆基线 / M1 静态记忆（人工整理 SOP）/ M2 自动记忆（写入+检索，无淘汰）/ M3 记忆+淘汰与冲突消解 / S1 自改进（技能库自动扩展）/ M3+S1 组合 / 负对照（记忆注入**错误**或**无关**知识，检验是否只是 prompt 变长带来的增益）。
+   - 每臂写：实现方式、成本（token/墙钟）、污染防护（held-out 任务、时间切分、答案泄漏检查、记忆内容审计）、**样本量与统计功效**（n 不足时明确写"仅信号不作结论"）。
+   - 必须设计**一个"杀手级"对照**：能区分"记忆真的有用"与"上下文更长/prompt 更丰富"（例如同等 token 预算的无记忆长 prompt；或记忆内容随机打乱）。
+   - 给出**最小可跑矩阵**（可在 1–2 周内跑完、不重训基座、复用现有 cases 与 harness）与**理想矩阵**（若资源允许）。
+5. **论文规划**
+   - 标题候选 2–3 个；贡献列表（3–4 条，动词开头）；章节大纲（与两篇 zhulong 同构：Intro → 认知/方法 → Self-evolve → 新任务形态 → 实验 → 分析 → Related → Conclusion）；图表清单（Figure/Table 各 3–5 个，标注数据来源与是否已有）；实验矩阵表（臂 × 任务子集 × 重复次数 × 判据）。
+   - **时间线**（按 ICML 2027 截稿倒推，标出"数据冻结日""写作冻结日""内部评审日"）+ **风险清单**（H2 为负结果怎么办、cases 增长与评测口径漂移怎么办、不可开源被质疑怎么办 → 每项给 Plan B）。
+   - 明确"**负结果也发**"的诚实路线：若自改进无收益，写成"在真实 designflow 上自改进的边界条件"——这本身是可发表认知。
+6. **与现有资产的衔接**
+   - 列表说明：哪些实验**今天就能跑**（复用 696-run 快照、7 路 harness、四库 cases）、哪些需要新造题（缺口在哪个域）、哪些需要新基座/新沙盒。
+   - 明确**不得**为了论文数字去改判据/改题/挑样本（防伪底线不变）。
+
+### ③ 交付物与硬约束
+
+- **唯一交付**：`doc/ZhuLong_DAC2027/reports/report_edafb_icml2027_plan_zh.html`
+  - 中文、单文件自包含、**0 外链 / 0 CDN / 0 `<script>`**；首屏给「结论先行」摘要卡（一段话 + 6 条判据 + 3 个最大风险）。
+  - 结构建议：§0 结论先行 / §1 现稿诊断（逐节） / §2 贡献重定位与开源边界 / §3 与 DATE27 的 delta 表 / §4 可证伪命题 / §5 消融设计（臂表 + 污染防护 + 统计） / §6 论文大纲与图表 / §7 实验矩阵与时间线 / §8 风险与 Plan B / §9 现有资产映射 / 附录（引用清单：路径+行号）。
+- **禁止**：改 `main.tex` / `sections/*.tex` / `appendix/*.tex`（本轮只规划，不改稿）；覆盖已有报告；动 designflow 造题线的 cases/jsonl/ledger；起训练或评测进程。
+- **可追溯**：每个数字后面必须带来源（文件路径 + 行号 / json 路径 / 命令）。**不确定就写 `UNKNOWN`**，禁止编造数字或引用不存在的实验。
+- **体量**：HTML > 25 KB；`MEMORY_ZHULONG.md` 只加一行心跳（保持 ≤40 KB，超了滚动归档）。
+- **提交**：`zhulong plan: EDA-Flow-Bench ICML2027 重定位与消融设计 v1`，只 add 本线文件（勿 `-A`）。
+- **判据（自检后再提交）**：① 六问全部有答案；② ≥6 臂且含"等 token 预算"负对照；③ 每条假设有证伪条件；④ 有 delta 表与时间线；⑤ 0 外链 0 script；⑥ 全文数字可追溯。
+
+
+---
+
+### 📦 归档块 · 2026-11-17 09:3x 结案令 — 停止 subagent 消融评测 · 结案归档 · 覆盖一切前令（用户令 · 2026-11-18 wake#1284 搬入）
+
+> 🟢 **结案令 · 2026-11-17 09:3x（用户令：停止 subagent 消融评测 · 结案归档 · 覆盖一切前令）· ✅ 已执行（A0pp eval killed by ops）**
+>
+> **用户原话**：「结果比较差，让 zhulong agent 把评测停下来吧。」
+>
+> **用户认知结论（必写进报告 + MEMORY，作为本线最终结论）**：
+> > 「已设计若干 subagent 消融实验，但尚未取得显著收益（subagent 对比单 agent）。在当前任务难度条件下：
+> > 1. 单 agent 表现优于多 agent；
+> > 2. 在多 agent 中，自主 spawn subagent 优于用户定制。
+> > 上述两条由 2026 年暑假清华大学博士研究积累的认知仍然稳固。」
+>
+> **执行动作（ops 侧已完成）**：
+> - A0pp eval 全部进程已 kill（wrapper PID1443422 / worker PID620959 / proxy PID1443459 / 10 个 cline worker）；
+> - A0pp r3 未完成，**不评分、不计入最终结果**；
+> - A0pp r1=10.0% / r2=2.5% 作为"input-budget 施压下单 agent 退化"的探索性数据保留，**不作为正式结论**（r3 缺失，无法算 mean±std）。
+>
+> **agent 侧结案任务（下次唤醒执行，做完即 standby）**：
+> 1. **MEMORY_ZHULONG.md** 顶部写一行结案结论，原文引用用户的两条认知（单 agent > 多 agent；自主 spawn > 用户定制），标注"2026 暑假清华博士研究积累的认知"；
+> 2. **reports** 侧：在 `reports/report_zhulong_subagent_ablation_zh.html` 顶部或 `reports/report_zhulong_a3a6_arms_zh.html` 补一节「§结案 · 用户认知结论」，写明：
+>    - 本线实验全部结果汇总（A0=69.2% / A1=66.7% / A2=53.3% / A0′ VOID / A0′′ r1=10% r2=2.5% r3=未完成 / H2 smoke 叫停）；
+>    - 用户两条认知结论原文；
+>    - 标注"subagent 消融线结案，不再追加新臂"；
+> 3. **ZHULONG_TASK.md**：将 2026-11-15 20:5x（放行 A3-A6）+ 2026-11-16 09:0x（修正 input 预算）两令标记为「已归档 · 被 2026-11-17 09:3x 结案令覆盖」；
+> 4. **不再起任何新臂**（A3/A3′/A4/A5/A6/A0′′′ 全部取消）；subagent 消融线 **done_all**；
+> 5. commit + push，前缀 `zhulong arms: 结案`。
+>
+> **保留产物不删**：A0pp data-dir / proxy 脚本 / cost JSON / trace / daily-memories 均保留为历史档，供后续研究引用。
+>
+> **优先级**：本令覆盖一切前令；结案后 ZhuLong agent 回 standby，无待办。
+
+
+---
+
+### 📦 归档块 · 2026-11-15 20:5x 用户令 — 放行 A3–A6（2026-11-18 wake#1284 搬入）
+
+> 📦 已归档 · 2026-11-15 20:5x（用户令：放行 A3–A6）· ⚠️ 被 2026-11-17 09:3x 结案令覆盖（subagent 消融线结案，不再追加新臂）
+>
+> **用户原话**：「这个实验设计很糟糕。应该限制 input 预算而非 output 预算。逻辑是：subagent 能够成立，是因为通过分工，让不同的 agent 上下文更少。不同 agent 专注不同的事情。上下文更少，限制的是 input 而非 output。限制 output 是让 agent 写代码迭代尝试更少，对不对？我们是想通过更少的输入上下文，让多 agent 相对于单 agent 优势更加明显对不对？」
+>
+> **覆盖前令范围**：本令**修正** 2026-11-15 20:5x 运维令中关于 A0′/A3 的预算施压维度。前令的"放行 A3–A6 / 起跑顺序 / 判据纪律 / 硬约束"框架**仍有效**；仅"小预算 = 砍 out-budget（maxTokens 16K→4K）"这一条**作废**，改为"小预算 = 砍 in-budget（contextWindow）"。
+>
+> **设计错误诊断（必读）**：
+> - **A0′（maxTokens 4K, 无 spawn）与 A2（maxTokens 4K, 强制 spawn）限制的是 output** → 杀的是"写代码迭代次数" → 吞吐崩塌（gen-rate 75%）→ 158-scale 17% 测的是"out-budget 对吞吐的影响"，**与 subagent 分工价值无关**。
+> - **subagent 的核心价值 = 分工让每个 agent 的上下文更小**：单 agent 一个上下文要同时装 API 文档 + 探索历史 + 代码 → input 大；多 agent 分工后 subagent 只装 API 查询结果（小 input），主 agent 只装代码 + API 摘要（小 input）→ **每个 agent 的 input 都天然小**。
+> - 所以施压维度必须是 **input 预算（contextWindow）**：让单 agent 在小 input 下塞不下完整 API 文档 → 频繁 compaction → 信息丢失 → 质量下降；而多 agent 分工后每个 agent 上下文天然小 → 不触发 compaction 或触发更少 → 质量保持。**这才是让多 agent 相对单 agent 优势显现的正确施压方式**。
+>
+> **A0′ 处置**：
+> - **A0′（out 4K baseline）结果作废**：r2=15.8% / r3=17.1% / r4=17.1% **不用于 A3 对照**，仅在报告里标"设计错误 · out-budget 施压 · 与 subagent 价值无关"；
+> - A0′ data-dir（`/nasdata/app.e0031982/subagent_ablation/A0prime`）保留为历史档，**不再追加轮次**；
+> - 若 A0′ 已扩到 158-scale 的评分流水，**保留产物不删**，仅标注作废理由。
+>
+> **修正后的实验设计（立即起跑）**：
+>
+> | 臂 | contextWindow (in) | maxTokens (out) | spawn | 含义 | 对照 |
+> |----|--------------------|-----------------|-------|------|------|
+> | A0 | 32K | 16K | 无 | 原 baseline（已跑 69.2%） | — |
+> | **A0′′** | **8K** | **16K（不变）** | 无 | 单 agent 小 input 基线 | — |
+> | **A0′′′** | **4K** | **16K（不变）** | 无 | 更激进小 input 基线 | — |
+> | **A3** | **8K** | **16K（不变）** | 有 | 多 agent 小 input | 对照 A0′′ |
+> | **A3′** | **4K** | **16K（不变）** | 有 | 多 agent 更激进小 input | 对照 A0′′′ |
+>
+> **关键规则**：
+> 1. **output 预算恒定 16K**（不限制写代码迭代），唯一施压变量是 **input 预算（contextWindow）**；
+> 2. **compaction=basic 不变**（@0.9×contextWindow 触发，即 8K→@7.2K / 4K→@3.6K）；
+> 3. spawn 机制：A3/A3′ 沿用 A1 的"主 agent 自主 spawn + 强提示注入 subagent_researcher"（已验证调用率 100%），不用 A2 的强制小预算 spawn；
+> 4. subagent 的 input 预算**独立设**（不继承主 agent 的 contextWindow）——这是分工的关键：subagent 只装 API 查询结果（几 K 即够），主 agent 只装代码 + API 摘要。若 cline wrapper 当前不支持 subagent 独立 contextWindow，先 smoke 证明并在 MEMORY 写清限制。
+>
+> **判据（覆盖前令）**：
+> - **A3 ITT ≥ A0′′ ITT + 3pp**（同 in=8K 下，有 spawn 比无 spawn 好），McNemar 方向一致；
+> - **A3′ ITT ≥ A0′′′ ITT + 3pp**（同 in=4K 下，有 spawn 比无 spawn 好），McNemar 方向一致；
+> - 若 8K 下单 agent 已不受损（A0′′ ≈ A0），说明 8K 还不够小，直接跑 A0′′′/A3′ 的 4K 梯度；
+> - 若 4K 下多 agent 也崩（A3′ ≈ A0′′′），说明施压过猛，回退到 8K 报告并标"4K 不可行"。
+>
+> **起跑顺序（覆盖前令）**：
+> 1. **A0′′**（in=8K, out=16K, 无 spawn）——新 baseline，A3 的预注册判据依赖它，**先做**；
+> 2. **A3**（in=8K, out=16K, 有 spawn）——A0′′ 跑完立即起；
+> 3. 若 A0′′ ≈ A0（8K 不够小）→ 跳到 A0′′′/A3′（4K 梯度）；
+> 4. A6 / A4 / A5 顺序沿用前令。
+>
+> **起跑前必做（沿用前令）**：在 `MEMORY_ZHULONG.md` 写一行「臂号 + 唯一变量（=in-budget）+ 预注册判据 + 数据子集 + 资源/并发 + 对照臂」；未写不得起跑。
+>
+> **交付**：沿用前令（原地更新 `reports/report_zhulong_a3a6_arms_zh.html` + MEMORY 结论行 + daily 流水 + commit 前缀 `zhulong arms:`）。
+>
+> **优先级**：本令高于一切 standby/心跳；A0′′ 是当前唯一无前置的起跑项，**立即做**。
+
+
+---
+
+### 📦 归档块 · 2026-11-15 20:5x 运维令 — 放行 A3–A6 · 允许起实验（2026-11-18 wake#1284 搬入）
+
+> 🔴 **运维令 · 2026-11-15 20:5x（用户令：放行 A3–A6 · 最高优先 · 允许起实验）· ⚠️ A0′/A3 预算维度已被 2026-11-16 09:0x 令修正，其余条款仍有效**
+>
+> **用户原话**：「zhulong 放行 A3-A6」
+>
+> **授权范围**：**A3 / A4 / A5 / A6 四臂全部放行**，可自主起跑、自主定轮次与资源；A3 必需的 **A0′ 预算基线**、A4 必需的 **H2 wrapper（`INHERIT_MCP=1`）**、A6 依赖的上下文测量等配套工作**一并放行**。不再需要逐臂请示。
+>
+> **起跑顺序（按你 15:0x 报告 §7；允许用新证据推翻，但必须先在 MEMORY 写理由）**：
+> 1. **A0′**（同小预算下的单 agent 基线）——A3 的预注册判据依赖它，**不许跳过**；
+> 2. **A3**（主+子 agent 分别设 in/out 上限，超限强制交付/交接）——先在 **30 题 H_ctx 候选子集**（compacted ∪ top-25）做分层分析，再决定是否扩到 158；**自然超窗路径已证死路，只走强制小预算**；
+> 3. **A6**（gate on trigger，条件 spawn）；
+> 4. **A4**（接力臂，序列分段、段间结构化交接；需 H2 wrapper）；
+> 5. **A5**（写后只挑刺，隔离 A2 的无脑采纳；依赖 A2 结论）。
+>
+> **判据纪律（不得放宽）**：
+> - A3：`A3 ITT ≥ A0′ ITT + 3pp`，McNemar 方向一致；样本不足必须标「仅参考」；
+> - 每臂只改**一个**变量；若必须同时改两个（如 A3 同时改预算与 spawn 策略），必须加对应基线臂（A0′/A3′）把变量拆开；
+> - **负结果照写**；不许用「多 agent 看起来更好」替代统计判据；不许改题/图/check、不许编造数字。
+>
+> **起跑前必做（每臂一次）**：在 `MEMORY_ZHULONG.md` 写一行「**臂号 + 唯一变量 + 预注册判据 + 数据子集 + 资源/并发 + 对照臂**」；未写不得起跑。
+>
+> **硬约束（违反则本轮作废）**：
+> 1. **不 kill、不干扰他线在跑的 eval**：当前 36.15 baseline eval `PID1910477/1910486`（post-train 线）仍在跑；等它自然结束或错峰使用沙盒，**禁止**为了起臂去 kill 它；
+> 2. `-p 8` 必须 **per-task data-dir 隔离**（否则 `messages must not be empty` 竞态）；
+> 3. 子 agent 三条现状（**继承父模型 / 无 MCP / maxIterations 继承**）不得默认可改；若某臂需要改 wrapper，先 smoke 证明并写进 MEMORY；
+> 4. 磁盘：`/home 5.8G✅ /nasdata 33G✅` 已达标，但每臂 trace/产物要控制体积，大 trace 压缩归档，**禁止**用清盘腾空间的方式删他线数据；
+> 5. 不改 `eda_fastmcp` / 题库 / 沙盒配置；只读引用。
+>
+> **交付**：
+> - 每臂跑完（或判定不可行）→ **原地更新** `reports/report_zhulong_a3a6_arms_zh.html`（在 §1 总表补「状态/结果」列，并新增「结果」节；旧 A0/A1/A2 数字不动）；
+> - `MEMORY_ZHULONG.md` 顶部一行结论 + `daily-memories/2026-11-15.md` 流水 + commit 前缀 `zhulong arms:`；
+> - 若某臂因技术不可行/资源不足没跑，写清「**为什么没跑 + 需要谁做什么**」，不许静默跳过。
+>
+> **自主性**：允许并行准备多臂，但**正式跑要逐个记预注册**；A0′ 是当前唯一无前置的起跑项，**先做**；A3 可在 A0′ 跑完后立即起。起跑/跑完正常 push，不必等全部跑完再提交。
+>
+> **优先级**：本令高于「继续等裁决」类心跳；磁盘清盘令已 done_all，无需再清。A3–A6 放行后，**A3 仍是优先于 A4/A5 的核心臂**（对应用户的 H_ctx 思路）。
+
+
+---
+
+### 📦 归档块 · 2026-11-15 07:2x 用户裁令 — ⛔ 停止 H2 · 写 A0/A1/A2 trace 报告 · 提出 A3/A4… 消融 idea（2026-11-18 wake#1284 搬入）
+
+### ✅ 用户裁令 · 2026-11-15 07:2x（**⛔ 停止 H2 · 写 A0/A1/A2 中文 HTML 报告 · 提出 A3/A4… 消融 idea（目标：多 agent ≥ 单 agent）· 采纳「独立上下文 + 固定小 token 预算」思路**）· ✅ 已完成（wake#957·commit a6f78b8bc + 报告 Q1 补充 commit 见下）· **等用户裁决 A3-A6 起跑顺序**
+
+> **用户原话**：「zhulong：停止H2。如果A2弱于A0，那么在A2基础上做的H2就没有意义，是浪费时间。现在请zhulong分析A0/A1/A2的日志trace，撰写中文HTML报告，提出A3/A4/... 的消融idea，以争取多agent得分>=单agent。另外，我有一个思路请zhulong考虑：多agent的主要优势在于独立上下文 -> 如果解决一个任务所需上下文 > 底模LLM上下文窗口，且单agent压缩机制不足以保留足够细节，那么多agent就可能优于单agent。因此是否可以考虑给每个agent(包括主agent）以确定且较小的token（in & out）预算，当然这就需要弱化（重测）基线。」
+
+**零、立即动作（本轮第一件事，做完再谈别的）**
+1. **停 H2**：`kill` `run_h2_ablation.sh` PID2017148 及其 cline 子进程（`pkill -f run_h2_ablation` + 逐 PID 核）；**已在跑的 B 臂 trace 一律保留不删**（它们是 H2 复现证据，也是 H2「子模型恒=父模型」的实证）；`§7 PHASE` 改 `h2_stopped_by_user`；`WAITING` 按实际（无 eval 在跑 ⇒ 0）。
+2. 在 `MEMORY_ZHULONG.md` 记一行：**H2 停止理由 = A2(53.3%) 显著弱于 A0(69.2%)、A1(66.7%)（per-round McNemar A0vsA2 p=0.0008 / A1vsA2 p=0.006），在 A2 基础上做子模型梯度无科学意义**。若你有相反证据或更好的判断，直接写进 MEMORY 并说明——**决策可以被更好的论证推翻**。
+
+**一、任务：A0/A1/A2 日志 trace 分析 → 中文 HTML 报告**
+
+- **报告文件（新建，用户点名）**：`reports/report_zhulong_subagent_a0a1a2_trace_zh.html`（中文、单文件自包含、**0 外链 / 0 script**、图表用内联 SVG）。
+- **必须回答的问题（逐条给证据：`路径:行号` 或命令输出）**：
+  1. **A2 为什么掉 15.9pp？** 已知线索：`mcnemar_subagent_results.json.key_finding` 说主因是**生成吞吐下降**（cline_ok 60% vs A1 72–90%），而 gen-rate 都 ~87%（⇒ 不是代码质量，而是**没跑完/被截断**）。请用 trace **量化验证或推翻**这条：A2 的 per-task `wall_sec`、`max turns 命中率`、`finishReason` 分布、超时数、`spawn_agent` 调用次数分布（0 次 / 1 次 / >1 次）、子 agent 的 token 与耗时占比。
+  2. **spawn 的「采纳率」**：主 agent 是否真把子 agent 的结论写进代码？（A2 的 verifier 建议是否被采纳 → 采纳 vs 未采纳题目的 Pass 差）。这是 `mcnemar_subagent_results.json.deferred` 里挂着的欠账，本轮必须还。
+  3. **A1 为什么没增益（−2.5pp，p=0.68）？** 子 agent **无 MCP 工具**（只能 read_files/search_codebase/run_commands）⇒ 「研究委托」是否只是把主 agent 的 token 花了两遍？（对比 A0/A1 的 main tokens、tool histogram、重复探索 rate）。
+  4. **上下文维度**：三臂的 main-agent 峰值上下文占用、compaction 触发次数与压缩后丢失率（能测就测，测不了写「未采集 + 补法」）。
+  5. **三臂并列成绩表**（ITT mean±std、majority vote、3 轮逐轮数字、McNemar 三对，b/c/p/n 全列），**负结果照写**。
+- **报告纪律**：更新版报告顶部要有**一句话结论**；旧报告 `reports/report_zhulong_subagent_ablation_zh.html` 保留为历史档，加 SUPERSEDED 指针（不删）。
+
+**二、任务：提出 A3 / A4 / … 消融 idea（判据：多 agent ≥ 单 agent）**
+
+- 每个 idea 必须写成**可执行臂**：`臂号 | 唯一变量 | 机制（谁 spawn、何时 spawn、子 agent 看到什么、结果怎么回传） | 预注册判据 | 预期机制 | 风险与失效模式 | 预估成本`。
+- **硬约束**（这些是前面已经踩过的坑，别再踩）：
+  - 子 agent **继承父模型**、**无 MCP 工具**、`maxIterations` 继承父值 ⇒ 任何依赖「给子 agent 换模型/换工具/换 iter」的设计**当前技术不可行**（除非重做 wrapper 并 smoke 证明）。
+  - `-p 8` 下共享 data-dir 会出「messages must not be empty」竞态 ⇒ 需要并发的臂必须 per-task data-dir 隔离，并在臂描述里写清。
+  - 每个臂都要先说清**「为什么这条能超过 A0=69.2%」**，否则不做。
+- **候选起点（供参考，可采纳可推翻，须自己论证）**：
+  - **A3 上下文预算臂（用户思路，优先评估）**：给**主 agent 与子 agent 都设确定且较小的 token 预算（in 与 out 分别设上限）**，超限即强制交付/交接；同时**弱化并重测基线**（预算打平时主 agent 会怎么退化的「预算基线」必须先测出来，否则没有可比性）。
+  - **A4 接力臂（接力而非并行）**：把序列拆成「多段」，每段一个**全新上下文**的子 agent，段间只传**结构化交接物**（文件 + 摘要），主 agent 只做编排与合并（典型适用：长 trace 深读 → 逐段结论）。
+  - **A5 严格「写后只挑刺」臂**：verifier **只允许输出 issue list 到文件**，不得改代码；主 agent **必须逐条 triage（accept/reject + 理由）后才能提交** ⇒ 把 A2 的「无脑采纳/吞吐下降」隔离开。
+  - **A6 门槛臂（gate on trigger）**：只在「主 agent 判为高风险 / 上下文占用 > X% / 已有失败重试」时才 spawn，其余一律不 spawn（前提：先做 A3 的上下文测量）。
+- **必须先做的「可行性预检」**（写进报告，不要直接开跑）：每条 idea 在 cline v3.0.74 wrapper 的**注入强度**（提示注入 vs hook vs wrapper 级），能否**不弱化判据**地实施。
+
+**三、用户思路（必须正面回应，写进报告 §「为什么多 agent 可能赢」）**
+
+> 多 agent 的主要优势在**独立上下文**：当**解决一个任务所需上下文 > 底模上下文窗口**、且**单 agent 压缩不足以保留足够细节**时，多 agent 才可能优于单 agent。⇒ 设想：给**每个 agent（含主 agent）确定且较小的 token（in & out）预算**。
+
+- 你需要在报告中：
+  1. 把这条思路**形式化**成可检验假设（例：`H_ctx`：在「总上下文超窗」的分层子集上，多 agent 的 Δ 显著为正，且在「不超窗」子集上 Δ ≤ 0；即 **Δ 与 (所需上下文 / 窗口) 正相关**）；
+  2. 给出**分层口径**：用 A0 的 per-task 峰值上下文 / 压缩次数 / trace 长度做分层变量，把 40 题分成「超窗风险高 / 低」两层再比；
+  3. **诚实说明**：若当前 40 题子集**根本不够长**（大多数题不触发窗口），那就**明确写「本数据集无法检验该假设」**并给出**能检验它的任务构造方案**（例如取 158 全集中 trace 最长的 top-k）。注意：40 题上的「无差异」**不能**用来否定该假设——那是检验力问题，不是结论。
+
+**四、交付清单**
+1. `reports/report_zhulong_subagent_a0a1a2_trace_zh.html`（含 §三 的假设形式化）
+2. `A3/A4/… idea 表`（可直接接成下一轮 RUN_ARMS）
+3. `MEMORY_ZHULONG.md` 一节 + `daily-memories/2026-11-15.md` 流水 + commit/push
+4. **自主发起实验**：你可以自行决定何时起新臂。唯一要求是**资源不与他线冲突**（GPU/沙盒空闲）、**起跑前在 MEMORY 写一句「臂号 + 唯一变量 + 判据」**，这样结果可追溯。（本轮重点是报告+idea，但如果你判断某个小实验能立刻验证关键假设，直接做。）
+
+## 归档块 · 2026-11-18 v1.6（假设内聚化重组：7→3 核心+7 子·总-机制-边界三层）
+
+> 归档时间：2026-11-18 wake#1303 · ✅ 已交付（commit 待提交）·报告 122386B·8 判据全通过·原文如下。
+
+> 🔴🔴🔴🔴 **用户令 · 2026-11-18（交互式会话下发 · 第四批意见）— v1.6 假设内聚化重组：7 条并列假设 → 3 条核心假设 + 7 条子假设（总-机制-边界 三层结构）· 最高优先 · 覆盖 standby** ⚠️ **若 v1.6 计划书尚未交付，先完成 v1.6 再做 v1.7（v1.7 论文重写依赖 v1.6 的 3 核心+7 子假设结构）；若 v1.6 已交付，直接做 v1.7**
+>
+> 本条是 v1.5 交付（commit `e810dc502`·119150B）后的**假设结构重组**。用户检查发现：v1.4/v1.5 的 H1-H7 七条假设**并列压平，层次混乱，篇幅过大**——H1 是总命题、H5-H7 是 H1 的机制级分解、H2/H3 是 RSI 维度同源、H4 最游离，本应"总-分-边界"三层却摊成 7 条并列。ICML 正文 9 页，7 条 × 5 字段 ≈ 一整页假设表，挤压实验与分析空间。subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**。
+>
+> **用户原话**：「H1-H7 是什么关系，数量是否过多，可否设计得更内聚而非散乱。篇幅毕竟有限。」→ 经分析 + 用户裁决，采用**方案 A：3 条核心假设**。
+>
+> ### ① §4 假设内聚化重组（方案 A · 总-机制-边界 三层）
+>
+> **重组结构**（agent 必须按此重组 §4，保留所有证伪条件与判据，只改编号与层次）：
+>
+> ```
+> L1 总命题（功能级 · 合并现 H1/H2/H3）
+> H1 · 受治理的长期记忆 + 递归自改进在长链 EDA flow 上有可迁移增益
+>     ├── H1a · 长期记忆提升长链 Pass@1（现 H1，M3 vs M0）
+>     ├── H1b · RSI 收益随链长单调增长（现 H2，Δ_long > Δ_mid > Δ_short）
+>     └── H1c · 记忆是 RSI 的前提（现 H3，无记忆时 RSI 收益消失/转负）
+>
+> L2 机制级（v1.4 情绪机制 · 合并现 H5/H6/H7）
+> H2 · H1 的增益来自情绪启发的三条计算机制（而非单纯 prompt 变长）
+>     ├── H2a · 惊奇度门控写入 > 均匀采样（现 H5，M5 vs M2，w = α·surprise + β·penalty）
+>     ├── H2b · 武器聚焦压缩 > 全量写入（现 H7，M7 vs M2，central/peripheral ratio）
+>     └── H2c · 状态感知检索 > 状态无关检索（现 H6，M6 vs M3，state_match 项）
+>
+> L3 边界条件（附论 · 保留现 H4）
+> H3 · 单 agent ≥ 多 agent 结论在 flow 场景的复现（现 H4，结案结论迁移性）
+> ```
+>
+> **重组要求**：
+> - **§4 顶部**加一张三层结构图（如上）+ 一段叙事说明：「H1 是总命题（记忆+RSI 有无用），H2 解释 H1 的增益来自哪个具体机制（情绪三机制），H3 是附论边界条件（结案结论迁移性）。三层构成"总-机制-边界"的内聚结构，每层独立可证伪。」
+> - **每条核心假设**（H1/H2/H3）给一段总陈述 + 证伪条件（核心假设的证伪 = 其所有子假设证伪的合取/析取，agent 自主定义合取还是析取，但必须明确）。
+> - **每条子假设**（H1a/b/c · H2a/b/c）保留 v1.4/v1.5 的 5 字段（陈述/自变量/因变量/判据阈值/证伪条件），但**紧凑化呈现**（可用紧凑表格或折叠列表，目标：7 条子假设总篇幅 ≤ 现状 7 条并列假设的 60%）。
+> - **§4.5 标题**改：「§4.5 机制级假设 H2（v1.4 情绪机制 · 总命题 H1 的机制分解）」，内容保留 v1.4 的三机制计算映射（w = α·surprise + β·penalty / central_vs_peripheral_ratio / score = sim + γ·state_match）+ 生物证据引用附录 G。
+> - **诚实路线**段落保留：若 H1 被证伪 → 写成"RSI 在长链 flow 的边界条件"；若 H2 被证伪 → 写成"情绪启发式在符号工具编排上的边界条件"（两者都是可发表认知）。
+> - **H3（边界条件）**明确标注「附论假设，非主线；与 H1/H2 独立证伪」，避免读者误以为 H3 是 H1/H2 的前提。
+>
+> ### ② §5.1 臂表的"对应假设"列同步新编号
+>
+> - M0/M3/N1 → H1a（长期记忆提升 Pass@1）
+> - M3+S1/S1 → H1b（RSI 随链长单调）+ H1c（记忆是 RSI 前提）
+> - M5 → H2a（惊奇度门控）；M7 → H2b（武器聚焦压缩）；M6 → H2c（状态感知检索）
+> - N2 → H2 的负对照（错误记忆）；M8 → H2 的负对照（负效价偏倚）
+> - M4 → H1 + H2 的可迁移性正检验（跨域迁移 + 答案泄露率审计）
+> - 多 agent 对比臂（若有）→ H3
+>
+> ### ③ §6 全节同步至 v1.6 新编号
+>
+> - **§6.1 标题候选**：保留 v1.5 的 6 个候选（3 情绪机制主线 + 3 备选），推荐继续指向情绪机制方向（无需重做，v1.5 已合格）。
+> - **§6.2 贡献列表第 1 条**改："**Formulate** 3 条核心预注册可证伪假设（H1 总命题 + H2 机制级 + H3 边界）下设 7 条子假设（H1a/b/c · H2a/b/c · H3 独立），each with falsification conditions（§4）。"其余 4 条保留 v1.5。
+> - **§6.3 章节大纲**同步：
+>   - §1 Intro: "3 条核心假设预告（H1 总 + H2 机制 + H3 边界）"。
+>   - §5 Pre-Registered: "3 核心假设 + 7 子假设（H1a/b/c · H2a/b/c · H3）+ 13 臂表 + M4 迁移污染检验 + 答案泄露率审计"。
+>   - §6 Experiments: "H1/H2/H3 判据核验 + 情绪机制三机制的消融对比（M5/M6/M7 vs M2/M3）"。
+>   - §9 Conclusion: "哪些假设被支持/证伪（H1/H2/H3 分别）+ 子假设的方向性结论"。
+>   - 其余 v1.5 同步项（§3/§4/§7/§9/Ethics/Related Work）保留。
+> - **§6.4 图表清单**：
+>   - Table 2: "13 臂消融表（臂号 / 唯一变量 / 判据 / 结果 / 对应子假设）"。
+>   - Table 3: "**3 核心假设 + 7 子假设判据核验**（H1/H2/H3 总结论 + H1a/b/c · H2a/b/c · H3 各子假设 point estimate + CI + McNemar p + 证伪/支持）"。
+>   - 其余 v1.5 图表（Figure 2 13 臂 / 新增情绪机制图表 4+ 个）保留。
+>
+> ### ④ 硬约束（继承 v1.4/v1.5，全部继续生效）
+>
+> - **唯一改动文件**：`doc/ZhuLong_DAC2027/reports/report_edafb_icml2027_plan_zh.html`（在 v1.5 的 119150B 基础上做 §4 重组 + §5.1 臂表假设列 + §6 编号同步）。
+> - 🚫 **不改 §0/§1/§2/§3/§5.2-§5.4/§7/§8/§9 本体**（本轮改 §4 + §5.1 臂表假设列 + §6 编号同步）；§5.1 只改"对应假设"列编号，不动臂的实现/判据。
+> - 🚫 **不改 `main.tex` / `sections/*.tex` / `appendix/*.tex`**。
+> - 🚫 **不覆盖已有报告**（增量 edit，不重写）。
+> - 🚫 **不动 designflow 造题线的 cases/jsonl/ledger**。
+> - 🚫 **不起训练或评测进程**；subagent 消融线仍 `done_all`，新臂 M4-M8 是设计文档不是起跑。
+> - ✅ **0 外链 0 CDN 0 `<script>`** 纪律继续生效。
+> - ✅ **可追溯**：子假设的证伪条件保留 v1.4/v1.5 原内容（只改编号 H5→H2a 等），数据来源标注不变。
+> - ✅ **防伪底线**：不编造数字 / 不编造文献 / 不改判据 / 不挑样本（不变）。
+> - ✅ **体量**：HTML 仍 > 25KB；`MEMORY_ZHULONG.md` 只加一行心跳（保持 ≤40 KB，超了滚动归档）。
+> - **提交**：commit 前缀 `zhulong plan: EDA-Flow-Bench ICML2027 计划书 v1.6 — 假设内聚化重组（7→3 核心+7 子·总-机制-边界三层）+ §6 编号同步`；**只 add 本线文件**（`reports/report_edafb_icml2027_plan_zh.html` + `run/MEMORY_ZHULONG.md` + `run/daily-memories/*` + `run/ZHULONG_TASK.md`），勿 `-A`。
+> - **判据（自检后再提交）**：
+>   ① §4 重组为 3 核心假设（H1 总/H2 机制/H3 边界）+ 7 子假设（H1a/b/c · H2a/b/c · H3 独立），三层结构图 + 叙事说明在位 ✅；
+>   ② 每条核心假设有总陈述 + 证伪条件；每条子假设保留 5 字段且紧凑化（篇幅 ≤ 现状 60%）✅；
+>   ③ §4.5 标题改为"机制级假设 H2"，三机制计算映射 + 附录 G 引用保留 ✅；
+>   ④ §5.1 臂表"对应假设"列全部改用 v1.6 新编号 ✅；
+>   ⑤ §6.2 第1条 + §6.3 §1/§5/§6/§9 行 + §6.4 Table 2/Table 3 同步 v1.6 新编号 ✅；
+>   ⑥ 0 真实外链（grep `href="https?://"`=0）+ 0 `<script>` ✅；
+>   ⑦ §0/§1/§2/§3/§5.2-§5.4/§7/§8/§9 本体未改（diff 只在 §4 + §5.1 假设列 + §6 编号同步）✅；
+>   ⑧ v1.4/v1.5 的所有判据继续过（size>25KB / 11+ h2 / 13 臂 / delta 表 / 时间线 / 附录 F/G / Plan B / UNKNOWN）✅。
+> - 完成后 `WAITING=0` standby，记一行心跳（wake# 续编），等待用户下一步放行（§7.2 预注册日 2026-11-22 临近）。
+>
+> **agent 自主空间**：核心假设的总陈述措辞 / 子假设紧凑化的具体呈现形式（表格 vs 折叠列表）/ 核心假设证伪条件是合取还是析取 / §4.5 是否升格独立章节 / 新增图表编号 由 agent 自主决定——用户给的是结构（总-机制-边界）与编号方案，不是逐字模板。
+
+
+## 归档块 · 2026-11-18 v1.7（放行直接改论文正文：按 v1.6 计划书重写 EDA-Flow-Bench_ICML2027/ · 正文 ≤ 6 页）
+
+> 归档时间：2026-11-18 wake#1303 · ✅ 已交付（commit 待提交）·正文 6 页·10 判据全通过·原文如下。
+
+> 🔴🔴🔴🔴🔴 **用户令 · 2026-11-18（交互式会话下发 · 第五批意见 · 重大放行）— v1.7 放行直接改论文正文：按 v1.6 计划书重写 `EDA-Flow-Bench_ICML2027/` 正文（main.tex + sections/*.tex + appendix/*.tex），正文篇幅 ≤ 6 页（不含 references + appendix）· 最高优先 · 覆盖 standby**
+>
+> 本条是 v1.6 计划书（假设内聚化）之后的**重大放行**：从"只改计划书"升级到"直接改正文"。用户原话："放行 zhulong agent 直接改论文，正文篇幅限制在 <=6 页。"subagent 消融线仍保持 `done_all` 结案，**不起任何新臂**（论文里写的 M4-M8 是预注册设计，不是现在起跑）。
+>
+> ### ① 放行范围（解除前令的"不改 main.tex/sections/appendix"约束）
+>
+> - ✅ **可改**：`doc/ZhuLong_DAC2027/EDA-Flow-Bench_ICML2027/main.tex` + `sections/*.tex`（0-9 全部 10 个文件）+ `appendix/*.tex`（A/B/C 全部 3 个文件）+ `main.bbl`（若引用更新）。
+> - ✅ **可改**：`reports/report_edafb_icml2027_plan_zh.html`（v1.6 计划书，若论文写作中发现计划书需同步订正，可一并改）。
+> - 🚫 **仍不动**：`doc/ZhuLong_DAC2027/benchmark/` 下 designflow 造题线的 cases/jsonl/ledger/MEMORY_DESIGNFLOW_*（造题线在途产物，非本线）。
+> - 🚫 **仍不动**：DATE27_Zhulong / ZhuLong_DAC2027/DAC2027 / ZhuLong_DAC2027/ZhuLong_ASPDAC2027 等其他论文树（只读参照）。
+> - 🚫 **仍不起**：训练/评测进程（subagent 消融线 done_all；新臂 M4-M8 是预注册设计文档，不是现在起跑）。
+>
+> ### ② 篇幅硬限：正文 ≤ 6 页
+>
+> - **正文**（不含 references + appendix）≤ **6 页**（pdflatex 编译后 `\outputwritten` 的正文页数，即 references 前）。ICML 2027 允许 9 页，用户自我加压到 6 页——这是**硬约束**，超出则必须压缩。
+> - **references + appendix 不计入 6 页**（ICML 惯例：references 与 appendix 无页数上限）。
+> - **压缩策略**（agent 自主选择组合）：
+>   - 把现 §2 Benchmark / §3 Harness 的"评测集本体"描述**大幅压缩**（v1.6 已把 bench 降为副线载体，正文只需 enough to support 认知命题，不需卖 bench）；
+>   - 把 detailed benchmark construction / harness impl 移到 **appendix**（A/B/C 已有空间）；
+>   - §5 Analysis 的失败分类 / trace 解剖细节移 appendix，正文只留"认知命题所需的最小分析"；
+>   - 表格用紧凑版（booktabs + 最小列宽），详细表移 appendix；
+>   - 假设表用 v1.6 的"3 核心 + 7 子"内聚结构，紧凑呈现（子假设用折叠列表或迷你表，目标 ≤ 现状 60% 篇幅）。
+> - **编译验证**（必须自检后提交）：
+>   - `pdflatex -interaction=nonstopmode main.tex` × 2 + `bibtex main` × 1 + `pdflatex` × 1（干净构建）；
+>   - `grep -c '^!' main.log` = 0（无 error）；
+>   - `grep -c 'Undefined' main.log` = 0（无未定义引用）；
+>   - `grep 'Output written' main.log` 确认正文页数 ≤ 6（agent 自行判断正文与 references 的分界，可看 main.aux 的 `\writefile` 节点或 main.log 的 page break）；
+>   - 匿名性：`pdftotext main.pdf - | grep -iE 'Yang Liu|Hongwen|cxmt|ChangXin'` = 0（无作者泄漏，双盲纪律）。
+>
+> ### ③ 内容重写要求（按 v1.6 计划书 §6.3 章节大纲）
+>
+> **新论文结构**（与 v1.6 计划书 §6.3 对齐，正文 ≤ 6 页）：
+>
+> | 章节 | 内容（v1.6 计划书口径） | 篇幅目标 |
+> |---|---|---|
+> | §1 Introduction | 动机：从脚本到 flow 的迁移 + 3 核心假设预告（H1 总 + H2 机制 + H3 边界）+ grounding-gap 框架回顾 + 从生物情绪-记忆机制到 LLM agent 可计算映射（一句话 motivation） | ~0.8 页 |
+> | §2 Background: From Script to Flow | grounding-gap 框架回顾 + 单脚本 vs flow 的 delta（§3 表）+ 为什么 memory + RSI 在 flow 层可能不同 | ~0.5 页 |
+> | §3 Task Modality & Benchmark (carrier) | design_flow 契约（submit.zip + ≥8 断言）+ 13 域 + Full 集子集评测（不开源，仅内部）+ 协议白皮书级开源（§2.3 v1.4 收缩，删 Lite 500 + mock-EDA）+ 作为认知检验载体而非卖点 | ~0.6 页 |
+> | §4 Harness with Memory & Self-Improvement | 三层记忆 L0/L1/L2（继承 DATE27）扩展到 flow 层 + v1.4 三条情绪机制计算映射（写入门控 `w = α·surprise + β·penalty` / 武器聚焦压缩 `central_vs_peripheral_ratio` / 状态感知检索 `score = sim + γ·state_match`）+ 13 臂实现细节（紧凑） | ~1.0 页 |
+> | §5 Pre-Registered Hypotheses & Ablation Design | **3 核心假设 + 7 子假设**（H1 总/H2 机制/H3 边界 + H1a/b/c · H2a/b/c · H3）+ 13 臂表（紧凑）+ M4 迁移污染检验 + 答案泄露率审计 + 统计功效 | ~1.0 页 |
+> | §6 Experiments | **预注册状态声明**（数据冻结日 / 预注册日 2026-11-22 / 结果 to be evaluated）+ M0 基线锚点（10.0% 引用 696 快照）+ H1/H2/H3 判据核验框架（占位，结果待跑）+ 现有 696-run 的复用部分 | ~0.7 页 |
+> | §7 Analysis: Why Memory Helps/Hurts | 失败分类（no-output 21% / semantic 62.8% / contract 0.3%，引用 5_analysis.tex）+ trace 解剖（47 pilot, 26.5 calls, 41.2% MCP）+ 情绪机制分析占位（surprise 分布 / state_match 命中 / 压缩比 vs Pass@1 / 泄露率审计，待跑） | ~0.6 页 |
+> | §8 Related Work | EDA benchmark / agent memory / RSI / self-evolution + **affective neuroscience × agent memory**（McGaugh / Bower / Loftus / Friston / Itti & Baldi / Park / EM-LLM / PsychoAgent，引用附录 G 调研文献） | ~0.4 页 |
+> | §9 Conclusion: Boundary Conditions of RSI and Affective-Memory Mechanisms | 哪些假设被支持/证伪（H1/H2/H3 分别，待跑占位）+ 情绪机制在符号工具编排上的适用边界 + future work | ~0.3 页 |
+> | Ethics + Reproducibility | 协议白皮书级开源 + NDA 受控评审包（§2.3 v1.4 收缩，删 mock-EDA） | ~0.1 页 |
+>
+> **合计正文目标**：~6.0 页（agent 自主微调各节篇幅，但总和 ≤ 6）。
+>
+> **关键内容要求**：
+>
+> 1. **Abstract 重写**：从"卖 bench"改为"认知命题 + 情绪机制"。新 abstract 结构：① 从 EDA-Scripting-Bench 76.5% 到 EDA-Flow-Bench 10.0% 的 7.6× 跳变引出问题；② 提出 3 核心假设（H1 长期记忆+RSI 在长链 flow 的可迁移增益 / H2 增益来自情绪启发三机制 / H3 单 agent≥多 agent 边界）；③ 预注册 13 臂消融（含等 token 杀手级对照 N1 + Full→Lite 迁移污染检验 M4）；④ 协议白皮书级开源（不开 Lite 集/mock-EDA）；⑤ 诚实路线（负结果也发，界定 RSI + 情绪机制在符号工具编排的边界）。保留 \Ntasks=1684 / \Neval=696 / 10.0% / 76.5% 等冻结快照数字。
+>
+> 2. **§4 情绪机制三公式必须显式出现**（不能只文字描述）：
+>    - 写入门控：`w_{\text{write}}(e) = \alpha \cdot \text{surprise}(e) + \beta \cdot \text{penalty}(e)`，其中 surprise = KL(后验‖先验)（Itti & Baldi 2009 Bayesian surprise），penalty = 已耗 tool calls / token；
+>    - 武器聚焦压缩：`r_{\text{cp}} = |\text{central tokens}| / |\text{total tokens}|`，central = 报错栈 + 根因因果链，peripheral = 中间日志；
+>    - 状态感知检索：`\text{score}(q, m) = \text{sim}(q, m) + \gamma \cdot \text{state\_match}(\text{state}(q), \text{state}(m))`，state = (近 N 步失败率, 当前 tool 域, 链长阶段)。
+>
+> 3. **§5 假设表用 v1.6 内聚结构**（3 核心 + 7 子，紧凑呈现）：
+>    - 每条核心假设 H1/H2/H3 一段总陈述 + 证伪条件；
+>    - 7 子假设用紧凑表格（子假设编号 / 陈述一句话 / 证伪条件一句话），目标篇幅 ≤ 现状 7 条并列假设的 60%；
+>    - 三层结构图（L1 总 → L2 机制 → L3 边界）在 §5 开头给出。
+>
+> 4. **§6 Experiments 预注册状态声明**（必须在 §6 开头显式写）：
+>    - "This paper pre-registers 3 core hypotheses (H1-H3) and 7 sub-hypotheses (H1a-c, H2a-c, H3) before data collection. The pre-registration date is 2026-11-22. Results for M0 baseline are available from a frozen 696-run snapshot (10.0% Pass@1); all other arms (M1-M8, N1-N2) are to be evaluated post pre-registration. Negative results will be reported as publishable boundary conditions on RSI and affective-memory mechanisms in long-chain EDA orchestration."
+>
+> 5. **引用更新**（main.bbl）：
+>    - 加 ZhuLong-DAC 预印本：`\cite{liu2026runreadbackrefine}`（arXiv:2611.19056）；
+>    - 加 DATE27 预印本占位：`\cite{PLACEHOLDER_DATE27_ZHULONG}`（注释标"to appear 2026-12"）；
+>    - 加附录 G 调研文献（McGaugh 2004/2013, Bower 1981, Loftus 1987, Steblay 1992, Friston 2010, Itti & Baldi 2009, Park 2023 Generative Agents, EM-LLM arXiv:2407.09450, PsychoAgent arXiv:2608.07438 等）—— agent 从计划书附录 G 抄 BibTeX，**不编造**（只引 cimi_search 返回的）。
+>
+> 6. **图表**（正文 ≤ 6 页，图表精简，详细版移 appendix）：
+>    - 正文 Table 1: 与 DATE27 的 delta 表（§3）；
+>    - 正文 Table 2: 13 臂消融表（紧凑版，臂号 / 唯一变量 / 判据 / 对应子假设；结果列待跑标 "TBD"）；
+>    - 正文 Table 3: 3 核心假设 + 7 子假设判据核验（H1/H2/H3 总结论 + 各子假设 point estimate + CI + McNemar p 占位 "TBD"）；
+>    - 正文 Figure 1: From Script to Flow 概念图（可暂用 placeholder，标 "to be drawn"）；
+>    - 正文 Figure 2: 13 臂消融 Pass@1 + 95% CI（占位 "TBD, post pre-registration"）；
+>    - 其余情绪机制图表（α/β 标定 / 压缩比散点 / 泄露率审计 / state_match 分布）移 **appendix D**（新增），正文不展开。
+>    - Appendix A/B/C 保留现有 benchmark details / additional results / experimental details，新增 **Appendix D: Affective-Memory Mechanism Design Details**（三机制公式推导 + 调研文献完整表 + 情绪机制图表占位）。
+>
+> ### ④ 防伪底线（不变，必须继续遵守）
+>
+> - 🚫 **不编造数字**：现有冻结快照数字（10.0% / 62/620 / 1684 / 696 / 76.5% / 7.1× / 失败分类 21%/62.8%/0.3% / 47 pilot 26.5 calls 41.2% MCP 等）可继续引用，**必须带来源**（sections/4_experiments.tex:行号 / 5_analysis.tex:行号）；新臂 M1-M8/N1-N2 结果**全部标 "TBD" 或 "to be evaluated post pre-registration"**，禁止填假数据。
+> - 🚫 **不编造文献**：附录 G 调研文献只引 cimi_search 返回的，BibTeX 从计划书附录 G 抄；若发现某条文献不可靠（如 arXiv 编号查不到），诚实标注 "verified via cimi_search, not independently checked"。
+> - 🚫 **不改判据/不改题/不挑样本**：13 臂全用同一 check.py + 同一 ≥8 断言 + 同一 2400s 超时；M4 迁移臂的训练域/目标域 split 一旦冻结不得回溯调整。
+> - 🚫 **不删他人数据**：designflow 造题线的 cases/jsonl/ledger 不动；696-run 快照结果（results.txt）不动。
+> - ✅ **预注册纪律**：§6 显式声明预注册日 2026-11-22，结果冻结前不得回溯改假设/判据/样本。
+> - ✅ **双盲匿名**：保留 `\documentclass[submitted]{...}` 或 icml2026 [submitted] 选项；pdftotext 检查无作者/机构泄漏。
+> - ✅ **诚实路线**：§9 Conclusion 显式写"若 H1/H2 被证伪，本论文写成 RSI / 情绪机制在长链 flow 的边界条件，本身是可发表认知"。
+>
+> ### ⑤ 编译与提交
+>
+> - **编译**：`cd doc/ZhuLong_DAC2027/EDA-Flow-Bench_ICML2027 && rm -f main.aux main.out main.toc && pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex`（agent 必须跑完整 4 轮，确保引用交叉解析）。
+> - **编译产物入库**：`main.pdf` + `main.tex` + `sections/*.tex` + `appendix/*.tex` + `main.bbl`（若引用更新）+ `main.aux`（可选，用于 page count 验证）。**不入库** `main.log`（临时文件）。
+> - **提交**：commit 前缀 `zhulong paper: EDA-Flow-Bench ICML2027 论文重写 v1.7 — 按 v1.6 计划书（3 核心+7 子假设 / 13 臂 / 情绪机制三公式 / Full→Lite 迁移 / 协议白皮书开源）+ 正文 ≤ 6 页`；**只 add 论文树 + 本线 run 文件**（`EDA-Flow-Bench_ICML2027/{main.tex,main.pdf,sections/*.tex,appendix/*.tex,main.bbl}` + `run/MEMORY_ZHULONG.md` + `run/daily-memories/*` + `run/ZHULONG_TASK.md` + `reports/report_edafb_icml2027_plan_zh.html` 若有同步订正），勿 `-A`。
+> - **判据（自检后再提交）**：
+>   ① 正文 ≤ 6 页（pdflatex Output written + agent 核 page break，正文页数 ≤ 6，不含 references + appendix）✅；
+>   ② 编译 0 error（`grep -c '^!' main.log` = 0）+ 0 undefined（`grep -c 'Undefined' main.log` = 0）✅；
+>   ③ 匿名性（pdftotext 无作者/机构泄漏）✅；
+>   ④ §4 含三情绪机制公式（`w = α·surprise + β·penalty` / `r_cp` / `score = sim + γ·state_match`）显式出现 ✅；
+>   ⑤ §5 含 3 核心假设 + 7 子假设（v1.6 内聚结构，三层结构图在位）✅；
+>   ⑥ §6 含预注册状态声明（预注册日 2026-11-22 + M0 锚点 10.0% + M1-M8/N1-N2 标 TBD）✅；
+>   ⑦ §9 Conclusion 含诚实路线（H1/H2 证伪写成边界条件）✅；
+>   ⑧ 引用含 ZhuLong-DAC + DATE27 PLACEHOLDER + 附录 G 调研文献（不编造）✅；
+>   ⑨ 防伪底线全过（不编造数字/文献，不改判据/题/样本，不删他人数据）✅；
+>   ⑩ Appendix D 新增（情绪机制设计细节 + 调研文献完整表 + 图表占位）✅。
+> - 完成后 `WAITING=0` standby，记一行心跳（wake# 续编），等待用户下一步放行（§7.2 预注册日 2026-11-22 临近，论文重写应在预注册日前完成）。
+>
+> **agent 自主空间**：各节具体篇幅分配（在 6 页内）/ 压缩策略组合 / 公式排版细节 / 表格紧凑形式 / Figure 1 概念图是否用 placeholder / Appendix D 结构细节 由 agent 自主决定——用户给的是"按 v1.6 计划书重写 + 6 页硬限 + 防伪底线"，不是逐字模板。**鼓励 agent 发挥**：若重写中发现 v1.6 计划书某处需订正（如某假设陈述在 LaTeX 里更清晰、某公式符号更规范），可一并改计划书 + 论文，但必须 commit message 标注"plan + paper 同步订正"。
+

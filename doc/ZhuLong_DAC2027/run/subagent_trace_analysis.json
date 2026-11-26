@@ -1,0 +1,1415 @@
+{
+  "analysis": "ZhuLong subagent A0/A1/A2 trace analysis",
+  "date": "2026-11-15",
+  "A0": {
+    "n_task_traces": 120,
+    "per_round": {
+      "C_basic_r1": {
+        "n_tasks": 40,
+        "pass_rate": 0.675,
+        "mean_wall_sec": 978.6815789473685,
+        "mean_n_msgs": 47.625,
+        "mean_prompt_tokens": 2540984.425,
+        "mean_total_tokens": 2586483.75
+      },
+      "C_basic_r2": {
+        "n_tasks": 40,
+        "pass_rate": 0.7,
+        "mean_wall_sec": 1129.0526315789473,
+        "mean_n_msgs": 38.95,
+        "mean_prompt_tokens": 2012695.35,
+        "mean_total_tokens": 2055122.125
+      },
+      "C_basic_r3": {
+        "n_tasks": 40,
+        "pass_rate": 0.7,
+        "mean_wall_sec": 1153.1605263157894,
+        "mean_n_msgs": 40.15,
+        "mean_prompt_tokens": 1986537.325,
+        "mean_total_tokens": 2030018.25
+      }
+    }
+  },
+  "A1": {
+    "n_task_traces": 120,
+    "per_round": {
+      "2026_1114_130945": {
+        "n_tasks": 40,
+        "total_spawn": 46,
+        "mean_spawn_per_task": 1.15,
+        "mean_peak_ctx": 79825.425,
+        "mean_n_msgs": 76.875,
+        "sub_tok_in_total": 0,
+        "sub_tok_out_total": 0,
+        "sub_n_msgs_total": 0,
+        "main_tok_in_total": 2540963
+      },
+      "2026_1114_152932": {
+        "n_tasks": 40,
+        "total_spawn": 43,
+        "mean_spawn_per_task": 1.075,
+        "mean_peak_ctx": 76938.5,
+        "mean_n_msgs": 75.25,
+        "sub_tok_in_total": 0,
+        "sub_tok_out_total": 0,
+        "sub_n_msgs_total": 0,
+        "main_tok_in_total": 2474948
+      },
+      "2026_1114_180019": {
+        "n_tasks": 40,
+        "total_spawn": 42,
+        "mean_spawn_per_task": 1.05,
+        "mean_peak_ctx": 78485.95,
+        "mean_n_msgs": 67.525,
+        "sub_tok_in_total": 0,
+        "sub_tok_out_total": 0,
+        "sub_n_msgs_total": 0,
+        "main_tok_in_total": 2521973
+      }
+    }
+  },
+  "A2": {
+    "n_task_traces": 120,
+    "per_round": {
+      "2026_1114_210739": {
+        "n_tasks": 40,
+        "total_spawn": 39,
+        "mean_spawn_per_task": 0.975,
+        "n_verdicts": 29,
+        "verdicts": {
+          "FAIL": 15,
+          "PASS": 14
+        },
+        "n_adopted": 13,
+        "adopt_rate": 0.325,
+        "total_edits_after": 16,
+        "mean_peak_ctx": 81350.525,
+        "mean_n_msgs": 115.425
+      },
+      "2026_1114_234310": {
+        "n_tasks": 40,
+        "total_spawn": 38,
+        "mean_spawn_per_task": 0.95,
+        "n_verdicts": 34,
+        "verdicts": {
+          "PASS": 16,
+          "FAIL": 18
+        },
+        "n_adopted": 16,
+        "adopt_rate": 0.4,
+        "total_edits_after": 21,
+        "mean_peak_ctx": 83876.85,
+        "mean_n_msgs": 137.2
+      },
+      "2026_1115_021900": {
+        "n_tasks": 40,
+        "total_spawn": 40,
+        "mean_spawn_per_task": 1.0,
+        "n_verdicts": 37,
+        "verdicts": {
+          "PASS": 21,
+          "FAIL": 16
+        },
+        "n_adopted": 16,
+        "adopt_rate": 0.4,
+        "total_edits_after": 23,
+        "mean_peak_ctx": 83821.7,
+        "mean_n_msgs": 156.075
+      }
+    },
+    "verdict_counts": {
+      "FAIL": 42,
+      "NO_SPAWN": 33,
+      "PASS": 45
+    },
+    "adopted_counts": {
+      "FAIL_adopted=True": 37,
+      "NO_SPAWN_adopted=False": 33,
+      "PASS_adopted=False": 37,
+      "PASS_adopted=True": 8,
+      "FAIL_adopted=False": 5
+    }
+  },
+  "A2_per_task": {
+    "EDA-Eval-PyAether-001": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 2,
+        "n_spawn": 1,
+        "main_n_msgs": 56,
+        "main_peak_ctx": 79019
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 2,
+        "main_n_msgs": 32,
+        "main_peak_ctx": 45760
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 37,
+        "main_peak_ctx": 45068
+      }
+    ],
+    "EDA-Eval-PyAether-016": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 45,
+        "main_peak_ctx": 57376
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 89,
+        "main_peak_ctx": 97624
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 65,
+        "main_peak_ctx": 72951
+      }
+    ],
+    "EDA-Eval-PyAether-028": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 21,
+        "main_peak_ctx": 29417
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 48,
+        "main_peak_ctx": 56743
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 31,
+        "main_peak_ctx": 47003
+      }
+    ],
+    "EDA-Eval-PyAether-038": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 28,
+        "main_peak_ctx": 36481
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 31,
+        "main_peak_ctx": 45057
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 32,
+        "main_peak_ctx": 37750
+      }
+    ],
+    "EDA-Eval-PyAether-058": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 2,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 47,
+        "main_peak_ctx": 56333
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 40,
+        "main_peak_ctx": 64011
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 2,
+        "n_spawn": 1,
+        "main_n_msgs": 57,
+        "main_peak_ctx": 85818
+      }
+    ],
+    "EDA-Eval-PyAether-059": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 20,
+        "main_peak_ctx": 29861
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 3,
+        "runs_after": 2,
+        "n_spawn": 1,
+        "main_n_msgs": 44,
+        "main_peak_ctx": 44134
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 5,
+        "n_spawn": 2,
+        "main_n_msgs": 50,
+        "main_peak_ctx": 62298
+      }
+    ],
+    "EDA-Eval-PyAether-063": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 2,
+        "n_spawn": 2,
+        "main_n_msgs": 57,
+        "main_peak_ctx": 83899
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 45,
+        "main_peak_ctx": 60338
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 45,
+        "main_peak_ctx": 57458
+      }
+    ],
+    "EDA-Eval-PyAether-076": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 65,
+        "main_peak_ctx": 81728
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 47,
+        "main_peak_ctx": 68841
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 79,
+        "main_peak_ctx": 96728
+      }
+    ],
+    "EDA-Eval-PyAether-080": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 70,
+        "main_peak_ctx": 90628
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 44,
+        "main_peak_ctx": 64104
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 71,
+        "main_peak_ctx": 100398
+      }
+    ],
+    "EDA-Eval-PyAether-084": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 22,
+        "main_peak_ctx": 32315
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 30,
+        "main_peak_ctx": 40333
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 31,
+        "main_peak_ctx": 36552
+      }
+    ],
+    "EDA-Eval-PyAether-085": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 3,
+        "runs_after": 3,
+        "n_spawn": 2,
+        "main_n_msgs": 50,
+        "main_peak_ctx": 78430
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 61,
+        "main_peak_ctx": 82815
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": true,
+        "edits_after": 3,
+        "runs_after": 2,
+        "n_spawn": 1,
+        "main_n_msgs": 48,
+        "main_peak_ctx": 79730
+      }
+    ],
+    "EDA-Eval-PyAether-093": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 3,
+        "runs_after": 3,
+        "n_spawn": 1,
+        "main_n_msgs": 86,
+        "main_peak_ctx": 84462
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 59,
+        "main_peak_ctx": 78198
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 86,
+        "main_peak_ctx": 91781
+      }
+    ],
+    "EDA-Eval-PyAether-099": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 61,
+        "main_peak_ctx": 66154
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 62,
+        "main_peak_ctx": 87032
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 2,
+        "n_spawn": 1,
+        "main_n_msgs": 57,
+        "main_peak_ctx": 51286
+      }
+    ],
+    "EDA-Eval-PyAether-102": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 65,
+        "main_peak_ctx": 100738
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 3,
+        "runs_after": 2,
+        "n_spawn": 1,
+        "main_n_msgs": 68,
+        "main_peak_ctx": 99481
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 4,
+        "n_spawn": 3,
+        "main_n_msgs": 83,
+        "main_peak_ctx": 98798
+      }
+    ],
+    "EDA-Eval-PyAether-104": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 157,
+        "main_peak_ctx": 101835
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 125,
+        "main_peak_ctx": 90225
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 3,
+        "runs_after": 3,
+        "n_spawn": 2,
+        "main_n_msgs": 158,
+        "main_peak_ctx": 97083
+      }
+    ],
+    "EDA-Eval-PyAether-105": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 268,
+        "main_peak_ctx": 105810
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 356,
+        "main_peak_ctx": 107961
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 75,
+        "n_spawn": 0,
+        "main_n_msgs": 286,
+        "main_peak_ctx": 97276
+      }
+    ],
+    "EDA-Eval-PyAether-112": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 2,
+        "main_n_msgs": 143,
+        "main_peak_ctx": 102703
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 105,
+        "main_peak_ctx": 95557
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 115,
+        "main_peak_ctx": 99105
+      }
+    ],
+    "EDA-Eval-PyAether-114": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 64,
+        "main_peak_ctx": 79829
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 162,
+        "main_peak_ctx": 96733
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 317,
+        "main_peak_ctx": 100168
+      }
+    ],
+    "EDA-Eval-PyAether-118": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 692,
+        "main_peak_ctx": 91849
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 190,
+        "main_peak_ctx": 105022
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 84,
+        "main_peak_ctx": 91592
+      }
+    ],
+    "EDA-Eval-PyAether-119": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 250,
+        "main_peak_ctx": 91646
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 372,
+        "main_peak_ctx": 94103
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 231,
+        "n_spawn": 0,
+        "main_n_msgs": 457,
+        "main_peak_ctx": 91633
+      }
+    ],
+    "EDA-Eval-PyAether-120": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 124,
+        "main_peak_ctx": 92381
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 84,
+        "main_peak_ctx": 99600
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 86,
+        "main_peak_ctx": 105313
+      }
+    ],
+    "EDA-Eval-PyAether-124": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 176,
+        "main_peak_ctx": 97060
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 372,
+        "main_peak_ctx": 94837
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 285,
+        "main_peak_ctx": 97543
+      }
+    ],
+    "EDA-Eval-PyAether-125": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 19,
+        "main_peak_ctx": 31379
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 20,
+        "main_peak_ctx": 32204
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 21,
+        "main_peak_ctx": 25118
+      }
+    ],
+    "EDA-Eval-PyAether-126": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 65,
+        "main_peak_ctx": 89459
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 2,
+        "runs_after": 2,
+        "n_spawn": 1,
+        "main_n_msgs": 155,
+        "main_peak_ctx": 103174
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 41,
+        "main_peak_ctx": 62434
+      }
+    ],
+    "EDA-Eval-PyAether-128": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 234,
+        "main_peak_ctx": 96535
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 208,
+        "main_peak_ctx": 98470
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 681,
+        "main_peak_ctx": 96483
+      }
+    ],
+    "EDA-Eval-PyAether-129": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 262,
+        "main_peak_ctx": 99752
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 471,
+        "main_peak_ctx": 97191
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 258,
+        "main_peak_ctx": 98300
+      }
+    ],
+    "EDA-Eval-PyAether-131": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 246,
+        "main_peak_ctx": 94344
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 3,
+        "runs_after": 11,
+        "n_spawn": 2,
+        "main_n_msgs": 114,
+        "main_peak_ctx": 94471
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 352,
+        "main_peak_ctx": 95426
+      }
+    ],
+    "EDA-Eval-PyAether-135": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 80,
+        "main_peak_ctx": 76668
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 98,
+        "main_peak_ctx": 101728
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 176,
+        "main_peak_ctx": 96858
+      }
+    ],
+    "EDA-Eval-PyAether-137": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 3,
+        "n_spawn": 1,
+        "main_n_msgs": 52,
+        "main_peak_ctx": 61026
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 47,
+        "main_peak_ctx": 53566
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 2,
+        "runs_after": 4,
+        "n_spawn": 1,
+        "main_n_msgs": 49,
+        "main_peak_ctx": 67718
+      }
+    ],
+    "EDA-Eval-PyAether-139": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 2,
+        "main_n_msgs": 121,
+        "main_peak_ctx": 95064
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 61,
+        "main_peak_ctx": 76973
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 2,
+        "n_spawn": 1,
+        "main_n_msgs": 193,
+        "main_peak_ctx": 95347
+      }
+    ],
+    "EDA-Eval-PyAether-140": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 2,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 71,
+        "main_peak_ctx": 101358
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 74,
+        "main_peak_ctx": 95332
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 2,
+        "runs_after": 2,
+        "n_spawn": 1,
+        "main_n_msgs": 76,
+        "main_peak_ctx": 96520
+      }
+    ],
+    "EDA-Eval-PyAether-142": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 86,
+        "main_peak_ctx": 95806
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 190,
+        "main_peak_ctx": 108740
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 247,
+        "main_peak_ctx": 99946
+      }
+    ],
+    "EDA-Eval-PyAether-143": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 89,
+        "main_peak_ctx": 104104
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 102,
+        "main_peak_ctx": 101631
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 535,
+        "main_peak_ctx": 93349
+      }
+    ],
+    "EDA-Eval-PyAether-144": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 101,
+        "main_peak_ctx": 91333
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 81,
+        "main_peak_ctx": 90111
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 2,
+        "main_n_msgs": 115,
+        "main_peak_ctx": 97679
+      }
+    ],
+    "EDA-Eval-PyAether-145": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "PASS",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 9,
+        "n_spawn": 1,
+        "main_n_msgs": 172,
+        "main_peak_ctx": 99889
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 2,
+        "n_spawn": 1,
+        "main_n_msgs": 273,
+        "main_peak_ctx": 99949
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 172,
+        "main_peak_ctx": 100903
+      }
+    ],
+    "EDA-Eval-PyAether-147": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 2,
+        "n_spawn": 2,
+        "main_n_msgs": 85,
+        "main_peak_ctx": 92661
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 82,
+        "main_peak_ctx": 96767
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 76,
+        "main_peak_ctx": 101635
+      }
+    ],
+    "EDA-Eval-PyAether-148": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 1,
+        "main_n_msgs": 50,
+        "main_peak_ctx": 90102
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 4,
+        "runs_after": 7,
+        "n_spawn": 2,
+        "main_n_msgs": 148,
+        "main_peak_ctx": 90721
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 4,
+        "runs_after": 13,
+        "n_spawn": 3,
+        "main_n_msgs": 171,
+        "main_peak_ctx": 94256
+      }
+    ],
+    "EDA-Eval-PyAether-151": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 2,
+        "main_n_msgs": 81,
+        "main_peak_ctx": 101514
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "PASS",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 2,
+        "main_n_msgs": 71,
+        "main_peak_ctx": 102932
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 0,
+        "runs_after": 3,
+        "n_spawn": 2,
+        "main_n_msgs": 94,
+        "main_peak_ctx": 101544
+      }
+    ],
+    "EDA-Eval-PyAether-157": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 195,
+        "main_peak_ctx": 96562
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 728,
+        "main_peak_ctx": 94854
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 3,
+        "runs_after": 3,
+        "n_spawn": 1,
+        "main_n_msgs": 81,
+        "main_peak_ctx": 93550
+      }
+    ],
+    "EDA-Eval-PyAether-158": [
+      {
+        "batch": "2026_1114_210739",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 2,
+        "main_n_msgs": 41,
+        "main_peak_ctx": 66511
+      },
+      {
+        "batch": "2026_1114_234310",
+        "verdict": "FAIL",
+        "adopted": true,
+        "edits_after": 1,
+        "runs_after": 1,
+        "n_spawn": 1,
+        "main_n_msgs": 99,
+        "main_peak_ctx": 97751
+      },
+      {
+        "batch": "2026_1115_021900",
+        "verdict": "NO_SPAWN",
+        "adopted": false,
+        "edits_after": 0,
+        "runs_after": 0,
+        "n_spawn": 0,
+        "main_n_msgs": 345,
+        "main_peak_ctx": 92470
+      }
+    ]
+  }
+}

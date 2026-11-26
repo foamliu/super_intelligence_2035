@@ -1,0 +1,46 @@
+##########################################################################################
+# common_setup.tcl  (feint reference flow, excerpt)
+# Source: /apps/imctf/cad/script/digital_flow/feint/setup/common_setup.tcl
+# Excerpt shows the variable-hub pattern (defaults overridable via -x). Adapt into
+# your own setup/common_setup.tcl with corner/mode/library-profile switches.
+##########################################################################################
+
+if {![info exists ROOT_DIR]}     { set ROOT_DIR     "." }
+if {![info exists RTL_FILELIST]} { set RTL_FILELIST "" }
+if {![info exists SDC]}          { set SDC          "" }
+if {![info exists FM_MODE]}      { set FM_MODE      "" }
+if {![info exists PT_CORNER]}    { set PT_CORNER    "" }
+
+##################################################################
+# Design common variables
+##################################################################
+set DESIGN_NAME                            $DESIGN
+set DCRM_NDM_LIBRARY_NAME                  ${DESIGN_NAME}.ndm
+
+set INSERT_SELF_GATES                      false
+set ANALYZE_RTL_CONGESTION                 false
+set REPORT_CONGESTION                      false
+set ENHANCED_TNS_OPTIMIZATION              false
+set OPTIMIZATION_FLOW                      none
+set SET_QOR_STRATEGY_MODE                  "balanced"
+
+set CREATES_PG_NETLIST                     false
+set ADDITION_TIM_CHECK_LIST                "clock_crossing \
+                                            clock_no_period \
+                                            data_check_multiple_clock \
+                                            data_check_no_clock \
+                                            gated_clock ideal_clocks \
+                                            net_no_driving_info \
+                                            no_driving_cell \
+                                            partial_input_delay \
+                                            object_collection \
+                                            multicycle_path \
+                                            create_clock \
+                                            set_case_analysis"
+
+##########################################################################################
+# Tool Setup Variables
+##########################################################################################
+set DC_MAX_CORES     8
+set DCRM_ALIB_CACHE  .
+# ... (library search paths, target/link library lists keyed by PT_CORNER/VT list)

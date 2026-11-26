@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P20261932 · 基于失败根因分类与沉淀门的 Agent 轨迹知识提取方法</title>
+<style>
+:root {
+  --bg: #f8f9fb; --bg-alt: #eef1f6; --card: #ffffff; --card-hover: #fafbff;
+  --border: #dfe3ec; --border-light: #e8ecf4;
+  --text: #1e293b; --text-secondary: #475569; --dim: #94a3b8;
+  --blue: #3b82f6; --blue-light: #eff6ff; --blue-bg: rgba(59,130,246,0.08);
+  --green: #16a34a; --green-light: #f0fdf4; --green-bg: rgba(22,163,74,0.08);
+  --orange: #ea580c; --orange-light: #fff7ed; --orange-bg: rgba(234,88,12,0.08);
+  --red: #dc2626; --red-light: #fef2f2; --red-bg: rgba(220,38,38,0.06);
+  --purple: #7c3aed; --purple-light: #f5f3ff; --purple-bg: rgba(124,58,237,0.08);
+  --cyan: #0891b2; --cyan-light: #ecfeff; --cyan-bg: rgba(8,145,178,0.08);
+  --pink: #db2777; --pink-light: #fdf2f8; --pink-bg: rgba(219,39,119,0.08);
+  --teal: #0d9488;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+  --radius: 12px; --radius-sm: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { font-family: 'Inter', -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height:1.75; -webkit-font-smoothing: antialiased; }
+.topnav { position:sticky; top:0; z-index:100; background: rgba(255,255,255,0.88); backdrop-filter: blur(16px) saturate(180%); border-bottom:1px solid var(--border-light); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; }
+.topnav-brand { font-weight:700; color:var(--blue); font-size:1.0em; display:flex; align-items:center; gap:8px; }
+.topnav-links { display:flex; gap:4px; flex-wrap:wrap; }
+.topnav-links a { font-size:0.76em; padding:5px 9px; border-radius:6px; color:var(--text-secondary); text-decoration:none; transition:all 0.15s; }
+.topnav-links a:hover { background:var(--blue-light); color:var(--blue); }
+.container { max-width:1140px; margin:0 auto; padding:32px 24px 80px; }
+.hero { text-align:center; padding:48px 0 40px; }
+.hero h1 { font-size:2.0em; font-weight:800; background:linear-gradient(135deg, var(--orange), var(--red)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:12px; line-height:1.3; }
+.hero-subtitle { font-size:1.1em; color:var(--text-secondary); max-width:780px; margin:0 auto 20px; }
+.hero-badges { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.badge { display:inline-flex; align-items:center; gap:4px; padding:4px 12px; border-radius:999px; font-size:0.8em; font-weight:600; }
+.badge-blue { background:var(--blue-bg); color:var(--blue); }
+.badge-green { background:var(--green-bg); color:var(--green); }
+.badge-orange { background:var(--orange-bg); color:var(--orange); }
+.badge-purple { background:var(--purple-bg); color:var(--purple); }
+.badge-cyan { background:var(--cyan-bg); color:var(--cyan); }
+.badge-red { background:var(--red-bg); color:var(--red); }
+.badge-gray { background:var(--bg-alt); color:var(--text-secondary); }
+h2 { font-size:1.6em; font-weight:700; margin:48px 0 8px; padding-top:24px; border-top:2px solid var(--border-light); display:flex; align-items:center; gap:10px; }
+h2 .section-num { background:linear-gradient(135deg,var(--orange),var(--red)); color:#fff; width:34px; height:34px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; font-size:0.7em; flex-shrink:0; }
+h3 { font-size:1.22em; font-weight:700; margin:28px 0 8px; color:var(--text); }
+h4 { font-size:1.02em; font-weight:700; margin:18px 0 6px; color:var(--text-secondary); }
+p { margin:8px 0; color:var(--text-secondary); }
+p b, li b { color:var(--text); }
+code { font-family:'JetBrains Mono','Fira Code',Consolas,monospace; font-size:0.86em; background:var(--bg-alt); padding:2px 6px; border-radius:4px; color:var(--purple); }
+pre { background:#1e293b; color:#e2e8f0; padding:18px 20px; border-radius:var(--radius-sm); overflow-x:auto; margin:14px 0; font-size:0.82em; line-height:1.6; box-shadow:var(--shadow-md); }
+pre code { background:none; color:inherit; padding:0; font-size:inherit; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin:16px 0; box-shadow:var(--shadow-sm); }
+.card-title { font-weight:700; font-size:1.08em; margin-bottom:10px; color:var(--text); display:flex; align-items:center; gap:8px; }
+.highlight { background:var(--blue-light); border-left:4px solid var(--blue); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.warning { background:var(--orange-light); border-left:4px solid var(--orange); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.insight { background:var(--green-light); border-left:4px solid var(--green); padding:14px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:14px 0; }
+.paper { background:var(--purple-light); border-left:4px solid var(--purple); padding:12px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:12px 0; font-size:0.92em; }
+.paper b { color:var(--purple); }
+.why { background:var(--cyan-light); border-left:4px solid var(--cyan); padding:12px 16px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; margin:12px 0; font-size:0.92em; }
+.why b { color:var(--cyan); }
+.highlight b, .insight b { color:var(--text); }
+table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.88em; background:var(--card); border-radius:var(--radius-sm); overflow:hidden; box-shadow:var(--shadow-sm); }
+th { background:var(--bg-alt); text-align:left; padding:10px 14px; font-weight:700; color:var(--text); border-bottom:2px solid var(--border); }
+td { padding:10px 14px; border-bottom:1px solid var(--border-light); color:var(--text-secondary); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--card-hover); }
+.td-mono { font-family:'JetBrains Mono',Consolas,monospace; font-size:0.84em; }
+ul, ol { margin:8px 0 8px 22px; color:var(--text-secondary); }
+li { margin:4px 0; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.diagram-container { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin:18px 0; box-shadow:var(--shadow-sm); overflow-x:auto; }
+.diagram-label { text-align:center; font-size:0.84em; color:var(--dim); margin-top:8px; }
+.flow-steps { display:flex; flex-direction:column; gap:0; margin:16px 0; }
+.flow-step { display:flex; align-items:stretch; gap:16px; position:relative; }
+.flow-step-marker { display:flex; flex-direction:column; align-items:center; flex-shrink:0; width:40px; }
+.flow-step-dot { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--orange),var(--red)); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.82em; flex-shrink:0; box-shadow:var(--shadow-sm); z-index:1; }
+.flow-step-dot.green { background:linear-gradient(135deg,var(--green),var(--teal)); }
+.flow-step-dot.purple { background:linear-gradient(135deg,var(--purple),var(--pink)); }
+.flow-step-dot.blue { background:linear-gradient(135deg,var(--blue),var(--cyan)); }
+.flow-step-line { width:2px; background:var(--border); flex:1; min-height:20px; }
+.flow-step-content { padding:4px 0 20px; flex:1; }
+.flow-step-content b { color:var(--text); }
+.toc { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px 28px; margin:20px 0; box-shadow:var(--shadow-sm); }
+.toc-title { font-weight:700; margin-bottom:10px; color:var(--text); }
+.toc ol { margin:0 0 0 20px; columns:2; column-gap:32px; }
+.toc li { margin:5px 0; }
+.toc a { color:var(--text-secondary); text-decoration:none; }
+.toc a:hover { color:var(--orange); }
+.footer { text-align:center; color:var(--dim); font-size:0.85em; padding:40px 0 0; border-top:1px solid var(--border-light); margin-top:40px; }
+.kvs { display:grid; grid-template-columns:auto 1fr; gap:4px 14px; font-size:0.92em; margin:10px 0; }
+.kvs dt { font-weight:600; color:var(--text); }
+.kvs dd { color:var(--text-secondary); }
+.meta-card { background:linear-gradient(135deg, var(--orange-light), var(--red-light)); border:1px solid var(--border); border-radius:var(--radius); padding:20px 24px; margin:16px 0; box-shadow:var(--shadow-sm); }
+.meta-row { display:flex; gap:16px; flex-wrap:wrap; font-size:0.95em; }
+.meta-item { display:flex; gap:6px; }
+.meta-item .lbl { color:var(--dim); font-weight:600; }
+.meta-item .val { color:var(--text); font-weight:700; }
+@media (max-width:760px){ .two-col{grid-template-columns:1fr;} .toc ol{columns:1;} }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">🔬 P20261932 · 失败根因分类与沉淀门</div>
+  <div class="topnav-links">
+    <a href="#field">1.技术领域</a>
+    <a href="#prior">2.先前技术</a>
+    <a href="#motivation">3.发明目的</a>
+    <a href="#solution">4.技术方案</a>
+    <a href="#effects">5.有益效果</a>
+    <a href="#embodiments">6.具体实施</a>
+    <a href="#figures">7.附图说明</a>
+    <a href="#abbr">8.缩略语</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+  <h1>基于失败根因分类与沉淀门的 Agent 轨迹知识提取方法</h1>
+  <div class="hero-subtitle">错误码(what) → 根因(why) 多对一收敛 · 沉淀门过滤无信号失败 · 信号可靠性分层 · 治本后 L1 注入从净负 -5 题转净正 +17 题。</div>
+  <div class="hero-badges">
+    <span class="badge badge-orange">失败根因六分类</span>
+    <span class="badge badge-red">沉淀门筛选</span>
+    <span class="badge badge-purple">信号可靠性分层</span>
+    <span class="badge badge-cyan">规则引擎不越权</span>
+    <span class="badge badge-green">四类反思锚定成功信号</span>
+  </div>
+</div>
+
+<div class="meta-card">
+  <div class="meta-row">
+    <div class="meta-item"><span class="lbl">专利编号：</span><span class="val">P20261932</span></div>
+    <div class="meta-item"><span class="lbl">发明人：</span><span class="val">刘杨</span></div>
+    <div class="meta-item"><span class="lbl">发明名称：</span><span class="val">基于失败根因分类与沉淀门的 Agent 轨迹知识提取方法</span></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-title">📑 目录</div>
+  <ol>
+    <li><a href="#field">技术领域 (Field)</a></li>
+    <li><a href="#prior">先前技术 (Related prior art)</a></li>
+    <li><a href="#motivation">发明目的与技术问题 (Motivation &amp; challenge)</a></li>
+    <li><a href="#solution">技术方案 (Technical solution)</a></li>
+    <li><a href="#effects">有益效果 (Advantageous effects)</a></li>
+    <li><a href="#embodiments">具体实施方式 (Detailed embodiments)</a></li>
+    <li><a href="#figures">附图与说明 (Figures and description)</a></li>
+    <li><a href="#abbr">缩略语 (Description of the abbreviation)</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════ 1. FIELD ═══════════ -->
+<h2 id="field"><span class="section-num">1</span>技术领域 (Field)</h2>
+
+<p>本发明涉及人工智能领域的大语言模型 Agent 轨迹知识提取技术，具体涉及一种基于<b>失败根因六分类</b>与<b>沉淀门</b>（sedimentation gate）的 Agent 任务轨迹知识提取与沉淀方法。</p>
+
+<p>所述方法面向电子设计自动化（EDA）场景下的代码生成 Agent：Agent 接收自然语言任务需求，调用 EDA 软件 API 编写 Python 代码并在远程沙箱执行，由隐藏测试用例判定通过/失败。一轮 benchmark 含 158 个任务，每个任务留下完整对话轨迹（搜索记录、API 调用、错误日志、成败信号）。本方法从这些轨迹中提取可复用知识，但<b>并非所有轨迹都值得提取</b>——环境故障和生成失败不含 API 使用信号，若强行沉淀会用环境噪声冒充 API 教训，污染知识库。</p>
+
+<p>本发明通过<b>失败根因六分类</b>对每个失败任务判定"为什么会失败"（而非仅"发生了什么"），并通过<b>沉淀门</b>筛选哪些失败任务进入知识提取流程、哪些跳过，从而保证沉淀知识的信号质量。</p>
+
+<p>本发明适用于一切"失败原因可分类、知识提取有信号质量要求"的 LLM Agent 轨迹挖掘场景。</p>
+
+<!-- ═══════════ 2. PRIOR ═══════════ -->
+<h2 id="prior"><span class="section-num">2</span>先前技术 (Related prior art)</h2>
+
+<h3>2.1 Reflexion：对所有失败一视同仁反思</h3>
+<p>Reflexion（Shinn et al.）让 Agent 对所有失败任务做反思并写入记忆，<b>不区分失败原因</b>。其缺陷：环境超时、生成失败这类<b>不含 API 使用信号</b>的失败也被反思，产出"似是而非"的教训。论文 Table 3 证实：无可靠测试信号时反思反而有害（52% &lt; 60% 基线），在噪声上做反思会产生"harmful edits"。<b>问题</b>：如何按失败根因筛选哪些失败值得反思、哪些应跳过。</p>
+
+<h3>2.2 AutoGPT / BabyAGI：无信号失败不收敛</h3>
+<p>AutoGPT / BabyAGI（2023 现象级开源 Agent）让 LLM 自主规划与执行，但循环里<b>没有任何信号告诉它是否在进步</b>——它会"plausible-sounding plans 跑几小时，最终产出一文件夹半成品"。这类无信号失败若被反思沉淀，产出的"教训"实质是环境噪声冒充 API 教训，污染知识库。<b>问题</b>：如何识别并过滤不含 API 使用信号的环境故障 / 生成失败。</p>
+
+<h3>2.3 OpenCode：失败无根因分类导致重试不收敛</h3>
+<p>OpenCode（22M+ 开发者使用的开源 Coding Agent）对失败仅由 LLM 自行重试，<b>无根因分类</b>——所有失败一视同仁按错误码（API 错、配置错、网络错）查 troubleshooting 文档。但错误码只描述"发生了什么"（what），不描述"为什么会发生"（why）：一个任务搜了很多 API 但最终报 TypeError，错误码是 TypeError，根因却是"用错了 API"而非"没搜到"。仅靠错误码会误归类，导致重试方向错误、不收敛。<b>问题</b>：如何把细粒度错误码多对一收敛为粗粒度失败根因，作为"要不要沉淀、沉淀成什么"的依据。</p>
+
+<!-- ═══════════ 3. MOTIVATION ═══════════ -->
+<h2 id="motivation"><span class="section-num">3</span>发明目的与技术问题 (Motivation &amp; challenge)</h2>
+
+<h3>3.1 发明目的</h3>
+<p>提供一种从 Agent 任务轨迹中提取可复用知识的方法，使沉淀的知识具有高信号质量——只从"含 API 使用信号"的失败中提取教训，跳过环境噪声和生成失败，且对低信号失败采取保守策略，避免"似是而非"的知识系统性误导下游 Agent。</p>
+
+<h3>3.2 技术挑战</h3>
+
+<div class="card">
+  <div class="card-title">挑战 1：失败原因的粗粒度归类</div>
+  <p>错误码（TypeError/AttributeError/TimeoutError 等 15 类）只描述"发生了什么"（what），但"要不要沉淀、沉淀成什么"需要的是粗粒度"根因"（why）——是检索问题、API 用法问题还是逻辑问题。需要一个多对一收敛的根因分类器将 15 类错误码归入 6 类根因。<b>关键约束</b>：API 误用须先于检索缺失判定，否则"搜得多但用错"会被误判为检索问题，产出错误的"该多搜"教训。</p>
+</div>
+
+<div class="card">
+  <div class="card-title">挑战 2：无信号失败的过滤</div>
+  <p>环境故障（沙箱超时、session 初始化失败）和生成失败（没产出代码）<b>不含 API 使用信号</b>。若强行反思沉淀，产出的"教训"实质是环境噪声冒充 API 教训，污染知识库。需要一个沉淀门让无信号失败跳过 API 反思。</p>
+</div>
+
+<div class="card">
+  <div class="card-title">挑战 3：低信号失败的可靠性分层</div>
+  <p>即便过了沉淀门，失败信号的可靠性仍分层：属性错/类型错明确指向用错 API（信号最强）；断言错/未知错只说"结果不符"，说不清是 API 选错、参数错还是逻辑错（半可靠/纯猜测）。对低信号失败激进反思会沉淀噪声。此外<b>通过的任务在尝试过程中也报过错</b>（后来修好了），这些错误不是失败信号。需要按信号可靠性分层采取不同策略，并锚定最终成败而非中间错误。</p>
+</div>
+
+<!-- ═══════════ 4. SOLUTION ═══════════ -->
+<h2 id="solution"><span class="section-num">4</span>技术方案 (Technical solution)</h2>
+
+<p>本发明提供一种基于失败根因分类与沉淀门的 Agent 轨迹知识提取方法，包括 <b>双层失败标注模块</b>、<b>六分类根因判定模块</b>、<b>沉淀门筛选模块</b>、<b>信号可靠性分层反思模块</b>、<b>规则引擎与 LLM 双路径职责划分模块</b> 五部分。</p>
+
+<h3>4.1 双层失败标注与六分类根因判定</h3>
+<p>每个失败任务有<b>两层标注</b>：错误码（what，15 类，从错误日志异常类型提取）与失败根因（why，6 类，由根因分类函数在所有富集完成后统一计算）。两层<b>多对一收敛</b>——例如 TypeError/AttributeError/ImportError 都归入"③ API 误用"，各种 Timeout 归入"① 环境故障"。</p>
+<p>根因分类函数（<code>classify_failure_root</code>）按<b>优先级递减</b>顺序判定，返回 6 类之一：</p>
+<table>
+  <tr><th>优先级</th><th>根因</th><th>判定条件</th><th>含义</th><th>是否沉淀</th></tr>
+  <tr><td>0</td><td><b>SUCCESS</b></td><td>execution_success == True</td><td>通过</td><td>沉淀正面经验</td></tr>
+  <tr><td>1</td><td><b>ENV_FAILURE</b></td><td>错误码 ∈ {SANDBOX_TIMEOUT, SESSION_INIT_ERROR, ...}</td><td>环境故障</td><td><span class="badge badge-red">跳过沉淀</span></td></tr>
+  <tr><td>2</td><td><b>GEN_FAILURE</b></td><td>gen_status == "fail" 或 (codes==0 且 apis==0 且无错误)</td><td>生成失败</td><td><span class="badge badge-red">跳过沉淀</span></td></tr>
+  <tr><td>3</td><td><b>API_MISUSE</b></td><td>错误码 ∈ {TYPE_ERROR, ATTRIBUTE_ERROR, IMPORT_ERROR}</td><td>API 误用</td><td><span class="badge badge-green">沉淀</span></td></tr>
+  <tr><td>4</td><td><b>SEARCH_MISS</b></td><td>(codes==0 且 apis&gt;0) 或 (searches&gt;5 且 apis≤2)</td><td>检索缺失</td><td><span class="badge badge-green">沉淀</span></td></tr>
+  <tr><td>5</td><td><b>LOGIC_ERROR</b></td><td>ASSERTION_ERROR 或 (codes&gt;0 且 apis&gt;0 且无非 UNKNOWN 错误)</td><td>逻辑错</td><td><span class="badge badge-green">沉淀</span></td></tr>
+  <tr><td>6</td><td><b>UNKNOWN</b></td><td>兜底</td><td>未知</td><td>兜底</td></tr>
+</table>
+<div class="warning"><b>关键设计：API 误用先于检索缺失判定</b>。一个任务可能搜了很多 API（看起来像检索缺失），但若最终报参数类型错/属性错/导入错，根因是"用错了"而非"没搜到"。先判 API 误用避免把"搜得多但用错"误判为检索问题。</div>
+
+<!-- 图 1: 六分类决策树 SVG -->
+<div class="diagram-container">
+<svg viewBox="0 0 880 290" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,'PingFang SC',sans-serif">
+  <defs><filter id="sh1"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker></defs>
+  <rect x="320" y="14" width="240" height="44" rx="10" fill="#1e293b" filter="url(#sh1)"/>
+  <text x="440" y="41" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">execution_success?</text>
+  <path d="M 540 36 C 620 36, 690 50, 720 70" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#a1)"/>
+  <text x="600" y="30" fill="#16a34a" font-size="11.5" font-weight="600">是</text>
+  <rect x="660" y="70" width="200" height="36" rx="8" fill="#f0fdf4" stroke="#16a34a" filter="url(#sh1)"/>
+  <text x="760" y="92" fill="#166534" font-size="12" font-weight="600" text-anchor="middle">✅ SUCCESS（沉淀正面经验）</text>
+  <path d="M 340 36 C 260 36, 200 50, 160 70" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#a1)"/>
+  <text x="250" y="30" fill="#dc2626" font-size="11.5" font-weight="600">否</text>
+  <text x="120" y="92" fill="#dc2626" font-size="11.5" font-weight="600" text-anchor="middle">逐级判定</text>
+  <text x="120" y="108" fill="#94a3b8" font-size="10" text-anchor="middle">（优先级→）</text>
+  <line x1="160" y1="118" x2="160" y2="130" stroke="#dc2626" stroke-width="2"/>
+  <line x1="85" y1="130" x2="785" y2="130" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="85" y1="130" x2="85" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a1)"/>
+  <line x1="225" y1="130" x2="225" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a1)"/>
+  <line x1="365" y1="130" x2="365" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a1)"/>
+  <line x1="505" y1="130" x2="505" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a1)"/>
+  <line x1="645" y1="130" x2="645" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a1)"/>
+  <line x1="785" y1="130" x2="785" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a1)"/>
+  <g font-size="11" font-weight="600">
+    <rect x="20" y="140" width="130" height="40" rx="8" fill="#fef2f2" stroke="#dc2626" filter="url(#sh1)"/>
+    <text x="85" y="158" fill="#991b1b" text-anchor="middle">① ENV_FAILURE</text>
+    <text x="85" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">跳过沉淀</text>
+    <rect x="160" y="140" width="130" height="40" rx="8" fill="#fff7ed" stroke="#ea580c" filter="url(#sh1)"/>
+    <text x="225" y="158" fill="#9a3412" text-anchor="middle">② GEN_FAILURE</text>
+    <text x="225" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">跳过沉淀</text>
+    <rect x="300" y="140" width="130" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" filter="url(#sh1)"/>
+    <text x="365" y="158" fill="#1e40af" text-anchor="middle">③ API_MISUSE</text>
+    <text x="365" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">沉淀</text>
+    <rect x="440" y="140" width="130" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" filter="url(#sh1)"/>
+    <text x="505" y="158" fill="#1e40af" text-anchor="middle">④ SEARCH_MISS</text>
+    <text x="505" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">沉淀</text>
+    <rect x="580" y="140" width="130" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" filter="url(#sh1)"/>
+    <text x="645" y="158" fill="#1e40af" text-anchor="middle">⑤ LOGIC_ERROR</text>
+    <text x="645" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">沉淀</text>
+    <rect x="720" y="140" width="130" height="40" rx="8" fill="#f1f5f9" stroke="#94a3b8" filter="url(#sh1)"/>
+    <text x="785" y="158" fill="#475569" text-anchor="middle">⑥ UNKNOWN</text>
+    <text x="785" y="172" fill="#94a3b8" font-size="9.5" font-weight="500" text-anchor="middle">兜底</text>
+  </g>
+  <text x="440" y="208" fill="#94a3b8" font-size="10.5" text-anchor="middle">⟵ 优先级递减 ⟶</text>
+  <text x="440" y="232" fill="#475569" font-size="11" text-anchor="middle">环境/生成故障不含 API 信号 → 跳过沉淀；③④⑤⑥ 进入反思沉淀</text>
+  <text x="440" y="252" fill="#ea580c" font-size="10.5" text-anchor="middle">⚠️ ③ API_MISUSE 在 ④ SEARCH_MISS 之前判定（避免把"搜得多但用错"误判为检索问题）</text>
+</svg>
+  <div class="diagram-label">图 1 · 失败根因六分类优先级决策树</div>
+</div>
+
+<h3>4.2 沉淀门筛选模块</h3>
+<p><b>沉淀门</b>：环境故障和生成故障<b>不含 API 使用信号</b>，沉淀进来只会用环境噪声冒充 API 教训，故<b>跳过 API 反思</b>。其余 4 类（API 误用/检索缺失/逻辑错/未知）进入反思。</p>
+<pre><code>failure_root = classify_failure_root(artifact)
+if failure_root in ("ENV_FAILURE", "GEN_FAILURE"):
+    跳过 API 反思（环境故障类仍允许"决策反思"——若存在重复搜索等退化行为）
+else:
+    进入四类反思</code></pre>
+<div class="why"><b>技术效果</b>：过滤无信号失败，保证沉淀知识的信号质量。实测环境故障类失败若被反思，产出的"教训"指向沙箱缺资源等环境问题，对下游 API 选择毫无指导价值。</div>
+
+<h3>4.3 信号可靠性分层反思（含成败锚定）</h3>
+<p>进入反思的失败任务，按失败信号的<b>可靠性分层</b>采取不同策略：</p>
+<table>
+  <tr><th>信号可靠性</th><th>对应根因/错误码</th><th>反思策略</th></tr>
+  <tr><td><span class="badge badge-green">最强</span></td><td>API 误用（属性错/类型错/导入错）</td><td>明确指向用错 API 或参数，正常反思</td></tr>
+  <tr><td><span class="badge badge-orange">半可靠</span></td><td>逻辑错（断言错）</td><td>代码能跑但结果不对，不知 API 选错还是逻辑写错，<b>保守判断</b></td></tr>
+  <tr><td><span class="badge badge-gray">纯猜测</span></td><td>未知错</td><td><b>保守判断</b>，有疑虑返回"无"</td></tr>
+</table>
+<p><b>低信号保守判断</b>：对断言错、未知错、执行错这三类低信号失败，场景反思注入不确定性提示与保守指引，要求 LLM <b>保守</b>——只有 API 明确相关才产"待验证"条目，有疑虑返回"无"（→ 不写"待验证"条目，回退到坑点反思）。</p>
+
+<h3>4.4 知识可信度保障（双路径职责 / 状态强制 / 精准归因 / 不沉淀推断）</h3>
+<p>为保证沉淀出来的知识可信，本方法在反思产出后施加四项保障：</p>
+<ul>
+  <li><b>规则引擎不越权</b>：规则版场景提取是<b>两态</b>——成功产"已验证"，失败返回 None（不产条目），<b>不产"待验证"</b>。因为向量检索出的 API"看起来总是相关的"（词重叠近乎必然命中），规则无法区分"似是而非"，"待验证"专属 LLM 的语义判断。</li>
+  <li><b>状态前缀系统强制</b>：无论 LLM 输出什么前缀，系统都剥掉再用 ground-truth 成败重写（<code>authoritative_status = "verified" if success else "unverified"</code>），保证状态标签 100% 可信。</li>
+  <li><b>错误 API 精准归因</b>：从错误日志文本按 5 种模式（SWIG TypeError / AttributeError / ImportError / wrong kwarg / 缺参多参）提取真正报错的 API 名，用于反例计数——"已验证"条目被多个失败任务的真正报错 API 命中时加⚠️警告。反例只算 API_MISUSE（逻辑错/环境错不归因到 API）。</li>
+  <li><b>治本：不沉淀 Agent 推断</b>：反思规则改为"只陈述 Agent 代码真实调用的 API（used_apis 事实），不推断'正确 wrapper pattern'/'正确参数名'/'用属性 X 还是 setter Y'"。L1 只沉淀 used_apis 事实 + ground-truth 验证的用法，不沉淀 Agent 的"测试发现/参数名修正"类推断。</li>
+</ul>
+<div class="warning"><b>093 铁证（治本动因）</b>：治本前一条标"已验证"的条目声称参数名 <code>isReplaceMismatched</code>（一个 s）是错的、正确的是 <code>isReplaceMissmatched</code>（两个 s）。Agent 采信后把对的位置参数改成 kwarg &rarr; fail。实际 API 根本不接受任何 isReplace* kwarg。这条"测试发现"是 Agent 自测时的误判，被标"已验证"后系统性误导下游。</div>
+
+<h2 id="effects"><span class="section-num">5</span>有益效果 (Advantageous effects)</h2>
+
+<div class="insight"><b>5.1 根因分类准确驱动下游治理</b><br>沉淀门跳过环境故障/生成失败（不含 API 信号），API 误用先判确保"搜得多但用错"不被误判为检索缺失。实测 V5+evo 23 个失败中 API 误用 5 个（22%）、逻辑错 14 个（61%）、环境/资源 2 个（9%）、超时 1 个（4%），分类准确驱动了针对性的下游治理。</div>
+
+<div class="insight"><b>5.2 治本使 L1 注入从净负转净正</b><br>低信号保守判断 + 锚定最终成败 + 规则不越权 + 状态强制 + 不沉淀 Agent 推断，共同保证沉淀知识可信。治本前 L1 注入净负（093 铁证：含 Agent 推断的错误参数名"已验证"条目系统性误导，净 -5 题）；治本后 L1 注入<b>净 +17 题</b>（74.7% → 85.4%），真代码问题降 54%，AssertionError 降 36%。在 challenge split 上，自进化经 1-2 轮沉淀即在 test 上追平人类 V5.4 baseline（80.8%），R2 方差收敛到与人类一致（±3.82%）——根因分类 + 沉淀门 + 信号分层 + 治本是这一效果的前提。</div>
+
+<!-- 治本前后对比图 -->
+<div class="diagram-container">
+<svg viewBox="0 0 880 280" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,'PingFang SC',sans-serif">
+  <defs><filter id="sh4"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter></defs>
+  <text x="440" y="24" fill="#1e293b" font-size="14" font-weight="700" text-anchor="middle">治本前后 L1 注入效果对比（串行评估，全集 158）</text>
+  <!-- axes -->
+  <line x1="120" y1="240" x2="820" y2="240" stroke="#475569" stroke-width="1.5"/>
+  <line x1="120" y1="60" x2="120" y2="240" stroke="#475569" stroke-width="1.5"/>
+  <text x="110" y="244" fill="#94a3b8" font-size="10" text-anchor="end">70%</text>
+  <text x="110" y="194" fill="#94a3b8" font-size="10" text-anchor="end">78%</text>
+  <text x="110" y="144" fill="#94a3b8" font-size="10" text-anchor="end">86%</text>
+  <text x="110" y="94" fill="#94a3b8" font-size="10" text-anchor="end">94%</text>
+  <line x1="120" y1="194" x2="820" y2="194" stroke="#e8ecf4" stroke-dasharray="3 3"/>
+  <line x1="120" y1="144" x2="820" y2="144" stroke="#e8ecf4" stroke-dasharray="3 3"/>
+  <!-- scale: 70%->240, 94%->60, 1pp = (240-60)/24 = 7.5px -->
+  <!-- V5 baseline 74.7% (no L1) -->
+  <rect x="180" y="196.7" width="120" height="43.3" rx="4" fill="#94a3b8" filter="url(#sh4)"/>
+  <text x="240" y="190" fill="#475569" font-size="11" font-weight="700" text-anchor="middle">74.7%</text>
+  <text x="240" y="258" fill="#475569" font-size="10.5" text-anchor="middle">V5 baseline</text>
+  <text x="240" y="272" fill="#94a3b8" font-size="9.5" text-anchor="middle">(裸跑无 L1)</text>
+
+  <!-- 治本前 V5+evo 69.7% (净-5题) -->
+  <rect x="360" y="187.25" width="120" height="52.75" rx="4" fill="#dc2626" filter="url(#sh4)"/>
+  <text x="420" y="180" fill="#991b1b" font-size="11" font-weight="700" text-anchor="middle">≈69.7%</text>
+  <text x="420" y="258" fill="#991b1b" font-size="10.5" text-anchor="middle">治本前 V5+evo</text>
+  <text x="420" y="272" fill="#dc2626" font-size="9.5" text-anchor="middle">(含推断, 净 -5 题) ⚠️</text>
+
+  <!-- 治本后 V5+evo 85.4% (净+17题) ★ -->
+  <rect x="540" y="99.25" width="120" height="140.75" rx="4" fill="#16a34a" filter="url(#sh4)"/>
+  <text x="600" y="92" fill="#166534" font-size="12" font-weight="700" text-anchor="middle">85.4% ★</text>
+  <text x="600" y="258" fill="#166534" font-size="10.5" text-anchor="middle">治本后 V5+evo</text>
+  <text x="600" y="272" fill="#16a34a" font-size="9.5" text-anchor="middle">(不沉淀推断, 净 +17 题)</text>
+
+  <!-- arrow 治本前→治本后 -->
+  <path d="M 490 165 C 510 130, 530 110, 538 100" fill="none" stroke="#16a34a" stroke-width="2.5" marker-end="url(#a2)"/>
+  <text x="520" y="120" fill="#16a34a" font-size="11" font-weight="700">治本</text>
+
+  <!-- baseline→治本后 -->
+  <path d="M 310 195 C 400 160, 480 120, 538 105" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="380" y="150" fill="#3b82f6" font-size="10" font-weight="600">净 +17 题</text>
+</svg>
+  <div class="diagram-label">图 8 · 治本（不沉淀 Agent 推断 + [已验证] 严格化）使 L1 注入从净负转净正（数据来源：EDA Benchmark 历史迭代轨迹 V5 章节）</div>
+</div>
+
+<!-- ═══════════ 6. EMBODIMENTS ═══════════ -->
+<h2 id="embodiments"><span class="section-num">6</span>具体实施方式 (Detailed embodiments)</h2>
+
+<h3>实施例 1：六分类根因判定函数</h3>
+<pre><code>_ENV_ERROR_CODES = frozenset({"SANDBOX_TIMEOUT", "SESSION_INIT_ERROR",
+                               "CONNECTION_ERROR", "FILE_NOT_FOUND"})
+_API_MISUSE_CODES = frozenset({"TYPE_ERROR", "ATTRIBUTE_ERROR", "IMPORT_ERROR"})
+
+def classify_failure_root(artifact: dict) -> str:
+    if artifact.get("execution_success", False):
+        return "SUCCESS"
+    error_codes = {e.get("error_code", "") for e in artifact.get("errors", [])}
+    searches = artifact.get("searches", [])
+    apis = artifact.get("apis_fetched", [])
+    codes = artifact.get("codes_executed", 0)
+    gen_status = artifact.get("gen_status", "")
+
+    # 1. ENV_FAILURE（优先级最高）
+    if error_codes & _ENV_ERROR_CODES:
+        return "ENV_FAILURE"
+    # 2. GEN_FAILURE
+    if gen_status == "fail":
+        return "GEN_FAILURE"
+    if codes == 0 and len(apis) == 0 and not error_codes:
+        return "GEN_FAILURE"
+    # 3. API_MISUSE（先于 SEARCH_MISS！）
+    if error_codes & _API_MISUSE_CODES:
+        return "API_MISUSE"
+    # 4. SEARCH_MISS
+    if codes == 0 and len(apis) > 0:
+        return "SEARCH_MISS"
+    if len(searches) > 5 and len(apis) &lt;= 2:
+        return "SEARCH_MISS"
+    # 5. LOGIC_ERROR
+    if "ASSERTION_ERROR" in error_codes:
+        return "LOGIC_ERROR"
+    if codes > 0 and len(apis) > 0 and not (error_codes - {"UNKNOWN_ERROR"}):
+        return "LOGIC_ERROR"
+    # 6. 兜底
+    return "UNKNOWN"</code></pre>
+
+<h2 id="figures"><span class="section-num">7</span>附图与说明 (Figures and description)</h2>
+
+<div class="card">
+  <div class="card-title">图 1 · 失败根因六分类优先级决策树</div>
+  <p>见 §4.2 内嵌图。顶部 <code>execution_success?</code> 节点，是→SUCCESS；否→逐级判定（优先级递减）：① ENV_FAILURE（跳过沉淀）→ ② GEN_FAILURE（跳过沉淀）→ ③ API_MISUSE（沉淀）→ ④ SEARCH_MISS（沉淀）→ ⑤ LOGIC_ERROR（沉淀）→ ⑥ UNKNOWN（兜底）。底部标注"③ API_MISUSE 在 ④ SEARCH_MISS 之前判定"。</p>
+</div>
+
+<div class="card">
+  <div class="card-title">图 2 · 双层失败标注关系图</div>
+</div>
+<div class="diagram-container">
+<svg viewBox="0 0 880 280" xmlns="http://www.w3.org/2000/svg" font-family="Inter,-apple-system,'PingFang SC',sans-serif">
+  <defs><filter id="sh5"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter>
+    <marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker></defs>
+  <text x="440" y="22" fill="#1e293b" font-size="14" font-weight="700" text-anchor="middle">双层失败标注：错误码(what) → 根因(why) 多对一收敛</text>
+  <!-- 上层 15 error codes -->
+  <rect x="40" y="50" width="800" height="80" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5" filter="url(#sh5)"/>
+  <text x="440" y="72" fill="#9a3412" font-size="12" font-weight="700" text-anchor="middle">错误码 error_code（15 类，描述 what —— 发生了什么）</text>
+  <g font-size="10" font-weight="600">
+    <rect x="60" y="86" width="120" height="32" rx="6" fill="#fef2f2" stroke="#dc2626"/><text x="120" y="106" fill="#991b1b" text-anchor="middle">SANDBOX_TIMEOUT</text>
+    <rect x="195" y="86" width="120" height="32" rx="6" fill="#fef2f2" stroke="#dc2626"/><text x="255" y="106" fill="#991b1b" text-anchor="middle">SESSION_INIT_ERR</text>
+    <rect x="335" y="86" width="110" height="32" rx="6" fill="#eff6ff" stroke="#3b82f6"/><text x="390" y="106" fill="#1e40af" text-anchor="middle">TYPE_ERROR</text>
+    <rect x="460" y="86" width="130" height="32" rx="6" fill="#eff6ff" stroke="#3b82f6"/><text x="525" y="106" fill="#1e40af" text-anchor="middle">ATTRIBUTE_ERROR</text>
+    <rect x="605" y="86" width="110" height="32" rx="6" fill="#eff6ff" stroke="#3b82f6"/><text x="660" y="106" fill="#1e40af" text-anchor="middle">IMPORT_ERROR</text>
+    <rect x="730" y="86" width="100" height="32" rx="6" fill="#f0fdf4" stroke="#16a34a"/><text x="780" y="106" fill="#166534" text-anchor="middle">ASSERTION_ERR</text>
+  </g>
+  <text x="440" y="132" fill="#94a3b8" font-size="9.5" text-anchor="middle">… 共 15 类（其余略）</text>
+  <!-- arrows down -->
+  <line x1="120" y1="135" x2="120" y2="170" stroke="#dc2626" stroke-width="1.5" marker-end="url(#a5)"/>
+  <line x1="255" y1="135" x2="255" y2="170" stroke="#dc2626" stroke-width="1.5" marker-end="url(#a5)"/>
+  <line x1="390" y1="135" x2="390" y2="180" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#a5)"/>
+  <line x1="525" y1="135" x2="525" y2="180" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#a5)"/>
+  <line x1="660" y1="135" x2="660" y2="180" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#a5)"/>
+  <line x1="780" y1="135" x2="780" y2="210" stroke="#16a34a" stroke-width="1.5" marker-end="url(#a5)"/>
+  <!-- 下层 6 roots -->
+  <rect x="40" y="170" width="800" height="100" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5" filter="url(#sh5)"/>
+  <text x="440" y="190" fill="#6d28d9" font-size="12" font-weight="700" text-anchor="middle">失败根因 failure_root（6 类，描述 why —— 为什么会失败）</text>
+  <g font-size="10.5" font-weight="600">
+    <rect x="60" y="200" width="120" height="56" rx="8" fill="#fef2f2" stroke="#dc2626"/><text x="120" y="222" fill="#991b1b" text-anchor="middle">① ENV_FAILURE</text><text x="120" y="240" fill="#94a3b8" font-size="9" text-anchor="middle">环境故障</text>
+    <rect x="320" y="178" width="120" height="56" rx="8" fill="#eff6ff" stroke="#3b82f6"/><text x="380" y="200" fill="#1e40af" text-anchor="middle">③ API_MISUSE</text><text x="380" y="218" fill="#94a3b8" font-size="9" text-anchor="middle">API 误用</text>
+    <rect x="720" y="208" width="120" height="56" rx="8" fill="#f0fdf4" stroke="#16a34a"/><text x="780" y="230" fill="#166534" text-anchor="middle">⑤ LOGIC_ERROR</text><text x="780" y="248" fill="#94a3b8" font-size="9" text-anchor="middle">逻辑错</text>
+  </g>
+</svg>
+  <div class="diagram-label">图 2 · 双层失败标注：15 类错误码多对一收敛到 6 类根因</div>
+</div>
+
+<div class="card">
+  <div class="card-title">图 8 · 治本前后 L1 注入效果对比</div>
+  <p>见 §5 内嵌柱状图。治本前净 -5 题（含 Agent 推断的"已验证"条目系统性误导），治本后净 +17 题（不沉淀推断 + [已验证] 严格化）。</p>
+</div>
+
+<!-- ═══════════ 8. ABBR ═══════════ -->
+<h2 id="abbr"><span class="section-num">8</span>缩略语 (Description of the abbreviation)</h2>
+<table>
+  <tr><th>缩略语</th><th>全称</th><th>说明</th></tr>
+  <tr><td>AI</td><td>Artificial Intelligence</td><td>人工智能</td></tr>
+  <tr><td>Agent</td><td>—</td><td>能自主调用工具完成任务的 LLM 智能体</td></tr>
+  <tr><td>LLM</td><td>Large Language Model</td><td>大语言模型</td></tr>
+  <tr><td>EDA</td><td>Electronic Design Automation</td><td>电子设计自动化</td></tr>
+  <tr><td>API</td><td>Application Programming Interface</td><td>应用程序接口</td></tr>
+  <tr><td>trace</td><td>—</td><td>Agent 跑一个任务的完整对话历史</td></tr>
+  <tr><td>ground-truth</td><td>—</td><td>沙箱隐藏测试判定的真实成败</td></tr>
+  <tr><td>pass@1</td><td>Pass rate at 1</td><td>单次生成通过率</td></tr>
+  <tr><td>error_code</td><td>—</td><td>错误码，描述"发生了什么"（what），15 类</td></tr>
+  <tr><td>failure_root</td><td>—</td><td>失败根因，描述"为什么会失败"（why），6 类</td></tr>
+  <tr><td>ENV_FAILURE</td><td>Environment Failure</td><td>环境故障（沙箱超时/session 初始化失败等）</td></tr>
+  <tr><td>GEN_FAILURE</td><td>Generation Failure</td><td>生成失败（没产出代码）</td></tr>
+  <tr><td>API_MISUSE</td><td>API Misuse</td><td>API 误用（参数类型/属性/导入错）</td></tr>
+  <tr><td>SEARCH_MISS</td><td>Search Miss</td><td>检索缺失（没搜到/搜太少）</td></tr>
+  <tr><td>LOGIC_ERROR</td><td>Logic Error</td><td>逻辑错（代码能跑但断言不过）</td></tr>
+  <tr><td>UNKNOWN</td><td>—</td><td>兜底根因</td></tr>
+  <tr><td>sedimentation gate</td><td>沉淀门</td><td>筛选哪些失败任务进入知识提取的门槛</td></tr>
+  <tr><td>used_apis</td><td>—</td><td>从生成代码静态提取的真实调用 API</td></tr>
+  <tr><td>disconfirm</td><td>反例</td><td>已验证条目被失败任务的报错 API 命中的计数</td></tr>
+  <tr><td>L0 / L1</td><td>Layer 0 / Layer 1</td><td>原始轨迹层 / 聚合模式层（详见 P20261929）</td></tr>
+  <tr><td>Reflexion</td><td>—</td><td>言语强化学习反思方法（Shinn et al.），不分根因反思问题来源</td></tr>
+  <tr><td>AutoGPT / BabyAGI</td><td>—</td><td>2023 现象级开源自主 Agent，无信号失败不收敛问题来源</td></tr>
+  <tr><td>OpenCode</td><td>—</td><td>22M+ 开发者开源 Coding Agent，失败无根因分类问题来源</td></tr>
+</table>
+
+<div class="footer">
+  专利评审材料 P20261932 · 基于失败根因分类与沉淀门的 Agent 轨迹知识提取方法 · 发明人：刘杨 · 2026-11-13
+</div>
+
+</div>
+</body>
+</html>

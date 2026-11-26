@@ -1,0 +1,7 @@
+/rundata/lacaa/V0/workdir/kenwang/Calibre_DRC/metalOption/test_2/./ts_auto.sh 
+Fatal Python error: initfsencoding: unable to load the file system codec
+ModuleNotFoundError: No module named 'encodings'
+
+Current thread 0x00007f8847ccf700 (most recent call first):
+./ts_auto.sh: line 8: 42818 Aborted                 (core dumped) ./drc_auto.py main.rule 18 18 xa_start=3 xa_end=3 x_start=4 x_end=4 xb_start=5 xb_end=5 ya_start=6 ya_end=6 y_start=7 y_end=12 yy_start=13 yy_end=14 yx_start=15 yx_end=16 z_start=17 z_end=18 mtsk=1P18M_18F1xa1x1xb1ya6y2yy2yx2z
+有一个问题需要帮忙解决一下，现在文件 drc_auto.py 中需要调整一下 load Python 的版本，请参考一下 .bashrc 文件应该如何修改呢

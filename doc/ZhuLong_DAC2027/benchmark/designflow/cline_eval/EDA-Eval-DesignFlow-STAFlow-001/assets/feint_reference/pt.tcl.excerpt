@@ -1,0 +1,47 @@
+#################################################################################
+# PrimeTime STA-PA Methodology Script  (feint reference flow, excerpt)
+# Source: /apps/imctf/cad/script/digital_flow/feint/scripts/pt.tcl
+# This is the Synopsys-style reference flow the user pointed to. Excerpt shows
+# the library-corner mapping + netlist/SDC resolution pattern. Adapt the structure
+# into a standalone, parameterized flow; do NOT copy this verbatim.
+#################################################################################
+
+set sdir "."
+
+##################################################################
+#    Source setup Files
+##################################################################
+source /apps/imctf/cad/script/digital_flow/utilities/procs_global.tcl
+rm_source -file ../setup/common_setup.tcl
+
+file mkdir $REPORTS_DIR
+file mkdir $OUTPUTS_DIR
+
+if {![info exists PT_LIB_VT_TYPES]} {
+    set PT_LIB_VT_TYPES   "lvt ulvt"
+}
+if {![info exists PT_CORNER]} {
+    set PT_CORNER  "tt0p8v25c"
+}
+
+puts "RM-Info: PT corner = $PT_CORNER, analysis libs = $ANALYSIS_LIBRARY_FILES"
+
+set search_path ". $ADDITIONAL_SEARCH_PATH $search_path"
+set target_library $ANALYSIS_LIBRARY_FILES
+set link_path "* $target_library $ADDITIONAL_LINK_LIB_FILES"
+
+if {[string length $DESIGN_NAME] > 0} {
+} else {
+    set DESIGN_NAME "$DESIGN_NAME"
+}
+
+# Provide list of Verilog netlist files. It can be compressed --- example "A.v B.v C.v"
+set NETLIST_FILES "./results/${DESIGN_NAME}.mapped.v"
+
+######################################
+# Constraint Section Setup
+######################################
+set CONSTRAINT_FILES "./results/${DESIGN_NAME}.mapped.sdc"
+
+# ... (downstream: read_lib, read_verilog, read_sdc, read_spef, update_timing,
+#      report_timing, report_constraint, report_clock, report_analysis_coverage)

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Vision — Official AIMv2 AR Paradigm vs Ours: Controlled A/B Report</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d29922;--purple:#bc8cff;--orange:#e8873c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;max-width:1200px;margin:0 auto;padding:20px}
+h1{font-size:1.8em;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:.3em;margin:1.5em 0 .5em}
+h2{font-size:1.4em;color:var(--purple);margin:1.2em 0 .5em;border-bottom:1px solid var(--border);padding-bottom:.2em}
+h3{font-size:1.15em;color:var(--green);margin:1em 0 .4em}
+h4{font-size:1.0em;color:var(--orange);margin:.8em 0 .3em}
+p{margin:.5em 0}
+table{border-collapse:collapse;width:100%;margin:.8em 0;font-size:.9em}
+th,td{border:1px solid var(--border);padding:.4em .6em;text-align:center}
+th{background:var(--card);color:var(--accent);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.best{color:var(--green);font-weight:700}
+.bad{color:var(--red)}
+.warn{color:var(--yellow)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;margin:.8em 0}
+.tldr{background:linear-gradient(135deg,#161b22,#1a2332);border-left:4px solid var(--accent)}
+.tldr ul{margin:.3em 0 .3em 1.2em}
+.tldr li{margin:.3em 0}
+code{background:var(--card);padding:.1em .3em;border-radius:3px;font-family:'SF Mono',Consolas,monospace;font-size:.85em;color:var(--orange)}
+.svg-container{margin:1em 0;text-align:center}
+.svg-container svg{max-width:100%;height:auto}
+.note{color:var(--muted);font-size:.85em;font-style:italic}
+.handicap{background:rgba(210,153,34,.1);border:1px solid var(--yellow);border-radius:8px;padding:1em 1.2em;margin:.8em 0}
+.handicap h3{color:var(--yellow)}
+.tag{display:inline-block;padding:.1em .5em;border-radius:10px;font-size:.75em;font-weight:600}
+.tag-ok{background:rgba(63,185,80,.2);color:var(--green)}
+.tag-fail{background:rgba(248,81,73,.2);color:var(--red)}
+.tag-warn{background:rgba(210,153,34,.2);color:var(--yellow)}
+.refs{font-size:.85em;color:var(--muted);margin-top:2em;border-top:1px solid var(--border);padding-top:.5em}
+.refs a{color:var(--accent);text-decoration:none}
+.check{color:var(--green)}
+.cross{color:var(--red)}
+</style>
+</head>
+<body>
+<p class="note">Generated: 2026-10-08 · Agent: vision · Experiment ID: R13 (④ in task queue) · Pre-registered plan: <code>VISION_AIMV2_OFFICIAL_PLAN.md</code> (approved 2026-10-06, 6 revision points addressed)</p>
+<h1>Official AIMv2 AR Paradigm vs. Ours — Controlled A/B Report</h1>
+<p class="note">Self-contained report per operator instruction (2026-10-06): specification table + three-arm results + difference attribution + paper §VI-D wording suggestions. All numbers verified against <code>EXPERIMENTS_VISION.md §R13</code> and raw training logs. Related: <a href="report_vision_final_20261008.html">full-line final summary</a> · <a href="report_vision_mask_ratio.html">mask-ratio ablation</a> · <a href="report_vision_lp_protocol.html">lp evaluation protocol</a>.</p>
+
+<h2>1. TL;DR</h2>
+<div class="card tldr">
+<ul>
+<li><strong>Core question:</strong> Can the official AIMv2 pure-AR paradigm (causal ViT + next-patch pixel + text AR, no contrastive) succeed at <em>our</em> data scale (~7.7M pairs, short captions)?</li>
+<li><strong>Arm B (pure AR, no InfoNCE):</strong> <span class="bad">🔴 Collapsed at step 600</span> — C1 rises 0.86→0.97 in 300 steps, circuit-breaker triggers at 2% of training. Loss was decreasing (6.77→5.08); collapse is a representation failure, not an optimization failure.</li>
+<li><strong>Arm B-hybrid (AR + InfoNCE):</strong> <span class="warn">🟡 No collapse, but lp = 1.37%</span> — InfoNCE prevents collapse (C1≈0.48, 30k steps), but representation quality is catastrophically lower: Δlp = −12.1 pp vs. baseline 13.49%. Zero-shot at chance (0.37%).</li>
+<li><strong>Verdict:</strong> ❌ <strong>Non-AR + contrastive paradigm is strictly superior at our data scale.</strong> We retain bidirectional + InfoNCE + masked-patch-MSE as the final recipe.</li>
+<li><strong>Key handicap:</strong> Official AIMv2 uses 12B pairs with LLaMA-3 long synthetic captions; we use 7.7M pairs with short alt-text (~20 tokens) — a <strong>1557×</strong> data gap. <em>This is a scale finding, not a paradigm condemnation.</em></li>
+</ul>
+</div>
+
+<h2>2. Specification Comparison Table</h2>
+<p>Per operator-provided specification (2026-10-06). All three arms share the same trunk (OpenVision2 w512/d30/patch16/224²), same data (CC12M + Amshaker, ~7.7M pairs), same 30k-step budget.</p>
+<table>
+<tr><th>Dimension</th><th>Official AIMv2 (target)</th><th>Ours — Arm A (baseline)</th><th>Ours — Arm B (reproduced)</th><th>Ours — Arm B-hybrid</th></tr>
+<tr><td><strong>Paradigm</strong></td><td>Pure AR (vision AR + text AR)</td><td>Non-AR: bidirectional ViT + random mask</td><td>Pure AR (causal ViT)</td><td>AR + contrastive hybrid</td></tr>
+<tr><td><strong>Contrastive</strong></td><td class="cross">❌ None</td><td class="check">✅ InfoNCE</td><td class="cross">❌ None</td><td class="check">✅ InfoNCE (1.0×)</td></tr>
+<tr><td><strong>Masking</strong></td><td>Prefix-attention (causal)</td><td>Random mask (per-patch, 0.6)</td><td>Prefix-attention (causal)</td><td>Prefix-attention (causal)</td></tr>
+<tr><td><strong>Trunk forward</strong></td><td>AR: position i sees 0..i only</td><td>All patches visible; no mask tokens</td><td>AR: position i sees 0..i only</td><td>AR: position i sees 0..i only</td></tr>
+<tr><td><strong>Text tower</strong></td><td>Trainable text AR decoder</td><td>Frozen CLIP-ViT-L/14-336 (768-d)</td><td>Trainable ARTextDecoder (~66.8M)</td><td>Trainable ARTextDecoder (~66.8M)</td></tr>
+<tr><td><strong>Loss</strong></td><td><code>cap + 0.4×pixel</code></td><td><code>1.0×InfoNCE + 1.0×patch_MSE</code></td><td><code>cap + 0.4×pixel</code></td><td><code>1.0×InfoNCE + cap + 0.4×pixel</code></td></tr>
+<tr><td><strong>Trainable params</strong></td><td>~194M</td><td>127.4M</td><td>~194.3M</td><td>~194.3M</td></tr>
+<tr><td><strong>Data scale</strong></td><td>~12B pairs</td><td>~7.7M pairs</td><td>~7.7M pairs</td><td>~7.7M pairs</td></tr>
+<tr><td><strong>Caption type</strong></td><td>LLaMA-3 long synthetic</td><td>Short alt-text (~20 tokens)</td><td>Short alt-text (~20 tokens)</td><td>Short alt-text (~20 tokens)</td></tr>
+</table>
+<div class="card">
+<h4>Implementation Notes (revision points ①–②)</h4>
+<p><strong>① AR ≠ MAE:</strong> AR = "given prefix, predict next" — position <code>i</code> sees patches <code>0..i</code>, target is patch <code>i+1</code>. Loss: <code>MSE(pred[:, :-1], target[:, 1:])</code> (shift-by-1). This is <em>not</em> MAE's "given bidirectional context, reconstruct masked positions." Boundary: position 0 sees only patch 0; position 195 has no target (shifted away) — loss on positions 0..194 only.</p>
+<p><strong>② Text decoder cross-attention:</strong> ARTextDecoder cross-attends to <code>causal</code> vision patches (output of <code>OpenVision2.forward(causal=True)</code>), where each patch contains only prefix info. 🚫 Attending to bidirectional features = "bidirectional vision + causal text" ≠ official AIMv2.</p>
+</div>
+
+<div class="handicap">
+<h3>⚠️ Critical Handicap — Short Caption &amp; Small Data Scale (Revision Point ③)</h3>
+<p>This experiment reproduces the official AIMv2 <em>paradigm</em> but <strong>not</strong> the official AIMv2 <em>scale</em>. Two fundamental differences must be prominently noted:</p>
+<ul>
+<li><strong>Data volume:</strong> Official AIMv2 trains on ~12B pairs; we use ~7.7M pairs — a <strong>1557× gap</strong>. The AR paradigm's autoregressive signal accumulates with data volume; at 7.7M pairs, the signal may be insufficient.</li>
+<li><strong>Caption length/quality:</strong> Official AIMv2 uses LLaMA-3 long synthetic captions; we use short alt-text (~20 tokens). The text AR next-token loss (<code>cap_loss</code>) is <strong>inherently weaker</strong> with short captions.</li>
+</ul>
+<p><strong>Interpretation guardrail:</strong> A negative result here means "short captions + small data cannot sustain causal AR" — it does <em>not</em> mean "the official AIMv2 paradigm is bad." This is a <strong>scale boundary</strong> finding, not a paradigm condemnation.</p>
+</div>
+
+<h2>3. Three-Arm Results</h2>
+<h3>3.1 Summary Table</h3>
+<table>
+<tr><th>Arm</th><th>Attention</th><th>InfoNCE</th><th>C1@300</th><th>C1@600</th><th>C1@30k</th><th>lp@30k</th><th>zs@30k</th><th>Status</th></tr>
+<tr><td><strong>Arm A</strong> (baseline)</td><td>bidirectional</td><td class="check">✅</td><td>~0.33</td><td>~0.30</td><td>~0.28</td><td class="best">13.49%</td><td>—</td><td><span class="tag tag-ok">healthy, optimal</span></td></tr>
+<tr><td><strong>Arm B</strong> (pure AR)</td><td>causal</td><td class="cross">❌</td><td class="bad">0.8649</td><td class="bad">0.9731</td><td>—</td><td>—</td><td>—</td><td><span class="tag tag-fail">🔴 collapsed @600</span></td></tr>
+<tr><td><strong>Arm B-hybrid</strong></td><td>causal</td><td class="check">✅</td><td>0.2480</td><td>0.4332</td><td>0.4845</td><td class="bad">1.37%</td><td class="bad">0.37%</td><td><span class="tag tag-warn">no collapse, lp very low</span></td></tr>
+</table>
+
+<h3>3.2 Arm B — Pure Causal AR (No InfoNCE)</h3>
+<div class="card">
+<table>
+<tr><th>Metric</th><th>Value</th><th>Notes</th></tr>
+<tr><td>Probe step 300</td><td>C1=<strong>0.8649</strong>, C2_gap=−0.0001, C4=OK</td><td>Approaching collapse threshold (0.95)</td></tr>
+<tr><td>Probe step 600</td><td>C1=<strong>0.9731</strong>, C2_gap=+0.0000, C4=OK</td><td><strong>&gt;0.95 → circuit-breaker triggers</strong></td></tr>
+<tr><td>Fuse step</td><td><strong>600 / 30000</strong></td><td>Only 2% of training completed</td></tr>
+<tr><td>final_loss</td><td>5.0552</td><td>Loss <em>decreasing</em> (cap 6.77→5.08, pixel ~0.73) — "loss down, features collapse"</td></tr>
+<tr><td>Throughput</td><td>2434.5 img/s</td><td>Lower than R12b ~5000 (causal mask + full-position PatchPredictor overhead)</td></tr>
+</table>
+<p><strong>Key findings:</strong></p>
+<ol>
+<li><strong>Pure causal AR without contrastive → rapid collapse:</strong> C1 0.86→0.97 in 300 steps.</li>
+<li><strong>Causal vs. bidirectional:</strong> R11-H (bidirectional, no InfoNCE) C1=0.43, no collapse. Arm B (causal, no InfoNCE) collapsed. → <strong>Collapse = causal attention × no contrastive</strong> (combined effect).</li>
+<li><strong>Loss decreasing but features collapsing:</strong> AR next-patch admits trivial solution — constant prediction collapses features while reducing loss.</li>
+<li><strong>DDP deadlock fixed:</strong> Added <code>dist.broadcast(fused_flag, src=0)</code> to synchronize all ranks' exit on circuit-breaker.</li>
+</ol>
+<p><strong>Pre-registered judgment:</strong> <code>Arm B C1 &gt; 0.95 → 🔴 AR collapse</code> — ✅ <strong>Hit.</strong></p>
+</div>
+
+<h3>3.3 Arm B-hybrid — Causal AR + InfoNCE</h3>
+<div class="card">
+<table>
+<tr><th>Metric</th><th>Value</th><th>Notes</th></tr>
+<tr><td>Training steps</td><td>30000 / 30000</td><td>✅ Full run completed</td></tr>
+<tr><td>Total wall-clock</td><td>8712.7s (~2.42h)</td><td>steady_image_s = 2175.9</td></tr>
+<tr><td>Fused (collapsed)</td><td><strong>False</strong></td><td>✅ No collapse throughout</td></tr>
+<tr><td>C1 @30000</td><td><strong>0.4845</strong></td><td>Oscillating 0.30–0.55, C4=OK, C2_gap ~+0.064</td></tr>
+<tr><td>final_loss</td><td>9.7075</td><td>contrast ~5.38, cap ~4.62, pixel ~0.77</td></tr>
+<tr><td>Checkpoints</td><td>4 (10k, 20k, 30k, + final)</td><td>All saved and evaluated</td></tr>
+</table>
+<h4>IN-1k frozen-trunk evaluation</h4>
+<table>
+<tr><th>Checkpoint</th><th>lp top-1</th><th>zs top-1</th></tr>
+<tr><td>step 10000</td><td>0.31%</td><td>0.37%</td></tr>
+<tr><td>step 20000</td><td>1.31%</td><td>0.36%</td></tr>
+<tr><td>step 30000</td><td class="bad"><strong>1.37%</strong></td><td>0.37%</td></tr>
+</table>
+<p><strong>vs. baseline:</strong> Δlp = <strong>−12.12 pp</strong> (1.37% vs 13.49%) — far beyond ±1.5 pp noise band. Zero-shot at chance (0.37% vs 0.10% for 1000 classes).</p>
+</div>
+
+<h3>3.4 Arm B' (Parameter Isolation) — Not Run</h3>
+<div class="card">
+<p><strong>Status:</strong> <span class="tag tag-warn">Optional arm — not executed</span></p>
+<p>Plan (<code>§3.3, revision point ⑤</code>) specified B' to isolate the ~67M parameter-count confound (Arm B's ARTextDecoder). B' would use a narrower decoder (hidden ~256, same depth) to match Arm A's 127.4M.</p>
+<p><strong>Why not run:</strong> Arm B <em>collapsed</em> and Arm B-hybrid's lp (1.37%) is 12.1 pp below baseline (13.49%) — parameter-count differences cannot explain a 12.1 pp gap. The collapse and degradation are driven by <strong>causal attention + data scale</strong>, not by 67M extra parameters. B' would not change the conclusion.</p>
+</div>
+
+<h2>4. C1 Collapse Diagnostic (Visual)</h2>
+<div class="svg-container">
+<svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+<rect width="600" height="280" fill="#0d1117" rx="8"/>
+<text x="300" y="22" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold">C1 Collapse Diagnostic — AR Paradigm Comparison</text>
+<line x1="60" y1="240" x2="560" y2="240" stroke="#30363d" stroke-width="1"/>
+<line x1="60" y1="50" x2="60" y2="240" stroke="#30363d" stroke-width="1"/>
+<text x="310" y="265" text-anchor="middle" fill="#8b949e" font-size="10">Training step</text>
+<text x="20" y="145" text-anchor="middle" fill="#8b949e" font-size="10" transform="rotate(-90 20 145)">C1 (feature cosine)</text>
+<text x="52" y="244" text-anchor="end" fill="#8b949e" font-size="9">0.0</text>
+<text x="52" y="197" text-anchor="end" fill="#8b949e" font-size="9">0.5</text>
+<text x="52" y="150" text-anchor="end" fill="#8b949e" font-size="9">1.0</text>
+<line x1="60" y1="150" x2="560" y2="150" stroke="#f85149" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+<text x="555" y="145" text-anchor="end" fill="#f85149" font-size="9">collapse threshold (0.95)</text>
+<path d="M 60 228 Q 200 226 400 229 L 560 230" stroke="#3fb950" stroke-width="2.5" fill="none"/>
+<text x="440" y="222" fill="#3fb950" font-size="10">Arm A: C1≈0.28 (healthy)</text>
+<path d="M 60 228 L 90 190 L 110 152" stroke="#f85149" stroke-width="2.5" fill="none"/>
+<circle cx="110" cy="152" r="4" fill="#f85149"/>
+<text x="125" y="148" fill="#f85149" font-size="10" font-weight="bold">Arm B: C1=0.97 @600 → FUSE</text>
+<path d="M 60 228 Q 200 205 400 203 L 560 202" stroke="#d29922" stroke-width="2" fill="none" stroke-dasharray="3,2"/>
+<text x="400" y="195" fill="#d29922" font-size="9">R11-H: bidir+no-InfoNCE C1≈0.43</text>
+<path d="M 60 228 Q 150 210 200 198 Q 300 185 400 190 Q 500 195 560 188" stroke="#58a6ff" stroke-width="2.5" fill="none"/>
+<text x="350" y="180" fill="#58a6ff" font-size="10">Arm B-hybrid: C1≈0.48 (no collapse)</text>
+<text x="60" y="255" text-anchor="middle" fill="#8b949e" font-size="9">0</text>
+<text x="190" y="255" text-anchor="middle" fill="#8b949e" font-size="9">600</text>
+<text x="310" y="255" text-anchor="middle" fill="#8b949e" font-size="9">10k</text>
+<text x="430" y="255" text-anchor="middle" fill="#8b949e" font-size="9">20k</text>
+<text x="555" y="255" text-anchor="middle" fill="#8b949e" font-size="9">30k</text>
+</svg>
+</div>
+<p class="note">Arm B (red) shoots through 0.95 at step 600. Arm B-hybrid (blue) stays below 0.55 for 30k steps. Arm A (green) remains ~0.28. R11-H (yellow dashed) stays ~0.43 — proving causal attention is more collapse-prone than bidirectional without contrastive anchor.</p>
+
+<h2>5. Fairness Report</h2>
+<table>
+<tr><th>Metric</th><th>Arm A (baseline)</th><th>Arm B (pure AR)</th><th>Arm B-hybrid</th></tr>
+<tr><td>Trainable parameters</td><td>127.4M</td><td>~194.3M (+67M decoder)</td><td>~194.3M (+67M decoder)</td></tr>
+<tr><td>Training tokens</td><td>~3.0B</td><td>~60M (fused @600)</td><td>~3.0B</td></tr>
+<tr><td>Per-step wall-clock</td><td>~0.21s</td><td>~0.21s (before fuse)</td><td>~0.29s</td></tr>
+<tr><td>Steady-state img/s</td><td>~5000</td><td>2434.5</td><td>2175.9</td></tr>
+<tr><td>C1 (collapse)</td><td>~0.28 ✅</td><td>0.97 @600 🔴</td><td>0.4845 @30k ✅</td></tr>
+<tr><td>C2 (entropy gap)</td><td>positive</td><td>~0.00 (degenerate)</td><td>+0.064 ✅</td></tr>
+<tr><td>C4 (loss trajectory)</td><td>OK</td><td>OK (loss down)</td><td>OK</td></tr>
+<tr><td>GPU·h (8×H100)</td><td>reused</td><td>~0.35</td><td>~2.1</td></tr>
+</table>
+<p class="note">Throughput (revision point ④): Arm B 2434 img/s and Arm B-hybrid 2176 img/s were both below the pre-registered pessimistic estimate (3500–4000), confirming that causal SDPA + attn_mask + full-position PatchPredictor (+66% vs random-mask ~118) add significant overhead.</p>
+
+<h2>6. Difference Attribution</h2>
+<div class="card">
+<h3>6.1 Why Arm B Collapsed</h3>
+<p>Pure causal AR without contrastive collapses because the AR next-patch task admits a <strong>trivial solution</strong>: if all features collapse to one direction, a constant prediction satisfies the loss. Loss decreases (cap 6.77→5.08) but representations are destroyed (C1→0.97).</p>
+<p><strong>Causal vs. bidirectional:</strong> R11-H (bidirectional, no InfoNCE) did <em>not</em> collapse (C1=0.43). Bidirectional attention provides implicit regularization. Causal attention restricts to prefix-only, making trivial collapse easier. → <strong>Collapse = causal × no contrastive</strong> (combined effect).</p>
+</div>
+<div class="card">
+<h3>6.2 Why Arm B-hybrid Survives but Underperforms</h3>
+<p>InfoNCE prevents collapse (C1 0.30–0.55 for 30k steps) by forcing feature dispersion. But lp@30k=1.37% (−12.1 pp vs baseline):</p>
+<ul>
+<li><strong>Information restriction:</strong> Each patch attends only to prefix (0..i). Early patches see very little context.</li>
+<li><strong>Representation quality:</strong> Linear probing needs globally-aware features; causal features are locally biased → poor for classification.</li>
+<li><strong>Zero-shot at chance (0.37%):</strong> Causal vision features cannot align with frozen CLIP text embeddings.</li>
+</ul>
+</div>
+<div class="card">
+<h3>6.3 Why Official AIMv2 Succeeds (Scale Hypothesis)</h3>
+<ol>
+<li><strong>Data volume (1557× gap):</strong> 12B pairs vs 7.7M. At 12B scale, diverse examples may overwhelm the trivial collapse solution.</li>
+<li><strong>Long LLaMA-3 captions:</strong> Rich captions provide strong text-AR signal. Our short alt-text (~20 tokens) → weak cap_loss.</li>
+<li><strong>Possible additional regularization:</strong> Unspecified techniques (EMA, init, scheduling) may further stabilize training.</li>
+</ol>
+<p><strong>Conclusion:</strong> Causal AR <em>requires</em> large-scale data + long captions. At our scale, bidirectional + contrastive is strictly superior. This is a <strong>scale boundary finding</strong>.</p>
+</div>
+
+<h2>7. Pre-Registered Judgment Match</h2>
+<table>
+<tr><th>Arm</th><th>Condition</th><th>Judgment</th><th>Matched?</th></tr>
+<tr><td>Arm B</td><td>C1 &gt; 0.95 → 🔴 collapse</td><td>"No contrastive → collapse"</td><td class="check">✅ Hit (C1=0.97 @600)</td></tr>
+<tr><td>Arm B-hybrid</td><td>Δlp ≤ −1.5 → ❌ non-AR better</td><td>"Contrastive + bidirectional necessary"</td><td class="check">✅ Hit (Δlp = −12.12 pp)</td></tr>
+</table>
+<p><strong>Combined judgment (revision point ⑥):</strong> Δlp = −12.12 pp is far in "❌ non-AR better" zone; C1 = 0.4845 is well below 0.80 threshold. No intermediate judgment needed — result is unambiguous.</p>
+
+<h2>8. Paper §VI-D Wording Suggestions</h2>
+<p>The paper (<code>6_vision_encoder.tex</code>) already includes §VI-D with Table <code>tab:visar</code>. Below are suggestions to ensure the handicap and scale boundary are clearly communicated.</p>
+<div class="card">
+<h4>Suggestion 1: Prominently label the handicap</h4>
+<p><strong>Current</strong> (line 276): "The official AIMv2 avoids this at ~12B pairs with long LLaMA-3 captions..."</p>
+<p><strong>Suggested addition</strong>: "We emphasize that this is a <em>scale boundary</em> finding: the causal AR paradigm's signal accumulates with data volume and caption richness. Our 7.7M short-caption pairs represent a ~1557× data deficit. The negative result should be interpreted as 'short captions + small data cannot sustain causal AR,' not as 'the causal AR paradigm is fundamentally flawed.'"</p>
+</div>
+<div class="card">
+<h4>Suggestion 2: Clarify AR ≠ MAE</h4>
+<p><strong>Suggested addition</strong> in §VI-D: "The AR paradigm is distinct from MAE: AR predicts the <em>next</em> patch given the causal prefix (position <code>i</code> sees 0..<code>i</code>, target is <code>i</code>+1), while MAE reconstructs <em>masked</em> positions given bidirectional context. The shift-by-1 MSE implements AR, not MAE."</p>
+</div>
+<div class="card">
+<h4>Suggestion 3: Causal-vs-bidirectional asymmetry</h4>
+<p><strong>Already present</strong> (line 248): Well-stated. No change needed.</p>
+</div>
+<div class="card">
+<h4>Suggestion 4: Fairness metrics footnote</h4>
+<p><strong>Suggested</strong> for Table <code>tab:visar</code> caption: "Arm B and B-hybrid include a trainable ARTextDecoder (~66.8M), total ~194.3M vs. 127.4M for Arm A. Parameter confound not isolated (B' not run) because the 12.1 pp gap exceeds what 67M parameters could explain. Throughput: Arm B 2434 img/s, B-hybrid 2176 img/s, vs. Arm A ~5000."</p>
+</div>
+
+<h2>9. License Compliance</h2>
+<div class="card">
+<ul>
+<li>🔴 No code copied from <code>ml-aim/AIMv2</code> (Apple Sample Code License).</li>
+<li>✅ Implementation based on AIMv2 paper description (arXiv 2411.14444), self-developed.</li>
+<li>✅ Reused in-repo code: <code>CoCaDecoder</code>, <code>PatchPredictor</code> — self-developed or Apache-2.0.</li>
+<li>Results labeled: "Self-developed implementation (not official weight reproduction)."</li>
+</ul>
+</div>
+
+<div class="refs">
+<h3>References &amp; Evidence</h3>
+<ul>
+<li>Plan: <code>run/VISION_AIMV2_OFFICIAL_PLAN.md</code> (commit 8a7d2093)</li>
+<li>Results: <code>run/EXPERIMENTS_VISION.md §R13</code> (lines 205–268)</li>
+<li>Paper: <code>ISEDA2027/6_vision_encoder.tex §VI-D</code> (lines 236–277)</li>
+<li>Logs: <code>/tmp/r13_aimv2_ar.log</code> (Arm B), <code>/tmp/r13_aimv2_ar_hybrid.log</code> (Arm B-hybrid)</li>
+<li>Scripts: <code>vision/run_aimv2_ar.sh</code>, <code>vision/run_aimv2_ar_hybrid.sh</code></li>
+<li>Related: <a href="report_vision_final_20261008.html">Full-line final summary v2</a> · <a href="report_vision_encoder_final.html">v1</a> · <a href="report_vision_mask_ratio.html">mask-ratio</a> · <a href="report_vision_lp_protocol.html">lp protocol</a> · <a href="report_vision_aimv2_impl.html">AIMv2 impl</a></li>
+</ul>
+</div>
+</body>
+</html>

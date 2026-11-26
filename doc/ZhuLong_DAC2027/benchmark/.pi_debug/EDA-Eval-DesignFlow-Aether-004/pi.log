@@ -1,0 +1,34 @@
+=== pi-SUT Aether-004 start 2026-10-30 07:33:26 ===
+=== pi-SUT Aether-004 start 2026-10-30 07:33:26 ===
+=== pi exit=0 end 2026-10-30 07:39:45 ===
+=== tail pi_run.log ===
+    } elseif {[llength $missing] > 0} {
+        set verdict "INCOMPLETE"
+    } elseif {!$has_summary} {
+        set verdict "INCOMPLETE"
+    } else {
+        set verdict "PASS"
+    }
+
+    return [dict create total_layers $total_layers total_shapes $total_shapes \
+        drawing_layers $drawing pin_layers $pin label_layers $label \
+        dup_gdsno $dup missing_purpose_layers $missing max_shape_layer $max_name \
+        mismatched_summary $mismatched verdict $verdict]
+}
+```
+
+Key semantics covered: last-wins on duplicate names; distinct-name counting; `count` default 0; case-insensitive purpose; empty purpose → `missing_purpose_layers` (not drawing); dup detection on the `(gdsno, datatype)` pair; ALL layers of a shared pair listed; max-shape tie-break via `lsort -dictionary` iteration; mismatch on provided SUMMARY fields only; verdict priority `dup > missing > no-summary > PASS`.
+
+## Sandbox verification (Empyrean WaveView Tcl, .75)
+
+```
+RESULT:ALL_ASSERTS_PASS
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+
+`error_log` was empty. Session workdir cleaned up.
+
+DESIGN_FLOW_VERDICT=PASS — the implementation passes all 13 checker cases (A–M).
+
+**State: PASS**

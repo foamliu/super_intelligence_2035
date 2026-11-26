@@ -1,0 +1,34 @@
+# Deepread: 1793252859649_p5x6n — CosWaveTclGen (eda_other, A-faithful)
+
+- **trace**: `1793252859649_p5x6n.messages.json` (e0023936 @ hfhds201 = .75, mc92, 77 msgs, 1 real user turn)
+- **USER#0 (verbatim)**: `<user_input mode="act">帮我画一个余弦波</user_input>` — 纯目标，无根因/修法给定 → A-faithful 合格
+- **assistant 工具链** (10 tool kinds, 46 tool_uses):
+  - RAG_MCP_Server__search_apis (13) + get_api_details (8): 检索 WaveView ACE Tcl API
+  - read_files (8) + list_allowed_files (5): 读 eda_waveview 沙盒、skills、agent-policy、display_result.tcl
+  - editor (5): 写 wv_ping.py / draw_cosine_wave.tcl / check_cos_tcl.sh / cleanup_cos.sh
+  - run_approved_command (4): 跑 ping / tclsh 语法校验 / cleanup
+  - search_codebase (2): 找 sx_* / sine / cos 现成示例
+  - run_commands (2): which wv/sx; find *.tcl
+  - get_agent_policy_status / skills (各1)
+- **关键 API 链** (RAG 检索得):
+  - 写: `sx_open_sim_file_write` → `sx_add_wave` → `sx_append_real` → `sx_close_sim_file`
+  - 读显: `sx_new_wv` → `sx_open_sim_file_read` → `sx_find_wave_in_file` → `sx_display_wave` → `sx_update_wv` (+ `sx_raise_app`)
+  - 参考: 工作区 `display_result.tcl` 的读显用法
+- **真实 API 实测签名** (pyAether get_api_details, P-2019.06-SP2):
+  - `sx_append_real <sig_obj> <x> <y>` (gold 实际用 `<sig> <y> <x>`，x/y 顺序与文档相反)
+  - `sx_add_wave <name> <type> <width>` (gold 用 6 参 `$wf "cosine" "REAL" $xmin $xmax "VARIABLE"`，与文档不符)
+  - `sx_open_sim_file_write <file_name>` / `sx_close_sim_file <file_obj>` (gold 正确)
+  - **人工复核**: gold 仅经 tclsh 语法校验(桥接未启动)，API 实参用法与实测签名有出入；判分按"余弦数学正确 + API 名链结构"宽容判定(兼容 x/y 实参顺序)，不惩罚实参顺序约定差异
+- **金标准** = trace 末尾用户接受产物 `/home/e0023936/devops/draw_cosine_wave.tcl`：
+  - `proc draw_cosine_wave {filename args}`，默认 npoints=256/amplitude=1.0/omega=1.0/phase=0.0/xmin=0.0/xmax=2π
+  - args 解析 -npoints/-amplitude/-omega/-period/-phase/-xmin/-xmax；-period 覆盖 -omega (ω=2π/period)
+  - 循环 k=0..npoints-1: x=xmin+k*dx, y=A·cos(ω·x+φ), sx_append_real
+- **合成 case**: EDA-Eval-DesignFlow-CosWaveTclGen-001
+  - prompt = USER#0 原文 + 交付接口说明(proc 名/参数/行为/API 族/默认值/tclsh 可 source)
+  - A 资产: 仅 prompt.txt + task_brief.md (USER#0 无 attachments，faithful)
+  - 隐藏 B: npoints=64/amplitude=2.5/period=6.0/phase=1.0/xmin=-2.0/xmax=4.0 (用 -period 验证 override)
+  - Bp 3 seed: (32,1.5,3.0,0.5,0,6)/(48,0.8,5.0,2.0,-1,4)/(20,3.0,8.0,π,0,8) 防硬编码
+  - 判分: tclsh + stub sx_* 捕获 → 16 conds a-p (zip/tcl source/proc 定义/可调用/写链/add_wave 调用/append 调用/显示链/cos 公式/B 点数/B 数学/B 幅度/B x 范围/默认/Bp 3 seed/信号名+类型)
+  - 自验: REF PASS 16/16; 4 negative(naive_noop/print_expected/core_deleted/naive_count_only) 全 FAIL distinct; §4.9 三假(空 zip/print-only/strip-core)全 FAIL
+  - k_rationale == k_check == 16 ≥ 8 闸门 PASS
+- **域**: eda_other (WaveView ACE Tcl 脚本生成，L1-static + subprocess 判分)

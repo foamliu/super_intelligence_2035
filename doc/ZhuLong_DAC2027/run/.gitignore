@@ -1,0 +1,4 @@
+# 两轴消融 (think×lang) 原始数据 / 成本 / 哨兵 —— 不入 git (任务书 §5/§6 护栏)
+ablation_think_lang_results.json
+cost_*.json
+.ablation_think_lang_DONE

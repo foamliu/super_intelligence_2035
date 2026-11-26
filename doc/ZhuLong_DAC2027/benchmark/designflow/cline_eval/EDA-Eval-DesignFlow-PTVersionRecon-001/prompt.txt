@@ -1,0 +1,1 @@
+分析此目录/apps/synopsys/primetime下的各项文件夹有什么区别；如果我想使用primetime 来调试STA flow，我应该选择哪个版本去使用？

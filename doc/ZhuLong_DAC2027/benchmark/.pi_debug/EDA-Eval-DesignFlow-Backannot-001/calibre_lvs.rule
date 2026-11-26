@@ -1,0 +1,35 @@
+// =========================================================================
+// Calibre LVS rule file fragment  (脱敏合成)
+// Design: DRAMTOP
+// =========================================================================
+LAYOUT PATH "DRAMTOP.gds"
+LAYOUT PRIMARY "DRAMTOP"
+SOURCE PATH "DRAMTOP.cdl.mod"
+SOURCE SYSTEM SPICE
+
+LVS BOX GRAY I_Array16GTop
+LVS BOX GRAY I_Array8G_SC1
+
+// net name mapping: schematic (layout CDL) net name -> source net name.
+// Format:  CellName#OldNetName#NewNetName
+//   CellName  = the hierarchical cell where the rename applies
+//   OldNetName= net name in the layout/CDL (post-merge, SPEF side)
+//   NewNetName= net name in the source netlist (Cadence SI, full hierarchy)
+//
+// Used to absorb cross-vendor hierarchy merge mismatches so LVS (and the
+// downstream CDL ignore for read_parasitics) can map merged trivial nodes
+// back to their full-hierarchy names.
+LVS PREFER NETS FILTER
+    I_Array8G_SC1#ACDef#net0296
+    I_Array8G_SC1#ACLevelA#net023
+    I_CMAryB_222#ACDef#net0296
+    I_CMAryB_222#ACLevelA#net023
+
+// To ignore a merge-trivial-node backannotation failure in CDL, add a
+// CDL IGNORE entry of the same CellName#OldNetName#NewNetName form:
+//   .IGNORE_NET I_CMAryB_222#net0296#ACDef[3]
+//   .IGNORE_NET I_CMAryB_222#net023#ACLevelA[1]
+
+LVS IGNORE TRIVIAL NAMED  // StarRC-merged trivial nodes may be ignored
+
+// END of fragment

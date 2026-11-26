@@ -1,0 +1,720 @@
+{
+  "R88": {
+    "total_tasks": 158,
+    "total_traces": 103,
+    "total_errors": 20,
+    "failure_mode_counts": {
+      "logic_error": 13,
+      "import_error": 2,
+      "type_error": 1,
+      "api_misuse": 3,
+      "timeout": 1
+    },
+    "irreducible_counts": {
+      "irreducible": 12,
+      "partially_reducible": 6,
+      "avoidable": 2
+    },
+    "scenario_stats": {
+      "Schematic": {
+        "total": 47,
+        "errors": 4
+      },
+      "Others": {
+        "total": 23,
+        "errors": 5
+      },
+      "Layout": {
+        "total": 64,
+        "errors": 8
+      },
+      "Design Management": {
+        "total": 24,
+        "errors": 3
+      }
+    },
+    "category_stats": {
+      "Utilities": {
+        "total": 15,
+        "errors": 3
+      },
+      "Geometry Operation & Analysis": {
+        "total": 26,
+        "errors": 3
+      },
+      "Design Content Creation": {
+        "total": 46,
+        "errors": 5
+      },
+      "Database & Design Management": {
+        "total": 25,
+        "errors": 2
+      },
+      "Design Content Query & Edit": {
+        "total": 25,
+        "errors": 4
+      },
+      "Simulation & Analysis Configuration": {
+        "total": 21,
+        "errors": 3
+      }
+    },
+    "techlib_stats": {
+      "dep_total": 45,
+      "dep_errors": 5,
+      "nodep_total": 113,
+      "nodep_errors": 15
+    },
+    "ceiling": {
+      "total_run": 103,
+      "total_errors": 20,
+      "raw_failure_rate": 0.1941747572815534,
+      "extrapolated_failures_158": 30.679611650485437,
+      "irreducible_count": 12,
+      "partially_reducible_count": 6,
+      "avoidable_count": 2,
+      "unknown_count": 0,
+      "truly_hard_per_run": 15.0,
+      "truly_hard_rate": 0.14563106796116504,
+      "ceiling_failures_158": 23.009708737864077,
+      "ceiling_pass_rate": 0.854368932038835,
+      "ceiling_pass_pct": 85.4368932038835
+    },
+    "curriculum": {
+      "L1_trivial": 0,
+      "L2_basic": 0,
+      "L3_medium": 7,
+      "L4_advanced": 11,
+      "L5_challenge": 2
+    },
+    "error_details": [
+      {
+        "task_id": "EDA-Eval-PyAether-009",
+        "entry_point": "open_cellview_by_type",
+        "filename": "EDA-Eval-PyAether_009.json",
+        "conv_len": 46,
+        "tool_calls": 8,
+        "tool_types": {
+          "list_files": 3,
+          "execute_command": 2,
+          "write_to_file": 2,
+          "read_file": 1
+        },
+        "iterations": 4,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "logic_error": 8,
+          "api_misuse": 2
+        },
+        "irreducible": "irreducible",
+        "score": 4,
+        "reasons": [
+          "apis=7",
+          "dual_err=2",
+          "logic_deep"
+        ],
+        "scenario": "Design Management",
+        "category": "Database & Design Management",
+        "num_unique_apis": 7,
+        "techlib_dependency": false,
+        "lines_of_code": 1,
+        "task_name": "Open a Cellview by Library, Cell, and View Names with Specified Mode"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-014",
+        "entry_point": "create_schematic_pins",
+        "filename": "EDA-Eval-PyAether_014.json",
+        "conv_len": 45,
+        "tool_calls": 6,
+        "tool_types": {
+          "list_files": 2,
+          "execute_command": 2,
+          "write_to_file": 1,
+          "read_file": 1
+        },
+        "iterations": 3,
+        "failure_mode": "import_error",
+        "error_signals": {
+          "import_error": 4
+        },
+        "irreducible": "irreducible",
+        "score": 4,
+        "reasons": [
+          "techlib=True",
+          "apis=10"
+        ],
+        "scenario": "Layout",
+        "category": "Design Content Creation",
+        "num_unique_apis": 10,
+        "techlib_dependency": true,
+        "lines_of_code": 6,
+        "task_name": "Batch Place Instances in Layout"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-015",
+        "entry_point": "get_design_object_type",
+        "filename": "EDA-Eval-PyAether_015.json",
+        "conv_len": 56,
+        "tool_calls": 8,
+        "tool_types": {
+          "list_files": 2,
+          "execute_command": 3,
+          "write_to_file": 3
+        },
+        "iterations": 6,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "logic_error": 3,
+          "api_misuse": 2,
+          "syntax_error": 1,
+          "import_error": 1
+        },
+        "irreducible": "irreducible",
+        "score": 5,
+        "reasons": [
+          "apis=7",
+          "multi_err=4",
+          "logic_deep"
+        ],
+        "scenario": "Design Management",
+        "category": "Design Content Query & Edit",
+        "num_unique_apis": 7,
+        "techlib_dependency": false,
+        "lines_of_code": 1,
+        "task_name": "Get Design Object Type from CellView"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-016",
+        "entry_point": "get_first_instance_name",
+        "filename": "EDA-Eval-PyAether_016.json",
+        "conv_len": 94,
+        "tool_calls": 10,
+        "tool_types": {
+          "list_files": 3,
+          "execute_command": 2,
+          "write_to_file": 4,
+          "read_file": 1
+        },
+        "iterations": 6,
+        "failure_mode": "type_error",
+        "error_signals": {
+          "type_error": 10,
+          "api_misuse": 8,
+          "logic_error": 4
+        },
+        "irreducible": "irreducible",
+        "score": 6,
+        "reasons": [
+          "techlib=True",
+          "apis=8",
+          "multi_err=3"
+        ],
+        "scenario": "Schematic",
+        "category": "Design Content Query & Edit",
+        "num_unique_apis": 8,
+        "techlib_dependency": true,
+        "lines_of_code": 4,
+        "task_name": "Get the Name of the First Instance in a CellView Design Object"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-022",
+        "entry_point": "get_instances_by_master_cell",
+        "filename": "EDA-Eval-PyAether_022.json",
+        "conv_len": 92,
+        "tool_calls": 9,
+        "tool_types": {
+          "list_files": 2,
+          "execute_command": 3,
+          "write_to_file": 4
+        },
+        "iterations": 7,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "logic_error": 8,
+          "import_error": 2
+        },
+        "irreducible": "irreducible",
+        "score": 4,
+        "reasons": [
+          "apis=9",
+          "dual_err=2",
+          "logic_deep"
+        ],
+        "scenario": "Schematic",
+        "category": "Design Content Query & Edit",
+        "num_unique_apis": 9,
+        "techlib_dependency": false,
+        "lines_of_code": 6,
+        "task_name": "Filter Schematic Instances by Master Cell Name"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-026",
+        "entry_point": "configure_lpp_header",
+        "filename": "EDA-Eval-PyAether_026.json",
+        "conv_len": 72,
+        "tool_calls": 2,
+        "tool_types": {
+          "execute_command": 1,
+          "write_to_file": 1
+        },
+        "iterations": 2,
+        "failure_mode": "api_misuse",
+        "error_signals": {
+          "api_misuse": 4,
+          "logic_error": 2
+        },
+        "irreducible": "partially_reducible",
+        "score": 3,
+        "reasons": [
+          "apis=10",
+          "dual_err=2"
+        ],
+        "scenario": "Layout",
+        "category": "Design Content Creation",
+        "num_unique_apis": 10,
+        "techlib_dependency": false,
+        "lines_of_code": 4,
+        "task_name": "Configure a Layer-Purpose Pair (LPP) Header Object with Layer, Purpose, Packet Name, and Priority"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-027",
+        "entry_point": "get_bbox_from_points",
+        "filename": "EDA-Eval-PyAether_027.json",
+        "conv_len": 6,
+        "tool_calls": 2,
+        "tool_types": {
+          "list_files": 1,
+          "execute_command": 1
+        },
+        "iterations": 1,
+        "failure_mode": "timeout",
+        "error_signals": {},
+        "irreducible": "partially_reducible",
+        "score": 2,
+        "reasons": [
+          "apis=7"
+        ],
+        "scenario": "Layout",
+        "category": "Geometry Operation & Analysis",
+        "num_unique_apis": 7,
+        "techlib_dependency": false,
+        "lines_of_code": 9,
+        "task_name": "Calculate Bounding Box from a List of 2D Points"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-031",
+        "entry_point": "simplify_polygon",
+        "filename": "EDA-Eval-PyAether_031.json",
+        "conv_len": 58,
+        "tool_calls": 4,
+        "tool_types": {
+          "execute_command": 2,
+          "write_to_file": 1,
+          "list_files": 1
+        },
+        "iterations": 3,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "logic_error": 17,
+          "missing_dependency": 1,
+          "import_error": 3,
+          "api_misuse": 1
+        },
+        "irreducible": "irreducible",
+        "score": 4,
+        "reasons": [
+          "apis=5",
+          "multi_err=4",
+          "logic_deep"
+        ],
+        "scenario": "Layout",
+        "category": "Geometry Operation & Analysis",
+        "num_unique_apis": 5,
+        "techlib_dependency": false,
+        "lines_of_code": 6,
+        "task_name": "Simplify a Closed Polygon by Removing Redundant Vertices"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-051",
+        "entry_point": "format_verilog_signal",
+        "filename": "EDA-Eval-PyAether_051.json",
+        "conv_len": 96,
+        "tool_calls": 10,
+        "tool_types": {
+          "execute_command": 5,
+          "write_to_file": 4,
+          "read_file": 1
+        },
+        "iterations": 10,
+        "failure_mode": "import_error",
+        "error_signals": {
+          "import_error": 2
+        },
+        "irreducible": "avoidable",
+        "score": 1,
+        "reasons": [
+          "apis=5"
+        ],
+        "scenario": "Others",
+        "category": "Utilities",
+        "num_unique_apis": 5,
+        "techlib_dependency": false,
+        "lines_of_code": 9,
+        "task_name": "Format Verilog Signal Name Using EmyNtlUtil with Mode Selection"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-052",
+        "entry_point": "validate_netlist_configurations",
+        "filename": "EDA-Eval-PyAether_052.json",
+        "conv_len": 28,
+        "tool_calls": 7,
+        "tool_types": {
+          "list_files": 2,
+          "execute_command": 3,
+          "write_to_file": 1,
+          "read_file": 1
+        },
+        "iterations": 4,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "logic_error": 11,
+          "import_error": 2
+        },
+        "irreducible": "irreducible",
+        "score": 5,
+        "reasons": [
+          "apis=6",
+          "loc=38",
+          "dual_err=2",
+          "logic_deep"
+        ],
+        "scenario": "Schematic",
+        "category": "Simulation & Analysis Configuration",
+        "num_unique_apis": 6,
+        "techlib_dependency": false,
+        "lines_of_code": 38,
+        "task_name": "Batch Validate Netlist View Configurations for CI/CD Health Checks"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-054",
+        "entry_point": "configure_simulation_policy",
+        "filename": "EDA-Eval-PyAether_054.json",
+        "conv_len": 34,
+        "tool_calls": 7,
+        "tool_types": {
+          "list_files": 2,
+          "execute_command": 2,
+          "write_to_file": 2,
+          "read_file": 1
+        },
+        "iterations": 5,
+        "failure_mode": "api_misuse",
+        "error_signals": {
+          "api_misuse": 8
+        },
+        "irreducible": "partially_reducible",
+        "score": 2,
+        "reasons": [
+          "apis=5",
+          "loc=14"
+        ],
+        "scenario": "Others",
+        "category": "Simulation & Analysis Configuration",
+        "num_unique_apis": 5,
+        "techlib_dependency": false,
+        "lines_of_code": 14,
+        "task_name": "Configure Donau Job Simulation Policy with Conditional Logic"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-058",
+        "entry_point": "generate_balanced_policies",
+        "filename": "EDA-Eval-PyAether_058.json",
+        "conv_len": 28,
+        "tool_calls": 4,
+        "tool_types": {
+          "execute_command": 1,
+          "write_to_file": 1,
+          "read_file": 1,
+          "list_files": 1
+        },
+        "iterations": 3,
+        "failure_mode": "api_misuse",
+        "error_signals": {
+          "api_misuse": 6,
+          "import_error": 1
+        },
+        "irreducible": "partially_reducible",
+        "score": 2,
+        "reasons": [
+          "apis=5",
+          "dual_err=2"
+        ],
+        "scenario": "Others",
+        "category": "Simulation & Analysis Configuration",
+        "num_unique_apis": 5,
+        "techlib_dependency": false,
+        "lines_of_code": 10,
+        "task_name": "Batch Generate Balanced OGE Job Policies with Priority and Resource Rules"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-063",
+        "entry_point": "get_cell_file_type",
+        "filename": "EDA-Eval-PyAether_063.json",
+        "conv_len": 53,
+        "tool_calls": 11,
+        "tool_types": {
+          "list_files": 3,
+          "execute_command": 4,
+          "write_to_file": 1,
+          "read_file": 3
+        },
+        "iterations": 8,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "logic_error": 23
+        },
+        "irreducible": "partially_reducible",
+        "score": 3,
+        "reasons": [
+          "apis=7",
+          "logic_deep"
+        ],
+        "scenario": "Design Management",
+        "category": "Database & Design Management",
+        "num_unique_apis": 7,
+        "techlib_dependency": false,
+        "lines_of_code": 4,
+        "task_name": "Get DM Cell File Object Type from Library, Cell, and View"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-066",
+        "entry_point": "adjust_job_policy",
+        "filename": "EDA-Eval-PyAether_066.json",
+        "conv_len": 28,
+        "tool_calls": 6,
+        "tool_types": {
+          "list_files": 2,
+          "execute_command": 1,
+          "write_to_file": 1,
+          "read_file": 2
+        },
+        "iterations": 2,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "logic_error": 1
+        },
+        "irreducible": "avoidable",
+        "score": 1,
+        "reasons": [
+          "logic_deep"
+        ],
+        "scenario": "Others",
+        "category": "Utilities",
+        "num_unique_apis": 3,
+        "techlib_dependency": false,
+        "lines_of_code": 10,
+        "task_name": "Dynamically Adjust Job Policy Based on CPU Load and User Limit"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-074",
+        "entry_point": "create_wrapped_qstring_list",
+        "filename": "EDA-Eval-PyAether_074.json",
+        "conv_len": 50,
+        "tool_calls": 10,
+        "tool_types": {
+          "list_files": 3,
+          "execute_command": 2,
+          "write_to_file": 4,
+          "read_file": 1
+        },
+        "iterations": 6,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "logic_error": 4
+        },
+        "irreducible": "partially_reducible",
+        "score": 2,
+        "reasons": [
+          "apis=4",
+          "logic_deep"
+        ],
+        "scenario": "Others",
+        "category": "Utilities",
+        "num_unique_apis": 4,
+        "techlib_dependency": false,
+        "lines_of_code": 7,
+        "task_name": "Create a CStringList with Conditional Logic for Empty String Handling"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-075",
+        "entry_point": "batch_create_sorted_lpps",
+        "filename": "EDA-Eval-PyAether_075.json",
+        "conv_len": 97,
+        "tool_calls": 12,
+        "tool_types": {
+          "list_files": 1,
+          "execute_command": 1,
+          "write_to_file": 10
+        },
+        "iterations": 11,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "api_misuse": 1,
+          "type_error": 4,
+          "logic_error": 9
+        },
+        "irreducible": "irreducible",
+        "score": 6,
+        "reasons": [
+          "apis=10",
+          "loc=13",
+          "multi_err=3",
+          "logic_deep"
+        ],
+        "scenario": "Layout",
+        "category": "Design Content Creation",
+        "num_unique_apis": 10,
+        "techlib_dependency": false,
+        "lines_of_code": 13,
+        "task_name": "Batch Create, Configure, and Sort LPP Header Objects by Priority"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-086",
+        "entry_point": "create_custom_symbol_pin",
+        "filename": "EDA-Eval-PyAether_086.json",
+        "conv_len": 54,
+        "tool_calls": 9,
+        "tool_types": {
+          "list_files": 3,
+          "execute_command": 2,
+          "write_to_file": 3,
+          "read_file": 1
+        },
+        "iterations": 7,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "type_error": 13,
+          "logic_error": 18,
+          "import_error": 3
+        },
+        "irreducible": "irreducible",
+        "score": 5,
+        "reasons": [
+          "apis=11",
+          "multi_err=3",
+          "logic_deep"
+        ],
+        "scenario": "Schematic",
+        "category": "Design Content Creation",
+        "num_unique_apis": 11,
+        "techlib_dependency": false,
+        "lines_of_code": 5,
+        "task_name": "Create a Custom Polygonal Symbol Pin with Coordinate List"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-091",
+        "entry_point": "create_physical_pin",
+        "filename": "EDA-Eval-PyAether_091.json",
+        "conv_len": 93,
+        "tool_calls": 5,
+        "tool_types": {
+          "list_files": 1,
+          "execute_command": 2,
+          "write_to_file": 2
+        },
+        "iterations": 5,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "logic_error": 4,
+          "missing_dependency": 2,
+          "api_misuse": 4,
+          "import_error": 3
+        },
+        "irreducible": "irreducible",
+        "score": 6,
+        "reasons": [
+          "techlib=True",
+          "apis=5",
+          "multi_err=4",
+          "logic_deep"
+        ],
+        "scenario": "Layout",
+        "category": "Design Content Creation",
+        "num_unique_apis": 5,
+        "techlib_dependency": true,
+        "lines_of_code": 2,
+        "task_name": "Create a Physical Pin Object by Associating a Geometric Figure with a Net and Terminal"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-092",
+        "entry_point": "resize_and_move_shapes",
+        "filename": "EDA-Eval-PyAether_092.json",
+        "conv_len": 98,
+        "tool_calls": 24,
+        "tool_types": {
+          "list_files": 1,
+          "execute_command": 14,
+          "write_to_file": 8,
+          "read_file": 1
+        },
+        "iterations": 23,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "missing_dependency": 3,
+          "api_misuse": 12,
+          "type_error": 33,
+          "logic_error": 56,
+          "import_error": 10,
+          "syntax_error": 4
+        },
+        "irreducible": "irreducible",
+        "score": 8,
+        "reasons": [
+          "techlib=True",
+          "apis=10",
+          "multi_err=6",
+          "logic_deep",
+          "long_conv=98"
+        ],
+        "scenario": "Layout",
+        "category": "Geometry Operation & Analysis",
+        "num_unique_apis": 10,
+        "techlib_dependency": true,
+        "lines_of_code": 8,
+        "task_name": "Resize and Move Layout Figures Using dbResize API"
+      },
+      {
+        "task_id": "EDA-Eval-PyAether-098",
+        "entry_point": "delete_design_figures",
+        "filename": "EDA-Eval-PyAether_098.json",
+        "conv_len": 80,
+        "tool_calls": 10,
+        "tool_types": {
+          "list_files": 3,
+          "execute_command": 2,
+          "write_to_file": 5
+        },
+        "iterations": 8,
+        "failure_mode": "logic_error",
+        "error_signals": {
+          "logic_error": 12,
+          "type_error": 7
+        },
+        "irreducible": "irreducible",
+        "score": 6,
+        "reasons": [
+          "techlib=True",
+          "apis=11",
+          "dual_err=2",
+          "logic_deep"
+        ],
+        "scenario": "Layout",
+        "category": "Design Content Query & Edit",
+        "num_unique_apis": 11,
+        "techlib_dependency": true,
+        "lines_of_code": 4,
+        "task_name": "Delete Multiple Design Figures Using Vector Conversion"
+      }
+    ]
+  }
+}

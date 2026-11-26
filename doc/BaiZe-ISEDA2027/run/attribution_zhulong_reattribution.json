@@ -1,0 +1,177 @@
+{
+  "directive": "2026-11-15 08:1x user order: re-run 158 eval the zhulong way + re-attribute (exclude run_commands)",
+  "baseline_run": "attribution_3615_run1 (36.15, official eda_fastmcp run_cline_script.sh, PreToolUse hook active)",
+  "is_zhulong_method": true,
+  "zhulong_method_evidence": [
+    "PreToolUse hook deployed to ~/.cline/hooks/PreToolUse (36.15), mtime 2026-11-15 07:35",
+    "run_commands overridden 1051 times = hook design (run_commands disabled), NOT model deficit",
+    "3 KB tools + run_code all used: get_api_details 354, search_apis 285, search_apis_by_keyword 232, run_code 96 successful attempts",
+    "official pipeline: format_eval_task.py + run_cli.sh + run_eval.py (final_report.json matches run_eval output)",
+    "providers.json (36.15): model=minicpm5-2b-sft-v39-final, baseUrl=http://127.0.0.1:18096/v1 (reverse tunnel to .17:8096)",
+    "EDA_PROMPT_TEMPLATE_PYAETHER=eval_sys_prompt_template_old.md"
+  ],
+  "cli_versions": {
+    "zhulong_fork": "3.0.29",
+    "cline_official": "3.0.51"
+  },
+  "funnel": {
+    "total": 158,
+    "gen_success": 36,
+    "gen_fail": 121,
+    "gen_timeout": 1,
+    "passed": 30,
+    "pass_rate": 0.1899,
+    "gen_success_then_pass_rate": 0.8333
+  },
+  "Q1_real_mcp_rejection_rate_exclude_run_commands": {
+    "definition": "only search_apis/get_api_details/search_apis_by_keyword/run_code; run_commands EXCLUDED (built-in tool disabled by hook)",
+    "per_tool": {
+      "get_api_details": {
+        "rejections": 41,
+        "successful_attempts": 354,
+        "total_attempts": 395,
+        "rejection_rate": 0.1038
+      },
+      "search_apis": {
+        "rejections": 17,
+        "successful_attempts": 285,
+        "total_attempts": 302,
+        "rejection_rate": 0.0563
+      },
+      "search_apis_by_keyword": {
+        "rejections": 5,
+        "successful_attempts": 232,
+        "total_attempts": 237,
+        "rejection_rate": 0.0211
+      },
+      "run_code": {
+        "rejections": 3,
+        "successful_attempts": 96,
+        "total_attempts": 99,
+        "rejection_rate": 0.0303
+      }
+    },
+    "total_real_mcp_rejections": 66,
+    "total_real_mcp_attempts": 1033,
+    "overall_real_mcp_rejection_rate": 0.0601,
+    "verdict": "LOW (~5-6%). Model CAN call real MCP tools. The prior 80.6%% run_commands figure is hook design, not model deficit."
+  },
+  "Q2_run_code_rejection_rate": {
+    "run_code_rejections": 3,
+    "run_code_successful_attempts": 96,
+    "run_code_rejection_rate": 0.0303,
+    "run_code_variants_rejections_incl": 9,
+    "run_code_variants_attempts_incl": 106,
+    "run_code_variants_rejection_rate_incl": 0.0783,
+    "verdict": "VERY LOW (~3%%). run_code (the only execution channel in the white-list) works. Real execution ability is present."
+  },
+  "Q3_silent_no_generation": {
+    "silent_no_gen_tasks": 45,
+    "out_of_gen_fail": 121,
+    "share_of_gen_fail": 0.3719,
+    "share_of_158": 0.2848,
+    "characteristics": "zero rejections, zero tool calls, gen_fail -> model never entered the agent loop",
+    "verdict": "45 tasks (28.5%% of 158) silently never entered the agent loop. NOT a tool-format problem; a model-doesnt-start problem. Unchanged by the tool-face switch."
+  },
+  "Q4_pass1_diff_decomposition": {
+    "old_baseline": {
+      "label": "old_.17_nonzhulong",
+      "pass_rate_5run_mean": 0.0304,
+      "pass_rate_5run_std": 0.0083,
+      "n_runs": 5,
+      "model": "minicpm5-2b-sft-v39-final (global_step_105)",
+      "env": ".17 local eda_fastmcp clone, no RAG, no MCP sandbox, run_commands ENABLED (no PreToolUse hook)",
+      "benchmark": "EDA-Eval-PyAether-v20260311_fixed.jsonl (158 tasks)",
+      "source": "MEMORY step105 5-run mean 0.0304+/-0.0083 (locked)"
+    },
+    "new_baseline": {
+      "label": "new_3615_zhulong",
+      "pass_rate": 0.1899,
+      "n_runs": 1,
+      "model": "minicpm5-2b-sft-v39-final (global_step_105) via reverse tunnel 18096->.17:8096",
+      "env": "36.15 official eda_fastmcp pipeline, PreToolUse hook (run_commands DISABLED), RAG + MCP sandbox reachable",
+      "benchmark": "EDA-Eval-PyAether-158 (158 tasks)",
+      "cli_versions": {
+        "zhulong_fork": "3.0.29",
+        "cline_official": "3.0.51"
+      },
+      "source": "attribution_3615_run1/final_report.json (2026-11-14T20:08)",
+      "note_single_run": "single run; 5-run mean+/-std pending (protocol Sec.2)"
+    },
+    "pass1_diff_pp": 15.95,
+    "decomposition": [
+      {
+        "factor": "tool_face",
+        "detail": "run_commands DISABLED by hook (1051 rejections removed from deficit); RAG 3 KB tools + run_code ENABLED & reachable",
+        "direction": "enables retrieval+execution"
+      },
+      {
+        "factor": "knowledge",
+        "detail": "RAG API-doc knowledge base reachable on 36.15 (:9009 recall) vs none on .17",
+        "direction": "+retrieval"
+      },
+      {
+        "factor": "sandbox",
+        "detail": "MCP sandbox (run_code -> EDA env) reachable via 36.15 SANDBOX_ENDPOINTS vs none on .17",
+        "direction": "+execution"
+      },
+      {
+        "factor": "prompt",
+        "detail": "same EDA_PROMPT_TEMPLATE_PYAETHER=eval_sys_prompt_template_old.md (controlled)",
+        "direction": "neutral"
+      },
+      {
+        "factor": "concurrency",
+        "detail": "-p 8 -n both (controlled)",
+        "direction": "neutral"
+      },
+      {
+        "factor": "n_runs",
+        "detail": "old=5-run mean, new=1-run -> diff not yet statistically tested (McNemar/bootstrap pending 5-run)",
+        "direction": "caveat"
+      }
+    ],
+    "verdict": "+15.95pp jump attributable MAINLY to environment (RAG+sandbox reachable), NOT to run_commands being disabled. Prior model-cant-call-MCP-tools attribution INVALIDATED: real MCP rejection ~5-6%%, run_code ~3%%."
+  },
+  "rejection_breakdown_full": {
+    "total_rejections": 1304,
+    "run_commands_rejections_hook_design": 1051,
+    "run_commands_share": 0.806,
+    "real_mcp_rejections": 66,
+    "workspace_confinement_rejections_read_files": 104,
+    "reject_reasons": {
+      "missing-required-field": 527,
+      "other-type-error": 378,
+      "string-not-array": 321,
+      "unavailable-tool": 41,
+      "wrong-type-boolean": 37
+    }
+  },
+  "genfail_deep_dive": {
+    "n_gen_fail": 121,
+    "rejection_count_distribution": {
+      "0": 45,
+      "1-2": 38,
+      "6-10": 7,
+      "11+": 12,
+      "3-5": 19
+    },
+    "used_search_apis": 0,
+    "used_run_code": 0,
+    "zero_rejections": 45,
+    "no_log_segment": 0
+  },
+  "classification_sixtype": {
+    "PASS": 30,
+    "T6_tool_format_genfail": 121,
+    "T4_assertion_insufficient": 5,
+    "T5_timeout": 1,
+    "T3_api_misuse": 1
+  },
+  "integrity_check": {
+    "pyAether_MCP_calls_source": "attribution_3615_run1/codegen_rejection_stats.json#pyAether_MCP_calls",
+    "reject_tools_source": "attribution_3615_run1_perquest_profile.json#aggregate_reject_tools",
+    "final_report_source": "attribution_3615_run1/final_report.json",
+    "recompute_command": "python3 bpt_zhulong_reattribution.py"
+  }
+}

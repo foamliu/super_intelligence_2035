@@ -1,0 +1,4 @@
+# corner <name>      <voltage>  <temp>     <mode-list>
+corner  tt_0p75_25c   0.75       25         func,scan
+corner  ss_0p81_125c  0.81       125        func,scan
+corner  ff_0p69_-40c  0.69       -40        func,scan

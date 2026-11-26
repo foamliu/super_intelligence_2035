@@ -1,0 +1,8 @@
+# cell control: T_CompXor (digital xor)
+add_pin A input
+add_pin B input
+add_pin Y output
+
+# fixed: ^ (XOR) is illegal in Liberty boolean expressions
+#        A ^ B = (A & (!B)) | ((!A) & B)
+add_function Y { (A & (!B)) | ((!A) & B) }

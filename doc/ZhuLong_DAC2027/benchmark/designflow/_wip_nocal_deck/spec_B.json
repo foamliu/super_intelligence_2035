@@ -1,0 +1,15 @@
+{
+  "case_id": "EDA-Eval-DesignFlow-NocalOffsetDeck-001",
+  "domain": "characterization",
+  "control_signals": {
+    "init": {"net": "initb", "vsource": "Vinitb", "const_value_param": "vddbx", "const_value": 1.0},
+    "clk":  {"net": "cal_clkb", "vsource": "Vclkb", "const_value": 0},
+    "en":   {"net": "cal_enb", "vsource": "Venb", "const_value": 0}
+  },
+  "dut_subckt": "cmp_dut_b",
+  "measure_names": ["vtrip_at_b", "offset_b"],
+  "vdd_param": "vddbx",
+  "vhalf_param": "vhalfbx",
+  "expected_offset_v": 0.23423,
+  "expected_vtrip_v": 0.73423
+}

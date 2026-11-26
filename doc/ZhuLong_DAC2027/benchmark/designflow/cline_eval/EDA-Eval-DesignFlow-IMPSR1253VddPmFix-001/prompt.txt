@@ -1,0 +1,1 @@
+进入./apr/logs查看inv_fp.log，其中有告警：Begin power routing ... **WARN: (IMPSR-1253): Unable to find any standard cell pin connected to the VDD_PM net. 查询问题原因

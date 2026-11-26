@@ -1,0 +1,51 @@
+** Library name: synth_lib
+** Cell name: INV_2X_B
+** View name: schematic
+.subckt INV_2X_B I O VDD VSS
+XNM0 O I VSS nsvt_dbc w=238e-9 l=6e-9 delvtrand=delvtrand_nsvt dtemp=dtemp_nsvt
+XPM0 O I VDD psvt_dbc w=238e-9 l=6e-9 delvtrand=delvtrand_psvt dtemp=dtemp_psvt
+.ends INV_2X_B
+** End of subcircuit definition.
+
+** Library name: synth_lib
+** Cell name: NAND_3X_B
+** View name: schematic
+.subckt NAND_3X_B A B O VDD VSS
+XNM0 net9 B VSS nsvt_dbc w=357e-9 l=6e-9 delvtrand=delvtrand_nsvt dtemp=dtemp_nsvt
+XNM1 net9 A VSS nsvt_dbc w=357e-9 l=6e-9 delvtrand=0 dtemp=0
+XPM0 O B VDD psvt_dbc w=357e-9 l=6e-9 delvtrand=delvtrand_psvt dtemp=dtemp_psvt
+XPM1 O A VDD psvt_dbc w=357e-9 l=6e-9 delvtrand=delvtrand_psvt dtemp=dtemp_psvt
+.ends NAND_3X_B
+** End of subcircuit definition.
+
+** Library name: synth_lib
+** Cell name: TS_comp_B
+** View name: schematic
+.subckt TS_comp_B EN NEG OUT POS VDD VSS
+XNM0 OUT ENB VSS nsvt_dbc w=200e-9 l=20e-9 delvtrand=delvtrand_nsvt dtemp=dtemp_nsvt
+XNM1 INBIAS ENB VSS nsvt_dbc w=200e-9 l=20e-9 delvtrand=delvtrand_nsvt dtemp=dtemp_nsvt
+XNM2 VNB ENB VSS nsvt_dbc w=200e-9 l=20e-9 delvtrand=delvtrand_nsvt dtemp=dtemp_nsvt
+XPM0 net60 NEG VCM pulvt_dbc w=623e-9 l=20e-9 delvtrand=delvtrand_pulvt dtemp=dtemp_pulvt
+XPM1 net14 POS VCM pulvt_dbc w=623e-9 l=20e-9 delvtrand=delvtrand_pulvt dtemp=dtemp_pulvt
+XPM2 VCM VPB VDD pulvt_dbc w=119e-9 l=54e-9 delvtrand=100e-3 dtemp=0
+XPM3 VPB ENE VDD psvt_dbc w=119e-9 l=54e-9 delvtrand=delvtrand_psvt dtemp=dtemp_psvt
+XPM4 OUT ENE VDD psvt_dbc w=119e-9 l=54e-9 delvtrand=100e-3 dtemp=0
+XPM5 NETX ENE VDD psvt_dbc w=119e-9 l=54e-9 delvtrand=50e-3 dtemp=0
+XPM6 NETY ENB VDD pulvt_dbc w=119e-9 l=54e-9 delvtrand=delvtrand_pulvt dtemp=dtemp_pulvt
+.ends TS_comp_B
+** End of subcircuit definition.
+
+** Library name: synth_lib
+** Cell name: TS_analog_B
+** View name: schematic
+.subckt TS_analog_B CLK OUT VDD VSS
+XM0 OUT N2 VSS nsvt_dbc w=300e-9 l=6e-9 delvtrand=delvtrand_nsvt dtemp=dtemp_nsvt
+XM1 OUT N2 VDD psvt_dbc w=300e-9 l=6e-9 delvtrand=delvtrand_psvt dtemp=dtemp_psvt
+XM2 OUT N2 VDD psvt_dbc w=300e-9 l=6e-9 delvtrand=delvtrand_psvt dtemp=dtemp_psvt
+XM3 N2 N3 VSS nulvt_dbc w=200e-9 l=20e-9 delvtrand=delvtrand_nulvt dtemp=dtemp_nulvt
+XM4 N3 N4 VDD pulvt_dbc w=200e-9 l=20e-9 delvtrand=100e-3 dtemp=0
+XM5 N4 CLK VSS nsvt_dbc w=200e-9 l=20e-9 delvtrand=0 dtemp=0
+XM6 N5 CLK VDD psvt_dbc w=200e-9 l=20e-9 delvtrand=delvtrand_psvt dtemp=dtemp_psvt
+.ends TS_analog_B
+** End of subcircuit definition.
+

@@ -1,0 +1,25 @@
+校验已通过。交付完成情况如下：
+
+## 交付物（已打包 `outputs/submit.zip`，4 个文件）
+
+1. **`annot_diag_report.md`** — 诊断报告，包含：
+   - 反标汇总表：`1,005,545 / 1,002,982 / 2,563`（Internal）、`35,464 / 28,367 / 7,097`（Boundary/port）、**TOTAL `1,041,009 / 1,031,349 / 9,660 (0.93%)`**
+   - 三类计数：**PARA-043 = 3,871**、**PARA-044 = 4,902**、**PARA-124 = 887**（合计 9,660），含样例 net
+   - 反标匹配机制 6 步说明
+   - 根因：**Synopsys StarRC merge trivial 节点 vs Cadence SI 保留完整 hierarchy**，名称对不上 → 反标失败
+
+2. **`hierarchy_compare.tsv`** — 6 行对照（表头 `error_type/net/netlist_hierarchy/spef_hierarchy`），每行两列层级路径均含 `.`
+
+3. **`noncritical_ignore_list.txt`** — 6 条 `CellName#OldNetName#NewNetName`（merge-trivial 可 ignore 项）
+
+4. **`critical_fails.tsv`** — 6 条关键失败（`net023`/`topport_n23` 顶层输出端口 + `ACThLevelA[3]`/`ACThDefN[3]` timing-critical 输出锥），与 ignore 列表 net 无重叠
+
+关键发现：`calibre_lvs.rule` 中 `.IGNORE_NET I_CMAryB_222#net023#ACLevelA[1]` 只是**格式示意**，照抄会误把 `net023`（真实顶层输出 port，SDF 标记 CRITICAL）当非关键忽略——已将其归入 critical 而非 ignore。
+
+## 校验结果
+
+```
+PASS
+```
+
+（`_reference_check.py` 本身只有 `check()` 函数定义、无 `__main__` 入口，直接 `python3 _reference_check.py` 会静默退出；我用 `python3 -c "import _reference_check as c; print('PASS' if c.check('outputs/submit.zip', '.') else 'FAIL')"` 调用了它，7 项条件 (a)–(g) 全部通过。）
