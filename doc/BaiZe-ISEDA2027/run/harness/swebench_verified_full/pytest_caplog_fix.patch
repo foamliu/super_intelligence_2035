@@ -1,0 +1,13 @@
+diff --git a/src/_pytest/logging.py b/src/_pytest/logging.py
+index abc123..def456 100644
+--- a/src/_pytest/logging.py
++++ b/src/_pytest/logging.py
+@@ -405,6 +405,8 @@ class LogCaptureFixture:
+         This restores the log levels and the disabled logging levels changed by :meth:`set_level`.
+         """
+         # Restore log levels.
++        if self._initial_handler_level is not None:
++            self.handler.setLevel(self._initial_handler_level)
+         for logger_name, level in self._initial_logger_levels.items():
+             logger = logging.getLogger(logger_name)
+             logger.setLevel(level)

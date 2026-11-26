@@ -1,0 +1,14 @@
+
+diff --git a/sklearn/feature_extraction/text.py b/sklearn/feature_extraction/text.py
+index abc123..def456 100644
+--- a/sklearn/feature_extraction/text.py
++++ b/sklearn/feature_extraction/text.py
+@@ -1200,6 +1200,8 @@ class _VectorizerMixin:
+         Returns
+         -------
+         feature_names : list of str
++        """
++        self._validate_vocabulary()
+         if not hasattr(self, "vocabulary_"):
+             raise NotFittedError(
+                 f"{self.__class__.__name__} - Vocabulary wasn't fitted."
