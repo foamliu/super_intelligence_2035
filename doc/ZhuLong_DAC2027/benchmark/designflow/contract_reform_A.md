@@ -466,3 +466,57 @@ live-neg 注入：候选用 `echo "Error-[URMI] ... unresolved module"`（伪造
 REQ-1（VpsRegrErrorEngineer-001）check_live 设计**经真 vcs 实跑验证成立**：Q1 mock 保真 ✓ / Q2 live-neg 牙 ✓ / 真 vcs ground-truth == spec ✓ / 通路就绪 ✓。解冻后 R2 落盘为**低风险机械执行**（非侵入包装 + live-neg + sha 同步 + §5 ②④⑥⑦ 复验），无需再设计。REQ-2（TotemSC-001 · 真 finesim）待同类验证（r1310 已确认 finesim @ /apps/synopsys/SRB/ 在 .75 PATH）。
 **🚫 本轮未改 check.py / cases / negative / assets / hidden / 主树 / jsonl。仅 .75 隔离 session 实跑 + 本设计文档记证据。冻结窗口未解冻。**
 
+---
+
+## R2 check_live 设计 .75 实跑验证 · REQ-2 TotemSC-001（r1318 · 冻结窗口内 · 只读 · 不改判分）
+
+> **背景**：r1317 完成 REQ-1（VpsRegrErrorEngineer-001）真 vcs 实跑验证；本轮对 REQ-2（TotemSC-001 · 真 finesim）做同类验证。冻结窗口仍活（zhulong r3' 进行中 328/500=65.6% @ 20:48，ETA~00:09 Nov-27），但 `.75`+`eda_flow` MCP 与 zhulong 无关（§1.2 资源表），可在不碰主树判分文件的前提下，把 REQ-2 的 check_live 设计**对照真 finesim 跑一遍**，验证 Q1（mock 语义保真）/ Q2（live-neg 牙）。**本轮未改任何 check.py / cases / negative / assets / hidden / 主树 / jsonl**；仅在 .75 隔离 session 内跑真 finesim + 在本设计文档记证据。
+
+### 验证方法
+- `eda_flow open_session`（task_id=TotemSCLiveVal, eval_id=r1318-liveval-20261126, user=designflowA）→ workdir on .75（hfhds201）。
+- 写 `totemsc_liveval.py` 到 workdir（复刻 check.py 的 `_build_B(stage, seed)` 逻辑 seed 101/202/303，**不读 reference/**）。
+- **Q1**：每 seed `_build_B` → 参考解 rewrite（`.model ./`→`.model `）→ `finesim -np 2 dut.sp` 跑真 finesim（**不**前置 mock PATH）→ 捕 rc + dut.log → 按参考解 `parse_log` 同款 marker 分类（`FineSim Successfully Completed`/`DC converged`/`End of Transient Analysis`/`Generating MOS models`/`can't find model`）→ 与 mock 预测（rewrite 后=success）对照。
+- **Q2**：每 seed `_build_B` → **删整行 `.model ./`**（mock 见 count==0⇒success，即 check_static 全过）→ 跑真 finesim → 断言真 finesim 报 `can't find model`/exit≠0（check_live FAIL）。
+- 验 `FineSim V-2023.12-1 for linux64` banner 证真二进制跑过（非 mock/非 echo）。
+
+### 实跑结果（.75 hfhds201 · finesim V-2023.12-1 @ /apps/synopsys/SRB/finesim/V-2023.12-1/bin/finesim · 全 6 跑 wall ~30s · license OK）
+
+**Q1 — 参考解 rewrite + 真 finesim（mock 预测=success）：**
+
+| seed | true_count | fixed | rc | dur | cant_find | success | dc | tran | genmos | mock_pred | real_success | DIVERGE |
+|:--|--:|--:|--:|--:|:--|:--|:--|:--|:--|:--|:--|:--|
+| 101 | 5 | 5 | 0 | 6.24s | False | True | True | True | True | True | True | False |
+| 202 | 4 | 4 | 0 | 5.14s | False | True | True | True | True | True | True | False |
+| 303 | 3 | 3 | 0 | 5.16s | False | True | True | True | True | True | True | False |
+
+**真 finesim 对 3 seed 全 success（rc=0 + 全 success marker 在 + 无 `can't find model`）== mock 预测 ✓（0 divergence）**
+
+**Q2 — 删行 cheat + 真 finesim（mock 预测=success）：**
+
+| seed | deleted | rc | dur | cant_find | success | mock_pred | real_fail | TEETH |
+|:--|--:|--:|--:|:--|:--|:--|:--|:--|
+| 101 | 5 | 5 | 4.15s | True | False | True | True | True |
+| 202 | 4 | 5 | 4.15s | True | False | True | True | True |
+| 303 | 3 | 5 | 4.14s | True | False | True | True | True |
+
+**删行 cheat：mock 见 `.model ./` count==0 ⇒ success（check_static 全过）；真 finesim 发现设备引用未定义模型 ⇒ `can't find model` + exit=5 + 无 success banner ⇒ check_live FAIL（3 seed 全 TEETH=True）✓**
+
+### Q1 mock 语义保真 —— CONFIRMED（无 divergence，且强于 REQ-1）
+真 finesim 对 3 seed（参考解 rewrite 后）的分类全 success，与参考解 `MOCK_FINESIM_PY` 的预测**逐 seed 一致**，无 `MOCK_DIVERGENCE`。**比 REQ-1 更强**：mock 的 success 路径「无脑写固定 banner」原本被标 ⚠️ 弱保真，但本轮真 finesim 实测**也产完全相同的 4 个 success marker**（`FineSim Successfully Completed`/`DC converged`/`End of Transient Analysis`/`Generating MOS models`）——即 mock 的 success banner 不是凭空捏造，而是真 finesim 对这类简单 level=1 网表的真实输出复刻。⇒ mock 是忠实简化（error 路径 + success 路径双忠实），case 健康，R2 改造不触发 §1.4 TODO(BLOCKED)。
+
+### Q2 live-neg 牙 —— CONFIRMED（静态过/实跑错正交）
+live-neg 注入：候选**删整行 `.model ./`**（而非改 `./`→`` ）⇒ mock 见 `.model ./` 计数==0 ⇒ success 路径（mock 不验模型是否真定义）⇒ check_static cond(f) 过（计数 0）+ cond(h) 过（mock 自写 dut.log banner）+ cond(i–m) 全过 ⇒ **静态全过**；但 check_live step3 真 finesim 发现设备引用的模型未定义 ⇒ `can't find model` + exit=5 ⇒ **check_live FAIL**。注入点（模型定义完整性）与静态（`.model ./` 计数）正交，牙确认。
+
+### §5 七项预检（解冻后落盘时逐项复验，本轮已预证 ①③⑤雏形）
+- ① **ref 真 finesim PASS**：本轮已证 3 seed 全 success（rc=0 + 全 marker），banner 在 ⇒ check_live(ref) 必 PASS（解冻后落盘 check_live 复跑确认）。
+- ③ **3-seed 确定性**：finesim 对同输入确定性（本轮 3 seed 同 rewrite 后同 success），wall ~5s/seed ⇒ 3-seed 廉价可跑，解冻后验 md5。
+- ⑤ **judge_layers/test/check.py sha 三方同步**：解冻后落盘时同步。
+- ②④⑥⑦：解冻后落盘时验。
+- 额外：本轮确认 `.75` finesim 通路就绪（which finesim ✓ / V-2023.12-1 / hfhds201 / license OK / 秒级），R2 落盘无 infra 阻塞。
+
+### 结论
+REQ-2（TotemSC-001）check_live 设计**经真 finesim 实跑验证成立**：Q1 mock 保真 ✓（且 success 路径双忠实）/ Q2 live-neg 牙 ✓ / 真 finesim ground-truth == mock 预测 ✓ / 通路就绪 ✓。解冻后 R2 落盘为**低风险机械执行**（非侵入包装 + live-neg（删行）+ sha 同步 + §5 ②④⑥⑦ 复验），无需再设计。
+
+**两 REQ（VpsRegrErrorEngineer-001 / TotemSC-001）check_live 设计均已 .75 实跑验证就绪**，解冻后 R2 落盘为纯机械执行（非侵入包装 + live-neg + sha 同步 + §5 ②④⑥⑦），无设计风险、无 infra 阻塞。
+**🚫 本轮未改 check.py / cases / negative / assets / hidden / 主树 / jsonl。仅 .75 隔离 session 实跑（已 close_session cleaned）+ 本设计文档记证据。冻结窗口未解冻（r3' 328/500=65.6% @ 20:48，ETA~00:09 Nov-27）。**
+
