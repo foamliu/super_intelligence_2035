@@ -671,8 +671,9 @@ r1302 把桩体分两类（GT-replay vs syntax-validator）。本轮发现**第�
 | r1300 | GrDecPwrVerifTb-001 | hspice-mock | DONE |
 | r1304 | GmidLut-001 | hspice-mock GT-replay | DONE |
 | r1305 | VcoKvcoChar-001 | hspice-mock GT-replay | DONE |
+| r1306 | PVTalterChar-001 | hspice-mock GT-replay | DONE |
 
-L2.live done 8→9；REQ 未改造 33-9=24 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
+L2.live done 9→10；REQ 未改造 33-10=23 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
 
 ### r1305：VcoKvcoChar-001（hspice-mock GT-replay-by-signature · 第9条）
 
@@ -687,3 +688,19 @@ L2.live done 8→9；REQ 未改造 33-9=24 条（hspice-mock/finesim-mock GT-rep
 **登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
 
 **.75 通路 OK**（r1305 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session r1305-reflive/r1305-cheatlive 用后 close）。
+
+### r1306：PVTalterChar-001（hspice-mock GT-replay-by-signature · 第10条）
+
+**Q2 实证（r1306）**：cheat `negative/cheat_dead_wl.py`（复制 ref `pvt_char_harness_ref.py`，把 `.subckt nand2` 内 4 个晶体管 `mn1/mn2/mp1/mp2` 的 `w=wn l=ln` 篡改为 `w=1e-21u l=1e3u` 电死 NAND2，**保持 `.param wn=1.5u wp=1.5u ln=180n` + `.lib 'model_b.sp' <corner>` + `.temp` + `.param cload` 签名行**）→ `_check_static_impl` **12/12 PASS 假阳**（桩 `_HSPICE_MOCK_SRC.parse_deck` 按 `kpn|vton|kpp|vtop|temp|cload|wn|wp|ln|vdd` 签名查 `_MOCK_VALUES` 回放 GT tpdr/tpdf，**不解析 `.subckt` 晶体管 W/L**）。真 hspice V-2023.12-SP1-1 @ hfhds201：w=1e-21u 死管不开关 → `.measure tran tpdr` fails → rows=0 → n_alters=0 / baseline tpdr=None → cond (d)(f)(h)(i)(j) FAIL。
+
+**Q1 保真**：.75 真跑 ref（honest deck）→ B baseline(tt_0_300f) tpdr=1.4916 tpdf=1.4433；A baseline(tt_-40_200f) tpdr=1.7823 tpdf=1.3040 —— **== mock `_MOCK_VALUES` 逐位一致**。
+
+**改造**：非侵入包装（`_check_static_impl` 12 conds a-l 断言逻辑/阈值原封，仅 return shape `bool`→`results list` 以暴露 first-fail tag 供 selftest distinct 校验 + `check_static` try/except 3-tuple + `check_live(sess)` .75 真跑 hspice rerun candidate `pvt_char_harness.py` on hidden B AND visible A，读 real `pvt_report.json`，复断 conds (d)(e)(f)(g)(h)(i)(j)(k) 同阈值 n_alters=27/corner0=tt_0_300f/baseline tpdr within ±5% REF_B=1.4916/tpd_2nd_rise all null/worst=tt_0_800f/overall_pass=False/A baseline tpdr within ±5% REF_A=1.7823 AND !=B/determinism 2x rerun，only-add never relax）+ `__main__` 块 + live-neg（`negative/cheat_dead_wl.py`：w=1e-21u，static-pass mock-replays-GT / live-fail cond d/f/h/i/j）+ `negative_selftest.py` 重写（STATIC 4 negs distinct{c,j,d,f} + §4.9 trio distinct{empty:c, print:j, core:d} + LIVE_NEG via EDASession）+ `judge_layers=[L0,L1,L2.live]` + JSON `test` 字段 sha `3b2645391e14` 3-way sync。
+
+**§5 全绿**：① REF check_live PASS（real hspice B base tpdr=1.4916 worst=tt_0_800f overall=False A base tpdr=1.7823==mock GT Q1 fidelity）；② 4 static neg FAIL distinct{c,j,d,f} + §4.9 trio distinct + live-neg FAIL cond d/f/h/i/j；③ 确定性（cond k 2x rerun B verdicts identical + hspice level-1 确定性）；④ SKIP_RUN deploy workdir clean（无 check.py/reference/hidden 泄漏）；⑤ sha `3b2645391e14` 3-way sync（JSON test / 磁盘 check.py）；⑥ 断言条数只增不减（check_live +8 live conds d/e/f/g/h/i/j/k 同阈值，不放宽）；⑦ L5 hidden-B uploaded to sess not in SUT sandbox，check_live 不读 reference/。
+
+**登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
+
+**.75 通路 OK**（r1306 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session r1306-REF/r1306-CHEAT/liveneg 用后 close）。
+
+**注**：本轮 check.py/negative/selftest 被 concurrent shardC loop sweep（commit `ff9ef6e6d` 03:27:22）提前 commit 入 git（working-tree 广 `git add` 拾取 in-progress 改动），case JSON `judge_layers`+`test` sync 本轮补 commit（`6ba40d41f`）。md5 校验 HEAD check.py == 本轮工作树，无 corruption。跨 shard `git add` 拾取是已知 loop 风险，建议各 shard loop 改 `git add -- benchmarks/EDA-Eval-DesignFlow/cases/<本shard>` + `reference/EDA-Eval-DesignFlow-<本shard-case>` 精确路径。
