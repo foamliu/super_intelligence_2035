@@ -1,6 +1,12 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 0
+> 🆕 **用户令 · 2026-11-26 (G) — opencode v2.4 搞不定就降级到 v1.19.6**
+>
+> **用户原话**：「opencode 如果 2.4 搞不定就就降级，但不是降级到 v1.18.27 而是到 v1.19.6」
+>
+> **执行**：opencode v2.4.1-dev 的 `tools.edit()` 不写磁盘 bug 如果无法快速修复，就降级到 v1.19.6（不是 v1.18.27）。源码在 `/nas_train/app.e0031982/harness/opencode`，用 git checkout 到 v1.19.6 对应的 commit/tag/branch，重新 build。
+
 > 🔄 **用户令 · 2026-11-26 (F) — doubao-pro 7-way 评测 RUNNING（升级后重测）**
 >
 > **升级结果**（7/7 verified available）：cline 3.0.76·codex 0.172.0·opencode v2.4.1-dev·cc 2.1.332·dsh 0.2.2rc2·pi 1.6.1·hermes git.e0dcc39
