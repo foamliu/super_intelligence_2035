@@ -22,7 +22,7 @@
 
 ## 心跳
 
-`CONTRACT: P1=1/1 done · P2=6 L2.live 全闭合 (TrMatchHelper-001 + FullAdderSchemBuild-001 + OpenDmViewsProduce-001 + AeDelCellCurCellProduce-001 + SelFigReport-001 + IOBufTune-001 done) · P3=497/608 judge_layers`
+`CONTRACT: P1=1/1 done · P2=7 L2.live 全闭合 · P3=609/609 judge_layers 全声明 · P4=done`
 
 ## r1446 交付：P2 第 5 条 check_live（SelFigReport-001）
 
@@ -162,6 +162,20 @@
 - **case JSON**：metadata.judge_layers=[L0,L1,L2.live] + test 同步（24630 chars）+
   check_sha256/check_size 更新；reference_submit.zip 已存在不动。
 
+## r1449 交付：P3 批量收口（105 case 补声明 judge_layers）
+
+- **背景**：D shard P1/P2/P4 全闭合后，唯一余 contract 工作 = P3 批量声明。
+  r1441 已声明 497/608，余 105 case 无 judge_layers（8 api 假阳性 + 97 sim-keyword，
+  均经 r1446 逐题核验 reference_solution 无真实 pyAether 调用 + r1447 P4 复核为 T3 mock）。
+- **本轮**：对 105 case 批量加 `metadata.judge_layers=["L0","L1"]`。
+  - 104 case 多行 metadata：在 `"metadata": {` 后插入首键。
+  - 1 case（BtopPoststressJobs-001）单行 compact metadata：在 `"metadata":{` 后插入。
+- **结果**：609/609 全声明（602 L0L1 + 7 L2.live）。行为保持 check() fallback（框架对
+  ["L0","L1"] + 旧式 check() 走 fallback，L2.live 不触发，与改造前完全一致）。
+- **自验**：SKIP_RUN=1 eval/run_one.sh AgingStepDirSplit-001 --shard D → judge 步骤无报错
+  （verdict=FAIL 仅因 SKIP_RUN 无 submit.zip，非 check.py 回归）。
+- **D shard CONTRACT 全闭合**：P1=1/1 · P2=6(+1 pilot=7 L2.live) · P3=609/609 · P4=done。
+
 ## r1448 交付：P2 收尾第 6 条 check_live（IOBufTune-001）— D shard P2 全闭合
 
 - **候选选择**：P4 实跑适合性分析（r1447）确认 D shard lite-128 中真需 L2.live 的 T1
@@ -217,13 +231,11 @@
 
 ## 下一轮计划
 
-1. **D shard P2 实质闭合**（r1448）：P4 T1=4/4 全 done（SkillToAether /
-   AeDelCellCurCellProduce / SelFigReport / IOBufTune），P2 api 子类既已穷尽（r1446），
-   sim-keyword 97 条经 P4 复核均为 mock 假阳性。**D shard P2 收口**。
-2. P3：把 8 条假阳性 api 候选 + sim-keyword 子类中确属 mock 的 case 批量补声明
-   `judge_layers=["L0","L1"]`（需逐题读 check.py 区分 netlist-text 假阳性 vs 真二进制调用）。
-   当前 497/608，余 110 待分类。
-3. 造新题让位给 P2（运维令：P1>P2>P3）。P2 既已全闭合，下一轮转 P3 批量声明 + 造题恢复。
+1. **D shard CONTRACT 全闭合**（r1449）：P1=1/1 · P2=7 L2.live · P3=609/609 · P4=done。
+   contract 改造工作全部完成，无遗留。
+2. 造题恢复（运维令：P1>P2>P3，三者既闭合，造题不再让位）。下一轮走 trace_ledger
+   --shard D next → claim → 深读 → 合成 → 自验。
+3. 跨 shard P0 监控：OpampChar-001（B-shard，挂 101+ 轮）待 B 接管。
 
 ## P2 api 子类 13 条（强候选 · r1446 核验后）
 
