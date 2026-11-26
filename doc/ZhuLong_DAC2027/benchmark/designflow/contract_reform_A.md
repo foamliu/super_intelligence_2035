@@ -332,11 +332,44 @@ P1/P2/P3/P4 全闭合后首轮回归 spot-check。确认 r1274/r1275 判分逻�
 | T3/NA | 117 | 106 | 口径收窄（116 vs 122）+ 2 条升 REQ |
 | r1272 误判家族 | IrunSimDiagnose-001/-v2 / RunRegrSubmit-001-v2 | **复验确认 NA** | irun/xrun 仅出现在嵌入日志/config 文本（§2.1 rule2 证实），非 subprocess 真调用；旧 P4 T3 结论正确 |
 
+### §2.1 rule1 mock-stub 家族体检（r1316 补 · 只读）
+
+> **令源**：LIVE_EVAL_ORDER §2.1 rule1「凡 check.py 调自写假工具（hspice_mock/finesim_mock/伪 tcl 桩/内嵌 GT 常量）必须答 Q1 语义保真 / Q2 能否被骗」。r1312 程序化扫出 16 条 NA 含 mock/stub 信号，r1315 仅深读 2 条 borderline（CalVcoEnvWorkaround/DftTestmaxLaunchFlow）；本轮补齐其余 14 条的 Q1/Q2 体检，区分 **NA 桩模式** 与 **REQ 桩模式**。
+
+**关键区分（REQ 桩 vs NA 桩）**：
+- **REQ 桩模式**（VpsRegrErrorEngineer/TotemSC）：check.py 写**假工具二进制**（vcs/finesim mock）上 PATH；候选的**独立脚本**调用它以为是真的；候选可**单独伪造 report 文件**而不跑工具 ⇒ Q2=能骗 ⇒ REQ。
+- **NA 桩模式**（下表 16 条）：桩是**候选交付物的测试夹具**，不是「候选脚本误调的假工具」。候选交付物本身是被验对象（TCL 脚本/python 解析器），桩提供受控执行环境，call-log/evidence 由**候选实际脚本**生成 ⇒ 候选无法单独伪造 ⇒ Q2=不能骗 ⇒ NA。
+
+**16 条 mock-stub NA 案 Q1/Q2 体检（按桩用途分 3 类）**：
+
+| 类 | case_id | 桩用途 | Q1 语义保真 | Q2 能否被骗 | verdict |
+|:--|:--|:--|:--|:--|:--|
+| **A. TCL 测试夹具**（STUB_WRAPPER 注入 tclsh，log 候选脚本命令调用） | IMPSR1253VddPmFix-001 | mock Innovus dbGet/globalNetConnect/addNet，跑候选 innovus_fp.tcl 验命令调用序列 | 桩只 log 命令名/参数，不模拟 Innovus 物理输出（无 net 几何/连通性）⇒ 验脚本结构非工具输出 | ❌ 不能骗：call-log 由候选**实际 tcl 脚本**经固定 STUB_WRAPPER 生成，候选无法单独伪造 log（脚本不调命令即 log 空→cond o/m FAIL） | NA ✅ |
+| A | OstrichSpefRCFactor-001 | mock ostrich read_spef/build_plot/get_scale_factor，跑候选 ostrich_rc_factor.tcl 验调用计数 | 同上，桩不解析 spef/不算 RC，只 log 命令 | ❌ 不能骗：同上，call-log 来自候选脚本实跑 | NA ✅ |
+| A | CosimSetup-001 | mock vcs/verdi 命令，跑候选 setup tcl 验流程 | 桩 log 命令非模拟编译 | ❌ 不能骗：deliverable=tcl 脚本，log 来自实跑 | NA ✅ |
+| A | FilelistFlattenGen-001 | stub 验候选 filelist 脚本输出结构 | 桩非工具二进制 | ❌ 不能骗：deliverable=脚本本身 | NA ✅ |
+| A | MakeConvenienceTarget-001 | stub 验候选 Makefile target | 桩非工具 | ❌ 不能骗 | NA ✅ |
+| A | IrunSimDiagnose-001-v2 | stub 验候选诊断脚本（irun/vcs 仅日志文本，§2.1 rule2） | 桩非工具 | ❌ 不能骗：deliverable=诊断脚本 | NA ✅ |
+| A | SimFailParse-001 | stub 验候选 log 解析脚本（irun/xrun 仅日志文本） | 桩非工具 | ❌ 不能骗 | NA ✅ |
+| A | SpefAnnotAudit-001 | stub 验候选 PrimeTime 日志审计脚本（PrimeTime 仅日志文本） | 桩非工具 | ❌ 不能骗 | NA ✅ |
+| A | VcdToFsdbMigration-001 | stub 验候选 verdi 迁移脚本（verdi 仅文本） | 桩非工具 | ❌ 不能骗 | NA ✅ |
+| A | TbFamilyRoleAnalyze-001 | stub 验候选 testbench 角色分析脚本（SKILL/xrun 仅文本） | 桩非工具 | ❌ 不能骗 | NA ✅ |
+| **B. 负样本命名**（"stub"/"fake_" 出现在 negative 样本名/注释，非 check 自写工具） | DRCDeckOpt-001 | "naive_stub" = 负样本名（COPY 不改 deck），check 跑候选 apply_opt.py 真 python 解析器 | N/A（非工具桩） | ❌ 不能骗：check 跑候选真解析器产 deck，calibre 仅 deck 文本提及 | NA ✅ |
+| B | PDKRunsetExplore-001 | "stub"/"fake_" = 负样本名，check 验候选 runset 探索脚本 | N/A | ❌ 不能骗 | NA ✅ |
+| B | InnovusLogAudit-001 | "fake_" = 负样本名，check 验候选日志审计脚本 | N/A | ❌ 不能骗 | NA ✅ |
+| B | AprStampFix-001 | "stub" = 负样本/tcl fixture，check 验候选 stamp 修复 | N/A | ❌ 不能骗 | NA ✅ |
+| **C. 夹具文件**（"dummy"=hidden B 内 fixture 文件，非假工具） | CosimFlowAnalyze-001 | "dummy.sp" = hidden B cosim 目录内 fixture 文件，check 跑候选分析脚本 | N/A（非工具桩） | ❌ 不能骗：deliverable=分析脚本，finesim/VCS 仅 evidence 文本 | NA ✅ |
+| **已 r1315 深读** | CalVcoEnvWorkaround-001 | 候选自建 calibre_vco stub（交付物=stub 本身=workaround，真 calibre 从不调用） | N/A | ❌ 不能骗：deliverable=stub 本身，14cond+hiddenB 有牙 | NA ✅ |
+| 已 r1315 深读 | DftTestmaxLaunchFlow-001 | 生成器产 run_full_flow.sh 含 offline check + tool fallback（dc_shell/vcs/tmax=文本检查 §2.1 rule2） | N/A | ❌ 不能骗：deliverable=scaffold 生成器 | NA ✅ |
+
+**结论**：16 条 mock-stub NA 全部确认 NA。桩均为**候选交付物的测试夹具/负样本名/fixture 文件**，无一条属「check 写假工具二进制上 PATH 让候选独立脚本误调且 report 可单独伪造」的 REQ 模式。与 r1312 程序化扫描结论一致，无升 REQ/OPT 变化。**LIVE-REQ 计数维持 6（4 已 L2.live + 2 新待 R2），LIVE-OPT 维持 4，LIVE-NA 维持 106。**
+
 ### R1 纪律
 
 - 🚫 未改 reference/*/check.py / cases/*.json（冻结窗口 §1.1）
 - 🚫 未降断言/阈值/条件；🚫 未改 prompt/assets/hidden
 - ✅ 全量 116 条 verdict + reason + round 填入 live_eval_review_A.tsv
+- ✅ §2.1 rule1 mock-stub 家族 16 条 Q1/Q2 体检补齐（r1316），区分 NA 桩模式 vs REQ 桩模式
 - ⏳ 2 新 REQ 待冻结窗口解冻后 R2 改造（拆 check_static/check_live + route .75 + live-neg + §5 七项）
 
 ---
