@@ -9,11 +9,11 @@
 | 优先级 | 状态 | 数量 | 说明 |
 |:--|:--|:--|:--|
 | P1 — pilot 12 case | ✅ DONE | 5/5 pilot + 2 cleanup = 7/7 | r1204 修 5 pilot + r1207 修 PowerFillMergeGen/RsCalcChkPtGen |
-| P2 — 真-EDA L2.live 扩展 | 🔄 进行中 | 4 L2.live done（Lite 内 0 余 / Lite 外 27 候选） | 见 §P2 |
+| P2 — 真-EDA L2.live 扩展 | 🔄 进行中 | 5 L2.live done（Lite 内 0 余 / Lite 外 3 C-owned 候选待转） | 见 §P2 |
 | P3 — mock case 声明 judge_layers | ✅ DONE | 620/620 | r1208 收口；C 全量 629/629 = 618 [L0,L1] + 11 [L0,L1,L2.live] |
 | P4 — Lite 实跑适合性分析 | ✅ DONE (r1210) | 137/137 | 见 §P4，Lite-137 内 T1 已全部闭合 |
 
-**CONTRACT 心跳**：`P1=7/7 done · P2=4 L2.live (Lite 内 6 T1 全闭合, Lite 外 27 候选 19T/7F/2P 待转) · P3=620/620 judge_layers · P4=137/137 (T1=6 done / T2=16 / T3=115)`
+**CONTRACT 心跳**：`P1=7/7 done · P2=5 L2.live (Lite 内 6 T1 全闭合, Lite 外 3 C-owned TRUE 候选待转: AetherHiliteCmd/RnodeScatterScript/WheelZoom) · P3=620/620 judge_layers · P4=137/137 (T1=6 done / T2=16 / T3=115)`
 
 ---
 
@@ -54,7 +54,7 @@ r1207 cleanup（指南表标 shard=A 系误标，物理在 `cases/C/` domain=lay
 
 **关键发现（P4 复核）**：28 条 p2 候选里**只有 1 条（AdjViaSelect-001）在 Lite-137 内**，其余 27 条都在 Lite-137 之外。Lite-137 内的真-EDA case 已在 P1/r1204-r1209 全部转 L2.live（6 条）。所以 **P2 后续推进的是 Lite-外** 的 19 TRUE 候选，不影响 Lite-500 全绿状态。
 
-### 已转换（4 条）
+### 已转换（5 条）
 
 | case_id | domain | 轮次 | judge_layers | 自验 |
 |:--|:--|:--|:--|:--|
@@ -62,12 +62,24 @@ r1207 cleanup（指南表标 shard=A 系误标，物理在 `cases/C/` domain=lay
 | RedundantPinRemoval-* | layout_aether | r1206 | [L0,L1,L2.live] ✅ | PASS |
 | AdjViaSelect-001 | layout_aether | r1208 | [L0,L1,L2.live] ✅ | PASS（Lite 内） |
 | ListInstCV-001 | layout_aether | r1209 | [L0,L1,L2.live] ✅ | PASS |
+| SchematicPinAdd-001 | layout_aether | r1211 | [L0,L1,L2.live] ✅ | PASS（ref check_static+check_live .75 实跑 PASS；teeth-verified：candidate 调 nonexistent api `dbCreateSchPinExFake` 被 check_live FAIL；negative_selftest 5 neg ALL-FAIL；附修 ListInstCV negative_selftest leak r1209 遗留） |
 
-注：ListInstCV-001 / RedundantPinRemoval 不在 Lite-137（Lite 外的 P2 推进）。
+注：ListInstCV-001 / RedundantPinRemoval / SchematicPinAdd 不在 Lite-137（Lite 外的 P2 推进）。
 
-### 待转换（Lite 外，按 MEMORY r1209 排序）
+### 待转换（Lite 外，按 r1211 复核排序）
 
-下一轮 P2 优先非-dict TRUE 候选：`SelFigReport-001` / `CstViewPrecheck-001` / `DecqaRwaBusCount-001`。4 条 `retDict=True`（TopCellNameProduce / ViaOptimGds / AetherStandaloneInstList / AutoCellRmAvPf）需 special wrap（passed==total → pass）后才能转。
+**候选复核修正（r1211）**：原 p2_candidates_C.tsv 的 28 条「no-live pyAether-mention」扫描是按 reference/check.py 文件做的，未校核 case JSON 归属。逐条 cross-ref `cases/` 后发现：
+- **3 条 D-owned 误入 C 池**：SelFigReport-001 / CstViewPrecheck-001 / DecqaRwaBusCount-001 物理在 `cases/D/`（domain=analog_context / schematic_netlist），归 shard D，C 不碰。
+- **6 条 orphan reference**（有 reference/check.py 但无 case JSON）：AeDelCellCurCellProduce / AetherStandaloneInstList / NicapBlockCreatePlanner / SchPinAddProduce / TopCellNameProduce / ViaOptimGds —— 无 case JSON 即不在评测集，转了也无意义，skip。
+- **AutoCellRmAvPf / AnalogCmpSchemBuild / PyaetherScreenshotVerifyQA** 在 `cases/D/`（D-owned），DecoderSchemGen 在 `cases/A/`（A-owned）。
+
+剩余 **C-owned 且有 case JSON 的 TRUE 候选**（3 条，下一轮 P2 优先）：
+
+| case_id | domain | judge_layers | ref_ae_attrs | 备注 |
+|:--|:--|:--|:--|:--|
+| AetherHiliteCmd-001 | layout_aether | [L0,L1] | aeGetCurDesign/aeGetInstHier/aeAddHighLightObj/...（13 attrs） | 双文件交付(server_start+aether_client)+socket 协议，工作量 M |
+| RnodeScatterScript-001 | layout_aether | [L0,L1] | dbCVExist/dbGetTrueOverlapsEx/dbNewCellView/dbCrtRect3X/dbCrtLabel/emyPointF/dbSaveCV/dbCloseCV/dbCrtInst/dmGetObj/aeToggleCallBack | 单文件，14 条件，工作量 S-M |
+| WheelZoom-001 | layout_aether | [L0,L1] | aeZoomInAtMouse/aeZoomOutAtMouse/guScroll/aeSetBindKey/aeGetBindKey | 单文件，15 条件，bare import 需确认调用别名；工作量 S-M |
 
 FALSE 候选（7 条，mock-only attrs）改造工作量 L（需 strategy-2 强一致或重写 ref），暂缓。
 

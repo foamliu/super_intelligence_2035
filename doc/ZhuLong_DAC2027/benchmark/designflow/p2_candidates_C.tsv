@@ -15,9 +15,9 @@ AetherStandaloneInstList-001	TRUE	emyDesign;emyInitAether;emyNativeNS;emyScalarN
 AnalogCmpSchemBuild-001	TRUE	aeDesignIsEditable;aeGetCurDesign;aeOpenDesign;aeSaveDesign;dbCreateInst;dbCrtNet;dbCrtTerm;dbOpenCVByType;emyInitAether;emyString		
 AutoCellRmAvPf-001	TRUE	aeOpenDesign;dbDelete;dbSaveCV;emyGetAllInstHeaders;emyInitAether;emyInitDb		retDict=True
 AutoPlacementStep3-001	FALSE	aeAutoPlacementFromDesign	aeAutoPlacementFromDesign	ref uses mock-only API
-CstViewPrecheck-001	TRUE	dbCVExist;dbDelCV		
+CstViewPrecheck-001	TRUE	dbCVExist;dbDelCV		D-OWNED (cases/D/, domain=analog_context) -- skip, not C
 DecoderSchemGen-001	TRUE	aeCreateWire;aeGetCurDesign;dbCrtInst;dbCrtSchWireName;emyDesignSave		
-DecqaRwaBusCount-001	TRUE	aeGetCurDesign;emyCdbaNS;openDesign		
+DecqaRwaBusCount-001	TRUE	aeGetCurDesign;emyCdbaNS;openDesign		D-OWNED (cases/D/, domain=schematic_netlist) -- skip, not C
 GgFlowReport-001	PURE			no ae.* calls in ref solve
 InvSchemBuild-001	FALSE	aeConnect;aeExportNetlist	aeConnect;aeExportNetlist	ref uses mock-only API
 LayoutHierScrapeDiag-001	FALSE	aeGetCurDesign;aeError;aeMessage;dbCellViewExist;getCellView	dbCellViewExist;getCellView	ref uses mock-only API
@@ -30,12 +30,12 @@ PyaetherScreenshotVerifyQA-001	TRUE	aeCapture;aeOpenDesign;emyInitAether
 QaLibCellBuild-001	FALSE	aeAttachTech;dbCrtLib	aeAttachTech;dbCrtLib	ref uses mock-only API
 RnodeScatterScript-001	TRUE	aeBaseAppFormCallBack;aeCreateAppForm;aeCreateFormButton;aeCreateStringField;aeDisplayForm;aeGetCurDesign;aeMessage;aeSetCallbackStatus;aeToggleCallBack;dbCVExist;dbCloseCV;dbCrtInst;dbCrtLabel;dbCrtRect3X;dbGetTrueOverlapsEx;dbNewCellView;dbSaveCV;dmGetObj;emyInitAether;emyPointF;load		
 SchPinAddProduce-001	TRUE	dbCreateSchPinEx;dbOpenCV		
-SchematicPinAdd-001	TRUE	dbCheckAndSaveDesign;dbCreateSchPinEx;dbFindTermByName;dbOpenCVByType;emyPointF		
-SelFigReport-001	TRUE	aeGetCurDesign		
+SchematicPinAdd-001	TRUE	dbCheckAndSaveDesign;dbCreateSchPinEx;dbFindTermByName;dbOpenCVByType;emyPointF		CONVERTED r1211 (check_live strategy-1 + judge_layers=[L0,L1,L2.live]; ref check_static+check_live PASS on .75; teeth-verified fails nonexistent api)
+SelFigReport-001	TRUE	aeGetCurDesign		D-OWNED (cases/D/, domain=analog_context) -- skip, not C
 StdCellFromNetlistProduce-001	FALSE	dbCreatePin	dbCreatePin	ref uses mock-only API
 TopCellNameProduce-001	TRUE	aeGetCurDesign;emyInitAether		retDict=True (check returns dict passed/total; wrap needs passed==total handling)
 ViaOptimGds-001	TRUE	aeCreateRect;dbCreateLib;dbCrtRect;dbDetachFig;dbGdsIn;dbGdsOut;dbOpenCV;emyInitAether;getBBox		retDict=True
 WheelZoom-001	TRUE	aeZoomInAtMouse;aeZoomOutAtMouse;guScroll		
-# SUMMARY: 19 TRUE (2 converted: AdjViaSelect r1208 + ListInstCV r1209), 7 FALSE, 3 PURE. 29 total no-live pyAether-mention.
+# SUMMARY: 19 TRUE, 3 C-converted (AdjViaSelect r1208 + ListInstCV r1209 + SchematicPinAdd r1211), 3 D-owned skipped (SelFigReport/CstViewPrecheck/DecqaRwaBusCount), 7 FALSE, 3 PURE. 29 total no-live pyAether-mention.
 # 4 TRUE cases retDict=True need special wrap (passed==total -> pass) before conversion.
-# Next P2 round: convert next TRUE candidate (prefer non-dict: SelFigReport-001 / CstViewPrecheck-001 / DecqaRwaBusCount-001).
+# Next P2 round: remaining C-owned TRUE w/ case file: AetherHiliteCmd-001 / RnodeScatterScript-001 / WheelZoom-001. (SelFigReport/CstViewPrecheck/DecqaRwaBusCount are D-owned; AeDelCellCurCellProduce/AetherStandaloneInstList/NicapBlockCreatePlanner/SchPinAddProduce/TopCellNameProduce/ViaOptimGds have NO case JSON -- orphan reference dirs, skip.)
