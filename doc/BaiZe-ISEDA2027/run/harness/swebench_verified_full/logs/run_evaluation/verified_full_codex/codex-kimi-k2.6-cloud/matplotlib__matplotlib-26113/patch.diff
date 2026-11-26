@@ -1,0 +1,44 @@
+diff --git a/lib/matplotlib/axes/_axes.py b/lib/matplotlib/axes/_axes.py
+index 5369eadbd..46fb69852 100644
+--- a/lib/matplotlib/axes/_axes.py
++++ b/lib/matplotlib/axes/_axes.py
+@@ -5014,7 +5014,7 @@ default: :rc:`scatter.edgecolors`
+             if mincnt is None:
+                 mincnt = 0
+             accum = np.array(
+-                [reduce_C_function(acc) if len(acc) > mincnt else np.nan
++                [reduce_C_function(acc) if len(acc) >= mincnt else np.nan
+                  for Cs_at_i in [Cs_at_i1, Cs_at_i2]
+                  for acc in Cs_at_i[1:]],  # [1:] drops out-of-range points.
+                 float)
+diff --git a/lib/matplotlib/tests/test_axes.py b/lib/matplotlib/tests/test_axes.py
+index 065d17f95..2f38d790a 100644
+--- a/lib/matplotlib/tests/test_axes.py
++++ b/lib/matplotlib/tests/test_axes.py
+@@ -999,6 +999,26 @@ def test_hexbin_log_clim():
+     assert h.get_clim() == (2, 100)
+ 
+ 
++
++
++def test_hexbin_mincnt_with_C():
++    # Issue: mincnt behavior should be consistent whether C is given or not.
++    np.random.seed(42)
++    x = np.random.standard_normal(250)
++    y = np.random.standard_normal(250)
++    c = np.ones_like(x)
++
++    fig, ax = plt.subplots()
++    hb_no_c = ax.hexbin(x, y, mincnt=1, gridsize=(7, 7))
++    count_no_c = len(hb_no_c.get_offsets())
++
++    fig, ax = plt.subplots()
++    hb_with_c = ax.hexbin(x, y, C=c, reduce_C_function=np.sum,
++                          mincnt=1, gridsize=(7, 7))
++    count_with_c = len(hb_with_c.get_offsets())
++
++    assert count_no_c == count_with_c
++
+ def test_inverted_limits():
+     # Test gh:1553
+     # Calling invert_xaxis prior to plotting should not disable autoscaling

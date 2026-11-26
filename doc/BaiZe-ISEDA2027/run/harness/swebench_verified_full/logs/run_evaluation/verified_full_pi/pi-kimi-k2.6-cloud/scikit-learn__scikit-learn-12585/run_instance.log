@@ -1,0 +1,79 @@
+2026-11-02 03:07:32,529 - INFO - Creating container for scikit-learn__scikit-learn-12585...
+2026-11-02 03:07:32,552 - INFO - Container for scikit-learn__scikit-learn-12585 created: ef8384134f58840430bbd87f8cd8c61aaa0e23f79d0ed2d545430826e0f05b82
+2026-11-02 03:07:33,259 - INFO - Container for scikit-learn__scikit-learn-12585 started: ef8384134f58840430bbd87f8cd8c61aaa0e23f79d0ed2d545430826e0f05b82
+2026-11-02 03:07:33,262 - INFO - Intermediate patch for scikit-learn__scikit-learn-12585 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-12585/patch.diff, now applying to container...
+2026-11-02 03:07:33,424 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/base.py...
+Checking patch sklearn/tests/test_base.py...
+Applied patch sklearn/base.py cleanly.
+Applied patch sklearn/tests/test_base.py cleanly.
+
+2026-11-02 03:07:33,854 - INFO - Git diff before:
+diff --git a/sklearn/base.py b/sklearn/base.py
+index 56ffb18bf..34998270c 100644
+--- a/sklearn/base.py
++++ b/sklearn/base.py
+@@ -48,7 +48,7 @@ def clone(estimator, safe=True):
+     # XXX: not handling dictionaries
+     if estimator_type in (list, tuple, set, frozenset):
+         return estimator_type([clone(e, safe=safe) for e in estimator])
+-    elif not hasattr(estimator, 'get_params'):
++    elif not hasattr(estimator, 'get_params') or isinstance(estimator, type):
+         if not safe:
+             return copy.deepcopy(estimator)
+         else:
+diff --git a/sklearn/tests/test_base.py b/sklearn/tests/test_base.py
+index ebcb38925..332d1d217 100644
+--- a/sklearn/tests/test_base.py
++++ b/sklearn/tests/test_base.py
+@@ -77,6 +77,10 @@ class NoEstimator(object):
+     def predict(self, X=None):
+         return None
+ 
++class EstimatorWithClassAsParam(BaseEstimator):
++    def __init__(self, estimator_cls=None):
++        self.estimator_cls = estimator_cls
++
+ 
+ class VargEstimator(BaseEstimator):
+     """scikit-learn estimators shouldn't have vargs."""
+@@ -153,6 +157,14 @@ def test_clone_nan():
+ 
+     assert clf.empty is clf2.empty
+ 
++def test_clone_estimator_type():
++    # Non-regression test for issue where clone fails when a parameter
++    # is an estimator class (rather than an instance).
++    from sklearn.preprocessing import StandardScaler
++    estimator = EstimatorWithClassAsParam(estimator_cls=StandardScaler)
++    estimator_clone = clone(estimator)
++    assert estimator_clone.estimator_cls is StandardScaler
++
+ 
+ def test_clone_sparse_matrices():
+     sparse_matrix_classes = [
+2026-11-02 03:07:33,858 - INFO - Eval script for scikit-learn__scikit-learn-12585 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-12585/eval.sh; copying to container...
+2026-11-02 03:07:38,164 - INFO - Test runtime: 4.23 seconds
+2026-11-02 03:07:38,167 - INFO - Test output for scikit-learn__scikit-learn-12585 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-12585/test_output.txt
+2026-11-02 03:07:38,244 - INFO - Git diff after:
+diff --git a/sklearn/base.py b/sklearn/base.py
+index 56ffb18bf..34998270c 100644
+--- a/sklearn/base.py
++++ b/sklearn/base.py
+@@ -48,7 +48,7 @@ def clone(estimator, safe=True):
+     # XXX: not handling dictionaries
+     if estimator_type in (list, tuple, set, frozenset):
+         return estimator_type([clone(e, safe=safe) for e in estimator])
+-    elif not hasattr(estimator, 'get_params'):
++    elif not hasattr(estimator, 'get_params') or isinstance(estimator, type):
+         if not safe:
+             return copy.deepcopy(estimator)
+         else:
+2026-11-02 03:07:38,244 - INFO - Git diff changed after running eval script
+2026-11-02 03:07:38,245 - INFO - Grading answer for scikit-learn__scikit-learn-12585...
+2026-11-02 03:07:38,247 - INFO - report: {'scikit-learn__scikit-learn-12585': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/tests/test_base.py::test_clone_estimator_types'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/tests/test_base.py::test_clone', 'sklearn/tests/test_base.py::test_clone_2', 'sklearn/tests/test_base.py::test_clone_buggy', 'sklearn/tests/test_base.py::test_clone_empty_array', 'sklearn/tests/test_base.py::test_clone_nan', 'sklearn/tests/test_base.py::test_clone_sparse_matrices', 'sklearn/tests/test_base.py::test_repr', 'sklearn/tests/test_base.py::test_str', 'sklearn/tests/test_base.py::test_get_params', 'sklearn/tests/test_base.py::test_is_classifier', 'sklearn/tests/test_base.py::test_set_params', 'sklearn/tests/test_base.py::test_set_params_passes_all_parameters', 'sklearn/tests/test_base.py::test_set_params_updates_valid_params', 'sklearn/tests/test_base.py::test_score_sample_weight', 'sklearn/tests/test_base.py::test_clone_pandas_dataframe', 'sklearn/tests/test_base.py::test_pickle_version_warning_is_not_raised_with_matching_version', 'sklearn/tests/test_base.py::test_pickle_version_warning_is_issued_upon_different_version', 'sklearn/tests/test_base.py::test_pickle_version_warning_is_issued_when_no_version_info_in_pickle', 'sklearn/tests/test_base.py::test_pickle_version_no_warning_is_issued_with_non_sklearn_estimator', 'sklearn/tests/test_base.py::test_pickling_when_getstate_is_overwritten_by_mixin', 'sklearn/tests/test_base.py::test_pickling_when_getstate_is_overwritten_by_mixin_outside_of_sklearn', 'sklearn/tests/test_base.py::test_pickling_works_when_getstate_is_overwritten_in_the_child_class'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-12585: resolved: True
+2026-11-02 03:07:38,250 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-12585.verified_full_pi...
+2026-11-02 03:07:54,008 - INFO - Container sweb.eval.scikit-learn__scikit-learn-12585.verified_full_pi stopped successfully.
+2026-11-02 03:07:54,008 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-12585.verified_full_pi...
+2026-11-02 03:07:54,049 - INFO - Container sweb.eval.scikit-learn__scikit-learn-12585.verified_full_pi removed successfully.

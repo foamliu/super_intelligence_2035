@@ -1,0 +1,2018 @@
+{
+  "hermes": {
+    "total": 87,
+    "done": 50,
+    "pass": 0,
+    "exception": 37,
+    "trials": {
+      "adaptive-rejection-sampler": {
+        "reward": null,
+        "exception": true
+      },
+      "bn-fit-modify": {
+        "reward": "0",
+        "exception": false
+      },
+      "break-filter-js-from-html": {
+        "reward": "0",
+        "exception": false
+      },
+      "build-cython-ext": {
+        "reward": "0",
+        "exception": false
+      },
+      "build-pmars": {
+        "reward": null,
+        "exception": true
+      },
+      "build-pov-ray": {
+        "reward": null,
+        "exception": true
+      },
+      "caffe-cifar-10": {
+        "reward": null,
+        "exception": true
+      },
+      "cancel-async-tasks": {
+        "reward": "0",
+        "exception": false
+      },
+      "chess-best-move": {
+        "reward": "0",
+        "exception": false
+      },
+      "circuit-fibsqrt": {
+        "reward": "0",
+        "exception": false
+      },
+      "cobol-modernization": {
+        "reward": "0",
+        "exception": false
+      },
+      "code-from-image": {
+        "reward": "0",
+        "exception": false
+      },
+      "compile-compcert": {
+        "reward": null,
+        "exception": true
+      },
+      "configure-git-webserver": {
+        "reward": null,
+        "exception": true
+      },
+      "constraints-scheduling": {
+        "reward": "0",
+        "exception": false
+      },
+      "count-dataset-tokens": {
+        "reward": "0",
+        "exception": false
+      },
+      "crack-7z-hash": {
+        "reward": null,
+        "exception": true
+      },
+      "custom-memory-heap-crash": {
+        "reward": "0",
+        "exception": false
+      },
+      "db-wal-recovery": {
+        "reward": "0",
+        "exception": false
+      },
+      "distribution-search": {
+        "reward": "0",
+        "exception": false
+      },
+      "dna-assembly": {
+        "reward": null,
+        "exception": true
+      },
+      "dna-insert": {
+        "reward": null,
+        "exception": true
+      },
+      "extract-elf": {
+        "reward": null,
+        "exception": true
+      },
+      "extract-moves-from-video": {
+        "reward": null,
+        "exception": true
+      },
+      "feal-differential-cryptanalysis": {
+        "reward": "0",
+        "exception": false
+      },
+      "feal-linear-cryptanalysis": {
+        "reward": "0",
+        "exception": false
+      },
+      "filter-js-from-html": {
+        "reward": "0",
+        "exception": false
+      },
+      "financial-document-processor": {
+        "reward": null,
+        "exception": true
+      },
+      "fix-code-vulnerability": {
+        "reward": "0",
+        "exception": false
+      },
+      "fix-git": {
+        "reward": "0",
+        "exception": false
+      },
+      "fix-ocaml-gc": {
+        "reward": null,
+        "exception": true
+      },
+      "gcode-to-text": {
+        "reward": "0",
+        "exception": false
+      },
+      "git-leak-recovery": {
+        "reward": null,
+        "exception": true
+      },
+      "git-multibranch": {
+        "reward": null,
+        "exception": true
+      },
+      "gpt2-codegolf": {
+        "reward": null,
+        "exception": true
+      },
+      "headless-terminal": {
+        "reward": "0",
+        "exception": false
+      },
+      "hf-model-inference": {
+        "reward": "0",
+        "exception": false
+      },
+      "install-windows-3.11": {
+        "reward": null,
+        "exception": true
+      },
+      "kv-store-grpc": {
+        "reward": "0",
+        "exception": false
+      },
+      "large-scale-text-editing": {
+        "reward": "0",
+        "exception": false
+      },
+      "largest-eigenval": {
+        "reward": "0",
+        "exception": false
+      },
+      "llm-inference-batching-scheduler": {
+        "reward": "0",
+        "exception": false
+      },
+      "log-summary-date-ranges": {
+        "reward": "0",
+        "exception": false
+      },
+      "mailman": {
+        "reward": null,
+        "exception": true
+      },
+      "make-doom-for-mips": {
+        "reward": "0",
+        "exception": false
+      },
+      "make-mips-interpreter": {
+        "reward": "0",
+        "exception": false
+      },
+      "mcmc-sampling-stan": {
+        "reward": "0",
+        "exception": false
+      },
+      "merge-diff-arc-agi-task": {
+        "reward": null,
+        "exception": true
+      },
+      "model-extraction-relu-logits": {
+        "reward": "0",
+        "exception": false
+      },
+      "modernize-scientific-stack": {
+        "reward": "0",
+        "exception": false
+      },
+      "multi-source-data-merger": {
+        "reward": "0",
+        "exception": false
+      },
+      "nginx-request-logging": {
+        "reward": "0",
+        "exception": false
+      },
+      "openssl-selfsigned-cert": {
+        "reward": "0",
+        "exception": false
+      },
+      "overfull-hbox": {
+        "reward": null,
+        "exception": true
+      },
+      "password-recovery": {
+        "reward": null,
+        "exception": true
+      },
+      "path-tracing-reverse": {
+        "reward": null,
+        "exception": true
+      },
+      "path-tracing": {
+        "reward": null,
+        "exception": true
+      },
+      "polyglot-c-py": {
+        "reward": null,
+        "exception": true
+      },
+      "polyglot-rust-c": {
+        "reward": null,
+        "exception": true
+      },
+      "portfolio-optimization": {
+        "reward": "0",
+        "exception": false
+      },
+      "protein-assembly": {
+        "reward": "0",
+        "exception": false
+      },
+      "prove-plus-comm": {
+        "reward": null,
+        "exception": true
+      },
+      "pypi-server": {
+        "reward": "0",
+        "exception": false
+      },
+      "pytorch-model-cli": {
+        "reward": null,
+        "exception": true
+      },
+      "pytorch-model-recovery": {
+        "reward": "0",
+        "exception": false
+      },
+      "qemu-alpine-ssh": {
+        "reward": null,
+        "exception": true
+      },
+      "qemu-startup": {
+        "reward": null,
+        "exception": true
+      },
+      "query-optimize": {
+        "reward": null,
+        "exception": true
+      },
+      "raman-fitting": {
+        "reward": "0",
+        "exception": false
+      },
+      "regex-chess": {
+        "reward": "0",
+        "exception": false
+      },
+      "regex-log": {
+        "reward": null,
+        "exception": true
+      },
+      "reshard-c4-data": {
+        "reward": "0",
+        "exception": false
+      },
+      "rstan-to-pystan": {
+        "reward": "0",
+        "exception": false
+      },
+      "sam-cell-seg": {
+        "reward": "0",
+        "exception": false
+      },
+      "sanitize-git-repo": {
+        "reward": "0",
+        "exception": false
+      },
+      "schemelike-metacircular-eval": {
+        "reward": "0",
+        "exception": false
+      },
+      "sparql-university": {
+        "reward": null,
+        "exception": true
+      },
+      "sqlite-db-truncate": {
+        "reward": "0",
+        "exception": false
+      },
+      "sqlite-with-gcov": {
+        "reward": null,
+        "exception": true
+      },
+      "torch-pipeline-parallelism": {
+        "reward": null,
+        "exception": true
+      },
+      "torch-tensor-parallelism": {
+        "reward": null,
+        "exception": true
+      },
+      "train-fasttext": {
+        "reward": "0",
+        "exception": false
+      },
+      "tune-mjcf": {
+        "reward": "0",
+        "exception": false
+      },
+      "video-processing": {
+        "reward": "0",
+        "exception": false
+      },
+      "vulnerable-secret": {
+        "reward": "0",
+        "exception": false
+      },
+      "winning-avg-corewars": {
+        "reward": null,
+        "exception": true
+      },
+      "write-compressor": {
+        "reward": null,
+        "exception": true
+      }
+    }
+  },
+  "claude-code": {
+    "total": 57,
+    "done": 34,
+    "pass": 0,
+    "exception": 45,
+    "trials": {
+      "adaptive-rejection-sampler": {
+        "reward": "0",
+        "exception": true
+      },
+      "bn-fit-modify": {
+        "reward": null,
+        "exception": true
+      },
+      "break-filter-js-from-html": {
+        "reward": "0",
+        "exception": true
+      },
+      "build-cython-ext": {
+        "reward": null,
+        "exception": true
+      },
+      "build-pmars": {
+        "reward": null,
+        "exception": true
+      },
+      "build-pov-ray": {
+        "reward": null,
+        "exception": true
+      },
+      "caffe-cifar-10": {
+        "reward": null,
+        "exception": true
+      },
+      "cancel-async-tasks": {
+        "reward": "0",
+        "exception": false
+      },
+      "chess-best-move": {
+        "reward": "0",
+        "exception": true
+      },
+      "circuit-fibsqrt": {
+        "reward": null,
+        "exception": true
+      },
+      "cobol-modernization": {
+        "reward": "0",
+        "exception": true
+      },
+      "code-from-image": {
+        "reward": null,
+        "exception": true
+      },
+      "compile-compcert": {
+        "reward": null,
+        "exception": true
+      },
+      "configure-git-webserver": {
+        "reward": "0",
+        "exception": false
+      },
+      "constraints-scheduling": {
+        "reward": "0",
+        "exception": false
+      },
+      "count-dataset-tokens": {
+        "reward": "0",
+        "exception": false
+      },
+      "crack-7z-hash": {
+        "reward": null,
+        "exception": true
+      },
+      "custom-memory-heap-crash": {
+        "reward": null,
+        "exception": true
+      },
+      "db-wal-recovery": {
+        "reward": "0",
+        "exception": true
+      },
+      "distribution-search": {
+        "reward": null,
+        "exception": true
+      },
+      "dna-assembly": {
+        "reward": "0",
+        "exception": true
+      },
+      "dna-insert": {
+        "reward": "0",
+        "exception": true
+      },
+      "extract-elf": {
+        "reward": null,
+        "exception": true
+      },
+      "extract-moves-from-video": {
+        "reward": "0",
+        "exception": true
+      },
+      "feal-differential-cryptanalysis": {
+        "reward": null,
+        "exception": true
+      },
+      "feal-linear-cryptanalysis": {
+        "reward": "0",
+        "exception": true
+      },
+      "filter-js-from-html": {
+        "reward": "0",
+        "exception": false
+      },
+      "financial-document-processor": {
+        "reward": null,
+        "exception": true
+      },
+      "fix-code-vulnerability": {
+        "reward": null,
+        "exception": true
+      },
+      "fix-git": {
+        "reward": "0",
+        "exception": false
+      },
+      "fix-ocaml-gc": {
+        "reward": null,
+        "exception": true
+      },
+      "gcode-to-text": {
+        "reward": "0",
+        "exception": true
+      },
+      "git-leak-recovery": {
+        "reward": "0",
+        "exception": true
+      },
+      "git-multibranch": {
+        "reward": "0",
+        "exception": true
+      },
+      "gpt2-codegolf": {
+        "reward": "0",
+        "exception": true
+      },
+      "headless-terminal": {
+        "reward": "0",
+        "exception": true
+      },
+      "hf-model-inference": {
+        "reward": "0",
+        "exception": false
+      },
+      "install-windows-3.11": {
+        "reward": null,
+        "exception": true
+      },
+      "kv-store-grpc": {
+        "reward": "0",
+        "exception": false
+      },
+      "large-scale-text-editing": {
+        "reward": null,
+        "exception": true
+      },
+      "largest-eigenval": {
+        "reward": null,
+        "exception": true
+      },
+      "llm-inference-batching-scheduler": {
+        "reward": null,
+        "exception": true
+      },
+      "log-summary-date-ranges": {
+        "reward": "0",
+        "exception": false
+      },
+      "mailman": {
+        "reward": "0",
+        "exception": true
+      },
+      "make-doom-for-mips": {
+        "reward": "0",
+        "exception": true
+      },
+      "make-mips-interpreter": {
+        "reward": "0",
+        "exception": true
+      },
+      "mcmc-sampling-stan": {
+        "reward": null,
+        "exception": true
+      },
+      "merge-diff-arc-agi-task": {
+        "reward": "0",
+        "exception": true
+      },
+      "model-extraction-relu-logits": {
+        "reward": "0",
+        "exception": true
+      },
+      "modernize-scientific-stack": {
+        "reward": "0",
+        "exception": false
+      },
+      "multi-source-data-merger": {
+        "reward": "0",
+        "exception": false
+      },
+      "nginx-request-logging": {
+        "reward": null,
+        "exception": true
+      },
+      "openssl-selfsigned-cert": {
+        "reward": "0",
+        "exception": false
+      },
+      "overfull-hbox": {
+        "reward": "0",
+        "exception": true
+      },
+      "password-recovery": {
+        "reward": "0",
+        "exception": true
+      },
+      "path-tracing-reverse": {
+        "reward": null,
+        "exception": true
+      },
+      "path-tracing": {
+        "reward": "0",
+        "exception": true
+      }
+    }
+  },
+  "cline": {
+    "total": 87,
+    "done": 80,
+    "pass": 43,
+    "exception": 26,
+    "trials": {
+      "adaptive-rejection-sampler": {
+        "reward": "0",
+        "exception": true
+      },
+      "bn-fit-modify": {
+        "reward": "1",
+        "exception": false
+      },
+      "break-filter-js-from-html": {
+        "reward": "1",
+        "exception": false
+      },
+      "build-cython-ext": {
+        "reward": "0",
+        "exception": true
+      },
+      "build-pmars": {
+        "reward": "0",
+        "exception": true
+      },
+      "build-pov-ray": {
+        "reward": "1",
+        "exception": false
+      },
+      "caffe-cifar-10": {
+        "reward": "0",
+        "exception": false
+      },
+      "cancel-async-tasks": {
+        "reward": "0",
+        "exception": false
+      },
+      "chess-best-move": {
+        "reward": "0",
+        "exception": false
+      },
+      "circuit-fibsqrt": {
+        "reward": null,
+        "exception": true
+      },
+      "cobol-modernization": {
+        "reward": "1",
+        "exception": false
+      },
+      "code-from-image": {
+        "reward": "1",
+        "exception": false
+      },
+      "compile-compcert": {
+        "reward": "0",
+        "exception": false
+      },
+      "configure-git-webserver": {
+        "reward": "1",
+        "exception": false
+      },
+      "constraints-scheduling": {
+        "reward": "1",
+        "exception": false
+      },
+      "count-dataset-tokens": {
+        "reward": "1",
+        "exception": false
+      },
+      "crack-7z-hash": {
+        "reward": "0",
+        "exception": true
+      },
+      "custom-memory-heap-crash": {
+        "reward": "1",
+        "exception": false
+      },
+      "db-wal-recovery": {
+        "reward": "0",
+        "exception": true
+      },
+      "distribution-search": {
+        "reward": "1",
+        "exception": false
+      },
+      "dna-assembly": {
+        "reward": "0",
+        "exception": true
+      },
+      "dna-insert": {
+        "reward": "0",
+        "exception": false
+      },
+      "extract-elf": {
+        "reward": "1",
+        "exception": false
+      },
+      "extract-moves-from-video": {
+        "reward": "0",
+        "exception": false
+      },
+      "feal-differential-cryptanalysis": {
+        "reward": "1",
+        "exception": false
+      },
+      "feal-linear-cryptanalysis": {
+        "reward": "1",
+        "exception": false
+      },
+      "filter-js-from-html": {
+        "reward": "0",
+        "exception": false
+      },
+      "financial-document-processor": {
+        "reward": "1",
+        "exception": false
+      },
+      "fix-code-vulnerability": {
+        "reward": "1",
+        "exception": false
+      },
+      "fix-git": {
+        "reward": "1",
+        "exception": false
+      },
+      "fix-ocaml-gc": {
+        "reward": null,
+        "exception": true
+      },
+      "gcode-to-text": {
+        "reward": "0",
+        "exception": false
+      },
+      "git-leak-recovery": {
+        "reward": "1",
+        "exception": false
+      },
+      "git-multibranch": {
+        "reward": "0",
+        "exception": true
+      },
+      "gpt2-codegolf": {
+        "reward": "0",
+        "exception": true
+      },
+      "headless-terminal": {
+        "reward": "1",
+        "exception": false
+      },
+      "hf-model-inference": {
+        "reward": "1",
+        "exception": true
+      },
+      "install-windows-3.11": {
+        "reward": "0",
+        "exception": false
+      },
+      "kv-store-grpc": {
+        "reward": "1",
+        "exception": false
+      },
+      "large-scale-text-editing": {
+        "reward": "1",
+        "exception": false
+      },
+      "largest-eigenval": {
+        "reward": "1",
+        "exception": true
+      },
+      "llm-inference-batching-scheduler": {
+        "reward": "1",
+        "exception": false
+      },
+      "log-summary-date-ranges": {
+        "reward": "1",
+        "exception": false
+      },
+      "mailman": {
+        "reward": "1",
+        "exception": false
+      },
+      "make-doom-for-mips": {
+        "reward": "0",
+        "exception": false
+      },
+      "make-mips-interpreter": {
+        "reward": "0",
+        "exception": true
+      },
+      "mcmc-sampling-stan": {
+        "reward": "0",
+        "exception": true
+      },
+      "merge-diff-arc-agi-task": {
+        "reward": "1",
+        "exception": false
+      },
+      "model-extraction-relu-logits": {
+        "reward": "1",
+        "exception": false
+      },
+      "modernize-scientific-stack": {
+        "reward": "1",
+        "exception": false
+      },
+      "multi-source-data-merger": {
+        "reward": "1",
+        "exception": false
+      },
+      "nginx-request-logging": {
+        "reward": "1",
+        "exception": false
+      },
+      "openssl-selfsigned-cert": {
+        "reward": "0",
+        "exception": false
+      },
+      "overfull-hbox": {
+        "reward": "0",
+        "exception": true
+      },
+      "password-recovery": {
+        "reward": "1",
+        "exception": false
+      },
+      "path-tracing-reverse": {
+        "reward": "0",
+        "exception": true
+      },
+      "path-tracing": {
+        "reward": "0",
+        "exception": true
+      },
+      "polyglot-c-py": {
+        "reward": "0",
+        "exception": false
+      },
+      "polyglot-rust-c": {
+        "reward": "0",
+        "exception": false
+      },
+      "portfolio-optimization": {
+        "reward": "1",
+        "exception": false
+      },
+      "protein-assembly": {
+        "reward": "0",
+        "exception": true
+      },
+      "prove-plus-comm": {
+        "reward": "1",
+        "exception": false
+      },
+      "pypi-server": {
+        "reward": "1",
+        "exception": false
+      },
+      "pytorch-model-cli": {
+        "reward": null,
+        "exception": true
+      },
+      "pytorch-model-recovery": {
+        "reward": null,
+        "exception": true
+      },
+      "qemu-alpine-ssh": {
+        "reward": "0",
+        "exception": true
+      },
+      "qemu-startup": {
+        "reward": "1",
+        "exception": false
+      },
+      "query-optimize": {
+        "reward": "1",
+        "exception": false
+      },
+      "raman-fitting": {
+        "reward": "0",
+        "exception": false
+      },
+      "regex-chess": {
+        "reward": "0",
+        "exception": false
+      },
+      "regex-log": {
+        "reward": "1",
+        "exception": false
+      },
+      "reshard-c4-data": {
+        "reward": "1",
+        "exception": false
+      },
+      "rstan-to-pystan": {
+        "reward": "0",
+        "exception": false
+      },
+      "sam-cell-seg": {
+        "reward": "0",
+        "exception": false
+      },
+      "sanitize-git-repo": {
+        "reward": "0",
+        "exception": false
+      },
+      "schemelike-metacircular-eval": {
+        "reward": null,
+        "exception": true
+      },
+      "sparql-university": {
+        "reward": "1",
+        "exception": false
+      },
+      "sqlite-db-truncate": {
+        "reward": "1",
+        "exception": false
+      },
+      "sqlite-with-gcov": {
+        "reward": "1",
+        "exception": false
+      },
+      "torch-pipeline-parallelism": {
+        "reward": null,
+        "exception": true
+      },
+      "torch-tensor-parallelism": {
+        "reward": "1",
+        "exception": false
+      },
+      "train-fasttext": {
+        "reward": "0",
+        "exception": false
+      },
+      "tune-mjcf": {
+        "reward": "0",
+        "exception": true
+      },
+      "video-processing": {
+        "reward": "0",
+        "exception": false
+      },
+      "vulnerable-secret": {
+        "reward": "1",
+        "exception": false
+      },
+      "winning-avg-corewars": {
+        "reward": null,
+        "exception": true
+      },
+      "write-compressor": {
+        "reward": "0",
+        "exception": true
+      }
+    }
+  },
+  "codex": {
+    "total": 87,
+    "done": 41,
+    "pass": 20,
+    "exception": 59,
+    "trials": {
+      "adaptive-rejection-sampler": {
+        "reward": "0",
+        "exception": true
+      },
+      "bn-fit-modify": {
+        "reward": "1",
+        "exception": false
+      },
+      "break-filter-js-from-html": {
+        "reward": "0",
+        "exception": true
+      },
+      "build-cython-ext": {
+        "reward": "0",
+        "exception": false
+      },
+      "build-pmars": {
+        "reward": "0",
+        "exception": true
+      },
+      "build-pov-ray": {
+        "reward": null,
+        "exception": true
+      },
+      "caffe-cifar-10": {
+        "reward": "0",
+        "exception": false
+      },
+      "cancel-async-tasks": {
+        "reward": "0",
+        "exception": false
+      },
+      "chess-best-move": {
+        "reward": "0",
+        "exception": false
+      },
+      "circuit-fibsqrt": {
+        "reward": null,
+        "exception": true
+      },
+      "cobol-modernization": {
+        "reward": "1",
+        "exception": false
+      },
+      "code-from-image": {
+        "reward": "1",
+        "exception": false
+      },
+      "compile-compcert": {
+        "reward": null,
+        "exception": true
+      },
+      "configure-git-webserver": {
+        "reward": "1",
+        "exception": false
+      },
+      "constraints-scheduling": {
+        "reward": "1",
+        "exception": false
+      },
+      "count-dataset-tokens": {
+        "reward": "1",
+        "exception": false
+      },
+      "crack-7z-hash": {
+        "reward": "0",
+        "exception": true
+      },
+      "custom-memory-heap-crash": {
+        "reward": "1",
+        "exception": true
+      },
+      "db-wal-recovery": {
+        "reward": "1",
+        "exception": false
+      },
+      "distribution-search": {
+        "reward": "1",
+        "exception": false
+      },
+      "dna-assembly": {
+        "reward": "0",
+        "exception": true
+      },
+      "dna-insert": {
+        "reward": "0",
+        "exception": false
+      },
+      "extract-elf": {
+        "reward": "0",
+        "exception": true
+      },
+      "extract-moves-from-video": {
+        "reward": "0",
+        "exception": true
+      },
+      "feal-differential-cryptanalysis": {
+        "reward": null,
+        "exception": true
+      },
+      "feal-linear-cryptanalysis": {
+        "reward": null,
+        "exception": true
+      },
+      "filter-js-from-html": {
+        "reward": null,
+        "exception": true
+      },
+      "financial-document-processor": {
+        "reward": null,
+        "exception": true
+      },
+      "fix-code-vulnerability": {
+        "reward": null,
+        "exception": true
+      },
+      "fix-git": {
+        "reward": null,
+        "exception": true
+      },
+      "fix-ocaml-gc": {
+        "reward": null,
+        "exception": true
+      },
+      "gcode-to-text": {
+        "reward": null,
+        "exception": true
+      },
+      "git-leak-recovery": {
+        "reward": null,
+        "exception": true
+      },
+      "git-multibranch": {
+        "reward": null,
+        "exception": true
+      },
+      "gpt2-codegolf": {
+        "reward": null,
+        "exception": true
+      },
+      "headless-terminal": {
+        "reward": null,
+        "exception": true
+      },
+      "hf-model-inference": {
+        "reward": null,
+        "exception": true
+      },
+      "install-windows-3.11": {
+        "reward": null,
+        "exception": true
+      },
+      "kv-store-grpc": {
+        "reward": null,
+        "exception": true
+      },
+      "large-scale-text-editing": {
+        "reward": null,
+        "exception": true
+      },
+      "largest-eigenval": {
+        "reward": null,
+        "exception": true
+      },
+      "llm-inference-batching-scheduler": {
+        "reward": null,
+        "exception": true
+      },
+      "log-summary-date-ranges": {
+        "reward": null,
+        "exception": true
+      },
+      "mailman": {
+        "reward": null,
+        "exception": true
+      },
+      "make-doom-for-mips": {
+        "reward": null,
+        "exception": true
+      },
+      "make-mips-interpreter": {
+        "reward": null,
+        "exception": true
+      },
+      "mcmc-sampling-stan": {
+        "reward": null,
+        "exception": true
+      },
+      "merge-diff-arc-agi-task": {
+        "reward": null,
+        "exception": true
+      },
+      "model-extraction-relu-logits": {
+        "reward": null,
+        "exception": true
+      },
+      "modernize-scientific-stack": {
+        "reward": null,
+        "exception": true
+      },
+      "multi-source-data-merger": {
+        "reward": null,
+        "exception": true
+      },
+      "nginx-request-logging": {
+        "reward": null,
+        "exception": true
+      },
+      "openssl-selfsigned-cert": {
+        "reward": null,
+        "exception": true
+      },
+      "overfull-hbox": {
+        "reward": null,
+        "exception": true
+      },
+      "password-recovery": {
+        "reward": null,
+        "exception": true
+      },
+      "path-tracing-reverse": {
+        "reward": null,
+        "exception": true
+      },
+      "path-tracing": {
+        "reward": null,
+        "exception": true
+      },
+      "polyglot-c-py": {
+        "reward": null,
+        "exception": true
+      },
+      "polyglot-rust-c": {
+        "reward": "0",
+        "exception": true
+      },
+      "portfolio-optimization": {
+        "reward": "1",
+        "exception": false
+      },
+      "protein-assembly": {
+        "reward": "0",
+        "exception": true
+      },
+      "prove-plus-comm": {
+        "reward": "1",
+        "exception": false
+      },
+      "pypi-server": {
+        "reward": "0",
+        "exception": false
+      },
+      "pytorch-model-cli": {
+        "reward": null,
+        "exception": true
+      },
+      "pytorch-model-recovery": {
+        "reward": null,
+        "exception": true
+      },
+      "qemu-alpine-ssh": {
+        "reward": "0",
+        "exception": false
+      },
+      "qemu-startup": {
+        "reward": null,
+        "exception": true
+      },
+      "query-optimize": {
+        "reward": "1",
+        "exception": false
+      },
+      "raman-fitting": {
+        "reward": "0",
+        "exception": false
+      },
+      "regex-chess": {
+        "reward": null,
+        "exception": true
+      },
+      "regex-log": {
+        "reward": "1",
+        "exception": false
+      },
+      "reshard-c4-data": {
+        "reward": "1",
+        "exception": false
+      },
+      "rstan-to-pystan": {
+        "reward": "0",
+        "exception": true
+      },
+      "sam-cell-seg": {
+        "reward": "0",
+        "exception": false
+      },
+      "sanitize-git-repo": {
+        "reward": "0",
+        "exception": false
+      },
+      "schemelike-metacircular-eval": {
+        "reward": null,
+        "exception": true
+      },
+      "sparql-university": {
+        "reward": "1",
+        "exception": false
+      },
+      "sqlite-db-truncate": {
+        "reward": "1",
+        "exception": false
+      },
+      "sqlite-with-gcov": {
+        "reward": "1",
+        "exception": false
+      },
+      "torch-pipeline-parallelism": {
+        "reward": null,
+        "exception": true
+      },
+      "torch-tensor-parallelism": {
+        "reward": "1",
+        "exception": false
+      },
+      "train-fasttext": {
+        "reward": null,
+        "exception": true
+      },
+      "tune-mjcf": {
+        "reward": "1",
+        "exception": true
+      },
+      "video-processing": {
+        "reward": null,
+        "exception": true
+      },
+      "vulnerable-secret": {
+        "reward": "1",
+        "exception": false
+      },
+      "winning-avg-corewars": {
+        "reward": null,
+        "exception": true
+      },
+      "write-compressor": {
+        "reward": "0",
+        "exception": true
+      }
+    }
+  },
+  "opencode": {
+    "total": 87,
+    "done": 75,
+    "pass": 41,
+    "exception": 27,
+    "trials": {
+      "adaptive-rejection-sampler": {
+        "reward": "1",
+        "exception": true
+      },
+      "bn-fit-modify": {
+        "reward": "1",
+        "exception": false
+      },
+      "break-filter-js-from-html": {
+        "reward": "0",
+        "exception": true
+      },
+      "build-cython-ext": {
+        "reward": "0",
+        "exception": false
+      },
+      "build-pmars": {
+        "reward": "0",
+        "exception": true
+      },
+      "build-pov-ray": {
+        "reward": "1",
+        "exception": false
+      },
+      "caffe-cifar-10": {
+        "reward": "0",
+        "exception": true
+      },
+      "cancel-async-tasks": {
+        "reward": "0",
+        "exception": false
+      },
+      "chess-best-move": {
+        "reward": "0",
+        "exception": true
+      },
+      "circuit-fibsqrt": {
+        "reward": "0",
+        "exception": false
+      },
+      "cobol-modernization": {
+        "reward": "1",
+        "exception": false
+      },
+      "code-from-image": {
+        "reward": "1",
+        "exception": false
+      },
+      "compile-compcert": {
+        "reward": null,
+        "exception": true
+      },
+      "configure-git-webserver": {
+        "reward": "1",
+        "exception": false
+      },
+      "constraints-scheduling": {
+        "reward": "1",
+        "exception": false
+      },
+      "count-dataset-tokens": {
+        "reward": "0",
+        "exception": true
+      },
+      "crack-7z-hash": {
+        "reward": "1",
+        "exception": false
+      },
+      "custom-memory-heap-crash": {
+        "reward": "1",
+        "exception": false
+      },
+      "db-wal-recovery": {
+        "reward": "0",
+        "exception": true
+      },
+      "distribution-search": {
+        "reward": "1",
+        "exception": false
+      },
+      "dna-assembly": {
+        "reward": "0",
+        "exception": true
+      },
+      "dna-insert": {
+        "reward": "0",
+        "exception": false
+      },
+      "extract-elf": {
+        "reward": "1",
+        "exception": false
+      },
+      "extract-moves-from-video": {
+        "reward": null,
+        "exception": true
+      },
+      "feal-differential-cryptanalysis": {
+        "reward": "1",
+        "exception": false
+      },
+      "feal-linear-cryptanalysis": {
+        "reward": "0",
+        "exception": false
+      },
+      "filter-js-from-html": {
+        "reward": "0",
+        "exception": false
+      },
+      "financial-document-processor": {
+        "reward": null,
+        "exception": true
+      },
+      "fix-code-vulnerability": {
+        "reward": "1",
+        "exception": false
+      },
+      "fix-git": {
+        "reward": "1",
+        "exception": false
+      },
+      "fix-ocaml-gc": {
+        "reward": null,
+        "exception": true
+      },
+      "gcode-to-text": {
+        "reward": "0",
+        "exception": true
+      },
+      "git-leak-recovery": {
+        "reward": "1",
+        "exception": false
+      },
+      "git-multibranch": {
+        "reward": "1",
+        "exception": false
+      },
+      "gpt2-codegolf": {
+        "reward": "0",
+        "exception": false
+      },
+      "headless-terminal": {
+        "reward": "1",
+        "exception": false
+      },
+      "hf-model-inference": {
+        "reward": "1",
+        "exception": false
+      },
+      "install-windows-3.11": {
+        "reward": null,
+        "exception": true
+      },
+      "kv-store-grpc": {
+        "reward": "1",
+        "exception": false
+      },
+      "large-scale-text-editing": {
+        "reward": "1",
+        "exception": false
+      },
+      "largest-eigenval": {
+        "reward": "1",
+        "exception": false
+      },
+      "llm-inference-batching-scheduler": {
+        "reward": "1",
+        "exception": false
+      },
+      "log-summary-date-ranges": {
+        "reward": "1",
+        "exception": false
+      },
+      "mailman": {
+        "reward": "1",
+        "exception": false
+      },
+      "make-doom-for-mips": {
+        "reward": "0",
+        "exception": true
+      },
+      "make-mips-interpreter": {
+        "reward": "0",
+        "exception": true
+      },
+      "mcmc-sampling-stan": {
+        "reward": "0",
+        "exception": true
+      },
+      "merge-diff-arc-agi-task": {
+        "reward": "1",
+        "exception": false
+      },
+      "model-extraction-relu-logits": {
+        "reward": "0",
+        "exception": false
+      },
+      "modernize-scientific-stack": {
+        "reward": "1",
+        "exception": false
+      },
+      "multi-source-data-merger": {
+        "reward": "1",
+        "exception": false
+      },
+      "nginx-request-logging": {
+        "reward": "1",
+        "exception": false
+      },
+      "openssl-selfsigned-cert": {
+        "reward": "1",
+        "exception": false
+      },
+      "overfull-hbox": {
+        "reward": "0",
+        "exception": false
+      },
+      "password-recovery": {
+        "reward": "1",
+        "exception": false
+      },
+      "path-tracing-reverse": {
+        "reward": "0",
+        "exception": true
+      },
+      "path-tracing": {
+        "reward": "0",
+        "exception": true
+      },
+      "polyglot-c-py": {
+        "reward": "0",
+        "exception": false
+      },
+      "polyglot-rust-c": {
+        "reward": "0",
+        "exception": false
+      },
+      "portfolio-optimization": {
+        "reward": "0",
+        "exception": false
+      },
+      "protein-assembly": {
+        "reward": "0",
+        "exception": false
+      },
+      "prove-plus-comm": {
+        "reward": "1",
+        "exception": false
+      },
+      "pypi-server": {
+        "reward": "1",
+        "exception": false
+      },
+      "pytorch-model-cli": {
+        "reward": null,
+        "exception": true
+      },
+      "pytorch-model-recovery": {
+        "reward": null,
+        "exception": true
+      },
+      "qemu-alpine-ssh": {
+        "reward": "0",
+        "exception": true
+      },
+      "qemu-startup": {
+        "reward": "1",
+        "exception": false
+      },
+      "query-optimize": {
+        "reward": "0",
+        "exception": false
+      },
+      "raman-fitting": {
+        "reward": null,
+        "exception": true
+      },
+      "regex-chess": {
+        "reward": "0",
+        "exception": false
+      },
+      "regex-log": {
+        "reward": "1",
+        "exception": false
+      },
+      "reshard-c4-data": {
+        "reward": "1",
+        "exception": false
+      },
+      "rstan-to-pystan": {
+        "reward": "1",
+        "exception": false
+      },
+      "sam-cell-seg": {
+        "reward": null,
+        "exception": true
+      },
+      "sanitize-git-repo": {
+        "reward": "1",
+        "exception": false
+      },
+      "schemelike-metacircular-eval": {
+        "reward": null,
+        "exception": true
+      },
+      "sparql-university": {
+        "reward": "1",
+        "exception": false
+      },
+      "sqlite-db-truncate": {
+        "reward": "1",
+        "exception": false
+      },
+      "sqlite-with-gcov": {
+        "reward": "0",
+        "exception": false
+      },
+      "torch-pipeline-parallelism": {
+        "reward": null,
+        "exception": true
+      },
+      "torch-tensor-parallelism": {
+        "reward": "0",
+        "exception": false
+      },
+      "train-fasttext": {
+        "reward": null,
+        "exception": true
+      },
+      "tune-mjcf": {
+        "reward": "1",
+        "exception": false
+      },
+      "video-processing": {
+        "reward": "0",
+        "exception": false
+      },
+      "vulnerable-secret": {
+        "reward": "1",
+        "exception": false
+      },
+      "winning-avg-corewars": {
+        "reward": "0",
+        "exception": false
+      },
+      "write-compressor": {
+        "reward": "0",
+        "exception": false
+      }
+    }
+  },
+  "pi": {
+    "total": 87,
+    "done": 80,
+    "pass": 35,
+    "exception": 23,
+    "trials": {
+      "adaptive-rejection-sampler": {
+        "reward": "0",
+        "exception": false
+      },
+      "bn-fit-modify": {
+        "reward": "1",
+        "exception": false
+      },
+      "break-filter-js-from-html": {
+        "reward": "1",
+        "exception": false
+      },
+      "build-cython-ext": {
+        "reward": "1",
+        "exception": false
+      },
+      "build-pmars": {
+        "reward": "0",
+        "exception": true
+      },
+      "build-pov-ray": {
+        "reward": "1",
+        "exception": false
+      },
+      "caffe-cifar-10": {
+        "reward": "0",
+        "exception": true
+      },
+      "cancel-async-tasks": {
+        "reward": "0",
+        "exception": false
+      },
+      "chess-best-move": {
+        "reward": "0",
+        "exception": false
+      },
+      "circuit-fibsqrt": {
+        "reward": "0",
+        "exception": false
+      },
+      "cobol-modernization": {
+        "reward": "1",
+        "exception": false
+      },
+      "code-from-image": {
+        "reward": "1",
+        "exception": false
+      },
+      "compile-compcert": {
+        "reward": null,
+        "exception": true
+      },
+      "configure-git-webserver": {
+        "reward": "0",
+        "exception": false
+      },
+      "constraints-scheduling": {
+        "reward": "1",
+        "exception": false
+      },
+      "count-dataset-tokens": {
+        "reward": "0",
+        "exception": false
+      },
+      "crack-7z-hash": {
+        "reward": "1",
+        "exception": true
+      },
+      "custom-memory-heap-crash": {
+        "reward": "1",
+        "exception": false
+      },
+      "db-wal-recovery": {
+        "reward": "0",
+        "exception": true
+      },
+      "distribution-search": {
+        "reward": "1",
+        "exception": false
+      },
+      "dna-assembly": {
+        "reward": "0",
+        "exception": false
+      },
+      "dna-insert": {
+        "reward": "0",
+        "exception": false
+      },
+      "extract-elf": {
+        "reward": "0",
+        "exception": false
+      },
+      "extract-moves-from-video": {
+        "reward": "0",
+        "exception": true
+      },
+      "feal-differential-cryptanalysis": {
+        "reward": null,
+        "exception": true
+      },
+      "feal-linear-cryptanalysis": {
+        "reward": "0",
+        "exception": false
+      },
+      "filter-js-from-html": {
+        "reward": "0",
+        "exception": false
+      },
+      "financial-document-processor": {
+        "reward": "1",
+        "exception": false
+      },
+      "fix-code-vulnerability": {
+        "reward": "1",
+        "exception": false
+      },
+      "fix-git": {
+        "reward": "1",
+        "exception": false
+      },
+      "fix-ocaml-gc": {
+        "reward": null,
+        "exception": true
+      },
+      "gcode-to-text": {
+        "reward": "0",
+        "exception": true
+      },
+      "git-leak-recovery": {
+        "reward": "1",
+        "exception": false
+      },
+      "git-multibranch": {
+        "reward": "0",
+        "exception": true
+      },
+      "gpt2-codegolf": {
+        "reward": "0",
+        "exception": false
+      },
+      "headless-terminal": {
+        "reward": "0",
+        "exception": false
+      },
+      "hf-model-inference": {
+        "reward": "1",
+        "exception": false
+      },
+      "install-windows-3.11": {
+        "reward": null,
+        "exception": true
+      },
+      "kv-store-grpc": {
+        "reward": "0",
+        "exception": false
+      },
+      "large-scale-text-editing": {
+        "reward": "0",
+        "exception": true
+      },
+      "largest-eigenval": {
+        "reward": "1",
+        "exception": false
+      },
+      "llm-inference-batching-scheduler": {
+        "reward": "1",
+        "exception": false
+      },
+      "log-summary-date-ranges": {
+        "reward": "1",
+        "exception": false
+      },
+      "mailman": {
+        "reward": "1",
+        "exception": false
+      },
+      "make-doom-for-mips": {
+        "reward": "0",
+        "exception": true
+      },
+      "make-mips-interpreter": {
+        "reward": "0",
+        "exception": false
+      },
+      "mcmc-sampling-stan": {
+        "reward": "0",
+        "exception": true
+      },
+      "merge-diff-arc-agi-task": {
+        "reward": "1",
+        "exception": false
+      },
+      "model-extraction-relu-logits": {
+        "reward": "0",
+        "exception": false
+      },
+      "modernize-scientific-stack": {
+        "reward": "1",
+        "exception": false
+      },
+      "multi-source-data-merger": {
+        "reward": "1",
+        "exception": false
+      },
+      "nginx-request-logging": {
+        "reward": "1",
+        "exception": false
+      },
+      "openssl-selfsigned-cert": {
+        "reward": "1",
+        "exception": false
+      },
+      "overfull-hbox": {
+        "reward": "0",
+        "exception": false
+      },
+      "password-recovery": {
+        "reward": "0",
+        "exception": true
+      },
+      "path-tracing-reverse": {
+        "reward": "0",
+        "exception": false
+      },
+      "path-tracing": {
+        "reward": "0",
+        "exception": true
+      },
+      "polyglot-c-py": {
+        "reward": "0",
+        "exception": false
+      },
+      "polyglot-rust-c": {
+        "reward": "0",
+        "exception": false
+      },
+      "portfolio-optimization": {
+        "reward": "1",
+        "exception": false
+      },
+      "protein-assembly": {
+        "reward": "1",
+        "exception": false
+      },
+      "prove-plus-comm": {
+        "reward": "0",
+        "exception": false
+      },
+      "pypi-server": {
+        "reward": "1",
+        "exception": false
+      },
+      "pytorch-model-cli": {
+        "reward": "0",
+        "exception": true
+      },
+      "pytorch-model-recovery": {
+        "reward": null,
+        "exception": true
+      },
+      "qemu-alpine-ssh": {
+        "reward": "1",
+        "exception": false
+      },
+      "qemu-startup": {
+        "reward": "1",
+        "exception": true
+      },
+      "query-optimize": {
+        "reward": "0",
+        "exception": false
+      },
+      "raman-fitting": {
+        "reward": "0",
+        "exception": true
+      },
+      "regex-chess": {
+        "reward": "0",
+        "exception": false
+      },
+      "regex-log": {
+        "reward": "0",
+        "exception": false
+      },
+      "reshard-c4-data": {
+        "reward": "0",
+        "exception": false
+      },
+      "rstan-to-pystan": {
+        "reward": "1",
+        "exception": false
+      },
+      "sam-cell-seg": {
+        "reward": null,
+        "exception": true
+      },
+      "sanitize-git-repo": {
+        "reward": "0",
+        "exception": false
+      },
+      "schemelike-metacircular-eval": {
+        "reward": "0",
+        "exception": false
+      },
+      "sparql-university": {
+        "reward": "0",
+        "exception": false
+      },
+      "sqlite-db-truncate": {
+        "reward": "1",
+        "exception": false
+      },
+      "sqlite-with-gcov": {
+        "reward": "1",
+        "exception": false
+      },
+      "torch-pipeline-parallelism": {
+        "reward": "0",
+        "exception": false
+      },
+      "torch-tensor-parallelism": {
+        "reward": "0",
+        "exception": false
+      },
+      "train-fasttext": {
+        "reward": null,
+        "exception": true
+      },
+      "tune-mjcf": {
+        "reward": "1",
+        "exception": true
+      },
+      "video-processing": {
+        "reward": "1",
+        "exception": false
+      },
+      "vulnerable-secret": {
+        "reward": "1",
+        "exception": false
+      },
+      "winning-avg-corewars": {
+        "reward": "0",
+        "exception": false
+      },
+      "write-compressor": {
+        "reward": "0",
+        "exception": false
+      }
+    }
+  }
+}

@@ -1,0 +1,80 @@
+diff --git a/sphinx/util/docfields.py b/sphinx/util/docfields.py
+index 3a3367eb..fa6cd20c 100644
+--- a/sphinx/util/docfields.py
++++ b/sphinx/util/docfields.py
+@@ -35,6 +35,22 @@ def _is_single_paragraph(node: nodes.field_body) -> bool:
+     return False
+ 
+ 
++def _split_type_and_arg(fieldarg: str) -> Tuple[str, str]:
++    """Split fieldarg into type and argument, respecting balanced brackets.
++    
++    Raises ValueError if no space is found outside of brackets.
++    """
++    balance = 0
++    for i, c in enumerate(fieldarg):
++        if c in '([{':
++            balance += 1
++        elif c in ')]}':
++            balance -= 1
++        elif c.isspace() and balance == 0:
++            return fieldarg[:i], fieldarg[i + 1:].lstrip()
++    raise ValueError('no space found')
++
++
+ class Field:
+     """A doc field that is never grouped.  It can have an argument or not, the
+     argument can be linked using a specified *rolename*.  Field should be used
+@@ -298,7 +314,7 @@ class DocFieldTransformer:
+             # also support syntax like ``:param type name:``
+             if typedesc.is_typed:
+                 try:
+-                    argtype, argname = fieldarg.split(None, 1)
++                    argtype, argname = _split_type_and_arg(fieldarg)
+                 except ValueError:
+                     pass
+                 else:
+diff --git a/tests/test_util_docfields.py b/tests/test_util_docfields.py
+new file mode 100644
+index 00000000..141c363c
+--- /dev/null
++++ b/tests/test_util_docfields.py
+@@ -0,0 +1,38 @@
++"""
++    test_util_docfields
++    ~~~~~~~~~~~~~~~~~~~
++
++    Tests sphinx.util.docfields functions.
++
++    :copyright: Copyright 2007-2021 by the Sphinx team, see AUTHORS.
++    :license: BSD, see LICENSE for details.
++"""
++
++import pytest
++
++from sphinx.util.docfields import _split_type_and_arg
++
++
++class TestSplitTypeAndArg:
++    def test_simple_type(self):
++        assert _split_type_and_arg('int opc_meta') == ('int', 'opc_meta')
++
++    def test_type_with_parens(self):
++        assert _split_type_and_arg('dict(str, str) opc_meta') == ('dict(str, str)', 'opc_meta')
++
++    def test_type_with_brackets(self):
++        assert _split_type_and_arg('dict[str, str] opc_meta') == ('dict[str, str]', 'opc_meta')
++
++    def test_type_with_nested_brackets(self):
++        assert _split_type_and_arg('Callable[[int, str], None] opc_meta') == \
++               ('Callable[[int, str], None]', 'opc_meta')
++
++    def test_type_with_braces(self):
++        assert _split_type_and_arg('set{int} opc_meta') == ('set{int}', 'opc_meta')
++
++    def test_no_space_raises(self):
++        with pytest.raises(ValueError):
++            _split_type_and_arg('opc_meta')
++
++    def test_multiple_spaces(self):
++        assert _split_type_and_arg('dict(str, str)   opc_meta') == ('dict(str, str)', 'opc_meta')

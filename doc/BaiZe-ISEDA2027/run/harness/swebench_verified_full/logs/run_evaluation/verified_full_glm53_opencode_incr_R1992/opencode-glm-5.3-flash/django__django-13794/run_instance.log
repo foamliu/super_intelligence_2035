@@ -1,0 +1,102 @@
+2026-11-09 21:02:33,431 - INFO - Creating container for django__django-13794...
+2026-11-09 21:02:33,456 - INFO - Container for django__django-13794 created: 839091b127d94e927e3abc034507e74717e023f0e07ffaa930398a73e037b84e
+2026-11-09 21:02:34,266 - INFO - Container for django__django-13794 started: 839091b127d94e927e3abc034507e74717e023f0e07ffaa930398a73e037b84e
+2026-11-09 21:02:34,268 - INFO - Intermediate patch for django__django-13794 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R1992/opencode-glm-5.3-flash/django__django-13794/patch.diff, now applying to container...
+2026-11-09 21:02:34,414 - INFO - >>>>> Applied Patch:
+Checking patch django/template/defaultfilters.py...
+Checking patch tests/template_tests/filter_tests/test_add.py...
+Applied patch django/template/defaultfilters.py cleanly.
+Applied patch tests/template_tests/filter_tests/test_add.py cleanly.
+
+2026-11-09 21:02:35,907 - INFO - Git diff before:
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 1c844580c6..62829a908d 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -11,6 +11,7 @@ from urllib.parse import quote
+ from django.utils import formats
+ from django.utils.dateformat import format, time_format
+ from django.utils.encoding import iri_to_uri
++from django.utils.functional import Promise
+ from django.utils.html import (
+     avoid_wrapping, conditional_escape, escape, escapejs,
+     json_script as _json_script, linebreaks, strip_tags, urlize as _urlize,
+@@ -680,6 +681,10 @@ def add(value, arg):
+         try:
+             return value + arg
+         except Exception:
++            # Strings can't be concatenated with lazy strings (Promise
++            # proxies), so force their evaluation before concatenating.
++            if isinstance(value, (str, Promise)) and isinstance(arg, (str, Promise)):
++                return str(value) + str(arg)
+             return ''
+ 
+ 
+diff --git a/tests/template_tests/filter_tests/test_add.py b/tests/template_tests/filter_tests/test_add.py
+index 0fcc661f4a..8e110cf736 100644
+--- a/tests/template_tests/filter_tests/test_add.py
++++ b/tests/template_tests/filter_tests/test_add.py
+@@ -2,6 +2,7 @@ from datetime import date, timedelta
+ 
+ from django.template.defaultfilters import add
+ from django.test import SimpleTestCase
++from django.utils.functional import lazystr
+ 
+ from ..utils import setup
+ 
+@@ -46,8 +47,22 @@ class AddTests(SimpleTestCase):
+         output = self.engine.render_to_string('add07', {'d': date(2000, 1, 1), 't': timedelta(10)})
+         self.assertEqual(output, 'Jan. 11, 2000')
+ 
++    @setup({'add08': '{{ s|add:lazy_s }}'})
++    def test_add_lazy_string(self):
++        output = self.engine.render_to_string('add08', {'s': 'abc', 'lazy_s': lazystr('def')})
++        self.assertEqual(output, 'abcdef')
++
+ 
+ class FunctionTests(SimpleTestCase):
+ 
+     def test_add(self):
+         self.assertEqual(add('1', '2'), 3)
++
++    def test_add_string_with_lazy_string(self):
++        self.assertEqual(add('abc', lazystr('def')), 'abcdef')
++
++    def test_add_lazy_string_with_string(self):
++        self.assertEqual(add(lazystr('abc'), 'def'), 'abcdef')
++
++    def test_add_lazy_string_with_lazy_string(self):
++        self.assertEqual(add(lazystr('abc'), lazystr('def')), 'abcdef')
+2026-11-09 21:02:35,910 - INFO - Eval script for django__django-13794 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R1992/opencode-glm-5.3-flash/django__django-13794/eval.sh; copying to container...
+2026-11-09 21:02:42,436 - INFO - Test runtime: 6.43 seconds
+2026-11-09 21:02:42,438 - INFO - Test output for django__django-13794 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R1992/opencode-glm-5.3-flash/django__django-13794/test_output.txt
+2026-11-09 21:02:42,528 - INFO - Git diff after:
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 1c844580c6..62829a908d 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -11,6 +11,7 @@ from urllib.parse import quote
+ from django.utils import formats
+ from django.utils.dateformat import format, time_format
+ from django.utils.encoding import iri_to_uri
++from django.utils.functional import Promise
+ from django.utils.html import (
+     avoid_wrapping, conditional_escape, escape, escapejs,
+     json_script as _json_script, linebreaks, strip_tags, urlize as _urlize,
+@@ -680,6 +681,10 @@ def add(value, arg):
+         try:
+             return value + arg
+         except Exception:
++            # Strings can't be concatenated with lazy strings (Promise
++            # proxies), so force their evaluation before concatenating.
++            if isinstance(value, (str, Promise)) and isinstance(arg, (str, Promise)):
++                return str(value) + str(arg)
+             return ''
+2026-11-09 21:02:42,528 - INFO - Git diff changed after running eval script
+2026-11-09 21:02:42,528 - INFO - Grading answer for django__django-13794...
+2026-11-09 21:02:42,530 - INFO - report: {'django__django-13794': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_add08 (template_tests.filter_tests.test_add.AddTests)', 'test_add09 (template_tests.filter_tests.test_add.AddTests)'], 'failure': ['test_lazy_add (utils_tests.test_functional.FunctionalTests)']}, 'PASS_TO_PASS': {'success': ['test_add (template_tests.filter_tests.test_add.FunctionTests)', 'cached_property caches its value and behaves like a property.', 'test_cached_property_auto_name (utils_tests.test_functional.FunctionalTests)', "Disallow this case because the decorated function wouldn't be cached.", 'test_cached_property_reuse_same_name (utils_tests.test_functional.FunctionalTests)', 'test_cached_property_set_name_not_called (utils_tests.test_functional.FunctionalTests)', 'test_classproperty_getter (utils_tests.test_functional.FunctionalTests)', 'test_classproperty_override_getter (utils_tests.test_functional.FunctionalTests)', 'test_lazy (utils_tests.test_functional.FunctionalTests)', 'lazy also finds base class methods in the proxy object', 'lazy finds the correct (overridden) method implementation', 'test_lazy_class_preparation_caching (utils_tests.test_functional.FunctionalTests)', 'test_lazy_equality (utils_tests.test_functional.FunctionalTests)', 'test_lazy_object_to_string (utils_tests.test_functional.FunctionalTests)', 'test_lazy_repr_bytes (utils_tests.test_functional.FunctionalTests)', 'test_lazy_repr_int (utils_tests.test_functional.FunctionalTests)', 'test_lazy_repr_text (utils_tests.test_functional.FunctionalTests)', 'test_add01 (template_tests.filter_tests.test_add.AddTests)', 'test_add02 (template_tests.filter_tests.test_add.AddTests)', 'test_add03 (template_tests.filter_tests.test_add.AddTests)', 'test_add04 (template_tests.filter_tests.test_add.AddTests)', 'test_add05 (template_tests.filter_tests.test_add.AddTests)', 'test_add06 (template_tests.filter_tests.test_add.AddTests)', 'test_add07 (template_tests.filter_tests.test_add.AddTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13794: resolved: False
+2026-11-09 21:02:42,531 - INFO - Attempting to stop container sweb.eval.django__django-13794.verified_full_glm53_opencode_incr_R1992...
+2026-11-09 21:02:58,854 - INFO - Container sweb.eval.django__django-13794.verified_full_glm53_opencode_incr_R1992 stopped successfully.
+2026-11-09 21:02:58,855 - INFO - Attempting to remove container sweb.eval.django__django-13794.verified_full_glm53_opencode_incr_R1992...
+2026-11-09 21:02:58,914 - INFO - Container sweb.eval.django__django-13794.verified_full_glm53_opencode_incr_R1992 removed successfully.

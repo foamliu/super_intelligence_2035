@@ -1,0 +1,11 @@
+{
+  "harness": "claude-code",
+  "run_id": "verified_full_glm53_claude-code_incr_R2252",
+  "round": "R2252",
+  "n": 1,
+  "resolved": [
+    "sympy__sympy-15349"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

@@ -1,0 +1,92 @@
+2026-11-02 17:49:02,085 - INFO - Creating container for django__django-13925...
+2026-11-02 17:49:02,106 - INFO - Container for django__django-13925 created: 96e2ef2ee9cb62387991130cf66177e09d6fdc503db45cff6c15d208dee2c105
+2026-11-02 17:49:02,830 - INFO - Container for django__django-13925 started: 96e2ef2ee9cb62387991130cf66177e09d6fdc503db45cff6c15d208dee2c105
+2026-11-02 17:49:02,832 - INFO - Intermediate patch for django__django-13925 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-13925/patch.diff, now applying to container...
+2026-11-02 17:49:03,001 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/base.py...
+warning: django/db/models/base.py has type 100755, expected 100644
+Checking patch django/db/models/base.py.bak...
+Checking patch tests/check_framework/test_model_checks.py...
+warning: tests/check_framework/test_model_checks.py has type 100755, expected 100644
+Applied patch django/db/models/base.py cleanly.
+Applied patch django/db/models/base.py.bak cleanly.
+Applied patch tests/check_framework/test_model_checks.py cleanly.
+
+2026-11-02 17:49:03,716 - INFO - Git diff before:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 4038859cfa..0f2f35118f 100755
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -1299,6 +1299,7 @@ class Model(metaclass=ModelBase):
+     def _check_default_pk(cls):
+         if (
+             cls._meta.pk.auto_created and
++            cls._meta.pk not in cls._meta.parents.values() and
+             not settings.is_overridden('DEFAULT_AUTO_FIELD') and
+             not cls._meta.app_config._is_default_auto_field_overridden
+         ):
+diff --git a/tests/check_framework/test_model_checks.py b/tests/check_framework/test_model_checks.py
+index d4342ada07..0c0653639a 100755
+--- a/tests/check_framework/test_model_checks.py
++++ b/tests/check_framework/test_model_checks.py
+@@ -415,3 +415,36 @@ class ModelDefaultAutoFieldTests(SimpleTestCase):
+                 app_label = 'check_framework.apps.CheckPKConfig'
+ 
+         self.assertEqual(checks.run_checks(app_configs=apps.get_app_configs()), [])
++
++    def test_inherited_pk(self):
++        """
++        A child model inheriting from a parent with an explicit primary key
++        should not raise a warning about auto-created primary keys.
++        Regression test for ticket #32577.
++        """
++        class Parent(models.Model):
++            id = models.BigAutoField(primary_key=True)
++
++        class Child(Parent):
++            pass
++
++        self.assertEqual(Child._check_default_pk(), [])
++
++    def test_inherited_auto_pk(self):
++        """
++        A child model inheriting from a parent with an auto-created primary key
++        should not raise a warning.
++        """
++        class Parent(models.Model):
++            pass
++
++        class Child(Parent):
++            pass
++
++        # Parent should warn (it's the one that auto-created the pk)
++        parent_errors = Parent._check_default_pk()
++        self.assertEqual(len(parent_errors), 1)
++        self.assertEqual(parent_errors[0].id, 'models.W042')
++
++        # Child should NOT warn (pk is inherited)
++        self.assertEqual(Child._check_default_pk(), [])
+2026-11-02 17:49:03,719 - INFO - Eval script for django__django-13925 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-13925/eval.sh; copying to container...
+2026-11-02 17:49:10,265 - INFO - Test runtime: 6.47 seconds
+2026-11-02 17:49:10,272 - INFO - Test output for django__django-13925 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-13925/test_output.txt
+2026-11-02 17:49:10,351 - INFO - Git diff after:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 4038859cfa..0f2f35118f 100755
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -1299,6 +1299,7 @@ class Model(metaclass=ModelBase):
+     def _check_default_pk(cls):
+         if (
+             cls._meta.pk.auto_created and
++            cls._meta.pk not in cls._meta.parents.values() and
+             not settings.is_overridden('DEFAULT_AUTO_FIELD') and
+             not cls._meta.app_config._is_default_auto_field_overridden
+         ):
+2026-11-02 17:49:10,351 - INFO - Git diff changed after running eval script
+2026-11-02 17:49:10,351 - INFO - Grading answer for django__django-13925...
+2026-11-02 17:49:10,368 - INFO - report: {'django__django-13925': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_auto_created_inherited_pk (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_explicit_inherited_pk (check_framework.test_model_checks.ModelDefaultAutoFieldTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_app_default_auto_field (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_auto_created_inherited_parent_link (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_auto_created_pk (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_default_auto_field_setting (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_explicit_inherited_parent_link (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_explicit_pk (check_framework.test_model_checks.ModelDefaultAutoFieldTests)', 'test_collision_abstract_model (check_framework.test_model_checks.IndexNameTests)', 'test_collision_across_apps (check_framework.test_model_checks.IndexNameTests)', 'test_collision_in_different_models (check_framework.test_model_checks.IndexNameTests)', 'test_collision_in_same_model (check_framework.test_model_checks.IndexNameTests)', 'test_no_collision_abstract_model_interpolation (check_framework.test_model_checks.IndexNameTests)', 'test_no_collision_across_apps_interpolation (check_framework.test_model_checks.IndexNameTests)', 'test_collision_abstract_model (check_framework.test_model_checks.ConstraintNameTests)', 'test_collision_across_apps (check_framework.test_model_checks.ConstraintNameTests)', 'test_collision_in_different_models (check_framework.test_model_checks.ConstraintNameTests)', 'test_collision_in_same_model (check_framework.test_model_checks.ConstraintNameTests)', 'test_no_collision_abstract_model_interpolation (check_framework.test_model_checks.ConstraintNameTests)', 'test_no_collision_across_apps_interpolation (check_framework.test_model_checks.ConstraintNameTests)', 'test_collision_across_apps (check_framework.test_model_checks.DuplicateDBTableTests)', 'test_collision_across_apps_database_routers_installed (check_framework.test_model_checks.DuplicateDBTableTests)', 'test_collision_in_same_app (check_framework.test_model_checks.DuplicateDBTableTests)', 'test_collision_in_same_app_database_routers_installed (check_framework.test_model_checks.DuplicateDBTableTests)', 'test_no_collision_for_proxy_models (check_framework.test_model_checks.DuplicateDBTableTests)', 'test_no_collision_for_unmanaged_models (check_framework.test_model_checks.DuplicateDBTableTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13925: resolved: True
+2026-11-02 17:49:10,370 - INFO - Attempting to stop container sweb.eval.django__django-13925.verified_full_deepseek-harness...
+2026-11-02 17:49:26,544 - INFO - Container sweb.eval.django__django-13925.verified_full_deepseek-harness stopped successfully.
+2026-11-02 17:49:26,545 - INFO - Attempting to remove container sweb.eval.django__django-13925.verified_full_deepseek-harness...
+2026-11-02 17:49:26,590 - INFO - Container sweb.eval.django__django-13925.verified_full_deepseek-harness removed successfully.

@@ -1,0 +1,140 @@
+2026-10-30 15:33:25,674 - INFO - Creating container for django__django-11999...
+2026-10-30 15:33:25,714 - INFO - Container for django__django-11999 created: d6cc093c0ee6c387e2f76557eb40ae3844ebba50276dc766e3bf1eef99f2c0fe
+2026-10-30 15:33:26,390 - INFO - Container for django__django-11999 started: d6cc093c0ee6c387e2f76557eb40ae3844ebba50276dc766e3bf1eef99f2c0fe
+2026-10-30 15:33:26,392 - INFO - Intermediate patch for django__django-11999 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-11999/patch.diff, now applying to container...
+2026-10-30 15:33:26,523 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/fields/__init__.py...
+warning: django/db/models/fields/__init__.py has type 100755, expected 100644
+Checking patch tests/model_fields/models.py...
+warning: tests/model_fields/models.py has type 100755, expected 100644
+Checking patch tests/model_fields/tests.py...
+warning: tests/model_fields/tests.py has type 100755, expected 100644
+Applied patch django/db/models/fields/__init__.py cleanly.
+Applied patch tests/model_fields/models.py cleanly.
+Applied patch tests/model_fields/tests.py cleanly.
+
+2026-10-30 15:33:27,909 - INFO - Git diff before:
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index ee45bb941e..ce790675c1 100755
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -763,8 +763,10 @@ class Field(RegisterLookupMixin):
+             if not getattr(cls, self.attname, None):
+                 setattr(cls, self.attname, self.descriptor_class(self))
+         if self.choices is not None:
+-            setattr(cls, 'get_%s_display' % self.name,
+-                    partialmethod(cls._get_FIELD_display, field=self))
++            method_name = 'get_%s_display' % self.name
++            if not getattr(cls, method_name, None):
++                setattr(cls, method_name,
++                        partialmethod(cls._get_FIELD_display, field=self))
+ 
+     def get_filter_kwargs_for_object(self, obj):
+         """
+diff --git a/tests/model_fields/models.py b/tests/model_fields/models.py
+index 98b32d0c1e..bb641e784c 100755
+--- a/tests/model_fields/models.py
++++ b/tests/model_fields/models.py
+@@ -76,6 +76,17 @@ class Choiceful(models.Model):
+     empty_choices_text = models.TextField(choices=())
+ 
+ 
++class OverrideGetDisplay(models.Model):
++    choice = models.IntegerField(choices=[(1, 'One'), (2, 'Two')])
++
++    def get_choice_display(self):
++        return 'custom choice'
++
++
++class OverrideGetDisplayChild(OverrideGetDisplay):
++    pass
++
++
+ class BigD(models.Model):
+     d = models.DecimalField(max_digits=32, decimal_places=30)
+ 
+diff --git a/tests/model_fields/tests.py b/tests/model_fields/tests.py
+index 0d6e930b06..2fa423cc25 100755
+--- a/tests/model_fields/tests.py
++++ b/tests/model_fields/tests.py
+@@ -7,8 +7,8 @@ from django.test import SimpleTestCase, TestCase
+ from django.utils.functional import lazy
+ 
+ from .models import (
+-    Bar, Choiceful, Foo, RenamedField, VerboseNameField, Whiz, WhizDelayed,
+-    WhizIter, WhizIterEmpty,
++    Bar, Choiceful, Foo, OverrideGetDisplay, RenamedField, VerboseNameField,
++    Whiz, WhizDelayed, WhizIter, WhizIterEmpty,
+ )
+ 
+ 
+@@ -186,6 +186,20 @@ class GetFieldDisplayTests(SimpleTestCase):
+         self.assertIsNone(WhizIterEmpty(c=None).c)         # Blank value
+         self.assertEqual(WhizIterEmpty(c='').c, '')        # Empty value
+ 
++    def test_get_FIELD_display_override(self):
++        """
++        get_FIELD_display() can be overridden on the model.
++        """
++        self.assertEqual(OverrideGetDisplay(choice=1).get_choice_display(), 'custom choice')
++        self.assertEqual(OverrideGetDisplay(choice=2).get_choice_display(), 'custom choice')
++
++    def test_get_FIELD_display_override_inherited(self):
++        """
++        get_FIELD_display() override is inherited by subclasses.
++        """
++        from .models import OverrideGetDisplayChild
++        self.assertEqual(OverrideGetDisplayChild(choice=1).get_choice_display(), 'custom choice')
++
+ 
+ class GetChoicesTests(SimpleTestCase):
+2026-10-30 15:33:27,912 - INFO - Eval script for django__django-11999 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-11999/eval.sh; copying to container...
+2026-10-30 15:33:35,850 - INFO - Test runtime: 7.84 seconds
+2026-10-30 15:33:35,856 - INFO - Test output for django__django-11999 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-11999/test_output.txt
+2026-10-30 15:33:35,933 - INFO - Git diff after:
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index ee45bb941e..ce790675c1 100755
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -763,8 +763,10 @@ class Field(RegisterLookupMixin):
+             if not getattr(cls, self.attname, None):
+                 setattr(cls, self.attname, self.descriptor_class(self))
+         if self.choices is not None:
+-            setattr(cls, 'get_%s_display' % self.name,
+-                    partialmethod(cls._get_FIELD_display, field=self))
++            method_name = 'get_%s_display' % self.name
++            if not getattr(cls, method_name, None):
++                setattr(cls, method_name,
++                        partialmethod(cls._get_FIELD_display, field=self))
+ 
+     def get_filter_kwargs_for_object(self, obj):
+         """
+diff --git a/tests/model_fields/models.py b/tests/model_fields/models.py
+index 98b32d0c1e..bb641e784c 100755
+--- a/tests/model_fields/models.py
++++ b/tests/model_fields/models.py
+@@ -76,6 +76,17 @@ class Choiceful(models.Model):
+     empty_choices_text = models.TextField(choices=())
+ 
+ 
++class OverrideGetDisplay(models.Model):
++    choice = models.IntegerField(choices=[(1, 'One'), (2, 'Two')])
++
++    def get_choice_display(self):
++        return 'custom choice'
++
++
++class OverrideGetDisplayChild(OverrideGetDisplay):
++    pass
++
++
+ class BigD(models.Model):
+     d = models.DecimalField(max_digits=32, decimal_places=30)
+2026-10-30 15:33:35,933 - INFO - Git diff changed after running eval script
+2026-10-30 15:33:35,933 - INFO - Grading answer for django__django-11999...
+2026-10-30 15:33:35,943 - INFO - report: {'django__django-11999': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_overriding_FIELD_display (model_fields.tests.GetFieldDisplayTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_blank_in_choices (model_fields.tests.GetChoicesTests)', 'test_blank_in_grouped_choices (model_fields.tests.GetChoicesTests)', 'test_empty_choices (model_fields.tests.GetChoicesTests)', 'test_lazy_strings_not_evaluated (model_fields.tests.GetChoicesTests)', 'test_check (model_fields.tests.ChoicesTests)', 'test_choices (model_fields.tests.ChoicesTests)', 'test_flatchoices (model_fields.tests.ChoicesTests)', 'test_formfield (model_fields.tests.ChoicesTests)', 'test_invalid_choice (model_fields.tests.ChoicesTests)', 'Can supply a custom choices form class to Field.formfield()', 'deconstruct() uses __qualname__ for nested class support.', 'Field instances can be pickled.', 'test_field_name (model_fields.tests.BasicFieldTests)', 'Fields are ordered based on their creation.', 'test_field_repr (model_fields.tests.BasicFieldTests)', '__repr__() uses __qualname__ for nested class support.', 'test_field_str (model_fields.tests.BasicFieldTests)', 'test_field_verbose_name (model_fields.tests.BasicFieldTests)', 'Field.formfield() sets disabled for fields with choices.', 'test_show_hidden_initial (model_fields.tests.BasicFieldTests)', 'test_choices_and_field_display (model_fields.tests.GetFieldDisplayTests)', 'test_empty_iterator_choices (model_fields.tests.GetFieldDisplayTests)', 'A translated display value is coerced to str.', 'test_iterator_choices (model_fields.tests.GetFieldDisplayTests)', 'test_get_choices (model_fields.tests.GetChoicesLimitChoicesToTests)', 'test_get_choices_reverse_related_field (model_fields.tests.GetChoicesLimitChoicesToTests)', 'test_get_choices (model_fields.tests.GetChoicesOrderingTests)', 'test_get_choices_default_ordering (model_fields.tests.GetChoicesOrderingTests)', 'test_get_choices_reverse_related_field (model_fields.tests.GetChoicesOrderingTests)', 'test_get_choices_reverse_related_field_default_ordering (model_fields.tests.GetChoicesOrderingTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11999: resolved: True
+2026-10-30 15:33:35,945 - INFO - Attempting to stop container sweb.eval.django__django-11999.verified_full_opencode...
+2026-10-30 15:33:51,872 - INFO - Container sweb.eval.django__django-11999.verified_full_opencode stopped successfully.
+2026-10-30 15:33:51,872 - INFO - Attempting to remove container sweb.eval.django__django-11999.verified_full_opencode...
+2026-10-30 15:33:51,924 - INFO - Container sweb.eval.django__django-11999.verified_full_opencode removed successfully.

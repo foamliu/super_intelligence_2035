@@ -1,0 +1,54 @@
+diff --git a/django/views/generic/base.py b/django/views/generic/base.py
+index ea5baca08d..47e6f2fe70 100644
+--- a/django/views/generic/base.py
++++ b/django/views/generic/base.py
+@@ -11,7 +11,6 @@ from django.template.response import TemplateResponse
+ from django.urls import reverse
+ from django.utils.decorators import classonlymethod
+ from django.utils.deprecation import RemovedInDjango40Warning
+-from django.utils.functional import SimpleLazyObject
+ 
+ logger = logging.getLogger('django.request')
+ 
+@@ -165,21 +164,32 @@ class TemplateView(TemplateResponseMixin, ContextMixin, View):
+ 
+ 
+ # RemovedInDjango40Warning
+-def _wrap_url_kwargs_with_deprecation_warning(url_kwargs):
+-    context_kwargs = {}
+-    for key, value in url_kwargs.items():
+-        # Bind into function closure.
+-        @SimpleLazyObject
+-        def access_value(key=key, value=value):
++class _DeprecatedURLKwargs(dict):
++    def __init__(self, url_kwargs):
++        super().__init__(url_kwargs)
++        self._warned = set()
++
++    def _warn(self, key):
++        if key not in self._warned:
+             warnings.warn(
+                 'TemplateView passing URL kwargs to the context is '
+                 'deprecated. Reference %s in your template through '
+                 'view.kwargs instead.' % key,
+                 RemovedInDjango40Warning, stacklevel=2,
+             )
+-            return value
+-        context_kwargs[key] = access_value
+-    return context_kwargs
++            self._warned.add(key)
++
++    def __getitem__(self, key):
++        self._warn(key)
++        return super().__getitem__(key)
++
++    def get(self, key, default=None):
++        self._warn(key)
++        return super().get(key, default)
++
++
++def _wrap_url_kwargs_with_deprecation_warning(url_kwargs):
++    return _DeprecatedURLKwargs(url_kwargs)
+ 
+ 
+ class RedirectView(View):

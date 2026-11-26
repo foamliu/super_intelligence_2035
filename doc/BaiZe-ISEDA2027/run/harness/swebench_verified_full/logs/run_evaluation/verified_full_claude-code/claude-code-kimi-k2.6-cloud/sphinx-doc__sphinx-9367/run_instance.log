@@ -1,0 +1,66 @@
+2026-10-30 17:26:24,737 - INFO - Creating container for sphinx-doc__sphinx-9367...
+2026-10-30 17:26:24,778 - INFO - Container for sphinx-doc__sphinx-9367 created: 326d3bd1f49b2603e0c01665805708adc9bc647eabfb95eab0a7c5caa093f68e
+2026-10-30 17:26:31,749 - INFO - Container for sphinx-doc__sphinx-9367 started: 326d3bd1f49b2603e0c01665805708adc9bc647eabfb95eab0a7c5caa093f68e
+2026-10-30 17:26:31,756 - INFO - Intermediate patch for sphinx-doc__sphinx-9367 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-9367/patch.diff, now applying to container...
+2026-10-30 17:26:31,977 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/pycode/ast.py...
+Checking patch tests/test_pycode_ast.py...
+Applied patch sphinx/pycode/ast.py cleanly.
+Applied patch tests/test_pycode_ast.py cleanly.
+
+2026-10-30 17:26:32,310 - INFO - Git diff before:
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index f541ec0a9..48505e3d5 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -214,7 +214,10 @@ class _UnparseVisitor(ast.NodeVisitor):
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+         if node.elts:
+-            return "(" + ", ".join(self.visit(e) for e in node.elts) + ")"
++            if len(node.elts) == 1:
++                return "(%s,)" % self.visit(node.elts[0])
++            else:
++                return "(" + ", ".join(self.visit(e) for e in node.elts) + ")"
+         else:
+             return "()"
+ 
+diff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py
+index e80062351..b61dc6f25 100644
+--- a/tests/test_pycode_ast.py
++++ b/tests/test_pycode_ast.py
+@@ -54,6 +54,7 @@ from sphinx.pycode import ast
+     ("- 1", "- 1"),                             # UnaryOp
+     ("- a", "- a"),                             # USub
+     ("(1, 2, 3)", "(1, 2, 3)"),                   # Tuple
++    ("(1,)", "(1,)"),                           # Tuple (single element)
+     ("()", "()"),                               # Tuple (empty)
+ ])
+ def test_unparse(source, expected):
+2026-10-30 17:26:32,326 - INFO - Eval script for sphinx-doc__sphinx-9367 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-9367/eval.sh; copying to container...
+2026-10-30 17:26:35,575 - INFO - Test runtime: 3.13 seconds
+2026-10-30 17:26:35,576 - INFO - Test output for sphinx-doc__sphinx-9367 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-9367/test_output.txt
+2026-10-30 17:26:35,699 - INFO - Git diff after:
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index f541ec0a9..48505e3d5 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -214,7 +214,10 @@ class _UnparseVisitor(ast.NodeVisitor):
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+         if node.elts:
+-            return "(" + ", ".join(self.visit(e) for e in node.elts) + ")"
++            if len(node.elts) == 1:
++                return "(%s,)" % self.visit(node.elts[0])
++            else:
++                return "(" + ", ".join(self.visit(e) for e in node.elts) + ")"
+         else:
+             return "()"
+2026-10-30 17:26:35,699 - INFO - Git diff changed after running eval script
+2026-10-30 17:26:35,699 - INFO - Grading answer for sphinx-doc__sphinx-9367...
+2026-10-30 17:26:35,701 - INFO - report: {'sphinx-doc__sphinx-9367': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_pycode_ast.py::test_unparse[(1,)-(1,)]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_pycode_ast.py::test_unparse[a', 'tests/test_pycode_ast.py::test_unparse[os.path-os.path]', 'tests/test_pycode_ast.py::test_unparse[1', "tests/test_pycode_ast.py::test_unparse[b'bytes'-b'bytes']", 'tests/test_pycode_ast.py::test_unparse[object()-object()]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_0]', "tests/test_pycode_ast.py::test_unparse[{'key1':", 'tests/test_pycode_ast.py::test_unparse[...-...]', 'tests/test_pycode_ast.py::test_unparse[Tuple[int,', 'tests/test_pycode_ast.py::test_unparse[~', 'tests/test_pycode_ast.py::test_unparse[lambda', 'tests/test_pycode_ast.py::test_unparse[[1,', 'tests/test_pycode_ast.py::test_unparse[sys-sys]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_1]', 'tests/test_pycode_ast.py::test_unparse[not', 'tests/test_pycode_ast.py::test_unparse[{1,', "tests/test_pycode_ast.py::test_unparse['str'-'str']", 'tests/test_pycode_ast.py::test_unparse[+', 'tests/test_pycode_ast.py::test_unparse[-', 'tests/test_pycode_ast.py::test_unparse[(1,', 'tests/test_pycode_ast.py::test_unparse[()-()]', 'tests/test_pycode_ast.py::test_unparse_None', 'tests/test_pycode_ast.py::test_unparse_py38[lambda', 'tests/test_pycode_ast.py::test_unparse_py38[0x1234-0x1234]', 'tests/test_pycode_ast.py::test_unparse_py38[1_000_000-1_000_000]'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9367: resolved: True
+2026-10-30 17:26:35,702 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9367.verified_full_claude-code...
+2026-10-30 17:26:51,443 - INFO - Container sweb.eval.sphinx-doc__sphinx-9367.verified_full_claude-code stopped successfully.
+2026-10-30 17:26:51,443 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9367.verified_full_claude-code...
+2026-10-30 17:26:51,479 - INFO - Container sweb.eval.sphinx-doc__sphinx-9367.verified_full_claude-code removed successfully.

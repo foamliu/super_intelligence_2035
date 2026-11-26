@@ -1,0 +1,54 @@
+```tcl
+proc spice_summarize_measure_lis {path} {
+    set fh [open $path r]
+    set contents [read $fh]
+    close $fh
+
+    set re {^([A-Za-z0-9_]+)[[:space:]]*=[[:space:]]*([-+]?([0-9]+\.?[0-9]*|[0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)[[:space:]]+targ[[:space:]]*=}
+
+    set total 0
+    set sum 0.0
+    set max_value 0.0
+    set max_name ""
+    set min_value 0.0
+    set min_name ""
+    set num_nonzero 0
+
+    set first 1
+    foreach line [split $contents "\n"] {
+        if {[regexp $re $line -> name value]} {
+            set v [expr {double($value)}]
+            incr total
+            set sum [expr {$sum + $v}]
+            if {$first} {
+                set max_value $v
+                set max_name $name
+                set min_value $v
+                set min_name $name
+                set first 0
+            } else {
+                if {$v > $max_value} {
+                    set max_value $v
+                    set max_name $name
+                }
+                if {$v < $min_value} {
+                    set min_value $v
+                    set min_name $name
+                }
+            }
+            if {$v != 0.0} {
+                incr num_nonzero
+            }
+        }
+    }
+
+    if {$total == 0} {
+        return "total_measurements 0 sum_values 0.0 mean_value 0.0 max_value 0.0 max_name {} min_value 0.0 min_name {} range 0.0 num_nonzero 0"
+    }
+
+    set mean_value [expr {$sum / $total}]
+    set range [expr {$max_value - $min_value}]
+
+    return "total_measurements $total sum_values $sum mean_value $mean_value max_value $max_value max_name $max_name min_value $min_value min_name $min_name range $range num_nonzero $num_nonzero"
+}
+```

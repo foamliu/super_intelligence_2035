@@ -1,0 +1,66 @@
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 5edbbd376..b1bbe9cfe 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -8,7 +8,7 @@ from itertools import chain
+ from django.core.exceptions import (
+     NON_FIELD_ERRORS, FieldError, ImproperlyConfigured, ValidationError,
+ )
+-from django.forms.fields import ChoiceField, Field
++from django.forms.fields import ChoiceField, Field, FileField
+ from django.forms.forms import BaseForm, DeclarativeFieldsMetaclass
+ from django.forms.formsets import BaseFormSet, formset_factory
+ from django.forms.utils import ErrorList
+@@ -50,7 +50,22 @@ def construct_instance(form, instance, fields=None, exclude=None):
+         # checkbox inputs because they don't appear in POST data if not checked.
+         if (f.has_default() and
+                 form[f.name].field.widget.value_omitted_from_data(form.data, form.files, form.add_prefix(f.name))):
+-            continue
++            field = form.fields[f.name]
++            prefixed_name = form.add_prefix(f.name)
++            empty_value = field.widget.value_from_datadict({}, {}, prefixed_name)
++            try:
++                if isinstance(field, FileField):
++                    initial = form.get_initial_for_field(field, f.name)
++                    empty_value = field.clean(empty_value, initial)
++                else:
++                    empty_value = field.clean(empty_value)
++            except ValidationError:
++                # If validation of the empty value fails, assume the user
++                # modified cleaned_data and apply it.
++                pass
++            else:
++                if cleaned_data[f.name] == empty_value:
++                    continue
+         # Defer saving file-type fields until after the other fields, so a
+         # callable upload_to can use the values from other fields.
+         if isinstance(f, models.FileField):
+diff --git a/tests/model_forms/tests.py b/tests/model_forms/tests.py
+index 3893eb334..73baaa8dc 100644
+--- a/tests/model_forms/tests.py
++++ b/tests/model_forms/tests.py
+@@ -585,6 +585,24 @@ class ModelFormBaseTest(TestCase):
+         m2 = mf2.save(commit=False)
+         self.assertEqual(m2.mode, '')
+ 
++    def test_default_overridden_by_cleaned_data(self):
++        class PubForm(forms.ModelForm):
++            mode = forms.CharField(max_length=255, required=False)
++
++            class Meta:
++                model = PublicationDefaults
++                fields = ('mode',)
++
++            def clean(self):
++                cleaned_data = super().clean()
++                cleaned_data['mode'] = 'de'
++                return cleaned_data
++
++        mf1 = PubForm({})
++        self.assertEqual(mf1.errors, {})
++        m1 = mf1.save(commit=False)
++        self.assertEqual(m1.mode, 'de')
++
+     def test_default_not_populated_on_optional_checkbox_input(self):
+         class PubForm(forms.ModelForm):
+             class Meta:

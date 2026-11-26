@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "astropy__astropy-14508",
+    "model_name_or_path": "hermes-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py\nindex 118bfced..9fca6288 100644\n--- a/astropy/io/fits/card.py\n+++ b/astropy/io/fits/card.py\n@@ -1299,6 +1299,26 @@ def _format_value(value):\n \n def _format_float(value):\n     \"\"\"Format a floating number to make sure it gets the decimal point.\"\"\"\n+    # Try str(value) first: it often produces a shorter string that still\n+    # round-trips correctly (e.g. 0.009125 instead of 0.009124999999999999).\n+    value_str = str(value)\n+    if \".\" not in value_str and \"E\" not in value_str and \"e\" not in value_str:\n+        value_str += \".0\"\n+    elif \"E\" in value_str or \"e\" in value_str:\n+        idx = value_str.find(\"E\") if \"E\" in value_str else value_str.find(\"e\")\n+        significand = value_str[:idx]\n+        exponent = value_str[idx + 1 :]\n+        if exponent[0] in (\"+\", \"-\"):\n+            sign = exponent[0]\n+            exponent = exponent[1:]\n+        else:\n+            sign = \"\"\n+        value_str = f\"{significand}E{sign}{int(exponent):02d}\"\n+\n+    if len(value_str) <= 20:\n+        return value_str\n+\n+    # Fall back to .16G for cases where str(value) exceeds 20 characters.\n     value_str = f\"{value:.16G}\"\n     if \".\" not in value_str and \"E\" not in value_str:\n         value_str += \".0\"\n"
+  }
+]

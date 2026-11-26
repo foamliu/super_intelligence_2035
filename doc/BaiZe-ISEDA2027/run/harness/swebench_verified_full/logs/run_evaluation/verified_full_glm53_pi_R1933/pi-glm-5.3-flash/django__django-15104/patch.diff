@@ -1,0 +1,50 @@
+diff --git a/django/db/migrations/autodetector.py b/django/db/migrations/autodetector.py
+index 97977d72e..bf9c2acd2 100644
+--- a/django/db/migrations/autodetector.py
++++ b/django/db/migrations/autodetector.py
+@@ -96,7 +96,7 @@ class MigrationAutodetector:
+         for name, field in sorted(fields.items()):
+             deconstruction = self.deep_deconstruct(field)
+             if field.remote_field and field.remote_field.model:
+-                del deconstruction[2]['to']
++                deconstruction[2].pop('to', None)
+             fields_def.append(deconstruction)
+         return fields_def
+ 
+diff --git a/tests/migrations/test_autodetector.py b/tests/migrations/test_autodetector.py
+index 3b4660114..e5a5ce140 100644
+--- a/tests/migrations/test_autodetector.py
++++ b/tests/migrations/test_autodetector.py
+@@ -708,6 +708,32 @@ class AutodetectorTests(TestCase):
+         self.assertOperationTypes(changes, 'testapp', 0, ["AddField"])
+         self.assertOperationAttributes(changes, "testapp", 0, 0, name="name")
+ 
++    def test_add_field_with_hardcoded_to(self):
++        """
++        A relation field with a hardcoded `to` that removes it from its
++        deconstructed kwargs doesn't cause a KeyError (#33230).
++        """
++        class HardcodedForeignKey(models.ForeignKey):
++            def __init__(self, *args, **kwargs):
++                kwargs['to'] = 'testapp.HardcodedModel'
++                super().__init__(*args, **kwargs)
++
++            def deconstruct(self):
++                name, path, args, kwargs = super().deconstruct()
++                del kwargs['to']
++                return name, path, args, kwargs
++
++        before = ProjectState()
++        before.add_model(ModelState('testapp', 'HardcodedModel', []))
++        after = ProjectState()
++        after.add_model(ModelState('testapp', 'HardcodedModel', []))
++        after.add_model(ModelState('testapp', 'TestModel', [
++            ('custom', HardcodedForeignKey(on_delete=models.CASCADE)),
++        ]))
++        changes = MigrationAutodetector(before, after)._detect_changes()
++        self.assertNumberMigrations(changes, 'testapp', 1)
++        self.assertOperationTypes(changes, 'testapp', 0, ['CreateModel'])
++
+     @mock.patch('django.db.migrations.questioner.MigrationQuestioner.ask_not_null_addition',
+                 side_effect=AssertionError("Should not have prompted for not null addition"))
+     def test_add_date_fields_with_auto_now_not_asking_for_default(self, mocked_ask_method):

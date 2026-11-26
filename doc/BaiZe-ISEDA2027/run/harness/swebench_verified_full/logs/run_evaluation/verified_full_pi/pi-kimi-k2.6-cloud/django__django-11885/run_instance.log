@@ -1,0 +1,171 @@
+2026-10-30 16:48:12,448 - INFO - Creating container for django__django-11885...
+2026-10-30 16:48:12,511 - INFO - Container for django__django-11885 created: 2f5195423f5d5d615ceee38bf06d8b392bbe600adde644b17869cc4ce424770e
+2026-10-30 16:48:14,772 - INFO - Container for django__django-11885 started: 2f5195423f5d5d615ceee38bf06d8b392bbe600adde644b17869cc4ce424770e
+2026-10-30 16:48:14,774 - INFO - Intermediate patch for django__django-11885 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-11885/patch.diff, now applying to container...
+2026-10-30 16:48:14,892 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/deletion.py...
+Checking patch tests/delete/models.py...
+Checking patch tests/delete/tests.py...
+Applied patch django/db/models/deletion.py cleanly.
+Applied patch tests/delete/models.py cleanly.
+Applied patch tests/delete/tests.py cleanly.
+
+2026-10-30 16:48:16,269 - INFO - Git diff before:
+diff --git a/django/db/models/deletion.py b/django/db/models/deletion.py
+index ae82d26340..431eafd063 100644
+--- a/django/db/models/deletion.py
++++ b/django/db/models/deletion.py
+@@ -310,6 +310,16 @@ class Collector:
+                     )
+ 
+             # fast deletes
++            fast_deletes_by_model = {}
++            for qs in self.fast_deletes:
++                fast_deletes_by_model.setdefault(qs.model, []).append(qs)
++            self.fast_deletes = []
++            for model, querysets in fast_deletes_by_model.items():
++                combined = querysets[0]
++                for qs in querysets[1:]:
++                    combined = combined | qs
++                self.fast_deletes.append(combined)
++
+             for qs in self.fast_deletes:
+                 count = qs._raw_delete(using=self.using)
+                 deleted_counter[qs.model._meta.label] += count
+diff --git a/tests/delete/models.py b/tests/delete/models.py
+index e2ddce0588..63b6db67e9 100644
+--- a/tests/delete/models.py
++++ b/tests/delete/models.py
+@@ -147,3 +147,13 @@ class SecondReferrer(models.Model):
+     other_referrer = models.ForeignKey(
+         Referrer, models.CASCADE, to_field='unique_field', related_name='+'
+     )
++
++class Person(models.Model):
++    friends = models.ManyToManyField('self')
++
++class User2(models.Model):
++    pass
++
++class Entry(models.Model):
++    created_by = models.ForeignKey(User2, models.CASCADE, related_name='created_entries')
++    updated_by = models.ForeignKey(User2, models.CASCADE, related_name='updated_entries')
+diff --git a/tests/delete/tests.py b/tests/delete/tests.py
+index 505fd843d7..e0aa433732 100644
+--- a/tests/delete/tests.py
++++ b/tests/delete/tests.py
+@@ -6,9 +6,9 @@ from django.db.models.sql.constants import GET_ITERATOR_CHUNK_SIZE
+ from django.test import TestCase, skipIfDBFeature, skipUnlessDBFeature
+ 
+ from .models import (
+-    MR, A, Avatar, Base, Child, HiddenUser, HiddenUserProfile, M, M2MFrom,
+-    M2MTo, MRNull, Origin, Parent, R, RChild, RChildChild, Referrer, S, T,
+-    User, create_a, get_default_r,
++    MR, A, Avatar, Base, Child, Entry, HiddenUser, HiddenUserProfile, M, M2MFrom,
++    M2MTo, MRNull, Origin, Parent, Person, R, RChild, RChildChild, Referrer, S, T,
++    User, User2, create_a, get_default_r,
+ )
+ 
+ 
+@@ -331,13 +331,8 @@ class DeletionTests(TestCase):
+         TEST_SIZE = 2000
+         objs = [Avatar() for i in range(0, TEST_SIZE)]
+         Avatar.objects.bulk_create(objs)
+-        # Calculate the number of queries needed.
+-        batch_size = connection.ops.bulk_batch_size(['pk'], objs)
+-        # The related fetches are done in batches.
+-        batches = ceil(len(objs) / batch_size)
+-        # One query for Avatar.objects.all() and then one related fast delete for
+-        # each batch.
+-        fetches_to_mem = 1 + batches
++        # One query to fetch Avatars and one combined fast delete for related users.
++        fetches_to_mem = 2
+         # The Avatar objects are going to be deleted in batches of GET_ITERATOR_CHUNK_SIZE
+         queries = fetches_to_mem + TEST_SIZE // GET_ITERATOR_CHUNK_SIZE
+         self.assertNumQueries(queries, Avatar.objects.all().delete)
+@@ -351,12 +346,11 @@ class DeletionTests(TestCase):
+ 
+         batch_size = max(connection.ops.bulk_batch_size(['pk'], range(TEST_SIZE)), 1)
+ 
+-        # TEST_SIZE / batch_size (select related `T` instances)
+-        # + 1 (select related `U` instances)
++        # 1 (select related `T` instances)
++        # + 1 (combined fast delete of related `U` instances)
+         # + TEST_SIZE / GET_ITERATOR_CHUNK_SIZE (delete `T` instances in batches)
+         # + 1 (delete `s`)
+-        expected_num_queries = ceil(TEST_SIZE / batch_size)
+-        expected_num_queries += ceil(TEST_SIZE / GET_ITERATOR_CHUNK_SIZE) + 2
++        expected_num_queries = ceil(TEST_SIZE / GET_ITERATOR_CHUNK_SIZE) + 3
+ 
+         self.assertNumQueries(expected_num_queries, s.delete)
+         self.assertFalse(S.objects.exists())
+@@ -582,3 +576,18 @@ class FastDeleteTests(TestCase):
+                 User.objects.filter(avatar__desc='missing').delete(),
+                 (0, {'delete.User': 0})
+             )
++
++    def test_fast_delete_combined_by_table_fk(self):
++        u = User2.objects.create()
++        Entry.objects.create(created_by=u, updated_by=u)
++        # 1 query to fast-delete the entries, 1 to delete the user.
++        self.assertNumQueries(2, u.delete)
++        self.assertFalse(Entry.objects.exists())
++        self.assertFalse(User2.objects.exists())
++
++    def test_fast_delete_combined_by_table_m2m(self):
++        p = Person.objects.create()
++        p.friends.add(p)
++        # 1 query to fast-delete the m2m rows, 1 to delete the person.
++        self.assertNumQueries(2, p.delete)
++        self.assertFalse(Person.objects.exists())
+2026-10-30 16:48:16,272 - INFO - Eval script for django__django-11885 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-11885/eval.sh; copying to container...
+2026-10-30 16:48:24,036 - INFO - Test runtime: 7.67 seconds
+2026-10-30 16:48:24,039 - INFO - Test output for django__django-11885 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-11885/test_output.txt
+2026-10-30 16:48:24,105 - INFO - Git diff after:
+diff --git a/django/db/models/deletion.py b/django/db/models/deletion.py
+index ae82d26340..431eafd063 100644
+--- a/django/db/models/deletion.py
++++ b/django/db/models/deletion.py
+@@ -310,6 +310,16 @@ class Collector:
+                     )
+ 
+             # fast deletes
++            fast_deletes_by_model = {}
++            for qs in self.fast_deletes:
++                fast_deletes_by_model.setdefault(qs.model, []).append(qs)
++            self.fast_deletes = []
++            for model, querysets in fast_deletes_by_model.items():
++                combined = querysets[0]
++                for qs in querysets[1:]:
++                    combined = combined | qs
++                self.fast_deletes.append(combined)
++
+             for qs in self.fast_deletes:
+                 count = qs._raw_delete(using=self.using)
+                 deleted_counter[qs.model._meta.label] += count
+diff --git a/tests/delete/models.py b/tests/delete/models.py
+index e2ddce0588..63b6db67e9 100644
+--- a/tests/delete/models.py
++++ b/tests/delete/models.py
+@@ -147,3 +147,13 @@ class SecondReferrer(models.Model):
+     other_referrer = models.ForeignKey(
+         Referrer, models.CASCADE, to_field='unique_field', related_name='+'
+     )
++
++class Person(models.Model):
++    friends = models.ManyToManyField('self')
++
++class User2(models.Model):
++    pass
++
++class Entry(models.Model):
++    created_by = models.ForeignKey(User2, models.CASCADE, related_name='created_entries')
++    updated_by = models.ForeignKey(User2, models.CASCADE, related_name='updated_entries')
+2026-10-30 16:48:24,105 - INFO - Git diff changed after running eval script
+2026-10-30 16:48:24,105 - INFO - Grading answer for django__django-11885...
+2026-10-30 16:48:24,112 - INFO - report: {'django__django-11885': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_fast_delete_combined_relationships (delete.tests.FastDeleteTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_fast_delete_empty_no_update_can_self_select (delete.tests.FastDeleteTests)', 'test_fast_delete_fk (delete.tests.FastDeleteTests)', 'test_fast_delete_inheritance (delete.tests.FastDeleteTests)', 'test_fast_delete_instance_set_pk_none (delete.tests.FastDeleteTests)', 'test_fast_delete_joined_qs (delete.tests.FastDeleteTests)', 'test_fast_delete_large_batch (delete.tests.FastDeleteTests)', 'test_fast_delete_m2m (delete.tests.FastDeleteTests)', 'test_fast_delete_qs (delete.tests.FastDeleteTests)', 'test_fast_delete_revm2m (delete.tests.FastDeleteTests)', 'test_auto (delete.tests.OnDeleteTests)', 'test_auto_nullable (delete.tests.OnDeleteTests)', 'test_cascade (delete.tests.OnDeleteTests)', 'test_cascade_from_child (delete.tests.OnDeleteTests)', 'test_cascade_from_parent (delete.tests.OnDeleteTests)', 'test_cascade_nullable (delete.tests.OnDeleteTests)', 'test_do_nothing (delete.tests.OnDeleteTests)', 'test_do_nothing_qscount (delete.tests.OnDeleteTests)', 'test_inheritance_cascade_down (delete.tests.OnDeleteTests)', 'test_inheritance_cascade_up (delete.tests.OnDeleteTests)', 'test_non_callable (delete.tests.OnDeleteTests)', 'test_o2o_setnull (delete.tests.OnDeleteTests)', 'test_protect (delete.tests.OnDeleteTests)', 'test_setdefault (delete.tests.OnDeleteTests)', 'test_setdefault_none (delete.tests.OnDeleteTests)', 'test_setnull (delete.tests.OnDeleteTests)', 'test_setnull_from_child (delete.tests.OnDeleteTests)', 'test_setnull_from_parent (delete.tests.OnDeleteTests)', 'test_setvalue (delete.tests.OnDeleteTests)', 'test_bulk (delete.tests.DeletionTests)', 'test_can_defer_constraint_checks (delete.tests.DeletionTests)', 'test_delete_with_keeping_parents (delete.tests.DeletionTests)', 'test_delete_with_keeping_parents_relationships (delete.tests.DeletionTests)', 'test_deletion_order (delete.tests.DeletionTests)', 'test_hidden_related (delete.tests.DeletionTests)', 'test_instance_update (delete.tests.DeletionTests)', 'test_m2m (delete.tests.DeletionTests)', 'test_model_delete_returns_num_rows (delete.tests.DeletionTests)', 'test_only_referenced_fields_selected (delete.tests.DeletionTests)', 'test_proxied_model_duplicate_queries (delete.tests.DeletionTests)', 'test_queryset_delete_returns_num_rows (delete.tests.DeletionTests)', 'test_relational_post_delete_signals_happen_before_parent_object (delete.tests.DeletionTests)'], 'failure': ['test_large_delete (delete.tests.DeletionTests)', 'test_large_delete_related (delete.tests.DeletionTests)']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11885: resolved: False
+2026-10-30 16:48:24,113 - INFO - Attempting to stop container sweb.eval.django__django-11885.verified_full_pi...
+2026-10-30 16:48:40,132 - INFO - Container sweb.eval.django__django-11885.verified_full_pi stopped successfully.
+2026-10-30 16:48:40,133 - INFO - Attempting to remove container sweb.eval.django__django-11885.verified_full_pi...
+2026-10-30 16:48:40,181 - INFO - Container sweb.eval.django__django-11885.verified_full_pi removed successfully.

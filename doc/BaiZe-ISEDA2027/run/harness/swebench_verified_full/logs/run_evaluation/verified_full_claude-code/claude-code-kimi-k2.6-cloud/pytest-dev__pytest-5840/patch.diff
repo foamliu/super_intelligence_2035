@@ -1,0 +1,30 @@
+diff --git a/src/_pytest/config/__init__.py b/src/_pytest/config/__init__.py
+index 3a0eca5..bec522c 100644
+--- a/src/_pytest/config/__init__.py
++++ b/src/_pytest/config/__init__.py
+@@ -435,9 +435,12 @@ class PytestPluginManager(PluginManager):
+         # Use realpath to avoid loading the same conftest twice
+         # with build systems that create build directories containing
+         # symlinks to actual files.
+-        conftestpath = unique_path(conftestpath)
++        # Note: conftestpath.pyimport() uses the path's case to construct
++        # the module name, so we must use the original path for pyimport().
++        # We only use unique_path for the cache key to deduplicate.
++        conftestpath_cache_key = unique_path(conftestpath)
+         try:
+-            return self._conftestpath2mod[conftestpath]
++            return self._conftestpath2mod[conftestpath_cache_key]
+         except KeyError:
+             pkgpath = conftestpath.pypkgpath()
+             if pkgpath is None:
+@@ -454,8 +457,8 @@ class PytestPluginManager(PluginManager):
+                 raise ConftestImportFailure(conftestpath, sys.exc_info())
+ 
+             self._conftest_plugins.add(mod)
+-            self._conftestpath2mod[conftestpath] = mod
+-            dirpath = conftestpath.dirpath()
++            self._conftestpath2mod[conftestpath_cache_key] = mod
++            dirpath = unique_path(conftestpath.dirpath())
+             if dirpath in self._dirpath2confmods:
+                 for path, mods in self._dirpath2confmods.items():
+                     if path and path.relto(dirpath) or path == dirpath:

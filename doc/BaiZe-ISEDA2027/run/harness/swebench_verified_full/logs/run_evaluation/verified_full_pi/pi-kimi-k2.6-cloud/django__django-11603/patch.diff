@@ -1,0 +1,75 @@
+diff --git a/django/db/models/aggregates.py b/django/db/models/aggregates.py
+index da4ff928aa..42758821a6 100644
+--- a/django/db/models/aggregates.py
++++ b/django/db/models/aggregates.py
+@@ -99,7 +99,7 @@ class Aggregate(Func):
+ class Avg(FixDurationInputMixin, NumericOutputFieldMixin, Aggregate):
+     function = 'AVG'
+     name = 'Avg'
+-
++    allow_distinct = True
+ 
+ class Count(Aggregate):
+     function = 'COUNT'
+@@ -121,12 +121,12 @@ class Count(Aggregate):
+ class Max(Aggregate):
+     function = 'MAX'
+     name = 'Max'
+-
++    allow_distinct = True
+ 
+ class Min(Aggregate):
+     function = 'MIN'
+     name = 'Min'
+-
++    allow_distinct = True
+ 
+ class StdDev(NumericOutputFieldMixin, Aggregate):
+     name = 'StdDev'
+@@ -142,7 +142,7 @@ class StdDev(NumericOutputFieldMixin, Aggregate):
+ class Sum(FixDurationInputMixin, Aggregate):
+     function = 'SUM'
+     name = 'Sum'
+-
++    allow_distinct = True
+ 
+ class Variance(NumericOutputFieldMixin, Aggregate):
+     name = 'Variance'
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index bd6ecf699c..44dee118d4 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -402,6 +402,17 @@ class AggregateTestCase(TestCase):
+             distinct_ratings=Count(Case(When(pages__gt=300, then='rating')), distinct=True),
+         )
+         self.assertEqual(aggs['distinct_ratings'], 4)
++    def test_distinct_aggregates(self):
++        aggs = Book.objects.aggregate(
++            sum=Sum('rating', distinct=True),
++            avg=Avg('rating', distinct=True),
++            max=Max('rating', distinct=True),
++            min=Min('rating', distinct=True),
++        )
++        self.assertEqual(aggs['sum'], 16.5)
++        self.assertEqual(aggs['avg'], 4.125)
++        self.assertEqual(aggs['max'], 5.0)
++        self.assertEqual(aggs['min'], 3.0)
+ 
+     def test_non_grouped_annotation_not_in_group_by(self):
+         """
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index f5d1553dfb..1e07037f95 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -1586,7 +1586,10 @@ class ReprTests(SimpleTestCase):
+     def test_distinct_aggregates(self):
+         self.assertEqual(repr(Count('a', distinct=True)), "Count(F(a), distinct=True)")
+         self.assertEqual(repr(Count('*', distinct=True)), "Count('*', distinct=True)")
+-
++        self.assertEqual(repr(Avg('a', distinct=True)), "Avg(F(a), distinct=True)")
++        self.assertEqual(repr(Sum('a', distinct=True)), "Sum(F(a), distinct=True)")
++        self.assertEqual(repr(Max('a', distinct=True)), "Max(F(a), distinct=True)")
++        self.assertEqual(repr(Min('a', distinct=True)), "Min(F(a), distinct=True)")
+     def test_filtered_aggregates(self):
+         filter = Q(a=1)
+         self.assertEqual(repr(Avg('a', filter=filter)), "Avg(F(a), filter=(AND: ('a', 1)))")

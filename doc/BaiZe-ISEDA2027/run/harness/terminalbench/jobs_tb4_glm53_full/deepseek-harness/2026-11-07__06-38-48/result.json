@@ -1,0 +1,104 @@
+{
+    "id": "fc92c1a7-f192-4506-9241-7fe5f98d8bfa",
+    "started_at": "2026-11-07T06:38:48.415715",
+    "updated_at": "2026-11-07T07:35:59.707590Z",
+    "finished_at": null,
+    "n_total_trials": 66,
+    "stats": {
+        "n_completed_trials": 59,
+        "n_errored_trials": 56,
+        "n_running_trials": 1,
+        "n_pending_trials": 6,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "deepseek-harness__terminal-bench-4.0": {
+                "n_trials": 3,
+                "n_errors": 56,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "heat-pump-warranty__jUhyWds",
+                            "interleaved-vigenere__UANsh35",
+                            "retro-console-soc__gWdwbkn"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "RuntimeError": [
+                        "atrx-vep-crispr__odRi2sm",
+                        "batched-eval-parity__dVK4hSX",
+                        "biped-contact-dynamics__2YNfZaC",
+                        "bun-sourcemap-leak__e5MJvQK",
+                        "cad-model__syfKLa9",
+                        "cargo-flight-dispatch__5iE8wR6",
+                        "coq-block-bound__2uAyCMA",
+                        "ctr-optimization__P55qeRC",
+                        "data-anonymization__NXCefSD",
+                        "embedding-drift-monitor__TVDE8aS",
+                        "fin-saccr-rwa__JG3vjhy",
+                        "foodstuff-beta-activity__CaFaz3x",
+                        "formal-crypto__5tjZnLW",
+                        "fp8-rmsnorm-gemm__UutV9Tt",
+                        "freecad-impeller__mYCDbuB",
+                        "freecad-platform-drawing__y8QudzU",
+                        "freecad-spring-clip__d3aQPa9",
+                        "freight-dispatch-shift__YGQ7eZo",
+                        "glycan-ms2-elucidation__eXYKcqb",
+                        "hof-topology-interpenetration__FhCkVHE",
+                        "html-js-filter__C5JdtFo",
+                        "intrastat-meldung__FThBSCd",
+                        "jax-speedrun-gpu__DuV4u5Y",
+                        "ks-solver-cpp__KGuvL6p",
+                        "kv-live-surgery__xN46eyT",
+                        "lake-temp-glm__F4hWWGR",
+                        "layout-config-recreation__rGBEuQk",
+                        "layout-config-recreation2__5EsQZub",
+                        "legacy-utility-triage__GDkjHRH",
+                        "live-database-cutover__w68EapD",
+                        "math-eval-grader__kzR3wKv",
+                        "mp-checkpoint-consolidation__GNfiLrt",
+                        "music-harmony__Ugds8uq",
+                        "mvcc-lsm-compaction__7xiakAx",
+                        "ontology-kg-querying__NymyN7R",
+                        "payments-pipeline-fix__UnRoPdr",
+                        "photonic-waveguide-routing__9GEzMyU",
+                        "pretrain-shard-corruption__NV2is85",
+                        "production-planning__wmrRzPD",
+                        "protein-autointerp-disulfide__9gtgJ8a",
+                        "risk-scorer-replay__48KXH9X",
+                        "rs-archive-clone__KSSzUa6",
+                        "satb-audio-transcription__5683QGj",
+                        "session-window-debug__U8YKt2K",
+                        "sglang-qwen-burst__VFSyiRQ",
+                        "shadow-relay__xLr62fP",
+                        "sound-change-cascade__dGchxuA",
+                        "telecom-entity-resolution__JMkFG2H"
+                    ],
+                    "ValueError": [
+                        "cumulative-layout-shift__9sbionR",
+                        "medical-claims-processing__wecD9Wu"
+                    ],
+                    "NonZeroAgentExitCodeError": [
+                        "distributed-dedup__aVzExea",
+                        "gsea-proteomics__78tdmMw",
+                        "nextjs-performance__EBgKj34",
+                        "react-lead-form__92bLtfr",
+                        "roy-polymorph-cn__ya2YRk2",
+                        "takens-embedding-lean__Gvtjn9T"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}

@@ -1,0 +1,264 @@
+2026-11-11 19:12:00,854 - INFO - Creating container for pylint-dev__pylint-4970...
+2026-11-11 19:12:00,873 - INFO - Container for pylint-dev__pylint-4970 created: 8916c24391c92832477cf539c2839244a13342ce0681c77d0c9881125b57e393
+2026-11-11 19:12:01,729 - INFO - Container for pylint-dev__pylint-4970 started: 8916c24391c92832477cf539c2839244a13342ce0681c77d0c9881125b57e393
+2026-11-11 19:12:01,731 - INFO - Intermediate patch for pylint-dev__pylint-4970 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2189/cline-glm-5.3-flash/pylint-dev__pylint-4970/patch.diff, now applying to container...
+2026-11-11 19:12:01,866 - INFO - >>>>> Applied Patch:
+Checking patch ChangeLog...
+Checking patch doc/whatsnew/2.11.rst...
+Checking patch examples/pylintrc...
+Checking patch pylint/checkers/similar.py...
+Checking patch pylintrc...
+Checking patch tests/checkers/unittest_similar.py...
+Applied patch ChangeLog cleanly.
+Applied patch doc/whatsnew/2.11.rst cleanly.
+Applied patch examples/pylintrc cleanly.
+Applied patch pylint/checkers/similar.py cleanly.
+Applied patch pylintrc cleanly.
+Applied patch tests/checkers/unittest_similar.py cleanly.
+
+2026-11-11 19:12:02,124 - INFO - Git diff before:
+diff --git a/ChangeLog b/ChangeLog
+index 97af302a..9c06de48 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -65,6 +65,11 @@ Release date: TBA
+ 
+ * Extended ``consider-using-in`` check to work for attribute access.
+ 
++* Setting ``min-similarity-lines`` to ``0`` now disables the duplicate code check entirely
++  instead of using a minimum of zero lines.
++
++  Closes #4231
++
+ 
+ What's New in Pylint 2.10.3?
+ ============================
+diff --git a/doc/whatsnew/2.11.rst b/doc/whatsnew/2.11.rst
+index 72dc75e7..a30c67ba 100644
+--- a/doc/whatsnew/2.11.rst
++++ b/doc/whatsnew/2.11.rst
+@@ -71,3 +71,8 @@ Other Changes
+   Closes #4907
+ 
+ * Extended ``consider-using-in`` check to work for attribute access.
++
++* Setting ``min-similarity-lines`` to ``0`` now disables the duplicate code check entirely
++  instead of using a minimum of zero lines.
++
++  Closes #4231
+diff --git a/examples/pylintrc b/examples/pylintrc
+index 0bfe9593..fa77b28f 100644
+--- a/examples/pylintrc
++++ b/examples/pylintrc
+@@ -297,7 +297,7 @@ ignore-docstrings=yes
+ # Ignore imports when computing similarities.
+ ignore-imports=no
+ 
+-# Minimum lines number of a similarity.
++# Minimum lines number of a similarity. Setting it to 0 disables the check.
+ min-similarity-lines=4
+ 
+ 
+diff --git a/pylint/checkers/similar.py b/pylint/checkers/similar.py
+index c65b1c89..88249050 100644
+--- a/pylint/checkers/similar.py
++++ b/pylint/checkers/similar.py
+@@ -394,6 +394,9 @@ class Similar:
+ 
+     def _compute_sims(self) -> List[Tuple[int, Set[LinesChunkLimits_T]]]:
+         """compute similarities in appended files"""
++        if self.min_lines <= 0:
++            # min-similarity-lines <= 0 disables the check, there is nothing to compute
++            return []
+         no_duplicates: Dict[int, List[Set[LinesChunkLimits_T]]] = defaultdict(list)
+ 
+         for commonality in self._iter_sims():
+@@ -739,7 +742,8 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+                 "default": DEFAULT_MIN_SIMILARITY_LINE,
+                 "type": "int",
+                 "metavar": "<int>",
+-                "help": "Minimum lines number of a similarity.",
++                "help": "Minimum lines number of a similarity. "
++                "Setting it to 0 disables the check.",
+             },
+         ),
+         (
+@@ -825,6 +829,11 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+ 
+         stream must implement the readlines method
+         """
++        if self.min_lines <= 0:
++            # min-similarity-lines <= 0 disables the check entirely, so don't
++            # even collect the module's lines
++            # See https://github.com/PyCQA/pylint/issues/4231
++            return
+         with node.stream() as stream:
+             self.append_stream(self.linter.current_name, stream, node.file_encoding)
+ 
+diff --git a/pylintrc b/pylintrc
+index 6acebfbf..4bd6b582 100644
+--- a/pylintrc
++++ b/pylintrc
+@@ -117,7 +117,7 @@ notes=FIXME,XXX,TODO
+ 
+ [SIMILARITIES]
+ 
+-# Minimum lines number of a similarity.
++# Minimum lines number of a similarity. Setting it to 0 disables the check.
+ min-similarity-lines=4
+ 
+ # Ignore comments when computing similarities.
+diff --git a/tests/checkers/unittest_similar.py b/tests/checkers/unittest_similar.py
+index 4ddf2029..86637ae9 100644
+--- a/tests/checkers/unittest_similar.py
++++ b/tests/checkers/unittest_similar.py
+@@ -43,6 +43,8 @@ EMPTY_FUNCTION_1 = str(INPUT / "similar_empty_func_1.py")
+ EMPTY_FUNCTION_2 = str(INPUT / "similar_empty_func_2.py")
+ MULTILINE = str(INPUT / "multiline-import")
+ HIDE_CODE_WITH_IMPORTS = str(INPUT / "hide_code_with_imports.py")
++SIMILAR_LINES_A = str(INPUT / "similar_lines_a.py")
++SIMILAR_LINES_B = str(INPUT / "similar_lines_b.py")
+ 
+ 
+ def test_ignore_comments() -> None:
+@@ -393,6 +395,37 @@ def test_no_args() -> None:
+             pytest.fail("not system exit")
+ 
+ 
++def test_dont_check_duplicate_code_if_min_similarity_lines_is_zero() -> None:
++    output = StringIO()
++    with redirect_stdout(output), pytest.raises(SystemExit) as ex:
++        similar.Run(["--duplicates", "0", SIMILAR1, SIMILAR2])
++    assert ex.value.code == 0
++    assert (
++        output.getvalue().strip()
++        == """
++TOTAL lines=62 duplicates=0 percent=0.00
++""".strip()
++    )
++
++
++def test_linter_checks_duplicate_code_by_default() -> None:
++    """Sanity check that duplicate-code is raised with the default options."""
++    linter = PyLinter(reporter=Reporter())
++    linter.register_checker(similar.SimilarChecker(linter))
++    linter.check([SIMILAR_LINES_A, SIMILAR_LINES_B])
++    assert "R0801" in linter.reporter.message_ids
++
++
++def test_linter_dont_check_duplicate_code_if_min_similarity_lines_is_zero() -> None:
++    """Tests that setting min-similarity-lines to 0 disables the check."""
++    linter = PyLinter(reporter=Reporter())
++    linter.register_checker(similar.SimilarChecker(linter))
++    linter.global_set_option("min-similarity-lines", 0)
++    linter.check([SIMILAR_LINES_A, SIMILAR_LINES_B])
++    assert not linter.reporter.messages
++    assert "R0801" not in linter.reporter.message_ids
++
++
+ def test_get_map_data() -> None:
+     """Tests that a SimilarChecker respects the MapReduceMixin interface"""
+     linter = PyLinter(reporter=Reporter())
+2026-11-11 19:12:02,126 - INFO - Eval script for pylint-dev__pylint-4970 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2189/cline-glm-5.3-flash/pylint-dev__pylint-4970/eval.sh; copying to container...
+2026-11-11 19:12:06,044 - INFO - Test runtime: 3.85 seconds
+2026-11-11 19:12:06,047 - INFO - Test output for pylint-dev__pylint-4970 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2189/cline-glm-5.3-flash/pylint-dev__pylint-4970/test_output.txt
+2026-11-11 19:12:06,117 - INFO - Git diff after:
+diff --git a/ChangeLog b/ChangeLog
+index 97af302a..9c06de48 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -65,6 +65,11 @@ Release date: TBA
+ 
+ * Extended ``consider-using-in`` check to work for attribute access.
+ 
++* Setting ``min-similarity-lines`` to ``0`` now disables the duplicate code check entirely
++  instead of using a minimum of zero lines.
++
++  Closes #4231
++
+ 
+ What's New in Pylint 2.10.3?
+ ============================
+diff --git a/doc/whatsnew/2.11.rst b/doc/whatsnew/2.11.rst
+index 72dc75e7..a30c67ba 100644
+--- a/doc/whatsnew/2.11.rst
++++ b/doc/whatsnew/2.11.rst
+@@ -71,3 +71,8 @@ Other Changes
+   Closes #4907
+ 
+ * Extended ``consider-using-in`` check to work for attribute access.
++
++* Setting ``min-similarity-lines`` to ``0`` now disables the duplicate code check entirely
++  instead of using a minimum of zero lines.
++
++  Closes #4231
+diff --git a/examples/pylintrc b/examples/pylintrc
+index 0bfe9593..fa77b28f 100644
+--- a/examples/pylintrc
++++ b/examples/pylintrc
+@@ -297,7 +297,7 @@ ignore-docstrings=yes
+ # Ignore imports when computing similarities.
+ ignore-imports=no
+ 
+-# Minimum lines number of a similarity.
++# Minimum lines number of a similarity. Setting it to 0 disables the check.
+ min-similarity-lines=4
+ 
+ 
+diff --git a/pylint/checkers/similar.py b/pylint/checkers/similar.py
+index c65b1c89..88249050 100644
+--- a/pylint/checkers/similar.py
++++ b/pylint/checkers/similar.py
+@@ -394,6 +394,9 @@ class Similar:
+ 
+     def _compute_sims(self) -> List[Tuple[int, Set[LinesChunkLimits_T]]]:
+         """compute similarities in appended files"""
++        if self.min_lines <= 0:
++            # min-similarity-lines <= 0 disables the check, there is nothing to compute
++            return []
+         no_duplicates: Dict[int, List[Set[LinesChunkLimits_T]]] = defaultdict(list)
+ 
+         for commonality in self._iter_sims():
+@@ -739,7 +742,8 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+                 "default": DEFAULT_MIN_SIMILARITY_LINE,
+                 "type": "int",
+                 "metavar": "<int>",
+-                "help": "Minimum lines number of a similarity.",
++                "help": "Minimum lines number of a similarity. "
++                "Setting it to 0 disables the check.",
+             },
+         ),
+         (
+@@ -825,6 +829,11 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+ 
+         stream must implement the readlines method
+         """
++        if self.min_lines <= 0:
++            # min-similarity-lines <= 0 disables the check entirely, so don't
++            # even collect the module's lines
++            # See https://github.com/PyCQA/pylint/issues/4231
++            return
+         with node.stream() as stream:
+             self.append_stream(self.linter.current_name, stream, node.file_encoding)
+ 
+diff --git a/pylintrc b/pylintrc
+index 6acebfbf..4bd6b582 100644
+--- a/pylintrc
++++ b/pylintrc
+@@ -117,7 +117,7 @@ notes=FIXME,XXX,TODO
+ 
+ [SIMILARITIES]
+ 
+-# Minimum lines number of a similarity.
++# Minimum lines number of a similarity. Setting it to 0 disables the check.
+ min-similarity-lines=4
+ 
+ # Ignore comments when computing similarities.
+2026-11-11 19:12:06,117 - INFO - Git diff changed after running eval script
+2026-11-11 19:12:06,117 - INFO - Grading answer for pylint-dev__pylint-4970...
+2026-11-11 19:12:06,120 - INFO - report: {'pylint-dev__pylint-4970': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['tests/checkers/unittest_similar.py::test_set_duplicate_lines_to_zero']}, 'PASS_TO_PASS': {'success': ['tests/checkers/unittest_similar.py::test_ignore_comments', 'tests/checkers/unittest_similar.py::test_ignore_docstrings', 'tests/checkers/unittest_similar.py::test_ignore_imports', 'tests/checkers/unittest_similar.py::test_multiline_imports', 'tests/checkers/unittest_similar.py::test_ignore_multiline_imports', 'tests/checkers/unittest_similar.py::test_ignore_signatures_fail', 'tests/checkers/unittest_similar.py::test_ignore_signatures_pass', 'tests/checkers/unittest_similar.py::test_ignore_signatures_class_methods_fail', 'tests/checkers/unittest_similar.py::test_ignore_signatures_class_methods_pass', 'tests/checkers/unittest_similar.py::test_ignore_signatures_empty_functions_fail', 'tests/checkers/unittest_similar.py::test_ignore_signatures_empty_functions_pass', 'tests/checkers/unittest_similar.py::test_no_hide_code_with_imports', 'tests/checkers/unittest_similar.py::test_ignore_nothing', 'tests/checkers/unittest_similar.py::test_lines_without_meaningful_content_do_not_trigger_similarity', 'tests/checkers/unittest_similar.py::test_help', 'tests/checkers/unittest_similar.py::test_no_args', 'tests/checkers/unittest_similar.py::test_get_map_data'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pylint-dev__pylint-4970: resolved: False
+2026-11-11 19:12:06,122 - INFO - Attempting to stop container sweb.eval.pylint-dev__pylint-4970.verified_full_glm53_cline-patched_incr_R2189...
+2026-11-11 19:12:22,476 - INFO - Container sweb.eval.pylint-dev__pylint-4970.verified_full_glm53_cline-patched_incr_R2189 stopped successfully.
+2026-11-11 19:12:22,476 - INFO - Attempting to remove container sweb.eval.pylint-dev__pylint-4970.verified_full_glm53_cline-patched_incr_R2189...
+2026-11-11 19:12:22,511 - INFO - Container sweb.eval.pylint-dev__pylint-4970.verified_full_glm53_cline-patched_incr_R2189 removed successfully.

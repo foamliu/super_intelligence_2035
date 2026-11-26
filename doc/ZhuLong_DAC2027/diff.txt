@@ -1,0 +1,196 @@
+# ZhuLong 论文修订 — 修正版 diff 草稿（未改动任何源文件）
+
+说明：本文件是"修正版 diff 草稿"，逐条对应朋友的修订建议书，但做了三处必要修正：
+(1) D5（1.1）的 L3/L4 映射已改 —— 朋友的 (i)(iv)->L3 与本论文 `undocumented -> L4` / `documented nowhere` 冲突，
+    改为 generation-stage -> L3、四类 evaluation-stage pattern 统一归 L4；
+(2) D6（2.2）去掉了对 4.1 L30 的逐字复述，改为"引用而不复述"；
+(3) D7（2.3）并入 4.3 开头而非 Introduction 另起一段，省篇幅。
+
+每条均标注：文件 / 位置锚点 / old->new / 依据 / 验收。锚点逐字取自当前文件。
+不做项：3.1（ε 收窄，冗余）、3.2（烛龙隐喻，盲审风险）。
+
+
+## 0. 篇幅预算总表
+
+| 编号 | 改动                            | 文件                | 净增英文正文 | 备注                         |
+|------|---------------------------------|---------------------|--------------|------------------------------|
+| D1   | 1.2a+1.2b L4 直觉 + 时间窗脚注  | 4_grounding.tex     | ~95 词       | footnote 小字但占版面         |
+| D2   | 2.1 self-exploration 采集/运行  | 3_design.tex        | ~65 词       |                              |
+| D3   | 3.3 脚本≠LVS/DRC                | 7_discussion.tex    | ~35 词       | 合并进现有句                 |
+| D4   | 3.4 长链 flow + 胶水层          | 8_conclusion.tex    | ~25 词       | 替换现有 future-work 句      |
+| D5   | 1.1（修正映射）                | 6_exp.tex           | ~55 词       | generation->L3 / pattern->L4 |
+| D6   | 2.2（去重复）                  | 4_grounding.tex     | ~55 词       | 引用 4.1，不复述             |
+| D7   | 2.3 loop necessary-not-sufficient | 4_grounding.tex  | ~50 词       | 并入 4.3 开头                |
+
+净增合计 ≈ 380 词英文正文 -> 必须同步删 ≈ 380 词对冲，否则 6 页正文保不住（见 §4 删除候选）。
+不做：3.1（ε 收窄）、3.2（烛龙隐喻）—— 理由见 §3。
+
+
+## 1. 第一批（直接做）
+
+### D1 | 1.2a + 1.2b — L4 直觉定义 + 时间窗 footnote
+- 文件/位置：4_grounding.tex，在 `\subsection{A Bayesian Formalization of the Grounding Gap}`（L33）之前插入
+  （即 L30 的 `selects one channel of L4` 段之后、4.2 之前，满足"Table 1 后、4.2 前"）。
+- 新增英文：
+```latex
+Intuitively, L4 is what one can only know by being there: execution is the means of being there, but being there is not the same as seeing clearly---how clearly $\Omega$ sees is exactly $\epsilon$.\footnote{The L3/L4 boundary is a task-relative time window, not an absolute clock. ``Is this true right now?'' admits hours for a question like whether one is hungry, but quarters for whether a PyAether API's documentation is current; L3 is frozen at the training cutoff, while L4 is whatever falls inside the task's window and must be read from the environment.}
+% L4 直觉：只有到场才知道的事；执行是到场的手段，但到场不等于看清，看清程度恰为 ε。脚注：L3/L4 边界是任务相对时间窗而非绝对时钟——"此刻为真"对"饿不饿"允许小时级窗口，对"PyAether API 文档是否现行"只允许季度级；L3 冻结在训练截止日，L4 是落在任务窗口内、必须从环境读取的部分。
+```
+- 依据：内部讨论"L4 = 必须到场才知道""环是到场的手段，看清程度就是 ε"。
+- 验收：三条原定义（indexicality / non-guaranteeability / real-time commitment）在 L10 原样保留；新句只追加、不删改。
+
+### D2 | 2.1 — self-exploration 的 collection-time / runtime 归属
+- 文件/位置：3_design.tex，L34 末句 `...served at runtime via \texttt{get\_api\_details} with no overhead.` 后追加一段。
+- old（锚点，保留不动）：`...served at runtime via \texttt{get\_api\_details} with no overhead.`
+- 新增英文：
+```latex
+At collection time the exploration agent observes the live runtime via \texttt{run\_code}---an L4 observation---but the product is frozen into the knowledge base and served as a static fact, by then an L3-style record of a past observation, subject to staleness. This is why self-exploration is a bounded prior-side complement: it converts L4 observations into an L3 cache, and its accuracy is bounded by cache freshness, not by the fidelity of $\Omega$ at runtime.
+% 澄清自探索的信息层级：采集时通过 run_code 观测实时运行时（属 L4 观测），但产物冻结进知识库、运行时作为静态事实提供，此时已退化为对过去观测的 L3 式记录，受时效约束。故自探索是有界先验侧补充：把 L4 观测转成 L3 缓存，精度受缓存新鲜度而非运行时 Ω 保真度约束。
+```
+- 依据：解决"self-exploration 补 L3 还是 L4"的内部争议。
+  3.4 原句 `retrieval enriches only the L1--L3 facts Ω returns, so self-exploration complements---and is bounded by---the L4 observation` 保留不删（新段是它的展开，不冲突）。
+- 验收：+2.4 pp 及区间原样；原句未删。
+
+### D3 | 3.3 — limitations 补"脚本正确 ≠ LVS/DRC"
+- 文件/位置：7_discussion.tex，L7。
+- old：`Pass@1 certifies only the effects its assertions check, not full functional equivalence.`
+- new：
+```latex
+Pass@1 certifies only the effects its assertions check, not full functional equivalence---script-level correctness is necessary but not sufficient for end-to-end correctness, and it does not certify that the produced design passes LVS or DRC, a gap this benchmark does not close.
+% Pass@1 只认证断言所检查的效果而非完全功能等价——脚本层正确是端到端正确的必要非充分条件，且不保证产出的设计通过 LVS/DRC；这是本基准不覆盖的鸿沟。
+```
+- 依据：诚实声明脚本层 vs 物理验证层的 gap，审稿加分。
+
+### D4 | 3.4 — conclusion 长链 flow + 胶水层
+- 文件/位置：8_conclusion.tex，L4。
+- old：`Future work: domain-specializing the harness, long-term memory and recursive self-improvement, multimodal grounding, and flow-orchestration benchmarking.`
+- new：
+```latex
+Future work: domain-specializing the harness, long-term memory and recursive self-improvement, multimodal grounding, and long-chain flow-orchestration benchmarking---ZhuLong evaluates the glue layer that makes flows runnable end-to-end, and that glue layer is the precondition of a whole-flow agent.
+% 未来工作：领域化 harness、长期记忆与递归自我改进、多模态接地、长链 flow 编排评测——ZhuLong 评的是使 flow 端到端可跑的胶水层，而胶水层是整流程智能体的前置条件。
+```
+- 依据：与 §1 `connective tissue`、§2 切割一致；不提未发表 benchmark 名（红线 3 满足）。
+
+## 2. 第二批（修正后做）
+
+### D5 | 1.1 — 误差分析映射（映射已改，这是关键修正）
+- 文件/位置：6_exp.tex，L114（generation/evaluation split 段）之后、L115（four patterns 段）之前。
+- 修正点：朋友原稿把 (i)(iv) 归 L3，与 4.1 的 `undocumented binding contract -> L4` 和 6.3 的 `documented nowhere` 冲突。
+  改为：generation-stage -> L3，四类 evaluation-stage pattern 统一归 L4。
+- 新增英文：
+```latex
+The failures reduce to two missing ingredients, neither a matter of raw model capability: domain knowledge the prior would need to produce a candidate (L3), and a contract in the live design that $\Omega$ cannot see (L4). Generation-stage failures are predominantly L3; the four evaluation-stage patterns below are predominantly L4---constraints documented nowhere yet decisive, visible only through $\Omega$.
+% 失败归结为两个缺失要素，均非模型原始能力问题：产出候选所需的领域知识（L3），与实时设计中 Ω 看不见的契约（L4）。生成阶段失败以 L3 为主；下方四类评测阶段模式以 L4 为主——文档从未记录却决定成败、仅能通过 Ω 观测的契约。
+```
+- 依据：内部讨论"failure 是缺领域知识或缺观测，而非 agent 太傻"；但落到 pattern 的具体归属时，
+  论文已论证四类 pattern 全是 `documented nowhere`，故统一归 L4，把"领域知识"二分挂在 generation/evaluation 切分上。
+- 验收：四类 pattern 描述与例子（L115/L118）不动；不引入与 L30 `undocumented -> L4` 的矛盾。
+
+### D6 | 2.2 — ε≥ε₀>0、57.2 下界（去重复）
+- 文件/位置：4_grounding.tex，L59 末句 `...observation is the under-invested axis whose returns are measurable and graded.` 之后插入。
+- 修正点：朋友稿把 4.1 L30 的 `organizational, tacit, and modal…` 整段复述一遍，纯浪费篇幅。改为引用。
+- 新增英文：
+```latex
+In deployment $\epsilon$ does not reach zero: by Section~\ref{sec:four-levels}, $\Omega$ covers one channel of L4, not its entirety, so $\epsilon \ge \epsilon_0 > 0$ and the grounding gap has a positive lower bound. The 57.2-pp observation span should be read accordingly---a lower bound on what observation buys, measured through the $\Omega$ this paper implements.
+% 部署中 ε 不会到零：依 §4.1，Ω 只覆盖 L4 的一个通道而非全部，故 ε ≥ ε₀ > 0，落地鸿沟有正下界。57.2pp 观测跨度应照此解读——它是本文所实现 Ω 测得的"观测能买多少"的下界。
+```
+- 依据：与 4.2 的 `g(ε)->0`（极限陈述）不冲突（新段讲部署下界）；
+  "lower bound" 带 `through the Ω this paper implements` 限定，不引回排序断言。
+- 验收：不再复述 4.1 L30；与 6.2.3 的 57.2 pp 表述一致。
+
+### D7 | 2.3 — loop necessary-not-sufficient（并入 4.3）
+- 文件/位置：4_grounding.tex，L65。
+- old：`The formalization yields three architectural principles.`
+- new：
+```latex
+Every execution-grounded harness already has a generate--execute--refine loop; a loop is necessary but not sufficient. What the loop alone leaves missing, and what this paper supplies, is a theory of what it cannot see: the L4 space no offline prior reaches, and the observation fidelity $\epsilon$ bounding how much of it a given $\Omega$ recovers. The formalization yields three architectural principles.
+% 每个执行接地 harness 都有"生成–执行–修正"环；环是必要非充分条件。仅有环仍缺失、而本文补上的，是关于"环看不到什么"的理论：离线先验无法触及的 L4 空间，以及给定 Ω 能恢复其中多少的观测保真度 ε。
+```
+- 依据：内部讨论"不是多了个环，是认识到有环也够不着的空间并认真补"；
+  与 §2 对 ChatEDA/MCP4EDA/AutoEDA 的切割一致。
+- 验收：不自贬（不说"我们只是加了个环"）；并入 4.3 而非 Introduction 另起一段，省篇幅。
+
+
+## 3. 不做项 + 理由
+
+- 3.1（ε 收窄到 Ω）— 冗余。
+  4_grounding.tex L56 已定义 ε = sup_θ ‖p(·|θ) − p̂(·|θ)‖_TV（观测似然），
+  L59 已写 `Here ε is exactly the fidelity of this paper's Ω implementation—retrieval quality plus execution read-back`。
+  论文从未把 ε 泛化成"harness 属性"，无需再收窄。
+
+- 3.2（烛龙命名隐喻）— 盲审下不做。
+  全文目前没有任何命名解释（已查 §1/§3）；中文神话命名有暴露作者身份风险，且与红线"克制文化表述"自相矛盾。
+  建议整个砍掉，或仅在有明确 reviewer 意见后再议。
+
+
+## 4. 对冲删除候选（≈380 词，需朋友确认删哪里）
+
+守住 6 页正文的删除来源（按冗余度降序）：
+
+1. 4_grounding.tex L67：`This is a bottleneck, not a substitution: neither axis compensates for the other.`（~13 词）
+   —— 与同段 principle 二前半句 `while a richer prior raises the L1--L3 ceiling with diminishing returns on L4` 语义重复，
+   且正是上一轮 context 里标注"是否也 revise"的那句。建议顺手删。
+
+2. 4_grounding.tex L59：`The two axes answer different questions---how much observation buys at a fixed model, versus how much a stronger prior buys under full observation---so we report both and ask which is binding in the current model-capability regime, rather than treating them as competing explanations.`（~45 词）
+   —— 与 Introduction RQ1（`The two axes answer different questions`）重复，可压缩为一句。
+
+3. 6_exp.tex 6.2 的叙述句（成分量级列举等）—— 多处与 Table 1 重复的数值复述，可精简（具体待定，约 100–150 词）。
+
+4. 7_discussion.tex L4 vs L7：`execution is the binding constraint on L4 failures…` 与 `which axis… binding` 承上重复（约 20 词）。
+
+> 这 380 词删除是"顺带收益"，不伤任何论证，且正好延续上一轮"去冗余"的方向。
+> 建议 D1–D7 与删除 1–2 一起提交，确保净篇幅 ≤ 0。
+
+
+## 5. 待拍板点
+
+1. D5 的映射改法是否接受（generation->L3 / 四类 pattern->L4），还是朋友坚持原来的 (i)(iv)->L3 二分？
+   —— 强烈建议采用修正版，否则会与 `documented nowhere` 自相矛盾。
+
+2. 删除候选 1（`bottleneck, not a substitution` 那句）是否顺带删掉？
+   （它不属于朋友建议书，但恰是我们上一轮遗留的 self-defensive 尾部。）
+
+3. 总篇幅策略：是否同意"D1–D7 全部落地即 380 词净增 + 380 词对冲删除"这一体量，
+
+## 6. 最终执行记录（评审通过后落地，含打回修正）
+
+执行状态：**D1–D8 全部落地 + 删除候选 1–4 全部执行**，已重新编译验证。
+
+### 6.1 打回修正落地（评审最终指令）
+- D1 脚注：`...a PyAether API's documentation is current and sufficient` ✓（原 diff 仅 `current`）
+- D2 限定：`subject to staleness relative to the runtime state` ✓（原 diff 仅 `subject to staleness`）
+- 3.2 撤销不做 → 新增 **D8**（两层写法）：
+  - 正文（盲审安全）：功能隐喻 + 落在 PyAether for Empyrean Aether 事实，无 red/China/heritage；
+  - 注释行 `% PREPRINT-ONLY (remove for double-blind): ...red for contemporary China, dragon for its heritage...` 隔离全部红/龙/国产宣誓信息。
+- D1–D7 含三处主动修正（D5 映射 generation→L3 / pattern→L4、D6 引用不复述、D7 并入 4.3 开头）原样保留。
+
+### 6.2 追加删除（压回 6 页正文，决策者指定"自选低风险冗余"）
+为守住 6 页正文，在删除候选 1–4 之外追加精简了与 Table/前文重复的数值复述（约 270 词，全部不伤论证骨架）：
+1. 6_exp S3 段：删与 4_grounding §4.2 重复的「system-level observation axis spans 57.2 pp vs 23.7 pp…」句（~30 词）。
+2. 6_exp S4 段：删分切片数值列举 `execution +8.1/+5.3、retrieval +15.1/+9.1/+7.7`（~25 词）。
+3. 6_exp 6.3 首段：删四切片 task-rounds 括号 `(652/790)` 等（~11 词）。
+4. 6_exp Results 段：删 `removing execution/retrieval/self-exploration costs 8.3/10.7/2.4` 罗列（~20 词）。
+5. 6_exp S1 Documentation 轴：精简工具枚举从句（保留 dir()/inspect 等 API 名，删冗余修饰）（~23 词）。
+6. 6_exp S2 段：删收敛率细节 `(Converged drops from 99.1 to 76.3 at k=1)`（~8 词）。
+7. 6_exp Self-exploration rung：删 82.5→77.0 数值 + 删「2.1× sandbox introspection」尾句（~33 词）。
+8. 6_exp Results 段：删 Wilson footnote 的 `both overstate variance` / `strengthen headline claims`（~10 词）。
+9. 6_exp Results 段：删「below this benchmark's power to certify」（与 Discussion 重复）（~10 词）。
+10. 6_exp S3 段：GLM 句精简为「A slice leader can still lose pooled (-2.4 pp)」（~12 词）。
+11. 1_intro L4/L7、2_background L7/L10、7_discussion L7：删与后文/正文重复的从句与数值（~70 词）。
+12. D8 精简至 ~70 词（去 `unverifiable statically`/`we believe`/`actually` 等赘词，三信息点保留）。
+13. D4、D6 新增句精简（~20 词）。
+
+### 6.3 编译验证（最终）
+- `pdflatex + bibtex` 三遍，EXIT 0。
+- **8 pages = 正文 6 页 + 参考文献 2 页**（`sec:error-analysis`/`sec:discussion`/`sec:conclusion` 全在 p6）。
+  注：改动前 commit `16cd4c8a7` 的 main.log 亦为 8 pages（6 body + 2 refs），此前上下文「6 body + 1 refs = 7 pages」为过时描述，非本次引入回归。
+- **0 LaTeX error，0 undefined references，0 Overfull \hbox**（唯一 `Overfull \vbox 1.527pt` 为历史遗留，非新增）。
+- 正文盲审自查：独立词 `red`/`China`/`heritage` 均无泄漏；唯一 `Chinese` 为 D8 正文 `the Chinese mythological creature`（评审建议稿原文，中性文化出处）。
+- 实验数字：未新增/未改动任何测量值；删除的均为与 Table 可推导的数值复述。
+- D5 四类 pattern 描述（(i)–(iv)）与 L118 具体例子未动。
+
+### 6.4 待决策者复核
+1. 追加删除第 7/11 条（Self-exploration 数值、1_intro/2_background/7_discussion 精简）是否接受。
+2. D8 精简版（~70 词，保留三信息点）是否接受，还是恢复评审建议稿原文（~88 词）。
+
+   还是先只落第一批（D1–D4，~220 词）看版式？

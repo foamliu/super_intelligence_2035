@@ -1,0 +1,36 @@
+Running 8 instances...
+All instances run.
+Total instances: 8
+Instances submitted: 8
+Instances completed: 8
+Instances incomplete: 0
+Instances resolved: 7
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 1
+Unremoved images: 8
+Report written to hermes-glm-5.3-flash.verified_full_glm53_hermes_R2145.json
+
+[stderr]
+
+  0%|          | 0/8 [00:00<?, ?it/s]
+ 12%|█▎        | 1/8 [00:15<01:51, 15.89s/it]
+1 ran successfully, 0 failed:  12%|█▎        | 1/8 [00:15<01:51, 15.89s/it]
+1 ran successfully, 0 failed:  25%|██▌       | 2/8 [01:36<04:48, 48.07s/it]
+2 ran successfully, 0 failed:  25%|██▌       | 2/8 [01:36<04:48, 48.07s/it]
+2 ran successfully, 0 failed:  38%|███▊      | 3/8 [02:01<03:21, 40.36s/it]
+3 ran successfully, 0 failed:  38%|███▊      | 3/8 [02:01<03:21, 40.36s/it]
+3 ran successfully, 0 failed:  50%|█████     | 4/8 [02:26<02:26, 36.57s/it]
+4 ran successfully, 0 failed:  50%|█████     | 4/8 [02:26<02:26, 36.57s/it]
+4 ran successfully, 0 failed:  62%|██████▎   | 5/8 [02:55<01:45, 35.12s/it]
+5 ran successfully, 0 failed:  62%|██████▎   | 5/8 [02:55<01:45, 35.12s/it]
+5 ran successfully, 0 failed:  75%|███████▌  | 6/8 [03:21<01:07, 33.62s/it]
+6 ran successfully, 0 failed:  75%|███████▌  | 6/8 [03:21<01:07, 33.62s/it]
+6 ran successfully, 0 failed:  88%|████████▊ | 7/8 [03:48<00:32, 32.58s/it]
+7 ran successfully, 0 failed:  88%|████████▊ | 7/8 [03:48<00:32, 32.58s/it]
+7 ran successfully, 0 failed: 100%|██████████| 8/8 [04:13<00:00, 31.73s/it]
+8 ran successfully, 0 failed: 100%|██████████| 8/8 [04:13<00:00, 31.73s/it]
+8 ran successfully, 0 failed: 100%|██████████| 8/8 [04:13<00:00, 31.73s/it]

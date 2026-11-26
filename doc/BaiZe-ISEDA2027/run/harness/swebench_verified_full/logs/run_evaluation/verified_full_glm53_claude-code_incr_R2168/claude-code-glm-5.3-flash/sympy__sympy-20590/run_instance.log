@@ -1,0 +1,92 @@
+2026-11-11 12:25:26,754 - INFO - Creating container for sympy__sympy-20590...
+2026-11-11 12:25:26,797 - INFO - Container for sympy__sympy-20590 created: dde8e35c6bd05b1e3739ca7d8153b93a3161410da4e1cf78353b42dcb03cf2b2
+2026-11-11 12:25:28,027 - INFO - Container for sympy__sympy-20590 started: dde8e35c6bd05b1e3739ca7d8153b93a3161410da4e1cf78353b42dcb03cf2b2
+2026-11-11 12:25:28,029 - INFO - Intermediate patch for sympy__sympy-20590 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2168/claude-code-glm-5.3-flash/sympy__sympy-20590/patch.diff, now applying to container...
+2026-11-11 12:25:28,139 - INFO - >>>>> Applied Patch:
+Checking patch sympy/core/_print_helpers.py...
+warning: sympy/core/_print_helpers.py has type 100755, expected 100644
+Checking patch sympy/core/tests/test_symbol.py...
+warning: sympy/core/tests/test_symbol.py has type 100755, expected 100644
+Applied patch sympy/core/_print_helpers.py cleanly.
+Applied patch sympy/core/tests/test_symbol.py cleanly.
+
+2026-11-11 12:25:28,932 - INFO - Git diff before:
+diff --git a/sympy/core/_print_helpers.py b/sympy/core/_print_helpers.py
+index 96d7e72676..f7875b9eec 100755
+--- a/sympy/core/_print_helpers.py
++++ b/sympy/core/_print_helpers.py
+@@ -17,6 +17,8 @@ class Printable:
+     This also adds support for LaTeX printing in jupyter notebooks.
+     """
+ 
++    __slots__ = ()
++
+     # Note, we always use the default ordering (lex) in __str__ and __repr__,
+     # regardless of the global setting. See issue 5487.
+     def __str__(self):
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index a07a1d2f36..89b10a4572 100755
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -35,6 +35,17 @@ def test_Symbol():
+     raises(TypeError, lambda: Symbol())
+ 
+ 
++def test_Symbol_no_dict():
++    # Regression test for #20643. Symbol (and other slotted Basic subclasses)
++    # should not have a __dict__. Printable in the class hierarchy must define
++    # __slots__ = () or every Basic instance gets a __dict__.
++    s = Symbol('s')
++    assert not hasattr(s, '__dict__')
++    assert Symbol.__slots__ == ('name',)
++    assert not hasattr(Dummy('d'), '__dict__')
++    assert not hasattr(Wild('w'), '__dict__')
++
++
+ def test_Dummy():
+     assert Dummy() != Dummy()
+2026-11-11 12:25:28,934 - INFO - Eval script for sympy__sympy-20590 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2168/claude-code-glm-5.3-flash/sympy__sympy-20590/eval.sh; copying to container...
+2026-11-11 12:25:34,326 - INFO - Test runtime: 5.32 seconds
+2026-11-11 12:25:34,328 - INFO - Test output for sympy__sympy-20590 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2168/claude-code-glm-5.3-flash/sympy__sympy-20590/test_output.txt
+2026-11-11 12:25:34,402 - INFO - Git diff after:
+diff --git a/sympy/core/_print_helpers.py b/sympy/core/_print_helpers.py
+index 96d7e72676..f7875b9eec 100755
+--- a/sympy/core/_print_helpers.py
++++ b/sympy/core/_print_helpers.py
+@@ -17,6 +17,8 @@ class Printable:
+     This also adds support for LaTeX printing in jupyter notebooks.
+     """
+ 
++    __slots__ = ()
++
+     # Note, we always use the default ordering (lex) in __str__ and __repr__,
+     # regardless of the global setting. See issue 5487.
+     def __str__(self):
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index a07a1d2f36..89b10a4572 100755
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -35,6 +35,17 @@ def test_Symbol():
+     raises(TypeError, lambda: Symbol())
+ 
+ 
++def test_Symbol_no_dict():
++    # Regression test for #20643. Symbol (and other slotted Basic subclasses)
++    # should not have a __dict__. Printable in the class hierarchy must define
++    # __slots__ = () or every Basic instance gets a __dict__.
++    s = Symbol('s')
++    assert not hasattr(s, '__dict__')
++    assert Symbol.__slots__ == ('name',)
++    assert not hasattr(Dummy('d'), '__dict__')
++    assert not hasattr(Wild('w'), '__dict__')
++
++
+ def test_Dummy():
+     assert Dummy() != Dummy()
+2026-11-11 12:25:34,402 - INFO - Grading answer for sympy__sympy-20590...
+2026-11-11 12:25:34,408 - INFO - report: {'sympy__sympy-20590': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_immutable'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test__aresame', 'test_structure', 'test_equality', 'test_matches_basic', 'test_has', 'test_subs', 'test_subs_with_unicode_symbols', 'test_atoms', 'test_free_symbols_empty', 'test_doit', 'test_S', 'test_xreplace', 'test_preorder_traversal', 'test_sorted_args', 'test_call', 'test_rewrite', 'test_literal_evalf_is_number_is_zero_is_comparable', 'test_as_Basic', 'test_atomic', 'test_as_dummy', 'test_canonical_variables'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-20590: resolved: True
+2026-11-11 12:25:34,410 - INFO - Attempting to stop container sweb.eval.sympy__sympy-20590.verified_full_glm53_claude-code_incr_R2168...
+2026-11-11 12:25:50,666 - INFO - Container sweb.eval.sympy__sympy-20590.verified_full_glm53_claude-code_incr_R2168 stopped successfully.
+2026-11-11 12:25:50,666 - INFO - Attempting to remove container sweb.eval.sympy__sympy-20590.verified_full_glm53_claude-code_incr_R2168...
+2026-11-11 12:25:50,718 - INFO - Container sweb.eval.sympy__sympy-20590.verified_full_glm53_claude-code_incr_R2168 removed successfully.

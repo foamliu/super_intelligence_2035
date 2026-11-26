@@ -1,0 +1,32 @@
+Running 6 instances...
+All instances run.
+Total instances: 6
+Instances submitted: 6
+Instances completed: 6
+Instances incomplete: 0
+Instances resolved: 6
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 6
+Report written to hermes-glm-5.3-flash.verified_full_glm53_hermes_incr_R2233.json
+
+[stderr]
+
+  0%|          | 0/6 [00:00<?, ?it/s]
+ 17%|█▋        | 1/6 [03:13<16:09, 193.88s/it]
+1 ran successfully, 0 failed:  17%|█▋        | 1/6 [03:13<16:09, 193.88s/it]
+1 ran successfully, 0 failed:  33%|███▎      | 2/6 [05:03<10:06, 151.73s/it]
+2 ran successfully, 0 failed:  33%|███▎      | 2/6 [05:03<10:06, 151.73s/it]
+2 ran successfully, 0 failed:  50%|█████     | 3/6 [06:49<06:49, 136.53s/it]
+3 ran successfully, 0 failed:  50%|█████     | 3/6 [06:49<06:49, 136.53s/it]
+3 ran successfully, 0 failed:  67%|██████▋   | 4/6 [08:42<04:21, 130.61s/it]
+4 ran successfully, 0 failed:  67%|██████▋   | 4/6 [08:42<04:21, 130.61s/it]
+4 ran successfully, 0 failed:  83%|████████▎ | 5/6 [09:20<01:52, 112.01s/it]
+5 ran successfully, 0 failed:  83%|████████▎ | 5/6 [09:20<01:52, 112.01s/it]
+5 ran successfully, 0 failed: 100%|██████████| 6/6 [09:50<00:00, 98.44s/it] 
+6 ran successfully, 0 failed: 100%|██████████| 6/6 [09:50<00:00, 98.44s/it]
+6 ran successfully, 0 failed: 100%|██████████| 6/6 [09:50<00:00, 98.44s/it]

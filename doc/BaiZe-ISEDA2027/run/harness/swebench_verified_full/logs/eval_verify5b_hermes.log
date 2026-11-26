@@ -1,0 +1,16 @@
+Running 5 instances...
+  0%|          | 0/5 [00:00<?, ?it/s] 20%|██        | 1/5 [00:21<01:25, 21.26s/it]1 ran successfully, 0 failed:  20%|██        | 1/5 [00:21<01:25, 21.26s/it]1 ran successfully, 0 failed:  40%|████      | 2/5 [00:23<00:34, 11.54s/it]2 ran successfully, 0 failed:  40%|████      | 2/5 [00:23<00:34, 11.54s/it]2 ran successfully, 0 failed:  60%|██████    | 3/5 [00:23<00:15,  7.74s/it]3 ran successfully, 0 failed:  60%|██████    | 3/5 [00:23<00:15,  7.74s/it]3 ran successfully, 0 failed:  80%|████████  | 4/5 [00:24<00:06,  6.22s/it]4 ran successfully, 0 failed:  80%|████████  | 4/5 [00:24<00:06,  6.22s/it]4 ran successfully, 0 failed: 100%|██████████| 5/5 [05:27<00:00, 65.55s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [05:27<00:00, 65.55s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [05:27<00:00, 65.55s/it]
+All instances run.
+Total instances: 5
+Instances submitted: 5
+Instances completed: 5
+Instances incomplete: 0
+Instances resolved: 4
+Instances unresolved: 1
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 5
+Report written to hermes-kimi-k2.6-cloud.verify5b_hermes.json

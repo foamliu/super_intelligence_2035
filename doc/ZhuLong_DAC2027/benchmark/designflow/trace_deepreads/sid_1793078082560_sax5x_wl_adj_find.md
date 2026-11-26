@@ -1,0 +1,23 @@
+# 深读笔记 — sid 1793078082560_sax5x (WlAdjFind-001)
+
+- **trace**: miccao @ hfeg0plg36, mc=153, 165 msgs, ~1.2MB; session dir `.cline/data/sessions/<sid>/<sid>.messages.json`（子目录）。
+- **用户轮（逐字）**：
+  - UI#0: `/home/miccao/work/python/find_adjacent_wl.il 你能转成python格式么，virtuoso API改成aether API` —— 纯需求轮（请求把 SKILL 转成 python、virtuoso→aether API），无根因/无修复 = A-档 合规 seed。
+  - UI#109: `我不小心把你的脚本弄丢了，帮我在生成一遍，名字带个后缀2` —— 同一目标的重新表达（重新生成 + 后缀2），非根因/修复 = 仍合规。
+- **真实工具链**: agent read find_adjacent_wl.il → RAG search_apis aether（dbShapeQueryEx / dbGetTrueOverlaps / goaLayer / dbResize / agrMergePolygons / dbCopyFig / techFindLayer / emyBoxGetOverlap …）→ editor 写 find_adjacent_wl.py（302 行）/ find_adjacent_wl_2.py（281 行，后缀2 版本）。本机仍存 find_adjacent_wl.py / _2.py / _cyz.py（Oct 28，session 产物）。
+- **源 .il 算法（find_adjacent_wl.il, 198 行, 作者 Yezhou.Cao）**：
+  - `wlCleanScratch`：清理 scratch 层 WLA/WLB。
+  - `wlShapeClose(cv figA figB half)`：grow-and-AND 精确验证——两 shape 各 grow by half 到 WLA/WLB，dbLayerAnd，非空 ⇔ space ≤ 2*half = thresh（inclusive per 注释；touching 边界零面积 AND 实测丢弃）。
+  - `wlDumpLabels(cv pattern outPath)`：dump 顶层匹配 pattern 的 label。
+  - `wlFindAdjacent(cv thresh m1Layer txtPattern outPath)`：① 按匹配 label 的 bbox 用 dbGetOverlaps 认领顶层 M1 shape 到 net（同 net 多 label 可认多 shape；不同 net 认同一 shape → warn short）；② 每个 claimed shape 建 grown-bbox record(x1g=x1-half…)按 x1g 排序；③ sweep i<j：rj.x1g > ri.x2g 则 break；不同 net + grown-bbox x/y overlap → wlShapeClose 精确验证 → 命中则按 alphalessp 排序 netA/netB 建 key，seen[key]++，首个记录 sample point（grown-overlap 区中点），后续只计数不入 pairList；④ 报告：表头两行 + 每对 `netA\tnetB\tclose spots\tsample x\tsample y`，pairList 按 cons 逆序输出。
+  - WL 命名 `sec<S>m<M>wl[oe]<B>`，pattern `^sec[0-9]+m[0-9]+wl[oe]<[0-9]+$`（`[oe]` 小写，故 net 名用小写 o/e；`<` 字面、无 `>` 闭合）。threshold 0.182 um。
+  - **源 .il 已知笔误**：sweep y-overlap 检查 `nth(3 j)` 应为 `nth(3 rj)`（j 是整数 index → 运行到该行会报 unbound/list 错误）。移植按文档化方法（grown-bbox overlap + grow-and-AND 验证）的**意图逻辑**修正为 `rj.y1g`，已在金标注释说明。
+- **L2 阻塞**：live Virtuoso/Aether + OA 库 + techfile 在 .75 沙盒不可达 → L1-boundary 占位（同 PinFloatAether/RsCalcMesh 先例）。捕获可验子任务 = 相邻 wordline 查找算法的纯 python 移植（读 layout JSON，无商业工具）。
+- **金标来源**：find_adjacent_wl.il 算法（权威、注释完整）。layout_A 由 .il 用例参数（thresh 0.182 / pattern / M1）派生，手算 3 对（counts 2/1/1，samples 25.5,10.275 / 27.5,11.025 / 28.5,11.275）作为金标独立校验——gold wl_adjacent_find.py 复现一致 → 信任 gold 在 B/B2 上的输出。
+- **A 输入（SUT 可见）**：inputs/{find_adjacent_wl.il(verbatim 198 行), layout_A.json(Array16G_T_wlA, 水平 WL runs, thresh 0.182, 6 nets/9 shapes 含 1 decoy 无 label, 3 相邻对其中 sec0m0wle<0|sec0m0wlo<0> 有 2 close spots), task_brief.md, prompt.txt(UI#0 逐字+沙盒注)}。
+- **隐藏 B**：hidden/layout_B.json（SerDesTop_wlB, **垂直** WL runs, thresh **0.260**, 8 nets/9 shapes 含 1 decoy, 3 相邻对：sec1m2wle<3|sec1m2wlo<3> 2 close spots + sec1m2wle<4|sec1m2wlo<4> 1 + sec1m2wle<4|sec2m3wlo<5> 1）。B 与 A 结构全不同（方向/ thresh / net 命名 / 坐标 / 金属层编号 sec1m2/sec2m3 vs sec0m0）。
+- **隐藏 B2**：hidden/layout_B2.json（AmpTop_wlB2, 3 nets/3 shapes, thresh 0.300, 1 相邻对 sec3m1wle<7|sec3m1wlo<7>）—— 跨输入守卫，杀硬编码。
+- **金标 reference/wl_adjacent_find.py**：纯 stdlib（json/re/sys），端口 .il 算法（claim-by-label → grown-bbox record sort by x1g → sweep + grow-and-intersect 精确验证 → 去重计数 + 首个 sample point → 报告）。reference_submit.zip = 该脚本（rename wl_adjacent_find_submit.py）。
+- **check.py（13 条断言 a–m，自包含：layout A/B/B2 内联）**：①zip+.py(≥500B/无NUL) ②py_compile ③反硬编码(无 B token: sec1m2wle<3/SerDesTop_wlB/10.325…) ④B 跑 exit0+报告 ⑤B header1 含 adjacent/space<=/0.260 ⑥B header2 ⑦B 恰 3 对 ⑧B sec1m2wle<3|sec1m2wlo<3> spots=2 ⑨B sec1m2wle<4|sec1m2wlo<4> spots=1 sample(11.225,30.000) ⑩B sec1m2wle<4|sec2m3wlo<5> spots=1 sample(11.475,30.000) ⑪B2 跨输入守卫 1 对(5.325,20.000) ⑫A 跨输入守卫 3 对含 sec0m0wle<0|sec0m0wlo<0> spots=2(击穿硬编码 B) ⑬B 连跑 3 次 sha256 一致。
+- **自验**：ref PASS 13/13；4 negative（fake_empty→①/fake_print_expected→③/fake_core_deleted→⑦/fake_hardcode_A→⑤）全 FAIL NEG_RC=0；§4.9 (a)空壳(b)只print(c)删核心 三假全 FAIL；jsonl test 字段 sha == disk check.py sha cd234a3dd288 ✓；test 字段独立 temp 目录复跑 PASS（自包含）。k_rationale=k_check=13≥8 GATE PASS。
+- **坑**：(1) SKILL pattern `[oe]` 小写 vs net 名 O/E 大写不匹配 → net 名改小写 o/e。(2) net 名 `<B>` 是注释记法，实际字符串是 `<` 字面 + 数字 + 结束（无 `>`）。(3) 边界 inclusive：gap==thresh 时 grown rect 仅边相接、strict rect-overlap=False（与 grow-and-AND 丢弃零面积一致）→ B thresh 设 0.260 使 gap 0.25 严格在内，避免边界歧义。(4) check.py 路径相对 __file__ 在提取到 temp 目录时失效 → layout 内联自包含。

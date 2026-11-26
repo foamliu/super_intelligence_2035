@@ -1,0 +1,29 @@
+diff --git a/sphinx/ext/autodoc/mock.py b/sphinx/ext/autodoc/mock.py
+index 98a3a3a9..6cb52581 100644
+--- a/sphinx/ext/autodoc/mock.py
++++ b/sphinx/ext/autodoc/mock.py
+@@ -70,6 +70,7 @@ class _MockObject:
+ 
+ def _make_subclass(name: str, module: str, superclass: Any = _MockObject,
+                    attributes: Any = None) -> Any:
++    name = str(name)
+     attrs = {'__module__': module, '__display_name__': module + '.' + name}
+     attrs.update(attributes or {})
+ 
+diff --git a/tests/test_ext_autodoc_mock.py b/tests/test_ext_autodoc_mock.py
+index 4760493c..aafced67 100644
+--- a/tests/test_ext_autodoc_mock.py
++++ b/tests/test_ext_autodoc_mock.py
+@@ -117,3 +117,12 @@ def test_mock_decorator():
+     assert func.__doc__ == "docstring"
+     assert Foo.meth.__doc__ == "docstring"
+     assert Bar.__doc__ == "docstring"
++
++
++def test_MockObject_with_TypeVar():
++    mock = _MockObject()
++    from typing import TypeVar, Generic
++    T = TypeVar('T')
++    # subscripting with a TypeVar (as in Generic[T]) should not raise
++    result = mock[T]
++    assert isinstance(result, _MockObject)

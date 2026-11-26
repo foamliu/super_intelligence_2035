@@ -1,0 +1,105 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 5e7b23f9a..86b507e73 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -580,9 +580,15 @@ class ModelAdmin(BaseModelAdmin):
+     def __str__(self):
+         return "%s.%s" % (self.model._meta.app_label, self.__class__.__name__)
+ 
++    def get_inlines(self, request, obj=None):
++        """
++        Hook for specifying custom inline classes.
++        """
++        return self.inlines
++
+     def get_inline_instances(self, request, obj=None):
+         inline_instances = []
+-        for inline_class in self.inlines:
++        for inline_class in self.get_inlines(request, obj):
+             inline = inline_class(self.model, self.admin_site)
+             if request:
+                 if not (inline.has_view_or_change_permission(request, obj) or
+diff --git a/docs/ref/contrib/admin/index.txt b/docs/ref/contrib/admin/index.txt
+index 93679c46f..3523208e5 100644
+--- a/docs/ref/contrib/admin/index.txt
++++ b/docs/ref/contrib/admin/index.txt
+@@ -1608,6 +1608,21 @@ templates used by the :class:`ModelAdmin` views:
+             def get_sortable_by(self, request):
+                 return {*self.get_list_display(request)} - {'rank'}
+ 
++.. method:: ModelAdmin.get_inlines(request, obj=None)
++
++    The ``get_inlines`` method is given the ``HttpRequest`` and the ``obj``
++    being edited (or ``None`` on an add form) and is expected to return a
++    ``list`` or ``tuple`` of inline classes. The default implementation returns
++    the object's :attr:`~ModelAdmin.inlines` attribute, for example::
++
++        class MyModelAdmin(admin.ModelAdmin):
++            inlines = (MyInline, SomeOtherInline)
++
++            def get_inlines(self, request, obj=None):
++                if obj:
++                    return (MyInline, SomeOtherInline)
++                return ()
++
+ .. method:: ModelAdmin.get_inline_instances(request, obj=None)
+ 
+     The ``get_inline_instances`` method is given the ``HttpRequest`` and the
+diff --git a/docs/releases/3.0.txt b/docs/releases/3.0.txt
+index d7ad7a8cf..527925638 100644
+--- a/docs/releases/3.0.txt
++++ b/docs/releases/3.0.txt
+@@ -47,6 +47,9 @@ Minor features
+ * Added support for the ``admin_order_field`` attribute on properties in
+   :attr:`.ModelAdmin.list_display`.
+ 
++* :meth:`.ModelAdmin.get_inlines` allows specifying the inlines based on the
++  request or model instance.
++
+ :mod:`django.contrib.admindocs`
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+diff --git a/tests/modeladmin/tests.py b/tests/modeladmin/tests.py
+index 6934bf2b3..9ab149ea4 100644
+--- a/tests/modeladmin/tests.py
++++ b/tests/modeladmin/tests.py
+@@ -3,7 +3,7 @@ from datetime import date
+ from django import forms
+ from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
+ from django.contrib.admin.options import (
+-    HORIZONTAL, VERTICAL, ModelAdmin, TabularInline,
++    HORIZONTAL, VERTICAL, ModelAdmin, StackedInline, TabularInline,
+     get_content_type_for_model,
+ )
+ from django.contrib.admin.sites import AdminSite
+@@ -719,6 +719,30 @@ class ModelAdminTests(TestCase):
+         self.assertEqual(perms_needed, {'band'})
+         self.assertEqual(protected, [])
+ 
++    def test_get_inlines(self):
++        class ConcertInline(TabularInline):
++            model = Concert
++
++        class SongInline(StackedInline):
++            model = Song
++
++        class BandAdmin(ModelAdmin):
++            inlines = [ConcertInline]
++
++            def get_inlines(self, request, obj=None):
++                if obj is None:
++                    return []
++                return [ConcertInline, SongInline]
++
++        ma = BandAdmin(Band, self.site)
++        self.assertEqual(ma.get_inlines(request), [])
++        self.assertEqual(ma.get_inlines(request, self.band), [ConcertInline, SongInline])
++        self.assertEqual(ma.get_inline_instances(request), [])
++        inline_instances = ma.get_inline_instances(request, self.band)
++        self.assertEqual(len(inline_instances), 2)
++        self.assertIsInstance(inline_instances[0], ConcertInline)
++        self.assertIsInstance(inline_instances[1], SongInline)
++
+ 
+ class ModelAdminPermissionTests(SimpleTestCase):
+ 

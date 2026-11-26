@@ -1,0 +1,4 @@
+Total BACKLOG items (real patch, no report.json): 3
+  codex                astropy__astropy-8707                              patchlen=3638
+  codex                astropy__astropy-8872                              patchlen=1021
+  deepseek-harness     matplotlib__matplotlib-22865                       patchlen=833

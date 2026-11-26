@@ -1,0 +1,506 @@
+2026-10-30 15:55:27,901 - INFO - Creating container for sympy__sympy-12419...
+2026-10-30 15:55:27,926 - INFO - Container for sympy__sympy-12419 created: 5daff392b8ed09a3f88acd23cd852a052a38054fb85c68fa2f9b24f7cccb5c3a
+2026-10-30 15:55:30,891 - INFO - Container for sympy__sympy-12419 started: 5daff392b8ed09a3f88acd23cd852a052a38054fb85c68fa2f9b24f7cccb5c3a
+2026-10-30 15:55:30,893 - INFO - Intermediate patch for sympy__sympy-12419 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-12419/patch.diff, now applying to container...
+2026-10-30 15:55:31,009 - INFO - >>>>> Applied Patch:
+Checking patch sympy/assumptions/sathandlers.py...
+warning: sympy/assumptions/sathandlers.py has type 100755, expected 100644
+Checking patch sympy/core/basic.py...
+warning: sympy/core/basic.py has type 100755, expected 100644
+Checking patch sympy/matrices/expressions/matexpr.py...
+warning: sympy/matrices/expressions/matexpr.py has type 100755, expected 100644
+Checking patch sympy/matrices/expressions/tests/test_indexing.py...
+warning: sympy/matrices/expressions/tests/test_indexing.py has type 100755, expected 100644
+Checking patch sympy/matrices/matrices.py...
+warning: sympy/matrices/matrices.py has type 100755, expected 100644
+Checking patch sympy/matrices/sparse.py...
+warning: sympy/matrices/sparse.py has type 100755, expected 100644
+Checking patch sympy/plotting/plot.py...
+warning: sympy/plotting/plot.py has type 100755, expected 100644
+Checking patch sympy/tensor/array/arrayop.py...
+warning: sympy/tensor/array/arrayop.py has type 100755, expected 100644
+Checking patch sympy/tensor/array/ndim_array.py...
+warning: sympy/tensor/array/ndim_array.py has type 100755, expected 100644
+Checking patch sympy/tensor/indexed.py...
+warning: sympy/tensor/indexed.py has type 100755, expected 100644
+Applied patch sympy/assumptions/sathandlers.py cleanly.
+Applied patch sympy/core/basic.py cleanly.
+Applied patch sympy/matrices/expressions/matexpr.py cleanly.
+Applied patch sympy/matrices/expressions/tests/test_indexing.py cleanly.
+Applied patch sympy/matrices/matrices.py cleanly.
+Applied patch sympy/matrices/sparse.py cleanly.
+Applied patch sympy/plotting/plot.py cleanly.
+Applied patch sympy/tensor/array/arrayop.py cleanly.
+Applied patch sympy/tensor/array/ndim_array.py cleanly.
+Applied patch sympy/tensor/indexed.py cleanly.
+
+2026-10-30 15:55:31,469 - INFO - Git diff before:
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..deec4c573 100755
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,7 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++from collections import defaultdict
++from collections.abc import MutableMapping
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index b992b45c2..fe91845ca 100755
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,6 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++from collections.abc import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index b4d759836..cd6770d69 100755
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -476,10 +476,8 @@ def conjugate(self):
+         return self
+ 
+     def _entry(self, i, j):
+-        if i == j:
+-            return S.One
+-        else:
+-            return S.Zero
++        from sympy import KroneckerDelta
++        return KroneckerDelta(i, j)
+ 
+     def _eval_determinant(self):
+         return S.One
+diff --git a/sympy/matrices/expressions/tests/test_indexing.py b/sympy/matrices/expressions/tests/test_indexing.py
+index d69ef682d..429f18346 100755
+--- a/sympy/matrices/expressions/tests/test_indexing.py
++++ b/sympy/matrices/expressions/tests/test_indexing.py
+@@ -1,8 +1,9 @@
+ from sympy import (symbols, MatrixSymbol, MatPow, BlockMatrix,
+-        Identity, ZeroMatrix, ImmutableMatrix, eye, Sum)
++        Identity, ZeroMatrix, ImmutableMatrix, eye, Sum, KroneckerDelta)
+ from sympy.utilities.pytest import raises
+ 
+ k, l, m, n = symbols('k l m n', integer=True)
++p = symbols('p', integer=True, positive=True)
+ i, j = symbols('i j', integer=True)
+ 
+ W = MatrixSymbol('W', k, l)
+@@ -55,6 +56,19 @@ def test_Identity_index():
+     raises(IndexError, lambda: I[3, 3])
+ 
+ 
++def test_Identity_symbolic_index():
++    I = Identity(n)
++    assert I[i, j] == KroneckerDelta(i, j)
++    assert I[0, i] == KroneckerDelta(0, i)
++    Ip = Identity(p)
++    assert Sum(Ip[0, i], (i, 0, p - 1)).doit() == 1
++    assert Sum(Ip[i, 0], (i, 0, p - 1)).doit() == 1
++    # total sum should not be 0 (issue 12300)
++    total = Sum(Sum(Ip[i, j], (i, 0, p - 1)), (j, 0, p - 1)).doit()
++    assert total != 0
++    assert total.subs(p, 3).doit() == 3
++
++
+ def test_block_index():
+     I = Identity(3)
+     Z = ZeroMatrix(3, 3)
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index b6808b58d..027a17ef7 100755
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1903,7 +1903,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 24df97b01..bf00de7a8 100755
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -52,7 +52,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 664602d6b..6268b99c0 100755
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+ 
+diff --git a/sympy/tensor/array/arrayop.py b/sympy/tensor/array/arrayop.py
+index 5358ae8a4..260a26ca2 100755
+--- a/sympy/tensor/array/arrayop.py
++++ b/sympy/tensor/array/arrayop.py
+@@ -1,6 +1,7 @@
+ import itertools
+ 
+ import collections
++import collections.abc
+ 
+ from sympy import S, Tuple, diff
+ 
+@@ -103,7 +104,7 @@ def tensorcontraction(array, *contraction_axes):
+     # Verify contraction_axes:
+     taken_dims = set([])
+     for axes_group in contraction_axes:
+-        if not isinstance(axes_group, collections.Iterable):
++        if not isinstance(axes_group, collections.abc.Iterable):
+             raise ValueError("collections of contraction axes expected")
+ 
+         dim = array.shape[axes_group[0]]
+@@ -190,7 +191,7 @@ def derive_by_array(expr, dx):
+ 
+     """
+     from sympy.matrices import MatrixBase
+-    array_types = (collections.Iterable, MatrixBase, NDimArray)
++    array_types = (collections.abc.Iterable, MatrixBase, NDimArray)
+ 
+     if isinstance(dx, array_types):
+         dx = ImmutableDenseNDimArray(dx)
+diff --git a/sympy/tensor/array/ndim_array.py b/sympy/tensor/array/ndim_array.py
+index 11a374ed3..7c72a8ce1 100755
+--- a/sympy/tensor/array/ndim_array.py
++++ b/sympy/tensor/array/ndim_array.py
+@@ -1,5 +1,6 @@
+ from __future__ import print_function, division
+ import collections
++import collections.abc
+ 
+ from sympy import Basic
+ 
+@@ -100,13 +101,13 @@ def _check_symbolic_index(self, index):
+ 
+     def _setter_iterable_check(self, value):
+         from sympy.matrices.matrices import MatrixBase
+-        if isinstance(value, (collections.Iterable, MatrixBase, NDimArray)):
++        if isinstance(value, (collections.abc.Iterable, MatrixBase, NDimArray)):
+             raise NotImplementedError
+ 
+     @classmethod
+     def _scan_iterable_shape(cls, iterable):
+         def f(pointer):
+-            if not isinstance(pointer, collections.Iterable):
++            if not isinstance(pointer, collections.abc.Iterable):
+                 return [pointer], ()
+ 
+             result = []
+@@ -131,7 +132,7 @@ def _handle_ndarray_creation_inputs(cls, iterable=None, shape=None, **kwargs):
+             shape = iterable.shape
+             iterable = list(iterable)
+         # Construct N-dim array from an iterable (numpy arrays included):
+-        elif shape is None and isinstance(iterable, collections.Iterable):
++        elif shape is None and isinstance(iterable, collections.abc.Iterable):
+             iterable, shape = cls._scan_iterable_shape(iterable)
+ 
+         # Construct N-dim array from a Matrix:
+@@ -309,7 +310,7 @@ def __sub__(self, other):
+     def __mul__(self, other):
+         from sympy.matrices.matrices import MatrixBase
+ 
+-        if isinstance(other, (collections.Iterable,NDimArray, MatrixBase)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, MatrixBase)):
+             raise ValueError("scalar expected, use tensorproduct(...) for tensorial product")
+         other = sympify(other)
+         result_list = [i*other for i in self]
+@@ -318,7 +319,7 @@ def __mul__(self, other):
+     def __rmul__(self, other):
+         from sympy.matrices.matrices import MatrixBase
+ 
+-        if isinstance(other, (collections.Iterable,NDimArray, MatrixBase)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, MatrixBase)):
+             raise ValueError("scalar expected, use tensorproduct(...) for tensorial product")
+         other = sympify(other)
+         result_list = [other*i for i in self]
+@@ -327,7 +328,7 @@ def __rmul__(self, other):
+     def __div__(self, other):
+         from sympy.matrices.matrices import MatrixBase
+ 
+-        if isinstance(other, (collections.Iterable,NDimArray, MatrixBase)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, MatrixBase)):
+             raise ValueError("scalar expected")
+         other = sympify(other)
+         result_list = [i/other for i in self]
+diff --git a/sympy/tensor/indexed.py b/sympy/tensor/indexed.py
+index c8b958ea5..b656d7d6c 100755
+--- a/sympy/tensor/indexed.py
++++ b/sympy/tensor/indexed.py
+@@ -108,6 +108,7 @@
+ from __future__ import print_function, division
+ 
+ import collections
++import collections.abc
+ 
+ from sympy.core.sympify import _sympify
+ from sympy.functions.special.tensor_functions import KroneckerDelta
+@@ -153,7 +154,7 @@ def __new__(cls, base, *args, **kw_args):
+             raise TypeError(filldedent("""
+                 Indexed expects string, Symbol, or IndexedBase as base."""))
+         args = list(map(sympify, args))
+-        if isinstance(base, (NDimArray, collections.Iterable, Tuple, MatrixBase)) and all([i.is_number for i in args]):
++        if isinstance(base, (NDimArray, collections.abc.Iterable, Tuple, MatrixBase)) and all([i.is_number for i in args]):
+             return base[args]
+         return Expr.__new__(cls, base, *args, **kw_args)
+2026-10-30 15:55:31,471 - INFO - Eval script for sympy__sympy-12419 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-12419/eval.sh; copying to container...
+2026-10-30 15:55:36,179 - INFO - Test runtime: 4.66 seconds
+2026-10-30 15:55:36,181 - INFO - Test output for sympy__sympy-12419 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-12419/test_output.txt
+2026-10-30 15:55:36,258 - INFO - Git diff after:
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..deec4c573 100755
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,7 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++from collections import defaultdict
++from collections.abc import MutableMapping
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index b992b45c2..fe91845ca 100755
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,6 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++from collections.abc import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index b4d759836..cd6770d69 100755
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -476,10 +476,8 @@ def conjugate(self):
+         return self
+ 
+     def _entry(self, i, j):
+-        if i == j:
+-            return S.One
+-        else:
+-            return S.Zero
++        from sympy import KroneckerDelta
++        return KroneckerDelta(i, j)
+ 
+     def _eval_determinant(self):
+         return S.One
+diff --git a/sympy/matrices/expressions/tests/test_indexing.py b/sympy/matrices/expressions/tests/test_indexing.py
+index d69ef682d..429f18346 100755
+--- a/sympy/matrices/expressions/tests/test_indexing.py
++++ b/sympy/matrices/expressions/tests/test_indexing.py
+@@ -1,8 +1,9 @@
+ from sympy import (symbols, MatrixSymbol, MatPow, BlockMatrix,
+-        Identity, ZeroMatrix, ImmutableMatrix, eye, Sum)
++        Identity, ZeroMatrix, ImmutableMatrix, eye, Sum, KroneckerDelta)
+ from sympy.utilities.pytest import raises
+ 
+ k, l, m, n = symbols('k l m n', integer=True)
++p = symbols('p', integer=True, positive=True)
+ i, j = symbols('i j', integer=True)
+ 
+ W = MatrixSymbol('W', k, l)
+@@ -55,6 +56,19 @@ def test_Identity_index():
+     raises(IndexError, lambda: I[3, 3])
+ 
+ 
++def test_Identity_symbolic_index():
++    I = Identity(n)
++    assert I[i, j] == KroneckerDelta(i, j)
++    assert I[0, i] == KroneckerDelta(0, i)
++    Ip = Identity(p)
++    assert Sum(Ip[0, i], (i, 0, p - 1)).doit() == 1
++    assert Sum(Ip[i, 0], (i, 0, p - 1)).doit() == 1
++    # total sum should not be 0 (issue 12300)
++    total = Sum(Sum(Ip[i, j], (i, 0, p - 1)), (j, 0, p - 1)).doit()
++    assert total != 0
++    assert total.subs(p, 3).doit() == 3
++
++
+ def test_block_index():
+     I = Identity(3)
+     Z = ZeroMatrix(3, 3)
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index b6808b58d..027a17ef7 100755
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1903,7 +1903,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 24df97b01..bf00de7a8 100755
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -52,7 +52,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 664602d6b..6268b99c0 100755
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+ 
+diff --git a/sympy/tensor/array/arrayop.py b/sympy/tensor/array/arrayop.py
+index 5358ae8a4..260a26ca2 100755
+--- a/sympy/tensor/array/arrayop.py
++++ b/sympy/tensor/array/arrayop.py
+@@ -1,6 +1,7 @@
+ import itertools
+ 
+ import collections
++import collections.abc
+ 
+ from sympy import S, Tuple, diff
+ 
+@@ -103,7 +104,7 @@ def tensorcontraction(array, *contraction_axes):
+     # Verify contraction_axes:
+     taken_dims = set([])
+     for axes_group in contraction_axes:
+-        if not isinstance(axes_group, collections.Iterable):
++        if not isinstance(axes_group, collections.abc.Iterable):
+             raise ValueError("collections of contraction axes expected")
+ 
+         dim = array.shape[axes_group[0]]
+@@ -190,7 +191,7 @@ def derive_by_array(expr, dx):
+ 
+     """
+     from sympy.matrices import MatrixBase
+-    array_types = (collections.Iterable, MatrixBase, NDimArray)
++    array_types = (collections.abc.Iterable, MatrixBase, NDimArray)
+ 
+     if isinstance(dx, array_types):
+         dx = ImmutableDenseNDimArray(dx)
+diff --git a/sympy/tensor/array/ndim_array.py b/sympy/tensor/array/ndim_array.py
+index 11a374ed3..7c72a8ce1 100755
+--- a/sympy/tensor/array/ndim_array.py
++++ b/sympy/tensor/array/ndim_array.py
+@@ -1,5 +1,6 @@
+ from __future__ import print_function, division
+ import collections
++import collections.abc
+ 
+ from sympy import Basic
+ 
+@@ -100,13 +101,13 @@ def _check_symbolic_index(self, index):
+ 
+     def _setter_iterable_check(self, value):
+         from sympy.matrices.matrices import MatrixBase
+-        if isinstance(value, (collections.Iterable, MatrixBase, NDimArray)):
++        if isinstance(value, (collections.abc.Iterable, MatrixBase, NDimArray)):
+             raise NotImplementedError
+ 
+     @classmethod
+     def _scan_iterable_shape(cls, iterable):
+         def f(pointer):
+-            if not isinstance(pointer, collections.Iterable):
++            if not isinstance(pointer, collections.abc.Iterable):
+                 return [pointer], ()
+ 
+             result = []
+@@ -131,7 +132,7 @@ def _handle_ndarray_creation_inputs(cls, iterable=None, shape=None, **kwargs):
+             shape = iterable.shape
+             iterable = list(iterable)
+         # Construct N-dim array from an iterable (numpy arrays included):
+-        elif shape is None and isinstance(iterable, collections.Iterable):
++        elif shape is None and isinstance(iterable, collections.abc.Iterable):
+             iterable, shape = cls._scan_iterable_shape(iterable)
+ 
+         # Construct N-dim array from a Matrix:
+@@ -309,7 +310,7 @@ def __sub__(self, other):
+     def __mul__(self, other):
+         from sympy.matrices.matrices import MatrixBase
+ 
+-        if isinstance(other, (collections.Iterable,NDimArray, MatrixBase)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, MatrixBase)):
+             raise ValueError("scalar expected, use tensorproduct(...) for tensorial product")
+         other = sympify(other)
+         result_list = [i*other for i in self]
+@@ -318,7 +319,7 @@ def __mul__(self, other):
+     def __rmul__(self, other):
+         from sympy.matrices.matrices import MatrixBase
+ 
+-        if isinstance(other, (collections.Iterable,NDimArray, MatrixBase)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, MatrixBase)):
+             raise ValueError("scalar expected, use tensorproduct(...) for tensorial product")
+         other = sympify(other)
+         result_list = [other*i for i in self]
+@@ -327,7 +328,7 @@ def __rmul__(self, other):
+     def __div__(self, other):
+         from sympy.matrices.matrices import MatrixBase
+ 
+-        if isinstance(other, (collections.Iterable,NDimArray, MatrixBase)):
++        if isinstance(other, (collections.abc.Iterable,NDimArray, MatrixBase)):
+             raise ValueError("scalar expected")
+         other = sympify(other)
+         result_list = [i/other for i in self]
+diff --git a/sympy/tensor/indexed.py b/sympy/tensor/indexed.py
+index c8b958ea5..b656d7d6c 100755
+--- a/sympy/tensor/indexed.py
++++ b/sympy/tensor/indexed.py
+@@ -108,6 +108,7 @@
+ from __future__ import print_function, division
+ 
+ import collections
++import collections.abc
+ 
+ from sympy.core.sympify import _sympify
+ from sympy.functions.special.tensor_functions import KroneckerDelta
+@@ -153,7 +154,7 @@ def __new__(cls, base, *args, **kw_args):
+             raise TypeError(filldedent("""
+                 Indexed expects string, Symbol, or IndexedBase as base."""))
+         args = list(map(sympify, args))
+-        if isinstance(base, (NDimArray, collections.Iterable, Tuple, MatrixBase)) and all([i.is_number for i in args]):
++        if isinstance(base, (NDimArray, collections.abc.Iterable, Tuple, MatrixBase)) and all([i.is_number for i in args]):
+             return base[args]
+         return Expr.__new__(cls, base, *args, **kw_args)
+2026-10-30 15:55:36,259 - INFO - Grading answer for sympy__sympy-12419...
+2026-10-30 15:55:36,261 - INFO - report: {'sympy__sympy-12419': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_Identity'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_shape', 'test_matexpr', 'test_subs', 'test_ZeroMatrix', 'test_ZeroMatrix_doit', 'test_Identity_doit', 'test_addition', 'test_multiplication', 'test_MatPow', 'test_MatrixSymbol', 'test_dense_conversion', 'test_free_symbols', 'test_zero_matmul', 'test_matadd_simplify', 'test_matmul_simplify', 'test_invariants', 'test_indexing', 'test_single_indexing', 'test_MatrixElement_commutative', 'test_MatrixSymbol_determinant', 'test_MatrixElement_diff', 'test_MatrixElement_doit', 'test_identity_powers', 'test_Zero_power', 'test_matrixelement_diff'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-12419: resolved: True
+2026-10-30 15:55:36,262 - INFO - Attempting to stop container sweb.eval.sympy__sympy-12419.verified_full_opencode...
+2026-10-30 15:55:53,476 - INFO - Container sweb.eval.sympy__sympy-12419.verified_full_opencode stopped successfully.
+2026-10-30 15:55:53,476 - INFO - Attempting to remove container sweb.eval.sympy__sympy-12419.verified_full_opencode...
+2026-10-30 15:55:53,511 - INFO - Container sweb.eval.sympy__sympy-12419.verified_full_opencode removed successfully.

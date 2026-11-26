@@ -1,0 +1,112 @@
+2026-11-10 16:47:15,668 - INFO - Creating container for scikit-learn__scikit-learn-14053...
+2026-11-10 16:47:15,700 - INFO - Container for scikit-learn__scikit-learn-14053 created: d7e5354f2f93b1c5f2ffa7195a72e3fea10d54483391d4748aa6100eecc97591
+2026-11-10 16:47:16,623 - INFO - Container for scikit-learn__scikit-learn-14053 started: d7e5354f2f93b1c5f2ffa7195a72e3fea10d54483391d4748aa6100eecc97591
+2026-11-10 16:47:16,624 - INFO - Intermediate patch for scikit-learn__scikit-learn-14053 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/scikit-learn__scikit-learn-14053/patch.diff, now applying to container...
+2026-11-10 16:47:16,745 - INFO - >>>>> Applied Patch:
+Checking patch doc/whats_new/v0.22.rst...
+Checking patch sklearn/tree/export.py...
+Checking patch sklearn/tree/tests/test_export.py...
+Applied patch doc/whats_new/v0.22.rst cleanly.
+Applied patch sklearn/tree/export.py cleanly.
+Applied patch sklearn/tree/tests/test_export.py cleanly.
+
+2026-11-10 16:47:17,208 - INFO - Git diff before:
+diff --git a/doc/whats_new/v0.22.rst b/doc/whats_new/v0.22.rst
+index 85b8c330b..4d95917ae 100644
+--- a/doc/whats_new/v0.22.rst
++++ b/doc/whats_new/v0.22.rst
+@@ -87,6 +87,12 @@ Changelog
+   ``decision_function_shape='ovr'``, and the number of target classes > 2.
+   :pr:`12557` by `Adrin Jalali`_.
+ 
++:mod:`sklearn.tree`
++...................
++
++- |Fix| Fixed bug in :func:`tree.export_text` when the tree has one feature and
++  a single feature name is passed in. :pr:`14053` by `Thomas Fan`_.
++
+ 
+ :mod:`sklearn.preprocessing`
+ ............................
+diff --git a/sklearn/tree/export.py b/sklearn/tree/export.py
+index 1fe11e596..2c9d21b7b 100644
+--- a/sklearn/tree/export.py
++++ b/sklearn/tree/export.py
+@@ -890,7 +890,8 @@ def export_text(decision_tree, feature_names=None, max_depth=10,
+         value_fmt = "{}{} value: {}\n"
+ 
+     if feature_names:
+-        feature_names_ = [feature_names[i] for i in tree_.feature]
++        feature_names_ = [feature_names[i] if i != _tree.TREE_UNDEFINED
++                          else None for i in tree_.feature]
+     else:
+         feature_names_ = ["feature_{}".format(i) for i in tree_.feature]
+ 
+diff --git a/sklearn/tree/tests/test_export.py b/sklearn/tree/tests/test_export.py
+index 503431f45..317a11ae2 100644
+--- a/sklearn/tree/tests/test_export.py
++++ b/sklearn/tree/tests/test_export.py
+@@ -396,6 +396,21 @@ def test_export_text():
+     assert export_text(reg, decimals=1) == expected_report
+     assert export_text(reg, decimals=1, show_weights=True) == expected_report
+ 
++    X_single = [[-2], [-1], [-1], [1], [1], [2]]
++    reg = DecisionTreeRegressor(max_depth=2, random_state=0)
++    reg.fit(X_single, y_mo)
++
++    expected_report = dedent("""
++    |--- first <= 0.0
++    |   |--- value: [-1.0, -1.0]
++    |--- first >  0.0
++    |   |--- value: [1.0, 1.0]
++    """).lstrip()
++    assert export_text(reg, decimals=1,
++                       feature_names=['first']) == expected_report
++    assert export_text(reg, decimals=1, show_weights=True,
++                       feature_names=['first']) == expected_report
++
+ 
+ def test_plot_tree_entropy(pyplot):
+     # mostly smoke tests
+2026-11-10 16:47:17,211 - INFO - Eval script for scikit-learn__scikit-learn-14053 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/scikit-learn__scikit-learn-14053/eval.sh; copying to container...
+2026-11-10 16:47:22,006 - INFO - Test runtime: 4.73 seconds
+2026-11-10 16:47:22,009 - INFO - Test output for scikit-learn__scikit-learn-14053 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/scikit-learn__scikit-learn-14053/test_output.txt
+2026-11-10 16:47:22,067 - INFO - Git diff after:
+diff --git a/doc/whats_new/v0.22.rst b/doc/whats_new/v0.22.rst
+index 85b8c330b..4d95917ae 100644
+--- a/doc/whats_new/v0.22.rst
++++ b/doc/whats_new/v0.22.rst
+@@ -87,6 +87,12 @@ Changelog
+   ``decision_function_shape='ovr'``, and the number of target classes > 2.
+   :pr:`12557` by `Adrin Jalali`_.
+ 
++:mod:`sklearn.tree`
++...................
++
++- |Fix| Fixed bug in :func:`tree.export_text` when the tree has one feature and
++  a single feature name is passed in. :pr:`14053` by `Thomas Fan`_.
++
+ 
+ :mod:`sklearn.preprocessing`
+ ............................
+diff --git a/sklearn/tree/export.py b/sklearn/tree/export.py
+index 1fe11e596..2c9d21b7b 100644
+--- a/sklearn/tree/export.py
++++ b/sklearn/tree/export.py
+@@ -890,7 +890,8 @@ def export_text(decision_tree, feature_names=None, max_depth=10,
+         value_fmt = "{}{} value: {}\n"
+ 
+     if feature_names:
+-        feature_names_ = [feature_names[i] for i in tree_.feature]
++        feature_names_ = [feature_names[i] if i != _tree.TREE_UNDEFINED
++                          else None for i in tree_.feature]
+     else:
+         feature_names_ = ["feature_{}".format(i) for i in tree_.feature]
+2026-11-10 16:47:22,067 - INFO - Git diff changed after running eval script
+2026-11-10 16:47:22,067 - INFO - Grading answer for scikit-learn__scikit-learn-14053...
+2026-11-10 16:47:22,069 - INFO - report: {'scikit-learn__scikit-learn-14053': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/tree/tests/test_export.py::test_export_text'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/tree/tests/test_export.py::test_graphviz_toy', 'sklearn/tree/tests/test_export.py::test_graphviz_errors', 'sklearn/tree/tests/test_export.py::test_friedman_mse_in_graphviz', 'sklearn/tree/tests/test_export.py::test_precision', 'sklearn/tree/tests/test_export.py::test_export_text_errors'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-14053: resolved: True
+2026-11-10 16:47:22,071 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_glm53_hermes_incr_R2028...
+2026-11-10 16:47:38,191 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_glm53_hermes_incr_R2028 stopped successfully.
+2026-11-10 16:47:38,191 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_glm53_hermes_incr_R2028...
+2026-11-10 16:47:38,228 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_glm53_hermes_incr_R2028 removed successfully.

@@ -1,0 +1,115 @@
+diff --git a/doc/usage/extensions/autodoc.rst b/doc/usage/extensions/autodoc.rst
+index 150b62c4d..dde2ffee3 100644
+--- a/doc/usage/extensions/autodoc.rst
++++ b/doc/usage/extensions/autodoc.rst
+@@ -136,10 +136,19 @@ inserting them into the page source under a suitable :rst:dir:`py:module`,
+            :undoc-members:
+ 
+    * "Private" members (that is, those named like ``_private`` or ``__private``)
+-     will be included if the ``private-members`` flag option is given.
++     will be included if the ``private-members`` flag option is given.  It can
++     also take an explicit list of members; only these will then be
++     documented::
++
++        .. autoclass:: Noodle
++           :private-members: _spicy, _hot
+ 
+      .. versionadded:: 1.1
+ 
++     .. versionchanged:: 3.2
++        The option can now take arguments, i.e. the private members to
++        document.
++
+    * autodoc considers a member private if its docstring contains
+      ``:meta private:`` in its :ref:`info-field-lists`.
+      For example:
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index 8c3509c3b..c180ab7c8 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -87,6 +87,13 @@ def members_set_option(arg: Any) -> Union[object, Set[str]]:
+     return {x.strip() for x in arg.split(',') if x.strip()}
+ 
+ 
++def private_members_option(arg: Any) -> Union[object, List[str]]:
++    """Used to convert the :private-members: option to auto directives."""
++    if arg is None or arg is True:
++        return ALL
++    return [x.strip() for x in arg.split(',') if x.strip()]
++
++
+ def inherited_members_option(arg: Any) -> Union[object, Set[str]]:
+     """Used to convert the :members: option to auto directives."""
+     if arg is None:
+@@ -649,15 +656,21 @@ class Documenter:
+             elif (namespace, membername) in attr_docs:
+                 if want_all and isprivate:
+                     # ignore members whose name starts with _ by default
+-                    keep = self.options.private_members
++                    if self.options.private_members is ALL:
++                        keep = True
++                    else:
++                        keep = membername in self.options.private_members
+                 else:
+                     # keep documented attributes
+                     keep = True
+                 isattr = True
+             elif want_all and isprivate:
+                 # ignore members whose name starts with _ by default
+-                keep = self.options.private_members and \
+-                    (has_doc or self.options.undoc_members)
++                if self.options.private_members is ALL:
++                    keep = has_doc or self.options.undoc_members
++                else:
++                    keep = membername in self.options.private_members and \
++                        (has_doc or self.options.undoc_members)
+             else:
+                 if self.options.members is ALL and is_filtered_inherited_member(membername):
+                     keep = False
+@@ -859,7 +872,7 @@ class ModuleDocumenter(Documenter):
+         'show-inheritance': bool_option, 'synopsis': identity,
+         'platform': identity, 'deprecated': bool_option,
+         'member-order': member_order_option, 'exclude-members': members_set_option,
+-        'private-members': bool_option, 'special-members': members_option,
++        'private-members': private_members_option, 'special-members': members_option,
+         'imported-members': bool_option, 'ignore-module-all': bool_option
+     }  # type: Dict[str, Callable]
+ 
+@@ -1279,7 +1292,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type:
+         'noindex': bool_option, 'inherited-members': inherited_members_option,
+         'show-inheritance': bool_option, 'member-order': member_order_option,
+         'exclude-members': members_set_option,
+-        'private-members': bool_option, 'special-members': members_option,
++        'private-members': private_members_option, 'special-members': members_option,
+     }  # type: Dict[str, Callable]
+ 
+     _signature_class = None  # type: Any
+diff --git a/tests/test_ext_autodoc_private_members.py b/tests/test_ext_autodoc_private_members.py
+index f4cadd3a5..c8b26520b 100644
+--- a/tests/test_ext_autodoc_private_members.py
++++ b/tests/test_ext_autodoc_private_members.py
+@@ -60,3 +60,24 @@ def test_private_field_and_private_members(app):
+         '   :meta private:',
+         '',
+     ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_private_field_and_specific_private_members(app):
++    app.config.autoclass_content = 'class'
++    options = {"members": None,
++               "private-members": "_public_function"}
++    actual = do_autodoc(app, 'module', 'target.private', options)
++    assert list(actual) == [
++        '',
++        '.. py:module:: target.private',
++        '',
++        '',
++        '.. py:function:: _public_function(name)',
++        '   :module: target.private',
++        '',
++        '   public_function is a docstring().',
++        '',
++        '   :meta public:',
++        '',
++    ]

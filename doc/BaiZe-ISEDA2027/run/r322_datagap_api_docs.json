@@ -1,0 +1,64 @@
+{
+  "R322_source": "MCP get_api_details batch fetch (2026-11-12)",
+  "description": "Compact API docs for data-gap APIs (R321 not_covered_apis). Extracted from pyAether MCP get_api_details responses, trimmed to core signature+description+example (verbose 补充说明 sections removed).",
+  "total_data_gap_apis": 166,
+  "poc_batch_size": 8,
+  "apis": [
+    {
+      "api_name": "EmyLPPHeader.getLayerNum",
+      "api_type": "method",
+      "signature": "getLayerNum() -> emyLayerNum",
+      "description": "Get layer number of the EmyLPPHeader. Returns emyLayerNum (out parameter).",
+      "example": ">>> import pyAether\n>>> lpp_header = pyAether.EmyLPPHeader.create(None, 1, 12)\n>>> res = lpp_header.getLayerNum()"
+    },
+    {
+      "api_name": "EmyLPPHeader.getMaskNum",
+      "api_type": "method",
+      "signature": "getMaskNum() -> emyInt4",
+      "description": "Get maskNum value of the EmyLPPHeader. Returns emyInt4 (out parameter).",
+      "example": ">>> import pyAether\n>>> lpp_header = pyAether.EmyLPPHeader.create(None, 1, 12)\n>>> res = lpp_header.getMaskNum()"
+    },
+    {
+      "api_name": "EmyLPPHeader.getPacketName",
+      "api_type": "method",
+      "signature": "getPacketName() -> emyChar",
+      "description": "Get packet name of the EmyLPPHeader. Returns the packet name as a string. Default is empty string for newly created EmyLPPHeader; use setPacketName() to set it. There is also a static overload getSpecPacketName(tech, layerNum, purposeNum).",
+      "example": ">>> import pyAether\n>>> lpp_header = pyAether.EmyLPPHeader.create(None, 1, 12)\n>>> res = lpp_header.getPacketName()\n>>> lpp_header.setPacketName(\"my_packet\")\n>>> res = lpp_header.getPacketName()"
+    },
+    {
+      "api_name": "GuCartPolyLine.getPointArray",
+      "api_type": "method",
+      "signature": "getPointArray(pointArray: emyPointArrayF)",
+      "description": "Gets an array of points of GuCartPolyLine. The pointArray parameter is an output parameter of type emyPointArrayF that stores the result. Must pass a valid emyPointArrayF object (not a Python list). Use toList() to convert result to a Python list. Point order is preserved from creation.",
+      "example": ">>> import pyAether as pyScript\n>>> arr0 = pyScript.emyPointArrayF()\n>>> arr0.append((0.2, 1.3))\n>>> arr0.append((2.6, 4.5))\n>>> gu_poly_line = pyScript.GuCartPolyLine(arr0)\n>>> array_f = pyScript.emyPointArrayF()\n>>> gu_poly_line.getPointArray(array_f)\n>>> array_f\n[(0.2, 1.3), (2.6, 4.5)]"
+    },
+    {
+      "api_name": "MdeDcAnalysis.setSweepRange",
+      "api_type": "method",
+      "signature": "setSweepRange(sweepRange: MdeSweepRange)",
+      "description": "Set the sweep range for DC analysis. The sweepRange parameter must be a MdeSweepRange object. Use MDE_SWEEP_RANGE_CENTER_SPAN mode with center+span, or MDE_SWEEP_RANGE_START_STOP mode with start+stop. All numeric values should be passed as strings.",
+      "example": "import pyAether as ae\nsr = ae.MdeSweepRange()\nsr.mode = ae.MDE_SWEEP_RANGE_CENTER_SPAN\nsr.center = \"10\"\nsr.span = \"10\"\ndc = ae.MdeDcAnalysis()\ndc.setSweepRange(sr)"
+    },
+    {
+      "api_name": "MdeSweepRange.span",
+      "api_type": "property",
+      "signature": "span (property, str, read/write)",
+      "description": "Span value for center-span sweep mode. String type property. Used together with center to define the sweep range: actual range = [center - span/2, center + span/2]. Only meaningful when mode = MDE_SWEEP_RANGE_CENTER_SPAN. Supports numeric strings, scientific notation, and EDA unit suffixes.",
+      "example": "import pyAether as pyScript\nsweep_range = pyScript.MdeSweepRange()\nsweep_range.mode = pyScript.MDE_SWEEP_RANGE_CENTER_SPAN\nsweep_range.center = \"2.5\"\nsweep_range.span = \"0.5\"\ncurrent_span = sweep_range.span"
+    },
+    {
+      "api_name": "emyTransformF.invert",
+      "api_type": "method",
+      "signature": "invert(*args)",
+      "description": "Invert the transformation represented by emyTransformF. Returns a new transform with inverted orientation and offset.",
+      "example": ""
+    },
+    {
+      "api_name": "emyTransformF.orient",
+      "api_type": "method",
+      "signature": "orient()",
+      "description": "Get the orientation component of the emyTransformF transformation.",
+      "example": ""
+    }
+  ]
+}

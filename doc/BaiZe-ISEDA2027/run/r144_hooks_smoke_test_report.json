@@ -1,0 +1,194 @@
+{
+  "r144_metadata": {
+    "title": "Production Hook System Smoke Test",
+    "date": "2026-11-10",
+    "wake": 191,
+    "gpu": false,
+    "steps": 5,
+    "elapsed_s": 0.001
+  },
+  "registry": {
+    "hook_count": 6,
+    "fire_count": 450,
+    "error_count": 0,
+    "phase_counts": {
+      "step_start": 5,
+      "gen_start": 5,
+      "tool_call_start": 10,
+      "tool_call_end": 10,
+      "rollout_request_end": 10,
+      "gen_end": 5,
+      "reward_end": 5,
+      "adv_end": 5,
+      "update_actor_end": 5,
+      "validate_end": 5,
+      "checkpoint_end": 5,
+      "step_end": 5
+    },
+    "hooks": [
+      {
+        "name": "resilience",
+        "priority": 5,
+        "collapse_detected": false,
+        "warning_count": 0,
+        "loss_history": [
+          2.02274442806498,
+          2.04193664780531,
+          2.054370977686915,
+          2.0575911367498416,
+          2.050160619831842
+        ]
+      },
+      {
+        "name": "curriculum_scheduler",
+        "priority": 10,
+        "current_phase": "Warmup",
+        "transition_count": 0,
+        "phase_history": [
+          [
+            0,
+            "Warmup"
+          ]
+        ]
+      },
+      {
+        "name": "rollout_scheduler",
+        "priority": 15,
+        "max_sc": 8,
+        "strategy": "both",
+        "throttle_count": 0,
+        "early_stopped": 0,
+        "total_rollouts": 10,
+        "total_tool_calls": 10
+      },
+      {
+        "name": "kl_scheduler",
+        "priority": 20,
+        "kl_coeff": 0.003868,
+        "adjustment_count": 0,
+        "kl_history": [
+          0.5144992288526912,
+          0.5284624622502723,
+          0.5418524163923611,
+          0.5543966889237192,
+          0.5658401294510664
+        ]
+      },
+      {
+        "name": "anti_cheat",
+        "priority": 30,
+        "alert_count": 0,
+        "rollback_count": 0,
+        "cheat_history": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "early_stop",
+        "priority": 40,
+        "max_steps": 750,
+        "plateau_count": 0,
+        "peak_reward": 0.2349,
+        "stop_reason": null,
+        "val_history": [
+          0.4733874757704843,
+          0.5546331523869632,
+          0.612848223531423,
+          0.6545611447537093,
+          0.6844497588649753
+        ],
+        "reward_history": [
+          0.2330310303137753,
+          0.23347976955545977,
+          0.23393424021661052,
+          0.23439450553932126,
+          0.23486062919101058
+        ]
+      }
+    ]
+  },
+  "step_results": [
+    {
+      "step": 1,
+      "phase": "Warmup",
+      "kl_coeff": 0.001574,
+      "cheat_score": 0.0,
+      "resilience": "OK",
+      "early_stop": "continue",
+      "should_stop": false
+    },
+    {
+      "step": 2,
+      "phase": "Warmup",
+      "kl_coeff": 0.002147,
+      "cheat_score": 0.0,
+      "resilience": "OK",
+      "early_stop": "continue",
+      "should_stop": false
+    },
+    {
+      "step": 3,
+      "phase": "Warmup",
+      "kl_coeff": 0.002721,
+      "cheat_score": 0.0,
+      "resilience": "OK",
+      "early_stop": "continue",
+      "should_stop": false
+    },
+    {
+      "step": 4,
+      "phase": "Warmup",
+      "kl_coeff": 0.003294,
+      "cheat_score": 0.0,
+      "resilience": "OK",
+      "early_stop": "continue",
+      "should_stop": false
+    },
+    {
+      "step": 5,
+      "phase": "Warmup",
+      "kl_coeff": 0.003868,
+      "cheat_score": 0.0,
+      "resilience": "OK",
+      "early_stop": "continue",
+      "should_stop": false
+    }
+  ],
+  "verification": {
+    "all_pass": true,
+    "checks": [
+      {
+        "desc": "All 6 hooks registered",
+        "passed": true
+      },
+      {
+        "desc": "No hook errors",
+        "passed": true
+      },
+      {
+        "desc": "All hooks fired",
+        "passed": true
+      },
+      {
+        "desc": "Curriculum phase set",
+        "passed": true
+      },
+      {
+        "desc": "KL coeff computed",
+        "passed": true
+      },
+      {
+        "desc": "Cheat score computed",
+        "passed": true
+      },
+      {
+        "desc": "No stop in 5 steps",
+        "passed": true
+      }
+    ]
+  }
+}

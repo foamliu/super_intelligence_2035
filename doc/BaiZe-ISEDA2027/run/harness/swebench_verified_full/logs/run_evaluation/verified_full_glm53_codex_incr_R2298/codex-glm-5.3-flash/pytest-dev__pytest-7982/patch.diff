@@ -1,0 +1,62 @@
+diff --git a/changelog/7968.bugfix.rst b/changelog/7968.bugfix.rst
+new file mode 100644
+index 0000000..cdc89c6
+--- /dev/null
++++ b/changelog/7968.bugfix.rst
+@@ -0,0 +1 @@
++:issue:`7968`: Fixed collection of symlinked directories, a regression in pytest 6.1.0.
+diff --git a/src/_pytest/assertion/rewrite.py b/src/_pytest/assertion/rewrite.py
+index 6497267..f22296f 100644
+--- a/src/_pytest/assertion/rewrite.py
++++ b/src/_pytest/assertion/rewrite.py
+@@ -697,6 +697,8 @@ class AssertionRewriter(ast.NodeVisitor):
+         imports = [
+             ast.Import([alias], lineno=lineno, col_offset=0) for alias in aliases
+         ]
++        for imp in imports:
++            ast.fix_missing_locations(imp)
+         mod.body[pos:pos] = imports
+         # Collect asserts.
+         nodes: List[ast.AST] = [mod]
+diff --git a/src/_pytest/pathlib.py b/src/_pytest/pathlib.py
+index f0bdb14..b96cba0 100644
+--- a/src/_pytest/pathlib.py
++++ b/src/_pytest/pathlib.py
+@@ -558,7 +558,7 @@ def visit(
+     entries = sorted(os.scandir(path), key=lambda entry: entry.name)
+     yield from entries
+     for entry in entries:
+-        if entry.is_dir(follow_symlinks=False) and recurse(entry):
++        if entry.is_dir() and recurse(entry):
+             yield from visit(entry.path, recurse)
+ 
+ 
+diff --git a/testing/test_collection.py b/testing/test_collection.py
+index 841aa35..2a447c2 100644
+--- a/testing/test_collection.py
++++ b/testing/test_collection.py
+@@ -1256,6 +1256,24 @@ def test_collect_sub_with_symlinks(use_pkg, testdir):
+     )
+ 
+ 
++def test_collect_subdir_symlink(testdir):
++    """Collection follows symlinked directories (#7968)."""
++    real = testdir.mkdir("real")
++    real.join("test_file.py").write("def test_file(): pass")
++
++    symlink = testdir.tmpdir.join("symlink")
++    symlink_or_skip(real, symlink, target_is_directory=True)
++
++    result = testdir.runpytest("-v", str(symlink))
++    result.stdout.fnmatch_lines(
++        [
++            "symlink/test_file.py::test_file PASSED*",
++            "*1 passed in*",
++        ]
++    )
++    assert result.ret == 0
++
++
+ def test_collector_respects_tbstyle(testdir):
+     p1 = testdir.makepyfile("assert 0")
+     result = testdir.runpytest(p1, "--tb=native")

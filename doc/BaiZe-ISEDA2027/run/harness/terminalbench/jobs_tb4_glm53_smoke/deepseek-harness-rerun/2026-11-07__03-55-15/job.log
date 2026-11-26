@@ -1,0 +1,13 @@
+Task terminal-bench/bun-sourcemap-leak: Configured runtime overrides apply only to the agent environment and are not propagated to separate verifier environments (extra_docker_compose: /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/terminalbench/overlay-network-host.yml). Bake grading dependencies into the verifier image under tests/ or declare required agent outputs as artifacts.
+Agent 'deepseek-harness' does not declare an options_model; leftover kwargs are ignored
+Running command: python3 -m ensurepip --upgrade 2>&1 | tail -3 || true
+Command outputs captured
+Running command: python3 /tmp/get-pip.py --break-system-packages --trusted-host mirrors.aliyun.com 2>&1 | tail -8
+Command outputs captured
+Running command: python3 -m pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -8
+Command outputs captured
+Trial bun-sourcemap-leak__2ekpiTk failed: DeepSeek-Harness exited with code 2: stdout=
+=== DSH WARNING: empty final_response ===
+result repr: RunResult(session_id='tb-deepseek', final_response='', finish_reason='max-tokens', events=[{'type': 'agent/inbox/spliced', 'seq': 0, 'time': 1793994933031, 'data': {'target': 'next-turn', 'start': 0, 'inserted': [{'content': [{'type': 'text', 'text': "Fix the Bun/TypeScript app's production release pipeline, which currently leaks private source provenance through generated artifacts, so `bun run release` uses the client source tree and provenance policy of whatever input app is present in `/app` at runtime, then emits safe files under `/app/dist`. The shipped server artifact only needs to preserve the required public server response and must not expose private server implementation details.\n\nUse `/app/visibility.json` as the provena stderr=
+Collecting main service artifacts
+Not retrying trial because the maximum number of retries has been reached

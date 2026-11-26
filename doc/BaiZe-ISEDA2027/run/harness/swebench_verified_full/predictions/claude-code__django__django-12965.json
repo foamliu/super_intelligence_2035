@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-12965",
+    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py\nindex 29e33c075..d4b35c946 100644\n--- a/django/db/models/sql/compiler.py\n+++ b/django/db/models/sql/compiler.py\n@@ -1423,6 +1423,7 @@ class SQLDeleteCompiler(SQLCompiler):\n         Create the SQL for this query. Return the SQL string and list of\n         parameters.\n         \"\"\"\n+        self.query.get_initial_alias()\n         if self.single_alias:\n             return self._as_sql(self.query)\n         innerq = self.query.clone()\n"
+  }
+]

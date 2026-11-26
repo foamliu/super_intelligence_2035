@@ -1,0 +1,134 @@
+2026-10-30 15:53:53,741 - INFO - Creating container for sphinx-doc__sphinx-8120...
+2026-10-30 15:53:53,802 - INFO - Container for sphinx-doc__sphinx-8120 created: a0a5b19d12164bca57c59043705b8a1a92dff37f43d16b2aaafdbae4346cf86b
+2026-10-30 15:53:54,610 - INFO - Container for sphinx-doc__sphinx-8120 started: a0a5b19d12164bca57c59043705b8a1a92dff37f43d16b2aaafdbae4346cf86b
+2026-10-30 15:53:54,612 - INFO - Intermediate patch for sphinx-doc__sphinx-8120 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-8120/patch.diff, now applying to container...
+2026-10-30 15:53:54,777 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/application.py...
+Checking patch tests/test_locale.py...
+Applied patch sphinx/application.py cleanly.
+Applied patch tests/test_locale.py cleanly.
+
+2026-10-30 15:53:55,188 - INFO - Git diff before:
+diff --git a/sphinx/application.py b/sphinx/application.py
+index 385b74d8a..197a1dc56 100644
+--- a/sphinx/application.py
++++ b/sphinx/application.py
+@@ -293,7 +293,7 @@ class Sphinx:
+                 if catalog.domain == 'sphinx' and catalog.is_outdated():
+                     catalog.write_mo(self.config.language)
+ 
+-            locale_dirs = [None, path.join(package_dir, 'locale')] + list(repo.locale_dirs)
++            locale_dirs = [None] + list(repo.locale_dirs) + [path.join(package_dir, 'locale')]
+             self.translator, has_translation = locale.init(locale_dirs, self.config.language)
+             if has_translation or self.config.language == 'en':
+                 # "en" never needs to be translated
+diff --git a/tests/test_locale.py b/tests/test_locale.py
+index a744a5ff7..08bfc402c 100644
+--- a/tests/test_locale.py
++++ b/tests/test_locale.py
+@@ -9,6 +9,7 @@
+ """
+ 
+ import pytest
++from babel.messages import mofile, pofile
+ 
+ from sphinx import locale
+ 
+@@ -63,3 +64,30 @@ def test_add_message_catalog(app, rootdir):
+     assert _('Hello world') == 'HELLO WORLD'
+     assert _('Hello sphinx') == 'Hello sphinx'
+     assert _('Hello reST') == 'Hello reST'
++
++
++def test_init_priority(tempdir):
++    # Create builtin locale dir with a translation
++    builtin_dir = tempdir / 'builtin' / 'en' / 'LC_MESSAGES'
++    builtin_dir.makedirs()
++    builtin_po = builtin_dir / 'myext.po'
++    builtin_po.write_text('msgid "Hello world"\nmsgstr "BUILTIN HELLO"\n')
++    with open(builtin_po, 'r') as f:
++        catalog = pofile.read_po(f)
++    with open(builtin_dir / 'myext.mo', 'wb') as f:
++        mofile.write_mo(f, catalog)
++
++    # Create user locale dir with a conflicting translation
++    user_dir = tempdir / 'user' / 'en' / 'LC_MESSAGES'
++    user_dir.makedirs()
++    user_po = user_dir / 'myext.po'
++    user_po.write_text('msgid "Hello world"\nmsgstr "USER HELLO"\n')
++    with open(user_po, 'r') as f:
++        catalog = pofile.read_po(f)
++    with open(user_dir / 'myext.mo', 'wb') as f:
++        mofile.write_mo(f, catalog)
++
++    # user dir first -> user translation should win
++    locale.init([str(tempdir / 'user'), str(tempdir / 'builtin')], 'en', 'myext')
++    _ = locale.get_translation('myext')
++    assert _('Hello world') == 'USER HELLO'
+2026-10-30 15:53:55,192 - INFO - Eval script for sphinx-doc__sphinx-8120 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-8120/eval.sh; copying to container...
+2026-10-30 15:54:04,652 - INFO - Test runtime: 9.34 seconds
+2026-10-30 15:54:04,655 - INFO - Test output for sphinx-doc__sphinx-8120 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-8120/test_output.txt
+2026-10-30 15:54:04,702 - INFO - Git diff after:
+diff --git a/sphinx/application.py b/sphinx/application.py
+index 385b74d8a..197a1dc56 100644
+--- a/sphinx/application.py
++++ b/sphinx/application.py
+@@ -293,7 +293,7 @@ class Sphinx:
+                 if catalog.domain == 'sphinx' and catalog.is_outdated():
+                     catalog.write_mo(self.config.language)
+ 
+-            locale_dirs = [None, path.join(package_dir, 'locale')] + list(repo.locale_dirs)
++            locale_dirs = [None] + list(repo.locale_dirs) + [path.join(package_dir, 'locale')]
+             self.translator, has_translation = locale.init(locale_dirs, self.config.language)
+             if has_translation or self.config.language == 'en':
+                 # "en" never needs to be translated
+diff --git a/tests/test_locale.py b/tests/test_locale.py
+index a744a5ff7..08bfc402c 100644
+--- a/tests/test_locale.py
++++ b/tests/test_locale.py
+@@ -9,6 +9,7 @@
+ """
+ 
+ import pytest
++from babel.messages import mofile, pofile
+ 
+ from sphinx import locale
+ 
+@@ -63,3 +64,30 @@ def test_add_message_catalog(app, rootdir):
+     assert _('Hello world') == 'HELLO WORLD'
+     assert _('Hello sphinx') == 'Hello sphinx'
+     assert _('Hello reST') == 'Hello reST'
++
++
++def test_init_priority(tempdir):
++    # Create builtin locale dir with a translation
++    builtin_dir = tempdir / 'builtin' / 'en' / 'LC_MESSAGES'
++    builtin_dir.makedirs()
++    builtin_po = builtin_dir / 'myext.po'
++    builtin_po.write_text('msgid "Hello world"\nmsgstr "BUILTIN HELLO"\n')
++    with open(builtin_po, 'r') as f:
++        catalog = pofile.read_po(f)
++    with open(builtin_dir / 'myext.mo', 'wb') as f:
++        mofile.write_mo(f, catalog)
++
++    # Create user locale dir with a conflicting translation
++    user_dir = tempdir / 'user' / 'en' / 'LC_MESSAGES'
++    user_dir.makedirs()
++    user_po = user_dir / 'myext.po'
++    user_po.write_text('msgid "Hello world"\nmsgstr "USER HELLO"\n')
++    with open(user_po, 'r') as f:
++        catalog = pofile.read_po(f)
++    with open(user_dir / 'myext.mo', 'wb') as f:
++        mofile.write_mo(f, catalog)
++
++    # user dir first -> user translation should win
++    locale.init([str(tempdir / 'user'), str(tempdir / 'builtin')], 'en', 'myext')
++    _ = locale.get_translation('myext')
++    assert _('Hello world') == 'USER HELLO'
+2026-10-30 15:54:04,702 - INFO - Grading answer for sphinx-doc__sphinx-8120...
+2026-10-30 15:54:04,762 - INFO - report: {'sphinx-doc__sphinx-8120': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_intl.py::test_customize_system_message'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_intl.py::test_text_toctree', 'tests/test_intl.py::test_text_emit_warnings', 'tests/test_intl.py::test_text_warning_node', 'tests/test_intl.py::test_text_title_underline', 'tests/test_intl.py::test_text_subdirs', 'tests/test_intl.py::test_text_inconsistency_warnings', 'tests/test_intl.py::test_text_literalblock_warnings', 'tests/test_intl.py::test_text_definition_terms', 'tests/test_intl.py::test_text_glossary_term', 'tests/test_intl.py::test_text_glossary_term_inconsistencies', 'tests/test_intl.py::test_gettext_section', 'tests/test_intl.py::test_text_section', 'tests/test_intl.py::test_text_seealso', 'tests/test_intl.py::test_text_figure_captions', 'tests/test_intl.py::test_text_rubric', 'tests/test_intl.py::test_text_docfields', 'tests/test_intl.py::test_text_admonitions', 'tests/test_intl.py::test_gettext_toctree', 'tests/test_intl.py::test_gettext_table', 'tests/test_intl.py::test_text_table', 'tests/test_intl.py::test_gettext_topic', 'tests/test_intl.py::test_text_topic', 'tests/test_intl.py::test_gettext_definition_terms', 'tests/test_intl.py::test_gettext_glossary_terms', 'tests/test_intl.py::test_gettext_glossary_term_inconsistencies', 'tests/test_intl.py::test_gettext_literalblock', 'tests/test_intl.py::test_gettext_buildr_ignores_only_directive', 'tests/test_intl.py::test_gettext_dont_rebuild_mo', 'tests/test_intl.py::test_html_footnotes', 'tests/test_intl.py::test_html_undefined_refs', 'tests/test_intl.py::test_html_index_entries', 'tests/test_intl.py::test_html_versionchanges', 'tests/test_intl.py::test_html_docfields', 'tests/test_intl.py::test_html_template', 'tests/test_intl.py::test_html_rebuild_mo', 'tests/test_intl.py::test_xml_footnotes', 'tests/test_intl.py::test_xml_footnote_backlinks', 'tests/test_intl.py::test_xml_refs_in_python_domain', 'tests/test_intl.py::test_xml_keep_external_links', 'tests/test_intl.py::test_xml_role_xref', 'tests/test_intl.py::test_xml_warnings', 'tests/test_intl.py::test_text_references', 'tests/test_intl.py::test_image_glob_intl', 'tests/test_intl.py::test_image_glob_intl_using_figure_language_filename'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8120: resolved: True
+2026-10-30 15:54:04,766 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8120.verified_full_opencode...
+2026-10-30 15:54:20,787 - INFO - Container sweb.eval.sphinx-doc__sphinx-8120.verified_full_opencode stopped successfully.
+2026-10-30 15:54:20,787 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8120.verified_full_opencode...
+2026-10-30 15:54:20,846 - INFO - Container sweb.eval.sphinx-doc__sphinx-8120.verified_full_opencode removed successfully.

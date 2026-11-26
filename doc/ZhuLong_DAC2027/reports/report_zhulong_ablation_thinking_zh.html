@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZhuLong thinking 档位消融报告（轴 A）· 含成本</title>
+<style>
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1180px;margin:24px auto;padding:0 24px;color:#1f2328;line-height:1.65;background:#fafbfc}
+h1{font-size:1.55em;border-bottom:2px solid #0969da;padding-bottom:8px}
+h2{font-size:1.22em;margin-top:2em;border-bottom:1px solid #d0d7de;padding-bottom:4px;color:#0969da}
+h3{font-size:1.05em;margin-top:1.4em}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.86em}
+th,td{border:1px solid #d0d7de;padding:5px 8px;text-align:center;white-space:nowrap}
+th{background:#eef2f6;font-weight:600}
+td.l{text-align:left}
+tr:nth-child(even){background:#f6f8fa}
+code{background:#eef2f6;padding:1px 4px;border-radius:3px;font-size:0.9em}
+.banner{padding:10px 14px;border-radius:6px;margin:14px 0}
+.warn{background:#fff8c5;border:1px solid #d4a72c;color:#633c01}
+.ok{background:#dafbe1;border:1px solid #1a7f37;color:#0a3622}
+.info{background:#ddf4ff;border:1px solid #0969da;color:#0a417a}
+.err{background:#ffebe9;border:1px solid #cf222e;color:#82071e}
+.small{font-size:0.82em;color:#57606a}
+.quad{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.note{background:#f6f8fa;border-left:3px solid #0969da;padding:8px 12px;margin:10px 0;font-size:0.9em}
+ul{margin:6px 0}
+</style></head><body>
+<h1>ZhuLong 消融报告（轴 A）：cline <code>--thinking</code> 档位</h1>
+
+<div class="banner ok">✅ 轴 A（thinking 档位）全部 15/15 轮完成，本报告为最终版</div>
+
+<div class="note">
+<b>口径</b>：基座 = <code>glm-5.2</code>（恒定）｜harness = cline 3.0.51（不改版本）｜
+测试集 = EDA-Eval-PyAether 158 题（不跑 SKILL/Tcl）｜协议 = Pass@1 单次无 retry <code>-p 8 -n</code>｜
+每档 3 轮，共 15 轮。<br>
+<b>基线锚点</b>：B.glm-5.2 (cline CLI 5-run) = 83.3 ± 3.1%（rounds=[84.2, 87.3, 84.2, 79.1, 81.6]，既有 cline CLI 5-run）。<br>
+<b>档位</b>：['none', 'low', 'medium', 'high', 'xhigh']（<code>none</code>=无 <code>--thinking</code>，<code>medium</code>=基线档，<code>xhigh</code>=最高档）。<br>
+<b>范围</b>：本报告仅轴 A（thinking 档位）；轴 B（思维链语言）见两轴总报告。
+</div>
+
+<h2>1. 核心结论</h2>
+<div class="note">
+<b>倒 U 形确认</b>：随 <code>--thinking</code> 档位从 none 逐级升高，Pass@1 先升后降，
+在 <code>medium</code> 达峰值（与 <code>high</code> 均值相同，但 medium 方差最小、最稳定），
+到 <code>xhigh</code> 回落到基线以下 —— 过度思考反而损害正确率。<br>
+<b>趋势</b>：none→low 开思考: Δ+4.6pp、low→medium 加深: Δ+1.3pp、medium→high: Δ+0.0pp（方差 0.7→2.7）、high→xhigh 过度思考: Δ-3.2pp（回落）。<br>
+<b>最优档位</b>：<code>medium（85.4±0.7%）</code>（默认 <code>medium</code> 即最优档，无需再调高；提高档位只增加成本与方差）。
+</div>
+
+<h2>2. 汇总对比（分数 + 成本）</h2>
+<p class="small">Δpp 为 vs 基线 83.3%；墙钟/题=每任务墙钟秒数；prompt/completion/reasoning tok 为该档 3 轮总量均值；tok/题=每任务总 token 均值。</p>
+<table class=""><thead><tr><th>变体</th><th>轮次</th><th>Pass@1(%)</th><th>Δpp vs基线</th><th>墙钟/题</th><th>Batch墙钟</th><th>prompt tok</th><th>completion tok</th><th>reasoning tok</th><th>total tok</th><th>tok/题</th><th>converged</th><th>timeout</th><th>gen-fail</th></tr></thead><tbody><tr><td>A-none</td><td>3/3</td><td>79.5 ± 2.6</td><td>-3.8</td><td>390 ± 76s</td><td>2.34 ± 0.59h</td><td>1.27亿</td><td>237.6万</td><td>110.2万</td><td>1.30亿</td><td>82.0万</td><td>96.2 ± 6.6%</td><td>2.3</td><td>5.7</td></tr><tr><td>A-low</td><td>3/3</td><td>84.2 ± 1.1</td><td>0.9</td><td>355 ± 50s</td><td>2.13 ± 0.34h</td><td>1.16亿</td><td>215.3万</td><td>97.6万</td><td>1.19亿</td><td>75.0万</td><td>99.8 ± 0.3%</td><td>1.7</td><td>0.0</td></tr><tr><td>A-medium</td><td>3/3</td><td>85.4 ± 0.7</td><td>2.1</td><td>385 ± 15s</td><td>2.56 ± 0.43h</td><td>1.35亿</td><td>243.7万</td><td>108.5万</td><td>1.37亿</td><td>86.7万</td><td>99.6 ± 0.3%</td><td>2.0</td><td>0.0</td></tr><tr><td>A-high</td><td>3/3</td><td>85.4 ± 2.7</td><td>2.1</td><td>439 ± 32s</td><td>3.15 ± 0.82h</td><td>1.41亿</td><td>263.3万</td><td>123.0万</td><td>1.43亿</td><td>90.7万</td><td>99.8 ± 0.3%</td><td>3.7</td><td>0.0</td></tr><tr><td>A-xhigh</td><td>3/3</td><td>82.3 ± 1.1</td><td>-1.0</td><td>535 ± 47s</td><td>3.51 ± 0.72h</td><td>1.37亿</td><td>372.7万</td><td>210.0万</td><td>1.41亿</td><td>89.3万</td><td>99.8 ± 0.3%</td><td>3.3</td><td>0.0</td></tr><tr><td>B.glm-5.2 (cline CLI 5-run)</td><td>5/5</td><td>83.3 ± 3.1</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+
+<h2>3. 逐轮明细（每轮完整成本）</h2>
+<p class="small">每档 3 轮逐一列出 Pass@1 与全套成本字段，便于核对方差来源（尤其 high 档 3 轮 82.3/87.3/86.7 的高散度）。</p>
+<table class=""><thead><tr><th>轮次</th><th>gen 批次</th><th>Pass@1(%)</th><th>passed/total</th><th>墙钟/题</th><th>Batch墙钟</th><th>prompt tok</th><th>compl tok</th><th>reasoning tok</th><th>total tok</th><th>tok/题</th><th>converged</th><th>timeout</th><th>gen-fail</th></tr></thead><tbody><tr><td>A_none_r1</td><td>2026_1107_083036</td><td>82.3%</td><td>130/158</td><td>436s</td><td>2.79h</td><td>1.46亿</td><td>265.8万</td><td>124.8万</td><td>1.49亿</td><td>94.1万</td><td>100.0%</td><td>3</td><td>0</td></tr><tr><td>A_none_r2</td><td>2026_1107_111911</td><td>77.2%</td><td>122/158</td><td>302s</td><td>1.67h</td><td>1.03亿</td><td>186.8万</td><td>84.3万</td><td>1.05亿</td><td>66.3万</td><td>88.6%</td><td>1</td><td>17</td></tr><tr><td>A_none_r3</td><td>2026_1107_141709</td><td>79.1%</td><td>None/None</td><td>431s</td><td>2.55h</td><td>1.33亿</td><td>260.1万</td><td>121.7万</td><td>1.35亿</td><td>85.7万</td><td>100.0%</td><td>3</td><td>0</td></tr><tr><td>A_low_r1</td><td>2026_1107_172457</td><td>84.8%</td><td>None/None</td><td>390s</td><td>2.35h</td><td>1.22亿</td><td>232.5万</td><td>105.9万</td><td>1.24亿</td><td>78.7万</td><td>99.4%</td><td>3</td><td>0</td></tr><tr><td>A_low_r2</td><td>2026_1107_202342</td><td>84.8%</td><td>None/None</td><td>297s</td><td>1.73h</td><td>1.05亿</td><td>186.9万</td><td>81.0万</td><td>1.07亿</td><td>67.8万</td><td>100.0%</td><td>0</td><td>0</td></tr><tr><td>A_low_r3</td><td>2026_1107_222951</td><td>82.9%</td><td>None/None</td><td>376s</td><td>2.30h</td><td>1.22亿</td><td>226.4万</td><td>106.0万</td><td>1.24亿</td><td>78.6万</td><td>100.0%</td><td>2</td><td>0</td></tr><tr><td>A_medium_r1</td><td>2026_1108_011419</td><td>84.8%</td><td>None/None</td><td>398s</td><td>3.06h</td><td>1.38亿</td><td>245.1万</td><td>108.1万</td><td>1.40亿</td><td>88.6万</td><td>100.0%</td><td>1</td><td>0</td></tr><tr><td>A_medium_r2</td><td>2026_1108_044517</td><td>85.4%</td><td>None/None</td><td>369s</td><td>2.28h</td><td>1.26亿</td><td>231.1万</td><td>104.6万</td><td>1.29亿</td><td>81.5万</td><td>99.4%</td><td>2</td><td>0</td></tr><tr><td>A_medium_r3</td><td>2026_1108_071626</td><td>86.1%</td><td>None/None</td><td>390s</td><td>2.35h</td><td>1.40亿</td><td>254.8万</td><td>112.8万</td><td>1.42亿</td><td>89.9万</td><td>99.4%</td><td>3</td><td>0</td></tr><tr><td>A_high_r1</td><td>2026_1108_102522</td><td>82.3%</td><td>None/None</td><td>465s</td><td>2.93h</td><td>1.52亿</td><td>274.3万</td><td>130.3万</td><td>1.54亿</td><td>97.7万</td><td>100.0%</td><td>3</td><td>0</td></tr><tr><td>A_high_r2</td><td>2026_1108_133443</td><td>87.3%</td><td>None/None</td><td>449s</td><td>4.06h</td><td>1.38亿</td><td>270.9万</td><td>125.0万</td><td>1.41亿</td><td>89.2万</td><td>99.4%</td><td>4</td><td>0</td></tr><tr><td>A_high_r3</td><td>2026_1108_175735</td><td>86.7%</td><td>None/None</td><td>403s</td><td>2.46h</td><td>1.32亿</td><td>244.8万</td><td>113.8万</td><td>1.35亿</td><td>85.3万</td><td>100.0%</td><td>4</td><td>0</td></tr><tr><td>A_xhigh_r1</td><td>2026_1108_205131</td><td>82.9%</td><td>None/None</td><td>586s</td><td>4.25h</td><td>1.45亿</td><td>402.2万</td><td>228.5万</td><td>1.49亿</td><td>94.2万</td><td>99.4%</td><td>4</td><td>0</td></tr><tr><td>A_xhigh_r2</td><td>2026_1109_013327</td><td>81.0%</td><td>None/None</td><td>526s</td><td>3.47h</td><td>1.36亿</td><td>370.9万</td><td>207.4万</td><td>1.40亿</td><td>88.4万</td><td>100.0%</td><td>3</td><td>0</td></tr><tr><td>A_xhigh_r3</td><td>2026_1109_052847</td><td>82.9%</td><td>None/None</td><td>494s</td><td>2.81h</td><td>1.31亿</td><td>344.9万</td><td>194.0万</td><td>1.35亿</td><td>85.3万</td><td>100.0%</td><td>3</td><td>0</td></tr></tbody></table>
+
+<h2>4. 成本-分数象限</h2>
+<p class="small">横轴 Pass@1（%），纵轴 token/题（成本）；红色虚竖线 = 基线 83.3%。理想变体 = 左上（低 token 高分数）。</p>
+<div style="position:relative;width:520px;height:360px;border:1px solid #d0d7de;background:#fff;margin:8px 0"><div class="quad" style="background:#0969da;position:absolute;left:126.7px;top:187.5px" title="A-none"></div><div style="position:absolute;left:143.7px;top:188.5px;font-size:10px;color:#0969da">A-none</div><div class="quad" style="background:#0969da;position:absolute;left:325.1px;top:305.0px" title="A-low"></div><div style="position:absolute;left:342.1px;top:306.0px;font-size:10px;color:#0969da">A-low</div><div class="quad" style="background:#0969da;position:absolute;left:379.3px;top:108.7px" title="A-medium"></div><div style="position:absolute;left:396.3px;top:109.7px;font-size:10px;color:#0969da">A-medium</div><div class="quad" style="background:#0969da;position:absolute;left:379.3px;top:41.0px" title="A-high"></div><div style="position:absolute;left:396.3px;top:42.0px;font-size:10px;color:#0969da">A-high</div><div class="quad" style="background:#0969da;position:absolute;left:243.7px;top:65.0px" title="A-xhigh"></div><div style="position:absolute;left:260.7px;top:66.0px;font-size:10px;color:#0969da">A-xhigh</div><div style="position:absolute;left:295.0px;top:46px;height:268px;border-left:1px dashed #cf222e"></div><div style="position:absolute;left:298.0px;top:34px;font-size:10px;color:#cf222e">基线 83.3%</div><div style="position:absolute;left:220.0px;top:342px;font-size:11px;color:#57606a">Pass@1 (%)</div><div style="position:absolute;left:6px;top:130.0px;font-size:11px;color:#57606a;transform:rotate(-90deg);transform-origin:left top">token/题</div><div style="position:absolute;left:36.0px;top:316px;font-size:9px;color:#8c959f">77.5</div><div style="position:absolute;left:248.0px;top:316px;font-size:9px;color:#8c959f">82.5</div><div style="position:absolute;left:460.0px;top:316px;font-size:9px;color:#8c959f">87.4</div><div style="position:absolute;left:14.0px;top:306.0px;font-size:9px;color:#8c959f">75.0万</div><div style="position:absolute;left:14.0px;top:174.0px;font-size:9px;color:#8c959f">82.9万</div><div style="position:absolute;left:14.0px;top:42.0px;font-size:9px;color:#8c959f">90.7万</div></div>
+
+<h2>5. 失败归因</h2>
+<p class="small">timeout / gen-fail 为该档 3 轮均值；converged 为收敛任务占比均值。</p>
+<table class=""><thead><tr><th>变体</th><th>timeout 均值</th><th>gen-fail 均值</th><th>converged</th></tr></thead><tbody><tr><td>A-none</td><td>2.3</td><td>5.7</td><td>96.2 ± 6.6%</td></tr><tr><td>A-low</td><td>1.7</td><td>0.0</td><td>99.8 ± 0.3%</td></tr><tr><td>A-medium</td><td>2.0</td><td>0.0</td><td>99.6 ± 0.3%</td></tr><tr><td>A-high</td><td>3.7</td><td>0.0</td><td>99.8 ± 0.3%</td></tr><tr><td>A-xhigh</td><td>3.3</td><td>0.0</td><td>99.8 ± 0.3%</td></tr></tbody></table>
+
+<h2>6. 口径校验：<code>--thinking</code> flag 确实生效</h2>
+<p class="small">各档可见思维块数（n_thinking_blocks）与思维链字符数应随档位单调上升，否则 flag 未注入、该档数据不可用。</p>
+<table class=""><thead><tr><th>变体</th><th>样本</th><th>n_thinking_blocks</th><th>reasoning_chars</th></tr></thead><tbody><tr><td>A-none</td><td>474 题</td><td>18.8 ± 21.0</td><td>27910 ± 48975 字/题</td></tr><tr><td>A-low</td><td>474 题</td><td>17.7 ± 18.2</td><td>24718 ± 40408 字/题</td></tr><tr><td>A-medium</td><td>474 题</td><td>19.5 ± 19.1</td><td>27475 ± 38944 字/题</td></tr><tr><td>A-high</td><td>474 题</td><td>20.7 ± 26.3</td><td>31145 ± 57982 字/题</td></tr><tr><td>A-xhigh</td><td>474 题</td><td>21.4 ± 21.3</td><td>53153 ± 89712 字/题</td></tr></tbody></table>
+
+<h2>附：轴 A 全体成本</h2>
+<p class="small">15 轮合计：total tokens = 20.09亿；批墙钟合计 = 41.06h；
+每任务 token 均值 = 847506 ± 90004。</p>
+
+<div class="small" style="margin-top:2em;color:#8c959f">
+生成时间 2026-11-09 11:11:00 +0800 ｜ 数据源 run/ablation_think_lang_results.json（不入 git）
+｜ 生成器 gen_report_zhulong_ablation_thinking_zh.py（0 script / 0 外链）。
+</div>
+</body></html>

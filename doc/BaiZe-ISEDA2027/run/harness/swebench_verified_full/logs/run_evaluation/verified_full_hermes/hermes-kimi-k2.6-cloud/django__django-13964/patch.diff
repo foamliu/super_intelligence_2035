@@ -1,0 +1,210 @@
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 242821869..988ade007 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -933,14 +933,14 @@ class Model(metaclass=ModelBase):
+                         "%s() prohibited to prevent data loss due to unsaved "
+                         "related object '%s'." % (operation_name, field.name)
+                     )
+-                elif getattr(self, field.attname) is None:
++                else:
+                     # Use pk from related object if it has been saved after
+-                    # an assignment.
+-                    setattr(self, field.attname, obj.pk)
+-                # If the relationship's pk/to_field was changed, clear the
+-                # cached relationship.
+-                if getattr(obj, field.target_field.attname) != getattr(self, field.attname):
+-                    field.delete_cached_value(self)
++                    # an assignment or if the pk was changed.
++                    related_pk = getattr(obj, field.target_field.attname)
++                    if getattr(self, field.attname) != related_pk:
++                        setattr(self, field.attname, related_pk)
++                        if field.is_cached(self):
++                            field.delete_cached_value(self)
+ 
+     def delete(self, using=None, keep_parents=False):
+         using = using or router.db_for_write(self.__class__, instance=self)
+diff --git a/test_issue.py b/test_issue.py
+new file mode 100644
+index 000000000..e175eafea
+--- /dev/null
++++ b/test_issue.py
+@@ -0,0 +1,25 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth', 'testapp'],
++)
++
++django.setup()
++
++from django.core.management import call_command
++call_command('migrate', '--run-syncdb', verbosity=0)
++
++from django.db import transaction
++from testapp.models import Product, Order
++
++with transaction.atomic():
++    order = Order()
++    order.product = Product()
++    order.product.sku = 'foo'
++    order.product.save()
++    order.save()
++    print('product_id:', repr(order.product_id))
++    print('Order.filter(product_id=""):', Order.objects.filter(product_id='').exists())
++    print('Order.filter(product=order.product):', Order.objects.filter(product=order.product).exists())
+diff --git a/test_regression.py b/test_regression.py
+new file mode 100644
+index 000000000..e7b76a930
+--- /dev/null
++++ b/test_regression.py
+@@ -0,0 +1,65 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth', 'testapp'],
++)
++
++django.setup()
++
++from django.core.management import call_command
++call_command('migrate', '--run-syncdb', verbosity=0)
++
++from django.db import transaction
++from testapp.models import Product, Order
++
++# Scenario 1: assign unsaved product with empty pk, then set pk and save
++with transaction.atomic():
++    order = Order()
++    order.product = Product()
++    order.product.sku = 'foo'
++    order.product.save()
++    order.save()
++    assert order.product_id == 'foo', f"Expected 'foo', got {order.product_id!r}"
++    assert Order.objects.filter(product=order.product).exists()
++
++print('Scenario 1 passed')
++
++# Scenario 2: assign saved product directly
++with transaction.atomic():
++    order2 = Order()
++    order2.product = Product(sku='bar')
++    order2.product.save()
++    order2.save()
++    assert order2.product_id == 'bar'
++    assert Order.objects.filter(product=order2.product).exists()
++
++print('Scenario 2 passed')
++
++# Scenario 3: assign unsaved product without pk should raise ValueError
++try:
++    order3 = Order()
++    order3.product = Product()
++    order3.save()
++    assert False, "Should have raised ValueError"
++except ValueError as e:
++    assert 'unsaved' in str(e)
++    print('Scenario 3 passed')
++
++# Scenario 4: changing the pk of a saved related object after assignment
++with transaction.atomic():
++    p = Product(sku='baz')
++    p.save()
++    order4 = Order()
++    order4.product = p
++    assert order4.product_id == 'baz'
++    p.sku = 'qux'
++    p.save()
++    order4.save()
++    assert order4.product_id == 'qux', f"Expected 'qux', got {order4.product_id!r}"
++    assert Order.objects.filter(product=p).exists()
++
++print('Scenario 4 passed')
++
++print('All regression tests passed')
+diff --git a/testapp/__init__.py b/testapp/__init__.py
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/testapp/models.py b/testapp/models.py
+new file mode 100644
+index 000000000..c14655ecc
+--- /dev/null
++++ b/testapp/models.py
+@@ -0,0 +1,7 @@
++from django.db import models
++
++class Product(models.Model):
++    sku = models.CharField(primary_key=True, max_length=50)
++
++class Order(models.Model):
++    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+diff --git a/tests/many_to_one/models.py b/tests/many_to_one/models.py
+index e9f8fbff7..174d2274d 100644
+--- a/tests/many_to_one/models.py
++++ b/tests/many_to_one/models.py
+@@ -114,3 +114,11 @@ class School(models.Model):
+ 
+ class Student(models.Model):
+     school = models.ForeignKey(School, models.CASCADE)
++
++
++class ParentWithCharPK(models.Model):
++    name = models.CharField(primary_key=True, max_length=50)
++
++
++class ChildWithCharPK(models.Model):
++    parent = models.ForeignKey(ParentWithCharPK, models.CASCADE)
+diff --git a/tests/many_to_one/tests.py b/tests/many_to_one/tests.py
+index 3c7cd0c3f..bc2cfc089 100644
+--- a/tests/many_to_one/tests.py
++++ b/tests/many_to_one/tests.py
+@@ -7,8 +7,8 @@ from django.test import TestCase
+ from django.utils.translation import gettext_lazy
+ 
+ from .models import (
+-    Article, Category, Child, ChildNullableParent, City, Country, District,
+-    First, Parent, Record, Relation, Reporter, School, Student, Third,
++    Article, Category, Child, ChildNullableParent, ChildWithCharPK, City, Country, District,
++    First, Parent, ParentWithCharPK, Record, Relation, Reporter, School, Student, Third,
+     ToFieldChild,
+ )
+ 
+@@ -726,3 +726,34 @@ class ManyToOneTests(TestCase):
+             usa.cities.remove(chicago.pk)
+         with self.assertRaisesMessage(TypeError, msg):
+             usa.cities.set([chicago.pk])
++
++    def test_unsaved_char_pk_fk_synced_on_save(self):
++        """
++        Assigning an unsaved related instance with a non-auto CharField PK,
++        then setting the PK and saving the related instance, should sync the
++        FK value when the parent is saved.
++        """
++        parent = ParentWithCharPK()
++        child = ChildWithCharPK()
++        child.parent = parent
++        parent.name = 'foo'
++        parent.save()
++        child.save()
++        self.assertEqual(child.parent_id, 'foo')
++        self.assertTrue(ChildWithCharPK.objects.filter(parent=parent).exists())
++
++    def test_char_pk_change_synced_on_save(self):
++        """
++        Changing the PK of a saved related instance after assignment should
++        be reflected in the FK when the parent is saved.
++        """
++        parent = ParentWithCharPK(name='bar')
++        parent.save()
++        child = ChildWithCharPK()
++        child.parent = parent
++        self.assertEqual(child.parent_id, 'bar')
++        parent.name = 'baz'
++        parent.save()
++        child.save()
++        self.assertEqual(child.parent_id, 'baz')
++        self.assertTrue(ChildWithCharPK.objects.filter(parent=parent).exists())

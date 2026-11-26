@@ -1,0 +1,59 @@
+```tcl
+proc analog_pex_netlist_audit {inst_path net_path} {
+    # ---- read declared .inst cell names ----
+    set inst_cells {}
+    set fh [open $inst_path r]
+    while {[gets $fh line] >= 0} {
+        set line [string trim $line]
+        if {$line ne ""} {
+            lappend inst_cells $line
+        }
+    }
+    close $fh
+    set inst_cells [lsort -unique $inst_cells]
+
+    # ---- read netlists/ symlinks; classify by EXACT anchored suffix,
+    #       never by a substring/contains ".spf" test ----
+    set cdl_spf {}
+    set spf_rc {}
+    set fh [open $net_path r]
+    while {[gets $fh line] >= 0} {
+        set line [string trim $line]
+        if {$line eq ""} {
+            continue
+        }
+        if {[string match "*.cdl.spf" $line]} {
+            # ".cdl.spf" suffix is 8 characters
+            lappend cdl_spf [string range $line 0 end-8]
+        } elseif {[string match "*.spf_RC" $line]} {
+            # ".spf_RC" suffix is 7 characters
+            lappend spf_rc [string range $line 0 end-7]
+        }
+        # any other suffix is not a PEX netlist reference
+    }
+    close $fh
+
+    set cdl_spf [lsort -unique $cdl_spf]
+    set spf_rc  [lsort -unique $spf_rc]
+    set with_pex [lsort -unique [concat $cdl_spf $spf_rc]]
+
+    # ---- declared cells with no PEX symlink -> will SMSC-99 fail ----
+    set no_pex {}
+    foreach cell $inst_cells {
+        if {[lsearch -exact $with_pex $cell] < 0} {
+            lappend no_pex $cell
+        }
+    }
+    set no_pex [lsort $no_pex]
+
+    # ---- emit flat dict string ----
+    set out ""
+    append out "num_inst_cells [llength $inst_cells] "
+    append out "num_with_pex [llength $with_pex] "
+    append out "num_no_pex [llength $no_pex] "
+    append out "num_cdl_spf [llength $cdl_spf] "
+    append out "num_spf_rc [llength $spf_rc] "
+    append out "no_pex_cells [join $no_pex " "]"
+    return [string trim $out]
+}
+```

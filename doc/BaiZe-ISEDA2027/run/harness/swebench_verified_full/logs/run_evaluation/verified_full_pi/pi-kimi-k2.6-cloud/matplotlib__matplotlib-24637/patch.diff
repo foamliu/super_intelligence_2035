@@ -1,0 +1,54 @@
+diff --git a/lib/matplotlib/offsetbox.py b/lib/matplotlib/offsetbox.py
+index efa34dd07..ab9bf0abf 100644
+--- a/lib/matplotlib/offsetbox.py
++++ b/lib/matplotlib/offsetbox.py
+@@ -1453,12 +1453,14 @@ or callable, default: value of *xycoords*
+         if not self.get_visible() or not self._check_xy(renderer):
+             return
+         self.update_positions(renderer)
++        renderer.open_group('annotationbox', self.get_gid())
+         if self.arrow_patch is not None:
+             if self.arrow_patch.figure is None and self.figure is not None:
+                 self.arrow_patch.figure = self.figure
+             self.arrow_patch.draw(renderer)
+         self.patch.draw(renderer)
+         self.offsetbox.draw(renderer)
++        renderer.close_group('annotationbox')
+         self.stale = False
+ 
+ 
+diff --git a/lib/matplotlib/tests/test_backend_svg.py b/lib/matplotlib/tests/test_backend_svg.py
+index 78383904c..097a91571 100644
+--- a/lib/matplotlib/tests/test_backend_svg.py
++++ b/lib/matplotlib/tests/test_backend_svg.py
+@@ -298,6 +298,30 @@ def test_gid():
+             assert gid in buf
+ 
+ 
++def test_annotationbbox_gid():
++    """Test that AnnotationBbox gid appears in output svg."""
++    from matplotlib.offsetbox import AnnotationBbox, OffsetImage
++
++    fig, ax = plt.subplots()
++    arr = np.ones((10, 10, 3))
++    imagebox = OffsetImage(arr, zoom=1)
++    imagebox.image.axes = ax
++
++    ab = AnnotationBbox(imagebox, (0.5, 0.5),
++                        xybox=(0.5, 0.5),
++                        xycoords='data',
++                        boxcoords='axes fraction',
++                        pad=0.5)
++    ab.set_gid('test_annotationbbox_gid')
++    ax.add_artist(ab)
++
++    with BytesIO() as fd:
++        fig.savefig(fd, format='svg')
++        buf = fd.getvalue().decode()
++
++    assert 'test_annotationbbox_gid' in buf
++
++
+ def test_savefig_tight():
+     # Check that the draw-disabled renderer correctly disables open/close_group
+     # as well.

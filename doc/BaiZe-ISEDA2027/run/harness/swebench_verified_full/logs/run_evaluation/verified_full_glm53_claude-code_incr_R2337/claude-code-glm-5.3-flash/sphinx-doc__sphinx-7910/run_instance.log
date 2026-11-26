@@ -1,0 +1,166 @@
+2026-11-13 06:25:19,877 - INFO - Creating container for sphinx-doc__sphinx-7910...
+2026-11-13 06:25:19,907 - INFO - Container for sphinx-doc__sphinx-7910 created: d0ffc63be14c1ee19a9ee756fa7a45ae72b98eb00cd1ceb5eff01b5f11dc3984
+2026-11-13 06:25:20,757 - INFO - Container for sphinx-doc__sphinx-7910 started: d0ffc63be14c1ee19a9ee756fa7a45ae72b98eb00cd1ceb5eff01b5f11dc3984
+2026-11-13 06:25:20,759 - INFO - Intermediate patch for sphinx-doc__sphinx-7910 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2337/claude-code-glm-5.3-flash/sphinx-doc__sphinx-7910/patch.diff, now applying to container...
+2026-11-13 06:25:20,933 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+Checking patch sphinx/ext/napoleon/__init__.py...
+Checking patch tests/napoleon_decorator.py...
+Checking patch tests/test_ext_napoleon.py...
+Applied patch CHANGES cleanly.
+Applied patch sphinx/ext/napoleon/__init__.py cleanly.
+Applied patch tests/napoleon_decorator.py cleanly.
+Applied patch tests/test_ext_napoleon.py cleanly.
+
+2026-11-13 06:25:21,381 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index 894b9447a..59901e7e9 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -33,6 +33,9 @@ Bugs fixed
+ * #7846: html theme: XML-invalid files were generated
+ * #7869: :rst:role:`abbr` role without an explanation will show the explanation
+   from the previous abbr role
++* #4404: napoleon: decorated ``__init__`` and other members are not documented
++  when ``napoleon_include_init_with_doc`` (or the private/special variants) is
++  enabled
+ * C and C++, removed ``noindex`` directive option as it did
+   nothing.
+ 
+diff --git a/sphinx/ext/napoleon/__init__.py b/sphinx/ext/napoleon/__init__.py
+index 10b1ff3a3..cc70b1307 100644
+--- a/sphinx/ext/napoleon/__init__.py
++++ b/sphinx/ext/napoleon/__init__.py
+@@ -8,6 +8,7 @@
+     :license: BSD, see LICENSE for details.
+ """
+ 
++import inspect
+ from typing import Any, Dict, List
+ 
+ from sphinx import __display_version__ as __version__
+@@ -438,7 +439,7 @@ def _skip_member(app: Sphinx, what: str, name: str, obj: Any,
+                         mod_path = cls_path.split('.')
+                         cls = functools.reduce(getattr, mod_path, mod)
+                     else:
+-                        cls = obj.__globals__[cls_path]
++                        cls = inspect.unwrap(obj).__globals__[cls_path]
+                 except Exception:
+                     cls_is_owner = False
+                 else:
+diff --git a/tests/test_ext_napoleon.py b/tests/test_ext_napoleon.py
+index 7c3379757..4bcb13245 100644
+--- a/tests/test_ext_napoleon.py
++++ b/tests/test_ext_napoleon.py
+@@ -16,6 +16,8 @@ from unittest import TestCase, mock
+ from sphinx.application import Sphinx
+ from sphinx.ext.napoleon import _process_docstring, _skip_member, Config, setup
+ 
++from napoleon_decorator import _decorator
++
+ 
+ def _private_doc():
+     """module._private_doc.DOCSTRING"""
+@@ -51,6 +53,20 @@ class SampleClass:
+         pass
+ 
+ 
++class SampleDecoratedClass:
++    @_decorator
++    def __init__(self):
++        """SampleDecoratedClass.__init__.DOCSTRING"""
++
++    @_decorator
++    def _private_doc(self):
++        """SampleDecoratedClass._private_doc.DOCSTRING"""
++
++    @_decorator
++    def __special_doc__(self):
++        """SampleDecoratedClass.__special_doc__.DOCSTRING"""
++
++
+ class SampleError(Exception):
+     def _private_doc(self):
+         """SampleError._private_doc.DOCSTRING"""
+@@ -130,8 +146,10 @@ class SkipMemberTest(TestCase):
+             self.assertEqual(None, _skip_member(app, what, member, obj, skip,
+                                                 mock.Mock()))
+         else:
+-            self.assertFalse(_skip_member(app, what, member, obj, skip,
+-                                          mock.Mock()))
++            # napoleon must explicitly return False (not None) to keep
++            # autodoc from skipping the member
++            self.assertIs(False, _skip_member(app, what, member, obj, skip,
++                                              mock.Mock()))
+         setattr(app.config, config_name, False)
+         self.assertEqual(None, _skip_member(app, what, member, obj, skip,
+                                             mock.Mock()))
+@@ -165,6 +183,21 @@ class SkipMemberTest(TestCase):
+                         SampleClass.__special_doc__, False,
+                         'napoleon_include_special_with_doc')
+ 
++    def test_class_decorated_init_doc(self):
++        self.assertSkip('class', '__init__',
++                        SampleDecoratedClass.__init__, False,
++                        'napoleon_include_init_with_doc')
++
++    def test_class_decorated_private_doc(self):
++        self.assertSkip('class', '_private_doc',
++                        SampleDecoratedClass._private_doc, False,
++                        'napoleon_include_private_with_doc')
++
++    def test_class_decorated_special_doc(self):
++        self.assertSkip('class', '__special_doc__',
++                        SampleDecoratedClass.__special_doc__, False,
++                        'napoleon_include_special_with_doc')
++
+     def test_class_special_undoc(self):
+         self.assertSkip('class', '__special_undoc__',
+                         SampleClass.__special_undoc__, True,
+2026-11-13 06:25:21,385 - INFO - Eval script for sphinx-doc__sphinx-7910 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2337/claude-code-glm-5.3-flash/sphinx-doc__sphinx-7910/eval.sh; copying to container...
+2026-11-13 06:25:25,107 - INFO - Test runtime: 3.65 seconds
+2026-11-13 06:25:25,109 - INFO - Test output for sphinx-doc__sphinx-7910 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2337/claude-code-glm-5.3-flash/sphinx-doc__sphinx-7910/test_output.txt
+2026-11-13 06:25:25,177 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index 894b9447a..59901e7e9 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -33,6 +33,9 @@ Bugs fixed
+ * #7846: html theme: XML-invalid files were generated
+ * #7869: :rst:role:`abbr` role without an explanation will show the explanation
+   from the previous abbr role
++* #4404: napoleon: decorated ``__init__`` and other members are not documented
++  when ``napoleon_include_init_with_doc`` (or the private/special variants) is
++  enabled
+ * C and C++, removed ``noindex`` directive option as it did
+   nothing.
+ 
+diff --git a/sphinx/ext/napoleon/__init__.py b/sphinx/ext/napoleon/__init__.py
+index 10b1ff3a3..cc70b1307 100644
+--- a/sphinx/ext/napoleon/__init__.py
++++ b/sphinx/ext/napoleon/__init__.py
+@@ -8,6 +8,7 @@
+     :license: BSD, see LICENSE for details.
+ """
+ 
++import inspect
+ from typing import Any, Dict, List
+ 
+ from sphinx import __display_version__ as __version__
+@@ -438,7 +439,7 @@ def _skip_member(app: Sphinx, what: str, name: str, obj: Any,
+                         mod_path = cls_path.split('.')
+                         cls = functools.reduce(getattr, mod_path, mod)
+                     else:
+-                        cls = obj.__globals__[cls_path]
++                        cls = inspect.unwrap(obj).__globals__[cls_path]
+                 except Exception:
+                     cls_is_owner = False
+                 else:
+2026-11-13 06:25:25,178 - INFO - Git diff changed after running eval script
+2026-11-13 06:25:25,178 - INFO - Grading answer for sphinx-doc__sphinx-7910...
+2026-11-13 06:25:25,181 - INFO - report: {'sphinx-doc__sphinx-7910': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_napoleon.py::SkipMemberTest::test_class_decorated_doc'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_napoleon.py::ProcessDocstringTest::test_modify_in_place', 'tests/test_ext_napoleon.py::SetupTest::test_add_config_values', 'tests/test_ext_napoleon.py::SetupTest::test_unknown_app_type', 'tests/test_ext_napoleon.py::SkipMemberTest::test_class_private_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_class_private_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_class_special_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_class_special_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_exception_private_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_exception_private_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_exception_special_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_exception_special_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_module_private_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_module_private_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_module_special_doc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_module_special_undoc', 'tests/test_ext_napoleon.py::SkipMemberTest::test_namedtuple'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-7910: resolved: True
+2026-11-13 06:25:25,183 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-7910.verified_full_glm53_claude-code_incr_R2337...
+2026-11-13 06:25:41,305 - INFO - Container sweb.eval.sphinx-doc__sphinx-7910.verified_full_glm53_claude-code_incr_R2337 stopped successfully.
+2026-11-13 06:25:41,305 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7910.verified_full_glm53_claude-code_incr_R2337...
+2026-11-13 06:25:41,348 - INFO - Container sweb.eval.sphinx-doc__sphinx-7910.verified_full_glm53_claude-code_incr_R2337 removed successfully.

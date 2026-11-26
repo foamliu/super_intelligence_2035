@@ -1,0 +1,347 @@
+2026-11-12 07:42:35,508 - INFO - Creating container for sympy__sympy-12419...
+2026-11-12 07:42:35,545 - INFO - Container for sympy__sympy-12419 created: 48c3d843ed2316ac59ceb113e66680191eda65c2cc01e8a91078fa16c462d39e
+2026-11-12 07:42:36,254 - INFO - Container for sympy__sympy-12419 started: 48c3d843ed2316ac59ceb113e66680191eda65c2cc01e8a91078fa16c462d39e
+2026-11-12 07:42:36,256 - INFO - Intermediate patch for sympy__sympy-12419 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2241/cline-glm-5.3-flash/sympy__sympy-12419/patch.diff, now applying to container...
+2026-11-12 07:42:36,388 - INFO - >>>>> Applied Patch:
+Checking patch sympy/concrete/delta.py...
+warning: sympy/concrete/delta.py has type 100755, expected 100644
+Checking patch sympy/concrete/tests/test_delta.py...
+warning: sympy/concrete/tests/test_delta.py has type 100755, expected 100644
+Checking patch sympy/functions/special/tensor_functions.py...
+warning: sympy/functions/special/tensor_functions.py has type 100755, expected 100644
+Checking patch sympy/functions/special/tests/test_tensor_functions.py...
+warning: sympy/functions/special/tests/test_tensor_functions.py has type 100755, expected 100644
+Checking patch sympy/matrices/expressions/matexpr.py...
+warning: sympy/matrices/expressions/matexpr.py has type 100755, expected 100644
+Checking patch sympy/matrices/expressions/tests/test_matexpr.py...
+warning: sympy/matrices/expressions/tests/test_matexpr.py has type 100755, expected 100644
+Applied patch sympy/concrete/delta.py cleanly.
+Applied patch sympy/concrete/tests/test_delta.py cleanly.
+Applied patch sympy/functions/special/tensor_functions.py cleanly.
+Applied patch sympy/functions/special/tests/test_tensor_functions.py cleanly.
+Applied patch sympy/matrices/expressions/matexpr.py cleanly.
+Applied patch sympy/matrices/expressions/tests/test_matexpr.py cleanly.
+
+2026-11-12 07:42:36,878 - INFO - Git diff before:
+diff --git a/sympy/concrete/delta.py b/sympy/concrete/delta.py
+index 014d5b577..a219d4844 100755
+--- a/sympy/concrete/delta.py
++++ b/sympy/concrete/delta.py
+@@ -310,6 +310,11 @@ def deltasummation(f, limit, no_piecewise=False):
+     # try to extract a simple KroneckerDelta term
+     delta, expr = _extract_delta(g, x)
+ 
++    if (delta is not None) and (delta.delta_range is not None):
++        dinf, dsup = delta.delta_range
++        if (limit[1] - dinf <= 0) == True and (limit[2] - dsup >= 0) == True:
++            no_piecewise = True
++
+     if not delta:
+         return summation(f, limit)
+ 
+diff --git a/sympy/concrete/tests/test_delta.py b/sympy/concrete/tests/test_delta.py
+index bf4e0a425..3450cfc83 100755
+--- a/sympy/concrete/tests/test_delta.py
++++ b/sympy/concrete/tests/test_delta.py
+@@ -282,6 +282,18 @@ def test_deltasummation_basic_symbolic():
+         Piecewise((1, And(k <= i, i <= l)), (0, True))
+ 
+ 
++def test_deltasummation_kd_range():
++    # KroneckerDelta with a range: if the summation limits cover the
++    # range of the delta, the result is not wrapped in a Piecewise
++    assert ds(KD(i, j, (0, 3)), (j, 0, 3)) == 1
++    assert ds(KD(i, j, (0, 3)), (j, 0, 4)) == 1
++    assert ds(KD(i, j, (0, k)), (j, 0, k)) == 1
++    assert ds(KD(i, j, (0, 3)), (j, 1, 3)) == \
++        Piecewise((1, And(S(1) <= i, i <= 3)), (0, True))
++    assert ds(KD(i, j, (0, 3)), (j, 1, 2)) == \
++        Piecewise((1, And(S(1) <= i, i <= 2)), (0, True))
++
++
+ def test_deltasummation_mul_x_kd():
+     assert ds(x*KD(i, j), (j, 1, 3)) == \
+         Piecewise((x, And(S(1) <= i, i <= 3)), (0, True))
+diff --git a/sympy/functions/special/tensor_functions.py b/sympy/functions/special/tensor_functions.py
+index 547f1b7f4..01c9e229e 100755
+--- a/sympy/functions/special/tensor_functions.py
++++ b/sympy/functions/special/tensor_functions.py
+@@ -133,7 +133,7 @@ class KroneckerDelta(Function):
+     is_integer = True
+ 
+     @classmethod
+-    def eval(cls, i, j):
++    def eval(cls, i, j, delta_range=None):
+         """
+         Evaluates the discrete delta function.
+ 
+@@ -155,6 +155,17 @@ def eval(cls, i, j):
+         # indirect doctest
+ 
+         """
++        if delta_range is not None:
++            dinf, dsup = delta_range
++            if (dinf - i > 0) == True:
++                return S.Zero
++            if (dinf - j > 0) == True:
++                return S.Zero
++            if (dsup - i < 0) == True:
++                return S.Zero
++            if (dsup - j < 0) == True:
++                return S.Zero
++
+         diff = i - j
+         if diff.is_zero:
+             return S.One
+@@ -171,7 +182,33 @@ def eval(cls, i, j):
+         # following lines will check if inputs are in order
+         # if not, will return KroneckerDelta with correct order
+         if i is not min(i, j, key=default_sort_key):
+-            return cls(j, i)
++            if delta_range:
++                return cls(j, i, delta_range)
++            else:
++                return cls(j, i)
++
++    @property
++    def delta_range(self):
++        """
++        The range within which the KroneckerDelta can be non-zero.
++
++        Examples
++        ========
++
++        >>> from sympy.functions.special.tensor_functions import KroneckerDelta
++        >>> from sympy.abc import i, j, n
++        >>> KroneckerDelta(i, j).delta_range is None
++        True
++        >>> KroneckerDelta(i, j, (0, n - 1)).delta_range
++        (0, n - 1)
++
++        See Also
++        ========
++
++        eval
++        """
++        if len(self.args) > 2:
++            return self.args[2]
+ 
+     def _eval_power(self, expt):
+         if expt.is_positive:
+diff --git a/sympy/functions/special/tests/test_tensor_functions.py b/sympy/functions/special/tests/test_tensor_functions.py
+index dcc69c8a0..c3968859e 100755
+--- a/sympy/functions/special/tests/test_tensor_functions.py
++++ b/sympy/functions/special/tests/test_tensor_functions.py
+@@ -60,6 +60,17 @@ def test_kronecker_delta():
+     # to test if canonical
+     assert (KroneckerDelta(i, j) == KroneckerDelta(j, i)) == True
+ 
++    # range of possible non-zero values
++    assert KroneckerDelta(1, 5, (0, 2)) == 0
++    assert KroneckerDelta(5, 1, (0, 2)) == 0
++    assert KroneckerDelta(-1, 1, (0, 2)) == 0
++    assert KroneckerDelta(1, -1, (0, 2)) == 0
++    assert KroneckerDelta(1, 1, (0, 2)) == 1
++    assert KroneckerDelta(i, j, (0, 2)) != 0
++    assert KroneckerDelta(i, j, (0, 2)) == KroneckerDelta(j, i, (0, 2))
++    assert KroneckerDelta(i, j).delta_range is None
++    assert KroneckerDelta(i, j, (0, 2)).delta_range == (0, 2)
++
+ def test_kronecker_delta_secondquant():
+     """secondquant-specific methods"""
+     D = KroneckerDelta
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index b4d759836..ec85fc6cc 100755
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -479,7 +479,8 @@ def _entry(self, i, j):
+         if i == j:
+             return S.One
+         else:
+-            return S.Zero
++            from sympy.functions.special.tensor_functions import KroneckerDelta
++            return KroneckerDelta(i, j, (0, self.cols - 1))
+ 
+     def _eval_determinant(self):
+         return S.One
+diff --git a/sympy/matrices/expressions/tests/test_matexpr.py b/sympy/matrices/expressions/tests/test_matexpr.py
+index dbc548594..84c82b18e 100755
+--- a/sympy/matrices/expressions/tests/test_matexpr.py
++++ b/sympy/matrices/expressions/tests/test_matexpr.py
+@@ -1,4 +1,4 @@
+-from sympy import KroneckerDelta, diff, Piecewise, And
++from sympy import KroneckerDelta, diff, Interval, Piecewise, And
+ from sympy import Sum
+ 
+ from sympy.core import S, symbols, Add, Mul
+@@ -84,6 +84,17 @@ def test_Identity():
+     assert In.inverse() == In
+     assert In.conjugate() == In
+ 
++    i, j = symbols('i j')
++    assert In[i, j] != 0
++    assert Sum(In[i, j], (i, 0, n-1), (j, 0, n-1)).subs(n, 3).doit() == 3
++    assert Sum(Sum(In[i, j], (i, 0, n-1)), (j, 0, n-1)).subs(n, 3).doit() == 3
++    assert Sum(In[i, j], (i, 0, n-1)).doit() == 1
++    assert Sum(In[i, j], (i, 0, n-2)).doit() == \
++        Piecewise((1, Interval(0, n-2).as_relational(j)), (0, True))
++    assert Sum(In[i, j], (i, 1, n-1)).doit() == \
++        Piecewise((1, Interval(1, n-1).as_relational(j)), (0, True))
++    assert Identity(3).as_explicit() == ImmutableMatrix.eye(3)
++
+ def test_Identity_doit():
+     Inn = Identity(Add(n, n, evaluate=False))
+     assert isinstance(Inn.rows, Add)
+2026-11-12 07:42:36,881 - INFO - Eval script for sympy__sympy-12419 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2241/cline-glm-5.3-flash/sympy__sympy-12419/eval.sh; copying to container...
+2026-11-12 07:42:42,348 - INFO - Test runtime: 5.40 seconds
+2026-11-12 07:42:42,350 - INFO - Test output for sympy__sympy-12419 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2241/cline-glm-5.3-flash/sympy__sympy-12419/test_output.txt
+2026-11-12 07:42:42,408 - INFO - Git diff after:
+diff --git a/sympy/concrete/delta.py b/sympy/concrete/delta.py
+index 014d5b577..a219d4844 100755
+--- a/sympy/concrete/delta.py
++++ b/sympy/concrete/delta.py
+@@ -310,6 +310,11 @@ def deltasummation(f, limit, no_piecewise=False):
+     # try to extract a simple KroneckerDelta term
+     delta, expr = _extract_delta(g, x)
+ 
++    if (delta is not None) and (delta.delta_range is not None):
++        dinf, dsup = delta.delta_range
++        if (limit[1] - dinf <= 0) == True and (limit[2] - dsup >= 0) == True:
++            no_piecewise = True
++
+     if not delta:
+         return summation(f, limit)
+ 
+diff --git a/sympy/concrete/tests/test_delta.py b/sympy/concrete/tests/test_delta.py
+index bf4e0a425..3450cfc83 100755
+--- a/sympy/concrete/tests/test_delta.py
++++ b/sympy/concrete/tests/test_delta.py
+@@ -282,6 +282,18 @@ def test_deltasummation_basic_symbolic():
+         Piecewise((1, And(k <= i, i <= l)), (0, True))
+ 
+ 
++def test_deltasummation_kd_range():
++    # KroneckerDelta with a range: if the summation limits cover the
++    # range of the delta, the result is not wrapped in a Piecewise
++    assert ds(KD(i, j, (0, 3)), (j, 0, 3)) == 1
++    assert ds(KD(i, j, (0, 3)), (j, 0, 4)) == 1
++    assert ds(KD(i, j, (0, k)), (j, 0, k)) == 1
++    assert ds(KD(i, j, (0, 3)), (j, 1, 3)) == \
++        Piecewise((1, And(S(1) <= i, i <= 3)), (0, True))
++    assert ds(KD(i, j, (0, 3)), (j, 1, 2)) == \
++        Piecewise((1, And(S(1) <= i, i <= 2)), (0, True))
++
++
+ def test_deltasummation_mul_x_kd():
+     assert ds(x*KD(i, j), (j, 1, 3)) == \
+         Piecewise((x, And(S(1) <= i, i <= 3)), (0, True))
+diff --git a/sympy/functions/special/tensor_functions.py b/sympy/functions/special/tensor_functions.py
+index 547f1b7f4..01c9e229e 100755
+--- a/sympy/functions/special/tensor_functions.py
++++ b/sympy/functions/special/tensor_functions.py
+@@ -133,7 +133,7 @@ class KroneckerDelta(Function):
+     is_integer = True
+ 
+     @classmethod
+-    def eval(cls, i, j):
++    def eval(cls, i, j, delta_range=None):
+         """
+         Evaluates the discrete delta function.
+ 
+@@ -155,6 +155,17 @@ def eval(cls, i, j):
+         # indirect doctest
+ 
+         """
++        if delta_range is not None:
++            dinf, dsup = delta_range
++            if (dinf - i > 0) == True:
++                return S.Zero
++            if (dinf - j > 0) == True:
++                return S.Zero
++            if (dsup - i < 0) == True:
++                return S.Zero
++            if (dsup - j < 0) == True:
++                return S.Zero
++
+         diff = i - j
+         if diff.is_zero:
+             return S.One
+@@ -171,7 +182,33 @@ def eval(cls, i, j):
+         # following lines will check if inputs are in order
+         # if not, will return KroneckerDelta with correct order
+         if i is not min(i, j, key=default_sort_key):
+-            return cls(j, i)
++            if delta_range:
++                return cls(j, i, delta_range)
++            else:
++                return cls(j, i)
++
++    @property
++    def delta_range(self):
++        """
++        The range within which the KroneckerDelta can be non-zero.
++
++        Examples
++        ========
++
++        >>> from sympy.functions.special.tensor_functions import KroneckerDelta
++        >>> from sympy.abc import i, j, n
++        >>> KroneckerDelta(i, j).delta_range is None
++        True
++        >>> KroneckerDelta(i, j, (0, n - 1)).delta_range
++        (0, n - 1)
++
++        See Also
++        ========
++
++        eval
++        """
++        if len(self.args) > 2:
++            return self.args[2]
+ 
+     def _eval_power(self, expt):
+         if expt.is_positive:
+diff --git a/sympy/functions/special/tests/test_tensor_functions.py b/sympy/functions/special/tests/test_tensor_functions.py
+index dcc69c8a0..c3968859e 100755
+--- a/sympy/functions/special/tests/test_tensor_functions.py
++++ b/sympy/functions/special/tests/test_tensor_functions.py
+@@ -60,6 +60,17 @@ def test_kronecker_delta():
+     # to test if canonical
+     assert (KroneckerDelta(i, j) == KroneckerDelta(j, i)) == True
+ 
++    # range of possible non-zero values
++    assert KroneckerDelta(1, 5, (0, 2)) == 0
++    assert KroneckerDelta(5, 1, (0, 2)) == 0
++    assert KroneckerDelta(-1, 1, (0, 2)) == 0
++    assert KroneckerDelta(1, -1, (0, 2)) == 0
++    assert KroneckerDelta(1, 1, (0, 2)) == 1
++    assert KroneckerDelta(i, j, (0, 2)) != 0
++    assert KroneckerDelta(i, j, (0, 2)) == KroneckerDelta(j, i, (0, 2))
++    assert KroneckerDelta(i, j).delta_range is None
++    assert KroneckerDelta(i, j, (0, 2)).delta_range == (0, 2)
++
+ def test_kronecker_delta_secondquant():
+     """secondquant-specific methods"""
+     D = KroneckerDelta
+diff --git a/sympy/matrices/expressions/matexpr.py b/sympy/matrices/expressions/matexpr.py
+index b4d759836..ec85fc6cc 100755
+--- a/sympy/matrices/expressions/matexpr.py
++++ b/sympy/matrices/expressions/matexpr.py
+@@ -479,7 +479,8 @@ def _entry(self, i, j):
+         if i == j:
+             return S.One
+         else:
+-            return S.Zero
++            from sympy.functions.special.tensor_functions import KroneckerDelta
++            return KroneckerDelta(i, j, (0, self.cols - 1))
+ 
+     def _eval_determinant(self):
+         return S.One
+2026-11-12 07:42:42,408 - INFO - Git diff changed after running eval script
+2026-11-12 07:42:42,408 - INFO - Grading answer for sympy__sympy-12419...
+2026-11-12 07:42:42,410 - INFO - report: {'sympy__sympy-12419': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_Identity'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_shape', 'test_matexpr', 'test_subs', 'test_ZeroMatrix', 'test_ZeroMatrix_doit', 'test_Identity_doit', 'test_addition', 'test_multiplication', 'test_MatPow', 'test_MatrixSymbol', 'test_dense_conversion', 'test_free_symbols', 'test_zero_matmul', 'test_matadd_simplify', 'test_matmul_simplify', 'test_invariants', 'test_indexing', 'test_single_indexing', 'test_MatrixElement_commutative', 'test_MatrixSymbol_determinant', 'test_MatrixElement_diff', 'test_MatrixElement_doit', 'test_identity_powers', 'test_Zero_power', 'test_matrixelement_diff'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-12419: resolved: True
+2026-11-12 07:42:42,412 - INFO - Attempting to stop container sweb.eval.sympy__sympy-12419.verified_full_glm53_cline-patched_incr_R2241...
+2026-11-12 07:42:58,592 - INFO - Container sweb.eval.sympy__sympy-12419.verified_full_glm53_cline-patched_incr_R2241 stopped successfully.
+2026-11-12 07:42:58,592 - INFO - Attempting to remove container sweb.eval.sympy__sympy-12419.verified_full_glm53_cline-patched_incr_R2241...
+2026-11-12 07:42:58,634 - INFO - Container sweb.eval.sympy__sympy-12419.verified_full_glm53_cline-patched_incr_R2241 removed successfully.

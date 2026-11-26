@@ -1,0 +1,20 @@
+diff --git a/astropy/coordinates/sky_coordinate.py b/astropy/coordinates/sky_coordinate.py
+index ab475f7d..1ecd70b4 100644
+--- a/astropy/coordinates/sky_coordinate.py
++++ b/astropy/coordinates/sky_coordinate.py
+@@ -897,7 +897,7 @@ class SkyCoord(ShapedLikeNDArray):
+         # Fail
+         raise AttributeError(
+             f"'{self.__class__.__name__}' object has no attribute '{attr}'"
+-        )
++        ) from self._hidden_attrvalue
+ 
+     def __setattr__(self, attr, val):
+         # This is to make anything available through __getattr__ immutable
+diff --git a/astropy_helpers b/astropy_helpers
+new file mode 160000
+index 00000000..7f11678c
+--- /dev/null
++++ b/astropy_helpers
+@@ -0,0 +1 @@
++Subproject commit 7f11678c03286f72acc9bab77868dabaeb368fda

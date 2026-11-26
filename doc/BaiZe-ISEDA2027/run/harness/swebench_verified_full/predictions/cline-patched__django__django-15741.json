@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-15741",
+    "model_name_or_path": "cline-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/utils/formats.py b/django/utils/formats.py\nindex 3f38322d8..ff90433be 100644\n--- a/django/utils/formats.py\n+++ b/django/utils/formats.py\n@@ -111,6 +111,7 @@ def get_format(format_type, lang=None, use_l10n=None):\n             use_l10n = settings._USE_L10N_INTERNAL\n         except AttributeError:\n             use_l10n = settings.USE_L10N\n+    format_type = str(format_type)\n     if use_l10n and lang is None:\n         lang = get_language()\n     cache_key = (format_type, lang)\ndiff --git a/tests/i18n/tests.py b/tests/i18n/tests.py\nindex 0093181f6..9e7b41908 100644\n--- a/tests/i18n/tests.py\n+++ b/tests/i18n/tests.py\n@@ -572,6 +572,16 @@ class FormattingTests(SimpleTestCase):\n                     ),\n                 )\n \n+    def test_get_format_lazy_string(self):\n+        \"\"\"\n+        get_format() accepts a lazy string as the format_type parameter.\n+        \"\"\"\n+        reset_format_cache()\n+        self.assertEqual(get_format(gettext_lazy(\"DATE_FORMAT\")), \"N j, Y\")\n+        # Test again with a cached value.\n+        self.assertEqual(get_format(gettext_lazy(\"DATE_FORMAT\")), \"N j, Y\")\n+        reset_format_cache()\n+\n     def test_locale_independent(self):\n         \"\"\"\n         Localization of numbers\n"
+  }
+]

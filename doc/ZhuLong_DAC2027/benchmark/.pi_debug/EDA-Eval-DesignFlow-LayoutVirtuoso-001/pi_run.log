@@ -1,0 +1,24 @@
+完成。已交付 `outputs/submit.zip`（含 4 个文件），全部为纯标准库独立工具，未调任何 EDA 工具。
+
+## 产物
+
+**`outputs/submit.zip`**：
+- `rtext_rnode_audit.py` — 可复用审计工具（`argparse`+`re`+`collections`）
+- `sample_output_unclean.txt` — 清理前真实 stdout（MISALIGNED）
+- `sample_output_clean.txt` — 清理后真实 stdout（ALIGNED）
+- `cleanup_report.txt` — 人读报告（per-net + BEFORE/AFTER + 删除清单带 xy）
+
+## 工具核心逻辑（防 naive 计数器的要点）
+
+1. **purpose 过滤**：正则解析 `(LAYER "PURPOSE") "NET" xy=(X Y)`，`purpose ∉ {RTEXT, RNODE}`（含 `drawing`）直接跳过，因此 24 个 `vblh!` 标签不进 net 分组、不进重复/垃圾统计。
+2. **per-net 分组判定**：按 net 归组，每个 net 分算 RTEXT/RNODE 唯一坐标数 → `ALIGNED`（两者>0）/ `GARBAGE`（RTEXT>0 且 RNODE==0）/ `MISSING_RTEXT`（反）。
+3. **按 `(layer,purpose,net,x,y)` 去重**：坐标取 6 位小数四舍五入后作键，`duplicate_labels = Σ(count-1)`，识别出 9 条（3 RTEXT + 6 RNODE）。
+4. **整体判决**：所有 net 全 ALIGNED 且无重复才 `ALIGNED`，否则 `MISALIGNED`。
+5. **退出码**：审计完成一律 0，文件读取失败返回 2。
+
+## 关键计数量（已核对 checker 断言全过）
+
+- 不净档：`MISALIGNED`、`garbage_nets=2`（test2/edit_test）、`duplicate_labels=9`、vcc/vss/viso 均 ALIGNED
+- 净档：`ALIGNED`、`garbage_nets=0`、`duplicate_labels=0`，vcc RTEXT=2 RNODE=11、vss 2/11、viso 2/9
+
+直接复用命令：`python3 rtext_rnode_audit.py --inventory <label_dump.txt>`。

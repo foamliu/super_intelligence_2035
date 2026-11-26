@@ -1,0 +1,76 @@
+2026-11-02 02:14:00,651 - INFO - Creating container for scikit-learn__scikit-learn-10844...
+2026-11-02 02:14:00,674 - INFO - Container for scikit-learn__scikit-learn-10844 created: 245eb707c83fdc9184f62778f9bc7bd759e43fcaaf1b186c807b8fce5045a14e
+2026-11-02 02:14:01,340 - INFO - Container for scikit-learn__scikit-learn-10844 started: 245eb707c83fdc9184f62778f9bc7bd759e43fcaaf1b186c807b8fce5045a14e
+2026-11-02 02:14:01,343 - INFO - Intermediate patch for scikit-learn__scikit-learn-10844 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-10844/patch.diff, now applying to container...
+2026-11-02 02:14:01,486 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/metrics/cluster/supervised.py...
+Checking patch sklearn/metrics/cluster/tests/test_supervised.py...
+Applied patch sklearn/metrics/cluster/supervised.py cleanly.
+Applied patch sklearn/metrics/cluster/tests/test_supervised.py cleanly.
+
+2026-11-02 02:14:01,894 - INFO - Git diff before:
+diff --git a/sklearn/metrics/cluster/supervised.py b/sklearn/metrics/cluster/supervised.py
+index a987778ae..9bcca75a2 100644
+--- a/sklearn/metrics/cluster/supervised.py
++++ b/sklearn/metrics/cluster/supervised.py
+@@ -856,7 +856,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
+     tk = np.dot(c.data, c.data) - n_samples
+     pk = np.sum(np.asarray(c.sum(axis=0)).ravel() ** 2) - n_samples
+     qk = np.sum(np.asarray(c.sum(axis=1)).ravel() ** 2) - n_samples
+-    return tk / np.sqrt(pk * qk) if tk != 0. else 0.
++    return np.sqrt(tk / pk) * np.sqrt(tk / qk) if tk != 0. else 0.
+ 
+ 
+ def entropy(labels):
+diff --git a/sklearn/metrics/cluster/tests/test_supervised.py b/sklearn/metrics/cluster/tests/test_supervised.py
+index 8da03d1e1..6d390be8e 100644
+--- a/sklearn/metrics/cluster/tests/test_supervised.py
++++ b/sklearn/metrics/cluster/tests/test_supervised.py
+@@ -1,4 +1,5 @@
+ import numpy as np
++import warnings
+ 
+ from sklearn.metrics.cluster import adjusted_mutual_info_score
+ from sklearn.metrics.cluster import adjusted_rand_score
+@@ -274,3 +275,16 @@ def test_fowlkes_mallows_score_properties():
+     # symmetric and permutation(both together)
+     score_both = fowlkes_mallows_score(labels_b, (labels_a + 2) % 3)
+     assert_almost_equal(score_both, expected)
++
++
++def test_fowlkes_mallows_score_overflow():
++    # Test that large inputs do not trigger an overflow in the
++    # intermediate integer product pk * qk.
++    n_samples = 100000
++    labels_true = np.zeros(n_samples, dtype=int)
++    labels_pred = np.zeros(n_samples, dtype=int)
++    with warnings.catch_warnings(record=True) as w:
++        warnings.simplefilter("always")
++        score = fowlkes_mallows_score(labels_true, labels_pred)
++    assert_almost_equal(score, 1.0)
++    assert_equal(len(w), 0)
+2026-11-02 02:14:01,897 - INFO - Eval script for scikit-learn__scikit-learn-10844 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-10844/eval.sh; copying to container...
+2026-11-02 02:14:07,988 - INFO - Test runtime: 6.02 seconds
+2026-11-02 02:14:07,990 - INFO - Test output for scikit-learn__scikit-learn-10844 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/scikit-learn__scikit-learn-10844/test_output.txt
+2026-11-02 02:14:08,064 - INFO - Git diff after:
+diff --git a/sklearn/metrics/cluster/supervised.py b/sklearn/metrics/cluster/supervised.py
+index a987778ae..9bcca75a2 100644
+--- a/sklearn/metrics/cluster/supervised.py
++++ b/sklearn/metrics/cluster/supervised.py
+@@ -856,7 +856,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
+     tk = np.dot(c.data, c.data) - n_samples
+     pk = np.sum(np.asarray(c.sum(axis=0)).ravel() ** 2) - n_samples
+     qk = np.sum(np.asarray(c.sum(axis=1)).ravel() ** 2) - n_samples
+-    return tk / np.sqrt(pk * qk) if tk != 0. else 0.
++    return np.sqrt(tk / pk) * np.sqrt(tk / qk) if tk != 0. else 0.
+ 
+ 
+ def entropy(labels):
+2026-11-02 02:14:08,064 - INFO - Git diff changed after running eval script
+2026-11-02 02:14:08,064 - INFO - Grading answer for scikit-learn__scikit-learn-10844...
+2026-11-02 02:14:08,066 - INFO - report: {'scikit-learn__scikit-learn-10844': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/metrics/cluster/tests/test_supervised.py::test_int_overflow_mutual_info_fowlkes_mallows_score'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/metrics/cluster/tests/test_supervised.py::test_error_messages_on_wrong_input', 'sklearn/metrics/cluster/tests/test_supervised.py::test_perfect_matches', 'sklearn/metrics/cluster/tests/test_supervised.py::test_homogeneous_but_not_complete_labeling', 'sklearn/metrics/cluster/tests/test_supervised.py::test_complete_but_not_homogeneous_labeling', 'sklearn/metrics/cluster/tests/test_supervised.py::test_not_complete_and_not_homogeneous_labeling', 'sklearn/metrics/cluster/tests/test_supervised.py::test_non_consicutive_labels', 'sklearn/metrics/cluster/tests/test_supervised.py::test_adjustment_for_chance', 'sklearn/metrics/cluster/tests/test_supervised.py::test_adjusted_mutual_info_score', 'sklearn/metrics/cluster/tests/test_supervised.py::test_expected_mutual_info_overflow', 'sklearn/metrics/cluster/tests/test_supervised.py::test_entropy', 'sklearn/metrics/cluster/tests/test_supervised.py::test_contingency_matrix', 'sklearn/metrics/cluster/tests/test_supervised.py::test_contingency_matrix_sparse', 'sklearn/metrics/cluster/tests/test_supervised.py::test_exactly_zero_info_score', 'sklearn/metrics/cluster/tests/test_supervised.py::test_v_measure_and_mutual_information', 'sklearn/metrics/cluster/tests/test_supervised.py::test_fowlkes_mallows_score', 'sklearn/metrics/cluster/tests/test_supervised.py::test_fowlkes_mallows_score_properties'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-10844: resolved: True
+2026-11-02 02:14:08,068 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_pi...
+2026-11-02 02:14:24,125 - INFO - Container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_pi stopped successfully.
+2026-11-02 02:14:24,125 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_pi...
+2026-11-02 02:14:24,168 - INFO - Container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_pi removed successfully.

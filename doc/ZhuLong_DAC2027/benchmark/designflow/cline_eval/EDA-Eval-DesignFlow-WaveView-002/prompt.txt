@@ -1,0 +1,12 @@
+你是 EDA 团队的波形分析工程师。用户 easont 在调试 LPDDR5 DDGOA TempHalfWL 温度传感器的混合信号 cosim（FineSim SPICE + VCS Verilog），仿真产生一份 FSDB 波形，已导出为一张混合信号波形截图 `wv_sigs_A.png`（5 个信号自上而下：clk / rst_n / data / vref / sel，横轴为时间 ns，纵轴为电压，图中无任何数据标签或数值标注）。
+
+请**直接看图**，对图中每个信号判断并填写一份 JSON 报告 `wv_report.json`：
+- `type`：logic（数字信号，只有离散电平）或 analog（模拟信号，连续变化）；
+- `n_transitions`：该信号在图示时间窗内的电平跳变次数（数字信号数上升沿+下降沿总数；模拟信号填 null）；
+- `function`：从对应集合中选一个最贴切的语义标签 (clk∈{clock,clk,clock_signal} / rst_n∈{reset,active_low_reset,reset_n,resetb} / data∈{data_bus,data,bus,data_signal} / vref∈{reference_ramp,analog_ramp,ramp,reference_voltage,vref} / sel∈{selector,select,enable,selector_enable,chip_select})；
+- `period_ns` / `duty`：仅对周期性时钟 clk 填写（从坐标轴估读周期与占空比）；
+- `vmin` / `vmax`：仅对模拟信号 vref 填写（从纵轴读最小/最大电压）；
+- `n_pulses`：对 sel 填高电平脉冲个数；`n_levels`：对 data 填出现的不同电平档数；
+- 其余不适用字段填 null。
+
+⚠️ 答案必须**从图读出**，不要尝试用脚本解析图中的原始数据点；判分器在独立目录校验报告数值（允许读图容差）。交付：`outputs/submit.zip`，内含一个 `wv_report.json`（UTF-8 JSON）。隐藏 B 图不进沙盒。详细 schema 见 asset `task_brief.md`。

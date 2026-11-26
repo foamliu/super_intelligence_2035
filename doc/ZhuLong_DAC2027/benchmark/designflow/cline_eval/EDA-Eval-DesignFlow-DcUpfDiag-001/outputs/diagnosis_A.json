@@ -1,0 +1,64 @@
+{
+  "save_upf_empty": {
+    "root_cause": "save_upf 使用了 -supplemental 且 upf.enable_golden_upf=true：-supplemental 只写出相对 golden UPF 的增量（派生的 supply exception、插入的 MV 单元、电源状态变化），而本流程综合前后 没有任何这类增量，因此输出文件只剩头部注释，表现为“空”。",
+    "mechanism": "开启 golden UPF 后，load_upf 把源 UPF 注册为参考基线；save_upf -supplemental 只 dump 新增意图。由于电源意图未定义 isolation/level-shifter/retention 策略、各域电压相同（无跨域 level shifter 需求），compile 阶段 0 个 MV 单元被插入、也没有派生出新的 supply exception，增量集合为空，所以 save_upf 输出文件里没有任何 UPF 命令（dc.upf 仅为注释头）。",
+    "evidence": [
+      "dc.upf: save_upf 输出只有头部注释，没有任何 create/connect/set 等实质 UPF 命令（0 个非注释行）",
+      "dc.tcl: save_upf 调用带 -supplemental，只导出相对 golden UPF 的增量",
+      "dc.tcl: upf.enable_golden_upf=true，load_upf 的 UPF 被当作 golden 基线",
+      "test_chip_power.upf: 电源意图未定义 isolation/level-shifter/retention 策略",
+      "dc.log: 报告中 0 个 isolation/LS/retention/repeater 单元被插入，无派生的 supply exception 可导出"
+    ],
+    "fix": "改用完整导出：save_upf 去掉 -supplemental（例如 'save_upf ${FINAL_UPF}' 或不带 -supplemental 的 'save_upf -include_supply_exceptions ...'）。若确实只要增量 UPF，则需先在 UPF 中定义 isolation/level-shifter/retention 策略或显式 supply exception，否则增量 UPF 合法地为空。",
+    "is_defect": false
+  },
+  "netlist_no_pg": {
+    "root_cause": "网表由 'write -format verilog' 导出且未加 -pg：DC 的 Verilog 写器默认只输出功能引脚，不写 VDD/VSS 电源/地引脚及其 supply 连接，因此综合后网表没有 VDD/VSS。",
+    "mechanism": "'write -format verilog'（不带 -pg）不会写出电源与地引脚；再加上顶层 RTL 没有声明 supply 端口，最终网表的模块端口和单元实例都不含 VDD/VSS。修复应在写网表命令追加 -pg（例如 'write -format verilog -pg -hierarchy -output ...'）。",
+    "evidence": [
+      "dc.tcl: write -format verilog -hierarchy -output ${RESULTS_DIR}/${DESIGN_NAME}_postsyn.v",
+      "dc.tcl: 'write -format verilog' 未带 -pg，Verilog 写器默认省略 power/ground 引脚与 supply 连接",
+      "postsyn_head.v: 模块端口与单元实例均无 VDD/VSS（无 .VDD()/.VSS() 连接）",
+      "rtl_top.v: RTL 顶层端口段未声明 VDD/VSS supply 端口"
+    ],
+    "is_defect": true
+  },
+  "latent_issues": [
+    {
+      "id": "LAT-1",
+      "severity": "high",
+      "desc": "电源域 (pd_aon, pd_pm) 没有通过 set_domain_supply_net/associate_supply_set 绑定 primary 电源；set_domain_supply_net 作用在 'ss_aon, ss_pm' 上（与 domain 名不一致，疑似 supply set / 域名写错），导致各域未显式获得电源，DC 退回默认假设 VDD/VSS（UPF-405）。",
+      "fix": "为每个电源域显式绑定电源：set_domain_supply_net <domain> -primary_power_net ... -primary_ground_net ...，或将 set_domain_supply_net 的目标改成真实的 domain 名。"
+    },
+    {
+      "id": "LAT-2",
+      "severity": "high",
+      "desc": "supply net 创建在未定义的 supply domain 'pm_top' 中（create_supply_net -domain 引用它，但没有 create_supply_domain 声明）。",
+      "fix": "在用 -domain 引用前先 'create_supply_domain pm_top'，或去掉 -domain 让 net 落入合适的作用域。"
+    },
+    {
+      "id": "LAT-3",
+      "severity": "high",
+      "desc": "create_power_domain 的 -elements 指向层次实例 'TOPPMBLK_Blk4129/PM_VDDI_Inst'，但提供的 RTL/网表中不存在该实例。",
+      "fix": "把 -elements 指向 elaborated 层次中真实存在的实例，或用 -include_scope 圈定已有的层次边界。"
+    },
+    {
+      "id": "LAT-4",
+      "severity": "medium",
+      "desc": "设置脚本定义了 FINAL_UPF 输出路径变量，但驱动脚本 save_upf 硬编码输出文件名、从未引用 ${FINAL_UPF}，导致对该变量的修改不会生效。",
+      "fix": "让 save_upf 使用 '${FINAL_UPF}' 作为输出路径，避免文件名硬编码不一致。"
+    },
+    {
+      "id": "LAT-5",
+      "severity": "low",
+      "desc": "被注释掉的 set_port_attributes 块用逗号分隔端口列表（{A,B,C}），若取消注释，Tcl/UPF 会把整个花括号组当单一 token，导致属性未作用到预期端口。",
+      "fix": "改用空格分隔的端口列表（如 -ports {A B C}）。"
+    },
+    {
+      "id": "LAT-6",
+      "severity": "high",
+      "desc": "综合后网表把被单元驱动的输出端口声明为 input（如 TMOut, TMReady），端口方向与驱动关系不一致。",
+      "fix": "重新生成网表/修正端口方向声明，使被驱动的端口声明为 output。"
+    }
+  ]
+}

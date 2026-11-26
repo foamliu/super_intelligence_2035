@@ -1,0 +1,183 @@
+2026-10-31 05:43:35,979 - INFO - Creating container for scikit-learn__scikit-learn-13496...
+2026-10-31 05:43:36,031 - INFO - Container for scikit-learn__scikit-learn-13496 created: 051cec6973066d6164190078e6bf821b5b1aff343c6d1e2f8682f52e129ca488
+2026-10-31 05:43:36,886 - INFO - Container for scikit-learn__scikit-learn-13496 started: 051cec6973066d6164190078e6bf821b5b1aff343c6d1e2f8682f52e129ca488
+2026-10-31 05:43:36,888 - INFO - Intermediate patch for scikit-learn__scikit-learn-13496 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/scikit-learn__scikit-learn-13496/patch.diff, now applying to container...
+2026-10-31 05:43:37,003 - INFO - >>>>> Applied Patch:
+Checking patch doc/whats_new/v0.21.rst...
+warning: doc/whats_new/v0.21.rst has type 100755, expected 100644
+Checking patch sklearn/ensemble/iforest.py...
+warning: sklearn/ensemble/iforest.py has type 100755, expected 100644
+Checking patch sklearn/ensemble/tests/test_iforest.py...
+warning: sklearn/ensemble/tests/test_iforest.py has type 100755, expected 100644
+Applied patch doc/whats_new/v0.21.rst cleanly.
+Applied patch sklearn/ensemble/iforest.py cleanly.
+Applied patch sklearn/ensemble/tests/test_iforest.py cleanly.
+
+2026-10-31 05:43:37,385 - INFO - Git diff before:
+diff --git a/doc/whats_new/v0.21.rst b/doc/whats_new/v0.21.rst
+index d9ae08ed5..6c748bf91 100755
+--- a/doc/whats_new/v0.21.rst
++++ b/doc/whats_new/v0.21.rst
+@@ -167,6 +167,10 @@ Support for Python 3.4 and below has been officially dropped.
+   prediction step, thus capping the memory usage. :issue:`13283` by
+   `Nicolas Goix`_.
+ 
++- |Enhancement| Exposed ``warm_start`` parameter in
++  :class:`ensemble.IsolationForest`. This allows for incremental addition of
++  new trees to the ensemble. :issue:`13406` by :user:`Contributor`.
++
+ - |Fix| Fixed a bug in :class:`ensemble.GradientBoostingClassifier` and
+   :class:`ensemble.GradientBoostingRegressor`, which didn't support
+   scikit-learn estimators as the initial estimator. Also added support of
+diff --git a/sklearn/ensemble/iforest.py b/sklearn/ensemble/iforest.py
+index 8a1bd3625..c665370ab 100755
+--- a/sklearn/ensemble/iforest.py
++++ b/sklearn/ensemble/iforest.py
+@@ -120,6 +120,10 @@ class IsolationForest(BaseBagging, OutlierMixin):
+     verbose : int, optional (default=0)
+         Controls the verbosity of the tree building process.
+ 
++    warm_start : bool, optional (default=False)
++        When set to ``True``, reuse the solution of the previous call to fit
++        and add more estimators to the ensemble, otherwise, just fit a whole
++        new forest. See :term:`the Glossary <warm_start>`.
+ 
+     Attributes
+     ----------
+@@ -173,7 +177,8 @@ class IsolationForest(BaseBagging, OutlierMixin):
+                  n_jobs=None,
+                  behaviour='old',
+                  random_state=None,
+-                 verbose=0):
++                 verbose=0,
++                 warm_start=False):
+         super().__init__(
+             base_estimator=ExtraTreeRegressor(
+                 max_features=1,
+@@ -187,7 +192,8 @@ class IsolationForest(BaseBagging, OutlierMixin):
+             max_features=max_features,
+             n_jobs=n_jobs,
+             random_state=random_state,
+-            verbose=verbose)
++            verbose=verbose,
++            warm_start=warm_start)
+ 
+         self.behaviour = behaviour
+         self.contamination = contamination
+diff --git a/sklearn/ensemble/tests/test_iforest.py b/sklearn/ensemble/tests/test_iforest.py
+index 67ba2d7f9..32617893e 100755
+--- a/sklearn/ensemble/tests/test_iforest.py
++++ b/sklearn/ensemble/tests/test_iforest.py
+@@ -359,3 +359,50 @@ def test_iforest_chunks_works2(
+ ):
+     test_iforest_works(contamination)
+     assert mocked_get_chunk.call_count == n_predict_calls
++
++
++def test_warm_start():
++    """Test if fitting incrementally with warm start gives a forest of the
++    right size and the same results as a normal fit."""
++    X_train = [[0.], [0.44], [0.45], [0.46], [1.]]
++    # The expected predicts are singletons belonging to one of the two clusters
++    # and almost on the boundary between both expected clusters.
++    X_test = [[0.], [1.], [0.45]]
++
++    clf_ws = None
++    for n_estimators in [5, 10]:
++        if clf_ws is None:
++            clf_ws = IsolationForest(n_estimators=n_estimators,
++                                     random_state=42,
++                                     warm_start=True)
++        else:
++            clf_ws.set_params(n_estimators=n_estimators)
++        clf_ws.fit(X_train)
++        assert len(clf_ws.estimators_) == n_estimators
++
++    clf_no_ws = IsolationForest(n_estimators=10, random_state=42,
++                                warm_start=False)
++    clf_no_ws.fit(X_train)
++
++    assert_allclose(clf_ws.score_samples(X_test),
++                    clf_no_ws.score_samples(X_test))
++
++
++def test_warm_start_equivalence():
++    """Test that warm started IsolationForest with 5+5 estimators is
++    equivalent to one IsolationForest with 10 estimators."""
++    X_train = [[0.], [0.44], [0.45], [0.46], [1.]]
++    X_test = [[0.], [1.], [0.45]]
++
++    clf_ws = IsolationForest(n_estimators=5, warm_start=True,
++                             random_state=42)
++    clf_ws.fit(X_train)
++    clf_ws.set_params(n_estimators=10)
++    clf_ws.fit(X_train)
++
++    clf = IsolationForest(n_estimators=10, warm_start=False,
++                          random_state=42)
++    clf.fit(X_train)
++
++    assert_allclose(clf_ws.score_samples(X_test),
++                    clf.score_samples(X_test))
+2026-10-31 05:43:37,386 - INFO - Eval script for scikit-learn__scikit-learn-13496 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/scikit-learn__scikit-learn-13496/eval.sh; copying to container...
+2026-10-31 05:43:46,311 - INFO - Test runtime: 8.85 seconds
+2026-10-31 05:43:46,313 - INFO - Test output for scikit-learn__scikit-learn-13496 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/scikit-learn__scikit-learn-13496/test_output.txt
+2026-10-31 05:43:46,381 - INFO - Git diff after:
+diff --git a/doc/whats_new/v0.21.rst b/doc/whats_new/v0.21.rst
+index d9ae08ed5..6c748bf91 100755
+--- a/doc/whats_new/v0.21.rst
++++ b/doc/whats_new/v0.21.rst
+@@ -167,6 +167,10 @@ Support for Python 3.4 and below has been officially dropped.
+   prediction step, thus capping the memory usage. :issue:`13283` by
+   `Nicolas Goix`_.
+ 
++- |Enhancement| Exposed ``warm_start`` parameter in
++  :class:`ensemble.IsolationForest`. This allows for incremental addition of
++  new trees to the ensemble. :issue:`13406` by :user:`Contributor`.
++
+ - |Fix| Fixed a bug in :class:`ensemble.GradientBoostingClassifier` and
+   :class:`ensemble.GradientBoostingRegressor`, which didn't support
+   scikit-learn estimators as the initial estimator. Also added support of
+diff --git a/sklearn/ensemble/iforest.py b/sklearn/ensemble/iforest.py
+index 8a1bd3625..c665370ab 100755
+--- a/sklearn/ensemble/iforest.py
++++ b/sklearn/ensemble/iforest.py
+@@ -120,6 +120,10 @@ class IsolationForest(BaseBagging, OutlierMixin):
+     verbose : int, optional (default=0)
+         Controls the verbosity of the tree building process.
+ 
++    warm_start : bool, optional (default=False)
++        When set to ``True``, reuse the solution of the previous call to fit
++        and add more estimators to the ensemble, otherwise, just fit a whole
++        new forest. See :term:`the Glossary <warm_start>`.
+ 
+     Attributes
+     ----------
+@@ -173,7 +177,8 @@ class IsolationForest(BaseBagging, OutlierMixin):
+                  n_jobs=None,
+                  behaviour='old',
+                  random_state=None,
+-                 verbose=0):
++                 verbose=0,
++                 warm_start=False):
+         super().__init__(
+             base_estimator=ExtraTreeRegressor(
+                 max_features=1,
+@@ -187,7 +192,8 @@ class IsolationForest(BaseBagging, OutlierMixin):
+             max_features=max_features,
+             n_jobs=n_jobs,
+             random_state=random_state,
+-            verbose=verbose)
++            verbose=verbose,
++            warm_start=warm_start)
+ 
+         self.behaviour = behaviour
+         self.contamination = contamination
+2026-10-31 05:43:46,382 - INFO - Git diff changed after running eval script
+2026-10-31 05:43:46,382 - INFO - Grading answer for scikit-learn__scikit-learn-13496...
+2026-10-31 05:43:46,384 - INFO - report: {'scikit-learn__scikit-learn-13496': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/ensemble/tests/test_iforest.py::test_iforest_warm_start'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/ensemble/tests/test_iforest.py::test_iforest', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_sparse', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_error', 'sklearn/ensemble/tests/test_iforest.py::test_recalculate_max_depth', 'sklearn/ensemble/tests/test_iforest.py::test_max_samples_attribute', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_parallel_regression', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_performance', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_works[0.25]', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_works[auto]', 'sklearn/ensemble/tests/test_iforest.py::test_max_samples_consistency', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_subsampled_features', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_average_path_length', 'sklearn/ensemble/tests/test_iforest.py::test_score_samples', 'sklearn/ensemble/tests/test_iforest.py::test_deprecation', 'sklearn/ensemble/tests/test_iforest.py::test_behaviour_param', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_chunks_works1[0.25-3]', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_chunks_works1[auto-2]', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_chunks_works2[0.25-3]', 'sklearn/ensemble/tests/test_iforest.py::test_iforest_chunks_works2[auto-2]'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-13496: resolved: True
+2026-10-31 05:43:46,385 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-13496.verified_full_deepseek-harness...
+2026-10-31 05:44:02,514 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13496.verified_full_deepseek-harness stopped successfully.
+2026-10-31 05:44:02,514 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-13496.verified_full_deepseek-harness...
+2026-10-31 05:44:02,553 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13496.verified_full_deepseek-harness removed successfully.

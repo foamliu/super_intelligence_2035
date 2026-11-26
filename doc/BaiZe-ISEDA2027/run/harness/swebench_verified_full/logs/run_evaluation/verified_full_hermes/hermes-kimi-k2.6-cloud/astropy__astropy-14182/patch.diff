@@ -1,0 +1,47 @@
+diff --git a/astropy/io/ascii/rst.py b/astropy/io/ascii/rst.py
+index abdeba8e..8c443d87 100644
+--- a/astropy/io/ascii/rst.py
++++ b/astropy/io/ascii/rst.py
+@@ -57,10 +57,13 @@ class RST(FixedWidth):
+     data_class = SimpleRSTData
+     header_class = SimpleRSTHeader
+ 
+-    def __init__(self):
+-        super().__init__(delimiter_pad=None, bookend=False)
++    def __init__(self, header_rows=None):
++        super().__init__(delimiter_pad=None, bookend=False, header_rows=header_rows)
++        self.data.start_line = len(self.header.header_rows) + 2
+ 
+     def write(self, lines):
+         lines = super().write(lines)
+-        lines = [lines[1]] + lines + [lines[1]]
++        header_rows = getattr(self.header, "header_rows", ["name"])
++        position_line_idx = len(header_rows)
++        lines = [lines[position_line_idx]] + lines + [lines[position_line_idx]]
+         return lines
+diff --git a/astropy/io/ascii/tests/test_rst.py b/astropy/io/ascii/tests/test_rst.py
+index 84d6fed4..2a4bad1e 100644
+--- a/astropy/io/ascii/tests/test_rst.py
++++ b/astropy/io/ascii/tests/test_rst.py
+@@ -185,3 +185,21 @@ Col1      Col2 Col3 Col4
+ ==== ========= ==== ====
+ """,
+     )
++
++
++def test_write_header_rows():
++    """Write a table as a SimpleRST Table with header_rows"""
++    out = StringIO()
++    ascii.write(dat, out, Writer=ascii.RST, header_rows=["name", "unit"])
++    assert_equal_splitlines(
++        out.getvalue(),
++        """\
++==== ========= ==== ====
++Col1      Col2 Col3 Col4
++                        
++==== ========= ==== ====
++ 1.2   "hello"    1    a
++ 2.4 's worlds    2    2
++==== ========= ==== ====
++""",
++    )

@@ -1,0 +1,114 @@
+2026-10-30 16:10:29,444 - INFO - Creating container for astropy__astropy-14365...
+2026-10-30 16:10:34,958 - INFO - Removed existing container sweb.eval.astropy__astropy-14365.verified_full_cline-patched
+2026-10-30 16:10:34,976 - INFO - Container for astropy__astropy-14365 created: a0363f3f2c316a4aa37f460418cfd2d0877add452fd7fb1915477c23725e38e0
+2026-10-30 16:11:08,570 - INFO - Container for astropy__astropy-14365 started: a0363f3f2c316a4aa37f460418cfd2d0877add452fd7fb1915477c23725e38e0
+2026-10-30 16:11:08,571 - INFO - Intermediate patch for astropy__astropy-14365 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/astropy__astropy-14365/patch.diff, now applying to container...
+2026-10-30 16:11:08,748 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/ascii/qdp.py...
+warning: astropy/io/ascii/qdp.py has type 100755, expected 100644
+Checking patch astropy/io/ascii/tests/test_qdp.py...
+warning: astropy/io/ascii/tests/test_qdp.py has type 100755, expected 100644
+Applied patch astropy/io/ascii/qdp.py cleanly.
+Applied patch astropy/io/ascii/tests/test_qdp.py cleanly.
+
+2026-10-30 16:11:09,190 - INFO - Git diff before:
+diff --git a/astropy/io/ascii/qdp.py b/astropy/io/ascii/qdp.py
+index 83a4f004a..87be76ba7 100755
+--- a/astropy/io/ascii/qdp.py
++++ b/astropy/io/ascii/qdp.py
+@@ -34,6 +34,8 @@ def _line_type(line, delimiter=None):
+     --------
+     >>> _line_type("READ SERR 3")
+     'command'
++    >>> _line_type("read serr 3")
++    'command'
+     >>> _line_type(" \\n    !some gibberish")
+     'comment'
+     >>> _line_type("   ")
+@@ -60,7 +62,7 @@ def _line_type(line, delimiter=None):
+     ValueError: Unrecognized QDP line...
+     """
+     _decimal_re = r"[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?"
+-    _command_re = r"READ [TS]ERR(\s+[0-9]+)+"
++    _command_re = r"(?i:READ [TS]ERR(\s+[0-9]+)+)"
+ 
+     sep = delimiter
+     if delimiter is None:
+diff --git a/astropy/io/ascii/tests/test_qdp.py b/astropy/io/ascii/tests/test_qdp.py
+index ef24e6f6a..a9bf19f7f 100755
+--- a/astropy/io/ascii/tests/test_qdp.py
++++ b/astropy/io/ascii/tests/test_qdp.py
+@@ -233,6 +233,33 @@ def test_read_write_simple_specify_name(tmp_path):
+     assert np.all(t2["a"] == t1["a"])
+ 
+ 
++def test_lowercase_commands(tmp_path):
++    example_qdp = """
++        ! Initial comment line 1
++        ! Initial comment line 2
++        read terr 1
++        read serr 3
++        ! Table 0 comment
++        !a a(pos) a(neg) b c ce d
++        53000.5   0.25  -0.5   1  1.5  3.5 2
++        54000.5   1.25  -1.5   2  2.5  4.5 3
++        NO NO NO NO NO
++        ! Table 1 comment
++        !a a(pos) a(neg) b c ce d
++        54000.5   2.25  -2.5   NO  3.5  5.5 5
++        55000.5   3.25  -3.5   4  4.5  6.5 nan
++        """
++    t = Table.read(
++        example_qdp, format="ascii.qdp", table_id=1, names=["a", "b", "c", "d"]
++    )
++    assert np.isclose(t["a"][0], 54000.5)
++    assert np.isclose(t["a_perr"][0], 2.25)
++    assert np.isclose(t["a_nerr"][0], -2.5)
++    assert np.isclose(t["c"][0], 3.5)
++    assert np.isclose(t["c_err"][0], 5.5)
++    assert np.isclose(t["d"][0], 5)
++
++
+ def test_get_lines_from_qdp(tmp_path):
+     test_file = str(tmp_path / "test.qdp")
+     text_string = "A\nB"
+2026-10-30 16:11:09,191 - INFO - Eval script for astropy__astropy-14365 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/astropy__astropy-14365/eval.sh; copying to container...
+2026-10-30 16:12:03,680 - INFO - Test runtime: 54.08 seconds
+2026-10-30 16:12:03,688 - INFO - Test output for astropy__astropy-14365 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/astropy__astropy-14365/test_output.txt
+2026-10-30 16:12:03,738 - INFO - Git diff after:
+diff --git a/astropy/io/ascii/qdp.py b/astropy/io/ascii/qdp.py
+index 83a4f004a..87be76ba7 100755
+--- a/astropy/io/ascii/qdp.py
++++ b/astropy/io/ascii/qdp.py
+@@ -34,6 +34,8 @@ def _line_type(line, delimiter=None):
+     --------
+     >>> _line_type("READ SERR 3")
+     'command'
++    >>> _line_type("read serr 3")
++    'command'
+     >>> _line_type(" \\n    !some gibberish")
+     'comment'
+     >>> _line_type("   ")
+@@ -60,7 +62,7 @@ def _line_type(line, delimiter=None):
+     ValueError: Unrecognized QDP line...
+     """
+     _decimal_re = r"[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?"
+-    _command_re = r"READ [TS]ERR(\s+[0-9]+)+"
++    _command_re = r"(?i:READ [TS]ERR(\s+[0-9]+)+)"
+ 
+     sep = delimiter
+     if delimiter is None:
+2026-10-30 16:12:03,739 - INFO - Git diff changed after running eval script
+2026-10-30 16:12:03,739 - INFO - Grading answer for astropy__astropy-14365...
+2026-10-30 16:12:03,745 - INFO - report: {'astropy__astropy-14365': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['astropy/io/ascii/tests/test_qdp.py::test_roundtrip[True]']}, 'PASS_TO_PASS': {'success': ['astropy/io/ascii/tests/test_qdp.py::test_get_tables_from_qdp_file', 'astropy/io/ascii/tests/test_qdp.py::test_roundtrip[False]', 'astropy/io/ascii/tests/test_qdp.py::test_read_example', 'astropy/io/ascii/tests/test_qdp.py::test_roundtrip_example', 'astropy/io/ascii/tests/test_qdp.py::test_roundtrip_example_comma', 'astropy/io/ascii/tests/test_qdp.py::test_read_write_simple', 'astropy/io/ascii/tests/test_qdp.py::test_read_write_simple_specify_name', 'astropy/io/ascii/tests/test_qdp.py::test_get_lines_from_qdp'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-14365: resolved: False
+2026-10-30 16:12:03,747 - INFO - Attempting to stop container sweb.eval.astropy__astropy-14365.verified_full_cline-patched...
+2026-10-30 16:12:24,751 - INFO - Container sweb.eval.astropy__astropy-14365.verified_full_cline-patched stopped successfully.
+2026-10-30 16:12:24,751 - INFO - Attempting to remove container sweb.eval.astropy__astropy-14365.verified_full_cline-patched...
+2026-10-30 16:12:24,811 - INFO - Container sweb.eval.astropy__astropy-14365.verified_full_cline-patched removed successfully.
+i-k2.6-cloud/astropy__astropy-14365/run_instance.log) for more information.
+2026-10-30 16:10:34,879 - INFO - Attempting to stop container sweb.eval.astropy__astropy-14365.verified_full_cline-patched...
+2026-10-30 16:10:34,907 - INFO - Container sweb.eval.astropy__astropy-14365.verified_full_cline-patched stopped successfully.
+2026-10-30 16:10:34,907 - INFO - Attempting to remove container sweb.eval.astropy__astropy-14365.verified_full_cline-patched...
+2026-10-30 16:10:34,932 - INFO - Failed to remove container sweb.eval.astropy__astropy-14365.verified_full_cline-patched: Command '['docker', 'rm', '--force', '94fc62046228a4464b90ccd043ac786ad16e1d463c098b22dcd7609415821938']' returned non-zero exit status 1.
+Command output: None

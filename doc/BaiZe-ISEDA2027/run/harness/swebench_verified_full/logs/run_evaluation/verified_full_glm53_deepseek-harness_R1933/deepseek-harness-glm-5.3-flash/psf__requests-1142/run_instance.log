@@ -1,0 +1,124 @@
+2026-11-09 08:17:51,427 - INFO - Creating container for psf__requests-1142...
+2026-11-09 08:17:51,457 - INFO - Container for psf__requests-1142 created: 7f29769c1dd1c0c17721a2bdac794e2647fcef89230b38cc116bde4cc69bd6ea
+2026-11-09 08:17:52,610 - INFO - Container for psf__requests-1142 started: 7f29769c1dd1c0c17721a2bdac794e2647fcef89230b38cc116bde4cc69bd6ea
+2026-11-09 08:17:52,612 - INFO - Intermediate patch for psf__requests-1142 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/psf__requests-1142/patch.diff, now applying to container...
+2026-11-09 08:17:52,718 - INFO - >>>>> Applied Patch:
+Checking patch HISTORY.rst...
+Checking patch requests/models.py...
+Checking patch test_requests.py...
+Applied patch HISTORY.rst cleanly.
+Applied patch requests/models.py cleanly.
+Applied patch test_requests.py cleanly.
+
+2026-11-09 08:17:52,787 - INFO - Git diff before:
+diff --git a/HISTORY.rst b/HISTORY.rst
+index a3491a1..f8b2c00 100644
+--- a/HISTORY.rst
++++ b/HISTORY.rst
+@@ -6,6 +6,9 @@ History
+ 1.1.0 (2013-01-10)
+ ++++++++++++++++++
+ 
++- Don't send ``Content-Length: 0`` on bodyless requests (e.g. GET),
++  which broke some servers (e.g. amazon.com).
++
+ - CHUNKED REQUESTS
+ - Support for iterable response bodies
+ - Assume servers persist redirect params
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..b817dae 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -377,7 +377,11 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+                     else:
+                         content_type = 'application/x-www-form-urlencoded'
+ 
+-            self.prepare_content_length(body)
++            # Only set Content-Length if there is a body. Sending a
++            # Content-Length header on requests without a body (e.g. GET)
++            # breaks some servers (e.g. amazon.com).
++            if body:
++                self.prepare_content_length(body)
+ 
+             # Add content-type if it wasn't explicitly provided.
+             if (content_type) and (not 'content-type' in self.headers):
+@@ -386,7 +390,6 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+         if hasattr(body, 'seek') and hasattr(body, 'tell'):
+             body.seek(0, 2)
+             self.headers['Content-Length'] = str(body.tell())
+diff --git a/test_requests.py b/test_requests.py
+index c974e98..b9b17b6 100644
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -58,6 +58,17 @@ class RequestsTestCase(unittest.TestCase):
+         assert pr.body == 'life=42'
+ 
+ 
++    def test_no_content_length_for_bodyless_requests(self):
++        """Content-Length must not be sent on requests without a body
++        (e.g. GET), since some servers (e.g. amazon.com) reject it."""
++        request = requests.Request('GET', 'http://example.com/').prepare()
++        self.assertNotIn('Content-Length', request.headers)
++
++    def test_content_length_set_for_bodied_requests(self):
++        request = requests.Request('POST', 'http://example.com/',
++                                   data={'life': '42'}).prepare()
++        self.assertEqual(request.headers['Content-Length'], str(len(request.body)))
++
+     def test_path_is_not_double_encoded(self):
+         request = requests.Request('GET', "http://0.0.0.0/get/test case").prepare()
+2026-11-09 08:17:52,789 - INFO - Eval script for psf__requests-1142 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/psf__requests-1142/eval.sh; copying to container...
+2026-11-09 08:17:56,190 - INFO - Test runtime: 3.33 seconds
+2026-11-09 08:17:56,192 - INFO - Test output for psf__requests-1142 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1933/deepseek-harness-glm-5.3-flash/psf__requests-1142/test_output.txt
+2026-11-09 08:17:56,262 - INFO - Git diff after:
+diff --git a/HISTORY.rst b/HISTORY.rst
+index a3491a1..f8b2c00 100644
+--- a/HISTORY.rst
++++ b/HISTORY.rst
+@@ -6,6 +6,9 @@ History
+ 1.1.0 (2013-01-10)
+ ++++++++++++++++++
+ 
++- Don't send ``Content-Length: 0`` on bodyless requests (e.g. GET),
++  which broke some servers (e.g. amazon.com).
++
+ - CHUNKED REQUESTS
+ - Support for iterable response bodies
+ - Assume servers persist redirect params
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..b817dae 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -377,7 +377,11 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+                     else:
+                         content_type = 'application/x-www-form-urlencoded'
+ 
+-            self.prepare_content_length(body)
++            # Only set Content-Length if there is a body. Sending a
++            # Content-Length header on requests without a body (e.g. GET)
++            # breaks some servers (e.g. amazon.com).
++            if body:
++                self.prepare_content_length(body)
+ 
+             # Add content-type if it wasn't explicitly provided.
+             if (content_type) and (not 'content-type' in self.headers):
+@@ -386,7 +390,6 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+         if hasattr(body, 'seek') and hasattr(body, 'tell'):
+             body.seek(0, 2)
+             self.headers['Content-Length'] = str(body.tell())
+2026-11-09 08:17:56,262 - INFO - Git diff changed after running eval script
+2026-11-09 08:17:56,262 - INFO - Grading answer for psf__requests-1142...
+2026-11-09 08:17:56,277 - INFO - report: {'psf__requests-1142': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_no_content_length'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_basic_building', 'test_requests.py::RequestsTestCase::test_entry_points', 'test_requests.py::RequestsTestCase::test_invalid_url', 'test_requests.py::RequestsTestCase::test_params_are_added_before_fragment', 'test_requests.py::RequestsTestCase::test_path_is_not_double_encoded'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for psf__requests-1142: resolved: True
+2026-11-09 08:17:56,279 - INFO - Attempting to stop container sweb.eval.psf__requests-1142.verified_full_glm53_deepseek-harness_R1933...
+2026-11-09 08:18:12,639 - INFO - Container sweb.eval.psf__requests-1142.verified_full_glm53_deepseek-harness_R1933 stopped successfully.
+2026-11-09 08:18:12,640 - INFO - Attempting to remove container sweb.eval.psf__requests-1142.verified_full_glm53_deepseek-harness_R1933...
+2026-11-09 08:18:12,670 - INFO - Container sweb.eval.psf__requests-1142.verified_full_glm53_deepseek-harness_R1933 removed successfully.

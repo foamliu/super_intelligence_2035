@@ -1,0 +1,156 @@
+2026-11-10 02:27:58,142 - INFO - Creating container for django__django-14376...
+2026-11-10 02:27:58,187 - INFO - Container for django__django-14376 created: 8194fb37f9b13218449bcabdf0fe50c64010c24e90fc63100937d7acb32de1b3
+2026-11-10 02:27:58,898 - INFO - Container for django__django-14376 started: 8194fb37f9b13218449bcabdf0fe50c64010c24e90fc63100937d7acb32de1b3
+2026-11-10 02:27:58,900 - INFO - Intermediate patch for django__django-14376 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2027/deepseek-harness-glm-5.3-flash/django__django-14376/patch.diff, now applying to container...
+2026-11-10 02:27:59,073 - INFO - >>>>> Applied Patch:
+Checking patch django/db/backends/mysql/base.py...
+Checking patch django/db/backends/mysql/client.py...
+Checking patch tests/backends/mysql/tests.py...
+Applied patch django/db/backends/mysql/base.py cleanly.
+Applied patch django/db/backends/mysql/client.py cleanly.
+Applied patch tests/backends/mysql/tests.py cleanly.
+
+2026-11-10 02:28:00,327 - INFO - Git diff before:
+diff --git a/django/db/backends/mysql/base.py b/django/db/backends/mysql/base.py
+index 2c62182d31..8b28a60485 100644
+--- a/django/db/backends/mysql/base.py
++++ b/django/db/backends/mysql/base.py
+@@ -200,9 +200,9 @@ class DatabaseWrapper(BaseDatabaseWrapper):
+         if settings_dict['USER']:
+             kwargs['user'] = settings_dict['USER']
+         if settings_dict['NAME']:
+-            kwargs['db'] = settings_dict['NAME']
++            kwargs['database'] = settings_dict['NAME']
+         if settings_dict['PASSWORD']:
+-            kwargs['passwd'] = settings_dict['PASSWORD']
++            kwargs['password'] = settings_dict['PASSWORD']
+         if settings_dict['HOST'].startswith('/'):
+             kwargs['unix_socket'] = settings_dict['HOST']
+         elif settings_dict['HOST']:
+diff --git a/django/db/backends/mysql/client.py b/django/db/backends/mysql/client.py
+index 95442a32b0..2186b7bfce 100644
+--- a/django/db/backends/mysql/client.py
++++ b/django/db/backends/mysql/client.py
+@@ -10,10 +10,7 @@ class DatabaseClient(BaseDatabaseClient):
+         env = None
+         db = settings_dict['OPTIONS'].get('db', settings_dict['NAME'])
+         user = settings_dict['OPTIONS'].get('user', settings_dict['USER'])
+-        password = settings_dict['OPTIONS'].get(
+-            'password',
+-            settings_dict['OPTIONS'].get('passwd', settings_dict['PASSWORD'])
+-        )
++        password = settings_dict['OPTIONS'].get('password', settings_dict['PASSWORD'])
+         host = settings_dict['OPTIONS'].get('host', settings_dict['HOST'])
+         port = settings_dict['OPTIONS'].get('port', settings_dict['PORT'])
+         server_ca = settings_dict['OPTIONS'].get('ssl', {}).get('ca')
+diff --git a/tests/backends/mysql/tests.py b/tests/backends/mysql/tests.py
+index 02fc312abc..ed71a67ac0 100644
+--- a/tests/backends/mysql/tests.py
++++ b/tests/backends/mysql/tests.py
+@@ -2,8 +2,9 @@ import unittest
+ from contextlib import contextmanager
+ 
+ from django.core.exceptions import ImproperlyConfigured
++from django.db.backends.mysql.client import DatabaseClient
+ from django.db import connection
+-from django.test import TestCase, override_settings
++from django.test import SimpleTestCase, TestCase, override_settings
+ 
+ 
+ @contextmanager
+@@ -89,3 +90,18 @@ class IsolationLevelTests(TestCase):
+         )
+         with self.assertRaisesMessage(ImproperlyConfigured, msg):
+             new_connection.cursor()
++
++
++class DatabaseClientTests(SimpleTestCase):
++    def test_db_info(self):
++        settings_dict = connection.settings_dict.copy()
++        settings_dict['NAME'] = 'test_db'
++        settings_dict['USER'] = 'test_user'
++        settings_dict['PASSWORD'] = 'test_password'
++        args, env = DatabaseClient.settings_to_cmd_args_env(settings_dict, [])
++        self.assertEqual(env, {'MYSQL_PWD': 'test_password'})
++        self.assertEqual(
++            args,
++            ['mysql', '--user=test_user', '--host=localhost', '--port=3306',
++             'test_db'],
++        )
+2026-11-10 02:28:00,328 - INFO - Eval script for django__django-14376 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2027/deepseek-harness-glm-5.3-flash/django__django-14376/eval.sh; copying to container...
+2026-11-10 02:28:09,115 - INFO - Test runtime: 8.71 seconds
+2026-11-10 02:28:09,116 - INFO - Test output for django__django-14376 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2027/deepseek-harness-glm-5.3-flash/django__django-14376/test_output.txt
+2026-11-10 02:28:09,203 - INFO - Git diff after:
+diff --git a/django/db/backends/mysql/base.py b/django/db/backends/mysql/base.py
+index 2c62182d31..8b28a60485 100644
+--- a/django/db/backends/mysql/base.py
++++ b/django/db/backends/mysql/base.py
+@@ -200,9 +200,9 @@ class DatabaseWrapper(BaseDatabaseWrapper):
+         if settings_dict['USER']:
+             kwargs['user'] = settings_dict['USER']
+         if settings_dict['NAME']:
+-            kwargs['db'] = settings_dict['NAME']
++            kwargs['database'] = settings_dict['NAME']
+         if settings_dict['PASSWORD']:
+-            kwargs['passwd'] = settings_dict['PASSWORD']
++            kwargs['password'] = settings_dict['PASSWORD']
+         if settings_dict['HOST'].startswith('/'):
+             kwargs['unix_socket'] = settings_dict['HOST']
+         elif settings_dict['HOST']:
+diff --git a/django/db/backends/mysql/client.py b/django/db/backends/mysql/client.py
+index 95442a32b0..2186b7bfce 100644
+--- a/django/db/backends/mysql/client.py
++++ b/django/db/backends/mysql/client.py
+@@ -10,10 +10,7 @@ class DatabaseClient(BaseDatabaseClient):
+         env = None
+         db = settings_dict['OPTIONS'].get('db', settings_dict['NAME'])
+         user = settings_dict['OPTIONS'].get('user', settings_dict['USER'])
+-        password = settings_dict['OPTIONS'].get(
+-            'password',
+-            settings_dict['OPTIONS'].get('passwd', settings_dict['PASSWORD'])
+-        )
++        password = settings_dict['OPTIONS'].get('password', settings_dict['PASSWORD'])
+         host = settings_dict['OPTIONS'].get('host', settings_dict['HOST'])
+         port = settings_dict['OPTIONS'].get('port', settings_dict['PORT'])
+         server_ca = settings_dict['OPTIONS'].get('ssl', {}).get('ca')
+diff --git a/tests/backends/mysql/tests.py b/tests/backends/mysql/tests.py
+index 02fc312abc..ed71a67ac0 100644
+--- a/tests/backends/mysql/tests.py
++++ b/tests/backends/mysql/tests.py
+@@ -2,8 +2,9 @@ import unittest
+ from contextlib import contextmanager
+ 
+ from django.core.exceptions import ImproperlyConfigured
++from django.db.backends.mysql.client import DatabaseClient
+ from django.db import connection
+-from django.test import TestCase, override_settings
++from django.test import SimpleTestCase, TestCase, override_settings
+ 
+ 
+ @contextmanager
+@@ -89,3 +90,18 @@ class IsolationLevelTests(TestCase):
+         )
+         with self.assertRaisesMessage(ImproperlyConfigured, msg):
+             new_connection.cursor()
++
++
++class DatabaseClientTests(SimpleTestCase):
++    def test_db_info(self):
++        settings_dict = connection.settings_dict.copy()
++        settings_dict['NAME'] = 'test_db'
++        settings_dict['USER'] = 'test_user'
++        settings_dict['PASSWORD'] = 'test_password'
++        args, env = DatabaseClient.settings_to_cmd_args_env(settings_dict, [])
++        self.assertEqual(env, {'MYSQL_PWD': 'test_password'})
++        self.assertEqual(
++            args,
++            ['mysql', '--user=test_user', '--host=localhost', '--port=3306',
++             'test_db'],
++        )
+2026-11-10 02:28:09,203 - INFO - Grading answer for django__django-14376...
+2026-11-10 02:28:09,206 - INFO - report: {'django__django-14376': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_options_non_deprecated_keys_preferred (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_options_override_settings_proper_values (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_parameters (dbshell.test_mysql.MySqlDbshellCommandTestCase)']}, 'PASS_TO_PASS': {'success': ['test_basic_params_specified_in_settings (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_can_connect_using_sockets (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_crash_password_does_not_leak (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_fails_with_keyerror_on_incomplete_config (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_options_charset (dbshell.test_mysql.MySqlDbshellCommandTestCase)', 'test_ssl_certificate_is_added (dbshell.test_mysql.MySqlDbshellCommandTestCase)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14376: resolved: False
+2026-11-10 02:28:09,208 - INFO - Attempting to stop container sweb.eval.django__django-14376.verified_full_glm53_deepseek-harness_incr_R2027...
+2026-11-10 02:28:25,370 - INFO - Container sweb.eval.django__django-14376.verified_full_glm53_deepseek-harness_incr_R2027 stopped successfully.
+2026-11-10 02:28:25,371 - INFO - Attempting to remove container sweb.eval.django__django-14376.verified_full_glm53_deepseek-harness_incr_R2027...
+2026-11-10 02:28:25,416 - INFO - Container sweb.eval.django__django-14376.verified_full_glm53_deepseek-harness_incr_R2027 removed successfully.

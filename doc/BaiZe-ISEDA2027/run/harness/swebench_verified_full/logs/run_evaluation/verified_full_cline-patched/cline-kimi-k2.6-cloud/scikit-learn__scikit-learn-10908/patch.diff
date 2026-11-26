@@ -1,0 +1,51 @@
+diff --git a/sklearn/feature_extraction/tests/test_text.py b/sklearn/feature_extraction/tests/test_text.py
+index 22fbd3f..e613ede 100644
+--- a/sklearn/feature_extraction/tests/test_text.py
++++ b/sklearn/feature_extraction/tests/test_text.py
+@@ -259,6 +259,22 @@ def test_countvectorizer_custom_vocabulary():
+         assert_equal(X.shape[1], len(terms))
+ 
+ 
++def test_countvectorizer_custom_vocabulary_no_fit():
++    vocab = {"pizza": 0, "beer": 1}
++    terms = set(vocab.keys())
++
++    for typ in [dict, list, iter]:
++        v = typ(vocab)
++        vect = CountVectorizer(vocabulary=v)
++        assert_false(hasattr(vect, "vocabulary_"))
++        assert_equal(set(vect.get_feature_names()), terms)
++        X = vect.transform(JUNK_FOOD_DOCS)
++        assert_equal(X.shape[1], len(terms))
++        # inverse_transform should also work without fit
++        inv = vect.inverse_transform(X)
++        assert_equal(len(inv), X.shape[0])
++
++
+ def test_countvectorizer_custom_vocabulary_pipeline():
+     what_we_like = ["pizza", "beer"]
+     pipe = Pipeline([
+diff --git a/sklearn/feature_extraction/text.py b/sklearn/feature_extraction/text.py
+index 9b1ebd6..6003c05 100644
+--- a/sklearn/feature_extraction/text.py
++++ b/sklearn/feature_extraction/text.py
+@@ -973,6 +973,9 @@ class CountVectorizer(BaseEstimator, VectorizerMixin):
+         X_inv : list of arrays, len = n_samples
+             List of arrays of terms.
+         """
++        if not hasattr(self, 'vocabulary_'):
++            self._validate_vocabulary()
++
+         self._check_vocabulary()
+ 
+         if sp.issparse(X):
+@@ -993,6 +996,9 @@ class CountVectorizer(BaseEstimator, VectorizerMixin):
+ 
+     def get_feature_names(self):
+         """Array mapping from feature integer indices to feature name"""
++        if not hasattr(self, 'vocabulary_'):
++            self._validate_vocabulary()
++
+         self._check_vocabulary()
+ 
+         return [t for t, i in sorted(six.iteritems(self.vocabulary_),

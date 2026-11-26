@@ -1,0 +1,91 @@
+2026-11-05 02:52:03,515 - INFO - Creating container for pytest-dev__pytest-7205...
+2026-11-05 02:52:03,540 - INFO - Container for pytest-dev__pytest-7205 created: d94aa81f4b71b58aacb3101cf87a2682b0b0758358d412769a2b60167822708b
+2026-11-05 02:52:04,712 - INFO - Container for pytest-dev__pytest-7205 started: d94aa81f4b71b58aacb3101cf87a2682b0b0758358d412769a2b60167822708b
+2026-11-05 02:52:04,714 - INFO - Intermediate patch for pytest-dev__pytest-7205 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/pytest-dev__pytest-7205/patch.diff, now applying to container...
+2026-11-05 02:52:04,844 - INFO - >>>>> Applied Patch:
+Checking patch src/_pytest/setuponly.py...
+Checking patch testing/test_setuponly.py...
+Applied patch src/_pytest/setuponly.py cleanly.
+Applied patch testing/test_setuponly.py cleanly.
+
+2026-11-05 02:52:05,006 - INFO - Git diff before:
+diff --git a/src/_pytest/setuponly.py b/src/_pytest/setuponly.py
+index c9cc589ff..9fc218a3e 100644
+--- a/src/_pytest/setuponly.py
++++ b/src/_pytest/setuponly.py
+@@ -1,4 +1,5 @@
+ import pytest
++from _pytest._io.saferepr import saferepr
+ 
+ 
+ def pytest_addoption(parser):
+@@ -66,7 +67,7 @@ def _show_fixture_action(fixturedef, msg):
+             tw.write(" (fixtures used: {})".format(", ".join(deps)))
+ 
+     if hasattr(fixturedef, "cached_param"):
+-        tw.write("[{}]".format(fixturedef.cached_param))
++        tw.write("[{}]".format(saferepr(fixturedef.cached_param)))
+ 
+     tw.flush()
+ 
+diff --git a/testing/test_setuponly.py b/testing/test_setuponly.py
+index e26a33dee..a41e1ddfb 100644
+--- a/testing/test_setuponly.py
++++ b/testing/test_setuponly.py
+@@ -201,6 +201,26 @@ def test_show_fixtures_with_parameter_ids_function(testdir, mode):
+     result.stdout.fnmatch_lines(["*SETUP    F foobar?FOO?", "*SETUP    F foobar?BAR?"])
+ 
+ 
++def test_show_fixtures_with_bytes_parameters(testdir, mode):
++    p = testdir.makepyfile(
++        r"""
++        import pytest
++        @pytest.fixture(params=[b'foo', b'bar'])
++        def foobar():
++            pass
++        def test_foobar(foobar):
++            pass
++    """
++    )
++
++    result = testdir.runpytest(mode, p, "-Werror::BytesWarning")
++    assert result.ret == 0
++
++    result.stdout.fnmatch_lines(
++        ["*SETUP    F foobar?b'foo'?", "*SETUP    F foobar?b'bar'?"]
++    )
++
++
+ def test_dynamic_fixture_request(testdir):
+     p = testdir.makepyfile(
+         """
+2026-11-05 02:52:05,009 - INFO - Eval script for pytest-dev__pytest-7205 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/pytest-dev__pytest-7205/eval.sh; copying to container...
+2026-11-05 02:52:13,407 - INFO - Test runtime: 8.30 seconds
+2026-11-05 02:52:13,409 - INFO - Test output for pytest-dev__pytest-7205 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/pytest-dev__pytest-7205/test_output.txt
+2026-11-05 02:52:13,467 - INFO - Git diff after:
+diff --git a/src/_pytest/setuponly.py b/src/_pytest/setuponly.py
+index c9cc589ff..9fc218a3e 100644
+--- a/src/_pytest/setuponly.py
++++ b/src/_pytest/setuponly.py
+@@ -1,4 +1,5 @@
+ import pytest
++from _pytest._io.saferepr import saferepr
+ 
+ 
+ def pytest_addoption(parser):
+@@ -66,7 +67,7 @@ def _show_fixture_action(fixturedef, msg):
+             tw.write(" (fixtures used: {})".format(", ".join(deps)))
+ 
+     if hasattr(fixturedef, "cached_param"):
+-        tw.write("[{}]".format(fixturedef.cached_param))
++        tw.write("[{}]".format(saferepr(fixturedef.cached_param)))
+ 
+     tw.flush()
+2026-11-05 02:52:13,467 - INFO - Git diff changed after running eval script
+2026-11-05 02:52:13,467 - INFO - Grading answer for pytest-dev__pytest-7205...
+2026-11-05 02:52:13,470 - INFO - report: {'pytest-dev__pytest-7205': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['testing/test_setuponly.py::test_show_fixtures_with_parameters[--setup-only]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids[--setup-only]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids_function[--setup-only]', 'testing/test_setuponly.py::test_show_fixtures_with_parameters[--setup-plan]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids[--setup-plan]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids_function[--setup-plan]', 'testing/test_setuponly.py::test_show_fixtures_with_parameters[--setup-show]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids[--setup-show]', 'testing/test_setuponly.py::test_show_fixtures_with_parameter_ids_function[--setup-show]', 'testing/test_setuponly.py::test_show_fixture_action_with_bytes'], 'failure': []}, 'PASS_TO_PASS': {'success': ['testing/test_setuponly.py::test_show_only_active_fixtures[--setup-only]', 'testing/test_setuponly.py::test_show_different_scopes[--setup-only]', 'testing/test_setuponly.py::test_show_nested_fixtures[--setup-only]', 'testing/test_setuponly.py::test_show_fixtures_with_autouse[--setup-only]', 'testing/test_setuponly.py::test_show_only_active_fixtures[--setup-plan]', 'testing/test_setuponly.py::test_show_different_scopes[--setup-plan]', 'testing/test_setuponly.py::test_show_nested_fixtures[--setup-plan]', 'testing/test_setuponly.py::test_show_fixtures_with_autouse[--setup-plan]', 'testing/test_setuponly.py::test_show_only_active_fixtures[--setup-show]', 'testing/test_setuponly.py::test_show_different_scopes[--setup-show]', 'testing/test_setuponly.py::test_show_nested_fixtures[--setup-show]', 'testing/test_setuponly.py::test_show_fixtures_with_autouse[--setup-show]', 'testing/test_setuponly.py::test_dynamic_fixture_request', 'testing/test_setuponly.py::test_capturing', 'testing/test_setuponly.py::test_show_fixtures_and_execute_test', 'testing/test_setuponly.py::test_setup_show_with_KeyboardInterrupt_in_test'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pytest-dev__pytest-7205: resolved: True
+2026-11-05 02:52:13,472 - INFO - Attempting to stop container sweb.eval.pytest-dev__pytest-7205.verified_full_cline-patched...
+2026-11-05 02:52:29,464 - INFO - Container sweb.eval.pytest-dev__pytest-7205.verified_full_cline-patched stopped successfully.
+2026-11-05 02:52:29,464 - INFO - Attempting to remove container sweb.eval.pytest-dev__pytest-7205.verified_full_cline-patched...
+2026-11-05 02:52:29,507 - INFO - Container sweb.eval.pytest-dev__pytest-7205.verified_full_cline-patched removed successfully.

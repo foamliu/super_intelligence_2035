@@ -1,0 +1,80 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index 780e0047..1c00502a 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -1,3 +1,18 @@
++5.1 (unreleased)
++================
++
++Bug Fixes
++---------
++
++astropy.timeseries
++^^^^^^^^^^^^^^^^^^
++
++- Improved the error message raised when a ``TimeSeries`` or ``BinnedTimeSeries``
++  fails the required column check to list all the expected and found columns,
++  rather than only the first of each, which was misleading when a required
++  column other than the first was missing. [#12620]
++
++
+ 5.0.4 (2022-03-31)
+ ==================
+ 
+diff --git a/astropy/timeseries/core.py b/astropy/timeseries/core.py
+index c279f35f..115da812 100644
+--- a/astropy/timeseries/core.py
++++ b/astropy/timeseries/core.py
+@@ -56,6 +56,14 @@ class BaseTimeSeries(QTable):
+ 
+     def _check_required_columns(self):
+ 
++        def as_scalar_or_list_str(obj):
++            if not hasattr(obj, "__len__"):
++                return f"'{obj}'"
++            elif len(obj) == 1:
++                return f"'{obj[0]}'"
++            else:
++                return str(obj)
++
+         if not self._required_columns_enabled:
+             return
+ 
+@@ -76,9 +84,12 @@ class BaseTimeSeries(QTable):
+ 
+             elif self.colnames[:len(required_columns)] != required_columns:
+ 
+-                raise ValueError("{} object is invalid - expected '{}' "
+-                                 "as the first column{} but found '{}'"
+-                                 .format(self.__class__.__name__, required_columns[0], plural, self.colnames[0]))
++                raise ValueError("{} object is invalid - expected {} "
++                                 "as the first column{} but found {}"
++                                 .format(self.__class__.__name__,
++                                         as_scalar_or_list_str(required_columns),
++                                         plural,
++                                         as_scalar_or_list_str(self.colnames[:len(required_columns)])))
+ 
+             if (self._required_columns_relax
+                     and self._required_columns == self.colnames[:len(self._required_columns)]):
+diff --git a/astropy/timeseries/tests/test_sampled.py b/astropy/timeseries/tests/test_sampled.py
+index bcc06d92..b11e1fed 100644
+--- a/astropy/timeseries/tests/test_sampled.py
++++ b/astropy/timeseries/tests/test_sampled.py
+@@ -395,6 +395,17 @@ def test_required_columns():
+     assert exc.value.args[0] == ("TimeSeries object is invalid - expected "
+                                  "'time' as the first column but found 'banana'")
+ 
++    # Test the case where there are additional required columns in addition
++    # to 'time' - the error should list all the expected and found columns
++    # (see https://github.com/astropy/astropy/issues/12620)
++    ts_2cols_required = ts.copy()
++    ts_2cols_required._required_columns = ['time', 'a']
++    with pytest.raises(ValueError) as exc:
++        ts_2cols_required.remove_column('a')
++    assert exc.value.args[0] == ("TimeSeries object is invalid - expected "
++                                 "['time', 'a'] as the first columns but found "
++                                 "['time', 'b']")
++
+ 
+ @pytest.mark.parametrize('cls', [BoxLeastSquares, LombScargle])
+ def test_periodogram(cls):

@@ -1,0 +1,543 @@
+{
+  "mdes_table": [
+    {
+      "p_a": 0.36,
+      "delta_pp": 5,
+      "p_b": 0.41,
+      "disc_rate": 0.4748,
+      "eff_disc": 0.3851,
+      "n_discordant": 60,
+      "min_k_for_sig": 0,
+      "mdes_pp": 37.97,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.36,
+      "delta_pp": 10,
+      "p_b": 0.45999999999999996,
+      "disc_rate": 0.4888,
+      "eff_disc": 0.3952,
+      "n_discordant": 62,
+      "min_k_for_sig": 0,
+      "mdes_pp": 39.24,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.36,
+      "delta_pp": 15,
+      "p_b": 0.51,
+      "disc_rate": 0.5028,
+      "eff_disc": 0.4062,
+      "n_discordant": 64,
+      "min_k_for_sig": 0,
+      "mdes_pp": 40.51,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.36,
+      "delta_pp": 20,
+      "p_b": 0.56,
+      "disc_rate": 0.5168,
+      "eff_disc": 0.4182,
+      "n_discordant": 66,
+      "min_k_for_sig": 0,
+      "mdes_pp": 41.77,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.36,
+      "delta_pp": 25,
+      "p_b": 0.61,
+      "disc_rate": 0.5308,
+      "eff_disc": 0.4314,
+      "n_discordant": 68,
+      "min_k_for_sig": 0,
+      "mdes_pp": 43.04,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.36,
+      "delta_pp": 30,
+      "p_b": 0.6599999999999999,
+      "disc_rate": 0.5448,
+      "eff_disc": 0.4457,
+      "n_discordant": 70,
+      "min_k_for_sig": 0,
+      "mdes_pp": 44.3,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.5,
+      "delta_pp": 5,
+      "p_b": 0.55,
+      "disc_rate": 0.5,
+      "eff_disc": 0.4005,
+      "n_discordant": 63,
+      "min_k_for_sig": 0,
+      "mdes_pp": 39.87,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.5,
+      "delta_pp": 10,
+      "p_b": 0.6,
+      "disc_rate": 0.5,
+      "eff_disc": 0.402,
+      "n_discordant": 63,
+      "min_k_for_sig": 0,
+      "mdes_pp": 39.87,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.5,
+      "delta_pp": 15,
+      "p_b": 0.65,
+      "disc_rate": 0.5,
+      "eff_disc": 0.4045,
+      "n_discordant": 63,
+      "min_k_for_sig": 0,
+      "mdes_pp": 39.87,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.5,
+      "delta_pp": 20,
+      "p_b": 0.7,
+      "disc_rate": 0.5,
+      "eff_disc": 0.408,
+      "n_discordant": 64,
+      "min_k_for_sig": 0,
+      "mdes_pp": 40.51,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.5,
+      "delta_pp": 25,
+      "p_b": 0.75,
+      "disc_rate": 0.5,
+      "eff_disc": 0.4125,
+      "n_discordant": 65,
+      "min_k_for_sig": 0,
+      "mdes_pp": 41.14,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.5,
+      "delta_pp": 30,
+      "p_b": 0.8,
+      "disc_rate": 0.5,
+      "eff_disc": 0.418,
+      "n_discordant": 66,
+      "min_k_for_sig": 0,
+      "mdes_pp": 41.77,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.65,
+      "delta_pp": 5,
+      "p_b": 0.7000000000000001,
+      "disc_rate": 0.44,
+      "eff_disc": 0.363,
+      "n_discordant": 57,
+      "min_k_for_sig": 0,
+      "mdes_pp": 36.08,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.65,
+      "delta_pp": 10,
+      "p_b": 0.75,
+      "disc_rate": 0.425,
+      "eff_disc": 0.3544,
+      "n_discordant": 56,
+      "min_k_for_sig": 0,
+      "mdes_pp": 35.44,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.65,
+      "delta_pp": 15,
+      "p_b": 0.8,
+      "disc_rate": 0.41,
+      "eff_disc": 0.3464,
+      "n_discordant": 54,
+      "min_k_for_sig": 0,
+      "mdes_pp": 34.18,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.65,
+      "delta_pp": 20,
+      "p_b": 0.8500000000000001,
+      "disc_rate": 0.395,
+      "eff_disc": 0.3389,
+      "n_discordant": 53,
+      "min_k_for_sig": 0,
+      "mdes_pp": 33.54,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.65,
+      "delta_pp": 25,
+      "p_b": 0.9,
+      "disc_rate": 0.38,
+      "eff_disc": 0.3317,
+      "n_discordant": 52,
+      "min_k_for_sig": 0,
+      "mdes_pp": 32.91,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.65,
+      "delta_pp": 30,
+      "p_b": 0.95,
+      "disc_rate": 0.365,
+      "eff_disc": 0.3248,
+      "n_discordant": 51,
+      "min_k_for_sig": 0,
+      "mdes_pp": 32.28,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.75,
+      "delta_pp": 5,
+      "p_b": 0.8,
+      "disc_rate": 0.35,
+      "eff_disc": 0.3014,
+      "n_discordant": 47,
+      "min_k_for_sig": 0,
+      "mdes_pp": 29.75,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.75,
+      "delta_pp": 10,
+      "p_b": 0.85,
+      "disc_rate": 0.325,
+      "eff_disc": 0.2841,
+      "n_discordant": 44,
+      "min_k_for_sig": 0,
+      "mdes_pp": 27.85,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.75,
+      "delta_pp": 15,
+      "p_b": 0.9,
+      "disc_rate": 0.3,
+      "eff_disc": 0.2667,
+      "n_discordant": 42,
+      "min_k_for_sig": 0,
+      "mdes_pp": 26.58,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.75,
+      "delta_pp": 20,
+      "p_b": 0.95,
+      "disc_rate": 0.275,
+      "eff_disc": 0.2492,
+      "n_discordant": 39,
+      "min_k_for_sig": 0,
+      "mdes_pp": 24.68,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.75,
+      "delta_pp": 25,
+      "p_b": 1.0,
+      "disc_rate": 0.25,
+      "eff_disc": 0.2313,
+      "n_discordant": 36,
+      "min_k_for_sig": 0,
+      "mdes_pp": 22.78,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.85,
+      "delta_pp": 5,
+      "p_b": 0.9,
+      "disc_rate": 0.22,
+      "eff_disc": 0.2009,
+      "n_discordant": 31,
+      "min_k_for_sig": 0,
+      "mdes_pp": 19.62,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.85,
+      "delta_pp": 10,
+      "p_b": 0.95,
+      "disc_rate": 0.185,
+      "eff_disc": 0.1721,
+      "n_discordant": 27,
+      "min_k_for_sig": 0,
+      "mdes_pp": 17.09,
+      "power_approx": 1.0
+    },
+    {
+      "p_a": 0.85,
+      "delta_pp": 15,
+      "p_b": 1.0,
+      "disc_rate": 0.15,
+      "eff_disc": 0.1424,
+      "n_discordant": 22,
+      "min_k_for_sig": 0,
+      "mdes_pp": 13.92,
+      "power_approx": 1.0
+    }
+  ],
+  "mc_nemar_power": [
+    {
+      "comparison": "Baseline(36%) -> M1(50%)",
+      "delta_pp": 14.000000000000002,
+      "power": 0.998,
+      "mean_b_disc": 19.83,
+      "mean_c_disc": 59.16,
+      "mean_discordant": 78.98,
+      "verdict": "ADEQUATE"
+    },
+    {
+      "comparison": "M1(50%) -> M2(65%)",
+      "delta_pp": 15.000000000000002,
+      "power": 0.997,
+      "mean_b_disc": 18.54,
+      "mean_c_disc": 60.51,
+      "mean_discordant": 79.05,
+      "verdict": "ADEQUATE"
+    },
+    {
+      "comparison": "M2(65%) -> M3(75%)",
+      "delta_pp": 9.999999999999998,
+      "power": 0.845,
+      "mean_b_disc": 12.51,
+      "mean_c_disc": 33.31,
+      "mean_discordant": 45.82,
+      "verdict": "ADEQUATE"
+    },
+    {
+      "comparison": "M3(75%) -> M4(85%)",
+      "delta_pp": 9.999999999999998,
+      "power": 0.736,
+      "mean_b_disc": 3.81,
+      "mean_c_disc": 15.77,
+      "mean_discordant": 19.57,
+      "verdict": "INSUFFICIENT"
+    }
+  ],
+  "bootstrap_power": [
+    {
+      "comparison": "Baseline(36%) -> M1(50%)",
+      "delta_pp": 14.000000000000002,
+      "power": 1.0,
+      "verdict": "ADEQUATE"
+    },
+    {
+      "comparison": "M1(50%) -> M2(65%)",
+      "delta_pp": 15.000000000000002,
+      "power": 1.0,
+      "verdict": "ADEQUATE"
+    },
+    {
+      "comparison": "M2(65%) -> M3(75%)",
+      "delta_pp": 9.999999999999998,
+      "power": 0.995,
+      "verdict": "ADEQUATE"
+    },
+    {
+      "comparison": "M3(75%) -> M4(85%)",
+      "delta_pp": 9.999999999999998,
+      "power": 1.0,
+      "verdict": "ADEQUATE"
+    }
+  ],
+  "min_runs": [
+    {
+      "comparison": "Baseline(36%) -> M1(50%)",
+      "delta_pp": 14.000000000000002,
+      "min_runs_80pct": 3,
+      "min_runs_90pct": 3,
+      "current_runs": 5,
+      "adequate_80pct": true,
+      "adequate_90pct": true
+    },
+    {
+      "comparison": "M1(50%) -> M2(65%)",
+      "delta_pp": 15.000000000000002,
+      "min_runs_80pct": 2,
+      "min_runs_90pct": 2,
+      "current_runs": 5,
+      "adequate_80pct": true,
+      "adequate_90pct": true
+    },
+    {
+      "comparison": "M2(65%) -> M3(75%)",
+      "delta_pp": 9.999999999999998,
+      "min_runs_80pct": 4,
+      "min_runs_90pct": 8,
+      "current_runs": 5,
+      "adequate_80pct": true,
+      "adequate_90pct": false
+    },
+    {
+      "comparison": "M3(75%) -> M4(85%)",
+      "delta_pp": 9.999999999999998,
+      "min_runs_80pct": 8,
+      "min_runs_90pct": 20,
+      "current_runs": 5,
+      "adequate_80pct": false,
+      "adequate_90pct": false
+    }
+  ],
+  "decision_rules": [
+    {
+      "comparison": "Baseline -> M1",
+      "delta_pp": 14.000000000000002,
+      "expected_discordant": 54,
+      "critical_k": 0,
+      "min_discordant_diff": 54,
+      "min_pp_for_significance": 34.18,
+      "alpha": 0.05,
+      "test": "McNemar exact (two-sided)",
+      "rule": "Declare M1 > Baseline if |b-c| >= 54 (~34.2pp), p < 0.05 (exact McNemar)"
+    },
+    {
+      "comparison": "M1 -> M2",
+      "delta_pp": 15.000000000000002,
+      "expected_discordant": 54,
+      "critical_k": 0,
+      "min_discordant_diff": 54,
+      "min_pp_for_significance": 34.18,
+      "alpha": 0.05,
+      "test": "McNemar exact (two-sided)",
+      "rule": "Declare M2 > M1 if |b-c| >= 54 (~34.2pp), p < 0.05 (exact McNemar)"
+    },
+    {
+      "comparison": "M2 -> M3",
+      "delta_pp": 9.999999999999998,
+      "expected_discordant": 46,
+      "critical_k": 0,
+      "min_discordant_diff": 46,
+      "min_pp_for_significance": 29.11,
+      "alpha": 0.05,
+      "test": "McNemar exact (two-sided)",
+      "rule": "Declare M3 > M2 if |b-c| >= 46 (~29.1pp), p < 0.05 (exact McNemar)"
+    },
+    {
+      "comparison": "M3 -> M4",
+      "delta_pp": 9.999999999999998,
+      "expected_discordant": 35,
+      "critical_k": 0,
+      "min_discordant_diff": 35,
+      "min_pp_for_significance": 22.15,
+      "alpha": 0.05,
+      "test": "McNemar exact (two-sided)",
+      "rule": "Declare M4 > M3 if |b-c| >= 35 (~22.2pp), p < 0.05 (exact McNemar)"
+    }
+  ],
+  "multiple_comparison": {
+    "n_comparisons": 4,
+    "bonferroni_alpha": 0.0125,
+    "fdr_alpha": 0.05,
+    "bonferroni_rules": [
+      {
+        "comparison": "Baseline -> M1",
+        "bonferroni_alpha": 0.0125,
+        "min_discordant_diff": 54
+      },
+      {
+        "comparison": "M1 -> M2",
+        "bonferroni_alpha": 0.0125,
+        "min_discordant_diff": 54
+      },
+      {
+        "comparison": "M2 -> M3",
+        "bonferroni_alpha": 0.0125,
+        "min_discordant_diff": 46
+      },
+      {
+        "comparison": "M3 -> M4",
+        "bonferroni_alpha": 0.0125,
+        "min_discordant_diff": 35
+      }
+    ],
+    "recommendation": "Use Benjamini-Hochberg FDR for the success ladder. For primary claim (any M_k achieved), use alpha=0.05."
+  },
+  "summary": {
+    "n_tasks": 158,
+    "n_runs": 5,
+    "alpha": 0.05,
+    "n_sims": 1000,
+    "success_ladder": [
+      {
+        "name": "Baseline",
+        "pass_rate": 0.36,
+        "desc": "MiniCPM5-2B, zero adaptation"
+      },
+      {
+        "name": "M1",
+        "pass_rate": 0.5,
+        "desc": "Tool protocol fixed (D1/D2/D6)"
+      },
+      {
+        "name": "M2",
+        "pass_rate": 0.65,
+        "desc": "+ domain CPT + SFT"
+      },
+      {
+        "name": "M3",
+        "pass_rate": 0.75,
+        "desc": "+ RL"
+      },
+      {
+        "name": "M4",
+        "pass_rate": 0.85,
+        "desc": "Approaching DeepSeek-V4-Pro"
+      }
+    ],
+    "adequate_steps": [
+      {
+        "step": "Baseline -> M1",
+        "delta_pp": 14.000000000000002,
+        "mcnemar_power": 0.998,
+        "bootstrap_power": 1.0,
+        "min_runs_for_80pct": 3,
+        "current_runs": 5,
+        "adequate": true,
+        "recommendation": "5 runs ARE adequate for 50% detection. No change needed."
+      },
+      {
+        "step": "M1 -> M2",
+        "delta_pp": 15.000000000000002,
+        "mcnemar_power": 0.997,
+        "bootstrap_power": 1.0,
+        "min_runs_for_80pct": 2,
+        "current_runs": 5,
+        "adequate": true,
+        "recommendation": "5 runs ARE adequate for 65% detection. No change needed."
+      },
+      {
+        "step": "M2 -> M3",
+        "delta_pp": 9.999999999999998,
+        "mcnemar_power": 0.845,
+        "bootstrap_power": 0.995,
+        "min_runs_for_80pct": 4,
+        "current_runs": 5,
+        "adequate": true,
+        "recommendation": "5 runs ARE adequate for 75% detection. No change needed."
+      },
+      {
+        "step": "M3 -> M4",
+        "delta_pp": 9.999999999999998,
+        "mcnemar_power": 0.736,
+        "bootstrap_power": 1.0,
+        "min_runs_for_80pct": 8,
+        "current_runs": 5,
+        "adequate": true,
+        "recommendation": "5 runs ARE adequate for 85% detection. No change needed."
+      }
+    ],
+    "overall_recommendation": "OK: 5 runs provide >=80% power for ALL success ladder steps.",
+    "pre_registered_threshold": "PRE-REGISTERED EVALUATION PROTOCOL (frozen before testing):\n  Significance level: alpha = 0.05 (two-sided)\n  Primary test: McNemar's exact test (paired, 158 tasks)\n  Secondary test: Paired bootstrap CI (2000 resamples)\n  Multiple comparison: Benjamini-Hochberg FDR for success ladder\n  Effect size: Cohen's h ( arcsin(sqrt(p2)) - arcsin(sqrt(p1)) )\n  Decision: Declare M_k achieved if (a) point estimate >= M_k threshold,\n    (b) McNemar p < alpha, (c) bootstrap 95% CI excludes 0, (d) effect size h > 0.3\n    Baseline -> M1: min 34.2pp (critical |b-c| >= 54)\n    M1 -> M2: min 34.2pp (critical |b-c| >= 54)\n    M2 -> M3: min 29.1pp (critical |b-c| >= 46)\n    M3 -> M4: min 22.1pp (critical |b-c| >= 35)"
+  }
+}

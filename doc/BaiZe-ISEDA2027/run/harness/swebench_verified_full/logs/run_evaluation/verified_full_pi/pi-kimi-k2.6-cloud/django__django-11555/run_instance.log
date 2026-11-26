@@ -1,0 +1,107 @@
+2026-11-01 15:35:27,999 - INFO - Creating container for django__django-11555...
+2026-11-01 15:35:28,020 - INFO - Container for django__django-11555 created: 5e89d8e2af80a3b4cc725c56f61470a5b54cd9e2a01e34ee0774b5b43ee0821b
+2026-11-01 15:35:29,017 - INFO - Container for django__django-11555 started: 5e89d8e2af80a3b4cc725c56f61470a5b54cd9e2a01e34ee0774b5b43ee0821b
+2026-11-01 15:35:29,020 - INFO - Intermediate patch for django__django-11555 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-11555/patch.diff, now applying to container...
+2026-11-01 15:35:29,199 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+Checking patch tests/ordering/models.py...
+Checking patch tests/ordering/tests.py...
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch tests/ordering/models.py cleanly.
+Applied patch tests/ordering/tests.py cleanly.
+
+2026-11-01 15:35:30,513 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index eaccc96d7d..62cd2e7a40 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -704,6 +704,15 @@ class SQLCompiler:
+         not be) and column name for ordering by the given 'name' parameter.
+         The 'name' is of the form 'field1__field2__...__fieldN'.
+         """
++        if hasattr(name, 'resolve_expression'):
++            if isinstance(name, Value):
++                name = Cast(name, name.output_field)
++            if not isinstance(name, OrderBy):
++                name = name.asc()
++            if default_order == 'DESC':
++                name = name.copy()
++                name.reverse_ordering()
++            return [(name, False)]
+         name, order = get_order_dir(name, default_order)
+         descending = order == 'DESC'
+         pieces = name.split(LOOKUP_SEP)
+diff --git a/tests/ordering/models.py b/tests/ordering/models.py
+index 8b71983c44..bf66b99098 100644
+--- a/tests/ordering/models.py
++++ b/tests/ordering/models.py
+@@ -59,3 +59,12 @@ class Reference(models.Model):
+ 
+     class Meta:
+         ordering = ('article',)
++
++class OrderedByFParent(models.Model):
++    name = models.CharField(max_length=100)
++
++    class Meta:
++        ordering = [models.F('name').asc()]
++
++class OrderedByFChild(OrderedByFParent):
++    extra = models.CharField(max_length=100)
+diff --git a/tests/ordering/tests.py b/tests/ordering/tests.py
+index 18c32d6d5f..73d3d4ae41 100644
+--- a/tests/ordering/tests.py
++++ b/tests/ordering/tests.py
+@@ -9,7 +9,7 @@ from django.db.models.functions import Upper
+ from django.test import TestCase
+ from django.utils.deprecation import RemovedInDjango31Warning
+ 
+-from .models import Article, Author, OrderedByFArticle, Reference
++from .models import Article, Author, OrderedByFArticle, OrderedByFChild, OrderedByFParent, Reference
+ 
+ 
+ class OrderingTests(TestCase):
+@@ -471,3 +471,11 @@ class OrderingTests(TestCase):
+         )
+         with self.assertRaisesMessage(RemovedInDjango31Warning, msg):
+             list(Article.objects.values('author').annotate(Count('headline')))
++
++    def test_order_by_parent_model_with_expression_ordering(self):
++        """Ordering by a parent relation when the parent uses expression ordering."""
++        OrderedByFParent.objects.create(name='Z')
++        OrderedByFChild.objects.create(name='A', extra='x')
++        OrderedByFChild.objects.create(name='M', extra='y')
++        qs = OrderedByFChild.objects.order_by('orderedbyfparent_ptr')
++        self.assertQuerysetEqual(qs, ['A', 'M'], attrgetter('name'))
+2026-11-01 15:35:30,515 - INFO - Eval script for django__django-11555 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-11555/eval.sh; copying to container...
+2026-11-01 15:35:37,243 - INFO - Test runtime: 6.62 seconds
+2026-11-01 15:35:37,244 - INFO - Test output for django__django-11555 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-11555/test_output.txt
+2026-11-01 15:35:37,335 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index eaccc96d7d..62cd2e7a40 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -704,6 +704,15 @@ class SQLCompiler:
+         not be) and column name for ordering by the given 'name' parameter.
+         The 'name' is of the form 'field1__field2__...__fieldN'.
+         """
++        if hasattr(name, 'resolve_expression'):
++            if isinstance(name, Value):
++                name = Cast(name, name.output_field)
++            if not isinstance(name, OrderBy):
++                name = name.asc()
++            if default_order == 'DESC':
++                name = name.copy()
++                name.reverse_ordering()
++            return [(name, False)]
+         name, order = get_order_dir(name, default_order)
+         descending = order == 'DESC'
+         pieces = name.split(LOOKUP_SEP)
+2026-11-01 15:35:37,335 - INFO - Git diff changed after running eval script
+2026-11-01 15:35:37,335 - INFO - Grading answer for django__django-11555...
+2026-11-01 15:35:37,339 - INFO - report: {'django__django-11555': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_order_by_ptr_field_with_default_ordering_by_expression (ordering.tests.OrderingTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_default_ordering (ordering.tests.OrderingTests)', 'F expressions can be used in Meta.ordering.', 'test_default_ordering_override (ordering.tests.OrderingTests)', 'test_deprecated_values_annotate (ordering.tests.OrderingTests)', 'test_extra_ordering (ordering.tests.OrderingTests)', 'test_extra_ordering_quoting (ordering.tests.OrderingTests)', 'test_extra_ordering_with_table_name (ordering.tests.OrderingTests)', 'test_no_reordering_after_slicing (ordering.tests.OrderingTests)', 'test_order_by_constant_value (ordering.tests.OrderingTests)', 'test_order_by_constant_value_without_output_field (ordering.tests.OrderingTests)', 'test_order_by_f_expression (ordering.tests.OrderingTests)', 'test_order_by_f_expression_duplicates (ordering.tests.OrderingTests)', 'test_order_by_fk_attname (ordering.tests.OrderingTests)', 'test_order_by_nulls_first (ordering.tests.OrderingTests)', 'test_order_by_nulls_first_and_last (ordering.tests.OrderingTests)', 'test_order_by_nulls_last (ordering.tests.OrderingTests)', 'test_order_by_override (ordering.tests.OrderingTests)', 'test_order_by_pk (ordering.tests.OrderingTests)', 'test_orders_nulls_first_on_filtered_subquery (ordering.tests.OrderingTests)', 'test_random_ordering (ordering.tests.OrderingTests)', 'test_related_ordering_duplicate_table_reference (ordering.tests.OrderingTests)', 'test_reverse_meta_ordering_pure (ordering.tests.OrderingTests)', 'test_reverse_ordering_pure (ordering.tests.OrderingTests)', 'test_reversed_ordering (ordering.tests.OrderingTests)', 'test_stop_slicing (ordering.tests.OrderingTests)', 'test_stop_start_slicing (ordering.tests.OrderingTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11555: resolved: True
+2026-11-01 15:35:37,341 - INFO - Attempting to stop container sweb.eval.django__django-11555.verified_full_pi...
+2026-11-01 15:35:53,175 - INFO - Container sweb.eval.django__django-11555.verified_full_pi stopped successfully.
+2026-11-01 15:35:53,175 - INFO - Attempting to remove container sweb.eval.django__django-11555.verified_full_pi...
+2026-11-01 15:35:53,222 - INFO - Container sweb.eval.django__django-11555.verified_full_pi removed successfully.

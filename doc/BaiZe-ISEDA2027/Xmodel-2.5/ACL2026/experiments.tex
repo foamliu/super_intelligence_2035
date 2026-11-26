@@ -1,0 +1,29 @@
+\section{Experimental Settings}
+
+\subsection{Baselines}
+We compare Xmodel-2.5 with eight publicly released decoder-only models in the 1--2\,B range:
+
+\begin{itemize}
+  \item \textbf{Qwen3-1.7B}~\citep{yang2025qwen3} — updated Qwen series with enhanced code and math data;
+  \item \textbf{MiniCPM-1B}~\citep{minicpm2024} — SLM trained with WSD and domain-weighted data;
+  \item \textbf{InternLM2.5-1.8B}~\citep{cai2024internlm2} — upgraded InternLM with improved reasoning;
+  \item \textbf{Llama-3.2-1B}~\citep{llama3} — Meta's lightweight Llama-3 variant;
+  \item \textbf{Gemma-3\_1B}~\citep{gemmateam2025gemma3} — Gemini-2.0-based SLM with alternating local-global attention for 32 k long context.;
+  \item \textbf{SmolLM2-1.7B}~\citep{allal2025smollm2} — high-quality corpus focused common-sense model.
+  \item \textbf{Xmode2-1.2B}~\citep{qun2024xmodel2} — compact SLM trained with WSD scheduling and math-enriched corpora for strong reasoning.
+\end{itemize}
+
+All baseline results are reproduced with our unified evaluation pipeline using the Language Model Evaluation Harness \citep{eval-harness} to ensure fair comparison.
+
+\subsection{Tasks and Metrics}
+We evaluate on 13 datasets covering commonsense, symbolic and multilingual reasoning.
+
+\paragraph{Commonsense} ARC-Challenge \citep{clark2018think} (25-shot), ARC-Easy \citep{clark2018think} (25-shot), PIQA \citep{Bisk2019PIQARA} (0-shot), HellaSwag \citep{zellers2019hellaswag} (10-shot), WinoGrande \citep{Sakaguchi2021WinoGrande} (5-shot).
+
+\paragraph{Symbolic Reasoning} BBH \citep{Suzgun2022ChallengingBT} (3-shot), MMLU \citep{hendryckstest2021} (5-shot).
+
+\paragraph{Mathematical \& Code} GSM8k \citep{cobbe2021gsm8k} exact-match with flexible-extract (5-shot), MATH \citep{hendrycks2021math} (4-shot) verified by math\_verify, HumanEval \citep{chen2021humaneval}(0-shot), MBPP \citep{austin2021mbpp}(3-shot).
+
+\paragraph{Chinese Understanding} C-Eval \citep{huang2023ceval} (5-shot), CMMLU \citep{li2024cmmlu} (5-shot).
+
+Metrics: accuracy for all sets; pass@1 for HumanEval/MBPP; exact-match for GSM8k/MATH.

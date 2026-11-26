@@ -1,0 +1,59 @@
+diff --git a/lib/matplotlib/tests/test_widgets.py b/lib/matplotlib/tests/test_widgets.py
+index 71ebd176..a5333865 100644
+--- a/lib/matplotlib/tests/test_widgets.py
++++ b/lib/matplotlib/tests/test_widgets.py
+@@ -280,6 +280,25 @@ def test_span_selector_direction():
+         tool.direction = 'invalid_string'
+ 
+ 
++def test_span_selector_interactive_does_not_expand_axes():
++    # Regression test for GH issue: interactive SpanSelector should not
++    # force axes limits to include 0.
++    ax = get_ax()
++    ax.set_xlim(10, 20)
++    ax.set_ylim(10, 20)
++
++    def onselect(vmin, vmax):
++        pass
++
++    tool = widgets.SpanSelector(ax, onselect, 'horizontal', interactive=True)
++    assert ax.get_xlim() == (10, 20)
++    assert ax.get_ylim() == (10, 20)
++
++    tool.direction = 'vertical'
++    assert ax.get_xlim() == (10, 20)
++    assert ax.get_ylim() == (10, 20)
++
++
+ def test_tool_line_handle():
+     ax = get_ax()
+ 
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+index a199e45d..01ac3618 100644
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -2366,10 +2366,21 @@ class ToolLineHandles:
+             line_props = {}
+         line_props.update({'visible': False, 'animated': useblit})
+ 
+-        line_fun = ax.axvline if self.direction == 'horizontal' else ax.axhline
+-        self._line_props = line_props
++        if self.direction == 'horizontal':
++            trans = ax.get_xaxis_transform()
++            self.artists = [
++                Line2D([p, p], [0, 1], transform=trans, **line_props)
++                for p in positions]
++        else:
++            trans = ax.get_yaxis_transform()
++            self.artists = [
++                Line2D([0, 1], [p, p], transform=trans, **line_props)
++                for p in positions]
++
++        for artist in self.artists:
++            ax.add_line(artist)
+ 
+-        self.artists = [line_fun(p, **line_props) for p in positions]
++        self._line_props = line_props
+ 
+     @property
+     def positions(self):

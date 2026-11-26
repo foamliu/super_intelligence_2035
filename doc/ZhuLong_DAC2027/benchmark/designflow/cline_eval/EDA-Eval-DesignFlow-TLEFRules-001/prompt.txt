@@ -1,0 +1,1 @@
+/home/pdk/chengleiy/e_innovus/QA/tsi/tech_thk2d0_m5.lef，读取这份techlef文件，汇总每一层走线层和通孔层的布线规则

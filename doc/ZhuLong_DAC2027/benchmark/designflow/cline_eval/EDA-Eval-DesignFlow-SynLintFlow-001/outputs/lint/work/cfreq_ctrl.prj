@@ -1,0 +1,23 @@
+# =============================================================================
+# cfreq_ctrl.prj : VC Static (SpyGlass) 项目文件
+# 包含 RTL 读入, SGDC(CDC/RDC) 约束, 顶层设置与默认 goal
+# =============================================================================
+
+# ---- 项目工作目录 (结果输出) ----
+set_option projectwdir ./results
+
+# ---- 读入 RTL 源文件列表 ----
+read_file -type sourcelist design_rtl.list
+
+# ---- 读入约束 (CDC / RDC) ----
+read_file -type sgdc ../config/cdc_sdc/cdc.sdc
+read_file -type sgdc ../config/rdc_sdc/rdc.sdc
+
+# ---- 顶层模块 ----
+set_option top cfreq_ctrl
+
+# ---- 语言 / 模式 ----
+set_option language_mode verilog
+
+# ---- 默认 goal ----
+current_goal lint/lint_rtl

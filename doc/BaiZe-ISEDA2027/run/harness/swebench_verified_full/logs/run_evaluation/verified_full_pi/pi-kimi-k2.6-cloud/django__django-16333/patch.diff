@@ -1,0 +1,75 @@
+diff --git a/django/contrib/auth/forms.py b/django/contrib/auth/forms.py
+index d73d1c84..a408c857 100644
+--- a/django/contrib/auth/forms.py
++++ b/django/contrib/auth/forms.py
+@@ -141,9 +141,9 @@ class UserCreationForm(forms.ModelForm):
+         user.set_password(self.cleaned_data["password1"])
+         if commit:
+             user.save()
++            self.save_m2m()
+         return user
+ 
+-
+ class UserChangeForm(forms.ModelForm):
+     password = ReadOnlyPasswordHashField(
+         label=_("Password"),
+diff --git a/tests/auth_tests/test_forms.py b/tests/auth_tests/test_forms.py
+index 78078316..dc3faf88 100644
+--- a/tests/auth_tests/test_forms.py
++++ b/tests/auth_tests/test_forms.py
+@@ -35,6 +35,7 @@ from .models.custom_user import (
+ )
+ from .models.with_custom_email_field import CustomEmailField
+ from .models.with_integer_username import IntegerUsernameUser
++from .models.with_many_to_many import CustomUserWithM2M, Organization
+ from .settings import AUTH_TEMPLATES
+ 
+ 
+@@ -334,6 +335,47 @@ class UserCreationFormTest(TestDataMixin, TestCase):
+                     form.fields[field_name].widget.attrs["autocomplete"], autocomplete
+                 )
+ 
++    def test_m2m_saved(self):
++        org = Organization.objects.create(name="Organization 1")
++
++        class CustomUserCreationForm(UserCreationForm):
++            class Meta(UserCreationForm.Meta):
++                model = CustomUserWithM2M
++                fields = ("username", "orgs")
++
++        data = {
++            "username": "testuser",
++            "password1": "testpassword",
++            "password2": "testpassword",
++            "orgs": [org.pk],
++        }
++        form = CustomUserCreationForm(data)
++        self.assertTrue(form.is_valid())
++        user = form.save()
++        self.assertEqual(user.orgs.count(), 1)
++        self.assertEqual(user.orgs.first(), org)
++
++    def test_m2m_commit_false(self):
++        org = Organization.objects.create(name="Organization 1")
++
++        class CustomUserCreationForm(UserCreationForm):
++            class Meta(UserCreationForm.Meta):
++                model = CustomUserWithM2M
++                fields = ("username", "orgs")
++
++        data = {
++            "username": "testuser",
++            "password1": "testpassword",
++            "password2": "testpassword",
++            "orgs": [org.pk],
++        }
++        form = CustomUserCreationForm(data)
++        self.assertTrue(form.is_valid())
++        user = form.save(commit=False)
++        user.save()
++        form.save_m2m()
++        self.assertEqual(user.orgs.count(), 1)
++        self.assertEqual(user.orgs.first(), org)
+ 
+ # To verify that the login form rejects inactive users, use an authentication
+ # backend that allows them.

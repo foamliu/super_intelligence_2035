@@ -1,0 +1,72 @@
+2026-10-30 16:49:32,716 - INFO - Creating container for django__django-12965...
+2026-10-30 16:49:32,735 - INFO - Container for django__django-12965 created: 8783f19d2eae89ae5b9970a323c672f2d1beb364390116af698293621ad7c365
+2026-10-30 16:49:35,498 - INFO - Container for django__django-12965 started: 8783f19d2eae89ae5b9970a323c672f2d1beb364390116af698293621ad7c365
+2026-10-30 16:49:35,499 - INFO - Intermediate patch for django__django-12965 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12965/patch.diff, now applying to container...
+2026-10-30 16:49:35,642 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+Checking patch tests/delete/tests.py...
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch tests/delete/tests.py cleanly.
+
+2026-10-30 16:49:37,088 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 29e33c075f..7b417ee83f 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -1423,6 +1423,9 @@ class SQLDeleteCompiler(SQLCompiler):
+         Create the SQL for this query. Return the SQL string and list of
+         parameters.
+         """
++        # Ensure the base table is in the query so that single_alias is
++        # computed correctly.
++        self.query.get_initial_alias()
+         if self.single_alias:
+             return self._as_sql(self.query)
+         innerq = self.query.clone()
+diff --git a/tests/delete/tests.py b/tests/delete/tests.py
+index c32ebba83f..5de1c228d2 100644
+--- a/tests/delete/tests.py
++++ b/tests/delete/tests.py
+@@ -638,6 +638,16 @@ class FastDeleteTests(TestCase):
+         self.assertEqual(User.objects.count(), 1)
+         self.assertTrue(User.objects.filter(pk=u2.pk).exists())
+ 
++    def test_fast_delete_no_subquery(self):
++        """
++        Fast deleting a simple queryset shouldn't generate a subquery.
++        """
++        User.objects.create()
++        with self.assertNumQueries(1) as ctx:
++            User.objects.all().delete()
++        sql = ctx.captured_queries[0]['sql']
++        self.assertNotIn('SELECT', sql)
++
+     def test_fast_delete_instance_set_pk_none(self):
+         u = User.objects.create()
+         # User can be fast-deleted.
+2026-10-30 16:49:37,090 - INFO - Eval script for django__django-12965 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12965/eval.sh; copying to container...
+2026-10-30 16:49:45,354 - INFO - Test runtime: 8.20 seconds
+2026-10-30 16:49:45,356 - INFO - Test output for django__django-12965 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12965/test_output.txt
+2026-10-30 16:49:45,422 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 29e33c075f..7b417ee83f 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -1423,6 +1423,9 @@ class SQLDeleteCompiler(SQLCompiler):
+         Create the SQL for this query. Return the SQL string and list of
+         parameters.
+         """
++        # Ensure the base table is in the query so that single_alias is
++        # computed correctly.
++        self.query.get_initial_alias()
+         if self.single_alias:
+             return self._as_sql(self.query)
+         innerq = self.query.clone()
+2026-10-30 16:49:45,422 - INFO - Git diff changed after running eval script
+2026-10-30 16:49:45,422 - INFO - Grading answer for django__django-12965...
+2026-10-30 16:49:45,424 - INFO - report: {'django__django-12965': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_fast_delete_all (delete.tests.FastDeleteTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_fast_delete_combined_relationships (delete.tests.FastDeleteTests)', 'test_fast_delete_empty_no_update_can_self_select (delete.tests.FastDeleteTests)', 'test_fast_delete_fk (delete.tests.FastDeleteTests)', 'test_fast_delete_inheritance (delete.tests.FastDeleteTests)', 'test_fast_delete_instance_set_pk_none (delete.tests.FastDeleteTests)', 'test_fast_delete_joined_qs (delete.tests.FastDeleteTests)', 'test_fast_delete_large_batch (delete.tests.FastDeleteTests)', 'test_fast_delete_m2m (delete.tests.FastDeleteTests)', 'test_fast_delete_qs (delete.tests.FastDeleteTests)', 'test_fast_delete_revm2m (delete.tests.FastDeleteTests)', 'test_auto (delete.tests.OnDeleteTests)', 'test_auto_nullable (delete.tests.OnDeleteTests)', 'test_cascade (delete.tests.OnDeleteTests)', 'test_cascade_from_child (delete.tests.OnDeleteTests)', 'test_cascade_from_parent (delete.tests.OnDeleteTests)', 'test_cascade_nullable (delete.tests.OnDeleteTests)', 'test_do_nothing (delete.tests.OnDeleteTests)', 'test_do_nothing_qscount (delete.tests.OnDeleteTests)', 'test_inheritance_cascade_down (delete.tests.OnDeleteTests)', 'test_inheritance_cascade_up (delete.tests.OnDeleteTests)', 'test_non_callable (delete.tests.OnDeleteTests)', 'test_o2o_setnull (delete.tests.OnDeleteTests)', 'test_protect (delete.tests.OnDeleteTests)', 'test_protect_multiple (delete.tests.OnDeleteTests)', 'test_protect_path (delete.tests.OnDeleteTests)', 'test_restrict (delete.tests.OnDeleteTests)', 'test_restrict_gfk_no_fast_delete (delete.tests.OnDeleteTests)', 'test_restrict_multiple (delete.tests.OnDeleteTests)', 'test_restrict_path_cascade_direct (delete.tests.OnDeleteTests)', 'test_restrict_path_cascade_indirect (delete.tests.OnDeleteTests)', 'test_restrict_path_cascade_indirect_diamond (delete.tests.OnDeleteTests)', 'test_setdefault (delete.tests.OnDeleteTests)', 'test_setdefault_none (delete.tests.OnDeleteTests)', 'test_setnull (delete.tests.OnDeleteTests)', 'test_setnull_from_child (delete.tests.OnDeleteTests)', 'test_setnull_from_parent (delete.tests.OnDeleteTests)', 'test_setvalue (delete.tests.OnDeleteTests)', 'test_bulk (delete.tests.DeletionTests)', 'test_can_defer_constraint_checks (delete.tests.DeletionTests)', 'test_delete_with_keeping_parents (delete.tests.DeletionTests)', 'test_delete_with_keeping_parents_relationships (delete.tests.DeletionTests)', 'test_deletion_order (delete.tests.DeletionTests)', 'test_hidden_related (delete.tests.DeletionTests)', 'test_instance_update (delete.tests.DeletionTests)', 'test_large_delete (delete.tests.DeletionTests)', 'test_large_delete_related (delete.tests.DeletionTests)', 'test_m2m (delete.tests.DeletionTests)', 'test_model_delete_returns_num_rows (delete.tests.DeletionTests)', 'test_only_referenced_fields_selected (delete.tests.DeletionTests)', 'test_proxied_model_duplicate_queries (delete.tests.DeletionTests)', 'test_queryset_delete_returns_num_rows (delete.tests.DeletionTests)', 'test_relational_post_delete_signals_happen_before_parent_object (delete.tests.DeletionTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12965: resolved: True
+2026-10-30 16:49:45,426 - INFO - Attempting to stop container sweb.eval.django__django-12965.verified_full_pi...
+2026-10-30 16:50:01,512 - INFO - Container sweb.eval.django__django-12965.verified_full_pi stopped successfully.
+2026-10-30 16:50:01,512 - INFO - Attempting to remove container sweb.eval.django__django-12965.verified_full_pi...
+2026-10-30 16:50:01,574 - INFO - Container sweb.eval.django__django-12965.verified_full_pi removed successfully.

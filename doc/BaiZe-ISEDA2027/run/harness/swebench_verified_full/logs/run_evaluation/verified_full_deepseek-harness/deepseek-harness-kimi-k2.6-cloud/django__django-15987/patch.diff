@@ -1,0 +1,55 @@
+diff --git a/django/core/management/commands/loaddata.py b/django/core/management/commands/loaddata.py
+index ac97f13161..e81dec36d8 100644
+--- a/django/core/management/commands/loaddata.py
++++ b/django/core/management/commands/loaddata.py
+@@ -361,7 +361,7 @@ class Command(BaseCommand):
+         current directory.
+         """
+         dirs = []
+-        fixture_dirs = settings.FIXTURE_DIRS
++        fixture_dirs = [os.fspath(d) for d in settings.FIXTURE_DIRS]
+         if len(fixture_dirs) != len(set(fixture_dirs)):
+             raise ImproperlyConfigured("settings.FIXTURE_DIRS contains duplicates.")
+         for app_config in apps.get_app_configs():
+diff --git a/tests/fixtures_regress/tests.py b/tests/fixtures_regress/tests.py
+index 8c9228f675..e4d2f9af68 100644
+--- a/tests/fixtures_regress/tests.py
++++ b/tests/fixtures_regress/tests.py
+@@ -587,6 +587,37 @@ class TestFixtures(TestCase):
+         management.call_command("loaddata", "inner/absolute.json", verbosity=0)
+         self.assertQuerysetEqual(Absolute.objects.all(), [1], transform=lambda o: o.pk)
+ 
++    @override_settings(
++        FIXTURE_DIRS=[
++            Path(_cur_dir) / "fixtures_1",
++            os.path.join(_cur_dir, "fixtures_1"),
++        ]
++    )
++    def test_fixture_dirs_with_duplicates_pathlib(self):
++        """
++        settings.FIXTURE_DIRS cannot contain duplicates when one is a Path
++        instance in order to avoid repeated fixture loading.
++        """
++        with self.assertRaisesMessage(
++            ImproperlyConfigured, "settings.FIXTURE_DIRS contains duplicates."
++        ):
++            management.call_command("loaddata", "absolute.json", verbosity=0)
++
++    @override_settings(FIXTURE_DIRS=[Path(_cur_dir) / "fixtures"])
++    def test_fixture_dirs_with_default_fixture_path_pathlib(self):
++        """
++        settings.FIXTURE_DIRS cannot contain a default fixtures directory
++        for application (app/fixtures) as a Path in order to avoid repeated
++        fixture loading.
++        """
++        msg = (
++            "'%s' is a default fixture directory for the '%s' app "
++            "and cannot be listed in settings.FIXTURE_DIRS."
++            % (os.path.join(_cur_dir, "fixtures"), "fixtures_regress")
++        )
++        with self.assertRaisesMessage(ImproperlyConfigured, msg):
++            management.call_command("loaddata", "absolute.json", verbosity=0)
++
+ 
+ class NaturalKeyFixtureTests(TestCase):
+     def test_nk_deserialize(self):

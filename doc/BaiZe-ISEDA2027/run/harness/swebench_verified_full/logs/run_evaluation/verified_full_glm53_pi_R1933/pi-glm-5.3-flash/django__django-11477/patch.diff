@@ -1,0 +1,98 @@
+diff --git a/django/urls/resolvers.py b/django/urls/resolvers.py
+index af0508f94e..c5caf65887 100644
+--- a/django/urls/resolvers.py
++++ b/django/urls/resolvers.py
+@@ -155,6 +155,7 @@ class RegexPattern(CheckURLMixin):
+             # positional arguments.
+             kwargs = match.groupdict()
+             args = () if kwargs else match.groups()
++            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+             return path[match.end():], args, kwargs
+         return None
+ 
+diff --git a/repro.py b/repro.py
+new file mode 100644
+index 0000000000..ad1173a3e9
+--- /dev/null
++++ b/repro.py
+@@ -0,0 +1,28 @@
++"""Reproduce ticket: translate_url() creates an incorrect URL when optional
++named groups are missing in the URL pattern."""
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    USE_I18N=True,
++    LANGUAGE_CODE='en',
++    LANGUAGES=[('nl', 'Dutch'), ('en', 'English')],
++    ROOT_URLCONF='repro_urls',
++    ALLOWED_HOSTS=['*'],
++)
++django.setup()
++
++from django.urls import translate_url  # noqa: E402
++
++# Case 1: URL matched WITHOUT the optional group participating.
++result = translate_url('/en/optional/1/', 'nl')
++print("no optional group:  ", repr(result))
++assert result == '/nl/optional/1/', "BUG: got %r, expected '/nl/optional/1/'" % result
++
++# Case 2: URL matched WITH the optional group participating.
++result = translate_url('/en/optional/1/2/', 'nl')
++print("with optional group:", repr(result))
++assert result == '/nl/optional/1/2/', "BUG: got %r" % result
++
++print("OK")
+diff --git a/repro_urls.py b/repro_urls.py
+new file mode 100644
+index 0000000000..1348331a76
+--- /dev/null
++++ b/repro_urls.py
+@@ -0,0 +1,16 @@
++from django.conf.urls.i18n import i18n_patterns
++from django.http import HttpResponse
++from django.urls import re_path
++
++
++def view(request, **kwargs):
++    return HttpResponse('ok')
++
++
++urlpatterns = i18n_patterns(
++    re_path(
++        r'^optional/(?P<parameter1>.*)/(?:(?P<parameter2>.*)/)?$',
++        view,
++        name='optional',
++    ),
++)
+diff --git a/tests/i18n/patterns/tests.py b/tests/i18n/patterns/tests.py
+index 6ed2c4ffeb..3e7bb86623 100644
+--- a/tests/i18n/patterns/tests.py
++++ b/tests/i18n/patterns/tests.py
+@@ -157,13 +157,14 @@ class URLTranslationTests(URLTestCaseBase):
+             self.assertEqual(translate_url('/en/account/register/', 'nl'), '/nl/profiel/registreren/')
+             # path() URL pattern
+             self.assertEqual(translate_url('/en/account/register-as-path/', 'nl'), '/nl/profiel/registreren-als-pad/')
++            # Optional named groups are missing from the URL.
++            self.assertEqual(translate_url('/en/optional/1/', 'nl'), '/nl/optional/1/')
+             self.assertEqual(translation.get_language(), 'en')
+ 
+         with translation.override('nl'):
+             self.assertEqual(translate_url('/nl/gebruikers/', 'en'), '/en/users/')
+             self.assertEqual(translation.get_language(), 'nl')
+ 
+-
+ class URLNamespaceTests(URLTestCaseBase):
+     """
+     Tests if the translations are still working within namespaces.
+diff --git a/tests/i18n/patterns/urls/default.py b/tests/i18n/patterns/urls/default.py
+index b0c2f2585e..e5fc7d474b 100644
+--- a/tests/i18n/patterns/urls/default.py
++++ b/tests/i18n/patterns/urls/default.py
+@@ -17,4 +17,5 @@ urlpatterns += i18n_patterns(
+     path('prefixed.xml', view, name='prefixed_xml'),
+     re_path(_(r'^users/$'), view, name='users'),
+     re_path(_(r'^account/'), include('i18n.patterns.urls.namespace', namespace='account')),
++    re_path(r'^optional/(?P<parameter1>[0-9]+)/(?:(?P<parameter2>[0-9]+)/)?$', view, name='optional'),
+ )

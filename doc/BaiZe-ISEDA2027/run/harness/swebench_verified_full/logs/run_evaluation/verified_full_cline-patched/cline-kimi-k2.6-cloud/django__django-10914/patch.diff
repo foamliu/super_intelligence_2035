@@ -1,0 +1,93 @@
+diff --git a/django/conf/global_settings.py b/django/conf/global_settings.py
+index acee9887..bdeec806 100644
+--- a/django/conf/global_settings.py
++++ b/django/conf/global_settings.py
+@@ -304,7 +304,7 @@ FILE_UPLOAD_TEMP_DIR = None
+ 
+ # The numeric mode to set newly-uploaded files to. The value should be a mode
+ # you'd pass directly to os.chmod; see https://docs.python.org/library/os.html#files-and-directories.
+-FILE_UPLOAD_PERMISSIONS = None
++FILE_UPLOAD_PERMISSIONS = 0o644
+ 
+ # The numeric mode to assign to newly-created directories, when uploading files.
+ # The value should be a mode as you'd pass to os.chmod;
+diff --git a/docs/howto/deployment/checklist.txt b/docs/howto/deployment/checklist.txt
+index c31bcac6..01663064 100644
+--- a/docs/howto/deployment/checklist.txt
++++ b/docs/howto/deployment/checklist.txt
+@@ -157,12 +157,11 @@ Now is a good time to check your backup strategy for these files.
+ :setting:`FILE_UPLOAD_PERMISSIONS`
+ ----------------------------------
+ 
+-With the default file upload settings, files smaller than
+-:setting:`FILE_UPLOAD_MAX_MEMORY_SIZE` may be stored with a different mode
+-than larger files as described in :setting:`FILE_UPLOAD_PERMISSIONS`.
++The default value of the :setting:`FILE_UPLOAD_PERMISSIONS` setting changed
++from ``None`` to ``0o644`` so that uploaded files have consistent permissions.
+ 
+-Setting :setting:`FILE_UPLOAD_PERMISSIONS` ensures all files are uploaded with
+-the same permissions.
++If you need the previous behavior, set :setting:`FILE_UPLOAD_PERMISSIONS` to
++``None``.
+ 
+ HTTPS
+ =====
+diff --git a/docs/ref/settings.txt b/docs/ref/settings.txt
+index 46e99af9..eba5bd2e 100644
+--- a/docs/ref/settings.txt
++++ b/docs/ref/settings.txt
+@@ -1484,7 +1484,7 @@ This value mirrors the functionality and caveats of the
+ ``FILE_UPLOAD_PERMISSIONS``
+ ---------------------------
+ 
+-Default: ``None``
++Default: ``0o644``
+ 
+ The numeric mode (i.e. ``0o644``) to set newly uploaded files to. For
+ more information about what these modes mean, see the documentation for
+diff --git a/docs/releases/3.0.txt b/docs/releases/3.0.txt
+index 5d9bff08..361b53b9 100644
+--- a/docs/releases/3.0.txt
++++ b/docs/releases/3.0.txt
+@@ -290,6 +290,11 @@ Miscellaneous
+ * ``ContentType.__str__()`` now includes the model's ``app_label`` to
+   disambiguate model's with the same name in different apps.
+ 
++* The default value of the :setting:`FILE_UPLOAD_PERMISSIONS` setting changed
++  from ``None`` to ``0o644`` so that uploaded files have consistent permissions.
++  If you need the previous behavior, set :setting:`FILE_UPLOAD_PERMISSIONS` to
++  ``None``.
++
+ .. _deprecated-features-3.0:
+ 
+ Features deprecated in 3.0
+diff --git a/tests/file_storage/tests.py b/tests/file_storage/tests.py
+index 43486955..c77490c7 100644
+--- a/tests/file_storage/tests.py
++++ b/tests/file_storage/tests.py
+@@ -899,6 +899,12 @@ class FileStoragePermissions(unittest.TestCase):
+         mode = os.stat(self.storage.path(fname))[0] & 0o777
+         self.assertEqual(mode, 0o666 & ~self.umask)
+ 
++    def test_file_upload_new_default_permissions(self):
++        self.storage = FileSystemStorage(self.storage_dir)
++        fname = self.storage.save("some_file", ContentFile("data"))
++        mode = os.stat(self.storage.path(fname))[0] & 0o777
++        self.assertEqual(mode, 0o644)
++
+     @override_settings(FILE_UPLOAD_DIRECTORY_PERMISSIONS=0o765)
+     def test_file_upload_directory_permissions(self):
+         self.storage = FileSystemStorage(self.storage_dir)
+diff --git a/tests/test_utils/tests.py b/tests/test_utils/tests.py
+index a1a113a2..e953eb66 100644
+--- a/tests/test_utils/tests.py
++++ b/tests/test_utils/tests.py
+@@ -1099,7 +1099,7 @@ class OverrideSettingsTests(SimpleTestCase):
+         the file_permissions_mode attribute of
+         django.core.files.storage.default_storage.
+         """
+-        self.assertIsNone(default_storage.file_permissions_mode)
++        self.assertEqual(default_storage.file_permissions_mode, 0o644)
+         with self.settings(FILE_UPLOAD_PERMISSIONS=0o777):
+             self.assertEqual(default_storage.file_permissions_mode, 0o777)
+ 

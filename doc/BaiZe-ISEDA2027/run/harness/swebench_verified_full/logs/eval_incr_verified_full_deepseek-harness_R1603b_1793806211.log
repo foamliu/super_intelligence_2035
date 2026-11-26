@@ -1,0 +1,23 @@
+Running 2 instances...
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 0
+Instances unresolved: 1
+Instances with likely infrastructure failures: 1
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 1
+Unremoved images: 2
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness_rerun_R1603b.json
+
+[stderr]
+
+  0%|          | 0/2 [00:00<?, ?it/s]
+1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:00<00:00, 1053.58it/s]
+1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:17<00:00,  8.53s/it]  
+2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:17<00:00,  8.53s/it]
+2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:17<00:00,  8.53s/it]

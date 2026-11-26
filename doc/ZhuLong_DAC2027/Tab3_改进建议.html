@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong Tab-3（主结果表）改进建议</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1a2332;--muted:#5b6b7f;--line:#e2e8f0;--accent:#2563eb;--code-bg:#0f172a;--code-ink:#e2e8f0;--p-high:#e11d48;--p-mid:#ea580c;--p-low:#64748b;--ok:#16a34a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif}
+.container{max-width:1000px;margin:0 auto;padding:32px 18px 80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 28px;margin-bottom:22px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+h1{font-size:25px;margin:0 0 6px}
+h2{font-size:18px;margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid var(--line)}
+h3{font-size:15.5px;margin:20px 0 8px;color:#0f3a6b}
+.meta{color:var(--muted);font-size:13px;margin:0 0 20px}
+code,pre{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace}
+pre{background:var(--code-bg);color:var(--code-ink);padding:14px 16px;border-radius:8px;overflow:auto;font-size:12.5px;line-height:1.6}
+code{background:#eef2f7;padding:1px 6px;border-radius:4px;font-size:13px;color:#0f3a6b}
+pre code{background:transparent;padding:0;color:inherit}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#eef3fa}
+.tag{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff;white-space:nowrap}
+.t-high{background:var(--p-high)}.t-mid{background:var(--p-mid)}.t-low{background:var(--p-low)}.t-ok{background:var(--ok)}
+.note{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:11px 14px;font-size:13.5px;color:#92400e;margin:10px 0}
+.okbox{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:11px 14px;font-size:13.5px;color:#166534;margin:10px 0}
+ul{margin:6px 0;padding-left:20px}li{margin:3px 0}
+table.preview th,table.preview td{text-align:center}
+table.preview td.lbl{text-align:left;white-space:nowrap}
+table.preview td.b{font-weight:700}
+table.preview tr.blockhead td{background:#eef3fa;font-style:italic;text-align:left}
+table.preview td.del{color:#94a3b8;font-style:italic;text-decoration:line-through}
+.dagger{color:var(--p-high);font-weight:800;vertical-align:super;font-size:11px}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>ZhuLong Tab-3（主结果表）改进建议</h1>
+<p class="meta">对象：<code>6_exp.tex</code> 顶部 <code>table*</code>（caption "Main results on EDA-Scripting-Bench…"） · 生成于 2026-11-02 · 已复核最新提交 <code>82f5287aa</code></p>
+
+<div class="card">
+<h2>一、结论</h2>
+<p>这张表信息丰富（4 列评测精度 + 5 列运行代价 = 9 个数据列、8 行、约 72 个数字格），放在双栏 <code>table*</code> 里<b>没有溢出</b>（完整编译 <code>Overfull \hbox = 0</code>）。<b>唯一一处正确性错误（加粗语义矛盾）已在 <code>82f5287aa</code> 修复。</b>剩余是若干<b>可读性 / 美观</b>改进：全部<b>不删改任何实验数据</b>，只做排版分区、分层。</p>
+<div class="okbox"><b>已完成 ✅</b>：(F) 行 SKILL 列 <code>60.3</code> 误加粗已去掉，现在 <code>Bold marks the per-column best</code> 与表格内容逐列一致。</div>
+<div class="note"><b>结论</b>：优先做「列头两级分区 + <code>cmidrule</code>」（成本最低、收益最大）；其次「(F) 行去冗余」「Tcl 倒挂加标注」；「± 紧凑化」作为逐列的宽度释放手段。</div>
+</div>
+
+<div class="card">
+<h2>二、现状速览</h2>
+<p>列结构（当前 <code>{@{}lccccccccc@{}}</code>，10 列平铺、无分区）：</p>
+<table>
+<tr><th style="width:22%">Configuration</th><th>Overall</th><th>PyAether</th><th>SKILL</th><th>Tcl</th><th>Time (s)</th><th>run_code</th><th>Tool calls</th><th>Input tok (k)</th><th>Output tok (k)</th></tr>
+<tr><td>（样本数行）</td><td>(449)</td><td>(158)</td><td>(157)</td><td>(134)</td><td colspan="5">(per task, 449)</td></tr>
+</table>
+<ul>
+<li><b>上块</b>：5 个配置 —— Pure LLM / RAG (no sandbox) / w/o Retrieval / w/o Self-Expl. / <b>Full</b>。</li>
+<li><b>下块</b>：读回轴 3 档 —— (N′) 无回读 / (B) 二值 / (F) 全观测，其中 <b>(F) 与上方 Full 行完全相同</b>。</li>
+<li>全表每格为 <code>mean ± s.d.</code>（± 约重复 70 次，且为数学模式 <code>$ \pm $</code>，自带左右空隙，占宽）。</li>
+<li>精度列为「越大越好」，加粗标列最优；成本列为「越小越好」，但<b>无任何标注</b>。</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>三、改进项清单（按优先级）</h2>
+<table>
+<tr><th style="width:74px">优先级</th><th style="width:30px">#</th><th style="width:120px">项</th><th>问题</th><th>建议</th><th style="width:78px">动数据?</th></tr>
+<tr><td><span class="tag t-ok">已修复</span></td><td>①</td><td>加粗语义</td><td>(F) 行 SKILL 60.3 误加粗、与列最优 61.5 冲突</td><td>已去粗（82f5287aa）</td><td>否</td></tr>
+<tr><td><span class="tag t-high">高</span></td><td>④</td><td>列头分区</td><td>9 个数字列平铺，精度与成本糊在一起</td><td>两级列头 + cmidrule 分区</td><td>否</td></tr>
+<tr><td><span class="tag t-mid">中</span></td><td>②</td><td>(F) 行冗余</td><td>与 Full 行 10 格全重复</td><td>删除整行（caption 已声明 coincides）</td><td>删一行</td></tr>
+<tr><td><span class="tag t-mid">中</span></td><td>③</td><td>Tcl 倒挂无标注</td><td>87.9 &gt; 83.0 &lt; 89.9 中间档倒挂，扫读易误判</td><td>给 83.0 加 <code>\S</code> + 脚注指向 §6.2</td><td>否</td></tr>
+<tr><td><span class="tag t-mid">中</span></td><td>⑤</td><td>± 冗余</td><td>约 70 个「$ \pm $」数学模式，占宽</td><td>换紧凑文本「76.9±2.3」</td><td>否</td></tr>
+<tr><td><span class="tag t-low">低</span></td><td>⑥</td><td>标签过长</td><td>"Baseline 2: RAG (retr.+self-expl., no sandbox)" 挤压数字列</td><td>缩写 + 脚注给全称</td><td>否</td></tr>
+<tr><td><span class="tag t-low">低</span></td><td>⑦</td><td>裸 0 混排</td><td>run_code 的 0 与 "22.6 ± 2.8" 格式不齐</td><td>改 "—"（不适用）</td><td>否</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>四、逐条详解</h2>
+
+<h3>④ 列头两级分区（最高优先）</h3>
+<p>现状（单行平铺，10 列，精度与成本无分界）：</p>
+<pre> &amp; \textbf{Overall} &amp; \textbf{PyAether} &amp; \textbf{SKILL} &amp; \textbf{Tcl} &amp; \textbf{Time (s)} &amp; \textbf{run\_code} &amp; \textbf{Tool calls} &amp; \textbf{Input tokens (k)} &amp; \textbf{Output tokens (k)} \\
+\textbf{Configuration} &amp; (449) &amp; (158) &amp; (157) &amp; (134) &amp; \multicolumn{5}{c}{(per task, 449)} \\</pre>
+<p>建议（两级分组 + <code>cmidrule</code> 把「评测精度」与「运行代价」分开）：</p>
+<pre> &amp; \multicolumn{4}{c}{\textbf{Pass@1 (\%)}} &amp; \multicolumn{5}{c}{\textbf{Per-task operating cost}} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-10}
+Configuration &amp; Overall &amp; PyAether &amp; SKILL &amp; Tcl &amp; Time (s) &amp; Exec calls &amp; Tool calls &amp; In tok (k) &amp; Out tok (k) \\
+ &amp; (449) &amp; (158) &amp; (157) &amp; (134) &amp; \multicolumn{5}{c}{(449, mean $\pm$ s.d.)} \\</pre>
+<div class="note">另把 <code>run_code</code> 改为 <code>Exec calls</code>，脚注点明「Tool calls = search + details + Exec + builtin」，让 reviewer 一眼看懂「总调用 vs 执行子集」的主从关系。</div>
+
+<h3>⑤ ± 紧凑化</h3>
+<p>把数学模式 <code>$ \pm $</code>（带左右空隙）换成文本 <code>\pm</code> 或直接 Unicode <code>±</code>（且不加空格），全表约 70 处，累计省宽可观，<code>\scriptsize</code> 才有升档到 <code>\footnotesize</code> 的空间、行距也能适当放松：</p>
+<pre>74.6 $\pm$ 1.6   →   74.6±1.6    （去掉 $…$ 与空格）</pre>
+<p class="note">注意：本文档多处直接把 ± 写成普通文本，实际 LaTeX 里用 <code>74.6$\pm$1.6</code> 或 textcomp 的 <code>\textpm</code> 均可，效果都是窄于 <code>$ \pm $</code>。</p>
+</div>
+
+<div class="card">
+<h3>② (F) 行去冗余</h3>
+<p>(F) 行与 Full 行 10 格完全相同（<code>76.9/82.5/60.3/89.9/464/10.6/26.3/710/12.0</code>），caption 已写 <code>(F) coincides with the Full row</code>。删掉整行后，读回轴只剩 (N′)、(B) 两档，F 档由上方 Full 行承担，不损失任何信息，且消除「同一行出现两遍」的扫读困惑。</p>
+<pre>\midrule
+\multicolumn{10}{@{}l}{\emph{Read-back axis ($\Omega$ varies; retrieval + effector fixed)}} \\
+(N$'$) No read-back (prior only) &amp; 69.8±2.2 &amp; 73.4±2.1 &amp; ... \\
+(B) Binary pass/fail          &amp; 71.0±0.8 &amp; 74.6±1.6 &amp; ... \\
+% (F) 行整行删除 —— 其内容 = 上方 Full 行</pre>
+
+<h3>③ Tcl 读回轴倒挂加标注</h3>
+<p>(B) 档在 Tcl 列 <code>83.0</code> 低于 (N′) 的 <code>87.9</code>，破坏单调（N′&lt;B&lt;F 的 F 已在 Full 行）。这是数据本身（Tcl 短脚本近单发、二值信号无可操作信息，见 §6.2），但表中无提示。给该值加 dagger 并补脚注：</p>
+<pre>(B) Binary pass/fail &amp; ... &amp; 57.2±4.8 &amp; 83.0\textsuperscript{\S} &amp; ...</pre>
+<pre>\scriptsize{... \S = Tcl read-back inverts at the middle rung (short near-single-shot scripts; see Section~6.2).}</pre>
+
+<h3>⑥ 配置标签缩写</h3>
+<pre>Baseline 1: Pure LLM                            →  Pure LLM
+Baseline 2: RAG (retr.+self-expl., no sandbox)  →  RAG (no sandbox)
+ZhuLong w/o Retrieval (execution only)          →  w/o retrieval
+ZhuLong w/o Self-Expl.                          →  w/o self-expl.</pre>
+<p class="note">全称在 §6.1 正文已有定义，表内缩写不损失可追溯性；如需保守，可在脚注补一行全称映射。</p>
+
+<h3>⑦ run_code 裸 0 → "—"</h3>
+<p>Baseline 1/2 无沙盒，run_code 的 <code>0</code> 与 <code>22.6 ± 2.8</code> 混排突兀。改为 <code>—</code>（不适用），脚注补 <code>— = no sandbox execution</code>。</p>
+</div>
+
+<div class="card">
+<h2>五、建议后的目标样式预览</h2>
+<p>（HTML 模拟，仅示意排版；加粗 = 精度列最优；dagger = Tcl 倒挂标注）</p>
+<table class="preview">
+<tr><td colspan="4"><b>Pass@1 (%)</b></td><td colspan="5"><b>Per-task operating cost</b></td></tr>
+<tr>
+<td class="lbl"><b>Configuration</b></td>
+<td>Overall (449)</td><td>PyAether (158)</td><td>SKILL (157)</td><td>Tcl (134)</td>
+<td>Time (s)</td><td>Exec calls</td><td>Tool calls</td><td>In tok (k)</td><td>Out tok (k)</td>
+</tr>
+<tr><td class="lbl">Pure LLM</td><td>19.7±1.4</td><td>14.3±2.1</td><td>33.2±2.3</td><td>10.1±1.1</td><td>183±9</td><td>—</td><td>3.6±0.1</td><td>72±2</td><td>6.3±0.7</td></tr>
+<tr><td class="lbl">RAG (no sandbox)</td><td>68.6±1.6</td><td>71.1±4.6</td><td>52.2±1.9</td><td>84.6±1.9</td><td>226±9</td><td>—</td><td>16.9±0.7</td><td>272±8</td><td>8.6±0.3</td></tr>
+<tr><td class="lbl">w/o retrieval</td><td>66.2±4.2</td><td>73.4±7.3</td><td>45.2±9.4</td><td>82.2±2.3</td><td>981±151</td><td>22.6±2.8</td><td>26.3±3.1</td><td>658±133</td><td>11.7±2.8</td></tr>
+<tr><td class="lbl">w/o self-expl.</td><td>74.5±1.8</td><td>77.0±4.1</td><td class="b">61.5±0.7</td><td>86.7±3.0</td><td>645±132</td><td>12.6±1.4</td><td>29.5±2.9</td><td>722±116</td><td>11.5±2.3</td></tr>
+<tr><td class="lbl"><b>ZhuLong (Full)</b></td><td class="b">76.9±2.3</td><td class="b">82.5±2.0</td><td>60.3±6.7</td><td class="b">89.9±2.0</td><td>464±57</td><td>10.6±0.7</td><td>26.3±1.4</td><td>710±21</td><td>12.0±0.7</td></tr>
+<tr class="blockhead"><td colspan="10" class="lbl">Read-back axis（Ω 变化；检索 + 执行器固定）</td></tr>
+<tr><td class="lbl">(N′) no read-back</td><td>69.8±2.2</td><td>73.4±2.1</td><td>50.7±4.9</td><td>87.9±1.7</td><td>253±5</td><td>1.1±0.0</td><td>16.6±0.9</td><td>278±12</td><td>4.0±0.1</td></tr>
+<tr><td class="lbl">(B) binary</td><td>71.0±0.8</td><td>74.6±1.6</td><td>57.2±4.8</td><td>83.0<span class="dagger">†</span>±2.3</td><td>634±40</td><td>22.8±2.9</td><td>43.9±3.9</td><td>887±139</td><td>7.7±0.8</td></tr>
+<tr><td class="lbl del">(F) full observation（= Full 行，建议删除）</td><td class="del">76.9</td><td class="del">82.5</td><td class="del">60.3</td><td class="del">89.9</td><td class="del">464</td><td class="del">10.6</td><td class="del">26.3</td><td class="del">710</td><td class="del">12.0</td></tr>
+</table>
+<ul>
+<li><span class="dagger">†</span> Tcl 读回轴在中间档倒挂（短脚本近单发、二值信号无可操作信息；见 §6.2）。</li>
+<li><b>—</b> 无沙盒执行，不适用。</li>
+<li><b>加粗</b> = 该精度列最优。</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>六、验证记录</h2>
+<div class="note">✅ <b>执行落地状态（2026-11-02）</b>：本建议 ④⑤②③⑥⑦ 已全部落地到 <code>DAC2027/6_exp.tex</code>，完整编译（pdflatex→bibtex→pdflatex×2）通过：<b>8 页、0 undefined 引用、无新增 overfull</b>。注：② 采用「保留 (F) 行 + 去加粗 + 标签 <code>(= Full row)</code>」而非删行，因 §6.2 正文多处逐条引用 (N′)(B)(F) 三档（59/50/105 行），删行需跨 caption+正文三处联动、风险 &gt; 收益；去加粗已根治「同列双加粗」歧义且零数据/行号变动。另：全文既有 1 处 <code>1.527pt</code> 的 <code>\vbox</code> float 纵向微溢（第 8 页附录区）在改动前后均存在，与本表无关。</div>
+<table>
+<tr><th style="width:46%">项</th><th>结果</th></tr>
+<tr><td>完整编译（pdflatex → bibtex → pdflatex ×2）</td><td>exit 0，8 页，0 未定义引用</td></tr>
+<tr><td>Overfull \hbox（表格是否超宽）</td><td>0 处（表格 fit 版心，未溢出）</td></tr>
+<tr><td>Overfull \vbox（纵向 float 微溢，改动前后均存在）</td><td>1 处，1.527pt（既有，非本次引入）</td></tr>
+<tr><td>对照实验：加列前 <code>7f19dfe78</code></td><td>8 页</td></tr>
+<tr><td>对照实验：加列后 <code>82f5287aa</code></td><td>8 页（加列未增加页数）</td></tr>
+<tr><td>加粗语义（Bold = per-column best）</td><td>已自洽（82f5287aa 修复 (F) 行 SKILL；本次去 (F) 行加粗后彻底无同列双加粗）</td></tr>
+</table>
+</div>
+
+<div class="card">
+<div class="note">以上建议均不删改任何实验数据；(F) 行是唯一一处可安全删除的冗余行（其内容与 Full 行完全相同）。若需保持「读回轴三档可视对比」，也可保留 (F) 行、仅去掉其加粗并给行首加「= Full row」标注。</div>
+</div>
+
+</div>
+</body>
+</html>

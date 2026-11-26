@@ -1,0 +1,202 @@
+2026-11-13 18:09:44,344 - INFO - Creating container for sympy__sympy-20438...
+2026-11-13 18:09:44,366 - INFO - Container for sympy__sympy-20438 created: 26fdd518657c2e7286cf332ac938b74541fc4225b612f33a7793ca2da6d6651e
+2026-11-13 18:09:48,767 - INFO - Container for sympy__sympy-20438 started: 26fdd518657c2e7286cf332ac938b74541fc4225b612f33a7793ca2da6d6651e
+2026-11-13 18:09:48,769 - INFO - Intermediate patch for sympy__sympy-20438 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2387b/pi-glm-5.3-flash/sympy__sympy-20438/patch.diff, now applying to container...
+2026-11-13 18:09:48,910 - INFO - >>>>> Applied Patch:
+Checking patch sympy/core/relational.py...
+Checking patch sympy/core/tests/test_relational.py...
+Checking patch sympy/sets/handlers/issubset.py...
+Checking patch sympy/sets/tests/test_sets.py...
+Applied patch sympy/core/relational.py cleanly.
+Applied patch sympy/core/tests/test_relational.py cleanly.
+Applied patch sympy/sets/handlers/issubset.py cleanly.
+Applied patch sympy/sets/tests/test_sets.py cleanly.
+
+2026-11-13 18:09:49,696 - INFO - Git diff before:
+diff --git a/sympy/core/relational.py b/sympy/core/relational.py
+index e2e0b7fbcc..42ff8eb5c3 100644
+--- a/sympy/core/relational.py
++++ b/sympy/core/relational.py
+@@ -311,7 +311,7 @@ def _eval_simplify(self, **kwargs):
+             v = None
+             if dif.is_comparable:
+                 v = dif.n(2)
+-            elif dif.equals(0):  # XXX this is expensive
++            elif isinstance(dif, Expr) and dif.equals(0):  # XXX this is expensive
+                 v = S.Zero
+             if v is not None:
+                 r = r.func._eval_relation(v, S.Zero)
+diff --git a/sympy/core/tests/test_relational.py b/sympy/core/tests/test_relational.py
+index e94437a575..068f9e9daf 100644
+--- a/sympy/core/tests/test_relational.py
++++ b/sympy/core/tests/test_relational.py
+@@ -733,6 +733,13 @@ def test_simplify_relational():
+     assert Eq(2*x, 4).simplify() == Eq(x, 2)
+     z = cos(1)**2 + sin(1)**2 - 1  # z.is_zero is None
+     assert Eq(z*x, 0).simplify() == S.true
++    # non-Expr operands (sets) should not raise in _eval_simplify
++    # https://github.com/sympy/sympy/issues/18791
++    from sympy.sets.sets import ProductSet
++    a = FiniteSet(1, 2)
++    b = ProductSet(a, a)
++    c = FiniteSet((1, 1), (1, 2), (2, 1), (2, 2))
++    assert Eq(b, c).simplify() == Eq(b, c)
+ 
+     assert Ne(y, x).simplify() == Ne(x, y)
+     assert Ne(x - 1, 0).simplify() == Ne(x, 1)
+diff --git a/sympy/sets/handlers/issubset.py b/sympy/sets/handlers/issubset.py
+index fdca06025a..1b8dfe3ca4 100644
+--- a/sympy/sets/handlers/issubset.py
++++ b/sympy/sets/handlers/issubset.py
+@@ -1,7 +1,7 @@
+ from sympy import S, Symbol
+ from sympy.core.logic import fuzzy_and, fuzzy_bool, fuzzy_not, fuzzy_or
+ from sympy.core.relational import Eq
+-from sympy.sets.sets import FiniteSet, Interval, Set, Union
++from sympy.sets.sets import FiniteSet, Interval, ProductSet, Set, Union
+ from sympy.sets.fancysets import Complexes, Reals, Range, Rationals
+ from sympy.multipledispatch import dispatch
+ 
+@@ -133,3 +133,29 @@ def is_subset_sets(a, b): # noqa:F811
+ @dispatch(Rationals, Range)  # type: ignore # noqa:F811
+ def is_subset_sets(a, b): # noqa:F811
+     return False
++
++@dispatch(ProductSet, ProductSet)  # type: ignore # noqa:F811
++def is_subset_sets(a, b): # noqa:F811
++    # A ProductSet is a subset of another ProductSet if and only if each of
++    # its component sets is a subset of the corresponding component set. The
++    # component sets of a ProductSet are never empty unless the ProductSet
++    # itself is empty (the constructor collapses such cases) so the
++    # componentwise check is valid.
++    if len(a.sets) != len(b.sets):
++        return False
++    return fuzzy_and(a_sets.is_subset(b_sets)
++                     for a_sets, b_sets in zip(a.sets, b.sets))
++
++@dispatch(ProductSet, FiniteSet)  # type: ignore # noqa:F811
++def is_subset_sets(a, b): # noqa:F811
++    # A ProductSet is a subset of a FiniteSet if all of its elements are
++    # elements of the FiniteSet. This can only be decided by iteration so
++    # it is only attempted when the ProductSet is a finite iterable set.
++    if a.is_iterable and a.is_finite_set:
++        return fuzzy_and(b.contains(element) for element in a)
++
++@dispatch(FiniteSet, ProductSet)  # type: ignore # noqa:F811
++def is_subset_sets(a, b): # noqa:F811
++    # A FiniteSet is a subset of a ProductSet if all of its elements are
++    # elements of the ProductSet.
++    return fuzzy_and(b.contains(element) for element in a)
+diff --git a/sympy/sets/tests/test_sets.py b/sympy/sets/tests/test_sets.py
+index d29a046072..3fbd0cf1bb 100644
+--- a/sympy/sets/tests/test_sets.py
++++ b/sympy/sets/tests/test_sets.py
+@@ -628,6 +628,23 @@ def test_ProductSet_is_empty():
+     assert ProductSet(Interval(x, 1), S.Reals).is_empty == None
+ 
+ 
++def test_ProductSet_is_subset():
++    # https://github.com/sympy/sympy/issues/18791
++    a = FiniteSet(1, 2)
++    b = ProductSet(a, a)
++    c = FiniteSet((1, 1), (1, 2), (2, 1), (2, 2))
++    assert b.is_subset(c)
++    assert c.is_subset(b)
++    assert b.is_subset(ProductSet(a, S.Reals))
++    assert ProductSet(a, S.Reals).is_subset(b) == False
++    assert b.is_subset(ProductSet(a, a, a)) == False
++    assert ProductSet(a, a, a).is_subset(b) == False
++    assert ProductSet(S.EmptySet, a).is_subset(c)
++    assert c.is_subset(ProductSet(S.EmptySet, a)) == False
++    # symbolic component sets can give a fuzzy answer
++    assert ProductSet(FiniteSet(x), a).is_subset(ProductSet(FiniteSet(1), a)) is None
++
++
+ def test_interval_subs():
+     a = Symbol('a', real=True)
+2026-11-13 18:09:49,700 - INFO - Eval script for sympy__sympy-20438 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2387b/pi-glm-5.3-flash/sympy__sympy-20438/eval.sh; copying to container...
+2026-11-13 18:10:21,441 - INFO - Test runtime: 31.67 seconds
+2026-11-13 18:10:21,443 - INFO - Test output for sympy__sympy-20438 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2387b/pi-glm-5.3-flash/sympy__sympy-20438/test_output.txt
+2026-11-13 18:10:21,488 - INFO - Git diff after:
+diff --git a/sympy/core/relational.py b/sympy/core/relational.py
+index e2e0b7fbcc..42ff8eb5c3 100644
+--- a/sympy/core/relational.py
++++ b/sympy/core/relational.py
+@@ -311,7 +311,7 @@ def _eval_simplify(self, **kwargs):
+             v = None
+             if dif.is_comparable:
+                 v = dif.n(2)
+-            elif dif.equals(0):  # XXX this is expensive
++            elif isinstance(dif, Expr) and dif.equals(0):  # XXX this is expensive
+                 v = S.Zero
+             if v is not None:
+                 r = r.func._eval_relation(v, S.Zero)
+diff --git a/sympy/core/tests/test_relational.py b/sympy/core/tests/test_relational.py
+index e94437a575..068f9e9daf 100644
+--- a/sympy/core/tests/test_relational.py
++++ b/sympy/core/tests/test_relational.py
+@@ -733,6 +733,13 @@ def test_simplify_relational():
+     assert Eq(2*x, 4).simplify() == Eq(x, 2)
+     z = cos(1)**2 + sin(1)**2 - 1  # z.is_zero is None
+     assert Eq(z*x, 0).simplify() == S.true
++    # non-Expr operands (sets) should not raise in _eval_simplify
++    # https://github.com/sympy/sympy/issues/18791
++    from sympy.sets.sets import ProductSet
++    a = FiniteSet(1, 2)
++    b = ProductSet(a, a)
++    c = FiniteSet((1, 1), (1, 2), (2, 1), (2, 2))
++    assert Eq(b, c).simplify() == Eq(b, c)
+ 
+     assert Ne(y, x).simplify() == Ne(x, y)
+     assert Ne(x - 1, 0).simplify() == Ne(x, 1)
+diff --git a/sympy/sets/handlers/issubset.py b/sympy/sets/handlers/issubset.py
+index fdca06025a..1b8dfe3ca4 100644
+--- a/sympy/sets/handlers/issubset.py
++++ b/sympy/sets/handlers/issubset.py
+@@ -1,7 +1,7 @@
+ from sympy import S, Symbol
+ from sympy.core.logic import fuzzy_and, fuzzy_bool, fuzzy_not, fuzzy_or
+ from sympy.core.relational import Eq
+-from sympy.sets.sets import FiniteSet, Interval, Set, Union
++from sympy.sets.sets import FiniteSet, Interval, ProductSet, Set, Union
+ from sympy.sets.fancysets import Complexes, Reals, Range, Rationals
+ from sympy.multipledispatch import dispatch
+ 
+@@ -133,3 +133,29 @@ def is_subset_sets(a, b): # noqa:F811
+ @dispatch(Rationals, Range)  # type: ignore # noqa:F811
+ def is_subset_sets(a, b): # noqa:F811
+     return False
++
++@dispatch(ProductSet, ProductSet)  # type: ignore # noqa:F811
++def is_subset_sets(a, b): # noqa:F811
++    # A ProductSet is a subset of another ProductSet if and only if each of
++    # its component sets is a subset of the corresponding component set. The
++    # component sets of a ProductSet are never empty unless the ProductSet
++    # itself is empty (the constructor collapses such cases) so the
++    # componentwise check is valid.
++    if len(a.sets) != len(b.sets):
++        return False
++    return fuzzy_and(a_sets.is_subset(b_sets)
++                     for a_sets, b_sets in zip(a.sets, b.sets))
++
++@dispatch(ProductSet, FiniteSet)  # type: ignore # noqa:F811
++def is_subset_sets(a, b): # noqa:F811
++    # A ProductSet is a subset of a FiniteSet if all of its elements are
++    # elements of the FiniteSet. This can only be decided by iteration so
++    # it is only attempted when the ProductSet is a finite iterable set.
++    if a.is_iterable and a.is_finite_set:
++        return fuzzy_and(b.contains(element) for element in a)
++
++@dispatch(FiniteSet, ProductSet)  # type: ignore # noqa:F811
++def is_subset_sets(a, b): # noqa:F811
++    # A FiniteSet is a subset of a ProductSet if all of its elements are
++    # elements of the ProductSet.
++    return fuzzy_and(b.contains(element) for element in a)
+2026-11-13 18:10:21,488 - INFO - Git diff changed after running eval script
+2026-11-13 18:10:21,488 - INFO - Grading answer for sympy__sympy-20438...
+2026-11-13 18:10:21,489 - INFO - report: {'sympy__sympy-20438': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_Eq', 'test_issue_19378']}, 'PASS_TO_PASS': {'success': ['test_imageset', 'test_is_empty', 'test_is_finiteset', 'test_deprecated_is_EmptySet', 'test_interval_arguments', 'test_interval_symbolic_end_points', 'test_interval_is_empty', 'test_union', 'test_union_iter', 'test_union_is_empty', 'test_difference', 'test_Complement', 'test_set_operations_nonsets', 'test_complement', 'test_intersect1', 'test_intersection', 'test_issue_9623', 'test_is_disjoint', 'test_ProductSet__len__', 'test_ProductSet', 'test_ProductSet_of_single_arg_is_not_arg', 'test_ProductSet_is_empty', 'test_interval_subs', 'test_interval_to_mpi', 'test_set_evalf', 'test_measure', 'test_is_subset', 'test_is_proper_subset', 'test_is_superset', 'test_is_proper_superset', 'test_contains', 'test_interval_symbolic', 'test_union_contains', 'test_is_number', 'test_Interval_is_left_unbounded', 'test_Interval_is_right_unbounded', 'test_Interval_as_relational', 'test_Finite_as_relational', 'test_Union_as_relational', 'test_Intersection_as_relational', 'test_Complement_as_relational', 'test_SymmetricDifference_as_relational', 'test_EmptySet', 'test_finite_basic', 'test_product_basic', 'test_real', 'test_supinf', 'test_universalset', 'test_Union_of_ProductSets_shares', 'test_Interval_free_symbols', 'test_image_interval', 'test_image_piecewise', 'test_image_FiniteSet', 'test_image_Union', 'test_image_EmptySet', 'test_issue_5724_7680', 'test_boundary', 'test_boundary_Union', 'test_boundary_ProductSet', 'test_boundary_ProductSet_line', 'test_is_open', 'test_is_closed', 'test_closure', 'test_interior', 'test_issue_7841', 'test_SymmetricDifference', 'test_issue_9536', 'test_issue_9637', 'test_issue_9808', 'test_issue_9956', 'test_issue_Symbol_inter', 'test_issue_11827', 'test_issue_10113', 'test_issue_10248', 'test_issue_9447', 'test_issue_10337', 'test_issue_10326', 'test_issue_2799', 'test_issue_9706', 'test_issue_8257', 'test_issue_10931', 'test_issue_11174', 'test_issue_18505', 'test_finite_set_intersection', 'test_union_intersection_constructor', 'test_Union_contains', 'test_DisjointUnion', 'test_DisjointUnion_is_empty', 'test_DisjointUnion_is_iterable', 'test_DisjointUnion_contains', 'test_DisjointUnion_iter', 'test_DisjointUnion_len', 'test_issue_20089'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-20438: resolved: False
+2026-11-13 18:10:21,491 - INFO - Attempting to stop container sweb.eval.sympy__sympy-20438.verified_full_glm53_pi_incr_R2387b...
+2026-11-13 18:10:37,213 - INFO - Container sweb.eval.sympy__sympy-20438.verified_full_glm53_pi_incr_R2387b stopped successfully.
+2026-11-13 18:10:37,213 - INFO - Attempting to remove container sweb.eval.sympy__sympy-20438.verified_full_glm53_pi_incr_R2387b...
+2026-11-13 18:10:37,265 - INFO - Container sweb.eval.sympy__sympy-20438.verified_full_glm53_pi_incr_R2387b removed successfully.

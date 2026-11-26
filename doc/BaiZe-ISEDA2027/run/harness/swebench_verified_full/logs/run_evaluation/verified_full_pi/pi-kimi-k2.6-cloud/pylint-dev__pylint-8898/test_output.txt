@@ -1,0 +1,524 @@
++ source /opt/miniconda3/bin/activate
+++ _CONDA_ROOT=/opt/miniconda3
+++ . /opt/miniconda3/etc/profile.d/conda.sh
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ '[' -z '' ']'
++++ export CONDA_SHLVL=0
++++ CONDA_SHLVL=0
++++ '[' -n '' ']'
++++++ dirname /opt/miniconda3/bin/conda
+++++ dirname /opt/miniconda3/bin
++++ PATH=/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ export PATH
++++ '[' -z '' ']'
++++ PS1=
+++ conda activate
+++ local cmd=activate
+++ case "$cmd" in
+++ __conda_activate activate
+++ '[' -n '' ']'
+++ local ask_conda
++++ PS1=
++++ __conda_exe shell.posix activate
++++ /opt/miniconda3/bin/conda shell.posix activate
+++ ask_conda='PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''1'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ eval 'PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''1'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++++ PS1='(base) '
++++ export PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ export CONDA_PREFIX=/opt/miniconda3
++++ CONDA_PREFIX=/opt/miniconda3
++++ export CONDA_SHLVL=1
++++ CONDA_SHLVL=1
++++ export CONDA_DEFAULT_ENV=base
++++ CONDA_DEFAULT_ENV=base
++++ export 'CONDA_PROMPT_MODIFIER=(base) '
++++ CONDA_PROMPT_MODIFIER='(base) '
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ __conda_hashr
+++ '[' -n '' ']'
+++ '[' -n '' ']'
+++ hash -r
++ conda activate testbed
++ local cmd=activate
++ case "$cmd" in
++ __conda_activate activate testbed
++ '[' -n '' ']'
++ local ask_conda
+++ PS1='(base) '
+++ __conda_exe shell.posix activate testbed
+++ /opt/miniconda3/bin/conda shell.posix activate testbed
++ ask_conda='PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''2'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_1='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++ eval 'PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''2'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_1='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ PS1='(testbed) '
+++ export PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ export CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ export CONDA_SHLVL=2
+++ CONDA_SHLVL=2
+++ export CONDA_DEFAULT_ENV=testbed
+++ CONDA_DEFAULT_ENV=testbed
+++ export 'CONDA_PROMPT_MODIFIER=(testbed) '
+++ CONDA_PROMPT_MODIFIER='(testbed) '
+++ export CONDA_PREFIX_1=/opt/miniconda3
+++ CONDA_PREFIX_1=/opt/miniconda3
+++ export CONDA_EXE=/opt/miniconda3/bin/conda
+++ CONDA_EXE=/opt/miniconda3/bin/conda
+++ export _CE_M=
+++ _CE_M=
+++ export _CE_CONDA=
+++ _CE_CONDA=
+++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++ __conda_hashr
++ '[' -n '' ']'
++ '[' -n '' ']'
++ hash -r
++ cd /testbed
++ git config --global --add safe.directory /testbed
++ cd /testbed
++ git status
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   pylint/checkers/base/name_checker/checker.py
+	modified:   pylint/checkers/design_analysis.py
+	modified:   pylint/lint/base_options.py
+	modified:   pylint/utils/utils.py
+	modified:   tests/config/test_argparse_config.py
+	modified:   tests/utils/unittest_utils.py
+
+no changes added to commit (use "git add" and/or "git commit -a")
++ git show
+commit 95d0a5c0c22eae3537f125aad9f66d7c465aa271
+Author: SWE-bench <setup@swebench.com>
+Date:   Thu Aug 13 03:10:28 2026 +0000
+
+    SWE-bench
++ git -c core.fileMode=false diff 1f8c4d9eb185c16a2c1d881c054f015e1c2eb334
+diff --git a/pylint/checkers/base/name_checker/checker.py b/pylint/checkers/base/name_checker/checker.py
+index 42a7c6b2e..e6f5fefa0 100644
+--- a/pylint/checkers/base/name_checker/checker.py
++++ b/pylint/checkers/base/name_checker/checker.py
+@@ -212,7 +212,7 @@ class NameChecker(_BasicChecker):
+                 "type": "regexp_csv",
+                 "metavar": "<names>",
+                 "help": "Good variable names regexes, separated by a comma. If names match any regex,"
+-                " they will always be accepted",
++                " they will always be accepted. Commas inside regexes can be escaped with \\,",
+             },
+         ),
+         (
+@@ -232,7 +232,7 @@ class NameChecker(_BasicChecker):
+                 "type": "regexp_csv",
+                 "metavar": "<names>",
+                 "help": "Bad variable names regexes, separated by a comma. If names match any regex,"
+-                " they will always be refused",
++                " they will always be refused. Commas inside regexes can be escaped with \\,",
+             },
+         ),
+         (
+diff --git a/pylint/checkers/design_analysis.py b/pylint/checkers/design_analysis.py
+index bea1ef53c..a0fcfa513 100644
+--- a/pylint/checkers/design_analysis.py
++++ b/pylint/checkers/design_analysis.py
+@@ -395,7 +395,8 @@ class MisdesignChecker(BaseChecker):
+                 "type": "regexp_csv",
+                 "metavar": "<pattern>[,<pattern>...]",
+                 "help": "List of regular expressions of class ancestor names "
+-                "to ignore when counting public methods (see R0903)",
++                "to ignore when counting public methods (see R0903). "
++                "Commas inside regexes can be escaped with \\,"
+             },
+         ),
+     )
+diff --git a/pylint/lint/base_options.py b/pylint/lint/base_options.py
+index ee811db4e..ed68ac92f 100644
+--- a/pylint/lint/base_options.py
++++ b/pylint/lint/base_options.py
+@@ -58,7 +58,7 @@ def _make_linter_options(linter: PyLinter) -> Options:
+                 "default": (re.compile(r"^\.#"),),
+                 "help": "Files or directories matching the regular expression patterns are"
+                 " skipped. The regex matches against base names, not paths. The default value "
+-                "ignores Emacs file locks",
++                "ignores Emacs file locks. Commas inside regexes can be escaped with \\,",
+             },
+         ),
+         (
+@@ -70,7 +70,8 @@ def _make_linter_options(linter: PyLinter) -> Options:
+                 "help": "Add files or directories matching the regular expressions patterns to the "
+                 "ignore-list. The regex matches against paths and can be in "
+                 "Posix or Windows format. Because '\\\\' represents the directory delimiter "
+-                "on Windows systems, it can't be used as an escape character.",
++                "on Windows systems, it can't be used as an escape character. "
++                "Commas inside patterns can be escaped with \\,",
+             },
+         ),
+         (
+diff --git a/pylint/utils/utils.py b/pylint/utils/utils.py
+index fa7f7b92f..2566e0948 100644
+--- a/pylint/utils/utils.py
++++ b/pylint/utils/utils.py
+@@ -212,13 +212,16 @@ def register_plugins(linter: PyLinter, directory: str) -> None:
+ def _splitstrip(string: str, sep: str = ",") -> list[str]:
+     """Return a list of stripped string by splitting the string given as
+     argument on `sep` (',' by default), empty strings are discarded.
++    A backslash can be used to escape the separator.
+ 
+     >>> _splitstrip('a, b, c   ,  4,,')
+     ['a', 'b', 'c', '4']
+     >>> _splitstrip('a')
+     ['a']
+-    >>> _splitstrip('a,\nb,\nc,')
++    >>> _splitstrip('a,\\nb,\\nc,')
+     ['a', 'b', 'c']
++    >>> _splitstrip(r'a\, b, c')
++    ['a, b', 'c']
+ 
+     :type string: str or unicode
+     :param string: a csv line
+@@ -229,7 +232,26 @@ def _splitstrip(string: str, sep: str = ",") -> list[str]:
+     :rtype: str or unicode
+     :return: the unquoted string (or the input string if it wasn't quoted)
+     """
+-    return [word.strip() for word in string.split(sep) if word.strip()]
++    result: list[str] = []
++    current: list[str] = []
++    i = 0
++    while i < len(string):
++        if string[i] == "\\" and i + 1 < len(string) and string[i + 1] == sep:
++            current.append(sep)
++            i += 2
++        elif string[i] == sep:
++            word = "".join(current).strip()
++            if word:
++                result.append(word)
++            current = []
++            i += 1
++        else:
++            current.append(string[i])
++            i += 1
++    word = "".join(current).strip()
++    if word:
++        result.append(word)
++    return result
+ 
+ 
+ def _unquote(string: str) -> str:
+diff --git a/tests/config/test_argparse_config.py b/tests/config/test_argparse_config.py
+index dfa0fd4dd..5c4d2677f 100644
+--- a/tests/config/test_argparse_config.py
++++ b/tests/config/test_argparse_config.py
+@@ -80,3 +80,28 @@ class TestArguments:
+         with pytest.raises(UnrecognizedArgumentAction):
+             # We test with None as that is 'unrecognized'
+             manager._add_parser_option(group, None)  # type: ignore[arg-type]
++
++
++class TestRegexpCsvTransformer:
++    """Tests for the regexp_csv transformer and escaped comma support."""
++
++    @staticmethod
++    def test_regexp_csv_with_escaped_comma() -> None:
++        """Check that commas can be escaped in regexp_csv options."""
++        run = Run(
++            [EMPTY_MODULE, r"--bad-names-rgxs=(foo{1\,3})"],
++            exit=False,
++        )
++        assert len(run.linter.config.bad_names_rgxs) == 1
++        assert run.linter.config.bad_names_rgxs[0].pattern == "(foo{1,3})"
++
++    @staticmethod
++    def test_regexp_csv_multiple_with_escaped_comma() -> None:
++        """Check that multiple regexes work with escaped commas."""
++        run = Run(
++            [EMPTY_MODULE, r"--bad-names-rgxs=(foo{1\,3}),(bar|baz)"],
++            exit=False,
++        )
++        assert len(run.linter.config.bad_names_rgxs) == 2
++        assert run.linter.config.bad_names_rgxs[0].pattern == "(foo{1,3})"
++        assert run.linter.config.bad_names_rgxs[1].pattern == "(bar|baz)"
+diff --git a/tests/utils/unittest_utils.py b/tests/utils/unittest_utils.py
+index d2cfbd5b2..c091c121e 100644
+--- a/tests/utils/unittest_utils.py
++++ b/tests/utils/unittest_utils.py
+@@ -22,3 +22,15 @@ def test_decoding_stream_known_encoding() -> None:
+     binary_io = io.BytesIO("€".encode("cp1252"))
+     stream = utils.decoding_stream(binary_io, "cp1252")
+     assert stream.read() == "€"
++
++
++def test_splitstrip() -> None:
++    assert utils._splitstrip("a, b, c   ,  4,,") == ["a", "b", "c", "4"]
++    assert utils._splitstrip("a") == ["a"]
++    assert utils._splitstrip("a,\nb,\nc,") == ["a", "b", "c"]
++
++
++def test_splitstrip_with_escaped_separator() -> None:
++    assert utils._splitstrip(r"a\, b, c") == ["a, b", "c"]
++    assert utils._splitstrip(r"(foo{1\,3})") == ["(foo{1,3})"]
++    assert utils._splitstrip(r"foo\,bar,baz\,qux") == ["foo,bar", "baz,qux"]
++ source /opt/miniconda3/bin/activate
+++ _CONDA_ROOT=/opt/miniconda3
+++ . /opt/miniconda3/etc/profile.d/conda.sh
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ '[' -z x ']'
+++ conda activate
+++ local cmd=activate
+++ case "$cmd" in
+++ __conda_activate activate
+++ '[' -n '' ']'
+++ local ask_conda
++++ PS1='(testbed) '
++++ __conda_exe shell.posix activate
++++ /opt/miniconda3/bin/conda shell.posix activate
+++ ask_conda='PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''3'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_PREFIX_2='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ eval 'PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''3'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_PREFIX_2='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++++ PS1='(base) '
++++ export PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ export CONDA_PREFIX=/opt/miniconda3
++++ CONDA_PREFIX=/opt/miniconda3
++++ export CONDA_SHLVL=3
++++ CONDA_SHLVL=3
++++ export CONDA_DEFAULT_ENV=base
++++ CONDA_DEFAULT_ENV=base
++++ export 'CONDA_PROMPT_MODIFIER=(base) '
++++ CONDA_PROMPT_MODIFIER='(base) '
++++ export CONDA_PREFIX_2=/opt/miniconda3/envs/testbed
++++ CONDA_PREFIX_2=/opt/miniconda3/envs/testbed
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ __conda_hashr
+++ '[' -n '' ']'
+++ '[' -n '' ']'
+++ hash -r
++ conda activate testbed
++ local cmd=activate
++ case "$cmd" in
++ __conda_activate activate testbed
++ '[' -n '' ']'
++ local ask_conda
+++ PS1='(base) '
+++ __conda_exe shell.posix activate testbed
+++ /opt/miniconda3/bin/conda shell.posix activate testbed
++ ask_conda='PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''4'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_3='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++ eval 'PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''4'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_3='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ PS1='(testbed) '
+++ export PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ export CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ export CONDA_SHLVL=4
+++ CONDA_SHLVL=4
+++ export CONDA_DEFAULT_ENV=testbed
+++ CONDA_DEFAULT_ENV=testbed
+++ export 'CONDA_PROMPT_MODIFIER=(testbed) '
+++ CONDA_PROMPT_MODIFIER='(testbed) '
+++ export CONDA_PREFIX_3=/opt/miniconda3
+++ CONDA_PREFIX_3=/opt/miniconda3
+++ export CONDA_EXE=/opt/miniconda3/bin/conda
+++ CONDA_EXE=/opt/miniconda3/bin/conda
+++ export _CE_M=
+++ _CE_M=
+++ export _CE_CONDA=
+++ _CE_CONDA=
+++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++ __conda_hashr
++ '[' -n '' ']'
++ '[' -n '' ']'
++ hash -r
++ python -m pip install -e .
+Error processing line 1 of /opt/miniconda3/envs/testbed/lib/python3.9/site-packages/distutils-precedence.pth:
+
+  Traceback (most recent call last):
+    File "/opt/miniconda3/envs/testbed/lib/python3.9/site.py", line 177, in addpackage
+      exec(line)
+    File "<string>", line 1, in <module>
+  ModuleNotFoundError: No module named '_distutils_hack'
+
+Remainder of file ignored
+Obtaining file:///testbed
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: platformdirs>=2.2.0 in /opt/miniconda3/envs/testbed/lib/python3.9/site-packages (from pylint==3.0.0b1) (4.3.6)
+Requirement already satisfied: astroid<=3.1.0-dev0,>=3.0.0a8 in /opt/miniconda3/envs/testbed/lib/python3.9/site-packages (from pylint==3.0.0b1) (3.0.3)
+Requirement already satisfied: isort<6,>=4.2.5 in /opt/miniconda3/envs/testbed/lib/python3.9/site-packages (from pylint==3.0.0b1) (5.13.2)
+Requirement already satisfied: mccabe<0.8,>=0.6 in /opt/miniconda3/envs/testbed/lib/python3.9/site-packages (from pylint==3.0.0b1) (0.7.0)
+Requirement already satisfied: tomlkit>=0.10.1 in /opt/miniconda3/envs/testbed/lib/python3.9/site-packages (from pylint==3.0.0b1) (0.11.8)
+Requirement already satisfied: typing-extensions>=3.10.0 in /opt/miniconda3/envs/testbed/lib/python3.9/site-packages (from pylint==3.0.0b1) (4.12.2)
+Requirement already satisfied: dill>=0.2 in /opt/miniconda3/envs/testbed/lib/python3.9/site-packages (from pylint==3.0.0b1) (0.3.9)
+Requirement already satisfied: tomli>=1.1.0 in /opt/miniconda3/envs/testbed/lib/python3.9/site-packages (from pylint==3.0.0b1) (2.0.2)
+Building wheels for collected packages: pylint
+  Building editable for pylint (pyproject.toml): started
+  Building editable for pylint (pyproject.toml): finished with status 'done'
+  Created wheel for pylint: filename=pylint-3.0.0b1-0.editable-py3-none-any.whl size=25475 sha256=79a7a1cad6a918acec7225eb9343cb216618ffd4e8be99bf014a5f14a691a14e
+  Stored in directory: /tmp/pip-ephem-wheel-cache-wgxi0gwb/wheels/7d/66/67/70d1ee2124ccf21d601c352e25cdca10f611f7c8b3f9ffb9e4
+Successfully built pylint
+Installing collected packages: pylint
+  Attempting uninstall: pylint
+    Found existing installation: pylint 3.0.0b1
+    Uninstalling pylint-3.0.0b1:
+      Successfully uninstalled pylint-3.0.0b1
+Successfully installed pylint-3.0.0b1
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
++ git checkout 1f8c4d9eb185c16a2c1d881c054f015e1c2eb334 tests/config/test_config.py
+Updated 0 paths from ddc0b886d
++ git apply -v -
+Checking patch tests/config/test_config.py...
+Applied patch tests/config/test_config.py cleanly.
++ : '>>>>> Start Test Output'
++ pytest -rA tests/config/test_config.py
+Error processing line 1 of /opt/miniconda3/envs/testbed/lib/python3.9/site-packages/distutils-precedence.pth:
+
+  Traceback (most recent call last):
+    File "/opt/miniconda3/envs/testbed/lib/python3.9/site.py", line 177, in addpackage
+      exec(line)
+    File "<string>", line 1, in <module>
+  ModuleNotFoundError: No module named '_distutils_hack'
+
+Remainder of file ignored
+/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/_pytest/config/__init__.py:331: PluggyTeardownRaisedWarning: A plugin raised an exception during an old-style hookwrapper teardown.
+Plugin: helpconfig, Hook: pytest_cmdline_parse
+ConftestImportFailure: SyntaxError: invalid escape sequence \, (utils.py, line 213) (from /testbed/tests/conftest.py)
+For more information see https://pluggy.readthedocs.io/en/stable/api_reference.html#pluggy.PluggyTeardownRaisedWarning
+  config = pluginmanager.hook.pytest_cmdline_parse(
+ImportError while loading conftest '/testbed/tests/conftest.py'.
+tests/conftest.py:15: in <module>
+    from pylint import checkers
+pylint/checkers/__init__.py:47: in <module>
+    from pylint.checkers.base_checker import (
+pylint/checkers/base_checker.py:16: in <module>
+    from pylint.config.arguments_provider import _ArgumentsProvider
+pylint/config/arguments_provider.py:12: in <module>
+    from pylint.config.arguments_manager import _ArgumentsManager
+pylint/config/arguments_manager.py:19: in <module>
+    from pylint import utils
+pylint/utils/__init__.py:10: in <module>
+    from pylint.utils.docs import print_full_documentation
+pylint/utils/docs.py:13: in <module>
+    from pylint.utils.utils import get_rst_section, get_rst_title
+E     File "/testbed/pylint/utils/utils.py", line 213
+E       """Return a list of stripped string by splitting the string given as
+E       ^
+E   SyntaxError: invalid escape sequence \,
++ SWEBENCH_TEST_EXIT_CODE=4
++ : '>>>>> End Test Output'
++ echo '>>>>> Test Exit Code: 4'
++ git checkout 1f8c4d9eb185c16a2c1d881c054f015e1c2eb334 tests/config/test_config.py
+>>>>> Test Exit Code: 4
+Updated 1 path from ddc0b886d

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-13820",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/db/migrations/loader.py b/django/db/migrations/loader.py\nindex 95a5062ec9..85e47a4558 100644\n--- a/django/db/migrations/loader.py\n+++ b/django/db/migrations/loader.py\n@@ -88,9 +88,9 @@ class MigrationLoader:\n                     continue\n                 raise\n             else:\n-                # Empty directories are namespaces.\n+                # Namespace packages have no __file__ and a non-list __path__.\n                 # getattr() needed on PY36 and older (replace w/attribute access).\n-                if getattr(module, '__file__', None) is None:\n+                if getattr(module, '__file__', None) is None and not isinstance(module.__path__, list):\n                     self.unmigrated_apps.add(app_config.label)\n                     continue\n                 # Module is not a package (e.g. migrations.py).\n"
+  }
+]

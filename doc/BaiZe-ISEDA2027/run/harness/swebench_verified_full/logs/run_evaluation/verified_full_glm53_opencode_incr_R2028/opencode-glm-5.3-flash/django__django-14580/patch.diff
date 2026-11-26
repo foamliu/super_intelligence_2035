@@ -1,0 +1,59 @@
+diff --git a/django/db/migrations/serializer.py b/django/db/migrations/serializer.py
+index e19c881cda..0db6608dd5 100644
+--- a/django/db/migrations/serializer.py
++++ b/django/db/migrations/serializer.py
+@@ -273,8 +273,8 @@ class TupleSerializer(BaseSequenceSerializer):
+ class TypeSerializer(BaseSerializer):
+     def serialize(self):
+         special_cases = [
+-            (models.Model, "models.Model", []),
+-            (type(None), 'type(None)', []),
++            (models.Model, "models.Model", {"from django.db import models"}),
++            (type(None), 'type(None)', set()),
+         ]
+         for case, string, imports in special_cases:
+             if case is self.value:
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+index a590ff4398..ec69fa2493 100644
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -33,6 +33,10 @@ class DeconstructibleInstances:
+         return ('DeconstructibleInstances', [], {})
+ 
+ 
++class MyMixin:
++    pass
++
++
+ class Money(decimal.Decimal):
+     def deconstruct(self):
+         return (
+@@ -658,6 +662,28 @@ class WriterTests(SimpleTestCase):
+     def test_serialize_type_none(self):
+         self.assertSerializedEqual(type(None))
+ 
++    def test_serialize_type_model(self):
++        self.assertSerializedResultEqual(
++            models.Model,
++            ("models.Model", {"from django.db import models"}),
++        )
++
++    def test_models_model_base_without_other_models_imports(self):
++        migration = type("Migration", (migrations.Migration,), {
++            "operations": [
++                migrations.CreateModel(
++                    name="MyModel",
++                    fields=[],
++                    options={"abstract": False},
++                    bases=(MyMixin, models.Model),
++                ),
++            ],
++        })
++        writer = MigrationWriter(migration)
++        output = writer.as_string()
++        self.assertIn("import migrations.test_writer\n", output)
++        self.assertIn("from django.db import migrations, models\n", output)
++
+     def test_simple_migration(self):
+         """
+         Tests serializing a simple migration.

@@ -1,0 +1,119 @@
+2026-10-30 16:20:02,814 - INFO - Creating container for django__django-16116...
+2026-10-30 16:20:03,510 - INFO - Removed existing container sweb.eval.django__django-16116.verified_full_cline-patched
+2026-10-30 16:20:03,536 - INFO - Container for django__django-16116 created: 294ef4b6c359fcd93c921ffc67195246abf8724e59e4e451b88b6ee0cf697a2c
+2026-10-30 16:20:05,279 - INFO - Container for django__django-16116 started: 294ef4b6c359fcd93c921ffc67195246abf8724e59e4e451b88b6ee0cf697a2c
+2026-10-30 16:20:05,280 - INFO - Intermediate patch for django__django-16116 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-16116/patch.diff, now applying to container...
+2026-10-30 16:20:05,398 - INFO - >>>>> Applied Patch:
+Checking patch django/core/management/commands/makemigrations.py...
+Checking patch tests/migrations/test_commands.py...
+Applied patch django/core/management/commands/makemigrations.py cleanly.
+Applied patch tests/migrations/test_commands.py cleanly.
+
+2026-10-30 16:20:06,323 - INFO - Git diff before:
+diff --git a/django/core/management/commands/makemigrations.py b/django/core/management/commands/makemigrations.py
+index 2e97d9064b..3d216e3fb6 100644
+--- a/django/core/management/commands/makemigrations.py
++++ b/django/core/management/commands/makemigrations.py
+@@ -70,7 +70,10 @@ class Command(BaseCommand):
+             "--check",
+             action="store_true",
+             dest="check_changes",
+-            help="Exit with a non-zero status if model changes are missing migrations.",
++            help=(
++                "Exit with a non-zero status if model changes are missing migrations "
++                "and do not actually write them."
++            ),
+         )
+         parser.add_argument(
+             "--scriptable",
+@@ -111,6 +114,8 @@ class Command(BaseCommand):
+             raise CommandError("The migration name must be a valid Python identifier.")
+         self.include_header = options["include_header"]
+         check_changes = options["check_changes"]
++        if check_changes:
++            self.dry_run = True
+         self.scriptable = options["scriptable"]
+         self.update = options["update"]
+         # If logs and prompts are diverted to stderr, remove the ERROR style.
+diff --git a/tests/migrations/test_commands.py b/tests/migrations/test_commands.py
+index 9900c7a35d..95ff9857c5 100644
+--- a/tests/migrations/test_commands.py
++++ b/tests/migrations/test_commands.py
+@@ -2389,17 +2389,38 @@ class MakeMigrationsTests(MigrationTestBase):
+     def test_makemigrations_check(self):
+         """
+         makemigrations --check should exit with a non-zero status when
+-        there are changes to an app requiring migrations.
++        there are changes to an app requiring migrations and should not
++        create migration files.
+         """
+-        with self.temporary_migration_module():
++        with self.temporary_migration_module() as migration_dir:
+             with self.assertRaises(SystemExit):
+                 call_command("makemigrations", "--check", "migrations", verbosity=0)
++            self.assertFalse(os.path.exists(os.path.join(migration_dir, "migrations")))
+ 
+         with self.temporary_migration_module(
+             module="migrations.test_migrations_no_changes"
+         ):
+             call_command("makemigrations", "--check", "migrations", verbosity=0)
+ 
++    def test_makemigrations_check_does_not_write_files(self):
++        """
++        makemigrations --check should not write migration files even when
++        changes are detected.
++        """
++        with self.temporary_migration_module(
++            module="migrations.test_migrations"
++        ) as migration_dir:
++            with self.assertRaises(SystemExit):
++                call_command("makemigrations", "--check", "migrations", verbosity=0)
++            self.assertCountEqual(
++                [
++                    f
++                    for f in os.listdir(migration_dir)
++                    if not f.startswith("__pycache__")
++                ],
++                ["__init__.py", "0001_initial.py", "0002_second.py"],
++            )
++
+     def test_makemigrations_migration_path_output(self):
+         """
+         makemigrations should print the relative paths to the migrations unless
+2026-10-30 16:20:06,325 - INFO - Eval script for django__django-16116 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-16116/eval.sh; copying to container...
+2026-10-30 16:20:21,459 - INFO - Test runtime: 15.07 seconds
+2026-10-30 16:20:21,460 - INFO - Test output for django__django-16116 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-16116/test_output.txt
+2026-10-30 16:20:21,522 - INFO - Git diff after:
+diff --git a/django/core/management/commands/makemigrations.py b/django/core/management/commands/makemigrations.py
+index 2e97d9064b..3d216e3fb6 100644
+--- a/django/core/management/commands/makemigrations.py
++++ b/django/core/management/commands/makemigrations.py
+@@ -70,7 +70,10 @@ class Command(BaseCommand):
+             "--check",
+             action="store_true",
+             dest="check_changes",
+-            help="Exit with a non-zero status if model changes are missing migrations.",
++            help=(
++                "Exit with a non-zero status if model changes are missing migrations "
++                "and do not actually write them."
++            ),
+         )
+         parser.add_argument(
+             "--scriptable",
+@@ -111,6 +114,8 @@ class Command(BaseCommand):
+             raise CommandError("The migration name must be a valid Python identifier.")
+         self.include_header = options["include_header"]
+         check_changes = options["check_changes"]
++        if check_changes:
++            self.dry_run = True
+         self.scriptable = options["scriptable"]
+         self.update = options["update"]
+         # If logs and prompts are diverted to stderr, remove the ERROR style.
+2026-10-30 16:20:21,522 - INFO - Git diff changed after running eval script
+2026-10-30 16:20:21,522 - INFO - Grading answer for django__django-16116...
+2026-10-30 16:20:21,526 - INFO - report: {'django__django-16116': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['makemigrations --check should exit with a non-zero status when'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_makemigrations_app_name_specified_as_label (migrations.test_commands.AppLabelErrorTests)', 'test_makemigrations_nonexistent_app_label (migrations.test_commands.AppLabelErrorTests)', 'test_migrate_app_name_specified_as_label (migrations.test_commands.AppLabelErrorTests)', 'test_migrate_nonexistent_app_label (migrations.test_commands.AppLabelErrorTests)', 'test_optimizemigration_app_name_specified_as_label (migrations.test_commands.AppLabelErrorTests)', 'test_optimizemigration_nonexistent_app_label (migrations.test_commands.AppLabelErrorTests)', 'test_showmigrations_app_name_specified_as_label (migrations.test_commands.AppLabelErrorTests)', 'test_showmigrations_nonexistent_app_label (migrations.test_commands.AppLabelErrorTests)', 'test_sqlmigrate_app_name_specified_as_label (migrations.test_commands.AppLabelErrorTests)', 'test_sqlmigrate_nonexistent_app_label (migrations.test_commands.AppLabelErrorTests)', 'test_squashmigrations_app_name_specified_as_label (migrations.test_commands.AppLabelErrorTests)', 'test_squashmigrations_nonexistent_app_label (migrations.test_commands.AppLabelErrorTests)', 'test_ambigious_prefix (migrations.test_commands.OptimizeMigrationTests)', 'test_app_without_migrations (migrations.test_commands.OptimizeMigrationTests)', 'test_creates_replace_migration_manual_porting (migrations.test_commands.OptimizeMigrationTests)', 'test_fails_squash_migration_manual_porting (migrations.test_commands.OptimizeMigrationTests)', 'test_no_optimization_possible (migrations.test_commands.OptimizeMigrationTests)', 'test_optimization (migrations.test_commands.OptimizeMigrationTests)', 'test_optimization_no_verbosity (migrations.test_commands.OptimizeMigrationTests)', 'test_optimizemigration_check (migrations.test_commands.OptimizeMigrationTests)', 'test_unknown_prefix (migrations.test_commands.OptimizeMigrationTests)', 'test_ambiguous_prefix (migrations.test_commands.MigrateTests)', 'test_app_without_migrations (migrations.test_commands.MigrateTests)', 'Tests basic usage of the migrate command.', 'test_migrate_backward_to_squashed_migration (migrations.test_commands.MigrateTests)', 'test_migrate_check (migrations.test_commands.MigrateTests)', 'test_migrate_check_migrated_app (migrations.test_commands.MigrateTests)', 'test_migrate_check_plan (migrations.test_commands.MigrateTests)', 'migrate exits if it detects a conflict.', '--fake-initial only works if all tables created in the initial', 'test_migrate_fake_initial_case_insensitive (migrations.test_commands.MigrateTests)', 'Split initial migrations can be faked with --fake-initial.', 'Running migrate with some migrations applied before their dependencies', '`Migration.initial = False` skips fake-initial detection.', 'test_migrate_not_reflected_changes (migrations.test_commands.MigrateTests)', 'Migrating to a squashed migration specified by name should succeed', 'Tests migrate --plan output.', 'With prune=True, references to migration files deleted from the', 'Running a single squashed migration should record all of the original', 'Running migrate for a squashed migration should record as run', 'Running migrate --run-syncdb with an app_label only creates tables for', 'test_migrate_syncdb_app_with_migrations (migrations.test_commands.MigrateTests)', 'For an app without migrations, editor.execute() is used for executing', 'test_migrate_with_system_checks (migrations.test_commands.MigrateTests)', 'test_prune_deleted_squashed_migrations_in_replaces (migrations.test_commands.MigrateTests)', 'test_prune_no_app_label (migrations.test_commands.MigrateTests)', 'test_prune_no_migrations_to_prune (migrations.test_commands.MigrateTests)', 'Assuming you have 3 apps, `A`, `B`, and `C`, such that:', "showmigrations --list  displays migrations and whether or not they're", 'test_showmigrations_list_squashed (migrations.test_commands.MigrateTests)', 'test_showmigrations_no_migrations (migrations.test_commands.MigrateTests)', 'Tests --plan output of showmigrations command', 'test_showmigrations_plan_app_label_no_migrations (migrations.test_commands.MigrateTests)', '`showmigrations --plan app_label` output with multiple app_labels.', 'Tests --plan output of showmigrations command without migrations', '`showmigrations --plan app_label` output with a single app_label.', 'Tests --plan output of showmigrations command with squashed migrations.', 'test_showmigrations_unmigrated_app (migrations.test_commands.MigrateTests)', 'test_sqlmigrate_ambiguous_prefix_squashed_migrations (migrations.test_commands.MigrateTests)', 'sqlmigrate outputs reverse looking SQL.', "Transaction wrappers aren't shown for non-atomic migrations.", "Transaction wrappers aren't shown for databases that don't support", 'sqlmigrate outputs forward looking SQL.', 'test_sqlmigrate_no_operations (migrations.test_commands.MigrateTests)', 'test_sqlmigrate_noop (migrations.test_commands.MigrateTests)', 'test_sqlmigrate_replaced_migration (migrations.test_commands.MigrateTests)', 'test_sqlmigrate_squashed_migration (migrations.test_commands.MigrateTests)', 'test_sqlmigrate_unrepresentable (migrations.test_commands.MigrateTests)', 'test_unknown_prefix (migrations.test_commands.MigrateTests)', 'test_squashed_name_exists (migrations.test_commands.SquashMigrationsTests)', "--squashed-name specifies the new migration's name.", '--squashed-name also works if a start migration is omitted.', 'test_squashmigrations_initial_attribute (migrations.test_commands.SquashMigrationsTests)', "squashmigrations doesn't accept a starting migration after the ending migration.", 'test_squashmigrations_manual_porting (migrations.test_commands.SquashMigrationsTests)', 'squashmigrations optimizes operations.', 'squashmigrations squashes migrations.', 'squashmigrations accepts a starting migration.', "squashmigrations --no-optimize doesn't optimize operations.", 'test_failing_migration (migrations.test_commands.MakeMigrationsTests)', 'test_files_content (migrations.test_commands.MakeMigrationsTests)', 'makemigrations respects --dry-run option when fixing migration', '`makemigrations --merge --dry-run` writes the merge migration file to', 'test_makemigrations_auto_merge_name (migrations.test_commands.MakeMigrationsTests)', 'makemigrations prompts the user when adding auto_now_add to an existing', 'test_makemigrations_auto_now_add_interactive_quit (migrations.test_commands.MakeMigrationsTests)', 'makemigrations exits if it detects a conflict.', 'The history consistency checks in makemigrations respect', 'test_makemigrations_continues_number_sequence_after_squash (migrations.test_commands.MakeMigrationsTests)', 'test_makemigrations_default_merge_name (migrations.test_commands.MakeMigrationsTests)', 'makemigrations raises a nice error when migrations are disabled for an', '`makemigrations --dry-run` should not ask for defaults.', 'Allow `makemigrations --dry-run` to output the migrations file to', 'test_makemigrations_empty_connections (migrations.test_commands.MakeMigrationsTests)', 'makemigrations properly constructs an empty migration.', "makemigrations exits if no app is specified with 'empty' mode.", 'test_makemigrations_field_rename_interactive (migrations.test_commands.MakeMigrationsTests)', 'makemigrations properly merges the conflicting migrations with --noinput.', 'makemigrations should raise InconsistentMigrationHistory exception if', 'test_makemigrations_inconsistent_history_db_failure (migrations.test_commands.MakeMigrationsTests)', 'makemigrations enters interactive mode and merges properly.', 'The user is prompted to merge by default if there are conflicts and', 'makemigrations messages when adding a NOT NULL field in interactive', 'makemigrations messages when changing a NULL field to NOT NULL in', 'makemigrations enters and exits interactive mode properly.', 'makemigrations prompts the user when adding a unique field with', 'makemigrations --merge does not output any operations from apps that', 'makemigrations exits if in merge mode with no conflicts.', 'makemigrations should print the relative paths to the migrations unless', 'makemigrations prints the absolute path if os.path.relpath() raises a', 'makemigrations announces the migration at the default verbosity level.', 'test_makemigrations_migrations_modules_nonexistent_toplevel_package (migrations.test_commands.MakeMigrationsTests)', 'makemigrations creates migrations when specifying a custom location', 'test_makemigrations_model_rename_interactive (migrations.test_commands.MakeMigrationsTests)', 'makemigrations should detect initial is needed on empty migration', 'makemigrations exits when there are no changes to an app.', 'makemigrations exits when there are no changes and no apps are specified.', 'makemigrations fails to merge migrations with no common ancestor.', 'Migration directories without an __init__.py file are allowed.', 'Non-interactive makemigrations fails when a default is missing on a', 'makemigrations adds and removes a possible field rename in', 'makemigrations adds and removes a possible model rename in', 'test_makemigrations_non_interactive_unique_callable_default_addition (migrations.test_commands.MakeMigrationsTests)', 'makemigrations should recognize number-only migrations (0001.py).', 'With scriptable=True, log output is diverted to stderr, and only the', 'test_makemigrations_scriptable_merge (migrations.test_commands.MakeMigrationsTests)', 'makemigrations does not create a merge for an unspecified app even if', 'makemigrations does not raise a CommandError when an unspecified app', 'test_makemigrations_update (migrations.test_commands.MakeMigrationsTests)', 'test_makemigrations_update_applied_migration (migrations.test_commands.MakeMigrationsTests)', 'test_makemigrations_update_dependency_migration (migrations.test_commands.MakeMigrationsTests)', 'test_makemigrations_update_existing_name (migrations.test_commands.MakeMigrationsTests)', 'test_makemigrations_update_manual_porting (migrations.test_commands.MakeMigrationsTests)', 'test_makemigrations_update_no_migration (migrations.test_commands.MakeMigrationsTests)', 'test_makemigrations_update_squash_migration (migrations.test_commands.MakeMigrationsTests)', 'makemigrations --name generate a custom migration name.', 'test_makemigrations_with_invalid_custom_name (migrations.test_commands.MakeMigrationsTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16116: resolved: True
+2026-10-30 16:20:21,528 - INFO - Attempting to stop container sweb.eval.django__django-16116.verified_full_cline-patched...
+2026-10-30 16:20:38,451 - INFO - Container sweb.eval.django__django-16116.verified_full_cline-patched stopped successfully.
+2026-10-30 16:20:38,455 - INFO - Attempting to remove container sweb.eval.django__django-16116.verified_full_cline-patched...
+2026-10-30 16:20:38,500 - INFO - Container sweb.eval.django__django-16116.verified_full_cline-patched removed successfully.

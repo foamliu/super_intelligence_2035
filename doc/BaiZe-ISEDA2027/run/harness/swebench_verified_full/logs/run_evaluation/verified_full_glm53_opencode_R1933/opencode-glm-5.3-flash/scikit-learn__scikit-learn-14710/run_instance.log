@@ -1,0 +1,90 @@
+2026-11-09 15:15:22,075 - INFO - Creating container for scikit-learn__scikit-learn-14710...
+2026-11-09 15:15:22,119 - INFO - Container for scikit-learn__scikit-learn-14710 created: 083bc21a425b8194ad6e134aa61643d1b47bbf4d97af825c855fdd64f165e2f5
+2026-11-09 15:15:22,626 - INFO - Container for scikit-learn__scikit-learn-14710 started: 083bc21a425b8194ad6e134aa61643d1b47bbf4d97af825c855fdd64f165e2f5
+2026-11-09 15:15:22,628 - INFO - Intermediate patch for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/scikit-learn__scikit-learn-14710/patch.diff, now applying to container...
+2026-11-09 15:15:23,059 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py...
+Checking patch sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py...
+Applied patch sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py cleanly.
+Applied patch sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py cleanly.
+
+2026-11-09 15:15:23,368 - INFO - Git diff before:
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8ca..70a507d09 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,15 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if is_classifier(self):
++            y_small_train = self.classes_[y_small_train.astype(int)]
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if is_classifier(self):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+index 1eebdefd5..3b419ba42 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+@@ -132,6 +132,22 @@ def test_early_stopping_classification(data, scoring, validation_fraction,
+         assert gb.n_iter_ == max_iter
+ 
+ 
++@pytest.mark.parametrize('scoring', ('accuracy', 'loss'))
++def test_early_stopping_with_string_targets(scoring):
++    # Regression test: the scorer used during early stopping was fed
++    # integer-encoded y_true while predictions were original labels
++    # (e.g. strings), which used to raise a TypeError.
++
++    X, y = make_classification(n_samples=100, random_state=0)
++    y = y.astype(str)
++
++    gb = HistGradientBoostingClassifier(
++        scoring=scoring, n_iter_no_change=2, random_state=0
++    )
++    gb.fit(X, y)
++    assert 2 <= gb.n_iter_ <= 100
++
++
+ @pytest.mark.parametrize(
+     'scores, n_iter_no_change, tol, stopping',
+     [
+2026-11-09 15:15:23,369 - INFO - Eval script for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/scikit-learn__scikit-learn-14710/eval.sh; copying to container...
+2026-11-09 15:16:05,392 - INFO - Test runtime: 41.94 seconds
+2026-11-09 15:16:05,393 - INFO - Test output for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/scikit-learn__scikit-learn-14710/test_output.txt
+2026-11-09 15:16:05,435 - INFO - Git diff after:
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8ca..70a507d09 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,15 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if is_classifier(self):
++            y_small_train = self.classes_[y_small_train.astype(int)]
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if is_classifier(self):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+2026-11-09 15:16:05,435 - INFO - Git diff changed after running eval script
+2026-11-09 15:16:05,435 - INFO - Grading answer for scikit-learn__scikit-learn-14710...
+2026-11-09 15:16:05,445 - INFO - report: {'scikit-learn__scikit-learn-14710': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': False, 'resolved': False, 'infra_failure': False}}
+Result for scikit-learn__scikit-learn-14710: resolved: False
+2026-11-09 15:16:05,447 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_opencode_R1933...
+2026-11-09 15:16:21,600 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_opencode_R1933 stopped successfully.
+2026-11-09 15:16:21,600 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_opencode_R1933...
+2026-11-09 15:16:21,640 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_opencode_R1933 removed successfully.

@@ -1,0 +1,105 @@
+2026-11-10 07:21:04,632 - INFO - Creating container for scikit-learn__scikit-learn-13328...
+2026-11-10 07:21:04,666 - INFO - Container for scikit-learn__scikit-learn-13328 created: 8c11c1d19d6f8951a50aea724bf59ea38397cb13859cdc6aa645167c6ef9141e
+2026-11-10 07:21:05,468 - INFO - Container for scikit-learn__scikit-learn-13328 started: 8c11c1d19d6f8951a50aea724bf59ea38397cb13859cdc6aa645167c6ef9141e
+2026-11-10 07:21:05,470 - INFO - Intermediate patch for scikit-learn__scikit-learn-13328 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2026/pi-glm-5.3-flash/scikit-learn__scikit-learn-13328/patch.diff, now applying to container...
+2026-11-10 07:21:05,600 - INFO - >>>>> Applied Patch:
+Checking patch doc/whats_new/v0.21.rst...
+Checking patch sklearn/linear_model/huber.py...
+Checking patch sklearn/linear_model/tests/test_huber.py...
+Applied patch doc/whats_new/v0.21.rst cleanly.
+Applied patch sklearn/linear_model/huber.py cleanly.
+Applied patch sklearn/linear_model/tests/test_huber.py cleanly.
+
+2026-11-10 07:21:06,034 - INFO - Git diff before:
+diff --git a/doc/whats_new/v0.21.rst b/doc/whats_new/v0.21.rst
+index e3e3ec9f8..0092fbc1b 100644
+--- a/doc/whats_new/v0.21.rst
++++ b/doc/whats_new/v0.21.rst
+@@ -226,6 +226,10 @@ Support for Python 3.4 and below has been officially dropped.
+   ``fit_intercept=True`` in sparse and dense case.
+   :issue:`13279` by `Alexandre Gramfort`_
+ 
++- |Fix| Fix a bug where :class:`linear_model.HuberRegressor` would raise
++  ``TypeError`` when the input features ``X`` contained boolean values.
++  :issue:`13625` by :user:`Nicholas Dingwall <ndingwall>`.
++
+ - |API| :func:`linear_model.logistic_regression_path` is deprecated
+   in version 0.21 and will be removed in version 0.23.
+   :issue:`12821` by :user:`Nicolas Hug <NicolasHug>`.
+diff --git a/sklearn/linear_model/huber.py b/sklearn/linear_model/huber.py
+index 65c686400..285913684 100644
+--- a/sklearn/linear_model/huber.py
++++ b/sklearn/linear_model/huber.py
+@@ -251,7 +251,8 @@ class HuberRegressor(LinearModel, RegressorMixin, BaseEstimator):
+         self : object
+         """
+         X, y = check_X_y(
+-            X, y, copy=False, accept_sparse=['csr'], y_numeric=True)
++            X, y, copy=False, accept_sparse=['csr'], y_numeric=True,
++            dtype=[np.float64, np.float32])
+         if sample_weight is not None:
+             sample_weight = np.array(sample_weight)
+             check_consistent_length(y, sample_weight)
+diff --git a/sklearn/linear_model/tests/test_huber.py b/sklearn/linear_model/tests/test_huber.py
+index 6a8b26133..b3c26fec4 100644
+--- a/sklearn/linear_model/tests/test_huber.py
++++ b/sklearn/linear_model/tests/test_huber.py
+@@ -199,3 +199,17 @@ def test_huber_better_r2_score():
+ 
+     # The huber model should also fit poorly on the outliers.
+     assert_greater(ridge_outlier_score, huber_outlier_score)
++
++
++def test_huber_bool_inputs():
++    # Non-regression test for gh-13625:
++    # HuberRegressor used to raise a TypeError when X contained boolean
++    # values, because the unary minus operator is not supported on
++    # boolean arrays. Boolean input should be converted to float.
++    X = np.array([[True, False], [False, True]])
++    y = np.array([1, 0])
++    huber = HuberRegressor().fit(X, y)
++    X_float = X.astype(float)
++    huber_float = HuberRegressor().fit(X_float, y)
++    assert_array_almost_equal(huber.coef_, huber_float.coef_)
++    assert_almost_equal(huber.intercept_, huber_float.intercept_)
+2026-11-10 07:21:06,037 - INFO - Eval script for scikit-learn__scikit-learn-13328 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2026/pi-glm-5.3-flash/scikit-learn__scikit-learn-13328/eval.sh; copying to container...
+2026-11-10 07:21:10,729 - INFO - Test runtime: 4.61 seconds
+2026-11-10 07:21:10,732 - INFO - Test output for scikit-learn__scikit-learn-13328 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2026/pi-glm-5.3-flash/scikit-learn__scikit-learn-13328/test_output.txt
+2026-11-10 07:21:10,800 - INFO - Git diff after:
+diff --git a/doc/whats_new/v0.21.rst b/doc/whats_new/v0.21.rst
+index e3e3ec9f8..0092fbc1b 100644
+--- a/doc/whats_new/v0.21.rst
++++ b/doc/whats_new/v0.21.rst
+@@ -226,6 +226,10 @@ Support for Python 3.4 and below has been officially dropped.
+   ``fit_intercept=True`` in sparse and dense case.
+   :issue:`13279` by `Alexandre Gramfort`_
+ 
++- |Fix| Fix a bug where :class:`linear_model.HuberRegressor` would raise
++  ``TypeError`` when the input features ``X`` contained boolean values.
++  :issue:`13625` by :user:`Nicholas Dingwall <ndingwall>`.
++
+ - |API| :func:`linear_model.logistic_regression_path` is deprecated
+   in version 0.21 and will be removed in version 0.23.
+   :issue:`12821` by :user:`Nicolas Hug <NicolasHug>`.
+diff --git a/sklearn/linear_model/huber.py b/sklearn/linear_model/huber.py
+index 65c686400..285913684 100644
+--- a/sklearn/linear_model/huber.py
++++ b/sklearn/linear_model/huber.py
+@@ -251,7 +251,8 @@ class HuberRegressor(LinearModel, RegressorMixin, BaseEstimator):
+         self : object
+         """
+         X, y = check_X_y(
+-            X, y, copy=False, accept_sparse=['csr'], y_numeric=True)
++            X, y, copy=False, accept_sparse=['csr'], y_numeric=True,
++            dtype=[np.float64, np.float32])
+         if sample_weight is not None:
+             sample_weight = np.array(sample_weight)
+             check_consistent_length(y, sample_weight)
+2026-11-10 07:21:10,800 - INFO - Git diff changed after running eval script
+2026-11-10 07:21:10,800 - INFO - Grading answer for scikit-learn__scikit-learn-13328...
+2026-11-10 07:21:10,802 - INFO - report: {'scikit-learn__scikit-learn-13328': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/linear_model/tests/test_huber.py::test_huber_bool'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/linear_model/tests/test_huber.py::test_huber_equals_lr_for_high_epsilon', 'sklearn/linear_model/tests/test_huber.py::test_huber_max_iter', 'sklearn/linear_model/tests/test_huber.py::test_huber_gradient', 'sklearn/linear_model/tests/test_huber.py::test_huber_sample_weights', 'sklearn/linear_model/tests/test_huber.py::test_huber_sparse', 'sklearn/linear_model/tests/test_huber.py::test_huber_scaling_invariant', 'sklearn/linear_model/tests/test_huber.py::test_huber_and_sgd_same_results', 'sklearn/linear_model/tests/test_huber.py::test_huber_warm_start', 'sklearn/linear_model/tests/test_huber.py::test_huber_better_r2_score'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-13328: resolved: True
+2026-11-10 07:21:10,803 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_glm53_pi_incr_R2026...
+2026-11-10 07:21:26,954 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_glm53_pi_incr_R2026 stopped successfully.
+2026-11-10 07:21:26,954 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_glm53_pi_incr_R2026...
+2026-11-10 07:21:26,996 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_glm53_pi_incr_R2026 removed successfully.

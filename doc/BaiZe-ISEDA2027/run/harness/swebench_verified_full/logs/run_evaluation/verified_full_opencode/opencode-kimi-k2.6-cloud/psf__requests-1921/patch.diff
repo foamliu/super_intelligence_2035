@@ -1,0 +1,169 @@
+diff --git a/requests/cookies.py b/requests/cookies.py
+index 831c49c..ba5bb43 100644
+--- a/requests/cookies.py
++++ b/requests/cookies.py
+@@ -8,6 +8,10 @@ requests.utils imports from here, so be careful with imports.
+ 
+ import time
+ import collections
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
+ from .compat import cookielib, urlparse, urlunparse, Morsel
+ 
+ try:
+@@ -156,7 +160,7 @@ class CookieConflictError(RuntimeError):
+     Use .get and .set and include domain and path args in order to be more specific."""
+ 
+ 
+-class RequestsCookieJar(cookielib.CookieJar, collections.MutableMapping):
++class RequestsCookieJar(cookielib.CookieJar, MutableMapping):
+     """Compatibility class; is a cookielib.CookieJar, but exposes a dict interface.
+ 
+     This is the CookieJar we create by default for requests and sessions that
+diff --git a/requests/models.py b/requests/models.py
+index cd232e6..f2d75c3 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -161,10 +161,10 @@ class RequestHooksMixin(object):
+         if event not in self.hooks:
+             raise ValueError('Unsupported event specified, with event name "%s"' % (event))
+ 
+-        if isinstance(hook, collections.Callable):
++        if callable(hook):
+             self.hooks[event].append(hook)
+         elif hasattr(hook, '__iter__'):
+-            self.hooks[event].extend(h for h in hook if isinstance(h, collections.Callable))
++            self.hooks[event].extend(h for h in hook if callable(h))
+ 
+     def deregister_hook(self, event, hook):
+         """Deregister a previously registered hook.
+diff --git a/requests/packages/urllib3/_collections.py b/requests/packages/urllib3/_collections.py
+index 5907b0d..8fbb407 100644
+--- a/requests/packages/urllib3/_collections.py
++++ b/requests/packages/urllib3/_collections.py
+@@ -4,7 +4,10 @@
+ # This module is part of urllib3 and is released under
+ # the MIT License: http://www.opensource.org/licenses/mit-license.php
+ 
+-from collections import MutableMapping
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
+ try:
+     from threading import RLock
+ except ImportError: # Platform-specific: No threads available
+diff --git a/requests/sessions.py b/requests/sessions.py
+index a023e4e..26df681 100644
+--- a/requests/sessions.py
++++ b/requests/sessions.py
+@@ -9,7 +9,10 @@ requests (cookies, auth, proxies).
+ 
+ """
+ import os
+-from collections import Mapping
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
+ from datetime import datetime
+ 
+ from .compat import cookielib, OrderedDict, urljoin, urlparse, builtin_str
+@@ -42,6 +45,8 @@ def merge_setting(request_setting, session_setting, dict_class=OrderedDict):
+         return request_setting
+ 
+     if request_setting is None:
++        if isinstance(session_setting, Mapping):
++            return dict_class((k, v) for k, v in to_key_val_list(session_setting) if v is not None)
+         return session_setting
+ 
+     # Bypass if not a dictionary (e.g. verify)
+@@ -55,7 +60,7 @@ def merge_setting(request_setting, session_setting, dict_class=OrderedDict):
+     merged_setting.update(to_key_val_list(request_setting))
+ 
+     # Remove keys that are set to None.
+-    for (k, v) in request_setting.items():
++    for (k, v) in list(merged_setting.items()):
+         if v is None:
+             del merged_setting[k]
+ 
+diff --git a/requests/structures.py b/requests/structures.py
+index a175913..5e25694 100644
+--- a/requests/structures.py
++++ b/requests/structures.py
+@@ -12,6 +12,11 @@ import os
+ import collections
+ from itertools import islice
+ 
++try:
++    from collections.abc import MutableMapping, Mapping
++except ImportError:
++    from collections import MutableMapping, Mapping
++
+ 
+ class IteratorProxy(object):
+     """docstring for IteratorProxy"""
+@@ -34,7 +39,7 @@ class IteratorProxy(object):
+         return "".join(islice(self.i, None, n))
+ 
+ 
+-class CaseInsensitiveDict(collections.MutableMapping):
++class CaseInsensitiveDict(MutableMapping):
+     """
+     A case-insensitive ``dict``-like object.
+ 
+@@ -94,7 +99,7 @@ class CaseInsensitiveDict(collections.MutableMapping):
+         )
+ 
+     def __eq__(self, other):
+-        if isinstance(other, collections.Mapping):
++        if isinstance(other, Mapping):
+             other = CaseInsensitiveDict(other)
+         else:
+             return NotImplemented
+diff --git a/requests/utils.py b/requests/utils.py
+index 7b7ff0a..54dc3cf 100644
+--- a/requests/utils.py
++++ b/requests/utils.py
+@@ -13,6 +13,11 @@ import cgi
+ import codecs
+ import collections
+ import io
++
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
+ import os
+ import platform
+ import re
+@@ -160,7 +165,7 @@ def to_key_val_list(value):
+     if isinstance(value, (str, bytes, bool, int)):
+         raise ValueError('cannot encode objects that are not 2-tuples')
+ 
+-    if isinstance(value, collections.Mapping):
++    if isinstance(value, Mapping):
+         value = value.items()
+ 
+     return list(value)
+diff --git a/test_requests.py b/test_requests.py
+index 3d7cdaa..a955914 100755
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -804,6 +804,14 @@ class RequestsTestCase(unittest.TestCase):
+         r = s.get(httpbin('get'), headers={'FOO': None})
+         assert 'foo' not in r.request.headers
+ 
++    def test_session_header_remove(self):
++        # Setting a session header to None should remove it from requests.
++        s = requests.Session()
++        s.headers['Accept-Encoding'] = None
++        req = requests.Request('GET', 'http://example.com/')
++        prep = s.prepare_request(req)
++        assert 'Accept-Encoding' not in prep.headers
++
+     def test_params_are_merged_case_sensitive(self):
+         s = requests.Session()
+         s.params['foo'] = 'bar'

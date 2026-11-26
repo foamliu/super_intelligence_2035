@@ -1,0 +1,107 @@
+diff --git a/doc/ext/numpydoc.py b/doc/ext/numpydoc.py
+index a575060..2b89abb 100644
+--- a/doc/ext/numpydoc.py
++++ b/doc/ext/numpydoc.py
+@@ -102,7 +102,7 @@ def mangle_signature(app, what, name, obj, options, sig, retann):
+             'initializes x; see ' in pydoc.getdoc(obj.__init__))):
+         return '', ''
+ 
+-    if not (isinstance(obj, collections.Callable) or
++    if not (isinstance(obj, collections.abc.Callable) or
+             hasattr(obj, '__argspec_is_invalid_')):
+         return
+ 
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d0..cb98217 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,6 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++from collections.abc import MutableMapping, defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/combinatorics/permutations.py b/sympy/combinatorics/permutations.py
+index 136ed5a..4854a07 100644
+--- a/sympy/combinatorics/permutations.py
++++ b/sympy/combinatorics/permutations.py
+@@ -896,10 +896,7 @@ def __new__(cls, *args, **kwargs):
+ 
+         temp = flatten(args)
+         if has_dups(temp):
+-            if is_cycle:
+-                raise ValueError('there were repeated elements; to resolve '
+-                'cycles use Cycle%s.' % ''.join([str(tuple(c)) for c in args]))
+-            else:
++            if not is_cycle:
+                 raise ValueError('there were repeated elements.')
+         temp = set(temp)
+ 
+diff --git a/sympy/combinatorics/tests/test_permutations.py b/sympy/combinatorics/tests/test_permutations.py
+index 7f8cd57..95b4e59 100644
+--- a/sympy/combinatorics/tests/test_permutations.py
++++ b/sympy/combinatorics/tests/test_permutations.py
+@@ -349,7 +349,9 @@ def test_args():
+     raises(ValueError, lambda: Permutation([[1, 2], 0]))
+            # enclosing brackets needed on 0
+     raises(ValueError, lambda: Permutation([1, 1, 0]))
+-    raises(ValueError, lambda: Permutation([[1], [1, 2]]))
++    # Overlapping cycles are allowed and applied left-to-right
++    assert Permutation([[1], [1, 2]]) == Permutation([0, 2, 1])
++    assert Permutation([[1, 2], [1]]) == Permutation([0, 2, 1])
+     raises(ValueError, lambda: Permutation([4, 5], size=10))  # where are 0-3?
+     # but this is ok because cycles imply that only those listed moved
+     assert Permutation(4, 5) == Permutation([0, 1, 2, 3, 5, 4])
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index b992b45..fe91845 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,6 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++from collections.abc import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index ca6ba63..738cbca 100644
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -2267,7 +2267,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 24df97b..bf00de7 100644
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -52,7 +52,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 664602d..6268b99 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+ 

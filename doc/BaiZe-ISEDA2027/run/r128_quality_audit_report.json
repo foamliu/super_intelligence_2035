@@ -1,0 +1,80 @@
+{
+  "round": "R128",
+  "timestamp": "2026-11-10",
+  "total_tasks": 3347,
+  "verification_summary": {
+    "V1_api_existence": {
+      "pass": 3347,
+      "skip": 0,
+      "fail": 0
+    },
+    "V2_canonical_validity": {
+      "pass": 3347,
+      "skip": 0,
+      "fail": 0
+    },
+    "V3_entry_point_match": {
+      "pass": 3347,
+      "skip": 0,
+      "fail": 0
+    },
+    "V4_assertion_quality": {
+      "pass": 3347,
+      "skip": 0,
+      "fail": 0
+    },
+    "V5_type_consistency": {
+      "pass": 3000,
+      "skip": 347,
+      "fail": 0
+    },
+    "V6_contamination": {
+      "pass": 3347,
+      "skip": 0,
+      "fail": 0
+    }
+  },
+  "solvability_distribution": {
+    "1.0": 3347,
+    "0.8-0.99": 0,
+    "0.6-0.79": 0,
+    "0.4-0.59": 0,
+    "<0.4": 0
+  },
+  "all_pass_count": 3347,
+  "high_quality_count": 3347,
+  "difficulty_breakdown": {
+    "L1": {
+      "total": 1500,
+      "pass": 1500,
+      "avg_score": 1.0
+    },
+    "L2": {
+      "total": 347,
+      "pass": 347,
+      "avg_score": 1.0
+    },
+    "L3": {
+      "total": 800,
+      "pass": 800,
+      "avg_score": 1.0
+    },
+    "L4": {
+      "total": 500,
+      "pass": 500,
+      "avg_score": 1.0
+    },
+    "L5": {
+      "total": 200,
+      "pass": 200,
+      "avg_score": 1.0
+    }
+  },
+  "api_coverage": {
+    "unique_apis_used": 5933,
+    "api_kb_size": 8463,
+    "coverage_pct": 70.11
+  },
+  "verified_output_count": 3347,
+  "fail_details_sample": {}
+}

@@ -1,0 +1,14 @@
+# Scenario: after loading a placed DEF into Innovus, a netlist-integrity
+# sign-off step must report the total number of nets, to confirm the DEF
+# NETS section was parsed completely (the count is reconciled against the
+# DEF header). The design is a standard-cell block.
+#
+# Environment: Cadence Innovus Tcl. The design 'C1' is already loaded
+# (LEF + DEF) when the proc is called; use dbGet to query the database.
+#   dbGet top.nets   -> list of net dbObjects in the top cell
+#
+# Task: implement inn_count_nets, which returns the total number of nets
+# in the top cell as an integer. Must return 0 when the design has no nets.
+proc inn_count_nets {} {
+    # your code here
+}

@@ -1,0 +1,76 @@
+diff --git a/pylint/checkers/similar.py b/pylint/checkers/similar.py
+index c65b1c8..a1c2d0e 100644
+--- a/pylint/checkers/similar.py
++++ b/pylint/checkers/similar.py
+@@ -531,6 +531,8 @@ class Similar:
+         """iterate on similarities among all files, by making a cartesian
+         product
+         """
++        if self.min_lines == 0:
++            return
+         for idx, lineset in enumerate(self.linesets[:-1]):
+             for lineset2 in self.linesets[idx + 1 :]:
+                 yield from self._find_common(lineset, lineset2)
+@@ -739,7 +741,7 @@ class SimilarChecker(BaseChecker, Similar, MapReduceMixin):
+                 "default": DEFAULT_MIN_SIMILARITY_LINE,
+                 "type": "int",
+                 "metavar": "<int>",
+-                "help": "Minimum lines number of a similarity.",
++                "help": "Minimum lines number of a similarity. Setting this to 0 disables the duplicate code check.",
+             },
+         ),
+         (
+diff --git a/repro.py b/repro.py
+new file mode 100644
+index 0000000..d26c3d9
+--- /dev/null
++++ b/repro.py
+@@ -0,0 +1,20 @@
++import sys
++sys.path.insert(0, '/dev/shm/harness_verified_full/workdirs/hermes/pylint-dev_pylint')
++
++from pylint.lint import PyLinter
++from pylint.testutils import GenericTestReporter as Reporter
++from pylint.checkers import similar
++
++linter = PyLinter(reporter=Reporter())
++checker = similar.SimilarChecker(linter)
++linter.register_checker(checker)
++
++# Set min-similarity-lines to 0 on the checker directly
++checker.set_option('min-similarity-lines', 0)
++
++# Two files with obvious duplication
++from pathlib import Path
++INPUT = Path('/dev/shm/harness_verified_full/workdirs/hermes/pylint-dev_pylint/tests/input')
++
++linter.check([str(INPUT / 'similar1'), str(INPUT / 'similar2')])
++print('Messages:', linter.reporter.messages)
+diff --git a/repro_rc.ini b/repro_rc.ini
+new file mode 100644
+index 0000000..cab6235
+--- /dev/null
++++ b/repro_rc.ini
+@@ -0,0 +1,2 @@
++[MASTER]
++min-similarity-lines=0
+diff --git a/tests/checkers/unittest_similar.py b/tests/checkers/unittest_similar.py
+index 4ddf202..788c0bc 100644
+--- a/tests/checkers/unittest_similar.py
++++ b/tests/checkers/unittest_similar.py
+@@ -393,6 +393,15 @@ def test_no_args() -> None:
+             pytest.fail("not system exit")
+ 
+ 
++def test_min_similarity_lines_zero_disables_check() -> None:
++    """Test that setting min-similarity-lines to 0 disables duplicate code detection."""
++    output = StringIO()
++    with redirect_stdout(output), pytest.raises(SystemExit) as ex:
++        similar.Run(["--duplicates", "0", SIMILAR1, SIMILAR2])
++    assert ex.value.code == 0
++    assert "TOTAL lines=62 duplicates=0 percent=0.00" in output.getvalue()
++
++
+ def test_get_map_data() -> None:
+     """Tests that a SimilarChecker respects the MapReduceMixin interface"""
+     linter = PyLinter(reporter=Reporter())

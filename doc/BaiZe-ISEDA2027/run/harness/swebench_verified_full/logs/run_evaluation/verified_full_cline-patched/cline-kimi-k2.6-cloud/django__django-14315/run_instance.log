@@ -1,0 +1,111 @@
+2026-10-30 16:16:51,689 - INFO - Creating container for django__django-14315...
+2026-10-30 16:16:56,252 - INFO - Removed existing container sweb.eval.django__django-14315.verified_full_cline-patched
+2026-10-30 16:16:56,308 - INFO - Container for django__django-14315 created: bc9e927e93b667cee7b4074c524120ce7920306a7c70b9bca86f13fd5078c0ec
+2026-10-30 16:17:00,589 - INFO - Container for django__django-14315 started: bc9e927e93b667cee7b4074c524120ce7920306a7c70b9bca86f13fd5078c0ec
+2026-10-30 16:17:00,591 - INFO - Intermediate patch for django__django-14315 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14315/patch.diff, now applying to container...
+2026-10-30 16:17:00,927 - INFO - >>>>> Applied Patch:
+Checking patch django/db/backends/postgresql/client.py...
+Checking patch tests/dbshell/test_postgresql.py...
+Applied patch django/db/backends/postgresql/client.py cleanly.
+Applied patch tests/dbshell/test_postgresql.py cleanly.
+
+2026-10-30 16:17:01,845 - INFO - Git diff before:
+diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py
+index 3effab65a8..d2997bc9a9 100644
+--- a/django/db/backends/postgresql/client.py
++++ b/django/db/backends/postgresql/client.py
+@@ -36,20 +36,26 @@ class DatabaseClient(BaseDatabaseClient):
+             args += [dbname]
+         args.extend(parameters)
+ 
+-        env = {}
++        env = None
+         if passwd:
+-            env['PGPASSWORD'] = str(passwd)
++            env = {'PGPASSWORD': str(passwd)}
+         if service:
++            env = env or {}
+             env['PGSERVICE'] = str(service)
+         if sslmode:
++            env = env or {}
+             env['PGSSLMODE'] = str(sslmode)
+         if sslrootcert:
++            env = env or {}
+             env['PGSSLROOTCERT'] = str(sslrootcert)
+         if sslcert:
++            env = env or {}
+             env['PGSSLCERT'] = str(sslcert)
+         if sslkey:
++            env = env or {}
+             env['PGSSLKEY'] = str(sslkey)
+         if passfile:
++            env = env or {}
+             env['PGPASSFILE'] = str(passfile)
+         return args, env
+ 
+diff --git a/tests/dbshell/test_postgresql.py b/tests/dbshell/test_postgresql.py
+index a96acac6f1..6aaf6c8f77 100644
+--- a/tests/dbshell/test_postgresql.py
++++ b/tests/dbshell/test_postgresql.py
+@@ -39,7 +39,7 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+                 'PORT': '444',
+             }), (
+                 ['psql', '-U', 'someuser', '-h', 'somehost', '-p', '444', 'dbname'],
+-                {},
++                None,
+             )
+         )
+ 
+@@ -134,7 +134,7 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+     def test_parameters(self):
+         self.assertEqual(
+             self.settings_to_cmd_args_env({'NAME': 'dbname'}, ['--help']),
+-            (['psql', 'dbname', '--help'], {}),
++            (['psql', 'dbname', '--help'], None),
+         )
+ 
+     @skipUnless(connection.vendor == 'postgresql', 'Requires a PostgreSQL connection')
+2026-10-30 16:17:01,848 - INFO - Eval script for django__django-14315 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14315/eval.sh; copying to container...
+2026-10-30 16:17:08,423 - INFO - Test runtime: 6.51 seconds
+2026-10-30 16:17:08,425 - INFO - Test output for django__django-14315 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-14315/test_output.txt
+2026-10-30 16:17:08,926 - INFO - Git diff after:
+diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py
+index 3effab65a8..d2997bc9a9 100644
+--- a/django/db/backends/postgresql/client.py
++++ b/django/db/backends/postgresql/client.py
+@@ -36,20 +36,26 @@ class DatabaseClient(BaseDatabaseClient):
+             args += [dbname]
+         args.extend(parameters)
+ 
+-        env = {}
++        env = None
+         if passwd:
+-            env['PGPASSWORD'] = str(passwd)
++            env = {'PGPASSWORD': str(passwd)}
+         if service:
++            env = env or {}
+             env['PGSERVICE'] = str(service)
+         if sslmode:
++            env = env or {}
+             env['PGSSLMODE'] = str(sslmode)
+         if sslrootcert:
++            env = env or {}
+             env['PGSSLROOTCERT'] = str(sslrootcert)
+         if sslcert:
++            env = env or {}
+             env['PGSSLCERT'] = str(sslcert)
+         if sslkey:
++            env = env or {}
+             env['PGSSLKEY'] = str(sslkey)
+         if passfile:
++            env = env or {}
+             env['PGPASSFILE'] = str(passfile)
+         return args, env
+2026-10-30 16:17:08,926 - INFO - Git diff changed after running eval script
+2026-10-30 16:17:08,926 - INFO - Grading answer for django__django-14315...
+2026-10-30 16:17:08,931 - INFO - report: {'django__django-14315': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_accent (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_basic (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_column (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_crash_password_does_not_leak (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_nopass (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_parameters (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_passfile (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_service (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_ssl_certificate (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)'], 'failure': ['test_runshell_use_environ (backends.base.test_client.SimpleDatabaseClientTests)', 'test_settings_to_cmd_args_env (backends.base.test_client.SimpleDatabaseClientTests)']}, 'PASS_TO_PASS': {'success': [], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14315: resolved: False
+2026-10-30 16:17:08,936 - INFO - Attempting to stop container sweb.eval.django__django-14315.verified_full_cline-patched...
+2026-10-30 16:17:27,382 - INFO - Container sweb.eval.django__django-14315.verified_full_cline-patched stopped successfully.
+2026-10-30 16:17:27,383 - INFO - Attempting to remove container sweb.eval.django__django-14315.verified_full_cline-patched...
+2026-10-30 16:17:27,436 - INFO - Container sweb.eval.django__django-14315.verified_full_cline-patched removed successfully.

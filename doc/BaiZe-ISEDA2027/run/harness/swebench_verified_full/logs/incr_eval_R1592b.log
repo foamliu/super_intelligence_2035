@@ -1,0 +1,17 @@
+[R1592b 20:15:31] === force re-eval 4 cline rerun ids with NEW run_id ===
+[R1592b 20:15:31] merged 455 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_cline-patched.json
+[R1592b 20:15:31] EVAL cline on 4 instances (run_id=verified_full_cline-patched_rerun_R1592)
+[R1592b 20:15:35]   eval finished rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_incr_verified_full_cline-patched_rerun_R1592_1793794531.log
+[R1592b 20:15:35]   4 instances already run, skipping...
+[R1592b 20:15:35]   Instances submitted: 4
+[R1592b 20:15:35]   Instances completed: 4
+[R1592b 20:15:35]   Instances resolved: 0
+[R1592b 20:15:35]   Instances unresolved: 4
+[R1592b 20:15:35]   astropy__astropy-7336: FAILED
+[R1592b 20:15:35]   django__django-11087: FAILED
+[R1592b 20:15:35]   django__django-14725: FAILED
+[R1592b 20:15:35]   django__django-15098: FAILED
+[R1592b 20:15:35] updated /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_cline-patched.json: resolved=335 failed=120 infra=0 n=455
+[R1592b 20:15:35] === regen report ===
+[R1592b 20:15:35]     cline        done=500/500 patch=455 no_patch=36 infra=0 eval=Y resolved=335
+[R1592b 20:15:35] === R1592b DONE ===

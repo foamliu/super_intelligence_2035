@@ -1,0 +1,140 @@
+2026-10-30 15:42:31,763 - INFO - Creating container for django__django-16136...
+2026-10-30 15:42:31,824 - INFO - Container for django__django-16136 created: 2338f6f29affe4a3e0bf0352b55e627ce22c01659f6946ddcd6a0665db7aee2c
+2026-10-30 15:42:32,237 - INFO - Container for django__django-16136 started: 2338f6f29affe4a3e0bf0352b55e627ce22c01659f6946ddcd6a0665db7aee2c
+2026-10-30 15:42:32,239 - INFO - Intermediate patch for django__django-16136 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-16136/patch.diff, now applying to container...
+2026-10-30 15:42:32,364 - INFO - >>>>> Applied Patch:
+Checking patch django/views/generic/base.py...
+Checking patch tests/async/tests.py...
+Applied patch django/views/generic/base.py cleanly.
+Applied patch tests/async/tests.py cleanly.
+
+2026-10-30 15:42:33,751 - INFO - Git diff before:
+diff --git a/django/views/generic/base.py b/django/views/generic/base.py
+index db1842e3e5..9d2eec4a66 100644
+--- a/django/views/generic/base.py
++++ b/django/views/generic/base.py
+@@ -92,15 +92,32 @@ class View:
+                     "attributes of the class." % (cls.__name__, key)
+                 )
+ 
+-        def view(request, *args, **kwargs):
+-            self = cls(**initkwargs)
+-            self.setup(request, *args, **kwargs)
+-            if not hasattr(self, "request"):
+-                raise AttributeError(
+-                    "%s instance has no 'request' attribute. Did you override "
+-                    "setup() and forget to call super()?" % cls.__name__
+-                )
+-            return self.dispatch(request, *args, **kwargs)
++        if cls.view_is_async:
++
++            async def view(request, *args, **kwargs):
++                self = cls(**initkwargs)
++                self.setup(request, *args, **kwargs)
++                if not hasattr(self, "request"):
++                    raise AttributeError(
++                        "%s instance has no 'request' attribute. Did you override "
++                        "setup() and forget to call super()?" % cls.__name__
++                    )
++                response = self.dispatch(request, *args, **kwargs)
++                if asyncio.iscoroutine(response):
++                    response = await response
++                return response
++
++        else:
++
++            def view(request, *args, **kwargs):
++                self = cls(**initkwargs)
++                self.setup(request, *args, **kwargs)
++                if not hasattr(self, "request"):
++                    raise AttributeError(
++                        "%s instance has no 'request' attribute. Did you override "
++                        "setup() and forget to call super()?" % cls.__name__
++                    )
++                return self.dispatch(request, *args, **kwargs)
+ 
+         view.view_class = cls
+         view.view_initkwargs = initkwargs
+diff --git a/tests/async/tests.py b/tests/async/tests.py
+index 66eece4b97..aaa9aef48c 100644
+--- a/tests/async/tests.py
++++ b/tests/async/tests.py
+@@ -125,3 +125,20 @@ class ViewTests(SimpleTestCase):
+         sync.
+         """
+         self.assertIs(View.view_is_async, False)
++
++    async def test_async_view_http_method_not_allowed(self):
++        """
++        An async view with no handler for a given request method returns a
++        valid HttpResponseNotAllowed response rather than raising TypeError.
++        """
++
++        class AsyncPostOnlyView(View):
++            async def post(self, request, *args, **kwargs):
++                return HttpResponse("Hello (async) world!")
++
++        view = AsyncPostOnlyView.as_view()
++        from django.test import RequestFactory
++
++        request = RequestFactory().get("/")
++        response = await view(request)
++        self.assertEqual(response.status_code, 405)
+2026-10-30 15:42:33,753 - INFO - Eval script for django__django-16136 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-16136/eval.sh; copying to container...
+2026-10-30 15:42:40,626 - INFO - Test runtime: 6.80 seconds
+2026-10-30 15:42:40,629 - INFO - Test output for django__django-16136 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-16136/test_output.txt
+2026-10-30 15:42:40,709 - INFO - Git diff after:
+diff --git a/django/views/generic/base.py b/django/views/generic/base.py
+index db1842e3e5..9d2eec4a66 100644
+--- a/django/views/generic/base.py
++++ b/django/views/generic/base.py
+@@ -92,15 +92,32 @@ class View:
+                     "attributes of the class." % (cls.__name__, key)
+                 )
+ 
+-        def view(request, *args, **kwargs):
+-            self = cls(**initkwargs)
+-            self.setup(request, *args, **kwargs)
+-            if not hasattr(self, "request"):
+-                raise AttributeError(
+-                    "%s instance has no 'request' attribute. Did you override "
+-                    "setup() and forget to call super()?" % cls.__name__
+-                )
+-            return self.dispatch(request, *args, **kwargs)
++        if cls.view_is_async:
++
++            async def view(request, *args, **kwargs):
++                self = cls(**initkwargs)
++                self.setup(request, *args, **kwargs)
++                if not hasattr(self, "request"):
++                    raise AttributeError(
++                        "%s instance has no 'request' attribute. Did you override "
++                        "setup() and forget to call super()?" % cls.__name__
++                    )
++                response = self.dispatch(request, *args, **kwargs)
++                if asyncio.iscoroutine(response):
++                    response = await response
++                return response
++
++        else:
++
++            def view(request, *args, **kwargs):
++                self = cls(**initkwargs)
++                self.setup(request, *args, **kwargs)
++                if not hasattr(self, "request"):
++                    raise AttributeError(
++                        "%s instance has no 'request' attribute. Did you override "
++                        "setup() and forget to call super()?" % cls.__name__
++                    )
++                return self.dispatch(request, *args, **kwargs)
+ 
+         view.view_class = cls
+         view.view_initkwargs = initkwargs
+2026-10-30 15:42:40,709 - INFO - Git diff changed after running eval script
+2026-10-30 15:42:40,709 - INFO - Grading answer for django__django-16136...
+2026-10-30 15:42:40,711 - INFO - report: {'django__django-16136': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_http_method_not_allowed_responds_correctly (async.tests.ViewTests)', 'test_mixed_views_raise_error (async.tests.ViewTests)']}, 'PASS_TO_PASS': {'success': ["View and by extension any subclasses that don't define handlers are", 'test_options_handler_responds_correctly (async.tests.ViewTests)', 'test_views_are_correctly_marked (async.tests.ViewTests)', 'test_caches_local (async.tests.CacheTest)', 'test_async_unsafe (async.tests.AsyncUnsafeTest)', 'Utility class which turns an awaitable that only works on the thread with', 'test_get_async_connection (async.tests.DatabaseConnectionTest)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16136: resolved: False
+2026-10-30 15:42:40,712 - INFO - Attempting to stop container sweb.eval.django__django-16136.verified_full_opencode...
+2026-10-30 15:42:56,781 - INFO - Container sweb.eval.django__django-16136.verified_full_opencode stopped successfully.
+2026-10-30 15:42:56,782 - INFO - Attempting to remove container sweb.eval.django__django-16136.verified_full_opencode...
+2026-10-30 15:42:56,841 - INFO - Container sweb.eval.django__django-16136.verified_full_opencode removed successfully.

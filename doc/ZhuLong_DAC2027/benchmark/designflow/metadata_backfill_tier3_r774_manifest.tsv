@@ -1,0 +1,16 @@
+case_id	user@host	k_check	driver	apply_status
+# metadata_backfill_tier3_r774_manifest.tsv — r774 (2026-11-18) metadata-debt backfill 档3 (reframe_note) apply, spotcheck batch10 (r731, 9 keep_reframe cases)
+# 背景: r771 bounded queue spec 档1→档3→档2. r772 档1 (level→layer normalize 160 cases) done. r773 档3 batch9 (r730, 8 cases) done. 本轮 r774 档3 batch10.
+# 源: designflow/intent_audit_B_r731_spotcheck10.tsv per_case_reasoning + cases/B/ trace_source(user@host) + test_rationale k_check
+# apply: cases/B/<case>.json metadata 新增 reframe_note (末位 key, 保留键序), indent=2 ensure_ascii=False, round-trip identical 验过; B.jsonl 双存储同步 (metadata 替换, B.jsonl 顶层字段 budget 等保留)
+# driver 分类: portability=真实内网 path/license 不可达→合成自包含 (6 cases, 含 2 produce->produce 仅 portability 驱动); portability+Q&A->produce(candidate)=trace 用户问 how/why, Q&A->produce 重构待 trace 全文确认 (3 cases: FineSimDiag/ResistorTrimNetlistExplain/CmlMirrorSweepAnalysis, 参照 batch9 SimModelMismatchDiag keep_faithful 先例)
+# post-verify: cases/B reframe_note present 40→49(+9) / B.jsonl reframe_note 40→49 同步 / 395/395 valid JSON / test_rationale 394/395 k-header (1 known follow-up TranStimSync-001 非本轮引入) / k>=8 394/394 硬闸门不受影响 / apply 脚本 _metadata_backfill_tier3_reframe_note_r774.py
+EDA-Eval-DesignFlow-NetlistLibdefsTrap-001	alexli@10.129.2.13	14	portability	APPLIED
+EDA-Eval-DesignFlow-ULVTDelvtoNetlistMod-001	joeyl@10.129.2.13	14	portability	APPLIED
+EDA-Eval-DesignFlow-StcCrfGenerator-001	jerrychu@10.129.2.12	14	portability	APPLIED
+EDA-Eval-DesignFlow-Ddr6RptCmdExtract-001	e0017484@hfeg0plg08	12	portability	APPLIED
+EDA-Eval-DesignFlow-FineSimDiag-001	e0024852@hfeg0pkn004	13	portability+Q&A->produce(candidate)	APPLIED
+EDA-Eval-DesignFlow-SentaurusDeckSetupSummary-001	e02141@hfeg0pkn001	13	portability	APPLIED
+EDA-Eval-DesignFlow-GaaFetDeckAugment-001	e02141@hfeg0pkn005	13	portability	APPLIED
+EDA-Eval-DesignFlow-ResistorTrimNetlistExplain-001	zhililu@hfeg0pkn002	13	portability+Q&A->produce(candidate)	APPLIED
+EDA-Eval-DesignFlow-CmlMirrorSweepAnalysis-001	lvyy@hfeg0pkn005	13	portability+Q&A->produce(candidate)	APPLIED

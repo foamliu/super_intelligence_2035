@@ -1,0 +1,13 @@
+{
+  "harness": "opencode",
+  "run_id": "verified_full_glm53_opencode_incr_R2187",
+  "round": "R2187",
+  "n": 3,
+  "resolved": [
+    "sphinx-doc__sphinx-7748",
+    "sphinx-doc__sphinx-7757",
+    "sphinx-doc__sphinx-7889"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

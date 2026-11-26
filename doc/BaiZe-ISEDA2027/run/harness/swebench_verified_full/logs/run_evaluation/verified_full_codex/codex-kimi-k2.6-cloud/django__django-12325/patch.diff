@@ -1,0 +1,52 @@
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 8ea6c05ef..d1076f80f 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -200,11 +200,16 @@ class ModelBase(type):
+             # Skip concrete parent classes.
+             if base != new_class and not base._meta.abstract:
+                 continue
+-            # Locate OneToOneField instances.
++            # Locate OneToOneField instances that could be parent links to
++            # the current model. If multiple OneToOneFields point to the same
++            # parent, prefer the one explicitly marked as a parent_link.
+             for field in base._meta.local_fields:
+                 if isinstance(field, OneToOneField):
+                     related = resolve_relation(new_class, field.remote_field.model)
+-                    parent_links[make_model_tuple(related)] = field
++                    related_tuple = make_model_tuple(related)
++                    existing = parent_links.get(related_tuple)
++                    if existing is None or (not existing.remote_field.parent_link and field.remote_field.parent_link):
++                        parent_links[related_tuple] = field
+ 
+         # Track fields inherited from base models.
+         inherited_attributes = set()
+diff --git a/tests/model_inheritance/tests.py b/tests/model_inheritance/tests.py
+index 5eef0f5bf..56f0c0987 100644
+--- a/tests/model_inheritance/tests.py
++++ b/tests/model_inheritance/tests.py
+@@ -205,6 +205,24 @@ class ModelInheritanceTests(TestCase):
+         self.assertEqual(A.attr.called, (A, 'attr'))
+ 
+ 
++    @isolate_apps('model_inheritance')
++    def test_multi_one_to_one_parent_link_order(self):
++        """Multiple OneToOneField to parent shouldn't depend on declaration order."""
++        from django.db.models import CASCADE, PROTECT
++        
++        class Document(models.Model):
++            pass
++
++        # When document_ptr is declared BEFORE origin, it should still work
++        class Picking(Document):
++            document_ptr = models.OneToOneField(Document, on_delete=CASCADE, parent_link=True, related_name='+')
++            origin = models.OneToOneField(Document, related_name='picking', on_delete=PROTECT)
++
++        # Should not raise ImproperlyConfigured
++        self.assertTrue(hasattr(Picking, 'document_ptr'))
++
++
++
+ class ModelInheritanceDataTests(TestCase):
+     @classmethod
+     def setUpTestData(cls):

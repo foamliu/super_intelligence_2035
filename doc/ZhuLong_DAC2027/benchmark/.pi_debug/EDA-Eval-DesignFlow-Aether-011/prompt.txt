@@ -1,0 +1,93 @@
+You are an EDA design-flow engineer. Implement a Tcl proc that audits a pyAether-emitted textual ECO (Engineering Change Order) report for a layout cellview. This is a pure text-analysis task (no EDA tool calls needed to produce the answer); you will verify your implementation on the Empyrean WaveView Tcl sandbox.
+
+TASK
+Implement the Tcl proc `layout_eco_audit` that takes ONE string argument `report_text` (the full ECO report text) and returns a flat Tcl dict with EXACTLY these 12 keys, in this exact order:
+
+    total_ecos  add_count  delete_count  modify_count  swap_count
+    applied_count  pending_count  rejected_count  skipped_count
+    cells_affected  mismatched_summary  verdict
+
+REPORT GRAMMAR (one statement per line; lines starting with '#' are comments and are ignored; blank lines are ignored; a leading "# ECO report" header may appear and is ignored):
+
+    ECO <action> <inst_name> cell=<C> status=<S> delta=<D>
+    SUMMARY total=<N> add=<N> delete=<N> modify=<N> swap=<N> applied=<N> pending=<N> rejected=<N> skipped=<N>
+
+- <action>   : one of add, delete, modify, swap (CASE-INSENSITIVE for counting).
+- <inst_name>: a bare instance-name token. The DEDUP key is the ORDERED pair
+               (action, inst_name): "add u1" and "modify u1" are DIFFERENT keys
+               (action is part of the key, not normalized away).
+- cell=      : a single cell/master name (e.g. NAND2). May be ABSENT or EMPTY
+               (empty cell is treated as no cell -- not added to cells_affected).
+- status=    : one of applied, pending, rejected, skipped (CASE-INSENSITIVE).
+               May be ABSENT or EMPTY -- in that case INFER from delta:
+                   delta > 0.0  -> applied
+                   delta == 0.0 -> skipped
+                   delta < 0.0  -> pending
+               (NEVER "unknown"/"warn"/"done". delta==0.0 is skipped inclusive.)
+- delta=     : a real number. May be ABSENT (default 0.0 -> skipped).
+
+RETURNED DICT KEYS (exact order):
+  1. total_ecos       : integer -- count of DISTINCT (action, inst_name) keys
+                         after LAST-WINS dedup (duplicate key: the LAST
+                         occurrence replaces cell/status/delta; not sum, not
+                         first-wins; counts ONCE).
+  2. add_count        : integer -- keys whose action (case-insensitive) == add.
+  3. delete_count     : integer -- keys whose action == delete.
+  4. modify_count     : integer -- keys whose action == modify.
+  5. swap_count       : integer -- keys whose action == swap.
+  6. applied_count    : integer -- keys whose effective status == applied.
+  7. pending_count    : integer -- keys whose effective status == pending.
+  8. rejected_count   : integer -- keys whose effective status == rejected.
+  9. skipped_count    : integer -- keys whose effective status == skipped.
+  10. cells_affected  : list of strings -- the UNION of cell values over ALL
+                         keys (regardless of status), deduplicated, lex-sorted
+                         (lsort -dictionary). Empty cell values are NOT added.
+                         Empty list if no non-empty cells.
+  11. mismatched_summary : list of strings -- for each SUMMARY field that does
+                         NOT match the computed value, a string
+                         "field=summary_val vs computed_val". Fields:
+                           total vs total_ecos (integer ==)
+                           add vs add_count (integer ==)
+                           delete vs delete_count (integer ==)
+                           modify vs modify_count (integer ==)
+                           swap vs swap_count (integer ==)
+                           applied vs applied_count (integer ==)
+                           pending vs pending_count (integer ==)
+                           rejected vs rejected_count (integer ==)
+                           skipped vs skipped_count (integer ==)
+                         ABSENT summary fields are NOT reported (not mismatched).
+                         Empty list if no SUMMARY line. Empty list if all match.
+  12. verdict         : string -- priority:
+                           rejected_count > 0  -> "FAIL"
+                           else pending_count > 0 -> "REVIEW"
+                           else (no summary OR mismatched non-empty) -> "INCOMPLETE"
+                           else -> "PASS"
+
+IMPORTANT RULES (a naive implementation fails these -- the checker enforces correct behavior):
+  (1) action is CASE-INSENSITIVE: "add"/"ADD"/"Add" all match add.
+  (2) status is CASE-INSENSITIVE: "applied"/"APPLIED"/"Applied" all match applied.
+  (3) Duplicate (action, inst_name) key: LAST occurrence WINS (replace
+      cell/status/delta, not sum, not first-wins). Counts ONCE in total_ecos.
+  (4) (action, inst_name) is an ORDERED key: "add u1" and "modify u1" are
+      DIFFERENT keys, both counted. action is part of the key.
+  (5) status ABSENT or EMPTY -> infer from delta thresholds (above). NEVER
+      treat absent status as skipped by default (only delta==0 gives skipped).
+  (6) delta==0.0 -> skipped (inclusive); delta>0 -> applied; delta<0 -> pending.
+      delta=0.001 -> applied; delta=-0.001 -> pending.
+  (7) missing delta -> default 0.0 -> skipped (0.0 == 0.0).
+  (8) cells_affected: UNION over ALL keys (regardless of status), deduplicated,
+      lex-sorted. Empty/absent cell values NOT added.
+  (9) mismatched_summary: ABSENT summary fields NOT reported (not mismatched).
+      Empty list if no SUMMARY line. Integer equality for all count fields.
+  (10) verdict priority: FAIL (rejected>0) > REVIEW (pending>0) > INCOMPLETE
+       (no summary or mismatched) > PASS. A REVIEW case with mismatched summary
+       is still REVIEW (pending wins over INCOMPLETE).
+  All output lists lex-sorted with lsort -dictionary.
+
+IMPLEMENTATION NOTES:
+- Use Tcl 'split' on newline, 'string trim', 'string match' globs (e.g.
+  "cell=*"), 'lsort -dictionary' for sorting, 'array'/'info exists' for dedup,
+  'dict create' for the returned dict in exact key order.
+- The Empyrean WaveView Tcl regexp supports POSIX classes like [[:space:]];
+  do NOT rely on \b / \s / \d / \w Perl classes.
+- Avoid lassign if unsure; use lindex.

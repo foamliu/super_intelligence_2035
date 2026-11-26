@@ -1,0 +1,32 @@
+2026-11-04 20:42:47,110 - INFO - Creating container for matplotlib__matplotlib-26113...
+2026-11-04 20:42:47,151 - INFO - Container for matplotlib__matplotlib-26113 created: 58fa015d7c76a356821ca20a9aa47720301c08390254208646a49a869616e903
+2026-11-04 20:42:48,721 - INFO - Container for matplotlib__matplotlib-26113 started: 58fa015d7c76a356821ca20a9aa47720301c08390254208646a49a869616e903
+2026-11-04 20:42:48,723 - INFO - Intermediate patch for matplotlib__matplotlib-26113 written to logs/run_evaluation/verified_full_deepseek-harness_rerun_R1594/deepseek-harness-kimi-k2.6-cloud/matplotlib__matplotlib-26113/patch.diff, now applying to container...
+2026-11-04 20:42:48,893 - INFO - >>>>> Applied Patch:
+Checking patch lib/matplotlib/axes/_axes.py...
+Applied patch lib/matplotlib/axes/_axes.py cleanly.
+
+2026-11-04 20:42:51,013 - INFO - Git diff before:
+diff --git a/lib/matplotlib/axes/_axes.py b/lib/matplotlib/axes/_axes.py
+index 5369eadbde..09b446d1ba 100644
+--- a/lib/matplotlib/axes/_axes.py
++++ b/lib/matplotlib/axes/_axes.py
+@@ -4848,7 +4848,7 @@ default: :rc:`scatter.edgecolors`
+             Use a linear or log10 scale on the vertical axis.
+ 
+         mincnt : int > 0, default: *None*
+-            If not *None*, only display cells with more than *mincnt*
++            If not *None*, only display cells with at least *mincnt*
+             number of points in the cell.
+ 
+         marginals : bool, default: *False*
+@@ -5014,7 +5014,7 @@ default: :rc:`scatter.edgecolors`
+             if mincnt is None:
+                 mincnt = 0
+             accum = np.array(
+-                [reduce_C_function(acc) if len(acc) > mincnt else np.nan
++                [reduce_C_function(acc) if len(acc) >= mincnt else np.nan
+                  for Cs_at_i in [Cs_at_i1, Cs_at_i2]
+                  for acc in Cs_at_i[1:]],  # [1:] drops out-of-range points.
+                 float)
+2026-11-04 20:42:51,015 - INFO - Eval script for matplotlib__matplotlib-26113 written to logs/run_evaluation/verified_full_deepseek-harness_rerun_R1594/deepseek-harness-kimi-k2.6-cloud/matplotlib__matplotlib-26113/eval.sh; copying to container...

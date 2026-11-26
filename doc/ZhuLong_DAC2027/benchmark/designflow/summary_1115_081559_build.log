@@ -1,0 +1,34 @@
+summary_1115_081559.tsv build log
+==================================
+source: /home/t0002965/log/ssh_eda_search_20261115_081559/summary.tsv (.75, scan completed 11-15 08:20)
+raw_sha256: 8f96394ecc337d8b2c0507ae44a04e1caf0bf7c757dc8df488858b6d821ef5e6
+raw_lines (incl header): 39104
+curated_sha256: cd8f5cb66749a12b22c3a56764e430070c38c403d300149a0f031964cf664966
+curated_rows (data, excl header): 4543
+dedup_sessions (slug-level, max mc): 4543
+mc>=10: 3348
+mc>=15: 3132
+mc>=20: 2952
+mc>=30: 2656
+
+schema: ip host user session_file match_count keywords tools (7 cols, same as summary_1105/1109/1113/1114)
+dedup rule: by slug (session_file minus .messages.json/.messages.archive.json/.archive.json/.json suffix), keep row with max match_count
+filter rule: only keep session rows (same as 1113/1114)
+
+context (r617, 2026-11-15):
+  - summary_stats.json.mc_matrix.src switched by shard A to ssh_eda_search_20261115_081559/summary.tsv (08:20 scan).
+    Prior round r616 noted this dir appeared at 08:15:59 but was not yet in summary_stats.json; B was instructed
+    "下轮若 A 切 1115_081559 B 须先重跑 mc-matrix 再下 0-case 结论". r617 = that next round.
+  - Built local summary_1115_081559.tsv on .75 (curated in-place at .75:.../summary_curated_B.tsv, then
+    pulled to local via eda_flow return_files). sha256 matches .75 curated file.
+  - 1115_081559 vs 1114: unique slugs 4539 -> 4543 (+4); B pool mc>=10 942 -> 943 (+1); B fresh mc>=10 0 -> 0 (still 0).
+  - mc-matrix `python3 designflow/trace_ledger.py --shard B mc-matrix --src designflow/summary_1115_081559.tsv`:
+      pool=943 / touched=943 / fresh=0  (mc>=10)
+      mc>=5 fresh=32 (below mc>=10 threshold, historical peek non-produce-task dominated, not in doable pool)
+  - .75 increment since scan (08:20): `find ... -newermt '2026-11-15 08:20:00'` => 0 new sessions.
+  - No newer scan dir exists (ls -dt top3 = 1115_081559 / 1115_013654 / 1114_184938).
+  - **NOT updating summary_stats.json** (B is not config owner per 11-11 令; A owns pool switch).
+    1114 工件 retained as B-side historical control (summary_1114.tsv + build log).
+  - B direct objective (11-12 令: B 域 mc>=10 fresh>0): 1115_081559 does NOT satisfy (fresh=0). Pool saturation
+    continues across snapshots (1109/1113/1114/1115_081559 all B fresh=0 at mc>=10).
+  - 0-case verdict for r617: mc>=10 fresh=0 + .75 increment 0 + no newer scan. WAITING: 0 (continue next round).

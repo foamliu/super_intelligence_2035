@@ -1,0 +1,76 @@
+diff --git a/shim/sitecustomize.py b/shim/sitecustomize.py
+new file mode 100644
+index 00000000..ba58e439
+--- /dev/null
++++ b/shim/sitecustomize.py
+@@ -0,0 +1,33 @@
++import numpy as np
++import sys
++
++for alias, target in [
++    ('int', int),
++    ('float', float),
++    ('bool', bool),
++    ('object', object),
++    ('complex', complex),
++    ('str', str),
++]:
++    if not hasattr(np, alias):
++        setattr(np, alias, target)
++
++try:
++    import scipy.optimize.linesearch as _ls
++    if not hasattr(_ls, 'line_search_wolfe2'):
++        if hasattr(_ls, 'line_search_wolfe1'):
++            _ls.line_search_wolfe2 = _ls.line_search_wolfe1
++        elif hasattr(_ls, 'line_search'):
++            _ls.line_search_wolfe2 = _ls.line_search
++            _ls.line_search_wolfe1 = _ls.line_search
++except Exception:
++    pass
++
++try:
++    import scipy.spatial.distance as _dist
++    if not hasattr(_dist, 'wminkowski'):
++        def wminkowski(u, v, p, w):
++            return _dist.minkowski(u, v, p, w=w)
++        _dist.wminkowski = wminkowski
++except Exception:
++    pass
+diff --git a/sklearn/model_selection/_split.py b/sklearn/model_selection/_split.py
+index c49a3ce6..99bda54b 100644
+--- a/sklearn/model_selection/_split.py
++++ b/sklearn/model_selection/_split.py
+@@ -1102,6 +1102,10 @@ class _RepeatedSplits(metaclass=ABCMeta):
+         self.n_repeats = n_repeats
+         self.random_state = random_state
+         self.cvargs = cvargs
++        self.n_splits = cvargs.get('n_splits')
++
++    def __repr__(self):
++        return _build_repr(self)
+ 
+     def split(self, X, y=None, groups=None):
+         """Generates indices to split data into training and test set.
+diff --git a/sklearn/model_selection/tests/test_split.py b/sklearn/model_selection/tests/test_split.py
+index a38fb435..dc9d4b6c 100644
+--- a/sklearn/model_selection/tests/test_split.py
++++ b/sklearn/model_selection/tests/test_split.py
+@@ -1525,6 +1525,17 @@ def test_build_repr():
+     assert repr(MockSplitter(5, 6)) == "MockSplitter(a=5, b=6, c=None)"
+ 
+ 
++def test_repeated_kfold_repeated_stratified_kfold_repr():
++    # Check that RepeatedKFold and RepeatedStratifiedKFold have correct repr.
++    rkf = RepeatedKFold(n_splits=5, n_repeats=10, random_state=None)
++    rskf = RepeatedStratifiedKFold(n_splits=5, n_repeats=10,
++                                    random_state=None)
++    assert repr(rkf) == "RepeatedKFold(n_repeats=10, n_splits=5, " \
++                        "random_state=None)"
++    assert repr(rskf) == "RepeatedStratifiedKFold(n_repeats=10, n_splits=5, " \
++                         "random_state=None)"
++
++
+ @pytest.mark.parametrize('CVSplitter', (ShuffleSplit, GroupShuffleSplit,
+                                         StratifiedShuffleSplit))
+ def test_shuffle_split_empty_trainset(CVSplitter):

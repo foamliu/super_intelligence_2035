@@ -1,0 +1,86 @@
+2026-11-09 13:24:21,599 - INFO - Creating container for django__django-12965...
+2026-11-09 13:24:21,614 - INFO - Container for django__django-12965 created: 63019327f63cc395aab68c9c04d1927cb211c4a74835a0ed4f92c989c74872b1
+2026-11-09 13:24:22,098 - INFO - Container for django__django-12965 started: 63019327f63cc395aab68c9c04d1927cb211c4a74835a0ed4f92c989c74872b1
+2026-11-09 13:24:22,101 - INFO - Intermediate patch for django__django-12965 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-12965/patch.diff, now applying to container...
+2026-11-09 13:24:22,313 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+Checking patch repro_debug.py...
+Checking patch repro_debug2.py...
+Checking patch repro_delete.py...
+Checking patch repro_verify.py...
+Checking patch tests/delete/tests.py...
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch repro_debug.py cleanly.
+Applied patch repro_debug2.py cleanly.
+Applied patch repro_delete.py cleanly.
+Applied patch repro_verify.py cleanly.
+Applied patch tests/delete/tests.py cleanly.
+
+2026-11-09 13:24:23,694 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 29e33c075f..78e4981be3 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -1407,6 +1407,10 @@ class SQLInsertCompiler(SQLCompiler):
+ class SQLDeleteCompiler(SQLCompiler):
+     @cached_property
+     def single_alias(self):
++        # Ensure base table is in the query, then check that it's the only
++        # alias. Queries that haven't been compiled yet have no aliases, e.g.
++        # Model.objects.all().delete().
++        self.query.get_initial_alias()
+         return sum(self.query.alias_refcount[t] > 0 for t in self.query.alias_map) == 1
+ 
+     def _as_sql(self, query):
+diff --git a/tests/delete/tests.py b/tests/delete/tests.py
+index c32ebba83f..3527b529cc 100644
+--- a/tests/delete/tests.py
++++ b/tests/delete/tests.py
+@@ -638,6 +638,20 @@ class FastDeleteTests(TestCase):
+         self.assertEqual(User.objects.count(), 1)
+         self.assertTrue(User.objects.filter(pk=u2.pk).exists())
+ 
++    def test_fast_delete_full_queryset(self):
++        """
++        Deleting a full queryset doesn't use a subquery, e.g. to allow
++        locking the table (see #31664).
++        """
++        User.objects.bulk_create(User() for i in range(0, 3))
++        with self.assertNumQueries(1) as ctx:
++            User.objects.all().delete()
++        self.assertEqual(
++            ctx.captured_queries[0]['sql'],
++            'DELETE FROM %s' % connection.ops.quote_name(User._meta.db_table),
++        )
++        self.assertEqual(User.objects.count(), 0)
++
+     def test_fast_delete_instance_set_pk_none(self):
+         u = User.objects.create()
+         # User can be fast-deleted.
+2026-11-09 13:24:23,699 - INFO - Eval script for django__django-12965 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-12965/eval.sh; copying to container...
+2026-11-09 13:24:31,725 - INFO - Test runtime: 7.96 seconds
+2026-11-09 13:24:31,728 - INFO - Test output for django__django-12965 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-12965/test_output.txt
+2026-11-09 13:24:31,814 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 29e33c075f..78e4981be3 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -1407,6 +1407,10 @@ class SQLInsertCompiler(SQLCompiler):
+ class SQLDeleteCompiler(SQLCompiler):
+     @cached_property
+     def single_alias(self):
++        # Ensure base table is in the query, then check that it's the only
++        # alias. Queries that haven't been compiled yet have no aliases, e.g.
++        # Model.objects.all().delete().
++        self.query.get_initial_alias()
+         return sum(self.query.alias_refcount[t] > 0 for t in self.query.alias_map) == 1
+ 
+     def _as_sql(self, query):
+2026-11-09 13:24:31,814 - INFO - Git diff changed after running eval script
+2026-11-09 13:24:31,814 - INFO - Grading answer for django__django-12965...
+2026-11-09 13:24:31,816 - INFO - report: {'django__django-12965': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_fast_delete_all (delete.tests.FastDeleteTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_fast_delete_combined_relationships (delete.tests.FastDeleteTests)', 'test_fast_delete_empty_no_update_can_self_select (delete.tests.FastDeleteTests)', 'test_fast_delete_fk (delete.tests.FastDeleteTests)', 'test_fast_delete_inheritance (delete.tests.FastDeleteTests)', 'test_fast_delete_instance_set_pk_none (delete.tests.FastDeleteTests)', 'test_fast_delete_joined_qs (delete.tests.FastDeleteTests)', 'test_fast_delete_large_batch (delete.tests.FastDeleteTests)', 'test_fast_delete_m2m (delete.tests.FastDeleteTests)', 'test_fast_delete_qs (delete.tests.FastDeleteTests)', 'test_fast_delete_revm2m (delete.tests.FastDeleteTests)', 'test_auto (delete.tests.OnDeleteTests)', 'test_auto_nullable (delete.tests.OnDeleteTests)', 'test_cascade (delete.tests.OnDeleteTests)', 'test_cascade_from_child (delete.tests.OnDeleteTests)', 'test_cascade_from_parent (delete.tests.OnDeleteTests)', 'test_cascade_nullable (delete.tests.OnDeleteTests)', 'test_do_nothing (delete.tests.OnDeleteTests)', 'test_do_nothing_qscount (delete.tests.OnDeleteTests)', 'test_inheritance_cascade_down (delete.tests.OnDeleteTests)', 'test_inheritance_cascade_up (delete.tests.OnDeleteTests)', 'test_non_callable (delete.tests.OnDeleteTests)', 'test_o2o_setnull (delete.tests.OnDeleteTests)', 'test_protect (delete.tests.OnDeleteTests)', 'test_protect_multiple (delete.tests.OnDeleteTests)', 'test_protect_path (delete.tests.OnDeleteTests)', 'test_restrict (delete.tests.OnDeleteTests)', 'test_restrict_gfk_no_fast_delete (delete.tests.OnDeleteTests)', 'test_restrict_multiple (delete.tests.OnDeleteTests)', 'test_restrict_path_cascade_direct (delete.tests.OnDeleteTests)', 'test_restrict_path_cascade_indirect (delete.tests.OnDeleteTests)', 'test_restrict_path_cascade_indirect_diamond (delete.tests.OnDeleteTests)', 'test_setdefault (delete.tests.OnDeleteTests)', 'test_setdefault_none (delete.tests.OnDeleteTests)', 'test_setnull (delete.tests.OnDeleteTests)', 'test_setnull_from_child (delete.tests.OnDeleteTests)', 'test_setnull_from_parent (delete.tests.OnDeleteTests)', 'test_setvalue (delete.tests.OnDeleteTests)', 'test_bulk (delete.tests.DeletionTests)', 'test_can_defer_constraint_checks (delete.tests.DeletionTests)', 'test_delete_with_keeping_parents (delete.tests.DeletionTests)', 'test_delete_with_keeping_parents_relationships (delete.tests.DeletionTests)', 'test_deletion_order (delete.tests.DeletionTests)', 'test_hidden_related (delete.tests.DeletionTests)', 'test_instance_update (delete.tests.DeletionTests)', 'test_large_delete (delete.tests.DeletionTests)', 'test_large_delete_related (delete.tests.DeletionTests)', 'test_m2m (delete.tests.DeletionTests)', 'test_model_delete_returns_num_rows (delete.tests.DeletionTests)', 'test_only_referenced_fields_selected (delete.tests.DeletionTests)', 'test_proxied_model_duplicate_queries (delete.tests.DeletionTests)', 'test_queryset_delete_returns_num_rows (delete.tests.DeletionTests)', 'test_relational_post_delete_signals_happen_before_parent_object (delete.tests.DeletionTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12965: resolved: True
+2026-11-09 13:24:31,818 - INFO - Attempting to stop container sweb.eval.django__django-12965.verified_full_glm53_opencode_R1933...
+2026-11-09 13:24:47,532 - INFO - Container sweb.eval.django__django-12965.verified_full_glm53_opencode_R1933 stopped successfully.
+2026-11-09 13:24:47,532 - INFO - Attempting to remove container sweb.eval.django__django-12965.verified_full_glm53_opencode_R1933...
+2026-11-09 13:24:47,574 - INFO - Container sweb.eval.django__django-12965.verified_full_glm53_opencode_R1933 removed successfully.

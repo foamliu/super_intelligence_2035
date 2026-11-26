@@ -1,0 +1,68 @@
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index 9a3be6bb..9a2f3047 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -7,8 +7,7 @@
+ from collections.abc import Iterable
+ from sympy import Derivative
+ 
+-_name_with_digits_p = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
+-
++_name_with_digits_p = re.compile(r'^([^\W\d_]+)([0-9]+)$', re.UNICODE)
+ 
+ def split_super_sub(text):
+     """Split a symbol name into a name, superscripts and subscripts
+diff --git a/sympy/printing/pretty/tests/test_pretty.py b/sympy/printing/pretty/tests/test_pretty.py
+index 42fae775..5d0fe764 100644
+--- a/sympy/printing/pretty/tests/test_pretty.py
++++ b/sympy/printing/pretty/tests/test_pretty.py
+@@ -270,6 +270,7 @@ def test_upretty_greek():
+     assert upretty( Symbol('alpha^+_1') ) == 'α⁺₁'
+     assert upretty( Symbol('beta') ) == 'β'
+     assert upretty(Symbol('lambda')) == 'λ'
++    assert upretty(Symbol('omega0')) == 'ω₀'
+ 
+ 
+ def test_upretty_multiindex():
+@@ -277,6 +278,9 @@ def test_upretty_multiindex():
+     assert upretty( Symbol('Y00') ) == 'Y₀₀'
+     assert upretty( Symbol('Y_00') ) == 'Y₀₀'
+     assert upretty( Symbol('F^+-') ) == 'F⁺⁻'
++    assert upretty( Symbol('ω0') ) == 'ω₀'
++    assert upretty( Symbol('ω_0') ) == 'ω₀'
++
+ 
+ 
+ def test_upretty_sub_super():
+diff --git a/sympy/printing/tests/test_conventions.py b/sympy/printing/tests/test_conventions.py
+index 87689aa8..4af37688 100644
+--- a/sympy/printing/tests/test_conventions.py
++++ b/sympy/printing/tests/test_conventions.py
+@@ -31,6 +31,13 @@ def test_super_sub():
+     assert split_super_sub("alpha_11_11") == ("alpha", [], ["11", "11"])
+     assert split_super_sub("") == ("", [], [])
+ 
++    # handle unicode
++    assert split_super_sub("α") == ("α", [], [])
++    assert split_super_sub("α1") == ("α", [], ["1"])
++    assert split_super_sub("α_1") == ("α", [], ["1"])
++    assert split_super_sub("α_1^2") == ("α", ["2"], ["1"])
++    assert split_super_sub("α1_1") == ("α", [], ["1", "1"])
++
+ 
+ def test_requires_partial():
+     x, y, z, t, nu = symbols('x y z t nu')
+diff --git a/sympy/printing/tests/test_latex.py b/sympy/printing/tests/test_latex.py
+index c3f183d4..3150a46d 100644
+--- a/sympy/printing/tests/test_latex.py
++++ b/sympy/printing/tests/test_latex.py
+@@ -318,6 +318,9 @@ def test_latex_symbols():
+     assert latex(Symbol('q21')) == r"q_{21}"
+     assert latex(Symbol('epsilon0')) == r"\epsilon_{0}"
+     assert latex(Symbol('omega1')) == r"\omega_{1}"
++    assert latex(Symbol('omega_1')) == r"\omega_{1}"
++    assert latex(Symbol('ω0')) == r"ω_{0}"
++    assert latex(Symbol('ω_0')) == r"ω_{0}"
+     assert latex(Symbol('91')) == r"91"
+     assert latex(Symbol('alpha_new')) == r"\alpha_{new}"
+     assert latex(Symbol('C^orig')) == r"C^{orig}"

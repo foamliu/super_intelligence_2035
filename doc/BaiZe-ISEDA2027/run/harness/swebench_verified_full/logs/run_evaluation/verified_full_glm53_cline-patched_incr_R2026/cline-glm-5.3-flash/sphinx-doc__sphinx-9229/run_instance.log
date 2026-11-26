@@ -1,0 +1,55 @@
+2026-11-10 02:45:34,471 - INFO - Creating container for sphinx-doc__sphinx-9229...
+2026-11-10 02:45:34,493 - INFO - Container for sphinx-doc__sphinx-9229 created: 0a07aac416f9da135319246716178cebfa6daa1a1d03fbb936ee6a65a44aea0d
+2026-11-10 02:45:35,248 - INFO - Container for sphinx-doc__sphinx-9229 started: 0a07aac416f9da135319246716178cebfa6daa1a1d03fbb936ee6a65a44aea0d
+2026-11-10 02:45:35,250 - INFO - Intermediate patch for sphinx-doc__sphinx-9229 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2026/cline-glm-5.3-flash/sphinx-doc__sphinx-9229/patch.diff, now applying to container...
+2026-11-10 02:45:35,355 - INFO - >>>>> Applied Patch:
+Checking patch tests/roots/test-ext-autodoc/target/classes.py...
+Checking patch tests/test_ext_autodoc_autoclass.py...
+Applied patch tests/roots/test-ext-autodoc/target/classes.py cleanly.
+Applied patch tests/test_ext_autodoc_autoclass.py cleanly.
+
+2026-11-10 02:45:35,736 - INFO - Git diff before:
+diff --git a/tests/roots/test-ext-autodoc/target/classes.py b/tests/roots/test-ext-autodoc/target/classes.py
+index a3b4c6477..7526e65bc 100644
+--- a/tests/roots/test-ext-autodoc/target/classes.py
++++ b/tests/roots/test-ext-autodoc/target/classes.py
+@@ -30,3 +30,6 @@ class Quux(List[Union[int, float]]):
+ 
+ 
+ Alias = Foo
++
++#: docstring
++OtherAlias = Bar
+diff --git a/tests/test_ext_autodoc_autoclass.py b/tests/test_ext_autodoc_autoclass.py
+index 096dc9397..ee0c00ae2 100644
+--- a/tests/test_ext_autodoc_autoclass.py
++++ b/tests/test_ext_autodoc_autoclass.py
+@@ -327,3 +327,15 @@ def test_class_alias(app):
+         '',
+         '   alias of :class:`target.classes.Foo`',
+     ]
++
++
++def test_class_alias_having_doccomment(app):
++    actual = do_autodoc(app, 'class', 'target.classes.OtherAlias')
++    assert list(actual) == [
++        '',
++        '.. py:attribute:: OtherAlias',
++        '   :module: target.classes',
++        '',
++        '   docstring',
++        '',
++    ]
+2026-11-10 02:45:35,739 - INFO - Eval script for sphinx-doc__sphinx-9229 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2026/cline-glm-5.3-flash/sphinx-doc__sphinx-9229/eval.sh; copying to container...
+2026-11-10 02:45:40,520 - INFO - Test runtime: 4.72 seconds
+2026-11-10 02:45:40,522 - INFO - Test output for sphinx-doc__sphinx-9229 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2026/cline-glm-5.3-flash/sphinx-doc__sphinx-9229/test_output.txt
+2026-11-10 02:45:40,567 - INFO - Git diff after:
+
+2026-11-10 02:45:40,567 - INFO - Git diff changed after running eval script
+2026-11-10 02:45:40,567 - INFO - Grading answer for sphinx-doc__sphinx-9229...
+2026-11-10 02:45:40,570 - INFO - report: {'sphinx-doc__sphinx-9229': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['tests/test_ext_autodoc_autoclass.py::test_class_alias_having_doccomment']}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_autoclass.py::test_classes', 'tests/test_ext_autodoc_autoclass.py::test_instance_variable', 'tests/test_ext_autodoc_autoclass.py::test_inherited_instance_variable', 'tests/test_ext_autodoc_autoclass.py::test_uninitialized_attributes', 'tests/test_ext_autodoc_autoclass.py::test_undocumented_uninitialized_attributes', 'tests/test_ext_autodoc_autoclass.py::test_decorators', 'tests/test_ext_autodoc_autoclass.py::test_properties', 'tests/test_ext_autodoc_autoclass.py::test_slots_attribute', 'tests/test_ext_autodoc_autoclass.py::test_show_inheritance_for_subclass_of_generic_type', 'tests/test_ext_autodoc_autoclass.py::test_class_doc_from_class', 'tests/test_ext_autodoc_autoclass.py::test_class_doc_from_init', 'tests/test_ext_autodoc_autoclass.py::test_class_doc_from_both', 'tests/test_ext_autodoc_autoclass.py::test_class_alias'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9229: resolved: False
+2026-11-10 02:45:40,571 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9229.verified_full_glm53_cline-patched_incr_R2026...
+2026-11-10 02:45:56,938 - INFO - Container sweb.eval.sphinx-doc__sphinx-9229.verified_full_glm53_cline-patched_incr_R2026 stopped successfully.
+2026-11-10 02:45:56,938 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9229.verified_full_glm53_cline-patched_incr_R2026...
+2026-11-10 02:45:57,034 - INFO - Container sweb.eval.sphinx-doc__sphinx-9229.verified_full_glm53_cline-patched_incr_R2026 removed successfully.

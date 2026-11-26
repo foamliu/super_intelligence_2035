@@ -1,0 +1,103 @@
+2026-11-09 07:46:25,019 - INFO - Creating container for sympy__sympy-15349...
+2026-11-09 07:46:25,373 - INFO - Removed existing container sweb.eval.sympy__sympy-15349.verified_full_glm53_hermes_R1933
+2026-11-09 07:46:25,388 - INFO - Container for sympy__sympy-15349 created: d4c777ce3dd695b53f30799deb48f08a134c6d2b09584efdb9259ae6540a48ad
+2026-11-09 07:46:27,153 - INFO - Container for sympy__sympy-15349 started: d4c777ce3dd695b53f30799deb48f08a134c6d2b09584efdb9259ae6540a48ad
+2026-11-09 07:46:27,155 - INFO - Intermediate patch for sympy__sympy-15349 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sympy__sympy-15349/patch.diff, now applying to container...
+2026-11-09 07:46:27,322 - INFO - >>>>> Applied Patch:
+Checking patch sympy/algebras/quaternion.py...
+Checking patch sympy/algebras/tests/test_quaternion.py...
+Applied patch sympy/algebras/quaternion.py cleanly.
+Applied patch sympy/algebras/tests/test_quaternion.py cleanly.
+
+2026-11-09 07:46:27,789 - INFO - Git diff before:
+diff --git a/sympy/algebras/quaternion.py b/sympy/algebras/quaternion.py
+index b84e7cb95..7eae8d73d 100644
+--- a/sympy/algebras/quaternion.py
++++ b/sympy/algebras/quaternion.py
+@@ -529,7 +529,7 @@ def to_rotation_matrix(self, v=None):
+ 
+         m10 = 2*s*(q.b*q.c + q.d*q.a)
+         m11 = 1 - 2*s*(q.b**2 + q.d**2)
+-        m12 = 2*s*(q.c*q.d + q.b*q.a)
++        m12 = 2*s*(q.c*q.d - q.b*q.a)
+ 
+         m20 = 2*s*(q.b*q.d - q.c*q.a)
+         m21 = 2*s*(q.c*q.d + q.b*q.a)
+diff --git a/sympy/algebras/tests/test_quaternion.py b/sympy/algebras/tests/test_quaternion.py
+index 420e9976d..3451bdd31 100644
+--- a/sympy/algebras/tests/test_quaternion.py
++++ b/sympy/algebras/tests/test_quaternion.py
+@@ -96,11 +96,11 @@ def test_quaternion_conversions():
+                                    2 * acos(sqrt(30)/30))
+ 
+     assert q1.to_rotation_matrix() == Matrix([[-S(2)/3, S(2)/15, S(11)/15],
+-                                     [S(2)/3, -S(1)/3, S(14)/15],
++                                     [S(2)/3, -S(1)/3, S(2)/3],
+                                      [S(1)/3, S(14)/15, S(2)/15]])
+ 
+     assert q1.to_rotation_matrix((1, 1, 1)) == Matrix([[-S(2)/3, S(2)/15, S(11)/15, S(4)/5],
+-                                                  [S(2)/3, -S(1)/3, S(14)/15, -S(4)/15],
++                                                  [S(2)/3, -S(1)/3, S(2)/3, S(0)],
+                                                   [S(1)/3, S(14)/15, S(2)/15, -S(2)/5],
+                                                   [S(0), S(0), S(0), S(1)]])
+ 
+@@ -120,3 +120,19 @@ def test_quaternion_conversions():
+                [sin(theta),  cos(theta), 0, -sin(theta) - cos(theta) + 1],
+                [0,           0,          1,  0],
+                [0,           0,          0,  1]])
++
++
++def test_quaternion_rotation_iss1593():
++    """
++    There was a sign mistake in the definition,
++    of the rotation matrix. This tests that particular sign mistake.
++    See issue 1593 for reference.
++    See wikipedia
++    https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation#Quaternion-derived_rotation_matrix
++    for the correct definition
++    """
++    q = Quaternion(cos(x/2), sin(x/2), 0, 0)
++    assert(trigsimp(q.to_rotation_matrix()) == Matrix([
++                [1,      0,      0],
++                [0, cos(x), -sin(x)],
++                [0, sin(x), cos(x)]]))
+2026-11-09 07:46:27,791 - INFO - Eval script for sympy__sympy-15349 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sympy__sympy-15349/eval.sh; copying to container...
+2026-11-09 07:46:34,212 - INFO - Test runtime: 6.35 seconds
+2026-11-09 07:46:34,212 - INFO - Test output for sympy__sympy-15349 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sympy__sympy-15349/test_output.txt
+2026-11-09 07:46:34,287 - INFO - Git diff after:
+diff --git a/sympy/algebras/quaternion.py b/sympy/algebras/quaternion.py
+index b84e7cb95..7eae8d73d 100644
+--- a/sympy/algebras/quaternion.py
++++ b/sympy/algebras/quaternion.py
+@@ -529,7 +529,7 @@ def to_rotation_matrix(self, v=None):
+ 
+         m10 = 2*s*(q.b*q.c + q.d*q.a)
+         m11 = 1 - 2*s*(q.b**2 + q.d**2)
+-        m12 = 2*s*(q.c*q.d + q.b*q.a)
++        m12 = 2*s*(q.c*q.d - q.b*q.a)
+ 
+         m20 = 2*s*(q.b*q.d - q.c*q.a)
+         m21 = 2*s*(q.c*q.d + q.b*q.a)
+2026-11-09 07:46:34,287 - INFO - Git diff changed after running eval script
+2026-11-09 07:46:34,287 - INFO - Grading answer for sympy__sympy-15349...
+2026-11-09 07:46:34,288 - INFO - report: {'sympy__sympy-15349': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_quaternion_conversions'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_quaternion_construction', 'test_quaternion_complex_real_addition', 'test_quaternion_functions'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-15349: resolved: True
+2026-11-09 07:46:34,289 - INFO - Attempting to stop container sweb.eval.sympy__sympy-15349.verified_full_glm53_hermes_R1933...
+2026-11-09 07:46:50,613 - INFO - Container sweb.eval.sympy__sympy-15349.verified_full_glm53_hermes_R1933 stopped successfully.
+2026-11-09 07:46:50,614 - INFO - Attempting to remove container sweb.eval.sympy__sympy-15349.verified_full_glm53_hermes_R1933...
+2026-11-09 07:46:50,666 - INFO - Container sweb.eval.sympy__sympy-15349.verified_full_glm53_hermes_R1933 removed successfully.
+ll_glm53_hermes_R1933.1794181585 removed successfully.
+cker/api/client.py", line 277, in _raise_for_status
+    raise create_api_error_from_http_exception(e) from e
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/errors.py", line 39, in create_api_error_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.APIError: 409 Client Error for http+docker://localhost/v1.47/containers/a3f6b08731052a0d2f0877e8d96baf695b75bd467458ef777a3cbd012b39d1e4/exec: Conflict ("container a3f6b08731052a0d2f0877e8d96baf695b75bd467458ef777a3cbd012b39d1e4 is not running")
+
+Check (logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sympy__sympy-15349/run_instance.log) for more information.
+2026-11-09 07:46:25,360 - INFO - Attempting to stop container sweb.eval.sympy__sympy-15349.verified_full_glm53_hermes_R1933...
+2026-11-09 07:46:25,382 - INFO - Failed to stop container sweb.eval.sympy__sympy-15349.verified_full_glm53_hermes_R1933: Command '['docker', 'stop', '--time=15', 'a3f6b08731052a0d2f0877e8d96baf695b75bd467458ef777a3cbd012b39d1e4']' returned non-zero exit status 1.. Trying to forcefully kill...
+2026-11-09 07:46:25,382 - INFO - Forcefully killing container sweb.eval.sympy__sympy-15349.verified_full_glm53_hermes_R1933...
+2026-11-09 07:46:25,404 - INFO - Failed to kill container sweb.eval.sympy__sympy-15349.verified_full_glm53_hermes_R1933: Error response from daemon: cannot kill container: a3f6b08731052a0d2f0877e8d96baf695b75bd467458ef777a3cbd012b39d1e4: No such container: a3f6b08731052a0d2f0877e8d96baf695b75bd467458ef777a3cbd012b39d1e4
+
+2026-11-09 07:46:25,404 - INFO - Attempting to remove container sweb.eval.sympy__sympy-15349.verified_full_glm53_hermes_R1933...
+2026-11-09 07:46:25,442 - INFO - Container sweb.eval.sympy__sympy-15349.verified_full_glm53_hermes_R1933 removed successfully.

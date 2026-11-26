@@ -1,0 +1,117 @@
+2026-11-10 05:54:36,267 - INFO - Creating container for pytest-dev__pytest-7236...
+2026-11-10 05:54:36,289 - INFO - Container for pytest-dev__pytest-7236 created: de691fc3a25aff837e7b90849faebac36c23bbf46ba099a0e23aa556d111ca22
+2026-11-10 05:54:37,072 - INFO - Container for pytest-dev__pytest-7236 started: de691fc3a25aff837e7b90849faebac36c23bbf46ba099a0e23aa556d111ca22
+2026-11-10 05:54:37,074 - INFO - Intermediate patch for pytest-dev__pytest-7236 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2026/opencode-glm-5.3-flash/pytest-dev__pytest-7236/patch.diff, now applying to container...
+2026-11-10 05:54:37,215 - INFO - >>>>> Applied Patch:
+Checking patch changelog/7215.bugfix.rst...
+Checking patch src/_pytest/unittest.py...
+Checking patch testing/test_unittest.py...
+Applied patch changelog/7215.bugfix.rst cleanly.
+Applied patch src/_pytest/unittest.py cleanly.
+Applied patch testing/test_unittest.py cleanly.
+
+2026-11-10 05:54:37,356 - INFO - Git diff before:
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 773f545af..db1c4e0ac 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -220,7 +220,7 @@ class TestCaseFunction(Function):
+             # arguably we could always postpone tearDown(), but this changes the moment where the
+             # TestCase instance interacts with the results object, so better to only do it
+             # when absolutely needed
+-            if self.config.getoption("usepdb"):
++            if self.config.getoption("usepdb") and not _is_skipped(self.obj):
+                 self._explicit_tearDown = self._testcase.tearDown
+                 setattr(self._testcase, "tearDown", lambda *args: None)
+ 
+@@ -241,6 +241,11 @@ class TestCaseFunction(Function):
+             excinfo.traceback = traceback
+ 
+ 
++def _is_skipped(obj) -> bool:
++    """Return True if the given object has been marked with @unittest.skip."""
++    return bool(getattr(obj, "__unittest_skip__", False))
++
++
+ @hookimpl(tryfirst=True)
+ def pytest_runtest_makereport(item, call):
+     if isinstance(item, TestCaseFunction):
+diff --git a/testing/test_unittest.py b/testing/test_unittest.py
+index 83f1b6b2a..28ab71d8f 100644
+--- a/testing/test_unittest.py
++++ b/testing/test_unittest.py
+@@ -1193,6 +1193,38 @@ def test_pdb_teardown_called(testdir, monkeypatch):
+     ]
+ 
+ 
++@pytest.mark.parametrize("mark", ["@unittest.skip", "@pytest.mark.skip"])
++def test_pdb_teardown_skipped(testdir, monkeypatch, mark):
++    """With --pdb, setUp and tearDown should not be called for skipped tests."""
++    tracked = []
++    monkeypatch.setattr(pytest, "test_pdb_teardown_skipped", tracked, raising=False)
++
++    testdir.makepyfile(
++        """
++        import unittest
++        import pytest
++
++        class MyTestCase(unittest.TestCase):
++
++            def setUp(self):
++                pytest.test_pdb_teardown_skipped.append("setUp:" + self.id())
++
++            def tearDown(self):
++                pytest.test_pdb_teardown_skipped.append("tearDown:" + self.id())
++
++            {mark}("skipped for reasons")
++            def test_1(self):
++                pass
++
++    """.format(
++            mark=mark
++        )
++    )
++    result = testdir.runpytest_inprocess("--pdb")
++    result.stdout.fnmatch_lines("* 1 skipped in *")
++    assert tracked == []
++
++
+ def test_async_support(testdir):
+     pytest.importorskip("unittest.async_case")
+2026-11-10 05:54:37,358 - INFO - Eval script for pytest-dev__pytest-7236 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2026/opencode-glm-5.3-flash/pytest-dev__pytest-7236/eval.sh; copying to container...
+2026-11-10 05:54:46,594 - INFO - Test runtime: 9.17 seconds
+2026-11-10 05:54:46,595 - INFO - Test output for pytest-dev__pytest-7236 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2026/opencode-glm-5.3-flash/pytest-dev__pytest-7236/test_output.txt
+2026-11-10 05:54:46,660 - INFO - Git diff after:
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 773f545af..db1c4e0ac 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -220,7 +220,7 @@ class TestCaseFunction(Function):
+             # arguably we could always postpone tearDown(), but this changes the moment where the
+             # TestCase instance interacts with the results object, so better to only do it
+             # when absolutely needed
+-            if self.config.getoption("usepdb"):
++            if self.config.getoption("usepdb") and not _is_skipped(self.obj):
+                 self._explicit_tearDown = self._testcase.tearDown
+                 setattr(self._testcase, "tearDown", lambda *args: None)
+ 
+@@ -241,6 +241,11 @@ class TestCaseFunction(Function):
+             excinfo.traceback = traceback
+ 
+ 
++def _is_skipped(obj) -> bool:
++    """Return True if the given object has been marked with @unittest.skip."""
++    return bool(getattr(obj, "__unittest_skip__", False))
++
++
+ @hookimpl(tryfirst=True)
+ def pytest_runtest_makereport(item, call):
+     if isinstance(item, TestCaseFunction):
+2026-11-10 05:54:46,660 - INFO - Git diff changed after running eval script
+2026-11-10 05:54:46,660 - INFO - Grading answer for pytest-dev__pytest-7236...
+2026-11-10 05:54:46,665 - INFO - report: {'pytest-dev__pytest-7236': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['testing/test_unittest.py::test_pdb_teardown_skipped[@unittest.skip]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['testing/test_unittest.py::test_simple_unittest', 'testing/test_unittest.py::test_runTest_method', 'testing/test_unittest.py::test_isclasscheck_issue53', 'testing/test_unittest.py::test_setup', 'testing/test_unittest.py::test_setUpModule', 'testing/test_unittest.py::test_setUpModule_failing_no_teardown', 'testing/test_unittest.py::test_new_instances', 'testing/test_unittest.py::test_function_item_obj_is_instance', 'testing/test_unittest.py::test_teardown', 'testing/test_unittest.py::test_teardown_issue1649', 'testing/test_unittest.py::test_unittest_skip_issue148', 'testing/test_unittest.py::test_method_and_teardown_failing_reporting', 'testing/test_unittest.py::test_setup_failure_is_shown', 'testing/test_unittest.py::test_setup_setUpClass', 'testing/test_unittest.py::test_setup_class', 'testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Error]', 'testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Failure]', 'testing/test_unittest.py::test_testcase_custom_exception_info[Error]', 'testing/test_unittest.py::test_testcase_custom_exception_info[Failure]', 'testing/test_unittest.py::test_testcase_totally_incompatible_exception_info', 'testing/test_unittest.py::test_module_level_pytestmark', 'testing/test_unittest.py::test_djangolike_testcase', 'testing/test_unittest.py::test_unittest_not_shown_in_traceback', 'testing/test_unittest.py::test_unorderable_types', 'testing/test_unittest.py::test_unittest_typerror_traceback', 'testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[pytest]', 'testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[unittest]', 'testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[pytest]', 'testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[unittest]', 'testing/test_unittest.py::test_unittest_setup_interaction[fixture-return]', 'testing/test_unittest.py::test_unittest_setup_interaction[yield_fixture-yield]', 'testing/test_unittest.py::test_non_unittest_no_setupclass_support', 'testing/test_unittest.py::test_no_teardown_if_setupclass_failed', 'testing/test_unittest.py::test_cleanup_functions', 'testing/test_unittest.py::test_issue333_result_clearing', 'testing/test_unittest.py::test_unittest_raise_skip_issue748', 'testing/test_unittest.py::test_unittest_skip_issue1169', 'testing/test_unittest.py::test_class_method_containing_test_issue1558', 'testing/test_unittest.py::test_usefixtures_marker_on_unittest[builtins.object]', 'testing/test_unittest.py::test_usefixtures_marker_on_unittest[unittest.TestCase]', 'testing/test_unittest.py::test_testcase_handles_init_exceptions', 'testing/test_unittest.py::test_error_message_with_parametrized_fixtures', 'testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip.py-1', 'testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_class.py-1', 'testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_module.py-1', 'testing/test_unittest.py::test_BdbQuit', 'testing/test_unittest.py::test_exit_outcome', 'testing/test_unittest.py::test_trace', 'testing/test_unittest.py::test_pdb_teardown_called', 'testing/test_unittest.py::test_pdb_teardown_skipped[@pytest.mark.skip]', 'testing/test_unittest.py::test_async_support'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pytest-dev__pytest-7236: resolved: True
+2026-11-10 05:54:46,667 - INFO - Attempting to stop container sweb.eval.pytest-dev__pytest-7236.verified_full_glm53_opencode_incr_R2026...
+2026-11-10 05:55:02,737 - INFO - Container sweb.eval.pytest-dev__pytest-7236.verified_full_glm53_opencode_incr_R2026 stopped successfully.
+2026-11-10 05:55:02,737 - INFO - Attempting to remove container sweb.eval.pytest-dev__pytest-7236.verified_full_glm53_opencode_incr_R2026...
+2026-11-10 05:55:02,787 - INFO - Container sweb.eval.pytest-dev__pytest-7236.verified_full_glm53_opencode_incr_R2026 removed successfully.

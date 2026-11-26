@@ -1,0 +1,89 @@
+diff --git a/astropy/utils/misc.py b/astropy/utils/misc.py
+index de3fb01d..6903e85e 100644
+--- a/astropy/utils/misc.py
++++ b/astropy/utils/misc.py
+@@ -528,15 +528,24 @@ class InheritDocstrings(type):
+                 not key.startswith('_'))
+ 
+         for key, val in dct.items():
+-            if (inspect.isfunction(val) and
+-                is_public_member(key) and
+-                val.__doc__ is None):
++            if not is_public_member(key):
++                continue
++
++            if inspect.isfunction(val):
++                doc_target = val
++            elif isinstance(val, property):
++                doc_target = val
++            elif isinstance(val, (classmethod, staticmethod)):
++                doc_target = val.__func__
++            else:
++                continue
++
++            if doc_target.__doc__ is None:
+                 for base in cls.__mro__[1:]:
+                     super_method = getattr(base, key, None)
+                     if super_method is not None:
+-                        val.__doc__ = super_method.__doc__
++                        doc_target.__doc__ = super_method.__doc__
+                         break
+-
+         super().__init__(name, bases, dct)
+ 
+ 
+diff --git a/astropy/utils/tests/test_misc.py b/astropy/utils/tests/test_misc.py
+index 4f632e8d..8f75c843 100644
+--- a/astropy/utils/tests/test_misc.py
++++ b/astropy/utils/tests/test_misc.py
+@@ -80,14 +80,50 @@ def test_inherit_docstrings():
+             "FOO"
+             pass
+ 
++        @property
++        def bar(self):
++            "BAR"
++            return 1
++
++        @classmethod
++        def cm(cls):
++            "CM"
++            pass
++
++        @staticmethod
++        def sm():
++            "SM"
++            pass
++
+     class Subclass(Base):
+         def __call__(self, *args):
+             pass
+ 
++        @property
++        def bar(self):
++            return 2
++
++        @classmethod
++        def cm(cls):
++            pass
++
++        @staticmethod
++        def sm():
++            pass
++
+     if Base.__call__.__doc__ is not None:
+         # TODO: Maybe if __doc__ is None this test should be skipped instead?
+         assert Subclass.__call__.__doc__ == "FOO"
+ 
++    if Base.bar.__doc__ is not None:
++        assert Subclass.bar.__doc__ == "BAR"
++
++    if Base.cm.__doc__ is not None:
++        assert Subclass.cm.__doc__ == "CM"
++
++    if Base.sm.__doc__ is not None:
++        assert Subclass.sm.__doc__ == "SM"
++
+ 
+ def test_set_locale():
+     # First, test if the required locales are available

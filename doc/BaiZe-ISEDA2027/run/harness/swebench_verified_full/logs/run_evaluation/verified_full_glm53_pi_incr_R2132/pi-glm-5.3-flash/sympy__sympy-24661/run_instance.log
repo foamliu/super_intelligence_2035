@@ -1,0 +1,158 @@
+2026-11-11 01:12:46,600 - INFO - Creating container for sympy__sympy-24661...
+2026-11-11 01:12:46,639 - INFO - Container for sympy__sympy-24661 created: 8460c38db2cfc18bccc1fed0ad5850dbe77a270fe9c50035df82daefd0a6c6ec
+2026-11-11 01:12:47,330 - INFO - Container for sympy__sympy-24661 started: 8460c38db2cfc18bccc1fed0ad5850dbe77a270fe9c50035df82daefd0a6c6ec
+2026-11-11 01:12:47,332 - INFO - Intermediate patch for sympy__sympy-24661 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2132/pi-glm-5.3-flash/sympy__sympy-24661/patch.diff, now applying to container...
+2026-11-11 01:12:47,492 - INFO - >>>>> Applied Patch:
+Checking patch sympy/parsing/sympy_parser.py...
+Checking patch sympy/parsing/tests/test_sympy_parser.py...
+Applied patch sympy/parsing/sympy_parser.py cleanly.
+Applied patch sympy/parsing/tests/test_sympy_parser.py cleanly.
+
+2026-11-11 01:12:48,042 - INFO - Git diff before:
+diff --git a/sympy/parsing/sympy_parser.py b/sympy/parsing/sympy_parser.py
+index 52711d1324..f271ec29bb 100644
+--- a/sympy/parsing/sympy_parser.py
++++ b/sympy/parsing/sympy_parser.py
+@@ -1119,6 +1119,15 @@ class EvaluateFalseTransformer(ast.NodeTransformer):
+         'exp', 'ln', 'log', 'sqrt', 'cbrt',
+     )
+ 
++    relational_operators = {
++        ast.NotEq: 'Ne',
++        ast.Lt: 'Lt',
++        ast.LtE: 'Le',
++        ast.Gt: 'Gt',
++        ast.GtE: 'Ge',
++        ast.Eq: 'Eq',
++    }
++
+     def flatten(self, args, func):
+         result = []
+         for arg in args:
+@@ -1186,6 +1195,24 @@ def visit_BinOp(self, node):
+             return new_node
+         return node
+ 
++    def visit_Compare(self, node):
++        if len(node.ops) == 1 and len(node.comparators) == 1:
++            # only handle a single comparison
++            op = node.ops[0]
++            if type(op) in self.relational_operators:
++                sympy_class = self.relational_operators[type(op)]
++                right = self.visit(node.comparators[0])
++                left = self.visit(node.left)
++                new_node = ast.Call(
++                    func=ast.Name(id=sympy_class, ctx=ast.Load()),
++                    args=[left, right],
++                    keywords=[ast.keyword(arg='evaluate', value=ast.NameConstant(value=False, ctx=ast.Load()))],
++                    starargs=None,
++                    kwargs=None
++                )
++                return new_node
++        return node
++
+     def visit_Call(self, node):
+         new_node = self.generic_visit(node)
+         if isinstance(node.func, ast.Name) and node.func.id in self.functions:
+diff --git a/sympy/parsing/tests/test_sympy_parser.py b/sympy/parsing/tests/test_sympy_parser.py
+index 7c43e1fce3..68e70cdb34 100644
+--- a/sympy/parsing/tests/test_sympy_parser.py
++++ b/sympy/parsing/tests/test_sympy_parser.py
+@@ -5,8 +5,9 @@
+ import builtins
+ import types
+ 
++from sympy import S
+ from sympy.assumptions import Q
+-from sympy.core import Symbol, Function, Float, Rational, Integer, I, Mul, Pow, Eq
++from sympy.core import Symbol, Function, Float, Rational, Integer, I, Mul, Pow, Eq, Lt, Gt, Le, Ge, Ne
+ from sympy.functions import exp, factorial, factorial2, sin, Min, Max
+ from sympy.logic import And
+ from sympy.series import Limit
+@@ -209,6 +210,29 @@ def test_function_evaluate_false():
+     assert str(parse_expr('cbrt(0)', evaluate=False)) == '0**(1/3)'
+ 
+ 
++def test_parse_expr_evaluate_false():
++    # See #23167
++    cases = {
++        '1 < 2': Lt(1, 2, evaluate=False),
++        '1 > 2': Gt(1, 2, evaluate=False),
++        '1 <= 2': Le(1, 2, evaluate=False),
++        '1 >= 2': Ge(1, 2, evaluate=False),
++        '1 == 2': Eq(1, 2, evaluate=False),
++        '1 != 2': Ne(1, 2, evaluate=False),
++    }
++    for text, result in cases.items():
++        assert parse_expr(text, evaluate=False) == result
++    x = Symbol('x')
++    assert parse_expr('x < 2', evaluate=False) == Lt(x, 2, evaluate=False)
++    assert parse_expr('x + 1 < 2 + x', evaluate=False) == Lt(
++        parse_expr('x + 1', evaluate=False),
++        parse_expr('2 + x', evaluate=False),
++        evaluate=False)
++    # evaluate=True (default) still evaluates relationals
++    assert parse_expr('1 < 2') is S.true
++    assert parse_expr('2 < 1') is S.false
++
++
+ def test_issue_10773():
+     inputs = {
+     '-10/5': '(-10)/5',
+2026-11-11 01:12:48,045 - INFO - Eval script for sympy__sympy-24661 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2132/pi-glm-5.3-flash/sympy__sympy-24661/eval.sh; copying to container...
+2026-11-11 01:12:52,937 - INFO - Test runtime: 4.83 seconds
+2026-11-11 01:12:52,940 - INFO - Test output for sympy__sympy-24661 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2132/pi-glm-5.3-flash/sympy__sympy-24661/test_output.txt
+2026-11-11 01:12:53,013 - INFO - Git diff after:
+diff --git a/sympy/parsing/sympy_parser.py b/sympy/parsing/sympy_parser.py
+index 52711d1324..f271ec29bb 100644
+--- a/sympy/parsing/sympy_parser.py
++++ b/sympy/parsing/sympy_parser.py
+@@ -1119,6 +1119,15 @@ class EvaluateFalseTransformer(ast.NodeTransformer):
+         'exp', 'ln', 'log', 'sqrt', 'cbrt',
+     )
+ 
++    relational_operators = {
++        ast.NotEq: 'Ne',
++        ast.Lt: 'Lt',
++        ast.LtE: 'Le',
++        ast.Gt: 'Gt',
++        ast.GtE: 'Ge',
++        ast.Eq: 'Eq',
++    }
++
+     def flatten(self, args, func):
+         result = []
+         for arg in args:
+@@ -1186,6 +1195,24 @@ def visit_BinOp(self, node):
+             return new_node
+         return node
+ 
++    def visit_Compare(self, node):
++        if len(node.ops) == 1 and len(node.comparators) == 1:
++            # only handle a single comparison
++            op = node.ops[0]
++            if type(op) in self.relational_operators:
++                sympy_class = self.relational_operators[type(op)]
++                right = self.visit(node.comparators[0])
++                left = self.visit(node.left)
++                new_node = ast.Call(
++                    func=ast.Name(id=sympy_class, ctx=ast.Load()),
++                    args=[left, right],
++                    keywords=[ast.keyword(arg='evaluate', value=ast.NameConstant(value=False, ctx=ast.Load()))],
++                    starargs=None,
++                    kwargs=None
++                )
++                return new_node
++        return node
++
+     def visit_Call(self, node):
+         new_node = self.generic_visit(node)
+         if isinstance(node.func, ast.Name) and node.func.id in self.functions:
+2026-11-11 01:12:53,013 - INFO - Git diff changed after running eval script
+2026-11-11 01:12:53,013 - INFO - Grading answer for sympy__sympy-24661...
+2026-11-11 01:12:53,015 - INFO - report: {'sympy__sympy-24661': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_24288'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_sympy_parser', 'test_rationalize', 'test_factorial_fail', 'test_repeated_fail', 'test_repeated_dot_only', 'test_local_dict', 'test_local_dict_split_implmult', 'test_local_dict_symbol_to_fcn', 'test_global_dict', 'test_no_globals', 'test_issue_2515', 'test_issue_7663', 'test_recursive_evaluate_false_10560', 'test_function_evaluate_false', 'test_issue_10773', 'test_split_symbols', 'test_split_symbols_function', 'test_functional_exponent', 'test_match_parentheses_implicit_multiplication', 'test_convert_equals_signs', 'test_parse_function_issue_3539', 'test_split_symbols_numeric', 'test_unicode_names', 'test_python3_features', 'test_issue_19501', 'test_parsing_definitions', 'test_builtins'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-24661: resolved: True
+2026-11-11 01:12:53,017 - INFO - Attempting to stop container sweb.eval.sympy__sympy-24661.verified_full_glm53_pi_incr_R2132...
+2026-11-11 01:13:09,183 - INFO - Container sweb.eval.sympy__sympy-24661.verified_full_glm53_pi_incr_R2132 stopped successfully.
+2026-11-11 01:13:09,183 - INFO - Attempting to remove container sweb.eval.sympy__sympy-24661.verified_full_glm53_pi_incr_R2132...
+2026-11-11 01:13:09,253 - INFO - Container sweb.eval.sympy__sympy-24661.verified_full_glm53_pi_incr_R2132 removed successfully.

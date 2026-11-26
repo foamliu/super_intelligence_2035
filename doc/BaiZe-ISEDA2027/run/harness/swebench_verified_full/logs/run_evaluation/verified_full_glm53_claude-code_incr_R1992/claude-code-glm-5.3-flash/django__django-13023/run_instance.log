@@ -1,0 +1,62 @@
+2026-11-09 22:42:52,745 - INFO - Creating container for django__django-13023...
+2026-11-09 22:42:52,802 - INFO - Container for django__django-13023 created: d3c25b3a5fa59fd75bc04fc18152d902ca2cce3f1e9463e332d916bd6462ee92
+2026-11-09 22:42:53,262 - INFO - Container for django__django-13023 started: d3c25b3a5fa59fd75bc04fc18152d902ca2cce3f1e9463e332d916bd6462ee92
+2026-11-09 22:42:53,264 - INFO - Intermediate patch for django__django-13023 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R1992/claude-code-glm-5.3-flash/django__django-13023/patch.diff, now applying to container...
+2026-11-09 22:42:53,485 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/fields/__init__.py...
+Checking patch tests/model_fields/test_decimalfield.py...
+Applied patch django/db/models/fields/__init__.py cleanly.
+Applied patch tests/model_fields/test_decimalfield.py cleanly.
+
+2026-11-09 22:42:54,852 - INFO - Git diff before:
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index 0fd69059ee..693eee36a7 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -1501,7 +1501,7 @@ class DecimalField(Field):
+             return self.context.create_decimal_from_float(value)
+         try:
+             return decimal.Decimal(value)
+-        except decimal.InvalidOperation:
++        except (decimal.InvalidOperation, TypeError):
+             raise exceptions.ValidationError(
+                 self.error_messages['invalid'],
+                 code='invalid',
+diff --git a/tests/model_fields/test_decimalfield.py b/tests/model_fields/test_decimalfield.py
+index e284005aa0..e5a2891fc5 100644
+--- a/tests/model_fields/test_decimalfield.py
++++ b/tests/model_fields/test_decimalfield.py
+@@ -24,6 +24,8 @@ class DecimalFieldTests(TestCase):
+         msg = '“abc” value must be a decimal number.'
+         with self.assertRaisesMessage(ValidationError, msg):
+             f.to_python('abc')
++        with self.assertRaises(ValidationError):
++            f.to_python({})
+ 
+     def test_default(self):
+         f = models.DecimalField(default=Decimal('0.00'))
+2026-11-09 22:42:54,854 - INFO - Eval script for django__django-13023 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R1992/claude-code-glm-5.3-flash/django__django-13023/eval.sh; copying to container...
+2026-11-09 22:43:02,724 - INFO - Test runtime: 7.76 seconds
+2026-11-09 22:43:02,725 - INFO - Test output for django__django-13023 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R1992/claude-code-glm-5.3-flash/django__django-13023/test_output.txt
+2026-11-09 22:43:02,805 - INFO - Git diff after:
+diff --git a/django/db/models/fields/__init__.py b/django/db/models/fields/__init__.py
+index 0fd69059ee..693eee36a7 100644
+--- a/django/db/models/fields/__init__.py
++++ b/django/db/models/fields/__init__.py
+@@ -1501,7 +1501,7 @@ class DecimalField(Field):
+             return self.context.create_decimal_from_float(value)
+         try:
+             return decimal.Decimal(value)
+-        except decimal.InvalidOperation:
++        except (decimal.InvalidOperation, TypeError):
+             raise exceptions.ValidationError(
+                 self.error_messages['invalid'],
+                 code='invalid',
+2026-11-09 22:43:02,805 - INFO - Git diff changed after running eval script
+2026-11-09 22:43:02,805 - INFO - Grading answer for django__django-13023...
+2026-11-09 22:43:02,808 - INFO - report: {'django__django-13023': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_invalid_value (model_fields.test_decimalfield.DecimalFieldTests)', 'test_lookup_really_big_value (model_fields.test_decimalfield.DecimalFieldTests)']}, 'PASS_TO_PASS': {'success': ['test_default (model_fields.test_decimalfield.DecimalFieldTests)', 'test_filter_with_strings (model_fields.test_decimalfield.DecimalFieldTests)', 'test_get_prep_value (model_fields.test_decimalfield.DecimalFieldTests)', 'test_max_decimal_places_validation (model_fields.test_decimalfield.DecimalFieldTests)', 'test_max_digits_validation (model_fields.test_decimalfield.DecimalFieldTests)', 'test_max_whole_digits_validation (model_fields.test_decimalfield.DecimalFieldTests)', "Trailing zeros in the fractional part aren't truncated.", 'test_save_without_float_conversion (model_fields.test_decimalfield.DecimalFieldTests)', 'test_to_python (model_fields.test_decimalfield.DecimalFieldTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13023: resolved: False
+2026-11-09 22:43:02,810 - INFO - Attempting to stop container sweb.eval.django__django-13023.verified_full_glm53_claude-code_incr_R1992...
+2026-11-09 22:43:18,833 - INFO - Container sweb.eval.django__django-13023.verified_full_glm53_claude-code_incr_R1992 stopped successfully.
+2026-11-09 22:43:18,833 - INFO - Attempting to remove container sweb.eval.django__django-13023.verified_full_glm53_claude-code_incr_R1992...
+2026-11-09 22:43:18,869 - INFO - Container sweb.eval.django__django-13023.verified_full_glm53_claude-code_incr_R1992 removed successfully.

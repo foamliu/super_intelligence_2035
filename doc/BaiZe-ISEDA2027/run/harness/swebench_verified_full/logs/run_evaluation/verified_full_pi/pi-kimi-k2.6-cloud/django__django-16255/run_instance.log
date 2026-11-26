@@ -1,0 +1,133 @@
+2026-10-30 16:57:28,815 - INFO - Creating container for django__django-16255...
+2026-10-30 16:57:28,850 - INFO - Container for django__django-16255 created: 0ca832f22f9dfb0ec3e7541b73e53871e6c79706475256db837a9c67d2741bbc
+2026-10-30 16:57:31,635 - INFO - Container for django__django-16255 started: 0ca832f22f9dfb0ec3e7541b73e53871e6c79706475256db837a9c67d2741bbc
+2026-10-30 16:57:31,637 - INFO - Intermediate patch for django__django-16255 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-16255/patch.diff, now applying to container...
+2026-10-30 16:57:31,774 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/sitemaps/__init__.py...
+warning: django/contrib/sitemaps/__init__.py has type 100755, expected 100644
+Checking patch tests/sitemaps_tests/test_http.py...
+warning: tests/sitemaps_tests/test_http.py has type 100755, expected 100644
+Checking patch tests/sitemaps_tests/urls/http.py...
+warning: tests/sitemaps_tests/urls/http.py has type 100755, expected 100644
+Applied patch django/contrib/sitemaps/__init__.py cleanly.
+Applied patch tests/sitemaps_tests/test_http.py cleanly.
+Applied patch tests/sitemaps_tests/urls/http.py cleanly.
+
+2026-10-30 16:57:33,414 - INFO - Git diff before:
+diff --git a/django/contrib/sitemaps/__init__.py b/django/contrib/sitemaps/__init__.py
+index 27756d9d96..b40ad806ed 100755
+--- a/django/contrib/sitemaps/__init__.py
++++ b/django/contrib/sitemaps/__init__.py
+@@ -168,7 +168,7 @@ class Sitemap:
+         if callable(self.lastmod):
+             try:
+                 return max([self.lastmod(item) for item in self.items()])
+-            except TypeError:
++            except (TypeError, ValueError):
+                 return None
+         else:
+             return self.lastmod
+diff --git a/tests/sitemaps_tests/test_http.py b/tests/sitemaps_tests/test_http.py
+index 4a269b8737..978ec2b585 100755
+--- a/tests/sitemaps_tests/test_http.py
++++ b/tests/sitemaps_tests/test_http.py
+@@ -506,9 +506,22 @@ class HTTPSitemapTests(SitemapTestsBase):
+         )
+         self.assertXMLEqual(index_response.content.decode(), expected_content_index)
+         self.assertXMLEqual(sitemap_response.content.decode(), expected_content_sitemap)
++    def test_callable_lastmod_empty(self):
++        """
++        Sitemap with no items but callable `lastmod` doesn't raise ValueError.
++        """
++        index_response = self.client.get("/callable-lastmod-empty/index.xml")
++        sitemap_response = self.client.get("/callable-lastmod-empty/sitemap.xml")
++        self.assertNotIn("Last-Modified", index_response)
++        self.assertNotIn("Last-Modified", sitemap_response)
++        expected_content_index = """<?xml version="1.0" encoding="UTF-8"?>
++        <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
++        <sitemap><loc>http://example.com/simple/sitemap-callable-lastmod.xml</loc></sitemap>
++        </sitemapindex>
++        """
++        self.assertXMLEqual(index_response.content.decode(), expected_content_index)
++        self.assertEqual(sitemap_response.status_code, 200)
+ 
+-
+-# RemovedInDjango50Warning
+ class DeprecatedTests(SitemapTestsBase):
+     @override_settings(
+         TEMPLATES=[
+diff --git a/tests/sitemaps_tests/urls/http.py b/tests/sitemaps_tests/urls/http.py
+index 9a468de476..e6867687e9 100755
+--- a/tests/sitemaps_tests/urls/http.py
++++ b/tests/sitemaps_tests/urls/http.py
+@@ -113,9 +113,17 @@ class CallableLastmodFullSitemap(Sitemap):
+     def lastmod(self, obj):
+         return obj.lastmod
+ 
++class CallableLastmodEmptySitemap(Sitemap):
++    """No items but `lastmod` is callable."""
++    location = "/location/"
++
++    def items(self):
++        return []
++
++    def lastmod(self, obj):
++        return datetime(2013, 3, 13, 10, 0, 0)
+ 
+ class GetLatestLastmodNoneSiteMap(Sitemap):
+-    changefreq = "never"
+     priority = 0.5
+     location = "/location/"
+ 
+@@ -232,6 +240,9 @@ callable_lastmod_partial_sitemap = {
+ callable_lastmod_full_sitemap = {
+     "callable-lastmod": CallableLastmodFullSitemap,
+ }
++callable_lastmod_empty_sitemap = {
++    "callable-lastmod": CallableLastmodEmptySitemap,
++}
+ 
+ urlpatterns = [
+     path("simple/index.xml", views.index, {"sitemaps": simple_sitemaps}),
+@@ -417,6 +428,16 @@ urlpatterns = [
+         views.sitemap,
+         {"sitemaps": callable_lastmod_full_sitemap},
+     ),
++    path(
++        "callable-lastmod-empty/index.xml",
++        views.index,
++        {"sitemaps": callable_lastmod_empty_sitemap},
++    ),
++    path(
++        "callable-lastmod-empty/sitemap.xml",
++        views.sitemap,
++        {"sitemaps": callable_lastmod_empty_sitemap},
++    ),
+     path(
+         "generic-lastmod/index.xml",
+         views.index,
+2026-10-30 16:57:33,415 - INFO - Eval script for django__django-16255 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-16255/eval.sh; copying to container...
+2026-10-30 16:57:42,173 - INFO - Test runtime: 8.70 seconds
+2026-10-30 16:57:42,176 - INFO - Test output for django__django-16255 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-16255/test_output.txt
+2026-10-30 16:57:42,243 - INFO - Git diff after:
+diff --git a/django/contrib/sitemaps/__init__.py b/django/contrib/sitemaps/__init__.py
+index 27756d9d96..b40ad806ed 100755
+--- a/django/contrib/sitemaps/__init__.py
++++ b/django/contrib/sitemaps/__init__.py
+@@ -168,7 +168,7 @@ class Sitemap:
+         if callable(self.lastmod):
+             try:
+                 return max([self.lastmod(item) for item in self.items()])
+-            except TypeError:
++            except (TypeError, ValueError):
+                 return None
+         else:
+             return self.lastmod
+2026-10-30 16:57:42,243 - INFO - Git diff changed after running eval script
+2026-10-30 16:57:42,243 - INFO - Grading answer for django__django-16255...
+2026-10-30 16:57:42,255 - INFO - report: {'django__django-16255': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_callable_sitemod_no_items (sitemaps_tests.test_http.HTTPSitemapTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['A simple sitemap index can be rendered with a custom template', 'test_simple_sitemap_custom_index_warning (sitemaps_tests.test_http.DeprecatedTests)', 'A i18n sitemap with alternate/hreflang links can be rendered.', 'A i18n sitemap index with limited languages can be rendered.', 'A i18n sitemap index with x-default can be rendered.', 'A cached sitemap index can be rendered (#2713).', 'All items in the sitemap have `lastmod`. The `Last-Modified` header', 'Not all items have `lastmod`. Therefore the `Last-Modified` header', 'test_empty_page (sitemaps_tests.test_http.HTTPSitemapTests)', 'test_empty_sitemap (sitemaps_tests.test_http.HTTPSitemapTests)', 'The priority value should not be localized.', 'test_no_section (sitemaps_tests.test_http.HTTPSitemapTests)', 'test_page_not_int (sitemaps_tests.test_http.HTTPSitemapTests)', 'A sitemap may have multiple pages.', 'test_requestsite_sitemap (sitemaps_tests.test_http.HTTPSitemapTests)', 'A simple sitemap can be rendered with a custom template', 'A simple i18n sitemap index can be rendered, without logging variable', 'A simple sitemap can be rendered', 'A simple sitemap index can be rendered', 'A simple sitemap section can be rendered', 'sitemapindex.lastmod is included when Sitemap.lastmod is', 'sitemapindex.lastmod is omitted when Sitemap.lastmod is', "Check we get ImproperlyConfigured if we don't pass a site object to", "Check we get ImproperlyConfigured when we don't pass a site object to", 'Check to make sure that the raw item is included with each', 'Last-Modified header is set correctly', 'The Last-Modified header should be support dates (without time).', 'Last-Modified header is missing when sitemap has no lastmod', 'Last-Modified header is omitted when lastmod not on all items', 'The Last-Modified header should be converted from timezone aware dates', 'lastmod datestamp shows timezones if Sitemap.get_latest_lastmod', 'A sitemap may not be callable.', 'test_sitemap_without_entries (sitemaps_tests.test_http.HTTPSitemapTests)', 'The Last-Modified header is set to the most recent sitemap lastmod.', "The Last-Modified header is omitted when lastmod isn't found in all", 'test_x_robots_sitemap (sitemaps_tests.test_http.HTTPSitemapTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16255: resolved: True
+2026-10-30 16:57:42,257 - INFO - Attempting to stop container sweb.eval.django__django-16255.verified_full_pi...
+2026-10-30 16:57:58,313 - INFO - Container sweb.eval.django__django-16255.verified_full_pi stopped successfully.
+2026-10-30 16:57:58,313 - INFO - Attempting to remove container sweb.eval.django__django-16255.verified_full_pi...
+2026-10-30 16:57:58,367 - INFO - Container sweb.eval.django__django-16255.verified_full_pi removed successfully.

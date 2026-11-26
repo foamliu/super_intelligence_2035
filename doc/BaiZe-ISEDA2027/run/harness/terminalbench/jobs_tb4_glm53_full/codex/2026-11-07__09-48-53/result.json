@@ -1,0 +1,106 @@
+{
+    "id": "4591de1d-aa56-41af-853a-b55d639fc41b",
+    "started_at": "2026-11-07T09:48:54.058118",
+    "updated_at": "2026-11-07T10:14:18.496736",
+    "finished_at": "2026-11-07T10:14:18.496736",
+    "n_total_trials": 66,
+    "stats": {
+        "n_completed_trials": 66,
+        "n_errored_trials": 66,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "codex__terminal-bench-4.0": {
+                "n_trials": 0,
+                "n_errors": 66,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {},
+                "exception_stats": {
+                    "RuntimeError": [
+                        "atrx-vep-crispr__jsiECG7",
+                        "batched-eval-parity__jwyH95f",
+                        "biped-contact-dynamics__tRKvSHh",
+                        "bun-sourcemap-leak__d8Dhi8G",
+                        "cad-model__77o6v9U",
+                        "cargo-flight-dispatch__Hbz2dgz",
+                        "coq-block-bound__zP2F7eN",
+                        "ctr-optimization__9R6G9LA",
+                        "data-anonymization__Q4gD5Yo",
+                        "distributed-dedup__iA3dxP2",
+                        "embedding-drift-monitor__feYG7cd",
+                        "fin-saccr-rwa__kFJksSz",
+                        "foodstuff-beta-activity__FmB2Vef",
+                        "formal-crypto__kdTD3hR",
+                        "freecad-impeller__sHyeXjF",
+                        "freecad-platform-drawing__rhjMCC3",
+                        "freecad-spring-clip__P6o72Vw",
+                        "freight-dispatch-shift__zVwdcgG",
+                        "glycan-ms2-elucidation__xtZJtFz",
+                        "gsea-proteomics__q88PnQb",
+                        "heat-pump-warranty__wQpgaKw",
+                        "hof-topology-interpenetration__iZS56Mr",
+                        "html-js-filter__bRvRVmr",
+                        "interleaved-vigenere__XDudGaQ",
+                        "intrastat-meldung__yiEBjya",
+                        "jax-speedrun-gpu__Xgdnd99",
+                        "ks-solver-cpp__BUSggdF",
+                        "kv-live-surgery__DaDa6GY",
+                        "lake-temp-glm__6YFrjio",
+                        "layout-config-recreation__miDxLnx",
+                        "layout-config-recreation2__2Yj6dfq",
+                        "legacy-utility-triage__CrJjFSg",
+                        "live-database-cutover__Aj8CbSY",
+                        "math-eval-grader__62zPTEn",
+                        "mp-checkpoint-consolidation__vZWNjyJ",
+                        "music-harmony__qNiCwc4",
+                        "mvcc-lsm-compaction__kZmApQZ",
+                        "nextjs-performance__gn4cVny",
+                        "ontology-kg-querying__DBkwk3U",
+                        "payments-pipeline-fix__kTr7V9i",
+                        "photonic-waveguide-routing__tW7Y223",
+                        "pretrain-shard-corruption__imQTYpC",
+                        "production-planning__D6WQ8D6",
+                        "protein-autointerp-disulfide__fZMNATZ",
+                        "react-lead-form__Mwyupua",
+                        "retro-console-soc__hifYq8F",
+                        "roy-polymorph-cn__5HZRyV2",
+                        "rs-archive-clone__vM69LAQ",
+                        "satb-audio-transcription__zaGqbYC",
+                        "session-window-debug__XzAH7yN",
+                        "sglang-qwen-burst__GSjjtB8",
+                        "shadow-relay__6yL8XRz",
+                        "sound-change-cascade__UbXJzfv",
+                        "takens-embedding-lean__mhBoPaq",
+                        "telecom-entity-resolution__Ay55apg",
+                        "uefi-bootkit__ZGdKynY",
+                        "vba-userform-port__HwHFcRT",
+                        "vf2-speedup-networkx__2nW6z4q",
+                        "vllm-deepseek-streaming__DQrHSZq",
+                        "vpp-loss-divergence__xNTHJ2V",
+                        "wal-recovery-ordering__rXrfCrE",
+                        "wdm-design__BWe8Njb"
+                    ],
+                    "ValueError": [
+                        "cumulative-layout-shift__izK4JyM",
+                        "medical-claims-processing__Yhm6TzV"
+                    ],
+                    "NonZeroAgentExitCodeError": [
+                        "fp8-rmsnorm-gemm__ikruR8B",
+                        "risk-scorer-replay__sYLgkPU"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}

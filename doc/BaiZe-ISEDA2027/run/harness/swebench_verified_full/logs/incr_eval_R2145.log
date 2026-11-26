@@ -1,0 +1,80 @@
+[R2145-eval 05:10:48] cline: 206 already evaluated
+[R2145-eval 05:10:48] cline: 206 total real, 0 new to eval
+[R2145-eval 05:10:48] cline: no new instances to eval, skipping
+[R2145-eval 05:10:48] codex: 96 already evaluated
+[R2145-eval 05:10:48] codex: 96 total real, 0 new to eval
+[R2145-eval 05:10:48] codex: no new instances to eval, skipping
+[R2145-eval 05:10:48] opencode: 434 already evaluated
+[R2145-eval 05:10:48] opencode: 442 total real, 8 new to eval
+[R2145-eval 05:10:48] opencode: launching eval on 8 NEW instances (workers=1, timeout=1800)...
+[R2145-eval 05:12:47] cline: 206 already evaluated
+[R2145-eval 05:12:47] cline: 206 total real, 0 new to eval
+[R2145-eval 05:12:47] cline: no new instances to eval, skipping
+[R2145-eval 05:12:47] codex: 96 already evaluated
+[R2145-eval 05:12:47] codex: 96 total real, 0 new to eval
+[R2145-eval 05:12:47] codex: no new instances to eval, skipping
+[R2145-eval 05:12:47] opencode: 434 already evaluated
+[R2145-eval 05:12:47] opencode: 443 total real, 9 new to eval
+[R2145-eval 05:12:47] opencode: launching eval on 9 NEW instances (workers=1, timeout=1800)...
+[R2145-eval 05:13:28] cline: 206 already evaluated
+[R2145-eval 05:13:28] cline: 206 total real, 0 new to eval
+[R2145-eval 05:13:28] cline: no new instances to eval, skipping
+[R2145-eval 05:13:28] codex: 96 already evaluated
+[R2145-eval 05:13:28] codex: 96 total real, 0 new to eval
+[R2145-eval 05:13:28] codex: no new instances to eval, skipping
+[R2145-eval 05:13:28] opencode: 434 already evaluated
+[R2145-eval 05:13:28] opencode: 443 total real, 9 new to eval
+[R2145-eval 05:13:28] opencode: launching eval on 9 NEW instances (workers=1, timeout=1800)...
+[R2145-eval 05:14:07] cline: 206 already evaluated
+[R2145-eval 05:14:07] cline: 206 total real, 0 new to eval
+[R2145-eval 05:14:07] cline: no new instances to eval, skipping
+[R2145-eval 05:14:07] codex: 96 already evaluated
+[R2145-eval 05:14:07] codex: 96 total real, 0 new to eval
+[R2145-eval 05:14:07] codex: no new instances to eval, skipping
+[R2145-eval 05:14:07] opencode: 434 already evaluated
+[R2145-eval 05:14:08] opencode: 443 total real, 9 new to eval
+[R2145-eval 05:14:08] opencode: launching eval on 9 NEW instances (workers=1, timeout=1800)...
+[R2145-eval 05:15:38] opencode: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_opencode_R2145.log
+[R2145-eval 05:15:38] opencode: MERGED resolved=361 failed=79 infra=3 total=443 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_opencode.json
+[R2145-eval 05:15:38] claude-code: 194 already evaluated
+[R2145-eval 05:15:39] claude-code: 194 total real, 0 new to eval
+[R2145-eval 05:15:39] claude-code: no new instances to eval, skipping
+[R2145-eval 05:15:39] pi: 183 already evaluated
+[R2145-eval 05:15:39] pi: 183 total real, 0 new to eval
+[R2145-eval 05:15:39] pi: no new instances to eval, skipping
+[R2145-eval 05:15:39] hermes: 369 already evaluated
+[R2145-eval 05:15:39] hermes: 377 total real, 8 new to eval
+[R2145-eval 05:15:39] hermes: launching eval on 8 NEW instances (workers=1, timeout=1800)...
+[R2145-eval 05:15:54] opencode: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_opencode_R2145.log
+[R2145-eval 05:15:54] opencode: MERGED resolved=361 failed=79 infra=3 total=443 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_opencode.json
+[R2145-eval 05:15:54] claude-code: 194 already evaluated
+[R2145-eval 05:15:54] claude-code: 194 total real, 0 new to eval
+[R2145-eval 05:15:54] claude-code: no new instances to eval, skipping
+[R2145-eval 05:15:54] pi: 183 already evaluated
+[R2145-eval 05:15:54] pi: 183 total real, 0 new to eval
+[R2145-eval 05:15:54] pi: no new instances to eval, skipping
+[R2145-eval 05:15:54] hermes: 369 already evaluated
+[R2145-eval 05:15:54] hermes: 377 total real, 8 new to eval
+[R2145-eval 05:15:54] hermes: launching eval on 8 NEW instances (workers=1, timeout=1800)...
+[R2145-eval 05:16:26] opencode: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_opencode_R2145.log
+[R2145-eval 05:16:26] opencode: MERGED resolved=362 failed=79 infra=2 total=443 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_opencode.json
+[R2145-eval 05:16:26] claude-code: 194 already evaluated
+[R2145-eval 05:16:27] claude-code: 194 total real, 0 new to eval
+[R2145-eval 05:16:27] claude-code: no new instances to eval, skipping
+[R2145-eval 05:16:27] pi: 183 already evaluated
+[R2145-eval 05:16:27] pi: 183 total real, 0 new to eval
+[R2145-eval 05:16:27] pi: no new instances to eval, skipping
+[R2145-eval 05:16:27] hermes: 369 already evaluated
+[R2145-eval 05:16:27] hermes: 378 total real, 9 new to eval
+[R2145-eval 05:16:27] hermes: launching eval on 9 NEW instances (workers=1, timeout=1800)...
+[R2145-eval 05:19:57] hermes: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_hermes_R2145.log
+[R2145-eval 05:19:57] hermes: MERGED resolved=339 failed=38 infra=0 total=377 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_hermes.json
+[R2145-eval 05:19:57] deepseek: 165 already evaluated
+[R2145-eval 05:19:57] deepseek: 167 total real, 2 new to eval
+[R2145-eval 05:19:57] deepseek: launching eval on 2 NEW instances (workers=1, timeout=1800)...
+[R2145-eval 05:20:51] deepseek: eval done rc=0; log -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/logs/eval_glm53_deepseek-harness_R2145.log
+[R2145-eval 05:20:51] deepseek: MERGED resolved=129 failed=33 infra=5 total=167 -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/reports/eval_glm53_deepseek-harness.json
+Traceback (most recent call last):
+  File "/nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/incr_eval_glm53_R2145.py", line 143, in <module>
+    log(f"\nR2145 eval done in {time.time()-t0:.1f}s", flush=True)
+TypeError: log() got an unexpected keyword argument 'flush'

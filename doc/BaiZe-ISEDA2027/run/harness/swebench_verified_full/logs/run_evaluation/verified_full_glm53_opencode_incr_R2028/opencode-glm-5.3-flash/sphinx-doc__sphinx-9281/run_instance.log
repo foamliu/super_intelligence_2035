@@ -1,0 +1,75 @@
+2026-11-10 15:17:24,178 - INFO - Creating container for sphinx-doc__sphinx-9281...
+2026-11-10 15:17:24,200 - INFO - Container for sphinx-doc__sphinx-9281 created: 17d612329dc234b4496bc3993dcfbc9f0b7e0365a3de61ec343bc60fdbbb7093
+2026-11-10 15:17:24,740 - INFO - Container for sphinx-doc__sphinx-9281 started: 17d612329dc234b4496bc3993dcfbc9f0b7e0365a3de61ec343bc60fdbbb7093
+2026-11-10 15:17:24,742 - INFO - Intermediate patch for sphinx-doc__sphinx-9281 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sphinx-doc__sphinx-9281/patch.diff, now applying to container...
+2026-11-10 15:17:24,837 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/util/inspect.py...
+Checking patch tests/test_util_inspect.py...
+Applied patch sphinx/util/inspect.py cleanly.
+Applied patch tests/test_util_inspect.py cleanly.
+
+2026-11-10 15:17:25,287 - INFO - Git diff before:
+diff --git a/sphinx/util/inspect.py b/sphinx/util/inspect.py
+index a415a7074..5e25fc648 100644
+--- a/sphinx/util/inspect.py
++++ b/sphinx/util/inspect.py
+@@ -457,6 +457,8 @@ def object_description(object: Any) -> str:
+         else:
+             return "frozenset({%s})" % ", ".join(object_description(x)
+                                                  for x in sorted_values)
++    if isinstance(object, enum.Enum):
++        return f"{object.__class__.__name__}.{object.name}"
+     try:
+         s = repr(object)
+     except Exception as exc:
+diff --git a/tests/test_util_inspect.py b/tests/test_util_inspect.py
+index de4ad9236..c78dfe65d 100644
+--- a/tests/test_util_inspect.py
++++ b/tests/test_util_inspect.py
+@@ -10,6 +10,7 @@
+ 
+ import ast
+ import datetime
++import enum
+ import functools
+ import sys
+ import types
+@@ -516,6 +517,13 @@ def test_dict_customtype():
+     assert "<CustomType(2)>: 2" in description
+ 
+ 
++def test_object_description_enum():
++    class MyEnum(enum.Enum):
++        ValueA = 10
++
++    assert inspect.object_description(MyEnum.ValueA) == 'MyEnum.ValueA'
++
++
+ def test_getslots():
+     class Foo:
+         pass
+2026-11-10 15:17:25,290 - INFO - Eval script for sphinx-doc__sphinx-9281 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sphinx-doc__sphinx-9281/eval.sh; copying to container...
+2026-11-10 15:17:29,631 - INFO - Test runtime: 4.28 seconds
+2026-11-10 15:17:29,633 - INFO - Test output for sphinx-doc__sphinx-9281 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sphinx-doc__sphinx-9281/test_output.txt
+2026-11-10 15:17:29,673 - INFO - Git diff after:
+diff --git a/sphinx/util/inspect.py b/sphinx/util/inspect.py
+index a415a7074..5e25fc648 100644
+--- a/sphinx/util/inspect.py
++++ b/sphinx/util/inspect.py
+@@ -457,6 +457,8 @@ def object_description(object: Any) -> str:
+         else:
+             return "frozenset({%s})" % ", ".join(object_description(x)
+                                                  for x in sorted_values)
++    if isinstance(object, enum.Enum):
++        return f"{object.__class__.__name__}.{object.name}"
+     try:
+         s = repr(object)
+     except Exception as exc:
+2026-11-10 15:17:29,674 - INFO - Git diff changed after running eval script
+2026-11-10 15:17:29,674 - INFO - Grading answer for sphinx-doc__sphinx-9281...
+2026-11-10 15:17:29,677 - INFO - report: {'sphinx-doc__sphinx-9281': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_util_inspect.py::test_object_description_enum'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_util_inspect.py::test_TypeAliasNamespace', 'tests/test_util_inspect.py::test_signature', 'tests/test_util_inspect.py::test_signature_partial', 'tests/test_util_inspect.py::test_signature_methods', 'tests/test_util_inspect.py::test_signature_partialmethod', 'tests/test_util_inspect.py::test_signature_annotations', 'tests/test_util_inspect.py::test_signature_annotations_py38', 'tests/test_util_inspect.py::test_signature_from_str_basic', 'tests/test_util_inspect.py::test_signature_from_str_default_values', 'tests/test_util_inspect.py::test_signature_from_str_annotations', 'tests/test_util_inspect.py::test_signature_from_str_complex_annotations', 'tests/test_util_inspect.py::test_signature_from_str_kwonly_args', 'tests/test_util_inspect.py::test_signature_from_str_positionaly_only_args', 'tests/test_util_inspect.py::test_signature_from_str_invalid', 'tests/test_util_inspect.py::test_signature_from_ast', 'tests/test_util_inspect.py::test_safe_getattr_with_default', 'tests/test_util_inspect.py::test_safe_getattr_with_exception', 'tests/test_util_inspect.py::test_safe_getattr_with_property_exception', 'tests/test_util_inspect.py::test_safe_getattr_with___dict___override', 'tests/test_util_inspect.py::test_dictionary_sorting', 'tests/test_util_inspect.py::test_set_sorting', 'tests/test_util_inspect.py::test_set_sorting_fallback', 'tests/test_util_inspect.py::test_frozenset_sorting', 'tests/test_util_inspect.py::test_frozenset_sorting_fallback', 'tests/test_util_inspect.py::test_dict_customtype', 'tests/test_util_inspect.py::test_getslots', 'tests/test_util_inspect.py::test_isclassmethod', 'tests/test_util_inspect.py::test_isstaticmethod', 'tests/test_util_inspect.py::test_iscoroutinefunction', 'tests/test_util_inspect.py::test_isfunction', 'tests/test_util_inspect.py::test_isbuiltin', 'tests/test_util_inspect.py::test_isdescriptor', 'tests/test_util_inspect.py::test_isattributedescriptor', 'tests/test_util_inspect.py::test_isproperty', 'tests/test_util_inspect.py::test_isgenericalias', 'tests/test_util_inspect.py::test_unpartial', 'tests/test_util_inspect.py::test_getdoc_inherited_decorated_method', 'tests/test_util_inspect.py::test_is_builtin_class_method'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9281: resolved: True
+2026-11-10 15:17:29,678 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9281.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 15:17:45,749 - INFO - Container sweb.eval.sphinx-doc__sphinx-9281.verified_full_glm53_opencode_incr_R2028 stopped successfully.
+2026-11-10 15:17:45,749 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9281.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 15:17:45,785 - INFO - Container sweb.eval.sphinx-doc__sphinx-9281.verified_full_glm53_opencode_incr_R2028 removed successfully.

@@ -1,0 +1,81 @@
+diff --git a/django/contrib/sitemaps/__init__.py b/django/contrib/sitemaps/__init__.py
+index 27756d9d96..b40ad806ed 100644
+--- a/django/contrib/sitemaps/__init__.py
++++ b/django/contrib/sitemaps/__init__.py
+@@ -168,7 +168,7 @@ class Sitemap:
+         if callable(self.lastmod):
+             try:
+                 return max([self.lastmod(item) for item in self.items()])
+-            except TypeError:
++            except (TypeError, ValueError):
+                 return None
+         else:
+             return self.lastmod
+diff --git a/tests/sitemaps_tests/test_http.py b/tests/sitemaps_tests/test_http.py
+index 4a269b8737..ff3c5da49b 100644
+--- a/tests/sitemaps_tests/test_http.py
++++ b/tests/sitemaps_tests/test_http.py
+@@ -223,6 +223,14 @@ class HTTPSitemapTests(SitemapTestsBase):
+             response.headers["Last-Modified"], "Sat, 20 Apr 2013 05:00:00 GMT"
+         )
+ 
++    def test_sitemap_get_latest_lastmod_empty_items_callable(self):
++        """
++        sitemapindex.lastmod is omitted when Sitemap.lastmod is
++        callable and Sitemap.items() returns an empty list.
++        """
++        response = self.client.get("/lastmod/empty-callable-lastmod-sitemap.xml")
++        self.assertNotContains(response, "<lastmod>")
++
+     def test_sitemap_get_latest_lastmod_none(self):
+         """
+         sitemapindex.lastmod is omitted when Sitemap.lastmod is
+diff --git a/tests/sitemaps_tests/urls/http.py b/tests/sitemaps_tests/urls/http.py
+index 9a468de476..aaabb0fb7c 100644
+--- a/tests/sitemaps_tests/urls/http.py
++++ b/tests/sitemaps_tests/urls/http.py
+@@ -114,6 +114,20 @@ class CallableLastmodFullSitemap(Sitemap):
+         return obj.lastmod
+ 
+ 
++class EmptySitemapWithCallableLastmod(Sitemap):
++    """Sitemap with no items but callable lastmod."""
++
++    changefreq = "never"
++    priority = 0.5
++    location = "/location/"
++
++    def items(self):
++        return []
++
++    def lastmod(self, obj):
++        return datetime(2013, 3, 13, 10, 0, 0)
++
++
+ class GetLatestLastmodNoneSiteMap(Sitemap):
+     changefreq = "never"
+     priority = 0.5
+@@ -204,6 +218,10 @@ generic_sitemaps = {
+     "generic": GenericSitemap({"queryset": TestModel.objects.order_by("pk").all()}),
+ }
+ 
++empty_sitemaps_callable_lastmod = {
++    "empty-callable-lastmod": EmptySitemapWithCallableLastmod,
++}
++
+ get_latest_lastmod_none_sitemaps = {
+     "get-latest-lastmod-none": GetLatestLastmodNoneSiteMap,
+ }
+@@ -350,6 +368,12 @@ urlpatterns = [
+         {"sitemaps": sitemaps_lastmod_descending},
+         name="django.contrib.sitemaps.views.sitemap",
+     ),
++    path(
++        "lastmod/empty-callable-lastmod-sitemap.xml",
++        views.index,
++        {"sitemaps": empty_sitemaps_callable_lastmod},
++        name="django.contrib.sitemaps.views.index",
++    ),
+     path(
+         "lastmod/get-latest-lastmod-none-sitemap.xml",
+         views.index,

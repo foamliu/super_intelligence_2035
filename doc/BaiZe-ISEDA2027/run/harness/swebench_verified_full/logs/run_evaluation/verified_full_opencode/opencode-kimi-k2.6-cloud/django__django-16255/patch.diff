@@ -1,0 +1,80 @@
+diff --git a/django/contrib/sitemaps/__init__.py b/django/contrib/sitemaps/__init__.py
+index 27756d9d96..b40ad806ed 100644
+--- a/django/contrib/sitemaps/__init__.py
++++ b/django/contrib/sitemaps/__init__.py
+@@ -168,7 +168,7 @@ class Sitemap:
+         if callable(self.lastmod):
+             try:
+                 return max([self.lastmod(item) for item in self.items()])
+-            except TypeError:
++            except (TypeError, ValueError):
+                 return None
+         else:
+             return self.lastmod
+diff --git a/tests/sitemaps_tests/test_http.py b/tests/sitemaps_tests/test_http.py
+index 4a269b8737..e69dbfbd05 100644
+--- a/tests/sitemaps_tests/test_http.py
++++ b/tests/sitemaps_tests/test_http.py
+@@ -247,6 +247,15 @@ class HTTPSitemapTests(SitemapTestsBase):
+         response = self.client.get("/lastmod/latest-lastmod-timezone-sitemap.xml")
+         self.assertContains(response, "<lastmod>2013-03-13T10:00:00-05:00</lastmod>")
+ 
++    def test_empty_sitemap_callable_lastmod(self):
++        """
++        sitemapindex.lastmod is omitted when Sitemap.lastmod is callable and
++        Sitemap.items() returns an empty list.
++        """
++        response = self.client.get("/empty/callable-lastmod/sitemap.xml")
++        self.assertEqual(response.status_code, 200)
++        self.assertNotContains(response, "<lastmod>")
++
+     def test_localized_priority(self):
+         """The priority value should not be localized."""
+         with translation.override("fr"):
+diff --git a/tests/sitemaps_tests/urls/http.py b/tests/sitemaps_tests/urls/http.py
+index 9a468de476..e837ea32ec 100644
+--- a/tests/sitemaps_tests/urls/http.py
++++ b/tests/sitemaps_tests/urls/http.py
+@@ -54,6 +54,18 @@ class EmptySitemap(Sitemap):
+     location = "/location/"
+ 
+ 
++class EmptyCallableLastmodSitemap(Sitemap):
++    changefreq = "never"
++    priority = 0.5
++    location = "/location/"
++
++    def items(self):
++        return []
++
++    def lastmod(self, obj):
++        return datetime(2013, 3, 13, 10, 0, 0)
++
++
+ class FixedLastmodSitemap(SimpleSitemap):
+     lastmod = datetime(2013, 3, 13, 10, 0, 0)
+ 
+@@ -170,6 +182,10 @@ empty_sitemaps = {
+     "empty": EmptySitemap,
+ }
+ 
++empty_callable_lastmod_sitemaps = {
++    "empty-callable-lastmod": EmptyCallableLastmodSitemap,
++}
++
+ fixed_lastmod_sitemaps = {
+     "fixed-lastmod": FixedLastmodSitemap,
+ }
+@@ -302,6 +318,12 @@ urlpatterns = [
+         {"sitemaps": empty_sitemaps},
+         name="django.contrib.sitemaps.views.sitemap",
+     ),
++    path(
++        "empty/callable-lastmod/sitemap.xml",
++        views.index,
++        {"sitemaps": empty_callable_lastmod_sitemaps},
++        name="django.contrib.sitemaps.views.index",
++    ),
+     path(
+         "lastmod/sitemap.xml",
+         views.sitemap,

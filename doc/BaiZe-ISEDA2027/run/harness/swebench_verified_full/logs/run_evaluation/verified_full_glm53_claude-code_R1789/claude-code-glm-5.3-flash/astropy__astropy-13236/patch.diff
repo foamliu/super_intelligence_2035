@@ -1,0 +1,52 @@
+diff --git a/astropy/table/table.py b/astropy/table/table.py
+index 5afe2127..6f9b8d27 100644
+--- a/astropy/table/table.py
++++ b/astropy/table/table.py
+@@ -1243,6 +1243,8 @@ class Table:
+         # mixin class
+         if (not isinstance(data, Column) and not data_is_mixin
+                 and isinstance(data, np.ndarray) and len(data.dtype) > 1):
++            warnings.warn('adding a structured ndarray to a table is deprecated, '
++                          'wrap it in a Column first', FutureWarning)
+             data = data.view(NdarrayMixin)
+             data_is_mixin = True
+ 
+diff --git a/astropy/table/tests/test_mixin.py b/astropy/table/tests/test_mixin.py
+index 2fdcd20d..ec473745 100644
+--- a/astropy/table/tests/test_mixin.py
++++ b/astropy/table/tests/test_mixin.py
+@@ -712,9 +712,15 @@ def test_ndarray_mixin():
+     d = np.arange(8, dtype='i8').reshape(4, 2).view(NdarrayMixin)
+ 
+     # Add one during initialization and the next as a new column.
+-    t = Table([a], names=['a'])
+-    t['b'] = b
+-    t['c'] = c
++    with pytest.warns(FutureWarning,
++                      match='adding a structured ndarray to a table is deprecated'):
++        t = Table([a], names=['a'])
++    with pytest.warns(FutureWarning,
++                      match='adding a structured ndarray to a table is deprecated'):
++        t['b'] = b
++    with pytest.warns(FutureWarning,
++                      match='adding a structured ndarray to a table is deprecated'):
++        t['c'] = c
+     t['d'] = d
+ 
+     assert isinstance(t['a'], NdarrayMixin)
+diff --git a/astropy_helpers b/astropy_helpers
+new file mode 160000
+index 00000000..7f11678c
+--- /dev/null
++++ b/astropy_helpers
+@@ -0,0 +1 @@
++Subproject commit 7f11678c03286f72acc9bab77868dabaeb368fda
+diff --git a/docs/changes/table/13247.api.rst b/docs/changes/table/13247.api.rst
+new file mode 100644
+index 00000000..10c1d17c
+--- /dev/null
++++ b/docs/changes/table/13247.api.rst
+@@ -0,0 +1,3 @@
++Adding a structured ``numpy`` array to a table is deprecated. Wrap the array
++in a ``Column`` first: ``Table({'a': Column(arr)})``. In a future release the
++structured array will be added as a ``Column`` instead of an ``NdarrayMixin``.

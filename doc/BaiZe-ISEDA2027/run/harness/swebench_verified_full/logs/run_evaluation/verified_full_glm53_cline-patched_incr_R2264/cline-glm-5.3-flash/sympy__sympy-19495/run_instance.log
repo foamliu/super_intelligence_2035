@@ -1,0 +1,118 @@
+2026-11-12 12:53:44,590 - INFO - Creating container for sympy__sympy-19495...
+2026-11-12 12:53:44,608 - INFO - Container for sympy__sympy-19495 created: ba168a8939ab8434f4c3fdf653163088e1c2167283ce8f0817fa7c29662db8da
+2026-11-12 12:53:45,312 - INFO - Container for sympy__sympy-19495 started: ba168a8939ab8434f4c3fdf653163088e1c2167283ce8f0817fa7c29662db8da
+2026-11-12 12:53:45,314 - INFO - Intermediate patch for sympy__sympy-19495 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2264/cline-glm-5.3-flash/sympy__sympy-19495/patch.diff, now applying to container...
+2026-11-12 12:53:45,450 - INFO - >>>>> Applied Patch:
+Checking patch sympy/sets/conditionset.py...
+Checking patch sympy/sets/tests/test_conditionset.py...
+Applied patch sympy/sets/conditionset.py cleanly.
+Applied patch sympy/sets/tests/test_conditionset.py cleanly.
+
+2026-11-12 12:53:46,151 - INFO - Git diff before:
+diff --git a/sympy/sets/conditionset.py b/sympy/sets/conditionset.py
+index 118eda6f77..2f40edf70b 100644
+--- a/sympy/sets/conditionset.py
++++ b/sympy/sets/conditionset.py
+@@ -243,7 +243,14 @@ def _eval_subs(self, old, new):
+         cond = self.condition.subs(old, new)
+         base = self.base_set.subs(old, new)
+         if cond is S.true:
+-            return ConditionSet(new, Contains(new, base), base)
++            # the condition no longer filters the base set (it does
++            # not depend on the dummy symbol) so the set is just the
++            # base set; the dummy symbol must not be replaced by
++            # `new` since it is not the target of the substitution
++            # (see issue 19485)
++            return base
++        if cond is S.false:
++            return S.EmptySet
+         return self.func(self.sym, cond, base)
+ 
+     def dummy_eq(self, other, symbol=None):
+diff --git a/sympy/sets/tests/test_conditionset.py b/sympy/sets/tests/test_conditionset.py
+index 0d4527a52c..ab7b76dd90 100644
+--- a/sympy/sets/tests/test_conditionset.py
++++ b/sympy/sets/tests/test_conditionset.py
+@@ -1,7 +1,7 @@
+ from sympy.sets import (ConditionSet, Intersection, FiniteSet,
+     EmptySet, Union, Contains)
+ from sympy import (Symbol, Eq, S, Abs, sin, pi, Interval,
+-    And, Mod, oo, Function)
++    And, Mod, oo, Function, ImageSet, Lambda, asin, Rational)
+ from sympy.testing.pytest import raises, XFAIL, warns_deprecated_sympy
+ 
+ 
+@@ -124,8 +124,10 @@ def test_subs_CondSet():
+         x + 1, x < 1, s))
+     assert ConditionSet(
+         n, n < x, Interval(0, oo)).subs(x, p) == Interval(0, oo)
++    # the condition n < p is True for every element of the base
++    # set so the base set itself is the result (issue 19485)
+     assert ConditionSet(
+-        n, n < x, Interval(-oo, 0)).subs(x, p) == S.EmptySet
++        n, n < x, Interval(-oo, 0)).subs(x, p) == Interval(-oo, 0)
+     assert ConditionSet(f(x), f(x) < 1, {w, z}
+         ).subs(f(x), y) == ConditionSet(y, y < 1, {w, z})
+ 
+@@ -139,6 +141,29 @@ def test_subs_CondSet_tebr():
+     assert c.subs(x, z) == c
+ 
+ 
++def test_issue_19485():
++    # https://github.com/sympy/sympy/issues/19485
++    # subs of a free symbol must not target the dummy symbol of
++    # the ConditionSet
++    n = Symbol('n')
++    img = ImageSet(Lambda(n, 2*n*pi + asin(y)), S.Integers)
++    cs = ConditionSet(x, Contains(y, Interval(-1, 1)), img)
++    assert cs.subs(y, Rational(1, 3)) == ImageSet(
++        Lambda(n, 2*n*pi + asin(Rational(1, 3))), S.Integers)
++    assert cs.subs(y, Rational(1, 3)) == cs.xreplace(
++        {y: Rational(1, 3)})
++    # when the condition evaluates to True the base set is the
++    # answer; when it evaluates to False the result is EmptySet
++    assert ConditionSet(x, Contains(y, Interval(-1, 1)), S.Reals
++        ).subs(y, Rational(1, 3)) == S.Reals
++    assert ConditionSet(x, Contains(y, Interval(2, 3)), S.Reals
++        ).subs(y, Rational(1, 3)) == S.EmptySet
++    # the FiniteSet base set case (from solveset_real(Abs(x) - y, x))
++    assert ConditionSet(
++        x, Contains(y, Interval(0, oo)), FiniteSet(-y, y)
++        ).subs(y, Rational(1, 3)) == FiniteSet(-Rational(1, 3), Rational(1, 3))
++
++
+ def test_dummy_eq():
+     C = ConditionSet
+     I = S.Integers
+2026-11-12 12:53:46,154 - INFO - Eval script for sympy__sympy-19495 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2264/cline-glm-5.3-flash/sympy__sympy-19495/eval.sh; copying to container...
+2026-11-12 12:53:50,818 - INFO - Test runtime: 4.58 seconds
+2026-11-12 12:53:50,820 - INFO - Test output for sympy__sympy-19495 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2264/cline-glm-5.3-flash/sympy__sympy-19495/test_output.txt
+2026-11-12 12:53:50,875 - INFO - Git diff after:
+diff --git a/sympy/sets/conditionset.py b/sympy/sets/conditionset.py
+index 118eda6f77..2f40edf70b 100644
+--- a/sympy/sets/conditionset.py
++++ b/sympy/sets/conditionset.py
+@@ -243,7 +243,14 @@ def _eval_subs(self, old, new):
+         cond = self.condition.subs(old, new)
+         base = self.base_set.subs(old, new)
+         if cond is S.true:
+-            return ConditionSet(new, Contains(new, base), base)
++            # the condition no longer filters the base set (it does
++            # not depend on the dummy symbol) so the set is just the
++            # base set; the dummy symbol must not be replaced by
++            # `new` since it is not the target of the substitution
++            # (see issue 19485)
++            return base
++        if cond is S.false:
++            return S.EmptySet
+         return self.func(self.sym, cond, base)
+ 
+     def dummy_eq(self, other, symbol=None):
+2026-11-12 12:53:50,875 - INFO - Git diff changed after running eval script
+2026-11-12 12:53:50,876 - INFO - Grading answer for sympy__sympy-19495...
+2026-11-12 12:53:50,877 - INFO - report: {'sympy__sympy-19495': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_subs_CondSet'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_CondSet', 'test_CondSet_intersect', 'test_issue_9849', 'test_simplified_FiniteSet_in_CondSet', 'test_free_symbols', 'test_subs_CondSet_tebr', 'test_dummy_eq', 'test_contains'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-19495: resolved: True
+2026-11-12 12:53:50,878 - INFO - Attempting to stop container sweb.eval.sympy__sympy-19495.verified_full_glm53_cline-patched_incr_R2264...
+2026-11-12 12:54:06,913 - INFO - Container sweb.eval.sympy__sympy-19495.verified_full_glm53_cline-patched_incr_R2264 stopped successfully.
+2026-11-12 12:54:06,913 - INFO - Attempting to remove container sweb.eval.sympy__sympy-19495.verified_full_glm53_cline-patched_incr_R2264...
+2026-11-12 12:54:06,961 - INFO - Container sweb.eval.sympy__sympy-19495.verified_full_glm53_cline-patched_incr_R2264 removed successfully.

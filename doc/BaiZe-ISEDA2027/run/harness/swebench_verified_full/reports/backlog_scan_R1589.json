@@ -1,0 +1,23 @@
+{
+  "round": "R1589",
+  "total_backlog": 2,
+  "per_harness": {
+    "cline-patched": [
+      {
+        "instance_id": "django__django-15127",
+        "patchlen": 3711
+      }
+    ],
+    "codex": [],
+    "deepseek-harness": [
+      {
+        "instance_id": "matplotlib__matplotlib-25479",
+        "patchlen": 1700
+      }
+    ],
+    "opencode": [],
+    "pi": [],
+    "claude-code": [],
+    "hermes": []
+  }
+}

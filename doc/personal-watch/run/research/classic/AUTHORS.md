@@ -6,8 +6,6 @@
 > 🔴 **找 X 的铁律（不猜）**：只登记**能从可访问页面读到**的 handle（作者本人主页 `href`，并用 X 页 `og:description` 二次核对身份）；**读不到 = 写「未找到 X」**。
 > 🚫 不许猜 handle（猜错会 follow 到无关账号，比不 follow 更糟）。X.com 自 **2026-11-11 12:4x** 起经本机 Mihomo 代理**只读可达**；**follow 仍需登录态 ⇒ 未自动执行**（0 follow，未假装）。
 
-> **当前计数（2026-11-26 09:1x 补轮 · r267）**：作者 **395** 人（编号最大 **395**）· X 已核验 **156**（本轮 **+1**：`@junyanz89` 由 GitHub 个人页 <https://github.com/junyanz> 经代理 `200` 外链 `twitter.com/junyanz89` + 代理抓 `x.com/junyanz89` `200` / 211,715 B，`og:title` = `Jun-Yan Zhu (@junyanz89) on X`、`description` = `… Associate Professor (on leave) at … @CarnegieMellon` ⇒ 双源；Lvmin Zhang `x.com/lllyasviel` 实为 `julian gomez` 他人、Mingxing Tan `x.com/MingxingTan` 为 0 followers 空账号 ⇒ 均记「未找到 X」，不猜）· 已发信 **180**（台账 #1–#180；今日 **8/12**）· 回信 **0**（0/180；已回复 0 / 无应答>14d 21 / 未到期 159）。本轮 **+3**：Jun-Yan Zhu（CycleGAN 一作，中文，本人主页明文 `junyanz at cs dot cmu dot edu` + X 双源 ⇒ 已发信 #179）· Lvmin Zhang（ControlNet 一作，中文，本人主页明文 `lvmin AT cs.stanford.edu` ⇒ 已发信 #180）· Mingxing Tan（EfficientNet 一作，中文，`mingxingtan.com` 两路 `000`、GitHub 无邮箱、PDF 无邮箱 ⇒ 仅建档、不发信）。
-> **当前计数（2026-11-26 09:0x · r266）**：作者 **392** 人（编号最大 **392**）· X 已核验 **155**（本轮 **+2**：`@tkipf` 由本人主页 <https://tkipf.github.io/>（`200` / 20,897 B）外链 `twitter.com/tkipf` + 代理抓 `x.com/tkipf` `200` / 185,469 B，`og:title` = `Thomas Kipf (@tkipf) on X`、`description` = `Research at @GoogleDeepMind…` ⇒ 双源；`@sedielem` 由本人主页 <https://sander.ai/>（`200` / 533,520 B）外链 `x.com/sedielem` + 代理抓 `x.com/sedielem` `200` / 194,071 B，`og:title` = `Sander Dieleman (@sedielem) on X`、`description` = `Research Scientist at Google DeepMind (WaveNet…)` ⇒ 双源；Aäron van den Oord `@avdnoord` 仅 X 页单源（`200` / 183,301 B）无本人主页二次核 ⇒ 记「待核」、不计入已核验）· 已发信 **178**（台账 #1–#178；今日 **6/12**）· 回信 **0**（0/178；已回复 0 / 无应答>14d 21 / 未到期 157）。本轮 **+3**：Thomas N. Kipf（GCN 一作，英文，主页无明文邮箱 ⇒ 仅建档，X 双源）/ Aäron van den Oord（WaveNet + PixelRNN 一作，荷兰姓名，无本人主页 / 无公开邮箱 ⇒ 仅建档，X 单源待核）/ Sander Dieleman（WaveNet 二作，荷兰语，本人主页明文 `sanderdieleman@gmail.com` + X 双源 ⇒ 已发信 #178，荷兰语称谓 + 英文正文）。
 > **当前计数（2026-11-26 06:1x 补轮 · r265）**：作者 **389** 人（编号最大 **389**）· X 已核验 **153**（本轮 **+1**：`@DrYangSong` 由本人主页 <https://yang-song.net/>（`200` / 48,966 B）外链 `twitter.com/DrYangSong` + 代理抓 `x.com/DrYangSong` `200` / 181,855 B，`og:title` = `Yang Song (@DrYangSong) on X`、`description` = `Research Principal of MSL` ⇒ 双源；Gao Huang 主页无本人 X 外链、`x.com/gaohuang` 404；John Schulman `x.com/Joschu` 实测 `og:title` = `Joann Schuster (@Joschu) on X` ⇒ 为另一人 ⇒ 均记「未找到 X」，不猜）· 已发信 **177**（台账 #1–#177；今日 **5/12**）· 回信 **0**（0/177；已回复 0 / 无应答>14d 21 / 未到期 156）。本轮 **+3**：Gao Huang（DenseNet 一作，中文，本人主页明文 `gaohuang AT tsinghua.edu.cn` ⇒ 已发信 #176）· Yang Song（Score-SDE 一作，中文，本人主页明文 `thusongyang@gmail.com` + X 双源 ⇒ 已发信 #177）· John Schulman（TRPO 一作，英文，`joschu.net` 页内无明文邮箱 + `https` 多次 `000` ⇒ 仅建档、不发信）。
 > **当前计数（2026-11-26 06:0x）**：作者 **386** 人（编号最大 **386**）· X 已核验 **152**（本轮 **+1**：`@neilhoulsby` 由本人主页 <https://neilhoulsby.github.io/>（`200` / 115,917 B）外链 `twitter.com/neilhoulsby` + 代理抓 `x.com/neilhoulsby` `200` / 187,162 B，`og:title` = `Neil Houlsby (@neilhoulsby) on X` ⇒ 双源；Yaron Lipman 本人站点直连与代理均 `000`、Aaron Harlap 主页无 X 外链 ⇒ 记「未找到 X」，不猜）· 已发信 **175**（台账 #1–#175；今日 **3/12**）· 回信 **0**（0/175；已回复 0 / 无应答>14d 9 / 未到期 166）。本轮 **+3**：Neil Houlsby（Adapter 一作，英文，主页明文 `neil@anthropic.com` ⇒ 已发信 #174）· Yaron Lipman（Flow Matching 一作，希伯来/英文姓名，主页两路 `000`、无明文邮箱 ⇒ 仅建档）· Aaron Harlap（PipeDream 一作，英文，主页明文 `aaron dot harlap at gmail dot com` ⇒ 已发信 #175，站点较旧已标注风险）。
 
@@ -2002,7 +2000,6 @@
 
 | 日期 | 对象 | 论文 | 邮箱来源 | 结果 |
 |:--|:--|:--|:--|:--|
-| 2026-11-26 09:0x（**第一百一十九轮**） | Sander Dieleman | `1609.03499` WaveNet | 本人主页 <https://sander.ai/> `200` / 533,520 B，页内明文 `mailto:sanderdieleman@gmail.com` | `SENT OK`（英文正文，荷兰语称谓 `Beste Sander,`；落款两行 `Best regards,` / `Yang Liu`；今日 **6/12**） |
 | 2026-11-25 00:05（**第一百零九轮**） | Kyunghyun Cho 조경현 | `1406.1078` RNN Encoder–Decoder | 本人主页 `https://kyunghyuncho.me/contact/` `200` / 33,507 B，防爬写法 `kyunghyun.cho _at_ nyu.edu`（按页面规则还原；未用 2014 论文旧地址） | `SENT OK`（`kyunghyun.cho@nyu.edu`，**한국어 297 字含空格 / 251 字不含空格**；🚦 发送前字数已核；新日期起计今日 **1/12**） |
 | 2026-11-11 11:36 | Tri Dao | `2205.14135` FlashAttention | 个人 CV PDF（2026 版） | `SENT OK`（见 `research/mail/发送记录.md`） |
 | 2026-11-11 11:43 | Shunyu Yao | `2210.03629` ReAct | 本人主页 `mailto:` | `SENT OK`（`shunyuy@princeton.edu`） |
@@ -5509,81 +5506,3 @@
 | X 账号 | **未找到 X**（主页无 X 外链；`x.com/Joschu` 实测 `og:title` = `Joann Schuster (@Joschu) on X` ⇒ 为另一人，**不登记**） |
 | 状态 | **待跟踪**（仅建档；当前无可核公开邮箱 ⇒ 不发信） |
 | 备注 | RL / RLHF 方向作者。问题候选（待有邮箱时再发）：① 信任域半径如何随 reward 尺度与 batch 规模设定；② TRPO 相对 PPO 在长序列 agent 任务上的稳定性差；③ Fisher-vector product / 共轭梯度的成本控制与近似误差。 |
-
-### 390. Thomas N. Kipf
-
-| 字段 | 内容 |
-|:--|:--|
-| 姓名 | Thomas N. Kipf（`语言=英文(判据=德/英语姓名族属 + 荷兰博士、现英国 Google DeepMind 机构；母语表未覆盖 ⇒ 英文兜底)`） |
-| 机构 | **Google DeepMind**（Senior Staff Research Scientist；GCN 发表时为 University of Amsterdam，博士导师 Max Welling） |
-| 代表论文 | **Semi-Supervised Classification with Graph Convolutional Networks**（`1609.02907`，B 轨 #423，一作；ICLR 2017） |
-| 邮箱 | **未找到**（本人主页 <https://tkipf.github.io/> `200` / 20,897 B，页内 `Contact` 指向本页 footer，**无明文邮箱 / 无 `mailto:`** ⇒ 🚫 不猜、不发信） |
-| 主页 | <https://tkipf.github.io/>（`200` / 20,897 B） |
-| X 账号 | **`@tkipf`**（主页 `href="https://twitter.com/tkipf"` 外链 + 代理抓 `x.com/tkipf` `200` / 185,469 B，`og:title` = `Thomas Kipf (@tkipf) on X`、`og:description` = `Research at @GoogleDeepMind. Gemini+Omni. Priors: GNNs, Structured World Models, Neural Assets, Veo Ingredients/References, Veo Robotics` ⇒ 双源；本轮 X +1 → 154） |
-| 状态 | **待跟踪**（无可核公开邮箱 ⇒ 不发信；X 已双源，可作言论源） |
-| 备注 | 图神经网络 / 结构化世界模型方向作者。问题候选（待有邮箱时再发）：① 边线性消息传递在稠密网表上何时失效、是否需采样邻域；② 半监督节点分类的标签传播与图结构先验如何权衡；③ 结构化世界模型的图编码是否可迁移到电路/版图这类强约束图。 |
-
-### 391. Aäron van den Oord
-
-| 字段 | 内容 |
-|:--|:--|
-| 姓名 | Aäron van den Oord（`语言=英文(判据=荷兰语姓名族属 + 英国 DeepMind 机构；如需发信按「荷兰语称谓 + 英文正文」，当前无邮箱不发)`） |
-| 机构 | **Google DeepMind**（X bio 自述 GenMedia lead；WaveNet / PixelRNN 发表时 DeepMind） |
-| 代表论文 | **WaveNet: A Generative Model for Raw Audio**（`1609.03499`，B 轨 #424，一作）· **Pixel Recurrent Neural Networks**（`1601.06759`，B 轨 #425，一作） |
-| 邮箱 | **未找到**（无本人主页；未定位可核明文地址 ⇒ 🚫 不猜、不发信） |
-| 主页 | **未找到** |
-| X 账号 | **`@avdnoord`**（代理抓 `x.com/avdnoord` `200` / 183,301 B，`og:title` = `Aäron van den Oord (@avdnoord) on X`、`og:description` = `GenMedia lead at DeepMind: Gemini Omni, Veo, Genie, Nano Banana.` ⇒ **单源**（无本人主页外链二次核）⇒ **不计入已核验**，仅登记待核） |
-| 状态 | **待跟踪**（无公开邮箱；X 单源待二次核） |
-| 备注 | 生成建模（音频 / 图像）方向作者。WaveNet 与 PixelRNN 为同一作者 ⇒ 按「同作者 ≤1」只记不重复发。问题候选：① 原始波形直接用分类分布（μ-law）vs 混合密度输出的取舍；② 逐点自回归在长序列上的并行化与缓存；③ 逐像素似然与扩散似然在小数据下的可比性。 |
-
-### 392. Sander Dieleman
-
-| 字段 | 内容 |
-|:--|:--|
-| 姓名 | Sander Dieleman（`语言=荷兰语(判据=荷兰语姓名族属 + 比利时/英国机构) ⇒ 发信用荷兰语称谓 + 英文正文`） |
-| 机构 | **Google DeepMind**（Research Scientist；本人主页 `sander.ai` 自述） |
-| 代表论文 | **WaveNet: A Generative Model for Raw Audio**（`1609.03499`，B 轨 #424，二作） |
-| 邮箱 | **`sanderdieleman@gmail.com`**（本人主页 <https://sander.ai/> — `benanne.github.io` 301 到此 — 页内 `mailto:sanderdieleman@gmail.com` 明文，`200` / 533,520 B，2026-11-26 复核） |
-| 主页 | <https://sander.ai/>（`200` / 533,520 B） |
-| X 账号 | **`@sedielem`**（主页 `href="https://x.com/sedielem"` 文本 `Twitter` 外链 + 代理抓 `x.com/sedielem` `200` / 194,071 B，`og:title` = `Sander Dieleman (@sedielem) on X`、`og:description` = `Research Scientist at Google DeepMind (WaveNet, Nano Banana, Gemini Omni). …` ⇒ 双源；本轮 X +1 → 155） |
-| 状态 | **已发信**（#178，2026-11-26 09:0x） |
-| 备注 | 生成模型 / 音频方向作者。问题候选见 `mail/drafts/1609.03499.md`：① μ-law 256 类输出 vs 高保真输出分布的取舍；② 固定算力下 dilation cycle / 堆叠层数与通道宽度的分配；③ 逐点自回归生成的缓存瓶颈与并行化解码。 |
-
-### 393. Jun-Yan Zhu
-
-| 字段 | 内容 |
-|:--|:--|
-| 姓名 | Jun-Yan Zhu（`语言=中文(判据=华人姓名族属 Zhu Jun-Yan + 清华 B.E. / CMU 机构)`） |
-| 机构 | **Carnegie Mellon University**（Michael B. Donohue Associate Professor of Computer Science & Robotics；主页自述 Nunchux AI 联合创始人 / Chief Scientist） |
-| 代表论文 | **Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks**（`1703.10593`，B 轨 #426，一作） |
-| 邮箱 | **`junyanz@cs.cmu.edu`**（本人主页 <https://www.cs.cmu.edu/~junyanz/> `HTTP 200` / **186,301 B**，页内明文 `Email : junyanz at cs dot cmu dot edu`，2026-11-26 复核；**A 级**） |
-| 主页 | <https://www.cs.cmu.edu/~junyanz/>（`200` / 186,301 B） |
-| X 账号 | **`@junyanz89`**（GitHub 个人页 <https://github.com/junyanz> 经代理 `200` 外链 `twitter.com/junyanz89` + 代理抓 `x.com/junyanz89` `200` / **211,715 B**，`og:title` = `Jun-Yan Zhu (@junyanz89) on X`、`og:description` = `Building the Frontier of Multimodal Inference @NunchuxAI, Associate Professor (on leave) at the Generative Intelligence Lab @CarnegieMellon.` ⇒ 双源；本轮 X +1 → 156） |
-| 状态 | **已发信**（#179，2026-11-26 09:1x） |
-| 备注 | 语言=中文(判据=华人姓名族属 Zhu Jun-Yan + 清华 B.E./CMU 机构)。生成模型 / 图像转换方向作者。问题候选见 `mail/drafts/1703.10593.md`：① 循环一致权重 λ=10 的可观测判据；② 几何保持场景下显式空间约束 vs 弱配对/成对监督；③ 结构域→纹理域的 G/F 容量不对称。 |
-
-### 394. Lvmin Zhang
-
-| 字段 | 内容 |
-|:--|:--|
-| 姓名 | Lvmin Zhang（拼音名；汉字未核，不猜）（`语言=中文(判据=华人拼音姓名族属 Zhang Lvmin + 苏州大学 B.Eng. / Stanford 机构)`） |
-| 机构 | **Stanford University**（Computer Science PhD candidate，导师 Maneesh Agrawala；主页最新条目 2026-09-24） |
-| 代表论文 | **Adding Conditional Control to Text-to-Image Diffusion Models**（`2302.05543`，B 轨 #427，一作） |
-| 邮箱 | **`lvmin@cs.stanford.edu`**（本人主页 <https://lllyasviel.github.io/lvmin_zhang/> `HTTP 200` / **58,741 B**，页内明文 `lvmin AT cs.stanford.edu / lvminzhang AT acm.org`，2026-11-26 复核；**A 级**） |
-| 主页 | <https://lllyasviel.github.io/lvmin_zhang/>（`200` / 58,741 B） |
-| X 账号 | **未找到 X**（`x.com/lllyasviel` `og:title` = `julian gomez (@lllyasviel) on X`、129 followers / 161 following ⇒ 判他人；本人主页无 X 外链；不猜、不登记） |
-| 状态 | **已发信**（#180，2026-11-26 09:1x） |
-| 备注 | 语言=中文(判据=华人拼音姓名族属 Zhang Lvmin + 苏州大学 B.Eng./Stanford 机构)。可控生成 / 人机交互方向作者。问题候选见 `mail/drafts/2302.05543.md`：① 小数据下零初始化卷积 vs LoRA/adapter 的等参数量对照；② 多条件共享一份可训练副本还是各自独立、冲突如何加权；③ 显存受限时副本能否只限前若干层。 |
-
-### 395. Mingxing Tan
-
-| 字段 | 内容 |
-|:--|:--|
-| 姓名 | Mingxing Tan（拼音名；汉字未核，不猜）（`语言=中文(判据=华人拼音姓名族属 Tan Mingxing + Google 机构；如发信按中文，当前无邮箱不发)`） |
-| 机构 | **Google**（EfficientNet 发表时 Google Brain / Research；当前岗位未核） |
-| 代表论文 | **EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks**（`1905.11946`，B 轨 #428，一作） |
-| 邮箱 | **未找到**（`mingxingtan.com` 直连与经代理均超时 `000`；GitHub <https://github.com/mingxingtan> 经代理 `200` 但无 bio / 无邮箱；EfficientNet PDF 首页无作者邮箱 ⇒ 不猜、不发信） |
-| 主页 | **未找到**（候选 `mingxingtan.com` 不可达） |
-| X 账号 | **未找到 X**（`x.com/MingxingTan` `og:title` = `MingxingTan (@MingxingTan) on X`，但 **0 followers / 5 following**、无本人主页外链 ⇒ 判不可靠，不登记） |
-| 状态 | **待跟踪**（无可核公开邮箱 / 无可核 X） |
-| 备注 | 语言=中文(判据=华人拼音姓名族属 Tan Mingxing + Google 机构)。模型缩放 / 视觉骨干方向作者。问题候选（待有邮箱时再发）：① 复合系数在「深度/宽度/分辨率」之外的第四个轴（序列长度）如何外推；② 同精度下的推理成本优势能否在训练成本上也成立；③ 小数据迁移时复合缩放是否仍优于单轴放大。 |

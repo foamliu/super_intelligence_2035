@@ -1,0 +1,55 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index a8c5342..97e6a59 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -34,7 +34,10 @@ Enhancements
+ Bug fixes
+ ~~~~~~~~~
+ 
+-- Improved error handling and documentation for `.expand_dims()` 
++- Fixed ``combine_by_coords`` raising an error when passed datasets with
++  identical non-monotonic coordinates, which should be ignored as bystander
++  dimensions (:issue:`3150`).
++- Improved error handling and documentation for `.expand_dims()`
+   read-only view.
+ - Fix tests for big-endian systems (:issue:`3125`).
+   By `Graham Inggs <https://github.com/ginggs>`_.
+diff --git a/xarray/core/combine.py b/xarray/core/combine.py
+index 37ae903..facb695 100644
+--- a/xarray/core/combine.py
++++ b/xarray/core/combine.py
+@@ -501,7 +501,7 @@ def combine_by_coords(datasets, compat='no_conflicts', data_vars='all',
+                                    fill_value=fill_value)
+ 
+         # Check the overall coordinates are monotonically increasing
+-        for dim in concatenated.dims:
++        for dim in concat_dims:
+             if dim in concatenated:
+                 indexes = concatenated.indexes.get(dim)
+                 if not (indexes.is_monotonic_increasing
+diff --git a/xarray/tests/test_combine.py b/xarray/tests/test_combine.py
+index 77e2993..312900a 100644
+--- a/xarray/tests/test_combine.py
++++ b/xarray/tests/test_combine.py
+@@ -618,6 +618,21 @@ class TestCombineAuto:
+                                       " along dimension x"):
+             combine_by_coords([ds1, ds0])
+ 
++    def test_combine_by_coords_non_monotonic_identical_coords(self):
++        # Non-monotonic coordinates that are identical on both datasets
++        # should not raise an error. (GH3150)
++        yCoord = ['a', 'c', 'b']
++        ds1 = Dataset({'data': (['x', 'y'], [[1, 2, 3], [4, 5, 6]])},
++                      {'x': [1, 2], 'y': yCoord})
++        ds2 = Dataset({'data': (['x', 'y'], [[7, 8, 9], [10, 11, 12]])},
++                      {'x': [3, 4], 'y': yCoord})
++        actual = combine_by_coords([ds1, ds2])
++        expected = Dataset({'data': (['x', 'y'],
++                                     [[1, 2, 3], [4, 5, 6],
++                                      [7, 8, 9], [10, 11, 12]])},
++                           {'x': [1, 2, 3, 4], 'y': yCoord})
++        assert_identical(expected, actual)
++
+ 
+ @pytest.mark.filterwarnings("ignore:In xarray version 0.13 `auto_combine` "
+                             "will be deprecated")

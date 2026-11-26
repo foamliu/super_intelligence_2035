@@ -1,0 +1,45 @@
+diff --git a/sklearn/utils/_set_output.py b/sklearn/utils/_set_output.py
+index 335773c6..d27df000 100644
+--- a/sklearn/utils/_set_output.py
++++ b/sklearn/utils/_set_output.py
+@@ -55,7 +55,7 @@ def _wrap_in_pandas_container(
+     if isinstance(data_to_wrap, pd.DataFrame):
+         if columns is not None:
+             data_to_wrap.columns = columns
+-        if index is not None:
++        if index is not None and len(index) == len(data_to_wrap):
+             data_to_wrap.index = index
+         return data_to_wrap
+ 
+diff --git a/sklearn/utils/tests/test_set_output.py b/sklearn/utils/tests/test_set_output.py
+index ac73ca09..40baa183 100644
+--- a/sklearn/utils/tests/test_set_output.py
++++ b/sklearn/utils/tests/test_set_output.py
+@@ -260,3 +260,27 @@ def test_set_output_mro():
+         pass
+ 
+     assert C().transform(None) == "B"
++
++
++def test__wrap_in_pandas_container_mismatched_index_length():
++    """Check that _wrap_in_pandas_container preserves original index when
++    data_to_wrap has a different number of rows than the provided index.
++
++    Non-regression test for: https://github.com/scikit-learn/scikit-learn/issues/25591
++    """
++    pd = pytest.importorskip("pandas")
++
++    # DataFrame with 4 rows, but index with 6 elements
++    X_df = pd.DataFrame({"a": [1, 2, 3, 4]}, index=[10, 20, 30, 40])
++    new_index = [100, 200, 300, 400, 500, 600]
++
++    # Should not raise, and should keep original index
++    result = _wrap_in_pandas_container(X_df, columns=None, index=new_index)
++    assert_array_equal(result.index, [10, 20, 30, 40])
++    assert_array_equal(result.columns, ["a"])
++
++    # When lengths match, index should be updated
++    X_df2 = pd.DataFrame({"a": [1, 2, 3]}, index=[10, 20, 30])
++    new_index2 = [100, 200, 300]
++    result2 = _wrap_in_pandas_container(X_df2, columns=None, index=new_index2)
++    assert_array_equal(result2.index, [100, 200, 300])

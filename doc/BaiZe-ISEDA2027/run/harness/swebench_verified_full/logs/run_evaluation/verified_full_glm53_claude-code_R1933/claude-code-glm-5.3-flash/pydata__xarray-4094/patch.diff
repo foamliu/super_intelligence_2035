@@ -1,0 +1,46 @@
+diff --git a/doc/whats-new.rst b/doc/whats-new.rst
+index c1440ec..71fea9d 100644
+--- a/doc/whats-new.rst
++++ b/doc/whats-new.rst
+@@ -118,6 +118,9 @@ Bug fixes
+ ~~~~~~~~~
+ - Fix errors combining attrs in :py:func:`open_mfdataset` (:issue:`4009`, :pull:`4173`)
+   By `John Omotani <https://github.com/johnomotani>`_
++- Fix ``DataArray.to_unstacked_dataset()`` for variables with only a single
++  dimension (:issue:`4021`)
++  By `Yang Liu <https://github.com/aliuq>`_
+ - If groupby receives a ``DataArray`` with name=None, assign a default name (:issue:`158`)
+   By `Phil Butcher <https://github.com/pjbutcher>`_.
+ - Support dark mode in VS code (:issue:`4024`)
+diff --git a/xarray/core/dataarray.py b/xarray/core/dataarray.py
+index b0df874..3be9bb7 100644
+--- a/xarray/core/dataarray.py
++++ b/xarray/core/dataarray.py
+@@ -1961,7 +1961,7 @@ class DataArray(AbstractArray, DataWithCoords):
+         # pull variables out of datarray
+         data_dict = {}
+         for k in variables:
+-            data_dict[k] = self.sel({variable_dim: k}).squeeze(drop=True)
++            data_dict[k] = self.sel({variable_dim: k}, drop=True).squeeze(drop=True)
+ 
+         # unstacked dataset
+         return Dataset(data_dict)
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index 9c8d407..ce9dfbb 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -3055,6 +3055,14 @@ class TestDataset:
+         x = y.to_unstacked_dataset("features")
+         assert_identical(D, x)
+ 
++    def test_to_stacked_array_to_unstacked_dataset_single_dimension(self):
++        # regression test for GH4021
++        arr = xr.DataArray(np.arange(3), coords=[("x", [0, 1, 2])])
++        data = xr.Dataset({"a": arr, "b": arr})
++        stacked = data.to_stacked_array("y", sample_dims=["x"])
++        roundtripped = stacked.to_unstacked_dataset("y")
++        assert_identical(data, roundtripped)
++
+     def test_update(self):
+         data = create_test_data(seed=0)
+         expected = data.copy()

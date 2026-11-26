@@ -1,0 +1,92 @@
+diff --git a/django/core/serializers/python.py b/django/core/serializers/python.py
+index 36048601a..4ad563ba4 100644
+--- a/django/core/serializers/python.py
++++ b/django/core/serializers/python.py
+@@ -79,7 +79,7 @@ class Serializer(base.Serializer):
+                     return self._value_from_field(value, value._meta.pk)
+ 
+                 def queryset_iterator(obj, field):
+-                    return getattr(obj, field.name).only("pk").iterator()
++                    return getattr(obj, field.name).select_related(None).only("pk").iterator()
+ 
+             m2m_iter = getattr(obj, "_prefetched_objects_cache", {}).get(
+                 field.name,
+diff --git a/django/core/serializers/xml_serializer.py b/django/core/serializers/xml_serializer.py
+index 1d3269c41..44458be22 100644
+--- a/django/core/serializers/xml_serializer.py
++++ b/django/core/serializers/xml_serializer.py
+@@ -155,7 +155,7 @@ class Serializer(base.Serializer):
+                     self.xml.addQuickElement("object", attrs={"pk": str(value.pk)})
+ 
+                 def queryset_iterator(obj, field):
+-                    return getattr(obj, field.name).only("pk").iterator()
++                    return getattr(obj, field.name).select_related(None).only("pk").iterator()
+ 
+             m2m_iter = getattr(obj, "_prefetched_objects_cache", {}).get(
+                 field.name,
+diff --git a/tests/serializers/models/base.py b/tests/serializers/models/base.py
+index af9ca2b20..8fef1f0b7 100644
+--- a/tests/serializers/models/base.py
++++ b/tests/serializers/models/base.py
+@@ -163,3 +163,27 @@ class ComplexModel(models.Model):
+     field1 = models.CharField(max_length=10)
+     field2 = models.CharField(max_length=10)
+     field3 = models.CharField(max_length=10)
++
++
++class M2MCustomManagerTagManager(models.Manager):
++    def get_queryset(self):
++        qs = super().get_queryset()
++        qs = qs.select_related("master")
++        return qs
++
++
++class M2MCustomManagerTagMaster(models.Model):
++    name = models.CharField(max_length=120)
++
++
++class M2MCustomManagerTag(models.Model):
++    objects = M2MCustomManagerTagManager()
++    name = models.CharField(max_length=120)
++    master = models.ForeignKey(
++        M2MCustomManagerTagMaster, on_delete=models.SET_NULL, null=True
++    )
++
++
++class M2MCustomManagerTest(models.Model):
++    name = models.CharField(max_length=120)
++    tags = models.ManyToManyField(M2MCustomManagerTag, blank=True)
+diff --git a/tests/serializers/tests.py b/tests/serializers/tests.py
+index 67ae8f43d..212509405 100644
+--- a/tests/serializers/tests.py
++++ b/tests/serializers/tests.py
+@@ -20,6 +20,9 @@ from .models import (
+     Category,
+     Child,
+     ComplexModel,
++    M2MCustomManagerTag,
++    M2MCustomManagerTagMaster,
++    M2MCustomManagerTest,
+     Movie,
+     Player,
+     ProxyBaseModel,
+@@ -349,6 +352,19 @@ class SerializersTestBase:
+         date_values = self._get_field_values(serial_str, "pub_date")
+         self.assertEqual(date_values[0].replace("T", " "), "0001-02-03 04:05:06")
+ 
++    def test_serialize_m2m_with_custom_manager_select_related(self):
++        """
++        Serialization of m2m relations works when the related model has a
++        custom manager using select_related().
++        """
++        tag_master = M2MCustomManagerTagMaster.objects.create(name="master")
++        tag = M2MCustomManagerTag.objects.create(name="tag", master=tag_master)
++        test_obj = M2MCustomManagerTest.objects.create(name="test")
++        test_obj.tags.add(tag)
++
++        serial_str = serializers.serialize(self.serializer_name, [test_obj])
++        self.assertTrue(self._validate_output(serial_str))
++
+     def test_pkless_serialized_strings(self):
+         """
+         Serialized strings without PKs can be turned into models

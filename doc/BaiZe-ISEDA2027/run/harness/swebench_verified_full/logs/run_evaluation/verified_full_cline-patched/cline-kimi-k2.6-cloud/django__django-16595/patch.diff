@@ -1,0 +1,65 @@
+diff --git a/django/db/migrations/operations/fields.py b/django/db/migrations/operations/fields.py
+index cd3aab43a..12c988c44 100644
+--- a/django/db/migrations/operations/fields.py
++++ b/django/db/migrations/operations/fields.py
+@@ -247,7 +247,11 @@ class AlterField(FieldOperation):
+         return "alter_%s_%s" % (self.model_name_lower, self.name_lower)
+ 
+     def reduce(self, operation, app_label):
+-        if isinstance(operation, RemoveField) and self.is_same_field_operation(
++        if isinstance(operation, AlterField) and self.is_same_field_operation(
++            operation
++        ):
++            return [operation]
++        elif isinstance(operation, RemoveField) and self.is_same_field_operation(
+             operation
+         ):
+             return [operation]
+diff --git a/tests/migrations/test_optimizer.py b/tests/migrations/test_optimizer.py
+index 6485009eb..aa6b67d3d 100644
+--- a/tests/migrations/test_optimizer.py
++++ b/tests/migrations/test_optimizer.py
+@@ -796,6 +796,43 @@ class OptimizerTests(SimpleTestCase):
+             ],
+         )
+ 
++    def test_alter_field_alter_field(self):
++        """
++        Multiple AlterField operations on the same field should optimize into
++        the last AlterField.
++        """
++        self.assertOptimizesTo(
++            [
++                migrations.AlterField(
++                    "Foo",
++                    "age",
++                    models.CharField(max_length=256, null=True),
++                ),
++                migrations.AlterField(
++                    "Foo",
++                    "age",
++                    models.CharField(max_length=128, null=True),
++                ),
++                migrations.AlterField(
++                    "Foo",
++                    "age",
++                    models.CharField(max_length=128, null=True, help_text="help"),
++                ),
++                migrations.AlterField(
++                    "Foo",
++                    "age",
++                    models.CharField(max_length=128, null=True, help_text="help", default=None),
++                ),
++            ],
++            [
++                migrations.AlterField(
++                    "Foo",
++                    "age",
++                    models.CharField(max_length=128, null=True, help_text="help", default=None),
++                ),
++            ],
++        )
++
+     def test_add_field_delete_field(self):
+         """
+         RemoveField should cancel AddField

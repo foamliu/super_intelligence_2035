@@ -1,0 +1,96 @@
+2026-11-09 13:24:00,079 - INFO - Creating container for django__django-12858...
+2026-11-09 13:24:00,101 - INFO - Container for django__django-12858 created: 3b3fee01ac713809d88d84bd24177c21679010af09703e89fe52aaf9c9411c30
+2026-11-09 13:24:01,050 - INFO - Container for django__django-12858 started: 3b3fee01ac713809d88d84bd24177c21679010af09703e89fe52aaf9c9411c30
+2026-11-09 13:24:01,052 - INFO - Intermediate patch for django__django-12858 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-12858/patch.diff, now applying to container...
+2026-11-09 13:24:01,163 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/base.py...
+Checking patch tests/invalid_models_tests/test_models.py...
+Applied patch django/db/models/base.py cleanly.
+Applied patch tests/invalid_models_tests/test_models.py cleanly.
+
+2026-11-09 13:24:02,576 - INFO - Git diff before:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 6c9e9d3707..bc6f7d283e 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -1747,7 +1747,9 @@ class Model(metaclass=ModelBase):
+                     else:
+                         _cls = None
+                 except (FieldDoesNotExist, AttributeError):
+-                    if fld is None or fld.get_transform(part) is None:
++                    if fld is None or (
++                        fld.get_transform(part) is None and fld.get_lookup(part) is None
++                    ):
+                         errors.append(
+                             checks.Error(
+                                 "'ordering' refers to the nonexistent field, "
+diff --git a/tests/invalid_models_tests/test_models.py b/tests/invalid_models_tests/test_models.py
+index 6bfdf2e736..952e54dc3a 100644
+--- a/tests/invalid_models_tests/test_models.py
++++ b/tests/invalid_models_tests/test_models.py
+@@ -893,6 +893,38 @@ class OtherModelTests(SimpleTestCase):
+         with register_lookup(models.CharField, Lower):
+             self.assertEqual(Model.check(), [])
+ 
++    def test_ordering_allows_lookups(self):
++        class Parent(models.Model):
++            pass
++
++        class Child(models.Model):
++            parent = models.ForeignKey(Parent, models.CASCADE, null=True)
++            test = models.CharField(max_length=100)
++
++            class Meta:
++                ordering = ('parent__isnull', 'test__isnull')
++
++        self.assertEqual(Child.check(), [])
++
++    def test_ordering_pointing_to_invalid_lookup(self):
++        class Parent(models.Model):
++            pass
++
++        class Child(models.Model):
++            parent = models.ForeignKey(Parent, models.CASCADE)
++
++            class Meta:
++                ordering = ('parent__invalid_lookup',)
++
++        self.assertEqual(Child.check(), [
++            Error(
++                "'ordering' refers to the nonexistent field, related field, "
++                "or lookup 'parent__invalid_lookup'.",
++                obj=Child,
++                id='models.E015',
++            ),
++        ])
++
+     def test_ordering_pointing_to_related_model_pk(self):
+         class Parent(models.Model):
+             pass
+2026-11-09 13:24:02,579 - INFO - Eval script for django__django-12858 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-12858/eval.sh; copying to container...
+2026-11-09 13:24:08,908 - INFO - Test runtime: 6.26 seconds
+2026-11-09 13:24:08,910 - INFO - Test output for django__django-12858 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-12858/test_output.txt
+2026-11-09 13:24:08,975 - INFO - Git diff after:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 6c9e9d3707..bc6f7d283e 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -1747,7 +1747,9 @@ class Model(metaclass=ModelBase):
+                     else:
+                         _cls = None
+                 except (FieldDoesNotExist, AttributeError):
+-                    if fld is None or fld.get_transform(part) is None:
++                    if fld is None or (
++                        fld.get_transform(part) is None and fld.get_lookup(part) is None
++                    ):
+                         errors.append(
+                             checks.Error(
+                                 "'ordering' refers to the nonexistent field, "
+2026-11-09 13:24:08,975 - INFO - Git diff changed after running eval script
+2026-11-09 13:24:08,975 - INFO - Grading answer for django__django-12858...
+2026-11-09 13:24:08,976 - INFO - report: {'django__django-12858': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_ordering_pointing_to_lookup_not_transform (invalid_models_tests.test_models.OtherModelTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_check_constraints (invalid_models_tests.test_models.ConstraintsTests)', 'test_check_constraints_required_db_features (invalid_models_tests.test_models.ConstraintsTests)', 'test_deferrable_unique_constraint (invalid_models_tests.test_models.ConstraintsTests)', 'test_deferrable_unique_constraint_required_db_features (invalid_models_tests.test_models.ConstraintsTests)', 'test_unique_constraint_with_condition (invalid_models_tests.test_models.ConstraintsTests)', 'test_unique_constraint_with_condition_required_db_features (invalid_models_tests.test_models.ConstraintsTests)', 'test_db_column_clash (invalid_models_tests.test_models.FieldNamesTests)', 'test_ending_with_underscore (invalid_models_tests.test_models.FieldNamesTests)', 'test_including_separator (invalid_models_tests.test_models.FieldNamesTests)', 'test_pk (invalid_models_tests.test_models.FieldNamesTests)', 'test_list_containing_non_iterable (invalid_models_tests.test_models.UniqueTogetherTests)', 'test_non_iterable (invalid_models_tests.test_models.UniqueTogetherTests)', 'test_non_list (invalid_models_tests.test_models.UniqueTogetherTests)', 'test_pointing_to_fk (invalid_models_tests.test_models.UniqueTogetherTests)', 'test_pointing_to_m2m (invalid_models_tests.test_models.UniqueTogetherTests)', 'test_pointing_to_missing_field (invalid_models_tests.test_models.UniqueTogetherTests)', 'test_valid_model (invalid_models_tests.test_models.UniqueTogetherTests)', 'test_list_containing_non_iterable (invalid_models_tests.test_models.IndexTogetherTests)', 'test_non_iterable (invalid_models_tests.test_models.IndexTogetherTests)', 'test_non_list (invalid_models_tests.test_models.IndexTogetherTests)', 'test_pointing_to_fk (invalid_models_tests.test_models.IndexTogetherTests)', 'test_pointing_to_m2m_field (invalid_models_tests.test_models.IndexTogetherTests)', 'test_pointing_to_missing_field (invalid_models_tests.test_models.IndexTogetherTests)', 'test_pointing_to_non_local_field (invalid_models_tests.test_models.IndexTogetherTests)', 'test_field_name_clash_with_child_accessor (invalid_models_tests.test_models.ShadowingFieldsTests)', 'test_id_clash (invalid_models_tests.test_models.ShadowingFieldsTests)', 'test_inheritance_clash (invalid_models_tests.test_models.ShadowingFieldsTests)', 'test_multigeneration_inheritance (invalid_models_tests.test_models.ShadowingFieldsTests)', 'test_multiinheritance_clash (invalid_models_tests.test_models.ShadowingFieldsTests)', 'test_index_with_condition (invalid_models_tests.test_models.IndexesTests)', 'test_index_with_condition_required_db_features (invalid_models_tests.test_models.IndexesTests)', 'test_max_name_length (invalid_models_tests.test_models.IndexesTests)', 'test_name_constraints (invalid_models_tests.test_models.IndexesTests)', 'test_pointing_to_fk (invalid_models_tests.test_models.IndexesTests)', 'test_pointing_to_m2m_field (invalid_models_tests.test_models.IndexesTests)', 'test_pointing_to_missing_field (invalid_models_tests.test_models.IndexesTests)', 'test_pointing_to_non_local_field (invalid_models_tests.test_models.IndexesTests)', 'test_just_order_with_respect_to_no_errors (invalid_models_tests.test_models.OtherModelTests)', 'test_just_ordering_no_errors (invalid_models_tests.test_models.OtherModelTests)', 'test_lazy_reference_checks (invalid_models_tests.test_models.OtherModelTests)', 'test_m2m_autogenerated_table_name_clash (invalid_models_tests.test_models.OtherModelTests)', 'test_m2m_autogenerated_table_name_clash_database_routers_installed (invalid_models_tests.test_models.OtherModelTests)', 'test_m2m_field_table_name_clash (invalid_models_tests.test_models.OtherModelTests)', 'test_m2m_field_table_name_clash_database_routers_installed (invalid_models_tests.test_models.OtherModelTests)', 'test_m2m_table_name_clash (invalid_models_tests.test_models.OtherModelTests)', 'test_m2m_table_name_clash_database_routers_installed (invalid_models_tests.test_models.OtherModelTests)', 'test_m2m_to_concrete_and_proxy_allowed (invalid_models_tests.test_models.OtherModelTests)', 'test_m2m_unmanaged_shadow_models_not_checked (invalid_models_tests.test_models.OtherModelTests)', 'test_name_beginning_with_underscore (invalid_models_tests.test_models.OtherModelTests)', 'test_name_contains_double_underscores (invalid_models_tests.test_models.OtherModelTests)', 'test_name_ending_with_underscore (invalid_models_tests.test_models.OtherModelTests)', 'test_non_valid (invalid_models_tests.test_models.OtherModelTests)', 'test_onetoone_with_explicit_parent_link_parent_model (invalid_models_tests.test_models.OtherModelTests)', 'test_onetoone_with_parent_model (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_allows_registered_lookups (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_non_iterable (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_pointing_multiple_times_to_model_fields (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_pointing_to_foreignkey_field (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_pointing_to_missing_field (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_pointing_to_missing_foreignkey_field (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_pointing_to_missing_related_field (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_pointing_to_missing_related_model_field (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_pointing_to_non_related_field (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_pointing_to_related_model_pk (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_pointing_to_two_related_model_field (invalid_models_tests.test_models.OtherModelTests)', 'test_ordering_with_order_with_respect_to (invalid_models_tests.test_models.OtherModelTests)', 'test_property_and_related_field_accessor_clash (invalid_models_tests.test_models.OtherModelTests)', 'test_single_primary_key (invalid_models_tests.test_models.OtherModelTests)', 'test_swappable_missing_app (invalid_models_tests.test_models.OtherModelTests)', 'test_swappable_missing_app_name (invalid_models_tests.test_models.OtherModelTests)', 'test_two_m2m_through_same_model_with_different_through_fields (invalid_models_tests.test_models.OtherModelTests)', 'test_two_m2m_through_same_relationship (invalid_models_tests.test_models.OtherModelTests)', 'test_unique_primary_key (invalid_models_tests.test_models.OtherModelTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12858: resolved: True
+2026-11-09 13:24:08,978 - INFO - Attempting to stop container sweb.eval.django__django-12858.verified_full_glm53_opencode_R1933...
+2026-11-09 13:24:25,116 - INFO - Container sweb.eval.django__django-12858.verified_full_glm53_opencode_R1933 stopped successfully.
+2026-11-09 13:24:25,116 - INFO - Attempting to remove container sweb.eval.django__django-12858.verified_full_glm53_opencode_R1933...
+2026-11-09 13:24:25,153 - INFO - Container sweb.eval.django__django-12858.verified_full_glm53_opencode_R1933 removed successfully.

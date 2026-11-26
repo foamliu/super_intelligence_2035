@@ -1,0 +1,95 @@
+2026-11-03 08:14:20,884 - INFO - Creating container for scikit-learn__scikit-learn-12585...
+2026-11-03 08:14:20,911 - INFO - Container for scikit-learn__scikit-learn-12585 created: 54248a4b81c8be06c971814c40e20ebc189d4d612ecd5d4eedc1b11dfbf96c5c
+2026-11-03 08:14:21,765 - INFO - Container for scikit-learn__scikit-learn-12585 started: 54248a4b81c8be06c971814c40e20ebc189d4d612ecd5d4eedc1b11dfbf96c5c
+2026-11-03 08:14:21,767 - INFO - Intermediate patch for scikit-learn__scikit-learn-12585 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-12585/patch.diff, now applying to container...
+2026-11-03 08:14:21,902 - INFO - >>>>> Applied Patch:
+Checking patch shim/sitecustomize.py...
+Checking patch sklearn/base.py...
+Checking patch sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py...
+Checking patch sklearn/tests/test_base.py...
+Applied patch shim/sitecustomize.py cleanly.
+Applied patch sklearn/base.py cleanly.
+Applied patch sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py cleanly.
+Applied patch sklearn/tests/test_base.py cleanly.
+
+2026-11-03 08:14:22,320 - INFO - Git diff before:
+diff --git a/sklearn/base.py b/sklearn/base.py
+index 56ffb18bf..34998270c 100644
+--- a/sklearn/base.py
++++ b/sklearn/base.py
+@@ -48,7 +48,7 @@ def clone(estimator, safe=True):
+     # XXX: not handling dictionaries
+     if estimator_type in (list, tuple, set, frozenset):
+         return estimator_type([clone(e, safe=safe) for e in estimator])
+-    elif not hasattr(estimator, 'get_params'):
++    elif not hasattr(estimator, 'get_params') or isinstance(estimator, type):
+         if not safe:
+             return copy.deepcopy(estimator)
+         else:
+diff --git a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+index bf92569c1..32b0d62f9 100644
+--- a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
++++ b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+@@ -147,6 +147,7 @@ def _make_cell_set_template_code():
+     else:
+         return types.CodeType(
+             co.co_argcount,
++            getattr(co, 'co_posonlyargcount', 0),
+             co.co_kwonlyargcount,
+             co.co_nlocals,
+             co.co_stacksize,
+diff --git a/sklearn/tests/test_base.py b/sklearn/tests/test_base.py
+index ebcb38925..95dd52df2 100644
+--- a/sklearn/tests/test_base.py
++++ b/sklearn/tests/test_base.py
+@@ -167,6 +167,13 @@ def test_clone_sparse_matrices():
+         assert_array_equal(clf.empty.toarray(), clf_cloned.empty.toarray())
+ 
+ 
++def test_clone_estimator_class_as_parameter():
++    # Regression test for cloning when a parameter is an estimator class.
++    clf = MyEstimator(empty=MyEstimator)
++    clf_cloned = clone(clf)
++    assert clf_cloned.empty is MyEstimator
++
++
+ def test_repr():
+     # Smoke test the repr of the base estimator.
+     my_estimator = MyEstimator()
+2026-11-03 08:14:22,323 - INFO - Eval script for scikit-learn__scikit-learn-12585 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-12585/eval.sh; copying to container...
+2026-11-03 08:14:25,958 - INFO - Test runtime: 3.53 seconds
+2026-11-03 08:14:25,960 - INFO - Test output for scikit-learn__scikit-learn-12585 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-12585/test_output.txt
+2026-11-03 08:14:26,031 - INFO - Git diff after:
+diff --git a/sklearn/base.py b/sklearn/base.py
+index 56ffb18bf..34998270c 100644
+--- a/sklearn/base.py
++++ b/sklearn/base.py
+@@ -48,7 +48,7 @@ def clone(estimator, safe=True):
+     # XXX: not handling dictionaries
+     if estimator_type in (list, tuple, set, frozenset):
+         return estimator_type([clone(e, safe=safe) for e in estimator])
+-    elif not hasattr(estimator, 'get_params'):
++    elif not hasattr(estimator, 'get_params') or isinstance(estimator, type):
+         if not safe:
+             return copy.deepcopy(estimator)
+         else:
+diff --git a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+index bf92569c1..32b0d62f9 100644
+--- a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
++++ b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+@@ -147,6 +147,7 @@ def _make_cell_set_template_code():
+     else:
+         return types.CodeType(
+             co.co_argcount,
++            getattr(co, 'co_posonlyargcount', 0),
+             co.co_kwonlyargcount,
+             co.co_nlocals,
+             co.co_stacksize,
+2026-11-03 08:14:26,031 - INFO - Git diff changed after running eval script
+2026-11-03 08:14:26,031 - INFO - Grading answer for scikit-learn__scikit-learn-12585...
+2026-11-03 08:14:26,068 - INFO - report: {'scikit-learn__scikit-learn-12585': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': False, 'resolved': False, 'infra_failure': False}}
+Result for scikit-learn__scikit-learn-12585: resolved: False
+2026-11-03 08:14:26,070 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-12585.verified_full_hermes...
+2026-11-03 08:14:42,023 - INFO - Container sweb.eval.scikit-learn__scikit-learn-12585.verified_full_hermes stopped successfully.
+2026-11-03 08:14:42,024 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-12585.verified_full_hermes...
+2026-11-03 08:14:42,053 - INFO - Container sweb.eval.scikit-learn__scikit-learn-12585.verified_full_hermes removed successfully.

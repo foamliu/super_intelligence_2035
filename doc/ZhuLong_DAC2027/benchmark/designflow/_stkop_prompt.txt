@@ -1,0 +1,66 @@
+# 串联堆叠 MOS 静态工作点分析工具
+
+## 背景（真实用户任务）
+
+模拟工程师 e0029308 在 `hfeg0pkn002` 上跑一颗五管 OTA 的静态工作点仿真（`/proj/lacaa/TV1_DBC_Virtuoso/workdir/e0029308/STD_PLDX_LVL_SIM/OP_DC_SIM`，FineSim dcOpInfo）。这颗 OTA 的输入对管用了「两只 MOS 串联（stack）当成一根较长 L 的管子」的结构。e0029308 连问了三个问题：
+
+1. 「有很多串联管子当成一个 L 较长的管子，那我静态工作该如何分析，看这一串管子中的某一根可以吗？」
+2. 「我看起来是接近 D 端的 Vds 会更大，难道不是分析靠近 D 端部分的管子工作状态吗？」
+3. 「那我这种五管 OTA 的输入对管，我应该看哪一侧呢？你最好再看下电路图再回答我，别再错了。」
+
+助手先答错了方向（说源端那根饱和），被追问后订正为：**只有靠近漏端（D 端）那根进入饱和（pinch-off），其余靠源端（S 端）的管子落在三极管区是正常预期、不是设计错**；整串是否饱和看 D 端管的 `region` 与 `Vds >= Vov`；串内每根电流相等（KCL）。
+
+你需要把这种「拿到一份 dcOpInfo 工作点数据，判断堆叠管整串工作状态、定位该看哪根管」的工作做成一个**可复用的分析脚本**，让工程师不再误读。
+
+## 任务
+
+写一个 Python 脚本 `op_analyze.py`，命令行用法：
+
+```
+python3 op_analyze.py <op_data.json> <out_dir>
+```
+
+读入 dcOpInfo 风格的工作点数据 `<op_data.json>`（结构见附件 `op_data_A.json`），在 `<out_dir>` 下生成 `op_analysis.json`。
+
+输入 `op_data.json` 结构：
+
+- 顶层：`circuit` / `simulator` / `corner` / `temp_c` / `vdd` / `netlist_note` / `stacks`
+- `stacks`：数组，每个元素 = 一个串联堆叠，含 `stack_id` / `type`(`nmos` 或 `pmos`) / `transistors`
+- 每个 `transistors` 元素含：`name` / `W_um` / `L_um` / `vgs` / `vth` / `vds` / `region`(`sat` 或 `triode`) / `id` / `node_source` / `node_drain`
+  - 堆叠管之间通过 `node_drain`/`node_source` 串接：上一管的 `node_drain` = 下一管的 `node_source`（中间节点）；整串最靠 D 端那管的 `node_drain` 是栈对外输出节点（不是栈内任何管的 `node_source`）；最靠 S 端那管的 `node_source` 是栈对外参考节点（不是栈内任何管的 `node_drain`）。
+
+`op_analysis.json` 必须包含以下顶层字段：
+
+- `circuit` / `simulator` / `corner`：原样回填
+- `stacks`：数组，每个栈一个对象，含：
+  - `stack_id` / `type`：原样回填
+  - `d_side_transistor`：**该堆叠中靠近漏端（D 端）那根管子的 `name`**——必须由网络拓扑推断（其 `node_drain` 不是栈内任何管的 `node_source`），**不能简单取 `transistors[0]`**
+  - `s_side_transistor`：靠近源端（S 端）那根管子的 `name`（其 `node_source` 不是栈内任何管的 `node_drain`）
+  - `current`：整串电流 = 该栈任一管子的 `|id|`
+  - `current_consistent`：布尔，栈内所有管子 `|id|` 是否一致（KCL，容差 1e-12 相对）
+  - `d_side_region` / `d_side_vds` / `d_side_vov` / `d_side_margin`：D 端管的 `region` / `|vds|` / `|vgs - vth|` / (`|vds| - |vgs - vth|`)
+  - `s_side_region`：S 端管的 `region`
+  - `verdict`：该栈判定——`properly_saturated`（D 端管 `region==sat` 且电流一致；S 端管落在 triode 是预期，不算异常）/ `not_saturated`（D 端管 `region != sat`，须同时报异常）/ `anomaly`（电流不一致，或 S 端管在 sat 而 D 端管也在 sat 的非预期情形）
+- `anomalies`：字符串数组，列出所有异常描述（`properly_saturated` 的栈无异常；D 端管在 triode 须报「<stack_id>: D-side transistor <name> in <region> (expected sat); stack not saturated」）；无任何异常时为空数组 `[]`
+- `overall_verdict`：任一栈非 `properly_saturated` 则为 `not_saturated`，否则 `properly_saturated`
+
+## 交付
+
+把 `op_analyze.py` 和它在 `op_data_A.json`（随附件提供，见 `attachments`）上跑出来的 `op_analysis.json` 一起打包成 `outputs/submit.zip`。`submit.zip` 内部目录结构：
+
+```
+outputs/
+  op_analyze.py
+  op_analysis.json
+```
+
+## 附件
+
+- `assets/EDA-Eval-DesignFlow-StackedMOSOpAnalysis-001/op_data_A.json`：一份合成的 5T OTA 堆叠 NMOS 输入对管 dcOpInfo 数据（A 输入，可见）。你的 `op_analyze.py` 必须能正确解析它，并用它产出的 `op_analysis.json` 作为交付的一部分。
+
+## 注意
+
+- `op_analyze.py` 必须是**通用分析器**，不能硬编码 `op_data_A.json` 里的任何具体管子名/节点名/数值/verdict。判分时会在另一份结构相同但拓扑/类型/工作点全异的隐藏数据上重跑你的 `op_analyze.py`（隐藏数据为 PMOS 堆叠、不同 corner、D 端管落在 triode），并与独立 ground truth 比对；若你的脚本在隐藏数据上输出与 A 输入相同的 verdict / D 端管名 / region，会被判为硬编码而失败。
+- D 端管必须由网络拓扑推断，不是按数组顺序取第一个——隐藏数据的管子数组顺序与 A 不同。
+- 同时支持 NMOS（S 端源接 gnd）与 PMOS（S 端源接 vdd）：`vov` 与 `margin` 一律用绝对值 `|vgs - vth|` 与 `|vds|`。
+- 不要在 `submit.zip` 里放 `op_data_A.json` 本身或任何 ground truth 文件，只放 `op_analyze.py` 和它产出的 `op_analysis.json`。

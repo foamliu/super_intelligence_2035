@@ -1,0 +1,46 @@
+2026-11-04 03:48:45,027 - INFO - Creating container for sphinx-doc__sphinx-9673...
+2026-11-04 03:48:45,049 - INFO - Container for sphinx-doc__sphinx-9673 created: 50455b6a722b966bed4f3e7b859587ed4a22d5c132413413019e5d1d2026fc06
+2026-11-04 03:48:45,603 - INFO - Container for sphinx-doc__sphinx-9673 started: 50455b6a722b966bed4f3e7b859587ed4a22d5c132413413019e5d1d2026fc06
+2026-11-04 03:48:45,606 - INFO - Intermediate patch for sphinx-doc__sphinx-9673 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sphinx-doc__sphinx-9673/patch.diff, now applying to container...
+2026-11-04 03:48:45,780 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/ext/autodoc/typehints.py...
+Applied patch sphinx/ext/autodoc/typehints.py cleanly.
+
+2026-11-04 03:48:46,244 - INFO - Git diff before:
+diff --git a/sphinx/ext/autodoc/typehints.py b/sphinx/ext/autodoc/typehints.py
+index af4b47bb0..97fe2d670 100644
+--- a/sphinx/ext/autodoc/typehints.py
++++ b/sphinx/ext/autodoc/typehints.py
+@@ -149,7 +149,7 @@ def augment_descriptions_with_types(
+         elif parts[0] == 'type':
+             name = ' '.join(parts[1:])
+             has_type.add(name)
+-        elif parts[0] == 'return':
++        elif parts[0] in ('return', 'returns'):
+             has_description.add('return')
+         elif parts[0] == 'rtype':
+             has_type.add('return')
+2026-11-04 03:48:46,247 - INFO - Eval script for sphinx-doc__sphinx-9673 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sphinx-doc__sphinx-9673/eval.sh; copying to container...
+2026-11-04 03:48:52,027 - INFO - Test runtime: 5.67 seconds
+2026-11-04 03:48:52,029 - INFO - Test output for sphinx-doc__sphinx-9673 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sphinx-doc__sphinx-9673/test_output.txt
+2026-11-04 03:48:52,083 - INFO - Git diff after:
+diff --git a/sphinx/ext/autodoc/typehints.py b/sphinx/ext/autodoc/typehints.py
+index af4b47bb0..97fe2d670 100644
+--- a/sphinx/ext/autodoc/typehints.py
++++ b/sphinx/ext/autodoc/typehints.py
+@@ -149,7 +149,7 @@ def augment_descriptions_with_types(
+         elif parts[0] == 'type':
+             name = ' '.join(parts[1:])
+             has_type.add(name)
+-        elif parts[0] == 'return':
++        elif parts[0] in ('return', 'returns'):
+             has_description.add('return')
+         elif parts[0] == 'rtype':
+             has_type.add('return')
+2026-11-04 03:48:52,083 - INFO - Grading answer for sphinx-doc__sphinx-9673...
+2026-11-04 03:48:52,092 - INFO - report: {'sphinx-doc__sphinx-9673': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_no_undoc'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_configs.py::test_autoclass_content_class', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_init', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_mixed', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_separated_init', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_separated_new', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_both', 'tests/test_ext_autodoc_configs.py::test_autodoc_inherit_docstrings', 'tests/test_ext_autodoc_configs.py::test_autodoc_docstring_signature', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_class', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_init', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_both', 'tests/test_ext_autodoc_configs.py::test_mocked_module_imports', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_signature', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_none', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_none_for_overload', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_with_documented_init', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_with_documented_init_no_undoc', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_for_invalid_node', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_both', 'tests/test_ext_autodoc_configs.py::test_autodoc_type_aliases', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_and_type_aliases', 'tests/test_ext_autodoc_configs.py::test_autodoc_default_options', 'tests/test_ext_autodoc_configs.py::test_autodoc_default_options_with_values'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9673: resolved: True
+2026-11-04 03:48:52,094 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9673.verified_full_hermes...
+2026-11-04 03:49:08,183 - INFO - Container sweb.eval.sphinx-doc__sphinx-9673.verified_full_hermes stopped successfully.
+2026-11-04 03:49:08,183 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9673.verified_full_hermes...
+2026-11-04 03:49:08,234 - INFO - Container sweb.eval.sphinx-doc__sphinx-9673.verified_full_hermes removed successfully.

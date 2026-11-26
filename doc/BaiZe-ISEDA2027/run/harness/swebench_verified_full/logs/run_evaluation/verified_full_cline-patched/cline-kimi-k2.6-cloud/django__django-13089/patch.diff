@@ -1,0 +1,49 @@
+diff --git a/django/core/cache/backends/db.py b/django/core/cache/backends/db.py
+index 33c79c5a1..c9048e207 100644
+--- a/django/core/cache/backends/db.py
++++ b/django/core/cache/backends/db.py
+@@ -267,9 +267,11 @@ class DatabaseCache(BaseDatabaseCache):
+                 cursor.execute(
+                     connection.ops.cache_key_culling_sql() % table,
+                     [cull_num])
+-                cursor.execute("DELETE FROM %s "
+-                               "WHERE cache_key < %%s" % table,
+-                               [cursor.fetchone()[0]])
++                row = cursor.fetchone()
++                if row:
++                    cursor.execute("DELETE FROM %s "
++                                   "WHERE cache_key < %%s" % table,
++                                   [row[0]])
+ 
+     def clear(self):
+         db = router.db_for_write(self.cache_model_class)
+diff --git a/tests/cache/tests.py b/tests/cache/tests.py
+index d404475e1..9290fc0c6 100644
+--- a/tests/cache/tests.py
++++ b/tests/cache/tests.py
+@@ -250,6 +250,7 @@ _caches_setting_base = {
+     'custom_key2': {'KEY_FUNCTION': 'cache.tests.custom_key_func'},
+     'cull': {'OPTIONS': {'MAX_ENTRIES': 30}},
+     'zero_cull': {'OPTIONS': {'CULL_FREQUENCY': 0, 'MAX_ENTRIES': 30}},
++    'cull_frequency_one': {'OPTIONS': {'CULL_FREQUENCY': 1, 'MAX_ENTRIES': 30}},
+ }
+ 
+ 
+@@ -1040,6 +1041,17 @@ class DBCacheTests(BaseCacheTests, TransactionTestCase):
+     def test_zero_cull(self):
+         self._perform_cull_test('zero_cull', 50, 18)
+ 
++    def test_cull_frequency_one(self):
++        # Regression test for #31584 - culling shouldn't crash when
++        # cache_key_culling_sql() returns no rows (which can happen due to
++        # a race condition or when CULL_FREQUENCY=1).
++        cache = caches['cull_frequency_one']
++        try:
++            for i in range(1, 50):
++                cache.set('cull%d' % i, 'value', 1000)
++        except TypeError:
++            self.fail('Cache cull with CULL_FREQUENCY=1 should not crash.')
++
+     def test_second_call_doesnt_crash(self):
+         out = io.StringIO()
+         management.call_command('createcachetable', stdout=out)

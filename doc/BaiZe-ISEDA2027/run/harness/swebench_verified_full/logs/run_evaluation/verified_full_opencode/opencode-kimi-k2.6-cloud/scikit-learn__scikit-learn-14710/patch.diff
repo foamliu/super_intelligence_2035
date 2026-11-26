@@ -1,0 +1,53 @@
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8c..3170e400 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,15 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if hasattr(self, 'classes_'):
++            y_small_train = self.classes_[y_small_train.astype(int)]
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if hasattr(self, 'classes_'):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+index 1eebdefd..7a8eaded 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+@@ -415,3 +415,15 @@ def test_infinite_values_missing_values():
+ 
+     assert stump_clf.fit(X, y_isinf).score(X, y_isinf) == 1
+     assert stump_clf.fit(X, y_isnan).score(X, y_isnan) == 1
++
++
++def test_early_stopping_str_target():
++    # Regression test for issue #15781
++    # Make sure early stopping works with string targets
++    X = np.random.randn(100, 10)
++    y = np.array(['x'] * 50 + ['y'] * 50, dtype=object)
++
++    gbrt = HistGradientBoostingClassifier(n_iter_no_change=10)
++    gbrt.fit(X, y)
++    # Check that the scorer was successfully called during training
++    assert len(gbrt.train_score_) > 0
+diff --git a/sklearn/linear_model/least_angle.py b/sklearn/linear_model/least_angle.py
+index 2df43cca..c3d99292 100644
+--- a/sklearn/linear_model/least_angle.py
++++ b/sklearn/linear_model/least_angle.py
+@@ -166,7 +166,7 @@ def lars_path(X, y, Xy=None, Gram=None, max_iter=500, alpha_min=0,
+ 
+ 
+ def lars_path_gram(Xy, Gram, n_samples, max_iter=500, alpha_min=0,
+-                   method='lar', copy_X=True, eps=np.finfo(np.float).eps,
++              method='lar', copy_X=True, eps=np.finfo(np.float).eps,
+                    copy_Gram=True, verbose=0, return_path=True,
+                    return_n_iter=False, positive=False):
+     """lars_path in the sufficient stats mode [1]

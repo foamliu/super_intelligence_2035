@@ -1,0 +1,47 @@
+2026-11-01 11:45:13,154 - INFO - Creating container for astropy__astropy-14539...
+2026-11-01 11:45:14,283 - INFO - Removed existing container sweb.eval.astropy__astropy-14539.verified_full_hermes
+2026-11-01 11:45:14,322 - INFO - Container for astropy__astropy-14539 created: 9e5335d01aa545586a1b7a8f80cfb51f572a33b57e17957b94c3600861b53e31
+2026-11-01 11:45:15,176 - INFO - Container for astropy__astropy-14539 started: 9e5335d01aa545586a1b7a8f80cfb51f572a33b57e17957b94c3600861b53e31
+2026-11-01 11:45:15,178 - INFO - Intermediate patch for astropy__astropy-14539 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-14539/patch.diff, now applying to container...
+2026-11-01 11:45:15,346 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/fits/diff.py...
+Applied patch astropy/io/fits/diff.py cleanly.
+
+2026-11-01 11:45:15,865 - INFO - Git diff before:
+diff --git a/astropy/io/fits/diff.py b/astropy/io/fits/diff.py
+index 100cdf1b8..a639c1e26 100644
+--- a/astropy/io/fits/diff.py
++++ b/astropy/io/fits/diff.py
+@@ -1449,7 +1449,7 @@ class TableDataDiff(_BaseDiff):
+                 arrb.dtype, np.floating
+             ):
+                 diffs = where_not_allclose(arra, arrb, rtol=self.rtol, atol=self.atol)
+-            elif "P" in col.format:
++            elif col.format.format in ("P", "Q"):
+                 diffs = (
+                     [
+                         idx
+2026-11-01 11:45:15,867 - INFO - Eval script for astropy__astropy-14539 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-14539/eval.sh; copying to container...
+2026-11-01 11:46:42,073 - INFO - Test runtime: 86.11 seconds
+2026-11-01 11:46:42,075 - INFO - Test output for astropy__astropy-14539 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/astropy__astropy-14539/test_output.txt
+2026-11-01 11:46:42,155 - INFO - Git diff after:
+diff --git a/astropy/io/fits/diff.py b/astropy/io/fits/diff.py
+index 100cdf1b8..a639c1e26 100644
+--- a/astropy/io/fits/diff.py
++++ b/astropy/io/fits/diff.py
+@@ -1449,7 +1449,7 @@ class TableDataDiff(_BaseDiff):
+                 arrb.dtype, np.floating
+             ):
+                 diffs = where_not_allclose(arra, arrb, rtol=self.rtol, atol=self.atol)
+-            elif "P" in col.format:
++            elif col.format.format in ("P", "Q"):
+                 diffs = (
+                     [
+                         idx
+2026-11-01 11:46:42,155 - INFO - Grading answer for astropy__astropy-14539...
+2026-11-01 11:46:42,161 - INFO - report: {'astropy__astropy-14539': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_tables', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_table_data'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_headers', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_slightly_different_headers', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_common_keywords', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_keyword_count', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_keywords', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_keyword_values', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_keyword_comments', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_keyword_values_with_duplicate', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_asymmetric_duplicate_keywords', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_floating_point_rtol', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_floating_point_atol', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_blanks', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_blank_cards[HeaderDiff]', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_blank_cards[HDUDiff]', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_blank_cards[FITSDiff]', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_hdus', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_keyword_values', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_keyword_comments', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_trivial_identical_images', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_within_relative_tolerance', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_within_absolute_tolerance', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_within_rtol_and_atol', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_not_identical_within_rtol_and_atol', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_comp_image_hdus', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_dimensions', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_pixels', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_diff_empty_tables', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_ignore_table_fields', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_table_field_names', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_table_field_counts', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_different_table_rows', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_identical_files_basic', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_partially_identical_files1', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_partially_identical_files2', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_partially_identical_files3', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_diff_nans', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_file_output_from_path_string', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_file_output_overwrite_safety', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_file_output_overwrite_success', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_rawdatadiff_nodiff', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_rawdatadiff_dimsdiff', 'astropy/io/fits/tests/test_diff.py::TestDiff::test_rawdatadiff_bytesdiff', 'astropy/io/fits/tests/test_diff.py::test_fitsdiff_hdu_name', 'astropy/io/fits/tests/test_diff.py::test_fitsdiff_no_hdu_name', 'astropy/io/fits/tests/test_diff.py::test_fitsdiff_with_names', 'astropy/io/fits/tests/test_diff.py::test_rawdatadiff_diff_with_rtol'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-14539: resolved: True
+2026-11-01 11:46:42,162 - INFO - Attempting to stop container sweb.eval.astropy__astropy-14539.verified_full_hermes...
+2026-11-01 11:46:58,015 - INFO - Container sweb.eval.astropy__astropy-14539.verified_full_hermes stopped successfully.
+2026-11-01 11:46:58,016 - INFO - Attempting to remove container sweb.eval.astropy__astropy-14539.verified_full_hermes...
+2026-11-01 11:46:58,064 - INFO - Container sweb.eval.astropy__astropy-14539.verified_full_hermes removed successfully.

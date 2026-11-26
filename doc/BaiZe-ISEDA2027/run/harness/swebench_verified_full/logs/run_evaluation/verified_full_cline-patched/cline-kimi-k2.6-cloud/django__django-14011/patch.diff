@@ -1,0 +1,43 @@
+diff --git a/django/core/servers/basehttp.py b/django/core/servers/basehttp.py
+index 14dab517c..c51610200 100644
+--- a/django/core/servers/basehttp.py
++++ b/django/core/servers/basehttp.py
+@@ -81,6 +81,11 @@ class ThreadedWSGIServer(socketserver.ThreadingMixIn, WSGIServer):
+     """A threaded version of the WSGIServer"""
+     daemon_threads = True
+ 
++    def process_request_thread(self, request, client_address):
++        super().process_request_thread(request, client_address)
++        from django.db import connections
++        connections.close_all()
++
+ 
+ class ServerHandler(simple_server.ServerHandler):
+     http_version = '1.1'
+diff --git a/tests/servers/test_basehttp.py b/tests/servers/test_basehttp.py
+index b90e8565a..6d02352b2 100644
+--- a/tests/servers/test_basehttp.py
++++ b/tests/servers/test_basehttp.py
+@@ -1,7 +1,9 @@
+ from io import BytesIO
++from unittest import mock
+ 
+ from django.core.handlers.wsgi import WSGIRequest
+-from django.core.servers.basehttp import WSGIRequestHandler, WSGIServer
++from django.core.servers.basehttp import ThreadedWSGIServer, WSGIRequestHandler, WSGIServer
++from django.db import connections
+ from django.test import SimpleTestCase
+ from django.test.client import RequestFactory
+ from django.test.utils import captured_stderr
+@@ -132,3 +134,11 @@ class WSGIServerTestCase(SimpleTestCase):
+                         self.assertEqual(cm.records[0].getMessage(), msg)
+                 finally:
+                     server.server_close()
++
++
++class ThreadedWSGIServerTestCase(SimpleTestCase):
++    def test_closes_connections(self):
++        server = ThreadedWSGIServer(('localhost', 0), mock.Mock(), bind_and_activate=False)
++        with mock.patch.object(connections, 'close_all') as mock_close_all:
++            server.process_request_thread(mock.Mock(), mock.Mock())
++            mock_close_all.assert_called_once()

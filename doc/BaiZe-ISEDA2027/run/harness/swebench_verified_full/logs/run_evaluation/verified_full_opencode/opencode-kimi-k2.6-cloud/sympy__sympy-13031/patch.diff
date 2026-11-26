@@ -1,0 +1,88 @@
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index e6f36cd..313670b 100644
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -53,7 +53,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+@@ -985,7 +985,13 @@ def col_join(self, other):
+         >>> C == A.row_insert(A.rows, Matrix(B))
+         True
+         """
+-        if not self:
++        if self.rows == 0 and self.cols == 0:
++            return type(self)(other)
++        if self.cols == 0:
++            if self.cols != other.cols:
++                raise ShapeError()
++            return type(self)(self.rows + other.rows, self.cols, {})
++        if self.rows == 0:
+             return type(self)(other)
+         A, B = self, other
+         if not A.cols == B.cols:
+@@ -1191,7 +1197,13 @@ def row_join(self, other):
+         >>> C == A.col_insert(A.cols, B)
+         True
+         """
+-        if not self:
++        if self.rows == 0 and self.cols == 0:
++            return type(self)(other)
++        if self.rows == 0:
++            if self.rows != other.rows:
++                raise ShapeError()
++            return type(self)(self.rows, self.cols + other.cols, {})
++        if self.cols == 0:
+             return type(self)(other)
+         A, B = self, other
+         if not A.rows == B.rows:
+diff --git a/sympy/matrices/tests/test_commonmatrix.py b/sympy/matrices/tests/test_commonmatrix.py
+index 3e27ecc..dde773c 100644
+--- a/sympy/matrices/tests/test_commonmatrix.py
++++ b/sympy/matrices/tests/test_commonmatrix.py
+@@ -249,6 +249,14 @@ def test_vstack():
+     raises(ShapeError, lambda: m.vstack(m, m2))
+     assert Matrix.vstack() == Matrix()
+ 
++    # test regression #12938
++    M1 = Matrix.zeros(0, 0)
++    M2 = Matrix.zeros(1, 0)
++    M3 = Matrix.zeros(2, 0)
++    M4 = Matrix.zeros(3, 0)
++    m = ShapingOnlyMatrix.vstack(M1, M2, M3, M4)
++    assert m.rows == 6 and m.cols == 0
++
+ 
+ # PropertiesOnlyMatrix tests
+ def test_atoms():
+diff --git a/sympy/matrices/tests/test_sparse.py b/sympy/matrices/tests/test_sparse.py
+index acea940..6ffc29f 100644
+--- a/sympy/matrices/tests/test_sparse.py
++++ b/sympy/matrices/tests/test_sparse.py
+@@ -26,6 +26,21 @@ def sparse_zeros(n):
+     assert type(a.row_join(b)) == type(a)
+     assert type(a.col_join(b)) == type(a)
+ 
++    # test regression #12938
++    M1 = SparseMatrix.zeros(0, 0)
++    M2 = SparseMatrix.zeros(0, 1)
++    M3 = SparseMatrix.zeros(0, 2)
++    M4 = SparseMatrix.zeros(0, 3)
++    assert SparseMatrix.hstack(M1, M2, M3, M4).shape == (0, 6)
++    assert SparseMatrix.hstack(M1, M2, M3, M4).cols == 6
++
++    M1 = SparseMatrix.zeros(0, 0)
++    M2 = SparseMatrix.zeros(1, 0)
++    M3 = SparseMatrix.zeros(2, 0)
++    M4 = SparseMatrix.zeros(3, 0)
++    assert SparseMatrix.vstack(M1, M2, M3, M4).shape == (6, 0)
++    assert SparseMatrix.vstack(M1, M2, M3, M4).rows == 6
++
+     # test element assignment
+     a = SparseMatrix((
+         (1, 0),

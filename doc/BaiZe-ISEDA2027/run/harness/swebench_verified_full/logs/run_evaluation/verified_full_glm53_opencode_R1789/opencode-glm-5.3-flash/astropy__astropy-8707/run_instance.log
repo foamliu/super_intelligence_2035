@@ -1,0 +1,140 @@
+2026-11-07 20:32:52,794 - INFO - Creating container for astropy__astropy-8707...
+2026-11-07 20:32:52,825 - INFO - Container for astropy__astropy-8707 created: 5a01c84793495deb5ad23e741140c12679c544664cf688d4009bfb33cd2683af
+2026-11-07 20:32:53,749 - INFO - Container for astropy__astropy-8707 started: 5a01c84793495deb5ad23e741140c12679c544664cf688d4009bfb33cd2683af
+2026-11-07 20:32:53,751 - INFO - Intermediate patch for astropy__astropy-8707 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/astropy__astropy-8707/patch.diff, now applying to container...
+2026-11-07 20:32:53,926 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/fits/card.py...
+Checking patch astropy/io/fits/header.py...
+Applied patch astropy/io/fits/card.py cleanly.
+Applied patch astropy/io/fits/header.py cleanly.
+
+2026-11-07 20:32:54,570 - INFO - Git diff before:
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d73..240cd00a5 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -5,7 +5,7 @@ import warnings
+ 
+ import numpy as np
+ 
+-from .util import _str_to_num, _is_int, translate, _words_group
++from .util import _str_to_num, _is_int, translate, _words_group, decode_ascii
+ from .verify import _Verify, _ErrList, VerifyError, VerifyWarning
+ 
+ from . import conf
+@@ -551,9 +551,17 @@ class Card(_Verify):
+         if it is not the length of a card image (80 columns).  If the card
+         image is longer than 80 columns, assume it contains ``CONTINUE``
+         card(s).
++
++        Parameters
++        ----------
++        image : str or bytes
++            The card image string.  In the case of bytes the content is
++            assumed to be ASCII encoded.
+         """
+ 
+         card = cls()
++        if isinstance(image, bytes):
++            image = decode_ascii(image)
+         card._image = _pad(image)
+         card._verified = False
+         return card
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d52..dd61010d6 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -334,8 +334,9 @@ class Header:
+ 
+         Parameters
+         ----------
+-        data : str
+-           String containing the entire header.
++        data : str, bytes
++           String or bytes containing the entire header.  In the case of
++           bytes the content is assumed to be ASCII encoded.
+ 
+         sep : str, optional
+             The string separating cards from each other, such as a newline.  By
+@@ -361,6 +362,11 @@ class Header:
+         idx = 0
+         image = []
+ 
++        # If the header was passed in as bytes, decode it to str first;
++        # the rest of the parsing code assumes str input
++        if isinstance(data, bytes):
++            data = decode_ascii(data)
++
+         while idx < len(data):
+             if require_full_cardlength:
+                 end_idx = idx + Card.length
+2026-11-07 20:32:54,573 - INFO - Eval script for astropy__astropy-8707 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/astropy__astropy-8707/eval.sh; copying to container...
+2026-11-07 20:33:05,505 - INFO - Test runtime: 10.85 seconds
+2026-11-07 20:33:05,508 - INFO - Test output for astropy__astropy-8707 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/astropy__astropy-8707/test_output.txt
+2026-11-07 20:33:05,569 - INFO - Git diff after:
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d73..240cd00a5 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -5,7 +5,7 @@ import warnings
+ 
+ import numpy as np
+ 
+-from .util import _str_to_num, _is_int, translate, _words_group
++from .util import _str_to_num, _is_int, translate, _words_group, decode_ascii
+ from .verify import _Verify, _ErrList, VerifyError, VerifyWarning
+ 
+ from . import conf
+@@ -551,9 +551,17 @@ class Card(_Verify):
+         if it is not the length of a card image (80 columns).  If the card
+         image is longer than 80 columns, assume it contains ``CONTINUE``
+         card(s).
++
++        Parameters
++        ----------
++        image : str or bytes
++            The card image string.  In the case of bytes the content is
++            assumed to be ASCII encoded.
+         """
+ 
+         card = cls()
++        if isinstance(image, bytes):
++            image = decode_ascii(image)
+         card._image = _pad(image)
+         card._verified = False
+         return card
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d52..dd61010d6 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -334,8 +334,9 @@ class Header:
+ 
+         Parameters
+         ----------
+-        data : str
+-           String containing the entire header.
++        data : str, bytes
++           String or bytes containing the entire header.  In the case of
++           bytes the content is assumed to be ASCII encoded.
+ 
+         sep : str, optional
+             The string separating cards from each other, such as a newline.  By
+@@ -361,6 +362,11 @@ class Header:
+         idx = 0
+         image = []
+ 
++        # If the header was passed in as bytes, decode it to str first;
++        # the rest of the parsing code assumes str input
++        if isinstance(data, bytes):
++            data = decode_ascii(data)
++
+         while idx < len(data):
+             if require_full_cardlength:
+                 end_idx = idx + Card.length
+2026-11-07 20:33:05,569 - INFO - Grading answer for astropy__astropy-8707...
+2026-11-07 20:33:05,573 - INFO - report: {'astropy__astropy-8707': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_from_bytes'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/fits/tests/test_header.py::test_shallow_copy', 'astropy/io/fits/tests/test_header.py::test_init_with_header', 'astropy/io/fits/tests/test_header.py::test_init_with_dict', 'astropy/io/fits/tests/test_header.py::test_init_with_ordereddict', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_rename_keyword', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_constructor_default_args', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_string_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_boolean_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_long_integer_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_floating_point_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_complex_value_card'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-8707: resolved: True
+2026-11-07 20:33:05,574 - INFO - Attempting to stop container sweb.eval.astropy__astropy-8707.verified_full_glm53_opencode_R1789...
+2026-11-07 20:33:22,000 - INFO - Container sweb.eval.astropy__astropy-8707.verified_full_glm53_opencode_R1789 stopped successfully.
+2026-11-07 20:33:22,001 - INFO - Attempting to remove container sweb.eval.astropy__astropy-8707.verified_full_glm53_opencode_R1789...
+2026-11-07 20:33:22,049 - INFO - Container sweb.eval.astropy__astropy-8707.verified_full_glm53_opencode_R1789 removed successfully.

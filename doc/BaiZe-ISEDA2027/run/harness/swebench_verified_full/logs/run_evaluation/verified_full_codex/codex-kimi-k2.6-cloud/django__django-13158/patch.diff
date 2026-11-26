@@ -1,0 +1,36 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 686e75c9..f512cc2d 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -432,6 +432,8 @@ class SQLCompiler:
+ 
+     def get_combinator_sql(self, combinator, all):
+         features = self.connection.features
++        if self.query.is_empty():
++            raise EmptyResultSet
+         compilers = [
+             query.get_compiler(self.using, self.connection)
+             for query in self.query.combined_queries if not query.is_empty()
+diff --git a/tests/queries/test_qs_combinators.py b/tests/queries/test_qs_combinators.py
+index 9c6fd474..22a03adb 100644
+--- a/tests/queries/test_qs_combinators.py
++++ b/tests/queries/test_qs_combinators.py
+@@ -314,3 +314,18 @@ class QuerySetSetOperationTests(TestCase):
+                         msg % (operation, combinator),
+                     ):
+                         getattr(getattr(qs, combinator)(qs), operation)()
++
++    def test_none_on_combined_query(self):
++        """Test that .none() on a combined query returns an empty result."""
++        qs1 = Number.objects.filter(num__lte=1)
++        qs2 = Number.objects.filter(num__gte=8)
++        union_qs = qs1.union(qs2)
++        self.assertEqual(len(list(union_qs.none())), 0)
++        self.assertEqual(len(list(union_qs)), 4)
++
++        # Also test intersection and difference
++        intersect_qs = qs1.intersection(qs2)
++        self.assertEqual(len(list(intersect_qs.none())), 0)
++
++        diff_qs = qs1.difference(qs2)
++        self.assertEqual(len(list(diff_qs.none())), 0)

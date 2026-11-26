@@ -1,0 +1,47 @@
+diff --git a/lib/matplotlib/__init__.py b/lib/matplotlib/__init__.py
+index c268a567..04776922 100644
+--- a/lib/matplotlib/__init__.py
++++ b/lib/matplotlib/__init__.py
+@@ -674,6 +674,11 @@ class RcParams(MutableMapping, dict):
+             val = dict.__getitem__(self, key)
+             if val is rcsetup._auto_backend_sentinel:
+                 from matplotlib import pyplot as plt
++                if plt._backend_mod is not None:
++                    import matplotlib.backends
++                    backend = matplotlib.backends.backend
++                    dict.__setitem__(self, key, backend)
++                    return backend
+                 plt.switch_backend(rcsetup._auto_backend_sentinel)
+ 
+         return dict.__getitem__(self, key)
+diff --git a/lib/matplotlib/tests/test_rcparams.py b/lib/matplotlib/tests/test_rcparams.py
+index 99856b34..e4b0c8bf 100644
+--- a/lib/matplotlib/tests/test_rcparams.py
++++ b/lib/matplotlib/tests/test_rcparams.py
+@@ -545,6 +545,26 @@ def test_backend_fallback_headful(tmpdir):
+     assert backend.strip().lower() != "agg"
+ 
+ 
++def test_backend_after_rc_context():
++    # Check that get_backend() does not clear figures if rc_context reverted
++    # rcParams['backend'] to the auto sentinel after a figure was created.
++    plt.close('all')
++    orig_backend = dict.__getitem__(mpl.rcParams, 'backend')
++    try:
++        dict.__setitem__(mpl.rcParams, 'backend',
++                         mpl.rcsetup._auto_backend_sentinel)
++        with mpl.rc_context():
++            fig = plt.figure()
++        assert len(plt._pylab_helpers.Gcf.figs) == 1
++        backend = mpl.get_backend()
++        assert isinstance(backend, str)
++        assert len(plt._pylab_helpers.Gcf.figs) == 1
++        plt.close(fig)
++    finally:
++        dict.__setitem__(mpl.rcParams, 'backend', orig_backend)
++        plt.close('all')
++
++
+ def test_deprecation(monkeypatch):
+     monkeypatch.setitem(
+         mpl._deprecated_map, "patch.linewidth",

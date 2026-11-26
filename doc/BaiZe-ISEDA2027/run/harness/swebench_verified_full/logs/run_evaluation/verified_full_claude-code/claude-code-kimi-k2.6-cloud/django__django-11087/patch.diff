@@ -1,0 +1,52 @@
+diff --git a/django/db/models/deletion.py b/django/db/models/deletion.py
+index 3a462f1c4..0aa936593 100644
+--- a/django/db/models/deletion.py
++++ b/django/db/models/deletion.py
+@@ -234,7 +234,7 @@ class Collector:
+         """
+         return related.related_model._base_manager.using(self.using).filter(
+             **{"%s__in" % related.field.name: objs}
+-        )
++        ).only(related.related_model._meta.pk.name, related.field.name)
+ 
+     def instances_with_model(self):
+         for model, instances in self.data.items():
+diff --git a/tests/delete/tests.py b/tests/delete/tests.py
+index ed47d0667..e29898b85 100644
+--- a/tests/delete/tests.py
++++ b/tests/delete/tests.py
+@@ -4,6 +4,7 @@ from django.db import IntegrityError, connection, models
+ from django.db.models.deletion import Collector
+ from django.db.models.sql.constants import GET_ITERATOR_CHUNK_SIZE
+ from django.test import TestCase, skipIfDBFeature, skipUnlessDBFeature
++from django.test.utils import CaptureQueriesContext
+ 
+ from .models import (
+     MR, A, Avatar, Base, Child, HiddenUser, HiddenUserProfile, M, M2MFrom,
+@@ -437,6 +438,26 @@ class DeletionTests(TestCase):
+         with self.assertNumQueries(2):
+             avatar.delete()
+ 
++    def test_delete_uses_only_required_fields(self):
++        """
++        #30182 - .delete() should use only the required fields (pk and the
++        foreign key to the parent object) during cascade collection.
++        """
++        r = R.objects.create()
++        s = S.objects.create(r=r)
++        with CaptureQueriesContext(connection) as ctx:
++            r.delete()
++        # Find the SELECT query for S
++        select_queries = [
++            q['sql'] for q in ctx.captured_queries
++            if 'SELECT' in q['sql'] and 'delete_s' in q['sql']
++        ]
++        self.assertEqual(len(select_queries), 1)
++        # Verify that only pk and r_id (fk) are selected, not any other field
++        select_sql = select_queries[0]
++        self.assertIn('"id"', select_sql)
++        self.assertIn('"r_id"', select_sql)
++
+ 
+ class FastDeleteTests(TestCase):
+ 

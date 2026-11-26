@@ -1,0 +1,5 @@
+=== pi-SUT Analog-003 start Thu Oct 29 09:25:53 PM CST 2026 ===
+pi exit=143
+--- DESIGN_FLOW_VERDICT result lines ---
+DESIGN_FLOW_VERDICT=PASS
+DETAIL=PASS 6 / FAIL 0 (6 cases)

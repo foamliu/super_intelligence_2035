@@ -1,0 +1,19 @@
+26 instances already run, skipping...
+Running 5 instances...
+  0%|          | 0/5 [00:00<?, ?it/s] 20%|██        | 1/5 [00:26<01:46, 26.53s/it]1 ran successfully, 0 failed:  20%|██        | 1/5 [00:26<01:46, 26.53s/it]1 ran successfully, 0 failed:  40%|████      | 2/5 [00:29<00:44, 14.88s/it]2 ran successfully, 0 failed:  40%|████      | 2/5 [00:29<00:44, 14.88s/it]2 ran successfully, 0 failed:  60%|██████    | 3/5 [01:24<00:56, 28.03s/it]3 ran successfully, 0 failed:  60%|██████    | 3/5 [01:24<00:56, 28.03s/it]3 ran successfully, 0 failed:  80%|████████  | 4/5 [01:25<00:21, 21.36s/it]4 ran successfully, 0 failed:  80%|████████  | 4/5 [01:25<00:21, 21.36s/it]4 ran successfully, 0 failed: 100%|██████████| 5/5 [30:18<00:00, 363.73s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [30:18<00:00, 363.73s/it]5 ran successfully, 0 failed: 100%|██████████| 5/5 [30:18<00:00, 363.73s/it]
+Error in evaluation for scikit-learn__scikit-learn-14710: Test timed out after 1800 seconds.
+Check (logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
+All instances run.
+Total instances: 31
+Instances submitted: 31
+Instances completed: 30
+Instances incomplete: 0
+Instances resolved: 24
+Instances unresolved: 6
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 1
+Instances with empty patches: 0
+Instances with errors: 1
+Unstopped containers: 0
+Unremoved images: 31
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json

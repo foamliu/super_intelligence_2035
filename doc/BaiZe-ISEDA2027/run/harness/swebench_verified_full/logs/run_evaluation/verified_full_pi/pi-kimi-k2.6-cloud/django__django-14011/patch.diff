@@ -1,0 +1,57 @@
+diff --git a/django/test/testcases.py b/django/test/testcases.py
+index 92f566b7b0..7d22515b80 100644
+--- a/django/test/testcases.py
++++ b/django/test/testcases.py
+@@ -1473,10 +1473,18 @@ class _MediaFilesHandler(FSFilesHandler):
+         return settings.MEDIA_URL
+ 
+ 
++class _LiveServerThreadedWSGIServer(ThreadedWSGIServer):
++    def process_request_thread(self, request, client_address):
++        try:
++            super().process_request_thread(request, client_address)
++        finally:
++            connections.close_all()
++
++
+ class LiveServerThread(threading.Thread):
+     """Thread for running a live http server while the tests are running."""
+ 
+-    server_class = ThreadedWSGIServer
++    server_class = _LiveServerThreadedWSGIServer
+ 
+     def __init__(self, host, static_handler, connections_override=None, port=0):
+         self.host = host
+diff --git a/tests/servers/test_liveserverthread.py b/tests/servers/test_liveserverthread.py
+index 09b6ca08c8..cbe6864af1 100644
+--- a/tests/servers/test_liveserverthread.py
++++ b/tests/servers/test_liveserverthread.py
+@@ -31,6 +31,28 @@ class LiveServerThreadTest(TransactionTestCase):
+         finally:
+             conn.dec_thread_sharing()
+ 
++    def test_worker_thread_closes_connections(self):
++        from unittest.mock import patch
++
++        class MockRequest:
++            def shutdown(self, flag):
++                pass
++
++            def close(self):
++                pass
++
++        class TestServer(LiveServerThread.server_class):
++            def finish_request(self, request, client_address):
++                pass
++
++        server = TestServer(('127.0.0.1', 0), object)
++        try:
++            with patch.object(connections, 'close_all') as mock_close_all:
++                server.process_request_thread(MockRequest(), None)
++                mock_close_all.assert_called_once()
++        finally:
++            server.server_close()
++
+     def test_server_class(self):
+         class FakeServer:
+             def __init__(*args, **kwargs):

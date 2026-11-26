@@ -1,0 +1,412 @@
+{
+  "timestamp": "2026-11-09T10:56:44.977341",
+  "node": "s0pgpuap12",
+  "r_number": "R91",
+  "title": "Pre-GPU Day Readiness Audit",
+  "model_old_path": {
+    "path": "/tmp/models/MiniCPM5-2B",
+    "exists": false,
+    "files": [],
+    "total_size_mb": 0
+  },
+  "model_nas_path": {
+    "path": "/nas_data/app.e0031982/models/MiniCPM5-2B",
+    "exists": true,
+    "files": [
+      {
+        "file": "config.json",
+        "exists": true,
+        "size": 704
+      },
+      {
+        "file": "model-00000-of-00001.safetensors",
+        "exists": true,
+        "size": 5033557096
+      },
+      {
+        "file": "model.safetensors.index.json",
+        "exists": true,
+        "size": 31378
+      },
+      {
+        "file": "tokenizer.json",
+        "exists": true,
+        "size": 9894271
+      },
+      {
+        "file": "tokenizer_config.json",
+        "exists": true,
+        "size": 94391
+      },
+      {
+        "file": "special_tokens_map.json",
+        "exists": true,
+        "size": 551
+      },
+      {
+        "file": "generation_config.json",
+        "exists": true,
+        "size": 213
+      },
+      {
+        "file": "chat_template.jinja",
+        "exists": true,
+        "size": 5435
+      }
+    ],
+    "total_size_mb": 4809.9
+  },
+  "model_path_issue": {
+    "old_path_deleted": true,
+    "nas_path_exists": true,
+    "fix": "Update BAIZE_MODEL_PATH from /tmp/models/MiniCPM5-2B to /nas_data/app.e0031982/models/MiniCPM5-2B",
+    "blocking": false
+  },
+  "venv_verl": {
+    "label": "verl_cu124_venv",
+    "path": "/home/app.e0031982/code/verl_cu124_venv/bin/python",
+    "exists": true,
+    "version": "Python 3.10.22"
+  },
+  "venv_vllm": {
+    "label": "vllm_venv",
+    "path": "/home/app.e0031982/code/vllm_venv/bin/python",
+    "exists": true,
+    "version": "Python 3.13.14"
+  },
+  "torch_cuda_verl": {
+    "label": "verl_cu124_venv",
+    "output": "torch=2.6.0+cu124\ncuda_available=True\ncuda_version=12.4",
+    "torch_cuda": true
+  },
+  "gpu": {
+    "available": true,
+    "gpus": [
+      {
+        "index": 0,
+        "free_mib": 64,
+        "total_mib": 46068,
+        "util_pct": 0
+      },
+      {
+        "index": 1,
+        "free_mib": 1085,
+        "total_mib": 46068,
+        "util_pct": 0
+      },
+      {
+        "index": 2,
+        "free_mib": 1085,
+        "total_mib": 46068,
+        "util_pct": 0
+      },
+      {
+        "index": 3,
+        "free_mib": 1085,
+        "total_mib": 46068,
+        "util_pct": 0
+      },
+      {
+        "index": 4,
+        "free_mib": 474,
+        "total_mib": 46068,
+        "util_pct": 0
+      },
+      {
+        "index": 5,
+        "free_mib": 989,
+        "total_mib": 46068,
+        "util_pct": 0
+      },
+      {
+        "index": 6,
+        "free_mib": 985,
+        "total_mib": 46068,
+        "util_pct": 0
+      },
+      {
+        "index": 7,
+        "free_mib": 987,
+        "total_mib": 46068,
+        "util_pct": 0
+      }
+    ],
+    "free_gpus": 0,
+    "total_gpus": 8,
+    "ready": false
+  },
+  "eval_assets": [
+    {
+      "label": "Eval driver",
+      "path": "/home/app.e0031982/code/eda_fastmcp/scripts/run_cline_script.sh",
+      "exists": true
+    },
+    {
+      "label": "Eval scorer",
+      "path": "/home/app.e0031982/code/eda_fastmcp/scripts/run_eval.py",
+      "exists": true
+    },
+    {
+      "label": "158-case dataset",
+      "path": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-Eval-PyAether-v20260311.jsonl",
+      "exists": true
+    },
+    {
+      "label": "API database",
+      "path": "/home/app.e0031982/code/eda_fastmcp/docs/API_INFO_MERGED_V3.json",
+      "exists": true
+    },
+    {
+      "label": "Dataset task count",
+      "count": 158,
+      "ok": true
+    },
+    {
+      "label": "DeepSeek traces",
+      "path": "/home/app.e0031982/code/eda_fastmcp/pyAether-eval/cline_cli_trace/cline_trace_v1_3",
+      "count": 0
+    }
+  ],
+  "sft_data": [
+    {
+      "label": "SFT v1",
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_pyaether_corpus.jsonl",
+      "exists": true,
+      "lines": 19610
+    },
+    {
+      "label": "SFT v2",
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/sft_pyaether_corpus_v2.jsonl",
+      "exists": true,
+      "lines": 19524
+    },
+    {
+      "label": "RL parquet",
+      "path": "/nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/rl_pyaether_synth_v2.parquet",
+      "exists": true,
+      "size": 953467
+    }
+  ],
+  "scripts": [
+    {
+      "script": "baize_posttrain_anneal.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    },
+    {
+      "script": "baize_posttrain_sft.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    },
+    {
+      "script": "baize_posttrain_rl_grpo.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    },
+    {
+      "script": "baize_posttrain_eval.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    },
+    {
+      "script": "baize_posttrain_launch_11_9.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    },
+    {
+      "script": "baize_posttrain_gpu_watcher.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    },
+    {
+      "script": "baize_posttrain_preflight_check.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    },
+    {
+      "script": "baize_posttrain_contamination_gate.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    },
+    {
+      "script": "baize_posttrain_minicpm5_diag.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    },
+    {
+      "script": "baize_posttrain_post_rl_pipeline.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    },
+    {
+      "script": "baize_posttrain_paths.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    },
+    {
+      "script": "baize_posttrain_day1_runbook.sh",
+      "exists": true,
+      "syntax_ok": true,
+      "stderr": ""
+    }
+  ],
+  "configs": [
+    {
+      "config": "baize_posttrain_rl_verl_config_v2.yaml",
+      "exists": true,
+      "has_old_model_path": true
+    },
+    {
+      "config": "baize_posttrain_rl_verl_config.yaml",
+      "exists": true,
+      "has_old_model_path": true
+    },
+    {
+      "config": "baize_posttrain_tool_config.yaml",
+      "exists": true,
+      "has_old_model_path": false
+    },
+    {
+      "config": "sft_blend_config.yaml",
+      "exists": true,
+      "has_old_model_path": false
+    }
+  ],
+  "tmp_model_refs": [
+    {
+      "file": "baize_posttrain_day0_audit.py",
+      "ref_count": 1
+    },
+    {
+      "file": "baize_posttrain_gpu_watcher.sh",
+      "ref_count": 1
+    },
+    {
+      "file": "baize_posttrain_sglang_preflight.py",
+      "ref_count": 1
+    },
+    {
+      "file": "baize_posttrain_day0_readiness_audit.py",
+      "ref_count": 1
+    },
+    {
+      "file": "baize_posttrain_rl_verl_config_v2.yaml",
+      "ref_count": 2
+    },
+    {
+      "file": "baize_posttrain_rl_verl_config.yaml",
+      "ref_count": 2
+    },
+    {
+      "file": "baize_posttrain_minicpm5_diag.sh",
+      "ref_count": 1
+    },
+    {
+      "file": "baize_posttrain_day1_diag.py",
+      "ref_count": 3
+    },
+    {
+      "file": "baize_posttrain_rl_grpo.sh",
+      "ref_count": 1
+    },
+    {
+      "file": "baize_posttrain_paths.sh",
+      "ref_count": 1
+    },
+    {
+      "file": "baize_posttrain_multiturn_e2e_sim.py",
+      "ref_count": 1
+    },
+    {
+      "file": "baize_posttrain_f14_parser_resolution.py",
+      "ref_count": 3
+    },
+    {
+      "file": "baize_posttrain_e2e_audit.py",
+      "ref_count": 1
+    },
+    {
+      "file": "baize_posttrain_tokenizer_coverage.py",
+      "ref_count": 2
+    },
+    {
+      "file": "baize_posttrain_gpu_day_audit.py",
+      "ref_count": 1
+    },
+    {
+      "file": "baize_posttrain_r91_gpu_readiness_audit.py",
+      "ref_count": 1
+    }
+  ],
+  "disk": [
+    {
+      "mount": "/",
+      "total": "2.4T",
+      "used": "1.9T",
+      "avail": "367G",
+      "use_pct": "85%"
+    },
+    {
+      "mount": "/nas_data",
+      "total": "127T",
+      "used": "108T",
+      "avail": "20T",
+      "use_pct": "85%"
+    },
+    {
+      "mount": "~/code",
+      "total": "2.4T",
+      "used": "1.9T",
+      "avail": "367G",
+      "use_pct": "85%"
+    }
+  ],
+  "gpu_watcher": {
+    "running": true,
+    "processes": [
+      "2022305 bash /nas_data/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/baize_posttrain_gpu_watcher.sh --poll-interval 120 --launch-steps 1-5 --log /nas_data/app.e0031982/code/BaiZe-ISEDA2027/nemo_experiments/gpu_watcher_11_9.log"
+    ]
+  },
+  "summary": {
+    "total_blockers": 2,
+    "blockers": [
+      "16 files reference deleted /tmp model path",
+      "GPU not ready: 0/8 free (need >=4)"
+    ],
+    "ready_count": 19,
+    "ready_items": [
+      "Model on NAS: 4809.9MB",
+      "verl_cu124_venv exists",
+      "vllm_venv exists",
+      "Script OK: baize_posttrain_anneal.sh",
+      "Script OK: baize_posttrain_sft.sh",
+      "Script OK: baize_posttrain_rl_grpo.sh",
+      "Script OK: baize_posttrain_eval.sh",
+      "Script OK: baize_posttrain_launch_11_9.sh",
+      "Script OK: baize_posttrain_gpu_watcher.sh",
+      "Script OK: baize_posttrain_preflight_check.sh",
+      "Script OK: baize_posttrain_contamination_gate.sh",
+      "Script OK: baize_posttrain_minicpm5_diag.sh",
+      "Script OK: baize_posttrain_post_rl_pipeline.sh",
+      "Script OK: baize_posttrain_paths.sh",
+      "Script OK: baize_posttrain_day1_runbook.sh",
+      "Eval asset OK: Eval driver",
+      "Eval asset OK: Eval scorer",
+      "Eval asset OK: 158-case dataset",
+      "Eval asset OK: API database"
+    ],
+    "overall_ready": false,
+    "can_proceed_after_fixes": true
+  }
+}

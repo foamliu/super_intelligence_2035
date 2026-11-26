@@ -1,0 +1,210 @@
+2026-10-31 00:58:16,707 - INFO - Creating container for psf__requests-1142...
+2026-10-31 00:58:16,727 - INFO - Container for psf__requests-1142 created: b08caa6f51cc04e3d0f3951a99637fb26bc6c53dfff0ad4bbf3866bcca5cc4fe
+2026-10-31 00:58:17,602 - INFO - Container for psf__requests-1142 started: b08caa6f51cc04e3d0f3951a99637fb26bc6c53dfff0ad4bbf3866bcca5cc4fe
+2026-10-31 00:58:17,604 - INFO - Intermediate patch for psf__requests-1142 written to logs/run_evaluation/verify5_hermes/hermes-kimi-k2.6-cloud/psf__requests-1142/patch.diff, now applying to container...
+2026-10-31 00:58:17,793 - INFO - >>>>> Applied Patch:
+Checking patch requests/cookies.py...
+Checking patch requests/models.py...
+Checking patch requests/packages/urllib3/_collections.py...
+Applied patch requests/cookies.py cleanly.
+Applied patch requests/models.py cleanly.
+Applied patch requests/packages/urllib3/_collections.py cleanly.
+
+2026-10-31 00:58:17,917 - INFO - Git diff before:
+diff --git a/requests/cookies.py b/requests/cookies.py
+index bd7289e..78f7436 100644
+--- a/requests/cookies.py
++++ b/requests/cookies.py
+@@ -133,7 +133,11 @@ class CookieConflictError(RuntimeError):
+     Use .get and .set and include domain and path args in order to be more specific."""
+ 
+ 
+-class RequestsCookieJar(cookielib.CookieJar, collections.MutableMapping):
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++class RequestsCookieJar(cookielib.CookieJar, MutableMapping):
+     """Compatibility class; is a cookielib.CookieJar, but exposes a dict interface.
+ 
+     This is the CookieJar we create by default for requests and sessions that
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..5a9dcd9 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -137,10 +137,14 @@ class RequestHooksMixin(object):
+     def register_hook(self, event, hook):
+         """Properly register a hook."""
+ 
+-        if isinstance(hook, collections.Callable):
++        try:
++            from collections.abc import Callable
++        except ImportError:
++            from collections import Callable
++        if isinstance(hook, Callable):
+             self.hooks[event].append(hook)
+         elif hasattr(hook, '__iter__'):
+-            self.hooks[event].extend(h for h in hook if isinstance(h, collections.Callable))
++            self.hooks[event].extend(h for h in hook if isinstance(h, Callable))
+ 
+     def deregister_hook(self, event, hook):
+         """Deregister a previously registered hook.
+@@ -348,9 +352,9 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         ])
+ 
+         try:
+-            length = str(super_len(data))
++            length = super_len(data)
+         except (TypeError, AttributeError):
+-            length = False
++            length = None
+ 
+         if is_stream:
+             body = data
+@@ -358,8 +362,8 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+             if files:
+                 raise NotImplementedError('Streamed bodies and files are mutually exclusive.')
+ 
+-            if length:
+-                self.headers['Content-Length'] = length
++            if length is not None:
++                self.headers['Content-Length'] = str(length)
+             else:
+                 self.headers['Transfer-Encoding'] = 'chunked'
+         # Check if file, fo, generator, iterator.
+@@ -386,13 +390,14 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+         if hasattr(body, 'seek') and hasattr(body, 'tell'):
+             body.seek(0, 2)
+             self.headers['Content-Length'] = str(body.tell())
+             body.seek(0, 0)
+         elif body is not None:
+             self.headers['Content-Length'] = str(len(body))
++        elif self.method not in ('GET', 'HEAD', 'OPTIONS', 'DELETE', 'TRACE'):
++            self.headers['Content-Length'] = '0'
+ 
+     def prepare_auth(self, auth):
+         """Prepares the given HTTP auth data."""
+diff --git a/requests/packages/urllib3/_collections.py b/requests/packages/urllib3/_collections.py
+index a052b1d..2103bfa 100644
+--- a/requests/packages/urllib3/_collections.py
++++ b/requests/packages/urllib3/_collections.py
+@@ -4,7 +4,10 @@
+ # This module is part of urllib3 and is released under
+ # the MIT License: http://www.opensource.org/licenses/mit-license.php
+ 
+-from collections import MutableMapping
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
+ from threading import Lock
+ 
+ try: # Python 2.7+
+2026-10-31 00:58:17,922 - INFO - Eval script for psf__requests-1142 written to logs/run_evaluation/verify5_hermes/hermes-kimi-k2.6-cloud/psf__requests-1142/eval.sh; copying to container...
+2026-10-31 00:58:21,632 - INFO - Test runtime: 3.63 seconds
+2026-10-31 00:58:21,635 - INFO - Test output for psf__requests-1142 written to logs/run_evaluation/verify5_hermes/hermes-kimi-k2.6-cloud/psf__requests-1142/test_output.txt
+2026-10-31 00:58:21,754 - INFO - Git diff after:
+diff --git a/requests/cookies.py b/requests/cookies.py
+index bd7289e..78f7436 100644
+--- a/requests/cookies.py
++++ b/requests/cookies.py
+@@ -133,7 +133,11 @@ class CookieConflictError(RuntimeError):
+     Use .get and .set and include domain and path args in order to be more specific."""
+ 
+ 
+-class RequestsCookieJar(cookielib.CookieJar, collections.MutableMapping):
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++class RequestsCookieJar(cookielib.CookieJar, MutableMapping):
+     """Compatibility class; is a cookielib.CookieJar, but exposes a dict interface.
+ 
+     This is the CookieJar we create by default for requests and sessions that
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..5a9dcd9 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -137,10 +137,14 @@ class RequestHooksMixin(object):
+     def register_hook(self, event, hook):
+         """Properly register a hook."""
+ 
+-        if isinstance(hook, collections.Callable):
++        try:
++            from collections.abc import Callable
++        except ImportError:
++            from collections import Callable
++        if isinstance(hook, Callable):
+             self.hooks[event].append(hook)
+         elif hasattr(hook, '__iter__'):
+-            self.hooks[event].extend(h for h in hook if isinstance(h, collections.Callable))
++            self.hooks[event].extend(h for h in hook if isinstance(h, Callable))
+ 
+     def deregister_hook(self, event, hook):
+         """Deregister a previously registered hook.
+@@ -348,9 +352,9 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         ])
+ 
+         try:
+-            length = str(super_len(data))
++            length = super_len(data)
+         except (TypeError, AttributeError):
+-            length = False
++            length = None
+ 
+         if is_stream:
+             body = data
+@@ -358,8 +362,8 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+             if files:
+                 raise NotImplementedError('Streamed bodies and files are mutually exclusive.')
+ 
+-            if length:
+-                self.headers['Content-Length'] = length
++            if length is not None:
++                self.headers['Content-Length'] = str(length)
+             else:
+                 self.headers['Transfer-Encoding'] = 'chunked'
+         # Check if file, fo, generator, iterator.
+@@ -386,13 +390,14 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+         if hasattr(body, 'seek') and hasattr(body, 'tell'):
+             body.seek(0, 2)
+             self.headers['Content-Length'] = str(body.tell())
+             body.seek(0, 0)
+         elif body is not None:
+             self.headers['Content-Length'] = str(len(body))
++        elif self.method not in ('GET', 'HEAD', 'OPTIONS', 'DELETE', 'TRACE'):
++            self.headers['Content-Length'] = '0'
+ 
+     def prepare_auth(self, auth):
+         """Prepares the given HTTP auth data."""
+diff --git a/requests/packages/urllib3/_collections.py b/requests/packages/urllib3/_collections.py
+index a052b1d..2103bfa 100644
+--- a/requests/packages/urllib3/_collections.py
++++ b/requests/packages/urllib3/_collections.py
+@@ -4,7 +4,10 @@
+ # This module is part of urllib3 and is released under
+ # the MIT License: http://www.opensource.org/licenses/mit-license.php
+ 
+-from collections import MutableMapping
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
+ from threading import Lock
+ 
+ try: # Python 2.7+
+2026-10-31 00:58:21,755 - INFO - Grading answer for psf__requests-1142...
+2026-10-31 00:58:21,763 - INFO - report: {'psf__requests-1142': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_no_content_length'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_basic_building', 'test_requests.py::RequestsTestCase::test_entry_points', 'test_requests.py::RequestsTestCase::test_invalid_url', 'test_requests.py::RequestsTestCase::test_params_are_added_before_fragment', 'test_requests.py::RequestsTestCase::test_path_is_not_double_encoded'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for psf__requests-1142: resolved: True
+2026-10-31 00:58:21,765 - INFO - Attempting to stop container sweb.eval.psf__requests-1142.verify5_hermes...
+2026-10-31 00:58:38,086 - INFO - Container sweb.eval.psf__requests-1142.verify5_hermes stopped successfully.
+2026-10-31 00:58:38,086 - INFO - Attempting to remove container sweb.eval.psf__requests-1142.verify5_hermes...
+2026-10-31 00:58:38,128 - INFO - Container sweb.eval.psf__requests-1142.verify5_hermes removed successfully.

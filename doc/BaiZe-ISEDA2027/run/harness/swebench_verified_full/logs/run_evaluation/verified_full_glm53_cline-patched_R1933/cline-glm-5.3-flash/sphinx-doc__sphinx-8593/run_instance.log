@@ -1,0 +1,170 @@
+2026-11-09 12:42:18,745 - INFO - Creating container for sphinx-doc__sphinx-8593...
+2026-11-09 12:42:18,788 - INFO - Container for sphinx-doc__sphinx-8593 created: c3c6df10cee79adc786ba31f887d75e640c22d027f1c2e9101be8f122bc3f634
+2026-11-09 12:42:19,842 - INFO - Container for sphinx-doc__sphinx-8593 started: c3c6df10cee79adc786ba31f887d75e640c22d027f1c2e9101be8f122bc3f634
+2026-11-09 12:42:19,843 - INFO - Intermediate patch for sphinx-doc__sphinx-8593 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/sphinx-doc__sphinx-8593/patch.diff, now applying to container...
+2026-11-09 12:42:19,996 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+Checking patch sphinx/ext/autodoc/__init__.py...
+Checking patch tests/roots/test-ext-autodoc/target/meta_public.py...
+Checking patch tests/test_ext_autodoc_private_members.py...
+Applied patch CHANGES cleanly.
+Applied patch sphinx/ext/autodoc/__init__.py cleanly.
+Applied patch tests/roots/test-ext-autodoc/target/meta_public.py cleanly.
+Applied patch tests/test_ext_autodoc_private_members.py cleanly.
+
+2026-11-09 12:42:20,454 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index 9360f3473..f7f08e0ec 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -18,6 +18,7 @@ Bugs fixed
+ 
+ * #741: autodoc: inherited-members doesn't work for instance attributes on super
+   class
++* #8697: autodoc: :meta public: does not effect to variables
+ 
+ Testing
+ --------
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index 76265f5be..c452dc0d4 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -1044,17 +1044,30 @@ class ModuleDocumenter(Documenter):
+             self.add_line('   :deprecated:', sourcename)
+ 
+     def get_object_members(self, want_all: bool) -> Tuple[bool, ObjectMembers]:
++        if self.analyzer:
++            attr_docs = self.analyzer.find_attr_docs()
++        else:
++            attr_docs = {}
++
++        def get_docstring(name: str) -> str:
++            # get a docstring from the comment (ex. ``#: docstring``) if exists
++            return "\n".join(attr_docs.get(('', name), []))
++
+         if want_all:
+             members = get_module_members(self.object)
+             if not self.__all__:
+                 # for implicit module members, check __module__ to avoid
+                 # documenting imported objects
+-                return True, members
++                ret = []
++                for name, value in members:
++                    ret.append(ObjectMember(name, value, docstring=get_docstring(name)))
++
++                return True, ret
+             else:
+                 ret = []
+                 for name, value in members:
+                     if name in self.__all__:
+-                        ret.append(ObjectMember(name, value))
++                        ret.append(ObjectMember(name, value, docstring=get_docstring(name)))
+                     else:
+                         ret.append(ObjectMember(name, value, skipped=True))
+ 
+@@ -1065,7 +1078,7 @@ class ModuleDocumenter(Documenter):
+             for name in memberlist:
+                 try:
+                     value = safe_getattr(self.object, name)
+-                    ret.append(ObjectMember(name, value))
++                    ret.append(ObjectMember(name, value, docstring=get_docstring(name)))
+                 except AttributeError:
+                     logger.warning(__('missing attribute mentioned in :members: option: '
+                                       'module %s, attribute %s') %
+diff --git a/tests/test_ext_autodoc_private_members.py b/tests/test_ext_autodoc_private_members.py
+index 6bce5ce78..338f6651c 100644
+--- a/tests/test_ext_autodoc_private_members.py
++++ b/tests/test_ext_autodoc_private_members.py
+@@ -81,3 +81,22 @@ def test_private_members(app):
+         '   :meta public:',
+         '',
+     ]
++
++
++@pytest.mark.sphinx('html', testroot='ext-autodoc')
++def test_meta_public(app):
++    app.config.autoclass_content = 'class'
++    options = {"members": None}
++    actual = do_autodoc(app, 'module', 'target.meta_public', options)
++    assert list(actual) == [
++        '',
++        '.. py:module:: target.meta_public',
++        '',
++        '',
++        '.. py:data:: _foo',
++        '   :module: target.meta_public',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
++    ]
+2026-11-09 12:42:20,457 - INFO - Eval script for sphinx-doc__sphinx-8593 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/sphinx-doc__sphinx-8593/eval.sh; copying to container...
+2026-11-09 12:42:24,250 - INFO - Test runtime: 3.74 seconds
+2026-11-09 12:42:24,252 - INFO - Test output for sphinx-doc__sphinx-8593 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/sphinx-doc__sphinx-8593/test_output.txt
+2026-11-09 12:42:24,306 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index 9360f3473..f7f08e0ec 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -18,6 +18,7 @@ Bugs fixed
+ 
+ * #741: autodoc: inherited-members doesn't work for instance attributes on super
+   class
++* #8697: autodoc: :meta public: does not effect to variables
+ 
+ Testing
+ --------
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index 76265f5be..c452dc0d4 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -1044,17 +1044,30 @@ class ModuleDocumenter(Documenter):
+             self.add_line('   :deprecated:', sourcename)
+ 
+     def get_object_members(self, want_all: bool) -> Tuple[bool, ObjectMembers]:
++        if self.analyzer:
++            attr_docs = self.analyzer.find_attr_docs()
++        else:
++            attr_docs = {}
++
++        def get_docstring(name: str) -> str:
++            # get a docstring from the comment (ex. ``#: docstring``) if exists
++            return "\n".join(attr_docs.get(('', name), []))
++
+         if want_all:
+             members = get_module_members(self.object)
+             if not self.__all__:
+                 # for implicit module members, check __module__ to avoid
+                 # documenting imported objects
+-                return True, members
++                ret = []
++                for name, value in members:
++                    ret.append(ObjectMember(name, value, docstring=get_docstring(name)))
++
++                return True, ret
+             else:
+                 ret = []
+                 for name, value in members:
+                     if name in self.__all__:
+-                        ret.append(ObjectMember(name, value))
++                        ret.append(ObjectMember(name, value, docstring=get_docstring(name)))
+                     else:
+                         ret.append(ObjectMember(name, value, skipped=True))
+ 
+@@ -1065,7 +1078,7 @@ class ModuleDocumenter(Documenter):
+             for name in memberlist:
+                 try:
+                     value = safe_getattr(self.object, name)
+-                    ret.append(ObjectMember(name, value))
++                    ret.append(ObjectMember(name, value, docstring=get_docstring(name)))
+                 except AttributeError:
+                     logger.warning(__('missing attribute mentioned in :members: option: '
+                                       'module %s, attribute %s') %
+2026-11-09 12:42:24,306 - INFO - Git diff changed after running eval script
+2026-11-09 12:42:24,306 - INFO - Grading answer for sphinx-doc__sphinx-8593...
+2026-11-09 12:42:24,308 - INFO - report: {'sphinx-doc__sphinx-8593': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_autodoc_private_members.py::test_private_field', 'tests/test_ext_autodoc_private_members.py::test_private_members'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_private_members.py::test_private_field_and_private_members'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8593: resolved: True
+2026-11-09 12:42:24,309 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8593.verified_full_glm53_cline-patched_R1933...
+2026-11-09 12:42:40,564 - INFO - Container sweb.eval.sphinx-doc__sphinx-8593.verified_full_glm53_cline-patched_R1933 stopped successfully.
+2026-11-09 12:42:40,564 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8593.verified_full_glm53_cline-patched_R1933...
+2026-11-09 12:42:40,600 - INFO - Container sweb.eval.sphinx-doc__sphinx-8593.verified_full_glm53_cline-patched_R1933 removed successfully.

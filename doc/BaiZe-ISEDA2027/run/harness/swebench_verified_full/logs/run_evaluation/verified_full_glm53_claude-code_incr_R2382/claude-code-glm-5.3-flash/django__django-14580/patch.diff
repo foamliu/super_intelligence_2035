@@ -1,0 +1,44 @@
+diff --git a/django/db/migrations/serializer.py b/django/db/migrations/serializer.py
+index e19c881cda..6e78462e95 100644
+--- a/django/db/migrations/serializer.py
++++ b/django/db/migrations/serializer.py
+@@ -273,7 +273,7 @@ class TupleSerializer(BaseSequenceSerializer):
+ class TypeSerializer(BaseSerializer):
+     def serialize(self):
+         special_cases = [
+-            (models.Model, "models.Model", []),
++            (models.Model, "models.Model", ['from django.db import models']),
+             (type(None), 'type(None)', []),
+         ]
+         for case, string, imports in special_cases:
+diff --git a/docs/releases/3.2.6.txt b/docs/releases/3.2.6.txt
+index 426b9c6797..8d2672c4fa 100644
+--- a/docs/releases/3.2.6.txt
++++ b/docs/releases/3.2.6.txt
+@@ -9,4 +9,8 @@ Django 3.2.6 fixes several bugs in 3.2.5.
+ Bugfixes
+ ========
+ 
++* Fixed a bug in Django 3.2 where a generated migration was missing an import
++  of ``models`` for models with only custom fields, causing a ``NameError``
++  when loading the migration (:ticket:`32893`).
++
+ * ...
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+index a590ff4398..471194ffc2 100644
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -658,6 +658,13 @@ class WriterTests(SimpleTestCase):
+     def test_serialize_type_none(self):
+         self.assertSerializedEqual(type(None))
+ 
++    def test_serialize_type_model(self):
++        self.assertSerializedEqual(models.Model)
++        self.assertSerializedResultEqual(
++            MigrationWriter.serialize(models.Model),
++            ("('models.Model', {'from django.db import models'})", set()),
++        )
++
+     def test_simple_migration(self):
+         """
+         Tests serializing a simple migration.

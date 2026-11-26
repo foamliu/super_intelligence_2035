@@ -1,0 +1,130 @@
+2026-10-30 19:22:51,094 - INFO - Creating container for astropy__astropy-8707...
+2026-10-30 19:22:51,151 - INFO - Container for astropy__astropy-8707 created: babbc764eb33f2021048dfbb7f108e552600f577150ff3836b23ec995420a3ea
+2026-10-30 19:22:53,154 - INFO - Container for astropy__astropy-8707 started: babbc764eb33f2021048dfbb7f108e552600f577150ff3836b23ec995420a3ea
+2026-10-30 19:22:53,156 - INFO - Intermediate patch for astropy__astropy-8707 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/astropy__astropy-8707/patch.diff, now applying to container...
+2026-10-30 19:22:53,288 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/fits/card.py...
+Checking patch astropy/io/fits/header.py...
+Applied patch astropy/io/fits/card.py cleanly.
+Applied patch astropy/io/fits/header.py cleanly.
+
+2026-10-30 19:22:54,093 - INFO - Git diff before:
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d73..1ce974a87 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -5,7 +5,7 @@ import warnings
+ 
+ import numpy as np
+ 
+-from .util import _str_to_num, _is_int, translate, _words_group
++from .util import _str_to_num, _is_int, translate, _words_group, decode_ascii
+ from .verify import _Verify, _ErrList, VerifyError, VerifyWarning
+ 
+ from . import conf
+@@ -554,7 +554,7 @@ class Card(_Verify):
+         """
+ 
+         card = cls()
+-        card._image = _pad(image)
++        card._image = _pad(decode_ascii(image))
+         card._verified = False
+         return card
+ 
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d52..701a69614 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -329,13 +329,13 @@ class Header:
+     @classmethod
+     def fromstring(cls, data, sep=''):
+         """
+-        Creates an HDU header from a byte string containing the entire header
+-        data.
++        Creates an HDU header from a string or byte string containing the
++        entire header data.
+ 
+         Parameters
+         ----------
+-        data : str
+-           String containing the entire header.
++        data : str or bytes
++           String or byte string containing the entire header.
+ 
+         sep : str, optional
+             The string separating cards from each other, such as a newline.  By
+@@ -348,6 +348,9 @@ class Header:
+             A new `Header` instance.
+         """
+ 
++        data = decode_ascii(data)
++        sep = decode_ascii(sep)
++
+         cards = []
+ 
+         # If the card separator contains characters that may validly appear in
+2026-10-30 19:22:54,098 - INFO - Eval script for astropy__astropy-8707 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/astropy__astropy-8707/eval.sh; copying to container...
+2026-10-30 19:23:04,272 - INFO - Test runtime: 10.11 seconds
+2026-10-30 19:23:04,274 - INFO - Test output for astropy__astropy-8707 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/astropy__astropy-8707/test_output.txt
+2026-10-30 19:23:04,335 - INFO - Git diff after:
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 8c1ac5d73..1ce974a87 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -5,7 +5,7 @@ import warnings
+ 
+ import numpy as np
+ 
+-from .util import _str_to_num, _is_int, translate, _words_group
++from .util import _str_to_num, _is_int, translate, _words_group, decode_ascii
+ from .verify import _Verify, _ErrList, VerifyError, VerifyWarning
+ 
+ from . import conf
+@@ -554,7 +554,7 @@ class Card(_Verify):
+         """
+ 
+         card = cls()
+-        card._image = _pad(image)
++        card._image = _pad(decode_ascii(image))
+         card._verified = False
+         return card
+ 
+diff --git a/astropy/io/fits/header.py b/astropy/io/fits/header.py
+index ad07e6d52..701a69614 100644
+--- a/astropy/io/fits/header.py
++++ b/astropy/io/fits/header.py
+@@ -329,13 +329,13 @@ class Header:
+     @classmethod
+     def fromstring(cls, data, sep=''):
+         """
+-        Creates an HDU header from a byte string containing the entire header
+-        data.
++        Creates an HDU header from a string or byte string containing the
++        entire header data.
+ 
+         Parameters
+         ----------
+-        data : str
+-           String containing the entire header.
++        data : str or bytes
++           String or byte string containing the entire header.
+ 
+         sep : str, optional
+             The string separating cards from each other, such as a newline.  By
+@@ -348,6 +348,9 @@ class Header:
+             A new `Header` instance.
+         """
+ 
++        data = decode_ascii(data)
++        sep = decode_ascii(sep)
++
+         cards = []
+ 
+         # If the card separator contains characters that may validly appear in
+2026-10-30 19:23:04,336 - INFO - Grading answer for astropy__astropy-8707...
+2026-10-30 19:23:04,341 - INFO - report: {'astropy__astropy-8707': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_from_bytes'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/fits/tests/test_header.py::test_shallow_copy', 'astropy/io/fits/tests/test_header.py::test_init_with_header', 'astropy/io/fits/tests/test_header.py::test_init_with_dict', 'astropy/io/fits/tests/test_header.py::test_init_with_ordereddict', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_rename_keyword', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_card_constructor_default_args', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_string_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_boolean_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_long_integer_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_floating_point_value_card', 'astropy/io/fits/tests/test_header.py::TestHeaderFunctions::test_complex_value_card'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-8707: resolved: True
+2026-10-30 19:23:04,342 - INFO - Attempting to stop container sweb.eval.astropy__astropy-8707.verified_full_claude-code...
+2026-10-30 19:23:19,934 - INFO - Container sweb.eval.astropy__astropy-8707.verified_full_claude-code stopped successfully.
+2026-10-30 19:23:19,934 - INFO - Attempting to remove container sweb.eval.astropy__astropy-8707.verified_full_claude-code...
+2026-10-30 19:23:19,978 - INFO - Container sweb.eval.astropy__astropy-8707.verified_full_claude-code removed successfully.

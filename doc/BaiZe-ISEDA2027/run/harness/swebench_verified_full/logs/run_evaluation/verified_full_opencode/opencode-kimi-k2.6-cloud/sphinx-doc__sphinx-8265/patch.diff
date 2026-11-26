@@ -1,0 +1,95 @@
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index 9bafff11..3723b4a0 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -166,6 +166,17 @@ class _UnparseVisitor(ast.NodeVisitor):
+         return "{" + ", ".join(self.visit(e) for e in node.elts) + "}"
+ 
+     def visit_Subscript(self, node: ast.Subscript) -> str:
++        slice_node = node.slice
++        if isinstance(slice_node, ast.Index):
++            slice_node = slice_node.value
++        if (isinstance(slice_node, ast.Tuple) and slice_node.elts and
++                not any(isinstance(elt, getattr(ast, 'Starred', type(None)))
++                        for elt in slice_node.elts)):
++            if len(slice_node.elts) == 1:
++                return "%s[%s,]" % (self.visit(node.value),
++                                    self.visit(slice_node.elts[0]))
++            return "%s[%s]" % (self.visit(node.value),
++                               ", ".join(self.visit(e) for e in slice_node.elts))
+         return "%s[%s]" % (self.visit(node.value), self.visit(node.slice))
+ 
+     def visit_UnaryOp(self, node: ast.UnaryOp) -> str:
+@@ -173,7 +184,10 @@ class _UnparseVisitor(ast.NodeVisitor):
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+         if node.elts:
+-            return ", ".join(self.visit(e) for e in node.elts)
++            if len(node.elts) == 1:
++                return "(%s,)" % self.visit(node.elts[0])
++            else:
++                return "(%s)" % ", ".join(self.visit(e) for e in node.elts)
+         else:
+             return "()"
+ 
+diff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py
+index 9b12d24d..bd2d1fe7 100644
+--- a/tests/test_pycode_ast.py
++++ b/tests/test_pycode_ast.py
+@@ -53,7 +53,8 @@ from sphinx.pycode import ast
+     ("+ a", "+ a"),                             # UAdd
+     ("- 1", "- 1"),                             # UnaryOp
+     ("- a", "- a"),                             # USub
+-    ("(1, 2, 3)", "1, 2, 3"),                   # Tuple
++    ("(1, 2, 3)", "(1, 2, 3)"),                 # Tuple
++    ("(1,)", "(1,)"),                           # Tuple (single element)
+     ("()", "()"),                               # Tuple (empty)
+ ])
+ def test_unparse(source, expected):
+diff --git a/tests/test_util_inspect.py b/tests/test_util_inspect.py
+index c21eaaa1..37cd7c2d 100644
+--- a/tests/test_util_inspect.py
++++ b/tests/test_util_inspect.py
+@@ -292,7 +292,8 @@ def test_signature_from_str_basic():
+ def test_signature_from_str_default_values():
+     signature = ('(a=0, b=0.0, c="str", d=b"bytes", e=..., f=True, '
+                  'g=[1, 2, 3], h={"a": 1}, i={1, 2, 3}, '
+-                 'j=lambda x, y: None, k=None, l=object(), m=foo.bar.CONSTANT)')
++                 'j=lambda x, y: None, k=None, l=object(), m=foo.bar.CONSTANT, '
++                 'n=(1, 2, 3), o=(1,))')
+     sig = inspect.signature_from_str(signature)
+     assert sig.parameters['a'].default == '0'
+     assert sig.parameters['b'].default == '0.0'
+@@ -307,6 +308,8 @@ def test_signature_from_str_default_values():
+     assert sig.parameters['k'].default == 'None'
+     assert sig.parameters['l'].default == 'object()'
+     assert sig.parameters['m'].default == 'foo.bar.CONSTANT'
++    assert sig.parameters['n'].default == '(1, 2, 3)'
++    assert sig.parameters['o'].default == '(1,)'
+ 
+ 
+ def test_signature_from_str_annotations():
+@@ -356,10 +359,10 @@ def test_signature_from_str_invalid():
+ 
+ 
+ def test_signature_from_ast():
+-    signature = 'def func(a, b, *args, c=0, d="blah", **kwargs): pass'
++    signature = 'def func(a, b, *args, c=0, d="blah", e=(1, 2), **kwargs): pass'
+     tree = ast.parse(signature)
+     sig = inspect.signature_from_ast(tree.body[0])
+-    assert list(sig.parameters.keys()) == ['a', 'b', 'args', 'c', 'd', 'kwargs']
++    assert list(sig.parameters.keys()) == ['a', 'b', 'args', 'c', 'd', 'e', 'kwargs']
+     assert sig.parameters['a'].name == 'a'
+     assert sig.parameters['a'].kind == Parameter.POSITIONAL_OR_KEYWORD
+     assert sig.parameters['a'].default == Parameter.empty
+@@ -380,6 +383,10 @@ def test_signature_from_ast():
+     assert sig.parameters['d'].kind == Parameter.KEYWORD_ONLY
+     assert sig.parameters['d'].default == "'blah'"
+     assert sig.parameters['d'].annotation == Parameter.empty
++    assert sig.parameters['e'].name == 'e'
++    assert sig.parameters['e'].kind == Parameter.KEYWORD_ONLY
++    assert sig.parameters['e'].default == '(1, 2)'
++    assert sig.parameters['e'].annotation == Parameter.empty
+     assert sig.parameters['kwargs'].name == 'kwargs'
+     assert sig.parameters['kwargs'].kind == Parameter.VAR_KEYWORD
+     assert sig.parameters['kwargs'].default == Parameter.empty

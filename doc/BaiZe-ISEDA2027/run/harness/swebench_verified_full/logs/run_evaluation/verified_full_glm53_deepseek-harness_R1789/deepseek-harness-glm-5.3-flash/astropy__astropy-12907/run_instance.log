@@ -1,0 +1,118 @@
+2026-11-07 23:30:38,737 - INFO - Creating container for astropy__astropy-12907...
+2026-11-07 23:30:38,757 - INFO - Container for astropy__astropy-12907 created: 232e0be391500ec136b442da1ef8ef99aa71e77f1e2a97d57f7d5fa77794ff42
+2026-11-07 23:30:39,399 - INFO - Container for astropy__astropy-12907 started: 232e0be391500ec136b442da1ef8ef99aa71e77f1e2a97d57f7d5fa77794ff42
+2026-11-07 23:30:39,401 - INFO - Intermediate patch for astropy__astropy-12907 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1789/deepseek-harness-glm-5.3-flash/astropy__astropy-12907/patch.diff, now applying to container...
+2026-11-07 23:30:39,541 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES.rst...
+warning: CHANGES.rst has type 100755, expected 100644
+Checking patch astropy/modeling/separable.py...
+warning: astropy/modeling/separable.py has type 100755, expected 100644
+Checking patch astropy/modeling/tests/test_separable.py...
+warning: astropy/modeling/tests/test_separable.py has type 100755, expected 100644
+Applied patch CHANGES.rst cleanly.
+Applied patch astropy/modeling/separable.py cleanly.
+Applied patch astropy/modeling/tests/test_separable.py cleanly.
+
+2026-11-07 23:30:39,994 - INFO - Git diff before:
+diff --git a/CHANGES.rst b/CHANGES.rst
+index ac1e6227e..aa37a1a31 100755
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -47,6 +47,10 @@ astropy.modeling
+ - Bugfix for ``keyerror`` thrown by ``Model.input_units_equivalencies`` when
+   used on ``fix_inputs`` models which have no set unit equivalencies. [#12597]
+ 
++- Fix the separability matrix computed for nested compound models. The ``&``
++  operator now correctly combines the computed separability of its operands
++  instead of assuming the right-hand operand is fully separable. [#12901]
++
+ astropy.table
+ ^^^^^^^^^^^^^
+ 
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index a308e2729..45bea3608 100755
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -242,7 +242,7 @@ def _cstack(left, right):
+         cright = _coord_matrix(right, 'right', noutp)
+     else:
+         cright = np.zeros((noutp, right.shape[1]))
+-        cright[-right.shape[0]:, -right.shape[1]:] = 1
++        cright[-right.shape[0]:, -right.shape[1]:] = right
+ 
+     return np.hstack([cleft, cright])
+ 
+diff --git a/astropy/modeling/tests/test_separable.py b/astropy/modeling/tests/test_separable.py
+index 8dfe5c862..d772ff047 100755
+--- a/astropy/modeling/tests/test_separable.py
++++ b/astropy/modeling/tests/test_separable.py
+@@ -148,3 +148,30 @@ def test_custom_model_separable():
+ 
+     assert not model_c().separable
+     assert np.all(separability_matrix(model_c()) == [True, True])
++
++
++def test_nested_compound_separability():
++    """
++    Separability of nested compound models should be identical to
++    that of the equivalent flat compound model.
++
++    Regression test for the ``&`` operator discarding the computed
++    separability matrix of a nested (right-hand) compound model.
++    """
++    cm = models.Linear1D(10) & models.Linear1D(5)
++
++    assert_allclose(
++        separability_matrix(models.Pix2Sky_TAN() & cm),
++        separability_matrix(models.Pix2Sky_TAN() & models.Linear1D(10) & models.Linear1D(5))
++    )
++
++    # nesting on the left side as well as double nesting
++    assert_allclose(
++        separability_matrix(cm & models.Pix2Sky_TAN()),
++        separability_matrix(models.Linear1D(10) & models.Linear1D(5) & models.Pix2Sky_TAN())
++    )
++    assert_allclose(
++        separability_matrix((cm & models.Pix2Sky_TAN()) & cm),
++        separability_matrix(models.Linear1D(10) & models.Linear1D(5) & models.Pix2Sky_TAN()
++                            & models.Linear1D(10) & models.Linear1D(5))
++    )
+2026-11-07 23:30:39,997 - INFO - Eval script for astropy__astropy-12907 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1789/deepseek-harness-glm-5.3-flash/astropy__astropy-12907/eval.sh; copying to container...
+2026-11-07 23:32:04,412 - INFO - Test runtime: 84.33 seconds
+2026-11-07 23:32:04,416 - INFO - Test output for astropy__astropy-12907 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1789/deepseek-harness-glm-5.3-flash/astropy__astropy-12907/test_output.txt
+2026-11-07 23:32:04,480 - INFO - Git diff after:
+diff --git a/CHANGES.rst b/CHANGES.rst
+index ac1e6227e..aa37a1a31 100755
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -47,6 +47,10 @@ astropy.modeling
+ - Bugfix for ``keyerror`` thrown by ``Model.input_units_equivalencies`` when
+   used on ``fix_inputs`` models which have no set unit equivalencies. [#12597]
+ 
++- Fix the separability matrix computed for nested compound models. The ``&``
++  operator now correctly combines the computed separability of its operands
++  instead of assuming the right-hand operand is fully separable. [#12901]
++
+ astropy.table
+ ^^^^^^^^^^^^^
+ 
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index a308e2729..45bea3608 100755
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -242,7 +242,7 @@ def _cstack(left, right):
+         cright = _coord_matrix(right, 'right', noutp)
+     else:
+         cright = np.zeros((noutp, right.shape[1]))
+-        cright[-right.shape[0]:, -right.shape[1]:] = 1
++        cright[-right.shape[0]:, -right.shape[1]:] = right
+ 
+     return np.hstack([cleft, cright])
+2026-11-07 23:32:04,480 - INFO - Git diff changed after running eval script
+2026-11-07 23:32:04,480 - INFO - Grading answer for astropy__astropy-12907...
+2026-11-07 23:32:04,488 - INFO - report: {'astropy__astropy-12907': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/modeling/tests/test_separable.py::test_separable[compound_model6-result6]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model9-result9]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/modeling/tests/test_separable.py::test_coord_matrix', 'astropy/modeling/tests/test_separable.py::test_cdot', 'astropy/modeling/tests/test_separable.py::test_cstack', 'astropy/modeling/tests/test_separable.py::test_arith_oper', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model0-result0]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model1-result1]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model2-result2]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model3-result3]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model4-result4]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model5-result5]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model7-result7]', 'astropy/modeling/tests/test_separable.py::test_separable[compound_model8-result8]', 'astropy/modeling/tests/test_separable.py::test_custom_model_separable'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-12907: resolved: True
+2026-11-07 23:32:04,490 - INFO - Attempting to stop container sweb.eval.astropy__astropy-12907.verified_full_glm53_deepseek-harness_R1789...
+2026-11-07 23:32:20,267 - INFO - Container sweb.eval.astropy__astropy-12907.verified_full_glm53_deepseek-harness_R1789 stopped successfully.
+2026-11-07 23:32:20,267 - INFO - Attempting to remove container sweb.eval.astropy__astropy-12907.verified_full_glm53_deepseek-harness_R1789...
+2026-11-07 23:32:20,334 - INFO - Container sweb.eval.astropy__astropy-12907.verified_full_glm53_deepseek-harness_R1789 removed successfully.

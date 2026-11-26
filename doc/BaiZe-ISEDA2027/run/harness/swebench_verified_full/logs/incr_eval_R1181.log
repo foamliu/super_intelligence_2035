@@ -1,0 +1,39 @@
+=== incr_eval R1181 START Sun Nov  1 04:04:37 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Sun Nov  1 04:04:37 PM CST 2026] === merge hermes predictions ===
+hermes: 77 real patches merged
+[Sun Nov  1 04:04:37 PM CST 2026] === hermes eval START: django__django-11095 ===
+1 instances already run, skipping...
+No instances to run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 3
+Unremoved images: 1
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[Sun Nov  1 04:04:41 PM CST 2026] === hermes eval DONE ===
+[Sun Nov  1 04:04:41 PM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=497 resolved=401 failed=96 infra=0)
+  pi: unchanged (n=421 resolved=306 failed=115 infra=0)
+  claude-code: unchanged (n=344 resolved=263 failed=81 infra=0)
+  codex: unchanged (n=228 resolved=179 failed=49 infra=0)
+  hermes: WROTE eval_hermes.json  n=77 resolved=58 failed=19 infra=0
+  deepseek-harness: unchanged (n=78 resolved=62 failed=16 infra=0)
+[Sun Nov  1 04:04:42 PM CST 2026] === gen report HTML ===
+written /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/reports/report_harness_swebench_verified_full500_zh.html (15386B)
+  cline        done=500/500 patch=442 no_patch=51 infra=0 eval=Y resolved=326
+  opencode     done=500/500 patch=497 no_patch=-7 infra=0 eval=Y resolved=401
+  pi           done=500/500 patch=421 no_patch=12 infra=59 eval=Y resolved=306
+  claude-code  done=500/500 patch=344 no_patch=79 infra=70 eval=Y resolved=263
+  codex        done=500/500 patch=228 no_patch=70 infra=197 eval=Y resolved=179
+  hermes       done=113/500 patch=76 no_patch=36 infra=0 eval=Y resolved=58
+  deepseek-harness done=229/500 patch=77 no_patch=4 infra=118 eval=Y resolved=62
+=== incr_eval R1181 DONE Sun Nov  1 04:04:42 PM CST 2026 ===

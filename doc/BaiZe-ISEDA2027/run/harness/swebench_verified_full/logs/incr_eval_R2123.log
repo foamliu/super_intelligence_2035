@@ -1,0 +1,5 @@
+
+============================================================
+=== hermes: incr_eval R2123 (2 instances) ===
+  [22:45:18] hermes: merged 365 real preds -> predictions_glm53/predictions_hermes_glm53.json
+  [22:45:18] hermes: launching eval (workers=1, timeout=1800, 2 instances)...

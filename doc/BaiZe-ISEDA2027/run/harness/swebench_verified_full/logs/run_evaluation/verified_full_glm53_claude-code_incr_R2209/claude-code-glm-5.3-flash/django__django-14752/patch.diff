@@ -1,0 +1,62 @@
+diff --git a/django/contrib/admin/views/autocomplete.py b/django/contrib/admin/views/autocomplete.py
+index 3903e4c98c..78edab7370 100644
+--- a/django/contrib/admin/views/autocomplete.py
++++ b/django/contrib/admin/views/autocomplete.py
+@@ -26,12 +26,18 @@ class AutocompleteJsonView(BaseListView):
+         context = self.get_context_data()
+         return JsonResponse({
+             'results': [
+-                {'id': str(getattr(obj, to_field_name)), 'text': str(obj)}
+-                for obj in context['object_list']
++                self.serialize_result(obj, to_field_name) for obj in context['object_list']
+             ],
+             'pagination': {'more': context['page_obj'].has_next()},
+         })
+ 
++    def serialize_result(self, obj, to_field_name):
++        """
++        Convert the provided model object to a dictionary that is added to the
++        results list.
++        """
++        return {'id': str(getattr(obj, to_field_name)), 'text': str(obj)}
++
+     def get_paginator(self, *args, **kwargs):
+         """Use the ModelAdmin's paginator."""
+         return self.model_admin.get_paginator(self.request, *args, **kwargs)
+diff --git a/tests/admin_views/test_autocomplete_view.py b/tests/admin_views/test_autocomplete_view.py
+index aa978f7a83..90444b8ca0 100644
+--- a/tests/admin_views/test_autocomplete_view.py
++++ b/tests/admin_views/test_autocomplete_view.py
+@@ -1,3 +1,4 @@
++import datetime
+ import json
+ from contextlib import contextmanager
+ 
+@@ -91,6 +92,27 @@ class AutocompleteJsonViewTests(AdminViewBasicTestCase):
+             'pagination': {'more': False},
+         })
+ 
++    def test_serialize_result(self):
++        class SerializedQuestionAdmin(QuestionAdmin):
++            search_fields = ['question']
++
++        q = Question.objects.create(question='Is this a question?', posted=datetime.date.today())
++        request = self.factory.get(self.url, {'term': 'is', **self.opts})
++        request.user = self.superuser
++
++        class CustomAutocompleteJsonView(AutocompleteJsonView):
++            def serialize_result(self, obj, to_field_name):
++                return super().serialize_result(obj, to_field_name) | {'posted': obj.posted}
++
++        with model_admin(Question, SerializedQuestionAdmin):
++            response = CustomAutocompleteJsonView.as_view(**self.as_view_args)(request)
++        self.assertEqual(response.status_code, 200)
++        data = json.loads(response.content.decode('utf-8'))
++        self.assertEqual(data, {
++            'results': [{'id': str(q.pk), 'text': q.question, 'posted': str(q.posted)}],
++            'pagination': {'more': False},
++        })
++
+     def test_custom_to_field(self):
+         q = Question.objects.create(question='Is this a question?')
+         request = self.factory.get(self.url, {'term': 'is', **self.opts, 'field_name': 'question_with_to_field'})

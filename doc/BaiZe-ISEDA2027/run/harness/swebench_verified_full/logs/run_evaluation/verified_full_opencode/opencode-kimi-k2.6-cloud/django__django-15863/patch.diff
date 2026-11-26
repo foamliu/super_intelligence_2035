@@ -1,0 +1,33 @@
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 7a5b28d159..932c52edb3 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -151,8 +151,11 @@ def floatformat(text, arg=-1):
+             use_l10n = False
+             arg = arg[:-1] or -1
+     try:
+-        input_val = repr(text)
+-        d = Decimal(input_val)
++        if isinstance(text, Decimal):
++            d = text
++        else:
++            input_val = repr(text)
++            d = Decimal(input_val)
+     except InvalidOperation:
+         try:
+             d = Decimal(str(float(text)))
+diff --git a/tests/template_tests/filter_tests/test_floatformat.py b/tests/template_tests/filter_tests/test_floatformat.py
+index 8dc69b2437..99330e398e 100644
+--- a/tests/template_tests/filter_tests/test_floatformat.py
++++ b/tests/template_tests/filter_tests/test_floatformat.py
+@@ -56,6 +56,10 @@ class FunctionTests(SimpleTestCase):
+         self.assertEqual(floatformat(0.12345, 2), "0.12")
+         self.assertEqual(floatformat(Decimal("555.555"), 2), "555.56")
+         self.assertEqual(floatformat(Decimal("09.000")), "9")
++        self.assertEqual(
++            floatformat(Decimal("42.12345678901234567890"), 20),
++            "42.12345678901234567890",
++        )
+         self.assertEqual(floatformat("foo"), "")
+         self.assertEqual(floatformat(13.1031, "bar"), "13.1031")
+         self.assertEqual(floatformat(18.125, 2), "18.13")

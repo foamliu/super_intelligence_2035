@@ -1,0 +1,210 @@
+diff --git a/django/db/migrations/operations/models.py b/django/db/migrations/operations/models.py
+index 967a91fdc8..f9ade3f02e 100644
+--- a/django/db/migrations/operations/models.py
++++ b/django/db/migrations/operations/models.py
+@@ -807,6 +807,9 @@ class IndexOperation(Operation):
+     def model_name_lower(self):
+         return self.model_name.lower()
+ 
++    def references_model(self, name, app_label):
++        return name.lower() == self.model_name_lower
++
+ 
+ class AddIndex(IndexOperation):
+     """Add an index on a model."""
+@@ -861,6 +864,34 @@ class AddIndex(IndexOperation):
+     def migration_name_fragment(self):
+         return "%s_%s" % (self.model_name_lower, self.index.name.lower())
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, RemoveIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.index.name.lower() == operation.name.lower()
++        ):
++            return []
++        elif (
++            isinstance(operation, RenameIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and operation.old_name
++            and self.index.name.lower() == operation.old_name.lower()
++        ):
++            new_index = self.index.clone()
++            new_index.name = operation.new_name
++            return [
++                AddIndex(
++                    model_name=self.model_name,
++                    index=new_index,
++                ),
++            ]
++        elif (
++            isinstance(operation, DeleteModel)
++            and self.model_name_lower == operation.name_lower
++        ):
++            return [operation]
++        return super().reduce(operation, app_label)
++
+ 
+ class RemoveIndex(IndexOperation):
+     """Remove an index from a model."""
+@@ -904,6 +935,14 @@ class RemoveIndex(IndexOperation):
+     def migration_name_fragment(self):
+         return "remove_%s_%s" % (self.model_name_lower, self.name.lower())
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, DeleteModel)
++            and self.model_name_lower == operation.name_lower
++        ):
++            return [operation]
++        return super().reduce(operation, app_label)
++
+ 
+ class RenameIndex(IndexOperation):
+     """Rename an index."""
+@@ -1094,6 +1133,20 @@ class AddConstraint(IndexOperation):
+     def migration_name_fragment(self):
+         return "%s_%s" % (self.model_name_lower, self.constraint.name.lower())
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, RemoveConstraint)
++            and self.model_name_lower == operation.model_name_lower
++            and self.constraint.name.lower() == operation.name.lower()
++        ):
++            return []
++        elif (
++            isinstance(operation, DeleteModel)
++            and self.model_name_lower == operation.name_lower
++        ):
++            return [operation]
++        return super().reduce(operation, app_label)
++
+ 
+ class RemoveConstraint(IndexOperation):
+     option_name = "constraints"
+@@ -1135,3 +1188,11 @@ class RemoveConstraint(IndexOperation):
+     @property
+     def migration_name_fragment(self):
+         return "remove_%s_%s" % (self.model_name_lower, self.name.lower())
++
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, DeleteModel)
++            and self.model_name_lower == operation.name_lower
++        ):
++            return [operation]
++        return super().reduce(operation, app_label)
+diff --git a/tests/migrations/test_optimizer.py b/tests/migrations/test_optimizer.py
+index 8cd4c67fbd..d94c3fd8ba 100644
+--- a/tests/migrations/test_optimizer.py
++++ b/tests/migrations/test_optimizer.py
+@@ -1158,3 +1158,108 @@ class OptimizerTests(SimpleTestCase):
+                 ),
+             ]
+         )
++
++    def test_add_index_remove_index(self):
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Foo",
++                    models.Index(fields=["a"], name="idx_foo_a"),
++                ),
++                migrations.RemoveIndex("Foo", "idx_foo_a"),
++            ],
++            [],
++        )
++
++    def test_add_index_rename_index(self):
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Foo",
++                    models.Index(fields=["a"], name="idx_old"),
++                ),
++                migrations.RenameIndex("Foo", new_name="idx_new", old_name="idx_old"),
++            ],
++            [
++                migrations.AddIndex(
++                    "Foo",
++                    models.Index(fields=["a"], name="idx_new"),
++                ),
++            ],
++        )
++
++    def test_add_index_delete_model(self):
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Foo",
++                    models.Index(fields=["a"], name="idx_foo_a"),
++                ),
++                migrations.DeleteModel("Foo"),
++            ],
++            [migrations.DeleteModel("Foo")],
++        )
++
++    def test_remove_index_delete_model(self):
++        self.assertOptimizesTo(
++            [
++                migrations.RemoveIndex("Foo", "idx_foo_a"),
++                migrations.DeleteModel("Foo"),
++            ],
++            [migrations.DeleteModel("Foo")],
++        )
++
++    def test_add_constraint_remove_constraint(self):
++        self.assertOptimizesTo(
++            [
++                migrations.AddConstraint(
++                    "Foo",
++                    models.UniqueConstraint(fields=["a"], name="uc_foo_a"),
++                ),
++                migrations.RemoveConstraint("Foo", "uc_foo_a"),
++            ],
++            [],
++        )
++
++    def test_add_constraint_delete_model(self):
++        self.assertOptimizesTo(
++            [
++                migrations.AddConstraint(
++                    "Foo",
++                    models.UniqueConstraint(fields=["a"], name="uc_foo_a"),
++                ),
++                migrations.DeleteModel("Foo"),
++            ],
++            [migrations.DeleteModel("Foo")],
++        )
++
++    def test_remove_constraint_delete_model(self):
++        self.assertOptimizesTo(
++            [
++                migrations.RemoveConstraint("Foo", "uc_foo_a"),
++                migrations.DeleteModel("Foo"),
++            ],
++            [migrations.DeleteModel("Foo")],
++        )
++
++    def test_add_index_remove_index_different_model(self):
++        self.assertDoesNotOptimize(
++            [
++                migrations.AddIndex(
++                    "Foo",
++                    models.Index(fields=["a"], name="idx_foo_a"),
++                ),
++                migrations.RemoveIndex("Bar", "idx_foo_a"),
++            ]
++        )
++
++    def test_add_index_remove_index_different_name(self):
++        self.assertDoesNotOptimize(
++            [
++                migrations.AddIndex(
++                    "Foo",
++                    models.Index(fields=["a"], name="idx_foo_a"),
++                ),
++                migrations.RemoveIndex("Foo", "idx_foo_b"),
++            ]
++        )

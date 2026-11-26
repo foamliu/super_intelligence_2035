@@ -1,0 +1,50 @@
+diff --git a/shim/sitecustomize.py b/shim/sitecustomize.py
+new file mode 100644
+index 00000000..adf363be
+--- /dev/null
++++ b/shim/sitecustomize.py
+@@ -0,0 +1,12 @@
++import builtins
++import numpy as np
++for attr in ('int','float','bool','object','complex'):
++    if not hasattr(np, attr):
++        setattr(np, attr, getattr(builtins, attr))
++
++import scipy.optimize.linesearch as _ls
++if not hasattr(_ls, 'line_search_wolfe2'):
++    def _line_search_wolfe2(*args, **kwargs):
++        return _ls.line_search(*args, **kwargs)
++    _ls.line_search_wolfe2 = _line_search_wolfe2
++    _ls.line_search_wolfe1 = _line_search_wolfe2
+diff --git a/sklearn/feature_extraction/tests/test_text.py b/sklearn/feature_extraction/tests/test_text.py
+index 7b7697ff..be67509b 100644
+--- a/sklearn/feature_extraction/tests/test_text.py
++++ b/sklearn/feature_extraction/tests/test_text.py
+@@ -97,6 +97,11 @@ def test_strip_accents():
+     expected = 'this is a test'
+     assert strip_accents_unicode(a) == expected
+ 
++    # check strings already in NFKD form (e.g., combining characters)
++    a = chr(110) + chr(771)  # n + combining tilde
++    expected = 'n'
++    assert strip_accents_unicode(a) == expected
++
+ 
+ def test_to_ascii():
+     # check some classical latin accentuated symbols
+diff --git a/sklearn/feature_extraction/text.py b/sklearn/feature_extraction/text.py
+index bb5a9d64..11236d95 100644
+--- a/sklearn/feature_extraction/text.py
++++ b/sklearn/feature_extraction/text.py
+@@ -130,10 +130,7 @@ def strip_accents_unicode(s):
+         ASCII equivalent.
+     """
+     normalized = unicodedata.normalize('NFKD', s)
+-    if normalized == s:
+-        return s
+-    else:
+-        return ''.join([c for c in normalized if not unicodedata.combining(c)])
++    return ''.join([c for c in normalized if not unicodedata.combining(c)])
+ 
+ 
+ def strip_accents_ascii(s):

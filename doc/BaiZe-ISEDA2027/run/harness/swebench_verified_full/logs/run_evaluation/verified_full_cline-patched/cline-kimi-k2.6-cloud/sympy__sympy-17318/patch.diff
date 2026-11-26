@@ -1,0 +1,49 @@
+diff --git a/sympy/simplify/radsimp.py b/sympy/simplify/radsimp.py
+index 216ae262..37da7129 100644
+--- a/sympy/simplify/radsimp.py
++++ b/sympy/simplify/radsimp.py
+@@ -1113,6 +1113,8 @@ def _split_gcd(*a):
+     >>> _split_gcd(55, 35, 22, 14, 77, 10)
+     (5, [55, 35, 10], [22, 14, 77])
+     """
++    if not a:
++        return S.One, [], []
+     g = a[0]
+     b1 = [g]
+     b2 = []
+diff --git a/sympy/simplify/sqrtdenest.py b/sympy/simplify/sqrtdenest.py
+index f0b7653e..4c50783d 100644
+--- a/sympy/simplify/sqrtdenest.py
++++ b/sympy/simplify/sqrtdenest.py
+@@ -158,6 +158,8 @@ def _sqrt_match(p):
+         pargs = sorted(p.args, key=default_sort_key)
+         if all((x**2).is_Rational for x in pargs):
+             r, b, a = split_surds(p)
++            if not b:
++                return None
+             res = a, b, r
+             return list(res)
+         # to make the process canonical, the argument is included in the tuple
+diff --git a/sympy/simplify/tests/test_sqrtdenest.py b/sympy/simplify/tests/test_sqrtdenest.py
+index c30f7a32..2a826864 100644
+--- a/sympy/simplify/tests/test_sqrtdenest.py
++++ b/sympy/simplify/tests/test_sqrtdenest.py
+@@ -1,4 +1,4 @@
+-from sympy import sqrt, root, S, Symbol, sqrtdenest, Integral, cos
++from sympy import sqrt, root, S, Symbol, sqrtdenest, Integral, cos, I
+ from sympy.simplify.sqrtdenest import _subsets as subsets
+ from sympy.utilities.pytest import slow
+ 
+@@ -20,6 +20,12 @@ def test_sqrtdenest():
+         assert sqrtdenest(i) == d[i]
+ 
+ 
++def test_issue_12420():
++    from sympy.simplify.sqrtdenest import _sqrt_match
++    # An Add with no surds but with rational squares should not raise
++    assert _sqrt_match(4 + 3*I) is None
++
++
+ def test_sqrtdenest2():
+     assert sqrtdenest(sqrt(16 - 2*r29 + 2*sqrt(55 - 10*r29))) == \
+         r5 + sqrt(11 - 2*r29)

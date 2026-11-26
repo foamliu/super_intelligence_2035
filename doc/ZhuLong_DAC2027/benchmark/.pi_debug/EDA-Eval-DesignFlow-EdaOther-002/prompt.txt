@@ -1,0 +1,127 @@
+You are a coding agent being evaluated. Implement a Tcl proc and verify it on the Cadence WaveView Tcl sandbox via the `eda_flow` MCP.
+
+# Task
+Implement `proc pattern_speed_weekly_stats {manifest} { ... }` in Tcl per this spec:
+
+You are analyzing pattern-simulation AVC files from a DDR memory verification flow. Given a manifest of `.avc` pattern files (each record is a 4-element list `{name folder_exists folder_files mtime}`), compute weekly pattern-speed statistics with STRICT folder validation.
+
+Rules:
+1. A pattern's SPEED is the SECOND-TO-LAST `_`-delimited field of the avc basename (strip the `.avc` extension first).
+   - `pattern_simulation_16Gb_LP6_Fix_10667_001.avc` -> speed `10667`
+   - `pattern_simulation_16Gb_LP6_Fix_9600_0928_9600_996.avc` -> speed `9600` (NOT 996)
+   - `pat_8000_007.avc` -> speed `8000` (NOT 007)
+   If the basename has fewer than 2 `_`-fields, count it as `no_speed` and skip it.
+2. Folder validation - a pattern counts as a LEGAL/validated pattern ONLY IF ALL hold:
+   - its matching folder exists (folder_exists = 1); otherwise -> `no_folder`, skip.
+   - the folder is non-empty (folder_files is a non-empty list); otherwise -> `empty`, skip.
+   - the folder does NOT contain ONLY `irun.log`. A folder whose single entry is exactly `irun.log` is a FAILED simulation with no compare result -> `only_irunlog`, skip. A folder containing `irun.log` PLUS any other file (e.g. A_Compare.rpt, B_Compare.rpt, ncsim.shm) is VALID.
+3. For each VALID pattern: tally by speed, and group by ISO week of its mtime using `clock format $mtime -format %G-W%V -gmt 1` (yields labels like `2026-W34`). Track min/max mtime epoch among valid patterns.
+4. Return a FLAT dict string (single line, space-separated `key value` pairs) with EXACTLY these keys in this order:
+   total_avc total_valid num_no_folder num_only_irunlog num_empty num_no_speed time_span_lo time_span_hi speeds speed_totals weeks week_totals week_speed
+   - total_avc = total records seen; total_valid = number of legal/validated patterns.
+   - num_no_folder / num_only_irunlog / num_empty / num_no_speed = respective skip counts.
+   - time_span_lo / time_span_hi = min / max mtime epoch among VALID patterns (empty string if no valid patterns).
+   - speeds = valid speeds sorted NUMERICALLY ascending, space-separated.
+   - speed_totals = `speed:count` for each valid speed, in the same numeric order, space-separated.
+   - weeks = ISO-week labels sorted ascending (lexicographic == chronological), space-separated.
+   - week_totals = `week:count` in week order, space-separated.
+   - week_speed = `week:speed:count` sorted by week then speed, space-separated.
+   Put scalar counts first; list-valued keys (speeds, speed_totals, weeks, week_totals, week_speed) last so each list value is terminated by the next key.
+
+Use only Tcl builtins (no external packages). The manifest is a Tcl list of records; each record is a 4-element list `{name folder_exists folder_files mtime}` where folder_files is a Tcl list of filenames (possibly empty) and mtime is an integer epoch (seconds, UTC).
+
+# How to verify (REQUIRED - do this yourself using the eda_flow MCP)
+1. Call `open_session` with task_id="PI-SUT", eval_id="20261029-edaoth2", user="pi_sut", sample="0" to get a workdir.
+2. Build a single Tcl script that contains: (a) your `pattern_speed_weekly_stats` proc, (b) the test procs below, (c) a driver that calls `catch {check pattern_speed_weekly_stats} msg` and `puts` the RC and msg.
+3. Use `write_file` to write that script to `<workdir>/edaoth2_pi.tcl`.
+4. Use `run_code` with lang="tcl", host="waveview", workdir=<workdir>, code=`source <workdir>/edaoth2_pi.tcl` to execute it.
+5. Report the REF_CHECK_RC and REF_CHECK_MSG. If REF_CHECK_RC==0 and msg=="ALL_ASSERTS_PASS", your implementation PASSES. If it FAILS, read the assertion message, fix your proc, and re-run until PASS (or report the failure honestly).
+6. Call `close_session` with the workdir to clean up.
+
+# Test procs (append verbatim to your script, after your proc)
+proc assert {cond msg} {
+    set ok [uplevel 1 [list expr $cond]]
+    if {!$ok} { error "ASSERT FAIL: $cond -- $msg" }
+}
+proc mk {name fe ff mt} { return [list $name $fe $ff $mt] }
+proc check {candidate} {
+    set e34 [clock scan "2026-08-21 09:13:12" -gmt 1]
+    set e38 [clock scan "2026-09-18 08:00:00" -gmt 1]
+    set e42 [clock scan "2026-10-14 00:34:27" -gmt 1]
+    set e43 [clock scan "2026-10-21 08:00:00" -gmt 1]
+    set e44 [clock scan "2026-10-28 04:19:08" -gmt 1]
+    set e9600 [clock scan "2026-09-28 12:00:00" -gmt 1]
+    set mA {}
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_0821_weekly34_10667_001.avc 1 {irun.log A_Compare.rpt B_Compare.rpt} $e34]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_0821_weekly34_10667_002.avc 1 {A_Compare.rpt} $e34]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_0821_weekly34_10667_003.avc 1 {irun.log ncsim.shm} $e34]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_0908_weekly38_10667_001.avc 1 {irun.log A_Compare.rpt} $e38]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_0908_weekly38_10667_002.avc 1 {A_Compare.rpt B_Compare.rpt} $e38]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_0908_weekly38_10667_003.avc 1 {ncsim.shm} $e38]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_001.avc 1 {irun.log A_Compare.rpt} $e42]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_002.avc 1 {A_Compare.rpt} $e42]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_003.avc 1 {irun.log B_Compare.rpt} $e42]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_051.avc 1 {A_Compare.rpt} $e43]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_052.avc 1 {irun.log A_Compare.rpt ncsim.shm} $e43]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_053.avc 1 {B_Compare.rpt} $e43]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_123.avc 1 {A_Compare.rpt} $e44]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_124.avc 1 {irun.log A_Compare.rpt} $e44]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_125.avc 1 {ncsim.shm A_Compare.rpt} $e44]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_200.avc 0 {} $e42]
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_9600_0928_9600_500.avc 0 {} $e9600]
+    for {set i 1} {$i <= 9} {incr i} {
+        set nm [format "pattern_simulation_16Gb_LP6_Fix_9600_0928_9600_%03d.avc" $i]
+        lappend mA [mk $nm 1 {irun.log} $e9600]
+    }
+    lappend mA [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_300.avc 1 {} $e43]
+    lappend mA [mk x.avc 1 {A_Compare.rpt} $e43]
+    set out [$candidate $mA]
+    assert {[regexp {total_avc[[:space:]]+28} $out]} "total_avc must be 28"
+    assert {[regexp {total_valid[[:space:]]+15} $out]} "total_valid must be 15"
+    assert {[regexp {num_no_folder[[:space:]]+2} $out]} "num_no_folder must be 2"
+    assert {[regexp {num_only_irunlog[[:space:]]+9} $out]} "num_only_irunlog must be 9"
+    assert {[regexp {num_empty[[:space:]]+1} $out]} "num_empty must be 1"
+    assert {[regexp {num_no_speed[[:space:]]+1} $out]} "num_no_speed must be 1"
+    assert {[regexp {speeds[[:space:]]+10667[[:space:]]+speed_totals} $out]} "valid speeds must be exactly 10667"
+    assert {![regexp {9600} $out]} "9600 MUST NOT appear (all 9600 are only-irun.log -> excluded)"
+    assert {[regexp {speed_totals[[:space:]]+10667:15} $out]} "speed_totals must be 10667:15"
+    assert {[regexp {week_totals[[:space:]]+2026-W34:3[[:space:]]+2026-W38:3[[:space:]]+2026-W42:3[[:space:]]+2026-W43:3[[:space:]]+2026-W44:3} $out]} "week_totals 3 per week"
+    assert {[regexp {week_speed[[:space:]]+.*2026-W44:10667:3} $out]} "week_speed must include 2026-W44:10667:3"
+    set pLo "time_span_lo $e34 time_span_hi"
+    set pHi "time_span_hi $e44 speeds"
+    assert {[regexp $pLo $out]} "time_span_lo must be earliest epoch"
+    assert {[regexp $pHi $out]} "time_span_hi must be latest epoch"
+    set eB [clock scan "2026-10-15 08:00:00" -gmt 1]
+    set mB {}
+    lappend mB [mk pattern_simulation_16Gb_LP6_Fix_1014_weekly43_10667_010.avc 1 {A_Compare.rpt} $eB]
+    lappend mB [mk pattern_simulation_16Gb_LP6_Fix_9600_0928_9600_020.avc 1 {A_Compare.rpt B_Compare.rpt} $eB]
+    lappend mB [mk pattern_simulation_16Gb_LP6_Fix_9600_0928_9600_021.avc 0 {} $eB]
+    lappend mB [mk y.avc 1 {A_Compare.rpt} $eB]
+    set outB [$candidate $mB]
+    assert {[regexp {total_avc[[:space:]]+4} $outB]} "Case B total_avc 4"
+    assert {[regexp {total_valid[[:space:]]+2} $outB]} "Case B total_valid 2"
+    assert {[regexp {num_no_folder[[:space:]]+1} $outB]} "Case B num_no_folder 1"
+    assert {[regexp {num_only_irunlog[[:space:]]+0} $outB]} "Case B num_only_irunlog 0"
+    assert {[regexp {num_no_speed[[:space:]]+1} $outB]} "Case B num_no_speed 1"
+    assert {[regexp {speeds[[:space:]]+9600[[:space:]]+10667} $outB]} "Case B speeds include 9600 and 10667"
+    assert {[regexp {speed_totals[[:space:]]+9600:1[[:space:]]+10667:1} $outB]} "Case B speed_totals 9600:1 10667:1"
+    set eC [clock scan "2026-10-20 08:00:00" -gmt 1]
+    set mC {}
+    lappend mC [mk pattern_simulation_16Gb_LP6_Fix_10667_001.avc 1 {A_Compare.rpt} $eC]
+    lappend mC [mk pattern_simulation_16Gb_LP6_Fix_9600_0928_9600_996.avc 1 {A_Compare.rpt} $eC]
+    lappend mC [mk pat_8000_007.avc 1 {A_Compare.rpt} $eC]
+    set outC [$candidate $mC]
+    assert {[regexp {total_valid[[:space:]]+3} $outC]} "Case C total_valid 3"
+    assert {[regexp {speeds[[:space:]]+8000[[:space:]]+9600[[:space:]]+10667} $outC]} "Case C speeds 8000 9600 10667 (2nd-to-last field)"
+    assert {[regexp {speed_totals[[:space:]]+8000:1[[:space:]]+9600:1[[:space:]]+10667:1} $outC]} "Case C speed_totals 8000:1 9600:1 10667:1"
+    assert {![regexp {speed_totals[[:space:]]+.*001:} $outC]} "must NOT report 001 as speed (last-field trap)"
+    assert {![regexp {speed_totals[[:space:]]+.*996:} $outC]} "must NOT report 996 as speed (last-field trap)"
+    return "ALL_ASSERTS_PASS"
+}
+
+# Driver to append at the very end of your script:
+set rr [catch {check pattern_speed_weekly_stats} msg]
+puts "REF_CHECK_RC=$rr"
+puts "REF_CHECK_MSG=$msg"
+
+When done, output a final line EXACTLY: `PI_FINAL_RESULT: <PASS|FAIL>` and the REF_CHECK_MSG. Keep your implementation concise.

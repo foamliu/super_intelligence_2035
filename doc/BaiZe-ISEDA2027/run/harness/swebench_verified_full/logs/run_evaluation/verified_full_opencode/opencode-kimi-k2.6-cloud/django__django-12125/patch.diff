@@ -1,0 +1,105 @@
+diff --git a/django/db/migrations/serializer.py b/django/db/migrations/serializer.py
+index 7d226955d5..2466223897 100644
+--- a/django/db/migrations/serializer.py
++++ b/django/db/migrations/serializer.py
+@@ -8,6 +8,7 @@ import math
+ import re
+ import types
+ import uuid
++from importlib import import_module
+ 
+ from django.conf import SettingsReference
+ from django.db import models
+@@ -95,7 +96,18 @@ class DeconstructableSerializer(BaseSerializer):
+             imports = {"from django.db import models"}
+             name = "models.%s" % name
+         else:
+-            imports = {"import %s" % module}
++            # Find the actual module by trying progressively shorter prefixes.
++            module_path = module
++            while module_path:
++                try:
++                    import_module(module_path)
++                    break
++                except ImportError:
++                    pass
++                if "." not in module_path:
++                    break
++                module_path = module_path.rsplit(".", 1)[0]
++            imports = {"import %s" % module_path}
+             name = path
+         return name, imports
+ 
+@@ -267,9 +279,9 @@ class TypeSerializer(BaseSerializer):
+         if hasattr(self.value, "__module__"):
+             module = self.value.__module__
+             if module == builtins.__name__:
+-                return self.value.__name__, set()
++                return self.value.__qualname__, set()
+             else:
+-                return "%s.%s" % (module, self.value.__name__), {"import %s" % module}
++                return "%s.%s" % (module, self.value.__qualname__), {"import %s" % module}
+ 
+ 
+ class UUIDSerializer(BaseSerializer):
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+index ca924f35ec..bb2dce2854 100644
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -56,6 +56,19 @@ class BinaryEnum(enum.Enum):
+     B = b'value-b'
+ 
+ 
++class DeconstructibleInstances:
++    def deconstruct(self):
++        return ('migrations.test_writer.DeconstructibleInstances', [], {})
++
++
++class OuterClass:
++    class InnerField(models.CharField):
++        pass
++
++    class InnerClass:
++        pass
++
++
+ class IntEnum(enum.IntEnum):
+     A = 1
+     B = 2
+@@ -450,6 +463,25 @@ class WriterTests(SimpleTestCase):
+             ("models.TextField(blank=True, null=True)", {'from django.db import models'})
+         )
+ 
++    def test_serialize_nested_class_fields(self):
++        field = OuterClass.InnerField(max_length=255)
++        string, imports = MigrationWriter.serialize(field)
++        self.assertEqual(
++            string,
++            'migrations.test_writer.OuterClass.InnerField(max_length=255)'
++        )
++        self.assertEqual(imports, {'import migrations.test_writer'})
++        self.assertSerializedFieldEqual(field)
++
++    def test_serialize_nested_class_type(self):
++        self.assertSerializedResultEqual(
++            OuterClass.InnerClass,
++            (
++                'migrations.test_writer.OuterClass.InnerClass',
++                {'import migrations.test_writer'},
++            ),
++        )
++
+     def test_serialize_settings(self):
+         self.assertSerializedEqual(SettingsReference(settings.AUTH_USER_MODEL, "AUTH_USER_MODEL"))
+         self.assertSerializedResultEqual(
+@@ -726,10 +758,6 @@ class WriterTests(SimpleTestCase):
+         # Yes, it doesn't make sense to use a class as a default for a
+         # CharField. It does make sense for custom fields though, for example
+         # an enumfield that takes the enum class as an argument.
+-        class DeconstructibleInstances:
+-            def deconstruct(self):
+-                return ('DeconstructibleInstances', [], {})
+-
+         string = MigrationWriter.serialize(models.CharField(default=DeconstructibleInstances))[0]
+         self.assertEqual(string, "models.CharField(default=migrations.test_writer.DeconstructibleInstances)")
+ 

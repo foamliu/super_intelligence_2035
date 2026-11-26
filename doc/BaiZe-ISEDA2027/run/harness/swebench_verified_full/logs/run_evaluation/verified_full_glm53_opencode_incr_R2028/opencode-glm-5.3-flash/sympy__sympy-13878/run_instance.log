@@ -1,0 +1,106 @@
+2026-11-10 18:51:26,189 - INFO - Creating container for sympy__sympy-13878...
+2026-11-10 18:51:26,245 - INFO - Container for sympy__sympy-13878 created: c0a39fe10222ed10619fe280ba846f7116327eeb6f44481a3209907e6ac6f850
+2026-11-10 18:51:26,793 - INFO - Container for sympy__sympy-13878 started: c0a39fe10222ed10619fe280ba846f7116327eeb6f44481a3209907e6ac6f850
+2026-11-10 18:51:26,799 - INFO - Intermediate patch for sympy__sympy-13878 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sympy__sympy-13878/patch.diff, now applying to container...
+2026-11-10 18:51:26,908 - INFO - >>>>> Applied Patch:
+Checking patch sympy/stats/crv_types.py...
+Applied patch sympy/stats/crv_types.py cleanly.
+
+2026-11-10 18:51:27,433 - INFO - Git diff before:
+diff --git a/sympy/stats/crv_types.py b/sympy/stats/crv_types.py
+index fff7da80a..c529765de 100644
+--- a/sympy/stats/crv_types.py
++++ b/sympy/stats/crv_types.py
+@@ -47,7 +47,8 @@
+ 
+ from sympy import (log, sqrt, pi, S, Dummy, Interval, sympify, gamma,
+                    Piecewise, And, Eq, binomial, factorial, Sum, floor, Abs,
+-                   Lambda, Basic, lowergamma, erf, erfc, I)
++                   Lambda, Basic, lowergamma, uppergamma, hyper, asin,
++                   erf, erfc, I)
+ from sympy import beta as beta_fn
+ from sympy import cos, exp, besseli
+ from sympy.stats.crv import (SingleContinuousPSpace, SingleContinuousDistribution,
+@@ -153,6 +154,14 @@ class ArcsinDistribution(SingleContinuousDistribution):
+     def pdf(self, x):
+         return 1/(pi*sqrt((x - self.a)*(self.b - x)))
+ 
++    def _cdf(self, x):
++        a, b = self.a, self.b
++        return Piecewise(
++            (S.Zero, x < a),
++            (2/pi*asin(sqrt((x - a)/(b - a))), x <= b),
++            (S.One, True)
++        )
++
+ def Arcsin(name, a=0, b=1):
+     r"""
+     Create a Continuous Random Variable with an arcsin distribution.
+@@ -670,6 +679,13 @@ def pdf(self, x):
+         p, a, b = self.p, self.a, self.b
+         return a*p/x*((x/b)**(a*p)/(((x/b)**a + 1)**(p + 1)))
+ 
++    def _cdf(self, x):
++        p, a, b = self.p, self.a, self.b
++        return Piecewise(
++            ((1 + (x/b)**(-a))**(-p), x > 0),
++            (S.Zero, True)
++        )
++
+ 
+ def Dagum(name, p, a, b):
+     r"""
+2026-11-10 18:51:27,435 - INFO - Eval script for sympy__sympy-13878 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sympy__sympy-13878/eval.sh; copying to container...
+2026-11-10 18:51:47,850 - INFO - Test runtime: 20.35 seconds
+2026-11-10 18:51:47,853 - INFO - Test output for sympy__sympy-13878 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/sympy__sympy-13878/test_output.txt
+2026-11-10 18:51:47,904 - INFO - Git diff after:
+diff --git a/sympy/stats/crv_types.py b/sympy/stats/crv_types.py
+index fff7da80a..c529765de 100644
+--- a/sympy/stats/crv_types.py
++++ b/sympy/stats/crv_types.py
+@@ -47,7 +47,8 @@
+ 
+ from sympy import (log, sqrt, pi, S, Dummy, Interval, sympify, gamma,
+                    Piecewise, And, Eq, binomial, factorial, Sum, floor, Abs,
+-                   Lambda, Basic, lowergamma, erf, erfc, I)
++                   Lambda, Basic, lowergamma, uppergamma, hyper, asin,
++                   erf, erfc, I)
+ from sympy import beta as beta_fn
+ from sympy import cos, exp, besseli
+ from sympy.stats.crv import (SingleContinuousPSpace, SingleContinuousDistribution,
+@@ -153,6 +154,14 @@ class ArcsinDistribution(SingleContinuousDistribution):
+     def pdf(self, x):
+         return 1/(pi*sqrt((x - self.a)*(self.b - x)))
+ 
++    def _cdf(self, x):
++        a, b = self.a, self.b
++        return Piecewise(
++            (S.Zero, x < a),
++            (2/pi*asin(sqrt((x - a)/(b - a))), x <= b),
++            (S.One, True)
++        )
++
+ def Arcsin(name, a=0, b=1):
+     r"""
+     Create a Continuous Random Variable with an arcsin distribution.
+@@ -670,6 +679,13 @@ def pdf(self, x):
+         p, a, b = self.p, self.a, self.b
+         return a*p/x*((x/b)**(a*p)/(((x/b)**a + 1)**(p + 1)))
+ 
++    def _cdf(self, x):
++        p, a, b = self.p, self.a, self.b
++        return Piecewise(
++            ((1 + (x/b)**(-a))**(-p), x > 0),
++            (S.Zero, True)
++        )
++
+ 
+ def Dagum(name, p, a, b):
+     r"""
+2026-11-10 18:51:47,904 - INFO - Grading answer for sympy__sympy-13878...
+2026-11-10 18:51:47,921 - INFO - report: {'sympy__sympy-13878': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_arcsin'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_ContinuousDomain', 'test_characteristic_function', 'test_benini', 'test_chi', 'test_chi_noncentral', 'test_chi_squared', 'test_gompertz', 'test_shiftedgompertz', 'test_trapezoidal', 'test_quadratic_u', 'test_von_mises', 'test_prefab_sampling', 'test_input_value_assertions', 'test_probability_unevaluated', 'test_density_unevaluated', 'test_random_parameters', 'test_random_parameters_given', 'test_conjugate_priors', 'test_issue_10003'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-13878: resolved: True
+2026-11-10 18:51:47,922 - INFO - Attempting to stop container sweb.eval.sympy__sympy-13878.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 18:52:04,018 - INFO - Container sweb.eval.sympy__sympy-13878.verified_full_glm53_opencode_incr_R2028 stopped successfully.
+2026-11-10 18:52:04,018 - INFO - Attempting to remove container sweb.eval.sympy__sympy-13878.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 18:52:04,058 - INFO - Container sweb.eval.sympy__sympy-13878.verified_full_glm53_opencode_incr_R2028 removed successfully.

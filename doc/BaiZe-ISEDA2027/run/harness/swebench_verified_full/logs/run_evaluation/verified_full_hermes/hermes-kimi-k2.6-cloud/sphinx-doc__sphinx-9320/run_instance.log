@@ -1,0 +1,98 @@
+2026-11-04 02:16:06,637 - INFO - Creating container for sphinx-doc__sphinx-9320...
+2026-11-04 02:16:06,661 - INFO - Container for sphinx-doc__sphinx-9320 created: 649447d00f436ef5486def0069c31ede9615b70349ff54b5532cecf8aad0263e
+2026-11-04 02:16:07,321 - INFO - Container for sphinx-doc__sphinx-9320 started: 649447d00f436ef5486def0069c31ede9615b70349ff54b5532cecf8aad0263e
+2026-11-04 02:16:07,323 - INFO - Intermediate patch for sphinx-doc__sphinx-9320 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sphinx-doc__sphinx-9320/patch.diff, now applying to container...
+2026-11-04 02:16:07,440 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/cmd/quickstart.py...
+Checking patch test_bug.py...
+Checking patch tests/test_quickstart.py...
+Applied patch sphinx/cmd/quickstart.py cleanly.
+Applied patch test_bug.py cleanly.
+Applied patch tests/test_quickstart.py cleanly.
+
+2026-11-04 02:16:07,883 - INFO - Git diff before:
+diff --git a/sphinx/cmd/quickstart.py b/sphinx/cmd/quickstart.py
+index a40a21073..8e9f6898c 100644
+--- a/sphinx/cmd/quickstart.py
++++ b/sphinx/cmd/quickstart.py
+@@ -95,6 +95,12 @@ def is_path(x: str) -> str:
+     return x
+ 
+ 
++def is_path_or_empty(x: str) -> str:
++    if not x:
++        return x
++    return is_path(x)
++
++
+ def allow_empty(x: str) -> str:
+     return x
+ 
+@@ -223,7 +229,7 @@ def ask_user(d: Dict) -> None:
+         print(__('sphinx-quickstart will not overwrite existing Sphinx projects.'))
+         print()
+         d['path'] = do_prompt(__('Please enter a new root path (or just Enter to exit)'),
+-                              '', is_path)
++                              '', is_path_or_empty)
+         if not d['path']:
+             sys.exit(1)
+ 
+diff --git a/tests/test_quickstart.py b/tests/test_quickstart.py
+index 94144ef22..05f7f76ee 100644
+--- a/tests/test_quickstart.py
++++ b/tests/test_quickstart.py
+@@ -250,3 +250,17 @@ def test_extensions(tempdir):
+     ns = {}
+     exec(conffile.read_text(), ns)
+     assert ns['extensions'] == ['foo', 'bar', 'baz']
++
++
++def test_quickstart_existing_confpy(tempdir):
++    answers = {
++        'Root path': tempdir,
++    }
++    qs.term_input = mock_input(answers)
++
++    # create an existing conf.py
++    (tempdir / 'conf.py').write_text('# existing conf.py\n')
++
++    d = {}
++    with pytest.raises(SystemExit):
++        qs.ask_user(d)
+2026-11-04 02:16:07,886 - INFO - Eval script for sphinx-doc__sphinx-9320 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sphinx-doc__sphinx-9320/eval.sh; copying to container...
+2026-11-04 02:16:12,534 - INFO - Test runtime: 4.56 seconds
+2026-11-04 02:16:12,536 - INFO - Test output for sphinx-doc__sphinx-9320 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sphinx-doc__sphinx-9320/test_output.txt
+2026-11-04 02:16:12,590 - INFO - Git diff after:
+diff --git a/sphinx/cmd/quickstart.py b/sphinx/cmd/quickstart.py
+index a40a21073..8e9f6898c 100644
+--- a/sphinx/cmd/quickstart.py
++++ b/sphinx/cmd/quickstart.py
+@@ -95,6 +95,12 @@ def is_path(x: str) -> str:
+     return x
+ 
+ 
++def is_path_or_empty(x: str) -> str:
++    if not x:
++        return x
++    return is_path(x)
++
++
+ def allow_empty(x: str) -> str:
+     return x
+ 
+@@ -223,7 +229,7 @@ def ask_user(d: Dict) -> None:
+         print(__('sphinx-quickstart will not overwrite existing Sphinx projects.'))
+         print()
+         d['path'] = do_prompt(__('Please enter a new root path (or just Enter to exit)'),
+-                              '', is_path)
++                              '', is_path_or_empty)
+         if not d['path']:
+             sys.exit(1)
+2026-11-04 02:16:12,590 - INFO - Git diff changed after running eval script
+2026-11-04 02:16:12,590 - INFO - Grading answer for sphinx-doc__sphinx-9320...
+2026-11-04 02:16:12,595 - INFO - report: {'sphinx-doc__sphinx-9320': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_quickstart.py::test_exits_when_existing_confpy'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_quickstart.py::test_do_prompt', 'tests/test_quickstart.py::test_do_prompt_inputstrip', 'tests/test_quickstart.py::test_do_prompt_with_nonascii', 'tests/test_quickstart.py::test_quickstart_defaults', 'tests/test_quickstart.py::test_quickstart_all_answers', 'tests/test_quickstart.py::test_generated_files_eol', 'tests/test_quickstart.py::test_quickstart_and_build', 'tests/test_quickstart.py::test_default_filename', 'tests/test_quickstart.py::test_extensions'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9320: resolved: True
+2026-11-04 02:16:12,597 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9320.verified_full_hermes...
+2026-11-04 02:16:28,634 - INFO - Container sweb.eval.sphinx-doc__sphinx-9320.verified_full_hermes stopped successfully.
+2026-11-04 02:16:28,634 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9320.verified_full_hermes...
+2026-11-04 02:16:28,678 - INFO - Container sweb.eval.sphinx-doc__sphinx-9320.verified_full_hermes removed successfully.

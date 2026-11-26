@@ -1,0 +1,177 @@
+2026-11-07 23:02:50,611 - INFO - Creating container for django__django-12419...
+2026-11-07 23:02:50,632 - INFO - Container for django__django-12419 created: 8a1d2ff6fb7f6dd28494e8051d38af39081878bd736ad19c915df393e124bc8f
+2026-11-07 23:02:51,412 - INFO - Container for django__django-12419 started: 8a1d2ff6fb7f6dd28494e8051d38af39081878bd736ad19c915df393e124bc8f
+2026-11-07 23:02:51,414 - INFO - Intermediate patch for django__django-12419 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-12419/patch.diff, now applying to container...
+2026-11-07 23:02:51,542 - INFO - >>>>> Applied Patch:
+Checking patch django/conf/global_settings.py...
+Checking patch docs/ref/settings.txt...
+Checking patch docs/releases/3.1.txt...
+Checking patch tests/project_template/test_settings.py...
+Applied patch django/conf/global_settings.py cleanly.
+Applied patch docs/ref/settings.txt cleanly.
+Applied patch docs/releases/3.1.txt cleanly.
+Applied patch tests/project_template/test_settings.py cleanly.
+
+2026-11-07 23:02:52,431 - INFO - Git diff before:
+diff --git a/django/conf/global_settings.py b/django/conf/global_settings.py
+index 09c9b95d26..8bb59a4037 100644
+--- a/django/conf/global_settings.py
++++ b/django/conf/global_settings.py
+@@ -637,6 +637,6 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+ SECURE_HSTS_PRELOAD = False
+ SECURE_HSTS_SECONDS = 0
+ SECURE_REDIRECT_EXEMPT = []
+-SECURE_REFERRER_POLICY = None
++SECURE_REFERRER_POLICY = 'same-origin'
+ SECURE_SSL_HOST = None
+ SECURE_SSL_REDIRECT = False
+diff --git a/docs/ref/settings.txt b/docs/ref/settings.txt
+index b4a5bdc48f..8c3f6f2b47 100644
+--- a/docs/ref/settings.txt
++++ b/docs/ref/settings.txt
+@@ -2395,12 +2395,16 @@ from URL paths, so patterns shouldn't include them, e.g.
+ 
+ .. versionadded:: 3.0
+ 
+-Default: ``None``
++Default: ``'same-origin'``
+ 
+ If configured, the :class:`~django.middleware.security.SecurityMiddleware` sets
+ the :ref:`referrer-policy` header on all responses that do not already have it
+ to the value provided.
+ 
++.. versionchanged:: 3.1
++
++    In older versions, the default value is ``None``.
++
+ .. setting:: SECURE_SSL_HOST
+ 
+ ``SECURE_SSL_HOST``
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 4a165156e1..903e2510ba 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -285,6 +285,19 @@ Requests and Responses
+ * The new :meth:`.HttpRequest.accepts` method returns whether the request
+   accepts the given MIME type according to the ``Accept`` HTTP header.
+ 
++.. _whats-new-security-3.1:
++
++Security
++~~~~~~~~
++
++* The :setting:`SECURE_REFERRER_POLICY` setting now defaults to
++  ``'same-origin'``. With this configured,
++  :class:`~django.middleware.security.SecurityMiddleware` sets the
++  :ref:`referrer-policy` header to ``same-origin`` on all responses that do not
++  already have it. This prevents the ``Referer`` header being sent to other
++  origins. If you need the previous behavior, explicitly set
++  :setting:`SECURE_REFERRER_POLICY` to ``None``.
++
+ Serialization
+ ~~~~~~~~~~~~~
+ 
+@@ -452,6 +465,10 @@ Miscellaneous
+ * Providing a non-local remote field in the :attr:`.ForeignKey.to_field`
+   argument now raises :class:`~django.core.exceptions.FieldError`.
+ 
++* :setting:`SECURE_REFERRER_POLICY` now defaults to ``'same-origin'``. See the
++  *What's New* :ref:`Security section <whats-new-security-3.1>` above for more
++  details.
++
+ .. _deprecated-features-3.1:
+ 
+ Features deprecated in 3.1
+diff --git a/tests/project_template/test_settings.py b/tests/project_template/test_settings.py
+index 5617f4a943..e8d466938d 100644
+--- a/tests/project_template/test_settings.py
++++ b/tests/project_template/test_settings.py
+@@ -38,6 +38,7 @@ class TestStartProjectSettings(SimpleTestCase):
+             self.assertEqual(headers, [
+                 b'Content-Length: 0',
+                 b'Content-Type: text/html; charset=utf-8',
++                b'Referrer-Policy: same-origin',
+                 b'X-Content-Type-Options: nosniff',
+                 b'X-Frame-Options: DENY',
+             ])
+2026-11-07 23:02:52,433 - INFO - Eval script for django__django-12419 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-12419/eval.sh; copying to container...
+2026-11-07 23:02:59,286 - INFO - Test runtime: 6.76 seconds
+2026-11-07 23:02:59,288 - INFO - Test output for django__django-12419 written to logs/run_evaluation/verified_full_glm53_hermes_R1789/hermes-glm-5.3-flash/django__django-12419/test_output.txt
+2026-11-07 23:02:59,358 - INFO - Git diff after:
+diff --git a/django/conf/global_settings.py b/django/conf/global_settings.py
+index 09c9b95d26..8bb59a4037 100644
+--- a/django/conf/global_settings.py
++++ b/django/conf/global_settings.py
+@@ -637,6 +637,6 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+ SECURE_HSTS_PRELOAD = False
+ SECURE_HSTS_SECONDS = 0
+ SECURE_REDIRECT_EXEMPT = []
+-SECURE_REFERRER_POLICY = None
++SECURE_REFERRER_POLICY = 'same-origin'
+ SECURE_SSL_HOST = None
+ SECURE_SSL_REDIRECT = False
+diff --git a/docs/ref/settings.txt b/docs/ref/settings.txt
+index b4a5bdc48f..8c3f6f2b47 100644
+--- a/docs/ref/settings.txt
++++ b/docs/ref/settings.txt
+@@ -2395,12 +2395,16 @@ from URL paths, so patterns shouldn't include them, e.g.
+ 
+ .. versionadded:: 3.0
+ 
+-Default: ``None``
++Default: ``'same-origin'``
+ 
+ If configured, the :class:`~django.middleware.security.SecurityMiddleware` sets
+ the :ref:`referrer-policy` header on all responses that do not already have it
+ to the value provided.
+ 
++.. versionchanged:: 3.1
++
++    In older versions, the default value is ``None``.
++
+ .. setting:: SECURE_SSL_HOST
+ 
+ ``SECURE_SSL_HOST``
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 4a165156e1..903e2510ba 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -285,6 +285,19 @@ Requests and Responses
+ * The new :meth:`.HttpRequest.accepts` method returns whether the request
+   accepts the given MIME type according to the ``Accept`` HTTP header.
+ 
++.. _whats-new-security-3.1:
++
++Security
++~~~~~~~~
++
++* The :setting:`SECURE_REFERRER_POLICY` setting now defaults to
++  ``'same-origin'``. With this configured,
++  :class:`~django.middleware.security.SecurityMiddleware` sets the
++  :ref:`referrer-policy` header to ``same-origin`` on all responses that do not
++  already have it. This prevents the ``Referer`` header being sent to other
++  origins. If you need the previous behavior, explicitly set
++  :setting:`SECURE_REFERRER_POLICY` to ``None``.
++
+ Serialization
+ ~~~~~~~~~~~~~
+ 
+@@ -452,6 +465,10 @@ Miscellaneous
+ * Providing a non-local remote field in the :attr:`.ForeignKey.to_field`
+   argument now raises :class:`~django.core.exceptions.FieldError`.
+ 
++* :setting:`SECURE_REFERRER_POLICY` now defaults to ``'same-origin'``. See the
++  *What's New* :ref:`Security section <whats-new-security-3.1>` above for more
++  details.
++
+ .. _deprecated-features-3.1:
+ 
+ Features deprecated in 3.1
+2026-11-07 23:02:59,358 - INFO - Git diff changed after running eval script
+2026-11-07 23:02:59,358 - INFO - Grading answer for django__django-12419...
+2026-11-07 23:02:59,359 - INFO - report: {'django__django-12419': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_middleware_headers (project_template.test_settings.TestStartProjectSettings)'], 'failure': []}, 'PASS_TO_PASS': {'success': [], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12419: resolved: True
+2026-11-07 23:02:59,360 - INFO - Attempting to stop container sweb.eval.django__django-12419.verified_full_glm53_hermes_R1789...
+2026-11-07 23:03:15,676 - INFO - Container sweb.eval.django__django-12419.verified_full_glm53_hermes_R1789 stopped successfully.
+2026-11-07 23:03:15,676 - INFO - Attempting to remove container sweb.eval.django__django-12419.verified_full_glm53_hermes_R1789...
+2026-11-07 23:03:15,739 - INFO - Container sweb.eval.django__django-12419.verified_full_glm53_hermes_R1789 removed successfully.

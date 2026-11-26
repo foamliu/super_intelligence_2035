@@ -1,0 +1,73 @@
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 7c978c47..16993cb6 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -105,6 +105,12 @@ class Point(GeometryEntity):
+ 
+     is_Point = True
+ 
++    # Points are not Exprs but they do define arithmetic operations, so
++    # they are given a higher _op_priority than Expr (10.0) so that
++    # binary operations like ``2*Point(1, 1)`` are handled by Point
++    # instead of creating a Mul of a number and a Point.
++    _op_priority = 11.0
++
+     def __new__(cls, *args, **kwargs):
+         evaluate = kwargs.get('evaluate', global_evaluate[0])
+         on_morph = kwargs.get('on_morph', 'ignore')
+@@ -255,6 +261,14 @@ def __mul__(self, factor):
+ 
+         >>> from sympy.geometry.point import Point
+ 
++        A Point can be multiplied by a number on either side of the
++        multiplication:
++
++        >>> Point(1, 2)*2
++        Point2D(2, 4)
++        >>> 2*Point(1, 2)
++        Point2D(2, 4)
++
+         When multiplying a Point by a floating point number,
+         the coordinates of the Point will be changed to Floats:
+ 
+@@ -278,6 +292,8 @@ def __mul__(self, factor):
+         coords = [simplify(x*factor) for x in self.args]
+         return Point(coords, evaluate=False)
+ 
++    __rmul__ = __mul__
++
+     def __neg__(self):
+         """Negate the point."""
+         coords = [-x for x in self.args]
+diff --git a/sympy/geometry/tests/test_point.py b/sympy/geometry/tests/test_point.py
+index 475d1d40..fca58f5c 100644
+--- a/sympy/geometry/tests/test_point.py
++++ b/sympy/geometry/tests/test_point.py
+@@ -1,4 +1,4 @@
+-from sympy import I, Rational, Symbol, pi, sqrt, S
++from sympy import I, Rational, Symbol, pi, sqrt, S, sympify
+ from sympy.geometry import Line, Point, Point2D, Point3D, Line3D, Plane
+ from sympy.geometry.entity import rotate, scale, translate
+ from sympy.matrices import Matrix
+@@ -400,3 +400,21 @@ def test_direction_cosine():
+     assert p2.direction_cosine(Point3D(0, 0, 0)) == [-sqrt(3) / 3, -sqrt(3) / 3, -sqrt(3) / 3]
+     assert p2.direction_cosine(Point3D(1, 1, 12)) == [0, 0, 1]
+     assert p2.direction_cosine(Point3D(12, 1, 12)) == [sqrt(2) / 2, 0, sqrt(2) / 2]
++
++
++def test_point_mul():
++    p = Point(0, 1)
++    q = Point(1, 1)
++    assert p*2 == Point(0, 2)
++    assert 2*p == Point(0, 2)
++    assert p*2.0 == 2.0*p
++    assert p*S(2.0) == S(2.0)*p == Point(0, 2)
++    assert q*Rational(1, 2) == Rational(1, 2)*q == Point(S.Half, S.Half)
++    x = Symbol('x')
++    assert q*x == x*q == Point(x, x)
++    assert 2*Point3D(1, 1, 1) == Point3D(2, 2, 2)
++    # a number times a Point used to raise GeometryError when the
++    # number came first (issue 16558)
++    p1 = Point(0, 0)
++    p2 = Point(1, 1)
++    assert p1 + p2*sympify(2.0) == p1 + sympify(2.0)*p2 == Point(2.0, 2.0)

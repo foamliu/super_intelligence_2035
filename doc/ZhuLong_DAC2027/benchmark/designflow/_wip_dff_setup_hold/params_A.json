@@ -1,0 +1,19 @@
+{
+  "vdd": 1.1,
+  "tclk": 500e-12,
+  "wn": 0.5e-6,
+  "wp": 1.0e-6,
+  "l": 0.13e-6,
+  "cl": 5e-15,
+  "kp_n": 50e-6,
+  "kp_p": 20e-6,
+  "vto_n": 0.7,
+  "vto_p": -0.7,
+  "lambda": 0.05,
+  "tsu_nominal": 250e-12,
+  "tsu_sweep": [0, 30e-12, 60e-12, 100e-12, 150e-12, 220e-12, 320e-12, 450e-12],
+  "th_sweep":  [0, 10e-12, 25e-12, 50e-12, 80e-12, 120e-12, 180e-12, 260e-12],
+  "obs_setup_offset": 200e-12,
+  "obs_hold_offset":  200e-12,
+  "vq_threshold_frac": 0.7
+}

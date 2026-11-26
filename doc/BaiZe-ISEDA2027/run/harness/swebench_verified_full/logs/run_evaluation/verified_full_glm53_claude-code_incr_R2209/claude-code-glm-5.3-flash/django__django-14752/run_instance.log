@@ -1,0 +1,112 @@
+2026-11-12 00:17:22,397 - INFO - Creating container for django__django-14752...
+2026-11-12 00:17:22,417 - INFO - Container for django__django-14752 created: 07c2513eb889a15850e360e6107e1c7c7463e4c690cdb3de69f18b533db56cc2
+2026-11-12 00:17:23,083 - INFO - Container for django__django-14752 started: 07c2513eb889a15850e360e6107e1c7c7463e4c690cdb3de69f18b533db56cc2
+2026-11-12 00:17:23,085 - INFO - Intermediate patch for django__django-14752 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2209/claude-code-glm-5.3-flash/django__django-14752/patch.diff, now applying to container...
+2026-11-12 00:17:23,269 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/admin/views/autocomplete.py...
+warning: django/contrib/admin/views/autocomplete.py has type 100755, expected 100644
+Checking patch tests/admin_views/test_autocomplete_view.py...
+warning: tests/admin_views/test_autocomplete_view.py has type 100755, expected 100644
+Applied patch django/contrib/admin/views/autocomplete.py cleanly.
+Applied patch tests/admin_views/test_autocomplete_view.py cleanly.
+
+2026-11-12 00:17:24,463 - INFO - Git diff before:
+diff --git a/django/contrib/admin/views/autocomplete.py b/django/contrib/admin/views/autocomplete.py
+index 3903e4c98c..78edab7370 100755
+--- a/django/contrib/admin/views/autocomplete.py
++++ b/django/contrib/admin/views/autocomplete.py
+@@ -26,12 +26,18 @@ class AutocompleteJsonView(BaseListView):
+         context = self.get_context_data()
+         return JsonResponse({
+             'results': [
+-                {'id': str(getattr(obj, to_field_name)), 'text': str(obj)}
+-                for obj in context['object_list']
++                self.serialize_result(obj, to_field_name) for obj in context['object_list']
+             ],
+             'pagination': {'more': context['page_obj'].has_next()},
+         })
+ 
++    def serialize_result(self, obj, to_field_name):
++        """
++        Convert the provided model object to a dictionary that is added to the
++        results list.
++        """
++        return {'id': str(getattr(obj, to_field_name)), 'text': str(obj)}
++
+     def get_paginator(self, *args, **kwargs):
+         """Use the ModelAdmin's paginator."""
+         return self.model_admin.get_paginator(self.request, *args, **kwargs)
+diff --git a/tests/admin_views/test_autocomplete_view.py b/tests/admin_views/test_autocomplete_view.py
+index aa978f7a83..90444b8ca0 100755
+--- a/tests/admin_views/test_autocomplete_view.py
++++ b/tests/admin_views/test_autocomplete_view.py
+@@ -1,3 +1,4 @@
++import datetime
+ import json
+ from contextlib import contextmanager
+ 
+@@ -91,6 +92,27 @@ class AutocompleteJsonViewTests(AdminViewBasicTestCase):
+             'pagination': {'more': False},
+         })
+ 
++    def test_serialize_result(self):
++        class SerializedQuestionAdmin(QuestionAdmin):
++            search_fields = ['question']
++
++        q = Question.objects.create(question='Is this a question?', posted=datetime.date.today())
++        request = self.factory.get(self.url, {'term': 'is', **self.opts})
++        request.user = self.superuser
++
++        class CustomAutocompleteJsonView(AutocompleteJsonView):
++            def serialize_result(self, obj, to_field_name):
++                return super().serialize_result(obj, to_field_name) | {'posted': obj.posted}
++
++        with model_admin(Question, SerializedQuestionAdmin):
++            response = CustomAutocompleteJsonView.as_view(**self.as_view_args)(request)
++        self.assertEqual(response.status_code, 200)
++        data = json.loads(response.content.decode('utf-8'))
++        self.assertEqual(data, {
++            'results': [{'id': str(q.pk), 'text': q.question, 'posted': str(q.posted)}],
++            'pagination': {'more': False},
++        })
++
+     def test_custom_to_field(self):
+         q = Question.objects.create(question='Is this a question?')
+         request = self.factory.get(self.url, {'term': 'is', **self.opts, 'field_name': 'question_with_to_field'})
+2026-11-12 00:17:24,466 - INFO - Eval script for django__django-14752 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2209/claude-code-glm-5.3-flash/django__django-14752/eval.sh; copying to container...
+2026-11-12 00:17:34,723 - INFO - Test runtime: 10.18 seconds
+2026-11-12 00:17:34,727 - INFO - Test output for django__django-14752 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2209/claude-code-glm-5.3-flash/django__django-14752/test_output.txt
+2026-11-12 00:17:34,799 - INFO - Git diff after:
+diff --git a/django/contrib/admin/views/autocomplete.py b/django/contrib/admin/views/autocomplete.py
+index 3903e4c98c..78edab7370 100755
+--- a/django/contrib/admin/views/autocomplete.py
++++ b/django/contrib/admin/views/autocomplete.py
+@@ -26,12 +26,18 @@ class AutocompleteJsonView(BaseListView):
+         context = self.get_context_data()
+         return JsonResponse({
+             'results': [
+-                {'id': str(getattr(obj, to_field_name)), 'text': str(obj)}
+-                for obj in context['object_list']
++                self.serialize_result(obj, to_field_name) for obj in context['object_list']
+             ],
+             'pagination': {'more': context['page_obj'].has_next()},
+         })
+ 
++    def serialize_result(self, obj, to_field_name):
++        """
++        Convert the provided model object to a dictionary that is added to the
++        results list.
++        """
++        return {'id': str(getattr(obj, to_field_name)), 'text': str(obj)}
++
+     def get_paginator(self, *args, **kwargs):
+         """Use the ModelAdmin's paginator."""
+         return self.model_admin.get_paginator(self.request, *args, **kwargs)
+2026-11-12 00:17:34,799 - INFO - Git diff changed after running eval script
+2026-11-12 00:17:34,799 - INFO - Grading answer for django__django-14752...
+2026-11-12 00:17:34,812 - INFO - report: {'django__django-14752': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_serialize_result (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_custom_to_field (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_custom_to_field_custom_pk (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_custom_to_field_permission_denied (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_field_does_not_allowed (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_field_does_not_exist (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_field_no_related_field (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'Search results are paginated.', 'Users require the change permission for the related model to the', 'test_limit_choices_to (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_missing_search_fields (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_must_be_logged_in (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'Searching across model relations use QuerySet.distinct() to avoid', 'test_success (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'test_to_field_resolution_with_fk_pk (admin_views.test_autocomplete_view.AutocompleteJsonViewTests)', 'to_field resolution should correctly resolve for target models using'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14752: resolved: True
+2026-11-12 00:17:34,814 - INFO - Attempting to stop container sweb.eval.django__django-14752.verified_full_glm53_claude-code_incr_R2209...
+2026-11-12 00:17:50,748 - INFO - Container sweb.eval.django__django-14752.verified_full_glm53_claude-code_incr_R2209 stopped successfully.
+2026-11-12 00:17:50,748 - INFO - Attempting to remove container sweb.eval.django__django-14752.verified_full_glm53_claude-code_incr_R2209...
+2026-11-12 00:17:50,799 - INFO - Container sweb.eval.django__django-14752.verified_full_glm53_claude-code_incr_R2209 removed successfully.

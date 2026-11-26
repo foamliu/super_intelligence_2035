@@ -1,0 +1,11 @@
+{
+  "harness": "pi",
+  "run_id": "verified_full_glm53_pi_incr_R2392",
+  "round": "R2392",
+  "n": 1,
+  "resolved": [
+    "sympy__sympy-21379"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

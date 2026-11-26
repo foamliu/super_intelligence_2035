@@ -1,0 +1,48 @@
+diff --git a/sklearn/svm/base.py b/sklearn/svm/base.py
+index 64cebe83..9144a0eb 100644
+--- a/sklearn/svm/base.py
++++ b/sklearn/svm/base.py
+@@ -287,8 +287,13 @@ class BaseLibSVM(BaseEstimator, metaclass=ABCMeta):
+         n_SV = self.support_vectors_.shape[0]
+ 
+         dual_coef_indices = np.tile(np.arange(n_SV), n_class)
+-        dual_coef_indptr = np.arange(0, dual_coef_indices.size + 1,
+-                                     dual_coef_indices.size / n_class)
++        if not n_SV:
++            # if n_SV is 0, we need to create an empty array with the
++            # correct shape
++            dual_coef_indptr = np.zeros(n_class + 1, dtype=np.int32)
++        else:
++            dual_coef_indptr = np.arange(0, dual_coef_indices.size + 1,
++                                         dual_coef_indices.size / n_class)
+         self.dual_coef_ = sp.csr_matrix(
+             (dual_coef_data, dual_coef_indices, dual_coef_indptr),
+             (n_class, n_SV))
+diff --git a/sklearn/svm/tests/test_sparse.py b/sklearn/svm/tests/test_sparse.py
+index 7cf6e8af..33b87642 100644
+--- a/sklearn/svm/tests/test_sparse.py
++++ b/sklearn/svm/tests/test_sparse.py
+@@ -327,6 +327,23 @@ def test_sparse_realdata():
+     assert_array_equal(clf.dual_coef_, sp_clf.dual_coef_.toarray())
+ 
+ 
++def test_sparse_fit_empty_support_vectors():
++    # Regression test for #13141: fitting a sparse SVM on data that yields
++    # no support vectors should not raise a ZeroDivisionError.
++    X = np.array([[0, 1, 0, 0],
++                  [0, 0, 0, 1],
++                  [0, 0, 1, 0],
++                  [0, 0, 0, 1]])
++    y = np.array([0.04, 0.04, 0.10, 0.16])
++
++    clf = svm.SVR(C=316.227766017, gamma=1.0, kernel='linear', tol=0.001)
++    clf.fit(sparse.csr_matrix(X), y)
++    assert clf.support_vectors_.shape[0] == 0
++    assert clf.dual_coef_.shape == (1, 0)
++    assert_array_almost_equal(clf.predict(sparse.csr_matrix(X)),
++                              clf.predict(X))
++
++
+ def test_sparse_svc_clone_with_callable_kernel():
+     # Test that the "dense_fit" is called even though we use sparse input
+     # meaning that everything works fine.

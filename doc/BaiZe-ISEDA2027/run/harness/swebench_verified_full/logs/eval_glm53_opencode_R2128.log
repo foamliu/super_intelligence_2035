@@ -1,0 +1,17 @@
+3 instances already run, skipping...
+No instances to run.
+Total instances: 3
+Instances submitted: 3
+Instances completed: 3
+Instances incomplete: 0
+Instances resolved: 3
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 3
+Unremoved images: 3
+Report written to opencode-glm-5.3-flash.verified_full_glm53_opencode_incr_R2128.json
+
+[stderr]

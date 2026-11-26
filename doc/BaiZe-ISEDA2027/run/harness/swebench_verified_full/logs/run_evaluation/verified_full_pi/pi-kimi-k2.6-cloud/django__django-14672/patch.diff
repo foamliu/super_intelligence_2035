@@ -1,0 +1,49 @@
+diff --git a/django/db/models/fields/reverse_related.py b/django/db/models/fields/reverse_related.py
+index ccc2223a5f..65950590e2 100644
+--- a/django/db/models/fields/reverse_related.py
++++ b/django/db/models/fields/reverse_related.py
+@@ -310,7 +310,7 @@ class ManyToManyRel(ForeignObjectRel):
+     def identity(self):
+         return super().identity + (
+             self.through,
+-            self.through_fields,
++            make_hashable(self.through_fields),
+             self.db_constraint,
+         )
+ 
+diff --git a/tests/invalid_models_tests/test_relative_fields.py b/tests/invalid_models_tests/test_relative_fields.py
+index 8909b12214..afd7beca62 100644
+--- a/tests/invalid_models_tests/test_relative_fields.py
++++ b/tests/invalid_models_tests/test_relative_fields.py
+@@ -1780,3 +1780,31 @@ class M2mThroughFieldsTests(SimpleTestCase):
+                 id='fields.E310',
+             ),
+         ])
++
++    def test_hashable_through_fields(self):
++        class Parent(models.Model):
++            pass
++
++        class ProxyParent(Parent):
++            class Meta:
++                proxy = True
++
++        class Child(models.Model):
++            parent = models.ForeignKey(Parent, models.CASCADE)
++            many_to_many_field = models.ManyToManyField(
++                Parent,
++                through='ManyToManyModel',
++                through_fields=['child', 'parent'],
++                related_name='something',
++            )
++
++        class ManyToManyModel(models.Model):
++            parent = models.ForeignKey(Parent, models.CASCADE, related_name='+')
++            child = models.ForeignKey(Child, models.CASCADE, related_name='+')
++
++        # ManyToManyRel.identity must be hashable even when through_fields
++        # is a list.
++        field = Child._meta.get_field('many_to_many_field')
++        self.assertEqual(hash(field.remote_field), hash(field.remote_field))
++        # This should not raise TypeError: unhashable type: 'list'.
++        self.assertEqual(ProxyParent.check(), [])

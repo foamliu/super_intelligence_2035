@@ -1,0 +1,33 @@
+// =========================================================================
+// SDF INTERCONNECT fragment  (脱敏合成)
+// Design: DRAMTOP  (from sdf.tcl generated SDF)
+// Shows near-zero INTERCONNECT delay -> symptom of failed backannotation
+// =========================================================================
+(DELAYFILE
+  (SDFVERSION "3.1")
+  (DESIGN "DRAMTOP")
+  (VENDOR "Synopsys")
+  (PROCESS "22ull")
+  (TIMESCALE 1ns)
+  (TEMPERATURE 25.0:25.0:25.0)
+)
+
+(CELL (CELLTYPE "module") (INSTANCE I_Array16GTop.I_Array8G_SC1.I_CMAryB_222)
+  (DELAY
+    (ABSOLUTE
+      // Y of I218_1_ -> A2 of I34_1_  (interconnect on net ACLevelA[1])
+      (INTERCONNECT I218_1_/Y I34_1_/A2 (0.000::0.000) (0.000::0.000))
+      // Y of I34_1_  -> A2 of I34_3_  (interconnect on net cm1_ro_ACThLevelA[3])
+      (INTERCONNECT I34_1_/Y I34_3_/A2 (0.000::0.000) (0.000::0.000))
+      // Y of I34_3_  -> A of I35_1_   (interconnect on net net0296[3])
+      (INTERCONNECT I34_3_/Y I35_1_/A  (0.000::0.000) (0.000::0.000))
+      // Y of I36_4_  -> top port      (interconnect on net net023, CRITICAL)
+      (INTERCONNECT I36_4_/Y topport_n23 (0.000::0.000) (0.000::0.000))
+    )
+  )
+)
+
+// NOTE: all-zero (0.000::0.000) INTERCONNECT delays indicate the parasitics
+// for these nets were NOT backannotated (the SPEF read failed for them).
+// nets net0296[*] / net023 are internal trivial nodes kept by Cadence SI
+// but merged away by StarRC -> PARA-044 / PARA-124 -> not annotated.

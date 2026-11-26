@@ -1,0 +1,135 @@
+2026-10-30 15:54:20,855 - INFO - Creating container for sphinx-doc__sphinx-8593...
+2026-10-30 15:54:20,880 - INFO - Container for sphinx-doc__sphinx-8593 created: 8459673021d109c398a59c1067806d97aea75932eea94a9d447c5adca3adae1a
+2026-10-30 15:54:21,696 - INFO - Container for sphinx-doc__sphinx-8593 started: 8459673021d109c398a59c1067806d97aea75932eea94a9d447c5adca3adae1a
+2026-10-30 15:54:21,698 - INFO - Intermediate patch for sphinx-doc__sphinx-8593 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-8593/patch.diff, now applying to container...
+2026-10-30 15:54:21,822 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/ext/autodoc/__init__.py...
+Checking patch tests/roots/test-ext-autodoc/target/private.py...
+Checking patch tests/test_ext_autodoc_private_members.py...
+Applied patch sphinx/ext/autodoc/__init__.py cleanly.
+Applied patch tests/roots/test-ext-autodoc/target/private.py cleanly.
+Applied patch tests/test_ext_autodoc_private_members.py cleanly.
+
+2026-10-30 15:54:22,242 - INFO - Git diff before:
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index 76265f5be..5b714952d 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -728,7 +728,14 @@ class Documenter:
+ 
+             has_doc = bool(doc)
+ 
+-            metadata = extract_metadata(doc)
++            # check attribute docs for metadata
++            if (namespace, membername) in attr_docs:
++                attr_doc = '\n'.join(attr_docs[(namespace, membername)])
++                metadata = extract_metadata(attr_doc)
++                has_doc = True
++            else:
++                metadata = extract_metadata(doc)
++
+             if 'private' in metadata:
+                 # consider a member private if docstring has "private" metadata
+                 isprivate = True
+diff --git a/tests/roots/test-ext-autodoc/target/private.py b/tests/roots/test-ext-autodoc/target/private.py
+index a39ce085e..add798e20 100644
+--- a/tests/roots/test-ext-autodoc/target/private.py
++++ b/tests/roots/test-ext-autodoc/target/private.py
+@@ -9,3 +9,7 @@ def _public_function(name):
+ 
+     :meta public:
+     """
++
++_public_var = None  #: :meta public:
++
++_private_var = None  #: :meta private:
+diff --git a/tests/test_ext_autodoc_private_members.py b/tests/test_ext_autodoc_private_members.py
+index 6bce5ce78..5dbc5d6c4 100644
+--- a/tests/test_ext_autodoc_private_members.py
++++ b/tests/test_ext_autodoc_private_members.py
+@@ -30,6 +30,13 @@ def test_private_field(app):
+         '',
+         '   :meta public:',
+         '',
++        '',
++        '.. py:data:: _public_var',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
+     ]
+ 
+ 
+@@ -44,6 +51,13 @@ def test_private_field_and_private_members(app):
+         '.. py:module:: target.private',
+         '',
+         '',
++        '.. py:data:: _private_var',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta private:',
++        '',
++        '',
+         '.. py:function:: _public_function(name)',
+         '   :module: target.private',
+         '',
+@@ -52,6 +66,13 @@ def test_private_field_and_private_members(app):
+         '   :meta public:',
+         '',
+         '',
++        '.. py:data:: _public_var',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
++        '',
+         '.. py:function:: private_function(name)',
+         '   :module: target.private',
+         '',
+@@ -80,4 +101,11 @@ def test_private_members(app):
+         '',
+         '   :meta public:',
+         '',
++        '',
++        '.. py:data:: _public_var',
++        '   :module: target.private',
++        '   :value: None',
++        '',
++        '   :meta public:',
++        '',
+     ]
+2026-10-30 15:54:22,247 - INFO - Eval script for sphinx-doc__sphinx-8593 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-8593/eval.sh; copying to container...
+2026-10-30 15:54:26,452 - INFO - Test runtime: 4.14 seconds
+2026-10-30 15:54:26,454 - INFO - Test output for sphinx-doc__sphinx-8593 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-8593/test_output.txt
+2026-10-30 15:54:26,533 - INFO - Git diff after:
+diff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py
+index 76265f5be..5b714952d 100644
+--- a/sphinx/ext/autodoc/__init__.py
++++ b/sphinx/ext/autodoc/__init__.py
+@@ -728,7 +728,14 @@ class Documenter:
+ 
+             has_doc = bool(doc)
+ 
+-            metadata = extract_metadata(doc)
++            # check attribute docs for metadata
++            if (namespace, membername) in attr_docs:
++                attr_doc = '\n'.join(attr_docs[(namespace, membername)])
++                metadata = extract_metadata(attr_doc)
++                has_doc = True
++            else:
++                metadata = extract_metadata(doc)
++
+             if 'private' in metadata:
+                 # consider a member private if docstring has "private" metadata
+                 isprivate = True
+2026-10-30 15:54:26,533 - INFO - Git diff changed after running eval script
+2026-10-30 15:54:26,533 - INFO - Grading answer for sphinx-doc__sphinx-8593...
+2026-10-30 15:54:26,536 - INFO - report: {'sphinx-doc__sphinx-8593': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_autodoc_private_members.py::test_private_field', 'tests/test_ext_autodoc_private_members.py::test_private_members'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_private_members.py::test_private_field_and_private_members'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8593: resolved: True
+2026-10-30 15:54:26,537 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8593.verified_full_opencode...
+2026-10-30 15:54:42,806 - INFO - Container sweb.eval.sphinx-doc__sphinx-8593.verified_full_opencode stopped successfully.
+2026-10-30 15:54:42,806 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8593.verified_full_opencode...
+2026-10-30 15:54:42,841 - INFO - Container sweb.eval.sphinx-doc__sphinx-8593.verified_full_opencode removed successfully.

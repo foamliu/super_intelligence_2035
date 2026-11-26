@@ -1,0 +1,178 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 35f3c5e1ea..3f27efbf77 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1702,8 +1702,16 @@ class Query(BaseExpression):
+         handle.
+         """
+         filter_lhs, filter_rhs = filter_expr
+-        if isinstance(filter_rhs, F):
+-            filter_expr = (filter_lhs, OuterRef(filter_rhs.name))
++        if isinstance(filter_rhs, OuterRef):
++            # The generated inner query is one level deeper than the query
++            # referenced by a user-provided OuterRef, so wrap the reference to
++            # defer its resolution by one level. Otherwise it would be
++            # incorrectly resolved against the current query when the inner
++            # query is resolved as a subquery of it (see build_filter() below).
++            filter_rhs = OuterRef(filter_rhs)
++        elif isinstance(filter_rhs, F):
++            filter_rhs = OuterRef(filter_rhs.name)
++        filter_expr = (filter_lhs, filter_rhs)
+         # Generate the inner query.
+         query = Query(self.model)
+         query._filtered_relations = self._filtered_relations
+diff --git a/repro_outerref.py b/repro_outerref.py
+new file mode 100644
+index 0000000000..5c265d1c4b
+--- /dev/null
++++ b/repro_outerref.py
+@@ -0,0 +1,89 @@
++import datetime
++import os
++import sys
++
++sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tests'))
++sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
++
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=[
++        'django.contrib.contenttypes',
++        'django.contrib.auth',
++        'queries',
++    ],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.core.management import call_command
++from django.db.models import Exists, OuterRef, Q
++
++from queries.models import Author, ExtraInfo, Item, NamedCategory, Note, Number, Tag
++
++call_command('migrate', run_syncdb=True, verbosity=0, interactive=False)
++
++# Data setup mirroring https://code.djangoproject.com/ticket/32245:
++# a Number whose pk matches the Tag.category_id of the only item's tag.
++category = NamedCategory.objects.create(name='category', id=1001)
++number = Number.objects.create(id=1001, num=1)
++tag = Tag.objects.create(name='tag', category=category)
++note = Note.objects.create(note='note', misc='misc')
++extra = ExtraInfo.objects.create(info='extra', note=note)
++author = Author.objects.create(name='author', num=1, extra=extra)
++item = Item.objects.create(
++    id=1002, name='item', created=datetime.datetime(2021, 1, 1),
++    creator=author, note=note,
++)
++item.tags.add(tag)
++
++print('=== filter(): works correctly (reference) ===')
++qs_filter = Number.objects.annotate(
++    foo=Exists(Item.objects.filter(tags__category_id=OuterRef('pk')))
++).filter(foo=True)
++print('SQL:', qs_filter.query)
++print('Result:', list(qs_filter))
++
++print()
++print('=== exclude(): ticket #32245 ===')
++qs_exclude = Number.objects.annotate(
++    foo=Exists(Item.objects.exclude(tags__category_id=OuterRef('pk')))
++).filter(foo=True)
++print('SQL:', qs_exclude.query)
++print('Result:', list(qs_exclude))
++
++print()
++print('=== ~Q(): ticket #32245 ===')
++qs_q = Number.objects.annotate(
++    foo=Exists(Item.objects.filter(~Q(tags__category_id=OuterRef('pk'))))
++).filter(foo=True)
++print('SQL:', qs_q.query)
++print('Result:', list(qs_q))
++
++# The only item has a tag whose category_id matches number.pk, so:
++# - filter() matches the number (the item's tag category is number.pk),
++# - while the negated exclude()/~Q() variants must not match it.
++expected = {
++    'filter()': [number],
++    'exclude()': [],
++    '~Q()': [],
++}
++results = {
++    'filter()': list(qs_filter),
++    'exclude()': list(qs_exclude),
++    '~Q()': list(qs_q),
++}
++failed = False
++for name in ('filter()', 'exclude()', '~Q()'):
++    ok = results[name] == expected[name]
++    print('%s %s: result=%r (expected %r)' % (
++        'PASS' if ok else 'FAIL', name, results[name], expected[name]))
++    failed = failed or not ok
++
++print()
++print('RESULT:', 'FAILED' if failed else 'ALL OK')
++sys.exit(1 if failed else 0)
+diff --git a/tests/queries/tests.py b/tests/queries/tests.py
+index 8339c52a02..4101f0ab91 100644
+--- a/tests/queries/tests.py
++++ b/tests/queries/tests.py
+@@ -6,7 +6,7 @@ from operator import attrgetter
+ 
+ from django.core.exceptions import EmptyResultSet, FieldError
+ from django.db import DEFAULT_DB_ALIAS, connection
+-from django.db.models import Count, F, Q
++from django.db.models import Count, Exists, F, OuterRef, Q
+ from django.db.models.sql.constants import LOUTER
+ from django.db.models.sql.where import NothingNode, WhereNode
+ from django.test import SimpleTestCase, TestCase, skipUnlessDBFeature
+@@ -97,6 +97,46 @@ class Queries1Tests(TestCase):
+         # So, 'U0."id"' is referenced in SELECT and WHERE twice.
+         self.assertEqual(str(qs4.query).lower().count('u0.'), 4)
+ 
++    def test_exists_exclude_with_outer_ref(self):
++        category = NamedCategory.objects.create(name='category', id=1001)
++        number = Number.objects.create(id=1001, num=1)
++        tag = Tag.objects.create(name='tag', category=category)
++        item = Item.objects.create(
++            name='item', created=self.time1, creator=self.a1, note=self.n1,
++            id=1002,
++        )
++        item.tags.add(tag)
++        # The only item considered by the subqueries has a tag whose
++        # category_id matches number.pk, so an Exists() of a subquery
++        # correlated on Number.pk must match for filter() and must not match
++        # for exclude() and ~Q(). The outer reference must point to the outer
++        # query (Number), not to the intermediate query generated by
++        # split_exclude() (Item).
++        self.assertCountEqual(
++            Number.objects.annotate(
++                foo=Exists(Item.objects.filter(
++                    pk=item.pk, tags__category_id=OuterRef('pk'),
++                ))
++            ).filter(foo=True),
++            [number],
++        )
++        self.assertCountEqual(
++            Number.objects.annotate(
++                foo=Exists(Item.objects.filter(
++                    pk=item.pk,
++                ).exclude(tags__category_id=OuterRef('pk')))
++            ).filter(foo=True),
++            [],
++        )
++        self.assertCountEqual(
++            Number.objects.annotate(
++                foo=Exists(Item.objects.filter(
++                    ~Q(tags__category_id=OuterRef('pk')), pk=item.pk,
++                ))
++            ).filter(foo=True),
++            [],
++        )
++
+     def test_ticket1050(self):
+         self.assertQuerysetEqual(
+             Item.objects.filter(tags__isnull=True),

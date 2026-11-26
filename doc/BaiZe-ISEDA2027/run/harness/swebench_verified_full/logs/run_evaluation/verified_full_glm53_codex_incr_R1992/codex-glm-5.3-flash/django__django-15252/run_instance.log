@@ -1,0 +1,79 @@
+2026-11-09 20:24:01,633 - INFO - Creating container for django__django-15252...
+2026-11-09 20:24:01,665 - INFO - Container for django__django-15252 created: 1afe7b615a2962c9a8e206f15f4b04f5cbb4c53f94bcf20408cfc26ae01a1862
+2026-11-09 20:24:02,598 - INFO - Container for django__django-15252 started: 1afe7b615a2962c9a8e206f15f4b04f5cbb4c53f94bcf20408cfc26ae01a1862
+2026-11-09 20:24:02,601 - INFO - Intermediate patch for django__django-15252 written to logs/run_evaluation/verified_full_glm53_codex_incr_R1992/codex-glm-5.3-flash/django__django-15252/patch.diff, now applying to container...
+2026-11-09 20:24:02,754 - INFO - >>>>> Applied Patch:
+Checking patch django/db/migrations/recorder.py...
+warning: django/db/migrations/recorder.py has type 100755, expected 100644
+Applied patch django/db/migrations/recorder.py cleanly.
+
+2026-11-09 20:24:04,336 - INFO - Git diff before:
+diff --git a/django/db/migrations/recorder.py b/django/db/migrations/recorder.py
+index 1a37c6b7d0..c5f49f9f06 100755
+--- a/django/db/migrations/recorder.py
++++ b/django/db/migrations/recorder.py
+@@ -1,5 +1,5 @@
+ from django.apps.registry import Apps
+-from django.db import DatabaseError, models
++from django.db import DatabaseError, models, router
+ from django.utils.functional import classproperty
+ from django.utils.timezone import now
+ 
+@@ -58,6 +58,8 @@ class MigrationRecorder:
+ 
+     def ensure_schema(self):
+         """Ensure the table exists and has the correct schema."""
++        if not router.allow_migrate_model(self.connection.alias, self.Migration):
++            raise MigrationSchemaMissing("Not allowed to create the django_migrations table (%s)" % self.connection.alias)
+         # If the table's there, that's fine - we've never changed its schema
+         # in the codebase.
+         if self.has_table():
+@@ -74,6 +76,8 @@ class MigrationRecorder:
+         Return a dict mapping (app_name, migration_name) to Migration instances
+         for all applied migrations.
+         """
++        if not router.allow_migrate_model(self.connection.alias, self.Migration):
++            return {}
+         if self.has_table():
+             return {(migration.app, migration.name): migration for migration in self.migration_qs}
+         else:
+2026-11-09 20:24:04,339 - INFO - Eval script for django__django-15252 written to logs/run_evaluation/verified_full_glm53_codex_incr_R1992/codex-glm-5.3-flash/django__django-15252/eval.sh; copying to container...
+2026-11-09 20:24:15,127 - INFO - Test runtime: 10.70 seconds
+2026-11-09 20:24:15,130 - INFO - Test output for django__django-15252 written to logs/run_evaluation/verified_full_glm53_codex_incr_R1992/codex-glm-5.3-flash/django__django-15252/test_output.txt
+2026-11-09 20:24:15,192 - INFO - Git diff after:
+diff --git a/django/db/migrations/recorder.py b/django/db/migrations/recorder.py
+index 1a37c6b7d0..c5f49f9f06 100755
+--- a/django/db/migrations/recorder.py
++++ b/django/db/migrations/recorder.py
+@@ -1,5 +1,5 @@
+ from django.apps.registry import Apps
+-from django.db import DatabaseError, models
++from django.db import DatabaseError, models, router
+ from django.utils.functional import classproperty
+ from django.utils.timezone import now
+ 
+@@ -58,6 +58,8 @@ class MigrationRecorder:
+ 
+     def ensure_schema(self):
+         """Ensure the table exists and has the correct schema."""
++        if not router.allow_migrate_model(self.connection.alias, self.Migration):
++            raise MigrationSchemaMissing("Not allowed to create the django_migrations table (%s)" % self.connection.alias)
+         # If the table's there, that's fine - we've never changed its schema
+         # in the codebase.
+         if self.has_table():
+@@ -74,6 +76,8 @@ class MigrationRecorder:
+         Return a dict mapping (app_name, migration_name) to Migration instances
+         for all applied migrations.
+         """
++        if not router.allow_migrate_model(self.connection.alias, self.Migration):
++            return {}
+         if self.has_table():
+             return {(migration.app, migration.name): migration for migration in self.migration_qs}
+         else:
+2026-11-09 20:24:15,192 - INFO - Grading answer for django__django-15252...
+2026-11-09 20:24:15,204 - INFO - report: {'django__django-15252': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_migrate_test_setting_false_ensure_schema (backends.base.test_creation.TestDbCreationTests)', 'The django_migrations table is not created if there are no migrations']}, 'PASS_TO_PASS': {'success': ['test_mark_expected_failures_and_skips (backends.base.test_creation.TestMarkTests)', 'test_custom_test_name (backends.base.test_creation.TestDbSignatureTests)', 'test_custom_test_name_with_test_prefix (backends.base.test_creation.TestDbSignatureTests)', 'test_default_name (backends.base.test_creation.TestDbSignatureTests)', 'If the current state satisfies the given target, do nothing.', 'Minimize unnecessary rollbacks in connected apps.', 'Minimize rollbacks when target has multiple in-app children.', "mark_expected_failures_and_skips() isn't called unless", 'test_migrate_test_setting_false (backends.base.test_creation.TestDbCreationTests)', 'test_migrate_test_setting_true (backends.base.test_creation.TestDbCreationTests)', 'test_circular_reference (backends.base.test_creation.TestDeserializeDbFromString)', 'test_circular_reference_with_natural_key (backends.base.test_creation.TestDeserializeDbFromString)', 'test_self_reference (backends.base.test_creation.TestDeserializeDbFromString)', 'test_serialize_db_to_string_base_manager (backends.base.test_creation.TestDeserializeDbFromString)', 'test_alter_id_type_with_fk (migrations.test_executor.ExecutorTests)', 'Applying all replaced migrations marks replacement as applied (#24628).', 'An atomic operation is properly rolled back inside a non-atomic', 'Regression test for #22325 - references to a custom user model defined in the', 'executor.detect_soft_applied() detects ManyToManyField tables from an', "Re-planning a full migration of a fully-migrated set doesn't", 'test_migrate_backward_to_squashed_migration (migrations.test_executor.ExecutorTests)', 'A new squash migration will be marked as applied even if all its', 'test_migrate_marks_replacement_unapplied (migrations.test_executor.ExecutorTests)', 'Migrations are applied and recorded atomically.', 'Migrations are not recorded if deferred SQL application fails.', 'Although the MigrationExecutor interfaces allows for mixed migration', 'Applying a non-atomic migration works as expected.', '#24129 - Tests callback process', 'Tests running a simple set of migrations.', 'Tests running a squashed migration from zero (should ignore what it replaces)', 'Tests detection of initial migrations already having been applied.', '#26647 - Unrelated applied migrations should be part of the final', '#24123 - All models of apps being unapplied which are', '#24123 - All models of apps already applied which are'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-15252: resolved: False
+2026-11-09 20:24:15,206 - INFO - Attempting to stop container sweb.eval.django__django-15252.verified_full_glm53_codex_incr_R1992...
+2026-11-09 20:24:31,104 - INFO - Container sweb.eval.django__django-15252.verified_full_glm53_codex_incr_R1992 stopped successfully.
+2026-11-09 20:24:31,104 - INFO - Attempting to remove container sweb.eval.django__django-15252.verified_full_glm53_codex_incr_R1992...
+2026-11-09 20:24:31,166 - INFO - Container sweb.eval.django__django-15252.verified_full_glm53_codex_incr_R1992 removed successfully.

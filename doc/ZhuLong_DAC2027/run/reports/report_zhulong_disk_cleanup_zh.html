@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZhuLong 硬盘清盘报告 · 2026-11-15 19:02（第三轮·达标）</title>
+<style>
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHeang",sans-serif;max-width:980px;margin:0 auto;padding:24px;color:#222;background:#fafafa;line-height:1.6}
+  h1{font-size:1.45em;border-bottom:3px solid #c0392b;padding-bottom:8px}
+  h2{font-size:1.18em;margin-top:28px;border-left:5px solid #2c7fb8;padding-left:10px}
+  .verdict{padding:14px 18px;border-radius:8px;font-weight:bold;font-size:1.02em;margin:10px 0}
+  .ok{background:#d4edda;color:#155724;border:1px solid #c3e6cb}
+  .warn{background:#fff3cd;color:#856404;border:1px solid #ffeaa7}
+  .bad{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}
+  table{border-collapse:collapse;width:100%;font-size:0.9em;margin:10px 0;background:#fff}
+  th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:#2c7fb8;color:#fff}
+  tr:nth-child(even){background:#f6f8fa}
+  code{background:#eef;padding:1px 4px;border-radius:3px;font-size:0.88em}
+  .small{font-size:0.85em;color:#666}
+  .tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:0.78em;color:#fff}
+  .t-product{background:#e67e22}.t-archive{background:#8e44ad}.t-protect{background:#34495e}
+  ul{margin:6px 0} li{margin:3px 0}
+  .bar{height:18px;border-radius:3px;display:inline-block}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+</style>
+</head>
+<body>
+
+<h1>🧹 ZhuLong 硬盘清盘报告 · 2026-11-15 19:02（第三轮 · <span style="color:#155724">达标</span>）</h1>
+
+<div class="small">运维令 12:5x「安排 zhulong 清理硬盘」· 目标 /home ≥5G、/nasdata ≥25G。本报告为同文件名报告的更新版，合并三轮清盘的最终状态。前两轮（wake#967 13:30 / wake#968 14:00）已清 ~6G + 4.93G（npm 缓存 / 旧 CLI 归档 / 旧安装器 / 归档日志等，详见各自 TSV）。<b>本轮（19:02）为第三轮，找到并处置前两轮漏看的一项 11G 大目录</b>，使 /nasdata 首次达标。删除清单 TSV：<code>run/zhulong_disk_cleanup_20261115_1902.tsv</code>。</div>
+
+<h2>一、首屏结论（before / after）</h2>
+
+<div class="verdict ok">
+  BEFORE（19:02 本轮起）：/home 可用 <b>5.8 G</b>（99% 满，✅ 已达标）｜/nasdata 可用 <b>20 G</b>（97% 满，⚠️ 差 ~5G）<br>
+  AFTER（19:04 本轮毕）：/home 可用 <b>5.8 G</b>（99% 满，<b>✅ 达标 ≥5G</b>）｜/nasdata 可用 <b>29 G</b>（95% 满，<b>✅ 达标 ≥25G</b>）
+</div>
+
+<p><b>一句话结论</b>：前两轮清盘结论「/nasdata 结构性缺口、需运维 VACUUM opencode.db」<b>被本轮推翻</b>——根因不是「活库无法清」，而是前两轮<b>没往 ZhuLong_DAC2027 论文树里看</b>。该树下的 <code>trace_ablation_think_lang/</code>（think×lang 两轴消融的 11G 原始 trace，实验已于 11-07 交付 30/30、结果入论文）被压缩为 1G 归档 <code>.tar.zst</code> 后删除原件，净释放 ~10G，/nasdata 直接达标。<b>无需运维 VACUUM opencode.db</b>。</p>
+
+<h2>二、本轮删除清单</h2>
+
+<table>
+<tr><th>路径</th><th>大小</th><th>类别</th><th>理由</th><th>核验</th></tr>
+<tr>
+  <td class="mono">/nasdata/app.e0031982/code/ZhuLong_DAC2027/<br>trace_ablation_think_lang/</td>
+  <td>~11 G<br><span class="small">(30 个 run 子目录·82695 文件)</span></td>
+  <td><span class="tag t-product">归档实验产物</span></td>
+  <td>think×lang 两轴消融（A_high/low/medium/none/xhigh×3 + B_en/es/fr/ru/zh×3 = 30 run）的原始 cline trace。<b>实验已于 2026-11-07 归档交付 30/30</b>（ZHULONG_TASK.md「已归档·2026-11-07 08:3x」），Pass@1 结果已写入 <code>zhulong_results.md</code> 与论文表。<b>属「本线已归档、被取代」的旧产物</b>（当前活跃实验为 subagent A0/A1/A2→A3-A6，与此无关）。<b>处置方式：压缩归档而非直接 rm</b>——证据保全，符合「宁可少清」。</td>
+  <td>✅ <code>tar --zstd -tf</code> VERIFY_OK<br>82695 条目·30 run 目录与原件 <code>ls</code> 一致</td>
+</tr>
+</table>
+
+<h3>归档产物（保留，非删除）</h3>
+<table>
+<tr><th>路径</th><th>大小</th><th>说明</th></tr>
+<tr><td class="mono">…/ZhuLong_DAC2027/<br>trace_ablation_think_lang.tar.zst</td><td>1,048,277,655 B（1004 M）</td><td>zstd 压缩归档·压缩比 ~10.8:1（JSON trace 高度可压）·tar exit=0·<code>tar -t</code> 完整性校验通过。需要时可 <code>tar --zstd -xf …</code> 还原。</td></tr>
+</table>
+
+<h2>三、三轮汇总</h2>
+
+<table>
+<tr><th>轮次</th><th>时间</th><th>主要动作</th><th>释放</th><th>/home after</th><th>/nasdata after</th></tr>
+<tr><td>第一轮 wake#967</td><td>11-15 13:30</td><td>npm 缓存 + 旧 CLI 归档/解压件 + 安装器</td><td>~6 G</td><td>—</td><td>14 G（仍差 11G）</td></tr>
+<tr><td>第二轮 wake#968</td><td>11-15 14:00</td><td>归档日志 / 旧 tmp / 重复编码件等 1221 项</td><td>4.93 G</td><td>7.3 G ✅</td><td>20 G（仍差 5G·结论误判为「结构性缺口」）</td></tr>
+<tr><td><b>第三轮 wake#975</b></td><td><b>11-15 19:02</b></td><td><b>trace_ablation_think_lang 11G → 1G 归档</b></td><td><b>~10 G（净）</b></td><td><b>5.8 G ✅</b></td><td><b>29 G ✅ 达标</b></td></tr>
+</table>
+
+<h2>四、未删项及原因（守四类硬护栏）</h2>
+
+<table>
+<tr><th>项</th><th>大小</th><th>未删原因</th></tr>
+<tr><td class="mono">.local/share/opencode/opencode.db</td><td>2.24 G</td><td><b>live SQLite</b>·18:52 仍在写（designflow shard D 的 opencode agent PID 1867821 正在跑）·我是 opencode 内运行·删则自毁当前会话。前两轮据此判定「结构性缺口」；本轮用归档 trace 达标，<b>此项不再阻塞</b>，但运维若要进一步增厚余量可考虑离线 <code>VACUUM</code>（需停 opencode 期间执行）。</td></tr>
+<tr><td class="mono">eda_fastmcp/{venv,.git,kb}</td><td>6.1G + 4.0G + 984M</td><td>硬护栏 #3：eda_fastmcp 源码/题面受保护·<code>venv</code> 是 baseline eval（PID 1910477/1910486，cwd=eda_fastmcp）正在用的 conda/venv·<code>.git</code> 受保护。</td></tr>
+<tr><td class="mono">.local/node-20 / node-22</td><td>2.0G / 365M</td><td>正在用的 node 运行时（cline / opencode 在 node-20）·硬护栏 #3「正在用的 conda/venv」类。node-22 虽疑似冗余但未确认无依赖，按「不确定先列不删」保留。</td></tr>
+<tr><td class="mono">super_intelligence_2035/.git</td><td>1.3 G</td><td>硬护栏 #3：git 仓库受保护。</td></tr>
+<tr><td class="mono">.cache/*（scratch 子目录 ~79M）</td><td>79 M</td><td>多为 designflow 线共享 scratch，该线<b>正在跑</b>（PID 1867821）·归属不确定 + 体量小·按「不确定先列不删」「禁改他人文件」保留。</td></tr>
+<tr><td class="mono">.cline / .cline_posttrain_baseline</td><td>37M / 28K</td><td>硬护栏 #1：cline session 目录受保护（baseline eval 在用）。</td></tr>
+<tr><td class="mono">trace_ablation_subagent (60M)</td><td>60 M</td><td><b>当前</b> A0/A1/A2 subagent 消融的原始证据·刚刚交付的 trace 报告依赖它·「最新一版与正在用的绝不删」。</td></tr>
+<tr><td class="mono">trace_retest (683M)</td><td>683 M</td><td>10-19 readback_none 重测 trace·属 S1 保真度证据·虽旧但未确认已被取代·按「不确定先列不删」保留（可作下一轮候选，需先核 zhulong_results.md 是否已收其结果）。</td></tr>
+<tr><td class="mono">eda_code_eval 旧 batch（11-14 及更早）</td><td>~30 M</td><td>体量小 + 与 posttrain/baize 线共享该目录·归属不确定·保留。</td></tr>
+<tr><td class="mono">/home 其他用户目录</td><td>~372 G</td><td>/home 99% 满但 <b>我（app.e0031982）仅占 326M</b>；压力来自 app.e0023936 / app.t0002147 等其他用户的 cline 历史·<b>非我所能清</b>·硬护栏 #2/#3。/home 5.8G 已达标，无需我介入。</td></tr>
+</table>
+
+<h2>五、若仍不足，下一步需要谁做什么</h2>
+
+<div class="verdict ok">两项目标<b>均已达标</b>（/home 5.8G ✅、/nasdata 29G ✅），<b>无缺口</b>，本轮无未尽事项。</div>
+
+<p><b>增厚余量（可选，非必需）</b>：</p>
+<ul>
+  <li><b>运维</b>：可选在 opencode 全停窗口对 <code>opencode.db</code> 做 <code>VACUUM</code>（2.24G 活库，可能有大量已删会话的空页），或对 eda_fastmcp <code>.git</code>（4G）做 <code>git gc --aggressive</code>——二者均需停相关服务，不宜 agent 自行操作。</li>
+  <li><b>下一轮 agent</b>：若 /nasdata 再度紧张，可评估 <code>trace_retest</code>（683M）是否已被 zhulong_results.md 收口，若已收口可同样压缩归档；以及 <code>trace_ablation_compaction</code>（29M，11-13 mtime，compaction 消融已归档）可压缩。</li>
+</ul>
+
+<h2>六、验收清单（缺一不可）</h2>
+<ul>
+  <li>✅ <code>df -h /home /nasdata</code> before/after 对比（见 §一）</li>
+  <li>✅ <code>ps -ef | grep run_cline_script</code> 仍见 baseline eval 存活（PID 1910477/1910486）</li>
+  <li>✅ loop 进程未挂（PID 243810）+ <code>https_proxy</code> 注入正常</li>
+  <li>✅ 删除清单 TSV <code>run/zhulong_disk_cleanup_20261115_1902.tsv</code>（路径/字节/理由）</li>
+  <li>✅ 本报告中文、单文件、0 外链 / 0 script</li>
+</ul>
+
+<div class="small" style="margin-top:24px;border-top:1px solid #ddd;padding-top:8px">报告生成：2026-11-15 19:0x · wake#975 · commit 前缀 <code>zhulong disk:</code> · 数据可复现：<code>df -h /home /nasdata</code>、<code>ls -lh …/trace_ablation_think_lang.tar.zst</code>、<code>tar --zstd -tf …/trace_ablation_think_lang.tar.zst | wc -l</code></div>
+
+</body>
+</html>

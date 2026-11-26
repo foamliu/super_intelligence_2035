@@ -1,0 +1,39 @@
+diff --git a/django/core/paginator.py b/django/core/paginator.py
+index 1f92da5d4f..a091683a3a 100644
+--- a/django/core/paginator.py
++++ b/django/core/paginator.py
+@@ -82,6 +82,10 @@ class Paginator:
+         """
+         return Page(*args, **kwargs)
+ 
++    def __iter__(self):
++        for page_num in self.page_range:
++            yield self.page(page_num)
++
+     @cached_property
+     def count(self):
+         """Return the total number of objects, across all pages."""
+diff --git a/tests/pagination/tests.py b/tests/pagination/tests.py
+index ef6e355e8d..112f585553 100644
+--- a/tests/pagination/tests.py
++++ b/tests/pagination/tests.py
+@@ -265,6 +265,19 @@ class PaginationTests(SimpleTestCase):
+         """
+         self.assertIsInstance(Paginator([1, 2, 3], 2).page_range, type(range(0)))
+ 
++    def test_paginator_iteration(self):
++        """
++        Paginators iterate over all pages.
++        """
++        eleven = 'abcdefghijk'
++        paginator = Paginator(eleven, 4)
++        pages = list(paginator)
++        self.assertEqual(len(pages), 3)
++        self.assertEqual([page.number for page in pages], [1, 2, 3])
++        self.assertEqual([page.object_list for page in pages], [
++            'abcd', 'efgh', 'ijk',
++        ])
++
+     def test_get_page(self):
+         """
+         Paginator.get_page() returns a valid page even with invalid page

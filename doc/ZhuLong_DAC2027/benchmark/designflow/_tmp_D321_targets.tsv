@@ -1,0 +1,14 @@
+1793165432787_o5o6p	e0046913	10.129.2.12	184	synopsys:2213;netlist:202;pyaether:20;aether:13;
+1792738287471_mrlo9	e03179	10.129.2.11	144	netlist:460;analog:190;transistor:97;synopsys:96;schematic:60;waveview:38;opamp:13;mosfet:13;
+1793166879135_xs1lj	e0017906	10.129.2.11	119	netlist:324;schematic:12;analog:8;cadence:4;.def:2;
+1791957763339_dhgxy	e0039602	10.129.8.136	91	netlist:202;cadence:4;schematic:3;transistor:2;
+1790156336826_y2xz6	jason17w	10.129.32.190	77	netlist:324;synopsys:12;hspice:4;aether:4;skipper:3;pyaether:3;calibre:1;
+1789629900465_d3vay	pjli	172.16.8.13	77	netlist:265;cadence:26;cmos:9;schematic:1;
+1791456748770_htwv2	yzwang	10.129.2.10	76	netlist:223;calibre:128;pdk:53;.spi:11;.gds:9;gdsii:5;
+1789386764132_phgjl	sagequan	10.129.32.190	73	analog:156;.def:55;netlist:24;waveview:22;.lef:9;synopsys:4;
+1789094185350_tze5k	sagequan	10.129.32.190	72	analog:204;cellview:10;.def:9;waveview:4;pyaether:4;netlist:4;
+1793081212647_xyj1z	eva1wu	10.129.35.97	68	aether:344;schematic:211;netlist:96;pyaether:59;pdk:50;lib.defs:26;analog:18;
+1792042544705_d1cg3	t0002441	10.129.32.75	102	synopsys:2984;hspice:185;spectre:40;cadence:22;netlist:21;
+1789957560618_7kyrv	mike	10.129.32.80	92	synopsys:1274;analog:47;hspice:40;cadence:12;waveview:6;
+1792549549929_j0t84	zhukaic	10.129.33.26	87	aether:115;hspice:79;synopsys:29;pdk:27;waveview:25;pyaether:25;netlist:24;
+1790149493569_194wf	ziyuny	10.129.32.190	128	aether:583;schematic:210;analog:126;dbopencv:92;pyaether:53;netlist:31;

@@ -1,0 +1,24 @@
+Running 2 instances...
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 3
+Unremoved images: 2
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+
+[stderr]
+
+  0%|          | 0/2 [00:00<?, ?it/s]
+ 50%|█████     | 1/2 [00:21<00:21, 21.86s/it]
+1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:21<00:21, 21.86s/it]
+1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.01s/it]
+2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.01s/it]
+2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.01s/it]

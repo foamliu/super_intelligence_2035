@@ -1,0 +1,94 @@
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index f02199d97..cbceabcca 100644
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -1412,14 +1412,23 @@ class SQLInsertCompiler(SQLCompiler):
+             if not self.returning_fields:
+                 return []
+             if self.connection.features.can_return_rows_from_bulk_insert and len(self.query.objs) > 1:
+-                return self.connection.ops.fetch_returned_insert_rows(cursor)
+-            if self.connection.features.can_return_columns_from_insert:
++                rows = self.connection.ops.fetch_returned_insert_rows(cursor)
++            elif self.connection.features.can_return_columns_from_insert:
+                 assert len(self.query.objs) == 1
+-                return [self.connection.ops.fetch_returned_insert_columns(cursor, self.returning_params)]
+-            return [(self.connection.ops.last_insert_id(
+-                cursor, self.query.get_meta().db_table, self.query.get_meta().pk.column
+-            ),)]
+-
++                rows = [self.connection.ops.fetch_returned_insert_columns(cursor, self.returning_params)]
++            else:
++                rows = [(self.connection.ops.last_insert_id(
++                    cursor, self.query.get_meta().db_table, self.query.get_meta().pk.column
++                ),)]
++            if rows:
++                cols = [
++                    field.get_col(self.query.get_meta().db_table, output_field=field)
++                    for field in returning_fields
++                ]
++                converters = self.get_converters(cols)
++                if converters:
++                    rows = list(self.apply_converters(rows, converters))
++            return rows
+ 
+ class SQLDeleteCompiler(SQLCompiler):
+     @cached_property
+diff --git a/tests/from_db_value/models.py b/tests/from_db_value/models.py
+index 58e8ec3a2..6876334ef 100644
+--- a/tests/from_db_value/models.py
++++ b/tests/from_db_value/models.py
+@@ -21,3 +21,23 @@ class CashField(models.DecimalField):
+ 
+ class CashModel(models.Model):
+     cash = CashField()
++
++
++class MyIntWrapper(int):
++    pass
++
++
++class MyAutoField(models.BigAutoField):
++    def from_db_value(self, value, expression, connection):
++        if value is None:
++            return None
++        return MyIntWrapper(value)
++
++    def get_prep_value(self, value):
++        if value is None:
++            return None
++        return int(value)
++
++
++class AutoModel(models.Model):
++    id = MyAutoField(primary_key=True)
+diff --git a/tests/from_db_value/tests.py b/tests/from_db_value/tests.py
+index ab92f37cc..fdca533b8 100644
+--- a/tests/from_db_value/tests.py
++++ b/tests/from_db_value/tests.py
+@@ -1,8 +1,8 @@
+ from django.db import connection
+ from django.db.models import Max
+-from django.test import TestCase
++from django.test import TestCase, skipUnlessDBFeature
+ 
+-from .models import Cash, CashModel
++from .models import AutoModel, Cash, CashModel, MyIntWrapper
+ 
+ 
+ class FromDBValueTest(TestCase):
+@@ -33,3 +33,15 @@ class FromDBValueTest(TestCase):
+     def test_connection(self):
+         instance = CashModel.objects.get()
+         self.assertEqual(instance.cash.vendor, connection.vendor)
++
++
++class InsertReturningValuesTest(TestCase):
++    def test_create_calls_from_db_value(self):
++        obj = AutoModel.objects.create()
++        self.assertIsInstance(obj.id, MyIntWrapper)
++
++    @skipUnlessDBFeature('can_return_rows_from_bulk_insert')
++    def test_bulk_create_calls_from_db_value(self):
++        obj = AutoModel()
++        AutoModel.objects.bulk_create([obj])
++        self.assertIsInstance(obj.id, MyIntWrapper)

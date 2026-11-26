@@ -1,0 +1,40 @@
+
+########## sections/4_experiments.tex  rows 44-56 ##########
+  ln domain                 P    F   E   A  Tot  P+F   calc%   tex%  verdict
+  44 pnr\_signoff           5   19   0   0   25   24   20.83   20.8  Total col 25 != PASS+FAIL 24 (Total is the 696-case count incl. ERROR/ABSENT)
+  45 characterization       5   21   0   0   28   26   19.23   19.2  Total col 28 != PASS+FAIL 26 (Total is the 696-case count incl. ERROR/ABSENT)
+  46 eda\_other             6   27   0   0   38   33   18.18   18.2  Total col 38 != PASS+FAIL 33 (Total is the 696-case count incl. ERROR/ABSENT)
+  47 pg\_layout             4   24   0   0   28   28   14.29   14.3  OK
+  48 schematic\_netlist    13  100   0   0  131  113   11.50   11.5  Total col 131 != PASS+FAIL 113 (Total is the 696-case count incl. ERROR/ABSENT)
+  49 digital                5   40   0   0   51   45   11.11   11.1  Total col 51 != PASS+FAIL 45 (Total is the 696-case count incl. ERROR/ABSENT)
+  50 layout\_virtuoso       4   35   0   0   40   39   10.26   10.3  Total col 40 != PASS+FAIL 39 (Total is the 696-case count incl. ERROR/ABSENT)
+  51 analog\_context        4   39   0   0   55   43    9.30    9.3  Total col 55 != PASS+FAIL 43 (Total is the 696-case count incl. ERROR/ABSENT)
+  52 verification           3   30   0   0   38   33    9.09    9.1  Total col 38 != PASS+FAIL 33 (Total is the 696-case count incl. ERROR/ABSENT)
+  53 spice\_sim             8   87   0   0  104   95    8.42    8.4  Total col 104 != PASS+FAIL 95 (Total is the 696-case count incl. ERROR/ABSENT)
+  54 waveform               2   37   0   0   47   39    5.13    5.1  Total col 47 != PASS+FAIL 39 (Total is the 696-case count incl. ERROR/ABSENT)
+  55 physical\_verify       2   66   0   0   73   68    2.94    2.9  Total col 73 != PASS+FAIL 68 (Total is the 696-case count incl. ERROR/ABSENT)
+  56 layout\_aether         1   33   0   0   38   34    2.94    2.9  Total col 38 != PASS+FAIL 34 (Total is the 696-case count incl. ERROR/ABSENT)
+  column sums: PASS=62 FAIL=558 ERROR=0 ABSENT=0 TotalCol=696 decided=620
+  recomputed overall = 62/620 = 10.0000% -> 10.0
+  tex Overall row (line 58): ['Overall', '62', '558', '620', '10.0']
+  -> arithmetic defects: 0  []
+
+########## appendix/B_additional_results.tex  rows 25-37 ##########
+  ln domain                 P    F   E   A  Tot  P+F   calc%   tex%  verdict
+  25 schematic\_netlist    13  100  18   0  131  113   11.50   11.5  OK
+  26 spice\_sim             8   87   7   2  104   95    8.42    8.4  OK
+  27 physical\_verify       2   66   4   1   73   68    2.94    2.9  OK
+  28 digital                5   40   6   0   51   45   11.11   11.1  OK
+  29 analog\_context        4   39  12   0   55   43    9.30    9.3  OK
+  30 waveform               2   37   8   0   47   39    5.13    5.1  OK
+  31 layout\_virtuoso       4   35   0   1   40   39   10.26   10.3  OK
+  32 layout\_aether         1   33   4   0   38   34    2.94    2.9  OK
+  33 verification           3   30   5   0   38   33    9.09    9.1  OK
+  34 eda\_other             6   27   4   1   38   33   18.18   18.2  OK
+  35 pg\_layout             4   24   0   0   28   28   14.29   14.3  OK
+  36 characterization       5   21   2   0   28   26   19.23   19.2  OK
+  37 pnr\_signoff           5   19   0   1   25   24   20.83   20.8  OK
+  column sums: PASS=62 FAIL=558 ERROR=70 ABSENT=6 TotalCol=696 decided=620
+  recomputed overall = 62/620 = 10.0000% -> 10.0
+  tex Overall row (line 39): ['Total', '62', '558', '70', '6', '696', '10.0']
+  -> arithmetic defects: 0  []

@@ -1,0 +1,107 @@
+{
+ "meta": {
+  "generator": "bpt_attribution_t6_report.py",
+  "generated_at": "2026-11-14T22:46:25",
+  "data_source": "attribution_3615_run1 (36.15 run1, minicpm5-2b-sft-v39-final / global_step_105)"
+ },
+ "funnel": {
+  "total_tasks": 158,
+  "gen_success": 36,
+  "gen_fail": 121,
+  "gen_timeout": 1,
+  "passed": 30,
+  "overall_pass_rate_pct": 18.99,
+  "post_gen_pass_rate_pct": 83.33
+ },
+ "rejection_total": 1304,
+ "rejection_by_reason": [
+  {
+   "reason": "missing-required-field",
+   "count": 527,
+   "pct_of_total": 40.4,
+   "p0_eliminable_rate": 0.7,
+   "p0_eliminable_count": 369,
+   "mechanism": "run_commands 缺 commands / read_files 缺 path 对象 / submit 缺 summary|verified; P0 给结构化正例"
+  },
+  {
+   "reason": "other-type-error",
+   "count": 378,
+   "pct_of_total": 29.0,
+   "p0_eliminable_rate": 0.4,
+   "p0_eliminable_count": 151,
+   "mechanism": "把 submit_and_exit 的 summary/verified 传给 eda_flow 工具等双 MCP 混淆; P0 区分两 server 参数不互通 (余为 parser 乱码, 非 prompt 可解)"
+  },
+  {
+   "reason": "string-not-array",
+   "count": 321,
+   "pct_of_total": 24.6,
+   "p0_eliminable_rate": 0.9,
+   "p0_eliminable_count": 289,
+   "mechanism": "run_commands 把多条命令拼成一个字符串; P0 直接给数组正反例 (262/321=81.7% 属 run_commands)"
+  },
+  {
+   "reason": "unavailable-tool",
+   "count": 41,
+   "pct_of_total": 3.1,
+   "p0_eliminable_rate": 0.5,
+   "p0_eliminable_count": 20,
+   "mechanism": "调用不存在工具名 / parser 产出乱码工具名; P0 列出两 server 真实工具 (余为 vLLM minicpm5 parser 乱码, infra 层)"
+  },
+  {
+   "reason": "wrong-type-boolean",
+   "count": 37,
+   "pct_of_total": 2.8,
+   "p0_eliminable_rate": 0.8,
+   "p0_eliminable_count": 30,
+   "mechanism": "submit_and_exit 的 verified 传成字符串/数字; P0 明示为布尔"
+  }
+ ],
+ "p0_eliminable_total": 859,
+ "p0_eliminable_pct": 65.9,
+ "rejection_by_tool_top": {
+  "run_commands": 1051,
+  "read_files": 104,
+  "get_api_details": 41,
+  "submit_and_exit": 37,
+  "search_apis": 17,
+  "write_file": 13,
+  "open_session": 6,
+  "search_apis_by_keyword": 5
+ },
+ "run_commands_share_pct": 80.6,
+ "run_commands_string_not_array": 262,
+ "six_type_classification": {
+  "PASS": 30,
+  "T6_tool_format_genfail": 121,
+  "T4_assertion_insufficient": 5,
+  "T5_timeout": 1,
+  "T3_api_misuse": 1
+ },
+ "t6_genfail_decomposition": {
+  "n_genfail": 121,
+  "silent_no_rejection": 45,
+  "rejection_death": 76,
+  "rejection_count_distribution": {
+   "0": 45,
+   "1-2": 38,
+   "6-10": 7,
+   "11+": 12,
+   "3-5": 19
+  },
+  "genfail_used_search_apis": 0,
+  "genfail_used_run_code": 0
+ },
+ "p0_expected_recovery": {
+  "optimistic_delta_pp": 20.0,
+  "conservative_delta_pp": 13.4,
+  "target": "76 个拒绝致死任务 (run_commands 占 80.6% 拒绝)"
+ },
+ "blocker": {
+  "item": "A1/A3 单变量消融 (40题) + P0 dev 前后对比 (79题) 须在 36.15 跑",
+  "status": "HARD BLOCKED",
+  "cause": "36.15 隧道 DOWN: dual-nix-tunnel 需 Windows 中继 172.19.195.133 运行 tunnel.ps1; .17 端口 3333 未监听; 直连 36.15:22 被防火墙阻. run1 21:15 完成时隧道尚通, 约 1.5h 前中继掉线.",
+  "who_stuck": "运维/infra (须在 Windows 中继重启 tunnel.ps1); 无法从 .17 单侧修复",
+  "eta": "未知 (取决于运维); 隧道恢复后 A1+A3 约 4-5h, P0 dev eval 约 2-3h",
+  "model_serve_state": ".17 GPU6:8096 step105-final 健康 (urllib 实测); GPU7:8095 R2-step200 监听中; 唯缺到 36.15 反向隧道 18096"
+ }
+}

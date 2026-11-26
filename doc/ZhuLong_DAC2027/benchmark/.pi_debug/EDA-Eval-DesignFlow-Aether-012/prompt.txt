@@ -1,0 +1,126 @@
+You are an EDA design-flow engineer. Implement a Tcl proc that audits a pyAether-emitted textual PG (power/ground) MESH strap report for a layout cellview. This is a pure text-analysis task (no EDA tool calls needed to produce the answer); you will verify your implementation on the Empyrean WaveView Tcl sandbox.
+
+TASK
+Implement the Tcl proc `layout_pgmesh_audit` that takes ONE string argument `report_text` (the full PG-MESH report text) and returns a flat Tcl dict with EXACTLY these 14 keys, in this exact order:
+
+    total_straps  power_straps  ground_straps  unknown_straps
+    short_count  open_count  skip_count
+    min_width  max_space  worst_min_width_strap  worst_max_space_strap
+    coverage_pct  mismatched_summary  verdict
+
+REPORT GRAMMAR (one statement per line; lines starting with '#' are comments and are ignored; blank lines are ignored; a leading "# PG-MESH report" header may appear and is ignored):
+
+    MESH <name> <layer> <direction> <width> <space> <vias> <status>
+    SUMMARY total=<N> power=<N> ground=<N> min_width=<W> max_space=<S> coverage=<PCT>
+
+- <name>      : a strap identifier token. The DEDUP key is the ORDERED pair
+                (name, layer): "vdd1 M5" and "vdd1 M6" are DIFFERENT keys.
+- <layer>     : a metal layer token (e.g. M5, M6). Part of the dedup key.
+- <direction> : one of H, V, horizontal, vertical (CASE-INSENSITIVE; normalize
+                to H/V is acceptable -- direction is NOT a returned key, but it
+                is part of each record). May be absent.
+- <width>     : a real number (the strap metal width). May be ABSENT or EMPTY
+                -> default 0.0.
+- <space>     : a real number (strap-to-strap space). May be ABSENT or EMPTY
+                -> default 0.0.
+- <vias>      : an integer (number of vias in the strap's cut array). May be
+                ABSENT or EMPTY -> default 1. RED HERRING: vias is NOT used for
+                any strap count (each MESH record counts as ONE strap entry).
+- <status>    : one of ok, skip, short, open (CASE-INSENSITIVE). May be ABSENT
+                or EMPTY -> default "ok" (NEVER inferred from other fields).
+
+RETURNED DICT KEYS (exact order):
+  1. total_straps           : integer -- count of DISTINCT (name, layer) keys
+                              after LAST-WINS dedup (duplicate key: the LAST
+                              occurrence replaces direction/width/space/vias/
+                              status; not sum, not first-wins; counts ONCE).
+  2. power_straps           : integer -- keys whose NAME classifies as power.
+  3. ground_straps          : integer -- keys whose NAME classifies as ground.
+  4. unknown_straps         : integer -- keys whose name is neither power nor
+                              ground. (power + ground + unknown == total_straps)
+  5. short_count            : integer -- keys whose effective status == short.
+  6. open_count             : integer -- keys whose effective status == open.
+  7. skip_count             : integer -- keys whose effective status == skip.
+  8. min_width              : real -- MIN width over NON-SKIP keys only. -1.0 if
+                              there are no non-SKIP keys. SKIP keys EXCLUDED
+                              even if they hold the file-wide minimum.
+  9. max_space              : real -- MAX space over NON-SKIP keys only. -1.0 if
+                              no non-SKIP keys. SKIP keys EXCLUDED.
+  10. worst_min_width_strap : string -- the NAME of a non-SKIP key achieving
+                              min_width. On ties, the LEX-SMALLEST name using
+                              DICTIONARY (numeric-aware) order (e.g. strap2 <
+                              strap10). "" if no non-SKIP keys.
+  11. worst_max_space_strap : string -- the NAME of a non-SKIP key achieving
+                              max_space. Same tie-break rule. "" if none.
+  12. coverage_pct          : integer 0..100 -- round((power_straps +
+                              ground_straps) * 100 / total_straps). 0 if
+                              total_straps == 0. (round half-up via Tcl
+                              round().)
+  13. mismatched_summary    : list of strings -- for each SUMMARY field that
+                              does NOT match the computed value, a string
+                              "field=summary_val vs computed_val". Fields:
+                                total vs total_straps (integer ==)
+                                power vs power_straps (integer ==)
+                                ground vs ground_straps (integer ==)
+                                min_width vs min_width (NUMERIC ==, so
+                                       0.080 matches 0.08)
+                                max_space vs max_space (NUMERIC ==)
+                                coverage vs coverage_pct (integer ==)
+                              ABSENT summary fields are NOT reported. Empty
+                              list if no SUMMARY line. Empty list if all match.
+  14. verdict               : string -- priority:
+                                short_count > 0   -> "FAIL"
+                                else open_count > 0 -> "REVIEW"
+                                else (no summary OR mismatched non-empty) ->
+                                   "INCOMPLETE"
+                                else -> "PASS"
+
+NAME CLASSIFICATION (case-insensitive substring match on the lowercased name):
+  - power  : name contains "vdd" OR "vcc" OR "power"
+  - ground : name contains "gnd" OR "vss" OR "ground"
+  - otherwise -> unknown
+  (Classification is by NAME only, INDEPENDENT of status. A SKIP strap named
+   vdd1 still counts as power_straps; it is only excluded from min_width /
+   max_space because of its status.)
+
+IMPORTANT RULES (a naive implementation fails these -- the checker enforces
+correct behavior):
+  (1) direction and status are CASE-INSENSITIVE (HORIZONTAL/horizontal, OK/Ok,
+      SHORT/Short). Direction normalization is internal only (not a key).
+  (2) Duplicate (name, layer) key: LAST occurrence WINS (replace
+      direction/width/space/vias/status, not sum, not first-wins). Counts
+      ONCE in total_straps.
+  (3) (name, layer) is an ORDERED key: "vdd1 M5" and "vdd1 M6" are DIFFERENT
+      keys, both counted. layer is part of the key.
+  (4) status ABSENT or EMPTY -> default "ok" (NEVER inferred from width/space).
+  (5) missing width -> 0.0; missing space -> 0.0; missing vias -> 1. A missing
+      width of 0.0 CAN become the min_width (it is a non-SKIP default-ok strap).
+  (6) min_width / max_space / worst_*_strap computed over NON-SKIP keys ONLY.
+      short/open/ok are all NON-SKIP and ARE included. SKIP keys are excluded
+      even if they hold the extreme value. If no non-SKIP keys: min_width=-1.0,
+      max_space=-1.0, worst_*_strap="".
+  (7) worst_*_strap tie-break: LEX-SMALLEST name via lsort -dictionary (so
+      strap2 < strap10, dictionary numeric-aware), NOT plain lsort -increasing.
+  (8) coverage_pct = round((power+ground)*100/total); total==0 -> 0. Coverage
+      is computed from NAME-classification counts regardless of status (a SKIP
+      vdd1 still counts in power_straps and in total).
+  (9) mismatched_summary: ABSENT summary fields NOT reported. min_width and
+      max_space compared with NUMERIC equality (0.080 == 0.08 -> match, NOT a
+      mismatch). total/power/ground/coverage compared with integer equality.
+      Empty list if no SUMMARY line.
+  (10) verdict priority: FAIL (short>0) > REVIEW (open>0) > INCOMPLETE (no
+       summary or mismatched) > PASS. A FAIL case with a matching summary is
+       still FAIL (short wins over PASS). A REVIEW case with a matching summary
+       is still REVIEW.
+  All output lists lex-sorted with lsort -dictionary where applicable.
+
+IMPLEMENTATION NOTES:
+- Use Tcl 'split' on newline, 'string trim', 'string match' globs (e.g.
+  "min_width=*"), 'lsort -dictionary' for sorting and tie-breaks, 'array' /
+  'info exists' for dedup, 'dict create' for the returned dict in exact key
+  order.
+- For numeric equality use expr {double($a) == double($b)}; for integer
+  equality use $a != $b (Tcl coerces integer-looking strings).
+- The Empyrean WaveView Tcl regexp supports POSIX classes like [[:space:]];
+  do NOT rely on \b / \s / \d / \w Perl classes.
+- Avoid lassign if unsure; use lindex.

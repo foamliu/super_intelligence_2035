@@ -1,0 +1,138 @@
+2026-11-10 10:17:55,752 - INFO - Creating container for astropy__astropy-13453...
+2026-11-10 10:17:55,785 - INFO - Container for astropy__astropy-13453 created: 89dc640f6f7884f24dbf0458e3f5cd3cd0a82f693ccecb317250d7b74da0af86
+2026-11-10 10:17:59,299 - INFO - Container for astropy__astropy-13453 started: 89dc640f6f7884f24dbf0458e3f5cd3cd0a82f693ccecb317250d7b74da0af86
+2026-11-10 10:17:59,301 - INFO - Intermediate patch for astropy__astropy-13453 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2028/codex-glm-5.3-flash/astropy__astropy-13453/patch.diff, now applying to container...
+2026-11-10 10:17:59,435 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/ascii/core.py...
+Checking patch astropy/io/ascii/html.py...
+Checking patch astropy/io/ascii/tests/test_html.py...
+Applied patch astropy/io/ascii/core.py cleanly.
+Applied patch astropy/io/ascii/html.py cleanly.
+Applied patch astropy/io/ascii/tests/test_html.py cleanly.
+
+2026-11-10 10:18:00,180 - INFO - Git diff before:
+diff --git a/astropy/io/ascii/core.py b/astropy/io/ascii/core.py
+index 1a7785bd2..752be16fa 100644
+--- a/astropy/io/ascii/core.py
++++ b/astropy/io/ascii/core.py
+@@ -931,9 +931,9 @@ class BaseData:
+         for vals in zip(*col_str_iters):
+             lines.append(self.splitter.join(vals))
+ 
+-    def _set_col_formats(self):
++    def _set_col_formats(self, cols=None):
+         """WRITE: set column formats."""
+-        for col in self.cols:
++        for col in self.cols if cols is None else cols:
+             if col.info.name in self.formats:
+                 col.info.format = self.formats[col.info.name]
+ 
+diff --git a/astropy/io/ascii/html.py b/astropy/io/ascii/html.py
+index 266cf229c..47b2a2482 100644
+--- a/astropy/io/ascii/html.py
++++ b/astropy/io/ascii/html.py
+@@ -354,6 +354,7 @@ class HTML(core.BaseReader):
+             self.data.fill_values = [self.data.fill_values]
+ 
+         self.data._set_fill_values(cols)
++        self.data._set_col_formats(cols)
+ 
+         lines = []
+ 
+@@ -429,6 +430,7 @@ class HTML(core.BaseReader):
+                                 for i in range(span):
+                                     # Split up multicolumns into separate columns
+                                     new_col = Column([el[i] for el in col])
++                                    new_col.info.format = col.info.format
+ 
+                                     new_col_iter_str_vals = self.fill_values(
+                                         col, new_col.info.iter_str_vals())
+diff --git a/astropy/io/ascii/tests/test_html.py b/astropy/io/ascii/tests/test_html.py
+index 0515efa06..90129d163 100644
+--- a/astropy/io/ascii/tests/test_html.py
++++ b/astropy/io/ascii/tests/test_html.py
+@@ -636,6 +636,36 @@ def test_write_table_html_fill_values():
+     assert buffer_output.getvalue() == buffer_expected.getvalue()
+ 
+ 
++def test_write_table_html_formats():
++    """
++    Test that passing formats should format the column values.
++    """
++    buffer_output = StringIO()
++    t = Table([[1.23875234858e-24], [2]], names=('a', 'b'))
++    ascii.write(t, buffer_output, formats={'a': '{:.2e}'}, format='html')
++
++    t_expected = Table([['1.24e-24'], [2]], names=('a', 'b'))
++    buffer_expected = StringIO()
++    ascii.write(t_expected, buffer_expected, format='html')
++
++    assert buffer_output.getvalue() == buffer_expected.getvalue()
++
++
++def test_write_table_html_formats_multidimensional():
++    """
++    Test that passing formats should format multidimensional column values.
++    """
++    buffer_output = StringIO()
++    t = Table([[(1.23875234858e-24, 3.2348748432e-15)]], names=('a',))
++    ascii.write(t, buffer_output, formats={'a': '{:.2e}'}, format='html')
++
++    t_expected = Table([[('1.24e-24', '3.23e-15')]], names=('a',))
++    buffer_expected = StringIO()
++    ascii.write(t_expected, buffer_expected, format='html')
++
++    assert buffer_output.getvalue() == buffer_expected.getvalue()
++
++
+ def test_write_table_html_fill_values_optional_columns():
+     """
+     Test that passing optional column in fill_values should only replace
+2026-11-10 10:18:00,183 - INFO - Eval script for astropy__astropy-13453 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2028/codex-glm-5.3-flash/astropy__astropy-13453/eval.sh; copying to container...
+2026-11-10 10:19:25,417 - INFO - Test runtime: 85.18 seconds
+2026-11-10 10:19:25,423 - INFO - Test output for astropy__astropy-13453 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2028/codex-glm-5.3-flash/astropy__astropy-13453/test_output.txt
+2026-11-10 10:19:25,524 - INFO - Git diff after:
+diff --git a/astropy/io/ascii/core.py b/astropy/io/ascii/core.py
+index 1a7785bd2..752be16fa 100644
+--- a/astropy/io/ascii/core.py
++++ b/astropy/io/ascii/core.py
+@@ -931,9 +931,9 @@ class BaseData:
+         for vals in zip(*col_str_iters):
+             lines.append(self.splitter.join(vals))
+ 
+-    def _set_col_formats(self):
++    def _set_col_formats(self, cols=None):
+         """WRITE: set column formats."""
+-        for col in self.cols:
++        for col in self.cols if cols is None else cols:
+             if col.info.name in self.formats:
+                 col.info.format = self.formats[col.info.name]
+ 
+diff --git a/astropy/io/ascii/html.py b/astropy/io/ascii/html.py
+index 266cf229c..47b2a2482 100644
+--- a/astropy/io/ascii/html.py
++++ b/astropy/io/ascii/html.py
+@@ -354,6 +354,7 @@ class HTML(core.BaseReader):
+             self.data.fill_values = [self.data.fill_values]
+ 
+         self.data._set_fill_values(cols)
++        self.data._set_col_formats(cols)
+ 
+         lines = []
+ 
+@@ -429,6 +430,7 @@ class HTML(core.BaseReader):
+                                 for i in range(span):
+                                     # Split up multicolumns into separate columns
+                                     new_col = Column([el[i] for el in col])
++                                    new_col.info.format = col.info.format
+ 
+                                     new_col_iter_str_vals = self.fill_values(
+                                         col, new_col.info.iter_str_vals())
+2026-11-10 10:19:25,525 - INFO - Git diff changed after running eval script
+2026-11-10 10:19:25,525 - INFO - Grading answer for astropy__astropy-13453...
+2026-11-10 10:19:25,528 - INFO - report: {'astropy__astropy-13453': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/io/ascii/tests/test_html.py::test_write_table_formatted_columns'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/io/ascii/tests/test_html.py::test_listwriter', 'astropy/io/ascii/tests/test_html.py::test_htmlinputter_no_bs4', 'astropy/io/ascii/tests/test_html.py::test_multicolumn_write', 'astropy/io/ascii/tests/test_html.py::test_write_no_multicols', 'astropy/io/ascii/tests/test_html.py::test_write_table_html_fill_values', 'astropy/io/ascii/tests/test_html.py::test_write_table_html_fill_values_optional_columns', 'astropy/io/ascii/tests/test_html.py::test_write_table_html_fill_values_masked', 'astropy/io/ascii/tests/test_html.py::test_multicolumn_table_html_fill_values', 'astropy/io/ascii/tests/test_html.py::test_multi_column_write_table_html_fill_values_masked'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-13453: resolved: True
+2026-11-10 10:19:25,531 - INFO - Attempting to stop container sweb.eval.astropy__astropy-13453.verified_full_glm53_codex_incr_R2028...
+2026-11-10 10:19:41,247 - INFO - Container sweb.eval.astropy__astropy-13453.verified_full_glm53_codex_incr_R2028 stopped successfully.
+2026-11-10 10:19:41,247 - INFO - Attempting to remove container sweb.eval.astropy__astropy-13453.verified_full_glm53_codex_incr_R2028...
+2026-11-10 10:19:41,305 - INFO - Container sweb.eval.astropy__astropy-13453.verified_full_glm53_codex_incr_R2028 removed successfully.

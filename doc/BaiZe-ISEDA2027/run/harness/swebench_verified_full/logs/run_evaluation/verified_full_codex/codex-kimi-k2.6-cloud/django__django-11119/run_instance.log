@@ -1,0 +1,82 @@
+2026-10-31 03:30:18,560 - INFO - Creating container for django__django-11119...
+2026-10-31 03:30:18,598 - INFO - Container for django__django-11119 created: 6811353f2b93c43b475043c1460d7de9606addc9690770e9d945af3542e67a5b
+2026-10-31 03:30:21,804 - INFO - Container for django__django-11119 started: 6811353f2b93c43b475043c1460d7de9606addc9690770e9d945af3542e67a5b
+2026-10-31 03:30:21,807 - INFO - Intermediate patch for django__django-11119 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-11119/patch.diff, now applying to container...
+2026-10-31 03:30:21,960 - INFO - >>>>> Applied Patch:
+Checking patch django/template/engine.py...
+Checking patch tests/template_tests/test_engine.py...
+Applied patch django/template/engine.py cleanly.
+Applied patch tests/template_tests/test_engine.py cleanly.
+
+2026-10-31 03:30:22,906 - INFO - Git diff before:
+diff --git a/django/template/engine.py b/django/template/engine.py
+index dfaa67ba12..ff9ce58d59 100644
+--- a/django/template/engine.py
++++ b/django/template/engine.py
+@@ -160,7 +160,7 @@ class Engine:
+         if isinstance(context, Context):
+             return t.render(context)
+         else:
+-            return t.render(Context(context))
++            return t.render(Context(context, autoescape=self.autoescape))
+ 
+     def select_template(self, template_name_list):
+         """
+diff --git a/tests/template_tests/test_engine.py b/tests/template_tests/test_engine.py
+index 2bb8601fbb..f08719aa25 100644
+--- a/tests/template_tests/test_engine.py
++++ b/tests/template_tests/test_engine.py
+@@ -22,6 +22,28 @@ class RenderToStringTest(SimpleTestCase):
+         )
+ 
+ 
++    def test_autoescape_off(self):
++        engine = Engine(dirs=[TEMPLATE_DIR], autoescape=False)
++        self.assertEqual(
++            engine.render_to_string('test_context.html', {'obj': '<b>test</b>'}),
++            'obj:<b>test</b>\n',
++        )
++
++    def test_autoescape_on(self):
++        engine = Engine(dirs=[TEMPLATE_DIR], autoescape=True)
++        self.assertEqual(
++            engine.render_to_string('test_context.html', {'obj': '<b>test</b>'}),
++            'obj:&lt;b&gt;test&lt;/b&gt;\n',
++        )
++
++    def test_autoescape_context_instance(self):
++        engine = Engine(dirs=[TEMPLATE_DIR], autoescape=False)
++        context = Context({'obj': '<b>test</b>'}, autoescape=True)
++        self.assertEqual(
++            engine.render_to_string('test_context.html', context),
++            'obj:&lt;b&gt;test&lt;/b&gt;\n',
++        )
++
+ class GetDefaultTests(SimpleTestCase):
+ 
+     @override_settings(TEMPLATES=[])
+2026-10-31 03:30:22,910 - INFO - Eval script for django__django-11119 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-11119/eval.sh; copying to container...
+2026-10-31 03:30:29,344 - INFO - Test runtime: 6.35 seconds
+2026-10-31 03:30:29,346 - INFO - Test output for django__django-11119 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-11119/test_output.txt
+2026-10-31 03:30:29,454 - INFO - Git diff after:
+diff --git a/django/template/engine.py b/django/template/engine.py
+index dfaa67ba12..ff9ce58d59 100644
+--- a/django/template/engine.py
++++ b/django/template/engine.py
+@@ -160,7 +160,7 @@ class Engine:
+         if isinstance(context, Context):
+             return t.render(context)
+         else:
+-            return t.render(Context(context))
++            return t.render(Context(context, autoescape=self.autoescape))
+ 
+     def select_template(self, template_name_list):
+         """
+2026-10-31 03:30:29,454 - INFO - Git diff changed after running eval script
+2026-10-31 03:30:29,454 - INFO - Grading answer for django__django-11119...
+2026-10-31 03:30:29,456 - INFO - report: {'django__django-11119': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_autoescape_off (template_tests.test_engine.RenderToStringTest)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_cached_loader_priority (template_tests.test_engine.LoaderTests)', 'test_loader_priority (template_tests.test_engine.LoaderTests)', 'test_origin (template_tests.test_engine.LoaderTests)', 'test_basic_context (template_tests.test_engine.RenderToStringTest)', 'test_multiple_engines_configured (template_tests.test_engine.GetDefaultTests)', 'test_no_engines_configured (template_tests.test_engine.GetDefaultTests)', 'test_single_engine_configured (template_tests.test_engine.GetDefaultTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11119: resolved: True
+2026-10-31 03:30:29,457 - INFO - Attempting to stop container sweb.eval.django__django-11119.verified_full_codex...
+2026-10-31 03:30:45,204 - INFO - Container sweb.eval.django__django-11119.verified_full_codex stopped successfully.
+2026-10-31 03:30:45,204 - INFO - Attempting to remove container sweb.eval.django__django-11119.verified_full_codex...
+2026-10-31 03:30:45,269 - INFO - Container sweb.eval.django__django-11119.verified_full_codex removed successfully.

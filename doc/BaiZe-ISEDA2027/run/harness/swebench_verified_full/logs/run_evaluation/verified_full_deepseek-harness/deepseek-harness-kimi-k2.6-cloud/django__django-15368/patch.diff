@@ -1,0 +1,29 @@
+diff --git a/django/db/models/query.py b/django/db/models/query.py
+index f8d848e92..6b5b73893 100644
+--- a/django/db/models/query.py
++++ b/django/db/models/query.py
+@@ -670,7 +670,7 @@ class QuerySet:
+                 when_statements = []
+                 for obj in batch_objs:
+                     attr = getattr(obj, field.attname)
+-                    if not isinstance(attr, Expression):
++                    if not hasattr(attr, "resolve_expression"):
+                         attr = Value(attr, output_field=field)
+                     when_statements.append(When(pk=obj.pk, then=attr))
+                 case_statement = Case(*when_statements, output_field=field)
+diff --git a/tests/queries/test_bulk_update.py b/tests/queries/test_bulk_update.py
+index 1d669e0bb..b6968329f 100644
+--- a/tests/queries/test_bulk_update.py
++++ b/tests/queries/test_bulk_update.py
+@@ -280,3 +280,11 @@ class BulkUpdateTests(TestCase):
+         parent.refresh_from_db()
+         self.assertEqual(parent.f, 42)
+         self.assertIsNone(parent.single)
++
++    def test_plain_f_expression(self):
++        """bulk_update() should work with plain F() expressions."""
++        numbers = [Number.objects.create(num=i) for i in range(10)]
++        for number in numbers:
++            number.num = F('num')
++        Number.objects.bulk_update(numbers, ['num'])
++        self.assertCountEqual(Number.objects.filter(num__in=range(10)), numbers)

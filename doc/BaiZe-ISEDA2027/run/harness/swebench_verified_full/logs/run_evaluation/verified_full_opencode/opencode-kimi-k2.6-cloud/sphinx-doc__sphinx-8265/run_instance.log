@@ -1,0 +1,201 @@
+2026-10-30 15:54:02,519 - INFO - Creating container for sphinx-doc__sphinx-8265...
+2026-10-30 15:54:02,572 - INFO - Container for sphinx-doc__sphinx-8265 created: 04a81cb76d8a56ffdc248cc677010d4d64e51b971ea285490746e04b38de1fee
+2026-10-30 15:54:03,870 - INFO - Container for sphinx-doc__sphinx-8265 started: 04a81cb76d8a56ffdc248cc677010d4d64e51b971ea285490746e04b38de1fee
+2026-10-30 15:54:03,873 - INFO - Intermediate patch for sphinx-doc__sphinx-8265 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-8265/patch.diff, now applying to container...
+2026-10-30 15:54:04,016 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/pycode/ast.py...
+Checking patch tests/test_pycode_ast.py...
+Checking patch tests/test_util_inspect.py...
+Applied patch sphinx/pycode/ast.py cleanly.
+Applied patch tests/test_pycode_ast.py cleanly.
+Applied patch tests/test_util_inspect.py cleanly.
+
+2026-10-30 15:54:04,416 - INFO - Git diff before:
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index 9bafff11c..3723b4a0f 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -166,6 +166,17 @@ class _UnparseVisitor(ast.NodeVisitor):
+         return "{" + ", ".join(self.visit(e) for e in node.elts) + "}"
+ 
+     def visit_Subscript(self, node: ast.Subscript) -> str:
++        slice_node = node.slice
++        if isinstance(slice_node, ast.Index):
++            slice_node = slice_node.value
++        if (isinstance(slice_node, ast.Tuple) and slice_node.elts and
++                not any(isinstance(elt, getattr(ast, 'Starred', type(None)))
++                        for elt in slice_node.elts)):
++            if len(slice_node.elts) == 1:
++                return "%s[%s,]" % (self.visit(node.value),
++                                    self.visit(slice_node.elts[0]))
++            return "%s[%s]" % (self.visit(node.value),
++                               ", ".join(self.visit(e) for e in slice_node.elts))
+         return "%s[%s]" % (self.visit(node.value), self.visit(node.slice))
+ 
+     def visit_UnaryOp(self, node: ast.UnaryOp) -> str:
+@@ -173,7 +184,10 @@ class _UnparseVisitor(ast.NodeVisitor):
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+         if node.elts:
+-            return ", ".join(self.visit(e) for e in node.elts)
++            if len(node.elts) == 1:
++                return "(%s,)" % self.visit(node.elts[0])
++            else:
++                return "(%s)" % ", ".join(self.visit(e) for e in node.elts)
+         else:
+             return "()"
+ 
+diff --git a/tests/test_pycode_ast.py b/tests/test_pycode_ast.py
+index 9b12d24d5..bd2d1fe7e 100644
+--- a/tests/test_pycode_ast.py
++++ b/tests/test_pycode_ast.py
+@@ -53,7 +53,8 @@ from sphinx.pycode import ast
+     ("+ a", "+ a"),                             # UAdd
+     ("- 1", "- 1"),                             # UnaryOp
+     ("- a", "- a"),                             # USub
+-    ("(1, 2, 3)", "1, 2, 3"),                   # Tuple
++    ("(1, 2, 3)", "(1, 2, 3)"),                 # Tuple
++    ("(1,)", "(1,)"),                           # Tuple (single element)
+     ("()", "()"),                               # Tuple (empty)
+ ])
+ def test_unparse(source, expected):
+diff --git a/tests/test_util_inspect.py b/tests/test_util_inspect.py
+index c21eaaa16..37cd7c2d8 100644
+--- a/tests/test_util_inspect.py
++++ b/tests/test_util_inspect.py
+@@ -292,7 +292,8 @@ def test_signature_from_str_basic():
+ def test_signature_from_str_default_values():
+     signature = ('(a=0, b=0.0, c="str", d=b"bytes", e=..., f=True, '
+                  'g=[1, 2, 3], h={"a": 1}, i={1, 2, 3}, '
+-                 'j=lambda x, y: None, k=None, l=object(), m=foo.bar.CONSTANT)')
++                 'j=lambda x, y: None, k=None, l=object(), m=foo.bar.CONSTANT, '
++                 'n=(1, 2, 3), o=(1,))')
+     sig = inspect.signature_from_str(signature)
+     assert sig.parameters['a'].default == '0'
+     assert sig.parameters['b'].default == '0.0'
+@@ -307,6 +308,8 @@ def test_signature_from_str_default_values():
+     assert sig.parameters['k'].default == 'None'
+     assert sig.parameters['l'].default == 'object()'
+     assert sig.parameters['m'].default == 'foo.bar.CONSTANT'
++    assert sig.parameters['n'].default == '(1, 2, 3)'
++    assert sig.parameters['o'].default == '(1,)'
+ 
+ 
+ def test_signature_from_str_annotations():
+@@ -356,10 +359,10 @@ def test_signature_from_str_invalid():
+ 
+ 
+ def test_signature_from_ast():
+-    signature = 'def func(a, b, *args, c=0, d="blah", **kwargs): pass'
++    signature = 'def func(a, b, *args, c=0, d="blah", e=(1, 2), **kwargs): pass'
+     tree = ast.parse(signature)
+     sig = inspect.signature_from_ast(tree.body[0])
+-    assert list(sig.parameters.keys()) == ['a', 'b', 'args', 'c', 'd', 'kwargs']
++    assert list(sig.parameters.keys()) == ['a', 'b', 'args', 'c', 'd', 'e', 'kwargs']
+     assert sig.parameters['a'].name == 'a'
+     assert sig.parameters['a'].kind == Parameter.POSITIONAL_OR_KEYWORD
+     assert sig.parameters['a'].default == Parameter.empty
+@@ -380,6 +383,10 @@ def test_signature_from_ast():
+     assert sig.parameters['d'].kind == Parameter.KEYWORD_ONLY
+     assert sig.parameters['d'].default == "'blah'"
+     assert sig.parameters['d'].annotation == Parameter.empty
++    assert sig.parameters['e'].name == 'e'
++    assert sig.parameters['e'].kind == Parameter.KEYWORD_ONLY
++    assert sig.parameters['e'].default == '(1, 2)'
++    assert sig.parameters['e'].annotation == Parameter.empty
+     assert sig.parameters['kwargs'].name == 'kwargs'
+     assert sig.parameters['kwargs'].kind == Parameter.VAR_KEYWORD
+     assert sig.parameters['kwargs'].default == Parameter.empty
+2026-10-30 15:54:04,417 - INFO - Eval script for sphinx-doc__sphinx-8265 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-8265/eval.sh; copying to container...
+2026-10-30 15:54:07,579 - INFO - Test runtime: 3.10 seconds
+2026-10-30 15:54:07,580 - INFO - Test output for sphinx-doc__sphinx-8265 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-8265/test_output.txt
+2026-10-30 15:54:07,631 - INFO - Git diff after:
+diff --git a/sphinx/pycode/ast.py b/sphinx/pycode/ast.py
+index 9bafff11c..3723b4a0f 100644
+--- a/sphinx/pycode/ast.py
++++ b/sphinx/pycode/ast.py
+@@ -166,6 +166,17 @@ class _UnparseVisitor(ast.NodeVisitor):
+         return "{" + ", ".join(self.visit(e) for e in node.elts) + "}"
+ 
+     def visit_Subscript(self, node: ast.Subscript) -> str:
++        slice_node = node.slice
++        if isinstance(slice_node, ast.Index):
++            slice_node = slice_node.value
++        if (isinstance(slice_node, ast.Tuple) and slice_node.elts and
++                not any(isinstance(elt, getattr(ast, 'Starred', type(None)))
++                        for elt in slice_node.elts)):
++            if len(slice_node.elts) == 1:
++                return "%s[%s,]" % (self.visit(node.value),
++                                    self.visit(slice_node.elts[0]))
++            return "%s[%s]" % (self.visit(node.value),
++                               ", ".join(self.visit(e) for e in slice_node.elts))
+         return "%s[%s]" % (self.visit(node.value), self.visit(node.slice))
+ 
+     def visit_UnaryOp(self, node: ast.UnaryOp) -> str:
+@@ -173,7 +184,10 @@ class _UnparseVisitor(ast.NodeVisitor):
+ 
+     def visit_Tuple(self, node: ast.Tuple) -> str:
+         if node.elts:
+-            return ", ".join(self.visit(e) for e in node.elts)
++            if len(node.elts) == 1:
++                return "(%s,)" % self.visit(node.elts[0])
++            else:
++                return "(%s)" % ", ".join(self.visit(e) for e in node.elts)
+         else:
+             return "()"
+ 
+diff --git a/tests/test_util_inspect.py b/tests/test_util_inspect.py
+index c21eaaa16..37cd7c2d8 100644
+--- a/tests/test_util_inspect.py
++++ b/tests/test_util_inspect.py
+@@ -292,7 +292,8 @@ def test_signature_from_str_basic():
+ def test_signature_from_str_default_values():
+     signature = ('(a=0, b=0.0, c="str", d=b"bytes", e=..., f=True, '
+                  'g=[1, 2, 3], h={"a": 1}, i={1, 2, 3}, '
+-                 'j=lambda x, y: None, k=None, l=object(), m=foo.bar.CONSTANT)')
++                 'j=lambda x, y: None, k=None, l=object(), m=foo.bar.CONSTANT, '
++                 'n=(1, 2, 3), o=(1,))')
+     sig = inspect.signature_from_str(signature)
+     assert sig.parameters['a'].default == '0'
+     assert sig.parameters['b'].default == '0.0'
+@@ -307,6 +308,8 @@ def test_signature_from_str_default_values():
+     assert sig.parameters['k'].default == 'None'
+     assert sig.parameters['l'].default == 'object()'
+     assert sig.parameters['m'].default == 'foo.bar.CONSTANT'
++    assert sig.parameters['n'].default == '(1, 2, 3)'
++    assert sig.parameters['o'].default == '(1,)'
+ 
+ 
+ def test_signature_from_str_annotations():
+@@ -356,10 +359,10 @@ def test_signature_from_str_invalid():
+ 
+ 
+ def test_signature_from_ast():
+-    signature = 'def func(a, b, *args, c=0, d="blah", **kwargs): pass'
++    signature = 'def func(a, b, *args, c=0, d="blah", e=(1, 2), **kwargs): pass'
+     tree = ast.parse(signature)
+     sig = inspect.signature_from_ast(tree.body[0])
+-    assert list(sig.parameters.keys()) == ['a', 'b', 'args', 'c', 'd', 'kwargs']
++    assert list(sig.parameters.keys()) == ['a', 'b', 'args', 'c', 'd', 'e', 'kwargs']
+     assert sig.parameters['a'].name == 'a'
+     assert sig.parameters['a'].kind == Parameter.POSITIONAL_OR_KEYWORD
+     assert sig.parameters['a'].default == Parameter.empty
+@@ -380,6 +383,10 @@ def test_signature_from_ast():
+     assert sig.parameters['d'].kind == Parameter.KEYWORD_ONLY
+     assert sig.parameters['d'].default == "'blah'"
+     assert sig.parameters['d'].annotation == Parameter.empty
++    assert sig.parameters['e'].name == 'e'
++    assert sig.parameters['e'].kind == Parameter.KEYWORD_ONLY
++    assert sig.parameters['e'].default == '(1, 2)'
++    assert sig.parameters['e'].annotation == Parameter.empty
+     assert sig.parameters['kwargs'].name == 'kwargs'
+     assert sig.parameters['kwargs'].kind == Parameter.VAR_KEYWORD
+     assert sig.parameters['kwargs'].default == Parameter.empty
+2026-10-30 15:54:07,631 - INFO - Git diff changed after running eval script
+2026-10-30 15:54:07,631 - INFO - Grading answer for sphinx-doc__sphinx-8265...
+2026-10-30 15:54:07,633 - INFO - report: {'sphinx-doc__sphinx-8265': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_pycode_ast.py::test_unparse[(1,'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_pycode_ast.py::test_unparse[a', 'tests/test_pycode_ast.py::test_unparse[os.path-os.path]', 'tests/test_pycode_ast.py::test_unparse[1', "tests/test_pycode_ast.py::test_unparse[b'bytes'-b'bytes']", 'tests/test_pycode_ast.py::test_unparse[object()-object()]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_0]', "tests/test_pycode_ast.py::test_unparse[{'key1':", 'tests/test_pycode_ast.py::test_unparse[...-...]', 'tests/test_pycode_ast.py::test_unparse[Tuple[int,', 'tests/test_pycode_ast.py::test_unparse[~', 'tests/test_pycode_ast.py::test_unparse[lambda', 'tests/test_pycode_ast.py::test_unparse[[1,', 'tests/test_pycode_ast.py::test_unparse[sys-sys]', 'tests/test_pycode_ast.py::test_unparse[1234-1234_1]', 'tests/test_pycode_ast.py::test_unparse[not', 'tests/test_pycode_ast.py::test_unparse[{1,', "tests/test_pycode_ast.py::test_unparse['str'-'str']", 'tests/test_pycode_ast.py::test_unparse[+', 'tests/test_pycode_ast.py::test_unparse[-', 'tests/test_pycode_ast.py::test_unparse[()-()]', 'tests/test_pycode_ast.py::test_unparse_None', 'tests/test_pycode_ast.py::test_unparse_py38'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8265: resolved: True
+2026-10-30 15:54:07,634 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8265.verified_full_opencode...
+2026-10-30 15:54:23,687 - INFO - Container sweb.eval.sphinx-doc__sphinx-8265.verified_full_opencode stopped successfully.
+2026-10-30 15:54:23,688 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8265.verified_full_opencode...
+2026-10-30 15:54:23,727 - INFO - Container sweb.eval.sphinx-doc__sphinx-8265.verified_full_opencode removed successfully.

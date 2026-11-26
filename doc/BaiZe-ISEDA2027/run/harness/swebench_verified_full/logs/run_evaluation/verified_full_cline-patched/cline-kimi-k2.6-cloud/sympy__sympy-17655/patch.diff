@@ -1,0 +1,88 @@
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 7c978c47..be8cccba 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -104,6 +104,7 @@ class Point(GeometryEntity):
+     """
+ 
+     is_Point = True
++    _op_priority = 10.01
+ 
+     def __new__(cls, *args, **kwargs):
+         evaluate = kwargs.get('evaluate', global_evaluate[0])
+@@ -221,6 +222,10 @@ def __add__(self, other):
+         coords = [simplify(a + b) for a, b in zip(s, o)]
+         return Point(coords, evaluate=False)
+ 
++    def __radd__(self, other):
++        """Implementation of reverse addition method."""
++        return self + other
++
+     def __contains__(self, item):
+         return item in self.args
+ 
+@@ -230,6 +235,10 @@ def __div__(self, divisor):
+         coords = [simplify(x/divisor) for x in self.args]
+         return Point(coords, evaluate=False)
+ 
++    def __rdiv__(self, other):
++        """Implementation of reverse division method."""
++        raise GeometryError("Don't know how to divide {} by a Point object".format(other))
++
+     def __eq__(self, other):
+         if not isinstance(other, Point) or len(self.args) != len(other.args):
+             return False
+@@ -278,6 +287,8 @@ def __mul__(self, factor):
+         coords = [simplify(x*factor) for x in self.args]
+         return Point(coords, evaluate=False)
+ 
++    __rmul__ = __mul__
++
+     def __neg__(self):
+         """Negate the point."""
+         coords = [-x for x in self.args]
+@@ -288,6 +299,13 @@ def __sub__(self, other):
+         coordinates."""
+         return self + [-x for x in other]
+ 
++    def __rsub__(self, other):
++        """Implementation of reverse subtraction method."""
++        try:
++            return Point(other, evaluate=False) - self
++        except TypeError:
++            raise GeometryError("Don't know how to subtract a Point object from {}".format(other))
++
+     @classmethod
+     def _normalize_dimension(cls, *points, **kwargs):
+         """Ensure that points have the same dimension.
+@@ -853,6 +871,7 @@ def unit(self):
+     n = evalf
+ 
+     __truediv__ = __div__
++    __rtruediv__ = __rdiv__
+ 
+ class Point2D(Point):
+     """A point in a 2-dimensional Euclidean space.
+diff --git a/sympy/geometry/tests/test_point.py b/sympy/geometry/tests/test_point.py
+index 475d1d40..5dddcd13 100644
+--- a/sympy/geometry/tests/test_point.py
++++ b/sympy/geometry/tests/test_point.py
+@@ -1,4 +1,4 @@
+-from sympy import I, Rational, Symbol, pi, sqrt, S
++from sympy import I, Rational, Symbol, pi, sqrt, S, sympify
+ from sympy.geometry import Line, Point, Point2D, Point3D, Line3D, Plane
+ from sympy.geometry.entity import rotate, scale, translate
+ from sympy.matrices import Matrix
+@@ -91,7 +91,12 @@ def test_point():
+     assert (-p3).__rsub__(p4) == p3.midpoint(p4).scale(2, 2)
+ 
+     assert p4 * 5 == Point(5, 5)
++    assert 5 * p4 == Point(5, 5)
+     assert p4 / 5 == Point(0.2, 0.2)
++    assert sympify(2.0) * Point(1, 1) == Point(2, 2)
++    raises(ValueError, lambda: 2.0 + Point(1, 1))
++    raises(ValueError, lambda: 2.0 - Point(1, 1))
++    raises(ValueError, lambda: 2.0 / Point(1, 1))
+ 
+     raises(ValueError, lambda: Point(0, 0) + 10)
+ 

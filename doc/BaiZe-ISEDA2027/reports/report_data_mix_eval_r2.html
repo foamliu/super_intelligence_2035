@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe · Round 2 数据配比贝叶斯优化 + top-K 评测报告</title>
+<style>
+:root{--bg:#0f1117;--card:#181b24;--card2:#1f232e;--bd:#2a2f3d;--tx:#e6e8ee;--mut:#9aa0b0;--acc:#4fc3f7;--acc2:#66bb6a;--warn:#ffb74d;--err:#ef5350;--pur:#ab47bc;--grn:#26a69a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7;font-size:15px;padding:0}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 24px 64px}
+header{border-bottom:1px solid var(--bd);padding-bottom:24px;margin-bottom:28px}
+header h1{font-size:26px;font-weight:700;letter-spacing:-.3px}
+header .sub{color:var(--mut);font-size:14px;margin-top:8px}
+header .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tag{display:inline-block;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:600;border:1px solid var(--bd);background:var(--card2)}
+.tag.live{color:var(--acc2);border-color:#2e7d32;background:#1b2e1b}
+.tag.warn{color:var(--warn);border-color:#e65100;background:#2e2418}
+.tag.err{color:var(--err);border-color:#c62828;background:#2e1313}
+h2{font-size:20px;font-weight:700;margin:36px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+h3{font-size:16px;font-weight:600;margin:24px 0 10px;color:var(--acc)}
+h4{font-size:14px;font-weight:600;margin:18px 0 8px;color:var(--mut)}
+p{margin:10px 0}
+.mut{color:var(--mut)} .acc{color:var(--acc)} .grn{color:var(--grn)} .warn{color:var(--warn)} .err{color:var(--err)} .pur{color:var(--pur)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:18px 20px;margin:14px 0}
+.card.hl{border-left:3px solid var(--acc)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+.kpi{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:16px 18px}
+.kpi .lbl{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.kpi .val{font-size:28px;font-weight:700;margin-top:4px}
+.kpi .unit{font-size:14px;color:var(--mut);font-weight:400}
+.kpi .delta{font-size:12px;margin-top:4px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--bd)}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px;background:var(--card2)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:hover{background:var(--card2)}
+code{background:#222632;padding:1px 6px;border-radius:3px;font-family:"SFMono-Regular",Consolas,monospace;font-size:13px;color:var(--acc)}
+pre{background:#11141c;border:1px solid var(--bd);border-radius:8px;padding:14px 16px;overflow-x:auto;margin:12px 0;font-family:"SFMono-Regular",Consolas,monospace;font-size:12.5px;line-height:1.55;color:#c8cdd8}
+.callout{padding:14px 18px;border-radius:8px;margin:14px 0;border-left:4px solid}
+.callout.info{background:#121a26;border-color:var(--acc)}
+.callout.warn{background:#231d12;border-color:var(--warn)}
+.callout.key{background:#1a1b2e;border-color:var(--pur)}
+.callout.err{background:#231313;border-color:var(--err)}
+.callout p{margin:6px 0}
+.toc{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;margin-bottom:28px}
+.toc h4{margin:0 0 8px;color:var(--acc)}
+.toc ol{padding-left:20px;margin:0} .toc li{margin:4px 0}
+.toc a{color:var(--tx);text-decoration:none;border-bottom:1px dotted var(--bd)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>BaiZe · Round 2 数据配比贝叶斯优化 + top-K 评测报告</h1>
+<div class="sub">小代理模型 (d=128, L=14, N=18.36M) · Optuna BO · Stable 段 (web/code/math) · 2026-10-07</div>
+<div class="meta">
+<span class="tag live">✅ BO 200/200 完成</span>
+<span class="tag live">✅ top-K 全量 lm_eval 完成</span>
+<span class="tag warn">⚠️ 代理 ≠ 2.2B</span>
+<span class="tag">D = 0.5B tok/trial</span>
+<span class="tag">MBS = 16 · s_step = 166ms</span>
+<span class="tag err">Spearman ρ = −0.80</span>
+</div>
+</header>
+
+<div class="toc">
+<h4>目录</h4>
+<ol>
+<li><a href="#s1">实验概述</a></li>
+<li><a href="#s2">BO R2 搜索结果（200 trials）</a></li>
+<li><a href="#s3">top-K 收尾：全量 lm_eval</a></li>
+<li><a href="#s4">R1 vs R2 对比与 Spearman 分析</a></li>
+<li><a href="#s5">最优配比推荐</a></li>
+<li><a href="#s6">限制与迁移性说明</a></li>
+</ol>
+</div>
+
+<h2 id="s1">1. 实验概述</h2>
+<div class="grid g3">
+<div class="kpi"><div class="lbl">代理模型规模</div><div class="val">18.36<span class="unit">M params</span></div><div class="delta">d=128, L=14, Mamba2-Hybrid</div></div>
+<div class="kpi"><div class="lbl">BO trials</div><div class="val">200<span class="unit"> (166✅ + 34❌)</span></div><div class="delta">166 complete, 34 failed (t1–t34 初始批次)</div></div>
+<div class="kpi"><div class="lbl">每 trial token 量 D</div><div class="val">0.5<span class="unit">B tok</span></div><div class="delta">MBS=16 · 15,258 steps · GBS=16 · seq=2048</div></div>
+</div>
+
+<h3>搜索空间（Stable 段）</h3>
+<div class="card hl">
+<p>三点单纯形采样：<code>web ∈ [0.80, 0.95]</code> · <code>code ∈ [0.03, 0.12]</code> · <code>math = 1 − web − code</code></p>
+<p>数据源：<code>base</code> = ultrafineweb (s0–s3 已分词, 22.05B tok) · <code>code</code> = UltraData-Code · <code>math</code> = UltraData-Math</p>
+</div>
+
+<h3>目标函数 (objective)</h3>
+<div class="card">
+<p>主 objective = 固定 held-out 验证集上 lm_eval 8 task 平均分（<code>--limit 500</code>）</p>
+<p>8 tasks: <code>arc_challenge</code>, <code>arc_easy</code>, <code>boolq</code>, <code>hellaswag</code>, <code>openbookqa</code>, <code>piqa</code>, <code>sciq</code>, <code>winogrande</code></p>
+<p class="mut">⚠️ R1 用验证集 loss 作 objective；R2 改用 lm_eval 分数（R1 已证 loss ≠ 能力, ρ=−0.43）</p>
+</div>
+
+<h3>s_step 优化</h3>
+<div class="card">
+<p>R1 瓶颈定位：s_step=1.5s（overhead-bound, 非 compute-bound）</p>
+<p>R2 修复：MBS 1→16，s_step 1432ms→<span class="acc">166ms（8.6×）</span>，D 从 0.016B→<span class="acc">0.5B tok/trial</span></p>
+<p>投影：6 GPU × 24h → 205 trial/24h（实际 200 trial 用时 ≈ 8h on 8 GPU）</p>
+</div>
+<h2 id="s2">2. BO R2 搜索结果（200 trials）</h2>
+<div class="grid g3">
+<div class="kpi"><div class="lbl">Score MIN</div><div class="val err">0.3730</div><div class="delta">t75 (web=0.81, code=0.07)</div></div>
+<div class="kpi"><div class="lbl">Score MAX</div><div class="val grn">0.4155</div><div class="delta">t23 (web=0.94, code=0.11)</div></div>
+<div class="kpi"><div class="lbl">Score AVG</div><div class="val">0.3908</div><div class="delta">166 complete trials</div></div>
+</div>
+
+<h3>Top 10 trials（by BO score DESC）</h3>
+<table>
+<tr><th>#</th><th>Trial</th><th class="num">BO Score</th><th class="num">web</th><th class="num">code</th><th class="num">math</th><th>Status</th></tr>
+<tr><td>1</td><td>t23</td><td class="num grn">0.4155</td><td class="num">0.9412</td><td class="num">0.1093</td><td class="num">0.0100</td><td>✅</td></tr>
+<tr><td>2</td><td>t38</td><td class="num">0.4138</td><td class="num">0.8947</td><td class="num">0.0999</td><td class="num">0.0100</td><td>✅</td></tr>
+<tr><td>3</td><td>t118</td><td class="num">0.4130</td><td class="num">0.8742</td><td class="num">0.0709</td><td class="num">0.0550</td><td>✅</td></tr>
+<tr><td>4</td><td>t199</td><td class="num">0.4123</td><td class="num">0.9313</td><td class="num">0.0979</td><td class="num">0.0100</td><td>✅</td></tr>
+<tr><td>5</td><td>t33</td><td class="num">0.4090</td><td class="num">0.9405</td><td class="num">0.0864</td><td class="num">0.0100</td><td>✅</td></tr>
+<tr><td>6</td><td>t134</td><td class="num">0.4068</td><td class="num">0.9353</td><td class="num">0.0643</td><td class="num">0.0100</td><td>✅</td></tr>
+<tr><td>7</td><td>t57</td><td class="num">0.4058</td><td class="num">0.9038</td><td class="num">0.0613</td><td class="num">0.0350</td><td>✅</td></tr>
+<tr><td>8</td><td>t105</td><td class="num">0.4055</td><td class="num">0.8446</td><td class="num">0.1140</td><td class="num">0.0410</td><td>✅</td></tr>
+<tr><td>9</td><td>t79</td><td class="num">0.4052</td><td class="num">0.9334</td><td class="num">0.1001</td><td class="num">0.0100</td><td>✅</td></tr>
+<tr><td>10</td><td>t80</td><td class="num">0.4048</td><td class="num">0.8483</td><td class="num">0.1168</td><td class="num">0.0350</td><td>✅</td></tr>
+</table>
+
+<div class="callout info">
+<p><b>观察 1</b>：最优配比集中在 <code>web ≈ 0.87–0.94</code> · <code>code ≈ 0.06–0.12</code> · <code>math ≈ 0.01</code>（math 趋近下界）。</p>
+<p><b>观察 2</b>：math 占比对 BO score 有明显负影响 —— top-10 中仅 t118 (math=0.055) 和 t105/t80 (math≈0.04) 偏高，其余均贴 0.01 下界。</p>
+<p class="mut">⚠️ 可能原因：代理模型仅 18.36M 参数，数学数据在极小模型上可能"噪声 > 信号"（小模型无法从数学数据中提取结构化推理能力，反而稀释 web/code 的基础语言能力）。</p>
+</div>
+<h2 id="s3">3. top-K 收尾：全量 lm_eval（8 tasks, no limit）</h2>
+<p>取 BO score top-5 (t23, t38, t118, t199, t33)，用 <b>相同 R2 参数</b> (MBS=16, 15,258 steps, D=0.5B) 重新训练，转换为 HF checkpoint，跑 <b>全量 lm_eval</b>（8 tasks, <code>NO --limit</code>）。</p>
+
+<h3>全量 lm_eval 结果</h3>
+<table>
+<tr><th>Trial</th><th class="num">BO Score<br><span class="mut">(limit 500)</span></th><th class="num">Full Eval Avg<br><span class="mut">(no limit)</span></th><th class="num">arc_chal</th><th class="num">arc_easy</th><th class="num">boolq</th><th class="num">hellaswag</th><th class="num">openbookqa</th><th class="num">piqa</th><th class="num">sciq</th><th class="num">winogrande</th><th class="num">ΔRank</th></tr>
+<tr><td>t23</td><td class="num grn">0.4155 (1st)</td><td class="num err">0.3846 (4th)</td><td class="num">0.215</td><td class="num">0.341</td><td class="num">0.439</td><td class="num">0.260</td><td class="num">0.250</td><td class="num">0.551</td><td class="num">0.512</td><td class="num">0.509</td><td class="num err">−3</td></tr>
+<tr><td>t38</td><td class="num">0.4138 (2nd)</td><td class="num err">0.3835 (5th)</td><td class="num">0.206</td><td class="num">0.345</td><td class="num">0.428</td><td class="num">0.261</td><td class="num">0.238</td><td class="num">0.555</td><td class="num">0.526</td><td class="num">0.507</td><td class="num err">−3</td></tr>
+<tr><td>t118</td><td class="num">0.4130 (3rd)</td><td class="num">0.3877 (3rd)</td><td class="num">0.218</td><td class="num">0.330</td><td class="num">0.470</td><td class="num">0.261</td><td class="num">0.246</td><td class="num">0.564</td><td class="num">0.516</td><td class="num">0.497</td><td class="num">0</td></tr>
+<tr><td>t199</td><td class="num">0.4123 (4th)</td><td class="num grn">0.3899 (1st)</td><td class="num">0.206</td><td class="num">0.351</td><td class="num">0.512</td><td class="num">0.258</td><td class="num">0.238</td><td class="num">0.549</td><td class="num">0.516</td><td class="num">0.489</td><td class="num grn">+3</td></tr>
+<tr><td>t33</td><td class="num">0.4090 (5th)</td><td class="num">0.3897 (2nd)</td><td class="num">0.213</td><td class="num">0.344</td><td class="num">0.516</td><td class="num">0.258</td><td class="num">0.240</td><td class="num">0.542</td><td class="num">0.503</td><td class="num">0.500</td><td class="num grn">+3</td></tr>
+</table>
+
+<div class="callout err">
+<p><b>核心发现</b>：BO score 排名与全量 lm_eval 排名 <b>几乎完全反转</b>！</p>
+<ul>
+<li>BO 第 1 名 (t23) → 全量评测第 4 名（↓3）</li>
+<li>BO 第 2 名 (t38) → 全量评测第 5 名（↓3）</li>
+<li>BO 第 4 名 (t199) → 全量评测第 1 名（↑3）</li>
+<li>BO 第 5 名 (t33) → 全量评测第 2 名（↑3）</li>
+</ul>
+<p><b>Spearman ρ = −0.80</b>（n=5, p≈0.10）—— 代理指标与真实能力呈 <b>强负相关</b>。</p>
+</div>
+<h2 id="s4">4. R1 vs R2 对比与 Spearman 分析</h2>
+<div class="grid g2">
+<div class="card">
+<h3>R1（验证集 loss 作 objective）</h3>
+<table>
+<tr><th class="num">Trials</th><th class="num">D (tok)</th><th class="num">Spearman ρ</th><th>Objective</th></tr>
+<tr><td class="num">200</td><td class="num">0.016B</td><td class="num err">−0.43</td><td>held-out loss</td></tr>
+</table>
+<p class="mut">Top-6 全量 lm_eval avg ≈ 0.332–0.337（D=0.016B, 模型严重欠训）</p>
+</div>
+<div class="card">
+<h3>R2（lm_eval --limit 500 作 objective）</h3>
+<table>
+<tr><th class="num">Trials</th><th class="num">D (tok)</th><th class="num">Spearman ρ</th><th>Objective</th></tr>
+<tr><td class="num">200</td><td class="num">0.5B</td><td class="num err">−0.80</td><td>lm_eval score</td></tr>
+</table>
+<p class="mut">Top-5 全量 lm_eval avg ≈ 0.383–0.390（D=0.5B, 训练量提升 31×）</p>
+</div>
+</div>
+
+<div class="callout key">
+<p><b>为什么两轮都呈负相关？</b></p>
+<ul>
+<li><b>R1</b>：objective = 验证集 loss。更低 loss 的配比 → 更"拟合验证集"→ 但验证集与下游任务分布不同 → 过拟合 loss 反而降低下游能力。ρ = −0.43。</li>
+<li><b>R2</b>：objective = lm_eval <code>--limit 500</code>。500 样本子集上的高分区比 → 可能利用了子集偏差（小样本噪声）→ 在全量评测（>10K 样本）上无法泛化。ρ = −0.80（更强负相关）。</li>
+<li><b>共同根因</b>：代理模型仅 18.36M 参数 + D ≤ 0.5B tok → 模型欠训，不同配比间的"能力差异"被噪声淹没。代理指标的排名信号 <b>不可靠</b>。</li>
+</ul>
+</div>
+
+<div class="callout warn">
+<p><b>R2 全量 lm_eval 比 R1 提升明显</b>：avg 从 ~0.335 → ~0.388（+15.8%），主要归因于 D 从 0.016B → 0.5B（31×）。</p>
+<p>但 top-5 内部 spread 仅 0.3835–0.3899（Δ=0.006, 1.6%），接近噪声水平 —— <b>配比差异在当前代理规模下不可靠区分</b>。</p>
+</div>
+
+<h2 id="s5">5. 最优配比推荐</h2>
+<div class="card hl">
+<h3>Stable 段推荐配比（Stable 主体）</h3>
+<table>
+<tr><th>成分</th><th class="num">推荐占比</th><th class="num">BO 最优 (t23)</th><th class="num">全量最优 (t199)</th><th>数据源</th></tr>
+<tr><td>web (base)</td><td class="num grn">0.93</td><td class="num">0.941</td><td class="num">0.931</td><td>Ultra-FineWeb (ultrafineweb_en + zh + UltraX)</td></tr>
+<tr><td>code</td><td class="num grn">0.10</td><td class="num">0.109</td><td class="num">0.098</td><td>UltraData-Code (L2/L3)</td></tr>
+<tr><td>math</td><td class="num warn">0.01</td><td class="num">0.010</td><td class="num">0.010</td><td>UltraData-Math (L1/L2/L3)</td></tr>
+</table>
+<p class="mut">推荐值取 BO 最优与全量最优的折中。math=0.01 是搜索空间下界，BO 未找到 math > 0.01 的优势区域（在 18.36M 代理上）。</p>
+</div>
+
+<div class="callout info">
+<p><b>关键提醒</b>：该配比基于 <b>18.36M 代理模型</b>，直接迁移到 2.2B 的可靠性 <b>未经验证</b>。</p>
+<p>根据 <code>ye2024datamixinglaws</code> 数据混合定律，最优配比随模型规模变化 —— 小模型偏好高 web 占比是因为 web 数据的"每 token 信息密度"对小模型最有效；大模型可能从 code/math 中获益更多。</p>
+<p><b>建议</b>：将 <code>web=0.93, code=0.10, math=0.01</code> 作为 <b>先验锚点</b>，在 2.2B 正式训练中保留 ±5% 的调整空间，特别是 math 占比可能需要在 2.2B 上重新搜索。</p>
+</div>
+<h2 id="s6">6. 限制与迁移性说明</h2>
+<div class="card">
+<h3>已知限制</h3>
+<ol>
+<li><b>代理规模 ≠ 2.2B</b>：代理仅 18.36M（d=128, L=14），与目标 2.2B（d=512, L=14）差 120×。配比结论的迁移性受 <code>ye2024datamixinglaws</code> 约束，需在 2.2B 上验证。</li>
+<li><b>D = 0.5B tok/trial</b>：正式训练 D ≈ 100B+（200×差距）。配比在极欠训条件下的排序，可能与充分训练后不同。</li>
+<li><b>代理指标不可靠</b>：两轮 BO 的 Spearman ρ 分别为 −0.43 和 −0.80，均为 <b>负相关</b> —— 代理指标（loss 或 lm_eval --limit 500）<b>不能可靠预测</b>全量下游任务表现。</li>
+<li><b>top-5 内部 spread 小</b>：全量 lm_eval avg spread = 0.006（1.6%），接近统计噪声 —— 在当前代理规模下，不同配比的 <b>区分度不足</b>。</li>
+<li><b>math 搜索不充分</b>：搜索空间 <code>math ∈ [0.01, 0.17]</code>，但 BO 收敛到 math≈0.01 下界 —— 可能是代理模型太小无法利用 math，而非 math 本身无价值。</li>
+<li><b>仅 Stable 段</b>：Decay 段（SFT 配比）未在本轮搜索，需后续补充。</li>
+<li><b>34 个 failed trials</b>：t1–t34 均失败（初始批次 GPU 分配问题），从 t35 起恢复正常。不影响 BO 搜索质量（Optuna 从失败 trial 中不学习参数关系）。</li>
+</ol>
+</div>
+
+<div class="callout key">
+<p><b>结论</b>：BO R2 在 18.36M 代理上搜索 Stable 段配比，最优区域为 <code>web ≈ 0.93, code ≈ 0.10, math ≈ 0.01</code>。但代理指标与真实能力呈强负相关（ρ=−0.80），且 top-5 区分度接近噪声水平 —— <b>配比推荐应作为先验锚点而非最终答案</b>，在 2.2B 正式训练中需保留调整空间。</p>
+</div>
+
+<hr style="border:0;border-top:1px solid var(--bd);margin:32px 0">
+<p class="mut" style="text-align:center;font-size:13px">
+BaiZe Data Pipeline · BO Round 2 · 2026-10-07<br>
+代理模型: d=128, L=14, N=18.36M (Mamba2-Hybrid) · D=0.5B tok/trial · MBS=16 · s_step=166ms<br>
+DB: <code>nemo_experiments/mix_search/mix_search_eval_r2.db</code> · Results: <code>topk_lmeval_results_r2.json</code>
+</p>
+</div>
+</body>
+</html>

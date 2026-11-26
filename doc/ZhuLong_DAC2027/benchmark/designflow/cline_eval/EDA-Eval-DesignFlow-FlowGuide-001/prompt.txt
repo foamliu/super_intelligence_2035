@@ -1,0 +1,1 @@
+/home/johnl/.cline/scripts/data/primelib_char_T_IsmTop/dc_addr_to_regi  帮我总结下这个对话的到进展 并做一个指导我复现的pdf 工具如何启动啊 关键到文件在哪里啊这些

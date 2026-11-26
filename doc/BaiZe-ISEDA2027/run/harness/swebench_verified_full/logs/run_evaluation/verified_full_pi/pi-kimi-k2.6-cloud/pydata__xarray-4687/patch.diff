@@ -1,0 +1,87 @@
+diff --git a/xarray/core/computation.py b/xarray/core/computation.py
+index 9fe93c8..a3bc925 100644
+--- a/xarray/core/computation.py
++++ b/xarray/core/computation.py
+@@ -1727,7 +1727,7 @@ def dot(*arrays, dims=None, **kwargs):
+     return result.transpose(*all_dims, missing_dims="ignore")
+ 
+ 
+-def where(cond, x, y):
++def where(cond, x, y, keep_attrs=True):
+     """Return elements from `x` or `y` depending on `cond`.
+ 
+     Performs xarray-like broadcasting across input arguments.
+@@ -1743,6 +1743,10 @@ def where(cond, x, y):
+         values to choose from where `cond` is True
+     y : scalar, array, Variable, DataArray or Dataset
+         values to choose from where `cond` is False
++    keep_attrs : bool, optional
++        Whether to keep attributes (attrs) of the input arguments.
++        If True, attrs from `cond` are preserved; if `cond` has no attrs,
++        attrs from `x` or `y` are used instead. Default is True.
+ 
+     Returns
+     -------
+@@ -1809,7 +1813,7 @@ def where(cond, x, y):
+         equivalent methods
+     """
+     # alignment for three arguments is complicated, so don't support it yet
+-    return apply_ufunc(
++    result = apply_ufunc(
+         duck_array_ops.where,
+         cond,
+         x,
+@@ -1817,7 +1821,14 @@ def where(cond, x, y):
+         join="exact",
+         dataset_join="exact",
+         dask="allowed",
++        keep_attrs=keep_attrs,
+     )
++    if keep_attrs is True and hasattr(result, "attrs") and not result.attrs:
++        for arg in (x, y):
++            if hasattr(arg, "attrs") and arg.attrs:
++                result.attrs = arg.attrs.copy()
++                break
++    return result
+ 
+ 
+ def polyval(coord, coeffs, degree_dim="degree"):
+diff --git a/xarray/tests/test_computation.py b/xarray/tests/test_computation.py
+index c9a10b7..e89afb3 100644
+--- a/xarray/tests/test_computation.py
++++ b/xarray/tests/test_computation.py
+@@ -1921,6 +1921,34 @@ def test_where() -> None:
+     expected = xr.DataArray([1, 0], dims="x")
+     assert_identical(expected, actual)
+ 
++def test_where_keep_attrs() -> None:
++    # attrs from cond are preserved
++    cond = xr.DataArray([True, False], dims="x")
++    cond.attrs["a"] = "1"
++    x = xr.DataArray([1, 2], dims="x")
++    x.attrs["b"] = "2"
++    actual = xr.where(cond, x, 0)
++    assert actual.attrs == {"a": "1"}
++
++    # fallback to x's attrs when cond has no attrs
++    cond = xr.DataArray([True, False], dims="x")
++    actual = xr.where(cond, x, 0)
++    assert actual.attrs == {"b": "2"}
++
++    # fallback to y's attrs when cond and x have no attrs
++    y = xr.DataArray([3, 4], dims="x")
++    y.attrs["c"] = "3"
++    actual = xr.where(cond, 0, y)
++    assert actual.attrs == {"c": "3"}
++
++    # keep_attrs=False drops attrs
++    actual = xr.where(cond, x, 0, keep_attrs=False)
++    assert actual.attrs == {}
++
++    # numpy cond: x's attrs are preserved
++    cond = np.array([True, False])
++    actual = xr.where(cond, x, 0)
++    assert actual.attrs == {"b": "2"}
+ 
+ @pytest.mark.parametrize("use_dask", [True, False])
+ @pytest.mark.parametrize("use_datetime", [True, False])

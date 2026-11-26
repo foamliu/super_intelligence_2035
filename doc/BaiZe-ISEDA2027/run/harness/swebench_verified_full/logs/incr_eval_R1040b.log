@@ -1,0 +1,66 @@
+=== incr_eval R1040b START Sat Oct 31 11:50:18 AM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3, re-merged predictions)
+[Sat Oct 31 11:50:18 AM CST 2026] === claude-code eval START 2 instances: django__django-12713 django__django-12741  ===
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:25<00:25, 25.91s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:25<00:25, 25.91s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.39s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.39s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.39s/it]
+All instances run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 2
+Report written to claude-code-kimi-k2.6-cloud.verified_full_claude-code.json
+[Sat Oct 31 11:50:50 AM CST 2026] === claude-code eval DONE ===
+[Sat Oct 31 11:50:50 AM CST 2026] === codex eval START 1 instances: django__django-11551  ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:24<00:00, 24.72s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.72s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:24<00:00, 24.72s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+[Sat Oct 31 11:51:19 AM CST 2026] === codex eval DONE ===
+[Sat Oct 31 11:51:19 AM CST 2026] === hermes eval START 1 instances: sympy__sympy-15809  ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:32<00:00, 32.05s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:32<00:00, 32.05s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:32<00:00, 32.05s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[Sat Oct 31 11:51:56 AM CST 2026] === hermes eval DONE ===
+[Sat Oct 31 11:51:56 AM CST 2026] deepseek-harness: no unevaluated IDs, skip
+[Sat Oct 31 11:51:56 AM CST 2026] === regen summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=488 resolved=395 failed=93 infra=0)
+  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
+  claude-code: WROTE eval_claude-code.json  n=304 resolved=232 failed=72 infra=0
+  codex: WROTE eval_codex.json  n=195 resolved=154 failed=41 infra=0
+  hermes: WROTE eval_hermes.json  n=24 resolved=17 failed=7 infra=0
+  deepseek-harness: unchanged (n=32 resolved=26 failed=6 infra=0)
+=== incr_eval R1040b DONE Sat Oct 31 11:51:57 AM CST 2026 ===

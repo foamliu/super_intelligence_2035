@@ -1,0 +1,45 @@
+diff --git a/django/db/migrations/serializer.py b/django/db/migrations/serializer.py
+index d88cda6e..06657eba 100644
+--- a/django/db/migrations/serializer.py
++++ b/django/db/migrations/serializer.py
+@@ -168,7 +168,7 @@ class FunctionTypeSerializer(BaseSerializer):
+         ):
+             klass = self.value.__self__
+             module = klass.__module__
+-            return "%s.%s.%s" % (module, klass.__name__, self.value.__name__), {
++            return "%s.%s.%s" % (module, klass.__qualname__, self.value.__name__), {
+                 "import %s" % module
+             }
+         # Further error checking
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+index bef8f640..a053f983 100644
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -535,6 +535,11 @@ class WriterTests(SimpleTestCase):
+         string = MigrationWriter.serialize(field)[0]
+         self.assertEqual(string, "models.FilePathField(path=%r)" % path_like.path)
+ 
++    class NestedClass:
++        @classmethod
++        def default(cls):
++            return ["basic"]
++
+     def test_serialize_functions(self):
+         with self.assertRaisesMessage(ValueError, "Cannot serialize function: lambda"):
+             self.assertSerializedEqual(lambda x: 42)
+@@ -543,6 +548,15 @@ class WriterTests(SimpleTestCase):
+         self.assertEqual(string, "models.SET(42)")
+         self.serialize_round_trip(models.SET(42))
+ 
++    def test_serialize_nested_class_method(self):
++        self.assertSerializedResultEqual(
++            self.NestedClass.default,
++            (
++                "migrations.test_writer.WriterTests.NestedClass.default",
++                {"import migrations.test_writer"},
++            ),
++        )
++
+     def test_serialize_datetime(self):
+         self.assertSerializedEqual(datetime.datetime.now())
+         self.assertSerializedEqual(datetime.datetime.now)

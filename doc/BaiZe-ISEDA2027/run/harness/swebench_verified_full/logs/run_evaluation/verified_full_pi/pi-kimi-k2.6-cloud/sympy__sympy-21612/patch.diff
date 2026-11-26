@@ -1,0 +1,43 @@
+diff --git a/sympy/printing/str.py b/sympy/printing/str.py
+index c3fdcdd4..597fbdb0 100644
+--- a/sympy/printing/str.py
++++ b/sympy/printing/str.py
+@@ -292,6 +292,8 @@ def _print_Mul(self, expr):
+             if len(dfactors) > 1:
+                 return '%s/(%s)' % (n, d)
+             elif dfactors:
++                if '/' in d and not d.startswith('('):
++                    return '%s/(%s)' % (n, d)
+                 return '%s/%s' % (n, d)
+             return n
+ 
+@@ -336,6 +338,11 @@ def apow(i):
+                             isinstance(item.base, Mul)):
+                         # To avoid situations like #14160
+                         pow_paren.append(item)
++                    elif (isinstance(item.base, Pow) and
++                            item.base.is_commutative and
++                            (item.base.exp is S.NegativeOne or
++                             -item.base.exp is S.Half)):
++                        pow_paren.append(item)
+                     b.append(item.base)
+             elif item.is_Rational and item is not S.Infinity:
+                 if item.p != 1:
+diff --git a/sympy/printing/tests/test_str.py b/sympy/printing/tests/test_str.py
+index 690b1a8b..5093793f 100644
+--- a/sympy/printing/tests/test_str.py
++++ b/sympy/printing/tests/test_str.py
+@@ -252,6 +252,13 @@ def test_Mul():
+     # For issue 14160
+     assert str(Mul(-2, x, Pow(Mul(y,y,evaluate=False), -1, evaluate=False),
+                                                 evaluate=False)) == '-2*x/(y*y)'
++    # For nested fractions (LaTeX parsing of fractions)
++    assert str(Mul(Mul(Pow(x, -1, evaluate=False), Add(Pow(y, 3, evaluate=False), z),
++                       evaluate=False),
++                   Pow(Pow(Pow(x, 2, evaluate=False), -1, evaluate=False), -1, evaluate=False),
++                   evaluate=False)) == '((y**3 + z)/x)/(1/(x**2))'
++    assert str(Mul(y, Pow(Pow(x, -S.Half, evaluate=False), -1, evaluate=False),
++                   evaluate=False)) == 'y/(1/sqrt(x))'
+ 
+ 
+     class CustomClass1(Expr):

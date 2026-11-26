@@ -1,0 +1,66 @@
+diff --git a/django/urls/base.py b/django/urls/base.py
+index 0e1c3d909c..dd9b2e4c22 100644
+--- a/django/urls/base.py
++++ b/django/urls/base.py
+@@ -7,7 +7,7 @@ from django.utils.functional import lazy
+ from django.utils.translation import override
+ 
+ from .exceptions import NoReverseMatch, Resolver404
+-from .resolvers import get_ns_resolver, get_resolver
++from .resolvers import _get_cached_resolver, get_ns_resolver, get_resolver
+ from .utils import get_callable
+ 
+ # SCRIPT_NAME prefixes for each thread are stored here. If there's no entry for
+@@ -92,7 +92,7 @@ reverse_lazy = lazy(reverse, str)
+ 
+ def clear_url_caches():
+     get_callable.cache_clear()
+-    get_resolver.cache_clear()
++    _get_cached_resolver.cache_clear()
+     get_ns_resolver.cache_clear()
+ 
+ 
+diff --git a/django/urls/resolvers.py b/django/urls/resolvers.py
+index 247e3680c0..b6d6d67d56 100644
+--- a/django/urls/resolvers.py
++++ b/django/urls/resolvers.py
+@@ -64,10 +64,25 @@ class ResolverMatch:
+ 
+ 
+ @functools.lru_cache(maxsize=None)
++def _get_cached_resolver(urlconf=None):
++    return URLResolver(RegexPattern(r'^/'), urlconf)
++
++
+ def get_resolver(urlconf=None):
++    """
++    Return the URLResolver for the given urlconf, or the default one if
++    urlconf is None.
++
++    The URLResolver is memoized by urlconf. Callers commonly pass the result
++    of get_urlconf(), which is None until set_urlconf() is called (e.g. when
++    the first request is handled) and settings.ROOT_URLCONF afterwards, so
++    resolve None to settings.ROOT_URLCONF *before* the memoized lookup. This
++    keeps the cache key stable and avoids constructing (and expensively
++    populating) a second, duplicate URLResolver keyed on None.
++    """
+     if urlconf is None:
+         urlconf = settings.ROOT_URLCONF
+-    return URLResolver(RegexPattern(r'^/'), urlconf)
++    return _get_cached_resolver(urlconf)
+ 
+ 
+ @functools.lru_cache(maxsize=None)
+diff --git a/tests/view_tests/views.py b/tests/view_tests/views.py
+index ce0079a355..d364d128a7 100644
+--- a/tests/view_tests/views.py
++++ b/tests/view_tests/views.py
+@@ -55,6 +55,8 @@ def raises403(request):
+ 
+ 
+ def raises404(request):
++    # Pass urlconf=None explicitly to exercise get_resolver(None), which must
++    # return the same cached resolver as get_resolver() -- see #31884.
+     resolver = get_resolver(None)
+     resolver.resolve('/not-in-urls')
+ 

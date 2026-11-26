@@ -1,0 +1,36 @@
+diff --git a/requests/sessions.py b/requests/sessions.py
+index a023e4e..fbe4fa9 100644
+--- a/requests/sessions.py
++++ b/requests/sessions.py
+@@ -52,6 +52,12 @@ def merge_setting(request_setting, session_setting, dict_class=OrderedDict):
+         return request_setting
+ 
+     merged_setting = dict_class(to_key_val_list(session_setting))
++
++    # Remove keys that are set to None.
++    for (k, v) in session_setting.items():
++        if v is None:
++            del merged_setting[k]
++
+     merged_setting.update(to_key_val_list(request_setting))
+ 
+     # Remove keys that are set to None.
+diff --git a/test_requests.py b/test_requests.py
+index 3d7cdaa..1575b74 100755
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -804,6 +804,14 @@ class RequestsTestCase(unittest.TestCase):
+         r = s.get(httpbin('get'), headers={'FOO': None})
+         assert 'foo' not in r.request.headers
+ 
++    def test_header_remove_from_session_is_case_insensitive(self):
++        # Issue: removing a session-level default header by setting to None
++        s = requests.Session()
++        s.headers['foo'] = 'bar'
++        s.headers['foo'] = None
++        r = s.get(httpbin('get'))
++        assert 'foo' not in r.request.headers
++
+     def test_params_are_merged_case_sensitive(self):
+         s = requests.Session()
+         s.params['foo'] = 'bar'

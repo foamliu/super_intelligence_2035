@@ -1,0 +1,97 @@
+diff --git a/sklearn/impute/_iterative.py b/sklearn/impute/_iterative.py
+index 1d918bc0..b5683189 100644
+--- a/sklearn/impute/_iterative.py
++++ b/sklearn/impute/_iterative.py
+@@ -117,6 +117,12 @@ class IterativeImputer(_BaseImputer):
+         Which strategy to use to initialize the missing values. Same as the
+         `strategy` parameter in :class:`~sklearn.impute.SimpleImputer`.
+ 
++    fill_value : str or numerical value, default=None
++        When `initial_strategy == "constant"`, `fill_value` is used to replace
++        all occurrences of missing values. If left to the default, `fill_value`
++        will be 0 when imputing numerical data and "missing_value" for strings
++        or object data types.
++
+     imputation_order : {'ascending', 'descending', 'roman', 'arabic', \
+             'random'}, default='ascending'
+         The order in which the features will be imputed. Possible values:
+@@ -281,6 +287,7 @@ class IterativeImputer(_BaseImputer):
+         "initial_strategy": [
+             StrOptions({"mean", "median", "most_frequent", "constant"})
+         ],
++        "fill_value": "no_validation",  # any object is valid
+         "imputation_order": [
+             StrOptions({"ascending", "descending", "roman", "arabic", "random"})
+         ],
+@@ -301,6 +308,7 @@ class IterativeImputer(_BaseImputer):
+         tol=1e-3,
+         n_nearest_features=None,
+         initial_strategy="mean",
++        fill_value=None,
+         imputation_order="ascending",
+         skip_complete=False,
+         min_value=-np.inf,
+@@ -322,6 +330,7 @@ class IterativeImputer(_BaseImputer):
+         self.tol = tol
+         self.n_nearest_features = n_nearest_features
+         self.initial_strategy = initial_strategy
++        self.fill_value = fill_value
+         self.imputation_order = imputation_order
+         self.skip_complete = skip_complete
+         self.min_value = min_value
+@@ -613,6 +622,7 @@ class IterativeImputer(_BaseImputer):
+             self.initial_imputer_ = SimpleImputer(
+                 missing_values=self.missing_values,
+                 strategy=self.initial_strategy,
++                fill_value=self.fill_value,
+                 keep_empty_features=self.keep_empty_features,
+             )
+             X_filled = self.initial_imputer_.fit_transform(X)
+diff --git a/sklearn/impute/tests/test_impute.py b/sklearn/impute/tests/test_impute.py
+index 86553eff..bfb45057 100644
+--- a/sklearn/impute/tests/test_impute.py
++++ b/sklearn/impute/tests/test_impute.py
+@@ -28,6 +28,7 @@ from sklearn import tree
+ from sklearn.random_projection import _sparse_random_matrix
+ from sklearn.exceptions import ConvergenceWarning
+ from sklearn.impute._base import _most_frequent
++from sklearn.utils import is_scalar_nan
+ 
+ 
+ def _assert_array_equal_and_same_dtype(x, y):
+@@ -1524,6 +1525,35 @@ def test_iterative_imputer_keep_empty_features(initial_strategy):
+     assert_allclose(X_imputed[:, 1], 0)
+ 
+ 
++@pytest.mark.parametrize("fill_value", [-1, 0, 42, np.nan])
++def test_iterative_imputer_fill_value(fill_value):
++    """Check that IterativeImputer supports fill_value for initial_strategy='constant'."""
++    X = np.array([[1, np.nan, 2], [3, np.nan, np.nan], [5, 6, 7]])
++
++    imputer = IterativeImputer(
++        initial_strategy="constant", fill_value=fill_value, max_iter=0
++    )
++    X_imputed = imputer.fit_transform(X)
++    if is_scalar_nan(fill_value):
++        assert np.all(np.isnan(X_imputed[[0, 1], 1]))
++        assert np.all(np.isnan(X_imputed[1, 2]))
++    else:
++        assert_allclose(X_imputed[[0, 1], 1], fill_value)
++        assert_allclose(X_imputed[1, 2], fill_value)
++    # non-missing values should be preserved
++    assert X_imputed[2, 1] == 6.0
++    assert X_imputed[2, 2] == 7.0
++
++    # transform should also use the same fill_value
++    X_test = np.array([[np.nan, np.nan, np.nan], [8, 9, 10]])
++    X_test_imputed = imputer.transform(X_test)
++    if is_scalar_nan(fill_value):
++        assert np.all(np.isnan(X_test_imputed[0]))
++    else:
++        assert_allclose(X_test_imputed[0], fill_value)
++    assert_allclose(X_test_imputed[1], [8, 9, 10])
++
++
+ @pytest.mark.parametrize("keep_empty_features", [True, False])
+ def test_knn_imputer_keep_empty_features(keep_empty_features):
+     """Check the behaviour of `keep_empty_features` for `KNNImputer`."""

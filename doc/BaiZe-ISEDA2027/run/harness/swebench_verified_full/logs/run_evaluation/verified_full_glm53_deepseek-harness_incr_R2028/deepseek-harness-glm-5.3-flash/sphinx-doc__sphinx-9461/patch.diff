@@ -1,0 +1,13 @@
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index 4e1b184e0..a9fcdc07b 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -34,7 +34,7 @@ else:
+             return ref._eval_type(globalns, localns)
+ 
+ if sys.version_info > (3, 10):
+-    from types import Union as types_Union
++    from types import UnionType as types_Union
+ else:
+     types_Union = None
+ 

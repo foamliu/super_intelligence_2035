@@ -1,0 +1,37 @@
+diff --git a/sklearn/ensemble/_iforest.py b/sklearn/ensemble/_iforest.py
+index 4d6c1c3f..b52684fa 100644
+--- a/sklearn/ensemble/_iforest.py
++++ b/sklearn/ensemble/_iforest.py
+@@ -345,7 +345,9 @@ class IsolationForest(OutlierMixin, BaseBagging):
+             return self
+ 
+         # else, define offset_ wrt contamination parameter
+-        self.offset_ = np.percentile(self.score_samples(X), 100.0 * self.contamination)
++        self.offset_ = np.percentile(
++            -self._compute_chunked_score_samples(X), 100.0 * self.contamination
++        )
+ 
+         return self
+ 
+diff --git a/sklearn/ensemble/tests/test_iforest.py b/sklearn/ensemble/tests/test_iforest.py
+index 5f046540..94a988f6 100644
+--- a/sklearn/ensemble/tests/test_iforest.py
++++ b/sklearn/ensemble/tests/test_iforest.py
+@@ -339,3 +339,17 @@ def test_base_estimator_property_deprecated():
+     )
+     with pytest.warns(FutureWarning, match=warn_msg):
+         model.base_estimator_
++
++
++def test_iforest_no_warning_with_dataframe_and_contamination():
++    """Check that no spurious warning is raised when fitting IsolationForest
++    with a pandas DataFrame and contamination != "auto".
++
++    Non-regression test for #25506
++    """
++    pd = pytest.importorskip("pandas")
++    X = pd.DataFrame({"a": [-1.1, 0.3, 0.5, 100]})
++    clf = IsolationForest(random_state=0, contamination=0.05)
++    with warnings.catch_warnings():
++        warnings.simplefilter("error")
++        clf.fit(X)

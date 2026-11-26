@@ -1,0 +1,59 @@
+\pdfoutput=1
+\documentclass{article}
+
+% ============================================================
+% BaiZe-NeurIPS2027 — BaiZe MLLM 主线（从 BaiZe-ISEDA2027 拆分）
+% 阶段：vision encoder pretrain -> MLLM alignment -> RL -> 评测
+%       （通用12集 + 领域4集 + EDA Flow Bench 的 Multimodal 子集）
+% TODO(内容重写)：0_abstract / 1_intro / 2_related_work / 3_architecture /
+%                 7_conclusion 仍为 ISEDA 原文占位，需按 MLLM 主线重写；
+%                 0_abstract 内 \begin{IEEEkeywords} 需改为 NeurIPS keywords 或删除。
+% ============================================================
+
+\usepackage[preprint]{neurips_2023}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[table]{xcolor}
+\usepackage{xspace}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+% IEEEkeywords stub（占位：抽象重写时移除）
+\newenvironment{IEEEkeywords}{}{}
+
+\newcommand{\llm}{BaiZe\xspace}
+
+% TODO(标题定稿)：MLLM 主线标题占位
+\title{BaiZe: From-Scratch Vision Encoder and Multimodal Grounding for Visual EDA Tasks}
+
+% NeurIPS 匿名评审：作者信息留空
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\input{NeurIPS2027/0_abstract}
+\input{NeurIPS2027/1_intro}
+\input{NeurIPS2027/2_related_work}
+\input{NeurIPS2027/3_architecture}
+\input{NeurIPS2027/4_vision_encoder}
+\input{NeurIPS2027/5_mllm_alignment}
+\input{NeurIPS2027/6_domain_rl}
+\input{NeurIPS2027/7_conclusion}
+
+\bibliographystyle{plain}
+\bibliography{reference}
+
+\end{document}

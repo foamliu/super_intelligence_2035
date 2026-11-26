@@ -1,0 +1,98 @@
+2026-11-03 09:52:47,368 - INFO - Creating container for scikit-learn__scikit-learn-13328...
+2026-11-03 09:52:47,387 - INFO - Container for scikit-learn__scikit-learn-13328 created: 6d881d506b054e2c72ba2cf618e1a2a58d95ece3ba3a6b3ffc50f60bcca03944
+2026-11-03 09:52:47,985 - INFO - Container for scikit-learn__scikit-learn-13328 started: 6d881d506b054e2c72ba2cf618e1a2a58d95ece3ba3a6b3ffc50f60bcca03944
+2026-11-03 09:52:47,987 - INFO - Intermediate patch for scikit-learn__scikit-learn-13328 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-13328/patch.diff, now applying to container...
+2026-11-03 09:52:48,099 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py...
+Checking patch sklearn/linear_model/huber.py...
+Checking patch sklearn/linear_model/tests/test_huber.py...
+Applied patch sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py cleanly.
+Applied patch sklearn/linear_model/huber.py cleanly.
+Applied patch sklearn/linear_model/tests/test_huber.py cleanly.
+
+2026-11-03 09:52:48,517 - INFO - Git diff before:
+diff --git a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+index bf92569c1..12a4ff279 100644
+--- a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
++++ b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+@@ -147,6 +147,7 @@ def _make_cell_set_template_code():
+     else:
+         return types.CodeType(
+             co.co_argcount,
++            co.co_posonlyargcount,
+             co.co_kwonlyargcount,
+             co.co_nlocals,
+             co.co_stacksize,
+diff --git a/sklearn/linear_model/huber.py b/sklearn/linear_model/huber.py
+index 65c686400..6c9566693 100644
+--- a/sklearn/linear_model/huber.py
++++ b/sklearn/linear_model/huber.py
+@@ -251,7 +251,8 @@ class HuberRegressor(LinearModel, RegressorMixin, BaseEstimator):
+         self : object
+         """
+         X, y = check_X_y(
+-            X, y, copy=False, accept_sparse=['csr'], y_numeric=True)
++            X, y, copy=False, accept_sparse=['csr'], y_numeric=True,
++            dtype=np.float64)
+         if sample_weight is not None:
+             sample_weight = np.array(sample_weight)
+             check_consistent_length(y, sample_weight)
+diff --git a/sklearn/linear_model/tests/test_huber.py b/sklearn/linear_model/tests/test_huber.py
+index 6a8b26133..569266f0f 100644
+--- a/sklearn/linear_model/tests/test_huber.py
++++ b/sklearn/linear_model/tests/test_huber.py
+@@ -179,6 +179,16 @@ def test_huber_warm_start():
+     assert huber_warm.n_iter_ == 0
+ 
+ 
++def test_huber_boolean_input():
++    # Test that fitting with a boolean X does not raise
++    rng = np.random.RandomState(0)
++    X, y = make_regression(n_samples=200, n_features=2, noise=4.0,
++                           random_state=0)
++    X_bool = X > 0
++    huber = HuberRegressor().fit(X_bool, y)
++    assert huber.coef_.dtype == np.float64
++
++
+ def test_huber_better_r2_score():
+     # Test that huber returns a better r2 score than non-outliers"""
+     X, y = make_regression_with_outliers()
+2026-11-03 09:52:48,519 - INFO - Eval script for scikit-learn__scikit-learn-13328 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-13328/eval.sh; copying to container...
+2026-11-03 09:52:52,563 - INFO - Test runtime: 3.96 seconds
+2026-11-03 09:52:52,564 - INFO - Test output for scikit-learn__scikit-learn-13328 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-13328/test_output.txt
+2026-11-03 09:52:52,635 - INFO - Git diff after:
+diff --git a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+index bf92569c1..12a4ff279 100644
+--- a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
++++ b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+@@ -147,6 +147,7 @@ def _make_cell_set_template_code():
+     else:
+         return types.CodeType(
+             co.co_argcount,
++            co.co_posonlyargcount,
+             co.co_kwonlyargcount,
+             co.co_nlocals,
+             co.co_stacksize,
+diff --git a/sklearn/linear_model/huber.py b/sklearn/linear_model/huber.py
+index 65c686400..6c9566693 100644
+--- a/sklearn/linear_model/huber.py
++++ b/sklearn/linear_model/huber.py
+@@ -251,7 +251,8 @@ class HuberRegressor(LinearModel, RegressorMixin, BaseEstimator):
+         self : object
+         """
+         X, y = check_X_y(
+-            X, y, copy=False, accept_sparse=['csr'], y_numeric=True)
++            X, y, copy=False, accept_sparse=['csr'], y_numeric=True,
++            dtype=np.float64)
+         if sample_weight is not None:
+             sample_weight = np.array(sample_weight)
+             check_consistent_length(y, sample_weight)
+2026-11-03 09:52:52,635 - INFO - Git diff changed after running eval script
+2026-11-03 09:52:52,635 - INFO - Grading answer for scikit-learn__scikit-learn-13328...
+2026-11-03 09:52:52,641 - INFO - report: {'scikit-learn__scikit-learn-13328': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['sklearn/linear_model/tests/test_huber.py::test_huber_bool']}, 'PASS_TO_PASS': {'success': [], 'failure': ['sklearn/linear_model/tests/test_huber.py::test_huber_equals_lr_for_high_epsilon', 'sklearn/linear_model/tests/test_huber.py::test_huber_max_iter', 'sklearn/linear_model/tests/test_huber.py::test_huber_gradient', 'sklearn/linear_model/tests/test_huber.py::test_huber_sample_weights', 'sklearn/linear_model/tests/test_huber.py::test_huber_sparse', 'sklearn/linear_model/tests/test_huber.py::test_huber_scaling_invariant', 'sklearn/linear_model/tests/test_huber.py::test_huber_and_sgd_same_results', 'sklearn/linear_model/tests/test_huber.py::test_huber_warm_start', 'sklearn/linear_model/tests/test_huber.py::test_huber_better_r2_score']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-13328: resolved: False
+2026-11-03 09:52:52,643 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_hermes...
+2026-11-03 09:53:08,428 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_hermes stopped successfully.
+2026-11-03 09:53:08,428 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_hermes...
+2026-11-03 09:53:08,462 - INFO - Container sweb.eval.scikit-learn__scikit-learn-13328.verified_full_hermes removed successfully.

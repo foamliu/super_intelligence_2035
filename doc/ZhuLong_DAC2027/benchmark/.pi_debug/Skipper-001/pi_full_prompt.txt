@@ -1,0 +1,47 @@
+Implement the Tcl proc described below. This is a pure text-parsing/string task; you do NOT need to call any tool or run anything. Output ONLY the completed `proc skipper_build_bsub_regr_cmd {spec_text} { ... }` inside a single ```tcl fenced block, and nothing else. Runtime is Empyrean Skipper Tcl: use POSIX regex classes ([[:space:]], [A-Za-z0-9_]) not \s/\w; no `eq` operator (use `[string equal]`).
+
+# Scenario: a digital verification team runs UniVista Skipper (UVS) Verilog regressions on an
+# LSF farm. Each regression is submitted with `bsub -Is run_regr`, which takes the tool name,
+# a config (under `run_script_<tool>/`), a run tag, a wait, a file-limit, and a queue. The
+# `run_regr` wrapper REFUSES to overwrite an existing tag directory, so the chosen tag must
+# not collide with any tag dir already present under the project's `vps_log/`.
+#
+# You are given a regression spec file (key:value lines). Parse it and emit the exact
+# `bsub -Is run_regr ...` command an engineer would submit, together with the tag you chose.
+#
+# Spec fields:
+#   tool        : regression tool (e.g. uvs)
+#   config      : config name (file lives at ./run_script_<tool>/<config>)
+#   wait        : -w minutes (integer)
+#   file_limit  : -f file limit (integer)
+#   queue       : -q LSF queue name
+#   date        : YYYYMMDD stamp for collision-safe tag suffix
+#   existing    : comma-separated already-used tag dirs (must NOT reuse)
+#
+# Tag selection rule (matches the real run_regr collision-avoidance convention):
+#   1. base tag = `<tool>_<config>`
+#   2. if base tag is NOT in `existing`, use it
+#   3. otherwise use `<tool>_<date>_<config>_r2`
+#   4. if that also collides, increment the suffix: _r3, _r4, ... until a non-colliding tag
+#      is found
+#
+# Command format (exact, single space separated, fields in this order):
+#   bsub -Is run_regr -w <wait> --tool <tool> --config ./run_script_<tool>/<config> -t <tag> -f <file_limit> -q <queue>
+#
+# Return a Tcl dict with two keys:
+#   cmd  -- the full bsub command string (one line, no leading/trailing whitespace)
+#   tag  -- the chosen tag string
+#
+# proc skipper_build_bsub_regr_cmd {spec_text} -> dict {cmd tag}
+#
+# Example (spec above):
+#   tool=uvs config=run_step2_2 wait=20 file_limit=8000 queue=bcp_LP1 date=20260923
+#   existing=uvs_run_step2_2,uvs_20260923_run_step2_2_jason
+#   -> base `uvs_run_step2_2` collides; `uvs_20260923_run_step2_2_r2` is free ->
+#      tag = uvs_20260923_run_step2_2_r2
+#      cmd = bsub -Is run_regr -w 20 --tool uvs --config ./run_script_uvs/run_step2_2 -t uvs_20260923_run_step2_2_r2 -f 8000 -q bcp_LP1
+#
+# Constraints: parse robustly (ignore blank lines and `#` comment lines; whitespace around
+# the value is trimmed); the `existing` field may list zero or more comma-separated tags;
+# if a value is missing, treat empty. Runtime is Empyrean Skipper Tcl: use POSIX regex
+# classes ([[:space:]], [A-Za-z0-9_]) not \s/\w; no `eq` operator (use `[string equal]`).

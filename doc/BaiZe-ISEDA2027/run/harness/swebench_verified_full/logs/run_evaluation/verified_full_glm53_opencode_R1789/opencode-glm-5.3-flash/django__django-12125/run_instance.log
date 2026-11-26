@@ -1,0 +1,156 @@
+2026-11-07 20:57:56,598 - INFO - Creating container for django__django-12125...
+2026-11-07 20:57:56,624 - INFO - Container for django__django-12125 created: 969107c77939b1d39c13dcd7bfae9edb31871a39dd30d234b259eb97acd104e6
+2026-11-07 20:57:57,344 - INFO - Container for django__django-12125 started: 969107c77939b1d39c13dcd7bfae9edb31871a39dd30d234b259eb97acd104e6
+2026-11-07 20:57:57,346 - INFO - Intermediate patch for django__django-12125 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-12125/patch.diff, now applying to container...
+2026-11-07 20:57:57,505 - INFO - >>>>> Applied Patch:
+Checking patch django/db/migrations/serializer.py...
+warning: django/db/migrations/serializer.py has type 100755, expected 100644
+Checking patch tests/migrations/test_writer.py...
+warning: tests/migrations/test_writer.py has type 100755, expected 100644
+Applied patch django/db/migrations/serializer.py cleanly.
+Applied patch tests/migrations/test_writer.py cleanly.
+
+2026-11-07 20:57:58,635 - INFO - Git diff before:
+diff --git a/django/db/migrations/serializer.py b/django/db/migrations/serializer.py
+index 7d226955d5..d51962d219 100755
+--- a/django/db/migrations/serializer.py
++++ b/django/db/migrations/serializer.py
+@@ -6,6 +6,7 @@ import enum
+ import functools
+ import math
+ import re
++import sys
+ import types
+ import uuid
+ 
+@@ -90,10 +91,19 @@ class DeconstructableSerializer(BaseSerializer):
+ 
+     @staticmethod
+     def _serialize_path(path):
+-        module, name = path.rsplit(".", 1)
++        # The path may point to an inner class, e.g. "app.models.Outer.Inner",
++        # so find the longest prefix of the path that is an actual module to
++        # generate a valid import.
++        pieces = path.split(".")
++        for i in range(len(pieces) - 1, 0, -1):
++            module = ".".join(pieces[:i])
++            if module in sys.modules:
++                break
++        else:
++            module, _ = path.rsplit(".", 1)
+         if module == "django.db.models":
+             imports = {"from django.db import models"}
+-            name = "models.%s" % name
++            name = "models.%s" % path[len("django.db.models."):]
+         else:
+             imports = {"import %s" % module}
+             name = path
+@@ -269,7 +279,10 @@ class TypeSerializer(BaseSerializer):
+             if module == builtins.__name__:
+                 return self.value.__name__, set()
+             else:
+-                return "%s.%s" % (module, self.value.__name__), {"import %s" % module}
++                qualname = self.value.__qualname__
++                if "<" in qualname:  # Qualname can include <locals>
++                    qualname = self.value.__name__
++                return "%s.%s" % (module, qualname), {"import %s" % module}
+ 
+ 
+ class UUIDSerializer(BaseSerializer):
+diff --git a/tests/migrations/test_writer.py b/tests/migrations/test_writer.py
+index ca924f35ec..afcad6c35c 100755
+--- a/tests/migrations/test_writer.py
++++ b/tests/migrations/test_writer.py
+@@ -61,6 +61,15 @@ class IntEnum(enum.IntEnum):
+     B = 2
+ 
+ 
++class Outer:
++    class Inner(models.CharField):
++        pass
++
++    class InnerEnum(enum.Enum):
++        A = 'a-value'
++        B = 'value-b'
++
++
+ class OperationWriterTests(SimpleTestCase):
+ 
+     def test_empty_signature(self):
+@@ -733,6 +742,18 @@ class WriterTests(SimpleTestCase):
+         string = MigrationWriter.serialize(models.CharField(default=DeconstructibleInstances))[0]
+         self.assertEqual(string, "models.CharField(default=migrations.test_writer.DeconstructibleInstances)")
+ 
++    def test_serialize_inner_class_field(self):
++        field = Outer.Inner(max_length=20)
++        string, imports = MigrationWriter.serialize(field)
++        self.assertEqual(string, "migrations.test_writer.Outer.Inner(max_length=20)")
++        self.assertEqual(imports, {"import migrations.test_writer"})
++        self.serialize_round_trip(field)
++
++    def test_serialize_inner_class_argument(self):
++        string, imports = MigrationWriter.serialize(models.CharField(default=Outer.InnerEnum))
++        self.assertEqual(string, "models.CharField(default=migrations.test_writer.Outer.InnerEnum)")
++        self.assertEqual(imports, {"from django.db import models", "import migrations.test_writer"})
++
+     def test_register_serializer(self):
+         class ComplexSerializer(BaseSerializer):
+             def serialize(self):
+2026-11-07 20:57:58,638 - INFO - Eval script for django__django-12125 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-12125/eval.sh; copying to container...
+2026-11-07 20:58:06,221 - INFO - Test runtime: 7.47 seconds
+2026-11-07 20:58:06,224 - INFO - Test output for django__django-12125 written to logs/run_evaluation/verified_full_glm53_opencode_R1789/opencode-glm-5.3-flash/django__django-12125/test_output.txt
+2026-11-07 20:58:06,303 - INFO - Git diff after:
+diff --git a/django/db/migrations/serializer.py b/django/db/migrations/serializer.py
+index 7d226955d5..d51962d219 100755
+--- a/django/db/migrations/serializer.py
++++ b/django/db/migrations/serializer.py
+@@ -6,6 +6,7 @@ import enum
+ import functools
+ import math
+ import re
++import sys
+ import types
+ import uuid
+ 
+@@ -90,10 +91,19 @@ class DeconstructableSerializer(BaseSerializer):
+ 
+     @staticmethod
+     def _serialize_path(path):
+-        module, name = path.rsplit(".", 1)
++        # The path may point to an inner class, e.g. "app.models.Outer.Inner",
++        # so find the longest prefix of the path that is an actual module to
++        # generate a valid import.
++        pieces = path.split(".")
++        for i in range(len(pieces) - 1, 0, -1):
++            module = ".".join(pieces[:i])
++            if module in sys.modules:
++                break
++        else:
++            module, _ = path.rsplit(".", 1)
+         if module == "django.db.models":
+             imports = {"from django.db import models"}
+-            name = "models.%s" % name
++            name = "models.%s" % path[len("django.db.models."):]
+         else:
+             imports = {"import %s" % module}
+             name = path
+@@ -269,7 +279,10 @@ class TypeSerializer(BaseSerializer):
+             if module == builtins.__name__:
+                 return self.value.__name__, set()
+             else:
+-                return "%s.%s" % (module, self.value.__name__), {"import %s" % module}
++                qualname = self.value.__qualname__
++                if "<" in qualname:  # Qualname can include <locals>
++                    qualname = self.value.__name__
++                return "%s.%s" % (module, qualname), {"import %s" % module}
+ 
+ 
+ class UUIDSerializer(BaseSerializer):
+2026-11-07 20:58:06,303 - INFO - Git diff changed after running eval script
+2026-11-07 20:58:06,303 - INFO - Grading answer for django__django-12125...
+2026-11-07 20:58:06,313 - INFO - report: {'django__django-12125': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_serialize_nested_class (migrations.test_writer.WriterTests)', 'test_serialize_numbers (migrations.test_writer.WriterTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_args_kwargs_signature (migrations.test_writer.OperationWriterTests)', 'test_args_signature (migrations.test_writer.OperationWriterTests)', 'test_empty_signature (migrations.test_writer.OperationWriterTests)', 'test_expand_args_signature (migrations.test_writer.OperationWriterTests)', 'test_kwargs_signature (migrations.test_writer.OperationWriterTests)', 'test_multiline_args_signature (migrations.test_writer.OperationWriterTests)', 'test_nested_args_signature (migrations.test_writer.OperationWriterTests)', 'test_nested_operation_expand_args_signature (migrations.test_writer.OperationWriterTests)', 'test_custom_operation (migrations.test_writer.WriterTests)', 'test_deconstruct_class_arguments (migrations.test_writer.WriterTests)', 'test_migration_file_header_comments (migrations.test_writer.WriterTests)', 'test_migration_path (migrations.test_writer.WriterTests)', 'test_models_import_omitted (migrations.test_writer.WriterTests)', 'test_register_non_serializer (migrations.test_writer.WriterTests)', 'test_register_serializer (migrations.test_writer.WriterTests)', 'test_serialize_builtin_types (migrations.test_writer.WriterTests)', 'test_serialize_builtins (migrations.test_writer.WriterTests)', 'test_serialize_choices (migrations.test_writer.WriterTests)', 'test_serialize_class_based_validators (migrations.test_writer.WriterTests)', 'test_serialize_collections (migrations.test_writer.WriterTests)', 'test_serialize_compiled_regex (migrations.test_writer.WriterTests)', 'test_serialize_constants (migrations.test_writer.WriterTests)', 'test_serialize_datetime (migrations.test_writer.WriterTests)', 'test_serialize_empty_nonempty_tuple (migrations.test_writer.WriterTests)', 'test_serialize_enums (migrations.test_writer.WriterTests)', 'test_serialize_fields (migrations.test_writer.WriterTests)', 'test_serialize_frozensets (migrations.test_writer.WriterTests)', 'test_serialize_functions (migrations.test_writer.WriterTests)', 'test_serialize_functools_partial (migrations.test_writer.WriterTests)', 'test_serialize_functools_partialmethod (migrations.test_writer.WriterTests)', 'test_serialize_iterators (migrations.test_writer.WriterTests)', 'test_serialize_lazy_objects (migrations.test_writer.WriterTests)', "A reference in a local scope can't be serialized.", 'test_serialize_managers (migrations.test_writer.WriterTests)', 'test_serialize_multiline_strings (migrations.test_writer.WriterTests)', 'test_serialize_range (migrations.test_writer.WriterTests)', 'test_serialize_set (migrations.test_writer.WriterTests)', 'test_serialize_settings (migrations.test_writer.WriterTests)', 'test_serialize_strings (migrations.test_writer.WriterTests)', 'test_serialize_timedelta (migrations.test_writer.WriterTests)', 'test_serialize_type_none (migrations.test_writer.WriterTests)', 'An unbound method used within a class body can be serialized.', 'test_serialize_uuid (migrations.test_writer.WriterTests)', 'test_simple_migration (migrations.test_writer.WriterTests)', 'test_sorted_imports (migrations.test_writer.WriterTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12125: resolved: True
+2026-11-07 20:58:06,315 - INFO - Attempting to stop container sweb.eval.django__django-12125.verified_full_glm53_opencode_R1789...
+2026-11-07 20:58:22,924 - INFO - Container sweb.eval.django__django-12125.verified_full_glm53_opencode_R1789 stopped successfully.
+2026-11-07 20:58:22,924 - INFO - Attempting to remove container sweb.eval.django__django-12125.verified_full_glm53_opencode_R1789...
+2026-11-07 20:58:22,972 - INFO - Container sweb.eval.django__django-12125.verified_full_glm53_opencode_R1789 removed successfully.

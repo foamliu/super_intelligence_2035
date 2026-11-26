@@ -1,0 +1,174 @@
+2026-10-30 16:49:05,791 - INFO - Creating container for django__django-12419...
+2026-10-30 16:49:05,834 - INFO - Container for django__django-12419 created: 8c4dad7ccfb0b0e6273c3109fed69c9095621e9581544148a34828f4d37c626f
+2026-10-30 16:49:08,946 - INFO - Container for django__django-12419 started: 8c4dad7ccfb0b0e6273c3109fed69c9095621e9581544148a34828f4d37c626f
+2026-10-30 16:49:08,953 - INFO - Intermediate patch for django__django-12419 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12419/patch.diff, now applying to container...
+2026-10-30 16:49:09,430 - INFO - >>>>> Applied Patch:
+Checking patch django/conf/global_settings.py...
+Checking patch docs/ref/settings.txt...
+Checking patch docs/releases/3.1.txt...
+Checking patch tests/check_framework/test_security.py...
+Checking patch tests/middleware/test_security.py...
+Applied patch django/conf/global_settings.py cleanly.
+Applied patch docs/ref/settings.txt cleanly.
+Applied patch docs/releases/3.1.txt cleanly.
+Applied patch tests/check_framework/test_security.py cleanly.
+Applied patch tests/middleware/test_security.py cleanly.
+
+2026-10-30 16:49:10,710 - INFO - Git diff before:
+diff --git a/django/conf/global_settings.py b/django/conf/global_settings.py
+index 09c9b95d26..8bb59a4037 100644
+--- a/django/conf/global_settings.py
++++ b/django/conf/global_settings.py
+@@ -637,6 +637,6 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+ SECURE_HSTS_PRELOAD = False
+ SECURE_HSTS_SECONDS = 0
+ SECURE_REDIRECT_EXEMPT = []
+-SECURE_REFERRER_POLICY = None
++SECURE_REFERRER_POLICY = 'same-origin'
+ SECURE_SSL_HOST = None
+ SECURE_SSL_REDIRECT = False
+diff --git a/docs/ref/settings.txt b/docs/ref/settings.txt
+index b4a5bdc48f..c964b80779 100644
+--- a/docs/ref/settings.txt
++++ b/docs/ref/settings.txt
+@@ -2395,7 +2395,7 @@ from URL paths, so patterns shouldn't include them, e.g.
+ 
+ .. versionadded:: 3.0
+ 
+-Default: ``None``
++Default: ``'same-origin'``
+ 
+ If configured, the :class:`~django.middleware.security.SecurityMiddleware` sets
+ the :ref:`referrer-policy` header on all responses that do not already have it
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 4a165156e1..2272978425 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -451,6 +451,8 @@ Miscellaneous
+ 
+ * Providing a non-local remote field in the :attr:`.ForeignKey.to_field`
+   argument now raises :class:`~django.core.exceptions.FieldError`.
++* The default value of the :setting:`SECURE_REFERRER_POLICY` setting has changed
++  from ``None`` to ``'same-origin'``.
+ 
+ .. _deprecated-features-3.1:
+ 
+diff --git a/tests/check_framework/test_security.py b/tests/check_framework/test_security.py
+index 4c1869d272..e85e337962 100644
+--- a/tests/check_framework/test_security.py
++++ b/tests/check_framework/test_security.py
+@@ -539,6 +539,12 @@ class CheckReferrerPolicyTest(SimpleTestCase):
+             with self.subTest(value=value), override_settings(SECURE_REFERRER_POLICY=value):
+                 self.assertEqual(self.func(None), [])
+ 
++    def test_default_referrer_policy(self):
++        """
++        With the default SECURE_REFERRER_POLICY, no warning is emitted.
++        """
++        self.assertEqual(self.func(None), [])
++
+     @override_settings(
+         MIDDLEWARE=['django.middleware.security.SecurityMiddleware'],
+         SECURE_REFERRER_POLICY='invalid-value',
+diff --git a/tests/middleware/test_security.py b/tests/middleware/test_security.py
+index 07b72fc73a..7f3ccb20c8 100644
+--- a/tests/middleware/test_security.py
++++ b/tests/middleware/test_security.py
+@@ -231,6 +231,13 @@ class SecurityMiddlewareTest(SimpleTestCase):
+         """
+         self.assertNotIn('Referrer-Policy', self.process_response())
+ 
++    def test_referrer_policy_default(self):
++        """
++        With the default SECURE_REFERRER_POLICY, the middleware adds a
++        "Referrer-Policy: same-origin" header to the response.
++        """
++        self.assertEqual(self.process_response()['Referrer-Policy'], 'same-origin')
++
+     def test_referrer_policy_on(self):
+         """
+         With SECURE_REFERRER_POLICY set to a valid value, the middleware adds a
+2026-10-30 16:49:10,713 - INFO - Eval script for django__django-12419 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12419/eval.sh; copying to container...
+2026-10-30 16:49:16,864 - INFO - Test runtime: 6.08 seconds
+2026-10-30 16:49:16,867 - INFO - Test output for django__django-12419 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-12419/test_output.txt
+2026-10-30 16:49:16,941 - INFO - Git diff after:
+diff --git a/django/conf/global_settings.py b/django/conf/global_settings.py
+index 09c9b95d26..8bb59a4037 100644
+--- a/django/conf/global_settings.py
++++ b/django/conf/global_settings.py
+@@ -637,6 +637,6 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+ SECURE_HSTS_PRELOAD = False
+ SECURE_HSTS_SECONDS = 0
+ SECURE_REDIRECT_EXEMPT = []
+-SECURE_REFERRER_POLICY = None
++SECURE_REFERRER_POLICY = 'same-origin'
+ SECURE_SSL_HOST = None
+ SECURE_SSL_REDIRECT = False
+diff --git a/docs/ref/settings.txt b/docs/ref/settings.txt
+index b4a5bdc48f..c964b80779 100644
+--- a/docs/ref/settings.txt
++++ b/docs/ref/settings.txt
+@@ -2395,7 +2395,7 @@ from URL paths, so patterns shouldn't include them, e.g.
+ 
+ .. versionadded:: 3.0
+ 
+-Default: ``None``
++Default: ``'same-origin'``
+ 
+ If configured, the :class:`~django.middleware.security.SecurityMiddleware` sets
+ the :ref:`referrer-policy` header on all responses that do not already have it
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 4a165156e1..2272978425 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -451,6 +451,8 @@ Miscellaneous
+ 
+ * Providing a non-local remote field in the :attr:`.ForeignKey.to_field`
+   argument now raises :class:`~django.core.exceptions.FieldError`.
++* The default value of the :setting:`SECURE_REFERRER_POLICY` setting has changed
++  from ``None`` to ``'same-origin'``.
+ 
+ .. _deprecated-features-3.1:
+ 
+diff --git a/tests/check_framework/test_security.py b/tests/check_framework/test_security.py
+index 4c1869d272..e85e337962 100644
+--- a/tests/check_framework/test_security.py
++++ b/tests/check_framework/test_security.py
+@@ -539,6 +539,12 @@ class CheckReferrerPolicyTest(SimpleTestCase):
+             with self.subTest(value=value), override_settings(SECURE_REFERRER_POLICY=value):
+                 self.assertEqual(self.func(None), [])
+ 
++    def test_default_referrer_policy(self):
++        """
++        With the default SECURE_REFERRER_POLICY, no warning is emitted.
++        """
++        self.assertEqual(self.func(None), [])
++
+     @override_settings(
+         MIDDLEWARE=['django.middleware.security.SecurityMiddleware'],
+         SECURE_REFERRER_POLICY='invalid-value',
+diff --git a/tests/middleware/test_security.py b/tests/middleware/test_security.py
+index 07b72fc73a..7f3ccb20c8 100644
+--- a/tests/middleware/test_security.py
++++ b/tests/middleware/test_security.py
+@@ -231,6 +231,13 @@ class SecurityMiddlewareTest(SimpleTestCase):
+         """
+         self.assertNotIn('Referrer-Policy', self.process_response())
+ 
++    def test_referrer_policy_default(self):
++        """
++        With the default SECURE_REFERRER_POLICY, the middleware adds a
++        "Referrer-Policy: same-origin" header to the response.
++        """
++        self.assertEqual(self.process_response()['Referrer-Policy'], 'same-origin')
++
+     def test_referrer_policy_on(self):
+         """
+         With SECURE_REFERRER_POLICY set to a valid value, the middleware adds a
+2026-10-30 16:49:16,941 - INFO - Grading answer for django__django-12419...
+2026-10-30 16:49:16,943 - INFO - report: {'django__django-12419': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_middleware_headers (project_template.test_settings.TestStartProjectSettings)'], 'failure': []}, 'PASS_TO_PASS': {'success': [], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12419: resolved: True
+2026-10-30 16:49:16,945 - INFO - Attempting to stop container sweb.eval.django__django-12419.verified_full_pi...
+2026-10-30 16:49:32,665 - INFO - Container sweb.eval.django__django-12419.verified_full_pi stopped successfully.
+2026-10-30 16:49:32,666 - INFO - Attempting to remove container sweb.eval.django__django-12419.verified_full_pi...
+2026-10-30 16:49:32,710 - INFO - Container sweb.eval.django__django-12419.verified_full_pi removed successfully.

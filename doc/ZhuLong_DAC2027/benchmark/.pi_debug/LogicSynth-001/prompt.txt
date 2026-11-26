@@ -1,0 +1,42 @@
+# Scenario: a real digital design team runs SpyGlass-based static checks (Lint / CDC / RDC)
+# on synthesizable RTL before handing it to Design Compiler. The lint flow lives in a
+# dedicated `lint/work/` folder driven by a central `sc_target.mk`, and needs three
+# scaffold files generated from the target RTL so a designer can just `cd lint/work &&
+# make lint`.
+#
+# You are given the target RTL source path (relative to the project root) and the design
+# top module name. Produce the three lint-flow scaffold files a real engineer would
+# hand-write, following the SpyGlass vc_static convention used in the team's reference
+# flow:
+#
+#   1. design_rtl.list  -- a SpyGlass source-list file. Line 1 must be an `+incdir+<dir>`
+#      directive giving the directory of the RTL file (relative path from lint/work/,
+#      i.e. the RTL sits two levels up under rtl_synth/). Line 2 must be the RTL file
+#      path (same relative convention). No blank lines, no trailing whitespace lines.
+#
+#   2. <module>.prj     -- a SpyGlass project file (GUI complement to the batch Makefile).
+#      Must start with the two header magic lines `#!SPYGLASS_PROJECT_FILE` and
+#      `#!VERSION 3.0`, contain a `read_file -type sourcelist design_rtl.list` import
+#      line, a `set_option top <module>` line setting the design top, and a
+#      `current_methodology $SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff` line.
+#
+#   3. Makefile         -- a GNU Makefile with the four batch targets `lint`, `cdc`,
+#      `rdc` and `all` (plus a `clean`). It must define `DESIGN_TOP = <module>`, set
+#      `TOOL = ds/vc_static`, reference `LINT_WAIVER = ../config/waiver.tcl`, the CDC
+#      and RDC SDC files under `../config/`, and `include` the central
+#      `/apps/imctf/cad/script/digital_static_check/sc_target.mk`. Each of lint/cdc/rdc
+#      must declare its report file under `../report/`.
+#
+# Return a Tcl dict with the three keys: `design_rtl_list`, `prj`, `makefile`, each
+# value being the full text of the corresponding file. The RTL directory is exactly two
+# levels up from lint/work/ (so use `../../rtl_synth/<file>` and `+incdir+../../rtl_synth`).
+#
+# proc logicsynth_build_lint_scaffold {rtl_relpath module_name} -> dict
+#
+# Example: logicsynth_build_lint_scaffold "rtl_synth/cfreq_ctrl.v" "cfreq_ctrl"
+#   -> design_rtl_list = "+incdir+../../rtl_synth\n../../rtl_synth/cfreq_ctrl.v\n"
+#      prj             = "#!SPYGLASS_PROJECT_FILE\n#!VERSION 3.0\n... read_file -type sourcelist design_rtl.list\n... set_option top cfreq_ctrl\n... current_methodology $SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff\n"
+#      makefile        = "... DESIGN_TOP = cfreq_ctrl\n... TOOL = ds/vc_static\n... include /apps/imctf/cad/script/digital_static_check/sc_target.mk\n"
+#
+# Constraints: paths relative and exact (`../../rtl_synth/...`); no absolute paths; the
+# prj and Makefile must be plain text ready to write to disk as-is.

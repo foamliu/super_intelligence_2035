@@ -1,0 +1,74 @@
+diff --git a/django/db/models/aggregates.py b/django/db/models/aggregates.py
+index da4ff928aa..3effaa7533 100644
+--- a/django/db/models/aggregates.py
++++ b/django/db/models/aggregates.py
+@@ -99,6 +99,7 @@ class Aggregate(Func):
+ class Avg(FixDurationInputMixin, NumericOutputFieldMixin, Aggregate):
+     function = 'AVG'
+     name = 'Avg'
++    allow_distinct = True
+ 
+ 
+ class Count(Aggregate):
+@@ -121,11 +122,13 @@ class Count(Aggregate):
+ class Max(Aggregate):
+     function = 'MAX'
+     name = 'Max'
++    allow_distinct = True
+ 
+ 
+ class Min(Aggregate):
+     function = 'MIN'
+     name = 'Min'
++    allow_distinct = True
+ 
+ 
+ class StdDev(NumericOutputFieldMixin, Aggregate):
+@@ -142,6 +145,7 @@ class StdDev(NumericOutputFieldMixin, Aggregate):
+ class Sum(FixDurationInputMixin, Aggregate):
+     function = 'SUM'
+     name = 'Sum'
++    allow_distinct = True
+ 
+ 
+ class Variance(NumericOutputFieldMixin, Aggregate):
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index bd6ecf699c..0cba4ba63d 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -492,6 +492,18 @@ class AggregateTestCase(TestCase):
+         age_sum = distinct_authors.aggregate(Sum('age'))
+         self.assertEqual(age_sum['age__sum'], 103)
+ 
++    def test_avg_distinct(self):
++        vals = Book.objects.aggregate(Avg('rating', distinct=True))
++        self.assertEqual(vals, {'rating__avg': Approximate(4.125, places=2)})
++
++    def test_sum_distinct(self):
++        vals = Book.objects.aggregate(Sum('rating', distinct=True))
++        self.assertEqual(vals, {'rating__sum': Approximate(16.5, places=2)})
++
++    def test_min_max_distinct(self):
++        vals = Book.objects.aggregate(Min('rating', distinct=True), Max('rating', distinct=True))
++        self.assertEqual(vals, {'rating__min': 3.0, 'rating__max': 5.0})
++
+     def test_filtering(self):
+         p = Publisher.objects.create(name='Expensive Publisher', num_awards=0)
+         Book.objects.create(
+diff --git a/tests/expressions/tests.py b/tests/expressions/tests.py
+index f5d1553dfb..abf65433e6 100644
+--- a/tests/expressions/tests.py
++++ b/tests/expressions/tests.py
+@@ -1584,8 +1584,12 @@ class ReprTests(SimpleTestCase):
+         self.assertEqual(repr(Variance('a', sample=True)), "Variance(F(a), sample=True)")
+ 
+     def test_distinct_aggregates(self):
++        self.assertEqual(repr(Avg('a', distinct=True)), "Avg(F(a), distinct=True)")
+         self.assertEqual(repr(Count('a', distinct=True)), "Count(F(a), distinct=True)")
+         self.assertEqual(repr(Count('*', distinct=True)), "Count('*', distinct=True)")
++        self.assertEqual(repr(Max('a', distinct=True)), "Max(F(a), distinct=True)")
++        self.assertEqual(repr(Min('a', distinct=True)), "Min(F(a), distinct=True)")
++        self.assertEqual(repr(Sum('a', distinct=True)), "Sum(F(a), distinct=True)")
+ 
+     def test_filtered_aggregates(self):
+         filter = Q(a=1)

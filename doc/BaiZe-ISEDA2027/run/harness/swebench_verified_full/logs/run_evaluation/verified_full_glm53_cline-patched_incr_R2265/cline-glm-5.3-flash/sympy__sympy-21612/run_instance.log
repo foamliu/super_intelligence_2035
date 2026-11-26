@@ -1,0 +1,156 @@
+2026-11-12 13:17:52,383 - INFO - Creating container for sympy__sympy-21612...
+2026-11-12 13:17:52,405 - INFO - Container for sympy__sympy-21612 created: 439504822d65abeba18e8942013fec99844d3d1f9793f4a2d80c92324a1cde35
+2026-11-12 13:17:53,084 - INFO - Container for sympy__sympy-21612 started: 439504822d65abeba18e8942013fec99844d3d1f9793f4a2d80c92324a1cde35
+2026-11-12 13:17:53,086 - INFO - Intermediate patch for sympy__sympy-21612 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2265/cline-glm-5.3-flash/sympy__sympy-21612/patch.diff, now applying to container...
+2026-11-12 13:17:53,254 - INFO - >>>>> Applied Patch:
+Checking patch sympy/parsing/tests/test_latex.py...
+warning: sympy/parsing/tests/test_latex.py has type 100755, expected 100644
+Checking patch sympy/printing/str.py...
+warning: sympy/printing/str.py has type 100755, expected 100644
+Checking patch sympy/printing/tests/test_str.py...
+warning: sympy/printing/tests/test_str.py has type 100755, expected 100644
+Applied patch sympy/parsing/tests/test_latex.py cleanly.
+Applied patch sympy/printing/str.py cleanly.
+Applied patch sympy/printing/tests/test_str.py cleanly.
+
+2026-11-12 13:17:53,977 - INFO - Git diff before:
+diff --git a/sympy/parsing/tests/test_latex.py b/sympy/parsing/tests/test_latex.py
+index f5c61cde13..67122de665 100755
+--- a/sympy/parsing/tests/test_latex.py
++++ b/sympy/parsing/tests/test_latex.py
+@@ -319,3 +319,16 @@ def test_failing_not_parseable():
+     for latex_str in FAILING_BAD_STRINGS:
+         with raises(LaTeXParsingError):
+             parse_latex(latex_str)
++
++
++def test_frac_printing():
++    # https://github.com/sympy/sympy/issues/22061
++    # nested fractions must keep the denominator bracketed when printed
++    from sympy.parsing.latex import parse_latex
++    from sympy import simplify
++    expr = parse_latex(r"\frac{\frac{a^3+b}{c}}{\frac{1}{c^2}}")
++    assert str(expr) == "((a**3 + b)/c)/(1/(c**2))"
++    # the parsed expression must still be mathematically correct
++    assert simplify(expr - c*(a**3 + b)) == 0
++    assert str(parse_latex(r"\frac{x}{\frac{1}{4}}")) == "x/(1/4)"
++    assert str(parse_latex(r"\frac{a}{\frac{1}{2}}")) == "a/(1/2)"
+diff --git a/sympy/printing/str.py b/sympy/printing/str.py
+index c3fdcdd435..f8b2c782be 100755
+--- a/sympy/printing/str.py
++++ b/sympy/printing/str.py
+@@ -287,6 +287,15 @@ def _print_Mul(self, expr):
+             dfactors = pre + [self.parenthesize(a, prec, strict=False)
+                 for a in d]
+ 
++            # parenthesize denominator factors that are themselves negative
++            # powers since they print as 1/... and would otherwise give
++            # ambiguous output like 1/1/(c**2) for 1*(1/c**2)**(-1)
++            # (this happens for unevaluated products built when parsing
++            # nested fractions, see issue #22061)
++            for j, a in enumerate(d):
++                if isinstance(a, Pow) and a.exp.is_negative:
++                    dfactors[j + len(pre)] = "(%s)" % dfactors[j + len(pre)]
++
+             n = '*'.join(nfactors)
+             d = '*'.join(dfactors)
+             if len(dfactors) > 1:
+@@ -336,6 +345,13 @@ def apow(i):
+                             isinstance(item.base, Mul)):
+                         # To avoid situations like #14160
+                         pow_paren.append(item)
++                    elif isinstance(item.base, Pow) and \
++                            item.base.exp.is_negative:
++                        # To avoid situations like #22061, i.e. when the
++                        # base is itself an inverse power, as with
++                        # unevaluated products like x*(1/c**2)**(-1)
++                        # built when parsing nested fractions
++                        pow_paren.append(item)
+                     b.append(item.base)
+             elif item.is_Rational and item is not S.Infinity:
+                 if item.p != 1:
+diff --git a/sympy/printing/tests/test_str.py b/sympy/printing/tests/test_str.py
+index 690b1a8bbf..5d4776a3f6 100755
+--- a/sympy/printing/tests/test_str.py
++++ b/sympy/printing/tests/test_str.py
+@@ -252,6 +252,13 @@ def test_Mul():
+     # For issue 14160
+     assert str(Mul(-2, x, Pow(Mul(y,y,evaluate=False), -1, evaluate=False),
+                                                 evaluate=False)) == '-2*x/(y*y)'
++    # For issue 22061: a denominator that is itself an inverse power must
++    # remain bracketed (as produced by parsing nested fractions)
++    p = Pow(Pow(y, 2, evaluate=False), -1, evaluate=False)
++    assert str(Mul(x, Pow(p, -1, evaluate=False), evaluate=False)) == \
++        'x/(1/(y**2))'
++    assert str(Mul(S.One, Pow(p, -1, evaluate=False), evaluate=False)) == \
++        '1/(1/(y**2))'
+ 
+ 
+     class CustomClass1(Expr):
+2026-11-12 13:17:53,980 - INFO - Eval script for sympy__sympy-21612 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2265/cline-glm-5.3-flash/sympy__sympy-21612/eval.sh; copying to container...
+2026-11-12 13:18:00,925 - INFO - Test runtime: 6.89 seconds
+2026-11-12 13:18:00,928 - INFO - Test output for sympy__sympy-21612 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2265/cline-glm-5.3-flash/sympy__sympy-21612/test_output.txt
+2026-11-12 13:18:00,990 - INFO - Git diff after:
+diff --git a/sympy/parsing/tests/test_latex.py b/sympy/parsing/tests/test_latex.py
+index f5c61cde13..67122de665 100755
+--- a/sympy/parsing/tests/test_latex.py
++++ b/sympy/parsing/tests/test_latex.py
+@@ -319,3 +319,16 @@ def test_failing_not_parseable():
+     for latex_str in FAILING_BAD_STRINGS:
+         with raises(LaTeXParsingError):
+             parse_latex(latex_str)
++
++
++def test_frac_printing():
++    # https://github.com/sympy/sympy/issues/22061
++    # nested fractions must keep the denominator bracketed when printed
++    from sympy.parsing.latex import parse_latex
++    from sympy import simplify
++    expr = parse_latex(r"\frac{\frac{a^3+b}{c}}{\frac{1}{c^2}}")
++    assert str(expr) == "((a**3 + b)/c)/(1/(c**2))"
++    # the parsed expression must still be mathematically correct
++    assert simplify(expr - c*(a**3 + b)) == 0
++    assert str(parse_latex(r"\frac{x}{\frac{1}{4}}")) == "x/(1/4)"
++    assert str(parse_latex(r"\frac{a}{\frac{1}{2}}")) == "a/(1/2)"
+diff --git a/sympy/printing/str.py b/sympy/printing/str.py
+index c3fdcdd435..f8b2c782be 100755
+--- a/sympy/printing/str.py
++++ b/sympy/printing/str.py
+@@ -287,6 +287,15 @@ def _print_Mul(self, expr):
+             dfactors = pre + [self.parenthesize(a, prec, strict=False)
+                 for a in d]
+ 
++            # parenthesize denominator factors that are themselves negative
++            # powers since they print as 1/... and would otherwise give
++            # ambiguous output like 1/1/(c**2) for 1*(1/c**2)**(-1)
++            # (this happens for unevaluated products built when parsing
++            # nested fractions, see issue #22061)
++            for j, a in enumerate(d):
++                if isinstance(a, Pow) and a.exp.is_negative:
++                    dfactors[j + len(pre)] = "(%s)" % dfactors[j + len(pre)]
++
+             n = '*'.join(nfactors)
+             d = '*'.join(dfactors)
+             if len(dfactors) > 1:
+@@ -336,6 +345,13 @@ def apow(i):
+                             isinstance(item.base, Mul)):
+                         # To avoid situations like #14160
+                         pow_paren.append(item)
++                    elif isinstance(item.base, Pow) and \
++                            item.base.exp.is_negative:
++                        # To avoid situations like #22061, i.e. when the
++                        # base is itself an inverse power, as with
++                        # unevaluated products like x*(1/c**2)**(-1)
++                        # built when parsing nested fractions
++                        pow_paren.append(item)
+                     b.append(item.base)
+             elif item.is_Rational and item is not S.Infinity:
+                 if item.p != 1:
+2026-11-12 13:18:00,990 - INFO - Git diff changed after running eval script
+2026-11-12 13:18:00,990 - INFO - Grading answer for sympy__sympy-21612...
+2026-11-12 13:18:00,993 - INFO - report: {'sympy__sympy-21612': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_Mul'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_printmethod', 'test_Abs', 'test_Add', 'test_Catalan', 'test_ComplexInfinity', 'test_Derivative', 'test_dict', 'test_Dict', 'test_Dummy', 'test_EulerGamma', 'test_Exp', 'test_factorial', 'test_Function', 'test_Geometry', 'test_GoldenRatio', 'test_TribonacciConstant', 'test_ImaginaryUnit', 'test_Infinity', 'test_Integer', 'test_Integral', 'test_Interval', 'test_AccumBounds', 'test_Lambda', 'test_Limit', 'test_list', 'test_Matrix_str', 'test_NaN', 'test_NegativeInfinity', 'test_Order', 'test_Permutation_Cycle', 'test_Pi', 'test_Poly', 'test_PolyRing', 'test_FracField', 'test_PolyElement', 'test_FracElement', 'test_GaussianInteger', 'test_GaussianRational', 'test_Pow', 'test_sqrt', 'test_Rational', 'test_Float', 'test_Relational', 'test_AppliedBinaryRelation', 'test_CRootOf', 'test_RootSum', 'test_GroebnerBasis', 'test_set', 'test_SparseMatrix', 'test_Sum', 'test_Symbol', 'test_tuple', 'test_Series_str', 'test_TransferFunction_str', 'test_Parallel_str', 'test_Feedback_str', 'test_Quaternion_str_printer', 'test_Quantity_str', 'test_wild_str', 'test_wild_matchpy', 'test_zeta', 'test_issue_3101', 'test_issue_3103', 'test_issue_4021', 'test_sstrrepr', 'test_infinity', 'test_full_prec', 'test_noncommutative', 'test_empty_printer', 'test_settings', 'test_RandomDomain', 'test_FiniteSet', 'test_UniversalSet', 'test_PrettyPoly', 'test_categories', 'test_Tr', 'test_issue_6387', 'test_MatMul_MatAdd', 'test_MatrixSlice', 'test_true_false', 'test_Equivalent', 'test_Xor', 'test_Complement', 'test_SymmetricDifference', 'test_UnevaluatedExpr', 'test_MatrixElement_printing', 'test_MatrixSymbol_printing', 'test_MatrixExpressions', 'test_Subs_printing', 'test_issue_15716', 'test_str_special_matrices', 'test_issue_14567', 'test_issue_21119_21460', 'test_Str', 'test_diffgeom', 'test_NDimArray', 'test_Predicate', 'test_AppliedPredicate'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-21612: resolved: True
+2026-11-12 13:18:00,995 - INFO - Attempting to stop container sweb.eval.sympy__sympy-21612.verified_full_glm53_cline-patched_incr_R2265...
+2026-11-12 13:18:17,136 - INFO - Container sweb.eval.sympy__sympy-21612.verified_full_glm53_cline-patched_incr_R2265 stopped successfully.
+2026-11-12 13:18:17,136 - INFO - Attempting to remove container sweb.eval.sympy__sympy-21612.verified_full_glm53_cline-patched_incr_R2265...
+2026-11-12 13:18:17,179 - INFO - Container sweb.eval.sympy__sympy-21612.verified_full_glm53_cline-patched_incr_R2265 removed successfully.

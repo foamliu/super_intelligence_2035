@@ -1,0 +1,120 @@
+diff --git a/seaborn/_core/scales.py b/seaborn/_core/scales.py
+index 55874bf..b4411e3 100644
+--- a/seaborn/_core/scales.py
++++ b/seaborn/_core/scales.py
+@@ -378,7 +378,16 @@ class ContinuousBase(Scale):
+             axis.set_view_interval(vmin, vmax)
+             locs = axis.major.locator()
+             locs = locs[(vmin <= locs) & (locs <= vmax)]
+-            labels = axis.major.formatter.format_ticks(locs)
++            formatter = axis.major.formatter
++            labels = formatter.format_ticks(locs)
++            # A ScalarFormatter can use an offset to reduce the magnitude of
++            # the tick labels; on an axis the offset gets displayed separately,
++            # but a legend has no way to convey it, so the labels need to
++            # reflect the full data values on their own.
++            if isinstance(formatter, ScalarFormatter) and formatter.get_offset():
++                formatter.set_useOffset(False)
++                formatter.set_scientific(False)
++                labels = formatter.format_ticks(locs)
+             new._legend = list(locs), list(labels)
+ 
+         return new
+diff --git a/seaborn/utils.py b/seaborn/utils.py
+index 2407853..ee26359 100644
+--- a/seaborn/utils.py
++++ b/seaborn/utils.py
+@@ -705,6 +705,14 @@ def locator_to_legend_entries(locator, limits, dtype):
+     # once pinned matplotlib>=3.1.0 with:
+     # formatted_levels = formatter.format_ticks(raw_levels)
+     formatter.set_locs(raw_levels)
++    if isinstance(formatter, mpl.ticker.ScalarFormatter) and formatter.get_offset():
++        # A ScalarFormatter can use an offset to reduce the magnitude of the
++        # tick labels; on an axis the offset gets displayed separately, but a
++        # legend has no way to convey it, so the labels need to reflect the
++        # full data values on their own.
++        formatter.set_useOffset(False)
++        formatter.set_scientific(False)
++        formatter.set_locs(raw_levels)
+     formatted_levels = [formatter(x) for x in raw_levels]
+ 
+     return raw_levels, formatted_levels
+diff --git a/tests/_core/test_plot.py b/tests/_core/test_plot.py
+index e4ba99e..0305073 100644
+--- a/tests/_core/test_plot.py
++++ b/tests/_core/test_plot.py
+@@ -2051,6 +2051,16 @@ class TestLegend:
+         p = Plot(**xy, color=["a", "b", "c", "d"]).add(NoLegendMark()).plot()
+         assert not p._figure.legends
+ 
++    def test_legend_formatter_offset(self, xy):
++
++        # Large values trigger an offset in the default ScalarFormatter,
++        # which has no place to be displayed in a legend; the legend labels
++        # should reflect the full data values.
++        s = pd.Series([2e6, 4e6, 6e6, 4e6], name="s")
++        p = Plot(**xy, pointsize=s).add(MockMark()).plot()
++        e, = p._legend_contents
++        assert e[-1] == ["2000000", "3000000", "4000000", "5000000", "6000000"]
++
+ 
+ class TestDefaultObject:
+ 
+diff --git a/tests/_core/test_scales.py b/tests/_core/test_scales.py
+index c4b39f5..e621ac6 100644
+--- a/tests/_core/test_scales.py
++++ b/tests/_core/test_scales.py
+@@ -21,6 +21,7 @@ from seaborn._core.properties import (
+     Alpha,
+     Color,
+     Fill,
++    PointSize,
+ )
+ from seaborn.palettes import color_palette
+ from seaborn.external.version import Version
+@@ -312,6 +313,27 @@ class TestContinuous:
+         with pytest.raises(TypeError, match="`like` must be"):
+             s.label(like=2)
+ 
++    def test_legend_offset(self, x):
++
++        x = pd.Series([2e6, 4e6, 6e6], name="x")
++        s = Continuous()._setup(x, PointSize())
++        values, labels = s._legend
++        assert values == [2e6, 3e6, 4e6, 5e6, 6e6]
++        assert labels == ["2000000", "3000000", "4000000", "5000000", "6000000"]
++
++    def test_legend_offset_with_zero(self, x):
++
++        x = pd.Series([0, 1e6, 2e6], name="x")
++        s = Continuous()._setup(x, PointSize())
++        values, labels = s._legend
++        assert labels == ["0", "500000", "1000000", "1500000", "2000000"]
++
++    def test_legend_no_offset(self, x):
++
++        s = Continuous()._setup(x, PointSize())
++        values, labels = s._legend
++        assert labels == ["2", "4", "6", "8"]
++
+ 
+ class TestNominal:
+ 
+diff --git a/tests/test_utils.py b/tests/test_utils.py
+index 02839a0..f77a05e 100644
+--- a/tests/test_utils.py
++++ b/tests/test_utils.py
+@@ -334,6 +334,13 @@ def test_locator_to_legend_entries():
+         # Use regex as mpl switched to minus sign, not hyphen, in 3.6
+         assert re.match(f"1e.0{exp}", str_levels[i])
+ 
++    # Large values where the formatter uses an offset should not lose
++    # the magnitude information in the legend
++    locator = mpl.ticker.MaxNLocator(nbins=3)
++    limits = (2e6, 6e6)
++    levels, str_levels = utils.locator_to_legend_entries(locator, limits, float)
++    assert str_levels == [str(int(l)) for l in levels]
++
+ 
+ def test_move_legend_matplotlib_objects():
+ 

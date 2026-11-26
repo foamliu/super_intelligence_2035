@@ -1,0 +1,46 @@
+{
+    "total_instances": 4,
+    "submitted_instances": 4,
+    "completed_instances": 4,
+    "resolved_instances": 2,
+    "unresolved_instances": 2,
+    "infra_failure_instances": 0,
+    "ambiguous_failure_instances": 0,
+    "empty_patch_instances": 0,
+    "error_instances": 0,
+    "completed_ids": [
+        "astropy__astropy-14598",
+        "django__django-12708",
+        "django__django-12713",
+        "django__django-12741"
+    ],
+    "incomplete_ids": [],
+    "empty_patch_ids": [],
+    "submitted_ids": [
+        "astropy__astropy-14598",
+        "django__django-12708",
+        "django__django-12713",
+        "django__django-12741"
+    ],
+    "resolved_ids": [
+        "django__django-12713",
+        "django__django-12741"
+    ],
+    "unresolved_ids": [
+        "astropy__astropy-14598",
+        "django__django-12708"
+    ],
+    "infra_failure_ids": [],
+    "ambiguous_failure_ids": [],
+    "failure_reasons": {},
+    "error_ids": [],
+    "schema_version": 2,
+    "unstopped_instances": 0,
+    "unstopped_containers": [],
+    "unremoved_images": [
+        "swebench/sweb.eval.x86_64.astropy_1776_astropy-14598:latest",
+        "swebench/sweb.eval.x86_64.django_1776_django-12708:latest",
+        "swebench/sweb.eval.x86_64.django_1776_django-12713:latest",
+        "swebench/sweb.eval.x86_64.django_1776_django-12741:latest"
+    ]
+}

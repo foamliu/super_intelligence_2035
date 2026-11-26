@@ -1,0 +1,100 @@
+diff --git a/sphinx/domains/cpp.py b/sphinx/domains/cpp.py
+index fe52d88..578327d 100644
+--- a/sphinx/domains/cpp.py
++++ b/sphinx/domains/cpp.py
+@@ -298,6 +298,7 @@ T = TypeVar('T')
+ 
+ _string_re = re.compile(r"[LuU8]?('([^'\\]*(?:\\.[^'\\]*)*)'"
+                         r'|"([^"\\]*(?:\\.[^"\\]*)*)")', re.S)
++_ud_suffix_re = re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*')
+ _visibility_re = re.compile(r'\b(public|private|protected)\b')
+ _operator_re = re.compile(r'''(?x)
+         \[\s*\]
+@@ -882,6 +883,22 @@ class ASTCharLiteral(ASTLiteral):
+         signode.append(nodes.Text(txt, txt))
+ 
+ 
++class ASTUserDefinedLiteral(ASTLiteral):
++    def __init__(self, data: str) -> None:
++        self.data = data
++
++    def _stringify(self, transform: StringifyTransform) -> str:
++        return self.data
++
++    def get_id(self, version: int) -> str:
++        return "L%sE" % self.data
++
++    def describe_signature(self, signode: TextElement, mode: str,
++                           env: "BuildEnvironment", symbol: "Symbol") -> None:
++        txt = str(self)
++        signode.append(nodes.Text(txt, txt))
++
++
+ class ASTThisLiteral(ASTExpression):
+     def _stringify(self, transform: StringifyTransform) -> str:
+         return "this"
+@@ -4662,18 +4679,23 @@ class DefinitionParser(BaseParser):
+                       integer_literal_re, octal_literal_re]:
+             pos = self.pos
+             if self.match(regex):
+-                while self.current_char in 'uUlLfF':
+-                    self.pos += 1
++                if self.match(_ud_suffix_re):
++                    return ASTUserDefinedLiteral(self.definition[pos:self.pos])
+                 return ASTNumberLiteral(self.definition[pos:self.pos])
+ 
+         string = self._parse_string()
+         if string is not None:
++            if self.match(_ud_suffix_re):
++                return ASTUserDefinedLiteral(string + self.matched_text)
+             return ASTStringLiteral(string)
+ 
+         # character-literal
+         if self.match(char_literal_re):
+             prefix = self.last_match.group(1)  # may be None when no prefix
+             data = self.last_match.group(2)
++            charText = self.last_match.group(0)
++            if self.match(_ud_suffix_re):
++                return ASTUserDefinedLiteral(charText + self.matched_text)
+             try:
+                 return ASTCharLiteral(prefix, data)
+             except UnicodeDecodeError as e:
+@@ -4682,7 +4704,6 @@ class DefinitionParser(BaseParser):
+                 self.fail("Can not handle character literal"
+                           " resulting in multiple decoded characters.")
+ 
+-        # TODO: user-defined lit
+         return None
+ 
+     def _parse_fold_or_paren_expression(self) -> ASTExpression:
+diff --git a/tests/test_domain_cpp.py b/tests/test_domain_cpp.py
+index 9db741a..f73f466 100644
+--- a/tests/test_domain_cpp.py
++++ b/tests/test_domain_cpp.py
+@@ -176,7 +176,14 @@ def test_expressions():
+         exprCheck(p + "'\\U0001f34c'", t + "127820")
+         exprCheck(p + "'\\U0001F34C'", t + "127820")
+ 
+-    # TODO: user-defined lit
++    # user-defined literals
++    exprCheck('42_km', 'L42_kmE')
++    exprCheck('42foo', 'L42fooE')
++    exprCheck('3.14_rad', 'L3.14_radE')
++    exprCheck('6.62607015e-34q_J', 'L6.62607015e-34q_JE')
++    exprCheck('6.62607015e-34q_J * 1q_s', 'mlL6.62607015e-34q_JEL1q_sE')
++    exprCheck('"hello"_world', 'L"hello"_worldE')
++    exprCheck("'a'_udl", "L'a'_udlE")
+     exprCheck('(... + Ns)', '(... + Ns)', id4='flpl2Ns')
+     exprCheck('(Ns + ...)', '(Ns + ...)', id4='frpl2Ns')
+     exprCheck('(Ns + ... + 0)', '(Ns + ... + 0)', id4='fLpl2NsL0E')
+@@ -806,6 +813,10 @@ def test_initializers():
+     check('member', 'T v{42, 42, 42}', idsMember)
+     check('member', 'T v{42, 42, 42,}', idsMember)
+     check('member', 'T v{42, 42, args...}', idsMember)
++    # with '=', user-defined literals
++    check('member', 'T v = 42_km', idsMember)
++    check('member', 'auto planck_constant = 6.62607015e-34q_J * 1q_s',
++          {1: 'planck_constant__auto', 2: '15planck_constant'})
+     # other
+     check('member', 'T v = T{}', idsMember)
+ 

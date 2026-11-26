@@ -1,0 +1,122 @@
+2026-11-10 07:57:53,862 - INFO - Creating container for django__django-14053...
+2026-11-10 07:57:53,880 - INFO - Container for django__django-14053 created: b07b15e2509905000cacc7767b4f73e13d80288c8ab884f5c6c6105f2d143b44
+2026-11-10 07:57:54,343 - INFO - Container for django__django-14053 started: b07b15e2509905000cacc7767b4f73e13d80288c8ab884f5c6c6105f2d143b44
+2026-11-10 07:57:54,345 - INFO - Intermediate patch for django__django-14053 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2026/hermes-glm-5.3-flash/django__django-14053/patch.diff, now applying to container...
+2026-11-10 07:57:54,459 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/staticfiles/storage.py...
+Checking patch tests/staticfiles_tests/test_storage.py...
+Applied patch django/contrib/staticfiles/storage.py cleanly.
+Applied patch tests/staticfiles_tests/test_storage.py cleanly.
+
+2026-11-10 07:57:55,933 - INFO - Git diff before:
+diff --git a/django/contrib/staticfiles/storage.py b/django/contrib/staticfiles/storage.py
+index 494890cc23..bf49580780 100644
+--- a/django/contrib/staticfiles/storage.py
++++ b/django/contrib/staticfiles/storage.py
+@@ -226,17 +226,24 @@ class HashedFilesMixin:
+             path for path in paths
+             if matches_patterns(path, self._patterns)
+         ]
+-        # Do a single pass first. Post-process all files once, then repeat for
+-        # adjustable files.
++        # Adjustable files to yield at end, keyed by the original path.
++        processed_adjustable_paths = {}
++
++        # Do a single pass first. Post-process all files once, yielding not
++        # adjustable files and exceptions, and collecting adjustable files.
+         for name, hashed_name, processed, _ in self._post_process(paths, adjustable_paths, hashed_files):
+-            yield name, hashed_name, processed
++            if name not in adjustable_paths or isinstance(processed, Exception):
++                yield name, hashed_name, processed
++            else:
++                processed_adjustable_paths[name] = (name, hashed_name, processed)
+ 
+         paths = {path: paths[path] for path in adjustable_paths}
+ 
+         for i in range(self.max_post_process_passes):
+             substitutions = False
+             for name, hashed_name, processed, subst in self._post_process(paths, adjustable_paths, hashed_files):
+-                yield name, hashed_name, processed
++                # Overwrite since hashed_name may be newer.
++                processed_adjustable_paths[name] = (name, hashed_name, processed)
+                 substitutions = substitutions or subst
+ 
+             if not substitutions:
+@@ -248,6 +255,9 @@ class HashedFilesMixin:
+         # Store the processed paths
+         self.hashed_files.update(hashed_files)
+ 
++        # Yield adjustable files with final, hashed name.
++        yield from processed_adjustable_paths.values()
++
+     def _post_process(self, paths, adjustable_paths, hashed_files):
+         # Sort the files by directory level
+         def path_level(name):
+diff --git a/tests/staticfiles_tests/test_storage.py b/tests/staticfiles_tests/test_storage.py
+index dc45a0b839..7ae88e6c68 100644
+--- a/tests/staticfiles_tests/test_storage.py
++++ b/tests/staticfiles_tests/test_storage.py
+@@ -203,6 +203,8 @@ class TestHashedFiles:
+         self.assertIn(os.path.join('cached', 'css', 'window.css'), stats['post_processed'])
+         self.assertIn(os.path.join('cached', 'css', 'img', 'window.png'), stats['unmodified'])
+         self.assertIn(os.path.join('test', 'nonascii.css'), stats['post_processed'])
++        # No file should be yielded twice.
++        self.assertCountEqual(stats['post_processed'], set(stats['post_processed']))
+         self.assertPostCondition()
+ 
+     def test_css_import_case_insensitive(self):
+2026-11-10 07:57:55,936 - INFO - Eval script for django__django-14053 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2026/hermes-glm-5.3-flash/django__django-14053/eval.sh; copying to container...
+2026-11-10 07:58:04,050 - INFO - Test runtime: 8.03 seconds
+2026-11-10 07:58:04,053 - INFO - Test output for django__django-14053 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2026/hermes-glm-5.3-flash/django__django-14053/test_output.txt
+2026-11-10 07:58:04,133 - INFO - Git diff after:
+diff --git a/django/contrib/staticfiles/storage.py b/django/contrib/staticfiles/storage.py
+index 494890cc23..bf49580780 100644
+--- a/django/contrib/staticfiles/storage.py
++++ b/django/contrib/staticfiles/storage.py
+@@ -226,17 +226,24 @@ class HashedFilesMixin:
+             path for path in paths
+             if matches_patterns(path, self._patterns)
+         ]
+-        # Do a single pass first. Post-process all files once, then repeat for
+-        # adjustable files.
++        # Adjustable files to yield at end, keyed by the original path.
++        processed_adjustable_paths = {}
++
++        # Do a single pass first. Post-process all files once, yielding not
++        # adjustable files and exceptions, and collecting adjustable files.
+         for name, hashed_name, processed, _ in self._post_process(paths, adjustable_paths, hashed_files):
+-            yield name, hashed_name, processed
++            if name not in adjustable_paths or isinstance(processed, Exception):
++                yield name, hashed_name, processed
++            else:
++                processed_adjustable_paths[name] = (name, hashed_name, processed)
+ 
+         paths = {path: paths[path] for path in adjustable_paths}
+ 
+         for i in range(self.max_post_process_passes):
+             substitutions = False
+             for name, hashed_name, processed, subst in self._post_process(paths, adjustable_paths, hashed_files):
+-                yield name, hashed_name, processed
++                # Overwrite since hashed_name may be newer.
++                processed_adjustable_paths[name] = (name, hashed_name, processed)
+                 substitutions = substitutions or subst
+ 
+             if not substitutions:
+@@ -248,6 +255,9 @@ class HashedFilesMixin:
+         # Store the processed paths
+         self.hashed_files.update(hashed_files)
+ 
++        # Yield adjustable files with final, hashed name.
++        yield from processed_adjustable_paths.values()
++
+     def _post_process(self, paths, adjustable_paths, hashed_files):
+         # Sort the files by directory level
+         def path_level(name):
+2026-11-10 07:58:04,133 - INFO - Git diff changed after running eval script
+2026-11-10 07:58:04,133 - INFO - Grading answer for django__django-14053...
+2026-11-10 07:58:04,134 - INFO - report: {'django__django-14053': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['post_processing behaves correctly.'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_hashed_name (staticfiles_tests.test_storage.TestCollectionNoneHashStorage)', 'test_collect_static_files_default_permissions (staticfiles_tests.test_storage.TestStaticFilePermissions)', 'test_collect_static_files_permissions (staticfiles_tests.test_storage.TestStaticFilePermissions)', 'test_collect_static_files_subclass_of_static_storage (staticfiles_tests.test_storage.TestStaticFilePermissions)', 'With storage classes having several file extension patterns, only the', 'test_template_tag_return (staticfiles_tests.test_storage.TestCollectionSimpleStorage)', 'test_template_tag_simple_content (staticfiles_tests.test_storage.TestCollectionSimpleStorage)', 'test_file_change_after_collectstatic (staticfiles_tests.test_storage.TestCollectionHashedFilesCache)', 'test_clear_empties_manifest (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_css_import_case_insensitive (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_import_loop (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'See #18050', 'test_intermediate_files (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_loaded_cache (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_manifest_does_not_exist (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_manifest_does_not_ignore_permission_error (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_manifest_exists (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_missing_entry (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_parse_cache (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_path_ignored_completely (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_path_with_fragment (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_path_with_querystring (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_path_with_querystring_and_fragment (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'post_processing indicates the origin of the error when it fails.', 'test_template_tag_absolute (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'Like test_template_tag_absolute, but for a file in STATIC_ROOT (#26249).', 'test_template_tag_deep_relative (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_template_tag_relative (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_template_tag_return (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_template_tag_simple_content (staticfiles_tests.test_storage.TestCollectionManifestStorage)', 'test_template_tag_url (staticfiles_tests.test_storage.TestCollectionManifestStorage)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14053: resolved: True
+2026-11-10 07:58:04,136 - INFO - Attempting to stop container sweb.eval.django__django-14053.verified_full_glm53_hermes_incr_R2026...
+2026-11-10 07:58:20,329 - INFO - Container sweb.eval.django__django-14053.verified_full_glm53_hermes_incr_R2026 stopped successfully.
+2026-11-10 07:58:20,329 - INFO - Attempting to remove container sweb.eval.django__django-14053.verified_full_glm53_hermes_incr_R2026...
+2026-11-10 07:58:20,378 - INFO - Container sweb.eval.django__django-14053.verified_full_glm53_hermes_incr_R2026 removed successfully.

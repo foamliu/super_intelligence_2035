@@ -1,0 +1,288 @@
+2026-10-30 15:55:54,204 - INFO - Creating container for sympy__sympy-13647...
+2026-10-30 15:55:54,255 - INFO - Container for sympy__sympy-13647 created: ae2d62f2ac3ef03d5667116ea5db6a269ec8812f3c518a94d166e7772adda23a
+2026-10-30 15:55:58,743 - INFO - Container for sympy__sympy-13647 started: ae2d62f2ac3ef03d5667116ea5db6a269ec8812f3c518a94d166e7772adda23a
+2026-10-30 15:55:58,748 - INFO - Intermediate patch for sympy__sympy-13647 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-13647/patch.diff, now applying to container...
+2026-10-30 15:55:58,973 - INFO - >>>>> Applied Patch:
+Checking patch sympy/core/basic.py...
+warning: sympy/core/basic.py has type 100755, expected 100644
+Checking patch sympy/core/containers.py...
+warning: sympy/core/containers.py has type 100755, expected 100644
+Checking patch sympy/matrices/common.py...
+warning: sympy/matrices/common.py has type 100755, expected 100644
+Checking patch sympy/matrices/matrices.py...
+warning: sympy/matrices/matrices.py has type 100755, expected 100644
+Checking patch sympy/matrices/sparse.py...
+warning: sympy/matrices/sparse.py has type 100755, expected 100644
+Checking patch sympy/plotting/plot.py...
+warning: sympy/plotting/plot.py has type 100755, expected 100644
+Applied patch sympy/core/basic.py cleanly.
+Applied patch sympy/core/containers.py cleanly.
+Applied patch sympy/matrices/common.py cleanly.
+Applied patch sympy/matrices/matrices.py cleanly.
+Applied patch sympy/matrices/sparse.py cleanly.
+Applied patch sympy/plotting/plot.py cleanly.
+
+2026-10-30 15:55:59,475 - INFO - Git diff before:
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index d4ca323e0..099b074cb 100755
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,10 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/core/containers.py b/sympy/core/containers.py
+index 15abd93e3..20eddaa19 100755
+--- a/sympy/core/containers.py
++++ b/sympy/core/containers.py
+@@ -13,6 +13,10 @@
+ from sympy.core.sympify import sympify, converter
+ from sympy.utilities.iterables import iterable
+ 
++try:
++    import collections.abc as collections_abc
++except ImportError:
++    import collections as collections_abc
+ import collections
+ 
+ 
+@@ -268,7 +272,7 @@ def _sorted_args(self):
+         return tuple(sorted(self.args, key=default_sort_key))
+ 
+ 
+-class OrderedSet(collections.MutableSet):
++class OrderedSet(collections_abc.MutableSet):
+     def __init__(self, iterable=None):
+         if iterable:
+             self.map = collections.OrderedDict((item, None) for item in iterable)
+diff --git a/sympy/matrices/common.py b/sympy/matrices/common.py
+index 056d9bc49..57e1c61c4 100755
+--- a/sympy/matrices/common.py
++++ b/sympy/matrices/common.py
+@@ -6,6 +6,10 @@
+ 
+ from __future__ import print_function, division
+ 
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import collections
+ from sympy.core.add import Add
+ from sympy.core.basic import Basic, Atom
+@@ -86,7 +90,7 @@ def entry(i, j):
+                 return self[i, j]
+             elif pos <= j < pos + other.cols:
+                 return other[i, j - pos]
+-            return self[i, j - pos - other.cols]
++            return self[i, j - other.cols]
+ 
+         return self._new(self.rows, self.cols + other.cols,
+                          lambda i, j: entry(i, j))
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index 5e241c68e..5595d5bb2 100755
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1,5 +1,9 @@
+ from __future__ import print_function, division
+ 
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import collections
+ from sympy.assumptions.refine import refine
+ from sympy.core.add import Add
+@@ -2045,7 +2049,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+                                  "Both dimensions must be positive".format(rows, cols))
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 7701cbc17..f409d58dc 100755
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -14,6 +14,10 @@
+ 
+ from .matrices import MatrixBase, ShapeError, a2idx
+ from .dense import Matrix
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import collections
+ 
+ 
+@@ -53,7 +57,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index b3b0237d1..70b11b0da 100755
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,10 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import warnings
+ import sys
+2026-10-30 15:55:59,477 - INFO - Eval script for sympy__sympy-13647 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-13647/eval.sh; copying to container...
+2026-10-30 15:56:10,883 - INFO - Test runtime: 11.32 seconds
+2026-10-30 15:56:10,885 - INFO - Test output for sympy__sympy-13647 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sympy__sympy-13647/test_output.txt
+2026-10-30 15:56:10,949 - INFO - Git diff after:
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index d4ca323e0..099b074cb 100755
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,10 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/core/containers.py b/sympy/core/containers.py
+index 15abd93e3..20eddaa19 100755
+--- a/sympy/core/containers.py
++++ b/sympy/core/containers.py
+@@ -13,6 +13,10 @@
+ from sympy.core.sympify import sympify, converter
+ from sympy.utilities.iterables import iterable
+ 
++try:
++    import collections.abc as collections_abc
++except ImportError:
++    import collections as collections_abc
+ import collections
+ 
+ 
+@@ -268,7 +272,7 @@ def _sorted_args(self):
+         return tuple(sorted(self.args, key=default_sort_key))
+ 
+ 
+-class OrderedSet(collections.MutableSet):
++class OrderedSet(collections_abc.MutableSet):
+     def __init__(self, iterable=None):
+         if iterable:
+             self.map = collections.OrderedDict((item, None) for item in iterable)
+diff --git a/sympy/matrices/common.py b/sympy/matrices/common.py
+index 056d9bc49..57e1c61c4 100755
+--- a/sympy/matrices/common.py
++++ b/sympy/matrices/common.py
+@@ -6,6 +6,10 @@
+ 
+ from __future__ import print_function, division
+ 
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import collections
+ from sympy.core.add import Add
+ from sympy.core.basic import Basic, Atom
+@@ -86,7 +90,7 @@ def entry(i, j):
+                 return self[i, j]
+             elif pos <= j < pos + other.cols:
+                 return other[i, j - pos]
+-            return self[i, j - pos - other.cols]
++            return self[i, j - other.cols]
+ 
+         return self._new(self.rows, self.cols + other.cols,
+                          lambda i, j: entry(i, j))
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index 5e241c68e..5595d5bb2 100755
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -1,5 +1,9 @@
+ from __future__ import print_function, division
+ 
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import collections
+ from sympy.assumptions.refine import refine
+ from sympy.core.add import Add
+@@ -2045,7 +2049,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+                                  "Both dimensions must be positive".format(rows, cols))
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 7701cbc17..f409d58dc 100755
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -14,6 +14,10 @@
+ 
+ from .matrices import MatrixBase, ShapeError, a2idx
+ from .dense import Matrix
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import collections
+ 
+ 
+@@ -53,7 +57,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index b3b0237d1..70b11b0da 100755
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,10 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import warnings
+ import sys
+2026-10-30 15:56:10,949 - INFO - Grading answer for sympy__sympy-13647...
+2026-10-30 15:56:10,953 - INFO - report: {'sympy__sympy-13647': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_col_insert'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test__MinimalMatrix', 'test_vec', 'test_tolist', 'test_row_col_del', 'test_get_diag_blocks1', 'test_get_diag_blocks2', 'test_shape', 'test_reshape', 'test_row_col', 'test_row_join', 'test_col_join', 'test_row_insert', 'test_extract', 'test_hstack', 'test_vstack', 'test_atoms', 'test_free_symbols', 'test_has', 'test_is_anti_symmetric', 'test_diagonal_symmetrical', 'test_is_hermitian', 'test_is_Identity', 'test_is_symbolic', 'test_is_upper', 'test_is_lower', 'test_is_square', 'test_is_symmetric', 'test_is_hessenberg', 'test_is_zero', 'test_values', 'test_applyfunc', 'test_adjoint', 'test_as_real_imag', 'test_conjugate', 'test_doit', 'test_evalf', 'test_expand', 'test_replace', 'test_replace_map', 'test_simplify', 'test_subs', 'test_trace', 'test_xreplace', 'test_permute', 'test_abs', 'test_add', 'test_multiplication', 'test_power', 'test_neg', 'test_sub', 'test_div', 'test_det', 'test_adjugate', 'test_cofactor_and_minors', 'test_charpoly', 'test_row_op', 'test_col_op', 'test_is_echelon', 'test_echelon_form', 'test_rref', 'test_eye', 'test_ones', 'test_zeros', 'test_diag', 'test_jordan_block', 'test_columnspace', 'test_rowspace', 'test_nullspace', 'test_eigenvals', 'test_eigenvects', 'test_left_eigenvects', 'test_diagonalize', 'test_is_diagonalizable', 'test_jordan_form', 'test_singular_values', 'test_integrate'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-13647: resolved: True
+2026-10-30 15:56:10,954 - INFO - Attempting to stop container sweb.eval.sympy__sympy-13647.verified_full_opencode...
+2026-10-30 15:56:29,374 - INFO - Container sweb.eval.sympy__sympy-13647.verified_full_opencode stopped successfully.
+2026-10-30 15:56:29,374 - INFO - Attempting to remove container sweb.eval.sympy__sympy-13647.verified_full_opencode...
+2026-10-30 15:56:29,416 - INFO - Container sweb.eval.sympy__sympy-13647.verified_full_opencode removed successfully.

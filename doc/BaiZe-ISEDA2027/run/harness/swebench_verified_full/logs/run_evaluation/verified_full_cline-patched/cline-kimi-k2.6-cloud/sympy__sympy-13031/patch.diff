@@ -1,0 +1,179 @@
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d0..881a5f9 100644
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,7 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++from collections.abc import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index 04452ce..148aa76 100644
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,7 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping, defaultdict
++from collections.abc import Mapping
++from collections import defaultdict
+ from itertools import chain
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+diff --git a/sympy/holonomic/linearsolver.py b/sympy/holonomic/linearsolver.py
+index f43e983..a23341f 100644
+--- a/sympy/holonomic/linearsolver.py
++++ b/sympy/holonomic/linearsolver.py
+@@ -21,7 +21,7 @@ def _sympify(a):
+     def row_join(self, rhs):
+         from sympy.matrices import MutableMatrix
+         # Allows you to build a matrix even if it is null matrix
+-        if not self:
++        if self.rows == 0 and self.cols == 0:
+             return type(self)(rhs)
+ 
+         if self.rows != rhs.rows:
+@@ -35,7 +35,7 @@ def row_join(self, rhs):
+     def col_join(self, bott):
+         from sympy.matrices import MutableMatrix
+         # Allows you to build a matrix even if it is null matrix
+-        if not self:
++        if self.rows == 0 and self.cols == 0:
+             return type(self)(bott)
+ 
+         if self.cols != bott.cols:
+diff --git a/sympy/matrices/common.py b/sympy/matrices/common.py
+index 7ef51bc..dbec6c6 100644
+--- a/sympy/matrices/common.py
++++ b/sympy/matrices/common.py
+@@ -201,7 +201,7 @@ def col_insert(self, pos, other):
+         row_insert
+         """
+         # Allows you to build a matrix even if it is null matrix
+-        if not self:
++        if self.rows == 0 and self.cols == 0:
+             return type(self)(other)
+ 
+         if pos < 0:
+@@ -438,7 +438,7 @@ def row_insert(self, pos, other):
+         """
+         from sympy.matrices import MutableMatrix
+         # Allows you to build a matrix even if it is null matrix
+-        if not self:
++        if self.rows == 0 and self.cols == 0:
+             return self._new(other)
+ 
+         if pos < 0:
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index da1d307..9ce312c 100644
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -2032,7 +2032,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+                                  "Both dimensions must be positive".format(rows, cols))
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index e6f36cd..ad4ca77 100644
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -53,7 +53,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+@@ -985,7 +985,7 @@ def col_join(self, other):
+         >>> C == A.row_insert(A.rows, Matrix(B))
+         True
+         """
+-        if not self:
++        if self.rows == 0 and self.cols == 0:
+             return type(self)(other)
+         A, B = self, other
+         if not A.cols == B.cols:
+@@ -1191,7 +1191,7 @@ def row_join(self, other):
+         >>> C == A.col_insert(A.cols, B)
+         True
+         """
+-        if not self:
++        if self.rows == 0 and self.cols == 0:
+             return type(self)(other)
+         A, B = self, other
+         if not A.rows == B.rows:
+diff --git a/sympy/matrices/tests/test_commonmatrix.py b/sympy/matrices/tests/test_commonmatrix.py
+index 3e27ecc..ba59b8e 100644
+--- a/sympy/matrices/tests/test_commonmatrix.py
++++ b/sympy/matrices/tests/test_commonmatrix.py
+@@ -229,6 +229,10 @@ def test_hstack():
+     m = ShapingOnlyMatrix.hstack(M1, M2, M3, M4)
+     assert m.rows == 0 and m.cols == 6
+ 
++    # test empty matrix row_insert/col_insert
++    assert Matrix.zeros(0, 3).col_insert(0, Matrix.zeros(0, 2)).shape == (0, 5)
++    assert Matrix.zeros(3, 0).row_insert(0, Matrix.zeros(2, 0)).shape == (5, 0)
++
+ def test_vstack():
+     m = ShapingOnlyMatrix(4, 3, lambda i, j: i*3 + j)
+     m2 = ShapingOnlyMatrix(3, 4, lambda i, j: i*3 + j)
+@@ -249,6 +253,14 @@ def test_vstack():
+     raises(ShapeError, lambda: m.vstack(m, m2))
+     assert Matrix.vstack() == Matrix()
+ 
++    # test regression #12938 for vstack
++    M1 = Matrix.zeros(0, 0)
++    M2 = Matrix.zeros(1, 0)
++    M3 = Matrix.zeros(2, 0)
++    M4 = Matrix.zeros(3, 0)
++    m = ShapingOnlyMatrix.vstack(M1, M2, M3, M4)
++    assert m.rows == 6 and m.cols == 0
++
+ 
+ # PropertiesOnlyMatrix tests
+ def test_atoms():
+diff --git a/sympy/matrices/tests/test_matrices.py b/sympy/matrices/tests/test_matrices.py
+index bca44a6..ed2a4b6 100644
+--- a/sympy/matrices/tests/test_matrices.py
++++ b/sympy/matrices/tests/test_matrices.py
+@@ -2453,6 +2453,17 @@ def test_issue_5320():
+         [1, 0, 2, 0],
+         [0, 1, 0, 2]
+     ])
++    # test empty matrix hstack/vstack for SparseMatrix
++    M1 = cls.zeros(0, 0)
++    M2 = cls.zeros(0, 1)
++    M3 = cls.zeros(0, 2)
++    M4 = cls.zeros(0, 3)
++    assert cls.hstack(M1, M2, M3, M4).shape == (0, 6)
++    M1 = cls.zeros(0, 0)
++    M2 = cls.zeros(1, 0)
++    M3 = cls.zeros(2, 0)
++    M4 = cls.zeros(3, 0)
++    assert cls.vstack(M1, M2, M3, M4).shape == (6, 0)
+ 
+ def test_issue_11944():
+     A = Matrix([[1]])
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index d5abe84..a04226a 100644
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+ 

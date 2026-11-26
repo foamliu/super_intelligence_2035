@@ -1,0 +1,111 @@
+diff --git a/django/db/models/functions/datetime.py b/django/db/models/functions/datetime.py
+index b6594b043b..a0141154c4 100644
+--- a/django/db/models/functions/datetime.py
++++ b/django/db/models/functions/datetime.py
+@@ -292,7 +292,7 @@ class TruncDate(TruncBase):
+     def as_sql(self, compiler, connection):
+         # Cast to date rather than truncate to date.
+         lhs, lhs_params = compiler.compile(self.lhs)
+-        tzname = timezone.get_current_timezone_name() if settings.USE_TZ else None
++        tzname = self.get_tzname() if settings.USE_TZ else None
+         sql = connection.ops.datetime_cast_date_sql(lhs, tzname)
+         return sql, lhs_params
+ 
+@@ -305,7 +305,7 @@ class TruncTime(TruncBase):
+     def as_sql(self, compiler, connection):
+         # Cast to time rather than truncate to time.
+         lhs, lhs_params = compiler.compile(self.lhs)
+-        tzname = timezone.get_current_timezone_name() if settings.USE_TZ else None
++        tzname = self.get_tzname() if settings.USE_TZ else None
+         sql = connection.ops.datetime_cast_time_sql(lhs, tzname)
+         return sql, lhs_params
+ 
+diff --git a/docs/ref/models/database-functions.txt b/docs/ref/models/database-functions.txt
+index f5efdb7e87..ac3a8cbdb4 100644
+--- a/docs/ref/models/database-functions.txt
++++ b/docs/ref/models/database-functions.txt
+@@ -623,7 +623,7 @@ that deal with date-parts can be used with ``DateField``::
+ ``DateTimeField`` truncation
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-.. class:: TruncDate(expression, **extra)
++.. class:: TruncDate(expression, output_field=None, tzinfo=None, **extra)
+ 
+     .. attribute:: lookup_name = 'date'
+     .. attribute:: output_field = DateField()
+@@ -632,7 +632,7 @@ that deal with date-parts can be used with ``DateField``::
+ truncate function. It's also registered as a transform on  ``DateTimeField`` as
+ ``__date``.
+ 
+-.. class:: TruncTime(expression, **extra)
++.. class:: TruncTime(expression, output_field=None, tzinfo=None, **extra)
+ 
+     .. attribute:: lookup_name = 'time'
+     .. attribute:: output_field = TimeField()
+diff --git a/docs/releases/3.2.txt b/docs/releases/3.2.txt
+index d29a582d74..78779829f6 100644
+--- a/docs/releases/3.2.txt
++++ b/docs/releases/3.2.txt
+@@ -290,6 +290,11 @@ Models
+   distinct fields if there's only one field specified in
+   :meth:`.QuerySet.distinct`.
+ 
++* The new ``tzinfo`` attribute of
++  :class:`~django.db.models.functions.TruncDate` and
++  :class:`~django.db.models.functions.TruncTime` allows truncating to a
++  specific timezone.
++
+ Pagination
+ ~~~~~~~~~~
+ 
+diff --git a/tests/db_functions/datetime/test_extract_trunc.py b/tests/db_functions/datetime/test_extract_trunc.py
+index f8ebb81cb5..2205136b17 100644
+--- a/tests/db_functions/datetime/test_extract_trunc.py
++++ b/tests/db_functions/datetime/test_extract_trunc.py
+@@ -1037,6 +1037,46 @@ class DateFunctionTests(TestCase):
+ @override_settings(USE_TZ=True, TIME_ZONE='UTC')
+ class DateFunctionWithTimeZoneTests(DateFunctionTests):
+ 
++    def test_trunc_date_func_with_timezone(self):
++        start_datetime = datetime(2015, 6, 15, 14, 30, 50, 321)
++        end_datetime = datetime(2016, 6, 15, 14, 10, 50, 123)
++        start_datetime = timezone.make_aware(start_datetime, is_dst=False)
++        end_datetime = timezone.make_aware(end_datetime, is_dst=False)
++        self.create_model(start_datetime, end_datetime)
++        self.create_model(end_datetime, start_datetime)
++        melb = pytz.timezone('Australia/Melbourne')
++        with timezone.override(timezone.utc):
++            self.assertQuerysetEqual(
++                DTModel.objects.annotate(
++                    extracted=TruncDate('start_datetime', tzinfo=melb),
++                ).order_by('start_datetime'),
++                [
++                    (start_datetime, start_datetime.astimezone(melb).date()),
++                    (end_datetime, end_datetime.astimezone(melb).date()),
++                ],
++                lambda m: (m.start_datetime, m.extracted)
++            )
++
++    def test_trunc_time_func_with_timezone(self):
++        start_datetime = datetime(2015, 6, 15, 14, 30, 50, 321)
++        end_datetime = datetime(2016, 6, 15, 14, 10, 50, 123)
++        start_datetime = timezone.make_aware(start_datetime, is_dst=False)
++        end_datetime = timezone.make_aware(end_datetime, is_dst=False)
++        self.create_model(start_datetime, end_datetime)
++        self.create_model(end_datetime, start_datetime)
++        melb = pytz.timezone('Australia/Melbourne')
++        with timezone.override(timezone.utc):
++            self.assertQuerysetEqual(
++                DTModel.objects.annotate(
++                    extracted=TruncTime('start_datetime', tzinfo=melb),
++                ).order_by('start_datetime'),
++                [
++                    (start_datetime, start_datetime.astimezone(melb).time()),
++                    (end_datetime, end_datetime.astimezone(melb).time()),
++                ],
++                lambda m: (m.start_datetime, m.extracted)
++            )
++
+     def test_extract_func_with_timezone(self):
+         start_datetime = datetime(2015, 6, 15, 23, 30, 1, 321)
+         end_datetime = datetime(2015, 6, 16, 13, 11, 27, 123)

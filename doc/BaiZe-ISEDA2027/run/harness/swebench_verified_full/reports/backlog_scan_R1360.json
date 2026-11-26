@@ -1,0 +1,3 @@
+Total BACKLOG items (real patch, no report.json): 2
+  deepseek-harness     django__django-14580                               patchlen=599
+  hermes               pytest-dev__pytest-10081                           patchlen=802

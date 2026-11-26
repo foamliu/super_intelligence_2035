@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "psf__requests-6028",
+    "model_name_or_path": "codex-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/requests/adapters.py b/requests/adapters.py\nindex fe22ff4..4223cb3 100644\n--- a/requests/adapters.py\n+++ b/requests/adapters.py\n@@ -192,7 +192,7 @@ class HTTPAdapter(BaseAdapter):\n         else:\n             proxy_headers = self.proxy_headers(proxy)\n             manager = self.proxy_manager[proxy] = proxy_from_url(\n-                proxy,\n+                urldefragauth(proxy),\n                 proxy_headers=proxy_headers,\n                 num_pools=self._pool_connections,\n                 maxsize=self._pool_maxsize,\n"
+  }
+]

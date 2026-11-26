@@ -1,0 +1,387 @@
+{
+  "timestamp": "2026-11-08 23:04:04",
+  "model": {
+    "name": "BaiZe-2B (real model, ETA pretrain ckpt ~2026-12-25)",
+    "params_B": 2.0,
+    "hidden_dim": 2048,
+    "num_layers": 42,
+    "vocab_size": 73448,
+    "is_real_baize": true,
+    "note": "白泽正式模型，Mamba2架构，从pretrain S1 ckpt resume"
+  },
+  "gpu": {
+    "name": "A40",
+    "memory_GB": 46,
+    "bf16_tflops": 150,
+    "bandwidth_GBps": 696
+  },
+  "num_gpu": 4,
+  "ctx_configs": [
+    {
+      "label": "ctx4096",
+      "ctx_len": 4096,
+      "gbs": 128,
+      "mbs": 2,
+      "throughput": {
+        "tokens_per_sec": 15000.0,
+        "seconds_per_step": 34.952533333333335,
+        "steps_per_hour": 102.996826171875,
+        "tokens_per_step": 524288,
+        "flops_per_step": 6291456000000000.0,
+        "mfu": 0.3,
+        "memory_full": {
+          "total_GB": 32.455716863999996,
+          "per_gpu_GB": 8.113929215999999,
+          "fits": true
+        },
+        "memory_lora": {
+          "total_GB": 13.055716863999999,
+          "per_gpu_GB": 3.2639292159999997,
+          "fits": true
+        }
+      },
+      "time_pred": {
+        "total_steps": 3000,
+        "seconds_per_step": 34.952533333333335,
+        "total_seconds": 104857.6,
+        "hours": 29.127111111111113,
+        "days": 1.2136296296296296,
+        "total_tokens_consumed": 1572864000,
+        "total_tokens_B": 1.572864,
+        "warmup_steps": 100,
+        "decay_steps": 300
+      },
+      "loss_pred": {
+        "initial_loss": 2.8,
+        "final_loss": 2.545722719619071,
+        "delta_loss": 0.2542772803809286,
+        "total_unique_tokens": 2741370000.0,
+        "total_unique_B": 2.74137,
+        "epochs": 0.5737510806640476,
+        "domain_final_ppl": 3.3,
+        "domain_epochs": 93.78235093696763,
+        "pyaether_epochs": 110.10048,
+        "overfitting_risk": "high"
+      }
+    },
+    {
+      "label": "ctx8192",
+      "ctx_len": 8192,
+      "gbs": 128,
+      "mbs": 1,
+      "throughput": {
+        "tokens_per_sec": 15000.0,
+        "seconds_per_step": 69.90506666666667,
+        "steps_per_hour": 51.4984130859375,
+        "tokens_per_step": 1048576,
+        "flops_per_step": 1.2582912e+16,
+        "mfu": 0.3,
+        "memory_full": {
+          "total_GB": 32.455716863999996,
+          "per_gpu_GB": 8.113929215999999,
+          "fits": true
+        },
+        "memory_lora": {
+          "total_GB": 13.055716863999999,
+          "per_gpu_GB": 3.2639292159999997,
+          "fits": true
+        }
+      },
+      "time_pred": {
+        "total_steps": 3000,
+        "seconds_per_step": 69.90506666666667,
+        "total_seconds": 209715.2,
+        "hours": 58.254222222222225,
+        "days": 2.4272592592592592,
+        "total_tokens_consumed": 3145728000,
+        "total_tokens_B": 3.145728,
+        "warmup_steps": 100,
+        "decay_steps": 300
+      },
+      "loss_pred": {
+        "initial_loss": 2.8,
+        "final_loss": 2.3722666083855444,
+        "delta_loss": 0.42773339161445545,
+        "total_unique_tokens": 2741370000.0,
+        "total_unique_B": 2.74137,
+        "epochs": 1.1475021613280951,
+        "domain_final_ppl": 3.3,
+        "domain_epochs": 187.56470187393526,
+        "pyaether_epochs": 220.20096,
+        "overfitting_risk": "high"
+      }
+    },
+    {
+      "label": "ctx16384",
+      "ctx_len": 16384,
+      "gbs": 128,
+      "mbs": 1,
+      "throughput": {
+        "tokens_per_sec": 15000.0,
+        "seconds_per_step": 139.81013333333334,
+        "steps_per_hour": 25.74920654296875,
+        "tokens_per_step": 2097152,
+        "flops_per_step": 2.5165824e+16,
+        "mfu": 0.3,
+        "memory_full": {
+          "total_GB": 40.911433728,
+          "per_gpu_GB": 10.227858432,
+          "fits": true
+        },
+        "memory_lora": {
+          "total_GB": 21.511433728,
+          "per_gpu_GB": 5.377858432,
+          "fits": true
+        }
+      },
+      "time_pred": {
+        "total_steps": 3000,
+        "seconds_per_step": 139.81013333333334,
+        "total_seconds": 419430.4,
+        "hours": 116.50844444444445,
+        "days": 4.8545185185185185,
+        "total_tokens_consumed": 6291456000,
+        "total_tokens_B": 6.291456,
+        "warmup_steps": 100,
+        "decay_steps": 300
+      },
+      "loss_pred": {
+        "initial_loss": 2.8,
+        "final_loss": 2.173228034648595,
+        "delta_loss": 0.6267719653514046,
+        "total_unique_tokens": 2741370000.0,
+        "total_unique_B": 2.74137,
+        "epochs": 2.2950043226561903,
+        "domain_final_ppl": 3.3,
+        "domain_epochs": 375.1294037478705,
+        "pyaether_epochs": 440.40192,
+        "overfitting_risk": "high"
+      }
+    }
+  ],
+  "anneal_analyses": [
+    {
+      "blend_name": "default",
+      "desc": "默认(anneal.sh占位)：领域30%+web50%+code12%+math8%",
+      "expected_pp": "3-8",
+      "ratios": {
+        "domain": 30,
+        "web": 50,
+        "code": 12,
+        "math": 8,
+        "desc": "默认(anneal.sh占位)：领域30%+web50%+code12%+math8%",
+        "expected_pp": "3-8"
+      },
+      "domain_tokens": 2520000000.0,
+      "domain_tokens_M": 2520.0,
+      "domain_coverage": 504.0,
+      "forgetting_risk": "low",
+      "anneal_time_hours": 110.96042328042331,
+      "anneal_time_days": 4.623350970017638,
+      "tokens_consumed_B": 8.388608
+    },
+    {
+      "blend_name": "domain_heavy",
+      "desc": "领域加重：最大化API知识注入",
+      "expected_pp": "5-12",
+      "ratios": {
+        "domain": 50,
+        "web": 30,
+        "code": 12,
+        "math": 8,
+        "desc": "领域加重：最大化API知识注入",
+        "expected_pp": "5-12"
+      },
+      "domain_tokens": 4200000000.0,
+      "domain_tokens_M": 4200.0,
+      "domain_coverage": 840.0,
+      "forgetting_risk": "medium",
+      "anneal_time_hours": 110.96042328042331,
+      "anneal_time_days": 4.623350970017638,
+      "tokens_consumed_B": 8.388608
+    },
+    {
+      "blend_name": "domain_light",
+      "desc": "领域减轻：最小化遗忘风险",
+      "expected_pp": "1-4",
+      "ratios": {
+        "domain": 15,
+        "web": 60,
+        "code": 15,
+        "math": 10,
+        "desc": "领域减轻：最小化遗忘风险",
+        "expected_pp": "1-4"
+      },
+      "domain_tokens": 1260000000.0,
+      "domain_tokens_M": 1260.0,
+      "domain_coverage": 252.0,
+      "forgetting_risk": "low",
+      "anneal_time_hours": 110.96042328042331,
+      "anneal_time_days": 4.623350970017638,
+      "tokens_consumed_B": 8.388608
+    },
+    {
+      "blend_name": "code_heavy",
+      "desc": "代码加重：补D4代码生成能力",
+      "expected_pp": "3-8",
+      "ratios": {
+        "domain": 25,
+        "web": 40,
+        "code": 25,
+        "math": 10,
+        "desc": "代码加重：补D4代码生成能力",
+        "expected_pp": "3-8"
+      },
+      "domain_tokens": 2100000000.0,
+      "domain_tokens_M": 2100.0,
+      "domain_coverage": 420.0,
+      "forgetting_risk": "low",
+      "anneal_time_hours": 110.96042328042331,
+      "anneal_time_days": 4.623350970017638,
+      "tokens_consumed_B": 8.388608
+    },
+    {
+      "blend_name": "no_anneal",
+      "desc": "无领域退火(对照组)",
+      "expected_pp": "0 (对照)",
+      "ratios": {
+        "domain": 0,
+        "web": 60,
+        "code": 25,
+        "math": 15,
+        "desc": "无领域退火(对照组)",
+        "expected_pp": "0 (对照)"
+      },
+      "domain_tokens": 0.0,
+      "domain_tokens_M": 0.0,
+      "domain_coverage": 0.0,
+      "forgetting_risk": "none",
+      "anneal_time_hours": 110.96042328042331,
+      "anneal_time_days": 4.623350970017638,
+      "tokens_consumed_B": 8.388608
+    }
+  ],
+  "ablation": {
+    "full_matrix_cells": 25,
+    "strategic_subset": 6,
+    "ablations": [
+      {
+        "id": "A1",
+        "name": "Baseline (no anneal + R6 default SFT)",
+        "anneal": "no_anneal",
+        "sft": "R6_default",
+        "purpose": "下界基线：跳过退火，仅SFT",
+        "expected": "M1 (50%)",
+        "gpu_hours": 12,
+        "priority": 1
+      },
+      {
+        "id": "A2",
+        "name": "Default anneal + R6 default SFT",
+        "anneal": "default",
+        "sft": "R6_default",
+        "purpose": "主线配置：退火30% + SFT默认配比",
+        "expected": "M2 (65%)",
+        "gpu_hours": 18,
+        "priority": 1
+      },
+      {
+        "id": "A3",
+        "name": "Domain-heavy anneal + R6 default SFT",
+        "anneal": "domain_heavy",
+        "sft": "R6_default",
+        "purpose": "退火贡献上限：领域50% vs 30%",
+        "expected": "M2+ (65-70%)",
+        "gpu_hours": 18,
+        "priority": 2
+      },
+      {
+        "id": "A4",
+        "name": "Default anneal + domain-heavy SFT",
+        "anneal": "default",
+        "sft": "domain_heavy",
+        "purpose": "SFT配比贡献：PyAether45% vs 25%",
+        "expected": "M2 (65%)",
+        "gpu_hours": 18,
+        "priority": 2
+      },
+      {
+        "id": "A5",
+        "name": "Default anneal + agent-heavy SFT",
+        "anneal": "default",
+        "sft": "agent_heavy",
+        "purpose": "工具调用修复：agent45% vs 30%",
+        "expected": "M1->M2",
+        "gpu_hours": 18,
+        "priority": 3
+      },
+      {
+        "id": "A6",
+        "name": "No anneal + domain-heavy SFT",
+        "anneal": "no_anneal",
+        "sft": "domain_heavy",
+        "purpose": "退火vs SFT去耦：跳过退火但SFT领域加重",
+        "expected": "M1-M2",
+        "gpu_hours": 12,
+        "priority": 3
+      }
+    ],
+    "total_gpu_hours": 96,
+    "priority1_hours": 30,
+    "priority2_hours": 36
+  },
+  "handoff": {
+    "checkpoint_selection": {
+      "criteria": [
+        "1. eval Pass@1 >= M1 (50%) on 20-task subset",
+        "2. SFT loss收敛(最后200步下降<5%)",
+        "3. 无NaN/Inf in training log",
+        "4. 工具调用合法率>80%(D1修复验证)",
+        "5. 无严重过拟合(eval loss不高于train loss 50%+)"
+      ],
+      "selection_rule": "满足全部5条标准中选eval Pass@1最高的；相同则选step最小(泛化更好)",
+      "save_interval": "每300步存1个ckpt(3000步共10个)"
+    },
+    "pre_rl_validation_gate": {
+      "checks": [
+        {
+          "name": "Model load",
+          "method": "SGLang serve SFT ckpt",
+          "pass_criterion": "HTTP 200",
+          "timeout": "5 min"
+        },
+        {
+          "name": "Tool call format",
+          "method": "10题tool-use prompt",
+          "pass_criterion": ">=8/10格式合法",
+          "timeout": "10 min"
+        },
+        {
+          "name": "API knowledge",
+          "method": "10题API查询",
+          "pass_criterion": ">=7/10 API名正确",
+          "timeout": "10 min"
+        },
+        {
+          "name": "No degradation",
+          "method": "20题full eval",
+          "pass_criterion": "Pass@1>=36%",
+          "timeout": "30 min"
+        },
+        {
+          "name": "Cheat rate",
+          "method": "PreToolUse hook全20题",
+          "pass_criterion": "cheat_rate<5%(红线)",
+          "timeout": "30 min"
+        }
+      ],
+      "gate_logic": "全部5项PASS->GO for RL；任一FAIL->回退ckpt或重SFT；Cheat rate FAIL->硬停(红线)"
+    },
+    "rl_warmstart_config": {
+      "lr_recommendation": "RL LR = SFT LR * 0.1 (2e-6 full, 1e-5 LoRA)",
+      "kl_init": "0.05",
+      "entropy_init": "0.8",
+      "note": "SFT后模型已有工具格式知识，GRPO应重点优化语义正确性而非格式"
+    }
+  }
+}

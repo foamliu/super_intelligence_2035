@@ -1,0 +1,131 @@
+2026-11-09 23:26:10,436 - INFO - Creating container for django__django-15127...
+2026-11-09 23:26:10,481 - INFO - Container for django__django-15127 created: 95f2fdc80467ad59147d4a32f0ccbff0ecb7e749dc67f5b6acc1d545e7aad9a9
+2026-11-09 23:26:11,214 - INFO - Container for django__django-15127 started: 95f2fdc80467ad59147d4a32f0ccbff0ecb7e749dc67f5b6acc1d545e7aad9a9
+2026-11-09 23:26:11,216 - INFO - Intermediate patch for django__django-15127 written to logs/run_evaluation/verified_full_glm53_pi_incr_R1992/pi-glm-5.3-flash/django__django-15127/patch.diff, now applying to container...
+2026-11-09 23:26:11,383 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/messages/storage/base.py...
+Checking patch tests/messages_tests/base.py...
+Applied patch django/contrib/messages/storage/base.py cleanly.
+Applied patch tests/messages_tests/base.py cleanly.
+
+2026-11-09 23:26:12,810 - INFO - Git diff before:
+diff --git a/django/contrib/messages/storage/base.py b/django/contrib/messages/storage/base.py
+index 01422066a6..8cdbbd92c7 100644
+--- a/django/contrib/messages/storage/base.py
++++ b/django/contrib/messages/storage/base.py
+@@ -1,8 +1,6 @@
+ from django.conf import settings
+ from django.contrib.messages import constants, utils
+ 
+-LEVEL_TAGS = utils.get_level_tags()
+-
+ 
+ class Message:
+     """
+@@ -38,7 +36,7 @@ class Message:
+ 
+     @property
+     def level_tag(self):
+-        return LEVEL_TAGS.get(self.level, '')
++        return utils.get_level_tags().get(self.level, '')
+ 
+ 
+ class BaseStorage:
+diff --git a/tests/messages_tests/base.py b/tests/messages_tests/base.py
+index 9dad08e6c7..665bf6c394 100644
+--- a/tests/messages_tests/base.py
++++ b/tests/messages_tests/base.py
+@@ -1,7 +1,7 @@
+-from django.contrib.messages import constants, get_level, set_level, utils
++from django.contrib.messages import constants, get_level, set_level
+ from django.contrib.messages.api import MessageFailure
+ from django.contrib.messages.constants import DEFAULT_LEVELS
+-from django.contrib.messages.storage import base, default_storage
++from django.contrib.messages.storage import default_storage
+ from django.contrib.messages.storage.base import Message
+ from django.http import HttpRequest, HttpResponse
+ from django.test import modify_settings, override_settings
+@@ -22,20 +22,6 @@ def add_level_messages(storage):
+     storage.add(constants.SUCCESS, 'This was a triumph.')
+ 
+ 
+-class override_settings_tags(override_settings):
+-    def enable(self):
+-        super().enable()
+-        # LEVEL_TAGS is a constant defined in the
+-        # django.contrib.messages.storage.base module, so after changing
+-        # settings.MESSAGE_TAGS, update that constant also.
+-        self.old_level_tags = base.LEVEL_TAGS
+-        base.LEVEL_TAGS = utils.get_level_tags()
+-
+-    def disable(self):
+-        super().disable()
+-        base.LEVEL_TAGS = self.old_level_tags
+-
+-
+ class BaseTests:
+     storage_class = default_storage
+     levels = {
+@@ -47,7 +33,7 @@ class BaseTests:
+     }
+ 
+     def setUp(self):
+-        self.settings_override = override_settings_tags(
++        self.settings_override = override_settings(
+             TEMPLATES=[{
+                 'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                 'DIRS': [],
+@@ -368,7 +354,18 @@ class BaseTests:
+         tags = [msg.level_tag for msg in storage]
+         self.assertEqual(tags, ['info', '', 'debug', 'warning', 'error', 'success'])
+ 
+-    @override_settings_tags(MESSAGE_TAGS={
++    @override_settings(MESSAGE_TAGS={
++        constants.SUCCESS: 'success',
++        29: 'custom',
++    })
++    def test_level_tag_with_custom_tags(self):
++        storage = self.get_storage()
++        storage.level = 0
++        add_level_messages(storage)
++        tags = [msg.level_tag for msg in storage]
++        self.assertEqual(tags, ['info', 'custom', 'debug', 'warning', 'error', 'success'])
++
++    @override_settings(MESSAGE_TAGS={
+         constants.INFO: 'info',
+         constants.DEBUG: '',
+         constants.WARNING: '',
+2026-11-09 23:26:12,813 - INFO - Eval script for django__django-15127 written to logs/run_evaluation/verified_full_glm53_pi_incr_R1992/pi-glm-5.3-flash/django__django-15127/eval.sh; copying to container...
+2026-11-09 23:26:21,489 - INFO - Test runtime: 8.59 seconds
+2026-11-09 23:26:21,491 - INFO - Test output for django__django-15127 written to logs/run_evaluation/verified_full_glm53_pi_incr_R1992/pi-glm-5.3-flash/django__django-15127/test_output.txt
+2026-11-09 23:26:21,573 - INFO - Git diff after:
+diff --git a/django/contrib/messages/storage/base.py b/django/contrib/messages/storage/base.py
+index 01422066a6..8cdbbd92c7 100644
+--- a/django/contrib/messages/storage/base.py
++++ b/django/contrib/messages/storage/base.py
+@@ -1,8 +1,6 @@
+ from django.conf import settings
+ from django.contrib.messages import constants, utils
+ 
+-LEVEL_TAGS = utils.get_level_tags()
+-
+ 
+ class Message:
+     """
+@@ -38,7 +36,7 @@ class Message:
+ 
+     @property
+     def level_tag(self):
+-        return LEVEL_TAGS.get(self.level, '')
++        return utils.get_level_tags().get(self.level, '')
+ 
+ 
+ class BaseStorage:
+2026-11-09 23:26:21,573 - INFO - Git diff changed after running eval script
+2026-11-09 23:26:21,573 - INFO - Grading answer for django__django-15127...
+2026-11-09 23:26:21,574 - INFO - report: {'django__django-15127': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_override_settings_level_tags (messages_tests.tests.TestLevelTags)']}, 'PASS_TO_PASS': {'success': ['test_eq (messages_tests.tests.MessageTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-15127: resolved: False
+2026-11-09 23:26:21,576 - INFO - Attempting to stop container sweb.eval.django__django-15127.verified_full_glm53_pi_incr_R1992...
+2026-11-09 23:26:37,590 - INFO - Container sweb.eval.django__django-15127.verified_full_glm53_pi_incr_R1992 stopped successfully.
+2026-11-09 23:26:37,591 - INFO - Attempting to remove container sweb.eval.django__django-15127.verified_full_glm53_pi_incr_R1992...
+2026-11-09 23:26:37,644 - INFO - Container sweb.eval.django__django-15127.verified_full_glm53_pi_incr_R1992 removed successfully.

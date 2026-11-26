@@ -1,0 +1,35 @@
+diff --git a/sklearn/metrics/cluster/supervised.py b/sklearn/metrics/cluster/supervised.py
+index a987778..9bcca75 100644
+--- a/sklearn/metrics/cluster/supervised.py
++++ b/sklearn/metrics/cluster/supervised.py
+@@ -856,7 +856,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
+     tk = np.dot(c.data, c.data) - n_samples
+     pk = np.sum(np.asarray(c.sum(axis=0)).ravel() ** 2) - n_samples
+     qk = np.sum(np.asarray(c.sum(axis=1)).ravel() ** 2) - n_samples
+-    return tk / np.sqrt(pk * qk) if tk != 0. else 0.
++    return np.sqrt(tk / pk) * np.sqrt(tk / qk) if tk != 0. else 0.
+ 
+ 
+ def entropy(labels):
+diff --git a/sklearn/metrics/cluster/tests/test_supervised.py b/sklearn/metrics/cluster/tests/test_supervised.py
+index 8da03d1..f6190fd 100644
+--- a/sklearn/metrics/cluster/tests/test_supervised.py
++++ b/sklearn/metrics/cluster/tests/test_supervised.py
+@@ -253,6 +253,17 @@ def test_fowlkes_mallows_score():
+     assert_almost_equal(worst_score, 0.)
+ 
+ 
++def test_fowlkes_mallows_score_overflow():
++    # Test that fowlkes_mallows_score does not overflow when pk * qk
++    # exceeds the int32 limit.
++    # See https://github.com/scikit-learn/scikit-learn/issues/8696
++    n_samples = 70000
++    labels_true = np.zeros(n_samples, dtype=int)
++    labels_pred = np.zeros(n_samples, dtype=int)
++    score = fowlkes_mallows_score(labels_true, labels_pred)
++    assert_almost_equal(score, 1.0)
++
++
+ def test_fowlkes_mallows_score_properties():
+     # handcrafted example
+     labels_a = np.array([0, 0, 0, 1, 1, 2])

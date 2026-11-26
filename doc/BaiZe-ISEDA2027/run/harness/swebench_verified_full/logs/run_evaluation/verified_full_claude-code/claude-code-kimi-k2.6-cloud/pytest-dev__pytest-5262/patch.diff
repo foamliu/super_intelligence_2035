@@ -1,0 +1,47 @@
+diff --git a/src/_pytest/capture.py b/src/_pytest/capture.py
+index 25eab7f..ae9c1ee 100644
+--- a/src/_pytest/capture.py
++++ b/src/_pytest/capture.py
+@@ -442,6 +442,11 @@ class EncodedFile(object):
+         data = "".join(linelist)
+         self.write(data)
+ 
++    @property
++    def mode(self):
++        """The mode of the stream, without the 'b' flag since write() only accepts str."""
++        return self.buffer.mode.replace("b", "")
++
+     @property
+     def name(self):
+         """Ensure that file.name is a string."""
+diff --git a/testing/test_capture.py b/testing/test_capture.py
+index 5d80eb6..1c2ee6c 100644
+--- a/testing/test_capture.py
++++ b/testing/test_capture.py
+@@ -1574,3 +1574,26 @@ def test_typeerror_encodedfile_write(testdir):
+         )
+     else:
+         assert result_with_capture.ret == 0
++
++
++def test_encodedfile_mode():
++    """EncodedFile.mode should not contain 'b' since write() only accepts str.
++
++    Some code, like youtube-dl, checks for 'b' in the mode to decide whether
++    to write str or bytes. EncodedFile.write() only accepts str (it encodes
++    str to bytes internally), so its mode should reflect that.
++    """
++    import tempfile
++
++    with tempfile.TemporaryFile(mode="wb+") as f:
++        ef = capture.safe_text_dupfile(f, "wb+")
++        assert "b" not in ef.mode
++        # Simulate youtube-dl-like behavior: check for 'b' in mode,
++        # write str when there is no 'b'.
++        if "b" in ef.mode:
++            pytest.fail("mode should not contain 'b'")
++        else:
++            ef.write("hello")
++            ef.flush()
++        f.seek(0)
++        assert b"hello" in f.read()

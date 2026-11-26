@@ -1,0 +1,48 @@
+diff --git a/changelog/7951.bugfix.rst b/changelog/7951.bugfix.rst
+new file mode 100644
+index 0000000..c7ea26a
+--- /dev/null
++++ b/changelog/7951.bugfix.rst
+@@ -0,0 +1 @@
++Fixed a bug where symlinked directories were not collected during collection.
+diff --git a/src/_pytest/pathlib.py b/src/_pytest/pathlib.py
+index f0bdb14..b96cba0 100644
+--- a/src/_pytest/pathlib.py
++++ b/src/_pytest/pathlib.py
+@@ -558,7 +558,7 @@ def visit(
+     entries = sorted(os.scandir(path), key=lambda entry: entry.name)
+     yield from entries
+     for entry in entries:
+-        if entry.is_dir(follow_symlinks=False) and recurse(entry):
++        if entry.is_dir() and recurse(entry):
+             yield from visit(entry.path, recurse)
+ 
+ 
+diff --git a/testing/test_collection.py b/testing/test_collection.py
+index 841aa35..7e5f1e7 100644
+--- a/testing/test_collection.py
++++ b/testing/test_collection.py
+@@ -1256,6 +1256,23 @@ def test_collect_sub_with_symlinks(use_pkg, testdir):
+     )
+ 
+ 
++def test_collect_symlinked_dir(testdir):
++    """Regression test for #7951: a symlinked directory is collected."""
++    sub = testdir.mkdir("sub")
++    sub.join("test_file.py").write("def test_file(): pass")
++
++    symlink_or_skip(sub, testdir.tmpdir.join("symlink_to_sub"))
++
++    result = testdir.runpytest("-v", str(testdir.tmpdir))
++    result.stdout.fnmatch_lines(
++        [
++            "sub/test_file.py::test_file PASSED*",
++            "symlink_to_sub/test_file.py::test_file PASSED*",
++            "*2 passed in*",
++        ]
++    )
++
++
+ def test_collector_respects_tbstyle(testdir):
+     p1 = testdir.makepyfile("assert 0")
+     result = testdir.runpytest(p1, "--tb=native")

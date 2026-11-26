@@ -1,0 +1,54 @@
+diff --git a/src/_pytest/mark/expression.py b/src/_pytest/mark/expression.py
+index 04c7341..9541b53 100644
+--- a/src/_pytest/mark/expression.py
++++ b/src/_pytest/mark/expression.py
+@@ -161,6 +161,12 @@ def not_expr(s: Scanner) -> ast.expr:
+         return ret
+     ident = s.accept(TokenType.IDENT)
+     if ident:
++        if ident.value == "True":
++            return ast.NameConstant(True)
++        elif ident.value == "False":
++            return ast.NameConstant(False)
++        elif ident.value == "None":
++            return ast.NameConstant(None)
+         return ast.Name(ident.value, ast.Load())
+     s.reject((TokenType.NOT, TokenType.LPAREN, TokenType.IDENT))
+ 
+diff --git a/testing/test_mark_expression.py b/testing/test_mark_expression.py
+index 3358886..9b0b6a8 100644
+--- a/testing/test_mark_expression.py
++++ b/testing/test_mark_expression.py
+@@ -128,8 +128,6 @@ def test_syntax_errors(expr: str, column: int, message: str) -> None:
+         "not[and]or",
+         "1234+5678",
+         "123.232",
+-        "True",
+-        "False",
+         "if",
+         "else",
+         "while",
+@@ -139,6 +137,23 @@ def test_valid_idents(ident: str) -> None:
+     assert evaluate(ident, {ident: True}.__getitem__)
+ 
+ 
++@pytest.mark.parametrize(
++    ("expr", "expected"),
++    (
++        ("True", True),
++        ("False", False),
++        ("None", None),
++        ("not True", False),
++        ("not False", True),
++        ("True and True", True),
++        ("True and False", False),
++        ("True or False", True),
++    ),
++)
++def test_keywords(expr: str, expected) -> None:
++    assert evaluate(expr, lambda ident: True) is expected
++
++
+ @pytest.mark.parametrize(
+     "ident",
+     (

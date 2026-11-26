@@ -1,0 +1,75 @@
+```tcl
+proc skipper_build_bsub_regr_cmd {spec_text} {
+    set tool       ""
+    set config     ""
+    set wait       ""
+    set file_limit ""
+    set queue      ""
+    set date       ""
+    set existing   ""
+
+    foreach raw [split $spec_text "\n"] {
+        set line [string trim $raw]
+        if {[string length $line] == 0} {
+            continue
+        }
+        if {[string equal [string index $line 0] "#"]} {
+            continue
+        }
+        if {![regexp {^([A-Za-z0-9_]+)[[:space:]]*[=:][[:space:]]*(.*)$} $line _ key value]} {
+            continue
+        }
+        set value [string trim $value]
+        switch -- $key {
+            tool       { set tool $value }
+            config     { set config $value }
+            wait       { set wait $value }
+            file_limit { set file_limit $value }
+            queue      { set queue $value }
+            date       { set date $value }
+            existing   { set existing $value }
+        }
+    }
+
+    set existing_list {}
+    foreach item [split $existing ","] {
+        set item [string trim $item]
+        if {[string length $item] > 0} {
+            lappend existing_list $item
+        }
+    }
+
+    set base "${tool}_${config}"
+    set base_taken 0
+    foreach item $existing_list {
+        if {[string equal $base $item]} {
+            set base_taken 1
+            break
+        }
+    }
+
+    if {!$base_taken} {
+        set tag $base
+    } else {
+        set n 2
+        while {1} {
+            set tag "${tool}_${date}_${config}_r${n}"
+            set taken 0
+            foreach item $existing_list {
+                if {[string equal $tag $item]} {
+                    set taken 1
+                    break
+                }
+            }
+            if {!$taken} {
+                break
+            }
+            incr n
+        }
+    }
+
+    set cmd "bsub -Is run_regr -w ${wait} --tool ${tool} --config ./run_script_${tool}/${config} -t ${tag} -f ${file_limit} -q ${queue}"
+
+    return [dict create cmd $cmd tag $tag]
+}
+```

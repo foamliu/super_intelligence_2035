@@ -1,0 +1,82 @@
+diff --git a/lib/matplotlib/cbook.py b/lib/matplotlib/cbook.py
+index c9699b2e2..4ad410ae8 100644
+--- a/lib/matplotlib/cbook.py
++++ b/lib/matplotlib/cbook.py
+@@ -788,6 +788,19 @@ class Grouper:
+     def __init__(self, init=()):
+         self._mapping = {weakref.ref(x): [weakref.ref(x)] for x in init}
+ 
++    def __getstate__(self):
++        self.clean()
++        unique_groups = {id(group): group for group in self._mapping.values()}
++        return [[x() for x in group if x() is not None]
++                for group in unique_groups.values()]
++
++    def __setstate__(self, state):
++        self._mapping = {}
++        for group in state:
++            refs = [weakref.ref(x) for x in group]
++            for ref in refs:
++                self._mapping[ref] = refs
++
+     def __contains__(self, item):
+         return weakref.ref(item) in self._mapping
+ 
+diff --git a/lib/matplotlib/tests/test_cbook.py b/lib/matplotlib/tests/test_cbook.py
+index aa5c999b7..93bbc57ee 100644
+--- a/lib/matplotlib/tests/test_cbook.py
++++ b/lib/matplotlib/tests/test_cbook.py
+@@ -16,6 +16,10 @@ import matplotlib.colors as mcolors
+ from matplotlib.cbook import delete_masked_points
+ 
+ 
++class _PicklableDummy:
++    pass
++
++
+ class Test_delete_masked_points:
+     def test_bad_first_arg(self):
+         with pytest.raises(ValueError):
+@@ -597,6 +601,22 @@ def test_grouper_private():
+         assert mapping[ref(o)] is base_set
+ 
+ 
++def test_grouper_pickle():
++    objs = [_PicklableDummy() for _ in range(5)]
++    g = cbook.Grouper()
++    g.join(*objs)
++    # Pickle the Grouper together with the objects so that the unpickled
++    # objects stay alive (the Grouper only holds weakrefs).
++    g2, objs2 = pickle.loads(pickle.dumps((g, objs)))
++    assert set(list(g2)[0]) == set(objs2)
++    assert set(g2.get_siblings(objs2[0])) == set(objs2)
++    for other in objs2[1:]:
++        assert g2.joined(objs2[0], other)
++    g2.remove(objs2[0])
++    for other in objs2[1:]:
++        assert not g2.joined(objs2[0], other)
++
++
+ def test_flatiter():
+     x = np.arange(5)
+     it = x.flat
+diff --git a/lib/matplotlib/tests/test_pickle.py b/lib/matplotlib/tests/test_pickle.py
+index ec6bdcc2f..1f03df9e2 100644
+--- a/lib/matplotlib/tests/test_pickle.py
++++ b/lib/matplotlib/tests/test_pickle.py
+@@ -282,3 +282,15 @@ def test_dynamic_norm():
+ def test_vertexselector():
+     line, = plt.plot([0, 1], picker=True)
+     pickle.loads(pickle.dumps(VertexSelector(line)))
++
++
++def test_align_labels():
++    fig = plt.figure()
++    ax1 = fig.add_subplot(211)
++    ax2 = fig.add_subplot(212)
++    ax1.plot([0, 1, 2], [3, 4, 5])
++    ax1.set_ylabel('ylabel1')
++    ax2.plot([0, 1, 2], [3, 4, 5])
++    ax2.set_ylabel('ylabel2')
++    fig.align_labels()
++    pickle.loads(pickle.dumps(fig))

@@ -1,0 +1,55 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 69a5fbf389..db7df891e3 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -249,16 +249,17 @@ class BaseModelAdmin(metaclass=forms.MediaDefiningClass):
+             return None
+         db = kwargs.get('using')
+ 
+-        autocomplete_fields = self.get_autocomplete_fields(request)
+-        if db_field.name in autocomplete_fields:
+-            kwargs['widget'] = AutocompleteSelectMultiple(db_field.remote_field, self.admin_site, using=db)
+-        elif db_field.name in self.raw_id_fields:
+-            kwargs['widget'] = widgets.ManyToManyRawIdWidget(db_field.remote_field, self.admin_site, using=db)
+-        elif db_field.name in [*self.filter_vertical, *self.filter_horizontal]:
+-            kwargs['widget'] = widgets.FilteredSelectMultiple(
+-                db_field.verbose_name,
+-                db_field.name in self.filter_vertical
+-            )
++        if 'widget' not in kwargs:
++            autocomplete_fields = self.get_autocomplete_fields(request)
++            if db_field.name in autocomplete_fields:
++                kwargs['widget'] = AutocompleteSelectMultiple(db_field.remote_field, self.admin_site, using=db)
++            elif db_field.name in self.raw_id_fields:
++                kwargs['widget'] = widgets.ManyToManyRawIdWidget(db_field.remote_field, self.admin_site, using=db)
++            elif db_field.name in [*self.filter_vertical, *self.filter_horizontal]:
++                kwargs['widget'] = widgets.FilteredSelectMultiple(
++                    db_field.verbose_name,
++                    db_field.name in self.filter_vertical
++                )
+ 
+         if 'queryset' not in kwargs:
+             queryset = self.get_field_queryset(db, db_field, request)
+diff --git a/tests/admin_widgets/tests.py b/tests/admin_widgets/tests.py
+index 719d0d8095..a91abbb36f 100644
+--- a/tests/admin_widgets/tests.py
++++ b/tests/admin_widgets/tests.py
+@@ -113,6 +113,18 @@ class AdminFormfieldForDBFieldTests(SimpleTestCase):
+         self.assertFormfield(Band, 'members', widgets.ManyToManyRawIdWidget,
+                              raw_id_fields=['members'])
+ 
++    def test_widget_override_many_to_many(self):
++        """A widget passed to formfield_for_manytomany() is respected."""
++        class BandAdmin(admin.ModelAdmin):
++            def formfield_for_manytomany(self, db_field, request, **kwargs):
++                if db_field.name == 'members':
++                    kwargs['widget'] = forms.TextInput
++                return super().formfield_for_manytomany(db_field, request, **kwargs)
++
++        ma = BandAdmin(Band, admin.site)
++        ff = ma.formfield_for_manytomany(Band._meta.get_field('members'), request=None)
++        self.assertIsInstance(ff.widget, forms.TextInput)
++
+     def test_filtered_many_to_many(self):
+         self.assertFormfield(Band, 'members', widgets.FilteredSelectMultiple,
+                              filter_vertical=['members'])

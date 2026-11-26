@@ -1,0 +1,396 @@
+diff --git a/debug1.py b/debug1.py
+new file mode 100644
+index 0000000000..3e50ebc533
+--- /dev/null
++++ b/debug1.py
+@@ -0,0 +1,50 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++import traceback
++from django.db import connection, models
++from django.db.models import Exists, OuterRef, Q
++import django.db.models.expressions as expr
++
++orig_as_sql = expr.ResolvedOuterRef.as_sql
++def patched(self, *args, **kwargs):
++    traceback.print_stack()
++    print("=== ResolvedOuterRef.as_sql called for", self.name)
++    return orig_as_sql(self, *args, **kwargs)
++expr.ResolvedOuterRef.as_sql = patched
++
++class Number(models.Model):
++    num = models.IntegerField()
++    class Meta:
++        app_label = 'auth'
++
++class Tag(models.Model):
++    category = models.ForeignKey('Number', models.SET_NULL, null=True, default=None)
++    class Meta:
++        app_label = 'auth'
++
++class Item(models.Model):
++    name = models.CharField(max_length=10)
++    tags = models.ManyToManyField(Tag, blank=True)
++    class Meta:
++        app_label = 'auth'
++
++with connection.schema_editor() as editor:
++    editor.create_model(Number)
++    editor.create_model(Tag)
++    editor.create_model(Item)
++
++qs = Number.objects.annotate(
++    foo=Exists(
++        Item.objects.filter(tags__category_id=OuterRef('pk'))
++    )
++).filter(foo=True)
++print("FILTER SQL:", qs.query)
+diff --git a/debug2.py b/debug2.py
+new file mode 100644
+index 0000000000..8be3417939
+--- /dev/null
++++ b/debug2.py
+@@ -0,0 +1,51 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++import traceback
++import django.db.models.expressions as expr
++
++orig_resolve = expr.OuterRef.resolve_expression
++def patched(self, query=None, allow_joins=True, reuse=None, summarize=False, for_save=False, simple_col=False):
++    result = orig_resolve(self, query, allow_joins, reuse, summarize, for_save, simple_col)
++    print("=== OuterRef.resolve_expression on query for model:", query.model, "->", result)
++    return result
++expr.OuterRef.resolve_expression = patched
++
++from django.db import connection, models
++from django.db.models import Exists, OuterRef
++
++class Number(models.Model):
++    num = models.IntegerField()
++    class Meta:
++        app_label = 'auth'
++
++class Tag(models.Model):
++    category = models.ForeignKey('Number', models.SET_NULL, null=True, default=None)
++    class Meta:
++        app_label = 'auth'
++
++class Item(models.Model):
++    name = models.CharField(max_length=10)
++    tags = models.ManyToManyField(Tag, blank=True)
++    class Meta:
++        app_label = 'auth'
++
++with connection.schema_editor() as editor:
++    editor.create_model(Number)
++    editor.create_model(Tag)
++    editor.create_model(Item)
++
++qs = Number.objects.annotate(
++    foo=Exists(
++        Item.objects.filter(tags__category_id=OuterRef('pk'))
++    )
++).filter(foo=True)
++print("FILTER SQL:", qs.query)
+diff --git a/debug3.py b/debug3.py
+new file mode 100644
+index 0000000000..8e7e52bfd0
+--- /dev/null
++++ b/debug3.py
+@@ -0,0 +1,45 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import connection, models
++from django.db.models import Exists, OuterRef
++
++class Number(models.Model):
++    num = models.IntegerField()
++    class Meta:
++        app_label = 'auth'
++
++class Tag(models.Model):
++    category = models.ForeignKey('Number', models.SET_NULL, null=True, default=None)
++    class Meta:
++        app_label = 'auth'
++
++class Item(models.Model):
++    name = models.CharField(max_length=10)
++    tags = models.ManyToManyField(Tag, blank=True)
++    class Meta:
++        app_label = 'auth'
++
++with connection.schema_editor() as editor:
++    editor.create_model(Number)
++    editor.create_model(Tag)
++    editor.create_model(Item)
++
++subq = Item.objects.filter(tags__category_id=OuterRef('pk'))
++qs = Number.objects.annotate(foo=Exists(subq)).filter(foo=True)
++inner = qs.query.annotations['foo'].query
++print("Inner where tree:")
++print(inner.where)
++def dump(node, indent=0):
++    print(' ' * indent, type(node).__name__, getattr(node, 'lookup_name', ''), getattr(node, 'lhs', ''), '|', getattr(node, 'rhs', ''))
++    for child in getattr(node, 'children', []):
++        dump(child, indent + 2)
++dump(inner.where)
+diff --git a/debug4.py b/debug4.py
+new file mode 100644
+index 0000000000..f39bc85b43
+--- /dev/null
++++ b/debug4.py
+@@ -0,0 +1,50 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++import traceback
++import django.db.models.expressions as expr
++from django.db.models.expressions import Col
++
++orig_init = Col.__init__
++def patched(self, alias, target, output_field=None):
++    if getattr(target, 'model', None) and target.model.__name__ == 'Number':
++        traceback.print_stack()
++        print("=== Col created with alias", alias, "target", target)
++    orig_init(self, alias, target, output_field)
++Col.__init__ = patched
++
++from django.db import connection, models
++from django.db.models import Exists, OuterRef
++
++class Number(models.Model):
++    num = models.IntegerField()
++    class Meta:
++        app_label = 'auth'
++
++class Tag(models.Model):
++    category = models.ForeignKey('Number', models.SET_NULL, null=True, default=None)
++    class Meta:
++        app_label = 'auth'
++
++class Item(models.Model):
++    name = models.CharField(max_length=10)
++    tags = models.ManyToManyField(Tag, blank=True)
++    class Meta:
++        app_label = 'auth'
++
++with connection.schema_editor() as editor:
++    editor.create_model(Number)
++    editor.create_model(Tag)
++    editor.create_model(Item)
++
++subq = Item.objects.filter(tags__category_id=OuterRef('pk'))
++qs = Number.objects.annotate(foo=Exists(subq)).filter(foo=True)
++print("FILTER SQL:", qs.query)
+diff --git a/debug5.py b/debug5.py
+new file mode 100644
+index 0000000000..ff38d8545f
+--- /dev/null
++++ b/debug5.py
+@@ -0,0 +1,50 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++import traceback
++import django.db.models.expressions as expr
++
++orig_resolve = expr.F.resolve_expression
++def patched(self, query=None, allow_joins=True, reuse=None, summarize=False, for_save=False, simple_col=False):
++    if isinstance(self, expr.ResolvedOuterRef):
++        print("=== ResolvedOuterRef(%s) resolved against query model: %s" % (self.name, query.model))
++        traceback.print_stack()
++    return orig_resolve(self, query, allow_joins, reuse, summarize, for_save, simple_col)
++expr.F.resolve_expression = patched
++
++from django.db import connection, models
++from django.db.models import Exists, OuterRef
++
++class Number(models.Model):
++    num = models.IntegerField()
++    class Meta:
++        app_label = 'auth'
++
++class Tag(models.Model):
++    category = models.ForeignKey('Number', models.SET_NULL, null=True, default=None)
++    class Meta:
++        app_label = 'auth'
++
++class Item(models.Model):
++    name = models.CharField(max_length=10)
++    tags = models.ManyToManyField(Tag, blank=True)
++    class Meta:
++        app_label = 'auth'
++
++with connection.schema_editor() as editor:
++    editor.create_model(Number)
++    editor.create_model(Tag)
++    editor.create_model(Item)
++
++qs = Number.objects.annotate(
++    foo=Exists(Item.objects.exclude(tags__category_id=OuterRef('pk')))
++).filter(foo=True)
++print("EXCLUDE SQL:", qs.query)
+diff --git a/repro.py b/repro.py
+new file mode 100644
+index 0000000000..312a89b922
+--- /dev/null
++++ b/repro.py
+@@ -0,0 +1,59 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import connection, models
++from django.db.models import Exists, OuterRef
++
++class Number(models.Model):
++    num = models.IntegerField()
++    class Meta:
++        app_label = 'auth'
++
++class Tag(models.Model):
++    category = models.ForeignKey('Number', models.SET_NULL, null=True, default=None)
++    class Meta:
++        app_label = 'auth'
++
++class Item(models.Model):
++    name = models.CharField(max_length=10)
++    tags = models.ManyToManyField(Tag, blank=True)
++    class Meta:
++        app_label = 'auth'
++
++with connection.schema_editor() as editor:
++    editor.create_model(Number)
++    editor.create_model(Tag)
++    editor.create_model(Item)
++
++# filter() -- works
++qs = Number.objects.annotate(
++    foo=Exists(
++        Item.objects.filter(tags__category_id=OuterRef('pk'))
++    )
++).filter(foo=True)
++print(qs)
++
++# exclude() -- crashes
++qs = Number.objects.annotate(
++    foo=Exists(
++        Item.objects.exclude(tags__category_id=OuterRef('pk'))
++    )
++).filter(foo=True)
++print(qs)
++
++# filter(~Q()) -- crashes
++from django.db.models import Q
++qs = Number.objects.annotate(
++    foo=Exists(
++        Item.objects.filter(~Q(tags__category_id=OuterRef('pk')))
++    )
++).filter(foo=True)
++print(qs)
+diff --git a/repro2.py b/repro2.py
+new file mode 100644
+index 0000000000..dc988c2ee3
+--- /dev/null
++++ b/repro2.py
+@@ -0,0 +1,49 @@
++import django
++from django.conf import settings
++
++settings.configure(
++    DEBUG=True,
++    DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}},
++    INSTALLED_APPS=['django.contrib.contenttypes', 'django.contrib.auth'],
++    DEFAULT_AUTO_FIELD='django.db.models.AutoField',
++)
++django.setup()
++
++from django.db import connection, models
++from django.db.models import Exists, OuterRef, Q
++
++class Number(models.Model):
++    num = models.IntegerField()
++    class Meta:
++        app_label = 'auth'
++
++class Tag(models.Model):
++    category = models.ForeignKey('Number', models.SET_NULL, null=True, default=None)
++    class Meta:
++        app_label = 'auth'
++
++class Item(models.Model):
++    name = models.CharField(max_length=10)
++    tags = models.ManyToManyField(Tag, blank=True)
++    class Meta:
++        app_label = 'auth'
++
++with connection.schema_editor() as editor:
++    editor.create_model(Number)
++    editor.create_model(Tag)
++    editor.create_model(Item)
++
++qs = Number.objects.annotate(
++    foo=Exists(
++        Item.objects.filter(tags__category_id=OuterRef('pk'))
++    )
++).filter(foo=True)
++print("FILTER:", qs.query)
++
++qs = Number.objects.annotate(
++    foo=Exists(
++        Item.objects.exclude(tags__category_id=OuterRef('pk'))
++    )
++).filter(foo=True)
++print("EXCLUDE:", qs.query)
++print(list(qs))

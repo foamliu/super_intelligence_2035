@@ -1,0 +1,104 @@
+2026-11-11 00:44:33,446 - INFO - Creating container for scikit-learn__scikit-learn-14053...
+2026-11-11 00:44:33,491 - INFO - Container for scikit-learn__scikit-learn-14053 created: df9adff928f5c4d3f5689b596dfbd1019c691a5e573bd2cbfaeb86ac33b0e251
+2026-11-11 00:44:35,849 - INFO - Container for scikit-learn__scikit-learn-14053 started: df9adff928f5c4d3f5689b596dfbd1019c691a5e573bd2cbfaeb86ac33b0e251
+2026-11-11 00:44:35,853 - INFO - Intermediate patch for scikit-learn__scikit-learn-14053 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2130/codex-glm-5.3-flash/scikit-learn__scikit-learn-14053/patch.diff, now applying to container...
+2026-11-11 00:44:36,004 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/tree/export.py...
+Checking patch sklearn/tree/tests/test_export.py...
+Applied patch sklearn/tree/export.py cleanly.
+Applied patch sklearn/tree/tests/test_export.py cleanly.
+
+2026-11-11 00:44:36,503 - INFO - Git diff before:
+diff --git a/sklearn/tree/export.py b/sklearn/tree/export.py
+index 1fe11e596..ea94af19c 100644
+--- a/sklearn/tree/export.py
++++ b/sklearn/tree/export.py
+@@ -890,9 +890,13 @@ def export_text(decision_tree, feature_names=None, max_depth=10,
+         value_fmt = "{}{} value: {}\n"
+ 
+     if feature_names:
+-        feature_names_ = [feature_names[i] for i in tree_.feature]
++        feature_names_ = [feature_names[i] if i != _tree.TREE_UNDEFINED
++                          else None
++                          for i in tree_.feature]
+     else:
+-        feature_names_ = ["feature_{}".format(i) for i in tree_.feature]
++        feature_names_ = ["feature_{}".format(i) if i != _tree.TREE_UNDEFINED
++                          else None
++                          for i in tree_.feature]
+ 
+     export_text.report = ""
+ 
+diff --git a/sklearn/tree/tests/test_export.py b/sklearn/tree/tests/test_export.py
+index 503431f45..596f8969c 100644
+--- a/sklearn/tree/tests/test_export.py
++++ b/sklearn/tree/tests/test_export.py
+@@ -4,6 +4,7 @@ Testing for export functions of decision trees (sklearn.tree.export).
+ from re import finditer, search
+ from textwrap import dedent
+ 
++import numpy as np
+ from numpy.random import RandomState
+ 
+ from sklearn.base import is_classifier
+@@ -397,6 +398,29 @@ def test_export_text():
+     assert export_text(reg, decimals=1, show_weights=True) == expected_report
+ 
+ 
++def test_export_text_single_feature():
++    X = np.array([[0], [1], [2], [3], [4], [5]])
++    y = np.array([0, 0, 0, 1, 1, 1])
++    clf = DecisionTreeClassifier(max_depth=2, random_state=0)
++    clf.fit(X, y)
++
++    expected_report = dedent("""
++    |--- feature_0 <= 2.50
++    |   |--- class: 0
++    |--- feature_0 >  2.50
++    |   |--- class: 1
++    """).lstrip()
++    assert export_text(clf) == expected_report
++
++    expected_report = dedent("""
++    |--- a <= 2.50
++    |   |--- class: 0
++    |--- a >  2.50
++    |   |--- class: 1
++    """).lstrip()
++    assert export_text(clf, feature_names=['a']) == expected_report
++
++
+ def test_plot_tree_entropy(pyplot):
+     # mostly smoke tests
+     # Check correctness of export_graphviz for criterion = entropy
+2026-11-11 00:44:36,506 - INFO - Eval script for scikit-learn__scikit-learn-14053 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2130/codex-glm-5.3-flash/scikit-learn__scikit-learn-14053/eval.sh; copying to container...
+2026-11-11 00:44:41,802 - INFO - Test runtime: 5.25 seconds
+2026-11-11 00:44:41,804 - INFO - Test output for scikit-learn__scikit-learn-14053 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2130/codex-glm-5.3-flash/scikit-learn__scikit-learn-14053/test_output.txt
+2026-11-11 00:44:41,851 - INFO - Git diff after:
+diff --git a/sklearn/tree/export.py b/sklearn/tree/export.py
+index 1fe11e596..ea94af19c 100644
+--- a/sklearn/tree/export.py
++++ b/sklearn/tree/export.py
+@@ -890,9 +890,13 @@ def export_text(decision_tree, feature_names=None, max_depth=10,
+         value_fmt = "{}{} value: {}\n"
+ 
+     if feature_names:
+-        feature_names_ = [feature_names[i] for i in tree_.feature]
++        feature_names_ = [feature_names[i] if i != _tree.TREE_UNDEFINED
++                          else None
++                          for i in tree_.feature]
+     else:
+-        feature_names_ = ["feature_{}".format(i) for i in tree_.feature]
++        feature_names_ = ["feature_{}".format(i) if i != _tree.TREE_UNDEFINED
++                          else None
++                          for i in tree_.feature]
+ 
+     export_text.report = ""
+2026-11-11 00:44:41,851 - INFO - Git diff changed after running eval script
+2026-11-11 00:44:41,851 - INFO - Grading answer for scikit-learn__scikit-learn-14053...
+2026-11-11 00:44:41,852 - INFO - report: {'scikit-learn__scikit-learn-14053': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/tree/tests/test_export.py::test_export_text'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/tree/tests/test_export.py::test_graphviz_toy', 'sklearn/tree/tests/test_export.py::test_graphviz_errors', 'sklearn/tree/tests/test_export.py::test_friedman_mse_in_graphviz', 'sklearn/tree/tests/test_export.py::test_precision', 'sklearn/tree/tests/test_export.py::test_export_text_errors'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-14053: resolved: True
+2026-11-11 00:44:41,853 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_glm53_codex_incr_R2130...
+2026-11-11 00:44:58,479 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_glm53_codex_incr_R2130 stopped successfully.
+2026-11-11 00:44:58,479 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_glm53_codex_incr_R2130...
+2026-11-11 00:44:58,511 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14053.verified_full_glm53_codex_incr_R2130 removed successfully.

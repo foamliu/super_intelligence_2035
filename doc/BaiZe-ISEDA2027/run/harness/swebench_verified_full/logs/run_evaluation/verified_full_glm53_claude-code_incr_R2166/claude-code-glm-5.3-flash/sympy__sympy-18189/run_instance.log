@@ -1,0 +1,66 @@
+2026-11-11 10:48:31,311 - INFO - Creating container for sympy__sympy-18189...
+2026-11-11 10:48:31,334 - INFO - Container for sympy__sympy-18189 created: d141196c8f0d3b2cef4e9de1d065be42903acfca2f31b15d0897494623766322
+2026-11-11 10:48:32,039 - INFO - Container for sympy__sympy-18189 started: d141196c8f0d3b2cef4e9de1d065be42903acfca2f31b15d0897494623766322
+2026-11-11 10:48:32,041 - INFO - Intermediate patch for sympy__sympy-18189 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2166/claude-code-glm-5.3-flash/sympy__sympy-18189/patch.diff, now applying to container...
+2026-11-11 10:48:32,188 - INFO - >>>>> Applied Patch:
+Checking patch sympy/solvers/diophantine.py...
+warning: sympy/solvers/diophantine.py has type 100755, expected 100644
+Checking patch sympy/solvers/tests/test_diophantine.py...
+warning: sympy/solvers/tests/test_diophantine.py has type 100755, expected 100644
+Applied patch sympy/solvers/diophantine.py cleanly.
+Applied patch sympy/solvers/tests/test_diophantine.py cleanly.
+
+2026-11-11 10:48:32,864 - INFO - Git diff before:
+diff --git a/sympy/solvers/diophantine.py b/sympy/solvers/diophantine.py
+index 6092e35dab..b43f5c1dcf 100755
+--- a/sympy/solvers/diophantine.py
++++ b/sympy/solvers/diophantine.py
+@@ -182,7 +182,7 @@ def diophantine(eq, param=symbols("t", integer=True), syms=None,
+             if syms != var:
+                 dict_sym_index = dict(zip(syms, range(len(syms))))
+                 return {tuple([t[dict_sym_index[i]] for i in var])
+-                            for t in diophantine(eq, param)}
++                            for t in diophantine(eq, param, permute=permute)}
+         n, d = eq.as_numer_denom()
+         if n.is_number:
+             return set()
+diff --git a/sympy/solvers/tests/test_diophantine.py b/sympy/solvers/tests/test_diophantine.py
+index e4e8972ae0..a82a3bf3b7 100755
+--- a/sympy/solvers/tests/test_diophantine.py
++++ b/sympy/solvers/tests/test_diophantine.py
+@@ -501,6 +501,10 @@ def test_diophantine():
+     assert diophantine(eq, permute=True) == complete_soln
+ 
+     assert diophantine(x**2 + x*Rational(15, 14) - 3) == set()
++    # test issue 18186
++    eq = x**4 + y**4 - 2**4 - 3**4
++    assert diophantine(eq, syms=(x, y), permute=True) == \
++        diophantine(eq, syms=(y, x), permute=True)
+     # test issue 11049
+     eq = 92*x**2 - 99*y**2 - z**2
+     coeff = eq.as_coefficients_dict()
+2026-11-11 10:48:32,866 - INFO - Eval script for sympy__sympy-18189 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2166/claude-code-glm-5.3-flash/sympy__sympy-18189/eval.sh; copying to container...
+2026-11-11 10:49:06,149 - INFO - Test runtime: 33.21 seconds
+2026-11-11 10:49:06,151 - INFO - Test output for sympy__sympy-18189 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2166/claude-code-glm-5.3-flash/sympy__sympy-18189/test_output.txt
+2026-11-11 10:49:06,216 - INFO - Git diff after:
+diff --git a/sympy/solvers/diophantine.py b/sympy/solvers/diophantine.py
+index 6092e35dab..b43f5c1dcf 100755
+--- a/sympy/solvers/diophantine.py
++++ b/sympy/solvers/diophantine.py
+@@ -182,7 +182,7 @@ def diophantine(eq, param=symbols("t", integer=True), syms=None,
+             if syms != var:
+                 dict_sym_index = dict(zip(syms, range(len(syms))))
+                 return {tuple([t[dict_sym_index[i]] for i in var])
+-                            for t in diophantine(eq, param)}
++                            for t in diophantine(eq, param, permute=permute)}
+         n, d = eq.as_numer_denom()
+         if n.is_number:
+             return set()
+2026-11-11 10:49:06,216 - INFO - Git diff changed after running eval script
+2026-11-11 10:49:06,216 - INFO - Grading answer for sympy__sympy-18189...
+2026-11-11 10:49:06,221 - INFO - report: {'sympy__sympy-18189': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_diophantine'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_input_format', 'test_univariate', 'test_classify_diop', 'test_linear', 'test_quadratic_simple_hyperbolic_case', 'test_quadratic_elliptical_case', 'test_quadratic_parabolic_case', 'test_quadratic_perfect_square', 'test_quadratic_non_perfect_square', 'test_issue_9106', 'test_issue_18138', 'test_DN', 'test_bf_pell', 'test_length', 'test_transformation_to_pell', 'test_find_DN', 'test_ldescent', 'test_diop_ternary_quadratic_normal', 'test_transformation_to_normal', 'test_diop_ternary_quadratic', 'test_square_factor', 'test_parametrize_ternary_quadratic', 'test_no_square_ternary_quadratic', 'test_descent', 'test_general_pythagorean', 'test_diop_general_sum_of_squares_quick', 'test_diop_partition', 'test_prime_as_sum_of_two_squares', 'test_sum_of_three_squares', 'test_sum_of_four_squares', 'test_power_representation', 'test_assumptions', 'test_diopcoverage', 'test_holzer', 'test_issue_9539', 'test_issue_8943', 'test_diop_sum_of_even_powers', 'test_sum_of_squares_powers', 'test__can_do_sum_of_squares', 'test_diophantine_permute_sign', 'test_issue_9538'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-18189: resolved: True
+2026-11-11 10:49:06,222 - INFO - Attempting to stop container sweb.eval.sympy__sympy-18189.verified_full_glm53_claude-code_incr_R2166...
+2026-11-11 10:49:22,279 - INFO - Container sweb.eval.sympy__sympy-18189.verified_full_glm53_claude-code_incr_R2166 stopped successfully.
+2026-11-11 10:49:22,280 - INFO - Attempting to remove container sweb.eval.sympy__sympy-18189.verified_full_glm53_claude-code_incr_R2166...
+2026-11-11 10:49:22,323 - INFO - Container sweb.eval.sympy__sympy-18189.verified_full_glm53_claude-code_incr_R2166 removed successfully.

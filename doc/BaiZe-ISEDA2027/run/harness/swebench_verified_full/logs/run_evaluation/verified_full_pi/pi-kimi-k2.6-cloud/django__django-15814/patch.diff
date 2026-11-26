@@ -1,0 +1,72 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 33cc636b22..cbcf74aac2 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -745,9 +745,9 @@ class Query(BaseExpression):
+                     name = self._filtered_relations[name].relation_name
+                 source = opts.get_field(name)
+                 if is_reverse_o2o(source):
+-                    cur_model = source.related_model
++                    cur_model = source.related_model._meta.concrete_model
+                 else:
+-                    cur_model = source.remote_field.model
++                    cur_model = source.remote_field.model._meta.concrete_model
+                 opts = cur_model._meta
+                 # Even if we're "just passing through" this model, we must add
+                 # both the current model's pk and the related reference field
+diff --git a/tests/defer/models.py b/tests/defer/models.py
+index 6de2e2af97..f47e999e33 100644
+--- a/tests/defer/models.py
++++ b/tests/defer/models.py
+@@ -32,6 +32,16 @@ class ChildProxy(Child):
+         proxy = True
+ 
+ 
++class SecondaryProxy(Secondary):
++    class Meta:
++        proxy = True
++
++
++class PrimaryToProxy(models.Model):
++    name = models.CharField(max_length=50)
++    proxy_related = models.ForeignKey(SecondaryProxy, models.CASCADE)
++
++
+ class RefreshPrimaryProxy(Primary):
+     class Meta:
+         proxy = True
+diff --git a/tests/defer/tests.py b/tests/defer/tests.py
+index d2cff258b4..146b0da833 100644
+--- a/tests/defer/tests.py
++++ b/tests/defer/tests.py
+@@ -6,8 +6,10 @@ from .models import (
+     Child,
+     ChildProxy,
+     Primary,
++    PrimaryToProxy,
+     RefreshPrimaryProxy,
+     Secondary,
++    SecondaryProxy,
+     ShadowChild,
+ )
+ 
+@@ -255,6 +257,19 @@ class TestDefer2(AssertionMixin, TestCase):
+         self.assertEqual(child.name, "p1")
+         self.assertEqual(child.value, "xx")
+ 
++    def test_only_select_related_to_proxy_model(self):
++        """
++        select_related() followed by only() on a FK to a proxy model doesn't
++        crash. See #33751.
++        """
++        secondary = Secondary.objects.create(first="x1", second="y2")
++        PrimaryToProxy.objects.create(name="p1", proxy_related=secondary)
++        obj = PrimaryToProxy.objects.select_related("proxy_related").only(
++            "proxy_related__first"
++        ).get()
++        self.assertEqual(obj.proxy_related.first, "x1")
++        self.assert_delayed(obj, 1)
++
+     def test_defer_inheritance_pk_chaining(self):
+         """
+         When an inherited model is fetched from the DB, its PK is also fetched.

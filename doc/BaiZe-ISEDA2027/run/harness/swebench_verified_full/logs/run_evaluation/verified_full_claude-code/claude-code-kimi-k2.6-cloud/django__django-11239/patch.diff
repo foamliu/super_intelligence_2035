@@ -1,0 +1,99 @@
+diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py
+index cf4df7688..aa34e8749 100644
+--- a/django/db/backends/postgresql/client.py
++++ b/django/db/backends/postgresql/client.py
+@@ -30,6 +30,14 @@ class DatabaseClient(BaseDatabaseClient):
+         subprocess_env = os.environ.copy()
+         if passwd:
+             subprocess_env['PGPASSWORD'] = str(passwd)
++        if conn_params.get('sslmode'):
++            subprocess_env['PGSSLMODE'] = str(conn_params['sslmode'])
++        if conn_params.get('sslrootcert'):
++            subprocess_env['PGSSLROOTCERT'] = str(conn_params['sslrootcert'])
++        if conn_params.get('sslcert'):
++            subprocess_env['PGSSLCERT'] = str(conn_params['sslcert'])
++        if conn_params.get('sslkey'):
++            subprocess_env['PGSSLKEY'] = str(conn_params['sslkey'])
+         try:
+             # Allow SIGINT to pass to psql to abort queries.
+             signal.signal(signal.SIGINT, signal.SIG_IGN)
+diff --git a/tests/dbshell/test_postgresql.py b/tests/dbshell/test_postgresql.py
+index a33e7f648..1ac7ad7cc 100644
+--- a/tests/dbshell/test_postgresql.py
++++ b/tests/dbshell/test_postgresql.py
+@@ -94,3 +94,75 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+             DatabaseClient.runshell_db({})
+         # dbshell restores the original handler.
+         self.assertEqual(sigint_handler, signal.getsignal(signal.SIGINT))
++
++    def test_ssl(self):
++        def _mock_subprocess_run(*args, env=os.environ, **kwargs):
++            self.subprocess_args = list(*args)
++            self.pgsslmode = env.get('PGSSLMODE')
++            self.pgsslrootcert = env.get('PGSSLROOTCERT')
++            self.pgsslcert = env.get('PGSSLCERT')
++            self.pgsslkey = env.get('PGSSLKEY')
++            return subprocess.CompletedProcess(self.subprocess_args, 0)
++        with mock.patch('subprocess.run', new=_mock_subprocess_run):
++            DatabaseClient.runshell_db({
++                'database': 'dbname',
++                'sslmode': 'verify-ca',
++                'sslrootcert': '/path/to/ca.crt',
++                'sslcert': '/path/to/client.crt',
++                'sslkey': '/path/to/client.key',
++            })
++        self.assertEqual(self.subprocess_args, ['psql', 'dbname'])
++        self.assertEqual(self.pgsslmode, 'verify-ca')
++        self.assertEqual(self.pgsslrootcert, '/path/to/ca.crt')
++        self.assertEqual(self.pgsslcert, '/path/to/client.crt')
++        self.assertEqual(self.pgsslkey, '/path/to/client.key')
++
++    def test_ssl_with_password(self):
++        def _mock_subprocess_run(*args, env=os.environ, **kwargs):
++            self.subprocess_args = list(*args)
++            self.pgpassword = env.get('PGPASSWORD')
++            self.pgsslmode = env.get('PGSSLMODE')
++            self.pgsslrootcert = env.get('PGSSLROOTCERT')
++            self.pgsslcert = env.get('PGSSLCERT')
++            self.pgsslkey = env.get('PGSSLKEY')
++            return subprocess.CompletedProcess(self.subprocess_args, 0)
++        with mock.patch('subprocess.run', new=_mock_subprocess_run):
++            DatabaseClient.runshell_db({
++                'database': 'dbname',
++                'user': 'someuser',
++                'password': 'somepassword',
++                'host': 'somehost',
++                'port': '444',
++                'sslmode': 'verify-full',
++                'sslrootcert': '/path/to/ca.crt',
++                'sslcert': '/path/to/client.crt',
++                'sslkey': '/path/to/client.key',
++            })
++        self.assertEqual(
++            self.subprocess_args,
++            ['psql', '-U', 'someuser', '-h', 'somehost', '-p', '444', 'dbname'],
++        )
++        self.assertEqual(self.pgpassword, 'somepassword')
++        self.assertEqual(self.pgsslmode, 'verify-full')
++        self.assertEqual(self.pgsslrootcert, '/path/to/ca.crt')
++        self.assertEqual(self.pgsslcert, '/path/to/client.crt')
++        self.assertEqual(self.pgsslkey, '/path/to/client.key')
++
++    def test_no_ssl(self):
++        def _mock_subprocess_run(*args, env=os.environ, **kwargs):
++            self.subprocess_args = list(*args)
++            self.pgsslmode = env.get('PGSSLMODE')
++            self.pgsslrootcert = env.get('PGSSLROOTCERT')
++            self.pgsslcert = env.get('PGSSLCERT')
++            self.pgsslkey = env.get('PGSSLKEY')
++            return subprocess.CompletedProcess(self.subprocess_args, 0)
++        with mock.patch('subprocess.run', new=_mock_subprocess_run):
++            DatabaseClient.runshell_db({
++                'database': 'dbname',
++                'user': 'someuser',
++            })
++        self.assertEqual(self.subprocess_args, ['psql', '-U', 'someuser', 'dbname'])
++        self.assertIsNone(self.pgsslmode)
++        self.assertIsNone(self.pgsslrootcert)
++        self.assertIsNone(self.pgsslcert)
++        self.assertIsNone(self.pgsslkey)

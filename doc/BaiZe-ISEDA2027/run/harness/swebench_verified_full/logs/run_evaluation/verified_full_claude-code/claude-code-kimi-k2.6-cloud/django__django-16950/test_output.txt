@@ -1,0 +1,565 @@
++ source /opt/miniconda3/bin/activate
+++ _CONDA_ROOT=/opt/miniconda3
+++ . /opt/miniconda3/etc/profile.d/conda.sh
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ '[' -z '' ']'
++++ export CONDA_SHLVL=0
++++ CONDA_SHLVL=0
++++ '[' -n '' ']'
++++++ dirname /opt/miniconda3/bin/conda
+++++ dirname /opt/miniconda3/bin
++++ PATH=/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ export PATH
++++ '[' -z '' ']'
++++ PS1=
+++ conda activate
+++ local cmd=activate
+++ case "$cmd" in
+++ __conda_activate activate
+++ '[' -n '' ']'
+++ local ask_conda
++++ PS1=
++++ __conda_exe shell.posix activate
++++ /opt/miniconda3/bin/conda shell.posix activate
+++ ask_conda='PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''1'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ eval 'PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''1'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++++ PS1='(base) '
++++ export PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ export CONDA_PREFIX=/opt/miniconda3
++++ CONDA_PREFIX=/opt/miniconda3
++++ export CONDA_SHLVL=1
++++ CONDA_SHLVL=1
++++ export CONDA_DEFAULT_ENV=base
++++ CONDA_DEFAULT_ENV=base
++++ export 'CONDA_PROMPT_MODIFIER=(base) '
++++ CONDA_PROMPT_MODIFIER='(base) '
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ __conda_hashr
+++ '[' -n '' ']'
+++ '[' -n '' ']'
+++ hash -r
++ conda activate testbed
++ local cmd=activate
++ case "$cmd" in
++ __conda_activate activate testbed
++ '[' -n '' ']'
++ local ask_conda
+++ PS1='(base) '
+++ __conda_exe shell.posix activate testbed
+++ /opt/miniconda3/bin/conda shell.posix activate testbed
++ ask_conda='PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''2'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_1='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++ eval 'PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''2'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_1='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ PS1='(testbed) '
+++ export PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ export CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ export CONDA_SHLVL=2
+++ CONDA_SHLVL=2
+++ export CONDA_DEFAULT_ENV=testbed
+++ CONDA_DEFAULT_ENV=testbed
+++ export 'CONDA_PROMPT_MODIFIER=(testbed) '
+++ CONDA_PROMPT_MODIFIER='(testbed) '
+++ export CONDA_PREFIX_1=/opt/miniconda3
+++ CONDA_PREFIX_1=/opt/miniconda3
+++ export CONDA_EXE=/opt/miniconda3/bin/conda
+++ CONDA_EXE=/opt/miniconda3/bin/conda
+++ export _CE_M=
+++ _CE_M=
+++ export _CE_CONDA=
+++ _CE_CONDA=
+++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++ __conda_hashr
++ '[' -n '' ']'
++ '[' -n '' ']'
++ hash -r
++ cd /testbed
++ git config --global --add safe.directory /testbed
++ cd /testbed
++ git status
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   django/forms/models.py
+	modified:   tests/admin_inlines/admin.py
+	modified:   tests/admin_inlines/models.py
+	modified:   tests/admin_inlines/tests.py
+
+no changes added to commit (use "git add" and/or "git commit -a")
++ git show
+commit d4e5c7436f1d5f9cb716da59ee0f6a2b08863050
+Author: SWE-bench <setup@swebench.com>
+Date:   Thu Aug 13 01:52:01 2026 +0000
+
+    SWE-bench
++ git -c core.fileMode=false diff f64fd47a7627ed6ffe2df2a32ded6ee528a784eb
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 3fa04b821f..3fd24b9471 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1150,6 +1150,8 @@ class BaseInlineFormSet(BaseModelFormSet):
+         return super().save_new(form, commit=commit)
+ 
+     def add_fields(self, form, index):
++        from django.db.models import AutoField
++
+         super().add_fields(form, index)
+         if self._pk_field == self.fk:
+             name = self._pk_field.name
+@@ -1177,7 +1179,7 @@ class BaseInlineFormSet(BaseModelFormSet):
+                 to_field = self.instance._meta.get_field(kwargs["to_field"])
+             else:
+                 to_field = self.instance._meta.pk
+-            if to_field.has_default():
++            if isinstance(to_field, AutoField):
+                 setattr(self.instance, to_field.attname, None)
+ 
+         form.fields[name] = InlineForeignKeyField(self.instance, **kwargs)
+diff --git a/tests/admin_inlines/admin.py b/tests/admin_inlines/admin.py
+index 0ec56d71b3..0f88a1c246 100644
+--- a/tests/admin_inlines/admin.py
++++ b/tests/admin_inlines/admin.py
+@@ -55,6 +55,8 @@ from .models import (
+     Teacher,
+     Title,
+     TitleCollection,
++    UUIDChild,
++    UUIDParent,
+ )
+ 
+ site = admin.AdminSite(name="admin")
+@@ -425,6 +427,14 @@ class ShowInlineParentAdmin(admin.ModelAdmin):
+         return []
+ 
+ 
++class UUIDChildInline(admin.StackedInline):
++    model = UUIDChild
++
++
++class UUIDParentAdmin(admin.ModelAdmin):
++    inlines = [UUIDChildInline]
++
++
+ site.register(TitleCollection, inlines=[TitleInline])
+ # Test bug #12561 and #12778
+ # only ModelAdmin media
+@@ -459,6 +469,7 @@ site.register(CourseProxy, ClassAdminStackedVertical)
+ site.register(CourseProxy1, ClassAdminTabularVertical)
+ site.register(CourseProxy2, ClassAdminTabularHorizontal)
+ site.register(ShowInlineParent, ShowInlineParentAdmin)
++site.register(UUIDParent, UUIDParentAdmin)
+ # Used to test hidden fields in tabular and stacked inlines.
+ site2 = admin.AdminSite(name="tabular_inline_hidden_field_admin")
+ site2.register(SomeParentModel, inlines=[ChildHiddenFieldTabularInline])
+diff --git a/tests/admin_inlines/models.py b/tests/admin_inlines/models.py
+index a8d2ee02e1..e497e40d81 100644
+--- a/tests/admin_inlines/models.py
++++ b/tests/admin_inlines/models.py
+@@ -2,6 +2,7 @@
+ Testing of admin inline formsets.
+ """
+ import random
++import uuid
+ 
+ from django.contrib.contenttypes.fields import GenericForeignKey
+ from django.contrib.contenttypes.models import ContentType
+@@ -377,3 +378,17 @@ class BothVerboseNameProfile(Profile):
+     class Meta:
+         verbose_name = "Model with both - name"
+         verbose_name_plural = "Model with both - plural name"
++
++
++# Models for ticket #32267.
++
++
++class UUIDParent(models.Model):
++    pkid = models.BigAutoField(primary_key=True, editable=False)
++    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
++    name = models.CharField(max_length=50)
++
++
++class UUIDChild(models.Model):
++    name = models.CharField(max_length=50)
++    parent = models.ForeignKey(UUIDParent, models.CASCADE, to_field="id")
+diff --git a/tests/admin_inlines/tests.py b/tests/admin_inlines/tests.py
+index 9533cc9af3..70429a8beb 100644
+--- a/tests/admin_inlines/tests.py
++++ b/tests/admin_inlines/tests.py
+@@ -44,6 +44,8 @@ from .models import (
+     Teacher,
+     VerboseNamePluralProfile,
+     VerboseNameProfile,
++    UUIDChild,
++    UUIDParent,
+ )
+ 
+ INLINE_CHANGELINK_HTML = 'class="inlinechangelink">Change</a>'
+@@ -760,6 +762,28 @@ class TestInline(TestDataMixin, TestCase):
+         parent.refresh_from_db()
+         self.assertIs(parent.show_inlines, True)
+ 
++    def test_inline_with_uuid_parent_non_pk(self):
++        """
++        Adding a new parent with inline children works when the inline's
++        ForeignKey points to a non-PK UUIDField with a default value. The UUID
++        default should not be reset to None. Refs #32267.
++        """
++        data = {
++            "name": "Test Parent",
++            "uuidchild_set-TOTAL_FORMS": 1,
++            "uuidchild_set-INITIAL_FORMS": 0,
++            "uuidchild_set-MIN_NUM_FORMS": 0,
++            "uuidchild_set-MAX_NUM_FORMS": 1000,
++            "uuidchild_set-0-name": "Test Child",
++            "_save": "Save",
++        }
++        response = self.client.post(
++            reverse("admin:admin_inlines_uuidparent_add"), data
++        )
++        self.assertEqual(response.status_code, 302)
++        parent = UUIDParent.objects.get()
++        self.assertEqual(UUIDChild.objects.filter(parent=parent).count(), 1)
++
+ 
+ @override_settings(ROOT_URLCONF="admin_inlines.urls")
+ class TestInlineMedia(TestDataMixin, TestCase):
++ source /opt/miniconda3/bin/activate
+++ _CONDA_ROOT=/opt/miniconda3
+++ . /opt/miniconda3/etc/profile.d/conda.sh
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ '[' -z x ']'
+++ conda activate
+++ local cmd=activate
+++ case "$cmd" in
+++ __conda_activate activate
+++ '[' -n '' ']'
+++ local ask_conda
++++ PS1='(testbed) '
++++ __conda_exe shell.posix activate
++++ /opt/miniconda3/bin/conda shell.posix activate
+++ ask_conda='PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''3'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_PREFIX_2='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ eval 'PS1='\''(base) '\''
+export PATH='\''/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3'\''
+export CONDA_SHLVL='\''3'\''
+export CONDA_DEFAULT_ENV='\''base'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_PREFIX_2='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++++ PS1='(base) '
++++ export PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ PATH=/opt/miniconda3/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++++ export CONDA_PREFIX=/opt/miniconda3
++++ CONDA_PREFIX=/opt/miniconda3
++++ export CONDA_SHLVL=3
++++ CONDA_SHLVL=3
++++ export CONDA_DEFAULT_ENV=base
++++ CONDA_DEFAULT_ENV=base
++++ export 'CONDA_PROMPT_MODIFIER=(base) '
++++ CONDA_PROMPT_MODIFIER='(base) '
++++ export CONDA_PREFIX_2=/opt/miniconda3/envs/testbed
++++ CONDA_PREFIX_2=/opt/miniconda3/envs/testbed
++++ export CONDA_EXE=/opt/miniconda3/bin/conda
++++ CONDA_EXE=/opt/miniconda3/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ __conda_hashr
+++ '[' -n '' ']'
+++ '[' -n '' ']'
+++ hash -r
++ conda activate testbed
++ local cmd=activate
++ case "$cmd" in
++ __conda_activate activate testbed
++ '[' -n '' ']'
++ local ask_conda
+++ PS1='(base) '
+++ __conda_exe shell.posix activate testbed
+++ /opt/miniconda3/bin/conda shell.posix activate testbed
++ ask_conda='PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''4'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_3='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
++ eval 'PS1='\''(testbed) '\''
+export PATH='\''/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'\''
+export CONDA_PREFIX='\''/opt/miniconda3/envs/testbed'\''
+export CONDA_SHLVL='\''4'\''
+export CONDA_DEFAULT_ENV='\''testbed'\''
+export CONDA_PROMPT_MODIFIER='\''(testbed) '\''
+export CONDA_PREFIX_3='\''/opt/miniconda3'\''
+export CONDA_EXE='\''/opt/miniconda3/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/miniconda3/bin/python'\'''
+++ PS1='(testbed) '
+++ export PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ PATH=/opt/miniconda3/envs/testbed/bin:/opt/miniconda3/condabin:/opt/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+++ export CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ CONDA_PREFIX=/opt/miniconda3/envs/testbed
+++ export CONDA_SHLVL=4
+++ CONDA_SHLVL=4
+++ export CONDA_DEFAULT_ENV=testbed
+++ CONDA_DEFAULT_ENV=testbed
+++ export 'CONDA_PROMPT_MODIFIER=(testbed) '
+++ CONDA_PROMPT_MODIFIER='(testbed) '
+++ export CONDA_PREFIX_3=/opt/miniconda3
+++ CONDA_PREFIX_3=/opt/miniconda3
+++ export CONDA_EXE=/opt/miniconda3/bin/conda
+++ CONDA_EXE=/opt/miniconda3/bin/conda
+++ export _CE_M=
+++ _CE_M=
+++ export _CE_CONDA=
+++ _CE_CONDA=
+++ export CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
+++ CONDA_PYTHON_EXE=/opt/miniconda3/bin/python
++ __conda_hashr
++ '[' -n '' ']'
++ '[' -n '' ']'
++ hash -r
++ python -m pip install -e .
+Obtaining file:///testbed
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: asgiref>=3.7.0 in /opt/miniconda3/envs/testbed/lib/python3.11/site-packages (from Django==5.0.dev20260813015201) (3.8.1)
+Requirement already satisfied: sqlparse>=0.3.1 in /opt/miniconda3/envs/testbed/lib/python3.11/site-packages (from Django==5.0.dev20260813015201) (0.5.2)
+Building wheels for collected packages: Django
+  Building editable for Django (pyproject.toml): started
+  Building editable for Django (pyproject.toml): finished with status 'done'
+  Created wheel for Django: filename=django-5.0.dev20260813015201-0.editable-py3-none-any.whl size=27617 sha256=e45df986434576b64c2f40c12176557050f6dd0c367441be9517c9c2cf73907d
+  Stored in directory: /tmp/pip-ephem-wheel-cache-oa00dy7q/wheels/49/5f/4f/01b7d31ea6ddac9643da788242d33e5fd3467d95d17b032c6b
+Successfully built Django
+Installing collected packages: Django
+  Attempting uninstall: Django
+    Found existing installation: Django 5.0.dev20230707060601
+    Uninstalling Django-5.0.dev20230707060601:
+      Successfully uninstalled Django-5.0.dev20230707060601
+Successfully installed Django-5.0.dev20260813015201
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
++ git checkout f64fd47a7627ed6ffe2df2a32ded6ee528a784eb tests/model_formsets/test_uuid.py
+Updated 0 paths from 1abf1f8f94
++ git apply -v -
+Checking patch tests/model_formsets/test_uuid.py...
+Applied patch tests/model_formsets/test_uuid.py cleanly.
++ : '>>>>> Start Test Output'
++ ./tests/runtests.py --verbosity 2 --settings=test_sqlite --parallel 1 model_formsets.test_uuid
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Testing against Django installed in '/testbed/django'
+Importing application model_formsets
+Found 7 test(s).
+Skipping setup of unused database(s): other.
+Operations to perform:
+  Synchronize unmigrated apps: auth, contenttypes, messages, model_formsets, sessions, staticfiles
+  Apply all migrations: admin, sites
+Synchronizing apps without migrations:
+  Creating tables...
+    Creating table django_content_type
+    Creating table auth_permission
+    Creating table auth_group
+    Creating table auth_user
+    Creating table django_session
+    Creating table model_formsets_author
+    Creating table model_formsets_betterauthor
+    Creating table model_formsets_book
+    Creating table model_formsets_bookwithcustompk
+    Creating table model_formsets_editor
+    Creating table model_formsets_bookwithoptionalalteditor
+    Creating table model_formsets_alternatebook
+    Creating table model_formsets_authormeeting
+    Creating table model_formsets_customprimarykey
+    Creating table model_formsets_place
+    Creating table model_formsets_owner
+    Creating table model_formsets_location
+    Creating table model_formsets_ownerprofile
+    Creating table model_formsets_restaurant
+    Creating table model_formsets_product
+    Creating table model_formsets_price
+    Creating table model_formsets_mexicanrestaurant
+    Creating table model_formsets_classymexicanrestaurant
+    Creating table model_formsets_repository
+    Creating table model_formsets_revision
+    Creating table model_formsets_person
+    Creating table model_formsets_membership
+    Creating table model_formsets_team
+    Creating table model_formsets_player
+    Creating table model_formsets_poet
+    Creating table model_formsets_poem
+    Creating table model_formsets_post
+    Creating table model_formsets_uuidpkparent
+    Creating table model_formsets_uuidpkchild
+    Creating table model_formsets_childwitheditablepk
+    Creating table model_formsets_autopkchildofuuidpkparent
+    Creating table model_formsets_autopkparent
+    Creating table model_formsets_uuidpkchildofautopkparent
+    Creating table model_formsets_parentwithuuidalternatekey
+    Creating table model_formsets_childrelatedviaak
+    Running deferred SQL...
+Running migrations:
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying sites.0001_initial... OK
+  Applying sites.0002_alter_domain_unique... OK
+System check identified no issues (1 silenced).
+test_inlineformset_factory_ignores_default_pks_on_submit (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_ignores_default_pks_on_submit)
+#24377 - Inlines with a model field default should ignore that default ... FAIL
+test_inlineformset_factory_nulls_default_pks (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_nulls_default_pks)
+#24377 - If we're adding a new object, a parent's auto-generated pk ... FAIL
+test_inlineformset_factory_nulls_default_pks_alternate_key_relation (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_nulls_default_pks_alternate_key_relation)
+#24958 - Variant of test_inlineformset_factory_nulls_default_pks for ... FAIL
+test_inlineformset_factory_nulls_default_pks_alternate_key_relation_data (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_nulls_default_pks_alternate_key_relation_data)
+If form data is provided, a parent's auto-generated alternate key is ... ok
+test_inlineformset_factory_nulls_default_pks_auto_parent_uuid_child (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_nulls_default_pks_auto_parent_uuid_child)
+#24958 - Variant of test_inlineformset_factory_nulls_default_pks for ... ok
+test_inlineformset_factory_nulls_default_pks_child_editable_pk (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_nulls_default_pks_child_editable_pk)
+#24958 - Variant of test_inlineformset_factory_nulls_default_pks for ... FAIL
+test_inlineformset_factory_nulls_default_pks_uuid_parent_auto_child (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_nulls_default_pks_uuid_parent_auto_child)
+#24958 - Variant of test_inlineformset_factory_nulls_default_pks for ... FAIL
+
+======================================================================
+FAIL: test_inlineformset_factory_ignores_default_pks_on_submit (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_ignores_default_pks_on_submit)
+#24377 - Inlines with a model field default should ignore that default
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/testbed/tests/model_formsets/test_uuid.py", line 46, in test_inlineformset_factory_ignores_default_pks_on_submit
+    self.assertIsNone(formset.instance.uuid)
+AssertionError: UUID('549e31f1-0f13-4e69-9f59-ff978259b4df') is not None
+
+======================================================================
+FAIL: test_inlineformset_factory_nulls_default_pks (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_nulls_default_pks)
+#24377 - If we're adding a new object, a parent's auto-generated pk
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/testbed/tests/model_formsets/test_uuid.py", line 27, in test_inlineformset_factory_nulls_default_pks
+    self.assertIsNone(formset.forms[0].fields["parent"].initial)
+AssertionError: UUID('0593606f-eb43-4cc7-8a4d-8d0ef9b2bfc8') is not None
+
+======================================================================
+FAIL: test_inlineformset_factory_nulls_default_pks_alternate_key_relation (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_nulls_default_pks_alternate_key_relation)
+#24958 - Variant of test_inlineformset_factory_nulls_default_pks for
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/testbed/tests/model_formsets/test_uuid.py", line 95, in test_inlineformset_factory_nulls_default_pks_alternate_key_relation
+    self.assertIsNone(formset.forms[0].fields["parent"].initial)
+AssertionError: UUID('a4ddf264-2308-4cdc-a88b-26dbd46cf66a') is not None
+
+======================================================================
+FAIL: test_inlineformset_factory_nulls_default_pks_child_editable_pk (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_nulls_default_pks_child_editable_pk)
+#24958 - Variant of test_inlineformset_factory_nulls_default_pks for
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/testbed/tests/model_formsets/test_uuid.py", line 83, in test_inlineformset_factory_nulls_default_pks_child_editable_pk
+    self.assertIsNone(formset.forms[0].fields["parent"].initial)
+AssertionError: UUID('37df6168-9c7a-4019-b382-642837a2a67e') is not None
+
+======================================================================
+FAIL: test_inlineformset_factory_nulls_default_pks_uuid_parent_auto_child (model_formsets.test_uuid.InlineFormsetTests.test_inlineformset_factory_nulls_default_pks_uuid_parent_auto_child)
+#24958 - Variant of test_inlineformset_factory_nulls_default_pks for
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/testbed/tests/model_formsets/test_uuid.py", line 59, in test_inlineformset_factory_nulls_default_pks_uuid_parent_auto_child
+    self.assertIsNone(formset.forms[0].fields["parent"].initial)
+AssertionError: UUID('ab7404d3-df94-4c3a-8684-8a4ce2ef6568') is not None
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.015s
+
+FAILED (failures=5)
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
++ SWEBENCH_TEST_EXIT_CODE=1
++ : '>>>>> End Test Output'
++ echo '>>>>> Test Exit Code: 1'
+>>>>> Test Exit Code: 1
++ git checkout f64fd47a7627ed6ffe2df2a32ded6ee528a784eb tests/model_formsets/test_uuid.py
+Updated 1 path from 1abf1f8f94

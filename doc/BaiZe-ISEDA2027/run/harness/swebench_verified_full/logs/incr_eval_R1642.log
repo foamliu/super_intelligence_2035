@@ -1,0 +1,13 @@
+
+=== deepseek-harness: incr_eval ['pylint-dev__pylint-7277'] ===
+[11:40:26] deepseek-harness: merged 256 -> predictions/predictions_deepseek-harness.json
+[11:40:26] deepseek-harness: launching eval (workers=1, timeout=1800, run_id=verified_full_deepseek-harness_incr_R1642)...
+
+=== deepseek-harness: incr_eval ['pylint-dev__pylint-7277'] ===
+[11:46:40] deepseek-harness: merged 256 -> predictions/predictions_deepseek-harness.json
+[11:46:40] deepseek-harness: launching eval (workers=1, timeout=1800, run_id=verified_full_deepseek-harness_incr_R1642)...
+[11:47:35] deepseek-harness: eval done rc=0
+[11:47:35] deepseek-harness pylint-dev__pylint-7277: RESOLVED (from logs/run_evaluation/verified_full_deepseek-harness_incr_R1642/deepseek-harness-kimi-k2.6-cloud/pylint-dev__pylint-7277/report.json)
+[11:47:35] deepseek-harness: resolved=202 failed=53 infra=0 no_patch=6 n=261
+
+[11:47:35] R1642 incr_eval DONE (54s)

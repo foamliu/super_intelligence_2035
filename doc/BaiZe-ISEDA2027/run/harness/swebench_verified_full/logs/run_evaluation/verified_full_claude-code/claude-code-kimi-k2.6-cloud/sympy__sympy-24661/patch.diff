@@ -1,0 +1,107 @@
+diff --git a/sympy/parsing/sympy_parser.py b/sympy/parsing/sympy_parser.py
+index 52711d1324..8562fd4795 100644
+--- a/sympy/parsing/sympy_parser.py
++++ b/sympy/parsing/sympy_parser.py
+@@ -1118,6 +1118,14 @@ class EvaluateFalseTransformer(ast.NodeTransformer):
+         'cosh', 'coth', 'csch', 'sech', 'sinh', 'tanh',
+         'exp', 'ln', 'log', 'sqrt', 'cbrt',
+     )
++    relationals = {
++        ast.Lt: 'Lt',
++        ast.Gt: 'Gt',
++        ast.LtE: 'Le',
++        ast.GtE: 'Ge',
++        ast.Eq: 'Eq',
++        ast.NotEq: 'Ne',
++    }
+ 
+     def flatten(self, args, func):
+         result = []
+@@ -1186,6 +1194,34 @@ def visit_BinOp(self, node):
+             return new_node
+         return node
+ 
++    def visit_Compare(self, node):
++        if all(op.__class__ in self.relationals for op in node.ops):
++            new_node = self.generic_visit(node)
++            rels = []
++            left = self.visit(new_node.left)
++            for op, comparator in zip(new_node.ops, new_node.comparators):
++                sympy_class = self.relationals[op.__class__]
++                right = self.visit(comparator)
++                rel = ast.Call(
++                    func=ast.Name(id=sympy_class, ctx=ast.Load()),
++                    args=[left, right],
++                    keywords=[ast.keyword(arg='evaluate', value=ast.NameConstant(value=False, ctx=ast.Load()))],
++                    starargs=None,
++                    kwargs=None
++                )
++                rels.append(rel)
++                left = right
++            if len(rels) == 1:
++                return rels[0]
++            return ast.Call(
++                func=ast.Name(id='And', ctx=ast.Load()),
++                args=rels,
++                keywords=[ast.keyword(arg='evaluate', value=ast.NameConstant(value=False, ctx=ast.Load()))],
++                starargs=None,
++                kwargs=None
++            )
++        return node
++
+     def visit_Call(self, node):
+         new_node = self.generic_visit(node)
+         if isinstance(node.func, ast.Name) and node.func.id in self.functions:
+diff --git a/sympy/parsing/tests/test_sympy_parser.py b/sympy/parsing/tests/test_sympy_parser.py
+index 7c43e1fce3..1123d2d947 100644
+--- a/sympy/parsing/tests/test_sympy_parser.py
++++ b/sympy/parsing/tests/test_sympy_parser.py
+@@ -6,7 +6,7 @@
+ import types
+ 
+ from sympy.assumptions import Q
+-from sympy.core import Symbol, Function, Float, Rational, Integer, I, Mul, Pow, Eq
++from sympy.core import Symbol, Function, Float, Rational, Integer, I, Mul, Pow, Eq, Lt, Gt, Le, Ge, Ne
+ from sympy.functions import exp, factorial, factorial2, sin, Min, Max
+ from sympy.logic import And
+ from sympy.series import Limit
+@@ -359,3 +359,39 @@ def test_issue_22822():
+     raises(ValueError, lambda: parse_expr('x', {'': 1}))
+     data = {'some_parameter': None}
+     assert parse_expr('some_parameter is None', data) is True
++
++
++def test_relational_evaluate_false():
++    # Test that relationals respect evaluate=False
++    # See issue #22305 and #22098
++    x, y = Symbol('x'), Symbol('y')
++
++    # Simple comparisons
++    assert parse_expr('1 < 2', evaluate=False) == Lt(1, 2, evaluate=False)
++    assert parse_expr('1 > 2', evaluate=False) == Gt(1, 2, evaluate=False)
++    assert parse_expr('1 <= 2', evaluate=False) == Le(1, 2, evaluate=False)
++    assert parse_expr('1 >= 2', evaluate=False) == Ge(1, 2, evaluate=False)
++    assert parse_expr('1 == 2', evaluate=False) == Eq(1, 2, evaluate=False)
++    assert parse_expr('1 != 2', evaluate=False) == Ne(1, 2, evaluate=False)
++
++    # Comparisons with symbols
++    assert parse_expr('x < y', evaluate=False) == Lt(x, y, evaluate=False)
++    assert parse_expr('x > y', evaluate=False) == Gt(x, y, evaluate=False)
++    assert parse_expr('x <= y', evaluate=False) == Le(x, y, evaluate=False)
++    assert parse_expr('x >= y', evaluate=False) == Ge(x, y, evaluate=False)
++    assert parse_expr('x == y', evaluate=False) == Eq(x, y, evaluate=False)
++    assert parse_expr('x != y', evaluate=False) == Ne(x, y, evaluate=False)
++
++    # Chained comparisons
++    assert parse_expr('1 < 2 < 3', evaluate=False) == \
++        And(Lt(1, 2, evaluate=False), Lt(2, 3, evaluate=False), evaluate=False)
++    assert parse_expr('1 < 2 <= 3', evaluate=False) == \
++        And(Lt(1, 2, evaluate=False), Le(2, 3, evaluate=False), evaluate=False)
++    assert parse_expr('1 == 2 == 3', evaluate=False) == \
++        And(Eq(1, 2, evaluate=False), Eq(2, 3, evaluate=False), evaluate=False)
++
++    # Verify that evaluate=True still works
++    assert parse_expr('1 < 2', evaluate=True) == True
++    assert parse_expr('1 > 2', evaluate=True) == False
++    assert parse_expr('1 == 2', evaluate=True) == False
++    assert parse_expr('1 != 2', evaluate=True) == True

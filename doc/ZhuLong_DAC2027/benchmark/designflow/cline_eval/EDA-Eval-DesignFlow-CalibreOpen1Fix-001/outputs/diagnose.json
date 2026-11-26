@@ -1,0 +1,9 @@
+{
+  "root_cause": "The Calibre DRC rule file (calibreSTIcmp.rule) is missing the LAYOUT PRECISION statement, so Calibre cannot determine the layout database coordinate precision while opening the GDSII input (LP4TOP.gds), which aborts with OPEN1 (problem with access, file type, or file open). In the original flow, gen_preAA_G5_CIP_final_A.py computed precision = 10000 for cxmtG5_CIP but never injected it back into the rule deck before running calibre -drc.",
+  "issues": [
+    "calibreSTIcmp.rule has no LAYOUT PRECISION statement; without it Calibre cannot resolve the GDSII layout precision on file open and reports OPEN1.",
+    "gen_preAA_G5_CIP_final_A.py computes precision but never writes it into the deck (BUG 2: PRECISION computed but unused).",
+    "The sed edits only rewrite LAYOUT PATH and LAYOUT PRIMARY, leaving LAYOUT PRECISION unset before calibre -drc runs."
+  ],
+  "fix_summary": "fix.py reads precision from the config file and injects 'LAYOUT PRECISION 10000' into the rule deck: it replaces the value if a LAYOUT PRECISION line already exists, otherwise inserts a new line immediately after the LAYOUT system line. All other LAYOUT statements are preserved unchanged, and it exits 0 on success."
+}

@@ -1,0 +1,29 @@
+diff --git a/sympy/geometry/point.py b/sympy/geometry/point.py
+index 5930484..d4af972 100644
+--- a/sympy/geometry/point.py
++++ b/sympy/geometry/point.py
+@@ -266,8 +266,10 @@ def distance(self, p):
+         sqrt(x**2 + y**2)
+ 
+         """
+-        return sqrt(sum([(a - b)**2 for a, b in zip(
+-            self.args, p.args if isinstance(p, Point) else p)]))
++        p = Point(p)
++        if len(self.args) != len(p.args):
++            raise ValueError("Points must have the same number of dimensions")
++        return sqrt(sum([(a - b)**2 for a, b in zip(self.args, p.args)]))
+ 
+     def taxicab_distance(self, p):
+         """The Taxicab Distance from self to point p.
+diff --git a/sympy/geometry/tests/test_point.py b/sympy/geometry/tests/test_point.py
+index c7b2d30..113b6dd 100644
+--- a/sympy/geometry/tests/test_point.py
++++ b/sympy/geometry/tests/test_point.py
+@@ -41,6 +41,7 @@ def test_point():
+     assert Point.distance(p3, p4) == sqrt(2)
+     assert Point.distance(p1, p1) == 0
+     assert Point.distance(p3, p2) == sqrt(p2.x**2 + p2.y**2)
++    raises(ValueError, lambda: Point(2, 0).distance(Point(1, 0, 2)))
+ 
+     assert Point.taxicab_distance(p4, p3) == 2
+ 

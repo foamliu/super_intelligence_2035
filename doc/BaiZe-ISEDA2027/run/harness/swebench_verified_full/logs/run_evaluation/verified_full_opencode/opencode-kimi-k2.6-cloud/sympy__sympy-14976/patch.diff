@@ -1,0 +1,62 @@
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index d0690142..a0dd9bf0 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -331,6 +331,14 @@ def _print_Float(self, e):
+         args = str(tuple(map(int, e._mpf_)))
+         return '{func}({args})'.format(func=self._module_format('mpmath.mpf'), args=args)
+ 
++    def _print_Rational(self, e):
++        if e.q == 1:
++            return '{func}({p})'.format(func=self._module_format('mpmath.mpf'), p=e.p)
++        if e.p < 0:
++            return '-{func}({p})/{func}({q})'.format(
++                func=self._module_format('mpmath.mpf'), p=-e.p, q=e.q)
++        return '{func}({p})/{func}({q})'.format(
++            func=self._module_format('mpmath.mpf'), p=e.p, q=e.q)
+ 
+     def _print_uppergamma(self, e):
+         return "{0}({1}, {2}, {3})".format(
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index 68994056..ecac9b75 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -2,7 +2,7 @@
+ from __future__ import (absolute_import, division, print_function)
+ 
+ from sympy.codegen import Assignment
+-from sympy.core import Expr, Mod, symbols, Eq, Le, Gt, zoo, oo
++from sympy.core import Expr, Mod, symbols, Eq, Le, Gt, zoo, oo, Rational
+ from sympy.core.numbers import pi
+ from sympy.codegen.ast import none
+ from sympy.external import import_module
+@@ -40,6 +40,9 @@ def test_PythonCodePrinter():
+ def test_MpmathPrinter():
+     p = MpmathPrinter()
+     assert p.doprint(sign(x)) == 'mpmath.sign(x)'
++    assert p.doprint(Rational(1, 2)) == 'mpmath.mpf(1)/mpmath.mpf(2)'
++    assert p.doprint(Rational(-1, 2)) == '-mpmath.mpf(1)/mpmath.mpf(2)'
++    assert p.doprint(Rational(3, 2)) == 'mpmath.mpf(3)/mpmath.mpf(2)'
+ 
+ 
+ def test_NumPyPrinter():
+diff --git a/sympy/utilities/tests/test_lambdify.py b/sympy/utilities/tests/test_lambdify.py
+index 149a7e31..2fd0d08e 100644
+--- a/sympy/utilities/tests/test_lambdify.py
++++ b/sympy/utilities/tests/test_lambdify.py
+@@ -157,6 +157,15 @@ def test_mpmath_precision():
+     mpmath.mp.dps = 100
+     assert str(lambdify((), pi.evalf(100), 'mpmath')()) == str(pi.evalf(100))
+ 
++@conserve_mpmath_dps
++def test_mpmath_rational():
++    mpmath.mp.dps = 50
++    f = lambdify(x, x + Rational(1, 3), 'mpmath')
++    # Check that the rational is evaluated at mpmath precision, not as a float
++    result = f(mpmath.mpf('0'))
++    expected = mpmath.mpf(1)/mpmath.mpf(3)
++    assert result == expected
++
+ #================== Test Translations ==============================
+ # We can only check if all translated functions are valid. It has to be checked
+ # by hand if they are complete.

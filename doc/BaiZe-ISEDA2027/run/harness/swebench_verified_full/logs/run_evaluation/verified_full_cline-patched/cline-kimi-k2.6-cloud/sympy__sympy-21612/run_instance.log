@@ -1,0 +1,159 @@
+2026-10-30 22:24:57,362 - INFO - Creating container for sympy__sympy-21612...
+2026-10-30 22:24:57,423 - INFO - Container for sympy__sympy-21612 created: 1c627f71c6eee01644d102ecbf7f1ab11e3e10e5f9dc2e8342a4f239d0c0b197
+2026-10-30 22:24:59,371 - INFO - Container for sympy__sympy-21612 started: 1c627f71c6eee01644d102ecbf7f1ab11e3e10e5f9dc2e8342a4f239d0c0b197
+2026-10-30 22:24:59,373 - INFO - Intermediate patch for sympy__sympy-21612 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-21612/patch.diff, now applying to container...
+2026-10-30 22:24:59,550 - INFO - >>>>> Applied Patch:
+Checking patch sympy/parsing/tests/test_latex.py...
+warning: sympy/parsing/tests/test_latex.py has type 100755, expected 100644
+/tmp/patch.diff:25: new blank line at EOF.
++
+Checking patch sympy/printing/str.py...
+warning: sympy/printing/str.py has type 100755, expected 100644
+Checking patch sympy/printing/tests/test_str.py...
+warning: sympy/printing/tests/test_str.py has type 100755, expected 100644
+Applied patch sympy/parsing/tests/test_latex.py cleanly.
+Applied patch sympy/printing/str.py cleanly.
+Applied patch sympy/printing/tests/test_str.py cleanly.
+warning: 1 line adds whitespace errors.
+
+2026-10-30 22:25:00,118 - INFO - Git diff before:
+diff --git a/sympy/parsing/tests/test_latex.py b/sympy/parsing/tests/test_latex.py
+index f5c61cde13..48c50c4664 100755
+--- a/sympy/parsing/tests/test_latex.py
++++ b/sympy/parsing/tests/test_latex.py
+@@ -313,9 +313,20 @@ def test_not_parseable():
+     r"a / b /",
+ ]
+ 
++
++def test_nested_frac():
++    from sympy.parsing.latex import parse_latex
++    # Test that nested fractions are parenthesized correctly in string form
++    expr = parse_latex(r"\frac{\frac{a^3+b}{c}}{\frac{1}{c^2}}")
++    assert str(expr) == '((a**3 + b)/c)/(1/(c**2))'
++    expr = parse_latex(r"\frac{a}{\frac{1}{c d}}")
++    assert str(expr) == 'a/(1/(c*d))'
++
++
+ @XFAIL
+ def test_failing_not_parseable():
+     from sympy.parsing.latex import parse_latex, LaTeXParsingError
+     for latex_str in FAILING_BAD_STRINGS:
+         with raises(LaTeXParsingError):
+             parse_latex(latex_str)
++
+diff --git a/sympy/printing/str.py b/sympy/printing/str.py
+index c3fdcdd435..a6af38e848 100755
+--- a/sympy/printing/str.py
++++ b/sympy/printing/str.py
+@@ -284,8 +284,12 @@ def _print_Mul(self, expr):
+                 pre = [str(d.pop(0))]
+             else:
+                 pre = []
+-            dfactors = pre + [self.parenthesize(a, prec, strict=False)
+-                for a in d]
++            dfactors = pre + [
++                ("(%s)" % self.parenthesize(a, prec, strict=False))
++                if (isinstance(a, Pow) and a.exp.is_negative)
++                else self.parenthesize(a, prec, strict=False)
++                for a in d
++            ]
+ 
+             n = '*'.join(nfactors)
+             d = '*'.join(dfactors)
+@@ -336,6 +340,9 @@ def apow(i):
+                             isinstance(item.base, Mul)):
+                         # To avoid situations like #14160
+                         pow_paren.append(item)
++                    elif (isinstance(item.base, Pow) and
++                          item.base.exp.is_negative):
++                        pow_paren.append(item)
+                     b.append(item.base)
+             elif item.is_Rational and item is not S.Infinity:
+                 if item.p != 1:
+diff --git a/sympy/printing/tests/test_str.py b/sympy/printing/tests/test_str.py
+index 690b1a8bbf..bfeb0e3c3e 100755
+--- a/sympy/printing/tests/test_str.py
++++ b/sympy/printing/tests/test_str.py
+@@ -252,6 +252,15 @@ def test_Mul():
+     # For issue 14160
+     assert str(Mul(-2, x, Pow(Mul(y,y,evaluate=False), -1, evaluate=False),
+                                                 evaluate=False)) == '-2*x/(y*y)'
++    # Parenthesize Pow with negative exponent in denominator
++    a, b, c = symbols('a,b,c')
++    assert str(Mul(a, Pow(Pow(Add(b, c), -1), -1, evaluate=False),
++                   evaluate=False)) == 'a/(1/(b + c))'
++    inner = Pow(Pow(c, 2, evaluate=False), -1, evaluate=False)
++    assert str(Mul(a, Pow(inner, -1, evaluate=False),
++                   evaluate=False)) == 'a/(1/(c**2))'
++    assert str(Mul(1, Pow(inner, -1, evaluate=False),
++                   evaluate=False)) == '1/(1/(c**2))'
+ 
+ 
+     class CustomClass1(Expr):
+2026-10-30 22:25:00,120 - INFO - Eval script for sympy__sympy-21612 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-21612/eval.sh; copying to container...
+2026-10-30 22:25:07,103 - INFO - Test runtime: 6.91 seconds
+2026-10-30 22:25:07,112 - INFO - Test output for sympy__sympy-21612 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sympy__sympy-21612/test_output.txt
+2026-10-30 22:25:07,233 - INFO - Git diff after:
+diff --git a/sympy/parsing/tests/test_latex.py b/sympy/parsing/tests/test_latex.py
+index f5c61cde13..48c50c4664 100755
+--- a/sympy/parsing/tests/test_latex.py
++++ b/sympy/parsing/tests/test_latex.py
+@@ -313,9 +313,20 @@ def test_not_parseable():
+     r"a / b /",
+ ]
+ 
++
++def test_nested_frac():
++    from sympy.parsing.latex import parse_latex
++    # Test that nested fractions are parenthesized correctly in string form
++    expr = parse_latex(r"\frac{\frac{a^3+b}{c}}{\frac{1}{c^2}}")
++    assert str(expr) == '((a**3 + b)/c)/(1/(c**2))'
++    expr = parse_latex(r"\frac{a}{\frac{1}{c d}}")
++    assert str(expr) == 'a/(1/(c*d))'
++
++
+ @XFAIL
+ def test_failing_not_parseable():
+     from sympy.parsing.latex import parse_latex, LaTeXParsingError
+     for latex_str in FAILING_BAD_STRINGS:
+         with raises(LaTeXParsingError):
+             parse_latex(latex_str)
++
+diff --git a/sympy/printing/str.py b/sympy/printing/str.py
+index c3fdcdd435..a6af38e848 100755
+--- a/sympy/printing/str.py
++++ b/sympy/printing/str.py
+@@ -284,8 +284,12 @@ def _print_Mul(self, expr):
+                 pre = [str(d.pop(0))]
+             else:
+                 pre = []
+-            dfactors = pre + [self.parenthesize(a, prec, strict=False)
+-                for a in d]
++            dfactors = pre + [
++                ("(%s)" % self.parenthesize(a, prec, strict=False))
++                if (isinstance(a, Pow) and a.exp.is_negative)
++                else self.parenthesize(a, prec, strict=False)
++                for a in d
++            ]
+ 
+             n = '*'.join(nfactors)
+             d = '*'.join(dfactors)
+@@ -336,6 +340,9 @@ def apow(i):
+                             isinstance(item.base, Mul)):
+                         # To avoid situations like #14160
+                         pow_paren.append(item)
++                    elif (isinstance(item.base, Pow) and
++                          item.base.exp.is_negative):
++                        pow_paren.append(item)
+                     b.append(item.base)
+             elif item.is_Rational and item is not S.Infinity:
+                 if item.p != 1:
+2026-10-30 22:25:07,234 - INFO - Git diff changed after running eval script
+2026-10-30 22:25:07,234 - INFO - Grading answer for sympy__sympy-21612...
+2026-10-30 22:25:07,238 - INFO - report: {'sympy__sympy-21612': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_Mul'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_printmethod', 'test_Abs', 'test_Add', 'test_Catalan', 'test_ComplexInfinity', 'test_Derivative', 'test_dict', 'test_Dict', 'test_Dummy', 'test_EulerGamma', 'test_Exp', 'test_factorial', 'test_Function', 'test_Geometry', 'test_GoldenRatio', 'test_TribonacciConstant', 'test_ImaginaryUnit', 'test_Infinity', 'test_Integer', 'test_Integral', 'test_Interval', 'test_AccumBounds', 'test_Lambda', 'test_Limit', 'test_list', 'test_Matrix_str', 'test_NaN', 'test_NegativeInfinity', 'test_Order', 'test_Permutation_Cycle', 'test_Pi', 'test_Poly', 'test_PolyRing', 'test_FracField', 'test_PolyElement', 'test_FracElement', 'test_GaussianInteger', 'test_GaussianRational', 'test_Pow', 'test_sqrt', 'test_Rational', 'test_Float', 'test_Relational', 'test_AppliedBinaryRelation', 'test_CRootOf', 'test_RootSum', 'test_GroebnerBasis', 'test_set', 'test_SparseMatrix', 'test_Sum', 'test_Symbol', 'test_tuple', 'test_Series_str', 'test_TransferFunction_str', 'test_Parallel_str', 'test_Feedback_str', 'test_Quaternion_str_printer', 'test_Quantity_str', 'test_wild_str', 'test_wild_matchpy', 'test_zeta', 'test_issue_3101', 'test_issue_3103', 'test_issue_4021', 'test_sstrrepr', 'test_infinity', 'test_full_prec', 'test_noncommutative', 'test_empty_printer', 'test_settings', 'test_RandomDomain', 'test_FiniteSet', 'test_UniversalSet', 'test_PrettyPoly', 'test_categories', 'test_Tr', 'test_issue_6387', 'test_MatMul_MatAdd', 'test_MatrixSlice', 'test_true_false', 'test_Equivalent', 'test_Xor', 'test_Complement', 'test_SymmetricDifference', 'test_UnevaluatedExpr', 'test_MatrixElement_printing', 'test_MatrixSymbol_printing', 'test_MatrixExpressions', 'test_Subs_printing', 'test_issue_15716', 'test_str_special_matrices', 'test_issue_14567', 'test_issue_21119_21460', 'test_Str', 'test_diffgeom', 'test_NDimArray', 'test_Predicate', 'test_AppliedPredicate'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-21612: resolved: True
+2026-10-30 22:25:07,239 - INFO - Attempting to stop container sweb.eval.sympy__sympy-21612.verified_full_cline-patched...
+2026-10-30 22:25:31,723 - INFO - Container sweb.eval.sympy__sympy-21612.verified_full_cline-patched stopped successfully.
+2026-10-30 22:25:31,723 - INFO - Attempting to remove container sweb.eval.sympy__sympy-21612.verified_full_cline-patched...
+2026-10-30 22:25:31,791 - INFO - Container sweb.eval.sympy__sympy-21612.verified_full_cline-patched removed successfully.

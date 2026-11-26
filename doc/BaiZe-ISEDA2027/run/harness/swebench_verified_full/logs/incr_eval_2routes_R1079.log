@@ -1,0 +1,57 @@
+=== incr_eval_2routes R1079 START Sat Oct 31 07:29:36 PM CST 2026 === (py=/nas_train/app.e0031982/miniforge3/envs/py310/bin/python3)
+[Sat Oct 31 07:29:36 PM CST 2026] === merge hermes predictions ===
+hermes: 36 real patches merged
+[Sat Oct 31 07:29:36 PM CST 2026] === hermes eval START 1 new instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:23<00:00, 23.15s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.15s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [00:23<00:00, 23.15s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+[Sat Oct 31 07:30:02 PM CST 2026] === hermes eval DONE ===
+[Sat Oct 31 07:30:02 PM CST 2026] === merge deepseek-harness predictions ===
+deepseek-harness: 43 real patches merged
+[Sat Oct 31 07:30:03 PM CST 2026] === deepseek-harness eval START 1 new instances ===
+Running 1 instances...
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [01:42<00:00, 102.15s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:42<00:00, 102.15s/it]1 ran successfully, 0 failed: 100%|██████████| 1/1 [01:42<00:00, 102.15s/it]
+All instances run.
+Total instances: 1
+Instances submitted: 1
+Instances completed: 1
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 1
+Report written to deepseek-harness-kimi-k2.6-cloud.verified_full_deepseek-harness.json
+[Sat Oct 31 07:31:49 PM CST 2026] === deepseek-harness eval DONE ===
+[Sat Oct 31 07:31:49 PM CST 2026] === regen eval summaries ===
+regen_eval_summaries: cline-patched, opencode, pi, claude-code, codex, hermes, deepseek-harness
+  cline-patched: unchanged (n=442 resolved=326 failed=116 infra=0)
+  opencode: unchanged (n=488 resolved=395 failed=93 infra=0)
+  pi: unchanged (n=410 resolved=298 failed=112 infra=0)
+  claude-code: unchanged (n=319 resolved=245 failed=74 infra=0)
+  codex: unchanged (n=206 resolved=162 failed=44 infra=0)
+  hermes: WROTE eval_hermes.json  n=36 resolved=27 failed=9 infra=0
+  deepseek-harness: WROTE eval_deepseek-harness.json  n=43 resolved=34 failed=9 infra=0
+[Sat Oct 31 07:31:50 PM CST 2026] === gen report HTML ===
+  pi           done=500/500 patch=410 no_patch=23 infra=59 eval=Y resolved=298
+  claude-code  done=411/500 patch=320 no_patch=85 infra=0 eval=Y resolved=245
+  codex        done=472/500 patch=206 no_patch=76 infra=185 eval=Y resolved=162
+  hermes       done=56/500 patch=35 no_patch=21 infra=0 eval=Y resolved=27
+  deepseek-harness done=171/500 patch=41 no_patch=4 infra=112 eval=Y resolved=34
+=== incr_eval_2routes R1079 DONE Sat Oct 31 07:31:50 PM CST 2026 ===

@@ -1,0 +1,120 @@
+2026-11-10 14:48:02,206 - INFO - Creating container for django__django-16032...
+2026-11-10 14:48:02,220 - INFO - Container for django__django-16032 created: 53681c611bdffc8e4e71619b82cb210cb0e40e8005a49092bd39dcd1c1d03106
+2026-11-10 14:48:02,767 - INFO - Container for django__django-16032 started: 53681c611bdffc8e4e71619b82cb210cb0e40e8005a49092bd39dcd1c1d03106
+2026-11-10 14:48:02,770 - INFO - Intermediate patch for django__django-16032 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2028/pi-glm-5.3-flash/django__django-16032/patch.diff, now applying to container...
+2026-11-10 14:48:02,855 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/query.py...
+Checking patch docs/releases/4.2.txt...
+Checking patch tests/annotations/tests.py...
+Applied patch django/db/models/sql/query.py cleanly.
+Applied patch docs/releases/4.2.txt cleanly.
+Applied patch tests/annotations/tests.py cleanly.
+
+2026-11-10 14:48:03,997 - INFO - Git diff before:
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 8419dc0d54..fd3aa09302 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -266,7 +266,9 @@ class Query(BaseExpression):
+     @property
+     def has_select_fields(self):
+         return bool(
+-            self.select or self.annotation_select_mask or self.extra_select_mask
++            self.select
++            or (self.annotation_select_mask and not self.default_cols)
++            or self.extra_select_mask
+         )
+ 
+     @cached_property
+diff --git a/docs/releases/4.2.txt b/docs/releases/4.2.txt
+index e4394c5887..664f0d8dc7 100644
+--- a/docs/releases/4.2.txt
++++ b/docs/releases/4.2.txt
+@@ -397,3 +397,10 @@ Miscellaneous
+ 
+ * The ``map_height`` and ``map_width`` attributes of ``BaseGeometryWidget`` are
+   deprecated, use CSS to size map widgets instead.
++
++Bugfixes
++=======
++
++* Fixed a bug in Django 4.0 where ``__in`` lookups didn't clear selected
++  fields on the right-hand side when ``QuerySet.alias()`` was used after
++  ``annotate()`` (:ticket:`34162`).
+diff --git a/tests/annotations/tests.py b/tests/annotations/tests.py
+index 8de2bf1998..a38647e98f 100644
+--- a/tests/annotations/tests.py
++++ b/tests/annotations/tests.py
+@@ -989,6 +989,30 @@ class NonAggregateAnnotationTestCase(TestCase):
+             publisher_books_qs, [{"name": "Sams"}, {"name": "Morgan Kaufmann"}]
+         )
+ 
++    def test_annotation_and_alias_filter_in_subquery(self):
++        long_books_qs = (
++            Book.objects.filter(
++                pages__gt=400,
++            )
++            .annotate(book_annotate=Value(1))
++            .alias(book_alias=Value(1))
++        )
++        publisher_books_qs = (
++            Publisher.objects.filter(
++                book__in=long_books_qs,
++            )
++            .values("name")
++        )
++        self.assertCountEqual(
++            publisher_books_qs,
++            [
++                {"name": "Apress"},
++                {"name": "Sams"},
++                {"name": "Prentice Hall"},
++                {"name": "Morgan Kaufmann"},
++            ]
++        )
++
+     def test_annotation_exists_aggregate_values_chaining(self):
+         qs = (
+             Book.objects.values("publisher")
+2026-11-10 14:48:03,999 - INFO - Eval script for django__django-16032 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2028/pi-glm-5.3-flash/django__django-16032/eval.sh; copying to container...
+2026-11-10 14:48:09,452 - INFO - Test runtime: 5.40 seconds
+2026-11-10 14:48:09,454 - INFO - Test output for django__django-16032 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2028/pi-glm-5.3-flash/django__django-16032/test_output.txt
+2026-11-10 14:48:09,500 - INFO - Git diff after:
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 8419dc0d54..fd3aa09302 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -266,7 +266,9 @@ class Query(BaseExpression):
+     @property
+     def has_select_fields(self):
+         return bool(
+-            self.select or self.annotation_select_mask or self.extra_select_mask
++            self.select
++            or (self.annotation_select_mask and not self.default_cols)
++            or self.extra_select_mask
+         )
+ 
+     @cached_property
+diff --git a/docs/releases/4.2.txt b/docs/releases/4.2.txt
+index e4394c5887..664f0d8dc7 100644
+--- a/docs/releases/4.2.txt
++++ b/docs/releases/4.2.txt
+@@ -397,3 +397,10 @@ Miscellaneous
+ 
+ * The ``map_height`` and ``map_width`` attributes of ``BaseGeometryWidget`` are
+   deprecated, use CSS to size map widgets instead.
++
++Bugfixes
++=======
++
++* Fixed a bug in Django 4.0 where ``__in`` lookups didn't clear selected
++  fields on the right-hand side when ``QuerySet.alias()`` was used after
++  ``annotate()`` (:ticket:`34162`).
+2026-11-10 14:48:09,500 - INFO - Git diff changed after running eval script
+2026-11-10 14:48:09,500 - INFO - Grading answer for django__django-16032...
+2026-11-10 14:48:09,501 - INFO - report: {'django__django-16032': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_annotation_and_alias_filter_in_subquery (annotations.tests.NonAggregateAnnotationTestCase)', 'test_annotation_and_alias_filter_related_in_subquery (annotations.tests.NonAggregateAnnotationTestCase)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_aggregate_alias (annotations.tests.AliasTests)', 'test_alias_after_annotation (annotations.tests.AliasTests)', 'test_alias_annotate_with_aggregation (annotations.tests.AliasTests)', 'test_alias_annotation_expression (annotations.tests.AliasTests)', 'test_alias_default_alias_expression (annotations.tests.AliasTests)', 'test_alias_sql_injection (annotations.tests.AliasTests)', 'test_basic_alias (annotations.tests.AliasTests)', 'test_basic_alias_annotation (annotations.tests.AliasTests)', 'test_basic_alias_f_annotation (annotations.tests.AliasTests)', 'test_basic_alias_f_transform_annotation (annotations.tests.AliasTests)', 'test_dates_alias (annotations.tests.AliasTests)', 'test_datetimes_alias (annotations.tests.AliasTests)', 'test_defer_only_alias (annotations.tests.AliasTests)', 'test_filter_alias_agg_with_double_f (annotations.tests.AliasTests)', 'test_filter_alias_with_double_f (annotations.tests.AliasTests)', 'test_filter_alias_with_f (annotations.tests.AliasTests)', 'test_joined_alias_annotation (annotations.tests.AliasTests)', 'test_order_by_alias (annotations.tests.AliasTests)', 'test_order_by_alias_aggregate (annotations.tests.AliasTests)', 'test_overwrite_alias_with_annotation (annotations.tests.AliasTests)', 'test_overwrite_annotation_with_alias (annotations.tests.AliasTests)', 'test_update_with_alias (annotations.tests.AliasTests)', 'test_values_alias (annotations.tests.AliasTests)', 'test_aggregate_over_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_aggregate_over_full_expression_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_alias_forbidden_chars (annotations.tests.NonAggregateAnnotationTestCase)', 'test_alias_sql_injection (annotations.tests.NonAggregateAnnotationTestCase)', 'test_annotate_exists (annotations.tests.NonAggregateAnnotationTestCase)', 'test_annotate_with_aggregation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_annotation_aggregate_with_m2o (annotations.tests.NonAggregateAnnotationTestCase)', 'test_annotation_exists_aggregate_values_chaining (annotations.tests.NonAggregateAnnotationTestCase)', 'test_annotation_filter_with_subquery (annotations.tests.NonAggregateAnnotationTestCase)', 'test_annotation_in_f_grouped_by_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_annotation_reverse_m2m (annotations.tests.NonAggregateAnnotationTestCase)', 'test_annotation_subquery_and_aggregate_values_chaining (annotations.tests.NonAggregateAnnotationTestCase)', 'test_annotation_subquery_outerref_transform (annotations.tests.NonAggregateAnnotationTestCase)', 'test_annotation_with_m2m (annotations.tests.NonAggregateAnnotationTestCase)', 'test_arguments_must_be_expressions (annotations.tests.NonAggregateAnnotationTestCase)', 'test_basic_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_basic_f_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_boolean_value_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_chaining_annotation_filter_with_m2m (annotations.tests.NonAggregateAnnotationTestCase)', 'test_chaining_transforms (annotations.tests.NonAggregateAnnotationTestCase)', 'Columns are aligned in the correct order for resolve_columns. This test', 'test_column_field_ordering_with_deferred (annotations.tests.NonAggregateAnnotationTestCase)', 'test_combined_annotation_commutative (annotations.tests.NonAggregateAnnotationTestCase)', 'test_combined_expression_annotation_with_aggregation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_combined_f_expression_annotation_with_aggregation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_custom_functions (annotations.tests.NonAggregateAnnotationTestCase)', 'test_custom_functions_can_ref_other_functions (annotations.tests.NonAggregateAnnotationTestCase)', 'test_custom_transform_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_decimal_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'Deferred attributes can be referenced by an annotation,', 'test_empty_expression_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_empty_queryset_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_filter_agg_with_double_f (annotations.tests.NonAggregateAnnotationTestCase)', 'test_filter_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_filter_annotation_with_double_f (annotations.tests.NonAggregateAnnotationTestCase)', 'test_filter_annotation_with_f (annotations.tests.NonAggregateAnnotationTestCase)', 'test_filter_decimal_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_filter_wrong_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_full_expression_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_full_expression_annotation_with_aggregation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_grouping_by_q_expression_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_joined_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_joined_transformed_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_mixed_type_annotation_date_interval (annotations.tests.NonAggregateAnnotationTestCase)', 'test_mixed_type_annotation_numbers (annotations.tests.NonAggregateAnnotationTestCase)', 'Fields on an inherited model can be referenced by an', 'Annotating None onto a model round-trips', 'test_order_by_aggregate (annotations.tests.NonAggregateAnnotationTestCase)', 'test_order_by_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_q_expression_annotation_with_aggregation (annotations.tests.NonAggregateAnnotationTestCase)', 'test_raw_sql_with_inherited_field (annotations.tests.NonAggregateAnnotationTestCase)', 'test_update_with_annotation (annotations.tests.NonAggregateAnnotationTestCase)', 'Annotations can reference fields in a values clause,', 'test_values_with_pk_annotation (annotations.tests.NonAggregateAnnotationTestCase)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16032: resolved: True
+2026-11-10 14:48:09,503 - INFO - Attempting to stop container sweb.eval.django__django-16032.verified_full_glm53_pi_incr_R2028...
+2026-11-10 14:48:25,513 - INFO - Container sweb.eval.django__django-16032.verified_full_glm53_pi_incr_R2028 stopped successfully.
+2026-11-10 14:48:25,514 - INFO - Attempting to remove container sweb.eval.django__django-16032.verified_full_glm53_pi_incr_R2028...
+2026-11-10 14:48:25,553 - INFO - Container sweb.eval.django__django-16032.verified_full_glm53_pi_incr_R2028 removed successfully.

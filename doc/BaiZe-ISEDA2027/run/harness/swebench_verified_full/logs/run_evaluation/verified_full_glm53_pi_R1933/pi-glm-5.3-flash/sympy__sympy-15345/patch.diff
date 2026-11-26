@@ -1,0 +1,45 @@
+diff --git a/sympy/printing/mathematica.py b/sympy/printing/mathematica.py
+index ea7e3a2d..465f14ee 100644
+--- a/sympy/printing/mathematica.py
++++ b/sympy/printing/mathematica.py
+@@ -93,6 +93,12 @@ def _print_list(self, expr):
+     _print_tuple = _print_list
+     _print_Tuple = _print_list
+ 
++    def _print_Max(self, expr):
++        return "Max[%s]" % self.stringify(expr.args, ", ")
++
++    def _print_Min(self, expr):
++        return "Min[%s]" % self.stringify(expr.args, ", ")
++
+     def _print_Function(self, expr):
+         if expr.func.__name__ in self.known_functions:
+             cond_mfunc = self.known_functions[expr.func.__name__]
+diff --git a/sympy/printing/tests/test_mathematica.py b/sympy/printing/tests/test_mathematica.py
+index dd636d06..4d350d0b 100644
+--- a/sympy/printing/tests/test_mathematica.py
++++ b/sympy/printing/tests/test_mathematica.py
+@@ -2,7 +2,7 @@
+                         Rational, Integer, Tuple, Derivative)
+ from sympy.integrals import Integral
+ from sympy.concrete import Sum
+-from sympy.functions import exp, sin, cos, conjugate
++from sympy.functions import exp, sin, cos, conjugate, Max, Min
+ 
+ from sympy import mathematica_code as mcode
+ 
+@@ -48,6 +48,14 @@ def test_Mul():
+     assert mcode(x*A*B*(C + D)*A*y) == "x*y*A**B**(C + D)**A"
+ 
+ 
++def test_Max_Min():
++    assert mcode(Max(x, y, z)) == "Max[x, y, z]"
++    assert mcode(Max(x, 2)) == "Max[2, x]"
++    assert mcode(Min(x, y, z)) == "Min[x, y, z]"
++    assert mcode(Min(x, 2)) == "Min[2, x]"
++    assert mcode(Max(sin(x), y**2)) == "Max[Sin[x], y^2]"
++
++
+ def test_constants():
+     assert mcode(pi) == "Pi"
+     assert mcode(oo) == "Infinity"

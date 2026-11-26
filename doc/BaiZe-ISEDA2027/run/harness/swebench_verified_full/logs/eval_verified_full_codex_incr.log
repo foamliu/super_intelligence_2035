@@ -1,0 +1,51 @@
+163 instances already run, skipping...
+Running 6 instances...
+  0%|          | 0/6 [00:00<?, ?it/s] 17%|█▋        | 1/6 [00:21<01:46, 21.38s/it]1 ran successfully, 0 failed:  17%|█▋        | 1/6 [00:21<01:46, 21.38s/it]1 ran successfully, 0 failed:  33%|███▎      | 2/6 [00:21<00:43, 10.82s/it]2 ran successfully, 0 failed:  33%|███▎      | 2/6 [00:21<00:43, 10.82s/it]2 ran successfully, 0 failed:  50%|█████     | 3/6 [00:30<00:30, 10.25s/it]3 ran successfully, 0 failed:  50%|█████     | 3/6 [00:30<00:30, 10.25s/it]3 ran successfully, 0 failed:  67%|██████▋   | 4/6 [00:30<00:15,  7.72s/it]4 ran successfully, 0 failed:  67%|██████▋   | 4/6 [00:30<00:15,  7.72s/it]4 ran successfully, 0 failed:  83%|████████▎ | 5/6 [00:42<00:08,  8.42s/it]5 ran successfully, 0 failed:  83%|████████▎ | 5/6 [00:42<00:08,  8.42s/it]5 ran successfully, 0 failed: 100%|██████████| 6/6 [00:59<00:00,  9.98s/it]6 ran successfully, 0 failed: 100%|██████████| 6/6 [00:59<00:00,  9.98s/it]6 ran successfully, 0 failed: 100%|██████████| 6/6 [00:59<00:00,  9.98s/it]
+All instances run.
+Total instances: 169
+Instances submitted: 169
+Instances completed: 169
+Instances incomplete: 0
+Instances resolved: 131
+Instances unresolved: 38
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 7
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 169
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+169 instances already run, skipping...
+Running 6 instances...
+  0%|          | 0/6 [00:00<?, ?it/s] 17%|█▋        | 1/6 [00:21<01:47, 21.59s/it]1 ran successfully, 0 failed:  17%|█▋        | 1/6 [00:21<01:47, 21.59s/it]1 ran successfully, 0 failed:  33%|███▎      | 2/6 [00:33<01:07, 16.89s/it]2 ran successfully, 0 failed:  33%|███▎      | 2/6 [00:33<01:07, 16.89s/it]2 ran successfully, 0 failed:  50%|█████     | 3/6 [00:33<00:33, 11.32s/it]3 ran successfully, 0 failed:  50%|█████     | 3/6 [00:33<00:33, 11.32s/it]3 ran successfully, 0 failed:  67%|██████▋   | 4/6 [00:42<00:21, 10.71s/it]4 ran successfully, 0 failed:  67%|██████▋   | 4/6 [00:42<00:21, 10.71s/it]4 ran successfully, 0 failed:  83%|████████▎ | 5/6 [00:45<00:09,  9.18s/it]5 ran successfully, 0 failed:  83%|████████▎ | 5/6 [00:45<00:09,  9.18s/it]5 ran successfully, 0 failed: 100%|██████████| 6/6 [00:51<00:00,  8.54s/it]6 ran successfully, 0 failed: 100%|██████████| 6/6 [00:51<00:00,  8.54s/it]6 ran successfully, 0 failed: 100%|██████████| 6/6 [00:51<00:00,  8.54s/it]
+All instances run.
+Total instances: 175
+Instances submitted: 175
+Instances completed: 175
+Instances incomplete: 0
+Instances resolved: 136
+Instances unresolved: 39
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 7
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 175
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json
+175 instances already run, skipping...
+Running 9 instances...
+  0%|          | 0/9 [00:00<?, ?it/s] 11%|█         | 1/9 [00:24<03:19, 24.97s/it]1 ran successfully, 0 failed:  11%|█         | 1/9 [00:24<03:19, 24.97s/it]1 ran successfully, 0 failed:  22%|██▏       | 2/9 [00:26<01:32, 13.25s/it]2 ran successfully, 0 failed:  22%|██▏       | 2/9 [00:26<01:32, 13.25s/it]2 ran successfully, 0 failed:  33%|███▎      | 3/9 [00:27<00:54,  9.10s/it]3 ran successfully, 0 failed:  33%|███▎      | 3/9 [00:27<00:54,  9.10s/it]3 ran successfully, 0 failed:  44%|████▍     | 4/9 [00:27<00:34,  6.97s/it]4 ran successfully, 0 failed:  44%|████▍     | 4/9 [00:27<00:34,  6.97s/it]4 ran successfully, 0 failed:  56%|█████▌    | 5/9 [00:28<00:22,  5.66s/it]5 ran successfully, 0 failed:  56%|█████▌    | 5/9 [00:28<00:22,  5.66s/it]5 ran successfully, 0 failed:  67%|██████▋   | 6/9 [00:28<00:14,  4.74s/it]6 ran successfully, 0 failed:  67%|██████▋   | 6/9 [00:28<00:14,  4.74s/it]6 ran successfully, 0 failed:  78%|███████▊  | 7/9 [00:28<00:08,  4.08s/it]7 ran successfully, 0 failed:  78%|███████▊  | 7/9 [00:28<00:08,  4.08s/it]7 ran successfully, 0 failed:  89%|████████▉ | 8/9 [00:28<00:03,  3.59s/it]8 ran successfully, 0 failed:  89%|████████▉ | 8/9 [00:28<00:03,  3.59s/it]8 ran successfully, 0 failed: 100%|██████████| 9/9 [00:51<00:00,  5.74s/it]9 ran successfully, 0 failed: 100%|██████████| 9/9 [00:51<00:00,  5.74s/it]9 ran successfully, 0 failed: 100%|██████████| 9/9 [00:51<00:00,  5.74s/it]
+All instances run.
+Total instances: 184
+Instances submitted: 184
+Instances completed: 184
+Instances incomplete: 0
+Instances resolved: 143
+Instances unresolved: 41
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 7
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 184
+Report written to codex-kimi-k2.6-cloud.verified_full_codex.json

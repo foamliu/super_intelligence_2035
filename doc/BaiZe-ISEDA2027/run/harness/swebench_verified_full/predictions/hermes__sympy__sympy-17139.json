@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-17139",
+    "model_name_or_path": "hermes-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sympy/simplify/fu.py b/sympy/simplify/fu.py\nindex ad1130ef..609ae8da 100644\n--- a/sympy/simplify/fu.py\n+++ b/sympy/simplify/fu.py\n@@ -501,6 +501,9 @@ def _f(rv):\n         if not (rv.is_Pow and rv.base.func == f):\n             return rv\n \n+        if not rv.exp.is_integer:\n+            return rv\n+\n         if (rv.exp < 0) == True:\n             return rv\n         if (rv.exp > max) == True:\n"
+  }
+]

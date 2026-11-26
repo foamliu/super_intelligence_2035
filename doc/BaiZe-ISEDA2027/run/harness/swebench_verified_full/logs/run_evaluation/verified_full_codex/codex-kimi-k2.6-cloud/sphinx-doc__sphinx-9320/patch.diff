@@ -1,0 +1,50 @@
+diff --git a/sphinx/cmd/quickstart.py b/sphinx/cmd/quickstart.py
+index a40a2107..a7124854 100644
+--- a/sphinx/cmd/quickstart.py
++++ b/sphinx/cmd/quickstart.py
+@@ -89,6 +89,8 @@ class ValidationError(Exception):
+ 
+ 
+ def is_path(x: str) -> str:
++    if not x:
++        return x
+     x = path.expanduser(x)
+     if not path.isdir(x):
+         raise ValidationError(__("Please enter a valid path name."))
+@@ -146,7 +148,7 @@ def do_prompt(text: str, default: str = None, validator: Callable[[str], Any] =
+         else:
+             prompt = colorize(COLOR_QUESTION, prompt, input_mode=False)
+         x = term_input(prompt).strip()
+-        if default and not x:
++        if default is not None and not x:
+             x = default
+         try:
+             x = validator(x)
+diff --git a/tests/test_quickstart.py b/tests/test_quickstart.py
+index 94144ef2..c1a2ef07 100644
+--- a/tests/test_quickstart.py
++++ b/tests/test_quickstart.py
+@@ -250,3 +250,23 @@ def test_extensions(tempdir):
+     ns = {}
+     exec(conffile.read_text(), ns)
+     assert ns['extensions'] == ['foo', 'bar', 'baz']
++
++
++def test_do_prompt_empty_default():
++    """Test that empty-string default is accepted and not overridden."""
++    qs.term_input = mock_input({'Q1': ''})
++    assert qs.do_prompt('Q1', default='') == ''
++
++
++def test_do_prompt_empty_default_does_not_override_nonempty():
++    """Test that empty-string default does not override a user-entered value."""
++    qs.term_input = mock_input({'Q1': 'user_value'})
++    assert qs.do_prompt('Q1', default='') == 'user_value'
++
++
++def test_is_path_empty_string():
++    """Test that is_path accepts an empty string to allow exiting."""
++    assert qs.is_path('') == ''
++    
++    with pytest.raises(qs.ValidationError):
++        qs.is_path('nonexistent_path_12345')

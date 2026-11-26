@@ -1,0 +1,142 @@
+diff --git a/shim/sitecustomize.py b/shim/sitecustomize.py
+new file mode 100644
+index 0000000..581b81a
+--- /dev/null
++++ b/shim/sitecustomize.py
+@@ -0,0 +1,48 @@
++import collections
++import collections.abc
++import numpy as np
++import scipy.optimize.linesearch as _ls
++
++# Restore deprecated collections aliases removed in Python 3.10
++if not hasattr(collections, 'Mapping'):
++    collections.Mapping = collections.abc.Mapping
++if not hasattr(collections, 'MutableMapping'):
++    collections.MutableMapping = collections.abc.MutableMapping
++if not hasattr(collections, 'Iterable'):
++    collections.Iterable = collections.abc.Iterable
++if not hasattr(collections, 'Callable'):
++    collections.Callable = collections.abc.Callable
++
++# Restore deprecated numpy aliases removed in NumPy 1.20+
++if not hasattr(np, 'int'):
++    np.int = int
++if not hasattr(np, 'float'):
++    np.float = float
++if not hasattr(np, 'bool'):
++    np.bool = bool
++if not hasattr(np, 'object'):
++    np.object = object
++if not hasattr(np, 'complex'):
++    np.complex = complex
++
++# scipy.optimize.linesearch compatibility for newer scipy (1.15+)
++if not hasattr(_ls, 'line_search_wolfe2'):
++    def line_search_wolfe2(*args, **kwargs):
++        from scipy.optimize import line_search
++        f = args[0]
++        myfprime = args[1]
++        xk = args[2]
++        pk = args[3]
++        gfk = kwargs.get('gfk', None)
++        old_fval = kwargs.get('old_fval', None)
++        old_old_fval = kwargs.get('old_old_fval', None)
++        res = line_search(f, myfprime, xk, pk, gfk=gfk,
++                          old_fval=old_fval, old_old_fval=old_old_fval,
++                          args=kwargs.get('args', ()))
++        return res
++    _ls.line_search_wolfe2 = line_search_wolfe2
++
++if not hasattr(_ls, 'line_search_wolfe1'):
++    def line_search_wolfe1(*args, **kwargs):
++        return _ls.line_search_wolfe2(*args, **kwargs)
++    _ls.line_search_wolfe1 = line_search_wolfe1
+diff --git a/sklearn/linear_model/logistic.py b/sklearn/linear_model/logistic.py
+index e4ea696..c4d2e18 100644
+--- a/sklearn/linear_model/logistic.py
++++ b/sklearn/linear_model/logistic.py
+@@ -922,7 +922,8 @@ def _log_reg_scoring_path(X, y, train, test, pos_class=None, Cs=10,
+         check_input=False, max_squared_sum=max_squared_sum,
+         sample_weight=sample_weight)
+ 
+-    log_reg = LogisticRegression(fit_intercept=fit_intercept)
++    log_reg = LogisticRegression(fit_intercept=fit_intercept,
++                                 multi_class=multi_class)
+ 
+     # The score method of Logistic Regression has a classes_ attribute.
+     if multi_class == 'ovr':
+diff --git a/test_regression_8720.py b/test_regression_8720.py
+new file mode 100644
+index 0000000..b497e68
+--- /dev/null
++++ b/test_regression_8720.py
+@@ -0,0 +1,68 @@
++import numpy as np
++from sklearn.linear_model.logistic import _log_reg_scoring_path, LogisticRegression
++from sklearn.metrics import log_loss
++
++
++def test_logistic_regression_cv_multinomial_predict_proba_consistency():
++    """LogisticRegressionCV with multi_class='multinomial' should use
++    multinomial predict_proba for scoring, not OvR.
++    Regression test for issue #8720.
++    """
++    np.random.seed(42)
++    n_samples = 200
++    n_features = 5
++    X = np.random.randn(n_samples, n_features)
++    # 3-class problem
++    y = np.random.choice([0, 1, 2], size=n_samples)
++
++    train = list(range(0, 150))
++    test = list(range(150, 200))
++
++    # Call _log_reg_scoring_path with multinomial and neg_log_loss scorer
++    coefs, Cs, scores, n_iter = _log_reg_scoring_path(
++        X, y, train, test,
++        fit_intercept=True,
++        scoring='neg_log_loss',
++        multi_class='multinomial',
++        solver='lbfgs',
++        max_iter=200,
++    )
++
++    # scores shape: (n_cs,)
++    cv_score = scores[0]
++
++    # Build a LogisticRegression with the fitted coefficients and
++    # multi_class='multinomial' to compute the expected score.
++    w = coefs[0]
++    lr_multi = LogisticRegression(fit_intercept=True, multi_class='multinomial')
++    lr_multi.coef_ = w[:, :-1]
++    lr_multi.intercept_ = w[:, -1]
++    lr_multi.classes_ = np.unique(y[train])
++
++    probs_multi = lr_multi.predict_proba(X[test])
++    expected_score = -log_loss(y[test], probs_multi)
++
++    # The score returned by _log_reg_scoring_path must match the multinomial score
++    assert np.isclose(cv_score, expected_score), (
++        f"CV score {cv_score} does not match multinomial score {expected_score}. "
++        "This indicates the scorer is using OvR probabilities instead of multinomial."
++    )
++
++    # For completeness, also verify that an OvR model gives a DIFFERENT score
++    lr_ovr = LogisticRegression(fit_intercept=True, multi_class='ovr')
++    lr_ovr.coef_ = w[:, :-1]
++    lr_ovr.intercept_ = w[:, -1]
++    lr_ovr.classes_ = np.unique(y[train])
++    probs_ovr = lr_ovr.predict_proba(X[test])
++    ovr_score = -log_loss(y[test], probs_ovr)
++
++    # The OvR score should differ (or at least, our fix ensures the CV score
++    # matches multinomial, not OvR)
++    assert np.isclose(cv_score, expected_score) and not np.isclose(cv_score, ovr_score), (
++        "CV score unexpectedly matches OvR score; fix may not be applied."
++    )
++
++
++if __name__ == "__main__":
++    test_logistic_regression_cv_multinomial_predict_proba_consistency()
++    print("Test passed.")

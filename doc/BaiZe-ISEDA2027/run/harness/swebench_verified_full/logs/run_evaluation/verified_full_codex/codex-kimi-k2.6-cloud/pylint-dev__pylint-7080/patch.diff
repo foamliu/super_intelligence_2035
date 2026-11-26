@@ -1,0 +1,78 @@
+diff --git a/pylint/lint/pylinter.py b/pylint/lint/pylinter.py
+index e2bbf061..9fbcaf93 100644
+--- a/pylint/lint/pylinter.py
++++ b/pylint/lint/pylinter.py
+@@ -610,11 +610,18 @@ class PyLinter(
+                         skip_subtrees.append(root)
+                         yield root
+                     else:
+-                        yield from (
+-                            os.path.join(root, file)
+-                            for file in files
+-                            if file.endswith(".py")
+-                        )
++                        for file in files:
++                            if not file.endswith(".py"):
++                                continue
++                            file_path = os.path.join(root, file)
++                            if _is_ignored_file(
++                                file_path,
++                                self.config.ignore,
++                                self.config.ignore_patterns,
++                                self.config.ignore_paths,
++                            ):
++                                continue
++                            yield file_path
+             else:
+                 yield something
+ 
+diff --git a/tests/lint/unittest_lint.py b/tests/lint/unittest_lint.py
+index 3dbde39c..b8ad1c94 100644
+--- a/tests/lint/unittest_lint.py
++++ b/tests/lint/unittest_lint.py
+@@ -931,3 +931,45 @@ print(submodule1)
+         with fix_import_path([tmpdir]):
+             linter.check(["submodule2.py"])
+     assert not linter.stats.by_msg
++
++
++class TestRecursiveIgnorePathsNoPackage:
++    """Test that --ignore-paths works with --recursive in non-package directories.
++
++    Regression test for https://github.com/PyCQA/pylint/issues/XXXX:
++    --recursive=y ignores ignore-paths when directories don't have __init__.py
++    """
++
++    @staticmethod
++    def test_recursive_ignore_paths_no_package() -> None:
++        """Test that --ignore-paths is respected in non-package directories."""
++        with tempfile.TemporaryDirectory() as tmpdir:
++            # Create a non-package directory with a subdirectory
++            os.makedirs(os.path.join(tmpdir, "src", "gen"))
++            os.makedirs(os.path.join(tmpdir, "src", "keep"))
++            with open(os.path.join(tmpdir, "src", "gen", "about.py"), "w") as f:
++                f.write("x = 1\n")
++            with open(os.path.join(tmpdir, "src", "keep", "ok.py"), "w") as f:
++                f.write("y = 2\n")
++            with open(os.path.join(tmpdir, "src", "main.py"), "w") as f:
++                f.write("z = 3\n")
++
++            run = Run(
++                [
++                    "--recursive",
++                    "y",
++                    "--ignore-paths",
++                    ".*/gen/.*",
++                    os.path.join(tmpdir, "src"),
++                ],
++                exit=False,
++            )
++
++            discovered = list(run.linter._discover_files([os.path.join(tmpdir, "src")]))
++            discovered_paths = [os.path.basename(p) for p in discovered]
++
++            # gen/about.py should be ignored
++            assert "about.py" not in discovered_paths
++            # main.py and keep/ok.py should still be discovered
++            assert "main.py" in discovered_paths
++            assert "ok.py" in discovered_paths

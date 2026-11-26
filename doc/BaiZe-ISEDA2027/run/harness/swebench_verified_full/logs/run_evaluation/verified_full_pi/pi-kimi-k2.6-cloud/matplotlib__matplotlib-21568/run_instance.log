@@ -1,0 +1,76 @@
+2026-11-01 18:50:56,490 - INFO - Creating container for matplotlib__matplotlib-21568...
+2026-11-01 18:50:56,521 - INFO - Container for matplotlib__matplotlib-21568 created: 0998e336315602bc4a213cf2d3d7f5ac3cb7247e3e1f652ce2ce135bb113ea49
+2026-11-01 18:50:57,059 - INFO - Container for matplotlib__matplotlib-21568 started: 0998e336315602bc4a213cf2d3d7f5ac3cb7247e3e1f652ce2ce135bb113ea49
+2026-11-01 18:50:57,061 - INFO - Intermediate patch for matplotlib__matplotlib-21568 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/matplotlib__matplotlib-21568/patch.diff, now applying to container...
+2026-11-01 18:50:57,183 - INFO - >>>>> Applied Patch:
+Checking patch lib/matplotlib/dates.py...
+Checking patch lib/matplotlib/tests/test_dates.py...
+Checking patch reproduce.py...
+Applied patch lib/matplotlib/dates.py cleanly.
+Applied patch lib/matplotlib/tests/test_dates.py cleanly.
+Applied patch reproduce.py cleanly.
+
+2026-11-01 18:50:59,251 - INFO - Git diff before:
+diff --git a/lib/matplotlib/dates.py b/lib/matplotlib/dates.py
+index 0766156d64..d987fdec37 100644
+--- a/lib/matplotlib/dates.py
++++ b/lib/matplotlib/dates.py
+@@ -593,7 +593,7 @@ def drange(dstart, dend, delta):
+ 
+ def _wrap_in_tex(text):
+     p = r'([a-zA-Z]+)'
+-    ret_text = re.sub(p, r'}$\1$\\mathdefault{', text)
++    ret_text = re.sub(p, r'}$\1$\\mathdefault{', text.replace(' ', r'\ '))
+ 
+     # Braces ensure dashes are not spaced like binary operators.
+     ret_text = '$\\mathdefault{'+ret_text.replace('-', '{-}')+'}$'
+diff --git a/lib/matplotlib/tests/test_dates.py b/lib/matplotlib/tests/test_dates.py
+index 96a3db1730..796e1a4f92 100644
+--- a/lib/matplotlib/tests/test_dates.py
++++ b/lib/matplotlib/tests/test_dates.py
+@@ -325,7 +325,7 @@ def test_date_formatter_callable():
+     (datetime.timedelta(weeks=52 * 200),
+      [r'$\mathdefault{%d}$' % (year,) for year in range(1990, 2171, 20)]),
+     (datetime.timedelta(days=30),
+-     [r'Jan$\mathdefault{ %02d 1990}$' % (day,) for day in range(1, 32, 3)]),
++     [r'Jan$\mathdefault{\ %02d\ 1990}$' % (day,) for day in range(1, 32, 3)]),
+     (datetime.timedelta(hours=20),
+      [r'$\mathdefault{%02d:00:00}$' % (hour,) for hour in range(0, 21, 2)]),
+ ])
+@@ -340,6 +340,14 @@ def test_date_formatter_usetex(delta, expected):
+     formatter = mdates.AutoDateFormatter(locator, usetex=True)
+     assert [formatter(loc) for loc in locator()] == expected
+ 
++def test_wrap_in_tex_space():
++    """Test that _wrap_in_tex preserves spaces correctly."""
++    assert mdates._wrap_in_tex('01 00:00') == r'$\mathdefault{01\ 00:00}$'
++    assert mdates._wrap_in_tex('Jan 01') == r'Jan$\mathdefault{\ 01}$'
++    assert mdates._wrap_in_tex('Jan 01 2020') == r'Jan$\mathdefault{\ 01\ 2020}$'
++    assert mdates._wrap_in_tex('2020-01-01') == r'$\mathdefault{2020{-}01{-}01}$'
++    assert mdates._wrap_in_tex('00:00:00') == r'$\mathdefault{00:00:00}$'
++
+ 
+ def test_drange():
+     """
+2026-11-01 18:50:59,253 - INFO - Eval script for matplotlib__matplotlib-21568 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/matplotlib__matplotlib-21568/eval.sh; copying to container...
+2026-11-01 18:51:11,082 - INFO - Test runtime: 11.72 seconds
+2026-11-01 18:51:11,083 - INFO - Test output for matplotlib__matplotlib-21568 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/matplotlib__matplotlib-21568/test_output.txt
+2026-11-01 18:51:11,162 - INFO - Git diff after:
+diff --git a/lib/matplotlib/dates.py b/lib/matplotlib/dates.py
+index 0766156d64..d987fdec37 100644
+--- a/lib/matplotlib/dates.py
++++ b/lib/matplotlib/dates.py
+@@ -593,7 +593,7 @@ def drange(dstart, dend, delta):
+ 
+ def _wrap_in_tex(text):
+     p = r'([a-zA-Z]+)'
+-    ret_text = re.sub(p, r'}$\1$\\mathdefault{', text)
++    ret_text = re.sub(p, r'}$\1$\\mathdefault{', text.replace(' ', r'\ '))
+ 
+     # Braces ensure dashes are not spaced like binary operators.
+     ret_text = '$\\mathdefault{'+ret_text.replace('-', '{-}')+'}$'
+2026-11-01 18:51:11,162 - INFO - Git diff changed after running eval script
+2026-11-01 18:51:11,162 - INFO - Grading answer for matplotlib__matplotlib-21568...
+2026-11-01 18:51:11,163 - INFO - report: {'matplotlib__matplotlib-21568': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['lib/matplotlib/tests/test_dates.py::test_date_formatter_usetex[delta2-expected2]', 'lib/matplotlib/tests/test_dates.py::test_date_formatter_usetex[delta3-expected3]', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_usetex[t_delta2-expected2]', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_usetex[t_delta3-expected3]']}, 'PASS_TO_PASS': {'success': ['lib/matplotlib/tests/test_dates.py::test_date_numpyx', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[s]-t00]', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[s]-t01]', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[s]-t02]', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[us]-t00]', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[us]-t01]', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[us]-t02]', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[ms]-t00]', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[ms]-t01]', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[ms]-t02]', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[ns]-t00]', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[ns]-t01]', 'lib/matplotlib/tests/test_dates.py::test_date_date2num_numpy[datetime64[ns]-t02]', 'lib/matplotlib/tests/test_dates.py::test_date2num_NaT[datetime64[s]]', 'lib/matplotlib/tests/test_dates.py::test_date2num_NaT[datetime64[us]]', 'lib/matplotlib/tests/test_dates.py::test_date2num_NaT[datetime64[ms]]', 'lib/matplotlib/tests/test_dates.py::test_date2num_NaT[datetime64[ns]]', 'lib/matplotlib/tests/test_dates.py::test_date2num_NaT_scalar[s]', 'lib/matplotlib/tests/test_dates.py::test_date2num_NaT_scalar[ms]', 'lib/matplotlib/tests/test_dates.py::test_date2num_NaT_scalar[us]', 'lib/matplotlib/tests/test_dates.py::test_date2num_NaT_scalar[ns]', 'lib/matplotlib/tests/test_dates.py::test_date_empty', 'lib/matplotlib/tests/test_dates.py::test_date_not_empty', 'lib/matplotlib/tests/test_dates.py::test_axhline', 'lib/matplotlib/tests/test_dates.py::test_date_axhspan[png]', 'lib/matplotlib/tests/test_dates.py::test_date_axvspan[png]', 'lib/matplotlib/tests/test_dates.py::test_date_axhline[png]', 'lib/matplotlib/tests/test_dates.py::test_date_axvline[png]', 'lib/matplotlib/tests/test_dates.py::test_too_many_date_ticks', 'lib/matplotlib/tests/test_dates.py::test_RRuleLocator[png]', 'lib/matplotlib/tests/test_dates.py::test_RRuleLocator_dayrange', 'lib/matplotlib/tests/test_dates.py::test_RRuleLocator_close_minmax', 'lib/matplotlib/tests/test_dates.py::test_DateFormatter[png]', 'lib/matplotlib/tests/test_dates.py::test_locator_set_formatter', 'lib/matplotlib/tests/test_dates.py::test_date_formatter_callable', 'lib/matplotlib/tests/test_dates.py::test_date_formatter_usetex[delta0-expected0]', 'lib/matplotlib/tests/test_dates.py::test_date_formatter_usetex[delta1-expected1]', 'lib/matplotlib/tests/test_dates.py::test_drange', 'lib/matplotlib/tests/test_dates.py::test_auto_date_locator', 'lib/matplotlib/tests/test_dates.py::test_auto_date_locator_intmult', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_subsecond', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_show_offset[t_delta0-1997-Jan-01', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_show_offset[t_delta1-1997-Jan-01', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_show_offset[t_delta2-1997-Jan-01]', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_show_offset[t_delta3-1997-Jan-02]', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_show_offset[t_delta4-1997-Jan]', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_show_offset[t_delta5-]', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_show_offset[t_delta6-]', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_usetex[t_delta0-expected0]', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_usetex[t_delta1-expected1]', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_formats', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_zformats', 'lib/matplotlib/tests/test_dates.py::test_concise_formatter_tz', 'lib/matplotlib/tests/test_dates.py::test_auto_date_locator_intmult_tz', 'lib/matplotlib/tests/test_dates.py::test_date_inverted_limit[png]', 'lib/matplotlib/tests/test_dates.py::test_date2num_dst', 'lib/matplotlib/tests/test_dates.py::test_date2num_dst_pandas', 'lib/matplotlib/tests/test_dates.py::test_rrulewrapper', 'lib/matplotlib/tests/test_dates.py::test_rrulewrapper_pytz', 'lib/matplotlib/tests/test_dates.py::test_yearlocator_pytz', 'lib/matplotlib/tests/test_dates.py::test_YearLocator', 'lib/matplotlib/tests/test_dates.py::test_DayLocator', 'lib/matplotlib/tests/test_dates.py::test_tz_utc', 'lib/matplotlib/tests/test_dates.py::test_num2timedelta[1-tdelta0]', 'lib/matplotlib/tests/test_dates.py::test_num2timedelta[x1-tdelta1]', 'lib/matplotlib/tests/test_dates.py::test_datetime64_in_list', 'lib/matplotlib/tests/test_dates.py::test_change_epoch', 'lib/matplotlib/tests/test_dates.py::test_warn_notintervals', 'lib/matplotlib/tests/test_dates.py::test_change_converter', 'lib/matplotlib/tests/test_dates.py::test_change_interval_multiples', 'lib/matplotlib/tests/test_dates.py::test_epoch2num', 'lib/matplotlib/tests/test_dates.py::test_julian2num'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for matplotlib__matplotlib-21568: resolved: False
+2026-11-01 18:51:11,165 - INFO - Attempting to stop container sweb.eval.matplotlib__matplotlib-21568.verified_full_pi...

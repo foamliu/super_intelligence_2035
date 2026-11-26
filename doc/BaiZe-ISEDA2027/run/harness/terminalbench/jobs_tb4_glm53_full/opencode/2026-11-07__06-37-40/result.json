@@ -1,0 +1,90 @@
+{
+    "id": "66c970bf-490c-4517-80ca-4a38ad567404",
+    "started_at": "2026-11-07T06:37:40.571616",
+    "updated_at": "2026-11-07T07:42:11.857523Z",
+    "finished_at": null,
+    "n_total_trials": 66,
+    "stats": {
+        "n_completed_trials": 45,
+        "n_errored_trials": 33,
+        "n_running_trials": 1,
+        "n_pending_trials": 20,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "opencode__terminal-bench-4.0": {
+                "n_trials": 12,
+                "n_errors": 33,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "formal-crypto__soNcz8G",
+                            "freecad-impeller__mnE2uoN",
+                            "freecad-platform-drawing__q2oDUjy",
+                            "freecad-spring-clip__X3R3dFH",
+                            "freight-dispatch-shift__36nJW4H",
+                            "glycan-ms2-elucidation__3n96ug3",
+                            "gsea-proteomics__TAcprZU",
+                            "heat-pump-warranty__6mL7WsR",
+                            "hof-topology-interpenetration__YNfiMuv",
+                            "html-js-filter__GyxoWWV",
+                            "payments-pipeline-fix__msU42aN",
+                            "photonic-waveguide-routing__2zHcSBD"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "RuntimeError": [
+                        "atrx-vep-crispr__6tCwByp",
+                        "batched-eval-parity__SEEFpqN",
+                        "biped-contact-dynamics__CnT2MGc",
+                        "bun-sourcemap-leak__ra5RLyq",
+                        "cad-model__sU4HgPg",
+                        "cargo-flight-dispatch__VDXAhA6",
+                        "coq-block-bound__yECMpYb",
+                        "ctr-optimization__rBDgsAT",
+                        "data-anonymization__bfNVEDP",
+                        "distributed-dedup__dSJQqrQ",
+                        "embedding-drift-monitor__kD8R4bL",
+                        "fin-saccr-rwa__yTxoUJW",
+                        "foodstuff-beta-activity__c9HpAX3",
+                        "interleaved-vigenere__WKqS4bk",
+                        "intrastat-meldung__av6t5Pe",
+                        "jax-speedrun-gpu__ZS2pi7F",
+                        "ks-solver-cpp__nkVJPG2",
+                        "kv-live-surgery__8ms59ze",
+                        "lake-temp-glm__ZFxsWMF",
+                        "layout-config-recreation__9zZehzk",
+                        "layout-config-recreation2__RhwzCar",
+                        "legacy-utility-triage__SzrLAxi",
+                        "live-database-cutover__vqUDtPw",
+                        "math-eval-grader__2Sf5ZVy",
+                        "mp-checkpoint-consolidation__VXN9jGY",
+                        "music-harmony__aG5ALDj",
+                        "mvcc-lsm-compaction__XnJhtTm",
+                        "nextjs-performance__nVcck4o",
+                        "ontology-kg-querying__Qti6z5M",
+                        "pretrain-shard-corruption__4GatoV8"
+                    ],
+                    "ValueError": [
+                        "cumulative-layout-shift__f3NiTyp",
+                        "medical-claims-processing__3SBN4nV"
+                    ],
+                    "NonZeroAgentExitCodeError": [
+                        "fp8-rmsnorm-gemm__s7rfrxW"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}

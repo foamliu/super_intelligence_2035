@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "matplotlib__matplotlib-24970",
+    "model_name_or_path": "opencode-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/lib/matplotlib/colors.py b/lib/matplotlib/colors.py\nindex 2d3072da0..7d922a21d 100644\n--- a/lib/matplotlib/colors.py\n+++ b/lib/matplotlib/colors.py\n@@ -725,6 +725,8 @@ class Colormap:\n                 # Avoid converting large positive values to negative integers.\n                 np.clip(xa, -1, self.N, out=xa)\n                 xa = xa.astype(int)\n+        elif xa.dtype.kind in \"iu\":\n+            xa = xa.astype(int)\n         # Set the over-range indices before the under-range;\n         # otherwise the under-range values get converted to over-range.\n         xa[xa > self.N - 1] = self._i_over\n"
+  }
+]

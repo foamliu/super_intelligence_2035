@@ -1,0 +1,12 @@
+Implementation verified on the Synopsys WaveView ACE Tcl sandbox.
+
+`xa_log_diagnose` reads the log once (line-by-line via `gets`), parses the banner/version, counts `Error:` lines, extracts the first BSIM-CMG `Version = <VER>` / `Reset it to version = <VER2>`, and applies the precedence chain for `root_cause`.
+
+Sandbox checker result:
+```
+DESIGN_FLOW_VERDICT=PASS
+DETAIL=PASS 5 / FAIL 0 (5 cases: A BSIM-CMG-unsupported, B success, C convergence, D missing_model, E precedence-teeth)
+```
+
+All 5 cases passed (including the precedence "teeth" case E), so the result is **PASS**.
+=== pi exit=0 end Thu Oct 29 06:42:14 PM CST 2026 ===

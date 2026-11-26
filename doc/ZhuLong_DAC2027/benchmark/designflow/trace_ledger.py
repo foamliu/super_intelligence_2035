@@ -1,0 +1,1247 @@
+#!/usr/bin/env python3
+"""trace_ledger.py — trace 处理台账 + 覆盖率进度（纯标准库）
+
+解决两件事：
+  1) 去重：开工前 `next` 取候选（自动排除已动过的 session），`claim` 落台账；
+  2) 进度：`stats --bar` 打印覆盖率百分比，`refresh` 记录候选池并显示新增 trace。
+
+文件（本目录）：
+  trace_ledger.tsv     逐 session 台账（只有"动过的"，很小，可入库）
+  summary_stats.json   候选池规模快照（每轮刷一次）
+
+台账列：session_file user host match_count domain status case_id updated_at note
+status：claimed / deepread / case / parked
+"""
+import argparse
+import datetime
+import glob
+import json
+import os
+import re
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+STATS = os.path.join(HERE, "summary_stats.json")
+
+# ---- shard 支持：按 domain 分片，每个 shard 独立 ledger + keywords 过滤候选 ----
+# summary.tsv 列: ip host user session_file match_count keywords tools
+# keywords 列（$6，格式 "tool:count;tool:count"）做 domain 代理过滤。
+# 注意：$7(tools) 对部分 session 为空（如 verilog:4237 但 tools=""），r309 修前
+# 过滤 $7 会漏掉 ~346 个 mc>=15 的 verilog/rtl/sdc session（dedup 294→2381，8x）。
+# 故 r309 起过滤改用 $6（authoritative），$7 仅作冗余参考。
+SHARD_DOMAINS = {
+    # shard A 11/06 放宽: 加 synthesis/synopsys/tcl/verilog/systemverilog/rtl/synthesis/sdc
+    # (数字前端工程师少用 cline, 旧过滤词只命中 53 session, 放宽后 11/05 新扫描命中 187)
+    "A": ("digital|verification|pnr_signoff|eda_other",
+          "verdi|vcs|dc_shell|verilint|formality|innovus|primetime|design_compiler|rc|pt_shell"
+          "|synthesis|synopsys|tcl|verilog|systemverilog|rtl|sdc|vivado|yosys|openroad"),
+    "B": ("spice_sim|characterization",
+          "hspice|finesim|siliconsmart|spectre|ngspice|simulator|spice|custom_sim"),
+    "C": ("physical_verify|layout_virtuoso|layout_aether|pg_layout",
+          "calibre|virtuoso|aether|ipcustom|layout|lvs|drc|pexivirtuoso"),
+    "D": ("schematic_netlist|waveform|analog_context",
+          "waveview|cosmos|skill|netlist|spiros|spectrum|analog|schematic"),
+}
+# per-shard mc 阈值
+# 2026-11-11 用户令：全面下调到 mc>=10（原 A=15 / B,C,D=30）。
+# 依据：2026-11-05 全量扫描 summary_1105.tsv 实测（5822 数据行 -> 2560 去重 session）：
+#   未动过(可做)  mc>=30 → mc>=10：119 → 381（+262，3.2x）；分 shard A 109→318, B 5→39,
+#   C 102→332, D 70→252。复算：trace_ledger.py mc-matrix --src designflow/summary_1105.tsv
+# 可被 summary_stats.json 的 shard_mc 字段覆盖。
+SHARD_MC = {"A": 10, "B": 10, "C": 10, "D": 10}
+# 全局默认阈值（无 --shard 时用；也是 refresh 时写 mc<N> 的键）
+DEFAULT_MC = 10
+# per-shard 排除关键词（r709 兑现 A r708 §观点5 承诺，回应 D r809/r813/r888 十催）。
+# D 域 = schematic_netlist/waveform/analog_context；hspice/finesim/spectre 等 spice-sim
+# 工具命中属 B 域 spice_sim，旧 inclusion-only 过滤会经 D 的 netlist/analog 关键词漏入 D 池。
+# 排除具体 spice-sim 工具名（保留通用 spice/simulator/analog，避免误杀 D 域 analog context）。
+# A/B/C 排除词为空 ⇒ 零影响（纯 additive）。
+SHARD_EXCLUDE = {
+    "A": "",
+    "B": "",
+    "C": "",
+    "D": "hspice|finesim|siliconsmart|spectre|ngspice|custom_sim",
+}
+
+# 运行时由 --shard 设定
+_shard = None
+LEDGER = os.path.join(HERE, "trace_ledger.tsv")
+
+def _set_shard(s):
+    global _shard, LEDGER
+    _shard = s
+    if s:
+        LEDGER = os.path.join(HERE, "trace_ledger_%s.tsv" % s)
+
+COLS = ["session_file", "user", "host", "match_count", "domain", "status",
+        "case_id", "updated_at", "note"]
+VALID_STATUS = ("claimed", "deepread", "case", "parked", "seeded")
+# 'seeded' = shard agent 已把 trace 种入 jsonl (出完 case)，等同 'case' 计入覆盖
+COVERED = ("case", "seeded")                   # 计入"已覆盖"
+TOUCHED = ("claimed", "deepread", "case", "parked", "seeded")   # 计入"已动过"
+
+
+def _now():
+    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+
+
+def _load_file(path):
+    """从单个台账文件读行（不设全局 LEDGER）。"""
+    rows = []
+    if not os.path.exists(path):
+        return rows
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            parts = line.rstrip("\n").split("\t")
+            parts += [""] * (len(COLS) - len(parts))
+            if parts[0] == COLS[0]:      # 容忍误写入的表头行
+                continue
+            rows.append(dict(zip(COLS, parts[:len(COLS)])))
+    return rows
+
+
+def load():
+    # 无 --shard 时：聚合 4 个 per-shard 台账（真实数据源），而非过时的合并台账
+    if _shard is None:
+        shard_files = [os.path.join(HERE, "trace_ledger_%s.tsv" % s)
+                       for s in ("A", "B", "C", "D")]
+        if any(os.path.exists(p) for p in shard_files):
+            rows = []
+            for p in shard_files:
+                rows.extend(_load_file(p))
+            return rows
+    return _load_file(LEDGER)
+
+
+def load_all_shards():
+    """聚合全部 4 shard 台账（不论当前 --shard 是什么）。
+
+    r549 code-fix (r548 mandate): `next --shard A` 旧实现只排除 A 台账，B/C/D
+    已 ledger 的 session 仍呈"fresh" → r547 jt7be 跨 shard dup 事故的直接根因。
+    选料的 *排除集* 必须用 4-shard 并集；per-shard 仅用于 *候选 keyword 过滤*。
+    """
+    rows = []
+    for s in ("A", "B", "C", "D"):
+        rows.extend(_load_file(os.path.join(HERE, "trace_ledger_%s.tsv" % s)))
+    return rows
+
+
+def save(rows):
+    tmp = LEDGER + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        for r in rows:
+            f.write("\t".join(str(r.get(c, "")) for c in COLS) + "\n")
+    os.replace(tmp, LEDGER)
+
+
+def load_stats():
+    if not os.path.exists(STATS):
+        return {}
+    with open(STATS, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def target_of(stats):
+    """分母 = 候选池规模。严格按 target_mc 取对应 key。
+
+    2026-11-11 修复：旧实现把候选 key 列表写死成 ("mc30","mc100",...)，导致
+    target_mc 形同虚设 —— 设 target_mc=10 时仍会 fallback 到 mc30，分母永远是
+    mc>=30 的口径（这正是日报 34.4% 与"池枯竭"互相打架的根因）。
+    现在：显式接受 mc<N> / mcN / mc100 / mc300 / sessions 按顺序精确回退，
+    但会打印实际命中的 key，绝不静默换成别档口径。
+    返回 (target, mc, key_hit)。
+    """
+    mc = int(stats.get("target_mc", DEFAULT_MC))
+    # 只接受与 target_mc 同档或更宽松的显式快照 key，按"同档优先"顺序
+    cand_keys = ["mc%d" % mc, "mc_%d" % mc, "mc%03d" % mc,
+                 "mc100", "mc300", "sessions"]
+    seen = set()
+    for k in cand_keys:
+        if k in seen:
+            continue
+        seen.add(k)
+        if stats.get(k):
+            return int(stats[k]), mc, k
+    return int(stats.get("sessions", 0) or 0), mc, "sessions"
+
+
+def bar(pct, width=28):
+    pct = max(0.0, min(100.0, pct))
+    filled = int(round(width * pct / 100.0))
+    return "[" + "#" * filled + "." * (width - filled) + "]"
+
+
+def _upsert(session, **kw):
+    rows = load()
+    # r663 修：台账 session_file 混存 bare / .messages.json / .json 三种后缀形式
+    # （如 L188 "1793786351814_mmmtz" bare vs L624 "..._mmmtz.messages.json"），
+    # 旧实现用 == 精确匹配 → 同会话产生两行（dup）→ r662 在已造 case 上重复合成。
+    # 现用 _norm_sid 规范化后比较；命中则在原行就地更新，不新增行。
+    norm = _norm_sid(session)
+    for r in rows:
+        if _norm_sid(r["session_file"]) == norm:
+            for k, v in kw.items():
+                if v not in (None, ""):
+                    r[k] = str(v)
+            r["updated_at"] = _now()
+            save(rows)
+            return r
+    r = {c: "" for c in COLS}
+    r["session_file"] = session
+    r["status"] = kw.pop("status", "claimed")
+    for k, v in kw.items():
+        if v not in (None, ""):
+            r[k] = str(v)
+    r["updated_at"] = _now()
+    rows.append(r)
+    save(rows)
+    return r
+
+def _pool_members(st):
+    """返回池内 session slug 集合（来自 mc_matrix.src / scan_snapshot），用于把
+    覆盖率分子限制在同一底池内 —— 否则会把快照之外的旧 session 算进分子，
+    导致"池 1929 - 已动过 2347"这类自相矛盾的数字。"""
+    src = st.get("mc_matrix", {}).get("src") if isinstance(st.get("mc_matrix"), dict) else None
+    src = src or st.get("scan_snapshot")
+    if not src:
+        return None
+    p = src if os.path.isabs(src) else os.path.join(HERE, src)
+    if not os.path.exists(p):
+        p = os.path.join(os.path.dirname(HERE), src) if not os.path.isabs(src) else p
+    if not os.path.exists(p):
+        return None
+    best, _, _ = _dedup_scan(p)
+    return set(best)
+
+
+def cmd_stats(args):
+    rows = load()
+    st = load_stats()
+    target, mc, key_hit = target_of(st)
+    pool = _pool_members(st)
+
+    def _in_pool(r):
+        return pool is None or _norm_sid(r["session_file"]) in pool
+
+    covered = [r for r in rows if r["status"] in COVERED and _in_pool(r)]
+    touched = [r for r in rows if r["status"] in TOUCHED and _in_pool(r)]
+    by = {}
+    for r in rows:
+        by[r["status"]] = by.get(r["status"], 0) + 1
+    pct = (100.0 * len(covered) / target) if target else 0.0
+    if target:
+        print("trace 覆盖率 %s %5.1f%%   covered=%d / target=%d (mc>=%d, key=%s%s)"
+              % (bar(pct), pct, len(covered), target, mc, key_hit,
+                 "，已限定池内" if pool else ""))
+    else:
+        print("trace 覆盖率：候选池未知（先 refresh：sessions/mc10/mc30/mc100）；covered=%d"
+              % len(covered))
+    print("  已动过 %d：case %d · deepread %d · parked %d · claimed %d（全台账）"
+          % (len(touched), by.get("case", 0), by.get("deepread", 0),
+             by.get("parked", 0), by.get("claimed", 0)))
+    if target:
+        # 2026-11-11：旧实现用 len(touched) 直接减，但 4 个 shard ledger 有重复行
+        # （同一 session 被多个 shard park 过），会把"剩余可做"算成 0，误导成"池已枯竭"。
+        # 现在按去重后的 session slug 计数。
+        touched_sids = {_norm_sid(r["session_file"]) for r in touched if r["session_file"]}
+        print("  剩余可做 ≈ %d（池 %d - 池内去重已动过 %d）"
+              % (max(0, target - len(touched_sids)), target, len(touched_sids)))
+    if st.get("updated_at"):
+        print("  快照 %s：sessions=%s mc300=%s mc500=%s mc1000=%s"
+              % (st.get("updated_at"), st.get("sessions"), st.get("mc300"),
+                 st.get("mc500"), st.get("mc1000")))
+    if st.get("prev_sessions"):
+        print("  新增 traces（自上次刷新）：%+d"
+              % (int(st.get("sessions", 0)) - int(st["prev_sessions"])))
+    dom = {}
+    for r in covered:
+        if r.get("domain"):
+            dom[r["domain"]] = dom.get(r["domain"], 0) + 1
+    if dom:
+        print("  已覆盖 domain：" + " · ".join("%s:%d" % (k, v) for k, v in sorted(dom.items())))
+    if args.html:
+        print(html_block(rows, st))
+
+
+def html_block(rows=None, st=None):
+    """日报用的 HTML 片段（内联样式，无外链）"""
+    rows = load() if rows is None else rows
+    st = load_stats() if st is None else st
+    target, mc, key_hit = target_of(st)
+    pool = _pool_members(st)
+
+    def _in_pool(r):
+        return pool is None or _norm_sid(r["session_file"]) in pool
+
+    covered = [r for r in rows if r["status"] in COVERED and _in_pool(r)]
+    touched = [r for r in rows if r["status"] in TOUCHED and _in_pool(r)]
+    pct = (100.0 * len(covered) / target) if target else 0.0
+    by = {}
+    for r in rows:
+        by[r["status"]] = by.get(r["status"], 0) + 1
+    dom = {}
+    for r in covered:
+        if r.get("domain"):
+            dom[r["domain"]] = dom.get(r["domain"], 0) + 1
+    delta = "—"
+    if st.get("prev_sessions"):
+        delta = "新增 traces（自上次刷新）：%+d" % (
+            int(st.get("sessions", 0)) - int(st["prev_sessions"]))
+    dom_html = "".join("<li>%s：<b>%d</b></li>" % (k, v) for k, v in sorted(dom.items()))
+    pct_txt = ("%.1f%%" % pct) if target else "—"
+    width = pct if target else 0.0
+    pool_txt = str(target) if target else "未知（待 refresh）"
+    # 2026-11-11：把分母实际命中的快照 key 显式写进页面，杜绝"分母悄悄换档"。
+    src_txt = ("分母口径 = <code>summary_stats.json:%s</code>（target_mc=%d）" % (key_hit, mc)
+               if target else "分母口径 = 未知")
+    return (
+        '<h3>trace 覆盖率进度条（候选池 mc&ge;%d，合并 4 shard ledger）</h3>\n'
+        '<p style="color:#666;font-size:.78rem">%s</p>\n'
+        '<div class="kpis">\n'
+        '<div class="kpi"><div class="n">%s</div><div class="l">已用 / 候选池（mc&ge;%d）</div></div>\n'
+        '<div class="kpi"><div class="n">%d</div><div class="l">已用去重 session</div></div>\n'
+        '<div class="kpi"><div class="n">%s</div><div class="l">候选池总量</div></div>\n'
+        '<div class="kpi"><div class="n">%d</div><div class="l">已动过（含暂缓）</div></div>\n'
+        '</div>\n'
+        '<div style="background:#e3e8ef;border-radius:6px;height:18px;overflow:hidden">'
+        '<div style="width:%.1f%%;height:18px;background:#2c7be5"></div></div>\n'
+        '<p style="color:#666;font-size:.8rem">%s · 台账 case %d / seeded %d / deepread %d / parked %d / claimed %d</p>\n'
+        '<ul>%s</ul>\n'
+        % (mc, src_txt, pct_txt, mc, len(covered), pool_txt, len(touched), width, delta,
+           by.get("case", 0), by.get("seeded", 0), by.get("deepread", 0),
+           by.get("parked", 0), by.get("claimed", 0), dom_html or "<li>—</li>"))
+def cmd_next(args):
+    # 规范化：台账存 bare 形式或带 .messages.json/.json 后缀混存，summary.tsv 统一带后缀。
+    # strip 后缀再做 anchor 匹配，避免 $-anchor 漏放行已用 session。
+    # r394 修：summary.tsv 混存 .json 与 .messages.json，旧 sub 只剥 .messages.json，
+    #   导致 .json 后缀的已台账 session（如 fi203.json/31lou.json）漏过排除集 → 假 fresh。
+    #   现统一剥 \.(messages\.)?json$ 后缀。
+    _SF_SUFFIX = re.compile(r'\.(messages\.)?json$')
+    # r549 code-fix (r548 mandate): 排除集必须用 4-shard 并集，否则 B/C/D 已
+    # ledger 的 session 会呈"fresh" → 跨 shard dup 事故（r547 jt7be 同 session
+    # 在 A/D 双案均未互斥）。per-shard 仅用于候选 keyword 过滤，不缩小排除集。
+    used_src = load_all_shards() if _shard else load()
+    used = [_SF_SUFFIX.sub("", r["session_file"])
+            for r in used_src if r["session_file"]]
+    # 去重 + 保持顺序（4-shard 并集会有跨 shard 重复 slug）
+    seen_slugs = set()
+    used_uniq = []
+    for u in used:
+        if u not in seen_slugs:
+            seen_slugs.add(u)
+            used_uniq.append(u)
+    used = used_uniq
+    st = load_stats()
+    # per-shard mc 阈值: summary_stats.json.shard_mc → SHARD_MC → target_mc → DEFAULT_MC
+    shard_mc_cfg = st.get("shard_mc", {}) if isinstance(st.get("shard_mc"), dict) else {}
+    if _shard and _shard in SHARD_MC:
+        mc = int(shard_mc_cfg.get(_shard, SHARD_MC[_shard]))
+    else:
+        mc = int(st.get("target_mc", DEFAULT_MC))
+    # 扫描路径: 优先 summary_stats.json.scan_path, 否则用 .75 上最新扫描目录
+    scan_tsv = st.get("scan_path", "")
+    if not scan_tsv:
+        scan_tsv = "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv"
+    pat = "|".join(used) if used else "__none__"
+    # shard tools 过滤（$7 = tools 列）
+    tool_filter = ""
+    if _shard and _shard in SHARD_DOMAINS:
+        tools_re = SHARD_DOMAINS[_shard][1]
+        tool_filter = " && $6 ~ /%s/" % tools_re
+        excl = SHARD_EXCLUDE.get(_shard, "")
+        if excl:
+            tool_filter += " && $6 !~ /%s/" % excl
+    print("# 1) 在 .75 上跑（经 eda_flow run_commands）取候选，已排除台账里的 session%s：" % ("，按 shard %s keywords($6) 过滤" % _shard if _shard else ""))
+    print("# (sub(/\\.messages\\.json$/,\"\",$4); sub(/\\.json$/,\"\",$4) 规范化后做 anchor 匹配; r394 修 .json 后缀漏排除)")
+    print("# 候选池 mc>=%d%s (11/06: shard A 放宽过滤词+降阈值; **2026-11-11 用户令: 全线降到 mc>=10**)" % (mc, " [shard %s 专属阈值]" % _shard if _shard and _shard in SHARD_MC and mc != DEFAULT_MC else ""))
+    print("# 扫描源: %s" % scan_tsv)
+    print("# r309: 过滤改用 $6(keywords) 而非 $7(tools)；$7 对 ~346 verilog session 为空，旧 $7 过滤漏候选 8x (dedup 294->2381)")
+    print("awk -F'\\t' 'NR>1 && $5+0>=%d {sub(/\\.messages\\.json$/,\"\",$4); sub(/\\.json$/,\"\",$4); $4 !~ /^(%s)$/%s {print $5\"\\t\"$4\"\\t\"$3\"\\t\"$2\"\\t\"$6}' "
+          "%s | sort -rn | head -%d"
+          % (mc, pat, tool_filter, scan_tsv, args.n))
+    # 预筛提示
+    pre = load_prefilter() if args.prefiltered else {}
+    if args.prefiltered:
+        rejects = [sf for sf, r in pre.items() if r.get("verdict") == "reject"]
+        print("# 1.5) --prefiltered: 已排除 %d 个 prefilter reject" % len(rejects))
+        if rejects:
+            print("#   rejects: %s" % " ".join(s[:20] for s in rejects[:5]))
+    else:
+        print("# 1.5) 可选: 对候选跑 0.8B 预筛 (trace_prefilter.py), 过滤非 EDA session")
+        print("#   python3 designflow/trace_prefilter.py batch --summary <candidates.tsv> --min-mc %d --limit %d" % (mc, args.n))
+        print("#   python3 designflow/trace_ledger.py%s prefilter --apply" % (" --shard %s" % _shard if _shard else ""))
+    print("# 2) 选第一条，落台账：")
+    print("python3 designflow/trace_ledger.py%s claim --session <session_file> --user <user> "
+          "--host <host> --match <match_count> [--domain <domain>]"
+          % (" --shard %s" % _shard if _shard else ""))
+    print("# 3) 出完 case 后结算（这是覆盖率的唯一分子来源）：")
+    print("python3 designflow/trace_ledger.py%s mark --session <session_file> --status case "
+          "--case-id <EDA-Eval-DesignFlow-XXX>"
+          % (" --shard %s" % _shard if _shard else ""))
+    print("# 台账已有 %d 条（4-shard 并集，r549 修：跨 shard 互斥）。本 shard 台账 %d 条。"
+          % (len(used), len(load())))
+
+
+def cmd_claim(args):
+    # r663 修：refusal 检查同时修两个 bug ——
+    #   (1) 后缀规范化：台账混存 bare/.messages.json/.json，旧 == 精确匹配漏判同会话
+    #       → r662 在 L188 已 case 的 mmmtz 上又 claim 了 mmmtz.messages.json (dup)。
+    #       现用 _norm_sid 规范化后比较。
+    #   (2) 跨 shard 互斥（r549 next 已修但 claim 漏修）：refusal 检查必须覆盖 4 shard
+    #       并集，否则 B/C/D 已 ledger 的 session 仍能在 A 重复 claim。
+    norm = _norm_sid(args.session)
+    for r in load_all_shards():
+        if _norm_sid(r["session_file"]) == norm and r["status"] in TOUCHED:
+            print("REFUSED: 该 session 已在台账（status=%s, case_id=%s, %s, shard_row=%s）"
+                  % (r["status"], r["case_id"] or "-", r["updated_at"],
+                     r["session_file"]))
+            return 1
+    _upsert(args.session, user=args.user, host=args.host, match_count=args.match,
+            domain=args.domain, status="claimed", note=args.note)
+    print("claimed: %s (%s/%s, mc=%s)" % (args.session, args.user, args.host, args.match))
+    return 0
+
+
+def cmd_mark(args):
+    if args.status not in VALID_STATUS:
+        print("bad status: %s (allowed: %s)" % (args.status, "/".join(VALID_STATUS)))
+        return 2
+    # r708 fix (A 召集人 + 共享 code owner): cmd_mark 加跨 shard 互斥检查。
+    # 根因 (D r816 实证): cmd_claim (L372-389) 有 load_all_shards() 跨 shard refusal，
+    # 但 cmd_mark 直接 _upsert 落盘，后门敞开 → A r682 fl4rh 绕过 claim 直接 mark 造
+    # 跨 shard 重复 (D 11-08 已 case 同 session)。修复: mark 前若 session 已在**他 shard**
+    # (非当前 --shard) TOUCHED，refuse 并报已存在 case_id；--force 显式覆盖用于
+    # wrong-domain 标注等需保留 case 的例外场景 (sgk0l 类)。同 shard 内 claimed→case
+    # 是正常流程，不 refuse。仅警告不 refuse wrong-domain，因需保留 case。
+    norm = _norm_sid(args.session)
+    collisions = []
+    for s in ("A", "B", "C", "D"):
+        if _shard and s == _shard:
+            continue  # 同 shard 内 claimed→case 是正常流程，跳过
+        for r in _load_file(os.path.join(HERE, "trace_ledger_%s.tsv" % s)):
+            if _norm_sid(r["session_file"]) == norm and r["status"] in TOUCHED:
+                collisions.append((s, r))
+    if collisions and not args.force:
+        s, c = collisions[0]
+        print("REFUSED: session 已在 **他 shard %s** 台账 (status=%s, case_id=%s, %s, "
+              "shard_row=%s)。跨 shard 互斥：一 trace 一 case。" %
+              (s, c["status"], c["case_id"] or "-", c["updated_at"], c["session_file"]))
+        print("若确需保留 (如 wrong-domain 标注)，加 --force 显式覆盖。")
+        return 1
+    if collisions and args.force:
+        s, c = collisions[0]
+        print("WARN --force: session 已在他 shard %s 台账 (status=%s, case_id=%s, "
+              "%s) — 强制 mark，请在 note 记录原因。" %
+              (s, c["status"], c["case_id"] or "-", c["updated_at"]))
+    _upsert(args.session, status=args.status, case_id=args.case_id, note=args.note)
+    print("marked: %s -> %s%s" % (args.session, args.status,
+                                  (" (%s)" % args.case_id) if args.case_id else ""))
+    return 0
+
+
+def cmd_seed(args):
+    """把 jsonl 里已有的 case 灌进台账（一次性 bootstrap）"""
+    rows = load()
+    have = {r["session_file"] for r in rows if r["session_file"]}
+    added = 0
+    with open(args.jsonl, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            r = json.loads(line)
+            md = r.get("metadata") or {}
+            ts = md.get("trace_source") or {}
+            s = ts.get("session_file")
+            if not s or s in have:
+                continue
+            rows.append({
+                "session_file": s, "user": ts.get("user", ""), "host": ts.get("host", ""),
+                "match_count": str(ts.get("match_count", "")),
+                "domain": md.get("domain", ""), "status": "case",
+                "case_id": r.get("task_id", ""), "updated_at": _now(), "note": "seeded",
+            })
+            have.add(s)
+            added += 1
+    save(rows)
+    print("seeded %d case(s) from %s; ledger total=%d" % (added, args.jsonl, len(rows)))
+    return 0
+
+
+PREFILTER_RESULTS = os.path.join(HERE, "prefilter_results.jsonl")
+
+
+def load_prefilter():
+    """读 prefilter_results.jsonl, 返回 {session_file: verdict_dict}"""
+    out = {}
+    if not os.path.exists(PREFILTER_RESULTS):
+        return out
+    with open(PREFILTER_RESULTS, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            sf = r.get("session") or r.get("session_file")
+            if sf:
+                out[sf] = r
+    return out
+
+
+def cmd_prefilter(args):
+    """批量跑 0.8B 预筛 + 把 verdict 写回台账 note 列
+
+    用法:
+      # 用已有 prefilter_results.jsonl 更新台账 (不重跑 0.8B)
+      python3 trace_ledger.py prefilter --apply
+
+      # 对 candidates.tsv 跑预筛 + 写台账
+      python3 trace_ledger.py prefilter --candidates candidates_mc30.tsv --apply
+    """
+    import subprocess
+    if args.candidates:
+        # 跑 trace_prefilter.py
+        cmd = ["python3", os.path.join(HERE, "trace_prefilter.py"), "batch",
+               "--summary", args.candidates,
+               "--min-mc", str(args.min_mc),
+               "--output", PREFILTER_RESULTS]
+        if args.limit:
+            cmd += ["--limit", str(args.limit)]
+        print("running: %s" % " ".join(cmd))
+        rc = subprocess.call(cmd)
+        if rc != 0:
+            print("prefilter failed (rc=%d)" % rc)
+            return rc
+    if not os.path.exists(PREFILTER_RESULTS):
+        print("no prefilter_results.jsonl; run with --candidates first")
+        return 1
+    results = load_prefilter()
+    print("prefilter results: %d sessions" % len(results))
+    # 统计
+    from collections import Counter
+    verdicts = Counter(r.get("verdict") for r in results.values())
+    print("  verdicts: %s" % dict(verdicts))
+    if not args.apply:
+        print("(dry-run; --apply 写入台账)")
+        return 0
+    # 写回台账: reject → status=parked, note=prefilter_reject
+    #          accept/uncertain → note=prefilter_<verdict> (不改变 status)
+    n_reject = n_label = 0
+    rows = load()
+    have = {r["session_file"]: r for r in rows}
+    for sf, r in results.items():
+        v = r.get("verdict", "uncertain")
+        # 规范化 session_file 形式 (台账可能存 bare 或带后缀)
+        keys = [sf, sf + ".messages.json"]
+        # 也试 strip 后缀
+        if sf.endswith(".messages.json"):
+            keys.append(sf.replace(".messages.json", ""))
+        matched = None
+        for k in keys:
+            if k in have:
+                matched = k
+                break
+        if matched:
+            row = have[matched]
+        else:
+            # 新建一行 (不 claim, 只记 prefilter 结果)
+            row = {c: "" for c in COLS}
+            row["session_file"] = sf
+            row["status"] = "parked" if v == "reject" else ""
+            row["match_count"] = str(r.get("mc", ""))
+            row["user"] = r.get("user", "")
+            rows.append(row)
+            have[sf] = row
+        note = "prefilter_%s conf=%.2f" % (v, float(r.get("confidence", 0)))
+        if v == "reject":
+            row["status"] = "parked"
+            row["note"] = note + " | " + str(r.get("reason", ""))[:80]
+            n_reject += 1
+        else:
+            # 不覆盖已有 case/seeded 的 note
+            if row["status"] not in COVERED:
+                row["note"] = note
+            n_label += 1
+        row["updated_at"] = _now()
+    save(rows)
+    print("applied: %d reject→parked, %d labeled (accept/uncertain); ledger total=%d"
+          % (n_reject, n_label, len(rows)))
+    return 0
+
+
+def cmd_refresh(args):
+    try:
+        new = json.loads(args.json)
+    except Exception as e:
+        print("bad json: %s" % e)
+        return 2
+    st = load_stats()
+    if st.get("sessions"):
+        st["prev_sessions"] = st["sessions"]
+    st.update(new)
+    st["updated_at"] = _now()
+    with open(STATS, "w", encoding="utf-8") as f:
+        json.dump(st, f, ensure_ascii=False, indent=2, sort_keys=True)
+    print("stats refreshed: %s" % json.dumps({k: st[k] for k in sorted(st)}, ensure_ascii=False))
+    return 0
+
+
+def cmd_scansync(args):
+    """管理任务: 在 .75 上找最新扫描目录, 统计各口径, 输出 ready-to-run 命令块.
+    shard A 用这个做每日巡检: 更新 summary_stats.json + 报告各 shard 候选池规模 + 新增 trace."""
+    st = load_stats()
+    old_scan = st.get("scan_path", "/home/t0002965/log/ssh_eda_search_20261109_224902/summary.tsv")
+    print("# === scansync: 在 .75 上跑 (经 eda_flow run_commands) ===")
+    print("# 1) 找最新扫描目录 (按时间排序)")
+    print("ls -dt /home/t0002965/log/ssh_eda_search_*/ 2>/dev/null | head -1")
+    print("# 2) 用最新扫描统计各口径 (假设最新目录是 $SCAN_DIR):")
+    print("#    SCAN_DIR=$(ls -dt /home/t0002965/log/ssh_eda_search_*/ | head -1)")
+    print("#    SUMMARY=$SCAN_DIR/summary.tsv")
+    print("echo \"scan_dir: $SCAN_DIR\"")
+    print("echo \"total_rows: $(tail -n +2 $SUMMARY | wc -l)\"")
+    print("echo \"dedup_sessions: $(tail -n +2 $SUMMARY | awk -F'\\t' '{print $4}' | sort -u | wc -l)\"")
+    print("echo \"dedup_users: $(tail -n +2 $SUMMARY | awk -F'\\t' '{print $3}' | sort -u | wc -l)\"")
+    print("echo \"dedup_hosts: $(tail -n +2 $SUMMARY | awk -F'\\t' '{print $2}' | sort -u | wc -l)\"")
+    print("echo \"mc30: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=30 {print $4}' | sort -u | wc -l)\"")
+    print("echo \"mc100: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=100 {print $4}' | sort -u | wc -l)\"")
+    # 2026-11-11 用户令：全线下调到 mc>=10，故各档都要统计，供 refresh 写 mc10/mc15/mc20/mc30
+    for m in (10, 15, 20, 30):
+        if m == 30:
+            continue
+        print("echo \"mc%d: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d {print $4}' | sort -u | wc -l)\""
+              % (m, m))
+        print("echo \"users_mc%d: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d {print $3}' | sort -u | wc -l)\""
+              % (m, m))
+    print("echo \"users_mc30: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=30 {print $3}' | sort -u | wc -l)\"")
+    print("# 3) 各 shard 候选池规模 (用当前过滤词 + mc 阈值):")
+    for sid in sorted(SHARD_DOMAINS):
+        tools_re = SHARD_DOMAINS[sid][1]
+        excl = SHARD_EXCLUDE.get(sid, "")
+        excl_filter = " && $6 !~ /%s/" % excl if excl else ""
+        mc = SHARD_MC.get(sid, 30)
+        print("echo \"shard_%s_pool_mc%d: $(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/%s {print $4}' | sort -u | wc -l)\""
+              % (sid, mc, mc, tools_re, excl_filter))
+    print("# 4) 新增 session (旧扫描没有的, 按 target_mc=%d 口径):" % DEFAULT_MC)
+    print("echo \"new_sessions: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=%d{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d{print $4}' | sort -u) | wc -l)\""
+          % (old_scan, DEFAULT_MC, DEFAULT_MC))
+    print("# 5) 各 shard 的新增候选 (旧扫描没有的):")
+    for sid in sorted(SHARD_DOMAINS):
+        tools_re = SHARD_DOMAINS[sid][1]
+        excl = SHARD_EXCLUDE.get(sid, "")
+        excl_filter = " && $6 !~ /%s/" % excl if excl else ""
+        mc = SHARD_MC.get(sid, 30)
+        print("echo \"shard_%s_new: $(comm -13 <(tail -n +2 %s | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/%s{print $4}' | sort -u) <(tail -n +2 $SUMMARY | awk -F'\\t' '$5+0>=%d && $6 ~ /%s/%s{print $4}' | sort -u) | wc -l)\""
+              % (sid, old_scan, mc, tools_re, excl_filter, mc, tools_re, excl_filter))
+    print("# 6) 更新 summary_stats.json (把上面的数字填进去):")
+    print("#    python3 designflow/trace_ledger.py refresh --json '{\"scan_path\":\"$SCAN_DIR/summary.tsv\",\"mc30\":NNN,...}'")
+    print("# 7) daily scan log 增量 (今日新增 trace):")
+    print("TODAY=$(date +%%Y%%m%%d)")
+    print("echo \"today_log: /home/t0002965/log/eda_trace_$TODAY.log\"")
+    print("echo \"today_sessions: $(grep -c '^10\\.' /home/t0002965/log/eda_trace_$TODAY.log 2>/dev/null)\"")
+    print("# 旧扫描: %s" % old_scan)
+    return 0
+
+
+def _norm_sid(s):
+    """规范化 session 标识 → **纯 slug**（如 1792044811256_a7ied）。
+
+    同一 slug 会在多个 user 目录 / 多台机器上重复出现（实测 2700 个 slug 里有 2 个
+    被两个不同 user 使用），所以必须用 slug 而不是 user+slug 做去重键，否则会多算。
+    """
+    base = s.replace("\\", "/").rstrip("/").split("/")[-1]
+    for suf in (".messages.archive.json", ".messages.archive",
+                ".messages.json", ".archive.json", ".json"):
+        if base.endswith(suf):
+            return base[: -len(suf)]
+    return base
+
+
+def _is_header(p):
+    """判断 summary.tsv 的一行是否为表头（列名，而非数据）。"""
+    return bool(p) and p[0] in ("ip", "session_file", "match_count", "#")
+
+
+def _dedup_scan(src):
+    """读 summary.tsv → {sid: {mc, user, host, kw, ip}}，同 session 取最大 mc。
+
+    注意：summary.tsv 里同一 session 会在**很多台机器**上各出现一行（同一个 cline
+    session 目录被多 host 挂载/同步），所以必须先按 session 去重再统计，否则数字会
+    虚高（实测 5822 数据行 → 2701 个去重 session）。表头行必须跳过，否则
+    "session_file" 会被当成一个 session 混进统计。
+    """
+    best = {}
+    n_rows = 0
+    n_hdr = 0
+    with open(src, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            p = line.rstrip("\n").split("\t")
+            if _is_header(p):
+                n_hdr += 1
+                continue
+            if len(p) < 6:
+                continue
+            n_rows += 1
+            host, user, sf, mcs, kws = p[1], p[2], p[3], p[4], p[5]
+            sid = _norm_sid(sf)
+            try:
+                mc = int(float(mcs))
+            except (TypeError, ValueError):
+                continue
+            if sid not in best or mc > best[sid]["mc"]:
+                best[sid] = {"mc": mc, "user": user, "host": host,
+                             "kw": kws, "ip": p[0]}
+    return best, n_rows, n_hdr
+
+
+def cmd_mcmartix(args):
+    """2026-11-11 用户令：mc 阈值全线下调到 mc>=10 的评估工具（纯本机，可复算）。
+
+    读一份 summary.tsv（列: ip host user session_file match_count keywords tools），
+    按 session 去重（同一 session 可能在多台机重复出现，取最大 match_count），
+    然后对每个阈值 m 统计：池总量 / 已动过(4 shard ledger) / 未动过(=真正可做)。
+    可选 --shard X 再按该 shard 的 keywords 过滤词切分。
+
+    用途：
+      1) 复核"降到 mc>=10 到底能多出多少可做候选"；
+      2) 生成可直接喂给 `trace_ledger.py refresh --json` 的 mc10/mc15/mc20/mc30 数字；
+      3) 生成 candidates_mc<N>.tsv 候选清单（--emit-candidates）。
+    """
+    import re
+    src = args.src
+    if not os.path.exists(src):
+        print("ERROR: 扫描快照不存在: %s" % src)
+        return 2
+
+    # 台账：把已动过的 session 全部收进来（4 shard + 老合并台账）
+    touched = {}
+    for s in ("A", "B", "C", "D"):
+        p = os.path.join(HERE, "trace_ledger_%s.tsv" % s)
+        for r in _load_file(p):
+            if r["session_file"]:
+                touched[_norm_sid(r["session_file"])] = r["status"]
+    for r in _load_file(os.path.join(HERE, "trace_ledger.tsv")):
+        if r["session_file"]:
+            touched.setdefault(_norm_sid(r["session_file"]), r["status"])
+
+    # 扫描快照：session 去重，取最大 mc（和 keywords 一起保留）
+    best, n_rows, n_hdr = _dedup_scan(src)
+
+    # 可选：按 shard 的 keywords 过滤词切分
+    kw_pat = None
+    excl_pat = None
+    if args.shard:
+        if args.shard not in SHARD_DOMAINS:
+            print("ERROR: 未知 shard %s" % args.shard)
+            return 2
+        kw_pat = re.compile(SHARD_DOMAINS[args.shard][1])
+        excl = SHARD_EXCLUDE.get(args.shard, "")
+        if excl:
+            excl_pat = re.compile(excl)
+
+    rows = [dict(sid=k, **v) for k, v in best.items()
+            if (kw_pat is None or kw_pat.search(v["kw"] or ""))
+            and (excl_pat is None or not excl_pat.search(v["kw"] or ""))]
+
+    thresholds = [int(x) for x in args.thresholds.split(",") if x.strip()]
+    # 2026-11-19 r780 兑现 A r771 §建议动作2 承诺（D r922 待 verify）：
+    # mc-matrix 输出 header 须含 snapshot_src + generated_at + 「next snapshot 落地时
+    # 旧结论 expire」提示，承 D r910 pool-snapshot-freshness 方法学（D r908→r909 + A
+    # r760→r765 双实证：跨 snapshot 引用过时枯竭结论会误导 §9）。
+    import time
+    try:
+        mtime = time.strftime("%Y-%m-%d", time.localtime(os.path.getmtime(src)))
+    except OSError:
+        mtime = "?"
+    print("# snapshot_src=%s" % src)
+    print("# generated_at=%s (snapshot mtime)" % mtime)
+    print("# next_snapshot_expires_this_conclusion=true")
+    print("# 扫描快照: %s" % src)
+    print("# 数据行 = %d（跳过表头 %d 行）→ 去重 session = %d%s"
+          % (n_rows, n_hdr, len(rows),
+             ("（shard %s keywords 过滤后）" % args.shard) if args.shard else ""))
+    print("# 台账已动过 session = %d（case/seeded=%d, parked=%d）"
+          % (len(touched),
+             sum(1 for v in touched.values() if v in COVERED),
+             sum(1 for v in touched.values() if v == "parked")))
+    print("")
+    print("%-10s %10s %10s %10s" % ("阈值", "池总量", "已动过", "未动过(可做)"))
+    print("-" * 44)
+    table = {}
+    for m in thresholds:
+        sel = [r for r in rows if r["mc"] >= m]
+        t = sum(1 for r in sel if r["sid"] in touched)
+        table[m] = {"pool": len(sel), "touched": t, "fresh": len(sel) - t}
+        print("mc>=%-6d %10d %10d %10d" % (m, len(sel), t, len(sel) - t))
+
+    if args.json:
+        print("")
+        print("# 可直接喂 refresh 的 JSON 片段：")
+        obj = {"target_mc": args.target_mc,
+               "shard_mc": {s: args.target_mc for s in sorted(SHARD_DOMAINS)},
+               "mc_matrix": {("mc%d" % m): table[m] for m in thresholds}}
+        for m in thresholds:
+            obj["mc%d" % m] = table[m]["pool"]
+        print(json.dumps(obj, ensure_ascii=False))
+
+    if args.emit_candidates:
+        m = args.emit_candidates_mc
+        sel = sorted([r for r in rows if r["mc"] >= m],
+                     key=lambda r: -r["mc"])
+        out = os.path.join(HERE, "candidates_mc%d.tsv" % m)
+        with open(out, "w", encoding="utf-8") as f:
+            f.write("ip\tuser\tsession_file\tmatch_count\tkeywords\n")
+            for r in sel:
+                f.write("%s\t%s\t%s\t%d\t%s\n"
+                        % (r["ip"], r["user"], r["sid"], r["mc"], r["kw"]))
+        unledgered = sum(1 for r in sel if r["sid"] not in touched)
+        print("")
+        print("已写出候选清单: %s（%d 行，其中未动过 %d）" % (out, len(sel), unledgered))
+    return 0
+
+
+def cmd_mcguard(args):
+    """2026-11-11 用户令守门员：检查 mc>=10 规则是否被破坏（可进 pre-commit / 每轮自检）。
+
+    检查项：
+      G1 summary_stats.json: target_mc == 10
+      G2 summary_stats.json: shard_mc 全 == 10（A/B/C/D）
+      G3 trace_ledger.py: SHARD_MC 全 == 10、DEFAULT_MC == 10
+      G4 候选清单 candidates_mc10.tsv 存在，且 min(match_count) >= 10
+      G5 任务书 *_TASK*.md 的「选料阈值」不得残留 target_mc=30 / shard_mc 15/30 模板
+      G6 覆盖率分母 key 必须是 mc10
+    退出码：0 全过；1 有 FAIL。
+    """
+    import re
+    fails = []
+    warns = []
+
+    # ---- G1/G2 ----
+    st = load_stats()
+    if int(st.get("target_mc", -1)) != 10:
+        fails.append("G1 summary_stats.target_mc = %r（必须 10）" % st.get("target_mc"))
+    shard_mc = st.get("shard_mc", {})
+    for s in ("A", "B", "C", "D"):
+        v = shard_mc.get(s)
+        if v != 10:
+            fails.append("G2 summary_stats.shard_mc[%s] = %r（必须 10）" % (s, v))
+
+    # ---- G3 ----
+    src = os.path.join(HERE, "trace_ledger.py")
+    with open(src, encoding="utf-8") as f:
+        txt = f.read()
+    m = re.search(r"^SHARD_MC\s*=\s*(\{[^}]*\})", txt, re.M)
+    if not m:
+        fails.append("G3 找不到 SHARD_MC 定义")
+    else:
+        try:
+            cfg = json.loads(m.group(1).replace("'", '"'))
+        except Exception:
+            cfg = {}
+        for s in ("A", "B", "C", "D"):
+            if cfg.get(s) != 10:
+                fails.append("G3 trace_ledger.SHARD_MC[%s] = %r（必须 10）" % (s, cfg.get(s)))
+    if not re.search(r"^DEFAULT_MC\s*=\s*10\b", txt, re.M):
+        fails.append("G3 trace_ledger.DEFAULT_MC 不是 10")
+
+    # ---- G4 ----
+    cand = os.path.join(HERE, "candidates_mc10.tsv")
+    if not os.path.exists(cand):
+        fails.append("G4 缺 candidates_mc10.tsv")
+    else:
+        mn = None
+        with open(cand, encoding="utf-8") as f:
+            f.readline()
+            for line in f:
+                p = line.rstrip("\n").split("\t")
+                if len(p) < 4:
+                    continue
+                try:
+                    v = int(float(p[3]))
+                except ValueError:
+                    continue
+                mn = v if mn is None else min(mn, v)
+        if mn is None:
+            fails.append("G4 candidates_mc10.tsv 无数据行")
+        elif mn < 10:
+            fails.append("G4 candidates_mc10.tsv 最小 mc = %d（<10，混入低档候选）" % mn)
+
+    # ---- G5 ----
+    bench = os.path.dirname(HERE)
+    import glob
+    tasks = sorted(glob.glob(os.path.join(bench, "BAIZE_DESIGNFLOW_BENCH_TASK*.md")))
+    for t in tasks:
+        with open(t, encoding="utf-8") as f:
+            for i, line in enumerate(f, 1):
+                # 只抓"可复制执行"的模板行，放过已标注作废/禁止的行
+                if '"target_mc":30' in line.replace(" ", "") and "禁止" not in line \
+                        and "作废" not in line and "已作废" not in line:
+                    fails.append("G5 %s:L%d 残留可执行的 target_mc=30 模板"
+                                 % (os.path.basename(t), i))
+                if re.search(r'"shard_mc"\s*:\s*\{\s*"A"\s*:\s*15', line) and "作废" not in line:
+                    fails.append("G5 %s:L%d 残留 shard_mc A:15 模板"
+                                 % (os.path.basename(t), i))
+
+    # ---- G6 ----
+    target, mc, key = target_of(st)
+    if key != "mc10":
+        warns.append("G6 覆盖率分母 key = %s（期望 mc10；可能是 11/09 换池未完成或 key 缺失）" % key)
+
+    print("=== mc>=10 守门员 ===")
+    print("target_mc=%s shard_mc=%s 分母key=%s 分母=%s"
+          % (st.get("target_mc"), json.dumps(shard_mc, ensure_ascii=False), key, target))
+    if fails:
+        print("\nFAIL (%d):" % len(fails))
+        for x in fails:
+            print("  ✗ " + x)
+    else:
+        print("  ✓ G1-G5 全过")
+    for w in warns:
+        print("  ! " + w)
+    print("\n结果：%s" % ("FAIL" if fails else "PASS"))
+    return 1 if fails else 0
+
+
+def cmd_phantom_check(args):
+    """2026-11-19 r780 兑现 A r771 §建议动作1 承诺（D r910 surface + D r922 待 verify）：
+    ledger-jsonl 一致性机械检测 invariant。
+
+    对每个 shard：扫 trace_ledger_<X>.tsv 中 status=case/seeded 的行（case_id 非空），
+    与 EDA-Eval-DesignFlow_<X>.jsonl 中的 case id 集合对比。分类：
+      - 已建 assets 可 revival：ledger 标 case 且 reference/<id>/ 存在，但 jsonl 缺行
+        （各 shard 优先零成本 revival 补齐）
+      - 无 reference dir：ledger 标 case 但 jsonl 缺行且 reference/ 也无对应目录
+        （历史 mark 早于造题 → 须补造或下线，不可静默残留）
+      - jsonl 多余：jsonl 有 case id 但 ledger 未 mark case（极少见，反向漏标）
+
+    id 归一化：ledger 与 jsonl 的 case_id 可能含/省略「EDA-Eval-DesignFlow-」前缀
+    （A.jsonl 实测两格式并存），比较前统一剥前缀。
+
+    退出码：0=PASS（无 phantom）/ 1=FAIL（有 phantom）。承 r708 single-source-of-truth
+    invariant：cases/X/<case>.json=source(入 git)，X.jsonl=build 产物，phantom=裂痕。
+    """
+    PREFIX = "EDA-Eval-DesignFlow-"
+
+    def _norm_cid(cid):
+        cid = (cid or "").strip()
+        if cid.startswith(PREFIX):
+            cid = cid[len(PREFIX):]
+        return cid
+    jsonl_dir = args.jsonl_dir
+    ref_dir = args.ref_dir
+    shards = (args.shard,) if args.shard else ("A", "B", "C", "D")
+    total_phantom = 0
+    summary_lines = []
+    for s in shards:
+        ledger_p = os.path.join(HERE, "trace_ledger_%s.tsv" % s)
+        if not os.path.exists(ledger_p):
+            summary_lines.append("shard %s: 台账文件不存在 %s" % (s, ledger_p))
+            continue
+        # 收集 ledger status=case/seeded 的 (session_file, case_id)
+        ledger_cases = {}  # norm_cid -> session_file (取第一条)
+        case_id_to_sid = {}
+        for r in _load_file(ledger_p):
+            if r["status"] in COVERED and r["case_id"]:
+                cid = _norm_cid(r["case_id"])
+                if not cid:
+                    continue
+                ledger_cases.setdefault(cid, r["session_file"])
+                case_id_to_sid[cid] = r["session_file"]
+        # 收集 jsonl case id 集合（归一化后）
+        jsonl_p = os.path.join(jsonl_dir, "EDA-Eval-DesignFlow_%s.jsonl" % s)
+        jsonl_ids = set()
+        if os.path.exists(jsonl_p):
+            with open(jsonl_p, encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    try:
+                        rec = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    cid = _norm_cid(rec.get("id") or rec.get("case_id") or rec.get("task_id") or "")
+                    if cid:
+                        jsonl_ids.add(cid)
+        else:
+            summary_lines.append("shard %s: jsonl 不存在 %s（跳过 jsonl 对比，仅报 ledger case 数）"
+                                  % (s, jsonl_p))
+        # 分类
+        ledger_ids = set(ledger_cases.keys())
+        # phantom = ledger 有 case 但 jsonl 没有
+        phantoms = ledger_ids - jsonl_ids
+        # 已建 assets：reference/<id>/ 或 reference/<PREFIX><id>/ 目录存在
+        built_assets = []
+        no_ref = []
+        for cid in sorted(phantoms):
+            ref_path_short = os.path.join(ref_dir, cid)
+            ref_path_full = os.path.join(ref_dir, PREFIX + cid)
+            has_ref = os.path.isdir(ref_path_short) or os.path.isdir(ref_path_full)
+            if has_ref:
+                built_assets.append((cid, case_id_to_sid.get(cid, "")))
+            else:
+                no_ref.append((cid, case_id_to_sid.get(cid, "")))
+        # jsonl 多余（jsonl 有但 ledger 未标 case）
+        jsonl_only = jsonl_ids - ledger_ids
+        n_phantom = len(phantoms)
+        total_phantom += n_phantom
+        line = ("shard %s: ledger case=%d / jsonl ids=%d / phantom=%d "
+                "(已建 assets=%d, 无 reference dir=%d) / jsonl 多余=%d"
+                % (s, len(ledger_ids), len(jsonl_ids), n_phantom,
+                   len(built_assets), len(no_ref), len(jsonl_only)))
+        summary_lines.append(line)
+        if args.verbose:
+            for cid, sid in built_assets:
+                summary_lines.append("  [可 revival] %s (session=%s) ref dir 存在" % (cid, sid))
+            for cid, sid in no_ref:
+                summary_lines.append("  [无 ref]    %s (session=%s) 须补造或下线" % (cid, sid))
+            for cid in sorted(jsonl_only):
+                summary_lines.append("  [jsonl 多余] %s jsonl 有但 ledger 未 mark case" % cid)
+    print("=== phantom-check (ledger-jsonl 一致性 invariant) ===")
+    print("jsonl_dir=%s" % jsonl_dir)
+    print("ref_dir=%s" % ref_dir)
+    print("")
+    for ln in summary_lines:
+        print(ln)
+    print("")
+    verdict = "PASS" if total_phantom == 0 else "FAIL"
+    print("结果：%s (total phantom=%d)" % (verdict, total_phantom))
+    print("注：phantom=ledger 标 case 但 jsonl 无对应行 (data-hygiene threat, "
+          "承 r708 single-source-of-truth invariant)。")
+    print("    「已建 assets」phantom = 零成本 revival 候选 (各 shard 优先补齐)。")
+    print("    「无 reference dir」phantom = 历史 mark 早于造题 → 须补造或下线。")
+    return 1 if total_phantom else 0
+
+
+_NOFILE_RE = re.compile(r"NOFILE|file-deleted-postscan|file-deleted", re.IGNORECASE)
+
+
+def _latest_local_summary():
+    """找 designflow/ 下最新的 summary_*.tsv 本地镜像 (JOIN 恢复 ip/host/user 用)。"""
+    cands = sorted(glob.glob(os.path.join(HERE, "summary_*.tsv")), reverse=True)
+    # glob 不保证按 mtime；按 mtime 再排一次取最新
+    cands = sorted(cands, key=lambda p: os.path.getmtime(p), reverse=True)
+    return cands[0] if cands else None
+
+
+def _load_summary_coords(summary_path):
+    """读 scan summary.tsv → {slug: (ip, host, user, mc)}。
+
+    summary.tsv 列 (见 AGENTS.md §2): ip host user session_file match_count keywords tools。
+    session_file 形如 1782890212076_npkmm.messages.json，归一化为 slug 做 join 键。
+    """
+    coords = {}
+    if not summary_path or not os.path.exists(summary_path):
+        return coords
+    with open(summary_path, encoding="utf-8", errors="replace") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) < 5 or parts[0] == "ip":
+                continue
+            ip, host, user, sess, mc = parts[0], parts[1], parts[2], parts[3], parts[4]
+            slug = _norm_sid(sess)
+            # 同 slug 可能跨多机/多 user 出现 (实测 ~2/2700)，保留首个 (= 最高 mc 行，
+            # 因 summary 一般按 match_count desc 排)；仍记全量供 verbose 复核。
+            coords.setdefault(slug, (ip, host, user, mc))
+    return coords
+
+
+def cmd_revive_nofile(args):
+    """2026-11-20 r827 兑现 discuss/A.md r826 承诺 + D r969 §建议动作1：
+    NOFILE-parked 子目录路径重试 revival 工具 (A 作 trace_ledger.py code owner)。
+
+    背景 (D r969 + C r836 + A r820 三域实证)：cline session 文件实际在子目录
+    `~/.cline/data/sessions/<id>/<id>.messages.json`，旧 peek/revival 用 flat 路径
+    `~/.cline/data/sessions/<id>.messages.json` 必 NOFILE ⇒ 大量活候选被误判 parked
+    (D 台账 106 unique NOFILE-parked, A 23 parked)。本工具把这条路径 bug 修成机械可扫：
+
+    1. 扫 shard 台账 NOFILE-parked 行 (status=parked + note 命中 NOFILE/file-deleted)；
+    2. JOIN scan summary.tsv 恢复 (ip, host, user) —— 台账里 host 常为空 (D263-peek
+       丢映射)，但 summary.tsv 保留全量 ip/host/user/mc，可恢复探测坐标；
+    3. 输出 subdir-aware SSH 探测命令块 (经 eda_flow run_commands 在 .75 上跑)，按
+       (ip, user) 分批连接，每条同时探 flat 与 subdir 路径，输出 TSV：
+       slug \t flat_size|NOFILE \t subdir_size|NOFILE
+       subdir_size != NOFILE ⇒ 活候选，可 un-park + deep-read + 造题。
+
+    纯本机 dry-run (不连 .75)：emit ready-to-run bash 块 + 恢复率统计。
+    退出码：0=有可恢复候选且命令已 emit / 2=无可恢复候选 / 3=summary 不可用。
+    """
+    summary_path = args.src or _latest_local_summary()
+    if not summary_path or not os.path.exists(summary_path):
+        print("[revive-nofile] 找不到 scan summary.tsv 本地镜像 (--src 指定)。")
+        print("  designflow/ 下需有 summary_*.tsv (各 shard scansync 时已 mirror)。")
+        return 3
+    coords = _load_summary_coords(summary_path)
+    if not coords:
+        print("[revive-nofile] summary.tsv 解析为空: %s" % summary_path)
+        return 3
+    shards = (args.shard,) if args.shard else ("A", "B", "C", "D")
+    print("# === revive-nofile: NOFILE-parked 子目录路径重试 revival (r827) ===")
+    print("# 兑现: discuss/A.md r826 承诺 + D r969 §建议动作1 (A 作 code owner)")
+    print("# 背景: flat 路径 NOFILE 是假阴性, 真路径在 sessions/<id>/<id>.messages.json")
+    print("# summary: %s (%d slugs)" % (summary_path, len(coords)))
+    print("# 在 .75 上跑 (经 eda_flow run_commands); ssh 加 </dev/null 防 hang (TASK §2 坑3)")
+    print("# 输出列: slug \\t flat_size|NOFILE \\t subdir_size|NOFILE")
+    print("# subdir_size != NOFILE ⇒ 活候选 ⇒ un-park + deep-read + 造题")
+    print("")
+    total_parked = total_recoverable = total_lost = 0
+    all_groups = []  # (shard, ip, user, host, [slugs])
+    for s in shards:
+        ledger_p = os.path.join(HERE, "trace_ledger_%s.tsv" % s)
+        if not os.path.exists(ledger_p):
+            print("# shard %s: 台账不存在, 跳过" % s)
+            continue
+        parked_slugs = []
+        seen = set()
+        for r in _load_file(ledger_p):
+            if r["status"] != "parked":
+                continue
+            if not _NOFILE_RE.search(r.get("note", "")):
+                continue
+            slug = _norm_sid(r["session_file"])
+            if slug in seen:
+                continue
+            seen.add(slug)
+            parked_slugs.append(slug)
+        # JOIN summary 恢复坐标
+        recoverable = []  # (slug, ip, host, user, mc)
+        lost = []
+        for slug in parked_slugs:
+            c = coords.get(slug)
+            if c:
+                recoverable.append((slug, c[0], c[1], c[2], c[3]))
+            else:
+                lost.append(slug)
+        # 按 (ip, user) 分批
+        groups = {}
+        for slug, ip, host, user, mc in recoverable:
+            groups.setdefault((ip, user, host), []).append(slug)
+        total_parked += len(parked_slugs)
+        total_recoverable += len(recoverable)
+        total_lost += len(lost)
+        print("# --- shard %s: NOFILE-parked=%d / recoverable=%d / lost=%d / ssh-groups=%d ---"
+              % (s, len(parked_slugs), len(recoverable), len(lost), len(groups)))
+        if args.verbose:
+            for slug, ip, host, user, mc in recoverable:
+                print("#   [recoverable] %s → ip=%s host=%s user=%s mc=%s"
+                      % (slug, ip, host, user, mc))
+            for slug in lost:
+                print("#   [lost]        %s (summary 无此 slug, 坐标不可恢复)" % slug)
+        for (ip, user, host), slugs in groups.items():
+            all_groups.append((s, ip, user, host, sorted(slugs)))
+    print("")
+    if not all_groups:
+        print("# 无可恢复候选 — 各 shard NOFILE-parked 全部未在 summary 中找到坐标。")
+        print("# 汇总: parked=%d recoverable=0 lost=%d" % (total_parked, total_lost))
+        return 2
+    # emit bash 探测块
+    print("# ===== 复制以下块到 eda_flow run_commands (cwd=workdir) =====")
+    for s, ip, user, host, slugs in all_groups:
+        slugs_str = " ".join(slugs)
+        print("# shard %s @ %s (%s) user=%s — %d sessions"
+              % (s, ip, host, user, len(slugs)))
+        # 单连接内循环探每条 slug 的 flat+subdir; 路径用 /home/<user> (非 ~, 因 ssh 以
+        # 自身身份登录读他人 home)。subdir_size != NOFILE ⇒ 活候选。
+        print("ssh -o BatchMode=yes -o ConnectTimeout=8 %s </dev/null 'for s in %s; do "
+              "printf \"%%s\\t\" \"$s\"; "
+              "for p in /home/%s/.cline/data/sessions/$s.messages.json "
+              "/home/%s/.cline/data/sessions/$s/$s.messages.json; do "
+              "if [ -f \"$p\" ]; then printf \"%%s\\t\" \"$(stat -c%%s \"$p\" 2>/dev/null)\"; "
+              "else printf \"NOFILE\\t\"; fi; done; printf \"\\n\"; done' "
+              "2>/dev/null"
+              % (ip, slugs_str, user, user))
+    print("# ===== 探测块结束 =====")
+    print("")
+    print("# 汇总: NOFILE-parked=%d / recoverable=%d / lost=%d / ssh-groups=%d"
+          % (total_parked, total_recoverable, total_lost, len(all_groups)))
+    print("# 后续 (看探测输出): 对 subdir_size != NOFILE 的 slug, un-park + deep-read:")
+    print("#   python3 designflow/trace_ledger.py --shard <X> mark --session <slug>.messages.json \\")
+    print("#       --status parked --note 'subdir-ALIVE <size> revival r827, 待 deep-read'")
+    print("# (mark 用 --force 若跨 shard 互斥; deep-read 后再 claim/造题/转 case)")
+    return 0
+
+
+def main():
+    ap = argparse.ArgumentParser(description="trace ledger + coverage progress")
+    ap.add_argument("--shard", default=None, choices=sorted(SHARD_DOMAINS.keys()),
+                    help="shard ID (A/B/C/D): uses trace_ledger_<X>.tsv + tools filter in next")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    p = sub.add_parser("stats")
+    p.add_argument("--bar", action="store_true")
+    p.add_argument("--html", action="store_true")
+    p = sub.add_parser("next")
+    p.add_argument("--n", type=int, default=5)
+    p.add_argument("--prefiltered", action="store_true",
+                   help="读 prefilter_results.jsonl, 提示排除 reject 的 session")
+    p = sub.add_parser("claim")
+    p.add_argument("--session", required=True)
+    p.add_argument("--user", default="")
+    p.add_argument("--host", default="")
+    p.add_argument("--match", default="")
+    p.add_argument("--domain", default="")
+    p.add_argument("--note", default="")
+    p = sub.add_parser("mark")
+    p.add_argument("--session", required=True)
+    p.add_argument("--status", required=True)
+    p.add_argument("--case-id", dest="case_id", default="")
+    p.add_argument("--note", default="")
+    p.add_argument("--force", action="store_true",
+                   help="覆盖跨 shard 互斥 (仅 wrong-domain 标注等需保留 case 的例外)")
+    p = sub.add_parser("refresh")
+    p.add_argument("--json", required=True)
+    p = sub.add_parser("seed")
+    p.add_argument("--jsonl", required=True)
+    p = sub.add_parser("scansync",
+                       help="管理任务: 输出 .75 上最新扫描的统计命令块 (shard A 每日巡检用)")
+    p = sub.add_parser("prefilter")
+    p.add_argument("--candidates", help="candidates TSV (跑 trace_prefilter.py)")
+    p.add_argument("--min-mc", type=int, default=DEFAULT_MC)
+    p.add_argument("--limit", type=int, default=0)
+    p.add_argument("--apply", action="store_true", help="写回台账 (默认 dry-run)")
+    p = sub.add_parser("mc-matrix",
+                       help="2026-11-11 用户令: 按 mc 阈值矩阵统计 池/已动过/未动过 "
+                            "(纯本机可复算), 并生成 candidates_mc<N>.tsv")
+    p.add_argument("--src", required=True, help="扫描快照 summary.tsv 路径")
+    p.add_argument("--thresholds", default="5,10,15,20,30")
+    p.add_argument("--target-mc", dest="target_mc", type=int, default=DEFAULT_MC,
+                   help="建议 adopt 的阈值 (写进 refresh JSON 的 target_mc/shard_mc)")
+    p.add_argument("--json", action="store_true", help="输出可喂 refresh --json 的片段")
+    p.add_argument("--emit-candidates", dest="emit_candidates", action="store_true",
+                   help="写出 candidates_mc<N>.tsv")
+    p.add_argument("--emit-candidates-mc", dest="emit_candidates_mc", type=int,
+                   default=DEFAULT_MC)
+    p = sub.add_parser("mcguard",
+                       help="2026-11-11 守门员: 校验 mc>=10 规则未被破坏 (退出码 0=PASS/1=FAIL)")
+    p = sub.add_parser("phantom-check",
+                       help="2026-11-19 r780 兑现 A r771 §建议动作1 承诺: "
+                            "ledger-jsonl 一致性机械检测 invariant (退出码 0=PASS/1=FAIL)")
+    p.add_argument("--jsonl-dir", dest="jsonl_dir", required=True,
+                   help="EDA-Eval-DesignFlow jsonl 目录 (含 EDA-Eval-DesignFlow_<X>.jsonl)")
+    p.add_argument("--ref-dir", dest="ref_dir", required=True,
+                   help="reference 目录 (含 <case_id>/ 子目录, 用于判「已建 assets」phantom)")
+    p.add_argument("--verbose", action="store_true", help="输出每个 phantom 的 case_id + session")
+    p = sub.add_parser("revive-nofile",
+                       help="2026-11-20 r827 兑现 discuss/A.md r826 承诺 + D r969 §建议动作1: "
+                            "NOFILE-parked 子目录路径重试 revival (JOIN summary 恢复坐标 + emit "
+                            "subdir-aware SSH 探测块; 纯本机 dry-run)")
+    p.add_argument("--src", help="scan summary.tsv 本地镜像 (默认 designflow/ 下最新 summary_*.tsv)")
+    p.add_argument("--verbose", action="store_true", help="输出每个 NOFILE-parked slug 的恢复坐标")
+    a = ap.parse_args()
+    if a.shard:
+        _set_shard(a.shard)
+    return {"stats": cmd_stats, "next": cmd_next, "claim": cmd_claim,
+            "mark": cmd_mark, "refresh": cmd_refresh, "seed": cmd_seed,
+            "scansync": cmd_scansync, "prefilter": cmd_prefilter,
+            "mc-matrix": cmd_mcmartix, "mcguard": cmd_mcguard,
+            "phantom-check": cmd_phantom_check,
+            "revive-nofile": cmd_revive_nofile}[a.cmd](a) or 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+

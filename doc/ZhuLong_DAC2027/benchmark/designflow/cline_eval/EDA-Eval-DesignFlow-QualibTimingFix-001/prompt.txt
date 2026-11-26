@@ -1,0 +1,8 @@
+please analysis this directory's file, and response me with chinese. 我在做 SRAM IP 的 Qualib 一致性检查（Verilog 模型 ↔ TMLib/Liberty 时序约束一致性），用 check_mem_verilog_tmlib.tcl 跑了 xcheck，发现我自己的模型 CXN4HCSPS512X8M4B2C1R1W1BW1RE1_FS 不合格：xcheck_Verilog_Tmlib 有 3 条 error / 7 条 total，timing_constraint 明细里出现一批 "Tmlib Only" 弧——也就是 Liberty（.lib）里声明了 setup/hold 时序检查，但 Verilog 的 specify 块里没有对应的 $setuphold。我对比了 TSMC 参考模型 R2R028SGA_W64B16M4B1_BCSW（report_2prf/），它的差异更小（只有 2 条 "Verilog Only" removal 弧，方向相反），所以我的模型不合格的主因是 Verilog specify 块不完整、缺了控制/数据 pin 的 setup/hold 检查。
+
+please compare @report/X_S_Check_inspection.html 和 @report_2prf/X_S_Check_inspection.html，focus on timing constraint part，给我一个可落地的修复方案。具体来说，请写一个 Python 脚本 qualib_timing_fix.py，读入一个 SRAM 模型的 (Verilog .v, Liberty .lib, xcheck report 目录) 三元组，做下面两件事：
+
+1. 诊断：解析 X_S_Check_inspection.html 的 check_Verilog / check_Tmlib / xcheck_Verilog_Tmlib 汇总（W/E/T），以及 result_xcheck_Verilog_Tmlib/ 下的 *_timing_constraint.html 明细，把每条弧归类成 "Tmlib Only"（Liberty 有 / Verilog specify 缺）或 "Verilog Only"（Verilog 有 / Liberty 缺），输出结构化的 fix_report.json。
+2. 修复：在原 Verilog 的 specify 块内（endspecify 之前）为每条 "Tmlib Only" 的 setup_rising/hold_rising 弧补一条 $setuphold 检查，生成 <model>_fixed.v；对 "Verilog Only" 弧或 min_pulse_width/minimum_period 这类非 setup/hold 弧不要乱加 $setuphold。
+
+脚本命令行接口必须是：python3 qualib_timing_fix.py <verilog> <lib> <html_dir> <out_dir>，在 out_dir 下写出 fix_report.json 和 <model>_fixed.v（<model> 取 timing_constraint HTML 里的 cell 名，或 Verilog 文件名去 .v）。脚本要通用——不能硬编码我 CXN4 模型的 pin 名或弧列表，必须从输入文件里解析出来，这样换一个结构不同的 SRAM 模型也能正确跑。先拿 A 输入（CXN4HCSPS512X8M4B2C1R1W1BW1RE1_FS 的 .v / .lib / report/）跑一遍验证，再把 qualib_timing_fix.py 单独打包成 outputs/submit.zip 作为交付件。

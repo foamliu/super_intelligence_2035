@@ -1,0 +1,589 @@
+{
+  "timestamp": "2026-11-09T06:07:32.745228",
+  "baseline": 0.36,
+  "targets": {
+    "M1": 0.5,
+    "M2": 0.65,
+    "M3": 0.75,
+    "M4": 0.85
+  },
+  "analysis": {
+    "n_total_trials": 18000,
+    "n_configs": 156,
+    "n_pareto": 6,
+    "top10": [
+      {
+        "mix": {
+          "agentic": 0.292397,
+          "code": 0.137889,
+          "general": 0.05234,
+          "math": 0.05488,
+          "pyaether_api": 0.267151,
+          "pyaether_sft": 0.195343
+        },
+        "total_tokens": 2000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.637443,
+        "std_pass1": 0.0,
+        "mean_gain": 0.277443,
+        "mean_forgetting": 0.055397,
+        "mean_synergy": 0.145761,
+        "mean_cost": 2.174293,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.256192,
+          "D2_frequency": 0.267678,
+          "D4_knowledge": 0.35,
+          "D5_scenario": 0.3,
+          "D6_iteration": 0.286484
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.187268,
+          "code": 0.297588,
+          "general": 0.004066,
+          "math": 0.059348,
+          "pyaether_api": 0.238768,
+          "pyaether_sft": 0.212962
+        },
+        "total_tokens": 2000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.629874,
+        "std_pass1": 0.0,
+        "mean_gain": 0.269874,
+        "mean_forgetting": 0.049222,
+        "mean_synergy": 0.146051,
+        "mean_cost": 2.161556,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.203167,
+          "D2_frequency": 0.234531,
+          "D4_knowledge": 0.35,
+          "D5_scenario": 0.3,
+          "D6_iteration": 0.284068
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.292397,
+          "code": 0.137889,
+          "general": 0.05234,
+          "math": 0.05488,
+          "pyaether_api": 0.267151,
+          "pyaether_sft": 0.195343
+        },
+        "total_tokens": 4000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.620243,
+        "std_pass1": 0.0,
+        "mean_gain": 0.260243,
+        "mean_forgetting": 0.102712,
+        "mean_synergy": 0.145761,
+        "mean_cost": 4.348585,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.3,
+          "D2_frequency": 0.378554,
+          "D4_knowledge": 0.35,
+          "D5_scenario": 0.3,
+          "D6_iteration": 0.405149
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.187268,
+          "code": 0.297588,
+          "general": 0.004066,
+          "math": 0.059348,
+          "pyaether_api": 0.238768,
+          "pyaether_sft": 0.212962
+        },
+        "total_tokens": 4000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.618636,
+        "std_pass1": 0.0,
+        "mean_gain": 0.258636,
+        "mean_forgetting": 0.094795,
+        "mean_synergy": 0.146051,
+        "mean_cost": 4.323112,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.287322,
+          "D2_frequency": 0.331677,
+          "D4_knowledge": 0.35,
+          "D5_scenario": 0.3,
+          "D6_iteration": 0.401733
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.292397,
+          "code": 0.137889,
+          "general": 0.05234,
+          "math": 0.05488,
+          "pyaether_api": 0.267151,
+          "pyaether_sft": 0.195343
+        },
+        "total_tokens": 1000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.61414,
+        "std_pass1": 0.0,
+        "mean_gain": 0.25414,
+        "mean_forgetting": 0.030818,
+        "mean_synergy": 0.145761,
+        "mean_cost": 1.087146,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.181155,
+          "D2_frequency": 0.189277,
+          "D4_knowledge": 0.289687,
+          "D5_scenario": 0.213841,
+          "D6_iteration": 0.202574
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.292397,
+          "code": 0.137889,
+          "general": 0.05234,
+          "math": 0.05488,
+          "pyaether_api": 0.267151,
+          "pyaether_sft": 0.195343
+        },
+        "total_tokens": 2000000000.0,
+        "ctx_config": "8k",
+        "mean_pass1": 0.611553,
+        "std_pass1": 0.0,
+        "mean_gain": 0.251553,
+        "mean_forgetting": 0.055397,
+        "mean_synergy": 0.145761,
+        "mean_cost": 2.174293,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.256192,
+          "D2_frequency": 0.267678,
+          "D4_knowledge": 0.35,
+          "D5_scenario": 0.3,
+          "D6_iteration": 0.286484
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.187268,
+          "code": 0.297588,
+          "general": 0.004066,
+          "math": 0.059348,
+          "pyaether_api": 0.238768,
+          "pyaether_sft": 0.212962
+        },
+        "total_tokens": 1000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.609978,
+        "std_pass1": 0.0,
+        "mean_gain": 0.249978,
+        "mean_forgetting": 0.025583,
+        "mean_synergy": 0.146051,
+        "mean_cost": 1.080778,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.143661,
+          "D2_frequency": 0.165838,
+          "D4_knowledge": 0.286931,
+          "D5_scenario": 0.228393,
+          "D6_iteration": 0.200866
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.35,
+          "code": 0.135,
+          "general": 0.1,
+          "math": 0.135,
+          "pyaether_api": 0.1,
+          "pyaether_sft": 0.18
+        },
+        "total_tokens": 2000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.607717,
+        "std_pass1": 0.0,
+        "mean_gain": 0.247717,
+        "mean_forgetting": 0.03445,
+        "mean_synergy": 0.096818,
+        "mean_cost": 2.269,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.261447,
+          "D2_frequency": 0.219569,
+          "D4_knowledge": 0.35,
+          "D5_scenario": 0.253437,
+          "D6_iteration": 0.287709
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.292397,
+          "code": 0.137889,
+          "general": 0.05234,
+          "math": 0.05488,
+          "pyaether_api": 0.267151,
+          "pyaether_sft": 0.195343
+        },
+        "total_tokens": 8000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.60693,
+        "std_pass1": 0.0,
+        "mean_gain": 0.24693,
+        "mean_forgetting": 0.15,
+        "mean_synergy": 0.145761,
+        "mean_cost": 8.69717,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.3,
+          "D2_frequency": 0.535357,
+          "D4_knowledge": 0.35,
+          "D5_scenario": 0.3,
+          "D6_iteration": 0.572967
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.35,
+          "code": 0.1,
+          "general": 0.15,
+          "math": 0.05,
+          "pyaether_api": 0.15,
+          "pyaether_sft": 0.2
+        },
+        "total_tokens": 2000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.605741,
+        "std_pass1": 0.0,
+        "mean_gain": 0.245741,
+        "mean_forgetting": 0.043823,
+        "mean_synergy": 0.114504,
+        "mean_cost": 2.25,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.210077,
+          "D2_frequency": 0.267466,
+          "D4_knowledge": 0.35,
+          "D5_scenario": 0.268785,
+          "D6_iteration": 0.293726
+        }
+      }
+    ],
+    "pareto_front": [
+      {
+        "mix": {
+          "agentic": 0.292397,
+          "code": 0.137889,
+          "general": 0.05234,
+          "math": 0.05488,
+          "pyaether_api": 0.267151,
+          "pyaether_sft": 0.195343
+        },
+        "total_tokens": 2000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.637443,
+        "std_pass1": 0.0,
+        "mean_gain": 0.277443,
+        "mean_forgetting": 0.055397,
+        "mean_synergy": 0.145761,
+        "mean_cost": 2.174293,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.256192,
+          "D2_frequency": 0.267678,
+          "D4_knowledge": 0.35,
+          "D5_scenario": 0.3,
+          "D6_iteration": 0.286484
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.187268,
+          "code": 0.297588,
+          "general": 0.004066,
+          "math": 0.059348,
+          "pyaether_api": 0.238768,
+          "pyaether_sft": 0.212962
+        },
+        "total_tokens": 2000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.629874,
+        "std_pass1": 0.0,
+        "mean_gain": 0.269874,
+        "mean_forgetting": 0.049222,
+        "mean_synergy": 0.146051,
+        "mean_cost": 2.161556,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.203167,
+          "D2_frequency": 0.234531,
+          "D4_knowledge": 0.35,
+          "D5_scenario": 0.3,
+          "D6_iteration": 0.284068
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.292397,
+          "code": 0.137889,
+          "general": 0.05234,
+          "math": 0.05488,
+          "pyaether_api": 0.267151,
+          "pyaether_sft": 0.195343
+        },
+        "total_tokens": 1000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.61414,
+        "std_pass1": 0.0,
+        "mean_gain": 0.25414,
+        "mean_forgetting": 0.030818,
+        "mean_synergy": 0.145761,
+        "mean_cost": 1.087146,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.181155,
+          "D2_frequency": 0.189277,
+          "D4_knowledge": 0.289687,
+          "D5_scenario": 0.213841,
+          "D6_iteration": 0.202574
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.187268,
+          "code": 0.297588,
+          "general": 0.004066,
+          "math": 0.059348,
+          "pyaether_api": 0.238768,
+          "pyaether_sft": 0.212962
+        },
+        "total_tokens": 1000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.609978,
+        "std_pass1": 0.0,
+        "mean_gain": 0.249978,
+        "mean_forgetting": 0.025583,
+        "mean_synergy": 0.146051,
+        "mean_cost": 1.080778,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.143661,
+          "D2_frequency": 0.165838,
+          "D4_knowledge": 0.286931,
+          "D5_scenario": 0.228393,
+          "D6_iteration": 0.200866
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.25,
+          "code": 0.15,
+          "general": 0.25,
+          "math": 0.1,
+          "pyaether_api": 0.15,
+          "pyaether_sft": 0.1
+        },
+        "total_tokens": 1000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.563306,
+        "std_pass1": 0.00715,
+        "mean_gain": 0.203306,
+        "mean_forgetting": 0.01545,
+        "mean_synergy": 0.101688,
+        "mean_cost": 1.08,
+        "n_trials": 200,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.152818,
+          "D2_frequency": 0.141187,
+          "D4_knowledge": 0.2658,
+          "D5_scenario": 0.183821,
+          "D6_iteration": 0.194715
+        }
+      },
+      {
+        "mix": {
+          "agentic": 0.25,
+          "code": 0.15,
+          "general": 0.3,
+          "math": 0.09,
+          "pyaether_api": 0.15,
+          "pyaether_sft": 0.06
+        },
+        "total_tokens": 1000000000.0,
+        "ctx_config": "16k",
+        "mean_pass1": 0.551131,
+        "std_pass1": 0.0,
+        "mean_gain": 0.191131,
+        "mean_forgetting": 0.017357,
+        "mean_synergy": 0.0886,
+        "mean_cost": 1.072,
+        "n_trials": 100,
+        "p_m1": 1.0,
+        "p_m2": 0.0,
+        "p_m3": 0.0,
+        "d_improvements_mean": {
+          "D1_legality": 0.114739,
+          "D2_frequency": 0.149423,
+          "D4_knowledge": 0.262458,
+          "D5_scenario": 0.167574,
+          "D6_iteration": 0.180129
+        }
+      }
+    ],
+    "source_correlations": {
+      "general": -0.258,
+      "agentic": -0.2259,
+      "pyaether_api": 0.4536,
+      "code": 0.0836,
+      "math": -0.2055,
+      "pyaether_sft": 0.1204
+    },
+    "ctx_analysis": {
+      "16k": {
+        "mean": 0.567364,
+        "min": 0.475607,
+        "max": 0.637443
+      },
+      "8k": {
+        "mean": 0.541235,
+        "min": 0.458173,
+        "max": 0.611553
+      },
+      "4k": {
+        "mean": 0.486968,
+        "min": 0.386326,
+        "max": 0.557782
+      }
+    },
+    "token_budget_analysis": {
+      "2000000000.0": {
+        "mean": 0.550029,
+        "min": 0.436641,
+        "max": 0.637443
+      },
+      "4000000000.0": {
+        "mean": 0.539998,
+        "min": 0.431973,
+        "max": 0.620243
+      },
+      "1000000000.0": {
+        "mean": 0.531706,
+        "min": 0.429079,
+        "max": 0.61414
+      },
+      "8000000000.0": {
+        "mean": 0.505691,
+        "min": 0.386326,
+        "max": 0.60693
+      }
+    },
+    "best_m1_config": {
+      "mix": {
+        "agentic": 0.292397,
+        "code": 0.137889,
+        "general": 0.05234,
+        "math": 0.05488,
+        "pyaether_api": 0.267151,
+        "pyaether_sft": 0.195343
+      },
+      "total_tokens": 2000000000.0,
+      "ctx_config": "16k",
+      "mean_pass1": 0.637443,
+      "std_pass1": 0.0,
+      "mean_gain": 0.277443,
+      "mean_forgetting": 0.055397,
+      "mean_synergy": 0.145761,
+      "mean_cost": 2.174293,
+      "n_trials": 100,
+      "p_m1": 1.0,
+      "p_m2": 0.0,
+      "p_m3": 0.0,
+      "d_improvements_mean": {
+        "D1_legality": 0.256192,
+        "D2_frequency": 0.267678,
+        "D4_knowledge": 0.35,
+        "D5_scenario": 0.3,
+        "D6_iteration": 0.286484
+      }
+    },
+    "best_m2_config": null,
+    "worst_config": {
+      "mix": {
+        "agentic": 0.45,
+        "code": 0.21,
+        "general": 0.2,
+        "math": 0.09,
+        "pyaether_api": 0.05,
+        "pyaether_sft": 0.01
+      },
+      "total_tokens": 8000000000.0,
+      "ctx_config": "4k",
+      "mean_pass1": 0.386326,
+      "std_pass1": 0.0,
+      "mean_gain": 0.026326,
+      "mean_forgetting": 0.140647,
+      "mean_synergy": 0.033567,
+      "mean_cost": 9.264,
+      "n_trials": 100,
+      "p_m1": 0.0,
+      "p_m2": 0.0,
+      "p_m3": 0.0,
+      "d_improvements_mean": {
+        "D1_legality": 0.3,
+        "D2_frequency": 0.450951,
+        "D4_knowledge": 0.35,
+        "D5_scenario": 0.3,
+        "D6_iteration": 0.636233
+      }
+    }
+  }
+}

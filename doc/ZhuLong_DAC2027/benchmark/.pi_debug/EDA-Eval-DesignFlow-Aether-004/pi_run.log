@@ -1,0 +1,125 @@
+Implemented and verified. The Tcl proc passed every assertion on the Empyrean WaveView (.75) Tcl sandbox.
+
+## Implementation
+
+```tcl
+proc layout_gds_layermap_audit {report_text} {
+    array set layer_gdsno {}
+    array set layer_datatype {}
+    array set layer_purpose {}
+    array set layer_count {}
+    set has_summary 0
+    set summary_total_layers ""
+    set summary_total_shapes ""
+
+    foreach raw [split $report_text "\n"] {
+        set line [string trim $raw]
+        if {$line eq ""} {continue}
+        if {[string index $line 0] eq "#"} {continue}
+        if {[string match "LAYER *" $line]} {
+            set rest [string trim [string range $line 5 end]]
+            set fields [split $rest]
+            set name [lindex $fields 0]
+            set gdsno ""; set datatype ""; set purpose ""; set count ""
+            foreach f [lrange $fields 1 end] {
+                if {[string match "gdsno=*" $f]}    {set gdsno    [string range $f 6 end]}
+                if {[string match "datatype=*" $f]} {set datatype [string range $f 9 end]}
+                if {[string match "purpose=*" $f]}  {set purpose  [string range $f 8 end]}
+                if {[string match "count=*" $f]}    {set count    [string range $f 6 end]}
+            }
+            set layer_gdsno($name) $gdsno
+            set layer_datatype($name) $datatype
+            set layer_purpose($name) $purpose
+            set layer_count($name) $count
+        } elseif {[string match "SUMMARY *" $line]} {
+            set has_summary 1
+            set rest [string trim [string range $line 7 end]]
+            foreach f [split $rest] {
+                if {[string match "total_layers=*" $f]} {set summary_total_layers [string range $f 13 end]}
+                if {[string match "total_shapes=*" $f]} {set summary_total_shapes [string range $f 13 end]}
+            }
+        }
+    }
+
+    set names [lsort -dictionary [array names layer_count]]
+    set total_layers [llength $names]
+    set total_shapes 0
+    set drawing [list]; set pin [list]; set label [list]; set missing [list]
+    set max_count -1; set max_name ""
+    array set pairmap {}
+
+    foreach name $names {
+        set cnt 0
+        if {$layer_count($name) ne ""} {set cnt $layer_count($name)}
+        set total_shapes [expr {$total_shapes + $cnt}]
+        if {$cnt > $max_count} {set max_count $cnt; set max_name $name}
+        set purp [string tolower $layer_purpose($name)]
+        if {$purp eq "drawing"} {lappend drawing $name}
+        if {$purp eq "pin"}     {lappend pin $name}
+        if {$purp eq "label"}   {lappend label $name}
+        if {$purp eq ""}        {lappend missing $name}
+        if {$layer_gdsno($name) ne ""} {
+            set key "$layer_gdsno($name),$layer_datatype($name)"
+            lappend pairmap($key) $name
+        }
+    }
+
+    set dup [list]
+    foreach key [array names pairmap] {
+        if {[llength $pairmap($key)] > 1} {
+            foreach n $pairmap($key) {lappend dup $n}
+        }
+    }
+    set dup [lsort -dictionary -unique $dup]
+
+    set mismatched [list]
+    if {$has_summary} {
+        if {$summary_total_layers ne ""} {
+            set eq 0
+            if {[string is integer -strict $summary_total_layers]} {
+                if {[expr {$summary_total_layers == $total_layers}]} {set eq 1}
+            } elseif {$summary_total_layers eq [string trim $total_layers]} {set eq 1}
+            if {!$eq} {lappend mismatched "total_layers"}
+        }
+        if {$summary_total_shapes ne ""} {
+            set eq 0
+            if {[string is integer -strict $summary_total_shapes]} {
+                if {[expr {$summary_total_shapes == $total_shapes}]} {set eq 1}
+            } elseif {$summary_total_shapes eq [string trim $total_shapes]} {set eq 1}
+            if {!$eq} {lappend mismatched "total_shapes"}
+        }
+    }
+    set mismatched [lsort -dictionary $mismatched]
+
+    if {[llength $dup] > 0} {
+        set verdict "FAIL"
+    } elseif {[llength $missing] > 0} {
+        set verdict "INCOMPLETE"
+    } elseif {!$has_summary} {
+        set verdict "INCOMPLETE"
+    } else {
+        set verdict "PASS"
+    }
+
+    return [dict create total_layers $total_layers total_shapes $total_shapes \
+        drawing_layers $drawing pin_layers $pin label_layers $label \
+        dup_gdsno $dup missing_purpose_layers $missing max_shape_layer $max_name \
+        mismatched_summary $mismatched verdict $verdict]
+}
+```
+
+Key semantics covered: last-wins on duplicate names; distinct-name counting; `count` default 0; case-insensitive purpose; empty purpose → `missing_purpose_layers` (not drawing); dup detection on the `(gdsno, datatype)` pair; ALL layers of a shared pair listed; max-shape tie-break via `lsort -dictionary` iteration; mismatch on provided SUMMARY fields only; verdict priority `dup > missing > no-summary > PASS`.
+
+## Sandbox verification (Empyrean WaveView Tcl, .75)
+
+```
+RESULT:ALL_ASSERTS_PASS
+RESULT:ALL_ASSERTS_PASS
+DESIGN_FLOW_VERDICT=PASS
+```
+
+`error_log` was empty. Session workdir cleaned up.
+
+DESIGN_FLOW_VERDICT=PASS — the implementation passes all 13 checker cases (A–M).
+
+**State: PASS**

@@ -1,0 +1,168 @@
+2026-11-10 17:43:02,044 - INFO - Creating container for django__django-13568...
+2026-11-10 17:43:02,065 - INFO - Container for django__django-13568 created: 6d629f1a9dd3f5b34a063b748bb0b55a615d1d32a1ea11bc583f1035c98a3c68
+2026-11-10 17:43:02,868 - INFO - Container for django__django-13568 started: 6d629f1a9dd3f5b34a063b748bb0b55a615d1d32a1ea11bc583f1035c98a3c68
+2026-11-10 17:43:02,870 - INFO - Intermediate patch for django__django-13568 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/django__django-13568/patch.diff, now applying to container...
+2026-11-10 17:43:02,988 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/auth/checks.py...
+Checking patch docs/ref/checks.txt...
+Checking patch docs/releases/3.2.txt...
+Checking patch tests/auth_tests/test_checks.py...
+Applied patch django/contrib/auth/checks.py cleanly.
+Applied patch docs/ref/checks.txt cleanly.
+Applied patch docs/releases/3.2.txt cleanly.
+Applied patch tests/auth_tests/test_checks.py cleanly.
+
+2026-11-10 17:43:03,913 - INFO - Git diff before:
+diff --git a/django/contrib/auth/checks.py b/django/contrib/auth/checks.py
+index 65fc266f7e..0eebb4c1b8 100644
+--- a/django/contrib/auth/checks.py
++++ b/django/contrib/auth/checks.py
+@@ -52,7 +52,10 @@ def check_user_model(app_configs=None, **kwargs):
+         )
+ 
+     # Check that the username field is unique
+-    if not cls._meta.get_field(cls.USERNAME_FIELD).unique:
++    if not cls._meta.get_field(cls.USERNAME_FIELD).unique and not any(
++        cls.USERNAME_FIELD in constraint.fields
++        for constraint in cls._meta.total_unique_constraints
++    ):
+         if (settings.AUTHENTICATION_BACKENDS ==
+                 ['django.contrib.auth.backends.ModelBackend']):
+             errors.append(
+diff --git a/docs/ref/checks.txt b/docs/ref/checks.txt
+index 56fde4198a..c58eb51972 100644
+--- a/docs/ref/checks.txt
++++ b/docs/ref/checks.txt
+@@ -765,7 +765,7 @@ The following checks are performed on the default
+ * **auth.E003**: ``<field>`` must be unique because it is named as the
+   ``USERNAME_FIELD``.
+ * **auth.W004**: ``<field>`` is named as the ``USERNAME_FIELD``, but it is not
+-  unique.
++  unique (it is not covered by a unique index or a total unique constraint).
+ * **auth.E005**: The permission codenamed ``<codename>`` clashes with a builtin
+   permission for model ``<model>``.
+ * **auth.E006**: The permission codenamed ``<codename>`` is duplicated for model
+diff --git a/docs/releases/3.2.txt b/docs/releases/3.2.txt
+index d61f66733d..0276541f8f 100644
+--- a/docs/releases/3.2.txt
++++ b/docs/releases/3.2.txt
+@@ -95,6 +95,10 @@ Minor features
+   constrained environments. If this is the case, the existing hasher can be
+   subclassed to override the defaults.
+ 
++* The system check that the ``USERNAME_FIELD`` is unique now allows the field
++  to be covered by a total :class:`~django.db.models.UniqueConstraint`, rather
++  than requiring the field to be marked with ``unique=True``.
++
+ :mod:`django.contrib.contenttypes`
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+diff --git a/tests/auth_tests/test_checks.py b/tests/auth_tests/test_checks.py
+index cfaa4063f8..89e1e18327 100644
+--- a/tests/auth_tests/test_checks.py
++++ b/tests/auth_tests/test_checks.py
+@@ -85,6 +85,49 @@ class UserModelChecksTests(SimpleTestCase):
+                 ),
+             ])
+ 
++    @override_settings(AUTH_USER_MODEL='auth_tests.ConstraintUser')
++    def test_username_unique_with_total_unique_constraint(self):
++        """A USERNAME_FIELD covered by a total UniqueConstraint is valid."""
++        class ConstraintUser(AbstractBaseUser):
++            username = models.CharField(max_length=30)
++
++            USERNAME_FIELD = 'username'
++
++            class Meta:
++                constraints = [
++                    models.UniqueConstraint(fields=['username'], name='user_username_unq'),
++                ]
++
++        errors = checks.run_checks(self.apps.get_app_configs())
++        self.assertEqual(errors, [])
++
++    @override_settings(AUTH_USER_MODEL='auth_tests.ConstraintUser')
++    def test_username_unique_with_conditional_unique_constraint(self):
++        """A USERNAME_FIELD covered by a conditional UniqueConstraint is invalid."""
++        class ConstraintUser(AbstractBaseUser):
++            username = models.CharField(max_length=30)
++
++            USERNAME_FIELD = 'username'
++
++            class Meta:
++                constraints = [
++                    models.UniqueConstraint(
++                        fields=['username'],
++                        condition=models.Q(username__startswith='a'),
++                        name='user_username_unq',
++                    ),
++                ]
++
++        errors = checks.run_checks(self.apps.get_app_configs())
++        self.assertEqual(errors, [
++            checks.Error(
++                "'ConstraintUser.username' must be "
++                "unique because it is named as the 'USERNAME_FIELD'.",
++                obj=ConstraintUser,
++                id='auth.E003',
++            ),
++        ])
++
+     @override_settings(AUTH_USER_MODEL='auth_tests.BadUser')
+     def test_is_anonymous_authenticated_methods(self):
+         """
+2026-11-10 17:43:03,916 - INFO - Eval script for django__django-13568 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/django__django-13568/eval.sh; copying to container...
+2026-11-10 17:43:10,422 - INFO - Test runtime: 6.44 seconds
+2026-11-10 17:43:10,425 - INFO - Test output for django__django-13568 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2028/deepseek-harness-glm-5.3-flash/django__django-13568/test_output.txt
+2026-11-10 17:43:10,515 - INFO - Git diff after:
+diff --git a/django/contrib/auth/checks.py b/django/contrib/auth/checks.py
+index 65fc266f7e..0eebb4c1b8 100644
+--- a/django/contrib/auth/checks.py
++++ b/django/contrib/auth/checks.py
+@@ -52,7 +52,10 @@ def check_user_model(app_configs=None, **kwargs):
+         )
+ 
+     # Check that the username field is unique
+-    if not cls._meta.get_field(cls.USERNAME_FIELD).unique:
++    if not cls._meta.get_field(cls.USERNAME_FIELD).unique and not any(
++        cls.USERNAME_FIELD in constraint.fields
++        for constraint in cls._meta.total_unique_constraints
++    ):
+         if (settings.AUTHENTICATION_BACKENDS ==
+                 ['django.contrib.auth.backends.ModelBackend']):
+             errors.append(
+diff --git a/docs/ref/checks.txt b/docs/ref/checks.txt
+index 56fde4198a..c58eb51972 100644
+--- a/docs/ref/checks.txt
++++ b/docs/ref/checks.txt
+@@ -765,7 +765,7 @@ The following checks are performed on the default
+ * **auth.E003**: ``<field>`` must be unique because it is named as the
+   ``USERNAME_FIELD``.
+ * **auth.W004**: ``<field>`` is named as the ``USERNAME_FIELD``, but it is not
+-  unique.
++  unique (it is not covered by a unique index or a total unique constraint).
+ * **auth.E005**: The permission codenamed ``<codename>`` clashes with a builtin
+   permission for model ``<model>``.
+ * **auth.E006**: The permission codenamed ``<codename>`` is duplicated for model
+diff --git a/docs/releases/3.2.txt b/docs/releases/3.2.txt
+index d61f66733d..0276541f8f 100644
+--- a/docs/releases/3.2.txt
++++ b/docs/releases/3.2.txt
+@@ -95,6 +95,10 @@ Minor features
+   constrained environments. If this is the case, the existing hasher can be
+   subclassed to override the defaults.
+ 
++* The system check that the ``USERNAME_FIELD`` is unique now allows the field
++  to be covered by a total :class:`~django.db.models.UniqueConstraint`, rather
++  than requiring the field to be marked with ``unique=True``.
++
+ :mod:`django.contrib.contenttypes`
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-11-10 17:43:10,516 - INFO - Git diff changed after running eval script
+2026-11-10 17:43:10,516 - INFO - Grading answer for django__django-13568...
+2026-11-10 17:43:10,517 - INFO - report: {'django__django-13568': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_username_unique_with_model_constraint (auth_tests.test_checks.UserModelChecksTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_clashing_custom_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_clashing_default_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_custom_permission_codename_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_custom_permission_name_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_empty_default_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_model_name_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_non_clashing_custom_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_verbose_name_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_is_anonymous_authenticated_methods (auth_tests.test_checks.UserModelChecksTests)', 'REQUIRED_FIELDS should be a list.', 'test_username_non_unique (auth_tests.test_checks.UserModelChecksTests)', 'USERNAME_FIELD should not appear in REQUIRED_FIELDS.', 'test_username_partially_unique (auth_tests.test_checks.UserModelChecksTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13568: resolved: True
+2026-11-10 17:43:10,519 - INFO - Attempting to stop container sweb.eval.django__django-13568.verified_full_glm53_deepseek-harness_incr_R2028...
+2026-11-10 17:43:26,164 - INFO - Container sweb.eval.django__django-13568.verified_full_glm53_deepseek-harness_incr_R2028 stopped successfully.
+2026-11-10 17:43:26,164 - INFO - Attempting to remove container sweb.eval.django__django-13568.verified_full_glm53_deepseek-harness_incr_R2028...
+2026-11-10 17:43:26,224 - INFO - Container sweb.eval.django__django-13568.verified_full_glm53_deepseek-harness_incr_R2028 removed successfully.

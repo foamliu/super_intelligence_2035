@@ -1,0 +1,40 @@
+diff --git a/sklearn/feature_extraction/tests/test_text.py b/sklearn/feature_extraction/tests/test_text.py
+index 7b7697ff..e3e4dc1d 100644
+--- a/sklearn/feature_extraction/tests/test_text.py
++++ b/sklearn/feature_extraction/tests/test_text.py
+@@ -97,6 +97,12 @@ def test_strip_accents():
+     expected = 'this is a test'
+     assert strip_accents_unicode(a) == expected
+ 
++    # check that 'COMBINING ACUTE ACCENT' is stripped when the string is
++    # already in NFKD form (regression test for #15155)
++    a = 'o\u0301'  # "o" followed by combining acute accent
++    expected = 'o'
++    assert strip_accents_unicode(a) == expected
++
+ 
+ def test_to_ascii():
+     # check some classical latin accentuated symbols
+diff --git a/sklearn/feature_extraction/text.py b/sklearn/feature_extraction/text.py
+index bb5a9d64..6d618d38 100644
+--- a/sklearn/feature_extraction/text.py
++++ b/sklearn/feature_extraction/text.py
+@@ -129,11 +129,14 @@ def strip_accents_unicode(s):
+         Remove accentuated char for any unicode symbol that has a direct
+         ASCII equivalent.
+     """
+-    normalized = unicodedata.normalize('NFKD', s)
+-    if normalized == s:
++    try:
++        # If `s` is ASCII-compatible, return it unchanged
++        s.encode("ASCII", errors="strict")
+         return s
+-    else:
+-        return ''.join([c for c in normalized if not unicodedata.combining(c)])
++    except UnicodeEncodeError:
++        pass
++    normalized = unicodedata.normalize('NFKD', s)
++    return ''.join([c for c in normalized if not unicodedata.combining(c)])
+ 
+ 
+ def strip_accents_ascii(s):

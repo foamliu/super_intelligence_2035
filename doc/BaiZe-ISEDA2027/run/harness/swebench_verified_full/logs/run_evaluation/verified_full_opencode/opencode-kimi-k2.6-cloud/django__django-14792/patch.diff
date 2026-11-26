@@ -1,0 +1,54 @@
+diff --git a/django/utils/timezone.py b/django/utils/timezone.py
+index bb2b6b9594..732d91645e 100644
+--- a/django/utils/timezone.py
++++ b/django/utils/timezone.py
+@@ -73,7 +73,7 @@ def get_current_timezone_name():
+ 
+ def _get_timezone_name(timezone):
+     """Return the name of ``timezone``."""
+-    return str(timezone)
++    return timezone.tzname(None) or str(timezone)
+ 
+ # Timezone selection functions.
+ 
+diff --git a/tests/utils_tests/test_timezone.py b/tests/utils_tests/test_timezone.py
+index 2e28d3a9a5..7144988f00 100644
+--- a/tests/utils_tests/test_timezone.py
++++ b/tests/utils_tests/test_timezone.py
+@@ -274,3 +274,36 @@ class TimezoneTests(SimpleTestCase):
+     def test_fixedoffset_negative_timedelta(self):
+         delta = datetime.timedelta(hours=-2)
+         self.assertEqual(timezone.get_fixed_timezone(delta).utcoffset(None), delta)
++
++    def test_get_timezone_name(self):
++        self.assertEqual(
++            timezone._get_timezone_name(pytz.timezone('America/New_York')),
++            'America/New_York',
++        )
++        self.assertEqual(
++            timezone._get_timezone_name(pytz.timezone('Etc/GMT-10')),
++            '+10',
++        )
++        self.assertEqual(
++            timezone._get_timezone_name(pytz.timezone('Etc/GMT+10')),
++            '-10',
++        )
++        self.assertEqual(
++            timezone._get_timezone_name(datetime.timezone(datetime.timedelta(hours=10))),
++            'UTC+10:00',
++        )
++
++    @needs_zoneinfo
++    def test_get_timezone_name_zoneinfo(self):
++        self.assertEqual(
++            timezone._get_timezone_name(zoneinfo.ZoneInfo('America/New_York')),
++            'America/New_York',
++        )
++        self.assertEqual(
++            timezone._get_timezone_name(zoneinfo.ZoneInfo('Etc/GMT-10')),
++            '+10',
++        )
++        self.assertEqual(
++            timezone._get_timezone_name(zoneinfo.ZoneInfo('Etc/GMT+10')),
++            '-10',
++        )

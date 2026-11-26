@@ -1,0 +1,2 @@
+Implement the Tcl proc described below. This is a pure text-parsing task; you do NOT need to call any tool or run anything. Output ONLY the completed `proc spice_summarize_measure_lis {path} { ... }` inside a single ```tcl fenced block, and nothing else. Runtime is Synopsys WaveView ACE Tcl: use POSIX regex classes ([[:space:]], [A-Za-z0-9_]) not \s/\w.
+

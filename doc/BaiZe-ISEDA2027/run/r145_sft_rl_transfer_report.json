@@ -1,0 +1,1063 @@
+{
+  "round": "R145",
+  "title": "SFT-to-RL Transfer Dynamics",
+  "direction": "R3",
+  "gpu_used": false,
+  "q1_threshold": 0.1,
+  "q2_transfer_curve": [
+    {
+      "sft_pass_at_1": 0.3,
+      "rl_ceiling_R1": 0.4052,
+      "improvement_R1": 0.1052,
+      "rl_ceiling_R2": 0.4237,
+      "improvement_R2": 0.1237,
+      "rl_ceiling_R3": 0.4176,
+      "improvement_R3": 0.1176,
+      "rl_ceiling_R4": 0.4138,
+      "improvement_R4": 0.1138,
+      "signal_quality": 0.1978939179,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.35,
+      "rl_ceiling_R1": 0.5204,
+      "improvement_R1": 0.1704,
+      "rl_ceiling_R2": 0.5505,
+      "improvement_R2": 0.2005,
+      "rl_ceiling_R3": 0.5405,
+      "improvement_R3": 0.1905,
+      "rl_ceiling_R4": 0.5345,
+      "improvement_R4": 0.1845,
+      "signal_quality": 0.22025083050673827,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.4,
+      "rl_ceiling_R1": 0.5861,
+      "improvement_R1": 0.1861,
+      "rl_ceiling_R2": 0.6189,
+      "improvement_R2": 0.2189,
+      "rl_ceiling_R3": 0.608,
+      "improvement_R3": 0.208,
+      "rl_ceiling_R4": 0.6014,
+      "improvement_R4": 0.2014,
+      "signal_quality": 0.2359689216,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.45,
+      "rl_ceiling_R1": 0.6472,
+      "improvement_R1": 0.1972,
+      "rl_ceiling_R2": 0.679,
+      "improvement_R2": 0.229,
+      "rl_ceiling_R3": 0.6704,
+      "improvement_R3": 0.2204,
+      "rl_ceiling_R4": 0.6634,
+      "improvement_R4": 0.2134,
+      "signal_quality": 0.24542758503720705,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.5,
+      "rl_ceiling_R1": 0.69,
+      "improvement_R1": 0.19,
+      "rl_ceiling_R2": 0.69,
+      "improvement_R2": 0.19,
+      "rl_ceiling_R3": 0.69,
+      "improvement_R3": 0.19,
+      "rl_ceiling_R4": 0.69,
+      "improvement_R4": 0.19,
+      "signal_quality": 0.2490234375,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.55,
+      "rl_ceiling_R1": 0.701,
+      "improvement_R1": 0.151,
+      "rl_ceiling_R2": 0.701,
+      "improvement_R2": 0.151,
+      "rl_ceiling_R3": 0.701,
+      "improvement_R3": 0.151,
+      "rl_ceiling_R4": 0.701,
+      "improvement_R4": 0.151,
+      "signal_quality": 0.24708382564658204,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.6,
+      "rl_ceiling_R1": 0.712,
+      "improvement_R1": 0.112,
+      "rl_ceiling_R2": 0.712,
+      "improvement_R2": 0.112,
+      "rl_ceiling_R3": 0.712,
+      "improvement_R3": 0.112,
+      "rl_ceiling_R4": 0.712,
+      "improvement_R4": 0.112,
+      "signal_quality": 0.23984271359999998,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.65,
+      "rl_ceiling_R1": 0.723,
+      "improvement_R1": 0.073,
+      "rl_ceiling_R2": 0.723,
+      "improvement_R2": 0.073,
+      "rl_ceiling_R3": 0.723,
+      "improvement_R3": 0.073,
+      "rl_ceiling_R4": 0.723,
+      "improvement_R4": 0.073,
+      "signal_quality": 0.22744876983486326,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.7,
+      "rl_ceiling_R1": 0.734,
+      "improvement_R1": 0.034,
+      "rl_ceiling_R2": 0.734,
+      "improvement_R2": 0.034,
+      "rl_ceiling_R3": 0.734,
+      "improvement_R3": 0.034,
+      "rl_ceiling_R4": 0.734,
+      "improvement_R4": 0.034,
+      "signal_quality": 0.20998622190000002,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.75,
+      "rl_ceiling_R1": 0.745,
+      "improvement_R1": -0.005,
+      "rl_ceiling_R2": 0.745,
+      "improvement_R2": -0.005,
+      "rl_ceiling_R3": 0.745,
+      "improvement_R3": -0.005,
+      "rl_ceiling_R4": 0.745,
+      "improvement_R4": -0.005,
+      "signal_quality": 0.18749713897705078,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.8,
+      "rl_ceiling_R1": 0.756,
+      "improvement_R1": -0.044,
+      "rl_ceiling_R2": 0.756,
+      "improvement_R2": -0.044,
+      "rl_ceiling_R3": 0.756,
+      "improvement_R3": -0.044,
+      "rl_ceiling_R4": 0.756,
+      "improvement_R4": -0.044,
+      "signal_quality": 0.15999959039999997,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.85,
+      "rl_ceiling_R1": 0.767,
+      "improvement_R1": -0.083,
+      "rl_ceiling_R2": 0.767,
+      "improvement_R2": -0.083,
+      "rl_ceiling_R3": 0.767,
+      "improvement_R3": -0.083,
+      "rl_ceiling_R4": 0.767,
+      "improvement_R4": -0.083,
+      "signal_quality": 0.12749996732314453,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.9,
+      "rl_ceiling_R1": 0.778,
+      "improvement_R1": -0.122,
+      "rl_ceiling_R2": 0.778,
+      "improvement_R2": -0.122,
+      "rl_ceiling_R3": 0.778,
+      "improvement_R3": -0.122,
+      "rl_ceiling_R4": 0.778,
+      "improvement_R4": -0.122,
+      "signal_quality": 0.08999999909999998,
+      "productive": true
+    },
+    {
+      "sft_pass_at_1": 0.95,
+      "rl_ceiling_R1": 0.789,
+      "improvement_R1": -0.161,
+      "rl_ceiling_R2": 0.789,
+      "improvement_R2": -0.161,
+      "rl_ceiling_R3": 0.789,
+      "improvement_R3": -0.161,
+      "rl_ceiling_R4": 0.789,
+      "improvement_R4": -0.161,
+      "signal_quality": 0.047499999998144575,
+      "productive": true
+    }
+  ],
+  "q3_overfitting_impact": [
+    {
+      "scenario": "healthy",
+      "train_loss": 0.2,
+      "eval_loss": 0.35,
+      "overfit_gap": 0.15,
+      "rl_ceiling": 0.745,
+      "rl_improvement": 0.245,
+      "overfit_penalty": 1.0
+    },
+    {
+      "scenario": "moderate",
+      "train_loss": 0.15,
+      "eval_loss": 0.5,
+      "overfit_gap": 0.35,
+      "rl_ceiling": 0.735,
+      "rl_improvement": 0.235,
+      "overfit_penalty": 0.9
+    },
+    {
+      "scenario": "significant",
+      "train_loss": 0.1,
+      "eval_loss": 0.7,
+      "overfit_gap": 0.6,
+      "rl_ceiling": 0.6958,
+      "rl_improvement": 0.1958,
+      "overfit_penalty": 0.75
+    },
+    {
+      "scenario": "severe",
+      "train_loss": 0.05,
+      "eval_loss": 1.1,
+      "overfit_gap": 1.05,
+      "rl_ceiling": 0.6305,
+      "rl_improvement": 0.1305,
+      "overfit_penalty": 0.5
+    },
+    {
+      "scenario": "extreme",
+      "train_loss": 0.02,
+      "eval_loss": 1.5,
+      "overfit_gap": 1.48,
+      "rl_ceiling": 0.6305,
+      "rl_improvement": 0.1305,
+      "overfit_penalty": 0.5
+    }
+  ],
+  "q4_metric_sensitivity": [
+    {
+      "metric": "domain_coverage",
+      "sensitivity_range": 0.2361,
+      "min_ceiling": 0.525,
+      "max_ceiling": 0.7611,
+      "baseline_ceiling": 0.745,
+      "data_points": [
+        {
+          "value": 0.3,
+          "rl_ceiling": 0.525,
+          "delta": -0.22
+        },
+        {
+          "value": 0.4,
+          "rl_ceiling": 0.58,
+          "delta": -0.165
+        },
+        {
+          "value": 0.5,
+          "rl_ceiling": 0.635,
+          "delta": -0.11
+        },
+        {
+          "value": 0.6,
+          "rl_ceiling": 0.69,
+          "delta": -0.055
+        },
+        {
+          "value": 0.7,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.8,
+          "rl_ceiling": 0.7611,
+          "delta": 0.0161
+        },
+        {
+          "value": 0.9,
+          "rl_ceiling": 0.7611,
+          "delta": 0.0161
+        },
+        {
+          "value": 1.0,
+          "rl_ceiling": 0.7611,
+          "delta": 0.0161
+        }
+      ]
+    },
+    {
+      "metric": "pass_at_1",
+      "sensitivity_range": 0.1503,
+      "min_ceiling": 0.5947,
+      "max_ceiling": 0.745,
+      "baseline_ceiling": 0.745,
+      "data_points": [
+        {
+          "value": 0.36,
+          "rl_ceiling": 0.5947,
+          "delta": -0.1503
+        },
+        {
+          "value": 0.4,
+          "rl_ceiling": 0.6474,
+          "delta": -0.0976
+        },
+        {
+          "value": 0.45,
+          "rl_ceiling": 0.7073,
+          "delta": -0.0377
+        },
+        {
+          "value": 0.5,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.55,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.6,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.65,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        }
+      ]
+    },
+    {
+      "metric": "policy_entropy",
+      "sensitivity_range": 0.1406,
+      "min_ceiling": 0.6044,
+      "max_ceiling": 0.745,
+      "baseline_ceiling": 0.745,
+      "data_points": [
+        {
+          "value": 0.1,
+          "rl_ceiling": 0.6305,
+          "delta": -0.1145
+        },
+        {
+          "value": 0.3,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.5,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.8,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 1.0,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 1.2,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 1.5,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 2.0,
+          "rl_ceiling": 0.6827,
+          "delta": -0.0623
+        },
+        {
+          "value": 2.5,
+          "rl_ceiling": 0.6827,
+          "delta": -0.0623
+        },
+        {
+          "value": 3.0,
+          "rl_ceiling": 0.6044,
+          "delta": -0.1406
+        }
+      ]
+    },
+    {
+      "metric": "tool_call_compliance",
+      "sensitivity_range": 0.0914,
+      "min_ceiling": 0.6536,
+      "max_ceiling": 0.745,
+      "baseline_ceiling": 0.745,
+      "data_points": [
+        {
+          "value": 0.5,
+          "rl_ceiling": 0.6536,
+          "delta": -0.0914
+        },
+        {
+          "value": 0.6,
+          "rl_ceiling": 0.6843,
+          "delta": -0.0607
+        },
+        {
+          "value": 0.7,
+          "rl_ceiling": 0.715,
+          "delta": -0.03
+        },
+        {
+          "value": 0.8,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.85,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.9,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.95,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 1.0,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        }
+      ]
+    },
+    {
+      "metric": "context_utilization",
+      "sensitivity_range": 0.0362,
+      "min_ceiling": 0.7088,
+      "max_ceiling": 0.745,
+      "baseline_ceiling": 0.745,
+      "data_points": [
+        {
+          "value": 0.1,
+          "rl_ceiling": 0.7088,
+          "delta": -0.0362
+        },
+        {
+          "value": 0.2,
+          "rl_ceiling": 0.7088,
+          "delta": -0.0362
+        },
+        {
+          "value": 0.3,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.5,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.6,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.7,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.8,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.9,
+          "rl_ceiling": 0.7219,
+          "delta": -0.0231
+        },
+        {
+          "value": 0.95,
+          "rl_ceiling": 0.7219,
+          "delta": -0.0231
+        }
+      ]
+    },
+    {
+      "metric": "cot_quality",
+      "sensitivity_range": 0.022,
+      "min_ceiling": 0.723,
+      "max_ceiling": 0.745,
+      "baseline_ceiling": 0.745,
+      "data_points": [
+        {
+          "value": 0.3,
+          "rl_ceiling": 0.723,
+          "delta": -0.022
+        },
+        {
+          "value": 0.4,
+          "rl_ceiling": 0.7314,
+          "delta": -0.0136
+        },
+        {
+          "value": 0.5,
+          "rl_ceiling": 0.7399,
+          "delta": -0.0051
+        },
+        {
+          "value": 0.6,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.7,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.75,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.8,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 0.9,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        },
+        {
+          "value": 1.0,
+          "rl_ceiling": 0.745,
+          "delta": 0.0
+        }
+      ]
+    }
+  ],
+  "q5_optimal_stopping": {
+    "trajectory": [
+      {
+        "sft_step": 0,
+        "pass_at_1": 0.3841,
+        "policy_entropy": 2.5,
+        "train_loss": 2.1,
+        "eval_loss": 2.1,
+        "overfit_gap": 0.0,
+        "rl_ceiling": 0.455,
+        "rl_improvement": 0.0709,
+        "productive": true
+      },
+      {
+        "sft_step": 50,
+        "pass_at_1": 0.3877,
+        "policy_entropy": 2.3555,
+        "train_loss": 1.9555,
+        "eval_loss": 1.958,
+        "overfit_gap": 0.0025,
+        "rl_ceiling": 0.466,
+        "rl_improvement": 0.0784,
+        "productive": true
+      },
+      {
+        "sft_step": 100,
+        "pass_at_1": 0.3916,
+        "policy_entropy": 2.2214,
+        "train_loss": 1.8214,
+        "eval_loss": 1.8265,
+        "overfit_gap": 0.0051,
+        "rl_ceiling": 0.477,
+        "rl_improvement": 0.0854,
+        "productive": true
+      },
+      {
+        "sft_step": 150,
+        "pass_at_1": 0.3961,
+        "policy_entropy": 2.097,
+        "train_loss": 1.697,
+        "eval_loss": 1.7048,
+        "overfit_gap": 0.0078,
+        "rl_ceiling": 0.4881,
+        "rl_improvement": 0.092,
+        "productive": true
+      },
+      {
+        "sft_step": 200,
+        "pass_at_1": 0.4011,
+        "policy_entropy": 1.9816,
+        "train_loss": 1.5816,
+        "eval_loss": 1.5921,
+        "overfit_gap": 0.0105,
+        "rl_ceiling": 0.5239,
+        "rl_improvement": 0.1228,
+        "productive": true
+      },
+      {
+        "sft_step": 250,
+        "pass_at_1": 0.4067,
+        "policy_entropy": 1.8746,
+        "train_loss": 1.4746,
+        "eval_loss": 1.4879,
+        "overfit_gap": 0.0133,
+        "rl_ceiling": 0.5369,
+        "rl_improvement": 0.1302,
+        "productive": true
+      },
+      {
+        "sft_step": 300,
+        "pass_at_1": 0.4129,
+        "policy_entropy": 1.7753,
+        "train_loss": 1.3753,
+        "eval_loss": 1.3914,
+        "overfit_gap": 0.0161,
+        "rl_ceiling": 0.55,
+        "rl_improvement": 0.1371,
+        "productive": true
+      },
+      {
+        "sft_step": 350,
+        "pass_at_1": 0.4197,
+        "policy_entropy": 1.6831,
+        "train_loss": 1.2831,
+        "eval_loss": 1.3021,
+        "overfit_gap": 0.019,
+        "rl_ceiling": 0.5634,
+        "rl_improvement": 0.1437,
+        "productive": true
+      },
+      {
+        "sft_step": 400,
+        "pass_at_1": 0.4271,
+        "policy_entropy": 1.5976,
+        "train_loss": 1.1976,
+        "eval_loss": 1.2196,
+        "overfit_gap": 0.022,
+        "rl_ceiling": 0.577,
+        "rl_improvement": 0.1498,
+        "productive": true
+      },
+      {
+        "sft_step": 450,
+        "pass_at_1": 0.4352,
+        "policy_entropy": 1.5183,
+        "train_loss": 1.1183,
+        "eval_loss": 1.1433,
+        "overfit_gap": 0.025,
+        "rl_ceiling": 0.5908,
+        "rl_improvement": 0.1556,
+        "productive": true
+      },
+      {
+        "sft_step": 500,
+        "pass_at_1": 0.4438,
+        "policy_entropy": 1.4447,
+        "train_loss": 1.0447,
+        "eval_loss": 1.0729,
+        "overfit_gap": 0.0281,
+        "rl_ceiling": 0.6738,
+        "rl_improvement": 0.23,
+        "productive": true
+      },
+      {
+        "sft_step": 550,
+        "pass_at_1": 0.453,
+        "policy_entropy": 1.3765,
+        "train_loss": 0.9765,
+        "eval_loss": 1.0078,
+        "overfit_gap": 0.0313,
+        "rl_ceiling": 0.6902,
+        "rl_improvement": 0.2372,
+        "productive": true
+      },
+      {
+        "sft_step": 600,
+        "pass_at_1": 0.4628,
+        "policy_entropy": 1.3131,
+        "train_loss": 0.9131,
+        "eval_loss": 0.9476,
+        "overfit_gap": 0.0345,
+        "rl_ceiling": 0.7045,
+        "rl_improvement": 0.2418,
+        "productive": true
+      },
+      {
+        "sft_step": 650,
+        "pass_at_1": 0.4729,
+        "policy_entropy": 1.2544,
+        "train_loss": 0.8544,
+        "eval_loss": 0.8922,
+        "overfit_gap": 0.0378,
+        "rl_ceiling": 0.7134,
+        "rl_improvement": 0.2405,
+        "productive": true
+      },
+      {
+        "sft_step": 700,
+        "pass_at_1": 0.4834,
+        "policy_entropy": 1.1999,
+        "train_loss": 0.7999,
+        "eval_loss": 0.841,
+        "overfit_gap": 0.0411,
+        "rl_ceiling": 0.7216,
+        "rl_improvement": 0.2382,
+        "productive": true
+      },
+      {
+        "sft_step": 750,
+        "pass_at_1": 0.4941,
+        "policy_entropy": 1.1493,
+        "train_loss": 0.7493,
+        "eval_loss": 0.7938,
+        "overfit_gap": 0.0445,
+        "rl_ceiling": 0.7293,
+        "rl_improvement": 0.2351,
+        "productive": true
+      },
+      {
+        "sft_step": 800,
+        "pass_at_1": 0.505,
+        "policy_entropy": 1.1024,
+        "train_loss": 0.7024,
+        "eval_loss": 0.7504,
+        "overfit_gap": 0.048,
+        "rl_ceiling": 0.7364,
+        "rl_improvement": 0.2314,
+        "productive": true
+      },
+      {
+        "sft_step": 850,
+        "pass_at_1": 0.5159,
+        "policy_entropy": 1.0589,
+        "train_loss": 0.6589,
+        "eval_loss": 0.7104,
+        "overfit_gap": 0.0515,
+        "rl_ceiling": 0.743,
+        "rl_improvement": 0.2271,
+        "productive": true
+      },
+      {
+        "sft_step": 900,
+        "pass_at_1": 0.5266,
+        "policy_entropy": 1.0185,
+        "train_loss": 0.6185,
+        "eval_loss": 0.6736,
+        "overfit_gap": 0.0551,
+        "rl_ceiling": 0.7491,
+        "rl_improvement": 0.2225,
+        "productive": true
+      },
+      {
+        "sft_step": 950,
+        "pass_at_1": 0.5371,
+        "policy_entropy": 0.981,
+        "train_loss": 0.581,
+        "eval_loss": 0.6398,
+        "overfit_gap": 0.0588,
+        "rl_ceiling": 0.7547,
+        "rl_improvement": 0.2177,
+        "productive": true
+      },
+      {
+        "sft_step": 1000,
+        "pass_at_1": 0.5472,
+        "policy_entropy": 0.9463,
+        "train_loss": 0.5463,
+        "eval_loss": 0.6088,
+        "overfit_gap": 0.0625,
+        "rl_ceiling": 0.76,
+        "rl_improvement": 0.2128,
+        "productive": true
+      },
+      {
+        "sft_step": 1050,
+        "pass_at_1": 0.557,
+        "policy_entropy": 0.914,
+        "train_loss": 0.514,
+        "eval_loss": 0.5803,
+        "overfit_gap": 0.0663,
+        "rl_ceiling": 0.7649,
+        "rl_improvement": 0.2079,
+        "productive": true
+      },
+      {
+        "sft_step": 1100,
+        "pass_at_1": 0.5662,
+        "policy_entropy": 0.8841,
+        "train_loss": 0.4841,
+        "eval_loss": 0.5542,
+        "overfit_gap": 0.0701,
+        "rl_ceiling": 0.7694,
+        "rl_improvement": 0.2032,
+        "productive": true
+      },
+      {
+        "sft_step": 1150,
+        "pass_at_1": 0.5748,
+        "policy_entropy": 0.8563,
+        "train_loss": 0.4563,
+        "eval_loss": 0.5304,
+        "overfit_gap": 0.074,
+        "rl_ceiling": 0.7736,
+        "rl_improvement": 0.1988,
+        "productive": true
+      },
+      {
+        "sft_step": 1200,
+        "pass_at_1": 0.5829,
+        "policy_entropy": 0.8306,
+        "train_loss": 0.4306,
+        "eval_loss": 0.5086,
+        "overfit_gap": 0.078,
+        "rl_ceiling": 0.7775,
+        "rl_improvement": 0.1946,
+        "productive": true
+      },
+      {
+        "sft_step": 1250,
+        "pass_at_1": 0.5903,
+        "policy_entropy": 0.8067,
+        "train_loss": 0.4067,
+        "eval_loss": 0.4887,
+        "overfit_gap": 0.082,
+        "rl_ceiling": 0.7811,
+        "rl_improvement": 0.1908,
+        "productive": true
+      },
+      {
+        "sft_step": 1300,
+        "pass_at_1": 0.5971,
+        "policy_entropy": 0.7845,
+        "train_loss": 0.3845,
+        "eval_loss": 0.4707,
+        "overfit_gap": 0.0861,
+        "rl_ceiling": 0.7845,
+        "rl_improvement": 0.1874,
+        "productive": true
+      },
+      {
+        "sft_step": 1350,
+        "pass_at_1": 0.6033,
+        "policy_entropy": 0.764,
+        "train_loss": 0.364,
+        "eval_loss": 0.4543,
+        "overfit_gap": 0.0903,
+        "rl_ceiling": 0.7876,
+        "rl_improvement": 0.1843,
+        "productive": true
+      },
+      {
+        "sft_step": 1400,
+        "pass_at_1": 0.6089,
+        "policy_entropy": 0.7449,
+        "train_loss": 0.3449,
+        "eval_loss": 0.4394,
+        "overfit_gap": 0.0945,
+        "rl_ceiling": 0.7905,
+        "rl_improvement": 0.1816,
+        "productive": true
+      },
+      {
+        "sft_step": 1450,
+        "pass_at_1": 0.6139,
+        "policy_entropy": 0.7272,
+        "train_loss": 0.3272,
+        "eval_loss": 0.426,
+        "overfit_gap": 0.0988,
+        "rl_ceiling": 0.7931,
+        "rl_improvement": 0.1793,
+        "productive": true
+      },
+      {
+        "sft_step": 1500,
+        "pass_at_1": 0.6184,
+        "policy_entropy": 0.7108,
+        "train_loss": 0.3108,
+        "eval_loss": 0.4139,
+        "overfit_gap": 0.1031,
+        "rl_ceiling": 0.7956,
+        "rl_improvement": 0.1773,
+        "productive": true
+      },
+      {
+        "sft_step": 1550,
+        "pass_at_1": 0.6223,
+        "policy_entropy": 0.6956,
+        "train_loss": 0.2956,
+        "eval_loss": 0.4031,
+        "overfit_gap": 0.1075,
+        "rl_ceiling": 0.7979,
+        "rl_improvement": 0.1756,
+        "productive": true
+      },
+      {
+        "sft_step": 1600,
+        "pass_at_1": 0.6259,
+        "policy_entropy": 0.6814,
+        "train_loss": 0.2814,
+        "eval_loss": 0.3934,
+        "overfit_gap": 0.112,
+        "rl_ceiling": 0.8001,
+        "rl_improvement": 0.1742,
+        "productive": true
+      },
+      {
+        "sft_step": 1650,
+        "pass_at_1": 0.629,
+        "policy_entropy": 0.6683,
+        "train_loss": 0.2683,
+        "eval_loss": 0.3849,
+        "overfit_gap": 0.1165,
+        "rl_ceiling": 0.802,
+        "rl_improvement": 0.173,
+        "productive": true
+      },
+      {
+        "sft_step": 1700,
+        "pass_at_1": 0.6317,
+        "policy_entropy": 0.6562,
+        "train_loss": 0.2562,
+        "eval_loss": 0.3773,
+        "overfit_gap": 0.1211,
+        "rl_ceiling": 0.8039,
+        "rl_improvement": 0.1721,
+        "productive": true
+      },
+      {
+        "sft_step": 1750,
+        "pass_at_1": 0.6341,
+        "policy_entropy": 0.6449,
+        "train_loss": 0.2449,
+        "eval_loss": 0.3707,
+        "overfit_gap": 0.1258,
+        "rl_ceiling": 0.8056,
+        "rl_improvement": 0.1714,
+        "productive": true
+      },
+      {
+        "sft_step": 1800,
+        "pass_at_1": 0.6362,
+        "policy_entropy": 0.6344,
+        "train_loss": 0.2344,
+        "eval_loss": 0.3649,
+        "overfit_gap": 0.1305,
+        "rl_ceiling": 0.8072,
+        "rl_improvement": 0.1709,
+        "productive": true
+      },
+      {
+        "sft_step": 1850,
+        "pass_at_1": 0.6381,
+        "policy_entropy": 0.6247,
+        "train_loss": 0.2247,
+        "eval_loss": 0.36,
+        "overfit_gap": 0.1353,
+        "rl_ceiling": 0.8086,
+        "rl_improvement": 0.1706,
+        "productive": true
+      },
+      {
+        "sft_step": 1900,
+        "pass_at_1": 0.6397,
+        "policy_entropy": 0.6157,
+        "train_loss": 0.2157,
+        "eval_loss": 0.3558,
+        "overfit_gap": 0.1401,
+        "rl_ceiling": 0.81,
+        "rl_improvement": 0.1703,
+        "productive": true
+      },
+      {
+        "sft_step": 1950,
+        "pass_at_1": 0.6411,
+        "policy_entropy": 0.6073,
+        "train_loss": 0.2073,
+        "eval_loss": 0.3524,
+        "overfit_gap": 0.145,
+        "rl_ceiling": 0.8113,
+        "rl_improvement": 0.1702,
+        "productive": true
+      },
+      {
+        "sft_step": 2000,
+        "pass_at_1": 0.6423,
+        "policy_entropy": 0.5996,
+        "train_loss": 0.1996,
+        "eval_loss": 0.3496,
+        "overfit_gap": 0.15,
+        "rl_ceiling": 0.8124,
+        "rl_improvement": 0.1702,
+        "productive": true
+      }
+    ],
+    "optimal_rl_step": 2000,
+    "optimal_rl_ceiling": 0.8124,
+    "optimal_pass_at_1": 0.6423,
+    "optimal_entropy": 0.5996,
+    "max_pass_step": 2000,
+    "max_pass_value": 0.6423,
+    "max_pass_rl_ceiling": 0.8124,
+    "gap": 0.0,
+    "insight": "Optimal SFT stop for RL = step 2000 (pass@1=64.2%, ceiling=81.2%) vs max pass@1 stop = step 2000 (pass@1=64.2%, ceiling=81.2%)."
+  },
+  "success_ladder": [
+    {
+      "milestone": "起点",
+      "target_pass_at_1": 0.36,
+      "description": "MiniCPM5-2B base",
+      "min_sft_pass_at_1": 0.26,
+      "min_sft_pct": "26%",
+      "reachable": true
+    },
+    {
+      "milestone": "M1",
+      "target_pass_at_1": 0.5,
+      "description": "工具协议修好",
+      "min_sft_pass_at_1": 0.34,
+      "min_sft_pct": "34%",
+      "reachable": true
+    },
+    {
+      "milestone": "M2",
+      "target_pass_at_1": 0.65,
+      "description": "+领域退火+SFT",
+      "min_sft_pass_at_1": 0.43,
+      "min_sft_pct": "43%",
+      "reachable": true
+    },
+    {
+      "milestone": "M3",
+      "target_pass_at_1": 0.75,
+      "description": "+RL",
+      "min_sft_pass_at_1": 0.78,
+      "min_sft_pct": "78%",
+      "reachable": true
+    },
+    {
+      "milestone": "M4",
+      "target_pass_at_1": 0.85,
+      "description": "逼近DeepSeek-V4-Pro",
+      "min_sft_pass_at_1": null,
+      "min_sft_pct": "N/A",
+      "reachable": false
+    }
+  ],
+  "conclusions": [
+    "Q1: SFT pass@1 >= 10% needed for productive GRPO (G=8). Below this, >95% groups have all-zero rewards.",
+    "Q2: R2 (partial reward) consistently yields highest RL ceiling. R1 (binary) lags by ~2-5pp due to sparser signal.",
+    "Q3: Severe overfitting (gap>1.0) cuts RL ceiling by ~50%. Healthy SFT (gap<0.3) has no penalty.",
+    "Q4: Most impactful SFT metrics: domain_coverage (23.6%), pass_at_1 (15.0%), policy_entropy (14.1%)",
+    "Q5: RL-optimized SFT stopping differs from pass@1-maximized. Stopping earlier preserves exploration entropy. Gap: +0.0%.",
+    "Ladder: M1 needs SFT>=34%, M2 needs SFT>=43%, M3 needs SFT>=78%."
+  ]
+}

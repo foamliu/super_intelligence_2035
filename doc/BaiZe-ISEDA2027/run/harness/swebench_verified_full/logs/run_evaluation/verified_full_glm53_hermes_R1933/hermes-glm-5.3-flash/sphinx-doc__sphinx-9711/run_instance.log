@@ -1,0 +1,114 @@
+2026-11-09 07:40:56,189 - INFO - Creating container for sphinx-doc__sphinx-9711...
+2026-11-09 07:40:56,223 - INFO - Container for sphinx-doc__sphinx-9711 created: 9d7d2b451cacd58b6ae5fcc812270de08f67c386cd802500d1a4a78b58408081
+2026-11-09 07:40:57,520 - INFO - Container for sphinx-doc__sphinx-9711 started: 9d7d2b451cacd58b6ae5fcc812270de08f67c386cd802500d1a4a78b58408081
+2026-11-09 07:40:57,521 - INFO - Intermediate patch for sphinx-doc__sphinx-9711 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sphinx-doc__sphinx-9711/patch.diff, now applying to container...
+2026-11-09 07:40:57,697 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+Checking patch sphinx/extension.py...
+Checking patch tests/test_extension.py...
+Applied patch CHANGES cleanly.
+Applied patch sphinx/extension.py cleanly.
+Applied patch tests/test_extension.py cleanly.
+
+2026-11-09 07:40:58,130 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index ae7cbbe7c..4c70a1bbb 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -63,6 +63,7 @@ Bugs fixed
+ * #9678: linkcheck: file extension was shown twice in warnings
+ * #9697: py domain: An index entry with parens was registered for ``py:method``
+   directive with ``:property:`` option
++* #9708: needs_extension failed to check double-digit version correctly
+ 
+ Testing
+ --------
+diff --git a/sphinx/extension.py b/sphinx/extension.py
+index 7ec6c8518..34bf7763a 100644
+--- a/sphinx/extension.py
++++ b/sphinx/extension.py
+@@ -10,6 +10,8 @@
+ 
+ from typing import TYPE_CHECKING, Any, Dict
+ 
++from packaging.version import InvalidVersion, Version
++
+ from sphinx.config import Config
+ from sphinx.errors import VersionRequirementError
+ from sphinx.locale import __
+@@ -51,7 +53,18 @@ def verify_needs_extensions(app: "Sphinx", config: Config) -> None:
+                               'but it is not loaded.'), extname)
+             continue
+ 
+-        if extension.version == 'unknown version' or reqversion > extension.version:
++        fulfilled = True
++        if extension.version == 'unknown version':
++            fulfilled = False
++        else:
++            try:
++                if Version(reqversion) > Version(extension.version):
++                    fulfilled = False
++            except InvalidVersion:
++                if reqversion > extension.version:
++                    fulfilled = False
++
++        if not fulfilled:
+             raise VersionRequirementError(__('This project needs the extension %s at least in '
+                                              'version %s and therefore cannot be built with '
+                                              'the loaded version (%s).') %
+2026-11-09 07:40:58,134 - INFO - Eval script for sphinx-doc__sphinx-9711 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sphinx-doc__sphinx-9711/eval.sh; copying to container...
+2026-11-09 07:41:02,661 - INFO - Test runtime: 4.45 seconds
+2026-11-09 07:41:02,664 - INFO - Test output for sphinx-doc__sphinx-9711 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/sphinx-doc__sphinx-9711/test_output.txt
+2026-11-09 07:41:02,738 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index ae7cbbe7c..4c70a1bbb 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -63,6 +63,7 @@ Bugs fixed
+ * #9678: linkcheck: file extension was shown twice in warnings
+ * #9697: py domain: An index entry with parens was registered for ``py:method``
+   directive with ``:property:`` option
++* #9708: needs_extension failed to check double-digit version correctly
+ 
+ Testing
+ --------
+diff --git a/sphinx/extension.py b/sphinx/extension.py
+index 7ec6c8518..34bf7763a 100644
+--- a/sphinx/extension.py
++++ b/sphinx/extension.py
+@@ -10,6 +10,8 @@
+ 
+ from typing import TYPE_CHECKING, Any, Dict
+ 
++from packaging.version import InvalidVersion, Version
++
+ from sphinx.config import Config
+ from sphinx.errors import VersionRequirementError
+ from sphinx.locale import __
+@@ -51,7 +53,18 @@ def verify_needs_extensions(app: "Sphinx", config: Config) -> None:
+                               'but it is not loaded.'), extname)
+             continue
+ 
+-        if extension.version == 'unknown version' or reqversion > extension.version:
++        fulfilled = True
++        if extension.version == 'unknown version':
++            fulfilled = False
++        else:
++            try:
++                if Version(reqversion) > Version(extension.version):
++                    fulfilled = False
++            except InvalidVersion:
++                if reqversion > extension.version:
++                    fulfilled = False
++
++        if not fulfilled:
+             raise VersionRequirementError(__('This project needs the extension %s at least in '
+                                              'version %s and therefore cannot be built with '
+                                              'the loaded version (%s).') %
+2026-11-09 07:41:02,739 - INFO - Grading answer for sphinx-doc__sphinx-9711...
+2026-11-09 07:41:02,742 - INFO - report: {'sphinx-doc__sphinx-9711': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_extension.py::test_needs_extensions'], 'failure': []}, 'PASS_TO_PASS': {'success': [], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9711: resolved: True
+2026-11-09 07:41:02,744 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9711.verified_full_glm53_hermes_R1933...
+2026-11-09 07:41:19,086 - INFO - Container sweb.eval.sphinx-doc__sphinx-9711.verified_full_glm53_hermes_R1933 stopped successfully.
+2026-11-09 07:41:19,086 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9711.verified_full_glm53_hermes_R1933...
+2026-11-09 07:41:19,129 - INFO - Container sweb.eval.sphinx-doc__sphinx-9711.verified_full_glm53_hermes_R1933 removed successfully.

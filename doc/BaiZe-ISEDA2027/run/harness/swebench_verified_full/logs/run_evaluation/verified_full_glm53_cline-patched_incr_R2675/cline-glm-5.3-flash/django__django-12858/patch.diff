@@ -1,0 +1,105 @@
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 6c9e9d3707..262312397f 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -1747,7 +1747,10 @@ class Model(metaclass=ModelBase):
+                     else:
+                         _cls = None
+                 except (FieldDoesNotExist, AttributeError):
+-                    if fld is None or fld.get_transform(part) is None:
++                    if fld is None or (
++                        fld.get_transform(part) is None and
++                        fld.get_lookup(part) is None
++                    ):
+                         errors.append(
+                             checks.Error(
+                                 "'ordering' refers to the nonexistent field, "
+diff --git a/tests/invalid_models_tests/test_ordering_lookups.py b/tests/invalid_models_tests/test_ordering_lookups.py
+new file mode 100644
+index 0000000000..d2266ebedd
+--- /dev/null
++++ b/tests/invalid_models_tests/test_ordering_lookups.py
+@@ -0,0 +1,83 @@
++import unittest
++
++from django.core.checks import Error
++from django.db import models
++from django.test import SimpleTestCase
++from django.test.utils import isolate_apps
++
++
++class OrderingLookupChecksTests(SimpleTestCase):
++    """Regression tests for models.E015 and ordering by lookups (#31717)."""
++
++    @isolate_apps('invalid_models_tests')
++    def test_ordering_with_lookups_that_are_not_transforms(self):
++        class Model(models.Model):
++            test = models.CharField(max_length=100)
++
++            class Meta:
++                ordering = ('test__isnull',)
++
++        self.assertEqual(Model.check(), [])
++
++    @isolate_apps('invalid_models_tests')
++    def test_ordering_pointing_to_related_model_isnull(self):
++        class Parent(models.Model):
++            pass
++
++        class Child(models.Model):
++            parent = models.ForeignKey(Parent, models.CASCADE)
++
++            class Meta:
++                ordering = ('parent__isnull',)
++
++        self.assertEqual(Child.check(), [])
++
++    @isolate_apps('invalid_models_tests')
++    def test_ordering_pointing_to_nested_related_model_isnull(self):
++        class Parent2(models.Model):
++            pass
++
++        class Parent1(models.Model):
++            parent2 = models.ForeignKey(Parent2, models.CASCADE)
++
++        class Child(models.Model):
++            parent1 = models.ForeignKey(Parent1, models.CASCADE)
++
++            class Meta:
++                ordering = ('parent1__parent2__isnull',)
++
++        self.assertEqual(Child.check(), [])
++
++    @isolate_apps('invalid_models_tests')
++    def test_ordering_pointing_to_self_referential_foreignkey_isnull(self):
++        class Product(models.Model):
++            parent = models.ForeignKey('self', models.CASCADE, null=True)
++
++            class Meta:
++                ordering = ('parent__isnull',)
++
++        self.assertEqual(Product.check(), [])
++
++    @isolate_apps('invalid_models_tests')
++    def test_ordering_pointing_to_invalid_lookup(self):
++        class Parent(models.Model):
++            pass
++
++        class Child(models.Model):
++            parent = models.ForeignKey(Parent, models.CASCADE)
++
++            class Meta:
++                ordering = ('parent__isnull__nonexistent',)
++
++        self.assertEqual(Child.check(), [
++            Error(
++                "'ordering' refers to the nonexistent field, related field, "
++                "or lookup 'parent__isnull__nonexistent'.",
++                obj=Child,
++                id='models.E015',
++            ),
++        ])
++
++
++if __name__ == '__main__':
++    unittest.main()

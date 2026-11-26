@@ -1,0 +1,293 @@
+line	session	user	host	mc	domain	旧col6	旧col7	新判定	理由
+27	1787821853675_z72bi.messages.json	sophiaw	hfeg0plg09	167	spice_sim	presim/nanospice多仿真器skill.75不可用	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+57	1791448973775_f8g40					compare runModelQA.pl vs refactored _new.pl, summarize multi-simulator innovatio	待定	可造	analysis-Q&A: 多仿真器脚本对比(11-15 新标准恢复)
+68	1790150039431_ojny6.messages.json					env-check/demo scaffolding (sagequan), netlist:103/hspice:6 incidental; not clea	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+80	1793868970979_6nte7.messages.json	kaixuanx	hfeg0pkn002	35	spice_sim	trace incomplete: ends at clarifying ask_question, no accepted golden power resu	待定	不可造	无 check() 牙: trace 不完整无 golden (criterion 2)
+81	1793328354943_p7jfx.messages.json	tongni	hfeg0pkn001	481	spice_sim	file deleted by active user tongni between 11-05 scan and 11-06 06:25; session e	待定	不可造	无真实 trace: 用户已删除文件 (criterion 1)
+82	1793184645122_t1epq					lacaa 6T SRAM view circuit diagram; 1 user input; exploration not production (11	待定	可造	explain-Q&A: SRAM 电路图讲解(11-15 新标准恢复)
+85	1789451741660_7uwtz					scenario trigger 仿真与验证; demo not real need (1106 scout)	待定	不可造	无真实用户意图: 模板触发/演示非真实需求
+89	1793692406403_lcg3v.messages.json	ronghu	hfeg0pkn005	27	spice_sim	char_paste_inst	待定	可造	produce/char: characterization 器件粘贴任务
+90	1792981479658_jh3kb.messages.json	ronghu	hfeg0pkn005	18	spice_sim	cell_list_no_need	待定	不可造	无真实用户意图: 用户明确表示不需要
+92	1793370534751_zju83.messages.json	yh1yang	hfeg0pkn002	24	spice_sim	noise_00	待定	可造	produce/debug: spice noise 分析(.meas noise 任务)
+93	1793864695856_1el4z.messages.json	mwxi	hfhds228	19	spice_sim	file_not_found	待定	可造	debug-Q&A: file-not-found 诊断(11-15 新标准恢复)
+94	1793181609220_r08ob.messages.json	e0018590	hfeg0pkn005	24	spice_sim	perm_denied_diag	待定	可造	debug-Q&A: 权限拒绝诊断(11-15 新标准恢复)
+95	1792841597198_8xefu.messages.json	congyi	hfhds201	15	spice_sim	lsf_sched_check	待定	可造	env-config: LSF 调度检查(11-15 新标准恢复)
+97	1793356935781_jqx69.messages.json	adaml	hfeg0pkn002	17	spice_sim	no_user_text	待定	不可造	无真实用户意图: 无用户文本输入
+98	1793266716067_bw8qq.messages.json	tongni	hfeg0pkn001	22	spice_sim	no_user_text	待定	不可造	无真实用户意图: 无用户文本输入
+99	1793774598225_ydt6x.messages.json	kaixuanx	hfeg0pkn002	18	spice_sim	cleanup_py_sh	待定	不可造	非 EDA: 脚本清理
+101	1793669959152_3123n.messages.json	lvyy	hfeg0pkn004	576	spice_sim	why_current_diff_diag	待定	可造	debug-Q&A: 电流差异根因诊断(11-15 新标准恢复)
+106	1793524556149_f86ll.messages.json	sinanz	hfeg0pkn005	655	spice_sim	analyze_circuit_func	待定	可造	explain-Q&A: 电路功能分析(11-15 新标准恢复)
+107	1793585625884_wohc2.messages.json	dsgao	hfeg0pkn001	104	spice_sim	verdi_diag	待定	可造	debug-Q&A: Verdi 调试诊断(11-15 新标准恢复)
+108	1791447139857_poxvz.messages.json	johnl	hfeg0pkn001	87	spice_sim	run_dc_fail_diag	待定	可造	debug-Q&A: DC 仿真失败诊断(11-15 新标准恢复)
+109	1793856196029_7at4j.messages.json	lvyy	hfeg0pkn004	69	spice_sim	why_no_folder_diag	待定	可造	debug-Q&A: 文件夹缺失诊断(11-15 新标准恢复)
+111	1791962616204_7j1bw.messages.json	caozhang	hfeg0pkn004	218	spice_sim	async_fifo_rtl	待定	不可造	wrong-shard-for-B: RTL 属 A 域(digital)
+114	1793600748187_dq8bz.messages.json	adaml	hfeg0pkn002	621	spice_sim	no_user_text	待定	不可造	无真实用户意图: 无用户文本输入
+118	1793956931048_y1tu4					handoff resume context summary (xinqiaoz)	待定	不可造	无真实用户意图: 上下文恢复摘要非任务
+119	1793968405868_bw3m7					handoff resume context summary (xinqiaoz)	待定	不可造	无真实用户意图: 上下文恢复摘要非任务
+120	1793967403860_ojko8					trivial: waveform recognition question (huifangg)	待定	可造	Q&A: 波形识别问答(11-15 新标准恢复)
+122	1793948987582_oylx6					DRC shardC resume: DNW_ENC bad pattern fix (xxchen)	待定	不可造	wrong-shard-for-B: DRC 属 C 域
+133	1793685165147_ga396					prior-rejected (MEMORY line 4)	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+134	1788946694927_w5knw					prior-rejected old+software-dev	待定	不可造	非 EDA: 软件开发非设计流任务
+135	1792045605929_rp1xk					prior-rejected (MEMORY line 4)	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+138	1793323487985_ukhbj					prior-rejected inaccessible host hfeg0pbn15	待定	不可造	无真实 trace: 主机不可达 (criterion 1)
+139	1788871441686_fieju					prior-rejected low spice(14hspice/22total tiny session)	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+140	1792133910648_645nk	wnyu	hfeg0pkn004	1	spice_sim	synthesis_attempted_A档不达: div3_model.py行为级计数器模型trace中3次运行全失败(msg57/61/65 no DIVO	待定	不可造	无 check() 牙: trace 中运行全失败无 golden (criterion 2)
+143	1793923081404_s6bse					file-management-movedesktop	待定	不可造	非 EDA: 文件管理
+145	1793931174603_tc4yu					rootcause-whyPM11cutoff	待定	可造	debug-Q&A: 根因诊断(11-15 新标准恢复)
+146	1792119938594_z6elv					trivial-hi	待定	不可造	无真实用户意图: 问候/琐碎会话
+147	1792379743340_2y77m					skill-invocation-tran-sim-gen	待定	可造	produce: tran-sim 生成
+148	1793763926139_g7b4c.messages.json					1566	待定	待定	hint 为纯数字(疑似截断): 需深读 trace 判定
+149	1793763944405_7qatl.messages.json					1524	待定	待定	hint 为纯数字(疑似截断): 需深读 trace 判定
+150	1793763970829_iq1bu.messages.json					1437	待定	待定	hint 为纯数字(疑似截断): 需深读 trace 判定
+151	1793261282500_4fq1p.messages.json					2310	待定	待定	hint 为纯数字(疑似截断): 需深读 trace 判定
+152	1792544094676_mntzu.messages.json					917	待定	待定	hint 为纯数字(疑似截断): 需深读 trace 判定
+153	1791980431476_gsmj2.messages.json					155	待定	待定	hint 为纯数字(疑似截断): 需深读 trace 判定
+154	1793274153419_2q4mg.messages.json					291	待定	待定	hint 为纯数字(疑似截断): 需深读 trace 判定
+155	1788771111710_mwijd	scout	scout	0	characterization	sagequan@hfeg0pnd002 meta-testing-zlcli-harness-not-EDA	待定	不可造	无真实用户意图: harness meta 测试非 EDA
+158	1789885303895_nv8gj	scout	scout	0	characterization	jinsongl@hfeg0pkn005 rootcause-question-报错原因是什么	待定	可造	debug-Q&A: 根因诊断(11-15 新标准恢复)
+159	1793684231151_ne32u	scout	scout	0	characterization	adaml@hfeg0pkn002 skill-authoring-meta	待定	不可造	无真实用户意图: skill 编写(meta)
+160	1789441210558_p8wm1	scout	scout	0	characterization	shaoyou@hfeg0pkn003 trivial-GUI-launch-anasim	待定	不可造	无真实用户意图: 琐碎 GUI 启动
+164	1790126403703_fj73q					env-setup(swb-python-api-config)	待定	可造	env-config: 环境配置(11-15 新标准恢复)
+167	1790573877427_0qyc2					SpiceAgent-skill-session-run-sim-trivial	待定	不可造	无真实用户意图: skill run-sim 琐碎
+168	1788412903933_suh90					trivial-file-ops(delete-copy-bashrc-CDS.log)	待定	不可造	无真实用户意图: 琐碎文件操作
+170	1793950315023_15w22					rootcause(resume-of-n36p3-same)	待定	可造	debug-Q&A: 根因诊断(11-15 新标准恢复)
+172	1790044729030_4v3b5					rootcause(why-Q-recovers-40750ps-fsdb)	待定	可造	debug-Q&A: 根因诊断(11-15 新标准恢复)
+182	1791512939497_0aw4j					root-cause+meta-skill writing (jason17w@pnd002)	待定	不可造	无真实用户意图: meta-skill 编写
+183	1789465514819_9f0ra					trivial: launch sim scenario (shaoyou@pkn003)	待定	不可造	无真实用户意图: 模板触发场景非真实需求
+185	1793609804560_mr6sa					RON opt root-cause: monotonicity wrong (clarawu@pkn004)	待定	可造	debug-Q&A: 根因诊断(11-15 新标准恢复)
+187	1793847299644_hu27g					root-cause: why sim exited (thomasz@pkn002)	待定	可造	debug-Q&A: 根因诊断(11-15 新标准恢复)
+188	1783323056207_rc0jh					GUI trivial: connect virtuoso (e0014566@pkn005)	待定	不可造	无真实用户意图: 琐碎 GUI 启动
+191	1790047784806_lsc1e					run existing RC flow (simplec@pkn002)	待定	可造	produce: RC flow 运行(11-15 新标准恢复)
+192	1791877271220_1fnn2					root-cause+batch scheduling (rongtaoy@pkn002)	待定	可造	debug-Q&A: 根因诊断(11-15 新标准恢复)
+193	1793093482443_38unc					sysadmin: adjust display (e0047695@pkn005)	待定	不可造	无真实用户意图: 系统管理非 EDA
+194	1783084592736_1kipj					automate SKILL execution (e0014566@pkn005)	待定	不可造	无真实用户意图: skill 自动化执行(meta)
+196	1792371906656_jyoob					GUI trivial: open virtuoso (pwma@pkn005)	待定	不可造	无真实用户意图: 琐碎 GUI 启动
+197	1793790579965_4ncj8					GUI trivial: open virtuoso (shuoz@pkn004)	待定	不可造	无真实用户意图: 琐碎 GUI 启动
+200	1793959674227_uybl4					trivial: 5msgs/5KB no spice (e0025768) 11-07 rescan	待定	不可造	无真实用户意图: 琐碎小会话无 spice
+201	1793959865181_3pj6u					trivial: 4msgs/5KB no spice (e0025768) 11-07 rescan	待定	不可造	无真实用户意图: 琐碎小会话无 spice
+202	1793959981001_og48h					trivial: 10msgs/18KB MC1 no spice (e0025768) 11-07 rescan	待定	不可造	无真实用户意图: 琐碎小会话无 spice
+207	1793957796515_nwl1p					trivial: USER0='hi' 4msgs e0023936 hfhds201 scout 1107 0704	待定	不可造	无真实用户意图: 问候/琐碎会话
+208	1793957771319_oau5r					trivial: USER0='hi' 2msgs e0023936 hfhds201 scout 1107 0704	待定	不可造	无真实用户意图: 问候/琐碎会话
+211	1793946881286_z34dy					trivial: USER0='hello' 218msgs t0002965 hfhds201 scout 1107 0704	待定	不可造	无真实用户意图: 问候/琐碎会话
+212	1793929260637_1dk7h					trivial: USER0='ni' 2msgs e0023936 hfhds201 scout 1107 0704	待定	不可造	无真实用户意图: 问候/琐碎会话
+214	1791768325372_g13dw	dandans	hfhds201	16	spice_sim	incomplete trace: USER0='修改aging代码 step1/step2仿真分目录' + attached matrixrun perl; 	待定	可造	produce: aging 仿真分目录(意图真实, reframe 可造)
+216	1791446512697_3s3zx					incomplete: assistant asked question, session terminated, no resolution	待定	不可造	无 check() 牙: trace 不完整无结论 (criterion 2)
+241	1791457560417_636qr					code review runModelQA refactor non-A-faithful	待定	可造	analysis-Q&A: runModelQA 重构 code review(11-15 新标准恢复)
+251	1789470466679_wqxag					shaoyou@pkn003: 启动业务场景:模拟电路优化·二次执行 = 模板触发, 非真实需求	待定	不可造	无真实用户意图: 模板触发/演示非真实需求
+252	1790575149766_y8vwx					alenxu@pkn003: 首轮'2' = 单字符菜单选择, 无意图	待定	不可造	无真实用户意图: 单字符菜单选择无意图
+254	1791961257165_nohd9					xinweif@pkn005: '你可以干什么' = trivial greeting	待定	不可造	无真实用户意图: 问候/琐碎会话
+262	1789526951493_wa1uw					teaching: 阐述6-5ys/教会我仿真目的	待定	可造	explain-Q&A: 仿真目的讲解(11-15 新标准恢复)
+264	1782728857158_05p8p					troubleshooting: Virtuoso未连接排查	待定	可造	env-config: Virtuoso 连接排查(11-15 新标准恢复)
+265	1790751104057_raf93					run-regression skill 模板替换queue	待定	可造	produce: regression 模板替换生成
+267	1789610397098_48m5j					同drcpa coverage 首消息非任务轮	待定	不可造	无真实用户意图: 首消息非任务轮
+272	1793670518248_ap4dl					GUI task (tkinter xval_tool), hspice counts from tool processing hspice decks, n	待定	不可造	非 EDA: tkinter GUI 工具开发
+273	1794037498869_m5mbi					disk-scanner V5 optimization (scandir_find concurrency), hspice counts from scan	待定	不可造	非 EDA: 磁盘扫描工具
+281	1793670219522_sdtpg	dsgao	hfhds201	295	spice_sim	fails-strict-filter:spice=2/410=0.5%,synthesis/netlist-dominant	待定	不可造	wrong-shard-for-B: spice 关键词占比极低非 B 主导
+282	1793084506490_ytldc	dsgao	hfhds201	175	spice_sim	fails-strict-filter:spice=50/574=8.7%,calibre/LVS-dominant	待定	不可造	wrong-shard-for-B: spice 关键词占比极低非 B 主导
+283	1793091608908_lzt3e	e0023936	hfhds201	161	spice_sim	fails-strict-filter:spice=2/230=0.9%,pyAether/virtuoso-dominant	待定	不可造	wrong-shard-for-B: spice 关键词占比极低非 B 主导
+291	1793957377461_s9bc9					scout_1108_20: pkn004 e0039602 netlist block-rename skill, schematic_netlist, RE	待定	不可造	无真实用户意图: scout/eval 会话
+296	1793161602607_0i3r5					scout_1108_20: pkn004 my7li aether crash troubleshooting, env-issue non-delivera	待定	不可造	无真实用户意图: scout/eval 会话
+297	1792132080120_htbqn					scout_1108_20: pkn004 tabtao sdf_ss.log Warning filter, log-processing, REJECT s	待定	不可造	无真实用户意图: scout/eval 会话
+298	1793839606322_bghqo					scout_1108_20: pkn004 e0039602 tb_family stdcell netlist check+rewrite, schemati	待定	不可造	无真实用户意图: scout/eval 会话
+300	1791963281932_4a852					scout_1108_20: pkn004 e0039602 netlist cell->simlib_base.sv mapping, schematic_n	待定	不可造	无真实用户意图: scout/eval 会话
+304	1793260065712_n78nn					scout_1108_20: pkn005 t0003117 eval user netlist_extract skill, REJECT eval user	待定	不可造	无真实用户意图: scout/eval 会话
+305	1793684384632_6dmno					scout_1108_20: pkn005 t0003117 eval user netlist_extract skill, REJECT eval user	待定	不可造	无真实用户意图: scout/eval 会话
+308	1792560658830_jvnvb	jinsongl	hfeg0pkn005	68	spice_sim	netlist compare debug (head/wc/mkdir), not clean task-statement; REJECT	待定	可造	debug-Q&A: netlist 对比调试(11-15 新标准恢复)
+309	1793192893935_poa8g	yixiaow	hfeg0pkn005	56	spice_sim	simulation-output-not-found debug, grep/find first turns; REJECT	待定	可造	debug-Q&A: 仿真输出缺失诊断(11-15 新标准恢复)
+310	1789984306992_4vmtg	bin1y	hfeg0pkn002	50	spice_sim	grep netlist vblhh debug, not clean task; REJECT	待定	可造	debug-Q&A: netlist debug(11-15 新标准恢复)
+312	1792386812545_n2isr	tongni	hfeg0pkn001	49	spice_sim	incomplete trace: 5 user prompt strings only (netlistHeader/SUBCKT AG_Vcc2scALDO	待定	不可造	无 check() 牙: trace 不完整 (criterion 2)
+314	1792489769571_ch2cw	johnl	hfeg0pkn001	42	spice_sim	env probing (ls/id/proj-link), not task; REJECT	待定	不可造	无真实用户意图: 环境探测非任务
+318	1793794507428_dus4q	e0047527	hfeg0pkn005	33	spice_sim	env probing (EMPYREAN_HOME/which aether), not task; REJECT	待定	不可造	无真实用户意图: 环境探测非任务
+320	1793154955266_qw049	yixiaow	hfeg0pkn005	30	spice_sim	aether W/L min constraint + sim error (如何解决=ask-fix), borderline schematic; 暂缓	待定	可造	debug-Q&A: W/L 约束+sim error 修复诊断(11-15 新标准恢复)
+323	1790128216866_kbs81	e02141	hfeg0pkn001	13	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+324	1789975159435_j1gy6	rongjiez	hfeg0pkn005	12	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+325	1792570696255_obhqj	ypzheng	hfeg0pkn003	11	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+326	1793877281100_262wq	allenzh	hfeg0pkn004	9	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+327	1793770158127_wb9zm	nevinrao	hfeg0pkn001	9	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+328	1791944653526_tdbc1	e0029495	hfeg0pkn002	9	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+329	1789545210038_ep9m4	lorikx	hfeg0pkn004	9	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+330	1789552395398_wt5s2	lorikx	hfeg0pkn004	9	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+331	1793786362791_uvxvv	berylwu	hfeg0pkn002	8	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+332	1790659224643_m273z	t0002987	hfeg0pkn005	8	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+333	1792724490907_5vb3f	thomasz	hfeg0pkn002	7	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+334	1793078652491_wk3wd	cliu	hfeg0pkn004	7	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+335	1788417639556_79j7l	shaoyou	hfeg0pkn003	6	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+336	1790058749132_f0qtv	t0002987	hfeg0pkn005	6	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+337	1793955925596_5cgk3	rongjiez	hfeg0pkn005	5	spice_sim		待定	待定	无 hint: 需深读 trace 判定
+339	1793952138224_b2l64	t0003117	hfeg0pkn005	405	spice_sim	eval-user+premise-missing fault-inject	待定	不可造	无真实用户意图: eval/scout 用户
+341	1792375467654_hs5zf	mwxi	hfhds228	35	spice_sim	unreachable SSH no-file	待定	不可造	无真实 trace: 主机不可达/无文件 (criterion 1)
+348	1793277537589_ext1v	jackjia	hfeg0pkn001	70	spice_sim	vague FineSim write-leveling stimulus guidance no verifiable deliverable	待定	不可造	无 check() 牙: 无可验证交付物 (criterion 2)
+351	1792827081154_d810y	jackjia	hfeg0pkn001	240	spice_sim	low-quality scatter 飞线/Verdi/FSDB/Aether-version 52 turns	待定	不可造	无真实用户意图: 低质量散点会话
+354	1793586740418_bcyev					7 裸文件路径 premise-missing reject	待定	不可造	无真实用户意图: 裸路径/缺前提
+355	1793667785681_e328y					3 裸路径+5 premise-missing reject	待定	不可造	无真实用户意图: 裸路径/缺前提
+359	1793176752981_ikfrw	joeyl	hfeg0plg49	14	spice_sim	115msg 45-corner tr0 measure session ended mid binary-format reverse-engineering	待定	不可造	无 check() 牙: trace 不完整无 golden (criterion 2)
+360	1792376948635_va4dv	alieenwu	hfeg0plg08	25	spice_sim	U#0 .meas ms scientific-notation config question knowledge-Q low-structureable r	待定	可造	knowledge-Q&A: .meas 科学计数法配置问答(11-15 新标准恢复)
+364	1792215728595_u7a72	jiuzhou	hfeg0plg52	2173	spice_sim	vague: U#0 'open the aging simulation' 过于含糊，assistant 仅找到目录后 ask_question，sessio	待定	不可造	无真实用户意图: 含糊意图
+366	1792738292906_icpw2	yanxvwei	hfeg0plg52	1005	spice_sim	perl script edit, code-editing paradigm, reject	待定	可造	produce: perl 脚本编辑(EDA 脚本生成)
+367	1788353164910_sxtgo	rongjiez	hfeg0plg52	977	spice_sim	qt cpp jobmonitor editing, code-editing paradigm, reject	待定	不可造	非 EDA: cpp 软件开发
+368	1794144259461_ifj1a	dandans	hfeg0plg05	595	spice_sim	lsf live job monitoring, not self-contained, reject	待定	不可造	无真实用户意图: 作业监控非任务
+369	1791612109523_qv65m	mike	hfeg0plg05	486	spice_sim	env build/run reconstruction, no computational golden, reject	待定	不可造	无 check() 牙: 无计算 golden (criterion 2)
+370	1793327181609_04txc	peeked	hfeg0plg52	0	spice_sim	peeked reject (see deepread/round notes)	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+371	1793322259360_bisir	peeked	hfeg0plg52	0	spice_sim	peeked reject (see deepread/round notes)	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+372	1789908324813_f0jns	peeked	hfeg0plg52	0	spice_sim	peeked reject (see deepread/round notes)	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+379	1793951758493_60sod.messages.json	thomasz	hfeg0pkn001	118	spice_sim	U0 gvim edit task not design-flow	待定	不可造	非 EDA: 编辑器操作非设计流
+382	1793955920680_cp2b9.messages.json	rongjiez	hfeg0pkn005	78	spice_sim	waveform compare_wave -reuse edit = shard D	待定	不可造	wrong-shard-for-B: waveform 属 D 域
+384	1790064740875_kjw6u.messages.json	johnl	hfeg0pkn001	132	spice_sim	U0 git init file-op not design-flow	待定	不可造	非 EDA: 纯文件操作
+385	1792497102583_70jmd.messages.json	johnl	hfeg0pkn001	127	spice_sim	U0 find .lib files file-op	待定	不可造	非 EDA: 纯文件操作
+391	1792138312431_6i68m.messages.json	e0042624	hfeg0pkn005	64	spice_sim	U0 skill_instructions paste no explicit user produce-turn	待定	不可造	无真实用户意图: 粘贴 skill 说明无任务轮
+403	1793685492215_twnbr	adaml	hfeg0pkn002	3	spice_sim	spice3/3=100% peek: sim-report-writer skill输出格式配置 非produce-task	待定	可造	env-config: skill 输出格式配置(11-15 新标准恢复)
+405	1792392597029_q92x8	e0046686	hfeg0pkn005	4	spice_sim	spice4/6=67% peek: git版本排障 spice假阳性	待定	不可造	非 EDA: git 排障
+408	1790585671436_vatpl	e0014566	hfeg0pkn001	4	spice_sim	spice4/8=50% peek: 裸hi问候 spice假阳性	待定	不可造	无真实用户意图: 问候/琐碎会话
+409	1790578790015_xcbxf	t0002987	hfeg0pkn005	4	spice_sim	spice4/8=50% peek: shell命令检查 spice假阳性	待定	不可造	非 EDA: shell 命令检查
+410	1790581856569_4qohy	e02141	hfeg0pkn001	3	spice_sim	spice3/8=38% peek: swb-python-api配置 spice假阳性	待定	可造	env-config: swb python api 配置(11-15 新标准恢复)
+411	1790586030024_lf7lw	e02141	hfeg0pkn001	3	spice_sim	spice3/8=38% peek: swb-python-api配置(同4qohy) spice假阳性	待定	可造	env-config: swb python api 配置(11-15 新标准恢复)
+412	1789898322144_yhqp5	mike	hfeg0pkn003	3	spice_sim	spice3/9=33% peek: nishi nage裸问候片段 spice假阳性	待定	不可造	无真实用户意图: 问候/琐碎会话
+413	1789696540475_wqcki	shaoyou	hfeg0pkn003	4	spice_sim	spice4/13=31% peek: AnaSim工具启动 spice假阳性	待定	不可造	无真实用户意图: 琐碎工具启动
+414	1792842218809_1yo6b	jkxu	hfeg0pkn002	4	spice_sim	spice4/13=31% peek: bsub作业监控 spice假阳性	待定	不可造	无真实用户意图: 作业监控非任务
+421	1794191443800_6miad	t0003060	hfeg0pkn003	2	spice_sim	kw=2 text-summarization(Fanout汇报), no produce	待定	不可造	无 check() 牙: 文本摘要无 EDA 交付物 (criterion 2)
+474	1794143890547_lnkot	jackjia	hfeg0pkn002	8	spice_sim	vague-opener 桥接了吗	待定	不可造	无真实用户意图: 含糊开场
+476	1794202378967_ihvqf	xinqiaoz	hfeg0pkn002	8	spice_sim	handoff-resume not-clean-produce	待定	不可造	无真实用户意图: 上下文恢复非任务
+477	1794213041594_yhfm0	xinqiaoz	hfeg0pkn002	8	spice_sim	handoff-resume not-clean-produce	待定	不可造	无真实用户意图: 上下文恢复非任务
+484	1794212622727_s5b5x	rongjiez	hfeg0pkn004	8	spice_sim	fresh-kw0 trivial	待定	不可造	无真实用户意图: 琐碎会话
+485	1793688761923_zqew3	rose3wang	hfeg0pkn003	8	spice_sim	gzip-cmd trivial file-op	待定	不可造	非 EDA: 文件操作
+489	1794216342754_bmka4	xinqiaoz	hfeg0pkn002	0	spice_sim	handoff-resume session not-clean-produce	待定	不可造	无真实用户意图: 上下文恢复非任务
+492	1794216992024_cv75g	zhenglu	hfeg0pkn004	0	spice_sim	trivial greeting session	待定	不可造	无真实用户意图: 问候/琐碎会话
+493	1794215592923_ukr0g	ellawu	hfeg0pkn005	0	spice_sim	trivial small session 5KB	待定	不可造	无真实用户意图: 琐碎小会话
+494	1794217754949_0r0uq	t0002802	hfeg0pkn005	0	spice_sim	trivial small session 5KB	待定	不可造	无真实用户意图: 琐碎小会话
+495	1794217616311_703eg	t0002802	hfeg0pkn005	0	spice_sim	trivial small session 5KB	待定	不可造	无真实用户意图: 琐碎小会话
+496	1794216319185_lvu4r	hktklin	hfeg0pkn004	0	spice_sim	trivial small session 5KB	待定	不可造	无真实用户意图: 琐碎小会话
+497	1794216750374_d5x87	hktklin	hfeg0pkn004	0	spice_sim	trivial small session 4KB	待定	不可造	无真实用户意图: 琐碎小会话
+498	1794215816873_l3qi7	rose3wang	hfeg0pkn003	0	spice_sim	trivial small session 5KB	待定	不可造	无真实用户意图: 琐碎小会话
+506	1793778171219_tq83u	e0046686	hfeg0pkn005	5	spice_sim	1109cron-diff: 316netlist+5hspice but NFS-flaky unreadable on pkn005	待定	不可造	无真实用户意图: cron-diff 琐碎/无用户文本
+508	1791795684242_lxy78	e0039602	hfeg0pkn004	3	spice_sim	1109cron-diff peek: 6msg trivial no-user-text reject	待定	不可造	无真实用户意图: 无用户文本输入
+509	1794125570732_twmgl	e0023936	hfeg0pkn004	2	spice_sim	1109cron-diff: 4msg-class trivial low-spice	待定	不可造	无真实用户意图: cron-diff 琐碎/无用户文本
+511	1793955833843_7hcwf	e0039602	hfeg0pkn004	2	spice_sim	1109cron-diff: 2hspice+1calibre trivial	待定	不可造	无真实用户意图: cron-diff 琐碎/无用户文本
+513	1793760816185_ahiez	e0046686	hfeg0pkn005	2	spice_sim	1109cron-diff: 2netlist+2hspice trivial	待定	不可造	无真实用户意图: cron-diff 琐碎/无用户文本
+515	1794044717680_q5znu	thomasz	hfeg0pkn001	1	spice_sim	1109cron-diff peek: 6msg trivial no-user-text reject; calibre-dominant	待定	不可造	无真实用户意图: 无用户文本输入
+516	1793925634338_7qzdr	e0046686	hfeg0pkn005	1	spice_sim	1109cron-diff: 36netlist+1hspice low-spice pkn005-flaky	待定	不可造	无真实用户意图: cron-diff 琐碎/无用户文本
+517	1793619261390_uyqhw	e0039602	hfeg0pkn004	1	spice_sim	1109cron-diff peek: 6msg trivial no-user-text reject; pyAether-dominant	待定	不可造	无真实用户意图: 无用户文本输入
+519	1793169071103_vafrf	e0039602	hfeg0pkn004	1	spice_sim	1109cron-diff: 1hspice trivial	待定	不可造	无真实用户意图: cron-diff 琐碎/无用户文本
+520	1793103814409_kxeno	e0044587	hfeg0pkn004	1	spice_sim	1109cron-diff: 1hspice+1calibre trivial	待定	不可造	无真实用户意图: cron-diff 琐碎/无用户文本
+523	1794221830421_oclzn.messages.json	dandans	hfeg0pkn002	6	spice_sim	ops btop job-submit no-produce	待定	不可造	无真实用户意图: 作业提交监控
+539	1793184099494_4v4nf	wenwenl	hfeg0plg74	122	spice_sim	session file GC'd on plg74 (dir+flat both missing), unreachable	待定	不可造	无真实 trace: 主机不可达/无文件 (criterion 1)
+540	1792549549929_j0t84	zhukaic	hfeg0plg58	87	spice_sim	single user turn, output target=workspace.cxmt.com web URL, deliverable un-verif	待定	不可造	无 check() 牙: 交付物不可验证 (criterion 2)
+582	1793682926396_lt3nh	t0003117	hfeg0pkn005	159	spice_sim	peek GUI open virtuoso run SKILL reject	待定	不可造	无真实用户意图: GUI skill 执行
+619	1793870551130_jr0o3	ronghu	hfeg0pkn005	44	spice_sim	debug power-meas-inst fix-iteration	待定	可造	debug-Q&A: power-meas inst 修复迭代诊断(11-15 新标准恢复)
+621	1791513972290_bih9j	thomasz	hfeg0pfn060	99	spice_sim	debug IR-result-missing-vcc-vblh	待定	可造	debug-Q&A: IR 结果缺失诊断(11-15 新标准恢复)
+628	1792722310323_1e0xa	sagequan	hfeg0pbn04	11	spice_sim	skill-loading cimi-kb-search	待定	不可造	无真实用户意图: skill 加载
+634	1794314373226_6eas3	e0030760	hfeg0pkn004	204	spice_sim	devops desktop-cleanup	待定	不可造	非 EDA: devops 清理
+635	1794308888937_ddye0	haoliu	hfeg0pkn004	189	spice_sim	devops netlist-cleanup	待定	不可造	非 EDA: devops 清理
+636	1794292541692_gu0ry	t0001988	hfeg0pkn002	46	spice_sim	trivial hello+paste	待定	不可造	无真实用户意图: 问候/琐碎会话
+638	1794295775296_m64s7	zqzhan	hfeg0pkn002	19	spice_sim	archive-JSONL low-hspice	待定	不可造	非 EDA: 归档操作
+641	1794279029544_1vjqj	zhililu	hfeg0pkn002	71	spice_sim	debug finesim SFE-1802	待定	可造	debug-Q&A: finesim 报错根因诊断(11-15 新标准恢复)
+642	1793783334586_h14an	zanezang	hfeg0plg57	8	spice_sim	unreachable+low-mc	待定	不可造	无真实 trace: 主机不可达/无文件 (criterion 1)
+643	1785392109301_zh03r	e0025730	hfeg0plg49	1	spice_sim	unreachable+mc=1	待定	不可造	无真实 trace: 主机不可达/无文件 (criterion 1)
+644	1794276772104_yicdk	hengbow	hfeg0pkn001	9	spice_sim	11-11 fresh spice>=5: trivial 1msg	待定	不可造	无真实用户意图: 琐碎单消息
+645	1794278751082_g8en5	jinsongl	hfeg0pkn005	7	spice_sim	11-11 fresh spice>=5: raw SKILL cckExplore log, not cline session	待定	不可造	无真实用户意图: 非 cline session
+646	1794280189538_742yv	rhyanw	hfeg0pkn001	8	spice_sim	11-11 fresh spice>=5: trivial 1msg	待定	不可造	无真实用户意图: 琐碎单消息
+649	1794296961043_fessi	t0002113	hfeg0pkn001	5	spice_sim	11-11 fresh spice>=5: tool discovery 'which finesim finesime hspice'	待定	不可造	无真实用户意图: 工具发现(which)非任务
+650	1794299623303_khbvq	yuchens	hfeg0pkn004	5	spice_sim	11-11 fresh spice>=5: trivial 1msg	待定	不可造	无真实用户意图: 琐碎单消息
+664	1794297992607_e4kv0	fresh1111	fresh-scan	0	spice_sim	open ddgoa circuit exploration, not produce-task	待定	可造	explain-Q&A: 电路探索讲解(11-15 新标准恢复)
+667	1792394341749_wapy4	fresh1111	fresh-scan	0	spice_sim	session NOT FOUND on hfeg0pkn001	待定	不可造	无真实 trace: session 文件不存在 (criterion 1)
+671	1794278391708_xedbf	fresh1111	fresh-scan	0	spice_sim	PrimeSim version output paste, debug/error paste not produce-task	待定	可造	debug-Q&A: PrimeSim 版本/报错诊断(11-15 新标准恢复)
+680	1793964715214_ddg83	zhililu	hfeg0pkn002	46	spice_sim	netlist-creation error debug: U#1 paste ADE netlister error (failed at creating 	待定	可造	debug-Q&A: ADE netlister 报错诊断(11-15 新标准恢复)
+687	1794292759049_xqgpn	e0041392	hfeg0plg52	0	spice_sim	workspace upload ops	待定	不可造	非 EDA: 工作区上传操作
+694	1790600533401_vnze7	clwang	hfeg0pkn005	0	spice_sim	file split generic linux	待定	不可造	非 EDA: 通用 linux 文件操作
+699	1794275548538_ga7xw	e0024852	hfeg0plg58	0	spice_sim	gxrc error-paste debug	待定	可造	debug-Q&A: gxrc error-paste 根因诊断(11-15 新标准恢复)
+707	1793869480489_7kote	e0027609	hfeg0pkn005	0	spice_sim	查看电路图结构 explanation	待定	可造	explain-Q&A: 电路图结构讲解(11-15 新标准恢复)
+708	1794224138220_25gxe	ziyuny	hfeg0plg52	0	spice_sim	session history meta	待定	不可造	无真实用户意图: meta 会话
+721	1794144165637_dm3nn	unknown	unknown	0	spice_sim	aether bridge meta trivial	待定	不可造	无真实用户意图: meta 会话
+722	1794295800537_cap3d	unknown	unknown	0	spice_sim	TCAD deck setup skill-loading	待定	不可造	无真实用户意图: skill 加载
+732	1794280083783_13vlc	unknown	unknown	0	spice_sim	hello/speak-chinese trivial	待定	不可造	无真实用户意图: 问候/琐碎会话
+734	1794314918312_qln7t	unknown	unknown	0	spice_sim	hspice waveform hierarchy debug	待定	可造	debug-Q&A: hspice 波形层级调试(11-15 新标准恢复)
+735	1794224252917_ls7n4	unknown	unknown	0	spice_sim	finesim matrix sleep+exec scheduling thin	待定	可造	produce/env: finesim matrix 调度配置(11-15 新标准恢复)
+741	1794277014106_0helb	unknown	unknown	0	spice_sim	context-engineering skill-loading	待定	不可造	无真实用户意图: skill 加载
+742	1793150137494_widtp	unknown	unknown	0	spice_sim	DDR6 spec translation	待定	可造	retrieval: DDR6 spec 翻译(11-15 新标准恢复)
+746	1793176301340_bme92	my7li	hfeg0pkn004	0	spice_sim	skill-loading: dqtool skill_tracer.py dev	待定	不可造	无真实用户意图: skill 加载
+765	1794296252513_bnwz4	steveny	hfeg0plg105	0	spice_sim	skill-loading: virtuoso hello world	待定	不可造	无真实用户意图: skill hello-world 加载
+768	1794302284516_pylvf	maggiew	hfeg0pkn004	0	spice_sim	trivial: hello	待定	不可造	无真实用户意图: 问候/琐碎会话
+770	1794310642206_v5jv2	steveny	hfeg0plg105	0	spice_sim	skill-loading: aether hello world	待定	不可造	无真实用户意图: skill hello-world 加载
+772	1794317657516_33zed	e0044587	hfeg0pkn004	0	spice_sim	trivial: hello	待定	不可造	无真实用户意图: 问候/琐碎会话
+775	1792743024140_uco1e	zhukaic	hfeg0plg58	14	spice_sim	write .measure rise/fall as TEXT in chat, no file deliverable, trivial L1 not vi	待定	不可造	无 check() 牙: 无文件交付物 (criterion 2)
+787	1794359298326_ho1cr	e0039602	hfeg0pkn005	57	eda_other	post-snap fresh: LLM-review-code refactor not EDA	待定	不可造	非 EDA: 代码重构
+791	1794363743004_v11bs	my7li	hfeg0pkn005	41	eda_other	post-snap fresh: status-check not produce	待定	不可造	无真实用户意图: 状态检查非任务
+793	1794361820675_nqb2j	e0030760	hfeg0plg100	144	eda_other	post-snap fresh: desktop-file-move not EDA	待定	不可造	非 EDA: 桌面文件移动
+797	1794361655307_euuvj	xinqiaoz	hfeg0pkn002	67	eda_other	post-snap fresh: handoff-context-restore not produce	待定	不可造	无真实用户意图: 上下文恢复非任务
+799	1793173193409_mx7xh	junweix	hfeg0pkn002	77	spice_sim	remote pkn002 junweix file others-r=0, not readable by e0031982 sandbox identity	待定	不可造	无真实 trace: e0031982 身份不可读 (criterion 1)
+801	1788249638562_0si6a	sophiaw	hfeg0plg09	160	characterization	meta-exploration session (agent self-introspection), no real design task; hspice	待定	不可造	无真实用户意图: agent 自省 meta 会话
+803	1793370534751_zju83	yh1yang	hfeg0pkn002	24	spice_sim	reject first_user=00 续指垃圾	待定	不可造	无真实用户意图: 续指垃圾会话
+805	1793257968522_mp3us	tongni	hfeg0plg49	164	spice_sim	reject skill-authoring sim-sp-gen	待定	不可造	无真实用户意图: skill 编写(meta)
+808	1785907092176_vdeyi	e0025768	hfeg0pkn001	65	spice_sim	reject debugging optimize报错	待定	可造	debug-Q&A: optimize 报错根因诊断(11-15 新标准恢复)
+809	1793602325758_lcg3v	ronghu	hfeg0pkn005	27	spice_sim	reject debugging SiliconSmart char hspice rc=1	待定	可造	debug-Q&A: SiliconSmart characterization 报错诊断(11-15 新标准恢复)
+813	1793266716067_ioa1s	tongni	hfeg0plg49	93	spice_sim	reject skill-authoring skill-creator meta	待定	不可造	无真实用户意图: skill 编写(meta)
+817	1792207956030_8anm0	lanxinz	hfeg0pkn002	57	spice_sim	park 1109 fresh unassessed-low	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+818	1792391609614_eznro	mwxi	hfeg0pkn002	43	spice_sim	park 1109 fresh unassessed-low	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+820	1793176175395_5i5wz	e03179	hfeg0pkn002	147	spice_sim	reject skill-use vam-agent	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+821	1792220242064_duzjh	jinsongl	hfeg0pkn002	123	spice_sim	reject skill-authoring zigzag skill	待定	不可造	无真实用户意图: skill 编写(meta)
+823	1792462491236_ccaea	weidong	hfeg0pkn002	133	spice_sim	reject L1 filename->CSV too simple for new case	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+824	1790658262664_zjzz8	e03179	hfeg0pkn002	168	spice_sim	reject skill-use vam-agent 建模	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+834	1792040981126_o5xjq					scout_1111: advisory 'which CAD tools for analog opt' — not design_flow	待定	不可造	无真实用户意图: advisory 非 design_flow
+868	1794397721848_op8wj	tongni	hfeg0plg49	1521	spice_sim	CLEAN spice_sim multi-deck LDO Vcc2sc_stdby SPEC-comparison (tran/ac/ac_load/dc_	待定	可造	produce: LDO SPEC 对比生成(spice_sim 干净 B 产出)
+878	1794398684733_jjrpj	e0030760	10.129.2.10	509	spice_sim	r414 rescan reject: jjrpj not-viable B-domain L2/L3	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+879	1794394259449_bwtk9	e0030760	10.129.2.10	509	spice_sim	r414 rescan reject: bwtk9 not-viable B-domain L2/L3	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+880	1794382087740_nm5op	rongjiez	10.129.35.69	306	spice_sim	r414 rescan reject: nm5op not-viable B-domain L2/L3	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+881	1794375717921_5p2v2	thomasz	10.129.35.69	122	spice_sim	r414 rescan reject: 5p2v2 not-viable B-domain L2/L3	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+882	1794369069999_jlgfx	yohannw	10.129.2.11	195	spice_sim	r414 rescan reject: jlgfx not-viable B-domain L2/L3	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+883	1794395852366_tef8l	yinyus	10.129.2.10	283	spice_sim	r414 rescan: unlocatable on recorded host (file absent /home/*/.cline on 10.129.	待定	不可造	无真实 trace: 记录主机上定位不到 (criterion 1)
+885	1791424827517_ca3hh.messages.json					ambiguous (guangmingz '解析dsim_block' - parse DSIM block, single brief turn, uncl	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+901	1792119938594_z6elv.messages.json					non-task (wnyu 'hi/在吗/为什么job跑得慢' - chit-chat + job-speed complaint)	待定	不可造	无真实用户意图: chit-chat/作业抱怨非任务
+902	1793684384632_6dmno.messages.json					wrong-type (t0003117 '执行skills_v0.2/netlist_extract/SKILLS.md' - skill execution	待定	不可造	无真实用户意图: skill 执行非 design_flow
+906	1793243641918_xcuds.messages.json					meta/infra: skill-creator meta-skill writing, spice kw from skill content	待定	不可造	无真实用户意图: meta-skill 编写
+909	1792837595656_ymjs5.messages.json					phantom: session file not found on any reachable host (harrywu)	待定	不可造	无真实 trace: session 文件在可达主机上找不到 (criterion 1)
+910	1793953494729_nmz6w.messages.json					phantom: session file not found on reachable hosts (hairuizh)	待定	不可造	无真实 trace: session 文件在可达主机上找不到 (criterion 1)
+915	1790731913166_ki1x0.messages.json	chengk	hfeg0plg102	27	spice_sim	code-reading+flowchart task (IddFlowCode/test), no SPICE sim, L1 docs, not desig	待定	可造	analysis-Q&A: IddFlow 代码阅读+流程图(11-15 新标准恢复)
+917	1782803097375_exstf.messages.json	e0025730	hfeg0plg49	25	spice_sim	lvlshft skill sizing/code-reading on private devops tree, no real HSPICE run (on	待定	可造	analysis-Q&A: level-shifter sizing 代码阅读(11-15 新标准恢复)
+920	1790073773700_rwf2q.messages.json	bo1zhao	hfeg0plg11	13	spice_sim	RedHawk-SC PDF manual reading + web fetch, no SPICE sim, exploration not design-	待定	可造	doc-search: RedHawk-SC 手册检索(11-15 新标准恢复)
+922	1790578411744_brrc3.messages.json	e0039602	hfeg0pkn002	49	spice_sim	AutoDebug code-reading+comparison report (V3 vs 0916), no SPICE/waveform sim, L1	待定	可造	analysis-Q&A: AutoDebug 代码阅读+对比报告(11-15 新标准恢复)
+923	1789106338537_v9zug					kanban app session (.cline/apps/kanban/), not cline coding session, REJECT peek 	待定	不可造	无真实用户意图: kanban app 非 cline coding 会话
+925	1787636335993_qe1va					peeked-r434:not-clean-B-produce	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+926	1789031072098_3tnys					peeked-r434:not-clean-B-produce	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+927	1792467113057_ny0wi					peeked-r434:not-clean-B-produce	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+928	1792490112659_zhp1c					peeked-r434:not-clean-B-produce	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+929	1791537680196_nmt8f					peeked-r434:not-clean-B-produce	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+930	1792397227578_q4d8h					peeked-r434:not-clean-B-produce	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+931	1792548283238_of6ff					peeked-r434:not-clean-B-produce	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+932	1792630583637_kjibr					peeked-r434:not-clean-B-produce	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+933	1789993978842_q63ux	yiz	hfeg0pgn145	248	spice_sim	peeked-r435:waveform-toggle-read-ncsim-trn-not-B-produce	待定	不可造	wrong-shard-for-B: ncsim 波形属 D 域
+935	1792564968145_q16oz	t0002801	hfeg0plg99	102	spice_sim	peeked-r435:waveform-image-merge-iwave-not-B-produce	待定	不可造	wrong-shard-for-B: waveform 属 D 域
+936	1790236401918_27c6f	jason17w	hfeg0pnd002	187	spice_sim	peeked-r435:ddr-lpddr-regression-run-verify-not-B-produce	待定	不可造	wrong-shard-for-B: regression verify 属 A 域
+939	1791791403952_lvack	e0039602	hfeg0pkn002	10	spice_sim	deepread: wavecompare_simple project (HSPICE fail/pass FSDB waveform compare EQ/	待定	可造	analysis: HSPICE 波形对比 EQ 分析(11-15 新标准恢复)
+942	1785805971045_pjfj6					Aether-setup session (non-B, peeked r473): aether:270-307 dominant, hspice:8 tra	待定	不可造	wrong-shard-for-B: aether 主导属 C 域
+943	1785807285227_lilm3					Aether-setup session (non-B, peeked r473): aether:270-307 dominant, hspice:8 tra	待定	不可造	wrong-shard-for-B: aether 主导属 C 域
+944	1785807113859_qpmab					Aether-setup session (non-B, peeked r473): aether:270-307 dominant, hspice:8 tra	待定	不可造	wrong-shard-for-B: aether 主导属 C 域
+945	1785748618878_xdsvm					Aether-setup session (non-B, peeked r473): aether:270-307 dominant, hspice:8 tra	待定	不可造	wrong-shard-for-B: aether 主导属 C 域
+946	1789717846934_5laiw					meta/test session (non-B, peeked r473): user asks 'what model are you'/'who are 	待定	不可造	无真实用户意图: meta 测试会话
+947	1792042227278_opiso					meta/test session (non-B, peeked r473): user asks 'what model are you'/'who are 	待定	不可造	无真实用户意图: meta 测试会话
+948	1793238915568_4u64s					greeting/meta test session (hi/你好 first msgs), non-B	待定	不可造	无真实用户意图: 问候/meta 测试
+951	sessions.index					peek: non-B-dominant (netlist/drc/aether, spice density <6%)	待定	不可造	wrong-shard-for-B: 非 spice_char 主导
+952	1789462115306_x2l1c					peek: non-B-dominant (netlist/drc/aether, spice density <6%)	待定	不可造	wrong-shard-for-B: 非 spice_char 主导
+953	1789883369982_reaxa					peek: non-B-dominant (netlist/drc/aether, spice density <6%)	待定	不可造	wrong-shard-for-B: 非 spice_char 主导
+954	1792215350755_xusb9					peek: non-B-dominant (netlist/drc/aether, spice density <6%)	待定	不可造	wrong-shard-for-B: 非 spice_char 主导
+960	1794384639913_dyu61	marryma	10.129.35.68	426	spice_sim	non-B mislabel: SKILL/PDK code-reading (list_allowed_files+read_files only, no s	待定	不可造	wrong-shard-for-B: 纯 skill 代码阅读无 sim
+961	1794459781454_dgo3h.messages.json					non-B mislabel: PDK HL_hspice model library usage guide + example deck gen, hspi	待定	可造	explain-Q&A: PDK hspice 模型库用法(11-15 新标准恢复, hspice 存在)
+975	1794486098997_xziue	joeyl	hfeg0pkn004	111	spice_sim	r506: P-004 repeat — joeyl WCK CML divider tuning (U0 'WCK整体链路...前三级cml没优化好' + H	待定	不可造	dup: P-004 cluster 已有 case
+976	1794559963037_mjde5	e0044131	hfeg0pkn003	641	spice_sim	context-paste SRAM building summary, first msg not a task	待定	不可造	无真实用户意图: 上下文粘贴首轮非任务
+977	1794557926672_b3z68	e0039816	hfeg0pkn001	405	spice_sim	context-setting 'answer in Chinese', schematic/pyAether dominant	待定	不可造	无真实用户意图: 上下文设置非任务
+980	1794559210459_ct4gh	alexli	hfeg0pkn004	1649	spice_sim	interactive job-polling/monitoring (cluster PEND), not produce-task	待定	不可造	无真实用户意图: 作业监控非任务
+984	1794551152849_i2ubt	joeyl	hfeg0pkn004	630	spice_sim	P-004 joeyl WCK cluster sibling	待定	不可造	dup: joeyl WCK cluster 已有 case
+986	1794555552139_myisk	joeyl	hfeg0pkn004	356	spice_sim	P-004 joeyl WCK bias (ngrdc sibling, ratio0.956 same netlist194+hspice194)	待定	不可造	dup: joeyl WCK cluster 已有 case
+987	1794557266556_79wy5	e0039816	hfeg0pkn001	107	spice_sim	context-setting 'answer in Chinese', schematic/pyAether	待定	不可造	无真实用户意图: 上下文设置非任务
+988	1794547075294_ad825	joeyl	hfeg0pkn004	367	spice_sim	P-004 joeyl WCK cluster sibling	待定	不可造	dup: joeyl WCK cluster 已有 case
+989	1794550148719_diznh	jiangbaol	hfeg0pkn004	838	spice_sim	jiangbaol P-004 cluster sibling (0xbsc)	待定	不可造	dup: P-004 cluster 已有 case
+999	1794532519466_3qout					joeyl:file gone (r516 已判)	待定	不可造	无真实 trace: session 文件已消失 (criterion 1)
+1000	1794538116856_7s3gj					joeyl:file not found on .75	待定	不可造	无真实 trace: .75 上文件不存在 (criterion 1)
+1005	1794531171412_btp20					chjh07:IT troubleshooting (csh set/module load 卡住)	待定	可造	env-config: IT/csh/module 排障(11-15 新标准恢复)
+1006	1794374152243_0bhj0					bensonh:waveform GUI viewing (打开 vgrden 波形)	待定	不可造	wrong-shard-for-B: waveform 属 D 域
+1008	1794539336252_x67j4	t0002609	hfeg0pkn004	76	spice_sim	r526 peek: USER#0 agent-policy writableRoot write-test = env-policy testing not 	待定	不可造	无真实用户意图: 策略测试
+1012	1794375714680_dx87n					r528 deepread 22msgs: sch->netlist extract P2STopM5 but msg21 pyAether sandbox c	待定	待定	hint 无法按规则决断: 需深读 trace 判定
+1021	1794535889484_t59qe					r531 peek session file gone on pkn004 (joeyl P-004 cluster) REJECT	待定	不可造	无真实 trace: session 文件已消失 (criterion 1)
+1033	1794548435602_2kj3r					r533 daily-log NEW; Python xval_tool debug, not B-domain	待定	不可造	wrong-shard-for-B: 非 B 域
+1034	1794567660912_43b70					r533 daily-log NEW; USER#0=你好 greeting, low-signal not B produce	待定	不可造	无真实用户意图: 问候
+1043	1794552735950_6jrrg					waveview waveform open (cross-domain shard D)	待定	不可造	wrong-shard-for-B: waveview 属 D 域
+1044	1794630329700_sclqx					non-produce session (cd ~/.agents)	待定	不可造	无真实用户意图: cd ~/.agents 非任务
+1045	1794550233229_egiyo	e0048410	hfeg0plg98	29	characterization	non-produce: 'hello' test session, not a real EDA task	待定	不可造	无真实用户意图: hello 测试会话

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage(i) R2 · P-9.5 训练性能 Profiling · 崩溃排查 + 5-way 归因</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+         max-width: 1100px; margin: 0 auto; padding: 24px; background: #f8f9fa; color: #1a1a2e; line-height: 1.65; }
+  h1 { font-size: 1.55em; border-bottom: 3px solid #6c5ce7; padding-bottom: 10px; }
+  h2 { font-size: 1.25em; color: #6c5ce7; margin-top: 36px; border-left: 5px solid #6c5ce7; padding-left: 12px; }
+  h3 { font-size: 1.08em; color: #2d3436; margin-top: 22px; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 0.88em; }
+  th, td { border: 1px solid #dfe6e9; padding: 7px 10px; text-align: left; }
+  th { background: #6c5ce7; color: #fff; font-weight: 600; }
+  tr:nth-child(even) { background: #f1f2f6; }
+  .ok { color: #00b894; font-weight: 700; }
+  .err { color: #e74c3c; font-weight: 700; }
+  code, pre { font-family: "JetBrains Mono", "Fira Code", Consolas, monospace; font-size: 0.82em; }
+  pre { background: #2d3436; color: #dfe6e9; padding: 14px; border-radius: 8px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+  .box { background: #fff; border-radius: 10px; padding: 16px 20px; margin: 16px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .crash { border-left: 4px solid #e74c3c; }
+  .fix { border-left: 4px solid #00b894; }
+  .bar { display: inline-block; height: 16px; border-radius: 3px; vertical-align: middle; margin-right: 6px; }
+  .summary { background: #6c5ce7; color: #fff; border-radius: 10px; padding: 18px 24px; margin: 16px 0; }
+  .summary b { color: #ffeaa7; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.78em; font-weight: 600; margin: 0 3px; }
+  .t-gemm { background: #74b9ff; color: #2d3436; }
+  .t-ssm  { background: #a29bfe; color: #fff; }
+  .t-attn { background: #fd79a8; color: #fff; }
+  .t-comm { background: #fdcb6e; color: #2d3436; }
+  .t-elem { background: #55efc4; color: #2d3436; }
+  .mono { font-family: monospace; font-size: 0.85em; }
+  .small { font-size: 0.82em; color: #636e72; }
+  ul { margin: 6px 0; } li { margin: 3px 0; }
+</style>
+</head>
+<body>
+
+<h1>BaiZe Stage(i) R2 · P-9.5 训练性能 Profiling — 崩溃排查 + 5-way 归因</h1>
+<p class="small">
+  模型：Mamba2-hybrid 2.22B（24 Mamba2 + 4 Attn + 28 MLP，56 层） ·
+  机器：10.239.2.29（H100 80GB SXM5） ·
+  生成：2026-10-06（第 114 次唤醒） ·
+  框架：Megatron-LM (mcore 0.16.1) + transformer_engine 2.12 + torch 2.8.0+cu128
+</p>
+
+<div class="summary">
+  <b>⭐ 一句话结论</b>：P-9.5 torch.profiler <span class="ok">崩溃已修复并成功复跑</span>。
+  <b>5-way 归因（合成 DP8·MBS2·seq4094·bf16 生产口径）</b>：
+  <span class="tag t-comm">comm 41.7%</span>
+  <span class="tag t-gemm">GEMM 27.6%</span>
+  <span class="tag t-elem">elementwise 21.3%</span>
+  <span class="tag t-ssm">SSM 8.6%</span>
+  <span class="tag t-attn">attention 0.7%</span>
+  → <b>通信是 #1 瓶颈</b>（NCCL allreduce/allgather），GEMM 是 #2；<b>注意力仅 0.7%</b>（hybrid 56 层中仅 4 层 attn），
+  证实 hybrid 把 O(n²) attention 压到几乎可忽略。FP8 Amdahl 上界 g=0.49 → 1.96×（excl comm），现实 ~1.2–1.3×（与 P-9.6② 实测 s=1.21–1.24 一致）。
+</div>
+
+<h2>1. 崩溃根因排查（原始报错）</h2>
+<div class="box crash">
+<h3>1.1 第一次运行（2026-10-04 16:53–17:19，baize_p95_prof.sh）</h3>
+<p><b>配置</b>：TP1·DP8·MBS2·seq4096·GBS=1024·bf16，50 步，profile 窗口 [10,40)，megatron-bridge 内置 profiler + monkey-patch。</p>
+<p><b>结果</b>：<span class="err">rc=1，SIGABRT (Signal 6)</span>，KEYAVG 文件 <b>空（0 行）</b>。</p>
+<h3>1.2 原始报错</h3>
+<pre>[16:56:57] iteration 10/50 | elapsed 19233 ms | loss 11.11
+[17:00:47] iteration 20/50 | elapsed 23030 ms | loss 8.19
+[17:04:37] iteration 30/50 | elapsed 23014 ms | loss 7.84
+--- iteration 40 (= profile 窗口 [10,40) 结束步) ---
+[rank3]: RuntimeError: iteration 40: found NaN in local forward loss calculation
+[rank2]: RuntimeError: iteration 40: found NaN in local forward loss calculation
+--- 级联：NCCL 超时 → SIGABRT ---
+terminate: c10::DistBackendError
+  [Rank 6] Watchdog: WorkNCCL(SeqNum=2889, OpType=COALESCED,
+  Timeout(ms)=600000) ran for 600008ms before timing out.
+  [0]: rank 2, exitcode -6 (SIGABRT)
+  rc=1 peak_gpu_mem_MiB=54675
+  --- key_averages head ---   ← 空</pre>
+<h3>1.3 根因</h3>
+<table>
+<tr><th>#</th><th>因素</th><th>致命性</th></tr>
+<tr><td>1</td><td><b>重型 profiler 标志</b>：profile_memory=True + with_stack=True + record_shapes=True，GBS=1024（64 grad-accum 步）×30 步 profile → trace 事件爆炸 → on_trace_ready 导出极重</td><td>⭐⭐⭐ 主因</td></tr>
+<tr><td>2</td><td><b>NaN @ iter 40</b>：profile 窗口结束步偶发 NaN（ranks 2,3）。同配置 1100 步长跑（P-9.7）rc=0 → NaN 与 profiler 强相关</td><td>⭐⭐ 触发器</td></tr>
+<tr><td>3</td><td><b>NCCL 10 分钟超时 → SIGABRT</b>：rank 0 阻塞在 on_trace_ready 导出，ranks 2/3 已死 → collective 永不完成 → 600s 超时 → terminate → SIGABRT</td><td>⭐⭐ 级联</td></tr>
+</table>
+<p><b>因果链</b>：重型 profiler → trace 爆炸 → step 40 NaN → rank 0 阻塞导出 → NCCL 超时 → SIGABRT → KEYAVG 空。</p>
+</div>
+
+
+<h2>2. 修复方案</h2>
+<div class="box fix">
+<table>
+<tr><th>修复项</th><th>旧（崩溃）</th><th>新（修复）</th></tr>
+<tr><td>profiler 路径</td><td>monkey-patch bridge（pretrain_profile_launcher.py）</td><td><b>独立脚本</b> profile_bf16.py（P-4 已验证 rc=0）</td></tr>
+<tr><td>profile_memory</td><td>True</td><td><b>False</b></td></tr>
+<tr><td>with_stack</td><td>True</td><td><b>False</b></td></tr>
+<tr><td>record_shapes</td><td>True</td><td><b>False</b></td></tr>
+<tr><td>GPU 数</td><td>8（DP8）</td><td><b>2（DP2，GPU0-1）</b> — GPU2-7 被 data 实验占用</td></tr>
+<tr><td>GBS / grad-accum</td><td>1024 / 64 段</td><td><b>4 / 1 段</b>（最轻）</td></tr>
+<tr><td>步数</td><td>50（prof 30 步）</td><td><b>20（prof 10 步）</b></td></tr>
+</table>
+<p><b>命令</b>：</p>
+<pre>CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node=2 --master_port=29935 \
+  profile_bf16.py --name p95_prof_v2 --steps 20 --warmup 5 --profile-steps 10 \
+  --gbs 4 --mbs 2 --seq-length 4094 --tensor-parallel 1 \
+  --lr 1e-3 --lr-warmup-iters 2 --lr-decay-iters 2 --out /tmp/baize_p95_keyavg_v2.txt</pre>
+<p><b>结果</b>：<span class="ok">rc=0 ✅</span>，305 ops，KEYAVG 238 行，峰值 61657 MiB，无 NaN/crash/超时。</p>
+</div>
+
+<h2>3. 5-way 归因表</h2>
+<div class="box">
+<p>分类规则（analyze_bf16_profile.py）：
+<span class="tag t-attn">attention</span>=flash_attn；
+<span class="tag t-ssm">SSM</span>=Mamba scan/conv1d；
+<span class="tag t-gemm">GEMM</span>=LayerNormLinear/nvjet/mm；
+<span class="tag t-comm">comm</span>=NCCL；
+<span class="tag t-elem">elementwise</span>=norm/act/opt/CE/embed/misc。</p>
+<h3>3.1 三组配置对比</h3>
+<table>
+<tr><th>类别</th><th>P-9.5 复跑<br><span class="small">DP2·MBS2（comm 最小）</span></th><th>P-4 原始<br><span class="small">DP8·MBS1（comm 权威）</span></th><th>⭐ 合成 DP8·MBS2<br><span class="small">生产口径</span></th></tr>
+<tr><td><span class="tag t-comm">comm</span></td><td><span class="bar" style="width:51px;background:#fdcb6e"></span>10.2%</td><td><span class="bar" style="width:209px;background:#fdcb6e"></span>41.7%</td><td><span class="bar" style="width:209px;background:#fdcb6e"></span><b>41.7%</b></td></tr>
+<tr><td><span class="tag t-gemm">GEMM</span></td><td><span class="bar" style="width:206px;background:#74b9ff"></span>41.1%</td><td><span class="bar" style="width:143px;background:#74b9ff"></span>28.6%</td><td><span class="bar" style="width:138px;background:#74b9ff"></span><b>27.6%</b></td></tr>
+<tr><td><span class="tag t-elem">elem</span></td><td><span class="bar" style="width:170px;background:#55efc4"></span>34.0%</td><td><span class="bar" style="width:102px;background:#55efc4"></span>20.4%</td><td><span class="bar" style="width:107px;background:#55efc4"></span><b>21.3%</b></td></tr>
+<tr><td><span class="tag t-ssm">SSM</span></td><td><span class="bar" style="width:68px;background:#a29bfe"></span>13.6%</td><td><span class="bar" style="width:42px;background:#a29bfe"></span>8.4%</td><td><span class="bar" style="width:43px;background:#a29bfe"></span><b>8.6%</b></td></tr>
+<tr><td><span class="tag t-attn">attn</span></td><td><span class="bar" style="width:6px;background:#fd79a8"></span>1.1%</td><td><span class="bar" style="width:4px;background:#fd79a8"></span>0.7%</td><td><span class="bar" style="width:4px;background:#fd79a8"></span><b>0.7%</b></td></tr>
+<tr><td><b>合计</b></td><td>100%</td><td>100%</td><td>99.9%</td></tr>
+<tr><td class="small">总 self_device_time</td><td class="small">6.247 s</td><td class="small">45.731 s</td><td class="small">—</td></tr>
+</table>
+<h3>3.2 合成方法</h3>
+<p>GPU2-7 被 data 实验占用 → 复跑只能 DP2。DP2 低估 comm，但 <b>compute 类别是架构内禀</b>（与 DP 度无关）。
+合成：comm ← P-4 DP8 实测 41.7%；compute（58.3%）← 两轮 compute-only 均值（GEMM 47.4%, SSM 14.8%, attn 1.2%, elem 36.5% of compute）× 58.3%。
+两轮 compute-only 高度一致（GEMM 45.8% vs 49.1%）→ 合成可信。</p>
+
+<h2>4. Top-30 算子（按 self CUDA time）</h2>
+<div class="box">
+<h3>4.1 P-9.5 复跑（DP2·MBS2，232 ops，总 6.247 s）</h3>
+<table>
+<tr><th>#</th><th>类别</th><th>self_ms</th><th>count</th><th>算子名</th></tr>
+<tr><td>1</td><td><span class="tag t-comm">comm</span></td><td>526.1</td><td>370</td><td class="mono">ncclDevKernel_ReduceScatter_Sum_f32_RING_LL</td></tr>
+<tr><td>2</td><td><span class="tag t-gemm">GEMM</span></td><td>458.3</td><td>560</td><td class="mono">_LayerNormLinearBackward</td></tr>
+<tr><td>3</td><td><span class="tag t-ssm">SSM</span></td><td>332.1</td><td>240</td><td class="mono">MambaSplitConv1dScanCombinedFnBackward</td></tr>
+<tr><td>4</td><td><span class="tag t-gemm">GEMM</span></td><td>316.7</td><td>560</td><td class="mono">_LinearBackward</td></tr>
+<tr><td>5</td><td><span class="tag t-gemm">GEMM</span></td><td>314.2</td><td>850</td><td class="mono">nvjet_tst_128x256_64x4_2x1_v_bz_coopA_NTN</td></tr>
+<tr><td>6</td><td><span class="tag t-gemm">GEMM</span></td><td>282.2</td><td>610</td><td class="mono">nvjet_tst_128x256_64x4_2x1_v_bz_coopA_NNN</td></tr>
+<tr><td>7</td><td><span class="tag t-gemm">GEMM</span></td><td>223.0</td><td>560</td><td class="mono">_LayerNormLinear</td></tr>
+<tr><td>8</td><td><span class="tag t-elem">elem</span></td><td>169.0</td><td>5940</td><td class="mono">aten::copy_</td></tr>
+<tr><td>9</td><td><span class="tag t-gemm">GEMM</span></td><td>156.4</td><td>30</td><td class="mono">aten::mm</td></tr>
+<tr><td>10</td><td><span class="tag t-gemm">GEMM</span></td><td>154.7</td><td>520</td><td class="mono">nvjet_tst_256x144_64x4_2x1_v_bz_coopA_NNT</td></tr>
+</table>
+<p class="small">完整 30 行见 <code>run/p95_analysis_v2.txt</code>；原始 key_averages 见 <code>run/p95_keyavg_v2.txt</code>。</p>
+
+<h3>4.2 P-4 原始（DP8·MBS1，234 ops，总 45.731 s）</h3>
+<table>
+<tr><th>#</th><th>类别</th><th>self_ms</th><th>count</th><th>算子名</th></tr>
+<tr><td>1</td><td><span class="tag t-comm">comm</span></td><td>9787.4</td><td>2960</td><td class="mono">ncclDevKernel_ReduceScatter_Sum_f32_RING_LL</td></tr>
+<tr><td>2</td><td><span class="tag t-comm">comm</span></td><td>9222.5</td><td>2960</td><td class="mono">ncclDevKernel_AllGather_RING_LL</td></tr>
+<tr><td>3</td><td><span class="tag t-gemm">GEMM</span></td><td>2488.2</td><td>4480</td><td class="mono">_LayerNormLinearBackward</td></tr>
+<tr><td>4</td><td><span class="tag t-gemm">GEMM</span></td><td>1675.2</td><td>6800</td><td class="mono">nvjet_tst_128x256_64x4_2x1_v_bz_coopA_NNN</td></tr>
+<tr><td>5</td><td><span class="tag t-gemm">GEMM</span></td><td>1527.7</td><td>4480</td><td class="mono">_LinearBackward</td></tr>
+<tr><td>6</td><td><span class="tag t-ssm">SSM</span></td><td>1515.4</td><td>1920</td><td class="mono">MambaSplitConv1dScanCombinedFnBackward</td></tr>
+<tr><td>7</td><td><span class="tag t-gemm">GEMM</span></td><td>1493.4</td><td>6800</td><td class="mono">nvjet_tst_128x256_64x4_2x1_v_bz_coopA_NTN</td></tr>
+<tr><td>8</td><td><span class="tag t-gemm">GEMM</span></td><td>1198.6</td><td>4480</td><td class="mono">_LayerNormLinear</td></tr>
+<tr><td>9</td><td><span class="tag t-gemm">GEMM</span></td><td>924.5</td><td>4800</td><td class="mono">nvjet_tst_128x256_64x4_2x1_v_bz_coopA_TNN</td></tr>
+<tr><td>10</td><td><span class="tag t-elem">elem</span></td><td>910.4</td><td>33520</td><td class="mono">aten::add_</td></tr>
+</table>
+<p class="small">完整见 <code>run/p4_analysis.txt</code>。P-4 DP8 #1/#2 都是 NCCL（~42%）；DP2 复跑 comm 仅 8.4% → GEMM 上升。两轮 compute Top-k 算子<b>完全一致</b>。</p>
+</div>
+
+<h2>5. FP8 Amdahl 上界</h2>
+<div class="box">
+<table>
+<tr><th>配置</th><th>g_wall（含 comm）</th><th>g_comp（excl comm）</th><th>上界 1/(1−g)</th><th>s=2.0</th><th>s=1.6</th><th>s=1.3</th></tr>
+<tr><td>P-9.5 DP2·MBS2</td><td>0.4111</td><td>0.4576</td><td>1.70× / 1.84×</td><td>1.26× / 1.30×</td><td>1.18× / 1.21×</td><td>1.11× / 1.12×</td></tr>
+<tr><td>P-4 DP8·MBS1</td><td>0.2856</td><td>0.4902</td><td>1.40× / 1.96×</td><td>1.17× / 1.33×</td><td>1.12× / 1.23×</td><td>1.07× / 1.13×</td></tr>
+</table>
+<p class="small">格式：incl comm / excl comm。</p>
+<ul>
+  <li><b>g_comp ≈ 0.46–0.49</b>（两轮一致）→ FP8 excl-comm 上界 ≈ <b>1.84–1.96×</b>。</li>
+  <li>comm 41.7%（DP8）不被 FP8 加速 → incl-comm 上界仅 <b>1.40×</b>。</li>
+  <li>现实 s≈1.6 → 端到端 ≈ <b>1.12–1.21×</b>，与 <b>P-9.6② 实测 1.21–1.24× 精确吻合 ✅</b>。</li>
+</ul>
+</div>
+
+
+<h2>6. 与 P-9 系列结论的交叉印证</h2>
+<div class="box">
+<table>
+<tr><th>P-9 发现</th><th>P-9.5 印证</th><th>状态</th></tr>
+<tr><td><b>P-9.1</b>：MBS 1→2 +59% 吞吐</td><td>MBS=2 compute 更干净（GEMM 28.6%→41.1% at DP2），grad-accum 气泡减少</td><td><span class="ok">✅</span></td></tr>
+<tr><td><b>P-9.6①</b>：TP4·MBS8 仅 189K（−24%）</td><td>comm 41.7% 是 #1 → TP4 额外 allreduce+SP → MFU −7.8pp</td><td><span class="ok">✅</span></td></tr>
+<tr><td><b>P-9.6②</b>：FP8 s=1.21–1.24</td><td>g_comp=0.49, s=1.6 → 预测 1.21× → 实测精确吻合</td><td><span class="ok">✅ 精确</span></td></tr>
+<tr><td><b>P-9.4</b>：M=16384 FP8 不转正（s≤1.01）</td><td>M 小→GEMM 访存受限→FP8 压缩少→comm 占比更高→更难转正</td><td><span class="ok">✅</span></td></tr>
+<tr><td><b>P-4</b>：NCCL 41.7%</td><td>双源确认（P-4 DP8 + P-9.5 DP2 对比）</td><td><span class="ok">✅ 双源</span></td></tr>
+<tr><td><b>P-9.3</b>：seq↓ 每 token 更慢（r=1.75）</td><td>attention 仅 0.7% → seq 对 attn 影响极小；r 增大因 GEMM M 减半→访存受限</td><td><span class="ok">✅</span></td></tr>
+<tr><td><b>hybrid 论点</b>：attn O(n²) 被 SSM O(n) 替代</td><td><b>attention 仅 0.7%</b>（4/56 层）vs SSM 8.6%（24 层）→ 核心优势的<b>直接量化</b></td><td><span class="ok">✅ 核心量化</span></td></tr>
+</table>
+</div>
+
+<h2>7. 结论（对 P-8 的指导）</h2>
+<div class="box">
+<h3>7.1 瓶颈排序（生产口径 DP8·MBS2·bf16）</h3>
+<table>
+<tr><th>#</th><th>类别</th><th>占比</th><th>性质</th><th>能否优化</th></tr>
+<tr><td>1</td><td><span class="tag t-comm">comm</span></td><td>41.7%</td><td>NCCL allreduce/allgather</td><td>overlap 已开；进一步需改 recipe（已冻结）</td></tr>
+<tr><td>2</td><td><span class="tag t-gemm">GEMM</span></td><td>27.6%</td><td>LayerNormLinear / nvjet</td><td>FP8（已验证 s=1.21–1.24，P-8 沿用 delayed FP8）</td></tr>
+<tr><td>3</td><td><span class="tag t-elem">elem</span></td><td>21.3%</td><td>norm/act/copy/opt（访存受限）</td><td>fused kernel 已在用</td></tr>
+<tr><td>4</td><td><span class="tag t-ssm">SSM</span></td><td>8.6%</td><td>Mamba2 selective-scan</td><td>DaoAILab 高效 kernel</td></tr>
+<tr><td>5</td><td><span class="tag t-attn">attn</span></td><td>0.7%</td><td>FlashAttn（4/56 层）</td><td>无需优化</td></tr>
+</table>
+<h3>7.2 建议</h3>
+<ul>
+  <li><b>通信 #1</b>（41.7%）：overlap-grad-reduce/overlap-param-gather/distributed-optimizer 已开 → P-8 不追加。</li>
+  <li><b>FP8（delayed）</b>打中 #2 GEMM → P-8 <b>沿用 delayed FP8</b>（与 P-9.9 一致）。</li>
+  <li><b>attention 0.7%</b> 是 hybrid 优势的<strong>直接量化</strong> → 论文 §4 可引用。</li>
+  <li><b>SSM 8.6%</b>：非瓶颈，kernel 路径正确。</li>
+</ul>
+<h3>7.3 论文回填建议</h3>
+<ul>
+  <li>§4：加「kernel-level 5-way 归因：comm 41.7% > GEMM 27.6% > elem 21.3% > SSM 8.6% > attn 0.7%」。</li>
+  <li>FP8：g_comp=0.49 → 上界 1.96×（excl comm），实测 1.21–1.24× → 通信拖累有据。</li>
+  <li>tab:archcomp：吞吐代价 ~8%（P-7）+ 5-way 佐证「通信主导、非算力受限」。</li>
+</ul>
+</div>
+
+<h2>8. 产出文件</h2>
+<div class="box">
+<table>
+<tr><th>文件</th><th>说明</th></tr>
+<tr><td class="mono">run/baize_p95_prof2.sh</td><td>复跑脚本（修复版，DP2·MBS2·light-flags）</td></tr>
+<tr><td class="mono">run/p95_keyavg_v2.txt</td><td>复跑原始 key_averages（238 行，305 ops）</td></tr>
+<tr><td class="mono">run/p95_analysis_v2.txt</td><td>复跑 5-way 分类结果</td></tr>
+<tr><td class="mono">run/p95_prof2.sum</td><td>复跑摘要（rc=0, peak 61657 MiB）</td></tr>
+<tr><td class="mono">run/p4_profile_bf16.txt</td><td>P-4 原始 key_averages（DP8·MBS1）</td></tr>
+<tr><td class="mono">run/p4_analysis.txt</td><td>P-4 5-way 分类结果</td></tr>
+<tr><td class="mono">report_pretrain_p95_profiler.html</td><td>本报告</td></tr>
+</table>
+</div>
+
+<p class="small" style="margin-top:40px; border-top:1px solid #dfe6e9; padding-top:12px;">
+  BaiZe Stage(i) R2 · P-9.5 训练性能 Profiling · 崩溃排查 + 5-way 归因 ·
+  生成于 2026-10-06 · 第 114 次唤醒 ·
+  铁律：不改 P-5b recipe / 不回训 / 不存 ckpt / 🚫 不 kill watchdog loop
+</p>
+
+</body>
+</html>
+

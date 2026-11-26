@@ -1,0 +1,13 @@
+{
+  "harness": "claude-code",
+  "run_id": "verified_full_glm53_claude-code_incr_R2235",
+  "round": "R2235",
+  "n": 3,
+  "resolved": [
+    "scikit-learn__scikit-learn-25931",
+    "scikit-learn__scikit-learn-9288",
+    "sphinx-doc__sphinx-10323"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

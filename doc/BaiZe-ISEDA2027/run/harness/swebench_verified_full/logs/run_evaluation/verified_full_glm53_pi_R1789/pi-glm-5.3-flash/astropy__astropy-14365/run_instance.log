@@ -1,0 +1,128 @@
+2026-11-07 21:54:14,716 - INFO - Creating container for astropy__astropy-14365...
+2026-11-07 21:54:14,758 - INFO - Container for astropy__astropy-14365 created: 27480090ff1d037be52121d9d3f1970bf8894215950c7cc7a0fee8def88f2686
+2026-11-07 21:54:15,477 - INFO - Container for astropy__astropy-14365 started: 27480090ff1d037be52121d9d3f1970bf8894215950c7cc7a0fee8def88f2686
+2026-11-07 21:54:15,479 - INFO - Intermediate patch for astropy__astropy-14365 written to logs/run_evaluation/verified_full_glm53_pi_R1789/pi-glm-5.3-flash/astropy__astropy-14365/patch.diff, now applying to container...
+2026-11-07 21:54:15,618 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES.rst...
+warning: CHANGES.rst has type 100755, expected 100644
+Checking patch astropy/io/ascii/qdp.py...
+warning: astropy/io/ascii/qdp.py has type 100755, expected 100644
+Checking patch astropy/io/ascii/tests/test_qdp.py...
+warning: astropy/io/ascii/tests/test_qdp.py has type 100755, expected 100644
+Applied patch CHANGES.rst cleanly.
+Applied patch astropy/io/ascii/qdp.py cleanly.
+Applied patch astropy/io/ascii/tests/test_qdp.py cleanly.
+
+2026-11-07 21:54:16,153 - INFO - Git diff before:
+diff --git a/CHANGES.rst b/CHANGES.rst
+index e20a70581..c07e5f0e4 100755
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -10,6 +10,10 @@ astropy.io.ascii
+ - CDS and MRT tables with units that contain with multiple divisions, such as
+   ``km/s/Mpc`` now parse correctly as being equal to ``km/(s.Mpc)``. [#14369]
+ 
++- Fix ``ascii.qdp`` table reading so that QDP commands are recognized
++  regardless of case, e.g. ``read serr 1 2`` is now accepted in addition to
++  ``READ SERR 1 2``. [#14354]
++
+ astropy.io.fits
+ ^^^^^^^^^^^^^^^
+ 
+diff --git a/astropy/io/ascii/qdp.py b/astropy/io/ascii/qdp.py
+index 83a4f004a..09f233787 100755
+--- a/astropy/io/ascii/qdp.py
++++ b/astropy/io/ascii/qdp.py
+@@ -34,6 +34,8 @@ def _line_type(line, delimiter=None):
+     --------
+     >>> _line_type("READ SERR 3")
+     'command'
++    >>> _line_type("read serr 1 2")
++    'command'
+     >>> _line_type(" \\n    !some gibberish")
+     'comment'
+     >>> _line_type("   ")
+@@ -68,7 +70,7 @@ def _line_type(line, delimiter=None):
+     _new_re = rf"NO({sep}NO)+"
+     _data_re = rf"({_decimal_re}|NO|[-+]?nan)({sep}({_decimal_re}|NO|[-+]?nan))*)"
+     _type_re = rf"^\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})?\s*(\!(?P<comment>.*))?\s*$"
+-    _line_type_re = re.compile(_type_re)
++    _line_type_re = re.compile(_type_re, re.IGNORECASE)
+     line = line.strip()
+     if not line:
+         return "comment"
+diff --git a/astropy/io/ascii/tests/test_qdp.py b/astropy/io/ascii/tests/test_qdp.py
+index ef24e6f6a..d22754a09 100755
+--- a/astropy/io/ascii/tests/test_qdp.py
++++ b/astropy/io/ascii/tests/test_qdp.py
+@@ -137,6 +137,21 @@ def test_read_example():
+ 
+     for col1, col2 in zip(t.itercols(), dat.itercols()):
+         assert np.allclose(col1, col2, equal_nan=True)
++def test_lowercase(tmp_path):
++    """
++    Test that the reader is case-insensitive, e.g. that lowercase
++    ``read serr`` commands are recognized (QDP itself is not case-sensitive).
++    """
++    test_file = tmp_path / "test.qdp"
++    example_qdp = """
++        read serr 1 2
++        1 0.5 1 0.5
++        """
++    test_file.write_text(example_qdp)
++    table = _read_table_qdp(str(test_file), table_id=0)
++    assert table.colnames == ["col1", "col1_err", "col2", "col2_err"]
++    assert np.allclose(table["col1"], [1])
++    assert np.allclose(table["col1_err"], [0.5])
+ 
+ 
+ def test_roundtrip_example(tmp_path):
+2026-11-07 21:54:16,155 - INFO - Eval script for astropy__astropy-14365 written to logs/run_evaluation/verified_full_glm53_pi_R1789/pi-glm-5.3-flash/astropy__astropy-14365/eval.sh; copying to container...
+2026-11-07 21:55:14,720 - INFO - Test runtime: 58.49 seconds
+2026-11-07 21:55:14,722 - INFO - Test output for astropy__astropy-14365 written to logs/run_evaluation/verified_full_glm53_pi_R1789/pi-glm-5.3-flash/astropy__astropy-14365/test_output.txt
+2026-11-07 21:55:14,803 - INFO - Git diff after:
+diff --git a/CHANGES.rst b/CHANGES.rst
+index e20a70581..c07e5f0e4 100755
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -10,6 +10,10 @@ astropy.io.ascii
+ - CDS and MRT tables with units that contain with multiple divisions, such as
+   ``km/s/Mpc`` now parse correctly as being equal to ``km/(s.Mpc)``. [#14369]
+ 
++- Fix ``ascii.qdp`` table reading so that QDP commands are recognized
++  regardless of case, e.g. ``read serr 1 2`` is now accepted in addition to
++  ``READ SERR 1 2``. [#14354]
++
+ astropy.io.fits
+ ^^^^^^^^^^^^^^^
+ 
+diff --git a/astropy/io/ascii/qdp.py b/astropy/io/ascii/qdp.py
+index 83a4f004a..09f233787 100755
+--- a/astropy/io/ascii/qdp.py
++++ b/astropy/io/ascii/qdp.py
+@@ -34,6 +34,8 @@ def _line_type(line, delimiter=None):
+     --------
+     >>> _line_type("READ SERR 3")
+     'command'
++    >>> _line_type("read serr 1 2")
++    'command'
+     >>> _line_type(" \\n    !some gibberish")
+     'comment'
+     >>> _line_type("   ")
+@@ -68,7 +70,7 @@ def _line_type(line, delimiter=None):
+     _new_re = rf"NO({sep}NO)+"
+     _data_re = rf"({_decimal_re}|NO|[-+]?nan)({sep}({_decimal_re}|NO|[-+]?nan))*)"
+     _type_re = rf"^\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})?\s*(\!(?P<comment>.*))?\s*$"
+-    _line_type_re = re.compile(_type_re)
++    _line_type_re = re.compile(_type_re, re.IGNORECASE)
+     line = line.strip()
+     if not line:
+         return "comment"
+2026-11-07 21:55:14,803 - INFO - Git diff changed after running eval script
+2026-11-07 21:55:14,803 - INFO - Grading answer for astropy__astropy-14365...
+2026-11-07 21:55:14,813 - INFO - report: {'astropy__astropy-14365': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['astropy/io/ascii/tests/test_qdp.py::test_roundtrip[True]']}, 'PASS_TO_PASS': {'success': ['astropy/io/ascii/tests/test_qdp.py::test_get_tables_from_qdp_file', 'astropy/io/ascii/tests/test_qdp.py::test_roundtrip[False]', 'astropy/io/ascii/tests/test_qdp.py::test_read_example', 'astropy/io/ascii/tests/test_qdp.py::test_roundtrip_example', 'astropy/io/ascii/tests/test_qdp.py::test_roundtrip_example_comma', 'astropy/io/ascii/tests/test_qdp.py::test_read_write_simple', 'astropy/io/ascii/tests/test_qdp.py::test_read_write_simple_specify_name', 'astropy/io/ascii/tests/test_qdp.py::test_get_lines_from_qdp'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-14365: resolved: False
+2026-11-07 21:55:14,815 - INFO - Attempting to stop container sweb.eval.astropy__astropy-14365.verified_full_glm53_pi_R1789...
+2026-11-07 21:55:31,081 - INFO - Container sweb.eval.astropy__astropy-14365.verified_full_glm53_pi_R1789 stopped successfully.
+2026-11-07 21:55:31,081 - INFO - Attempting to remove container sweb.eval.astropy__astropy-14365.verified_full_glm53_pi_R1789...
+2026-11-07 21:55:31,143 - INFO - Container sweb.eval.astropy__astropy-14365.verified_full_glm53_pi_R1789 removed successfully.

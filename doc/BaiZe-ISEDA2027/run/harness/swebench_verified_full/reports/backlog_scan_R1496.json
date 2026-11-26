@@ -1,0 +1,5 @@
+Total BACKLOG items (real patch, no report.json): 4
+  codex                sympy__sympy-20438                                 patchlen=1216
+  codex                sympy__sympy-20590                                 patchlen=472
+  deepseek-harness     django__django-16145                               patchlen=1211
+  deepseek-harness     django__django-16255                               patchlen=524

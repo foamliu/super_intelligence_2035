@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'><title>BaiZe 项目日报 · 2026-10-13</title><style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:20px;background:#f8f9fa;color:#2c3e50;line-height:1.6}h1{color:#1a1a2e;border-bottom:3px solid #e74c3c;padding-bottom:10px}h2{color:#1a1a2e;border-bottom:1px solid #bdc3c7;padding-bottom:5px;margin-top:30px}table{border-collapse:collapse;width:100%;margin:15px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#2c3e50;color:#fff}tr:nth-child(even){background:#ecf0f1}.green{color:#27ae60;font-weight:bold}.amber{color:#e67e22;font-weight:bold}.red{color:#e74c3c;font-weight:bold}.blue{color:#2980b9;font-weight:bold}.note{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 15px;margin:15px 0;border-radius:4px}.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 15px;margin:15px 0;border-radius:4px}.ok{background:#d4efdf;border-left:4px solid #27ae60;padding:10px 15px;margin:15px 0;border-radius:4px}.warn{background:#fdebd0;border-left:4px solid #e67e22;padding:10px 15px;margin:15px 0;border-radius:4px}footer{text-align:center;color:#7f8c8d;margin-top:40px;font-size:12px;border-top:1px solid #bdc3c7;padding-top:10px}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}</style></head><body>
+<h1>BaiZe 项目日报 · 2026-10-13</h1>
+<p style='color:#7f8c8d'>生成时间：2026-10-13 ~17:05 · 覆盖六线：pretrain / vision / harness / data / zhulong / news</p>
+
+<div class='info'><strong>TL;DR</strong>：<strong>pretrain P-8（AdamW）过半</strong>——step5240/10490（50.0%），loss 2.616 再创新低，健康推进。<strong>vision</strong> 转入<strong>外部编码器 ProtB 横比评测</strong>（5 路并行，ETA ~20:00–21:30）。<strong>harness fix3</strong>（C 扩展 build deps）64 条重评运行中。<strong>data</strong> en_v1_4 48.7% / 85M 69%。<strong>zhulong 今日两次处置</strong>：① 沙盒重启后下发指令(十五)恢复试验；② <strong>定位并修复 loop 静默空转故障</strong>（<code>opencode --dir</code> 已被移除 → 每轮 <code>Unrecognized flag</code> 后误判成功），已改脚本并重启。</div>
+
+<h2>1. 各线状态总览</h2>
+<table><tr><th>线</th><th>阶段</th><th>最新进展</th><th>状态</th></tr>
+<tr><td class='blue'>pretrain</td><td>P-8 AdamW 训练</td><td>step5240/10490（50.0%），loss 2.616 新低，~249K tok/s</td><td class='green'>🟢 健康过半</td></tr>
+<tr><td class='blue'>vision</td><td>外部编码器评测</td><td>④-4ep 收官 67.05%；5 模型 ProtB 横比进行中（ETA ~20:00–21:30）</td><td class='blue'>🔬 评测中</td></tr>
+<tr><td class='blue'>harness</td><td>fix3 重评</td><td>64 条 C 扩展 build deps 修复运行中；fix1+2 已达 617 resolved</td><td class='amber'>🟠 重评中</td></tr>
+<tr><td class='blue'>data</td><td>双路下载</td><td>en_v1_4 48.7% / 85M 69.0%；磁盘 85%，85M 速率下降</td><td class='amber'>🟠 下载中</td></tr>
+<tr><td class='blue'>zhulong</td><td>loop 修复重启</td><td>指令(十五)恢复 + --dir bug 修复 → 待重启后从 phi_k3 r2 继续</td><td class='amber'>🟠 恢复中</td></tr>
+<tr><td class='blue'>news</td><td>常态化采集</td><td>第九十七轮 +7（累计 296）</td><td class='green'>✅ 运行中</td></tr>
+</table>
+
+<h2>2. Pretrain —— P-8 AdamW 过半，loss 2.616 新低 🟢</h2>
+<div class='ok'><strong>P-8 AdamW 从零训练越过中点</strong>：step5240/10490（50.0%，~22.0B/44B token），LR=1e-3 恒定，loss 3.98→2.646→2.616 平滑下降无 spike；grad_norm 0.12–0.17 稳定，0 NaN / 0 skipped，~249K tok/s，8 卡 54-57GB · 96-100% util。</div>
+<table><tr><th>项</th><th>值</th></tr>
+<tr><td>调度</td><td>WSD：warmup 524 ✅ → stable 524→9441（当前 5240）→ decay 9441→10490（共 10490 步 / ~2.0 天）</td></tr>
+<tr><td>checkpoint</td><td>ckpt@1049 + 2098 + 3147 + 4196 已保存（17GB）；next@5245（~已到）；decay 切@9441</td></tr>
+<tr><td>吞吐</td><td>~249K tok/s · torchrun PID 771300（etimes ~24.6h）</td></tr>
+<tr><td>dist_muon 处置</td><td>已停（step8490 loss 2.623 发散）；8 个 ckpt（34GB）留作证据</td></tr>
+</table>
+<div class='ok'><strong>正式训练计划已交付</strong>（<code>report_pretrain_formal_train_plan.html</code>）：全量 MiniCPM5 数据 + en_v1_4 · .12+.29 双机 16 卡 · DP16 · GBS=1024 / LR=1e-3 · 空窗期 5 试验。</div>
+
+<h2>3. Vision —— ④-4ep 收官 + 外部编码器 ProtB 横比 🔬</h2>
+<div class='ok'><strong>④-4ep 全套已完成</strong>：748,404 步 / ~16.8h，final_loss=0.0805；<strong>ProtB 67.05±0.02%</strong>、ProtA 56.70%、zs 40.64%、k-NN 42.35%，四指标一致 +1.7~2.9pp。</div>
+<div class='warn'><strong>④-4ep verdict = MODERATE, DIMINISHING</strong>：67.05% &lt; 70% 胜利阈值；1→2ep +3.03pp、2→4ep +1.68pp → 上行但逼近特征天花板。中文报告 <code>vision/report_vision_final_20261012_zh.html</code> 已交付。</div>
+<div class='info'><strong>外部编码器 ProtB 横比评测运行中</strong>：CLIP / SigLIP2 / AIMv2 / OV2 / RICE 5 模型 × ProtB 3-seed on IN-1K，5 路并行（.12 GPU 3-7）。smoke 全 PASS；吞吐 CLIP 152 / OV2 149 / SigLIP2 116 / AIMv2 103 / RICE 66 img/s；ETA CLIP/OV2 ~2h、RICE ~5h。已修 pyarrow thread contention（<code>pa.set_cpu_count(8)</code>）。产出外部参照 HTML + EXPERIMENTS_VISION §external。</div>
+<div class='note'><strong>已定结论</strong>：V2 Muon 全 LR 坍缩❌（与 AIMv2 objective 不兼容）；V3 全量数据 Δlp=+1.18pp → Null。</div>
+
+<h2>4. Harness —— fix3（C 扩展 build deps）运行中 🟠</h2>
+<div class='ok'><strong>root cause 已定位并修复</strong>：pkg-config `.pc` 文件含完整 host 路径而非 chroot 内部路径 → 沙箱内找不到 qhull/freetype 头文件。修复：`sed` 修正 `.pc` prefix + `r1_eval.py` 注入 <code>CFLAGS/CPPFLAGS/LDFLAGS/PKG_CONFIG_PATH/C_INCLUDE_PATH/CPLUS_INCLUDE_PATH</code> + `--no-build-isolation`。</div>
+<div class='ok'><strong>验证通过</strong>：matplotlib 首条 <code>patch_applied: false→true</code>（78s/条）；全量 64 条后台运行（PID 2127908，<code>--resume</code>）。</div>
+<div class='warn'><strong>累计</strong>：574→617 resolved（29.4%）；剩余 sphinx 8 条 · P1-1 astropy · P1-2 网络 503 + ②b 重跑 —— 等运维拍板。</div>
+
+<h2>5. Data —— 双路下载，85M 速率下降 🟠</h2>
+<table><tr><th>项</th><th>进度</th><th>速率 / ETA</th><th>归属</th></tr>
+<tr><td>en_v1_4（Ultra-FineWeb）</td><td class='blue'>27522/56461（48.7%，55/110 snapshots）</td><td>~10.5MB/s · ETA 3–5 天</td><td>data 线</td></tr>
+<tr><td>85M 多模态（LLaVA-OV-1.5）</td><td class='blue'>8368/12124（69.0%，obelics 77.6%）</td><td>~3.36MB/s 瞬时 / 10.19 avg · ETA 20–61 天 ⚠️</td><td>data 线 retry-loop（PID 2420118）</td></tr>
+<tr><td>GPIC</td><td class='green'>✅ 8160 tar（retry-loop 存活）</td><td>——</td><td>data 线</td></tr>
+<tr><td>R3 分词 / 污染扫描</td><td class='green'>✅ 110/110 · 220K docs 0 命中</td><td>——</td><td>data 线</td></tr>
+</table>
+<div class='warn'><strong>磁盘 / 速率预警</strong>：/nas_train 85%（32T 剩）；85M 瞬时速率降到 3.36MB/s（proxy 503 重启后 ramping），ETA 拉长到 20–61 天；若 85M 下满将达 93.6% 超 90% 红线（~8 天后逼近，届时须停 85M 等运维）。<code>sa1b</code> + <code>zero250m</code> 两子集（≈9.85TB）仍未开始。</div>
+<div class='note'>P-8 数据层已全就绪；en_v1_4 / 85M 均非 44B 档阻塞项，但 en_v1_4 下满须过 <code>check_contamination.py</code> 再报完成。</div>
+
+<h2>6. Zhulong —— loop 静默空转故障定位与修复 🟠</h2>
+<div class='ok'><strong>① 沙盒重启后恢复试验</strong>：下发指令(十五)撤销暂停令，从 phi_k3 r2 继续（r1=72.8% 定稿）。</div>
+<div class='warn'><strong>② 发现 loop 静默空转（今日关键故障）</strong>：zhulong loop 每轮报 <code>ERROR Unrecognized flag: --dir in command opencode run</code>，但 <code>opencode returned (exit 0)</code> → loop 误判「正常」→ <strong>agent 零唤醒、静默空转</strong>（这正是指令(十五)下发后 zhulong 不响应的原因）。根因：<code>zhulong_loop.sh</code> 调 <code>opencode run --dir "$CWD"</code>，而当前 opencode CLI 已移除 <code>--dir</code> 参数。</div>
+<div class='ok'><strong>③ 双副本清理 + 脚本修复</strong>：经 RUN_ID 66 只读体检确认 loop 双副本（464225 + 2302281）、ops relay 双副本（3277328 + 3896331）→ 已各 kill 一个（留 2302281 / 3277328）；修复 <code>--dir</code> → <code>cd "$CWD" &&</code>（commit 99fc71e5）→ 用户已在 36.15 拉取并重启 loop。</div>
+<div class='note'><strong>待确认</strong>：重启后 loop 是否真正恢复推车（日志出现 <code>invoking opencode</code> 且无 <code>Unrecognized flag</code>）→ 从 phi_k3 r2 继续推进 C2。</div>
+
+<h2>7. News & 辅助线</h2>
+<div class='ok'><strong>News（第 17 批 · 第九十七轮）</strong>：累计 296 条（当日 33）；微头条 15:01「导演徐克谈 AI」+ 引流评论 5 条 + 回评 0；粉丝 72 / 微头条 432。</div>
+<div class='ok'><strong>video</strong>：13_外骨骼 R2V 端到端成片（48/48 镜）+ QC 通过；T2V 批量推进。</div>
+
+<h2>8. 今日关键事件回看</h2>
+<table><tr><th>时间</th><th>事件</th></tr>
+<tr><td>~12:43</td><td>vision ④-4ep 全套评测完成（ProtB 67.05% MODERATE/DIMINISHING）</td></tr>
+<tr><td>~14:30</td><td>harness fix3 根因定位（pkg-config host 路径）+ 64 条重评启动</td></tr>
+<tr><td>~14:51</td><td>zhulong RUN_ID 65 杀评测进程（沙盒重启准备）</td></tr>
+<tr><td>~15:37</td><td class='blue'>vision 启动外部编码器 ProtB 横比（5 路并行）</td></tr>
+<tr><td>~16:25</td><td class='amber'>zhulong 下发指令(十五)恢复试验</td></tr>
+<tr><td>~16:49</td><td class='red'>RUN_ID 66 体检发现 zhulong loop/relay 双副本 + loop --dir 静默空转</td></tr>
+<tr><td>~16:57</td><td class='red'>修复 zhulong_loop.sh（--dir → cd）+ 双副本清理；用户拉取重启 loop</td></tr>
+<tr><td>~17:03</td><td>harness auto-commit；data #401 巡检（85M 速率下降告警）</td></tr>
+</table>
+
+<h2>9. 关注 / 风险</h2>
+<ul>
+<li>🔴 <strong>zhulong loop 重启核验</strong>：确认重启后不再 <code>Unrecognized flag: --dir</code>，真正读到任务书、从 phi_k3 r2 继续；若仍 <code>No such file</code> 则 PATH 问题。</li>
+<li>🟠 <strong>data 85M 速率下降</strong>：瞬时 3.36MB/s（proxy 503 重启后），若持续则 ETA 拉长到月级；磁盘逼近 90% 红线（~8 天）。</li>
+<li>🟠 <strong>vision 外部编码器评测（~5h）</strong>：5 路并行占 .12 GPU 3-7，产出外部参照 HTML + §external 记录。</li>
+<li>🟠 <strong>harness fix3 重评（~2–4h）</strong>：完成后出 fix3 报告；sphinx/astropy/网络 503 待拍板。</li>
+<li>🟢 <strong>pretrain P-8</strong>：已过半，紧盯 decay 切@9441，防再次发散。</li>
+</ul>
+
+<footer>BaiZe-ISEDA2027 · 日报 report_10_13.html · 数据来源：各线 MEMORY / git log（截至 2026-10-13 ~17:05）· 生成：Cline</footer>
+</body></html>

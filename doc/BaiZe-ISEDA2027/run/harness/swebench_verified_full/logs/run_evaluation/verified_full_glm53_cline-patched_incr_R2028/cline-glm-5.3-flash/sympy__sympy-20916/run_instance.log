@@ -1,0 +1,176 @@
+2026-11-10 10:14:44,779 - INFO - Creating container for sympy__sympy-20916...
+2026-11-10 10:14:44,814 - INFO - Container for sympy__sympy-20916 created: cf977e7ffe3bc51938654e53c07cc54c75c2b77ae44c5013fd27e68afd5135f5
+2026-11-10 10:14:45,724 - INFO - Container for sympy__sympy-20916 started: cf977e7ffe3bc51938654e53c07cc54c75c2b77ae44c5013fd27e68afd5135f5
+2026-11-10 10:14:45,726 - INFO - Intermediate patch for sympy__sympy-20916 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/sympy__sympy-20916/patch.diff, now applying to container...
+2026-11-10 10:14:45,903 - INFO - >>>>> Applied Patch:
+Checking patch sympy/printing/conventions.py...
+Checking patch sympy/printing/pretty/pretty_symbology.py...
+Checking patch sympy/printing/pretty/tests/test_pretty.py...
+Checking patch sympy/printing/tests/test_conventions.py...
+Applied patch sympy/printing/conventions.py cleanly.
+Applied patch sympy/printing/pretty/pretty_symbology.py cleanly.
+Applied patch sympy/printing/pretty/tests/test_pretty.py cleanly.
+Applied patch sympy/printing/tests/test_conventions.py cleanly.
+
+2026-11-10 10:14:46,595 - INFO - Git diff before:
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index 9a3be6bbe9..fe9d432ee6 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -7,7 +7,9 @@
+ from collections.abc import Iterable
+ from sympy import Derivative
+ 
+-_name_with_digits_p = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
++# A name may consist of any Unicode letters (e.g. Greek letters like ω)
++# followed by trailing digits, which are treated as a subscript.
++_name_with_digits_p = re.compile(r'^([^\W\d_]+)([0-9]+)$', re.UNICODE)
+ 
+ 
+ def split_super_sub(text):
+@@ -27,6 +29,10 @@ def split_super_sub(text):
+     ('a', ['1'], ['x'])
+     >>> split_super_sub('var_sub1__sup_sub2')
+     ('var', ['sup'], ['sub1', 'sub2'])
++    >>> split_super_sub('omega0')
++    ('omega', [], ['0'])
++    >>> split_super_sub('ω0')
++    ('ω', [], ['0'])
+ 
+     """
+     if not text:
+diff --git a/sympy/printing/pretty/pretty_symbology.py b/sympy/printing/pretty/pretty_symbology.py
+index 3f7c4a2dc7..aa89f5b9a1 100644
+--- a/sympy/printing/pretty/pretty_symbology.py
++++ b/sympy/printing/pretty/pretty_symbology.py
+@@ -528,7 +528,7 @@ def translate(s, bold_name) :
+             if s.lower().endswith(key) and len(s)>len(key):
+                 return modifier_dict[key](translate(s[:-len(key)], bold_name))
+         if bold_name:
+-            return ''.join([bold_unicode[c] for c in s])
++            return ''.join([bold_unicode.get(c, c) for c in s])
+         return s
+ 
+     name = translate(name, bold_name)
+diff --git a/sympy/printing/pretty/tests/test_pretty.py b/sympy/printing/pretty/tests/test_pretty.py
+index 42fae775d3..d0a4c1c9f2 100644
+--- a/sympy/printing/pretty/tests/test_pretty.py
++++ b/sympy/printing/pretty/tests/test_pretty.py
+@@ -270,6 +270,12 @@ def test_upretty_greek():
+     assert upretty( Symbol('alpha^+_1') ) == 'α⁺₁'
+     assert upretty( Symbol('beta') ) == 'β'
+     assert upretty(Symbol('lambda')) == 'λ'
++    # subscripts are formatted on Greek letters, both when the name spells
++    # the letter out and when it contains the Greek character itself
++    assert upretty( Symbol('omega0') ) == 'ω₀'
++    assert upretty( Symbol('omega_0') ) == 'ω₀'
++    assert upretty( Symbol('ω0') ) == 'ω₀'
++    assert upretty( Symbol('ω_0') ) == 'ω₀'
+ 
+ 
+ def test_upretty_multiindex():
+@@ -7160,6 +7166,9 @@ def boldpretty(expr):
+     assert boldpretty(omega) == 'ω'
+     omega = MatrixSymbol("omeganorm", 3, 3)
+     assert boldpretty(omega) == '‖ω‖'
++    # bold printing works for names containing Greek characters
++    omega = MatrixSymbol("ω0", 3, 3)
++    assert boldpretty(omega) == 'ω₀'
+ 
+     a = Symbol('alpha')
+     b = Symbol('b')
+diff --git a/sympy/printing/tests/test_conventions.py b/sympy/printing/tests/test_conventions.py
+index 87689aa8fc..41e8a43585 100644
+--- a/sympy/printing/tests/test_conventions.py
++++ b/sympy/printing/tests/test_conventions.py
+@@ -30,6 +30,12 @@ def test_super_sub():
+     assert split_super_sub("alpha_11") == ("alpha", [], ["11"])
+     assert split_super_sub("alpha_11_11") == ("alpha", [], ["11", "11"])
+     assert split_super_sub("") == ("", [], [])
++    # trailing digits are treated as a subscript
++    assert split_super_sub("x1") == ("x", [], ["1"])
++    assert split_super_sub("omega0") == ("omega", [], ["0"])
++    # this also works when the name contains non-ASCII letters like Greek
++    assert split_super_sub("ω0") == ("ω", [], ["0"])
++    assert split_super_sub("ωx1") == ("ωx", [], ["1"])
+ 
+ 
+ def test_requires_partial():
+2026-11-10 10:14:46,610 - INFO - Eval script for sympy__sympy-20916 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/sympy__sympy-20916/eval.sh; copying to container...
+2026-11-10 10:14:50,687 - INFO - Test runtime: 4.00 seconds
+2026-11-10 10:14:50,693 - INFO - Test output for sympy__sympy-20916 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/sympy__sympy-20916/test_output.txt
+2026-11-10 10:14:50,760 - INFO - Git diff after:
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index 9a3be6bbe9..fe9d432ee6 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -7,7 +7,9 @@
+ from collections.abc import Iterable
+ from sympy import Derivative
+ 
+-_name_with_digits_p = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
++# A name may consist of any Unicode letters (e.g. Greek letters like ω)
++# followed by trailing digits, which are treated as a subscript.
++_name_with_digits_p = re.compile(r'^([^\W\d_]+)([0-9]+)$', re.UNICODE)
+ 
+ 
+ def split_super_sub(text):
+@@ -27,6 +29,10 @@ def split_super_sub(text):
+     ('a', ['1'], ['x'])
+     >>> split_super_sub('var_sub1__sup_sub2')
+     ('var', ['sup'], ['sub1', 'sub2'])
++    >>> split_super_sub('omega0')
++    ('omega', [], ['0'])
++    >>> split_super_sub('ω0')
++    ('ω', [], ['0'])
+ 
+     """
+     if not text:
+diff --git a/sympy/printing/pretty/pretty_symbology.py b/sympy/printing/pretty/pretty_symbology.py
+index 3f7c4a2dc7..aa89f5b9a1 100644
+--- a/sympy/printing/pretty/pretty_symbology.py
++++ b/sympy/printing/pretty/pretty_symbology.py
+@@ -528,7 +528,7 @@ def translate(s, bold_name) :
+             if s.lower().endswith(key) and len(s)>len(key):
+                 return modifier_dict[key](translate(s[:-len(key)], bold_name))
+         if bold_name:
+-            return ''.join([bold_unicode[c] for c in s])
++            return ''.join([bold_unicode.get(c, c) for c in s])
+         return s
+ 
+     name = translate(name, bold_name)
+diff --git a/sympy/printing/pretty/tests/test_pretty.py b/sympy/printing/pretty/tests/test_pretty.py
+index 42fae775d3..d0a4c1c9f2 100644
+--- a/sympy/printing/pretty/tests/test_pretty.py
++++ b/sympy/printing/pretty/tests/test_pretty.py
+@@ -270,6 +270,12 @@ def test_upretty_greek():
+     assert upretty( Symbol('alpha^+_1') ) == 'α⁺₁'
+     assert upretty( Symbol('beta') ) == 'β'
+     assert upretty(Symbol('lambda')) == 'λ'
++    # subscripts are formatted on Greek letters, both when the name spells
++    # the letter out and when it contains the Greek character itself
++    assert upretty( Symbol('omega0') ) == 'ω₀'
++    assert upretty( Symbol('omega_0') ) == 'ω₀'
++    assert upretty( Symbol('ω0') ) == 'ω₀'
++    assert upretty( Symbol('ω_0') ) == 'ω₀'
+ 
+ 
+ def test_upretty_multiindex():
+@@ -7160,6 +7166,9 @@ def boldpretty(expr):
+     assert boldpretty(omega) == 'ω'
+     omega = MatrixSymbol("omeganorm", 3, 3)
+     assert boldpretty(omega) == '‖ω‖'
++    # bold printing works for names containing Greek characters
++    omega = MatrixSymbol("ω0", 3, 3)
++    assert boldpretty(omega) == 'ω₀'
+ 
+     a = Symbol('alpha')
+     b = Symbol('b')
+2026-11-10 10:14:50,760 - INFO - Git diff changed after running eval script
+2026-11-10 10:14:50,760 - INFO - Grading answer for sympy__sympy-20916...
+2026-11-10 10:14:50,763 - INFO - report: {'sympy__sympy-20916': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_super_sub']}, 'PASS_TO_PASS': {'success': ['test_requires_partial'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-20916: resolved: False
+2026-11-10 10:14:50,765 - INFO - Attempting to stop container sweb.eval.sympy__sympy-20916.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:15:07,000 - INFO - Container sweb.eval.sympy__sympy-20916.verified_full_glm53_cline-patched_incr_R2028 stopped successfully.
+2026-11-10 10:15:07,000 - INFO - Attempting to remove container sweb.eval.sympy__sympy-20916.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:15:07,060 - INFO - Container sweb.eval.sympy__sympy-20916.verified_full_glm53_cline-patched_incr_R2028 removed successfully.

@@ -1,0 +1,79 @@
+RTEXT / RNODE 标签审计 + 清理报告
+====================================
+工程师  : e0014566  (host hfeg0pkn001)
+版图     : Array16G_B  (auto_austin_case1 / layout)
+用途     : rscalc 电源网络电阻计算前的 RTEXT/RNODE 核验
+工具     : rtext_rnode_audit.py (纯 Python 标准库，离线，可复用)
+
+约定（rscalc_conventions.md）
+-----------------------------
+- RTEXT   = 电源 pad / 源点（rscalc 电阻起点），网络名不带 "!"
+- RNODE   = 检查点（rscalc 电阻终点），网络名不带 "!"
+- drawing = GDS stream-out 网络名标签（带 "!"，如 vblh!），审计一律忽略
+- 打齐判定：每个真实电源网在每个所用图层上 RTEXT>0 且 RNODE>0
+- 垃圾网络：RTEXT>0 但 RNODE==0（调试残留坐标），必须删除
+- 重复 label：同 (layer, purpose, net, x, y) 出现多次，必须删除
+
+一、per-net 审计（全 5 个 net）
+-------------------------------
+net=test2      RTEXT=2  RNODE=0   layers=RDL  verdict=GARBAGE
+net=edit_test  RTEXT=1  RNODE=0   layers=RDL  verdict=GARBAGE
+net=vcc        RTEXT=2  RNODE=11  layers=RDL  verdict=ALIGNED
+net=vss        RTEXT=2  RNODE=11  layers=RDL  verdict=ALIGNED
+net=viso       RTEXT=2  RNODE=9   layers=RDL  verdict=ALIGNED
+
+垃圾网络清单（RTEXT>0 且 RNODE==0）
+-----------------------------------
+- test2      : 打了 2 个 RTEXT 源点却没有 RNODE 检查点，纯调试残留
+- edit_test  : 打了 1 个 RTEXT 源点却没有 RNODE 检查点，纯调试残留
+（若按 void 计数总量，这 3 个垃圾 RTEXT 会被计入总数且无人检查 RNODE==0，
+  从而误报 ALIGNED —— 故必须 per-net 分组判定）
+
+重复 label 清单（同 layer+purpose+net+xy）
+------------------------------------------
+共 9 条重复（RTEXT 3 条 + RNODE 6 条）：
+  (RDL "RTEXT")  "viso"  xy=(15818.6100 -1351.52)   x2 -> 删 1
+  (RDL "RTEXT")  "vss"   xy=(17664.2000 -1351.52)   x2 -> 删 1
+  (RDL "RTEXT")  "vcc"   xy=(17501.0300 -1351.52)   x2 -> 删 1
+  (RDL "RNODE")  "vcc"   xy=(17501.0300 -1351.52)   x3 -> 删 2
+  (RDL "RNODE")  "vss"   xy=(17664.2000 -1351.52)   x3 -> 删 2
+  (RDL "RNODE")  "viso"  xy=(15818.6100 -1351.52)   x3 -> 删 2
+
+二、BEFORE / AFTER 对比
+-----------------------
+BEFORE（清理前，label_inventory_unclean.txt）:
+  verdict = MISALIGNED
+  原因：2 个垃圾网络（test2/edit_test）+ 9 条重复 label
+  计数：garbage_nets=2，duplicate_labels=9
+
+AFTER（清理后，label_inventory_clean.txt）:
+  verdict = ALIGNED
+  结果：仅 vcc/vss/viso 三真实电源网，全部 RTEXT>0 且 RNODE>0，无重复
+  计数：garbage_nets=0，duplicate_labels=0
+  vcc  RTEXT=2 RNODE=11 / vss  RTEXT=2 RNODE=11 / viso  RTEXT=2 RNODE=9
+
+三、建议删除清单（DELETE，带 layer/purpose/net/xy）
+--------------------------------------------------
+垃圾网络（3 条，全部删除）：
+  DELETE (garbage)   (RDL "RTEXT")  "edit_test"  xy=(100.0000 100.00)
+  DELETE (garbage)   (RDL "RTEXT")  "test2"      xy=(0.0000 0.00)
+  DELETE (garbage)   (RDL "RTEXT")  "test2"      xy=(10.0000 10.00)
+
+重复 label（9 条，删除多余副本）：
+  DELETE (duplicate) (RDL "RTEXT")  "viso"  xy=(15818.6100 -1351.52)
+  DELETE (duplicate) (RDL "RTEXT")  "vss"   xy=(17664.2000 -1351.52)
+  DELETE (duplicate) (RDL "RTEXT")  "vcc"   xy=(17501.0300 -1351.52)
+  DELETE (duplicate) (RDL "RNODE")  "vcc"   xy=(17501.0300 -1351.52)
+  DELETE (duplicate) (RDL "RNODE")  "vcc"   xy=(17501.0300 -1351.52)
+  DELETE (duplicate) (RDL "RNODE")  "vss"   xy=(17664.2000 -1351.52)
+  DELETE (duplicate) (RDL "RNODE")  "vss"   xy=(17664.2000 -1351.52)
+  DELETE (duplicate) (RDL "RNODE")  "viso"  xy=(15818.6100 -1351.52)
+  DELETE (duplicate) (RDL "RNODE")  "viso"  xy=(15818.6100 -1351.52)
+
+四、说明
+--------
+- drawing-purpose 标签（24 个 "vblh!"）已按 purpose 过滤排除，不参与 RTEXT/RNODE
+  计数，也不计入重复/垃圾，故不影响 rscalc 审计结果。
+- 清理方式：virtuoso 端 dbDeleteObject 删除上述 12 条 label 后 dbSave，再重扫验证。
+- 复用方式：python3 rtext_rnode_audit.py --inventory <label_dump.txt>
+  退出码：审计完成（无论 ALIGNED/MISALIGNED）一律 0；参数/解析错误非 0。

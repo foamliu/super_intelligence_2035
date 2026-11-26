@@ -1,0 +1,73 @@
+diff --git a/django/db/models/fields/related.py b/django/db/models/fields/related.py
+index c2aea9c73..ea1efd5cc 100644
+--- a/django/db/models/fields/related.py
++++ b/django/db/models/fields/related.py
+@@ -582,7 +582,11 @@ class ForeignObject(RelatedField):
+         if self.remote_field.parent_link:
+             kwargs['parent_link'] = self.remote_field.parent_link
+         if isinstance(self.remote_field.model, str):
+-            kwargs['to'] = self.remote_field.model.lower()
++            if '.' in self.remote_field.model:
++                app_label, model_name = self.remote_field.model.split('.', 1)
++                kwargs['to'] = '%s.%s' % (app_label, model_name.lower())
++            else:
++                kwargs['to'] = self.remote_field.model.lower()
+         else:
+             kwargs['to'] = self.remote_field.model._meta.label_lower
+         # If swappable is True, then see if we're actually pointing to the target
+diff --git a/tests/field_deconstruction/tests.py b/tests/field_deconstruction/tests.py
+index bf00aa44e..a2717937e 100644
+--- a/tests/field_deconstruction/tests.py
++++ b/tests/field_deconstruction/tests.py
+@@ -260,6 +260,18 @@ class FieldDeconstructionTests(SimpleTestCase):
+         self.assertEqual(args, [])
+         self.assertEqual(kwargs, {"to": "auth.permission", "unique": True, "on_delete": models.CASCADE})
+ 
++    def test_foreign_key_mixed_case_app_label(self):
++        """
++        Deconstruction preserves mixed-case app labels (#31716).
++        """
++        field = models.ForeignKey("MiXeD_CaSe.Category", models.CASCADE)
++        name, path, args, kwargs = field.deconstruct()
++        self.assertEqual(kwargs['to'], "MiXeD_CaSe.category")
++        # Cloning shouldn't alter the app label casing.
++        field2 = field.clone()
++        name, path, args, kwargs = field2.deconstruct()
++        self.assertEqual(kwargs['to'], "MiXeD_CaSe.category")
++
+     @override_settings(AUTH_USER_MODEL="auth.Permission")
+     def test_foreign_key_swapped(self):
+         with isolate_lru_cache(apps.get_swappable_settings_name):
+@@ -340,6 +352,17 @@ class FieldDeconstructionTests(SimpleTestCase):
+         self.assertEqual(args, [])
+         self.assertEqual(kwargs, {"to": "auth.permission", "on_delete": models.CASCADE})
+ 
++    def test_one_to_one_mixed_case_app_label(self):
++        """
++        Deconstruction preserves mixed-case app labels (#31716).
++        """
++        field = models.OneToOneField("MiXeD_CaSe.Category", models.CASCADE)
++        name, path, args, kwargs = field.deconstruct()
++        self.assertEqual(kwargs['to'], "MiXeD_CaSe.category")
++        field2 = field.clone()
++        name, path, args, kwargs = field2.deconstruct()
++        self.assertEqual(kwargs['to'], "MiXeD_CaSe.category")
++
+     def test_image_field(self):
+         field = models.ImageField(upload_to="foo/barness", width_field="width", height_field="height")
+         name, path, args, kwargs = field.deconstruct()
+diff --git a/tests/migrations/migrations_test_apps/mixed_case_app/__init__.py b/tests/migrations/migrations_test_apps/mixed_case_app/__init__.py
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/tests/migrations/migrations_test_apps/mixed_case_app/apps.py b/tests/migrations/migrations_test_apps/mixed_case_app/apps.py
+new file mode 100644
+index 000000000..ceee914fa
+--- /dev/null
++++ b/tests/migrations/migrations_test_apps/mixed_case_app/apps.py
+@@ -0,0 +1,6 @@
++from django.apps import AppConfig
++
++
++class MixedCaseAppConfig(AppConfig):
++    name = 'migrations_test_apps.mixed_case_app'
++    label = 'MiXeD_CaSe'

@@ -1,0 +1,14 @@
+{
+  "changed_lines": [
+    {
+      "line_no": 32,
+      "old": "XI37 JudgeN<8> JudgeN_buff vbn! vbp! vcc! vss! / bufLx4",
+      "new": "XI37 JudgeN<8> JudgeN_buff vss! vcc! vcc! vss! / bufLx4"
+    }
+  ],
+  "wellformed": true,
+  "line_count_unchanged": true,
+  "subckt_count": 5,
+  "ends_count": 5,
+  "total_lines": 35
+}

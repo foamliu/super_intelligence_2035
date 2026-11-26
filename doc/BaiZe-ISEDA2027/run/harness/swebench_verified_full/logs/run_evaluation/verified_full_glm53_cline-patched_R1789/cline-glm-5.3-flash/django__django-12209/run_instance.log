@@ -1,0 +1,194 @@
+2026-11-07 20:01:37,468 - INFO - Creating container for django__django-12209...
+2026-11-07 20:01:39,501 - INFO - Removed existing container sweb.eval.django__django-12209.verified_full_glm53_cline-patched_R1789
+2026-11-07 20:01:39,520 - INFO - Container for django__django-12209 created: 6f69bd22b6122cbceab272f8e38b46032a6b6ee11de87fd0ca874cf655e2c27f
+2026-11-07 20:01:40,570 - INFO - Container for django__django-12209 started: 6f69bd22b6122cbceab272f8e38b46032a6b6ee11de87fd0ca874cf655e2c27f
+2026-11-07 20:01:40,571 - INFO - Intermediate patch for django__django-12209 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1789/cline-glm-5.3-flash/django__django-12209/patch.diff, now applying to container...
+2026-11-07 20:01:40,697 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/base.py...
+Checking patch docs/ref/models/instances.txt...
+Checking patch tests/basic/models.py...
+Checking patch tests/basic/tests.py...
+Applied patch django/db/models/base.py cleanly.
+Applied patch docs/ref/models/instances.txt cleanly.
+Applied patch tests/basic/models.py cleanly.
+Applied patch tests/basic/tests.py cleanly.
+
+2026-11-07 2026-11-07 20:01:41,914 - INFO - Git diff before:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index e3b14a41a0..893caf0013 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -849,10 +849,11 @@ class Model(metaclass=ModelBase):
+         updated = False
+         # Skip an UPDATE when adding an instance and primary key has a default.
+         if (
++            not raw and
+             not force_insert and
+             self._state.adding and
+-            self._meta.pk.default and
+-            self._meta.pk.default is not NOT_PROVIDED
++            meta.pk.default and
++            meta.pk.default is not NOT_PROVIDED
+         ):
+             force_insert = True
+         # If possible, try an UPDATE. If that doesn't update anything, do an INSERT.
+diff --git a/docs/ref/models/instances.txt b/docs/ref/models/instances.txt
+index 9345bc0fe0..db2933e902 100644
+--- a/docs/ref/models/instances.txt
++++ b/docs/ref/models/instances.txt
+@@ -465,8 +465,9 @@ How Django knows to UPDATE vs. INSERT
+ 
+ You may have noticed Django database objects use the same ``save()`` method
+ for creating and changing objects. Django abstracts the need to use ``INSERT``
+-or ``UPDATE`` SQL statements. Specifically, when you call ``save()``, Django
+-follows this algorithm:
++or ``UPDATE`` SQL statements. Specifically, when you call ``save()`` and the
++object's primary key attribute does **not** define a
++:attr:`~django.db.models.Field.default`, Django follows this algorithm:
+ 
+ * If the object's primary key attribute is set to a value that evaluates to
+   ``True`` (i.e., a value other than ``None`` or the empty string), Django
+@@ -475,6 +476,11 @@ follows this algorithm:
+   didn't update anything (e.g. if primary key is set to a value that doesn't
+   exist in the database), Django executes an ``INSERT``.
+ 
++If the object's primary key attribute defines a
++:attr:`~django.db.models.Field.default` then Django executes an ``UPDATE`` if
++it is an existing model instance and primary key is set to a value that exists
++in the database. Otherwise, Django executes an ``INSERT``.
++
+ The one gotcha here is that you should be careful not to specify a primary-key
+ value explicitly when saving new objects, if you cannot guarantee the
+ primary-key value is unused. For more on this nuance, see `Explicitly specifying
+diff --git a/tests/basic/models.py b/tests/basic/models.py
+index 7b2b1aee54..6dcdfa90c0 100644
+--- a/tests/basic/models.py
++++ b/tests/basic/models.py
+@@ -46,3 +46,7 @@ class SelfRef(models.Model):
+ 
+ class PrimaryKeyWithDefault(models.Model):
+     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
++
++
++class ChildPrimaryKeyWithDefault(PrimaryKeyWithDefault):
++    pass
+diff --git a/tests/basic/tests.py b/tests/basic/tests.py
+index 5eada343e1..3add466f84 100644
+--- a/tests/basic/tests.py
++++ b/tests/basic/tests.py
+@@ -12,8 +12,8 @@ from django.test import (
+ from django.utils.translation import gettext_lazy
+ 
+ from .models import (
+-    Article, ArticleSelectOnSave, FeaturedArticle, PrimaryKeyWithDefault,
+-    SelfRef,
++    Article, ArticleSelectOnSave, ChildPrimaryKeyWithDefault, FeaturedArticle,
++    PrimaryKeyWithDefault, SelfRef,
+ )
+ 
+ 
+@@ -139,6 +139,12 @@ class ModelInstanceCreationTests(TestCase):
+         with self.assertNumQueries(1):
+             PrimaryKeyWithDefault().save()
+ 
++    def test_save_parent_primary_with_default(self):
++        # An UPDATE attempt is skipped when an inherited primary key has
++        # default.
++        with self.assertNumQueries(2):
++            ChildPrimaryKeyWithDefault().save()
++
+ 
+ class ModelTest(TestCase):
+     def test_objects_attribute_is_only_available_on_the_class_itself(self):
+2026-11-07 20:01:41,915 - INFO - Eval script for django__django-12209 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1789/cline-glm-5.3-flash/django__django-12209/eval.sh; copying to co2026-11-07 2026-11-07 20:01:49,326 - INFO - Test runtime: 7.32 seconds
+2026-11-07 20:01:49,328 - INFO - Test output for django__django-12209 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1789/cline-glm-5.3-flash/django__django-12209/test_output.txt
+2026-11-07 20:01:49,404 - INFO - Git diff after:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index e3b14a41a0..893caf0013 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -849,10 +849,11 @@ class Model(metaclass=ModelBase):
+         updated = False
+         # Skip an UPDATE when adding an instance and primary key has a default.
+         if (
++            not raw and
+             not force_insert and
+             self._state.adding and
+-            self._meta.pk.default and
+-            self._meta.pk.default is not NOT_PROVIDED
++            meta.pk.default and
++            meta.pk.default is not NOT_PROVIDED
+         ):
+             force_insert = True
+         # If possible, try an UPDATE. If that doesn't update anything, do an INSERT.
+diff --git a/docs/ref/models/instances.txt b/docs/ref/models/instances.txt
+index 9345bc0fe0..db2933e902 100644
+--- a/docs/ref/models/instances.txt
++++ b/docs/ref/models/instances.txt
+@@ 2026-11-07 20:01:58,507 - INFO - Container sweb.eval.django__django-12209.verified_full_glm53_cline-patched_R1789 stopped successfully.
+2026-11-07 20:01:58,507 - INFO - Attempting to remove container sweb.eval.django__django-12209.verified_full_glm53_cline-patched_R1789...
+2026-11-07 20:01:58,544 - INFO - Container sweb.eval.django__django-12209.verified_full_glm53_cline-patched_R1789 removed successfully.
+ry key attribute does **not** define a
++:attr:`~django.db.models.Field.default`, Django follows this algorithm:
+ 
+ * If the object's primary key attribute is set to a value that evaluates to
+   ``True`` (i.e., a value other than ``None`` or the empty string), Django
+@@ -475,6 +476,11 @@ follows this algorithm:
+   didn't update anything (e.g. if primary key is set to a value that doesn't
+   exist in the database), Django executes an ``INSERT``.
+ 
++If the object's primary key attribute defines a
++:attr:`~django.db.models.Field.default` then Django executes an ``UPDATE`` if
++it is an existing model instance and primary key is set to a value that exists
++in the database. Otherwise, Django executes an ``INSERT``.
++
+ The one gotcha here is that you should be careful not to specify a primary-key
+ value explicitly when saving new objects, if you cannot guarantee the
+ primary-key value is unused. For more on this nuance, see `Explicitly specifying
+diff --git a/tests/basic/models.py b/tests/basic/models.py
+index 7b2b1aee54..6dcdfa90c0 100644
+--- a/tests/basic/models.py
++++ b/tests/basic/models.py
+@@ -46,3 +46,7 @@ class SelfRef(models.Model):
+ 
+ class PrimaryKeyWithDefault(models.Model):
+     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
++
++
++class ChildPrimaryKeyWithDefault(PrimaryKeyWithDefault):
++    pass
+diff --git a/tests/basic/tests.py b/tests/basic/tests.py
+index 5eada343e1..3add466f84 100644
+--- a/tests/basic/tests.py
++++ b/tests/basic/tests.py
+@@ -12,8 +12,8 @@ from django.test import (
+ from django.utils.translation import gettext_lazy
+ 
+ from .models import (
+-    Article, ArticleSelectOnSave, FeaturedArticle, PrimaryKeyWithDefault,
+-    SelfRef,
++    Article, ArticleSelectOnSave, ChildPrimaryKeyWithDefault, FeaturedArticle,
++    PrimaryKeyWithDefault, SelfRef,
+ )
+ 
+ 
+@@ -139,6 +139,12 @@ class ModelInstanceCreationTests(TestCase):
+         with self.assertNumQueries(1):
+             PrimaryKeyWithDefault().save()
+ 
++    def test_save_parent_primary_with_default(self):
++        # An UPDATE attempt is skipped when an inherited primary key has
++        # default.
++        with self.assertNumQueries(2):
++            ChildPrimaryKeyWithDefault().save()
++
+ 
+ class ModelTest(TestCase):
+     def test_objects_attribute_is_only_available_on_the_class_itself(self):
+2026-11-07 20:01:49,404 - INFO - Grading answer for django__django-12209...
+2026-11-07 20:01:49,405 - INFO - report: {'django__django-12209': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['partial(func, *args, **keywords) - new function with partial application'], 'failure': []}, 'PASS_TO_PASS': {'success': [], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12209: resolved: True
+2026-11-07 20:01:49,407 - INFO - Attempting to stop container sweb.eval.django__django-12209.verified_full_glm53_cline-patched_R1789.1794052898...
+2026-11-07 20:02:05,338 - INFO - Container sweb.eval.django__django-12209.verified_full_glm53_cline-patched_R1789.1794052898 stopped successfully.
+2026-11-07 20:02:05,338 - INFO - Attempting to remove container sweb.eval.django__django-12209.verified_full_glm53_cline-patched_R1789.1794052898...
+2026-11-07 20:02:05,397 - INFO - Container sweb.eval.django__django-12209.verified_full_glm53_cline-patched_R1789.1794052898 removed successfully.

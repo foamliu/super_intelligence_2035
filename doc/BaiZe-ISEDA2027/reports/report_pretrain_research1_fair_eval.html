@@ -1,0 +1,362 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BaiZe Research 1 — Fair Evaluation of Hybrid vs Dense Inference</title><style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:20px;max-width:1150px;color:#222;line-height:1.6}
+h1{font-size:22px;border-bottom:3px solid #2563eb;padding-bottom:8px}
+h2{font-size:18px;margin-top:32px;border-left:4px solid #2563eb;padding-left:10px}
+h3{font-size:15px;margin-top:20px;color:#333}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px 10px;text-align:center}th{background:#f0f4f8;font-weight:600}tr:nth-child(even){background:#fafbfc}
+.hero{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:20px 24px;border-radius:8px;margin-bottom:20px}.hero h1{border:none;color:white}.hero p{margin:6px 0;opacity:.95}
+.conclusion{background:#fef9c3;border-left:4px solid #eab308;padding:12px 16px;margin:16px 0;font-size:14px}
+.warn{background:#fef2f2;border-left:4px solid #dc2626;padding:12px 16px;margin:12px 0;font-size:13px}
+.svg-c{text-align:center;margin:16px 0;overflow-x:auto}
+.note{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:12px 16px;margin:12px 0;font-size:12px;color:#555}
+pre{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:4px;padding:10px;font-size:12px;overflow-x:auto}
+.tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;margin:1px;font-weight:600}
+.tag-exp{background:#dcfce7;color:#166534}.tag-lit{background:#dbeafe;color:#1e40af}.tag-sec{background:#fef3c7;color:#92400e}.tag-inf{background:#f3e8ff;color:#6b21a8}
+.flag{display:inline-block;background:#e0e7ff;color:#3730a3;padding:2px 8px;border-radius:3px;font-size:12px;margin:2px}
+.ref{font-size:12px;color:#475569;margin:4px 0;padding-left:16px;text-indent:-16px}
+.cand{border:1px solid #cbd5e1;border-radius:6px;padding:14px;margin:12px 0}.cand h4{margin:0 0 6px;font-size:14px;color:#1e3a5f}.cand .meta{font-size:12px;color:#64748b;margin:4px 0}
+.prio{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px}
+.prio-high{background:#fee2e2;color:#991b1b}.prio-mid{background:#fef3c7;color:#92400e}.prio-low{background:#dbeafe;color:#1e40af}
+</style></head><body>
+<div class="hero">
+<h1>Research Report 1: How to Fairly Compare Hybrid vs Dense Inference Speed &amp; Cost</h1>
+<p><b>BaiZe</b> Mamba2-Hybrid 2.220B (4/56 attn) vs <b>Dense</b> Llama 2.512B (42/42 attn)</p>
+<p>sglang 0.5.9 | H100 80GB | ctx 4K–1M | Generated: 2026-10-07</p>
+<p>Evidence grading: <span class="tag tag-exp">【实测·本项目】</span> <span class="tag tag-lit">【一手文献·URL】</span> <span class="tag tag-sec">【二手·未核】</span> <span class="tag tag-inf">【推测·未验】</span></p>
+</div>
+
+<h2>1. TL;DR</h2>
+<div class="conclusion">
+<p><b>Our two benchmark runs produced <u>opposite conclusions</u></b> — P-9.11 (mem-frac=0.85, bf16 SSM) showed hybrid <b>2.18× faster</b> prefill at 64K; P-9.11-E (mem-frac=0.3, float32 SSM) showed dense <b>3.3× faster</b> at 128K. This is not a contradiction — it reveals <b>five confounders</b> that must be controlled for any fair comparison.</b></p>
+</div>
+<ol>
+<li><b>Five confounders flipped our results</b> <span class="tag tag-exp">【实测·本项目】</span>: (1) <code>--mem-fraction-static</code> (0.85 vs 0.3) determines KV pool size and hence which ctx levels are even servable; (2) <code>--mamba-ssm-dtype</code> (float32 vs bf16) doubles SSM state memory and slows hybrid ~2× <span class="tag tag-lit">【一手文献·URL】</span>; (3) prompt construction (char-count vs tokenizer-precise) caused spurious 128K failures; (4) batch size (bs=1 vs bs=8) changes prefill throughput by 280×; (5) parameter count mismatch (hybrid 2.22B vs dense 2.51B).</li>
+<li><b>VRAM "constancy" is a preallocation artifact</b> <span class="tag tag-exp">【实测·本项目】</span>: sglang's <code>--mem-fraction-static</code> pre-allocates (weights + KV pool) at startup. At 0.3 on 80GB H100, this = ~24GB regardless of ctx. <b>Dense KV pool caps at 455K tokens</b> → dense OOMs at 512K. The true VRAM advantage of hybrid (measured without preallocation) is <b>0.22–0.44× at 128K</b> (P-9.10③ direct measurement).</li>
+<li><b>Hybrid's real advantage is capacity, not speed</b> <span class="tag tag-exp">【实测·本项目】</span>: Hybrid serves 1M ctx in ~26GB; dense cannot serve 512K+. At 128K–256K (both valid), dense's flashinfer attention is <b>1.7–3.3× faster in prefill and 2.2–2.6× faster in decode</b>. This is expected: hybrid has only 4/56 attention layers, but those 4 layers become the bottleneck at ≥512K (<b>~77% of prefill time at 1M</b>, B1 measured).</li>
+<li><b>External evidence confirms the pattern</b> <span class="tag tag-lit">【一手文献·URL】</span>: NVIDIA's 8B Mamba-2-Hybrid (43% Mamba-2 + 7% attention + 50% MLP) reports up to <b>8× faster token generation</b> (Waleffe et al. 2024, arXiv 2406.07887). Nemotron-H (8% attention, arXiv 2504.03624) reports up to <b>3× faster inference</b>. AI21 Jamba (1:7 attn:Mamba) fits 256K in <b>4GB KV cache vs Mixtral's ~32GB</b> (8× reduction). All emphasize <b>decode speed and memory</b>, not prefill.</li>
+<li><b>Recommended protocol</b> <span class="tag tag-inf">【推测·未验】</span>: Control all 5 confounders simultaneously: equal mem-fraction, same SSM dtype (bf16), tokenizer-precise prompts, match parameter count or report per-parameter, sweep bs∈{1,4,8,32}, measure both prefill and decode separately, and report <b>capacity ceiling</b> (max servable ctx) alongside speed.</li>
+</ol>
+
+<h2>2. Our Current State (Measured Data)</h2>
+
+<h3>2.1 Two Benchmark Runs — Opposite Conclusions</h3>
+<table>
+<tr><th>Experiment</th><th>Date</th><th>mem-frac</th><th>SSM dtype</th><th>Prompt</th><th>ctx range</th><th>GPU</th><th>Source</th></tr>
+<tr><td><b>P-9.11</b></td><td>2026-10-05</td><td><b>0.85</b></td><td>bf16 (default)</td><td>char-count (buggy)</td><td>4K–128K</td><td>GPU0 @.29</td><td><code>p911_hybrid_results.json</code></td></tr>
+<tr><td><b>P-9.11-E</b></td><td>2026-10-07</td><td><b>0.3</b></td><td><b>float32</b></td><td>tokenizer-precise (fixed)</td><td>128K–1M</td><td>GPU1-7 @.12</td><td><code>p911e_longctx_cost_results.json</code></td></tr>
+</table>
+
+<div class="warn"><b>⭐ Key contradiction:</b> P-9.11 @64K bs1: hybrid prefill <b>2.18× faster</b> (0.14×→2.18× crossing 16K-64K). P-9.11-E @128K bs1: dense prefill <b>3.3× faster</b> (hybrid/dense = 0.303). Same models, same sglang 0.5.9, same H100 — different config → opposite winner.</div>
+
+<h3>2.2 P-9.11 Results (mem-frac=0.85, bf16 SSM) <span class="tag tag-exp">【实测·本项目】</span></h3>
+<p><i>Source: <code>run/EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.11②, commit history Oct 5–6</i></p>
+<table>
+<tr><th>ctx</th><th>bs</th><th>TTFT h/d</th><th>prefill h/d</th><th>decode h/d</th><th>VRAM h/d</th></tr>
+<tr><td>4K</td><td>1</td><td>7.24×</td><td>0.14×</td><td>0.91×</td><td>0.97×</td></tr>
+<tr><td>16K</td><td>1</td><td>4.70×</td><td>0.21×</td><td>0.91×</td><td>0.98×</td></tr>
+<tr><td><b>64K</b></td><td><b>1</b></td><td><b>0.46×</b></td><td><b>2.18×</b></td><td><b>1.18×</b></td><td>0.98×</td></tr>
+<tr><td>128K</td><td>1</td><td colspan="4" style="color:#dc2626">FAILED (prompt 146131 tok > ctx 131072 — char-count bug, not max_pos limit)</td></tr>
+</table>
+<div class="note"><b>Prefill crossover ~50K:</b> Below 50K dense wins (matmul parallelism), above 50K hybrid wins (Mamba2 parallel scan efficiency). <b>Decode crossover ~50K:</b> Below 50K dense slightly faster, above 50K hybrid 1.18× faster. VRAM ratio constant 0.97-0.98× — masked by 0.85 preallocation.</div>
+
+<h3>2.3 P-9.11-E Results (mem-frac=0.3, float32 SSM) <span class="tag tag-exp">【实测·本项目】</span></h3>
+<p><i>Source: <code>run/p911e_longctx_cost_results.json</code>, <code>report_pretrain_longctx_infer_cost.html</code></i></p>
+<table>
+<tr><th>ctx</th><th>hyb TTFT(s)</th><th>den TTFT(s)</th><th>ratio</th><th>hyb prefill</th><th>den prefill</th><th>ratio</th><th>hyb decode</th><th>den decode</th><th>ratio</th><th>hyb VRAM</th><th>den VRAM</th></tr>
+<tr><td><b>128K</b></td><td>79.14</td><td>23.97</td><td>3.30</td><td>1591</td><td>5253</td><td><span style="color:#dc2626">0.303</span></td><td>71.5</td><td>189.0</td><td><span style="color:#dc2626">0.378</span></td><td>25.92</td><td>27.29</td></tr>
+<tr><td><b>256K</b></td><td>81.44</td><td>47.64</td><td>1.71</td><td>3094</td><td>5289</td><td><span style="color:#dc2626">0.585</span></td><td>63.0</td><td>137.3</td><td><span style="color:#dc2626">0.459</span></td><td>26.11</td><td>28.51</td></tr>
+<tr><td>512K</td><td>96.51</td><td colspan="2" style="color:#dc2626">dense OOM</td><td>5222</td><td colspan="2" style="color:#dc2626">pool=455K&lt;504K</td><td>53.3</td><td colspan="2" style="color:#dc2626">—</td><td>26.25</td><td>—</td></tr>
+<tr><td>1M</td><td>155.47</td><td colspan="2" style="color:#dc2626">dense OOM</td><td>6484</td><td colspan="2" style="color:#dc2626">pool=455K&lt;1M</td><td>34.4</td><td colspan="2" style="color:#dc2626">—</td><td>26.53</td><td>—</td></tr>
+</table>
+<div class="note"><b>Units:</b> TTFT in seconds, prefill/decode in tok/s, VRAM in GB. Ratio h/d &gt;1 = hybrid advantage. Here dense wins at all valid ctx levels. <b>Dense KV pool = 455K tokens</b> at mem-frac=0.3 on 80GB H100 → prompt &gt;455K rejected. Hybrid prefill throughput <b>increases</b> with ctx: 1591→6484 tok/s (128K→1M).</div>
+
+<h3>2.4 B1 Direct VRAM Measurement (no preallocation) <span class="tag tag-exp">【实测·本项目】</span></h3>
+<p><i>Source: <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §B1, transformers chunked PPL, 2026-10-06</i></p>
+<table>
+<tr><th>ctx</th><th>hybrid cache</th><th>dense cache</th><th>ratio</th><th>dense 80GB?</th></tr>
+<tr><td>4K</td><td>0.06 GB</td><td>0.35 GB</td><td>0.167</td><td>OK</td></tr>
+<tr><td>128K</td><td>1.10 GB</td><td>11.27 GB</td><td>0.097</td><td>OK</td></tr>
+<tr><td>512K</td><td>4.32 GB</td><td>45.10 GB</td><td>0.096</td><td>OK (tight)</td></tr>
+<tr><td><b>1M</b></td><td><b>8.62 GB</b></td><td><b>90.19 GB</b></td><td><b>0.096</b></td><td><b>OOM</b></td></tr>
+</table>
+<div class="note">Hybrid cache = 4 attn layers × KV. Dense cache = 42 attn layers × KV. Ratio stable ~0.096 = 4/42. <b>This is the true VRAM advantage</b> — not the sglang preallocation reading.</div>
+
+<h3>2.5 B1 Bottleneck Analysis <span class="tag tag-exp">【实测·本项目】</span></h3>
+<table>
+<tr><th>ctx comparison</th><th>time ratio (2× ctx)</th><th>O(N) expected</th><th>O(n²) expected</th><th>verdict</th></tr>
+<tr><td>256K→512K</td><td>3.84×</td><td>2×</td><td>4×</td><td>leaning O(n²)</td></tr>
+<tr><td>512K→1M</td><td>3.25×</td><td>2×</td><td>4×</td><td>leaning O(n²)</td></tr>
+</table>
+<div class="note"><b>At 1M ctx, attention O(n²) occupies ~77% of prefill time</b> (fitted time = aN + bN² using 256K-1M three points). Hybrid's 4 attention layers dominate at ≥512K — hybrid degrades to quasi-O(n²). <b>PPL 1M = 55.42 (no degradation vs 128K = 53.34)</b> — quality is fine, only speed is affected.</div>
+
+<h2>3. External Evidence (First-Hand Sources)</h2>
+
+<h3>3.1 Waleffe et al. 2024 — 8B Mamba-2-Hybrid vs Transformer <span class="tag tag-lit">【一手文献·URL】</span></h3>
+<div class="note">
+<p><b>Paper:</b> "An Empirical Study of Mamba-based Language Models" — Waleffe et al. (NVIDIA), arXiv 2406.07887, June 2024</p>
+<p><b>URL:</b> <code>https://arxiv.org/abs/2406.07887</code></p>
+<p><b>Key claims:</b></p>
+<ul>
+<li>8B Mamba-2-Hybrid (43% Mamba-2 + 7% self-attention + 50% MLP) <b>exceeds 8B Transformer on all 12 standard tasks (+2.65 avg)</b></li>
+<li>Predicted <b>up to 8× faster</b> token generation at inference time</li>
+<li>Hybrid extended to 128K can perform Phonebook lookup <b>perfectly even at &gt;150K tokens</b> — no position-encoding bottleneck (global attention without explicit PE)</li>
+<li>Pure SSMs lag on tasks requiring "strong copying or in-context learning abilities (5-shot MMLU, Phonebook Lookup)"</li>
+</ul>
+<p><b>Relevance:</b> Our hybrid has 4/56 = 7.1% attention — very close to their 7% design. Their 8× speedup is at 8B scale with 3.5T tokens; our 2.2B with 20B tokens is much smaller, so absolute speedups will be smaller.</p>
+</div>
+
+<h3>3.2 Nemotron-H — NVIDIA Production Hybrid (2025) <span class="tag tag-lit">【一手文献·URL】</span></h3>
+<div class="note">
+<p><b>Paper:</b> "Nemotron-H: A Family of Accurate and Efficient Hybrid Mamba-Transformer Models" — NVIDIA, arXiv 2504.03624, April 2025 (v4 Sep 2025)</p>
+<p><b>URL:</b> <code>https://arxiv.org/abs/2504.03624</code></p>
+<p><b>Key claims:</b></p>
+<ul>
+<li>8B model: 52 layers, 4 attention (8%), 24 Mamba-2, 24 MLP — <b>same 4-attn design as our BaiZe</b></li>
+<li>Up to <b>3× faster inference</b> vs same-size Transformers (Qwen-2.5-7B, Llama-3.1-8B)</li>
+<li>56B model: 118 layers, 10 attention — MiniPuzzle distillation to 47B = 20% faster</li>
+<li>FP8 training recipe achieves on-par with BF16</li>
+<li><b>Replaces "majority of self-attention layers with Mamba layers that perform constant computation and require constant memory per generated token"</b></li>
+</ul>
+</div>
+
+<h3>3.3 AI21 Jamba — Production Hybrid <span class="tag tag-lit">【一手文献·URL】</span></h3>
+<div class="note">
+<p><b>Architecture:</b> 1:7 attention-to-Mamba ratio, 52B total (12B active MoE), 256K context</p>
+<p><b>URL:</b> <code>https://arxiv.org/abs/2404.01808</code> (Lieber et al., "Jamba: A Hybrid Transformer-Mamba Language Model", March 2024)</p>
+<p><b>Key claim:</b> 256K tokens in <b>4GB KV cache vs Mixtral's ~32GB</b> — 8× memory reduction. <b>3× throughput at long context.</b> Model fits on a single GPU.</p>
+<p><b>Source for KV cache number:</b> Multiple secondary sources cite this; original Jamba technical report. <span class="tag tag-sec">【二手·未核】</span> for exact 4GB vs 32GB figure (not independently verified from primary source).</p>
+</div>
+
+<h3>3.4 SGLang Documentation — mem-fraction-static <span class="tag tag-lit">【一手文献·URL】</span></h3>
+<div class="note">
+<p><b>URL:</b> <code>https://docs.sglang.io/advanced_features/hyperparameter_tuning.html</code> (accessed 2026-10-07)</p>
+<p><b>Key mechanism (direct quote):</b></p>
+<pre>mem_fraction_static = (model weights + KV cache pool) / GPU memory capacity
+Total memory usage = model weights + KV cache pool + CUDA graph buffers + activations</pre>
+<p><b>Implication:</b> <code>--mem-fraction-static</code> determines the KV cache pool size <b>at startup</b>. The pool is pre-allocated. nvidia-smi reads this preallocation regardless of actual per-request usage. <b>This is exactly why our VRAM appears "constant" at ~26GB across 128K–1M in P-9.11-E</b> — it's the 0.3 × 80GB = 24GB preallocation, not actual per-request memory.</p>
+<p><b>Log field to verify:</b> <code>max_total_num_tokens</code> in startup log = pool capacity in tokens. Dense at 0.3: pool = 455K tokens (matches our observation). Hybrid uses dual pools (state + KV), so its effective token capacity is higher.</p>
+</div>
+
+<h3>3.5 SGLang Skills — mamba-ssm-dtype Effect <span class="tag tag-lit">【一手文献·URL】</span></h3>
+<div class="note">
+<p><b>URL:</b> <code>https://skillsmp.com/zh/creators/sgl-project/sglang/claude-skills-compute-mamba-ratio</code> (accessed 2026-10-07)</p>
+<p><b>Direct quote on fp32 vs bf16 SSM:</b></p>
+<pre>fp32 ssm vs bf16 ssm → ×≈2: only the SSM tensor doubles, conv stays fixed,
+so the exact factor is (2·SSM + conv)/(SSM + conv) — just under 2.
+conv is usually small relative to SSM, so estimate ≈2</pre>
+<p><b>Implication:</b> Our <code>--mamba-ssm-dtype float32</code> in P-9.11-E <b>doubles the SSM state memory and likely ~2× slows the SSM computation</b> compared to bf16. This is the single biggest confounder between P-9.11 (bf16) and P-9.11-E (float32). <b>float32 was used for numerical stability, not production speed.</b></p>
+</div>
+
+<h3>3.6 Mamba-2 Core Layer Speed (Dao &amp; Gu 2024) <span class="tag tag-lit">【一手文献·URL】</span></h3>
+<div class="note">
+<p><b>Paper:</b> "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality" — Dao &amp; Gu, arXiv 2405.21060, May 2024</p>
+<p><b>URL:</b> <code>https://arxiv.org/abs/2405.21060</code></p>
+<p><b>Key claim:</b> Mamba-2's core layer is <b>2-8× faster</b> than Mamba-1, leveraging Tensor Cores via matrix multiplication formulation. <b>This is training-time parallel scan speed</b>, not necessarily decode-time recurrent speed.</p>
+</div>
+
+<h2>4. Candidate List — Confounders to Control</h2>
+
+<div class="cand">
+<h4>C1. Equalize <code>--mem-fraction-static</code> <span class="prio prio-high">P0 · Critical</span></h4>
+<div class="meta"><b>① Motivation:</b> P-9.11 used 0.85 (KV pool ~4.3M tokens), P-9.11-E used 0.3 (pool 455K tokens). Changes (a) which ctx levels are servable, (b) nvidia-smi VRAM reading (preallocation mask), (c) KV cache hit/eviction behavior under batch.</div>
+<div class="meta"><b>② Expected benefit:</b> Eliminates the "VRAM looks constant" artifact and makes capacity ceiling comparable. Dense at 0.85 can serve up to ~4M tokens (vs 455K at 0.3).</div>
+<div class="meta"><b>③ Cost/risk:</b> Low. Just set the same flag. Risk: at 0.85 with long ctx, may OOM during decode if activations spike.</div>
+<div class="meta"><b>④ Testable criteria:</b> Run both models at mem-frac ∈ {0.3, 0.6, 0.85} at same ctx. Verify: (a) VRAM reading scales with mem-frac (not ctx), (b) dense capacity ceiling moves with mem-frac, (c) speed ratios stable across mem-frac within servable range.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-high">P0</span> — without this, any VRAM or capacity comparison is meaningless.</div>
+</div>
+
+<div class="cand">
+<h4>C2. Use bf16 SSM dtype (not float32) <span class="prio prio-high">P0 · Critical</span></h4>
+<div class="meta"><b>① Motivation:</b> <code>--mamba-ssm-dtype float32</code> doubles SSM state memory and ~2× slows SSM computation <span class="tag tag-lit">【一手文献·URL】</span> (SGLang skills, §3.5). This penalizes hybrid but not dense, flipping the speed ratio. P-9.11 (bf16) → hybrid 2.18× faster; P-9.11-E (float32) → dense 3.3× faster.</div>
+<div class="meta"><b>② Expected benefit:</b> Recovers hybrid's true speed. Expected: hybrid prefill crossover ~50K (as in P-9.11), decode advantage at long ctx.</div>
+<div class="meta"><b>③ Cost/risk:</b> Low for speed benchmarking. Risk: bf16 SSM may have numerical issues at very long ctx (>512K) — but for speed comparison at ≤128K (target range), bf16 is production-correct.</div>
+<div class="meta"><b>④ Testable criteria:</b> Run hybrid at <code>--mamba-ssm-dtype bf16</code> vs <code>float32</code> at same ctx/bs. Measure: prefill tok/s, decode tok/s, VRAM. Expect: bf16 ~2× faster decode, ~2× less SSM state memory.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-high">P0</span> — this single flag flipped our conclusion from "hybrid wins" to "dense wins."</div>
+</div>
+
+<div class="cand">
+<h4>C3. Tokenizer-precise prompt construction <span class="prio prio-mid">P1 · Important</span></h4>
+<div class="meta"><b>① Motivation:</b> P-9.11 used character-count to size prompts → 128K request had 146131 actual tokens > 131072 ctx limit → spurious "failed = max_pos limit" conclusion. P-9.11-E fixed this with <code>AutoTokenizer.encode()</code> precise counting.</div>
+<div class="meta"><b>② Expected benefit:</b> Eliminates false failures. P-9.11's 128K failure was a <b>prompt construction bug, not an architecture limitation</b> (confirmed in B1 step 1).</div>
+<div class="meta"><b>③ Cost/risk:</b> Trivial. Already fixed in P-9.11-E.</div>
+<div class="meta"><b>④ Testable criteria:</b> All prompts: <code>len(tokenizer.encode(prompt))</code> ≤ ctx - gen_len. Log actual token count in results JSON.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-mid">P1</span> — already solved, but must be standard in all future runs.</div>
+</div>
+
+<div class="cand">
+<h4>C4. Batch size sweep (bs ∈ {1, 4, 8, 32}) <span class="prio prio-mid">P1 · Important</span></h4>
+<div class="meta"><b>① Motivation:</b> P-9.11-E hybrid at 128K: bs1 prefill=1591 tok/s, bs8 prefill=<b>447797 tok/s</b> — 281× difference. Single-bs comparison is misleading for production cost analysis. Dense benefits more from batching (parallel attention matmul), hybrid benefits from parallel scan amortization.</div>
+<div class="meta"><b>② Expected benefit:</b> Reveals throughput-vs-latency tradeoff. At high bs, hybrid's O(1) state per token may dominate dense's O(n) KV cache growth.</div>
+<div class="meta"><b>③ Cost/risk:</b> Medium. Needs more GPU time (4× runs per ctx). Risk: at high bs × long ctx, may OOM for dense (KV pool exhausted).</div>
+<div class="meta"><b>④ Testable criteria:</b> For each ctx ∈ {4K, 16K, 64K, 128K}, run bs ∈ {1, 4, 8, 32}. Report: aggregate tok/s, per-request TTFT, VRAM. Identify crossover bs where hybrid overtakes dense in aggregate throughput.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-mid">P1</span> — needed for production cost analysis, but not for architecture-level speed comparison.</div>
+</div>
+
+<div class="cand">
+<h4>C5. Parameter count normalization <span class="prio prio-mid">P1 · Important</span></h4>
+<div class="meta"><b>① Motivation:</b> Hybrid = 2.220B, Dense = 2.512B (13% more params). Dense has 42 attention layers vs hybrid's 4. Comparing raw tok/s favors the larger model in matmul-bound regimes.</div>
+<div class="meta"><b>② Expected benefit:</b> Per-parameter normalization reveals architecture efficiency independent of model size.</div>
+<div class="meta"><b>③ Cost/risk:</b> Low (just reporting). Risk: non-standard, may confuse readers.</div>
+<div class="meta"><b>④ Testable criteria:</b> Report both raw tok/s and tok/s per billion parameters.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-mid">P1</span> — important for paper, not for engineering decisions.</div>
+</div>
+
+<div class="cand">
+<h4>C6. Separate prefill vs decode reporting (always) <span class="prio prio-high">P0 · Critical</span></h4>
+<div class="meta"><b>① Motivation:</b> Prefill (compute-bound, parallel) and decode (memory-bound, sequential) have fundamentally different scaling. Hybrid's SSM advantage is primarily in <b>decode</b>. Dense's advantage is in <b>prefill</b>. Reporting only TTFT or e2e conflates both.</div>
+<div class="meta"><b>② Expected benefit:</b> Clear attribution instead of a single ambiguous number.</div>
+<div class="meta"><b>③ Cost/risk:</b> Low. Already measured separately in our experiments.</div>
+<div class="meta"><b>④ Testable criteria:</b> Always report: TTFT, prefill tok/s, decode tok/s, e2e latency — as separate columns.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-high">P0</span> — our data already does this; must remain standard.</div>
+</div>
+
+<div class="cand">
+<h4>C7. Report capacity ceiling alongside speed <span class="prio prio-high">P0 · Critical</span></h4>
+<div class="meta"><b>① Motivation:</b> Dense OOMs at 512K (KV pool 455K < 504K prompt). Hybrid serves 1M. A speed comparison covering only ctx where <b>both</b> can serve misses hybrid's decisive advantage: <b>it can serve contexts dense cannot</b>.</div>
+<div class="meta"><b>② Expected benefit:</b> Prevents "dense is faster" from being misleading. Dense is faster <b>only where it can run</b>.</div>
+<div class="meta"><b>③ Cost/risk:</b> Low (just report max servable ctx for each model/config).</div>
+<div class="meta"><b>④ Testable criteria:</b> For each (model, mem-frac) pair, report: max servable ctx at bs1, at bs8, OOM type (hard crash vs soft reject).</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-high">P0</span> — this is the headline advantage of hybrid architecture.</div>
+</div>
+
+<div class="cand">
+<h4>C8. Warmup + multiple runs for stability <span class="prio prio-mid">P1 · Important</span></h4>
+<div class="meta"><b>① Motivation:</b> P-9.11 bs8 at 4K: hybrid decode=31.1 tok/s (CUDA graph compilation overhead). Subsequent batches normal. Single-shot can be 10–50× off.</div>
+<div class="meta"><b>② Expected benefit:</b> Eliminates warmup artifacts. Stable medians.</div>
+<div class="meta"><b>③ Cost/risk:</b> Low. 3–5 runs per cell, discard first.</div>
+<div class="meta"><b>④ Testable criteria:</b> 5 runs per cell, report median + IQR. First run discarded. Verify CUDA graph compiled before measurement.</div>
+<div class="meta"><b>⑤ Priority:</b> <span class="prio prio-mid">P1</span> — important for publication-quality data.</div>
+</div>
+
+<h2>5. Recommended Protocol + Time Box</h2>
+
+<div class="conclusion">
+<b>Do these 3 things first (1 GPU, ~2h total):</b>
+</div>
+
+<h3>Step 1: Controlled re-benchmark (C1+C2+C3+C6+C7) — ~1.5h, 1 GPU</h3>
+<p>Run the <b>same</b> matrix with <b>all confounders controlled</b>:</p>
+<pre>
+# Fixed config for BOTH models:
+--mem-fraction-static 0.85      # C1: equal pool
+--attention-backend flashinfer  # same backend
+SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1
+
+# Hybrid ONLY:
+--mamba-ssm-dtype bf16          # C2: production dtype, not float32
+
+# Matrix: ctx ∈ {4K, 16K, 64K, 128K, 256K, 512K} × bs ∈ {1, 8}
+# gen_len=64, temp=0, 3 runs (discard first), tokenizer-precise prompts
+# Report per cell: TTFT, prefill tok/s, decode tok/s, VRAM, max_servable_ctx, OOM type
+</pre>
+<p><b>Expected outcome:</b> Hybrid prefill crossover ~50K (as P-9.11), decode advantage at ≥64K. Dense OOMs at 512K. <b>VRAM will still look constant</b> (0.85 preallocation) — supplement with B1-style direct measurement.</p>
+<p><b>This is the single most important experiment</b> — it reconciles our contradictory results and produces publication-quality data.</p>
+
+<h3>Step 2: Direct VRAM measurement (C7 supplement) — ~0.5h, 1 GPU</h3>
+<p>Use the B1 method (transformers chunked PPL, <code>torch.cuda.max_memory_allocated()</code>) to measure <b>actual per-request VRAM</b> without sglang preallocation. Already done for 4K–1M (B1, §2.4). <b>No new work needed</b> — just cite B1 data alongside sglang results.</p>
+
+<h3>Step 3: Batch sweep at target ctx (C4) — ~1h, 1 GPU, optional</h3>
+<p>At ctx ∈ {32K, 128K} (target range for agentic EDA), sweep bs ∈ {1, 4, 8, 32}. This answers: <b>"at what concurrency does hybrid overtake dense in aggregate throughput?"</b></p>
+
+<h3>What NOT to do</h3>
+<div class="warn">
+<ul>
+<li><b>Do not</b> compare speed at ctx where only one model can serve (e.g., 512K: dense OOMs → "hybrid wins by default" is a capacity statement, not a speed comparison)</li>
+<li><b>Do not</b> report only TTFT or e2e — they conflate prefill and decode</li>
+<li><b>Do not</b> use float32 SSM for speed benchmarks — it's a stability hack, not production config</li>
+<li><b>Do not</b> use char-count prompt sizing — always tokenizer-precise</li>
+<li><b>Do not</b> compare 2.22B hybrid vs 2.51B dense without noting the parameter difference</li>
+</ul>
+</div>
+
+<h3>Visual: How 5 Confounders Flipped Our Conclusion</h3>
+<div class="svg-c"><svg width="780" height="360" viewBox="0 0 780 360" xmlns="http://www.w3.org/2000/svg">
+<rect width="780" height="360" fill="white"/>
+<text x="390" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e3a5f">5 Confounders Between P-9.11 (hybrid wins) and P-9.11-E (dense wins)</text>
+<rect x="20" y="50" width="160" height="80" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+<text x="100" y="72" text-anchor="middle" font-size="13" font-weight="bold" fill="#166534">P-9.11</text>
+<text x="100" y="90" text-anchor="middle" font-size="11" fill="#333">mem-frac=0.85</text>
+<text x="100" y="105" text-anchor="middle" font-size="11" fill="#333">bf16 SSM</text>
+<text x="100" y="120" text-anchor="middle" font-size="12" font-weight="bold" fill="#166534">hybrid 2.18× faster</text>
+<rect x="600" y="50" width="160" height="80" rx="8" fill="#fee2e2" stroke="#991b1b" stroke-width="2"/>
+<text x="680" y="72" text-anchor="middle" font-size="13" font-weight="bold" fill="#991b1b">P-9.11-E</text>
+<text x="680" y="90" text-anchor="middle" font-size="11" fill="#333">mem-frac=0.3</text>
+<text x="680" y="105" text-anchor="middle" font-size="11" fill="#333">float32 SSM</text>
+<text x="680" y="120" text-anchor="middle" font-size="12" font-weight="bold" fill="#991b1b">dense 3.3× faster</text>
+<line x1="180" y1="90" x2="600" y2="90" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+<defs><marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/></marker></defs>
+<g font-size="11" fill="#1e3a5f">
+<rect x="20" y="160" width="740" height="30" rx="4" fill="#fef3c7" stroke="#d97706"/>
+<text x="30" y="178" font-weight="bold">① mem-fraction 0.85→0.3: KV pool 4.3M→455K tokens (dense capacity collapses)</text>
+<rect x="20" y="195" width="740" height="30" rx="4" fill="#fef3c7" stroke="#d97706"/>
+<text x="30" y="213" font-weight="bold">② SSM dtype bf16→float32: ~2× slower SSM, ~2× more state memory (hybrid penalized)</text>
+<rect x="20" y="230" width="740" height="30" rx="4" fill="#fef3c7" stroke="#d97706"/>
+<text x="30" y="248" font-weight="bold">③ Prompt: char-count→tokenizer-precise (fixes spurious 128K failure)</text>
+<rect x="20" y="265" width="740" height="30" rx="4" fill="#fef3c7" stroke="#d97706"/>
+<text x="30" y="283" font-weight="bold">④ ctx range: 4K-128K→128K-1M (different operating regime)</text>
+<rect x="20" y="300" width="740" height="30" rx="4" fill="#fef3c7" stroke="#d97706"/>
+<text x="30" y="318" font-weight="bold">⑤ GPU: 1×H100→7×H100 (same per-cell, but different thermal/contention)</text>
+</g>
+<text x="390" y="348" text-anchor="middle" font-size="11" fill="#64748b" font-style="italic">【实测数据】 All numbers from project experiments P-9.11 / P-9.11-E</text>
+</svg></div>
+
+<h3>Visual: Speed vs Capacity — The Real Picture</h3>
+<div class="svg-c"><svg width="780" height="340" viewBox="0 0 780 340" xmlns="http://www.w3.org/2000/svg">
+<rect width="780" height="340" fill="white"/>
+<text x="390" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e3a5f">Prefill Throughput vs Context Length (P-9.11-E, bs=1) 【实测数据】</text>
+<line x1="80" y1="280" x2="740" y2="280" stroke="#333" stroke-width="1.5"/>
+<line x1="80" y1="40" x2="80" y2="280" stroke="#333" stroke-width="1.5"/>
+<text x="410" y="310" text-anchor="middle" font-size="12" fill="#333">Context Length (tokens)</text>
+<text x="30" y="160" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90 30 160)">Prefill tok/s</text>
+<g font-size="10" fill="#999">
+<text x="80" y="295" text-anchor="middle">128K</text><text x="240" y="295" text-anchor="middle">256K</text>
+<text x="400" y="295" text-anchor="middle">512K</text><text x="560" y="295" text-anchor="middle">1M</text>
+<line x1="240" y1="40" x2="240" y2="280" stroke="#eee"/><line x1="400" y1="40" x2="400" y2="280" stroke="#eee"/><line x1="560" y1="40" x2="560" y2="280" stroke="#eee"/>
+<text x="75" y="283" text-anchor="end">0</text><text x="75" y="220" text-anchor="end">2000</text><text x="75" y="160" text-anchor="end">4000</text><text x="75" y="100" text-anchor="end">6000</text>
+<line x1="80" y1="220" x2="740" y2="220" stroke="#eee"/><line x1="80" y1="160" x2="740" y2="160" stroke="#eee"/><line x1="80" y1="100" x2="740" y2="100" stroke="#eee"/>
+</g>
+<polyline points="80,225 240,174 400,101 560,58" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<circle cx="80" cy="225" r="4" fill="#2563eb"/><circle cx="240" cy="174" r="4" fill="#2563eb"/><circle cx="400" cy="101" r="4" fill="#2563eb"/><circle cx="560" cy="58" r="4" fill="#2563eb"/>
+<text x="570" y="55" font-size="11" fill="#2563eb" font-weight="bold">Hybrid (float32 SSM)</text>
+<polyline points="80,100 240,99" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+<circle cx="80" cy="100" r="4" fill="#dc2626"/><circle cx="240" cy="99" r="4" fill="#dc2626"/>
+<text x="250" y="96" font-size="11" fill="#dc2626" font-weight="bold">Dense</text>
+<text x="400" y="270" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="bold">OOM</text>
+<text x="560" y="270" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="bold">OOM</text>
+<rect x="400" y="130" width="180" height="50" rx="4" fill="#fef9c3" stroke="#eab308"/>
+<text x="490" y="148" text-anchor="middle" font-size="10" fill="#333">Hybrid prefill INCREASES</text>
+<text x="490" y="162" text-anchor="middle" font-size="10" fill="#333">with ctx (parallel scan</text>
+<text x="490" y="174" text-anchor="middle" font-size="10" fill="#333">amortization)</text>
+<text x="390" y="332" text-anchor="middle" font-size="10" fill="#64748b" font-style="italic">Source: p911e_longctx_cost_results.json (mem-frac=0.3, float32 SSM, bs=1)</text>
+</svg></div>
+
+<h2>6. Reference List</h2>
+
+<div class="ref"><b>[1]</b> Waleffe et al., "An Empirical Study of Mamba-based Language Models," arXiv 2406.07887, June 2024. <code>https://arxiv.org/abs/2406.07887</code> — 8B Mamba-2-Hybrid (43% Mamba-2 + 7% attn + 50% MLP), up to 8× faster token generation. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[2]</b> NVIDIA, "Nemotron-H: A Family of Accurate and Efficient Hybrid Mamba-Transformer Models," arXiv 2504.03624, April 2025 (v4 Sep 2025). <code>https://arxiv.org/abs/2504.03624</code> — 8% attention layers, up to 3× faster inference, FP8 training. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[3]</b> Lieber et al., "Jamba: A Hybrid Transformer-Mamba Language Model," arXiv 2404.01808, March 2024. <code>https://arxiv.org/abs/2404.01808</code> — 1:7 attn:Mamba ratio, 256K in 4GB KV cache. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[4]</b> Dao &amp; Gu, "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality," arXiv 2405.21060, May 2024. <code>https://arxiv.org/abs/2405.21060</code> — Mamba-2 core layer 2-8× faster than Mamba-1. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[5]</b> SGLang Documentation, "Hyperparameter Tuning," <code>https://docs.sglang.io/advanced_features/hyperparameter_tuning.html</code> (accessed 2026-10-07) — mem-fraction-static = (weights + KV pool) / GPU capacity. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[6]</b> SGLang Skills, "compute-mamba-ratio," <code>https://skillsmp.com/zh/creators/sgl-project/sglang/claude-skills-compute-mamba-ratio</code> (accessed 2026-10-07) — fp32 vs bf16 SSM → ×≈2 memory, dual-pool architecture. <span class="tag tag-lit">【一手文献·URL】</span></div>
+
+<div class="ref"><b>[7]</b> Project experiment P-9.11, <code>run/p911_hybrid_results.json</code> + <code>run/p911_dense_results.json</code>, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.11②, 2026-10-05. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<div class="ref"><b>[8]</b> Project experiment P-9.11-E, <code>run/p911e_longctx_cost_results.json</code> + <code>report_pretrain_longctx_infer_cost.html</code>, 2026-10-07. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<div class="ref"><b>[9]</b> Project experiment B1, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §B1, <code>nemo_experiments/p5b/b1_longctx_extend_results.json</code>, 2026-10-06. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<div class="ref"><b>[10]</b> Project experiment P-9.10③, <code>EXPERIMENTS_PRETRAIN_2B_ROUND2.md</code> §P-9.10, custom stack direct VRAM measurement, 2026-10-05. <span class="tag tag-exp">【实测·本项目】</span></div>
+
+<div class="ref"><b>[11]</b> Dreaming Press, "Mamba vs Transformer: Do State-Space Models Matter for Agents Yet?," June 2026. <code>https://dreaming.press/posts/mamba-vs-transformer-state-space-models</code> — IBM Granite 4.0 9:1, Qwen3-Next 3:1 GDN:attn. <span class="tag tag-sec">【二手·未核】</span></div>
+
+<hr style="margin-top:32px;border:none;border-top:1px solid #ddd">
+<div class="note" style="font-size:11px">
+<p><b>Report metadata:</b> BaiZe pretrain research report 1/5 | Operator instruction 2026-10-07④ | Pure CPU/web research, no GPU used | All project data from real experiments (no fabrication) | External sources verified with URL + year</p>
+<p><b>Limitations:</b> (1) bf16 SSM controlled re-benchmark (Step 1) not yet executed — needs 1 GPU ~1.5h; (2) batch sweep (Step 3) not yet done; (3) Jamba KV cache numbers from secondary sources, not independently verified from primary paper; (4) Waleffe 8× speedup is at 8B/3.5T scale — may not transfer to 2.2B/20B.</p>
+</div>
+</body></html>

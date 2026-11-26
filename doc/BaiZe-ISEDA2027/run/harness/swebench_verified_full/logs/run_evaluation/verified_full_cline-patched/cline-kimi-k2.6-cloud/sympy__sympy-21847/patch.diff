@@ -1,0 +1,52 @@
+diff --git a/sympy/polys/monomials.py b/sympy/polys/monomials.py
+index 0e844033..d2cd3451 100644
+--- a/sympy/polys/monomials.py
++++ b/sympy/polys/monomials.py
+@@ -127,7 +127,7 @@ def itermonomials(variables, max_degrees, min_degrees=None):
+                 for variable in item:
+                     if variable != 1:
+                         powers[variable] += 1
+-                if max(powers.values()) >= min_degree:
++                if sum(powers.values()) >= min_degree:
+                     monomials_list_comm.append(Mul(*item))
+             yield from set(monomials_list_comm)
+         else:
+@@ -139,7 +139,7 @@ def itermonomials(variables, max_degrees, min_degrees=None):
+                 for variable in item:
+                     if variable != 1:
+                         powers[variable] += 1
+-                if max(powers.values()) >= min_degree:
++                if sum(powers.values()) >= min_degree:
+                     monomials_list_non_comm.append(Mul(*item))
+             yield from set(monomials_list_non_comm)
+     else:
+diff --git a/sympy/polys/tests/test_monomials.py b/sympy/polys/tests/test_monomials.py
+index 482cbee3..ed5c8b27 100644
+--- a/sympy/polys/tests/test_monomials.py
++++ b/sympy/polys/tests/test_monomials.py
+@@ -50,12 +50,25 @@ def test_monomials():
+     assert set(itermonomials([x, y], 3)) == \
+             {S.One, x, y, x**2, x**3, y**2, y**3, x*y, x*y**2, y*x**2}
+ 
++    # total_degree with min_degrees
++    assert set(itermonomials([x, y], 2, 1)) == {x, y, x**2, x*y, y**2}
++    assert set(itermonomials([x, y], 3, 3)) == {x**3, x**2*y, x*y**2, y**3}
++    assert set(itermonomials([x, y, z], 3, 3)) == \
++            {x**3, x**2*y, x**2*z, x*y**2, x*y*z, x*z**2, y**3, y**2*z, y*z**2, z**3}
++    assert set(itermonomials([x, y], 3, 2)) == \
++            {x**2, x*y, y**2, x**3, x**2*y, x*y**2, y**3}
++
+     i, j, k = symbols('i j k', commutative=False)
+     assert set(itermonomials([i, j, k], 0)) == {S.One}
+     assert set(itermonomials([i, j, k], 1)) == {S.One, i, j, k}
+     assert set(itermonomials([i, j, k], 2)) == \
+            {S.One, i, j, k, i**2, j**2, k**2, i*j, i*k, j*i, j*k, k*i, k*j}
+ 
++    # non-commutative total_degree with min_degrees
++    assert set(itermonomials([i, j], 2, 2)) == {i**2, i*j, j*i, j**2}
++    assert set(itermonomials([i, j, k], 2, 2)) == \
++           {i**2, j**2, k**2, i*j, i*k, j*i, j*k, k*i, k*j}
++
+     assert set(itermonomials([i, j, k], 3)) == \
+             {S.One, i, j, k, i**2, j**2, k**2, i*j, i*k, j*i, j*k, k*i, k*j,
+                     i**3, j**3, k**3,

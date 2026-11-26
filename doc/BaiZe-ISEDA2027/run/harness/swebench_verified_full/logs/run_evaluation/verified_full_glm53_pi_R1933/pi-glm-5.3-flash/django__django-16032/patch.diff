@@ -1,0 +1,65 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 8419dc0d54..fd3aa09302 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -266,7 +266,9 @@ class Query(BaseExpression):
+     @property
+     def has_select_fields(self):
+         return bool(
+-            self.select or self.annotation_select_mask or self.extra_select_mask
++            self.select
++            or (self.annotation_select_mask and not self.default_cols)
++            or self.extra_select_mask
+         )
+ 
+     @cached_property
+diff --git a/docs/releases/4.2.txt b/docs/releases/4.2.txt
+index e4394c5887..664f0d8dc7 100644
+--- a/docs/releases/4.2.txt
++++ b/docs/releases/4.2.txt
+@@ -397,3 +397,10 @@ Miscellaneous
+ 
+ * The ``map_height`` and ``map_width`` attributes of ``BaseGeometryWidget`` are
+   deprecated, use CSS to size map widgets instead.
++
++Bugfixes
++=======
++
++* Fixed a bug in Django 4.0 where ``__in`` lookups didn't clear selected
++  fields on the right-hand side when ``QuerySet.alias()`` was used after
++  ``annotate()`` (:ticket:`34162`).
+diff --git a/tests/annotations/tests.py b/tests/annotations/tests.py
+index 8de2bf1998..a38647e98f 100644
+--- a/tests/annotations/tests.py
++++ b/tests/annotations/tests.py
+@@ -989,6 +989,30 @@ class NonAggregateAnnotationTestCase(TestCase):
+             publisher_books_qs, [{"name": "Sams"}, {"name": "Morgan Kaufmann"}]
+         )
+ 
++    def test_annotation_and_alias_filter_in_subquery(self):
++        long_books_qs = (
++            Book.objects.filter(
++                pages__gt=400,
++            )
++            .annotate(book_annotate=Value(1))
++            .alias(book_alias=Value(1))
++        )
++        publisher_books_qs = (
++            Publisher.objects.filter(
++                book__in=long_books_qs,
++            )
++            .values("name")
++        )
++        self.assertCountEqual(
++            publisher_books_qs,
++            [
++                {"name": "Apress"},
++                {"name": "Sams"},
++                {"name": "Prentice Hall"},
++                {"name": "Morgan Kaufmann"},
++            ]
++        )
++
+     def test_annotation_exists_aggregate_values_chaining(self):
+         qs = (
+             Book.objects.values("publisher")

@@ -1,0 +1,326 @@
+{
+  "throughput": {
+    "r138_ft": 2.5,
+    "r141_rollout": 20.81,
+    "effective_ft": 2.5,
+    "effective_lora": 3.0,
+    "bottleneck": "R138 training compute (Full FT)",
+    "rollout_headroom": 8.3
+  },
+  "step_budget": {
+    "window_h": 504,
+    "rl_h": 352.8,
+    "pure_h": 299.9,
+    "max_ft": 749,
+    "max_lora": 899,
+    "curriculum": 550,
+    "feasible_ft": true,
+    "feasible_lora": true
+  },
+  "convergence": {
+    "steps": 750,
+    "baseline": 0.36,
+    "target": 0.75,
+    "models": {
+      "sigmoid": {
+        "final_reward": 0.7468,
+        "milestones": [
+          {
+            "milestone": "baseline",
+            "target": 0.36,
+            "step_reached": 0,
+            "reached": true
+          },
+          {
+            "milestone": "M1",
+            "target": 0.5,
+            "step_reached": 250,
+            "reached": true
+          },
+          {
+            "milestone": "M2",
+            "target": 0.65,
+            "step_reached": 400,
+            "reached": true
+          },
+          {
+            "milestone": "M3",
+            "target": 0.75,
+            "step_reached": null,
+            "reached": false
+          },
+          {
+            "milestone": "M4",
+            "target": 0.85,
+            "step_reached": null,
+            "reached": false
+          }
+        ]
+      },
+      "logarithmic": {
+        "final_reward": 0.7474,
+        "milestones": [
+          {
+            "milestone": "baseline",
+            "target": 0.36,
+            "step_reached": 0,
+            "reached": true
+          },
+          {
+            "milestone": "M1",
+            "target": 0.5,
+            "step_reached": 70,
+            "reached": true
+          },
+          {
+            "milestone": "M2",
+            "target": 0.65,
+            "step_reached": 205,
+            "reached": true
+          },
+          {
+            "milestone": "M3",
+            "target": 0.75,
+            "step_reached": null,
+            "reached": false
+          },
+          {
+            "milestone": "M4",
+            "target": 0.85,
+            "step_reached": null,
+            "reached": false
+          }
+        ]
+      },
+      "power_law": {
+        "final_reward": 0.5463,
+        "milestones": [
+          {
+            "milestone": "baseline",
+            "target": 0.36,
+            "step_reached": 0,
+            "reached": true
+          },
+          {
+            "milestone": "M1",
+            "target": 0.5,
+            "step_reached": 375,
+            "reached": true
+          },
+          {
+            "milestone": "M2",
+            "target": 0.65,
+            "step_reached": null,
+            "reached": false
+          },
+          {
+            "milestone": "M3",
+            "target": 0.75,
+            "step_reached": null,
+            "reached": false
+          },
+          {
+            "milestone": "M4",
+            "target": 0.85,
+            "step_reached": null,
+            "reached": false
+          }
+        ]
+      }
+    }
+  },
+  "timeline": {
+    "pure_training_h": 300.0,
+    "checkpoint_h": 1.5,
+    "evaluation_h": 11.25,
+    "recovery_h": 0.28,
+    "warmup_h": 0.083,
+    "total_overhead_h": 13.03,
+    "total_wall_h": 313.11,
+    "overhead_pct": 4.2,
+    "n_checkpoints": 30,
+    "n_evaluations": 15,
+    "expected_collapses": 1.05
+  },
+  "curriculum": {
+    "total": 748,
+    "stages": [
+      {
+        "name": "Warmup",
+        "steps": 68,
+        "levels": [
+          "L1"
+        ],
+        "replay_ratio": 0.0,
+        "reward_config": "R0",
+        "rollouts": 2176,
+        "wall_clock_h": 3.27
+      },
+      {
+        "name": "Foundation",
+        "steps": 136,
+        "levels": [
+          "L1",
+          "L2"
+        ],
+        "replay_ratio": 0.0,
+        "reward_config": "R2+R5",
+        "rollouts": 4352,
+        "wall_clock_h": 6.53
+      },
+      {
+        "name": "Development",
+        "steps": 204,
+        "levels": [
+          "L2",
+          "L3"
+        ],
+        "replay_ratio": 0.2,
+        "reward_config": "R2+R5",
+        "rollouts": 6528,
+        "wall_clock_h": 9.8
+      },
+      {
+        "name": "Refinement",
+        "steps": 204,
+        "levels": [
+          "L3",
+          "L4"
+        ],
+        "replay_ratio": 0.25,
+        "reward_config": "R3+anti-cheat",
+        "rollouts": 6528,
+        "wall_clock_h": 9.8
+      },
+      {
+        "name": "Mastery",
+        "steps": 136,
+        "levels": [
+          "L4",
+          "L5"
+        ],
+        "replay_ratio": 0.3,
+        "reward_config": "R3+R4",
+        "rollouts": 4352,
+        "wall_clock_h": 6.53
+      }
+    ]
+  },
+  "early_stopping": [
+    {
+      "name": "reward_plateau",
+      "desc": "Mean reward improvement <0.5% over 30 steps",
+      "window": 30,
+      "threshold": 0.005,
+      "action": "stop",
+      "severity": "info"
+    },
+    {
+      "name": "eval_plateau",
+      "desc": "Eval Pass@1 improvement <1pp over 2 evals",
+      "window": 100,
+      "threshold": 0.01,
+      "action": "stop",
+      "severity": "info"
+    },
+    {
+      "name": "reward_hacking",
+      "desc": "Cheat rate >5% (R135)",
+      "window": 10,
+      "threshold": 0.05,
+      "action": "rollback",
+      "severity": "critical"
+    },
+    {
+      "name": "kl_divergence",
+      "desc": "KL >5.0 from ref model (R132)",
+      "window": 1,
+      "threshold": 5.0,
+      "action": "rollback",
+      "severity": "critical"
+    },
+    {
+      "name": "entropy_collapse",
+      "desc": "Policy entropy <0.01 (R139 C3)",
+      "window": 5,
+      "threshold": 0.01,
+      "action": "warn",
+      "severity": "warning"
+    },
+    {
+      "name": "loss_nan",
+      "desc": "NaN in loss (R139 C4, FATAL)",
+      "window": 1,
+      "threshold": 1.0,
+      "action": "stop",
+      "severity": "critical"
+    },
+    {
+      "name": "overfitting",
+      "desc": "Train reward↑ but eval↓ over 2 evals",
+      "window": 100,
+      "threshold": 0.0,
+      "action": "stop",
+      "severity": "warning"
+    }
+  ],
+  "deadline": {
+    "sft_d": 5,
+    "rl_d": 13.0,
+    "eval_d": 3,
+    "paper_d": 7,
+    "total_d": 28.0,
+    "avail_d": 37,
+    "fits": true,
+    "slack_d": 9.0
+  },
+  "sensitivity": {
+    "300": {
+      "final": 0.7468,
+      "wall_h": 120.0,
+      "m3_reached": false
+    },
+    "500": {
+      "final": 0.7468,
+      "wall_h": 200.0,
+      "m3_reached": false
+    },
+    "550": {
+      "final": 0.7468,
+      "wall_h": 220.0,
+      "m3_reached": false
+    },
+    "750": {
+      "final": 0.7468,
+      "wall_h": 300.0,
+      "m3_reached": false
+    },
+    "1000": {
+      "final": 0.7468,
+      "wall_h": 400.0,
+      "m3_reached": false
+    },
+    "1500": {
+      "final": 0.7468,
+      "wall_h": 600.0,
+      "m3_reached": false
+    },
+    "2000": {
+      "final": 0.7468,
+      "wall_h": 800.0,
+      "m3_reached": false
+    }
+  },
+  "recommendations": [
+    "1. Full FT (S5) primary — 2.5 steps/h, 750 steps in 313h",
+    "2. LoRA fallback — 3.0 steps/h, 20% faster but may limit M4 ceiling",
+    "3. 750 steps recommended (1.36x R130's 550) — depth vs deadline balance",
+    "4. Overhead=4% — eval=11.2h + ckpt=1.5h + recovery=0.3h",
+    "5. Sigmoid model: M3(75%) at step ~None",
+    "6. Early stop: reward_plateau + eval_plateau + overfitting → stop; KL>5 or cheat>5% → rollback",
+    "7. Eval every 50 steps (15 runs) — milestone tracking critical",
+    "8. Checkpoint every 25 steps (30 saves) — enables rollback",
+    "9. Expected 1.1 collapses → 0.3h recovery",
+    "10. ISEDA fit: YES (slack=9.0d)"
+  ]
+}

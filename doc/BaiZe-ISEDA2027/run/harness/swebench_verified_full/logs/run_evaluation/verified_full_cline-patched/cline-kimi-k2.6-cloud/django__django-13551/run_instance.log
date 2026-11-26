@@ -1,0 +1,111 @@
+2026-10-30 16:15:23,465 - INFO - Creating container for django__django-13551...
+2026-10-30 16:15:23,482 - INFO - Container for django__django-13551 created: c0ceb2b354a8978707015dc82a6bfe823dae313da0923078a6ab39aff661f803
+2026-10-30 16:15:24,254 - INFO - Container for django__django-13551 started: c0ceb2b354a8978707015dc82a6bfe823dae313da0923078a6ab39aff661f803
+2026-10-30 16:15:24,255 - INFO - Intermediate patch for django__django-13551 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13551/patch.diff, now applying to container...
+2026-10-30 16:15:24,409 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/auth/tokens.py...
+warning: django/contrib/auth/tokens.py has type 100755, expected 100644
+Checking patch tests/auth_tests/test_tokens.py...
+warning: tests/auth_tests/test_tokens.py has type 100755, expected 100644
+Applied patch django/contrib/auth/tokens.py cleanly.
+Applied patch tests/auth_tests/test_tokens.py cleanly.
+
+2026-10-30 16:15:25,645 - INFO - Git diff before:
+diff --git a/django/contrib/auth/tokens.py b/django/contrib/auth/tokens.py
+index 93e2d71af2..40a78a6656 100755
+--- a/django/contrib/auth/tokens.py
++++ b/django/contrib/auth/tokens.py
+@@ -85,6 +85,7 @@ class PasswordResetTokenGenerator:
+            same password is chosen, due to password salting).
+         2. The last_login field will usually be updated very shortly after
+            a password reset.
++        3. The email field will change if the user changes their email address.
+         Failing those things, settings.PASSWORD_RESET_TIMEOUT eventually
+         invalidates the token.
+ 
+@@ -94,7 +95,9 @@ class PasswordResetTokenGenerator:
+         # Truncate microseconds so that tokens are consistent even if the
+         # database doesn't support microseconds.
+         login_timestamp = '' if user.last_login is None else user.last_login.replace(microsecond=0, tzinfo=None)
+-        return str(user.pk) + user.password + str(login_timestamp) + str(timestamp)
++        email_field = getattr(user, 'get_email_field_name', lambda: 'email')()
++        email = getattr(user, email_field, '') or ''
++        return str(user.pk) + user.password + str(login_timestamp) + str(timestamp) + email
+ 
+     def _num_seconds(self, dt):
+         return int((dt - datetime(2001, 1, 1)).total_seconds())
+diff --git a/tests/auth_tests/test_tokens.py b/tests/auth_tests/test_tokens.py
+index bba435be84..5b94bea921 100755
+--- a/tests/auth_tests/test_tokens.py
++++ b/tests/auth_tests/test_tokens.py
+@@ -7,6 +7,9 @@ from django.test import TestCase
+ from django.test.utils import ignore_warnings
+ from django.utils.deprecation import RemovedInDjango40Warning
+ 
++from .models.with_custom_email_field import CustomEmailField
++from .models.with_integer_username import IntegerUsernameUser
++
+ 
+ class MockedPasswordResetTokenGenerator(PasswordResetTokenGenerator):
+     def __init__(self, now):
+@@ -110,3 +113,25 @@ class TokenGeneratorTest(TestCase):
+         legacy_token = p_old_generator.make_token(user)
+         self.assertIs(p_old_generator.check_token(user, legacy_token), True)
+         self.assertIs(p_new_generator.check_token(user, legacy_token), True)
++
++    def test_email_change_invalidates_token(self):
++        user = User.objects.create_user('tokentestuser', 'test2@example.com', 'testpw')
++        p0 = PasswordResetTokenGenerator()
++        tk1 = p0.make_token(user)
++        user.email = 'newemail@example.com'
++        user.save()
++        self.assertIs(p0.check_token(user, tk1), False)
++
++    def test_custom_email_change_invalidates_token(self):
++        user = CustomEmailField.objects.create_user('testuser', 'testpw', 'test@example.com')
++        p0 = PasswordResetTokenGenerator()
++        tk1 = p0.make_token(user)
++        user.email_address = 'newemail@example.com'
++        user.save()
++        self.assertIs(p0.check_token(user, tk1), False)
++
++    def test_user_without_email_field(self):
++        user = IntegerUsernameUser.objects.create_user(123, 'testpw')
++        p0 = PasswordResetTokenGenerator()
++        tk1 = p0.make_token(user)
++        self.assertIs(p0.check_token(user, tk1), True)
+2026-10-30 16:15:25,649 - INFO - Eval script for django__django-13551 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13551/eval.sh; copying to container...
+2026-10-30 16:15:34,001 - INFO - Test runtime: 8.19 seconds
+2026-10-30 16:15:34,006 - INFO - Test output for django__django-13551 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/django__django-13551/test_output.txt
+2026-10-30 16:15:34,060 - INFO - Git diff after:
+diff --git a/django/contrib/auth/tokens.py b/django/contrib/auth/tokens.py
+index 93e2d71af2..40a78a6656 100755
+--- a/django/contrib/auth/tokens.py
++++ b/django/contrib/auth/tokens.py
+@@ -85,6 +85,7 @@ class PasswordResetTokenGenerator:
+            same password is chosen, due to password salting).
+         2. The last_login field will usually be updated very shortly after
+            a password reset.
++        3. The email field will change if the user changes their email address.
+         Failing those things, settings.PASSWORD_RESET_TIMEOUT eventually
+         invalidates the token.
+ 
+@@ -94,7 +95,9 @@ class PasswordResetTokenGenerator:
+         # Truncate microseconds so that tokens are consistent even if the
+         # database doesn't support microseconds.
+         login_timestamp = '' if user.last_login is None else user.last_login.replace(microsecond=0, tzinfo=None)
+-        return str(user.pk) + user.password + str(login_timestamp) + str(timestamp)
++        email_field = getattr(user, 'get_email_field_name', lambda: 'email')()
++        email = getattr(user, email_field, '') or ''
++        return str(user.pk) + user.password + str(login_timestamp) + str(timestamp) + email
+ 
+     def _num_seconds(self, dt):
+         return int((dt - datetime(2001, 1, 1)).total_seconds())
+2026-10-30 16:15:34,060 - INFO - Git diff changed after running eval script
+2026-10-30 16:15:34,060 - INFO - Grading answer for django__django-13551...
+2026-10-30 16:15:34,079 - INFO - report: {'django__django-13551': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['Updating the user email address invalidates the token.', 'test_token_with_different_secret (auth_tests.test_tokens.TokenGeneratorTest)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_str (auth_tests.test_models.GroupTests)', 'test_group_natural_key (auth_tests.test_models.NaturalKeysTestCase)', 'test_user_natural_key (auth_tests.test_models.NaturalKeysTestCase)', 'test_check_password (auth_tests.test_models.AnonymousUserTests)', 'test_delete (auth_tests.test_models.AnonymousUserTests)', 'test_eq (auth_tests.test_models.AnonymousUserTests)', 'test_hash (auth_tests.test_models.AnonymousUserTests)', 'test_int (auth_tests.test_models.AnonymousUserTests)', 'test_properties (auth_tests.test_models.AnonymousUserTests)', 'test_save (auth_tests.test_models.AnonymousUserTests)', 'test_set_password (auth_tests.test_models.AnonymousUserTests)', 'test_str (auth_tests.test_models.AnonymousUserTests)', 'test_create_superuser (auth_tests.test_models.TestCreateSuperUserSignals)', 'test_create_user (auth_tests.test_models.TestCreateSuperUserSignals)', 'test_str (auth_tests.test_models.PermissionTests)', 'test_load_data_with_user_permissions (auth_tests.test_models.LoadDataWithNaturalKeysAndMultipleDatabasesTestCase)', 'test_10265 (auth_tests.test_tokens.TokenGeneratorTest)', 'test_check_token_with_nonexistent_token_and_user (auth_tests.test_tokens.TokenGeneratorTest)', 'test_legacy_token_validation (auth_tests.test_tokens.TokenGeneratorTest)', 'test_make_token (auth_tests.test_tokens.TokenGeneratorTest)', 'The token is valid after n seconds, but no greater.', 'test_token_default_hashing_algorithm (auth_tests.test_tokens.TokenGeneratorTest)', 'test_user_is_created_and_added_to_group (auth_tests.test_models.LoadDataWithNaturalKeysTestCase)', 'test_user_is_created_and_added_to_group (auth_tests.test_models.LoadDataWithoutNaturalKeysTestCase)', 'test_backend_without_with_perm (auth_tests.test_models.UserWithPermTestCase)', 'test_basic (auth_tests.test_models.UserWithPermTestCase)', 'test_custom_backend (auth_tests.test_models.UserWithPermTestCase)', 'test_custom_backend_pass_obj (auth_tests.test_models.UserWithPermTestCase)', 'test_invalid_backend_type (auth_tests.test_models.UserWithPermTestCase)', 'test_invalid_permission_name (auth_tests.test_models.UserWithPermTestCase)', 'test_invalid_permission_type (auth_tests.test_models.UserWithPermTestCase)', 'test_multiple_backends (auth_tests.test_models.UserWithPermTestCase)', 'test_nonexistent_backend (auth_tests.test_models.UserWithPermTestCase)', 'test_nonexistent_permission (auth_tests.test_models.UserWithPermTestCase)', 'test_clean_normalize_username (auth_tests.test_models.AbstractBaseUserTests)', 'test_custom_email (auth_tests.test_models.AbstractBaseUserTests)', 'test_default_email (auth_tests.test_models.AbstractBaseUserTests)', 'test_has_usable_password (auth_tests.test_models.AbstractBaseUserTests)', 'test_normalize_username (auth_tests.test_models.AbstractBaseUserTests)', 'test_builtin_user_isactive (auth_tests.test_models.IsActiveTestCase)', 'test_is_active_field_default (auth_tests.test_models.IsActiveTestCase)', 'test_check_password_upgrade (auth_tests.test_models.AbstractUserTestCase)', 'test_email_user (auth_tests.test_models.AbstractUserTestCase)', 'test_last_login_default (auth_tests.test_models.AbstractUserTestCase)', 'test_user_clean_normalize_email (auth_tests.test_models.AbstractUserTestCase)', 'test_user_double_save (auth_tests.test_models.AbstractUserTestCase)', 'test_create_super_user_raises_error_on_false_is_superuser (auth_tests.test_models.UserManagerTestCase)', 'test_create_superuser_raises_error_on_false_is_staff (auth_tests.test_models.UserManagerTestCase)', 'test_create_user (auth_tests.test_models.UserManagerTestCase)', 'test_create_user_email_domain_normalize (auth_tests.test_models.UserManagerTestCase)', 'test_create_user_email_domain_normalize_rfc3696 (auth_tests.test_models.UserManagerTestCase)', 'test_create_user_email_domain_normalize_with_whitespace (auth_tests.test_models.UserManagerTestCase)', 'test_create_user_is_staff (auth_tests.test_models.UserManagerTestCase)', 'test_empty_username (auth_tests.test_models.UserManagerTestCase)', 'test_make_random_password (auth_tests.test_models.UserManagerTestCase)', 'test_runpython_manager_methods (auth_tests.test_models.UserManagerTestCase)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13551: resolved: True
+2026-10-30 16:15:34,081 - INFO - Attempting to stop container sweb.eval.django__django-13551.verified_full_cline-patched...
+2026-10-30 16:15:51,025 - INFO - Container sweb.eval.django__django-13551.verified_full_cline-patched stopped successfully.
+2026-10-30 16:15:51,025 - INFO - Attempting to remove container sweb.eval.django__django-13551.verified_full_cline-patched...
+2026-10-30 16:15:51,074 - INFO - Container sweb.eval.django__django-13551.verified_full_cline-patched removed successfully.

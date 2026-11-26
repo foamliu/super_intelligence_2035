@@ -1,0 +1,71 @@
+\section{The Four Levels of Information}
+
+We introduce a four-level distinction that separates what can be acquired offline from what must be observed online. The distinction applies to any agent that must act after its knowledge has been fixed through offline learning: \emph{generalized prior knowledge} acquirable before deployment versus \emph{situated state information} that depends on the specific environment at a specific time.
+% 我们引入一个四层区分，将可以离线获取的内容与必须在线观测的内容分开。该区分适用于任何必须在知识通过离线学习固定后行动的智能体：部署前可获取的"泛化先验知识"与依赖于特定时间具体环境的"情境状态信息"。
+
+\textbf{Level 1 (L1) -- Syntactic Correctness.} Well-formedness of symbols according to formal rules. Captured by formal grammars and the syntactic capacities of modern LLMs.
+% 第一层（L1）——语法正确性。符号根据形式规则的形式良好性。由形式语法和现代LLM的句法能力所覆盖。
+
+\textbf{Level 2 (L2) -- Physical Plausibility.} What events are physically plausible or generally expected: objects do not pass through walls, water flows downhill. L2 captures robust statistical patterns of the physical world, not logical certainties. These regularities are general and can be acquired through offline learning, constituting the agent's \emph{prior} over how the world typically behaves.
+% 第二层（L2）——物理合理性。什么事件在物理上是合理的或普遍可预期的：物体不会穿过墙壁，水往低处流。L2捕捉物理世界的稳健统计模式，而非逻辑确定性。这些规律性是一般的，可以通过离线学习获得，构成智能体关于世界通常如何运作的\emph{先验}。
+
+\textbf{Level 3 (L3) -- Historical Factuality.} What has actually occurred or is documented as fact: Paris is the capital of France. L3 concerns actual rather than merely possible states of affairs. Like L1 and L2, L3 can be acquired offline, but it is past-oriented, describing what was true as of the training cutoff, with no connection to what is true \emph{now}.
+% 第三层（L3）——历史事实性。什么已经实际发生或被记录为事实：巴黎是法国的首都。L3关乎"实际的"而非仅仅是"可能的"事态。与L1和L2一样，L3可以离线获取，但它是面向过去的，描述截至训练截止日期为真的内容，与"此刻"为真的内容没有联系。
+
+\textbf{Level 4 (L4) -- Situated Truthfulness.} L4 is qualitatively different. It concerns what is true \emph{right now}, in this specific environment. Three characteristics define it: (1) \emph{indexicality}---truth depends on context and changes over time; (2) \emph{non-guaranteeability from offline data}---no offline dataset can \emph{guarantee} the current L4 state, though it may induce strong priors; (3) \emph{real-time commitment}---L4 knowledge must be acquired continuously and acted upon promptly. To know L4, a system must observe its environment at runtime.
+% 第四层（L4）——情境真实性。L4有质的区别。它关乎"此时此刻"、在这个特定环境中为真的内容。三个特征定义它：（1）指示性——真值依赖于语境并随时间变化；（2）无法从离线数据获得保证——没有离线数据集能保证当前的L4状态，尽管它可以诱导出强先验；（3）实时承诺——L4知识必须被持续获取并迅速据此行动。要知晓L4，系统必须在运行时观测其环境。
+
+These four levels are ordered by their dependence on runtime access. Critically, L4 is not a semantic category of propositions; it is a \emph{grounding requirement} imposed by indexical reference. The same proposition may be L3 at one time and L4 at another, depending on whether it refers to a past fact or a current state. \textbf{L4 cannot be guaranteed by a frozen representation of the environment alone.} This is the core of the grounding gap.
+% 这四个层次按其运行时依赖程度排序。关键在于，L4不是命题的语义类别；它是由指示性所指强加的\emph{落地要求}。同一个命题可能在某个时刻是L3，在另一个时刻是L4，取决于它指的是过去的事实还是当前的状态。\textbf{L4无法仅靠环境的冻结表征来保证。}这就是落地鸿沟的核心。
+
+\subsection{Why L4 Cannot Come from Offline Knowledge}
+
+The four-level distinction explains why systems built from offline learning cannot perform grounding natively without runtime observation. This is not to deny that offline learning can induce strong priors over L4---such priors are valuable---but priors are not observations, and guessing is not grounding. Four architectural consequences follow from L4's defining characteristics:
+% 四层区分解释了为什么从离线学习构建的系统在没有运行时观测的情况下无法原生执行落地。这并非否认离线学习可以诱导出关于L4的强先验——这样的先验是有价值的——但先验不是观测，猜测不是落地。从L4的定义性特征可以推出四个架构性后果：
+
+\begin{enumerate}
+\item \emph{No observation modules}: L4 requires real-time observation; offline-trained systems have no native sensors beyond training inputs.
+% 无观测模块：L4需要实时观测；离线训练的系统除了训练输入外没有原生传感器。
+
+\item \emph{No persistent situated state}: L4 is indexical and time-dependent. Frozen deployment does not maintain an environment-grounded belief state across time.
+% 无持久情境状态：L4是指示性的、时间依赖的。冻结部署不跨时间维护基于环境的信念状态。
+
+\item \emph{No execution interface}: L4 requires action; prediction-only systems have no native effectors.
+% 无执行接口：L4需要行动；仅预测的系统没有原生执行器。
+
+\item \emph{No real-time feedback loop}: L4 requires continuous updating; frozen systems receive no feedback about output consequences.
+% 无实时反馈环路：L4需要持续更新；冻结系统不接收关于输出后果的反馈。
+\end{enumerate}
+
+These are not incidental shortcomings; they are consequences of offline training's fundamental design. Every observed failure of LLM-based agents in dynamic environments traces to one or more of these missing components.
+% 这些不是偶发缺陷；它们是离线训练基本设计的后果。基于LLM的智能体在动态环境中的每一个观察到的失败都可追溯到一个或多个这些缺失的组件。
+
+\subsection{The Situated State Is Not Limited to Physics}
+
+The situated state \(\theta_t\) is not limited to the physical world. It encompasses any aspect of the environment that is (a) temporally indexed, (b) context-dependent, and (c) not fully determined by static knowledge: digital states (DOM, repository status), informational states (market data, unread emails), and social states (a user's current intent). The grounding problem is isomorphic across these domains: the agent must observe the current state through a domain-specific runtime channel. L4 is whatever must be \emph{read} from the environment rather than \emph{recalled} from memory. This holds regardless of modality---whether L4 arrives as text, pixels, or sensor readings, it must be acquired at runtime, not recalled from frozen parameters.
+% 情境状态\(\theta_t\)不限于物理世界。它涵盖环境中任何（a）具有时间索引的、（b）依赖于上下文的、（c）不能被静态知识完全确定的方面：数字状态（DOM、仓库状态）、信息状态（市场数据、未读邮件）和社会状态（用户的当前意图）。落地问题在这些领域中是同构的：智能体必须通过特定领域的运行时通道观测当前状态。L4是必须从环境中"读取"而非从记忆中"回忆"的任何东西。无论何种模态——无论L4以文本、像素还是传感器读数形式到来——它都必须在运行时被获取，而非从冻结参数中回忆。
+
+This is not a claim that LLMs cannot \emph{access} L4 via tools or APIs. It is a claim about the \emph{source}: L4 must enter through runtime observation, not pretraining. A weather API supplies today's temperature; the LLM interprets it, but the observation itself comes from the environment.
+% 这并不是说LLM不能通过工具或API"访问"L4。这是关于信息"来源"的主张：L4必须通过运行时观测进入系统，而非预训练。天气API提供今天的温度；LLM解释它，但观测本身来自环境。
+
+The four-level distinction is not a taxonomy of all knowledge. It distinguishes what can be \emph{known in advance} from what must be \emph{observed now}. L4 is the only level that systematically resists offline encoding, requiring a fundamentally different mode of engagement with the world.
+% 四层区分并非所有知识的分类法。它区分了什么可以"预先知道"与什么必须"此刻观测"。L4是唯一系统性地抵抗离线编码的层次，需要一种根本不同的与世界互动的方式。
+
+\begin{table*}[t]
+\centering
+\caption{The four levels of information.}
+\label{tab:hierarchy}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{c p{3.5cm} p{3.8cm} c}
+\toprule
+\textbf{Level} & \textbf{Name} & \textbf{Core Question} & \textbf{Learnable Offline?} \\
+\midrule
+L1 & Syntactic Correctness & Is this string well-formed? & Yes \\
+L2 & Physical Plausibility & Could this event happen? & Yes \\
+L3 & Historical Factuality & Did this event happen? & Yes \\
+L4 & Situated Truthfulness & Is this true \emph{right now}? & \textbf{No} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+% 中文翻译：表格内容同上，已省略

@@ -1,0 +1,41 @@
+diff --git a/lib/matplotlib/tests/test_widgets.py b/lib/matplotlib/tests/test_widgets.py
+index 71ebd176..759c9631 100644
+--- a/lib/matplotlib/tests/test_widgets.py
++++ b/lib/matplotlib/tests/test_widgets.py
+@@ -280,6 +280,18 @@ def test_span_selector_direction():
+         tool.direction = 'invalid_string'
+ 
+ 
++def test_span_selector_interactive_initial_limits():
++    for direction, get_lim in [('horizontal', 'get_xlim'),
++                               ('vertical', 'get_ylim')]:
++        fig, ax = plt.subplots()
++        ax.plot([10, 20], [10, 20])
++        lim_before = getattr(ax, get_lim)()
++        tool = widgets.SpanSelector(ax, lambda *args: None, direction,
++                                    interactive=True)
++        lim_after = getattr(ax, get_lim)()
++        assert lim_after == lim_before
++
++
+ def test_tool_line_handle():
+     ax = get_ax()
+ 
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+index a199e45d..ccf3908e 100644
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -2141,10 +2141,12 @@ class SpanSelector(_SelectorWidget):
+         if self.direction == 'horizontal':
+             trans = ax.get_xaxis_transform()
+             w, h = 0, 1
++            x, y = ax.get_xbound()[0], 0
+         else:
+             trans = ax.get_yaxis_transform()
+             w, h = 1, 0
+-        self._rect = Rectangle((0, 0), w, h,
++            x, y = 0, ax.get_ybound()[0]
++        self._rect = Rectangle((x, y), w, h,
+                                transform=trans,
+                                visible=False,
+                                **self._rectprops)

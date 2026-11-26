@@ -1,0 +1,52 @@
+diff --git a/sympy/combinatorics/permutations.py b/sympy/combinatorics/permutations.py
+index 136ed5a..83b7e45 100644
+--- a/sympy/combinatorics/permutations.py
++++ b/sympy/combinatorics/permutations.py
+@@ -824,6 +824,14 @@ def __new__(cls, *args, **kwargs):
+         >>> Permutation([[4, 5, 6], [0, 1], [19]])
+         Permutation([1, 0, 2, 3, 5, 6, 4], size=20)
+ 
++        Cycles entered in cyclic form need not be disjoint; they are
++        applied in left-to-right order:
++
++        >>> Permutation([[0, 1], [0, 1]])
++        Permutation([0, 1])
++        >>> Permutation([[1, 2], [2, 3]])
++        Permutation([0, 3, 1, 2])
++
+         All manipulation of permutations assumes that the smallest element
+         is 0 (in keeping with 0-based indexing in Python) so if the 0 is
+         missing when entering a permutation in array form, an error will be
+@@ -895,12 +903,8 @@ def __new__(cls, *args, **kwargs):
+         # counting starts from 1.
+ 
+         temp = flatten(args)
+-        if has_dups(temp):
+-            if is_cycle:
+-                raise ValueError('there were repeated elements; to resolve '
+-                'cycles use Cycle%s.' % ''.join([str(tuple(c)) for c in args]))
+-            else:
+-                raise ValueError('there were repeated elements.')
++        if has_dups(temp) and not is_cycle:
++            raise ValueError('there were repeated elements.')
+         temp = set(temp)
+ 
+         if not is_cycle and \
+diff --git a/sympy/combinatorics/tests/test_permutations.py b/sympy/combinatorics/tests/test_permutations.py
+index 7f8cd57..8e3a01b 100644
+--- a/sympy/combinatorics/tests/test_permutations.py
++++ b/sympy/combinatorics/tests/test_permutations.py
+@@ -349,7 +349,12 @@ def test_args():
+     raises(ValueError, lambda: Permutation([[1, 2], 0]))
+            # enclosing brackets needed on 0
+     raises(ValueError, lambda: Permutation([1, 1, 0]))
+-    raises(ValueError, lambda: Permutation([[1], [1, 2]]))
++    # duplicate elements in a cycle are OK; the cycles are applied
++    # in left-to-right order
++    assert Permutation([[1], [1, 2]]) == Permutation([0, 2, 1])
++    assert Permutation([[0, 1], [0, 1]]) == Permutation([0, 1])
++    assert Permutation([[1, 2], [2, 3]]) == \
++        Permutation([[1, 2]])*Permutation([[2, 3]])
+     raises(ValueError, lambda: Permutation([4, 5], size=10))  # where are 0-3?
+     # but this is ok because cycles imply that only those listed moved
+     assert Permutation(4, 5) == Permutation([0, 1, 2, 3, 5, 4])

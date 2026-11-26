@@ -1,0 +1,13 @@
+{
+  "harness": "cline",
+  "run_id": "verified_full_glm53_cline-patched_incr_R2298",
+  "round": "R2298",
+  "n": 3,
+  "resolved": [
+    "django__django-11149",
+    "django__django-11265",
+    "django__django-11477"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

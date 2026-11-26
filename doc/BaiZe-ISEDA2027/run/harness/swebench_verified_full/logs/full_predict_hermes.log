@@ -1,0 +1,993 @@
+[verified-full 01:52:37] resume: loaded 10 existing results
+[verified-full 01:52:37] [1/500] sympy__sympy-11618 SKIP (predicted, patch=1269B)
+[verified-full 01:52:37] [2/500] PREDICT hermes on sympy__sympy-12096
+[verified-full 02:20:50]   -> patch-produced (patch=2348B wall=1568.3s)
+[verified-full 02:20:50] [3/500] PREDICT hermes on sympy__sympy-12419
+[verified-full 02:56:44]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 02:56:44] [4/500] PREDICT hermes on sympy__sympy-12481
+[verified-full 03:14:48]   -> patch-produced (patch=4405B wall=973.5s)
+[verified-full 03:14:48] [5/500] PREDICT hermes on sympy__sympy-12489
+[verified-full 03:48:15]   -> no-patch (patch=0B wall=1800.2s)
+[verified-full 03:48:15] [6/500] PREDICT hermes on sympy__sympy-13031
+[verified-full 04:12:37]   -> patch-produced (patch=663B wall=978.5s)
+[verified-full 04:12:37] [7/500] PREDICT hermes on sympy__sympy-13091
+[verified-full 04:44:43]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 04:44:43] [8/500] PREDICT hermes on sympy__sympy-13372
+[verified-full 04:48:26]   -> patch-produced (patch=1417B wall=143.2s)
+[verified-full 04:48:26] [9/500] PREDICT hermes on sympy__sympy-13480
+[verified-full 04:52:34]   -> patch-produced (patch=1195B wall=191.7s)
+[verified-full 04:52:34] [10/500] PREDICT hermes on sympy__sympy-13551
+[verified-full 05:29:17]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 05:29:17] [11/500] PREDICT hermes on sympy__sympy-13615
+[verified-full 06:01:30]   -> no-patch (patch=0B wall=1800.2s)
+[verified-full 06:01:30] [12/500] PREDICT hermes on sympy__sympy-13647
+[verified-full 06:14:27]   -> no-patch (patch=0B wall=650.0s)
+[verified-full 06:14:27] [13/500] PREDICT hermes on sympy__sympy-13757
+[verified-full 06:49:02]   -> patch-produced (patch=390B wall=1577.4s)
+[verified-full 06:49:02] [14/500] PREDICT hermes on sympy__sympy-13798
+[verified-full 07:03:27]   -> patch-produced (patch=1536B wall=413.6s)
+[verified-full 07:03:27] [15/500] PREDICT hermes on sympy__sympy-13852
+[verified-full 07:21:07]   -> patch-produced (patch=14584B wall=1053.4s)
+[verified-full 07:21:07] [16/500] PREDICT hermes on sympy__sympy-13877
+[verified-full 07:52:04]   -> patch-produced (patch=15626B wall=1723.2s)
+[verified-full 07:52:04] [17/500] PREDICT hermes on sympy__sympy-13878
+[verified-full 08:28:22]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 08:28:22] [18/500] PREDICT hermes on sympy__sympy-13974
+[verified-full 09:00:31]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 09:00:31] [19/500] PREDICT hermes on sympy__sympy-14248
+[verified-full 09:32:52]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 09:32:52] [20/500] PREDICT hermes on sympy__sympy-14531
+[verified-full 10:05:12]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 10:05:12] [21/500] PREDICT hermes on sympy__sympy-14711
+[verified-full 10:11:51]   -> patch-produced (patch=1031B wall=263.6s)
+[verified-full 10:11:51] [22/500] PREDICT hermes on sympy__sympy-14976
+[verified-full 10:37:18]   -> patch-produced (patch=1681B wall=1379.9s)
+[verified-full 10:37:18] [23/500] PREDICT hermes on sympy__sympy-15017
+[verified-full 10:51:41]   -> patch-produced (patch=3228B wall=283.8s)
+[verified-full 10:51:41] [24/500] PREDICT hermes on sympy__sympy-15345
+[verified-full 10:57:20]   -> patch-produced (patch=1569B wall=178.6s)
+[verified-full 10:57:20] [25/500] PREDICT hermes on sympy__sympy-15349
+[verified-full 11:07:36]   -> patch-produced (patch=1524B wall=460.3s)
+[verified-full 11:07:36] [26/500] PREDICT hermes on sympy__sympy-15599
+[verified-full 11:40:09]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 11:40:09] [27/500] PREDICT hermes on sympy__sympy-15809
+[verified-full 11:49:27]   -> patch-produced (patch=1371B wall=140.5s)
+[verified-full 11:49:27] [28/500] PREDICT hermes on sympy__sympy-15875
+[verified-full 12:27:02]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 12:27:02] [29/500] PREDICT hermes on sympy__sympy-15976
+[verified-full 12:45:43]   -> patch-produced (patch=10724B wall=973.1s)
+[verified-full 12:45:43] [30/500] PREDICT hermes on sympy__sympy-16450
+[verified-full 12:54:26]   -> patch-produced (patch=1286B wall=363.0s)
+[verified-full 12:54:26] [31/500] PREDICT hermes on sympy__sympy-16597
+[verified-full 13:27:02]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 13:27:02] [32/500] PREDICT hermes on sympy__sympy-16766
+[verified-full 13:31:28]   -> patch-produced (patch=1485B wall=123.0s)
+[verified-full 13:31:28] [33/500] PREDICT hermes on sympy__sympy-16792
+[verified-full 14:01:06]   -> patch-produced (patch=7928B wall=1621.9s)
+[verified-full 14:01:06] [34/500] PREDICT hermes on sympy__sympy-16886
+[verified-full 14:11:36]   -> patch-produced (patch=460B wall=54.9s)
+[verified-full 14:11:36] [35/500] PREDICT hermes on sympy__sympy-17139
+[verified-full 14:33:40]   -> patch-produced (patch=404B wall=1173.9s)
+[verified-full 14:33:40] [36/500] PREDICT hermes on sympy__sympy-17318
+[verified-full 15:12:44]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 15:12:44] [37/500] PREDICT hermes on sympy__sympy-17630
+[verified-full 15:45:20]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 15:45:20] [38/500] PREDICT hermes on sympy__sympy-17655
+[verified-full 16:18:03]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 16:18:03] [39/500] PREDICT hermes on sympy__sympy-18189
+[verified-full 16:26:01]   -> patch-produced (patch=1591B wall=321.8s)
+[verified-full 16:26:01] [40/500] PREDICT hermes on sympy__sympy-18199
+[verified-full 16:47:24]   -> patch-produced (patch=1357B wall=1112.8s)
+[verified-full 16:47:24] [41/500] PREDICT hermes on sympy__sympy-18211
+[verified-full 17:10:34]   -> patch-produced (patch=1842B wall=1229.2s)
+[verified-full 17:10:34] [42/500] PREDICT hermes on sympy__sympy-18698
+[verified-full 17:50:40]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 17:50:40] [43/500] PREDICT hermes on sympy__sympy-18763
+[verified-full 17:58:19]   -> patch-produced (patch=539B wall=309.0s)
+[verified-full 17:58:19] [44/500] PREDICT hermes on sympy__sympy-19040
+[verified-full 18:35:46]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 18:35:46] [45/500] PREDICT hermes on sympy__sympy-19346
+[verified-full 18:46:04]   -> patch-produced (patch=2095B wall=455.9s)
+[verified-full 18:46:04] [46/500] PREDICT hermes on sympy__sympy-19495
+[verified-full 19:18:39]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 19:18:39] [47/500] PREDICT hermes on sympy__sympy-19637
+[verified-full 19:24:34]   -> patch-produced (patch=415B wall=199.6s)
+[verified-full 19:24:34] [48/500] PREDICT hermes on sympy__sympy-19783
+[verified-full 19:57:13]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 19:57:13] [49/500] PREDICT hermes on sympy__sympy-19954
+[verified-full 20:12:58]   -> patch-produced (patch=1268B wall=467.8s)
+[verified-full 20:12:58] [50/500] PREDICT hermes on sympy__sympy-20154
+[verified-full 20:28:32]   -> patch-produced (patch=4029B wall=778.9s)
+[verified-full 20:28:32] [51/500] PREDICT hermes on sympy__sympy-20428
+[verified-full 20:46:51]   -> patch-produced (patch=636B wall=925.7s)
+[verified-full 20:46:51] [52/500] PREDICT hermes on sympy__sympy-20438
+[verified-full 21:19:32]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 21:19:32] [53/500] PREDICT hermes on sympy__sympy-20590
+[verified-full 21:36:05]   -> patch-produced (patch=310B wall=832.7s)
+[verified-full 21:36:05] [54/500] PREDICT hermes on sympy__sympy-20801
+[verified-full 22:08:42]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 22:08:42] [55/500] PREDICT hermes on sympy__sympy-20916
+[verified-full 22:41:37]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 22:41:37] [56/500] PREDICT hermes on sympy__sympy-21379
+[verified-full 23:11:41]   -> patch-produced (patch=2465B wall=1646.7s)
+[verified-full 23:11:41] [57/500] PREDICT hermes on sympy__sympy-21596
+[verified-full 23:37:11]   -> patch-produced (patch=2127B wall=1368.8s)
+[verified-full 23:37:11] [58/500] PREDICT hermes on sympy__sympy-21612
+[verified-full 00:09:56]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 00:09:56] [59/500] PREDICT hermes on sympy__sympy-21847
+[verified-full 00:24:38]   -> patch-produced (patch=2349B wall=388.0s)
+[verified-full 00:24:38] [60/500] PREDICT hermes on sympy__sympy-21930
+[verified-full 00:51:59]   -> patch-produced (patch=2507B wall=1484.8s)
+[verified-full 00:51:59] [61/500] PREDICT hermes on sympy__sympy-22080
+[verified-full 01:24:57]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 01:24:57] [62/500] PREDICT hermes on sympy__sympy-22456
+[verified-full 02:00:14]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 02:00:14] [63/500] PREDICT hermes on sympy__sympy-22714
+[verified-full 02:14:31]   -> patch-produced (patch=696B wall=670.0s)
+[verified-full 02:14:31] [64/500] PREDICT hermes on sympy__sympy-22914
+[verified-full 02:18:59]   -> patch-produced (patch=1327B wall=87.7s)
+[verified-full 02:18:59] [65/500] PREDICT hermes on sympy__sympy-23262
+[verified-full 02:33:31]   -> quota-blocked (patch=1246B wall=206.8s)
+[verified-full 02:33:31] [66/500] PREDICT hermes on sympy__sympy-23413
+[verified-full 03:01:07]   -> patch-produced (patch=2927B wall=1473.0s)
+[verified-full 03:01:07] [67/500] PREDICT hermes on sympy__sympy-23534
+[verified-full 03:08:52]   -> patch-produced (patch=1599B wall=277.0s)
+[verified-full 03:08:52] [68/500] PREDICT hermes on sympy__sympy-23824
+[verified-full 03:19:01]   -> patch-produced (patch=1586B wall=87.5s)
+[verified-full 03:19:01] [69/500] PREDICT hermes on sympy__sympy-23950
+[verified-full 03:51:59]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 03:51:59] [70/500] PREDICT hermes on sympy__sympy-24066
+[verified-full 04:24:50]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 04:24:50] [71/500] PREDICT hermes on sympy__sympy-24213
+[verified-full 04:39:01]   -> patch-produced (patch=687B wall=138.1s)
+[verified-full 04:39:01] [72/500] PREDICT hermes on sympy__sympy-24443
+[verified-full 05:05:31]   -> patch-produced (patch=2135B wall=1427.9s)
+[verified-full 05:05:31] [73/500] PREDICT hermes on sympy__sympy-24539
+[verified-full 05:09:26]   -> patch-produced (patch=537B wall=80.9s)
+[verified-full 05:09:26] [74/500] PREDICT hermes on sympy__sympy-24562
+[verified-full 05:37:45]   -> patch-produced (patch=420B wall=1599.7s)
+[verified-full 05:37:45] [75/500] PREDICT hermes on sympy__sympy-24661
+[verified-full 06:03:52]   -> patch-produced (patch=3185B wall=1388.8s)
+[verified-full 06:03:52] [76/500] astropy__astropy-12907 SKIP (predicted, patch=1293B)
+[verified-full 06:03:52] [77/500] PREDICT hermes on astropy__astropy-13033
+[verified-full 06:34:50]   -> patch-produced (patch=3550B wall=1348.3s)
+[verified-full 06:34:50] [78/500] PREDICT hermes on astropy__astropy-13236
+[verified-full 07:10:31]   -> patch-produced (patch=2175B wall=1663.9s)
+[verified-full 07:10:31] [79/500] PREDICT hermes on astropy__astropy-13398
+[verified-full 07:40:51]   -> patch-produced (patch=7688B wall=1640.2s)
+[verified-full 07:40:51] [80/500] PREDICT hermes on astropy__astropy-13453
+[verified-full 07:52:56]   -> patch-produced (patch=2443B wall=540.1s)
+[verified-full 07:52:56] [81/500] PREDICT hermes on astropy__astropy-13579
+[verified-full 08:25:33]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 08:25:33] [82/500] PREDICT hermes on astropy__astropy-13977
+[verified-full 08:58:32]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 08:58:32] [83/500] PREDICT hermes on astropy__astropy-14096
+[verified-full 09:36:58]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 09:36:58] [84/500] PREDICT hermes on astropy__astropy-14182
+[verified-full 09:55:51]   -> patch-produced (patch=1627B wall=952.8s)
+[verified-full 09:55:51] [85/500] PREDICT hermes on astropy__astropy-14309
+[verified-full 10:11:09]   -> patch-produced (patch=5441B wall=755.5s)
+[verified-full 10:11:09] [86/500] PREDICT hermes on astropy__astropy-14365
+[verified-full 10:23:59]   -> patch-produced (patch=1797B wall=205.2s)
+[verified-full 10:23:59] [87/500] PREDICT hermes on astropy__astropy-14369
+[verified-full 10:56:49]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 10:56:49] [88/500] PREDICT hermes on astropy__astropy-14508
+[verified-full 11:25:06]   -> patch-produced (patch=1265B wall=1541.9s)
+[verified-full 11:25:06] [89/500] PREDICT hermes on astropy__astropy-14539
+[verified-full 11:42:07]   -> patch-produced (patch=521B wall=850.9s)
+[verified-full 11:42:07] [90/500] PREDICT hermes on astropy__astropy-14598
+[verified-full 12:14:35]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 12:14:35] [91/500] PREDICT hermes on astropy__astropy-14995
+[verified-full 12:20:52]   -> patch-produced (patch=605B wall=208.8s)
+[verified-full 12:20:52] [92/500] PREDICT hermes on astropy__astropy-7166
+[verified-full 12:26:28]   -> patch-produced (patch=529B wall=195.1s)
+[verified-full 12:26:28] [93/500] PREDICT hermes on astropy__astropy-7336
+[verified-full 12:32:30]   -> patch-produced (patch=1411B wall=206.7s)
+[verified-full 12:32:30] [94/500] PREDICT hermes on astropy__astropy-7606
+[verified-full 12:37:49]   -> patch-produced (patch=1154B wall=158.6s)
+[verified-full 12:37:49] [95/500] PREDICT hermes on astropy__astropy-7671
+[verified-full 13:01:45]   -> patch-produced (patch=2037B wall=787.7s)
+[verified-full 13:01:45] [96/500] PREDICT hermes on astropy__astropy-8707
+[verified-full 13:18:45]   -> patch-produced (patch=1329B wall=741.0s)
+[verified-full 13:18:45] [97/500] PREDICT hermes on astropy__astropy-8872
+[verified-full 13:39:08]   -> patch-produced (patch=1723B wall=927.9s)
+[verified-full 13:39:08] [98/500] django__django-10097 SKIP (predicted, patch=1913B)
+[verified-full 13:39:08] [99/500] PREDICT hermes on django__django-10554
+[verified-full 14:12:58]   -> no-patch (patch=0B wall=1800.6s)
+[verified-full 14:12:58] [100/500] PREDICT hermes on django__django-10880
+[verified-full 14:35:50]   -> patch-produced (patch=635B wall=1154.0s)
+[verified-full 14:35:50] [101/500] PREDICT hermes on django__django-10914
+[verified-full 14:42:59]   -> patch-produced (patch=1489B wall=204.1s)
+[verified-full 14:42:59] [102/500] PREDICT hermes on django__django-10973
+[verified-full 14:53:24]   -> patch-produced (patch=6582B wall=384.0s)
+[verified-full 14:53:24] [103/500] PREDICT hermes on django__django-10999
+[verified-full 15:01:30]   -> patch-produced (patch=493B wall=266.5s)
+[verified-full 15:01:30] [104/500] PREDICT hermes on django__django-11066
+[verified-full 15:16:44]   -> patch-produced (patch=4618B wall=690.4s)
+[verified-full 15:16:44] [105/500] PREDICT hermes on django__django-11087
+[verified-full 15:50:36]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 15:50:36] [106/500] PREDICT hermes on django__django-11095
+[verified-full 16:01:47]   -> patch-produced (patch=3677B wall=444.6s)
+[verified-full 16:01:47] [107/500] PREDICT hermes on django__django-11099
+[verified-full 16:16:41]   -> patch-produced (patch=1897B wall=72.1s)
+[verified-full 16:16:41] [108/500] PREDICT hermes on django__django-11119
+[verified-full 16:29:52]   -> patch-produced (patch=1070B wall=134.2s)
+[verified-full 16:29:52] [109/500] PREDICT hermes on django__django-11133
+[verified-full 16:35:58]   -> patch-produced (patch=2094B wall=333.3s)
+[verified-full 16:35:58] [110/500] PREDICT hermes on django__django-11138
+[verified-full 17:19:12]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 17:19:12] [111/500] PREDICT hermes on django__django-11141
+[verified-full 17:42:19]   -> patch-produced (patch=2970B wall=1162.4s)
+[verified-full 17:42:19] [112/500] PREDICT hermes on django__django-11149
+[verified-full 18:25:44]   -> no-patch (patch=0B wall=1800.6s)
+[verified-full 18:25:44] [113/500] PREDICT hermes on django__django-11163
+[verified-full 18:37:54]   -> patch-produced (patch=1138B wall=105.3s)
+[verified-full 18:37:54] [114/500] PREDICT hermes on django__django-11179
+[verified-full 18:46:54]   -> patch-produced (patch=1927B wall=131.9s)
+[verified-full 18:46:54] [115/500] PREDICT hermes on django__django-11206
+[verified-full 19:15:48]   -> patch-produced (patch=1509B wall=1019.4s)
+[verified-full 19:15:48] [116/500] PREDICT hermes on django__django-11211
+[verified-full 19:33:42]   -> patch-produced (patch=2801B wall=860.9s)
+[verified-full 19:33:42] [117/500] PREDICT hermes on django__django-11239
+[verified-full 19:51:04]   -> patch-produced (patch=3343B wall=200.8s)
+[verified-full 19:51:04] [118/500] PREDICT hermes on django__django-11265
+[verified-full 20:24:37]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 20:24:37] [119/500] PREDICT hermes on django__django-11276
+[verified-full 20:58:07]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 20:58:07] [120/500] PREDICT hermes on django__django-11292
+[verified-full 21:28:12]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 21:28:12] [121/500] PREDICT hermes on django__django-11299
+[verified-full 21:39:07]   -> patch-produced (patch=1943B wall=449.7s)
+[verified-full 21:39:07] [122/500] PREDICT hermes on django__django-11333
+[verified-full 22:19:22]   -> patch-produced (patch=665B wall=1663.0s)
+[verified-full 22:19:22] [123/500] PREDICT hermes on django__django-11400
+[verified-full 22:30:06]   -> patch-produced (patch=4952B wall=462.0s)
+[verified-full 22:30:06] [124/500] PREDICT hermes on django__django-11433
+[verified-full 23:01:37]   -> patch-produced (patch=2467B wall=1705.7s)
+[verified-full 23:01:37] [125/500] PREDICT hermes on django__django-11451
+[verified-full 23:12:22]   -> patch-produced (patch=1686B wall=428.6s)
+[verified-full 23:12:22] [126/500] PREDICT hermes on django__django-11477
+[verified-full 23:31:01]   -> patch-produced (patch=2878B wall=905.3s)
+[verified-full 23:31:01] [127/500] PREDICT hermes on django__django-11490
+[verified-full 23:43:37]   -> patch-produced (patch=870B wall=544.9s)
+[verified-full 23:43:37] [128/500] PREDICT hermes on django__django-11532
+[verified-full 00:04:46]   -> patch-produced (patch=1799B wall=1053.8s)
+[verified-full 00:04:46] [129/500] PREDICT hermes on django__django-11551
+[verified-full 00:30:29]   -> patch-produced (patch=5216B wall=894.5s)
+[verified-full 00:30:29] [130/500] PREDICT hermes on django__django-11555
+[verified-full 01:03:29]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 01:03:29] [131/500] PREDICT hermes on django__django-11603
+[verified-full 01:14:01]   -> patch-produced (patch=2926B wall=452.4s)
+[verified-full 01:14:01] [132/500] PREDICT hermes on django__django-11728
+[verified-full 01:26:06]   -> patch-produced (patch=2043B wall=553.6s)
+[verified-full 01:26:06] [133/500] PREDICT hermes on django__django-11734
+[verified-full 01:59:14]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 01:59:14] [134/500] PREDICT hermes on django__django-11740
+[verified-full 02:32:44]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 02:32:44] [135/500] PREDICT hermes on django__django-11749
+[verified-full 02:41:55]   -> patch-produced (patch=3410B wall=338.9s)
+[verified-full 02:41:55] [136/500] PREDICT hermes on django__django-11790
+[verified-full 02:56:30]   -> patch-produced (patch=707B wall=646.9s)
+[verified-full 02:56:30] [137/500] PREDICT hermes on django__django-11815
+[verified-full 03:15:53]   -> patch-produced (patch=4959B wall=947.0s)
+[verified-full 03:15:53] [138/500] PREDICT hermes on django__django-11820
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [139/500] PREDICT hermes on django__django-11848
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [140/500] PREDICT hermes on django__django-11880
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [141/500] PREDICT hermes on django__django-11885
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [142/500] PREDICT hermes on django__django-11951
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [143/500] PREDICT hermes on django__django-11964
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [144/500] PREDICT hermes on django__django-11999
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [145/500] PREDICT hermes on django__django-12039
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [146/500] PREDICT hermes on django__django-12050
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [147/500] PREDICT hermes on django__django-12125
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [148/500] PREDICT hermes on django__django-12143
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [149/500] PREDICT hermes on django__django-12155
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [150/500] PREDICT hermes on django__django-12193
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [151/500] PREDICT hermes on django__django-12209
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [152/500] PREDICT hermes on django__django-12262
+[verified-full 03:15:53]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:53] [153/500] PREDICT hermes on django__django-12273
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [154/500] PREDICT hermes on django__django-12276
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [155/500] PREDICT hermes on django__django-12304
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [156/500] PREDICT hermes on django__django-12308
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [157/500] PREDICT hermes on django__django-12325
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [158/500] PREDICT hermes on django__django-12406
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [159/500] PREDICT hermes on django__django-12419
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [160/500] PREDICT hermes on django__django-12663
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [161/500] PREDICT hermes on django__django-12708
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [162/500] PREDICT hermes on django__django-12713
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [163/500] PREDICT hermes on django__django-12741
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [164/500] PREDICT hermes on django__django-12754
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [165/500] PREDICT hermes on django__django-12774
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [166/500] PREDICT hermes on django__django-12858
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [167/500] PREDICT hermes on django__django-12965
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [168/500] PREDICT hermes on django__django-13012
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [169/500] PREDICT hermes on django__django-13023
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [170/500] PREDICT hermes on django__django-13028
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [171/500] PREDICT hermes on django__django-13033
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [172/500] PREDICT hermes on django__django-13089
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [173/500] PREDICT hermes on django__django-13109
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [174/500] PREDICT hermes on django__django-13112
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [175/500] PREDICT hermes on django__django-13121
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [176/500] PREDICT hermes on django__django-13128
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [177/500] PREDICT hermes on django__django-13158
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [178/500] PREDICT hermes on django__django-13195
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [179/500] PREDICT hermes on django__django-13212
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [180/500] PREDICT hermes on django__django-13279
+[verified-full 03:15:54]   -> blocked (patch=0B wall=Nones)
+[verified-full 03:15:54] [181/500] PREDICT hermes on django__django-13297
+[verified-full 03:46:32]   -> patch-produced (patch=1221B wall=1604.0s)
+[verified-full 03:46:32] [182/500] PREDICT hermes on django__django-13315
+[verified-full 04:12:33]   -> patch-produced (patch=8652B wall=892.9s)
+[verified-full 04:12:33] [183/500] PREDICT hermes on django__django-13343
+[verified-full 04:24:41]   -> patch-produced (patch=3847B wall=498.4s)
+[verified-full 04:24:41] [184/500] PREDICT hermes on django__django-13344
+[verified-full 04:58:26]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 04:58:26] [185/500] PREDICT hermes on django__django-13346
+[verified-full 05:31:58]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 05:31:58] [186/500] PREDICT hermes on django__django-13363
+[verified-full 05:38:50]   -> patch-produced (patch=3018B wall=209.5s)
+[verified-full 05:38:50] [187/500] PREDICT hermes on django__django-13401
+[verified-full 05:59:40]   -> patch-produced (patch=3143B wall=1187.2s)
+[verified-full 05:59:40] [188/500] PREDICT hermes on django__django-13406
+[verified-full 06:33:49]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 06:33:49] [189/500] PREDICT hermes on django__django-13410
+[verified-full 06:38:54]   -> patch-produced (patch=755B wall=90.6s)
+[verified-full 06:38:54] [190/500] PREDICT hermes on django__django-13417
+[verified-full 07:10:47]   -> patch-produced (patch=486B wall=1701.7s)
+[verified-full 07:10:47] [191/500] PREDICT hermes on django__django-13449
+[verified-full 07:51:26]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 07:51:26] [192/500] PREDICT hermes on django__django-13512
+[verified-full 07:57:28]   -> patch-produced (patch=1224B wall=134.2s)
+[verified-full 07:57:28] [193/500] PREDICT hermes on django__django-13513
+[verified-full 08:18:11]   -> no-patch (patch=0B wall=1028.1s)
+[verified-full 08:18:11] [194/500] PREDICT hermes on django__django-13516
+[verified-full 08:27:19]   -> patch-produced (patch=1265B wall=357.0s)
+[verified-full 08:27:19] [195/500] PREDICT hermes on django__django-13551
+[verified-full 08:35:03]   -> patch-produced (patch=2267B wall=263.0s)
+[verified-full 08:35:03] [196/500] PREDICT hermes on django__django-13568
+[verified-full 08:42:28]   -> patch-produced (patch=3976B wall=234.4s)
+[verified-full 08:42:28] [197/500] PREDICT hermes on django__django-13569
+[verified-full 09:01:01]   -> patch-produced (patch=2923B wall=411.0s)
+[verified-full 09:01:01] [198/500] PREDICT hermes on django__django-13590
+[verified-full 09:23:24]   -> patch-produced (patch=1908B wall=1164.4s)
+[verified-full 09:23:24] [199/500] PREDICT hermes on django__django-13658
+[verified-full 09:29:36]   -> patch-produced (patch=894B wall=216.0s)
+[verified-full 09:29:36] [200/500] PREDICT hermes on django__django-13670
+[verified-full 09:39:53]   -> patch-produced (patch=1205B wall=105.7s)
+[verified-full 09:39:53] [201/500] PREDICT hermes on django__django-13741
+[verified-full 09:45:22]   -> patch-produced (patch=463B wall=144.0s)
+[verified-full 09:45:22] [202/500] PREDICT hermes on django__django-13786
+[verified-full 09:52:45]   -> patch-produced (patch=1973B wall=278.3s)
+[verified-full 09:52:45] [203/500] PREDICT hermes on django__django-13794
+[verified-full 10:16:41]   -> patch-produced (patch=2046B wall=1244.7s)
+[verified-full 10:16:41] [204/500] PREDICT hermes on django__django-13807
+[verified-full 10:43:07]   -> patch-produced (patch=1919B wall=1377.6s)
+[verified-full 10:43:07] [205/500] PREDICT hermes on django__django-13809
+[verified-full 10:54:39]   -> patch-produced (patch=3444B wall=507.0s)
+[verified-full 10:54:39] [206/500] PREDICT hermes on django__django-13810
+[verified-full 11:23:05]   -> quota-blocked (patch=3194B wall=864.3s)
+[verified-full 11:23:05] [207/500] PREDICT hermes on django__django-13820
+[verified-full 11:45:51]   -> patch-produced (patch=2346B wall=1114.3s)
+[verified-full 11:45:51] [208/500] PREDICT hermes on django__django-13821
+[verified-full 11:57:34]   -> patch-produced (patch=3416B wall=500.4s)
+[verified-full 11:57:34] [209/500] PREDICT hermes on django__django-13837
+[verified-full 12:25:03]   -> patch-produced (patch=5014B wall=1047.5s)
+[verified-full 12:25:03] [210/500] PREDICT hermes on django__django-13925
+[verified-full 12:42:32]   -> patch-produced (patch=3837B wall=842.2s)
+[verified-full 12:42:32] [211/500] PREDICT hermes on django__django-13933
+[verified-full 12:56:21]   -> patch-produced (patch=6456B wall=634.9s)
+[verified-full 12:56:21] [212/500] PREDICT hermes on django__django-13964
+[verified-full 13:18:55]   -> patch-produced (patch=7599B wall=1177.7s)
+[verified-full 13:18:55] [213/500] PREDICT hermes on django__django-14007
+[verified-full 13:52:21]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 13:52:21] [214/500] PREDICT hermes on django__django-14011
+[verified-full 14:25:25]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 14:25:25] [215/500] PREDICT hermes on django__django-14017
+[verified-full 14:43:43]   -> patch-produced (patch=1056B wall=987.3s)
+[verified-full 14:43:43] [216/500] PREDICT hermes on django__django-14034
+[verified-full 15:17:46]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 15:17:46] [217/500] PREDICT hermes on django__django-14053
+[verified-full 15:58:09]   -> no-patch (patch=0B wall=1800.6s)
+[verified-full 15:58:09] [218/500] PREDICT hermes on django__django-14089
+[verified-full 16:08:27]   -> patch-produced (patch=929B wall=63.0s)
+[verified-full 16:08:27] [219/500] PREDICT hermes on django__django-14122
+[verified-full 16:24:01]   -> patch-produced (patch=2388B wall=260.2s)
+[verified-full 16:24:01] [220/500] PREDICT hermes on django__django-14140
+[verified-full 16:34:54]   -> patch-produced (patch=1854B wall=439.5s)
+[verified-full 16:34:54] [221/500] PREDICT hermes on django__django-14155
+[verified-full 17:08:38]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 17:08:38] [222/500] PREDICT hermes on django__django-14170
+[verified-full 17:29:07]   -> patch-produced (patch=8130B wall=487.5s)
+[verified-full 17:29:07] [223/500] PREDICT hermes on django__django-14238
+[verified-full 17:39:00]   -> patch-produced (patch=1552B wall=381.9s)
+[verified-full 17:39:00] [224/500] PREDICT hermes on django__django-14311
+[verified-full 17:52:53]   -> patch-produced (patch=1960B wall=520.7s)
+[verified-full 17:52:53] [225/500] PREDICT hermes on django__django-14315
+[verified-full 17:59:43]   -> patch-produced (patch=3481B wall=248.6s)
+[verified-full 17:59:43] [226/500] PREDICT hermes on django__django-14349
+[verified-full 18:19:50]   -> patch-produced (patch=713B wall=362.6s)
+[verified-full 18:19:50] [227/500] PREDICT hermes on django__django-14351
+[verified-full 19:00:08]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 19:00:08] [228/500] PREDICT hermes on django__django-14373
+[verified-full 19:04:56]   -> patch-produced (patch=1491B wall=72.6s)
+[verified-full 19:04:56] [229/500] PREDICT hermes on django__django-14376
+[verified-full 19:15:41]   -> patch-produced (patch=1928B wall=438.0s)
+[verified-full 19:15:41] [230/500] PREDICT hermes on django__django-14404
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [231/500] PREDICT hermes on django__django-14434
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [232/500] PREDICT hermes on django__django-14493
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [233/500] PREDICT hermes on django__django-14500
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [234/500] PREDICT hermes on django__django-14534
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [235/500] PREDICT hermes on django__django-14539
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [236/500] PREDICT hermes on django__django-14559
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [237/500] PREDICT hermes on django__django-14580
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [238/500] PREDICT hermes on django__django-14608
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [239/500] PREDICT hermes on django__django-14631
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [240/500] PREDICT hermes on django__django-14672
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [241/500] PREDICT hermes on django__django-14725
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [242/500] PREDICT hermes on django__django-14752
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [243/500] PREDICT hermes on django__django-14765
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [244/500] PREDICT hermes on django__django-14771
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [245/500] PREDICT hermes on django__django-14787
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [246/500] PREDICT hermes on django__django-14792
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [247/500] PREDICT hermes on django__django-14855
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [248/500] PREDICT hermes on django__django-14915
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [249/500] PREDICT hermes on django__django-14999
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [250/500] PREDICT hermes on django__django-15022
+[verified-full 19:15:41]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:41] [251/500] PREDICT hermes on django__django-15037
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [252/500] PREDICT hermes on django__django-15098
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [253/500] PREDICT hermes on django__django-15103
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [254/500] PREDICT hermes on django__django-15104
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [255/500] PREDICT hermes on django__django-15127
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [256/500] PREDICT hermes on django__django-15128
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [257/500] PREDICT hermes on django__django-15161
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [258/500] PREDICT hermes on django__django-15252
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [259/500] PREDICT hermes on django__django-15268
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [260/500] PREDICT hermes on django__django-15277
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [261/500] PREDICT hermes on django__django-15278
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [262/500] PREDICT hermes on django__django-15280
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [263/500] PREDICT hermes on django__django-15315
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [264/500] PREDICT hermes on django__django-15368
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [265/500] PREDICT hermes on django__django-15375
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [266/500] PREDICT hermes on django__django-15380
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [267/500] PREDICT hermes on django__django-15382
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [268/500] PREDICT hermes on django__django-15467
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [269/500] PREDICT hermes on django__django-15499
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [270/500] PREDICT hermes on django__django-15503
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [271/500] PREDICT hermes on django__django-15525
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [272/500] PREDICT hermes on django__django-15554
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [273/500] PREDICT hermes on django__django-15561
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [274/500] PREDICT hermes on django__django-15563
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [275/500] PREDICT hermes on django__django-15569
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [276/500] PREDICT hermes on django__django-15572
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [277/500] PREDICT hermes on django__django-15629
+[verified-full 19:15:42]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:42] [278/500] PREDICT hermes on django__django-15695
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [279/500] PREDICT hermes on django__django-15731
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [280/500] PREDICT hermes on django__django-15732
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [281/500] PREDICT hermes on django__django-15741
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [282/500] PREDICT hermes on django__django-15814
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [283/500] PREDICT hermes on django__django-15851
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [284/500] PREDICT hermes on django__django-15863
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [285/500] PREDICT hermes on django__django-15916
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [286/500] PREDICT hermes on django__django-15930
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [287/500] PREDICT hermes on django__django-15957
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [288/500] PREDICT hermes on django__django-15973
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [289/500] PREDICT hermes on django__django-15987
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [290/500] PREDICT hermes on django__django-16032
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [291/500] PREDICT hermes on django__django-16082
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [292/500] PREDICT hermes on django__django-16100
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [293/500] PREDICT hermes on django__django-16116
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [294/500] PREDICT hermes on django__django-16136
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [295/500] PREDICT hermes on django__django-16139
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [296/500] PREDICT hermes on django__django-16145
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [297/500] PREDICT hermes on django__django-16255
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [298/500] PREDICT hermes on django__django-16256
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [299/500] PREDICT hermes on django__django-16263
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [300/500] PREDICT hermes on django__django-16315
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [301/500] PREDICT hermes on django__django-16333
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [302/500] PREDICT hermes on django__django-16429
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [303/500] PREDICT hermes on django__django-16454
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [304/500] PREDICT hermes on django__django-16485
+[verified-full 19:15:43]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:43] [305/500] PREDICT hermes on django__django-16493
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [306/500] PREDICT hermes on django__django-16502
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [307/500] PREDICT hermes on django__django-16527
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [308/500] PREDICT hermes on django__django-16560
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [309/500] PREDICT hermes on django__django-16569
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [310/500] PREDICT hermes on django__django-16595
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [311/500] PREDICT hermes on django__django-16612
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [312/500] PREDICT hermes on django__django-16631
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [313/500] PREDICT hermes on django__django-16642
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [314/500] PREDICT hermes on django__django-16661
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [315/500] PREDICT hermes on django__django-16662
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [316/500] PREDICT hermes on django__django-16667
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [317/500] PREDICT hermes on django__django-16801
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [318/500] PREDICT hermes on django__django-16819
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [319/500] PREDICT hermes on django__django-16877
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [320/500] PREDICT hermes on django__django-16899
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [321/500] PREDICT hermes on django__django-16901
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [322/500] PREDICT hermes on django__django-16938
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [323/500] PREDICT hermes on django__django-16950
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [324/500] PREDICT hermes on django__django-17029
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [325/500] PREDICT hermes on django__django-17084
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [326/500] PREDICT hermes on django__django-17087
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [327/500] PREDICT hermes on django__django-7530
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [328/500] PREDICT hermes on django__django-9296
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [329/500] matplotlib__matplotlib-13989 SKIP (predicted, patch=1968B)
+[verified-full 19:15:44] [330/500] PREDICT hermes on matplotlib__matplotlib-14623
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [331/500] PREDICT hermes on matplotlib__matplotlib-20488
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [332/500] PREDICT hermes on matplotlib__matplotlib-20676
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [333/500] PREDICT hermes on matplotlib__matplotlib-20826
+[verified-full 19:15:44]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:44] [334/500] PREDICT hermes on matplotlib__matplotlib-20859
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [335/500] PREDICT hermes on matplotlib__matplotlib-21568
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [336/500] PREDICT hermes on matplotlib__matplotlib-22719
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [337/500] PREDICT hermes on matplotlib__matplotlib-22865
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [338/500] PREDICT hermes on matplotlib__matplotlib-22871
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [339/500] PREDICT hermes on matplotlib__matplotlib-23299
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [340/500] PREDICT hermes on matplotlib__matplotlib-23314
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [341/500] PREDICT hermes on matplotlib__matplotlib-23412
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [342/500] PREDICT hermes on matplotlib__matplotlib-23476
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [343/500] PREDICT hermes on matplotlib__matplotlib-24026
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [344/500] PREDICT hermes on matplotlib__matplotlib-24149
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [345/500] PREDICT hermes on matplotlib__matplotlib-24177
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [346/500] PREDICT hermes on matplotlib__matplotlib-24570
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [347/500] PREDICT hermes on matplotlib__matplotlib-24627
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [348/500] PREDICT hermes on matplotlib__matplotlib-24637
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [349/500] PREDICT hermes on matplotlib__matplotlib-24870
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [350/500] PREDICT hermes on matplotlib__matplotlib-24970
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [351/500] PREDICT hermes on matplotlib__matplotlib-25122
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [352/500] PREDICT hermes on matplotlib__matplotlib-25287
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [353/500] PREDICT hermes on matplotlib__matplotlib-25311
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [354/500] PREDICT hermes on matplotlib__matplotlib-25332
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [355/500] PREDICT hermes on matplotlib__matplotlib-25479
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [356/500] PREDICT hermes on matplotlib__matplotlib-25775
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [357/500] PREDICT hermes on matplotlib__matplotlib-25960
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [358/500] PREDICT hermes on matplotlib__matplotlib-26113
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [359/500] PREDICT hermes on matplotlib__matplotlib-26208
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [360/500] PREDICT hermes on matplotlib__matplotlib-26291
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [361/500] PREDICT hermes on matplotlib__matplotlib-26342
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [362/500] PREDICT hermes on matplotlib__matplotlib-26466
+[verified-full 19:15:45]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:45] [363/500] PREDICT hermes on mwaskom__seaborn-3069
+[verified-full 19:15:46]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:46] [364/500] PREDICT hermes on mwaskom__seaborn-3187
+[verified-full 19:15:46]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:46] [365/500] PREDICT hermes on pallets__flask-5014
+[verified-full 19:15:46]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:46] [366/500] psf__requests-1142 SKIP (predicted, patch=3718B)
+[verified-full 19:15:46] [367/500] PREDICT hermes on psf__requests-1724
+[verified-full 19:15:46]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:46] [368/500] PREDICT hermes on psf__requests-1766
+[verified-full 19:15:46]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:46] [369/500] PREDICT hermes on psf__requests-1921
+[verified-full 19:15:46]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:46] [370/500] PREDICT hermes on psf__requests-2317
+[verified-full 19:15:46]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:46] [371/500] PREDICT hermes on psf__requests-2931
+[verified-full 19:15:46]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:46] [372/500] PREDICT hermes on psf__requests-5414
+[verified-full 19:15:46]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:46] [373/500] PREDICT hermes on psf__requests-6028
+[verified-full 19:15:46]   -> blocked (patch=0B wall=Nones)
+[verified-full 19:15:46] [374/500] PREDICT hermes on pydata__xarray-2905
+[verified-full 19:38:31]   -> patch-produced (patch=1254B wall=1365.3s)
+[verified-full 19:38:31] [375/500] PREDICT hermes on pydata__xarray-3095
+[verified-full 19:43:49]   -> patch-produced (patch=708B wall=260.1s)
+[verified-full 19:43:49] [376/500] PREDICT hermes on pydata__xarray-3151
+[verified-full 19:49:44]   -> patch-produced (patch=595B wall=306.5s)
+[verified-full 19:49:44] [377/500] PREDICT hermes on pydata__xarray-3305
+[verified-full 20:04:02]   -> patch-produced (patch=2136B wall=791.6s)
+[verified-full 20:04:02] [378/500] PREDICT hermes on pydata__xarray-3677
+[verified-full 20:12:33]   -> patch-produced (patch=1190B wall=471.3s)
+[verified-full 20:12:33] [379/500] PREDICT hermes on pydata__xarray-3993
+[verified-full 20:16:49]   -> no-patch (patch=0B wall=107.3s)
+[verified-full 20:16:49] [380/500] PREDICT hermes on pydata__xarray-4075
+[verified-full 20:20:52]   -> patch-produced (patch=1363B wall=191.6s)
+[verified-full 20:20:52] [381/500] PREDICT hermes on pydata__xarray-4094
+[verified-full 20:25:15]   -> patch-produced (patch=1393B wall=223.1s)
+[verified-full 20:25:15] [382/500] PREDICT hermes on pydata__xarray-4356
+[verified-full 20:45:21]   -> patch-produced (patch=986B wall=1160.1s)
+[verified-full 20:45:21] [383/500] PREDICT hermes on pydata__xarray-4629
+[verified-full 20:47:38]   -> patch-produced (patch=501B wall=85.2s)
+[verified-full 20:47:38] [384/500] PREDICT hermes on pydata__xarray-4687
+[verified-full 21:06:27]   -> patch-produced (patch=1592B wall=1066.1s)
+[verified-full 21:06:28] [385/500] PREDICT hermes on pydata__xarray-4695
+[verified-full 21:39:04]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 21:39:04] [386/500] PREDICT hermes on pydata__xarray-4966
+[verified-full 21:46:43]   -> patch-produced (patch=3278B wall=408.6s)
+[verified-full 21:46:43] [387/500] PREDICT hermes on pydata__xarray-6461
+[verified-full 22:17:53]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 22:17:53] [388/500] PREDICT hermes on pydata__xarray-6599
+[verified-full 22:44:41]   -> patch-produced (patch=1618B wall=1554.3s)
+[verified-full 22:44:41] [389/500] PREDICT hermes on pydata__xarray-6721
+[verified-full 23:00:50]   -> patch-produced (patch=4286B wall=949.9s)
+[verified-full 23:00:50] [390/500] PREDICT hermes on pydata__xarray-6744
+[verified-full 23:31:22]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 23:31:22] [391/500] PREDICT hermes on pydata__xarray-6938
+[verified-full 23:39:04]   -> patch-produced (patch=1579B wall=448.0s)
+[verified-full 23:39:04] [392/500] PREDICT hermes on pydata__xarray-6992
+[verified-full 23:53:36]   -> patch-produced (patch=1614B wall=863.4s)
+[verified-full 23:53:36] [393/500] PREDICT hermes on pydata__xarray-7229
+[verified-full 00:23:55]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 00:23:55] [394/500] PREDICT hermes on pydata__xarray-7233
+[verified-full 00:30:27]   -> patch-produced (patch=1398B wall=352.1s)
+[verified-full 00:30:27] [395/500] PREDICT hermes on pydata__xarray-7393
+[verified-full 00:32:46]   -> patch-produced (patch=1341B wall=119.6s)
+[verified-full 00:32:46] [396/500] PREDICT hermes on pylint-dev__pylint-4551
+[verified-full 01:03:11]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 01:03:11] [397/500] PREDICT hermes on pylint-dev__pylint-4604
+[verified-full 01:24:30]   -> patch-produced (patch=1601B wall=1254.4s)
+[verified-full 01:24:30] [398/500] PREDICT hermes on pylint-dev__pylint-4661
+[verified-full 01:29:35]   -> patch-produced (patch=2430B wall=219.1s)
+[verified-full 01:29:35] [399/500] pylint-dev__pylint-4970 SKIP (predicted, patch=0B)
+[verified-full 01:29:35] [400/500] PREDICT hermes on pylint-dev__pylint-6386
+[verified-full 01:40:26]   -> patch-produced (patch=1482B wall=618.0s)
+[verified-full 01:40:26] [401/500] PREDICT hermes on pylint-dev__pylint-6528
+[verified-full 02:11:01]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 02:11:01] [402/500] PREDICT hermes on pylint-dev__pylint-6903
+[verified-full 02:18:37]   -> patch-produced (patch=3527B wall=415.0s)
+[verified-full 02:18:37] [403/500] PREDICT hermes on pylint-dev__pylint-7080
+[verified-full 02:49:16]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 02:49:16] [404/500] PREDICT hermes on pylint-dev__pylint-7277
+[verified-full 02:52:06]   -> patch-produced (patch=1471B wall=123.9s)
+[verified-full 02:52:06] [405/500] PREDICT hermes on pylint-dev__pylint-8898
+[verified-full 03:24:32]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 03:24:32] [406/500] pytest-dev__pytest-10051 SKIP (predicted, patch=7055B)
+[verified-full 03:24:32] [407/500] PREDICT hermes on pytest-dev__pytest-10081
+[verified-full 03:36:06]   -> patch-produced (patch=802B wall=653.0s)
+[verified-full 03:36:06] [408/500] PREDICT hermes on pytest-dev__pytest-10356
+[verified-full 04:06:18]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 04:06:18] [409/500] PREDICT hermes on pytest-dev__pytest-5262
+[verified-full 04:08:37]   -> patch-produced (patch=1153B wall=111.3s)
+[verified-full 04:08:37] [410/500] PREDICT hermes on pytest-dev__pytest-5631
+[verified-full 04:15:06]   -> patch-produced (patch=1608B wall=346.4s)
+[verified-full 04:15:06] [411/500] PREDICT hermes on pytest-dev__pytest-5787
+[verified-full 04:40:49]   -> patch-produced (patch=9532B wall=1510.4s)
+[verified-full 04:40:49] [412/500] PREDICT hermes on pytest-dev__pytest-5809
+[verified-full 04:42:25]   -> patch-produced (patch=979B wall=63.8s)
+[verified-full 04:42:25] [413/500] PREDICT hermes on pytest-dev__pytest-5840
+[verified-full 05:12:58]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 05:12:58] [414/500] PREDICT hermes on pytest-dev__pytest-6197
+[verified-full 05:43:31]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 05:43:31] [415/500] PREDICT hermes on pytest-dev__pytest-6202
+[verified-full 05:53:04]   -> patch-produced (patch=3894B wall=473.3s)
+[verified-full 05:53:04] [416/500] PREDICT hermes on pytest-dev__pytest-7205
+[verified-full 05:56:06]   -> patch-produced (patch=636B wall=151.7s)
+[verified-full 05:56:06] [417/500] PREDICT hermes on pytest-dev__pytest-7236
+[verified-full 06:24:30]   -> patch-produced (patch=3585B wall=1670.2s)
+[verified-full 06:24:30] [418/500] PREDICT hermes on pytest-dev__pytest-7324
+[verified-full 06:34:35]   -> patch-produced (patch=1642B wall=569.2s)
+[verified-full 06:34:35] [419/500] PREDICT hermes on pytest-dev__pytest-7432
+[verified-full 06:41:51]   -> patch-produced (patch=2333B wall=378.6s)
+[verified-full 06:41:51] [420/500] PREDICT hermes on pytest-dev__pytest-7490
+[verified-full 07:02:07]   -> patch-produced (patch=2414B wall=1177.4s)
+[verified-full 07:02:07] [421/500] PREDICT hermes on pytest-dev__pytest-7521
+[verified-full 07:08:50]   -> patch-produced (patch=1058B wall=333.9s)
+[verified-full 07:08:50] [422/500] PREDICT hermes on pytest-dev__pytest-7571
+[verified-full 07:15:10]   -> patch-produced (patch=2141B wall=266.1s)
+[verified-full 07:15:10] [423/500] PREDICT hermes on pytest-dev__pytest-7982
+[verified-full 07:21:13]   -> patch-produced (patch=1437B wall=327.9s)
+[verified-full 07:21:13] [424/500] PREDICT hermes on pytest-dev__pytest-8399
+[verified-full 07:28:25]   -> patch-produced (patch=1720B wall=398.5s)
+[verified-full 07:28:25] [425/500] scikit-learn__scikit-learn-10297 SKIP (predicted, patch=4096B)
+[verified-full 07:28:25] [426/500] PREDICT hermes on scikit-learn__scikit-learn-10844
+[verified-full 07:34:34]   -> patch-produced (patch=1200B wall=234.2s)
+[verified-full 07:34:34] [427/500] PREDICT hermes on scikit-learn__scikit-learn-10908
+[verified-full 07:43:00]   -> patch-produced (patch=3075B wall=409.0s)
+[verified-full 07:43:00] [428/500] PREDICT hermes on scikit-learn__scikit-learn-11310
+[verified-full 07:53:25]   -> patch-produced (patch=6213B wall=471.8s)
+[verified-full 07:53:25] [429/500] PREDICT hermes on scikit-learn__scikit-learn-11578
+[verified-full 08:02:17]   -> patch-produced (patch=5352B wall=383.8s)
+[verified-full 08:02:17] [430/500] PREDICT hermes on scikit-learn__scikit-learn-12585
+[verified-full 08:13:34]   -> patch-produced (patch=2693B wall=517.8s)
+[verified-full 08:13:34] [431/500] PREDICT hermes on scikit-learn__scikit-learn-12682
+[verified-full 08:28:05]   -> patch-produced (patch=8823B wall=712.1s)
+[verified-full 08:28:05] [432/500] PREDICT hermes on scikit-learn__scikit-learn-12973
+[verified-full 08:37:19]   -> patch-produced (patch=3391B wall=411.4s)
+[verified-full 08:37:19] [433/500] PREDICT hermes on scikit-learn__scikit-learn-13124
+[verified-full 08:51:44]   -> patch-produced (patch=1013B wall=715.1s)
+[verified-full 08:51:44] [434/500] PREDICT hermes on scikit-learn__scikit-learn-13135
+[verified-full 09:05:31]   -> patch-produced (patch=3012B wall=257.7s)
+[verified-full 09:05:31] [435/500] PREDICT hermes on scikit-learn__scikit-learn-13142
+[verified-full 09:21:34]   -> patch-produced (patch=9635B wall=818.0s)
+[verified-full 09:21:34] [436/500] PREDICT hermes on scikit-learn__scikit-learn-13328
+[verified-full 09:37:49]   -> patch-produced (patch=2017B wall=832.1s)
+[verified-full 09:37:49] [437/500] PREDICT hermes on scikit-learn__scikit-learn-13439
+[verified-full 09:54:52]   -> patch-produced (patch=3394B wall=608.2s)
+[verified-full 09:54:52] [438/500] PREDICT hermes on scikit-learn__scikit-learn-13496
+[verified-full 10:06:53]   -> patch-produced (patch=7635B wall=308.5s)
+[verified-full 10:06:53] [439/500] PREDICT hermes on scikit-learn__scikit-learn-13779
+[verified-full 10:13:18]   -> patch-produced (patch=2941B wall=256.8s)
+[verified-full 10:13:18] [440/500] PREDICT hermes on scikit-learn__scikit-learn-14053
+[verified-full 10:21:36]   -> patch-produced (patch=1719B wall=371.0s)
+[verified-full 10:21:36] [441/500] PREDICT hermes on scikit-learn__scikit-learn-14087
+[verified-full 10:50:56]   -> patch-produced (patch=2377B wall=1620.3s)
+[verified-full 10:50:56] [442/500] PREDICT hermes on scikit-learn__scikit-learn-14141
+[verified-full 11:00:38]   -> patch-produced (patch=1213B wall=91.7s)
+[verified-full 11:00:38] [443/500] PREDICT hermes on scikit-learn__scikit-learn-14496
+[verified-full 11:11:33]   -> patch-produced (patch=2093B wall=220.7s)
+[verified-full 11:11:33] [444/500] PREDICT hermes on scikit-learn__scikit-learn-14629
+[verified-full 11:26:19]   -> patch-produced (patch=4822B wall=746.9s)
+[verified-full 11:26:19] [445/500] PREDICT hermes on scikit-learn__scikit-learn-14710
+[verified-full 11:49:55]   -> no-patch (patch=0B wall=880.0s)
+[verified-full 11:49:55] [446/500] PREDICT hermes on scikit-learn__scikit-learn-14894
+[verified-full 12:03:54]   -> patch-produced (patch=2904B wall=697.3s)
+[verified-full 12:03:54] [447/500] PREDICT hermes on scikit-learn__scikit-learn-14983
+[verified-full 12:13:15]   -> patch-produced (patch=2788B wall=407.6s)
+[verified-full 12:13:15] [448/500] PREDICT hermes on scikit-learn__scikit-learn-15100
+[verified-full 12:18:22]   -> patch-produced (patch=1849B wall=144.3s)
+[verified-full 12:18:22] [449/500] PREDICT hermes on scikit-learn__scikit-learn-25102
+[verified-full 12:51:07]   -> no-patch (patch=0B wall=1800.5s)
+[verified-full 12:51:07] [450/500] PREDICT hermes on scikit-learn__scikit-learn-25232
+[verified-full 13:09:21]   -> patch-produced (patch=4309B wall=932.9s)
+[verified-full 13:09:21] [451/500] PREDICT hermes on scikit-learn__scikit-learn-25747
+[verified-full 13:42:04]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 13:42:04] [452/500] PREDICT hermes on scikit-learn__scikit-learn-25931
+[verified-full 14:04:30]   -> patch-produced (patch=1713B wall=763.7s)
+[verified-full 14:04:30] [453/500] PREDICT hermes on scikit-learn__scikit-learn-25973
+[verified-full 14:22:16]   -> patch-produced (patch=4413B wall=471.8s)
+[verified-full 14:22:16] [454/500] PREDICT hermes on scikit-learn__scikit-learn-26194
+[verified-full 14:42:07]   -> patch-produced (patch=4735B wall=1039.8s)
+[verified-full 14:42:07] [455/500] PREDICT hermes on scikit-learn__scikit-learn-26323
+[verified-full 15:02:50]   -> patch-produced (patch=1795B wall=776.0s)
+[verified-full 15:02:50] [456/500] PREDICT hermes on scikit-learn__scikit-learn-9288
+[verified-full 15:22:01]   -> patch-produced (patch=4021B wall=643.9s)
+[verified-full 15:22:01] [457/500] sphinx-doc__sphinx-10323 SKIP (predicted, patch=2321B)
+[verified-full 15:22:01] [458/500] PREDICT hermes on sphinx-doc__sphinx-10435
+[verified-full 15:49:53]   -> patch-produced (patch=1821B wall=1585.9s)
+[verified-full 15:49:53] [459/500] PREDICT hermes on sphinx-doc__sphinx-10449
+[verified-full 16:21:08]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 16:21:08] [460/500] PREDICT hermes on sphinx-doc__sphinx-10466
+[verified-full 16:36:03]   -> patch-produced (patch=1354B wall=732.4s)
+[verified-full 16:36:03] [461/500] PREDICT hermes on sphinx-doc__sphinx-10614
+[verified-full 17:07:35]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 17:07:35] [462/500] PREDICT hermes on sphinx-doc__sphinx-10673
+[verified-full 17:39:07]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 17:39:07] [463/500] PREDICT hermes on sphinx-doc__sphinx-11445
+[verified-full 18:08:11]   -> patch-produced (patch=1713B wall=1601.7s)
+[verified-full 18:08:11] [464/500] PREDICT hermes on sphinx-doc__sphinx-11510
+[verified-full 18:38:14]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 18:38:14] [465/500] PREDICT hermes on sphinx-doc__sphinx-7440
+[verified-full 19:08:17]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 19:08:17] [466/500] PREDICT hermes on sphinx-doc__sphinx-7454
+[verified-full 19:23:28]   -> patch-produced (patch=1328B wall=907.9s)
+[verified-full 19:23:28] [467/500] PREDICT hermes on sphinx-doc__sphinx-7462
+[verified-full 19:34:40]   -> patch-produced (patch=3533B wall=669.7s)
+[verified-full 19:34:40] [468/500] PREDICT hermes on sphinx-doc__sphinx-7590
+[verified-full 20:04:42]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 20:04:42] [469/500] PREDICT hermes on sphinx-doc__sphinx-7748
+[verified-full 20:34:45]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 20:34:45] [470/500] PREDICT hermes on sphinx-doc__sphinx-7757
+[verified-full 20:50:59]   -> patch-produced (patch=1430B wall=968.0s)
+[verified-full 20:50:59] [471/500] PREDICT hermes on sphinx-doc__sphinx-7889
+[verified-full 20:54:34]   -> patch-produced (patch=957B wall=211.5s)
+[verified-full 20:54:34] [472/500] PREDICT hermes on sphinx-doc__sphinx-7910
+[verified-full 21:03:03]   -> patch-produced (patch=2131B wall=506.1s)
+[verified-full 21:03:03] [473/500] PREDICT hermes on sphinx-doc__sphinx-7985
+[verified-full 21:12:08]   -> patch-produced (patch=4201B wall=498.2s)
+[verified-full 21:12:08] [474/500] PREDICT hermes on sphinx-doc__sphinx-8035
+[verified-full 21:42:14]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 21:42:14] [475/500] PREDICT hermes on sphinx-doc__sphinx-8056
+[verified-full 22:12:17]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 22:12:17] [476/500] PREDICT hermes on sphinx-doc__sphinx-8120
+[verified-full 22:29:55]   -> patch-produced (patch=716B wall=1056.2s)
+[verified-full 22:29:55] [477/500] PREDICT hermes on sphinx-doc__sphinx-8265
+[verified-full 22:59:58]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 22:59:58] [478/500] PREDICT hermes on sphinx-doc__sphinx-8269
+[verified-full 23:05:03]   -> patch-produced (patch=2605B wall=303.4s)
+[verified-full 23:05:03] [479/500] PREDICT hermes on sphinx-doc__sphinx-8459
+[verified-full 23:28:25]   -> patch-produced (patch=3827B wall=1400.2s)
+[verified-full 23:28:26] [480/500] PREDICT hermes on sphinx-doc__sphinx-8475
+[verified-full 23:32:56]   -> patch-produced (patch=2783B wall=268.2s)
+[verified-full 23:32:56] [481/500] PREDICT hermes on sphinx-doc__sphinx-8548
+[verified-full 00:02:58]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 00:02:58] [482/500] PREDICT hermes on sphinx-doc__sphinx-8551
+[verified-full 00:13:22]   -> patch-produced (patch=2743B wall=617.2s)
+[verified-full 00:13:22] [483/500] PREDICT hermes on sphinx-doc__sphinx-8593
+[verified-full 00:28:22]   -> patch-produced (patch=2806B wall=897.4s)
+[verified-full 00:28:22] [484/500] PREDICT hermes on sphinx-doc__sphinx-8595
+[verified-full 00:34:33]   -> patch-produced (patch=1709B wall=366.7s)
+[verified-full 00:34:33] [485/500] PREDICT hermes on sphinx-doc__sphinx-8621
+[verified-full 00:38:39]   -> patch-produced (patch=1903B wall=242.7s)
+[verified-full 00:38:39] [486/500] PREDICT hermes on sphinx-doc__sphinx-8638
+[verified-full 00:46:00]   -> patch-produced (patch=685B wall=439.2s)
+[verified-full 00:46:00] [487/500] PREDICT hermes on sphinx-doc__sphinx-8721
+[verified-full 00:51:24]   -> patch-produced (patch=8218B wall=320.8s)
+[verified-full 00:51:24] [488/500] PREDICT hermes on sphinx-doc__sphinx-9229
+[verified-full 01:21:26]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 01:21:26] [489/500] PREDICT hermes on sphinx-doc__sphinx-9230
+[verified-full 01:29:37]   -> patch-produced (patch=5126B wall=487.1s)
+[verified-full 01:29:37] [490/500] PREDICT hermes on sphinx-doc__sphinx-9258
+[verified-full 01:59:40]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 01:59:40] [491/500] PREDICT hermes on sphinx-doc__sphinx-9281
+[verified-full 02:02:58]   -> patch-produced (patch=1072B wall=196.7s)
+[verified-full 02:02:58] [492/500] PREDICT hermes on sphinx-doc__sphinx-9320
+[verified-full 02:08:47]   -> patch-produced (patch=2878B wall=345.2s)
+[verified-full 02:08:47] [493/500] PREDICT hermes on sphinx-doc__sphinx-9367
+[verified-full 02:09:37]   -> patch-produced (patch=1158B wall=47.6s)
+[verified-full 02:09:37] [494/500] PREDICT hermes on sphinx-doc__sphinx-9461
+[verified-full 02:39:41]   -> no-patch (patch=0B wall=1800.4s)
+[verified-full 02:39:41] [495/500] PREDICT hermes on sphinx-doc__sphinx-9591
+[verified-full 02:42:54]   -> no-patch (patch=0B wall=190.2s)
+[verified-full 02:42:54] [496/500] PREDICT hermes on sphinx-doc__sphinx-9602
+[verified-full 03:12:58]   -> no-patch (patch=0B wall=1800.3s)
+[verified-full 03:12:58] [497/500] PREDICT hermes on sphinx-doc__sphinx-9658
+[verified-full 03:28:36]   -> patch-produced (patch=1354B wall=935.2s)
+[verified-full 03:28:36] [498/500] PREDICT hermes on sphinx-doc__sphinx-9673
+[verified-full 03:42:38]   -> patch-produced (patch=549B wall=840.2s)
+[verified-full 03:42:38] [499/500] PREDICT hermes on sphinx-doc__sphinx-9698
+[verified-full 03:44:47]   -> patch-produced (patch=1320B wall=126.4s)
+[verified-full 03:44:47] [500/500] PREDICT hermes on sphinx-doc__sphinx-9711
+[verified-full 03:52:24]   -> patch-produced (patch=4673B wall=454.7s)
+[verified-full 03:52:25] merged 230/500 predictions -> /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/harness/swebench_verified_full/predictions/predictions_hermes.json

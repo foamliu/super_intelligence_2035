@@ -1,0 +1,44 @@
+diff --git a/repro_12420.py b/repro_12420.py
+new file mode 100644
+index 00000000..3d86aac3
+--- /dev/null
++++ b/repro_12420.py
+@@ -0,0 +1,38 @@
++import sys
++from sympy import sqrt, I, sqrtdenest
++import sympy
++import sympy.simplify.sqrtdenest as sd
++
++print("sympy.__file__        :", sympy.__file__)
++print("sd.__file__           :", sd.__file__)
++print("sd.__name__           :", sd.__name__)
++print("sd is sys.modules entry:", sd is sys.modules.get('sympy.simplify.sqrtdenest'))
++
++orig = sd._sqrt_match
++calls = []
++def traced(p):
++    calls.append(repr(p))
++    return orig(p)
++sd._sqrt_match = traced
++
++print("--- _sqrtdenest1(sqrt(4+3*I)) with line tracing ---")
++def tracer(frame, event, arg):
++    if frame.f_code.co_filename == sd.__file__ and frame.f_code.co_name in ('_sqrtdenest1', '_sqrt_match'):
++        if event == 'call':
++            print("CALL", frame.f_code.co_name, "args:", {k: repr(v) for k, v in frame.f_locals.items()})
++        elif event == 'return':
++            print("RETURN", frame.f_code.co_name, "->", repr(arg))
++    return tracer
++
++sys.settrace(tracer)
++try:
++    res = sd._sqrtdenest1(sqrt(4 + 3*I))
++    print("result:", repr(res))
++except Exception:
++    import traceback
++    traceback.print_exc()
++sys.settrace(None)
++
++print("_sqrt_match calls:", calls)
++
++

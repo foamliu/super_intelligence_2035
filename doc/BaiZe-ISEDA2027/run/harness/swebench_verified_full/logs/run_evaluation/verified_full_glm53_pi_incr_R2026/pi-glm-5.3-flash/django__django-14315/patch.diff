@@ -1,0 +1,65 @@
+diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py
+index 3effab65a8..0effcc44e6 100644
+--- a/django/db/backends/postgresql/client.py
++++ b/django/db/backends/postgresql/client.py
+@@ -51,7 +51,7 @@ class DatabaseClient(BaseDatabaseClient):
+             env['PGSSLKEY'] = str(sslkey)
+         if passfile:
+             env['PGPASSFILE'] = str(passfile)
+-        return args, env
++        return args, (env or None)
+ 
+     def runshell(self, parameters):
+         sigint_handler = signal.getsignal(signal.SIGINT)
+diff --git a/tests/dbshell/test_postgresql.py b/tests/dbshell/test_postgresql.py
+index a96acac6f1..877507031f 100644
+--- a/tests/dbshell/test_postgresql.py
++++ b/tests/dbshell/test_postgresql.py
+@@ -39,7 +39,7 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+                 'PORT': '444',
+             }), (
+                 ['psql', '-U', 'someuser', '-h', 'somehost', '-p', '444', 'dbname'],
+-                {},
++                None,
+             )
+         )
+ 
+@@ -134,7 +134,7 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+     def test_parameters(self):
+         self.assertEqual(
+             self.settings_to_cmd_args_env({'NAME': 'dbname'}, ['--help']),
+-            (['psql', 'dbname', '--help'], {}),
++            (['psql', 'dbname', '--help'], None),
+         )
+ 
+     @skipUnless(connection.vendor == 'postgresql', 'Requires a PostgreSQL connection')
+@@ -162,4 +162,28 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+         args[0:1] = [sys.executable, str(fake_client)]
+         with self.assertRaises(subprocess.CalledProcessError) as ctx:
+             subprocess.run(args, check=True, env=env)
+-        self.assertNotIn('somepassword', str(ctx.exception))
++
++    @mock.patch('subprocess.run')
++    def test_runshell_env(self, mocked_subprocess_run):
++        # When no environment variables are set, env is None and the
++        # subprocess inherits os.environ.
++        client = DatabaseClient(mock.Mock(settings_dict={'NAME': 'dbname'}))
++        client.runshell([])
++        mocked_subprocess_run.assert_called_once_with(
++            ['psql', 'dbname'], env=None, check=True,
++        )
++
++    @mock.patch('subprocess.run')
++    def test_runshell_env_with_password(self, mocked_subprocess_run):
++        # Environment variables set through settings are merged with
++        # os.environ.
++        client = DatabaseClient(mock.Mock(settings_dict={
++            'NAME': 'dbname',
++            'PASSWORD': 'somepassword',
++        }))
++        client.runshell([])
++        mocked_subprocess_run.assert_called_once_with(
++            ['psql', 'dbname'],
++            env={**os.environ, 'PGPASSWORD': 'somepassword'},
++            check=True,
++        )

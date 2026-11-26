@@ -1,0 +1,115 @@
+2026-10-30 16:52:28,788 - INFO - Creating container for django__django-13964...
+2026-10-30 16:52:28,830 - INFO - Container for django__django-13964 created: a68ae229e5c7ff94bed8bb780f3926c0e402577c11660f24deaba34c90605548
+2026-10-30 16:52:29,354 - INFO - Container for django__django-13964 started: a68ae229e5c7ff94bed8bb780f3926c0e402577c11660f24deaba34c90605548
+2026-10-30 16:52:29,356 - INFO - Intermediate patch for django__django-13964 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-13964/patch.diff, now applying to container...
+2026-10-30 16:52:29,543 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/base.py...
+warning: django/db/models/base.py has type 100755, expected 100644
+Checking patch tests/many_to_one/models.py...
+warning: tests/many_to_one/models.py has type 100755, expected 100644
+Checking patch tests/many_to_one/tests.py...
+warning: tests/many_to_one/tests.py has type 100755, expected 100644
+Applied patch django/db/models/base.py cleanly.
+Applied patch tests/many_to_one/models.py cleanly.
+Applied patch tests/many_to_one/tests.py cleanly.
+
+2026-10-30 16:52:30,952 - INFO - Git diff before:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 2428218696..3c5efe8787 100755
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -933,7 +933,7 @@ class Model(metaclass=ModelBase):
+                         "%s() prohibited to prevent data loss due to unsaved "
+                         "related object '%s'." % (operation_name, field.name)
+                     )
+-                elif getattr(self, field.attname) is None:
++                elif getattr(self, field.attname) in field.target_field.empty_values:
+                     # Use pk from related object if it has been saved after
+                     # an assignment.
+                     setattr(self, field.attname, obj.pk)
+diff --git a/tests/many_to_one/models.py b/tests/many_to_one/models.py
+index e9f8fbff76..772a969583 100755
+--- a/tests/many_to_one/models.py
++++ b/tests/many_to_one/models.py
+@@ -77,6 +77,14 @@ class ChildNullableParent(models.Model):
+     parent = models.ForeignKey(Parent, models.CASCADE, null=True)
+ 
+ 
++class CharFieldPK(models.Model):
++    sku = models.CharField(primary_key=True, max_length=50)
++
++
++class Order(models.Model):
++    product = models.ForeignKey(CharFieldPK, models.CASCADE)
++
++
+ class ToFieldChild(models.Model):
+     parent = models.ForeignKey(Parent, models.CASCADE, to_field='name', related_name='to_field_children')
+ 
+diff --git a/tests/many_to_one/tests.py b/tests/many_to_one/tests.py
+index 3c7cd0c3fa..08bcaae942 100755
+--- a/tests/many_to_one/tests.py
++++ b/tests/many_to_one/tests.py
+@@ -7,8 +7,8 @@ from django.test import TestCase
+ from django.utils.translation import gettext_lazy
+ 
+ from .models import (
+-    Article, Category, Child, ChildNullableParent, City, Country, District,
+-    First, Parent, Record, Relation, Reporter, School, Student, Third,
++    Article, Category, CharFieldPK, Child, ChildNullableParent, City, Country, District,
++    First, Order, Parent, Record, Relation, Reporter, School, Student, Third,
+     ToFieldChild,
+ )
+ 
+@@ -549,6 +549,26 @@ class ManyToOneTests(TestCase):
+         self.assertEqual(child.parent, parent)
+         self.assertEqual(child.parent_id, parent.name)
+ 
++    def test_save_fk_after_parent_with_charfield_pk(self):
++        product = CharFieldPK()
++        order = Order(product=product)
++        product.sku = 'foo'
++        product.save()
++        order.save()
++        order.refresh_from_db()
++        self.assertEqual(order.product, product)
++        self.assertEqual(order.product_id, product.sku)
++
++    def test_save_fk_after_parent_with_charfield_pk_and_transaction(self):
++        with transaction.atomic():
++            order = Order()
++            order.product = CharFieldPK()
++            order.product.sku = 'foo'
++            order.product.save()
++            order.save()
++            self.assertFalse(Order.objects.filter(product_id='').exists())
++            self.assertTrue(Order.objects.filter(product=order.product).exists())
++
+     def test_fk_to_bigautofield(self):
+         ch = City.objects.create(name='Chicago')
+         District.objects.create(city=ch, name='Far South')
+2026-10-30 16:52:30,955 - INFO - Eval script for django__django-13964 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-13964/eval.sh; copying to container...
+2026-10-30 16:52:36,862 - INFO - Test runtime: 5.82 seconds
+2026-10-30 16:52:36,869 - INFO - Test output for django__django-13964 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-13964/test_output.txt
+2026-10-30 16:52:36,956 - INFO - Git diff after:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 2428218696..3c5efe8787 100755
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -933,7 +933,7 @@ class Model(metaclass=ModelBase):
+                         "%s() prohibited to prevent data loss due to unsaved "
+                         "related object '%s'." % (operation_name, field.name)
+                     )
+-                elif getattr(self, field.attname) is None:
++                elif getattr(self, field.attname) in field.target_field.empty_values:
+                     # Use pk from related object if it has been saved after
+                     # an assignment.
+                     setattr(self, field.attname, obj.pk)
+2026-10-30 16:52:36,956 - INFO - Git diff changed after running eval script
+2026-10-30 16:52:36,956 - INFO - Grading answer for django__django-13964...
+2026-10-30 16:52:36,983 - INFO - report: {'django__django-13964': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_save_fk_after_parent_with_non_numeric_pk_set_on_child (many_to_one.tests.ManyToOneTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_add (many_to_one.tests.ManyToOneTests)', 'test_add_after_prefetch (many_to_one.tests.ManyToOneTests)', 'test_add_remove_set_by_pk_raises (many_to_one.tests.ManyToOneTests)', 'test_add_then_remove_after_prefetch (many_to_one.tests.ManyToOneTests)', 'test_assign (many_to_one.tests.ManyToOneTests)', 'test_assign_fk_id_none (many_to_one.tests.ManyToOneTests)', 'test_assign_fk_id_value (many_to_one.tests.ManyToOneTests)', 'test_cached_foreign_key_with_to_field_not_cleared_by_save (many_to_one.tests.ManyToOneTests)', 'Model.save() invalidates stale ForeignKey relations after a primary key', 'test_clear_after_prefetch (many_to_one.tests.ManyToOneTests)', 'test_create (many_to_one.tests.ManyToOneTests)', 'test_create_relation_with_gettext_lazy (many_to_one.tests.ManyToOneTests)', 'test_deepcopy_and_circular_references (many_to_one.tests.ManyToOneTests)', 'test_delete (many_to_one.tests.ManyToOneTests)', 'test_explicit_fk (many_to_one.tests.ManyToOneTests)', 'test_fk_assignment_and_related_object_cache (many_to_one.tests.ManyToOneTests)', 'test_fk_instantiation_outside_model (many_to_one.tests.ManyToOneTests)', 'test_fk_to_bigautofield (many_to_one.tests.ManyToOneTests)', 'test_fk_to_smallautofield (many_to_one.tests.ManyToOneTests)', 'test_get (many_to_one.tests.ManyToOneTests)', 'test_hasattr_related_object (many_to_one.tests.ManyToOneTests)', 'test_manager_class_caching (many_to_one.tests.ManyToOneTests)', 'test_multiple_foreignkeys (many_to_one.tests.ManyToOneTests)', 'test_related_object (many_to_one.tests.ManyToOneTests)', 'test_relation_unsaved (many_to_one.tests.ManyToOneTests)', 'test_remove_after_prefetch (many_to_one.tests.ManyToOneTests)', 'test_reverse_assignment_deprecation (many_to_one.tests.ManyToOneTests)', 'test_reverse_foreign_key_instance_to_field_caching (many_to_one.tests.ManyToOneTests)', 'test_reverse_selects (many_to_one.tests.ManyToOneTests)', 'test_save_nullable_fk_after_parent (many_to_one.tests.ManyToOneTests)', 'test_save_nullable_fk_after_parent_with_to_field (many_to_one.tests.ManyToOneTests)', 'test_select_related (many_to_one.tests.ManyToOneTests)', 'test_selects (many_to_one.tests.ManyToOneTests)', 'test_set (many_to_one.tests.ManyToOneTests)', 'test_set_after_prefetch (many_to_one.tests.ManyToOneTests)', 'test_values_list_exception (many_to_one.tests.ManyToOneTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13964: resolved: True
+2026-10-30 16:52:36,986 - INFO - Attempting to stop container sweb.eval.django__django-13964.verified_full_pi...
+2026-10-30 16:52:53,027 - INFO - Container sweb.eval.django__django-13964.verified_full_pi stopped successfully.
+2026-10-30 16:52:53,027 - INFO - Attempting to remove container sweb.eval.django__django-13964.verified_full_pi...
+2026-10-30 16:52:53,078 - INFO - Container sweb.eval.django__django-13964.verified_full_pi removed successfully.

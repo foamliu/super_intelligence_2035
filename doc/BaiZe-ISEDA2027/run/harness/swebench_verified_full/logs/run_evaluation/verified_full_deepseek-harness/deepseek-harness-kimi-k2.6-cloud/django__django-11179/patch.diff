@@ -1,0 +1,29 @@
+diff --git a/django/db/models/deletion.py b/django/db/models/deletion.py
+index 92fe4affb..3a462f1c4 100644
+--- a/django/db/models/deletion.py
++++ b/django/db/models/deletion.py
+@@ -277,6 +277,7 @@ class Collector:
+             if self.can_fast_delete(instance):
+                 with transaction.mark_for_rollback_on_error():
+                     count = sql.DeleteQuery(model).delete_batch([instance.pk], self.using)
++                setattr(instance, model._meta.pk.attname, None)
+                 return count, {model._meta.label: count}
+ 
+         with transaction.atomic(using=self.using, savepoint=False):
+diff --git a/tests/delete/tests.py b/tests/delete/tests.py
+index 55eeb226e..f30095af0 100644
+--- a/tests/delete/tests.py
++++ b/tests/delete/tests.py
+@@ -522,3 +522,12 @@ class FastDeleteTests(TestCase):
+                 User.objects.filter(avatar__desc='missing').delete(),
+                 (0, {'delete.User': 0})
+             )
++
++    def test_fast_delete_instance_pk_set_to_none(self):
++        """
++        Deleting an instance with no dependencies should set its PK to None.
++        """
++        u = User.objects.create()
++        pk = u.pk
++        u.delete()
++        self.assertIsNone(u.pk)

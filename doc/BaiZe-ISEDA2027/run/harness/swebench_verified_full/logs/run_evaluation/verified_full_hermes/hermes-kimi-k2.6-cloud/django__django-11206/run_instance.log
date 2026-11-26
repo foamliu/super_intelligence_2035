@@ -1,0 +1,65 @@
+2026-11-01 19:26:50,133 - INFO - Creating container for django__django-11206...
+2026-11-01 19:26:50,153 - INFO - Container for django__django-11206 created: cb1d7f4e231bdebcd5f8520d5678122a22e4890be22638627d3138503317a0f6
+2026-11-01 19:26:51,014 - INFO - Container for django__django-11206 started: cb1d7f4e231bdebcd5f8520d5678122a22e4890be22638627d3138503317a0f6
+2026-11-01 19:26:51,016 - INFO - Intermediate patch for django__django-11206 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/django__django-11206/patch.diff, now applying to container...
+2026-11-01 19:26:51,129 - INFO - >>>>> Applied Patch:
+Checking patch django/utils/numberformat.py...
+Checking patch tests/utils_tests/test_numberformat.py...
+Applied patch django/utils/numberformat.py cleanly.
+Applied patch tests/utils_tests/test_numberformat.py cleanly.
+
+2026-11-01 19:26:51,918 - INFO - Git diff before:
+diff --git a/django/utils/numberformat.py b/django/utils/numberformat.py
+index 88b35fc435..2468646904 100644
+--- a/django/utils/numberformat.py
++++ b/django/utils/numberformat.py
+@@ -31,6 +31,9 @@ def format(number, decimal_sep, decimal_pos=None, grouping=0, thousand_sep='',
+         # scientific notation to avoid high memory usage in {:f}'.format().
+         _, digits, exponent = number.as_tuple()
+         if abs(exponent) + len(digits) > 200:
++            if decimal_pos is not None and abs(number) < Decimal(1).scaleb(-decimal_pos):
++                sign = '-' if number.as_tuple().sign else ''
++                return sign + '0' + (decimal_sep + '0' * decimal_pos if decimal_pos else '')
+             number = '{:e}'.format(number)
+             coefficient, exponent = number.split('e')
+             # Format the coefficient.
+diff --git a/tests/utils_tests/test_numberformat.py b/tests/utils_tests/test_numberformat.py
+index 3d656025ab..1f9bdf3315 100644
+--- a/tests/utils_tests/test_numberformat.py
++++ b/tests/utils_tests/test_numberformat.py
+@@ -94,7 +94,8 @@ class TestNumberFormat(SimpleTestCase):
+             ('1e-10', 8, '0.00000000'),
+             ('1e-11', 8, '0.00000000'),
+             ('1' + ('0' * 300), 3, '1.000e+300'),
+-            ('0.{}1234'.format('0' * 299), 3, '1.234e-300'),
++            ('0.{}1234'.format('0' * 299), 3, '0.000'),
++            ('1e-200', 2, '0.00'),
+         ]
+         for value, decimal_pos, expected_value in tests:
+             with self.subTest(value=value):
+2026-11-01 19:26:51,921 - INFO - Eval script for django__django-11206 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/django__django-11206/eval.sh; copying to container...
+2026-11-01 19:26:57,702 - INFO - Test runtime: 5.72 seconds
+2026-11-01 19:26:57,705 - INFO - Test output for django__django-11206 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/django__django-11206/test_output.txt
+2026-11-01 19:26:57,787 - INFO - Git diff after:
+diff --git a/django/utils/numberformat.py b/django/utils/numberformat.py
+index 88b35fc435..2468646904 100644
+--- a/django/utils/numberformat.py
++++ b/django/utils/numberformat.py
+@@ -31,6 +31,9 @@ def format(number, decimal_sep, decimal_pos=None, grouping=0, thousand_sep='',
+         # scientific notation to avoid high memory usage in {:f}'.format().
+         _, digits, exponent = number.as_tuple()
+         if abs(exponent) + len(digits) > 200:
++            if decimal_pos is not None and abs(number) < Decimal(1).scaleb(-decimal_pos):
++                sign = '-' if number.as_tuple().sign else ''
++                return sign + '0' + (decimal_sep + '0' * decimal_pos if decimal_pos else '')
+             number = '{:e}'.format(number)
+             coefficient, exponent = number.split('e')
+             # Format the coefficient.
+2026-11-01 19:26:57,788 - INFO - Git diff changed after running eval script
+2026-11-01 19:26:57,788 - INFO - Grading answer for django__django-11206...
+2026-11-01 19:26:57,790 - INFO - report: {'django__django-11206': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_decimal_numbers (utils_tests.test_numberformat.TestNumberFormat)', 'test_decimal_subclass (utils_tests.test_numberformat.TestNumberFormat)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_float_numbers (utils_tests.test_numberformat.TestNumberFormat)', 'test_format_number (utils_tests.test_numberformat.TestNumberFormat)', 'test_format_string (utils_tests.test_numberformat.TestNumberFormat)', 'test_large_number (utils_tests.test_numberformat.TestNumberFormat)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11206: resolved: True
+2026-11-01 19:26:57,792 - INFO - Attempting to stop container sweb.eval.django__django-11206.verified_full_hermes...
+2026-11-01 19:27:13,694 - INFO - Container sweb.eval.django__django-11206.verified_full_hermes stopped successfully.
+2026-11-01 19:27:13,695 - INFO - Attempting to remove container sweb.eval.django__django-11206.verified_full_hermes...
+2026-11-01 19:27:13,736 - INFO - Container sweb.eval.django__django-11206.verified_full_hermes removed successfully.

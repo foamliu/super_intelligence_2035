@@ -1,0 +1,103 @@
+2026-11-11 20:04:39,448 - INFO - Creating container for django__django-13568...
+2026-11-11 20:04:39,469 - INFO - Container for django__django-13568 created: 68aa2ec171e64859d33cf4b43efa69ce7251fb242beabb5c8a86197adc737e0f
+2026-11-11 20:04:40,261 - INFO - Container for django__django-13568 started: 68aa2ec171e64859d33cf4b43efa69ce7251fb242beabb5c8a86197adc737e0f
+2026-11-11 20:04:40,263 - INFO - Intermediate patch for django__django-13568 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2192/pi-glm-5.3-flash/django__django-13568/patch.diff, now applying to container...
+2026-11-11 20:04:40,387 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/auth/checks.py...
+Checking patch tests/auth_tests/test_checks.py...
+Applied patch django/contrib/auth/checks.py cleanly.
+Applied patch tests/auth_tests/test_checks.py cleanly.
+
+2026-11-11 20:04:41,612 - INFO - Git diff before:
+diff --git a/django/contrib/auth/checks.py b/django/contrib/auth/checks.py
+index 65fc266f7e..0712f88eb5 100644
+--- a/django/contrib/auth/checks.py
++++ b/django/contrib/auth/checks.py
+@@ -52,7 +52,13 @@ def check_user_model(app_configs=None, **kwargs):
+         )
+ 
+     # Check that the username field is unique
+-    if not cls._meta.get_field(cls.USERNAME_FIELD).unique:
++    if not cls._meta.get_field(cls.USERNAME_FIELD).unique and cls._meta.get_field(
++        cls.USERNAME_FIELD
++    ).name not in {
++        field_name
++        for constraint in cls._meta.total_unique_constraints
++        for field_name in constraint.fields
++    }:
+         if (settings.AUTHENTICATION_BACKENDS ==
+                 ['django.contrib.auth.backends.ModelBackend']):
+             errors.append(
+diff --git a/tests/auth_tests/test_checks.py b/tests/auth_tests/test_checks.py
+index cfaa4063f8..964fbd67b3 100644
+--- a/tests/auth_tests/test_checks.py
++++ b/tests/auth_tests/test_checks.py
+@@ -85,6 +85,37 @@ class UserModelChecksTests(SimpleTestCase):
+                 ),
+             ])
+ 
++    @override_settings(AUTH_USER_MODEL='auth_tests.Model')
++    def test_username_unique_with_model_constraint(self):
++        class Model(AbstractBaseUser):
++            username = models.CharField(max_length=30)
++            USERNAME_FIELD = 'username'
++
++            class Meta:
++                constraints = [
++                    models.UniqueConstraint(fields=['username'], name='user_username_unq')
++                ]
++
++        self.assertEqual(checks.run_checks(app_configs=self.apps.get_app_configs()), [])
++
++    @override_settings(AUTH_USER_MODEL='auth_tests.Model')
++    def test_username_non_unique_with_partial_unique_constraint(self):
++        class Model(AbstractBaseUser):
++            username = models.CharField(max_length=30)
++            USERNAME_FIELD = 'username'
++
++            class Meta:
++                constraints = [
++                    models.UniqueConstraint(
++                        fields=['username'],
++                        condition=models.Q(username__contains='@'),
++                        name='user_username_partial_unq',
++                    ),
++                ]
++
++        errors = checks.run_checks(app_configs=self.apps.get_app_configs())
++        self.assertEqual([error.id for error in errors], ['auth.E003'])
++
+     @override_settings(AUTH_USER_MODEL='auth_tests.BadUser')
+     def test_is_anonymous_authenticated_methods(self):
+         """
+2026-11-11 20:04:41,614 - INFO - Eval script for django__django-13568 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2192/pi-glm-5.3-flash/django__django-13568/eval.sh; copying to container...
+2026-11-11 20:04:48,496 - INFO - Test runtime: 6.79 seconds
+2026-11-11 20:04:48,497 - INFO - Test output for django__django-13568 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2192/pi-glm-5.3-flash/django__django-13568/test_output.txt
+2026-11-11 20:04:48,567 - INFO - Git diff after:
+diff --git a/django/contrib/auth/checks.py b/django/contrib/auth/checks.py
+index 65fc266f7e..0712f88eb5 100644
+--- a/django/contrib/auth/checks.py
++++ b/django/contrib/auth/checks.py
+@@ -52,7 +52,13 @@ def check_user_model(app_configs=None, **kwargs):
+         )
+ 
+     # Check that the username field is unique
+-    if not cls._meta.get_field(cls.USERNAME_FIELD).unique:
++    if not cls._meta.get_field(cls.USERNAME_FIELD).unique and cls._meta.get_field(
++        cls.USERNAME_FIELD
++    ).name not in {
++        field_name
++        for constraint in cls._meta.total_unique_constraints
++        for field_name in constraint.fields
++    }:
+         if (settings.AUTHENTICATION_BACKENDS ==
+                 ['django.contrib.auth.backends.ModelBackend']):
+             errors.append(
+2026-11-11 20:04:48,568 - INFO - Git diff changed after running eval script
+2026-11-11 20:04:48,568 - INFO - Grading answer for django__django-13568...
+2026-11-11 20:04:48,569 - INFO - report: {'django__django-13568': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_username_unique_with_model_constraint (auth_tests.test_checks.UserModelChecksTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_clashing_custom_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_clashing_default_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_custom_permission_codename_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_custom_permission_name_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_empty_default_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_model_name_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_non_clashing_custom_permissions (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_verbose_name_max_length (auth_tests.test_checks.ModelsPermissionsChecksTests)', 'test_is_anonymous_authenticated_methods (auth_tests.test_checks.UserModelChecksTests)', 'REQUIRED_FIELDS should be a list.', 'test_username_non_unique (auth_tests.test_checks.UserModelChecksTests)', 'USERNAME_FIELD should not appear in REQUIRED_FIELDS.', 'test_username_partially_unique (auth_tests.test_checks.UserModelChecksTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13568: resolved: True
+2026-11-11 20:04:48,571 - INFO - Attempting to stop container sweb.eval.django__django-13568.verified_full_glm53_pi_incr_R2192...
+2026-11-11 20:05:04,670 - INFO - Container sweb.eval.django__django-13568.verified_full_glm53_pi_incr_R2192 stopped successfully.
+2026-11-11 20:05:04,670 - INFO - Attempting to remove container sweb.eval.django__django-13568.verified_full_glm53_pi_incr_R2192...
+2026-11-11 20:05:04,727 - INFO - Container sweb.eval.django__django-13568.verified_full_glm53_pi_incr_R2192 removed successfully.

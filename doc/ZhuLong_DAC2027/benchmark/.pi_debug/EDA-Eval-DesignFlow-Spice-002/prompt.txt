@@ -1,0 +1,49 @@
+You are working in a Synopsys HSPICE / WaveView Tcl environment.
+
+A characterization engineer ran a 6T SRAM bitcell study: for each PMOS/cell supply
+VDD in {0.8, 0.9, 1.0, 1.1, 1.2} V they ran an HSPICE transient and saved the
+.measure results to a `.mt0` file (the HSPICE `$DATA1` tabular measure format).
+
+The `.mt0` file looks like:
+```
+$DATA1 SOURCE='PrimeSim HSPICE' VERSION='V-2023.12-SP1-1 linux64' PARAM_COUNT=0
+.TITLE '* sram 6t read/write current vs pmos cell vdd sweep'
+ vdd              iread_max        iread_min        iwrite_max       iwrite_min       vq_peak          vq_end
+    0.8000          0.0000e+00      -1.0110e-04       1.9400e-05       0.0000e+00       8.6000e-02       0.0000e+00
+    ...
+```
+
+Important properties of this format:
+- Line 1 is the `$DATA1 ...` header line.
+- Line 2 is the `.TITLE '...'` line.
+- Line 3 is the whitespace-separated **column names**.
+- Lines 4+ are the value rows (one per VDD point), whitespace-separated, in SI
+  base units (Amperes for currents, Volts for voltages), often in scientific
+  notation. Columns are padded with multiple spaces.
+
+Write a Tcl proc `spice_parse_mt0_sram {path}` that:
+1. Reads the `.mt0` file at `path`.
+2. Skips the two header lines (`$DATA1` and `.TITLE`) and reads the column-name
+   line, then each value row, mapping each column name to its float value per row.
+3. For each VDD row derives:
+   - `iread_ua`  = max(|iread_max|, |iread_min|) * 1e6   (read current, uA)
+   - `iwrite_ua` = max(|iwrite_max|, |iwrite_min|) * 1e6 (write current, uA)
+   - `read_stable` = 1 if `vq_peak < vdd/2` else 0   (cell must not flip on read)
+   - `write_ok`    = 1 if `vq_end  < vdd/2` else 0   (cell flipped after write)
+4. Returns a **flat space-separated `key value` string** (NOT a Tcl dict object)
+   with, for each point `i` (0-indexed in file order):
+   `p{i}_vdd`, `p{i}_iread_ua`, `p{i}_iwrite_ua`, `p{i}_vq_peak`, `p{i}_vq_end`,
+   `p{i}_read_stable`, `p{i}_write_ok`, plus `num_points`, `max_iread_ua`,
+   `max_iwrite_ua`, `iread_monotonic` (1 if iread_ua is non-decreasing across
+   rows else 0), `iwrite_monotonic`.
+
+Constraints (WaveView ACE Tcl):
+- Use POSIX regex classes only: `[[:space:]]`, `[^[:space:]]`, `[A-Za-z0-9_]`.
+  The `\s` / `\w` shortcuts are NOT supported. To tokenize a line robustly use
+  `regexp -all -inline {[^[:space:]]+}` (do NOT use `split $line " "`, which
+  yields empty tokens on the multi-space columns).
+- Skip the two header lines explicitly; do not classify header tokens as column
+  names.
+
+The proc must be self-contained and named exactly `spice_parse_mt0_sram`.
+

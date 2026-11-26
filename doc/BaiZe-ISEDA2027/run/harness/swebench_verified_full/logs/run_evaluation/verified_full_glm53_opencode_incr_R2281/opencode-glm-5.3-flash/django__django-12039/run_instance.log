@@ -1,0 +1,145 @@
+2026-11-12 17:28:00,532 - INFO - Creating container for django__django-12039...
+2026-11-12 17:28:00,552 - INFO - Container for django__django-12039 created: 93b5813d639cf5331d153590c424016cbf7d91732895d5b353e737be51b6e051
+2026-11-12 17:28:01,236 - INFO - Container for django__django-12039 started: 93b5813d639cf5331d153590c424016cbf7d91732895d5b353e737be51b6e051
+2026-11-12 17:28:01,239 - INFO - Intermediate patch for django__django-12039 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2281/opencode-glm-5.3-flash/django__django-12039/patch.diff, now applying to container...
+2026-11-12 17:28:01,387 - INFO - >>>>> Applied Patch:
+Checking patch django/db/backends/ddl_references.py...
+Checking patch tests/indexes/tests.py...
+Applied patch django/db/backends/ddl_references.py cleanly.
+Applied patch tests/indexes/tests.py cleanly.
+
+2026-11-12 17:28:02,549 - INFO - Git diff before:
+diff --git a/django/db/backends/ddl_references.py b/django/db/backends/ddl_references.py
+index 44e49806f8..ba55de1df8 100644
+--- a/django/db/backends/ddl_references.py
++++ b/django/db/backends/ddl_references.py
+@@ -83,10 +83,14 @@ class Columns(TableColumns):
+ 
+     def __str__(self):
+         def col_str(column, idx):
++            col = self.quote_name(column)
+             try:
+-                return self.quote_name(column) + self.col_suffixes[idx]
++                suffix = self.col_suffixes[idx]
++                if suffix:
++                    col = '{} {}'.format(col, suffix)
+             except IndexError:
+-                return self.quote_name(column)
++                pass
++            return col
+ 
+         return ', '.join(col_str(column, idx) for idx, column in enumerate(self.columns))
+ 
+@@ -114,7 +118,9 @@ class IndexColumns(Columns):
+             # length as self.columns.
+             col = '{} {}'.format(self.quote_name(column), self.opclasses[idx])
+             try:
+-                col = '{} {}'.format(col, self.col_suffixes[idx])
++                suffix = self.col_suffixes[idx]
++                if suffix:
++                    col = '{} {}'.format(col, suffix)
+             except IndexError:
+                 pass
+             return col
+diff --git a/tests/indexes/tests.py b/tests/indexes/tests.py
+index 588feaddff..04ab036139 100644
+--- a/tests/indexes/tests.py
++++ b/tests/indexes/tests.py
+@@ -75,6 +75,22 @@ class SchemaIndexesTests(TestCase):
+         index_sql = connection.schema_editor()._model_indexes_sql(IndexTogetherSingleList)
+         self.assertEqual(len(index_sql), 1)
+ 
++    def test_columns_list_sql(self):
++        index = Index(fields=['headline'], name='whitespace_idx')
++        editor = connection.schema_editor()
++        self.assertIn(
++            '(%s)' % editor.quote_name('headline'),
++            str(index.create_sql(Article, editor)),
++        )
++
++    def test_descending_columns_list_sql(self):
++        index = Index(fields=['-headline'], name='whitespace_idx')
++        editor = connection.schema_editor()
++        self.assertIn(
++            '(%s DESC)' % editor.quote_name('headline'),
++            str(index.create_sql(Article, editor)),
++        )
++
+ 
+ @skipIf(connection.vendor == 'postgresql', 'opclasses are PostgreSQL only')
+ class SchemaIndexesNotPostgreSQLTests(TransactionTestCase):
+@@ -223,6 +239,30 @@ class SchemaIndexesPostgreSQLTests(TransactionTestCase):
+             cursor.execute(self.get_opclass_query % indexname)
+             self.assertCountEqual(cursor.fetchall(), [('text_pattern_ops', indexname)])
+ 
++    def test_ops_class_columns_lists_sql(self):
++        index = Index(
++            fields=['headline'],
++            name='whitespace_idx',
++            opclasses=['text_pattern_ops'],
++        )
++        with connection.schema_editor() as editor:
++            self.assertIn(
++                '(%s text_pattern_ops)' % editor.quote_name('headline'),
++                str(index.create_sql(Article, editor)),
++            )
++
++    def test_ops_class_descending_columns_list_sql(self):
++        index = Index(
++            fields=['-headline'],
++            name='whitespace_idx',
++            opclasses=['text_pattern_ops'],
++        )
++        with connection.schema_editor() as editor:
++            self.assertIn(
++                '(%s text_pattern_ops DESC)' % editor.quote_name('headline'),
++                str(index.create_sql(Article, editor)),
++            )
++
+ 
+ @skipUnless(connection.vendor == 'mysql', 'MySQL tests')
+ class SchemaIndexesMySQLTests(TransactionTestCase):
+2026-11-12 17:28:02,551 - INFO - Eval script for django__django-12039 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2281/opencode-glm-5.3-flash/django__django-12039/eval.sh; copying to container...
+2026-11-12 17:28:08,863 - INFO - Test runtime: 6.20 seconds
+2026-11-12 17:28:08,864 - INFO - Test output for django__django-12039 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2281/opencode-glm-5.3-flash/django__django-12039/test_output.txt
+2026-11-12 17:28:08,932 - INFO - Git diff after:
+diff --git a/django/db/backends/ddl_references.py b/django/db/backends/ddl_references.py
+index 44e49806f8..ba55de1df8 100644
+--- a/django/db/backends/ddl_references.py
++++ b/django/db/backends/ddl_references.py
+@@ -83,10 +83,14 @@ class Columns(TableColumns):
+ 
+     def __str__(self):
+         def col_str(column, idx):
++            col = self.quote_name(column)
+             try:
+-                return self.quote_name(column) + self.col_suffixes[idx]
++                suffix = self.col_suffixes[idx]
++                if suffix:
++                    col = '{} {}'.format(col, suffix)
+             except IndexError:
+-                return self.quote_name(column)
++                pass
++            return col
+ 
+         return ', '.join(col_str(column, idx) for idx, column in enumerate(self.columns))
+ 
+@@ -114,7 +118,9 @@ class IndexColumns(Columns):
+             # length as self.columns.
+             col = '{} {}'.format(self.quote_name(column), self.opclasses[idx])
+             try:
+-                col = '{} {}'.format(col, self.col_suffixes[idx])
++                suffix = self.col_suffixes[idx]
++                if suffix:
++                    col = '{} {}'.format(col, suffix)
+             except IndexError:
+                 pass
+             return col
+2026-11-12 17:28:08,932 - INFO - Git diff changed after running eval script
+2026-11-12 17:28:08,932 - INFO - Grading answer for django__django-12039...
+2026-11-12 17:28:08,935 - INFO - report: {'django__django-12039': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_descending_columns_list_sql (indexes.tests.SchemaIndexesTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_columns_list_sql (indexes.tests.SchemaIndexesTests)', 'test_index_name (indexes.tests.SchemaIndexesTests)', 'test_index_name_hash (indexes.tests.SchemaIndexesTests)', 'test_index_together (indexes.tests.SchemaIndexesTests)', 'test_index_together_single_list (indexes.tests.SchemaIndexesTests)', 'test_create_index_ignores_opclasses (indexes.tests.SchemaIndexesNotPostgreSQLTests)', 'test_boolean_restriction_partial (indexes.tests.PartialIndexTests)', 'test_integer_restriction_partial (indexes.tests.PartialIndexTests)', 'test_is_null_condition (indexes.tests.PartialIndexTests)', 'test_multiple_conditions (indexes.tests.PartialIndexTests)', 'test_partial_index (indexes.tests.PartialIndexTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12039: resolved: True
+2026-11-12 17:28:08,936 - INFO - Attempting to stop container sweb.eval.django__django-12039.verified_full_glm53_opencode_incr_R2281...
+2026-11-12 17:28:25,128 - INFO - Container sweb.eval.django__django-12039.verified_full_glm53_opencode_incr_R2281 stopped successfully.
+2026-11-12 17:28:25,128 - INFO - Attempting to remove container sweb.eval.django__django-12039.verified_full_glm53_opencode_incr_R2281...
+2026-11-12 17:28:25,179 - INFO - Container sweb.eval.django__django-12039.verified_full_glm53_opencode_incr_R2281 removed successfully.

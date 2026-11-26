@@ -1,0 +1,45 @@
+diff --git a/pylint/__init__.py b/pylint/__init__.py
+index 9f3dd74e..1a0953fc 100644
+--- a/pylint/__init__.py
++++ b/pylint/__init__.py
+@@ -86,7 +86,10 @@ def modify_sys_path() -> None:
+     stdlib or pylint's own modules.
+     CPython issue: https://bugs.python.org/issue33053
+ 
+-    - Remove the first entry. This will always be either "" or the working directory
++    - Remove the first entry if it is "" or the working directory.
++      This avoids inadvertently importing user code from modules having the same
++      name as stdlib or pylint's own modules.
++      https://github.com/PyCQA/pylint/issues/4161
+     - Remove the working directory from the second and third entries
+       if PYTHONPATH includes a ":" at the beginning or the end.
+       https://github.com/PyCQA/pylint/issues/3636
+@@ -96,7 +99,8 @@ def modify_sys_path() -> None:
+       if pylint is installed in an editable configuration (as the last item).
+       https://github.com/PyCQA/pylint/issues/4161
+     """
+-    sys.path.pop(0)
++    if sys.path and sys.path[0] in ("", ".", os.getcwd()):
++        sys.path.pop(0)
+     env_pythonpath = os.environ.get("PYTHONPATH", "")
+     cwd = os.getcwd()
+     if env_pythonpath.startswith(":") and env_pythonpath not in (f":{cwd}", ":."):
+diff --git a/tests/test_self.py b/tests/test_self.py
+index 7c11601a..3e09fabb 100644
+--- a/tests/test_self.py
++++ b/tests/test_self.py
+@@ -814,6 +814,14 @@ a.py:1:4: E0001: Parsing failed: 'invalid syntax (<unknown>, line 1)' (syntax-er
+                 modify_sys_path()
+             assert sys.path == paths[1:]
+ 
++            # Test that we don't remove the first entry if it's not cwd, "", or "."
++            # https://github.com/PyCQA/pylint/issues/7006
++            paths = ["/custom_path", cwd, *default_paths]
++            sys.path = copy(paths)
++            with _test_environ_pythonpath():
++                modify_sys_path()
++            assert sys.path == paths
++
+     @pytest.mark.parametrize(
+         "args",
+         [

@@ -1,0 +1,116 @@
+2026-11-10 10:02:33,080 - INFO - Creating container for scikit-learn__scikit-learn-14710...
+2026-11-10 10:02:34,329 - INFO - Removed existing container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R2028
+2026-11-10 10:02:34,358 - INFO - Container for scikit-learn__scikit-learn-14710 created: 7bb6d91f64f8305429a7c12b60fe8f55f6dddc4cb97d6ecd55e3ee2975dfccd0
+2026-11-10 10:02:35,967 - INFO - Container for scikit-learn__scikit-learn-14710 started: 7bb6d91f64f8305429a7c12b60fe8f55f6dddc4cb97d6ecd55e3ee2975dfccd0
+2026-11-10 10:02:35,968 - INFO - Intermediate patch for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/scikit-learn__scikit-learn-14710/patch.diff, now applying to container...
+2026-11-10 10:02:36,129 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py...
+Checking patch sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py...
+Applied patch sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py cleanly.
+Applied patch sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py cleanly.
+
+2026-11-10 10:02:36,449 - INFO - Git diff before:
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8ca..c774d4ca9 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,16 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if is_classifier(self):
++            y_small_train = self.classes_[y_small_train.astype(int)]
++
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if is_classifier(self):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+index 1eebdefd5..811e9fb27 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+@@ -132,6 +132,33 @@ def test_early_stopping_classification(data, scoring, validation_fraction,
+         assert gb.n_iter_ == max_iter
+ 
+ 
++@pytest.mark.parametrize('data', (
++    make_classification(n_samples=50, random_state=0),
++    make_classification(n_samples=50, n_classes=3, n_clusters_per_class=1,
++                        random_state=0)
++))
++@pytest.mark.parametrize('validation_fraction', [0.1, None])
++def test_early_stopping_with_string_targets(data, validation_fraction):
++    # Regression test for #14228: with string targets, early stopping based on
++    # a scorer used to fail because the scorer was given the integer-encoded
++    # y_true while predict() returns the original (string) classes.
++    X, y = data
++    y = y.astype(str)
++    gb = HistGradientBoostingClassifier(
++        n_iter_no_change=10, validation_fraction=validation_fraction)
++    gb.fit(X, y)
++
++    # Early stopping can't occur before n_iter_no_change iterations
++    assert gb.n_iter_ >= 10
++    # Scores are computed for the initial model (before the first iteration)
++    # and after each iteration.
++    assert gb.train_score_.shape[0] == gb.n_iter_ + 1
++    if validation_fraction is None:
++        assert gb.validation_score_.shape[0] == 0
++    else:
++        assert gb.validation_score_.shape[0] == gb.n_iter_ + 1
++
++
+ @pytest.mark.parametrize(
+     'scores, n_iter_no_change, tol, stopping',
+     [
+2026-11-10 10:02:36,450 - INFO - Eval script for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/scikit-learn__scikit-learn-14710/eval.sh; copying to container...
+2026-11-10 10:26:54,185 - INFO - Test runtime: 1_457.67 seconds
+2026-11-10 10:26:54,186 - INFO - Test output for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/scikit-learn__scikit-learn-14710/test_output.txt
+2026-11-10 10:26:54,225 - INFO - Git diff after:
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8ca..c774d4ca9 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,16 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if is_classifier(self):
++            y_small_train = self.classes_[y_small_train.astype(int)]
++
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if is_classifier(self):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+2026-11-10 10:26:54,226 - INFO - Git diff changed after running eval script
+2026-11-10 10:26:54,226 - INFO - Grading answer for scikit-learn__scikit-learn-14710...
+2026-11-10 10:26:54,235 - INFO - report: {'scikit-learn__scikit-learn-14710': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': False, 'resolved': False, 'infra_failure': False}}
+Result for scikit-learn__scikit-learn-14710: resolved: False
+2026-11-10 10:26:54,237 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:27:09,913 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R2028 stopped successfully.
+2026-11-10 10:27:09,913 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:27:09,957 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R2028 removed successfully.
+rror_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.APIError: 409 Client Error for http+docker://localhost/v1.47/containers/cca226ac2ee921c83d811a19a8e5d1131fdccf426b432060b7d89c65a791531f/exec: Conflict ("container cca226ac2ee921c83d811a19a8e5d1131fdccf426b432060b7d89c65a791531f is not running")
+
+Check (logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/scikit-learn__scikit-learn-14710/run_instance.log) for more information.
+2026-11-10 10:02:34,322 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:02:34,354 - INFO - Failed to stop container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R2028: Command '['docker', 'stop', '--time=15', 'cca226ac2ee921c83d811a19a8e5d1131fdccf426b432060b7d89c65a791531f']' returned non-zero exit status 1.. Trying to forcefully kill...
+2026-11-10 10:02:34,354 - INFO - Forcefully killing container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:02:34,384 - INFO - Failed to kill container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R2028: Error response from daemon: cannot kill container: cca226ac2ee921c83d811a19a8e5d1131fdccf426b432060b7d89c65a791531f: No such container: cca226ac2ee921c83d811a19a8e5d1131fdccf426b432060b7d89c65a791531f
+
+2026-11-10 10:02:34,385 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:02:34,434 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_cline-patched_incr_R2028 removed successfully.

@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "sympy__sympy-22914",
+    "model_name_or_path": "hermes-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py\nindex 3a72ab60..3d335438 100644\n--- a/sympy/printing/pycode.py\n+++ b/sympy/printing/pycode.py\n@@ -428,6 +428,12 @@ def _print_sign(self, e):\n         return '(0.0 if {e} == 0 else {f}(1, {e}))'.format(\n             f=self._module_format('math.copysign'), e=self._print(e.args[0]))\n \n+    def _print_Min(self, expr):\n+        return \"min({})\".format(\", \".join(self._print(arg) for arg in expr.args))\n+\n+    def _print_Max(self, expr):\n+        return \"max({})\".format(\", \".join(self._print(arg) for arg in expr.args))\n+\n     def _print_Not(self, expr):\n         PREC = precedence(expr)\n         return self._operators['not'] + self.parenthesize(expr.args[0], PREC)\ndiff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py\nindex 9c1285d7..e2deb692 100644\n--- a/sympy/printing/tests/test_pycode.py\n+++ b/sympy/printing/tests/test_pycode.py\n@@ -58,6 +58,10 @@ def test_PythonCodePrinter():\n     assert prntr.doprint((2,3)) == \"(2, 3)\"\n     assert prntr.doprint([2,3]) == \"[2, 3]\"\n \n+    from sympy.functions.elementary.miscellaneous import Min, Max\n+    assert prntr.doprint(Min(x, y)) == 'min(x, y)'\n+    assert prntr.doprint(Max(x, y, z)) == 'max(x, y, z)'\n+\n \n def test_PythonCodePrinter_standard():\n     prntr = PythonCodePrinter()\n"
+  }
+]

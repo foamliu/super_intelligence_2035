@@ -1,0 +1,26 @@
+# MB 库与多 bit 单元上下文 —— A 档真实环境
+
+## 工程与库
+- 设计名 (DESIGN_NAME)：pa_cpu_merged_top
+- MB 库前缀 (MB_LIB_PREFIX)：DBCP51H180L6W25T5_MB_SVT（另有 _MB_LVT）
+- MB cell 模式 (MB_CELL_PATTERN)：MB[24]SDF*
+  * MB 库只有 2-bit 与 4-bit 单元：MB2SDF*（2 bit）、MB4SDF*（4 bit）
+  * 控制位分档：Q / RP(异步复位/置位) / SN(异步置位) 三档
+- 流程：Design Compiler NXT，hplp flow，WLM（非 topographical）模式
+- 当前合并策略：set_multibit_options -mode timing_only -critical_range 0.1
+
+## 候选与结果
+- multibit.components.rpt 里出现 1128 个 "Multibit Component" 候选 bank
+  （biu_pad_aaddr_reg[31:0]、biu_pad_wdata_reg[63:0]、ij1dfa3_reg[65:0] 等，宽度 2..66）
+- 但 MB 单元一个都没被用；最终 15307 单 bit FF / 0 多 bit FF / banking 0%
+
+## 根因（已定位）
+1. 本跑是非 topo（WLM）模式；该 flow 的多 bit 银行化依赖 topo 下的
+   identify_register_banks（placement-aware），这步被 shell_is_in_topographical_mode 闸门跳过。
+2. MB 库只有 2/4 位单元，522 个候选里多为 32/64/66 位宽总线，无匹配位宽单元。
+3. WLM 无物理库 → 不做总线拆分/物理分 bank。
+4. 控制位不匹配（同步复位/置位组合无对应 MB 单元）。
+5. set_multibit_options timing_only + critical_range 0.1 偏保守。
+
+## 诉求
+给一份「无物理库、WLM 模式下」可生效的完整命令段，让 2/4 位、控制位匹配的总线尽量合上。

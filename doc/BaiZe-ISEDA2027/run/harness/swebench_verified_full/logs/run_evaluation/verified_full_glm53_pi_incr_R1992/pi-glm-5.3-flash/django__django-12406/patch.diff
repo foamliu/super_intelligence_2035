@@ -1,0 +1,164 @@
+diff --git a/django/forms/models.py b/django/forms/models.py
+index dafc11f99..3fa491b91 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -13,7 +13,7 @@ from django.forms.forms import BaseForm, DeclarativeFieldsMetaclass
+ from django.forms.formsets import BaseFormSet, formset_factory
+ from django.forms.utils import ErrorList
+ from django.forms.widgets import (
+-    HiddenInput, MultipleHiddenInput, SelectMultiple,
++    HiddenInput, MultipleHiddenInput, RadioSelect, SelectMultiple,
+ )
+ from django.utils.text import capfirst, get_text_list
+ from django.utils.translation import gettext, gettext_lazy as _
+@@ -1185,17 +1185,19 @@ class ModelChoiceField(ChoiceField):
+                  required=True, widget=None, label=None, initial=None,
+                  help_text='', to_field_name=None, limit_choices_to=None,
+                  **kwargs):
+-        if required and (initial is not None):
+-            self.empty_label = None
+-        else:
+-            self.empty_label = empty_label
+-
+         # Call Field instead of ChoiceField __init__() because we don't need
+         # ChoiceField.__init__().
+         Field.__init__(
+             self, required=required, widget=widget, label=label,
+             initial=initial, help_text=help_text, **kwargs
+         )
++        if required and (initial is not None or isinstance(self.widget, RadioSelect)):
++            # RadioSelect has an inherent unfilled state, so a blank choice
++            # would look like a valid option instead of the absence of a
++            # selection; don't provide one for required fields.
++            self.empty_label = None
++        else:
++            self.empty_label = empty_label
+         self.queryset = queryset
+         self.limit_choices_to = limit_choices_to   # limit the queryset later.
+         self.to_field_name = to_field_name
+diff --git a/docs/ref/forms/fields.txt b/docs/ref/forms/fields.txt
+index d2a0550a4..97da956fb 100644
+--- a/docs/ref/forms/fields.txt
++++ b/docs/ref/forms/fields.txt
+@@ -1188,7 +1188,10 @@ generating choices. See :ref:`iterating-relationship-choices` for details.
+ 
+         Note that if a ``ModelChoiceField`` is required and has a default
+         initial value, no empty choice is created (regardless of the value
+-        of ``empty_label``).
++        of ``empty_label``). No empty choice is created either when the field
++        is required and its widget is ``RadioSelect``, since the widget has an
++        inherent unfilled state that makes the blank option look like a valid
++        choice.
+ 
+     .. attribute:: to_field_name
+ 
+diff --git a/docs/releases/3.1.txt b/docs/releases/3.1.txt
+index 4a165156e..4d52cbd80 100644
+--- a/docs/releases/3.1.txt
++++ b/docs/releases/3.1.txt
+@@ -207,6 +207,12 @@ Forms
+   now uses ``DATE_INPUT_FORMATS`` in addition to ``DATETIME_INPUT_FORMATS``
+   when converting a field input to a ``datetime`` value.
+ 
++* :class:`~django.forms.ModelChoiceField` no longer includes a blank option
++  ("---------") when its widget is ``RadioSelect`` and the field is required,
++  e.g. for a model field with ``blank=False``, because the widget has an
++  inherent unfilled state that makes the blank option look like a valid
++  choice.
++
+ Generic Views
+ ~~~~~~~~~~~~~
+ 
+diff --git a/tests/model_forms/test_modelchoicefield.py b/tests/model_forms/test_modelchoicefield.py
+index 4a2ef30b9..ceec61310 100644
+--- a/tests/model_forms/test_modelchoicefield.py
++++ b/tests/model_forms/test_modelchoicefield.py
+@@ -139,6 +139,36 @@ class ModelChoiceFieldTests(TestCase):
+         Category.objects.all().delete()
+         self.assertIs(bool(f.choices), True)
+ 
++    def test_choices_radio_select(self):
++        # A required ModelChoiceField with a RadioSelect widget has an inherent
++        # unfilled state, so it shouldn't include a blank choice that would
++        # look like a valid option.
++        f = forms.ModelChoiceField(Category.objects.all(), widget=forms.RadioSelect)
++        self.assertEqual(list(f.choices), [
++            (self.c1.pk, 'Entertainment'),
++            (self.c2.pk, 'A test'),
++            (self.c3.pk, 'Third'),
++        ])
++
++    def test_choices_radio_select_not_required(self):
++        # A non-required ModelChoiceField with a RadioSelect widget still
++        # includes a blank choice, since the absence of a selection is valid.
++        f = forms.ModelChoiceField(
++            Category.objects.all(), widget=forms.RadioSelect, required=False,
++        )
++        self.assertEqual(list(f.choices), [
++            ('', '---------'),
++            (self.c1.pk, 'Entertainment'),
++            (self.c2.pk, 'A test'),
++            (self.c3.pk, 'Third'),
++        ])
++
++    def test_choices_select_widget_includes_blank_option(self):
++        # Unlike RadioSelect, a blank option is idiomatic for <select> widgets
++        # even when the field is required.
++        f = forms.ModelChoiceField(Category.objects.all())
++        self.assertEqual(list(f.choices)[0], ('', '---------'))
++
+     def test_deepcopies_widget(self):
+         class ModelChoiceForm(forms.Form):
+             category = forms.ModelChoiceField(Category.objects.all())
+diff --git a/tests/model_forms/tests.py b/tests/model_forms/tests.py
+index 8259b3b8b..0d6f71a34 100644
+--- a/tests/model_forms/tests.py
++++ b/tests/model_forms/tests.py
+@@ -2399,6 +2399,47 @@ class OtherModelFormTests(TestCase):
+         with self.assertRaises(ValidationError):
+             f.fields['status'].clean('z')
+ 
++    def test_radioselect_foreign_key_not_required_blank_option(self):
++        """
++        A RadioSelect widget used for a ForeignKey with blank=False shouldn't
++        include a blank choice, because the widget has an inherent unfilled
++        state that makes the blank option look like a valid choice.
++        """
++        writer = Writer.objects.create(name='First Data File')
++
++        class TestRunForm(forms.ModelForm):
++            class Meta:
++                model = Article
++                fields = ['writer']
++                widgets = {'writer': forms.RadioSelect()}
++
++        form = TestRunForm()
++        self.assertHTMLEqual(
++            str(form['writer']),
++            '''<ul id="id_writer">
++<li><label for="id_writer_0"><input type="radio" name="writer" value="%d" required
++ id="id_writer_0"> First Data File</label></li>
++</ul>''' % writer.pk,
++        )
++
++    def test_radioselect_foreign_key_required_blank_option(self):
++        # A blank choice is still provided for a ForeignKey with blank=True,
++        # since the absence of a selection is valid.
++        class TestRunForm(forms.ModelForm):
++            class Meta:
++                model = Book
++                fields = ['author']
++                widgets = {'author': forms.RadioSelect()}
++
++        form = TestRunForm()
++        self.assertHTMLEqual(
++            str(form['author']),
++            '''<ul id="id_author">
++<li><label for="id_author_0"><input checked type="radio" name="author" value=""
++ id="id_author_0"> ---------</label></li>
++</ul>''',
++        )
++
+     def test_prefetch_related_queryset(self):
+         """
+         ModelChoiceField should respect a prefetch_related() on its queryset.

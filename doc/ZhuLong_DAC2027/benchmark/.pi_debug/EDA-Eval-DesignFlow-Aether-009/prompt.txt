@@ -1,0 +1,97 @@
+You are an EDA design-flow engineer. Implement a Tcl proc that audits a
+pyAether-emitted textual routing-connectivity report for a layout cellview.
+This is a pure text-analysis task (no EDA tool calls needed to produce the
+answer); you will verify your implementation on the Empyrean WaveView Tcl
+sandbox.
+
+TASK
+Implement the Tcl proc `layout_routing_audit` that takes ONE string argument
+`routing_text` (the full routing report text) and returns a flat Tcl dict with
+EXACTLY these 12 keys, in this exact order:
+
+    total_nets  routed_count  partial_count  unrouted_count  skipped_count
+    single_segment_nets  missing_via_nets  max_segments  max_segment_net
+    layers_used  mismatched_summary  verdict
+
+REPORT GRAMMAR (one statement per line; lines starting with '#' are comments
+and are ignored; blank lines are ignored; a leading "# Routing report" header
+may appear and is ignored):
+
+    NET <name> segments=<N> vias=<N> layers=<L1,L2,...> status=<S>
+    SUMMARY nets_checked=<N> routed=<N> unrouted=<N> missing_vias=<N> max_segments=<N> max_segment_net=<name>
+
+    - <name>    : a bare token (the net name), e.g. clk, data, vss, via2.
+    - segments= : a non-negative integer (number of routing segments). May be
+                  ABSENT (default 0).
+    - vias=     : a non-negative integer (number of vias on this net). May be
+                  ABSENT (default 0).
+    - layers=   : a comma-separated list of layer names (e.g. M1,M2,M3). May be
+                  ABSENT or EMPTY (layers= ) -> 0 layers. Duplicates within the
+                  list are collapsed (M1,M2,M1 -> {M1,M2}).
+    - status=   : one of routed | partial | unrouted | skipped (CASE-INSENSITIVE).
+                  May be ABSENT.
+    - SUMMARY carries 6 fields (each may be present or absent).
+
+SEMANTICS (read carefully -- a naive implementation fails several of these):
+
+ 1. total_nets = number of DISTINCT net names across all NET lines (after
+    dedup). DUPLICATE net name: LAST occurrence WINS (replace ALL fields --
+    segments/vias/layers/status -- not sum, not first-wins). The net counts
+    ONCE in total_nets.
+ 2. status is CASE-INSENSITIVE ("routed", "ROUTED", "Routed" all match ROUTED).
+    When status is ABSENT, infer it from segments:
+       segments == 0 -> UNROUTED
+       segments == 1 -> PARTIAL
+       segments >= 2 -> ROUTED
+    (status absent NEVER becomes SKIPPED.)
+ 3. routed_count / partial_count / unrouted_count / skipped_count = number of
+    dedup'd nets whose EFFECTIVE status is ROUTED / PARTIAL / UNROUTED /
+    SKIPPED.
+ 4. single_segment_nets = lex-sorted list of nets with segments == 1, REGARDLESS
+    of status (a watchlist of possibly-dangling single-segment wires). A net
+    with status=routed but segments==1 is STILL listed here.
+ 5. missing_via_nets = lex-sorted list of nets where the (dedup'd) layer count
+    is >= 2 AND vias == 0 (a net spanning multiple layers needs at least one
+    via; a single-layer net with 0 vias is FINE and NOT listed).
+ 6. max_segments / max_segment_net: computed over NON-SKIP nets ONLY. SKIP nets
+    are EXCLUDED even if their segment count is the file maximum. max_segments =
+    the maximum segments among non-SKIP nets; max_segment_net = the net owning
+    that max. Tie at max_segments -> LEXICOGRAPHICALLY SMALLEST net name
+    (lsort -dictionary -- numeric-aware, so "via2" < "via10"). If there are NO
+    non-SKIP nets, max_segments = -1 and max_segment_net = "" (empty string).
+ 7. layers_used = lex-sorted list of the UNION of all layers across ALL nets
+    (including skipped nets), dedup'd.
+ 8. mismatched_summary: list of SUMMARY field names whose provided value
+    mismatches the computed value. Compared:
+       - nets_checked, routed, unrouted, missing_vias : INTEGER equality
+       - max_segments : NUMERIC equality (expr ==), so "4" matches 4
+       - max_segment_net : STRING equality
+    ABSENT SUMMARY fields are NOT reported (do not appear in the list).
+    Empty list if there is no SUMMARY line.
+    Computed values: nets_checked=total_nets, routed=routed_count,
+    unrouted=unrouted_count, missing_vias=[llength missing_via_nets],
+    max_segments and max_segment_net as above.
+ 9. verdict priority (top first):
+       unrouted_count > 0 OR missing_via_nets non-empty  -> "FAIL"
+       mismatched_summary non-empty OR no SUMMARY         -> "INCOMPLETE"
+       otherwise                                           -> "PASS"
+    NOTE: partial_count and single_segment_nets do NOT trigger FAIL (they are
+    watchlists, not sign-off blockers). A net that is merely PARTIAL or
+    single-segment but fully routed with no missing vias and no unrouted nets
+    yields PASS (assuming a correct SUMMARY).
+
+RETURN a flat Tcl dict created with `dict create` in EXACTLY the order above.
+The list-valued keys (single_segment_nets, missing_via_nets, layers_used,
+mismatched_summary) are lex-sorted with `lsort -dictionary`. All other keys are
+scalars (integers or strings).
+
+CONSTRAINTS
+- Empyrean WaveView Tcl: NO Perl classes (\b \s \d \w). Use POSIX classes
+  ([[:space:]], [^[:space:]]) in regexp if needed. Use `split` on newline,
+  `string trim`, `string match` globs (e.g. "segments=*"), `lsort -dictionary`
+  for lexicographic sort + tie-breaks, `array`/`info exists` for sets,
+  `dict create` for the returned dict in exact key order. Compare integers/
+  floats NUMERICALLY (expr ==), NOT with `string equal`. Avoid `lassign` if
+  unsure; use `lindex`.
+- The checker builds all fixtures inline (no external files). Pure text +
+  integer math. No EDA tool calls.

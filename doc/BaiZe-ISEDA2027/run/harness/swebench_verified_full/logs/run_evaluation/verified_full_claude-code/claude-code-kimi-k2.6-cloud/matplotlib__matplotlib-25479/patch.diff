@@ -1,0 +1,44 @@
+diff --git a/lib/matplotlib/pyplot.py b/lib/matplotlib/pyplot.py
+index 58ce4c03f..8f929b8b7 100644
+--- a/lib/matplotlib/pyplot.py
++++ b/lib/matplotlib/pyplot.py
+@@ -2278,9 +2278,12 @@ def set_cmap(cmap: Colormap | str) -> None:
+     matplotlib.cm.register_cmap
+     matplotlib.cm.get_cmap
+     """
+-    cmap = get_cmap(cmap)
+-
+-    rc('image', cmap=cmap.name)
++    if isinstance(cmap, str):
++        name = cmap
++        cmap = get_cmap(cmap)
++    else:
++        name = cmap.name
++    rc('image', cmap=name)
+     im = gci()
+ 
+     if im is not None:
+diff --git a/lib/matplotlib/tests/test_colors.py b/lib/matplotlib/tests/test_colors.py
+index 2e841699c..a486024de 100644
+--- a/lib/matplotlib/tests/test_colors.py
++++ b/lib/matplotlib/tests/test_colors.py
+@@ -1649,3 +1649,19 @@ def test_cm_set_cmap_error():
+     bad_cmap = 'AardvarksAreAwkward'
+     with pytest.raises(ValueError, match=bad_cmap):
+         sm.set_cmap(bad_cmap)
++
++
++def test_pyplot_set_cmap_with_registered_name():
++    # Regression test for colormap name handling when the registered name
++    # differs from cmap.name.
++    cmap_data = [[0, 0, 0], [0.5, 0.5, 0.5], [1, 1, 1]]
++    my_cmap = colors.LinearSegmentedColormap.from_list('orig_name', cmap_data)
++    plt.colormaps.register(my_cmap, name='registered_name')
++
++    orig = mpl.rcParams['image.cmap']
++    try:
++        plt.set_cmap('registered_name')
++        assert mpl.rcParams['image.cmap'] == 'registered_name'
++    finally:
++        plt.rcParams['image.cmap'] = orig
++        plt.colormaps.unregister('registered_name')

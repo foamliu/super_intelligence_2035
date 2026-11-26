@@ -1,0 +1,10 @@
+在 test_chip 工程的 pp/ 阶段，需要为 Ansys RedHawk（classic）IR-drop / 功耗分析准备脚本目录 pp/redhawk/。
+
+该 test_chip 没有焊盘环（pad ring），电源网络只在 DEF 的 SPECIALNETS 里以 power ring 形式存在，因此需要在 ring 上放理想电压源点（PLOC）。请产出 pp/redhawk/ 目录下的 4 个文件：
+
+1. gen_inputs.py —— 解析 routed DEF 的 SPECIALNETS 段，定位电源/地网络的两条 power ring，在每条 ring 的 bbox 边界上选理想电压源点，输出 PLOC 文件（格式 `<net> <x_um> <y_um>`，坐标除以 DEF 的 DATABASE MICRONS 转微米）；再按 RedHawk GSR 关键字输出 GSR（TECH_FILE / LEF_FILES / DEF_FILES / LIB_FILES / CELL_RC_FILE(SPEF) / PAD_FILES / VDD_NETS(含名义电压) / GND_NETS / FREQ / TOGGLE_RATE，动态模式追加 VCD_FILE 块，FILE_TYPE FSDB + FRONT_PATH）。所有工程参数必须从 RH_* 环境变量读取（TOP/DEF/POWER_NET/GROUND_NET/VDD_NOMINAL/FREQ/TOGGLE_RATE/SPEF/FSDB/TECH_FILE/SIM_INSTANCE/GSR/PLOC/RUN_DYNAMIC/FRAME_SIZE 等），不要硬编码，这样同一脚本可用于不同工程。
+2. Makefile —— LSF bsub 驱动，export 上述 RH_* 变量，目标至少含 pp / static / dynamic / probe / clean。
+3. redhawk.tcl —— RedHawk batch 命令文件（load GSR -> perform extraction -power -ground -> perform analysis -vectorless / -vcd -> write_rh_file -filetype irdrop），从 RH_TOP/RH_GSR/RH_POWER_NET/RH_GROUND_NET 读输入。
+4. probe.tcl —— 用 Tcl info commands 列出本机 RedHawk 二进制的实际命令清单。
+
+可见的 v1 工程上下文见附件 ctx_A.txt，其 DEF 见 def_A.def（仅作开发参考）。交付接口：把 pp/redhawk/ 整个目录树打进 outputs/submit.zip。判分会用一份隐藏的 B 工程（不同的 top、不同的电源/地网络名、不同的电压/频率、不同的 ring 几何）通过 RH_* 环境变量驱动你的 gen_inputs.py 运行，校验产出的 GSR/PLOC 对 B 是否正确——所以 gen_inputs.py 必须真正读环境变量，硬编码 A 的值会在 B 上失败。

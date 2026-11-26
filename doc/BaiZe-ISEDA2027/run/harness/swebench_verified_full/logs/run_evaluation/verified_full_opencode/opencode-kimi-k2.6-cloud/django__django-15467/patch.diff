@@ -1,0 +1,41 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index 64be087bf..621959092 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -269,7 +269,8 @@ class BaseModelAdmin(metaclass=forms.MediaDefiningClass):
+                         "class": get_ul_class(self.radio_fields[db_field.name]),
+                     }
+                 )
+-                kwargs["empty_label"] = _("None") if db_field.blank else None
++                if "empty_label" not in kwargs:
++                    kwargs["empty_label"] = _("None") if db_field.blank else None
+ 
+         if "queryset" not in kwargs:
+             queryset = self.get_field_queryset(db, db_field, request)
+diff --git a/tests/modeladmin/tests.py b/tests/modeladmin/tests.py
+index ede1a0921..7d276d7c7 100644
+--- a/tests/modeladmin/tests.py
++++ b/tests/modeladmin/tests.py
+@@ -699,6 +699,22 @@ class ModelAdminTests(TestCase):
+             ["extra", "transport", "id", "DELETE", "main_band"],
+         )
+ 
++    def test_radio_fields_foreign_key_empty_label(self):
++        class ConcertAdmin(ModelAdmin):
++            radio_fields = {"opening_band": VERTICAL}
++
++            def formfield_for_foreignkey(self, db_field, request, **kwargs):
++                if db_field.name == "opening_band":
++                    kwargs["empty_label"] = "Custom Empty Label"
++                return super().formfield_for_foreignkey(db_field, request, **kwargs)
++
++        cma = ConcertAdmin(Concert, self.site)
++        cmafa = cma.get_form(request)
++        self.assertEqual(
++            list(cmafa.base_fields["opening_band"].widget.choices),
++            [("", "Custom Empty Label"), (self.band.id, "The Doors")],
++        )
++
+     def test_log_actions(self):
+         ma = ModelAdmin(Band, self.site)
+         mock_request = MockRequest()

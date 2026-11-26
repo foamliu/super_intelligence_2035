@@ -1,0 +1,4 @@
+Running command: pip install --break-system-packages deepseek-harness-sdk 2>&1 | tail -5
+Command outputs captured
+Trial fix-git__GXYAXH6 failed: DeepSeek-Harness exited with code 1: 
+Collecting main service artifacts

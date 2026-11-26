@@ -1,0 +1,75 @@
+2026-11-10 14:07:53,995 - INFO - Creating container for matplotlib__matplotlib-26291...
+2026-11-10 14:07:54,014 - INFO - Container for matplotlib__matplotlib-26291 created: fdb7b72b77720d6896b1606e3c1ec415665e66fddae2bd2aa596dd1c6dea18aa
+2026-11-10 14:07:54,802 - INFO - Container for matplotlib__matplotlib-26291 started: fdb7b72b77720d6896b1606e3c1ec415665e66fddae2bd2aa596dd1c6dea18aa
+2026-11-10 14:07:54,804 - INFO - Intermediate patch for matplotlib__matplotlib-26291 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/matplotlib__matplotlib-26291/patch.diff, now applying to container...
+2026-11-10 14:07:54,899 - INFO - Failed to apply patch to container: git apply --verbose
+2026-11-10 14:07:55,936 - INFO - Failed to apply patch to container: git apply --verbose --3way
+2026-11-10 14:07:57,026 - INFO - Failed to apply patch to container: git apply --verbose --reject
+2026-11-10 14:07:57,167 - INFO - >>>>> Applied Patch:
+patching file lib/mpl_toolkits/axes_grid1/inset_locator.py
+patching file lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py
+patching file test_inset.png
+
+2026-11-10 14:07:57,222 - INFO - Git diff before:
+diff --git a/lib/mpl_toolkits/axes_grid1/inset_locator.py b/lib/mpl_toolkits/axes_grid1/inset_locator.py
+index 9d35051074..46284c6802 100644
+--- a/lib/mpl_toolkits/axes_grid1/inset_locator.py
++++ b/lib/mpl_toolkits/axes_grid1/inset_locator.py
+@@ -69,6 +69,8 @@ class AnchoredLocatorBase(AnchoredOffsetbox):
+         raise RuntimeError("No draw method should be called")
+ 
+     def __call__(self, ax, renderer):
++        if renderer is None:
++            renderer = ax.figure._get_renderer()
+         self.axes = ax
+         bbox = self.get_window_extent(renderer)
+         px, py = self.get_offset(bbox.width, bbox.height, 0, 0, renderer)
+diff --git a/lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py b/lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py
+index b615747877..68696ba0ab 100644
+--- a/lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py
++++ b/lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py
+@@ -1,5 +1,6 @@
+ from itertools import product
+ import platform
++from io import BytesIO
+ 
+ import matplotlib as mpl
+ import matplotlib.pyplot as plt
+@@ -247,6 +248,12 @@ def test_inset_axes_complete():
+                          bbox_transform=ax.transAxes)
+ 
+ 
++def test_inset_locator_tight_bbox():
++    fig, ax = plt.subplots()
++    inset_axes(ax, width=1.3, height=0.9)
++    fig.savefig(BytesIO(), bbox_inches="tight")  # previously raised AttributeError
++
++
+ @image_comparison(['fill_facecolor.png'], remove_text=True, style='mpl20')
+ def test_fill_facecolor():
+     fig, ax = plt.subplots(1, 5)
+2026-11-10 14:07:57,224 - INFO - Eval script for matplotlib__matplotlib-26291 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/matplotlib__matplotlib-26291/eval.sh; copying to container...
+2026-11-10 14:09:14,028 - INFO - Test runtime: 76.74 seconds
+2026-11-10 14:09:14,031 - INFO - Test output for matplotlib__matplotlib-26291 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/matplotlib__matplotlib-26291/test_output.txt
+2026-11-10 14:09:14,101 - INFO - Git diff after:
+diff --git a/lib/mpl_toolkits/axes_grid1/inset_locator.py b/lib/mpl_toolkits/axes_grid1/inset_locator.py
+index 9d35051074..46284c6802 100644
+--- a/lib/mpl_toolkits/axes_grid1/inset_locator.py
++++ b/lib/mpl_toolkits/axes_grid1/inset_locator.py
+@@ -69,6 +69,8 @@ class AnchoredLocatorBase(AnchoredOffsetbox):
+         raise RuntimeError("No draw method should be called")
+ 
+     def __call__(self, ax, renderer):
++        if renderer is None:
++            renderer = ax.figure._get_renderer()
+         self.axes = ax
+         bbox = self.get_window_extent(renderer)
+         px, py = self.get_offset(bbox.width, bbox.height, 0, 0, renderer)
+2026-11-10 14:09:14,101 - INFO - Git diff changed after running eval script
+2026-11-10 14:09:14,101 - INFO - Grading answer for matplotlib__matplotlib-26291...
+2026-11-10 14:09:14,102 - INFO - report: {'matplotlib__matplotlib-26291': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_inset_axes_tight'], 'failure': []}, 'PASS_TO_PASS': {'success': ['lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_divider_append_axes', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_twin_axes_empty_and_removed[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_axesgrid_colorbar_log_smoketest', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_inset_colorbar_tight_layout_smoketest', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_inset_locator[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_inset_axes[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_inset_axes_complete', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_fill_facecolor[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_zooming_with_inverted_axes[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_anchored_direction_arrows[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_anchored_direction_arrows_many_args[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_axes_locatable_position', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_image_grid_each_left_label_mode_all[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_image_grid_single_bottom[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_image_grid_label_mode_deprecation_warning', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_image_grid[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_gettightbbox', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_picking_callbacks_overlap[gca-gca-big]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_picking_callbacks_overlap[gca-gca-small]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_picking_callbacks_overlap[host-host-big]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_picking_callbacks_overlap[host-host-small]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_picking_callbacks_overlap[host-parasite-big]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_picking_callbacks_overlap[host-parasite-small]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_picking_callbacks_overlap[parasite-host-big]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_picking_callbacks_overlap[parasite-host-small]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_picking_callbacks_overlap[parasite-parasite-big]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_picking_callbacks_overlap[parasite-parasite-small]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_anchored_artists[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_hbox_divider', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_vbox_divider', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_axes_class_tuple', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_grid_axes_lists', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_grid_axes_position[row]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_grid_axes_position[column]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_grid_errors[rect0-None-TypeError-Incorrect', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_grid_errors[111--1-ValueError-ngrids', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_grid_errors[111-7-ValueError-ngrids', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_divider_errors[None-TypeError-anchor', "lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_divider_errors[CC-ValueError-'CC'", 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_divider_errors[anchor2-TypeError-anchor', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_mark_inset_unstales_viewlim[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_auto_adjustable', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_rgb_axes[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_insetposition[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_imagegrid_cbar_mode_edge[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_imagegrid', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_removal', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_anchored_locator_base_call[png]', 'lib/mpl_toolkits/axes_grid1/tests/test_axes_grid1.py::test_grid_with_axes_class_not_overriding_axis'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for matplotlib__matplotlib-26291: resolved: True
+2026-11-10 14:09:14,104 - INFO - Attempting to stop container sweb.eval.matplotlib__matplotlib-26291.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 14:09:29,769 - INFO - Container sweb.eval.matplotlib__matplotlib-26291.verified_full_glm53_opencode_incr_R2028 stopped successfully.
+2026-11-10 14:09:29,769 - INFO - Attempting to remove container sweb.eval.matplotlib__matplotlib-26291.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 14:09:29,912 - INFO - Container sweb.eval.matplotlib__matplotlib-26291.verified_full_glm53_opencode_incr_R2028 removed successfully.

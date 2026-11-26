@@ -1,0 +1,90 @@
+{
+  "instance": "nand2_CPSel.XI1",
+  "master": "nand2LV",
+  "ports": [
+    {
+      "name": "A",
+      "direction": "input",
+      "net": "A",
+      "neighbors": [
+        {
+          "inst": "XI0",
+          "terminal": "B",
+          "master": "nand2LV"
+        }
+      ]
+    },
+    {
+      "name": "B",
+      "direction": "input",
+      "net": "B",
+      "neighbors": [
+        {
+          "inst": "XI0",
+          "terminal": "A",
+          "master": "nand2LV"
+        }
+      ]
+    },
+    {
+      "name": "Y",
+      "direction": "output",
+      "net": "Y",
+      "neighbors": [
+        {
+          "inst": "XI0",
+          "terminal": "Y",
+          "master": "nand2LV"
+        }
+      ]
+    },
+    {
+      "name": "vbulkn!",
+      "direction": "bidir",
+      "net": "vbn!",
+      "neighbors": [
+        {
+          "inst": "XI0",
+          "terminal": "vbulkn!",
+          "master": "nand2LV"
+        }
+      ]
+    },
+    {
+      "name": "vbulkp!",
+      "direction": "bidir",
+      "net": "vbp!",
+      "neighbors": [
+        {
+          "inst": "XI0",
+          "terminal": "vbulkp!",
+          "master": "nand2LV"
+        }
+      ]
+    },
+    {
+      "name": "vcc!",
+      "direction": "bidir",
+      "net": "vcc!",
+      "neighbors": [
+        {
+          "inst": "XI0",
+          "terminal": "vcc!",
+          "master": "nand2LV"
+        }
+      ]
+    },
+    {
+      "name": "vss!",
+      "direction": "bidir",
+      "net": "vss!",
+      "neighbors": [
+        {
+          "inst": "XI0",
+          "terminal": "vss!",
+          "master": "nand2LV"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+2026-10-30 15:33:58,692 - INFO - Creating container for django__django-12304...
+2026-10-30 15:33:58,730 - INFO - Container for django__django-12304 created: 6326006f3b853f1f3a65dd4bf302c3b1df378899a6f9d7411bba6ac509eab4a6
+2026-10-30 15:34:00,536 - INFO - Container for django__django-12304 started: 6326006f3b853f1f3a65dd4bf302c3b1df378899a6f9d7411bba6ac509eab4a6
+2026-10-30 15:34:00,537 - INFO - Intermediate patch for django__django-12304 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12304/patch.diff, now applying to container...
+2026-10-30 15:34:00,671 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/enums.py...
+Checking patch tests/model_enums/tests.py...
+Applied patch django/db/models/enums.py cleanly.
+Applied patch tests/model_enums/tests.py cleanly.
+
+2026-10-30 15:34:02,156 - INFO - Git diff before:
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index f48143ddaf..a756ebcf6f 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -26,6 +26,7 @@ class ChoicesMeta(enum.EnumMeta):
+             # assignment in enum's classdict.
+             dict.__setitem__(classdict, key, value)
+         cls = super().__new__(metacls, classname, bases, classdict)
++        cls.do_not_call_in_templates = True
+         cls._value2label_map_ = dict(zip(cls._value2member_map_, labels))
+         # Add a label property to instances of enum which uses the enum member
+         # that is passed in as "self" as the value to use when looking up the
+diff --git a/tests/model_enums/tests.py b/tests/model_enums/tests.py
+index b9356479de..7ac00787f0 100644
+--- a/tests/model_enums/tests.py
++++ b/tests/model_enums/tests.py
+@@ -4,6 +4,7 @@ import ipaddress
+ import uuid
+ 
+ from django.db import models
++from django.template import Context, Engine
+ from django.test import SimpleTestCase
+ from django.utils.functional import Promise
+ from django.utils.translation import gettext_lazy as _
+@@ -149,6 +150,12 @@ class ChoicesTests(SimpleTestCase):
+                 with self.subTest(member=member):
+                     self.assertEqual(str(test[member.name]), str(member.value))
+ 
++    def test_do_not_call_in_templates(self):
++        template = Engine().from_string('{{ suit.DIAMOND }}')
++        self.assertEqual(template.render(Context({'suit': Suit})), '1')
++        template = Engine().from_string('{{ year.FRESHMAN }}')
++        self.assertEqual(template.render(Context({'year': YearInSchool})), 'FR')
++
+ 
+ class Separator(bytes, models.Choices):
+     FS = b'\x1c', 'File Separator'
+2026-10-30 15:34:02,158 - INFO - Eval script for django__django-12304 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12304/eval.sh; copying to container...
+2026-10-30 15:34:08,874 - INFO - Test runtime: 6.65 seconds
+2026-10-30 15:34:08,875 - INFO - Test output for django__django-12304 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-12304/test_output.txt
+2026-10-30 15:34:08,950 - INFO - Git diff after:
+diff --git a/django/db/models/enums.py b/django/db/models/enums.py
+index f48143ddaf..a756ebcf6f 100644
+--- a/django/db/models/enums.py
++++ b/django/db/models/enums.py
+@@ -26,6 +26,7 @@ class ChoicesMeta(enum.EnumMeta):
+             # assignment in enum's classdict.
+             dict.__setitem__(classdict, key, value)
+         cls = super().__new__(metacls, classname, bases, classdict)
++        cls.do_not_call_in_templates = True
+         cls._value2label_map_ = dict(zip(cls._value2member_map_, labels))
+         # Add a label property to instances of enum which uses the enum member
+         # that is passed in as "self" as the value to use when looking up the
+2026-10-30 15:34:08,950 - INFO - Git diff changed after running eval script
+2026-10-30 15:34:08,950 - INFO - Grading answer for django__django-12304...
+2026-10-30 15:34:08,951 - INFO - report: {'django__django-12304': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_templates (model_enums.tests.ChoicesTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_integerchoices (model_enums.tests.ChoicesTests)', 'test_integerchoices_auto_label (model_enums.tests.ChoicesTests)', 'test_integerchoices_containment (model_enums.tests.ChoicesTests)', 'test_integerchoices_empty_label (model_enums.tests.ChoicesTests)', 'test_integerchoices_functional_api (model_enums.tests.ChoicesTests)', 'test_invalid_definition (model_enums.tests.ChoicesTests)', 'test_str (model_enums.tests.ChoicesTests)', 'test_textchoices (model_enums.tests.ChoicesTests)', 'test_textchoices_auto_label (model_enums.tests.ChoicesTests)', 'test_textchoices_blank_value (model_enums.tests.ChoicesTests)', 'test_textchoices_containment (model_enums.tests.ChoicesTests)', 'test_textchoices_empty_label (model_enums.tests.ChoicesTests)', 'test_textchoices_functional_api (model_enums.tests.ChoicesTests)', 'test_bool_unsupported (model_enums.tests.CustomChoicesTests)', 'test_labels_valid (model_enums.tests.CustomChoicesTests)', 'test_timezone_unsupported (model_enums.tests.CustomChoicesTests)', 'test_uuid_unsupported (model_enums.tests.CustomChoicesTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12304: resolved: True
+2026-10-30 15:34:08,952 - INFO - Attempting to stop container sweb.eval.django__django-12304.verified_full_opencode...
+2026-10-30 15:34:24,557 - INFO - Container sweb.eval.django__django-12304.verified_full_opencode stopped successfully.
+2026-10-30 15:34:24,557 - INFO - Attempting to remove container sweb.eval.django__django-12304.verified_full_opencode...
+2026-10-30 15:34:24,614 - INFO - Container sweb.eval.django__django-12304.verified_full_opencode removed successfully.

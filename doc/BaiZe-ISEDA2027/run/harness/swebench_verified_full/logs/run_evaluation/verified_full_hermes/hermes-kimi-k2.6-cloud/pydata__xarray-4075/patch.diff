@@ -1,0 +1,43 @@
+diff --git a/xarray/core/weighted.py b/xarray/core/weighted.py
+index 996d2e4..a4bd93e 100644
+--- a/xarray/core/weighted.py
++++ b/xarray/core/weighted.py
+@@ -107,7 +107,9 @@ class Weighted:
+             )
+ 
+         self.obj = obj
+-        self.weights = weights
++        # Make sure boolean weights are integer so that dot(mask, weights)
++        # returns a numeric sum instead of a boolean.
++        self.weights = weights.astype(int) if weights.dtype == bool else weights
+ 
+     @staticmethod
+     def _reduce(
+diff --git a/xarray/tests/test_weighted.py b/xarray/tests/test_weighted.py
+index 2453121..f8bded4 100644
+--- a/xarray/tests/test_weighted.py
++++ b/xarray/tests/test_weighted.py
+@@ -74,6 +74,23 @@ def test_weighted_sum_equal_weights(da, factor, skipna):
+     assert_equal(expected, result)
+ 
+ 
++@pytest.mark.parametrize("as_dataset", (True, False))
++def test_weighted_bool_weights(as_dataset):
++    # GH #4007
++    data = DataArray([1.0, 1.0, 1.0])
++    weights = DataArray(np.array([1, 1, 0], dtype=bool))
++
++    if as_dataset:
++        data = data.to_dataset(name="data")
++        expected = data.assign(data=1.0)
++    else:
++        expected = DataArray(1.0)
++
++    result = data.weighted(weights).mean()
++
++    assert_equal(expected, result)
++
++
+ @pytest.mark.parametrize(
+     ("weights", "expected"), (([1, 2], 5), ([0, 2], 4), ([0, 0], 0))
+ )

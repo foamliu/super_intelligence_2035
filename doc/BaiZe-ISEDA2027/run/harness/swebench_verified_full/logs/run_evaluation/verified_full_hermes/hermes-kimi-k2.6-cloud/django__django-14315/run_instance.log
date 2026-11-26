@@ -1,0 +1,174 @@
+2026-11-02 18:06:25,089 - INFO - Creating container for django__django-14315...
+2026-11-02 18:06:25,113 - INFO - Container for django__django-14315 created: 667ad24ca9515318fb702192779d2a40cf550685caf19f9704973d0733f88ea7
+2026-11-02 18:06:25,793 - INFO - Container for django__django-14315 started: 667ad24ca9515318fb702192779d2a40cf550685caf19f9704973d0733f88ea7
+2026-11-02 18:06:25,796 - INFO - Intermediate patch for django__django-14315 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/django__django-14315/patch.diff, now applying to container...
+2026-11-02 18:06:25,927 - INFO - >>>>> Applied Patch:
+Checking patch django/db/backends/base/client.py...
+Checking patch django/db/backends/postgresql/client.py...
+Checking patch tests/dbshell/test_mysql.py...
+Checking patch tests/dbshell/test_postgresql.py...
+Applied patch django/db/backends/base/client.py cleanly.
+Applied patch django/db/backends/postgresql/client.py cleanly.
+Applied patch tests/dbshell/test_mysql.py cleanly.
+Applied patch tests/dbshell/test_postgresql.py cleanly.
+
+2026-11-02 18:06:27,298 - INFO - Git diff before:
+diff --git a/django/db/backends/base/client.py b/django/db/backends/base/client.py
+index 339f1e863c..335f7bcded 100644
+--- a/django/db/backends/base/client.py
++++ b/django/db/backends/base/client.py
+@@ -21,6 +21,6 @@ class BaseDatabaseClient:
+ 
+     def runshell(self, parameters):
+         args, env = self.settings_to_cmd_args_env(self.connection.settings_dict, parameters)
+-        if env:
++        if env is not None:
+             env = {**os.environ, **env}
+         subprocess.run(args, env=env, check=True)
+diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py
+index 3effab65a8..d2997bc9a9 100644
+--- a/django/db/backends/postgresql/client.py
++++ b/django/db/backends/postgresql/client.py
+@@ -36,20 +36,26 @@ class DatabaseClient(BaseDatabaseClient):
+             args += [dbname]
+         args.extend(parameters)
+ 
+-        env = {}
++        env = None
+         if passwd:
+-            env['PGPASSWORD'] = str(passwd)
++            env = {'PGPASSWORD': str(passwd)}
+         if service:
++            env = env or {}
+             env['PGSERVICE'] = str(service)
+         if sslmode:
++            env = env or {}
+             env['PGSSLMODE'] = str(sslmode)
+         if sslrootcert:
++            env = env or {}
+             env['PGSSLROOTCERT'] = str(sslrootcert)
+         if sslcert:
++            env = env or {}
+             env['PGSSLCERT'] = str(sslcert)
+         if sslkey:
++            env = env or {}
+             env['PGSSLKEY'] = str(sslkey)
+         if passfile:
++            env = env or {}
+             env['PGPASSFILE'] = str(passfile)
+         return args, env
+ 
+diff --git a/tests/dbshell/test_mysql.py b/tests/dbshell/test_mysql.py
+index c3ecc6503b..032e83d0cd 100644
+--- a/tests/dbshell/test_mysql.py
++++ b/tests/dbshell/test_mysql.py
+@@ -191,7 +191,7 @@ class MySqlDbshellCommandTestCase(SimpleTestCase):
+             },
+             [],
+         )
+-        if env:
++        if env is not None:
+             env = {**os.environ, **env}
+         fake_client = Path(__file__).with_name('fake_client.py')
+         args[0:1] = [sys.executable, str(fake_client)]
+diff --git a/tests/dbshell/test_postgresql.py b/tests/dbshell/test_postgresql.py
+index a96acac6f1..3fdd4bd2f4 100644
+--- a/tests/dbshell/test_postgresql.py
++++ b/tests/dbshell/test_postgresql.py
+@@ -39,7 +39,7 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+                 'PORT': '444',
+             }), (
+                 ['psql', '-U', 'someuser', '-h', 'somehost', '-p', '444', 'dbname'],
+-                {},
++                None,
+             )
+         )
+ 
+@@ -134,7 +134,7 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+     def test_parameters(self):
+         self.assertEqual(
+             self.settings_to_cmd_args_env({'NAME': 'dbname'}, ['--help']),
+-            (['psql', 'dbname', '--help'], {}),
++            (['psql', 'dbname', '--help'], None),
+         )
+ 
+     @skipUnless(connection.vendor == 'postgresql', 'Requires a PostgreSQL connection')
+@@ -156,7 +156,7 @@ class PostgreSqlDbshellCommandTestCase(SimpleTestCase):
+         # The password doesn't leak in an exception that results from a client
+         # crash.
+         args, env = self.settings_to_cmd_args_env({'PASSWORD': 'somepassword'}, [])
+-        if env:
++        if env is not None:
+             env = {**os.environ, **env}
+         fake_client = Path(__file__).with_name('fake_client.py')
+         args[0:1] = [sys.executable, str(fake_client)]
+2026-11-02 18:06:27,302 - INFO - Eval script for django__django-14315 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/django__django-14315/eval.sh; copying to container...
+2026-11-02 18:06:35,672 - INFO - Test runtime: 8.28 seconds
+2026-11-02 18:06:35,674 - INFO - Test output for django__django-14315 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/django__django-14315/test_output.txt
+2026-11-02 18:06:35,753 - INFO - Git diff after:
+diff --git a/django/db/backends/base/client.py b/django/db/backends/base/client.py
+index 339f1e863c..335f7bcded 100644
+--- a/django/db/backends/base/client.py
++++ b/django/db/backends/base/client.py
+@@ -21,6 +21,6 @@ class BaseDatabaseClient:
+ 
+     def runshell(self, parameters):
+         args, env = self.settings_to_cmd_args_env(self.connection.settings_dict, parameters)
+-        if env:
++        if env is not None:
+             env = {**os.environ, **env}
+         subprocess.run(args, env=env, check=True)
+diff --git a/django/db/backends/postgresql/client.py b/django/db/backends/postgresql/client.py
+index 3effab65a8..d2997bc9a9 100644
+--- a/django/db/backends/postgresql/client.py
++++ b/django/db/backends/postgresql/client.py
+@@ -36,20 +36,26 @@ class DatabaseClient(BaseDatabaseClient):
+             args += [dbname]
+         args.extend(parameters)
+ 
+-        env = {}
++        env = None
+         if passwd:
+-            env['PGPASSWORD'] = str(passwd)
++            env = {'PGPASSWORD': str(passwd)}
+         if service:
++            env = env or {}
+             env['PGSERVICE'] = str(service)
+         if sslmode:
++            env = env or {}
+             env['PGSSLMODE'] = str(sslmode)
+         if sslrootcert:
++            env = env or {}
+             env['PGSSLROOTCERT'] = str(sslrootcert)
+         if sslcert:
++            env = env or {}
+             env['PGSSLCERT'] = str(sslcert)
+         if sslkey:
++            env = env or {}
+             env['PGSSLKEY'] = str(sslkey)
+         if passfile:
++            env = env or {}
+             env['PGPASSFILE'] = str(passfile)
+         return args, env
+ 
+diff --git a/tests/dbshell/test_mysql.py b/tests/dbshell/test_mysql.py
+index c3ecc6503b..032e83d0cd 100644
+--- a/tests/dbshell/test_mysql.py
++++ b/tests/dbshell/test_mysql.py
+@@ -191,7 +191,7 @@ class MySqlDbshellCommandTestCase(SimpleTestCase):
+             },
+             [],
+         )
+-        if env:
++        if env is not None:
+             env = {**os.environ, **env}
+         fake_client = Path(__file__).with_name('fake_client.py')
+         args[0:1] = [sys.executable, str(fake_client)]
+2026-11-02 18:06:35,753 - INFO - Git diff changed after running eval script
+2026-11-02 18:06:35,753 - INFO - Grading answer for django__django-14315...
+2026-11-02 18:06:35,757 - INFO - report: {'django__django-14315': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_accent (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_basic (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_column (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_crash_password_does_not_leak (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_nopass (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_parameters (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_passfile (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_service (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)', 'test_ssl_certificate (dbshell.test_postgresql.PostgreSqlDbshellCommandTestCase)'], 'failure': ['test_runshell_use_environ (backends.base.test_client.SimpleDatabaseClientTests)', 'test_settings_to_cmd_args_env (backends.base.test_client.SimpleDatabaseClientTests)']}, 'PASS_TO_PASS': {'success': [], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-14315: resolved: False
+2026-11-02 18:06:35,759 - INFO - Attempting to stop container sweb.eval.django__django-14315.verified_full_hermes...
+2026-11-02 18:06:51,859 - INFO - Container sweb.eval.django__django-14315.verified_full_hermes stopped successfully.
+2026-11-02 18:06:51,859 - INFO - Attempting to remove container sweb.eval.django__django-14315.verified_full_hermes...
+2026-11-02 18:06:51,919 - INFO - Container sweb.eval.django__django-14315.verified_full_hermes removed successfully.

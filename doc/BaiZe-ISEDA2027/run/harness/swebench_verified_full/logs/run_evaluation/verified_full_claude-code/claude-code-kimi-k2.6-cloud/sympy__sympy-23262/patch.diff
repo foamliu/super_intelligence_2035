@@ -1,0 +1,50 @@
+diff --git a/sympy/utilities/lambdify.py b/sympy/utilities/lambdify.py
+index da67263b19..e13822f31e 100644
+--- a/sympy/utilities/lambdify.py
++++ b/sympy/utilities/lambdify.py
+@@ -961,7 +961,10 @@ def _recursive_to_string(doprint, arg):
+             left, right = "()"
+         else:
+             raise NotImplementedError("unhandled type: %s, %s" % (type(arg), arg))
+-        return left +', '.join(_recursive_to_string(doprint, e) for e in arg) + right
++        inner = ', '.join(_recursive_to_string(doprint, e) for e in arg)
++        if isinstance(arg, tuple) and len(arg) == 1:
++            inner += ','
++        return left + inner + right
+     elif isinstance(arg, str):
+         return arg
+     else:
+diff --git a/sympy/utilities/tests/test_lambdify.py b/sympy/utilities/tests/test_lambdify.py
+index 023c2fb55a..9bc7b121d6 100644
+--- a/sympy/utilities/tests/test_lambdify.py
++++ b/sympy/utilities/tests/test_lambdify.py
+@@ -10,6 +10,7 @@
+ from sympy.core.relational import Eq
+ from sympy.core.singleton import S
+ from sympy.core.symbol import (Dummy, symbols)
++from sympy.core.containers import Tuple
+ from sympy.functions.combinatorial.factorials import (RisingFactorial, factorial)
+ from sympy.functions.elementary.complexes import Abs
+ from sympy.functions.elementary.exponential import exp
+@@ -1198,6 +1199,21 @@ def test_issue_14941():
+     assert f3(2, 3) == [3, 2]
+ 
+ 
++def test_lambdify_single_element_tuple():
++    # https://github.com/sympy/sympy/issues/XXXXX
++    # Single-element tuples should have a trailing comma in the generated code
++    f = lambdify([], tuple([1]))
++    assert f() == (1,)
++
++    # Also test with SymPy Tuple
++    f2 = lambdify([], Tuple(1))
++    assert f2() == (1,)
++
++    # Nested single-element tuple
++    f3 = lambdify([], tuple([tuple([1])]))
++    assert f3() == ((1,),)
++
++
+ def test_lambdify_Derivative_arg_issue_16468():
+     f = Function('f')(x)
+     fx = f.diff()

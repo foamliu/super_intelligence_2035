@@ -1,0 +1,100 @@
+2026-11-12 20:54:54,741 - INFO - Creating container for matplotlib__matplotlib-22865...
+2026-11-12 20:54:54,766 - INFO - Container for matplotlib__matplotlib-22865 created: 4a3f56162cf0dd61ab21c4213f6d1de9e80c648698c349a5db8cd9ed9b256ec6
+2026-11-12 20:54:55,514 - INFO - Container for matplotlib__matplotlib-22865 started: 4a3f56162cf0dd61ab21c4213f6d1de9e80c648698c349a5db8cd9ed9b256ec6
+2026-11-12 20:54:55,527 - INFO - Intermediate patch for matplotlib__matplotlib-22865 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2289b/hermes-glm-5.3-flash/matplotlib__matplotlib-22865/patch.diff, now applying to container...
+2026-11-12 20:54:55,692 - INFO - >>>>> Applied Patch:
+Checking patch lib/matplotlib/colorbar.py...
+Checking patch lib/matplotlib/tests/test_colorbar.py...
+Applied patch lib/matplotlib/colorbar.py cleanly.
+Applied patch lib/matplotlib/tests/test_colorbar.py cleanly.
+
+2026-11-12 20:54:57,683 - INFO - Git diff before:
+diff --git a/lib/matplotlib/colorbar.py b/lib/matplotlib/colorbar.py
+index c59b0ac815..57d7b50f89 100644
+--- a/lib/matplotlib/colorbar.py
++++ b/lib/matplotlib/colorbar.py
+@@ -651,8 +651,14 @@ class Colorbar:
+             if not self.drawedges:
+                 if len(self._y) >= self.n_rasterize:
+                     self.solids.set_rasterized(True)
+-        self.dividers.set_segments(
+-            np.dstack([X, Y])[1:-1] if self.drawedges else [])
++        if self.drawedges:
++            start_idx = 0 if self._extend_lower() else 1
++            if self._extend_upper():
++                self.dividers.set_segments(np.dstack([X, Y])[start_idx:])
++            else:
++                self.dividers.set_segments(np.dstack([X, Y])[start_idx:-1])
++        else:
++            self.dividers.set_segments([])
+ 
+     def _add_solids_patches(self, X, Y, C, mappable):
+         hatches = mappable.hatches * len(C)  # Have enough hatches.
+diff --git a/lib/matplotlib/tests/test_colorbar.py b/lib/matplotlib/tests/test_colorbar.py
+index ae3ab92c0d..ee12d722b6 100644
+--- a/lib/matplotlib/tests/test_colorbar.py
++++ b/lib/matplotlib/tests/test_colorbar.py
+@@ -919,6 +919,30 @@ def test_proportional_colorbars():
+             fig.colorbar(CS3, spacing=spacings[j], ax=axs[i, j])
+ 
+ 
++@pytest.mark.parametrize("extend, coloroffset, res", [
++    ('both', 1, [np.array([[0., 0.], [0., 1.]]),
++                 np.array([[1., 0.], [1., 1.]]),
++                 np.array([[2., 0.], [2., 1.]])]),
++    ('min', 0, [np.array([[0., 0.], [0., 1.]]),
++                np.array([[1., 0.], [1., 1.]])]),
++    ('max', 0, [np.array([[1., 0.], [1., 1.]]),
++                np.array([[2., 0.], [2., 1.]])]),
++    ('neither', -1, [np.array([[1., 0.], [1., 1.]])])
++    ])
++def test_colorbar_extend_drawedges(extend, coloroffset, res):
++    cmap = plt.get_cmap("viridis")
++    bounds = np.arange(3)
++    nb_colors = len(bounds) + coloroffset
++    colors = cmap(np.linspace(100, 255, nb_colors).astype(int))
++    cmap, norm = mcolors.from_levels_and_colors(bounds, colors, extend=extend)
++
++    plt.figure(figsize=(5, 1))
++    ax = plt.subplot(111)
++    cbar = Colorbar(ax, cmap=cmap, norm=norm, orientation='horizontal',
++                    drawedges=True)
++    assert np.all(np.equal(cbar.dividers.get_segments(), res))
++
++
+ def test_negative_boundarynorm():
+     fig, ax = plt.subplots(figsize=(1, 3))
+     cmap = plt.get_cmap("viridis")
+2026-11-12 20:54:57,701 - INFO - Eval script for matplotlib__matplotlib-22865 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2289b/hermes-glm-5.3-flash/matplotlib__matplotlib-22865/eval.sh; copying to container...
+2026-11-12 20:55:14,577 - INFO - Test runtime: 16.71 seconds
+2026-11-12 20:55:14,579 - INFO - Test output for matplotlib__matplotlib-22865 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2289b/hermes-glm-5.3-flash/matplotlib__matplotlib-22865/test_output.txt
+2026-11-12 20:55:14,655 - INFO - Git diff after:
+diff --git a/lib/matplotlib/colorbar.py b/lib/matplotlib/colorbar.py
+index c59b0ac815..57d7b50f89 100644
+--- a/lib/matplotlib/colorbar.py
++++ b/lib/matplotlib/colorbar.py
+@@ -651,8 +651,14 @@ class Colorbar:
+             if not self.drawedges:
+                 if len(self._y) >= self.n_rasterize:
+                     self.solids.set_rasterized(True)
+-        self.dividers.set_segments(
+-            np.dstack([X, Y])[1:-1] if self.drawedges else [])
++        if self.drawedges:
++            start_idx = 0 if self._extend_lower() else 1
++            if self._extend_upper():
++                self.dividers.set_segments(np.dstack([X, Y])[start_idx:])
++            else:
++                self.dividers.set_segments(np.dstack([X, Y])[start_idx:-1])
++        else:
++            self.dividers.set_segments([])
+ 
+     def _add_solids_patches(self, X, Y, C, mappable):
+         hatches = mappable.hatches * len(C)  # Have enough hatches.
+2026-11-12 20:55:14,655 - INFO - Git diff changed after running eval script
+2026-11-12 20:55:14,655 - INFO - Grading answer for matplotlib__matplotlib-22865...
+2026-11-12 20:55:14,656 - INFO - report: {'matplotlib__matplotlib-22865': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['lib/matplotlib/tests/test_colorbar.py::test_colorbar_extend_drawedges[both-1-res0]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extend_drawedges[min-0-res1]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extend_drawedges[max-0-res2]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_shape[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_length[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[min-expected0-horizontal]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[min-expected0-vertical]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[max-expected1-horizontal]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[max-expected1-vertical]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[both-expected2-horizontal]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extension_inverted_axis[both-expected2-vertical]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_positioning[png-True]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_positioning[png-False]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_single_ax_panchor_false', 'lib/matplotlib/tests/test_colorbar.py::test_contour_colorbar[png]', 'lib/matplotlib/tests/test_colorbar.py::test_gridspec_make_colorbar[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_single_scatter[png]', 'lib/matplotlib/tests/test_colorbar.py::test_remove_from_figure[no', 'lib/matplotlib/tests/test_colorbar.py::test_remove_from_figure[with', 'lib/matplotlib/tests/test_colorbar.py::test_remove_from_figure_cl', 'lib/matplotlib/tests/test_colorbar.py::test_colorbarbase', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_closed_patch[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_ticks', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_minorticks_on_off', 'lib/matplotlib/tests/test_colorbar.py::test_cbar_minorticks_for_rc_xyminortickvisible', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_autoticks', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_autotickslog', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_get_ticks', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_lognorm_extension[both]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_lognorm_extension[min]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_lognorm_extension[max]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_powernorm_extension', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_axes_kw', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_log_minortick_labels', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_renorm', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_format[%4.2e]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_format[{x:.2e}]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_scale_reset', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_get_ticks_2', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_inverted_ticks', 'lib/matplotlib/tests/test_colorbar.py::test_mappable_no_alpha', 'lib/matplotlib/tests/test_colorbar.py::test_mappable_2d_alpha', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_label', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_int[clim0]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_int[clim1]', 'lib/matplotlib/tests/test_colorbar.py::test_anchored_cbar_position_using_specgrid', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_change_lim_scale[png]', 'lib/matplotlib/tests/test_colorbar.py::test_axes_handles_same_functions[png]', 'lib/matplotlib/tests/test_colorbar.py::test_inset_colorbar_layout', 'lib/matplotlib/tests/test_colorbar.py::test_twoslope_colorbar[png]', 'lib/matplotlib/tests/test_colorbar.py::test_remove_cb_whose_mappable_has_no_figure[png]', 'lib/matplotlib/tests/test_colorbar.py::test_aspects', 'lib/matplotlib/tests/test_colorbar.py::test_proportional_colorbars[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_extend_drawedges[neither--1-res3]', 'lib/matplotlib/tests/test_colorbar.py::test_negative_boundarynorm', 'lib/matplotlib/tests/test_colorbar.py::test_boundaries[png]', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_no_warning_rcparams_grid_true', 'lib/matplotlib/tests/test_colorbar.py::test_colorbar_set_formatter_locator', 'lib/matplotlib/tests/test_colorbar.py::test_offset_text_loc', 'lib/matplotlib/tests/test_colorbar.py::test_title_text_loc'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for matplotlib__matplotlib-22865: resolved: True
+2026-11-12 20:55:14,658 - INFO - Attempting to stop container sweb.eval.matplotlib__matplotlib-22865.verified_full_glm53_hermes_incr_R2289b...
+2026-11-12 20:55:31,016 - INFO - Container sweb.eval.matplotlib__matplotlib-22865.verified_full_glm53_hermes_incr_R2289b stopped successfully.
+2026-11-12 20:55:31,017 - INFO - Attempting to remove container sweb.eval.matplotlib__matplotlib-22865.verified_full_glm53_hermes_incr_R2289b...
+2026-11-12 20:55:31,047 - INFO - Container sweb.eval.matplotlib__matplotlib-22865.verified_full_glm53_hermes_incr_R2289b removed successfully.

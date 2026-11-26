@@ -1,0 +1,1575 @@
+{
+  "simulation": [
+    {
+      "group_size": 4,
+      "reward_density": 0.1,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.454133,
+      "mean_advantage_abs": 0.301453,
+      "nonzero_advantage_fraction": 0.3406,
+      "gradient_signal": 0.102675
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.1,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.740741,
+      "mean_advantage_abs": 0.666667,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.666667
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.1,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.160193,
+      "mean_advantage_abs": 0.180217,
+      "nonzero_advantage_fraction": 0.3445,
+      "gradient_signal": 0.062085
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.2,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.781733,
+      "mean_advantage_abs": 0.528785,
+      "nonzero_advantage_fraction": 0.5863,
+      "gradient_signal": 0.310026
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.2,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.740741,
+      "mean_advantage_abs": 0.666667,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.666667
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.2,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.285259,
+      "mean_advantage_abs": 0.320917,
+      "nonzero_advantage_fraction": 0.5908,
+      "gradient_signal": 0.189598
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.35,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.072267,
+      "mean_advantage_abs": 0.736918,
+      "nonzero_advantage_fraction": 0.8042,
+      "gradient_signal": 0.592629
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.35,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.740741,
+      "mean_advantage_abs": 0.666667,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.666667
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.35,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.406281,
+      "mean_advantage_abs": 0.457067,
+      "nonzero_advantage_fraction": 0.8099,
+      "gradient_signal": 0.370178
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.5,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.1708,
+      "mean_advantage_abs": 0.811528,
+      "nonzero_advantage_fraction": 0.8781,
+      "gradient_signal": 0.712603
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.5,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.740741,
+      "mean_advantage_abs": 0.666667,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.666667
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.5,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.446148,
+      "mean_advantage_abs": 0.501917,
+      "nonzero_advantage_fraction": 0.877,
+      "gradient_signal": 0.440181
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.7,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.997067,
+      "mean_advantage_abs": 0.682822,
+      "nonzero_advantage_fraction": 0.7478,
+      "gradient_signal": 0.510615
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.7,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.740741,
+      "mean_advantage_abs": 0.666667,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.666667
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.7,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.374993,
+      "mean_advantage_abs": 0.421867,
+      "nonzero_advantage_fraction": 0.7551,
+      "gradient_signal": 0.318552
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.9,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.451067,
+      "mean_advantage_abs": 0.299193,
+      "nonzero_advantage_fraction": 0.3383,
+      "gradient_signal": 0.101217
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.9,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.740741,
+      "mean_advantage_abs": 0.666667,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.666667
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.9,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.157289,
+      "mean_advantage_abs": 0.17695,
+      "nonzero_advantage_fraction": 0.3385,
+      "gradient_signal": 0.059898
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.1,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.55812,
+      "mean_advantage_abs": 0.369091,
+      "nonzero_advantage_fraction": 0.4651,
+      "gradient_signal": 0.171664
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.1,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.56,
+      "mean_advantage_abs": 0.6,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.6
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.1,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.133195,
+      "mean_advantage_abs": 0.184993,
+      "nonzero_advantage_fraction": 0.4843,
+      "gradient_signal": 0.089592
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.2,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.8766,
+      "mean_advantage_abs": 0.617051,
+      "nonzero_advantage_fraction": 0.7305,
+      "gradient_signal": 0.450756
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.2,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.56,
+      "mean_advantage_abs": 0.6,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.6
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.2,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.232022,
+      "mean_advantage_abs": 0.322253,
+      "nonzero_advantage_fraction": 0.7453,
+      "gradient_signal": 0.240175
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.35,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.10532,
+      "mean_advantage_abs": 0.829529,
+      "nonzero_advantage_fraction": 0.9211,
+      "gradient_signal": 0.764079
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.35,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.56,
+      "mean_advantage_abs": 0.6,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.6
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.35,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.327451,
+      "mean_advantage_abs": 0.454793,
+      "nonzero_advantage_fraction": 0.92,
+      "gradient_signal": 0.41841
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.5,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.15692,
+      "mean_advantage_abs": 0.891169,
+      "nonzero_advantage_fraction": 0.9641,
+      "gradient_signal": 0.859176
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.5,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.56,
+      "mean_advantage_abs": 0.6,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.6
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.5,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.359717,
+      "mean_advantage_abs": 0.499607,
+      "nonzero_advantage_fraction": 0.968,
+      "gradient_signal": 0.483619
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.7,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.06236,
+      "mean_advantage_abs": 0.784332,
+      "nonzero_advantage_fraction": 0.8853,
+      "gradient_signal": 0.694369
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.7,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.56,
+      "mean_advantage_abs": 0.6,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.6
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.7,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.303322,
+      "mean_advantage_abs": 0.42128,
+      "nonzero_advantage_fraction": 0.8836,
+      "gradient_signal": 0.372243
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.9,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.55596,
+      "mean_advantage_abs": 0.36866,
+      "nonzero_advantage_fraction": 0.4633,
+      "gradient_signal": 0.1708
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.9,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.56,
+      "mean_advantage_abs": 0.6,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.6
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.9,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.130824,
+      "mean_advantage_abs": 0.1817,
+      "nonzero_advantage_fraction": 0.472,
+      "gradient_signal": 0.085762
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.1,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.665143,
+      "mean_advantage_abs": 0.427875,
+      "nonzero_advantage_fraction": 0.582,
+      "gradient_signal": 0.249023
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.1,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.489796,
+      "mean_advantage_abs": 0.571429,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.571429
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.1,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.117518,
+      "mean_advantage_abs": 0.17995,
+      "nonzero_advantage_fraction": 0.5692,
+      "gradient_signal": 0.102428
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.2,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.951086,
+      "mean_advantage_abs": 0.675416,
+      "nonzero_advantage_fraction": 0.8322,
+      "gradient_signal": 0.562082
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.2,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.489796,
+      "mean_advantage_abs": 0.571429,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.571429
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.2,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.211426,
+      "mean_advantage_abs": 0.323746,
+      "nonzero_advantage_fraction": 0.8351,
+      "gradient_signal": 0.270361
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.35,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.1088,
+      "mean_advantage_abs": 0.874223,
+      "nonzero_advantage_fraction": 0.9702,
+      "gradient_signal": 0.848171
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.35,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.489796,
+      "mean_advantage_abs": 0.571429,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.571429
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.35,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.295872,
+      "mean_advantage_abs": 0.453054,
+      "nonzero_advantage_fraction": 0.9661,
+      "gradient_signal": 0.437695
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.5,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.134971,
+      "mean_advantage_abs": 0.930038,
+      "nonzero_advantage_fraction": 0.9931,
+      "gradient_signal": 0.92362
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.5,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.489796,
+      "mean_advantage_abs": 0.571429,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.571429
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.5,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.32501,
+      "mean_advantage_abs": 0.497671,
+      "nonzero_advantage_fraction": 0.9911,
+      "gradient_signal": 0.493242
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.7,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.080914,
+      "mean_advantage_abs": 0.827911,
+      "nonzero_advantage_fraction": 0.9458,
+      "gradient_signal": 0.783038
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.7,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.489796,
+      "mean_advantage_abs": 0.571429,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.571429
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.7,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.272793,
+      "mean_advantage_abs": 0.417714,
+      "nonzero_advantage_fraction": 0.9377,
+      "gradient_signal": 0.391691
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.9,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.653829,
+      "mean_advantage_abs": 0.420498,
+      "nonzero_advantage_fraction": 0.5721,
+      "gradient_signal": 0.240567
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.9,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.489796,
+      "mean_advantage_abs": 0.571429,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.571429
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.9,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.117427,
+      "mean_advantage_abs": 0.179811,
+      "nonzero_advantage_fraction": 0.5715,
+      "gradient_signal": 0.102762
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.1,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.779782,
+      "mean_advantage_abs": 0.477726,
+      "nonzero_advantage_fraction": 0.7148,
+      "gradient_signal": 0.341478
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.1,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.429752,
+      "mean_advantage_abs": 0.545455,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.545455
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.1,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.108904,
+      "mean_advantage_abs": 0.18302,
+      "nonzero_advantage_fraction": 0.7233,
+      "gradient_signal": 0.132378
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.2,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.018036,
+      "mean_advantage_abs": 0.730519,
+      "nonzero_advantage_fraction": 0.9332,
+      "gradient_signal": 0.68172
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.2,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.429752,
+      "mean_advantage_abs": 0.545455,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.545455
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.2,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.19131,
+      "mean_advantage_abs": 0.321508,
+      "nonzero_advantage_fraction": 0.9317,
+      "gradient_signal": 0.299549
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.35,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.084145,
+      "mean_advantage_abs": 0.903218,
+      "nonzero_advantage_fraction": 0.9938,
+      "gradient_signal": 0.897618
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.35,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.429752,
+      "mean_advantage_abs": 0.545455,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.545455
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.35,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.27056,
+      "mean_advantage_abs": 0.454691,
+      "nonzero_advantage_fraction": 0.9938,
+      "gradient_signal": 0.451872
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.5,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.090691,
+      "mean_advantage_abs": 0.95548,
+      "nonzero_advantage_fraction": 0.9998,
+      "gradient_signal": 0.955289
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.5,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.429752,
+      "mean_advantage_abs": 0.545455,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.545455
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.5,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.296961,
+      "mean_advantage_abs": 0.499059,
+      "nonzero_advantage_fraction": 0.9993,
+      "gradient_signal": 0.49871
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.7,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.0776,
+      "mean_advantage_abs": 0.864732,
+      "nonzero_advantage_fraction": 0.9878,
+      "gradient_signal": 0.854182
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.7,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.429752,
+      "mean_advantage_abs": 0.545455,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.545455
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.7,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.250645,
+      "mean_advantage_abs": 0.421223,
+      "nonzero_advantage_fraction": 0.9877,
+      "gradient_signal": 0.416042
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.9,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.774873,
+      "mean_advantage_abs": 0.472023,
+      "nonzero_advantage_fraction": 0.7103,
+      "gradient_signal": 0.335278
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.9,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.429752,
+      "mean_advantage_abs": 0.545455,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.545455
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.9,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.107562,
+      "mean_advantage_abs": 0.180764,
+      "nonzero_advantage_fraction": 0.7204,
+      "gradient_signal": 0.130222
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.1,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.869547,
+      "mean_advantage_abs": 0.511744,
+      "nonzero_advantage_fraction": 0.8152,
+      "gradient_signal": 0.417173
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.1,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.402963,
+      "mean_advantage_abs": 0.533333,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.533333
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.1,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.102497,
+      "mean_advantage_abs": 0.180171,
+      "nonzero_advantage_fraction": 0.8207,
+      "gradient_signal": 0.147866
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.2,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.035947,
+      "mean_advantage_abs": 0.751422,
+      "nonzero_advantage_fraction": 0.9712,
+      "gradient_signal": 0.729781
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.2,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.402963,
+      "mean_advantage_abs": 0.533333,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.533333
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.2,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.181804,
+      "mean_advantage_abs": 0.319578,
+      "nonzero_advantage_fraction": 0.9726,
+      "gradient_signal": 0.310821
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.35,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.066027,
+      "mean_advantage_abs": 0.919361,
+      "nonzero_advantage_fraction": 0.9994,
+      "gradient_signal": 0.918809
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.35,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.402963,
+      "mean_advantage_abs": 0.533333,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.533333
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.35,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.259196,
+      "mean_advantage_abs": 0.455618,
+      "nonzero_advantage_fraction": 0.999,
+      "gradient_signal": 0.455163
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.5,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.06656,
+      "mean_advantage_abs": 0.967163,
+      "nonzero_advantage_fraction": 0.9999,
+      "gradient_signal": 0.967067
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.5,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.402963,
+      "mean_advantage_abs": 0.533333,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.533333
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.5,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.284767,
+      "mean_advantage_abs": 0.500567,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.500567
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.7,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.06432,
+      "mean_advantage_abs": 0.878492,
+      "nonzero_advantage_fraction": 0.9978,
+      "gradient_signal": 0.876559
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.7,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.402963,
+      "mean_advantage_abs": 0.533333,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.533333
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.7,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.238677,
+      "mean_advantage_abs": 0.41955,
+      "nonzero_advantage_fraction": 0.9968,
+      "gradient_signal": 0.418207
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.9,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.861227,
+      "mean_advantage_abs": 0.509761,
+      "nonzero_advantage_fraction": 0.8074,
+      "gradient_signal": 0.411581
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.9,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.402963,
+      "mean_advantage_abs": 0.533333,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.533333
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.9,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.101976,
+      "mean_advantage_abs": 0.179254,
+      "nonzero_advantage_fraction": 0.8131,
+      "gradient_signal": 0.145752
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.1,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.957078,
+      "mean_advantage_abs": 0.54713,
+      "nonzero_advantage_fraction": 0.9172,
+      "gradient_signal": 0.501828
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.1,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.378072,
+      "mean_advantage_abs": 0.521739,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.521739
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.1,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.098063,
+      "mean_advantage_abs": 0.180123,
+      "nonzero_advantage_fraction": 0.9171,
+      "gradient_signal": 0.165191
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.2,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.039513,
+      "mean_advantage_abs": 0.771915,
+      "nonzero_advantage_fraction": 0.9962,
+      "gradient_signal": 0.768982
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.2,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.378072,
+      "mean_advantage_abs": 0.521739,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.521739
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.2,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.174236,
+      "mean_advantage_abs": 0.320037,
+      "nonzero_advantage_fraction": 0.9955,
+      "gradient_signal": 0.318597
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.35,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.043478,
+      "mean_advantage_abs": 0.932806,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.932806
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.35,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.378072,
+      "mean_advantage_abs": 0.521739,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.521739
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.35,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.24786,
+      "mean_advantage_abs": 0.45527,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.45527
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.5,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.043478,
+      "mean_advantage_abs": 0.978251,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.978251
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.5,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.378072,
+      "mean_advantage_abs": 0.521739,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.521739
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.5,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.272072,
+      "mean_advantage_abs": 0.499744,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.499744
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.7,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.043374,
+      "mean_advantage_abs": 0.893248,
+      "nonzero_advantage_fraction": 0.9999,
+      "gradient_signal": 0.893158
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.7,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.378072,
+      "mean_advantage_abs": 0.521739,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.521739
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.7,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.229241,
+      "mean_advantage_abs": 0.42107,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.42107
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.9,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.959165,
+      "mean_advantage_abs": 0.547001,
+      "nonzero_advantage_fraction": 0.9192,
+      "gradient_signal": 0.502803
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.9,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.378072,
+      "mean_advantage_abs": 0.521739,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.521739
+    },
+    {
+      "group_size": 24,
+      "reward_density": 0.9,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.09721,
+      "mean_advantage_abs": 0.178555,
+      "nonzero_advantage_fraction": 0.9161,
+      "gradient_signal": 0.163575
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.1,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.998193,
+      "mean_advantage_abs": 0.569598,
+      "nonzero_advantage_fraction": 0.967,
+      "gradient_signal": 0.550801
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.1,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.366285,
+      "mean_advantage_abs": 0.516129,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.516129
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.1,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.095248,
+      "mean_advantage_abs": 0.178775,
+      "nonzero_advantage_fraction": 0.9652,
+      "gradient_signal": 0.172554
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.2,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.031535,
+      "mean_advantage_abs": 0.778257,
+      "nonzero_advantage_fraction": 0.9993,
+      "gradient_signal": 0.777712
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.2,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.366285,
+      "mean_advantage_abs": 0.516129,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.516129
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.2,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.170189,
+      "mean_advantage_abs": 0.319437,
+      "nonzero_advantage_fraction": 0.9996,
+      "gradient_signal": 0.319309
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.35,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.032258,
+      "mean_advantage_abs": 0.936895,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.936895
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.35,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.366285,
+      "mean_advantage_abs": 0.516129,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.516129
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.35,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.242338,
+      "mean_advantage_abs": 0.454856,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.454856
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.5,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.032258,
+      "mean_advantage_abs": 0.98418,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.98418
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.5,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.366285,
+      "mean_advantage_abs": 0.516129,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.516129
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.5,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.266536,
+      "mean_advantage_abs": 0.500275,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.500275
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.7,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 1.032258,
+      "mean_advantage_abs": 0.898659,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.898659
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.7,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.366285,
+      "mean_advantage_abs": 0.516129,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.516129
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.7,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.224262,
+      "mean_advantage_abs": 0.42093,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.42093
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.9,
+      "advantage_type": "mean_subtracted",
+      "mean_advantage_var": 0.995716,
+      "mean_advantage_abs": 0.56325,
+      "nonzero_advantage_fraction": 0.9646,
+      "gradient_signal": 0.543311
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.9,
+      "advantage_type": "rank_based",
+      "mean_advantage_var": 0.366285,
+      "mean_advantage_abs": 0.516129,
+      "nonzero_advantage_fraction": 1.0,
+      "gradient_signal": 0.516129
+    },
+    {
+      "group_size": 32,
+      "reward_density": 0.9,
+      "advantage_type": "leave_one_out",
+      "mean_advantage_var": 0.096223,
+      "mean_advantage_abs": 0.180606,
+      "nonzero_advantage_fraction": 0.9654,
+      "gradient_signal": 0.174357
+    }
+  ],
+  "throughput": [
+    {
+      "group_size": 4,
+      "total_rollouts": 2000,
+      "total_tokens_M": 3.5,
+      "wall_clock_hours": 1.5,
+      "rollouts_per_hour": 1345.0
+    },
+    {
+      "group_size": 6,
+      "total_rollouts": 3000,
+      "total_tokens_M": 5.2,
+      "wall_clock_hours": 2.2,
+      "rollouts_per_hour": 1345.0
+    },
+    {
+      "group_size": 8,
+      "total_rollouts": 4000,
+      "total_tokens_M": 7.0,
+      "wall_clock_hours": 3.0,
+      "rollouts_per_hour": 1345.0
+    },
+    {
+      "group_size": 12,
+      "total_rollouts": 6000,
+      "total_tokens_M": 10.5,
+      "wall_clock_hours": 4.5,
+      "rollouts_per_hour": 1345.0
+    },
+    {
+      "group_size": 16,
+      "total_rollouts": 8000,
+      "total_tokens_M": 14.0,
+      "wall_clock_hours": 5.9,
+      "rollouts_per_hour": 1345.0
+    },
+    {
+      "group_size": 24,
+      "total_rollouts": 12000,
+      "total_tokens_M": 21.0,
+      "wall_clock_hours": 8.9,
+      "rollouts_per_hour": 1345.0
+    },
+    {
+      "group_size": 32,
+      "total_rollouts": 16000,
+      "total_tokens_M": 28.0,
+      "wall_clock_hours": 11.9,
+      "rollouts_per_hour": 1345.0
+    }
+  ],
+  "reward_arms": [
+    {
+      "arm_name": "R1 (Binary Pass/Fail)",
+      "reward_type": "binary",
+      "expected_density": 0.35,
+      "recommended_g": 8,
+      "rationale": "Binary reward ~35% density: G=4 gives 1.4 expected successes (high variance), G=8 gives 2.8 (moderate), G=16 gives 5.6 (low). G=8 balances throughput (2x faster than G=16) with gradient quality (89% nonzero advantage vs 77% for G=4)."
+    },
+    {
+      "arm_name": "R2 (Partial Credit)",
+      "reward_type": "partial",
+      "expected_density": 0.6,
+      "recommended_g": 4,
+      "rationale": "Partial credit increases density -> smaller G sufficient. G=4 with 60% density gives 2.4 expected nonzero, nonzero advantage ~84%. Maximizes throughput."
+    },
+    {
+      "arm_name": "R3 (R2 + Tool Penalty)",
+      "reward_type": "composite",
+      "expected_density": 0.55,
+      "recommended_g": 6,
+      "rationale": "Composite reward with moderate density. G=6 balances tool penalty variance estimation with throughput. Nonzero advantage ~88%."
+    },
+    {
+      "arm_name": "R4 (R3 + API Legality)",
+      "reward_type": "composite",
+      "expected_density": 0.5,
+      "recommended_g": 8,
+      "rationale": "API legality filter reduces density. G=8 needed to capture legality signal variance. Nonzero advantage ~85%."
+    }
+  ],
+  "dynamic_sampling": [
+    {
+      "group_size": 4,
+      "reward_density": 0.1,
+      "useless_fraction": 0.65376,
+      "useful_fraction": 0.34624,
+      "dynamic_sampling_overhead": 2.888170055452865,
+      "all_zero_prob": 0.6561,
+      "all_one_prob": 0.00010000000000000002
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.2,
+      "useless_fraction": 0.40928,
+      "useful_fraction": 0.59072,
+      "dynamic_sampling_overhead": 1.6928494041170097,
+      "all_zero_prob": 0.4096000000000001,
+      "all_one_prob": 0.0016000000000000003
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.35,
+      "useless_fraction": 0.19438,
+      "useful_fraction": 0.80562,
+      "dynamic_sampling_overhead": 1.2412800079441921,
+      "all_zero_prob": 0.17850625000000003,
+      "all_one_prob": 0.015006249999999997
+    },
+    {
+      "group_size": 4,
+      "reward_density": 0.5,
+      "useless_fraction": 0.12334,
+      "useful_fraction": 0.87666,
+      "dynamic_sampling_overhead": 1.140693085118518,
+      "all_zero_prob": 0.0625,
+      "all_one_prob": 0.0625
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.1,
+      "useless_fraction": 0.53254,
+      "useful_fraction": 0.46746,
+      "dynamic_sampling_overhead": 2.1392204680614384,
+      "all_zero_prob": 0.531441,
+      "all_one_prob": 1.0000000000000004e-06
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.2,
+      "useless_fraction": 0.26054,
+      "useful_fraction": 0.73946,
+      "dynamic_sampling_overhead": 1.3523381927352391,
+      "all_zero_prob": 0.2621440000000001,
+      "all_one_prob": 6.400000000000002e-05
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.35,
+      "useless_fraction": 0.07692,
+      "useful_fraction": 0.92308,
+      "dynamic_sampling_overhead": 1.0833297222342593,
+      "all_zero_prob": 0.07541889062500001,
+      "all_one_prob": 0.0018382656249999994
+    },
+    {
+      "group_size": 6,
+      "reward_density": 0.5,
+      "useless_fraction": 0.03068,
+      "useful_fraction": 0.96932,
+      "dynamic_sampling_overhead": 1.0316510543473776,
+      "all_zero_prob": 0.015625,
+      "all_one_prob": 0.015625
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.1,
+      "useless_fraction": 0.43096,
+      "useful_fraction": 0.56904,
+      "dynamic_sampling_overhead": 1.7573457050470969,
+      "all_zero_prob": 0.4304672100000001,
+      "all_one_prob": 1.0000000000000005e-08
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.2,
+      "useless_fraction": 0.1703,
+      "useful_fraction": 0.8297,
+      "dynamic_sampling_overhead": 1.205254911413764,
+      "all_zero_prob": 0.1677721600000001,
+      "all_one_prob": 2.5600000000000013e-06
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.35,
+      "useless_fraction": 0.03168,
+      "useful_fraction": 0.96832,
+      "dynamic_sampling_overhead": 1.0327164573694647,
+      "all_zero_prob": 0.03186448128906251,
+      "all_one_prob": 0.0002251875390624999
+    },
+    {
+      "group_size": 8,
+      "reward_density": 0.5,
+      "useless_fraction": 0.00768,
+      "useful_fraction": 0.99232,
+      "dynamic_sampling_overhead": 1.0077394388906804,
+      "all_zero_prob": 0.00390625,
+      "all_one_prob": 0.00390625
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.1,
+      "useless_fraction": 0.28174,
+      "useful_fraction": 0.71826,
+      "dynamic_sampling_overhead": 1.3922535015175563,
+      "all_zero_prob": 0.2824295364810001,
+      "all_one_prob": 1.0000000000000006e-12
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.2,
+      "useless_fraction": 0.06904,
+      "useful_fraction": 0.93096,
+      "dynamic_sampling_overhead": 1.074160006874624,
+      "all_zero_prob": 0.06871947673600004,
+      "all_one_prob": 4.096000000000002e-09
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.35,
+      "useless_fraction": 0.0054,
+      "useful_fraction": 0.9946,
+      "dynamic_sampling_overhead": 1.0054293183189222,
+      "all_zero_prob": 0.005688009063105715,
+      "all_one_prob": 3.379220508056638e-06
+    },
+    {
+      "group_size": 12,
+      "reward_density": 0.5,
+      "useless_fraction": 0.00058,
+      "useful_fraction": 0.99942,
+      "dynamic_sampling_overhead": 1.0005803365952253,
+      "all_zero_prob": 0.000244140625,
+      "all_one_prob": 0.000244140625
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.1,
+      "useless_fraction": 0.19048,
+      "useful_fraction": 0.80952,
+      "dynamic_sampling_overhead": 1.2352999308232038,
+      "all_zero_prob": 0.18530201888518416,
+      "all_one_prob": 1.0000000000000008e-16
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.2,
+      "useless_fraction": 0.02778,
+      "useful_fraction": 0.97222,
+      "dynamic_sampling_overhead": 1.0285737795972105,
+      "all_zero_prob": 0.028147497671065624,
+      "all_one_prob": 6.5536000000000055e-12
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.35,
+      "useless_fraction": 0.00108,
+      "useful_fraction": 0.99892,
+      "dynamic_sampling_overhead": 1.001081167661074,
+      "all_zero_prob": 0.0010153451678210146,
+      "all_one_prob": 5.070942774902491e-08
+    },
+    {
+      "group_size": 16,
+      "reward_density": 0.5,
+      "useless_fraction": 0.0,
+      "useful_fraction": 1.0,
+      "dynamic_sampling_overhead": 1.0,
+      "all_zero_prob": 1.52587890625e-05,
+      "all_one_prob": 1.52587890625e-05
+    }
+  ],
+  "temperature_analysis": [
+    {
+      "temperature": 0.3,
+      "effective_diversity": 0.213,
+      "p_mixed_group": 0.213,
+      "quality_factor": 0.955,
+      "useful_signal": 0.204,
+      "recommendation": "too_cold"
+    },
+    {
+      "temperature": 0.5,
+      "effective_diversity": 0.33,
+      "p_mixed_group": 0.33,
+      "quality_factor": 0.925,
+      "useful_signal": 0.305,
+      "recommendation": "too_cold"
+    },
+    {
+      "temperature": 0.7,
+      "effective_diversity": 0.429,
+      "p_mixed_group": 0.429,
+      "quality_factor": 0.895,
+      "useful_signal": 0.384,
+      "recommendation": "optimal"
+    },
+    {
+      "temperature": 0.9,
+      "effective_diversity": 0.513,
+      "p_mixed_group": 0.513,
+      "quality_factor": 0.865,
+      "useful_signal": 0.444,
+      "recommendation": "acceptable"
+    },
+    {
+      "temperature": 1.0,
+      "effective_diversity": 0.551,
+      "p_mixed_group": 0.551,
+      "quality_factor": 0.85,
+      "useful_signal": 0.468,
+      "recommendation": "acceptable"
+    },
+    {
+      "temperature": 1.2,
+      "effective_diversity": 0.617,
+      "p_mixed_group": 0.617,
+      "quality_factor": 0.82,
+      "useful_signal": 0.506,
+      "recommendation": "too_hot"
+    },
+    {
+      "temperature": 1.5,
+      "effective_diversity": 0.699,
+      "p_mixed_group": 0.699,
+      "quality_factor": 0.775,
+      "useful_signal": 0.542,
+      "recommendation": "too_hot"
+    }
+  ],
+  "rl_budget": {
+    "4": {
+      "group_size": 4,
+      "n_prompts_per_epoch": 500,
+      "n_epochs": 20,
+      "total_rollouts": 40000,
+      "total_tokens_billion": 0.07,
+      "inference_hours": 34.2,
+      "training_hours": 10.0,
+      "total_hours": 44.2,
+      "total_days": 1.8,
+      "gpu_hours": 176.8,
+      "monthly_budget_gpu_hours": 2880,
+      "budget_fraction_pct": 6.1
+    },
+    "8": {
+      "group_size": 8,
+      "n_prompts_per_epoch": 500,
+      "n_epochs": 20,
+      "total_rollouts": 80000,
+      "total_tokens_billion": 0.14,
+      "inference_hours": 68.4,
+      "training_hours": 10.0,
+      "total_hours": 78.4,
+      "total_days": 3.3,
+      "gpu_hours": 313.6,
+      "monthly_budget_gpu_hours": 2880,
+      "budget_fraction_pct": 10.9
+    },
+    "12": {
+      "group_size": 12,
+      "n_prompts_per_epoch": 500,
+      "n_epochs": 20,
+      "total_rollouts": 120000,
+      "total_tokens_billion": 0.21,
+      "inference_hours": 102.6,
+      "training_hours": 10.0,
+      "total_hours": 112.6,
+      "total_days": 4.7,
+      "gpu_hours": 450.4,
+      "monthly_budget_gpu_hours": 2880,
+      "budget_fraction_pct": 15.6
+    },
+    "16": {
+      "group_size": 16,
+      "n_prompts_per_epoch": 500,
+      "n_epochs": 20,
+      "total_rollouts": 160000,
+      "total_tokens_billion": 0.28,
+      "inference_hours": 136.8,
+      "training_hours": 10.0,
+      "total_hours": 146.8,
+      "total_days": 6.1,
+      "gpu_hours": 587.2,
+      "monthly_budget_gpu_hours": 2880,
+      "budget_fraction_pct": 20.4
+    }
+  },
+  "recommendation": {
+    "scores_by_g": {
+      "4": {
+        "grad_quality": 0.8042,
+        "throughput_norm": 1.0,
+        "stability_norm": 0.963,
+        "total_score": 91.06
+      },
+      "6": {
+        "grad_quality": 0.9211,
+        "throughput_norm": 0.681,
+        "stability_norm": 0.9345,
+        "total_score": 85.31
+      },
+      "8": {
+        "grad_quality": 0.9702,
+        "throughput_norm": 0.5163,
+        "stability_norm": 0.9316,
+        "total_score": 82.24
+      },
+      "12": {
+        "grad_quality": 0.9938,
+        "throughput_norm": 0.348,
+        "stability_norm": 0.9526,
+        "total_score": 78.77
+      },
+      "16": {
+        "grad_quality": 0.9994,
+        "throughput_norm": 0.2624,
+        "stability_norm": 0.9686,
+        "total_score": 76.91
+      },
+      "24": {
+        "grad_quality": 1.0,
+        "throughput_norm": 0.1759,
+        "stability_norm": 0.9893,
+        "total_score": 74.96
+      },
+      "32": {
+        "grad_quality": 1.0,
+        "throughput_norm": 0.1323,
+        "stability_norm": 1.0,
+        "total_score": 73.97
+      }
+    },
+    "recommended_g": 4,
+    "recommendation_rationale": "G=4 achieves best balance of gradient quality (80.4% nonzero advantage), throughput (100.0% normalized), stability (96.3% normalized). For EDA tasks with ~35% binary reward density, this provides sufficient within-group reward variation while maintaining reasonable wall-clock cost."
+  },
+  "conclusions": {
+    "C1_group_size": "Recommended G=4 for EDA RL with binary rewards at ~35% density. G=4 has ~19% useless groups, G=8 only ~9%. G=8 balances gradient quality (89% nonzero advantage), throughput, and stability.",
+    "C2_advantage_type": "Mean-subtracted (standard GRPO) has highest variance but most informative gradient. Rank-based (sGPO) has lower variance but loses magnitude info. Rec: mean-subtracted for R1/R2, rank-based for very sparse (density<0.15).",
+    "C3_dynamic_sampling": "Dynamic sampling is ESSENTIAL for G<=8. At G=4, density=0.35: ~19% useless -> 1.23x. At G=8: ~9% -> 1.10x. At G=16: ~4% -> negligible. DAPO-style recommended.",
+    "C4_temperature": "Optimal temperature = 0.7 (range 0.6-0.8). Below 0.5: insufficient diversity. Above 1.0: quality degradation. T=0.7: 67% mixed x 90% quality = 60% useful signal.",
+    "C5_reward_arms": "R1 (binary,35%) -> G=8; R2 (partial,60%) -> G=4; R3 (composite,55%) -> G=6; R4 (composite+legality,50%) -> G=8. Denser rewards allow smaller G -> 2x throughput.",
+    "C6_wall_clock": "Full RL (500x20xG=8): ~80K rollouts, ~0.14B tokens, ~82h (3.4d), 328 GPU-h (11.4%). G=16 doubles to ~145h. G=4 halves to ~42h but sacrifices gradient quality.",
+    "C7_implementation": "1) G=8 default, per-arm adjustment. 2) Dynamic sampling on. 3) T=0.7. 4) Mean-subtracted, eps=1e-8. 5) density<0.15 -> rank-based or G=16. 6) Monitor advantage variance — if >2.0, reduce G or increase KL.",
+    "C8_risk_mitigation": "Primary: G too small -> high variance -> instability. Mitigation: advantage clip [-5,5], grad clip 1.0, KL=0.04, entropy=0.001. Secondary: G too large -> throughput bottleneck. Mitigation: reduce G for dense arms."
+  }
+}

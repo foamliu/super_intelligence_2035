@@ -1,0 +1,25 @@
+=== pi-SUT Wave-005 start Thu Oct 29 06:09:15 PM CST 2026 ===
+pi exit=0
+--- tail of pi_run.log ---
+Implementation:
+
+```tcl
+proc wv_count_by_pattern {fsdb_path pattern} {
+    set fo [sx_open_sim_file_read $fsdb_path]
+    set waves [sx_signal $pattern]
+    catch {sx_close_sim_file $fo}
+    return [llength $waves]
+}
+```
+
+The proc opens the FSDB, uses the `sx_signal` batch-selection API to obtain the list of matching wave handles, closes the file, and returns `llength` of the list (which is `0` when no signal matches).
+
+Sandbox verification result:
+- REF_CHECK_RC=0
+- REF_CHECK_MSG=CHECK_PASS
+
+PASS
+=== pi exit=0 end Thu Oct 29 06:09:49 PM CST 2026 ===
+--- REF_CHECK result lines ---
+- REF_CHECK_RC=0
+- REF_CHECK_MSG=CHECK_PASS

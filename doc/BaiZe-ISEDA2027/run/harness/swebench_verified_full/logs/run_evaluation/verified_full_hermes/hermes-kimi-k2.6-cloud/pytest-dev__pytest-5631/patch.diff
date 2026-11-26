@@ -1,0 +1,44 @@
+diff --git a/src/_pytest/compat.py b/src/_pytest/compat.py
+index d238061..1440cde 100644
+--- a/src/_pytest/compat.py
++++ b/src/_pytest/compat.py
+@@ -68,7 +68,11 @@ def num_mock_patch_args(function):
+     if any(mock_modules):
+         sentinels = [m.DEFAULT for m in mock_modules if m is not None]
+         return len(
+-            [p for p in patchings if not p.attribute_name and p.new in sentinels]
++            [
++                p
++                for p in patchings
++                if not p.attribute_name and any(p.new is s for s in sentinels)
++            ]
+         )
+     return len(patchings)
+ 
+diff --git a/testing/python/integration.py b/testing/python/integration.py
+index a6b8ddd..e82c1ec 100644
+--- a/testing/python/integration.py
++++ b/testing/python/integration.py
+@@ -235,6 +235,22 @@ class TestMockDecoration:
+         names = [x.nodeid.split("::")[-1] for x in calls]
+         assert names == ["test_one", "test_two", "test_three"]
+ 
++    def test_mock_patch_with_numpy_array(self, testdir):
++        pytest.importorskip("numpy")
++        testdir.makepyfile(
++            """
++            import os
++            import numpy as np
++            from unittest.mock import patch
++
++            @patch("os.path.basename", new=np.array([-5.5, 3.0]))
++            def test_something():
++                assert list(os.path.basename("123")) == [-5.5, 3.0]
++        """
++        )
++        reprec = testdir.inline_run()
++        reprec.assertoutcome(passed=1)
++
+     def test_mock_double_patch_issue473(self, testdir):
+         pytest.importorskip("mock", "1.0.1")
+         testdir.makepyfile(

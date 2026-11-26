@@ -1,0 +1,165 @@
+2026-10-27 20:50:15,649 - INFO - Creating container for scikit-learn__scikit-learn-11310...
+2026-10-27 20:50:15,682 - INFO - Container for scikit-learn__scikit-learn-11310 created: 5b1202ad90869befc08e85baf6ed97d5a2b9798a5b32ab71a71fbf7274f6ae3a
+2026-10-27 20:50:16,212 - INFO - Container for scikit-learn__scikit-learn-11310 started: 5b1202ad90869befc08e85baf6ed97d5a2b9798a5b32ab71a71fbf7274f6ae3a
+2026-10-27 20:50:16,214 - INFO - Intermediate patch for scikit-learn__scikit-learn-11310 written to logs/evaluation/verified_pilot_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-11310/patch.diff, now applying to container...
+2026-10-27 20:50:16,365 - INFO - >>>>> Applied Patch:
+Checking patch shim/sitecustomize.py...
+Checking patch sklearn/model_selection/_search.py...
+Checking patch sklearn/model_selection/tests/test_search.py...
+Applied patch shim/sitecustomize.py cleanly.
+Applied patch sklearn/model_selection/_search.py cleanly.
+Applied patch sklearn/model_selection/tests/test_search.py cleanly.
+
+2026-10-27 20:50:16,639 - INFO - Git diff before:
+diff --git a/sklearn/model_selection/_search.py b/sklearn/model_selection/_search.py
+index 99d6096af..92740123f 100644
+--- a/sklearn/model_selection/_search.py
++++ b/sklearn/model_selection/_search.py
+@@ -17,6 +17,7 @@ from collections import Mapping, namedtuple, defaultdict, Sequence, Iterable
+ from functools import partial, reduce
+ from itertools import product
+ import operator
++import time
+ import warnings
+ 
+ import numpy as np
+@@ -766,10 +767,12 @@ class BaseSearchCV(six.with_metaclass(ABCMeta, BaseEstimator,
+         if self.refit:
+             self.best_estimator_ = clone(base_estimator).set_params(
+                 **self.best_params_)
++            start_time = time.time()
+             if y is not None:
+                 self.best_estimator_.fit(X, y, **fit_params)
+             else:
+                 self.best_estimator_.fit(X, **fit_params)
++            self.refit_time_ = time.time() - start_time
+ 
+         # Store the only scorer not as a dict for single metric evaluation
+         self.scorer_ = scorers if self.multimetric_ else scorers['score']
+@@ -1073,6 +1076,11 @@ class GridSearchCV(BaseSearchCV):
+         For multi-metric evaluation, this attribute holds the validated
+         ``scoring`` dict which maps the scorer key to the scorer callable.
+ 
++    refit_time_ : float
++        Seconds used for refitting the best model on the whole dataset.
++
++        This is present only if ``refit`` is not False.
++
+     n_splits_ : int
+         The number of cross-validation splits (folds/iterations).
+ 
+@@ -1384,6 +1392,11 @@ class RandomizedSearchCV(BaseSearchCV):
+         For multi-metric evaluation, this attribute holds the validated
+         ``scoring`` dict which maps the scorer key to the scorer callable.
+ 
++    refit_time_ : float
++        Seconds used for refitting the best model on the whole dataset.
++
++        This is present only if ``refit`` is not False.
++
+     n_splits_ : int
+         The number of cross-validation splits (folds/iterations).
+ 
+diff --git a/sklearn/model_selection/tests/test_search.py b/sklearn/model_selection/tests/test_search.py
+index f436c7b55..9b303965a 100644
+--- a/sklearn/model_selection/tests/test_search.py
++++ b/sklearn/model_selection/tests/test_search.py
+@@ -9,6 +9,7 @@ import pickle
+ import sys
+ from types import GeneratorType
+ import re
++import time
+ 
+ import numpy as np
+ import scipy.sparse as sp
+@@ -640,6 +641,30 @@ def test_refit():
+     clf.fit(X, y)
+ 
+ 
++def test_refit_time():
++    X, y = make_classification(n_samples=50, n_features=4,
++                               random_state=42)
++
++    for SearchCV in (GridSearchCV, RandomizedSearchCV):
++        if SearchCV is GridSearchCV:
++            params = {'kernel': ['rbf'], 'C': [1, 10]}
++        else:
++            params = {'C': expon(scale=10)}
++
++        start = time.time()
++        search = SearchCV(SVC(gamma='scale'), params, refit=True, cv=2)
++        search.fit(X, y)
++        duration = time.time() - start
++
++        assert hasattr(search, 'refit_time_')
++        assert search.refit_time_ >= 0
++        assert search.refit_time_ <= duration
++
++        search = SearchCV(SVC(gamma='scale'), params, refit=False, cv=2)
++        search.fit(X, y)
++        assert not hasattr(search, 'refit_time_')
++
++
+ def test_gridsearch_nd():
+     # Pass X as list in GridSearchCV
+     X_4d = np.arange(10 * 5 * 3 * 2).reshape(10, 5, 3, 2)
+2026-10-27 20:50:16,642 - INFO - Eval script for scikit-learn__scikit-learn-11310 written to logs/evaluation/verified_pilot_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-11310/eval.sh; copying to container...
+2026-10-27 20:50:28,252 - INFO - Test runtime: 11.53 seconds
+2026-10-27 20:50:28,254 - INFO - Test output for scikit-learn__scikit-learn-11310 written to logs/evaluation/verified_pilot_hermes/hermes-kimi-k2.6-cloud/scikit-learn__scikit-learn-11310/test_output.txt
+2026-10-27 20:50:28,319 - INFO - Git diff after:
+diff --git a/sklearn/model_selection/_search.py b/sklearn/model_selection/_search.py
+index 99d6096af..92740123f 100644
+--- a/sklearn/model_selection/_search.py
++++ b/sklearn/model_selection/_search.py
+@@ -17,6 +17,7 @@ from collections import Mapping, namedtuple, defaultdict, Sequence, Iterable
+ from functools import partial, reduce
+ from itertools import product
+ import operator
++import time
+ import warnings
+ 
+ import numpy as np
+@@ -766,10 +767,12 @@ class BaseSearchCV(six.with_metaclass(ABCMeta, BaseEstimator,
+         if self.refit:
+             self.best_estimator_ = clone(base_estimator).set_params(
+                 **self.best_params_)
++            start_time = time.time()
+             if y is not None:
+                 self.best_estimator_.fit(X, y, **fit_params)
+             else:
+                 self.best_estimator_.fit(X, **fit_params)
++            self.refit_time_ = time.time() - start_time
+ 
+         # Store the only scorer not as a dict for single metric evaluation
+         self.scorer_ = scorers if self.multimetric_ else scorers['score']
+@@ -1073,6 +1076,11 @@ class GridSearchCV(BaseSearchCV):
+         For multi-metric evaluation, this attribute holds the validated
+         ``scoring`` dict which maps the scorer key to the scorer callable.
+ 
++    refit_time_ : float
++        Seconds used for refitting the best model on the whole dataset.
++
++        This is present only if ``refit`` is not False.
++
+     n_splits_ : int
+         The number of cross-validation splits (folds/iterations).
+ 
+@@ -1384,6 +1392,11 @@ class RandomizedSearchCV(BaseSearchCV):
+         For multi-metric evaluation, this attribute holds the validated
+         ``scoring`` dict which maps the scorer key to the scorer callable.
+ 
++    refit_time_ : float
++        Seconds used for refitting the best model on the whole dataset.
++
++        This is present only if ``refit`` is not False.
++
+     n_splits_ : int
+         The number of cross-validation splits (folds/iterations).
+2026-10-27 20:50:28,319 - INFO - Git diff changed after running eval script
+2026-10-27 20:50:28,319 - INFO - Grading answer for scikit-learn__scikit-learn-11310...
+2026-10-27 20:50:28,325 - INFO - report: {'scikit-learn__scikit-learn-11310': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/model_selection/tests/test_search.py::test_search_cv_timing'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/model_selection/tests/test_search.py::test_parameter_grid', 'sklearn/model_selection/tests/test_search.py::test_grid_search', 'sklearn/model_selection/tests/test_search.py::test_grid_search_with_fit_params', 'sklearn/model_selection/tests/test_search.py::test_random_search_with_fit_params', 'sklearn/model_selection/tests/test_search.py::test_grid_search_fit_params_deprecation', 'sklearn/model_selection/tests/test_search.py::test_grid_search_fit_params_two_places', 'sklearn/model_selection/tests/test_search.py::test_grid_search_no_score', 'sklearn/model_selection/tests/test_search.py::test_grid_search_score_method', 'sklearn/model_selection/tests/test_search.py::test_grid_search_groups', 'sklearn/model_selection/tests/test_search.py::test_return_train_score_warn', 'sklearn/model_selection/tests/test_search.py::test_classes__property', 'sklearn/model_selection/tests/test_search.py::test_trivial_cv_results_attr', 'sklearn/model_selection/tests/test_search.py::test_no_refit', 'sklearn/model_selection/tests/test_search.py::test_grid_search_error', 'sklearn/model_selection/tests/test_search.py::test_grid_search_one_grid_point', 'sklearn/model_selection/tests/test_search.py::test_grid_search_when_param_grid_includes_range', 'sklearn/model_selection/tests/test_search.py::test_grid_search_bad_param_grid', 'sklearn/model_selection/tests/test_search.py::test_grid_search_sparse', 'sklearn/model_selection/tests/test_search.py::test_grid_search_sparse_scoring', 'sklearn/model_selection/tests/test_search.py::test_grid_search_precomputed_kernel', 'sklearn/model_selection/tests/test_search.py::test_grid_search_precomputed_kernel_error_nonsquare', 'sklearn/model_selection/tests/test_search.py::test_refit', 'sklearn/model_selection/tests/test_search.py::test_gridsearch_nd', 'sklearn/model_selection/tests/test_search.py::test_X_as_list', 'sklearn/model_selection/tests/test_search.py::test_y_as_list', 'sklearn/model_selection/tests/test_search.py::test_pandas_input', 'sklearn/model_selection/tests/test_search.py::test_unsupervised_grid_search', 'sklearn/model_selection/tests/test_search.py::test_gridsearch_no_predict', 'sklearn/model_selection/tests/test_search.py::test_param_sampler', 'sklearn/model_selection/tests/test_search.py::test_grid_search_cv_results', 'sklearn/model_selection/tests/test_search.py::test_random_search_cv_results', 'sklearn/model_selection/tests/test_search.py::test_search_iid_param', 'sklearn/model_selection/tests/test_search.py::test_grid_search_cv_results_multimetric', 'sklearn/model_selection/tests/test_search.py::test_random_search_cv_results_multimetric', 'sklearn/model_selection/tests/test_search.py::test_search_cv_results_rank_tie_breaking', 'sklearn/model_selection/tests/test_search.py::test_search_cv_results_none_param', 'sklearn/model_selection/tests/test_search.py::test_grid_search_correct_score_results', 'sklearn/model_selection/tests/test_search.py::test_fit_grid_point', 'sklearn/model_selection/tests/test_search.py::test_pickle', 'sklearn/model_selection/tests/test_search.py::test_grid_search_with_multioutput_data', 'sklearn/model_selection/tests/test_search.py::test_predict_proba_disabled', 'sklearn/model_selection/tests/test_search.py::test_grid_search_allows_nans', 'sklearn/model_selection/tests/test_search.py::test_grid_search_failing_classifier', 'sklearn/model_selection/tests/test_search.py::test_grid_search_failing_classifier_raise', 'sklearn/model_selection/tests/test_search.py::test_parameters_sampler_replacement', 'sklearn/model_selection/tests/test_search.py::test_stochastic_gradient_loss_param', 'sklearn/model_selection/tests/test_search.py::test_search_train_scores_set_to_false', 'sklearn/model_selection/tests/test_search.py::test_grid_search_cv_splits_consistency', 'sklearn/model_selection/tests/test_search.py::test_transform_inverse_transform_round_trip', 'sklearn/model_selection/tests/test_search.py::test_deprecated_grid_search_iid'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-11310: resolved: True
+2026-10-27 20:50:28,328 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-11310.verified_pilot_hermes...
+2026-10-27 20:50:43,619 - INFO - Container sweb.eval.scikit-learn__scikit-learn-11310.verified_pilot_hermes stopped successfully.
+2026-10-27 20:50:43,620 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-11310.verified_pilot_hermes...
+2026-10-27 20:50:43,666 - INFO - Container sweb.eval.scikit-learn__scikit-learn-11310.verified_pilot_hermes removed successfully.

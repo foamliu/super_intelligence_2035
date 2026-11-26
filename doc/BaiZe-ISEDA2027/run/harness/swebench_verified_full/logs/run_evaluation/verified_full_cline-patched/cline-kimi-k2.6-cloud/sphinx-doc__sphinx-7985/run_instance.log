@@ -1,0 +1,359 @@
+2026-10-30 16:31:09,362 - INFO - Creating container for sphinx-doc__sphinx-7985...
+2026-10-30 16:31:10,632 - INFO - Removed existing container sweb.eval.sphinx-doc__sphinx-7985.verified_full_cline-patched
+2026-10-30 16:31:10,655 - INFO - Container for sphinx-doc__sphinx-7985 created: d4b1fe613d03f6b253189b621ca6b11614387ab4b547e71754a0893f2fa50490
+2026-10-30 16:31:12,710 - INFO - Container for sphinx-doc__sphinx-7985 started: d4b1fe613d03f6b253189b621ca6b11614387ab4b547e71754a0893f2fa50490
+2026-10-30 16:31:12,713 - INFO - Intermediate patch for sphinx-doc__sphinx-7985 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-7985/patch.diff, now applying to container...
+2026-10-30 16:31:12,905 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/builders/linkcheck.py...
+Checking patch tests/roots/test-linkcheck-local/conf.py...
+Checking patch tests/roots/test-linkcheck-local/index.rst...
+Checking patch tests/roots/test-linkcheck-local/other.rst...
+Checking patch tests/test_build_linkcheck.py...
+Applied patch sphinx/builders/linkcheck.py cleanly.
+Applied patch tests/roots/test-linkcheck-local/conf.py cleanly.
+Applied patch tests/roots/test-linkcheck-local/index.rst cleanly.
+Applied patch tests/roots/test-linkcheck-local/other.rst cleanly.
+Applied patch tests/test_build_linkcheck.py cleanly.
+
+2026-10-30 16:31:13,190 - INFO - Git diff before:
+diff --git a/sphinx/builders/linkcheck.py b/sphinx/builders/linkcheck.py
+index dd5317087..9f721dd2b 100644
+--- a/sphinx/builders/linkcheck.py
++++ b/sphinx/builders/linkcheck.py
+@@ -9,6 +9,7 @@
+ """
+ 
+ import json
++import posixpath
+ import queue
+ import re
+ import socket
+@@ -318,16 +319,24 @@ class CheckExternalLinksBuilder(Builder):
+                 continue
+             uri = refnode['refuri']
+             lineno = get_node_line(refnode)
+-            self.wqueue.put((uri, docname, lineno), False)
+-            n += 1
++            if uri.startswith(('http:', 'https:')):
++                self.wqueue.put((uri, docname, lineno), False)
++                n += 1
++            else:
++                status, info, code = self.check_local_link(uri, docname, doctree)
++                self.process_result((uri, docname, lineno, status, info, code))
+ 
+         # image nodes
+         for imgnode in doctree.traverse(nodes.image):
+             uri = imgnode['candidates'].get('?')
+-            if uri and '://' in uri:
++            if uri:
+                 lineno = get_node_line(imgnode)
+-                self.wqueue.put((uri, docname, lineno), False)
+-                n += 1
++                if uri.startswith(('http:', 'https:')):
++                    self.wqueue.put((uri, docname, lineno), False)
++                    n += 1
++                else:
++                    status, info, code = self.check_local_link(uri, docname, doctree)
++                    self.process_result((uri, docname, lineno, status, info, code))
+ 
+         done = 0
+         while done < n:
+@@ -337,6 +346,99 @@ class CheckExternalLinksBuilder(Builder):
+         if self.broken:
+             self.app.statuscode = 1
+ 
++    def check_local_link(self, uri: str, docname: str,
++                         doctree: Node) -> Tuple[str, str, int]:
++        """Check whether a local link is valid."""
++        if not uri or uri.startswith(('#', 'mailto:', 'ftp:', 'javascript:', 'data:')):
++            return 'unchecked', '', 0
++
++        if uri.startswith('file://'):
++            file_path = urlparse(uri).path
++            if path.exists(file_path):
++                return 'working', '', 0
++            return 'broken', __('File not found: %s') % file_path, 0
++
++        # split off anchor
++        if '#' in uri:
++            path_part, anchor = uri.split('#', 1)
++        else:
++            path_part, anchor = uri, None
++
++        # just an anchor in the current document
++        if not path_part:
++            return 'unchecked', '', 0
++
++        # try to resolve as a document name
++        target_docname = self._get_docname_for_link(path_part, docname)
++        if target_docname:
++            if anchor:
++                try:
++                    target_doctree = self.env.get_doctree(target_docname)
++                    if anchor in target_doctree.ids:
++                        return 'working', '', 0
++                    else:
++                        return 'broken', __("Anchor '%s' not found") % anchor, 0
++                except Exception as err:
++                    return 'broken', str(err), 0
++            else:
++                return 'working', '', 0
++
++        # check if file exists relative to the current source file
++        current_src_path = self.env.doc2path(docname)
++        current_src_dir = path.dirname(current_src_path)
++        target_path = path.normpath(path.join(current_src_dir, path_part))
++        if path.isabs(path_part):
++            target_path = path.normpath(path.join(self.env.srcdir, path_part))
++
++        if path.exists(target_path):
++            return 'working', '', 0
++
++        return 'broken', __('File not found: %s') % path_part, 0
++
++    def _get_docname_for_link(self, path_part: str, docname: str) -> str:
++        """Try to find a document name matching *path_part*."""
++        # list of suffixes to strip
++        suffixes = ['.html']
++        source_suffix = self.config.source_suffix
++        if isinstance(source_suffix, dict):
++            suffixes.extend(source_suffix.keys())
++        elif isinstance(source_suffix, str):
++            suffixes.append(source_suffix)
++        elif isinstance(source_suffix, (list, tuple)):
++            suffixes.extend(source_suffix)
++
++        def try_docname(name: str) -> str:
++            if name in self.env.found_docs:
++                return name
++            for suffix in suffixes:
++                if name.endswith(suffix):
++                    without_suffix = name[:-len(suffix)]
++                    if without_suffix in self.env.found_docs:
++                        return without_suffix
++            return None
++
++        # try as-is
++        result = try_docname(path_part)
++        if result:
++            return result
++
++        # try normalizing the path
++        normalized = posixpath.normpath(path_part)
++        result = try_docname(normalized)
++        if result:
++            return result
++
++        # try resolving relative to current document
++        current_dir = posixpath.dirname(docname)
++        resolved = posixpath.normpath(posixpath.join(current_dir, path_part))
++        if resolved.startswith('/'):
++            resolved = resolved[1:]
++        result = try_docname(resolved)
++        if result:
++            return result
++
++        return None
++
+     def write_entry(self, what: str, docname: str, filename: str, line: int,
+                     uri: str) -> None:
+         with open(path.join(self.outdir, 'output.txt'), 'a') as output:
+diff --git a/tests/test_build_linkcheck.py b/tests/test_build_linkcheck.py
+index d1fec550f..4f7da2c70 100644
+--- a/tests/test_build_linkcheck.py
++++ b/tests/test_build_linkcheck.py
+@@ -157,3 +157,40 @@ def test_linkcheck_request_headers(app, status, warning):
+                 assert headers["X-Secret"] == "open sesami"
+             else:
+                 assert headers["Accept"] == "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8"
++
++
++@pytest.mark.sphinx('linkcheck', testroot='linkcheck-local', freshenv=True)
++def test_local_links(app, status, warning):
++    app.builder.build_all()
++
++    assert (app.outdir / 'output.txt').exists()
++    content = (app.outdir / 'output.txt').read_text()
++    print(content)
++
++    # broken local document link
++    assert "doesntexist: File not found: doesntexist" in content
++    # valid local document link should not appear in broken links
++    assert "other: working" not in content  # working links are not written to output.txt
++    # broken anchor
++    assert "other#doesntexist: Anchor 'doesntexist' not found" in content
++    # valid anchor should not appear
++    # valid file link should not appear
++    # broken local file link
++    assert "missingfile.txt: File not found: missingfile.txt" in content
++
++    assert (app.outdir / 'output.json').exists()
++    json_content = (app.outdir / 'output.json').read_text()
++    print(json_content)
++
++    rows = [json.loads(x) for x in json_content.splitlines()]
++    rowsby = {row["uri"]: row for row in rows}
++
++    assert rowsby["doesntexist"]["status"] == "broken"
++    assert rowsby["doesntexist"]["info"] == "File not found: doesntexist"
++    assert rowsby["other#doesntexist"]["status"] == "broken"
++    assert rowsby["other#doesntexist"]["info"] == "Anchor 'doesntexist' not found"
++    assert rowsby["missingfile.txt"]["status"] == "broken"
++    assert rowsby["missingfile.txt"]["info"] == "File not found: missingfile.txt"
++    assert rowsby["other"]["status"] == "working"
++    assert rowsby["other#valid-section"]["status"] == "working"
++    assert rowsby["conf.py"]["status"] == "working"
+2026-10-30 16:31:13,196 - INFO - Eval script for sphinx-doc__sphinx-7985 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-7985/eval.sh; copying to container...
+2026-10-30 16:31:19,415 - INFO - Test runtime: 6.08 seconds
+2026-10-30 16:31:19,425 - INFO - Test output for sphinx-doc__sphinx-7985 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/sphinx-doc__sphinx-7985/test_output.txt
+2026-10-30 16:31:19,501 - INFO - Git diff after:
+diff --git a/sphinx/builders/linkcheck.py b/sphinx/builders/linkcheck.py
+index dd5317087..9f721dd2b 100644
+--- a/sphinx/builders/linkcheck.py
++++ b/sphinx/builders/linkcheck.py
+@@ -9,6 +9,7 @@
+ """
+ 
+ import json
++import posixpath
+ import queue
+ import re
+ import socket
+@@ -318,16 +319,24 @@ class CheckExternalLinksBuilder(Builder):
+                 continue
+             uri = refnode['refuri']
+             lineno = get_node_line(refnode)
+-            self.wqueue.put((uri, docname, lineno), False)
+-            n += 1
++            if uri.startswith(('http:', 'https:')):
++                self.wqueue.put((uri, docname, lineno), False)
++                n += 1
++            else:
++                status, info, code = self.check_local_link(uri, docname, doctree)
++                self.process_result((uri, docname, lineno, status, info, code))
+ 
+         # image nodes
+         for imgnode in doctree.traverse(nodes.image):
+             uri = imgnode['candidates'].get('?')
+-            if uri and '://' in uri:
++            if uri:
+                 lineno = get_node_line(imgnode)
+-                self.wqueue.put((uri, docname, lineno), False)
+-                n += 1
++                if uri.startswith(('http:', 'https:')):
++                    self.wqueue.put((uri, docname, lineno), False)
++                    n += 1
++                else:
++                    status, info, code = self.check_local_link(uri, docname, doctree)
++                    self.process_result((uri, docname, lineno, status, info, code))
+ 
+         done = 0
+         while done < n:
+@@ -337,6 +346,99 @@ class CheckExternalLinksBuilder(Builder):
+         if self.broken:
+             self.app.statuscode = 1
+ 
++    def check_local_link(self, uri: str, docname: str,
++                         doctree: Node) -> Tuple[str, str, int]:
++        """Check whether a local link is valid."""
++        if not uri or uri.startswith(('#', 'mailto:', 'ftp:', 'javascript:', 'data:')):
++            return 'unchecked', '', 0
++
++        if uri.startswith('file://'):
++            file_path = urlparse(uri).path
++            if path.exists(file_path):
++                return 'working', '', 0
++            return 'broken', __('File not found: %s') % file_path, 0
++
++        # split off anchor
++        if '#' in uri:
++            path_part, anchor = uri.split('#', 1)
++        else:
++            path_part, anchor = uri, None
++
++        # just an anchor in the current document
++        if not path_part:
++            return 'unchecked', '', 0
++
++        # try to resolve as a document name
++        target_docname = self._get_docname_for_link(path_part, docname)
++        if target_docname:
++            if anchor:
++                try:
++                    target_doctree = self.env.get_doctree(target_docname)
++                    if anchor in target_doctree.ids:
++                        return 'working', '', 0
++                    else:
++                        return 'broken', __("Anchor '%s' not found") % anchor, 0
++                except Exception as err:
++                    return 'broken', str(err), 0
++            else:
++                return 'working', '', 0
++
++        # check if file exists relative to the current source file
++        current_src_path = self.env.doc2path(docname)
++        current_src_dir = path.dirname(current_src_path)
++        target_path = path.normpath(path.join(current_src_dir, path_part))
++        if path.isabs(path_part):
++            target_path = path.normpath(path.join(self.env.srcdir, path_part))
++
++        if path.exists(target_path):
++            return 'working', '', 0
++
++        return 'broken', __('File not found: %s') % path_part, 0
++
++    def _get_docname_for_link(self, path_part: str, docname: str) -> str:
++        """Try to find a document name matching *path_part*."""
++        # list of suffixes to strip
++        suffixes = ['.html']
++        source_suffix = self.config.source_suffix
++        if isinstance(source_suffix, dict):
++            suffixes.extend(source_suffix.keys())
++        elif isinstance(source_suffix, str):
++            suffixes.append(source_suffix)
++        elif isinstance(source_suffix, (list, tuple)):
++            suffixes.extend(source_suffix)
++
++        def try_docname(name: str) -> str:
++            if name in self.env.found_docs:
++                return name
++            for suffix in suffixes:
++                if name.endswith(suffix):
++                    without_suffix = name[:-len(suffix)]
++                    if without_suffix in self.env.found_docs:
++                        return without_suffix
++            return None
++
++        # try as-is
++        result = try_docname(path_part)
++        if result:
++            return result
++
++        # try normalizing the path
++        normalized = posixpath.normpath(path_part)
++        result = try_docname(normalized)
++        if result:
++            return result
++
++        # try resolving relative to current document
++        current_dir = posixpath.dirname(docname)
++        resolved = posixpath.normpath(posixpath.join(current_dir, path_part))
++        if resolved.startswith('/'):
++            resolved = resolved[1:]
++        result = try_docname(resolved)
++        if result:
++            return result
++
++        return None
++
+     def write_entry(self, what: str, docname: str, filename: str, line: int,
+                     uri: str) -> None:
+         with open(path.join(self.outdir, 'output.txt'), 'a') as output:
+2026-10-30 16:31:19,502 - INFO - Git diff changed after running eval script
+2026-10-30 16:31:19,502 - INFO - Grading answer for sphinx-doc__sphinx-7985...
+2026-10-30 16:31:19,515 - INFO - report: {'sphinx-doc__sphinx-7985': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_build_linkcheck.py::test_defaults'], 'failure': ['tests/test_build_linkcheck.py::test_anchors_ignored']}, 'PASS_TO_PASS': {'success': ['tests/test_build_linkcheck.py::test_defaults_json', 'tests/test_build_linkcheck.py::test_auth', 'tests/test_build_linkcheck.py::test_linkcheck_request_headers'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-7985: resolved: False
+2026-10-30 16:31:19,521 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-7985.verified_full_cline-patched...
+2026-10-30 16:31:35,299 - INFO - Container sweb.eval.sphinx-doc__sphinx-7985.verified_full_cline-patched stopped successfully.
+2026-10-30 16:31:35,299 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-7985.verified_full_cline-patched...
+2026-10-30 16:31:35,336 - INFO - Container sweb.eval.sphinx-doc__sphinx-7985.verified_full_cline-patched removed successfully.

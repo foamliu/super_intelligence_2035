@@ -1,0 +1,240 @@
+2026-10-31 05:33:59,444 - INFO - Creating container for sympy__sympy-12481...
+2026-10-31 05:33:59,494 - INFO - Container for sympy__sympy-12481 created: db30e75ddfd47ddfb2356b167e0f802c51ba7cc0958c249c052d430bafdfb5d4
+2026-10-31 05:34:00,026 - INFO - Container for sympy__sympy-12481 started: db30e75ddfd47ddfb2356b167e0f802c51ba7cc0958c249c052d430bafdfb5d4
+2026-10-31 05:34:00,028 - INFO - Intermediate patch for sympy__sympy-12481 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-12481/patch.diff, now applying to container...
+2026-10-31 05:34:00,195 - INFO - >>>>> Applied Patch:
+Checking patch doc/ext/numpydoc.py...
+warning: doc/ext/numpydoc.py has type 100755, expected 100644
+Checking patch sympy/assumptions/sathandlers.py...
+warning: sympy/assumptions/sathandlers.py has type 100755, expected 100644
+Checking patch sympy/combinatorics/permutations.py...
+warning: sympy/combinatorics/permutations.py has type 100755, expected 100644
+Checking patch sympy/combinatorics/tests/test_permutations.py...
+warning: sympy/combinatorics/tests/test_permutations.py has type 100755, expected 100644
+Checking patch sympy/core/basic.py...
+warning: sympy/core/basic.py has type 100755, expected 100644
+Checking patch sympy/matrices/matrices.py...
+warning: sympy/matrices/matrices.py has type 100755, expected 100644
+Checking patch sympy/matrices/sparse.py...
+warning: sympy/matrices/sparse.py has type 100755, expected 100644
+Checking patch sympy/plotting/plot.py...
+warning: sympy/plotting/plot.py has type 100755, expected 100644
+Applied patch doc/ext/numpydoc.py cleanly.
+Applied patch sympy/assumptions/sathandlers.py cleanly.
+Applied patch sympy/combinatorics/permutations.py cleanly.
+Applied patch sympy/combinatorics/tests/test_permutations.py cleanly.
+Applied patch sympy/core/basic.py cleanly.
+Applied patch sympy/matrices/matrices.py cleanly.
+Applied patch sympy/matrices/sparse.py cleanly.
+Applied patch sympy/plotting/plot.py cleanly.
+
+2026-10-31 05:34:00,668 - INFO - Git diff before:
+diff --git a/doc/ext/numpydoc.py b/doc/ext/numpydoc.py
+index a57506032..2b89abb55 100755
+--- a/doc/ext/numpydoc.py
++++ b/doc/ext/numpydoc.py
+@@ -102,7 +102,7 @@ def mangle_signature(app, what, name, obj, options, sig, retann):
+             'initializes x; see ' in pydoc.getdoc(obj.__init__))):
+         return '', ''
+ 
+-    if not (isinstance(obj, collections.Callable) or
++    if not (isinstance(obj, collections.abc.Callable) or
+             hasattr(obj, '__argspec_is_invalid_')):
+         return
+ 
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..cb9821701 100755
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,6 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++from collections.abc import MutableMapping, defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/combinatorics/permutations.py b/sympy/combinatorics/permutations.py
+index 136ed5a47..4854a0785 100755
+--- a/sympy/combinatorics/permutations.py
++++ b/sympy/combinatorics/permutations.py
+@@ -896,10 +896,7 @@ def __new__(cls, *args, **kwargs):
+ 
+         temp = flatten(args)
+         if has_dups(temp):
+-            if is_cycle:
+-                raise ValueError('there were repeated elements; to resolve '
+-                'cycles use Cycle%s.' % ''.join([str(tuple(c)) for c in args]))
+-            else:
++            if not is_cycle:
+                 raise ValueError('there were repeated elements.')
+         temp = set(temp)
+ 
+diff --git a/sympy/combinatorics/tests/test_permutations.py b/sympy/combinatorics/tests/test_permutations.py
+index 7f8cd572e..95b4e590e 100755
+--- a/sympy/combinatorics/tests/test_permutations.py
++++ b/sympy/combinatorics/tests/test_permutations.py
+@@ -349,7 +349,9 @@ def test_args():
+     raises(ValueError, lambda: Permutation([[1, 2], 0]))
+            # enclosing brackets needed on 0
+     raises(ValueError, lambda: Permutation([1, 1, 0]))
+-    raises(ValueError, lambda: Permutation([[1], [1, 2]]))
++    # Overlapping cycles are allowed and applied left-to-right
++    assert Permutation([[1], [1, 2]]) == Permutation([0, 2, 1])
++    assert Permutation([[1, 2], [1]]) == Permutation([0, 2, 1])
+     raises(ValueError, lambda: Permutation([4, 5], size=10))  # where are 0-3?
+     # but this is ok because cycles imply that only those listed moved
+     assert Permutation(4, 5) == Permutation([0, 1, 2, 3, 5, 4])
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index b992b45c2..fe91845ca 100755
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,6 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++from collections.abc import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index ca6ba63a2..738cbcae5 100755
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -2267,7 +2267,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 24df97b01..bf00de7a8 100755
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -52,7 +52,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 664602d6b..6268b99c0 100755
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+2026-10-31 05:34:00,670 - INFO - Eval script for sympy__sympy-12481 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-12481/eval.sh; copying to container...
+2026-10-31 05:34:05,707 - INFO - Test runtime: 4.95 seconds
+2026-10-31 05:34:05,721 - INFO - Test output for sympy__sympy-12481 written to logs/run_evaluation/verified_full_hermes/hermes-kimi-k2.6-cloud/sympy__sympy-12481/test_output.txt
+2026-10-31 05:34:05,786 - INFO - Git diff after:
+diff --git a/doc/ext/numpydoc.py b/doc/ext/numpydoc.py
+index a57506032..2b89abb55 100755
+--- a/doc/ext/numpydoc.py
++++ b/doc/ext/numpydoc.py
+@@ -102,7 +102,7 @@ def mangle_signature(app, what, name, obj, options, sig, retann):
+             'initializes x; see ' in pydoc.getdoc(obj.__init__))):
+         return '', ''
+ 
+-    if not (isinstance(obj, collections.Callable) or
++    if not (isinstance(obj, collections.abc.Callable) or
+             hasattr(obj, '__argspec_is_invalid_')):
+         return
+ 
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..cb9821701 100755
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,6 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++from collections.abc import MutableMapping, defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/combinatorics/permutations.py b/sympy/combinatorics/permutations.py
+index 136ed5a47..4854a0785 100755
+--- a/sympy/combinatorics/permutations.py
++++ b/sympy/combinatorics/permutations.py
+@@ -896,10 +896,7 @@ def __new__(cls, *args, **kwargs):
+ 
+         temp = flatten(args)
+         if has_dups(temp):
+-            if is_cycle:
+-                raise ValueError('there were repeated elements; to resolve '
+-                'cycles use Cycle%s.' % ''.join([str(tuple(c)) for c in args]))
+-            else:
++            if not is_cycle:
+                 raise ValueError('there were repeated elements.')
+         temp = set(temp)
+ 
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index b992b45c2..fe91845ca 100755
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,6 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++from collections.abc import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index ca6ba63a2..738cbcae5 100755
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -2267,7 +2267,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/matrices/sparse.py b/sympy/matrices/sparse.py
+index 24df97b01..bf00de7a8 100755
+--- a/sympy/matrices/sparse.py
++++ b/sympy/matrices/sparse.py
+@@ -52,7 +52,7 @@ def __new__(cls, *args, **kwargs):
+             self.rows = as_int(args[0])
+             self.cols = as_int(args[1])
+ 
+-            if isinstance(args[2], collections.Callable):
++            if isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 for i in range(self.rows):
+                     for j in range(self.cols):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 664602d6b..6268b99c0 100755
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,7 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++from collections.abc import Callable
+ import warnings
+ import sys
+2026-10-31 05:34:05,787 - INFO - Git diff changed after running eval script
+2026-10-31 05:34:05,787 - INFO - Grading answer for sympy__sympy-12481...
+2026-10-31 05:34:05,789 - INFO - report: {'sympy__sympy-12481': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_args'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Permutation', 'test_josephus', 'test_ranking', 'test_mul', 'test_Cycle', 'test_from_sequence', 'test_printing_cyclic'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-12481: resolved: True
+2026-10-31 05:34:05,791 - INFO - Attempting to stop container sweb.eval.sympy__sympy-12481.verified_full_hermes...
+2026-10-31 05:34:22,015 - INFO - Container sweb.eval.sympy__sympy-12481.verified_full_hermes stopped successfully.
+2026-10-31 05:34:22,015 - INFO - Attempting to remove container sweb.eval.sympy__sympy-12481.verified_full_hermes...
+2026-10-31 05:34:22,065 - INFO - Container sweb.eval.sympy__sympy-12481.verified_full_hermes removed successfully.

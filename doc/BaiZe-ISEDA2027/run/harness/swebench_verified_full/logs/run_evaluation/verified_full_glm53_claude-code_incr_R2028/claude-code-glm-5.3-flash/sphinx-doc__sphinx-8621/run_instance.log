@@ -1,0 +1,113 @@
+2026-11-10 14:23:10,790 - INFO - Creating container for sphinx-doc__sphinx-8621...
+2026-11-10 14:23:10,808 - INFO - Container for sphinx-doc__sphinx-8621 created: d50a3dc5f80479523c28347d6e283be248dc80ca59c900dcebabc5de8c230084
+2026-11-10 14:23:11,759 - INFO - Container for sphinx-doc__sphinx-8621 started: d50a3dc5f80479523c28347d6e283be248dc80ca59c900dcebabc5de8c230084
+2026-11-10 14:23:11,761 - INFO - Intermediate patch for sphinx-doc__sphinx-8621 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/sphinx-doc__sphinx-8621/patch.diff, now applying to container...
+2026-11-10 14:23:11,919 - INFO - >>>>> Applied Patch:
+Checking patch CHANGES...
+Checking patch sphinx/builders/html/transforms.py...
+Checking patch tests/test_markup.py...
+Applied patch CHANGES cleanly.
+Applied patch sphinx/builders/html/transforms.py cleanly.
+Applied patch tests/test_markup.py cleanly.
+
+2026-11-10 14:23:12,372 - INFO - Git diff before:
+diff --git a/CHANGES b/CHANGES
+index 3a9f527ad..b2b0eb278 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -24,6 +24,8 @@ Features added
+ Bugs fixed
+ ----------
+ 
++* #8621: html: kbd role produces incorrect HTML when compound-key separators
++  (-, + or ^) are used as keystrokes
+ * #741: autodoc: inherited-members doesn't work for instance attributes on super
+   class
+ * #8592: autodoc: ``:meta public:`` does not effect to variables
+diff --git a/sphinx/builders/html/transforms.py b/sphinx/builders/html/transforms.py
+index c91da57e9..311b1b7a0 100644
+--- a/sphinx/builders/html/transforms.py
++++ b/sphinx/builders/html/transforms.py
+@@ -37,7 +37,7 @@ class KeyboardTransform(SphinxPostTransform):
+     """
+     default_priority = 400
+     builders = ('html',)
+-    pattern = re.compile(r'(-|\+|\^|\s+)')
++    pattern = re.compile(r'(?<=.)(-|\+|\^|\s+)(?=.)')
+ 
+     def run(self, **kwargs: Any) -> None:
+         matcher = NodeMatcher(nodes.literal, classes=["kbd"])
+diff --git a/tests/test_markup.py b/tests/test_markup.py
+index a2bcb2dc1..f6cff1445 100644
+--- a/tests/test_markup.py
++++ b/tests/test_markup.py
+@@ -266,6 +266,31 @@ def get_verifier(verify, verify_re):
+          '</kbd></p>'),
+         '\\sphinxkeyboard{\\sphinxupquote{M\\sphinxhyphen{}x  M\\sphinxhyphen{}s}}',
+     ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`-`',
++        '<p><kbd class="kbd docutils literal notranslate">-</kbd></p>',
++        '\\sphinxkeyboard{\\sphinxupquote{\\sphinxhyphen{}}}',
++    ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`+`',
++        '<p><kbd class="kbd docutils literal notranslate">+</kbd></p>',
++        '\\sphinxkeyboard{\\sphinxupquote{+}}',
++    ),
++    (
++        # kbd role
++        'verify',
++        ':kbd:`Shift-+`',
++        ('<p><kbd class="kbd docutils literal notranslate">'
++         '<kbd class="kbd docutils literal notranslate">Shift</kbd>'
++         '-'
++         '<kbd class="kbd docutils literal notranslate">+</kbd>'
++         '</kbd></p>'),
++        '\\sphinxkeyboard{\\sphinxupquote{Shift\\sphinxhyphen{}+}}',
++    ),
+     (
+         # non-interpolation of dashes in option role
+         'verify_re',
+2026-11-10 14:23:12,374 - INFO - Eval script for sphinx-doc__sphinx-8621 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/sphinx-doc__sphinx-8621/eval.sh; copying to container...
+2026-11-10 14:23:18,102 - INFO - Test runtime: 5.67 seconds
+2026-11-10 14:23:18,105 - INFO - Test output for sphinx-doc__sphinx-8621 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R2028/claude-code-glm-5.3-flash/sphinx-doc__sphinx-8621/test_output.txt
+2026-11-10 14:23:18,169 - INFO - Git diff after:
+diff --git a/CHANGES b/CHANGES
+index 3a9f527ad..b2b0eb278 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -24,6 +24,8 @@ Features added
+ Bugs fixed
+ ----------
+ 
++* #8621: html: kbd role produces incorrect HTML when compound-key separators
++  (-, + or ^) are used as keystrokes
+ * #741: autodoc: inherited-members doesn't work for instance attributes on super
+   class
+ * #8592: autodoc: ``:meta public:`` does not effect to variables
+diff --git a/sphinx/builders/html/transforms.py b/sphinx/builders/html/transforms.py
+index c91da57e9..311b1b7a0 100644
+--- a/sphinx/builders/html/transforms.py
++++ b/sphinx/builders/html/transforms.py
+@@ -37,7 +37,7 @@ class KeyboardTransform(SphinxPostTransform):
+     """
+     default_priority = 400
+     builders = ('html',)
+-    pattern = re.compile(r'(-|\+|\^|\s+)')
++    pattern = re.compile(r'(?<=.)(-|\+|\^|\s+)(?=.)')
+ 
+     def run(self, **kwargs: Any) -> None:
+         matcher = NodeMatcher(nodes.literal, classes=["kbd"])
+2026-11-10 14:23:18,169 - INFO - Git diff changed after running eval script
+2026-11-10 14:23:18,169 - INFO - Grading answer for sphinx-doc__sphinx-8621...
+2026-11-10 14:23:18,197 - INFO - report: {'sphinx-doc__sphinx-8621': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_markup.py::test_inline[verify-:kbd:`Alt+^`-<p><kbd', 'tests/test_markup.py::test_inline[verify-:kbd:`-`-<p><kbd'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_markup.py::test_inline[verify-:rfc:`2324`-<p><span', 'tests/test_markup.py::test_inline[verify-:rfc:`2324#id1`-<p><span', 'tests/test_markup.py::test_inline[verify_re-``code', 'tests/test_markup.py::test_inline[verify-:menuselection:`a', 'tests/test_markup.py::test_inline[verify-:menuselection:`&Foo', 'tests/test_markup.py::test_inline[verify-:guilabel:`&Foo', 'tests/test_markup.py::test_inline[verify-:guilabel:`Foo`-<p><span', 'tests/test_markup.py::test_inline[verify-:kbd:`space`-<p><kbd', 'tests/test_markup.py::test_inline[verify-:kbd:`Control+X`-<p><kbd', 'tests/test_markup.py::test_inline[verify-:kbd:`M-x', 'tests/test_markup.py::test_inline[verify_re-:option:`--with-option`-<p><code(', 'tests/test_markup.py::test_inline[verify-"John"-<p>\\u201cJohn\\u201d</p>-\\u201cJohn\\u201d]', 'tests/test_markup.py::test_inline[verify-``"John"``-<p><code', 'tests/test_markup.py::test_inline[verify-:manpage:`mp(1)`-<p><em', 'tests/test_markup.py::test_inline[verify-\\u0393\\\\\\\\\\u221e$-None-\\u0393\\\\textbackslash{}\\\\(\\\\infty\\\\)\\\\$]', 'tests/test_markup.py::test_inline[verify-::\\n\\n', 'tests/test_markup.py::test_inline[verify_re-`test', 'tests/test_markup.py::test_inline[verify-term\\n', 'tests/test_markup.py::test_inline[verify-term', 'tests/test_markup.py::test_inline[verify-..', 'tests/test_markup.py::test_inline_docutils16[verify-4', 'tests/test_markup.py::test_inline_for_unicode_latex_engine[verify-::\\n\\n', 'tests/test_markup.py::test_samp_role', 'tests/test_markup.py::test_download_role', 'tests/test_markup.py::test_XRefRole', 'tests/test_markup.py::test_rst_prolog', 'tests/test_markup.py::test_keep_warnings_is_True', 'tests/test_markup.py::test_keep_warnings_is_False', 'tests/test_markup.py::test_compact_refonly_bullet_list', 'tests/test_markup.py::test_default_role1', 'tests/test_markup.py::test_default_role2'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-8621: resolved: True
+2026-11-10 14:23:18,199 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_claude-code_incr_R2028...
+2026-11-10 14:23:34,337 - INFO - Container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_claude-code_incr_R2028 stopped successfully.
+2026-11-10 14:23:34,337 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_claude-code_incr_R2028...
+2026-11-10 14:23:34,377 - INFO - Container sweb.eval.sphinx-doc__sphinx-8621.verified_full_glm53_claude-code_incr_R2028 removed successfully.

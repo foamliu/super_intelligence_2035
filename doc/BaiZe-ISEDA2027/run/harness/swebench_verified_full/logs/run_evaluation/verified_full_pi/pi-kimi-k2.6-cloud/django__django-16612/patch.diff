@@ -1,0 +1,45 @@
+diff --git a/django/contrib/admin/sites.py b/django/contrib/admin/sites.py
+index 61be31d89..68dd5a94a 100644
+--- a/django/contrib/admin/sites.py
++++ b/django/contrib/admin/sites.py
+@@ -453,7 +453,10 @@ class AdminSite:
+                 pass
+             else:
+                 if getattr(match.func, "should_append_slash", True):
+-                    return HttpResponsePermanentRedirect("%s/" % request.path)
++                    redirect_url = "%s/" % request.path
++                    if request.META.get("QUERY_STRING"):
++                        redirect_url += "?%s" % request.META["QUERY_STRING"]
++                    return HttpResponsePermanentRedirect(redirect_url)
+         raise Http404
+ 
+     def _build_app_dict(self, request, label=None):
+diff --git a/tests/admin_views/tests.py b/tests/admin_views/tests.py
+index 5f7aafe43..9a3808796 100644
+--- a/tests/admin_views/tests.py
++++ b/tests/admin_views/tests.py
+@@ -8515,6 +8515,24 @@ class AdminSiteFinalCatchAllPatternTests(TestCase):
+             "/test_admin/admin/login/?next=/test_admin/admin/admin_views/article",
+         )
+ 
++    @override_settings(APPEND_SLASH=True)
++    def test_missing_slash_append_slash_true_with_query_string(self):
++        superuser = User.objects.create_user(
++            username="staff",
++            password="secret",
++            email="staff@example.com",
++            is_staff=True,
++        )
++        self.client.force_login(superuser)
++        known_url = reverse("admin:admin_views_article_changelist")
++        response = self.client.get(known_url[:-1] + "?id=123")
++        self.assertRedirects(
++            response,
++            known_url + "?id=123",
++            status_code=301,
++            target_status_code=403,
++        )
++
+     @override_settings(APPEND_SLASH=False)
+     def test_missing_slash_append_slash_false(self):
+         superuser = User.objects.create_user(

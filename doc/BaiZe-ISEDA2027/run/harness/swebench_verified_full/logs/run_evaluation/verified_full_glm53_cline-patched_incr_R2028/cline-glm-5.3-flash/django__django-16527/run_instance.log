@@ -1,0 +1,146 @@
+2026-11-10 09:15:48,709 - INFO - Creating container for django__django-16527...
+2026-11-10 09:15:48,778 - INFO - Container for django__django-16527 created: f14c2bdcf91ca1e0c34e3af6663fd8c71fec364c9c0b1efe6d43d56d721f0bd5
+2026-11-10 09:15:50,464 - INFO - Container for django__django-16527 started: f14c2bdcf91ca1e0c34e3af6663fd8c71fec364c9c0b1efe6d43d56d721f0bd5
+2026-11-10 09:15:50,466 - INFO - Intermediate patch for django__django-16527 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/django__django-16527/patch.diff, now applying to container...
+2026-11-10 09:15:50,614 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/admin/templatetags/admin_modify.py...
+warning: django/contrib/admin/templatetags/admin_modify.py has type 100755, expected 100644
+Checking patch tests/admin_views/tests.py...
+warning: tests/admin_views/tests.py has type 100755, expected 100644
+Applied patch django/contrib/admin/templatetags/admin_modify.py cleanly.
+Applied patch tests/admin_views/tests.py cleanly.
+
+2026-11-10 09:15:52,130 - INFO - Git diff before:
+diff --git a/django/contrib/admin/templatetags/admin_modify.py b/django/contrib/admin/templatetags/admin_modify.py
+index 9df4b7aadb..5b742af46a 100755
+--- a/django/contrib/admin/templatetags/admin_modify.py
++++ b/django/contrib/admin/templatetags/admin_modify.py
+@@ -100,6 +100,7 @@ def submit_row(context):
+                 and context.get("show_delete", True)
+             ),
+             "show_save_as_new": not is_popup
++            and has_add_permission
+             and has_change_permission
+             and change
+             and save_as,
+diff --git a/tests/admin_views/tests.py b/tests/admin_views/tests.py
+index 03ab9a9454..44093c8737 100755
+--- a/tests/admin_views/tests.py
++++ b/tests/admin_views/tests.py
+@@ -1862,6 +1862,44 @@ class SaveAsTests(TestCase):
+         self.assertFalse(response.context["show_save_and_continue"])
+         self.assertTrue(response.context["show_save_as_new"])
+ 
++    def test_save_as_new_with_add_permission(self):
++        """
++        "Save as new" button is displayed for a user with "add" and "change"
++        permissions.
++        """
++        add_change_user = User.objects.create_user(
++            username="addchangeuser", password="secret", is_staff=True
++        )
++        add_change_user.user_permissions.add(
++            get_perm(Person, get_permission_codename("add", Person._meta)),
++            get_perm(Person, get_permission_codename("change", Person._meta)),
++        )
++        self.client.force_login(add_change_user)
++        response = self.client.get(
++            reverse("admin:admin_views_person_change", args=(self.per1.pk,))
++        )
++        self.assertEqual(response.status_code, 200)
++        self.assertTrue(response.context["show_save_as_new"])
++
++    def test_save_as_new_without_add_permission(self):
++        """
++        "Save as new" button is not displayed for a user without the "add"
++        permission.
++        """
++        change_user = User.objects.create_user(
++            username="changeuser", password="secret", is_staff=True
++        )
++        change_user.user_permissions.add(
++            get_perm(Person, get_permission_codename("change", Person._meta))
++        )
++        self.client.force_login(change_user)
++        response = self.client.get(
++            reverse("admin:admin_views_person_change", args=(self.per1.pk,))
++        )
++        self.assertEqual(response.status_code, 200)
++        self.assertFalse(response.context["show_save_as_new"])
++        self.assertNotContains(response, "Save as new")
++
+ 
+ @override_settings(ROOT_URLCONF="admin_views.urls")
+ class CustomModelAdminTest(AdminViewBasicTestCase):
+2026-11-10 09:15:52,133 - INFO - Eval script for django__django-16527 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/django__django-16527/eval.sh; copying to container...
+2026-11-10 09:16:02,312 - INFO - Test runtime: 10.11 seconds
+2026-11-10 09:16:02,316 - INFO - Test output for django__django-16527 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/django__django-16527/test_output.txt
+2026-11-10 09:16:02,387 - INFO - Git diff after:
+diff --git a/django/contrib/admin/templatetags/admin_modify.py b/django/contrib/admin/templatetags/admin_modify.py
+index 9df4b7aadb..5b742af46a 100755
+--- a/django/contrib/admin/templatetags/admin_modify.py
++++ b/django/contrib/admin/templatetags/admin_modify.py
+@@ -100,6 +100,7 @@ def submit_row(context):
+                 and context.get("show_delete", True)
+             ),
+             "show_save_as_new": not is_popup
++            and has_add_permission
+             and has_change_permission
+             and change
+             and save_as,
+diff --git a/tests/admin_views/tests.py b/tests/admin_views/tests.py
+index 03ab9a9454..44093c8737 100755
+--- a/tests/admin_views/tests.py
++++ b/tests/admin_views/tests.py
+@@ -1862,6 +1862,44 @@ class SaveAsTests(TestCase):
+         self.assertFalse(response.context["show_save_and_continue"])
+         self.assertTrue(response.context["show_save_as_new"])
+ 
++    def test_save_as_new_with_add_permission(self):
++        """
++        "Save as new" button is displayed for a user with "add" and "change"
++        permissions.
++        """
++        add_change_user = User.objects.create_user(
++            username="addchangeuser", password="secret", is_staff=True
++        )
++        add_change_user.user_permissions.add(
++            get_perm(Person, get_permission_codename("add", Person._meta)),
++            get_perm(Person, get_permission_codename("change", Person._meta)),
++        )
++        self.client.force_login(add_change_user)
++        response = self.client.get(
++            reverse("admin:admin_views_person_change", args=(self.per1.pk,))
++        )
++        self.assertEqual(response.status_code, 200)
++        self.assertTrue(response.context["show_save_as_new"])
++
++    def test_save_as_new_without_add_permission(self):
++        """
++        "Save as new" button is not displayed for a user without the "add"
++        permission.
++        """
++        change_user = User.objects.create_user(
++            username="changeuser", password="secret", is_staff=True
++        )
++        change_user.user_permissions.add(
++            get_perm(Person, get_permission_codename("change", Person._meta))
++        )
++        self.client.force_login(change_user)
++        response = self.client.get(
++            reverse("admin:admin_views_person_change", args=(self.per1.pk,))
++        )
++        self.assertEqual(response.status_code, 200)
++        self.assertFalse(response.context["show_save_as_new"])
++        self.assertNotContains(response, "Save as new")
++
+ 
+ @override_settings(ROOT_URLCONF="admin_views.urls")
+ class CustomModelAdminTest(AdminViewBasicTestCase):
+2026-11-10 09:16:02,388 - INFO - Grading answer for django__django-16527...
+2026-11-10 09:16:02,399 - INFO - report: {'django__django-16527': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_submit_row_save_as_new_add_permission_required (admin_views.test_templatetags.AdminTemplateTagsTest.test_submit_row_save_as_new_add_permission_required)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_choice_links (admin_views.test_templatetags.DateHierarchyTests.test_choice_links)', 'test_choice_links_datetime (admin_views.test_templatetags.DateHierarchyTests.test_choice_links_datetime)', 'admin_modify template tags follow the standard search pattern', 'admin_list template tags follow the standard search pattern', 'test_override_show_save_and_add_another (admin_views.test_templatetags.AdminTemplateTagsTest.test_override_show_save_and_add_another)', 'submit_row template tag should pass whole context.'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16527: resolved: True
+2026-11-10 09:16:02,401 - INFO - Attempting to stop container sweb.eval.django__django-16527.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 09:16:18,542 - INFO - Container sweb.eval.django__django-16527.verified_full_glm53_cline-patched_incr_R2028 stopped successfully.
+2026-11-10 09:16:18,543 - INFO - Attempting to remove container sweb.eval.django__django-16527.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 09:16:18,594 - INFO - Container sweb.eval.django__django-16527.verified_full_glm53_cline-patched_incr_R2028 removed successfully.

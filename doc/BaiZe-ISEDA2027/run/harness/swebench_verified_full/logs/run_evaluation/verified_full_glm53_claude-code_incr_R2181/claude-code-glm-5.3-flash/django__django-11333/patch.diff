@@ -1,0 +1,82 @@
+diff --git a/django/urls/base.py b/django/urls/base.py
+index 0e1c3d909c..dd9b2e4c22 100644
+--- a/django/urls/base.py
++++ b/django/urls/base.py
+@@ -7,7 +7,7 @@ from django.utils.functional import lazy
+ from django.utils.translation import override
+ 
+ from .exceptions import NoReverseMatch, Resolver404
+-from .resolvers import get_ns_resolver, get_resolver
++from .resolvers import _get_cached_resolver, get_ns_resolver, get_resolver
+ from .utils import get_callable
+ 
+ # SCRIPT_NAME prefixes for each thread are stored here. If there's no entry for
+@@ -92,7 +92,7 @@ reverse_lazy = lazy(reverse, str)
+ 
+ def clear_url_caches():
+     get_callable.cache_clear()
+-    get_resolver.cache_clear()
++    _get_cached_resolver.cache_clear()
+     get_ns_resolver.cache_clear()
+ 
+ 
+diff --git a/django/urls/resolvers.py b/django/urls/resolvers.py
+index 247e3680c0..3d7430321d 100644
+--- a/django/urls/resolvers.py
++++ b/django/urls/resolvers.py
+@@ -64,10 +64,14 @@ class ResolverMatch:
+ 
+ 
+ @functools.lru_cache(maxsize=None)
++def _get_cached_resolver(urlconf):
++    return URLResolver(RegexPattern(r'^/'), urlconf)
++
++
+ def get_resolver(urlconf=None):
+     if urlconf is None:
+         urlconf = settings.ROOT_URLCONF
+-    return URLResolver(RegexPattern(r'^/'), urlconf)
++    return _get_cached_resolver(urlconf)
+ 
+ 
+ @functools.lru_cache(maxsize=None)
+diff --git a/tests/urlpatterns_reverse/tests.py b/tests/urlpatterns_reverse/tests.py
+index d26923ab9d..f74291f0a4 100644
+--- a/tests/urlpatterns_reverse/tests.py
++++ b/tests/urlpatterns_reverse/tests.py
+@@ -17,10 +17,11 @@ from django.test import SimpleTestCase, TestCase, override_settings
+ from django.test.utils import override_script_prefix
+ from django.urls import (
+     NoReverseMatch, Resolver404, ResolverMatch, URLPattern, URLResolver,
+-    get_callable, get_resolver, get_urlconf, include, path, re_path, resolve,
+-    reverse, reverse_lazy,
++    clear_url_caches, get_callable, get_resolver, get_urlconf, include, path,
++    re_path, resolve, reverse, reverse_lazy,
+ )
+-from django.urls.resolvers import RegexPattern
++from django.urls.base import set_urlconf
++from django.urls.resolvers import RegexPattern, _get_cached_resolver
+ 
+ from . import middleware, urlconf_outer, views
+ from .utils import URLObject
+@@ -507,6 +508,20 @@ class ResolverTests(SimpleTestCase):
+         thread.join()
+         self.assertNotEqual(resolver._reverse_dict, {})
+ 
++    def test_resolver_cache(self):
++        # A resolver is cached for the settings.ROOT_URLCONF, whether
++        # get_resolver() is called with or without an argument (#30826).
++        clear_url_caches()
++        try:
++            resolver = get_resolver()
++            self.assertIs(resolver, _get_cached_resolver(settings.ROOT_URLCONF))
++            set_urlconf('urlpatterns_reverse.urls')
++            self.assertIs(get_resolver(), resolver)
++            self.assertIs(get_resolver(settings.ROOT_URLCONF), resolver)
++        finally:
++            set_urlconf(None)
++            clear_url_caches()
++
+ 
+ @override_settings(ROOT_URLCONF='urlpatterns_reverse.reverse_lazy_urls')
+ class ReverseLazyTest(TestCase):

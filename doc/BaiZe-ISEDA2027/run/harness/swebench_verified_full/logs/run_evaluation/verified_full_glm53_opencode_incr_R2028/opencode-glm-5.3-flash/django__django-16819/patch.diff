@@ -1,0 +1,94 @@
+diff --git a/django/db/migrations/operations/models.py b/django/db/migrations/operations/models.py
+index 967a91fdc..d8037ee14 100644
+--- a/django/db/migrations/operations/models.py
++++ b/django/db/migrations/operations/models.py
+@@ -820,6 +820,15 @@ class AddIndex(IndexOperation):
+             )
+         self.index = index
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, RemoveIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.index.name == operation.name
++        ):
++            return []
++        return super().reduce(operation, app_label)
++
+     def state_forwards(self, app_label, state):
+         state.add_index(app_label, self.model_name_lower, self.index)
+ 
+@@ -869,6 +878,15 @@ class RemoveIndex(IndexOperation):
+         self.model_name = model_name
+         self.name = name
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, AddIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.name == operation.index.name
++        ):
++            return []
++        return super().reduce(operation, app_label)
++
+     def state_forwards(self, app_label, state):
+         state.remove_index(app_label, self.model_name_lower, self.name)
+ 
+diff --git a/tests/migrations/test_optimizer.py b/tests/migrations/test_optimizer.py
+index 8cd4c67fb..cbaa34cac 100644
+--- a/tests/migrations/test_optimizer.py
++++ b/tests/migrations/test_optimizer.py
+@@ -1158,3 +1158,53 @@ class OptimizerTests(SimpleTestCase):
+                 ),
+             ]
+         )
++
++    def test_add_remove_index(self):
++        """
++        AddIndex and RemoveIndex should collapse into nothing.
++        """
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Pony", models.Index(fields=["pink"], name="pony_pink_idx")
++                ),
++                migrations.RemoveIndex("Pony", name="pony_pink_idx"),
++            ],
++            [],
++        )
++
++    def test_remove_add_index(self):
++        """
++        RemoveIndex and AddIndex of the same index should collapse into
++        nothing.
++        """
++        self.assertOptimizesTo(
++            [
++                migrations.RemoveIndex("Pony", name="pony_pink_idx"),
++                migrations.AddIndex(
++                    "Pony", models.Index(fields=["pink"], name="pony_pink_idx")
++                ),
++            ],
++            [],
++        )
++
++    def test_add_remove_index_different_names(self):
++        """
++        AddIndex and RemoveIndex of different indexes should not be optimized.
++        """
++        self.assertDoesNotOptimize(
++            [
++                migrations.AddIndex(
++                    "Pony", models.Index(fields=["pink"], name="pony_pink_idx")
++                ),
++                migrations.RemoveIndex("Pony", name="pony_weight_idx"),
++            ]
++        )
++        self.assertDoesNotOptimize(
++            [
++                migrations.RemoveIndex("Pony", name="pony_pink_idx"),
++                migrations.AddIndex(
++                    "Pony", models.Index(fields=["pink"], name="pony_weight_idx")
++                ),
++            ]
++        )

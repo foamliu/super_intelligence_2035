@@ -1,0 +1,4 @@
+Running command: pip install --break-system-packages hermes-agent 2>&1 | tail -5
+Command outputs captured
+Trial break-filter-js-from-html__XN9C6Fq failed: Hermes exited with code 1: 
+Collecting main service artifacts

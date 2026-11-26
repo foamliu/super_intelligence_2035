@@ -1,0 +1,61 @@
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 192d9fad94..f1f99fca5f 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -632,6 +632,9 @@ def modelform_factory(
+     Meta = type("Meta", bases, attrs)
+     if formfield_callback:
+         Meta.formfield_callback = staticmethod(formfield_callback)
++    elif hasattr(form, "Meta") and hasattr(form.Meta, "formfield_callback"):
++        formfield_callback = form.Meta.formfield_callback
++
+     # Give this new form class a reasonable name.
+     class_name = model.__name__ + "Form"
+ 
+diff --git a/docs/ref/forms/models.txt b/docs/ref/forms/models.txt
+index b1cc131d79..ff6fe3b8ab 100644
+--- a/docs/ref/forms/models.txt
++++ b/docs/ref/forms/models.txt
+@@ -27,6 +27,10 @@ Model Form API reference. For introductory material about model forms, see the
+     ``formfield_callback`` is a callable that takes a model field and returns
+     a form field.
+ 
++    If you don't provide a ``formfield_callback``, ``modelform_factory()`` uses
++    the ``formfield_callback`` from the ``Meta`` of the ``form`` argument, if
++    it has one.
++
+     ``widgets`` is a dictionary of model field names mapped to a widget.
+ 
+     ``localized_fields`` is a list of names of fields which should be localized.
+diff --git a/tests/model_forms/tests.py b/tests/model_forms/tests.py
+index d2ce3348c5..0d79c6d195 100644
+--- a/tests/model_forms/tests.py
++++ b/tests/model_forms/tests.py
+@@ -3474,6 +3474,27 @@ class FormFieldCallbackTests(SimpleTestCase):
+                 formfield_callback="not a function or callable",
+             )
+ 
++    def test_meta_callback_without_default(self):
++        """Regression test for #32247"""
++
++        def callback(db_field, **kwargs):
++            formfield = db_field.formfield(**kwargs)
++            formfield.required = True
++            return formfield
++
++        class Form(forms.ModelForm):
++            formfield_callback = callback
++
++            class Meta:
++                model = Article
++                formfield_callback = callback
++                fields = ["status"]
++
++        factory_form = modelform_factory(Article, form=Form)
++
++        self.assertIs(factory_form.Meta.formfield_callback, callback)
++        self.assertTrue(factory_form.base_fields["status"].required)
++
+     def test_inherit_after_custom_callback(self):
+         def callback(db_field, **kwargs):
+             if isinstance(db_field, models.CharField):

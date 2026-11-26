@@ -1,0 +1,58 @@
+diff --git a/django/views/generic/base.py b/django/views/generic/base.py
+index ea5baca08..a5d49bb60 100644
+--- a/django/views/generic/base.py
++++ b/django/views/generic/base.py
+@@ -159,8 +159,13 @@ class TemplateView(TemplateResponseMixin, ContextMixin, View):
+     def get(self, request, *args, **kwargs):
+         # RemovedInDjango40Warning: when the deprecation ends, replace with:
+         #   context = self.get_context_data()
+-        context_kwargs = _wrap_url_kwargs_with_deprecation_warning(kwargs)
+-        context = self.get_context_data(**context_kwargs)
++        context = self.get_context_data(**kwargs)
++        if kwargs:
++            wrapped_kwargs = _wrap_url_kwargs_with_deprecation_warning({
++                key: value for key, value in kwargs.items()
++                if key in context and context[key] is value
++            })
++            context.update(wrapped_kwargs)
+         return self.render_to_response(context)
+ 
+ 
+diff --git a/tests/generic_views/test_base.py b/tests/generic_views/test_base.py
+index d498d23a6..c2b834c5f 100644
+--- a/tests/generic_views/test_base.py
++++ b/tests/generic_views/test_base.py
+@@ -8,6 +8,7 @@ from django.test import (
+ from django.test.utils import require_jinja2
+ from django.urls import resolve
+ from django.utils.deprecation import RemovedInDjango40Warning
++from django.utils.functional import SimpleLazyObject
+ from django.views.generic import RedirectView, TemplateView, View
+ 
+ from . import views
+@@ -603,3 +604,25 @@ class DeprecationTests(SimpleTestCase):
+             str(response.context['foo2'])
+         self.assertEqual(response.context['key'], 'value')
+         self.assertIsInstance(response.context['view'], View)
++
++    def test_get_context_data_url_kwargs_not_lazy(self):
++        """
++        URL kwargs passed to get_context_data() are not wrapped in
++        SimpleLazyObject so that they can be used in queries.
++        """
++        class CheckView(TemplateView):
++            template_name = 'generic_views/about.html'
++
++            def get_context_data(self, **kwargs):
++                context = super().get_context_data(**kwargs)
++                context['foo1_is_lazy'] = isinstance(kwargs.get('foo1'), SimpleLazyObject)
++                return context
++
++        view = CheckView.as_view()
++        request = RequestFactory().get('/')
++        response = view(request, foo1='bar1', foo2='bar2')
++        self.assertFalse(response.context_data['foo1_is_lazy'])
++        # The final context still has the lazy object for the deprecation warning.
++        self.assertIsInstance(response.context_data['foo1'], SimpleLazyObject)
++        self.assertIsInstance(response.context_data['foo2'], SimpleLazyObject)
++

@@ -1,0 +1,79 @@
+2026-11-07 23:18:22,373 - INFO - Creating container for django__django-11119...
+2026-11-07 23:18:22,396 - INFO - Container for django__django-11119 created: b5ce7146dc3aeb0aac779fe6f36a4bf2c560d3ac7de39a35d9c0c47c5a1d58db
+2026-11-07 23:18:23,188 - INFO - Container for django__django-11119 started: b5ce7146dc3aeb0aac779fe6f36a4bf2c560d3ac7de39a35d9c0c47c5a1d58db
+2026-11-07 23:18:23,190 - INFO - Intermediate patch for django__django-11119 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1805/deepseek-harness-glm-5.3-flash/django__django-11119/patch.diff, now applying to container...
+2026-11-07 23:18:23,347 - INFO - >>>>> Applied Patch:
+Checking patch django/template/engine.py...
+Checking patch tests/template_tests/test_engine.py...
+Applied patch django/template/engine.py cleanly.
+Applied patch tests/template_tests/test_engine.py cleanly.
+
+2026-11-07 23:18:24,262 - INFO - Git diff before:
+diff --git a/django/template/engine.py b/django/template/engine.py
+index dfaa67ba12..ff9ce58d59 100644
+--- a/django/template/engine.py
++++ b/django/template/engine.py
+@@ -160,7 +160,7 @@ class Engine:
+         if isinstance(context, Context):
+             return t.render(context)
+         else:
+-            return t.render(Context(context))
++            return t.render(Context(context, autoescape=self.autoescape))
+ 
+     def select_template(self, template_name_list):
+         """
+diff --git a/tests/template_tests/test_engine.py b/tests/template_tests/test_engine.py
+index 2bb8601fbb..43e92ccb21 100644
+--- a/tests/template_tests/test_engine.py
++++ b/tests/template_tests/test_engine.py
+@@ -3,6 +3,7 @@ import os
+ from django.core.exceptions import ImproperlyConfigured
+ from django.template import Context
+ from django.template.engine import Engine
++from django.template.backends.django import DjangoTemplates
+ from django.test import SimpleTestCase, override_settings
+ 
+ from .utils import ROOT, TEMPLATE_DIR
+@@ -21,6 +22,18 @@ class RenderToStringTest(SimpleTestCase):
+             'obj:test\n',
+         )
+ 
++    def test_autoescape_off(self):
++        engines = DjangoTemplates({
++            'NAME': 'engine_noescape',
++            'DIRS': [TEMPLATE_DIR],
++            'APP_DIRS': True,
++            'OPTIONS': {'autoescape': False},
++        }).engine
++        self.assertEqual(
++            engines.render_to_string('test_context.html', {'obj': 'test <&>'}),
++            'obj:test <&>\n',
++        )
++
+ 
+ class GetDefaultTests(SimpleTestCase):
+2026-11-07 23:18:24,264 - INFO - Eval script for django__django-11119 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1805/deepseek-harness-glm-5.3-flash/django__django-11119/eval.sh; copying to container...
+2026-11-07 23:18:30,321 - INFO - Test runtime: 5.98 seconds
+2026-11-07 23:18:30,321 - INFO - Test output for django__django-11119 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_R1805/deepseek-harness-glm-5.3-flash/django__django-11119/test_output.txt
+2026-11-07 23:18:30,389 - INFO - Git diff after:
+diff --git a/django/template/engine.py b/django/template/engine.py
+index dfaa67ba12..ff9ce58d59 100644
+--- a/django/template/engine.py
++++ b/django/template/engine.py
+@@ -160,7 +160,7 @@ class Engine:
+         if isinstance(context, Context):
+             return t.render(context)
+         else:
+-            return t.render(Context(context))
++            return t.render(Context(context, autoescape=self.autoescape))
+ 
+     def select_template(self, template_name_list):
+         """
+2026-11-07 23:18:30,389 - INFO - Git diff changed after running eval script
+2026-11-07 23:18:30,389 - INFO - Grading answer for django__django-11119...
+2026-11-07 23:18:30,390 - INFO - report: {'django__django-11119': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_autoescape_off (template_tests.test_engine.RenderToStringTest)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_cached_loader_priority (template_tests.test_engine.LoaderTests)', 'test_loader_priority (template_tests.test_engine.LoaderTests)', 'test_origin (template_tests.test_engine.LoaderTests)', 'test_basic_context (template_tests.test_engine.RenderToStringTest)', 'test_multiple_engines_configured (template_tests.test_engine.GetDefaultTests)', 'test_no_engines_configured (template_tests.test_engine.GetDefaultTests)', 'test_single_engine_configured (template_tests.test_engine.GetDefaultTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11119: resolved: True
+2026-11-07 23:18:30,391 - INFO - Attempting to stop container sweb.eval.django__django-11119.verified_full_glm53_deepseek-harness_R1805...
+2026-11-07 23:18:46,547 - INFO - Container sweb.eval.django__django-11119.verified_full_glm53_deepseek-harness_R1805 stopped successfully.
+2026-11-07 23:18:46,548 - INFO - Attempting to remove container sweb.eval.django__django-11119.verified_full_glm53_deepseek-harness_R1805...
+2026-11-07 23:18:46,604 - INFO - Container sweb.eval.django__django-11119.verified_full_glm53_deepseek-harness_R1805 removed successfully.

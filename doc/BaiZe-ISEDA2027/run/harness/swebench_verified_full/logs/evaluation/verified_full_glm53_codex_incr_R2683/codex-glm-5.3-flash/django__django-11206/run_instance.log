@@ -1,0 +1,66 @@
+2026-11-18 16:28:17,848 - INFO - Creating container for django__django-11206...
+2026-11-18 16:28:17,887 - INFO - Container for django__django-11206 created: 7d8fb62818cb8d9bb4de3c8cca52bdeb85710bf381cf60c2dba66c536e7f23fb
+2026-11-18 16:28:18,697 - INFO - Container for django__django-11206 started: 7d8fb62818cb8d9bb4de3c8cca52bdeb85710bf381cf60c2dba66c536e7f23fb
+2026-11-18 16:28:18,699 - INFO - Intermediate patch for django__django-11206 written to logs/evaluation/verified_full_glm53_codex_incr_R2683/codex-glm-5.3-flash/django__django-11206/patch.diff, now applying to container...
+2026-11-18 16:28:18,853 - INFO - >>>>> Applied Patch:
+Checking patch django/utils/numberformat.py...
+Checking patch tests/utils_tests/test_numberformat.py...
+Applied patch django/utils/numberformat.py cleanly.
+Applied patch tests/utils_tests/test_numberformat.py cleanly.
+
+2026-11-18 16:28:20,192 - INFO - Git diff before:
+diff --git a/django/utils/numberformat.py b/django/utils/numberformat.py
+index 88b35fc435..22b536accd 100644
+--- a/django/utils/numberformat.py
++++ b/django/utils/numberformat.py
+@@ -30,7 +30,9 @@ def format(number, decimal_sep, decimal_pos=None, grouping=0, thousand_sep='',
+         # Format values with more than 200 digits (an arbitrary cutoff) using
+         # scientific notation to avoid high memory usage in {:f}'.format().
+         _, digits, exponent = number.as_tuple()
+-        if abs(exponent) + len(digits) > 200:
++        if number.is_finite() and decimal_pos is not None and number.adjusted() < -decimal_pos:
++            str_number = '0.' + ('0' * decimal_pos)
++        elif abs(exponent) + len(digits) > 200:
+             number = '{:e}'.format(number)
+             coefficient, exponent = number.split('e')
+             # Format the coefficient.
+diff --git a/tests/utils_tests/test_numberformat.py b/tests/utils_tests/test_numberformat.py
+index 3d656025ab..c7341e2e0e 100644
+--- a/tests/utils_tests/test_numberformat.py
++++ b/tests/utils_tests/test_numberformat.py
+@@ -88,6 +88,8 @@ class TestNumberFormat(SimpleTestCase):
+             ('9e200', None, '9e+200'),
+             ('1.2345e999', 2, '1.23e+999'),
+             ('9e-999', None, '9e-999'),
++            ('1e-199', 2, '0.00'),
++            ('1e-200', 2, '0.00'),
+             ('1e-7', 8, '0.00000010'),
+             ('1e-8', 8, '0.00000001'),
+             ('1e-9', 8, '0.00000000'),
+2026-11-18 16:28:20,196 - INFO - Eval script for django__django-11206 written to logs/evaluation/verified_full_glm53_codex_incr_R2683/codex-glm-5.3-flash/django__django-11206/eval.sh; copying to container...
+2026-11-18 16:28:26,185 - INFO - Test runtime: 5.91 seconds
+2026-11-18 16:28:26,186 - INFO - Test output for django__django-11206 written to logs/evaluation/verified_full_glm53_codex_incr_R2683/codex-glm-5.3-flash/django__django-11206/test_output.txt
+2026-11-18 16:28:26,276 - INFO - Git diff after:
+diff --git a/django/utils/numberformat.py b/django/utils/numberformat.py
+index 88b35fc435..22b536accd 100644
+--- a/django/utils/numberformat.py
++++ b/django/utils/numberformat.py
+@@ -30,7 +30,9 @@ def format(number, decimal_sep, decimal_pos=None, grouping=0, thousand_sep='',
+         # Format values with more than 200 digits (an arbitrary cutoff) using
+         # scientific notation to avoid high memory usage in {:f}'.format().
+         _, digits, exponent = number.as_tuple()
+-        if abs(exponent) + len(digits) > 200:
++        if number.is_finite() and decimal_pos is not None and number.adjusted() < -decimal_pos:
++            str_number = '0.' + ('0' * decimal_pos)
++        elif abs(exponent) + len(digits) > 200:
+             number = '{:e}'.format(number)
+             coefficient, exponent = number.split('e')
+             # Format the coefficient.
+2026-11-18 16:28:26,277 - INFO - Git diff changed after running eval script
+2026-11-18 16:28:26,277 - INFO - Grading answer for django__django-11206...
+2026-11-18 16:28:26,278 - INFO - report: {'django__django-11206': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_decimal_numbers (utils_tests.test_numberformat.TestNumberFormat)', 'test_decimal_subclass (utils_tests.test_numberformat.TestNumberFormat)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_float_numbers (utils_tests.test_numberformat.TestNumberFormat)', 'test_format_number (utils_tests.test_numberformat.TestNumberFormat)', 'test_format_string (utils_tests.test_numberformat.TestNumberFormat)', 'test_large_number (utils_tests.test_numberformat.TestNumberFormat)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11206: resolved: True
+2026-11-18 16:28:26,280 - INFO - Attempting to stop container sweb.eval.django__django-11206.verified_full_glm53_codex_incr_R2683...
+2026-11-18 16:28:42,375 - INFO - Container sweb.eval.django__django-11206.verified_full_glm53_codex_incr_R2683 stopped successfully.
+2026-11-18 16:28:42,375 - INFO - Attempting to remove container sweb.eval.django__django-11206.verified_full_glm53_codex_incr_R2683...
+2026-11-18 16:28:42,434 - INFO - Container sweb.eval.django__django-11206.verified_full_glm53_codex_incr_R2683 removed successfully.

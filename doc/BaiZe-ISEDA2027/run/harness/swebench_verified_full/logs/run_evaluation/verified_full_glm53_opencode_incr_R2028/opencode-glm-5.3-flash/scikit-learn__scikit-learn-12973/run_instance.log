@@ -1,0 +1,129 @@
+2026-11-10 14:32:50,547 - INFO - Creating container for scikit-learn__scikit-learn-12973...
+2026-11-10 14:32:50,560 - INFO - Container for scikit-learn__scikit-learn-12973 created: 940b879e1efb45e9d15d66c982cc3d89abae0c107d01113ae13130acaf245047
+2026-11-10 14:32:51,277 - INFO - Container for scikit-learn__scikit-learn-12973 started: 940b879e1efb45e9d15d66c982cc3d89abae0c107d01113ae13130acaf245047
+2026-11-10 14:32:51,279 - INFO - Intermediate patch for scikit-learn__scikit-learn-12973 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/scikit-learn__scikit-learn-12973/patch.diff, now applying to container...
+2026-11-10 14:32:51,406 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/linear_model/least_angle.py...
+Checking patch sklearn/linear_model/tests/test_least_angle.py...
+Applied patch sklearn/linear_model/least_angle.py cleanly.
+Applied patch sklearn/linear_model/tests/test_least_angle.py cleanly.
+
+2026-11-10 14:32:51,846 - INFO - Git diff before:
+diff --git a/sklearn/linear_model/least_angle.py b/sklearn/linear_model/least_angle.py
+index 03b34a0dc..da483671c 100644
+--- a/sklearn/linear_model/least_angle.py
++++ b/sklearn/linear_model/least_angle.py
+@@ -1479,7 +1479,7 @@ class LassoLarsIC(LassoLars):
+         self.eps = eps
+         self.fit_path = True
+ 
+-    def fit(self, X, y, copy_X=True):
++    def fit(self, X, y, copy_X=None):
+         """Fit the model using X, y as training data.
+ 
+         Parameters
+@@ -1490,8 +1490,10 @@ class LassoLarsIC(LassoLars):
+         y : array-like, shape (n_samples,)
+             target values. Will be cast to X's dtype if necessary
+ 
+-        copy_X : boolean, optional, default True
++        copy_X : boolean, optional, default None
+             If ``True``, X will be copied; else, it may be overwritten.
++            If ``None``, the value of ``copy_X`` given at initialization
++            is used.
+ 
+         Returns
+         -------
+@@ -1500,8 +1502,11 @@ class LassoLarsIC(LassoLars):
+         """
+         X, y = check_X_y(X, y, y_numeric=True)
+ 
++        if copy_X is None:
++            copy_X = self.copy_X
++
+         X, y, Xmean, ymean, Xstd = LinearModel._preprocess_data(
+-            X, y, self.fit_intercept, self.normalize, self.copy_X)
++            X, y, self.fit_intercept, self.normalize, copy_X)
+         max_iter = self.max_iter
+ 
+         Gram = self.precompute
+diff --git a/sklearn/linear_model/tests/test_least_angle.py b/sklearn/linear_model/tests/test_least_angle.py
+index 21496efa6..f95b06a85 100644
+--- a/sklearn/linear_model/tests/test_least_angle.py
++++ b/sklearn/linear_model/tests/test_least_angle.py
+@@ -469,6 +469,25 @@ def test_lasso_lars_ic():
+     assert_raises(ValueError, lars_broken.fit, X, y)
+ 
+ 
++def test_lasso_lars_ic_copy_X():
++    # Test that LassoLarsIC respects the copy_X parameter set at
++    # initialization, even when copy_X is not explicitly passed to fit.
++    # Non-regression test for:
++    # https://github.com/scikit-learn/scikit-learn/issues/12526
++    X = np.array([[1, 2], [3, 4], [5, 6]], dtype=np.float64)
++    y = np.array([1, 2, 3], dtype=np.float64)
++    X_orig = X.copy()
++
++    lars = linear_model.LassoLarsIC(copy_X=False)
++    lars.fit(X, y)
++    assert_array_almost_equal(X, X_orig)
++
++    # explicit copy_X=True in fit should still be honoured
++    lars = linear_model.LassoLarsIC(copy_X=False)
++    lars.fit(X, y, copy_X=True)
++    assert_array_almost_equal(X, X_orig)
++
++
+ def test_lars_path_readonly_data():
+     # When using automated memory mapping on large input, the
+     # fold data is in read-only mode
+2026-11-10 14:32:51,849 - INFO - Eval script for scikit-learn__scikit-learn-12973 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/scikit-learn__scikit-learn-12973/eval.sh; copying to container...
+2026-11-10 14:32:55,489 - INFO - Test runtime: 3.59 seconds
+2026-11-10 14:32:55,492 - INFO - Test output for scikit-learn__scikit-learn-12973 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/scikit-learn__scikit-learn-12973/test_output.txt
+2026-11-10 14:32:55,531 - INFO - Git diff after:
+diff --git a/sklearn/linear_model/least_angle.py b/sklearn/linear_model/least_angle.py
+index 03b34a0dc..da483671c 100644
+--- a/sklearn/linear_model/least_angle.py
++++ b/sklearn/linear_model/least_angle.py
+@@ -1479,7 +1479,7 @@ class LassoLarsIC(LassoLars):
+         self.eps = eps
+         self.fit_path = True
+ 
+-    def fit(self, X, y, copy_X=True):
++    def fit(self, X, y, copy_X=None):
+         """Fit the model using X, y as training data.
+ 
+         Parameters
+@@ -1490,8 +1490,10 @@ class LassoLarsIC(LassoLars):
+         y : array-like, shape (n_samples,)
+             target values. Will be cast to X's dtype if necessary
+ 
+-        copy_X : boolean, optional, default True
++        copy_X : boolean, optional, default None
+             If ``True``, X will be copied; else, it may be overwritten.
++            If ``None``, the value of ``copy_X`` given at initialization
++            is used.
+ 
+         Returns
+         -------
+@@ -1500,8 +1502,11 @@ class LassoLarsIC(LassoLars):
+         """
+         X, y = check_X_y(X, y, y_numeric=True)
+ 
++        if copy_X is None:
++            copy_X = self.copy_X
++
+         X, y, Xmean, ymean, Xstd = LinearModel._preprocess_data(
+-            X, y, self.fit_intercept, self.normalize, self.copy_X)
++            X, y, self.fit_intercept, self.normalize, copy_X)
+         max_iter = self.max_iter
+ 
+         Gram = self.precompute
+2026-11-10 14:32:55,531 - INFO - Git diff changed after running eval script
+2026-11-10 14:32:55,531 - INFO - Grading answer for scikit-learn__scikit-learn-12973...
+2026-11-10 14:32:55,533 - INFO - report: {'scikit-learn__scikit-learn-12973': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_fit_copyX_behaviour[False]'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/linear_model/tests/test_least_angle.py::test_simple', 'sklearn/linear_model/tests/test_least_angle.py::test_simple_precomputed', 'sklearn/linear_model/tests/test_least_angle.py::test_all_precomputed', 'sklearn/linear_model/tests/test_least_angle.py::test_lars_lstsq', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_gives_lstsq_solution', 'sklearn/linear_model/tests/test_least_angle.py::test_collinearity', 'sklearn/linear_model/tests/test_least_angle.py::test_no_path', 'sklearn/linear_model/tests/test_least_angle.py::test_no_path_precomputed', 'sklearn/linear_model/tests/test_least_angle.py::test_no_path_all_precomputed', 'sklearn/linear_model/tests/test_least_angle.py::test_lars_precompute[Lars]', 'sklearn/linear_model/tests/test_least_angle.py::test_lars_precompute[LarsCV]', 'sklearn/linear_model/tests/test_least_angle.py::test_lars_precompute[LassoLarsIC]', 'sklearn/linear_model/tests/test_least_angle.py::test_singular_matrix', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_vs_lasso_cd', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_vs_lasso_cd_early_stopping', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_path_length', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_vs_lasso_cd_ill_conditioned', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_vs_lasso_cd_ill_conditioned2', 'sklearn/linear_model/tests/test_least_angle.py::test_lars_add_features', 'sklearn/linear_model/tests/test_least_angle.py::test_lars_n_nonzero_coefs', 'sklearn/linear_model/tests/test_least_angle.py::test_multitarget', 'sklearn/linear_model/tests/test_least_angle.py::test_lars_cv', 'sklearn/linear_model/tests/test_least_angle.py::test_lars_cv_max_iter', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_ic', 'sklearn/linear_model/tests/test_least_angle.py::test_lars_path_readonly_data', 'sklearn/linear_model/tests/test_least_angle.py::test_lars_path_positive_constraint', 'sklearn/linear_model/tests/test_least_angle.py::test_estimatorclasses_positive_constraint', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_vs_lasso_cd_positive', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_vs_R_implementation', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_copyX_behaviour[True]', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_copyX_behaviour[False]', 'sklearn/linear_model/tests/test_least_angle.py::test_lasso_lars_fit_copyX_behaviour[True]'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-12973: resolved: True
+2026-11-10 14:32:55,534 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-12973.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 14:33:11,323 - INFO - Container sweb.eval.scikit-learn__scikit-learn-12973.verified_full_glm53_opencode_incr_R2028 stopped successfully.
+2026-11-10 14:33:11,324 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-12973.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 14:33:11,356 - INFO - Container sweb.eval.scikit-learn__scikit-learn-12973.verified_full_glm53_opencode_incr_R2028 removed successfully.

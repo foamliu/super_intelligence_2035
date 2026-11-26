@@ -1,0 +1,153 @@
+2026-11-09 06:57:19,158 - INFO - Creating container for psf__requests-1142...
+2026-11-09 06:57:19,175 - INFO - Container for psf__requests-1142 created: 04869585e475048cc2e43c6e850106c77403dbd1878a2f4a1891b2d63c783dc7
+2026-11-09 06:57:19,728 - INFO - Container for psf__requests-1142 started: 04869585e475048cc2e43c6e850106c77403dbd1878a2f4a1891b2d63c783dc7
+2026-11-09 06:57:19,730 - INFO - Intermediate patch for psf__requests-1142 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/psf__requests-1142/patch.diff, now applying to container...
+2026-11-09 06:57:19,828 - INFO - >>>>> Applied Patch:
+Checking patch requests/models.py...
+Checking patch test_requests.py...
+Applied patch requests/models.py cleanly.
+Applied patch test_requests.py cleanly.
+
+2026-11-09 06:57:19,908 - INFO - Git diff before:
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..b8f5582 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -344,11 +344,13 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         is_stream = all([
+             hasattr(data, '__iter__'),
+             not isinstance(data, basestring),
++            not isinstance(data, list),
++            not isinstance(data, tuple),
+             not isinstance(data, dict)
+         ])
+ 
+         try:
+-            length = str(super_len(data))
++            length = super_len(data)
+         except (TypeError, AttributeError):
+             length = False
+ 
+@@ -386,13 +388,20 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+-        if hasattr(body, 'seek') and hasattr(body, 'tell'):
+-            body.seek(0, 2)
+-            self.headers['Content-Length'] = str(body.tell())
+-            body.seek(0, 0)
+-        elif body is not None:
+-            self.headers['Content-Length'] = str(len(body))
++        if body is not None:
++            length = super_len(body)
++            if not length and hasattr(body, 'seek') and hasattr(body, 'tell'):
++                # Fallback for file-like objects that super_len cannot measure.
++                curr_pos = body.tell()
++                body.seek(0, 2)
++                length = max(0, body.tell() - curr_pos)
++                body.seek(curr_pos, 0)
++            if length:
++                self.headers['Content-Length'] = str(length)
++        elif (self.method not in ('GET', 'HEAD')) and (self.headers.get('Content-Length') is None):
++            # Only send Content-Length: 0 for methods that can carry a body.
++            # GET/HEAD requests without a body must not advertise one.
++            self.headers['Content-Length'] = '0'
+ 
+     def prepare_auth(self, auth):
+         """Prepares the given HTTP auth data."""
+diff --git a/test_requests.py b/test_requests.py
+index c974e98..3f029cd 100644
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -125,6 +125,31 @@ class RequestsTestCase(unittest.TestCase):
+         r = requests.head(httpbin('get'))
+         self.assertEqual(r.status_code, 200)
+ 
++    def test_no_content_length(self):
++        req = requests.Request('GET', httpbin('get')).prepare()
++        self.assertFalse('Content-Length' in req.headers)
++
++        req = requests.Request('HEAD', httpbin('get')).prepare()
++        self.assertFalse('Content-Length' in req.headers)
++
++    def test_no_body_content_length(self):
++        for method in ('POST', 'PUT', 'PATCH', 'OPTIONS'):
++            req = requests.Request(method, httpbin(method.lower())).prepare()
++            self.assertEqual(req.headers['Content-Length'], '0')
++
++    def test_empty_content_length(self):
++        for method in ('POST', 'PUT', 'PATCH', 'OPTIONS'):
++            req = requests.Request(method, httpbin(method.lower()), data='').prepare()
++            self.assertEqual(req.headers['Content-Length'], '0')
++
++    def test_override_content_length(self):
++        headers = {
++            'Content-Length': 'not zero'
++        }
++        r = requests.post(httpbin('post'), headers=headers)
++        self.assertEqual(r.status_code, 200)
++        self.assertEqual(r.request.headers['Content-Length'], 'not zero')
++
+     def test_HTTP_200_OK_PUT(self):
+         r = requests.put(httpbin('put'))
+         self.assertEqual(r.status_code, 200)
+2026-11-09 06:57:19,910 - INFO - Eval script for psf__requests-1142 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/psf__requests-1142/eval.sh; copying to container...
+2026-11-09 06:57:22,971 - INFO - Test runtime: 2.98 seconds
+2026-11-09 06:57:22,973 - INFO - Test output for psf__requests-1142 written to logs/run_evaluation/verified_full_glm53_hermes_R1933/hermes-glm-5.3-flash/psf__requests-1142/test_output.txt
+2026-11-09 06:57:23,038 - INFO - Git diff after:
+diff --git a/requests/models.py b/requests/models.py
+index 9926045..b8f5582 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -344,11 +344,13 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         is_stream = all([
+             hasattr(data, '__iter__'),
+             not isinstance(data, basestring),
++            not isinstance(data, list),
++            not isinstance(data, tuple),
+             not isinstance(data, dict)
+         ])
+ 
+         try:
+-            length = str(super_len(data))
++            length = super_len(data)
+         except (TypeError, AttributeError):
+             length = False
+ 
+@@ -386,13 +388,20 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         self.body = body
+ 
+     def prepare_content_length(self, body):
+-        self.headers['Content-Length'] = '0'
+-        if hasattr(body, 'seek') and hasattr(body, 'tell'):
+-            body.seek(0, 2)
+-            self.headers['Content-Length'] = str(body.tell())
+-            body.seek(0, 0)
+-        elif body is not None:
+-            self.headers['Content-Length'] = str(len(body))
++        if body is not None:
++            length = super_len(body)
++            if not length and hasattr(body, 'seek') and hasattr(body, 'tell'):
++                # Fallback for file-like objects that super_len cannot measure.
++                curr_pos = body.tell()
++                body.seek(0, 2)
++                length = max(0, body.tell() - curr_pos)
++                body.seek(curr_pos, 0)
++            if length:
++                self.headers['Content-Length'] = str(length)
++        elif (self.method not in ('GET', 'HEAD')) and (self.headers.get('Content-Length') is None):
++            # Only send Content-Length: 0 for methods that can carry a body.
++            # GET/HEAD requests without a body must not advertise one.
++            self.headers['Content-Length'] = '0'
+ 
+     def prepare_auth(self, auth):
+         """Prepares the given HTTP auth data."""
+2026-11-09 06:57:23,038 - INFO - Git diff changed after running eval script
+2026-11-09 06:57:23,038 - INFO - Grading answer for psf__requests-1142...
+2026-11-09 06:57:23,043 - INFO - report: {'psf__requests-1142': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_no_content_length'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_requests.py::RequestsTestCase::test_basic_building', 'test_requests.py::RequestsTestCase::test_entry_points', 'test_requests.py::RequestsTestCase::test_invalid_url', 'test_requests.py::RequestsTestCase::test_params_are_added_before_fragment', 'test_requests.py::RequestsTestCase::test_path_is_not_double_encoded'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for psf__requests-1142: resolved: True
+2026-11-09 06:57:23,045 - INFO - Attempting to stop container sweb.eval.psf__requests-1142.verified_full_glm53_hermes_R1933...
+2026-11-09 06:57:39,188 - INFO - Container sweb.eval.psf__requests-1142.verified_full_glm53_hermes_R1933 stopped successfully.
+2026-11-09 06:57:39,188 - INFO - Attempting to remove container sweb.eval.psf__requests-1142.verified_full_glm53_hermes_R1933...
+2026-11-09 06:57:39,223 - INFO - Container sweb.eval.psf__requests-1142.verified_full_glm53_hermes_R1933 removed successfully.

@@ -1,0 +1,78 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index ac1e6227..351397be 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -1,3 +1,16 @@
++5.1.0 (unreleased)
++===================
++
++Bug Fixes
++---------
++
++astropy.modeling
++^^^^^^^^^^^^^^^^
++
++- Fix the ``separability_matrix`` function so that it correctly computes the
++  separability of nested `~astropy.modeling.core.CompoundModel` instances
++  (e.g. ``m.Pix2Sky_TAN() & (m.Linear1D(10) & m.Linear1D(5))``). [#12898]
++
+ 5.0.1 (2022-01-26)
+ ==================
+ 
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index a308e272..66acc3fe 100644
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -242,8 +242,7 @@ def _cstack(left, right):
+         cright = _coord_matrix(right, 'right', noutp)
+     else:
+         cright = np.zeros((noutp, right.shape[1]))
+-        cright[-right.shape[0]:, -right.shape[1]:] = 1
+-
++        cright[-right.shape[0]:, -right.shape[1]:] = right
+     return np.hstack([cleft, cright])
+ 
+ 
+diff --git a/astropy/modeling/tests/test_separable.py b/astropy/modeling/tests/test_separable.py
+index 8dfe5c86..63254e13 100644
+--- a/astropy/modeling/tests/test_separable.py
++++ b/astropy/modeling/tests/test_separable.py
+@@ -112,6 +112,15 @@ def test_cstack():
+                               [0, 0, 1]])
+                     )
+ 
++    # ndarray input (e.g. the coord_matrix of a nested compound model)
++    result = _cstack(np.array([[1, 1], [1, 1]]), np.array([[1, 0], [0, 1]]))
++    assert_allclose(result,
++                    np.array([[1, 1, 0, 0],
++                              [1, 1, 0, 0],
++                              [0, 0, 1, 0],
++                              [0, 0, 0, 1]])
++                    )
++
+ 
+ def test_arith_oper():
+     # Models as inputs
+@@ -135,6 +144,15 @@ def test_separable(compound_model, result):
+     assert_allclose(separability_matrix(compound_model), result[1])
+ 
+ 
++def test_separability_matrix_nested_compound_model():
++    """
++    A nested compound model should give the same separability matrix
++    as the equivalent flat compound model.
++    """
++    cm = models.Linear1D(10) & models.Linear1D(5)
++    assert_allclose(separability_matrix(models.Pix2Sky_TAN() & cm),
++                    separability_matrix(models.Pix2Sky_TAN() & models.Linear1D(10) & models.Linear1D(5)))
++
+ def test_custom_model_separable():
+     @custom_model
+     def model_a(x):
+diff --git a/astropy_helpers b/astropy_helpers
+new file mode 160000
+index 00000000..7f11678c
+--- /dev/null
++++ b/astropy_helpers
+@@ -0,0 +1 @@
++Subproject commit 7f11678c03286f72acc9bab77868dabaeb368fda

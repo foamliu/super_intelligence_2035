@@ -1,0 +1,226 @@
+2026-10-30 17:03:08,045 - INFO - Creating container for sympy__sympy-12481...
+2026-10-30 17:03:08,075 - INFO - Container for sympy__sympy-12481 created: 0f17ac939e47e319d131a16aae3935b0025f5df1c8cbe9ff02d51a8e874b131c
+2026-10-30 17:03:09,368 - INFO - Container for sympy__sympy-12481 started: 0f17ac939e47e319d131a16aae3935b0025f5df1c8cbe9ff02d51a8e874b131c
+2026-10-30 17:03:09,371 - INFO - Intermediate patch for sympy__sympy-12481 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-12481/patch.diff, now applying to container...
+2026-10-30 17:03:09,532 - INFO - >>>>> Applied Patch:
+Checking patch sympy/assumptions/sathandlers.py...
+warning: sympy/assumptions/sathandlers.py has type 100755, expected 100644
+Checking patch sympy/combinatorics/permutations.py...
+warning: sympy/combinatorics/permutations.py has type 100755, expected 100644
+Checking patch sympy/combinatorics/tests/test_permutations.py...
+warning: sympy/combinatorics/tests/test_permutations.py has type 100755, expected 100644
+Checking patch sympy/core/basic.py...
+warning: sympy/core/basic.py has type 100755, expected 100644
+Checking patch sympy/matrices/matrices.py...
+warning: sympy/matrices/matrices.py has type 100755, expected 100644
+Checking patch sympy/plotting/plot.py...
+warning: sympy/plotting/plot.py has type 100755, expected 100644
+Applied patch sympy/assumptions/sathandlers.py cleanly.
+Applied patch sympy/combinatorics/permutations.py cleanly.
+Applied patch sympy/combinatorics/tests/test_permutations.py cleanly.
+Applied patch sympy/core/basic.py cleanly.
+Applied patch sympy/matrices/matrices.py cleanly.
+Applied patch sympy/plotting/plot.py cleanly.
+
+2026-10-30 17:03:10,013 - INFO - Git diff before:
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..6723e560e 100755
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,10 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/combinatorics/permutations.py b/sympy/combinatorics/permutations.py
+index 136ed5a47..2aa348c22 100755
+--- a/sympy/combinatorics/permutations.py
++++ b/sympy/combinatorics/permutations.py
+@@ -802,8 +802,9 @@ def __new__(cls, *args, **kwargs):
+         """
+         Constructor for the Permutation object from a list or a
+         list of lists in which all elements of the permutation may
+-        appear only once.
+-
++        appear only once when entered in array form. In cyclic form,
++        elements may appear in more than one cycle and the cycles
++        will be composed from left to right.
+         Examples
+         ========
+ 
+@@ -896,10 +897,7 @@ def __new__(cls, *args, **kwargs):
+ 
+         temp = flatten(args)
+         if has_dups(temp):
+-            if is_cycle:
+-                raise ValueError('there were repeated elements; to resolve '
+-                'cycles use Cycle%s.' % ''.join([str(tuple(c)) for c in args]))
+-            else:
++            if not is_cycle:
+                 raise ValueError('there were repeated elements.')
+         temp = set(temp)
+ 
+diff --git a/sympy/combinatorics/tests/test_permutations.py b/sympy/combinatorics/tests/test_permutations.py
+index 7f8cd572e..238c11b7d 100755
+--- a/sympy/combinatorics/tests/test_permutations.py
++++ b/sympy/combinatorics/tests/test_permutations.py
+@@ -349,7 +349,9 @@ def test_args():
+     raises(ValueError, lambda: Permutation([[1, 2], 0]))
+            # enclosing brackets needed on 0
+     raises(ValueError, lambda: Permutation([1, 1, 0]))
+-    raises(ValueError, lambda: Permutation([[1], [1, 2]]))
++    assert Permutation([[1], [1, 2]]) == Permutation([0, 2, 1])
++    assert Permutation([[0, 1], [0, 1]]) == Permutation([0, 1])
++    assert Permutation([[0, 1], [1, 2]]) == Permutation([2, 0, 1])
+     raises(ValueError, lambda: Permutation([4, 5], size=10))  # where are 0-3?
+     # but this is ok because cycles imply that only those listed moved
+     assert Permutation(4, 5) == Permutation([0, 1, 2, 3, 5, 4])
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index b992b45c2..394c634b7 100755
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,9 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index ca6ba63a2..738cbcae5 100755
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -2267,7 +2267,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 664602d6b..87b607fc8 100755
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,10 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import warnings
+ import sys
+2026-10-30 17:03:10,016 - INFO - Eval script for sympy__sympy-12481 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-12481/eval.sh; copying to container...
+2026-10-30 17:03:14,867 - INFO - Test runtime: 4.76 seconds
+2026-10-30 17:03:14,869 - INFO - Test output for sympy__sympy-12481 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-12481/test_output.txt
+2026-10-30 17:03:14,943 - INFO - Git diff after:
+diff --git a/sympy/assumptions/sathandlers.py b/sympy/assumptions/sathandlers.py
+index 61d62d04c..6723e560e 100755
+--- a/sympy/assumptions/sathandlers.py
++++ b/sympy/assumptions/sathandlers.py
+@@ -1,6 +1,10 @@
+ from __future__ import print_function, division
+ 
+-from collections import MutableMapping, defaultdict
++try:
++    from collections.abc import MutableMapping
++except ImportError:
++    from collections import MutableMapping
++from collections import defaultdict
+ 
+ from sympy.core import (Add, Mul, Pow, Integer, Number, NumberSymbol,)
+ from sympy.core.numbers import ImaginaryUnit
+diff --git a/sympy/combinatorics/permutations.py b/sympy/combinatorics/permutations.py
+index 136ed5a47..2aa348c22 100755
+--- a/sympy/combinatorics/permutations.py
++++ b/sympy/combinatorics/permutations.py
+@@ -802,8 +802,9 @@ def __new__(cls, *args, **kwargs):
+         """
+         Constructor for the Permutation object from a list or a
+         list of lists in which all elements of the permutation may
+-        appear only once.
+-
++        appear only once when entered in array form. In cyclic form,
++        elements may appear in more than one cycle and the cycles
++        will be composed from left to right.
+         Examples
+         ========
+ 
+@@ -896,10 +897,7 @@ def __new__(cls, *args, **kwargs):
+ 
+         temp = flatten(args)
+         if has_dups(temp):
+-            if is_cycle:
+-                raise ValueError('there were repeated elements; to resolve '
+-                'cycles use Cycle%s.' % ''.join([str(tuple(c)) for c in args]))
+-            else:
++            if not is_cycle:
+                 raise ValueError('there were repeated elements.')
+         temp = set(temp)
+ 
+diff --git a/sympy/core/basic.py b/sympy/core/basic.py
+index b992b45c2..394c634b7 100755
+--- a/sympy/core/basic.py
++++ b/sympy/core/basic.py
+@@ -1,6 +1,9 @@
+ """Base class for all the objects in SymPy"""
+ from __future__ import print_function, division
+-from collections import Mapping
++try:
++    from collections.abc import Mapping
++except ImportError:
++    from collections import Mapping
+ 
+ from .assumptions import BasicMeta, ManagedProperties
+ from .cache import cacheit
+diff --git a/sympy/matrices/matrices.py b/sympy/matrices/matrices.py
+index ca6ba63a2..738cbcae5 100755
+--- a/sympy/matrices/matrices.py
++++ b/sympy/matrices/matrices.py
+@@ -2267,7 +2267,7 @@ def _handle_creation_inputs(cls, *args, **kwargs):
+             cols = as_int(args[1])
+ 
+             # Matrix(2, 2, lambda i, j: i+j)
+-            if len(args) == 3 and isinstance(args[2], collections.Callable):
++            if len(args) == 3 and isinstance(args[2], collections.abc.Callable):
+                 op = args[2]
+                 flat_list = []
+                 for i in range(rows):
+diff --git a/sympy/plotting/plot.py b/sympy/plotting/plot.py
+index 664602d6b..87b607fc8 100755
+--- a/sympy/plotting/plot.py
++++ b/sympy/plotting/plot.py
+@@ -25,7 +25,10 @@
+ from __future__ import print_function, division
+ 
+ import inspect
+-from collections import Callable
++try:
++    from collections.abc import Callable
++except ImportError:
++    from collections import Callable
+ import warnings
+ import sys
+2026-10-30 17:03:14,943 - INFO - Git diff changed after running eval script
+2026-10-30 17:03:14,943 - INFO - Grading answer for sympy__sympy-12481...
+2026-10-30 17:03:14,946 - INFO - report: {'sympy__sympy-12481': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_args'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Permutation', 'test_josephus', 'test_ranking', 'test_mul', 'test_Cycle', 'test_from_sequence', 'test_printing_cyclic'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-12481: resolved: True
+2026-10-30 17:03:14,948 - INFO - Attempting to stop container sweb.eval.sympy__sympy-12481.verified_full_pi...
+2026-10-30 17:03:31,239 - INFO - Container sweb.eval.sympy__sympy-12481.verified_full_pi stopped successfully.
+2026-10-30 17:03:31,239 - INFO - Attempting to remove container sweb.eval.sympy__sympy-12481.verified_full_pi...
+2026-10-30 17:03:31,288 - INFO - Container sweb.eval.sympy__sympy-12481.verified_full_pi removed successfully.

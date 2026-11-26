@@ -1,0 +1,68 @@
+# Scenario: a P&R signoff team runs a full Cadence Innovus flow. The flow log
+# contains `report_message` severity lines, indented continuation lines, and
+# `# Stage: <name>` progress markers. The signoff QA must audit the log to
+# decide whether the run is clean enough to tape out.
+#
+# Message line formats (the ONLY lines that carry severity):
+#   **ERROR: (IMPRPT-NNNN) free-form text
+#   **WARNING: (IMPRPT-NNNN) free-form text
+#   **INFO: (IMPRPT-NNNN) free-form text
+# A severity line may instead have NO id parens (a malformed/legacy message):
+#   **ERROR: free-form text with no id
+#   (likewise **WARNING: / **INFO: without parens)
+# A message's free-form text may WRAP onto one or more CONTINUATION lines: a
+# continuation line starts with whitespace (space or tab), is non-empty after
+# trimming, and does NOT itself start with `**`. Continuation lines are part
+# of the immediately preceding severity message (append their trimmed text to
+# that message's text). Any other line (command echoes, banner comments,
+# blank lines) is ignored.
+#
+# Stage markers are lines matching `# Stage: <name>` (the `# Stage: ` prefix
+# is REQUIRED). The flow is EARLY before the first `# Stage: route_complete`
+# marker and LATE at/after it. Other stage names (floorplan_complete,
+# place_complete, cts_complete, route_opt_complete, streamout_complete) do NOT
+# by themselves flip late (only the exact name `route_complete` does, once).
+#
+# A message is WAIVED if its FULL merged text (first line + all continuations)
+# contains the whole token `WAIVED` (case-sensitive, delimited by start/end of
+# text or surrounding whitespace).
+#
+# BLOCKING rule for ERRORs: an ERROR occurrence is
+#   - waived_errors    if its merged text contains the token WAIVED (any stage);
+#   - blocking_errors  otherwise, if it occurs in the LATE stage;
+#   - early_errors     otherwise (early stage, not waived).
+# (Every ERROR occurrence falls into exactly one of these three buckets.)
+# WARNINGs are never blocking; a WARNING whose merged text contains WAIVED is
+# waived_warnings. INFO is never blocking/waived.
+# A no-id error (no `(IMPRPT-NNNN)`) still counts in error_count and
+# no_id_count, is NOT listed in unique_ids / blocking_ids, and follows the
+# same blocking rule (late & not waived -> blocking).
+#
+# You are given ONE log as a multi-line string -- `log`.
+# Implement
+#     pnr_signoff_report_message_audit {log}
+# which RETURNS a Tcl dict (via `dict create`) with EXACTLY these keys, all as
+# STRING values (counts as decimal strings; id lists as space-separated sorted
+# ids or the literal "none" when empty):
+#
+#   total_messages      -- count of ALL parsed severity messages (ERROR+WARNING+INFO occurrences)
+#   error_count         -- ERROR occurrences (incl. repeats and no-id errors)
+#   warning_count       -- WARNING occurrences
+#   info_count          -- INFO occurrences
+#   no_id_count         -- messages that had a severity but NO (IMPRPT-NNNN) id
+#   unique_msg_ids      -- number of DISTINCT MSG_IDs seen (only messages WITH an id)
+#   blocking_errors     -- late-stage, non-waived ERROR occurrences
+#   waived_errors       -- ERROR occurrences whose merged text contains the token WAIVED
+#   waived_warnings     -- WARNING occurrences whose merged text contains the token WAIVED
+#   early_errors        -- early-stage, non-waived ERROR occurrences
+#   unique_ids          -- all distinct MSG_IDs, sorted ascending (lexicographic), space-separated; "none" if none
+#   blocking_ids        -- distinct MSG_IDs that had >=1 blocking occurrence, sorted ascending, space-separated; "none" if none
+#
+# Invariant you may rely on: blocking_errors + waived_errors + early_errors == error_count.
+#
+# Implement in Tcl using ONLY Tcl builtins (no external packages). The runtime
+# is Cadence WaveView Tcl (host=waveview). The waveview Tcl `regexp` supports
+# POSIX character classes (`[[:space:]]`, `[[:alnum:]]`, `[[:alpha:]]`) and
+# extended constructs; it does NOT support Perl `\b`/`\s`/`\d` -- use POSIX
+# classes instead. Use `dict create` for the return so keys are queryable via
+# `dict get`.

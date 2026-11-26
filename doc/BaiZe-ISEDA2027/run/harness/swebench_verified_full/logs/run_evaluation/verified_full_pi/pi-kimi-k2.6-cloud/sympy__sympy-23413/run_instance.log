@@ -1,0 +1,103 @@
+2026-11-01 12:59:49,590 - INFO - Creating container for sympy__sympy-23413...
+2026-11-01 12:59:49,738 - INFO - Container for sympy__sympy-23413 created: 8c67f18b0dafdf2fa51565682d2fd91a076231ccaee45e9f0f046b9830a69ca5
+2026-11-01 12:59:50,512 - INFO - Container for sympy__sympy-23413 started: 8c67f18b0dafdf2fa51565682d2fd91a076231ccaee45e9f0f046b9830a69ca5
+2026-11-01 12:59:50,514 - INFO - Intermediate patch for sympy__sympy-23413 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-23413/patch.diff, now applying to container...
+2026-11-01 12:59:50,649 - INFO - >>>>> Applied Patch:
+Checking patch sympy/matrices/tests/test_normalforms.py...
+Checking patch sympy/polys/matrices/normalforms.py...
+Checking patch sympy/polys/matrices/tests/test_normalforms.py...
+Applied patch sympy/matrices/tests/test_normalforms.py cleanly.
+Applied patch sympy/polys/matrices/normalforms.py cleanly.
+Applied patch sympy/polys/matrices/tests/test_normalforms.py cleanly.
+
+2026-11-01 12:59:51,269 - INFO - Git diff before:
+diff --git a/sympy/matrices/tests/test_normalforms.py b/sympy/matrices/tests/test_normalforms.py
+index 8e7dc0469d..31dae9dad8 100644
+--- a/sympy/matrices/tests/test_normalforms.py
++++ b/sympy/matrices/tests/test_normalforms.py
+@@ -77,5 +77,11 @@ def test_hermite_normal():
+     assert hermite_normal_form(m) == hnf
+ 
+     m = Matrix([[2, 7], [0, 0], [0, 0]])
+-    hnf = Matrix(3, 0, [])
++    hnf = Matrix([[1], [0], [0]])
++    assert hermite_normal_form(m) == hnf
++
++    # Regression test for HNF incorrectly dropping columns when m > n
++    # and bottom n rows are rank-deficient
++    m = Matrix([[0, 5], [0, 8], [1, 12]])
++    hnf = Matrix([[5, 0], [8, 0], [0, 1]])
+     assert hermite_normal_form(m) == hnf
+diff --git a/sympy/polys/matrices/normalforms.py b/sympy/polys/matrices/normalforms.py
+index 30f5534b08..853bba5323 100644
+--- a/sympy/polys/matrices/normalforms.py
++++ b/sympy/polys/matrices/normalforms.py
+@@ -208,13 +208,14 @@ def _hermite_normal_form(A):
+     # way up. The total number of rows we will consider is min(m, n), where
+     # A is an m x n matrix.
+     m, n = A.shape
+-    rows = min(m, n)
+     A = A.to_dense().rep.copy()
+     # Our goal is to put pivot entries in the rightmost columns.
+     # Invariant: Before processing each row, k should be the index of the
+     # leftmost column in which we have so far put a pivot.
+     k = n
+-    for i in range(m - 1, m - 1 - rows, -1):
++    for i in range(m - 1, -1, -1):
++        if k == 0:
++            break
+         k -= 1
+         # k now points to the column in which we want to put a pivot.
+         # We want zeros in all entries to the left of the pivot column.
+diff --git a/sympy/polys/matrices/tests/test_normalforms.py b/sympy/polys/matrices/tests/test_normalforms.py
+index 1b6bdd0d6b..3b607689a0 100644
+--- a/sympy/polys/matrices/tests/test_normalforms.py
++++ b/sympy/polys/matrices/tests/test_normalforms.py
+@@ -62,7 +62,13 @@ def test_hermite_normal():
+     assert hermite_normal_form(m) == hnf
+ 
+     m = DM([[2, 7], [0, 0], [0, 0]], ZZ)
+-    hnf = DM([[], [], []], ZZ)
++    hnf = DM([[1], [0], [0]], ZZ)
++    assert hermite_normal_form(m) == hnf
++
++    # Test for m > n where bottom n rows are rank-deficient
++    # (regression test for HNF incorrectly dropping columns)
++    m = DM([[0, 5], [0, 8], [1, 12]], ZZ)
++    hnf = DM([[5, 0], [8, 0], [0, 1]], ZZ)
+     assert hermite_normal_form(m) == hnf
+ 
+     m = DM([[-2, 1], [0, 1]], ZZ)
+2026-11-01 12:59:51,271 - INFO - Eval script for sympy__sympy-23413 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-23413/eval.sh; copying to container...
+2026-11-01 12:59:56,196 - INFO - Test runtime: 4.84 seconds
+2026-11-01 12:59:56,198 - INFO - Test output for sympy__sympy-23413 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-23413/test_output.txt
+2026-11-01 12:59:56,275 - INFO - Git diff after:
+diff --git a/sympy/polys/matrices/normalforms.py b/sympy/polys/matrices/normalforms.py
+index 30f5534b08..853bba5323 100644
+--- a/sympy/polys/matrices/normalforms.py
++++ b/sympy/polys/matrices/normalforms.py
+@@ -208,13 +208,14 @@ def _hermite_normal_form(A):
+     # way up. The total number of rows we will consider is min(m, n), where
+     # A is an m x n matrix.
+     m, n = A.shape
+-    rows = min(m, n)
+     A = A.to_dense().rep.copy()
+     # Our goal is to put pivot entries in the rightmost columns.
+     # Invariant: Before processing each row, k should be the index of the
+     # leftmost column in which we have so far put a pivot.
+     k = n
+-    for i in range(m - 1, m - 1 - rows, -1):
++    for i in range(m - 1, -1, -1):
++        if k == 0:
++            break
+         k -= 1
+         # k now points to the column in which we want to put a pivot.
+         # We want zeros in all entries to the left of the pivot column.
+2026-11-01 12:59:56,275 - INFO - Git diff changed after running eval script
+2026-11-01 12:59:56,275 - INFO - Grading answer for sympy__sympy-23413...
+2026-11-01 12:59:56,277 - INFO - report: {'sympy__sympy-23413': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_hermite_normal'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_smith_normal', 'test_smith_normal_deprecated'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-23413: resolved: True
+2026-11-01 12:59:56,279 - INFO - Attempting to stop container sweb.eval.sympy__sympy-23413.verified_full_pi...
+2026-11-01 13:00:12,426 - INFO - Container sweb.eval.sympy__sympy-23413.verified_full_pi stopped successfully.
+2026-11-01 13:00:12,426 - INFO - Attempting to remove container sweb.eval.sympy__sympy-23413.verified_full_pi...
+2026-11-01 13:00:12,482 - INFO - Container sweb.eval.sympy__sympy-23413.verified_full_pi removed successfully.

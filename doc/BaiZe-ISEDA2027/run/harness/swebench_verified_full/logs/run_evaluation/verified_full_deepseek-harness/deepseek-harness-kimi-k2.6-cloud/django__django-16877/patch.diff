@@ -1,0 +1,118 @@
+diff --git a/django/template/defaultfilters.py b/django/template/defaultfilters.py
+index 5289ef34a..db6a0dbb3 100644
+--- a/django/template/defaultfilters.py
++++ b/django/template/defaultfilters.py
+@@ -498,6 +498,15 @@ def safeseq(value):
+     return [mark_safe(obj) for obj in value]
+ 
+ 
++@register.filter(is_safe=True)
++def escapeseq(value):
++    """
++    An "escape" filter for sequences. Escape each element in the sequence,
++    individually. Return a list with the results.
++    """
++    return [conditional_escape(obj) for obj in value]
++
++
+ @register.filter(is_safe=True)
+ @stringfilter
+ def striptags(value):
+@@ -981,3 +990,4 @@ def pprint(value):
+         return pformat(value)
+     except Exception as e:
+         return "Error in formatting: %s: %s" % (e.__class__.__name__, e)
++
+diff --git a/docs/ref/templates/builtins.txt b/docs/ref/templates/builtins.txt
+index 3aa20dfc7..2a3a8f54b 100644
+--- a/docs/ref/templates/builtins.txt
++++ b/docs/ref/templates/builtins.txt
+@@ -1849,6 +1849,24 @@ For example:
+ If ``value`` is ``"testing\r\njavascript 'string\" <b>escaping</b>"``,
+ the output will be ``"testing\\u000D\\u000Ajavascript \\u0027string\\u0022 \\u003Cb\\u003Eescaping\\u003C/b\\u003E"``.
+ 
++
++.. templatefilter:: escapeseq
++
++``escapeseq``
++-------------
++
++Applies the :tfilter:`escape` filter to each element of a sequence. Useful in
++conjunction with other filters that operate on sequences, such as
++:tfilter:`join`. For example:
++
++.. code-block:: html+django
++
++    {{ some_list|escapeseq|join:", " }}
++
++You couldn't use the :tfilter:`escape` filter directly in this case, as it would
++first convert the variable into a string, rather than working with the
++individual elements of the sequence.
++
+ .. templatefilter:: filesizeformat
+ 
+ ``filesizeformat``
+diff --git a/docs/releases/5.0.txt b/docs/releases/5.0.txt
+index 611a7bd68..73df1edba 100644
+--- a/docs/releases/5.0.txt
++++ b/docs/releases/5.0.txt
+@@ -345,7 +345,8 @@ Signals
+ Templates
+ ~~~~~~~~~
+ 
+-* ...
++* The new :tfilter:`escapeseq` filter applies the :tfilter:`escape` filter
++  to each element of a sequence.
+ 
+ Tests
+ ~~~~~
+diff --git a/tests/template_tests/filter_tests/test_escapeseq.py b/tests/template_tests/filter_tests/test_escapeseq.py
+new file mode 100644
+index 000000000..c4a188d2d
+--- /dev/null
++++ b/tests/template_tests/filter_tests/test_escapeseq.py
+@@ -0,0 +1,44 @@
++from django.test import SimpleTestCase
++
++from ..utils import setup
++
++
++class EscapeseqTests(SimpleTestCase):
++    @setup({"escapeseq01": '{{ a|join:", " }} -- {{ a|escapeseq|join:", " }}'})
++    def test_escapeseq01(self):
++        output = self.engine.render_to_string("escapeseq01", {"a": ["&", "<"]})
++        self.assertEqual(output, "&amp;, &lt; -- &amp;, &lt;")
++
++    @setup(
++        {
++            "escapeseq02": (
++                '{% autoescape off %}{{ a|join:", " }} -- {{ a|escapeseq|join:", " }}'
++                "{% endautoescape %}"
++            )
++        }
++    )
++    def test_escapeseq02(self):
++        output = self.engine.render_to_string("escapeseq02", {"a": ["&", "<"]})
++        self.assertEqual(output, "&, < -- &amp;, &lt;")
++
++    @setup(
++        {
++            "escapeseq03": (
++                '{{ a|escapeseq|escapeseq|join:", " }}'
++            )
++        }
++    )
++    def test_escapeseq03(self):
++        output = self.engine.render_to_string("escapeseq03", {"a": ["&", "<"]})
++        self.assertEqual(output, "&amp;, &lt;")
++
++    @setup(
++        {
++            "escapeseq04": (
++                '{% autoescape off %}{{ a|escapeseq|escapeseq|join:", " }}{% endautoescape %}'
++            )
++        }
++    )
++    def test_escapeseq04(self):
++        output = self.engine.render_to_string("escapeseq04", {"a": ["&", "<"]})
++        self.assertEqual(output, "&amp;, &lt;")

@@ -1,0 +1,12 @@
+{
+  "root_cause": "drc_auto.py carries a hardcoded shebang '#!/apps/local/bin/python3' that launches a system interpreter, while .bashrc runs 'module switch python/3.11.9' and exports PYTHONHOME, PYTHONPATH, LD_LIBRARY_PATH for the module-managed Python. The hardcoded interpreter is thus executed under a mismatched Python environment and cannot find its own standard library, aborting with 'initfsencoding: unable to load the file system codec / ModuleNotFoundError: No module named encodings'.",
+  "shebang_before": "#!/apps/local/bin/python3",
+  "shebang_after": "#!/usr/bin/env python3",
+  "module_python_version": "3.11.9",
+  "env_vars_conflict": [
+    "PYTHONHOME",
+    "PYTHONPATH",
+    "LD_LIBRARY_PATH"
+  ],
+  "fix_summary": "Rewrote the shebang from '#!/apps/local/bin/python3' to '#!/usr/bin/env python3' so the launcher resolves python3 via PATH (the module-selected Python 3.11.9) and inherits a consistent PYTHONHOME/PYTHONPATH/LD_LIBRARY_PATH. All other file content was preserved."
+}

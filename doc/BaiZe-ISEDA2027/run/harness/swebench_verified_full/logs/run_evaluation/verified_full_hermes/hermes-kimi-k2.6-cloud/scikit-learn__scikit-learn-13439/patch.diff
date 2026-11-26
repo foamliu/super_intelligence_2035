@@ -1,0 +1,97 @@
+diff --git a/shim/sitecustomize.py b/shim/sitecustomize.py
+new file mode 100644
+index 00000000..0be49e3b
+--- /dev/null
++++ b/shim/sitecustomize.py
+@@ -0,0 +1,20 @@
++import numpy as np
++import scipy.optimize.linesearch as ls
++import scipy.spatial.distance as dist
++
++for alias in ('int','float','bool','object','complex'):
++    if not hasattr(np, alias):
++        setattr(np, alias, int if alias=='int' else float if alias=='float' else bool if alias=='bool' else object if alias=='object' else complex)
++
++# scipy linesearch fix
++if not hasattr(ls, 'line_search_wolfe2'):
++    try:
++        import scipy.optimize._linesearch as _ls
++        ls.line_search_wolfe2 = _ls.line_search_wolfe2
++        ls.line_search_wolfe1 = _ls.line_search_wolfe1
++    except Exception:
++        pass
++
++# wminkowski fix
++if not hasattr(dist, 'wminkowski'):
++    dist.wminkowski = lambda u, v, p, w: (sum(w*(abs(u-v)**p)))**(1/p)
+diff --git a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+index bf92569c..1f24e2b5 100644
+--- a/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
++++ b/sklearn/externals/joblib/externals/cloudpickle/cloudpickle.py
+@@ -46,6 +46,33 @@ import io
+ import dis
+ import sys
+ import types
++_orig_code_type = types.CodeType
++
++class _CodeTypeMeta(type):
++    def __instancecheck__(cls, instance):
++        return isinstance(instance, _orig_code_type)
++    def __subclasscheck__(cls, subclass):
++        return issubclass(subclass, _orig_code_type)
++    def __call__(cls, *args, **kwargs):
++        if len(args) == 15 and isinstance(args[5], bytes):
++            return _orig_code_type(
++                args[0], 0, args[1], args[2], args[3], args[4],
++                args[5], args[6], args[7], args[8], args[9],
++                args[10], args[11], args[12], args[14], args[13]
++            )
++        if len(args) == 14 and isinstance(args[4], bytes):
++            return _orig_code_type(
++                args[0], 0, 0, args[1], args[2], args[3],
++                args[4], args[5], args[6], args[7], args[8],
++                args[9], args[10], args[11], args[13], args[12]
++            )
++        return _orig_code_type(*args, **kwargs)
++
++class CodeType(metaclass=_CodeTypeMeta):
++    pass
++
++types.CodeType = CodeType
++
+ import opcode
+ import pickle
+ import struct
+diff --git a/sklearn/pipeline.py b/sklearn/pipeline.py
+index 7eaf9a46..3a11a826 100644
+--- a/sklearn/pipeline.py
++++ b/sklearn/pipeline.py
+@@ -219,6 +219,10 @@ class Pipeline(_BaseComposition):
+             return self.named_steps[ind]
+         return est
+ 
++    def __len__(self):
++        """Returns the length of the Pipeline"""
++        return len(self.steps)
++
+     @property
+     def _estimator_type(self):
+         return self.steps[-1][1]._estimator_type
+diff --git a/sklearn/tests/test_pipeline.py b/sklearn/tests/test_pipeline.py
+index 8d6fe8f7..e85e4d01 100644
+--- a/sklearn/tests/test_pipeline.py
++++ b/sklearn/tests/test_pipeline.py
+@@ -552,6 +552,13 @@ def test_pipeline_index():
+     assert_raises(KeyError, lambda: pipe['foobar'])
+ 
+ 
++def test_pipeline_len():
++    pipe = Pipeline([('transf', Transf()), ('clf', FitParamT())])
++    assert len(pipe) == 2
++    pipe2 = Pipeline([('transf', Transf())])
++    assert len(pipe2) == 1
++
++
+ def test_set_pipeline_steps():
+     transf1 = Transf()
+     transf2 = Transf()

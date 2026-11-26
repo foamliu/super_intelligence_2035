@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "scikit-learn__scikit-learn-12585",
+    "model_name_or_path": "claude-code-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/sklearn/base.py b/sklearn/base.py\nindex 56ffb18..3499827 100644\n--- a/sklearn/base.py\n+++ b/sklearn/base.py\n@@ -48,7 +48,7 @@ def clone(estimator, safe=True):\n     # XXX: not handling dictionaries\n     if estimator_type in (list, tuple, set, frozenset):\n         return estimator_type([clone(e, safe=safe) for e in estimator])\n-    elif not hasattr(estimator, 'get_params'):\n+    elif not hasattr(estimator, 'get_params') or isinstance(estimator, type):\n         if not safe:\n             return copy.deepcopy(estimator)\n         else:\ndiff --git a/sklearn/tests/test_base.py b/sklearn/tests/test_base.py\nindex ebcb389..fa43329 100644\n--- a/sklearn/tests/test_base.py\n+++ b/sklearn/tests/test_base.py\n@@ -135,6 +135,14 @@ def test_clone_buggy():\n     assert_raises(RuntimeError, clone, est)\n \n \n+def test_clone_estimator_types():\n+    # Check that clone correctly handles parameters that are estimator classes\n+    # (not instances), see https://github.com/scikit-learn/scikit-learn/issues/xxx\n+    clf = MyEstimator(empty=MyEstimator)\n+    clf2 = clone(clf)\n+    assert clf.empty is clf2.empty\n+\n+\n def test_clone_empty_array():\n     # Regression test for cloning estimators with empty arrays\n     clf = MyEstimator(empty=np.array([]))\n"
+  }
+]

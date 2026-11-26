@@ -1,0 +1,40 @@
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 5dcf923c12..bc7e6959e7 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1171,6 +1171,9 @@ class ModelChoiceIteratorValue:
+             other = other.value
+         return self.value == other
+ 
++    def __hash__(self):
++        return hash(self.value)
++
+ 
+ class ModelChoiceIterator:
+     def __init__(self, field):
+diff --git a/tests/model_forms/test_modelchoicefield.py b/tests/model_forms/test_modelchoicefield.py
+index 2a0c05d803..f1b9b42a5c 100644
+--- a/tests/model_forms/test_modelchoicefield.py
++++ b/tests/model_forms/test_modelchoicefield.py
+@@ -2,7 +2,7 @@ import datetime
+ 
+ from django import forms
+ from django.core.exceptions import ValidationError
+-from django.forms.models import ModelChoiceIterator
++from django.forms.models import ModelChoiceIterator, ModelChoiceIteratorValue
+ from django.forms.widgets import CheckboxSelectMultiple
+ from django.template import Context, Template
+ from django.test import TestCase
+@@ -55,6 +55,12 @@ class ModelChoiceFieldTests(TestCase):
+         with self.assertRaisesMessage(ValidationError, msg):
+             f.clean(c4.id)
+ 
++    def test_modelchoiceiteratorvalue_hashable(self):
++        f = forms.ModelChoiceField(Category.objects.all())
++        value = list(f.choices)[1][0]
++        self.assertIsInstance(value, ModelChoiceIteratorValue)
++        self.assertIn(value, {value})
++
+     def test_clean_model_instance(self):
+         f = forms.ModelChoiceField(Category.objects.all())
+         self.assertEqual(f.clean(self.c1), self.c1)

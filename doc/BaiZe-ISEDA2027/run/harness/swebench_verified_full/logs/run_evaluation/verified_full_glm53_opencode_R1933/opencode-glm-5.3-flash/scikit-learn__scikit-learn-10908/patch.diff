@@ -1,0 +1,42 @@
+diff --git a/sklearn/feature_extraction/tests/test_text.py b/sklearn/feature_extraction/tests/test_text.py
+index 22fbd3f..14eaa16 100644
+--- a/sklearn/feature_extraction/tests/test_text.py
++++ b/sklearn/feature_extraction/tests/test_text.py
+@@ -559,6 +559,13 @@ def test_feature_names():
+         assert_equal(idx, cv.vocabulary_.get(name))
+ 
+ 
++def test_feature_names_unfitted_with_vocabulary():
++    # non regression test: get_feature_names should not raise NotFittedError
++    # when the vocabulary parameter is provided at initialization
++    cv = CountVectorizer(vocabulary=['beer', 'burger', 'celeri'])
++    assert_array_equal(['beer', 'burger', 'celeri'], cv.get_feature_names())
++
++
+ def test_vectorizer_max_features():
+     vec_factories = (
+         CountVectorizer,
+diff --git a/sklearn/feature_extraction/text.py b/sklearn/feature_extraction/text.py
+index 9b1ebd6..6003c05 100644
+--- a/sklearn/feature_extraction/text.py
++++ b/sklearn/feature_extraction/text.py
+@@ -973,6 +973,9 @@ class CountVectorizer(BaseEstimator, VectorizerMixin):
+         X_inv : list of arrays, len = n_samples
+             List of arrays of terms.
+         """
++        if not hasattr(self, 'vocabulary_'):
++            self._validate_vocabulary()
++
+         self._check_vocabulary()
+ 
+         if sp.issparse(X):
+@@ -993,6 +996,9 @@ class CountVectorizer(BaseEstimator, VectorizerMixin):
+ 
+     def get_feature_names(self):
+         """Array mapping from feature integer indices to feature name"""
++        if not hasattr(self, 'vocabulary_'):
++            self._validate_vocabulary()
++
+         self._check_vocabulary()
+ 
+         return [t for t, i in sorted(six.iteritems(self.vocabulary_),

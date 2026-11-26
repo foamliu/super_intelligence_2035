@@ -1,0 +1,140 @@
+--- context_parallel.py.bak_baize_20261026	2026-10-26 10:21:56.946021314 +0800
++++ context_parallel.py	2026-10-26 10:42:27.313125290 +0800
+@@ -926,11 +926,11 @@
+     elif section == "upper-triangle":
+         max_seqlen_q_ = max_seqlen_q // 2
+     if section in ["lower-triangle", "upper-triangle"]:
+-        if use_flash_attn_3 or (fa_utils.v2_3_plus and not fa_utils.v2_7_0_plus):
+-            fa_forward_kwargs["window_size"] = (-1, -1)
+-        elif fa_utils.v2_7_0_plus:
++        if use_flash_attn_3 or fa_utils.v2_7_0_plus:
+             fa_forward_kwargs["window_size_left"] = -1
+             fa_forward_kwargs["window_size_right"] = -1
++        elif fa_utils.v2_3_plus:
++            fa_forward_kwargs["window_size"] = (-1, -1)
+ 
+     fa_forward_args_thd = get_fa_args(
+         True,
+@@ -1178,23 +1178,23 @@
+ ):
+     """Per-tile backward call of CP P2P with FlashAttention backend"""
+     dq, dk, dv = [torch.empty_like(x) for x in [q_part, k_part, v_part]]
+-    if use_flash_attn_3 or (fa_utils.v2_3_plus and not fa_utils.v2_7_0_plus):
+-        fa_backward_kwargs["window_size"] = (-1, -1)
+-    elif fa_utils.v2_7_0_plus:
++    if use_flash_attn_3 or fa_utils.v2_7_0_plus:
+         fa_backward_kwargs["window_size_left"] = -1
+         fa_backward_kwargs["window_size_right"] = -1
+         if not use_flash_attn_3:
+             fa_backward_kwargs["rng_state"] = rng_states[cp_size - step - 1]
++    elif fa_utils.v2_3_plus:
++        fa_backward_kwargs["window_size"] = (-1, -1)
+     max_seqlen_q_ = max_seqlen_q
+     max_seqlen_kv_ = max_seqlen_kv
+     softmax_lse__ = softmax_lse
+     causal_ = False
+     if section == "diagonal":
+-        if use_flash_attn_3 or (fa_utils.v2_3_plus and not fa_utils.v2_7_0_plus):
+-            fa_backward_kwargs["window_size"] = (-1, 0)
+-        elif fa_utils.v2_7_0_plus:
++        if use_flash_attn_3 or fa_utils.v2_7_0_plus:
+             fa_backward_kwargs["window_size_left"] = -1
+             fa_backward_kwargs["window_size_right"] = 0
++        elif fa_utils.v2_3_plus:
++            fa_backward_kwargs["window_size"] = (-1, 0)
+         causal_ = True
+     elif section == "lower-triangle":
+         max_seqlen_kv_ = max_seqlen_kv // 2
+@@ -1222,7 +1222,7 @@
+         out_part,
+         softmax_lse__,
+         *fa_backward_args_thd,
+-        causal=causal_,
++        **({"is_causal": causal_} if use_flash_attn_3 else {"causal": causal_}),
+         **fa_backward_kwargs,
+     )
+ 
+@@ -1484,7 +1484,8 @@
+                 flash_attn_fwd = (
+                     _flash_attn_fwd_v3  # pylint: disable=possibly-used-before-assignment
+                 )
+-                fa_forward_kwargs["window_size"] = (-1, 0) if causal else (-1, -1)
++                fa_forward_kwargs["window_size_left"] = -1
++                fa_forward_kwargs["window_size_right"] = 0 if causal else -1
+             else:
+                 if qkv_format == "thd":
+                     from transformer_engine.pytorch.attention.dot_product_attention.backends import (
+@@ -2958,11 +2959,11 @@
+                             max_seqlen_q=max_seqlen_q,
+                             max_seqlen_kv=max_seqlen_kv_,
+                         )
+-                        if use_flash_attn_3 or (fa_utils.v2_3_plus and not fa_utils.v2_7_0_plus):
+-                            fa_forward_kwargs["window_size"] = window_size_per_step[i]
+-                        elif fa_utils.v2_7_0_plus:
++                        if use_flash_attn_3 or fa_utils.v2_7_0_plus:
+                             fa_forward_kwargs["window_size_left"] = window_size_per_step[i][0]
+                             fa_forward_kwargs["window_size_right"] = window_size_per_step[i][1]
++                        elif fa_utils.v2_3_plus:
++                            fa_forward_kwargs["window_size"] = window_size_per_step[i]
+                         fa_outputs = flash_attn_fwd(
+                             q_,
+                             k_,
+@@ -3179,13 +3180,11 @@
+                         )
+                         if not ctx.use_flash_attn_3:
+                             fa_backward_kwargs["rng_state"] = rng_states[i]
+-                        if ctx.use_flash_attn_3 or (
+-                            fa_utils.v2_3_plus and not fa_utils.v2_7_0_plus
+-                        ):
+-                            fa_backward_kwargs["window_size"] = window_size_per_step[i]
+-                        elif fa_utils.v2_7_0_plus:
++                        if ctx.use_flash_attn_3 or fa_utils.v2_7_0_plus:
+                             fa_backward_kwargs["window_size_left"] = window_size_per_step[i][0]
+                             fa_backward_kwargs["window_size_right"] = window_size_per_step[i][1]
++                        elif fa_utils.v2_3_plus:
++                            fa_backward_kwargs["window_size"] = window_size_per_step[i]
+                         flash_attn_bwd(
+                             dout_,
+                             q_,
+@@ -3194,7 +3193,11 @@
+                             out_,
+                             softmax_lse_per_step[i],
+                             *fa_backward_args_thd,
+-                            causal="causal" in ctx.attn_mask_type,
++                            **(
++                                {"is_causal": "causal" in ctx.attn_mask_type}
++                                if ctx.use_flash_attn_3
++                                else {"causal": "causal" in ctx.attn_mask_type}
++                            ),
+                             **fa_backward_kwargs,
+                         )
+ 
+@@ -3334,7 +3337,8 @@
+                 )
+ 
+                 flash_attn_fwd = _flash_attn_fwd_v3
+-                fa_forward_kwargs["window_size"] = window_size
++                fa_forward_kwargs["window_size_left"] = window_size[0]
++                fa_forward_kwargs["window_size_right"] = window_size[1]
+             else:
+                 if qkv_format == "thd":
+                     from transformer_engine.pytorch.attention.dot_product_attention.backends import (
+@@ -3711,7 +3715,8 @@
+                 flash_attn_bwd = (
+                     _flash_attn_bwd_v3  # pylint: disable=possibly-used-before-assignment
+                 )
+-                fa_backward_kwargs["window_size"] = ctx.window_size
++                fa_backward_kwargs["window_size_left"] = ctx.window_size[0]
++                fa_backward_kwargs["window_size_right"] = ctx.window_size[1]
+                 fa_backward_kwargs["deterministic"] = ctx.deterministic
+             else:
+                 if qkv_format == "thd":
+@@ -3802,7 +3807,7 @@
+                 out,
+                 softmax_lse,
+                 *fa_backward_args_thd,
+-                causal=causal,
++                **({"is_causal": causal} if ctx.use_flash_attn_3 else {"causal": causal}),
+                 **fa_backward_kwargs,
+             )
+ 

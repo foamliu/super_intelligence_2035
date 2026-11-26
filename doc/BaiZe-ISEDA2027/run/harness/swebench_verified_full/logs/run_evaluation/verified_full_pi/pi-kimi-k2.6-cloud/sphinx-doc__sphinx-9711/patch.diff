@@ -1,0 +1,104 @@
+diff --git a/sphinx/extension.py b/sphinx/extension.py
+index 7ec6c851..68115cc0 100644
+--- a/sphinx/extension.py
++++ b/sphinx/extension.py
+@@ -10,6 +10,7 @@
+ 
+ from typing import TYPE_CHECKING, Any, Dict
+ 
++from packaging.version import InvalidVersion, Version
+ from sphinx.config import Config
+ from sphinx.errors import VersionRequirementError
+ from sphinx.locale import __
+@@ -51,7 +52,15 @@ def verify_needs_extensions(app: "Sphinx", config: Config) -> None:
+                               'but it is not loaded.'), extname)
+             continue
+ 
+-        if extension.version == 'unknown version' or reqversion > extension.version:
++        if extension.version == 'unknown version':
++            satisfied = False
++        else:
++            try:
++                satisfied = Version(reqversion) <= Version(extension.version)
++            except InvalidVersion:
++                satisfied = reqversion <= extension.version
++
++        if not satisfied:
+             raise VersionRequirementError(__('This project needs the extension %s at least in '
+                                              'version %s and therefore cannot be built with '
+                                              'the loaded version (%s).') %
+diff --git a/tests/test_extension.py b/tests/test_extension.py
+new file mode 100644
+index 00000000..4b509ad5
+--- /dev/null
++++ b/tests/test_extension.py
+@@ -0,0 +1,69 @@
++"""
++    test_extension
++    ~~~~~~~~~~~~~~
++
++    Test sphinx.extension.
++
++    :copyright: Copyright 2007-2021 by the Sphinx team, see AUTHORS.
++    :license: BSD, see LICENSE for details.
++"""
++
++from unittest.mock import Mock
++
++import pytest
++
++from sphinx.errors import VersionRequirementError
++from sphinx.extension import Extension, verify_needs_extensions
++
++
++def test_verify_needs_extensions():
++    app = Mock()
++    config = Mock()
++    config.needs_extensions = {
++        'ext1': '1.0',
++        'ext2': '1.0',
++        'ext3': '0.6.0',
++        'ext4': '1.0',
++        'ext5': '1.0',
++    }
++    app.extensions = {
++        'ext1': Extension('ext1', None, version='unknown version'),
++        'ext2': Extension('ext2', None, version='0.9'),
++        'ext3': Extension('ext3', None, version='0.10.0'),
++        'ext4': Extension('ext4', None, version='1.0'),
++        'ext5': Extension('ext5', None, version='1.1'),
++    }
++
++    # unknown version should raise
++    with pytest.raises(VersionRequirementError):
++        verify_needs_extensions(app, config)
++
++    # OK: required < loaded
++    config.needs_extensions = {'ext2': '0.8'}
++    verify_needs_extensions(app, config)
++
++    # OK: required == loaded
++    config.needs_extensions = {'ext2': '0.9'}
++    verify_needs_extensions(app, config)
++
++    # NG: required > loaded
++    config.needs_extensions = {'ext2': '1.0'}
++    with pytest.raises(VersionRequirementError):
++        verify_needs_extensions(app, config)
++
++    # OK: 0.6.0 < 0.10.0 (proper version comparison, not string comparison)
++    config.needs_extensions = {'ext3': '0.6.0'}
++    verify_needs_extensions(app, config)
++
++    # OK: 1.0 == 1.0
++    config.needs_extensions = {'ext4': '1.0'}
++    verify_needs_extensions(app, config)
++
++    # OK: 1.0 < 1.1
++    config.needs_extensions = {'ext5': '1.0'}
++    verify_needs_extensions(app, config)
++
++    # NG: 1.2 > 1.1
++    config.needs_extensions = {'ext5': '1.2'}
++    with pytest.raises(VersionRequirementError):
++        verify_needs_extensions(app, config)

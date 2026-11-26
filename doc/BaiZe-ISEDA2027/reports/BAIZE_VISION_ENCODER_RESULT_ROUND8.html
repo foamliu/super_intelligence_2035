@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaiZe Stage(iii) 视觉编码器 · 最终报告（R4–R8 修复 recipe + 6 架构 + ImageNet-1k）</title>
+<style>
+  :root { --primary:#0b3d6e; --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --bad:#cf222e; --bg:#f6f8fa; --card:#fff; --border:#d0d7de; --text:#1f2328; --muted:#59636e; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; color:var(--text); background:var(--bg); line-height:1.65; font-size:15px; }
+  .wrap { max-width:1140px; margin:0 auto; padding:32px 24px 80px; }
+  header.hero { background:linear-gradient(135deg,#0b3d6e 0%,#1a7f37 100%); color:#fff; border-radius:14px; padding:34px 36px; margin-bottom:26px; box-shadow:0 8px 24px rgba(11,61,110,.18); }
+  header.hero h1 { margin:0 0 8px; font-size:24px; letter-spacing:.3px; }
+  header.hero .sub { font-size:15px; opacity:.94; }
+  header.hero .meta { margin-top:14px; font-size:13px; opacity:.85; display:flex; flex-wrap:wrap; gap:18px; }
+  .verdict { background:#fff; border:1px solid var(--border); border-left:5px solid var(--ok); border-radius:10px; padding:18px 22px; margin-bottom:24px; }
+  h2.sec { font-size:20px; margin:34px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border); }
+  h2.sec .no { color:var(--ok); margin-right:8px; }
+  h3 { font-size:16px; margin:20px 0 8px; }
+  p { margin:8px 0; }
+  code { background:#eef1f4; border:1px solid #e1e4e8; border-radius:5px; padding:1px 6px; font-family:Consolas,Menlo,monospace; font-size:13px; color:#0b3d6e; }
+  pre { background:#0d1117; color:#e6edf3; border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.5; }
+  pre code { background:none; border:none; color:inherit; padding:0; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:13.5px; background:var(--card); }
+  th,td { border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top; }
+  th { background:#e9f5ec; color:#0b3d6e; font-weight:600; white-space:nowrap; }
+  tr:nth-child(even) td { background:#fafbfc; }
+  td.ok { background:#dafbe1; font-weight:700; }
+  td.bad { background:#ffebe9; font-weight:700; }
+  td.win { background:#dafbe1; font-weight:700; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .warncard { background:#fff; border:1px solid var(--border); border-left:5px solid var(--warn); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  ul,ol { margin:6px 0; padding-left:22px; } li { margin:3px 0; }
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>BaiZe Stage(iii) 视觉编码器 · 最终报告（R4–R8 修复 recipe + 6 架构 + ImageNet-1k）</h1>
+  <div class="sub">自 R4 起用「冻结 CLIP-768 文本塔 + InfoNCE」修复表征坍缩后，R5 重跑架构/分辨率对比 → R6 裁定 77 根因 → R7 裁定数据 = GPIC short → R8 扩到 6 架构并引入 ImageNet-1k 指标。<b>本页为最终权威结论</b>，R1/R2 的 loss 类读数已因坍缩 + lr=1e-3 cosine 伪影作废。</div>
+  <div class="meta">
+    <span>📅 完成：2026-10-02</span>
+    <span>🖥️ GPU 10.239.2.12（8×H100, TP1/DP8）</span>
+    <span>📦 数据：Stanford GPIC <code>short</code>（20 tok / 0% 截断）</span>
+    <span>🎯 目标：InfoNCE + 冻结 <code>clip-vit-large-patch14-336</code> text</span>
+    <span>🧪 判据：C1–C4 + IN-1k（frozen trunk）</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <h3 style="margin-top:0;">🎯 最终一句话结论</h3>
+  <p><b>胜出架构 = <code>OpenVision2</code>（纯 Attention ViT，505.2M），在 R8 六架构重比中四指标全第一</b>：<br>
+  loss@3k <b>4.8646</b>（最低）· 同塔 off-diag 余弦 C1 <b>0.2875</b>（最分散）· 训练吞吐 <b>3051.8 img/s</b> ·
+  ImageNet-1k zero-shot <b>0.95%</b> / linear-probe <b>1.14%</b>（均最高）。<br>
+  <b>坍缩是「SSM 特异」的</b>：含 SSM 子结构的两架构（<code>mambaeye</code> 纯 SSM / <code>deepencoder_v2</code> Attn+SSM）在 @step300 精确坍缩
+  （C1=1.0000、loss 卡 6.25≈ln512、IN-1k=精确 chance 0.10%），纯 Attention 系 4 架构（含 MoE-FFN / GELU / conv-hybrid）全健康。<br>
+  <b>新指标 <code>ImageNet-1k</code>（frozen trunk zs/lp）成功替换了退化的 R@1</b>（旧 R@1=1/5000 精确 chance、零区分度）。</p>
+  <ul>
+    <li>🔑 <b>架构结论</b>：修复 recipe 下「架构有真实差异」，OpenVision2 稳定胜出 → 替换 R1/R2 失效的「loss 与架构无关」结论。</li>
+    <li>🔑 <b>坍缩结论</b>：对 R4「随机文本塔是主因」的纠偏 —— 修好文本塔后 SSM 塔仍坍缩、Attention 塔不坍缩，坍缩倾向由 SSM 子结构决定。</li>
+    <li>🔑 <b>数据结论（R7）</b>：正式训练数据 = Stanford GPIC <code>short</code>（0% 截断、off-diag 0.245 最分散、out-of-domain 干净）。</li>
+    <li>🔑 <b>77 结论（R6）</b>：冻结 <code>clip-vit-large-patch14-336</code> text tower 的 77 是硬约束（<code>max_position_embeddings=77</code>），保持 77 + 短 caption 最省。</li>
+  </ul>
+</div>
+<h2 class="sec"><span class="no">1</span>胜出架构 · 完整可复现训练命令</h2>
+<p>正式训练 recipe（R4 验证 → R7 定数据 → R8 定架构）：<b>OpenVision2 · GPIC short · InfoNCE · 冻结 CLIP-768 text · @224/16 · 3000 步 · bs64×8=512 负样本</b>。</p>
+<pre><code>conda activate py310
+cd /nas_train/app.e0031982/code/super_intelligence_2035/doc/BaiZe-ISEDA2027/run/vision
+
+# 单架构（胜出 OpenVision2）完整训练
+python -m torch.distributed.run --nproc_per_node=8 --nnodes=1 \\
+     --master_addr=127.0.0.1 --master_port=$((29400 + RANDOM % 1000)) \\
+     r7_train.py --tower openvision2 --steps 3000 --resolution 224 --patch 16 \\
+     --batch-size 64 --lr 3e-3 --warmup 20 --seed 1234 \\
+     --data '/nas_inference/app.e0031982/datasets/stanford-vision-lab/gpic/train/*.tar' \\
+     --data-source gpic --output-dir /nas_train/app.e0031982/datasets/baize-vision/out/R8_openvision2 \\
+     --log-every 50 --probe-every 300 --probe-n 128 --num-workers 2 \\
+     --eval-data '/nas_train/app.e0031982/datasets/baize-vision/eval5k/*.tar'
+
+# 六架构串行 + 末了 ImageNet-1k zero-shot / linear-probe 评测
+bash r8_run.sh 3000
+</code></pre>
+
+<h2 class="sec"><span class="no">2</span>R8 · 6 架构对比表（@224/16 · GPIC short · 3000 步 · bs64=512，batch 匹配）</h2>
+<table>
+  <thead><tr><th>架构</th><th>参数量(总/激活)</th><th>loss@3k</th><th>训练img/s</th><th>C1@终</th><th>C2_gap@终</th><th>IN-1k zs top1</th><th>IN-1k zs top5</th><th>IN-1k lp top1</th><th>判定</th></tr></thead>
+  <tbody>
+    <tr><td class="win"><b>OpenVision2</b>（纯 Attention ViT）</td><td>505.22M / 505.22M</td><td class="win">4.8646</td><td>3051.8</td><td class="win">0.2875</td><td class="win">+0.0867</td><td class="win">0.95%</td><td class="win">3.64%</td><td class="win">1.14%</td><td class="ok">🏆 四指标全第一 · 胜出</td></tr>
+    <tr><td>MoE-ViE（Attention + MoE-FFN）</td><td>505.46M / 222.22M</td><td>5.5580</td><td>1225.7</td><td>0.4109</td><td>+0.0518</td><td>0.35%</td><td>1.53%</td><td>0.28%</td><td class="ok">✅ 健康</td></tr>
+    <tr><td>AIMv2（ViT-GELU，等参改编 depth 40）</td><td>505.46M / 505.46M</td><td>5.6370</td><td class="ok">3392.5</td><td>0.3931</td><td>+0.0500</td><td>0.38%</td><td>1.61%</td><td>0.25%</td><td class="ok">✅ 健康（吞吐最快）</td></tr>
+    <tr><td>FastViTHD（conv-stem 分层 hybrid）</td><td>507.77M / 507.77M</td><td>5.6683</td><td>2097.4</td><td>0.4494</td><td>+0.0369</td><td>0.39%</td><td>1.57%</td><td>0.27%</td><td class="ok">✅ 健康（conv-hybrid 无优势）</td></tr>
+    <tr><td>MambaEye（纯视觉 SSM，Vim 双向）</td><td>535.16M / 535.16M</td><td class="bad">6.2507*</td><td>949.5</td><td class="bad">1.0000</td><td class="bad">0.0000</td><td class="bad">0.10%</td><td class="bad">0.50%</td><td class="bad">0.10%</td><td class="bad">❌ @300 坍缩</td></tr>
+    <tr><td>DeepEncoderV2（Attn+SSM 混合）</td><td>517.19M / 517.19M</td><td class="bad">6.2513*</td><td>1864.5</td><td class="bad">1.0000</td><td class="bad">0.0000</td><td class="bad">0.10%</td><td class="bad">0.50%</td><td class="bad">0.10%</td><td class="bad">❌ @300 坍缩</td></tr>
+  </tbody>
+</table>
+<div class="card">
+  <p style="margin-top:0;">*6.25 ≈ ln(512)=6.238 = InfoNCE「无学习」熵平台（非正常收敛）。IN-1k 精确 chance = 1/1000 = 0.10%，坍缩架构精确等于 chance，健康架构为其 2.5–9.5×。<b>四指标（loss/C1/IN-1k zs/lp）排序一致指向 OpenVision2 第一</b>。</p>
+</div>
+
+<h2 class="sec"><span class="no">3</span>🔴 核心发现：坍缩是「SSM 特异」的（同一 recipe，唯一变量 = vision 架构）</h2>
+<div class="warncard">
+  <p style="margin-top:0;"><b>同一修复 recipe</b>（冻结 CLIP-768 文本塔 + InfoNCE + GPIC short + bs64=512 + lr 3e-3 + seed 1234）下：</p>
+  <ul>
+    <li><b>含 SSM 的两个架构</b>（<code>mambaeye</code> 纯 SSM、<code>deepencoder_v2</code> Attn+SSM 混合）都在 <b>@step300 精确坍缩</b>：C1=1.0000、loss 卡 6.25 平台、C2_gap=0、IN-1k=精确 chance。</li>
+    <li><b>纯 Attention 系的 4 个架构</b>（<code>openvision2</code> / <code>moevie</code> / <code>aimv2</code> / <code>fastvithd</code>）全健康、都不坍缩。</li>
+    <li>→ 文本塔 / 数据 / 目标函数 / 随机种子完全相同，唯一变量是 vision 架构 → <b>坍缩倾向由 SSM 子结构决定</b>。</li>
+  </ul>
+</div>
+<pre><code># mambaeye 熔断原文（/tmp/r8.log）
+[PROBE step 300] C1=1.0000 C2_diag=0.3115 C2_off=0.3115 C2_gap=+0.0000 loss_ema=6.2507 ... C4=FAIL
+[done] total=172.5s steps=300 steady_image_s=949.5 final_loss=6.2507 fused=True
+# deepencoder_v2 同样坍缩
+[PROBE step 300] C1=1.0000 C2_diag=0.3138 C2_off=0.3138 C2_gap=-0.0000 loss_ema=6.2513 ... C4=OK→熔断
+[done] total=105.0s steps=300 steady_image_s=1864.5 final_loss=6.2513 fused=True
+</code></pre>
+<div class="card">
+  <h3 style="margin-top:0;">对 R4 结论的修正（如实书写，不掩盖）</h3>
+  <ul>
+    <li>R4 把坍缩主因归到「随机文本塔」（S5：随机塔 off-diag 0.7258）并判定「修好文本塔即解决」。</li>
+    <li>R8 显示该判定<b>不完整</b>：配了冻结预训练文本塔后，SSM 塔仍坍缩、Attention 塔不坍缩。</li>
+    <li>⚠️ 边界：<code>mambaeye</code> 在 R1（SigLIP + 随机文本塔 + en500k）曾能训练（loss 6.73→4.64）→ 坍缩<b>依赖 recipe/目标/数据组合</b>，未必是 SSM 结构的绝对缺陷；但「当前修复 recipe 下含 SSM 架构坍缩」是确定的实测事实。</li>
+  </ul>
+</div>
+<h2 class="sec"><span class="no">4</span>ImageNet-1k 指标（frozen trunk 协议 + 污染核查）</h2>
+<p><b>为什么引入</b>：R2/R3 已证实旧检索代理 <code>R@1</code> 退化为精确 1/5000 chance、零区分度；<code>loss</code> 又不足以说明「模型好不好」。<code>IN-1k top-1/top-5</code> 是公认、可跨论文比较的指标。</p>
+<table>
+  <thead><tr><th>指标</th><th>怎么做</th><th>是否依赖文本塔/77</th></tr></thead>
+  <tbody>
+    <tr><td><b>zero-shot top-1/5</b></td><td>冻结 CLIP-768 text 对 1000 类 × 80 open_clip 模板取均值 → 图像特征 L2 归一化 argmax</td><td>依赖（受 77 限制）</td></tr>
+    <tr><td><b>linear-probe top-1</b></td><td>冻结 trunk 特征上训单个线性层（768→1000，AdamW 3e-3 × 100 epoch，full-batch）</td><td>不依赖</td></tr>
+  </tbody>
+</table>
+<div class="warncard">
+  <p style="margin-top:0;"><b>⚠️ 污染核查结论（做之前先查 —— 已查）</b>：</p>
+  <ul>
+    <li>盘上 IN-1k <b>无官方 50k val</b>（只有 train 1.28M 有标签 + test 100k label=-1 无标签）→ 自切 <b>val=每类前 50、probe-train=接下去 50</b>（deterministic）。</li>
+    <li><code>en500k</code>（R5 臂 A = LLaVA <code>imagenet/EN</code>）<b>与 IN-1k 同域、大概率同图</b>（LLaVA 重缩放 min-dim=256 + 文件名丢失 → 字节/文件名均不可比对）→ 其 IN-1k 数字标 <b>in-domain 污染、不可比</b>。</li>
+    <li>✅ <b>GPIC（Flickr 系）与 ImageNet 不同域</b> → R8 的 6 架构（GPIC short 训练）测 IN-1k 是<b>干净 out-of-domain</b>，可并排比较。</li>
+  </ul>
+</div>
+
+<h2 class="sec"><span class="no">5</span>R4–R8 决策谱系（修复 recipe 演进 · 证据出处见各 round 报告）</h2>
+<table>
+  <thead><tr><th>轮次</th><th>做了什么</th><th>关键结论（证据）</th></tr></thead>
+  <tbody>
+    <tr><td><b>R4</b></td><td>6 条怀疑逐条裁定 + 最小修复实验</td><td>坍缩主因 = <b>随机初始化文本塔</b>（S5 off-diag 0.7258）+ SigLIP logit_bias「梯度饥饿」；修复 recipe = 冻结 CLIP-768 text + InfoNCE + head→768，C1–C4 全过。<b>（R8 对此作局部纠偏，见 §3）</b></td></tr>
+    <tr><td><b>R5</b></td><td>修复 recipe 下重跑架构（P0）+ 分辨率（P1）</td><td>OpenVision2 P0 胜出（loss 4.5490 / C1 0.3008）；分辨率 224/16 最优（loss 3.0977），448/14 最差（吞吐仅 56%）。首次揭示「SSM 架构即便固定 recipe 仍坍缩」。</td></tr>
+    <tr><td><b>R6</b></td><td>77 根因 + 数据切换裁定</td><td>① 77 = 官方 OpenVision2 <code>open_clip_config.json → text_cfg.context_length=77</code>（vocab 49408/width 512/heads 8/layers 12），且官方另有<b>不受 77</b> 的 caption decoder。② 官方 <code>open_clip_pytorch_model.bin</code> <b>无训练过的 text tower</b>（294 keys 纯 vision 304.55M）→ 无法替代 CLIP text。③ 数据<b>分阶段切</b>：正式训练切 GPIC short、R5 保持 en500k 作对照。</td></tr>
+    <tr><td><b>R7</b></td><td>三数据臂交叉评测</td><td>正式训练数据 = <b>GPIC short</b>（臂 B，0% 截断 / off-diag 0.245 最分散）；en500k（臂 A）留作对照、标 in-domain；CC12M（臂 C′）交叉评测处处最弱被淘汰。</td></tr>
+    <tr><td><b>R8</b></td><td>扩 6 架构 + IN-1k 指标</td><td>OpenVision2 四指标全第一；坍缩 SSM 特异；IN-1k 成功替换退化 R@1；AIMv2/FastViTHD 等参改编未翻盘。</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec"><span class="no">6</span>论文回填建议（<code>tab:visarch</code> / <code>tab:visres</code> / <code>tab:visobj</code>）</h2>
+<div class="card">
+  <ul style="margin-top:0;">
+    <li><b><code>tab:visarch</code>（架构对比）→ 整表重写</b>（R1/R2 旧值全系坍缩读数已作废）：6 架构 × (numel、loss@3k、训练 img/s、C1、IN-1k zs/lp top-1、判定)，用 §2 数值，OpenVision2 胜出。AIMv2/FastViTHD 标「等参 500–600M from-scratch 改编（非官方模型）」。</li>
+    <li><b><code>tab:visres</code>（分辨率/patch）→ 沿用 R5 P1</b>：OpenVision2 × {224/16: loss 3.0977、336/14: 3.1909、448/14: 3.2711}。R2 坍缩读数作废。</li>
+    <li><b><code>tab:visobj</code>（目标函数/数据）→ 沿用 R4 + R7</b>：SigLIP vs InfoNCE（R4）+ 数据臂 en500k vs GPIC-short vs CC12M（R7，裁定 GPIC short），主指标用 IN-1k（跨臂可通约）。</li>
+    <li><b>数据来源段</b>：正式训练数据 = <b>Stanford GPIC <code>short</code></b>（20 tok / 0% 截断 / permissive 许可 / out-of-domain 干净）；en500k（LLaVA imagenet/EN）作对照臂并标「与 IN-1k 同域、in-domain 污染不可比」。</li>
+    <li><b>context length 说明</b>：冻结 <code>clip-vit-large-patch14-336</code> text tower（768 维，context 77，<code>max_position_embeddings=77</code>，&gt;77 抛 ValueError）；R6.3 裁定保持 77（GPIC short 0% 截断，77 非瓶颈）。</li>
+    <li><b>坍缩写法</b>：把「SSM 特异坍缩」写成 finding（含 SSM 架构在当前对比 recipe 下 @300 坍缩、纯 Attention 系健康），不用「loss 与架构无关」旧表述。</li>
+  </ul>
+</div>
+
+<footer>
+  <p><b>局限（如实标注）</b>：① R8.4「官方预训练参考表」（<code>apple/aimv2-*</code>/<code>timm/fastvit_*</code> 官方权重只测 IN-1k）<b>未跑</b>——官方权重未缓存、需下载 ~1.2GB 并扩展 <code>r8_eval_in1k.py</code>，估 30–45min，已给方法作后续可选回填；协议不同（官方预训练 vs 我们从零），务必单独一张表不并入排名。② SSM 坍缩依赖 recipe/目标/数据组合（R1 旧 recipe 下 mambaeye 曾能训练），未进一步溯源 SSM kernel/初始化。③ 本报告不改 <code>*.tex</code>，论文由外部统一回填。</p>
+  <p><b>产物链</b>：<code>run/EXPERIMENTS_VISION_ROUND{4,5,6,7,8}.md</code> · <code>run/MEMORY_VISION.md</code> · 各轮 <code>BAIZE_VISION_ENCODER_RESULT_ROUND*.html</code>。本页 = R8 最终版（自包含，离线可开）。</p>
+</footer>
+
+</div>
+</body>
+</html>

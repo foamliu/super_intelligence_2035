@@ -1,0 +1,103 @@
+2026-11-10 11:33:34,174 - INFO - Creating container for django__django-12273...
+2026-11-10 11:33:34,198 - INFO - Container for django__django-12273 created: 983ecb4f916143149950a0f150e518524aa1d38ea889cb6a058524d1ba31cbb9
+2026-11-10 11:33:34,978 - INFO - Container for django__django-12273 started: 983ecb4f916143149950a0f150e518524aa1d38ea889cb6a058524d1ba31cbb9
+2026-11-10 11:33:34,980 - INFO - Intermediate patch for django__django-12273 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-12273/patch.diff, now applying to container...
+2026-11-10 11:33:35,145 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/base.py...
+Checking patch tests/model_inheritance_regress/tests.py...
+Applied patch django/db/models/base.py cleanly.
+Applied patch tests/model_inheritance_regress/tests.py cleanly.
+
+2026-11-10 11:33:36,506 - INFO - Git diff before:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 844c01e95e..8ea6c05ef9 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -569,6 +569,9 @@ class Model(metaclass=ModelBase):
+         return getattr(self, meta.pk.attname)
+ 
+     def _set_pk_val(self, value):
++        for parent_link in self._meta.parents.values():
++            if parent_link and parent_link != self._meta.pk:
++                setattr(self, parent_link.target_field.attname, value)
+         return setattr(self, self._meta.pk.attname, value)
+ 
+     pk = property(_get_pk_val, _set_pk_val)
+diff --git a/tests/model_inheritance_regress/tests.py b/tests/model_inheritance_regress/tests.py
+index b0156ff9ac..2c15925da5 100644
+--- a/tests/model_inheritance_regress/tests.py
++++ b/tests/model_inheritance_regress/tests.py
+@@ -10,10 +10,11 @@ from django.test import TestCase
+ 
+ from .models import (
+     ArticleWithAuthor, BachelorParty, BirthdayParty, BusStation, Child,
+-    DerivedM, InternalCertificationAudit, ItalianRestaurant, M2MChild,
+-    MessyBachelorParty, ParkingLot, ParkingLot3, ParkingLot4A, ParkingLot4B,
+-    Person, Place, Profile, QualityControl, Restaurant, SelfRefChild,
+-    SelfRefParent, Senator, Supplier, TrainStation, User, Wholesaler,
++    Congressman, DerivedM, InternalCertificationAudit, ItalianRestaurant,
++    M2MChild, MessyBachelorParty, ParkingLot, ParkingLot3, ParkingLot4A,
++    ParkingLot4B, Person, Place, Politician, Profile, QualityControl,
++    Restaurant, SelfRefChild, SelfRefParent, Senator, Supplier, TrainStation,
++    User, Wholesaler,
+ )
+ 
+ 
+@@ -558,3 +559,31 @@ class ModelInheritanceTest(TestCase):
+         italian_restaurant.restaurant_ptr = None
+         self.assertIsNone(italian_restaurant.pk)
+         self.assertIsNone(italian_restaurant.id)
++
++    def test_create_new_instance_with_pk_equals_none(self):
++        p1 = Profile.objects.create(username='john')
++        p2 = User.objects.get(pk=p1.user_ptr_id).profile
++        # Create a new profile by setting pk = None.
++        p2.pk = None
++        p2.user_ptr_id = None
++        p2.username = 'bill'
++        p2.save()
++        self.assertEqual(Profile.objects.count(), 2)
++        self.assertEqual(User.objects.get(pk=p1.user_ptr_id).username, 'john')
++
++    def test_create_new_instance_with_pk_equals_none_multi_inheritance(self):
++        c1 = Congressman.objects.create(state='PA', name='John', title='senator 1')
++        c2 = Person.objects.get(pk=c1.pk).congressman
++        # Create a new congressman by setting pk = None.
++        c2.pk = None
++        c2.id = None
++        c2.politician_ptr_id = None
++        c2.name = 'Bill'
++        c2.title = 'senator 2'
++        c2.save()
++        self.assertEqual(Congressman.objects.count(), 2)
++        self.assertEqual(Person.objects.get(pk=c1.pk).name, 'John')
++        self.assertEqual(
++            Politician.objects.get(pk=c1.politician_ptr_id).title,
++            'senator 1',
++        )
+2026-11-10 11:33:36,509 - INFO - Eval script for django__django-12273 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-12273/eval.sh; copying to container...
+2026-11-10 11:33:42,596 - INFO - Test runtime: 6.02 seconds
+2026-11-10 11:33:42,598 - INFO - Test output for django__django-12273 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2028/opencode-glm-5.3-flash/django__django-12273/test_output.txt
+2026-11-10 11:33:42,712 - INFO - Git diff after:
+diff --git a/django/db/models/base.py b/django/db/models/base.py
+index 844c01e95e..8ea6c05ef9 100644
+--- a/django/db/models/base.py
++++ b/django/db/models/base.py
+@@ -569,6 +569,9 @@ class Model(metaclass=ModelBase):
+         return getattr(self, meta.pk.attname)
+ 
+     def _set_pk_val(self, value):
++        for parent_link in self._meta.parents.values():
++            if parent_link and parent_link != self._meta.pk:
++                setattr(self, parent_link.target_field.attname, value)
+         return setattr(self, self._meta.pk.attname, value)
+ 
+     pk = property(_get_pk_val, _set_pk_val)
+2026-11-10 11:33:42,713 - INFO - Git diff changed after running eval script
+2026-11-10 11:33:42,713 - INFO - Grading answer for django__django-12273...
+2026-11-10 11:33:42,714 - INFO - report: {'django__django-12273': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_create_new_instance_with_pk_equals_none (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_create_new_instance_with_pk_equals_none_multi_inheritance (model_inheritance_regress.tests.ModelInheritanceTest)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_abstract_base_class_m2m_relation_inheritance (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_abstract_verbose_name_plural_inheritance (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_all_fields_from_abstract_base_class (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_concrete_abstract_concrete_pk (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_filter_with_parent_fk (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_get_next_previous_by_date (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_id_field_update_on_ancestor_change (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_inheritance_joins (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_inheritance_resolve_columns (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_inheritance_select_related (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_inherited_fields (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_inherited_nullable_exclude (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_inherited_unique_field_with_form (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_issue_11764 (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_issue_21554 (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_issue_6755 (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_issue_7105 (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_issue_7276 (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_issue_7488 (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_issue_7853 (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_model_inheritance (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_ptr_accessor_assigns_state (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_queries_on_parent_access (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_queryset_update_on_parent_model (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_related_filtering_query_efficiency_ticket_15844 (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_use_explicit_o2o_to_parent_as_pk (model_inheritance_regress.tests.ModelInheritanceTest)', 'test_use_explicit_o2o_to_parent_from_abstract_model (model_inheritance_regress.tests.ModelInheritanceTest)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-12273: resolved: True
+2026-11-10 11:33:42,716 - INFO - Attempting to stop container sweb.eval.django__django-12273.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 11:33:59,246 - INFO - Container sweb.eval.django__django-12273.verified_full_glm53_opencode_incr_R2028 stopped successfully.
+2026-11-10 11:33:59,247 - INFO - Attempting to remove container sweb.eval.django__django-12273.verified_full_glm53_opencode_incr_R2028...
+2026-11-10 11:33:59,291 - INFO - Container sweb.eval.django__django-12273.verified_full_glm53_opencode_incr_R2028 removed successfully.

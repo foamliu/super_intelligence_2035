@@ -1,0 +1,79 @@
+diff --git a/lib/matplotlib/tests/test_scale.py b/lib/matplotlib/tests/test_scale.py
+index e406b1b..a2d500f 100644
+--- a/lib/matplotlib/tests/test_scale.py
++++ b/lib/matplotlib/tests/test_scale.py
+@@ -123,6 +123,30 @@ def test_logscale_invert_transform():
+     assert isinstance(Log10Transform().inverted(), InvertedLog10Transform)
+ 
+ 
++def test_logscale_invert_axis():
++    fig, ax = plt.subplots()
++    ax.plot([1, 2, 3], [1, 10, 100])
++    ax.set_yscale('log')
++    ax.set_ylim(100, 1)
++    assert ax.get_ylim() == (100, 1)
++
++
++def test_logscale_invert_xaxis():
++    fig, ax = plt.subplots()
++    ax.plot([1, 10, 100], [1, 2, 3])
++    ax.set_xscale('log')
++    ax.set_xlim(100, 1)
++    assert ax.get_xlim() == (100, 1)
++
++
++def test_logitscale_invert_axis():
++    fig, ax = plt.subplots()
++    ax.plot([0.1, 0.5, 0.9], [0.1, 0.5, 0.9])
++    ax.set_yscale('logit')
++    ax.set_ylim(0.9, 0.1)
++    assert ax.get_ylim() == (0.9, 0.1)
++
++
+ def test_logscale_transform_repr():
+     # check that repr of log transform succeeds
+     fig, ax = plt.subplots()
+diff --git a/lib/matplotlib/ticker.py b/lib/matplotlib/ticker.py
+index 209a3f9..a2d7ffd 100644
+--- a/lib/matplotlib/ticker.py
++++ b/lib/matplotlib/ticker.py
+@@ -2379,8 +2379,10 @@ class LogLocator(Locator):
+         if not np.isfinite(vmin) or not np.isfinite(vmax):
+             return 1, 10  # initial range, no data plotted yet
+ 
++        swapped = False
+         if vmin > vmax:
+             vmin, vmax = vmax, vmin
++            swapped = True
+         if vmax <= 0:
+             cbook._warn_external(
+                 "Data has no positive values, and therefore cannot be "
+@@ -2395,6 +2397,8 @@ class LogLocator(Locator):
+         if vmin == vmax:
+             vmin = _decade_less(vmin, self._base)
+             vmax = _decade_greater(vmax, self._base)
++        if swapped:
++            vmin, vmax = vmax, vmin
+         return vmin, vmax
+ 
+ 
+@@ -2624,8 +2628,10 @@ class LogitLocator(Locator):
+         if not np.isfinite(vmin) or not np.isfinite(vmax):
+             return initial_range  # no data plotted yet
+ 
++        swapped = False
+         if vmin > vmax:
+             vmin, vmax = vmax, vmin
++            swapped = True
+ 
+         # what to do if a window beyond ]0, 1[ is chosen
+         if self.axis is not None:
+@@ -2647,6 +2653,8 @@ class LogitLocator(Locator):
+         if vmin == vmax:
+             return 0.1 * vmin, 1 - 0.1 * vmin
+ 
++        if swapped:
++            vmin, vmax = vmax, vmin
+         return vmin, vmax
+ 
+ 

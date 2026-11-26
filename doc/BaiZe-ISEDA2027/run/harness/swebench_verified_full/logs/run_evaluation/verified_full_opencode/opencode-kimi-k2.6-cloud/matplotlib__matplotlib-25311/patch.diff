@@ -1,0 +1,104 @@
+diff --git a/lib/matplotlib/legend.py b/lib/matplotlib/legend.py
+index ff6abdb95..3154e10b8 100644
+--- a/lib/matplotlib/legend.py
++++ b/lib/matplotlib/legend.py
+@@ -1198,6 +1198,8 @@ class Legend(Artist):
+                 self._draggable = DraggableLegend(self,
+                                                   use_blit,
+                                                   update=update)
++            elif not getattr(self._draggable, 'cids', None):
++                self._draggable._post_pickle_reconnect()
+         else:
+             if self._draggable is not None:
+                 self._draggable.disconnect()
+diff --git a/lib/matplotlib/offsetbox.py b/lib/matplotlib/offsetbox.py
+index 1dee8a23d..e86d82ce3 100644
+--- a/lib/matplotlib/offsetbox.py
++++ b/lib/matplotlib/offsetbox.py
+@@ -1505,7 +1505,6 @@ class DraggableBase:
+         if not ref_artist.pickable():
+             ref_artist.set_picker(True)
+         self.got_artist = False
+-        self.canvas = self.ref_artist.figure.canvas
+         self._use_blit = use_blit and self.canvas.supports_blit
+         self.cids = [
+             self.canvas.callbacks._connect_picklable(
+@@ -1514,6 +1513,33 @@ class DraggableBase:
+                 'button_release_event', self.on_release),
+         ]
+ 
++    @property
++    def canvas(self):
++        if self.ref_artist.figure is not None:
++            return self.ref_artist.figure.canvas
++        return None
++
++    def __getstate__(self):
++        state = self.__dict__.copy()
++        # Remove callback ids; they will be reconnected on unpickle.
++        state.pop('cids', None)
++        state.pop('_c1', None)
++        return state
++
++    def __setstate__(self, state):
++        self.__dict__.update(state)
++
++    def _post_pickle_reconnect(self):
++        if self.canvas is None:
++            return
++        self._use_blit = self._use_blit and self.canvas.supports_blit
++        self.cids = [
++            self.canvas.callbacks._connect_picklable(
++                'pick_event', self.on_pick),
++            self.canvas.callbacks._connect_picklable(
++                'button_release_event', self.on_release),
++        ]
++
+     def on_motion(self, evt):
+         if self._check_still_parented() and self.got_artist:
+             dx = evt.x - self.mouse_x
+@@ -1562,6 +1588,8 @@ class DraggableBase:
+ 
+     def disconnect(self):
+         """Disconnect the callbacks."""
++        if self.canvas is None:
++            return
+         for cid in self.cids:
+             self.canvas.mpl_disconnect(cid)
+         try:
+diff --git a/lib/matplotlib/tests/test_pickle.py b/lib/matplotlib/tests/test_pickle.py
+index ec6bdcc2f..f6272c124 100644
+--- a/lib/matplotlib/tests/test_pickle.py
++++ b/lib/matplotlib/tests/test_pickle.py
+@@ -282,3 +282,18 @@ def test_dynamic_norm():
+ def test_vertexselector():
+     line, = plt.plot([0, 1], picker=True)
+     pickle.loads(pickle.dumps(VertexSelector(line)))
++
++
++def test_draggable_legend():
++    fig, ax = plt.subplots()
++    ax.plot([0, 1], label='foo')
++    legend = ax.legend()
++    legend.set_draggable(True)
++    pickle.loads(pickle.dumps(fig))
++
++
++def test_draggable_annotation():
++    fig, ax = plt.subplots()
++    ann = ax.annotate('test', xy=(0.5, 0.5))
++    ann.draggable(True)
++    pickle.loads(pickle.dumps(fig))
+diff --git a/lib/matplotlib/text.py b/lib/matplotlib/text.py
+index 0f874ba33..3717fe857 100644
+--- a/lib/matplotlib/text.py
++++ b/lib/matplotlib/text.py
+@@ -1643,6 +1643,8 @@ class _AnnotationBase:
+         if state:
+             if self._draggable is None:
+                 self._draggable = DraggableAnnotation(self, use_blit)
++            elif not getattr(self._draggable, 'cids', None):
++                self._draggable._post_pickle_reconnect()
+         else:
+             if self._draggable is not None:
+                 self._draggable.disconnect()

@@ -1,0 +1,23 @@
+=== incr_eval_pi START Sat Oct 31 04:16:31 AM CST 2026 ===
+[Sat Oct 31 04:16:31 AM CST 2026] === merge pi predictions ===
+pi: 400 patches merged, 400 eval IDs
+[Sat Oct 31 04:16:31 AM CST 2026] === pi eval START 400 instances (swebench skips already-done) ===
+398 instances already run, skipping...
+Running 2 instances...
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:24<00:24, 24.89s/it]1 ran successfully, 0 failed:  50%|█████     | 1/2 [00:24<00:24, 24.89s/it]1 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.25s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.25s/it]2 ran successfully, 0 failed: 100%|██████████| 2/2 [00:26<00:00, 13.25s/it]
+All instances run.
+Total instances: 400
+Instances submitted: 400
+Instances completed: 400
+Instances incomplete: 0
+Instances resolved: 292
+Instances unresolved: 108
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 8
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 1
+Unremoved images: 400
+Report written to pi-kimi-k2.6-cloud.verified_full_pi.json
+[Sat Oct 31 04:17:03 AM CST 2026] === pi eval DONE rc=0 ===
+=== incr_eval_pi DONE Sat Oct 31 04:17:03 AM CST 2026 ===

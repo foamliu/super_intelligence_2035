@@ -1,0 +1,42 @@
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 5dcf923c12..bc7e6959e7 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1171,6 +1171,9 @@ class ModelChoiceIteratorValue:
+             other = other.value
+         return self.value == other
+ 
++    def __hash__(self):
++        return hash(self.value)
++
+ 
+ class ModelChoiceIterator:
+     def __init__(self, field):
+diff --git a/tests/model_forms/test_modelchoicefield.py b/tests/model_forms/test_modelchoicefield.py
+index 2a0c05d803..0d70a8125e 100644
+--- a/tests/model_forms/test_modelchoicefield.py
++++ b/tests/model_forms/test_modelchoicefield.py
+@@ -2,7 +2,7 @@ import datetime
+ 
+ from django import forms
+ from django.core.exceptions import ValidationError
+-from django.forms.models import ModelChoiceIterator
++from django.forms.models import ModelChoiceIterator, ModelChoiceIteratorValue
+ from django.forms.widgets import CheckboxSelectMultiple
+ from django.template import Context, Template
+ from django.test import TestCase
+@@ -341,6 +341,14 @@ class ModelChoiceFieldTests(TestCase):
+ </div>""" % (self.c1.pk, self.c2.pk, self.c3.pk),
+         )
+ 
++    def test_modelchoiceiteratorvalue_hashable(self):
++        # ModelChoiceIteratorValue must be hashable so it can be used as a
++        # dictionary key, e.g. in custom widget create_option() methods.
++        field = forms.ModelChoiceField(Category.objects.all())
++        value = next(v for v, _ in field.choices if isinstance(v, ModelChoiceIteratorValue))
++        self.assertEqual(hash(value), hash(value.value))
++        self.assertIn(value, {value.value: 'value'})
++
+     def test_choices_not_fetched_when_not_rendering(self):
+         with self.assertNumQueries(1):
+             field = forms.ModelChoiceField(Category.objects.order_by('-name'))

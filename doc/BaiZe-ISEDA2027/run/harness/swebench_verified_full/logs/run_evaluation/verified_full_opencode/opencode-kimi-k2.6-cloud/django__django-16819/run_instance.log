@@ -1,0 +1,317 @@
+2026-10-30 15:44:02,408 - INFO - Creating container for django__django-16819...
+2026-10-30 15:44:02,437 - INFO - Container for django__django-16819 created: 69a888d874d883da9d71ce8a52e41c142d7349b6148bc61e74032754bb863868
+2026-10-30 15:44:05,415 - INFO - Container for django__django-16819 started: 69a888d874d883da9d71ce8a52e41c142d7349b6148bc61e74032754bb863868
+2026-10-30 15:44:05,417 - INFO - Intermediate patch for django__django-16819 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-16819/patch.diff, now applying to container...
+2026-10-30 15:44:05,572 - INFO - >>>>> Applied Patch:
+Checking patch django/db/migrations/operations/models.py...
+Checking patch tests/migrations/test_optimizer.py...
+Applied patch django/db/migrations/operations/models.py cleanly.
+Applied patch tests/migrations/test_optimizer.py cleanly.
+
+2026-10-30 15:44:07,248 - INFO - Git diff before:
+diff --git a/django/db/migrations/operations/models.py b/django/db/migrations/operations/models.py
+index 967a91fdc8..aa96096e21 100644
+--- a/django/db/migrations/operations/models.py
++++ b/django/db/migrations/operations/models.py
+@@ -807,6 +807,9 @@ class IndexOperation(Operation):
+     def model_name_lower(self):
+         return self.model_name.lower()
+ 
++    def references_model(self, name, app_label):
++        return name.lower() == self.model_name_lower
++
+ 
+ class AddIndex(IndexOperation):
+     """Add an index on a model."""
+@@ -861,6 +864,35 @@ class AddIndex(IndexOperation):
+     def migration_name_fragment(self):
+         return "%s_%s" % (self.model_name_lower, self.index.name.lower())
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, RemoveIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.index.name.lower() == operation.name.lower()
++        ):
++            return []
++        elif (
++            isinstance(operation, RenameIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and operation.old_name
++            and self.index.name.lower() == operation.old_name_lower
++        ):
++            new_index = self.index.clone()
++            new_index.name = operation.new_name
++            return [AddIndex(self.model_name, new_index)]
++        elif (
++            isinstance(operation, AddIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.index.name.lower() == operation.index.name.lower()
++        ):
++            return [operation]
++        elif (
++            isinstance(operation, DeleteModel)
++            and self.model_name_lower == operation.name_lower
++        ):
++            return [operation]
++        return super().reduce(operation, app_label)
++
+ 
+ class RemoveIndex(IndexOperation):
+     """Remove an index from a model."""
+@@ -904,6 +936,20 @@ class RemoveIndex(IndexOperation):
+     def migration_name_fragment(self):
+         return "remove_%s_%s" % (self.model_name_lower, self.name.lower())
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, AddIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.name.lower() == operation.index.name.lower()
++        ):
++            return [operation]
++        elif (
++            isinstance(operation, DeleteModel)
++            and self.model_name_lower == operation.name_lower
++        ):
++            return [operation]
++        return super().reduce(operation, app_label)
++
+ 
+ class RenameIndex(IndexOperation):
+     """Rename an index."""
+diff --git a/tests/migrations/test_optimizer.py b/tests/migrations/test_optimizer.py
+index 8cd4c67fbd..98762f0860 100644
+--- a/tests/migrations/test_optimizer.py
++++ b/tests/migrations/test_optimizer.py
+@@ -1158,3 +1158,147 @@ class OptimizerTests(SimpleTestCase):
+                 ),
+             ]
+         )
++
++    def test_add_index_remove_index(self):
++        """AddIndex and RemoveIndex should cancel out."""
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++                migrations.RemoveIndex("Foo", "foo_idx"),
++            ],
++            [],
++        )
++
++    def test_add_index_remove_index_different_names(self):
++        """AddIndex and RemoveIndex with different names should not optimize."""
++        self.assertDoesNotOptimize(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++                migrations.RemoveIndex("Foo", "bar_idx"),
++            ]
++        )
++
++    def test_remove_index_add_index(self):
++        """RemoveIndex should be absorbed by AddIndex with the same name."""
++        self.assertOptimizesTo(
++            [
++                migrations.RemoveIndex("Foo", "foo_idx"),
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++            ],
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++            ],
++        )
++
++    def test_remove_index_add_index_different_names(self):
++        """RemoveIndex and AddIndex with different names should not optimize."""
++        self.assertDoesNotOptimize(
++            [
++                migrations.RemoveIndex("Foo", "foo_idx"),
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="bar_idx")
++                ),
++            ]
++        )
++
++    def test_add_index_rename_index(self):
++        """AddIndex should absorb RenameIndex."""
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="old_idx")
++                ),
++                migrations.RenameIndex(
++                    "Foo", new_name="new_idx", old_name="old_idx"
++                ),
++            ],
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="new_idx")
++                ),
++            ],
++        )
++
++    def test_add_index_rename_index_old_fields(self):
++        """AddIndex should not absorb RenameIndex with old_fields."""
++        self.assertDoesNotOptimize(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="old_idx")
++                ),
++                migrations.RenameIndex(
++                    "Foo", new_name="new_idx", old_fields=("a",)
++                ),
++            ]
++        )
++
++    def test_add_index_add_index(self):
++        """Later AddIndex should replace earlier AddIndex with the same name."""
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["b"], name="foo_idx")
++                ),
++            ],
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["b"], name="foo_idx")
++                ),
++            ],
++        )
++
++    def test_add_index_delete_model(self):
++        """AddIndex should be absorbed by DeleteModel."""
++        self.assertOptimizesTo(
++            [
++                migrations.AddIndex(
++                    "Foo", models.Index(fields=["a"], name="foo_idx")
++                ),
++                migrations.DeleteModel("Foo"),
++            ],
++            [
++                migrations.DeleteModel("Foo"),
++            ],
++        )
++
++    def test_remove_index_delete_model(self):
++        """RemoveIndex should be absorbed by DeleteModel."""
++        self.assertOptimizesTo(
++            [
++                migrations.RemoveIndex("Foo", "foo_idx"),
++                migrations.DeleteModel("Foo"),
++            ],
++            [
++                migrations.DeleteModel("Foo"),
++            ],
++        )
++
++    def test_add_index_different_models(self):
++        """AddIndex on different models should not block optimization."""
++        self.assertOptimizesTo(
++            [
++                migrations.CreateModel(
++                    "Foo", [("name", models.CharField(max_length=255))]
++                ),
++                migrations.AddIndex(
++                    "Bar", models.Index(fields=["a"], name="bar_idx")
++                ),
++                migrations.DeleteModel("Foo"),
++            ],
++            [
++                migrations.AddIndex(
++                    "Bar", models.Index(fields=["a"], name="bar_idx")
++                ),
++            ],
++        )
+2026-10-30 15:44:07,250 - INFO - Eval script for django__django-16819 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-16819/eval.sh; copying to container...
+2026-10-30 15:44:14,867 - INFO - Test runtime: 7.55 seconds
+2026-10-30 15:44:14,870 - INFO - Test output for django__django-16819 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/django__django-16819/test_output.txt
+2026-10-30 15:44:14,949 - INFO - Git diff after:
+diff --git a/django/db/migrations/operations/models.py b/django/db/migrations/operations/models.py
+index 967a91fdc8..aa96096e21 100644
+--- a/django/db/migrations/operations/models.py
++++ b/django/db/migrations/operations/models.py
+@@ -807,6 +807,9 @@ class IndexOperation(Operation):
+     def model_name_lower(self):
+         return self.model_name.lower()
+ 
++    def references_model(self, name, app_label):
++        return name.lower() == self.model_name_lower
++
+ 
+ class AddIndex(IndexOperation):
+     """Add an index on a model."""
+@@ -861,6 +864,35 @@ class AddIndex(IndexOperation):
+     def migration_name_fragment(self):
+         return "%s_%s" % (self.model_name_lower, self.index.name.lower())
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, RemoveIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.index.name.lower() == operation.name.lower()
++        ):
++            return []
++        elif (
++            isinstance(operation, RenameIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and operation.old_name
++            and self.index.name.lower() == operation.old_name_lower
++        ):
++            new_index = self.index.clone()
++            new_index.name = operation.new_name
++            return [AddIndex(self.model_name, new_index)]
++        elif (
++            isinstance(operation, AddIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.index.name.lower() == operation.index.name.lower()
++        ):
++            return [operation]
++        elif (
++            isinstance(operation, DeleteModel)
++            and self.model_name_lower == operation.name_lower
++        ):
++            return [operation]
++        return super().reduce(operation, app_label)
++
+ 
+ class RemoveIndex(IndexOperation):
+     """Remove an index from a model."""
+@@ -904,6 +936,20 @@ class RemoveIndex(IndexOperation):
+     def migration_name_fragment(self):
+         return "remove_%s_%s" % (self.model_name_lower, self.name.lower())
+ 
++    def reduce(self, operation, app_label):
++        if (
++            isinstance(operation, AddIndex)
++            and self.model_name_lower == operation.model_name_lower
++            and self.name.lower() == operation.index.name.lower()
++        ):
++            return [operation]
++        elif (
++            isinstance(operation, DeleteModel)
++            and self.model_name_lower == operation.name_lower
++        ):
++            return [operation]
++        return super().reduce(operation, app_label)
++
+ 
+ class RenameIndex(IndexOperation):
+     """Rename an index."""
+2026-10-30 15:44:14,950 - INFO - Git diff changed after running eval script
+2026-10-30 15:44:14,950 - INFO - Grading answer for django__django-16819...
+2026-10-30 15:44:14,953 - INFO - report: {'django__django-16819': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_add_remove_index (migrations.test_optimizer.OptimizerTests.test_add_remove_index)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['AlterField should optimize into AddField.', 'RemoveField should cancel AddField', 'RenameField should optimize into AddField', 'test_alter_alter_field (migrations.test_optimizer.OptimizerTests.test_alter_alter_field)', 'test_alter_alter_index_model (migrations.test_optimizer.OptimizerTests.test_alter_alter_index_model)', 'test_alter_alter_owrt_model (migrations.test_optimizer.OptimizerTests.test_alter_alter_owrt_model)', 'test_alter_alter_table_model (migrations.test_optimizer.OptimizerTests.test_alter_alter_table_model)', 'test_alter_alter_unique_model (migrations.test_optimizer.OptimizerTests.test_alter_alter_unique_model)', 'RemoveField should absorb AlterField', 'RenameField should optimize to the other side of AlterField,', 'test_create_alter_index_delete_model (migrations.test_optimizer.OptimizerTests.test_create_alter_index_delete_model)', 'test_create_alter_index_field (migrations.test_optimizer.OptimizerTests.test_create_alter_index_field)', 'test_create_alter_model_managers (migrations.test_optimizer.OptimizerTests.test_create_alter_model_managers)', 'test_create_alter_model_options (migrations.test_optimizer.OptimizerTests.test_create_alter_model_options)', 'test_create_alter_owrt_delete_model (migrations.test_optimizer.OptimizerTests.test_create_alter_owrt_delete_model)', 'test_create_alter_owrt_field (migrations.test_optimizer.OptimizerTests.test_create_alter_owrt_field)', 'test_create_alter_unique_delete_model (migrations.test_optimizer.OptimizerTests.test_create_alter_unique_delete_model)', 'test_create_alter_unique_field (migrations.test_optimizer.OptimizerTests.test_create_alter_unique_field)', 'CreateModel and DeleteModel should collapse into nothing.', 'AddField should optimize into CreateModel.', "AddField should NOT optimize into CreateModel if it's an M2M using a", 'AlterField should optimize into CreateModel.', 'test_create_model_and_remove_model_options (migrations.test_optimizer.OptimizerTests.test_create_model_and_remove_model_options)', 'CreateModel order remains unchanged if the later AddField operation', "A CreateModel that inherits from another isn't reordered to avoid", 'RemoveField should optimize into CreateModel.', 'RenameField should optimize into CreateModel.', "AddField optimizes into CreateModel if it's a FK to a model that's", "CreateModel reordering behavior doesn't result in an infinite loop if", 'CreateModel should absorb RenameModels.', 'test_none_app_label (migrations.test_optimizer.OptimizerTests.test_none_app_label)', 'test_optimize_elidable_operation (migrations.test_optimizer.OptimizerTests.test_optimize_elidable_operation)', 'We should be able to optimize away create/delete through a create or', 'field-level through checking is working. This should manage to collapse', 'test_rename_index (migrations.test_optimizer.OptimizerTests.test_rename_index)', 'RenameModels should absorb themselves.', 'The optimizer does nothing on a single operation,', 'test_swapping_fields_names (migrations.test_optimizer.OptimizerTests.test_swapping_fields_names)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16819: resolved: True
+2026-10-30 15:44:14,955 - INFO - Attempting to stop container sweb.eval.django__django-16819.verified_full_opencode...
+2026-10-30 15:44:31,520 - INFO - Container sweb.eval.django__django-16819.verified_full_opencode stopped successfully.
+2026-10-30 15:44:31,520 - INFO - Attempting to remove container sweb.eval.django__django-16819.verified_full_opencode...
+2026-10-30 15:44:31,564 - INFO - Container sweb.eval.django__django-16819.verified_full_opencode removed successfully.

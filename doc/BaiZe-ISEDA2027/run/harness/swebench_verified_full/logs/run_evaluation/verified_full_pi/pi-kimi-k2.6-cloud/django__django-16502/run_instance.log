@@ -1,0 +1,148 @@
+2026-10-30 16:57:58,374 - INFO - Creating container for django__django-16502...
+2026-10-30 16:57:58,403 - INFO - Container for django__django-16502 created: 3a41308b574a56bd2f20269cf671a07009b36b721a3165436bd2c7003d424171
+2026-10-30 16:58:00,913 - INFO - Container for django__django-16502 started: 3a41308b574a56bd2f20269cf671a07009b36b721a3165436bd2c7003d424171
+2026-10-30 16:58:00,916 - INFO - Intermediate patch for django__django-16502 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-16502/patch.diff, now applying to container...
+2026-10-30 16:58:01,051 - INFO - >>>>> Applied Patch:
+Checking patch django/core/servers/basehttp.py...
+Checking patch tests/servers/test_basehttp.py...
+Applied patch django/core/servers/basehttp.py cleanly.
+Applied patch tests/servers/test_basehttp.py cleanly.
+
+2026-10-30 16:58:02,654 - INFO - Git diff before:
+diff --git a/django/core/servers/basehttp.py b/django/core/servers/basehttp.py
+index fef5532e58..b8df9ec106 100644
+--- a/django/core/servers/basehttp.py
++++ b/django/core/servers/basehttp.py
+@@ -147,6 +147,18 @@ class ServerHandler(simple_server.ServerHandler):
+         self.get_stdin().read()
+         super().close()
+ 
++    def write(self, data):
++        if self.environ.get("REQUEST_METHOD") == "HEAD":
++            if not self.status:
++                raise AssertionError("write() before start_response()")
++            elif not self.headers_sent:
++                self.bytes_sent = len(data)
++                self.send_headers()
++            else:
++                self.bytes_sent += len(data)
++            return
++        super().write(data)
++
+ 
+ class WSGIRequestHandler(simple_server.WSGIRequestHandler):
+     protocol_version = "HTTP/1.1"
+diff --git a/tests/servers/test_basehttp.py b/tests/servers/test_basehttp.py
+index a837505feb..9e8ad6f23f 100644
+--- a/tests/servers/test_basehttp.py
++++ b/tests/servers/test_basehttp.py
+@@ -106,6 +106,74 @@ class WSGIRequestHandlerTestCase(SimpleTestCase):
+ 
+         self.assertEqual(body, b"HTTP_SOME_HEADER:good")
+ 
++    def test_head_request(self):
++        """HEAD requests must not include a response body (#26052)."""
++
++        def test_app(environ, start_response):
++            start_response("200 OK", [("Content-Type", "text/plain")])
++            return [b"Hello World"]
++
++        rfile = BytesIO(b"HEAD / HTTP/1.0\r\n\r\n")
++
++        class UnclosableBytesIO(BytesIO):
++            def close(self):
++                pass
++
++        wfile = UnclosableBytesIO()
++
++        def makefile(mode, *a, **kw):
++            if mode == "rb":
++                return rfile
++            elif mode == "wb":
++                return wfile
++
++        request = Stub(makefile=makefile)
++        server = Stub(base_environ={}, get_app=lambda: test_app)
++
++        with self.assertLogs("django.server", "INFO"):
++            WSGIRequestHandler(request, "192.168.0.2", server)
++
++        wfile.seek(0)
++        response = wfile.getvalue()
++        header, sep, body = response.partition(b"\r\n\r\n")
++        self.assertTrue(sep)
++        self.assertEqual(body, b"")
++        self.assertIn(b"200 OK", header)
++        self.assertIn(b"Content-Length: 11", header)
++
++    def test_get_request(self):
++        """GET requests include the response body."""
++
++        def test_app(environ, start_response):
++            start_response("200 OK", [("Content-Type", "text/plain")])
++            return [b"Hello World"]
++
++        rfile = BytesIO(b"GET / HTTP/1.0\r\n\r\n")
++
++        class UnclosableBytesIO(BytesIO):
++            def close(self):
++                pass
++
++        wfile = UnclosableBytesIO()
++
++        def makefile(mode, *a, **kw):
++            if mode == "rb":
++                return rfile
++            elif mode == "wb":
++                return wfile
++
++        request = Stub(makefile=makefile)
++        server = Stub(base_environ={}, get_app=lambda: test_app)
++
++        with self.assertLogs("django.server", "INFO"):
++            WSGIRequestHandler(request, "192.168.0.2", server)
++
++        wfile.seek(0)
++        response = wfile.getvalue()
++        header, sep, body = response.partition(b"\r\n\r\n")
++        self.assertTrue(sep)
++        self.assertEqual(body, b"Hello World")
++
+ 
+ class WSGIServerTestCase(SimpleTestCase):
+     request_factory = RequestFactory()
+2026-10-30 16:58:02,658 - INFO - Eval script for django__django-16502 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-16502/eval.sh; copying to container...
+2026-10-30 16:58:09,800 - INFO - Test runtime: 7.07 seconds
+2026-10-30 16:58:09,802 - INFO - Test output for django__django-16502 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-16502/test_output.txt
+2026-10-30 16:58:09,878 - INFO - Git diff after:
+diff --git a/django/core/servers/basehttp.py b/django/core/servers/basehttp.py
+index fef5532e58..b8df9ec106 100644
+--- a/django/core/servers/basehttp.py
++++ b/django/core/servers/basehttp.py
+@@ -147,6 +147,18 @@ class ServerHandler(simple_server.ServerHandler):
+         self.get_stdin().read()
+         super().close()
+ 
++    def write(self, data):
++        if self.environ.get("REQUEST_METHOD") == "HEAD":
++            if not self.status:
++                raise AssertionError("write() before start_response()")
++            elif not self.headers_sent:
++                self.bytes_sent = len(data)
++                self.send_headers()
++            else:
++                self.bytes_sent += len(data)
++            return
++        super().write(data)
++
+ 
+ class WSGIRequestHandler(simple_server.WSGIRequestHandler):
+     protocol_version = "HTTP/1.1"
+2026-10-30 16:58:09,878 - INFO - Git diff changed after running eval script
+2026-10-30 16:58:09,878 - INFO - Grading answer for django__django-16502...
+2026-10-30 16:58:09,880 - INFO - report: {'django__django-16502': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_no_body_returned_for_head_requests (servers.test_basehttp.WSGIRequestHandlerTestCase.test_no_body_returned_for_head_requests)']}, 'PASS_TO_PASS': {'success': ['test_https (servers.test_basehttp.WSGIRequestHandlerTestCase.test_https)', 'test_log_message (servers.test_basehttp.WSGIRequestHandlerTestCase.test_log_message)', 'WSGIServer handles broken pipe errors.'], 'failure': ['WSGIRequestHandler ignores headers containing underscores.']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16502: resolved: False
+2026-10-30 16:58:09,882 - INFO - Attempting to stop container sweb.eval.django__django-16502.verified_full_pi...
+2026-10-30 16:58:27,073 - INFO - Container sweb.eval.django__django-16502.verified_full_pi stopped successfully.
+2026-10-30 16:58:27,073 - INFO - Attempting to remove container sweb.eval.django__django-16502.verified_full_pi...
+2026-10-30 16:58:27,130 - INFO - Container sweb.eval.django__django-16502.verified_full_pi removed successfully.

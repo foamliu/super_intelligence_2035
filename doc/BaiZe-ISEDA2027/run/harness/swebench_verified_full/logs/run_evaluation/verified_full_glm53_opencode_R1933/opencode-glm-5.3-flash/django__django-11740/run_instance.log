@@ -1,0 +1,106 @@
+2026-11-09 13:20:27,131 - INFO - Creating container for django__django-11740...
+2026-11-09 13:20:27,179 - INFO - Container for django__django-11740 created: 1bdc74d9e91b135b58ec8af12f448b483018e1be2c796a8122e67db24df6d558
+2026-11-09 13:20:28,375 - INFO - Container for django__django-11740 started: 1bdc74d9e91b135b58ec8af12f448b483018e1be2c796a8122e67db24df6d558
+2026-11-09 13:20:28,378 - INFO - Intermediate patch for django__django-11740 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-11740/patch.diff, now applying to container...
+2026-11-09 13:20:28,542 - INFO - >>>>> Applied Patch:
+Checking patch django/db/migrations/autodetector.py...
+Checking patch tests/migrations/test_autodetector.py...
+Applied patch django/db/migrations/autodetector.py cleanly.
+Applied patch tests/migrations/test_autodetector.py cleanly.
+
+2026-11-09 13:20:29,910 - INFO - Git diff before:
+diff --git a/django/db/migrations/autodetector.py b/django/db/migrations/autodetector.py
+index 0dc1c77c53..3d0bf2c043 100644
+--- a/django/db/migrations/autodetector.py
++++ b/django/db/migrations/autodetector.py
+@@ -963,6 +963,11 @@ class MigrationAutodetector:
+                             preserve_default = False
+                     else:
+                         field = new_field
++                    # If the field is a relation, add a dependency on the
++                    # related model.
++                    dependencies = []
++                    if field.remote_field and field.remote_field.model:
++                        dependencies.extend(self._get_dependencies_for_foreign_key(field))
+                     self.add_operation(
+                         app_label,
+                         operations.AlterField(
+@@ -970,7 +975,8 @@ class MigrationAutodetector:
+                             name=field_name,
+                             field=field,
+                             preserve_default=preserve_default,
+-                        )
++                        ),
++                        dependencies=dependencies,
+                     )
+                 else:
+                     # We cannot alter between m2m and concrete fields
+diff --git a/tests/migrations/test_autodetector.py b/tests/migrations/test_autodetector.py
+index e9926ba3bf..a5c8303c36 100644
+--- a/tests/migrations/test_autodetector.py
++++ b/tests/migrations/test_autodetector.py
+@@ -2251,6 +2251,26 @@ class AutodetectorTests(TestCase):
+         self.assertOperationAttributes(changes, 'testapp', 0, 0, name="book")
+         self.assertMigrationDependencies(changes, 'testapp', 0, [("otherapp", "__first__")])
+ 
++    def test_alter_field_fk_dependency(self):
++        """
++        #31679 - Altering a field to a ForeignKey adds a dependency on the
++        related model.
++        """
++        before = ModelState("testapp", "Author", [
++            ("id", models.AutoField(primary_key=True)),
++            ("book", models.UUIDField(null=True)),
++        ])
++        after = ModelState("testapp", "Author", [
++            ("id", models.AutoField(primary_key=True)),
++            ("book", models.ForeignKey("otherapp.Book", models.SET_NULL, null=True)),
++        ])
++        changes = self.get_changes([before, self.book], [after, self.book])
++        # Right number/type of migrations?
++        self.assertNumberMigrations(changes, 'testapp', 1)
++        self.assertOperationTypes(changes, 'testapp', 0, ["AlterField"])
++        self.assertOperationAttributes(changes, 'testapp', 0, 0, name="book")
++        self.assertMigrationDependencies(changes, 'testapp', 0, [("otherapp", "__first__")])
++
+     def test_circular_dependency_mixed_addcreate(self):
+         """
+         #23315 - The dependency resolver knows to put all CreateModel
+2026-11-09 13:20:29,912 - INFO - Eval script for django__django-11740 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-11740/eval.sh; copying to container...
+2026-11-09 13:20:37,177 - INFO - Test runtime: 7.18 seconds
+2026-11-09 13:20:37,179 - INFO - Test output for django__django-11740 written to logs/run_evaluation/verified_full_glm53_opencode_R1933/opencode-glm-5.3-flash/django__django-11740/test_output.txt
+2026-11-09 13:20:37,241 - INFO - Git diff after:
+diff --git a/django/db/migrations/autodetector.py b/django/db/migrations/autodetector.py
+index 0dc1c77c53..3d0bf2c043 100644
+--- a/django/db/migrations/autodetector.py
++++ b/django/db/migrations/autodetector.py
+@@ -963,6 +963,11 @@ class MigrationAutodetector:
+                             preserve_default = False
+                     else:
+                         field = new_field
++                    # If the field is a relation, add a dependency on the
++                    # related model.
++                    dependencies = []
++                    if field.remote_field and field.remote_field.model:
++                        dependencies.extend(self._get_dependencies_for_foreign_key(field))
+                     self.add_operation(
+                         app_label,
+                         operations.AlterField(
+@@ -970,7 +975,8 @@ class MigrationAutodetector:
+                             name=field_name,
+                             field=field,
+                             preserve_default=preserve_default,
+-                        )
++                        ),
++                        dependencies=dependencies,
+                     )
+                 else:
+                     # We cannot alter between m2m and concrete fields
+2026-11-09 13:20:37,242 - INFO - Git diff changed after running eval script
+2026-11-09 13:20:37,242 - INFO - Grading answer for django__django-11740...
+2026-11-09 13:20:37,244 - INFO - report: {'django__django-11740': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_alter_field_to_fk_dependency_other_app (migrations.test_autodetector.AutodetectorTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_add_alter_order_with_respect_to (migrations.test_autodetector.AutodetectorTests)', 'test_add_blank_textfield_and_charfield (migrations.test_autodetector.AutodetectorTests)', 'Test change detection of new constraints.', 'test_add_date_fields_with_auto_now_add_asking_for_default (migrations.test_autodetector.AutodetectorTests)', 'test_add_date_fields_with_auto_now_add_not_asking_for_null_addition (migrations.test_autodetector.AutodetectorTests)', 'test_add_date_fields_with_auto_now_not_asking_for_default (migrations.test_autodetector.AutodetectorTests)', 'Tests autodetection of new fields.', 'test_add_field_and_foo_together (migrations.test_autodetector.AutodetectorTests)', '#22030 - Adding a field with a default should work.', 'Tests index/unique_together detection.', 'Test change detection of new indexes.', '#22435 - Adding a ManyToManyField should not prompt for a default.', 'test_add_model_order_with_respect_to (migrations.test_autodetector.AutodetectorTests)', 'test_add_non_blank_textfield_and_charfield (migrations.test_autodetector.AutodetectorTests)', "Tests detection for adding db_table in model's options.", "Tests detection for changing db_table in model's options'.", 'test_alter_db_table_no_changes (migrations.test_autodetector.AutodetectorTests)', "Tests detection for removing db_table in model's options.", 'test_alter_db_table_with_model_change (migrations.test_autodetector.AutodetectorTests)', 'test_alter_field_to_not_null_oneoff_default (migrations.test_autodetector.AutodetectorTests)', 'test_alter_field_to_not_null_with_default (migrations.test_autodetector.AutodetectorTests)', 'test_alter_field_to_not_null_without_default (migrations.test_autodetector.AutodetectorTests)', 'test_alter_fk_before_model_deletion (migrations.test_autodetector.AutodetectorTests)', 'test_alter_many_to_many (migrations.test_autodetector.AutodetectorTests)', 'test_alter_model_managers (migrations.test_autodetector.AutodetectorTests)', "Changing a model's options should make a change.", "Changing a proxy model's options should also make a change.", 'Tests auto-naming of migrations for graph matching.', 'Bases of other models come first.', 'test_circular_dependency_mixed_addcreate (migrations.test_autodetector.AutodetectorTests)', 'test_circular_dependency_swappable (migrations.test_autodetector.AutodetectorTests)', 'test_circular_dependency_swappable2 (migrations.test_autodetector.AutodetectorTests)', 'test_circular_dependency_swappable_self (migrations.test_autodetector.AutodetectorTests)', 'test_circular_fk_dependency (migrations.test_autodetector.AutodetectorTests)', 'test_concrete_field_changed_to_many_to_many (migrations.test_autodetector.AutodetectorTests)', 'test_create_model_and_unique_together (migrations.test_autodetector.AutodetectorTests)', 'Test creation of new model with constraints already defined.', 'Test creation of new model with indexes already defined.', 'test_create_with_through_model (migrations.test_autodetector.AutodetectorTests)', 'test_custom_deconstructible (migrations.test_autodetector.AutodetectorTests)', 'Tests custom naming of migrations for graph matching.', 'Field instances are handled correctly by nested deconstruction.', 'test_deconstruct_type (migrations.test_autodetector.AutodetectorTests)', 'Nested deconstruction descends into dict values.', 'Nested deconstruction descends into lists.', 'Nested deconstruction descends into tuples.', 'test_default_related_name_option (migrations.test_autodetector.AutodetectorTests)', 'test_different_regex_does_alter (migrations.test_autodetector.AutodetectorTests)', 'test_empty_foo_together (migrations.test_autodetector.AutodetectorTests)', 'test_first_dependency (migrations.test_autodetector.AutodetectorTests)', 'Having a ForeignKey automatically adds a dependency.', 'test_fk_dependency_other_app (migrations.test_autodetector.AutodetectorTests)', 'test_foo_together_no_changes (migrations.test_autodetector.AutodetectorTests)', 'test_foo_together_ordering (migrations.test_autodetector.AutodetectorTests)', 'Tests unique_together and field removal detection & ordering', 'test_foreign_key_removed_before_target_model (migrations.test_autodetector.AutodetectorTests)', 'test_identical_regex_doesnt_alter (migrations.test_autodetector.AutodetectorTests)', 'test_keep_db_table_with_model_change (migrations.test_autodetector.AutodetectorTests)', 'test_last_dependency (migrations.test_autodetector.AutodetectorTests)', 'test_m2m_w_through_multistep_remove (migrations.test_autodetector.AutodetectorTests)', 'test_managed_to_unmanaged (migrations.test_autodetector.AutodetectorTests)', 'test_many_to_many_changed_to_concrete_field (migrations.test_autodetector.AutodetectorTests)', 'test_many_to_many_removed_before_through_model (migrations.test_autodetector.AutodetectorTests)', 'test_many_to_many_removed_before_through_model_2 (migrations.test_autodetector.AutodetectorTests)', 'test_mti_inheritance_model_removal (migrations.test_autodetector.AutodetectorTests)', "#23956 - Inheriting models doesn't move *_ptr fields into AddField operations.", 'test_nested_deconstructible_objects (migrations.test_autodetector.AutodetectorTests)', 'Tests autodetection of new models.', 'test_non_circular_foreignkey_dependency_removal (migrations.test_autodetector.AutodetectorTests)', 'Tests deletion of old models.', 'Test change detection of reordering of fields in indexes.', 'test_pk_fk_included (migrations.test_autodetector.AutodetectorTests)', 'The autodetector correctly deals with proxy models.', 'Bases of proxies come first.', 'test_proxy_custom_pk (migrations.test_autodetector.AutodetectorTests)', 'FK dependencies still work on proxy models.', 'test_proxy_to_mti_with_fk_to_proxy (migrations.test_autodetector.AutodetectorTests)', 'test_proxy_to_mti_with_fk_to_proxy_proxy (migrations.test_autodetector.AutodetectorTests)', 'test_remove_alter_order_with_respect_to (migrations.test_autodetector.AutodetectorTests)', 'Test change detection of removed constraints.', 'Tests autodetection of removed fields.', 'test_remove_field_and_foo_together (migrations.test_autodetector.AutodetectorTests)', 'Test change detection of removed indexes.', 'Tests autodetection of renamed fields.', 'test_rename_field_and_foo_together (migrations.test_autodetector.AutodetectorTests)', 'test_rename_field_foreign_key_to_field (migrations.test_autodetector.AutodetectorTests)', 'test_rename_field_preserved_db_column (migrations.test_autodetector.AutodetectorTests)', 'test_rename_foreign_object_fields (migrations.test_autodetector.AutodetectorTests)', 'test_rename_m2m_through_model (migrations.test_autodetector.AutodetectorTests)', 'Tests autodetection of renamed models.', 'test_rename_model_reverse_relation_dependencies (migrations.test_autodetector.AutodetectorTests)', 'test_rename_model_with_fks_in_different_position (migrations.test_autodetector.AutodetectorTests)', 'test_rename_model_with_renamed_rel_field (migrations.test_autodetector.AutodetectorTests)', 'test_rename_related_field_preserved_db_column (migrations.test_autodetector.AutodetectorTests)', 'test_replace_string_with_foreignkey (migrations.test_autodetector.AutodetectorTests)', 'test_same_app_circular_fk_dependency (migrations.test_autodetector.AutodetectorTests)', 'test_same_app_circular_fk_dependency_with_unique_together_and_indexes (migrations.test_autodetector.AutodetectorTests)', 'test_same_app_no_fk_dependency (migrations.test_autodetector.AutodetectorTests)', 'Setting order_with_respect_to adds a field.', 'test_supports_functools_partial (migrations.test_autodetector.AutodetectorTests)', 'test_swappable (migrations.test_autodetector.AutodetectorTests)', 'test_swappable_changed (migrations.test_autodetector.AutodetectorTests)', 'test_swappable_circular_multi_mti (migrations.test_autodetector.AutodetectorTests)', 'Swappable models get their CreateModel first.', 'test_trim_apps (migrations.test_autodetector.AutodetectorTests)', 'The autodetector correctly deals with managed models.', 'test_unmanaged_custom_pk (migrations.test_autodetector.AutodetectorTests)', 'test_unmanaged_delete (migrations.test_autodetector.AutodetectorTests)', 'test_unmanaged_to_managed (migrations.test_autodetector.AutodetectorTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-11740: resolved: True
+2026-11-09 13:20:37,245 - INFO - Attempting to stop container sweb.eval.django__django-11740.verified_full_glm53_opencode_R1933...
+2026-11-09 13:20:53,303 - INFO - Container sweb.eval.django__django-11740.verified_full_glm53_opencode_R1933 stopped successfully.
+2026-11-09 13:20:53,303 - INFO - Attempting to remove container sweb.eval.django__django-11740.verified_full_glm53_opencode_R1933...
+2026-11-09 13:20:53,350 - INFO - Container sweb.eval.django__django-11740.verified_full_glm53_opencode_R1933 removed successfully.

@@ -1,0 +1,93 @@
+diff --git a/reproduce.py b/reproduce.py
+new file mode 100644
+index 0000000..8c013a1
+--- /dev/null
++++ b/reproduce.py
+@@ -0,0 +1,24 @@
++import xarray as xr
++import numpy as np
++
++good_indexed, bad_indexed = xr.DataArray([None]), xr.DataArray([None])
++
++class HasValues(object):
++    values = 5
++
++good_indexed.loc[{'dim_0': 0}] = set()
++bad_indexed.loc[{'dim_0': 0}] = HasValues()
++
++print("good_indexed.values:", good_indexed.values)
++print("bad_indexed.values:", bad_indexed.values)
++print("bad_indexed.values dtype:", bad_indexed.values.dtype)
++print()
++print("Expected bad_indexed.values to contain HasValues instance, not array(5)")
++print("Type of element:", type(bad_indexed.values[0]))
++
++# Also test Variable directly
++var = xr.Variable(['x'], [None])
++var[0] = HasValues()
++print("\nDirect Variable assignment:")
++print("var.values:", var.values)
++print("Type of element:", type(var.values[0]))
+diff --git a/xarray/core/variable.py b/xarray/core/variable.py
+index 45553eb..c059614 100644
+--- a/xarray/core/variable.py
++++ b/xarray/core/variable.py
+@@ -218,7 +218,15 @@ def as_compatible_data(data, fastpath=False):
+         data = np.timedelta64(getattr(data, "value", data), "ns")
+ 
+     # we don't want nested self-described arrays
+-    data = getattr(data, "values", data)
++    if isinstance(data, (pd.Series, pd.DataFrame)):
++        data = data.values
++    else:
++        try:
++            from .dataarray import DataArray
++            if isinstance(data, DataArray):
++                data = data.values
++        except ImportError:
++            pass
+ 
+     if isinstance(data, np.ma.MaskedArray):
+         mask = np.ma.getmaskarray(data)
+diff --git a/xarray/tests/test_dataarray.py b/xarray/tests/test_dataarray.py
+index 8d599c7..d706a25 100644
+--- a/xarray/tests/test_dataarray.py
++++ b/xarray/tests/test_dataarray.py
+@@ -1119,6 +1119,16 @@ class TestDataArray:
+         assert np.all(da.values[0] == np.zeros(4))
+         assert da.values[1, 0] != 0
+ 
++    def test_loc_assign_object_with_values_attr(self):
++        # regression test for GH issue: objects with a .values property
++        # should not be coerced when assigned to object dtype arrays
++        class HasValues:
++            values = 5
++
++        da = DataArray([None], dims=["x"])
++        da.loc[{"x": 0}] = HasValues()
++        assert isinstance(da.values[0], HasValues)
++
+     def test_loc_assign_dataarray(self):
+         def get_data():
+             return DataArray(
+diff --git a/xarray/tests/test_variable.py b/xarray/tests/test_variable.py
+index e1ae3e1..79c4f74 100644
+--- a/xarray/tests/test_variable.py
++++ b/xarray/tests/test_variable.py
+@@ -1779,6 +1779,16 @@ class TestVariable(VariableSubclassobjects):
+         v[dict(x=[True, False], y=[False, True, False])] = 1
+         assert v[0, 1] == 1
+ 
++    def test_setitem_with_values_attr(self):
++        # regression test for GH issue: objects with a .values property
++        # should not be coerced when assigned to object dtype arrays
++        class HasValues:
++            values = 5
++
++        v = Variable(["x"], [None])
++        v[0] = HasValues()
++        assert isinstance(v.values[0], HasValues)
++
+     def test_setitem_fancy(self):
+         # assignment which should work as np.ndarray does
+         def assert_assigned_2d(array, key_x, key_y, values):

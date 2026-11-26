@@ -1,0 +1,50 @@
+{
+  "generated_at": "2026-11-17T08:47:34",
+  "protocol": "EDA-Eval-PyAether-158, Pass@1, 5-run mean±std, -p 8 -n",
+  "new_zhulong_baseline": {
+    "n": 5,
+    "mean": 0.0684,
+    "std": 0.0612,
+    "values": [
+      0.1899,
+      0.0443,
+      0.0253,
+      0.038,
+      0.0443
+    ],
+    "env": "36.15 zhulong口径 (PreToolUse hook, RAG+沙盒可达, run_commands禁用)",
+    "cli_agent": "zhulong fork 3.0.29",
+    "model": "minicpm5-2b-sft-v39-final(step105) via 18096->.17:8096"
+  },
+  "old_17_baseline": {
+    "n": 5,
+    "mean": 0.0304,
+    "std": 0.0074,
+    "values": [
+      0.038,
+      0.019,
+      0.0253,
+      0.0316,
+      0.038
+    ],
+    "env": ".17 非zhulong (无RAG/无沙盒, run_commands启用)",
+    "source": "/tmp/posttrain_5run_eval/step105"
+  },
+  "delta_pp": 3.8,
+  "paired_test_passany_mcnemar": {
+    "n11_both_pass": 9,
+    "n00_both_fail": 95,
+    "n10_new_only": 41,
+    "n01_old_only": 13,
+    "chi2_corrected": 13.5,
+    "discordant": 54
+  },
+  "paired_test_passfrac_wilcoxon": {
+    "n_nonzero": 55,
+    "error": "No module named 'scipy'"
+  },
+  "rca_status": "CLEAN",
+  "rca_status_reason": "5/5 runs valid (execution_results rows >>1 for all runs); run2-4 recovered via rca_recover_extract.py (ws+no-ws); pipeline collapse root cause fixed (ws/no-ws path mismatch + chain rca_recover hook integrated). Supersedes interim rca_status=INVALID.",
+  "caliber_caveat": "run1=ws-only anchor (batch 2026_1114_180019 cleaned, unrecoverable, Pass@1=18.99%); run2-5=recovered caliber (ws+no-ws via rca_recover_extract.py). 5-run mean carries this caveat. run1 18.99% vs run2-5 2.5-4.4% gap noted; run1 is a high outlier (its 36 ws segments passed at 83%).",
+  "note": "5-run检验补齐；McNemar用pass@any二值；Wilcoxon用每题pass-fraction配对；scipy不可用则只报n。"
+}

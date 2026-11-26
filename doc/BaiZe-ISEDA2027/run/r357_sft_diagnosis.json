@@ -1,0 +1,60 @@
+[R357] SFT Recipe Diagnosis -- 2026-11-13
+{
+  "round": "R357",
+  "date": "2026-11-13",
+  "gen_log_analysis": {
+    "log_lines": 58092,
+    "eda_tool_calls": {
+      "search_apis": 1,
+      "get_api_details": 1,
+      "run_code": 0
+    },
+    "eda_tool_total": 2,
+    "generic_tool_calls": {
+      "run_commands": 1536,
+      "read_files": 284,
+      "search_codebase": 3,
+      "editor": 75
+    },
+    "generic_tool_total": 1898,
+    "eda_vs_generic_ratio": 949.0,
+    "echo_done_count": 125,
+    "task_starts": 62,
+    "task_completions": 51,
+    "garbled_samples": [
+      "\u001b[0;34m[INFO]\u001b[0m Memory Bank 注入: 禁用 (--no-memory-inject)",
+      "\u001b[0;34m[INFO]\u001b[0m 文件路径: /home/app.e0031982/code/eda_fastmcp/pyAether-eval/config.yaml",
+      "\u001b[0;34m[INFO]\u001b[0m [Step 1.5] 跳过 Memory Bank 预热 (无 L0 artifacts，冷启动正常)",
+      "\u001b[0;34m[INFO]\u001b[0m 执行: /home/app.e0031982/code/eda_fastmcp/.venv/bin/python pyAether-eval/script/format_eval_task.py --task_file=/home/app.e0031982/code/eda_fastmcp/pyAether-eval/original_dataset/EDA-E",
+      "\u001b[0;34m[INFO]\u001b[0m 并行模式: 已为 8 个 worker 创建隔离数据目录 (CLI=cline)"
+    ]
+  },
+  "sft_data_analysis": {
+    "total_pairs": 1344,
+    "type_distribution": {
+      "S1": 258,
+      "S4": 217,
+      "S5": 212,
+      "S6": 188,
+      "S3": 179,
+      "R323_datagap_doc": 166,
+      "R323_datagap_code": 92,
+      "S1_doc_to_code": 10,
+      "S2_api_lookup": 10,
+      "S2": 7
+    },
+    "standalone_code_format": 1131,
+    "tool_call_format": 0,
+    "format_mismatch_pct": 84.2
+  }
+}
+
+============================================================
+KEY METRICS SUMMARY
+============================================================
+EDA tool calls:     2
+Generic tool calls: 1898
+Ratio (1:N):        1:949.0
+SFT standalone code: 84.2%
+echo done count:    125
+============================================================

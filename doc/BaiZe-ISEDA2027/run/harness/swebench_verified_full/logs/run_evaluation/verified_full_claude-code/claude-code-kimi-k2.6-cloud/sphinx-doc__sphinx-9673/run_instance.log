@@ -1,0 +1,93 @@
+2026-10-30 17:26:35,214 - INFO - Creating container for sphinx-doc__sphinx-9673...
+2026-10-30 17:26:35,249 - INFO - Container for sphinx-doc__sphinx-9673 created: 6b74159ff1e2fa46ec6b34ab0d65b56a59731df3f85e8f2dcae4d4c582755786
+2026-10-30 17:26:41,280 - INFO - Container for sphinx-doc__sphinx-9673 started: 6b74159ff1e2fa46ec6b34ab0d65b56a59731df3f85e8f2dcae4d4c582755786
+2026-10-30 17:26:41,281 - INFO - Intermediate patch for sphinx-doc__sphinx-9673 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-9673/patch.diff, now applying to container...
+2026-10-30 17:26:41,762 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/ext/autodoc/typehints.py...
+Checking patch tests/roots/test-ext-autodoc/target/napoleon_typehints.py...
+Checking patch tests/test_ext_autodoc_configs.py...
+Applied patch sphinx/ext/autodoc/typehints.py cleanly.
+Applied patch tests/roots/test-ext-autodoc/target/napoleon_typehints.py cleanly.
+Applied patch tests/test_ext_autodoc_configs.py cleanly.
+
+2026-10-30 17:26:42,083 - INFO - Git diff before:
+diff --git a/sphinx/ext/autodoc/typehints.py b/sphinx/ext/autodoc/typehints.py
+index af4b47bb0..97fe2d670 100644
+--- a/sphinx/ext/autodoc/typehints.py
++++ b/sphinx/ext/autodoc/typehints.py
+@@ -149,7 +149,7 @@ def augment_descriptions_with_types(
+         elif parts[0] == 'type':
+             name = ' '.join(parts[1:])
+             has_type.add(name)
+-        elif parts[0] == 'return':
++        elif parts[0] in ('return', 'returns'):
+             has_description.add('return')
+         elif parts[0] == 'rtype':
+             has_type.add('return')
+diff --git a/tests/test_ext_autodoc_configs.py b/tests/test_ext_autodoc_configs.py
+index f6436f541..a5968bce8 100644
+--- a/tests/test_ext_autodoc_configs.py
++++ b/tests/test_ext_autodoc_configs.py
+@@ -918,6 +918,37 @@ def test_autodoc_typehints_description_with_documented_init_no_undoc(app):
+             '         **x** (*int*) -- Some integer\n' == context)
+ 
+ 
++@pytest.mark.sphinx('text', testroot='ext-autodoc',
++                    confoverrides={'autodoc_typehints': "description",
++                                   'autodoc_typehints_description_target': 'documented',
++                                   'extensions': ['sphinx.ext.autodoc', 'sphinx.ext.napoleon'],
++                                   'napoleon_numpy_docstring': False})
++def test_autodoc_typehints_description_target_documented_with_napoleon(app):
++    # When using Napoleon with Google style, the Returns section generates
++    # :returns: (not :return:).  Make sure autodoc_typehints_description_target
++    # correctly detects it and adds the rtype when the return is documented.
++    (app.srcdir / 'index.rst').write_text(
++        '.. autofunction:: target.napoleon_typehints.google_doc_func\n'
++    )
++    app.build()
++    context = (app.outdir / 'index.txt').read_text()
++    assert ('target.napoleon_typehints.google_doc_func(param1, param2)\n'
++            '\n'
++            '   A function with a Google style docstring.\n'
++            '\n'
++            '   Parameters:\n'
++            '      * **param1** (*int*) -- First parameter.\n'
++            '\n'
++            '      * **param2** (*str*) -- Second parameter.\n'
++            '\n'
++            '   Returns:\n'
++            '      The returned value.\n'
++            '\n'
++            '   Return type:\n'
++            '      bool\n'
++            in context)
++
++
+ @pytest.mark.sphinx('text', testroot='ext-autodoc',
+                     confoverrides={'autodoc_typehints': "description"})
+ def test_autodoc_typehints_description_for_invalid_node(app):
+2026-10-30 17:26:42,084 - INFO - Eval script for sphinx-doc__sphinx-9673 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-9673/eval.sh; copying to container...
+2026-10-30 17:26:47,457 - INFO - Test runtime: 5.21 seconds
+2026-10-30 17:26:47,463 - INFO - Test output for sphinx-doc__sphinx-9673 written to logs/run_evaluation/verified_full_claude-code/claude-code-kimi-k2.6-cloud/sphinx-doc__sphinx-9673/test_output.txt
+2026-10-30 17:26:47,535 - INFO - Git diff after:
+diff --git a/sphinx/ext/autodoc/typehints.py b/sphinx/ext/autodoc/typehints.py
+index af4b47bb0..97fe2d670 100644
+--- a/sphinx/ext/autodoc/typehints.py
++++ b/sphinx/ext/autodoc/typehints.py
+@@ -149,7 +149,7 @@ def augment_descriptions_with_types(
+         elif parts[0] == 'type':
+             name = ' '.join(parts[1:])
+             has_type.add(name)
+-        elif parts[0] == 'return':
++        elif parts[0] in ('return', 'returns'):
+             has_description.add('return')
+         elif parts[0] == 'rtype':
+             has_type.add('return')
+2026-10-30 17:26:47,535 - INFO - Git diff changed after running eval script
+2026-10-30 17:26:47,535 - INFO - Grading answer for sphinx-doc__sphinx-9673...
+2026-10-30 17:26:47,540 - INFO - report: {'sphinx-doc__sphinx-9673': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_no_undoc'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_ext_autodoc_configs.py::test_autoclass_content_class', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_init', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_mixed', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_separated_init', 'tests/test_ext_autodoc_configs.py::test_autodoc_class_signature_separated_new', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_both', 'tests/test_ext_autodoc_configs.py::test_autodoc_inherit_docstrings', 'tests/test_ext_autodoc_configs.py::test_autodoc_docstring_signature', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_class', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_init', 'tests/test_ext_autodoc_configs.py::test_autoclass_content_and_docstring_signature_both', 'tests/test_ext_autodoc_configs.py::test_mocked_module_imports', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_signature', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_none', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_none_for_overload', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_with_documented_init', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_with_documented_init_no_undoc', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_for_invalid_node', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_both', 'tests/test_ext_autodoc_configs.py::test_autodoc_type_aliases', 'tests/test_ext_autodoc_configs.py::test_autodoc_typehints_description_and_type_aliases', 'tests/test_ext_autodoc_configs.py::test_autodoc_default_options', 'tests/test_ext_autodoc_configs.py::test_autodoc_default_options_with_values'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9673: resolved: True
+2026-10-30 17:26:47,543 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9673.verified_full_claude-code...
+2026-10-30 17:27:09,823 - INFO - Container sweb.eval.sphinx-doc__sphinx-9673.verified_full_claude-code stopped successfully.
+2026-10-30 17:27:09,823 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9673.verified_full_claude-code...
+2026-10-30 17:27:09,905 - INFO - Container sweb.eval.sphinx-doc__sphinx-9673.verified_full_claude-code removed successfully.

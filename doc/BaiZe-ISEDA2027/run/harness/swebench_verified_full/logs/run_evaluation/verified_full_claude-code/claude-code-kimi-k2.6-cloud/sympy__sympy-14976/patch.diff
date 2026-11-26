@@ -1,0 +1,41 @@
+diff --git a/sympy/printing/pycode.py b/sympy/printing/pycode.py
+index d0690142..550d950e 100644
+--- a/sympy/printing/pycode.py
++++ b/sympy/printing/pycode.py
+@@ -331,6 +331,13 @@ def _print_Float(self, e):
+         args = str(tuple(map(int, e._mpf_)))
+         return '{func}({args})'.format(func=self._module_format('mpmath.mpf'), args=args)
+ 
++    def _print_Rational(self, e):
++        if e.q == 1:
++            return str(e.p)
++        return '{mpf}({p})/{q}'.format(
++            mpf=self._module_format('mpmath.mpf'),
++            p=e.p,
++            q=e.q)
+ 
+     def _print_uppergamma(self, e):
+         return "{0}({1}, {2}, {3})".format(
+diff --git a/sympy/printing/tests/test_pycode.py b/sympy/printing/tests/test_pycode.py
+index 68994056..2c7e5346 100644
+--- a/sympy/printing/tests/test_pycode.py
++++ b/sympy/printing/tests/test_pycode.py
+@@ -3,7 +3,7 @@
+ 
+ from sympy.codegen import Assignment
+ from sympy.core import Expr, Mod, symbols, Eq, Le, Gt, zoo, oo
+-from sympy.core.numbers import pi
++from sympy.core.numbers import pi, Rational
+ from sympy.codegen.ast import none
+ from sympy.external import import_module
+ from sympy.logic import And, Or
+@@ -40,6 +40,9 @@ def test_PythonCodePrinter():
+ def test_MpmathPrinter():
+     p = MpmathPrinter()
+     assert p.doprint(sign(x)) == 'mpmath.sign(x)'
++    assert p.doprint(Rational(2, 3)) == 'mpmath.mpf(2)/3'
++    assert p.doprint(Rational(-2, 3)) == 'mpmath.mpf(-2)/3'
++    assert p.doprint(Rational(3, 1)) == '3'
+ 
+ 
+ def test_NumPyPrinter():

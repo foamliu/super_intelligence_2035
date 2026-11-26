@@ -1,0 +1,318 @@
+2026-10-30 16:58:27,137 - INFO - Creating container for django__django-16631...
+2026-10-30 16:58:27,197 - INFO - Container for django__django-16631 created: 9775b2a19ebf4480754974a7fccdaf8337d5e595cdc81b746ead9ed480459b61
+2026-10-30 16:58:29,810 - INFO - Container for django__django-16631 started: 9775b2a19ebf4480754974a7fccdaf8337d5e595cdc81b746ead9ed480459b61
+2026-10-30 16:58:29,812 - INFO - Intermediate patch for django__django-16631 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-16631/patch.diff, now applying to container...
+2026-10-30 16:58:29,926 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/auth/__init__.py...
+Checking patch django/contrib/auth/base_user.py...
+Checking patch tests/auth_tests/test_middleware.py...
+Checking patch tests/auth_tests/test_models.py...
+Applied patch django/contrib/auth/__init__.py cleanly.
+Applied patch django/contrib/auth/base_user.py cleanly.
+Applied patch tests/auth_tests/test_middleware.py cleanly.
+Applied patch tests/auth_tests/test_models.py cleanly.
+
+2026-10-30 16:58:31,425 - INFO - Git diff before:
+diff --git a/django/contrib/auth/__init__.py b/django/contrib/auth/__init__.py
+index 155330c596..6d20730cd0 100644
+--- a/django/contrib/auth/__init__.py
++++ b/django/contrib/auth/__init__.py
+@@ -60,6 +60,12 @@ def _get_user_session_key(request):
+     return get_user_model()._meta.pk.to_python(request.session[SESSION_KEY])
+ 
+ 
++def _get_session_auth_hash(user, secret=None):
++    try:
++        return user.get_session_auth_hash(secret=secret)
++    except TypeError:
++        return user.get_session_auth_hash()
++
+ @sensitive_variables("credentials")
+ def authenticate(request=None, **credentials):
+     """
+@@ -101,13 +107,17 @@ def login(request, user, backend=None):
+     if user is None:
+         user = request.user
+     if hasattr(user, "get_session_auth_hash"):
+-        session_auth_hash = user.get_session_auth_hash()
++        session_auth_hash = _get_session_auth_hash(user)
+ 
+     if SESSION_KEY in request.session:
+         if _get_user_session_key(request) != user.pk or (
+             session_auth_hash
+-            and not constant_time_compare(
+-                request.session.get(HASH_SESSION_KEY, ""), session_auth_hash
++            and not any(
++                constant_time_compare(
++                    request.session.get(HASH_SESSION_KEY, ""),
++                    _get_session_auth_hash(user, secret),
++                )
++                for secret in [settings.SECRET_KEY, *settings.SECRET_KEY_FALLBACKS]
+             )
+         ):
+             # To avoid reusing another user's session, create a new, empty
+@@ -199,8 +209,11 @@ def get_user(request):
+             # Verify the session
+             if hasattr(user, "get_session_auth_hash"):
+                 session_hash = request.session.get(HASH_SESSION_KEY)
+-                session_hash_verified = session_hash and constant_time_compare(
+-                    session_hash, user.get_session_auth_hash()
++                session_hash_verified = session_hash and any(
++                    constant_time_compare(
++                        session_hash, _get_session_auth_hash(user, secret)
++                    )
++                    for secret in [settings.SECRET_KEY, *settings.SECRET_KEY_FALLBACKS]
+                 )
+                 if not session_hash_verified:
+                     request.session.flush()
+diff --git a/django/contrib/auth/base_user.py b/django/contrib/auth/base_user.py
+index 5ee30bf59c..1bb77a7702 100644
+--- a/django/contrib/auth/base_user.py
++++ b/django/contrib/auth/base_user.py
+@@ -131,7 +131,7 @@ class AbstractBaseUser(models.Model):
+         """
+         return is_password_usable(self.password)
+ 
+-    def get_session_auth_hash(self):
++    def get_session_auth_hash(self, secret=None):
+         """
+         Return an HMAC of the password field.
+         """
+@@ -139,6 +139,7 @@ class AbstractBaseUser(models.Model):
+         return salted_hmac(
+             key_salt,
+             self.password,
++            secret=secret,
+             algorithm="sha256",
+         ).hexdigest()
+ 
+diff --git a/tests/auth_tests/test_middleware.py b/tests/auth_tests/test_middleware.py
+index e7c5a525cd..5be62394aa 100644
+--- a/tests/auth_tests/test_middleware.py
++++ b/tests/auth_tests/test_middleware.py
+@@ -1,8 +1,9 @@
++from django.contrib.auth import HASH_SESSION_KEY, SESSION_KEY, login
+ from django.contrib.auth.middleware import AuthenticationMiddleware
+ from django.contrib.auth.models import User
+ from django.core.exceptions import ImproperlyConfigured
+ from django.http import HttpRequest, HttpResponse
+-from django.test import TestCase
++from django.test import TestCase, override_settings
+ 
+ 
+ class TestAuthenticationMiddleware(TestCase):
+@@ -50,3 +51,41 @@ class TestAuthenticationMiddleware(TestCase):
+         self.assertEqual(auser, self.user)
+         auser_second = await self.request.auser()
+         self.assertIs(auser, auser_second)
++
++    @override_settings(SECRET_KEY="new_secret", SECRET_KEY_FALLBACKS=["old_secret"])
++    def test_secret_key_fallback_validates_session(self):
++        """Session created with an old secret is valid when the secret is a fallback."""
++        with override_settings(SECRET_KEY="old_secret"):
++            self.client.force_login(self.user)
++            session = self.client.session
++
++        request = HttpRequest()
++        request.session = session
++        self.middleware(request)
++        self.assertEqual(request.user, self.user)
++
++    @override_settings(SECRET_KEY="new_secret", SECRET_KEY_FALLBACKS=[])
++    def test_secret_key_fallback_removed_invalidates_session(self):
++        """Session created with an old secret is invalid when fallback is removed."""
++        with override_settings(SECRET_KEY="old_secret"):
++            self.client.force_login(self.user)
++            session = self.client.session
++
++        request = HttpRequest()
++        request.session = session
++        self.middleware(request)
++        self.assertTrue(request.user.is_anonymous)
++
++    @override_settings(SECRET_KEY="new_secret", SECRET_KEY_FALLBACKS=["old_secret"])
++    def test_login_with_secret_key_fallback(self):
++        """login() doesn't flush a session with a valid fallback hash."""
++        with override_settings(SECRET_KEY="old_secret"):
++            self.client.force_login(self.user)
++            session = self.client.session
++
++        request = HttpRequest()
++        request.session = session
++        request.user = self.user
++        login(request, self.user)
++        self.assertIn(SESSION_KEY, request.session)
++        self.assertEqual(request.session[HASH_SESSION_KEY], self.user.get_session_auth_hash())
+diff --git a/tests/auth_tests/test_models.py b/tests/auth_tests/test_models.py
+index fe1afcbdc3..59bf96d5a8 100644
+--- a/tests/auth_tests/test_models.py
++++ b/tests/auth_tests/test_models.py
+@@ -236,6 +236,11 @@ class AbstractBaseUserTests(SimpleTestCase):
+         user = CustomEmailField()
+         self.assertEqual(user.get_email_field_name(), "email_address")
+ 
++    def test_get_session_auth_hash(self):
++        user = User(password="foo")
++        hash1 = user.get_session_auth_hash()
++        hash2 = user.get_session_auth_hash(secret="custom-secret")
++        self.assertNotEqual(hash1, hash2)
+ 
+ class AbstractUserTestCase(TestCase):
+     def test_email_user(self):
+2026-10-30 16:58:31,428 - INFO - Eval script for django__django-16631 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-16631/eval.sh; copying to container...
+2026-10-30 16:58:38,802 - INFO - Test runtime: 7.31 seconds
+2026-10-30 16:58:38,805 - INFO - Test output for django__django-16631 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-16631/test_output.txt
+2026-10-30 16:58:38,878 - INFO - Git diff after:
+diff --git a/django/contrib/auth/__init__.py b/django/contrib/auth/__init__.py
+index 155330c596..6d20730cd0 100644
+--- a/django/contrib/auth/__init__.py
++++ b/django/contrib/auth/__init__.py
+@@ -60,6 +60,12 @@ def _get_user_session_key(request):
+     return get_user_model()._meta.pk.to_python(request.session[SESSION_KEY])
+ 
+ 
++def _get_session_auth_hash(user, secret=None):
++    try:
++        return user.get_session_auth_hash(secret=secret)
++    except TypeError:
++        return user.get_session_auth_hash()
++
+ @sensitive_variables("credentials")
+ def authenticate(request=None, **credentials):
+     """
+@@ -101,13 +107,17 @@ def login(request, user, backend=None):
+     if user is None:
+         user = request.user
+     if hasattr(user, "get_session_auth_hash"):
+-        session_auth_hash = user.get_session_auth_hash()
++        session_auth_hash = _get_session_auth_hash(user)
+ 
+     if SESSION_KEY in request.session:
+         if _get_user_session_key(request) != user.pk or (
+             session_auth_hash
+-            and not constant_time_compare(
+-                request.session.get(HASH_SESSION_KEY, ""), session_auth_hash
++            and not any(
++                constant_time_compare(
++                    request.session.get(HASH_SESSION_KEY, ""),
++                    _get_session_auth_hash(user, secret),
++                )
++                for secret in [settings.SECRET_KEY, *settings.SECRET_KEY_FALLBACKS]
+             )
+         ):
+             # To avoid reusing another user's session, create a new, empty
+@@ -199,8 +209,11 @@ def get_user(request):
+             # Verify the session
+             if hasattr(user, "get_session_auth_hash"):
+                 session_hash = request.session.get(HASH_SESSION_KEY)
+-                session_hash_verified = session_hash and constant_time_compare(
+-                    session_hash, user.get_session_auth_hash()
++                session_hash_verified = session_hash and any(
++                    constant_time_compare(
++                        session_hash, _get_session_auth_hash(user, secret)
++                    )
++                    for secret in [settings.SECRET_KEY, *settings.SECRET_KEY_FALLBACKS]
+                 )
+                 if not session_hash_verified:
+                     request.session.flush()
+diff --git a/django/contrib/auth/base_user.py b/django/contrib/auth/base_user.py
+index 5ee30bf59c..1bb77a7702 100644
+--- a/django/contrib/auth/base_user.py
++++ b/django/contrib/auth/base_user.py
+@@ -131,7 +131,7 @@ class AbstractBaseUser(models.Model):
+         """
+         return is_password_usable(self.password)
+ 
+-    def get_session_auth_hash(self):
++    def get_session_auth_hash(self, secret=None):
+         """
+         Return an HMAC of the password field.
+         """
+@@ -139,6 +139,7 @@ class AbstractBaseUser(models.Model):
+         return salted_hmac(
+             key_salt,
+             self.password,
++            secret=secret,
+             algorithm="sha256",
+         ).hexdigest()
+ 
+diff --git a/tests/auth_tests/test_middleware.py b/tests/auth_tests/test_middleware.py
+index e7c5a525cd..5be62394aa 100644
+--- a/tests/auth_tests/test_middleware.py
++++ b/tests/auth_tests/test_middleware.py
+@@ -1,8 +1,9 @@
++from django.contrib.auth import HASH_SESSION_KEY, SESSION_KEY, login
+ from django.contrib.auth.middleware import AuthenticationMiddleware
+ from django.contrib.auth.models import User
+ from django.core.exceptions import ImproperlyConfigured
+ from django.http import HttpRequest, HttpResponse
+-from django.test import TestCase
++from django.test import TestCase, override_settings
+ 
+ 
+ class TestAuthenticationMiddleware(TestCase):
+@@ -50,3 +51,41 @@ class TestAuthenticationMiddleware(TestCase):
+         self.assertEqual(auser, self.user)
+         auser_second = await self.request.auser()
+         self.assertIs(auser, auser_second)
++
++    @override_settings(SECRET_KEY="new_secret", SECRET_KEY_FALLBACKS=["old_secret"])
++    def test_secret_key_fallback_validates_session(self):
++        """Session created with an old secret is valid when the secret is a fallback."""
++        with override_settings(SECRET_KEY="old_secret"):
++            self.client.force_login(self.user)
++            session = self.client.session
++
++        request = HttpRequest()
++        request.session = session
++        self.middleware(request)
++        self.assertEqual(request.user, self.user)
++
++    @override_settings(SECRET_KEY="new_secret", SECRET_KEY_FALLBACKS=[])
++    def test_secret_key_fallback_removed_invalidates_session(self):
++        """Session created with an old secret is invalid when fallback is removed."""
++        with override_settings(SECRET_KEY="old_secret"):
++            self.client.force_login(self.user)
++            session = self.client.session
++
++        request = HttpRequest()
++        request.session = session
++        self.middleware(request)
++        self.assertTrue(request.user.is_anonymous)
++
++    @override_settings(SECRET_KEY="new_secret", SECRET_KEY_FALLBACKS=["old_secret"])
++    def test_login_with_secret_key_fallback(self):
++        """login() doesn't flush a session with a valid fallback hash."""
++        with override_settings(SECRET_KEY="old_secret"):
++            self.client.force_login(self.user)
++            session = self.client.session
++
++        request = HttpRequest()
++        request.session = session
++        request.user = self.user
++        login(request, self.user)
++        self.assertIn(SESSION_KEY, request.session)
++        self.assertEqual(request.session[HASH_SESSION_KEY], self.user.get_session_auth_hash())
+diff --git a/tests/auth_tests/test_models.py b/tests/auth_tests/test_models.py
+index fe1afcbdc3..59bf96d5a8 100644
+--- a/tests/auth_tests/test_models.py
++++ b/tests/auth_tests/test_models.py
+@@ -236,6 +236,11 @@ class AbstractBaseUserTests(SimpleTestCase):
+         user = CustomEmailField()
+         self.assertEqual(user.get_email_field_name(), "email_address")
+ 
++    def test_get_session_auth_hash(self):
++        user = User(password="foo")
++        hash1 = user.get_session_auth_hash()
++        hash2 = user.get_session_auth_hash(secret="custom-secret")
++        self.assertNotEqual(hash1, hash2)
+ 
+ class AbstractUserTestCase(TestCase):
+     def test_email_user(self):
+2026-10-30 16:58:38,878 - INFO - Grading answer for django__django-16631...
+2026-10-30 16:58:38,880 - INFO - report: {'django__django-16631': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_get_user_fallback_secret (auth_tests.test_basic.TestGetUser.test_get_user_fallback_secret)']}, 'PASS_TO_PASS': {'success': ['test_get_user (auth_tests.test_basic.TestGetUser.test_get_user)', 'test_get_user_anonymous (auth_tests.test_basic.TestGetUser.test_get_user_anonymous)', 'The current user model can be retrieved', 'Check the creation and properties of a superuser', 'test_superuser_no_email_or_password (auth_tests.test_basic.BasicTestCase.test_superuser_no_email_or_password)', 'The current user model can be swapped out for another', 'The alternate user setting must point to something in the format app.model', 'The current user model must point to an installed model', 'test_unicode_username (auth_tests.test_basic.BasicTestCase.test_unicode_username)', 'Users can be created and can set their password', 'Users can be created without an email', 'Default User model verbose names are translatable (#19945)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16631: resolved: False
+2026-10-30 16:58:38,881 - INFO - Attempting to stop container sweb.eval.django__django-16631.verified_full_pi...
+2026-10-30 16:58:56,031 - INFO - Container sweb.eval.django__django-16631.verified_full_pi stopped successfully.
+2026-10-30 16:58:56,031 - INFO - Attempting to remove container sweb.eval.django__django-16631.verified_full_pi...
+2026-10-30 16:58:56,095 - INFO - Container sweb.eval.django__django-16631.verified_full_pi removed successfully.

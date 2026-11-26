@@ -1,0 +1,138 @@
+diff --git a/django/contrib/admin/checks.py b/django/contrib/admin/checks.py
+index f82c20c2f1..9fd77b5d41 100644
+--- a/django/contrib/admin/checks.py
++++ b/django/contrib/admin/checks.py
+@@ -720,33 +720,33 @@ class ModelAdminChecks(BaseModelAdminChecks):
+             return []
+         elif hasattr(obj, item):
+             return []
+-        elif hasattr(obj.model, item):
++        else:
+             try:
+                 field = obj.model._meta.get_field(item)
+             except FieldDoesNotExist:
+-                return []
+-            else:
+-                if isinstance(field, models.ManyToManyField):
++                try:
++                    field = getattr(obj.model, item)
++                except AttributeError:
+                     return [
+                         checks.Error(
+-                            "The value of '%s' must not be a ManyToManyField." % label,
++                            "The value of '%s' refers to '%s', which is not a callable, "
++                            "an attribute of '%s', or an attribute or method on '%s.%s'." % (
++                                label, item, obj.__class__.__name__,
++                                obj.model._meta.app_label, obj.model._meta.object_name,
++                            ),
+                             obj=obj.__class__,
+-                            id='admin.E109',
++                            id='admin.E108',
+                         )
+                     ]
+-                return []
+-        else:
+-            return [
+-                checks.Error(
+-                    "The value of '%s' refers to '%s', which is not a callable, "
+-                    "an attribute of '%s', or an attribute or method on '%s.%s'." % (
+-                        label, item, obj.__class__.__name__,
+-                        obj.model._meta.app_label, obj.model._meta.object_name,
+-                    ),
+-                    obj=obj.__class__,
+-                    id='admin.E108',
+-                )
+-            ]
++            if isinstance(field, models.ManyToManyField):
++                return [
++                    checks.Error(
++                        "The value of '%s' must not be a ManyToManyField." % label,
++                        obj=obj.__class__,
++                        id='admin.E109',
++                    )
++                ]
++            return []
+ 
+     def _check_list_display_links(self, obj):
+         """ Check that list_display_links is a unique subset of list_display.
+diff --git a/tests/modeladmin/models.py b/tests/modeladmin/models.py
+index c0d3c772c9..7cc4bbb3c8 100644
+--- a/tests/modeladmin/models.py
++++ b/tests/modeladmin/models.py
+@@ -34,6 +34,23 @@ class Concert(models.Model):
+     ), blank=True)
+ 
+ 
++class InstanceOnlyDescriptor:
++    """A descriptor that is only accessible via instance (not class)."""
++    def __get__(self, instance, owner):
++        if instance is None:
++            raise AttributeError('InstanceOnlyField is only accessible via instance')
++        return 'instance_value'
++
++    def __set__(self, instance, value):
++        pass
++
++
++class InstanceOnlyField(models.Field):
++    def contribute_to_class(self, cls, name, private_only=False):
++        super().contribute_to_class(cls, name, private_only=private_only)
++        setattr(cls, self.attname, InstanceOnlyDescriptor())
++
++
+ class ValidationTestModel(models.Model):
+     name = models.CharField(max_length=100)
+     slug = models.SlugField()
+@@ -46,9 +63,20 @@ class ValidationTestModel(models.Model):
+     # This field is intentionally 2 characters long (#16080).
+     no = models.IntegerField(verbose_name="Number", blank=True, null=True)
+ 
++    class Meta:
++        app_label = 'modeladmin'
++
+     def decade_published_in(self):
+         return self.pub_date.strftime('%Y')[:3] + "0's"
+ 
+ 
++class InstanceOnlyFieldModel(models.Model):
++    name = models.CharField(max_length=100)
++    instance_only = InstanceOnlyField()
++
++    class Meta:
++        app_label = 'modeladmin'
++
++
+ class ValidationTestInlineModel(models.Model):
+     parent = models.ForeignKey(ValidationTestModel, models.CASCADE)
+diff --git a/tests/modeladmin/test_checks.py b/tests/modeladmin/test_checks.py
+index a1b7001f68..bfd7de704d 100644
+--- a/tests/modeladmin/test_checks.py
++++ b/tests/modeladmin/test_checks.py
+@@ -9,7 +9,8 @@ from django.forms.models import BaseModelFormSet
+ from django.test import SimpleTestCase
+ 
+ from .models import (
+-    Band, Song, User, ValidationTestInlineModel, ValidationTestModel,
++    Band, InstanceOnlyFieldModel, Song, User, ValidationTestInlineModel,
++    ValidationTestModel,
+ )
+ 
+ 
+@@ -509,6 +510,17 @@ class ListDisplayTests(CheckTestCase):
+ 
+         self.assertIsValid(TestModelAdmin, ValidationTestModel)
+ 
++    def test_valid_descriptor_without_class_access(self):
++        """
++        A descriptor that raises AttributeError when accessed on the model
++        class (rather than an instance) should still be valid if it's a
++        real field on the model.
++        """
++        class TestModelAdmin(ModelAdmin):
++            list_display = ('instance_only',)
++
++        self.assertIsValid(TestModelAdmin, InstanceOnlyFieldModel)
++
+ 
+ class ListDisplayLinksCheckTests(CheckTestCase):
+ 

@@ -1,0 +1,5 @@
+The verification succeeded: `run_code` on the `.75` WaveView Tcl sandbox returned `print_log = "ALL_ASSERTS_PASS"` with empty `error_log`, and the session was closed (`cleaned: true`).
+
+My `lvs_summary_audit` proc implements: whitespace collapse before matching, last-wins cells/counts, accumulate ERROR lines, separate benign WARNING count, signed layout-minus-source deltas, and the exact "clean" verdict condition (all delta/name matches AND zero errors).
+
+DESIGN_FLOW_VERDICT=PASS

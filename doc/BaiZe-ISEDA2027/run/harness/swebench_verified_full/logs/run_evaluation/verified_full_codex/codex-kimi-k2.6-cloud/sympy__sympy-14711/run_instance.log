@@ -1,0 +1,44 @@
+2026-11-03 17:33:09,157 - INFO - Creating container for sympy__sympy-14711...
+2026-11-03 17:33:09,180 - INFO - Container for sympy__sympy-14711 created: e73a535a4ef3d052c87195c73180ac58599245d2e8e246f1778ebd2aa37e34c3
+2026-11-03 17:33:09,852 - INFO - Container for sympy__sympy-14711 started: e73a535a4ef3d052c87195c73180ac58599245d2e8e246f1778ebd2aa37e34c3
+2026-11-03 17:33:09,854 - INFO - Intermediate patch for sympy__sympy-14711 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/sympy__sympy-14711/patch.diff, now applying to container...
+2026-11-03 17:33:09,999 - INFO - >>>>> Applied Patch:
+Checking patch sympy/physics/vector/vector.py...
+Applied patch sympy/physics/vector/vector.py cleanly.
+
+2026-11-03 17:33:10,551 - INFO - Git diff before:
+diff --git a/sympy/physics/vector/vector.py b/sympy/physics/vector/vector.py
+index a048ee57f..884911921 100644
+--- a/sympy/physics/vector/vector.py
++++ b/sympy/physics/vector/vector.py
+@@ -57,6 +57,8 @@ def __hash__(self):
+ 
+     def __add__(self, other):
+         """The add operator for Vector. """
++        if other == 0:
++            return self
+         other = _check_vector(other)
+         return Vector(self.args + other.args)
+2026-11-03 17:33:10,553 - INFO - Eval script for sympy__sympy-14711 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/sympy__sympy-14711/eval.sh; copying to container...
+2026-11-03 17:33:18,161 - INFO - Test runtime: 7.52 seconds
+2026-11-03 17:33:18,164 - INFO - Test output for sympy__sympy-14711 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/sympy__sympy-14711/test_output.txt
+2026-11-03 17:33:18,231 - INFO - Git diff after:
+diff --git a/sympy/physics/vector/vector.py b/sympy/physics/vector/vector.py
+index a048ee57f..884911921 100644
+--- a/sympy/physics/vector/vector.py
++++ b/sympy/physics/vector/vector.py
+@@ -57,6 +57,8 @@ def __hash__(self):
+ 
+     def __add__(self, other):
+         """The add operator for Vector. """
++        if other == 0:
++            return self
+         other = _check_vector(other)
+         return Vector(self.args + other.args)
+2026-11-03 17:33:18,231 - INFO - Grading answer for sympy__sympy-14711...
+2026-11-03 17:33:18,233 - INFO - report: {'sympy__sympy-14711': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_Vector'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Vector_diffs', 'test_vector_var_in_dcm'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-14711: resolved: True
+2026-11-03 17:33:18,234 - INFO - Attempting to stop container sweb.eval.sympy__sympy-14711.verified_full_codex...
+2026-11-03 17:33:34,311 - INFO - Container sweb.eval.sympy__sympy-14711.verified_full_codex stopped successfully.
+2026-11-03 17:33:34,311 - INFO - Attempting to remove container sweb.eval.sympy__sympy-14711.verified_full_codex...
+2026-11-03 17:33:34,359 - INFO - Container sweb.eval.sympy__sympy-14711.verified_full_codex removed successfully.

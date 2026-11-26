@@ -1,0 +1,8 @@
+run.sh: line 28: string: command not found
+run.sh: line 28: string: command not found
+run.sh: line 28: string: command not found
+=== pi-SUT Wave-006 start Thu Oct 29 09:55:54 PM CST 2026 ===
+pi exit=0
+--- DESIGN_FLOW_VERDICT result lines ---
+CHECK_RESULT=PASS 6 / FAIL 0 (6 cases: A basic-scalar+err+info, B comma-list teeth, C non-numeric-scalar teeth, D WVINFO pipe-in-msg teeth, E WVERR pipe-in-msg teeth, F multi-file comprehensive)
+DESIGN_FLOW_VERDICT=PASS

@@ -1,0 +1,212 @@
+2026-11-09 15:35:14,696 - INFO - Creating container for pylint-dev__pylint-6386...
+2026-11-09 15:35:14,718 - INFO - Container for pylint-dev__pylint-6386 created: badf55a527f26b7c33e8fe2ec8507850de4cf06d7fa4e103acc6944aea4acc5c
+2026-11-09 15:35:15,474 - INFO - Container for pylint-dev__pylint-6386 started: badf55a527f26b7c33e8fe2ec8507850de4cf06d7fa4e103acc6944aea4acc5c
+2026-11-09 15:35:15,476 - INFO - Intermediate patch for pylint-dev__pylint-6386 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/pylint-dev__pylint-6386/patch.diff, now applying to container...
+2026-11-09 15:35:15,648 - INFO - >>>>> Applied Patch:
+Checking patch pylint/config/argument.py...
+Checking patch pylint/config/arguments_manager.py...
+Checking patch pylint/config/utils.py...
+Checking patch pylint/lint/base_options.py...
+Checking patch tests/config/test_config.py...
+Applied patch pylint/config/argument.py cleanly.
+Applied patch pylint/config/arguments_manager.py cleanly.
+Applied patch pylint/config/utils.py cleanly.
+Applied patch pylint/lint/base_options.py cleanly.
+Applied patch tests/config/test_config.py cleanly.
+
+2026-11-09 15:35:16,020 - INFO - Git diff before:
+diff --git a/pylint/config/argument.py b/pylint/config/argument.py
+index 0bb732b5..eb3ab4e1 100644
+--- a/pylint/config/argument.py
++++ b/pylint/config/argument.py
+@@ -457,6 +457,7 @@ class _CallableArgument(_Argument):
+         kwargs: dict[str, Any],
+         hide_help: bool,
+         section: str | None,
++        metavar: str,
+     ) -> None:
+         super().__init__(
+             flags=flags, arg_help=arg_help, hide_help=hide_help, section=section
+@@ -467,3 +468,10 @@ class _CallableArgument(_Argument):
+ 
+         self.kwargs = kwargs
+         """Any additional arguments passed to the action."""
++
++        self.metavar = metavar
++        """The metavar of the argument.
++
++        See:
++        https://docs.python.org/3/library/argparse.html#metavar
++        """
+diff --git a/pylint/config/arguments_manager.py b/pylint/config/arguments_manager.py
+index ea87de82..1ba9a31e 100644
+--- a/pylint/config/arguments_manager.py
++++ b/pylint/config/arguments_manager.py
+@@ -218,6 +218,7 @@ class _ArgumentsManager:
+                 **argument.kwargs,
+                 action=argument.action,
+                 help=argument.help,
++                metavar=argument.metavar,
+             )
+         elif isinstance(argument, _ExtendArgument):
+             section_group.add_argument(
+diff --git a/pylint/config/utils.py b/pylint/config/utils.py
+index 8c790416..82845a93 100644
+--- a/pylint/config/utils.py
++++ b/pylint/config/utils.py
+@@ -71,6 +71,7 @@ def _convert_option_to_argument(
+             kwargs=optdict.get("kwargs", {}),
+             hide_help=optdict.get("hide", False),
+             section=optdict.get("group", None),
++            metavar=optdict.get("metavar", None),
+         )
+     try:
+         default = optdict["default"]
+@@ -207,6 +208,7 @@ PREPROCESSABLE_OPTIONS: dict[
+     "--output": (True, _set_output),
+     "--load-plugins": (True, _add_plugins),
+     "--verbose": (False, _set_verbose_mode),
++    "-v": (False, _set_verbose_mode),
+     "--enable-all-extensions": (False, _enable_all_extensions),
+ }
+ 
+@@ -218,7 +220,7 @@ def _preprocess_options(run: Run, args: Sequence[str]) -> list[str]:
+     i = 0
+     while i < len(args):
+         argument = args[i]
+-        if not argument.startswith("--"):
++        if not argument.startswith("-"):
+             processed_args.append(argument)
+             i += 1
+             continue
+diff --git a/pylint/lint/base_options.py b/pylint/lint/base_options.py
+index c793cc85..a06214d0 100644
+--- a/pylint/lint/base_options.py
++++ b/pylint/lint/base_options.py
+@@ -544,6 +544,7 @@ def _make_run_options(self: Run) -> Options:
+                 "help": "In verbose mode, extra non-checker-related info "
+                 "will be displayed.",
+                 "hide_from_config_file": True,
++                "metavar": "",
+             },
+         ),
+         (
+@@ -554,6 +555,7 @@ def _make_run_options(self: Run) -> Options:
+                 "help": "Load and enable all available extensions. "
+                 "Use --list-extensions to see a list all available extensions.",
+                 "hide_from_config_file": True,
++                "metavar": "",
+             },
+         ),
+         (
+diff --git a/tests/config/test_config.py b/tests/config/test_config.py
+index f91e6cbf..712d291e 100644
+--- a/tests/config/test_config.py
++++ b/tests/config/test_config.py
+@@ -100,3 +100,10 @@ def test_unknown_py_version(capsys: CaptureFixture) -> None:
+         Run([str(EMPTY_MODULE), "--py-version=the-newest"], exit=False)
+     output = capsys.readouterr()
+     assert "the-newest has an invalid format, should be a version string." in output.err
++
++
++def test_short_verbose(capsys: CaptureFixture) -> None:
++    """Check that we correctly handle the -v flag."""
++    Run([str(EMPTY_MODULE), "-v"], exit=False)
++    output = capsys.readouterr()
++    assert "Using config file" in output.err
+2026-11-09 15:35:16,022 - INFO - Eval script for pylint-dev__pylint-6386 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/pylint-dev__pylint-6386/eval.sh; copying to container...
+2026-11-09 15:35:21,167 - INFO - Test runtime: 5.07 seconds
+2026-11-09 15:35:21,169 - INFO - Test output for pylint-dev__pylint-6386 written to logs/run_evaluation/verified_full_glm53_claude-code_R1933/claude-code-glm-5.3-flash/pylint-dev__pylint-6386/test_output.txt
+2026-11-09 15:35:21,226 - INFO - Git diff after:
+diff --git a/pylint/config/argument.py b/pylint/config/argument.py
+index 0bb732b5..eb3ab4e1 100644
+--- a/pylint/config/argument.py
++++ b/pylint/config/argument.py
+@@ -457,6 +457,7 @@ class _CallableArgument(_Argument):
+         kwargs: dict[str, Any],
+         hide_help: bool,
+         section: str | None,
++        metavar: str,
+     ) -> None:
+         super().__init__(
+             flags=flags, arg_help=arg_help, hide_help=hide_help, section=section
+@@ -467,3 +468,10 @@ class _CallableArgument(_Argument):
+ 
+         self.kwargs = kwargs
+         """Any additional arguments passed to the action."""
++
++        self.metavar = metavar
++        """The metavar of the argument.
++
++        See:
++        https://docs.python.org/3/library/argparse.html#metavar
++        """
+diff --git a/pylint/config/arguments_manager.py b/pylint/config/arguments_manager.py
+index ea87de82..1ba9a31e 100644
+--- a/pylint/config/arguments_manager.py
++++ b/pylint/config/arguments_manager.py
+@@ -218,6 +218,7 @@ class _ArgumentsManager:
+                 **argument.kwargs,
+                 action=argument.action,
+                 help=argument.help,
++                metavar=argument.metavar,
+             )
+         elif isinstance(argument, _ExtendArgument):
+             section_group.add_argument(
+diff --git a/pylint/config/utils.py b/pylint/config/utils.py
+index 8c790416..82845a93 100644
+--- a/pylint/config/utils.py
++++ b/pylint/config/utils.py
+@@ -71,6 +71,7 @@ def _convert_option_to_argument(
+             kwargs=optdict.get("kwargs", {}),
+             hide_help=optdict.get("hide", False),
+             section=optdict.get("group", None),
++            metavar=optdict.get("metavar", None),
+         )
+     try:
+         default = optdict["default"]
+@@ -207,6 +208,7 @@ PREPROCESSABLE_OPTIONS: dict[
+     "--output": (True, _set_output),
+     "--load-plugins": (True, _add_plugins),
+     "--verbose": (False, _set_verbose_mode),
++    "-v": (False, _set_verbose_mode),
+     "--enable-all-extensions": (False, _enable_all_extensions),
+ }
+ 
+@@ -218,7 +220,7 @@ def _preprocess_options(run: Run, args: Sequence[str]) -> list[str]:
+     i = 0
+     while i < len(args):
+         argument = args[i]
+-        if not argument.startswith("--"):
++        if not argument.startswith("-"):
+             processed_args.append(argument)
+             i += 1
+             continue
+diff --git a/pylint/lint/base_options.py b/pylint/lint/base_options.py
+index c793cc85..a06214d0 100644
+--- a/pylint/lint/base_options.py
++++ b/pylint/lint/base_options.py
+@@ -544,6 +544,7 @@ def _make_run_options(self: Run) -> Options:
+                 "help": "In verbose mode, extra non-checker-related info "
+                 "will be displayed.",
+                 "hide_from_config_file": True,
++                "metavar": "",
+             },
+         ),
+         (
+@@ -554,6 +555,7 @@ def _make_run_options(self: Run) -> Options:
+                 "help": "Load and enable all available extensions. "
+                 "Use --list-extensions to see a list all available extensions.",
+                 "hide_from_config_file": True,
++                "metavar": "",
+             },
+         ),
+         (
+2026-11-09 15:35:21,226 - INFO - Git diff changed after running eval script
+2026-11-09 15:35:21,226 - INFO - Grading answer for pylint-dev__pylint-6386...
+2026-11-09 15:35:21,227 - INFO - report: {'pylint-dev__pylint-6386': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/config/test_config.py::test_short_verbose'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/config/test_config.py::test_can_read_toml_env_variable', 'tests/config/test_config.py::test_unknown_message_id', 'tests/config/test_config.py::test_unknown_option_name', 'tests/config/test_config.py::test_unknown_short_option_name', 'tests/config/test_config.py::test_unknown_confidence', 'tests/config/test_config.py::test_unknown_yes_no', 'tests/config/test_config.py::test_unknown_py_version'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pylint-dev__pylint-6386: resolved: True
+2026-11-09 15:35:21,229 - INFO - Attempting to stop container sweb.eval.pylint-dev__pylint-6386.verified_full_glm53_claude-code_R1933...
+2026-11-09 15:35:36,798 - INFO - Container sweb.eval.pylint-dev__pylint-6386.verified_full_glm53_claude-code_R1933 stopped successfully.
+2026-11-09 15:35:36,798 - INFO - Attempting to remove container sweb.eval.pylint-dev__pylint-6386.verified_full_glm53_claude-code_R1933...
+2026-11-09 15:35:36,845 - INFO - Container sweb.eval.pylint-dev__pylint-6386.verified_full_glm53_claude-code_R1933 removed successfully.

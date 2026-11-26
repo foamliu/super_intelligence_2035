@@ -1,0 +1,88 @@
+2026-11-10 16:01:17,272 - INFO - Creating container for astropy__astropy-7166...
+2026-11-10 16:01:17,336 - INFO - Container for astropy__astropy-7166 created: 00ecfa2477a3f077a3e21c83317cd368336e89fca8723e96258c9fb1f29aee2a
+2026-11-10 16:01:18,032 - INFO - Container for astropy__astropy-7166 started: 00ecfa2477a3f077a3e21c83317cd368336e89fca8723e96258c9fb1f29aee2a
+2026-11-10 16:01:18,034 - INFO - Intermediate patch for astropy__astropy-7166 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/astropy__astropy-7166/patch.diff, now applying to container...
+2026-11-10 16:01:18,146 - INFO - >>>>> Applied Patch:
+Checking patch astropy/utils/misc.py...
+Checking patch astropy/utils/tests/test_misc.py...
+Applied patch astropy/utils/misc.py cleanly.
+Applied patch astropy/utils/tests/test_misc.py cleanly.
+
+2026-11-10 16:01:18,677 - INFO - Git diff before:
+diff --git a/astropy/utils/misc.py b/astropy/utils/misc.py
+index de3fb01d1..4f29128fc 100644
+--- a/astropy/utils/misc.py
++++ b/astropy/utils/misc.py
+@@ -528,9 +528,9 @@ class InheritDocstrings(type):
+                 not key.startswith('_'))
+ 
+         for key, val in dct.items():
+-            if (inspect.isfunction(val) and
+-                is_public_member(key) and
+-                val.__doc__ is None):
++            if ((inspect.isfunction(val) or inspect.isdatadescriptor(val)) and
++                    is_public_member(key) and
++                    val.__doc__ is None):
+                 for base in cls.__mro__[1:]:
+                     super_method = getattr(base, key, None)
+                     if super_method is not None:
+diff --git a/astropy/utils/tests/test_misc.py b/astropy/utils/tests/test_misc.py
+index 4f632e8d1..e6501c949 100644
+--- a/astropy/utils/tests/test_misc.py
++++ b/astropy/utils/tests/test_misc.py
+@@ -80,14 +80,26 @@ def test_inherit_docstrings():
+             "FOO"
+             pass
+ 
++        @property
++        def bar(self):
++            "BAR"
++            pass
++
+     class Subclass(Base):
+         def __call__(self, *args):
+             pass
+ 
++        @property
++        def bar(self):
++            return 42
++
+     if Base.__call__.__doc__ is not None:
+         # TODO: Maybe if __doc__ is None this test should be skipped instead?
+         assert Subclass.__call__.__doc__ == "FOO"
+ 
++    if Base.bar.__doc__ is not None:
++        assert Subclass.bar.__doc__ == "BAR"
++
+ 
+ def test_set_locale():
+     # First, test if the required locales are available
+2026-11-10 16:01:18,679 - INFO - Eval script for astropy__astropy-7166 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/astropy__astropy-7166/eval.sh; copying to container...
+2026-11-10 16:01:23,511 - INFO - Test runtime: 4.77 seconds
+2026-11-10 16:01:23,514 - INFO - Test output for astropy__astropy-7166 written to logs/run_evaluation/verified_full_glm53_hermes_incr_R2028/hermes-glm-5.3-flash/astropy__astropy-7166/test_output.txt
+2026-11-10 16:01:23,561 - INFO - Git diff after:
+diff --git a/astropy/utils/misc.py b/astropy/utils/misc.py
+index de3fb01d1..4f29128fc 100644
+--- a/astropy/utils/misc.py
++++ b/astropy/utils/misc.py
+@@ -528,9 +528,9 @@ class InheritDocstrings(type):
+                 not key.startswith('_'))
+ 
+         for key, val in dct.items():
+-            if (inspect.isfunction(val) and
+-                is_public_member(key) and
+-                val.__doc__ is None):
++            if ((inspect.isfunction(val) or inspect.isdatadescriptor(val)) and
++                    is_public_member(key) and
++                    val.__doc__ is None):
+                 for base in cls.__mro__[1:]:
+                     super_method = getattr(base, key, None)
+                     if super_method is not None:
+2026-11-10 16:01:23,561 - INFO - Git diff changed after running eval script
+2026-11-10 16:01:23,561 - INFO - Grading answer for astropy__astropy-7166...
+2026-11-10 16:01:23,563 - INFO - report: {'astropy__astropy-7166': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['astropy/utils/tests/test_misc.py::test_inherit_docstrings'], 'failure': []}, 'PASS_TO_PASS': {'success': ['astropy/utils/tests/test_misc.py::test_isiterable', 'astropy/utils/tests/test_misc.py::test_signal_number_to_name_no_failure', 'astropy/utils/tests/test_misc.py::test_skip_hidden', 'astropy/utils/tests/test_misc.py::test_JsonCustomEncoder', 'astropy/utils/tests/test_misc.py::test_check_broadcast', 'astropy/utils/tests/test_misc.py::test_dtype_bytes_or_chars'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-7166: resolved: True
+2026-11-10 16:01:23,564 - INFO - Attempting to stop container sweb.eval.astropy__astropy-7166.verified_full_glm53_hermes_incr_R2028...
+2026-11-10 16:01:39,597 - INFO - Container sweb.eval.astropy__astropy-7166.verified_full_glm53_hermes_incr_R2028 stopped successfully.
+2026-11-10 16:01:39,597 - INFO - Attempting to remove container sweb.eval.astropy__astropy-7166.verified_full_glm53_hermes_incr_R2028...
+2026-11-10 16:01:39,624 - INFO - Container sweb.eval.astropy__astropy-7166.verified_full_glm53_hermes_incr_R2028 removed successfully.

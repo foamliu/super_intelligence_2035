@@ -1,0 +1,64 @@
+diff --git a/sympy/parsing/tests/test_latex.py b/sympy/parsing/tests/test_latex.py
+index f5c61cde..2b8335f1 100644
+--- a/sympy/parsing/tests/test_latex.py
++++ b/sympy/parsing/tests/test_latex.py
+@@ -120,6 +120,8 @@ def test_import():
+     (r"\frac{a}{b}", a / b),
+     (r"\frac{a + b}{c}", _Mul(a + b, _Pow(c, -1))),
+     (r"\frac{7}{3}", _Mul(7, _Pow(3, -1))),
++    (r"\frac{\frac{a}{b}}{c}", _Mul(_Mul(a, _Pow(b, -1)), _Pow(c, -1))),
++    (r"\frac{a}{\frac{b}{c}}", _Mul(a, _Pow(_Mul(b, _Pow(c, -1)), -1))),
+     (r"(\csc x)(\sec y)", csc(x)*sec(y)),
+     (r"\lim_{x \to 3} a", Limit(a, x, 3)),
+     (r"\lim_{x \rightarrow 3} a", Limit(a, x, 3)),
+diff --git a/sympy/printing/str.py b/sympy/printing/str.py
+index c3fdcdd4..1f9be442 100644
+--- a/sympy/printing/str.py
++++ b/sympy/printing/str.py
+@@ -288,11 +288,15 @@ def _print_Mul(self, expr):
+                 for a in d]
+ 
+             n = '*'.join(nfactors)
+-            d = '*'.join(dfactors)
++            d_str = '*'.join(dfactors)
+             if len(dfactors) > 1:
+-                return '%s/(%s)' % (n, d)
++                return '%s/(%s)' % (n, d_str)
+             elif dfactors:
+-                return '%s/%s' % (n, d)
++                if (len(d) == 1 and d[0].is_Pow and
++                        (d[0].exp is S.NegativeOne or
++                         d[0].exp is -S.Half)):
++                    return '%s/(%s)' % (n, d_str)
++                return '%s/%s' % (n, d_str)
+             return n
+ 
+         c, e = expr.as_coeff_Mul()
+@@ -336,6 +340,10 @@ def apow(i):
+                             isinstance(item.base, Mul)):
+                         # To avoid situations like #14160
+                         pow_paren.append(item)
++                    elif (item.base.is_Pow and
++                            (item.base.exp is S.NegativeOne or
++                             item.base.exp is -S.Half)):
++                        pow_paren.append(item)
+                     b.append(item.base)
+             elif item.is_Rational and item is not S.Infinity:
+                 if item.p != 1:
+diff --git a/sympy/printing/tests/test_str.py b/sympy/printing/tests/test_str.py
+index 690b1a8b..0ecdf643 100644
+--- a/sympy/printing/tests/test_str.py
++++ b/sympy/printing/tests/test_str.py
+@@ -252,6 +252,12 @@ def test_Mul():
+     # For issue 14160
+     assert str(Mul(-2, x, Pow(Mul(y,y,evaluate=False), -1, evaluate=False),
+                                                 evaluate=False)) == '-2*x/(y*y)'
++    # Test parenthesization of Pow with negative exponent base in denominator
++    assert str(Mul(x, Pow(Pow(y, -1), -1, evaluate=False), evaluate=False)) == 'x/(1/y)'
++    assert str(Mul(x, Pow(Pow(y, -S.Half), -1, evaluate=False),
++                     evaluate=False)) == 'x/(1/sqrt(y))'
++    assert str(Mul(S.One, Pow(Pow(y, -1), -1, evaluate=False),
++                   evaluate=False)) == '1/(1/y)'
+ 
+ 
+     class CustomClass1(Expr):

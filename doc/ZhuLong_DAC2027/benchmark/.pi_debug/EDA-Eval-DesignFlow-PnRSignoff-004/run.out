@@ -1,0 +1,6 @@
+=== pi-SUT PnRSignoff-004 start Thu Oct 29 11:33:04 PM CST 2026 ===
+pi exit=0
+--- DESIGN_FLOW_VERDICT result lines ---
+Local `tclsh 8.6.14` run: `CHECK_RESULT:ALL_ASSERTS_PASS` (all 6 fixture cases A–F).
+`CHECK_RESULT:ALL_ASSERTS_PASS`
+DESIGN_FLOW_VERDICT=PASS

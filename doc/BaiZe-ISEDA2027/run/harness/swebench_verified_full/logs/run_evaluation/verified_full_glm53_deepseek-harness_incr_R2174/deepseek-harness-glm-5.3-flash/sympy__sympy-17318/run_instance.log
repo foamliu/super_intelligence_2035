@@ -1,0 +1,52 @@
+2026-11-11 14:08:38,523 - INFO - Creating container for sympy__sympy-17318...
+2026-11-11 14:08:38,590 - INFO - Container for sympy__sympy-17318 created: 7bc6b5daf26541b1eefc2dd05719f72d1af136e660f609d6ed594fcfd2039032
+2026-11-11 14:08:40,340 - INFO - Container for sympy__sympy-17318 started: 7bc6b5daf26541b1eefc2dd05719f72d1af136e660f609d6ed594fcfd2039032
+2026-11-11 14:08:40,850 - INFO - Intermediate patch for sympy__sympy-17318 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2174/deepseek-harness-glm-5.3-flash/sympy__sympy-17318/patch.diff, now applying to container...
+2026-11-11 14:08:41,067 - INFO - >>>>> Applied Patch:
+Checking patch sympy/simplify/sqrtdenest.py...
+Applied patch sympy/simplify/sqrtdenest.py cleanly.
+
+2026-11-11 14:08:41,744 - INFO - Git diff before:
+diff --git a/sympy/simplify/sqrtdenest.py b/sympy/simplify/sqrtdenest.py
+index f0b7653ea8..ee016a195b 100644
+--- a/sympy/simplify/sqrtdenest.py
++++ b/sympy/simplify/sqrtdenest.py
+@@ -156,7 +156,10 @@ def _sqrt_match(p):
+         res = (p, S.Zero, S.Zero)
+     elif p.is_Add:
+         pargs = sorted(p.args, key=default_sort_key)
+-        if all((x**2).is_Rational for x in pargs):
++        # if all args are positive rational squares, split_surds can be used
++        # otherwise it can raise IndexError for e.g. 4 + 3*I (see issue 12420)
++        sqargs = [x**2 for x in pargs]
++        if all(sq.is_Rational and sq.is_positive for sq in sqargs):
+             r, b, a = split_surds(p)
+             res = a, b, r
+             return list(res)
+2026-11-11 14:08:41,747 - INFO - Eval script for sympy__sympy-17318 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2174/deepseek-harness-glm-5.3-flash/sympy__sympy-17318/eval.sh; copying to container...
+2026-11-11 14:08:59,308 - INFO - Test runtime: 17.48 seconds
+2026-11-11 14:08:59,310 - INFO - Test output for sympy__sympy-17318 written to logs/run_evaluation/verified_full_glm53_deepseek-harness_incr_R2174/deepseek-harness-glm-5.3-flash/sympy__sympy-17318/test_output.txt
+2026-11-11 14:08:59,364 - INFO - Git diff after:
+diff --git a/sympy/simplify/sqrtdenest.py b/sympy/simplify/sqrtdenest.py
+index f0b7653ea8..ee016a195b 100644
+--- a/sympy/simplify/sqrtdenest.py
++++ b/sympy/simplify/sqrtdenest.py
+@@ -156,7 +156,10 @@ def _sqrt_match(p):
+         res = (p, S.Zero, S.Zero)
+     elif p.is_Add:
+         pargs = sorted(p.args, key=default_sort_key)
+-        if all((x**2).is_Rational for x in pargs):
++        # if all args are positive rational squares, split_surds can be used
++        # otherwise it can raise IndexError for e.g. 4 + 3*I (see issue 12420)
++        sqargs = [x**2 for x in pargs]
++        if all(sq.is_Rational and sq.is_positive for sq in sqargs):
+             r, b, a = split_surds(p)
+             res = a, b, r
+             return list(res)
+2026-11-11 14:08:59,365 - INFO - Grading answer for sympy__sympy-17318...
+2026-11-11 14:08:59,365 - INFO - report: {'sympy__sympy-17318': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_issue_12420'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_sqrtdenest', 'test_sqrtdenest2', 'test_sqrtdenest_rec', 'test_issue_6241', 'test_sqrtdenest3', 'test_sqrtdenest4', 'test_sqrt_symbolic_denest', 'test_issue_5857', 'test_subsets', 'test_issue_5653'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-17318: resolved: True
+2026-11-11 14:08:59,367 - INFO - Attempting to stop container sweb.eval.sympy__sympy-17318.verified_full_glm53_deepseek-harness_incr_R2174...
+2026-11-11 14:09:15,491 - INFO - Container sweb.eval.sympy__sympy-17318.verified_full_glm53_deepseek-harness_incr_R2174 stopped successfully.
+2026-11-11 14:09:15,491 - INFO - Attempting to remove container sweb.eval.sympy__sympy-17318.verified_full_glm53_deepseek-harness_incr_R2174...
+2026-11-11 14:09:15,544 - INFO - Container sweb.eval.sympy__sympy-17318.verified_full_glm53_deepseek-harness_incr_R2174 removed successfully.

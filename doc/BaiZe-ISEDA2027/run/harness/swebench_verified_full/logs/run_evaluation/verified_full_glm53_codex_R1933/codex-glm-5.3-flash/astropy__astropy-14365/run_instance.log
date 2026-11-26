@@ -1,0 +1,74 @@
+2026-11-09 17:27:17,307 - INFO - Creating container for astropy__astropy-14365...
+2026-11-09 17:27:17,329 - INFO - Container for astropy__astropy-14365 created: 90135f0d10693a0dd0f6450f07ee1f1829e12d079f975d6dd918c089aca2f343
+2026-11-09 17:27:19,632 - INFO - Container for astropy__astropy-14365 started: 90135f0d10693a0dd0f6450f07ee1f1829e12d079f975d6dd918c089aca2f343
+2026-11-09 17:27:19,634 - INFO - Intermediate patch for astropy__astropy-14365 written to logs/run_evaluation/verified_full_glm53_codex_R1933/codex-glm-5.3-flash/astropy__astropy-14365/patch.diff, now applying to container...
+2026-11-09 17:27:19,790 - INFO - >>>>> Applied Patch:
+Checking patch astropy/io/ascii/qdp.py...
+warning: astropy/io/ascii/qdp.py has type 100755, expected 100644
+Checking patch astropy/io/ascii/tests/test_qdp.py...
+warning: astropy/io/ascii/tests/test_qdp.py has type 100755, expected 100644
+Applied patch astropy/io/ascii/qdp.py cleanly.
+Applied patch astropy/io/ascii/tests/test_qdp.py cleanly.
+
+2026-11-09 17:27:20,474 - INFO - Git diff before:
+diff --git a/astropy/io/ascii/qdp.py b/astropy/io/ascii/qdp.py
+index 83a4f004a..768beb0de 100755
+--- a/astropy/io/ascii/qdp.py
++++ b/astropy/io/ascii/qdp.py
+@@ -68,7 +68,7 @@ def _line_type(line, delimiter=None):
+     _new_re = rf"NO({sep}NO)+"
+     _data_re = rf"({_decimal_re}|NO|[-+]?nan)({sep}({_decimal_re}|NO|[-+]?nan))*)"
+     _type_re = rf"^\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})?\s*(\!(?P<comment>.*))?\s*$"
+-    _line_type_re = re.compile(_type_re)
++    _line_type_re = re.compile(_type_re, re.IGNORECASE)
+     line = line.strip()
+     if not line:
+         return "comment"
+diff --git a/astropy/io/ascii/tests/test_qdp.py b/astropy/io/ascii/tests/test_qdp.py
+index ef24e6f6a..4cccd6f34 100755
+--- a/astropy/io/ascii/tests/test_qdp.py
++++ b/astropy/io/ascii/tests/test_qdp.py
+@@ -139,6 +139,18 @@ def test_read_example():
+         assert np.allclose(col1, col2, equal_nan=True)
+ 
+ 
++def test_read_example_lowercase():
++    example_qdp = """
++        read serr 1 2
++        1 0.5 1 0.5
++    """
++    table = Table.read(example_qdp, format="ascii.qdp")
++
++    assert table.colnames == ["col1", "col1_err", "col2", "col2_err"]
++    assert np.allclose(table["col1_err"], [0.5, 0.5])
++    assert np.allclose(table["col2_err"], [0.5, 0.5])
++
++
+ def test_roundtrip_example(tmp_path):
+     example_qdp = """
+         ! Initial comment line 1
+2026-11-09 17:27:20,476 - INFO - Eval script for astropy__astropy-14365 written to logs/run_evaluation/verified_full_glm53_codex_R1933/codex-glm-5.3-flash/astropy__astropy-14365/eval.sh; copying to container...
+2026-11-09 17:28:41,701 - INFO - Test runtime: 81.16 seconds
+2026-11-09 17:28:41,703 - INFO - Test output for astropy__astropy-14365 written to logs/run_evaluation/verified_full_glm53_codex_R1933/codex-glm-5.3-flash/astropy__astropy-14365/test_output.txt
+2026-11-09 17:28:41,786 - INFO - Git diff after:
+diff --git a/astropy/io/ascii/qdp.py b/astropy/io/ascii/qdp.py
+index 83a4f004a..768beb0de 100755
+--- a/astropy/io/ascii/qdp.py
++++ b/astropy/io/ascii/qdp.py
+@@ -68,7 +68,7 @@ def _line_type(line, delimiter=None):
+     _new_re = rf"NO({sep}NO)+"
+     _data_re = rf"({_decimal_re}|NO|[-+]?nan)({sep}({_decimal_re}|NO|[-+]?nan))*)"
+     _type_re = rf"^\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})?\s*(\!(?P<comment>.*))?\s*$"
+-    _line_type_re = re.compile(_type_re)
++    _line_type_re = re.compile(_type_re, re.IGNORECASE)
+     line = line.strip()
+     if not line:
+         return "comment"
+2026-11-09 17:28:41,786 - INFO - Git diff changed after running eval script
+2026-11-09 17:28:41,786 - INFO - Grading answer for astropy__astropy-14365...
+2026-11-09 17:28:41,797 - INFO - report: {'astropy__astropy-14365': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['astropy/io/ascii/tests/test_qdp.py::test_roundtrip[True]']}, 'PASS_TO_PASS': {'success': ['astropy/io/ascii/tests/test_qdp.py::test_get_tables_from_qdp_file', 'astropy/io/ascii/tests/test_qdp.py::test_roundtrip[False]', 'astropy/io/ascii/tests/test_qdp.py::test_read_example', 'astropy/io/ascii/tests/test_qdp.py::test_roundtrip_example', 'astropy/io/ascii/tests/test_qdp.py::test_roundtrip_example_comma', 'astropy/io/ascii/tests/test_qdp.py::test_read_write_simple', 'astropy/io/ascii/tests/test_qdp.py::test_read_write_simple_specify_name', 'astropy/io/ascii/tests/test_qdp.py::test_get_lines_from_qdp'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for astropy__astropy-14365: resolved: False
+2026-11-09 17:28:41,801 - INFO - Attempting to stop container sweb.eval.astropy__astropy-14365.verified_full_glm53_codex_R1933...
+2026-11-09 17:28:57,540 - INFO - Container sweb.eval.astropy__astropy-14365.verified_full_glm53_codex_R1933 stopped successfully.
+2026-11-09 17:28:57,540 - INFO - Attempting to remove container sweb.eval.astropy__astropy-14365.verified_full_glm53_codex_R1933...
+2026-11-09 17:28:57,597 - INFO - Container sweb.eval.astropy__astropy-14365.verified_full_glm53_codex_R1933 removed successfully.

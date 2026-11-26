@@ -1,0 +1,30 @@
+Running 6 instances...
+All instances run.
+Total instances: 6
+Instances submitted: 6
+Instances completed: 6
+Instances incomplete: 0
+Instances resolved: 1
+Instances unresolved: 5
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 1
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 0
+Unremoved images: 6
+Report written to cline-kimi-k2.6-cloud.verified_full_cline-patched.json
+
+[stderr]
+
+  0%|          | 0/6 [00:00<?, ?it/s]
+ 17%|█▋        | 1/6 [00:23<01:55, 23.19s/it]
+1 ran successfully, 0 failed:  17%|█▋        | 1/6 [00:23<01:55, 23.19s/it]
+2 ran successfully, 0 failed:  33%|███▎      | 2/6 [00:23<00:46, 11.64s/it]
+2 ran successfully, 0 failed:  50%|█████     | 3/6 [00:45<00:45, 15.18s/it]
+3 ran successfully, 0 failed:  50%|█████     | 3/6 [00:45<00:45, 15.18s/it]
+3 ran successfully, 0 failed:  67%|██████▋   | 4/6 [00:47<00:23, 11.90s/it]
+4 ran successfully, 0 failed:  67%|██████▋   | 4/6 [00:47<00:23, 11.90s/it]
+5 ran successfully, 0 failed:  83%|████████▎ | 5/6 [00:47<00:09,  9.54s/it]
+5 ran successfully, 0 failed: 100%|██████████| 6/6 [05:29<00:00, 54.94s/it]
+6 ran successfully, 0 failed: 100%|██████████| 6/6 [05:29<00:00, 54.94s/it]
+6 ran successfully, 0 failed: 100%|██████████| 6/6 [05:29<00:00, 54.94s/it]

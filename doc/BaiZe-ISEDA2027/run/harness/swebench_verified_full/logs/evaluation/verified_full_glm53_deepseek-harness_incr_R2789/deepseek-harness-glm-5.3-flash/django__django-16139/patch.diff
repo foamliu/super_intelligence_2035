@@ -1,0 +1,111 @@
+diff --git a/django/contrib/auth/forms.py b/django/contrib/auth/forms.py
+index b3cfc6723c..523830e8ee 100644
+--- a/django/contrib/auth/forms.py
++++ b/django/contrib/auth/forms.py
+@@ -163,7 +163,9 @@ class UserChangeForm(forms.ModelForm):
+         super().__init__(*args, **kwargs)
+         password = self.fields.get("password")
+         if password:
+-            password.help_text = password.help_text.format("../password/")
++            password.help_text = password.help_text.format(
++                f"../../{self.instance.pk}/password/"
++            )
+         user_permissions = self.fields.get("user_permissions")
+         if user_permissions:
+             user_permissions.queryset = user_permissions.queryset.select_related(
+diff --git a/docs/releases/4.2.txt b/docs/releases/4.2.txt
+index 58e4bd12ac..b3dfe588e2 100644
+--- a/docs/releases/4.2.txt
++++ b/docs/releases/4.2.txt
+@@ -291,6 +291,14 @@ Validators
+ * The list of common passwords used by ``CommonPasswordValidator`` is updated
+   to the most recent version.
+ 
++Bugfixes
++========
++
++* Fixed a bug in ``django.contrib.auth`` that caused the "change password"
++  link in ``UserChangeForm``'s password field help text to point to an
++  incorrect URL when the user change page was accessed via a
++  ``to_field`` link from another model's admin (:ticket:`34049`).
++
+ .. _backwards-incompatible-4.2:
+ 
+ Backwards incompatible changes in 4.2
+diff --git a/tests/admin_widgets/tests.py b/tests/admin_widgets/tests.py
+index 70b1233ef4..528b01e968 100644
+--- a/tests/admin_widgets/tests.py
++++ b/tests/admin_widgets/tests.py
+@@ -4,6 +4,7 @@ import re
+ from datetime import datetime, timedelta
+ from importlib import import_module
+ from unittest import skipUnless
++from urllib.parse import urljoin
+ 
+ try:
+     import zoneinfo
+@@ -318,6 +319,45 @@ class AdminForeignKeyWidgetChangeList(TestDataMixin, TestCase):
+         self.assertContains(response, "/auth/user/add/")
+ 
+ 
++@override_settings(ROOT_URLCONF="admin_widgets.urls")
++class UserChangeFormPasswordLinkTests(TestDataMixin, TestCase):
++    """
++    The "change password" link in the UserAdmin change form's password
++    help_text must resolve regardless of the URL used to reach the change
++    page (e.g. via a to_field link from another model's admin, #34049).
++    """
++
++    def setUp(self):
++        self.client.force_login(self.superuser)
++
++    def test_password_change_link_when_accessed_via_to_field(self):
++        url = reverse("admin:auth_user_change", args=(self.superuser.pk,))
++        response = self.client.get(url)
++        rel_link = re.search(
++            r'you can change the password using <a href="([^"]*)">this form</a>',
++            response.content.decode(),
++        )[1]
++        password_change_url = reverse(
++            "admin:auth_user_password_change", args=(self.superuser.pk,)
++        )
++        self.assertEqual(urljoin(url, rel_link), password_change_url)
++
++        # The link is absolute with respect to the change page's URL, so it
++        # also works when the page is reached through a to_field URL that
++        # doesn't use the primary key.
++        url = reverse("admin:auth_user_change", args=(self.superuser.username,))
++        url += "?_to_field=username"
++        response = self.client.get(url)
++        rel_link = re.search(
++            r'you can change the password using <a href="([^"]*)">this form</a>',
++            response.content.decode(),
++        )[1]
++        self.assertEqual(
++            urljoin(url, rel_link),
++            reverse("admin:auth_user_password_change", args=(self.superuser.pk,)),
++        )
++
++
+ @override_settings(ROOT_URLCONF="admin_widgets.urls")
+ class AdminForeignKeyRawIdWidget(TestDataMixin, TestCase):
+     def setUp(self):
+diff --git a/tests/admin_widgets/widgetadmin.py b/tests/admin_widgets/widgetadmin.py
+index deb07adecc..666e19a295 100644
+--- a/tests/admin_widgets/widgetadmin.py
++++ b/tests/admin_widgets/widgetadmin.py
+@@ -1,4 +1,5 @@
+ from django.contrib import admin
++from django.contrib.auth.admin import UserAdmin
+ 
+ from .models import (
+     Advisor,
+@@ -55,7 +56,7 @@ class SchoolAdmin(admin.ModelAdmin):
+ 
+ site = WidgetAdmin(name="widget-admin")
+ 
+-site.register(User)
++site.register(User, UserAdmin)
+ site.register(Car, CarAdmin)
+ site.register(CarTire, CarTireAdmin)
+ 

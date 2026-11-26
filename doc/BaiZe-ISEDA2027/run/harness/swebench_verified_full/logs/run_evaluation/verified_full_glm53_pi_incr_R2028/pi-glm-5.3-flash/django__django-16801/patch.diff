@@ -1,0 +1,43 @@
+diff --git a/django/db/models/fields/files.py b/django/db/models/fields/files.py
+index 7f8eb128e..2f34a1be6 100644
+--- a/django/db/models/fields/files.py
++++ b/django/db/models/fields/files.py
+@@ -441,8 +441,9 @@ class ImageField(FileField):
+         # after their corresponding image field don't stay cleared by
+         # Model.__init__, see bug #11196.
+         # Only run post-initialization dimension update on non-abstract models
+-        if not cls._meta.abstract:
+-            signals.post_init.connect(self.update_dimension_fields, sender=cls)
++        if self.width_field or self.height_field:
++            if not cls._meta.abstract:
++                signals.post_init.connect(self.update_dimension_fields, sender=cls)
+ 
+     def update_dimension_fields(self, instance, force=False, *args, **kwargs):
+         """
+diff --git a/tests/model_fields/test_imagefield.py b/tests/model_fields/test_imagefield.py
+index 6ef46ef20..9833bfb91 100644
+--- a/tests/model_fields/test_imagefield.py
++++ b/tests/model_fields/test_imagefield.py
+@@ -5,6 +5,7 @@ from unittest import skipIf
+ from django.core.exceptions import ImproperlyConfigured
+ from django.core.files import File
+ from django.core.files.images import ImageFile
++from django.db.models import signals
+ from django.test import TestCase
+ from django.test.testcases import SerializeMixin
+ 
+@@ -328,6 +329,14 @@ class ImageFieldNoDimensionsTests(ImageFieldTwoDimensionsTests):
+ 
+     PersonModel = Person
+ 
++    def test_post_init_signal_not_connected(self):
++        # A post_init signal handler isn't needed when dimension fields
++        # aren't used, see #32252.
++        self.assertFalse(signals.post_init.has_listeners(Person))
++        self.assertTrue(
++            signals.post_init.has_listeners(PersonWithHeightAndWidth)
++        )
++
+ 
+ @skipIf(Image is None, "Pillow is required to test ImageField")
+ class ImageFieldOneDimensionTests(ImageFieldTwoDimensionsTests):

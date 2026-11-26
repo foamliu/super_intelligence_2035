@@ -1,0 +1,25 @@
+{
+  "total_success_traces": 103,
+  "total_error_traces": 20,
+  "parse_errors": 0,
+  "contaminated_count": 101,
+  "contamination_rate": "98.1%",
+  "key_finding": "All 103 DeepSeek traces are from the 158 eval tasks -> 100% contaminated. Raw traces CANNOT be used for SFT (red-line violation). Behavioral patterns extracted instead.",
+  "patterns_extracted": 61,
+  "sft_pairs_from_patterns": 14,
+  "tool_usage": {
+    "search_apis": 573,
+    "run_pyAether_code_tool": 516,
+    "get_api_details": 386
+  },
+  "turn_distribution": {
+    "mean": 14.320388349514563,
+    "min": 1,
+    "max": 41
+  },
+  "error_recovery_count": 9,
+  "error_trace_count": 20,
+  "error_trace_errors": 135,
+  "output_file": "sft_deepseek_patterns.jsonl",
+  "output_size_bytes": 9472
+}

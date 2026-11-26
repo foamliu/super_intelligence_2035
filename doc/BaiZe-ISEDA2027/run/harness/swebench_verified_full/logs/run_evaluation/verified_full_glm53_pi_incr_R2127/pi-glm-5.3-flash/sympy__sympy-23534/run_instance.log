@@ -1,0 +1,61 @@
+2026-11-11 00:00:15,962 - INFO - Creating container for sympy__sympy-23534...
+2026-11-11 00:00:15,984 - INFO - Container for sympy__sympy-23534 created: 5fe3c2fa70c7483d84a0ba0f199d842e8d766ac87f17c61d7235c78b9e0d7944
+2026-11-11 00:00:20,210 - INFO - Container for sympy__sympy-23534 started: 5fe3c2fa70c7483d84a0ba0f199d842e8d766ac87f17c61d7235c78b9e0d7944
+2026-11-11 00:00:20,212 - INFO - Intermediate patch for sympy__sympy-23534 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2127/pi-glm-5.3-flash/sympy__sympy-23534/patch.diff, now applying to container...
+2026-11-11 00:00:20,334 - INFO - >>>>> Applied Patch:
+Checking patch sympy/core/symbol.py...
+Checking patch sympy/core/tests/test_symbol.py...
+Applied patch sympy/core/symbol.py cleanly.
+Applied patch sympy/core/tests/test_symbol.py cleanly.
+
+2026-11-11 00:00:21,131 - INFO - Git diff before:
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c13f..569c7eb829 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,8 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
+-
++            result.append(symbols(name, cls=cls, **args))
+         return type(names)(result)
+ 
+ 
+diff --git a/sympy/core/tests/test_symbol.py b/sympy/core/tests/test_symbol.py
+index 19494c2083..54843f72f6 100644
+--- a/sympy/core/tests/test_symbol.py
++++ b/sympy/core/tests/test_symbol.py
+@@ -34,6 +34,9 @@ def test_Symbol():
+     c, d = symbols('c,d', cls=Dummy)
+     assert isinstance(c, Dummy)
+     assert isinstance(d, Dummy)
++    (c, d), (e, f) = symbols(('c,d', 'e,f'), cls=Dummy)
++    assert isinstance(c, Dummy) and isinstance(d, Dummy)
++    assert isinstance(e, Dummy) and isinstance(f, Dummy)
+     raises(TypeError, lambda: Symbol())
+2026-11-11 00:00:21,134 - INFO - Eval script for sympy__sympy-23534 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2127/pi-glm-5.3-flash/sympy__sympy-23534/eval.sh; copying to container...
+2026-11-11 00:00:25,726 - INFO - Test runtime: 4.53 seconds
+2026-11-11 00:00:25,728 - INFO - Test output for sympy__sympy-23534 written to logs/run_evaluation/verified_full_glm53_pi_incr_R2127/pi-glm-5.3-flash/sympy__sympy-23534/test_output.txt
+2026-11-11 00:00:25,785 - INFO - Git diff after:
+diff --git a/sympy/core/symbol.py b/sympy/core/symbol.py
+index f4a555c13f..569c7eb829 100644
+--- a/sympy/core/symbol.py
++++ b/sympy/core/symbol.py
+@@ -791,8 +791,7 @@ def literal(s):
+         return tuple(result)
+     else:
+         for name in names:
+-            result.append(symbols(name, **args))
+-
++            result.append(symbols(name, cls=cls, **args))
+         return type(names)(result)
+2026-11-11 00:00:25,785 - INFO - Git diff changed after running eval script
+2026-11-11 00:00:25,785 - INFO - Grading answer for sympy__sympy-23534...
+2026-11-11 00:00:25,786 - INFO - report: {'sympy__sympy-23534': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_symbols'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_Str', 'test_Symbol', 'test_Dummy', 'test_Dummy_force_dummy_index', 'test_lt_gt', 'test_no_len', 'test_ineq_unequal', 'test_Wild_properties', 'test_symbols_become_functions_issue_3539', 'test_unicode', 'test_uniquely_named_symbol_and_Symbol'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-23534: resolved: True
+2026-11-11 00:00:25,788 - INFO - Attempting to stop container sweb.eval.sympy__sympy-23534.verified_full_glm53_pi_incr_R2127...
+2026-11-11 00:00:42,873 - INFO - Container sweb.eval.sympy__sympy-23534.verified_full_glm53_pi_incr_R2127 stopped successfully.
+2026-11-11 00:00:42,873 - INFO - Attempting to remove container sweb.eval.sympy__sympy-23534.verified_full_glm53_pi_incr_R2127...
+2026-11-11 00:00:42,912 - INFO - Container sweb.eval.sympy__sympy-23534.verified_full_glm53_pi_incr_R2127 removed successfully.

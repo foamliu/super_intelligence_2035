@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设计流用例编写指南（交付件驱动）</title>
+<style>
+  :root{--bg:#fafafa;--fg:#1f2328;--muted:#57606a;--accent:#0969da;--border:#d0d7de;--code-bg:#f6f8fa;--code-fg:#24292f;--warn-bg:#fff8c5;--ok-bg:#dafbe1;--err-bg:#ffebe9;--info-bg:#ddf4ff}
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px 16px 64px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Helvetica,Arial,sans-serif;color:var(--fg);background:var(--bg);line-height:1.7;font-size:16px}
+  .wrap{max-width:920px;margin:0 auto}
+  h1{font-size:1.9em;border-bottom:2px solid var(--border);padding-bottom:.3em;margin-top:0}
+  h2{font-size:1.45em;margin-top:2em;border-bottom:1px solid var(--border);padding-bottom:.25em}
+  h3{font-size:1.15em;margin-top:1.5em}
+  h4{font-size:1em;margin-top:1.2em;color:var(--muted)}
+  p,li{font-size:16px}
+  code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;background:var(--code-bg);color:var(--code-fg);padding:2px 6px;border-radius:4px;font-size:.9em}
+  pre{background:var(--code-bg);color:var(--code-fg);padding:14px 16px;border-radius:6px;overflow-x:auto;border:1px solid var(--border);font-size:.85em;line-height:1.55}
+  pre code{background:none;padding:0;font-size:inherit}
+  .ascii{white-space:pre;font-size:.8em;line-height:1.45}
+  table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95em}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:#eaeef2;font-weight:600}
+  tr:nth-child(even) td{background:#fbfbfc}
+  .note{padding:12px 16px;border-radius:6px;margin:1em 0;border:1px solid}
+  .note-warn{background:var(--warn-bg);border-color:#d4a72c}
+  .note-ok{background:var(--ok-bg);border-color:#1a7f37}
+  .note-err{background:var(--err-bg);border-color:#cf222e}
+  .note-info{background:var(--info-bg);border-color:#0969da}
+  .note .tag{font-weight:700;margin-right:.5em}
+  .toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:12px 20px;margin:1.5em 0}
+  .toc ol{margin:.3em 0;padding-left:1.6em}
+  .meta-bar{color:var(--muted);font-size:.88em;margin-bottom:2em}
+  .track{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.8em;font-weight:600;margin-left:6px}
+  .track-df{background:#ddf4ff;color:#0969da;border:1px solid #0969da}
+  .track-sc{background:#f6f8fa;color:#57606a;border:1px solid var(--border)}
+  hr{border:none;border-top:1px solid var(--border);margin:2.5em 0}
+  .footer{color:var(--muted);font-size:.85em;margin-top:3em;border-top:1px solid var(--border);padding-top:1em}
+  .drop{color:#cf222e;font-weight:600}
+  .keep{color:#1a7f37;font-weight:600}
+  .new{color:#0969da;font-weight:600}
+  .redef{color:#8250df;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>设计流用例编写指南 <span class="track track-df">Design Flow</span></h1>
+  <div class="meta-bar">
+    面向：设计流 case 编写者&nbsp;|&nbsp;
+    框架：烛龙 EDA-Eval-Framework&nbsp;|&nbsp;
+    版本：v1（2026-10）&nbsp;|&nbsp;
+    维护：长鑫存储 · 刘杨
+  </div>
+
+  <div class="toc">
+    <strong>目录</strong>
+    <ol>
+      <li>背景与目的</li>
+      <li>设计流 case 的核心契约</li>
+      <li>字段继承与演进（对照表）</li>
+      <li>逐字段规范</li>
+      <li>交付件 <code>entry_point</code></li>
+      <li>所需文件/PDK 路径（写在 prompt 里）</li>
+      <li>交付件校验器 <code>test</code> 的约定</li>
+      <li>完整示例：CMOS 反相器原理图 + 功能仿真</li>
+      <li>示例 JSONL（单行）</li>
+      <li>交付与命名约定</li>
+      <li>常见错误自查清单</li>
+    </ol>
+  </div>
+
+  <!-- ========================================================== -->
+  <h2>1. 背景与目的</h2>
+  <p>
+    我们正在为 EDA Agent「烛龙」构建<strong>设计流评测集</strong>——一组用于评测 Agent 在数字电路设计流（design flow）上能力的<strong>评测用例</strong>集合。
+    评测用例交给评测框架执行：框架启动 Agent、供给 EDA 环境、收 Agent 产出的交付件、运行校验器、给出 pass/fail。
+  </p>
+  <p>
+    要让写出的评测用例能被评测框架直接使用，二者之间必须先明确一个<strong>接口协议</strong>——用例里有哪些字段、各字段什么含义、框架如何消费它们。
+    <strong>本文档的目的就是规定这个协议</strong>，让大家照着写出来的 case 能迅速嵌入框架执行，无需框架侧额外改动。
+  </p>
+  <p>
+    按业务，设计流用例分为数字、模拟、验证、测试等方向；各方向协议同构，本文档适用所有方向，后续按需出方向专属补充说明。
+  </p>
+
+  <!-- ========================================================== -->
+  <h2>2. 设计流 case 的核心契约</h2>
+  <p>一条设计流用例驱动 Agent 在 EDA 工程里完成一项多步任务并交付产物。契约是一条链：</p>
+  <div style="margin:1.2em 0;text-align:center">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" style="max-width:100%;height:auto;font-family:'PingFang SC','Microsoft YaHei',sans-serif">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0,0 L10,5 L0,10 z" fill="#57606a"/>
+      </marker>
+    </defs>
+    <rect x="200" y="6" width="320" height="50" rx="8" fill="#ddf4ff" stroke="#0969da" stroke-width="1.5"/>
+    <text x="360" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="#0969da">prompt (任务目标 + 文件/PDK 路径)</text>
+    <line x1="360" y1="56" x2="360" y2="92" stroke="#57606a" stroke-width="1.5" marker-end="url(#arr)"/>
+    <rect x="120" y="96" width="480" height="56" rx="8" fill="#fff8c5" stroke="#d4a72c" stroke-width="1.5"/>
+    <text x="360" y="120" text-anchor="middle" font-size="15" font-weight="600" fill="#7d4f00">agent</text>
+    <text x="360" y="139" text-anchor="middle" font-size="12" fill="#57606a">在一个 session 里多步工作（画图 / 仿真 / 跑工具 / 看报告）→ 产出交付件</text>
+    <line x1="360" y1="152" x2="360" y2="188" stroke="#57606a" stroke-width="1.5" marker-end="url(#arr)"/>
+    <rect x="180" y="192" width="360" height="50" rx="8" fill="#dafbe1" stroke="#1a7f37" stroke-width="1.5"/>
+    <text x="360" y="216" text-anchor="middle" font-size="15" font-weight="600" fill="#1a7f37">entry_point (交付件路径)</text>
+    <text x="360" y="233" text-anchor="middle" font-size="12" fill="#57606a">如 outputs/submit.zip</text>
+    <line x1="360" y1="242" x2="360" y2="278" stroke="#57606a" stroke-width="1.5" marker-end="url(#arr)"/>
+    <rect x="120" y="282" width="480" height="56" rx="8" fill="#f6f8fa" stroke="#57606a" stroke-width="1.5"/>
+    <text x="360" y="306" text-anchor="middle" font-size="15" font-weight="600" fill="#24292f">test (交付件校验器)</text>
+    <text x="360" y="325" text-anchor="middle" font-size="12" fill="#57606a">check(deliverable, workdir) → 断言交付件满足要求</text>
+    <line x1="360" y1="338" x2="360" y2="374" stroke="#57606a" stroke-width="1.5" marker-end="url(#arr)"/>
+    <rect x="240" y="378" width="120" height="46" rx="8" fill="#dafbe1" stroke="#1a7f37" stroke-width="1.5"/>
+    <text x="300" y="406" text-anchor="middle" font-size="16" font-weight="700" fill="#1a7f37">pass ✓</text>
+    <rect x="400" y="378" width="120" height="46" rx="8" fill="#ffebe9" stroke="#cf222e" stroke-width="1.5"/>
+    <text x="460" y="406" text-anchor="middle" font-size="16" font-weight="700" fill="#cf222e">fail ✗</text>
+    <text x="360" y="450" text-anchor="middle" font-size="12" fill="#57606a">框架据校验器是否抛错自动判定，你只需写断言</text>
+  </svg>
+  </div>
+
+  <div class="note note-ok">
+    <span class="tag">一句话契约：</span>
+    你写 <code>prompt</code>（任务目标，含所需文件/PDK 在 EDA NAS 上的路径）+ <code>entry_point</code>（交付件路径）+ <code>test</code>（校验交付件的脚本）。
+    框架负责开 session、让 agent 工作、收交付件、跑校验器、判分。<strong>你不需要管 session、沙盒、调度，也不需要管文件怎么传到 EDA 环境。</strong>
+  </div>
+
+  <h3>2.1 与 scripting 口径的根本差异</h3>
+  <table>
+    <thead><tr><th>维度</th><th>代码补全口径</th><th>设计流口径（本指南）</th></tr></thead>
+    <tbody>
+      <tr><td>模型做什么</td><td>补全一个函数体</td><td>多步驱动一个 flow</td></tr>
+      <tr><td>判分对象</td><td>函数返回值（stdout 末行标记）</td><td><strong>交付件</strong>（zip / cellview / 报告）</td></tr>
+      <tr><td>test 校验什么</td><td><code>check(candidate)</code> 调被补全的函数</td><td><code>check(deliverable, workdir)</code> 校验交付件</td></tr>
+      <tr><td>状态</td><td>单次沙盒调用内闭环</td><td>跨多次调用，session workdir 持久</td></tr>
+      <tr><td>输入文件</td><td>无（题面自含）</td><td>路径写在 <code>prompt</code> 里（EDA NAS 上的绝对路径，agent 通过 <code>run_commands</code> 访问）</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ========================================================== -->
+  <h2>3. 字段继承与演进（对照表）</h2>
+  <p>从 scripting 的字段集出发，<strong>继承有用的、抛弃没必要的、新增缺的</strong>：</p>
+  <table>
+    <thead><tr><th>字段</th><th>代码补全口径现状</th><th>设计流口径演进</th></tr></thead>
+    <tbody>
+      <tr><td><code>task_id</code></td><td>全局唯一</td><td><span class="keep">继承</span>，前缀 <code>EDA-Eval-DesignFlow-&lt;方向&gt;-NNN</code></td></tr>
+      <tr><td><code>mode</code></td><td>（无，隐含 completion）</td><td><span class="new">新增</span>，固定 <code>"design_flow"</code></td></tr>
+      <tr><td><code>prompt</code></td><td>代码补全题面（空函数体）</td><td><span class="redef">重定义</span>：自然语言<strong>任务目标</strong>（无函数体、无空签名）</td></tr>
+      <tr><td><code>entry_point</code></td><td>待补全的函数名</td><td><span class="redef">重定义</span>：<strong>交付件路径</strong>（相对 workdir），<code>test</code> 的校验对象</td></tr>
+      <tr><td><code>test</code></td><td><code>check(candidate)</code> 校验函数</td><td><span class="redef">重定义</span>：<code>check(deliverable, workdir)</code> <strong>交付件校验器</strong></td></tr>
+      <tr><td><code>lang</code></td><td>脚本语言 pyAether/skill/tcl</td><td><span class="drop">抛弃</span>：设计流不限定单一脚本语言，agent 混合用 SKILL/Tcl/shell</td></tr>
+      <tr><td><code>host</code></td><td>EDA 运行时（解释器宿主）</td><td><span class="drop">抛弃</span>：设计流一条 flow 可能跨多个 EDA 工具，让 case 填单个 host 不合理；所需 EDA 环境/license 由评测运行配置指定，不进 case</td></tr>
+      <tr><td><code>metadata</code></td><td>可选统计</td><td><span class="keep">继承</span>，增加 <code>domain</code>（digital/analog/verification/test）</td></tr>
+    </tbody>
+  </table>
+  <div class="note note-warn">
+    <span class="tag">为什么丢 <code>lang</code> 和 <code>host</code>：</span>
+    设计流 agent 不"用某一种语言补全一段代码"，而是用多种工具驱动整条 flow——<code>lang</code> 失去意义。
+    一条 flow 还可能跨多个 EDA 工具（如先 Virtuoso 画原理图、再 Spectre 仿真），让 case 填单个 <code>host</code> 不合理；
+    所需 EDA 环境 / license / 轮次 / 时长预算属于<strong>评测运行配置</strong>，由跑评测时指定，不进 case。
+    业务方向（数字/模拟/验证/测试）放 <code>metadata.domain</code>，仅用于分类统计。
+  </div>
+
+  <!-- ========================================================== -->
+  <h2>4. 逐字段规范</h2>
+
+  <h3>4.1 <code>task_id</code> <span class="keep">继承</span></h3>
+  <p>全局唯一。设计流统一前缀 <code>EDA-Eval-DesignFlow-&lt;方向&gt;-NNN</code>，方向取 <code>Digital/Analog/Verification/Test</code>，三位序号递增。</p>
+
+  <h3>4.2 <code>mode</code> <span class="new">新增</span></h3>
+  <p>固定 <code>"design_flow"</code>。框架据此走 agentic 评测通路（开 session、多轮、交付件判分），与 scripting 的 <code>completion</code> 分流。</p>
+
+  <h3>4.3 <code>prompt</code> <span class="redef">重定义</span></h3>
+  <p>自然语言<strong>任务目标</strong>。把"要完成什么、交付什么、约束是什么、所需文件在哪里"讲清楚——这是 agent 唯一的任务说明。要点：</p>
+  <ul>
+    <li>写<strong>目标</strong>，不要写空函数体或代码签名（那是 scripting 的事）。</li>
+    <li>明确<strong>交付什么</strong>（与 <code>entry_point</code> 对应：如"打包成 <code>outputs/submit.zip</code>，内含 5 个文件…"）。</li>
+    <li>明确<strong>约束</strong>（在哪个库建 cell、用什么工艺、仿真精度、指标阈值）。</li>
+    <li><strong>所需文件 / PDK 路径直接写在 prompt 里</strong>（EDA NAS 上的绝对路径），如"测试激励模板在 <code>/eda_nas/.../tb_inverter.scs</code>""PDK 目录 <code>/eda_nas/pdk/...</code>"。agent 通过 <code>run_commands</code> 在 EDA 服务器上访问这些路径。<strong>不要用 <code>attachments</code> 字段</strong>（当前版本暂不支持）。</li>
+  </ul>
+  <div class="note note-info">
+    <span class="tag">为什么路径写在 prompt 里：</span>EDA 环境（32.75）与开发环境（36.15）的 NAS <strong>不互通</strong>。所需文件必须放在 <strong>EDA NAS</strong> 上（DE 可在 EDA 环境的任意服务器上保存），agent 在 EDA 服务器上执行命令时才能访问。
+    <strong>可用路径由长鑫侧统一提供</strong>，不要硬编码未经确认的路径。
+  </div>
+
+  <h3>4.4 <code>entry_point</code> <span class="redef">重定义</span> · 交付件路径</h3>
+  <p>见 §5。</p>
+
+  <h3>4.5 <code>test</code> <span class="redef">重定义</span> · 交付件校验器</h3>
+  <p>见 §7。</p>
+
+  <h3>4.6 所需文件 / PDK 路径<span class="new">写在 prompt 里</span></h3>
+  <p>当前版本<strong>暂不支持 <code>attachments</code> 字段</strong>。任务所需的输入文件（电路网表、工艺库定义、testbench 模板、参考波形…）和 PDK 目录，<strong>一律把 EDA NAS 上的绝对路径写在 <code>prompt</code> 里</strong>，agent 通过 <code>run_commands</code> 在 EDA 服务器上访问。详见 §6。</p>
+
+  <h3>4.7 <code>metadata</code> <span class="keep">继承</span></h3>
+  <pre><code>"metadata": {
+  "domain": "analog",            // 必填: digital/analog/verification/test
+  "task_name": "一句话任务名",
+  "scenario": "业务场景描述",
+  "difficulty": "easy|medium|hard",
+  "artifacts": ["schematic.cir", "symbol.cir", ...]  // 期望的交付件内含文件清单(供统计/报告)
+}</code></pre>
+
+  <!-- ========================================================== -->
+  <h2>5. 交付件 <code>entry_point</code></h2>
+  <p>这是设计流判分的<strong>锚点</strong>——agent 必须产出它，<code>test</code> 校验它。<code>entry_point</code> 路径必须与 prompt 里要求 agent 产出的路径<strong>严格一致</strong>，否则 <code>test</code> 里"交付件存在"的 assert 会直接失败。两种形态：</p>
+
+  <h4>形态 A：文件路径（最常见，如 zip 包）</h4>
+  <pre><code>"entry_point": "outputs/submit.zip"</code></pre>
+  <p>相对 session workdir 的路径。agent 把所有要求产物打包到这里；<code>test</code> 解包校验。适合"多个文件交付"（你的 5 文件 zip 就是这种）。</p>
+
+  <h4>形态 B：结构化指针（指向 EDA 工程内对象）</h4>
+  <pre><code>"entry_point": {
+  "library": "my_lib",
+  "cell": "inverter",
+  "views": ["schematic", "symbol"]
+}</code></pre>
+  <p>指向 agent 在 EDA 工程里创建的对象（如 Virtuoso cellview）。<code>test</code> 直接在工程里打开校验，不必导出文件。适合"产物就是工程内对象"的任务。</p>
+
+  <div class="note note-info">
+    <span class="tag">选哪种？</span>
+    交付"一组文件/报告"用 A（zip）；交付"工程里建好的 cell/设计"用 B（结构化）。两者 <code>test</code> 都能处理，<code>check</code> 第一个参数 <code>deliverable</code> 会拿到这个值。
+  </div>
+
+  <!-- ========================================================== -->
+  <h2>6. 所需文件 / PDK 路径（写在 prompt 里）</h2>
+  <p>任务除任务目标外还需要的<strong>输入文件</strong>（电路网表、工艺库定义、testbench 模板、参考波形…）和 <strong>PDK 目录</strong>，当前版本<strong>不通过 <code>attachments</code> 字段传递</strong>，而是直接把路径写在 <code>prompt</code> 里。</p>
+  <div class="note note-info">
+    <span class="tag">文件位置：</span>EDA 环境（32.75）与开发环境（36.15）的 NAS <strong>不互通</strong>。所需文件必须放在 <strong>EDA NAS</strong> 上（DE 可在 EDA 环境的任意服务器上保存），agent 通过 <code>run_commands</code> 在 EDA 服务器上执行命令时可直接访问。
+    <strong>可用路径由长鑫侧统一提供</strong>，不要硬编码未经确认的路径。
+  </div>
+  <h4>写法示例</h4>
+  <pre><code>在 prompt 里直接给出路径，例如:
+
+"测试激励模板在 /eda_nas/designs/analog/tb_inverter.scs，请基于它搭建 testbench。
+ PDK 目录: /eda_nas/pdk/skywater130/，工艺库定义: /eda_nas/designs/analog/lib.defs。
+ 参考网表(可选,供对照): /eda_nas/designs/analog/ref_netlist.cdl。"</code></pre>
+  <table>
+    <thead><tr><th>要点</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>路径形态</td><td>EDA NAS 上的<strong>绝对路径</strong>（如 <code>/eda_nas/.../tb_inverter.scs</code>）；不要用相对路径（agent 的工作目录由框架在 EDA 服务器上创建，你不必要知道）</td></tr>
+      <tr><td>可用路径</td><td><strong>由长鑫侧统一提供</strong>（刘杨），不要硬编码未经确认的路径</td></tr>
+      <tr><td>PDK 目录</td><td>同样在 prompt 里给出绝对路径</td></tr>
+      <tr><td>可选文件</td><td>参考网表、参考波形等供 agent 对照的文件，也写路径并标注"可选"</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ========================================================== -->
+  <h2>7. 交付件校验器 <code>test</code> 的约定</h2>
+  <p><code>test</code> 是一段<strong>内联代码</strong>（字符串），定义交付件校验器。语义与 scripting 的 <code>check(candidate)</code> 不同：</p>
+
+  <div class="note note-err">
+    <span class="tag">签名约定：</span>
+    必须定义 <code>check(deliverable, workdir)</code>，<strong>两个参数</strong>：
+    <ul>
+      <li><code>deliverable</code> = <code>entry_point</code> 的值（文件路径字符串，或结构化对象）。</li>
+      <li><code>workdir</code> = session 工作目录绝对路径（附件、产物都在这里）。</li>
+    </ul>
+    在 <code>check</code> 内用<strong>断言</strong>校验交付件；<strong>不要自己打印 OK/FAIL 标记</strong>——框架会自动包一层执行入口，据 <code>check</code> 是否抛错打印判定标记。
+  </div>
+
+  <h4>校验器写法（按脚本语言）</h4>
+  <p>设计流一条 flow 可能跨多个 EDA 工具，<code>test</code> 校验器用哪种脚本语言写，由你根据任务涉及的 EDA 工具决定（如交付件在 Virtuoso 工程里 → 用 SKILL；在 Innovus 工程里 → 用 Tcl）。框架据 <code>test</code> 代码语言选择解释器执行。</p>
+  <ul>
+    <li><strong>SKILL（Virtuoso）</strong>：用 <code>unless(...) error("...")</code> 断言；<code>check</code> 末尾返回 <code>t</code>。</li>
+    <li><strong>Tcl（Innovus 等）</strong>：框架自动注入公共 <code>assert</code> 过程，直接用 <code>assert {&lt;expr&gt;} "msg"</code>（与 scripting Tcl 一致，<strong>不要重复定义 assert</strong>）。</li>
+    <li>需要解 zip / 读报告 / 调外部工具时，用对应宿主的系统调用（SKILL <code>system()</code>、Tcl <code>exec</code>）。</li>
+  </ul>
+
+  <h4>框架自动生成的执行入口（你不用写，了解即可）</h4>
+  <pre><code># 以 SKILL 为例, 框架拼在 test 之后:
+if( errset(check("outputs/submit.zip" "&lt;workdir&gt;")) then
+    println("DesignFlow-case-OK")
+else
+    println("DesignFlow-case-FAIL")
+)
+# Tcl 同构: catch {check $deliverable $workdir} ... puts Innovus-case-OK/FAIL</code></pre>
+
+  <div class="note note-ok">
+    <span class="tag">判分语义（两态，与 scripting 一致）：</span>框架运行 <code>check</code>，据是否抛错判定：
+    <ul>
+      <li><code>check</code> 不抛错（所有 assert 通过）⇒ <code>pass</code></li>
+      <li><code>check</code> 抛错（任一 assert 失败，<strong>含交付件不存在</strong>）⇒ <code>fail</code></li>
+    </ul>
+    交付件存在性只是 <code>check</code> 里的一个 assert（如 <code>unless(isFile(zip) error("deliverable missing"))</code>），不需要框架单独处理。你只要做到"<strong>断言全过 ⇒ 不抛错</strong>"即可。
+  </div>
+
+  <!-- ========================================================== -->
+  <h2>8. 完整示例：CMOS 反相器原理图 + 功能仿真</h2>
+  <p>这是模拟方向的真实设计流任务：建原理图 → 建 symbol → 搭 testbench → 跑 Spectre → 验逻辑反相 → 打包交付。</p>
+
+  <h3>7.1 拆开看各字段</h3>
+
+  <h4>prompt（任务目标，agent 看到的）</h4>
+  <pre><code>在指定 EDA 工程中创建一个 CMOS 反相器原理图，并完成初步功能仿真，验证输出与输入的逻辑反相关系。
+
+所需文件 (EDA NAS 上的绝对路径):
+- 测试激励模板: /eda_nas/designs/analog/tb_inverter.scs
+- 工艺库定义:   /eda_nas/designs/analog/lib.defs
+- PDK 目录:     /eda_nas/pdk/skywater130/
+
+要求:
+1. 在目标库 my_lib 下创建 cell inverter，schematic view：由一个 PMOS 与一个 NMOS
+   构成标准 CMOS 反相器（源极分别接 VDD/GND，栅极共接为输入 Vin，漏极共接为输出 Vout）。
+2. 生成 symbol view。
+3. 搭建 testbench（基于上述 tb_inverter.scs 模板），对 Vin 施加 0→VDD 的扫描，运行 Spectre 仿真。
+4. 将以下 5 个文件打包为 outputs/submit.zip 作为交付件:
+   - schematic.cir   (原理图导出网表)
+   - symbol.cir      (symbol 导出)
+   - tb_inverter.scs (测试激励网表)
+   - sim_inverter.log(仿真日志)
+   - inverter_wave.raw(仿真波形/结果)</code></pre>
+
+  <h4>entry_point（交付件路径）</h4>
+  <pre><code>"outputs/submit.zip"</code></pre>
+
+  <h4>test（交付件校验器，SKILL）</h4>
+  <pre><code>procedure(check(deliverable workdir)
+  let((zip tmp files vdd vout_hi vout_lo)
+    ;; (0) 交付件存在
+    zip = strcat(workdir "/" deliverable)
+    unless(isFile(zip) error(strcat("deliverable missing: " zip)))
+
+    ;; (1) 解包到临时目录
+    tmp = strcat(workdir "/__check_tmp")
+    system(strcat("rm -rf " tmp " ; mkdir -p " tmp " ; unzip -o -q " zip " -d " tmp))
+
+    ;; (2) 5 个产物文件齐全
+    files = list("schematic.cir" "symbol.cir" "tb_inverter.scs"
+                 "sim_inverter.log" "inverter_wave.raw")
+    foreach(f files
+      unless(isFile(strcat(tmp "/" f))
+        error(strcat("missing artifact in zip: " f)))
+    )
+
+    ;; (3) TODO(与长鑫对齐): 打开 schematic.cir / cellview, 校验 PMOS+NMOS 连接拓扑
+    ;;     (栅极共 Vin / 漏极共 Vout / PMOS 源接 VDD / NMOS 源接 GND)
+
+    ;; (4) TODO(与长鑫对齐): 解析 inverter_wave.raw / sim_inverter.log,
+    ;;     断言逻辑反相:
+    vdd = 1.2   ; 工艺电源电压, 按实际工艺填
+    ;; vout_hi = parse_wave(tmp "/inverter_wave.raw" vin=0.0)
+    ;; vout_lo = parse_wave(tmp "/inverter_wave.raw" vin=vdd)
+    ;; unless(vout_hi > vdd*0.9) error("Vin=0 时 Vout 未拉高, 非反相")
+    ;; unless(vout_lo < vdd*0.1) error("Vin=VDD 时 Vout 未拉低, 非反相")
+
+    ;; 清理临时目录
+    system(strcat("rm -rf " tmp))
+    t
+  )
+)</code></pre>
+  <div class="note note-warn">
+    <span class="tag">关于 TODO：</span>校验器里标注 <code>TODO(与长鑫对齐)</code> 的两段（原理图拓扑校验、波形解析断言）依赖具体 EDA 环境的 API 与工艺参数。
+    <strong>真值阈值、工艺电压、可用解析命令由长鑫侧统一提供</strong>，编写者先用占位骨架，最终校验逻辑由双方对齐后固化。
+  </div>
+
+  <h4>metadata</h4>
+  <pre><code>"metadata": {
+  "domain": "analog",
+  "task_name": "CMOS 反相器原理图创建与功能仿真",
+  "scenario": "原理图设计 + 功能仿真",
+  "difficulty": "medium",
+  "artifacts": ["schematic.cir","symbol.cir","tb_inverter.scs","sim_inverter.log","inverter_wave.raw"]
+}</code></pre>
+
+  <!-- ========================================================== -->
+  <h2>9. 示例 JSONL（单行）</h2>
+  <p>下面是上面这道 case 的完整 JSONL（实际入库时<strong>必须是单行紧凑 JSON</strong>，这里为可读性折行展示）：</p>
+  <pre><code>{
+  "task_id": "EDA-Eval-DesignFlow-Analog-001",
+  "mode": "design_flow",
+  "prompt": "在指定 EDA 工程中创建一个 CMOS 反相器原理图，并完成初步功能仿真，验证输出与输入的逻辑反相关系。\n\n所需文件 (EDA NAS 上的绝对路径):\n- 测试激励模板: /eda_nas/designs/analog/tb_inverter.scs\n- 工艺库定义: /eda_nas/designs/analog/lib.defs\n- PDK 目录: /eda_nas/pdk/skywater130/\n\n要求:\n1. 在目标库 my_lib 下创建 cell inverter，schematic view：由一个 PMOS 与一个 NMOS 构成标准 CMOS 反相器（源极分别接 VDD/GND，栅极共接为输入 Vin，漏极共接为输出 Vout）。\n2. 生成 symbol view。\n3. 搭建 testbench（基于上述 tb_inverter.scs 模板），对 Vin 施加 0→VDD 的扫描，运行 Spectre 仿真。\n4. 将以下 5 个文件打包为 outputs/submit.zip 作为交付件:\n   - schematic.cir (原理图导出网表)\n   - symbol.cir (symbol 导出)\n   - tb_inverter.scs (测试激励网表)\n   - sim_inverter.log (仿真日志)\n   - inverter_wave.raw (仿真波形/结果)",
+  "entry_point": "outputs/submit.zip",
+  "test": "procedure(check(deliverable workdir)\n  let((zip tmp files vdd)\n    zip = strcat(workdir \"/\" deliverable)\n    unless(isFile(zip) error(strcat(\"deliverable missing: \" zip)))\n    tmp = strcat(workdir \"/__check_tmp\")\n    system(strcat(\"rm -rf \" tmp \" ; mkdir -p \" tmp \" ; unzip -o -q \" zip \" -d \" tmp))\n    files = list(\"schematic.cir\" \"symbol.cir\" \"tb_inverter.scs\" \"sim_inverter.log\" \"inverter_wave.raw\")\n    foreach(f files\n      unless(isFile(strcat(tmp \"/\" f)) error(strcat(\"missing artifact in zip: \" f))))\n    ;; TODO(与长鑫对齐): 校验 PMOS+NMOS 拓扑; 解析波形断言 Vout=~Vin (阈值按工艺)\n    system(strcat(\"rm -rf \" tmp))\n    t\n  )\n)",
+  "metadata": {
+    "domain": "analog",
+    "task_name": "CMOS 反相器原理图创建与功能仿真",
+    "scenario": "原理图设计 + 功能仿真",
+    "difficulty": "medium",
+    "artifacts": ["schematic.cir","symbol.cir","tb_inverter.scs","sim_inverter.log","inverter_wave.raw"]
+  }
+}</code></pre>
+
+  <!-- ========================================================== -->
+  <h2>10. 交付与命名约定</h2>
+  <ul>
+    <li><strong>文件格式：</strong>JSONL，每行一道 case，行内紧凑 JSON。</li>
+    <li><strong>task_id：</strong><code>EDA-Eval-DesignFlow-&lt;方向&gt;-NNN</code>，方向 Digital/Analog/Verification/Test，全局唯一。</li>
+    <li><strong>所需文件/PDK 路径：</strong>写在 <code>prompt</code> 里（EDA NAS 上的绝对路径），<strong>不要用 <code>attachments</code> 字段</strong>（当前版本暂不支持）。可用路径由长鑫侧统一提供。</li>
+    <li><strong>提交方式：</strong>把 JSONL 交给长鑫侧入库，编写者<strong>不需要</strong>改框架/配置/沙盒，也<strong>不需要</strong>提交 assets 目录。</li>
+    <li><strong>真值与工艺参数：</strong>校验器里的真值阈值、工艺电压、可用设计/库路径，统一由长鑫提供后固化，避免硬编码失效。</li>
+  </ul>
+
+  <!-- ========================================================== -->
+  <h2>11. 常见错误自查清单</h2>
+  <table>
+    <thead><tr><th>症状</th><th>原因</th><th>修正</th></tr></thead>
+    <tbody>
+      <tr><td>数据集加载即报错</td><td>缺 <code>mode</code>，或 <code>mode</code> 非 <code>design_flow</code></td><td><code>mode="design_flow"</code></td></tr>
+      <tr><td>还带着 <code>lang</code> / <code>host</code> / <code>budget</code> 字段</td><td>沿用 scripting 习惯或旧版设计流草案</td><td>设计流<strong>不要这三个字段</strong>，删掉；EDA 环境/预算由评测运行配置指定</td></tr>
+      <tr><td><code>entry_point</code> 写成函数名</td><td>沿用 scripting 语义</td><td>设计流里它是<strong>交付件路径</strong>，不是函数名</td></tr>
+      <tr><td><code>test</code> 写成 <code>check(candidate)</code></td><td>沿用 scripting 签名</td><td>改为 <code>check(deliverable, workdir)</code>，校验交付件</td></tr>
+      <tr><td>判分恒失败但产物看着对</td><td>在 <code>check</code> 里自己 <code>puts/println</code> 了 OK/FAIL 标记，污染末行</td><td>删掉自定义标记输出，只留断言</td></tr>
+      <tr><td>agent 找不到所需文件</td><td><code>prompt</code> 里没给文件/PDK 的 EDA NAS 路径，或路径未经长鑫确认</td><td>所需文件路径写在 prompt 里（EDA NAS 绝对路径）；可用路径找刘杨确认</td></tr>
+      <tr><td>交付件路径 agent 产物对不上</td><td><code>entry_point</code> 与 prompt 里要求的产出路径不一致</td><td>两者严格一致；路径相对 workdir</td></tr>
+      <tr><td>校验器跑飞 / 误判</td><td>临时目录未清理、真值阈值写死错值</td><td>结尾清理临时目录；阈值/工艺参数与长鑫对齐</td></tr>
+      <tr><td>Tcl 校验器 <code>assert</code> 报未定义</td><td>重复定义了框架已注入的 <code>assert</code></td><td>直接用框架注入的 <code>assert</code>，不要重复定义</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+  <div class="footer">
+    <strong>联系：</strong>资产路径、工艺参数、真值阈值、入库接入 → 长鑫存储 · 刘杨。<br>
+    <strong>关联：</strong>框架内部设计细节见《设计流 Benchmark-框架改进设计文档》。
+  </div>
+
+</div>
+</body>
+</html>

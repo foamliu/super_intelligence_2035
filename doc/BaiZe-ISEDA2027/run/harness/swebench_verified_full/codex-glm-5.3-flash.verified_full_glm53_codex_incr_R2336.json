@@ -1,0 +1,12 @@
+{
+  "harness": "codex",
+  "run_id": "verified_full_glm53_codex_incr_R2336",
+  "round": "R2336",
+  "n": 2,
+  "resolved": [
+    "sympy__sympy-19954",
+    "sympy__sympy-20154"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

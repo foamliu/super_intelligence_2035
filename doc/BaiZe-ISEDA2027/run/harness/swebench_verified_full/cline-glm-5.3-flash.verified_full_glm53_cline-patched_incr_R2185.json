@@ -1,0 +1,11 @@
+{
+  "harness": "cline",
+  "run_id": "verified_full_glm53_cline-patched_incr_R2185",
+  "round": "R2185",
+  "n": 1,
+  "resolved": [
+    "pydata__xarray-6721"
+  ],
+  "failed": [],
+  "infra_or_quota": []
+}

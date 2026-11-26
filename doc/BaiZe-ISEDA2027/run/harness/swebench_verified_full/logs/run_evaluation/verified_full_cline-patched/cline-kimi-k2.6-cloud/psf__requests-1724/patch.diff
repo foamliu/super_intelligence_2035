@@ -1,0 +1,40 @@
+diff --git a/requests/models.py b/requests/models.py
+index f82f56a..2d49061 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -307,7 +307,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+         """Prepares the given HTTP method."""
+         self.method = method
+         if self.method is not None:
+-            self.method = self.method.upper()
++            self.method = to_native_string(self.method.upper())
+ 
+     def prepare_url(self, url, params):
+         """Prepares the given HTTP URL."""
+diff --git a/test_requests.py b/test_requests.py
+index a593db3..d81f86b 100755
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -13,7 +13,7 @@ import requests
+ import pytest
+ from requests.auth import HTTPDigestAuth
+ from requests.adapters import HTTPAdapter
+-from requests.compat import str, cookielib, getproxies, urljoin, urlparse
++from requests.compat import str, cookielib, getproxies, urljoin, urlparse, builtin_str
+ from requests.cookies import cookiejar_from_dict
+ from requests.exceptions import InvalidURL, MissingSchema
+ from requests.structures import CaseInsensitiveDict
+@@ -662,6 +662,13 @@ class RequestsTestCase(unittest.TestCase):
+         assert 'unicode' in p.headers.keys()
+         assert 'byte' in p.headers.keys()
+ 
++    def test_method_is_native(self):
++        r = requests.Request(u'POST', httpbin('post'))
++        p = r.prepare()
++
++        assert p.method == 'POST'
++        assert isinstance(p.method, builtin_str)
++
+     def test_can_send_nonstring_objects_with_files(self):
+         data = {'a': 0.0}
+         files = {'b': 'foo'}

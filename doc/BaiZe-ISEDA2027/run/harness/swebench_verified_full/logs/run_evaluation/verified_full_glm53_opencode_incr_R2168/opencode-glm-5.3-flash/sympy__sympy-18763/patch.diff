@@ -1,0 +1,33 @@
+diff --git a/sympy/printing/latex.py b/sympy/printing/latex.py
+index 8743723e..e743b67b 100644
+--- a/sympy/printing/latex.py
++++ b/sympy/printing/latex.py
+@@ -698,13 +698,12 @@ def _print_Derivative(self, expr):
+ 
+     def _print_Subs(self, subs):
+         expr, old, new = subs.args
+-        latex_expr = self._print(expr)
+         latex_old = (self._print(e) for e in old)
+         latex_new = (self._print(e) for e in new)
+         latex_subs = r'\\ '.join(
+             e[0] + '=' + e[1] for e in zip(latex_old, latex_new))
+-        return r'\left. %s \right|_{\substack{ %s }}' % (latex_expr,
+-                                                         latex_subs)
++        return r'\left. %s \right|_{\substack{ %s }}' % (self.parenthesize(
++            subs.expr, PRECEDENCE["Mul"], strict=True), latex_subs)
+ 
+     def _print_Integral(self, expr):
+         tex, symbols = "", []
+diff --git a/sympy/printing/tests/test_latex.py b/sympy/printing/tests/test_latex.py
+index 3d387cf0..fdb73b26 100644
+--- a/sympy/printing/tests/test_latex.py
++++ b/sympy/printing/tests/test_latex.py
+@@ -675,6 +675,8 @@ def test_latex_derivatives():
+ def test_latex_subs():
+     assert latex(Subs(x*y, (
+         x, y), (1, 2))) == r'\left. x y \right|_{\substack{ x=1\\ y=2 }}'
++    assert latex(3*Subs(-x + y, (
++        x,), (1,))) == r'3 \left. \left(- x + y\right) \right|_{\substack{ x=1 }}'
+ 
+ 
+ def test_latex_integrals():

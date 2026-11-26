@@ -1,0 +1,63 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index ac1e6227..aa37a1a3 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -47,6 +47,10 @@ astropy.modeling
+ - Bugfix for ``keyerror`` thrown by ``Model.input_units_equivalencies`` when
+   used on ``fix_inputs`` models which have no set unit equivalencies. [#12597]
+ 
++- Fix the separability matrix computed for nested compound models. The ``&``
++  operator now correctly combines the computed separability of its operands
++  instead of assuming the right-hand operand is fully separable. [#12901]
++
+ astropy.table
+ ^^^^^^^^^^^^^
+ 
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index a308e272..45bea360 100644
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -242,7 +242,7 @@ def _cstack(left, right):
+         cright = _coord_matrix(right, 'right', noutp)
+     else:
+         cright = np.zeros((noutp, right.shape[1]))
+-        cright[-right.shape[0]:, -right.shape[1]:] = 1
++        cright[-right.shape[0]:, -right.shape[1]:] = right
+ 
+     return np.hstack([cleft, cright])
+ 
+diff --git a/astropy/modeling/tests/test_separable.py b/astropy/modeling/tests/test_separable.py
+index 8dfe5c86..d772ff04 100644
+--- a/astropy/modeling/tests/test_separable.py
++++ b/astropy/modeling/tests/test_separable.py
+@@ -148,3 +148,30 @@ def test_custom_model_separable():
+ 
+     assert not model_c().separable
+     assert np.all(separability_matrix(model_c()) == [True, True])
++
++
++def test_nested_compound_separability():
++    """
++    Separability of nested compound models should be identical to
++    that of the equivalent flat compound model.
++
++    Regression test for the ``&`` operator discarding the computed
++    separability matrix of a nested (right-hand) compound model.
++    """
++    cm = models.Linear1D(10) & models.Linear1D(5)
++
++    assert_allclose(
++        separability_matrix(models.Pix2Sky_TAN() & cm),
++        separability_matrix(models.Pix2Sky_TAN() & models.Linear1D(10) & models.Linear1D(5))
++    )
++
++    # nesting on the left side as well as double nesting
++    assert_allclose(
++        separability_matrix(cm & models.Pix2Sky_TAN()),
++        separability_matrix(models.Linear1D(10) & models.Linear1D(5) & models.Pix2Sky_TAN())
++    )
++    assert_allclose(
++        separability_matrix((cm & models.Pix2Sky_TAN()) & cm),
++        separability_matrix(models.Linear1D(10) & models.Linear1D(5) & models.Pix2Sky_TAN()
++                            & models.Linear1D(10) & models.Linear1D(5))
++    )

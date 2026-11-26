@@ -1,0 +1,46 @@
+diff --git a/django/core/cache/backends/db.py b/django/core/cache/backends/db.py
+index 33c79c5a1..6394ba878 100644
+--- a/django/core/cache/backends/db.py
++++ b/django/core/cache/backends/db.py
+@@ -267,9 +267,11 @@ class DatabaseCache(BaseDatabaseCache):
+                 cursor.execute(
+                     connection.ops.cache_key_culling_sql() % table,
+                     [cull_num])
+-                cursor.execute("DELETE FROM %s "
+-                               "WHERE cache_key < %%s" % table,
+-                               [cursor.fetchone()[0]])
++                result = cursor.fetchone()
++                if result:
++                    cursor.execute("DELETE FROM %s "
++                                   "WHERE cache_key < %%s" % table,
++                                   [result[0]])
+ 
+     def clear(self):
+         db = router.db_for_write(self.cache_model_class)
+diff --git a/tests/cache/tests.py b/tests/cache/tests.py
+index d404475e1..e9705cf7c 100644
+--- a/tests/cache/tests.py
++++ b/tests/cache/tests.py
+@@ -19,6 +19,7 @@ from django.core.cache import (
+     DEFAULT_CACHE_ALIAS, CacheKeyWarning, InvalidCacheKey, cache, caches,
+ )
+ from django.core.cache.backends.base import InvalidCacheBackendError
++from django.core.cache.backends.db import DatabaseCache
+ from django.core.cache.utils import make_template_fragment_key
+ from django.db import close_old_connections, connection, connections
+ from django.http import (
+@@ -1040,6 +1041,14 @@ class DBCacheTests(BaseCacheTests, TransactionTestCase):
+     def test_zero_cull(self):
+         self._perform_cull_test('zero_cull', 50, 18)
+ 
++    def test_cull_with_no_result(self):
++        # Regression test for #31335 - culling when cache_key_culling_sql
++        # returns no rows shouldn't crash.
++        cache = DatabaseCache('test cache table', {'MAX_ENTRIES': 0, 'CULL_FREQUENCY': 1})
++        cache.set('key1', 'value1')
++        cache.set('key2', 'value2')  # Triggers cull.
++        self.assertEqual(cache.get('key2'), 'value2')
++
+     def test_second_call_doesnt_crash(self):
+         out = io.StringIO()
+         management.call_command('createcachetable', stdout=out)

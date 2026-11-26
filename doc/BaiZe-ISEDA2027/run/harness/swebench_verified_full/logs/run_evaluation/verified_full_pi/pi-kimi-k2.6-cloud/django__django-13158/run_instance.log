@@ -1,0 +1,69 @@
+2026-10-30 16:50:02,633 - INFO - Creating container for django__django-13158...
+2026-10-30 16:50:02,654 - INFO - Container for django__django-13158 created: 587f1061eb53e58aaf42c7304e6be930006827a351926a3e451c1a165a97057f
+2026-10-30 16:50:05,748 - INFO - Container for django__django-13158 started: 587f1061eb53e58aaf42c7304e6be930006827a351926a3e451c1a165a97057f
+2026-10-30 16:50:05,750 - INFO - Intermediate patch for django__django-13158 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-13158/patch.diff, now applying to container...
+2026-10-30 16:50:05,888 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/compiler.py...
+warning: django/db/models/sql/compiler.py has type 100755, expected 100644
+Checking patch tests/queries/test_qs_combinators.py...
+warning: tests/queries/test_qs_combinators.py has type 100755, expected 100644
+Applied patch django/db/models/sql/compiler.py cleanly.
+Applied patch tests/queries/test_qs_combinators.py cleanly.
+
+2026-10-30 16:50:07,446 - INFO - Git diff before:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 686e75c979..c4c5b4bc86 100755
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -431,6 +431,8 @@ class SQLCompiler:
+         return sql, params
+ 
+     def get_combinator_sql(self, combinator, all):
++        if self.query.is_empty():
++            raise EmptyResultSet
+         features = self.connection.features
+         compilers = [
+             query.get_compiler(self.using, self.connection)
+diff --git a/tests/queries/test_qs_combinators.py b/tests/queries/test_qs_combinators.py
+index 9c6fd474ca..2c0aa30fb9 100755
+--- a/tests/queries/test_qs_combinators.py
++++ b/tests/queries/test_qs_combinators.py
+@@ -99,6 +99,13 @@ class QuerySetSetOperationTests(TestCase):
+         self.assertEqual(len(qs2.union(qs2)), 0)
+         self.assertEqual(len(qs3.union(qs3)), 0)
+ 
++    def test_none_on_combined_queries(self):
++        qs1 = Number.objects.filter(num__lte=1)
++        qs2 = Number.objects.filter(num__gte=2, num__lte=3)
++        self.assertEqual(len(qs1.union(qs2).none()), 0)
++        self.assertEqual(len(qs1.intersection(qs2).none()), 0)
++        self.assertEqual(len(qs1.difference(qs2).none()), 0)
++
+     def test_limits(self):
+         qs1 = Number.objects.all()
+         qs2 = Number.objects.all()
+2026-10-30 16:50:07,449 - INFO - Eval script for django__django-13158 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-13158/eval.sh; copying to container...
+2026-10-30 16:50:16,174 - INFO - Test runtime: 8.66 seconds
+2026-10-30 16:50:16,178 - INFO - Test output for django__django-13158 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/django__django-13158/test_output.txt
+2026-10-30 16:50:16,260 - INFO - Git diff after:
+diff --git a/django/db/models/sql/compiler.py b/django/db/models/sql/compiler.py
+index 686e75c979..c4c5b4bc86 100755
+--- a/django/db/models/sql/compiler.py
++++ b/django/db/models/sql/compiler.py
+@@ -431,6 +431,8 @@ class SQLCompiler:
+         return sql, params
+ 
+     def get_combinator_sql(self, combinator, all):
++        if self.query.is_empty():
++            raise EmptyResultSet
+         features = self.connection.features
+         compilers = [
+             query.get_compiler(self.using, self.connection)
+2026-10-30 16:50:16,261 - INFO - Git diff changed after running eval script
+2026-10-30 16:50:16,261 - INFO - Grading answer for django__django-13158...
+2026-10-30 16:50:16,283 - INFO - report: {'django__django-13158': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_union_none (queries.test_qs_combinators.QuerySetSetOperationTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_combining_multiple_models (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_difference (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_intersection (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_union (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_count_union_empty_result (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_difference_with_empty_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_difference_with_values (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_intersection_with_empty_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_intersection_with_values (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_limits (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_order_by_same_type (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_order_raises_on_non_selected_column (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_ordering (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_ordering_by_alias (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_ordering_by_f_expression (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_ordering_by_f_expression_and_alias (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_qs_with_subcompound_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_simple_difference (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_simple_intersection (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_simple_union (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_distinct (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_empty_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_extra_and_values_list (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_two_annotated_values_list (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_values (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_values_list_and_order (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_union_with_values_list_on_annotated_and_unannotated (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_unsupported_operations_on_combined_qs (queries.test_qs_combinators.QuerySetSetOperationTests)', 'test_unsupported_ordering_slicing_raises_db_error (queries.test_qs_combinators.QuerySetSetOperationTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-13158: resolved: True
+2026-10-30 16:50:16,285 - INFO - Attempting to stop container sweb.eval.django__django-13158.verified_full_pi...
+2026-10-30 16:50:33,049 - INFO - Container sweb.eval.django__django-13158.verified_full_pi stopped successfully.
+2026-10-30 16:50:33,049 - INFO - Attempting to remove container sweb.eval.django__django-13158.verified_full_pi...
+2026-10-30 16:50:33,097 - INFO - Container sweb.eval.django__django-13158.verified_full_pi removed successfully.

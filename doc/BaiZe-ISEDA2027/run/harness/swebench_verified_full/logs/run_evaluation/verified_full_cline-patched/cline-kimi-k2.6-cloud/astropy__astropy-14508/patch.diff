@@ -1,0 +1,56 @@
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 118bfced..b16d48d7 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -1299,6 +1299,21 @@ def _format_value(value):
+ 
+ def _format_float(value):
+     """Format a floating number to make sure it gets the decimal point."""
++    # Try str(value) first for a more compact representation that avoids
++    # unnecessarily long strings like 0.009124999999999999 for 0.009125.
++    value_str = str(value).upper()
++    if "e" in value_str:
++        value_str = value_str.replace("e", "E")
++    if (
++        "." not in value_str
++        and "E" not in value_str
++        and value_str not in ("INF", "-INF", "NAN")
++    ):
++        value_str += ".0"
++
++    if len(value_str) <= 20:
++        return value_str
++
+     value_str = f"{value:.16G}"
+     if "." not in value_str and "E" not in value_str:
+         value_str += ".0"
+diff --git a/astropy/io/fits/tests/test_header.py b/astropy/io/fits/tests/test_header.py
+index a8f4e116..4c1dc93a 100644
+--- a/astropy/io/fits/tests/test_header.py
++++ b/astropy/io/fits/tests/test_header.py
+@@ -147,6 +147,25 @@ class TestHeaderFunctions(FitsTestCase):
+         if str(c) != f1 and str(c) != f2:
+             assert str(c) == f3
+ 
++    def test_floating_point_compact_representation(self):
++        """
++        Test that floating point values use a compact string representation
++        when possible, to avoid unnecessarily truncating comments.
++
++        Regression test for https://github.com/astropy/astropy/issues/14573
++        """
++        # This is a HIERARCH card where the old behavior would format 0.009125
++        # as 0.009124999999999999 (20 chars), causing the comment to be truncated.
++        # The new behavior should use the compact 0.009125 representation.
++        c = fits.Card(
++            "HIERARCH ESO IFM CL RADIUS",
++            0.009125,
++            "[m] radius arround actuator to avoid",
++        )
++        assert str(c) == _pad(
++            "HIERARCH ESO IFM CL RADIUS = 0.009125 / [m] radius arround actuator to avoid"
++        )
++
+     def test_card_image_constructed_too_long(self):
+         """Test that over-long cards truncate the comment"""
+ 

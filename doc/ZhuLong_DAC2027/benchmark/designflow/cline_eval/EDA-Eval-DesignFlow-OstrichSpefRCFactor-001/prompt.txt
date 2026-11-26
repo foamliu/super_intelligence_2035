@@ -1,0 +1,1 @@
+写一个用ostrich比较两个spef 生成RC Factor的tcl脚本

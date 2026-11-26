@@ -1,0 +1,128 @@
+diff --git a/CHANGES b/CHANGES
+index ed47709..fe60d1c 100644
+--- a/CHANGES
++++ b/CHANGES
+@@ -26,6 +26,7 @@ Bugs fixed
+ * #9096: sphinx-build: the value of progress bar for paralle build is wrong
+ * #10110: sphinx-build: exit code is not changed when error is raised on
+   builder-finished event
++* #10200: gettext: Duplicated locations are shown in message catalogs
+ 
+ Testing
+ --------
+diff --git a/sphinx/builders/gettext.py b/sphinx/builders/gettext.py
+index e8bc547..bc7d0de 100644
+--- a/sphinx/builders/gettext.py
++++ b/sphinx/builders/gettext.py
+@@ -53,11 +53,15 @@ class Catalog:
+         if msg not in self.metadata:  # faster lookup in hash
+             self.messages.append(msg)
+             self.metadata[msg] = []
+-        self.metadata[msg].append((origin.source, origin.line, origin.uid))  # type: ignore
++        line = origin.line
++        if line is None:
++            line = -1
++        self.metadata[msg].append((origin.source, line, origin.uid))  # type: ignore
+ 
+     def __iter__(self) -> Generator[Message, None, None]:
+         for message in self.messages:
+-            positions = [(source, line) for source, line, uuid in self.metadata[message]]
++            positions = sorted({(source, line) for source, line, uuid
++                                in self.metadata[message]})
+             uuids = [uuid for source, line, uuid in self.metadata[message]]
+             yield Message(message, positions, uuids)
+ 
+diff --git a/tests/roots/test-gettext-duplicate-location/conf.py b/tests/roots/test-gettext-duplicate-location/conf.py
+new file mode 100644
+index 0000000..310446d
+--- /dev/null
++++ b/tests/roots/test-gettext-duplicate-location/conf.py
+@@ -0,0 +1 @@
++root_doc = 'index'
+diff --git a/tests/roots/test-gettext-duplicate-location/index.rst b/tests/roots/test-gettext-duplicate-location/index.rst
+new file mode 100644
+index 0000000..cd3e801
+--- /dev/null
++++ b/tests/roots/test-gettext-duplicate-location/index.rst
+@@ -0,0 +1,7 @@
++Duplicate Locations
++===================
++
++.. toctree::
++   :caption: Type
++
++   Type <sub>
+diff --git a/tests/roots/test-gettext-duplicate-location/sub.rst b/tests/roots/test-gettext-duplicate-location/sub.rst
+new file mode 100644
+index 0000000..eb1d28e
+--- /dev/null
++++ b/tests/roots/test-gettext-duplicate-location/sub.rst
+@@ -0,0 +1,4 @@
++Sub Title
++---------
++
++This is a sub document referenced by the toctree in index.rst.
+diff --git a/tests/test_build_gettext.py b/tests/test_build_gettext.py
+index 3c4617e..38c79e6 100644
+--- a/tests/test_build_gettext.py
++++ b/tests/test_build_gettext.py
+@@ -8,6 +8,7 @@ from subprocess import PIPE, CalledProcessError
+ 
+ import pytest
+ 
++from sphinx.builders.gettext import Catalog, MsgOrigin
+ from sphinx.util.osutil import cd
+ 
+ 
+@@ -184,3 +185,51 @@ def test_build_single_pot(app):
+          'msgid "Generated section".*'),
+         result,
+         flags=re.S)
++
++
++def test_catalog_dedup_locations():
++    # regression test for #10200
++    catalog = Catalog()
++    catalog.add('Hello', MsgOrigin('source1.rst', 10))
++    catalog.add('Hello', MsgOrigin('source1.rst', 10))
++    catalog.add('Hello', MsgOrigin('source2.rst', 3))
++
++    (message,) = catalog
++    assert message.text == 'Hello'
++    assert message.locations == [('source1.rst', 10), ('source2.rst', 3)]
++
++
++def test_catalog_none_line():
++    # regression test for #10200; a location without line number must not
++    # break the sorting of the locations
++    catalog = Catalog()
++    catalog.add('Hello', MsgOrigin('source1.rst', None))
++    catalog.add('Hello', MsgOrigin('source1.rst', 10))
++
++    (message,) = catalog
++    assert message.locations == [('source1.rst', -1), ('source1.rst', 10)]
++
++
++@pytest.mark.sphinx('gettext', testroot='gettext-duplicate-location')
++def test_build_gettext_duplicate_location(app):
++    # regression test for #10200
++    app.builder.build_all()
++
++    pot = (app.outdir / 'index.pot').read_text(encoding='utf8')
++
++    # extract the location comments (``#:``) for each msgid
++    msgid = None
++    locations = {}
++    for line in pot.splitlines():
++        if line.startswith('#: '):
++            locations.setdefault(msgid, []).append(line)
++        elif line.startswith('msgid "'):
++            msgid = line[7:-1]
++
++    # each location must appear at most once per message
++    for msg_locations in locations.values():
++        assert len(msg_locations) == len(set(msg_locations))
++
++    # the msgid "Type" is used for both the caption and an entry title of
++    # the toctree in index.rst; its single location used to be repeated
++    assert len(locations['Type']) == 1

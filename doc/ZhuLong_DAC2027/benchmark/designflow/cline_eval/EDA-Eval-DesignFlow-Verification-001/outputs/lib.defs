@@ -1,0 +1,7 @@
+# lib.defs -- aether-ready version (rewritten for the step3+ aether flow).
+# INCLUDE the aether tool libraries, SKIP amsLib (it is pulled in by the aether
+# tool lib.defs but is not usable in this project and breaks the aether load),
+# and DEFINE the project library.
+INCLUDE ${AETHER_HOME}/lib/lib.defs
+SKIP amsLib
+DEFINE drcpa_top ./drcpa_top

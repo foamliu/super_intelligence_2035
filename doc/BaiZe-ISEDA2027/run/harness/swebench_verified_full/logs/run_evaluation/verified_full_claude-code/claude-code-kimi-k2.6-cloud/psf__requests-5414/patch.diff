@@ -1,0 +1,31 @@
+diff --git a/requests/adapters.py b/requests/adapters.py
+index fe22ff4..c4baaf1 100644
+--- a/requests/adapters.py
++++ b/requests/adapters.py
+@@ -20,6 +20,8 @@ from urllib3.exceptions import ClosedPoolError
+ from urllib3.exceptions import ConnectTimeoutError
+ from urllib3.exceptions import HTTPError as _HTTPError
+ from urllib3.exceptions import InvalidHeader as _InvalidHeader
++from urllib3.exceptions import LocationParseError
++from urllib3.exceptions import LocationValueError
+ from urllib3.exceptions import MaxRetryError
+ from urllib3.exceptions import NewConnectionError
+ from urllib3.exceptions import ProxyError as _ProxyError
+@@ -27,7 +29,6 @@ from urllib3.exceptions import ProtocolError
+ from urllib3.exceptions import ReadTimeoutError
+ from urllib3.exceptions import SSLError as _SSLError
+ from urllib3.exceptions import ResponseError
+-from urllib3.exceptions import LocationValueError
+ 
+ from .models import Response
+ from .compat import urlparse, basestring
+@@ -497,6 +498,9 @@ class HTTPAdapter(BaseAdapter):
+                     low_conn.close()
+                     raise
+ 
++        except LocationParseError as e:
++            raise InvalidURL(e, request=request)
++
+         except (ProtocolError, socket.error) as err:
+             raise ConnectionError(err, request=request)
+ 

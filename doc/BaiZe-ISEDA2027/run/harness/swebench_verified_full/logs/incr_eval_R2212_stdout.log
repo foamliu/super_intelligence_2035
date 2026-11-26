@@ -1,0 +1,8 @@
+
+=== hermes: django__django-13410 ===
+  merged 416 real preds -> predictions_glm53/predictions_hermes_glm53.json
+  [00:49:18] launching eval ...
+  Instances resolved: 1
+  Instances unresolved: 0
+  Instances with likely infrastructure failures: 0
+  eval done rc=0 (log: logs/eval_incr_verified_full_glm53_hermes_R2212.log)

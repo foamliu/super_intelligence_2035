@@ -1,0 +1,162 @@
+2026-10-30 15:54:36,784 - INFO - Creating container for sphinx-doc__sphinx-9230...
+2026-10-30 15:54:36,807 - INFO - Container for sphinx-doc__sphinx-9230 created: 7956db888eb5287a93d525b743666881cbc796b0d58b66332f32441bf96689c9
+2026-10-30 15:54:39,255 - INFO - Container for sphinx-doc__sphinx-9230 started: 7956db888eb5287a93d525b743666881cbc796b0d58b66332f32441bf96689c9
+2026-10-30 15:54:39,257 - INFO - Intermediate patch for sphinx-doc__sphinx-9230 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-9230/patch.diff, now applying to container...
+2026-10-30 15:54:39,399 - INFO - >>>>> Applied Patch:
+Checking patch sphinx/util/docfields.py...
+Checking patch sphinx/util/typing.py...
+Checking patch tests/test_util_docfields.py...
+Applied patch sphinx/util/docfields.py cleanly.
+Applied patch sphinx/util/typing.py cleanly.
+Applied patch tests/test_util_docfields.py cleanly.
+
+2026-10-30 15:54:39,825 - INFO - Git diff before:
+diff --git a/sphinx/util/docfields.py b/sphinx/util/docfields.py
+index 3a3367ebe..9a7c8244d 100644
+--- a/sphinx/util/docfields.py
++++ b/sphinx/util/docfields.py
+@@ -35,6 +35,40 @@ def _is_single_paragraph(node: nodes.field_body) -> bool:
+     return False
+ 
+ 
++def _split_type_and_name(fieldarg: str) -> Tuple[str, str]:
++    """Split *fieldarg* into type and name, respecting bracket nesting.
++
++    The name is the last whitespace-separated token that is not inside
++    any brackets.  Everything before it is the type.
++    """
++    depth = 0
++    tokens = []
++    start = 0
++    in_token = False
++    for i, c in enumerate(fieldarg):
++        if c in '([{':
++            depth += 1
++        elif c in ')]}':
++            depth -= 1
++        elif depth == 0 and c.isspace():
++            if in_token:
++                tokens.append((start, i))
++                in_token = False
++        elif depth == 0:
++            if not in_token:
++                start = i
++                in_token = True
++    if in_token:
++        tokens.append((start, len(fieldarg)))
++
++    if len(tokens) >= 2:
++        name_start, name_end = tokens[-1]
++        argname = fieldarg[name_start:name_end]
++        argtype = fieldarg[:name_start].rstrip()
++        return argtype, argname
++    raise ValueError
++
++
+ class Field:
+     """A doc field that is never grouped.  It can have an argument or not, the
+     argument can be linked using a specified *rolename*.  Field should be used
+@@ -298,7 +332,7 @@ class DocFieldTransformer:
+             # also support syntax like ``:param type name:``
+             if typedesc.is_typed:
+                 try:
+-                    argtype, argname = fieldarg.split(None, 1)
++                    argtype, argname = _split_type_and_name(fieldarg)
+                 except ValueError:
+                     pass
+                 else:
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index af6edcae0..74b52455e 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -34,7 +34,10 @@ else:
+             return ref._eval_type(globalns, localns)
+ 
+ if sys.version_info > (3, 10):
+-    from types import Union as types_Union
++    try:
++        from types import Union as types_Union
++    except ImportError:
++        from types import UnionType as types_Union
+ else:
+     types_Union = None
+2026-10-30 15:54:39,826 - INFO - Eval script for sphinx-doc__sphinx-9230 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-9230/eval.sh; copying to container...
+2026-10-30 15:54:46,892 - INFO - Test runtime: 6.98 seconds
+2026-10-30 15:54:46,894 - INFO - Test output for sphinx-doc__sphinx-9230 written to logs/run_evaluation/verified_full_opencode/opencode-kimi-k2.6-cloud/sphinx-doc__sphinx-9230/test_output.txt
+2026-10-30 15:54:47,418 - INFO - Git diff after:
+diff --git a/sphinx/util/docfields.py b/sphinx/util/docfields.py
+index 3a3367ebe..9a7c8244d 100644
+--- a/sphinx/util/docfields.py
++++ b/sphinx/util/docfields.py
+@@ -35,6 +35,40 @@ def _is_single_paragraph(node: nodes.field_body) -> bool:
+     return False
+ 
+ 
++def _split_type_and_name(fieldarg: str) -> Tuple[str, str]:
++    """Split *fieldarg* into type and name, respecting bracket nesting.
++
++    The name is the last whitespace-separated token that is not inside
++    any brackets.  Everything before it is the type.
++    """
++    depth = 0
++    tokens = []
++    start = 0
++    in_token = False
++    for i, c in enumerate(fieldarg):
++        if c in '([{':
++            depth += 1
++        elif c in ')]}':
++            depth -= 1
++        elif depth == 0 and c.isspace():
++            if in_token:
++                tokens.append((start, i))
++                in_token = False
++        elif depth == 0:
++            if not in_token:
++                start = i
++                in_token = True
++    if in_token:
++        tokens.append((start, len(fieldarg)))
++
++    if len(tokens) >= 2:
++        name_start, name_end = tokens[-1]
++        argname = fieldarg[name_start:name_end]
++        argtype = fieldarg[:name_start].rstrip()
++        return argtype, argname
++    raise ValueError
++
++
+ class Field:
+     """A doc field that is never grouped.  It can have an argument or not, the
+     argument can be linked using a specified *rolename*.  Field should be used
+@@ -298,7 +332,7 @@ class DocFieldTransformer:
+             # also support syntax like ``:param type name:``
+             if typedesc.is_typed:
+                 try:
+-                    argtype, argname = fieldarg.split(None, 1)
++                    argtype, argname = _split_type_and_name(fieldarg)
+                 except ValueError:
+                     pass
+                 else:
+diff --git a/sphinx/util/typing.py b/sphinx/util/typing.py
+index af6edcae0..74b52455e 100644
+--- a/sphinx/util/typing.py
++++ b/sphinx/util/typing.py
+@@ -34,7 +34,10 @@ else:
+             return ref._eval_type(globalns, localns)
+ 
+ if sys.version_info > (3, 10):
+-    from types import Union as types_Union
++    try:
++        from types import Union as types_Union
++    except ImportError:
++        from types import UnionType as types_Union
+ else:
+     types_Union = None
+2026-10-30 15:54:47,418 - INFO - Grading answer for sphinx-doc__sphinx-9230...
+2026-10-30 15:54:47,429 - INFO - report: {'sphinx-doc__sphinx-9230': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_domain_py.py::test_info_field_list'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_domain_py.py::test_function_signatures', 'tests/test_domain_py.py::test_domain_py_xrefs', 'tests/test_domain_py.py::test_domain_py_xrefs_abbreviations', 'tests/test_domain_py.py::test_domain_py_objects', 'tests/test_domain_py.py::test_resolve_xref_for_properties', 'tests/test_domain_py.py::test_domain_py_find_obj', 'tests/test_domain_py.py::test_domain_py_canonical', 'tests/test_domain_py.py::test_get_full_qualified_name', 'tests/test_domain_py.py::test_parse_annotation', 'tests/test_domain_py.py::test_pyfunction_signature', 'tests/test_domain_py.py::test_pyfunction_signature_full', 'tests/test_domain_py.py::test_pyfunction_signature_full_py38', 'tests/test_domain_py.py::test_pyfunction_with_number_literals', 'tests/test_domain_py.py::test_pyfunction_with_union_type_operator', 'tests/test_domain_py.py::test_optional_pyfunction_signature', 'tests/test_domain_py.py::test_pyexception_signature', 'tests/test_domain_py.py::test_exceptions_module_is_ignored', 'tests/test_domain_py.py::test_pydata_signature', 'tests/test_domain_py.py::test_pydata_signature_old', 'tests/test_domain_py.py::test_pydata_with_union_type_operator', 'tests/test_domain_py.py::test_pyobject_prefix', 'tests/test_domain_py.py::test_pydata', 'tests/test_domain_py.py::test_pyfunction', 'tests/test_domain_py.py::test_pyclass_options', 'tests/test_domain_py.py::test_pymethod_options', 'tests/test_domain_py.py::test_pyclassmethod', 'tests/test_domain_py.py::test_pystaticmethod', 'tests/test_domain_py.py::test_pyattribute', 'tests/test_domain_py.py::test_pyproperty', 'tests/test_domain_py.py::test_pydecorator_signature', 'tests/test_domain_py.py::test_pydecoratormethod_signature', 'tests/test_domain_py.py::test_canonical', 'tests/test_domain_py.py::test_canonical_definition_overrides', 'tests/test_domain_py.py::test_canonical_definition_skip', 'tests/test_domain_py.py::test_canonical_duplicated', 'tests/test_domain_py.py::test_info_field_list_var', 'tests/test_domain_py.py::test_module_index', 'tests/test_domain_py.py::test_module_index_submodule', 'tests/test_domain_py.py::test_module_index_not_collapsed', 'tests/test_domain_py.py::test_modindex_common_prefix', 'tests/test_domain_py.py::test_noindexentry', 'tests/test_domain_py.py::test_python_python_use_unqualified_type_names', 'tests/test_domain_py.py::test_python_python_use_unqualified_type_names_disabled', 'tests/test_domain_py.py::test_warn_missing_reference'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sphinx-doc__sphinx-9230: resolved: True
+2026-10-30 15:54:47,431 - INFO - Attempting to stop container sweb.eval.sphinx-doc__sphinx-9230.verified_full_opencode...
+2026-10-30 15:55:03,324 - INFO - Container sweb.eval.sphinx-doc__sphinx-9230.verified_full_opencode stopped successfully.
+2026-10-30 15:55:03,324 - INFO - Attempting to remove container sweb.eval.sphinx-doc__sphinx-9230.verified_full_opencode...
+2026-10-30 15:55:03,364 - INFO - Container sweb.eval.sphinx-doc__sphinx-9230.verified_full_opencode removed successfully.

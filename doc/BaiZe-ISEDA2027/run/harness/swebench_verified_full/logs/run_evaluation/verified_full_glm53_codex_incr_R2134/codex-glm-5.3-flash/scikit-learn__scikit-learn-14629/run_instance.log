@@ -1,0 +1,143 @@
+2026-11-11 01:44:44,292 - INFO - Creating container for scikit-learn__scikit-learn-14629...
+2026-11-11 01:44:44,366 - INFO - Container for scikit-learn__scikit-learn-14629 created: 75fd00832a62ea0d6364f4012ae39985c299bc0ab0790a70ba28c2512e94d99b
+2026-11-11 01:44:54,914 - INFO - Container for scikit-learn__scikit-learn-14629 started: 75fd00832a62ea0d6364f4012ae39985c299bc0ab0790a70ba28c2512e94d99b
+2026-11-11 01:44:54,919 - INFO - Intermediate patch for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2134/codex-glm-5.3-flash/scikit-learn__scikit-learn-14629/patch.diff, now applying to container...
+2026-11-11 01:44:55,099 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/model_selection/_validation.py...
+Checking patch sklearn/model_selection/tests/test_validation.py...
+Applied patch sklearn/model_selection/_validation.py cleanly.
+Applied patch sklearn/model_selection/tests/test_validation.py cleanly.
+
+2026-11-11 01:44:55,550 - INFO - Git diff before:
+diff --git a/sklearn/model_selection/_validation.py b/sklearn/model_selection/_validation.py
+index 95669a212..e09a97bcf 100644
+--- a/sklearn/model_selection/_validation.py
++++ b/sklearn/model_selection/_validation.py
+@@ -855,8 +855,12 @@ def _fit_and_predict(estimator, X, y, train, test, verbose, fit_params,
+     predictions = func(X_test)
+     if method in ['decision_function', 'predict_proba', 'predict_log_proba']:
+         if isinstance(predictions, list):
++            if hasattr(estimator, 'estimators_'):
++                estimators = estimator.estimators_
++            else:
++                estimators = [estimator] * len(predictions)
+             predictions = [_enforce_prediction_order(
+-                estimator.classes_[i_label], predictions[i_label],
++                estimators[i_label].classes_, predictions[i_label],
+                 n_classes=len(set(y[:, i_label])), method=method)
+                 for i_label in range(len(predictions))]
+         else:
+diff --git a/sklearn/model_selection/tests/test_validation.py b/sklearn/model_selection/tests/test_validation.py
+index 6fa2e4fee..41391a07e 100644
+--- a/sklearn/model_selection/tests/test_validation.py
++++ b/sklearn/model_selection/tests/test_validation.py
+@@ -56,10 +56,12 @@ from sklearn.metrics.scorer import check_scoring
+ 
+ from sklearn.linear_model import Ridge, LogisticRegression, SGDClassifier
+ from sklearn.linear_model import PassiveAggressiveClassifier, RidgeClassifier
++from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+ from sklearn.ensemble import RandomForestClassifier
+ from sklearn.neighbors import KNeighborsClassifier
+ from sklearn.svm import SVC
+ from sklearn.cluster import KMeans
++from sklearn.multioutput import MultiOutputClassifier
+ 
+ from sklearn.impute import SimpleImputer
+ 
+@@ -875,6 +877,27 @@ def test_cross_val_predict_predict_proba_shape():
+     assert preds.shape == (150, 3)
+ 
+ 
++def test_cross_val_predict_predict_proba_multioutput():
++    X, y = make_multilabel_classification(n_samples=50, random_state=0)
++    clf = MultiOutputClassifier(LinearDiscriminantAnalysis())
++
++    predictions = cross_val_predict(clf, X, y, cv=3,
++                                    method='predict_proba')
++    assert len(predictions) == y.shape[1]
++    for prediction in predictions:
++        assert prediction.shape == (50, 2)
++
++    # Test that missing classes in a fold are handled correctly.
++    y[:, 0] = 0
++    y[0, 0] = 1
++    cv = KFold(2)
++    train, test = list(cv.split(X, y))
++    predictions = cross_val_predict(clf, X, y, cv=cv,
++                                    method='predict_proba')
++    assert np.all(predictions[0][test[0], 1] == 0)
++    assert np.all(predictions[0][test[1]] > 0)
++
++
+ def test_cross_val_predict_predict_log_proba_shape():
+     X, y = make_classification(n_classes=2, n_samples=50, random_state=0)
+2026-11-11 01:44:55,552 - INFO - Eval script for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2134/codex-glm-5.3-flash/scikit-learn__scikit-learn-14629/eval.sh; copying to container...
+2026-11-11 01:45:08,971 - INFO - Test runtime: 13.33 seconds
+2026-11-11 01:45:08,973 - INFO - Test output for scikit-learn__scikit-learn-14629 written to logs/run_evaluation/verified_full_glm53_codex_incr_R2134/codex-glm-5.3-flash/scikit-learn__scikit-learn-14629/test_output.txt
+2026-11-11 01:45:09,019 - INFO - Git diff after:
+diff --git a/sklearn/model_selection/_validation.py b/sklearn/model_selection/_validation.py
+index 95669a212..e09a97bcf 100644
+--- a/sklearn/model_selection/_validation.py
++++ b/sklearn/model_selection/_validation.py
+@@ -855,8 +855,12 @@ def _fit_and_predict(estimator, X, y, train, test, verbose, fit_params,
+     predictions = func(X_test)
+     if method in ['decision_function', 'predict_proba', 'predict_log_proba']:
+         if isinstance(predictions, list):
++            if hasattr(estimator, 'estimators_'):
++                estimators = estimator.estimators_
++            else:
++                estimators = [estimator] * len(predictions)
+             predictions = [_enforce_prediction_order(
+-                estimator.classes_[i_label], predictions[i_label],
++                estimators[i_label].classes_, predictions[i_label],
+                 n_classes=len(set(y[:, i_label])), method=method)
+                 for i_label in range(len(predictions))]
+         else:
+diff --git a/sklearn/model_selection/tests/test_validation.py b/sklearn/model_selection/tests/test_validation.py
+index 6fa2e4fee..41391a07e 100644
+--- a/sklearn/model_selection/tests/test_validation.py
++++ b/sklearn/model_selection/tests/test_validation.py
+@@ -56,10 +56,12 @@ from sklearn.metrics.scorer import check_scoring
+ 
+ from sklearn.linear_model import Ridge, LogisticRegression, SGDClassifier
+ from sklearn.linear_model import PassiveAggressiveClassifier, RidgeClassifier
++from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+ from sklearn.ensemble import RandomForestClassifier
+ from sklearn.neighbors import KNeighborsClassifier
+ from sklearn.svm import SVC
+ from sklearn.cluster import KMeans
++from sklearn.multioutput import MultiOutputClassifier
+ 
+ from sklearn.impute import SimpleImputer
+ 
+@@ -875,6 +877,27 @@ def test_cross_val_predict_predict_proba_shape():
+     assert preds.shape == (150, 3)
+ 
+ 
++def test_cross_val_predict_predict_proba_multioutput():
++    X, y = make_multilabel_classification(n_samples=50, random_state=0)
++    clf = MultiOutputClassifier(LinearDiscriminantAnalysis())
++
++    predictions = cross_val_predict(clf, X, y, cv=3,
++                                    method='predict_proba')
++    assert len(predictions) == y.shape[1]
++    for prediction in predictions:
++        assert prediction.shape == (50, 2)
++
++    # Test that missing classes in a fold are handled correctly.
++    y[:, 0] = 0
++    y[0, 0] = 1
++    cv = KFold(2)
++    train, test = list(cv.split(X, y))
++    predictions = cross_val_predict(clf, X, y, cv=cv,
++                                    method='predict_proba')
++    assert np.all(predictions[0][test[0], 1] == 0)
++    assert np.all(predictions[0][test[1]] > 0)
++
++
+ def test_cross_val_predict_predict_log_proba_shape():
+     X, y = make_classification(n_classes=2, n_samples=50, random_state=0)
+2026-11-11 01:45:09,019 - INFO - Grading answer for scikit-learn__scikit-learn-14629...
+2026-11-11 01:45:09,021 - INFO - report: {'scikit-learn__scikit-learn-14629': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator1]']}, 'PASS_TO_PASS': {'success': ['sklearn/tests/test_multioutput.py::test_multi_target_regression', 'sklearn/tests/test_multioutput.py::test_multi_target_regression_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_target_regression_one_target', 'sklearn/tests/test_multioutput.py::test_multi_target_sparse_regression', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weights_api', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weight_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_target_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_parallelism', 'sklearn/tests/test_multioutput.py::test_multi_output_predict_proba', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_no_first_classes_exception', 'sklearn/tests/test_multioutput.py::test_multi_output_classification', 'sklearn/tests/test_multioutput.py::test_multiclass_multioutput_estimator', 'sklearn/tests/test_multioutput.py::test_multiclass_multioutput_estimator_predict_proba', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_classification_partial_fit_sample_weights', 'sklearn/tests/test_multioutput.py::test_multi_output_exceptions', 'sklearn/tests/test_multioutput.py::test_classifier_chain_fit_and_predict_with_linear_svc', 'sklearn/tests/test_multioutput.py::test_classifier_chain_fit_and_predict_with_sparse_data', 'sklearn/tests/test_multioutput.py::test_classifier_chain_vs_independent_models', 'sklearn/tests/test_multioutput.py::test_base_chain_fit_and_predict', 'sklearn/tests/test_multioutput.py::test_base_chain_fit_and_predict_with_sparse_data_and_cv', 'sklearn/tests/test_multioutput.py::test_base_chain_random_order', 'sklearn/tests/test_multioutput.py::test_base_chain_crossval_fit_and_predict', 'sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator0]', 'sklearn/tests/test_multioutput.py::test_multi_output_classes_[estimator2]'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-14629: resolved: False
+2026-11-11 01:45:09,023 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14629.verified_full_glm53_codex_incr_R2134...

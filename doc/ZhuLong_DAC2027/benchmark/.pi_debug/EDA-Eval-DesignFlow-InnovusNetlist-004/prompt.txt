@@ -1,0 +1,57 @@
+# Scenario: after loading a DEF into Innovus, a netlist-integrity sign-off step
+# audits the NETS section for "dangling" signal nets -- signal nets with too
+# few pin connections indicate an incomplete netlist or a missing instance
+# hookup. Power/ground nets are excluded from the dangling audit because they
+# legitimately have few connections at the block level (power stubs).
+#
+# You are given TWO multi-line strings describing a (simplified) DEF NETS and
+# SPECIALNETS section.
+#
+#   `nets_text`  -- the NETS section. One net per block:
+#       - <netname> [USE <SIGNAL|POWER|GROUND>]
+#         ( <inst> <pin> )
+#         ( <inst> <pin> )
+#         ;
+#     * A line starting with "- " declares a net: its first token is the net
+#       name, optionally followed by "USE <attr>".
+#     * A line of the form "( <inst> <pin> )" is one pin connection.
+#     * A line containing exactly ";" terminates that net block.
+#   `specialnets_text` -- the SPECIALNETS section (same line shape, but these
+#     nets are always power rails). May be empty.
+#
+# A net is classified POWER (excluded from the dangling audit) when, in this
+# strict precedence (first match wins):
+#   1. its name appears as a declared net in `specialnets_text`, OR
+#   2. its USE attribute (in the NETS block) is POWER or GROUND, OR
+#   3. it has NO USE attribute AND its name is exactly one of
+#      VDD / VSS / GND / VCC / VEE (case-sensitive, exact match).
+# A net with an explicit USE SIGNAL attribute is a SIGNAL net even if its name
+# is VDD-like (USE wins over the name pattern when USE is explicit). A net with
+# no USE attribute and a non-power name is a SIGNAL net.
+#
+# Each pin connection "( inst pin )" contributes one connection. If the SAME
+# (inst, pin) pair appears more than once within one net, the duplicates are
+# collapsed: the net's unique pin count counts each distinct pair once, and the
+# number of discarded duplicates is accumulated into `duplicate_connections`.
+#
+# Task: implement def_net_connectivity_audit, which returns a dict with EXACTLY
+# these keys:
+#   total_nets            -- number of net blocks in `nets_text` (integer)
+#   power_nets            -- sorted list of net names classified as power
+#   signal_nets_count     -- total_nets - len(power_nets) (integer)
+#   connected_count       -- signal nets whose UNIQUE pin count >= 2 (integer)
+#   single_pin_signal     -- sorted list of signal nets with UNIQUE pin count == 1
+#   unconnected_signal    -- sorted list of signal nets with UNIQUE pin count == 0
+#   duplicate_connections -- total discarded duplicate (inst,pin) pairs across
+#                            all nets in `nets_text` (integer)
+#   verdict               -- "clean" if both single_pin_signal and
+#                            unconnected_signal are empty, else "dangling"
+# Lists must be sorted (lsort, lexicographic). Return the dict via `dict create`.
+#
+# Environment: Cadence WaveView Tcl (pure string operations; POSIX character
+# classes only if you use regexp -- no \s \d \b). The proc must be self-
+# contained and deterministic.
+
+proc def_net_connectivity_audit {nets_text specialnets_text} {
+    # your code here
+}

@@ -1,0 +1,51 @@
+diff --git a/xarray/core/dataset.py b/xarray/core/dataset.py
+index c775d05..b7c8299 100644
+--- a/xarray/core/dataset.py
++++ b/xarray/core/dataset.py
+@@ -3773,6 +3773,8 @@ class Dataset(
+             dims = tuple(dims_dict.get(dim, dim) for dim in v.dims)
+             if k in result_dims:
+                 var = v.to_index_variable()
++                if var is v:
++                    var = var.copy()
+                 var.dims = dims
+                 if k in self._indexes:
+                     indexes[k] = self._indexes[k]
+@@ -3784,6 +3786,8 @@ class Dataset(
+                     coord_names.update(index_vars)
+             else:
+                 var = v.to_base_variable()
++                if var is v:
++                    var = var.copy()
+                 var.dims = dims
+                 variables[k] = var
+ 
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index 9ea4716..9fe54f1 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -2995,6 +2995,24 @@ class TestDataset:
+         assert isinstance(actual.variables["x"], Variable)
+         assert actual.xindexes["y"].equals(expected.xindexes["y"])
+ 
++    def test_swap_dims_no_mutation(self) -> None:
++        # regression test for GH issue: swap_dims should not mutate the original
++        ds = Dataset(
++            data_vars={
++                "y": ("z", [1, 2, 3]),
++                "lev": ("z", [10, 20, 30]),
++            },
++        )
++        ds2 = (
++            ds.swap_dims(z="lev")
++            .rename_dims(lev="z")
++            .reset_index("lev")
++            .reset_coords()
++        )
++        expected = ds2.copy()
++        ds2.swap_dims(z="lev")
++        assert_identical(expected, ds2)
++
+     def test_expand_dims_error(self) -> None:
+         original = Dataset(
+             {

@@ -1,0 +1,46 @@
+diff --git a/sklearn/cluster/optics_.py b/sklearn/cluster/optics_.py
+index 4f7eb11a..506530a8 100755
+--- a/sklearn/cluster/optics_.py
++++ b/sklearn/cluster/optics_.py
+@@ -437,7 +437,7 @@ if metric=’precomputed’.
+     n_samples = X.shape[0]
+     _validate_size(min_samples, n_samples, 'min_samples')
+     if min_samples <= 1:
+-        min_samples = max(2, min_samples * n_samples)
++        min_samples = int(round(max(2, min_samples * n_samples)))
+ 
+     # Start all points as 'unprocessed' ##
+     reachability_ = np.empty(n_samples)
+@@ -619,7 +619,7 @@ def cluster_optics_xi(reachability, predecessor, ordering, min_samples,
+     n_samples = len(reachability)
+     _validate_size(min_samples, n_samples, 'min_samples')
+     if min_samples <= 1:
+-        min_samples = max(2, min_samples * n_samples)
++        min_samples = int(round(max(2, min_samples * n_samples)))
+     if min_cluster_size is None:
+         min_cluster_size = min_samples
+     _validate_size(min_cluster_size, n_samples, 'min_cluster_size')
+diff --git a/sklearn/cluster/tests/test_optics.py b/sklearn/cluster/tests/test_optics.py
+index d5f4d62e..939b3307 100644
+--- a/sklearn/cluster/tests/test_optics.py
++++ b/sklearn/cluster/tests/test_optics.py
+@@ -271,6 +271,19 @@ def test_min_samples_edge_case():
+         assert_array_equal(clust.labels_, expected_labels)
+ 
+ 
++def test_min_samples_fraction():
++    C1 = [[0, 0], [0, 0.1], [0, -.1]]
++    C2 = [[10, 10], [10, 9], [10, 11]]
++    C3 = [[100, 100], [100, 96], [100, 106]]
++    X = np.vstack((C1, C2, C3))
++
++    expected_labels = np.r_[[0] * 3, [1] * 3, [2] * 3]
++    clust = OPTICS(min_samples=0.3,
++                   max_eps=7, cluster_method='xi',
++                   xi=0.04).fit(X)
++    assert_array_equal(clust.labels_, expected_labels)
++
++
+ # try arbitrary minimum sizes
+ @pytest.mark.parametrize('min_cluster_size', range(2, X.shape[0] // 10, 23))
+ def test_min_cluster_size(min_cluster_size):

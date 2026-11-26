@@ -1,0 +1,104 @@
+Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8790 kB]
+Ign:4 http://deb.debian.org/debian bookworm/main amd64 Packages
+Get:5 http://deb.debian.org/debian bookworm-updates/main amd64 Packages [6924 B]
+Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 Packages [354 kB]
+Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8790 kB]
+Err:4 http://deb.debian.org/debian bookworm/main amd64 Packages
+  Hash Sum mismatch
+  Hashes of expected file:
+   - Filesize:8790396 [weak]
+   - SHA256:9e0b5aabb2465b3d2e7a7fe27f9913846277833f7a2826e7767acccff5b588c5
+   - MD5Sum:b838d31986207780a596ce3e8010f90f [weak]
+  Hashes of received file:
+   - SHA256:932d78321a208e04d17c329060b112162e55a789278959271e1efc0adb6c891c
+   - MD5Sum:4d4386853fd8c4ae8745f8956a615f6b [weak]
+   - Filesize:8790396 [weak]
+  Last modification reported: Sat, 11 Jul 2026 09:49:15 +0000
+  Release file created at: Sat, 11 Jul 2026 10:16:37 +0000
+Fetched 676 kB in 4min 13s (2668 B/s)
+Reading package lists...
+E: Failed to fetch http://deb.debian.org/debian/dists/bookworm/main/binary-amd64/by-hash/SHA256/9e0b5aabb2465b3d2e7a7fe27f9913846277833f7a2826e7767acccff5b588c5  Hash Sum mismatch
+   Hashes of expected file:
+    - Filesize:8790396 [weak]
+    - SHA256:9e0b5aabb2465b3d2e7a7fe27f9913846277833f7a2826e7767acccff5b588c5
+    - MD5Sum:b838d31986207780a596ce3e8010f90f [weak]
+   Hashes of received file:
+    - SHA256:932d78321a208e04d17c329060b112162e55a789278959271e1efc0adb6c891c
+    - MD5Sum:4d4386853fd8c4ae8745f8956a615f6b [weak]
+    - Filesize:8790396 [weak]
+   Last modification reported: Sat, 11 Jul 2026 09:49:15 +0000
+   Release file created at: Sat, 11 Jul 2026 10:16:37 +0000
+E: Some index files failed to download. They have been ignored, or old ones used instead.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ libcurl4 : Depends: libbrotli1 (>= 0.6.0) but it is not installable
+            Depends: libgssapi-krb5-2 (>= 1.17) but it is not going to be installed
+            Depends: libldap-2.5-0 (>= 2.5.4) but it is not installable
+            Depends: libpsl5 (>= 0.16.0) but it is not installable
+            Depends: librtmp1 (>= 2.3) but it is not installable
+E: Unable to correct problems, you have held broken packages.
+/tests/test.sh: line 8: curl: command not found
+Downloading pygments (1.2MiB)
+ Downloading pygments
+Installed 6 packages in 21ms
+============================= test session starts ==============================
+platform linux -- Python 3.13.7, pytest-8.4.1, pluggy-1.7.0
+rootdir: /tests
+plugins: json-ctrf-0.3.5
+collected 2 items
+
+../tests/test_outputs.py FF                                              [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_summary_file_exists ___________________________
+
+    def test_summary_file_exists():
+        """Check if summary.csv exists."""
+>       assert OUTPUT_FILE.exists(), f"File {OUTPUT_FILE} does not exist"
+E       AssertionError: File /app/summary.csv does not exist
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/app/summary.csv').exists
+
+/tests/test_outputs.py:29: AssertionError
+______________________ test_summary_structure_and_counts _______________________
+
+    def test_summary_structure_and_counts():
+        """Validate CSV structure and check if counts match expected hard-coded values."""
+>       with OUTPUT_FILE.open("r", newline="") as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/app/summary.csv'), mode = 'r', buffering = -1
+encoding = 'utf-8', errors = None, newline = ''
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/summary.csv'
+
+/root/.local/share/uv/python/cpython-3.13.7-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:537: FileNotFoundError
+=========================== short test summary info ============================
+FAILED ../tests/test_outputs.py::test_summary_file_exists - AssertionError: F...
+FAILED ../tests/test_outputs.py::test_summary_structure_and_counts - FileNotF...
+============================== 2 failed in 0.07s ===============================

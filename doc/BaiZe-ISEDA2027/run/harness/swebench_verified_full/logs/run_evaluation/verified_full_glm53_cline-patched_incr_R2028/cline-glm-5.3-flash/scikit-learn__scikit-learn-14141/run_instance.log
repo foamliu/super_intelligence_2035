@@ -1,0 +1,74 @@
+2026-11-10 10:02:04,520 - INFO - Creating container for scikit-learn__scikit-learn-14141...
+2026-11-10 10:02:05,340 - INFO - Removed existing container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_cline-patched_incr_R2028
+2026-11-10 10:02:05,378 - INFO - Container for scikit-learn__scikit-learn-14141 created: c6dbe8f22eae4d170ebe90543e27494e483d87af76950714f74acffd2ca781e3
+2026-11-10 10:02:07,262 - INFO - Container for scikit-learn__scikit-learn-14141 started: c6dbe8f22eae4d170ebe90543e27494e483d87af76950714f74acffd2ca781e3
+2026-11-10 10:02:07,263 - INFO - Intermediate patch for scikit-learn__scikit-learn-14141 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/scikit-learn__scikit-learn-14141/patch.diff, now applying to container...
+2026-11-10 10:02:07,413 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/utils/_show_versions.py...
+Checking patch sklearn/utils/tests/test_show_versions.py...
+Applied patch sklearn/utils/_show_versions.py cleanly.
+Applied patch sklearn/utils/tests/test_show_versions.py cleanly.
+
+2026-11-10 10:02:07,676 - INFO - Git diff before:
+diff --git a/sklearn/utils/_show_versions.py b/sklearn/utils/_show_versions.py
+index e5d3141bf..ecba9ec68 100644
+--- a/sklearn/utils/_show_versions.py
++++ b/sklearn/utils/_show_versions.py
+@@ -48,6 +48,7 @@ def _get_deps_info():
+         "Cython",
+         "pandas",
+         "matplotlib",
++        "joblib",
+     ]
+ 
+     def get_version(module):
+diff --git a/sklearn/utils/tests/test_show_versions.py b/sklearn/utils/tests/test_show_versions.py
+index 31153c96c..b8ad843f7 100644
+--- a/sklearn/utils/tests/test_show_versions.py
++++ b/sklearn/utils/tests/test_show_versions.py
+@@ -23,6 +23,7 @@ def test_get_deps_info():
+     assert 'Cython' in deps_info
+     assert 'pandas' in deps_info
+     assert 'matplotlib' in deps_info
++    assert 'joblib' in deps_info
+ 
+ 
+ def test_show_versions_with_blas(capsys):
+2026-11-10 10:02:07,677 - INFO - Eval script for scikit-learn__scikit-learn-14141 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/scikit-learn__scikit-learn-14141/eval.sh; copying to container...
+2026-11-10 10:02:12,527 - INFO - Test runtime: 4.77 seconds
+2026-11-10 10:02:12,529 - INFO - Test output for scikit-learn__scikit-learn-14141 written to logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/scikit-learn__scikit-learn-14141/test_output.txt
+2026-11-10 10:02:12,612 - INFO - Git diff after:
+diff --git a/sklearn/utils/_show_versions.py b/sklearn/utils/_show_versions.py
+index e5d3141bf..ecba9ec68 100644
+--- a/sklearn/utils/_show_versions.py
++++ b/sklearn/utils/_show_versions.py
+@@ -48,6 +48,7 @@ def _get_deps_info():
+         "Cython",
+         "pandas",
+         "matplotlib",
++        "joblib",
+     ]
+ 
+     def get_version(module):
+2026-11-10 10:02:12,612 - INFO - Git diff changed after running eval script
+2026-11-10 10:02:12,612 - INFO - Grading answer for scikit-learn__scikit-learn-14141...
+2026-11-10 10:02:12,614 - INFO - report: {'scikit-learn__scikit-learn-14141': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/utils/tests/test_show_versions.py::test_get_deps_info'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/utils/tests/test_show_versions.py::test_get_sys_info', 'sklearn/utils/tests/test_show_versions.py::test_show_versions_with_blas'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-14141: resolved: True
+2026-11-10 10:02:12,616 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:02:28,508 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_cline-patched_incr_R2028 stopped successfully.
+2026-11-10 10:02:28,508 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:02:28,549 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_cline-patched_incr_R2028 removed successfully.
+atus
+    raise create_api_error_from_http_exception(e) from e
+  File "/nas_train/app.e0031982/miniforge3/envs/py310/lib/python3.10/site-packages/docker/errors.py", line 39, in create_api_error_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.APIError: 409 Client Error for http+docker://localhost/v1.47/containers/e3b400a3b30588a25f2861baef402b6222f25e69e2c415da351419b28edb4028/exec: Conflict ("container e3b400a3b30588a25f2861baef402b6222f25e69e2c415da351419b28edb4028 is not running")
+
+Check (logs/run_evaluation/verified_full_glm53_cline-patched_incr_R2028/cline-glm-5.3-flash/scikit-learn__scikit-learn-14141/run_instance.log) for more information.
+2026-11-10 10:02:05,337 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:02:05,368 - INFO - Failed to stop container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_cline-patched_incr_R2028: Command '['docker', 'stop', '--time=15', 'e3b400a3b30588a25f2861baef402b6222f25e69e2c415da351419b28edb4028']' returned non-zero exit status 1.. Trying to forcefully kill...
+2026-11-10 10:02:05,369 - INFO - Forcefully killing container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:02:05,396 - INFO - Failed to kill container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_cline-patched_incr_R2028: Error response from daemon: cannot kill container: e3b400a3b30588a25f2861baef402b6222f25e69e2c415da351419b28edb4028: No such container: e3b400a3b30588a25f2861baef402b6222f25e69e2c415da351419b28edb4028
+
+2026-11-10 10:02:05,397 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_cline-patched_incr_R2028...
+2026-11-10 10:02:05,423 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14141.verified_full_glm53_cline-patched_incr_R2028 removed successfully.

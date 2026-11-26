@@ -1,0 +1,393 @@
+diff --git a/.testlogs/batchB.log b/.testlogs/batchB.log
+new file mode 100644
+index 00000000..59c61e98
+--- /dev/null
++++ b/.testlogs/batchB.log
+@@ -0,0 +1,4 @@
++<frozen importlib._bootstrap>:241: RuntimeWarning: numpy.ndarray size changed, may indicate binary incompatibility. Expected 80 from C header, got 96 from PyObject
++........................................................................ [ 72%]
++............................                                             [100%]
++100 passed in 2.98s
+diff --git a/.testlogs/batchC.log b/.testlogs/batchC.log
+new file mode 100644
+index 00000000..28900a4f
+--- /dev/null
++++ b/.testlogs/batchC.log
+@@ -0,0 +1,291 @@
++<frozen importlib._bootstrap>:241: RuntimeWarning: numpy.ndarray size changed, may indicate binary incompatibility. Expected 80 from C header, got 96 from PyObject
++.....................................F.................................. [ 22%]
++..............................................................F......... [ 44%]
++........................................................................ [ 67%]
++..............................................................ssss...... [ 89%]
++ss...................ssxxxxx......                                       [100%]
++=================================== FAILURES ===================================
++_________________ TestFileFunctions.test_open_from_remote_url __________________
++
++self = <astropy.io.fits.tests.test_core.TestFileFunctions object at 0x7f6e972d1fc0>
++
++    @pytest.mark.remote_data(source="astropy")
++    def test_open_from_remote_url(self):
++        for dataurl in (conf.dataurl, conf.dataurl_mirror):
++            remote_url = f"{dataurl}/allsky/allsky_rosat.fits"
++            try:
++                with urllib.request.urlopen(remote_url) as urlobj:
++                    with fits.open(urlobj) as fits_handle:
++                        assert len(fits_handle) == 1
++    
++                for mode in ("ostream", "append", "update"):
++                    with pytest.raises(ValueError):
++                        with urllib.request.urlopen(remote_url) as urlobj:
++                            with fits.open(urlobj, mode=mode) as fits_handle:
++                                assert len(fits_handle) == 1
++            except (urllib.error.HTTPError, urllib.error.URLError):
++                continue
++            else:
++                break
++        else:
++>           raise Exception("Could not download file")
++E           Exception: Could not download file
++
++astropy/io/fits/tests/test_core.py:708: Exception
++__________________ TestFitsTime.test_time_to_fits_loc[Table] ___________________
++
++files = None
++
++    def update_leap_seconds(files=None):
++        """If the current ERFA leap second table is out of date, try to update it.
++    
++        Uses `astropy.utils.iers.LeapSeconds.auto_open` to try to find an
++        up-to-date table.  See that routine for the definition of "out of date".
++    
++        In order to make it safe to call this any time, all exceptions are turned
++        into warnings,
++    
++        Parameters
++        ----------
++        files : list of path-like, optional
++            List of files/URLs to attempt to open.  By default, uses defined by
++            `astropy.utils.iers.LeapSeconds.auto_open`, which includes the table
++            used by ERFA itself, so if that is up to date, nothing will happen.
++    
++        Returns
++        -------
++        n_update : int
++            Number of items updated.
++    
++        """
++        try:
++            from astropy.utils import iers
++    
++>           table = iers.LeapSeconds.auto_open(files)
++
++astropy/time/core.py:3304: 
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
++
++cls = <class 'astropy.utils.iers.iers.LeapSeconds'>
++files = ['erfa', '/dev/shm/harness_verified_full_glm53/workdirs/cline-patched/astropy_astropy/astropy/utils/iers/data/Leap_Sec...dat', 'https://hpiers.obspm.fr/iers/bul/bulc/Leap_Second.dat', 'https://www.ietf.org/timezones/data/leap-seconds.list']
++
++    @classmethod
++    def auto_open(cls, files=None):
++        """Attempt to get an up-to-date leap-second list.
++    
++        The routine will try the files in sequence until it finds one
++        whose expiration date is "good enough" (see below).  If none
++        are good enough, it returns the one with the most recent expiration
++        date, warning if that file is expired.
++    
++        For remote files that are cached already, the cached file is tried
++        first before attempting to retrieve it again.
++    
++        Parameters
++        ----------
++        files : list of path-like, optional
++            List of files/URLs to attempt to open.  By default, uses
++            ``cls._auto_open_files``.
++    
++        Returns
++        -------
++        leap_seconds : `~astropy.utils.iers.LeapSeconds`
++            Up to date leap-second table
++    
++        Notes
++        -----
++        Bulletin C is released about 10 days after a possible leap second is
++        introduced, i.e., mid-January or mid-July.  Expiration days are thus
++        generally at least 150 days after the present.  We look for a file
++        that expires more than 180 - `~astropy.utils.iers.Conf.auto_max_age`
++        after the present.
++        """
++        offset = 180 - (30 if conf.auto_max_age is None else conf.auto_max_age)
++        good_enough = cls._today() + TimeDelta(offset, format="jd")
++    
++        if files is None:
++            # Basic files to go over (entries in _auto_open_files can be
++            # configuration items, which we want to be sure are up to date).
++            files = [getattr(conf, f, f) for f in cls._auto_open_files]
++    
++        # Remove empty entries.
++        files = [f for f in files if f]
++    
++        # Our trials start with normal files and remote ones that are
++        # already in cache.  The bools here indicate that the cache
++        # should be used.
++        trials = [
++            (f, True) for f in files if not urlparse(f).netloc or is_url_in_cache(f)
++        ]
++        # If we are allowed to download, we try downloading new versions
++        # if none of the above worked.
++        if conf.auto_download:
++            trials += [(f, False) for f in files if urlparse(f).netloc]
++    
++        self = None
++        err_list = []
++        # Go through all entries, and return the first one that
++        # is not expired, or the most up to date one.
++        for f, allow_cache in trials:
++            if not allow_cache:
++                clear_download_cache(f)
++    
++            try:
++                trial = cls.open(f, cache=True)
++            except Exception as exc:
++                err_list.append(exc)
++                continue
++    
++            if self is None or trial.expires > self.expires:
++                self = trial
++                self.meta["data_url"] = str(f)
++                if self.expires > good_enough:
++                    break
++    
++        if self is None:
++            raise ValueError(
++                "none of the files could be read. The "
++                f"following errors were raised:\n {err_list}"
++            )
++    
++        if self.expires < self._today() and conf.auto_max_age is not None:
++>           warn("leap-second file is expired.", IERSStaleWarning)
++E           astropy.utils.iers.iers.IERSStaleWarning: leap-second file is expired.
++
++astropy/utils/iers/iers.py:1163: IERSStaleWarning
++
++During handling of the above exception, another exception occurred:
++
++self = <astropy.io.fits.tests.test_fitstime.TestFitsTime object at 0x7f6e96f2b0d0>
++table_types = <class 'astropy.table.table.Table'>
++
++    @pytest.mark.parametrize("table_types", (Table, QTable))
++    def test_time_to_fits_loc(self, table_types):
++        """
++        Test all the unusual conditions for locations of ``Time``
++        columns in a ``Table``.
++        """
++        t = table_types()
++        t["a"] = Time(self.time, format="isot", scale="utc")
++        t["b"] = Time(self.time, format="isot", scale="tt")
++    
++        # Check that vectorized location is stored using Green Bank convention
++        t["a"].location = EarthLocation([1.0, 2.0], [2.0, 3.0], [3.0, 4.0], unit="Mm")
++    
++        with pytest.warns(
++            AstropyUserWarning,
++            match=r'Time Column "b" has no '
++            r"specified location, but global Time Position is present",
++        ):
++            table, hdr = time_to_fits(t)
++        assert (table["OBSGEO-X"] == t["a"].location.x.to_value(unit="m")).all()
++        assert (table["OBSGEO-Y"] == t["a"].location.y.to_value(unit="m")).all()
++        assert (table["OBSGEO-Z"] == t["a"].location.z.to_value(unit="m")).all()
++    
++        with pytest.warns(
++            AstropyUserWarning,
++            match=r'Time Column "b" has no '
++            r"specified location, but global Time Position is present",
++        ):
++            t.write(self.temp("time.fits"), format="fits", overwrite=True)
++    
++        # Check that a blank value for the "TRPOSn" keyword is not generated
++        hdr = fits.getheader(self.temp("time.fits"), 1)
++        assert hdr.get("TRPOS2", None) is None
++    
++        with pytest.warns(
++            AstropyUserWarning,
++            match=r"Time column reference position "
++            r'"TRPOSn" is not specified. The default value for it is '
++            r'"TOPOCENTER", and the observatory position has been specified.',
++        ):
++            tm = table_types.read(
++                self.temp("time.fits"), format="fits", astropy_native=True
++            )
++    
++        assert (tm["a"].location == t["a"].location).all()
++        assert tm["b"].location == t["b"].location
++    
++        # Check that multiple Time columns with different locations raise an exception
++        t["a"].location = EarthLocation(1, 2, 3)
++        t["b"].location = EarthLocation(2, 3, 4)
++    
++        with pytest.raises(ValueError) as err:
++            table, hdr = time_to_fits(t)
++            assert "Multiple Time Columns with different geocentric" in str(err.value)
++    
++        # Check that Time column with no location specified will assume global location
++        t["b"].location = None
++    
++        with pytest.warns(
++            AstropyUserWarning,
++            match=(
++                'Time Column "b" has no specified '
++                "location, but global Time Position is present"
++            ),
++        ) as w:
++            table, hdr = time_to_fits(t)
++        assert len(w) == 1
++    
++        # Check that multiple Time columns with same location can be written
++        t["b"].location = EarthLocation(1, 2, 3)
++    
++        table, hdr = time_to_fits(t)
++    
++        # Check compatibility of Time Scales and Reference Positions
++    
++        for scale in BARYCENTRIC_SCALES:
++>           t.replace_column("a", getattr(t["a"], scale))
++
++astropy/io/fits/tests/test_fitstime.py:113: 
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
++astropy/time/core.py:1632: in __getattr__
++    tm._set_scale(attr)
++astropy/time/core.py:739: in _set_scale
++    _check_leapsec()
++astropy/time/core.py:3275: in _check_leapsec
++    update_leap_seconds()
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
++
++files = None
++
++    def update_leap_seconds(files=None):
++        """If the current ERFA leap second table is out of date, try to update it.
++    
++        Uses `astropy.utils.iers.LeapSeconds.auto_open` to try to find an
++        up-to-date table.  See that routine for the definition of "out of date".
++    
++        In order to make it safe to call this any time, all exceptions are turned
++        into warnings,
++    
++        Parameters
++        ----------
++        files : list of path-like, optional
++            List of files/URLs to attempt to open.  By default, uses defined by
++            `astropy.utils.iers.LeapSeconds.auto_open`, which includes the table
++            used by ERFA itself, so if that is up to date, nothing will happen.
++    
++        Returns
++        -------
++        n_update : int
++            Number of items updated.
++    
++        """
++        try:
++            from astropy.utils import iers
++    
++            table = iers.LeapSeconds.auto_open(files)
++            return erfa.leap_seconds.update(table)
++    
++        except Exception as exc:
++>           warn(
++                f"leap-second auto-update failed due to the following exception: {exc!r}",
++                AstropyWarning,
++            )
++E           astropy.utils.exceptions.AstropyWarning: leap-second auto-update failed due to the following exception: IERSStaleWarning('leap-second file is expired.')
++
++astropy/time/core.py:3308: AstropyWarning
++=========================== short test summary info ============================
++FAILED astropy/io/fits/tests/test_core.py::TestFileFunctions::test_open_from_remote_url
++FAILED astropy/io/fits/tests/test_fitstime.py::TestFitsTime::test_time_to_fits_loc[Table]
++2 failed, 307 passed, 8 skipped, 5 xfailed in 5.21s
+diff --git a/.testlogs/batchD.log b/.testlogs/batchD.log
+new file mode 100644
+index 00000000..ee4d9b79
+--- /dev/null
++++ b/.testlogs/batchD.log
+@@ -0,0 +1,4 @@
++<frozen importlib._bootstrap>:241: RuntimeWarning: numpy.ndarray size changed, may indicate binary incompatibility. Expected 80 from C header, got 96 from PyObject
++.................s...................................................... [ 54%]
++.............................................................            [100%]
++132 passed, 1 skipped in 19.05s
+diff --git a/.testlogs/table.log b/.testlogs/table.log
+new file mode 100644
+index 00000000..baf7a2b2
+--- /dev/null
++++ b/.testlogs/table.log
+@@ -0,0 +1,4 @@
++<frozen importlib._bootstrap>:241: RuntimeWarning: numpy.ndarray size changed, may indicate binary incompatibility. Expected 80 from C header, got 96 from PyObject
++......................................................................ss [ 62%]
++............................................                             [100%]
++114 passed, 2 skipped in 6.03s
+diff --git a/CHANGES.rst b/CHANGES.rst
+index be16b1fa..2236aee0 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -1,3 +1,15 @@
++Version 5.3.0 (unreleased)
++==========================
++
++Bug Fixes
++---------
++
++astropy.io.fits
++^^^^^^^^^^^^^^^
++
++- Fix a bug where ``astropy.io.fits.FITSDiff`` reported differences between
++  identical files with variable length array columns. [#14545]
++
+ Version 5.2.1 (2023-01-06)
+ ==========================
+ 
+diff --git a/astropy/io/fits/diff.py b/astropy/io/fits/diff.py
+index 100cdf1b..d3608ef0 100644
+--- a/astropy/io/fits/diff.py
++++ b/astropy/io/fits/diff.py
+@@ -1449,7 +1449,7 @@ class TableDataDiff(_BaseDiff):
+                 arrb.dtype, np.floating
+             ):
+                 diffs = where_not_allclose(arra, arrb, rtol=self.rtol, atol=self.atol)
+-            elif "P" in col.format:
++            elif "P" in col.format or "Q" in col.format:
+                 diffs = (
+                     [
+                         idx
+diff --git a/astropy/io/fits/tests/test_diff.py b/astropy/io/fits/tests/test_diff.py
+index adfebe6a..aaa40fb7 100644
+--- a/astropy/io/fits/tests/test_diff.py
++++ b/astropy/io/fits/tests/test_diff.py
+@@ -419,6 +419,28 @@ class TestDiff(FitsTestCase):
+         assert diff.diff_ratio == 0
+         assert diff.diff_total == 0
+ 
++    def test_identical_tables_with_vla(self):
++        """
++        Regression test for https://github.com/astropy/astropy/issues/14528
++
++        FITSDiff should not report differences between identical files
++        containing variable-length array columns (neither "P" nor "Q"
++        format).
++        """
++        colp = Column("a", format="PD", array=[[0], [0, 0]])
++        colq = Column("b", format="QD", array=[[0], [0, 0]])
++        hdu = BinTableHDU.from_columns([colp, colq])
++        hdu.writeto(self.temp("diffbug.fits"), overwrite=True)
++
++        diff = FITSDiff(self.temp("diffbug.fits"), self.temp("diffbug.fits"))
++        assert diff.identical
++        assert diff.diff_hdus == []
++
++        # Also check the table data diff directly for both VLA formats.
++        diff = TableDataDiff(hdu.data, hdu.data)
++        assert diff.identical
++        assert diff.diff_total == 0
++
+     def test_diff_empty_tables(self):
+         """
+         Regression test for https://aeon.stsci.edu/ssb/trac/pyfits/ticket/178

@@ -1,0 +1,57 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index e20a7058..40d80480 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -14,6 +14,9 @@ astropy.io.fits
+ ^^^^^^^^^^^^^^^
+ 
+ - Fix ``FITSDiff`` when table contains a VLA column with the Q type. [#14539]
++- Fix a bug that caused escaped single quotes (``''``) in ``Card`` string
++  values to be mangled when a card was split across ``CONTINUE`` cards,
++  regardless of where the quote pair fell relative to the chunk boundaries. [#14590]
+ 
+ astropy.table
+ ^^^^^^^^^^^^^
+diff --git a/astropy/io/fits/card.py b/astropy/io/fits/card.py
+index 1b3285dd..bd48eba6 100644
+--- a/astropy/io/fits/card.py
++++ b/astropy/io/fits/card.py
+@@ -859,7 +859,7 @@ class Card(_Verify):
+                     return kw, vc
+ 
+                 value = m.group("strg") or ""
+-                value = value.rstrip().replace("''", "'")
++                value = value.rstrip()
+                 if value and value[-1] == "&":
+                     value = value[:-1]
+                 values.append(value)
+diff --git a/astropy/io/fits/tests/test_header.py b/astropy/io/fits/tests/test_header.py
+index c573100c..aa45e720 100644
+--- a/astropy/io/fits/tests/test_header.py
++++ b/astropy/io/fits/tests/test_header.py
+@@ -602,6 +602,25 @@ class TestHeaderFunctions(FitsTestCase):
+         )
+         assert c.comment == "pysyn expression"
+ 
++    def test_string_value_with_null_string_characters(self):
++        """
++        Regression test for https://github.com/astropy/astropy/issues/14590
++
++        Ensure that escaped single quotes ('') in string values are not
++        mangled when a card is serialized to one or more CONTINUE cards and
++        parsed back, regardless of where the quote pair falls relative to the
++        CONTINUE chunk boundaries.
++        """
++        for n in range(60, 70):
++            card1 = fits.Card("CONFIG", "x" * n + "''")
++            card2 = fits.Card.fromstring(str(card1))
++            assert card1.value == card2.value
++
++        for n in range(50, 70):
++            card1 = fits.Card("CONFIG", "x" * n + "''" + "x" * 10)
++            card2 = fits.Card.fromstring(str(card1))
++            assert card1.value == card2.value
++
+     def test_final_continue_card_lacks_ampersand(self):
+         """
+         Regression test for https://github.com/astropy/astropy/issues/3282

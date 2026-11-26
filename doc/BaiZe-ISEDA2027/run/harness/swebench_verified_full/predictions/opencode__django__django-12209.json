@@ -1,0 +1,7 @@
+[
+  {
+    "instance_id": "django__django-12209",
+    "model_name_or_path": "opencode-kimi-k2.6-cloud",
+    "model_patch": "diff --git a/django/db/models/base.py b/django/db/models/base.py\nindex e3b14a41..844c01e9 100644\n--- a/django/db/models/base.py\n+++ b/django/db/models/base.py\n@@ -849,6 +849,7 @@ class Model(metaclass=ModelBase):\n         updated = False\n         # Skip an UPDATE when adding an instance and primary key has a default.\n         if (\n+            not raw and\n             not force_insert and\n             self._state.adding and\n             self._meta.pk.default and\ndiff --git a/tests/basic/tests.py b/tests/basic/tests.py\nindex 5eada343..d18d0f73 100644\n--- a/tests/basic/tests.py\n+++ b/tests/basic/tests.py\n@@ -139,6 +139,14 @@ class ModelInstanceCreationTests(TestCase):\n         with self.assertNumQueries(1):\n             PrimaryKeyWithDefault().save()\n \n+    def test_save_primary_with_default_raw(self):\n+        # When loading fixtures (raw=True), an UPDATE should be attempted\n+        # if the primary key already exists, not forced INSERT.\n+        obj = PrimaryKeyWithDefault.objects.create()\n+        obj2 = PrimaryKeyWithDefault(pk=obj.pk)\n+        obj2.save_base(raw=True)\n+        self.assertEqual(PrimaryKeyWithDefault.objects.count(), 1)\n+\n \n class ModelTest(TestCase):\n     def test_objects_attribute_is_only_available_on_the_class_itself(self):\n"
+  }
+]

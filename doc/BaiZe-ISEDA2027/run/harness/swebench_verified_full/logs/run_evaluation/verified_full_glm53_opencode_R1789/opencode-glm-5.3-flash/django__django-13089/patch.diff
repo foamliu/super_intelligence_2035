@@ -1,0 +1,43 @@
+diff --git a/django/core/cache/backends/db.py b/django/core/cache/backends/db.py
+index 33c79c5a1..0c10cc227 100644
+--- a/django/core/cache/backends/db.py
++++ b/django/core/cache/backends/db.py
+@@ -267,9 +267,11 @@ class DatabaseCache(BaseDatabaseCache):
+                 cursor.execute(
+                     connection.ops.cache_key_culling_sql() % table,
+                     [cull_num])
+-                cursor.execute("DELETE FROM %s "
+-                               "WHERE cache_key < %%s" % table,
+-                               [cursor.fetchone()[0]])
++                last_cache_key = cursor.fetchone()
++                if last_cache_key:
++                    cursor.execute("DELETE FROM %s "
++                                   "WHERE cache_key < %%s" % table,
++                                   [last_cache_key[0]])
+ 
+     def clear(self):
+         db = router.db_for_write(self.cache_model_class)
+diff --git a/tests/cache/tests.py b/tests/cache/tests.py
+index d404475e1..08875745f 100644
+--- a/tests/cache/tests.py
++++ b/tests/cache/tests.py
+@@ -1040,6 +1040,19 @@ class DBCacheTests(BaseCacheTests, TransactionTestCase):
+     def test_zero_cull(self):
+         self._perform_cull_test('zero_cull', 50, 18)
+ 
++    def test_cull_fetchone_returns_none(self):
++        # Simulate a culling query that doesn't return a value (#31267).
++        db_cache = caches['cull']
++        db_cache.set('foo', 'bar', 1000)
++        with mock.patch.object(db_cache, '_max_entries', 0), mock.patch.object(
++            connection.ops,
++            'cache_key_culling_sql',
++            return_value='SELECT cache_key FROM %s WHERE 1 = 0 AND cache_key < %%s',
++        ):
++            with connection.cursor() as cursor:
++                db_cache._cull(connection.alias, cursor, timezone.now())
++        self.assertEqual(db_cache.get('foo'), 'bar')
++
+     def test_second_call_doesnt_crash(self):
+         out = io.StringIO()
+         management.call_command('createcachetable', stdout=out)

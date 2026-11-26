@@ -1,0 +1,339 @@
+2026-11-09 04:24:04,999 - INFO - Creating container for django__django-16950...
+2026-11-09 04:24:05,664 - INFO - Container for django__django-16950 created: f5e03095043f77d248079df0b0d9ae764a9131a907a13e8a75cbea2c9bc6dd03
+2026-11-09 04:24:07,886 - INFO - Container for django__django-16950 started: f5e03095043f77d248079df0b0d9ae764a9131a907a13e8a75cbea2c9bc6dd03
+2026-11-09 04:24:07,897 - INFO - Intermediate patch for django__django-16950 written to logs/run_evaluation/verified_full_glm53_cli2026-11-09 04:24:07,996 - INFO - Container for django__django-16950 started: 53cbc0cb065d43a20a5ce12026-11-09 04:24:08,038 - INFO - >>>>> Applied Patch:
+Checking patch django/forms/models.py...
+Checking patch tests/inline_formsets/models.py...
+Checking patch tests/inline_formsets/tests.py...
+Applied patch django/forms/models.py cleanly.
+Applied patch tests/inline_formse2026-11-09 04:24:08,151 - INFO - >>>>> Applied Patch:
+Checking patch django/f2026-11-09 04:24:09,085 - INFO - Git diff before:
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 3fa04b821f..326bf84dad 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1178,7 +1178,7 @@ class BaseInlineFormSet(BaseModelFormSet):
+             else:
+                 to_field = self.instance._meta.pk
+             if to_field.has_default():
+-                setattr(self.instance, to_field.attname, None)
++                kwargs["initial"] = None
+ 
+         form.fields[name] = InlineForeignKeyField(self.instance, **kwargs)
+ 
+@@ -1352,9 +1352,11 @@ class InlineForeignKeyField(Field):
+         self.to_field = to_field
+         if self.parent_instance is not None:
+             if self.to_field:
+-                kwargs["initial"] = getattr(self.parent_instance, self.to_field)
++                kwargs.setdefault(
++                    "initial", getattr(self.parent_instance, self.to_field)
++                )
+             else:
+-                kwargs["initial"] = self.parent_instance.pk
++                kwargs.setdefault("initial", self.parent_instance.pk)
+         kwargs["required"] = False
+         super().__init__(*args, **kwargs)
+ 
+diff --git a/tests/inline_formsets/models.py b/tests/inline_formsets/models.py
+index f4c06e8fac..e56055d52f 100644
+--- a/tests/inline_formsets/models.py
++++ b/tests/inline_formsets/models.py
+@@ -1,3 +1,5 @@
++import uuid
++
+ from django.db import models
+ 
+ 
+@@ -32,3 +34,35 @@ class Poem(models.Model):
+ 
+     def __str__(self):
+         return self.name
++
++
++class UUIDModel(models.Model):
++    pkid = models.BigAutoField(primary_key=True, editable=False)
++    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
++
++    class Meta:
++        abstract = True
++
++
++class Thing(UUIDModel):
++    name = models.CharField(max_length=191)
++
++
++class SubThing(models.Model):
++    name = models.CharField(max_length=191)
++    thing = models.ForeignKey(
++        Thing,
++        models.CASCADE,
++        to_field="id",
++        related_name="subthings",
++    )
++
++
++class UUIDPKThing(models.Model):
++    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
++    name = models.CharField(max_length=191)
++
++
++class UUIDPKSubThing(models.Model):
++    name = models.CharField(max_length=191)
++    thing = models.ForeignKey(UUIDPKThing, models.CASCADE, related_name="subthings")
+diff --git a/tests/inline_formsets/tests.py b/tests/inline_formsets/tests.py
+index 1ae9b3f760..03a2328a14 100644
+--- a/tests/inline_formsets/tests.py
++++ b/tests/inline_formsets/tests.py
+@@ -1,7 +1,17 @@
+ from django.forms.models import ModelForm, inlineformset_factory
+ from django.test import TestCase, skipUnlessDBFeature
+ 
+-from .models import Child, Parent, Poem, Poet, School
++from .models import (
++    Child,
++    Parent,
++    Poem,
++    Poet,
++    School,
++    SubThing,
++    Thing,
++    UUIDPKSubThing,
++    UUIDPKThing,
++)
+ 
+ 
+ class DeletionTests(TestCase):
+@@ -215,3 +225,61 @@ class InlineFormsetFactoryTest(TestCase):
+         )
+         formset = PoemFormSet(None, instance=poet)
+         formset.forms  # Trigger form instantiation to run the assert above.
++
++
++class InlineFormsetWithUUIDDefaultTests(TestCase):
++    """
++    An inline formset for an unsaved parent whose key (or to_field target) is
++    a UUIDField with a default must not reset the parent's key to None
++    (#32257).
++    """
++
++    def test_to_field_with_uuid_default(self):
++        SubThingFormSet = inlineformset_factory(Thing, SubThing, fields=["name"])
++        thing = Thing(name="Mystery Spot")
++        data = {
++            "subthings-TOTAL_FORMS": "1",
++            "subthings-INITIAL_FORMS": "0",
++            "subthings-MIN_NUM_FORMS": "0",
++            "subthings-MAX_NUM_FORMS": "1000",
++            "subthings-0-name": "subthing",
++            "subthings-0-id": "",
++            "subthings-0-thing": "",
++        }
++        formset = SubThingFormSet(data, instance=thing)
++        self.assertIs(formset.is_valid(), True)
++        # Validation doesn't reset the parent's auto-generated key to None.
++        self.assertIsNotNone(thing.id)
++        thing.save()
++        formset.save()
++        self.assertEqual(SubThing.objects.count(), 1)
++        self.assertEqual(SubThing.objects.get().thing, thing)
++
++    def test_to_field_with_uuid_default_initial(self):
++        # The inline foreign key field renders empty for an unsaved parent,
++        # since its auto-generated key will be regenerated on save.
++        SubThingFormSet = inlineformset_factory(Thing, SubThing, fields=["name"])
++        formset = SubThingFormSet(instance=Thing(name="Mystery Spot"))
++        self.assertIsNone(formset.forms[0]["thing"].value())
++
++    def test_pk_with_uuid_default(self):
++        UUIDPKSubThingFormSet = inlineformset_factory(
++            UUIDPKThing, UUIDPKSubThing, fields=["name"]
++        )
++        thing = UUIDPKThing(name="Mystery Spot")
++        data = {
++            "subthings-TOTAL_FORMS": "1",
++            "subthings-INITIAL_FORMS": "0",
++            "subthings-MIN_NUM_FORMS": "0",
++            "subthings-MAX_NUM_FORMS": "1000",
++            "subthings-0-name": "subthing",
++            "subthings-0-id": "",
++            "subthings-0-thing": "",
++        }
++        formset = UUIDPKSubThingFormSet(data, instance=thing)
++        self.assertIs(formset.is_valid(), True)
++        self.assertIsNotNone(thing.id)
++        thing.save()
++        formset.save()
++        self.assertEqual(UUIDPKSubThing.objects.count(), 1)
++        self.assertEqual(UUIDPKSubThing.objects.get().thing, thing)
+2026-11-09 04:24:09,086 - INFO - Eval script for django__django-16950 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/django__django-16950/eval.sh; copying to container...
+2026-11-09 04:24:09,152 - ERROR - Error in evaluating model for django__django-16950: [Errno 2] No such file or directory: 'logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/django__django-16950/eval.tar'
+Traceback (most recent call last):
+  F2026-11-09 04:24:29,875 - INFO - Test runtime: 20.78 seconds
+2026-11-09 04:24:29,876 - INFO - Test output for django__django-16950 written to logs/run_evaluation/verified_full_glm53_cline-patched_R1933/cline-glm-5.3-flash/django__django-16950/test_output.txt
+2026-11-09 04:24:29,966 - INFO - Git diff after:
+diff --git a/django/forms/models.py b/django/forms/models.py
+index 3fa04b821f..326bf84dad 100644
+--- a/django/forms/models.py
++++ b/django/forms/models.py
+@@ -1178,7 +1178,7 @@ class BaseInlineFormSet(BaseModelFormSet):
+             else:
+                 to_field = self.instance._meta.pk
+             if to_field.has_default():
+-                setattr(self.instance, to_field.attname, None)
++                kwargs["initial"] = None
+ 
+         form.fields[name] = InlineForeignKeyField(self.instance, **kwargs)
+ 
+@@ -1352,9 +1352,11 @@ class InlineForeignKeyField(Field):
+         self.to_field = to_field
+         if self.parent_instance is not None:
+             if self.to_field:
+-                kwargs["initial"] = getattr(self.parent_instance, self.to_field)
++                kwargs.setdefault(
++                    "initial", getattr(self.parent_instance, self.to_field)
++                )
+             else:
+-                kwargs["initial"] = self.parent_instance.pk
++                kwargs.setdefault("initial", self.parent_instance.pk)
+         kwargs["required"] = False
+         super().__init__(*args, **kwargs)
+ 
+diff --git a/tests/inline_formsets/models.py b/tests/inline_formsets/models.py
+index f4c06e8fac..e56055d52f 100644
+--- a/tests/inline_formsets/models.py
++++ b/tests/inline_formsets/models.py
+@@ -1,3 +1,5 @@
++import uuid
++
+ from django.db import models
+ 
+ 
+@@ -32,3 +34,35 @@ class Poem(models.Model):
+ 
+     def __str__(self):
+         return self.name
++
++
++class UUIDModel(models.Model):
++    pkid = models.BigAutoField(primary_key=True, editable=False)
++    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
++
++    class Meta:
++        abstract = True
++
++
++class Thing(UUIDModel):
++    name = models.CharField(max_length=191)
++
++
++class SubThing(models.Model):
++    name = models.CharField(max_length=191)
++    thing = models.ForeignKey(
++        Thing,
++        models.CASCADE,
++        to_field="id",
++        related_name="subthings",
++    )
++
++
++class UUIDPKThing(models.Model):
++    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
++    name = models.CharField(max_length=191)
++
++
++class UUIDPKSubThing(models.Model):
++    name = models.CharField(max_length=191)
++    thing = models.ForeignKey(UUIDPKThing, models.CASCADE, related_name="subthings")
+diff --git a/tests/inline_formsets/tests.py b/tests/inline_formsets/tests.py
+index 1ae9b3f760..03a2328a14 100644
+--- a/tests/inline_formsets/tests.py
++++ b/tests/inline_formsets/tests.py
+@@ -1,7 +1,17 @@
+ from django.forms.models import ModelForm, inlineformset_factory
+ from django.test import TestCase, skipUnlessDBFeature
+ 
+-from .models import Child, Parent, Poem, Poet, School
++from .models import (
++    Child,
++    Parent,
++    Poem,
++    Poet,
++    School,
++    SubThing,
++    Thing,
++    UUIDPKSubThing,
++    UUIDPKThing,
++)
+ 
+ 
+ class DeletionTests(TestCase):
+@@ -215,3 +225,61 @@ class InlineFormsetFactoryTest(TestCase):
+         )
+         formset = PoemFormSet(None, instance=poet)
+         formset.forms  # Trigger form instantiation to run the assert above.
++
++
++class InlineFormsetWithUUIDDefaultTests(TestCase):
++    """
++    An inline formset for an unsaved parent whose key (or to_field target) is
++    a UUIDField with a default must not reset the parent's key to None
++    (#32257).
++    """
++
++    def test_to_field_with_uuid_default(self):
++        SubThingFormSet = inlineformset_factory(Thing, SubThing, fields=["name"])
++        thing = Thing(name="Mystery Spot")
++        data = {
++            "subthings-TOTAL_FORMS": "1",
++            "subthings-INITIAL_FORMS": "0",
++            "subthings-MIN_NUM_FORMS": "0",
++            "subthings-MAX_NUM_FORMS": "1000",
++            "subthings-0-name": "subthing",
++            "subthings-0-id": "",
++            "subthings-0-thing": "",
++        }
++        formset = SubThingFormSet(data, instance=thing)
++        self.assertIs(formset.is_valid(), True)
++        # Validation doesn't reset the parent's auto-generated key to None.
++        self.assertIsNotNone(thing.id)
++        thing.save()
++        formset.save()
++        self.assertEqual(SubThing.objects.count(), 1)
++        self.assertEqual(SubThing.objects.get().thing, thing)
++
++    def test_to_field_with_uuid_default_initial(self):
++        # The inline foreign key field renders empty for an unsaved parent,
++        # since its auto-generated key will be regenerated on save.
++        SubThingFormSet = inlineformset_factory(Thing, SubThing, fields=["name"])
++        formset = SubThingFormSet(instance=Thing(name="Mystery Spot"))
++        self.assertIsNone(formset.forms[0]["thing"].value())
++
++    def test_pk_with_uuid_default(self):
++        UUIDPKSubThingFormSet = inlineformset_factory(
++            UUIDPKThing, UUIDPKSubThing, fields=["name"]
++        )
++        thing = UUIDPKThing(name="Mystery Spot")
++        data = {
++            "subthings-TOTAL_FORMS": "1",
++            "subthings-INITIAL_FORMS": "0",
++            "subthings-MIN_NUM_FORMS": "0",
++            "subthings-MAX_NUM_FORMS": "1000",
++            "subthings-0-name": "subthing",
++            "subthings-0-id": "",
++            "subthings-0-thing": "",
++        }
++        formset = UUIDPKSubThingFormSet(data, instance=thing)
++        self.assertIs(formset.is_valid(), True)
++        self.assertIsNotNone(thing.id)
++        thing.save()
++        formset.save()
++        self.assertEqual(UUIDPKSubThing.objects.count(), 1)
++        self.assertEqual(UUIDPKSubThing.objects.get().thing, thing)
+2026-11-09 04:24:29,966 - INFO - Grading answer for django__django-16950...
+2026-11-09 04:24:29,968 - INFO - report: {'django__django-16950': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ["If form data is provided, a parent's auto-generated alternate key is"], 'failure': []}, 'PASS_TO_PASS': {'success': ["#24377 - If we're adding a new object, a parent's auto-generated pk", '#24958 - Variant of test_inlineformset_factory_nulls_default_pks for'], 'failure': ['#24377 - Inlines with a model field default should ignore that default']}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-16950: resolved: False
+2026-11-09 04:24:29,969 - INFO - Attempting to stop container sweb.eval.django__django-16950.verified_full_glm53_cline-patched_R1933.1794169445...
+2026-11-09 04:24:46,257 - INFO - Container sweb.eval.django__django-16950.verified_full_glm53_cline-patched_R1933.1794169445 stopped successfully.
+2026-11-09 04:24:46,257 - INFO - Attempting to remove container sweb.eval.django__django-16950.verified_full_glm53_cline-patched_R1933.1794169445...
+2026-11-09 04:24:46,297 - INFO - Container sweb.eval.django__django-16950.verified_full_glm53_cline-patched_R1933.1794169445 removed successfully.

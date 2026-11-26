@@ -1,0 +1,135 @@
+2026-10-30 17:45:45,309 - INFO - Creating container for django__django-15814...
+2026-10-30 17:45:45,329 - INFO - Container for django__django-15814 created: d107419f8a53092ac2fe766a45222701f8c445ceef921d72a60ddc7e96824ed4
+2026-10-30 17:45:48,768 - INFO - Container for django__django-15814 started: d107419f8a53092ac2fe766a45222701f8c445ceef921d72a60ddc7e96824ed4
+2026-10-30 17:45:48,771 - INFO - Intermediate patch for django__django-15814 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-15814/patch.diff, now applying to container...
+2026-10-30 17:45:48,967 - INFO - >>>>> Applied Patch:
+Checking patch django/db/models/sql/query.py...
+warning: django/db/models/sql/query.py has type 100755, expected 100644
+Checking patch tests/defer/models.py...
+warning: tests/defer/models.py has type 100755, expected 100644
+Checking patch tests/defer/settings.py...
+Checking patch tests/defer/tests.py...
+warning: tests/defer/tests.py has type 100755, expected 100644
+Applied patch django/db/models/sql/query.py cleanly.
+Applied patch tests/defer/models.py cleanly.
+Applied patch tests/defer/settings.py cleanly.
+Applied patch tests/defer/tests.py cleanly.
+
+2026-10-30 17:45:49,745 - INFO - Git diff before:
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 33cc636b22..5036335bec 100755
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -748,7 +748,7 @@ class Query(BaseExpression):
+                     cur_model = source.related_model
+                 else:
+                     cur_model = source.remote_field.model
+-                opts = cur_model._meta
++                opts = cur_model._meta.concrete_model._meta
+                 # Even if we're "just passing through" this model, we must add
+                 # both the current model's pk and the related reference field
+                 # (if it's not a reverse relation) to the things we select.
+diff --git a/tests/defer/models.py b/tests/defer/models.py
+index 6de2e2af97..0336535afe 100755
+--- a/tests/defer/models.py
++++ b/tests/defer/models.py
+@@ -58,3 +58,12 @@ class ShadowParent(models.Model):
+ 
+ class ShadowChild(ShadowParent):
+     name = models.CharField(default="adonis", max_length=6)
++
++
++class ProxySecondary(Secondary):
++    class Meta:
++        proxy = True
++
++
++class ProxyRelated(models.Model):
++    proxy = models.ForeignKey(ProxySecondary, models.CASCADE)
+diff --git a/tests/defer/tests.py b/tests/defer/tests.py
+index d2cff258b4..447eb12497 100755
+--- a/tests/defer/tests.py
++++ b/tests/defer/tests.py
+@@ -2,6 +2,8 @@ from django.core.exceptions import FieldError
+ from django.test import TestCase
+ 
+ from .models import (
++    ProxySecondary,
++    ProxyRelated,
+     BigChild,
+     Child,
+     ChildProxy,
+@@ -299,3 +301,9 @@ class TestDefer2(AssertionMixin, TestCase):
+             # access of any of them.
+             self.assertEqual(rf2.name, "new foo")
+             self.assertEqual(rf2.value, "new bar")
++
++    def test_select_related_only_proxy_target(self):
++        secondary = ProxySecondary.objects.create(first='x1', second='x2')
++        ProxyRelated.objects.create(proxy=secondary)
++        objs = list(ProxyRelated.objects.select_related('proxy').only('proxy__first'))
++        self.assertEqual(len(objs), 1)
+2026-10-30 17:45:49,750 - INFO - Eval script for django__django-15814 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-15814/eval.sh; copying to container...
+2026-10-30 17:45:57,384 - INFO - Test runtime: 7.48 seconds
+2026-10-30 17:45:57,392 - INFO - Test output for django__django-15814 written to logs/run_evaluation/verified_full_codex/codex-kimi-k2.6-cloud/django__django-15814/test_output.txt
+2026-10-30 17:45:57,489 - INFO - Git diff after:
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 33cc636b22..5036335bec 100755
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -748,7 +748,7 @@ class Query(BaseExpression):
+                     cur_model = source.related_model
+                 else:
+                     cur_model = source.remote_field.model
+-                opts = cur_model._meta
++                opts = cur_model._meta.concrete_model._meta
+                 # Even if we're "just passing through" this model, we must add
+                 # both the current model's pk and the related reference field
+                 # (if it's not a reverse relation) to the things we select.
+diff --git a/tests/defer/models.py b/tests/defer/models.py
+index 6de2e2af97..0336535afe 100755
+--- a/tests/defer/models.py
++++ b/tests/defer/models.py
+@@ -58,3 +58,12 @@ class ShadowParent(models.Model):
+ 
+ class ShadowChild(ShadowParent):
+     name = models.CharField(default="adonis", max_length=6)
++
++
++class ProxySecondary(Secondary):
++    class Meta:
++        proxy = True
++
++
++class ProxyRelated(models.Model):
++    proxy = models.ForeignKey(ProxySecondary, models.CASCADE)
+diff --git a/tests/defer/tests.py b/tests/defer/tests.py
+index d2cff258b4..447eb12497 100755
+--- a/tests/defer/tests.py
++++ b/tests/defer/tests.py
+@@ -2,6 +2,8 @@ from django.core.exceptions import FieldError
+ from django.test import TestCase
+ 
+ from .models import (
++    ProxySecondary,
++    ProxyRelated,
+     BigChild,
+     Child,
+     ChildProxy,
+@@ -299,3 +301,9 @@ class TestDefer2(AssertionMixin, TestCase):
+             # access of any of them.
+             self.assertEqual(rf2.name, "new foo")
+             self.assertEqual(rf2.value, "new bar")
++
++    def test_select_related_only_proxy_target(self):
++        secondary = ProxySecondary.objects.create(first='x1', second='x2')
++        ProxyRelated.objects.create(proxy=secondary)
++        objs = list(ProxyRelated.objects.select_related('proxy').only('proxy__first'))
++        self.assertEqual(len(objs), 1)
+2026-10-30 17:45:57,489 - INFO - Grading answer for django__django-15814...
+2026-10-30 17:45:57,520 - INFO - report: {'django__django-15814': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_select_related_only (proxy_models.tests.ProxyModelTests)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_abstract_base_with_model_fields (proxy_models.tests.ProxyModelTests)', 'Creating a Person makes them accessible through the MyPerson proxy.', 'A new MyPerson also shows up as a standard Person.', 'test_concrete_model (proxy_models.tests.ProxyModelTests)', 'test_content_type (proxy_models.tests.ProxyModelTests)', 'Correct type when querying a proxy of proxy', 'test_eq (proxy_models.tests.ProxyModelTests)', 'test_filter_proxy_relation_reverse (proxy_models.tests.ProxyModelTests)', "The StatusPerson models should have its own table (it's using ORM-level", 'test_myperson_manager (proxy_models.tests.ProxyModelTests)', 'test_new_fields (proxy_models.tests.ProxyModelTests)', 'test_no_base_classes (proxy_models.tests.ProxyModelTests)', 'Person is not proxied by StatusPerson subclass.', 'test_otherperson_manager (proxy_models.tests.ProxyModelTests)', 'test_permissions_created (proxy_models.tests.ProxyModelTests)', 'test_proxy_bug (proxy_models.tests.ProxyModelTests)', 'Proxy objects can be deleted', 'test_proxy_for_model (proxy_models.tests.ProxyModelTests)', "Proxy models are included in the ancestors for a model's DoesNotExist", 'test_proxy_load_from_fixture (proxy_models.tests.ProxyModelTests)', 'Test save signals for proxy models', 'test_proxy_update (proxy_models.tests.ProxyModelTests)', 'The MyPerson model should be generating the same database queries as', 'We can still use `select_related()` to include related models in our', 'test_swappable (proxy_models.tests.ProxyModelTests)', 'test_too_many_concrete_classes (proxy_models.tests.ProxyModelTests)', 'test_user_proxy_models (proxy_models.tests.ProxyModelTests)', 'Test if admin gives warning about cascade deleting models referenced', 'Test if the admin delete page shows the correct string representation'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-15814: resolved: True
+2026-10-30 17:45:57,531 - INFO - Attempting to stop container sweb.eval.django__django-15814.verified_full_codex...
+2026-10-30 17:46:13,922 - INFO - Container sweb.eval.django__django-15814.verified_full_codex stopped successfully.
+2026-10-30 17:46:13,922 - INFO - Attempting to remove container sweb.eval.django__django-15814.verified_full_codex...
+2026-10-30 17:46:14,026 - INFO - Container sweb.eval.django__django-15814.verified_full_codex removed successfully.

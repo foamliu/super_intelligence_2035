@@ -1,0 +1,14 @@
+# 扫描快照: designflow/summary_1113.tsv
+# 数据行 = 4418（跳过表头 1 行）→ 去重 session = 3172（shard D keywords 过滤后）
+# 台账已动过 session = 3053（case/seeded=747, parked=2081）
+
+阈值                池总量        已动过    未动过(可做)
+--------------------------------------------
+mc>=5            2826       2167        659
+mc>=10           2582       2123        459
+mc>=15           2427       2036        391
+mc>=20           2287       1951        336
+mc>=30           2061       1806        255
+
+# 可直接喂 refresh 的 JSON 片段：
+{"target_mc": 10, "shard_mc": {"A": 10, "B": 10, "C": 10, "D": 10}, "mc_matrix": {"mc5": {"pool": 2826, "touched": 2167, "fresh": 659}, "mc10": {"pool": 2582, "touched": 2123, "fresh": 459}, "mc15": {"pool": 2427, "touched": 2036, "fresh": 391}, "mc20": {"pool": 2287, "touched": 1951, "fresh": 336}, "mc30": {"pool": 2061, "touched": 1806, "fresh": 255}}, "mc5": 2826, "mc10": 2582, "mc15": 2427, "mc20": 2287, "mc30": 2061}

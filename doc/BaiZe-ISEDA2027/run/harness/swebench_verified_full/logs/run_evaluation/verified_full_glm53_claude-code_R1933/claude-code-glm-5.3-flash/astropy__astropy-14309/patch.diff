@@ -1,0 +1,60 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index be16b1fa..23dd85c0 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -1,3 +1,16 @@
++Version 5.3
++===========
++
++Bug Fixes
++---------
++
++astropy.io.fits
++^^^^^^^^^^^^^^^
++
++- Fix a bug where ``astropy.io.registry.identify_format`` would raise an
++  ``IndexError`` when the ``args`` argument was empty and the file path did
++  not have a FITS extension. [#14306]
++
+ Version 5.2.1 (2023-01-06)
+ ==========================
+ 
+diff --git a/astropy/io/fits/connect.py b/astropy/io/fits/connect.py
+index 4b6150f4..0b6c677f 100644
+--- a/astropy/io/fits/connect.py
++++ b/astropy/io/fits/connect.py
+@@ -69,7 +69,11 @@ def is_fits(origin, filepath, fileobj, *args, **kwargs):
+             (".fits", ".fits.gz", ".fit", ".fit.gz", ".fts", ".fts.gz")
+         ):
+             return True
+-    return isinstance(args[0], (HDUList, TableHDU, BinTableHDU, GroupsHDU))
++
++    if len(args):
++        return isinstance(args[0], (HDUList, TableHDU, BinTableHDU, GroupsHDU))
++
++    return False
+ 
+ 
+ def _decode_mixins(tbl):
+diff --git a/astropy/io/fits/tests/test_connect.py b/astropy/io/fits/tests/test_connect.py
+index c5c31033..556e679b 100644
+--- a/astropy/io/fits/tests/test_connect.py
++++ b/astropy/io/fits/tests/test_connect.py
+@@ -1002,3 +1002,17 @@ def test_meta_not_modified(tmp_path):
+     t.write(filename)
+     assert len(t.meta) == 1
+     assert t.meta["comments"] == ["a", "b"]
++
++
++def test_is_fits_identifier():
++    """Test that the FITS identifier does not fail when there is no
++    positional argument to inspect.
++
++    Regression test for https://github.com/astropy/astropy/issues/14305
++    """
++    from astropy.io.registry import identify_format
++
++    # This used to raise IndexError because args is empty and is_fits
++    # unconditionally accessed args[0].
++    assert identify_format("write", Table, "test.ecsv", None, [], {}) == ["ascii.ecsv"]
++    assert "fits" in identify_format("write", Table, "test.fits", None, [], {})

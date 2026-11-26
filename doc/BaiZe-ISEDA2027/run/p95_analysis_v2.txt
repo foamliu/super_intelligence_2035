@@ -1,0 +1,54 @@
+# analyzed 232 ops from /tmp/baize_p95_keyavg_v2.txt
+# excluded duplicate comm accounting: 1.27 s (nccl:* alias + record_param_comms wrapper)
+# total self_device_time_sum (deduped) = 6.247 s   device_time_sum = 10.550 s
+
+category                            self_ms   self_%     tot_ms    tot_%
+gemm                                 2567.8    41.1%     3890.1    36.9%
+ssm                                   846.9    13.6%     1408.1    13.3%
+attention                              71.3     1.1%      172.5     1.6%
+norm_act                              972.0    15.6%     1057.2    10.0%
+comm                                  635.7    10.2%     1169.9    11.1%
+ce                                      0.0     0.0%      238.6     2.3%
+embed                                   2.5     0.0%       18.4     0.2%
+optimizer                             393.2     6.3%      402.0     3.8%
+other(misc/launch/overhead)           757.4    12.1%     2192.9    20.8%
+
+=== GEMM fraction g & FP8 Amdahl bound (GEMM speeds up by s -> overall 1/((1-g)+g/s)) ===
+g_wall := GEMM / all deduped GPU self-time (incl comm) = 0.4111  -> 1/(1-g) = 1.70x
+g_comp := GEMM / GPU self-time excl comm           = 0.4576  -> 1/(1-g) = 1.84x
+comm share (deduped self) = 10.2%   ssm = 13.6%   norm+act = 15.6%
+  FP8 GEMM speedup s=2.0: 1.297x (excl comm), 1.259x (incl comm)
+  FP8 GEMM speedup s=1.6: 1.207x (excl comm), 1.182x (incl comm)
+  FP8 GEMM speedup s=1.3: 1.118x (excl comm), 1.105x (incl comm)
+
+=== top 30 ops by self_time (category | ms | count | name) ===
+comm                                 526.08     370  ncclDevKernel_ReduceScatter_Sum_f32_RING_LL(ncclDevKernelArgsStorage<4096ul>)
+gemm                                 458.28     560  _LayerNormLinearBackward
+ssm                                  332.10     240  MambaSplitConv1dScanCombinedFnBackward
+gemm                                 316.65     560  _LinearBackward
+gemm                                 314.15     850  nvjet_tst_128x256_64x4_2x1_v_bz_coopA_NTN
+gemm                                 282.17     610  nvjet_tst_128x256_64x4_2x1_v_bz_coopA_NNN
+gemm                                 222.97     560  _LayerNormLinear
+norm_act                             169.01    5940  aten::copy_
+gemm                                 156.40      30  aten::mm
+gemm                                 154.67     520  nvjet_tst_256x144_64x4_2x1_v_bz_coopA_NNT
+gemm                                 149.28     560  _Linear
+gemm                                 148.76     560  nvjet_tst_128x256_64x4_2x1_v_bz_coopA_TNN
+norm_act                             139.06    1260  void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::nativ
+optimizer                            120.75      10  Optimizer.step#FusedAdam.step
+norm_act                             120.15    4190  aten::add_
+optimizer                            119.69     570  void multi_tensor_apply_kernel<TensorListMetadata<4, false>, transformer_engine::multi_t
+gemm                                 108.79     240  nvjet_tst_192x192_64x4_2x1_v_bz_coopB_TNN
+ssm                                  102.59     240  MambaSplitConv1dScanCombinedFn
+gemm                                 102.38     240  nvjet_tst_256x128_64x4_1x2_h_bz_coopA_NTT
+comm                                 101.50     370  ncclDevKernel_AllGather_RING_LL(ncclDevKernelArgsStorage<4096ul>)
+norm_act                             100.37    3150  void at::native::unrolled_elementwise_kernel<at::native::CUDAFunctor_add<float>, std::ar
+gemm                                  93.93     280  nvjet_tst_256x144_64x4_2x1_v_bz_coopA_TNT
+ssm                                   59.71     240  _chunk_scan_chunk_state_bwd_dx_kernel
+other(misc/launch/overhead)           58.98      10  triton_red_fused_exp_sub_sum_2
+other(misc/launch/overhead)           58.98      10  triton_red_fused_exp_sub_sum_2
+norm_act                              57.65     370  aten::mul_
+norm_act                              57.65     370  void at::native::vectorized_elementwise_kernel<4, at::native::AUnaryFunctor<float, float
+gemm                                  53.68      50  nvjet_tst_256x152_64x4_1x2_h_bz_coopA_TNT
+ssm                                   53.48     240  _chunk_scan_fwd_kernel
+other(misc/launch/overhead)           49.94     240  LayerNormFnBackward

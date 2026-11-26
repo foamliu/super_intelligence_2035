@@ -1,0 +1,26 @@
+你在 CXMT 内网 EDA 集群上为数字后端工程师 yiminh 维护一条 Calibre ICV 晶体管级抽取后的网表转换流水线。
+该流水线把 ICV 抽出的层次化 CDL/Verilog 网表（顶层 top 模块实例化若干 `ICV_*` wrapper，wrapper 内再实例化
+`ICV_*` 子 wrapper 或 `LEAF_*` 叶单元，net 名常带 Verilog `\`-escape（如 `\cpu_pwdata[7]`）、总线 bit-select
+（如 `DIN[0]`）、以及 `VDD`/`VSS` 电源地连接）转换成一颗**扁平 Verilog 网表**，供后续 vlogan/综合工具消费。
+
+yiminh 对扁平化提出 3 条硬规则（来自一轮真实 debug 后定下的契约，不可放松）：
+  1. **NO `\`-escapes** —— 所有标识符清洗为合法 Verilog simple identifier `[A-Za-z_][A-Za-z0-9_]*`：
+     `\cpu_pwdata[7]` → `cpu_pwdata_7_`（去反斜杠、`[`/`]`/`:` 替成 `_`，数字开头加 `n` 前缀），
+     bit-select `DIN[0]` → `DIN_0_`（扁平化为标量 net 名）。
+  2. **NO `ICV_*`** —— 从顶层做 DFS 扁平化，把所有 `ICV_*` wrapper 内联进顶层；最终扁平模块里**只剩叶单元
+     `LEAF_*` 的实例**，每个叶实例名沿用 wrapper 实例名作前缀（如顶层经 `X1`→`X8`→叶 `X9` 的路径，叶实例名
+     为 `X1_X8_X9`，三段前缀）。叶单元 `LEAF_*` 的模块**定义**保留输出（同样清洗标识符、剥 PG）。
+  3. **NO VDD/VSS** —— 任何名为 `VDD` 或 `VSS` 的端口 / 线网 / pin 连接一律丢弃；PG-only 端口整条删除。
+
+你拿到可见输入 `A_input.v`（一个小的层次化网表：`top_A` → `ICV_WRAP_X`(2 级) 与 `ICV_WRAP_P` → `ICV_WRAP_Q`(3 级)
+与 `ICV_WRAP_R`(2 级)，含 `\`-escape net、`VDD/VSS`、总线 bit-select）。
+
+请交付 `outputs/submit.zip`，内含：
+  (1) `flatten_verilog.py` —— **通用** CDL/Verilog 层次网表扁平化器，CLI 形如
+      `python3 flatten_verilog.py <input.v> [-o <output.v>]`，实现上述 3 条规则，对任意同构输入都能工作
+      （**不要硬编码 A 的模块/net 名**；判分会用结构不同的隐藏输入 B 复跑你的脚本）；
+  (2) `flat_A.v` —— 你用该脚本对 `A_input.v` 跑出的扁平结果。
+
+输入语法（受限，一行一个构造，`;` 结尾）：`module NAME ( 端口列表 ) ;` 头；`input/output [W:0] NAME ;` 端口方向；
+`wire [W:0] NAME ;` 线网；`MODULE INST ( .PIN(NET) , ... ) ;` 实例（单行）；`not/buf/nand/nor/and/or ( Z , A , ... ) ;`
+原语门（叶单元体内）；`endmodule`。wrapper 模块内**无局部 wire**（所有 net 都是端口）。

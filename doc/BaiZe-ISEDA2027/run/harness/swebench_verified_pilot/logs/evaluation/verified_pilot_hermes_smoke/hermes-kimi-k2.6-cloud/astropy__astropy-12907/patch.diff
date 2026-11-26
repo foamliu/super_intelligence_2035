@@ -1,0 +1,45 @@
+diff --git a/astropy/modeling/separable.py b/astropy/modeling/separable.py
+index a308e27..45bea36 100644
+--- a/astropy/modeling/separable.py
++++ b/astropy/modeling/separable.py
+@@ -242,7 +242,7 @@ def _cstack(left, right):
+         cright = _coord_matrix(right, 'right', noutp)
+     else:
+         cright = np.zeros((noutp, right.shape[1]))
+-        cright[-right.shape[0]:, -right.shape[1]:] = 1
++        cright[-right.shape[0]:, -right.shape[1]:] = right
+ 
+     return np.hstack([cleft, cright])
+ 
+diff --git a/astropy/modeling/tests/test_separable.py b/astropy/modeling/tests/test_separable.py
+index 8dfe5c8..8443234 100644
+--- a/astropy/modeling/tests/test_separable.py
++++ b/astropy/modeling/tests/test_separable.py
+@@ -148,3 +148,27 @@ def test_custom_model_separable():
+ 
+     assert not model_c().separable
+     assert np.all(separability_matrix(model_c()) == [True, True])
++
++
++def test_nested_compound_separability():
++    """Regression test for nested CompoundModels on the right side of '&'."""
++    cm = m.Linear1D(10) & m.Linear1D(5)
++
++    # Non-nested for reference
++    expected = separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))
++    # Nested on the right
++    result = separability_matrix(m.Pix2Sky_TAN() & cm)
++    assert_allclose(result, expected)
++
++    # Nested on the left
++    expected2 = separability_matrix(m.Linear1D(10) & m.Linear1D(5) & m.Pix2Sky_TAN())
++    result2 = separability_matrix(cm & m.Pix2Sky_TAN())
++    assert_allclose(result2, expected2)
++
++    # Deeply nested
++    result3 = separability_matrix(cm & cm)
++    expected3 = np.array([[True, False, False, False],
++                          [False, True, False, False],
++                          [False, False, True, False],
++                          [False, False, False, True]])
++    assert_allclose(result3, expected3)

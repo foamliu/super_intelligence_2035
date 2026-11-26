@@ -1,0 +1,149 @@
+2026-11-11 03:56:11,505 - INFO - Creating container for django__django-15252...
+2026-11-11 03:56:11,540 - INFO - Container for django__django-15252 created: 10a4b2b29ef95bbd1bdf26d5311a86094b22d245c3513a62c95fc184e8c579f4
+2026-11-11 03:56:13,037 - INFO - Container for django__django-15252 started: 10a4b2b29ef95bbd1bdf26d5311a86094b22d245c3513a62c95fc184e8c579f4
+2026-11-11 03:56:13,039 - INFO - Intermediate patch for django__django-15252 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2141/opencode-glm-5.3-flash/django__django-15252/patch.diff, now applying to container...
+2026-11-11 03:56:13,185 - INFO - >>>>> Applied Patch:
+Checking patch django/db/migrations/executor.py...
+warning: django/db/migrations/executor.py has type 100755, expected 100644
+Checking patch tests/backends/base/test_creation.py...
+warning: tests/backends/base/test_creation.py has type 100755, expected 100644
+Checking patch tests/migrations/test_executor.py...
+warning: tests/migrations/test_executor.py has type 100755, expected 100644
+Applied patch django/db/migrations/executor.py cleanly.
+Applied patch tests/backends/base/test_creation.py cleanly.
+Applied patch tests/migrations/test_executor.py cleanly.
+
+2026-11-11 03:56:14,778 - INFO - Git diff before:
+diff --git a/django/db/migrations/executor.py b/django/db/migrations/executor.py
+index aa2fe0883b..89e9344a68 100755
+--- a/django/db/migrations/executor.py
++++ b/django/db/migrations/executor.py
+@@ -96,8 +96,12 @@ class MigrationExecutor:
+         (un)applied and in a second step run all the database operations.
+         """
+         # The django_migrations table must be present to record applied
+-        # migrations.
+-        self.recorder.ensure_schema()
++        # migrations, but don't create it if there are no migrations to apply.
++        if plan == []:
++            if not self.recorder.has_table():
++                return self._create_project_state(with_applied_migrations=False)
++        else:
++            self.recorder.ensure_schema()
+ 
+         if plan is None:
+             plan = self.migration_plan(targets)
+diff --git a/tests/backends/base/test_creation.py b/tests/backends/base/test_creation.py
+index 3a1164557b..825fb872ed 100755
+--- a/tests/backends/base/test_creation.py
++++ b/tests/backends/base/test_creation.py
+@@ -57,12 +57,12 @@ class TestDbSignatureTests(SimpleTestCase):
+ @mock.patch.object(connection, 'ensure_connection')
+ @mock.patch.object(connection, 'prepare_database')
+ @mock.patch('django.db.migrations.recorder.MigrationRecorder.has_table', return_value=False)
+-@mock.patch('django.db.migrations.executor.MigrationExecutor.migrate')
+ @mock.patch('django.core.management.commands.migrate.Command.sync_apps')
+ class TestDbCreationTests(SimpleTestCase):
+     available_apps = ['backends.base.app_unmigrated']
+ 
+-    def test_migrate_test_setting_false(self, mocked_sync_apps, mocked_migrate, *mocked_objects):
++    @mock.patch('django.db.migrations.executor.MigrationExecutor.migrate')
++    def test_migrate_test_setting_false(self, mocked_migrate, mocked_sync_apps, *mocked_objects):
+         test_connection = get_connection_copy()
+         test_connection.settings_dict['TEST']['MIGRATE'] = False
+         creation = test_connection.creation_class(test_connection)
+@@ -86,7 +86,32 @@ class TestDbCreationTests(SimpleTestCase):
+             with mock.patch.object(creation, '_destroy_test_db'):
+                 creation.destroy_test_db(old_database_name, verbosity=0)
+ 
+-    def test_migrate_test_setting_true(self, mocked_sync_apps, mocked_migrate, *mocked_objects):
++    @mock.patch('django.db.migrations.executor.MigrationRecorder.ensure_schema')
++    def test_migrate_test_setting_false_ensure_schema(
++        self, mocked_ensure_schema, mocked_sync_apps, *mocked_objects,
++    ):
++        test_connection = get_connection_copy()
++        test_connection.settings_dict['TEST']['MIGRATE'] = False
++        creation = test_connection.creation_class(test_connection)
++        if connection.vendor == 'oracle':
++            # Don't close connection on Oracle.
++            creation.connection.close = mock.Mock()
++        old_database_name = test_connection.settings_dict['NAME']
++        try:
++            with mock.patch.object(creation, '_create_test_db'):
++                creation.create_test_db(verbosity=0, autoclobber=True, serialize=False)
++            # The django_migrations table is not created.
++            mocked_ensure_schema.assert_not_called()
++            # App is synced.
++            mocked_sync_apps.assert_called()
++            mocked_args, _ = mocked_sync_apps.call_args
++            self.assertEqual(mocked_args[1], {'app_unmigrated'})
++        finally:
++            with mock.patch.object(creation, '_destroy_test_db'):
++                creation.destroy_test_db(old_database_name, verbosity=0)
++
++    @mock.patch('django.db.migrations.executor.MigrationExecutor.migrate')
++    def test_migrate_test_setting_true(self, mocked_migrate, mocked_sync_apps, *mocked_objects):
+         test_connection = get_connection_copy()
+         test_connection.settings_dict['TEST']['MIGRATE'] = True
+         creation = test_connection.creation_class(test_connection)
+@@ -109,6 +134,7 @@ class TestDbCreationTests(SimpleTestCase):
+                 creation.destroy_test_db(old_database_name, verbosity=0)
+ 
+     @mock.patch.dict(os.environ, {'RUNNING_DJANGOS_TEST_SUITE': ''})
++    @mock.patch('django.db.migrations.executor.MigrationExecutor.migrate')
+     @mock.patch.object(BaseDatabaseCreation, 'mark_expected_failures_and_skips')
+     def test_mark_expected_failures_and_skips_call(self, mark_expected_failures_and_skips, *mocked_objects):
+         """
+diff --git a/tests/migrations/test_executor.py b/tests/migrations/test_executor.py
+index ca2c03cac5..cab6ac6cb5 100755
+--- a/tests/migrations/test_executor.py
++++ b/tests/migrations/test_executor.py
+@@ -759,6 +759,17 @@ class ExecutorTests(MigrationTestBase):
+             False,
+         )
+ 
++    @mock.patch.object(MigrationRecorder, 'has_table', return_value=False)
++    def test_migrate_skips_schema_creation(self, mocked_has_table):
++        """
++        The django_migrations table is not created if there are no migrations
++        to record.
++        """
++        executor = MigrationExecutor(connection)
++        # 0 queries, since the query for has_table is being mocked.
++        with self.assertNumQueries(0):
++            executor.migrate([], plan=[])
++
+ 
+ class FakeLoader:
+     def __init__(self, graph, applied):
+2026-11-11 03:56:14,779 - INFO - Eval script for django__django-15252 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2141/opencode-glm-5.3-flash/django__django-15252/eval.sh; copying to container...
+2026-11-11 03:56:24,452 - INFO - Test runtime: 9.63 seconds
+2026-11-11 03:56:24,455 - INFO - Test output for django__django-15252 written to logs/run_evaluation/verified_full_glm53_opencode_incr_R2141/opencode-glm-5.3-flash/django__django-15252/test_output.txt
+2026-11-11 03:56:24,525 - INFO - Git diff after:
+diff --git a/django/db/migrations/executor.py b/django/db/migrations/executor.py
+index aa2fe0883b..89e9344a68 100755
+--- a/django/db/migrations/executor.py
++++ b/django/db/migrations/executor.py
+@@ -96,8 +96,12 @@ class MigrationExecutor:
+         (un)applied and in a second step run all the database operations.
+         """
+         # The django_migrations table must be present to record applied
+-        # migrations.
+-        self.recorder.ensure_schema()
++        # migrations, but don't create it if there are no migrations to apply.
++        if plan == []:
++            if not self.recorder.has_table():
++                return self._create_project_state(with_applied_migrations=False)
++        else:
++            self.recorder.ensure_schema()
+ 
+         if plan is None:
+             plan = self.migration_plan(targets)
+2026-11-11 03:56:24,525 - INFO - Git diff changed after running eval script
+2026-11-11 03:56:24,525 - INFO - Grading answer for django__django-15252...
+2026-11-11 03:56:24,535 - INFO - report: {'django__django-15252': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_migrate_test_setting_false_ensure_schema (backends.base.test_creation.TestDbCreationTests)', 'The django_migrations table is not created if there are no migrations'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_mark_expected_failures_and_skips (backends.base.test_creation.TestMarkTests)', 'test_custom_test_name (backends.base.test_creation.TestDbSignatureTests)', 'test_custom_test_name_with_test_prefix (backends.base.test_creation.TestDbSignatureTests)', 'test_default_name (backends.base.test_creation.TestDbSignatureTests)', 'If the current state satisfies the given target, do nothing.', 'Minimize unnecessary rollbacks in connected apps.', 'Minimize rollbacks when target has multiple in-app children.', "mark_expected_failures_and_skips() isn't called unless", 'test_migrate_test_setting_false (backends.base.test_creation.TestDbCreationTests)', 'test_migrate_test_setting_true (backends.base.test_creation.TestDbCreationTests)', 'test_circular_reference (backends.base.test_creation.TestDeserializeDbFromString)', 'test_circular_reference_with_natural_key (backends.base.test_creation.TestDeserializeDbFromString)', 'test_self_reference (backends.base.test_creation.TestDeserializeDbFromString)', 'test_serialize_db_to_string_base_manager (backends.base.test_creation.TestDeserializeDbFromString)', 'test_alter_id_type_with_fk (migrations.test_executor.ExecutorTests)', 'Applying all replaced migrations marks replacement as applied (#24628).', 'An atomic operation is properly rolled back inside a non-atomic', 'Regression test for #22325 - references to a custom user model defined in the', 'executor.detect_soft_applied() detects ManyToManyField tables from an', "Re-planning a full migration of a fully-migrated set doesn't", 'test_migrate_backward_to_squashed_migration (migrations.test_executor.ExecutorTests)', 'A new squash migration will be marked as applied even if all its', 'test_migrate_marks_replacement_unapplied (migrations.test_executor.ExecutorTests)', 'Migrations are applied and recorded atomically.', 'Migrations are not recorded if deferred SQL application fails.', 'Although the MigrationExecutor interfaces allows for mixed migration', 'Applying a non-atomic migration works as expected.', '#24129 - Tests callback process', 'Tests running a simple set of migrations.', 'Tests running a squashed migration from zero (should ignore what it replaces)', 'Tests detection of initial migrations already having been applied.', '#26647 - Unrelated applied migrations should be part of the final', '#24123 - All models of apps being unapplied which are', '#24123 - All models of apps already applied which are'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-15252: resolved: True
+2026-11-11 03:56:24,536 - INFO - Attempting to stop container sweb.eval.django__django-15252.verified_full_glm53_opencode_incr_R2141...
+2026-11-11 03:56:41,545 - INFO - Container sweb.eval.django__django-15252.verified_full_glm53_opencode_incr_R2141 stopped successfully.
+2026-11-11 03:56:41,545 - INFO - Attempting to remove container sweb.eval.django__django-15252.verified_full_glm53_opencode_incr_R2141...
+2026-11-11 03:56:41,594 - INFO - Container sweb.eval.django__django-15252.verified_full_glm53_opencode_incr_R2141 removed successfully.

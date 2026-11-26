@@ -1,0 +1,66 @@
+2026-11-03 10:15:49,000 - INFO - Creating container for django__django-15127...
+2026-11-03 10:15:49,020 - INFO - Container for django__django-15127 created: 0c66d49237cc3f9cd079e4b5a732dec425cb39f01e3dad228b10937990a3eb31
+2026-11-03 10:15:49,625 - INFO - Container for django__django-15127 started: 0c66d49237cc3f9cd079e4b5a732dec425cb39f01e3dad228b10937990a3eb31
+2026-11-03 10:15:49,627 - INFO - Intermediate patch for django__django-15127 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-15127/patch.diff, now applying to container...
+2026-11-03 10:15:49,781 - INFO - >>>>> Applied Patch:
+Checking patch django/contrib/messages/storage/base.py...
+Applied patch django/contrib/messages/storage/base.py cleanly.
+
+2026-11-03 10:15:50,924 - INFO - Git diff before:
+diff --git a/django/contrib/messages/storage/base.py b/django/contrib/messages/storage/base.py
+index 01422066a6..3b5aeb6a07 100644
+--- a/django/contrib/messages/storage/base.py
++++ b/django/contrib/messages/storage/base.py
+@@ -1,9 +1,18 @@
+ from django.conf import settings
+ from django.contrib.messages import constants, utils
++from django.core.signals import setting_changed
++from django.dispatch import receiver
+ 
+ LEVEL_TAGS = utils.get_level_tags()
+ 
+ 
++@receiver(setting_changed)
++def update_level_tags(**kwargs):
++    if kwargs['setting'] == 'MESSAGE_TAGS':
++        global LEVEL_TAGS
++        LEVEL_TAGS = utils.get_level_tags()
++
++
+ class Message:
+     """
+     Represent an actual message that can be stored in any of the supported
+2026-11-03 10:15:50,927 - INFO - Eval script for django__django-15127 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-15127/eval.sh; copying to container...
+2026-11-03 10:15:58,892 - INFO - Test runtime: 7.89 seconds
+2026-11-03 10:15:58,894 - INFO - Test output for django__django-15127 written to logs/run_evaluation/verified_full_deepseek-harness/deepseek-harness-kimi-k2.6-cloud/django__django-15127/test_output.txt
+2026-11-03 10:15:58,968 - INFO - Git diff after:
+diff --git a/django/contrib/messages/storage/base.py b/django/contrib/messages/storage/base.py
+index 01422066a6..3b5aeb6a07 100644
+--- a/django/contrib/messages/storage/base.py
++++ b/django/contrib/messages/storage/base.py
+@@ -1,9 +1,18 @@
+ from django.conf import settings
+ from django.contrib.messages import constants, utils
++from django.core.signals import setting_changed
++from django.dispatch import receiver
+ 
+ LEVEL_TAGS = utils.get_level_tags()
+ 
+ 
++@receiver(setting_changed)
++def update_level_tags(**kwargs):
++    if kwargs['setting'] == 'MESSAGE_TAGS':
++        global LEVEL_TAGS
++        LEVEL_TAGS = utils.get_level_tags()
++
++
+ class Message:
+     """
+     Represent an actual message that can be stored in any of the supported
+2026-11-03 10:15:58,968 - INFO - Grading answer for django__django-15127...
+2026-11-03 10:15:58,969 - INFO - report: {'django__django-15127': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['test_override_settings_level_tags (messages_tests.tests.TestLevelTags)'], 'failure': []}, 'PASS_TO_PASS': {'success': ['test_eq (messages_tests.tests.MessageTests)'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for django__django-15127: resolved: True
+2026-11-03 10:15:58,971 - INFO - Attempting to stop container sweb.eval.django__django-15127.verified_full_deepseek-harness...
+2026-11-03 10:16:15,155 - INFO - Container sweb.eval.django__django-15127.verified_full_deepseek-harness stopped successfully.
+2026-11-03 10:16:15,156 - INFO - Attempting to remove container sweb.eval.django__django-15127.verified_full_deepseek-harness...
+2026-11-03 10:16:15,211 - INFO - Container sweb.eval.django__django-15127.verified_full_deepseek-harness removed successfully.

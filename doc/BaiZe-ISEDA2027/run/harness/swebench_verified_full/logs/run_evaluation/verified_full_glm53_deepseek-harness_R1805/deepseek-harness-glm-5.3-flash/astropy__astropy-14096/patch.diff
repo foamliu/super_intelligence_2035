@@ -1,0 +1,72 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index 5815e93373..e11f8f1a6b 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -1,6 +1,16 @@
+ Version 5.1.1 (2022-10-23)
+ ==========================
+ 
++Bug Fixes
++---------
++
++astropy.coordinates
++^^^^^^^^^^^^^^^^^^^
++
++- Fixed the ``SkyCoord`` attribute access error message when using a subclass
++  with properties that access other (missing) attributes, so that the missing
++  attribute is correctly reported instead of the property name. [#13918]
++
+ API Changes
+ -----------
+ 
+diff --git a/astropy/coordinates/sky_coordinate.py b/astropy/coordinates/sky_coordinate.py
+index ab475f7d0d..d14bb00f75 100644
+--- a/astropy/coordinates/sky_coordinate.py
++++ b/astropy/coordinates/sky_coordinate.py
+@@ -894,10 +894,8 @@ class SkyCoord(ShapedLikeNDArray):
+             if frame_cls is not None and self.frame.is_transformable_to(frame_cls):
+                 return self.transform_to(attr)
+ 
+-        # Fail
+-        raise AttributeError(
+-            f"'{self.__class__.__name__}' object has no attribute '{attr}'"
+-        )
++        # Call __getattribute__; this will give the correct exception.
++        return self.__getattribute__(attr)
+ 
+     def __setattr__(self, attr, val):
+         # This is to make anything available through __getattr__ immutable
+diff --git a/astropy/coordinates/tests/test_sky_coord.py b/astropy/coordinates/tests/test_sky_coord.py
+index 4dcfba0d4d..16a1b69e1c 100644
+--- a/astropy/coordinates/tests/test_sky_coord.py
++++ b/astropy/coordinates/tests/test_sky_coord.py
+@@ -2165,3 +2165,29 @@ def test_match_to_catalog_3d_and_sky():
+     npt.assert_array_equal(idx, [0, 1, 2, 3])
+     assert_allclose(angle, 0 * u.deg, atol=1e-14 * u.deg, rtol=0)
+     assert_allclose(distance, 0 * u.kpc, atol=1e-14 * u.kpc, rtol=0)
++
++
++class TestSkyCoordSubclass:
++    """Regression test for #13918: SkyCoord subclasses should report the
++    missing attribute in the error message, not the property that was
++    accessing it."""
++
++    class CustomSkyCoord(SkyCoord):
++        @property
++        def prop(self):
++            return self.random_attr
++
++    def setup_method(self):
++        self.coord = self.CustomSkyCoord(
++            "00h42m30s", "+41d12m00s", frame="icrs"
++        )
++
++    def test_fake_attribute_error_message(self):
++        with pytest.raises(
++            AttributeError, match="'random_attr'"
++        ):
++            self.coord.prop
++
++    def test_missing_attribute_directly(self):
++        with pytest.raises(AttributeError, match="'random_attr'"):
++            self.coord.random_attr

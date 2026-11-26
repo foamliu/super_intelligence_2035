@@ -1,0 +1,118 @@
+2026-11-09 23:02:39,361 - INFO - Creating container for scikit-learn__scikit-learn-14710...
+2026-11-09 23:02:39,396 - INFO - Container for scikit-learn__scikit-learn-14710 created: fee7708b4d0bd6ec6526a7a844661117b3502707ebac6de12b2ba2998ddd34d9
+2026-11-09 23:02:39,967 - INFO - Container for scikit-learn__scikit-learn-14710 started: fee7708b4d0bd6ec6526a7a844661117b3502707ebac6de12b2ba2998ddd34d9
+2026-11-09 23:02:39,969 - INFO - Intermediate patch for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R1992/claude-code-glm-5.3-flash/scikit-learn__scikit-learn-14710/patch.diff, now applying to container...
+2026-11-09 23:02:40,128 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py...
+Checking patch sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py...
+Applied patch sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py cleanly.
+Applied patch sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py cleanly.
+
+2026-11-09 23:02:40,574 - INFO - Git diff before:
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8ca..3170e4000 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,15 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if hasattr(self, 'classes_'):
++            y_small_train = self.classes_[y_small_train.astype(int)]
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if hasattr(self, 'classes_'):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+index 1eebdefd5..fcf75a0a5 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/tests/test_gradient_boosting.py
+@@ -132,6 +132,50 @@ def test_early_stopping_classification(data, scoring, validation_fraction,
+         assert gb.n_iter_ == max_iter
+ 
+ 
++@pytest.mark.parametrize('data', (
++    make_classification(n_samples=30, random_state=0),
++    make_classification(n_samples=30, n_classes=3, n_clusters_per_class=1,
++                        random_state=0)
++))
++@pytest.mark.parametrize(
++    'scoring, validation_fraction, n_iter_no_change, tol', [
++        ('accuracy', .1, 5, 1e-7),  # use scorer
++        ('accuracy', None, 5, 1e-1),  # use scorer on training data
++        (None, .1, 5, 1e-7),  # same with default scorer
++        (None, None, 5, 1e-1),
++        ('loss', .1, 5, 1e-7),  # use loss
++        ('loss', None, 5, 1e-1),  # use loss on training data
++        (None, None, None, None),  # no early stopping
++        ])
++def test_early_stopping_classification_with_string_targets(
++        data, scoring, validation_fraction, n_iter_no_change, tol):
++
++    max_iter = 50
++
++    X, y = data
++    # strings are not required to be in any specific order
++    string_labels = y.astype(str)
++    rng = np.random.RandomState(0)
++    rng.shuffle(string_labels)
++
++    gb = HistGradientBoostingClassifier(
++        verbose=1,  # just for coverage
++        min_samples_leaf=5,  # easier to overfit fast
++        scoring=scoring,
++        tol=tol,
++        validation_fraction=validation_fraction,
++        max_iter=max_iter,
++        n_iter_no_change=n_iter_no_change,
++        random_state=0
++    )
++    gb.fit(X, string_labels)
++
++    if n_iter_no_change is not None:
++        assert n_iter_no_change <= gb.n_iter_ < max_iter
++    else:
++        assert gb.n_iter_ == max_iter
++
++
+ @pytest.mark.parametrize(
+     'scores, n_iter_no_change, tol, stopping',
+     [
+2026-11-09 23:02:40,577 - INFO - Eval script for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R1992/claude-code-glm-5.3-flash/scikit-learn__scikit-learn-14710/eval.sh; copying to container...
+2026-11-09 23:07:36,574 - INFO - Test runtime: 295.91 seconds
+2026-11-09 23:07:36,577 - INFO - Test output for scikit-learn__scikit-learn-14710 written to logs/run_evaluation/verified_full_glm53_claude-code_incr_R1992/claude-code-glm-5.3-flash/scikit-learn__scikit-learn-14710/test_output.txt
+2026-11-09 23:07:36,618 - INFO - Git diff after:
+diff --git a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+index ad6a5a8ca..3170e4000 100644
+--- a/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
++++ b/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
+@@ -426,11 +426,15 @@ class BaseHistGradientBoosting(BaseEstimator, ABC):
+ 
+         Scores are computed on validation data or on training data.
+         """
++        if hasattr(self, 'classes_'):
++            y_small_train = self.classes_[y_small_train.astype(int)]
+         self.train_score_.append(
+             self.scorer_(self, X_binned_small_train, y_small_train)
+         )
+ 
+         if self._use_validation_data:
++            if hasattr(self, 'classes_'):
++                y_val = self.classes_[y_val.astype(int)]
+             self.validation_score_.append(
+                 self.scorer_(self, X_binned_val, y_val)
+             )
+2026-11-09 23:07:36,618 - INFO - Git diff changed after running eval script
+2026-11-09 23:07:36,618 - INFO - Grading answer for scikit-learn__scikit-learn-14710...
+2026-11-09 23:07:36,634 - INFO - report: {'scikit-learn__scikit-learn-14710': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': False, 'resolved': False, 'infra_failure': False}}
+Result for scikit-learn__scikit-learn-14710: resolved: False
+2026-11-09 23:07:36,635 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_claude-code_incr_R1992...
+2026-11-09 23:07:52,466 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_claude-code_incr_R1992 stopped successfully.
+2026-11-09 23:07:52,466 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_claude-code_incr_R1992...
+2026-11-09 23:07:52,503 - INFO - Container sweb.eval.scikit-learn__scikit-learn-14710.verified_full_glm53_claude-code_incr_R1992 removed successfully.

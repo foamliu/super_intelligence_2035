@@ -1,0 +1,16 @@
+{
+  "harness": "claude-code",
+  "run_id": "verified_full_glm53_claude-code_incr_R2233",
+  "round": "R2233",
+  "n": 5,
+  "resolved": [
+    "scikit-learn__scikit-learn-13135",
+    "scikit-learn__scikit-learn-13496",
+    "scikit-learn__scikit-learn-13779",
+    "scikit-learn__scikit-learn-14053"
+  ],
+  "failed": [],
+  "infra_or_quota": [
+    "scikit-learn__scikit-learn-15100"
+  ]
+}

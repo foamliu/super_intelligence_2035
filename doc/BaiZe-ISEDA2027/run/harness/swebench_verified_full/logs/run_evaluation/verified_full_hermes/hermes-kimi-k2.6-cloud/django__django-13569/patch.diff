@@ -1,0 +1,79 @@
+diff --git a/django/db/models/functions/math.py b/django/db/models/functions/math.py
+index 304e11222..bc5f00965 100644
+--- a/django/db/models/functions/math.py
++++ b/django/db/models/functions/math.py
+@@ -145,6 +145,9 @@ class Random(NumericOutputFieldMixin, Func):
+     function = 'RANDOM'
+     arity = 0
+ 
++    def get_group_by_cols(self, alias=None):
++        return []
++
+     def as_mysql(self, compiler, connection, **extra_context):
+         return super().as_sql(compiler, connection, function='RAND', **extra_context)
+ 
+diff --git a/reproduce.py b/reproduce.py
+new file mode 100644
+index 000000000..63ee7cebe
+--- /dev/null
++++ b/reproduce.py
+@@ -0,0 +1,39 @@
++import os
++import sys
++
++os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tests.test_sqlite')
++sys.path.insert(0, '/dev/shm/harness_verified_full/workdirs/hermes/django_django')
++sys.path.insert(0, '/dev/shm/harness_verified_full/workdirs/hermes/django_django/tests')
++
++import django
++django.setup()
++
++from django.db.models import Count
++from aggregation.models import Book
++
++# Check: annotate + order_by('?') + values should not break aggregation
++qs = Book.objects.annotate(rc=Count('authors')).order_by('?').values('id', 'rc')
++result = list(qs)
++print("Result:", result)
++print("Query:", str(qs.query))
++
++# Verify aggregation is correct: every Book should have its actual author count
++from aggregation.models import Author
++errors = []
++for b in Book.objects.all():
++    actual = Author.objects.filter(book=b).count()
++    qs_result = [r['rc'] for r in result if r['id'] == b.id]
++    if not qs_result:
++        errors.append(f"Book {b.id} missing from queryset")
++    elif qs_result[0] != actual:
++        errors.append(f"Book {b.id} expected {actual}, got {qs_result[0]}")
++    else:
++        print(f"OK: Book {b.id} rc={actual}")
++
++if errors:
++    print("ERRORS:")
++    for e in errors:
++        print(e)
++    sys.exit(1)
++else:
++    print("All OK")
+diff --git a/tests/aggregation/tests.py b/tests/aggregation/tests.py
+index f8aeceb2d..5ab31d358 100644
+--- a/tests/aggregation/tests.py
++++ b/tests/aggregation/tests.py
+@@ -1315,3 +1315,15 @@ class AggregateTestCase(TestCase):
+         # with self.assertNumQueries(1) as ctx:
+         #     self.assertSequenceEqual(books_qs, [book])
+         # self.assertEqual(ctx[0]['sql'].count('SELECT'), 2)
++
++    def test_annotate_order_by_random_values(self):
++        """
++        Ordering by '?' (random) shouldn't break aggregation grouping.
++        """
++        b = Book.objects.annotate(rc=Count('authors')).order_by('?').values('id', 'rc')
++        # Verify aggregation is correct: every Book should have its actual author count.
++        for book in Book.objects.all():
++            actual = Author.objects.filter(book=book).count()
++            qs_result = [r['rc'] for r in b if r['id'] == book.id]
++            self.assertTrue(qs_result)
++            self.assertEqual(qs_result[0], actual)

@@ -1,0 +1,44 @@
+2026-10-30 16:27:16,020 - INFO - Creating container for pylint-dev__pylint-6903...
+2026-10-30 16:27:16,083 - INFO - Container for pylint-dev__pylint-6903 created: 1609adaeb65377414980542bd80515f637fac2321c98487234c40b59716f02a1
+2026-10-30 16:27:17,621 - INFO - Container for pylint-dev__pylint-6903 started: 1609adaeb65377414980542bd80515f637fac2321c98487234c40b59716f02a1
+2026-10-30 16:27:17,623 - INFO - Intermediate patch for pylint-dev__pylint-6903 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/pylint-dev__pylint-6903/patch.diff, now applying to container...
+2026-10-30 16:27:17,783 - INFO - >>>>> Applied Patch:
+Checking patch pylint/lint/run.py...
+Checking patch tests/lint/test_run.py...
+Applied patch pylint/lint/run.py cleanly.
+Applied patch tests/lint/test_run.py cleanly.
+
+2026-10-30 16:27:18,289 - INFO - Git diff before:
+diff --git a/pylint/lint/run.py b/pylint/lint/run.py
+index a7e5d557..0f10a6ec 100644
+--- a/pylint/lint/run.py
++++ b/pylint/lint/run.py
+@@ -58,6 +58,8 @@ def _query_cpu() -> int | None:
+             cpu_shares = int(file.read().rstrip())
+         # For AWS, gives correct value * 1024.
+         avail_cpu = int(cpu_shares / 1024)
++    if avail_cpu is not None:
++        return max(avail_cpu, 1)
+     return avail_cpu
+2026-10-30 16:27:18,292 - INFO - Eval script for pylint-dev__pylint-6903 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/pylint-dev__pylint-6903/eval.sh; copying to container...
+2026-10-30 16:27:36,889 - INFO - Test runtime: 18.51 seconds
+2026-10-30 16:27:36,891 - INFO - Test output for pylint-dev__pylint-6903 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/pylint-dev__pylint-6903/test_output.txt
+2026-10-30 16:27:36,969 - INFO - Git diff after:
+diff --git a/pylint/lint/run.py b/pylint/lint/run.py
+index a7e5d557..0f10a6ec 100644
+--- a/pylint/lint/run.py
++++ b/pylint/lint/run.py
+@@ -58,6 +58,8 @@ def _query_cpu() -> int | None:
+             cpu_shares = int(file.read().rstrip())
+         # For AWS, gives correct value * 1024.
+         avail_cpu = int(cpu_shares / 1024)
++    if avail_cpu is not None:
++        return max(avail_cpu, 1)
+     return avail_cpu
+2026-10-30 16:27:36,970 - INFO - Grading answer for pylint-dev__pylint-6903...
+2026-10-30 16:27:36,971 - INFO - report: {'pylint-dev__pylint-6903': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['tests/test_pylint_runners.py::test_pylint_run_jobs_equal_zero_dont_crash_with_cpu_fraction'], 'failure': []}, 'PASS_TO_PASS': {'success': ['tests/test_pylint_runners.py::test_runner[run_epylint]', 'tests/test_pylint_runners.py::test_runner[run_pylint]', 'tests/test_pylint_runners.py::test_runner[run_pyreverse]', 'tests/test_pylint_runners.py::test_runner[run_symilar]', 'tests/test_pylint_runners.py::test_runner_with_arguments[run_epylint]', 'tests/test_pylint_runners.py::test_runner_with_arguments[run_pylint]', 'tests/test_pylint_runners.py::test_runner_with_arguments[run_pyreverse]', 'tests/test_pylint_runners.py::test_runner_with_arguments[run_symilar]'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for pylint-dev__pylint-6903: resolved: True
+2026-10-30 16:27:36,973 - INFO - Attempting to stop container sweb.eval.pylint-dev__pylint-6903.verified_full_cline-patched...
+2026-10-30 16:27:52,768 - INFO - Container sweb.eval.pylint-dev__pylint-6903.verified_full_cline-patched stopped successfully.
+2026-10-30 16:27:52,768 - INFO - Attempting to remove container sweb.eval.pylint-dev__pylint-6903.verified_full_cline-patched...
+2026-10-30 16:27:52,815 - INFO - Container sweb.eval.pylint-dev__pylint-6903.verified_full_cline-patched removed successfully.

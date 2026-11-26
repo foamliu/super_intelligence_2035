@@ -1,0 +1,76 @@
+2026-10-30 16:28:17,443 - INFO - Creating container for scikit-learn__scikit-learn-10844...
+2026-10-30 16:28:18,759 - INFO - Removed existing container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_cline-patched
+2026-10-30 16:28:18,797 - INFO - Container for scikit-learn__scikit-learn-10844 created: 8efe86b83b81f8e1c72ef642b8ae3979cb25fc506d1dd5a1b4ffd6cf17b8dd83
+2026-10-30 16:28:19,530 - INFO - Container for scikit-learn__scikit-learn-10844 started: 8efe86b83b81f8e1c72ef642b8ae3979cb25fc506d1dd5a1b4ffd6cf17b8dd83
+2026-10-30 16:28:19,531 - INFO - Intermediate patch for scikit-learn__scikit-learn-10844 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-10844/patch.diff, now applying to container...
+2026-10-30 16:28:19,700 - INFO - >>>>> Applied Patch:
+Checking patch sklearn/metrics/cluster/supervised.py...
+Checking patch sklearn/metrics/cluster/tests/test_supervised.py...
+Applied patch sklearn/metrics/cluster/supervised.py cleanly.
+Applied patch sklearn/metrics/cluster/tests/test_supervised.py cleanly.
+
+2026-10-30 16:28:19,999 - INFO - Git diff before:
+diff --git a/sklearn/metrics/cluster/supervised.py b/sklearn/metrics/cluster/supervised.py
+index a987778ae..9bcca75a2 100644
+--- a/sklearn/metrics/cluster/supervised.py
++++ b/sklearn/metrics/cluster/supervised.py
+@@ -856,7 +856,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
+     tk = np.dot(c.data, c.data) - n_samples
+     pk = np.sum(np.asarray(c.sum(axis=0)).ravel() ** 2) - n_samples
+     qk = np.sum(np.asarray(c.sum(axis=1)).ravel() ** 2) - n_samples
+-    return tk / np.sqrt(pk * qk) if tk != 0. else 0.
++    return np.sqrt(tk / pk) * np.sqrt(tk / qk) if tk != 0. else 0.
+ 
+ 
+ def entropy(labels):
+diff --git a/sklearn/metrics/cluster/tests/test_supervised.py b/sklearn/metrics/cluster/tests/test_supervised.py
+index 8da03d1e1..f6190fd67 100644
+--- a/sklearn/metrics/cluster/tests/test_supervised.py
++++ b/sklearn/metrics/cluster/tests/test_supervised.py
+@@ -253,6 +253,17 @@ def test_fowlkes_mallows_score():
+     assert_almost_equal(worst_score, 0.)
+ 
+ 
++def test_fowlkes_mallows_score_overflow():
++    # Test that fowlkes_mallows_score does not overflow when pk * qk
++    # exceeds the int32 limit.
++    # See https://github.com/scikit-learn/scikit-learn/issues/8696
++    n_samples = 70000
++    labels_true = np.zeros(n_samples, dtype=int)
++    labels_pred = np.zeros(n_samples, dtype=int)
++    score = fowlkes_mallows_score(labels_true, labels_pred)
++    assert_almost_equal(score, 1.0)
++
++
+ def test_fowlkes_mallows_score_properties():
+     # handcrafted example
+     labels_a = np.array([0, 0, 0, 1, 1, 2])
+2026-10-30 16:28:20,000 - INFO - Eval script for scikit-learn__scikit-learn-10844 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-10844/eval.sh; copying to container...
+2026-10-30 16:28:24,005 - INFO - Test runtime: 3.93 seconds
+2026-10-30 16:28:24,006 - INFO - Test output for scikit-learn__scikit-learn-10844 written to logs/run_evaluation/verified_full_cline-patched/cline-kimi-k2.6-cloud/scikit-learn__scikit-learn-10844/test_output.txt
+2026-10-30 16:28:24,071 - INFO - Git diff after:
+diff --git a/sklearn/metrics/cluster/supervised.py b/sklearn/metrics/cluster/supervised.py
+index a987778ae..9bcca75a2 100644
+--- a/sklearn/metrics/cluster/supervised.py
++++ b/sklearn/metrics/cluster/supervised.py
+@@ -856,7 +856,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
+     tk = np.dot(c.data, c.data) - n_samples
+     pk = np.sum(np.asarray(c.sum(axis=0)).ravel() ** 2) - n_samples
+     qk = np.sum(np.asarray(c.sum(axis=1)).ravel() ** 2) - n_samples
+-    return tk / np.sqrt(pk * qk) if tk != 0. else 0.
++    return np.sqrt(tk / pk) * np.sqrt(tk / qk) if tk != 0. else 0.
+ 
+ 
+ def entropy(labels):
+2026-10-30 16:28:24,071 - INFO - Git diff changed after running eval script
+2026-10-30 16:28:24,072 - INFO - Grading answer for scikit-learn__scikit-learn-10844...
+2026-10-30 16:28:24,074 - INFO - report: {'scikit-learn__scikit-learn-10844': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': True, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': ['sklearn/metrics/cluster/tests/test_supervised.py::test_int_overflow_mutual_info_fowlkes_mallows_score'], 'failure': []}, 'PASS_TO_PASS': {'success': ['sklearn/metrics/cluster/tests/test_supervised.py::test_error_messages_on_wrong_input', 'sklearn/metrics/cluster/tests/test_supervised.py::test_perfect_matches', 'sklearn/metrics/cluster/tests/test_supervised.py::test_homogeneous_but_not_complete_labeling', 'sklearn/metrics/cluster/tests/test_supervised.py::test_complete_but_not_homogeneous_labeling', 'sklearn/metrics/cluster/tests/test_supervised.py::test_not_complete_and_not_homogeneous_labeling', 'sklearn/metrics/cluster/tests/test_supervised.py::test_non_consicutive_labels', 'sklearn/metrics/cluster/tests/test_supervised.py::test_adjustment_for_chance', 'sklearn/metrics/cluster/tests/test_supervised.py::test_adjusted_mutual_info_score', 'sklearn/metrics/cluster/tests/test_supervised.py::test_expected_mutual_info_overflow', 'sklearn/metrics/cluster/tests/test_supervised.py::test_entropy', 'sklearn/metrics/cluster/tests/test_supervised.py::test_contingency_matrix', 'sklearn/metrics/cluster/tests/test_supervised.py::test_contingency_matrix_sparse', 'sklearn/metrics/cluster/tests/test_supervised.py::test_exactly_zero_info_score', 'sklearn/metrics/cluster/tests/test_supervised.py::test_v_measure_and_mutual_information', 'sklearn/metrics/cluster/tests/test_supervised.py::test_fowlkes_mallows_score', 'sklearn/metrics/cluster/tests/test_supervised.py::test_fowlkes_mallows_score_properties'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for scikit-learn__scikit-learn-10844: resolved: True
+2026-10-30 16:28:24,075 - INFO - Attempting to stop container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_cline-patched...
+2026-10-30 16:28:41,533 - INFO - Container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_cline-patched stopped successfully.
+2026-10-30 16:28:41,534 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_cline-patched...
+2026-10-30 16:28:41,572 - INFO - Container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_cline-patched removed successfully.
+45d6807f6a19f255cff0cd0023fc0d813cf33a0f1326c603829735: No such container: 0e351517aa45d6807f6a19f255cff0cd0023fc0d813cf33a0f1326c603829735
+
+2026-10-30 16:28:18,827 - INFO - Attempting to remove container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_cline-patched...
+2026-10-30 16:28:18,887 - INFO - Container sweb.eval.scikit-learn__scikit-learn-10844.verified_full_cline-patched removed successfully.

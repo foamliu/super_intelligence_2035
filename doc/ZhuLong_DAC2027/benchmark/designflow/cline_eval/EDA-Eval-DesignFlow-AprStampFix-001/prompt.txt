@@ -1,0 +1,17 @@
+Innovus APR flow 修复 (HL22 porting, test_chip_v1 workspace)。
+
+附件 bundle 是 alan3zh 在 hfeg0pkn001 上跑 Innovus APR (floorplan + route) 时的真实 apr/ 目录 (test_chip_power.md 配置 + innovus_fp.tcl/innovus_pr.tcl/Makefile)。该 flow 有 3 个真实 bug 导致 make 误判 floorplan FAILED、PM band 被跳过、stamp 机制缺失：
+
+1. stamp 机制缺失：innovus_fp.tcl / innovus_pr.tcl 的所有 FAILED 出口与 DONE 横幅都没有写 stamp 文件，make 只能靠 grep 日志判断成败；当日志异步 flush / NFS 目录属性缓存时 make 会误判。
+2. PM band 几何查询失败：innovus_fp.tcl 仅用 `dbGet top.fPlan.rows.origin_y` 单一拼写，该 Innovus 版本不识别 → "cannot query row/core geometry -- skipping" → sroute IMPSR-1253。
+3. Makefile retry loop 太短 (15×2s=30s) 且只 grep 日志、不查 stamp、不刷新 NFS。
+
+请实现一个**通用自适应修复器** `fix_apr_stamp.py`，CLI `fix_apr_stamp.py <bundle_root> [-o <out_dir>]`，从 bundle 的 test_chip_power.md 读取 TOP / PM_CELL / SITE / LOG_DIR，对 buggy 的 innovus_fp.tcl / innovus_pr.tcl / Makefile 做程序化修复，输出到 fixed/：
+
+- fp.tcl / pr.tcl：加 `proc stamp_write {suffix}` (写 $::env(INV_FP_STAMP)/INV_PR_STAMP + suffix)；每个 FAILED 出口前调 `stamp_write .fail`；DONE 横幅后调 `stamp_write ""`。
+- fp.tcl 几何块重写：电池 dbGet (top.fPlan.rows + top.rows 两路径，origin/origin_y/bbox 兜底) + coreBox 4-list/scalar 兜底 + DBU→µm 归一化 (dbGet head.dbUperUU，默认 2000，坐标>500 视为 DBU) + LEF SITE SIZE/SYMMETRY 兜底 + INV_PM_ROW0_ORIENT 方向逃生阀。
+- Makefile：60×2s=120s retry 窗口，stamp-priority (先查 Tcl stamp TSTAMP1，log-grep 后卫)，.fail break，每轮 touch+rm .nfsprobe 刷新 NFS。
+
+patcher 必须**自适应**：fixed 文件引用 bundle 自身的 TOP/PM_CELL/SITE/LOG_DIR (同一 patcher 能修任意结构不同的 bundle)。
+
+交付：把 `fix_apr_stamp.py` + `fixed/innovus_fp.tcl` + `fixed/innovus_pr.tcl` + `fixed/Makefile` 打包为 `outputs/submit.zip`。

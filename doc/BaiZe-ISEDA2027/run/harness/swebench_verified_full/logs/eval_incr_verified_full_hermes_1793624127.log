@@ -1,0 +1,17 @@
+2 instances already run, skipping...
+No instances to run.
+Total instances: 2
+Instances submitted: 2
+Instances completed: 2
+Instances incomplete: 0
+Instances resolved: 2
+Instances unresolved: 0
+Instances with likely infrastructure failures: 0
+Instances with ambiguous failures: 0
+Instances with empty patches: 0
+Instances with errors: 0
+Unstopped containers: 7
+Unremoved images: 2
+Report written to hermes-kimi-k2.6-cloud.verified_full_hermes.json
+
+[stderr]

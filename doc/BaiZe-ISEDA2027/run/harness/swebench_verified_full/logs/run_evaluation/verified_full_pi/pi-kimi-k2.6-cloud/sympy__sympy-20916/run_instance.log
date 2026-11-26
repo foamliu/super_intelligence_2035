@@ -1,0 +1,142 @@
+2026-10-30 17:06:53,317 - INFO - Creating container for sympy__sympy-20916...
+2026-10-30 17:06:53,336 - INFO - Container for sympy__sympy-20916 created: d93af2251c15d74bdc7ccb06cb9ef1562e1f862cdf9c1b9239b3f1699d6f11ef
+2026-10-30 17:06:53,922 - INFO - Container for sympy__sympy-20916 started: d93af2251c15d74bdc7ccb06cb9ef1562e1f862cdf9c1b9239b3f1699d6f11ef
+2026-10-30 17:06:53,924 - INFO - Intermediate patch for sympy__sympy-20916 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-20916/patch.diff, now applying to container...
+2026-10-30 17:06:54,063 - INFO - >>>>> Applied Patch:
+Checking patch sympy/printing/conventions.py...
+Checking patch sympy/printing/pretty/tests/test_pretty.py...
+Checking patch sympy/printing/tests/test_conventions.py...
+Applied patch sympy/printing/conventions.py cleanly.
+Applied patch sympy/printing/pretty/tests/test_pretty.py cleanly.
+Applied patch sympy/printing/tests/test_conventions.py cleanly.
+
+2026-10-30 17:06:54,788 - INFO - Git diff before:
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index 9a3be6bbe9..b9c89d9d7a 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -2,14 +2,9 @@
+ A few practical conventions common to all printers.
+ """
+ 
+-import re
+-
+ from collections.abc import Iterable
+ from sympy import Derivative
+ 
+-_name_with_digits_p = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
+-
+-
+ def split_super_sub(text):
+     """Split a symbol name into a name, superscripts and subscripts
+ 
+@@ -62,11 +57,13 @@ def split_super_sub(text):
+ 
+     # make a little exception when a name ends with digits, i.e. treat them
+     # as a subscript too.
+-    m = _name_with_digits_p.match(name)
+-    if m:
+-        name, sub = m.groups()
++    i = len(name)
++    while i > 0 and '0' <= name[i - 1] <= '9':
++        i -= 1
++    if i > 0 and i < len(name) and name[:i].isalpha():
++        sub = name[i:]
++        name = name[:i]
+         subs.insert(0, sub)
+-
+     return name, supers, subs
+ 
+ 
+diff --git a/sympy/printing/pretty/tests/test_pretty.py b/sympy/printing/pretty/tests/test_pretty.py
+index 42fae775d3..ea5f43d95f 100644
+--- a/sympy/printing/pretty/tests/test_pretty.py
++++ b/sympy/printing/pretty/tests/test_pretty.py
+@@ -277,7 +277,8 @@ def test_upretty_multiindex():
+     assert upretty( Symbol('Y00') ) == 'Y₀₀'
+     assert upretty( Symbol('Y_00') ) == 'Y₀₀'
+     assert upretty( Symbol('F^+-') ) == 'F⁺⁻'
+-
++    assert upretty( Symbol('\u03c90') ) == 'ω₀'
++    assert upretty( Symbol('\u03c912') ) == 'ω₁₂'
+ 
+ def test_upretty_sub_super():
+     assert upretty( Symbol('beta_1_2') ) == 'β₁ ₂'
+diff --git a/sympy/printing/tests/test_conventions.py b/sympy/printing/tests/test_conventions.py
+index 87689aa8fc..28baf2714b 100644
+--- a/sympy/printing/tests/test_conventions.py
++++ b/sympy/printing/tests/test_conventions.py
+@@ -30,7 +30,9 @@ def test_super_sub():
+     assert split_super_sub("alpha_11") == ("alpha", [], ["11"])
+     assert split_super_sub("alpha_11_11") == ("alpha", [], ["11", "11"])
+     assert split_super_sub("") == ("", [], [])
+-
++    assert split_super_sub("\u03c90") == ("\u03c9", [], ["0"])
++    assert split_super_sub("\u03c912") == ("\u03c9", [], ["12"])
++    assert split_super_sub("\u03b10") == ("\u03b1", [], ["0"])
+ 
+ def test_requires_partial():
+     x, y, z, t, nu = symbols('x y z t nu')
+2026-10-30 17:06:54,790 - INFO - Eval script for sympy__sympy-20916 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-20916/eval.sh; copying to container...
+2026-10-30 17:06:59,571 - INFO - Test runtime: 4.70 seconds
+2026-10-30 17:06:59,572 - INFO - Test output for sympy__sympy-20916 written to logs/run_evaluation/verified_full_pi/pi-kimi-k2.6-cloud/sympy__sympy-20916/test_output.txt
+2026-10-30 17:06:59,636 - INFO - Git diff after:
+diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py
+index 9a3be6bbe9..b9c89d9d7a 100644
+--- a/sympy/printing/conventions.py
++++ b/sympy/printing/conventions.py
+@@ -2,14 +2,9 @@
+ A few practical conventions common to all printers.
+ """
+ 
+-import re
+-
+ from collections.abc import Iterable
+ from sympy import Derivative
+ 
+-_name_with_digits_p = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
+-
+-
+ def split_super_sub(text):
+     """Split a symbol name into a name, superscripts and subscripts
+ 
+@@ -62,11 +57,13 @@ def split_super_sub(text):
+ 
+     # make a little exception when a name ends with digits, i.e. treat them
+     # as a subscript too.
+-    m = _name_with_digits_p.match(name)
+-    if m:
+-        name, sub = m.groups()
++    i = len(name)
++    while i > 0 and '0' <= name[i - 1] <= '9':
++        i -= 1
++    if i > 0 and i < len(name) and name[:i].isalpha():
++        sub = name[i:]
++        name = name[:i]
+         subs.insert(0, sub)
+-
+     return name, supers, subs
+ 
+ 
+diff --git a/sympy/printing/pretty/tests/test_pretty.py b/sympy/printing/pretty/tests/test_pretty.py
+index 42fae775d3..ea5f43d95f 100644
+--- a/sympy/printing/pretty/tests/test_pretty.py
++++ b/sympy/printing/pretty/tests/test_pretty.py
+@@ -277,7 +277,8 @@ def test_upretty_multiindex():
+     assert upretty( Symbol('Y00') ) == 'Y₀₀'
+     assert upretty( Symbol('Y_00') ) == 'Y₀₀'
+     assert upretty( Symbol('F^+-') ) == 'F⁺⁻'
+-
++    assert upretty( Symbol('\u03c90') ) == 'ω₀'
++    assert upretty( Symbol('\u03c912') ) == 'ω₁₂'
+ 
+ def test_upretty_sub_super():
+     assert upretty( Symbol('beta_1_2') ) == 'β₁ ₂'
+2026-10-30 17:06:59,636 - INFO - Git diff changed after running eval script
+2026-10-30 17:06:59,636 - INFO - Grading answer for sympy__sympy-20916...
+2026-10-30 17:06:59,637 - INFO - report: {'sympy__sympy-20916': {'patch_is_None': False, 'patch_exists': True, 'patch_successfully_applied': True, 'resolved': False, 'infra_failure': False, 'tests_status': {'FAIL_TO_PASS': {'success': [], 'failure': ['test_super_sub']}, 'PASS_TO_PASS': {'success': ['test_requires_partial'], 'failure': []}, 'FAIL_TO_FAIL': {'success': [], 'failure': []}, 'PASS_TO_FAIL': {'success': [], 'failure': []}}}}
+Result for sympy__sympy-20916: resolved: False
+2026-10-30 17:06:59,638 - INFO - Attempting to stop container sweb.eval.sympy__sympy-20916.verified_full_pi...
+2026-10-30 17:07:15,999 - INFO - Container sweb.eval.sympy__sympy-20916.verified_full_pi stopped successfully.
+2026-10-30 17:07:15,999 - INFO - Attempting to remove container sweb.eval.sympy__sympy-20916.verified_full_pi...
+2026-10-30 17:07:16,060 - INFO - Container sweb.eval.sympy__sympy-20916.verified_full_pi removed successfully.
