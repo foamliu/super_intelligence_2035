@@ -1,0 +1,21 @@
+# deepread — 1793501977670_k1af0 (eric9zhu @ hfeg0pkn005, mc=147, physical_verify)
+
+- **trace**: 58 msgs, 2026-10-30; NEW user eric9zhu (no prior shard-C case). tools: 363 calibre + 79 schematic + 57 netlist + 8 virtuoso.
+- **domain**: physical_verify (Calibre LVS/ERC hierarchical diagnostic).
+- **用户意图（逐字原文，A 档候选）**:
+  - #0 「在以下目录有vref_mos_core这个cell的LVS结果，分析一下为什么会报了很多PATHCHK POWER && ! GROUND NOFLOAT的ERC 错误」
+  - #10 给出 debug workdir: `/proj/lacaa/TV1_FS_Virtuoso/workdir/eric9zhu/tmp/20261030_debug_ERC_GND/`
+  - #38 「具体的报错电路节点，能画个电路图嘛」
+  - #52 「不要示意体二极管，我就想看原始的电路TOPO结构示意图，和报ERC错的节点」
+  - #56 「为什么底层cell没有报错，到了顶层才报，LVS rule里面用的电源地设置是一样的」 ← 核心可验证问题（层级 PG 传播根因）
+- **assistant 工具链**: list_allowed_files → read `vref_mos_core.pathchk.erc` + `query_results` + `vref_mos_core.calibre.lvs/_lvs.cal_` + `vref_mos_core.calibre.lvs/vref_mos_core.*`(svdb netlist/spice layers) → search_codebase PATHCHK/NOFLOAT → 读多个 .calibre.lvs 子文件 (spice/netlist/layer) → search SUBCKT vref_mos_core / X527/X753/X773/X813/X797 (error instance ids) → run_commands → 继续读 svdb 文件。无 write_to_file（纯分析/诊断，未生成独立脚本 artifact）。
+- **真实输入文件（assets 候选，从 trace tool_result 提取）**:
+  - `vref_mos_core.pathchk.erc` — ERC PATHCHK 错误列表（POWER && !GROUND NOFLOAT 节点）
+  - `vref_mos_core.calibre.lvs/_lvs.cal_` — calibre LVS run log
+  - `vref_mos_core.calibre.lvs/vref_mos_core.*` — svdb spice/netlist/layer 文件（电路 TOPO + instance X527/X753/...）
+  - `query_results` — calibre query 输出
+  - 注：`/proj/lacaa/.../20261030_debug_ERC_GND/` 在 .75→hfeg0pkn005 ssh 下 ls 无输出（可能 tmp 已清理或 /proj 不在 hfeg0pkn005）；**真实文件内容须从 session messages 的 tool_result 中提取**（faithful，非合成）。
+- **可验证子任务（B-synthesized 候选）**: 写一个 Calibre LVS/ERC PATHCHK 诊断解析器 `erc_pathchk_diag.py`，CLI 读 `<erc_dir>`（含 .pathchk.erc + .calibre.lvs/ svdb），输出结构化 JSON：① PATHCHK POWER && !GROUND NOFLOAT 错误节点列表 ② 各错误节点的 instance id（X527/...）③ 顶层 vref_mos_core 的电路 TOPO（SUBCKT + instance net 连接）④ 底层 cell vs 顶层 cell 的 PG net 传播差异（为何底层不报、顶层报，同 PG 设置）⑤ 错误计数。check.py 断言：错误节点集合、instance id 集合、TOPO 等价、层级根因、计数、随机子集、交叉输入守卫等 ≥8 条。
+- **DISTINCT 检查**: vs r216 CalibreLvsRepDiag（LVS run-log SUMMARY 解析 + 版本切换）— 本案是 **ERC PATHCHK 错误节点 + 电路 TOPO + 层级 PG 传播根因**，互补不重叠。vs ERCFilter-001（ukkn7 e0031668，ERC filter）— 本案是 PATHCHK POWER/!GROUND NOFLOAT 特定错误类型 + 层级诊断，不同错误类型不同分析维度。vs r208 DrcUnusedVarClassify / r217 DrcExtendRuleValidator（DRC 规则/几何）— 本案是 LVS/ERC 侧。✓ DISTINCT。
+- **金标准**: trace 无单一干净 accepted artifact（用户最后问"为什么底层不报顶层报"，session 在诊断中结束，用户未明确接受最终交付）→ B-synthesized grounded on 真实 .pathchk.erc + svdb 文件内容（从 trace tool_result 提取）。
+- **状态**: 深读完成，合成未做（本轮预算耗尽）。**下一轮第一件事：合成 k1af0 case**。DEBT: 1 deepread 未合成。
