@@ -1,5 +1,25 @@
 # BAIZE_DESIGNFLOW_BENCH_TASK.md — 设计流 Benchmark 任务书（2026-10-30 重构版）
 
+> ## 🚀 2026-11-26 运维令 · 开始判分契约改造（check_static/check_live 拆分） · 最高优先（Lite-500 全绿后接续）
+>
+> **背景**：Lite-500 已 4 shard 全绿（507/507），zhulong 正在跑 3-run 验收。8670 服务已修复（16 worker 并发秒级），L2.live 实跑通路就绪。现在开始判分契约改造。
+>
+> **完整指南（每轮先读）**：`/nasdata/app.e0031982/code/EDA-Flow-Bench/reports/CONTRACT_REFORM_GUIDE.md`
+>
+> **三个优先级**：
+> - **P1（立即）**：修复 pilot 12 case 的 judge_layers 声明 + check_live（部分在 Lite-500 修复中丢失）。清单见指南 §2 表格。
+> - **P2（P1 完成后）**：扩展本 shard 真正调 EDA 的 case 到 L2.live（加 check_live + `judge_layers=["L0","L1","L2.live"]`）。
+> - **P3（与 P2 并行）**：mock case 声明 `judge_layers=["L0","L1"]`（不需要拆 check_static，框架已兼容旧式 check() 回退）。
+>
+> **改造手法**：非侵入包装（原 `check` → `_check_static_impl` 一字不动 + `check_static` 包 try/except 收口三元组 + `check_live(sess)` 新增 + `check` 兼容包装）。模板见指南 §3。
+>
+> **自验**：`SKIP_RUN=1 eval/run_one.sh <task_id> --shard <shard>` → PASS；P1/P2 case 再跑 `eval/run_one.sh <task_id> --shard <shard>` 验 L2.live 实跑 PASS。
+>
+> **心跳**：MEMORY 顶部一行 `CONTRACT: P1=<done>/<12> · P2=<n> L2.live · P3=<n>/<total> judge_layers`
+>
+> **优先级**：P1 > P2 > P3。造新题让位给 P1/P2，P3 可与造题并行。体积超限先归档已闭合的旧令（Lite-500 令已完成，可搬 ARCHIVE）。
+
+
 
 > ## 🥇 2026-11-24 22:0x 用户令 · 4 shard 优先修 Lite 集（500） · 最高优先（排期覆盖造题/扩池/治理）
 >
