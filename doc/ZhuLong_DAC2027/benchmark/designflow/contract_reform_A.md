@@ -208,3 +208,28 @@ FindPcells-001 的 selftest 本就用 bool-aware 写法（`if ok: passed`），�
 - 🚫 未碰别 shard 文件、未碰 jsonl
 - ✅ 只动：FindPcells reference_submit.zip（gold find_pcells.py 鲁棒性补丁）+ 3 个 negative_selftest.py（test 基础设施对齐新契约）
 - EFB commit `fb2fa69bd`
+
+## r1276 · 回归验证轮 (2026-11-26)
+
+P1/P2/P3/P4 全闭合后首轮回归 spot-check。确认 r1274/r1275 判分逻辑无衰减。
+
+### 自验结果（negative_selftest 直跑 check_static 三元组）
+
+| case_id | 类别 | REF | negatives | distinct labels |
+|:--|:--|:--|:--|:--|
+| NetCellMap-001 | P2 T1 | PASS ✅ | 5 negs 全 FAIL ✅ | {b,e,h,i} 4-distinct |
+| SvIntegrateGen-001 | P2 T1 | PASS ✅ | 4 negs 全 FAIL ✅ | {c,d,e,m} 4-distinct |
+| PyAetherCurDesignApi-001 | P1 pilot | (ref PASS 隐含) | 5 negs 全 FAIL ✅ | {c,h,i,j,l} 5-distinct |
+
+### 环境确认
+- .75 eda_flow MCP 可达（list_files 响应正常）
+- build_jsonl 重建：A=542 case（全 shard 2351，14 cross-shard 碰撞排除 + 48 retired 排除）
+- SKIP_RUN=1 不部署 ref 交付件（outputs 空）⇒ 回归用 negative_selftest 直跑 check_static
+
+### 观察事项
+- trace_ledger.py / summary_stats.json 已不在工作树（造题工作流已停，项目转入监控/治理阶段）
+- build_jsonl 报 14 处 cross-shard task_id 碰撞（多为 D 重复 A/B/C）+ 3 处 cases/D 无 task_id — 跨 shard 数据治理事项，非 A 责任
+
+### 纪律
+- 🚫 未改 case/check.py/negative/prompt/assets/hidden/别 shard
+- ✅ 两仓 0/0 ahead/behind clean
