@@ -22,7 +22,7 @@
 
 ## 心跳
 
-`CONTRACT: P1=1/1 done · P2=5 L2.live (TrMatchHelper-001 + FullAdderSchemBuild-001 + OpenDmViewsProduce-001 + AeDelCellCurCellProduce-001 + SelFigReport-001 done) · P3=497/608 judge_layers`
+`CONTRACT: P1=1/1 done · P2=6 L2.live 全闭合 (TrMatchHelper-001 + FullAdderSchemBuild-001 + OpenDmViewsProduce-001 + AeDelCellCurCellProduce-001 + SelFigReport-001 + IOBufTune-001 done) · P3=497/608 judge_layers`
 
 ## r1446 交付：P2 第 5 条 check_live（SelFigReport-001）
 
@@ -162,20 +162,68 @@
 - **case JSON**：metadata.judge_layers=[L0,L1,L2.live] + test 同步（24630 chars）+
   check_sha256/check_size 更新；reference_submit.zip 已存在不动。
 
+## r1448 交付：P2 收尾第 6 条 check_live（IOBufTune-001）— D shard P2 全闭合
+
+- **候选选择**：P4 实跑适合性分析（r1447）确认 D shard lite-128 中真需 L2.live 的 T1
+  仅 4 条，3 条已 done（SkillToAether / AeDelCellCurCellProduce / SelFigReport），**唯一
+  余项 = IOBufTune-001**（当前 check_static 用 `hspice_mock`：reference/hspice_mock/hspice
+  是 python Shichman-Hodges transient mock，prepend PATH，候选与 grader 的 _rerun_hspice
+  均命中 mock 非 real hspice；jl 未声明）。本轮实现 check_live 把判分从 mock 升级到
+  .75 real PrimeSim HSPICE，闭合 D shard P2。
+- **.75 实跑通路核验**（probe）：`which hspice` = `/apps/synopsys/SRB/hspice_V-2023.12-SP1-1/
+  hspice/linux64/hspice`，单 deck `.tran 0.02n 10n` 0.1s/run，license checkout OK
+  （`lic: Release primesim token(s)`）。real `.mt0` 格式：
+  `$DATA1 SOURCE='PrimeSim HSPICE' ...` + `.TITLE` + 头 `data_h data_l temper alter#`
+  + 数据行——候选的 `run_hspice` 解析器（hdr 含 data_h+data_l → 首行首字符数字/-）兼容。
+- **关键发现（probe bug 排查）**：首次 probe 用相对 `--outdir out_B`，候选 `run_hspice`
+  设 `cwd=run_dir` 但传相对 sp/lis 路径 → hspice cwd 错位找不到 .sp → 全 40 trial meas=None
+  → satisfied=false。根因是候选的路径逻辑依赖绝对 outdir（check.py 的 `_run_candidate`
+  用 `tempfile.mkdtemp` 绝对路径，故历史 mock 路径一直正常）。check_live 改用**绝对
+  outdir**（`wd + "/live/out_B"`）即正常：B trial5(LR56=125.97) data_h=1.1996≥1.188 /
+  data_l=2.32e-4≤0.001；B2 trial2(LR56=178.6) data_h=0.9991≥0.95 / data_l=3.17e-4≤0.0005；
+  B vs B2 distinct=True。
+- **非侵入包装**：`_check_static_impl` = 原 check 函数体逐字保留（原 raise-on-fail +
+  return True，无 teeth bug）；`check_static` 三元组包装；`check_live` 新增；`check`
+  兼容包装；`__main__` 改用 check_static 三元组（保持 rc=1/FAIL 给 negative_selftest）。
+  check_static 仍用 `hspice_mock`（eval host 无 real hspice），行为不变。
+- **check_live 策略** = real-hspice rerun（无 mock）：upload submit.zip + hidden spec_B/B2
+  （框架已 upload_text 到 wd root）→ unzip + py_compile + 验 real hspice present →
+  anti-hardcode-A（源码无 A 字面量）→ 候选用 **real hspice** 跑 B（绝对 outdir）→
+  读 tuned_params 验 satisfied=True + 5 参数在 B 范围 → `_live_rerun` 上传 `live_rerun.py`
+  helper（纯 ASCII，镜像 _rerun_hspice+_parse_mt0）用 real hspice 重跑 tuned params →
+  断言 data_h≥0.99*VDDQ_B / data_l≤0.001 → 同样跑 B2 + real rerun 断言 data_h≥0.95*VDDQ_B2
+  / data_l≤0.0005 → B vs B2 distinct。
+- **L2.live 价值/teeth**：mock 是 level-1 Shichman-Hodges 的 python 近似（LAMBDA=0.05，
+  forward-Euler），real 是工业 PrimeSim HSPICE。check_live 让候选在 real hspice 下搜索
+  参数并 real rerun 确认，凡过拟合 mock 数值怪癖（LAMBDA/积分误差）的候选在 real 下
+  data_h/data_l 不达标 → FAIL。B2 cross-input guard + real rerun 同时打掉 hardcode-A
+  （A 的 WP1=3.0 在 B2 range [0.8,2.5] 外）。
+- **自验**（全 PASS）：check_static REF PASS（L0+L1 16 条件 a-p，mock）；negative_selftest
+  6 neg ALL FAIL（empty/print_expected/core_deleted/naive_stub/no_target_check/hardcode_a
+  走 check() compat 全 FAIL，NEG_RC=0 CRASH_RC=0）；check_live(ref) via EDASession 框架
+  完整路径 PASS（L0+L1+L2.live all PASS，infra_fail=0）；check_live(6 neg) 直接调 ALL FAIL
+  （hardcode_a=A-literals / naive_stub+print_expected=B live data_h=1.1779<1.188 /
+  no_target_check=B live data_h=1.0603<1.188 / empty=tuned_params unparseable /
+  ref_core_deleted=A-literals 12345）。pure ASCII 探针代码。
+- **case JSON**：metadata.judge_layers=[L0,L1,L2.live] + test 同步（24939 chars ==
+  check.py 字节一致）commit `0d240e9e4` 已 push master；check.py（含 check_static/
+  check_live/compat）由 shard B 的 broad `git add` commit `a68b3b6da` 一并入库（边界
+  注记见下，内容正确未回退）。
+- **边界注记**：shard B commit `a68b3b6da`（2026-11-26 12:00:09）broad `git add` 把
+  D shard 的 IOBufTune-001/check.py（+225 行 = 我的 check_live 实现）连同 A 的
+  NetCellMap-001/check.py 等多 shard 文件一并提交——B 越界 + broad add 违纪。但 D 的
+  check.py 内容正确（我的实现逐字），未回退；D 只单独 commit 自己的 case JSON
+  （0d240e9e4）。已在 discuss/D.md 留观察项。
+
 ## 下一轮计划
 
-1. P2 api 子类 13 条中已核验：5 条真调 pyAether 已完成 check_live（TrMatchHelper /
-   FullAdderSchemBuild / OpenDmViewsProduce / AeDelCellCurCellProduce / SelFigReport）；
-   **余 8 条（WtmWriteCheckReviewQA / AutoPR / DirectivePairAudit / ExprLogicCheck /
-   FindCir4CrossProbe / LvsConnDiagnose / McpSseApiDocParseProduce / VerdictJoinPassLib）
-   经 r1446 逐题核验 reference_solution 均无真实 pyAether 调用——指标来自 check.py
-   注释/docstring 关键字误命中，应归 P3（mock），不再做 check_live**。⇒ **P2 api 子类
-   已穷尽，D shard P2 实质闭合**（剩余真 EDA 候选须从 sim-keyword 97 条逐题深读发掘，
-   多为 netlist 文本/注释假阳性，工作量大收益低，转 P4 适合性分析主导）。
-2. P3：把上述 8 条假阳性 api 候选 + sim-keyword 子类中确属 mock 的 case 批量补声明
+1. **D shard P2 实质闭合**（r1448）：P4 T1=4/4 全 done（SkillToAether /
+   AeDelCellCurCellProduce / SelFigReport / IOBufTune），P2 api 子类既已穷尽（r1446），
+   sim-keyword 97 条经 P4 复核均为 mock 假阳性。**D shard P2 收口**。
+2. P3：把 8 条假阳性 api 候选 + sim-keyword 子类中确属 mock 的 case 批量补声明
    `judge_layers=["L0","L1"]`（需逐题读 check.py 区分 netlist-text 假阳性 vs 真二进制调用）。
-3. 造新题让位给 P2（运维令：P1>P2>P3）。P2 api 子类既已穷尽，下一轮转 P3 批量声明 +
-   P4 实跑适合性分析。
+   当前 497/608，余 110 待分类。
+3. 造新题让位给 P2（运维令：P1>P2>P3）。P2 既已全闭合，下一轮转 P3 批量声明 + 造题恢复。
 
 ## P2 api 子类 13 条（强候选 · r1446 核验后）
 
