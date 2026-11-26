@@ -674,8 +674,12 @@ r1302 把桩体分两类（GT-replay vs syntax-validator）。本轮发现**第�
 | r1306 | PVTalterChar-001 | hspice-mock GT-replay | DONE |
 | r1308 | SramSNM-001 | hspice-mock GT-replay | DONE |
 | r1310 | InvPVTchar-001 | hspice-mock GT-replay | DONE |
+| r1311 | PFDdeadZone-001 | hspice-mock GT-replay | DONE |
+| r1312 | CtleAcChar-001 | hspice-mock GT-replay | DONE |
+| r1313 | DelayChainEdgeMeas-001 | hspice-mock GT-replay | DONE |
+| r1314 | OpampACSpec-001 | hspice-mock GT-replay | DONE |
 
-L2.live done 12→13；REQ 未改造 33-13=20 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
+L2.live done 16→17；REQ 未改造 33-17=16 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
 
 ### r1305：VcoKvcoChar-001（hspice-mock GT-replay-by-signature · 第9条）
 
@@ -770,3 +774,17 @@ L2.live done 12→13；REQ 未改造 33-13=20 条（hspice-mock/finesim-mock GT-
 - 🚫 execute Code Mode `write_file({content: <json-looking str>})`：JSON-look-alike 串被强制 parse 成 dict → pydantic input_type=dict。
 - 🚫 execute `code` 参数粘贴大 base64 串：抵达 MCP 前已被单字符替换 → `write_file(content_base64=...)` 收到错串 → 解码腐蚀。
 - ✅ 下轮 self-verify 正确通道：本地 Python 脚本 `from eda_flow_judge import EDASession` → `sess.upload_text(name, content)`（直接读本地文件 bytes encode，已验证 base64 往返一致）；或直接 `eval/run_one.sh InvPVTchar-001 --shard B`（框架用 EDASession.upload_text）。
+
+### r1314：OpampACSpec-001（hspice-mock GT-replay-by-signature · 第17条）
+
+**Q2 实证（r1314）**：cheat `cheat_dead_wl.py` 复制 ref `gen_opamp_ac_char.py`，在 `characterize` 把 DUT netlist 复制到 tempdir 时 `_deadify_netlist` 将所有 MOS instance 行的 `w=<num><unit>` 覆写为 `w=1e-21u`（电死），保留 `.model nmos vto=0.45` / `.param ib=` 签名行不变 → 桩 `_HSPICE_MOCK_SRC` 的 `_detect` 按 `.model nmos vto=` 签名（A=0.50/B=0.45）回放 .75-captured GT .meas → `_check_static_impl` **14/14 PASS 假阳**（mock 按 vto 签名回放 GT gain_dc/gbw/pm/f3db/gm，**不校验晶体管 W/L 物理**）。真 hspice V-2023.12-SP1-1 @ hfhds201：w=1e-21u 晶体管无增益 → vdb(out) 深负永不越 0 → `.meas gbw when vdb(out)=0` / `.meas pm find vp(out) when vdb(out)=0` / `.meas gm find vdb(out) when vp(out)=0` 全 failed → gbw/pm/f3db/gm=None，gain_dc=-195.88 → conds e/f/g/h/i/j FAIL。
+
+**Q1 保真**：.75 真跑 ref（honest deck）→ B gain_dc=24.1997 / gbw=3641900.0 / phase=-95.4953 / pm=84.5047 / f3db=223077.7 / gm=18.6523 —— **== mock `_MOCK["B"]` 逐位一致**（byte-exact，r1314 REF check_live PASS 复验）。
+
+**改造**：非侵入包装（`_check_static_impl` 14 conds a-n 一字不动 + `check_static` try/except 3-tuple parse a-n tag + `check_live(sess)` .75 真跑 hspice rerun candidate `gen_opamp_ac_char.py` on hidden B AND visible A AND determinism re-run，读 real `report.json`，复断 conds d-n 同阈值 d-method==hspice_run+n_runs==1 / e-gain_dc±0.5dB / f-gbw±5% / g-phase±2deg / h-pm±2deg / i-f3db±10% / j-gm±1dB / k-spec_check{l:F,pm:T,gbw:T} / l-verdict==fail / m-A-cross-input==GT_A±0.5+pass+A!=B / n-determinism-gbw-1e-6，only-add never relax）+ live-neg `cheat_dead_wl.py`（dead-W netlist，static-pass 14/14 via mock / live-fail cond e/f/g/h/i/j/k/m/n real hspice gain_dc=-195.88 gbw=None）+ `negative_selftest.py` 重写（STATIC 5 negs distinct{c,d,e,k,m}=5-distinct + §4.9 trio distinct{empty:c,print:m,core:d} + LIVE_NEG via EDASession）+ `judge_layers=[L0,L1,L2.live]` + JSON `test` 字段 sha `5bad67d6875b` 3-way sync（disk==JSON）。
+
+**§5 全绿**：① REF check_live PASS（real hspice B gain=24.1997 gbw=3641900.0 == mock GT Q1 fidelity）；② 5 static neg FAIL distinct{c,d,e,k,m} + §4.9 trio distinct + live-neg FAIL cond e/f/g/h/i/j/k/m/n；③ determinism（REF check_live 含 cond n B-rerun gbw identical 1e-6）；④ SKIP_RUN deploy workdir clean（无 check.py/reference/hidden 泄漏）；⑤ sha `5bad67d6875b` 3-way sync（JSON test / 磁盘 check.py）；⑥ 断言条数只增不减（check_live 复断 d-n 同阈值，不放宽）；⑦ L5 hidden-B uploaded to sess not in SUT sandbox，check_live 不读 reference/。
+
+**登记**：`live_eval_changes.tsv` +1 行（ts=2026-11-27T07:10+08:00, repo_commit=pending）。
+
+**.75 通路 OK**（r1314 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session liveREF/liveCHEAT 用后 close）。自验通道：本地 Python `from eda_flow_judge import EDASession` → `sess.upload_text` 上传 candidate+B/A 资产，REF live PASS + CHEAT live FAIL 一次过。
