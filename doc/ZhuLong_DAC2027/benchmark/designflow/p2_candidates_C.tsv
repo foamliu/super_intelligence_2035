@@ -1,0 +1,41 @@
+task_id	classification	ref_ae_attrs	missing_in_real_pyaether	note
+# P2 candidate validation for shard C (r1208, 2026-11-26)
+# Scan: no-live pyAether-mention check.py; classify by whether ref solve's ae.* attrs
+# all exist in real pyAether on .75 (probed via eda_flow run_code pyAether).
+# 11 attrs MISSING in real pyAether (mock-only): aeAttachTech aeAutoPlacementFromDesign
+#   aeConnect aeExportNetlist aeGetInstByName dbCellViewExist dbCreatePin dbCrtLib
+#   getCellView pycClose pycErrorDialog
+# TRUE = ref solve uses only real pyAether top-level attrs -> strategy-1 check_live feasible
+# FALSE = ref solve uses mock-only attrs -> strategy-1 would FAIL ref (ref written for mock surface)
+# PURE = no ae.* calls in ref solve (pure-python candidate, no pyAether script)
+AdjViaSelect-001	TRUE	aeGetCurDesign;aeGetSelectedSet;aeSelectFigs;aeSetBindKey;dbGetOverlaps;dbGetViaLayer		CONVERTED r1208 (check_live strategy-1 + judge_layers=[L0,L1,L2.live])
+AeDelCellCurCellProduce-001	TRUE	aeDelCell;emyInitAether;mdeGetCurrentLibCellView		
+AetherHiliteCmd-001	TRUE	SleAeSocketRequestCallback;aeAddHighLightObj;aeClearHighLight;aeCloseCmdProcessByPort;aeGetCurDesign;aeGetInstHier;aeRunCmdWithSocket;aeSelectObject;aeSetCmdPort;emyString;leGuiReturnOneLevel;sleGuiDescendEdit;sleGuiReturnToTop		
+AetherStandaloneInstList-001	TRUE	emyDesign;emyInitAether;emyNativeNS;emyScalarName		retDict=True (check returns dict; wrap needs passed==total handling)
+AnalogCmpSchemBuild-001	TRUE	aeDesignIsEditable;aeGetCurDesign;aeOpenDesign;aeSaveDesign;dbCreateInst;dbCrtNet;dbCrtTerm;dbOpenCVByType;emyInitAether;emyString		
+AutoCellRmAvPf-001	TRUE	aeOpenDesign;dbDelete;dbSaveCV;emyGetAllInstHeaders;emyInitAether;emyInitDb		retDict=True
+AutoPlacementStep3-001	FALSE	aeAutoPlacementFromDesign	aeAutoPlacementFromDesign	ref uses mock-only API
+CstViewPrecheck-001	TRUE	dbCVExist;dbDelCV		
+DecoderSchemGen-001	TRUE	aeCreateWire;aeGetCurDesign;dbCrtInst;dbCrtSchWireName;emyDesignSave		
+DecqaRwaBusCount-001	TRUE	aeGetCurDesign;emyCdbaNS;openDesign		
+GgFlowReport-001	PURE			no ae.* calls in ref solve
+InvSchemBuild-001	FALSE	aeConnect;aeExportNetlist	aeConnect;aeExportNetlist	ref uses mock-only API
+LayoutHierScrapeDiag-001	FALSE	aeGetCurDesign;aeError;aeMessage;dbCellViewExist;getCellView	dbCellViewExist;getCellView	ref uses mock-only API
+ListInstCV-001	TRUE	dbOpenCVByType;emyCdbaNS;emyInitAether;emyString		CONVERTED r1209 (check_live strategy-1 + judge_layers=[L0,L1,L2.live])
+NicapBlockCreatePlanner-001	TRUE	dbCVExist;dbCloseCV;dbCrtInst;dbCrtSchWire;dbNewCellView;dbOpenCV;emyDesignSave;emyInitAether;emyPointF		
+PinNetWiringAether-001	FALSE	aeGetInstByName	aeGetInstByName	ref uses mock-only API
+PtuGuiRecomputeProduce-001	FALSE	pycClose;pycErrorDialog	pycClose;pycErrorDialog	ref uses mock-only API (GUI dialog consts)
+PyAetherBridgeDiagClassifier-001	PURE			no ae.* calls in ref solve
+PyaetherScreenshotVerifyQA-001	TRUE	aeCapture;aeOpenDesign;emyInitAether		
+QaLibCellBuild-001	FALSE	aeAttachTech;dbCrtLib	aeAttachTech;dbCrtLib	ref uses mock-only API
+RnodeScatterScript-001	TRUE	aeBaseAppFormCallBack;aeCreateAppForm;aeCreateFormButton;aeCreateStringField;aeDisplayForm;aeGetCurDesign;aeMessage;aeSetCallbackStatus;aeToggleCallBack;dbCVExist;dbCloseCV;dbCrtInst;dbCrtLabel;dbCrtRect3X;dbGetTrueOverlapsEx;dbNewCellView;dbSaveCV;dmGetObj;emyInitAether;emyPointF;load		
+SchPinAddProduce-001	TRUE	dbCreateSchPinEx;dbOpenCV		
+SchematicPinAdd-001	TRUE	dbCheckAndSaveDesign;dbCreateSchPinEx;dbFindTermByName;dbOpenCVByType;emyPointF		
+SelFigReport-001	TRUE	aeGetCurDesign		
+StdCellFromNetlistProduce-001	FALSE	dbCreatePin	dbCreatePin	ref uses mock-only API
+TopCellNameProduce-001	TRUE	aeGetCurDesign;emyInitAether		retDict=True (check returns dict passed/total; wrap needs passed==total handling)
+ViaOptimGds-001	TRUE	aeCreateRect;dbCreateLib;dbCrtRect;dbDetachFig;dbGdsIn;dbGdsOut;dbOpenCV;emyInitAether;getBBox		retDict=True
+WheelZoom-001	TRUE	aeZoomInAtMouse;aeZoomOutAtMouse;guScroll		
+# SUMMARY: 19 TRUE (2 converted: AdjViaSelect r1208 + ListInstCV r1209), 7 FALSE, 3 PURE. 29 total no-live pyAether-mention.
+# 4 TRUE cases retDict=True need special wrap (passed==total -> pass) before conversion.
+# Next P2 round: convert next TRUE candidate (prefer non-dict: SelFigReport-001 / CstViewPrecheck-001 / DecqaRwaBusCount-001).
