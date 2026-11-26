@@ -271,25 +271,25 @@ r1290 仅识别 CTLESpec-001（finesim-mock）。本轮全量复核再发现 5 �
 AOI21ArcChar-001（r1290）已实证：garbage-netlist+正确签名 → 13/13 PASS 假阳。此手法可推广到全部 Type A。
 
 **Type A 41 条清单**（按家族）：
-- hspice-mock: AOI21ArcChar(r1290实证), AlterDeckSplit, CmlPvtAcReport, CtleAcChar, DelayChainEdgeMeas, DelaySigma, DffSetupHoldChar, GmidLut, GrDecPwrVerifTb, InvPVTchar, InvTripDelay, OpampACSpec, OpampChar, PFDdeadZone, PVTalterChar, PlatMosThinIdsatIoffSweep, PorCapSweep, PwlStimTransform, SlicerFbTimeOpt, SpGen, SpiceSim, SpiceTbGen, SramSNM, StdLibCharTmpl, StimPWL, StrongarmFomSweep, TaperBufOpt, Tr0TrTfMeas, TxRonSize, Vcc2scActDeckGen, Vcc2scTranGen, VcoKvcoChar, VlshftParamOpt, VwlpRefDeckSet, CdlBulkSanitize(borderline), MinpulseRewriteRun(borderline)
+- hspice-mock: AOI21ArcChar(r1290实证), AlterDeckSplit, CmlPvtAcReport, CtleAcChar, DelayChainEdgeMeas, DelaySigma, DffSetupHoldChar, GmidLut, GrDecPwrVerifTb, InvPVTchar, InvTripDelay, OpampACSpec, OpampChar, PFDdeadZone, PVTalterChar, PlatMosThinIdsatIoffSweep, PorCapSweep, PwlStimTransform, SlicerFbTimeOpt, SpGen, SpiceSim, SpiceTbGen, SramSNM, StdLibCharTmpl, StimPWL, StrongarmFomSweep, TaperBufOpt, Tr0TrTfMeas, TxRonSize, Vcc2scActDeckGen, Vcc2scTranGen, VcoKvcoChar, VlshftParamOpt, VwlpRefDeckSet, CdlBulkSanitize(r1292实证确认 REQ)
 - finesim-mock: BistOscRccReorder, CTLEAC, FineSimModelScopeFix, FineSimNoRefCktFix, FineSimWorkflowRunner
 
-**borderline 注记（仍归 Type A · 保守）**：
-- CdlBulkSanitize-001：候选 sanitize provided CDL → sanitized_b.cdl 被 check.py 建 tb 仿真。mock 解析候选 CDL 结构（查 PMOS+NMOS+common-drain）+ 假设理想反相器（vin>vpwr/2→out=_MLOW else _MHIGH）。conds c-h 约束候选保留 d/g/s 顺序+.SUBCKT+bulk rail。候选可改 W/L（param token 不被 c-h 检）但静态反相器 high/low 对 W/L 不敏感 ⇒ 真hspice 亦出 ~0/~VPWR。lean Type B 但保守归 REQ，R2 改造时再做 empirical cheat 验证。
-- MinpulseRewriteRun-001：候选 rewrite `.inc` 路径 in provided deck → rewritten deck 被 mock 仿真。mock 解析 `.inc`+balanced parens+statement 结构。候选 authorship 有限（路径替换非电路设计）。lean Type B 但保守归 REQ。
+**borderline 注记（r1292 empirical cheat 验证完成）**：
+- CdlBulkSanitize-001：**REQ 实证确认（r1292）**。r1291 推测「静态反相器 high/low 对 W/L 不敏感 ⇒ 真 hspice 亦出 ~0/~VPWR」**被证伪**。cheat harness：正确 bulk(VPWR/VGND)+正确 d/g/s 顺序（过 conds c-h）+ W/L 篡改为 w=1e-21u l=1e3u（电死反相器）→ check.py **12/12 PASS 假阳**（mock 仅按 P+N mos 存在+d/g/s 回放 GT，忽略 W/L）。**真 hspice**：w=1e-21u 反相器无法翻转 → cond j(v_lo<0.15·VPWR) / k(v_hi>0.85·VPWR) **FAIL**。⇒ Type A 确认：候选 transform 的 CDL 成为 `.include` 仿真的网表，可注入垃圾 W/L 物理。r1291「lean Type B」误判已纠正。
+- MinpulseRewriteRun-001：**降级 REQ→OPT（r1292）**。cond l 对 mock **和**真 hspice **都是纯语法检查**（check.py docstring 明示：「cond l only inspects .lis for job concluded + absence of syntax/parse error tokens -- does NOT check any measurement value」）。physics-cheat：正确 replace + RC 篡改 r1=1e-21 c1=1e-21（语法合法）→ check.py **14/14 PASS**；**真 hspice 同样 PASS**（语法合法→concluded，不查测量值）。⇒ L2.live **不加任何物理断言** ⇒ 非 REQ。唯一 mock↔real 差距：真 hspice parser 比 mock regex 严（如 mock 接受 `r1 a b c 1k` 多节点电阻，真 hspice abort）→ 边际语法增益 ⇒ OPT。r1291「保守归 REQ」已纠正。
 - FineSimModelScopeFix/FineSimNoRefCktFix/FineSimWorkflowRunner-001：「fix」语义：候选改写 provided broken deck → fixed deck 被 mock 仿真。候选 author fixed deck content ⇒ 可注入 garbage physics（造对 fix 签名但网表错）⇒ Type A。
 
 ### 与 r1290 的差异
 
-| 项 | r1290 | r1291 | 依据 |
-|:--|:--|:--|:--|
-| REQ 合计 | 46 | **41** | 5 条 Type B 降 OPT（全量 run_candidate 传参复核） |
-| OPT 合计 | 2 | **7** | +NetlistLintHsp/PostsimToggleDiag/PostsimPortAudit/SimExpl/RcurrDirClassify |
-| Type A/B 区分 | AOI21(A实证)+CTLESpec(B分析) | 全量 46 条分类完成 | 逐条核 run_candidate 传参 + mock keying + cross-input guard |
+| 项 | r1290 | r1291 | r1292 | 依据 |
+|:--|:--|:--|:--|:--|
+| REQ 合计 | 46 | 41 | **40** | r1291 5 条 Type B 降 OPT；r1292 MinpulseRewriteRun borderline 实证降 OPT |
+| OPT 合计 | 2 | 7 | **8** | +MinpulseRewriteRun（cond l 纯语法，mock==real，无物理增益） |
+| Type A/B 区分 | AOI21(A实证)+CTLESpec(B分析) | 全量 46 条分类完成 | 2 borderline empirical 验证完成 | r1292: CdlBulkSanitize cheat 12/12 假阳→REQ 确认；MinpulseRewriteRun cheat 14/14 但 real 亦过→OPT |
 
 ### 待办（R2 前置 / 解冻后）
 
-- R2 改造 Type A 41 条（≤3/轮）：拆 check_static/check_live + judge_layers 加 L2.live + live-neg。
+- R2 改造 Type A 40 条（≤3/轮）：拆 check_static/check_live + judge_layers 加 L2.live + live-neg。
 - 优先序：hspice-mock 家族（GT 签名维度少 + 网表候选可控 = 最易被骗）→ finesim-mock 家族。
-- CdlBulkSanitize/MinpulseRewriteRun 两条 borderline 在 R2 改造前各做 1 次 empirical cheat 验证（造 shape-right-physics-wrong 提交跑 check.py），确认是否真 Type A。
-- 心跳：`LIVE: B review=126/126 · REQ=41(done 0) · OPT=7(done 0) · NA=76 · L2.live 0→0`。
+- ~~CdlBulkSanitize/MinpulseRewriteRun borderline 验证~~ **已完成（r1292）**：CdlBulkSanitize=REQ 确认，MinpulseRewriteRun=OPT 降级。
+- 心跳：`LIVE: B review=126/126 · REQ=40(done 0) · OPT=8(done 0) · NA=76 · L2.live 0→0`。
