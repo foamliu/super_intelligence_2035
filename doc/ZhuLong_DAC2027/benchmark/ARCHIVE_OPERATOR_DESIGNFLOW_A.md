@@ -504,3 +504,27 @@ r1280-r1283 均为「全部 active 工作(P1/P2/P3/P4+Lite-500)闭合后的 idle
 - **无新 thermo_feedback/board/discuss.** A 三线收口不变, 0 改动 0 回归.
 
 > 两轮均为 r1338(live_eval_summary 刷新)与 r1342 之间的纯只读 teeth-guard 监控轮, 状态完全相同, 合并归档. 全文见 daily_A_2026-11-27.md §r1339 / §r1341.
+
+## 归档块 · 2026-11-27 r1344 瘦身 · A1（r1342/r1343 teeth-guard 监控轮，原文照搬，两轮状态完全相同合并归档）
+
+### r1342 (2026-11-27 ~02:2x) — teeth-guard 监控轮 (只读·0 改动)
+- **.75 REACH_OK**: eda_flow open_session teeth-r1342 → hfhds201, hspice/finesim/vcs/vlogan/hspice64 全 @ /apps/synopsys/SRB/ RC0 96ms, close cleaned.
+- **3 L2.live neg_selftest 全 OK 无回归**: VpsRegr 4-distinct{a,d,g,h} / TotemSC 4-distinct{c,d,f,h} / AsyncFifoSim 3-static{c,d,o}+live-neg.
+- **585 cases/A judge_layers 齐**: 574 L0L1+11 L2.live, 0 missing.
+- **review tsv 116/116 verdict 全填**: REQ7/OPT3/NA106, 0 empty.
+- **两仓 0/0 sync**: SI 0/0, EFB 0/0. EFB stash@{0}=别线 C in-flight 未碰; SI 工作树仅别线 untracked 未碰.
+- **changes.tsv A 行口径澄清**: r1341「A 仍 7 行」口径误差已澄清=「7」指 B L2.live-add, A 实=3, 8 预存 L2.live 未回登=预存条件非回归.
+- **research daily 2026-11-27 designflow 建议**(RTL 新 testbench/DRC 几何断言)不适用 A 归 C/D 评估.
+- **无新 thermo_feedback/board/discuss.** A 三线收口不变, 0 改动 0 回归.
+
+### r1343 (2026-11-27 ~02:3x) — teeth-guard 监控轮 (只读·0 改动)
+- **.75 REACH_OK**: eda_flow_judge EDASession open → hfhds201, hspice/finesim/vcs/vlogan/hspice64 全 @ /apps/synopsys/SRB/ RC0 108ms, close cleaned.
+- **3 L2.live neg_selftest 全 OK 无回归**: VpsRegr 4-distinct{a,d,g,h} / TotemSC 4-distinct{c,d,f,h} / AsyncFifoSim 3-static{c,d,o}+live-neg.
+- **585 cases/A judge_layers 齐**: 574 L0L1+11 L2.live, 0 missing.
+- **review tsv 116/116 verdict 全填**: REQ7/OPT3/NA106, 0 empty.
+- **两仓 0/0 sync**: SI 0/0, EFB 0/0. EFB stash@{0}=别线 C in-flight 未碰; SI 工作树仅别线 untracked 未碰.
+- **changes.tsv 25 data rows 无变化**: A=3 新晋 L2.live / B=7 / C=3 / D=12.
+- **research daily 2026-11-27 designflow 建议**(RTL 新 testbench/DRC 几何断言)不适用 A 归 C/D 评估.
+- **无新 thermo_feedback/board/discuss.** A 三线收口不变, 116/116 green, 0 改动 0 回归.
+
+> 两轮均为 r1339/r1341 归档后、r1344 之前的纯只读 teeth-guard 监控轮, 状态完全相同, 合并归档. 全文见 daily_A_2026-11-27.md §r1342 / §r1343.
