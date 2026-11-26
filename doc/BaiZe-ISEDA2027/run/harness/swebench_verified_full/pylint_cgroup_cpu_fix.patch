@@ -1,0 +1,37 @@
+diff --git a/pylint/lint/run.py b/pylint/lint/run.py
+index 1234567..abcdef0 100644
+--- a/pylint/lint/run.py
++++ b/pylint/lint/run.py
+@@ -52,7 +52,7 @@ def _query_cpu() -> Optional[int]:
+             period = int(f.read().strip())
+         if quota > 0:
+             # Calculation based on CFS quota and period
+-            return int(quota / period)
++            return int(quota / period) or 1
+     except (FileNotFoundError, ValueError, PermissionError):
+         pass
+     try:
+@@ -60,7 +60,7 @@ def _query_cpu() -> Optional[int]:
+             shares = int(f.read().strip())
+         if shares > 0:
+             # Calculation based on CPU shares
+-            return int(shares / 1024)
++            return int(shares / 1024) or 1
+     except (FileNotFoundError, ValueError, PermissionError):
+         return None
+
+diff --git a/pylint/lint/parallel.py b/pylint/lint/parallel.py
+index 7654321..fedcba0 100644
+--- a/pylint/lint/parallel.py
++++ b/pylint/lint/parallel.py
+@@ -137,6 +137,10 @@ def check_parallel(
+     """
+     jobs = jobs or 1
+     files = sorted(files)
++    # Ensure we never create a pool with less than 1 process
++    if jobs < 1:
++        jobs = 1
++
+     def _ worker_wrapper(linter: "PyLinter", arguments: Sequence[str]) -> Callable[[str], List[Message]]:
+         def inner(filename: str) -> List[Message]:
+             linter.check([filename])
