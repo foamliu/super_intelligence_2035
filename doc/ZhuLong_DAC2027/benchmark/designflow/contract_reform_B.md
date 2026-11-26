@@ -670,5 +670,20 @@ r1302 把桩体分两类（GT-replay vs syntax-validator）。本轮发现**第�
 | r1299 | DffSetupHoldChar-001 | hspice-mock | DONE |
 | r1300 | GrDecPwrVerifTb-001 | hspice-mock | DONE |
 | r1304 | GmidLut-001 | hspice-mock GT-replay | DONE |
+| r1305 | VcoKvcoChar-001 | hspice-mock GT-replay | DONE |
 
-L2.live done 7→8；REQ 未改造 33-8=25 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
+L2.live done 8→9；REQ 未改造 33-9=24 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
+
+### r1305：VcoKvcoChar-001（hspice-mock GT-replay-by-signature · 第9条）
+
+**Q2 实证（r1305）**：cheat `vco_kvco_cheat.py` 在 `gen_netlist` 的 `.subckt cs_inv` 把 Mp/Mn1/Mn2 的 W/L 篡改为 `w=1e-21u l=1e3u`（电死环形 VCO 晶体管），保持正确 `.param VVDD=1.2 VTUNE=0.85` + `.alter` `.param VTUNE=0.9/...` 签名行（桩 `_HSPICE_MOCK_SRC` 按 `vdd|vtune-csv` 签名查 `_MOCK_VALUES` 回放 GT）→ `_check_static_impl` **14/14 PASS 假阳**（mock 按签名回放 GT fosc/kvco，**不校验 VCO 环形网表晶体管 W/L/拓扑**）。真 hspice V-2023.12-SP1-1 @ hfhds201：w=1e-21u 环形 VCO 无法振荡 → `.measure tran tper` fails（s1 永不翻转）→ fosc=[] / kvco=null → cond (e)(g)(j)(k) FAIL。
+
+**Q1 保真**：.75 真跑 ref（honest deck）→ B fosc=[13.36741163, 17.42982735, 20.52149031, 22.92343838, 24.88516947, 26.49994707] / kvco=51.6746580742848；A fosc=[8.9585092, 11.33040257, 12.9958302, 14.27411158, 15.30615097] / kvco=31.278 —— **== mock `_MOCK_VALUES` 逐位一致**。
+
+**改造**：非侵入包装（`_check_static_impl` 14 conds a-n 一字不动 + `check_static` try/except 3-tuple + `check_live(sess)` .75 真跑 hspice rerun candidate `vco_kvco.py` on hidden B AND visible A，读 real `kvco_result.json`，复断 conds (d)-(n) 同阈值 hspice_ran/fosc-len==vtune-len≥3/monotonic/kvco>0/kvco within ±30% REF_B_KVCO/cross-input |B_fosc0-A_fosc0|>10%/A_fosc0 within ±25% REF_A_FOSC_0，only-add never relax）+ `__main__` 块 + live-neg（`cheat_dead_vco/vco_kvco.py`：w=1e-21u，static-pass mock-replays-GT / live-fail cond e/g/j/k）+ `negative_selftest.py` 重写（STATIC 6 negs distinct{a,d,e,f,l} + §4.9 trio distinct{empty:a, print:d, core:e} + LIVE_NEG via EDASession）+ `judge_layers=[L0,L1,L2.live]` + JSON `test` 字段 sha `0212619da6bb` 3-way sync。
+
+**§5 全绿**：① REF check_live PASS（real hspice B fosc==mock GT Q1 fidelity）；② 6 static neg FAIL distinct{a,d,e,f,l} + §4.9 trio distinct + live-neg FAIL cond e/g/j/k；③ 确定性（hspice 对同 deck/params 确定性，ref fosc byte-exact == 之前捕获的 mock GT）；④ SKIP_RUN deploy workdir clean（无 check.py/reference/hidden 泄漏）；⑤ sha `0212619da6bb` 3-way sync（JSON test / 磁盘 check.py）；⑥ 断言条数只增不减（check_live +11 conds d-n 同阈值，不放宽）；⑦ L5 hidden-B uploaded to sess not in SUT sandbox，check_live 不读 reference/。
+
+**登记**：`live_eval_changes.tsv` +1 行（jl `[L0,L1]`→`[L0,L1,L2.live]`）。
+
+**.75 通路 OK**（r1305 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session r1305-reflive/r1305-cheatlive 用后 close）。
