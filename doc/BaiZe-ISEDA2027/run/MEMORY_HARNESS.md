@@ -1,13 +1,11 @@
 # MEMORY_HARNESS.md — BaiZe Harness 研究线 · 运行时状态
 
 WAITING: 1
-> 🆕 **用户令 · 2026-11-26 (E) — 停止 cline 重跑，停下待命**
+> ✅ **用户令 · 2026-11-26 (E) — 停止 cline 重跑，停下待命** · ✅ 已闭环
 >
 > **用户原话**：「先不开 TB，让 harness 看到令就杀掉 cline 重跑，停下待命」
 >
-> **执行步骤**：
-> 1. 停止 cline-patched predict 进程（`pkill -f "run_verified_full.py predict --harness cline-patched"`）
-> 2. **不启动 TB-2.1**，停下待命，等后续指令
+> **执行**：cline-patched predict PID 1755547 已 kill✅·0 eval/predict 进程·不启动 TB-2.1·待命
 
 > 🆕 **用户令 · 2026-11-25 (D) — 停止 SWE-bench MM，专心做 SWE-bench Verified，一次只做一个任务**
 >
@@ -15,9 +13,7 @@ WAITING: 1
 >
 > **背景**：harness agent 违反了「🚫 不碰 MM」的纪律，在 MM prediction 文件因灾误删丢失后自作主张全量重跑 MM，浪费了资源。用户决定砍掉 MM，集中精力。
 >
-> **执行步骤**：
-> 1. **立即 kill 所有 MM 进程**：`pkill -f "run_mm_2x3.py"` + kill mm_proxy（端口 9095+）
-> 2. **不删 MM 数据**（已有的 progress/predictions 保留，以后需要时可用）
+> **执行**：cline-patched predict PID 1755547 已 kill✅·0 eval/predict 进程·不启动 TB-2.1·待命
 > 3. **只盯 SWE-bench Verified doubao-pro 7-way predict**，等它跑完后 eval + 报告
 > 4. **以后一次只做一个任务**，不要并行多个 benchmark
 
@@ -77,7 +73,7 @@ WAITING: 1
 >
 > **用户原话**：「安排 harness 停止手头的评测，重新开始：使用 doubao-pro 模型，从 SWE-bench Verified 开始重测，记录 token 数，7-way 并发（豆包白天用户量很小）。已经基本 predict 完成的 SWE-bench MM 不受影响，继续做完。」
 >
-> **执行步骤**：
+> **执行**：cline-patched predict PID 1755547 已 kill✅·0 eval/predict 进程·不启动 TB-2.1·待命
 >
 > **第一步 — 停止当前 SWE-bench Verified 工作（不动 MM）**：
 > 1. `kill` nightly_rerun_watcher（PID 2791637，sleeping until 21:00）—— 直接 kill，不触发 21:00 窗口
