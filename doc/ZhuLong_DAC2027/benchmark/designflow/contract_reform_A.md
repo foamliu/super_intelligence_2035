@@ -520,3 +520,44 @@ REQ-2（TotemSC-001）check_live 设计**经真 finesim 实跑验证成立**：Q
 **两 REQ（VpsRegrErrorEngineer-001 / TotemSC-001）check_live 设计均已 .75 实跑验证就绪**，解冻后 R2 落盘为纯机械执行（非侵入包装 + live-neg + sha 同步 + §5 ②④⑥⑦），无设计风险、无 infra 阻塞。
 **🚫 本轮未改 check.py / cases / negative / assets / hidden / 主树 / jsonl。仅 .75 隔离 session 实跑（已 close_session cleaned）+ 本设计文档记证据。冻结窗口未解冻（r3' 328/500=65.6% @ 20:48，ETA~00:09 Nov-27）。**
 
+
+## R2 落盘（r1319 · 2026-11-26 · freeze-removed §1.1 清账）
+
+> **背景**：2026-11-26 20:5x 用户裁定「designflow 是主线、zhulong 评测是辅线、不设等待」⇒ §1.1 清账，冻结窗口表述从 MEMORY 清除，R2 落盘不再 BLOCKED。r1317/r1318 已把两 REQ 的 check_live 设计在 .75 隔离 session 实跑验证（Q1 mock 保真 + Q2 live-neg 牙），落盘为纯机械执行。
+
+### 改造手法（两案一致 · 非侵入包装）
+1. `def check(...)` → `def _check_static_impl(...)`（函数体逐字保留，含原 in-process faithful vcs/finesim mock 作 L1 fallback）。
+2. `check_static(deliverable, workdir)` 包装：try/except 收口三元组 `(ok, errors, fail_stage)`，AssertionError → L1.semantic。
+3. `check_live(deliverable, workdir, sess)` 新增：upload submit.zip + 必需 assets 到 .75，跑真 vcs/finesim，断言真实产物。
+4. `check(deliverable, workdir)` 兼容包装：调 check_static 返 bool。
+5. case JSON `metadata.judge_layers=["L0","L1","L2.live"]` + `test` 字段与 reference/check.py sha 同步。
+6. negative_selftest.py 改用 check_static 三元组（旧式 subprocess-rc/raise 在契约后失效）。
+
+### REQ-1 VpsRegrErrorEngineer-001（k_check=12 a–l）
+- check_live：upload submit.zip + spec_A + verilogrun_A/ + rtl_A/ + libs_A/(.bak) + `_vpsregr_livechk.py` helper → .75 unzip → helper 对每 case 取**原始** verilogrun .sh，按 spec mod（swap_svp/strip_noerror）改写（**不**前置 mock PATH export ⇒ 命中真 vcs），跑真 vcs（`/apps/synopsys/SRB/vcs/R-2020.12/bin`），`_classify` → 真 vcs ground-truth category。
+- 断言：候选 `run_report.json` per_case `category` 逐 case == 真 vcs category（error1:3/error2:2）+ 粗粒度 pass/error 类一致 + `Chronologic VCS` banner 证真二进制。
+- **exit_code 不比**：r1319 实测发现 mock exit=1 vs real vcs exit=255（同 error 类），exit_code 精确等永远不成立；**category 才是 mock-independent 语义真相**（r1317 已证 mock category == real vcs category 0 divergence）。此为 r1313 设计「exit_code 精确等」的修正。
+- live-neg（teeth）：候选伪造 run_report 把 swap_svp case 的 category 报成 error2（真 vcs 为 error1）⇒ check_static cond(h) 过（候选 .sh echo 假 marker 匹配假 report）⇒ check_live 真 vcs ground-truth error1 ⇄ 候选 error2 ⇒ MISMATCH FAIL。
+
+### REQ-2 TotemSC-001（k_check=14 a–n）
+- check_live：upload submit.zip + `_totemsc_livechk.py` helper → .75 → helper unzip 候选 fix_finesim_models.py → 对 3 seed(101/202/303) `_build_B`（复刻 check.py 的 B 生成逻辑，**不读 reference/**）→ 跑候选 fix → 跑真 finesim（`/apps/synopsys/SRB/finesim/V-2023.12-1/bin`）→ 断言 exit==0 + 无 `can't find model` + 4 success markers（FineSim Successfully Completed / DC converged / End of Transient Analysis / Generating MOS models）+ FineSim banner + devices_fixed==B true count。
+- live-neg（teeth）：候选**删除** `.model ./` 整行（而非改 `./`→``）+ 计正确 devices_fixed + 写假 dut.log 含 markers ⇒ mock 见 `.model ./` 计数==0 → success（mock 不验模型是否真定义）⇒ check_static 全过；真 finesim 发现设备引用模型未定义 → `can't find model` exit=5 ⇒ check_live FAIL。
+
+### §5 七项验收（r1319 实测）
+
+| case_id | ① ref check_live on .75 | ② live-neg teeth | ③ 3-seed | ④ check_static(ref) | ⑤ sha 3-way | ⑥ 断言只增 | ⑦ 不读 reference/ |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| VpsRegrErrorEngineer-001 | PASS ✅ (5 case category==real vcs + banner) | ✅ swap-categories static-pass/live-fail | ✅ vcs 编译确定性 | PASS ✅ (neg_selftest) | fefb6cc6 ✅ | ✅ (_impl 12 条不变 + check_live 新增) | ✅ |
+| TotemSC-001 | PASS ✅ (3 seed exit0+4markers+devices_fixed) | ✅ delete-.model-./ static-pass/live-fail | ✅ helper 内置 3 seed | PASS ✅ (neg_selftest) | a379f02f ✅ | ✅ (_impl 14 条不变 + check_live 新增) | ✅ |
+
+- negative_selftest：VpsRegr 5 negs FAIL 4distinct{a,d,g,h} / TotemSC 6 negs FAIL 4distinct{c,d,f,h}，ref PASS。
+- .75 可达：eda_flow MCP open_session 秒级 + vcs R-2020.12 + finesim V-2023.12-1 + license OK。
+- **freeze-removed: 2026-11-26**（§1.1 清账：MEMORY 顶部冻结窗口/BLOCKED 待解冻表述已清除，WAITING 回到真实值）。
+
+### 纪律
+- 🚫 未改 断言逻辑/strictness/k_check/prompt/assets/hidden/别 shard/jsonl
+- 🚫 _check_static_impl 一字不动（12/14 条原封保留）
+- ✅ 只动：2 reference/check.py（rename check→_check_static_impl + 加 check_static/check_live/check 包装 + helper）+ 2 negative_selftest.py（改用 check_static 三元组）+ 2 case JSON（judge_layers + test sha 同步）
+- EFB 提交 `6c6608e98`（3 files：2 case JSON + VpsRegr check.py 最终修正；TotemSC check.py + 2 neg_selftest 被 concurrent D commit `80eff6abe` additive 扫入，内容正确已验）。
+- live_eval_changes.tsv 登记 2 行（§1.2）。
+- A-owned L2.live: 8 → 10（VpsRegrErrorEngineer-001 + TotemSC-001）。REQ=6 done 6/6 ✅。
