@@ -110,11 +110,11 @@ WAITING: 1
 
 PHASE:        11-26令(E)执行完毕·cline predict已kill·停下待命·等后续指令
 已完成:       H-B OK·Gate7/7·TB-2.1 7路 COMPLETE·SWE-bench Verified glm53+doubao-pro 7路 predict+eval·token 记录改造✅·launch_doubao_7way.sh✅·doubao-pro 7way predict 7/7 COMPLETE✅·eval 7/7 COMPLETE✅·报告✅·dsh SDK修复✅·MM已KILL✅·agent-arena repo✅·**令E✅**(cline predict killed·停下待命)
-当前动作:     idle·停下待命·cline predict已kill·0 eval/predict进程·guard PID931671 LIVE·gw_proxy 3进程LIVE(9090/9091/9092)·资源OK(load~24/224=11%·mem680G/2TB avail1.1T)
+当前动作:     idle·停下待命·0 eval/predict进程·guard PID931671 LIVE(500100s≈5.8d)·gw_proxy 3进程LIVE(9090/9091/9092·PID 623606/623610/623695·~88707s≈24.6h)·资源OK(load24.56/224=11%·mem682G/2TB avail1098G)
 下一步:     待运维新指令（所有 11-25 令 A/B/C/D + 11-26 令 E 已全部闭环）
-阻塞:         无
+阻塞:         无（git merge origin/main 被 1804 个 ZhuLong untracked 文件阻挡·origin/main 无 harness 变更·不影响本线）
 ERROR_COUNT:  0
- 体积: TASK~27.0KB / MEMORY≈27.5KB（归档H-004~H-008后·均<32KB✅）
+ 体积: TASK~26.4KB / MEMORY≈27.6KB（均<32KB✅）
 
   SWE-bench Verified Pass% (glm53 口径, 保留对照): hermes444/500=88.8%·opencode416/500=83.2%·cline335/500=67.0%·cc295/500=59.0%·pi247/500=49.4%·dsh195/500=39.0%·codex115/500=23.0%
   SWE-bench Verified Pass% (doubao-pro 口径): opencode323/500=64.6%·cline321/500=64.2%·hermes302/500=60.4%·cc297/500=59.4%·pi270/500=54.0%·codex218/500=43.6%·dsh130/500=26.0%
@@ -169,6 +169,7 @@ ERROR_COUNT:  0
 
 > #H-027（2026-11-26 09:20, **令E执行完毕**·**cline-patched predict PID 1755547 已 kill✅**·0 eval/predict 进程确认·不启动 TB-2.1·停下待命·自检(内存10-30令):0 harness eval/predict进程✅·自检(CPU 11-02令):load~24/224=11%(远<80%✅)·gw_proxy 3进程LIVE(9090/9091/9092·PID 623606/623610/623695)·guard PID931671 LIVE·0 Docker·mem680G/2TB avail1.1T·报告report_harness_doubao_pro_7way_swebench_tb_zh.html=7083B✅·token sidecar 52884 lines·dsh_sdk持久化✅·agent-arena repo✅·体积维护:H-004~H-008归档·TASK~27.0KB/MEMORY~27.5KB(均<32KB✅)·所有11-25令A/B/C/D+11-26令E已闭环·WAITING:1·下一步:待运维新指令）
 
+> #H-028（2026-11-26 10:12, 例行巡检·**idle·健康**·git fetch origin OK·merge origin/main 被 1804 个 ZhuLong trace_deepreads untracked 文件阻挡(origin/main 6 commits 无 harness 变更·不影响本线·ZhuLong agents 会处理自己的 merge)·自检(内存10-30令):0 harness eval/predict进程·gw_proxy 3进程RSS=23-44MB(远<50GB阈值✅)·guard 3.5MB✅·自检(CPU 11-02令):load24.56/224=11%(远<80%阈值✅)·0 harness进程>8000%CPU✅·guard PID931671 LIVE(500100s≈5.8d)·gw_proxy 3进程LIVE(9090/9091/9092·PID 623606/623610/623695·~88707s≈24.6h)·0 Docker·mem682G/2TB avail1098G·报告report_harness_doubao_pro_7way_swebench_tb_zh.html=7152B✅·token sidecar 53306 lines·dsh_sdk持久化✅(/nas_train/app.e0031982/harness_work/dsh_sdk)·agent-arena repo✅·TASK 26.4KB/MEMORY 27.6KB(均<32KB✅)·dedup修复(重复归档指针删除)·research日报2026-11-26已查(无新可执行建议)·所有11-25令A/B/C/D+11-26令E已闭环·WAITING:1·下一步:待运维新指令）
 
 
 ## 启动说明（首次唤醒）
