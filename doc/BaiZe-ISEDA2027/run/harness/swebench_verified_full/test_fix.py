@@ -1,52 +1,117 @@
-import datetime
-import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'django'))
-from django.utils.dateparse import parse_duration
+import sys
+import datetime
+from django.conf import settings
+from django.db import models
+from django import forms
 
-print("Testing original issue cases (negative minutes/seconds):")
+# Configure Django settings
+settings.configure(
+    DEBUG=True,
+    DATABASES={
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
+    },
+    INSTALLED_APPS=[
+        'django.contrib.contenttypes',
+        'django.contrib.auth',
+    ],
+)
 
-# These should now match (they didn't before)
-test_cases = [
-    # Cases that didn't match before the fix
-    ("1:-30:45", datetime.timedelta(hours=1, minutes=-30, seconds=45)),
-    ("-1:-30:-45", datetime.timedelta(hours=-1, minutes=-30, seconds=-45)),
-    ("2 days -1:-30:-45", datetime.timedelta(days=2, hours=-1, minutes=-30, seconds=-45)),
-    ("-2 days 1:-30:45", datetime.timedelta(days=-2, hours=1, minutes=-30, seconds=45)),
-    ("-0:-0:-1", datetime.timedelta(seconds=-1)),
-]
+import django
+django.setup()
 
-all_passed = True
-for input_str, expected in test_cases:
-    result = parse_duration(input_str)
-    if result == expected:
-        print(f"✓ PASS: '{input_str}' -> {result}")
-    else:
-        print(f"✗ FAIL: '{input_str}' -> {result} (expected {expected})")
-        all_passed = False
+# Define the model
+def default_mode():
+    return 'di'
 
-# Also test that normal cases still work
-print("\nTesting normal positive cases still work:")
-normal_cases = [
-    ("1:00:00", datetime.timedelta(hours=1)),
-    ("01:00:00", datetime.timedelta(hours=1)),
-    ("1:30:45", datetime.timedelta(hours=1, minutes=30, seconds=45)),
-    ("2 days 1:30:45", datetime.timedelta(days=2, hours=1, minutes=30, seconds=45)),
-    ("1.5", datetime.timedelta(seconds=1.5)),
-    ("0:00:00.000001", datetime.timedelta(microseconds=1)),
-]
+def default_category():
+    return 1
 
-for input_str, expected in normal_cases:
-    result = parse_duration(input_str)
-    if result == expected:
-        print(f"✓ PASS: '{input_str}' -> {result}")
-    else:
-        print(f"✗ FAIL: '{input_str}' -> {result} (expected {expected})")
-        all_passed = False
+class PublicationDefaults(models.Model):
+    MODE_CHOICES = (('di', 'direct'), ('de', 'delayed'))
+    CATEGORY_CHOICES = ((1, 'Games'), (2, 'Comics'), (3, 'Novel'))
+    title = models.CharField(max_length=30)
+    date_published = models.DateField(default=datetime.date.today)
+    mode = models.CharField(max_length=2, choices=MODE_CHOICES, default=default_mode)
+    category = models.IntegerField(choices=CATEGORY_CHOICES, default=default_category)
+    active = models.BooleanField(default=True)
 
-if all_passed:
-    print("\n✅ All tests passed! The fix is working correctly.")
-    print("\nThe issue is resolved: the regex now matches durations with negative minutes or seconds,")
-    print("which was not possible before the fix.")
-else:
-    print("\n❌ Some tests failed!")
+    class Meta:
+        app_label = 'test'
+
+# Create tables
+from django.db import connection
+with connection.schema_editor() as editor:
+    editor.create_model(PublicationDefaults)
+
+# Test case 1: Default behavior (no clean method override)
+print("Test 1: Default behavior (no clean method)")
+class PubForm1(forms.ModelForm):
+    mode = forms.CharField(max_length=255, required=False)
+    category = forms.IntegerField(required=False)
+
+    class Meta:
+        model = PublicationDefaults
+        fields = ('mode', 'category', 'title')
+
+form1 = PubForm1({'title': 'Test 1'})
+assert form1.is_valid(), f"Form1 invalid: {form1.errors}"
+instance1 = form1.save(commit=False)
+print(f"  mode: {instance1.mode} (expected 'di')")
+print(f"  category: {instance1.category} (expected 1)")
+assert instance1.mode == 'di'
+assert instance1.category == 1
+print("  ✓ Passed\n")
+
+# Test case 2: Clean method overrides values not in form data
+print("Test 2: Clean method sets values not in form data")
+class PubForm2(forms.ModelForm):
+    mode = forms.CharField(max_length=255, required=False)
+    category = forms.IntegerField(required=False)
+
+    class Meta:
+        model = PublicationDefaults
+        fields = ('mode', 'category', 'title')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data['mode'] = 'de'
+        cleaned_data['category'] = 3
+        return cleaned_data
+
+form2 = PubForm2({'title': 'Test 2'})
+assert form2.is_valid(), f"Form2 invalid: {form2.errors}"
+instance2 = form2.save(commit=False)
+print(f"  mode: {instance2.mode} (expected 'de')")
+print(f"  category: {instance2.category} (expected 3)")
+assert instance2.mode == 'de'
+assert instance2.category == 3
+print("  ✓ Passed\n")
+
+# Test case 3: Empty string submitted uses empty value, not default
+print("Test 3: Empty string submitted")
+form3 = PubForm1({'title': 'Test 3', 'mode': ''})
+assert form3.is_valid(), f"Form3 invalid: {form3.errors}"
+instance3 = form3.save(commit=False)
+print(f"  mode: '{instance3.mode}' (expected empty string)")
+assert instance3.mode == ''
+print("  ✓ Passed\n")
+
+# Test case 4: Checkbox field (active) works correctly
+print("Test 4: Checkbox field not submitted")
+class PubForm4(forms.ModelForm):
+    class Meta:
+        model = PublicationDefaults
+        fields = ('active', 'title')
+
+form4 = PubForm4({'title': 'Test 4'})
+assert form4.is_valid(), f"Form4 invalid: {form4.errors}"
+instance4 = form4.save(commit=False)
+print(f"  active: {instance4.active} (expected False)")
+assert instance4.active is False
+print("  ✓ Passed\n")
+
+print("All tests passed! ✅")
