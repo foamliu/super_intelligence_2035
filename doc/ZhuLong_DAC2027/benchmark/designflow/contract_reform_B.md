@@ -641,3 +641,34 @@ r1302 把桩体分两类（GT-replay vs syntax-validator）。本轮发现**第�
 - r1302 的 5 候选 OPT 全部结清：3 降级（SpGen/PlatMosThin/FineSimNoRefCkt）+ 2 REQ 确认（GmidLut/FineSimModelScope）。**R1 generic REQ boilerplate 对 faithful-physics-solver / 结构 validator 桩的误判已清零。**
 - R2 续改 GT-replay 真 Type A 家族（hspice-mock/finesim-mock）：当前 REQ 33 条（含已 done 7），未改造 26 条，B 预算 ≤6-8 条/轮，hspice-mock 家族优先。
 - 本轮**只读**：仅改 `live_eval_review_B.tsv` 3 条 verdict + 本节，🚫 未碰 `reference/*/check.py` 与 `cases/*.json`（无 judge_layers 变更，无 `live_eval_changes.tsv` 登记）。.75 通路 OK（r1303 reach: open_session 秒级 / hspice V-2023.12-SP1-1 + finesim V-2023.12-1 在 PATH @ hfhds201）。
+
+## R2 改造进度（2026-11-27 r1304 起 · 续 r1294-r1300）
+
+### r1304：GmidLut-001（hspice-mock GT-replay-by-signature · 第8条）
+
+**Q2 实证（r1303 已确认 + 本轮 ref check_live 复验）**：cheat `gmid_cheat_gen.py` 把 m1 模型名 `nch`→`nch_dead`（保持 `.param kp/vto` 签名 + `vvd vd 0 vds` 非零）→ 桩按 kp/vto 精确值匹配 A 场景回放预捕 real-HSPICE CSV（`_MOCK_CSV_A`）→ 候选 lut_A.csv = GT → 静态 16/16 PASS 假阳；真 hspice V-2023.12-SP1-1 @ hfhds201：model nch_dead not found → `job aborted` → 0 op-point blocks → 0-row lut_A_live → cond (e) row-count + (p-live) FAIL。
+
+**Q1 保真**：.75 真跑 ref gen.py（honest deck）→ lut_A_live 24 rows / lut_B_live 35 rows，与 mock `_MOCK_CSV_A/B` **逐位一致**（r1303 已确认；本轮 ref check_live PASS 复验 A=24/B=35）。
+
+**改造**：非侵入包装（`_check_static_impl` 16 conds a-p 一字不动 + `check_static` try/except 3-tuple + `check_live(sess)` .75 真跑 hspice rerun candidate `gmid_lut_gen.py` on hidden B AND visible A，读 real `lut_A_live.csv`/`lut_B_live.csv`，复断 conds (e)-(l) 同阈值 row-count/cgg>0/monotonicity + (n)(o) cross-input + (p-live) cand lut_A_live vs shipped lut_A.csv(mock GT) within 2%，only-add never relax）+ `__main__` 块 + live-neg（`cheat_nch_dead/gmid_lut_gen.py`：m1 nch_dead，static-pass mock-replays-GT / live-fail cond e 0 rows vs 24）+ `negative_selftest.py` 重写（STATIC 6 negs distinct{c,e,f,j,m} + §4.9 trio distinct{empty:c, print:m, core:e} + LIVE_NEG via EDASession）+ `judge_layers=[L0,L1,L2.live]` + JSON `test` 字段 sha `a946b900c910` 3-way sync。
+
+**§5 全绿**：① REF check_live PASS（real hspice A=24/B=35 Q1 fidelity lut_A_live==shipped GT）；② 6 static neg FAIL distinct{c,e,f,j,m} + §4.9 trio distinct + live-neg FAIL cond e；③ 3-seed deterministic lut_A md5 `7ec9ba02c19cd456d88963170df0f88e`；④ SKIP_RUN deploy workdir clean（无 check.py/reference/hidden 泄漏）；⑤ sha `a946b900c910` 3-way sync（JSON test / 磁盘 check.py）；⑥ 断言条数只增不减（+m_live cond ⑰，阈值不放宽）；⑦ L5 hidden-B uploaded to sess not in SUT sandbox，check_live 不读 reference/。
+
+**登记**：`live_eval_changes.tsv` +1 行（ts=2026-11-27T02:45+08:00, repo_commit=f193e5cc8）。
+
+**.75 通路 OK**（r1304 reach：open_session 秒级 / hspice V-2023.12-SP1-1 在 PATH @ hfhds201，session r1304-reflive 用后 close）。
+
+### R2 累计进度
+
+| 轮次 | case | 家族 | 状态 |
+|:--|:--|:--|:--|
+| r1294 | CdlBulkSanitize-001 | hspice-mock | DONE |
+| r1295 | InvTripDelay-001 | hspice-mock | DONE |
+| r1296 | AOI21ArcChar-001 | hspice-mock | DONE |
+| r1297 | AlterDeckSplit-001 | hspice-mock | DONE |
+| r1298 | SpiceSim-001 | hspice-mock | DONE |
+| r1299 | DffSetupHoldChar-001 | hspice-mock | DONE |
+| r1300 | GrDecPwrVerifTb-001 | hspice-mock | DONE |
+| r1304 | GmidLut-001 | hspice-mock GT-replay | DONE |
+
+L2.live done 7→8；REQ 未改造 33-8=25 条（hspice-mock/finesim-mock GT-replay 家族优先，B 预算 ≤6-8 条/轮，.75 严格串行，逐条独立自验）。
