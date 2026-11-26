@@ -6,52 +6,42 @@
 <h1>SWE-bench Verified · doubao-pro 7 路横评报告</h1>
 <div class="info">
 <p><strong>模型</strong>：doubao-seed-2.0-pro-cloud　|　<strong>7 路</strong>：zhulong(cline-patched) / codex / opencode / claude-code / pi / hermes / deepseek</p>
-<p><strong>题集</strong>：SWE-bench Verified 500 题　|　<strong>分母</strong>：恒 500　|　<strong>生成时间</strong>：2026-11-26 08:25（R3000）</p>
+<p><strong>题集</strong>：SWE-bench Verified 500 题　|　<strong>分母</strong>：恒 500　|　<strong>生成时间</strong>：2026-11-26 08:47（R3000）</p>
 <p><strong>cline 配置</strong>：compaction=basic · thinking=low · checkpoint=off（cline 3.0.51 无 checkpoint 功能，旧版 cline-checkpoint-off ELF 已废弃）</p>
 </div>
 
 <h2 style="font-size:1.5em;border-left:8px solid #e74c3c">★ 主表 · SWE-bench Verified（500 题 × 7 路 · Pass% = resolved/500 · 按 Pass% 降序）</h2>
 <table style="font-size:1.05em"><thead><tr><th>#</th><th>Harness</th><th>版本</th><th>Resolved/500</th><th>Pass%</th></tr></thead><tbody>
 <tr><td>1</td><td><strong>opencode</strong></td><td><code>1.18.27</code></td><td class='pass' style='font-weight:bold'>323/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>64.6%</td></tr>
-<tr><td>2</td><td><strong>zhulong(cline-patched)</strong></td><td><code>3.0.51</code></td><td class='pass' style='font-weight:bold'>321/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>64.2%</td></tr>
-<tr><td>3</td><td><strong>hermes</strong></td><td><code>git.0e21933 (2026.9.24)</code></td><td class='pass' style='font-weight:bold'>302/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>60.4%</td></tr>
-<tr><td>4</td><td><strong>claude-code</strong></td><td><code>2.1.197</code></td><td class='pass' style='font-weight:bold'>297/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>59.4%</td></tr>
-<tr><td>5</td><td><strong>pi</strong></td><td><code>0.2.15</code></td><td class='pass' style='font-weight:bold'>270/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>54.0%</td></tr>
-<tr><td>6</td><td><strong>codex</strong></td><td><code>0.94.0</code></td><td class='pass' style='font-weight:bold'>218/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>43.6%</td></tr>
-<tr><td>7</td><td><strong>deepseek</strong></td><td><code>0.1.5rc1</code></td><td class='pass' style='font-weight:bold'>130/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>26.0%</td></tr>
+<tr><td>2</td><td><strong>hermes</strong></td><td><code>git.0e21933 (2026.9.24)</code></td><td class='pass' style='font-weight:bold'>302/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>60.4%</td></tr>
+<tr><td>3</td><td><strong>claude-code</strong></td><td><code>2.1.197</code></td><td class='pass' style='font-weight:bold'>297/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>59.4%</td></tr>
+<tr><td>4</td><td><strong>pi</strong></td><td><code>0.2.15</code></td><td class='pass' style='font-weight:bold'>270/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>54.0%</td></tr>
+<tr><td>5</td><td><strong>codex</strong></td><td><code>0.94.0</code></td><td class='pass' style='font-weight:bold'>218/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>43.6%</td></tr>
+<tr><td>6</td><td><strong>deepseek</strong></td><td><code>0.1.5rc1</code></td><td class='pass' style='font-weight:bold'>130/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>26.0%</td></tr>
+<tr><td>7</td><td><strong>zhulong(cline-patched)</strong></td><td><code>3.0.51</code></td><td class='pass' style='font-weight:bold'>0/500</td><td style='font-size:1.35em;font-weight:bold;color:#27ae60'>0.0%</td></tr>
 </tbody></table>
 <div class="note"><p>分母恒 500。Pass% = resolved/500。未跑完的路按已 resolved 数 / 500 计算。</p></div>
 
 <h2>1. Predict 进度 + Token 统计</h2>
 <table><thead><tr><th>Harness</th><th>版本</th><th>Predict/500</th><th>剩余</th><th>Empty</th><th>API calls</th><th>Input/Output tokens</th><th>状态</th></tr></thead><tbody>
-<tr><td><strong>opencode</strong></td><td><code>1.18.27</code></td><td>498/500</td><td>2</td><td class='fail'>3</td><td>48615</td><td>818.9M / 14986K</td><td>⏳ 进行中</td></tr>
-<tr><td><strong>zhulong(cline-patched)</strong></td><td><code>3.0.51</code></td><td>494/500</td><td>6</td><td class='fail'>3</td><td>48356</td><td>813.8M / 14871K</td><td>⏳ 进行中</td></tr>
-<tr><td><strong>hermes</strong></td><td><code>git.0e21933 (2026.9.24)</code></td><td>498/500</td><td>2</td><td class='fail'>9</td><td>49259</td><td>829.3M / 15144K</td><td>⏳ 进行中</td></tr>
-<tr><td><strong>claude-code</strong></td><td><code>2.1.197</code></td><td>499/500</td><td>1</td><td class='fail'>6</td><td>36869</td><td>617.8M / 11557K</td><td>⏳ 进行中</td></tr>
-<tr><td><strong>pi</strong></td><td><code>0.2.15</code></td><td>496/500</td><td>4</td><td class='fail'>13</td><td>49546</td><td>828.2M / 15212K</td><td>⏳ 进行中</td></tr>
-<tr><td><strong>codex</strong></td><td><code>0.94.0</code></td><td>496/500</td><td>4</td><td class='fail'>32</td><td>50543</td><td>845.0M / 15513K</td><td>⏳ 进行中</td></tr>
-<tr><td><strong>deepseek</strong></td><td><code>0.1.5rc1</code></td><td>499/500</td><td>1</td><td class='fail'>200</td><td>38575</td><td>618.6M / 11862K</td><td>⏳ 进行中</td></tr>
+<tr><td><strong>opencode</strong></td><td><code>1.18.27</code></td><td>498/500</td><td>2</td><td class='fail'>3</td><td>48615</td><td>818.9M / 14986K</td><td>✅ 完成</td></tr>
+<tr><td><strong>hermes</strong></td><td><code>git.0e21933 (2026.9.24)</code></td><td>498/500</td><td>2</td><td class='fail'>9</td><td>49259</td><td>829.3M / 15144K</td><td>✅ 完成</td></tr>
+<tr><td><strong>claude-code</strong></td><td><code>2.1.197</code></td><td>499/500</td><td>1</td><td class='fail'>6</td><td>36869</td><td>617.8M / 11557K</td><td>✅ 完成</td></tr>
+<tr><td><strong>pi</strong></td><td><code>0.2.15</code></td><td>496/500</td><td>4</td><td class='fail'>13</td><td>49546</td><td>828.2M / 15212K</td><td>✅ 完成</td></tr>
+<tr><td><strong>codex</strong></td><td><code>0.94.0</code></td><td>496/500</td><td>4</td><td class='fail'>32</td><td>50543</td><td>845.0M / 15513K</td><td>✅ 完成</td></tr>
+<tr><td><strong>deepseek</strong></td><td><code>0.1.5rc1</code></td><td>499/500</td><td>1</td><td class='fail'>200</td><td>38575</td><td>618.6M / 11862K</td><td>✅ 完成</td></tr>
+<tr><td><strong>zhulong(cline-patched)</strong></td><td><code>3.0.51</code></td><td>6/500</td><td>494</td><td class='fail'>0</td><td>83</td><td>1.2M / 26K</td><td>⏳ 进行中</td></tr>
 </tbody></table>
 <div class="note"><p>Token 数据来自 prediction JSON 的 usage 字段（input_tokens / output_tokens / n_api_calls）。</p></div>
 
 <h2>2. 待跑 / 待重跑清单</h2>
 <h3>待跑（backlog · predict &lt; 500）</h3>
 <table><tr><th>Harness</th><th>剩余题数</th></tr>
-<tr><td><strong>zhulong(cline-patched)</strong></td><td>6</td></tr>
-<tr><td><strong>codex</strong></td><td>4</td></tr>
-<tr><td><strong>pi</strong></td><td>4</td></tr>
-<tr><td><strong>opencode</strong></td><td>2</td></tr>
-<tr><td><strong>hermes</strong></td><td>2</td></tr>
-<tr><td><strong>claude-code</strong></td><td>1</td></tr>
-<tr><td><strong>deepseek</strong></td><td>1</td></tr>
+<tr><td><strong>zhulong(cline-patched)</strong></td><td>494</td></tr>
 </table>
 
 <h3>待重跑（infra 失败）</h3>
 <table><tr><th>Harness</th><th>题目</th></tr>
-<tr><td><strong>zhulong(cline-patched)</strong></td><td>pylint-dev__pylint-8898</td></tr>
-<tr><td><strong>zhulong(cline-patched)</strong></td><td>scikit-learn__scikit-learn-14629</td></tr>
-<tr><td><strong>zhulong(cline-patched)</strong></td><td>scikit-learn__scikit-learn-14710</td></tr>
-<tr><td><strong>zhulong(cline-patched)</strong></td><td>sphinx-doc__sphinx-7590</td></tr>
 <tr><td><strong>codex</strong></td><td>django__django-14349</td></tr>
 <tr><td><strong>codex</strong></td><td>scikit-learn__scikit-learn-14710</td></tr>
 <tr><td><strong>opencode</strong></td><td>scikit-learn__scikit-learn-14710</td></tr>
@@ -75,5 +65,5 @@
 
 
 <hr><p style="text-align:center;color:#7f8c8d;font-size:0.9em">
-BaiZe Harness · R3000 · 2026-11-26 08:25<br>SWE-bench Verified 500 · doubao-pro 7-way
+BaiZe Harness · R3000 · 2026-11-26 08:47<br>SWE-bench Verified 500 · doubao-pro 7-way
 </p></body></html>

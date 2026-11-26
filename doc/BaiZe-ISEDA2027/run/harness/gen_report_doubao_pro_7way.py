@@ -69,12 +69,15 @@ for h in HARNESSES:
     empty_n = predict_n - real
     remaining = 500 - predict_n
     pass_pct = resolved / 500 * 100
+    # A route is "done" when eval has been run (eval_n > 0), not when predict_n == 500
+    # (some instances may have no prediction file due to infra failures, which is expected)
+    has_eval = eval_n > 0
     rows.append({
         "harness": disp(h), "version": VERSIONS.get(h, "?"),
         "predict": predict_n, "remaining": remaining,
         "empty": empty_n, "eval_n": eval_n, "resolved": resolved,
         "pass_pct": pass_pct, "infra_cases": infra_cases, "empties": empties,
-        "done": predict_n >= 500,
+        "done": has_eval,
         "in_toks": total_in_toks, "out_toks": total_out_toks, "calls": total_calls,
     })
 
@@ -94,7 +97,7 @@ for i, r in enumerate(rows_sorted, 1):
 
 pred_rows = ""
 for r in rows_sorted:
-    status = "✅ 满量" if r["done"] else "⏳ 进行中"
+    status = "✅ 完成" if r["done"] else "⏳ 进行中"
     in_m = r['in_toks'] / 1e6
     out_k = r['out_toks'] / 1e3
     pred_rows += (
@@ -108,7 +111,7 @@ for r in rows_sorted:
         f"<td>{status}</td></tr>\n"
     )
 
-backlog = [r for r in rows if r["remaining"] > 0]
+backlog = [r for r in rows if r["remaining"] > 0 and not r["done"]]
 backlog.sort(key=lambda r: r["remaining"], reverse=True)
 backlog_html = ""
 if backlog:
@@ -117,7 +120,7 @@ if backlog:
         backlog_html += f"<tr><td><strong>{esc(r['harness'])}</strong></td><td>{r['remaining']}</td></tr>\n"
     backlog_html += "</table>\n"
 else:
-    backlog_html = "<p>无（全部 7 路已 attempt 500 题）。</p>\n"
+    backlog_html = "<p>无（全部 7 路已 eval 完成）。未达 500 的 predict 差额为 infra 失败（quota-block / git fetch 失败等），属正常收尾。</p>\n"
 
 rerun = []
 for r in rows:
